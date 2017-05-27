@@ -696,24 +696,23 @@ bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t sen
 
 	bool found = false;
 
-	Common::List<Breakpoint>::const_iterator bpIter;
-	for (bpIter = _debugState._breakpoints.begin(); bpIter != _debugState._breakpoints.end(); ++bpIter) {
-		if (bpIter->_type != breakpointType)
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		if (bp->_action == BREAK_NONE || bp->_type != breakpointType)
 			continue;
-		if (bpIter->_action == BREAK_NONE)
-			continue;
-		if (bpIter->_name == methodName ||
-		    (bpIter->_name.hasSuffix("::") && methodName.hasPrefix(bpIter->_name))) {
+
+		if (bp->_name == methodName ||
+		    (bp->_name.hasSuffix("::") && methodName.hasPrefix(bp->_name))) {
 			if (!found) // Show message once, but allow multiple actions
 				_console->debugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
 			found = true;
 
-			if (bpIter->_action == BREAK_BREAK) {
+			if (bp->_action == BREAK_BREAK) {
 				_debugState.debugging = true;
 				_debugState.breakpointWasHit = true;
-			} else if (bpIter->_action == BREAK_BACKTRACE) {
+			} else if (bp->_action == BREAK_BACKTRACE) {
 				logBacktrace();
-			} else if (bpIter->_action == BREAK_INSPECT) {
+			} else if (bp->_action == BREAK_INSPECT) {
 				printObject(send_obj);
 			}
 		}
@@ -722,28 +721,30 @@ bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t sen
 }
 
 bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
+
+	if (!(_debugState._activeBreakpointTypes & BREAK_EXPORT))
+		return false;
+
 	bool found = false;
+	uint32 bpaddress = (script << 16 | pubfunct);
 
-	if (_debugState._activeBreakpointTypes & BREAK_EXPORT) {
-		uint32 bpaddress = (script << 16 | pubfunct);
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		if (bp->_action == BREAK_NONE || bp->_type != BREAK_EXPORT)
+			continue;
 
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			if (bp->_action == BREAK_NONE)
-				continue;
-			if (bp->_type == BREAK_EXPORT && bp->_address == bpaddress) {
-				if (!found) // Show message once, but allow multiple actions
-					_console->debugPrintf("Break on script %d, export %d\n", script, pubfunct);
-				found = true;
+		if (bp->_address == bpaddress) {
+			if (!found) // Show message once, but allow multiple actions
+				_console->debugPrintf("Break on script %d, export %d\n", script, pubfunct);
+			found = true;
 
-				if (bp->_action == BREAK_BREAK) {
-					_debugState.debugging = true;
-					_debugState.breakpointWasHit = true;
-				} else if (bp->_action == BREAK_BACKTRACE) {
-					logBacktrace();
-				} else if (bp->_action == BREAK_INSPECT) {
-					// Ignoring this mode, to make it identical to BREAK_LOG
-				}
+			if (bp->_action == BREAK_BREAK) {
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+			} else if (bp->_action == BREAK_BACKTRACE) {
+				logBacktrace();
+			} else if (bp->_action == BREAK_INSPECT) {
+				// Ignoring this mode, to make it identical to BREAK_LOG
 			}
 		}
 	}
@@ -752,26 +753,28 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 }
 
 bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
+	if (!(_debugState._activeBreakpointTypes & BREAK_ADDRESS))
+		return false;
+
 	bool found = false;
 
-	if (_debugState._activeBreakpointTypes & BREAK_ADDRESS) {
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			if (bp->_action == BREAK_NONE)
-				continue;
-			if (bp->_type == BREAK_ADDRESS && bp->_regAddress == address) {
-				if (!found)
-					_console->debugPrintf("Break at %04x:%04x\n", PRINT_REG(address));
-				found = true;
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		if (bp->_action == BREAK_NONE || bp->_type != BREAK_ADDRESS)
+			continue;
 
-				if (bp->_action == BREAK_BREAK) {
-					_debugState.debugging = true;
-					_debugState.breakpointWasHit = true;
-				} else if (bp->_action == BREAK_BACKTRACE) {
-					logBacktrace();
-				} else if (bp->_action == BREAK_INSPECT) {
-					// Ignoring this mode, to make it identical to BREAK_LOG
-				}
+		if (bp->_regAddress == address) {
+			if (!found)
+				_console->debugPrintf("Break at %04x:%04x\n", PRINT_REG(address));
+			found = true;
+
+			if (bp->_action == BREAK_BREAK) {
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+			} else if (bp->_action == BREAK_BACKTRACE) {
+				logBacktrace();
+			} else if (bp->_action == BREAK_INSPECT) {
+				// Ignoring this mode, to make it identical to BREAK_LOG
 			}
 		}
 	}
@@ -780,36 +783,34 @@ bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
 }
 
 bool SciEngine::checkKernelBreakpoint(const Common::String &name) {
+	if (!(_debugState._activeBreakpointTypes & BREAK_KERNEL))
+		return false;
+
 	bool found = false;
 
-	if (_debugState._activeBreakpointTypes & BREAK_KERNEL) {
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		if (bp->_action == BREAK_NONE || bp->_type != BREAK_KERNEL)
+			continue;
 
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			if (bp->_action == BREAK_NONE)
-				continue;
-			if (bp->_type != BREAK_KERNEL)
-				continue;
-
-			bool wildcard = bp->_name.lastChar() == '*';
-			Common::String prefix = bp->_name;
-			if (wildcard)
-				prefix.deleteLastChar();
-			if (bp->_name == name || (wildcard && name.hasPrefix(prefix))) {
-				if (bp->_action == BREAK_BREAK) {
-					if (!found)
-						_console->debugPrintf("Break on k%s\n", name.c_str());
-					_debugState.debugging = true;
-					_debugState.breakpointWasHit = true;
-				} else if (bp->_action == BREAK_BACKTRACE) {
-					if (!found)
-						_console->debugPrintf("Break on k%s\n", name.c_str());
-					logBacktrace();
-				} else if (bp->_action == BREAK_INSPECT) {
-					// Ignoring this mode, to make it identical to BREAK_LOG
-				}
-				found = true;
+		bool wildcard = bp->_name.lastChar() == '*';
+		Common::String prefix = bp->_name;
+		if (wildcard)
+			prefix.deleteLastChar();
+		if (bp->_name == name || (wildcard && name.hasPrefix(prefix))) {
+			if (bp->_action == BREAK_BREAK) {
+				if (!found)
+					_console->debugPrintf("Break on k%s\n", name.c_str());
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+			} else if (bp->_action == BREAK_BACKTRACE) {
+				if (!found)
+					_console->debugPrintf("Break on k%s\n", name.c_str());
+				logBacktrace();
+			} else if (bp->_action == BREAK_INSPECT) {
+				// Ignoring this mode, to make it identical to BREAK_LOG
 			}
+			found = true;
 		}
 	}
 
