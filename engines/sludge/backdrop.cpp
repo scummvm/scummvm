@@ -96,16 +96,16 @@ void nosnapshot() {
 #endif
 }
 
+void saveSnapshot(Common::WriteStream *stream) {
 #if 0
-void saveSnapshot(FILE *fp) {
 	if (snapshotTextureName) {
-		fputc(1, fp);               // 1 for snapshot follows
-		saveCoreHSI(fp, snapshotTextureName, winWidth, winHeight);
+		putch(1, stream);               // 1 for snapshot follows
+		saveCoreHSI(stream, snapshotTextureName, winWidth, winHeight);
 	} else {
-		fputc(0, fp);
+		putch(0, stream);
 	}
-}
 #endif
+}
 
 bool snapshot() {
 
@@ -157,17 +157,16 @@ bool snapshot() {
 	return true;
 }
 
-#if 0
-bool restoreSnapshot(FILE *fp) {
-	unsigned int picWidth = get2bytes(fp);
-	unsigned int picHeight = get2bytes(fp);
+bool restoreSnapshot(Common::SeekableReadStream *stream) {
+	unsigned int picWidth = get2bytes(stream);
+	unsigned int picHeight = get2bytes(stream);
 
 	if ((picWidth != winWidth) || (picHeight != winHeight))
 		return false;
 
 	unsigned int t1, t2, n;
 	unsigned short c;
-
+#if 0
 	GLubyte *target;
 	if (! NPOT_textures) {
 		picWidth = getNextPOT(picWidth);
@@ -177,17 +176,19 @@ bool restoreSnapshot(FILE *fp) {
 	}
 	GLubyte *snapshotTexture = new GLubyte [picHeight * picWidth * 4];
 	if (! snapshotTexture) return fatal("Out of memory while restoring snapshot.");
+#endif
 
 	for (t2 = 0; t2 < winHeight; t2 ++) {
 		t1 = 0;
 		while (t1 < winWidth) {
-			c = (unsigned short) get2bytes(fp);
+			c = (unsigned short) get2bytes(stream);
 			if (c & 32) {
-				n = fgetc(fp) + 1;
+				n = getch(stream) + 1;
 				c -= 32;
 			} else {
 				n = 1;
 			}
+#if 0
 			while (n --) {
 				target = snapshotTexture + 4 * picWidth * t2 + t1 * 4;
 				target[0] = (GLubyte) redValue(c);
@@ -196,9 +197,10 @@ bool restoreSnapshot(FILE *fp) {
 				target[3] = (GLubyte) 255;
 				t1++;
 			}
+#endif
 		}
 	}
-
+#if 0
 	if (! snapshotTextureName) glGenTextures(1, &snapshotTextureName);
 	glBindTexture(GL_TEXTURE_2D, snapshotTextureName);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -210,10 +212,9 @@ bool restoreSnapshot(FILE *fp) {
 
 	delete snapshotTexture;
 	snapshotTexture = NULL;
-
+#endif
 	return true;
 }
-#endif
 
 void killBackDrop() {
 #if 0
@@ -1005,7 +1006,7 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 extern int viewportOffsetX, viewportOffsetY;
 
 #if 0
-bool loadHSI(FILE *fp, int x, int y, bool reserve) {
+bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 
 	int t1, t2, n;
 	unsigned short c;
@@ -1014,7 +1015,7 @@ bool loadHSI(FILE *fp, int x, int y, bool reserve) {
 	int picWidth;
 	int picHeight;
 	int realPicWidth, realPicHeight;
-	long file_pointer = ftell(fp);
+	long file_pointer = stream->pos();
 
 	png_structp png_ptr;
 	png_infop info_ptr, end_info;
@@ -1025,20 +1026,20 @@ bool loadHSI(FILE *fp, int x, int y, bool reserve) {
 	// Is this a PNG file?
 
 	char tmp[10];
-	size_t bytes_read = fread(tmp, 1, 8, fp);
-	if (bytes_read != 8 && ferror(fp)) {
+	size_t bytes_read = stream->read(tmp, 8);
+	if (bytes_read != 8 && stream->err()) {
 		debugOut("Reading error in loadHSI.\n");
 	}
 	if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
 		// No, it's old-school HSI
 		fileIsPNG = false;
-		fseek(fp, file_pointer, SEEK_SET);
+		stream->seek(file_pointer, SEEK_SET);
 
-		picWidth = realPicWidth = get2bytes(fp);
-		picHeight = realPicHeight = get2bytes(fp);
+		picWidth = realPicWidth = get2bytes(stream);
+		picHeight = realPicHeight = get2bytes(stream);
 	} else {
 		// Read the PNG header
-
+#if 0
 		png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 		if (!png_ptr) {
 			return false;
@@ -1078,10 +1079,10 @@ bool loadHSI(FILE *fp, int x, int y, bool reserve) {
 		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
 
 		//int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-
+#endif
 	}
 
-
+#if 0
 	GLfloat texCoordW = 1.0;
 	GLfloat texCoordH = 1.0;
 	if (! NPOT_textures) {
@@ -1138,7 +1139,7 @@ bool loadHSI(FILE *fp, int x, int y, bool reserve) {
 	}
 
 	GLuint tmpTex;
-#if 0
+
 	glGenTextures(1, &tmpTex);
 	glBindTexture(GL_TEXTURE_2D, tmpTex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1150,7 +1151,7 @@ bool loadHSI(FILE *fp, int x, int y, bool reserve) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
-#endif
+
 	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, backdropTexture, tmpTex);
 
 
@@ -1189,9 +1190,9 @@ bool loadHSI(FILE *fp, int x, int y, bool reserve) {
 		int yoffset = 0;
 		while (yoffset < realPicHeight) {
 			int h = (realPicHeight - yoffset < viewportHeight) ? realPicHeight - yoffset : viewportHeight;
-#if 0
+
 			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
-#endif
+
 			const GLfloat vertices[] = {
 				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
 				(GLfloat)realPicWidth - xoffset, (GLfloat) - yoffset, 0.,
@@ -1207,7 +1208,7 @@ bool loadHSI(FILE *fp, int x, int y, bool reserve) {
 			};
 
 			if (backdropExists) {
-#if 0
+
 				// Render the sprite to the backdrop
 				// (using mulitexturing, so the old backdrop is seen where alpha < 1.0)
 				glActiveTexture(GL_TEXTURE2);
@@ -1217,35 +1218,34 @@ bool loadHSI(FILE *fp, int x, int y, bool reserve) {
 				glUseProgram(shader.paste);
 				GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
 				if (uniform >= 0) glUniform1i(uniform, 0); // No lighting
-#endif
 				setPMVMatrix(shader.paste);
 
 				setPrimaryColor(1.0, 1.0, 1.0, 1.0);
-#if 0
+
 				glBindTexture(GL_TEXTURE_2D, tmpTex);
 				//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-#endif
+
 				drawQuad(shader.paste, vertices, 3, texCoords, NULL, btexCoords);
-#if 0
+
 				glUseProgram(0);
-#endif
+
 			} else {
 				// It's all new - nothing special to be done.
 
-#if 0
+
 				glUseProgram(shader.texture);
-#endif
+
 				setPMVMatrix(shader.texture);
-#if 0
+
 				glBindTexture(GL_TEXTURE_2D, tmpTex);
-#endif
+
 				setPrimaryColor(1.0, 0.0, 0.0, 0.0);
 
 				drawQuad(shader.texture, vertices, 1, texCoords);
 
-#if 0
+
 				glUseProgram(0);
-#endif
+
 			}
 
 			// Copy Our ViewPort To The Texture
@@ -1259,17 +1259,17 @@ bool loadHSI(FILE *fp, int x, int y, bool reserve) {
 	deleteTextures(1, &tmpTex);
 
 	setPixelCoords(false);
-
+#endif
 	backdropExists = true;
 	return true;
 }
 
-bool mixHSI(FILE *fp, int x, int y) {
+bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	int realPicWidth, realPicHeight;
 	int picWidth;
 	int picHeight;
 
-	long file_pointer = ftell(fp);
+	long file_pointer = stream->pos();
 
 	png_structp png_ptr;
 	png_infop info_ptr, end_info;
@@ -1279,17 +1279,18 @@ bool mixHSI(FILE *fp, int x, int y) {
 
 	// Is this a PNG file?
 	char tmp[10];
-	size_t bytes_read = fread(tmp, 1, 8, fp);
-	if (bytes_read != 8 && ferror(fp)) {
+	size_t bytes_read = stream->read(tmp, 8);
+	if (bytes_read != 8 && stream->err()) {
 		debugOut("Reading error in mixHSI.\n");
 	}
+#if 0
 	if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
 		// No, it's old-school HSI
 		fileIsPNG = false;
-		fseek(fp, file_pointer, SEEK_SET);
+		stream->seek(file_pointer, SEEK_SET);
 
-		picWidth = realPicWidth = get2bytes(fp);
-		picHeight = realPicHeight = get2bytes(fp);
+		picWidth = realPicWidth = get2bytes(stream);
+		picHeight = realPicHeight = get2bytes(stream);
 	} else {
 		// Read the PNG header
 
@@ -1309,7 +1310,7 @@ bool mixHSI(FILE *fp, int x, int y) {
 			png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 			return false;
 		}
-		png_init_io(png_ptr, fp);       // Tell libpng which file to read
+		png_init_io(png_ptr, stream);       // Tell libpng which file to read
 		png_set_sig_bytes(png_ptr, 8);  // 8 bytes already read
 
 		png_read_info(png_ptr, info_ptr);
@@ -1398,9 +1399,9 @@ bool mixHSI(FILE *fp, int x, int y) {
 		for (t2 = 0; t2 < realPicHeight; t2 ++) {
 			t1 = 0;
 			while (t1 < realPicWidth) {
-				c = (unsigned short) get2bytes(fp);
+				c = (unsigned short) get2bytes(stream);
 				if (c & 32) {
-					n = fgetc(fp) + 1;
+					n = getch(stream) + 1;
 					c -= 32;
 				} else {
 					n = 1;
@@ -1425,7 +1426,7 @@ bool mixHSI(FILE *fp, int x, int y) {
 	}
 
 	GLuint tmpTex;
-#if 0
+
 	glGenTextures(1, &tmpTex);
 	glBindTexture(GL_TEXTURE_2D, tmpTex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1437,7 +1438,7 @@ bool mixHSI(FILE *fp, int x, int y) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
-#endif
+
 	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, backdropTexture, tmpTex);
 
 
@@ -1453,7 +1454,7 @@ bool mixHSI(FILE *fp, int x, int y) {
 		int yoffset = 0;
 		while (yoffset < realPicHeight) {
 			int h = (realPicHeight - yoffset < viewportHeight) ? realPicHeight - yoffset : viewportHeight;
-#if 0
+
 			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
 
 			// Render the sprite to the backdrop
@@ -1465,14 +1466,14 @@ bool mixHSI(FILE *fp, int x, int y) {
 			glUseProgram(shader.paste);
 			GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
 			if (uniform >= 0) glUniform1i(uniform, 0); // No lighting
-#endif
+
 			setPMVMatrix(shader.paste);
 
 			setPrimaryColor(1.0, 1.0, 1.0, 0.5);
-#if 0
+
 			glBindTexture(GL_TEXTURE_2D, tmpTex);
 			//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-#endif
+
 			const GLfloat vertices[] = {
 				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
 				(GLfloat)realPicWidth - xoffset, (GLfloat) - yoffset, 0.,
@@ -1481,10 +1482,10 @@ bool mixHSI(FILE *fp, int x, int y) {
 			};
 
 			drawQuad(shader.paste, vertices, 3, texCoords, NULL, btexCoords);
-#if 0
+
 			// Copy Our ViewPort To The Texture
 			glUseProgram(0);
-#endif
+
 			copyTexSubImage2D(GL_TEXTURE_2D, 0, (int)((x < 0) ? xoffset : x + xoffset), (int)((y < 0) ? yoffset : y + yoffset), (int)((x < 0) ? viewportOffsetX - x : viewportOffsetX), (int)((y < 0) ? viewportOffsetY - y : viewportOffsetY), w, h, backdropTextureName);
 
 			yoffset += viewportHeight;
@@ -1494,19 +1495,21 @@ bool mixHSI(FILE *fp, int x, int y) {
 	}
 	deleteTextures(1, &tmpTex);
 	setPixelCoords(false);
+#endif
 	return true;
 }
 
-void saveCorePNG(FILE *writer, GLuint texture, int w, int h) {
-	GLint tw, th;
+void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 #if 0
+	GLint tw, th;
+
 	glBindTexture(GL_TEXTURE_2D, texture);
-#endif
+
 	getTextureDimensions(texture, &tw, &th);
 
 	GLubyte *image = new GLubyte [tw * th * 4];
 	if (! checkNew(image)) return;
-#if 0
+
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 //	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 #endif
@@ -1557,11 +1560,11 @@ void saveCorePNG(FILE *writer, GLuint texture, int w, int h) {
 
 #if 0
 			glUseProgram(shader.texture);
-#endif
+
 			setPMVMatrix(shader.texture);
 
 			drawQuad(shader.texture, vertices, 1, texCoords);
-#if 0
+
 			glUseProgram(0);
 
 			for (int i = 0; i < h; i++)   {

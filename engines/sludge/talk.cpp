@@ -44,32 +44,32 @@ float speechSpeed = 1;
 void initSpeech() {
 	speech = new speechStruct;
 	if (checkNew(speech)) {
-		speech -> currentTalker = NULL;
-		speech -> allSpeech = NULL;
-		speech -> speechY = 0;
-		speech -> lastFile = -1;
+		speech->currentTalker = NULL;
+		speech->allSpeech = NULL;
+		speech->speechY = 0;
+		speech->lastFile = -1;
 	}
 }
 
 void killAllSpeech() {
-	if (speech -> lastFile != -1) {
+	if (speech->lastFile != -1) {
 #if 0
-		huntKillSound(speech -> lastFile);
+		huntKillSound(speech->lastFile);
 #endif
-		speech -> lastFile = -1;
+		speech->lastFile = -1;
 	}
 
-	if (speech -> currentTalker) {
-		makeSilent(* (speech -> currentTalker));
-		speech -> currentTalker = NULL;
+	if (speech->currentTalker) {
+		makeSilent(* (speech->currentTalker));
+		speech->currentTalker = NULL;
 	}
 
 	speechLine *killMe;
 
-	while (speech -> allSpeech) {
-		killMe = speech -> allSpeech;
-		speech -> allSpeech = speech -> allSpeech -> next;
-		delete killMe -> textLine;
+	while (speech->allSpeech) {
+		killMe = speech->allSpeech;
+		speech->allSpeech = speech->allSpeech->next;
+		delete killMe->textLine;
 		delete killMe;
 	}
 }
@@ -79,7 +79,7 @@ void killAllSpeech() {
 
 inline void setObjFontColour(objectType *t) {
 #if 0
-	setFontColour(speech -> talkCol, t -> r, t -> g, t -> b);
+	setFontColour(speech->talkCol, t->r, t->g, t->b);
 #endif
 }
 
@@ -90,10 +90,10 @@ void addSpeechLine(char *theLine, int x, int &offset) {
 	speechLine *newLine = new speechLine;
 	checkNew(newLine);
 
-	newLine -> next = speech -> allSpeech;
-	newLine -> textLine = copyString(theLine);
-	newLine -> x = xx1;
-	speech -> allSpeech = newLine;
+	newLine->next = speech->allSpeech;
+	newLine->textLine = copyString(theLine);
+	newLine->x = xx1;
+	speech->allSpeech = newLine;
 	if ((xx1 < 5) && (offset < (5 - xx1))) {
 		offset = 5 - xx1;
 	} else if ((xx2 >= ((float)winWidth / cameraZoom) - 5) && (offset > (((float)winWidth / cameraZoom) - 5 - xx2))) {
@@ -102,7 +102,7 @@ void addSpeechLine(char *theLine, int x, int &offset) {
 }
 
 int isThereAnySpeechGoingOn() {
-	return speech -> allSpeech ? speech -> lookWhosTalking : -1;
+	return speech->allSpeech ? speech->lookWhosTalking : -1;
 }
 
 int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
@@ -117,13 +117,13 @@ int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
 #if 0
 			if (startSound(sampleFile, false)) {
 				speechTime = -10;
-				speech -> lastFile = sampleFile;
+				speech->lastFile = sampleFile;
 				if (speechMode == 2) return -10;
 			}
 #endif
 		}
 	}
-	speech -> speechY = y;
+	speech->speechY = y;
 
 	while (strlen(theText) > wrap) {
 		a = wrap;
@@ -143,24 +143,24 @@ int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
 	addSpeechLine(theText, x, offset);
 	y -= fontHeight / cameraZoom;
 
-	if (y < 0) speech -> speechY -= y;
-	else if (speech -> speechY > cameraY + (float)(winHeight - fontHeight / 3) / cameraZoom) speech -> speechY = cameraY + (float)(winHeight - fontHeight / 3) / cameraZoom;
+	if (y < 0) speech->speechY -= y;
+	else if (speech->speechY > cameraY + (float)(winHeight - fontHeight / 3) / cameraZoom) speech->speechY = cameraY + (float)(winHeight - fontHeight / 3) / cameraZoom;
 
 	if (offset) {
-		speechLine *viewLine = speech -> allSpeech;
+		speechLine *viewLine = speech->allSpeech;
 		while (viewLine) {
-			viewLine -> x += offset;
-			viewLine = viewLine -> next;
+			viewLine->x += offset;
+			viewLine = viewLine->next;
 		}
 	}
 	return speechTime;
 }
 
 int wrapSpeechPerson(char *theText, onScreenPerson &thePerson, int sampleFile, bool animPerson) {
-	int i = wrapSpeechXY(theText, thePerson.x - cameraX, thePerson.y - cameraY - (thePerson.scale * (thePerson.height - thePerson.floaty)) - thePerson.thisType -> speechGap, thePerson.thisType -> wrapSpeech, sampleFile);
+	int i = wrapSpeechXY(theText, thePerson.x - cameraX, thePerson.y - cameraY - (thePerson.scale * (thePerson.height - thePerson.floaty)) - thePerson.thisType->speechGap, thePerson.thisType->wrapSpeech, sampleFile);
 	if (animPerson) {
 		makeTalker(thePerson);
-		speech -> currentTalker = & thePerson;
+		speech->currentTalker = &thePerson;
 	}
 	return i;
 }
@@ -168,20 +168,20 @@ int wrapSpeechPerson(char *theText, onScreenPerson &thePerson, int sampleFile, b
 int wrapSpeech(char *theText, int objT, int sampleFile, bool animPerson) {
 	int i;
 
-	speech -> lookWhosTalking = objT;
+	speech->lookWhosTalking = objT;
 	onScreenPerson *thisPerson = findPerson(objT);
 	if (thisPerson) {
-		setObjFontColour(thisPerson -> thisType);
+		setObjFontColour(thisPerson->thisType);
 		i = wrapSpeechPerson(theText, * thisPerson, sampleFile, animPerson);
 	} else {
 		screenRegion *thisRegion = getRegionForObject(objT);
 		if (thisRegion) {
-			setObjFontColour(thisRegion -> thisType);
-			i = wrapSpeechXY(theText, ((thisRegion -> x1 + thisRegion -> x2) >> 1) - cameraX, thisRegion -> y1 - thisRegion -> thisType -> speechGap - cameraY, thisRegion -> thisType -> wrapSpeech, sampleFile);
+			setObjFontColour(thisRegion->thisType);
+			i = wrapSpeechXY(theText, ((thisRegion->x1 + thisRegion->x2) >> 1) - cameraX, thisRegion->y1 - thisRegion->thisType->speechGap - cameraY, thisRegion->thisType->wrapSpeech, sampleFile);
 		} else {
 			objectType *temp = findObjectType(objT);
 			setObjFontColour(temp);
-			i = wrapSpeechXY(theText, winWidth >> 1, 10, temp -> wrapSpeech, sampleFile);
+			i = wrapSpeechXY(theText, winWidth >> 1, 10, temp->wrapSpeech, sampleFile);
 		}
 	}
 	return i;
@@ -189,87 +189,89 @@ int wrapSpeech(char *theText, int objT, int sampleFile, bool animPerson) {
 
 void viewSpeech() {
 #if 0
-	int viewY = speech -> speechY;
-	speechLine *viewLine = speech -> allSpeech;
-	fixFont(speech -> talkCol);
+	int viewY = speech->speechY;
+	speechLine *viewLine = speech->allSpeech;
+	fixFont(speech->talkCol);
 	while (viewLine) {
-		pasteString(viewLine -> textLine, viewLine -> x, viewY, speech -> talkCol);
+		pasteString(viewLine->textLine, viewLine->x, viewY, speech->talkCol);
 		viewY -= fontHeight / cameraZoom;
-		viewLine = viewLine -> next;
+		viewLine = viewLine->next;
 	}
 #endif
 }
 
-#if ALLOW_FILE
-void saveSpeech(speechStruct *sS, FILE *fp) {
-	speechLine *viewLine = sS -> allSpeech;
+void saveSpeech(speechStruct *sS, Common::WriteStream *stream) {
+#if 0
+	speechLine *viewLine = sS->allSpeech;
 
-	fputc(sS -> talkCol.originalRed, fp);
-	fputc(sS -> talkCol.originalGreen, fp);
-	fputc(sS -> talkCol.originalBlue, fp);
+	putch(sS->talkCol.originalRed, stream);
+	putch(sS->talkCol.originalGreen, stream);
+	putch(sS->talkCol.originalBlue, stream);
 
-	putFloat(speechSpeed, fp);
+	putFloat(speechSpeed, stream);
 
 	// Write y co-ordinate
-	put2bytes(sS -> speechY, fp);
+	put2bytes(sS->speechY, stream);
 
 	// Write which character's talking
-	put2bytes(sS -> lookWhosTalking, fp);
-	if (sS -> currentTalker) {
-		fputc(1, fp);
-		put2bytes(sS -> currentTalker -> thisType -> objectNum, fp);
+	put2bytes(sS->lookWhosTalking, stream);
+	if (sS->currentTalker) {
+		putch(1, stream);
+		put2bytes(sS->currentTalker->thisType->objectNum, stream);
 	} else {
-		fputc(0, fp);
+		putch(0, stream);
 	}
 
 	// Write what's being said
 	while (viewLine) {
-		fputc(1, fp);
-		writeString(viewLine -> textLine, fp);
-		put2bytes(viewLine -> x, fp);
-		viewLine = viewLine -> next;
+		putch(1, stream);
+		writeString(viewLine->textLine, stream);
+		put2bytes(viewLine->x, stream);
+		viewLine = viewLine->next;
 	}
-	fputc(0, fp);
+	putch(0, stream);
+#endif
 }
 
-bool loadSpeech(speechStruct *sS, FILE *fp) {
-	speech -> currentTalker = NULL;
+bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream) {
+#if 0
+	speech->currentTalker = NULL;
 	killAllSpeech();
-	byte r = fgetc(fp);
-	byte g = fgetc(fp);
-	byte b = fgetc(fp);
-	setFontColour(sS -> talkCol, r, g, b);
+	byte r = getch(stream);
+	byte g = getch(stream);
+	byte b = getch(stream);
+	setFontColour(sS->talkCol, r, g, b);
 
-	speechSpeed = getFloat(fp);
+	speechSpeed = getFloat(stream);
 
 	// Read y co-ordinate
-	sS -> speechY = get2bytes(fp);
+	sS->speechY = get2bytes(stream);
 
 	// Read which character's talking
-	sS -> lookWhosTalking = get2bytes(fp);
+	sS->lookWhosTalking = get2bytes(stream);
 
-	if (fgetc(fp)) {
-		sS -> currentTalker = findPerson(get2bytes(fp));
+	if (getch(stream)) {
+		sS->currentTalker = findPerson(get2bytes(stream));
 	} else {
-		sS -> currentTalker = NULL;
+		sS->currentTalker = NULL;
 	}
 
 	// Read what's being said
-	speechLine * * viewLine = & sS -> allSpeech;
+	speechLine * * viewLine = &sS->allSpeech;
 	speechLine *newOne;
-	speech -> lastFile = -1;
-	while (fgetc(fp)) {
+	speech->lastFile = -1;
+	while (getch(stream)) {
 		newOne = new speechLine;
 		if (! checkNew(newOne)) return false;
-		newOne -> textLine = readString(fp);
-		newOne -> x = get2bytes(fp);
-		newOne -> next = NULL;
+		newOne->textLine = readString(stream);
+		newOne->x = get2bytes(stream);
+		newOne->next = NULL;
 		(* viewLine) = newOne;
-		viewLine = & (newOne -> next);
+		viewLine = &(newOne->next);
 	}
 
 	return true;
-}
 #endif
+}
 
 } // End of namespace Sludge

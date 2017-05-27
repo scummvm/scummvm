@@ -155,7 +155,7 @@ bool extractSlice(int fileNum, char *toName) {
 
 	unsigned long fileLength = openFileFromNum(fileNum);
 	if (! fileLength) return false; // Error already displayed
-
+#if 0
 	FILE *copyVid = fopen(toName, "wb");
 	if (! copyVid) return fatal("Can't extract resource");
 
@@ -170,6 +170,7 @@ bool extractSlice(int fileNum, char *toName) {
 	}
 
 	fclose(copyVid);
+#endif
 	finishAccess();
 
 	return true;

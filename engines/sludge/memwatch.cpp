@@ -21,12 +21,15 @@
  */
 #include "allfiles.h"
 
+#include "common/debug.h"
+
 namespace Sludge {
 
 void *allKnownMem[3000];
 int allKnownNum = 0;
 
 void outputKnownMem() {
+#if 0
 	FILE *debu = fopen("debuTURN.txt", "at");
 
 	fprintf(debu, "%i lumps:", allKnownNum);
@@ -35,6 +38,7 @@ void outputKnownMem() {
 	}
 	fprintf(debu, "\n");
 	fclose(debu);
+#endif
 }
 
 void adding(void *mem) {
@@ -43,8 +47,10 @@ void adding(void *mem) {
 
 	outputKnownMem();
 	if (allKnownNum == 3000) {
-		//db ("Error! Array too full!");
+		debug("Error! Array too full!");
+#if 0
 		exit(1);
+#endif
 	}
 }
 
@@ -57,8 +63,10 @@ void deleting(void *mem) {
 			return;
 		}
 	}
+#if 0
 	//db ("Error! Deleted a block which hasn't been allocated!");
 	exit(1);
+#endif
 }
 
 } // End of namespace Sludge

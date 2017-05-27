@@ -27,10 +27,15 @@ namespace Sludge {
 bool saveGame(char *fname);
 bool loadGame(char *fname);
 
-#if ALLOW_FILE
-loadedFunction *loadFunction(FILE *fp);
-void saveFunction(loadedFunction *fun, FILE *fp);
-#endif
+bool saveVariable(variable *from, Common::WriteStream *stream);
+bool loadVariable(variable *to, Common::SeekableReadStream *stream);
+
+variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **last);
+bool saveStackRef(stackHandler *vs, Common::WriteStream *stream);
+stackHandler *loadStackRef(Common::SeekableReadStream *stream);
+
+loadedFunction *loadFunction(Common::SeekableReadStream *stream);
+void saveFunction(loadedFunction *fun, Common::WriteStream *stream);
 
 } // End of namespace Sludge
 

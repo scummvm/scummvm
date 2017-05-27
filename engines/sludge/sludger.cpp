@@ -127,55 +127,55 @@ const char *sludgeText[] = { "?????", "RETURN", "BRANCH", "BR_ZERO", "SET_GLOBAL
                              "INC_LOCAL", "DEC_LOCAL", "INC_GLOBAL", "DEC_GLOBAL", "INDEXSET", "INDEXGET",
                              "INC_INDEX", "DEC_INDEX", "QUICK_PUSH"
                            };
-#if ALLOW_FILE
-void loadHandlers(FILE *fp) {
-	currentEvents -> leftMouseFunction      = get2bytes(fp);
-	currentEvents -> leftMouseUpFunction    = get2bytes(fp);
-	currentEvents -> rightMouseFunction     = get2bytes(fp);
-	currentEvents -> rightMouseUpFunction   = get2bytes(fp);
-	currentEvents -> moveMouseFunction      = get2bytes(fp);
-	currentEvents -> focusFunction          = get2bytes(fp);
-	currentEvents -> spaceFunction          = get2bytes(fp);
+
+void loadHandlers(Common::SeekableReadStream *stream) {
+	currentEvents->leftMouseFunction      = get2bytes(stream);
+	currentEvents->leftMouseUpFunction    = get2bytes(stream);
+	currentEvents->rightMouseFunction     = get2bytes(stream);
+	currentEvents->rightMouseUpFunction   = get2bytes(stream);
+	currentEvents->moveMouseFunction      = get2bytes(stream);
+	currentEvents->focusFunction          = get2bytes(stream);
+	currentEvents->spaceFunction          = get2bytes(stream);
 }
 
-void saveHandlers(FILE *fp) {
-	put2bytes(currentEvents -> leftMouseFunction,      fp);
-	put2bytes(currentEvents -> leftMouseUpFunction,    fp);
-	put2bytes(currentEvents -> rightMouseFunction,     fp);
-	put2bytes(currentEvents -> rightMouseUpFunction,   fp);
-	put2bytes(currentEvents -> moveMouseFunction,      fp);
-	put2bytes(currentEvents -> focusFunction,          fp);
-	put2bytes(currentEvents -> spaceFunction,          fp);
+void saveHandlers(Common::WriteStream *stream) {
+	put2bytes(currentEvents->leftMouseFunction,      stream);
+	put2bytes(currentEvents->leftMouseUpFunction,    stream);
+	put2bytes(currentEvents->rightMouseFunction,     stream);
+	put2bytes(currentEvents->rightMouseUpFunction,   stream);
+	put2bytes(currentEvents->moveMouseFunction,      stream);
+	put2bytes(currentEvents->focusFunction,          stream);
+	put2bytes(currentEvents->spaceFunction,          stream);
 }
 
-FILE *openAndVerify(char *filename, char extra1, char extra2, const char *er, int &fileVersion) {
-	FILE *fp = fopen(filename, "rb");
-	if (! fp) {
+Common::File *openAndVerify(char *filename, char extra1, char extra2, const char *er, int &fileVersion) {
+	Common::File *fp = new Common::File();
+	if (!fp->open(filename)) {
 		fatal("Can't open file", filename);
 		return NULL;
 	}
 	bool headerBad = false;
-	if (fgetc(fp) != 'S') headerBad = true;
-	if (fgetc(fp) != 'L') headerBad = true;
-	if (fgetc(fp) != 'U') headerBad = true;
-	if (fgetc(fp) != 'D') headerBad = true;
-	if (fgetc(fp) != extra1) headerBad = true;
-	if (fgetc(fp) != extra2) headerBad = true;
+	if (getch(fp) != 'S') headerBad = true;
+	if (getch(fp) != 'L') headerBad = true;
+	if (getch(fp) != 'U') headerBad = true;
+	if (getch(fp) != 'D') headerBad = true;
+	if (getch(fp) != extra1) headerBad = true;
+	if (getch(fp) != extra2) headerBad = true;
 	if (headerBad) {
 		fatal(er, filename);
 		return NULL;
 	}
 	char c;
-	c = fgetc(fp);
-	debug(c);
-	while (c = fgetc(fp)) {
-		putchar(c);
+	c = getch(fp);
+	debug("%c", c);
+	while ((c = getch(fp))) {
+		debug("%c", c);
 	}
 
-	int majVersion = fgetc(fp);
-	printf("$majVersion %i\n", majVersion);
-	int minVersion = fgetc(fp);
-	printf("$minVersion %i\n", minVersion);
+	int majVersion = getch(fp);
+	debug(kSludgeDebugDataLoad, "majVersion %i", majVersion);
+	int minVersion = getch(fp);
+	debug(kSludgeDebugDataLoad, "minVersion %i", minVersion);
 	fileVersion = majVersion * 256 + minVersion;
 
 	char txtVer[120];
@@ -191,89 +191,83 @@ FILE *openAndVerify(char *filename, char extra1, char extra2, const char *er, in
 	}
 	return fp;
 }
-#endif
 
 bool initSludge(char *filename) {
 	int a = 0;
 	mouseCursorAnim = makeNullAnim();
 
-#if ALLOW_FILE
-	FILE *fp = openAndVerify(filename, 'G', 'E', ERROR_BAD_HEADER, gameVersion);
-	if (! fp) return false;
+	Common::File *fp = openAndVerify(filename, 'G', 'E', ERROR_BAD_HEADER, gameVersion);
+	if (!fp) return false;
 
-	char c = fgetc(fp);
-	putchar(c);
+	char c = getch(fp);
 	if (c) {
 		numBIFNames = get2bytes(fp);
-		printf("numBIFNames %i\n", numBIFNames);
+		debug(kSludgeDebugDataLoad, "numBIFNames %i", numBIFNames);
 		allBIFNames = new char *[numBIFNames];
-		if (! checkNew(allBIFNames)) return false;
+		if (!checkNew(allBIFNames)) return false;
 
 		for (int fn = 0; fn < numBIFNames; fn ++) {
 			allBIFNames[fn] = readString(fp);
-			printf("%s\n", allBIFNames[fn]);
 		}
 		numUserFunc = get2bytes(fp);
-		printf("numUserFunc %i\n", numUserFunc);
+		debug(kSludgeDebugDataLoad, "numUserFunc %i", numUserFunc);
 		allUserFunc = new char *[numUserFunc];
-		if (! checkNew(allUserFunc)) return false;
+		if (!checkNew(allUserFunc)) return false;
 
 		for (int fn = 0; fn < numUserFunc; fn ++) {
 			allUserFunc[fn] = readString(fp);
-			printf("%s\n", allUserFunc[fn]);
 		}
 		if (gameVersion >= VERSION(1, 3)) {
 			numResourceNames = get2bytes(fp);
-			printf("numResourceNames %i\n", numResourceNames);
+			debug(kSludgeDebugDataLoad, "numResourceNames %i", numResourceNames);
 			allResourceNames = new char *[numResourceNames];
-			if (! checkNew(allResourceNames)) return false;
+			if (!checkNew(allResourceNames)) return false;
 
 			for (int fn = 0; fn < numResourceNames; fn ++) {
 				allResourceNames[fn] = readString(fp);
-				printf("%s\n", allResourceNames[fn]);
 			}
 		}
 	}
 
 	winWidth = get2bytes(fp);
-	printf("winWidth : %i\n", winWidth);
+	debug(kSludgeDebugDataLoad, "winWidth : %i", winWidth);
 	winHeight = get2bytes(fp);
-	printf("winHeight : %i\n", winHeight);
-	specialSettings = fgetc(fp);
-	printf("specialSettings : %i\n", specialSettings);
-	desiredfps = 1000 / fgetc(fp);
+	debug(kSludgeDebugDataLoad, "winHeight : %i", winHeight);
+	specialSettings = getch(fp);
+	debug(kSludgeDebugDataLoad, "specialSettings : %i", specialSettings);
+	desiredfps = 1000 / getch(fp);
 
 	delete[] readString(fp);  // Unused - was used for registration purposes.
 
-	size_t bytes_read = fread(& fileTime, sizeof(FILETIME), 1, fp);
-	if (bytes_read != sizeof(FILETIME) && ferror(fp)) {
-		debugOut("Reading error in initSludge.\n");
+	size_t bytes_read = fp->read(&fileTime, sizeof(FILETIME));
+	if (bytes_read != sizeof(FILETIME) && fp->err()) {
+		debug("Reading error in initSludge.");
 	}
 
 	char *dataFol = (gameVersion >= VERSION(1, 3)) ? readString(fp) : joinStrings("", "");
-	printf("dataFol : %s\n", dataFol);
+	debug(kSludgeDebugDataLoad, "dataFol : %s", dataFol);
 
-	gameSettings.numLanguages = (gameVersion >= VERSION(1, 3)) ? (fgetc(fp)) : 0;
-	printf("numLanguages : %c\n", gameSettings.numLanguages);
+	gameSettings.numLanguages = (gameVersion >= VERSION(1, 3)) ? (getch(fp)) : 0;
+	debug(kSludgeDebugDataLoad, "numLanguages : %c", gameSettings.numLanguages);
 	makeLanguageTable(fp);
 
 	if (gameVersion >= VERSION(1, 6)) {
-		fgetc(fp);
+		getch(fp);
 		// aaLoad
-		fgetc(fp);
+		getch(fp);
 		getFloat(fp);
 		getFloat(fp);
 	}
 
 	char *checker = readString(fp);
-	debug(kSludgeDebugDataLoad, "checker : %s\n", checker);
+	debug(kSludgeDebugDataLoad, "checker : %s", checker);
 
 	if (strcmp(checker, "okSoFar")) return fatal(ERROR_BAD_HEADER, filename);
 	delete checker;
 	checker = NULL;
 
-	unsigned char customIconLogo = fgetc(fp);
-	kSludgeDebugDataLoad(kSludgeDebugDataLoad, "Game icon: %i", customIconLogo);
+	unsigned char customIconLogo = getch(fp);
+	debug(kSludgeDebugDataLoad, "Game icon type: %i", customIconLogo);
 
 	if (customIconLogo & 1) {
 		// There is an icon - read it!
@@ -346,7 +340,7 @@ bool initSludge(char *filename) {
 		}
 
 		gameIcon = new unsigned char [iconW * iconH * 4];
-		if (! gameIcon) return fatal("Can't reserve memory for game icon.");
+		if (!gameIcon) return fatal("Can't reserve memory for game icon.");
 
 		int32_t transCol = 63519;
 		Uint8 *p = (Uint8 *) gameIcon;
@@ -388,8 +382,8 @@ bool initSludge(char *filename) {
 	if (customIconLogo & 2) {
 		// There is an logo - read it!
 		debug(kSludgeDebugDataLoad, "There is an logo - read it!");
+#if 0
 		int n;
-
 		long file_pointer = ftell(fp);
 
 		png_structp png_ptr;
@@ -402,7 +396,7 @@ bool initSludge(char *filename) {
 		char tmp[10];
 		bytes_read = fread(tmp, 1, 8, fp);
 		if (bytes_read != 8 && ferror(fp)) {
-			debugOut("Reading error in initSludge.\n");
+			debugOut("Reading error in initSludge.");
 		}
 		if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
 			// No, it's old-school HSI
@@ -463,7 +457,7 @@ bool initSludge(char *filename) {
 		if ((logoW != 310) || (logoH != 88)) return fatal("Game logo have wrong dimensions. (Should be 310x88)");
 
 		gameLogo = new unsigned char [logoW * logoH * 4];
-		if (! gameLogo) return fatal("Can't reserve memory for game logo.");
+		if (!gameLogo) return fatal("Can't reserve memory for game logo.");
 
 		// int32_t transCol = 63519;
 		Uint8 *p = (Uint8 *) gameLogo;
@@ -506,13 +500,14 @@ bool initSludge(char *filename) {
 				}
 			}
 		}
+#endif
 	}
 
 	numGlobals = get2bytes(fp);
-	printf("numGlobals : %i\n", numGlobals);
+	debug("numGlobals : %i", numGlobals);
 
 	globalVars = new variable[numGlobals];
-	if (! checkNew(globalVars)) return false;
+	if (!checkNew(globalVars)) return false;
 	for (a = 0; a < numGlobals; a ++) initVarNew(globalVars[a]);
 
 	// Get the original (untranslated) name of the game and convert it to Unicode.
@@ -524,8 +519,9 @@ bool initSludge(char *filename) {
 
 	delete gameNameOrig;
 
-	changeToUserDir();
 #if 0
+	changeToUserDir();
+
 #ifdef _WIN32
 	mkdir(gameName);
 #else
@@ -542,11 +538,13 @@ bool initSludge(char *filename) {
 	// There's no startup window on Linux and respecting this
 	// option from the ini file would disable commandline options.
 #if defined __unix__ && !(defined __APPLE__)
-	if (! showSetupWindow()) return 0;
+#if 0
+	if (!showSetupWindow()) return 0;
+#endif
 	saveIniFile(filename);
 #else
-	if (! gameSettings.noStartWindow) {
-		if (! showSetupWindow()) return 0;
+	if (!gameSettings.noStartWindow) {
+		if (!showSetupWindow()) return 0;
 		saveIniFile(filename);
 	}
 #endif
@@ -571,7 +569,7 @@ bool initSludge(char *filename) {
 	}
 
 	positionStatus(10, winHeight - 15);
-#endif
+
 	return true;
 }
 
@@ -740,16 +738,16 @@ void pauseFunction(loadedFunction *fun) {
 	loadedFunction * * huntAndDestroy = & allRunningFunctions;
 	while (* huntAndDestroy) {
 		if (fun == * huntAndDestroy) {
-			(* huntAndDestroy) = (* huntAndDestroy) -> next;
+			(* huntAndDestroy) = (* huntAndDestroy)->next;
 			fun->next = NULL;
 		} else {
-			huntAndDestroy = & (* huntAndDestroy) -> next;
+			huntAndDestroy = & (* huntAndDestroy)->next;
 		}
 	}
 }
 
 void restartFunction(loadedFunction *fun) {
-	fun -> next = allRunningFunctions;
+	fun->next = allRunningFunctions;
 	allRunningFunctions = fun;
 }
 
@@ -757,11 +755,11 @@ void killSpeechTimers() {
 	loadedFunction *thisFunction = allRunningFunctions;
 
 	while (thisFunction) {
-		if (thisFunction -> freezerLevel == 0 && thisFunction -> isSpeech && thisFunction -> timeLeft) {
-			thisFunction -> timeLeft = 0;
-			thisFunction -> isSpeech = false;
+		if (thisFunction->freezerLevel == 0 && thisFunction->isSpeech && thisFunction->timeLeft) {
+			thisFunction->timeLeft = 0;
+			thisFunction->isSpeech = false;
 		}
-		thisFunction = thisFunction -> next;
+		thisFunction = thisFunction->next;
 	}
 
 	killAllSpeech();
@@ -771,8 +769,8 @@ void completeTimers() {
 	loadedFunction *thisFunction = allRunningFunctions;
 
 	while (thisFunction) {
-		if (thisFunction -> freezerLevel == 0) thisFunction -> timeLeft = 0;
-		thisFunction = thisFunction -> next;
+		if (thisFunction->freezerLevel == 0) thisFunction->timeLeft = 0;
+		thisFunction = thisFunction->next;
 	}
 }
 
@@ -780,11 +778,11 @@ void finishFunction(loadedFunction *fun) {
 	int a;
 
 	pauseFunction(fun);
-	if (fun -> stack) fatal(ERROR_NON_EMPTY_STACK);
-	delete fun -> compiledLines;
-	for (a = 0; a < fun -> numLocals; a ++) unlinkVar(fun -> localVars[a]);
-	delete fun -> localVars;
-	unlinkVar(fun -> reg);
+	if (fun->stack) fatal(ERROR_NON_EMPTY_STACK);
+	delete fun->compiledLines;
+	for (a = 0; a < fun->numLocals; a ++) unlinkVar(fun->localVars[a]);
+	delete fun->localVars;
+	unlinkVar(fun->reg);
 	delete fun;
 	fun = NULL;
 }
@@ -793,12 +791,12 @@ void abortFunction(loadedFunction *fun) {
 	int a;
 
 	pauseFunction(fun);
-	while (fun -> stack) trimStack(fun -> stack);
-	delete fun -> compiledLines;
-	for (a = 0; a < fun -> numLocals; a ++) unlinkVar(fun -> localVars[a]);
-	delete fun -> localVars;
-	unlinkVar(fun -> reg);
-	if (fun -> calledBy) abortFunction(fun -> calledBy);
+	while (fun->stack) trimStack(fun->stack);
+	delete fun->compiledLines;
+	for (a = 0; a < fun->numLocals; a ++) unlinkVar(fun->localVars[a]);
+	delete fun->localVars;
+	unlinkVar(fun->reg);
+	if (fun->calledBy) abortFunction(fun->calledBy);
 	delete fun;
 	fun = NULL;
 }
@@ -809,12 +807,12 @@ int cancelAFunction(int funcNum, loadedFunction *myself, bool &killedMyself) {
 
 	loadedFunction *fun = allRunningFunctions;
 	while (fun) {
-		if (fun -> originalNumber == funcNum) {
-			fun -> cancelMe = true;
+		if (fun->originalNumber == funcNum) {
+			fun->cancelMe = true;
 			n ++;
 			if (fun == myself) killedMyself = true;
 		}
-		fun = fun -> next;
+		fun = fun->next;
 	}
 	return n;
 }
@@ -823,12 +821,12 @@ void freezeSubs() {
 	loadedFunction *thisFunction = allRunningFunctions;
 
 	while (thisFunction) {
-		if (thisFunction -> unfreezable) {
+		if (thisFunction->unfreezable) {
 			//msgBox ("SLUDGE debugging bollocks!", "Trying to freeze an unfreezable function!");
 		} else {
-			thisFunction -> freezerLevel ++;
+			thisFunction->freezerLevel ++;
 		}
-		thisFunction = thisFunction -> next;
+		thisFunction = thisFunction->next;
 	}
 }
 
@@ -836,8 +834,8 @@ void unfreezeSubs() {
 	loadedFunction *thisFunction = allRunningFunctions;
 
 	while (thisFunction) {
-		if (thisFunction -> freezerLevel) thisFunction -> freezerLevel --;
-		thisFunction = thisFunction -> next;
+		if (thisFunction->freezerLevel) thisFunction->freezerLevel --;
+		thisFunction = thisFunction->next;
 	}
 }
 
@@ -848,25 +846,25 @@ bool continueFunction(loadedFunction *fun) {
 	unsigned int param;
 	sludgeCommand com;
 
-	if (fun -> cancelMe) {
+	if (fun->cancelMe) {
 		abortFunction(fun);
 		return true;
 	}
 
-//	if (numBIFNames) newDebug ("*** Function:", allUserFunc[fun -> originalNumber]);
+//	if (numBIFNames) newDebug ("*** Function:", allUserFunc[fun->originalNumber]);
 
 	//debugOut ("SLUDGER: continueFunction\n");
 
 	while (keepLooping) {
 		advanceNow = true;
-		param = fun -> compiledLines[fun -> runThisLine].param;
-		com = fun -> compiledLines[fun -> runThisLine].theCommand;
+		param = fun->compiledLines[fun->runThisLine].param;
+		com = fun->compiledLines[fun->runThisLine].theCommand;
 //		fprintf (stderr, "com: %d param: %d (%s)\n", com, param,
 //				(com < numSludgeCommands) ? sludgeText[com] : ERROR_UNKNOWN_MCODE); fflush(stderr);
 
 		if (numBIFNames) {
 			setFatalInfo(
-			    (fun -> originalNumber < numUserFunc) ? allUserFunc[fun -> originalNumber] : "Unknown user function",
+			    (fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
 			    (com < numSludgeCommands) ? sludgeText[com] : ERROR_UNKNOWN_MCODE);
 //			newDebug (
 //				(com < numSludgeCommands) ? sludgeText[com] : "Unknown SLUDGE machine code",
@@ -877,9 +875,9 @@ bool continueFunction(loadedFunction *fun) {
 
 		switch (com) {
 		case SLU_RETURN:
-			if (fun -> calledBy) {
-				loadedFunction *returnTo = fun -> calledBy;
-				if (fun -> returnSomething) copyVariable(fun -> reg, returnTo -> reg);
+			if (fun->calledBy) {
+				loadedFunction *returnTo = fun->calledBy;
+				if (fun->returnSomething) copyVariable(fun->reg, returnTo->reg);
 				finishFunction(fun);
 				fun = returnTo;
 				restartFunction(fun);
@@ -891,20 +889,21 @@ bool continueFunction(loadedFunction *fun) {
 			break;
 
 		case SLU_CALLIT:
-			switch (fun -> reg.varType) {
+			switch (fun->reg.varType) {
 			case SVT_FUNC:
 				pauseFunction(fun);
 				if (numBIFNames) setFatalInfo(
-					    (fun -> originalNumber < numUserFunc) ? allUserFunc[fun -> originalNumber] : "Unknown user function",
-					    (fun -> reg.varData.intValue < numUserFunc) ? allUserFunc[fun -> reg.varData.intValue] : "Unknown user function");
+					    (fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
+					    (fun->reg.varData.intValue < numUserFunc) ? allUserFunc[fun->reg.varData.intValue] : "Unknown user function");
 
-				if (! startNewFunctionNum(fun -> reg.varData.intValue, param, fun, fun -> stack)) return false;
+				if (!startNewFunctionNum(fun->reg.varData.intValue, param, fun, fun->stack)) return false;
 				fun = allRunningFunctions;
 				advanceNow = false;     // So we don't do anything else with "fun"
 				break;
 
 			case SVT_BUILT: {
-				builtReturn br = callBuiltIn(fun -> reg.varData.intValue, param, fun);
+				debug(kSludgeDebugStackMachine, "Built-in init value: %i", fun->reg.varData.intValue);
+				builtReturn br = callBuiltIn(fun->reg.varData.intValue, param, fun);
 
 				switch (br) {
 				case BR_ERROR:
@@ -924,13 +923,13 @@ bool continueFunction(loadedFunction *fun) {
 					break;
 
 				case BR_CALLAFUNC: {
-					int i = fun -> reg.varData.intValue;
-					setVariable(fun -> reg, SVT_INT, 1);
+					int i = fun->reg.varData.intValue;
+					setVariable(fun->reg, SVT_INT, 1);
 					pauseFunction(fun);
 					if (numBIFNames) setFatalInfo(
-						    (fun -> originalNumber < numUserFunc) ? allUserFunc[fun -> originalNumber] : "Unknown user function",
+						    (fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
 						    (i < numUserFunc) ? allUserFunc[i] : "Unknown user function");
-					if (! startNewFunctionNum(i, 0, fun, noStack, false)) return false;
+					if (!startNewFunctionNum(i, 0, fun, noStack, false)) return false;
 					fun = allRunningFunctions;
 					advanceNow = false;     // So we don't do anything else with "fun"
 				}
@@ -950,41 +949,41 @@ bool continueFunction(loadedFunction *fun) {
 		// These all grab things and shove 'em into the register
 
 		case SLU_LOAD_NULL:
-			setVariable(fun -> reg, SVT_NULL, 0);
+			setVariable(fun->reg, SVT_NULL, 0);
 			break;
 
 		case SLU_LOAD_FILE:
-			setVariable(fun -> reg, SVT_FILE, param);
+			setVariable(fun->reg, SVT_FILE, param);
 			break;
 
 		case SLU_LOAD_VALUE:
-			setVariable(fun -> reg, SVT_INT, param);
+			setVariable(fun->reg, SVT_INT, param);
 			break;
 
 		case SLU_LOAD_LOCAL:
-			if (! copyVariable(fun -> localVars[param], fun -> reg)) return false;
+			if (!copyVariable(fun->localVars[param], fun->reg)) return false;
 			break;
 
 		case SLU_AND:
-			setVariable(fun -> reg, SVT_INT, getBoolean(fun -> reg) && getBoolean(fun -> stack -> thisVar));
-			trimStack(fun -> stack);
+			setVariable(fun->reg, SVT_INT, getBoolean(fun->reg) && getBoolean(fun->stack->thisVar));
+			trimStack(fun->stack);
 			break;
 
 		case SLU_OR:
-			setVariable(fun -> reg, SVT_INT, getBoolean(fun -> reg) || getBoolean(fun -> stack -> thisVar));
-			trimStack(fun -> stack);
+			setVariable(fun->reg, SVT_INT, getBoolean(fun->reg) || getBoolean(fun->stack->thisVar));
+			trimStack(fun->stack);
 			break;
 
 		case SLU_LOAD_FUNC:
-			setVariable(fun -> reg, SVT_FUNC, param);
+			setVariable(fun->reg, SVT_FUNC, param);
 			break;
 
 		case SLU_LOAD_BUILT:
-			setVariable(fun -> reg, SVT_BUILT, param);
+			setVariable(fun->reg, SVT_BUILT, param);
 			break;
 
 		case SLU_LOAD_OBJTYPE:
-			setVariable(fun -> reg, SVT_OBJTYPE, param);
+			setVariable(fun->reg, SVT_OBJTYPE, param);
 			break;
 
 		case SLU_UNREG:
@@ -992,7 +991,7 @@ bool continueFunction(loadedFunction *fun) {
 			break;
 
 		case SLU_LOAD_STRING:
-			if (! loadStringToVar(fun -> reg, param)) {
+			if (!loadStringToVar(fun->reg, param)) {
 				return false;
 			}
 			break;
@@ -1000,11 +999,11 @@ bool continueFunction(loadedFunction *fun) {
 		case SLU_INDEXGET:
 		case SLU_INCREMENT_INDEX:
 		case SLU_DECREMENT_INDEX:
-			switch (fun -> stack -> thisVar.varType) {
+			switch (fun->stack->thisVar.varType) {
 			case SVT_NULL:
 				if (com == SLU_INDEXGET) {
-					setVariable(fun -> reg, SVT_NULL, 0);
-					trimStack(fun -> stack);
+					setVariable(fun->reg, SVT_NULL, 0);
+					trimStack(fun->stack);
 				} else {
 					return fatal(ERROR_INCDEC_UNKNOWN);
 				}
@@ -1012,37 +1011,37 @@ bool continueFunction(loadedFunction *fun) {
 
 			case SVT_FASTARRAY:
 			case SVT_STACK:
-				if (fun -> stack -> thisVar.varData.theStack -> first == NULL) {
+				if (fun->stack->thisVar.varData.theStack->first == NULL) {
 					return fatal(ERROR_INDEX_EMPTY);
 				} else {
 					int ii;
-					if (! getValueType(ii, SVT_INT, fun -> reg)) return false;
-					variable *grab = (fun -> stack -> thisVar.varType == SVT_FASTARRAY) ?
-					                 fastArrayGetByIndex(fun -> stack -> thisVar.varData.fastArray, ii)
+					if (!getValueType(ii, SVT_INT, fun->reg)) return false;
+					variable *grab = (fun->stack->thisVar.varType == SVT_FASTARRAY) ?
+					                 fastArrayGetByIndex(fun->stack->thisVar.varData.fastArray, ii)
 					                 :
-					                 stackGetByIndex(fun -> stack -> thisVar.varData.theStack -> first, ii);
+					                 stackGetByIndex(fun->stack->thisVar.varData.theStack->first, ii);
 
-					trimStack(fun -> stack);
+					trimStack(fun->stack);
 
-					if (! grab) {
-						setVariable(fun -> reg, SVT_NULL, 0);
+					if (!grab) {
+						setVariable(fun->reg, SVT_NULL, 0);
 					} else {
 						int ii;
 						switch (com) {
 						case SLU_INCREMENT_INDEX:
-							if (! getValueType(ii, SVT_INT, * grab)) return false;
-							setVariable(fun -> reg, SVT_INT, ii);
-							grab -> varData.intValue = ii + 1;
+							if (!getValueType(ii, SVT_INT, * grab)) return false;
+							setVariable(fun->reg, SVT_INT, ii);
+							grab->varData.intValue = ii + 1;
 							break;
 
 						case SLU_DECREMENT_INDEX:
-							if (! getValueType(ii, SVT_INT, * grab)) return false;
-							setVariable(fun -> reg, SVT_INT, ii);
-							grab -> varData.intValue = ii - 1;
+							if (!getValueType(ii, SVT_INT, * grab)) return false;
+							setVariable(fun->reg, SVT_INT, ii);
+							grab->varData.intValue = ii - 1;
 							break;
 
 						default:
-							if (! copyVariable(* grab, fun -> reg)) return false;
+							if (!copyVariable(* grab, fun->reg)) return false;
 						}
 					}
 				}
@@ -1054,29 +1053,29 @@ bool continueFunction(loadedFunction *fun) {
 			break;
 
 		case SLU_INDEXSET:
-			switch (fun -> stack -> thisVar.varType) {
+			switch (fun->stack->thisVar.varType) {
 			case SVT_STACK:
-				if (fun -> stack -> thisVar.varData.theStack -> first == NULL) {
+				if (fun->stack->thisVar.varData.theStack->first == NULL) {
 					return fatal(ERROR_INDEX_EMPTY);
 				} else {
 					int ii;
-					if (! getValueType(ii, SVT_INT, fun -> reg)) return false;
-					if (! stackSetByIndex(fun -> stack -> thisVar.varData.theStack -> first, ii, fun -> stack -> next -> thisVar)) {
+					if (!getValueType(ii, SVT_INT, fun->reg)) return false;
+					if (!stackSetByIndex(fun->stack->thisVar.varData.theStack->first, ii, fun->stack->next->thisVar)) {
 						return false;
 					}
-					trimStack(fun -> stack);
-					trimStack(fun -> stack);
+					trimStack(fun->stack);
+					trimStack(fun->stack);
 				}
 				break;
 
 			case SVT_FASTARRAY: {
 				int ii;
-				if (! getValueType(ii, SVT_INT, fun -> reg)) return false;
-				variable *v = fastArrayGetByIndex(fun -> stack -> thisVar.varData.fastArray, ii);
+				if (!getValueType(ii, SVT_INT, fun->reg)) return false;
+				variable *v = fastArrayGetByIndex(fun->stack->thisVar.varData.fastArray, ii);
 				if (v == NULL) return fatal("Not within bounds of fast array.");
-				if (! copyVariable(fun -> stack -> next -> thisVar, * v)) return false;
-				trimStack(fun -> stack);
-				trimStack(fun -> stack);
+				if (!copyVariable(fun->stack->next->thisVar, * v)) return false;
+				trimStack(fun->stack);
+				trimStack(fun->stack);
 			}
 			break;
 
@@ -1090,81 +1089,81 @@ bool continueFunction(loadedFunction *fun) {
 
 		case SLU_INCREMENT_LOCAL: {
 			int ii;
-			if (! getValueType(ii, SVT_INT, fun -> localVars[param])) return false;
-			setVariable(fun -> reg, SVT_INT, ii);
-			setVariable(fun -> localVars[param], SVT_INT, ii + 1);
+			if (!getValueType(ii, SVT_INT, fun->localVars[param])) return false;
+			setVariable(fun->reg, SVT_INT, ii);
+			setVariable(fun->localVars[param], SVT_INT, ii + 1);
 		}
 		break;
 
 		case SLU_INCREMENT_GLOBAL: {
 			int ii;
-			if (! getValueType(ii, SVT_INT, globalVars[param])) return false;
-			setVariable(fun -> reg, SVT_INT, ii);
+			if (!getValueType(ii, SVT_INT, globalVars[param])) return false;
+			setVariable(fun->reg, SVT_INT, ii);
 			setVariable(globalVars[param], SVT_INT, ii + 1);
 		}
 		break;
 
 		case SLU_DECREMENT_LOCAL: {
 			int ii;
-			if (! getValueType(ii, SVT_INT, fun -> localVars[param])) return false;
-			setVariable(fun -> reg, SVT_INT, ii);
-			setVariable(fun -> localVars[param], SVT_INT, ii - 1);
+			if (!getValueType(ii, SVT_INT, fun->localVars[param])) return false;
+			setVariable(fun->reg, SVT_INT, ii);
+			setVariable(fun->localVars[param], SVT_INT, ii - 1);
 		}
 		break;
 
 		case SLU_DECREMENT_GLOBAL: {
 			int ii;
-			if (! getValueType(ii, SVT_INT, globalVars[param])) return false;
-			setVariable(fun -> reg, SVT_INT, ii);
+			if (!getValueType(ii, SVT_INT, globalVars[param])) return false;
+			setVariable(fun->reg, SVT_INT, ii);
 			setVariable(globalVars[param], SVT_INT, ii - 1);
 		}
 		break;
 
 		case SLU_SET_LOCAL:
-			if (! copyVariable(fun -> reg, fun -> localVars[param])) return false;
+			if (!copyVariable(fun->reg, fun->localVars[param])) return false;
 			break;
 
 		case SLU_SET_GLOBAL:
 //			newDebug ("  Copying TO global variable", param);
 //			newDebug ("  Global type at the moment", globalVars[param].varType);
-			if (! copyVariable(fun -> reg, globalVars[param])) return false;
+			if (!copyVariable(fun->reg, globalVars[param])) return false;
 //			newDebug ("  New type", globalVars[param].varType);
 			break;
 
 		case SLU_LOAD_GLOBAL:
 //			newDebug ("  Copying FROM global variable", param);
 //			newDebug ("  Global type at the moment", globalVars[param].varType);
-			if (! copyVariable(globalVars[param], fun -> reg)) return false;
+			if (!copyVariable(globalVars[param], fun->reg)) return false;
 			break;
 
 		case SLU_STACK_PUSH:
-			if (! addVarToStack(fun -> reg, fun -> stack)) return false;
+			if (!addVarToStack(fun->reg, fun->stack)) return false;
 			break;
 
 		case SLU_QUICK_PUSH:
-			if (! addVarToStackQuick(fun -> reg, fun -> stack)) return false;
+			if (!addVarToStackQuick(fun->reg, fun->stack)) return false;
 			break;
 
 		case SLU_NOT:
-			setVariable(fun -> reg, SVT_INT, ! getBoolean(fun -> reg));
+			setVariable(fun->reg, SVT_INT, !getBoolean(fun->reg));
 			break;
 
 		case SLU_BR_ZERO:
-			if (! getBoolean(fun -> reg)) {
+			if (!getBoolean(fun->reg)) {
 				advanceNow = false;
-				fun -> runThisLine = param;
+				fun->runThisLine = param;
 			}
 			break;
 
 		case SLU_BRANCH:
 			advanceNow = false;
-			fun -> runThisLine = param;
+			fun->runThisLine = param;
 			break;
 
 		case SLU_NEGATIVE: {
 			int i;
-			if (! getValueType(i, SVT_INT, fun -> reg)) return false;
-			setVariable(fun -> reg, SVT_INT, -i);
+			if (!getValueType(i, SVT_INT, fun->reg)) return false;
+			setVariable(fun->reg, SVT_INT, -i);
 		}
 		break;
 
@@ -1181,62 +1180,62 @@ bool continueFunction(loadedFunction *fun) {
 		case SLU_MORETHAN:
 		case SLU_LESS_EQUAL:
 		case SLU_MORE_EQUAL:
-			if (fun -> stack) {
+			if (fun->stack) {
 				int firstValue, secondValue;
 
 				switch (com) {
 				case SLU_PLUS:
-					addVariablesInSecond(fun -> stack -> thisVar, fun -> reg);
-					trimStack(fun -> stack);
+					addVariablesInSecond(fun->stack->thisVar, fun->reg);
+					trimStack(fun->stack);
 					break;
 
 				case SLU_EQUALS:
-					compareVariablesInSecond(fun -> stack -> thisVar, fun -> reg);
-					trimStack(fun -> stack);
+					compareVariablesInSecond(fun->stack->thisVar, fun->reg);
+					trimStack(fun->stack);
 					break;
 
 				case SLU_NOT_EQ:
-					compareVariablesInSecond(fun -> stack -> thisVar, fun -> reg);
-					trimStack(fun -> stack);
-					fun -> reg.varData.intValue = ! fun -> reg.varData.intValue;
+					compareVariablesInSecond(fun->stack->thisVar, fun->reg);
+					trimStack(fun->stack);
+					fun->reg.varData.intValue = !fun->reg.varData.intValue;
 					break;
 
 				default:
-					if (! getValueType(firstValue, SVT_INT, fun -> stack -> thisVar)) return false;
-					if (! getValueType(secondValue, SVT_INT, fun -> reg)) return false;
-					trimStack(fun -> stack);
+					if (!getValueType(firstValue, SVT_INT, fun->stack->thisVar)) return false;
+					if (!getValueType(secondValue, SVT_INT, fun->reg)) return false;
+					trimStack(fun->stack);
 
 					switch (com) {
 					case SLU_MULT:
-						setVariable(fun -> reg, SVT_INT, firstValue * secondValue);
+						setVariable(fun->reg, SVT_INT, firstValue * secondValue);
 						break;
 
 					case SLU_MINUS:
-						setVariable(fun -> reg, SVT_INT, firstValue - secondValue);
+						setVariable(fun->reg, SVT_INT, firstValue - secondValue);
 						break;
 
 					case SLU_MODULUS:
-						setVariable(fun -> reg, SVT_INT, firstValue % secondValue);
+						setVariable(fun->reg, SVT_INT, firstValue % secondValue);
 						break;
 
 					case SLU_DIVIDE:
-						setVariable(fun -> reg, SVT_INT, firstValue / secondValue);
+						setVariable(fun->reg, SVT_INT, firstValue / secondValue);
 						break;
 
 					case SLU_LESSTHAN:
-						setVariable(fun -> reg, SVT_INT, firstValue < secondValue);
+						setVariable(fun->reg, SVT_INT, firstValue < secondValue);
 						break;
 
 					case SLU_MORETHAN:
-						setVariable(fun -> reg, SVT_INT, firstValue > secondValue);
+						setVariable(fun->reg, SVT_INT, firstValue > secondValue);
 						break;
 
 					case SLU_LESS_EQUAL:
-						setVariable(fun -> reg, SVT_INT, firstValue <= secondValue);
+						setVariable(fun->reg, SVT_INT, firstValue <= secondValue);
 						break;
 
 					case SLU_MORE_EQUAL:
-						setVariable(fun -> reg, SVT_INT, firstValue >= secondValue);
+						setVariable(fun->reg, SVT_INT, firstValue >= secondValue);
 						break;
 
 					default:
@@ -1252,7 +1251,7 @@ bool continueFunction(loadedFunction *fun) {
 			return fatal(ERROR_UNKNOWN_CODE);
 		}
 
-		if (advanceNow) fun -> runThisLine ++;
+		if (advanceNow) fun->runThisLine ++;
 
 	}
 	return true;
@@ -1265,22 +1264,22 @@ bool runSludge() {
 	loadedFunction *nextFunction;
 
 	while (thisFunction) {
-		nextFunction = thisFunction -> next;
+		nextFunction = thisFunction->next;
 
-		if (! thisFunction -> freezerLevel) {
-			if (thisFunction -> timeLeft) {
-				if (thisFunction -> timeLeft < 0) {
-					if (! stillPlayingSound(findInSoundCache(speech -> lastFile))) {
-						thisFunction -> timeLeft = 0;
+		if (!thisFunction->freezerLevel) {
+			if (thisFunction->timeLeft) {
+				if (thisFunction->timeLeft < 0) {
+					if (!stillPlayingSound(findInSoundCache(speech->lastFile))) {
+						thisFunction->timeLeft = 0;
 					}
-				} else if (! -- (thisFunction -> timeLeft)) {
+				} else if (!-- (thisFunction->timeLeft)) {
 				}
 			} else {
-				if (thisFunction -> isSpeech) {
-					thisFunction -> isSpeech = false;
+				if (thisFunction->isSpeech) {
+					thisFunction->isSpeech = false;
 					killAllSpeech();
 				}
-				if (! continueFunction(thisFunction))
+				if (!continueFunction(thisFunction))
 					return false;
 			}
 		}
@@ -1291,9 +1290,9 @@ bool runSludge() {
 	if (loadNow) {
 		if (loadNow[0] == ':') {
 			saveGame(loadNow + 1);
-			setVariable(saverFunc -> reg, SVT_INT, 1);
+			setVariable(saverFunc->reg, SVT_INT, 1);
 		} else {
-			if (! loadGame(loadNow)) return false;
+			if (!loadGame(loadNow)) return false;
 		}
 		delete loadNow;
 		loadNow = NULL;
@@ -1303,38 +1302,37 @@ bool runSludge() {
 }
 
 bool loadFunctionCode(loadedFunction *newFunc) {
-#if ALLOW_FILE
-	printf("\nCurrent address: %li\n", ftell(bigDataFile));
+
+	debug(kSludgeDebugDataLoad, "Current address: %i", bigDataFile->pos());
 	unsigned int numLines, numLinesRead;
 
-	if (! openSubSlice(newFunc -> originalNumber)) return false;
+	if (!openSubSlice(newFunc->originalNumber)) return false;
 
-	printf("Load function code\n");
+	debug(kSludgeDebugDataLoad, "Load function code");
 
-	newFunc -> unfreezable  = fgetc(bigDataFile);
+	newFunc->unfreezable  = getch(bigDataFile);
 	numLines                = get2bytes(bigDataFile);
-	printf("numLines: %i\n", numLines);
-	newFunc -> numArgs      = get2bytes(bigDataFile);
-	printf("numArgs: %i\n", newFunc -> numArgs);
-	newFunc -> numLocals    = get2bytes(bigDataFile);
-	printf("numLocals: %i\n", newFunc -> numLocals);
-	newFunc -> compiledLines = new lineOfCode[numLines];
-	if (! checkNew(newFunc -> compiledLines)) return false;
+	debug(kSludgeDebugDataLoad, "numLines: %i", numLines);
+	newFunc->numArgs      = get2bytes(bigDataFile);
+	debug(kSludgeDebugDataLoad, "numArgs: %i", newFunc->numArgs);
+	newFunc->numLocals    = get2bytes(bigDataFile);
+	debug(kSludgeDebugDataLoad, "numLocals: %i", newFunc->numLocals);
+	newFunc->compiledLines = new lineOfCode[numLines];
+	if (!checkNew(newFunc->compiledLines)) return false;
 
 	for (numLinesRead = 0; numLinesRead < numLines; numLinesRead ++) {
-		newFunc -> compiledLines[numLinesRead].theCommand = (sludgeCommand) fgetc(bigDataFile);
-		newFunc -> compiledLines[numLinesRead].param = get2bytes(bigDataFile);
-		printf("command line %i: %i\n", numLinesRead, newFunc->compiledLines[numLinesRead].theCommand);
+		newFunc->compiledLines[numLinesRead].theCommand = (sludgeCommand) getch(bigDataFile);
+		newFunc->compiledLines[numLinesRead].param = get2bytes(bigDataFile);
+		debug(kSludgeDebugDataLoad, "command line %i: %i", numLinesRead, newFunc->compiledLines[numLinesRead].theCommand);
 	}
 	finishAccess();
 
 	// Now we need to reserve memory for the local variables
-	newFunc -> localVars = new variable[newFunc -> numLocals];
-	if (! checkNew(newFunc -> localVars)) return false;
-	for (int a = 0; a < newFunc -> numLocals; a ++) {
-		initVarNew(newFunc -> localVars[a]);
+	newFunc->localVars = new variable[newFunc->numLocals];
+	if (!checkNew(newFunc->localVars)) return false;
+	for (int a = 0; a < newFunc->numLocals; a ++) {
+		initVarNew(newFunc->localVars[a]);
 	}
-#endif
 
 	return true;
 }
@@ -1342,31 +1340,31 @@ bool loadFunctionCode(loadedFunction *newFunc) {
 int startNewFunctionNum(unsigned int funcNum, unsigned int numParamsExpected, loadedFunction *calledBy, variableStack *&vStack, bool returnSommet) {
 	loadedFunction *newFunc = new loadedFunction;
 	checkNew(newFunc);
-	newFunc -> originalNumber = funcNum;
+	newFunc->originalNumber = funcNum;
 
 	loadFunctionCode(newFunc);
 
-	if (newFunc -> numArgs != (int)numParamsExpected) return fatal("Wrong number of parameters!");
-	if (newFunc -> numArgs > newFunc -> numLocals) return fatal("More arguments than local variable space!");
+	if (newFunc->numArgs != (int)numParamsExpected) return fatal("Wrong number of parameters!");
+	if (newFunc->numArgs > newFunc->numLocals) return fatal("More arguments than local variable space!");
 
 	// Now, lets copy the parameters from the calling function's stack...
 
 	while (numParamsExpected) {
 		numParamsExpected --;
-		if (vStack == NULL) return fatal("Corrupted file! The stack's empty and there were still parameters expected");
-		copyVariable(vStack -> thisVar, newFunc -> localVars[numParamsExpected]);
+		if (vStack == NULL) return fatal("Corrupted file!The stack's empty and there were still parameters expected");
+		copyVariable(vStack->thisVar, newFunc->localVars[numParamsExpected]);
 		trimStack(vStack);
 	}
 
-	newFunc -> cancelMe = false;
-	newFunc -> timeLeft = 0;
-	newFunc -> returnSomething = returnSommet;
-	newFunc -> calledBy = calledBy;
-	newFunc -> stack = NULL;
-	newFunc -> freezerLevel = 0;
-	newFunc -> runThisLine = 0;
-	newFunc -> isSpeech = 0;
-	initVarNew(newFunc -> reg);
+	newFunc->cancelMe = false;
+	newFunc->timeLeft = 0;
+	newFunc->returnSomething = returnSommet;
+	newFunc->calledBy = calledBy;
+	newFunc->stack = NULL;
+	newFunc->freezerLevel = 0;
+	newFunc->runThisLine = 0;
+	newFunc->isSpeech = 0;
+	initVarNew(newFunc->reg);
 
 	restartFunction(newFunc);
 	return 1;
@@ -1408,40 +1406,40 @@ bool handleInput() {
 		l = 0;
 	}
 
-	if (! overRegion) getOverRegion();
+	if (!overRegion) getOverRegion();
 
 	if (input.justMoved) {
-		if (currentEvents -> moveMouseFunction) {
-			if (! startNewFunctionNum(currentEvents -> moveMouseFunction, 0, NULL, noStack)) return false;
+		if (currentEvents->moveMouseFunction) {
+			if (!startNewFunctionNum(currentEvents->moveMouseFunction, 0, NULL, noStack)) return false;
 		}
 	}
 	input.justMoved = false;
 
-	if (lastRegion != overRegion && currentEvents -> focusFunction) {
+	if (lastRegion != overRegion && currentEvents->focusFunction) {
 		variableStack *tempStack = new variableStack;
-		if (! checkNew(tempStack)) return false;
+		if (!checkNew(tempStack)) return false;
 
-		initVarNew(tempStack -> thisVar);
+		initVarNew(tempStack->thisVar);
 		if (overRegion) {
-			setVariable(tempStack -> thisVar, SVT_OBJTYPE, overRegion -> thisType -> objectNum);
+			setVariable(tempStack->thisVar, SVT_OBJTYPE, overRegion->thisType->objectNum);
 		} else {
-			setVariable(tempStack -> thisVar, SVT_INT, 0);
+			setVariable(tempStack->thisVar, SVT_INT, 0);
 		}
-		tempStack -> next = NULL;
-		if (! startNewFunctionNum(currentEvents -> focusFunction, 1, NULL, tempStack)) return false;
+		tempStack->next = NULL;
+		if (!startNewFunctionNum(currentEvents->focusFunction, 1, NULL, tempStack)) return false;
 	}
-	if (input.leftRelease && currentEvents -> leftMouseUpFunction)  {
-		if (! startNewFunctionNum(currentEvents -> leftMouseUpFunction, 0, NULL, noStack)) return false;
+	if (input.leftRelease && currentEvents->leftMouseUpFunction)  {
+		if (!startNewFunctionNum(currentEvents->leftMouseUpFunction, 0, NULL, noStack)) return false;
 	}
-	if (input.rightRelease && currentEvents -> rightMouseUpFunction) {
-		if (! startNewFunctionNum(currentEvents -> rightMouseUpFunction, 0, NULL, noStack)) return false;
+	if (input.rightRelease && currentEvents->rightMouseUpFunction) {
+		if (!startNewFunctionNum(currentEvents->rightMouseUpFunction, 0, NULL, noStack)) return false;
 	}
-	if (input.leftClick && currentEvents -> leftMouseFunction)
-		if (! startNewFunctionNum(currentEvents -> leftMouseFunction, 0, NULL, noStack)) return false;
-	if (input.rightClick && currentEvents -> rightMouseFunction) {
-		if (! startNewFunctionNum(currentEvents -> rightMouseFunction, 0, NULL, noStack)) return false;
+	if (input.leftClick && currentEvents->leftMouseFunction)
+		if (!startNewFunctionNum(currentEvents->leftMouseFunction, 0, NULL, noStack)) return false;
+	if (input.rightClick && currentEvents->rightMouseFunction) {
+		if (!startNewFunctionNum(currentEvents->rightMouseFunction, 0, NULL, noStack)) return false;
 	}
-	if (input.keyPressed && currentEvents -> spaceFunction) {
+	if (input.keyPressed && currentEvents->spaceFunction) {
 		char *tempString = NULL;
 		switch (input.keyPressed) {
 		case 127:
@@ -1551,13 +1549,13 @@ bool handleInput() {
 
 		if (tempString) {
 			variableStack *tempStack = new variableStack;
-			if (! checkNew(tempStack)) return false;
-			initVarNew(tempStack -> thisVar);
-			makeTextVar(tempStack -> thisVar, tempString);
+			if (!checkNew(tempStack)) return false;
+			initVarNew(tempStack->thisVar);
+			makeTextVar(tempStack->thisVar, tempString);
 			delete tempString;
 			tempString = NULL;
-			tempStack -> next = NULL;
-			if (! startNewFunctionNum(currentEvents -> spaceFunction, 1, NULL, tempStack)) return false;
+			tempStack->next = NULL;
+			if (!startNewFunctionNum(currentEvents->spaceFunction, 1, NULL, tempStack)) return false;
 		}
 	}
 	input.rightClick = false;

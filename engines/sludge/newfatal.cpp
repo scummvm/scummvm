@@ -95,9 +95,8 @@ int inFatal(const char *str) {
 	fatalMessage = copyString(str);
 	if (fatalMessage == NULL) fatalMessage = copyString("Out of memory");
 
-#if 0
+
 	killSoundStuff();
-#endif
 
 #if defined(HAVE_GLES2)
 	EGL_Close();
@@ -123,7 +122,7 @@ void setFatalInfo(const char *userFunc, const char *BIF) {
 	delete fatalInfo;
 	fatalInfo = new char [strlen(userFunc) + strlen(BIF) + 38];
 	if (fatalInfo) sprintf(fatalInfo, "Currently in this sub: %s\nCalling: %s", userFunc, BIF);
-	debug("%s\n", fatalInfo);
+	debug("%s", fatalInfo);
 }
 
 void setResourceForFatal(int n) {

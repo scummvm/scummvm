@@ -50,24 +50,23 @@ objectType *findObjectType(int i) {
 }
 
 objectType *loadObjectType(int i) {
-#if ALLOW_FILE
 	int a, nameNum;
 	objectType *newType = new objectType;
 
 	if (checkNew(newType)) {
 		if (openObjectSlice(i)) {
 			nameNum = get2bytes(bigDataFile);
-			newType -> r = (byte) fgetc(bigDataFile);
-			newType -> g = (byte) fgetc(bigDataFile);
-			newType -> b = (byte) fgetc(bigDataFile);
-			newType -> speechGap = fgetc(bigDataFile);
-			newType -> walkSpeed = fgetc(bigDataFile);
+			newType -> r = (byte) getch(bigDataFile);
+			newType -> g = (byte) getch(bigDataFile);
+			newType -> b = (byte) getch(bigDataFile);
+			newType -> speechGap = getch(bigDataFile);
+			newType -> walkSpeed = getch(bigDataFile);
 			newType -> wrapSpeech = get4bytes(bigDataFile);
 			newType -> spinSpeed = get2bytes(bigDataFile);
 
 			if (gameVersion >= VERSION(1, 6)) {
 				// aaLoad
-				fgetc(bigDataFile);
+				getch(bigDataFile);
 				getFloat(bigDataFile);
 				getFloat(bigDataFile);
 			}
@@ -111,23 +110,21 @@ objectType *loadObjectType(int i) {
 			return newType;
 		}
 	}
-#endif
+
 	return NULL;
 }
 
-#if ALLOW_FILE
-objectType *loadObjectRef(FILE *fp) {
-	objectType *r = loadObjectType(get2bytes(fp));
+objectType *loadObjectRef(Common::SeekableReadStream *stream) {
+	objectType *r = loadObjectType(get2bytes(stream));
 	delete r -> screenName;
-	r -> screenName = readString(fp);
+	r -> screenName = readString(stream);
 	return r;
 }
 
-void saveObjectRef(objectType *r, FILE *fp) {
-	put2bytes(r -> objectNum, fp);
-	writeString(r -> screenName, fp);
+void saveObjectRef(objectType *r, Common::WriteStream *stream) {
+	put2bytes(r -> objectNum, stream);
+	writeString(r -> screenName, stream);
 }
-#endif
 
 int getCombinationFunction(int withThis, int thisObject) {
 	int i, num = 0;

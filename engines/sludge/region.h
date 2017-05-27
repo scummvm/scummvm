@@ -34,11 +34,10 @@ bool addScreenRegion(int x1, int y1, int x2, int y2, int, int, int, int objectNu
 void getOverRegion();
 screenRegion *getRegionForObject(int obj);
 void removeScreenRegion(int objectNum);
+void loadRegions(Common::SeekableReadStream *stream);
+void saveRegions(Common::WriteStream *stream);
 void killAllRegions();
-#if ALLOW_FILE
-void loadRegions(FILE *);
-void saveRegions(FILE *);
-#endif
+
 void showBoxes();
 
 } // End of namespace Sludge

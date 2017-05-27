@@ -44,10 +44,8 @@ objectType *findObjectType(int i);
 objectType *loadObjectType(int i);
 int getCombinationFunction(int a, int b);
 void removeObjectType(objectType *oT);
-#if ALLOW_FILE
-void saveObjectRef(objectType *r, FILE *fp);
-objectType *loadObjectRef(FILE *fp);
-#endif
+void saveObjectRef(objectType *r, Common::WriteStream *stream);
+objectType *loadObjectRef(Common::SeekableReadStream *stream);
 
 } // End of namespace Sludge
 

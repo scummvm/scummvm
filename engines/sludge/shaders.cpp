@@ -33,37 +33,32 @@ extern char *bundleFolder;
 //Read in a textfile (GLSL program)
 // we need to pass it as a string to the GLSL driver
 char *shaderFileRead(const char *name) {
-	FILE *fp;
+	Common::File fd;
 	char *content = NULL;
 	char *fn = joinStrings(bundleFolder, name);
 
 	int count = 0;
 
 	if (fn != NULL) {
+		if (fd.open(fn)) {
 
-		fp = fopen(fn, "rt");
-
-		if (fp != NULL) {
-
-			fseek(fp, 0, SEEK_END);
-			count = ftell(fp);
-			rewind(fp);
+			fd.seek(0, SEEK_END);
+			count = fd.pos();
+			fd.seek(0);
 
 			if (count > 0) {
 				content = (char *)malloc(sizeof(char) * (count + 1));
-				count = fread(content, sizeof(char), count, fp);
+				count = fd.read(content, sizeof(char) * count);
 				content[count] = '\0';
 			}
-			fclose(fp);
-
+			fd.close();
 		}
 	}
-
 	delete fn;
-
 	return content;
 }
 
+#if 0
 static void
 printShaderInfoLog(GLuint shader) {
 	GLint     infologLength = 0;
@@ -116,12 +111,14 @@ printProgramInfoLog(GLuint program) {
 	}
 	printOpenGLError();   // Check for OpenGL errors
 }
+#endif
 
 int buildShaders(const char *vertexShader, const char *fragmentShader) {
+#if 0
 	GLuint VS, FS, prog;
 	GLint vertCompiled, fragCompiled;
 	GLint linked;
-#if 0
+
 	// Create Shader Objects
 	VS = glCreateShader(GL_VERTEX_SHADER);
 	FS = glCreateShader(GL_FRAGMENT_SHADER);
@@ -145,10 +142,10 @@ int buildShaders(const char *vertexShader, const char *fragmentShader) {
 	printOpenGLError();
 	glGetShaderiv(FS, GL_COMPILE_STATUS, &fragCompiled);
 	printShaderInfoLog(FS);
-#endif
+
 	if (!vertCompiled || !fragCompiled)
 		return 0;
-
+#endif
 	debugOut("\nShaders compiled. \n");
 
 #if 0
@@ -166,13 +163,15 @@ int buildShaders(const char *vertexShader, const char *fragmentShader) {
 	printOpenGLError();
 	glGetProgramiv(prog, GL_LINK_STATUS, &linked);
 	printProgramInfoLog(prog);
-#endif
+
 	if (!linked)
 		return 0;
 
 	debugOut("Shader program linked. \n");
 
 	return prog;
+#endif
+	return 0; //TODO: false value
 }
 
 } // End of namespace Sludge

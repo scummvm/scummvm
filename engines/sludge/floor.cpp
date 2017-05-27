@@ -127,13 +127,13 @@ bool setFloor(int fileNum) {
 	killFloor();
 
 	setResourceForFatal(fileNum);
-#if ALLOW_FILE
+
 	if (! openFileFromNum(fileNum)) return false;
 
 	// Find out how many polygons there are and reserve memory
 
 	currentFloor -> originalNum = fileNum;
-	currentFloor -> numPolygons = fgetc(bigDataFile);
+	currentFloor -> numPolygons = getch(bigDataFile);
 	currentFloor -> polygon = new floorPolygon[currentFloor -> numPolygons];
 	if (! checkNew(currentFloor -> polygon)) return false;
 
@@ -143,7 +143,7 @@ bool setFloor(int fileNum) {
 
 		// Find out how many vertex IDs there are and reserve memory
 
-		currentFloor -> polygon[i].numVertices = fgetc(bigDataFile);
+		currentFloor -> polygon[i].numVertices = getch(bigDataFile);
 		currentFloor -> polygon[i].vertexID = new int[currentFloor -> polygon[i].numVertices];
 		if (! checkNew(currentFloor -> polygon[i].vertexID)) return false;
 
@@ -167,7 +167,7 @@ bool setFloor(int fileNum) {
 	}
 
 	finishAccess();
-#endif
+
 	// Now build the movement martix
 
 	currentFloor -> matrix = new int *[currentFloor -> numPolygons];

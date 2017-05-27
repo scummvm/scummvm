@@ -23,13 +23,13 @@
 #ifndef SLUDGE_BG_EFFECTS_H
 #define SLUDGE_BG_EFFECTS_H
 
+#include "common/file.h"
+
 namespace Sludge {
 
 bool blurScreen();
-#if ALLOW_FILE
-void blur_saveSettings(FILE *fp);
-void blur_loadSettings(FILE *fp);
-#endif
+void blur_saveSettings(Common::WriteStream *stream);
+void blur_loadSettings(Common::SeekableReadStream *stream);
 bool blur_createSettings(int numParams, variableStack *&stack);
 
 } // End of namespace Sludge

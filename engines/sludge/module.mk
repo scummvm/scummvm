@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	cursors.o \
 	debug.o \
 	detection.o \
+	fileset.o \
 	floor.o \
 	freeze.o \
 	fonttext.o \
@@ -17,6 +18,7 @@ MODULE_OBJS := \
 	line.o \
 	loadsave.o \
 	main_loop.o \
+	memwatch.o \
 	moreio.o \
 	movie.o \
 	newfatal.o \
@@ -33,15 +35,13 @@ MODULE_OBJS := \
 	stringy.o \
 	talk.o \
 	thumbnail.o \
+	timing.o \
 	transition.o \
 	variable.o \
 	zbuffer.o \
 	CommonCode/utf8.o \
-#	fileset.o \
-	linuxstuff.o \
-	memwatch.o \
+#	linuxstuff.o \
 	shaders.o \
-	timing.o \
 	libwebm/mkvparser.o \
 	libwebm/mkvreader.o \
  

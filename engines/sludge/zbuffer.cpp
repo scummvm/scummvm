@@ -19,8 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/system.h"
-
 #include "allfiles.h"
 #include "zbuffer.h"
 #include "fileset.h"
@@ -66,7 +64,7 @@ void sortZPal(int *oldpal, int *newpal, int size) {
 }
 
 bool setZBuffer(int y) {
-#if ALLOW_FILE
+#if 0
 	int x, n;
 	uint32_t stillToGo = 0;
 	int yPalette[16], sorted[16], sortback[16];

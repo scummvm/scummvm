@@ -29,18 +29,19 @@
 
 #include "debug.h"
 #include "stringy.h"
-
 #include "allfiles.h"
 #include "moreio.h"
 #include "newfatal.h"
 #include "CommonCode/version.h"
 
+#include "common/file.h"
+
 namespace Sludge {
 
 bool sliceBusy = true;
-#if ALLOW_FILE
-FILE *bigDataFile = NULL;
-#endif
+
+Common::File *bigDataFile = NULL;
+
 uint32_t startOfDataIndex, startOfTextIndex,
          startOfSubIndex, startOfObjectIndex;
 
@@ -54,8 +55,8 @@ bool openSubSlice(int num) {
 		return false;
 	}
 //	fprintf (dbug, "Going to position %li\n", startOfSubIndex + (num << 2));
-	fseek(bigDataFile, startOfSubIndex + (num << 2), 0);
-	fseek(bigDataFile, get4bytes(bigDataFile), 0);
+	bigDataFile->seek(startOfSubIndex + (num << 2), 0);
+	bigDataFile->seek(get4bytes(bigDataFile), 0);
 //	fprintf (dbug, "Told to skip forward to %li\n", ftell (bigDataFile));
 //	fclose (dbug);
 
@@ -73,8 +74,8 @@ bool openObjectSlice(int num) {
 	}
 
 //	fprintf (dbug, "Going to position %li\n", startOfObjectIndex + (num << 2));
-	fseek(bigDataFile, startOfObjectIndex + (num << 2), 0);
-	fseek(bigDataFile, get4bytes(bigDataFile), 0);
+	bigDataFile->seek(startOfObjectIndex + (num << 2), 0);
+	bigDataFile->seek(get4bytes(bigDataFile), 0);
 //	fprintf (dbug, "Told to skip forward to %li\n", ftell (bigDataFile));
 //	fclose (dbug);
 	return sliceBusy = true;
@@ -90,8 +91,8 @@ unsigned int openFileFromNum(int num) {
 
 //	fprintf (dbug, "\nTrying to open file %i\n", num);
 //	fprintf (dbug, "Jumping to %li (for index) \n", startOfDataIndex + (num << 2));
-	fseek(bigDataFile, startOfDataIndex + (num << 2), 0);
-	fseek(bigDataFile, get4bytes(bigDataFile), 1);
+	bigDataFile->seek(startOfDataIndex + (num << 2), 0);
+	bigDataFile->seek(get4bytes(bigDataFile), 1);
 //	fprintf (dbug, "Jumping to %li (for data) \n", ftell (bigDataFile));
 	sliceBusy = true;
 //	fclose (dbug);
@@ -103,6 +104,7 @@ unsigned int openFileFromNum(int num) {
 // Converts a string from Windows CP-1252 to UTF-8.
 // This is needed for old games.
 char *convertString(char *s) {
+#if 0
 	static char *buf = NULL;
 
 	if (! buf) {
@@ -161,6 +163,8 @@ char *convertString(char *s) {
 
 	delete [] sOrig;
 	return copyString(buf = bufOrig);
+#endif
+	return s;//TODO: false value
 }
 
 char *getNumberedString(int value) {
@@ -170,9 +174,9 @@ char *getNumberedString(int value) {
 		return NULL;
 	}
 
-	fseek(bigDataFile, (value << 2) + startOfTextIndex, 0);
+	bigDataFile->seek((value << 2) + startOfTextIndex, 0);
 	value = get4bytes(bigDataFile);
-	fseek(bigDataFile, value, 0);
+	bigDataFile->seek(value, 0);
 
 	char *s = readString(bigDataFile);
 
@@ -195,15 +199,15 @@ void finishAccess() {
 
 int32_t startIndex;
 
-void setFileIndices(FILE *fp, int numLanguages, unsigned int skipBefore) {
+void setFileIndices(Common::File *fp, int numLanguages, unsigned int skipBefore) {
 	if (fp) {
 		// Keep hold of the file handle, and let things get at it
 		bigDataFile = fp;
-		startIndex = ftell(fp);
+		startIndex = fp->pos();
 	} else {
 		// No file pointer - this means that we reuse the bigDataFile
 		fp = bigDataFile;
-		fseek(fp, startIndex, 0);
+		fp->seek(startIndex, SEEK_SET);
 	}
 	sliceBusy = false;
 
@@ -215,26 +219,26 @@ void setFileIndices(FILE *fp, int numLanguages, unsigned int skipBefore) {
 	// STRINGS
 	int skipAfter = numLanguages - skipBefore;
 	while (skipBefore) {
-		fseek(fp, get4bytes(fp), 0);
+		fp->seek(get4bytes(fp), SEEK_SET);
 		skipBefore --;
 	}
-	startOfTextIndex = ftell(fp) + 4;
+	startOfTextIndex = fp->pos() + 4;
 
-	fseek(fp, get4bytes(fp), 0);
+	fp->seek(get4bytes(fp), SEEK_SET);
 
 	while (skipAfter) {
-		fseek(fp, get4bytes(fp), 0);
+		fp->seek(get4bytes(fp), SEEK_SET);
 		skipAfter --;
 	}
 
-	startOfSubIndex = ftell(fp) + 4;
-	fseek(fp, get4bytes(fp), 1);
+	startOfSubIndex = fp->pos() + 4;
+	fp->seek(get4bytes(fp), SEEK_CUR);
 
-	startOfObjectIndex = ftell(fp) + 4;
-	fseek(fp, get4bytes(fp), 1);
+	startOfObjectIndex = fp->pos() + 4;
+	fp->seek(get4bytes(fp), SEEK_CUR);
 
 	// Remember that the data section starts here
-	startOfDataIndex = ftell(fp);
+	startOfDataIndex = fp->pos();
 }
 
 } // End of namespace Sludge

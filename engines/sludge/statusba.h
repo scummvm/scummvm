@@ -51,11 +51,9 @@ const char *statusBarText();
 void positionStatus(int, int);
 void drawStatusBar();
 
-#if ALLOW_FILE
 // Load and save
-bool loadStatusBars(FILE *fp);
-void saveStatusBars(FILE *fp);
-#endif
+bool loadStatusBars(Common::SeekableReadStream *stream);
+void saveStatusBars(Common::WriteStream *stream);
 
 // For freezing
 void restoreBarStuff(statusStuff *here);

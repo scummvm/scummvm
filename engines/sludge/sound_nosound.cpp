@@ -112,23 +112,22 @@ bool startSound(int f, bool loopy) {
 	return true;
 }
 
-#if ALLOW_FILE
-void saveSounds(FILE *fp) {
-	fputc(0, fp);
-	put2bytes(defSoundVol, fp);
-	put2bytes(defVol, fp);
+void saveSounds(Common::WriteStream *stream) {
+	putch(0, stream);
+	put2bytes(defSoundVol, stream);
+	put2bytes(defVol, stream);
 }
 
-void loadSounds(FILE *fp) {
-	while (fgetc(fp)) {
-		get2bytes(fp);
-		get2bytes(fp);
+void loadSounds(Common::SeekableReadStream *stream) {
+	while (getch(stream)) {
+		get2bytes(stream);
+		get2bytes(stream);
 	}
 
-	defSoundVol = get2bytes(fp);
-	defVol = get2bytes(fp);
+	defSoundVol = get2bytes(stream);
+	defVol = get2bytes(stream);
 }
-#endif
+
 bool getSoundCacheStack(stackHandler *sH) {
 //#pragma unused (sH)
 	return true;

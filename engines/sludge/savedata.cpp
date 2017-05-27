@@ -29,6 +29,8 @@
 #include "newfatal.h"
 #include "moreio.h"
 
+#include "common/file.h"
+
 #define LOAD_ERROR "Can't load custom data...\n\n"
 
 namespace Sludge {
@@ -59,107 +61,109 @@ void loadSaveDebug (int com) {
 }
 */
 
-#if ALLOW_FILE
-void writeStringEncoded(const char *s, FILE *fp) {
+void writeStringEncoded(const char *s, Common::WriteStream *stream) {
 	int a, len = strlen(s);
 
-	put2bytes(len, fp);
+	put2bytes(len, stream);
 	for (a = 0; a < len; a ++) {
-		fputc(s[a] ^ encode1, fp);
+		putch(s[a] ^ encode1, stream);
 		encode1 += encode2;
 	}
 }
 
-char *readStringEncoded(FILE *fp) {
+char *readStringEncoded(Common::File *fp) {
 	int a, len = get2bytes(fp);
 	char *s = new char[len + 1];
-	if (! checkNew(s)) return NULL;
+	if (!checkNew(s)) return NULL;
 	for (a = 0; a < len; a ++) {
-		s[a] = (char)(fgetc(fp) ^ encode1);
+		s[a] = (char)(getch(fp) ^ encode1);
 		encode1 += encode2;
 	}
 	s[len] = 0;
 	return s;
 }
 
-char *readTextPlain(FILE *fp) {
+char *readTextPlain(Common::File *fp) {
 	int32_t startPos;
 
-	int stringSize = 0;
+	uint32 stringSize = 0;
 	bool keepGoing = true;
 	char gotChar;
 	char *reply;
 
-	startPos = ftell(fp);
+	startPos = fp->pos();
 
 	while (keepGoing) {
-		gotChar = (char) fgetc(fp);
-		if ((gotChar == '\n') || (feof(fp))) {
+		gotChar = (char) getch(fp);
+		if ((gotChar == '\n') || (fp->eos())) {
 			keepGoing = false;
 		} else {
 			stringSize ++;
 		}
 	}
 
-	if ((stringSize == 0) && (feof(fp))) {
+	if ((stringSize == 0) && (fp->eos())) {
 		return NULL;
 	} else {
-		fseek(fp, startPos, SEEK_SET);
+		fp->seek(startPos, SEEK_SET);
 		reply = new char[stringSize + 1];
 		if (reply == NULL) return NULL;
-		size_t bytes_read = fread(reply, stringSize, 1, fp);
-		if (bytes_read != stringSize && ferror(fp)) {
+		size_t bytes_read = fp->read(reply, stringSize);
+		if (bytes_read != stringSize && fp->err()) {
 			debugOut("Reading error in readTextPlain.\n");
 		}
-		fgetc(fp);  // Skip the newline character
+		getch(fp);  // Skip the newline character
 		reply[stringSize] = 0;
 	}
 
 	return reply;
 }
-#endif
 
 bool fileToStack(char *filename, stackHandler *sH) {
-#if ALLOW_FILE
+
 	variable stringVar;
 	stringVar.varType = SVT_NULL;
 	const char *checker = saveEncoding ? "[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
 
-	FILE *fp = fopen(filename, "rb");
-	if (! fp) {
+	Common::File fd;
+
+	if (!fd.open(filename)) {
+#if 0
 		char currentDir[1000];
-		if (! getcwd(currentDir, 998)) {
+		if (!getcwd(currentDir, 998)) {
 			debugOut("Can't get current directory.\n");
 		}
 
 		if (chdir(gamePath)) {
 			debugOut("Error: Failed changing to directory %s\n", gamePath);
 		}
-		fp = fopen(filename, "rb");
+
 		if (chdir(currentDir)) {
 			debugOut("Error: Failed changing to directory %s\n", currentDir);
 		}
 
-		if (! fp) {
+		if (!fd.open(filename)) {
 			return fatal("No such file", filename);
 		}
+#endif
+		return fatal("No such file", filename); //TODO: false value
 	}
 
 	encode1 = (unsigned char) saveEncoding & 255;
 	encode2 = (unsigned char)(saveEncoding >> 8);
 
 	while (* checker) {
-		if (fgetc(fp) != * checker) {
-			fclose(fp);
+		if (getch(&fd) != * checker) {
+			fd.close();
 			return fatal(LOAD_ERROR "This isn't a SLUDGE custom data file:", filename);
 		}
 		checker ++;
 	}
 
 	if (saveEncoding) {
-		char *checker = readStringEncoded(fp);
+		char *checker = readStringEncoded(&fd);
 		if (strcmp(checker, "UN�LO�CKED")) {
-			fclose(fp);
+			fd.close();
 			return fatal(LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
 		}
 		delete checker;
@@ -169,55 +173,55 @@ bool fileToStack(char *filename, stackHandler *sH) {
 
 	for (;;) {
 		if (saveEncoding) {
-			char i = fgetc(fp) ^ encode1;
+			char i = getch(&fd) ^ encode1;
 
-			if (feof(fp)) break;
+			if (fd.eos()) break;
 			switch (i) {
 			case 0: {
-				char *g = readStringEncoded(fp);
+				char *g = readStringEncoded(&fd);
 				makeTextVar(stringVar, g);
 				delete g;
 			}
 			break;
 
 			case 1:
-				setVariable(stringVar, SVT_INT, get4bytes(fp));
+				setVariable(stringVar, SVT_INT, get4bytes(&fd));
 				break;
 
 			case 2:
-				setVariable(stringVar, SVT_INT, fgetc(fp));
+				setVariable(stringVar, SVT_INT, getch(&fd));
 				break;
 
 			default:
 				fatal(LOAD_ERROR "Corrupt custom data file:", filename);
-				fclose(fp);
+				fd.close();
 				return false;
 			}
 		} else {
-			char *line = readTextPlain(fp);
-			if (! line) break;
+			char *line = readTextPlain(&fd);
+			if (!line) break;
 			makeTextVar(stringVar, line);
 		}
 
 		if (sH -> first == NULL) {
 			// Adds to the TOP of the array... oops!
-			if (! addVarToStackQuick(stringVar, sH -> first)) return false;
+			if (!addVarToStackQuick(stringVar, sH -> first)) return false;
 			sH -> last = sH -> first;
 		} else {
 			// Adds to the END of the array... much better
-			if (! addVarToStackQuick(stringVar, sH -> last -> next)) return false;
+			if (!addVarToStackQuick(stringVar, sH -> last -> next)) return false;
 			sH -> last = sH -> last -> next;
 		}
 	}
-	fclose(fp);
-#endif
+	fd.close();
+
 	return true;
 }
 
 bool stackToFile(char *filename, const variable &from) {
-#if ALLOW_FILE
+#if 0
 	FILE *fp = fopen(filename, saveEncoding ? "wb" : "wt");
-	if (! fp) return fatal("Can't create file", filename);
+	if (!fp) return fatal("Can't create file", filename);
 
 	variableStack *hereWeAre = from.varData.theStack -> first;
 

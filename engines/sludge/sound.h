@@ -31,6 +31,8 @@
 
 #include "variable.h"
 
+#include "common/file.h"
+
 namespace Sludge {
 
 // Sound list stuff
@@ -66,11 +68,9 @@ bool stillPlayingSound(int ch);
 bool getSoundCacheStack(stackHandler *sH);
 int findInSoundCache(int a);
 
-#if ALLOW_FILE
 void debugSounds();
-void loadSounds(FILE *fp);
-void saveSounds(FILE *fp);
-#endif
+void loadSounds(Common::SeekableReadStream *stream);
+void saveSounds(Common::WriteStream *stream);
 
 unsigned int getSoundSource(int index);
 

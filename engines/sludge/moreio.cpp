@@ -24,7 +24,10 @@
 #include "newfatal.h"
 #include "stringy.h"
 
-#include "debug.h"
+#include "sludge.h"
+
+#include "common/debug.h"
+#include "common/file.h"
 
 #if defined __unix__ && !(defined __APPLE__)
 #include <endian.h>
@@ -37,43 +40,48 @@ namespace Sludge {
 
 bool allowAnyFilename = true;
 
-#if ALLOW_FILE
-int get2bytes(FILE *fp) {
+int getch(Common::SeekableReadStream *stream) {
+	return stream->readByte();
+}
+
+void putch(int c, Common::WriteStream *stream) {
+	stream->writeByte(c);
+}
+
+int get2bytes(Common::SeekableReadStream *stream) {
 	int f1, f2;
 
-	f1 = fgetc(fp);
-	f2 = fgetc(fp);
+	f1 = getch(stream);
+	f2 = getch(stream);
 
 	return (f1 * 256 + f2);
 }
 
-void put2bytes(int numtoput, FILE *fp) {
-	fputc((char)(numtoput / 256), fp);
-	fputc((char)(numtoput % 256), fp);
+void put2bytes(int numtoput, Common::WriteStream *stream) {
+	putch((char)(numtoput / 256), stream);
+	putch((char)(numtoput % 256), stream);
 }
 
-void writeString(char *s, FILE *fp) {
+void writeString(char *s, Common::WriteStream *stream) {
 	int a, len = strlen(s);
-	put2bytes(len, fp);
-	for (a = 0; a < len; a ++) {
-		fputc(s[a] + 1, fp);
+	put2bytes(len, stream);
+	for (a = 0; a < len; ++a) {
+		putch(s[a] + 1, stream);
 	}
 }
 
 
-char *readString(FILE *fp) {
-
-	int a, len = get2bytes(fp);
-	//debugOut ("MOREIO: readString - len %i\n", len);
+char *readString(Common::SeekableReadStream *stream) {
+	int a, len = get2bytes(stream);
 	char *s = new char[len + 1];
-	if (! checkNew(s)) {
+	if (!checkNew(s)) {
 		return NULL;
 	}
-	for (a = 0; a < len; a ++) {
-		s[a] = (char)(fgetc(fp) - 1);
+	for (a = 0; a < len; ++a) {
+		s[a] = (char)(getch(stream) - 1);
 	}
 	s[len] = 0;
-	//debugOut ("MOREIO: readString: %s\n", s);
+	debug(kSludgeDebugDataLoad, "Read string of length %i: %s", len, s);
 	return s;
 }
 
@@ -92,11 +100,12 @@ float floatSwap(float f) {
 }
 
 
-float getFloat(FILE *fp) {
+float getFloat(Common::SeekableReadStream *stream) {
 	float f;
-	size_t bytes_read = fread(& f, sizeof(float), 1, fp);
-	if (bytes_read != sizeof(float) && ferror(fp)) {
-		debugOut("Reading error in getFloat.\n");
+	size_t bytes_read = stream->read(&f, sizeof(float));
+			//fread(& f, sizeof(float), 1, fp);
+	if (bytes_read != sizeof(float) && stream->err()) {
+		debug("Reading error in getFloat.\n");
 	}
 
 #ifdef  __BIG_ENDIAN__
@@ -106,11 +115,12 @@ float getFloat(FILE *fp) {
 #endif
 }
 
-void putFloat(float f, FILE *fp) {
+void putFloat(float f, Common::WriteStream *stream) {
 #ifdef  __BIG_ENDIAN__
 	f = floatSwap(f);
 #endif
-	fwrite(& f, sizeof(float), 1, fp);
+	stream->write(&f,sizeof(float));
+	//fwrite(& f, sizeof(float), 1, fp);
 }
 
 short shortSwap(short s) {
@@ -123,11 +133,11 @@ short shortSwap(short s) {
 }
 
 
-short getSigned(FILE *fp) {
+short getSigned(Common::SeekableReadStream *stream) {
 	short f;
-	size_t bytes_read = fread(& f, sizeof(short), 1, fp);
-	if (bytes_read != sizeof(short) && ferror(fp)) {
-		debugOut("Reading error in getSigned.\n");
+	size_t bytes_read = stream->read(&f, sizeof(short));
+	if (bytes_read != sizeof(short) && stream->err()) {
+		debug("Reading error in getSigned.\n");
 	}
 #ifdef  __BIG_ENDIAN__
 	f = shortSwap(f);
@@ -135,39 +145,32 @@ short getSigned(FILE *fp) {
 	return f;
 }
 
-void putSigned(short f, FILE *fp) {
+void putSigned(short f, Common::WriteStream *stream) {
 #ifdef  __BIG_ENDIAN__
 	f = shortSwap(f);
 #endif
-	fwrite(& f, sizeof(short), 1, fp);
+	stream->write(&f, sizeof(short));
 }
 
 
 // The following two functions treat signed integers as unsigned.
 // That's done on purpose.
 
-int32_t get4bytes(FILE *fp) {
+int32_t get4bytes(Common::SeekableReadStream *stream) {
 	int f1, f2, f3, f4;
 
-	f1 = fgetc(fp);
-	f2 = fgetc(fp);
-	f3 = fgetc(fp);
-	f4 = fgetc(fp);
+	f1 = getch(stream);
+	f2 = getch(stream);
+	f3 = getch(stream);
+	f4 = getch(stream);
 
 	unsigned int x = f1 + f2 * 256 + f3 * 256 * 256 + f4 * 256 * 256 * 256;
 
 	return x;
-
-	/*
-
-	    int32_t f;
-	    fread (& f, sizeof (int32_t), 1, fp);
-	    return f;*/
 }
 
 
-void put4bytes(unsigned int i, FILE *fp) {
-	//  fwrite (&i, sizeof (long int), 1, fp);
+void put4bytes(unsigned int i, Common::WriteStream *stream) {
 	unsigned char f1, f2, f3, f4;
 
 	f4 = i / (256 * 256 * 256);
@@ -177,17 +180,17 @@ void put4bytes(unsigned int i, FILE *fp) {
 	f2 = i / 256;
 	f1 = i % 256;
 
-	fputc(f1, fp);
-	fputc(f2, fp);
-	fputc(f3, fp);
-	fputc(f4, fp);
+	putch(f1, stream);
+	putch(f2, stream);
+	putch(f3, stream);
+	putch(f4, stream);
 }
-#endif
+
 char *encodeFilename(char *nameIn) {
-	if (! nameIn) return NULL;
+	if (!nameIn) return NULL;
 	if (allowAnyFilename) {
 		char *newName = new char[strlen(nameIn) * 2 + 1];
-		if (! checkNew(newName)) return NULL;
+		if (!checkNew(newName)) return NULL;
 
 		int i = 0;
 		while (*nameIn) {
@@ -243,7 +246,7 @@ char *encodeFilename(char *nameIn) {
 		return newName;
 	} else {
 		int a;
-		for (a = 0; nameIn[a]; a ++) {
+		for (a = 0; nameIn[a]; ++a) {
 #ifdef _WIN32
 			if (nameIn[a] == '/') nameIn[a] = '\\';
 #else
@@ -258,7 +261,7 @@ char *encodeFilename(char *nameIn) {
 char *decodeFilename(char *nameIn) {
 	if (allowAnyFilename) {
 		char *newName = new char[strlen(nameIn) + 1];
-		if (! checkNew(newName)) return NULL;
+		if (!checkNew(newName)) return NULL;
 
 		int i = 0;
 		while (* nameIn) {

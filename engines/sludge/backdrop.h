@@ -67,12 +67,12 @@ void mixBackDrop(int fileNum, int x, int y);
 void drawBackDrop();
 void blankScreen(int x1, int y1, int x2, int y2);
 void darkScreen();
+void saveHSI(Common::WriteStream *stream);
 #if 0
-void saveHSI(FILE *writer);
-void saveCoreHSI(FILE *writer, GLuint texture, int w, int h);
-bool loadHSI(FILE *fp, int, int, bool);
-bool mixHSI(FILE *fp, int x = 0, int y = 0);
+void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h);
 #endif
+bool loadHSI(Common::SeekableReadStream *stream, int, int, bool);
+bool mixHSI(Common::SeekableReadStream *stream, int x = 0, int y = 0);
 void drawHorizontalLine(unsigned int, unsigned int, unsigned int);
 void drawVerticalLine(unsigned int, unsigned int, unsigned int);
 void hardScroll(int distance);
@@ -91,17 +91,13 @@ extern texture lightMap;
 
 void killParallax();
 bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY);
-#if 0
-void saveParallaxRecursive(parallaxLayer *me, FILE *fp);
-#endif
+void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *fp);
 void reloadParallaxTextures();
 
 void nosnapshot();
 bool snapshot();
-#if ALLOW_FILE
-void saveSnapshot(FILE *fp);
-bool restoreSnapshot(FILE *fp);
-#endif
+void saveSnapshot(Common::WriteStream *stream);
+bool restoreSnapshot(Common::SeekableReadStream *stream);
 #endif
 
 } // End of namespace Sludge
