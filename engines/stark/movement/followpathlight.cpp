@@ -50,6 +50,9 @@ void FollowPathLight::start() {
 
 	_previouslyEnabled = _item->isEnabled();
 	_item->setEnabled(true);
+
+	Math::Vector3d newPosition = _path->getWeightedPositionInEdge(0, 0);
+	_light->setPosition(newPosition);
 }
 
 void FollowPathLight::stop() {

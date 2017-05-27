@@ -47,15 +47,17 @@ FollowPath::~FollowPath() {
 void FollowPath::start() {
 	Movement::start();
 
-	changeItemAnim();
-
 	_previouslyEnabled = _item->isEnabled();
 	_item->setEnabled(true);
+
+	updateItemPosition(0, 0);
+	changeItemAnim();
 }
 
 void FollowPath::stop() {
 	Movement::stop();
 
+	changeItemAnim();
 	_item->setEnabled(_previouslyEnabled);
 }
 
@@ -82,7 +84,10 @@ void FollowPath::onGameLoop() {
 		return;
 	}
 
-	// Get the new position for the item
+	updateItemPosition(currentEdge, positionInEdge);
+}
+
+void FollowPath::updateItemPosition(uint currentEdge, float positionInEdge) const {// Get the new position for the item
 	Math::Vector3d newPosition = _path->getWeightedPositionInEdge(currentEdge, positionInEdge);
 
 	// Update the item's properties in the scene
@@ -105,20 +110,18 @@ void FollowPath::onGameLoop() {
 		Common::Point position2D = Common::Point(newPosition.x(), newPosition.y());
 		_item->setPosition2D(position2D);
 	}
-
-	changeItemAnim();
 }
 
 void FollowPath::changeItemAnim() {
 	if (_ended) {
 		if (_anim) {
-			_item->playActionAnim(_anim);
+			_item->resetActionAnim();
 		} else {
 			_item->setAnimKind(Resources::Anim::kActorUsageIdle);
 		}
 	} else {
 		if (_anim) {
-			_item->resetActionAnim();
+			_item->playActionAnim(_anim);
 		} else {
 			_item->setAnimKind(Resources::Anim::kActorUsageWalk);
 		}

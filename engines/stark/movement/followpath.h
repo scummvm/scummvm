@@ -58,6 +58,7 @@ public:
 
 private:
 	void changeItemAnim();
+	void updateItemPosition(uint currentEdge, float positionInEdge) const;
 	bool is3D() const;
 
 	Resources::Path *_path;
