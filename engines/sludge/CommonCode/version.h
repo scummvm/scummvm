@@ -10,4 +10,8 @@
 
 #define VERSION(a,b)    (a * 256 + b)
 
+namespace Sludge {
+
 extern int gameVersion;
+
+} // End of namespace Sludge
