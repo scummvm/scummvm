@@ -89,15 +89,13 @@ void CStarControlSub23::proc6(int val1, int val2, float val) {
 	_field48 = 31;
 	_field3C = (double)val2 * _field38;
 	
-	if (_powers.empty())
-		_powers.resize(32);
-
 	// Calculate the powers table
-	double exponent = 0.0, total = 0.0;
+	double base = 0.0, total = 0.0;
+	_powers.resize(32);
 	for (int idx = 31; idx >= 0; --idx) {
-		_powers[idx] = pow(4.0, exponent);
+		_powers[idx] = pow(base, 4.0);
 		total += _powers[idx];
-		exponent += 0.03125;
+		base += 0.03125;
 	}
 	
 	for (int idx = 0; idx < 32; ++idx) {
