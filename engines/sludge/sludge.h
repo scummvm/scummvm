@@ -22,23 +22,25 @@
 
 #ifndef SLUDGE_H
 #define SLUDGE_H
- 
+
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
- 
+
 #include "sludge/console.h"
 
 namespace Sludge {
  
 class SludgeConsole;
- 
+
 struct SludgeGameDescription;
 
 // debug channels
 enum {
 	kSludgeDebugScript = 1 << 0,
 	kSludgeDebugDataLoad = 1 << 1,
+	kSludgeDebugStackMachine = 1 << 2,
+	kSludgeDebugBuiltin = 1 << 3,
 };
  
 class SludgeEngine : public Engine {
