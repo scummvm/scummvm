@@ -7,7 +7,7 @@ out vec2 Texcoord;
 uniform mat4 mvp;
 
 void main() {
-	Texcoord = vec2(texcoord.x, texcoord.y);
+	Texcoord = vec2(texcoord.x, 1.0 - texcoord.y);
 
 	gl_Position = mvp * vec4(position.xyz, 1.0);
 }

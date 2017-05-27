@@ -199,8 +199,8 @@ public:
 				if (!vertexIndexMap.contains(vertexKey)) {
 					BiffMesh::Vertex vertex;
 					vertex.position = _rawVertices[_rawFaces[i].vertexIndex[j]].position;
-					vertex.normal = _rawNormals[_rawFaces[i].vertexIndex[j]];
-					vertex.texturePosition = _rawTexturePositions[_rawFaces[i].vertexIndex[j]];
+					vertex.normal = _rawNormals[_rawFaces[i].normalIndex[j]];
+					vertex.texturePosition = _rawTexturePositions[_rawFaces[i].textureVertexIndex[j]];
 
 					_vertices.push_back(vertex);
 
