@@ -24,10 +24,8 @@
 
 namespace Sludge {
 
-#if ALLOW_FILE
-bool saveThumbnail(FILE *fp);
-bool skipThumbnail(FILE *fp);
-#endif
+bool saveThumbnail(Common::WriteStream *stream);
+bool skipThumbnail(Common::SeekableReadStream *stream);
 
 void showThumbnail(char *filename, int x, int y);
 

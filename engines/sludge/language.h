@@ -22,6 +22,10 @@
 #ifndef LANGUAGE_H
 #define LANGUAGE_H
 
+#include "allfiles.h"
+
+#include "common/file.h"
+
 namespace Sludge {
 
 struct settingsStruct {
@@ -41,9 +45,7 @@ void readIniFile(char *filename);
 void saveIniFile(char *filename);
 int getLanguageForFileB();
 
-#if ALLOW_FILE
-void makeLanguageTable(FILE *table);
-#endif
+void makeLanguageTable(Common::File *table);
 
 } // End of namespace Sludge
 

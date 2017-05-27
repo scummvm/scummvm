@@ -33,6 +33,8 @@
 #include "moreio.h"
 #include "fileset.h"
 
+#include "common/file.h"
+
 #define MAX_SAMPLES 8
 #define MAX_MODS 3
 #define NUM_BUFS 3
@@ -359,13 +361,12 @@ void playStream(int a, bool isMOD, bool loopy) {
 #endif
 }
 
-#if ALLOW_FILE
-char *loadEntireFileToMemory(FILE *inputFile, uint32_t size) {
+char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile, uint32_t size) {
 	char *allData = new char[size];
 	if (! allData) return NULL;
 
-	size_t bytes_read = fread(allData, size, 1, inputFile);
-	if (bytes_read != size && ferror(inputFile)) {
+	size_t bytes_read = inputFile->read(allData, size);
+	if (bytes_read != size && inputFile->err()) {
 		debugOut("Reading error in loadEntireFileToMemory.\n");
 	}
 
@@ -373,10 +374,8 @@ char *loadEntireFileToMemory(FILE *inputFile, uint32_t size) {
 
 	return allData;
 }
-#endif
 
 bool playMOD(int f, int a, int fromTrack) {
-#if ALLOW_FILE
 	if (! soundOK) return true;
 	stopMOD(a);
 
@@ -387,7 +386,6 @@ bool playMOD(int f, int a, int fromTrack) {
 		setResourceForFatal(-1);
 		return false;
 	}
-#endif
 #if 0
 	unsigned char *memImage;
 	memImage = (unsigned char *) loadEntireFileToMemory(bigDataFile, length);
@@ -592,35 +590,33 @@ bool startSound(int f, bool loopy) {
 	return true;
 }
 
-#if ALLOW_FILE
-void saveSounds(FILE *fp) {
+void saveSounds(Common::WriteStream *stream) {
 	if (soundOK) {
 		for (int i = 0; i < MAX_SAMPLES; i ++) {
 			if (soundCache[i].looping) {
-				fputc(1, fp);
-				put2bytes(soundCache[i].fileLoaded, fp);
-				put2bytes(soundCache[i].vol, fp);
+				putch(1, stream);
+				put2bytes(soundCache[i].fileLoaded, stream);
+				put2bytes(soundCache[i].vol, stream);
 			}
 		}
 	}
-	fputc(0, fp);
-	put2bytes(defSoundVol, fp);
-	put2bytes(defVol, fp);
+	putch(0, stream);
+	put2bytes(defSoundVol, stream);
+	put2bytes(defVol, stream);
 }
 
-void loadSounds(FILE *fp) {
+void loadSounds(Common::SeekableReadStream *stream) {
 	for (int i = 0; i < MAX_SAMPLES; i ++) freeSound(i);
 
-	while (fgetc(fp)) {
-		int fileLoaded = get2bytes(fp);
-		defSoundVol = get2bytes(fp);
+	while (getch(stream)) {
+		int fileLoaded = get2bytes(stream);
+		defSoundVol = get2bytes(stream);
 		startSound(fileLoaded, 1);
 	}
 
-	defSoundVol = get2bytes(fp);
-	defVol = get2bytes(fp);
+	defSoundVol = get2bytes(stream);
+	defVol = get2bytes(stream);
 }
-#endif
 
 bool getSoundCacheStack(stackHandler *sH) {
 	variable newFileHandle;
@@ -742,12 +738,12 @@ void playSoundList(soundList *s) {
 #endif
 }
 
-#if ALLOW_FILE
 void playMovieStream(int a) {
+#if 0
 	if (! soundOK) return;
 	ALboolean ok;
 	ALuint src;
-#if 0
+
 	alGenSources(1, &src);
 	if (alGetError() != AL_NO_ERROR) {
 		debugOut("Failed to create OpenAL source!\n");
@@ -758,22 +754,20 @@ void playMovieStream(int a) {
 
 	ok = alurePlaySourceStream(src, soundCache[a].stream,
 	                           10, 0, sound_eos_callback, &intpointers[a]);
-#endif
 	if (!ok) {
-#if 0
 		debugOut("Failed to play stream: %s\n", alureGetErrorString());
 		alDeleteSources(1, &src);
 		if (alGetError() != AL_NO_ERROR) {
 			debugOut("Failed to delete OpenAL source!\n");
 		}
-#endif
+
 		soundCache[a].playingOnSource = 0;
 	} else {
 		soundCache[a].playingOnSource = src;
 		soundCache[a].playing = true;
 	}
-}
 #endif
+}
 
 #if 0
 int initMovieSound(int f, ALenum format, int audioChannels, ALuint samplerate,

@@ -22,18 +22,19 @@
 #include "allfiles.h"
 #include "helpers.h"
 
+#include "common/file.h"
+
 namespace Sludge {
 
 bool fileExists(const char *file) {
 	bool retval = false;
-#if ALLOW_FILE
-	FILE *tester;
-	tester = fopen(file, "rb");
-	if (tester) {
+
+	Common::File tester;
+	if (tester.open(file)) {
 		retval = true;
-		fclose(tester);
+		tester.close();
 	}
-#endif
+
 	return retval;
 }
 

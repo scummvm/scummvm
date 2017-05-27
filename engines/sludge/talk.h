@@ -47,10 +47,8 @@ void viewSpeech();
 void killAllSpeech();
 int isThereAnySpeechGoingOn();
 void initSpeech();
-#if ALLOW_FILE
-void saveSpeech(speechStruct *sS, FILE *fp);
-bool loadSpeech(speechStruct *sS, FILE *fp);
-#endif
+void saveSpeech(speechStruct *sS, Common::WriteStream *stream);
+bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream);
 
 } // End of namespace Sludge
 

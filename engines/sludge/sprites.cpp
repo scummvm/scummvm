@@ -116,7 +116,7 @@ bool reserveSpritePal(spritePalette &sP, int n) {
 }
 
 bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
-#if ALLOW_FILE
+#if 0
 	int i, tex_num, total, picwidth, picheight, spriteBankVersion = 0, howmany = 0, startIndex = 0;
 	int *totalwidth, * maxheight;
 	int numTextures = 0;

@@ -138,9 +138,7 @@ void setGameFilePath(char *f) {
 #endif
 }
 
-#if ALLOW_FILE
-void saveHSI(FILE *writer);
-#endif
+void saveHSI(Common::WriteStream *writer);
 
 extern bool reallyWantToQuit;
 
@@ -440,9 +438,8 @@ try
 	initStatusBar();
 	resetRandW();
 
-#if ALLOW_FILE
 	gameName = getNumberedString(1);
-#endif
+
 #if 0
 	SDL_WM_SetCaption(gameName, gameName);
 

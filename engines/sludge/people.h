@@ -125,14 +125,12 @@ personaAnimation *makeNullAnim();
 void deleteAnim(personaAnimation *orig);
 
 // Loading and saving
-#if ALLOW_FILE
-bool saveAnim(personaAnimation *p, FILE *fp);
-bool loadAnim(personaAnimation *p, FILE *fp);
-bool savePeople(FILE *fp);
-bool loadPeople(FILE *fp);
-bool saveCostume(persona *cossy, FILE *fp);
-bool loadCostume(persona *cossy, FILE *fp);
-#endif
+bool saveAnim(personaAnimation *p, Common::WriteStream *stream);
+bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream);
+bool savePeople(Common::WriteStream *stream);
+bool loadPeople(Common::SeekableReadStream *stream);
+bool saveCostume(persona *cossy, Common::WriteStream *stream);
+bool loadCostume(persona *cossy, Common::SeekableReadStream *stream);
 
 } // End of namespace Sludge
 

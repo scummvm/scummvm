@@ -28,6 +28,9 @@
 #include "newfatal.h"
 #include "moreio.h"
 
+#include "common/debug.h"
+#include "common/file.h"
+
 namespace Sludge {
 
 #if 0
@@ -113,22 +116,20 @@ static int *s_matrixEffectData = NULL;
 static int s_matrixEffectBase = 0;
 #endif
 
-#if ALLOW_FILE
-void blur_saveSettings(FILE *fp) {
+void blur_saveSettings(Common::WriteStream *stream) {
 	if (s_matrixEffectData) {
-		put4bytes(s_matrixEffectDivide, fp);
-		put4bytes(s_matrixEffectWidth, fp);
-		put4bytes(s_matrixEffectHeight, fp);
-		put4bytes(s_matrixEffectBase, fp);
-		fwrite(s_matrixEffectData, sizeof(int), s_matrixEffectWidth * s_matrixEffectHeight, fp);
+		put4bytes(s_matrixEffectDivide, stream);
+		put4bytes(s_matrixEffectWidth, stream);
+		put4bytes(s_matrixEffectHeight, stream);
+		put4bytes(s_matrixEffectBase, stream);
+		stream->write(s_matrixEffectData, sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight);
 	} else {
-		put4bytes(0, fp);
-		put4bytes(0, fp);
-		put4bytes(0, fp);
-		put4bytes(0, fp);
+		put4bytes(0, stream);
+		put4bytes(0, stream);
+		put4bytes(0, stream);
+		put4bytes(0, stream);
 	}
 }
-#endif
 
 static int *blur_allocateMemoryForEffect() {
 	free(s_matrixEffectData);
@@ -141,23 +142,21 @@ static int *blur_allocateMemoryForEffect() {
 	return s_matrixEffectData;
 }
 
-#if ALLOW_FILE
-void blur_loadSettings(FILE *fp) {
-	s_matrixEffectDivide = get4bytes(fp);
-	s_matrixEffectWidth = get4bytes(fp);
-	s_matrixEffectHeight = get4bytes(fp);
-	s_matrixEffectBase = get4bytes(fp);
+void blur_loadSettings(Common::SeekableReadStream *stream) {
+	s_matrixEffectDivide = get4bytes(stream);
+	s_matrixEffectWidth = get4bytes(stream);
+	s_matrixEffectHeight = get4bytes(stream);
+	s_matrixEffectBase = get4bytes(stream);
 
 	if (blur_allocateMemoryForEffect()) {
-		size_t bytes_read = fread(s_matrixEffectData, sizeof(int), s_matrixEffectWidth * s_matrixEffectHeight, fp);
-		if (bytes_read != sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight && ferror(fp)) {
-			debugOut("Reading error in blur_loadSettings.\n");
+		size_t bytes_read = stream->read(s_matrixEffectData, sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight);
+		if (bytes_read != sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight && stream->err()) {
+			debug("Reading error in blur_loadSettings.");
 		}
 	} else {
-		fseek(fp, sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight, SEEK_CUR);
+		stream->seek(sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight, SEEK_CUR);
 	}
 }
-#endif
 
 bool blur_createSettings(int numParams, variableStack *&stack) {
 	bool createNullThing = true;

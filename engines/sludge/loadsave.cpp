@@ -40,6 +40,7 @@
 #include "sound.h"
 #include "fileset.h"
 #include "debug.h"
+#include "loadsave.h"
 
 namespace Sludge {
 
@@ -93,81 +94,76 @@ stackLibrary *stackLib = NULL;
 //----------------------------------------------------------------------
 // For saving and loading stacks...
 //----------------------------------------------------------------------
-#if 0
-bool saveVariable(variable *from, FILE *fp);
-bool loadVariable(variable *to, FILE *fp);
-
-void saveStack(variableStack *vs, FILE *fp) {
+void saveStack(variableStack *vs, Common::WriteStream *stream) {
 	int elements = 0;
 	int a;
 
 	variableStack *search = vs;
 	while (search) {
 		elements ++;
-		search = search -> next;
+		search = search->next;
 	}
 
 	stackDebug((stackfp, "  stack contains %d elements\n", elements));
 
-	put2bytes(elements, fp);
+	put2bytes(elements, stream);
 	search = vs;
-	for (a = 0; a < elements; a ++) {
-		saveVariable(& search -> thisVar, fp);
-		search = search -> next;
+	for (a = 0; a < elements; ++a) {
+		saveVariable(&search->thisVar, stream);
+		search = search->next;
 	}
 }
 
-variableStack *loadStack(FILE *fp, variableStack **last) {
-	int elements = get2bytes(fp);
+variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **last) {
+	int elements = get2bytes(stream);
 	int a;
 	variableStack *first = NULL;
-	variableStack * * changeMe = & first;
+	variableStack * * changeMe = &first;
 
-	for (a = 0; a < elements; a ++) {
+	for (a = 0; a < elements; ++a) {
 		variableStack *nS = new variableStack;
 		if (!checkNew(nS)) return NULL;
-		loadVariable(& (nS -> thisVar), fp);
+		loadVariable(&(nS->thisVar), stream);
 		if (last && a == elements - 1) {
 			stackDebug((stackfp, "Setting last to %p\n", nS));
 			*last = nS;
 		}
-		nS -> next = NULL;
+		nS->next = NULL;
 		(* changeMe) = nS;
-		changeMe = & (nS -> next);
+		changeMe = &(nS->next);
 	}
 
 	return first;
 }
 
-bool saveStackRef(stackHandler *vs, FILE *fp) {
+bool saveStackRef(stackHandler *vs, Common::WriteStream *stream) {
 	stackLibrary *s = stackLib;
 	int a = 0;
 	while (s) {
-		if (s -> stack == vs) {
-			fputc(1, fp);
-			put2bytes(stackLibTotal - a, fp);
+		if (s->stack == vs) {
+			putch(1, stream);
+			put2bytes(stackLibTotal - a, stream);
 			return true;
 		}
-		s = s -> next;
-		a ++;
+		s = s->next;
+		++a;
 	}
-	fputc(0, fp);
-	saveStack(vs -> first, fp);
+	putch(0, stream);
+	saveStack(vs->first, stream);
 	s = new stackLibrary;
 	stackLibTotal ++;
 	if (! checkNew(s)) return false;
-	s -> next = stackLib;
-	s -> stack = vs;
+	s->next = stackLib;
+	s->stack = vs;
 	stackLib = s;
 	return true;
 }
-#endif
 
 void clearStackLib() {
 	stackLibrary *k;
 	while (stackLib) {
 		k = stackLib;
-		stackLib = stackLib -> next;
+		stackLib = stackLib->next;
 		delete k;
 	}
 	stackLibTotal = 0;
@@ -176,20 +172,20 @@ void clearStackLib() {
 stackHandler *getStackFromLibrary(int n) {
 	n = stackLibTotal - n;
 	while (n) {
-		stackLib = stackLib -> next;
+		stackLib = stackLib->next;
 		n --;
 	}
-	return stackLib -> stack;
+	return stackLib->stack;
 }
-#if 0
-stackHandler *loadStackRef(FILE *fp) {
+
+stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 	stackHandler *nsh;
 
-	if (fgetc(fp)) {    // It's one we've loaded already...
+	if (getch(stream)) {    // It's one we've loaded already...
 		stackDebug((stackfp, "loadStackRef (duplicate, get from library)\n"));
 
-		nsh = getStackFromLibrary(get2bytes(fp));
-		nsh -> timesUsed ++;
+		nsh = getStackFromLibrary(get2bytes(stream));
+		nsh->timesUsed ++;
 	} else {
 		stackDebug((stackfp, "loadStackRef (new one)\n"));
 
@@ -197,9 +193,9 @@ stackHandler *loadStackRef(FILE *fp) {
 
 		nsh = new stackHandler;
 		if (! checkNew(nsh)) return NULL;
-		nsh -> last = NULL;
-		nsh -> first = loadStack(fp, & nsh->last);
-		nsh -> timesUsed = 1;
+		nsh->last = NULL;
+		nsh->first = loadStack(stream, &nsh->last);
+		nsh->timesUsed = 1;
 		stackDebug((stackfp, "  first = %p\n", nsh->first));
 		if (nsh->first)
 			stackDebug((stackfp, "  first->next = %p\n", nsh->first->next));
@@ -211,8 +207,8 @@ stackHandler *loadStackRef(FILE *fp) {
 
 		stackLibrary *s = new stackLibrary;
 		if (! checkNew(s)) return NULL;
-		s -> stack = nsh;
-		s -> next = stackLib;
+		s->stack = nsh;
+		s->next = stackLib;
 		stackLib = s;
 		stackLibTotal ++;
 	}
@@ -222,8 +218,7 @@ stackHandler *loadStackRef(FILE *fp) {
 //----------------------------------------------------------------------
 // For saving and loading variables...
 //----------------------------------------------------------------------
-
-bool saveVariable(variable *from, FILE *fp) {
+bool saveVariable(variable *from, Common::WriteStream *stream) {
 #if DEBUG_STACKINESS
 	{
 		char *str = getTextFromAnyVar(*from);
@@ -232,29 +227,29 @@ bool saveVariable(variable *from, FILE *fp) {
 	}
 #endif
 
-	fputc(from -> varType, fp);
-	switch (from -> varType) {
+	putch(from->varType, stream);
+	switch (from->varType) {
 	case SVT_INT:
 	case SVT_FUNC:
 	case SVT_BUILT:
 	case SVT_FILE:
 	case SVT_OBJTYPE:
-		put4bytes(from -> varData.intValue, fp);
+		put4bytes(from->varData.intValue, stream);
 		return true;
 
 	case SVT_STRING:
-		writeString(from -> varData.theString, fp);
+		writeString(from->varData.theString, stream);
 		return true;
 
 	case SVT_STACK:
-		return saveStackRef(from -> varData.theStack, fp);
+		return saveStackRef(from->varData.theStack, stream);
 
 	case SVT_COSTUME:
-		saveCostume(from -> varData.costumeHandler, fp);
+		saveCostume(from->varData.costumeHandler, stream);
 		return false;
 
 	case SVT_ANIM:
-		saveAnim(from -> varData.animHandler, fp);
+		saveAnim(from->varData.animHandler, stream);
 		return false;
 
 	case SVT_NULL:
@@ -269,23 +264,23 @@ bool saveVariable(variable *from, FILE *fp) {
 	return true;
 }
 
-bool loadVariable(variable *to, FILE *fp) {
-	to -> varType = (variableType) fgetc(fp);
-	switch (to -> varType) {
+bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
+	to->varType = (variableType)getch(stream);
+	switch (to->varType) {
 	case SVT_INT:
 	case SVT_FUNC:
 	case SVT_BUILT:
 	case SVT_FILE:
 	case SVT_OBJTYPE:
-		to -> varData.intValue = get4bytes(fp);
+		to->varData.intValue = get4bytes(stream);
 		return true;
 
 	case SVT_STRING:
-		to -> varData.theString = readString(fp);
+		to->varData.theString = readString(stream);
 		return true;
 
 	case SVT_STACK:
-		to -> varData.theStack = loadStackRef(fp);
+		to->varData.theStack = loadStackRef(stream);
 #if DEBUG_STACKINESS
 		{
 			char *str = getTextFromAnyVar(*to);
@@ -296,15 +291,15 @@ bool loadVariable(variable *to, FILE *fp) {
 		return true;
 
 	case SVT_COSTUME:
-		to -> varData.costumeHandler = new persona;
-		if (! checkNew(to -> varData.costumeHandler)) return false;
-		loadCostume(to -> varData.costumeHandler, fp);
+		to->varData.costumeHandler = new persona;
+		if (! checkNew(to->varData.costumeHandler)) return false;
+		loadCostume(to->varData.costumeHandler, stream);
 		return true;
 
 	case SVT_ANIM:
-		to -> varData.animHandler = new personaAnimation;
-		if (! checkNew(to -> varData.animHandler)) return false;
-		loadAnim(to -> varData.animHandler, fp);
+		to->varData.animHandler = new personaAnimation;
+		if (! checkNew(to->varData.animHandler)) return false;
+		loadAnim(to->varData.animHandler, stream);
 		return true;
 
 	default:
@@ -316,34 +311,32 @@ bool loadVariable(variable *to, FILE *fp) {
 //----------------------------------------------------------------------
 // For saving and loading functions
 //----------------------------------------------------------------------
-
-void saveFunction(loadedFunction *fun, FILE *fp) {
+void saveFunction(loadedFunction *fun, Common::WriteStream *stream) {
 	int a;
-	put2bytes(fun -> originalNumber, fp);
-	if (fun -> calledBy) {
-		fputc(1, fp);
-		saveFunction(fun -> calledBy, fp);
+	put2bytes(fun->originalNumber, stream);
+	if (fun->calledBy) {
+		putch(1, stream);
+		saveFunction(fun->calledBy, stream);
 	} else {
-		fputc(0, fp);
+		putch(0, stream);
 	}
-	put4bytes(fun -> timeLeft, fp);
-	put2bytes(fun -> runThisLine, fp);
-	fputc(fun -> cancelMe, fp);
-	fputc(fun -> returnSomething, fp);
-	fputc(fun -> isSpeech, fp);
-	saveVariable(& (fun -> reg), fp);
+	put4bytes(fun->timeLeft, stream);
+	put2bytes(fun->runThisLine, stream);
+	putch(fun->cancelMe, stream);
+	putch(fun->returnSomething, stream);
+	putch(fun->isSpeech, stream);
+	saveVariable(&(fun->reg), stream);
 
-	if (fun -> freezerLevel) {
+	if (fun->freezerLevel) {
 		fatal(ERROR_GAME_SAVE_FROZEN);
 	}
-	saveStack(fun -> stack, fp);
-	for (a = 0; a < fun -> numLocals; a ++) {
-		saveVariable(& (fun -> localVars[a]), fp);
+	saveStack(fun->stack, stream);
+	for (a = 0; a < fun->numLocals; ++a) {
+		saveVariable(&(fun->localVars[a]), stream);
 	}
 }
 
-
-loadedFunction *loadFunction(FILE *fp) {
+loadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 	int a;
 
 	// Reserve memory...
@@ -353,31 +346,31 @@ loadedFunction *loadFunction(FILE *fp) {
 
 	// See what it was called by and load if we need to...
 
-	buildFunc -> originalNumber = get2bytes(fp);
-	buildFunc -> calledBy = NULL;
-	if (fgetc(fp)) {
-		buildFunc -> calledBy = loadFunction(fp);
-		if (! buildFunc -> calledBy) return NULL;
+	buildFunc->originalNumber = get2bytes(stream);
+	buildFunc->calledBy = NULL;
+	if (getch(stream)) {
+		buildFunc->calledBy = loadFunction(stream);
+		if (! buildFunc->calledBy) return NULL;
 	}
 
-	buildFunc -> timeLeft = get4bytes(fp);
-	buildFunc -> runThisLine = get2bytes(fp);
-	buildFunc -> freezerLevel = 0;
-	buildFunc -> cancelMe = fgetc(fp);
-	buildFunc -> returnSomething = fgetc(fp);
-	buildFunc -> isSpeech = fgetc(fp);
-	loadVariable(& (buildFunc -> reg), fp);
+	buildFunc->timeLeft = get4bytes(stream);
+	buildFunc->runThisLine = get2bytes(stream);
+	buildFunc->freezerLevel = 0;
+	buildFunc->cancelMe = getch(stream);
+	buildFunc->returnSomething = getch(stream);
+	buildFunc->isSpeech = getch(stream);
+	loadVariable(&(buildFunc->reg), stream);
 	loadFunctionCode(buildFunc);
 
-	buildFunc -> stack = loadStack(fp, NULL);
+	buildFunc->stack = loadStack(stream, NULL);
 
-	for (a = 0; a < buildFunc -> numLocals; a ++) {
-		loadVariable(& (buildFunc -> localVars[a]), fp);
+	for (a = 0; a < buildFunc->numLocals; ++a) {
+		loadVariable(&(buildFunc->localVars[a]), stream);
 	}
 
 	return buildFunc;
 }
-#endif
+
 //----------------------------------------------------------------------
 // Save everything
 //----------------------------------------------------------------------
@@ -397,7 +390,7 @@ bool saveGame(char *fname) {
 
 	if (! saveThumbnail(fp)) return false;
 
-	fwrite(& fileTime, sizeof(FILETIME), 1, fp);
+	fwrite(&fileTime, sizeof(FILETIME), 1, fp);
 
 	// DON'T ADD ANYTHING NEW BEFORE THIS POINT!
 
@@ -435,25 +428,25 @@ bool saveGame(char *fname) {
 	int countFunctions = 0;
 	while (thisFunction) {
 		countFunctions ++;
-		thisFunction = thisFunction -> next;
+		thisFunction = thisFunction->next;
 	}
 	put2bytes(countFunctions, fp);
 
 	thisFunction = allRunningFunctions;
 	while (thisFunction) {
 		saveFunction(thisFunction, fp);
-		thisFunction = thisFunction -> next;
+		thisFunction = thisFunction->next;
 	}
 
-	for (a = 0; a < numGlobals; a ++) {
-		saveVariable(& globalVars[a], fp);
+	for (a = 0; a < numGlobals; ++a) {
+		saveVariable(&globalVars[a], fp);
 	}
 
 	savePeople(fp);
 
-	if (currentFloor -> numPolygons) {
+	if (currentFloor->numPolygons) {
 		fputc(1, fp);
-		put2bytes(currentFloor -> originalNum, fp);
+		put2bytes(currentFloor->originalNum, fp);
 	} else fputc(0, fp);
 
 	if (zBuffer.tex) {
@@ -516,7 +509,7 @@ bool loadGame(char *fname) {
 		if (! skipThumbnail(fp)) return fatal(ERROR_GAME_LOAD_CORRUPT, fname);
 	}
 
-	size_t bytes_read = fread(& savedGameTime, sizeof(FILETIME), 1, fp);
+	size_t bytes_read = fread(&savedGameTime, sizeof(FILETIME), 1, fp);
 	if (bytes_read != sizeof(FILETIME) && ferror(fp)) {
 		debugOut("Reading error in loadGame.\n");
 	}
@@ -546,7 +539,7 @@ bool loadGame(char *fname) {
 			charOrder = new char[257];
 			if (! checkNew(charOrder)) return false;
 
-			for (int a = 0; a < 256; a ++) {
+			for (int a = 0; a < 256; ++a) {
 				x = fgetc(fp);
 				charOrder[x] = a;
 			}
@@ -584,20 +577,20 @@ bool loadGame(char *fname) {
 	mouseCursorFrameNum = get2bytes(fp);
 
 	loadedFunction *rFunc;
-	loadedFunction * * buildList = & allRunningFunctions;
+	loadedFunction * * buildList = &allRunningFunctions;
 
 
 	int countFunctions = get2bytes(fp);
 	while (countFunctions --) {
 		rFunc = loadFunction(fp);
-		rFunc -> next = NULL;
+		rFunc->next = NULL;
 		(* buildList) = rFunc;
-		buildList = & (rFunc -> next);
+		buildList = &(rFunc->next);
 	}
 
-	for (a = 0; a < numGlobals; a ++) {
+	for (a = 0; a < numGlobals; ++a) {
 		unlinkVar(globalVars[a]);
-		loadVariable(& globalVars[a], fp);
+		loadVariable(&globalVars[a], fp);
 	}
 
 	loadPeople(fp);

@@ -29,6 +29,8 @@
 #include "csludge.h"
 #include "language.h"
 
+#include "common/file.h"
+
 namespace Sludge {
 
 #ifndef _WIN32
@@ -85,15 +87,13 @@ int startNewFunctionNum(unsigned int, unsigned int, loadedFunction *, variableSt
 bool handleInput();
 void restartFunction(loadedFunction *fun);
 bool loadFunctionCode(loadedFunction *newFunc);
-#if ALLOW_FILE
-void loadHandlers(FILE *fp);
-void saveHandlers(FILE *fp);
-#endif
+void loadHandlers(Common::SeekableReadStream *stream);
+void saveHandlers(Common::WriteStream *stream);
+
 void finishFunction(loadedFunction *fun);
 void abortFunction(loadedFunction *fun);
-#if ALLOW_FILE
-FILE *openAndVerify(char *filename, char extra1, char extra2, const char *er, int &fileVersion);
-#endif
+Common::File *openAndVerify(char *filename, char extra1, char extra2, const char *er, int &fileVersion);
+
 void freezeSubs();
 void unfreezeSubs();
 void completeTimers();

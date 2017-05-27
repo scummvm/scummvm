@@ -22,13 +22,13 @@
 #ifndef SLUDGE_FILESET_H
 #define SLUDGE_FILESET_H
 
+#include "common/file.h"
+
 namespace Sludge {
 
-#if ALLOW_FILE
-extern FILE *bigDataFile;
+extern Common::File *bigDataFile;
 
-void setFileIndices(FILE *fp, int, unsigned int);
-#endif
+void setFileIndices(Common::File *fp, int, unsigned int);
 
 unsigned int openFileFromNum(int num);
 bool openSubSlice(int num);

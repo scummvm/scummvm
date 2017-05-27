@@ -41,105 +41,105 @@ extern int fontHeight;
 extern float cameraZoom;
 
 void setLitStatus(int i) {
-	nowStatus -> litStatus = i;
+	nowStatus->litStatus = i;
 }
 
 void killLastStatus() {
-	if (nowStatus -> firstStatusBar) {
-		statusBar *kill = nowStatus -> firstStatusBar;
-		nowStatus -> firstStatusBar = kill -> next;
-		delete kill -> text;
+	if (nowStatus->firstStatusBar) {
+		statusBar *kill = nowStatus->firstStatusBar;
+		nowStatus->firstStatusBar = kill->next;
+		delete kill->text;
 		delete kill;
 	}
 }
 
 void clearStatusBar() {
-	statusBar *stat = nowStatus -> firstStatusBar;
+	statusBar *stat = nowStatus->firstStatusBar;
 	statusBar *kill;
-	nowStatus -> litStatus = -1;
+	nowStatus->litStatus = -1;
 	while (stat) {
 		kill = stat;
-		stat = stat -> next;
-		delete kill -> text;
+		stat = stat->next;
+		delete kill->text;
 		delete kill;
 	}
-	nowStatus -> firstStatusBar = NULL;
+	nowStatus->firstStatusBar = NULL;
 }
 
 void addStatusBar() {
 	statusBar *newStat = new statusBar;
 	if (checkNew(newStat)) {
-		newStat -> next = nowStatus -> firstStatusBar;
-		newStat -> text = copyString("");
-		nowStatus -> firstStatusBar = newStat;
+		newStat->next = nowStatus->firstStatusBar;
+		newStat->text = copyString("");
+		nowStatus->firstStatusBar = newStat;
 	}
 }
 
 void setStatusBar(char *txt) {
-	if (nowStatus -> firstStatusBar) {
-		delete nowStatus -> firstStatusBar -> text;
-		nowStatus -> firstStatusBar -> text = copyString(txt);
+	if (nowStatus->firstStatusBar) {
+		delete nowStatus->firstStatusBar->text;
+		nowStatus->firstStatusBar->text = copyString(txt);
 	}
 }
 
 void positionStatus(int x, int y) {
-	nowStatus -> statusX = x;
-	nowStatus -> statusY = y;
+	nowStatus->statusX = x;
+	nowStatus->statusY = y;
 }
 
 void drawStatusBar() {
-	int y = nowStatus -> statusY, n = 0;
-	statusBar *stat = nowStatus -> firstStatusBar;
+	int y = nowStatus->statusY, n = 0;
+	statusBar *stat = nowStatus->firstStatusBar;
 	fixFont(litVerbLinePalette);
 	fixFont(verbLinePalette);
 	while (stat) {
-		switch (nowStatus -> alignStatus) {
+		switch (nowStatus->alignStatus) {
 		case IN_THE_CENTRE:
-			pasteString(stat -> text, ((winWidth - stringWidth(stat -> text)) >> 1) / cameraZoom, y / cameraZoom, (n ++ == nowStatus -> litStatus) ? litVerbLinePalette : verbLinePalette);
+			pasteString(stat->text, ((winWidth - stringWidth(stat->text)) >> 1) / cameraZoom, y / cameraZoom, (n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 			break;
 
 		case 1001:
-			pasteString(stat -> text, (winWidth - stringWidth(stat -> text)) - nowStatus -> statusX / cameraZoom, y / cameraZoom, (n ++ == nowStatus -> litStatus) ? litVerbLinePalette : verbLinePalette);
+			pasteString(stat->text, (winWidth - stringWidth(stat->text)) - nowStatus->statusX / cameraZoom, y / cameraZoom, (n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 			break;
 
 		default:
-			pasteString(stat -> text, nowStatus -> statusX / cameraZoom, y / cameraZoom, (n ++ == nowStatus -> litStatus) ? litVerbLinePalette : verbLinePalette);
+			pasteString(stat->text, nowStatus->statusX / cameraZoom, y / cameraZoom, (n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 		}
-		stat = stat -> next;
+		stat = stat->next;
 		y -= fontHeight;
 	}
 }
 
 void statusBarColour(byte r, byte g, byte b) {
 	setFontColour(verbLinePalette, r, g, b);
-	nowStatus -> statusR = r;
-	nowStatus -> statusG = g;
-	nowStatus -> statusB = b;
+	nowStatus->statusR = r;
+	nowStatus->statusG = g;
+	nowStatus->statusB = b;
 }
 
 void statusBarLitColour(byte r, byte g, byte b) {
 	setFontColour(litVerbLinePalette, r, g, b);
-	nowStatus -> statusLR = r;
-	nowStatus -> statusLG = g;
-	nowStatus -> statusLB = b;
+	nowStatus->statusLR = r;
+	nowStatus->statusLG = g;
+	nowStatus->statusLB = b;
 }
 
 statusStuff *copyStatusBarStuff(statusStuff *here) {
 
 	// Things we want to keep
-	here -> statusLR = nowStatus -> statusLR;
-	here -> statusLG = nowStatus -> statusLG;
-	here -> statusLB = nowStatus -> statusLB;
-	here -> statusR = nowStatus -> statusR;
-	here -> statusG = nowStatus -> statusG;
-	here -> statusB = nowStatus -> statusB;
-	here -> alignStatus = nowStatus -> alignStatus;
-	here -> statusX = nowStatus -> statusX;
-	here -> statusY = nowStatus -> statusY;
+	here->statusLR = nowStatus->statusLR;
+	here->statusLG = nowStatus->statusLG;
+	here->statusLB = nowStatus->statusLB;
+	here->statusR = nowStatus->statusR;
+	here->statusG = nowStatus->statusG;
+	here->statusB = nowStatus->statusB;
+	here->alignStatus = nowStatus->alignStatus;
+	here->statusX = nowStatus->statusX;
+	here->statusY = nowStatus->statusY;
 
 	// Things we want to clear
-	here -> litStatus = -1;
-	here -> firstStatusBar = NULL;
+	here->litStatus = -1;
+	here->firstStatusBar = NULL;
 
 	statusStuff *old = nowStatus;
 	nowStatus = here;
@@ -149,8 +149,8 @@ statusStuff *copyStatusBarStuff(statusStuff *here) {
 
 void restoreBarStuff(statusStuff *here) {
 	delete nowStatus;
-	setFontColour(verbLinePalette, here -> statusR, here -> statusG, here -> statusB);
-	setFontColour(litVerbLinePalette, here -> statusLR, here -> statusLG, here -> statusLB);
+	setFontColour(verbLinePalette, here->statusR, here->statusG, here->statusB);
+	setFontColour(litVerbLinePalette, here->statusLR, here->statusLG, here->statusLB);
 	nowStatus = here;
 }
 
@@ -166,68 +166,66 @@ void initStatusBar() {
 }
 
 const char *statusBarText() {
-	if (nowStatus -> firstStatusBar) {
-		return nowStatus -> firstStatusBar -> text;
+	if (nowStatus->firstStatusBar) {
+		return nowStatus->firstStatusBar->text;
 	} else {
 		return "";
 	}
 }
 
-#if ALLOW_FILE
-void saveStatusBars(FILE *fp) {
-	statusBar *viewLine = nowStatus -> firstStatusBar;
+void saveStatusBars(Common::WriteStream *stream) {
+	statusBar *viewLine = nowStatus->firstStatusBar;
 
-	put2bytes(nowStatus -> alignStatus, fp);
-	putSigned(nowStatus -> litStatus, fp);
-	put2bytes(nowStatus -> statusX, fp);
-	put2bytes(nowStatus -> statusY, fp);
+	put2bytes(nowStatus->alignStatus, stream);
+	putSigned(nowStatus->litStatus, stream);
+	put2bytes(nowStatus->statusX, stream);
+	put2bytes(nowStatus->statusY, stream);
 
-	fputc(nowStatus -> statusR, fp);
-	fputc(nowStatus -> statusG, fp);
-	fputc(nowStatus -> statusB, fp);
-	fputc(nowStatus -> statusLR, fp);
-	fputc(nowStatus -> statusLG, fp);
-	fputc(nowStatus -> statusLB, fp);
+	putch(nowStatus->statusR, stream);
+	putch(nowStatus->statusG, stream);
+	putch(nowStatus->statusB, stream);
+	putch(nowStatus->statusLR, stream);
+	putch(nowStatus->statusLG, stream);
+	putch(nowStatus->statusLB, stream);
 
 	// Write what's being said
 	while (viewLine) {
-		fputc(1, fp);
-		writeString(viewLine -> text, fp);
-		viewLine = viewLine -> next;
+		putch(1, stream);
+		writeString(viewLine->text, stream);
+		viewLine = viewLine->next;
 	}
-	fputc(0, fp);
+	putch(0, stream);
 }
 
-bool loadStatusBars(FILE *fp) {
+bool loadStatusBars(Common::SeekableReadStream *stream) {
 	clearStatusBar();
 
-	nowStatus -> alignStatus = get2bytes(fp);
-	nowStatus -> litStatus = getSigned(fp);
-	nowStatus -> statusX = get2bytes(fp);
-	nowStatus -> statusY = get2bytes(fp);
+	nowStatus->alignStatus = get2bytes(stream);
+	nowStatus->litStatus = getSigned(stream);
+	nowStatus->statusX = get2bytes(stream);
+	nowStatus->statusY = get2bytes(stream);
 
-	nowStatus -> statusR = fgetc(fp);
-	nowStatus -> statusG = fgetc(fp);
-	nowStatus -> statusB = fgetc(fp);
-	nowStatus -> statusLR = fgetc(fp);
-	nowStatus -> statusLG = fgetc(fp);
-	nowStatus -> statusLB = fgetc(fp);
+	nowStatus->statusR = getch(stream);
+	nowStatus->statusG = getch(stream);
+	nowStatus->statusB = getch(stream);
+	nowStatus->statusLR = getch(stream);
+	nowStatus->statusLG = getch(stream);
+	nowStatus->statusLB = getch(stream);
 
-	setFontColour(verbLinePalette, nowStatus -> statusR, nowStatus -> statusG, nowStatus -> statusB);
-	setFontColour(litVerbLinePalette, nowStatus -> statusLR, nowStatus -> statusLG, nowStatus -> statusLB);
+	setFontColour(verbLinePalette, nowStatus->statusR, nowStatus->statusG, nowStatus->statusB);
+	setFontColour(litVerbLinePalette, nowStatus->statusLR, nowStatus->statusLG, nowStatus->statusLB);
 	// Read what's being said
-	statusBar * * viewLine = & (nowStatus -> firstStatusBar);
+	statusBar * * viewLine = & (nowStatus->firstStatusBar);
 	statusBar *newOne;
-	while (fgetc(fp)) {
+	while (getch(stream)) {
 		newOne = new statusBar;
 		if (! checkNew(newOne)) return false;
-		newOne -> text = readString(fp);
-		newOne -> next = NULL;
+		newOne->text = readString(stream);
+		newOne->next = NULL;
 		(* viewLine) = newOne;
-		viewLine = & (newOne -> next);
+		viewLine = & (newOne->next);
 	}
 	return true;
 }
-#endif
 
 } // End of namespace Sludge

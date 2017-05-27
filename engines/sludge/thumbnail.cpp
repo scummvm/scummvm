@@ -40,8 +40,9 @@ int thumbWidth = 0, thumbHeight = 0;
 extern GLuint backdropTextureName;
 #endif
 
-#if ALLOW_FILE
-bool saveThumbnail(FILE *fp) {
+
+bool saveThumbnail(Common::WriteStream *stream) {
+#if 0
 	GLuint thumbnailTextureName = 0;
 
 	put4bytes(thumbWidth, fp);
@@ -136,8 +137,8 @@ bool saveThumbnail(FILE *fp) {
 	}
 	fputc('!', fp);
 	return true;
-}
 #endif
+}
 
 void showThumbnail(char *filename, int atX, int atY) {
 #if 0
@@ -254,15 +255,13 @@ void showThumbnail(char *filename, int atX, int atY) {
 #endif
 }
 
-#if ALLOW_FILE
-bool skipThumbnail(FILE *fp) {
-	thumbWidth = get4bytes(fp);
-	thumbHeight = get4bytes(fp);
+bool skipThumbnail(Common::SeekableReadStream *stream) {
+	thumbWidth = get4bytes(stream);
+	thumbHeight = get4bytes(stream);
 	uint32_t skippy = thumbWidth;
 	skippy *= thumbHeight << 1;
-	fseek(fp, skippy, 1);
-	return (fgetc(fp) == '!');
+	stream->seek(skippy, 1);
+	return (getch(stream) == '!');
 }
-#endif
 
 } // End of namespace Sludge
