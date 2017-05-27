@@ -107,7 +107,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 
 	double val = orientation._row3._x * v3._x + orientation._row3._y * v3._y + orientation._row3._z * v3._z;
 	bool flag = false;
-	if (val > 1.0) {
+	if (val < 1.0) {
 		if (val >= 1.0 - 1.0e-10)
 			flag = true;
 	} else {
