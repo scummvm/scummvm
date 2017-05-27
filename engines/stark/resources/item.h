@@ -100,9 +100,6 @@ public:
 	/** Obtain the concrete instance of an item template */
 	virtual ItemVisual *getSceneInstance() = 0;
 
-	/** Obtain the title for one of the item's hotspots */
-	virtual Common::String getHotspotTitle(uint32 hotspotIndex) const;
-
 	/** Replace the current movement with an other */
 	void setMovement(Movement *movement);
 
@@ -161,6 +158,9 @@ public:
 	/** Get the hotspot index for an item relative position */
 	int getHotspotIndexForPoint(const Common::Point &point);
 
+	/** Obtain the title for one of the item's hotspots */
+	Common::String getHotspotTitle(uint32 hotspotIndex);
+
 	/** Check whether the item has runnable scripts for the specified action */
 	bool canPerformAction(uint32 action, uint32 hotspotIndex);
 
@@ -216,7 +216,6 @@ public:
 
 	// Item API
 	ItemVisual *getSceneInstance() override;
-	Common::String getHotspotTitle(uint32 hotspotIndex) const override;
 	void setAnimHierarchy(AnimHierarchy *animHierarchy) override;
 
 	/** Obtain the bone mesh to use to render the item */
@@ -416,7 +415,6 @@ public:
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
-	Common::String getHotspotTitle(uint32 hotspotIndex) const override;
 
 	/** Set the mesh main or face texture */
 	void setTexture(int32 index, uint32 textureType);

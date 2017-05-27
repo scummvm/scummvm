@@ -117,15 +117,6 @@ Gfx::RenderEntry *Item::getRenderEntry(const Common::Point &positionOffset) {
 	return nullptr;
 }
 
-Common::String Item::getHotspotTitle(uint32 hotspotIndex) const {
-	PATTable *table = findChildWithOrder<PATTable>(hotspotIndex);
-	if (table) {
-		return table->getName();
-	} else {
-		return getName();
-	}
-}
-
 Movement *Item::getMovement() const {
 	return _movement;
 }
@@ -347,6 +338,15 @@ void ItemVisual::setPosition2D(const Common::Point &position) {
 	warning("ItemVisual::setPosition2D is not implemented for this item type: %d (%s)", _subType, _name.c_str());
 }
 
+Common::String ItemVisual::getHotspotTitle(uint32 hotspotIndex) {
+	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	if (table) {
+		return table->getName();
+	} else {
+		return getName();
+	}
+}
+
 ItemTemplate::~ItemTemplate() {
 }
 
@@ -398,14 +398,6 @@ ItemVisual *ItemTemplate::getSceneInstance() {
 	}
 
 	return nullptr;
-}
-
-Common::String ItemTemplate::getHotspotTitle(uint32 hotspotIndex) const {
-	if (_referencedItem) {
-		return _referencedItem->getHotspotTitle(hotspotIndex);
-	}
-
-	return Item::getHotspotTitle(hotspotIndex);
 }
 
 void ItemTemplate::setStockAnimHierachy(AnimHierarchy *animHierarchy) {
@@ -949,14 +941,6 @@ Gfx::RenderEntry *ModelItem::getRenderEntry(const Common::Point &positionOffset)
 	}
 
 	return _renderEntry;
-}
-
-Common::String ModelItem::getHotspotTitle(uint32 hotspotIndex) const {
-	if (_referencedItem) {
-		return _referencedItem->getHotspotTitle(hotspotIndex);
-	}
-
-	return Item::getHotspotTitle(hotspotIndex);
 }
 
 ItemTemplate *ModelItem::getItemTemplate() const {
