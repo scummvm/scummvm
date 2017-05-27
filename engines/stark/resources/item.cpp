@@ -340,11 +340,18 @@ void ItemVisual::setPosition2D(const Common::Point &position) {
 
 Common::String ItemVisual::getHotspotTitle(uint32 hotspotIndex) {
 	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	Common::String title;
 	if (table) {
-		return table->getName();
+		title = table->getName();
 	} else {
-		return getName();
+		title = getName();
 	}
+
+	if (title.equalsIgnoreCase("Default April PAT")) {
+		return "April"; // The same hack exists in the original
+	}
+
+	return title;
 }
 
 ItemTemplate::~ItemTemplate() {
