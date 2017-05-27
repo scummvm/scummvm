@@ -44,11 +44,12 @@
 #include "shaders.h"
 
 #include "sound.h"
+
+#if 0
 #include "vorbis/codec.h"
 #define OV_EXCLUDE_STATIC_CALLBACKS
 #include "vorbis/vorbisfile.h"
 
-#if 0
 #include "ogg/ogg.h"
 #include "libvorbis/vorbis_os.h"
 
