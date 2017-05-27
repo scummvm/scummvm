@@ -66,13 +66,9 @@ Math::Matrix4 VisualProp::getModelMatrix(const Math::Vector3d& position, float d
 	Math::Matrix4 rot2;
 	rot2.buildAroundY(270 - direction);
 
-	Math::Matrix4 scale;
-	scale.setValue(2, 2, -1.0f);
-
 	Math::Matrix4 modelTransform = _model->getTransform();
 
-	// FIXME: Why has the scale to be after the model transform?
-	return posMatrix * rot1 * rot2 * modelTransform * scale;
+	return posMatrix * rot1 * rot2 * modelTransform;
 }
 
 bool VisualProp::intersectRay(const Math::Ray &ray, const Math::Vector3d position, float direction) {

@@ -224,17 +224,27 @@ public:
 	Math::Matrix4 getTransform(uint keyframeIndex) const {
 		const KeyFrame &keyframe = _keyFrames[keyframeIndex];
 
-		Math::Matrix4 rotation = keyframe.essentialRotation.toMatrix();
-
 		Math::Matrix4 translation;
 		translation.setPosition(keyframe.translation);
+
+		Math::Matrix4 essentialRotation = keyframe.essentialRotation.toMatrix();
+
+		Math::Matrix4 determinant;
+		determinant.setValue(0, 0, keyframe.determinant);
+		determinant.setValue(1, 1, keyframe.determinant);
+		determinant.setValue(2, 2, keyframe.determinant);
+
+		Math::Matrix4 stretchRotation = keyframe.stretchRotation.toMatrix();
+
+		Math::Matrix4 stretchRotationTransposed = stretchRotation;
+		stretchRotationTransposed.transpose();
 
 		Math::Matrix4 scale;
 		scale.setValue(0, 0, keyframe.scale.x());
 		scale.setValue(1, 1, keyframe.scale.y());
 		scale.setValue(2, 2, keyframe.scale.z());
 
-		return translation * rotation * scale;
+		return translation * essentialRotation * determinant * stretchRotationTransposed * scale * stretchRotation;
 	}
 
 	const Common::Array<BiffMesh::Vertex> &getVertices() const {
@@ -340,10 +350,6 @@ public:
 		material.b = _diffuse.z();
 
 		return material;
-	}
-
-	const Common::String &getTexture() const {
-		return _texture;
 	}
 
 private:
