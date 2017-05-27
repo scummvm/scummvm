@@ -58,12 +58,11 @@ float FVector::normalize() {
 	return hyp;
 }
 
-const FVector *FVector::addAndNormalize(FVector &dest, const FVector &v1, const FVector &v2) {
-	FVector tempVector(v1._x + v2._x, v1._y + v2._y, v1._z + v2._z);
-	tempVector.normalize();
+FVector FVector::addAndNormalize(const FVector &v) const {
+	FVector tempV(_x + v._x, _y + v._y, _z + v._z);
+	tempV.normalize();
 
-	dest = tempVector;
-	return &dest;
+	return tempV;
 }
 
 float FVector::getDistance(const FVector &src) const {

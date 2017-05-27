@@ -64,9 +64,10 @@ public:
 	float normalize();
 
 	/**
-	 * Adds two vectors together and then normalizes the result
+	 * Adds the current vector and a passed one together, normalizes them,
+	 * and then returns the resulting vector
 	 */
-	static const FVector *addAndNormalize(FVector &dest, const FVector &v1, const FVector &v2);
+	FVector addAndNormalize(const FVector &v) const;
 
 	/**
 	 * Returns the distance between a specified point and this one

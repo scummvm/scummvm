@@ -57,17 +57,11 @@ void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const
 	}
 
 	if (!flag) {
-		const FVector *tv;
-		FVector tempV1, tempV2;
-		FVector::addAndNormalize(tempV1, row3, _posDelta);
-		tv = FVector::addAndNormalize(tempV2, row3, tempV1);
-		tempV1 = *tv;
-
-		tv = FVector::addAndNormalize(tempV2, row3, tempV1);
-		tempV1 = *tv;
-
-		tv = FVector::addAndNormalize(tempV2, row3, tempV1);
-		tempV1 = *tv;
+		FVector tempV1;
+		tempV1 = row3.addAndNormalize(_posDelta);
+		tempV1 = row3.addAndNormalize(tempV1);
+		tempV1 = row3.addAndNormalize(tempV1);
+		tempV1 = row3.addAndNormalize(tempV1);
 
 		FMatrix newOrient;
 		newOrient.fn1(tempV1);
@@ -81,7 +75,6 @@ void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const
 
 int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	FVector v1, v2, v3, v4;
-	const FVector *tv;
 
 	if (!_active)
 		return 0;
@@ -116,13 +109,10 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 	}
 
 	if (!flag) {
-		v2.addAndNormalize(v1, v2, v3);
-		tv = v2.addAndNormalize(v4, v2, v1);
-		v1 = *tv;
-		tv = v2.addAndNormalize(v4, v2, v1);
-		v1 = *tv;
-		tv = v2.addAndNormalize(v4, v2, v1);
-		v1 = *tv;
+		v1 = v2.addAndNormalize(v3);
+		v1 = v2.addAndNormalize(v1);
+		v1 = v2.addAndNormalize(v1);
+		v1 = v2.addAndNormalize(v1);
 
 		orientation.fn1(v1);
 		v2 = v1;
