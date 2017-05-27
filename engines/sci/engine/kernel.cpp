@@ -598,7 +598,6 @@ void Kernel::mapFunctions() {
 		_kernelFuncs[id].workarounds = NULL;
 		_kernelFuncs[id].subFunctions = NULL;
 		_kernelFuncs[id].subFunctionCount = 0;
-		_kernelFuncs[id].debugLogging = false;
 		if (kernelName.empty()) {
 			// No name was given -> must be an unknown opcode
 			warning("Kernel function %x unknown", id);
@@ -713,85 +712,6 @@ void Kernel::mapFunctions() {
 				mapped + ignored, _kernelNames.size(), mapped, ignored);
 
 	return;
-}
-
-bool Kernel::debugSetFunction(const char *kernelName, int logging, int breakpoint) {
-	if (strcmp(kernelName, "*")) {
-		for (uint id = 0; id < _kernelFuncs.size(); id++) {
-			if (_kernelFuncs[id].name) {
-				if (strcmp(kernelName, _kernelFuncs[id].name) == 0) {
-					if (_kernelFuncs[id].subFunctions) {
-						// sub-functions available and main name matched, in that case set logging of all sub-functions
-						KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
-						uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
-						for (uint subId = 0; subId < kernelSubCallCount; subId++) {
-							if (kernelSubCall->function) {
-								if (logging != -1)
-									kernelSubCall->debugLogging = logging == 1 ? true : false;
-								if (breakpoint != -1)
-									kernelSubCall->debugBreakpoint = breakpoint == 1 ? true : false;
-							}
-							kernelSubCall++;
-						}
-						return true;
-					}
-					// function name matched, set for this one and exit
-					if (logging != -1)
-						_kernelFuncs[id].debugLogging = logging == 1 ? true : false;
-					if (breakpoint != -1)
-						_kernelFuncs[id].debugBreakpoint = breakpoint == 1 ? true : false;
-					return true;
-				} else {
-					// main name was not matched
-					if (_kernelFuncs[id].subFunctions) {
-						// Sub-Functions available
-						KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
-						uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
-						for (uint subId = 0; subId < kernelSubCallCount; subId++) {
-							if (kernelSubCall->function) {
-								if (strcmp(kernelName, kernelSubCall->name) == 0) {
-									// sub-function name matched, set for this one and exit
-									if (logging != -1)
-										kernelSubCall->debugLogging = logging == 1 ? true : false;
-									if (breakpoint != -1)
-										kernelSubCall->debugBreakpoint = breakpoint == 1 ? true : false;
-									return true;
-								}
-							}
-							kernelSubCall++;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
-	// Set debugLogging for all calls
-	for (uint id = 0; id < _kernelFuncs.size(); id++) {
-		if (_kernelFuncs[id].name) {
-			if (!_kernelFuncs[id].subFunctions) {
-				// No sub-functions, enable actual kernel function
-				if (logging != -1)
-					_kernelFuncs[id].debugLogging = logging == 1 ? true : false;
-				if (breakpoint != -1)
-					_kernelFuncs[id].debugBreakpoint = breakpoint == 1 ? true : false;
-			} else {
-				// Sub-Functions available, enable those too
-				KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
-				uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
-				for (uint subId = 0; subId < kernelSubCallCount; subId++) {
-					if (kernelSubCall->function) {
-						if (logging != -1)
-							kernelSubCall->debugLogging = logging == 1 ? true : false;
-						if (breakpoint != -1)
-							kernelSubCall->debugBreakpoint = breakpoint == 1 ? true : false;
-					}
-					kernelSubCall++;
-				}
-			}
-		}
-	}
-	return true;
 }
 
 #ifdef ENABLE_SCI32
