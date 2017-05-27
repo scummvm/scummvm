@@ -119,8 +119,8 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 	}
 
 	if (_field40 >= 0) {
-		double powVal = _powers[_field40];
-		v1 = v2 * powVal;
+		double speedVal = _speeds[_field40];
+		v1 = v2 * speedVal;
 		pos += v1;
 
 		--_field40;
@@ -141,10 +141,10 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 	}
 
 	if (_field48 >= 0) {
-		double powVal = _powers[31 - _field48];
-		v1._y = v2._y * powVal;
-		v1._z = v2._z * powVal;
-		v1._x = v2._x * powVal;
+		double speedVal = _speeds[31 - _field48];
+		v1._y = v2._y * speedVal;
+		v1._z = v2._z * speedVal;
+		v1._x = v2._x * speedVal;
 		pos._y = v1._y + pos._y;
 		pos._z = v1._z + pos._z;
 		pos._x = pos._x + v1._x;

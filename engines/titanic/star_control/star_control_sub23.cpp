@@ -89,17 +89,17 @@ void CStarControlSub23::proc6(int val1, int val2, float val) {
 	_field48 = 31;
 	_field3C = (double)val2 * _field38;
 	
-	// Calculate the powers table
+	// Calculate the speeds for a graduated movement between stars
 	double base = 0.0, total = 0.0;
-	_powers.resize(32);
+	_speeds.resize(32);
 	for (int idx = 31; idx >= 0; --idx) {
-		_powers[idx] = pow(base, 4.0);
-		total += _powers[idx];
+		_speeds[idx] = pow(base, 4.0);
+		total += _speeds[idx];
 		base += 0.03125;
 	}
 	
 	for (int idx = 0; idx < 32; ++idx) {
-		_powers[idx] = _powers[idx] * _field3C / total;
+		_speeds[idx] = _speeds[idx] * _field3C / total;
 	}
 }
 

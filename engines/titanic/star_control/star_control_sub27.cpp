@@ -59,8 +59,8 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 	errorCode.set();
 
 	if (_field40 >= 0) {
-		double powVal = _powers[_field40];
-		pos += _posDelta * powVal;
+		double speedVal = _speeds[_field40];
+		pos += _posDelta * speedVal;
 		getVectorOnPath(pos);
 
 		--_field40;
@@ -74,8 +74,8 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 		errorCode.set();
 		return 1;
 	} else if (_field48 >= 0) {
-		double powVal = _powers[31 - _field48];
-		pos += _posDelta * powVal;
+		double speedVal = _speeds[31 - _field48];
+		pos += _posDelta * speedVal;
 		getVectorOnPath(pos);
 
 		--_field48;

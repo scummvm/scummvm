@@ -44,7 +44,7 @@ protected:
 	int _field44;
 	int _field48;
 	int _field4C;
-	Common::Array<double> _powers;
+	Common::Array<double> _speeds;
 	int _field54;
 	double _transitionPercent;
 	double _transitionPercentInc;
