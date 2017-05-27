@@ -325,7 +325,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			return SIGNAL_REG;
 		} else if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
 			// Create a virtual file containing the save game description
-			// and slot number, as the game scripts expect.
+			// and current score progress, as the game scripts expect.
 			int saveNo;
 			sscanf(name.c_str(), "%d.SG", &saveNo);
 			saveNo += kSaveIdShift;
@@ -365,7 +365,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			return SIGNAL_REG;
 		} else if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
 			// Create a virtual file containing the save game description
-			// and slot number, as the game scripts expect.
+			// and avatar ID, as the game scripts expect.
 			int saveNo;
 			sscanf(name.c_str(), "%d.DTA", &saveNo);
 			saveNo += kSaveIdShift;
