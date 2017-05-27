@@ -3698,27 +3698,17 @@ bool Console::cmdGo(int argc, const char **argv) {
 }
 
 bool Console::cmdLogKernel(int argc, const char **argv) {
-	if (argc < 3) {
+	if (argc != 2) {
 		debugPrintf("Logs calls to specified kernel function.\n");
-		debugPrintf("Usage: %s <kernel function/*> <on/off>\n", argv[0]);
-		debugPrintf("Example: %s StrCpy on\n", argv[0]);
+		debugPrintf("Usage: %s <kernel function/*>\n", argv[0]);
+		debugPrintf("Example: %s StrCpy\n", argv[0]);
+		debugPrintf("This is an alias for: bpk <kernel function> log\n");
 		return true;
 	}
 
-	bool logging;
-	if (strcmp(argv[2], "on") == 0)
-		logging = true;
-	else if (strcmp(argv[2], "off") == 0)
-		logging = false;
-	else {
-		debugPrintf("2nd parameter must be either on or off\n");
-		return true;
-	}
+	const char *bpk_argv[] = { "bpk", argv[1], "log" };
+	cmdBreakpointKernel(3, bpk_argv);
 
-	if (g_sci->getKernel()->debugSetFunction(argv[1], logging, -1))
-		debugPrintf("Logging %s for k%s\n", logging ? "enabled" : "disabled", argv[1]);
-	else
-		debugPrintf("Unknown kernel function %s\n", argv[1]);
 	return true;
 }
 
@@ -3759,6 +3749,9 @@ void Console::printBreakpoint(int index, const Breakpoint &bp) {
 	}
 	case BREAK_ADDRESS:
 		debugPrintf("Execute address %04x:%04x%s\n", PRINT_REG(bp._regAddress), bpaction);
+		break;
+	case BREAK_KERNEL:
+		debugPrintf("Kernel call k%s%s\n", bp._name.c_str(), bpaction);
 	}
 }
 
@@ -3996,27 +3989,68 @@ bool Console::cmdBreakpointWrite(int argc, const char **argv) {
 }
 
 bool Console::cmdBreakpointKernel(int argc, const char **argv) {
-	if (argc < 3) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on execution of a kernel function.\n");
-		debugPrintf("Usage: %s <name> <on/off>\n", argv[0]);
-		debugPrintf("Example: %s DrawPic on\n", argv[0]);
+		debugPrintf("Usage: %s <name> [<action>]\n", argv[0]);
+		debugPrintf("Example: %s DrawPic\n", argv[0]);
+		debugPrintf("         %s DrawPic log\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
 	}
 
-	bool breakpoint;
-	if (strcmp(argv[2], "on") == 0)
-		breakpoint = true;
-	else if (strcmp(argv[2], "off") == 0)
-		breakpoint = false;
-	else {
-		debugPrintf("2nd parameter must be either on or off\n");
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
+	}
+
+	// Check if any kernel functions match, to catch typos
+	Common::String name = argv[1];
+	bool wildcard = name.lastChar() == '*';
+	Common::String prefix = name;
+	if (wildcard)
+		prefix.deleteLastChar();
+	bool found = false;
+	const Kernel::KernelFunctionArray &kernelFuncs = _engine->getKernel()->_kernelFuncs;
+	for (uint id = 0; id < kernelFuncs.size() && !found; id++) {
+		if (kernelFuncs[id].name) {
+			const KernelSubFunction *kernelSubCall = kernelFuncs[id].subFunctions;
+			if (!kernelSubCall) {
+				Common::String kname = kernelFuncs[id].name;
+				if (name == kname || (wildcard && kname.hasPrefix(prefix)))
+					found = true;
+			} else {
+				uint kernelSubCallCount = kernelFuncs[id].subFunctionCount;
+				for (uint subId = 0; subId < kernelSubCallCount; subId++) {
+					if (kernelSubCall->name) {
+						Common::String kname = kernelSubCall->name;
+						if (name == kname || (wildcard && kname.hasPrefix(prefix)))
+							found = true;
+					}
+					kernelSubCall++;
+				}
+			}
+		}
+	}
+	if (!found) {
+		debugPrintf("No kernel functions match %s.\n", name.c_str());
 		return true;
 	}
 
-	if (g_sci->getKernel()->debugSetFunction(argv[1], -1, breakpoint))
-		debugPrintf("Breakpoint %s for k%s\n", (breakpoint ? "enabled" : "disabled"), argv[1]);
-	else
-		debugPrintf("Unknown kernel function %s\n", argv[1]);
+	Breakpoint bp;
+	bp._type = BREAK_KERNEL;
+	bp._name = name;
+	bp._action = action;
+
+	_debugState._breakpoints.push_back(bp);
+
+	if (action != BREAK_NONE)
+		_debugState._activeBreakpointTypes |= BREAK_KERNEL;
+
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
 
 	return true;
 }

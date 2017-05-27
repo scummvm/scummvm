@@ -302,7 +302,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
 		}
 
-		if (activeBreakpointTypes || DebugMan.isDebugChannelEnabled(kDebugLevelScripts))
+		if ((activeBreakpointTypes & (BREAK_SELECTOREXEC | BREAK_SELECTORREAD | BREAK_SELECTORWRITE))
+		     || DebugMan.isDebugChannelEnabled(kDebugLevelScripts))
 			debugSelectorCall(send_obj, selector, argc, argp, varp, funcp, s->_segMan, selectorType);
 
 		assert(argp[0].toUint16() == argc); // The first argument is argc
@@ -381,13 +382,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		addKernelCallToExecStack(s, kernelCallNr, -1, argc, argv);
 		s->r_acc = kernelCall.function(s, argc, argv);
 
-		if (kernelCall.debugLogging)
+		if (g_sci->checkKernelBreakpoint(kernelCall.name))
 			logKernelCall(&kernelCall, NULL, s, argc, argv, s->r_acc);
-		if (kernelCall.debugBreakpoint) {
-			debugN("Break on k%s\n", kernelCall.name);
-			g_sci->_debugState.debugging = true;
-			g_sci->_debugState.breakpointWasHit = true;
-		}
 	} else {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
@@ -453,13 +449,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		addKernelCallToExecStack(s, kernelCallNr, subId, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
 
-		if (kernelSubCall.debugLogging)
+		if (g_sci->checkKernelBreakpoint(kernelSubCall.name))
 			logKernelCall(&kernelCall, &kernelSubCall, s, argc, argv, s->r_acc);
-		if (kernelSubCall.debugBreakpoint) {
-			debugN("Break on k%s\n", kernelSubCall.name);
-			g_sci->_debugState.debugging = true;
-			g_sci->_debugState.breakpointWasHit = true;
-		}
 	}
 
 	// Remove callk stack frame again, if there's still an execution stack

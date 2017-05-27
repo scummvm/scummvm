@@ -779,6 +779,44 @@ bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
 	return found;
 }
 
+bool SciEngine::checkKernelBreakpoint(const Common::String &name) {
+	bool found = false;
+
+	if (_debugState._activeBreakpointTypes & BREAK_KERNEL) {
+
+		Common::List<Breakpoint>::const_iterator bp;
+		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+			if (bp->_action == BREAK_NONE)
+				continue;
+			if (bp->_type != BREAK_KERNEL)
+				continue;
+
+			bool wildcard = bp->_name.lastChar() == '*';
+			Common::String prefix = bp->_name;
+			if (wildcard)
+				prefix.deleteLastChar();
+			if (bp->_name == name || (wildcard && name.hasPrefix(prefix))) {
+				if (bp->_action == BREAK_BREAK) {
+					if (!found)
+						_console->debugPrintf("Break on k%s\n", name.c_str());
+					_debugState.debugging = true;
+					_debugState.breakpointWasHit = true;
+				} else if (bp->_action == BREAK_BACKTRACE) {
+					if (!found)
+						_console->debugPrintf("Break on k%s\n", name.c_str());
+					logBacktrace();
+				} else if (bp->_action == BREAK_INSPECT) {
+					// Ignoring this mode, to make it identical to BREAK_LOG
+				}
+				found = true;
+			}
+		}
+	}
+
+	return found;
+}
+
+
 void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType) {
 	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
 	const char *objectName = segMan->getObjectName(send_obj);

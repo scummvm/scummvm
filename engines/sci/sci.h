@@ -315,6 +315,7 @@ public:
 	bool checkAddressBreakpoint(const reg32_t &address);
 
 public:
+	bool checkKernelBreakpoint(const Common::String &name);
 
 	/**
 	 * Processes a multilanguage string based on the current language settings and
