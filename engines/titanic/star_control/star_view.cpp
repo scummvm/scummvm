@@ -87,7 +87,8 @@ void CStarView::draw(CScreenManager *screenManager) {
 		Point destPos(20, 10);
 
 		if (_showingPhoto) {
-			screenManager->blitFrom(SURFACE_PRIMARY, _photoSurface, &destPos);
+			if (_photoSurface)
+				screenManager->blitFrom(SURFACE_PRIMARY, _photoSurface, &destPos);
 
 			if (!_homePhotoMask && _owner) {
 				_homePhotoMask = _owner->getHiddenObject("HomePhotoMask");
