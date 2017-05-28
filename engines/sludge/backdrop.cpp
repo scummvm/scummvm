@@ -1005,24 +1005,19 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 
 extern int viewportOffsetX, viewportOffsetY;
 
-
-bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 #if 0
+bool loadImage(GLubyte *loadhere, int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, int x, int y, bool reserve) {
+
 	int t1, t2, n;
 	unsigned short c;
 	GLubyte *target;
 	int32_t transCol = reserve ? -1 : 63519;
-	int picWidth;
-	int picHeight;
-	int realPicWidth, realPicHeight;
 	long file_pointer = stream->pos();
-
 	png_structp png_ptr;
 	png_infop info_ptr, end_info;
 
 
 	int fileIsPNG = true;
-
 	// Is this a PNG file?
 
 	char tmp[10];
@@ -1076,21 +1071,10 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 
 		png_read_update_info(png_ptr, info_ptr);
 		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-		//int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-	}
-
-	GLfloat texCoordW = 1.0;
-	GLfloat texCoordH = 1.0;
-	if (!NPOT_textures) {
-		picWidth = getNextPOT(picWidth);
-		picHeight = getNextPOT(picHeight);
-		texCoordW = ((double)realPicWidth) / picWidth;
-		texCoordH = ((double)realPicHeight) / picHeight;
 	}
 
 	if (reserve) {
-		if (!resizeBackdrop(realPicWidth, realPicHeight)) return false;
+		if (! resizeBackdrop(realPicWidth, realPicHeight)) return false;
 	}
 
 	if (x == IN_THE_CENTRE) x = (sceneWidth - realPicWidth) >> 1;
@@ -1102,7 +1086,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 		for (int i = 0; i < realPicHeight; i++)
 			row_pointers[i] = backdropTexture + 4 * i * picWidth;
 
-		png_read_image(png_ptr, (png_byte **) row_pointers);
+		png_read_image(png_ptr, (png_byte **)row_pointers);
 		png_read_end(png_ptr, NULL);
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 	} else {
@@ -1116,7 +1100,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 				} else {
 					n = 1;
 				}
-				while (n --) {
+				while (--n) {
 					target = backdropTexture + 4 * picWidth * t2 + t1 * 4;
 					if (c == transCol || c == 2015) {
 						target[0] = (GLubyte) 0;
@@ -1134,9 +1118,10 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 			}
 		}
 	}
+	return true;
+}
 
-	GLuint tmpTex;
-
+void makeGlArray(GLuint &tmpTex, const GLubyte *texture, int picWidth, int picHeight) {
 	glGenTextures(1, &tmpTex);
 	glBindTexture(GL_TEXTURE_2D, tmpTex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1148,18 +1133,25 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
+	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture, tmpTex);
 
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, backdropTexture, tmpTex);
+}
 
-
-	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
+void renderToTexture(GLuint tmpTex, int x, int y, int picWidth, int picHeight, int realPicWidth, int realPicHeight) {
+	GLfloat texCoordW = 1.0;
+	GLfloat texCoordH = 1.0;
+	if (! NPOT_textures) {
+		picWidth = getNextPOT(picWidth);
+		picHeight = getNextPOT(picHeight);
+		texCoordW = ((double)realPicWidth) / picWidth;
+		texCoordH = ((double)realPicHeight) / picHeight;
+	}
 
 	float btx1;
 	float btx2;
 	float bty1;
 	float bty2;
-	if (!NPOT_textures) {
+	if (! NPOT_textures) {
 		btx1 = backdropTexW * x / sceneWidth;
 		btx2 = backdropTexW * (x + realPicWidth) / sceneWidth;
 		bty1 = backdropTexH * y / sceneHeight;
@@ -1205,7 +1197,6 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 			};
 
 			if (backdropExists) {
-
 				// Render the sprite to the backdrop
 				// (using mulitexturing, so the old backdrop is seen where alpha < 1.0)
 				glActiveTexture(GL_TEXTURE2);
@@ -1215,10 +1206,10 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 				glUseProgram(shader.paste);
 				GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
 				if (uniform >= 0) glUniform1i(uniform, 0); // No lighting
+
 				setPMVMatrix(shader.paste);
 
 				setPrimaryColor(1.0, 1.0, 1.0, 1.0);
-
 				glBindTexture(GL_TEXTURE_2D, tmpTex);
 				//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
@@ -1228,10 +1219,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 
 			} else {
 				// It's all new - nothing special to be done.
-
-
 				glUseProgram(shader.texture);
-
 				setPMVMatrix(shader.texture);
 
 				glBindTexture(GL_TEXTURE_2D, tmpTex);
@@ -1240,9 +1228,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 
 				drawQuad(shader.texture, vertices, 1, texCoords);
 
-
 				glUseProgram(0);
-
 			}
 
 			// Copy Our ViewPort To The Texture
@@ -1250,12 +1236,27 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 
 			yoffset += viewportHeight;
 		}
-
 		xoffset += viewportWidth;
 	}
+	setPixelCoords(false);
+}
+#endif
+
+bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
+#if 0
+	int picWidth, picHeight;
+	int realPicWidth, realPicHeight;
+
+	if (!loadImage(backdropTexture, picWidth, picHeight, realPicWidth, realPicHeight, stream, x, y, reserve))
+		return false;
+
+	GLuint tmpTex;
+	makeGlArray(tmpTex, backdropTexture, picWidth, picHeight);
+
+	renderToTexture(tmpTex, x, y, picWidth, picHeight, realPicWidth, realPicHeight);
+
 	deleteTextures(1, &tmpTex);
 
-	setPixelCoords(false);
 	backdropExists = true;
 #endif
 	return true;
