@@ -45,7 +45,7 @@ private:
 	bool _hasReference;
 	CViewport _photoViewport;
 	CSurfaceFader _fader;
-	CVideoSurface *_videoSurface2;
+	CVideoSurface *_photoSurface;
 	CGameObject *_homePhotoMask;
 	bool _field218;
 	bool _showingPhoto;
@@ -62,7 +62,7 @@ private:
 	/**
 	 * Gets a random position and orientation
 	 */
-	void randomizeVectors2(FVector &pos, FVector &orientation);
+	void getRandomPhotoViewpoint(FVector &pos, FVector &orientation);
 
 	/**
 	 * Handles resizing the surface

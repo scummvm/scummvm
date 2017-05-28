@@ -32,7 +32,7 @@ namespace Titanic {
 
 CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullptr),
 		_starField(nullptr), _videoSurface(nullptr), _hasReference(0),
-		_videoSurface2(nullptr), _homePhotoMask(nullptr),
+		_photoSurface(nullptr), _homePhotoMask(nullptr),
 		_field218(false), _showingPhoto(false) {
 	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
 
@@ -80,14 +80,14 @@ void CStarView::draw(CScreenManager *screenManager) {
 		return;
 
 	if (_fader.isActive()) {
-		CVideoSurface *surface = _showingPhoto ? _videoSurface2 : _videoSurface;
+		CVideoSurface *surface = _showingPhoto ? _photoSurface : _videoSurface;
 		surface = _fader.draw(screenManager, surface);
 		screenManager->blitFrom(SURFACE_PRIMARY, surface);
 	} else {
 		Point destPos(20, 10);
 
 		if (_showingPhoto) {
-			screenManager->blitFrom(SURFACE_PRIMARY, _videoSurface2, &destPos);
+			screenManager->blitFrom(SURFACE_PRIMARY, _photoSurface, &destPos);
 
 			if (!_homePhotoMask && _owner) {
 				_homePhotoMask = _owner->getHiddenObject("HomePhotoMask");
@@ -113,7 +113,7 @@ void CStarView::draw(CScreenManager *screenManager) {
 bool CStarView::MouseButtonDownMsg(int flags, const Point &pt) {
 	if (_starField) {
 		return _starField->mouseButtonDown(
-			_showingPhoto ? _videoSurface2 : _videoSurface,
+			_showingPhoto ? _photoSurface : _videoSurface,
 			&_camera, flags, pt);
 	}
 
@@ -362,7 +362,7 @@ void CStarView::fn14() {
 
 void CStarView::setHasReference() {
 	FVector pos, orientation;
-	randomizeVectors2(pos, orientation);
+	getRandomPhotoViewpoint(pos, orientation);
 
 	_photoViewport.setPosition(pos);
 	_photoViewport.setOrientation(orientation);
@@ -410,30 +410,30 @@ void CStarView::fn16() {
 void CStarView::fn17() {
 	if (_starField && !_showingPhoto) {
 		_camera.removeMatrixRow();
-		_starField->fn8(_videoSurface2);
+		_starField->fn8(_photoSurface);
 	}
 }
 
 void CStarView::fn18(CStarCamera *camera) {
 	if (_starField) {
-		if (!_videoSurface2) {
+		if (!_photoSurface) {
 			CScreenManager *scrManager = CScreenManager::setCurrent();
 			if (scrManager)
-				resizeSurface(scrManager, 600, 340, &_videoSurface2);
+				resizeSurface(scrManager, 600, 340, &_photoSurface);
 		}
 
-		if (_videoSurface2) {
+		if (_photoSurface) {
 			int oldVal = _starField->get54();
 			bool oldCrosshairs = _starField->setCrosshairs(false);
 
-			_videoSurface2->clear();
-			_videoSurface2->lock();
-			_starField->render(_videoSurface2, camera);
+			_photoSurface->clear();
+			_photoSurface->lock();
+			_starField->render(_photoSurface, camera);
 
 			_starField->setCrosshairs(oldCrosshairs);
 			_starField->set54(oldVal);
-			_starField->fn6(_videoSurface2, camera);
-			_videoSurface2->unlock();
+			_starField->fn6(_photoSurface, camera);
+			_photoSurface->unlock();
 		}
 	}
 }
@@ -454,7 +454,7 @@ void CStarView::randomizeVectors1(FVector &pos, FVector &orientation) {
 	orientation = FVector((float)-0.577350259, (float)-0.577350259, (float)-0.577350259);
 }
 
-void CStarView::randomizeVectors2(FVector &pos, FVector &orientation) {
+void CStarView::getRandomPhotoViewpoint(FVector &pos, FVector &orientation) {
 	/* ****DEBUG***
 	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
