@@ -25,6 +25,7 @@
 #include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/services/gameinterface.h"
+#include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 
@@ -83,9 +84,9 @@ void Cursor::setFading(bool fading) {
 void Cursor::updateFadeLevel() {
 	if (_fading) {
 		if (_fadeLevelIncreasing) {
-			_fadeLevel += 0.05f;
+			_fadeLevel += 0.001f * StarkGlobal->getMillisecondsPerGameloop();
 		} else {
-			_fadeLevel -= 0.05f;
+			_fadeLevel -= 0.001f * StarkGlobal->getMillisecondsPerGameloop();
 		}
 		if (ABS(_fadeLevel) >= _fadeValueMax) {
 			_fadeLevelIncreasing = !_fadeLevelIncreasing;
