@@ -30,6 +30,8 @@
 #include "sci/engine/script.h"
 #include "sci/engine/scriptdebug.h"
 
+#include "common/algorithm.h"
+
 namespace Sci {
 
 //#define VM_DEBUG_SEND
@@ -782,6 +784,49 @@ bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
 	return found;
 }
 
+bool matchKernelBreakpointPattern(const Common::String &pattern, const Common::String &name) {
+	// Pattern:
+	// A comma-separated list of atoms.
+	// An atom is a (possibly empty) word, optionally with a ! prefix (for
+	// a negative-match), and/or a * suffix (for a prefix-match).
+
+	// The last matching atom in the pattern takes effect.
+
+	// Examples:
+	// FrameOut : matches only FrameOut
+	// * : matches everything
+	// *,!FrameOut : matches everything except FrameOut
+	// InitBresen,DoBresen : matches InitBresen and DoBresen
+	// DoSound*,!DoSoundUpdateCues : matches all DoSound sub-functions except
+	//                               DoSoundUpdateCues
+
+	bool result = false;
+
+	Common::String::const_iterator i = pattern.begin();
+	while (i != pattern.end()) {
+		Common::String::const_iterator next = Common::find(i, pattern.end(), ',');
+		bool negative = *i == '!';
+
+		if (negative)
+			i++;
+
+		Common::String atom(i, next - i);
+
+		bool wildcard = atom.lastChar() == '*';
+		if (wildcard)
+			atom.deleteLastChar();
+
+		if ((!wildcard && atom == name) || (wildcard && name.hasPrefix(atom)))
+			result = !negative;
+
+		i = next;
+		if (i != pattern.end())
+			++i; // skip comma
+	}
+
+	return result;
+}
+
 bool SciEngine::checkKernelBreakpoint(const Common::String &name) {
 	if (!(_debugState._activeBreakpointTypes & BREAK_KERNEL))
 		return false;
@@ -793,11 +838,7 @@ bool SciEngine::checkKernelBreakpoint(const Common::String &name) {
 		if (bp->_action == BREAK_NONE || bp->_type != BREAK_KERNEL)
 			continue;
 
-		bool wildcard = bp->_name.lastChar() == '*';
-		Common::String prefix = bp->_name;
-		if (wildcard)
-			prefix.deleteLastChar();
-		if (bp->_name == name || (wildcard && name.hasPrefix(prefix))) {
+		if (matchKernelBreakpointPattern(bp->_name, name)) {
 			if (bp->_action == BREAK_BREAK) {
 				if (!found)
 					_console->debugPrintf("Break on k%s\n", name.c_str());
