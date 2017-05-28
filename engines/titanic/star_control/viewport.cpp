@@ -53,7 +53,7 @@ CViewport::CViewport(CViewport *src) :
 	_centerVector = src->_centerVector;
 	_field24 = src->_field24;
 
-	Common::copy(&src->_valArray[0], &src->_valArray[4], &_valArray[0]);
+	Common::copy(&src->_valArray[0], &src->_valArray[5], &_valArray[0]);
 	_flag = false;
 }
 
