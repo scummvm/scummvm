@@ -3816,7 +3816,7 @@ static bool stringToBreakpointAction(Common::String str, BreakpointAction &actio
 		action = BREAK_BACKTRACE;
 	else if (str == "inspect")
 		action = BREAK_INSPECT;
-	else if (str == "none")
+	else if (str == "ignore")
 		action = BREAK_NONE;
 	else
 		return false;
@@ -3846,7 +3846,7 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 		debugPrintf("         log    : log without breaking\n");
 		debugPrintf("         bt     : show backtrace without breaking\n");
 		debugPrintf("         inspect: show object (only for bpx/bpr/bpw)\n");
-		debugPrintf("         none   : ignore breakpoint\n");
+		debugPrintf("         ignore : ignore breakpoint\n");
 		return true;
 	}
 
