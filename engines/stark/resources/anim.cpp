@@ -500,7 +500,7 @@ void AnimSkeleton::onGameLoop() {
 	if (isInUse() && _totalTime) {
 		uint32 newTime = _currentTime + StarkGlobal->getMillisecondsPerGameloop();
 
-		if (!_loop && newTime > _totalTime) {
+		if (!_loop && newTime >= _totalTime) {
 			if (_actionItem) {
 				_actionItem->resetActionAnim();
 				_actionItem = nullptr;
