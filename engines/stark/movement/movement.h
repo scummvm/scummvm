@@ -71,7 +71,7 @@ protected:
 		kTurnRight
 	};
 
-	const float _defaultTurnAngleSpeed; // Degrees per gameloop
+	const float _defaultTurnAngleSpeed; // Degrees per ms
 
 	float computeAngleBetweenVectorsXYPlane(const Math::Vector3d &v1, const Math::Vector3d &v2) const;
 

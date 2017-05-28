@@ -59,6 +59,7 @@ public:
 
 private:
 	float computeDistancePerGameLoop() const;
+	float getAngularSpeed() const;
 
 	void changeItemAnim();
 	void updatePath() const;

@@ -123,7 +123,7 @@ void Walk::onGameLoop() {
 
 	// If the angle between the current direction and the new one is too high,
 	// make the character turn on itself until the angle is low enough
-	if (ABS(directionDeltaAngle) > _defaultTurnAngleSpeed + 0.1f) {
+	if (ABS(directionDeltaAngle) > getAngularSpeed() + 0.1f) {
 		_turnDirection = directionDeltaAngle < 0 ? kTurnLeft : kTurnRight;
 	} else {
 		_turnDirection = kTurnNone;
@@ -145,7 +145,7 @@ void Walk::onGameLoop() {
 		direction = currentDirection;
 
 		Math::Matrix3 rot;
-		rot.buildAroundZ(_turnDirection == kTurnLeft ? -_defaultTurnAngleSpeed : _defaultTurnAngleSpeed);
+		rot.buildAroundZ(_turnDirection == kTurnLeft ? -getAngularSpeed() : getAngularSpeed());
 		rot.transformVector(&direction);
 	}
 
@@ -171,6 +171,10 @@ void Walk::onGameLoop() {
 	_item3D->setFloorFaceIndex(newFloorFaceIndex);
 
 	changeItemAnim();
+}
+
+float Walk::getAngularSpeed() const {
+	return _defaultTurnAngleSpeed * StarkGlobal->getMillisecondsPerGameloop();
 }
 
 float Walk::computeDistancePerGameLoop() const {

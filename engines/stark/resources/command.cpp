@@ -1080,7 +1080,7 @@ Command *Command::opItemRotateDirection(Script *script, const ResourceReference 
 
 	Turn *movement = new Turn(item);
 	movement->setTargetDirection(directionVector);
-	movement->setSpeed(speed / 1000.0f);
+	movement->setSpeed(speed / (1000.0f * 33.0f));
 	movement->start();
 
 	item->setMovement(movement);

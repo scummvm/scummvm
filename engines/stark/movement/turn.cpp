@@ -27,6 +27,9 @@
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
 
+#include "engines/stark/services/global.h"
+#include "engines/stark/services/services.h"
+
 namespace Stark {
 
 Turn::Turn(Resources::FloorPositionedItem *item) :
@@ -51,7 +54,7 @@ void Turn::onGameLoop() {
 	// If the angle between the current direction and the new one is too high,
 	// make the character turn on itself until the angle is low enough
 	TurnDirection turnDirection;
-	if (ABS(directionDeltaAngle) > _turnSpeed + 0.1f) {
+	if (ABS(directionDeltaAngle) > getAngularSpeed() + 0.1f) {
 		turnDirection = directionDeltaAngle < 0 ? kTurnLeft : kTurnRight;
 	} else {
 		turnDirection = kTurnNone;
@@ -64,7 +67,7 @@ void Turn::onGameLoop() {
 		direction = currentDirection;
 
 		Math::Matrix3 rot;
-		rot.buildAroundZ(turnDirection == kTurnLeft ? -_turnSpeed : _turnSpeed);
+		rot.buildAroundZ(turnDirection == kTurnLeft ? -getAngularSpeed() : getAngularSpeed());
 		rot.transformVector(&direction);
 	}
 
@@ -75,6 +78,10 @@ void Turn::onGameLoop() {
 	if (direction == _targetDirection) {
 		stop();
 	}
+}
+
+float Turn::getAngularSpeed() const {
+	return _turnSpeed * StarkGlobal->getMillisecondsPerGameloop();
 }
 
 void Turn::setTargetDirection(const Math::Vector3d &direction) {

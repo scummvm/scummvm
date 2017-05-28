@@ -27,7 +27,7 @@ namespace Stark {
 Movement::Movement(Resources::ItemVisual *item) :
 		_ended(false),
 		_item(item),
-		_defaultTurnAngleSpeed(18.0) {
+		_defaultTurnAngleSpeed(18.0f * 30.0f / 1000.0f) { // 18 degrees per gameloop at 30 fps
 }
 
 Movement::~Movement() {

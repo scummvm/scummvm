@@ -49,6 +49,8 @@ public:
 	void setSpeed(float speed);
 
 private:
+	float getAngularSpeed() const;
+
 	Resources::FloorPositionedItem *_item3D;
 	Math::Vector3d _targetDirection;
 	float _turnSpeed;
