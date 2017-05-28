@@ -42,6 +42,8 @@ protected:
 public:
 	typedef ListInternal::Iterator<t_T>		iterator;
 	typedef ListInternal::ConstIterator<t_T>	const_iterator;
+    typedef ListInternal::ReverseIterator<t_T> reverse_iterator;
+	typedef ListInternal::ConstReverseIterator<t_T> const_reverse_iterator;
 
 	typedef t_T value_type;
 	typedef uint size_type;
@@ -70,12 +72,28 @@ public:
 	}
 
 	/**
+	 * Inserts element before pos. But since pos is a reverse iterator, that's actually after.
+	 */
+	void insert(reverse_iterator pos, const t_T &element) {
+		insert(pos._iter->_node->_next, element);
+	}
+
+	/**
 	 * Inserts the elements from first to last before pos.
 	 */
 	template<typename iterator2>
 	void insert(iterator pos, iterator2 first, iterator2 last) {
 		for (; first != last; ++first)
 			insert(pos, *first);
+	}
+
+	/**
+	 * Inserts the elements from first to last before pos. But since pos is a reverse iterator, that's actually after
+	 */
+	template<typename iterator2>
+	void insert(reverse_iterator pos, iterator2 first, iterator2 last) {
+		for (; first != last; ++first)
+			insert(pos._iter->_node->_next, *first);
 	}
 
 	/**
@@ -88,12 +106,30 @@ public:
 	}
 
 	/**
+	 * Deletes the element at location pos and returns a reverse_iterator pointing
+	 * to the element after the one which was deleted.
+	 */
+	reverse_iterator erase(reverse_iterator pos) {
+		assert(pos != reverse_end());
+		return reverse_iterator(erase(pos._node)._prev);
+	}
+
+	/**
 	 * Deletes the element at location pos and returns an iterator pointing
 	 * to the element before the one which was deleted.
 	 */
 	iterator reverse_erase(iterator pos) {
 		assert(pos != end());
 		return iterator(erase(pos._node)._prev);
+	}
+
+	/**
+	 * Deletes the element at location pos and returns a reverse_iterator pointing
+	 * to the element before the one which was deleted.
+	 */
+	reverse_iterator reverse_erase(reverse_iterator pos) {
+		assert(pos != reverse_end());
+		return reverse_iterator(erase(pos._node)._next);
 	}
 
 	/**
@@ -106,6 +142,19 @@ public:
 		NodeBase *l = last._node;
 		while (f != l)
 			f = erase(f)._next;
+		return last;
+	}
+
+	/**
+	 * Deletes the elements between first and last (including first but not
+	 * last) and returns an iterator pointing to the element after the one
+	 * which was deleted (i.e., last).
+	 */
+	reverse_iterator erase(reverse_iterator first, reverse_iterator last) {
+		NodeBase *f = first._iter->_node;
+		NodeBase *l = last._iter->_node;
+		while (f != l)
+			f = erase(f)._prev;
 		return last;
 	}
 
@@ -207,28 +256,36 @@ public:
 	}
 
 
-	iterator		begin() {
+	iterator begin() {
 		return iterator(_anchor._next);
 	}
 
-	iterator		reverse_begin() {
-		return iterator(_anchor._prev);
+	reverse_iterator reverse_begin() {
+		return reverse_iterator(_anchor._prev);
 	}
 
-	iterator		end() {
+	iterator end() {
 		return iterator(&_anchor);
 	}
 
-	const_iterator	begin() const {
+	reverse_iterator reverse_end() {
+		return reverse_iterator(&_anchor);
+	}
+
+	const_iterator begin() const {
 		return const_iterator(_anchor._next);
 	}
 
-	const_iterator	reverse_begin() const {
-		return const_iterator(_anchor._prev);
+	const_reverse_iterator reverse_begin() const {
+		return const_reverse_iterator(_anchor._prev);
 	}
 
-	const_iterator	end() const {
+	const_iterator end() const {
 		return const_iterator(const_cast<NodeBase *>(&_anchor));
+	}
+
+	const_reverse_iterator reverse_end() const {
+		return const_reverse_iterator(const_cast<NodeBase *>(&_anchor));
 	}
 
 protected:
