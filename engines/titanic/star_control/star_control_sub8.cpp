@@ -98,7 +98,7 @@ bool CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CSt
 
 	if (count > 0) {
 		allocate(count);
-		CStarRef2 starRef(starField, &_positions);
+		CStarRefArray starRef(starField, &_positions);
 		starRef.process(surfaceArea, camera);
 		return true;
 	} else {

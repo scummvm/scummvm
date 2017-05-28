@@ -92,14 +92,16 @@ bool CStarRef1::check(const Common::Point &pt, int index) {
 
 /*------------------------------------------------------------------------*/
 
-bool CStarRef2::check(const Common::Point &pt, int index) {
+bool CStarRefArray::check(const Common::Point &pt, int index) {
 	if (_index >= (int)_positions->size())
+		// Positions array full, so ignore
 		return false;
 
-	CStarPosition &sp = (*_positions)[index];
+	CStarPosition &sp = (*_positions)[_index++];
 	sp.x = pt.x;
 	sp.y = pt.y;
 	sp._index1 = sp._index2 = index;
+
 	return true;
 }
 

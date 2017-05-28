@@ -56,15 +56,15 @@ public:
 	virtual bool check(const Common::Point &pt, int index);
 };
 
-class CStarRef2 : public CBaseStarRef {
+class CStarRefArray : public CBaseStarRef {
 private:
 	Common::Array<CStarPosition> *_positions;
 public:
 	int _index;
 public:
-	CStarRef2(CBaseStars *stars, Common::Array<CStarPosition> *positions) :
+	CStarRefArray(CBaseStars *stars, Common::Array<CStarPosition> *positions) :
 		CBaseStarRef(stars), _positions(positions), _index(0) {}
-	virtual ~CStarRef2() {}
+	virtual ~CStarRefArray() {}
 
 	virtual bool check(const Common::Point &pt, int index);
 };
