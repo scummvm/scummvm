@@ -3993,6 +3993,9 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 		debugPrintf("Sets a breakpoint on execution of a kernel function.\n");
 		debugPrintf("Usage: %s <name> [<action>]\n", argv[0]);
 		debugPrintf("Example: %s DrawPic\n", argv[0]);
+		debugPrintf("         %s DoSoundPlay,DoSoundStop\n", argv[0]);
+		debugPrintf("         %s DoSound*\n", argv[0]);
+		debugPrintf("         %s DoSound*,!DoSoundUpdateCues\n", argv[0]);
 		debugPrintf("         %s DrawPic log\n", argv[0]);
 		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
@@ -4008,11 +4011,7 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 	}
 
 	// Check if any kernel functions match, to catch typos
-	Common::String name = argv[1];
-	bool wildcard = name.lastChar() == '*';
-	Common::String prefix = name;
-	if (wildcard)
-		prefix.deleteLastChar();
+	Common::String pattern = argv[1];
 	bool found = false;
 	const Kernel::KernelFunctionArray &kernelFuncs = _engine->getKernel()->_kernelFuncs;
 	for (uint id = 0; id < kernelFuncs.size() && !found; id++) {
@@ -4020,14 +4019,14 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 			const KernelSubFunction *kernelSubCall = kernelFuncs[id].subFunctions;
 			if (!kernelSubCall) {
 				Common::String kname = kernelFuncs[id].name;
-				if (name == kname || (wildcard && kname.hasPrefix(prefix)))
+				if (matchKernelBreakpointPattern(pattern, kname))
 					found = true;
 			} else {
 				uint kernelSubCallCount = kernelFuncs[id].subFunctionCount;
 				for (uint subId = 0; subId < kernelSubCallCount; subId++) {
 					if (kernelSubCall->name) {
 						Common::String kname = kernelSubCall->name;
-						if (name == kname || (wildcard && kname.hasPrefix(prefix)))
+						if (matchKernelBreakpointPattern(pattern, kname))
 							found = true;
 					}
 					kernelSubCall++;
@@ -4036,13 +4035,13 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 		}
 	}
 	if (!found) {
-		debugPrintf("No kernel functions match %s.\n", name.c_str());
+		debugPrintf("No kernel functions match %s.\n", pattern.c_str());
 		return true;
 	}
 
 	Breakpoint bp;
 	bp._type = BREAK_KERNEL;
-	bp._name = name;
+	bp._name = pattern;
 	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);

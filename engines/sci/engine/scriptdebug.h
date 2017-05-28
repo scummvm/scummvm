@@ -39,6 +39,8 @@ void logBacktrace();
 
 bool printObject(reg_t obj);
 
+bool matchKernelBreakpointPattern(const Common::String &pattern, const Common::String &name);
+
 }
 
 #endif
