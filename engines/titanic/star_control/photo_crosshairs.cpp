@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub8.h"
+#include "titanic/star_control/photo_crosshairs.h"
 #include "titanic/star_control/star_control_sub7.h"
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_field.h"
@@ -28,10 +28,10 @@
 
 namespace Titanic {
 
-CStarControlSub8::CStarControlSub8() : _field8(-1), _entryIndex(-1) {
+CPhotoCrosshairs::CPhotoCrosshairs() : _field8(-1), _entryIndex(-1) {
 }
 
-void CStarControlSub8::selectStar(int index, CVideoSurface *surface,
+void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 		CStarField *starField, CStarControlSub7 *sub7) {
 	if (_entryIndex >= 0) {
 		if (_entryIndex == _field8) {
@@ -93,7 +93,7 @@ void CStarControlSub8::selectStar(int index, CVideoSurface *surface,
 	}
 }
 
-bool CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera) {
+bool CPhotoCrosshairs::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	int count = starField->baseFn2(surfaceArea, camera);
 
 	if (count > 0) {
@@ -107,7 +107,7 @@ bool CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CSt
 	}
 }
 
-void CStarControlSub8::fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
+void CPhotoCrosshairs::fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
 	if (_field8 <= -1) {
 		if (_entryIndex > -1) {
 			fn5(_entryIndex, surface, starField, sub7);
@@ -122,17 +122,17 @@ void CStarControlSub8::fn2(CVideoSurface *surface, CStarField *starField, CStarC
 	}
 }
 
-void CStarControlSub8::fn3() {
+void CPhotoCrosshairs::fn3() {
 	if (_field8 < 3)
 		++_field8;
 }
 
-FPoint CStarControlSub8::getPosition() const {
+FPoint CPhotoCrosshairs::getPosition() const {
 	return (_entryIndex >= 0 && _entryIndex <= 2) ? 
 		FPoint(_entries[_entryIndex]) : FPoint();
 }
 
-void CStarControlSub8::draw(CSurfaceArea *surfaceArea) {
+void CPhotoCrosshairs::draw(CSurfaceArea *surfaceArea) {
 	if (!_positions.empty()) {
 		uint savedPixel = surfaceArea->_pixel;
 		surfaceArea->_pixel = 0xff;
@@ -155,7 +155,7 @@ void CStarControlSub8::draw(CSurfaceArea *surfaceArea) {
 	}
 }
 
-void CStarControlSub8::allocate(int count) {
+void CPhotoCrosshairs::allocate(int count) {
 	if (!_positions.empty()) {
 		if ((int)_positions.size() == count)
 			return;
@@ -166,12 +166,12 @@ void CStarControlSub8::allocate(int count) {
 	_positions.resize(count);
 }
 
-void CStarControlSub8::clear() {
+void CPhotoCrosshairs::clear() {
 	_positions.clear();
 	_field8 = _entryIndex = -1;
 }
 
-int CStarControlSub8::indexOf(const Common::Point &pt) const {
+int CPhotoCrosshairs::indexOf(const Common::Point &pt) const {
 	Common::Rect r(pt.x - 2, pt.y - 2, pt.x + 2, pt.y + 2);
 
 	for (int idx = 0; idx < (int)_positions.size(); ++idx) {
@@ -182,14 +182,14 @@ int CStarControlSub8::indexOf(const Common::Point &pt) const {
 	return -1;
 }
 
-void CStarControlSub8::fn4(int index, CSurfaceArea *surfaceArea) {
+void CPhotoCrosshairs::fn4(int index, CSurfaceArea *surfaceArea) {
 	if (index >= 0 && index < (int)_positions.size()) {
 		const CStarPosition &pt = _positions[index];
 		fn7(pt, surfaceArea);
 	}
 }
 
-void CStarControlSub8::fn5(int index, CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
+void CPhotoCrosshairs::fn5(int index, CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
 	surface->lock();
 	CSurfaceArea surfaceArea(surface);
 	fn7(_positions[index + 1], &surfaceArea);
@@ -199,12 +199,12 @@ void CStarControlSub8::fn5(int index, CVideoSurface *surface, CStarField *starFi
 	sub7->addStar(starP);
 }
 
-void CStarControlSub8::fn6(CSurfaceArea *surfaceArea) {
+void CPhotoCrosshairs::fn6(CSurfaceArea *surfaceArea) {
 	const CStarPosition &pt = _positions[_entryIndex];
 	fn7(pt, surfaceArea);
 }
 
-void CStarControlSub8::fn7(const FPoint &pt, CSurfaceArea *surfaceArea) {
+void CPhotoCrosshairs::fn7(const FPoint &pt, CSurfaceArea *surfaceArea) {
 	uint savedPixel = surfaceArea->_pixel;
 	surfaceArea->_pixel = 255;
 	surfaceArea->setColorFromPixel();

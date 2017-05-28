@@ -443,11 +443,11 @@ MODULE_OBJS := \
 	star_control/fvector.o \
 	star_control/matrix_transform.o \
 	star_control/orientation_changer.o \
+	star_control/photo_crosshairs.o \
 	star_control/star_camera.o \
 	star_control/star_closeup.o \
 	star_control/star_control_sub2.o \
 	star_control/star_control_sub7.o \
-	star_control/star_control_sub8.o \
 	star_control/star_control_sub21.o \
 	star_control/star_control_sub22.o \
 	star_control/star_control_sub23.o \

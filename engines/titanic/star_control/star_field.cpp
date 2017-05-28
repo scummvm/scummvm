@@ -33,7 +33,7 @@ CStarField::CStarField() : _points1On(false), _points2On(false), _mode(MODE_STAR
 
 void CStarField::load(SimpleFile *file) {
 	_sub7.load(file);
-	_sub8.load(file);
+	_crosshairs.load(file);
 	_points1On = file->readNumber();
 	_points2On = file->readNumber();
 	_mode = (StarMode)file->readNumber();
@@ -43,7 +43,7 @@ void CStarField::load(SimpleFile *file) {
 
 void CStarField::save(SimpleFile *file, int indent) {
 	_sub7.save(file, indent);
-	_sub8.save(file, indent);
+	_crosshairs.save(file, indent);
 	file->writeNumberLine(_points1On, indent);
 	file->writeNumberLine(_points2On, indent);
 	file->writeNumberLine(_mode, indent);
@@ -70,7 +70,7 @@ void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
 		drawCrosshairs(&surfaceArea);
 
 	_sub7.draw(&surfaceArea, camera, nullptr);
-	_sub8.draw(&surfaceArea);
+	_crosshairs.draw(&surfaceArea);
 
 	if (_points2On)
 		_points2.draw(&surfaceArea, camera);
@@ -123,7 +123,7 @@ bool CStarField::setCrosshairs(bool isVisible) {
 }
 
 int CStarField::get88() const {
-	return _sub8._field8;
+	return _crosshairs._field8;
 }
 
 int CStarField::get5() const {
@@ -131,7 +131,7 @@ int CStarField::get5() const {
 }
 
 void CStarField::setSolved() {
-	_isSolved = _sub8._field8 == 2;
+	_isSolved = _crosshairs._field8 == 2;
 }
 
 bool CStarField::isSolved() const {
@@ -183,10 +183,10 @@ void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 
 double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		FVector &v1, FVector &v2, FVector &v3) {
-	if (_sub8._fieldC < 0)
+	if (_crosshairs._fieldC < 0)
 		return -1.0;
 
-	const CBaseStarEntry *dataP = _sub7.getDataPtr(_sub8._fieldC);
+	const CBaseStarEntry *dataP = _sub7.getDataPtr(_crosshairs._fieldC);
 	v2 = dataP->_position;
 	FVector tv = camera->proc29(2, v2);
 
@@ -197,7 +197,7 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 
 	v1 = FVector(tv._x + surfaceArea->_centroid._x,
 		tv._y + surfaceArea->_centroid._y, tv._z);
-	FPoint pt = _sub8.getPosition();
+	FPoint pt = _crosshairs.getPosition();
 	v3 = FVector(pt._x, pt._y, 1.0);
 
 	double incr = (v1._x - pt._x) * (v1._x - pt._x);
@@ -212,16 +212,16 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 
 void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
 	CSurfaceArea surfaceArea(surface);
-	_sub8.fn1(this, &surfaceArea, camera);
+	_crosshairs.fn1(this, &surfaceArea, camera);
 }
 
 void CStarField::fn7() {
-	_sub8.fn3();
+	_crosshairs.fn3();
 	setSolved();
 }
 
 void CStarField::fn8(CVideoSurface *surface) {
-	_sub8.fn2(surface, this, &_sub7);
+	_crosshairs.fn2(surface, this, &_sub7);
 	setSolved();
 }
 
@@ -231,9 +231,9 @@ bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
 		CSurfaceArea surfaceArea(surface);
 		return selectStar(&surfaceArea, camera, pt);
 	} else {
-		int starNum = _sub8.indexOf(pt);
+		int starNum = _crosshairs.indexOf(pt);
 		if (starNum >= 0) {
-			_sub8.selectStar(starNum, surface, this, &_sub7);
+			_crosshairs.selectStar(starNum, surface, this, &_sub7);
 			return true;
 		}
 

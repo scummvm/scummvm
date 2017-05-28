@@ -426,10 +426,12 @@ void CStarView::fn18(CStarCamera *camera) {
 			int oldVal = _starField->get54();
 			bool oldCrosshairs = _starField->setCrosshairs(false);
 
+			// Render the starfield for the photograph view
 			_photoSurface->clear();
 			_photoSurface->lock();
 			_starField->render(_photoSurface, camera);
 
+			// Render any previously set crosshairs
 			_starField->setCrosshairs(oldCrosshairs);
 			_starField->set54(oldVal);
 			_starField->fn6(_photoSurface, camera);

@@ -26,7 +26,7 @@
 #include "titanic/star_control/star_control_sub2.h"
 #include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_control_sub7.h"
-#include "titanic/star_control/star_control_sub8.h"
+#include "titanic/star_control/photo_crosshairs.h"
 #include "titanic/star_control/star_points1.h"
 #include "titanic/star_control/star_points2.h"
 
@@ -35,7 +35,7 @@ namespace Titanic {
 class CStarField : public CStarControlSub2 {
 private:
 	CStarControlSub7 _sub7;
-	CStarControlSub8 _sub8;
+	CPhotoCrosshairs _crosshairs;
 	CStarPoints1 _points1;
 	CStarPoints2 _points2;
 	CStarCloseup _starCloseup;
