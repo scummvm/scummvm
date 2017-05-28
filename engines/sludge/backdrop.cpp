@@ -110,14 +110,14 @@ void saveSnapshot(Common::WriteStream *stream) {
 bool snapshot() {
 
 	nosnapshot();
-	if (! freeze()) return false;
+	if (!freeze()) return false;
 #if 0
 	setPixelCoords(true);
 	glGenTextures(1, &snapshotTextureName);
 
 	int w = winWidth;
 	int h = winHeight;
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		w = getNextPOT(winWidth);
 		h = getNextPOT(winHeight);
 		snapTexW = ((double)winWidth) / w;
@@ -168,14 +168,14 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 	unsigned short c;
 #if 0
 	GLubyte *target;
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		picWidth = getNextPOT(picWidth);
 		picHeight = getNextPOT(picHeight);
 		snapTexW = ((double)winWidth) / picWidth;
 		snapTexH = ((double)winHeight) / picHeight;
 	}
 	GLubyte *snapshotTexture = new GLubyte [picHeight * picWidth * 4];
-	if (! snapshotTexture) return fatal("Out of memory while restoring snapshot.");
+	if (!snapshotTexture) return fatal("Out of memory while restoring snapshot.");
 #endif
 
 	for (t2 = 0; t2 < winHeight; t2 ++) {
@@ -201,7 +201,7 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 		}
 	}
 #if 0
-	if (! snapshotTextureName) glGenTextures(1, &snapshotTextureName);
+	if (!snapshotTextureName) glGenTextures(1, &snapshotTextureName);
 	glBindTexture(GL_TEXTURE_2D, snapshotTextureName);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -241,11 +241,11 @@ void killParallax() {
 	while (parallaxStuff) {
 
 		parallaxLayer *k = parallaxStuff;
-		parallaxStuff = k -> next;
+		parallaxStuff = k->next;
 
 		// Now kill the image
-		deleteTextures(1, &k -> textureName);
-		delete k -> texture;
+		deleteTextures(1, &k->textureName);
+		delete k->texture;
 		delete k;
 		k = NULL;
 	}
@@ -267,16 +267,16 @@ bool reserveBackdrop() {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	if (backdropTexture) delete backdropTexture;
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		picWidth = getNextPOT(sceneWidth);
 		picHeight = getNextPOT(sceneHeight);
 		backdropTexW = ((double)sceneWidth) / picWidth;
 		backdropTexH = ((double)sceneHeight) / picHeight;
 	}
 	backdropTexture = new GLubyte [picWidth * picHeight * 4];
-	if (! checkNew(backdropTexture)) return false;
+	if (!checkNew(backdropTexture)) return false;
 
-	if (! backdropTextureName) glGenTextures(1, &backdropTextureName);
+	if (!backdropTextureName) glGenTextures(1, &backdropTextureName);
 	glBindTexture(GL_TEXTURE_2D, backdropTextureName);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -306,12 +306,12 @@ bool resizeBackdrop(int x, int y) {
 void loadBackDrop(int fileNum, int x, int y) {
 	setResourceForFatal(fileNum);
 #if 0
-	if (! openFileFromNum(fileNum)) {
+	if (!openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
 		return;
 	}
 
-	if (! loadHSI(bigDataFile, x, y, false)) {
+	if (!loadHSI(bigDataFile, x, y, false)) {
 		char mess[200];
 		sprintf(mess, "Can't paste overlay image outside scene dimensions\n\nX = %i\nY = %i\nWidth = %i\nHeight = %i", x, y, sceneWidth, sceneHeight);
 		fatal(mess);
@@ -325,12 +325,12 @@ void loadBackDrop(int fileNum, int x, int y) {
 void mixBackDrop(int fileNum, int x, int y) {
 #if 0
 	setResourceForFatal(fileNum);
-	if (! openFileFromNum(fileNum)) {
+	if (!openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
 		return;
 	}
 
-	if (! mixHSI(bigDataFile, x, y)) {
+	if (!mixHSI(bigDataFile, x, y)) {
 		fatal("Can't paste overlay image outside screen dimensions");
 	}
 
@@ -396,7 +396,7 @@ void hardScroll(int distance) {
 		return;
 	}
 
-	if (! distance) return;
+	if (!distance) return;
 #if 0
 	const GLfloat backdropTexCoords[] = {
 		0.0f, 0.0f,
@@ -563,15 +563,15 @@ void drawBackDrop() {
 		while (ps->next) ps = ps->next;
 
 		while (ps) {
-			ps -> cameraX = sortOutPCamera(cameraX, ps -> fractionX, (int)(sceneWidth - (float)winWidth / cameraZoom), (int)(ps -> width - (float)winWidth / cameraZoom));
-			ps -> cameraY = sortOutPCamera(cameraY, ps -> fractionY, (int)(sceneHeight - (float)winHeight / cameraZoom), (int)(ps -> height - (float)winHeight / cameraZoom));
+			ps->cameraX = sortOutPCamera(cameraX, ps->fractionX, (int)(sceneWidth - (float)winWidth / cameraZoom), (int)(ps->width - (float)winWidth / cameraZoom));
+			ps->cameraY = sortOutPCamera(cameraY, ps->fractionY, (int)(sceneHeight - (float)winHeight / cameraZoom), (int)(ps->height - (float)winHeight / cameraZoom));
 			glBindTexture(GL_TEXTURE_2D, ps->textureName);
 
 			float w = (ps->wrapS) ? sceneWidth : ps->width;
 			float h = (ps->wrapT) ? sceneHeight : ps->height;
 			float texw;
 			float texh;
-			if (! NPOT_textures) {
+			if (!NPOT_textures) {
 				texw = (ps->wrapS) ? (float) sceneWidth / ps->width : (float) ps->width / getNextPOT(ps->width);
 				texh = (ps->wrapT) ? (float) sceneHeight / ps->height : (float) ps->height / getNextPOT(ps->height);
 			} else {
@@ -580,10 +580,10 @@ void drawBackDrop() {
 			}
 
 			const GLfloat vertices[] = {
-				(GLfloat) - ps -> cameraX, (GLfloat) - ps -> cameraY, 0.1f,
-				w - ps -> cameraX, (GLfloat) - ps -> cameraY, 0.1f,
-				(GLfloat) - ps -> cameraX, h - ps -> cameraY, 0.1f,
-				w - ps -> cameraX, h - ps -> cameraY, 0.1f
+				(GLfloat) - ps->cameraX, (GLfloat) - ps->cameraY, 0.1f,
+				w - ps->cameraX, (GLfloat) - ps->cameraY, 0.1f,
+				(GLfloat) - ps->cameraX, h - ps->cameraY, 0.1f,
+				w - ps->cameraX, h - ps->cameraY, 0.1f
 			};
 
 			const GLfloat texCoords[] = {
@@ -594,7 +594,7 @@ void drawBackDrop() {
 			};
 			drawQuad(shader.smartScaler, vertices, 1, texCoords);
 
-			ps = ps -> prev;
+			ps = ps->prev;
 		}
 	}
 
@@ -626,7 +626,7 @@ bool loadLightMap(int v) {
 	int newPicWidth, newPicHeight;
 #if 0
 	setResourceForFatal(v);
-	if (! openFileFromNum(v)) return fatal("Can't open light map.");
+	if (!openFileFromNum(v)) return fatal("Can't open light map.");
 	long file_pointer = ftell(bigDataFile);
 
 	png_structp png_ptr;
@@ -701,7 +701,7 @@ bool loadLightMap(int v) {
 		}
 	}
 
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		newPicWidth = getNextPOT(lightMap.w);
 		newPicHeight = getNextPOT(lightMap.h);
 		lightMap.texW = (double) lightMap.w / newPicWidth;
@@ -719,7 +719,7 @@ bool loadLightMap(int v) {
 	if (lightMap.data) delete [] lightMap.data;
 
 	lightMap.data = new GLubyte [newPicWidth * newPicHeight * 4];
-	if (! lightMap.data) {
+	if (!lightMap.data) {
 		return fatal("Out of memory loading light map.");
 	}
 
@@ -759,7 +759,7 @@ bool loadLightMap(int v) {
 		}
 	}
 #if 0
-	if (! lightMap.name) glGenTextures(1, &lightMap.name);
+	if (!lightMap.name) glGenTextures(1, &lightMap.name);
 	glBindTexture(GL_TEXTURE_2D, lightMap.name);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -779,7 +779,7 @@ bool loadLightMap(int v) {
 void reloadParallaxTextures() {
 #if 0
 	parallaxLayer *nP = parallaxStuff;
-	if (! nP) return;
+	if (!nP) return;
 
 	while (nP) {
 		//fprintf (stderr, "Reloading parallax. (%d, %d) ", nP->width, nP->height);
@@ -787,11 +787,11 @@ void reloadParallaxTextures() {
 
 		glGenTextures(1, &nP->textureName);
 		glBindTexture(GL_TEXTURE_2D, nP->textureName);
-		if (nP -> wrapS)
+		if (nP->wrapS)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		else
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		if (nP -> wrapT)
+		if (nP->wrapT)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		else
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -804,7 +804,7 @@ void reloadParallaxTextures() {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		}
 
-		if (! NPOT_textures) {
+		if (!NPOT_textures) {
 			texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getNextPOT(nP->width), getNextPOT(nP->height), 0, GL_RGBA, GL_UNSIGNED_BYTE, nP->texture, nP->textureName);
 		} else {
 			texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, nP->width, nP->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nP->texture, nP->textureName);
@@ -819,17 +819,17 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 
 #if 0
 	setResourceForFatal(v);
-	if (! openFileFromNum(v)) return fatal("Can't open parallax image");
+	if (!openFileFromNum(v)) return fatal("Can't open parallax image");
 
 	parallaxLayer *nP = new parallaxLayer;
-	if (! checkNew(nP)) return false;
+	if (!checkNew(nP)) return false;
 
-	nP -> next = parallaxStuff;
+	nP->next = parallaxStuff;
 	parallaxStuff = nP;
-	if (nP -> next) {
-		nP -> next -> prev = nP;
+	if (nP->next) {
+		nP->next->prev = nP;
 	}
-	nP -> prev = NULL;
+	nP->prev = NULL;
 
 	int picWidth;
 	int picHeight;
@@ -854,8 +854,8 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 		fileIsPNG = false;
 		fseek(bigDataFile, file_pointer, SEEK_SET);
 
-		picWidth = nP -> width = get2bytes(bigDataFile);
-		picHeight = nP -> height = get2bytes(bigDataFile);
+		picWidth = nP->width = get2bytes(bigDataFile);
+		picHeight = nP->height = get2bytes(bigDataFile);
 	} else {
 		// Read the PNG header
 
@@ -884,8 +884,8 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 		int bit_depth, color_type, interlace_type, compression_type, filter_method;
 		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
 
-		picWidth = nP -> width = width;
-		picHeight = nP -> height = height;
+		picWidth = nP->width = width;
+		picHeight = nP->height = height;
 
 		if (bit_depth < 8) png_set_packing(png_ptr);
 		png_set_expand(png_ptr);
@@ -901,42 +901,42 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 
 	}
 
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		picWidth = getNextPOT(picWidth);
 		picHeight = getNextPOT(picHeight);
 	}
 
-	nP -> fileNum = v;
-	nP -> fractionX = fracX;
-	nP -> fractionY = fracY;
+	nP->fileNum = v;
+	nP->fractionX = fracX;
+	nP->fractionY = fracY;
 
 	if (fracX == 65535) {
-		nP -> wrapS = false;
-		if (nP -> width < winWidth) {
+		nP->wrapS = false;
+		if (nP->width < winWidth) {
 			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
 			return false;
 		}
 	} else {
-		nP -> wrapS = true;
+		nP->wrapS = true;
 	}
 
 	if (fracY == 65535) {
-		nP -> wrapT = false;
-		if (nP -> height < winHeight) {
+		nP->wrapT = false;
+		if (nP->height < winHeight) {
 			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
 			return false;
 		}
 	} else {
-		nP -> wrapT = true;
+		nP->wrapT = true;
 	}
 
-	nP -> texture = new GLubyte [picHeight * picWidth * 4];
-	if (! checkNew(nP -> texture)) return false;
+	nP->texture = new GLubyte [picHeight * picWidth * 4];
+	if (!checkNew(nP->texture)) return false;
 
 	if (fileIsPNG) {
-		unsigned char *row_pointers[nP -> height];
-		for (int i = 0; i < nP -> height; i++)
-			row_pointers[i] = nP -> texture + 4 * i * picWidth;
+		unsigned char *row_pointers[nP->height];
+		for (int i = 0; i < nP->height; i++)
+			row_pointers[i] = nP->texture + 4 * i * picWidth;
 
 		png_read_image(png_ptr, (png_byte **) row_pointers);
 		png_read_end(png_ptr, NULL);
@@ -947,9 +947,9 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 		unsigned short c;
 		GLubyte *target;
 
-		for (t2 = 0; t2 < nP -> height; t2 ++) {
+		for (t2 = 0; t2 < nP->height; t2 ++) {
 			t1 = 0;
-			while (t1 < nP -> width) {
+			while (t1 < nP->width) {
 				c = (unsigned short) get2bytes(bigDataFile);
 				if (c & 32) {
 					n = fgetc(bigDataFile) + 1;
@@ -958,7 +958,7 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 					n = 1;
 				}
 				while (n--) {
-					target = nP -> texture + 4 * picWidth * t2 + t1 * 4;
+					target = nP->texture + 4 * picWidth * t2 + t1 * 4;
 					if (c == 63519 || c == 2015) {
 						target[0] = (GLubyte) 0;
 						target[1] = (GLubyte) 0;
@@ -978,11 +978,11 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 
 	glGenTextures(1, &nP->textureName);
 	glBindTexture(GL_TEXTURE_2D, nP->textureName);
-	if (nP -> wrapS)
+	if (nP->wrapS)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	else
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	if (nP -> wrapT)
+	if (nP->wrapT)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	else
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -1005,9 +1005,9 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 
 extern int viewportOffsetX, viewportOffsetY;
 
-#if 0
-bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 
+bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
+#if 0
 	int t1, t2, n;
 	unsigned short c;
 	GLubyte *target;
@@ -1039,7 +1039,6 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 		picHeight = realPicHeight = get2bytes(stream);
 	} else {
 		// Read the PNG header
-#if 0
 		png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 		if (!png_ptr) {
 			return false;
@@ -1079,13 +1078,11 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
 
 		//int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-#endif
 	}
 
-#if 0
 	GLfloat texCoordW = 1.0;
 	GLfloat texCoordH = 1.0;
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		picWidth = getNextPOT(picWidth);
 		picHeight = getNextPOT(picHeight);
 		texCoordW = ((double)realPicWidth) / picWidth;
@@ -1093,7 +1090,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	}
 
 	if (reserve) {
-		if (! resizeBackdrop(realPicWidth, realPicHeight)) return false;
+		if (!resizeBackdrop(realPicWidth, realPicHeight)) return false;
 	}
 
 	if (x == IN_THE_CENTRE) x = (sceneWidth - realPicWidth) >> 1;
@@ -1162,7 +1159,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	float btx2;
 	float bty1;
 	float bty2;
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		btx1 = backdropTexW * x / sceneWidth;
 		btx2 = backdropTexW * (x + realPicWidth) / sceneWidth;
 		bty1 = backdropTexH * y / sceneHeight;
@@ -1259,12 +1256,13 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	deleteTextures(1, &tmpTex);
 
 	setPixelCoords(false);
-#endif
 	backdropExists = true;
+#endif
 	return true;
 }
 
 bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
+#if 0
 	int realPicWidth, realPicHeight;
 	int picWidth;
 	int picHeight;
@@ -1283,7 +1281,6 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	if (bytes_read != 8 && stream->err()) {
 		debugOut("Reading error in mixHSI.\n");
 	}
-#if 0
 	if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
 		// No, it's old-school HSI
 		fileIsPNG = false;
@@ -1345,7 +1342,7 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	float bty1, ty1;
 	float bty2, ty2;
 
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		tx1 = 0.0;
 		ty1 = 0.0;
 		tx2 = ((double)picWidth) / getNextPOT(picWidth);
@@ -1498,9 +1495,8 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 #endif
 	return true;
 }
-
-void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 #if 0
+void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 	GLint tw, th;
 
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -1508,13 +1504,12 @@ void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 	getTextureDimensions(texture, &tw, &th);
 
 	GLubyte *image = new GLubyte [tw * th * 4];
-	if (! checkNew(image)) return;
+	if (!checkNew(image)) return;
 
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 //	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-#endif
+
 #ifdef HAVE_GLES2
-#if 0
 	GLuint old_fbo, new_fbo;
 	GLint old_vp[4];
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint *)&old_fbo);
@@ -1527,13 +1522,8 @@ void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 	glBindFramebuffer(GL_FRAMEBUFFER, old_fbo);
 	glViewport(old_vp[0], old_vp[1], old_vp[2], old_vp[3]);
 	glDeleteFramebuffers(1, &new_fbo);
-#endif
 #else
 	setPixelCoords(true);
-
-
-	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
 	const GLfloat texCoords[] = {
 		0.0f, 0.0f,
 		1.0f, 0.0f,
@@ -1548,9 +1538,8 @@ void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 		int yoffset = 0;
 		while (yoffset < th) {
 			int h = (th - yoffset < viewportHeight) ? th - yoffset : viewportHeight;
-#if 0
+
 			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
-#endif
 			const GLfloat vertices[] = {
 				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
 				(GLfloat)tw - xoffset, (GLfloat) - yoffset, 0.,
@@ -1558,7 +1547,6 @@ void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 				(GLfloat)tw - xoffset, (GLfloat) - yoffset + th, 0.
 			};
 
-#if 0
 			glUseProgram(shader.texture);
 
 			setPMVMatrix(shader.texture);
@@ -1570,16 +1558,12 @@ void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 			for (int i = 0; i < h; i++)   {
 				glReadPixels(viewportOffsetX, viewportOffsetY + i, w, 1, GL_RGBA, GL_UNSIGNED_BYTE, image + xoffset * 4 + (yoffset + i) * 4 * tw);
 			}
-#endif
 			yoffset += viewportHeight;
 		}
 
 		xoffset += viewportWidth;
 	}
 	setPixelCoords(false);
-#endif
-
-
 
 	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png_ptr) {
@@ -1610,22 +1594,20 @@ void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 
 	delete [] image;
 	image = NULL;
-}
-
-void saveCoreHSI(FILE *writer, GLuint texture, int w, int h) {
-
-	GLint tw, th;
-#if 0
-	glBindTexture(GL_TEXTURE_2D, texture);
 #endif
+}
+#endif
+
+#if 0
+void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
+	GLint tw, th;
+	glBindTexture(GL_TEXTURE_2D, texture);
 	getTextureDimensions(texture, &tw, &th);
 
 	GLushort *image = new GLushort [tw * th];
-	if (! checkNew(image)) return;
-#if 0
+	if (!checkNew(image)) return;
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 //	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image);
-#endif
 	setPixelCoords(true);
 
 	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -1644,9 +1626,7 @@ void saveCoreHSI(FILE *writer, GLuint texture, int w, int h) {
 		int yoffset = 0;
 		while (yoffset < th) {
 			int h = (th - yoffset < viewportHeight) ? th - yoffset : viewportHeight;
-#if 0
 			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
-#endif
 			const GLfloat vertices[] = {
 				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
 				(GLfloat)w - xoffset, (GLfloat) - yoffset, 0.,
@@ -1654,34 +1634,27 @@ void saveCoreHSI(FILE *writer, GLuint texture, int w, int h) {
 				(GLfloat)w - xoffset, (GLfloat) - yoffset + h, 0.
 			};
 
-#if 0
 			glUseProgram(shader.texture);
-#endif
 			setPMVMatrix(shader.texture);
 			drawQuad(shader.texture, vertices, 1, texCoords);
-#if 0
 			glUseProgram(0);
 
 			for (int i = 0; i < h; i++)   {
 				glReadPixels(viewportOffsetX, viewportOffsetY + i, w, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image + xoffset + (yoffset + i)*tw);
 			}
-#endif
 			yoffset += viewportHeight;
 		}
 
 		xoffset += viewportWidth;
 	}
 	//glReadPixels(viewportOffsetX, viewportOffsetY, tw, th, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
 	setPixelCoords(false);
-
-
 
 	int x, y, lookAhead;
 	unsigned short int *fromHere, * lookPointer;
 
-	put2bytes(w, writer);
-	put2bytes(h, writer);
+	put2bytes(w, stream);
+	put2bytes(h, stream);
 
 	for (y = 0; y < h; y ++) {
 		fromHere = image + (y * tw);
@@ -1694,10 +1667,10 @@ void saveCoreHSI(FILE *writer, GLuint texture, int w, int h) {
 				lookPointer ++;
 			}
 			if (lookAhead == x + 1) {
-				put2bytes((* fromHere) & 65503, writer);
+				put2bytes((* fromHere) & 65503, stream);
 			} else {
-				put2bytes(* fromHere | 32, writer);
-				fputc(lookAhead - x - 1, writer);
+				put2bytes(* fromHere | 32, stream);
+				putch(lookAhead - x - 1, stream);
 			}
 			fromHere = lookPointer;
 			x = lookAhead;
@@ -1706,22 +1679,23 @@ void saveCoreHSI(FILE *writer, GLuint texture, int w, int h) {
 	delete [] image;
 	image = NULL;
 }
+#endif
 
-void saveHSI(FILE *writer) {
-	saveCorePNG(writer, backdropTextureName, sceneWidth, sceneHeight);
-}
-
-
-void saveParallaxRecursive(parallaxLayer *me, FILE *fp) {
-	if (me) {
-		saveParallaxRecursive(me -> next, fp);
-		fputc(1, fp);
-		put2bytes(me->fileNum, fp);
-		put2bytes(me ->fractionX, fp);
-		put2bytes(me->fractionY, fp);
-	}
+#if 0
+void saveHSI(Common::WriteStream *stream) {
+	saveCorePNG(stream, backdropTextureName, sceneWidth, sceneHeight);
 }
 #endif
+
+void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *stream) {
+	if (me) {
+		saveParallaxRecursive(me->next, stream);
+		putch(1, stream);
+		put2bytes(me->fileNum, stream);
+		put2bytes(me ->fractionX, stream);
+		put2bytes(me->fractionY, stream);
+	}
+}
 
 bool getRGBIntoStack(unsigned int x, unsigned int y, stackHandler *sH) {
 #if 0
@@ -1736,21 +1710,21 @@ bool getRGBIntoStack(unsigned int x, unsigned int y, stackHandler *sH) {
 	saveTexture(backdropTextureName, backdropTexture);
 
 	GLubyte *target;
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		target = backdropTexture + 4 * getNextPOT(sceneWidth) * y + x * 4;
 	} else {
 		target = backdropTexture + 4 * sceneWidth * y + x * 4;
 	}
 
 	setVariable(newValue, SVT_INT, target[2]);
-	if (! addVarToStackQuick(newValue, sH -> first)) return false;
-	sH -> last = sH -> first;
+	if (!addVarToStackQuick(newValue, sH->first)) return false;
+	sH->last = sH->first;
 
 	setVariable(newValue, SVT_INT, target[1]);
-	if (! addVarToStackQuick(newValue, sH -> first)) return false;
+	if (!addVarToStackQuick(newValue, sH->first)) return false;
 
 	setVariable(newValue, SVT_INT, target[0]);
-	if (! addVarToStackQuick(newValue, sH -> first)) return false;
+	if (!addVarToStackQuick(newValue, sH->first)) return false;
 #endif
 	return true;
 }
