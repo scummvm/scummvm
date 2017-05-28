@@ -72,9 +72,9 @@ void CStarCamera::setPosition(const FVector &v) {
 	}
 }
 
-void CStarCamera::proc5(const FVector &v) {
+void CStarCamera::setOrientation(const FVector &v) {
 	if (!isLocked())
-		_viewport.fn11(v);
+		_viewport.setOrientation(v);
 }
 
 void CStarCamera::proc6(int v) {

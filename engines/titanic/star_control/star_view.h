@@ -43,7 +43,7 @@ private:
 	CVideoSurface *_videoSurface;
 	CStarCamera _camera;
 	bool _hasReference;
-	CViewport _sub13;
+	CViewport _photoViewport;
 	CSurfaceFader _fader;
 	CVideoSurface *_videoSurface2;
 	CGameObject *_homePhotoMask;
@@ -54,8 +54,15 @@ private:
 	void fn18(CStarCamera *camera);
 	void fn19(int v);
 
-	void randomizeVectors1(FVector &v1, FVector &v2);
-	void randomizeVectors2(FVector &v1, FVector &v2);
+	/**
+	 * Gets a random position and orientation
+	 */
+	void randomizeVectors1(FVector &pos, FVector &orientation);
+
+	/**
+	 * Gets a random position and orientation
+	 */
+	void randomizeVectors2(FVector &pos, FVector &orientation);
 
 	/**
 	 * Handles resizing the surface

@@ -64,7 +64,7 @@ void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const
 		tempV1 = row3.addAndNormalize(tempV1);
 
 		FMatrix newOrient;
-		newOrient.fn1(tempV1);
+		newOrient.set(tempV1);
 		_orientationChanger.load(orientation, newOrient);
 
 		_transitionPercent = 0.0;
@@ -114,7 +114,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 		v1 = v2.addAndNormalize(v1);
 		v1 = v2.addAndNormalize(v1);
 
-		orientation.fn1(v1);
+		orientation.set(v1);
 		v2 = v1;
 	}
 

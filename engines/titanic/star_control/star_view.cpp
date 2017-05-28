@@ -45,7 +45,7 @@ void CStarView::load(SimpleFile *file, int param) {
 
 		_hasReference = file->readNumber();
 		if (_hasReference)
-			_sub13.load(file, 0);
+			_photoViewport.load(file, 0);
 
 		_field218 = file->readNumber();
 		_showingPhoto = file->readNumber();
@@ -57,7 +57,7 @@ void CStarView::save(SimpleFile *file, int indent) {
 
 	file->writeNumberLine(_hasReference, indent);
 	if (_hasReference)
-		_sub13.save(file, indent);
+		_photoViewport.save(file, indent);
 
 	file->writeNumberLine(_field218, indent);
 	file->writeNumberLine(_showingPhoto, indent);
@@ -70,7 +70,7 @@ void CStarView::setup(CScreenManager *screenManager, CStarField *starField, CSta
 
 void CStarView::reset() {
 	if (_hasReference) {
-		CStarCamera camera(&_sub13);
+		CStarCamera camera(&_photoViewport);
 		fn18(&camera);
 	}
 }
@@ -284,7 +284,7 @@ void CStarView::fn4() {
 	FVector v1, v2;
 	randomizeVectors1(v1, v2);
 	_camera.setPosition(v1);
-	_camera.proc5(v2);
+	_camera.setOrientation(v2);
 }
 
 void CStarView::fn5() {
@@ -298,22 +298,22 @@ void CStarView::fn6() {
 void CStarView::fn7() {
 	const CBaseStarEntry *star = _starField->getRandomStar();
 	if (star) {
-		FVector v1, v2;
-		randomizeVectors1(v1, v2);
-		v2 += star->_position;
-		_camera.setPosition(v2);
-		_camera.proc5(v1);
+		FVector pos, orientation;
+		randomizeVectors1(pos, orientation);
+		pos += star->_position;
+		_camera.setPosition(pos);
+		_camera.setOrientation(orientation);
 	}
 }
 
 void CStarView::fn19(int index) {
 	const CBaseStarEntry *star = _starField->getStar(index);
 	if (star) {
-		FVector v1, v2;
-		randomizeVectors1(v1, v2);
-		v1 += star->_position;
-		_camera.setPosition(v1);
-		_camera.proc5(v2);
+		FVector pos, orientation;
+		randomizeVectors1(pos, orientation);
+		pos += star->_position;
+		_camera.setPosition(pos);
+		_camera.setOrientation(orientation);
 	}
 }
 
@@ -361,14 +361,14 @@ void CStarView::fn14() {
 }
 
 void CStarView::setHasReference() {
-	FVector v1, v2;
-	randomizeVectors2(v1, v2);
+	FVector pos, orientation;
+	randomizeVectors2(pos, orientation);
 
-	_sub13.setPosition(v1);
-	_sub13.fn11(v2);
+	_photoViewport.setPosition(pos);
+	_photoViewport.setOrientation(orientation);
 	_field218 = false;
-	_sub13.fn13(MODE_PHOTO, 0.0);
-	_sub13.fn13(MODE_STARFIELD, 0.0);
+	_photoViewport.fn13(MODE_PHOTO, 0.0);
+	_photoViewport.fn13(MODE_STARFIELD, 0.0);
 	_hasReference = true;
 	reset();
 	_field218 = true;
@@ -391,12 +391,12 @@ void CStarView::fn16() {
 				break;
 
 			case 0:
-				_camera.fn3(&_sub13, v2);
+				_camera.fn3(&_photoViewport, v2);
 				_starField->fn7();
 				break;
 
 			case 1:
-				_camera.fn1(&_sub13, v2);
+				_camera.fn1(&_photoViewport, v2);
 				_starField->fn7();
 				break;
 
@@ -438,7 +438,7 @@ void CStarView::fn18(CStarCamera *camera) {
 	}
 }
 
-void CStarView::randomizeVectors1(FVector &v1, FVector &v2) {
+void CStarView::randomizeVectors1(FVector &pos, FVector &orientation) {
 	/* ***DEBUG***
 	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
@@ -450,11 +450,11 @@ void CStarView::randomizeVectors1(FVector &v1, FVector &v2) {
 	v2.normalize();
 	*/
 	// Values temporarily hardcoded to match hacked values in original EXE
-	v1 = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
-	v2 = FVector((float)-0.577350259, (float)-0.577350259, (float)-0.577350259);
+	pos = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
+	orientation = FVector((float)-0.577350259, (float)-0.577350259, (float)-0.577350259);
 }
 
-void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
+void CStarView::randomizeVectors2(FVector &pos, FVector &orientation) {
 	/* ****DEBUG***
 	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
@@ -466,8 +466,8 @@ void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
 	v2.normalize();
 	*/
 	// Values temporarily hardcoded to match hacked values in original EXE
-	v1 = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
-	v2 = FVector((float)0.624659300, (float)-0.468542814, (float)-0.624714553);
+	pos = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
+	orientation = FVector((float)0.624659300, (float)-0.468542814, (float)-0.624714553);
 }
 
 void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,

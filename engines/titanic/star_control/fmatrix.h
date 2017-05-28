@@ -80,7 +80,11 @@ public:
 	 */
 	void set(const DVector &row1, const DVector &row2, const DVector &row3);
 
-	void fn1(const FVector &v);
+	/**
+	 * Sets the data for the matrix from a vector
+	 */
+	void set(const FVector &v);
+
 	void fn2(const FMatrix &m);
 	void fn3(const FMatrix &m);
 

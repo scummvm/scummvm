@@ -116,8 +116,8 @@ void CViewport::setOrientation(const FMatrix &m) {
 	_flag = false;
 }
 
-void CViewport::fn11(const FVector &v) {
-	_orientation.fn1(v);
+void CViewport::setOrientation(const FVector &v) {
+	_orientation.set(v);
 	_flag = false;
 }
 

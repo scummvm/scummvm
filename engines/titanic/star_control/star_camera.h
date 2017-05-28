@@ -77,7 +77,11 @@ public:
 	 */
 	virtual void setPosition(const FVector &v);
 
-	virtual void proc5(const FVector &v);
+	/**
+	 * Sets the camera orientation
+	 */
+	virtual void setOrientation(const FVector &v);
+
 	virtual void proc6(int v);
 	virtual void proc7(int v);
 	virtual void proc8(int v);

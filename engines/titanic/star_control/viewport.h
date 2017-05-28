@@ -85,11 +85,15 @@ public:
 	void setPosition(const FPose &pose);
 
 	/**
-	 * Sets the orientation
+	 * Sets the orientation from a passed matrix
 	 */
 	void setOrientation(const FMatrix &m);
 
-	void fn11(const FVector &v);
+	/**
+	 * Sets the orientation from a passed vector
+	 */
+	void setOrientation(const FVector &v);
+
 	void fn12();
 	void fn13(StarMode mode, double val);
 	void reposition(double factor);
