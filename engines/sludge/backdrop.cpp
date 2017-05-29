@@ -58,6 +58,7 @@
 #include "common/debug.h"
 #include "image/png.h"
 #include "graphics/surface.h"
+#include "graphics/palette.h"
 #include "sludge.h"
 
 namespace Sludge {
@@ -80,6 +81,7 @@ GLuint snapshotTextureName = 0;
 #endif
 
 Graphics::Surface backdropSurface;
+
 
 float snapTexW = 1.0;
 float snapTexH = 1.0;
@@ -1017,6 +1019,8 @@ bool loadPng(int &picWidth, int &picHeight, int &realPicWidth,
 		return false;
 	}
 	backdropSurface.copyFrom(*(png.getSurface()));
+	const byte *palette = png.getPalette();
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	picWidth = realPicWidth = backdropSurface.w;
 	picHeight = realPicHeight = backdropSurface.h;
 	return true;
@@ -1137,11 +1141,12 @@ bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth,
 bool loadImage(int &picWidth, int &picHeight, int &realPicWidth,
 		int &realPicHeight, Common::SeekableReadStream *stream, int x, int y,
 		bool reserve) {
-	debug(kSludgeDebugGraphics, "Loading back drop image.");
+	debug(kSludgeDebugGraphics, "Loading back drop image at file position: %i", stream->pos());
 	if (!loadPng(picWidth, picHeight, realPicWidth, realPicHeight, stream,
 			reserve)) {
 		if (!loadByteArray(picWidth, picHeight, realPicWidth, realPicHeight,
 				stream, reserve)) {
+			debug(kSludgeDebugGraphics, "Back drop loading failed");
 			return false;
 		}
 	}
@@ -1151,9 +1156,10 @@ bool loadImage(int &picWidth, int &picHeight, int &realPicWidth,
 	if (y == IN_THE_CENTRE)
 		y = (sceneHeight - realPicHeight) >> 1;
 	if (x < 0 || x + realPicWidth > sceneWidth || y < 0
-			|| y + realPicHeight > sceneHeight)
+			|| y + realPicHeight > sceneHeight) {
+		debug(kSludgeDebugGraphics, "Illegal back drop size");
 		return false;
-
+	}
 	return true;
 }
 
