@@ -41,6 +41,7 @@ enum {
 	kSludgeDebugDataLoad = 1 << 1,
 	kSludgeDebugStackMachine = 1 << 2,
 	kSludgeDebugBuiltin = 1 << 3,
+	kSludgeDebugGraphics = 1 << 4
 };
  
 class SludgeEngine : public Engine {

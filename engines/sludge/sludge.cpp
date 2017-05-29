@@ -44,6 +44,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kSludgeDebugDataLoad, "Data Load", "Data loading debug level");
 	DebugMan.addDebugChannel(kSludgeDebugStackMachine, "Stack Machine", "Stack Machine debug level");
 	DebugMan.addDebugChannel(kSludgeDebugBuiltin, "Built-in", "Built-in debug level");
+	DebugMan.addDebugChannel(kSludgeDebugGraphics, "Graphics", "Graphics debug level");
 
 	// check init
 	debug("SludgeEngine::SludgeEngine");

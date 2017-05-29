@@ -55,6 +55,10 @@
 #include "statusba.h"
 #include "variable.h"
 #include "CommonCode/version.h"
+#include "common/debug.h"
+#include "image/png.h"
+#include "graphics/surface.h"
+#include "sludge.h"
 
 namespace Sludge {
 
@@ -74,6 +78,8 @@ texture lightMap;
 
 GLuint snapshotTextureName = 0;
 #endif
+
+Graphics::Surface backdropSurface;
 
 float snapTexW = 1.0;
 float snapTexH = 1.0;
@@ -110,7 +116,8 @@ void saveSnapshot(Common::WriteStream *stream) {
 bool snapshot() {
 
 	nosnapshot();
-	if (!freeze()) return false;
+	if (!freeze())
+		return false;
 #if 0
 	setPixelCoords(true);
 	glGenTextures(1, &snapshotTextureName);
@@ -134,19 +141,19 @@ bool snapshot() {
 
 	// Render scene
 	glDepthMask(GL_TRUE);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear The Screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// Clear The Screen
 	glDepthMask(GL_FALSE);
 
-	drawBackDrop();                 // Draw the room
+	drawBackDrop();// Draw the room
 	drawZBuffer(cameraX, cameraY, false);
 
 	glEnable(GL_DEPTH_TEST);
 
-	drawPeople();                   // Then add any moving characters...
+	drawPeople();// Then add any moving characters...
 
 	glDisable(GL_DEPTH_TEST);
 
-	viewSpeech();                   // ...and anything being said
+	viewSpeech();// ...and anything being said
 	drawStatusBar();
 	// Copy Our ViewPort To The Texture
 	copyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, viewportOffsetX, viewportOffsetY, winWidth, winHeight, snapshotTextureName);
@@ -178,7 +185,7 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 	if (!snapshotTexture) return fatal("Out of memory while restoring snapshot.");
 #endif
 
-	for (t2 = 0; t2 < winHeight; t2 ++) {
+	for (t2 = 0; t2 < winHeight; t2++) {
 		t1 = 0;
 		while (t1 < winWidth) {
 			c = (unsigned short) get2bytes(stream);
@@ -255,11 +262,11 @@ void killParallax() {
 bool reserveBackdrop() {
 	cameraX = 0;
 	cameraY = 0;
-	input.mouseX = (int)((float)input.mouseX * cameraZoom);
-	input.mouseY = (int)((float)input.mouseY * cameraZoom);
+	input.mouseX = (int) ((float) input.mouseX * cameraZoom);
+	input.mouseY = (int) ((float) input.mouseY * cameraZoom);
 	cameraZoom = 1.0;
-	input.mouseX = (int)((float)input.mouseX / cameraZoom);
-	input.mouseY = (int)((float)input.mouseY / cameraZoom);
+	input.mouseX = (int) ((float) input.mouseX / cameraZoom);
+	input.mouseY = (int) ((float) input.mouseY / cameraZoom);
 	setPixelCoords(false);
 	int picWidth = sceneWidth;
 	int picHeight = sceneHeight;
@@ -304,8 +311,8 @@ bool resizeBackdrop(int x, int y) {
 }
 
 void loadBackDrop(int fileNum, int x, int y) {
+	debug(kSludgeDebugGraphics, "Load back drop");
 	setResourceForFatal(fileNum);
-#if 0
 	if (!openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
 		return;
@@ -318,7 +325,6 @@ void loadBackDrop(int fileNum, int x, int y) {
 	}
 
 	finishAccess();
-#endif
 	setResourceForFatal(-1);
 }
 
@@ -341,10 +347,14 @@ void mixBackDrop(int fileNum, int x, int y) {
 
 void blankScreen(int x1, int y1, int x2, int y2) {
 
-	if (y1 < 0) y1 = 0;
-	if (x1 < 0) x1 = 0;
-	if (x2 > (int) sceneWidth) x2 = (int)sceneWidth;
-	if (y2 > (int) sceneHeight) y2 = (int)sceneHeight;
+	if (y1 < 0)
+		y1 = 0;
+	if (x1 < 0)
+		x1 = 0;
+	if (x2 > (int) sceneWidth)
+		x2 = (int) sceneWidth;
+	if (y2 > (int) sceneHeight)
+		y2 = (int) sceneHeight;
 
 	int picWidth = x2 - x1;
 	int picHeight = y2 - y1;
@@ -360,8 +370,6 @@ void blankScreen(int x1, int y1, int x2, int y2) {
 			int h = (picHeight - yoffset < viewportHeight) ? picHeight - yoffset : viewportHeight;
 
 			// Render the scene
-
-
 
 			const GLfloat vertices[] = {
 				-10.325f, -1.325f, 0.0f,
@@ -396,7 +404,8 @@ void hardScroll(int distance) {
 		return;
 	}
 
-	if (!distance) return;
+	if (!distance)
+		return;
 #if 0
 	const GLfloat backdropTexCoords[] = {
 		0.0f, 0.0f,
@@ -415,7 +424,6 @@ void hardScroll(int distance) {
 		while (yoffset < sceneHeight) {
 			int h = (sceneHeight - yoffset < viewportHeight) ? sceneHeight - yoffset : viewportHeight;
 
-
 			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
 
 			// Render the backdrop
@@ -429,7 +437,6 @@ void hardScroll(int distance) {
 				(GLfloat) - xoffset, (GLfloat)sceneHeight - distance - yoffset, 0.,
 				(GLfloat)sceneWidth - xoffset, (GLfloat)sceneHeight - distance - yoffset, 0.
 			};
-
 
 			glUseProgram(shader.texture);
 
@@ -463,11 +470,13 @@ void darkScreen() {
 
 	int xoffset = 0;
 	while (xoffset < sceneWidth) {
-		int w = (sceneWidth - xoffset < viewportWidth) ? sceneWidth - xoffset : viewportWidth;
+		int w = (sceneWidth - xoffset < viewportWidth) ?
+				sceneWidth - xoffset : viewportWidth;
 
 		int yoffset = 0;
 		while (yoffset < sceneHeight) {
-			int h = (sceneHeight - yoffset < viewportHeight) ? sceneHeight - yoffset : viewportHeight;
+			int h = (sceneHeight - yoffset < viewportHeight) ?
+					sceneHeight - yoffset : viewportHeight;
 
 			// Render the scene - first the old backdrop
 #if 0
@@ -489,7 +498,6 @@ void darkScreen() {
 				0.0f, backdropTexH,
 				backdropTexW, backdropTexH
 			};
-
 
 			glUseProgram(shader.texture);
 
@@ -524,19 +532,13 @@ void darkScreen() {
 		xoffset += w;
 	}
 
-
 	setPixelCoords(false);
 }
 
-
-
 inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
 	return (fX == 65535) ?
-	       (sceneMax ? ((cX * boxMax) / sceneMax) : 0)
-	       :
-	       ((cX * fX) / 100);
+			(sceneMax ? ((cX * boxMax) / sceneMax) : 0) : ((cX * fX) / 100);
 }
-
 
 void drawBackDrop() {
 #if 0
@@ -632,7 +634,6 @@ bool loadLightMap(int v) {
 	png_structp png_ptr;
 	png_infop info_ptr, end_info;
 
-
 	int fileIsPNG = true;
 
 	// Is this a PNG file?
@@ -669,8 +670,8 @@ bool loadLightMap(int v) {
 			png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 			return false;
 		}
-		png_init_io(png_ptr, bigDataFile);      // Tell libpng which file to read
-		png_set_sig_bytes(png_ptr, 8);  // 8 bytes already read
+		png_init_io(png_ptr, bigDataFile);     // Tell libpng which file to read
+		png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
 
 		png_read_info(png_ptr, info_ptr);
 
@@ -730,7 +731,7 @@ bool loadLightMap(int v) {
 	if (fileIsPNG) {
 		unsigned char *row_pointers[lightMap.h];
 		for (int i = 0; i < lightMap.h; i++)
-			row_pointers[i] = lightMap.data + 4 * i * newPicWidth;
+		row_pointers[i] = lightMap.data + 4 * i * newPicWidth;
 
 		png_read_image(png_ptr, (png_byte **) row_pointers);
 		png_read_end(png_ptr, NULL);
@@ -788,13 +789,13 @@ void reloadParallaxTextures() {
 		glGenTextures(1, &nP->textureName);
 		glBindTexture(GL_TEXTURE_2D, nP->textureName);
 		if (nP->wrapS)
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		else
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		if (nP->wrapT)
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		else
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		if (gameSettings.antiAlias < 0) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -815,7 +816,8 @@ void reloadParallaxTextures() {
 #endif
 }
 
-bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) {
+bool loadParallax(unsigned short v, unsigned short fracX,
+		unsigned short fracY) {
 
 #if 0
 	setResourceForFatal(v);
@@ -838,7 +840,6 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 
 	png_structp png_ptr;
 	png_infop info_ptr, end_info;
-
 
 	int fileIsPNG = true;
 
@@ -875,8 +876,8 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 			png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 			return false;
 		}
-		png_init_io(png_ptr, bigDataFile);      // Tell libpng which file to read
-		png_set_sig_bytes(png_ptr, 8);  // 8 bytes already read
+		png_init_io(png_ptr, bigDataFile);     // Tell libpng which file to read
+		png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
 
 		png_read_info(png_ptr, info_ptr);
 
@@ -936,7 +937,7 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 	if (fileIsPNG) {
 		unsigned char *row_pointers[nP->height];
 		for (int i = 0; i < nP->height; i++)
-			row_pointers[i] = nP->texture + 4 * i * picWidth;
+		row_pointers[i] = nP->texture + 4 * i * picWidth;
 
 		png_read_image(png_ptr, (png_byte **) row_pointers);
 		png_read_end(png_ptr, NULL);
@@ -979,13 +980,13 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 	glGenTextures(1, &nP->textureName);
 	glBindTexture(GL_TEXTURE_2D, nP->textureName);
 	if (nP->wrapS)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	else
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	if (nP->wrapT)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	else
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	if (gameSettings.antiAlias < 0) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1005,8 +1006,16 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 
 extern int viewportOffsetX, viewportOffsetY;
 
+bool loadPng(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
+	debug("Loading back drop png.");
+	::Image::PNGDecoder png;
+	if (!png.loadStream(*stream))
+		return false;
+	backdropSurface.copyFrom(*(png.getSurface()));
+	picWidth = realPicWidth = backdropSurface.w;
+	picHeight = realPicHeight = backdropSurface.h;
+	return true;
 #if 0
-bool loadPng(GLubyte *loadhere, int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
 	long file_pointer = stream->pos();
 	png_structp png_ptr;
 	png_infop info_ptr, end_info;
@@ -1041,7 +1050,7 @@ bool loadPng(GLubyte *loadhere, int &picWidth, int &picHeight, int &realPicWidth
 		return false;
 	}
 	png_init_io(png_ptr, stream);		// Tell libpng which file to read
-	png_set_sig_bytes(png_ptr, 8);	// 8 bytes already read
+	png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
 
 	png_read_info(png_ptr, info_ptr);
 
@@ -1069,14 +1078,16 @@ bool loadPng(GLubyte *loadhere, int &picWidth, int &picHeight, int &realPicWidth
 	unsigned char *row_pointers[realPicHeight];
 
 	for (int i = 0; i < realPicHeight; i++)
-		row_pointers[i] = loadhere + 4 * i * picWidth;
+	row_pointers[i] = loadhere + 4 * i * picWidth;
 
 	png_read_image(png_ptr, (png_byte **) row_pointers);
 	png_read_end(png_ptr, NULL);
 	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+#endif
 }
 
-bool loadByteArray(GLubyte *loadhere, int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
+bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
+#if 0
 	int32_t transCol = reserve ? -1 : 63519;
 	int t1, t2, n;
 	unsigned short c;
@@ -1114,12 +1125,13 @@ bool loadByteArray(GLubyte *loadhere, int &picWidth, int &picHeight, int &realPi
 			}
 		}
 	}
+#endif
 }
 
-bool loadImage(GLubyte *loadhere, int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, int x, int y, bool reserve) {
-
-	if (!loadPng(loadhere, picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
-		if (!loadByteArray(loadhere, picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
+bool loadImage(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, int x, int y, bool reserve) {
+	debug(kSludgeDebugGraphics, "Loading back drop image.");
+	if (!loadPng(picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
+		if (!loadByteArray(picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
 			return false;
 		}
 	}
@@ -1131,6 +1143,7 @@ bool loadImage(GLubyte *loadhere, int &picWidth, int &picHeight, int &realPicWid
 	return true;
 }
 
+#if 0
 void makeGlArray(GLuint &tmpTex, const GLubyte *texture, int picWidth, int picHeight) {
 	glGenTextures(1, &tmpTex);
 	glBindTexture(GL_TEXTURE_2D, tmpTex);
@@ -1215,7 +1228,7 @@ void renderToTexture(GLuint tmpTex, int x, int y, int picWidth, int picHeight, i
 
 				glUseProgram(shader.paste);
 				GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
-				if (uniform >= 0) glUniform1i(uniform, 0); // No lighting
+				if (uniform >= 0) glUniform1i(uniform, 0);// No lighting
 
 				setPMVMatrix(shader.paste);
 
@@ -1251,15 +1264,14 @@ void renderToTexture(GLuint tmpTex, int x, int y, int picWidth, int picHeight, i
 	setPixelCoords(false);
 }
 #endif
-
 bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
-#if 0
+	debug(kSludgeDebugGraphics, "Load HSI");
 	int picWidth, picHeight;
 	int realPicWidth, realPicHeight;
 
-	if (!loadImage(backdropTexture, picWidth, picHeight, realPicWidth, realPicHeight, stream, x, y, reserve))
+	if (!loadImage(picWidth, picHeight, realPicWidth, realPicHeight, stream, x, y, reserve))
 		return false;
-
+#if 0
 	GLuint tmpTex;
 	makeGlArray(tmpTex, backdropTexture, picWidth, picHeight);
 
@@ -1282,7 +1294,6 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 
 	png_structp png_ptr;
 	png_infop info_ptr, end_info;
-
 
 	int fileIsPNG = true;
 
@@ -1319,7 +1330,7 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 			return false;
 		}
 		png_init_io(png_ptr, stream);       // Tell libpng which file to read
-		png_set_sig_bytes(png_ptr, 8);  // 8 bytes already read
+		png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
 
 		png_read_info(png_ptr, info_ptr);
 
@@ -1394,11 +1405,10 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	GLubyte *target;
 	int32_t transCol = 63519;
 
-
 	if (fileIsPNG) {
 		unsigned char *row_pointers[realPicHeight];
 		for (int i = 0; i < realPicHeight; i++)
-			row_pointers[i] = backdropTexture + 4 * i * picWidth;
+		row_pointers[i] = backdropTexture + 4 * i * picWidth;
 
 		png_read_image(png_ptr, (png_byte **) row_pointers);
 		png_read_end(png_ptr, NULL);
@@ -1449,11 +1459,9 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 
 	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, backdropTexture, tmpTex);
 
-
 	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	setPixelCoords(true);
-
 
 	int xoffset = 0;
 	while (xoffset < realPicWidth) {
@@ -1473,7 +1481,7 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 
 			glUseProgram(shader.paste);
 			GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
-			if (uniform >= 0) glUniform1i(uniform, 0); // No lighting
+			if (uniform >= 0) glUniform1i(uniform, 0);// No lighting
 
 			setPMVMatrix(shader.paste);
 
@@ -1566,7 +1574,7 @@ void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 
 			glUseProgram(0);
 
-			for (int i = 0; i < h; i++)   {
+			for (int i = 0; i < h; i++) {
 				glReadPixels(viewportOffsetX, viewportOffsetY + i, w, 1, GL_RGBA, GL_UNSIGNED_BYTE, image + xoffset * 4 + (yoffset + i) * 4 * tw);
 			}
 			yoffset += viewportHeight;
@@ -1592,7 +1600,7 @@ void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 	png_init_io(png_ptr, writer);
 
 	png_set_IHDR(png_ptr, info_ptr, w, h,
-	             8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+			8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
 	unsigned char *row_pointers[h];
 
@@ -1650,7 +1658,7 @@ void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 			drawQuad(shader.texture, vertices, 1, texCoords);
 			glUseProgram(0);
 
-			for (int i = 0; i < h; i++)   {
+			for (int i = 0; i < h; i++) {
 				glReadPixels(viewportOffsetX, viewportOffsetY + i, w, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image + xoffset + (yoffset + i)*tw);
 			}
 			yoffset += viewportHeight;
@@ -1703,7 +1711,7 @@ void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *stream) {
 		saveParallaxRecursive(me->next, stream);
 		putch(1, stream);
 		put2bytes(me->fileNum, stream);
-		put2bytes(me ->fractionX, stream);
+		put2bytes(me->fractionX, stream);
 		put2bytes(me->fractionY, stream);
 	}
 }

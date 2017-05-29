@@ -44,6 +44,7 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "sludge", "Sludge Game" },
 	{ "welcome", "Welcome Example" },
 	{ "welcome2", "Welcome Example 2" },
+	{ "welcomePng", "Welcome For PNG Test" },
 	{ "verbcoin", "Verb Coin" },
 	{ 0, 0 }
 };
@@ -68,6 +69,19 @@ static const SludgeGameDescription gameDescriptions[] = {
 			"welcome2",
 			"",
 			AD_ENTRY1("Welcome.slg", "cb1f307c05b8ae4107bcc7f86a3d2f99"),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
+	{
+		{
+			"welcomePng",
+			"",
+			AD_ENTRY1("Welcome.slg", "ff0d7ef0ce73b5503ef6b965928af6d6"),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
