@@ -779,8 +779,8 @@ static const SciScriptPatcherEntry hoyle5Signatures[] = {
 // daySixBeignet::changeState (4) is called when the cop goes out and sets cycles to 220.
 //  this is not enough time to get to the door, so we patch that to 23 seconds
 // Applies to at least: English PC-CD, German PC-CD, English Mac
-// Responsible method: daySixBeignet::changeState
-static const uint16 gk1SignatureDay6PoliceBeignet[] = {
+// Responsible method: daySixBeignet::changeState(4), script 230
+static const uint16 gk1SignatureDay6PoliceBeignet1[] = {
 	0x35, 0x04,                         // ldi 04
 	0x1a,                               // eq?
 	0x30, SIG_ADDTOOFFSET(+2),          // bnt [next state check]
@@ -795,10 +795,37 @@ static const uint16 gk1SignatureDay6PoliceBeignet[] = {
 	SIG_END
 };
 
-static const uint16 gk1PatchDay6PoliceBeignet[] = {
+static const uint16 gk1PatchDay6PoliceBeignet1[] = {
 	PATCH_ADDTOOFFSET(+16),
 	0x34, PATCH_UINT16(0x0017),         // ldi 23
 	0x65, PATCH_GETORIGINALBYTEADJUST(+20, +2), // aTop seconds (1c for PC, 1e for Mac)
+	PATCH_END
+};
+
+// sInGateWithPermission::changeState (0) is called, when the player walks through the swinging door.
+//  When it's day 6 and the desk sergeant is outside for the beignet, this state will also set
+//  daySixBeignet::cycles to basically reset the overall timer, which is 200.
+//  This is not enough time to get to the door, so we patch that to 20 seconds
+// Applies to at least: English PC-CD, German PC-CD, English Mac
+// Responsible method: sInGateWithPermission::changeState(0), script 230
+// Fixes bug: #9805
+static const uint16 gk1SignatureDay6PoliceBeignet2[] = {
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa daySixBeignet
+	0x1a,                               // eq?
+	0x31, 0x0d,                         // bnt [skip set cycles]
+	0x38, SIG_SELECTOR16(cycles),       // pushi (cycles)
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(200),              // pushi 200d
+	0x72,                               // lofsa
+	SIG_END
+};
+
+static const uint16 gk1PatchDay6PoliceBeignet2[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x38, PATCH_SELECTOR16(seconds),    // pushi (seconds)
+	0x78,                               // push1
+	0x38, PATCH_UINT16(20),             // pushi 20
 	PATCH_END
 };
 
@@ -1076,7 +1103,8 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug,     gk1PatchInterrogationBug },
 	{  true,   212, "day 5 drum book dialogue error",              1, gk1SignatureDay5DrumBookDialogue, gk1PatchDay5DrumBookDialogue },
 	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze,      gk1PatchDay5PhoneFreeze },
-	{  true,   230, "day 6 police beignet timer issue",            1, gk1SignatureDay6PoliceBeignet,    gk1PatchDay6PoliceBeignet },
+	{  true,   230, "day 6 police beignet timer issue 1/2",        1, gk1SignatureDay6PoliceBeignet1,   gk1PatchDay6PoliceBeignet1 },
+	{  true,   230, "day 6 police beignet timer issue 2/2",        1, gk1SignatureDay6PoliceBeignet2,   gk1PatchDay6PoliceBeignet2 },
 	{  true,   230, "day 6 police sleep timer issue",              1, gk1SignatureDay6PoliceSleep,      gk1PatchDay6PoliceSleep },
 	{  true,   808, "day 10 gabriel dress up infinite turning",    1, gk1SignatureDay10GabrielDressUp,  gk1PatchDay10GabrielDressUp },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
