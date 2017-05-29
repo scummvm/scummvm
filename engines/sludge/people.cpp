@@ -71,7 +71,8 @@ inline int TF_abs(int a) {
 }
 
 void setFrames(onScreenPerson &m, int a) {
-	m.myAnim = m.myPersona->animation[(a * m.myPersona->numDirections) + m.direction];
+	m.myAnim = m.myPersona->animation[(a * m.myPersona->numDirections)
+			+ m.direction];
 }
 
 personaAnimation *createPersonaAnim(int num, variableStack *&stacky) {
@@ -85,15 +86,17 @@ personaAnimation *createPersonaAnim(int num, variableStack *&stacky) {
 	int a = num, frameNum, howMany;
 
 	while (a) {
-		a --;
+		a--;
 		newP->frames[a].noise = 0;
 		if (stacky->thisVar.varType == SVT_FILE) {
 			newP->frames[a].noise = stacky->thisVar.varData.intValue;
 		} else if (stacky->thisVar.varType == SVT_FUNC) {
-			newP->frames[a].noise = - stacky->thisVar.varData.intValue;
+			newP->frames[a].noise = -stacky->thisVar.varData.intValue;
 		} else if (stacky->thisVar.varType == SVT_STACK) {
-			getValueType(frameNum, SVT_INT, stacky->thisVar.varData.theStack->first->thisVar);
-			getValueType(howMany, SVT_INT, stacky->thisVar.varData.theStack->first->next->thisVar);
+			getValueType(frameNum, SVT_INT,
+					stacky->thisVar.varData.theStack->first->thisVar);
+			getValueType(howMany, SVT_INT,
+					stacky->thisVar.varData.theStack->first->next->thisVar);
 		} else {
 			getValueType(frameNum, SVT_INT, stacky->thisVar);
 			howMany = 1;
@@ -107,32 +110,34 @@ personaAnimation *createPersonaAnim(int num, variableStack *&stacky) {
 }
 
 personaAnimation *makeNullAnim() {
-	personaAnimation *newAnim  = new personaAnimation;
-	if (!checkNew(newAnim)) return NULL;
+	personaAnimation *newAnim = new personaAnimation;
+	if (!checkNew(newAnim))
+		return NULL;
 
-
-	newAnim->theSprites       = NULL;
-	newAnim->numFrames        = 0;
-	newAnim->frames           = NULL;
+	newAnim->theSprites = NULL;
+	newAnim->numFrames = 0;
+	newAnim->frames = NULL;
 	return newAnim;
 }
 
 personaAnimation *copyAnim(personaAnimation *orig) {
 	int num = orig->numFrames;
 
-	personaAnimation *newAnim  = new personaAnimation;
-	if (!checkNew(newAnim)) return NULL;
+	personaAnimation *newAnim = new personaAnimation;
+	if (!checkNew(newAnim))
+		return NULL;
 
 	// Copy the easy bits...
-	newAnim->theSprites       = orig->theSprites;
-	newAnim->numFrames        = num;
+	newAnim->theSprites = orig->theSprites;
+	newAnim->numFrames = num;
 
 	if (num) {
 
 		// Argh!Frames!We need a whole NEW array of animFrame structures...
 
 		newAnim->frames = new animFrame[num];
-		if (!checkNew(newAnim->frames)) return NULL;
+		if (!checkNew(newAnim->frames))
+			return NULL;
 
 		for (int a = 0; a < num; ++a) {
 			newAnim->frames[a].frameNum = orig->frames[a].frameNum;
@@ -161,7 +166,8 @@ void turnMeAngle(onScreenPerson *thisPerson, int direc) {
 	int d = thisPerson->myPersona->numDirections;
 	thisPerson->angle = direc;
 	direc += (180 / d) + 180 + thisPerson->angleOffset;
-	while (direc >= 360) direc -= 360;
+	while (direc >= 360)
+		direc -= 360;
 	thisPerson->direction = (direc * d) / 360;
 }
 
@@ -176,14 +182,17 @@ bool initPeople() {
 
 void spinStep(onScreenPerson *thisPerson) {
 	int diff = (thisPerson->angle + 360) - thisPerson->wantAngle;
-	int eachSlice = thisPerson->spinSpeed ? thisPerson->spinSpeed : (360 / thisPerson->myPersona->numDirections);
+	int eachSlice =
+			thisPerson->spinSpeed ?
+					thisPerson->spinSpeed :
+					(360 / thisPerson->myPersona->numDirections);
 	while (diff > 180) {
 		diff -= 360;
 	}
 
 	if (diff >= eachSlice) {
 		turnMeAngle(thisPerson, thisPerson->angle - eachSlice);
-	} else if (diff <= - eachSlice) {
+	} else if (diff <= -eachSlice) {
 		turnMeAngle(thisPerson, thisPerson->angle + eachSlice);
 	} else {
 		turnMeAngle(thisPerson, thisPerson->wantAngle);
@@ -194,19 +203,22 @@ void spinStep(onScreenPerson *thisPerson) {
 void rethinkAngle(onScreenPerson *thisPerson) {
 	int d = thisPerson->myPersona->numDirections;
 	int direc = thisPerson->angle + (180 / d) + 180 + thisPerson->angleOffset;
-	while (direc >= 360) direc -= 360;
+	while (direc >= 360)
+		direc -= 360;
 	thisPerson->direction = (direc * d) / 360;
 }
 
 bool turnPersonToFace(int thisNum, int direc) {
 	onScreenPerson *thisPerson = findPerson(thisNum);
 	if (thisPerson) {
-		if (thisPerson->continueAfterWalking) abortFunction(thisPerson->continueAfterWalking);
+		if (thisPerson->continueAfterWalking)
+			abortFunction(thisPerson->continueAfterWalking);
 		thisPerson->continueAfterWalking = NULL;
 		thisPerson->walking = false;
 		thisPerson->spinning = false;
 		turnMeAngle(thisPerson, direc);
-		setFrames(* thisPerson, (thisPerson == speech->currentTalker) ? ANI_TALK : ANI_STAND);
+		setFrames(*thisPerson,
+				(thisPerson == speech->currentTalker) ? ANI_TALK : ANI_STAND);
 		return true;
 	}
 	return false;
@@ -216,7 +228,8 @@ bool setPersonExtra(int thisNum, int extra) {
 	onScreenPerson *thisPerson = findPerson(thisNum);
 	if (thisPerson) {
 		thisPerson->extra = extra;
-		if (extra & EXTRA_NOSCALE) thisPerson->scale = 1;
+		if (extra & EXTRA_NOSCALE)
+			thisPerson->scale = 1;
 		return true;
 	}
 	return false;
@@ -230,13 +243,15 @@ void setScale(short int h, short int d) {
 void moveAndScale(onScreenPerson &me, float x, float y) {
 	me.x = x;
 	me.y = y;
-	if (!(me.extra & EXTRA_NOSCALE) && scaleDivide) me.scale = (me.y - scaleHorizon) / scaleDivide;
+	if (!(me.extra & EXTRA_NOSCALE) && scaleDivide)
+		me.scale = (me.y - scaleHorizon) / scaleDivide;
 }
 
 onScreenPerson *findPerson(int v) {
 	onScreenPerson *thisPerson = allPeople;
 	while (thisPerson) {
-		if (v == thisPerson->thisType->objectNum) break;
+		if (v == thisPerson->thisType->objectNum)
+			break;
 		thisPerson = thisPerson->next;
 	}
 	return thisPerson;
@@ -244,12 +259,14 @@ onScreenPerson *findPerson(int v) {
 
 void movePerson(int x, int y, int objNum) {
 	onScreenPerson *moveMe = findPerson(objNum);
-	if (moveMe) moveAndScale(* moveMe, x, y);
+	if (moveMe)
+		moveAndScale(*moveMe, x, y);
 }
 
 void setShown(bool h, int ob) {
 	onScreenPerson *moveMe = findPerson(ob);
-	if (moveMe) moveMe->show = h;
+	if (moveMe)
+		moveMe->show = h;
 }
 
 enum drawModes {
@@ -318,57 +335,57 @@ void setMyDrawMode(onScreenPerson *moveMe, int h) {
 		moveMe->colourmix = 255;
 		moveMe->transparency = 0;
 		break;
-	case    drawModeShadow1:
+	case drawModeShadow1:
 		moveMe->r = moveMe->g = moveMe->b = 0;
 		moveMe->colourmix = 255;
 		moveMe->transparency = 64;
 		break;
-	case    drawModeShadow2:
+	case drawModeShadow2:
 		moveMe->r = moveMe->g = moveMe->b = 0;
 		moveMe->colourmix = 255;
 		moveMe->transparency = 128;
 		break;
-	case    drawModeShadow3:
+	case drawModeShadow3:
 		moveMe->r = moveMe->g = moveMe->b = 0;
 		moveMe->colourmix = 255;
 		moveMe->transparency = 192;
 		break;
-	case    drawModeFoggy3:
+	case drawModeFoggy3:
 		moveMe->r = moveMe->g = moveMe->b = 128;
 		moveMe->colourmix = 192;
 		moveMe->transparency = 0;
 		break;
-	case    drawModeFoggy2:
+	case drawModeFoggy2:
 		moveMe->r = moveMe->g = moveMe->b = 128;
 		moveMe->colourmix = 128;
 		moveMe->transparency = 0;
 		break;
-	case    drawModeFoggy1:
+	case drawModeFoggy1:
 		moveMe->r = moveMe->g = moveMe->b = 128;
 		moveMe->colourmix = 64;
 		moveMe->transparency = 0;
 		break;
-	case    drawModeFoggy4:
+	case drawModeFoggy4:
 		moveMe->r = moveMe->g = moveMe->b = 128;
 		moveMe->colourmix = 255;
 		moveMe->transparency = 0;
 		break;
-	case    drawModeGlow3:
+	case drawModeGlow3:
 		moveMe->r = moveMe->g = moveMe->b = 255;
 		moveMe->colourmix = 192;
 		moveMe->transparency = 0;
 		break;
-	case    drawModeGlow2:
+	case drawModeGlow2:
 		moveMe->r = moveMe->g = moveMe->b = 255;
 		moveMe->colourmix = 128;
 		moveMe->transparency = 0;
 		break;
-	case    drawModeGlow1:
+	case drawModeGlow1:
 		moveMe->r = moveMe->g = moveMe->b = 255;
 		moveMe->colourmix = 64;
 		moveMe->transparency = 0;
 		break;
-	case    drawModeGlow4:
+	case drawModeGlow4:
 		moveMe->r = moveMe->g = moveMe->b = 255;
 		moveMe->colourmix = 255;
 		moveMe->transparency = 0;
@@ -384,22 +401,27 @@ void setMyDrawMode(onScreenPerson *moveMe, int h) {
 
 void setDrawMode(int h, int ob) {
 	onScreenPerson *moveMe = findPerson(ob);
-	if (!moveMe) return;
+	if (!moveMe)
+		return;
 
 	setMyDrawMode(moveMe, h);
 }
 
 void setPersonTransparency(int ob, unsigned char x) {
 	onScreenPerson *moveMe = findPerson(ob);
-	if (!moveMe) return;
+	if (!moveMe)
+		return;
 
-	if (x > 254) x = 254;
+	if (x > 254)
+		x = 254;
 	moveMe->transparency = x;
 }
 
-void setPersonColourise(int ob, unsigned char r, unsigned char g, unsigned char b, unsigned char colourmix) {
+void setPersonColourise(int ob, unsigned char r, unsigned char g,
+		unsigned char b, unsigned char colourmix) {
 	onScreenPerson *moveMe = findPerson(ob);
-	if (!moveMe) return;
+	if (!moveMe)
+		return;
 
 	moveMe->r = r;
 	moveMe->g = g;
@@ -407,36 +429,35 @@ void setPersonColourise(int ob, unsigned char r, unsigned char g, unsigned char 
 	moveMe->colourmix = colourmix;
 }
 
-
-
 extern screenRegion *overRegion;
 
 void shufflePeople() {
-	onScreenPerson * * thisReference = & allPeople;
-	onScreenPerson *A, * B;
+	onScreenPerson * * thisReference = &allPeople;
+	onScreenPerson *A, *B;
 
-	if (!allPeople) return;
+	if (!allPeople)
+		return;
 
-	while ((* thisReference)->next) {
-		float y1 = (* thisReference)->y;
-		if ((* thisReference)->extra & EXTRA_FRONT) y1 += 1000;
+	while ((*thisReference)->next) {
+		float y1 = (*thisReference)->y;
+		if ((*thisReference)->extra & EXTRA_FRONT)
+			y1 += 1000;
 
-		float y2 = (* thisReference)->next->y;
-		if ((* thisReference)->next->extra & EXTRA_FRONT) y2 += 1000;
+		float y2 = (*thisReference)->next->y;
+		if ((*thisReference)->next->extra & EXTRA_FRONT)
+			y2 += 1000;
 
 		if (y1 > y2) {
-			A = (* thisReference);
-			B = (* thisReference)->next;
+			A = (*thisReference);
+			B = (*thisReference)->next;
 			A->next = B->next;
 			B->next = A;
-			(* thisReference) = B;
+			(*thisReference) = B;
 		} else {
-			thisReference = & ((* thisReference)->next);
+			thisReference = &((*thisReference)->next);
 		}
 	}
 }
-
-
 
 void drawPeople() {
 	shufflePeople();
@@ -453,15 +474,20 @@ void drawPeople() {
 				thisPerson->frameNum = 0;
 				thisPerson->frameTick = myAnim->frames[0].howMany;
 				if (myAnim->frames[thisPerson->frameNum].noise > 0) {
-					startSound(myAnim->frames[thisPerson->frameNum].noise, false);
-					thisPerson->frameNum ++;
+					startSound(myAnim->frames[thisPerson->frameNum].noise,
+							false);
+					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+					thisPerson->frameTick =
+							thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				} else if (myAnim->frames[thisPerson->frameNum].noise) {
-					startNewFunctionNum(- myAnim->frames[thisPerson->frameNum].noise, 0, NULL, noStack);
-					thisPerson->frameNum ++;
+					startNewFunctionNum(
+							-myAnim->frames[thisPerson->frameNum].noise, 0,
+							NULL, noStack);
+					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+					thisPerson->frameTick =
+							thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				}
 			}
 			int fNumSign = myAnim->frames[thisPerson->frameNum].frameNum;
@@ -473,31 +499,39 @@ void drawPeople() {
 			}
 			if (m != 2) {
 				bool r = false;
-				r = scaleSprite(myAnim->theSprites->bank.sprites[fNum], myAnim->theSprites->bank.myPalette, thisPerson, m);
+				r = scaleSprite(myAnim->theSprites->bank.sprites[fNum],
+						myAnim->theSprites->bank.myPalette, thisPerson, m);
 				if (r) {
 					if (thisPerson->thisType->screenName[0]) {
-						if (personRegion.thisType != thisPerson->thisType) lastRegion = NULL;
+						if (personRegion.thisType != thisPerson->thisType)
+							lastRegion = NULL;
 						personRegion.thisType = thisPerson->thisType;
-						overRegion = & personRegion;
+						overRegion = &personRegion;
 					}
 				}
 			}
 		}
-		if (!-- thisPerson->frameTick) {
-			thisPerson->frameNum ++;
+		if (!--thisPerson->frameTick) {
+			thisPerson->frameNum++;
 			thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-			thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+			thisPerson->frameTick =
+					thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 			if (thisPerson->show && myAnim && myAnim->frames) {
 				if (myAnim->frames[thisPerson->frameNum].noise > 0) {
-					startSound(myAnim->frames[thisPerson->frameNum].noise, false);
-					thisPerson->frameNum ++;
+					startSound(myAnim->frames[thisPerson->frameNum].noise,
+							false);
+					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+					thisPerson->frameTick =
+							thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				} else if (myAnim->frames[thisPerson->frameNum].noise) {
-					startNewFunctionNum(- myAnim->frames[thisPerson->frameNum].noise, 0, NULL, noStack);
-					thisPerson->frameNum ++;
+					startNewFunctionNum(
+							-myAnim->frames[thisPerson->frameNum].noise, 0,
+							NULL, noStack);
+					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+					thisPerson->frameTick =
+							thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				}
 			}
 		}
@@ -514,22 +548,27 @@ void makeSilent(onScreenPerson &me) {
 }
 
 bool handleClosestPoint(int &setX, int &setY, int &setPoly) {
-	int gotX = 320, gotY = 200, gotPoly = -1, i, j, xTest1, yTest1,
-	    xTest2, yTest2, closestX, closestY, oldJ, currentDistance = 0xFFFFF,
-	                                              thisDistance;
+	int gotX = 320, gotY = 200, gotPoly = -1, i, j, xTest1, yTest1, xTest2,
+			yTest2, closestX, closestY, oldJ, currentDistance = 0xFFFFF,
+			thisDistance;
 
 //	FILE * dbug = fopen ("debug_closest.txt", "at");
 //	fprintf (dbug, "\nGetting closest point to %i, %i\n", setX, setY);
 
-	for (i = 0; i < currentFloor->numPolygons; i ++) {
+	for (i = 0; i < currentFloor->numPolygons; i++) {
 		oldJ = currentFloor->polygon[i].numVertices - 1;
-		for (j = 0; j < currentFloor->polygon[i].numVertices; j ++) {
+		for (j = 0; j < currentFloor->polygon[i].numVertices; j++) {
 //			fprintf (dbug, "Polygon %i, line %i... ", i, j);
-			xTest1 = currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x;
-			yTest1 = currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y;
-			xTest2 = currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].x;
-			yTest2 = currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].y;
-			closestPointOnLine(closestX, closestY, xTest1, yTest1, xTest2, yTest2, setX, setY);
+			xTest1 =
+					currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x;
+			yTest1 =
+					currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y;
+			xTest2 =
+					currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].x;
+			yTest2 =
+					currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].y;
+			closestPointOnLine(closestX, closestY, xTest1, yTest1, xTest2,
+					yTest2, setX, setY);
 //			fprintf (dbug, "closest point is %i, %i... ", closestX, closestY);
 			xTest1 = setX - closestX;
 			yTest1 = setY - closestY;
@@ -549,7 +588,8 @@ bool handleClosestPoint(int &setX, int &setY, int &setPoly) {
 	}
 //	fclose (dbug);
 
-	if (gotPoly == -1) return false;
+	if (gotPoly == -1)
+		return false;
 	setX = gotX;
 	setY = gotY;
 	setPoly = gotPoly;
@@ -565,11 +605,13 @@ bool doBorderStuff(onScreenPerson *moveMe) {
 	} else {
 		// The section in which we need to be next...
 		int newPoly = currentFloor->matrix[moveMe->inPoly][moveMe->walkToPoly];
-		if (newPoly == -1) return false;
+		if (newPoly == -1)
+			return false;
 
 		// Grab the index of the second matching corner...
 		int ID, ID2;
-		if (!getMatchingCorners(currentFloor->polygon[moveMe->inPoly], currentFloor->polygon[newPoly], ID, ID2))
+		if (!getMatchingCorners(currentFloor->polygon[moveMe->inPoly],
+				currentFloor->polygon[newPoly], ID, ID2))
 			return fatal("Not a valid floor plan!");
 
 		// Remember that we're walking to the new polygon...
@@ -605,8 +647,8 @@ bool doBorderStuff(onScreenPerson *moveMe) {
 			dy23 *= dy23;
 			dy24 *= dy24;
 
-			if (sqrt((double) dx13 + dy13) + sqrt((double) dx23 + dy23) <
-			        sqrt((double) dx14 + dy14) + sqrt((double) dx24 + dy24)) {
+			if (sqrt((double) dx13 + dy13) + sqrt((double) dx23 + dy23)
+					< sqrt((double) dx14 + dy14) + sqrt((double) dx24 + dy24)) {
 				moveMe->thisStepX = x3;
 				moveMe->thisStepY = y3;
 			} else {
@@ -623,7 +665,7 @@ bool doBorderStuff(onScreenPerson *moveMe) {
 		moveMe->spinning = true;
 	}
 
-	setFrames(* moveMe, ANI_WALK);
+	setFrames(*moveMe, ANI_WALK);
 	return true;
 }
 
@@ -634,20 +676,22 @@ bool walkMe(onScreenPerson *thisPerson, bool move = true) {
 		xDiff = thisPerson->thisStepX - thisPerson->x;
 		yDiff = (thisPerson->thisStepY - thisPerson->y) * 2;
 		s = thisPerson->scale * thisPerson->walkSpeed;
-		if (s < 0.2) s = 0.2;
+		if (s < 0.2)
+			s = 0.2;
 
-		maxDiff = (TF_abs(xDiff) >= TF_abs(yDiff)) ? TF_abs(xDiff) : TF_abs(yDiff);
+		maxDiff =
+				(TF_abs(xDiff) >= TF_abs(yDiff)) ?
+						TF_abs(xDiff) : TF_abs(yDiff);
 
 		if (TF_abs(maxDiff) > s) {
 			if (thisPerson->spinning) {
 				spinStep(thisPerson);
-				setFrames(* thisPerson, ANI_WALK);
+				setFrames(*thisPerson, ANI_WALK);
 			}
 			s = maxDiff / s;
 			if (move)
-				moveAndScale(* thisPerson,
-				             thisPerson->x + xDiff / s,
-				             thisPerson->y + yDiff / (s * 2));
+				moveAndScale(*thisPerson, thisPerson->x + xDiff / s,
+						thisPerson->y + yDiff / (s * 2));
 			return true;
 		}
 
@@ -659,24 +703,27 @@ bool walkMe(onScreenPerson *thisPerson, bool move = true) {
 			}
 			break;
 		}
-		if (!doBorderStuff(thisPerson)) break;
+		if (!doBorderStuff(thisPerson))
+			break;
 	}
 
 	thisPerson->walking = false;
-	setFrames(* thisPerson, ANI_STAND);
-	moveAndScale(* thisPerson,
-	             thisPerson->walkToX,
-	             thisPerson->walkToY);
+	setFrames(*thisPerson, ANI_STAND);
+	moveAndScale(*thisPerson, thisPerson->walkToX, thisPerson->walkToY);
 	return false;
 }
 
 bool makeWalkingPerson(int x, int y, int objNum, loadedFunction *func, int di) {
-	if (x == 0 && y == 0) return false;
-	if (currentFloor->numPolygons == 0) return false;
+	if (x == 0 && y == 0)
+		return false;
+	if (currentFloor->numPolygons == 0)
+		return false;
 	onScreenPerson *moveMe = findPerson(objNum);
-	if (!moveMe) return false;
+	if (!moveMe)
+		return false;
 
-	if (moveMe->continueAfterWalking) abortFunction(moveMe->continueAfterWalking);
+	if (moveMe->continueAfterWalking)
+		abortFunction(moveMe->continueAfterWalking);
 	moveMe->continueAfterWalking = NULL;
 	moveMe->walking = true;
 	moveMe->directionWhenDoneWalking = di;
@@ -685,13 +732,16 @@ bool makeWalkingPerson(int x, int y, int objNum, loadedFunction *func, int di) {
 	moveMe->walkToY = y;
 	moveMe->walkToPoly = inFloor(x, y);
 	if (moveMe->walkToPoly == -1) {
-		if (!handleClosestPoint(moveMe->walkToX, moveMe->walkToY, moveMe->walkToPoly)) return false;
+		if (!handleClosestPoint(moveMe->walkToX, moveMe->walkToY,
+				moveMe->walkToPoly))
+			return false;
 	}
 
 	moveMe->inPoly = inFloor(moveMe->x, moveMe->y);
 	if (moveMe->inPoly == -1) {
 		int xxx = moveMe->x, yyy = moveMe->y;
-		if (!handleClosestPoint(xxx, yyy, moveMe->inPoly)) return false;
+		if (!handleClosestPoint(xxx, yyy, moveMe->inPoly))
+			return false;
 	}
 
 	doBorderStuff(moveMe);
@@ -711,18 +761,22 @@ bool stopPerson(int o) {
 			moveMe->continueAfterWalking = NULL;
 			moveMe->walking = false;
 			moveMe->spinning = false;
-			setFrames(* moveMe, ANI_STAND);
+			setFrames(*moveMe, ANI_STAND);
 			return true;
 		}
 	return false;
 }
 
-bool forceWalkingPerson(int x, int y, int objNum, loadedFunction *func, int di) {
-	if (x == 0 && y == 0) return false;
+bool forceWalkingPerson(int x, int y, int objNum, loadedFunction *func,
+		int di) {
+	if (x == 0 && y == 0)
+		return false;
 	onScreenPerson *moveMe = findPerson(objNum);
-	if (!moveMe) return false;
+	if (!moveMe)
+		return false;
 
-	if (moveMe->continueAfterWalking) abortFunction(moveMe->continueAfterWalking);
+	if (moveMe->continueAfterWalking)
+		abortFunction(moveMe->continueAfterWalking);
 	moveMe->walking = true;
 	moveMe->continueAfterWalking = NULL;
 	moveMe->directionWhenDoneWalking = di;
@@ -745,27 +799,33 @@ bool forceWalkingPerson(int x, int y, int objNum, loadedFunction *func, int di) 
 }
 
 void jumpPerson(int x, int y, int objNum) {
-	if (x == 0 && y == 0) return;
+	if (x == 0 && y == 0)
+		return;
 	onScreenPerson *moveMe = findPerson(objNum);
-	if (!moveMe) return;
-	if (moveMe->continueAfterWalking) abortFunction(moveMe->continueAfterWalking);
+	if (!moveMe)
+		return;
+	if (moveMe->continueAfterWalking)
+		abortFunction(moveMe->continueAfterWalking);
 	moveMe->continueAfterWalking = NULL;
 	moveMe->walking = false;
 	moveMe->spinning = false;
-	moveAndScale(* moveMe, x, y);
+	moveAndScale(*moveMe, x, y);
 }
 
 bool floatCharacter(int f, int objNum) {
 	onScreenPerson *moveMe = findPerson(objNum);
-	if (!moveMe) return false;
+	if (!moveMe)
+		return false;
 	moveMe->floaty = f;
 	return true;
 }
 
 bool setCharacterWalkSpeed(int f, int objNum) {
-	if (f <= 0) return false;
+	if (f <= 0)
+		return false;
 	onScreenPerson *moveMe = findPerson(objNum);
-	if (!moveMe) return false;
+	if (!moveMe)
+		return false;
 	moveMe->walkSpeed = f;
 	return true;
 }
@@ -778,9 +838,10 @@ void walkAllPeople() {
 			walkMe(thisPerson);
 		} else if (thisPerson->spinning) {
 			spinStep(thisPerson);
-			setFrames(* thisPerson, ANI_STAND);
+			setFrames(*thisPerson, ANI_STAND);
 		}
-		if ((!thisPerson->walking) && (!thisPerson->spinning) && thisPerson->continueAfterWalking) {
+		if ((!thisPerson->walking) && (!thisPerson->spinning)
+				&& thisPerson->continueAfterWalking) {
 			restartFunction(thisPerson->continueAfterWalking);
 			thisPerson->continueAfterWalking = NULL;
 		}
@@ -790,14 +851,15 @@ void walkAllPeople() {
 
 bool addPerson(int x, int y, int objNum, persona *p) {
 	onScreenPerson *newPerson = new onScreenPerson;
-	if (!checkNew(newPerson)) return false;
+	if (!checkNew(newPerson))
+		return false;
 
 	// EASY STUFF
 	newPerson->thisType = loadObjectType(objNum);
 	newPerson->scale = 1;
 	newPerson->extra = 0;
 	newPerson->continueAfterWalking = NULL;
-	moveAndScale(* newPerson, x, y);
+	moveAndScale(*newPerson, x, y);
 	newPerson->frameNum = 0;
 	newPerson->walkToX = x;
 	newPerson->walkToY = y;
@@ -819,7 +881,7 @@ bool addPerson(int x, int y, int objNum, persona *p) {
 	newPerson->transparency = 0;
 	newPerson->myPersona = p;
 
-	setFrames(* newPerson, ANI_STAND);
+	setFrames(*newPerson, ANI_STAND);
 
 	// HEIGHT (BASED ON 1st FRAME OF 1st ANIMATION... INC. SPECIAL CASES)
 	int fNumSigned = p->animation[0]->frames[0].frameNum;
@@ -828,22 +890,24 @@ bool addPerson(int x, int y, int objNum, persona *p) {
 		if (fNumSigned < 0) {
 			newPerson->height = 5;
 		} else {
-			newPerson->height = p->animation[0]->theSprites->bank.sprites[0].yhot + 5;
+			newPerson->height =
+					p->animation[0]->theSprites->bank.sprites[0].yhot + 5;
 		}
 	} else {
-		newPerson->height = p->animation[0]->theSprites->bank.sprites[fNum].yhot + 5;
+		newPerson->height = p->animation[0]->theSprites->bank.sprites[fNum].yhot
+				+ 5;
 	}
 
 	// NOW ADD IT IN THE RIGHT PLACE
-	onScreenPerson * * changethat = & allPeople;
+	onScreenPerson * * changethat = &allPeople;
 
-	while (((* changethat) != NULL) && ((* changethat)->y < y))
-		changethat = & ((* changethat)->next);
+	while (((*changethat) != NULL) && ((*changethat)->y < y))
+		changethat = &((*changethat)->next);
 
-	newPerson->next = (* changethat);
-	(* changethat) = newPerson;
+	newPerson->next = (*changethat);
+	(*changethat) = newPerson;
 
-	return (bool)(newPerson->thisType != NULL);
+	return (bool) (newPerson->thisType != NULL);
 }
 
 int timeForAnim(personaAnimation *fram) {
@@ -854,10 +918,11 @@ int timeForAnim(personaAnimation *fram) {
 	return total;
 }
 
-void animatePerson(int obj, personaAnimation *fram) {   // Set a new SINGLE animation
+void animatePerson(int obj, personaAnimation *fram) { // Set a new SINGLE animation
 	onScreenPerson *moveMe = findPerson(obj);
 	if (moveMe) {
-		if (moveMe->continueAfterWalking) abortFunction(moveMe->continueAfterWalking);
+		if (moveMe->continueAfterWalking)
+			abortFunction(moveMe->continueAfterWalking);
 		moveMe->continueAfterWalking = NULL;
 		moveMe->walking = false;
 		moveMe->spinning = false;
@@ -874,10 +939,10 @@ void animatePerson(int obj, persona *per) {             // Set a new costume
 		moveMe->spinning = false;
 		moveMe->myPersona = per;
 		rethinkAngle(moveMe);
-		if (moveMe-> walking) {
-			setFrames(* moveMe, ANI_WALK);
+		if (moveMe->walking) {
+			setFrames(*moveMe, ANI_WALK);
 		} else {
-			setFrames(* moveMe, ANI_STAND);
+			setFrames(*moveMe, ANI_STAND);
 		}
 	}
 }
@@ -885,7 +950,8 @@ void animatePerson(int obj, persona *per) {             // Set a new costume
 void killAllPeople() {
 	onScreenPerson *killPeople;
 	while (allPeople) {
-		if (allPeople->continueAfterWalking) abortFunction(allPeople->continueAfterWalking);
+		if (allPeople->continueAfterWalking)
+			abortFunction(allPeople->continueAfterWalking);
 		allPeople->continueAfterWalking = NULL;
 		killPeople = allPeople;
 		allPeople = allPeople->next;
@@ -896,19 +962,20 @@ void killAllPeople() {
 
 void killMostPeople() {
 	onScreenPerson *killPeople;
-	onScreenPerson * * lookyHere = & allPeople;
+	onScreenPerson * * lookyHere = &allPeople;
 
-	while (* lookyHere) {
-		if ((* lookyHere)->extra & EXTRA_NOREMOVE) {
-			lookyHere = & (* lookyHere)->next;
+	while (*lookyHere) {
+		if ((*lookyHere)->extra & EXTRA_NOREMOVE) {
+			lookyHere = &(*lookyHere)->next;
 		} else {
-			killPeople = (* lookyHere);
+			killPeople = (*lookyHere);
 
 			// Change last pointer to NEXT in the list instead
-			(* lookyHere) = killPeople->next;
+			(*lookyHere) = killPeople->next;
 
 			// Gone from the list... now free some memory
-			if (killPeople->continueAfterWalking) abortFunction(killPeople->continueAfterWalking);
+			if (killPeople->continueAfterWalking)
+				abortFunction(killPeople->continueAfterWalking);
 			killPeople->continueAfterWalking = NULL;
 			removeObjectType(killPeople->thisType);
 			delete killPeople;
@@ -920,21 +987,22 @@ void removeOneCharacter(int i) {
 	onScreenPerson *p = findPerson(i);
 
 	if (p) {
-		if (overRegion == &personRegion && overRegion->thisType == p->thisType) {
+		if (overRegion == &personRegion
+				&& overRegion->thisType == p->thisType) {
 			overRegion = NULL;
 		}
 
-		if (p->continueAfterWalking) abortFunction(p->continueAfterWalking);
+		if (p->continueAfterWalking)
+			abortFunction(p->continueAfterWalking);
 		p->continueAfterWalking = NULL;
 		onScreenPerson * * killPeople;
 
-		for (killPeople = & allPeople;
-		        * killPeople != p;
-		        killPeople = & ((* killPeople)->next)) {
+		for (killPeople = &allPeople; *killPeople != p; killPeople =
+				&((*killPeople)->next)) {
 			;
 		}
 
-		* killPeople = p->next;
+		*killPeople = p->next;
 		removeObjectType(p->thisType);
 		delete p;
 	}
@@ -960,7 +1028,8 @@ bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream) {
 	if (p->numFrames) {
 		int a = get4bytes(stream);
 		p->frames = new animFrame[p->numFrames];
-		if (!checkNew(p->frames)) return false;
+		if (!checkNew(p->frames))
+			return false;
 		p->theSprites = loadBankForAnim(a);
 
 		for (a = 0; a < p->numFrames; ++a) {
@@ -979,25 +1048,26 @@ bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream) {
 	return true;
 }
 /*
-void debugCostume (char * message, persona * cossy) {
-    FILE * db = fopen ("debuTURN.txt", "at");
-    fprintf (db, "  %s costume with %i directions...\n", message, cossy->numDirections);
-    for (int a = 0; a < cossy->numDirections * 3; ++a) {
-        fprintf (db, "      %i frames:", cossy->animation[a]->numFrames);
-        for (int b = 0; b < cossy->animation[a]->numFrames; b ++) {
-            fprintf (db, " %i", cossy->animation[a]->frames[b]);
-        }
-        fprintf (db, "\n");
+ void debugCostume (char * message, persona * cossy) {
+ FILE * db = fopen ("debuTURN.txt", "at");
+ fprintf (db, "  %s costume with %i directions...\n", message, cossy->numDirections);
+ for (int a = 0; a < cossy->numDirections * 3; ++a) {
+ fprintf (db, "      %i frames:", cossy->animation[a]->numFrames);
+ for (int b = 0; b < cossy->animation[a]->numFrames; b ++) {
+ fprintf (db, " %i", cossy->animation[a]->frames[b]);
+ }
+ fprintf (db, "\n");
 
-    }
-    fclose (db);
-}
-*/
+ }
+ fclose (db);
+ }
+ */
 bool saveCostume(persona *cossy, Common::WriteStream *stream) {
 	int a;
 	put2bytes(cossy->numDirections, stream);
 	for (a = 0; a < cossy->numDirections * 3; ++a) {
-		if (!saveAnim(cossy->animation[a], stream)) return false;
+		if (!saveAnim(cossy->animation[a], stream))
+			return false;
 	}
 //	debugCostume ("Saved", cossy);
 	return true;
@@ -1006,13 +1076,16 @@ bool saveCostume(persona *cossy, Common::WriteStream *stream) {
 bool loadCostume(persona *cossy, Common::SeekableReadStream *stream) {
 	int a;
 	cossy->numDirections = get2bytes(stream);
-	cossy->animation = new personaAnimation * [cossy->numDirections * 3];
-	if (!checkNew(cossy->animation)) return false;
+	cossy->animation = new personaAnimation *[cossy->numDirections * 3];
+	if (!checkNew(cossy->animation))
+		return false;
 	for (a = 0; a < cossy->numDirections * 3; ++a) {
 		cossy->animation[a] = new personaAnimation;
-		if (!checkNew(cossy->animation[a])) return false;
+		if (!checkNew(cossy->animation[a]))
+			return false;
 
-		if (!loadAnim(cossy->animation[a], stream)) return false;
+		if (!loadAnim(cossy->animation[a], stream))
+			return false;
 	}
 //	debugCostume ("Loaded", cossy);
 	return true;
@@ -1026,7 +1099,7 @@ bool savePeople(Common::WriteStream *stream) {
 	putSigned(scaleDivide, stream);
 
 	while (me) {
-		countPeople ++;
+		countPeople++;
 		me = me->next;
 	}
 
@@ -1086,7 +1159,7 @@ bool savePeople(Common::WriteStream *stream) {
 }
 
 bool loadPeople(Common::SeekableReadStream *stream) {
-	onScreenPerson * * pointy = & allPeople;
+	onScreenPerson * * pointy = &allPeople;
 	onScreenPerson *me;
 
 	scaleHorizon = getSigned(stream);
@@ -1098,13 +1171,16 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 	allPeople = NULL;
 	for (a = 0; a < countPeople; ++a) {
 		me = new onScreenPerson;
-		if (!checkNew(me)) return false;
+		if (!checkNew(me))
+			return false;
 
 		me->myPersona = new persona;
-		if (!checkNew(me->myPersona)) return false;
+		if (!checkNew(me->myPersona))
+			return false;
 
 		me->myAnim = new personaAnimation;
-		if (!checkNew(me->myAnim)) return false;
+		if (!checkNew(me->myAnim))
+			return false;
 
 		me->x = getFloat(stream);
 		me->y = getFloat(stream);
@@ -1132,7 +1208,8 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 		me->spinning = getch(stream);
 		if (getch(stream)) {
 			me->continueAfterWalking = loadFunction(stream);
-			if (!me->continueAfterWalking) return false;
+			if (!me->continueAfterWalking)
+				return false;
 		} else {
 			me->continueAfterWalking = NULL;
 		}
@@ -1169,8 +1246,8 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 		}
 
 		me->next = NULL;
-		* pointy = me;
-		pointy = & (me->next);
+		*pointy = me;
+		pointy = &(me->next);
 	}
 //	db ("End of loadPeople");
 	return true;

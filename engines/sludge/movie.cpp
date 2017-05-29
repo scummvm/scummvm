@@ -71,7 +71,7 @@ bool handleInput();
 void playMovieStream(int a);
 #if 0
 int initMovieSound(int f, ALenum format, int audioChannels, ALuint samplerate,
-                   ALuint(*callback)(void *userdata, ALubyte *data, ALuint bytes));
+		ALuint(*callback)(void *userdata, ALubyte *data, ALuint bytes));
 #endif
 
 movieStates movieIsPlaying = nothing;
@@ -85,14 +85,14 @@ typedef struct audioBuffers {
 	unsigned int size;
 	audioBuffers *next;
 	Uint32 time_ms;
-} audioBuffers;
+}audioBuffers;
 
 typedef struct audioQueue {
 	audioBuffers *first, *last;
 	int size;
 	SDL_mutex *mutex;
 	SDL_cond *cond;
-} audioQueue;
+}audioQueue;
 
 audioQueue audioQ;
 
@@ -115,17 +115,16 @@ typedef struct videoBuffers {
 	videoBuffers *next;
 	GLsizei w, h;
 	Uint32 time_ms;
-} videoBuffers;
+}videoBuffers;
 
 typedef struct videoQueue {
 	videoBuffers *first, *last;
 	int size;
 	SDL_mutex *mutex;
 	SDL_cond *cond;
-} videoQueue;
+}videoQueue;
 
 videoQueue videoQ;
-
 
 void audio_queue_init(audioQueue *q) {
 	memset(q, 0, sizeof(audioQueue));
@@ -138,7 +137,7 @@ int audio_queue_put(audioQueue *q, char *buffer, unsigned int size, long long ti
 
 	audioBuffers *audioBuf = new audioBuffers;
 	if (!audioBuf)
-		return -1;
+	return -1;
 	audioBuf->buffer = buffer;
 	audioBuf->next = NULL;
 	audioBuf->size = size;
@@ -147,9 +146,9 @@ int audio_queue_put(audioQueue *q, char *buffer, unsigned int size, long long ti
 	SDL_LockMutex(q->mutex);
 
 	if (!q->last)
-		q->first = audioBuf;
+	q->first = audioBuf;
 	else
-		q->last->next = audioBuf;
+	q->last->next = audioBuf;
 	q->last = audioBuf;
 	q->size ++;
 	SDL_CondSignal(q->cond);
@@ -160,7 +159,6 @@ int audio_queue_put(audioQueue *q, char *buffer, unsigned int size, long long ti
 }
 inline static int audio_queue_get(audioQueue *q, char **buffer) {
 	int ret = 0;
-
 
 	audioBuffers *audioBuf;
 
@@ -176,7 +174,7 @@ inline static int audio_queue_get(audioQueue *q, char **buffer) {
 
 		q->first = audioBuf->next;
 		if (!q->first)
-			q->last = NULL;
+		q->last = NULL;
 		q->size--;
 		*buffer = audioBuf->buffer;
 		ret = audioBuf->size;
@@ -194,14 +192,14 @@ void video_queue_init(videoQueue *q) {
 	q->cond = SDL_CreateCond();
 }
 int video_queue_put(videoQueue *q, GLubyte *ytex,
-                    GLubyte *utex,
-                    GLubyte *vtex,
-                    GLsizei w, GLsizei h,
-                    long long time_ms) {
+		GLubyte *utex,
+		GLubyte *vtex,
+		GLsizei w, GLsizei h,
+		long long time_ms) {
 
 	videoBuffers *videoBuf = new videoBuffers;
 	if (!videoBuf)
-		return -1;
+	return -1;
 	videoBuf->ytex = ytex;
 	videoBuf->utex = utex;
 	videoBuf->vtex = vtex;
@@ -213,9 +211,9 @@ int video_queue_put(videoQueue *q, GLubyte *ytex,
 	SDL_LockMutex(q->mutex);
 
 	if (!q->last)
-		q->first = videoBuf;
+	q->first = videoBuf;
 	else
-		q->last->next = videoBuf;
+	q->last->next = videoBuf;
 	q->last = videoBuf;
 	q->size ++;
 	SDL_CondSignal(q->cond);
@@ -224,10 +222,10 @@ int video_queue_put(videoQueue *q, GLubyte *ytex,
 	return 0;
 }
 inline static int video_queue_get(videoQueue *q,
-                                  GLubyte **ytex,
-                                  GLubyte **utex,
-                                  GLubyte **vtex,
-                                  GLsizei *w, GLsizei *h) {
+		GLubyte **ytex,
+		GLubyte **utex,
+		GLubyte **vtex,
+		GLsizei *w, GLsizei *h) {
 	videoBuffers *videoBuf;
 	int ret = 0;
 
@@ -237,7 +235,7 @@ inline static int video_queue_get(videoQueue *q,
 	if (videoBuf) {
 		q->first = videoBuf->next;
 		if (!q->first)
-			q->last = NULL;
+		q->last = NULL;
 		q->size--;
 		*ytex = videoBuf->ytex;
 		*utex = videoBuf->utex;
@@ -279,10 +277,10 @@ void setMovieViewport() {
 	glViewport(vpOffsetX, vpOffsetY, vpWidth, vpHeight);
 #endif
 	const GLfloat bPMVMatrix[] = {
-		2.0f / 640.f,          .0,   .0,  .0,
-		.0, -2.0f / 400.f,   .0,  .0,
-		.0,          .0, 1.0f,  .0,
-		-1.0,        1.0f,   .0, 1.0f
+		2.0f / 640.f, .0, .0, .0,
+		.0, -2.0f / 400.f, .0, .0,
+		.0, .0, 1.0f, .0,
+		-1.0, 1.0f, .0, 1.0f
 
 	};
 	for (int i = 0; i < 16; i++) {
@@ -341,9 +339,9 @@ ALuint feedAudio(void *userdata, ALubyte *data, ALuint length) {
 	fakeAudio = false;
 
 	if (length > bufSize - bufOffset)
-		bufLen = bufSize - bufOffset;
+	bufLen = bufSize - bufOffset;
 	else
-		bufLen = length;
+	bufLen = length;
 
 	memcpy(data, buffer + bufOffset, bufLen);
 
@@ -364,13 +362,13 @@ ALuint feedAudio(void *userdata, ALubyte *data, ALuint length) {
 int playMovie(int fileNumber) {
 #if 0
 	if (specialSettings & SPECIAL_SILENT)
-		return 0;
+	return 0;
 
 	if (movieIsPlaying) return 0;
 
 	movieSoundPlaying = false;
 
-	vpx_codec_ctx_t  codec;
+	vpx_codec_ctx_t codec;
 
 	float pausefade = 1.0;
 
@@ -396,7 +394,7 @@ int playMovie(int fileNumber) {
 		fatal("Movie error: Segment::CreateInstance() failed.\n");
 	}
 
-	ret  = pSegment->Load();
+	ret = pSegment->Load();
 	if (ret < 0) {
 		fatal("Movie error: Segment::Load() failed.\n");
 	}
@@ -413,7 +411,7 @@ int playMovie(int fileNumber) {
 	unsigned long i = 0;
 	const unsigned long j = pTracks->GetTracksCount();
 
-	enum { VIDEO_TRACK = 1, AUDIO_TRACK = 2 };
+	enum {VIDEO_TRACK = 1, AUDIO_TRACK = 2};
 	int videoTrack = -1;
 	int audioTrack = -1;
 	long long audioBitDepth;
@@ -427,7 +425,7 @@ int playMovie(int fileNumber) {
 		const Track *const pTrack = pTracks->GetTrackByIndex(i++);
 
 		if (pTrack == NULL)
-			continue;
+		continue;
 
 		const long long trackType = pTrack->GetType();
 		//const unsigned long long trackUid = pTrack->GetUid();
@@ -436,15 +434,15 @@ int playMovie(int fileNumber) {
 		if (trackType == VIDEO_TRACK && videoTrack < 0) {
 			videoTrack = pTrack->GetNumber();
 			const VideoTrack *const pVideoTrack =
-			    static_cast<const VideoTrack *>(pTrack);
+			static_cast<const VideoTrack *>(pTrack);
 
-			const long long width =  pVideoTrack->GetWidth();
+			const long long width = pVideoTrack->GetWidth();
 			const long long height = pVideoTrack->GetHeight();
 
 			const double rate = pVideoTrack->GetFrameRate();
 
 			if (rate > 0)
-				Init_Special_Timer(rate);
+			Init_Special_Timer(rate);
 
 			movieAspect = (float)width / height;
 		}
@@ -452,9 +450,9 @@ int playMovie(int fileNumber) {
 		if (trackType == AUDIO_TRACK && audioTrack < 0) {
 			audioTrack = pTrack->GetNumber();
 			const AudioTrack *const pAudioTrack =
-			    static_cast<const AudioTrack *>(pTrack);
+			static_cast<const AudioTrack *>(pTrack);
 
-			audioChannels =  pAudioTrack->GetChannels();
+			audioChannels = pAudioTrack->GetChannels();
 			audioBitDepth = pAudioTrack->GetBitDepth();
 			audioSampleRate = pAudioTrack->GetSamplingRate();
 
@@ -503,17 +501,17 @@ int playMovie(int fileNumber) {
 				oggPacket.b_o_s = oggPacket.packetno == 0;
 				r = vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &oggPacket);
 				if (r)
-					fprintf(stderr, "vorbis_synthesis_headerin failed, error: %d", r);
+				fprintf(stderr, "vorbis_synthesis_headerin failed, error: %d", r);
 				oggPacket.packetno++;
 				p += sizes[i];
 			}
 
 			r = vorbis_synthesis_init(&vorbisDspState, &vorbisInfo);
 			if (r)
-				fprintf(stderr, "vorbis_synthesis_init failed, error: %d", r);
+			fprintf(stderr, "vorbis_synthesis_init failed, error: %d", r);
 			r = vorbis_block_init(&vorbisDspState, &vorbisBlock);
 			if (r)
-				fprintf(stderr, "vorbis_block_init failed, error: %d", r);
+			fprintf(stderr, "vorbis_block_init failed, error: %d", r);
 
 			ALenum audioFormat = alureGetSampleFormat(audioChannels, 16, 0);
 			movieAudioIndex = initMovieSound(fileNumber, audioFormat, audioChannels, (ALuint) audioSampleRate, feedAudio);
@@ -527,10 +525,10 @@ int playMovie(int fileNumber) {
 	}
 
 	if (videoTrack < 0)
-		fatal("Movie error: No video in movie file.");
+	fatal("Movie error: No video in movie file.");
 
 	if (audioTrack < 0)
-		fatal("Movie error: No sound found.");
+	fatal("Movie error: No sound found.");
 
 	video_queue_init(&videoQ);
 
@@ -540,11 +538,9 @@ int playMovie(int fileNumber) {
 		fatal("Movie error: Segment has no clusters.\n");
 	}
 
-
 	/* Initialize video codec */
 	if (vpx_codec_dec_init(&codec, interface, NULL, 0))
-		die_codec(&codec, "Failed to initialize decoder for movie.");
-
+	die_codec(&codec, "Failed to initialize decoder for movie.");
 
 	unsigned char *frame = new unsigned char[256 * 1024];
 	if (! checkNew(frame)) return false;
@@ -571,7 +567,7 @@ int playMovie(int fileNumber) {
 		}
 		pBlockEntry = pCluster->GetFirst();
 	}
-	const Block *pBlock  = pBlockEntry->GetBlock();
+	const Block *pBlock = pBlockEntry->GetBlock();
 	long long trackNum = pBlock->GetTrackNumber();
 	unsigned long tn = static_cast<unsigned long>(trackNum);
 	const Track *pTrack = pTracks->GetTrackByNumber(tn);
@@ -634,7 +630,7 @@ int playMovie(int fileNumber) {
 
 		checkInput();
 		if (weAreDoneSoQuit)
-			break;
+		break;
 		handleInput();
 
 		if (movieIsPlaying && (! movieIsEnding) && (videoQ.size < 100 || audioQ.size < 100)) {
@@ -652,7 +648,7 @@ int playMovie(int fileNumber) {
 						}
 						pBlockEntry = pCluster->GetFirst();
 					}
-					pBlock  = pBlockEntry->GetBlock();
+					pBlock = pBlockEntry->GetBlock();
 					trackNum = pBlock->GetTrackNumber();
 					tn = static_cast<unsigned long>(trackNum);
 					pTrack = pTracks->GetTrackByNumber(tn);
@@ -673,28 +669,27 @@ int playMovie(int fileNumber) {
 					if (! checkNew(frame)) return 0;
 				}
 				/*
-				                fprintf (stderr, "Block :%s,%s,%15lld\n",
-				                 (trackType == VIDEO_TRACK) ? "V" : "A",
-				                 pBlock->IsKey() ? "I" : "P",
-				                 time_ns);
+				 fprintf (stderr, "Block :%s,%s,%15lld\n",
+				 (trackType == VIDEO_TRACK) ? "V" : "A",
+				 pBlock->IsKey() ? "I" : "P",
+				 time_ns);
 				 */
 
 				if (trackNum == videoTrack) {
 
 					theFrame.Read(&reader, frame);
 
-
 					/* Decode the frame */
 					if (vpx_codec_decode(&codec, frame, size, NULL, 0))
-						die_codec(&codec, "Failed to decode frame");
+					die_codec(&codec, "Failed to decode frame");
 
 					// Let's decode an image frame!
-					vpx_codec_iter_t  iter = NULL;
-					vpx_image_t      *img;
+					vpx_codec_iter_t iter = NULL;
+					vpx_image_t *img;
 					/* Get frame data */
 					while ((img = vpx_codec_get_frame(&codec, &iter))) {
 						if (img->fmt != VPX_IMG_FMT_I420)
-							fatal("Movie error. The movie is not in I420 colour format, which is the only one I can hanlde at the moment.");
+						fatal("Movie error. The movie is not in I420 colour format, which is the only one I can hanlde at the moment.");
 
 						unsigned int y;
 
@@ -707,7 +702,7 @@ int playMovie(int fileNumber) {
 							utex = new GLubyte [(img->d_w >> 1) * (img->d_h >> 1)];
 							vtex = new GLubyte [(img->d_w >> 1) * (img->d_h >> 1)];
 							if (!ytex || !utex || !vtex)
-								fatal(ERROR_OUT_OF_MEMORY);
+							fatal(ERROR_OUT_OF_MEMORY);
 
 						}
 
@@ -728,8 +723,7 @@ int playMovie(int fileNumber) {
 						}
 
 						video_queue_put(&videoQ, ytex, utex, vtex,
-						                img->d_w, img->d_h, time_ns / 1000000);
-
+								img->d_w, img->d_h, time_ns / 1000000);
 
 					}
 
@@ -744,7 +738,7 @@ int playMovie(int fileNumber) {
 						oggPacket.granulepos = -1;
 						if (! vorbis_synthesis(&vorbisBlock, &oggPacket)) {
 							if (vorbis_synthesis_blockin(&vorbisDspState, &vorbisBlock))
-								fprintf(stderr, "Vorbis Synthesis block in error.\n");
+							fprintf(stderr, "Vorbis Synthesis block in error.\n");
 
 						} else {
 							fprintf(stderr, "Vorbis Synthesis error.\n");
@@ -771,12 +765,12 @@ int playMovie(int fileNumber) {
 									int off = (sgned ? 0 : 128);
 									vorbis_fpu_setround(&fpu);
 									for (j = 0; j < numSamples; j++)
-										for (i = 0; i < audioChannels; i++) {
-											val = vorbis_ftoi(pcm[i][j] * 128.f);
-											if (val > 127)val = 127;
-											else if (val < -128)val = -128;
-											*buffer++ = val + off;
-										}
+									for (i = 0; i < audioChannels; i++) {
+										val = vorbis_ftoi(pcm[i][j] * 128.f);
+										if (val > 127)val = 127;
+										else if (val < -128)val = -128;
+										*buffer++ = val + off;
+									}
 									vorbis_fpu_restore(fpu);
 								} else {
 									int off = (sgned ? 0 : 32768);
@@ -835,7 +829,7 @@ int playMovie(int fileNumber) {
 				++frameCounter;
 
 			} else {
-movieHasEnded:
+				movieHasEnded:
 				movieIsEnding = 1;
 			}
 		}
@@ -865,30 +859,29 @@ movieHasEnded:
 						if (! vTextureName) glGenTextures(1, &vTextureName);
 						glBindTexture(GL_TEXTURE_2D, yTextureName);
 						glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, w, h, 0,
-						             GL_ALPHA, GL_UNSIGNED_BYTE, ytex);
+								GL_ALPHA, GL_UNSIGNED_BYTE, ytex);
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 						glBindTexture(GL_TEXTURE_2D, uTextureName);
 						glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, w >> 1, h >> 1, 0,
-						             GL_ALPHA, GL_UNSIGNED_BYTE, utex);
+								GL_ALPHA, GL_UNSIGNED_BYTE, utex);
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 						glBindTexture(GL_TEXTURE_2D, vTextureName);
 						glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, w >> 1, h >> 1, 0,
-						             GL_ALPHA, GL_UNSIGNED_BYTE, vtex);
+								GL_ALPHA, GL_UNSIGNED_BYTE, vtex);
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
 
 						glBindTexture(GL_TEXTURE_2D, yTextureName);
 						glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h,
-						                GL_ALPHA, GL_UNSIGNED_BYTE, ytex);
+								GL_ALPHA, GL_UNSIGNED_BYTE, ytex);
 						glBindTexture(GL_TEXTURE_2D, uTextureName);
 						glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w >> 1, h >> 1,
-						                GL_ALPHA, GL_UNSIGNED_BYTE, utex);
+								GL_ALPHA, GL_UNSIGNED_BYTE, utex);
 						glBindTexture(GL_TEXTURE_2D, vTextureName);
 						glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w >> 1, h >> 1,
-						                GL_ALPHA, GL_UNSIGNED_BYTE, vtex);
+								GL_ALPHA, GL_UNSIGNED_BYTE, vtex);
 
 						delete [] ytex;
 						delete [] utex;
@@ -946,7 +939,6 @@ movieHasEnded:
 
 				glUseProgram(0);
 
-
 				glDisable(GL_BLEND);
 
 				Wait_Frame();
@@ -971,10 +963,8 @@ movieHasEnded:
 	for (int i = 0; i < 10; i++) Wait_Frame();
 	huntKillFreeSound(fileNumber);
 
-
 	if (vpx_codec_destroy(&codec))
-		die_codec(&codec, "Failed to destroy codec");
-
+	die_codec(&codec, "Failed to destroy codec");
 
 	vorbis_dsp_clear(&vorbisDspState);
 	vorbis_block_clear(&vorbisBlock);

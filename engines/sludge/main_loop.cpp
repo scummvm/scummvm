@@ -36,7 +36,6 @@
 
 #include <iostream>
 
-
 #include <stdexcept>
 
 #include <time.h>
@@ -159,19 +158,19 @@ void checkInput() {
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 
-		case SDL_VIDEORESIZE:
+			case SDL_VIDEORESIZE:
 			realWinWidth = event.resize.w;
 			realWinHeight = event.resize.h;
 			setGraphicsWindow(false, true, true);
 			break;
 
-		case SDL_MOUSEMOTION:
+			case SDL_MOUSEMOTION:
 			input.justMoved = true;
 			input.mouseX = event.motion.x * ((float)winWidth / cameraZoom) / realWinWidth;
 			input.mouseY = event.motion.y * ((float)winHeight / cameraZoom) / realWinHeight;
 			break;
 
-		case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button == SDL_BUTTON_LEFT) {
 				if (SDL_GetModState() & KMOD_CTRL) {
 					input.rightClick = true;
@@ -186,7 +185,7 @@ void checkInput() {
 			input.mouseY = event.motion.y * ((float)winHeight / cameraZoom) / realWinHeight;
 			break;
 
-		case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT) {
 				if (fakeRightclick) {
 					fakeRightclick = false;
@@ -200,7 +199,7 @@ void checkInput() {
 			input.mouseY = event.motion.y * ((float)winHeight / cameraZoom) / realWinHeight;
 			break;
 
-		case SDL_KEYDOWN:
+			case SDL_KEYDOWN:
 			// A Windows key is pressed - let's leave fullscreen.
 			if (runningFullscreen) {
 				if (event.key.keysym.sym == SDLK_LSUPER || event.key.keysym.sym == SDLK_LSUPER) {
@@ -224,7 +223,7 @@ void checkInput() {
 					break;
 				}
 				// Allow Alt+F4 to quit
-				if (SDLK_F4 ==  event.key.keysym.sym) {
+				if (SDLK_F4 == event.key.keysym.sym) {
 					SDL_Event event;
 					event.type = SDL_QUIT;
 					SDL_PushEvent(&event);
@@ -233,86 +232,86 @@ void checkInput() {
 				break;
 			}
 			switch (event.key.keysym.sym) {
-			case SDLK_BACKSPACE:
-			case SDLK_DELETE:   // Ok, mapping these to the same key is weird, I admit. But good?
+				case SDLK_BACKSPACE:
+				case SDLK_DELETE: // Ok, mapping these to the same key is weird, I admit. But good?
 				input.keyPressed = 127;
 				break;
-			case SDLK_TAB:
+				case SDLK_TAB:
 				input.keyPressed = 9;
 				break;
-			case SDLK_RETURN:
+				case SDLK_RETURN:
 				input.keyPressed = 13;
 				break;
-			case SDLK_ESCAPE:
+				case SDLK_ESCAPE:
 				input.keyPressed = 27;
 				break;
-			case SDLK_PAGEUP:
+				case SDLK_PAGEUP:
 				input.keyPressed = 63276;
 				break;
-			case SDLK_PAGEDOWN:
+				case SDLK_PAGEDOWN:
 				input.keyPressed = 63277;
 				break;
-			case SDLK_END:
+				case SDLK_END:
 				input.keyPressed = 63275;
 				break;
-			case SDLK_HOME:
+				case SDLK_HOME:
 				input.keyPressed = 63273;
 				break;
-			case SDLK_LEFT:
+				case SDLK_LEFT:
 				input.keyPressed = 63234;
 				break;
-			case SDLK_UP:
+				case SDLK_UP:
 				input.keyPressed = 63232;
 				break;
-			case SDLK_RIGHT:
+				case SDLK_RIGHT:
 				input.keyPressed = 63235;
 				break;
-			case SDLK_DOWN:
+				case SDLK_DOWN:
 				input.keyPressed = 63233;
 				break;
-			case SDLK_F1:
+				case SDLK_F1:
 				input.keyPressed = 63236;
 				break;
-			case SDLK_F2:
+				case SDLK_F2:
 				input.keyPressed = 63237;
 				break;
-			case SDLK_F3:
+				case SDLK_F3:
 				input.keyPressed = 63238;
 				break;
-			case SDLK_F4:
+				case SDLK_F4:
 				input.keyPressed = 63239;
 				break;
-			case SDLK_F5:
+				case SDLK_F5:
 				input.keyPressed = 63240;
 				break;
-			case SDLK_F6:
+				case SDLK_F6:
 				input.keyPressed = 63241;
 				break;
-			case SDLK_F7:
+				case SDLK_F7:
 				input.keyPressed = 63242;
 				break;
-			case SDLK_F8:
+				case SDLK_F8:
 				input.keyPressed = 63243;
 				break;
-			case SDLK_F9:
+				case SDLK_F9:
 				input.keyPressed = 63244;
 				break;
-			case SDLK_F10:
+				case SDLK_F10:
 				input.keyPressed = 63245;
 				break;
-			case SDLK_F11:
+				case SDLK_F11:
 				input.keyPressed = 63246;
 				break;
-			case SDLK_F12:
+				case SDLK_F12:
 				input.keyPressed = 63247;
 				break;
-			default:
+				default:
 				input.keyPressed = event.key.keysym.unicode;
 				break;
 			}
 			break;
 
-		case SDL_QUIT:
+			case SDL_QUIT:
 			if (reallyWantToQuit) {
 				// The game file has requested that we quit
 				weAreDoneSoQuit = 1;
@@ -326,7 +325,7 @@ void checkInput() {
 			}
 			break;
 
-		default:
+			default:
 			break;
 		}
 	}
@@ -335,9 +334,9 @@ void checkInput() {
 
 int main_loop(char *filename)
 #if 0
-try
+		try
 #endif
-{
+		{
 	/* Dimensions of our window. */
 	winWidth = 640;
 	winHeight = 480;
@@ -347,7 +346,6 @@ try
 #if 0
 	time_t t;
 	srand((unsigned) time(&t));
-
 
 	// bundleFolder is used to look for the game file
 	// and later to find the shader programs
@@ -392,11 +390,13 @@ try
 
 	// The player pressed cancel in the file selection dialogue,
 	// so we should quit now.
-	if (!sludgeFile) return 0;
+	if (!sludgeFile)
+		return 0;
 
 	// OK, so we DO want to start up, then...
 	setGameFilePath(sludgeFile);
-	if (!initSludge(sludgeFile)) return 0;
+	if (!initSludge(sludgeFile))
+		return 0;
 
 #if 0
 	/* Initialize the SDL library */
@@ -430,12 +430,16 @@ try
 
 	registerWindowForFatal();
 
-	if (!resizeBackdrop(winWidth, winHeight)) return fatal("Couldn't allocate memory for backdrop");
+	if (!resizeBackdrop(winWidth, winHeight))
+		return fatal("Couldn't allocate memory for backdrop");
 
 	blankScreen(0, 0, winWidth, winHeight);
-	if (!initPeople()) return fatal("Couldn't initialise people stuff");
-	if (!initFloor()) return fatal("Couldn't initialise floor stuff");
-	if (!initObjectTypes()) return fatal("Couldn't initialise object type stuff");
+	if (!initPeople())
+		return fatal("Couldn't initialise people stuff");
+	if (!initFloor())
+		return fatal("Couldn't initialise floor stuff");
+	if (!initObjectTypes())
+		return fatal("Couldn't initialise object type stuff");
 	initSpeech();
 	initStatusBar();
 	resetRandW();
@@ -473,7 +477,9 @@ try
 		walkAllPeople();
 		handleInput();
 		sludgeDisplay();
-		g_system->copyRectToScreen(backdropSurface.getPixels(), backdropSurface.pitch, 0, 0, backdropSurface.w, backdropSurface.h);
+		g_system->copyRectToScreen(backdropSurface.getPixels(),
+				backdropSurface.pitch, 0, 0, backdropSurface.w,
+				backdropSurface.h);
 		g_system->updateScreen();
 #if 0
 		Wait_Frame();
@@ -509,4 +515,5 @@ catch (std::exception &ex) { //NOTE by reference, not value
 }
 #endif
 
-} // End of namespace Sludge
+}
+ // End of namespace Sludge

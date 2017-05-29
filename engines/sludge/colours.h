@@ -42,7 +42,8 @@ inline unsigned short makeGrey(unsigned short int r) {
 	return ((r >> 3) << 11) | ((r >> 2) << 5) | (r >> 3);
 }
 
-inline unsigned short makeColour(unsigned short int r, unsigned short int g, unsigned short int b) {
+inline unsigned short makeColour(unsigned short int r, unsigned short int g,
+		unsigned short int b) {
 	return ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
 }
 

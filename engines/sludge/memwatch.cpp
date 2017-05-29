@@ -43,7 +43,7 @@ void outputKnownMem() {
 
 void adding(void *mem) {
 	allKnownMem[allKnownNum] = mem;
-	allKnownNum ++;
+	allKnownNum++;
 
 	outputKnownMem();
 	if (allKnownNum == 3000) {
@@ -55,8 +55,8 @@ void adding(void *mem) {
 }
 
 void deleting(void *mem) {
-	allKnownNum --;
-	for (int i = 0; i <= allKnownNum; i ++) {
+	allKnownNum--;
+	for (int i = 0; i <= allKnownNum; i++) {
 		if (allKnownMem[i] == mem) {
 			allKnownMem[i] = allKnownMem[allKnownNum];
 			outputKnownMem();

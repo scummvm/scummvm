@@ -47,13 +47,14 @@ void killZBuffer() {
 void sortZPal(int *oldpal, int *newpal, int size) {
 	int i, tmp;
 
-	for (i = 0; i < size; i ++) {
+	for (i = 0; i < size; i++) {
 		newpal[i] = i;
 	}
 
-	if (size < 2) return;
+	if (size < 2)
+		return;
 
-	for (i = 1; i < size; i ++) {
+	for (i = 1; i < size; i++) {
 		if (oldpal[newpal[i]] < oldpal[newpal[i - 1]]) {
 			tmp = newpal[i];
 			newpal[i] = newpal[i - 1];
@@ -80,17 +81,17 @@ bool setZBuffer(int y) {
 	if (fgetc(bigDataFile) != 'b') return fatal("Not a Z-buffer file");
 
 	switch (fgetc(bigDataFile)) {
-	case 0:
+		case 0:
 		zBuffer.width = 640;
 		zBuffer.height = 480;
 		break;
 
-	case 1:
+		case 1:
 		zBuffer.width = get2bytes(bigDataFile);
 		zBuffer.height = get2bytes(bigDataFile);
 		break;
 
-	default:
+		default:
 		return fatal("Extended Z-buffer format not supported in this version of the SLUDGE engine");
 	}
 	if (zBuffer.width != sceneWidth || zBuffer.height != sceneHeight) {

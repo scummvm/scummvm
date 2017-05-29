@@ -96,13 +96,16 @@ void makeSilent(onScreenPerson &me);
 void setShown(bool h, int ob);
 void setDrawMode(int h, int ob);
 void setPersonTransparency(int ob, unsigned char x);
-void setPersonColourise(int ob, unsigned char r, unsigned char g, unsigned char b, unsigned char colourmix);
+void setPersonColourise(int ob, unsigned char r, unsigned char g,
+		unsigned char b, unsigned char colourmix);
 
 // Moving 'em
 
 void movePerson(int x, int y, int objNum);
-bool makeWalkingPerson(int x, int y, int objNum, struct loadedFunction *func, int di);
-bool forceWalkingPerson(int x, int y, int objNum, struct loadedFunction *func, int di);
+bool makeWalkingPerson(int x, int y, int objNum, struct loadedFunction *func,
+		int di);
+bool forceWalkingPerson(int x, int y, int objNum, struct loadedFunction *func,
+		int di);
 void jumpPerson(int x, int y, int objNum);
 void walkAllPeople();
 bool turnPersonToFace(int thisNum, int direc);
@@ -116,7 +119,7 @@ void animatePerson(int obj, personaAnimation *);
 void animatePerson(int obj, persona *per);
 personaAnimation *createPersonaAnim(int num, struct variableStack *&stacky);
 inline void setBankFile(personaAnimation *newP, loadedSpriteBank *sB) {
-	newP -> theSprites = sB;
+	newP->theSprites = sB;
 }
 bool setPersonExtra(int f, int newSetting);
 int timeForAnim(personaAnimation *fram);

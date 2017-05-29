@@ -44,7 +44,6 @@ struct zBufferData {
 #endif
 };
 
-
 bool setZBuffer(int y);
 void killZBuffer();
 void drawZBuffer(int x, int y, bool upsidedown);

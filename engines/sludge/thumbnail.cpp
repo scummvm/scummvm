@@ -40,7 +40,6 @@ int thumbWidth = 0, thumbHeight = 0;
 extern GLuint backdropTextureName;
 #endif
 
-
 bool saveThumbnail(Common::WriteStream *stream) {
 #if 0
 	GLuint thumbnailTextureName = 0;
@@ -71,7 +70,6 @@ bool saveThumbnail(Common::WriteStream *stream) {
 		glBindTexture(GL_TEXTURE_2D, backdropTextureName);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
 
 		const GLfloat vertices[] = {
 			0., 0., 0.,
@@ -119,8 +117,6 @@ bool saveThumbnail(Common::WriteStream *stream) {
 
 		glReadPixels(viewportOffsetX, viewportOffsetY, thumbWidth, thumbHeight, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image);
 #endif
-
-
 
 		glUseProgram(0);
 #endif

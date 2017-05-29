@@ -2529,7 +2529,7 @@ builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
 				char buff[100];
 				sprintf(buff, "Built in function must have %i parameter%s",
 				        paramNum[whichFunc],
-				        (paramNum[whichFunc] == 1) ? "" : "s");
+						(paramNum[whichFunc] == 1) ? "" : "s");
 
 				fatal(copyString(buff));
 				return BR_ERROR;

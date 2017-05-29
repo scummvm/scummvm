@@ -37,7 +37,7 @@
 namespace Sludge {
 
 enum {
-	LIGHTMAPMODE_NONE       = -1,
+	LIGHTMAPMODE_NONE = -1,
 	LIGHTMAPMODE_HOTSPOT,
 	LIGHTMAPMODE_PIXEL,
 	LIGHTMAPMODE_NUM
@@ -45,7 +45,6 @@ enum {
 
 extern unsigned int winWidth, winHeight, sceneWidth, sceneHeight;
 extern int lightMapMode;
-
 
 struct parallaxLayer {
 #if 0

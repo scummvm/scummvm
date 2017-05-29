@@ -28,9 +28,7 @@ namespace Sludge {
  movieIsPlaying tracks the state of movie playing
  */
 enum movieStates {
-	nothing = 0,
-	playing,
-	paused
+	nothing = 0, playing, paused
 };
 extern movieStates movieIsPlaying;
 

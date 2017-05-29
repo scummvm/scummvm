@@ -42,8 +42,8 @@ bool sliceBusy = true;
 
 Common::File *bigDataFile = NULL;
 
-uint32_t startOfDataIndex, startOfTextIndex,
-         startOfSubIndex, startOfObjectIndex;
+uint32_t startOfDataIndex, startOfTextIndex, startOfSubIndex,
+		startOfObjectIndex;
 
 bool openSubSlice(int num) {
 //	FILE * dbug = fopen ("debuggy.txt", "at");
@@ -100,7 +100,6 @@ unsigned int openFileFromNum(int num) {
 	return get4bytes(bigDataFile);
 }
 
-
 // Converts a string from Windows CP-1252 to UTF-8.
 // This is needed for old games.
 char *convertString(char *s) {
@@ -124,10 +123,10 @@ char *convertString(char *s) {
 
 	if (convert == (iconv_t) - 1) {
 		switch (errno) {
-		case EINVAL:
+			case EINVAL:
 			fprintf(stderr, "Error: Encoding not supported by iconv.\n");
 			break;
-		default:
+			default:
 			fprintf(stderr, "Error: Could not open iconv conversion descriptor.\n");
 		}
 	}
@@ -136,35 +135,34 @@ char *convertString(char *s) {
 	size_t len2 = 65535;
 	size_t iconv_value =
 #ifdef _WIN32
-	    iconv(convert, (const char **) tmp1, &len1, tmp2, &len2);
+	iconv(convert, (const char **) tmp1, &len1, tmp2, &len2);
 #else
-	    iconv(convert, (char **) tmp1, &len1, tmp2, &len2);
+	iconv(convert, (char **) tmp1, &len1, tmp2, &len2);
 #endif
 
 	if (iconv_value == (size_t) - 1) {
 		switch (errno) {
-		/* See "man 3 iconv" for an explanation. */
-		case EILSEQ:
+			/* See "man 3 iconv" for an explanation. */
+			case EILSEQ:
 			fprintf(stderr, "Invalid multibyte sequence.\n");
 			break;
-		case EINVAL:
+			case EINVAL:
 			fprintf(stderr, "Incomplete multibyte sequence.\n");
 			break;
-		case E2BIG:
+			case E2BIG:
 			fprintf(stderr, "No more room.\n");
 			break;
-		default:
+			default:
 			fprintf(stderr, "Error: %s.\n", strerror(errno));
 		}
 		fatal("Conversion to Unicode failed. This can be fixed by recompiling the game in a current version of the SLUDGE Development Kit, but this error should never happen. Congratulations, you've found a bug in the SLUDGE engine! Please let us know about it.");
 	}
 	iconv_close(convert);
 
-
 	delete [] sOrig;
 	return copyString(buf = bufOrig);
 #endif
-	return s;//TODO: false value
+	return s; //TODO: false value
 }
 
 char *getNumberedString(int value) {
@@ -199,7 +197,8 @@ void finishAccess() {
 
 int32_t startIndex;
 
-void setFileIndices(Common::File *fp, int numLanguages, unsigned int skipBefore) {
+void setFileIndices(Common::File *fp, int numLanguages,
+		unsigned int skipBefore) {
 	if (fp) {
 		// Keep hold of the file handle, and let things get at it
 		bigDataFile = fp;
@@ -220,7 +219,7 @@ void setFileIndices(Common::File *fp, int numLanguages, unsigned int skipBefore)
 	int skipAfter = numLanguages - skipBefore;
 	while (skipBefore) {
 		fp->seek(get4bytes(fp), SEEK_SET);
-		skipBefore --;
+		skipBefore--;
 	}
 	startOfTextIndex = fp->pos() + 4;
 
@@ -228,7 +227,7 @@ void setFileIndices(Common::File *fp, int numLanguages, unsigned int skipBefore)
 
 	while (skipAfter) {
 		fp->seek(get4bytes(fp), SEEK_SET);
-		skipAfter --;
+		skipAfter--;
 	}
 
 	startOfSubIndex = fp->pos() + 4;

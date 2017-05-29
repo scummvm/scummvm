@@ -72,7 +72,7 @@ void freezeGraphics() {
 #endif
 	int w = winWidth;
 	int h = winHeight;
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		w = getNextPOT(winWidth);
 		h = getNextPOT(winHeight);
 	}
@@ -88,7 +88,6 @@ void freezeGraphics() {
 	// Temporarily disable AA
 	int antiAlias = gameSettings.antiAlias;
 	gameSettings.antiAlias = 0;
-
 
 	int x = 0;
 	while (x < winWidth) {
@@ -109,10 +108,10 @@ void freezeGraphics() {
 			}
 #if 0
 			const GLfloat bPMVMatrix[] = {
-				2.0f / realWinWidth * cameraZoom,                            .0,   .0,  .0,
-				.0, 2.0f / realWinHeight * cameraZoom,   .0,  .0,
-				.0,                            .0, 1.0f,  .0,
-				-2.0f * (x / realWinWidth) - 1.0f,  -2.0f * (y / realWinHeight) - 1.0f,   .0, 1.0f
+				2.0f / realWinWidth * cameraZoom, .0, .0, .0,
+				.0, 2.0f / realWinHeight * cameraZoom, .0, .0,
+				.0, .0, 1.0f, .0,
+				-2.0f * (x / realWinWidth) - 1.0f, -2.0f * (y / realWinHeight) - 1.0f, .0, 1.0f
 
 			};
 			for (int i = 0; i < 16; i++) {
@@ -120,18 +119,17 @@ void freezeGraphics() {
 			}
 			// Render scene
 			glDepthMask(GL_TRUE);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear The Screen
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// Clear The Screen
 			glDepthMask(GL_FALSE);
 
-			drawBackDrop();                 // Draw the room
+			drawBackDrop();// Draw the room
 			drawZBuffer(cameraX, cameraY, false);
 
 			glEnable(GL_DEPTH_TEST);
 
-			drawPeople();                   // Then add any moving characters...
+			drawPeople();// Then add any moving characters...
 
 			glDisable(GL_DEPTH_TEST);
-
 
 			// Copy Our ViewPort To The Texture
 			copyTexSubImage2D(GL_TEXTURE_2D, 0, x, y, 0, 0, w, h, freezeTextureName);
@@ -152,7 +150,8 @@ void freezeGraphics() {
 bool freeze() {
 	debugOut("calling freeze()\n");
 	frozenStuffStruct *newFreezer = new frozenStuffStruct;
-	if (! checkNew(newFreezer)) return false;
+	if (!checkNew(newFreezer))
+		return false;
 
 	// Grab a copy of the current scene
 	freezeGraphics();
@@ -161,7 +160,7 @@ bool freeze() {
 #endif
 	int picWidth = sceneWidth;
 	int picHeight = sceneHeight;
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		picWidth = getNextPOT(picWidth);
 		picHeight = getNextPOT(picHeight);
 	}
@@ -173,11 +172,11 @@ bool freeze() {
 
 	backdropTextureName = 0;
 #endif
-	newFreezer -> sceneWidth = sceneWidth;
-	newFreezer -> sceneHeight = sceneHeight;
-	newFreezer -> cameraX = cameraX;
-	newFreezer -> cameraY = cameraY;
-	newFreezer -> cameraZoom = cameraZoom;
+	newFreezer->sceneWidth = sceneWidth;
+	newFreezer->sceneHeight = sceneHeight;
+	newFreezer->cameraX = cameraX;
+	newFreezer->cameraY = cameraY;
+	newFreezer->cameraZoom = cameraZoom;
 #if 0
 	newFreezer -> lightMapTexture = lightMap.data;
 	newFreezer -> lightMapTextureName = lightMap.name;
@@ -192,9 +191,10 @@ bool freeze() {
 	zBuffer.tex = NULL;
 #endif
 	// resizeBackdrop kills parallax stuff, light map, z-buffer...
-	if (! resizeBackdrop(winWidth, winHeight)) return fatal("Can't create new temporary backdrop buffer");
+	if (!resizeBackdrop(winWidth, winHeight))
+		return fatal("Can't create new temporary backdrop buffer");
 
-	if (! NPOT_textures) {
+	if (!NPOT_textures) {
 		picWidth = getNextPOT(sceneWidth);
 		picHeight = getNextPOT(sceneHeight);
 #if 0
@@ -225,31 +225,33 @@ bool freeze() {
 		deleteTextures(1, &newFreezer -> backdropTextureName);
 	}
 #endif
-	newFreezer -> allPeople = allPeople;
+	newFreezer->allPeople = allPeople;
 	allPeople = NULL;
 
 	statusStuff *newStatusStuff = new statusStuff;
-	if (! checkNew(newStatusStuff)) return false;
-	newFreezer -> frozenStatus = copyStatusBarStuff(newStatusStuff);
+	if (!checkNew(newStatusStuff))
+		return false;
+	newFreezer->frozenStatus = copyStatusBarStuff(newStatusStuff);
 
-	newFreezer -> allScreenRegions = allScreenRegions;
+	newFreezer->allScreenRegions = allScreenRegions;
 	allScreenRegions = NULL;
 	overRegion = NULL;
 
-	newFreezer -> mouseCursorAnim = mouseCursorAnim;
-	newFreezer -> mouseCursorFrameNum = mouseCursorFrameNum;
+	newFreezer->mouseCursorAnim = mouseCursorAnim;
+	newFreezer->mouseCursorFrameNum = mouseCursorFrameNum;
 	mouseCursorAnim = makeNullAnim();
 	mouseCursorFrameNum = 0;
 
-	newFreezer -> speech = speech;
+	newFreezer->speech = speech;
 	initSpeech();
 
-	newFreezer -> currentEvents = currentEvents;
+	newFreezer->currentEvents = currentEvents;
 	currentEvents = new eventHandlers;
-	if (! checkNew(currentEvents)) return false;
+	if (!checkNew(currentEvents))
+		return false;
 	memset(currentEvents, 0, sizeof(eventHandlers));
 
-	newFreezer -> next = frozenStuff;
+	newFreezer->next = frozenStuff;
 	frozenStuff = newFreezer;
 
 	return true;
@@ -259,8 +261,8 @@ int howFrozen() {
 	int a = 0;
 	frozenStuffStruct *f = frozenStuff;
 	while (f) {
-		a ++;
-		f = f -> next;
+		a++;
+		f = f->next;
 	}
 	return a;
 }
@@ -272,25 +274,26 @@ extern GLubyte *backdropTexture;
 void unfreeze(bool killImage) {
 	frozenStuffStruct *killMe = frozenStuff;
 
-	if (! frozenStuff) return;
+	if (!frozenStuff)
+		return;
 
-	sceneWidth = frozenStuff -> sceneWidth;
-	sceneHeight = frozenStuff -> sceneHeight;
+	sceneWidth = frozenStuff->sceneWidth;
+	sceneHeight = frozenStuff->sceneHeight;
 
-	cameraX = frozenStuff -> cameraX;
-	cameraY = frozenStuff -> cameraY;
-	input.mouseX = (int)(input.mouseX * cameraZoom);
-	input.mouseY = (int)(input.mouseY * cameraZoom);
-	cameraZoom = frozenStuff -> cameraZoom;
-	input.mouseX = (int)(input.mouseX / cameraZoom);
-	input.mouseY = (int)(input.mouseY / cameraZoom);
+	cameraX = frozenStuff->cameraX;
+	cameraY = frozenStuff->cameraY;
+	input.mouseX = (int) (input.mouseX * cameraZoom);
+	input.mouseY = (int) (input.mouseY * cameraZoom);
+	cameraZoom = frozenStuff->cameraZoom;
+	input.mouseX = (int) (input.mouseX / cameraZoom);
+	input.mouseY = (int) (input.mouseY / cameraZoom);
 	setPixelCoords(false);
 
 	killAllPeople();
-	allPeople = frozenStuff -> allPeople;
+	allPeople = frozenStuff->allPeople;
 
 	killAllRegions();
-	allScreenRegions = frozenStuff -> allScreenRegions;
+	allScreenRegions = frozenStuff->allScreenRegions;
 
 	killLightMap();
 #if 0
@@ -346,18 +349,18 @@ void unfreeze(bool killImage) {
 	}
 #endif
 	deleteAnim(mouseCursorAnim);
-	mouseCursorAnim = frozenStuff -> mouseCursorAnim;
-	mouseCursorFrameNum = frozenStuff -> mouseCursorFrameNum;
+	mouseCursorAnim = frozenStuff->mouseCursorAnim;
+	mouseCursorFrameNum = frozenStuff->mouseCursorFrameNum;
 
-	restoreBarStuff(frozenStuff -> frozenStatus);
+	restoreBarStuff(frozenStuff->frozenStatus);
 
 	delete currentEvents;
-	currentEvents = frozenStuff -> currentEvents;
+	currentEvents = frozenStuff->currentEvents;
 	killAllSpeech();
 	delete speech;
 
-	speech = frozenStuff -> speech;
-	frozenStuff = frozenStuff -> next;
+	speech = frozenStuff->speech;
+	frozenStuff = frozenStuff->next;
 
 	overRegion = NULL;
 	delete killMe;

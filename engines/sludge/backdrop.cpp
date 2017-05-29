@@ -155,7 +155,7 @@ bool snapshot() {
 
 	viewSpeech();// ...and anything being said
 	drawStatusBar();
-	// Copy Our ViewPort To The Texture
+				 // Copy Our ViewPort To The Texture
 	copyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, viewportOffsetX, viewportOffsetY, winWidth, winHeight, snapshotTextureName);
 
 	setPixelCoords(false);
@@ -320,7 +320,9 @@ void loadBackDrop(int fileNum, int x, int y) {
 
 	if (!loadHSI(bigDataFile, x, y, false)) {
 		char mess[200];
-		sprintf(mess, "Can't paste overlay image outside scene dimensions\n\nX = %i\nY = %i\nWidth = %i\nHeight = %i", x, y, sceneWidth, sceneHeight);
+		sprintf(mess,
+				"Can't paste overlay image outside scene dimensions\n\nX = %i\nY = %i\nWidth = %i\nHeight = %i",
+				x, y, sceneWidth, sceneHeight);
 		fatal(mess);
 	}
 
@@ -1006,11 +1008,14 @@ bool loadParallax(unsigned short v, unsigned short fracX,
 
 extern int viewportOffsetX, viewportOffsetY;
 
-bool loadPng(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
-	debug("Loading back drop png.");
+bool loadPng(int &picWidth, int &picHeight, int &realPicWidth,
+		int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
+	debug(kSludgeDebugGraphics, "Loading back drop png.");
 	::Image::PNGDecoder png;
-	if (!png.loadStream(*stream))
+	if (!png.loadStream(*stream)) {
+		debug(kSludgeDebugGraphics, "Back drop is not a png");
 		return false;
+	}
 	backdropSurface.copyFrom(*(png.getSurface()));
 	picWidth = realPicWidth = backdropSurface.w;
 	picHeight = realPicHeight = backdropSurface.h;
@@ -1049,7 +1054,7 @@ bool loadPng(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeigh
 		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 		return false;
 	}
-	png_init_io(png_ptr, stream);		// Tell libpng which file to read
+	png_init_io(png_ptr, stream);       // Tell libpng which file to read
 	png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
 
 	png_read_info(png_ptr, info_ptr);
@@ -1086,7 +1091,8 @@ bool loadPng(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeigh
 #endif
 }
 
-bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
+bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth,
+		int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
 #if 0
 	int32_t transCol = reserve ? -1 : 63519;
 	int t1, t2, n;
@@ -1128,17 +1134,25 @@ bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth, int &realPi
 #endif
 }
 
-bool loadImage(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, int x, int y, bool reserve) {
+bool loadImage(int &picWidth, int &picHeight, int &realPicWidth,
+		int &realPicHeight, Common::SeekableReadStream *stream, int x, int y,
+		bool reserve) {
 	debug(kSludgeDebugGraphics, "Loading back drop image.");
-	if (!loadPng(picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
-		if (!loadByteArray(picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
+	if (!loadPng(picWidth, picHeight, realPicWidth, realPicHeight, stream,
+			reserve)) {
+		if (!loadByteArray(picWidth, picHeight, realPicWidth, realPicHeight,
+				stream, reserve)) {
 			return false;
 		}
 	}
 
-	if (x == IN_THE_CENTRE) x = (sceneWidth - realPicWidth) >> 1;
-	if (y == IN_THE_CENTRE) y = (sceneHeight - realPicHeight) >> 1;
-	if (x < 0 || x + realPicWidth > sceneWidth || y < 0 || y + realPicHeight > sceneHeight) return false;
+	if (x == IN_THE_CENTRE)
+		x = (sceneWidth - realPicWidth) >> 1;
+	if (y == IN_THE_CENTRE)
+		y = (sceneHeight - realPicHeight) >> 1;
+	if (x < 0 || x + realPicWidth > sceneWidth || y < 0
+			|| y + realPicHeight > sceneHeight)
+		return false;
 
 	return true;
 }
@@ -1269,7 +1283,8 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	int picWidth, picHeight;
 	int realPicWidth, realPicHeight;
 
-	if (!loadImage(picWidth, picHeight, realPicWidth, realPicHeight, stream, x, y, reserve))
+	if (!loadImage(picWidth, picHeight, realPicWidth, realPicHeight, stream, x,
+			y, reserve))
 		return false;
 #if 0
 	GLuint tmpTex;

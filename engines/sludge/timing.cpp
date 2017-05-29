@@ -59,4 +59,5 @@ void Wait_Frame(void) {
 }
 #endif
 
-} // End of namespace Sludge
+}
+               // End of namespace Sludge

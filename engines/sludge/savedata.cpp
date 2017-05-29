@@ -42,30 +42,30 @@ char encode2 = 0;
 extern char *gamePath;
 
 /*
-void loadSaveDebug (char * com) {
-    FILE * ffpp = fopen ("debuggy.txt", "at");
-    fprintf (ffpp, "%s\n", com);
-    fclose (ffpp);
-}
+ void loadSaveDebug (char * com) {
+ FILE * ffpp = fopen ("debuggy.txt", "at");
+ fprintf (ffpp, "%s\n", com);
+ fclose (ffpp);
+ }
 
-void loadSaveDebug (char com) {
-    FILE * ffpp = fopen ("debuggy.txt", "at");
-    fprintf (ffpp, "%c\n", com);
-    fclose (ffpp);
-}
+ void loadSaveDebug (char com) {
+ FILE * ffpp = fopen ("debuggy.txt", "at");
+ fprintf (ffpp, "%c\n", com);
+ fclose (ffpp);
+ }
 
-void loadSaveDebug (int com) {
-    FILE * ffpp = fopen ("debuggy.txt", "at");
-    fprintf (ffpp, "%d\n", com);
-    fclose (ffpp);
-}
-*/
+ void loadSaveDebug (int com) {
+ FILE * ffpp = fopen ("debuggy.txt", "at");
+ fprintf (ffpp, "%d\n", com);
+ fclose (ffpp);
+ }
+ */
 
 void writeStringEncoded(const char *s, Common::WriteStream *stream) {
 	int a, len = strlen(s);
 
 	put2bytes(len, stream);
-	for (a = 0; a < len; a ++) {
+	for (a = 0; a < len; a++) {
 		putch(s[a] ^ encode1, stream);
 		encode1 += encode2;
 	}
@@ -74,9 +74,10 @@ void writeStringEncoded(const char *s, Common::WriteStream *stream) {
 char *readStringEncoded(Common::File *fp) {
 	int a, len = get2bytes(fp);
 	char *s = new char[len + 1];
-	if (!checkNew(s)) return NULL;
-	for (a = 0; a < len; a ++) {
-		s[a] = (char)(getch(fp) ^ encode1);
+	if (!checkNew(s))
+		return NULL;
+	for (a = 0; a < len; a++) {
+		s[a] = (char) (getch(fp) ^ encode1);
 		encode1 += encode2;
 	}
 	s[len] = 0;
@@ -98,7 +99,7 @@ char *readTextPlain(Common::File *fp) {
 		if ((gotChar == '\n') || (fp->eos())) {
 			keepGoing = false;
 		} else {
-			stringSize ++;
+			stringSize++;
 		}
 	}
 
@@ -107,7 +108,8 @@ char *readTextPlain(Common::File *fp) {
 	} else {
 		fp->seek(startPos, SEEK_SET);
 		reply = new char[stringSize + 1];
-		if (reply == NULL) return NULL;
+		if (reply == NULL)
+			return NULL;
 		size_t bytes_read = fp->read(reply, stringSize);
 		if (bytes_read != stringSize && fp->err()) {
 			debugOut("Reading error in readTextPlain.\n");
@@ -123,7 +125,9 @@ bool fileToStack(char *filename, stackHandler *sH) {
 
 	variable stringVar;
 	stringVar.varType = SVT_NULL;
-	const char *checker = saveEncoding ? "[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
+	const char *checker =
+			saveEncoding ?
+					"[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
 
 	Common::File fd;
 
@@ -150,39 +154,42 @@ bool fileToStack(char *filename, stackHandler *sH) {
 	}
 
 	encode1 = (unsigned char) saveEncoding & 255;
-	encode2 = (unsigned char)(saveEncoding >> 8);
+	encode2 = (unsigned char) (saveEncoding >> 8);
 
-	while (* checker) {
-		if (getch(&fd) != * checker) {
+	while (*checker) {
+		if (getch(&fd) != *checker) {
 			fd.close();
-			return fatal(LOAD_ERROR "This isn't a SLUDGE custom data file:", filename);
+			return fatal(LOAD_ERROR "This isn't a SLUDGE custom data file:",
+					filename);
 		}
-		checker ++;
+		checker++;
 	}
 
 	if (saveEncoding) {
 		char *checker = readStringEncoded(&fd);
 		if (strcmp(checker, "UN�LO�CKED")) {
 			fd.close();
-			return fatal(LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
+			return fatal(
+					LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:",
+					filename);
 		}
 		delete checker;
 		checker = NULL;
 	}
 
-
 	for (;;) {
 		if (saveEncoding) {
 			char i = getch(&fd) ^ encode1;
 
-			if (fd.eos()) break;
+			if (fd.eos())
+				break;
 			switch (i) {
 			case 0: {
 				char *g = readStringEncoded(&fd);
 				makeTextVar(stringVar, g);
 				delete g;
 			}
-			break;
+				break;
 
 			case 1:
 				setVariable(stringVar, SVT_INT, get4bytes(&fd));
@@ -199,18 +206,21 @@ bool fileToStack(char *filename, stackHandler *sH) {
 			}
 		} else {
 			char *line = readTextPlain(&fd);
-			if (!line) break;
+			if (!line)
+				break;
 			makeTextVar(stringVar, line);
 		}
 
-		if (sH -> first == NULL) {
+		if (sH->first == NULL) {
 			// Adds to the TOP of the array... oops!
-			if (!addVarToStackQuick(stringVar, sH -> first)) return false;
-			sH -> last = sH -> first;
+			if (!addVarToStackQuick(stringVar, sH->first))
+				return false;
+			sH->last = sH->first;
 		} else {
 			// Adds to the END of the array... much better
-			if (!addVarToStackQuick(stringVar, sH -> last -> next)) return false;
-			sH -> last = sH -> last -> next;
+			if (!addVarToStackQuick(stringVar, sH->last->next))
+				return false;
+			sH->last = sH->last->next;
 		}
 	}
 	fd.close();
@@ -238,12 +248,12 @@ bool stackToFile(char *filename, const variable &from) {
 	while (hereWeAre) {
 		if (saveEncoding) {
 			switch (hereWeAre -> thisVar.varType) {
-			case SVT_STRING:
+				case SVT_STRING:
 				fputc(encode1, fp);
 				writeStringEncoded(hereWeAre -> thisVar.varData.theString, fp);
 				break;
 
-			case SVT_INT:
+				case SVT_INT:
 				// Small enough to be stored as a char
 				if (hereWeAre -> thisVar.varData.intValue >= 0 && hereWeAre -> thisVar.varData.intValue < 256) {
 					fputc(2 ^ encode1, fp);
@@ -254,7 +264,7 @@ bool stackToFile(char *filename, const variable &from) {
 				}
 				break;
 
-			default:
+				default:
 				fatal("Can't create an encoded custom data file containing anything other than numbers and strings", filename);
 				fclose(fp);
 				return false;

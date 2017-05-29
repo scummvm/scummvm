@@ -48,7 +48,6 @@ struct frozenStuffStruct {
 	frozenStuffStruct *next;
 };
 
-
 bool freeze();
 void unfreeze(bool killImage = true);
 int howFrozen();

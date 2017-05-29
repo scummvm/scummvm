@@ -1,10 +1,10 @@
 /*
-This is the list of the built in functions
+ This is the list of the built in functions
 
-true or false states if it's a used function
-in the current version of the engine,
-but that value currently isn't used anywhere
-*/
+ true or false states if it's a used function
+ in the current version of the engine,
+ but that value currently isn't used anywhere
+ */
 
 FUNC(true, say)
 FUNC(true, skipSpeech)
@@ -135,10 +135,10 @@ FUNC(true, captureAllKeys)
 FUNC(true, cacheSound)
 FUNC(true, setCharacterSpinSpeed)
 FUNC(true, transitionMode)
-FUNC(false,  _rem_movieStart)
-FUNC(false,  _rem_movieAbort)
-FUNC(false,  _rem_moviePlaying)
-FUNC(false,  _rem_updateDisplay)
+FUNC(false, _rem_movieStart)
+FUNC(false, _rem_movieAbort)
+FUNC(false, _rem_moviePlaying)
+FUNC(false, _rem_updateDisplay)
 FUNC(true, getSoundCache)
 FUNC(true, saveCustomData)
 FUNC(true, loadCustomData)
@@ -160,7 +160,7 @@ FUNC(true, hasFlag)
 FUNC(true, snapshotGrab)
 FUNC(true, snapshotClear)
 FUNC(true, bodgeFilenames)
-FUNC(false,  _rem_registryGetString)
+FUNC(false, _rem_registryGetString)
 FUNC(true, quitWithFatalError)
 FUNC(true, _rem_setCharacterAA)
 FUNC(true, _rem_setMaximumAA)

@@ -30,11 +30,11 @@ namespace Sludge {
 class SludgeEngine;
 
 // Example console class
-class SludgeConsole : public GUI::Debugger {
+class SludgeConsole: public GUI::Debugger {
 public:
 	SludgeConsole(SludgeEngine *vm);
 	virtual ~SludgeConsole(void);
-	
+
 private:
 	SludgeEngine *_vm;
 };

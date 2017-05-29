@@ -30,7 +30,7 @@
 #include "sludge/console.h"
 
 namespace Sludge {
- 
+
 class SludgeConsole;
 
 struct SludgeGameDescription;
@@ -43,8 +43,8 @@ enum {
 	kSludgeDebugBuiltin = 1 << 3,
 	kSludgeDebugGraphics = 1 << 4
 };
- 
-class SludgeEngine : public Engine {
+
+class SludgeEngine: public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -52,19 +52,19 @@ protected:
 public:
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();
- 
+
 	int getGameType() const;
 	const char *getGameId() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 
 	const SludgeGameDescription *_gameDescription;
- 
+
 private:
 	SludgeConsole *_console;
- 	Common::RandomSource *_rnd;
+	Common::RandomSource *_rnd;
 };
 
 } // End of namespace Sludge
- 
+
 #endif
