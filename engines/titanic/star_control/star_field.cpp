@@ -183,10 +183,10 @@ void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 
 double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		FVector &v1, FVector &v2, FVector &v3) {
-	if (_crosshairs._fieldC < 0)
+	if (_crosshairs.isEmpty())
 		return -1.0;
 
-	const CBaseStarEntry *dataP = _markers.getDataPtr(_crosshairs._fieldC);
+	const CBaseStarEntry *dataP = _markers.getDataPtr(_crosshairs._entryIndex);
 	v2 = dataP->_position;
 	FVector tv = camera->proc29(2, v2);
 

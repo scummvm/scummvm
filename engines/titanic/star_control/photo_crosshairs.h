@@ -40,7 +40,6 @@ class CStarCamera;
 class CPhotoCrosshairs {
 private:
 	Common::Array<CStarPosition> _positions;
-	int _entryIndex;
 	CStarPosition _entries[3];
 private:
 	/**
@@ -54,7 +53,7 @@ private:
 	void clear();
 public:
 	int _field8;
-	int _fieldC;
+	int _entryIndex;
 public:
 	CPhotoCrosshairs();
 	~CPhotoCrosshairs() { clear(); }
@@ -68,6 +67,11 @@ public:
 	 * Save the data for the class to file
 	 */
 	void save(SimpleFile *file, int indent) {}
+
+	/**
+	 * Returns true if there are no crosshairs present
+	 */
+	bool isEmpty() const { return _entryIndex == -1; }
 
 	void selectStar(int starNum, CVideoSurface *surface, CStarField *starField,
 		CStarMarkers *markers);
