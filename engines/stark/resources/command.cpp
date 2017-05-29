@@ -649,7 +649,7 @@ Command *Command::opPlayAnimation(Script *script, const ResourceReference &animR
 	// TODO: Check if the anim should reset the anim hirarchy upon completion
 
 	if (suspend) {
-		float animDuration = anim->getDuration();
+		uint32 animDuration = anim->getDuration();
 		script->pause(animDuration);
 		return this; // Stay on the same command while suspended
 	} else {

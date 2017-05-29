@@ -130,8 +130,7 @@ int VisualSmacker::getFrameNumber() const {
 }
 
 bool VisualSmacker::isDone() {
-	uint32 time = _smacker->getTime();
-	return time >= getDuration();
+	return getCurrentTime() >= getDuration();
 }
 
 int VisualSmacker::getWidth() const {
@@ -143,7 +142,7 @@ int VisualSmacker::getHeight() const {
 }
 
 uint32 VisualSmacker::getDuration() const {
-	return _smacker->getDuration().msecs();
+	return (_smacker->getRate().getInverse() * _smacker->getDuration().msecs()).toInt();
 }
 
 void VisualSmacker::rewind() {
@@ -158,7 +157,7 @@ void VisualSmacker::rewind() {
 }
 
 uint32 VisualSmacker::getCurrentTime() const {
-	return _smacker->getTime();
+	return (_smacker->getRate().getInverse() * _smacker->getTime()).toInt();
 }
 
 void VisualSmacker::overrideFrameRate(int32 framerate) {
