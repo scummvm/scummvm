@@ -78,7 +78,6 @@ extern parallaxLayer *parallaxStuff;                //      "
 extern int lightMapMode;                    //      "
 extern int languageNum;
 
-
 //----------------------------------------------------------------------
 // Globals (so we know what's saved already and what's a reference
 //----------------------------------------------------------------------
@@ -100,7 +99,7 @@ void saveStack(variableStack *vs, Common::WriteStream *stream) {
 
 	variableStack *search = vs;
 	while (search) {
-		elements ++;
+		elements++;
 		search = search->next;
 	}
 
@@ -114,7 +113,8 @@ void saveStack(variableStack *vs, Common::WriteStream *stream) {
 	}
 }
 
-variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **last) {
+variableStack *loadStack(Common::SeekableReadStream *stream,
+		variableStack **last) {
 	int elements = get2bytes(stream);
 	int a;
 	variableStack *first = NULL;
@@ -122,14 +122,15 @@ variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **las
 
 	for (a = 0; a < elements; ++a) {
 		variableStack *nS = new variableStack;
-		if (!checkNew(nS)) return NULL;
+		if (!checkNew(nS))
+			return NULL;
 		loadVariable(&(nS->thisVar), stream);
 		if (last && a == elements - 1) {
 			stackDebug((stackfp, "Setting last to %p\n", nS));
 			*last = nS;
 		}
 		nS->next = NULL;
-		(* changeMe) = nS;
+		(*changeMe) = nS;
 		changeMe = &(nS->next);
 	}
 
@@ -151,8 +152,9 @@ bool saveStackRef(stackHandler *vs, Common::WriteStream *stream) {
 	putch(0, stream);
 	saveStack(vs->first, stream);
 	s = new stackLibrary;
-	stackLibTotal ++;
-	if (! checkNew(s)) return false;
+	stackLibTotal++;
+	if (!checkNew(s))
+		return false;
 	s->next = stackLib;
 	s->stack = vs;
 	stackLib = s;
@@ -173,7 +175,7 @@ stackHandler *getStackFromLibrary(int n) {
 	n = stackLibTotal - n;
 	while (n) {
 		stackLib = stackLib->next;
-		n --;
+		n--;
 	}
 	return stackLib->stack;
 }
@@ -185,14 +187,15 @@ stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 		stackDebug((stackfp, "loadStackRef (duplicate, get from library)\n"));
 
 		nsh = getStackFromLibrary(get2bytes(stream));
-		nsh->timesUsed ++;
+		nsh->timesUsed++;
 	} else {
 		stackDebug((stackfp, "loadStackRef (new one)\n"));
 
 		// Load the new stack
 
 		nsh = new stackHandler;
-		if (! checkNew(nsh)) return NULL;
+		if (!checkNew(nsh))
+			return NULL;
 		nsh->last = NULL;
 		nsh->first = loadStack(stream, &nsh->last);
 		nsh->timesUsed = 1;
@@ -206,11 +209,12 @@ stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 		// Add it to the library of loaded stacks
 
 		stackLibrary *s = new stackLibrary;
-		if (! checkNew(s)) return NULL;
+		if (!checkNew(s))
+			return NULL;
 		s->stack = nsh;
 		s->next = stackLib;
 		stackLib = s;
-		stackLibTotal ++;
+		stackLibTotal++;
 	}
 	return nsh;
 }
@@ -257,15 +261,14 @@ bool saveVariable(variable *from, Common::WriteStream *stream) {
 
 	default:
 		fatal("Can't save variables of this type:",
-		      (from->varType < SVT_NUM_TYPES) ?
-		      typeName[from->varType] :
-		      "bad ID");
+				(from->varType < SVT_NUM_TYPES) ?
+						typeName[from->varType] : "bad ID");
 	}
 	return true;
 }
 
 bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
-	to->varType = (variableType)getch(stream);
+	to->varType = (variableType) getch(stream);
 	switch (to->varType) {
 	case SVT_INT:
 	case SVT_FUNC:
@@ -292,13 +295,15 @@ bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
 
 	case SVT_COSTUME:
 		to->varData.costumeHandler = new persona;
-		if (! checkNew(to->varData.costumeHandler)) return false;
+		if (!checkNew(to->varData.costumeHandler))
+			return false;
 		loadCostume(to->varData.costumeHandler, stream);
 		return true;
 
 	case SVT_ANIM:
 		to->varData.animHandler = new personaAnimation;
-		if (! checkNew(to->varData.animHandler)) return false;
+		if (!checkNew(to->varData.animHandler))
+			return false;
 		loadAnim(to->varData.animHandler, stream);
 		return true;
 
@@ -342,7 +347,8 @@ loadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 	// Reserve memory...
 
 	loadedFunction *buildFunc = new loadedFunction;
-	if (! checkNew(buildFunc)) return NULL;
+	if (!checkNew(buildFunc))
+		return NULL;
 
 	// See what it was called by and load if we need to...
 
@@ -350,7 +356,8 @@ loadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 	buildFunc->calledBy = NULL;
 	if (getch(stream)) {
 		buildFunc->calledBy = loadFunction(stream);
-		if (! buildFunc->calledBy) return NULL;
+		if (!buildFunc->calledBy)
+			return NULL;
 	}
 
 	buildFunc->timeLeft = get4bytes(stream);
@@ -396,7 +403,7 @@ bool saveGame(char *fname) {
 
 	fputc(allowAnyFilename, fp);
 	fputc(captureAllKeys, fp);
-	fputc(true, fp);  // updateDisplay
+	fputc(true, fp);// updateDisplay
 	fputc(fontTableSize > 0, fp);
 
 	if (fontTableSize > 0) {
@@ -515,7 +522,7 @@ bool loadGame(char *fname) {
 	}
 
 	if (savedGameTime.dwLowDateTime != fileTime.dwLowDateTime ||
-	        savedGameTime.dwHighDateTime != fileTime.dwHighDateTime) {
+			savedGameTime.dwHighDateTime != fileTime.dwHighDateTime) {
 		return fatal(ERROR_GAME_LOAD_WRONG, fname);
 	}
 
@@ -579,7 +586,6 @@ bool loadGame(char *fname) {
 	loadedFunction *rFunc;
 	loadedFunction * * buildList = &allRunningFunctions;
 
-
 	int countFunctions = get2bytes(fp);
 	while (countFunctions --) {
 		rFunc = loadFunction(fp);
@@ -594,7 +600,6 @@ bool loadGame(char *fname) {
 	}
 
 	loadPeople(fp);
-
 
 	if (fgetc(fp)) {
 		if (! setFloor(get2bytes(fp))) return false;

@@ -58,8 +58,8 @@ int get2bytes(Common::SeekableReadStream *stream) {
 }
 
 void put2bytes(int numtoput, Common::WriteStream *stream) {
-	putch((char)(numtoput / 256), stream);
-	putch((char)(numtoput % 256), stream);
+	putch((char) (numtoput / 256), stream);
+	putch((char) (numtoput % 256), stream);
 }
 
 void writeString(char *s, Common::WriteStream *stream) {
@@ -70,7 +70,6 @@ void writeString(char *s, Common::WriteStream *stream) {
 	}
 }
 
-
 char *readString(Common::SeekableReadStream *stream) {
 	int a, len = get2bytes(stream);
 	char *s = new char[len + 1];
@@ -78,7 +77,7 @@ char *readString(Common::SeekableReadStream *stream) {
 		return NULL;
 	}
 	for (a = 0; a < len; ++a) {
-		s[a] = (char)(getch(stream) - 1);
+		s[a] = (char) (getch(stream) - 1);
 	}
 	s[len] = 0;
 	debug(kSludgeDebugDataLoad, "Read string of length %i: %s", len, s);
@@ -99,11 +98,10 @@ float floatSwap(float f) {
 	return dat2.f;
 }
 
-
 float getFloat(Common::SeekableReadStream *stream) {
 	float f;
 	size_t bytes_read = stream->read(&f, sizeof(float));
-			//fread(& f, sizeof(float), 1, fp);
+	//fread(& f, sizeof(float), 1, fp);
 	if (bytes_read != sizeof(float) && stream->err()) {
 		debug("Reading error in getFloat.\n");
 	}
@@ -119,7 +117,7 @@ void putFloat(float f, Common::WriteStream *stream) {
 #ifdef  __BIG_ENDIAN__
 	f = floatSwap(f);
 #endif
-	stream->write(&f,sizeof(float));
+	stream->write(&f, sizeof(float));
 	//fwrite(& f, sizeof(float), 1, fp);
 }
 
@@ -131,7 +129,6 @@ short shortSwap(short s) {
 
 	return (b1 << 8) + b2;
 }
-
 
 short getSigned(Common::SeekableReadStream *stream) {
 	short f;
@@ -152,7 +149,6 @@ void putSigned(short f, Common::WriteStream *stream) {
 	stream->write(&f, sizeof(short));
 }
 
-
 // The following two functions treat signed integers as unsigned.
 // That's done on purpose.
 
@@ -168,7 +164,6 @@ int32_t get4bytes(Common::SeekableReadStream *stream) {
 
 	return x;
 }
-
 
 void put4bytes(unsigned int i, Common::WriteStream *stream) {
 	unsigned char f1, f2, f3, f4;
@@ -187,10 +182,12 @@ void put4bytes(unsigned int i, Common::WriteStream *stream) {
 }
 
 char *encodeFilename(char *nameIn) {
-	if (!nameIn) return NULL;
+	if (!nameIn)
+		return NULL;
 	if (allowAnyFilename) {
 		char *newName = new char[strlen(nameIn) * 2 + 1];
-		if (!checkNew(newName)) return NULL;
+		if (!checkNew(newName))
+			return NULL;
 
 		int i = 0;
 		while (*nameIn) {
@@ -241,7 +238,7 @@ char *encodeFilename(char *nameIn) {
 				break;
 			}
 			newName[i] = 0;
-			nameIn ++;
+			nameIn++;
 		}
 		return newName;
 	} else {
@@ -250,7 +247,8 @@ char *encodeFilename(char *nameIn) {
 #ifdef _WIN32
 			if (nameIn[a] == '/') nameIn[a] = '\\';
 #else
-			if (nameIn[a] == '\\') nameIn[a] = '/';
+			if (nameIn[a] == '\\')
+				nameIn[a] = '/';
 #endif
 		}
 
@@ -261,61 +259,62 @@ char *encodeFilename(char *nameIn) {
 char *decodeFilename(char *nameIn) {
 	if (allowAnyFilename) {
 		char *newName = new char[strlen(nameIn) + 1];
-		if (!checkNew(newName)) return NULL;
+		if (!checkNew(newName))
+			return NULL;
 
 		int i = 0;
-		while (* nameIn) {
-			if (* nameIn == '_') {
-				nameIn ++;
-				switch (* nameIn) {
+		while (*nameIn) {
+			if (*nameIn == '_') {
+				nameIn++;
+				switch (*nameIn) {
 				case 'L':
 					newName[i] = '<';
-					nameIn ++;
+					nameIn++;
 					break;
 				case 'G':
 					newName[i] = '>';
-					nameIn ++;
+					nameIn++;
 					break;
 				case 'P':
 					newName[i] = '|';
-					nameIn ++;
+					nameIn++;
 					break;
 				case 'U':
 					newName[i] = '_';
-					nameIn ++;
+					nameIn++;
 					break;
 				case 'S':
 					newName[i] = '\"';
-					nameIn ++;
+					nameIn++;
 					break;
 				case 'B':
 					newName[i] = '\\';
-					nameIn ++;
+					nameIn++;
 					break;
 				case 'F':
 					newName[i] = '/';
-					nameIn ++;
+					nameIn++;
 					break;
 				case 'C':
 					newName[i] = ':';
-					nameIn ++;
+					nameIn++;
 					break;
 				case 'A':
 					newName[i] = '*';
-					nameIn ++;
+					nameIn++;
 					break;
 				case 'Q':
 					newName[i] = '?';
-					nameIn ++;
+					nameIn++;
 					break;
 				default:
 					newName[i] = '_';
 				}
 			} else {
 				newName[i] = *nameIn;
-				nameIn ++;
+				nameIn++;
 			}
-			i ++;
+			i++;
 
 		}
 		newName[i] = 0;

@@ -94,13 +94,13 @@ struct textureList *firstTexture = NULL;
 
 textureList *addTexture() {
 	textureList *newTexture = new textureList;
-	newTexture -> next = firstTexture;
+	newTexture->next = firstTexture;
 	firstTexture = newTexture;
 	return newTexture;
 }
 
 #if 0
-void deleteTextures(GLsizei n,  const GLuint *textures) {
+void deleteTextures(GLsizei n, const GLuint *textures) {
 	if (firstTexture == NULL) {
 		//debugOut("Deleting texture while list is already empty.\n");
 	} else {
@@ -133,10 +133,10 @@ void deleteTextures(GLsizei n,  const GLuint *textures) {
 
 }
 
-void getTextureDimensions(GLuint name, GLint *width,  GLint *height) {
+void getTextureDimensions(GLuint name, GLint *width, GLint *height) {
 	textureList *list = firstTexture;
 	while (list) {
-		if (list->name == name)  {
+		if (list->name == name) {
 			*width = list->width;
 			*height = list->height;
 #if !defined(HAVE_GLES2)
@@ -156,7 +156,7 @@ void getTextureDimensions(GLuint name, GLint *width,  GLint *height) {
 	fatal("Texture not found in list.\n");
 }
 
-void storeTextureDimensions(GLuint name, GLsizei width,  GLsizei height, const char *file, int line) {
+void storeTextureDimensions(GLuint name, GLsizei width, GLsizei height, const char *file, int line) {
 	if (! NPOT_textures && !(((height & (height - 1)) == 0) || ((width & (width - 1)) == 0))) {
 		debugOut("I was told to create a texture with dimensions %ix%i in %s @ line %d although NPOT textures are disabled.\n", width, height, file, line);
 		//height = getNextPOT(height);
@@ -165,7 +165,7 @@ void storeTextureDimensions(GLuint name, GLsizei width,  GLsizei height, const c
 
 	textureList *list = firstTexture;
 	while (list) {
-		if (list->name == name)  {
+		if (list->name == name) {
 			//debugOut("Texture dimensions are overwritten.\n");
 			break;
 		}
@@ -182,14 +182,14 @@ void storeTextureDimensions(GLuint name, GLsizei width,  GLsizei height, const c
 #endif
 
 #ifdef HAVE_GLES2
-void glesCopyTexSubImage2D(GLenum target,  GLint level, GLint xoffset, GLint yoffset, GLint x,  GLint y,  GLsizei width,  GLsizei height) {
+void glesCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height) {
 	// Work around for broken glCopy(Sub)TexImage2D...
 	void *tmp = malloc(width * height * 4);
 	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, tmp);
 	glTexSubImage2D(target, level, xoffset, yoffset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, tmp);
 	free(tmp);
 }
-void glesCopyTexImage2D(GLenum target,  GLint level,  GLenum internalformat,  GLint x,  GLint y,  GLsizei width,  GLsizei height,  GLint border) {
+void glesCopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border) {
 	// Work around for broken glCopy(Sub)TexImage2D...
 	void *tmp = malloc(width * height * 4);
 	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, tmp);
@@ -199,7 +199,7 @@ void glesCopyTexImage2D(GLenum target,  GLint level,  GLenum internalformat,  GL
 #endif
 
 #if 0
-void dcopyTexImage2D(GLenum target,  GLint level,  GLenum internalformat,  GLint x,  GLint y,  GLsizei width,  GLsizei height,  GLint border, GLuint name, const char *file, int line) {
+void dcopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border, GLuint name, const char *file, int line) {
 
 	glBindTexture(GL_TEXTURE_2D, name);
 #ifdef HAVE_GLES2_
@@ -209,7 +209,7 @@ void dcopyTexImage2D(GLenum target,  GLint level,  GLenum internalformat,  GLint
 #endif
 }
 
-void dcopyTexSubImage2D(GLenum target,  GLint level,  GLint xoffset,  GLint yoffset,  GLint x,  GLint y,  GLsizei width,  GLsizei height, GLuint name, const char *file, int line) {
+void dcopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height, GLuint name, const char *file, int line) {
 	glBindTexture(GL_TEXTURE_2D, name);
 #ifdef HAVE_GLES2_
 	glesCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
@@ -218,16 +218,16 @@ void dcopyTexSubImage2D(GLenum target,  GLint level,  GLint xoffset,  GLint yoff
 #endif
 }
 
-void dtexImage2D(GLenum target,  GLint level,  GLint internalformat,  GLsizei width,  GLsizei height,
-                 GLint border,  GLenum format,  GLenum type,  const GLvoid *data, GLuint name, const char *file, int line) {
-	storeTextureDimensions(name, width,  height, file, line);
+void dtexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height,
+		GLint border, GLenum format, GLenum type, const GLvoid *data, GLuint name, const char *file, int line) {
+	storeTextureDimensions(name, width, height, file, line);
 	glBindTexture(GL_TEXTURE_2D, name);
-	glTexImage2D(target, level, internalformat, width, height, border, format, type,  data);
+	glTexImage2D(target, level, internalformat, width, height, border, format, type, data);
 }
 
-void dtexSubImage2D(GLenum target,  GLint level,  GLint xoffset,  GLint yoffset,  GLsizei width,  GLsizei height,
-                    GLenum format,  GLenum type,  const GLvoid *data, GLuint name, const char *file, int line) {
-	storeTextureDimensions(name, width,  height, file, line);
+void dtexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+		GLenum format, GLenum type, const GLvoid *data, GLuint name, const char *file, int line) {
+	storeTextureDimensions(name, width, height, file, line);
 	glBindTexture(GL_TEXTURE_2D, name);
 	glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, data);
 }
@@ -289,7 +289,6 @@ void drawQuad(GLint program, const GLfloat *vertices, int numTexCoords, ...) {
 
 }
 
-
 void setPMVMatrix(GLint program) {
 	glUniformMatrix4fv(glGetUniformLocation(program, "myPMVMatrix"), 1, GL_FALSE, aPMVMatrix);
 }
@@ -310,10 +309,10 @@ void setPixelCoords(bool pixels) {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		const GLfloat bPMVMatrix[] = {
-			2.0f / viewportWidth,                  .0,   .0,  .0,
-			.0, 2.0f / viewportHeight,   .0,  .0,
-			.0,                  .0, 1.0f,  .0,
-			-1.0,               -1.0f,   .0, 1.0f
+			2.0f / viewportWidth, .0, .0, .0,
+			.0, 2.0f / viewportHeight, .0, .0,
+			.0, .0, 1.0f, .0,
+			-1.0, -1.0f, .0, 1.0f
 
 		};
 		for (int i = 0; i < 16; i++) {
@@ -332,10 +331,10 @@ void setPixelCoords(bool pixels) {
 		GLfloat h = (GLfloat) winHeight / cameraZoom;
 
 		const GLfloat bPMVMatrix[] = {
-			2.0f / w,      .0,   .0,  .0,
-			.0, -2.0f / h,   .0,  .0,
-			.0,      .0, 1.0f,  .0,
-			-1.0,    1.0f,   .0, 1.0f
+			2.0f / w, .0, .0, .0,
+			.0, -2.0f / h, .0, .0,
+			.0, .0, 1.0f, .0,
+			-1.0, 1.0f, .0, 1.0f
 
 		};
 		for (int i = 0; i < 16; i++) {
@@ -347,7 +346,6 @@ void setPixelCoords(bool pixels) {
 
 int desktopW = 0, desktopH = 0;
 bool runningFullscreen = false;
-
 
 #if defined(HAVE_GLES2)
 void saveTexture(GLuint tex, GLubyte *data) {
@@ -412,7 +410,7 @@ void saveTexture(GLuint tex, GLubyte *data) {
 			drawQuad(shader.texture, vertices, 1, texCoords);
 			glUseProgram(0);
 
-			for (int i = 0; i < h; i++)   {
+			for (int i = 0; i < h; i++) {
 				glReadPixels(viewportOffsetX, viewportOffsetY + i, w, 1, GL_RGBA, GL_UNSIGNED_BYTE, data + xoffset * 4 + (yoffset + i) * 4 * tw);
 			}
 
@@ -607,13 +605,13 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 	Fragment = shaderFileRead("scale.frag");
 #else
 	/*  const GLubyte *str;
-	    int glDerivativesAvailable;
-	    str = glGetString (GL_EXTENSIONS);
-	    glDerivativesAvailable = (strstr((const char *)str, "GL_OES_standard_derivatives") != NULL);
-	    if (!glDerivativesAvailable) {
-	        debugOut("Extension \"GL_OES_standard_derivatives\" not available. Advanced anti-aliasing is not possible. Using linear anti-aliasing instead.");
-	        gameSettings.antiAlias = -1;
-	*/
+	 int glDerivativesAvailable;
+	 str = glGetString (GL_EXTENSIONS);
+	 glDerivativesAvailable = (strstr((const char *)str, "GL_OES_standard_derivatives") != NULL);
+	 if (!glDerivativesAvailable) {
+	 debugOut("Extension \"GL_OES_standard_derivatives\" not available. Advanced anti-aliasing is not possible. Using linear anti-aliasing instead.");
+	 gameSettings.antiAlias = -1;
+	 */
 	Fragment = shaderFileRead("scale_noaa.frag");
 //	}
 
@@ -823,7 +821,6 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 			}
 		}
 
-
 		reloadSpriteTextures();
 		reloadParallaxTextures();
 		zBuffer.texName = 0;
@@ -839,7 +836,7 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 	}
 
 	if (movieIsPlaying)
-		setMovieViewport();
+	setMovieViewport();
 #endif
 }
 
@@ -922,7 +919,6 @@ void setupOpenGLStuff() {
 	debugOut("Max texture image units: %d\n", n);
 
 }
-
 
 // I found this function on a coding forum on the 'net.
 // Looks a bit weird, but it should work.

@@ -49,9 +49,11 @@ soundThing soundCache[MAX_SAMPLES];
 int defVol = 128;
 int defSoundVol = 255;
 
-char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile, uint32_t size) {
+char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile,
+		uint32_t size) {
 	char *allData = new char[size];
-	if (!allData) return NULL;
+	if (!allData)
+		return NULL;
 	inputFile->read(allData, size);
 	finishAccess();
 
@@ -68,15 +70,17 @@ void stopMOD(int i) {
 
 int findInSoundCache(int a) {
 	int i;
-	for (i = 0; i < MAX_SAMPLES; i ++) {
-		if (soundCache[i].fileLoaded == a) return i;
+	for (i = 0; i < MAX_SAMPLES; i++) {
+		if (soundCache[i].fileLoaded == a)
+			return i;
 	}
 	return -1;
 }
 
 void huntKillSound(int filenum) {
 	int gotSlot = findInSoundCache(filenum);
-	if (gotSlot == -1) return;
+	if (gotSlot == -1)
+		return;
 	soundCache[gotSlot].looping = false;
 	BASS_SampleStop(soundCache[gotSlot].sample);
 }
@@ -90,7 +94,8 @@ void freeSound(int a) {
 
 void huntKillFreeSound(int filenum) {
 	int gotSlot = findInSoundCache(filenum);
-	if (gotSlot != -1) freeSound(gotSlot);
+	if (gotSlot != -1)
+		freeSound(gotSlot);
 }
 
 bool initSoundStuff(HWND hwnd) {
@@ -119,8 +124,10 @@ bool initSoundStuff(HWND hwnd) {
 void killSoundStuff() {
 	if (soundOK) {
 		int a;
-		for (a = 0; a < MAX_MODS;       a ++) stopMOD(a);
-		for (a = 0; a < MAX_SAMPLES;    a ++) freeSound(a);
+		for (a = 0; a < MAX_MODS; a++)
+			stopMOD(a);
+		for (a = 0; a < MAX_SAMPLES; a++)
+			freeSound(a);
 		BASS_Free();
 	}
 }
@@ -132,13 +139,19 @@ bool playMOD(int f, int a, int fromTrack) {
 
 		setResourceForFatal(f);
 		uint32_t length = openFileFromNum(f);
-		if (length == 0) return NULL;
+		if (length == 0)
+			return NULL;
 
 		char *memImage;
 		memImage = loadEntireFileToMemory(bigDataFile, length);
-		if (!memImage) return fatal(ERROR_MUSIC_MEMORY_LOW);
+		if (!memImage)
+			return fatal(ERROR_MUSIC_MEMORY_LOW);
 
-		mod[a] = BASS_MusicLoad(true, memImage, 0, length, BASS_MUSIC_LOOP | BASS_MUSIC_RAMP/*|BASS_MUSIC_PRESCAN needed too if we're going to set the position in bytes*/, 0);
+		mod[a] =
+				BASS_MusicLoad(true, memImage, 0, length,
+						BASS_MUSIC_LOOP
+								| BASS_MUSIC_RAMP/*|BASS_MUSIC_PRESCAN needed too if we're going to set the position in bytes*/,
+						0);
 		delete memImage;
 
 		if (!mod[a]) {
@@ -149,8 +162,10 @@ bool playMOD(int f, int a, int fromTrack) {
 			if (!BASS_ChannelPlay(mod[a], true))
 				debugOut("playMOD: Error %d!\n", BASS_ErrorGetCode());
 
-			BASS_ChannelSetPosition(mod[a], MAKELONG(fromTrack, 0), BASS_POS_MUSIC_ORDER);
-			BASS_ChannelFlags(mod[a], BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP, BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP);
+			BASS_ChannelSetPosition(mod[a], MAKELONG(fromTrack, 0),
+					BASS_POS_MUSIC_ORDER);
+			BASS_ChannelFlags(mod[a], BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP,
+					BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP);
 		}
 		setResourceForFatal(-1);
 	}
@@ -160,7 +175,8 @@ bool playMOD(int f, int a, int fromTrack) {
 void setMusicVolume(int a, int v) {
 	int ret;
 	if (soundOK && mod[a]) {
-		ret = BASS_ChannelSetAttribute(mod[a], BASS_ATTRIB_VOL, (float) v / 256);
+		ret = BASS_ChannelSetAttribute(mod[a], BASS_ATTRIB_VOL,
+				(float) v / 256);
 		if (!ret) {
 			debugOut("setMusicVolume: Error %d\n", BASS_ErrorGetCode());
 		}
@@ -176,7 +192,8 @@ void setSoundVolume(int a, int v) {
 		int ch = findInSoundCache(a);
 		if (ch != -1) {
 			if (BASS_ChannelIsActive(soundCache[ch].mostRecentChannel)) {
-				BASS_ChannelSetAttribute(soundCache[ch].mostRecentChannel, BASS_ATTRIB_VOL, (float) v / 256);
+				BASS_ChannelSetAttribute(soundCache[ch].mostRecentChannel,
+						BASS_ATTRIB_VOL, (float) v / 256);
 			}
 		}
 	}
@@ -186,7 +203,8 @@ bool stillPlayingSound(int ch) {
 	if (soundOK)
 		if (ch != -1)
 			if (soundCache[ch].fileLoaded != -1)
-				if (BASS_ChannelIsActive(soundCache[ch].mostRecentChannel) != BASS_ACTIVE_STOPPED)
+				if (BASS_ChannelIsActive(soundCache[ch].mostRecentChannel)
+						!= BASS_ACTIVE_STOPPED)
 					return true;
 	return false;
 }
@@ -212,8 +230,8 @@ int emptySoundSlot = 0;
 
 int findEmptySoundSlot() {
 	int t;
-	for (t = 0; t < MAX_SAMPLES; t ++) {
-		emptySoundSlot ++;
+	for (t = 0; t < MAX_SAMPLES; t++) {
+		emptySoundSlot++;
 		emptySoundSlot %= MAX_SAMPLES;
 		if (!soundCache[emptySoundSlot].sample)
 			return emptySoundSlot;
@@ -221,15 +239,16 @@ int findEmptySoundSlot() {
 
 	// Argh!They're all playing!Let's trash the oldest that's not looping...
 
-	for (t = 0; t < MAX_SAMPLES; t ++) {
-		emptySoundSlot ++;
+	for (t = 0; t < MAX_SAMPLES; t++) {
+		emptySoundSlot++;
 		emptySoundSlot %= MAX_SAMPLES;
-		if (!soundCache[emptySoundSlot].looping) return emptySoundSlot;
+		if (!soundCache[emptySoundSlot].looping)
+			return emptySoundSlot;
 	}
 
 	// Holy crap, they're all looping!What's this twat playing at?
 
-	emptySoundSlot ++;
+	emptySoundSlot++;
 	emptySoundSlot %= MAX_SAMPLES;
 	return emptySoundSlot;
 }
@@ -237,15 +256,15 @@ int findEmptySoundSlot() {
 int guessSoundFree = 0;
 
 /*
-void soundWarning (char * t, int i) {
-    FILE * u = fopen ("soundlog.txt", "at");
-    fprintf (u, "%s: %i\n", t, i);
-    fclose (u);
-}
-*/
+ void soundWarning (char * t, int i) {
+ FILE * u = fopen ("soundlog.txt", "at");
+ fprintf (u, "%s: %i\n", t, i);
+ fclose (u);
+ }
+ */
 
 bool forceRemoveSound() {
-	for (int a = 0; a < 8; a ++) {
+	for (int a = 0; a < 8; a++) {
 		if (soundCache[a].fileLoaded != -1 && !stillPlayingSound(a)) {
 //			soundWarning ("Deleting silent sound", a);
 			freeSound(a);
@@ -253,7 +272,7 @@ bool forceRemoveSound() {
 		}
 	}
 
-	for (int a = 0; a < 8; a ++) {
+	for (int a = 0; a < 8; a++) {
 		if (soundCache[a].fileLoaded != -1) {
 //			soundWarning ("Deleting playing sound", a);
 			freeSound(a);
@@ -267,16 +286,20 @@ bool forceRemoveSound() {
 int cacheSound(int f) {
 	setResourceForFatal(f);
 
-	if (!soundOK) return 0;
+	if (!soundOK)
+		return 0;
 
 	int a = findInSoundCache(f);
-	if (a != -1) return a;
-	if (f == -2) return -1;
+	if (a != -1)
+		return a;
+	if (f == -2)
+		return -1;
 	a = findEmptySoundSlot();
 	freeSound(a);
 
 	uint32_t length = openFileFromNum(f);
-	if (!length) return -1;
+	if (!length)
+		return -1;
 
 	char *memImage;
 
@@ -295,7 +318,8 @@ int cacheSound(int f) {
 
 	for (;;) {
 //		soundWarning ("  Trying to load sound into slot", a);
-		soundCache[a].sample = BASS_SampleLoad(true, memImage, 0, length, 65535, 0);
+		soundCache[a].sample = BASS_SampleLoad(true, memImage, 0, length, 65535,
+				0);
 
 		if (soundCache[a].sample) {
 			soundCache[a].fileLoaded = f;
@@ -315,17 +339,21 @@ int cacheSound(int f) {
 bool startSound(int f, bool loopy) {
 	if (soundOK) {
 		int a = cacheSound(f);
-		if (a == -1) return false;
+		if (a == -1)
+			return false;
 
 		soundCache[a].looping = loopy;
 		soundCache[a].vol = defSoundVol;
 
-		soundCache[a].mostRecentChannel = BASS_SampleGetChannel(soundCache[a].sample, false);
+		soundCache[a].mostRecentChannel = BASS_SampleGetChannel(
+				soundCache[a].sample, false);
 		if (soundCache[a].mostRecentChannel) {
 			BASS_ChannelPlay(soundCache[a].mostRecentChannel, true);
-			BASS_ChannelSetAttribute(soundCache[a].mostRecentChannel, BASS_ATTRIB_VOL, defSoundVol);
+			BASS_ChannelSetAttribute(soundCache[a].mostRecentChannel,
+					BASS_ATTRIB_VOL, defSoundVol);
 			if (loopy) {
-				BASS_ChannelFlags(soundCache[a].mostRecentChannel, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP); // set LOOP flag
+				BASS_ChannelFlags(soundCache[a].mostRecentChannel,
+						BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP); // set LOOP flag
 			}
 		}
 
@@ -334,22 +362,22 @@ bool startSound(int f, bool loopy) {
 }
 
 /*
-void debugSounds () {
-    FILE * fp = fopen ("newdebug.txt", "at");
-    if (fp) {
-        for (int aa = 0; aa < 32; aa ++) {
-            if (aa == EFFECT_CHANNELS) fprintf (fp, "|");
-            fprintf (fp, FSOUND_IsPlaying (aa) ? "#" : ".");
-        }
-        fprintf (fp, "\n");
-        fclose (fp);
-    }
-}
-// */
+ void debugSounds () {
+ FILE * fp = fopen ("newdebug.txt", "at");
+ if (fp) {
+ for (int aa = 0; aa < 32; aa ++) {
+ if (aa == EFFECT_CHANNELS) fprintf (fp, "|");
+ fprintf (fp, FSOUND_IsPlaying (aa) ? "#" : ".");
+ }
+ fprintf (fp, "\n");
+ fclose (fp);
+ }
+ }
+ // */
 
 void saveSounds(Common::WriteStream *stream) {
 	if (soundOK) {
-		for (int i = 0; i < MAX_SAMPLES; i ++) {
+		for (int i = 0; i < MAX_SAMPLES; i++) {
 			if (soundCache[i].looping) {
 				putch(1, stream);
 				put2bytes(soundCache[i].fileLoaded, stream);
@@ -363,7 +391,8 @@ void saveSounds(Common::WriteStream *stream) {
 }
 
 void loadSounds(Common::SeekableReadStream *stream) {
-	for (int i = 0; i < MAX_SAMPLES; i ++) freeSound(i);
+	for (int i = 0; i < MAX_SAMPLES; i++)
+		freeSound(i);
 
 	while (getch(stream)) {
 		int fileLoaded = get2bytes(stream);
@@ -379,11 +408,13 @@ bool getSoundCacheStack(stackHandler *sH) {
 	variable newFileHandle;
 	newFileHandle.varType = SVT_NULL;
 
-	for (int a = 0; a < MAX_SAMPLES; a ++) {
+	for (int a = 0; a < MAX_SAMPLES; a++) {
 		if (soundCache[a].fileLoaded != -1) {
 			setVariable(newFileHandle, SVT_FILE, soundCache[a].fileLoaded);
-			if (!addVarToStackQuick(newFileHandle, sH -> first)) return false;
-			if (sH -> last == NULL) sH -> last = sH -> first;
+			if (!addVarToStackQuick(newFileHandle, sH->first))
+				return false;
+			if (sH->last == NULL)
+				sH->last = sH->first;
 		}
 	}
 	return true;

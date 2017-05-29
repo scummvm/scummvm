@@ -60,7 +60,7 @@ void killAllSpeech() {
 	}
 
 	if (speech->currentTalker) {
-		makeSilent(* (speech->currentTalker));
+		makeSilent(*(speech->currentTalker));
 		speech->currentTalker = NULL;
 	}
 
@@ -96,8 +96,9 @@ void addSpeechLine(char *theLine, int x, int &offset) {
 	speech->allSpeech = newLine;
 	if ((xx1 < 5) && (offset < (5 - xx1))) {
 		offset = 5 - xx1;
-	} else if ((xx2 >= ((float)winWidth / cameraZoom) - 5) && (offset > (((float)winWidth / cameraZoom) - 5 - xx2))) {
-		offset = ((float)winWidth / cameraZoom) - 5 - xx2;
+	} else if ((xx2 >= ((float) winWidth / cameraZoom) - 5)
+			&& (offset > (((float) winWidth / cameraZoom) - 5 - xx2))) {
+		offset = ((float) winWidth / cameraZoom) - 5 - xx2;
 	}
 }
 
@@ -111,7 +112,8 @@ int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
 	killAllSpeech();
 
 	int speechTime = (strlen(theText) + 20) * speechSpeed;
-	if (speechTime < 1) speechTime = 1;
+	if (speechTime < 1)
+		speechTime = 1;
 	if (sampleFile != -1) {
 		if (speechMode >= 1) {
 #if 0
@@ -128,7 +130,7 @@ int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
 	while (strlen(theText) > wrap) {
 		a = wrap;
 		while (theText[a] != ' ') {
-			a --;
+			a--;
 			if (a == 0) {
 				a = wrap;
 				break;
@@ -143,8 +145,12 @@ int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
 	addSpeechLine(theText, x, offset);
 	y -= fontHeight / cameraZoom;
 
-	if (y < 0) speech->speechY -= y;
-	else if (speech->speechY > cameraY + (float)(winHeight - fontHeight / 3) / cameraZoom) speech->speechY = cameraY + (float)(winHeight - fontHeight / 3) / cameraZoom;
+	if (y < 0)
+		speech->speechY -= y;
+	else if (speech->speechY
+			> cameraY + (float) (winHeight - fontHeight / 3) / cameraZoom)
+		speech->speechY = cameraY
+				+ (float) (winHeight - fontHeight / 3) / cameraZoom;
 
 	if (offset) {
 		speechLine *viewLine = speech->allSpeech;
@@ -156,8 +162,13 @@ int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
 	return speechTime;
 }
 
-int wrapSpeechPerson(char *theText, onScreenPerson &thePerson, int sampleFile, bool animPerson) {
-	int i = wrapSpeechXY(theText, thePerson.x - cameraX, thePerson.y - cameraY - (thePerson.scale * (thePerson.height - thePerson.floaty)) - thePerson.thisType->speechGap, thePerson.thisType->wrapSpeech, sampleFile);
+int wrapSpeechPerson(char *theText, onScreenPerson &thePerson, int sampleFile,
+		bool animPerson) {
+	int i = wrapSpeechXY(theText, thePerson.x - cameraX,
+			thePerson.y - cameraY
+					- (thePerson.scale * (thePerson.height - thePerson.floaty))
+					- thePerson.thisType->speechGap,
+			thePerson.thisType->wrapSpeech, sampleFile);
 	if (animPerson) {
 		makeTalker(thePerson);
 		speech->currentTalker = &thePerson;
@@ -172,16 +183,20 @@ int wrapSpeech(char *theText, int objT, int sampleFile, bool animPerson) {
 	onScreenPerson *thisPerson = findPerson(objT);
 	if (thisPerson) {
 		setObjFontColour(thisPerson->thisType);
-		i = wrapSpeechPerson(theText, * thisPerson, sampleFile, animPerson);
+		i = wrapSpeechPerson(theText, *thisPerson, sampleFile, animPerson);
 	} else {
 		screenRegion *thisRegion = getRegionForObject(objT);
 		if (thisRegion) {
 			setObjFontColour(thisRegion->thisType);
-			i = wrapSpeechXY(theText, ((thisRegion->x1 + thisRegion->x2) >> 1) - cameraX, thisRegion->y1 - thisRegion->thisType->speechGap - cameraY, thisRegion->thisType->wrapSpeech, sampleFile);
+			i = wrapSpeechXY(theText,
+					((thisRegion->x1 + thisRegion->x2) >> 1) - cameraX,
+					thisRegion->y1 - thisRegion->thisType->speechGap - cameraY,
+					thisRegion->thisType->wrapSpeech, sampleFile);
 		} else {
 			objectType *temp = findObjectType(objT);
 			setObjFontColour(temp);
-			i = wrapSpeechXY(theText, winWidth >> 1, 10, temp->wrapSpeech, sampleFile);
+			i = wrapSpeechXY(theText, winWidth >> 1, 10, temp->wrapSpeech,
+					sampleFile);
 		}
 	}
 	return i;

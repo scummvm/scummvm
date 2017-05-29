@@ -51,11 +51,14 @@ unsigned int fontTableSize = 0;
 extern float cameraZoom;
 
 bool isInFont(char *theText) {
-	if (! fontTableSize) return 0;
-	if (! theText[0]) return 0;
+	if (!fontTableSize)
+		return 0;
+	if (!theText[0])
+		return 0;
 
 	// We don't want to compare strings. Only single characters allowed!
-	if (u8_strlen(theText) > 1) return false;
+	if (u8_strlen(theText) > 1)
+		return false;
 
 	int i = 0;
 	uint32_t c = u8_nextchar(theText, &i);
@@ -72,7 +75,8 @@ int stringWidth(char *theText) {
 	uint32_t c;
 	int xOff = 0;
 
-	if (! fontTableSize) return 0;
+	if (!fontTableSize)
+		return 0;
 
 	while (theText[a]) {
 		c = u8_nextchar(theText, &a);
@@ -87,46 +91,51 @@ void pasteString(char *theText, int xOff, int y, spritePalette &thePal) {
 	int a = 0;
 	uint32_t c;
 
-	if (! fontTableSize) return;
+	if (!fontTableSize)
+		return;
 
-	xOff += (int)((float)(fontSpace >> 1) / cameraZoom);
+	xOff += (int) ((float) (fontSpace >> 1) / cameraZoom);
 	while (theText[a]) {
 		c = u8_nextchar(theText, &a);
-		mySprite = & theFont.sprites[fontInTable(c)];
-		fontSprite(xOff, y, * mySprite, thePal);
-		xOff += (int)((double)(mySprite -> width + fontSpace) / cameraZoom);
+		mySprite = &theFont.sprites[fontInTable(c)];
+		fontSprite(xOff, y, *mySprite, thePal);
+		xOff += (int) ((double) (mySprite->width + fontSpace) / cameraZoom);
 	}
 }
 
-void pasteStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
+void pasteStringToBackdrop(char *theText, int xOff, int y,
+		spritePalette &thePal) {
 	sprite *mySprite;
 	int a = 0;
 	uint32_t c;
 
-	if (! fontTableSize) return;
+	if (!fontTableSize)
+		return;
 
 	xOff += fontSpace >> 1;
 	while (theText[a]) {
 		c = u8_nextchar(theText, &a);
-		mySprite = & theFont.sprites[fontInTable(c)];
-		pasteSpriteToBackDrop(xOff, y, * mySprite, thePal);
-		xOff += mySprite -> width + fontSpace;
+		mySprite = &theFont.sprites[fontInTable(c)];
+		pasteSpriteToBackDrop(xOff, y, *mySprite, thePal);
+		xOff += mySprite->width + fontSpace;
 	}
 }
 
-void burnStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
+void burnStringToBackdrop(char *theText, int xOff, int y,
+		spritePalette &thePal) {
 	sprite *mySprite;
 	int a = 0;
 	uint32_t c;
 
-	if (! fontTableSize) return;
+	if (!fontTableSize)
+		return;
 
 	xOff += fontSpace >> 1;
 	while (theText[a]) {
 		c = u8_nextchar(theText, &a);
-		mySprite = & theFont.sprites[fontInTable(c)];
-		burnSpriteToBackDrop(xOff, y, * mySprite, thePal);
-		xOff += mySprite -> width + fontSpace;
+		mySprite = &theFont.sprites[fontInTable(c)];
+		burnSpriteToBackDrop(xOff, y, *mySprite, thePal);
+		xOff += mySprite->width + fontSpace;
 	}
 }
 
@@ -167,26 +176,27 @@ bool loadFont(int filenum, const char *charOrder, int h) {
 	int a = 0;
 	uint32_t c;
 
-	delete [] fontOrderString;
+	delete[] fontOrderString;
 	fontOrderString = copyString(charOrder);
 
 	forgetSpriteBank(theFont);
 
 	loadedFontNum = filenum;
 
-
 	fontTableSize = 0;
 	while (charOrder[a]) {
 		c = u8_nextchar(charOrder, &a);
-		if (c > fontTableSize) fontTableSize = c;
+		if (c > fontTableSize)
+			fontTableSize = c;
 	}
 	fontTableSize++;
 
-	delete [] fontTable;
-	fontTable = new uint32_t [fontTableSize];
-	if (! checkNew(fontTable)) return false;
+	delete[] fontTable;
+	fontTable = new uint32_t[fontTableSize];
+	if (!checkNew(fontTable))
+		return false;
 
-	for (a = 0; a < fontTableSize; a ++) {
+	for (a = 0; a < fontTableSize; a++) {
 		fontTable[a] = 0;
 	}
 	a = 0;
@@ -197,7 +207,7 @@ bool loadFont(int filenum, const char *charOrder, int h) {
 		i++;
 	}
 
-	if (! loadSpriteBank(filenum, theFont, true)) {
+	if (!loadSpriteBank(filenum, theFont, true)) {
 		fatal("Can't load font");
 		return false;
 	}

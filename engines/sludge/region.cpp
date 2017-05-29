@@ -47,19 +47,20 @@ void showBoxes() {
 }
 
 void removeScreenRegion(int objectNum) {
-	screenRegion * * huntRegion = & allScreenRegions;
+	screenRegion * * huntRegion = &allScreenRegions;
 	screenRegion *killMe;
 
-	while (* huntRegion) {
-		if ((* huntRegion)->thisType->objectNum == objectNum) {
-			killMe = * huntRegion;
-			* huntRegion = killMe->next;
+	while (*huntRegion) {
+		if ((*huntRegion)->thisType->objectNum == objectNum) {
+			killMe = *huntRegion;
+			*huntRegion = killMe->next;
 			removeObjectType(killMe->thisType);
-			if (killMe == overRegion) overRegion = NULL;
+			if (killMe == overRegion)
+				overRegion = NULL;
 			delete killMe;
 			killMe = NULL;
 		} else {
-			huntRegion = & ((* huntRegion)->next);
+			huntRegion = &((*huntRegion)->next);
 		}
 	}
 }
@@ -69,7 +70,7 @@ void saveRegions(Common::WriteStream *stream) {
 	screenRegion *thisRegion = allScreenRegions;
 	while (thisRegion) {
 		thisRegion = thisRegion->next;
-		numRegions ++;
+		numRegions++;
 	}
 	put2bytes(numRegions, stream);
 	thisRegion = allScreenRegions;
@@ -91,12 +92,12 @@ void loadRegions(Common::SeekableReadStream *stream) {
 	int numRegions = get2bytes(stream);
 
 	screenRegion *newRegion;
-	screenRegion * * pointy = & allScreenRegions;
+	screenRegion * * pointy = &allScreenRegions;
 
-	while (numRegions --) {
+	while (numRegions--) {
 		newRegion = new screenRegion;
-		* pointy = newRegion;
-		pointy = & (newRegion->next);
+		*pointy = newRegion;
+		pointy = &(newRegion->next);
 
 		newRegion->x1 = get2bytes(stream);
 		newRegion->y1 = get2bytes(stream);
@@ -107,7 +108,7 @@ void loadRegions(Common::SeekableReadStream *stream) {
 		newRegion->di = get2bytes(stream);
 		newRegion->thisType = loadObjectRef(stream);
 	}
-	* pointy = NULL;
+	*pointy = NULL;
 }
 
 void killAllRegions() {
@@ -121,9 +122,11 @@ void killAllRegions() {
 	overRegion = NULL;
 }
 
-bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di, int objectNum) {
+bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,
+		int objectNum) {
 	screenRegion *newRegion = new screenRegion;
-	if (!checkNew(newRegion)) return false;
+	if (!checkNew(newRegion))
+		return false;
 	newRegion->di = di;
 	newRegion->x1 = x1;
 	newRegion->y1 = y1;
@@ -134,14 +137,16 @@ bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di, int
 	newRegion->thisType = loadObjectType(objectNum);
 	newRegion->next = allScreenRegions;
 	allScreenRegions = newRegion;
-	return (bool)(newRegion->thisType != NULL);
+	return (bool) (newRegion->thisType != NULL);
 }
 
 void getOverRegion() {
 	screenRegion *thisRegion = allScreenRegions;
 	while (thisRegion) {
-		if ((input.mouseX >= thisRegion->x1 - cameraX) && (input.mouseY >= thisRegion->y1 - cameraY) &&
-		        (input.mouseX <= thisRegion->x2 - cameraX) && (input.mouseY <= thisRegion->y2 - cameraY)) {
+		if ((input.mouseX >= thisRegion->x1 - cameraX)
+				&& (input.mouseY >= thisRegion->y1 - cameraY)
+				&& (input.mouseX <= thisRegion->x2 - cameraX)
+				&& (input.mouseY <= thisRegion->y2 - cameraY)) {
 			overRegion = thisRegion;
 			return;
 		}

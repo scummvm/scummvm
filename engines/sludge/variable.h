@@ -27,41 +27,50 @@ namespace Sludge {
 struct variable;
 struct variableStack;
 
-enum variableType {SVT_NULL, SVT_INT, SVT_FUNC, SVT_STRING,
-                   SVT_BUILT, SVT_FILE, SVT_STACK,
-                   SVT_OBJTYPE, SVT_ANIM, SVT_COSTUME,
-                   SVT_FASTARRAY, SVT_NUM_TYPES
-                  };
+enum variableType {
+	SVT_NULL,
+	SVT_INT,
+	SVT_FUNC,
+	SVT_STRING,
+	SVT_BUILT,
+	SVT_FILE,
+	SVT_STACK,
+	SVT_OBJTYPE,
+	SVT_ANIM,
+	SVT_COSTUME,
+	SVT_FASTARRAY,
+	SVT_NUM_TYPES
+};
 
 struct fastArrayHandler {
-	struct variable            *fastVariables;
-	int                         size;
-	int                         timesUsed;
+	struct variable *fastVariables;
+	int size;
+	int timesUsed;
 };
 
 struct stackHandler {
-	struct variableStack       *first;
-	struct variableStack       *last;
-	int                         timesUsed;
+	struct variableStack *first;
+	struct variableStack *last;
+	int timesUsed;
 };
 
 union variableData {
-	signed int                  intValue;
-	char                       *theString;
-	stackHandler               *theStack;
-	struct personaAnimation    *animHandler;
-	struct persona             *costumeHandler;
-	fastArrayHandler           *fastArray;
+	signed int intValue;
+	char *theString;
+	stackHandler *theStack;
+	struct personaAnimation *animHandler;
+	struct persona *costumeHandler;
+	fastArrayHandler *fastArray;
 };
 
 struct variable {
-	variableType                varType;
-	variableData                varData;
+	variableType varType;
+	variableData varData;
 };
 
 struct variableStack {
-	variable                    thisVar;
-	variableStack              *next;
+	variable thisVar;
+	variableStack *next;
 };
 
 // Initialisation
@@ -94,7 +103,8 @@ bool getValueType(int &toHere, variableType vT, const variable &v);
 bool addVarToStack(const variable &va, variableStack *&thisStack);
 bool addVarToStackQuick(variable &va, variableStack *&thisStack);
 void trimStack(variableStack *&stack);
-int deleteVarFromStack(const variable &va, variableStack *&thisStack, bool allOfEm = false);
+int deleteVarFromStack(const variable &va, variableStack *&thisStack,
+		bool allOfEm = false);
 variableStack *stackFindLast(variableStack *hunt);
 bool copyStack(const variable &from, variable &to);
 int stackSize(const stackHandler *me);
@@ -105,7 +115,6 @@ bool getSavedGamesStack(stackHandler *sH, char *ext);
 bool makeFastArrayFromStack(variable &to, const stackHandler *stacky);
 bool makeFastArraySize(variable &to, int size);
 variable *fastArrayGetByIndex(fastArrayHandler *vS, unsigned int theIndex);
-
 
 #define DEBUG_STACKINESS    0
 

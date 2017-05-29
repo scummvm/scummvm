@@ -32,7 +32,6 @@ struct speechLine {
 	int x;
 };
 
-
 struct speechStruct {
 	onScreenPerson *currentTalker;
 	speechLine *allSpeech;

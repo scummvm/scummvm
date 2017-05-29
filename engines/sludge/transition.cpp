@@ -113,7 +113,7 @@ void transitionSnapshotBox() {
 	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glBindTexture(GL_TEXTURE_2D, snapshotTextureName);
 
-	float xScale = (float) brightnessLevel * winWidth / 510.f;  // 510 = 255*2
+	float xScale = (float) brightnessLevel * winWidth / 510.f;// 510 = 255*2
 	float yScale = (float) brightnessLevel * winHeight / 510.f;
 
 	const GLfloat vertices[] = {
@@ -187,7 +187,6 @@ bool reserveTransitionTexture() {
 	return true;
 }
 
-
 void transitionDisolve() {
 
 #if 0
@@ -224,7 +223,7 @@ void transitionDisolve() {
 			toScreen[0] = toScreen[1] = toScreen[2] = toScreen[3] = 0;
 		}
 		toScreen += 4;
-	} while (toScreen < end);
+	}while (toScreen < end);
 
 	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, transitionTexture, transitionTextureName);
 
@@ -292,7 +291,7 @@ void transitionTV() {
 			toScreen[0] = toScreen[1] = toScreen[2] = toScreen[3] = 0;
 		}
 		toScreen += 4;
-	} while (toScreen < end);
+	}while (toScreen < end);
 
 	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, transitionTexture, transitionTextureName);
 

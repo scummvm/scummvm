@@ -37,10 +37,10 @@ void drawLine(int x1, int y1, int x2, int y2) {
 	int x, y;
 	bool backwards = false;
 #if 0
-	if (x1 < 0)  x1 = 0;
-	if (y1 < 0)  y1 = 0;
-	if (x2 < 0)  x2 = 0;
-	if (y2 < 0)  y2 = 0;
+	if (x1 < 0) x1 = 0;
+	if (y1 < 0) y1 = 0;
+	if (x2 < 0) x2 = 0;
+	if (y2 < 0) y2 = 0;
 	if (x1 > sceneWidth) x1 = sceneWidth - 1;
 	if (x2 > sceneWidth) x2 = sceneWidth - 1;
 	if (y1 > sceneHeight) y1 = sceneHeight - 1;
@@ -69,9 +69,7 @@ void drawLine(int x1, int y1, int x2, int y2) {
 	}
 	setPixelCoords(true);
 
-
 	glLineWidth(2.0);
-
 
 	int xoffset = 0;
 	while (xoffset < diffX) {
@@ -98,7 +96,6 @@ void drawLine(int x1, int y1, int x2, int y2) {
 				backdropTexW, backdropTexH
 			};
 
-
 			glUseProgram(shader.texture);
 
 			setPMVMatrix(shader.texture);
@@ -117,7 +114,6 @@ void drawLine(int x1, int y1, int x2, int y2) {
 				xo1, -yoffset, 0,
 				xo2, -yoffset + diffY, 0,
 			};
-
 
 			glUseProgram(shader.color);
 

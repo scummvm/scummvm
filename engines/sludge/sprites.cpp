@@ -57,7 +57,6 @@ extern float cameraZoom;
 
 unsigned char currentBurnR = 0, currentBurnG = 0, currentBurnB = 0;
 
-
 void forgetSpriteBank(spriteBank &forgetme) {
 #if 0
 	deleteTextures(forgetme.myPalette.numTextures, forgetme.myPalette.tex_names);
@@ -70,25 +69,24 @@ void forgetSpriteBank(spriteBank &forgetme) {
 	delete [] forgetme.myPalette.tex_names;
 	forgetme.myPalette.tex_names = NULL;
 #endif
-	delete [] forgetme.myPalette.tex_w;
+	delete[] forgetme.myPalette.tex_w;
 	forgetme.myPalette.tex_w = NULL;
-	delete [] forgetme.myPalette.tex_h;
+	delete[] forgetme.myPalette.tex_h;
 	forgetme.myPalette.tex_h = NULL;
 
 	if (forgetme.myPalette.pal) {
-		delete  [] forgetme.myPalette.pal;
+		delete[] forgetme.myPalette.pal;
 		forgetme.myPalette.pal = NULL;
-		delete  [] forgetme.myPalette.r;
+		delete[] forgetme.myPalette.r;
 		forgetme.myPalette.r = NULL;
-		delete  [] forgetme.myPalette.g;
+		delete[] forgetme.myPalette.g;
 		forgetme.myPalette.g = NULL;
-		delete  [] forgetme.myPalette.b;
+		delete[] forgetme.myPalette.b;
 		forgetme.myPalette.b = NULL;
 	}
 
 	delete forgetme.sprites;
 	forgetme.sprites = NULL;
-
 
 	// TODO: also remove sprite bank from allLoadedBanks
 	// And add a function call for this function to the scripting language
@@ -96,23 +94,28 @@ void forgetSpriteBank(spriteBank &forgetme) {
 
 bool reserveSpritePal(spritePalette &sP, int n) {
 	if (sP.pal) {
-		delete  [] sP.pal;
-		delete  [] sP.r;
-		delete  [] sP.g;
-		delete  [] sP.b;
+		delete[] sP.pal;
+		delete[] sP.r;
+		delete[] sP.g;
+		delete[] sP.b;
 	}
 
-	sP.pal = new unsigned short int [n];
-	if (! checkNew(sP.pal)) return false;
+	sP.pal = new unsigned short int[n];
+	if (!checkNew(sP.pal))
+		return false;
 
-	sP.r = new unsigned char [n];
-	if (! checkNew(sP.r)) return false;
-	sP.g = new unsigned char [n];
-	if (! checkNew(sP.g)) return false;
-	sP.b = new unsigned char [n];
-	if (! checkNew(sP.b)) return false;
+	sP.r = new unsigned char[n];
+	if (!checkNew(sP.r))
+		return false;
+	sP.g = new unsigned char[n];
+	if (!checkNew(sP.g))
+		return false;
+	sP.b = new unsigned char[n];
+	if (!checkNew(sP.b))
+		return false;
 	sP.total = n;
-	return (bool)(sP.pal != NULL) && (sP.r != NULL) && (sP.g != NULL) && (sP.b != NULL);
+	return (bool) (sP.pal != NULL) && (sP.r != NULL) && (sP.g != NULL)
+			&& (sP.b != NULL);
 }
 
 bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
@@ -173,60 +176,60 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	for (i = 0; i < total; i ++) {
 		switch (spriteBankVersion) {
-		case 3: {
-			loadhere.sprites[i].xhot = getSigned(bigDataFile);
-			loadhere.sprites[i].yhot = getSigned(bigDataFile);
+			case 3: {
+				loadhere.sprites[i].xhot = getSigned(bigDataFile);
+				loadhere.sprites[i].yhot = getSigned(bigDataFile);
 
-			png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-			if (!png_ptr) {
-				return fatal("Can't open sprite bank / font.");
-			}
+				png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+				if (!png_ptr) {
+					return fatal("Can't open sprite bank / font.");
+				}
 
-			png_infop info_ptr = png_create_info_struct(png_ptr);
-			if (!info_ptr) {
-				png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-				return fatal("Can't open sprite bank / font.");
-			}
+				png_infop info_ptr = png_create_info_struct(png_ptr);
+				if (!info_ptr) {
+					png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
+					return fatal("Can't open sprite bank / font.");
+				}
 
-			png_infop end_info = png_create_info_struct(png_ptr);
-			if (!end_info) {
-				png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-				return fatal("Can't open sprite bank / font.");
-			}
-			png_init_io(png_ptr, bigDataFile);      // Tell libpng which file to read
-			png_set_sig_bytes(png_ptr, 8);          // No sig
+				png_infop end_info = png_create_info_struct(png_ptr);
+				if (!end_info) {
+					png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+					return fatal("Can't open sprite bank / font.");
+				}
+				png_init_io(png_ptr, bigDataFile); // Tell libpng which file to read
+				png_set_sig_bytes(png_ptr, 8);// No sig
 
-			png_read_info(png_ptr, info_ptr);
+				png_read_info(png_ptr, info_ptr);
 
-			png_uint_32 width, height;
-			int bit_depth, color_type, interlace_type, compression_type, filter_method;
-			png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
+				png_uint_32 width, height;
+				int bit_depth, color_type, interlace_type, compression_type, filter_method;
+				png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
 
-			int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+				int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
 
-			unsigned char *row_pointers[height];
-			spriteData[i] = new unsigned char [rowbytes * height];
-			if (! checkNew(spriteData[i])) return false;
+				unsigned char *row_pointers[height];
+				spriteData[i] = new unsigned char [rowbytes * height];
+				if (! checkNew(spriteData[i])) return false;
 
-			for (unsigned int row = 0; row < height; row++)
+				for (unsigned int row = 0; row < height; row++)
 				row_pointers[row] = spriteData[i] + row * rowbytes;
 
-			png_read_image(png_ptr, (png_byte **) row_pointers);
-			png_read_end(png_ptr, NULL);
-			png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+				png_read_image(png_ptr, (png_byte **) row_pointers);
+				png_read_end(png_ptr, NULL);
+				png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 
-			picwidth = loadhere.sprites[i].width = width;
-			picheight = loadhere.sprites[i].height = height;
-			break;
-		}
-		case 2:
+				picwidth = loadhere.sprites[i].width = width;
+				picheight = loadhere.sprites[i].height = height;
+				break;
+			}
+			case 2:
 			picwidth = get2bytes(bigDataFile);
 			picheight = get2bytes(bigDataFile);
 			loadhere.sprites[i].xhot = getSigned(bigDataFile);
 			loadhere.sprites[i].yhot = getSigned(bigDataFile);
 			break;
 
-		default:
+			default:
 			picwidth = (byte) fgetc(bigDataFile);
 			picheight = (byte) fgetc(bigDataFile);
 			loadhere.sprites[i].xhot = fgetc(bigDataFile);
@@ -256,27 +259,27 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 			}
 			spriteData[i] = data;
 			switch (spriteBankVersion) {
-			case 2: {       // RUN LENGTH COMPRESSED DATA
-				unsigned size = picwidth * picheight;
-				unsigned pip = 0;
+				case 2: {       // RUN LENGTH COMPRESSED DATA
+					unsigned size = picwidth * picheight;
+					unsigned pip = 0;
 
-				while (pip < size) {
-					byte col = fgetc(bigDataFile);
-					int looper;
+					while (pip < size) {
+						byte col = fgetc(bigDataFile);
+						int looper;
 
-					if (col > howmany) {
-						col -= howmany + 1;
-						looper = fgetc(bigDataFile) + 1;
-					} else looper = 1;
+						if (col > howmany) {
+							col -= howmany + 1;
+							looper = fgetc(bigDataFile) + 1;
+						} else looper = 1;
 
-					while (looper --) {
-						data[pip ++] = col;
+						while (looper --) {
+							data[pip ++] = col;
+						}
 					}
 				}
-			}
-			break;
+				break;
 
-			default:        // RAW DATA
+				default:        // RAW DATA
 				size_t bytes_read = fread(data, picwidth, picheight, bigDataFile);
 				if (bytes_read != picwidth * picheight && ferror(bigDataFile)) {
 					debugOut("Reading error in loadSpriteBank.\n");
@@ -286,7 +289,6 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		}
 	}
 	numTextures++;
-
 
 	if (! spriteBankVersion) {
 		howmany = fgetc(bigDataFile);
@@ -368,9 +370,9 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 						target[1] = (GLubyte) 255;
 						target[2] = (GLubyte) 255;
 						if (s)
-							target[3] = (GLubyte) loadhere.myPalette.r[s];
+						target[3] = (GLubyte) loadhere.myPalette.r[s];
 						/*else
-						    target[3] = (GLubyte) 0;*/
+						 target[3] = (GLubyte) 0;*/
 					}
 				} else {
 					target[0] = (GLubyte) spriteData[i][fromhere++];
@@ -390,7 +392,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	glGenTextures(numTextures, loadhere.myPalette.tex_names);
 	if (isFont)
-		glGenTextures(numTextures, loadhere.myPalette.burnTex_names);
+	glGenTextures(numTextures, loadhere.myPalette.burnTex_names);
 
 #endif
 
@@ -436,7 +438,8 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 	return true;
 }
 
-void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal) {
+void pasteSpriteToBackDrop(int x1, int y1, sprite &single,
+		const spritePalette &fontPal) {
 #if 0
 	float tx1 = (float)(single.tex_x) / fontPal.tex_w[single.texNum];
 	float ty1 = 0.0;
@@ -490,7 +493,6 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &
 		while (yoffset < diffY) {
 			int h = (diffY - yoffset < viewportHeight) ? diffY - yoffset : viewportHeight;
 
-
 			// Render the sprite to the backdrop
 			// (using mulitexturing, so the backdrop is seen where alpha < 1.0)
 			glActiveTexture(GL_TEXTURE2);
@@ -499,7 +501,7 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &
 
 			glUseProgram(shader.paste);
 			GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
-			if (uniform >= 0) glUniform1i(uniform, 0); // No lighting
+			if (uniform >= 0) glUniform1i(uniform, 0);// No lighting
 
 			setPMVMatrix(shader.paste);
 
@@ -536,7 +538,8 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &
 	setPixelCoords(false);
 }
 
-void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal) {
+void burnSpriteToBackDrop(int x1, int y1, sprite &single,
+		const spritePalette &fontPal) {
 #if 0
 	float tx1 = (float)(single.tex_x - 0.5) / fontPal.tex_w[single.texNum];
 	float ty1 = 0.0;
@@ -626,7 +629,7 @@ void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &f
 			glBindTexture(GL_TEXTURE_2D, fontPal.burnTex_names[single.texNum]);
 
 //FIXME: Test this some more. Also pasting the backdrop again is not strictly necessary but allows using the paste shader.
-			drawQuad(shader.paste, spriteVertices, 3, spriteTexCoords, NULL,  backdropTexCoords);
+			drawQuad(shader.paste, spriteVertices, 3, spriteTexCoords, NULL, backdropTexCoords);
 			glUseProgram(0);
 
 			// Copy Our ViewPort To The Texture
@@ -644,17 +647,19 @@ void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &f
 extern GLuint backdropTextureName;
 #endif
 
-void fontSprite(bool flip, int x, int y, sprite &single, const spritePalette &fontPal) {
+void fontSprite(bool flip, int x, int y, sprite &single,
+		const spritePalette &fontPal) {
 
-	float tx1 = (float)(single.tex_x - 0.5) / fontPal.tex_w[single.texNum];
+	float tx1 = (float) (single.tex_x - 0.5) / fontPal.tex_w[single.texNum];
 	float ty1 = 0.0;
-	float tx2 = (float)(single.tex_x + single.width + (flip ? 1.0 : 0.5)) / fontPal.tex_w[single.texNum];
-	float ty2 = (float)(single.height + 2) / fontPal.tex_h[single.texNum];
+	float tx2 = (float) (single.tex_x + single.width + (flip ? 1.0 : 0.5))
+			/ fontPal.tex_w[single.texNum];
+	float ty2 = (float) (single.height + 2) / fontPal.tex_h[single.texNum];
 
-	float x1 = (float)x - (float)single.xhot / cameraZoom;
-	float y1 = (float)y - (float)single.yhot / cameraZoom;
-	float x2 = x1 + (float)single.width / cameraZoom;
-	float y2 = y1 + (float)single.height / cameraZoom;
+	float x1 = (float) x - (float) single.xhot / cameraZoom;
+	float y1 = (float) y - (float) single.yhot / cameraZoom;
+	float x2 = x1 + (float) single.width / cameraZoom;
+	float y2 = y1 + (float) single.height / cameraZoom;
 
 #if 0
 	GLfloat vertices[] = {
@@ -707,12 +712,10 @@ void fontSprite(int x, int y, sprite &single, const spritePalette &fontPal) {
 	fontSprite(false, x, y, single, fontPal);
 }
 
-void flipFontSprite(int x, int y, sprite &single, const spritePalette &fontPal) {
+void flipFontSprite(int x, int y, sprite &single,
+		const spritePalette &fontPal) {
 	fontSprite(true, x, y, single, fontPal);
 }
-
-
-
 
 unsigned char curLight[3];
 
@@ -734,7 +737,8 @@ extern GLuint backdropTextureName;
 
 bool checkColourChange(bool reset);
 
-bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, bool mirror) {
+bool scaleSprite(sprite &single, const spritePalette &fontPal,
+		onScreenPerson *thisPerson, bool mirror) {
 #if 0
 	float x = thisPerson->x;
 	float y = thisPerson->y;
@@ -758,9 +762,9 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 		x = x / cameraZoom;
 		y = y / cameraZoom;
 		if (single.xhot < 0)
-			x1 = x - (int)((mirror ? (float)(single.width - single.xhot) : (float)(single.xhot + 1)) * scale / cameraZoom);
+		x1 = x - (int)((mirror ? (float)(single.width - single.xhot) : (float)(single.xhot + 1)) * scale / cameraZoom);
 		else
-			x1 = x - (int)((mirror ? (float)(single.width - (single.xhot + 1)) : (float)single.xhot) * scale / cameraZoom);
+		x1 = x - (int)((mirror ? (float)(single.width - (single.xhot + 1)) : (float)single.xhot) * scale / cameraZoom);
 		y1 = y - (int)((single.yhot - thisPerson->floaty) * scale / cameraZoom);
 		x2 = x1 + (int)(diffX / cameraZoom);
 		y2 = y1 + (int)(diffY / cameraZoom);
@@ -768,9 +772,9 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 		x -= cameraX;
 		y -= cameraY;
 		if (single.xhot < 0)
-			x1 = x - (int)((mirror ? (float)(single.width - single.xhot) : (float)(single.xhot + 1)) * scale);
+		x1 = x - (int)((mirror ? (float)(single.width - single.xhot) : (float)(single.xhot + 1)) * scale);
 		else
-			x1 = x - (int)((mirror ? (float)(single.width - (single.xhot + 1)) : (float)single.xhot) * scale);
+		x1 = x - (int)((mirror ? (float)(single.width - (single.xhot + 1)) : (float)single.xhot) * scale);
 		y1 = y - (int)((single.yhot - thisPerson->floaty) * scale);
 		x2 = x1 + diffX;
 		y2 = y1 + diffY;
@@ -843,7 +847,7 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 	}
 #ifndef HAVE_GLES2
 	if (!(thisPerson->extra & EXTRA_RECTANGULAR))
-		checkColourChange(true);
+	checkColourChange(true);
 #endif
 	setDrawMode(thisPerson);
 
@@ -909,7 +913,8 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 }
 
 // Paste a scaled sprite onto the backdrop
-void fixScaleSprite(int x, int y, sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, int camX, int camY, bool mirror) {
+void fixScaleSprite(int x, int y, sprite &single, const spritePalette &fontPal,
+		onScreenPerson *thisPerson, int camX, int camY, bool mirror) {
 #if 0
 	float scale = thisPerson-> scale;
 	bool useZB = !(thisPerson->extra & EXTRA_NOZB);
@@ -926,9 +931,9 @@ void fixScaleSprite(int x, int y, sprite &single, const spritePalette &fontPal, 
 	int diffY = (int)(((float)single.height) * scale);
 	int x1;
 	if (single.xhot < 0)
-		x1 = x - (int)((mirror ? (float)(single.width - single.xhot) : (float)(single.xhot + 1)) * scale);
+	x1 = x - (int)((mirror ? (float)(single.width - single.xhot) : (float)(single.xhot + 1)) * scale);
 	else
-		x1 = x - (int)((mirror ? (float)(single.width - (single.xhot + 1)) : (float)single.xhot) * scale);
+	x1 = x - (int)((mirror ? (float)(single.width - (single.xhot + 1)) : (float)single.xhot) * scale);
 	int y1 = y - (int)((single.yhot - thisPerson->floaty) * scale);
 
 	float spriteWidth = diffX;
@@ -941,7 +946,6 @@ void fixScaleSprite(int x, int y, sprite &single, const spritePalette &fontPal, 
 	if (diffY < 0) return;
 
 	GLfloat z;
-
 
 	if (useZB && zBuffer.numPanels) {
 		int i;

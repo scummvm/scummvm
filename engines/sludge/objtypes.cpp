@@ -42,8 +42,9 @@ objectType *findObjectType(int i) {
 	objectType *huntType = allObjectTypes;
 
 	while (huntType) {
-		if (huntType -> objectNum == i) return huntType;
-		huntType = huntType -> next;
+		if (huntType->objectNum == i)
+			return huntType;
+		huntType = huntType->next;
 	}
 
 	return loadObjectType(i);
@@ -56,13 +57,13 @@ objectType *loadObjectType(int i) {
 	if (checkNew(newType)) {
 		if (openObjectSlice(i)) {
 			nameNum = get2bytes(bigDataFile);
-			newType -> r = (byte) getch(bigDataFile);
-			newType -> g = (byte) getch(bigDataFile);
-			newType -> b = (byte) getch(bigDataFile);
-			newType -> speechGap = getch(bigDataFile);
-			newType -> walkSpeed = getch(bigDataFile);
-			newType -> wrapSpeech = get4bytes(bigDataFile);
-			newType -> spinSpeed = get2bytes(bigDataFile);
+			newType->r = (byte) getch(bigDataFile);
+			newType->g = (byte) getch(bigDataFile);
+			newType->b = (byte) getch(bigDataFile);
+			newType->speechGap = getch(bigDataFile);
+			newType->walkSpeed = getch(bigDataFile);
+			newType->wrapSpeech = get4bytes(bigDataFile);
+			newType->spinSpeed = get2bytes(bigDataFile);
 
 			if (gameVersion >= VERSION(1, 6)) {
 				// aaLoad
@@ -72,13 +73,14 @@ objectType *loadObjectType(int i) {
 			}
 
 			if (gameVersion >= VERSION(1, 4)) {
-				newType -> flags = get2bytes(bigDataFile);
+				newType->flags = get2bytes(bigDataFile);
 			} else {
-				newType -> flags = 0;
+				newType->flags = 0;
 			}
 
-			newType -> numCom = get2bytes(bigDataFile);
-			newType -> allCombis = (newType -> numCom) ? new combination[newType -> numCom] : NULL;
+			newType->numCom = get2bytes(bigDataFile);
+			newType->allCombis =
+					(newType->numCom) ? new combination[newType->numCom] : NULL;
 
 #if DEBUG_COMBINATIONS
 			FILE *callEventLog = fopen("callEventLog.txt", "at");
@@ -87,9 +89,9 @@ objectType *loadObjectType(int i) {
 			}
 #endif
 
-			for (a = 0; a < newType -> numCom; a ++) {
-				newType -> allCombis[a].withObj = get2bytes(bigDataFile);
-				newType -> allCombis[a].funcNum = get2bytes(bigDataFile);
+			for (a = 0; a < newType->numCom; a++) {
+				newType->allCombis[a].withObj = get2bytes(bigDataFile);
+				newType->allCombis[a].funcNum = get2bytes(bigDataFile);
 #if DEBUG_COMBINATIONS
 				if (callEventLog) {
 					fprintf(callEventLog, "%d(%d) ", newType -> allCombis[a].withObj, newType -> allCombis[a].funcNum);
@@ -103,9 +105,9 @@ objectType *loadObjectType(int i) {
 			}
 #endif
 			finishAccess();
-			newType -> screenName = getNumberedString(nameNum);
-			newType -> objectNum = i;
-			newType -> next = allObjectTypes;
+			newType->screenName = getNumberedString(nameNum);
+			newType->objectNum = i;
+			newType->next = allObjectTypes;
 			allObjectTypes = newType;
 			return newType;
 		}
@@ -116,14 +118,14 @@ objectType *loadObjectType(int i) {
 
 objectType *loadObjectRef(Common::SeekableReadStream *stream) {
 	objectType *r = loadObjectType(get2bytes(stream));
-	delete r -> screenName;
-	r -> screenName = readString(stream);
+	delete r->screenName;
+	r->screenName = readString(stream);
 	return r;
 }
 
 void saveObjectRef(objectType *r, Common::WriteStream *stream) {
-	put2bytes(r -> objectNum, stream);
-	writeString(r -> screenName, stream);
+	put2bytes(r->objectNum, stream);
+	writeString(r->screenName, stream);
 }
 
 int getCombinationFunction(int withThis, int thisObject) {
@@ -137,9 +139,9 @@ int getCombinationFunction(int withThis, int thisObject) {
 	}
 #endif
 
-	for (i = 0; i < obj -> numCom; i ++) {
-		if (obj -> allCombis[i].withObj == withThis) {
-			num = obj -> allCombis[i].funcNum;
+	for (i = 0; i < obj->numCom; i++) {
+		if (obj->allCombis[i].withObj == withThis) {
+			num = obj->allCombis[i].funcNum;
 			break;
 		}
 	}
@@ -155,21 +157,21 @@ int getCombinationFunction(int withThis, int thisObject) {
 }
 
 void removeObjectType(objectType *oT) {
-	objectType * * huntRegion = & allObjectTypes;
+	objectType * * huntRegion = &allObjectTypes;
 
-	while (* huntRegion) {
-		if ((* huntRegion) == oT) {
+	while (*huntRegion) {
+		if ((*huntRegion) == oT) {
 //			FILE * debuggy2 = fopen ("debug.txt", "at");
 //			fprintf (debuggy2, "DELETING OBJECT TYPE: %p %s\n", oT, oT -> screenName);
 //			fclose (debuggy2);
 
-			* huntRegion = oT -> next;
-			delete oT -> allCombis;
-			delete oT -> screenName;
+			*huntRegion = oT->next;
+			delete oT->allCombis;
+			delete oT->screenName;
 			delete oT;
 			return;
 		} else {
-			huntRegion = & ((* huntRegion) -> next);
+			huntRegion = &((*huntRegion)->next);
 		}
 	}
 	fatal("Can't delete object type: bad pointer");

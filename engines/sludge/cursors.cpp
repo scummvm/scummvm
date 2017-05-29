@@ -68,8 +68,8 @@ void displayCursor() {
 
 		if (flipMe != 2) {
 			(flipMe ? flipFontSprite : fontSprite)(input.mouseX, input.mouseY,
-			                                       mouseCursorAnim -> theSprites -> bank.sprites[spriteNum],
-			                                       mouseCursorAnim -> theSprites -> bank.myPalette /* ( spritePalette&) NULL*/);
+					mouseCursorAnim -> theSprites -> bank.sprites[spriteNum],
+					mouseCursorAnim -> theSprites -> bank.myPalette /* ( spritePalette&) NULL*/);
 		}
 
 		if (++ mouseCursorCountUp >= mouseCursorAnim -> frames[mouseCursorFrameNum].howMany) {
@@ -82,9 +82,10 @@ void displayCursor() {
 }
 
 void pasteCursor(int x, int y, personaAnimation *c) {
-	if (c -> numFrames) pasteSpriteToBackDrop(x, y,
-		        c -> theSprites -> bank.sprites[c -> frames[0].frameNum],
-		        c -> theSprites -> bank.myPalette);
+	if (c->numFrames)
+		pasteSpriteToBackDrop(x, y,
+				c->theSprites->bank.sprites[c->frames[0].frameNum],
+				c->theSprites->bank.myPalette);
 }
 
 } // End of namespace Sludge

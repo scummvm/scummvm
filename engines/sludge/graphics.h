@@ -87,7 +87,8 @@ void setPMVMatrix(GLint program);
 #endif
 
 void setPixelCoords(bool pixels);
-void setGraphicsWindow(bool fullscreen, bool restoreGraphics = true, bool resize = false);
+void setGraphicsWindow(bool fullscreen, bool restoreGraphics = true,
+		bool resize = false);
 
 void setupOpenGLStuff();
 
@@ -96,10 +97,10 @@ int getNextPOT(int n);
 #if 0
 void saveTexture(GLuint tex, GLubyte *data);
 
-void dcopyTexImage2D(GLenum target,  GLint level,  GLenum internalformat,  GLint x,  GLint y,  GLsizei width,  GLsizei height,  GLint border, GLuint name, const char *file, int line);
-void dcopyTexSubImage2D(GLenum target,  GLint level,  GLint xoffset,  GLint yoffset,  GLint x,  GLint y,  GLsizei width,  GLsizei height, GLuint name, const char *file, int line);
-void dtexImage2D(GLenum target,  GLint level,  GLint internalformat,  GLsizei width,  GLsizei height,  GLint border,  GLenum format,  GLenum type,  const GLvoid *data, GLuint name, const char *file, int line);
-void dtexSubImage2D(GLenum target,  GLint level,  GLint xoffset,  GLint yoffset,  GLsizei width,  GLsizei height,  GLenum format,  GLenum type,  const GLvoid *data, GLuint name, const char *file, int line);
+void dcopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border, GLuint name, const char *file, int line);
+void dcopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height, GLuint name, const char *file, int line);
+void dtexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *data, GLuint name, const char *file, int line);
+void dtexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *data, GLuint name, const char *file, int line);
 
 #define copyTexImage2D(target, level, internalformat, x, y,  width, height, border, name) dcopyTexImage2D(target,  level,  internalformat,  x,  y,  width,height, border, name, __FILE__, __LINE__)
 
@@ -109,14 +110,15 @@ void dtexSubImage2D(GLenum target,  GLint level,  GLint xoffset,  GLint yoffset,
 
 #define texSubImage2D( target,  level,   xoffset,   yoffset,   width,  height, format,  type,   data,name) dtexSubImage2D( target, level,   xoffset,  yoffset,  width,  height, format,  type,  data,  name, __FILE__, __LINE__)
 
-void deleteTextures(GLsizei n,  const GLuint *textures);
+void deleteTextures(GLsizei n, const GLuint *textures);
 
-void getTextureDimensions(GLuint name, GLint *width,  GLint *height);
+void getTextureDimensions(GLuint name, GLint *width, GLint *height);
 
-int printOglError(const char *file, int         line);
+int printOglError(const char *file, int line);
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 #endif
 
-} // End of namespace Sludge
+}
+ // End of namespace Sludge
 
 #endif

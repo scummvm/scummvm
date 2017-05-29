@@ -44,9 +44,9 @@ unsigned int stringToInt(char *s) {
 		if (*s >= '0' && *s <= '9') {
 			i *= 10;
 			i += *s - '0';
-			s ++;
+			s++;
 		} else if (*s == '-') {
-			negative = ! negative;
+			negative = !negative;
 			s++;
 		} else {
 			if (negative)
@@ -55,7 +55,6 @@ unsigned int stringToInt(char *s) {
 		}
 	}
 }
-
 
 char *getPrefsFilename(char *filename) {
 	// Yes, this trashes the original string, but
@@ -92,7 +91,8 @@ void readIniFile(char *filename) {
 
 	Common::File fd;
 	if (!fd.open(langName)) {
-		debug(kSludgeDebugDataLoad, "Fail to open language file : %s", langName);
+		debug(kSludgeDebugDataLoad, "Fail to open language file : %s",
+				langName);
 		return;
 	}
 
@@ -127,7 +127,7 @@ void readIniFile(char *filename) {
 				if (strcmp(lineSoFar, "LANGUAGE") == 0) {
 					gameSettings.languageID = stringToInt(secondSoFar);
 				} else if (strcmp(lineSoFar, "WINDOW") == 0) {
-					gameSettings.userFullScreen = ! stringToInt(secondSoFar);
+					gameSettings.userFullScreen = !stringToInt(secondSoFar);
 				} else if (strcmp(lineSoFar, "REFRESH") == 0) {
 					gameSettings.refreshRate = stringToInt(secondSoFar);
 				} else if (strcmp(lineSoFar, "ANTIALIAS") == 0) {
@@ -153,10 +153,10 @@ void readIniFile(char *filename) {
 
 		default:
 			if (doingSecond) {
-				secondSoFar[here ++] = readChar;
+				secondSoFar[here++] = readChar;
 				secondSoFar[here] = 0;
 			} else {
-				lineSoFar[here ++] = readChar;
+				lineSoFar[here++] = readChar;
 				lineSoFar[here] = 0;
 			}
 			break;
@@ -185,19 +185,23 @@ void saveIniFile(char *filename) {
 
 void makeLanguageTable(Common::File *table) {
 	languageTable = new int[gameSettings.numLanguages + 1];
-	if (! checkNew(languageTable)) return;
+	if (!checkNew(languageTable))
+		return;
 
 	languageName = new char *[gameSettings.numLanguages + 1];
-	if (! checkNew(languageName)) return;
+	if (!checkNew(languageName))
+		return;
 
-	for (unsigned int i = 0; i <= gameSettings.numLanguages; i ++) {
+	for (unsigned int i = 0; i <= gameSettings.numLanguages; i++) {
 		languageTable[i] = i ? get2bytes(table) : 0;
-		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i, languageTable[i]);
+		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i,
+				languageTable[i]);
 		languageName[i] = 0;
 		if (gameVersion >= VERSION(2, 0)) {
 			if (gameSettings.numLanguages) {
 				languageName[i] = readString(table);
-				debug(kSludgeDebugDataLoad, "languageName %i: %s\n", i, languageName[i]);
+				debug(kSludgeDebugDataLoad, "languageName %i: %s\n", i,
+						languageName[i]);
 			}
 		}
 	}
@@ -206,8 +210,9 @@ void makeLanguageTable(Common::File *table) {
 int getLanguageForFileB() {
 	int indexNum = -1;
 
-	for (unsigned int i = 0; i <= gameSettings.numLanguages; i ++) {
-		if (languageTable[i] == gameSettings.languageID) indexNum = i;
+	for (unsigned int i = 0; i <= gameSettings.numLanguages; i++) {
+		if (languageTable[i] == gameSettings.languageID)
+			indexNum = i;
 	}
 
 	return indexNum;
