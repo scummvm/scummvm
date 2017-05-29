@@ -97,6 +97,7 @@ void nosnapshot();
 bool snapshot();
 void saveSnapshot(Common::WriteStream *stream);
 bool restoreSnapshot(Common::SeekableReadStream *stream);
-#endif
 
 } // End of namespace Sludge
+
+#endif
