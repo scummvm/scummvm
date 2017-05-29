@@ -85,10 +85,11 @@ void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 		surface->unlock();
 
 		++_entryIndex;
-		CStarPosition &newP = _positions[_entryIndex + 1];
-		newP = _positions[index];
+		const CStarPosition &srcPos = _positions[index];
+		CStarPosition &destPos = _entries[_entryIndex];
+		destPos = srcPos;
 
-		const CBaseStarEntry *starP = starField->getDataPtr(_positions[index]._index1);
+		const CBaseStarEntry *starP = starField->getDataPtr(destPos._index1);
 		markers->addStar(starP);
 	}
 }
