@@ -36,6 +36,8 @@ shaders/emi_dimplane.vertex      FILE    "engines/grim/shaders/emi_dimplane.vert
 shaders/grim_actor.fragment      FILE    "engines/grim/shaders/grim_actor.fragment"
 shaders/grim_actor.vertex        FILE    "engines/grim/shaders/grim_actor.vertex"
 shaders/grim_background.fragment FILE    "engines/grim/shaders/grim_background.fragment"
+shaders/grim_background.vertex   FILE    "engines/grim/shaders/grim_background.vertex"
+shaders/grim_primitive.fragment  FILE    "engines/grim/shaders/grim_primitive.fragment"
 shaders/grim_primitive.vertex    FILE    "engines/grim/shaders/grim_primitive.vertex"
 shaders/shadowplane.fragment     FILE    "engines/grim/shaders/shadowplane.fragment"
 shaders/shadowplane.vertex       FILE    "engines/grim/shaders/shadowplane.vertex"
