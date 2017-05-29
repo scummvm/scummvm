@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	backdrop.o \
 	bg_effects.o \
 	builtin.o \
+	bytearray.o \
 	console.o \
 	cursors.o \
 	debug.o \

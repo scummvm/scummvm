@@ -75,6 +75,7 @@
 #include "helpers.h"
 #include "graphics/surface.h"
 #include "common/debug.h"
+#include "sludge.h"
 
 namespace Sludge {
 
@@ -481,7 +482,6 @@ int main_loop(char *filename)
 		g_system->copyRectToScreen(backdropSurface.getPixels(),
 				backdropSurface.pitch, 0, 0, backdropSurface.w,
 				backdropSurface.h);
-		//g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
 		g_system->updateScreen();
 		g_system->delayMillis(100);
 #if 0

@@ -64,7 +64,8 @@ SludgeEngine::~SludgeEngine() {
  
 Common::Error SludgeEngine::run() {
 	// init graphics
-	initGraphics(640, 480, false);
+	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(640, 480, false, &format);
 
 	// create console
 	_console = new SludgeConsole(this);
