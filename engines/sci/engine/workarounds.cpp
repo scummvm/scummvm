@@ -563,9 +563,9 @@ const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	{ GID_LSL2,           -1,    54,  0,               "rm54", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // Amiga: room 55, script tries to kDisposeScript an object (does not happen for DOS) - bug #6818
 	{ GID_MOTHERGOOSEHIRES,37,  337,  0,        "rhymeScript", "changeState",               NULL,     0, { WORKAROUND_IGNORE,    0 } }, // after the rhyme with the king
 	{ GID_QFG1,           -1,    64,  0,               "rm64", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when leaving graveyard, parameter 0 is an object
-	{ GID_SQ4,           150,   151,  0,        "fightScript", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // during fight with Vohaul, parameter 0 is an object
-	{ GID_SQ4,           150,   152,  0,       "driveCloseUp", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download", parameter 0 is an object
-	{ GID_SQ4,           150,   152,  0,                   "", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download"... in Russian version - bug #5573
+	{ GID_SQ4,            -1,   151,  0,        "fightScript", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // during fight with Vohaul, parameter 0 is an object, happens in at least room 150
+	{ GID_SQ4,            -1,   152,  0,       "driveCloseUp", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download", parameter 0 is an object, may happen in room 150 and 900 (900 see bug #9812)
+	{ GID_SQ4,            -1,   152,  0,                   "", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download"... in Russian version - bug #5573
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
