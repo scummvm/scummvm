@@ -60,6 +60,7 @@
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 #include "sludge.h"
+#include "bytearray.h"
 
 namespace Sludge {
 
@@ -81,7 +82,6 @@ GLuint snapshotTextureName = 0;
 #endif
 
 Graphics::Surface backdropSurface;
-
 
 float snapTexW = 1.0;
 float snapTexH = 1.0;
@@ -1010,17 +1010,18 @@ bool loadParallax(unsigned short v, unsigned short fracX,
 
 extern int viewportOffsetX, viewportOffsetY;
 
-bool loadPng(int &picWidth, int &picHeight, int &realPicWidth,
-		int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
-	debug(kSludgeDebugGraphics, "Loading back drop png.");
+bool loadPng(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
+	debug(kSludgeDebugGraphics, "Loading back drop png at file position: %i", stream->pos());
 	::Image::PNGDecoder png;
 	if (!png.loadStream(*stream)) {
 		debug(kSludgeDebugGraphics, "Back drop is not a png");
 		return false;
 	}
-	backdropSurface.copyFrom(*(png.getSurface()));
-	const byte *palette = png.getPalette();
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	const Graphics::Surface *sourceSurface = png.getSurface();
+	Graphics::Surface *pngSurface = sourceSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), png.getPalette());
+	backdropSurface.copyFrom(*pngSurface);
+	pngSurface->free();
+	delete pngSurface;
 	picWidth = realPicWidth = backdropSurface.w;
 	picHeight = realPicHeight = backdropSurface.h;
 	return true;
@@ -1095,8 +1096,17 @@ bool loadPng(int &picWidth, int &picHeight, int &realPicWidth,
 #endif
 }
 
-bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth,
-		int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
+bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
+	debug(kSludgeDebugGraphics, "Loading back drop as a byte array at file position: %i", stream->pos());
+	ByteArrayDecoder byteDecoder;
+	if (!byteDecoder.loadStream(*stream)) {
+		debug(kSludgeDebugGraphics, "Back drop is not a byte array");
+		return false;
+	}
+	backdropSurface.copyFrom(*(byteDecoder.getSurface()));
+	picWidth = realPicWidth = backdropSurface.w;
+	picHeight = realPicHeight = backdropSurface.h;
+	return true;
 #if 0
 	int32_t transCol = reserve ? -1 : 63519;
 	int t1, t2, n;
@@ -1138,14 +1148,12 @@ bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth,
 #endif
 }
 
-bool loadImage(int &picWidth, int &picHeight, int &realPicWidth,
-		int &realPicHeight, Common::SeekableReadStream *stream, int x, int y,
-		bool reserve) {
+bool loadImage(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	debug(kSludgeDebugGraphics, "Loading back drop image at file position: %i", stream->pos());
-	if (!loadPng(picWidth, picHeight, realPicWidth, realPicHeight, stream,
-			reserve)) {
-		if (!loadByteArray(picWidth, picHeight, realPicWidth, realPicHeight,
-				stream, reserve)) {
+	int32 start_ptr = stream->pos();
+	if (!loadPng(picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
+		stream->seek(start_ptr);
+		if (!loadByteArray(picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
 			debug(kSludgeDebugGraphics, "Back drop loading failed");
 			return false;
 		}
