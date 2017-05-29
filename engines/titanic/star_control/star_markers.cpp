@@ -20,12 +20,12 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub7.h"
+#include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_camera.h"
 
 namespace Titanic {
 
-void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	if (_data.empty())
 		return;
 
@@ -71,7 +71,7 @@ void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CSta
 	surfaceArea->setColorFromPixel();
 }
 
-bool CStarControlSub7::addStar(const CBaseStarEntry *entry) {
+bool CStarMarkers::addStar(const CBaseStarEntry *entry) {
 	// iterate through the existing stars
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &star = _data[idx];

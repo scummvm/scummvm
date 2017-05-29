@@ -34,7 +34,7 @@
 namespace Titanic {
 
 class CStarField;
-class CStarControlSub7;
+class CStarMarkers;
 class CStarCamera;
 
 class CPhotoCrosshairs {
@@ -70,15 +70,15 @@ public:
 	void save(SimpleFile *file, int indent) {}
 
 	void selectStar(int starNum, CVideoSurface *surface, CStarField *starField,
-		CStarControlSub7 *sub7);
+		CStarMarkers *markers);
 
 	void draw(CSurfaceArea *surfaceArea);
 
 	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera);
-	void fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7);
+	void fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
 	void fn3();
 	void fn4(int index, CSurfaceArea *surfaceArea);
-	void fn5(int index, CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7);
+	void fn5(int index, CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
 	void fn6(CSurfaceArea *surfaceArea);
 	void fn7(const FPoint &pt, CSurfaceArea *surfaceArea);
 	FPoint getPosition() const;

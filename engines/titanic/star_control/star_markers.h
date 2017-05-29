@@ -20,15 +20,15 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB7_H
-#define TITANIC_STAR_CONTROL_SUB7_H
+#ifndef TITANIC_STAR_MARKERS_H
+#define TITANIC_STAR_MARKERS_H
 
 #include "titanic/star_control/base_stars.h"
 namespace Titanic {
 
-class CStarControlSub7 : public CBaseStars {
+class CStarMarkers : public CBaseStars {
 public:
-	virtual ~CStarControlSub7() { clear(); }
+	virtual ~CStarMarkers() { clear(); }
 
 	/**
 	 * Draw the item
@@ -43,4 +43,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB7_H */
+#endif /* TITANIC_STAR_MARKERS_H */

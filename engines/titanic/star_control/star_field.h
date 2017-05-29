@@ -25,7 +25,7 @@
 
 #include "titanic/star_control/star_control_sub2.h"
 #include "titanic/star_control/star_closeup.h"
-#include "titanic/star_control/star_control_sub7.h"
+#include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/photo_crosshairs.h"
 #include "titanic/star_control/star_points1.h"
 #include "titanic/star_control/star_points2.h"
@@ -34,7 +34,7 @@ namespace Titanic {
 
 class CStarField : public CStarControlSub2 {
 private:
-	CStarControlSub7 _sub7;
+	CStarMarkers _markers;
 	CPhotoCrosshairs _crosshairs;
 	CStarPoints1 _points1;
 	CStarPoints2 _points2;
@@ -112,8 +112,11 @@ public:
 	 */
 	bool isSolved() const;
 
-	int get7Count() const {
-		return _sub7.size();
+	/**
+	 * Returns the number of markers placed in the starfield
+	 */
+	int getMarkerCount() const {
+		return _markers.size();
 	}
 
 	void fn1(CErrorCode *errorCode);

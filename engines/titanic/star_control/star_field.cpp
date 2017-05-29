@@ -32,7 +32,7 @@ CStarField::CStarField() : _points1On(false), _points2On(false), _mode(MODE_STAR
 }
 
 void CStarField::load(SimpleFile *file) {
-	_sub7.load(file);
+	_markers.load(file);
 	_crosshairs.load(file);
 	_points1On = file->readNumber();
 	_points2On = file->readNumber();
@@ -42,7 +42,7 @@ void CStarField::load(SimpleFile *file) {
 }
 
 void CStarField::save(SimpleFile *file, int indent) {
-	_sub7.save(file, indent);
+	_markers.save(file, indent);
 	_crosshairs.save(file, indent);
 	file->writeNumberLine(_points1On, indent);
 	file->writeNumberLine(_points2On, indent);
@@ -69,7 +69,7 @@ void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
 	if (_showCrosshairs)
 		drawCrosshairs(&surfaceArea);
 
-	_sub7.draw(&surfaceArea, camera, nullptr);
+	_markers.draw(&surfaceArea, camera, nullptr);
 	_crosshairs.draw(&surfaceArea);
 
 	if (_points2On)
@@ -186,7 +186,7 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 	if (_crosshairs._fieldC < 0)
 		return -1.0;
 
-	const CBaseStarEntry *dataP = _sub7.getDataPtr(_crosshairs._fieldC);
+	const CBaseStarEntry *dataP = _markers.getDataPtr(_crosshairs._fieldC);
 	v2 = dataP->_position;
 	FVector tv = camera->proc29(2, v2);
 
@@ -221,7 +221,7 @@ void CStarField::fn7() {
 }
 
 void CStarField::fn8(CVideoSurface *surface) {
-	_crosshairs.fn2(surface, this, &_sub7);
+	_crosshairs.fn2(surface, this, &_markers);
 	setSolved();
 }
 
@@ -233,7 +233,7 @@ bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
 	} else {
 		int starNum = _crosshairs.indexOf(pt);
 		if (starNum >= 0) {
-			_crosshairs.selectStar(starNum, surface, this, &_sub7);
+			_crosshairs.selectStar(starNum, surface, this, &_markers);
 			return true;
 		}
 

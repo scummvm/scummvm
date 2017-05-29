@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/photo_crosshairs.h"
-#include "titanic/star_control/star_control_sub7.h"
+#include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_ref.h"
@@ -32,7 +32,7 @@ CPhotoCrosshairs::CPhotoCrosshairs() : _field8(-1), _entryIndex(-1) {
 }
 
 void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
-		CStarField *starField, CStarControlSub7 *sub7) {
+		CStarField *starField, CStarMarkers *markers) {
 	if (_entryIndex >= 0) {
 		if (_entryIndex == _field8) {
 			if (_field8 != 2) {
@@ -48,7 +48,7 @@ void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 					newP = _positions[index];
 
 					const CBaseStarEntry *starP = starField->getDataPtr(_positions[index]._index1);
-					sub7->addStar(starP);
+					markers->addStar(starP);
 				}
 			}
 		} else if (_entryIndex == _field8 + 1) {
@@ -60,7 +60,7 @@ void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 
 				--_entryIndex;
 				const CBaseStarEntry *starP = starField->getDataPtr(_positions[index]._index1);
-				sub7->addStar(starP);
+				markers->addStar(starP);
 			} else {
 				surface->lock();
 				CSurfaceArea surfaceArea(surface);
@@ -70,9 +70,9 @@ void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 
 				const CBaseStarEntry *starP;
 				starP = starField->getDataPtr(_positions[_entryIndex]._index1);
-				sub7->addStar(starP);
+				markers->addStar(starP);
 				starP = starField->getDataPtr(_positions[index]._index1);
-				sub7->addStar(starP);
+				markers->addStar(starP);
 
 				CStarPosition &newP = _positions[_entryIndex + 1];
 				newP = _positions[index];
@@ -89,7 +89,7 @@ void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 		newP = _positions[index];
 
 		const CBaseStarEntry *starP = starField->getDataPtr(_positions[index]._index1);
-		sub7->addStar(starP);
+		markers->addStar(starP);
 	}
 }
 
@@ -107,16 +107,16 @@ bool CPhotoCrosshairs::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CSt
 	}
 }
 
-void CPhotoCrosshairs::fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
+void CPhotoCrosshairs::fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
 	if (_field8 <= -1) {
 		if (_entryIndex > -1) {
-			fn5(_entryIndex, surface, starField, sub7);
+			fn5(_entryIndex, surface, starField, markers);
 			--_entryIndex;
 		}
 	} else {
 		--_field8;
 		if (_entryIndex - _field8 > 1) {
-			fn5(_entryIndex, surface, starField, sub7);
+			fn5(_entryIndex, surface, starField, markers);
 			--_entryIndex;
 		}
 	}
@@ -189,14 +189,14 @@ void CPhotoCrosshairs::fn4(int index, CSurfaceArea *surfaceArea) {
 	}
 }
 
-void CPhotoCrosshairs::fn5(int index, CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
+void CPhotoCrosshairs::fn5(int index, CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
 	surface->lock();
 	CSurfaceArea surfaceArea(surface);
 	fn7(_positions[index + 1], &surfaceArea);
 	surface->unlock();
 
 	const CBaseStarEntry *starP = starField->getDataPtr(_positions[index + 1]._index1);
-	sub7->addStar(starP);
+	markers->addStar(starP);
 }
 
 void CPhotoCrosshairs::fn6(CSurfaceArea *surfaceArea) {

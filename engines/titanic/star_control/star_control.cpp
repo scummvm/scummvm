@@ -141,7 +141,7 @@ void CStarControl::newFrame() {
 
 		if (_starField.getMode() == MODE_STARFIELD) {
 			val2 = _starField.get5();
-			if ((val1 + 2) == _starField.get7Count())
+			if ((val1 + 2) == _starField.getMarkerCount())
 				val2 = 0;
 		}
 
