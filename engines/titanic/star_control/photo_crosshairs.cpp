@@ -233,11 +233,11 @@ void CPhotoCrosshairs::drawAt(const FPoint &pt, CSurfaceArea *surfaceArea) {
 	uint savedPixel = surfaceArea->_pixel;
 	surfaceArea->_pixel = 255;
 	surfaceArea->setColorFromPixel();
-	SurfaceAreaMode savedMode = surfaceArea->setMode(SA_MODE3);
+	SurfaceAreaMode savedMode = surfaceArea->setMode(SA_XOR);
 
 
 	surfaceArea->fillRect(FRect(pt._x - 8.0, pt._y, pt._x - 4.0, pt._y));
-	surfaceArea->fillRect(FRect(pt._x - -4.0, pt._y, pt._x + 8.0, pt._y));
+	surfaceArea->fillRect(FRect(pt._x + 4.0, pt._y, pt._x + 8.0, pt._y));
 	surfaceArea->fillRect(FRect(pt._x, pt._y - 8.0, pt._x, pt._y - 4.0));
 	surfaceArea->fillRect(FRect(pt._x, pt._y + 4.0, pt._x, pt._y + 8.0));
 

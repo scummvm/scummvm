@@ -60,7 +60,7 @@ void CSurfaceArea::setColor(uint rgb) {
 		_color = rgb;
 		_colorMask = ~rgb;
 		break;
-	case SA_MODE3:
+	case SA_XOR:
 		_color = rgb;
 		_colorMask = 0xFFFFFFFF;
 		break;
@@ -76,7 +76,7 @@ void CSurfaceArea::setColor(uint rgb) {
 SurfaceAreaMode CSurfaceArea::setMode(SurfaceAreaMode mode) {
 	SurfaceAreaMode oldMode = _mode;
 	_mode = mode;
-	setColor(_color);
+	setColor(_rgb);
 	return oldMode;
 }
 
@@ -199,35 +199,7 @@ double CSurfaceArea::fillRect(const FRect &rect) {
 	} else {
 		colorRect(s, rr, _colorMask, _color);
 	}
-/*
-	int yInc = 1;
-	byte *lineStartP = (byte *)_pixelsPtr + rr.top * _pitch;
-	int width2 = rr.width() / 2;
-	int height2 = rr.height() / 2;
-	int xInc = _pitch;
 
-	if (xInc < 0) {
-		--xInc;
-		yInc = -1;
-	}
-
-	// rr: left=esi, edi=top, ebx=right, edx=bottom
-	// ecx=lineStartP; ebp=width2, edx=height2
-
-	if (_mode == SA_NONE) {
-		switch (_bpp) {
-		default:
-			break;
-		}
-	} else {
-		switch (_bpp) {
-		default:
-			break;
-		}
-	}
-
-	// Lots more functionality
-*/
 	return r.top;
 }
 

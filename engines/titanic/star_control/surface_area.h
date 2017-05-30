@@ -31,7 +31,7 @@
 namespace Titanic {
 
 enum SurfaceAreaMode {
-	SA_NONE = 0, SA_MODE1 = 1, SA_MODE2 = 2, SA_MODE3 = 3, SA_MODE4 = 4
+	SA_NONE = 0, SA_MODE1 = 1, SA_MODE2 = 2, SA_XOR = 3, SA_MODE4 = 4
 };
 
 class CSurfaceArea {
