@@ -302,15 +302,6 @@ Common::Error StarkEngine::loadGameState(int slot) {
 		return _saveFileMan->getError();
 	}
 
-	// Reset the UI
-	_userInterface->skipFMV();
-	_userInterface->clearLocationDependentState();
-	_userInterface->setInteractive(true);
-
-	// Clear the previous world resources
-	_resourceProvider->shutdown();
-	_diary->clear();
-
 	StateReadStream *stream = new StateReadStream(save);
 
 	// Read the header
@@ -322,14 +313,32 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	Common::String location = stream->readString();
 	uint locationIndex = strtol(location.c_str(), nullptr, 16);
 
-	Common::String version = stream->readString();
-	//TODO: Check the version
+	Common::String versionField = stream->readString();
+	if (!versionField.hasPrefix("Version:\t")) {
+		warning("The save file '%s' does not match the expected format", filename.c_str());
+		return Common::kReadingFailed;
+	}
+
+	uint version = atoi(&(versionField.c_str()[8]));
+	if (version < StateProvider::kMinSaveVersion || version > StateProvider::kSaveVersion) {
+		warning("The save file '%s' version (v%d) is not supported by this version of ResidualVM. Only versions v%d to v%d are allowed.",
+		        filename.c_str(), version, StateProvider::kMinSaveVersion, StateProvider::kSaveVersion);
+		return Common::kReadingFailed;
+	}
+
+	// Reset the UI
+	_userInterface->skipFMV();
+	_userInterface->clearLocationDependentState();
+	_userInterface->setInteractive(true);
+
+	// Clear the previous world resources
+	_resourceProvider->shutdown();
 
 	// Read the resource trees state
-	_stateProvider->readStateFromStream(stream);
+	_stateProvider->readStateFromStream(stream, version);
 
 	// Read the diary state
-	_diary->readStateFromStream(stream);
+	_diary->readStateFromStream(stream, version);
 
 	delete stream;
 
@@ -372,7 +381,7 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	save->writeString(location);
 
 	// Version
-	Common::String version = "Version:\t06";
+	Common::String version = Common::String::format("Version:\t%02d", StateProvider::kSaveVersion);
 	save->writeUint32LE(version.size());
 	save->writeString(version);
 

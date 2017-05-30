@@ -54,7 +54,7 @@ public:
 	void clear();
 
 	/** Replace the current state by that read from the stream */
-	void readStateFromStream(Common::SeekableReadStream *stream);
+	void readStateFromStream(Common::SeekableReadStream *stream, uint32 version);
 
 	/** Write the state to a stream */
 	void writeStateToStream(Common::WriteStream *stream);

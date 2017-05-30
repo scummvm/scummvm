@@ -50,14 +50,10 @@ Common::String StateReadStream::readString() {
 	return string;
 }
 
-StateProvider::ResourceTreeState::ResourceTreeState() :
-	_size(0),
-	_data(nullptr) {
-}
-
-StateProvider::ResourceTreeState::ResourceTreeState(uint32 size, byte *data) :
+StateProvider::ResourceTreeState::ResourceTreeState(uint32 size, byte *data, uint32 version) :
 	_size(size),
-	_data(data) {
+	_data(data),
+	_version(version) {
 }
 
 StateProvider::ResourceTreeState::~ResourceTreeState() {
@@ -104,11 +100,11 @@ void StateProvider::restoreResourceTreeState(Common::String storeKey, Resources:
 		ResourceTreeState *state = _stateStore[storeKey];
 
 		Common::MemoryReadStream stream(state->getData(), state->getSize(), DisposeAfterUse::NO);
-		readResourceTree(root, &stream, current);
+		readResourceTree(root, &stream, current, state->getVersion());
 	}
 }
 
-void StateProvider::readResourceTree(Resources::Object *resource, Common::SeekableReadStream *stream, bool current) {
+void StateProvider::readResourceTree(Resources::Object *resource, Common::SeekableReadStream *stream, bool current, uint32 version) {
 	// Read the resource to the source stream
 	/* byte type = */ stream->readByte();
 	/* byte subType = */ stream->readByte();
@@ -116,7 +112,7 @@ void StateProvider::readResourceTree(Resources::Object *resource, Common::Seekab
 
 	if (size > 0) {
 		Common::SeekableReadStream *resourceStream = stream->readStream(size);
-		ResourceSerializer *serializer = new ResourceSerializer(resourceStream, nullptr);
+		ResourceSerializer *serializer = new ResourceSerializer(resourceStream, nullptr, version);
 
 		// Deserialize the resource state from stream
 		if (current) {
@@ -131,7 +127,7 @@ void StateProvider::readResourceTree(Resources::Object *resource, Common::Seekab
 	// Deserialize the resource children
 	Common::Array<Resources::Object *> children = resource->listChildren<Resources::Object>();
 	for (uint i = 0; i < children.size(); i++) {
-		readResourceTree(children[i], stream, current);
+		readResourceTree(children[i], stream, current, version);
 	}
 }
 
@@ -171,14 +167,14 @@ void StateProvider::saveResourceTreeState(Common::String storeKey, Resources::Ob
 	writeResourceTree(root, &stream, current);
 
 	// Add the state to the store
-	_stateStore[storeKey] = new ResourceTreeState(stream.size(), stream.getData());
+	_stateStore[storeKey] = new ResourceTreeState(stream.size(), stream.getData(), kSaveVersion);
 }
 
 void StateProvider::writeResourceTree(Resources::Object *resource, Common::WriteStream *stream, bool current) {
 	// Explicit scope to control the lifespan of the memory stream
 	{
 		Common::MemoryWriteStreamDynamic resourceStream(DisposeAfterUse::YES);
-		ResourceSerializer *serializer = new ResourceSerializer(nullptr, &resourceStream);
+		ResourceSerializer *serializer = new ResourceSerializer(nullptr, &resourceStream, kSaveVersion);
 
 		// Serialize the resource to a memory stream
 		if (current) {
@@ -203,13 +199,21 @@ void StateProvider::writeResourceTree(Resources::Object *resource, Common::Write
 	}
 }
 
-void StateProvider::readStateFromStream(StateReadStream *stream) {
+void StateProvider::readStateFromStream(StateReadStream *stream, uint saveVersion) {
 	clear();
 
 	uint32 treeCount = stream->readUint32LE();
 	for (uint i = 0; i < treeCount; i++) {
 		// Read the store key
 		Common::String key = stream->readString();
+
+		// Each resource tree state needs to have its own version because
+		// some may never be made active again and serialized in the latest version.
+		// In that case they stay in a previous version.
+		uint treeVersion = 6;
+		if (saveVersion > 6) {
+			treeVersion = stream->readUint32LE();
+		}
 
 		// Read the data size
 		uint32 dataSize = stream->readUint32LE();
@@ -218,7 +222,7 @@ void StateProvider::readStateFromStream(StateReadStream *stream) {
 		byte *data = (byte *) malloc(dataSize);
 		stream->read(data, dataSize);
 
-		_stateStore[key] = new ResourceTreeState(dataSize, data);
+		_stateStore[key] = new ResourceTreeState(dataSize, data, treeVersion);
 	}
 }
 
@@ -228,13 +232,15 @@ void StateProvider::writeStateToStream(Common::WriteStream *stream) {
 	for (ResourceTreeStateMap::iterator it = _stateStore.begin(); it != _stateStore.end(); it++) {
 		stream->writeUint32LE(it->_key.size());
 		stream->writeString(it->_key);
+		stream->writeUint32LE(it->_value->getVersion());
 		stream->writeUint32LE(it->_value->getSize());
 		stream->write(it->_value->getData(), it->_value->getSize());
 	}
 }
 
-ResourceSerializer::ResourceSerializer(Common::SeekableReadStream *in, Common::WriteStream *out) :
+ResourceSerializer::ResourceSerializer(Common::SeekableReadStream *in, Common::WriteStream *out, uint32 version) :
 		Common::Serializer(in, out) {
+	_version = version;
 }
 
 void ResourceSerializer::syncAsFloat(float &value) {

@@ -51,7 +51,7 @@ public:
 
 class ResourceSerializer : public Common::Serializer {
 public:
-	ResourceSerializer(Common::SeekableReadStream *in, Common::WriteStream *out);
+	ResourceSerializer(Common::SeekableReadStream *in, Common::WriteStream *out, uint32 version);
 
 	void syncAsFloat(float &value);
 	void syncAsVector3d(Math::Vector3d &value);
@@ -99,21 +99,26 @@ public:
 	void saveGlobalState(Resources::Level *level);
 
 	/** Replace the current states by those read from the stream */
-	void readStateFromStream(StateReadStream*stream);
+	void readStateFromStream(StateReadStream *stream, uint saveVersion);
 
 	/** Write the states in the store to a stream */
 	void writeStateToStream(Common::WriteStream *stream);
 
+	static const uint kMinSaveVersion = 6;
+	static const uint kSaveVersion = 7;
+
 private:
 	class ResourceTreeState {
 	public:
-		ResourceTreeState();
-		ResourceTreeState(uint32 size, byte *data);
+		ResourceTreeState(uint32 size, byte *data, uint32 version);
 		~ResourceTreeState();
 
+		uint32 getVersion() const { return _version; }
 		uint32 getSize() const { return _size; }
 		byte *getData() const { return _data; }
+
 	private:
+		uint32 _version;
 		uint32 _size;
 		byte *_data;
 	};
@@ -123,7 +128,7 @@ private:
 	void restoreResourceTreeState(Common::String storeKey, Resources::Object *root, bool current);
 	void saveResourceTreeState(Common::String storeKey, Resources::Object *root, bool current);
 
-	void readResourceTree(Resources::Object *resource, Common::SeekableReadStream *stream, bool current);
+	void readResourceTree(Resources::Object *resource, Common::SeekableReadStream *stream, bool current, uint32 version);
 	void writeResourceTree(Resources::Object *resource, Common::WriteStream *stream, bool current);
 
 	void clear();

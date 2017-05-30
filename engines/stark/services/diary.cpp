@@ -64,20 +64,22 @@ bool Diary::hasFMVEntry(const Common::String &filename) const {
 	return false;
 }
 
-void Diary::readStateFromStream(Common::SeekableReadStream *stream) {
-	ResourceSerializer serializer(stream, nullptr);
+void Diary::readStateFromStream(Common::SeekableReadStream *stream, uint32 version) {
+	clear();
+
+	ResourceSerializer serializer(stream, nullptr, version);
 	saveLoad(&serializer);
 }
 
 void Diary::writeStateToStream(Common::WriteStream *stream) {
-	ResourceSerializer serializer(nullptr, stream);
+	ResourceSerializer serializer(nullptr, stream, StateProvider::kSaveVersion);
 	saveLoad(&serializer);
 }
 
 void Diary::saveLoad(ResourceSerializer *serializer) {
 	// Diary entries
 	uint32 diaryEntryCount = _diaryEntries.size();
-	serializer->syncAsUint32LE(diaryEntryCount);
+	serializer->syncAsUint32LE(diaryEntryCount, 7);
 
 	if (serializer->isLoading()) {
 		_diaryEntries.resize(diaryEntryCount);
@@ -89,7 +91,7 @@ void Diary::saveLoad(ResourceSerializer *serializer) {
 
 	// FMV entries
 	uint32 fmvEntryCount = _fmvEntries.size();
-	serializer->syncAsUint32LE(fmvEntryCount);
+	serializer->syncAsUint32LE(fmvEntryCount, 7);
 
 	if (serializer->isLoading()) {
 		_fmvEntries.resize(fmvEntryCount);
@@ -101,15 +103,11 @@ void Diary::saveLoad(ResourceSerializer *serializer) {
 		serializer->syncAsUint32LE(_fmvEntries[i].gameDisc);
 	}
 
-	// Conversation entries
-	uint32 conversationEntryCount = 0;
-	serializer->syncAsUint32LE(conversationEntryCount);
-	assert(conversationEntryCount == 0);
 	// TODO: Persist conversation entries
 
 	// Misc
-	serializer->syncAsByte(_hasUnreadEntries);
-	serializer->syncAsUint32LE(_pageIndex);
+	serializer->syncAsByte(_hasUnreadEntries, 7);
+	serializer->syncAsUint32LE(_pageIndex, 7);
 }
 
 } // End of namespace Stark
