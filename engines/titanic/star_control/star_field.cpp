@@ -67,7 +67,7 @@ void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
 	CSurfaceArea surfaceArea(surface);
 	draw(&surfaceArea, camera, &_starCloseup);
 	if (_showCrosshairs)
-		drawCrosshairs(&surfaceArea);
+		drawBox(&surfaceArea);
 
 	_markers.draw(&surfaceArea, camera, nullptr);
 	_crosshairs.draw(&surfaceArea);
@@ -142,7 +142,7 @@ void CStarField::fn1(CErrorCode *errorCode) {
 	_starCloseup.proc3(errorCode);
 }
 
-void CStarField::drawCrosshairs(CSurfaceArea *surfaceArea) {
+void CStarField::drawBox(CSurfaceArea *surfaceArea) {
 	uint oldPixel = surfaceArea->_pixel;
 	surfaceArea->_pixel = 0x323232;
 	surfaceArea->setColorFromPixel();

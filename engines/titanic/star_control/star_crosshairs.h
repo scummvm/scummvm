@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_PHOTO_CROSSHAIRS_H
-#define TITANIC_PHOTO_CROSSHAIRS_H
+#ifndef TITANIC_STAR_CROSSHAIRS_H
+#define TITANIC_STAR_CROSSHAIRS_H
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -37,7 +37,7 @@ class CStarField;
 class CStarMarkers;
 class CStarCamera;
 
-class CPhotoCrosshairs {
+class CStarCrosshairs {
 private:
 	Common::Array<CStarPosition> _positions;
 	CStarPosition _entries[3];
@@ -55,8 +55,8 @@ public:
 	int _matchIndex;
 	int _entryIndex;
 public:
-	CPhotoCrosshairs();
-	~CPhotoCrosshairs() { clear(); }
+	CStarCrosshairs();
+	~CStarCrosshairs() { clear(); }
 
 	/**
 	 * Load the data for the class from file
@@ -125,4 +125,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PHOTO_CROSSHAIRS_H */
+#endif /* TITANIC_STAR_CROSSHAIRS_H */

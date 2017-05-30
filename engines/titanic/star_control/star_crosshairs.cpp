@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/photo_crosshairs.h"
+#include "titanic/star_control/star_crosshairs.h"
 #include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_field.h"
@@ -28,10 +28,10 @@
 
 namespace Titanic {
 
-CPhotoCrosshairs::CPhotoCrosshairs() : _matchIndex(-1), _entryIndex(-1) {
+CStarCrosshairs::CStarCrosshairs() : _matchIndex(-1), _entryIndex(-1) {
 }
 
-void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
+void CStarCrosshairs::selectStar(int index, CVideoSurface *surface,
 		CStarField *starField, CStarMarkers *markers) {
 	if (_entryIndex >= 0) {
 		// There are existing selected stars already
@@ -117,7 +117,7 @@ void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 	}
 }
 
-bool CPhotoCrosshairs::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera) {
+bool CStarCrosshairs::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	int count = starField->baseFn2(surfaceArea, camera);
 
 	if (count > 0) {
@@ -131,7 +131,7 @@ bool CPhotoCrosshairs::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CSt
 	}
 }
 
-void CPhotoCrosshairs::fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
+void CStarCrosshairs::fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
 	if (_matchIndex <= -1) {
 		if (_entryIndex > -1) {
 			drawEntry(_entryIndex, surface, starField, markers);
@@ -146,17 +146,17 @@ void CPhotoCrosshairs::fn2(CVideoSurface *surface, CStarField *starField, CStarM
 	}
 }
 
-void CPhotoCrosshairs::incMatches() {
+void CStarCrosshairs::incMatches() {
 	if (_matchIndex < 3)
 		++_matchIndex;
 }
 
-FPoint CPhotoCrosshairs::getPosition() const {
+FPoint CStarCrosshairs::getPosition() const {
 	return (_entryIndex >= 0 && _entryIndex <= 2) ? 
 		FPoint(_entries[_entryIndex]) : FPoint();
 }
 
-void CPhotoCrosshairs::draw(CSurfaceArea *surfaceArea) {
+void CStarCrosshairs::draw(CSurfaceArea *surfaceArea) {
 	if (!_positions.empty()) {
 		uint savedPixel = surfaceArea->_pixel;
 		surfaceArea->_pixel = 0xff;
@@ -179,7 +179,7 @@ void CPhotoCrosshairs::draw(CSurfaceArea *surfaceArea) {
 	}
 }
 
-void CPhotoCrosshairs::allocate(int count) {
+void CStarCrosshairs::allocate(int count) {
 	if (!_positions.empty()) {
 		if ((int)_positions.size() == count)
 			return;
@@ -190,12 +190,12 @@ void CPhotoCrosshairs::allocate(int count) {
 	_positions.resize(count);
 }
 
-void CPhotoCrosshairs::clear() {
+void CStarCrosshairs::clear() {
 	_positions.clear();
 	_matchIndex = _entryIndex = -1;
 }
 
-int CPhotoCrosshairs::indexOf(const Common::Point &pt) const {
+int CStarCrosshairs::indexOf(const Common::Point &pt) const {
 	Common::Rect r(pt.x - 2, pt.y - 2, pt.x + 2, pt.y + 2);
 
 	for (int idx = 0; idx < (int)_positions.size(); ++idx) {
@@ -206,14 +206,14 @@ int CPhotoCrosshairs::indexOf(const Common::Point &pt) const {
 	return -1;
 }
 
-void CPhotoCrosshairs::drawStar(int index, CSurfaceArea *surfaceArea) {
+void CStarCrosshairs::drawStar(int index, CSurfaceArea *surfaceArea) {
 	if (index >= 0 && index < (int)_positions.size()) {
 		const CStarPosition &pt = _positions[index];
 		drawAt(pt, surfaceArea);
 	}
 }
 
-void CPhotoCrosshairs::drawEntry(int index, CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
+void CStarCrosshairs::drawEntry(int index, CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
 	surface->lock();
 	CSurfaceArea surfaceArea(surface);
 	drawAt(_entries[index], &surfaceArea);
@@ -223,13 +223,13 @@ void CPhotoCrosshairs::drawEntry(int index, CVideoSurface *surface, CStarField *
 	markers->addStar(starP);
 }
 
-void CPhotoCrosshairs::eraseCurrent(CSurfaceArea *surfaceArea) {
+void CStarCrosshairs::eraseCurrent(CSurfaceArea *surfaceArea) {
 	assert(_entryIndex >= 0);
 	const CStarPosition &pt = _entries[_entryIndex];
 	drawAt(pt, surfaceArea);
 }
 
-void CPhotoCrosshairs::drawAt(const FPoint &pt, CSurfaceArea *surfaceArea) {
+void CStarCrosshairs::drawAt(const FPoint &pt, CSurfaceArea *surfaceArea) {
 	uint savedPixel = surfaceArea->_pixel;
 	surfaceArea->_pixel = 255;
 	surfaceArea->setColorFromPixel();

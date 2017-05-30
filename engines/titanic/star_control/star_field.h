@@ -26,7 +26,7 @@
 #include "titanic/star_control/star_control_sub2.h"
 #include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_markers.h"
-#include "titanic/star_control/photo_crosshairs.h"
+#include "titanic/star_control/star_crosshairs.h"
 #include "titanic/star_control/star_points1.h"
 #include "titanic/star_control/star_points2.h"
 
@@ -35,7 +35,7 @@ namespace Titanic {
 class CStarField : public CStarControlSub2 {
 private:
 	CStarMarkers _markers;
-	CPhotoCrosshairs _crosshairs;
+	CStarCrosshairs _crosshairs;
 	CStarPoints1 _points1;
 	CStarPoints2 _points2;
 	CStarCloseup _starCloseup;
@@ -47,9 +47,9 @@ private:
 	bool _isSolved;
 private:
 	/**
-	 * Draws the square box crosshairs in the middle of the screen
+	 * Draws the big square box in the middle of the screen
 	 */
-	void drawCrosshairs(CSurfaceArea *surfaceArea);
+	void drawBox(CSurfaceArea *surfaceArea);
 
 	void fn4(CSurfaceArea *surfaceArea, CStarCamera *camera);
 public:
