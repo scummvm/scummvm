@@ -98,22 +98,29 @@ public:
 	void drawEntry(int index, CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
 
 	/**
-	 * Draw crosshairs for the most recently selected star 
+	 * Erase crosshairs for the most recently selected star
 	 */
-	void drawCurrent(CSurfaceArea *surfaceArea);
+	void eraseCurrent(CSurfaceArea *surfaceArea);
 	
 	/**
 	 * Draw crosshairs at the given position
 	 */
 	void drawAt(const FPoint &pt, CSurfaceArea *surfaceArea);
 	
-	
+	/**
+	 * Returns the position of the most recently selected star
+	 */
 	FPoint getPosition() const;
 
 	/**
 	 * Returns the index of an entry in the rects list a given point falls within
 	 */
 	int indexOf(const Common::Point &pt) const;
+
+	/**
+	 * Returns true if the starfield is solved
+	 */
+	bool isSolved() const { return _matchIndex == 2; }
 };
 
 } // End of namespace Titanic

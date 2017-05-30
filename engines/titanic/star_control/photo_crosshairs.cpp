@@ -34,61 +34,84 @@ CPhotoCrosshairs::CPhotoCrosshairs() : _matchIndex(-1), _entryIndex(-1) {
 void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 		CStarField *starField, CStarMarkers *markers) {
 	if (_entryIndex >= 0) {
+		// There are existing selected stars already
 		if (_entryIndex == _matchIndex) {
-			if (_matchIndex != 2) {
+			// All the stars selected so far have been matched. Only allow
+			// a selection addition if not all three stars have been found
+			if (!isSolved()) {
+				// Don't allow the most recent match to be re-selected
 				if (_positions[index] != _entries[_entryIndex]) {
 					surface->lock();
 
+					// Draw crosshairs around the selected star
 					CSurfaceArea surfaceArea(surface);
 					drawStar(index, &surfaceArea);
 					surface->unlock();
 
+					// Copy the star into the list of selected ones
 					++_entryIndex;
 					CStarPosition &newP = _entries[_entryIndex];
 					newP = _positions[index];
 
+					// Set up a marker in the main starfield for that same star
 					const CBaseStarEntry *starP = starField->getDataPtr(newP._index1);
 					markers->addStar(starP);
 				}
 			}
 		} else if (_entryIndex == _matchIndex + 1) {
+			// There is a most recently selected star that has not yet been matched.
+			// So we allow the user to reselect it to remove the selection, or shift
+			// the selection to some other star
 			if (_positions[index] == _entries[_entryIndex]) {
+				// Remove the crosshairs for the previously selected star
 				surface->lock();
 				CSurfaceArea surfaceArea(surface);
-				drawCurrent(&surfaceArea);
+				eraseCurrent(&surfaceArea);
 				surface->unlock();
 
+				// Decrement number of selections
 				--_entryIndex;
+
+				// Call the markers addStar method, which will remove the existing marker
 				const CBaseStarEntry *starP = starField->getDataPtr(_positions[index]._index1);
 				markers->addStar(starP);
 			} else {
+				// Erase the prior selection and draw the new one
 				surface->lock();
 				CSurfaceArea surfaceArea(surface);
-				drawCurrent(&surfaceArea);
+				eraseCurrent(&surfaceArea);
 				drawStar(index, &surfaceArea);
 				surface->unlock();
 
+				// Remove the old selection from the starfield markers
 				const CBaseStarEntry *starP;
 				starP = starField->getDataPtr(_entries[_entryIndex]._index1);
 				markers->addStar(starP);
+
+				// Add the new selection to the markers list
 				starP = starField->getDataPtr(_positions[index]._index1);
 				markers->addStar(starP);
 
+				// Copy the newly selected star's details into our selections list
 				CStarPosition &newP = _entries[_entryIndex];
 				newP = _positions[index];
 			}
 		}
 	} else {
+		// Very first star being selected
+		// Draw crosshairs around the selected star
 		surface->lock();
 		CSurfaceArea surfaceArea(surface);
 		drawStar(index, &surfaceArea);
 		surface->unlock();
 
+		// Copy the star into the list of selected ones
 		++_entryIndex;
 		const CStarPosition &srcPos = _positions[index];
 		CStarPosition &destPos = _entries[_entryIndex];
 		destPos = srcPos;
 
+		// Set up a marker in the main starfield for that same star
 		const CBaseStarEntry *starP = starField->getDataPtr(destPos._index1);
 		markers->addStar(starP);
 	}
@@ -200,7 +223,7 @@ void CPhotoCrosshairs::drawEntry(int index, CVideoSurface *surface, CStarField *
 	markers->addStar(starP);
 }
 
-void CPhotoCrosshairs::drawCurrent(CSurfaceArea *surfaceArea) {
+void CPhotoCrosshairs::eraseCurrent(CSurfaceArea *surfaceArea) {
 	assert(_entryIndex >= 0);
 	const CStarPosition &pt = _entries[_entryIndex];
 	drawAt(pt, surfaceArea);
