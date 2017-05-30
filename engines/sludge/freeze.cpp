@@ -191,7 +191,7 @@ bool freeze() {
 	zBuffer.tex = NULL;
 #endif
 	// resizeBackdrop kills parallax stuff, light map, z-buffer...
-	if (!resizeBackdrop(winWidth, winHeight))
+	if (!killResizeBackdrop(winWidth, winHeight))
 		return fatal("Can't create new temporary backdrop buffer");
 
 	if (!NPOT_textures) {

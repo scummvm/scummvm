@@ -60,7 +60,7 @@
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 #include "sludge.h"
-#include "bytearray.h"
+#include "imgloader.h"
 
 namespace Sludge {
 
@@ -76,11 +76,10 @@ bool backdropExists = false;
 GLfloat backdropTexW = 1.0;
 GLfloat backdropTexH = 1.0;
 
-texture lightMap;
-
 GLuint snapshotTextureName = 0;
 #endif
 
+texture lightMap;
 Graphics::Surface backdropSurface;
 
 float snapTexW = 1.0;
@@ -226,6 +225,8 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 }
 
 void killBackDrop() {
+	if (backdropSurface.getPixels())
+		backdropSurface.free();
 #if 0
 	deleteTextures(1, &backdropTextureName);
 	backdropTextureName = 0;
@@ -234,31 +235,31 @@ void killBackDrop() {
 }
 
 void killLightMap() {
+	if (lightMap.surface.getPixels()) {
+		lightMap.surface.free();
+	}
+	lightMapNumber = 0;
 #if 0
 	deleteTextures(1, &lightMap.name);
 	lightMap.name = 0;
-	if (lightMap.data) {
-		delete lightMap.data;
-		lightMap.data = NULL;
-	}
-	lightMapNumber = 0;
 #endif
 }
 
 void killParallax() {
-#if 0
+
 	while (parallaxStuff) {
 
 		parallaxLayer *k = parallaxStuff;
 		parallaxStuff = k->next;
-
+#if 0
 		// Now kill the image
 		deleteTextures(1, &k->textureName);
-		delete k->texture;
+#endif
+		k->surface.free();
 		delete k;
 		k = NULL;
 	}
-#endif
+
 }
 
 bool reserveBackdrop() {
@@ -302,14 +303,22 @@ bool reserveBackdrop() {
 	return true;
 }
 
-bool resizeBackdrop(int x, int y) {
+void killAllBackDrop() {
 	killLightMap();
 	killBackDrop();
 	killParallax();
 	killZBuffer();
+}
+
+bool resizeBackdrop(int x, int y) {
 	sceneWidth = x;
 	sceneHeight = y;
 	return reserveBackdrop();
+}
+
+bool killResizeBackdrop(int x, int y) {
+	killAllBackDrop();
+	return resizeBackdrop(x, y);
 }
 
 void loadBackDrop(int fileNum, int x, int y) {
@@ -333,7 +342,6 @@ void loadBackDrop(int fileNum, int x, int y) {
 }
 
 void mixBackDrop(int fileNum, int x, int y) {
-#if 0
 	setResourceForFatal(fileNum);
 	if (!openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
@@ -345,7 +353,6 @@ void mixBackDrop(int fileNum, int x, int y) {
 	}
 
 	finishAccess();
-#endif
 	setResourceForFatal(-1);
 }
 
@@ -629,83 +636,25 @@ void drawBackDrop() {
 }
 
 bool loadLightMap(int v) {
-	int newPicWidth, newPicHeight;
-#if 0
 	setResourceForFatal(v);
 	if (!openFileFromNum(v)) return fatal("Can't open light map.");
-	long file_pointer = ftell(bigDataFile);
 
-	png_structp png_ptr;
-	png_infop info_ptr, end_info;
+	killLightMap();
+	lightMapNumber = v;
 
-	int fileIsPNG = true;
+	if (!ImgLoader::loadImage(bigDataFile, &lightMap.surface))
+		return false;
 
-	// Is this a PNG file?
-
-	char tmp[10];
-	size_t bytes_read = fread(tmp, 1, 8, bigDataFile);
-	if (bytes_read != 8 && ferror(bigDataFile)) {
-		debugOut("Reading error in loadLightMap.\n");
-	}
-
-	if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
-		// No, it's old-school HSI
-		fileIsPNG = false;
-		fseek(bigDataFile, file_pointer, SEEK_SET);
-
-		newPicWidth = lightMap.w = bigDataFile->readUint16BE();
-		newPicHeight = lightMap.h = bigDataFile->readUint16BE();
-	} else {
-		// Read the PNG header
-
-		png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-		if (!png_ptr) {
-			return false;
-		}
-
-		info_ptr = png_create_info_struct(png_ptr);
-		if (!info_ptr) {
-			png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-			return false;
-		}
-
-		end_info = png_create_info_struct(png_ptr);
-		if (!end_info) {
-			png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-			return false;
-		}
-		png_init_io(png_ptr, bigDataFile);     // Tell libpng which file to read
-		png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
-
-		png_read_info(png_ptr, info_ptr);
-
-		png_uint_32 width, height;
-		int bit_depth, color_type, interlace_type, compression_type, filter_method;
-		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-		newPicWidth = lightMap.w = width;
-		newPicHeight = lightMap.h = height;
-
-		if (bit_depth < 8) png_set_packing(png_ptr);
-		png_set_expand(png_ptr);
-		if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) png_set_gray_to_rgb(png_ptr);
-		if (bit_depth == 16) png_set_strip_16(png_ptr);
-
-		png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
-
-		png_read_update_info(png_ptr, info_ptr);
-		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-		//int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-
-	}
+	int newPicWidth = lightMap.surface.w;
+	int newPicHeight = lightMap.surface.h;
 
 	if (lightMapMode == LIGHTMAPMODE_HOTSPOT) {
-		if (lightMap.w != sceneWidth || lightMap.h != sceneHeight) {
+		if (lightMap.surface.w != sceneWidth || lightMap.surface.h != sceneHeight) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
 		}
 	}
 
+#if 0
 	if (!NPOT_textures) {
 		newPicWidth = getNextPOT(lightMap.w);
 		newPicHeight = getNextPOT(lightMap.h);
@@ -715,54 +664,11 @@ bool loadLightMap(int v) {
 		lightMap.texW = 1.0;
 		lightMap.texH = 1.0;
 	}
+#endif
 
-	killLightMap();
-	lightMapNumber = v;
 #if 0
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 #endif
-	if (lightMap.data) delete [] lightMap.data;
-
-	lightMap.data = new GLubyte [newPicWidth * newPicHeight * 4];
-	if (!lightMap.data) {
-		return fatal("Out of memory loading light map.");
-	}
-
-	int t1, t2, n;
-	unsigned short c;
-	GLubyte *target;
-
-	if (fileIsPNG) {
-		unsigned char *row_pointers[lightMap.h];
-		for (int i = 0; i < lightMap.h; i++)
-		row_pointers[i] = lightMap.data + 4 * i * newPicWidth;
-
-		png_read_image(png_ptr, (png_byte **) row_pointers);
-		png_read_end(png_ptr, NULL);
-		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-	} else {
-
-		for (t2 = 0; t2 < lightMap.h; t2 ++) {
-			t1 = 0;
-			while (t1 < lightMap.w) {
-				c = (unsigned short)bigDataFile->readUint16BE();
-				if (c & 32) {
-					n = fgetc(bigDataFile) + 1;
-					c -= 32;
-				} else {
-					n = 1;
-				}
-				while (n --) {
-					target = lightMap.data + 4 * newPicWidth * t2 + t1 * 4;
-					target[0] = (GLubyte) redValue(c);
-					target[1] = (GLubyte) greenValue(c);
-					target[2] = (GLubyte) blueValue(c);
-					target[3] = (GLubyte) 255;
-					t1++;
-				}
-			}
-		}
-	}
 #if 0
 	if (!lightMap.name) glGenTextures(1, &lightMap.name);
 	glBindTexture(GL_TEXTURE_2D, lightMap.name);
@@ -775,7 +681,6 @@ bool loadLightMap(int v) {
 #endif
 	finishAccess();
 
-#endif
 	setResourceForFatal(-1);
 
 	return true;
@@ -820,10 +725,7 @@ void reloadParallaxTextures() {
 #endif
 }
 
-bool loadParallax(unsigned short v, unsigned short fracX,
-		unsigned short fracY) {
-
-#if 0
+bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) {
 	setResourceForFatal(v);
 	if (!openFileFromNum(v)) return fatal("Can't open parallax image");
 
@@ -840,71 +742,8 @@ bool loadParallax(unsigned short v, unsigned short fracX,
 	int picWidth;
 	int picHeight;
 
-	long file_pointer = ftell(bigDataFile);
-
-	png_structp png_ptr;
-	png_infop info_ptr, end_info;
-
-	int fileIsPNG = true;
-
-	// Is this a PNG file?
-
-	char tmp[10];
-	size_t bytes_read = fread(tmp, 1, 8, bigDataFile);
-	if (bytes_read != 8 && ferror(bigDataFile)) {
-		debugOut("Reading error in loadParallax.\n");
-	}
-	if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
-		// No, it's old-school HSI
-		fileIsPNG = false;
-		fseek(bigDataFile, file_pointer, SEEK_SET);
-
-		picWidth = nP->width = bigDataFile->readUint16BE();
-		picHeight = nP->height = bigDataFile->readUint16BE();
-	} else {
-		// Read the PNG header
-
-		png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-		if (!png_ptr) {
-			return false;
-		}
-
-		info_ptr = png_create_info_struct(png_ptr);
-		if (!info_ptr) {
-			png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-			return false;
-		}
-
-		end_info = png_create_info_struct(png_ptr);
-		if (!end_info) {
-			png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-			return false;
-		}
-		png_init_io(png_ptr, bigDataFile);     // Tell libpng which file to read
-		png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
-
-		png_read_info(png_ptr, info_ptr);
-
-		png_uint_32 width, height;
-		int bit_depth, color_type, interlace_type, compression_type, filter_method;
-		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-		picWidth = nP->width = width;
-		picHeight = nP->height = height;
-
-		if (bit_depth < 8) png_set_packing(png_ptr);
-		png_set_expand(png_ptr);
-		if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) png_set_gray_to_rgb(png_ptr);
-		if (bit_depth == 16) png_set_strip_16(png_ptr);
-
-		png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
-
-		png_read_update_info(png_ptr, info_ptr);
-		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-		//int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-
-	}
+	if (!ImgLoader::loadImage(bigDataFile, &nP->surface, false))
+		return false;
 
 	if (!NPOT_textures) {
 		picWidth = getNextPOT(picWidth);
@@ -935,52 +774,7 @@ bool loadParallax(unsigned short v, unsigned short fracX,
 		nP->wrapT = true;
 	}
 
-	nP->texture = new GLubyte [picHeight * picWidth * 4];
-	if (!checkNew(nP->texture)) return false;
-
-	if (fileIsPNG) {
-		unsigned char *row_pointers[nP->height];
-		for (int i = 0; i < nP->height; i++)
-		row_pointers[i] = nP->texture + 4 * i * picWidth;
-
-		png_read_image(png_ptr, (png_byte **) row_pointers);
-		png_read_end(png_ptr, NULL);
-		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-	} else {
-
-		int t1, t2, n;
-		unsigned short c;
-		GLubyte *target;
-
-		for (t2 = 0; t2 < nP->height; t2 ++) {
-			t1 = 0;
-			while (t1 < nP->width) {
-				c = (unsigned short)bigDataFile->readUint16BE();
-				if (c & 32) {
-					n = fgetc(bigDataFile) + 1;
-					c -= 32;
-				} else {
-					n = 1;
-				}
-				while (n--) {
-					target = nP->texture + 4 * picWidth * t2 + t1 * 4;
-					if (c == 63519 || c == 2015) {
-						target[0] = (GLubyte) 0;
-						target[1] = (GLubyte) 0;
-						target[2] = (GLubyte) 0;
-						target[3] = (GLubyte) 0;
-					} else {
-						target[0] = (GLubyte) redValue(c);
-						target[1] = (GLubyte) greenValue(c);
-						target[2] = (GLubyte) blueValue(c);
-						target[3] = (GLubyte) 255;
-					}
-					t1 ++;
-				}
-			}
-		}
-	}
-
+#if 0
 	glGenTextures(1, &nP->textureName);
 	glBindTexture(GL_TEXTURE_2D, nP->textureName);
 	if (nP->wrapS)
@@ -1001,175 +795,13 @@ bool loadParallax(unsigned short v, unsigned short fracX,
 	}
 
 	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nP->texture, nP->textureName);
-
-	finishAccess();
 #endif
+	finishAccess();
 	setResourceForFatal(-1);
 	return true;
 }
 
 extern int viewportOffsetX, viewportOffsetY;
-
-bool loadPng(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
-	debug(kSludgeDebugGraphics, "Loading back drop png at file position: %i", stream->pos());
-	::Image::PNGDecoder png;
-	if (!png.loadStream(*stream)) {
-		debug(kSludgeDebugGraphics, "Back drop is not a png");
-		return false;
-	}
-	const Graphics::Surface *sourceSurface = png.getSurface();
-	Graphics::Surface *pngSurface = sourceSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), png.getPalette());
-	backdropSurface.copyFrom(*pngSurface);
-	pngSurface->free();
-	delete pngSurface;
-	picWidth = realPicWidth = backdropSurface.w;
-	picHeight = realPicHeight = backdropSurface.h;
-	return true;
-#if 0
-	long file_pointer = stream->pos();
-	png_structp png_ptr;
-	png_infop info_ptr, end_info;
-
-	char tmp[10];
-	size_t bytes_read = stream->read(tmp, 8);
-
-	if (bytes_read != 8 && stream->err()) {
-		stream->seek(file_pointer, SEEK_SET);
-		return false;
-	}
-
-	if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
-		stream->seek(file_pointer, SEEK_SET);
-		return false;
-	}
-
-	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!png_ptr) {
-		return false;
-	}
-
-	info_ptr = png_create_info_struct(png_ptr);
-	if (!info_ptr) {
-		png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-		return false;
-	}
-
-	end_info = png_create_info_struct(png_ptr);
-	if (!end_info) {
-		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-		return false;
-	}
-	png_init_io(png_ptr, stream);       // Tell libpng which file to read
-	png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
-
-	png_read_info(png_ptr, info_ptr);
-
-	png_uint_32 width, height;
-	int bit_depth, color_type, interlace_type, compression_type, filter_method;
-	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-	picWidth = realPicWidth = width;
-	picHeight = realPicHeight = height;
-
-	if (bit_depth < 8) png_set_packing(png_ptr);
-	png_set_expand(png_ptr);
-	if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) png_set_gray_to_rgb(png_ptr);
-	if (bit_depth == 16) png_set_strip_16(png_ptr);
-
-	png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
-
-	png_read_update_info(png_ptr, info_ptr);
-	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-	if (reserve) {
-		if (!resizeBackdrop(realPicWidth, realPicHeight)) return false;
-	}
-
-	unsigned char *row_pointers[realPicHeight];
-
-	for (int i = 0; i < realPicHeight; i++)
-	row_pointers[i] = loadhere + 4 * i * picWidth;
-
-	png_read_image(png_ptr, (png_byte **) row_pointers);
-	png_read_end(png_ptr, NULL);
-	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-#endif
-}
-
-bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, bool reserve) {
-	debug(kSludgeDebugGraphics, "Loading back drop as a byte array at file position: %i", stream->pos());
-	ByteArrayDecoder byteDecoder;
-	if (!byteDecoder.loadStream(*stream)) {
-		debug(kSludgeDebugGraphics, "Back drop is not a byte array");
-		return false;
-	}
-	backdropSurface.copyFrom(*(byteDecoder.getSurface()));
-	picWidth = realPicWidth = backdropSurface.w;
-	picHeight = realPicHeight = backdropSurface.h;
-	return true;
-#if 0
-	int32_t transCol = reserve ? -1 : 63519;
-	int t1, t2, n;
-	unsigned short c;
-	picWidth = realPicWidth = stream->readUint16BE();
-	picHeight = realPicHeight = stream->readUint16BE();
-
-	if (reserve) {
-		if (!resizeBackdrop(realPicWidth, realPicHeight)) return false;
-	}
-
-	for (t2 = 0; t2 < realPicHeight; t2 ++) {
-		t1 = 0;
-		while (t1 < realPicWidth) {
-			c = (unsigned short)stream->readUint16BE();
-			if (c & 32) {
-				n = stream->readByte() + 1;
-				c -= 32;
-			} else {
-				n = 1;
-			}
-			while (n --) {
-				GLubyte *target = loadhere + 4 * picWidth * t2 + t1 * 4;
-				if (c == transCol || c == 2015) {
-					target[0] = (GLubyte)0;
-					target[1] = (GLubyte)0;
-					target[2] = (GLubyte)0;
-					target[3] = (GLubyte)0;
-				} else {
-					target[0] = (GLubyte)redValue(c);
-					target[1] = (GLubyte)greenValue(c);
-					target[2] = (GLubyte)blueValue(c);
-					target[3] = (GLubyte)255;
-				}
-				t1++;
-			}
-		}
-	}
-#endif
-}
-
-bool loadImage(int &picWidth, int &picHeight, int &realPicWidth, int &realPicHeight, Common::SeekableReadStream *stream, int x, int y, bool reserve) {
-	debug(kSludgeDebugGraphics, "Loading back drop image at file position: %i", stream->pos());
-	int32 start_ptr = stream->pos();
-	if (!loadPng(picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
-		stream->seek(start_ptr);
-		if (!loadByteArray(picWidth, picHeight, realPicWidth, realPicHeight, stream, reserve)) {
-			debug(kSludgeDebugGraphics, "Back drop loading failed");
-			return false;
-		}
-	}
-
-	if (x == IN_THE_CENTRE)
-		x = (sceneWidth - realPicWidth) >> 1;
-	if (y == IN_THE_CENTRE)
-		y = (sceneHeight - realPicHeight) >> 1;
-	if (x < 0 || x + realPicWidth > sceneWidth || y < 0
-			|| y + realPicHeight > sceneHeight) {
-		debug(kSludgeDebugGraphics, "Illegal back drop size");
-		return false;
-	}
-	return true;
-}
 
 #if 0
 void makeGlArray(GLuint &tmpTex, const GLubyte *texture, int picWidth, int picHeight) {
@@ -1294,12 +926,29 @@ void renderToTexture(GLuint tmpTex, int x, int y, int picWidth, int picHeight, i
 #endif
 bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	debug(kSludgeDebugGraphics, "Load HSI");
-	int picWidth, picHeight;
-	int realPicWidth, realPicHeight;
+	if (reserve) {
+		killAllBackDrop(); // kill all
+	}
 
-	if (!loadImage(picWidth, picHeight, realPicWidth, realPicHeight, stream, x,
-			y, reserve))
+	if (!ImgLoader::loadImage(stream, &backdropSurface, reserve))
 		return false;
+
+	int realPicWidth = backdropSurface.w;
+	int realPicHeight = backdropSurface.h;
+
+	if (reserve) { // resize backdrop
+		if (!resizeBackdrop(realPicWidth, realPicHeight)) return false;
+	}
+
+	if (x == IN_THE_CENTRE)
+		x = (sceneWidth - realPicWidth) >> 1;
+	if (y == IN_THE_CENTRE)
+		y = (sceneHeight - realPicHeight) >> 1;
+	if (x < 0 || x + realPicWidth > sceneWidth || y < 0
+			|| y + realPicHeight > sceneHeight) {
+		debug(kSludgeDebugGraphics, "Illegal back drop size");
+		return false;
+	}
 #if 0
 	GLuint tmpTex;
 	makeGlArray(tmpTex, backdropTexture, picWidth, picHeight);
@@ -1314,80 +963,17 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 }
 
 bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
-#if 0
-	int realPicWidth, realPicHeight;
-	int picWidth;
-	int picHeight;
+	debug(kSludgeDebugGraphics, "Load mixHSI");
+	if (!ImgLoader::loadImage(stream, &backdropSurface, false))
+		return false;
 
-	long file_pointer = stream->pos();
-
-	png_structp png_ptr;
-	png_infop info_ptr, end_info;
-
-	int fileIsPNG = true;
-
-	// Is this a PNG file?
-	char tmp[10];
-	size_t bytes_read = stream->read(tmp, 8);
-	if (bytes_read != 8 && stream->err()) {
-		debugOut("Reading error in mixHSI.\n");
-	}
-	if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
-		// No, it's old-school HSI
-		fileIsPNG = false;
-		stream->seek(file_pointer, SEEK_SET);
-
-		picWidth = realPicWidth = stream->readUint16BE();
-		picHeight = realPicHeight = stream->readUint16BE();
-	} else {
-		// Read the PNG header
-
-		png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-		if (!png_ptr) {
-			return false;
-		}
-
-		info_ptr = png_create_info_struct(png_ptr);
-		if (!info_ptr) {
-			png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-			return false;
-		}
-
-		end_info = png_create_info_struct(png_ptr);
-		if (!end_info) {
-			png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-			return false;
-		}
-		png_init_io(png_ptr, stream);       // Tell libpng which file to read
-		png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
-
-		png_read_info(png_ptr, info_ptr);
-
-		png_uint_32 width, height;
-		int bit_depth, color_type, interlace_type, compression_type, filter_method;
-		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-		picWidth = realPicWidth = width;
-		picHeight = realPicHeight = height;
-
-		if (bit_depth < 8) png_set_packing(png_ptr);
-		png_set_expand(png_ptr);
-		if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) png_set_gray_to_rgb(png_ptr);
-		if (bit_depth == 16) png_set_strip_16(png_ptr);
-
-		png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
-
-		png_read_update_info(png_ptr, info_ptr);
-		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-		//int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-
-	}
+	int realPicWidth = backdropSurface.w;
+	int realPicHeight = backdropSurface.h;
 
 	if (x == IN_THE_CENTRE) x = (sceneWidth - realPicWidth) >> 1;
 	if (y == IN_THE_CENTRE) y = (sceneHeight - realPicHeight) >> 1;
 	if (x < 0 || x + realPicWidth > sceneWidth || y < 0 || y + realPicHeight > sceneHeight) return false;
-
+#if 0
 	float btx1, tx1;
 	float btx2, tx2;
 	float bty1, ty1;
@@ -1429,66 +1015,8 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 		btx2, bty2
 	};
 
-	int t1, t2, n;
-	unsigned short c;
-	GLubyte *target;
-	int32_t transCol = 63519;
-
-	if (fileIsPNG) {
-		unsigned char *row_pointers[realPicHeight];
-		for (int i = 0; i < realPicHeight; i++)
-		row_pointers[i] = backdropTexture + 4 * i * picWidth;
-
-		png_read_image(png_ptr, (png_byte **) row_pointers);
-		png_read_end(png_ptr, NULL);
-		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-	} else {
-		for (t2 = 0; t2 < realPicHeight; t2 ++) {
-			t1 = 0;
-			while (t1 < realPicWidth) {
-				c = (unsigned short)stream->readUint16BE();
-				if (c & 32) {
-					n = stream->readByte() + 1;
-					c -= 32;
-				} else {
-					n = 1;
-				}
-				while (n --) {
-					target = backdropTexture + 4 * picWidth * t2 + t1 * 4;
-					if (c == transCol || c == 2015) {
-						target[0] = (GLubyte) 0;
-						target[1] = (GLubyte) 0;
-						target[2] = (GLubyte) 0;
-						target[3] = (GLubyte) 0;
-					} else {
-						target[0] = (GLubyte) redValue(c);
-						target[1] = (GLubyte) greenValue(c);
-						target[2] = (GLubyte) blueValue(c);
-						target[3] = (GLubyte) 255;
-					}
-					t1++;
-				}
-			}
-		}
-	}
-
 	GLuint tmpTex;
-
-	glGenTextures(1, &tmpTex);
-	glBindTexture(GL_TEXTURE_2D, tmpTex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	if (gameSettings.antiAlias < 0) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	} else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	}
-
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, backdropTexture, tmpTex);
-
-	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	makeGlArray(tmpTex, backdropTexture, picWidth, picHeight);
 
 	setPixelCoords(true);
 

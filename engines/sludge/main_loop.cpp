@@ -432,7 +432,7 @@ int main_loop(char *filename)
 
 	registerWindowForFatal();
 
-	if (!resizeBackdrop(winWidth, winHeight))
+	if (!killResizeBackdrop(winWidth, winHeight))
 		return fatal("Couldn't allocate memory for backdrop");
 
 	blankScreen(0, 0, winWidth, winHeight);
