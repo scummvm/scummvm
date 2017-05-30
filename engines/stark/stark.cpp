@@ -30,6 +30,7 @@
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/dialogplayer.h"
+#include "engines/stark/services/diary.h"
 #include "engines/stark/services/fontprovider.h"
 #include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/global.h"
@@ -65,6 +66,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_resourceProvider(nullptr),
 		_randomSource(nullptr),
 		_dialogPlayer(nullptr),
+		_diary(nullptr),
 		_userInterface(nullptr),
 		_fontProvider(nullptr),
 		_lastClickTime(0) {
@@ -82,6 +84,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 
 StarkEngine::~StarkEngine() {
 	delete _gameInterface;
+	delete _diary;
 	delete _dialogPlayer;
 	delete _randomSource;
 	delete _scene;
@@ -116,6 +119,7 @@ Common::Error StarkEngine::run() {
 	_fontProvider = new FontProvider();
 	_scene = new Scene(_gfx);
 	_dialogPlayer = new DialogPlayer();
+	_diary = new Diary();
 	_gameInterface = new GameInterface();
 	_userInterface = new UserInterface(_gfx);
 
@@ -123,6 +127,7 @@ Common::Error StarkEngine::run() {
 	StarkServices &services = StarkServices::instance();
 	services.archiveLoader = _archiveLoader;
 	services.dialogPlayer = _dialogPlayer;
+	services.diary = _diary;
 	services.gfx = _gfx;
 	services.global = _global;
 	services.resourceProvider = _resourceProvider;
@@ -304,6 +309,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 
 	// Clear the previous world resources
 	_resourceProvider->shutdown();
+	_diary->clear();
 
 	StateReadStream *stream = new StateReadStream(save);
 
@@ -322,7 +328,8 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	// Read the resource trees state
 	_stateProvider->readStateFromStream(stream);
 
-	//TODO: Read the rest of the state
+	// Read the diary state
+	_diary->readStateFromStream(stream);
 
 	delete stream;
 
@@ -372,8 +379,10 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	// 2. Write the resource trees state
 	_stateProvider->writeStateToStream(save);
 
-	//TODO: Write the rest of the state
-	//TODO: Write a screenshot
+	// 3. Write the diary state
+	_diary->writeStateToStream(save);
+
+	//TODO: Write a screenshot and ResidualVM specific metadata
 
 	delete save;
 

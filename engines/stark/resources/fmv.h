@@ -45,9 +45,12 @@ public:
 	FMV(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~FMV();
 
+	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 
-	Common::String getFilename() const { return _filename; }
+	/** Request the user interface to start playing the movie */
+	void requestPlayback();
+
 protected:
 	void printData() override;
 

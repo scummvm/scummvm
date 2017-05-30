@@ -24,6 +24,10 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/diary.h"
+#include "engines/stark/services/userinterface.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -41,6 +45,14 @@ void FMV::readData(Formats::XRCReadStream *stream) {
 	_filename = stream->readString();
 	_diaryAddEntryOnPlay = stream->readBool();
 	_gameDisc = stream->readUint32LE();
+}
+
+void FMV::requestPlayback() {
+	if (_diaryAddEntryOnPlay) {
+		StarkDiary->addFMVEntry(_filename, getName(), _gameDisc);
+	}
+
+	StarkUserInterface->requestFMVPlayback(_filename);
 }
 
 void FMV::printData() {

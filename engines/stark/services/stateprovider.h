@@ -56,6 +56,7 @@ public:
 	void syncAsFloat(float &value);
 	void syncAsVector3d(Math::Vector3d &value);
 	void syncAsResourceReference(ResourceReference &reference);
+	void syncAsString32(Common::String &string);
 
 	template<typename T>
 	void syncAsResourceReference(T **object);

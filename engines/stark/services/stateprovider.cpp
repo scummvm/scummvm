@@ -256,4 +256,22 @@ void ResourceSerializer::syncAsResourceReference(ResourceReference &reference) {
 	}
 }
 
+void ResourceSerializer::syncAsString32(Common::String &string) {
+	if (isLoading()) {
+		string.clear();
+
+		uint32 length = _loadStream->readUint32LE();
+		for (uint i = 0; i < length; i++) {
+			char c = _loadStream->readByte();
+			string += c;
+		}
+
+		_bytesSynced += 4 + length;
+	} else {
+		_saveStream->writeUint32LE(string.size());
+		_saveStream->writeString(string);
+		_bytesSynced += 4 + string.size();
+	}
+}
+
 } // End of namespace Stark

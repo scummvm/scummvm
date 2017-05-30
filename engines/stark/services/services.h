@@ -38,6 +38,7 @@ class Driver;
 
 class ArchiveLoader;
 class DialogPlayer;
+class Diary;
 class FontProvider;
 class GameInterface;
 class Global;
@@ -54,6 +55,7 @@ public:
 	StarkServices() {
 		archiveLoader = nullptr;
 		dialogPlayer = nullptr;
+		diary = nullptr;
 		gfx = nullptr;
 		global = nullptr;
 		resourceProvider = nullptr;
@@ -67,6 +69,7 @@ public:
 
 	ArchiveLoader *archiveLoader;
 	DialogPlayer *dialogPlayer;
+	Diary *diary;
 	Gfx::Driver *gfx;
 	Global *global;
 	ResourceProvider *resourceProvider;
@@ -79,8 +82,9 @@ public:
 };
 
 /** Shortcuts for accessing the services. */
-#define StarkArchiveLoader		StarkServices::instance().archiveLoader
-#define StarkDialogPlayer		StarkServices::instance().dialogPlayer
+#define StarkArchiveLoader      StarkServices::instance().archiveLoader
+#define StarkDialogPlayer       StarkServices::instance().dialogPlayer
+#define StarkDiary              StarkServices::instance().diary
 #define StarkGfx                StarkServices::instance().gfx
 #define StarkGlobal             StarkServices::instance().global
 #define StarkResourceProvider   StarkServices::instance().resourceProvider

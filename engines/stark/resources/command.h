@@ -124,11 +124,11 @@ public:
 		kLayerGoTo = 120,
 		kLayerEnable = 121,
 		kLocationScrollSet = 122,
-		kPlayFullMotionVideo = 123,
+		kFullMotionVideoPlay = 123,
 
 		kAnimSetFrame = 125,
 		kKnowledgeAssignNegatedBool = 126,
-		kEnableDiaryEntry = 127,
+		kDiaryEnableEntry = 127,
 		kPATChangeTooltip = 128,
 		kSoundChange = 129,
 		kLightSetColor = 130,
@@ -253,9 +253,9 @@ protected:
 	Command *opLayerGoTo(const ResourceReference &layerRef);
 	Command *opLayerEnable(const ResourceReference &layerRef, int32 enable);
 	Command *opLocationScrollSet(const ResourceReference &scrollRef);
-	Command *opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown);
+	Command *opFullMotionVideoPlay(Script *script, const ResourceReference &movieRef, int32 unknown);
 	Command *opAnimSetFrame(const ResourceReference &animRef, const ResourceReference &knowledgeRef);
-	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);
+	Command *opDiaryEnableEntry(const ResourceReference &knowledgeRef);
 	Command *opPATChangeTooltip(const ResourceReference &patRef, const ResourceReference &stringRef);
 	Command *opSoundChange(Script *script, const ResourceReference &soundRef, int32 volume, int32 pan, int32 duration, bool pause);
 	Command *opLightSetColor(const ResourceReference &lightRef, int32 red, int32 green, int32 blue);

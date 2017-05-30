@@ -1,0 +1,81 @@
+/* ResidualVM - A 3D game interpreter
+ *
+ * ResidualVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the AUTHORS
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef STARK_SERVICES_DIARY_H
+#define STARK_SERVICES_DIARY_H
+
+#include "common/str.h"
+#include "common/str-array.h"
+
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
+namespace Stark {
+
+class ResourceSerializer;
+
+/**
+ * Diary state storage
+ *
+ * Stores references to all the unlocked data available from the diary menu
+ */
+class Diary {
+public:
+	Diary();
+	virtual ~Diary();
+
+	/** Add an entry to the list of available diary pages */
+	void addDiaryEntry(const Common::String &name);
+
+	void addFMVEntry(const Common::String &filename, const Common::String &title, int gameDisc);
+
+	/** Reset all the game state data */
+	void clear();
+
+	/** Replace the current state by that read from the stream */
+	void readStateFromStream(Common::SeekableReadStream *stream);
+
+	/** Write the state to a stream */
+	void writeStateToStream(Common::WriteStream *stream);
+
+private:
+	struct FMVEntry {
+		Common::String filename;
+		Common::String title;
+		int gameDisc;
+	};
+
+	bool hasFMVEntry(const Common::String &filename) const;
+	void saveLoad(ResourceSerializer *serializer);
+
+	Common::Array<Common::String> _diaryEntries;
+	Common::Array<FMVEntry> _fmvEntries;
+
+	bool _hasUnreadEntries;
+	uint32 _pageIndex;
+};
+
+} // End of namespace Stark
+
+#endif // STARK_SERVICES_DIARY_H

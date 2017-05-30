@@ -44,6 +44,7 @@ enum StarkGameFeatures {
 class ArchiveLoader;
 class Console;
 class DialogPlayer;
+class Diary;
 class FontProvider;
 class Global;
 class GameInterface;
@@ -86,6 +87,7 @@ private:
 	// Services
 	ArchiveLoader *_archiveLoader;
 	DialogPlayer *_dialogPlayer;
+	Diary *_diary;
 	Global *_global;
 	GameInterface *_gameInterface;
 	StateProvider *_stateProvider;

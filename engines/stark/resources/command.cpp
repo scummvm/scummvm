@@ -57,6 +57,7 @@
 
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/dialogplayer.h"
+#include "engines/stark/services/diary.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/userinterface.h"
@@ -178,12 +179,12 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opLayerEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kLocationScrollSet:
 		return opLocationScrollSet(_arguments[1].referenceValue);
-	case kPlayFullMotionVideo:
-		return opPlayFullMotionVideo(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kFullMotionVideoPlay:
+		return opFullMotionVideoPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kAnimSetFrame:
 		return opAnimSetFrame(_arguments[1].referenceValue, _arguments[2].referenceValue);
-	case kEnableDiaryEntry:
-		return opEnableDiaryEntry(_arguments[1].referenceValue);
+	case kDiaryEnableEntry:
+		return opDiaryEnableEntry(_arguments[1].referenceValue);
 	case kPATChangeTooltip:
 		return opPATChangeTooltip(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kSoundChange:
@@ -943,9 +944,9 @@ Command *Command::opLocationScrollSet(const ResourceReference &scrollRef) {
 	return nextCommand();
 }
 
-Command *Command::opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown) {
+Command *Command::opFullMotionVideoPlay(Script *script, const ResourceReference &movieRef, int32 unknown) {
 	FMV *movie =  movieRef.resolve<FMV>();
-	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
+	warning("(TODO: Implement) opFullMotionVideoPlay(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
 
 	// Stop skipping frames
 	StarkGlobal->setNormalSpeed();
@@ -955,7 +956,7 @@ Command *Command::opPlayFullMotionVideo(Script *script, const ResourceReference 
 	Location *location = current->getLocation();
 	location->resetAnimationBlending();
 
-	StarkUserInterface->requestFMVPlayback(movie->getFilename());
+	movie->requestPlayback();
 
 	// Unconditional suspension
 	script->suspend(movie);
@@ -972,10 +973,14 @@ Command *Command::opAnimSetFrame(const ResourceReference &animRef, const Resourc
 	return nextCommand();
 }
 
-Command *Command::opEnableDiaryEntry(const ResourceReference &knowledgeRef) {
-	assert(_arguments.size() == 2);
+Command *Command::opDiaryEnableEntry(const ResourceReference &knowledgeRef) {
 	Knowledge *entry = knowledgeRef.resolve<Knowledge>();
-	warning("(TODO: Implement) opEnableDiaryEntry(%s) : %s", entry->getName().c_str(), knowledgeRef.describe().c_str());
+
+	if (!entry->getBooleanValue()) {
+		entry->setBooleanValue(true);
+
+		StarkDiary->addDiaryEntry(entry->getName());
+	}
 
 	return nextCommand();
 }
