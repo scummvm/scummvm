@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/surface_area.h"
+#include "graphics/primitives.h"
 
 namespace Titanic {
 
@@ -31,6 +32,7 @@ CSurfaceArea::CSurfaceArea(CVideoSurface *surface) {
 	_field0 = 0;
 	_colorMask = _color = 0;
 	_mode = SA_NONE;
+	_surface = nullptr;
 
 	// Original supported other pixel depths
 	_bpp = surface->getPixelDepth();
@@ -170,62 +172,38 @@ double CSurfaceArea::drawLine(const FRect &rect) {
 	}
 
 	Common::Rect rr((int)(MIN(r.left, r.right) - 0.5), (int)(MIN(r.top, r.bottom) - 0.5),
-		(int)(MAX(r.left, r.right) - 0.5) + 1, (int)(MAX(r.top, r.bottom) - 0.5) + 1);
+		(int)(MAX(r.left, r.right) - 0.5), (int)(MAX(r.top, r.bottom) - 0.5));
 	
 	Graphics::Surface s;
 	s.setPixels(_pixelsPtr);
 	s.pitch = _pitch;
 	s.w = _width;
 	s.h = _height;
+	_surface = &s;
 
 	switch (_bpp) {
 	case 0:
 		s.format = Graphics::PixelFormat::createFormatCLUT8();
-		break;
+		if (_mode != SA_NONE)
+			Graphics::drawLine(rr.left, rr.top, rr.right, rr.bottom, 0, plotPoint<byte>, this);
+		return r.top;
 	case 1:
 	case 2:
 		s.format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-		break;
+		if (_mode != SA_NONE)
+			Graphics::drawLine(rr.left, rr.top, rr.right, rr.bottom, 0, plotPoint<uint16>, this);
+		return r.top;
 	case 4:
 		s.format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		break;
+		if (_mode != SA_NONE)
+			Graphics::drawLine(rr.left, rr.top, rr.right, rr.bottom, 0, plotPoint<uint32>, this);
+		return r.top;
 	default:
 		error("Unknown bpp");
 	}
 
-	// Fill area
-	if (_mode == SA_NONE) {
-		s.drawLine(rr.left, rr.top, rr.right, rr.bottom, _rgb);
-	} else {
-		drawLine(s, rr, _colorMask, _color);
-	}
-
+	s.drawLine(rr.left, rr.top, rr.right, rr.bottom, _color);
 	return r.top;
-}
-
-template<typename T>
-static void drawLineFn(Graphics::Surface &s, const Common::Rect &r,
-		uint andMask, uint xorMask) {
-	for (int yp = r.top; yp < r.bottom; ++yp) {
-		T *pixelP = (T *)s.getBasePtr(r.left, yp);
-		for (int xp = r.left; xp < r.right; ++xp, ++pixelP)
-			*pixelP = (*pixelP & andMask) ^ xorMask;
-	}
-}
-
-void CSurfaceArea::drawLine(Graphics::Surface &s, const Common::Rect &r,
-		uint andMask, uint xorMask) {
-	switch (s.format.bytesPerPixel) {
-	case 1:
-		drawLineFn<byte>(s, r, andMask, xorMask);
-		break;
-	case 2:
-		drawLineFn<uint16>(s, r, andMask, xorMask);
-		break;
-	default:
-		drawLineFn<uint32>(s, r, andMask, xorMask);
-		break;
-	}
 }
 
 } // End of namespace Titanic

@@ -35,6 +35,14 @@ enum SurfaceAreaMode {
 };
 
 class CSurfaceArea {
+	template<typename T>
+	static void plotPoint(int x, int y, int color, void *data) {
+		CSurfaceArea *sa = (CSurfaceArea *)data;
+		if (x >= 0 && x < sa->_width && y >= 0 && y < sa->_height) {
+			T *ptr = (T *)sa->_surface->getBasePtr(x, y);
+			*ptr = (*ptr & sa->_colorMask) ^ sa->_color;
+		}
+	}
 private:
 	/**
 	 * Initialize data for the class
@@ -47,11 +55,6 @@ private:
 	void setColor(uint rgb);
 
 	void pixelToRGB(uint pixel, uint *rgb);
-
-	/**
-	 * Alters the pixels of a specified line using a passed and and xor mask
-	 */
-	static void drawLine(Graphics::Surface &s, const Common::Rect &r, uint andMask, uint xorMask);
 public:
 	int _field0;
 	int _width;
@@ -71,6 +74,7 @@ public:
 	uint _color;
 	SurfaceAreaMode _mode;
 	Rect _bounds;
+	Graphics::Surface *_surface;
 public:
 	CSurfaceArea(CVideoSurface *surface);
 
