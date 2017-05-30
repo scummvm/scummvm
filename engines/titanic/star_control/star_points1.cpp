@@ -95,7 +95,7 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarCamera *camera) {
 			r.right = vector4._x + vWidth2;
 			r.top = vector2._y + vHeight2;
 			r.left = vector2._x + vWidth2;
-			surface->fillRect(r);
+			surface->drawLine(r);
 		}
 
 		vector1 = vector3;

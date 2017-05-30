@@ -49,9 +49,9 @@ private:
 	void pixelToRGB(uint pixel, uint *rgb);
 
 	/**
-	 * Alters the pixels of a specified rectangle using a passed and and xor mask
+	 * Alters the pixels of a specified line using a passed and and xor mask
 	 */
-	static void colorRect(Graphics::Surface &s, const Common::Rect &r, uint andMask, uint xorMask);
+	static void drawLine(Graphics::Surface &s, const Common::Rect &r, uint andMask, uint xorMask);
 public:
 	int _field0;
 	int _width;
@@ -85,9 +85,16 @@ public:
 	void setColorFromPixel();
 
 	/**
-	 * Fills a rectangular area
+	 * Draws a line on the surface
 	 */
-	double fillRect(const FRect &rect);
+	double drawLine(const FRect &rect);
+
+	/**
+	 * Draws a line on the surface
+	 */
+	double drawLine(const Common::Point &pt1, const Common::Point &pt2) {
+		return drawLine(FRect(pt1.x, pt1.y, pt2.x, pt2.y));
+	}
 };
 
 } // End of namespace Titanic

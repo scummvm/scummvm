@@ -309,7 +309,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 					GridEntry &grid2 = _grid[d1._index2];
 
 					if (grid1._z > val1 && grid2._z > val1) {
-						surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
+						surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
 							grid2._position._x, grid2._position._y));
 					}
 				}
@@ -331,7 +331,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 					GridEntry &grid2 = _grid[d1._index2];
 
 					if (grid1._z > val1 && grid2._z > val1) {
-						surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
+						surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
 							grid2._position._x, grid2._position._y));
 					}
 				}
@@ -353,7 +353,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 					GridEntry &grid2 = _grid[d1._index2];
 
 					if (grid1._z > val1 && grid2._z > val1) {
-						surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
+						surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
 							grid2._position._x, grid2._position._y));
 					}
 				}
@@ -413,7 +413,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			GridEntry &grid2 = _grid[d1._index2];
 
 			if (grid2._z > val1 && grid1._z > val1) {
-				surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
+				surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
 					grid2._position._x, grid2._position._y));
 			}
 		}
@@ -435,7 +435,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			GridEntry &grid2 = _grid[d1._index2];
 
 			if (grid2._z > val1 && grid1._z > val1) {
-				surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
+				surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
 					grid2._position._x, grid2._position._y));
 			}
 		}
@@ -457,7 +457,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			GridEntry &grid2 = _grid[d1._index2];
 
 			if (grid2._z > val1 && grid1._z > val1) {
-				surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
+				surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
 					grid2._position._x, grid2._position._y));
 			}
 		}

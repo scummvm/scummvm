@@ -167,10 +167,10 @@ void CPhotoCrosshairs::draw(CSurfaceArea *surfaceArea) {
 			const CStarPosition &src = _entries[idx];
 			double xp = src.x, yp = src.y;
 
-			surfaceArea->fillRect(FRect(xp - 8.0, yp, xp - 4.0, yp));
-			surfaceArea->fillRect(FRect(xp + 4.0, yp, xp + 8.0, yp));
-			surfaceArea->fillRect(FRect(xp, yp - 8.0, xp, yp - 4.0));
-			surfaceArea->fillRect(FRect(xp, yp + 4.0, xp, yp + 8.0));
+			surfaceArea->drawLine(FRect(xp - 8.0, yp, xp - 4.0, yp));
+			surfaceArea->drawLine(FRect(xp + 4.0, yp, xp + 8.0, yp));
+			surfaceArea->drawLine(FRect(xp, yp - 8.0, xp, yp - 4.0));
+			surfaceArea->drawLine(FRect(xp, yp + 4.0, xp, yp + 8.0));
 		}
 
 		surfaceArea->_pixel = savedPixel;
@@ -236,10 +236,10 @@ void CPhotoCrosshairs::drawAt(const FPoint &pt, CSurfaceArea *surfaceArea) {
 	SurfaceAreaMode savedMode = surfaceArea->setMode(SA_XOR);
 
 
-	surfaceArea->fillRect(FRect(pt._x - 8.0, pt._y, pt._x - 4.0, pt._y));
-	surfaceArea->fillRect(FRect(pt._x + 4.0, pt._y, pt._x + 8.0, pt._y));
-	surfaceArea->fillRect(FRect(pt._x, pt._y - 8.0, pt._x, pt._y - 4.0));
-	surfaceArea->fillRect(FRect(pt._x, pt._y + 4.0, pt._x, pt._y + 8.0));
+	surfaceArea->drawLine(FRect(pt._x - 8.0, pt._y, pt._x - 4.0, pt._y));
+	surfaceArea->drawLine(FRect(pt._x + 4.0, pt._y, pt._x + 8.0, pt._y));
+	surfaceArea->drawLine(FRect(pt._x, pt._y - 8.0, pt._x, pt._y - 4.0));
+	surfaceArea->drawLine(FRect(pt._x, pt._y + 4.0, pt._x, pt._y + 8.0));
 
 	surfaceArea->_pixel = savedPixel;
 	surfaceArea->setColorFromPixel();

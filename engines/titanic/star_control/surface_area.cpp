@@ -109,7 +109,7 @@ void CSurfaceArea::pixelToRGB(uint pixel, uint *rgb) {
 	}
 }
 
-double CSurfaceArea::fillRect(const FRect &rect) {
+double CSurfaceArea::drawLine(const FRect &rect) {
 	if (rect.empty())
 		return rect.top;
 
@@ -195,16 +195,16 @@ double CSurfaceArea::fillRect(const FRect &rect) {
 
 	// Fill area
 	if (_mode == SA_NONE) {
-		s.fillRect(rr, _rgb);
+		s.drawLine(rr.left, rr.top, rr.right, rr.bottom, _rgb);
 	} else {
-		colorRect(s, rr, _colorMask, _color);
+		drawLine(s, rr, _colorMask, _color);
 	}
 
 	return r.top;
 }
 
 template<typename T>
-static void colorRectFn(Graphics::Surface &s, const Common::Rect &r,
+static void drawLineFn(Graphics::Surface &s, const Common::Rect &r,
 		uint andMask, uint xorMask) {
 	for (int yp = r.top; yp < r.bottom; ++yp) {
 		T *pixelP = (T *)s.getBasePtr(r.left, yp);
@@ -213,17 +213,17 @@ static void colorRectFn(Graphics::Surface &s, const Common::Rect &r,
 	}
 }
 
-void CSurfaceArea::colorRect(Graphics::Surface &s, const Common::Rect &r,
+void CSurfaceArea::drawLine(Graphics::Surface &s, const Common::Rect &r,
 		uint andMask, uint xorMask) {
 	switch (s.format.bytesPerPixel) {
 	case 1:
-		colorRectFn<byte>(s, r, andMask, xorMask);
+		drawLineFn<byte>(s, r, andMask, xorMask);
 		break;
 	case 2:
-		colorRectFn<uint16>(s, r, andMask, xorMask);
+		drawLineFn<uint16>(s, r, andMask, xorMask);
 		break;
 	default:
-		colorRectFn<uint32>(s, r, andMask, xorMask);
+		drawLineFn<uint32>(s, r, andMask, xorMask);
 		break;
 	}
 }
