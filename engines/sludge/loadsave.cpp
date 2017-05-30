@@ -105,7 +105,7 @@ void saveStack(variableStack *vs, Common::WriteStream *stream) {
 
 	stackDebug((stackfp, "  stack contains %d elements\n", elements));
 
-	put2bytes(elements, stream);
+	stream->writeUint16BE(elements);
 	search = vs;
 	for (a = 0; a < elements; ++a) {
 		saveVariable(&search->thisVar, stream);
@@ -115,7 +115,7 @@ void saveStack(variableStack *vs, Common::WriteStream *stream) {
 
 variableStack *loadStack(Common::SeekableReadStream *stream,
 		variableStack **last) {
-	int elements = get2bytes(stream);
+	int elements = stream->readUint16BE();
 	int a;
 	variableStack *first = NULL;
 	variableStack * * changeMe = &first;
@@ -142,14 +142,14 @@ bool saveStackRef(stackHandler *vs, Common::WriteStream *stream) {
 	int a = 0;
 	while (s) {
 		if (s->stack == vs) {
-			putch(1, stream);
-			put2bytes(stackLibTotal - a, stream);
+			stream->writeByte(1);
+			stream->writeUint16BE(stackLibTotal - a);
 			return true;
 		}
 		s = s->next;
 		++a;
 	}
-	putch(0, stream);
+	stream->writeByte(0);
 	saveStack(vs->first, stream);
 	s = new stackLibrary;
 	stackLibTotal++;
@@ -183,10 +183,10 @@ stackHandler *getStackFromLibrary(int n) {
 stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 	stackHandler *nsh;
 
-	if (getch(stream)) {    // It's one we've loaded already...
+	if (stream->readByte()) {    // It's one we've loaded already...
 		stackDebug((stackfp, "loadStackRef (duplicate, get from library)\n"));
 
-		nsh = getStackFromLibrary(get2bytes(stream));
+		nsh = getStackFromLibrary(stream->readUint16BE());
 		nsh->timesUsed++;
 	} else {
 		stackDebug((stackfp, "loadStackRef (new one)\n"));
@@ -231,14 +231,14 @@ bool saveVariable(variable *from, Common::WriteStream *stream) {
 	}
 #endif
 
-	putch(from->varType, stream);
+	stream->writeByte(from->varType);
 	switch (from->varType) {
 	case SVT_INT:
 	case SVT_FUNC:
 	case SVT_BUILT:
 	case SVT_FILE:
 	case SVT_OBJTYPE:
-		put4bytes(from->varData.intValue, stream);
+		stream->writeUint32LE(from->varData.intValue);
 		return true;
 
 	case SVT_STRING:
@@ -268,14 +268,14 @@ bool saveVariable(variable *from, Common::WriteStream *stream) {
 }
 
 bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
-	to->varType = (variableType) getch(stream);
+	to->varType = (variableType)stream->readByte();
 	switch (to->varType) {
 	case SVT_INT:
 	case SVT_FUNC:
 	case SVT_BUILT:
 	case SVT_FILE:
 	case SVT_OBJTYPE:
-		to->varData.intValue = get4bytes(stream);
+		to->varData.intValue = stream->readUint32LE();
 		return true;
 
 	case SVT_STRING:
@@ -318,18 +318,18 @@ bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
 //----------------------------------------------------------------------
 void saveFunction(loadedFunction *fun, Common::WriteStream *stream) {
 	int a;
-	put2bytes(fun->originalNumber, stream);
+	stream->writeUint16BE(fun->originalNumber);
 	if (fun->calledBy) {
-		putch(1, stream);
+		stream->writeByte(1);
 		saveFunction(fun->calledBy, stream);
 	} else {
-		putch(0, stream);
+		stream->writeByte(0);
 	}
-	put4bytes(fun->timeLeft, stream);
-	put2bytes(fun->runThisLine, stream);
-	putch(fun->cancelMe, stream);
-	putch(fun->returnSomething, stream);
-	putch(fun->isSpeech, stream);
+	stream->writeUint32LE(fun->timeLeft);
+	stream->writeUint16BE(fun->runThisLine);
+	stream->writeByte(fun->cancelMe);
+	stream->writeByte(fun->returnSomething);
+	stream->writeByte(fun->isSpeech);
 	saveVariable(&(fun->reg), stream);
 
 	if (fun->freezerLevel) {
@@ -352,20 +352,20 @@ loadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 
 	// See what it was called by and load if we need to...
 
-	buildFunc->originalNumber = get2bytes(stream);
+	buildFunc->originalNumber = stream->readUint16BE();
 	buildFunc->calledBy = NULL;
-	if (getch(stream)) {
+	if (stream->readByte()) {
 		buildFunc->calledBy = loadFunction(stream);
 		if (!buildFunc->calledBy)
 			return NULL;
 	}
 
-	buildFunc->timeLeft = get4bytes(stream);
-	buildFunc->runThisLine = get2bytes(stream);
+	buildFunc->timeLeft = stream->readUint32LE();
+	buildFunc->runThisLine = stream->readUint16BE();
 	buildFunc->freezerLevel = 0;
-	buildFunc->cancelMe = getch(stream);
-	buildFunc->returnSomething = getch(stream);
-	buildFunc->isSpeech = getch(stream);
+	buildFunc->cancelMe = stream->readByte();
+	buildFunc->returnSomething = stream->readByte();
+	buildFunc->isSpeech = stream->readByte();
 	loadVariable(&(buildFunc->reg), stream);
 	loadFunctionCode(buildFunc);
 
@@ -407,15 +407,15 @@ bool saveGame(char *fname) {
 	fputc(fontTableSize > 0, fp);
 
 	if (fontTableSize > 0) {
-		put2bytes(loadedFontNum, fp);
-		put2bytes(fontHeight, fp);
+		fp->writeUint16BE(loadedFontNum);
+		fp->writeUint16BE(fontHeight);
 		writeString(fontOrderString, fp);
 	}
 	putSigned(fontSpace, fp);
 
 	// Save backdrop
-	put2bytes(cameraX, fp);
-	put2bytes(cameraY, fp);
+	fp->writeUint16BE(cameraX);
+	fp->writeUint16BE(cameraY);
 	putFloat(cameraZoom, fp);
 
 	fputc(brightnessLevel, fp);
@@ -428,7 +428,7 @@ bool saveGame(char *fname) {
 	saveRegions(fp);
 
 	saveAnim(mouseCursorAnim, fp);
-	put2bytes(mouseCursorFrameNum, fp);
+	fp->writeUint16BE(mouseCursorFrameNum);
 
 	// Save functions
 	loadedFunction *thisFunction = allRunningFunctions;
@@ -437,7 +437,7 @@ bool saveGame(char *fname) {
 		countFunctions ++;
 		thisFunction = thisFunction->next;
 	}
-	put2bytes(countFunctions, fp);
+	fp->writeUint16BE(countFunctions);
 
 	thisFunction = allRunningFunctions;
 	while (thisFunction) {
@@ -453,17 +453,17 @@ bool saveGame(char *fname) {
 
 	if (currentFloor->numPolygons) {
 		fputc(1, fp);
-		put2bytes(currentFloor->originalNum, fp);
+		fp->writeUint16BE(currentFloor->originalNum);
 	} else fputc(0, fp);
 
 	if (zBuffer.tex) {
 		fputc(1, fp);
-		put2bytes(zBuffer.originalNum, fp);
+		fp->writeUint16BE(zBuffer.originalNum);
 	} else fputc(0, fp);
 
 	if (lightMap.data) {
 		fputc(1, fp);
-		put2bytes(lightMapNumber, fp);
+		fp->writeUint16BE(lightMapNumber);
 	} else fputc(0, fp);
 
 	fputc(lightMapMode, fp);
@@ -473,11 +473,11 @@ bool saveGame(char *fname) {
 	saveStatusBars(fp);
 	saveSounds(fp);
 
-	put2bytes(saveEncoding, fp);
+	fp->writeUint16BE(saveEncoding);
 
 	blur_saveSettings(fp);
 
-	put2bytes(currentBlankColour, fp);
+	fp->writeUint16BE(currentBlankColour);
 	fputc(currentBurnR, fp);
 	fputc(currentBurnG, fp);
 	fputc(currentBurnB, fp);
@@ -538,8 +538,8 @@ bool loadGame(char *fname) {
 	int fontNum;
 	char *charOrder;
 	if (fontLoaded) {
-		fontNum = get2bytes(fp);
-		fontHeight = get2bytes(fp);
+		fontNum = fp->readUint16BE();
+		fontHeight = fp->readUint16BE();
 
 		if (ssgVersion < VERSION(2, 2)) {
 			int x;
@@ -563,8 +563,8 @@ bool loadGame(char *fname) {
 	killAllPeople();
 	killAllRegions();
 
-	int camerX = get2bytes(fp);
-	int camerY = get2bytes(fp);
+	int camerX = fp->readUint16BE();
+	int camerY = fp->readUint16BE();
 	float camerZ;
 	if (ssgVersion >= VERSION(2, 0)) {
 		camerZ = getFloat(fp);
@@ -581,12 +581,12 @@ bool loadGame(char *fname) {
 	mouseCursorAnim = new personaAnimation;
 	if (! checkNew(mouseCursorAnim)) return false;
 	if (! loadAnim(mouseCursorAnim, fp)) return false;
-	mouseCursorFrameNum = get2bytes(fp);
+	mouseCursorFrameNum = fp->readUint16BE();
 
 	loadedFunction *rFunc;
 	loadedFunction * * buildList = &allRunningFunctions;
 
-	int countFunctions = get2bytes(fp);
+	int countFunctions = fp->readUint16BE();
 	while (countFunctions --) {
 		rFunc = loadFunction(fp);
 		rFunc->next = NULL;
@@ -602,15 +602,15 @@ bool loadGame(char *fname) {
 	loadPeople(fp);
 
 	if (fgetc(fp)) {
-		if (! setFloor(get2bytes(fp))) return false;
+		if (! setFloor(fp->readUint16BE())) return false;
 	} else setFloorNull();
 
 	if (fgetc(fp)) {
-		if (! setZBuffer(get2bytes(fp))) return false;
+		if (! setZBuffer(fp->readUint16BE())) return false;
 	}
 
 	if (fgetc(fp)) {
-		if (! loadLightMap(get2bytes(fp))) return false;
+		if (! loadLightMap(fp->readUint16BE())) return false;
 	}
 
 	if (ssgVersion >= VERSION(1, 4)) {
@@ -623,7 +623,7 @@ bool loadGame(char *fname) {
 	loadStatusBars(fp);
 	loadSounds(fp);
 
-	saveEncoding = get2bytes(fp);
+	saveEncoding = fp->readUint16BE();
 
 	if (ssgVersion >= VERSION(1, 6)) {
 		if (ssgVersion < VERSION(2, 0)) {
@@ -637,16 +637,16 @@ bool loadGame(char *fname) {
 	}
 
 	if (ssgVersion >= VERSION(1, 3)) {
-		currentBlankColour = get2bytes(fp);
+		currentBlankColour = fp->readUint16BE();
 		currentBurnR = fgetc(fp);
 		currentBurnG = fgetc(fp);
 		currentBurnB = fgetc(fp);
 
 		// Read parallax layers
 		while (fgetc(fp)) {
-			int im = get2bytes(fp);
-			int fx = get2bytes(fp);
-			int fy = get2bytes(fp);
+			int im = fp->readUint16BE();
+			int fx = fp->readUint16BE();
+			int fy = fp->readUint16BE();
 
 			if (! loadParallax(im, fx, fy)) return false;
 		}

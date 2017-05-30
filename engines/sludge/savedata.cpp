@@ -64,20 +64,20 @@ extern char *gamePath;
 void writeStringEncoded(const char *s, Common::WriteStream *stream) {
 	int a, len = strlen(s);
 
-	put2bytes(len, stream);
+	stream->writeUint16BE(len);
 	for (a = 0; a < len; a++) {
-		putch(s[a] ^ encode1, stream);
+		stream->writeByte(s[a] ^ encode1);
 		encode1 += encode2;
 	}
 }
 
 char *readStringEncoded(Common::File *fp) {
-	int a, len = get2bytes(fp);
+	int a, len = fp->readUint16BE();
 	char *s = new char[len + 1];
 	if (!checkNew(s))
 		return NULL;
 	for (a = 0; a < len; a++) {
-		s[a] = (char) (getch(fp) ^ encode1);
+		s[a] = (char) (fp->readByte() ^ encode1);
 		encode1 += encode2;
 	}
 	s[len] = 0;
@@ -95,7 +95,7 @@ char *readTextPlain(Common::File *fp) {
 	startPos = fp->pos();
 
 	while (keepGoing) {
-		gotChar = (char) getch(fp);
+		gotChar = (char) fp->readByte();
 		if ((gotChar == '\n') || (fp->eos())) {
 			keepGoing = false;
 		} else {
@@ -114,7 +114,7 @@ char *readTextPlain(Common::File *fp) {
 		if (bytes_read != stringSize && fp->err()) {
 			debugOut("Reading error in readTextPlain.\n");
 		}
-		getch(fp);  // Skip the newline character
+		fp->readByte();  // Skip the newline character
 		reply[stringSize] = 0;
 	}
 
@@ -157,7 +157,7 @@ bool fileToStack(char *filename, stackHandler *sH) {
 	encode2 = (unsigned char) (saveEncoding >> 8);
 
 	while (*checker) {
-		if (getch(&fd) != *checker) {
+		if (fd.readByte() != *checker) {
 			fd.close();
 			return fatal(LOAD_ERROR "This isn't a SLUDGE custom data file:",
 					filename);
@@ -179,7 +179,7 @@ bool fileToStack(char *filename, stackHandler *sH) {
 
 	for (;;) {
 		if (saveEncoding) {
-			char i = getch(&fd) ^ encode1;
+			char i = fd.readByte() ^ encode1;
 
 			if (fd.eos())
 				break;
@@ -192,11 +192,11 @@ bool fileToStack(char *filename, stackHandler *sH) {
 				break;
 
 			case 1:
-				setVariable(stringVar, SVT_INT, get4bytes(&fd));
+				setVariable(stringVar, SVT_INT, fd.readUint32LE());
 				break;
 
 			case 2:
-				setVariable(stringVar, SVT_INT, getch(&fd));
+				setVariable(stringVar, SVT_INT, fd.readByte());
 				break;
 
 			default:
@@ -260,7 +260,7 @@ bool stackToFile(char *filename, const variable &from) {
 					fputc(hereWeAre -> thisVar.varData.intValue, fp);
 				} else {
 					fputc(1 ^ encode1, fp);
-					put4bytes(hereWeAre -> thisVar.varData.intValue, fp);
+					fp->writeUint32LE(hereWeAre -> thisVar.varData.intValue);
 				}
 				break;
 

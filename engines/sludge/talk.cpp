@@ -219,32 +219,32 @@ void saveSpeech(speechStruct *sS, Common::WriteStream *stream) {
 #if 0
 	speechLine *viewLine = sS->allSpeech;
 
-	putch(sS->talkCol.originalRed, stream);
-	putch(sS->talkCol.originalGreen, stream);
-	putch(sS->talkCol.originalBlue, stream);
+	stream->writeByte(sS->talkCol.originalRed);
+	stream->writeByte(sS->talkCol.originalGreen);
+	stream->writeByte(sS->talkCol.originalBlue);
 
 	putFloat(speechSpeed, stream);
 
 	// Write y co-ordinate
-	put2bytes(sS->speechY, stream);
+	stream->writeUint16BE(sS->speechY);
 
 	// Write which character's talking
-	put2bytes(sS->lookWhosTalking, stream);
+	stream->writeUint16BE(sS->lookWhosTalking);
 	if (sS->currentTalker) {
-		putch(1, stream);
-		put2bytes(sS->currentTalker->thisType->objectNum, stream);
+		stream->writeByte(1);
+		stream->writeUint16BE(sS->currentTalker->thisType->objectNum);
 	} else {
-		putch(0, stream);
+		stream->writeByte(0);
 	}
 
 	// Write what's being said
 	while (viewLine) {
-		putch(1, stream);
+		stream->writeByte(1);
 		writeString(viewLine->textLine, stream);
-		put2bytes(viewLine->x, stream);
+		stream->writeUint16BE(viewLine->x);
 		viewLine = viewLine->next;
 	}
-	putch(0, stream);
+	stream->writeByte(0);
 #endif
 }
 
@@ -252,21 +252,21 @@ bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream) {
 #if 0
 	speech->currentTalker = NULL;
 	killAllSpeech();
-	byte r = getch(stream);
-	byte g = getch(stream);
-	byte b = getch(stream);
+	byte r = stream->readByte();
+	byte g = stream->readByte();
+	byte b = stream->readByte();
 	setFontColour(sS->talkCol, r, g, b);
 
 	speechSpeed = getFloat(stream);
 
 	// Read y co-ordinate
-	sS->speechY = get2bytes(stream);
+	sS->speechY = stream->readUint16BE();
 
 	// Read which character's talking
-	sS->lookWhosTalking = get2bytes(stream);
+	sS->lookWhosTalking = stream->readUint16BE();
 
-	if (getch(stream)) {
-		sS->currentTalker = findPerson(get2bytes(stream));
+	if (stream->readByte()) {
+		sS->currentTalker = findPerson(stream->readUint16BE());
 	} else {
 		sS->currentTalker = NULL;
 	}
@@ -275,11 +275,11 @@ bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream) {
 	speechLine * * viewLine = &sS->allSpeech;
 	speechLine *newOne;
 	speech->lastFile = -1;
-	while (getch(stream)) {
+	while (stream->readByte()) {
 		newOne = new speechLine;
 		if (! checkNew(newOne)) return false;
 		newOne->textLine = readString(stream);
-		newOne->x = get2bytes(stream);
+		newOne->x = stream->readUint16BE();
 		newOne->next = NULL;
 		(* viewLine) = newOne;
 		viewLine = &(newOne->next);

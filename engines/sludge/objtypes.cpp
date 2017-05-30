@@ -56,29 +56,29 @@ objectType *loadObjectType(int i) {
 
 	if (checkNew(newType)) {
 		if (openObjectSlice(i)) {
-			nameNum = get2bytes(bigDataFile);
-			newType->r = (byte) getch(bigDataFile);
-			newType->g = (byte) getch(bigDataFile);
-			newType->b = (byte) getch(bigDataFile);
-			newType->speechGap = getch(bigDataFile);
-			newType->walkSpeed = getch(bigDataFile);
-			newType->wrapSpeech = get4bytes(bigDataFile);
-			newType->spinSpeed = get2bytes(bigDataFile);
+			nameNum = bigDataFile->readUint16BE();
+			newType->r = (byte)bigDataFile->readByte();
+			newType->g = (byte)bigDataFile->readByte();
+			newType->b = (byte)bigDataFile->readByte();
+			newType->speechGap = bigDataFile->readByte();
+			newType->walkSpeed = bigDataFile->readByte();
+			newType->wrapSpeech = bigDataFile->readUint32LE();
+			newType->spinSpeed = bigDataFile->readUint16BE();
 
 			if (gameVersion >= VERSION(1, 6)) {
 				// aaLoad
-				getch(bigDataFile);
+				bigDataFile->readByte();
 				getFloat(bigDataFile);
 				getFloat(bigDataFile);
 			}
 
 			if (gameVersion >= VERSION(1, 4)) {
-				newType->flags = get2bytes(bigDataFile);
+				newType->flags = bigDataFile->readUint16BE();
 			} else {
 				newType->flags = 0;
 			}
 
-			newType->numCom = get2bytes(bigDataFile);
+			newType->numCom = bigDataFile->readUint16BE();
 			newType->allCombis =
 					(newType->numCom) ? new combination[newType->numCom] : NULL;
 
@@ -90,8 +90,8 @@ objectType *loadObjectType(int i) {
 #endif
 
 			for (a = 0; a < newType->numCom; a++) {
-				newType->allCombis[a].withObj = get2bytes(bigDataFile);
-				newType->allCombis[a].funcNum = get2bytes(bigDataFile);
+				newType->allCombis[a].withObj = bigDataFile->readUint16BE();
+				newType->allCombis[a].funcNum = bigDataFile->readUint16BE();
 #if DEBUG_COMBINATIONS
 				if (callEventLog) {
 					fprintf(callEventLog, "%d(%d) ", newType -> allCombis[a].withObj, newType -> allCombis[a].funcNum);
@@ -117,14 +117,14 @@ objectType *loadObjectType(int i) {
 }
 
 objectType *loadObjectRef(Common::SeekableReadStream *stream) {
-	objectType *r = loadObjectType(get2bytes(stream));
+	objectType *r = loadObjectType(stream->readUint16BE());
 	delete r->screenName;
 	r->screenName = readString(stream);
 	return r;
 }
 
 void saveObjectRef(objectType *r, Common::WriteStream *stream) {
-	put2bytes(r->objectNum, stream);
+	stream->writeUint16BE(r->objectNum);
 	writeString(r->screenName, stream);
 }
 

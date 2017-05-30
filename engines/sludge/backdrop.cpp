@@ -107,10 +107,10 @@ void nosnapshot() {
 void saveSnapshot(Common::WriteStream *stream) {
 #if 0
 	if (snapshotTextureName) {
-		putch(1, stream);               // 1 for snapshot follows
+		stream->writeByte(1);               // 1 for snapshot follows
 		saveCoreHSI(stream, snapshotTextureName, winWidth, winHeight);
 	} else {
-		putch(0, stream);
+		stream->writeByte(0);
 	}
 #endif
 }
@@ -167,8 +167,8 @@ bool snapshot() {
 }
 
 bool restoreSnapshot(Common::SeekableReadStream *stream) {
-	unsigned int picWidth = get2bytes(stream);
-	unsigned int picHeight = get2bytes(stream);
+	unsigned int picWidth = stream->readUint16BE();
+	unsigned int picHeight = stream->readUint16BE();
 
 	if ((picWidth != winWidth) || (picHeight != winHeight))
 		return false;
@@ -190,9 +190,9 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 	for (t2 = 0; t2 < winHeight; t2++) {
 		t1 = 0;
 		while (t1 < winWidth) {
-			c = (unsigned short) get2bytes(stream);
+			c = (unsigned short)stream->readUint16BE();
 			if (c & 32) {
-				n = getch(stream) + 1;
+				n = stream->readByte() + 1;
 				c -= 32;
 			} else {
 				n = 1;
@@ -653,8 +653,8 @@ bool loadLightMap(int v) {
 		fileIsPNG = false;
 		fseek(bigDataFile, file_pointer, SEEK_SET);
 
-		newPicWidth = lightMap.w = get2bytes(bigDataFile);
-		newPicHeight = lightMap.h = get2bytes(bigDataFile);
+		newPicWidth = lightMap.w = bigDataFile->readUint16BE();
+		newPicHeight = lightMap.h = bigDataFile->readUint16BE();
 	} else {
 		// Read the PNG header
 
@@ -745,7 +745,7 @@ bool loadLightMap(int v) {
 		for (t2 = 0; t2 < lightMap.h; t2 ++) {
 			t1 = 0;
 			while (t1 < lightMap.w) {
-				c = (unsigned short) get2bytes(bigDataFile);
+				c = (unsigned short)bigDataFile->readUint16BE();
 				if (c & 32) {
 					n = fgetc(bigDataFile) + 1;
 					c -= 32;
@@ -859,8 +859,8 @@ bool loadParallax(unsigned short v, unsigned short fracX,
 		fileIsPNG = false;
 		fseek(bigDataFile, file_pointer, SEEK_SET);
 
-		picWidth = nP->width = get2bytes(bigDataFile);
-		picHeight = nP->height = get2bytes(bigDataFile);
+		picWidth = nP->width = bigDataFile->readUint16BE();
+		picHeight = nP->height = bigDataFile->readUint16BE();
 	} else {
 		// Read the PNG header
 
@@ -955,7 +955,7 @@ bool loadParallax(unsigned short v, unsigned short fracX,
 		for (t2 = 0; t2 < nP->height; t2 ++) {
 			t1 = 0;
 			while (t1 < nP->width) {
-				c = (unsigned short) get2bytes(bigDataFile);
+				c = (unsigned short)bigDataFile->readUint16BE();
 				if (c & 32) {
 					n = fgetc(bigDataFile) + 1;
 					c -= 32;
@@ -1111,8 +1111,8 @@ bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth, int &realPi
 	int32_t transCol = reserve ? -1 : 63519;
 	int t1, t2, n;
 	unsigned short c;
-	picWidth = realPicWidth = get2bytes(stream);
-	picHeight = realPicHeight = get2bytes(stream);
+	picWidth = realPicWidth = stream->readUint16BE();
+	picHeight = realPicHeight = stream->readUint16BE();
 
 	if (reserve) {
 		if (!resizeBackdrop(realPicWidth, realPicHeight)) return false;
@@ -1121,9 +1121,9 @@ bool loadByteArray(int &picWidth, int &picHeight, int &realPicWidth, int &realPi
 	for (t2 = 0; t2 < realPicHeight; t2 ++) {
 		t1 = 0;
 		while (t1 < realPicWidth) {
-			c = (unsigned short) get2bytes(stream);
+			c = (unsigned short)stream->readUint16BE();
 			if (c & 32) {
-				n = getch(stream) + 1;
+				n = stream->readByte() + 1;
 				c -= 32;
 			} else {
 				n = 1;
@@ -1337,8 +1337,8 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 		fileIsPNG = false;
 		stream->seek(file_pointer, SEEK_SET);
 
-		picWidth = realPicWidth = get2bytes(stream);
-		picHeight = realPicHeight = get2bytes(stream);
+		picWidth = realPicWidth = stream->readUint16BE();
+		picHeight = realPicHeight = stream->readUint16BE();
 	} else {
 		// Read the PNG header
 
@@ -1446,9 +1446,9 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 		for (t2 = 0; t2 < realPicHeight; t2 ++) {
 			t1 = 0;
 			while (t1 < realPicWidth) {
-				c = (unsigned short) get2bytes(stream);
+				c = (unsigned short)stream->readUint16BE();
 				if (c & 32) {
-					n = getch(stream) + 1;
+					n = stream->readByte() + 1;
 					c -= 32;
 				} else {
 					n = 1;
@@ -1701,8 +1701,8 @@ void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 	int x, y, lookAhead;
 	unsigned short int *fromHere, * lookPointer;
 
-	put2bytes(w, stream);
-	put2bytes(h, stream);
+	stream->writeUint16BE(w);
+	stream->writeUint16BE(h);
 
 	for (y = 0; y < h; y ++) {
 		fromHere = image + (y * tw);
@@ -1717,8 +1717,8 @@ void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 			if (lookAhead == x + 1) {
 				put2bytes((* fromHere) & 65503, stream);
 			} else {
-				put2bytes(* fromHere | 32, stream);
-				putch(lookAhead - x - 1, stream);
+				stream->writeUint16BE(* fromHere | 32);
+				stream->writeByte(lookAhead - x - 1);
 			}
 			fromHere = lookPointer;
 			x = lookAhead;
@@ -1738,10 +1738,10 @@ void saveHSI(Common::WriteStream *stream) {
 void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *stream) {
 	if (me) {
 		saveParallaxRecursive(me->next, stream);
-		putch(1, stream);
-		put2bytes(me->fileNum, stream);
-		put2bytes(me->fractionX, stream);
-		put2bytes(me->fractionY, stream);
+		stream->writeByte(1);
+		stream->writeUint16BE(me->fileNum);
+		stream->writeUint16BE(me->fractionX);
+		stream->writeUint16BE(me->fractionY);
 	}
 }
 

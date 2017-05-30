@@ -44,8 +44,8 @@ bool saveThumbnail(Common::WriteStream *stream) {
 #if 0
 	GLuint thumbnailTextureName = 0;
 
-	put4bytes(thumbWidth, fp);
-	put4bytes(thumbHeight, fp);
+	fp->writeUint32LE(thumbWidth);
+	fp->writeUint32LE(thumbHeight);
 
 	if (thumbWidth && thumbHeight) {
 		if (! freeze()) return false;
@@ -148,8 +148,8 @@ void showThumbnail(char *filename, int atX, int atY) {
 	FILE *fp = openAndVerify(filename, 'S', 'A', ERROR_GAME_LOAD_NO, ssgVersion);
 	if (ssgVersion >= VERSION(1, 4)) {
 		if (fp == NULL) return;
-		int fileWidth = get4bytes(fp);
-		int fileHeight = get4bytes(fp);
+		int fileWidth = fp->readUint32LE();
+		int fileHeight = fp->readUint32LE();
 
 		int picWidth = fileWidth;
 		int picHeight = fileHeight;
@@ -170,7 +170,7 @@ void showThumbnail(char *filename, int atX, int atY) {
 		for (t2 = 0; t2 < fileHeight; t2 ++) {
 			t1 = 0;
 			while (t1 < fileWidth) {
-				c = (unsigned short) get2bytes(fp);
+				c = (unsigned short) fp->readUint16BE();
 				target = thumbnailTexture + 4 * picWidth * t2 + t1 * 4;
 				target[0] = (GLubyte) redValue(c);
 				target[1] = (GLubyte) greenValue(c);
@@ -252,12 +252,12 @@ void showThumbnail(char *filename, int atX, int atY) {
 }
 
 bool skipThumbnail(Common::SeekableReadStream *stream) {
-	thumbWidth = get4bytes(stream);
-	thumbHeight = get4bytes(stream);
+	thumbWidth = stream->readUint32LE();
+	thumbHeight = stream->readUint32LE();
 	uint32_t skippy = thumbWidth;
 	skippy *= thumbHeight << 1;
 	stream->seek(skippy, 1);
-	return (getch(stream) == '!');
+	return (stream->readByte() == '!');
 }
 
 } // End of namespace Sludge

@@ -35,6 +35,8 @@
 #include "CommonCode/version.h"
 
 #include "common/file.h"
+#include "common/debug.h"
+#include "sludge.h"
 
 namespace Sludge {
 
@@ -56,7 +58,7 @@ bool openSubSlice(int num) {
 	}
 //	fprintf (dbug, "Going to position %li\n", startOfSubIndex + (num << 2));
 	bigDataFile->seek(startOfSubIndex + (num << 2), 0);
-	bigDataFile->seek(get4bytes(bigDataFile), 0);
+	bigDataFile->seek(bigDataFile->readUint32LE(), 0);
 //	fprintf (dbug, "Told to skip forward to %li\n", ftell (bigDataFile));
 //	fclose (dbug);
 
@@ -75,7 +77,7 @@ bool openObjectSlice(int num) {
 
 //	fprintf (dbug, "Going to position %li\n", startOfObjectIndex + (num << 2));
 	bigDataFile->seek(startOfObjectIndex + (num << 2), 0);
-	bigDataFile->seek(get4bytes(bigDataFile), 0);
+	bigDataFile->seek(bigDataFile->readUint32LE(), 0);
 //	fprintf (dbug, "Told to skip forward to %li\n", ftell (bigDataFile));
 //	fclose (dbug);
 	return sliceBusy = true;
@@ -92,12 +94,12 @@ unsigned int openFileFromNum(int num) {
 //	fprintf (dbug, "\nTrying to open file %i\n", num);
 //	fprintf (dbug, "Jumping to %li (for index) \n", startOfDataIndex + (num << 2));
 	bigDataFile->seek(startOfDataIndex + (num << 2), 0);
-	bigDataFile->seek(get4bytes(bigDataFile), 1);
+	bigDataFile->seek(bigDataFile->readUint32LE(), 1);
 //	fprintf (dbug, "Jumping to %li (for data) \n", ftell (bigDataFile));
 	sliceBusy = true;
 //	fclose (dbug);
 
-	return get4bytes(bigDataFile);
+	return bigDataFile->readUint32LE();
 }
 
 // Converts a string from Windows CP-1252 to UTF-8.
@@ -173,7 +175,7 @@ char *getNumberedString(int value) {
 	}
 
 	bigDataFile->seek((value << 2) + startOfTextIndex, 0);
-	value = get4bytes(bigDataFile);
+	value = bigDataFile->readUint32LE();
 	bigDataFile->seek(value, 0);
 
 	char *s = readString(bigDataFile);
@@ -218,26 +220,30 @@ void setFileIndices(Common::File *fp, int numLanguages,
 	// STRINGS
 	int skipAfter = numLanguages - skipBefore;
 	while (skipBefore) {
-		fp->seek(get4bytes(fp), SEEK_SET);
+		fp->seek(fp->readUint32LE(), SEEK_SET);
 		skipBefore--;
 	}
 	startOfTextIndex = fp->pos() + 4;
+	debug(kSludgeDebugDataLoad, "startOfTextIndex: %i", startOfTextIndex);
 
-	fp->seek(get4bytes(fp), SEEK_SET);
+	fp->seek(fp->readUint32LE(), SEEK_SET);
 
 	while (skipAfter) {
-		fp->seek(get4bytes(fp), SEEK_SET);
+		fp->seek(fp->readUint32LE(), SEEK_SET);
 		skipAfter--;
 	}
 
 	startOfSubIndex = fp->pos() + 4;
-	fp->seek(get4bytes(fp), SEEK_CUR);
+	fp->seek(fp->readUint32LE(), SEEK_CUR);
+	debug(kSludgeDebugDataLoad, "startOfSubIndex: %i", startOfTextIndex);
 
 	startOfObjectIndex = fp->pos() + 4;
-	fp->seek(get4bytes(fp), SEEK_CUR);
+	fp->seek(fp->readUint32LE(), SEEK_CUR);
+	debug(kSludgeDebugDataLoad, "startOfObjectIndex: %i", startOfTextIndex);
 
 	// Remember that the data section starts here
 	startOfDataIndex = fp->pos();
+	debug(kSludgeDebugDataLoad, "startOfDataIndex: %i", startOfTextIndex);
 }
 
 } // End of namespace Sludge

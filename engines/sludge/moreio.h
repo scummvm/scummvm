@@ -27,20 +27,14 @@
 namespace Sludge {
 
 // Read
-int getch(Common::SeekableReadStream *stream);
-int get2bytes(Common::SeekableReadStream *stream);
 char *readString(Common::SeekableReadStream *stream);
 float getFloat(Common::SeekableReadStream *stream);
 short getSigned(Common::SeekableReadStream *stream);
-int32_t get4bytes(Common::SeekableReadStream *stream);
 
 // Write
-void putch(int c, Common::WriteStream *stream);
-void put2bytes(int numtoput, Common::WriteStream *stream);
 void writeString(char *s, Common::WriteStream *stream);
 void putFloat(float f, Common::WriteStream *stream);
 void putSigned(short f, Common::WriteStream *stream);
-void put4bytes(uint32_t f, Common::WriteStream *stream);
 
 char *encodeFilename(char *nameIn);
 char *decodeFilename(char *nameIn);

@@ -87,8 +87,8 @@ bool setZBuffer(int y) {
 		break;
 
 		case 1:
-		zBuffer.width = get2bytes(bigDataFile);
-		zBuffer.height = get2bytes(bigDataFile);
+		zBuffer.width = bigDataFile->readUint16BE();
+		zBuffer.height = bigDataFile->readUint16BE();
 		break;
 
 		default:
@@ -102,7 +102,7 @@ bool setZBuffer(int y) {
 
 	zBuffer.numPanels = fgetc(bigDataFile);
 	for (y = 0; y < zBuffer.numPanels; y ++) {
-		yPalette[y] = get2bytes(bigDataFile);
+		yPalette[y] = bigDataFile->readUint16BE();
 	}
 	sortZPal(yPalette, sorted, zBuffer.numPanels);
 	for (y = 0; y < zBuffer.numPanels; y ++) {
@@ -124,7 +124,7 @@ bool setZBuffer(int y) {
 			if (stillToGo == 0) {
 				n = fgetc(bigDataFile);
 				stillToGo = n >> 4;
-				if (stillToGo == 15) stillToGo = get2bytes(bigDataFile) + 16l;
+				if (stillToGo == 15) stillToGo = bigDataFile->readUint16BE() + 16l;
 				else stillToGo ++;
 				n &= 15;
 			}
