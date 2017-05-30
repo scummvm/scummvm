@@ -565,7 +565,8 @@ const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	{ GID_QFG1,           -1,    64,  0,               "rm64", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when leaving graveyard, parameter 0 is an object
 	{ GID_SQ4,            -1,   151,  0,        "fightScript", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // during fight with Vohaul, parameter 0 is an object, happens in at least room 150
 	{ GID_SQ4,            -1,   152,  0,       "driveCloseUp", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download", parameter 0 is an object, may happen in room 150 and 900 (900 see bug #9812)
-	{ GID_SQ4,            -1,   152,  0,                   "", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download"... in Russian version - bug #5573
+	{ GID_SQ4,           150,   152,  0,                   "", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download"... in Russian version - bug #5573
+	{ GID_SQ4,           900,   152,  0,                   "", "dispose",                   NULL,     0, { WORKAROUND_IGNORE,    0 } }, // same as above, but for "game over" room
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
