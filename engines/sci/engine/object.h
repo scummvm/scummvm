@@ -67,7 +67,7 @@ enum ObjectOffsets {
 	kOffsetNamePointerSci11 = 16
 };
 
-class Object {
+class Object : public Common::Serializable {
 public:
 	Object() :
 		_name(NULL_REG),

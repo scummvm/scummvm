@@ -71,12 +71,6 @@ void syncWithSerializer(Common::Serializer &s, Common::Serializable &obj) {
 	obj.saveLoadWithSerializer(s);
 }
 
-// FIXME: Object could implement Serializable to make use of the function
-// above.
-void syncWithSerializer(Common::Serializer &s, Object &obj) {
-	obj.saveLoadWithSerializer(s);
-}
-
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 	// Segment and offset are accessed directly here
 	s.syncAsUint16LE(obj._segment);
