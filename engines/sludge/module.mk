@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	backdrop.o \
 	bg_effects.o \
 	builtin.o \
-	bytearray.o \
 	console.o \
 	cursors.o \
 	debug.o \
@@ -15,6 +14,7 @@ MODULE_OBJS := \
 	fonttext.o \
 	graphics.o \
 	helpers.o \
+	imgloader.o \
 	language.o \
 	line.o \
 	loadsave.o \

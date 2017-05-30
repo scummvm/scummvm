@@ -441,7 +441,7 @@ builtIn(setSceneDimensions) {
 	trimStack(fun->stack);
 	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
 	trimStack(fun->stack);
-	if (resizeBackdrop(x, y)) {
+	if (killResizeBackdrop(x, y)) {
 		blankScreen(0, 0, x, y);
 		return BR_CONTINUE;
 	}

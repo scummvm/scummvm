@@ -51,6 +51,7 @@ struct parallaxLayer {
 	GLubyte *texture;
 	GLuint textureName;
 #endif
+	Graphics::Surface surface;
 	int width, height, speedX, speedY;
 	bool wrapS, wrapT;
 	unsigned short fileNum, fractionX, fractionY;
@@ -59,7 +60,9 @@ struct parallaxLayer {
 	parallaxLayer *prev;
 };
 
+void killAllBackDrop();
 bool resizeBackdrop(int x, int y);
+bool killResizeBackdrop(int x, int y);
 void killBackDrop();
 void loadBackDrop(int fileNum, int x, int y);
 void mixBackDrop(int fileNum, int x, int y);
@@ -82,9 +85,7 @@ bool getRGBIntoStack(unsigned int x, unsigned int y, stackHandler *sH);
 void killLightMap();
 bool loadLightMap(int v);
 
-#if 0
 extern texture lightMap;
-#endif
 
 // And background parallax scrolling
 

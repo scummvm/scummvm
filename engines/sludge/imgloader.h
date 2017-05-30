@@ -20,27 +20,23 @@
  *
  */
 
-#ifndef PRINCE_MHWANH_H
-#define PRINCE_MHWANH_H
+#ifndef SLUDGE_IMGLOADER_H
+#define SLUDGE_IMGLOADER_H
 
-#include "image/image_decoder.h"
-#include "graphics/surface.h"
+#include "common/file.h"
 
 namespace Sludge {
 
-class ByteArrayDecoder : public Image::ImageDecoder {
+class ImgLoader {
+protected:
+	ImgLoader() {}
 
 public:
-	ByteArrayDecoder();
-	virtual ~ByteArrayDecoder();
-
-	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual Graphics::Surface *getSurface() const { return _surface; }
-
-private:
-	Graphics::Surface *_surface;
+	static bool loadImage(Common::SeekableReadStream *stream, Graphics::Surface *dest);
+	static bool loadImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, bool reserve);
+	static bool loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surface *dest);
+	static bool loadReserveImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve);
+	static bool loadOtherImage(Common::SeekableReadStream *stream, Graphics::Surface *dest);
 };
 
 } // End of namespace Sludge

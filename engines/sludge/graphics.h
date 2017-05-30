@@ -31,6 +31,8 @@
 #endif
 #endif
 
+#include "graphics/surface.h"
+
 namespace Sludge {
 
 struct texture {
@@ -38,7 +40,7 @@ struct texture {
 	GLubyte *data;
 	GLuint name;
 #endif
-	int w, h;
+	Graphics::Surface surface;
 	double texW, texH;
 };
 
