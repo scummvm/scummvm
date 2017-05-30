@@ -606,29 +606,29 @@ void saveSounds(Common::WriteStream *stream) {
 	if (soundOK) {
 		for (int i = 0; i < MAX_SAMPLES; i++) {
 			if (soundCache[i].looping) {
-				putch(1, stream);
-				put2bytes(soundCache[i].fileLoaded, stream);
-				put2bytes(soundCache[i].vol, stream);
+				stream->writeByte(1);
+				stream->writeUint16BE(soundCache[i].fileLoaded);
+				stream->writeUint16BE(soundCache[i].vol);
 			}
 		}
 	}
-	putch(0, stream);
-	put2bytes(defSoundVol, stream);
-	put2bytes(defVol, stream);
+	stream->writeByte(0);
+	stream->writeUint16BE(defSoundVol);
+	stream->writeUint16BE(defVol);
 }
 
 void loadSounds(Common::SeekableReadStream *stream) {
 	for (int i = 0; i < MAX_SAMPLES; i++)
 		freeSound(i);
 
-	while (getch(stream)) {
-		int fileLoaded = get2bytes(stream);
-		defSoundVol = get2bytes(stream);
+	while (stream->readByte()) {
+		int fileLoaded = stream->readUint16BE();
+		defSoundVol = stream->readUint16BE();
 		startSound(fileLoaded, 1);
 	}
 
-	defSoundVol = get2bytes(stream);
-	defVol = get2bytes(stream);
+	defSoundVol = stream->readUint16BE();
+	defVol = stream->readUint16BE();
 }
 
 bool getSoundCacheStack(stackHandler *sH) {

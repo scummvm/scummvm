@@ -118,16 +118,16 @@ static int s_matrixEffectBase = 0;
 
 void blur_saveSettings(Common::WriteStream *stream) {
 	if (s_matrixEffectData) {
-		put4bytes(s_matrixEffectDivide, stream);
-		put4bytes(s_matrixEffectWidth, stream);
-		put4bytes(s_matrixEffectHeight, stream);
-		put4bytes(s_matrixEffectBase, stream);
+		stream->writeUint32LE(s_matrixEffectDivide);
+		stream->writeUint32LE(s_matrixEffectWidth);
+		stream->writeUint32LE(s_matrixEffectHeight);
+		stream->writeUint32LE(s_matrixEffectBase);
 		stream->write(s_matrixEffectData, sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight);
 	} else {
-		put4bytes(0, stream);
-		put4bytes(0, stream);
-		put4bytes(0, stream);
-		put4bytes(0, stream);
+		stream->writeUint32LE(0);
+		stream->writeUint32LE(0);
+		stream->writeUint32LE(0);
+		stream->writeUint32LE(0);
 	}
 }
 
@@ -143,10 +143,10 @@ static int *blur_allocateMemoryForEffect() {
 }
 
 void blur_loadSettings(Common::SeekableReadStream *stream) {
-	s_matrixEffectDivide = get4bytes(stream);
-	s_matrixEffectWidth = get4bytes(stream);
-	s_matrixEffectHeight = get4bytes(stream);
-	s_matrixEffectBase = get4bytes(stream);
+	s_matrixEffectDivide = stream->readUint32LE();
+	s_matrixEffectWidth = stream->readUint32LE();
+	s_matrixEffectHeight = stream->readUint32LE();
+	s_matrixEffectBase = stream->readUint32LE();
 
 	if (blur_allocateMemoryForEffect()) {
 		size_t bytes_read = stream->read(s_matrixEffectData, sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight);

@@ -127,23 +127,23 @@ const char *sludgeText[] = { "?????", "RETURN", "BRANCH", "BR_ZERO",
 		"INDEXGET", "INC_INDEX", "DEC_INDEX", "QUICK_PUSH" };
 
 void loadHandlers(Common::SeekableReadStream *stream) {
-	currentEvents->leftMouseFunction = get2bytes(stream);
-	currentEvents->leftMouseUpFunction = get2bytes(stream);
-	currentEvents->rightMouseFunction = get2bytes(stream);
-	currentEvents->rightMouseUpFunction = get2bytes(stream);
-	currentEvents->moveMouseFunction = get2bytes(stream);
-	currentEvents->focusFunction = get2bytes(stream);
-	currentEvents->spaceFunction = get2bytes(stream);
+	currentEvents->leftMouseFunction = stream->readUint16BE();
+	currentEvents->leftMouseUpFunction = stream->readUint16BE();
+	currentEvents->rightMouseFunction = stream->readUint16BE();
+	currentEvents->rightMouseUpFunction = stream->readUint16BE();
+	currentEvents->moveMouseFunction = stream->readUint16BE();
+	currentEvents->focusFunction = stream->readUint16BE();
+	currentEvents->spaceFunction = stream->readUint16BE();
 }
 
 void saveHandlers(Common::WriteStream *stream) {
-	put2bytes(currentEvents->leftMouseFunction, stream);
-	put2bytes(currentEvents->leftMouseUpFunction, stream);
-	put2bytes(currentEvents->rightMouseFunction, stream);
-	put2bytes(currentEvents->rightMouseUpFunction, stream);
-	put2bytes(currentEvents->moveMouseFunction, stream);
-	put2bytes(currentEvents->focusFunction, stream);
-	put2bytes(currentEvents->spaceFunction, stream);
+	stream->writeUint16BE(currentEvents->leftMouseFunction);
+	stream->writeUint16BE(currentEvents->leftMouseUpFunction);
+	stream->writeUint16BE(currentEvents->rightMouseFunction);
+	stream->writeUint16BE(currentEvents->rightMouseUpFunction);
+	stream->writeUint16BE(currentEvents->moveMouseFunction);
+	stream->writeUint16BE(currentEvents->focusFunction);
+	stream->writeUint16BE(currentEvents->spaceFunction);
 }
 
 Common::File *openAndVerify(char *filename, char extra1, char extra2,
@@ -154,32 +154,32 @@ Common::File *openAndVerify(char *filename, char extra1, char extra2,
 		return NULL;
 	}
 	bool headerBad = false;
-	if (getch(fp) != 'S')
+	if (fp->readByte() != 'S')
 		headerBad = true;
-	if (getch(fp) != 'L')
+	if (fp->readByte() != 'L')
 		headerBad = true;
-	if (getch(fp) != 'U')
+	if (fp->readByte() != 'U')
 		headerBad = true;
-	if (getch(fp) != 'D')
+	if (fp->readByte() != 'D')
 		headerBad = true;
-	if (getch(fp) != extra1)
+	if (fp->readByte() != extra1)
 		headerBad = true;
-	if (getch(fp) != extra2)
+	if (fp->readByte() != extra2)
 		headerBad = true;
 	if (headerBad) {
 		fatal(er, filename);
 		return NULL;
 	}
 	char c;
-	c = getch(fp);
+	c = fp->readByte();
 	debug("%c", c);
-	while ((c = getch(fp))) {
+	while ((c = fp->readByte())) {
 		debug("%c", c);
 	}
 
-	int majVersion = getch(fp);
+	int majVersion = fp->readByte();
 	debug(kSludgeDebugDataLoad, "majVersion %i", majVersion);
-	int minVersion = getch(fp);
+	int minVersion = fp->readByte();
 	debug(kSludgeDebugDataLoad, "minVersion %i", minVersion);
 	fileVersion = majVersion * 256 + minVersion;
 
@@ -206,9 +206,9 @@ bool initSludge(char *filename) {
 	if (!fp)
 		return false;
 
-	char c = getch(fp);
+	char c = fp->readByte();
 	if (c) {
-		numBIFNames = get2bytes(fp);
+		numBIFNames = fp->readUint16BE();
 		debug(kSludgeDebugDataLoad, "numBIFNames %i", numBIFNames);
 		allBIFNames = new char *[numBIFNames];
 		if (!checkNew(allBIFNames))
@@ -217,7 +217,7 @@ bool initSludge(char *filename) {
 		for (int fn = 0; fn < numBIFNames; fn++) {
 			allBIFNames[fn] = readString(fp);
 		}
-		numUserFunc = get2bytes(fp);
+		numUserFunc = fp->readUint16BE();
 		debug(kSludgeDebugDataLoad, "numUserFunc %i", numUserFunc);
 		allUserFunc = new char *[numUserFunc];
 		if (!checkNew(allUserFunc))
@@ -227,7 +227,7 @@ bool initSludge(char *filename) {
 			allUserFunc[fn] = readString(fp);
 		}
 		if (gameVersion >= VERSION(1, 3)) {
-			numResourceNames = get2bytes(fp);
+			numResourceNames = fp->readUint16BE();
 			debug(kSludgeDebugDataLoad, "numResourceNames %i",
 					numResourceNames);
 			allResourceNames = new char *[numResourceNames];
@@ -240,13 +240,13 @@ bool initSludge(char *filename) {
 		}
 	}
 
-	winWidth = get2bytes(fp);
+	winWidth = fp->readUint16BE();
 	debug(kSludgeDebugDataLoad, "winWidth : %i", winWidth);
-	winHeight = get2bytes(fp);
+	winHeight = fp->readUint16BE();
 	debug(kSludgeDebugDataLoad, "winHeight : %i", winHeight);
-	specialSettings = getch(fp);
+	specialSettings = fp->readByte();
 	debug(kSludgeDebugDataLoad, "specialSettings : %i", specialSettings);
-	desiredfps = 1000 / getch(fp);
+	desiredfps = 1000 / fp->readByte();
 
 	delete[] readString(fp);  // Unused - was used for registration purposes.
 
@@ -261,14 +261,14 @@ bool initSludge(char *filename) {
 	debug(kSludgeDebugDataLoad, "dataFol : %s", dataFol);
 
 	gameSettings.numLanguages =
-			(gameVersion >= VERSION(1, 3)) ? (getch(fp)) : 0;
+			(gameVersion >= VERSION(1, 3)) ? (fp->readByte()) : 0;
 	debug(kSludgeDebugDataLoad, "numLanguages : %c", gameSettings.numLanguages);
 	makeLanguageTable(fp);
 
 	if (gameVersion >= VERSION(1, 6)) {
-		getch(fp);
+		fp->readByte();
 		// aaLoad
-		getch(fp);
+		fp->readByte();
 		getFloat(fp);
 		getFloat(fp);
 	}
@@ -281,7 +281,7 @@ bool initSludge(char *filename) {
 	delete checker;
 	checker = NULL;
 
-	unsigned char customIconLogo = getch(fp);
+	unsigned char customIconLogo = fp->readByte();
 	debug(kSludgeDebugDataLoad, "Game icon type: %i", customIconLogo);
 
 	if (customIconLogo & 1) {
@@ -309,8 +309,8 @@ bool initSludge(char *filename) {
 			fileIsPNG = false;
 			fseek(fp, file_pointer, SEEK_SET);
 
-			iconW = get2bytes(fp);
-			iconH = get2bytes(fp);
+			iconW = fp->readUint16BE();
+			iconH = fp->readUint16BE();
 		} else {
 			// Read the PNG header
 
@@ -373,7 +373,7 @@ bool initSludge(char *filename) {
 			for (int t2 = 0; t2 < iconH; t2 ++) {
 				int t1 = 0;
 				while (t1 < iconW) {
-					unsigned short c = (unsigned short) get2bytes(fp);
+					unsigned short c = (unsigned short) fp->readUint16BE();
 					if (c & 32) {
 						n = fgetc(fp) + 1;
 						c -= 32;
@@ -418,8 +418,8 @@ bool initSludge(char *filename) {
 			fileIsPNG = false;
 			fseek(fp, file_pointer, SEEK_SET);
 
-			logoW = get2bytes(fp);
-			logoH = get2bytes(fp);
+			logoW = fp->readUint16BE();
+			logoH = fp->readUint16BE();
 		} else {
 			// Read the PNG header
 
@@ -490,7 +490,7 @@ bool initSludge(char *filename) {
 			for (int t2 = 0; t2 < logoH; t2 ++) {
 				int t1 = 0;
 				while (t1 < logoW) {
-					unsigned short c = (unsigned short) get2bytes(fp);
+					unsigned short c = (unsigned short) fp->readUint16BE();
 					if (c & 32) {
 						n = fgetc(fp) + 1;
 						c -= 32;
@@ -518,7 +518,7 @@ bool initSludge(char *filename) {
 #endif
 	}
 
-	numGlobals = get2bytes(fp);
+	numGlobals = fp->readUint16BE();
 	debug("numGlobals : %i", numGlobals);
 
 	globalVars = new variable[numGlobals];
@@ -1398,21 +1398,20 @@ bool loadFunctionCode(loadedFunction *newFunc) {
 
 	debug(kSludgeDebugDataLoad, "Load function code");
 
-	newFunc->unfreezable = getch(bigDataFile);
-	numLines = get2bytes(bigDataFile);
+	newFunc->unfreezable = bigDataFile->readByte();
+	numLines = bigDataFile->readUint16BE();
 	debug(kSludgeDebugDataLoad, "numLines: %i", numLines);
-	newFunc->numArgs = get2bytes(bigDataFile);
+	newFunc->numArgs = bigDataFile->readUint16BE();
 	debug(kSludgeDebugDataLoad, "numArgs: %i", newFunc->numArgs);
-	newFunc->numLocals = get2bytes(bigDataFile);
+	newFunc->numLocals = bigDataFile->readUint16BE();
 	debug(kSludgeDebugDataLoad, "numLocals: %i", newFunc->numLocals);
 	newFunc->compiledLines = new lineOfCode[numLines];
 	if (!checkNew(newFunc->compiledLines))
 		return false;
 
 	for (numLinesRead = 0; numLinesRead < numLines; numLinesRead++) {
-		newFunc->compiledLines[numLinesRead].theCommand = (sludgeCommand) getch(
-				bigDataFile);
-		newFunc->compiledLines[numLinesRead].param = get2bytes(bigDataFile);
+		newFunc->compiledLines[numLinesRead].theCommand = (sludgeCommand) bigDataFile->readByte();
+		newFunc->compiledLines[numLinesRead].param = bigDataFile->readUint16BE();
 		debug(kSludgeDebugDataLoad, "command line %i: %i", numLinesRead,
 				newFunc->compiledLines[numLinesRead].theCommand);
 	}

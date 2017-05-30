@@ -1009,34 +1009,34 @@ void removeOneCharacter(int i) {
 }
 
 bool saveAnim(personaAnimation *p, Common::WriteStream *stream) {
-	put2bytes(p->numFrames, stream);
+	stream->writeUint16BE(p->numFrames);
 	if (p->numFrames) {
-		put4bytes(p->theSprites->ID, stream);
+		stream->writeUint32LE(p->theSprites->ID);
 
 		for (int a = 0; a < p->numFrames; ++a) {
-			put4bytes(p->frames[a].frameNum, stream);
-			put4bytes(p->frames[a].howMany, stream);
-			put4bytes(p->frames[a].noise, stream);
+			stream->writeUint32LE(p->frames[a].frameNum);
+			stream->writeUint32LE(p->frames[a].howMany);
+			stream->writeUint32LE(p->frames[a].noise);
 		}
 	}
 	return true;
 }
 
 bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream) {
-	p->numFrames = get2bytes(stream);
+	p->numFrames = stream->readUint16BE();
 
 	if (p->numFrames) {
-		int a = get4bytes(stream);
+		int a = stream->readUint32LE();
 		p->frames = new animFrame[p->numFrames];
 		if (!checkNew(p->frames))
 			return false;
 		p->theSprites = loadBankForAnim(a);
 
 		for (a = 0; a < p->numFrames; ++a) {
-			p->frames[a].frameNum = get4bytes(stream);
-			p->frames[a].howMany = get4bytes(stream);
+			p->frames[a].frameNum = stream->readUint32LE();
+			p->frames[a].howMany = stream->readUint32LE();
 			if (ssgVersion >= VERSION(2, 0)) {
-				p->frames[a].noise = get4bytes(stream);
+				p->frames[a].noise = stream->readUint32LE();
 			} else {
 				p->frames[a].noise = 0;
 			}
@@ -1064,7 +1064,7 @@ bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream) {
  */
 bool saveCostume(persona *cossy, Common::WriteStream *stream) {
 	int a;
-	put2bytes(cossy->numDirections, stream);
+	stream->writeUint16BE(cossy->numDirections);
 	for (a = 0; a < cossy->numDirections * 3; ++a) {
 		if (!saveAnim(cossy->animation[a], stream))
 			return false;
@@ -1075,7 +1075,7 @@ bool saveCostume(persona *cossy, Common::WriteStream *stream) {
 
 bool loadCostume(persona *cossy, Common::SeekableReadStream *stream) {
 	int a;
-	cossy->numDirections = get2bytes(stream);
+	cossy->numDirections = stream->readUint16BE();
 	cossy->animation = new personaAnimation *[cossy->numDirections * 3];
 	if (!checkNew(cossy->animation))
 		return false;
@@ -1103,7 +1103,7 @@ bool savePeople(Common::WriteStream *stream) {
 		me = me->next;
 	}
 
-	put2bytes(countPeople, stream);
+	stream->writeUint16BE(countPeople);
 
 	me = allPeople;
 	for (a = 0; a < countPeople; ++a) {
@@ -1113,43 +1113,43 @@ bool savePeople(Common::WriteStream *stream) {
 
 		saveCostume(me->myPersona, stream);
 		saveAnim(me->myAnim, stream);
-		putch(me->myAnim == me->lastUsedAnim, stream);
+		stream->writeByte(me->myAnim == me->lastUsedAnim);
 
 		putFloat(me->scale, stream);
 
-		put2bytes(me->extra, stream);
-		put2bytes(me->height, stream);
-		put2bytes(me->walkToX, stream);
-		put2bytes(me->walkToY, stream);
-		put2bytes(me->thisStepX, stream);
-		put2bytes(me->thisStepY, stream);
-		put2bytes(me->frameNum, stream);
-		put2bytes(me->frameTick, stream);
-		put2bytes(me->walkSpeed, stream);
-		put2bytes(me->spinSpeed, stream);
+		stream->writeUint16BE(me->extra);
+		stream->writeUint16BE(me->height);
+		stream->writeUint16BE(me->walkToX);
+		stream->writeUint16BE(me->walkToY);
+		stream->writeUint16BE(me->thisStepX);
+		stream->writeUint16BE(me->thisStepY);
+		stream->writeUint16BE(me->frameNum);
+		stream->writeUint16BE(me->frameTick);
+		stream->writeUint16BE(me->walkSpeed);
+		stream->writeUint16BE(me->spinSpeed);
 		putSigned(me->floaty, stream);
-		putch(me->show, stream);
-		putch(me->walking, stream);
-		putch(me->spinning, stream);
+		stream->writeByte(me->show);
+		stream->writeByte(me->walking);
+		stream->writeByte(me->spinning);
 		if (me->continueAfterWalking) {
-			putch(1, stream);
+			stream->writeByte(1);
 			saveFunction(me->continueAfterWalking, stream);
 		} else {
-			putch(0, stream);
+			stream->writeByte(0);
 		}
-		put2bytes(me->direction, stream);
-		put2bytes(me->angle, stream);
-		put2bytes(me->angleOffset, stream);
-		put2bytes(me->wantAngle, stream);
+		stream->writeUint16BE(me->direction);
+		stream->writeUint16BE(me->angle);
+		stream->writeUint16BE(me->angleOffset);
+		stream->writeUint16BE(me->wantAngle);
 		putSigned(me->directionWhenDoneWalking, stream);
 		putSigned(me->inPoly, stream);
 		putSigned(me->walkToPoly, stream);
 
-		putch(me->r, stream);
-		putch(me->g, stream);
-		putch(me->b, stream);
-		putch(me->colourmix, stream);
-		putch(me->transparency, stream);
+		stream->writeByte(me->r);
+		stream->writeByte(me->g);
+		stream->writeByte(me->b);
+		stream->writeByte(me->colourmix);
+		stream->writeByte(me->transparency);
 
 		saveObjectRef(me->thisType, stream);
 
@@ -1165,7 +1165,7 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 	scaleHorizon = getSigned(stream);
 	scaleDivide = getSigned(stream);
 
-	int countPeople = get2bytes(stream);
+	int countPeople = stream->readUint16BE();
 	int a;
 
 	allPeople = NULL;
@@ -1188,50 +1188,50 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 		loadCostume(me->myPersona, stream);
 		loadAnim(me->myAnim, stream);
 
-		me->lastUsedAnim = getch(stream) ? me->myAnim : NULL;
+		me->lastUsedAnim = stream->readByte() ? me->myAnim : NULL;
 
 		me->scale = getFloat(stream);
 
-		me->extra = get2bytes(stream);
-		me->height = get2bytes(stream);
-		me->walkToX = get2bytes(stream);
-		me->walkToY = get2bytes(stream);
-		me->thisStepX = get2bytes(stream);
-		me->thisStepY = get2bytes(stream);
-		me->frameNum = get2bytes(stream);
-		me->frameTick = get2bytes(stream);
-		me->walkSpeed = get2bytes(stream);
-		me->spinSpeed = get2bytes(stream);
+		me->extra = stream->readUint16BE();
+		me->height = stream->readUint16BE();
+		me->walkToX = stream->readUint16BE();
+		me->walkToY = stream->readUint16BE();
+		me->thisStepX = stream->readUint16BE();
+		me->thisStepY = stream->readUint16BE();
+		me->frameNum = stream->readUint16BE();
+		me->frameTick = stream->readUint16BE();
+		me->walkSpeed = stream->readUint16BE();
+		me->spinSpeed = stream->readUint16BE();
 		me->floaty = getSigned(stream);
-		me->show = getch(stream);
-		me->walking = getch(stream);
-		me->spinning = getch(stream);
-		if (getch(stream)) {
+		me->show = stream->readByte();
+		me->walking = stream->readByte();
+		me->spinning = stream->readByte();
+		if (stream->readByte()) {
 			me->continueAfterWalking = loadFunction(stream);
 			if (!me->continueAfterWalking)
 				return false;
 		} else {
 			me->continueAfterWalking = NULL;
 		}
-		me->direction = get2bytes(stream);
-		me->angle = get2bytes(stream);
+		me->direction = stream->readUint16BE();
+		me->angle = stream->readUint16BE();
 		if (ssgVersion >= VERSION(2, 0)) {
-			me->angleOffset = get2bytes(stream);
+			me->angleOffset = stream->readUint16BE();
 		} else {
 			me->angleOffset = 0;
 		}
-		me->wantAngle = get2bytes(stream);
+		me->wantAngle = stream->readUint16BE();
 		me->directionWhenDoneWalking = getSigned(stream);
 		me->inPoly = getSigned(stream);
 		me->walkToPoly = getSigned(stream);
 		if (ssgVersion >= VERSION(2, 0)) {
-			me->r = getch(stream);
-			me->g = getch(stream);
-			me->b = getch(stream);
-			me->colourmix = getch(stream);
-			me->transparency = getch(stream);
+			me->r = stream->readByte();
+			me->g = stream->readByte();
+			me->b = stream->readByte();
+			me->colourmix = stream->readByte();
+			me->transparency = stream->readByte();
 		} else {
-			setMyDrawMode(me, get2bytes(stream));
+			setMyDrawMode(me, stream->readUint16BE());
 		}
 		me->thisType = loadObjectRef(stream);
 
@@ -1239,7 +1239,7 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 		if (ssgVersion >= VERSION(1, 6)) {
 			if (ssgVersion < VERSION(2, 0)) {
 				// aaLoad
-				getch(stream);
+				stream->readByte();
 				getFloat(stream);
 				getFloat(stream);
 			}

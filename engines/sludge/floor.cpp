@@ -135,7 +135,7 @@ bool setFloor(int fileNum) {
 	// Find out how many polygons there are and reserve memory
 
 	currentFloor->originalNum = fileNum;
-	currentFloor->numPolygons = getch(bigDataFile);
+	currentFloor->numPolygons = bigDataFile->readByte();
 	currentFloor->polygon = new floorPolygon[currentFloor->numPolygons];
 	if (!checkNew(currentFloor->polygon))
 		return false;
@@ -146,7 +146,7 @@ bool setFloor(int fileNum) {
 
 		// Find out how many vertex IDs there are and reserve memory
 
-		currentFloor->polygon[i].numVertices = getch(bigDataFile);
+		currentFloor->polygon[i].numVertices = bigDataFile->readByte();
 		currentFloor->polygon[i].vertexID =
 				new int[currentFloor->polygon[i].numVertices];
 		if (!checkNew(currentFloor->polygon[i].vertexID))
@@ -155,21 +155,21 @@ bool setFloor(int fileNum) {
 		// Read in each vertex ID
 
 		for (j = 0; j < currentFloor->polygon[i].numVertices; j++) {
-			currentFloor->polygon[i].vertexID[j] = get2bytes(bigDataFile);
+			currentFloor->polygon[i].vertexID[j] = bigDataFile->readUint16BE();
 		}
 	}
 
 	// Find out how many vertices there are and reserve memory
 
-	i = get2bytes(bigDataFile);
+	i = bigDataFile->readUint16BE();
 	currentFloor->vertex = new POINT[i];
 	if (!checkNew(currentFloor->vertex))
 		return false;
 
 	for (j = 0; j < i; j++) {
 
-		currentFloor->vertex[j].x = get2bytes(bigDataFile);
-		currentFloor->vertex[j].y = get2bytes(bigDataFile);
+		currentFloor->vertex[j].x = bigDataFile->readUint16BE();
+		currentFloor->vertex[j].y = bigDataFile->readUint16BE();
 	}
 
 	finishAccess();

@@ -29,6 +29,7 @@
 #include "stringy.h"
 #include "newfatal.h"
 #include "statusba.h"
+#include "common/file.h"
 
 namespace Sludge {
 
@@ -176,48 +177,48 @@ const char *statusBarText() {
 void saveStatusBars(Common::WriteStream *stream) {
 	statusBar *viewLine = nowStatus->firstStatusBar;
 
-	put2bytes(nowStatus->alignStatus, stream);
+	stream->writeUint16BE(nowStatus->alignStatus);
 	putSigned(nowStatus->litStatus, stream);
-	put2bytes(nowStatus->statusX, stream);
-	put2bytes(nowStatus->statusY, stream);
+	stream->writeUint16BE(nowStatus->statusX);
+	stream->writeUint16BE(nowStatus->statusY);
 
-	putch(nowStatus->statusR, stream);
-	putch(nowStatus->statusG, stream);
-	putch(nowStatus->statusB, stream);
-	putch(nowStatus->statusLR, stream);
-	putch(nowStatus->statusLG, stream);
-	putch(nowStatus->statusLB, stream);
+	stream->writeByte(nowStatus->statusR);
+	stream->writeByte(nowStatus->statusG);
+	stream->writeByte(nowStatus->statusB);
+	stream->writeByte(nowStatus->statusLR);
+	stream->writeByte(nowStatus->statusLG);
+	stream->writeByte(nowStatus->statusLB);
 
 	// Write what's being said
 	while (viewLine) {
-		putch(1, stream);
+		stream->writeByte(1);
 		writeString(viewLine->text, stream);
 		viewLine = viewLine->next;
 	}
-	putch(0, stream);
+	stream->writeByte(0);
 }
 
 bool loadStatusBars(Common::SeekableReadStream *stream) {
 	clearStatusBar();
 
-	nowStatus->alignStatus = get2bytes(stream);
+	nowStatus->alignStatus = stream->readUint16BE();
 	nowStatus->litStatus = getSigned(stream);
-	nowStatus->statusX = get2bytes(stream);
-	nowStatus->statusY = get2bytes(stream);
+	nowStatus->statusX = stream->readUint16BE();
+	nowStatus->statusY = stream->readUint16BE();
 
-	nowStatus->statusR = getch(stream);
-	nowStatus->statusG = getch(stream);
-	nowStatus->statusB = getch(stream);
-	nowStatus->statusLR = getch(stream);
-	nowStatus->statusLG = getch(stream);
-	nowStatus->statusLB = getch(stream);
+	nowStatus->statusR = stream->readByte();
+	nowStatus->statusG = stream->readByte();
+	nowStatus->statusB = stream->readByte();
+	nowStatus->statusLR = stream->readByte();
+	nowStatus->statusLG = stream->readByte();
+	nowStatus->statusLB = stream->readByte();
 
 	setFontColour(verbLinePalette, nowStatus->statusR, nowStatus->statusG, nowStatus->statusB);
 	setFontColour(litVerbLinePalette, nowStatus->statusLR, nowStatus->statusLG, nowStatus->statusLB);
 	// Read what's being said
 	statusBar * * viewLine = & (nowStatus->firstStatusBar);
 	statusBar *newOne;
-	while (getch(stream)) {
+	while (stream->readByte()) {
 		newOne = new statusBar;
 		if (! checkNew(newOne)) return false;
 		newOne->text = readString(stream);

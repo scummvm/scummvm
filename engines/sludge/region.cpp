@@ -72,16 +72,16 @@ void saveRegions(Common::WriteStream *stream) {
 		thisRegion = thisRegion->next;
 		numRegions++;
 	}
-	put2bytes(numRegions, stream);
+	stream->writeUint16BE(numRegions);
 	thisRegion = allScreenRegions;
 	while (thisRegion) {
-		put2bytes(thisRegion->x1, stream);
-		put2bytes(thisRegion->y1, stream);
-		put2bytes(thisRegion->x2, stream);
-		put2bytes(thisRegion->y2, stream);
-		put2bytes(thisRegion->sX, stream);
-		put2bytes(thisRegion->sY, stream);
-		put2bytes(thisRegion->di, stream);
+		stream->writeUint16BE(thisRegion->x1);
+		stream->writeUint16BE(thisRegion->y1);
+		stream->writeUint16BE(thisRegion->x2);
+		stream->writeUint16BE(thisRegion->y2);
+		stream->writeUint16BE(thisRegion->sX);
+		stream->writeUint16BE(thisRegion->sY);
+		stream->writeUint16BE(thisRegion->di);
 		saveObjectRef(thisRegion->thisType, stream);
 
 		thisRegion = thisRegion->next;
@@ -89,7 +89,7 @@ void saveRegions(Common::WriteStream *stream) {
 }
 
 void loadRegions(Common::SeekableReadStream *stream) {
-	int numRegions = get2bytes(stream);
+	int numRegions = stream->readUint16BE();
 
 	screenRegion *newRegion;
 	screenRegion * * pointy = &allScreenRegions;
@@ -99,13 +99,13 @@ void loadRegions(Common::SeekableReadStream *stream) {
 		*pointy = newRegion;
 		pointy = &(newRegion->next);
 
-		newRegion->x1 = get2bytes(stream);
-		newRegion->y1 = get2bytes(stream);
-		newRegion->x2 = get2bytes(stream);
-		newRegion->y2 = get2bytes(stream);
-		newRegion->sX = get2bytes(stream);
-		newRegion->sY = get2bytes(stream);
-		newRegion->di = get2bytes(stream);
+		newRegion->x1 = stream->readUint16BE();
+		newRegion->y1 = stream->readUint16BE();
+		newRegion->x2 = stream->readUint16BE();
+		newRegion->y2 = stream->readUint16BE();
+		newRegion->sX = stream->readUint16BE();
+		newRegion->sY = stream->readUint16BE();
+		newRegion->di = stream->readUint16BE();
 		newRegion->thisType = loadObjectRef(stream);
 	}
 	*pointy = NULL;

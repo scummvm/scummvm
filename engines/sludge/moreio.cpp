@@ -40,44 +40,22 @@ namespace Sludge {
 
 bool allowAnyFilename = true;
 
-int getch(Common::SeekableReadStream *stream) {
-	return stream->readByte();
-}
-
-void putch(int c, Common::WriteStream *stream) {
-	stream->writeByte(c);
-}
-
-int get2bytes(Common::SeekableReadStream *stream) {
-	int f1, f2;
-
-	f1 = getch(stream);
-	f2 = getch(stream);
-
-	return (f1 * 256 + f2);
-}
-
-void put2bytes(int numtoput, Common::WriteStream *stream) {
-	putch((char) (numtoput / 256), stream);
-	putch((char) (numtoput % 256), stream);
-}
-
 void writeString(char *s, Common::WriteStream *stream) {
 	int a, len = strlen(s);
-	put2bytes(len, stream);
+	stream->writeUint16BE(len);
 	for (a = 0; a < len; ++a) {
-		putch(s[a] + 1, stream);
+		stream->writeByte(s[a] + 1);
 	}
 }
 
 char *readString(Common::SeekableReadStream *stream) {
-	int a, len = get2bytes(stream);
+	int a, len = stream->readUint16BE();
 	char *s = new char[len + 1];
 	if (!checkNew(s)) {
 		return NULL;
 	}
 	for (a = 0; a < len; ++a) {
-		s[a] = (char) (getch(stream) - 1);
+		s[a] = (char)(stream->readByte() - 1);
 	}
 	s[len] = 0;
 	debug(kSludgeDebugDataLoad, "Read string of length %i: %s", len, s);
@@ -101,7 +79,6 @@ float floatSwap(float f) {
 float getFloat(Common::SeekableReadStream *stream) {
 	float f;
 	size_t bytes_read = stream->read(&f, sizeof(float));
-	//fread(& f, sizeof(float), 1, fp);
 	if (bytes_read != sizeof(float) && stream->err()) {
 		debug("Reading error in getFloat.\n");
 	}
@@ -118,7 +95,6 @@ void putFloat(float f, Common::WriteStream *stream) {
 	f = floatSwap(f);
 #endif
 	stream->write(&f, sizeof(float));
-	//fwrite(& f, sizeof(float), 1, fp);
 }
 
 short shortSwap(short s) {
@@ -147,38 +123,6 @@ void putSigned(short f, Common::WriteStream *stream) {
 	f = shortSwap(f);
 #endif
 	stream->write(&f, sizeof(short));
-}
-
-// The following two functions treat signed integers as unsigned.
-// That's done on purpose.
-
-int32_t get4bytes(Common::SeekableReadStream *stream) {
-	int f1, f2, f3, f4;
-
-	f1 = getch(stream);
-	f2 = getch(stream);
-	f3 = getch(stream);
-	f4 = getch(stream);
-
-	unsigned int x = f1 + f2 * 256 + f3 * 256 * 256 + f4 * 256 * 256 * 256;
-
-	return x;
-}
-
-void put4bytes(unsigned int i, Common::WriteStream *stream) {
-	unsigned char f1, f2, f3, f4;
-
-	f4 = i / (256 * 256 * 256);
-	i = i % (256 * 256 * 256);
-	f3 = i / (256 * 256);
-	i = i % (256 * 256);
-	f2 = i / 256;
-	f1 = i % 256;
-
-	putch(f1, stream);
-	putch(f2, stream);
-	putch(f3, stream);
-	putch(f4, stream);
 }
 
 char *encodeFilename(char *nameIn) {

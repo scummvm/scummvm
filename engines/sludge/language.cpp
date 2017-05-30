@@ -115,7 +115,7 @@ void readIniFile(char *filename) {
 	bool doingSecond = false;
 
 	do {
-		readChar = getch(&fd);
+		readChar = fd.readByte();
 		if (fd.eos()) {
 			readChar = '\n';
 			keepGoing = false;
@@ -193,7 +193,7 @@ void makeLanguageTable(Common::File *table) {
 		return;
 
 	for (unsigned int i = 0; i <= gameSettings.numLanguages; i++) {
-		languageTable[i] = i ? get2bytes(table) : 0;
+		languageTable[i] = i ? table->readUint16BE() : 0;
 		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i,
 				languageTable[i]);
 		languageName[i] = 0;

@@ -130,13 +130,13 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	loadhere.isFont = isFont;
 
-	total = get2bytes(bigDataFile);
+	total = bigDataFile->readUint16BE();
 	if (! total) {
 		spriteBankVersion = fgetc(bigDataFile);
 		if (spriteBankVersion == 1) {
 			total = 0;
 		} else {
-			total = get2bytes(bigDataFile);
+			total = bigDataFile->readUint16BE();
 		}
 	}
 
@@ -223,8 +223,8 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 				break;
 			}
 			case 2:
-			picwidth = get2bytes(bigDataFile);
-			picheight = get2bytes(bigDataFile);
+			picwidth = bigDataFile->readUint16BE();
+			picheight = bigDataFile->readUint16BE();
 			loadhere.sprites[i].xhot = getSigned(bigDataFile);
 			loadhere.sprites[i].yhot = getSigned(bigDataFile);
 			break;

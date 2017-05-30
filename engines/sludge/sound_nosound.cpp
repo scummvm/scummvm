@@ -113,19 +113,19 @@ bool startSound(int f, bool loopy) {
 }
 
 void saveSounds(Common::WriteStream *stream) {
-	putch(0, stream);
-	put2bytes(defSoundVol, stream);
-	put2bytes(defVol, stream);
+	stream->writeByte(0);
+	stream->writeUint16BE(defSoundVol);
+	stream->writeUint16BE(defVol);
 }
 
 void loadSounds(Common::SeekableReadStream *stream) {
-	while (getch(stream)) {
-		get2bytes(stream);
-		get2bytes(stream);
+	while (stream->readByte()) {
+		stream->readUint16BE();
+		stream->readUint16BE();
 	}
 
-	defSoundVol = get2bytes(stream);
-	defVol = get2bytes(stream);
+	defSoundVol = stream->readUint16BE();
+	defVol = stream->readUint16BE();
 }
 
 bool getSoundCacheStack(stackHandler *sH) {
