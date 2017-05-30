@@ -99,7 +99,11 @@ public:
 	 */
 	bool setCrosshairs(bool isVisible);
 
-	int get88() const;
+	/**
+	 * Returns the index for the number of star matches
+	 */
+	int getMatchedIndex() const;
+
 	int get5() const;
 
 	/**

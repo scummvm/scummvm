@@ -122,8 +122,8 @@ bool CStarField::setCrosshairs(bool isVisible) {
 	return oldVal;
 }
 
-int CStarField::get88() const {
-	return _crosshairs._field8;
+int CStarField::getMatchedIndex() const {
+	return _crosshairs._matchIndex;
 }
 
 int CStarField::get5() const {
@@ -131,7 +131,7 @@ int CStarField::get5() const {
 }
 
 void CStarField::setSolved() {
-	_isSolved = _crosshairs._field8 == 2;
+	_isSolved = _crosshairs._matchIndex == 2;
 }
 
 bool CStarField::isSolved() const {
@@ -216,7 +216,7 @@ void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
 }
 
 void CStarField::fn7() {
-	_crosshairs.fn3();
+	_crosshairs.incMatches();
 	setSolved();
 }
 

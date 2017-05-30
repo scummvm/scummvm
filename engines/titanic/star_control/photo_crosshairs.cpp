@@ -28,19 +28,19 @@
 
 namespace Titanic {
 
-CPhotoCrosshairs::CPhotoCrosshairs() : _field8(-1), _entryIndex(-1) {
+CPhotoCrosshairs::CPhotoCrosshairs() : _matchIndex(-1), _entryIndex(-1) {
 }
 
 void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 		CStarField *starField, CStarMarkers *markers) {
 	if (_entryIndex >= 0) {
-		if (_entryIndex == _field8) {
-			if (_field8 != 2) {
+		if (_entryIndex == _matchIndex) {
+			if (_matchIndex != 2) {
 				if (_positions[index] != _entries[_entryIndex]) {
 					surface->lock();
 
 					CSurfaceArea surfaceArea(surface);
-					fn4(index, &surfaceArea);
+					drawStar(index, &surfaceArea);
 					surface->unlock();
 
 					++_entryIndex;
@@ -51,11 +51,11 @@ void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 					markers->addStar(starP);
 				}
 			}
-		} else if (_entryIndex == _field8 + 1) {
+		} else if (_entryIndex == _matchIndex + 1) {
 			if (_positions[index] == _entries[_entryIndex]) {
 				surface->lock();
 				CSurfaceArea surfaceArea(surface);
-				fn6(&surfaceArea);
+				drawCurrent(&surfaceArea);
 				surface->unlock();
 
 				--_entryIndex;
@@ -64,8 +64,8 @@ void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 			} else {
 				surface->lock();
 				CSurfaceArea surfaceArea(surface);
-				fn6(&surfaceArea);
-				fn4(index, &surfaceArea);
+				drawCurrent(&surfaceArea);
+				drawStar(index, &surfaceArea);
 				surface->unlock();
 
 				const CBaseStarEntry *starP;
@@ -81,7 +81,7 @@ void CPhotoCrosshairs::selectStar(int index, CVideoSurface *surface,
 	} else {
 		surface->lock();
 		CSurfaceArea surfaceArea(surface);
-		fn4(index, &surfaceArea);
+		drawStar(index, &surfaceArea);
 		surface->unlock();
 
 		++_entryIndex;
@@ -109,23 +109,23 @@ bool CPhotoCrosshairs::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CSt
 }
 
 void CPhotoCrosshairs::fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
-	if (_field8 <= -1) {
+	if (_matchIndex <= -1) {
 		if (_entryIndex > -1) {
-			fn5(_entryIndex, surface, starField, markers);
+			drawEntry(_entryIndex, surface, starField, markers);
 			--_entryIndex;
 		}
 	} else {
-		--_field8;
-		if (_entryIndex - _field8 > 1) {
-			fn5(_entryIndex, surface, starField, markers);
+		--_matchIndex;
+		if (_entryIndex - _matchIndex > 1) {
+			drawEntry(_entryIndex, surface, starField, markers);
 			--_entryIndex;
 		}
 	}
 }
 
-void CPhotoCrosshairs::fn3() {
-	if (_field8 < 3)
-		++_field8;
+void CPhotoCrosshairs::incMatches() {
+	if (_matchIndex < 3)
+		++_matchIndex;
 }
 
 FPoint CPhotoCrosshairs::getPosition() const {
@@ -169,7 +169,7 @@ void CPhotoCrosshairs::allocate(int count) {
 
 void CPhotoCrosshairs::clear() {
 	_positions.clear();
-	_field8 = _entryIndex = -1;
+	_matchIndex = _entryIndex = -1;
 }
 
 int CPhotoCrosshairs::indexOf(const Common::Point &pt) const {
@@ -183,29 +183,30 @@ int CPhotoCrosshairs::indexOf(const Common::Point &pt) const {
 	return -1;
 }
 
-void CPhotoCrosshairs::fn4(int index, CSurfaceArea *surfaceArea) {
+void CPhotoCrosshairs::drawStar(int index, CSurfaceArea *surfaceArea) {
 	if (index >= 0 && index < (int)_positions.size()) {
 		const CStarPosition &pt = _positions[index];
-		fn7(pt, surfaceArea);
+		drawAt(pt, surfaceArea);
 	}
 }
 
-void CPhotoCrosshairs::fn5(int index, CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
+void CPhotoCrosshairs::drawEntry(int index, CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
 	surface->lock();
 	CSurfaceArea surfaceArea(surface);
-	fn7(_positions[index + 1], &surfaceArea);
+	drawAt(_entries[index], &surfaceArea);
 	surface->unlock();
 
-	const CBaseStarEntry *starP = starField->getDataPtr(_positions[index + 1]._index1);
+	const CBaseStarEntry *starP = starField->getDataPtr(_entries[index]._index1);
 	markers->addStar(starP);
 }
 
-void CPhotoCrosshairs::fn6(CSurfaceArea *surfaceArea) {
+void CPhotoCrosshairs::drawCurrent(CSurfaceArea *surfaceArea) {
+	assert(_entryIndex >= 0);
 	const CStarPosition &pt = _entries[_entryIndex];
-	fn7(pt, surfaceArea);
+	drawAt(pt, surfaceArea);
 }
 
-void CPhotoCrosshairs::fn7(const FPoint &pt, CSurfaceArea *surfaceArea) {
+void CPhotoCrosshairs::drawAt(const FPoint &pt, CSurfaceArea *surfaceArea) {
 	uint savedPixel = surfaceArea->_pixel;
 	surfaceArea->_pixel = 255;
 	surfaceArea->setColorFromPixel();

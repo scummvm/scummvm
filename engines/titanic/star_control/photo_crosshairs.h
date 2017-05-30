@@ -52,7 +52,7 @@ private:
 	 */
 	void clear();
 public:
-	int _field8;
+	int _matchIndex;
 	int _entryIndex;
 public:
 	CPhotoCrosshairs();
@@ -80,11 +80,34 @@ public:
 
 	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera);
 	void fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
-	void fn3();
-	void fn4(int index, CSurfaceArea *surfaceArea);
-	void fn5(int index, CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
-	void fn6(CSurfaceArea *surfaceArea);
-	void fn7(const FPoint &pt, CSurfaceArea *surfaceArea);
+	
+	/**
+	 * Increments the index for the number of matches
+	 */
+	void incMatches();
+	
+	/**
+	 * Draw the crosshairs for a given star
+	 */
+	void drawStar(int index, CSurfaceArea *surfaceArea);
+
+	/**
+	 * Draws the crosshairs for a specified entry, and adds the star
+	 * to the starfield markers
+	 */
+	void drawEntry(int index, CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
+
+	/**
+	 * Draw crosshairs for the most recently selected star 
+	 */
+	void drawCurrent(CSurfaceArea *surfaceArea);
+	
+	/**
+	 * Draw crosshairs at the given position
+	 */
+	void drawAt(const FPoint &pt, CSurfaceArea *surfaceArea);
+	
+	
 	FPoint getPosition() const;
 
 	/**

@@ -147,7 +147,7 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 
 bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	FPose pose;
-	int v = _starField ? _starField->get88() : -1;
+	int matchedIndex = _starField ? _starField->getMatchedIndex() : -1;
 
 	switch (key) {
 	case Common::KEYCODE_TAB:
@@ -177,7 +177,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_z:
 	case Common::KEYCODE_c:
-		if (v == -1) {
+		if (matchedIndex == -1) {
 			pose.setRotationMatrix(key == Common::KEYCODE_z ? Y_AXIS : X_AXIS, 1.0);
 			_camera.proc22(pose);
 			_camera.updatePosition(errorCode);
@@ -186,7 +186,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_SEMICOLON:
-		if (v == -1) {
+		if (matchedIndex == -1) {
 			_camera.increaseSpeed();
 			errorCode->set();
 			return true;
@@ -194,7 +194,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_PERIOD:
-		if (v == -1) {
+		if (matchedIndex == -1) {
 			_camera.decreaseSpeed();
 			errorCode->set();
 			return true;
@@ -202,7 +202,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_SPACE:
-		if (v == -1) {
+		if (matchedIndex == -1) {
 			_camera.stop();
 			errorCode->set();
 			return true;
@@ -210,7 +210,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_x:
-		if (v == -1) {
+		if (matchedIndex == -1) {
 			pose.setRotationMatrix(Y_AXIS, -1.0);
 			_camera.proc22(pose);
 			_camera.updatePosition(errorCode);
@@ -219,7 +219,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_QUOTE:
-		if (v == -1) {
+		if (matchedIndex == -1) {
 			pose.setRotationMatrix(X_AXIS, -1.0);
 			_camera.proc22(pose);
 			_camera.updatePosition(errorCode);
@@ -385,7 +385,7 @@ void CStarView::fn16() {
 			v1 += surfaceArea._centroid;
 			v3 += surfaceArea._centroid;
 
-			switch (_starField->get88()) {
+			switch (_starField->getMatchedIndex()) {
 			case -1:
 				_camera.fn2(v1, v2, v3);
 				_starField->fn7();

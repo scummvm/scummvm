@@ -136,7 +136,7 @@ void CStarControl::newFrame() {
 		_petControl = getPetControl();
 
 	if (_petControl) {
-		int val1 = _starField.get88();
+		int val1 = _starField.getMatchedIndex();
 		int val2 = 0;
 
 		if (_starField.getMode() == MODE_STARFIELD) {
