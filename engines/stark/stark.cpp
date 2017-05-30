@@ -409,7 +409,7 @@ Common::String StarkEngine::formatSaveName(const char *target, int slot) {
 void StarkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 
-	if (!_global || !_frameLimiter) {
+	if (!_global || !_global->getLevel() || !_global->getCurrent() || !_frameLimiter) {
 		// This function may be called when an error occurs before the engine is fully initialized
 		return;
 	}
