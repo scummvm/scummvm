@@ -91,13 +91,14 @@ public:
 	/**
 	 * Draws a line on the surface
 	 */
-	double drawLine(const FRect &rect);
+	double drawLine(const FPoint &pt1, const FPoint &pt2);
 
 	/**
-	 * Draws a line on the surface
+	 * Draws a line on the surface from the rect's top-left
+	 * to bottom-right corners
 	 */
-	double drawLine(const FPoint &pt1, const FPoint &pt2) {
-		return drawLine(FRect(pt1._x, pt1._y, pt2._x, pt2._y));
+	double drawLine(const FRect &rect) {
+		return drawLine(FPoint(rect.left, rect.top), FPoint(rect.right, rect.bottom));
 	}
 };
 

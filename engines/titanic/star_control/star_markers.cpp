@@ -54,10 +54,10 @@ void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClo
 
 			xc = center._x + vTemp._x;
 			yc = center._y + vTemp._y;
-			yb = yc + 4.0;
 			xl = xc - 4.0;
-			xr = xc + 4.0;
 			yt = yc - 4.0;
+			xr = xc + 4.0;
+			yb = yc + 4.0;
 			surfaceArea->drawLine(FPoint(xl, yc), FPoint(xc, yb)); // bottom-left
 			surfaceArea->drawLine(FPoint(xc, yb), FPoint(xr, yc)); // bottom-right
 			surfaceArea->drawLine(FPoint(xr, yc), FPoint(xc, yt)); // top-right
