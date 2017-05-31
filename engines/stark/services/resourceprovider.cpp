@@ -227,13 +227,6 @@ void ResourceProvider::performLocationChange() {
 	// Set the new current location
 	_global->setCurrent(current);
 
-	if (_restoreCurrentState) {
-		_stateProvider->restoreGlobalState(_global->getLevel());
-		_stateProvider->restoreCurrentLevelState(current->getLevel());
-		_stateProvider->restoreCurrentLocationState(current->getLevel(), current->getLocation());
-		_restoreCurrentState = false;
-	}
-
 	// Resources lifecycle update
 	_global->getLevel()->onEnterLocation();
 	current->getLevel()->onEnterLocation();
@@ -244,14 +237,21 @@ void ResourceProvider::performLocationChange() {
 		current->setInteractive(Resources::Object::cast<Resources::ModelItem>(_global->getApril()->getSceneInstance()));
 	}
 
-	setAprilInitialPosition();
-	setScrollInitialPosition();
+	if (_restoreCurrentState) {
+		_stateProvider->restoreGlobalState(_global->getLevel());
+		_stateProvider->restoreCurrentLevelState(current->getLevel());
+		_stateProvider->restoreCurrentLocationState(current->getLevel(), current->getLocation());
+		_restoreCurrentState = false;
+	} else {
+		setAprilInitialPosition();
+		setScrollInitialPosition();
 
-	// Trigger location change scripts
-	if (levelChanged) {
-		runLocationChangeScripts(current->getLevel(), Resources::Script::kCallModeEnterLocation);
+		// Trigger location change scripts
+		if (levelChanged) {
+			runLocationChangeScripts(current->getLevel(), Resources::Script::kCallModeEnterLocation);
+		}
+		runLocationChangeScripts(current->getLocation(), Resources::Script::kCallModeEnterLocation);
 	}
-	runLocationChangeScripts(current->getLocation(), Resources::Script::kCallModeEnterLocation);
 
 	purgeOldLocations();
 
