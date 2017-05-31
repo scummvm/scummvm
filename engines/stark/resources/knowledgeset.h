@@ -36,7 +36,7 @@ class XRCReadStream;
 
 namespace Resources {
 
-class Item;
+class InventoryItem;
 
 /**
  * A typed collection of Knowledge resources
@@ -56,10 +56,22 @@ public:
 	KnowledgeSet(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~KnowledgeSet();
 
+	// Resource API
+	void saveLoad(ResourceSerializer *serializer) override;
+
+	/** Add an inventory item, and keep track of its acquisition order */
+	void addItem(InventoryItem *item);
+
+	/** Remove an inventory item */
+	void removeItem(InventoryItem *item);
+
+	/** Get the render entries for the inventory items, in the order they were obtained */
 	Gfx::RenderEntryArray getInventoryRenderEntries();
 
 protected:
 	void printData() override;
+
+	Common::Array<uint16> _inventoryItemOrder;
 };
 
 } // End of namespace Resources

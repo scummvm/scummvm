@@ -33,6 +33,7 @@
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
+#include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
@@ -514,6 +515,15 @@ void InventoryItem::setEnabled(bool enabled) {
 	int16 selectedInventoryItem = StarkUserInterface->getSelectedInventoryItem();
 	if (!enabled && selectedInventoryItem == getIndex()) {
 		StarkUserInterface->selectInventoryItem(-1);
+	}
+
+	KnowledgeSet *inventory = StarkGlobal->getInventory();
+	if (inventory) {
+		if (enabled) {
+			inventory->addItem(this);
+		} else {
+			inventory->removeItem(this);
+		}
 	}
 }
 

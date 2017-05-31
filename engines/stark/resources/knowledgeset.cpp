@@ -24,6 +24,7 @@
 
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/services/stateprovider.h"
 
 namespace Stark {
 namespace Resources {
@@ -40,20 +41,66 @@ void KnowledgeSet::printData() {
 }
 
 Gfx::RenderEntryArray KnowledgeSet::getInventoryRenderEntries() {
-	// TODO: Keep and persist inventory items order
 	Common::Array<Resources::Item *> inventoryItems = listChildren<Resources::Item>(Resources::Item::kItemInventory);
-	Common::Array<Resources::Item *>::iterator it = inventoryItems.begin();
-	Gfx::RenderEntryArray result;
 
-	int i = 0;
-	for (; it != inventoryItems.end(); ++it, ++i) {
-		if (i < 4) continue; // HACK: The first 4 elements are UI elements, so skip them for now.
-		if ((*it)->isEnabled()) {
-			result.push_back((*it)->getRenderEntry(Common::Point(0, 0)));
+	// First add the inventory items from old saves which don't have an order
+	Gfx::RenderEntryArray result;
+	for (uint i = 0; i < inventoryItems.size(); i++) {
+		// The first 4 elements are UI elements (Eye, Mouth, Hand, ...)
+		if (i < 4 || !inventoryItems[i]->isEnabled()) continue;
+
+		bool orderFound = false;
+		for (uint j = 0; j < _inventoryItemOrder.size(); j++) {
+			if (_inventoryItemOrder[j] == inventoryItems[i]->getIndex()) {
+				orderFound = true;
+				break;
+			}
+		}
+
+		if (!orderFound) {
+			result.push_back(inventoryItems[i]->getRenderEntry(Common::Point(0, 0)));
+		}
+	}
+
+	// Then add the inventory items for which an order has been recorded
+	for (uint i = 0; i < _inventoryItemOrder.size(); i++) {
+		for (uint j = 0; j < inventoryItems.size(); j++) {
+			if (inventoryItems[j]->isEnabled() && inventoryItems[j]->getIndex() == _inventoryItemOrder[i]) {
+				result.push_back(inventoryItems[j]->getRenderEntry(Common::Point(0, 0)));
+			}
 		}
 	}
 
 	return result;
+}
+
+void KnowledgeSet::addItem(InventoryItem *item) {
+	_inventoryItemOrder.push_back(item->getIndex());
+}
+
+void KnowledgeSet::removeItem(InventoryItem *item) {
+	Common::Array<uint16>::iterator it;
+	for (it = _inventoryItemOrder.begin(); it != _inventoryItemOrder.end(); it++) {
+		if (*it == item->getIndex()) {
+			_inventoryItemOrder.erase(it);
+			break;
+		}
+	}
+}
+
+void KnowledgeSet::saveLoad(ResourceSerializer *serializer) {
+	if (_subType == kInventory) {
+		uint itemCount = _inventoryItemOrder.size();
+		serializer->syncAsUint32LE(itemCount);
+
+		if (serializer->isLoading()) {
+			_inventoryItemOrder.resize(itemCount);
+		}
+
+		for (uint i = 0; i < _inventoryItemOrder.size(); i++) {
+			serializer->syncAsUint16LE(_inventoryItemOrder[i]);
+		}
+	}
 }
 
 } // End of namespace Resources
