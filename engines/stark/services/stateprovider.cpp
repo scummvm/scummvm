@@ -112,16 +112,16 @@ void StateProvider::readResourceTree(Resources::Object *resource, Common::Seekab
 
 	if (size > 0) {
 		Common::SeekableReadStream *resourceStream = stream->readStream(size);
-		ResourceSerializer *serializer = new ResourceSerializer(resourceStream, nullptr, version);
+		ResourceSerializer serializer(resourceStream, nullptr, version);
 
 		// Deserialize the resource state from stream
 		if (current) {
-			resource->saveLoadCurrent(serializer);
+			resource->saveLoadCurrent(&serializer);
 		} else {
-			resource->saveLoad(serializer);
+			resource->saveLoad(&serializer);
 		}
 
-		delete serializer;
+		delete resourceStream;
 	}
 
 	// Deserialize the resource children
@@ -174,13 +174,13 @@ void StateProvider::writeResourceTree(Resources::Object *resource, Common::Write
 	// Explicit scope to control the lifespan of the memory stream
 	{
 		Common::MemoryWriteStreamDynamic resourceStream(DisposeAfterUse::YES);
-		ResourceSerializer *serializer = new ResourceSerializer(nullptr, &resourceStream, kSaveVersion);
+		ResourceSerializer serializer(nullptr, &resourceStream, kSaveVersion);
 
 		// Serialize the resource to a memory stream
 		if (current) {
-			resource->saveLoadCurrent(serializer);
+			resource->saveLoadCurrent(&serializer);
 		} else {
-			resource->saveLoad(serializer);
+			resource->saveLoad(&serializer);
 		}
 
 		// Write the resource to the target stream
@@ -188,8 +188,6 @@ void StateProvider::writeResourceTree(Resources::Object *resource, Common::Write
 		stream->writeByte(resource->getSubType());
 		stream->writeUint32LE(resourceStream.size());
 		stream->write(resourceStream.getData(), resourceStream.size());
-
-		delete serializer;
 	}
 
 	// Serialize the resource children
