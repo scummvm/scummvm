@@ -27,9 +27,9 @@
 
 namespace Titanic {
 
-CPetStarfield::CPetStarfield() : _field18C(0), _photoOn(true),
+CPetStarfield::CPetStarfield() : _flickerCtr(0), _photoOn(true),
 		_hasReference(false), _rect1(22, 352, 598, 478) {
-	_btnOffsets[0] = _btnOffsets[1] = _btnOffsets[2] = 0;
+	_markerStates[0] = _markerStates[1] = _markerStates[2] = MS_BLANK;
 }
 
 bool CPetStarfield::setup(CPetControl *petControl) {
@@ -72,9 +72,9 @@ void CPetStarfield::draw(CScreenManager *screenManager) {
 	}
 
 	_btnSetDest.draw(screenManager);
-	drawButton(_btnOffsets[0], 0, screenManager);
-	drawButton(_btnOffsets[1], 2, screenManager);
-	drawButton(_btnOffsets[2], 4, screenManager);
+	drawButton(_markerStates[0], 0, screenManager);
+	drawButton(_markerStates[1], 2, screenManager);
+	drawButton(_markerStates[2], 4, screenManager);
 	_text.draw(screenManager);
 }
 
@@ -178,37 +178,38 @@ bool CPetStarfield::setupControl(CPetControl *petControl) {
 	return true;
 }
 
-void CPetStarfield::drawButton(int offset, int index, CScreenManager *screenManager) {
-	if (_field18C < 4 && (offset / 3) == 1)
-		--offset;
-	if (offset == 2)
+void CPetStarfield::drawButton(MarkerState state, int index, CScreenManager *screenManager) {
+	int offset = (int)state;
+	if (_flickerCtr < 4 && state == MS_FLICKERING)
+		offset = 0;
+	if (state == MS_HIGHLIGHTED)
 		offset = 1;
 
 	_leds[index + offset].draw(screenManager);
 }
 
 void CPetStarfield::setButtons(int matchIndex, bool isMarkerClose) {
-	_btnOffsets[0] = 0;
-	_btnOffsets[1] = 0;
-	_btnOffsets[2] = 0;
+	_markerStates[0] = MS_BLANK;
+	_markerStates[1] = MS_BLANK;
+	_markerStates[2] = MS_BLANK;
 
 	if (matchIndex >= 0)
-		_btnOffsets[0] = 2;
+		_markerStates[0] = MS_HIGHLIGHTED;
 	if (matchIndex >= 1)
-		_btnOffsets[1] = 2;
+		_markerStates[1] = MS_HIGHLIGHTED;
 	if (matchIndex >= 2)
-		_btnOffsets[2] = 2;
+		_markerStates[2] = MS_HIGHLIGHTED;
 
 	if (isMarkerClose) {
 		if (matchIndex == -1)
-			_btnOffsets[0] = 1;
+			_markerStates[0] = MS_FLICKERING;
 		if (matchIndex == 0)
-			_btnOffsets[1] = 1;
+			_markerStates[1] = MS_FLICKERING;
 		if (matchIndex == 1)
-			_btnOffsets[2] = 1;
+			_markerStates[2] = MS_FLICKERING;
 	}
 
-	_field18C = (_field18C + 1) % 8;
+	_flickerCtr = (_flickerCtr + 1) % 8;
 }
 
 void CPetStarfield::makePetDirty() {
@@ -230,7 +231,7 @@ bool CPetStarfield::elementMouseButton(int index, CMouseButtonDownMsg *msg, cons
 	if (!rect.contains(msg->_mousePos))
 		return false;
 
-	switch (_btnOffsets[index]) {
+	switch (_markerStates[index]) {
 	case 1:
 		if (_petControl->_remoteTarget) {
 			CPETStarFieldLockMsg lockMsg(1);
@@ -239,7 +240,7 @@ bool CPetStarfield::elementMouseButton(int index, CMouseButtonDownMsg *msg, cons
 		break;
 
 	case 2:
-		if (index < 2 && _btnOffsets[index] >= 2) {
+		if (index < 2 && _markerStates[index] >= 2) {
 			if (_petControl->_remoteTarget) {
 				CPETStarFieldLockMsg lockMsg(1);
 				lockMsg.execute(_petControl->_remoteTarget);

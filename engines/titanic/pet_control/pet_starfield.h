@@ -29,16 +29,18 @@
 
 namespace Titanic {
 
+enum MarkerState { MS_BLANK = 0, MS_FLICKERING = 1, MS_HIGHLIGHTED = 2};
+
 class CPetStarfield : public CPetSection {
 private:
 	CPetGfxElement _imgStarfield;
 	CPetGfxElement _imgPhoto;
 	CPetGfxElement _imgStarCtrl;
 	CPetGfxElement _btnSetDest;
-	int _btnOffsets[3];
+	MarkerState _markerStates[3];
 	CPetGfxElement _leds[6];
 	Rect _rect1;
-	int _field18C;
+	int _flickerCtr;
 	CTextControl _text;
 	bool _photoOn;
 	bool _hasReference;
@@ -51,7 +53,7 @@ private:
 	/**
 	 * Draw a button
 	 */
-	void drawButton(int offset, int index, CScreenManager *screenManager);
+	void drawButton(MarkerState state, int index, CScreenManager *screenManager);
 
 	/**
 	 * Mouse down handling for Nav elements
