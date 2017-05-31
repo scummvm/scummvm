@@ -80,7 +80,7 @@ int stringWidth(char *theText) {
 
 	while (theText[a]) {
 		c = u8_nextchar(theText, &a);
-		xOff += theFont.sprites[fontInTable(c)].width + fontSpace;
+		xOff += theFont.sprites[fontInTable(c)].surface.w + fontSpace;
 	}
 
 	return xOff;
@@ -99,7 +99,7 @@ void pasteString(char *theText, int xOff, int y, spritePalette &thePal) {
 		c = u8_nextchar(theText, &a);
 		mySprite = &theFont.sprites[fontInTable(c)];
 		fontSprite(xOff, y, *mySprite, thePal);
-		xOff += (int) ((double) (mySprite->width + fontSpace) / cameraZoom);
+		xOff += (int) ((double) (mySprite->surface.w + fontSpace) / cameraZoom);
 	}
 }
 
@@ -117,7 +117,7 @@ void pasteStringToBackdrop(char *theText, int xOff, int y,
 		c = u8_nextchar(theText, &a);
 		mySprite = &theFont.sprites[fontInTable(c)];
 		pasteSpriteToBackDrop(xOff, y, *mySprite, thePal);
-		xOff += mySprite->width + fontSpace;
+		xOff += mySprite->surface.w + fontSpace;
 	}
 }
 
@@ -135,7 +135,7 @@ void burnStringToBackdrop(char *theText, int xOff, int y,
 		c = u8_nextchar(theText, &a);
 		mySprite = &theFont.sprites[fontInTable(c)];
 		burnSpriteToBackDrop(xOff, y, *mySprite, thePal);
-		xOff += mySprite->width + fontSpace;
+		xOff += mySprite->surface.w + fontSpace;
 	}
 }
 
