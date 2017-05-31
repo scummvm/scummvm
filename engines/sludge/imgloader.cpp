@@ -26,30 +26,19 @@
 #include "graphics/surface.h"
 
 #include "allfiles.h"
+#include "hsi.h"
 #include "imgloader.h"
 #include "colours.h"
 #include "sludge.h"
 
 namespace Sludge {
 
-bool ImgLoader::loadImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, bool reserve) {
-	debug("Loading image at position: %i", stream->pos());
+bool ImgLoader::loadImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve) {
+	debug(kSludgeDebugDataLoad, "Loading image at position: %i", stream->pos());
 	int32 start_ptr = stream->pos();
 	if (!loadPNGImage(stream, dest)) {
 		stream->seek(start_ptr);
-		if (!loadReserveImage(stream, dest, reserve)) {
-			return false;
-		}
-	}
-	return true;
-}
-
-bool ImgLoader::loadImage(Common::SeekableReadStream *stream, Graphics::Surface *dest) {
-	debug("Loading image at position: %i", stream->pos());
-	int32 start_ptr = stream->pos();
-	if (!loadPNGImage(stream, dest)) {
-		stream->seek(start_ptr);
-		if (!loadOtherImage(stream, dest)) {
+		if (!loadHSIImage(stream, dest, reserve)) {
 			return false;
 		}
 	}
@@ -68,70 +57,13 @@ bool ImgLoader::loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surfa
 	return true;
 }
 
-bool ImgLoader::loadReserveImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve) {
-	debug("Loading image at position: %i", stream->pos());
-	int32_t transCol = reserve ? -1 : 63519;
-	int n;
-	uint16 width = stream->readUint16BE();
-	uint16 height = stream->readUint16BE();
-
-	dest->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-	for (uint16 y = 0; y < height; y++) {
-		uint16 x = 0;
-		while (x < width) {
-			unsigned short c = (unsigned short)stream->readUint16BE();
-			if (c & 32) {
-				n = stream->readByte() + 1;
-				c -= 32;
-			} else {
-				n = 1;
-			}
-			while (n--) {
-				byte *target = (byte *)dest->getBasePtr(x, y);
-				if (c == transCol || c == 2015) {
-					target[0] = (byte)0;
-					target[1] = (byte)0;
-					target[2] = (byte)0;
-					target[3] = (byte)0;
-				} else {
-					target[0] = (byte)255;
-					target[1] = (byte)blueValue(c);
-					target[2] = (byte)greenValue(c);
-					target[3] = (byte)redValue(c);
-				}
-				x++;
-			}
-		}
+bool ImgLoader::loadHSIImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve) {
+	HSIDecoder hsiDecoder;
+	hsiDecoder.setReserve(reserve);
+	if (!hsiDecoder.loadStream(*stream)) {
+		return false;
 	}
-	return true;
-}
-
-bool ImgLoader::loadOtherImage(Common::SeekableReadStream *stream, Graphics::Surface *dest) {
-	int n;
-	uint16 width = stream->readUint16BE();
-	uint16 height = stream->readUint16BE();
-
-	dest->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-	for (uint16 y = 0; y < height; y++) {
-		uint16 x = 0;
-		while (x < width) {
-			unsigned short c = (unsigned short)stream->readUint16BE();
-			if (c & 32) {
-				n = stream->readByte() + 1;
-				c -= 32;
-			} else {
-				n = 1;
-			}
-			while (n--) {
-				byte *target = (byte *)dest->getBasePtr(x, y);
-				target[0] = (byte)255;
-				target[1] = (byte)blueValue(c);
-				target[2] = (byte)greenValue(c);
-				target[3] = (byte)redValue(c);
-				x++;
-			}
-		}
-	}
+	dest->copyFrom(*(hsiDecoder.getSurface()));
 	return true;
 }
 

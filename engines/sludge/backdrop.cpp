@@ -19,22 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#if 0
-#if defined __unix__ && !(defined __APPLE__)
-#include <png.h>
-#else
-#include <libpng/png.h>
-#endif
-
-#include <stdlib.h>
-#include <stdint.h>
-
-#if !defined(HAVE_GLES2)
-#include "GLee.h"
-#else
-#include <GLES2/gl2.h>
-#endif
-#endif
 
 #include "allfiles.h"
 #include "debug.h"
@@ -742,7 +726,7 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 	int picWidth;
 	int picHeight;
 
-	if (!ImgLoader::loadImage(bigDataFile, &nP->surface, false))
+	if (!ImgLoader::loadImage(bigDataFile, &nP->surface, 0))
 		return false;
 
 	if (!NPOT_textures) {
@@ -930,7 +914,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 		killAllBackDrop(); // kill all
 	}
 
-	if (!ImgLoader::loadImage(stream, &backdropSurface, reserve))
+	if (!ImgLoader::loadImage(stream, &backdropSurface, (int)reserve))
 		return false;
 
 	int realPicWidth = backdropSurface.w;
@@ -964,7 +948,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 
 bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	debug(kSludgeDebugGraphics, "Load mixHSI");
-	if (!ImgLoader::loadImage(stream, &backdropSurface, false))
+	if (!ImgLoader::loadImage(stream, &backdropSurface, 0))
 		return false;
 
 	int realPicWidth = backdropSurface.w;

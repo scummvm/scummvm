@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	fonttext.o \
 	graphics.o \
 	helpers.o \
+	hsi.o \
 	imgloader.o \
 	language.o \
 	line.o \

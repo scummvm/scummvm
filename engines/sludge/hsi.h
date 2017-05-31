@@ -19,22 +19,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef SLUDGE_HSI_H
+#define SLUDGE_HSI_H
 
-#ifndef SLUDGE_IMGLOADER_H
-#define SLUDGE_IMGLOADER_H
+#include "image/image_decoder.h"
 
-#include "common/file.h"
+#include "graphics/surface.h"
 
 namespace Sludge {
 
-class ImgLoader {
-protected:
-	ImgLoader() {}
-
+class HSIDecoder : public Image::ImageDecoder {
 public:
-	static bool loadImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve = -1);
-	static bool loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surface *dest);
-	static bool loadHSIImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve = -1);
+	HSIDecoder();
+	virtual ~HSIDecoder();
+
+	// ImageDecoder API
+	void destroy();
+	virtual bool loadStream(Common::SeekableReadStream &stream);
+	virtual Graphics::Surface *getSurface() const { return _surface; }
+	void setReserve(bool reserve) { _reserve = reserve; }
+
+private:
+	Graphics::Surface *_surface;
+	int _reserve;
 };
 
 } // End of namespace Sludge
