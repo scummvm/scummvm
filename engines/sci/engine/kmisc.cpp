@@ -647,6 +647,9 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 	case kGetColorDepth:
 		return make_reg(0, /* 256 color */ 2);
 	case kGetCDSpeed:
+		// The value `4` comes from Rama DOS resource.cfg installed in DOSBox,
+		// and seems to correspond to the highest expected CD speed value
+		return make_reg(0, 4);
 	case kGetCDDrive:
 	default:
 		return NULL_REG;
