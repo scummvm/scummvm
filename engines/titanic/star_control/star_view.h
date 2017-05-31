@@ -158,8 +158,15 @@ public:
 	 */
 	void setHasReference();
 	
-	void fn16();
-	void fn17();
+	/**
+	  * Handles locking in a star
+	  */
+	void lockStar();
+
+	/**
+	 * Handles unlocking a star
+	 */
+	void unlockStar();
 
 };
 

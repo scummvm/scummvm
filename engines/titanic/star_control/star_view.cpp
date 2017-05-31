@@ -375,7 +375,7 @@ void CStarView::setHasReference() {
 	_field218 = true;
 }
 
-void CStarView::fn16() {
+void CStarView::lockStar() {
 	if (_starField && !_showingPhoto) {
 		CSurfaceArea surfaceArea(_videoSurface);
 		FVector v1, v2, v3;
@@ -387,16 +387,19 @@ void CStarView::fn16() {
 
 			switch (_starField->getMatchedIndex()) {
 			case -1:
+				// First star match
 				_camera.fn2(v1, v2, v3);
 				_starField->fn7();
 				break;
 
 			case 0:
+				// Second star match
 				_camera.fn3(&_photoViewport, v2);
 				_starField->fn7();
 				break;
 
 			case 1:
+				// Third star match
 				_camera.fn1(&_photoViewport, v2);
 				_starField->fn7();
 				break;
@@ -408,7 +411,7 @@ void CStarView::fn16() {
 	}
 }
 
-void CStarView::fn17() {
+void CStarView::unlockStar() {
 	if (_starField && !_showingPhoto) {
 		_camera.removeMatrixRow();
 		_starField->fn8(_photoSurface);

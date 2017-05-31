@@ -115,10 +115,10 @@ bool CNavHelmet::PETStarFieldLockMsg(CPETStarFieldLockMsg *msg) {
 	if (_flag) {
 		if (msg->_value) {
 			playSound("a#6.wav");
-			starFn(STAR_17);
+			starFn(LOCK_STAR);
 		} else {
 			playSound("a#5.wav");
-			starFn(STAR_18);
+			starFn(UNLOCK_STAR);
 		}
 	}
 

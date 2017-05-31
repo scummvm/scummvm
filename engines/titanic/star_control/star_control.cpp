@@ -242,12 +242,12 @@ void CStarControl::doAction(StarControlAction action) {
 		_view.fn3(false);
 		break;
 
-	case STAR_17:
-		_view.fn16();
+	case LOCK_STAR:
+		_view.lockStar();
 		break;
 
-	case STAR_18:
-		_view.fn17();
+	case UNLOCK_STAR:
+		_view.unlockStar();
 		break;
 
 	case STAR_19:
