@@ -298,7 +298,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
-					tempV = camera->proc28(2, gridEntry);
+					tempV = camera->getRelativePos(2, gridEntry);
 					gridEntry._position._x = tempV._x;
 					gridEntry._position._y = tempV._y + vector2._y;
 				}
@@ -320,7 +320,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
-					tempV = camera->proc28(0, gridEntry);
+					tempV = camera->getRelativePos(0, gridEntry);
 					gridEntry._position._x = tempV._x + vector2._x;
 					gridEntry._position._y = tempV._y + vector2._y;
 				}
@@ -342,7 +342,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
-					tempV = camera->proc28(1, gridEntry);
+					tempV = camera->getRelativePos(1, gridEntry);
 					gridEntry._position._x = tempV._x + vector2._x;
 					gridEntry._position._y = tempV._y + vector2._y;
 				}
@@ -402,7 +402,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
-			tempV = camera->proc28(2, gridEntry);
+			tempV = camera->getRelativePos(2, gridEntry);
 			gridEntry._position._x = tempV._x + vector2._x;
 			gridEntry._position._y = tempV._y + vector2._y;
 		}
@@ -424,7 +424,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
-			tempV = camera->proc28(2, gridEntry);
+			tempV = camera->getRelativePos(2, gridEntry);
 			gridEntry._position._x = tempV._x + vector2._x;
 			gridEntry._position._y = tempV._y + vector2._y;
 		}
@@ -446,7 +446,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
-			tempV = camera->proc28(2, gridEntry);
+			tempV = camera->getRelativePos(2, gridEntry);
 			gridEntry._position._x = tempV._x + vector2._x;
 			gridEntry._position._y = tempV._y + vector2._y;
 		}

@@ -88,8 +88,8 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarCamera *camera) {
 		vector3._z = vTemp._x * pose._row1._z + vTemp._y * pose._row2._z + vTemp._z * pose._row3._z + pose._vector._z;
 
 		if (flag && vector1._z > threshold && vector3._z > threshold) {
-			vector2 = camera->proc28(2, vector1);
-			vector4 = camera->proc28(2, vector3);
+			vector2 = camera->getRelativePos(2, vector1);
+			vector4 = camera->getRelativePos(2, vector3);
 
 			r.bottom = vector4._y + vHeight2;
 			r.right = vector4._x + vWidth2;

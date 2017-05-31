@@ -199,8 +199,9 @@ int CStarCamera::proc27() const {
 	return _viewport._field24;
 }
 
-FVector CStarCamera::proc28(int index, const FVector &src) {
+FVector CStarCamera::getRelativePos(int index, const FVector &src) {
 	FVector dest;
+
 	dest._x = ((_viewport._valArray[index] + src._x) * _viewport._centerVector._x)
 		/ (_viewport._centerVector._y * src._z);
 	dest._y = src._y * _viewport._centerVector._x / (_viewport._centerVector._z * src._z);

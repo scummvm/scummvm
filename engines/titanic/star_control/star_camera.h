@@ -140,7 +140,12 @@ public:
 
 	virtual double proc26() const;
 	virtual int proc27() const;
-	virtual FVector proc28(int index, const FVector &src);
+
+	/**
+	 * Return the passed vector relative to the center of the viewpoint
+	 */
+	virtual FVector getRelativePos(int index, const FVector &src);
+
 	virtual FVector proc29(int index, const FVector &src);
 	virtual FVector proc30(int index, const FVector &v);
 	virtual FVector proc31(int index, const FVector &v);

@@ -34,7 +34,7 @@ void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClo
 	FPoint center((double)surfaceArea->_width * 0.5,
 		surfaceArea->_height * 0.5);
 	FVector newV;
-	double x1, x2, x3, y1, y2, y3;
+	double xl, xc, xr, yt, yc, yb;
 
 	uint savedPixel = surfaceArea->_pixel;
 	surfaceArea->_pixel = 0xffff;
@@ -50,18 +50,18 @@ void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClo
 			+ pose._row2._z * star._position._y + pose._vector._z;
 
 		if (newV._z > threshold) {
-			FVector vTemp = camera->proc28(2, newV);
+			FVector vTemp = camera->getRelativePos(2, newV);
 
-			x2 = center._x + vTemp._x;
-			y1 = center._y + vTemp._y;
-			y2 = y1 + 4.0;
-			x1 = x2 - 4.0;
-			x3 = x2 + 4.0;
-			y3 = y1 - 4.0;
-			surfaceArea->drawLine(FPoint(x1, y1), FPoint(x2, y2));
-			surfaceArea->drawLine(FPoint(x2, y2), FPoint(x3, y1));
-			surfaceArea->drawLine(FPoint(x3, y1), FPoint(x2, y3));
-			surfaceArea->drawLine(FPoint(x2, y3), FPoint(x1, y1));
+			xc = center._x + vTemp._x;
+			yc = center._y + vTemp._y;
+			yb = yc + 4.0;
+			xl = xc - 4.0;
+			xr = xc + 4.0;
+			yt = yc - 4.0;
+			surfaceArea->drawLine(FPoint(xl, yc), FPoint(xc, yb)); // bottom-left
+			surfaceArea->drawLine(FPoint(xc, yb), FPoint(xr, yc)); // bottom-right
+			surfaceArea->drawLine(FPoint(xr, yc), FPoint(xc, yt)); // top-right
+			surfaceArea->drawLine(FPoint(xc, yt), FPoint(xl, yc)); // top-left
 		}
 	}
 

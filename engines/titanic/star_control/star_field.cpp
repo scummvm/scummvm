@@ -193,7 +193,7 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 	if (camera->getThreshold() >= tv._z)
 		return -1.0;
 
-	tv = camera->proc28(2, tv);
+	tv = camera->getRelativePos(2, tv);
 
 	v1 = FVector(tv._x + surfaceArea->_centroid._x,
 		tv._y + surfaceArea->_centroid._y, tv._z);
