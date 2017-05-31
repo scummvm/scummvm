@@ -291,7 +291,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			}
 
 			if (val2 <= 0) {
-				surfaceArea->setMode(SA_NONE);
+				surfaceArea->setMode(SA_SOLID);
 				surfaceArea->_pixel = MKTAG_BE(entryP->_pixel1, entryP->_pixel2,
 					entryP->_pixel3, 0);
 				surfaceArea->setColorFromPixel();
@@ -314,7 +314,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 					}
 				}
 			} else {
-				surfaceArea->setMode(SA_NONE);
+				surfaceArea->setMode(SA_SOLID);
 				surfaceArea->_pixel = entryP->_pixel1;
 				surfaceArea->setColorFromPixel();
 
@@ -396,7 +396,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 	}
 
 	if (val2 <= 0) {
-		surfaceArea->setMode(SA_NONE);
+		surfaceArea->setMode(SA_SOLID);
 		surfaceArea->_pixel = pixel1;
 		surfaceArea->setColorFromPixel();
 
@@ -418,7 +418,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			}
 		}
 	} else {
-		surfaceArea->setMode(SA_NONE);
+		surfaceArea->setMode(SA_SOLID);
 		surfaceArea->_pixel = pixel2;
 		surfaceArea->setColorFromPixel();
 

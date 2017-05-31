@@ -344,9 +344,9 @@ void CStarView::fn11() {
 		_starField->fn9();
 }
 
-void CStarView::toggleCrosshairs() {
+void CStarView::toggleBox() {
 	if (_starField)
-		_starField->toggleCrosshairs();
+		_starField->toggleBox();
 }
 
 void CStarView::fn13() {
@@ -425,7 +425,7 @@ void CStarView::fn18(CStarCamera *camera) {
 
 		if (_photoSurface) {
 			int oldVal = _starField->get54();
-			bool oldCrosshairs = _starField->setCrosshairs(false);
+			bool oldCrosshairs = _starField->setBoxVisible(false);
 
 			// Render the starfield for the photograph view
 			_photoSurface->clear();
@@ -433,7 +433,7 @@ void CStarView::fn18(CStarCamera *camera) {
 			_starField->render(_photoSurface, camera);
 
 			// Render any previously set crosshairs
-			_starField->setCrosshairs(oldCrosshairs);
+			_starField->setBoxVisible(oldCrosshairs);
 			_starField->set54(oldVal);
 			_starField->fn6(_photoSurface, camera);
 			_photoSurface->unlock();

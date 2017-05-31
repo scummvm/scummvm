@@ -34,7 +34,7 @@ void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClo
 	FPoint center((double)surfaceArea->_width * 0.5,
 		surfaceArea->_height * 0.5);
 	FVector newV;
-	int x1, x2, x3, y1, y2, y3;
+	double x1, x2, x3, y1, y2, y3;
 
 	uint savedPixel = surfaceArea->_pixel;
 	surfaceArea->_pixel = 0xffff;
@@ -54,14 +54,14 @@ void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClo
 
 			x2 = center._x + vTemp._x;
 			y1 = center._y + vTemp._y;
-			y2 = y1 - -4.0;
+			y2 = y1 + 4.0;
 			x1 = x2 - 4.0;
-			x3 = x2 - -4.0;
+			x3 = x2 + 4.0;
 			y3 = y1 - 4.0;
-			surfaceArea->drawLine(Common::Point(x1, y1), Common::Point(x2, y2));
-			surfaceArea->drawLine(Common::Point(x2, y2), Common::Point(x3, y1));
-			surfaceArea->drawLine(Common::Point(x3, y1), Common::Point(x2, y3));
-			surfaceArea->drawLine(Common::Point(x2, y3), Common::Point(x1, y1));
+			surfaceArea->drawLine(FPoint(x1, y1), FPoint(x2, y2));
+			surfaceArea->drawLine(FPoint(x2, y2), FPoint(x3, y1));
+			surfaceArea->drawLine(FPoint(x3, y1), FPoint(x2, y3));
+			surfaceArea->drawLine(FPoint(x2, y3), FPoint(x1, y1));
 		}
 	}
 

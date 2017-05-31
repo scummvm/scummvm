@@ -161,7 +161,7 @@ void CStarCrosshairs::draw(CSurfaceArea *surfaceArea) {
 		uint savedPixel = surfaceArea->_pixel;
 		surfaceArea->_pixel = 0xff;
 		surfaceArea->setColorFromPixel();
-		SurfaceAreaMode savedMode = surfaceArea->setMode(SA_NONE);
+		SurfaceAreaMode savedMode = surfaceArea->setMode(SA_SOLID);
 
 		for (int idx = 0; idx < _entryIndex; ++idx) {
 			const CStarPosition &src = _entries[idx];

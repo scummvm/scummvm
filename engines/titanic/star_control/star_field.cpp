@@ -28,7 +28,7 @@
 namespace Titanic {
 
 CStarField::CStarField() : _points1On(false), _points2On(false), _mode(MODE_STARFIELD),
-		_showCrosshairs(true), _val5(0), _isSolved(false) {
+		_showBox(true), _val5(0), _isSolved(false) {
 }
 
 void CStarField::load(SimpleFile *file) {
@@ -37,7 +37,7 @@ void CStarField::load(SimpleFile *file) {
 	_points1On = file->readNumber();
 	_points2On = file->readNumber();
 	_mode = (StarMode)file->readNumber();
-	_showCrosshairs = file->readNumber();
+	_showBox = file->readNumber();
 	_isSolved = file->readNumber();
 }
 
@@ -47,7 +47,7 @@ void CStarField::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_points1On, indent);
 	file->writeNumberLine(_points2On, indent);
 	file->writeNumberLine(_mode, indent);
-	file->writeNumberLine(_showCrosshairs, indent);
+	file->writeNumberLine(_showBox, indent);
 	file->writeNumberLine(_isSolved, indent);
 }
 
@@ -66,7 +66,7 @@ bool CStarField::initDocument() {
 void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
 	CSurfaceArea surfaceArea(surface);
 	draw(&surfaceArea, camera, &_starCloseup);
-	if (_showCrosshairs)
+	if (_showBox)
 		drawBox(&surfaceArea);
 
 	_markers.draw(&surfaceArea, camera, nullptr);
@@ -112,13 +112,13 @@ void CStarField::setMode(StarMode mode) {
 	_mode = mode;
 }
 
-void CStarField::toggleCrosshairs() {
-	_showCrosshairs = !_showCrosshairs;
+void CStarField::toggleBox() {
+	_showBox = !_showBox;
 }
 
-bool CStarField::setCrosshairs(bool isVisible) {
-	bool oldVal = _showCrosshairs;
-	_showCrosshairs = isVisible;
+bool CStarField::setBoxVisible(bool isVisible) {
+	bool oldVal = _showBox;
+	_showBox = isVisible;
 	return oldVal;
 }
 

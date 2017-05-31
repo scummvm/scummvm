@@ -215,7 +215,7 @@ void CStarControl::doAction(StarControlAction action) {
 		break;
 
 	case STAR_11:
-		_view.toggleCrosshairs();
+		_view.toggleBox();
 		break;
 
 	case STAR_12:

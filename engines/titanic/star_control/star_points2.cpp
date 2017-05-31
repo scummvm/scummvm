@@ -76,7 +76,7 @@ void CStarPoints2::draw(CSurfaceArea *surface, CStarCamera *camera) {
 	surface->_pixel = 0xffff00;
 	uint oldPixel = surface->_pixel;
 	surface->setColorFromPixel();
-	SurfaceAreaMode oldMode = surface->setMode(SA_NONE);
+	SurfaceAreaMode oldMode = surface->setMode(SA_SOLID);
 
 	for (uint rootCtr = 0; rootCtr < _data.size(); ++rootCtr) {
 		const RootEntry &re = _data[rootCtr];

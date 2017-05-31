@@ -146,9 +146,9 @@ public:
 	void fn11();
 
 	/**
-	 * Toggles whether the crosshairs box is visible
+	 * Toggles whether the viewpoint box is visible in the starfield
 	 */
-	void toggleCrosshairs();
+	void toggleBox();
 	
 	void fn13();
 	void fn14();

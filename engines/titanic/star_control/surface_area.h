@@ -31,7 +31,7 @@
 namespace Titanic {
 
 enum SurfaceAreaMode {
-	SA_NONE = 0, SA_MODE1 = 1, SA_MODE2 = 2, SA_XOR = 3, SA_MODE4 = 4
+	SA_SOLID = 0, SA_MODE1 = 1, SA_MODE2 = 2, SA_XOR = 3, SA_MODE4 = 4
 };
 
 class CSurfaceArea {
@@ -96,8 +96,8 @@ public:
 	/**
 	 * Draws a line on the surface
 	 */
-	double drawLine(const Common::Point &pt1, const Common::Point &pt2) {
-		return drawLine(FRect(pt1.x, pt1.y, pt2.x, pt2.y));
+	double drawLine(const FPoint &pt1, const FPoint &pt2) {
+		return drawLine(FRect(pt1._x, pt1._y, pt2._x, pt2._y));
 	}
 };
 

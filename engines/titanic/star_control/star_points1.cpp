@@ -72,7 +72,7 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarCamera *camera) {
 	surface->_pixel = 0xff0000;
 	uint oldPixel = surface->_pixel;
 	surface->setColorFromPixel();
-	SurfaceAreaMode oldMode = surface->setMode(SA_NONE);
+	SurfaceAreaMode oldMode = surface->setMode(SA_SOLID);
 
 	vector1._z = vTemp._x * pose._row1._z + vTemp._y * pose._row2._z + vTemp._z * pose._row3._z + pose._vector._z;
 	vector1._x = vTemp._x * pose._row1._x + vTemp._y * pose._row2._x + vTemp._z * pose._row3._x + pose._vector._x;

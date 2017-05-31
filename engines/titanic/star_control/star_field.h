@@ -42,7 +42,7 @@ private:
 	bool _points1On;
 	bool _points2On;
 	StarMode _mode;
-	bool _showCrosshairs;
+	bool _showBox;
 	int _val5;
 	bool _isSolved;
 private:
@@ -90,14 +90,14 @@ public:
 	void setMode(StarMode mode);
 	
 	/**
-	 * Toggles whether the crosshairs box is visible
+	 * Toggles whether the big box is visible
 	 */
-	void toggleCrosshairs();
+	void toggleBox();
 
 	/**
-	 * Sets whether the crosshairs box is visible
+	 * Sets whether the big box is visible
 	 */
-	bool setCrosshairs(bool isVisible);
+	bool setBoxVisible(bool isVisible);
 
 	/**
 	 * Returns the index for the number of star matches

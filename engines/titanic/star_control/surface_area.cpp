@@ -31,7 +31,7 @@ CSurfaceArea::CSurfaceArea(CVideoSurface *surface) {
 	_pitch = surface->getPitch();
 	_field0 = 0;
 	_colorMask = _color = 0;
-	_mode = SA_NONE;
+	_mode = SA_SOLID;
 	_surface = nullptr;
 
 	// Original supported other pixel depths
@@ -49,7 +49,7 @@ void CSurfaceArea::initialize() {
 	_field27 = _field26 = _field25 = 0;
 	_field24 = 0;
 	_rgb = _field2C = 0;
-	_mode = SA_NONE;
+	_mode = SA_SOLID;
 }
 
 void CSurfaceArea::setColor(uint rgb) {
@@ -184,25 +184,31 @@ double CSurfaceArea::drawLine(const FRect &rect) {
 	switch (_bpp) {
 	case 0:
 		s.format = Graphics::PixelFormat::createFormatCLUT8();
-		if (_mode != SA_NONE)
+		if (_mode != SA_SOLID) {
 			Graphics::drawLine(rr.left, rr.top, rr.right, rr.bottom, 0, plotPoint<byte>, this);
-		return r.top;
+			return r.top;
+		}
+		break;
 	case 1:
 	case 2:
 		s.format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-		if (_mode != SA_NONE)
+		if (_mode != SA_SOLID) {
 			Graphics::drawLine(rr.left, rr.top, rr.right, rr.bottom, 0, plotPoint<uint16>, this);
-		return r.top;
+			return r.top;
+		}
+		break;
 	case 4:
 		s.format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		if (_mode != SA_NONE)
+		if (_mode != SA_SOLID) {
 			Graphics::drawLine(rr.left, rr.top, rr.right, rr.bottom, 0, plotPoint<uint32>, this);
-		return r.top;
+			return r.top;
+		}
+		break;
 	default:
 		error("Unknown bpp");
 	}
 
-	s.drawLine(rr.left, rr.top, rr.right, rr.bottom, _color);
+	s.drawLine(rr.left, rr.top, rr.right, rr.bottom, _rgb);
 	return r.top;
 }
 
