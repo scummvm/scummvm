@@ -22,23 +22,15 @@
 #ifndef SLUDGE_SPRITE_H
 #define SLUDGE_SPRITE_H
 
-#if 0
-#if !defined(HAVE_GLES2)
-#include "GLee.h"
-#else
-#include <GLES2/gl2.h>
-#endif
-#endif
+#include "graphics/surface.h"
 
 namespace Sludge {
 
 struct onScreenPerson;
 
 struct sprite {
-	int width, height, xhot, yhot;
-	int tex_x;
-	int texNum;
-	//unsigned char * data;
+	int xhot, yhot;
+	Graphics::Surface surface;
 };
 
 class spritePalette {
@@ -47,17 +39,10 @@ public:
 	unsigned char *r;
 	unsigned char *g;
 	unsigned char *b;
-#if 0
-	GLuint *tex_names;
-	GLuint *burnTex_names;
-#endif
-	int *tex_w, *tex_h;
-	int numTextures;
 	unsigned char originalRed, originalGreen, originalBlue, total;
 
-	spritePalette() :
-			pal(0), r(0), g(0), b(0)/*, tex_names(0), burnTex_names(0)*/
-			, tex_w(0), tex_h(0), numTextures(0), total(0) {
+	spritePalette() : pal(0), r(0), g(0), b(0), total(0) {
+		originalRed = originalGreen = originalBlue = 255;
 	}
 
 	~spritePalette() {
@@ -65,10 +50,6 @@ public:
 		delete[] r;
 		delete[] g;
 		delete[] b;
-//		delete [] tex_names;
-//		delete [] burnTex_names;
-		delete[] tex_w;
-		delete[] tex_h;
 	}
 };
 
