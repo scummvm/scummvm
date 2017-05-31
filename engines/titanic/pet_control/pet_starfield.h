@@ -105,9 +105,9 @@ public:
 	virtual void save(SimpleFile *file, int indent);
 
 	/**
-	 * Sets the offsets for each of the buttons
+	 * Sets the display for the marker buttons
 	 */
-	void setButtons(int val1, int val2);
+	void setButtons(int matchIndex, bool isMarkerClose);
 
 	/**
 	 * Sets whether the player has the galactic reference material

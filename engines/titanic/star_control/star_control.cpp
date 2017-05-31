@@ -136,16 +136,16 @@ void CStarControl::newFrame() {
 		_petControl = getPetControl();
 
 	if (_petControl) {
-		int val1 = _starField.getMatchedIndex();
-		int val2 = 0;
+		int matchIndex = _starField.getMatchedIndex();
+		bool isClose = false;
 
 		if (_starField.getMode() == MODE_STARFIELD) {
-			val2 = _starField.get5();
-			if ((val1 + 2) == _starField.getMarkerCount())
-				val2 = 0;
+			isClose = _starField.isCloseToMarker();
+			if ((matchIndex + 2) != _starField.getMarkerCount())
+				isClose = false;
 		}
 
-		_petControl->starsSetButtons(val1, val2);
+		_petControl->starsSetButtons(matchIndex, isClose);
 	}
 }
 

@@ -585,7 +585,7 @@ public:
 	/**
 	 * Sets the status buttons for the starfield control
 	 */
-	void starsSetButtons(int val1, int val2);
+	void starsSetButtons(int matchIndex, bool isMarkerClose);
 
 	/**
 	 * Sets that the user has the galactic reference material

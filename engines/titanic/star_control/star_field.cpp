@@ -28,7 +28,7 @@
 namespace Titanic {
 
 CStarField::CStarField() : _points1On(false), _points2On(false), _mode(MODE_STARFIELD),
-		_showBox(true), _val5(0), _isSolved(false) {
+		_showBox(true), _closeToMarker(false), _isSolved(false) {
 }
 
 void CStarField::load(SimpleFile *file) {
@@ -126,8 +126,8 @@ int CStarField::getMatchedIndex() const {
 	return _crosshairs._matchIndex;
 }
 
-int CStarField::get5() const {
-	return _val5;
+bool CStarField::isCloseToMarker() const {
+	return _closeToMarker;
 }
 
 void CStarField::setSolved() {
@@ -170,7 +170,7 @@ void CStarField::drawBox(CSurfaceArea *surfaceArea) {
 
 void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	FVector v1, v2, v3;
-	_val5 = 0;
+	_closeToMarker = false;
 
 	if (_mode == MODE_STARFIELD) {
 		if (fn5(surfaceArea, camera, v1, v2, v3) > -1.0) {
@@ -206,7 +206,7 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 	if ((v1._y - pt._y) * (v1._y - pt._y) + incr > 3600.0)
 		return -1.0;
 
-	_val5 = 1;
+	_closeToMarker = true;
 	return v1._y - pt._y;
 }
 

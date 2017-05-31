@@ -706,8 +706,8 @@ PassengerClass CPetControl::getMailDestClass(const CRoomFlags &roomFlags) const 
 	return roomFlags.getSuccUBusClass(roomFlags.getSuccUBusRoomName());
 }
 
-void CPetControl::starsSetButtons(int val1, int val2) {
-	_starfield.setButtons(val1, val2);
+void CPetControl::starsSetButtons(int matchIndex, bool isMarkerClose) {
+	_starfield.setButtons(matchIndex, isMarkerClose);
 	if (_currentArea == PET_STARFIELD)
 		_starfield.makePetDirty();
 }

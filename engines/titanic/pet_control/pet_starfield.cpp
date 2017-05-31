@@ -187,24 +187,24 @@ void CPetStarfield::drawButton(int offset, int index, CScreenManager *screenMana
 	_leds[index + offset].draw(screenManager);
 }
 
-void CPetStarfield::setButtons(int val1, int val2) {
+void CPetStarfield::setButtons(int matchIndex, bool isMarkerClose) {
 	_btnOffsets[0] = 0;
 	_btnOffsets[1] = 0;
 	_btnOffsets[2] = 0;
 
-	if (val1 >= 0)
+	if (matchIndex >= 0)
 		_btnOffsets[0] = 2;
-	if (val1 >= 1)
+	if (matchIndex >= 1)
 		_btnOffsets[1] = 2;
-	if (val1 >= 2)
+	if (matchIndex >= 2)
 		_btnOffsets[2] = 2;
 
-	if (val2) {
-		if (val1 == -1)
+	if (isMarkerClose) {
+		if (matchIndex == -1)
 			_btnOffsets[0] = 1;
-		if (val1 == 0)
+		if (matchIndex == 0)
 			_btnOffsets[1] = 1;
-		if (val1 == 1)
+		if (matchIndex == 1)
 			_btnOffsets[2] = 1;
 	}
 

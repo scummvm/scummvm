@@ -43,7 +43,7 @@ private:
 	bool _points2On;
 	StarMode _mode;
 	bool _showBox;
-	int _val5;
+	bool _closeToMarker;
 	bool _isSolved;
 private:
 	/**
@@ -104,7 +104,10 @@ public:
 	 */
 	int getMatchedIndex() const;
 
-	int get5() const;
+	/**
+	 * Returns true if the center of the starfield viewpoint is close to a marker
+	 */
+	bool isCloseToMarker() const;
 
 	/**
 	 * Sets the flag that the starfield has been solved
