@@ -23,14 +23,6 @@
 #ifndef SLUDGE_BACKDROP_H
 #define SLUDGE_BACKDROP_H
 
-#if 0
-#if !defined(HAVE_GLES2)
-#include "GLee.h"
-#else
-#include <GLES2/gl2.h>
-#endif
-#endif
-
 #include "variable.h"
 #include "graphics.h"
 
@@ -47,10 +39,6 @@ extern unsigned int winWidth, winHeight, sceneWidth, sceneHeight;
 extern int lightMapMode;
 
 struct parallaxLayer {
-#if 0
-	GLubyte *texture;
-	GLuint textureName;
-#endif
 	Graphics::Surface surface;
 	int width, height, speedX, speedY;
 	bool wrapS, wrapT;
