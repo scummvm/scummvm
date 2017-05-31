@@ -31,6 +31,7 @@
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 namespace Stark {
 namespace Resources {
@@ -226,6 +227,26 @@ void Sound::changeVolumePan(int32 volume, int32 pan, int32 duration) {
 		if (_fadeDurationRemaining == 0) {
 			_volume = volume / 100.0f;
 			_pan = pan / 100.0f;
+		}
+	}
+}
+
+void Sound::saveLoadCurrent(ResourceSerializer *serializer) {
+	bool playing = isPlaying();
+	serializer->syncAsUint32LE(playing);
+
+	if (_subType != kSoundSub3 && playing) {
+		uint32 elapsed = g_system->getMixer()->getSoundElapsedTime(_handle);
+		serializer->syncAsUint32LE(elapsed);
+		serializer->syncAsFloat(_volume);
+		serializer->syncAsFloat(_pan);
+		serializer->syncAsUint32LE(_fadeDurationRemaining);
+		serializer->syncAsFloat(_fadeTargetVolume);
+		serializer->syncAsFloat(_fadeTargetPan);
+
+		if (serializer->isLoading()) {
+			play();
+			// TODO: Seek to the "elapsed" position
 		}
 	}
 }

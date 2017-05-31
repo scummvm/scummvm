@@ -49,6 +49,7 @@ public:
 	static const Type::ResourceType TYPE = Type::kSoundItem;
 
 	enum SubType {
+		kSoundSub3  = 3,
 		kSoundStock = 5
 	};
 
@@ -65,6 +66,7 @@ public:
 	void readData(Formats::XRCReadStream *stream) override;
 	void onPreDestroy() override;
 	void onGameLoop() override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	/** Start playing the sound */
 	void play();

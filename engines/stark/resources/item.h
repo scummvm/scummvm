@@ -412,6 +412,7 @@ public:
 	void onAllLoaded() override;
 	void onEnterLocation() override;
 	void onExitLocation() override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;

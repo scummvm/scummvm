@@ -61,6 +61,8 @@ public:
 
 	// Resource API
 	virtual void readData(Formats::XRCReadStream *stream) override;
+	virtual void saveLoad(ResourceSerializer *serializer) override;
+	virtual void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	/** Obtain the render entry for the background item */
 	virtual Gfx::RenderEntry *getBackgroundRenderEntry() = 0;

@@ -95,6 +95,7 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void saveLoad(ResourceSerializer *serializer) override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 	void onAllLoaded() override;
 	void onGameLoop() override;
 

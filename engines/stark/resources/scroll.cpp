@@ -23,8 +23,8 @@
 #include "engines/stark/resources/scroll.h"
 
 #include "engines/stark/formats/xrc.h"
-
 #include "engines/stark/resources/location.h"
+#include "engines/stark/services/stateprovider.h"
 
 namespace Stark {
 namespace Resources {
@@ -76,12 +76,19 @@ void Scroll::onGameLoop() {
 }
 
 void Scroll::readData(Formats::XRCReadStream *stream) {
-	  _coordinate = stream->readUint32LE();
-	  _field_30 = stream->readUint32LE();
-	  _field_34 = stream->readUint32LE();
-	  _bookmarkIndex = stream->readUint32LE();
+	_coordinate = stream->readUint32LE();
+	_field_30 = stream->readUint32LE();
+	_field_34 = stream->readUint32LE();
+	_bookmarkIndex = stream->readUint32LE();
 }
 
+void Scroll::saveLoadCurrent(ResourceSerializer *serializer) {
+	serializer->syncAsUint32LE(_active);
+
+	if (serializer->isLoading() && _active) {
+		start();
+	}
+}
 
 void Scroll::printData() {
 	debug("coordinate: %d", _coordinate);

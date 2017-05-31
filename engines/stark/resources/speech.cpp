@@ -25,7 +25,9 @@
 #include "engines/stark/formats/xrc.h"
 
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
+#include "engines/stark/services/stateprovider.h"
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
@@ -182,6 +184,21 @@ void Speech::stopOtherSpeechesFromSameCharacter() {
 		Speech *speech = speeches[i];
 		if (speech->_character == _character && speech->isPlaying()) {
 			speech->stop();
+		}
+	}
+}
+
+void Speech::saveLoadCurrent(ResourceSerializer *serializer) {
+	bool playing = isPlaying();
+	serializer->syncAsUint32LE(playing);
+
+	if (playing) {
+		serializer->syncAsUint32LE(_removeTalkAnimWhenComplete);
+		serializer->syncAsResourceReference(&_soundResource);
+		serializer->syncAsResourceReference(&_lipSync);
+
+		if (serializer->isLoading()) {
+			StarkDialogPlayer->playSingle(this);
 		}
 	}
 }

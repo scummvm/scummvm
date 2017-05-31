@@ -58,6 +58,7 @@ public:
 	void onGameLoop() override;
 	void onExitLocation() override;
 	void onPreDestroy() override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	/** Obtain the text associated to the speech line */
 	Common::String getPhrase() const;

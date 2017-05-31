@@ -38,6 +38,7 @@
 #include "engines/stark/scene.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 #include "common/random.h"
 
@@ -490,6 +491,32 @@ void Location::floatScene(int32 periodMs, float amplitude, float offset) {
 	_floatPeriodMs = periodMs;
 	_floatAmplitude = amplitude;
 	_floatPosition = offset;
+}
+
+void Location::saveLoadCurrent(ResourceSerializer *serializer) {
+	serializer->syncAsSint32LE(_scroll.x);
+	serializer->syncAsSint32LE(_scroll.y);
+
+	if (serializer->isLoading()) {
+		setScrollPosition(_scroll);
+	}
+
+	serializer->syncAsResourceReference(&_currentLayer);
+
+	serializer->syncAsSint32LE(_floatPeriodMs);
+	serializer->syncAsFloat(_floatAmplitude);
+	serializer->syncAsFloat(_floatPosition);
+
+	serializer->syncAsSint32LE(_swayPeriodMs);
+	serializer->syncAsFloat(_swayAmplitude);
+	serializer->syncAsFloat(_swayOffset);
+	serializer->syncAsFloat(_swayPosition);
+
+	float swayAngle = _swayAngle.getDegrees();
+	serializer->syncAsFloat(swayAngle);
+	if (serializer->isLoading()) {
+		_swayAngle = swayAngle;
+	}
 }
 
 } // End of namespace Resources

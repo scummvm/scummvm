@@ -59,6 +59,7 @@ public:
 	// Resource API
 	void onAllLoaded() override;
 	void onGameLoop() override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	/** Does the location have a 3D layer ? */
 	bool has3DLayer();

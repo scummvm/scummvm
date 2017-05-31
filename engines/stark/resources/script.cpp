@@ -414,5 +414,27 @@ void Script::saveLoad(ResourceSerializer *serializer) {
 	serializer->syncAsSint32LE(_enabled);
 }
 
+void Script::saveLoadCurrent(ResourceSerializer *serializer) {
+	bool isStarted = !isOnBegin();
+	serializer->syncAsUint32LE(isStarted);
+
+	if (isStarted) {
+		serializer->syncAsResourceReference(&_nextCommand);
+
+		uint32 returnObjectCount = _returnObjects.size();
+		serializer->syncAsUint32LE(returnObjectCount);
+		if (serializer->isLoading()) {
+			_returnObjects.resize(returnObjectCount);
+		}
+		for (uint i = 0; i < _returnObjects.size(); i++) {
+			serializer->syncAsResourceReference(&_returnObjects[i]);
+		}
+
+		serializer->syncAsSint32LE(_pauseTimeLeft);
+		serializer->syncAsResourceReference(&_suspendingResource);
+		serializer->syncAsSint32LE(_resumeStatus);
+	}
+}
+
 } // End of namespace Resources
 } // End of namespace Stark

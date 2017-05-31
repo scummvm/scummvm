@@ -972,6 +972,14 @@ Anim *ModelItem::getIdleActionAnim() const {
 	return nullptr;
 }
 
+void ModelItem::saveLoadCurrent(ResourceSerializer *serializer) {
+	FloorPositionedItem::saveLoadCurrent(serializer);
+
+	serializer->syncAsSint32LE(_meshIndex);
+	serializer->syncAsSint32LE(_textureNormalIndex);
+	serializer->syncAsSint32LE(_textureFaceIndex);
+}
+
 void ModelItem::printData() {
 	FloorPositionedItem::printData();
 

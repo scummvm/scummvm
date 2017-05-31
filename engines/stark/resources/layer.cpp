@@ -28,6 +28,8 @@
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/light.h"
 
+#include "engines/stark/services/stateprovider.h"
+
 #include "common/debug.h"
 
 namespace Stark {
@@ -96,6 +98,15 @@ Gfx::LightEntryArray Layer::listLightEntries() {
 	}
 
 	return lightEntries;
+}
+
+void Layer::saveLoad(ResourceSerializer *serializer) {
+	serializer->syncAsSint32LE(_enabled);
+}
+
+void Layer::saveLoadCurrent(ResourceSerializer *serializer) {
+	serializer->syncAsSint32LE(_scroll.x);
+	serializer->syncAsSint32LE(_scroll.y);
 }
 
 Layer2D::~Layer2D() {

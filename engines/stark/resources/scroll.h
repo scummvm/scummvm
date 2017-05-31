@@ -48,6 +48,7 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void onGameLoop() override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	/** Start scrolling the location to this position */
 	void start();
