@@ -536,6 +536,10 @@ inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
 }
 
 void drawBackDrop() {
+	g_system->copyRectToScreen(backdropSurface.getPixels(),
+			backdropSurface.pitch, 0, 0, backdropSurface.w,
+			backdropSurface.h);
+	g_system->updateScreen();
 #if 0
 	setPrimaryColor(1.0, 1.0, 1.0, 1.0);
 
