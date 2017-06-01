@@ -43,7 +43,7 @@ void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 }
 
 void SaveStateDescriptor::setSaveDate(int year, int month, int day) {
-	_saveDate = Common::String::format("%.2d.%.2d.%.4d", day, month, year);
+	_saveDate = Common::String::format("%.4d-%.2d-%.2d", year, month, day);
 }
 
 void SaveStateDescriptor::setSaveTime(int hour, int min) {
