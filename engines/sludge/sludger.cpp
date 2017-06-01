@@ -702,19 +702,22 @@ void sludgeDisplay() {
 //	glClearColor(0.5, 0.5, 1.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// Clear The Screen
 	glDepthMask(GL_FALSE);
-
+#endif
 	drawBackDrop();// Draw the room
 	drawZBuffer(cameraX, cameraY, false);
-
+#if 0
 	glEnable(GL_DEPTH_TEST);
+#endif
 	drawPeople();// Then add any moving characters...
+#if 0
 	glDisable(GL_DEPTH_TEST);
+#endif
 	viewSpeech();// ...and anything being said
 	drawStatusBar();
 	displayCursor();
 
 	if (brightnessLevel < 255) fixBrightness();// This is for transitionLevel special effects
-
+#if 0
 	glFlush();
 #if !defined(HAVE_GLES2)
 	SDL_GL_SwapBuffers();
