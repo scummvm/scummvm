@@ -382,26 +382,26 @@ void CStarView::lockStar() {
 		double val = _starField->fn5(&surfaceArea, &_camera, v1, v2, v3);
 
 		if (val > -1.0) {
-			v1 += surfaceArea._centroid;
-			v3 += surfaceArea._centroid;
+			v1 -= surfaceArea._centroid;
+			v3 -= surfaceArea._centroid;
 
 			switch (_starField->getMatchedIndex()) {
 			case -1:
 				// First star match
 				_camera.fn2(v1, v2, v3);
-				_starField->fn7();
+				_starField->incMatches();
 				break;
 
 			case 0:
 				// Second star match
 				_camera.fn3(&_photoViewport, v2);
-				_starField->fn7();
+				_starField->incMatches();
 				break;
 
 			case 1:
 				// Third star match
 				_camera.fn1(&_photoViewport, v2);
-				_starField->fn7();
+				_starField->incMatches();
 				break;
 
 			default:

@@ -262,7 +262,7 @@ bool CStarControl::isSolved() const {
 
 void CStarControl::forceSolved() {
 	while (!_starField.isSolved())
-		_starField.fn7();
+		_starField.incMatches();
 }
 
 bool CStarControl::canSetStarDestination() const {

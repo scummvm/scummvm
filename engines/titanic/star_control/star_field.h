@@ -130,7 +130,12 @@ public:
 	double fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		FVector &v1, FVector &v2, FVector &v3);
 	void fn6(CVideoSurface *surface, CStarCamera *camera);
-	void fn7();
+
+	/**
+	 * Increments the number of matched markers
+	 */
+	void incMatches();
+
 	void fn8(CVideoSurface *surface);
 	void fn9() { _starCloseup.fn1(); }
 

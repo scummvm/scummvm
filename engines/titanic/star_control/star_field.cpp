@@ -203,11 +203,13 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 	double incr = (v1._x - pt._x) * (v1._x - pt._x);
 	if (incr > 3600.0)
 		return -1.0;
-	if ((v1._y - pt._y) * (v1._y - pt._y) + incr > 3600.0)
+
+	incr += (v1._y - pt._y) * (v1._y - pt._y);
+	if (incr > 3600.0)
 		return -1.0;
 
 	_closeToMarker = true;
-	return v1._y - pt._y;
+	return incr;
 }
 
 void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
@@ -215,7 +217,7 @@ void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
 	_crosshairs.fn1(this, &surfaceArea, camera);
 }
 
-void CStarField::fn7() {
+void CStarField::incMatches() {
 	_crosshairs.incMatches();
 	setSolved();
 }
