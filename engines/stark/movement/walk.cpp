@@ -27,6 +27,7 @@
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/floor.h"
@@ -212,6 +213,15 @@ void Walk::changeDestination(const Math::Vector3d &destination) {
 
 bool Walk::hasReachedDestination() const {
 	return _reachedDestination;
+}
+
+uint32 Walk::getType() const {
+	return kTypeWalk;
+}
+
+void Walk::saveLoad(ResourceSerializer *serializer) {
+	serializer->syncAsVector3d(_destination);
+	serializer->syncAsUint32LE(_running);
 }
 
 } // End of namespace Stark

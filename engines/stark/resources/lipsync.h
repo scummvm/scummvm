@@ -54,6 +54,7 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void onGameLoop() override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	/** Set the item for which the facial texture should be updated according to the lipsync data */
 	void setItem(ItemVisual *item, bool playTalkAnim);

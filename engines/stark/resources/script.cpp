@@ -421,11 +421,7 @@ void Script::saveLoadCurrent(ResourceSerializer *serializer) {
 	if (isStarted) {
 		serializer->syncAsResourceReference(&_nextCommand);
 
-		uint32 returnObjectCount = _returnObjects.size();
-		serializer->syncAsUint32LE(returnObjectCount);
-		if (serializer->isLoading()) {
-			_returnObjects.resize(returnObjectCount);
-		}
+		serializer->syncArraySize(_returnObjects);
 		for (uint i = 0; i < _returnObjects.size(); i++) {
 			serializer->syncAsResourceReference(&_returnObjects[i]);
 		}

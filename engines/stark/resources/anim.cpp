@@ -372,6 +372,16 @@ bool AnimVideo::isAtTime(uint32 time) const {
 	return currentTime >= time;
 }
 
+void AnimVideo::saveLoadCurrent(ResourceSerializer *serializer) {
+	Anim::saveLoadCurrent(serializer);
+
+	int32 frameNumber = _smacker->getFrameNumber();
+	serializer->syncAsSint32LE(frameNumber);
+	serializer->syncAsSint32LE(_refCount);
+
+	// TODO: Seek to the saved frame number when loading
+}
+
 void AnimVideo::printData() {
 	Anim::printData();
 

@@ -24,6 +24,7 @@
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/floor.h"
@@ -99,6 +100,18 @@ void FollowPathLight::setSpeed(float speed) {
 
 void FollowPathLight::setLight(Resources::Light *light) {
 	_light = light;
+}
+
+uint32 FollowPathLight::getType() const {
+	return kTypeFollowPathLight;
+}
+
+void FollowPathLight::saveLoad(ResourceSerializer *serializer) {
+	serializer->syncAsResourceReference(&_path);
+	serializer->syncAsResourceReference(&_light);
+	serializer->syncAsFloat(_position);
+	serializer->syncAsFloat(_speed);
+	serializer->syncAsUint32LE(_previouslyEnabled);
 }
 
 } // End of namespace Stark

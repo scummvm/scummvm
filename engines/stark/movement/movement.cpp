@@ -22,7 +22,31 @@
 
 #include "engines/stark/movement/movement.h"
 
+#include "engines/stark/movement/walk.h"
+#include "engines/stark/movement/followpath.h"
+#include "engines/stark/movement/followpathlight.h"
+#include "engines/stark/movement/turn.h"
+
+#include "engines/stark/resources/item.h"
+
+#include "common/textconsole.h"
+
 namespace Stark {
+
+Movement *Movement::construct(uint32 type, Resources::ItemVisual *item) {
+	switch (type) {
+		case kTypeWalk:
+			return new Walk(Resources::Object::cast<Resources::FloorPositionedItem>(item));
+		case kTypeFollowPath:
+			return new FollowPath(item);
+		case kTypeFollowPathLight:
+			return new FollowPathLight(item);
+		case kTypeTurn:
+			return new Turn(Resources::Object::cast<Resources::FloorPositionedItem>(item));
+		default:
+			error("Unexepected movement type '%d'", type);
+	}
+}
 
 Movement::Movement(Resources::ItemVisual *item) :
 		_ended(false),

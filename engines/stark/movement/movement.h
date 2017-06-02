@@ -31,6 +31,8 @@ namespace Resources {
 class ItemVisual;
 }
 
+class ResourceSerializer;
+
 /**
  * Abstract movement of an item on the current location's floor
  */
@@ -38,6 +40,19 @@ class Movement {
 public:
 	Movement(Resources::ItemVisual *item);
 	virtual ~Movement();
+
+	enum MovementType {
+		kTypeWalk            = 1,
+		kTypeFollowPath      = 2,
+		kTypeFollowPathLight = 3,
+		kTypeTurn            = 4
+	};
+
+	/** Movement factory */
+	static Movement *construct(uint32 type, Resources::ItemVisual *item);
+
+	/** Obtain the effective movement type */
+	virtual uint32 getType() const = 0;
 
 	/**
 	 * Initiate the movement
@@ -63,6 +78,11 @@ public:
 	 * Has the movement reached its destination successfully?
 	 */
 	virtual bool hasReachedDestination() const;
+
+	/**
+	 * Persist / restore the state of the movement so it can be resumed using 'start'
+	 */
+	virtual void saveLoad(ResourceSerializer *serializer) = 0;
 
 protected:
 	enum TurnDirection {

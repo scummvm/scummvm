@@ -67,6 +67,10 @@ bool Diary::hasFMVEntry(const Common::String &filename) const {
 void Diary::readStateFromStream(Common::SeekableReadStream *stream, uint32 version) {
 	clear();
 
+	if (version <= 6) {
+		return; //Early save versions did not persist the diary
+	}
+
 	ResourceSerializer serializer(stream, nullptr, version);
 	saveLoad(&serializer);
 }
@@ -78,25 +82,13 @@ void Diary::writeStateToStream(Common::WriteStream *stream) {
 
 void Diary::saveLoad(ResourceSerializer *serializer) {
 	// Diary entries
-	uint32 diaryEntryCount = _diaryEntries.size();
-	serializer->syncAsUint32LE(diaryEntryCount, 7);
-
-	if (serializer->isLoading()) {
-		_diaryEntries.resize(diaryEntryCount);
-	}
-
+	serializer->syncArraySize(_diaryEntries);
 	for (uint i = 0; i < _diaryEntries.size(); i++) {
 		serializer->syncAsString32(_diaryEntries[i]);
 	}
 
 	// FMV entries
-	uint32 fmvEntryCount = _fmvEntries.size();
-	serializer->syncAsUint32LE(fmvEntryCount, 7);
-
-	if (serializer->isLoading()) {
-		_fmvEntries.resize(fmvEntryCount);
-	}
-
+	serializer->syncArraySize(_fmvEntries);
 	for (uint i = 0; i < _fmvEntries.size(); i++) {
 		serializer->syncAsString32(_fmvEntries[i].filename);
 		serializer->syncAsString32(_fmvEntries[i].title);
@@ -106,8 +98,8 @@ void Diary::saveLoad(ResourceSerializer *serializer) {
 	// TODO: Persist conversation entries
 
 	// Misc
-	serializer->syncAsByte(_hasUnreadEntries, 7);
-	serializer->syncAsUint32LE(_pageIndex, 7);
+	serializer->syncAsByte(_hasUnreadEntries);
+	serializer->syncAsUint32LE(_pageIndex);
 }
 
 } // End of namespace Stark

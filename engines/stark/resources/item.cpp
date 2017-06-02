@@ -153,6 +153,27 @@ void Item::saveLoad(ResourceSerializer *serializer) {
 	serializer->syncAsSint32LE(_enabled);
 }
 
+void Item::saveLoadCurrent(ResourceSerializer *serializer) {
+	bool hasMovement = _movement != nullptr && !_movement->hasEnded();
+	serializer->syncAsUint32LE(hasMovement, 8);
+
+	if (hasMovement) {
+		uint32 movementType = _movement != nullptr ? _movement->getType() : 0;
+		serializer->syncAsUint32LE(movementType);
+
+		if (serializer->isLoading()) {
+			_movement = Movement::construct(movementType, Object::cast<ItemVisual>(this));
+		}
+
+		_movement->saveLoad(serializer);
+		serializer->syncAsResourceReference(&_movementSuspendedScript);
+
+		if (serializer->isLoading()) {
+			_movement->start();
+		}
+	}
+}
+
 ItemVisual::~ItemVisual() {
 	delete _renderEntry;
 }

@@ -44,6 +44,8 @@ public:
 	void start() override;
 	void onGameLoop() override;
 	void stop() override;
+	uint32 getType() const override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	/** Set the path to follow */
 	void setPath(Resources::Path *path);

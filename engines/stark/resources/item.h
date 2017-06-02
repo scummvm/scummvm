@@ -83,7 +83,8 @@ public:
 	// Resource API
 	virtual void readData(Formats::XRCReadStream *stream) override;
 	virtual void onGameLoop() override;
-	void saveLoad(ResourceSerializer *serializer) override;
+	virtual void saveLoad(ResourceSerializer *serializer) override;
+	virtual void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	/** Is the item present in the scene */
 	bool isEnabled() const;

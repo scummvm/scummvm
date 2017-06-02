@@ -30,6 +30,7 @@
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 #include "engines/stark/visual/visual.h"
 #include "engines/stark/visual/actor.h"
@@ -153,6 +154,18 @@ void LipSync::onGameLoop() {
 
 	if (_enabled && !_visual) {
 		reset();
+	}
+}
+
+void LipSync::saveLoadCurrent(ResourceSerializer *serializer) {
+	serializer->syncAsUint32LE(_enabled);
+	if (_enabled) {
+		serializer->syncAsResourceReference(&_item);
+		serializer->syncAsUint32LE(_positionMs);
+
+		if (serializer->isLoading()) {
+			setItem(_item, false);
+		}
 	}
 }
 

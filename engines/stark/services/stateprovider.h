@@ -60,6 +60,9 @@ public:
 
 	template<typename T>
 	void syncAsResourceReference(T **object);
+
+	template<typename T>
+	void syncArraySize(Common::Array<T> &array);
 };
 
 template<typename T>
@@ -74,6 +77,16 @@ void ResourceSerializer::syncAsResourceReference(T **object) {
 		ResourceReference reference;
 		reference.buildFromResource(*object);
 		reference.saveToStream(_saveStream);
+	}
+}
+
+template<typename T>
+void ResourceSerializer::syncArraySize(Common::Array<T> &array){
+	uint32 size = array.size();
+	syncAsUint32LE(size);
+
+	if (isLoading()) {
+		array.resize(size);
 	}
 }
 
@@ -105,7 +118,7 @@ public:
 	void writeStateToStream(Common::WriteStream *stream);
 
 	static const uint kMinSaveVersion = 6;
-	static const uint kSaveVersion = 7;
+	static const uint kSaveVersion = 8;
 
 private:
 	class ResourceTreeState {

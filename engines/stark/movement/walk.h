@@ -47,6 +47,8 @@ public:
 	void stop() override;
 	void onGameLoop() override;
 	bool hasReachedDestination() const override;
+	uint32 getType() const override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	/** Set the destination */
 	void setDestination(const Math::Vector3d &destination);

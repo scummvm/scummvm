@@ -41,6 +41,8 @@ public:
 
 	// Movement API
 	void onGameLoop() override;
+	uint32 getType() const override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	/** Set the direction to turn towards */
 	void setTargetDirection(const Math::Vector3d &direction);

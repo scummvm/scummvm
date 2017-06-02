@@ -29,6 +29,7 @@
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 namespace Stark {
 
@@ -90,6 +91,15 @@ void Turn::setTargetDirection(const Math::Vector3d &direction) {
 
 void Turn::setSpeed(float speed) {
 	_turnSpeed = speed;
+}
+
+uint32 Turn::getType() const {
+	return kTypeTurn;
+}
+
+void Turn::saveLoad(ResourceSerializer *serializer) {
+	serializer->syncAsVector3d(_targetDirection);
+	serializer->syncAsFloat(_turnSpeed);
 }
 
 } // End of namespace Stark

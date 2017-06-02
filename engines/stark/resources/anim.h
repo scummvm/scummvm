@@ -209,6 +209,7 @@ public:
 	void onAllLoaded() override;
 	void onGameLoop() override;
 	void onEnginePause(bool pause) override;
+	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
 	// Anim API
 	Visual *getVisual() override;

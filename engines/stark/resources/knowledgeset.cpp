@@ -90,13 +90,7 @@ void KnowledgeSet::removeItem(InventoryItem *item) {
 
 void KnowledgeSet::saveLoad(ResourceSerializer *serializer) {
 	if (_subType == kInventory) {
-		uint itemCount = _inventoryItemOrder.size();
-		serializer->syncAsUint32LE(itemCount);
-
-		if (serializer->isLoading()) {
-			_inventoryItemOrder.resize(itemCount);
-		}
-
+		serializer->syncArraySize(_inventoryItemOrder);
 		for (uint i = 0; i < _inventoryItemOrder.size(); i++) {
 			serializer->syncAsUint16LE(_inventoryItemOrder[i]);
 		}
