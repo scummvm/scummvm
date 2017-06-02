@@ -67,7 +67,7 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 	g_system->getTimeAndDate(curTime);
 	curTime.tm_year += 1900; // fixup year
 	curTime.tm_mon++; // fixup month
-	return Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+	return Common::String::format("%04d-%02d-%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
 #else
 	return Common::String::format("Save %d", slot + 1);
 #endif
