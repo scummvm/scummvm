@@ -475,9 +475,11 @@ void SaveLoadChooserSimple::reflowLayout() {
 
 		int textLines = 0;
 		if (!_saveDateSupport)
-			textLines++;
+			textLines += 2;
 		if (!_playTimeSupport)
 			textLines++;
+		if (_saveDateSupport || _playTimeSupport)
+			textLines--; // add a line of padding at the bottom
 
 		_container->resize(x, y, w, h - (kLineHeight * textLines));
 		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
