@@ -202,7 +202,7 @@ void DMatrix::loadTransform(const CMatrixTransform &src) {
 }
 
 DMatrix DMatrix::fn4(const DMatrix &m) {
-	DMatrix dm, dest;
+	DMatrix dm;
 	dm._row1._x = m._row3._x * _row1._z + m._row2._x * _row1._y
 		+ m._row1._x * _row1._x;
 	dm._row1._y = _row1._x * m._row1._y + m._row3._y * _row1._z
@@ -228,7 +228,7 @@ DMatrix DMatrix::fn4(const DMatrix &m) {
 	dm._row4._z = _row4._y * m._row2._z + _row4._x * m._row1._z
 		+ _row4._z * m._row3._z + m._row4._z;
 
-	return dest;
+	return dm;
 }
 
 } // End of namespace Titanic

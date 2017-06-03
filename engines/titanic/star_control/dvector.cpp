@@ -80,7 +80,6 @@ DVector DVector::fn3() const {
 DMatrix DVector::fn4(const DVector &v) {
 	const double FACTOR = 180.0 / M_PI;
 	DMatrix matrix1, matrix2, matrix3, matrix4;
-	DMatrix dest;
 	DVector vector1 = fn3();
 
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);

@@ -379,7 +379,7 @@ void CStarView::lockStar() {
 	if (_starField && !_showingPhoto) {
 		CSurfaceArea surfaceArea(_videoSurface);
 		FVector v1, v2, v3;
-			double val = _starField->fn5(&surfaceArea, &_camera, v1, v2, v3);
+		double val = _starField->fn5(&surfaceArea, &_camera, v1, v2, v3);
 
 		if (val > -1.0) {
 			v1 -= surfaceArea._centroid;
