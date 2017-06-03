@@ -23,13 +23,22 @@
 #ifndef SUPERNOVA_H
 #define SUPERNOVA_H
 
-#include "common/scummsys.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
+#include "common/array.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "engines/engine.h"
 
 #include "supernova/console.h"
+#include "supernova/graphics.h"
 
 namespace Supernova {
+
+const int kScreenWidth  = 320;
+const int kScreenHeight = 200;
+const int kTextSpeed[] = {19, 14, 10, 7, 4};
 
 class SupernovaEngine : public Engine {
 public:
@@ -41,6 +50,21 @@ public:
 private:
 	Common::RandomSource *_rnd;
 	Console *_console;
+	Audio::SoundHandle _soundHandle;
+	
+	// name is file ending of msn_data.xxx
+	// image decoded from file
+	// sections ??
+//	struct imageFile {
+//		Common::String name;
+//		MSNImageDecoder image;
+//	};
+//	Common::Array<imageFile> _images;
+	
+	void initData();
+	void playSound(int filenumber, int offset = 0);
+	void stopSound();
+	void renderImage(int file, int section);
 };
 
 }
