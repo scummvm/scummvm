@@ -35,7 +35,11 @@ public:
 	CStarControlSub21(const CNavigationInfo *src);
 	virtual ~CStarControlSub21() {}
 
+	/**
+	 * Start a movement to a given specified destination
+	 */
 	virtual void moveTo(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
+
 	virtual void proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m);
 
 	/**

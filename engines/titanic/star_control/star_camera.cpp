@@ -228,11 +228,13 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		return;
 
 	if (_matrixRow == -1) {
+		// No locked markers
 		FPose subX(X_AXIS, angles._y);
 		FPose subY(Y_AXIS, angles._x);
 		FPose sub(subX, subY);
 		proc22(sub);
 	} else if (_matrixRow == 0) {
+		// 1 marker is locked in
 		FVector row1 = _matrix._row1;
 		FPose subX(X_AXIS, angles._y);
 		FPose subY(Y_AXIS, angles._x);
@@ -316,6 +318,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		_viewport.setOrientation(m1);
 		_viewport.setPosition(tempV1);
 	} else if (_matrixRow == 1) {
+		// 2 markers locked in
 		FVector tempV2;
 		DMatrix m1, m2, sub;
 		DVector mrow1, mrow2, mrow3;
@@ -504,7 +507,7 @@ void CStarCamera::fn2(FVector v1, FVector v2, FVector v3) {
 		v3.normalize();
 		tempV.normalize();
 
-		DMatrix matrix = _viewport.getOrientation();
+		FMatrix matrix = _viewport.getOrientation();
 		const FVector &pos = _viewport._position;
 		_mover->proc10(v3, tempV, pos, matrix);
 
