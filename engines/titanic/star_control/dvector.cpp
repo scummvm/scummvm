@@ -77,7 +77,7 @@ DVector DVector::fn3() const {
 	return dest;
 }
 
-void DVector::fn4(const DVector &v, DMatrix &m) {
+DMatrix DVector::fn4(const DVector &v) {
 	const double FACTOR = 180.0 / M_PI;
 	DMatrix matrix1, matrix2, matrix3, matrix4;
 	DMatrix dest;
@@ -94,7 +94,7 @@ void DVector::fn4(const DVector &v, DMatrix &m) {
 	matrix3 = matrix1.fn4(matrix2);
 	matrix4 = matrix1.fn1();
 
-	m = matrix4.fn4(matrix3);
+	return matrix4.fn4(matrix3);
 }
 
 DMatrix DVector::fn5() const {

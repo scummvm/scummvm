@@ -51,7 +51,7 @@ public:
 	DVector *fn1(DVector &dest, const DMatrix &m);
 	void fn2(double val);
 	DVector fn3() const;
-	void fn4(const DVector &v, DMatrix &m);
+	DMatrix fn4(const DVector &v);
 	DMatrix fn5() const;
 
 	/**
