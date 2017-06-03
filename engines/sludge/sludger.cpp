@@ -76,6 +76,7 @@ extern char *launchMe;
 extern variable *launchResult;
 
 extern bool reallyWantToQuit;
+extern Graphics::Surface renderSurface;
 
 int numBIFNames = 0;
 char * *allBIFNames = NULL;
@@ -715,7 +716,8 @@ void sludgeDisplay() {
 	viewSpeech();// ...and anything being said
 	drawStatusBar();
 	displayCursor();
-
+	g_system->copyRectToScreen((byte *)renderSurface.getPixels(), renderSurface.pitch, 0, 0, renderSurface.w, renderSurface.h);
+	g_system->updateScreen();
 	if (brightnessLevel < 255) fixBrightness();// This is for transitionLevel special effects
 #if 0
 	glFlush();

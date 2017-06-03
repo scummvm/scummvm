@@ -48,6 +48,7 @@ extern GLuint backdropTextureName;
 extern inputType input;
 extern int cameraX, cameraY;
 extern float cameraZoom;
+extern Graphics::Surface renderSurface;
 
 unsigned char currentBurnR = 0, currentBurnG = 0, currentBurnB = 0;
 
@@ -615,10 +616,7 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 
 	// Use Transparent surface to scale and blit
 	Graphics::TransparentSurface tmp(single.surface, false);
-	Graphics::Surface *screen = g_system->lockScreen();
-	tmp.blit(*screen, x1, y1, (mirror? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB(255, 255, 255, 255), diffX, diffY);
-	g_system->unlockScreen();
-	g_system->updateScreen();
+	tmp.blit(renderSurface, x1, y1, (mirror? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB(255, 255, 255, 255), diffX, diffY);
 
 #if 0
 	GLfloat z;
