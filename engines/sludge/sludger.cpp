@@ -172,9 +172,9 @@ Common::File *openAndVerify(char *filename, char extra1, char extra2,
 	}
 	char c;
 	c = fp->readByte();
-	debug("%c", c);
+	debug(kSludgeDebugDataLoad, "%c", c);
 	while ((c = fp->readByte())) {
-		debug("%c", c);
+		debug(kSludgeDebugDataLoad, "%c", c);
 	}
 
 	int majVersion = fp->readByte();
@@ -519,7 +519,7 @@ bool initSludge(char *filename) {
 	}
 
 	numGlobals = fp->readUint16BE();
-	debug("numGlobals : %i", numGlobals);
+	debug(kSludgeDebugDataLoad, "numGlobals : %i", numGlobals);
 
 	globalVars = new variable[numGlobals];
 	if (!checkNew(globalVars))

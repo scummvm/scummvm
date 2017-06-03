@@ -40,7 +40,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	_rnd = new Common::RandomSource("sludge");
 
 	// Add debug channels
-	DebugMan.addDebugChannel(kSludgeDebugScript, "Script", "Script debug level");
+	DebugMan.addDebugChannel(kSludgeDebugFatal, "Script", "Script debug level");
 	DebugMan.addDebugChannel(kSludgeDebugDataLoad, "Data Load", "Data loading debug level");
 	DebugMan.addDebugChannel(kSludgeDebugStackMachine, "Stack Machine", "Stack Machine debug level");
 	DebugMan.addDebugChannel(kSludgeDebugBuiltin, "Built-in", "Built-in debug level");
