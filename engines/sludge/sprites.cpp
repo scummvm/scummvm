@@ -21,6 +21,7 @@
  */
 
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 #include "allfiles.h"
 #include "fileset.h"
 #include "people.h"
@@ -577,34 +578,26 @@ extern GLuint backdropTextureName;
 
 bool checkColourChange(bool reset);
 
-bool scaleSprite(sprite &single, const spritePalette &fontPal,
-		onScreenPerson *thisPerson, bool mirror) {
-#if 0
+bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, bool mirror) {
 	float x = thisPerson->x;
 	float y = thisPerson->y;
 
-	float scale = thisPerson-> scale;
-	bool light = !(thisPerson->extra & EXTRA_NOLITE);
+	float scale = thisPerson->scale;
 
 	if (scale <= 0.05) return false;
 
-	float tx1 = (float)(single.tex_x) / fontPal.tex_w[single.texNum];
-	float ty1 = (float) 1.0 / fontPal.tex_h[single.texNum];
-	float tx2 = (float)(single.tex_x + single.width) / fontPal.tex_w[single.texNum];
-	float ty2 = (float)(single.height + 1) / fontPal.tex_h[single.texNum];
+	int diffX = (int)(((float)single.surface.w) * scale);
+	int diffY = (int)(((float)single.surface.h) * scale);
 
-	int diffX = (int)(((float)single.width) * scale);
-	int diffY = (int)(((float)single.height) * scale);
+	float x1, y1, x2, y2;
 
-	GLfloat x1, y1, x2, y2;
-
-	if (thisPerson -> extra & EXTRA_FIXTOSCREEN) {
+	if (thisPerson->extra & EXTRA_FIXTOSCREEN) {
 		x = x / cameraZoom;
 		y = y / cameraZoom;
 		if (single.xhot < 0)
-		x1 = x - (int)((mirror ? (float)(single.width - single.xhot) : (float)(single.xhot + 1)) * scale / cameraZoom);
+			x1 = x - (int)((mirror ? (float)(single.surface.w - single.xhot) : (float)(single.xhot + 1)) * scale / cameraZoom);
 		else
-		x1 = x - (int)((mirror ? (float)(single.width - (single.xhot + 1)) : (float)single.xhot) * scale / cameraZoom);
+			x1 = x - (int)((mirror ? (float)(single.surface.w - (single.xhot + 1)) : (float)single.xhot) * scale / cameraZoom);
 		y1 = y - (int)((single.yhot - thisPerson->floaty) * scale / cameraZoom);
 		x2 = x1 + (int)(diffX / cameraZoom);
 		y2 = y1 + (int)(diffY / cameraZoom);
@@ -612,14 +605,22 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal,
 		x -= cameraX;
 		y -= cameraY;
 		if (single.xhot < 0)
-		x1 = x - (int)((mirror ? (float)(single.width - single.xhot) : (float)(single.xhot + 1)) * scale);
+		x1 = x - (int)((mirror ? (float)(single.surface.w - single.xhot) : (float)(single.xhot + 1)) * scale);
 		else
-		x1 = x - (int)((mirror ? (float)(single.width - (single.xhot + 1)) : (float)single.xhot) * scale);
+		x1 = x - (int)((mirror ? (float)(single.surface.w - (single.xhot + 1)) : (float)single.xhot) * scale);
 		y1 = y - (int)((single.yhot - thisPerson->floaty) * scale);
 		x2 = x1 + diffX;
 		y2 = y1 + diffY;
 	}
 
+	// Use Transparent surface to scale and blit
+	Graphics::TransparentSurface tmp(single.surface, false);
+	Graphics::Surface *screen = g_system->lockScreen();
+	tmp.blit(*screen, x1, y1, (mirror? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB(255, 255, 255, 255), diffX, diffY);
+	g_system->unlockScreen();
+	g_system->updateScreen();
+
+#if 0
 	GLfloat z;
 
 	if ((!(thisPerson->extra & EXTRA_NOZB)) && zBuffer.numPanels) {
@@ -655,6 +656,7 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal,
 		ltx2, lty2
 	};
 
+	bool light = !(thisPerson->extra & EXTRA_NOLITE);
 	if (light && lightMap.data) {
 		if (lightMapMode == LIGHTMAPMODE_HOTSPOT) {
 			int lx = (int)(x + cameraX);
@@ -737,7 +739,6 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal,
 	}
 
 	setSecondaryColor(0., 0., 0., 1.);
-	//glDisable(GL_COLOR_SUM); FIXME: replace line?
 
 	// Are we pointing at the sprite?
 	if (input.mouseX >= x1 && input.mouseX <= x2 && input.mouseY >= y1 && input.mouseY <= y2) {
@@ -748,8 +749,8 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal,
 		return checkColourChange(false);
 #endif
 	}
-#endif
 	return false;
+#endif
 }
 
 // Paste a scaled sprite onto the backdrop
