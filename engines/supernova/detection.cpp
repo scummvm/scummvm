@@ -63,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 class SupernovaMetaEngine: public AdvancedMetaEngine {
 public:
 	SupernovaMetaEngine() : AdvancedMetaEngine(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames) {
-		_singleId = "supernova";
+//		_singleId = "supernova";
 	}
 
 	virtual const char *getName() const {
@@ -84,8 +84,11 @@ bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool SupernovaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	// STUB
-	return false;
+	if (desc) {
+		*engine = new Supernova::SupernovaEngine(syst);
+	}
+	
+	return desc != NULL;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SUPERNOVA)

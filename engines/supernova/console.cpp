@@ -29,7 +29,18 @@ namespace Supernova {
 
 Console::Console(SupernovaEngine *vm)
 {
-	//registerCmd();
+	registerCmd("test", WRAP_METHOD(Console, cmdTest));
+}
+
+bool Console::cmdTest(int argc, const char **argv)
+{
+	if (argc == 2) {
+		debugPrintf("Success!");
+		return true;
+	} else {
+		debugPrintf("Failure!");
+		return false;
+	}
 }
 
 }

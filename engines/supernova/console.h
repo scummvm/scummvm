@@ -35,8 +35,12 @@ enum {
 
 class Console : public GUI::Debugger {
 public:
-	Console(SupernovaEngine *vm);
+	Console(Supernova::SupernovaEngine *vm);
 	virtual ~Console() {}
+	
+	bool cmdTest(int argc, const char **argv);
+private:
+	SupernovaEngine *_vm;
 };
 
 }
