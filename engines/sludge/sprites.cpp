@@ -112,7 +112,7 @@ bool reserveSpritePal(spritePalette &sP, int n) {
 
 bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
-	int total, picwidth, picheight, spriteBankVersion = 0, howmany = 0, startIndex = 0;
+	int total, spriteBankVersion = 0, howmany = 0, startIndex = 0;
 	byte *data;
 
 	setResourceForFatal(fileNum);
@@ -163,6 +163,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	// version 0, 1, 2
 	for (int i = 0; i < total; i ++) {
+		int picwidth, picheight;
 		// load sprite width, height, relative position
 		if (spriteBankVersion == 2) {
 			picwidth = bigDataFile->readUint16BE();
@@ -177,6 +178,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		}
 
 		// init data
+		loadhere.sprites[i].surface.create(picwidth, picheight, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 		data = (byte *)new byte[picwidth * (picheight + 1)];
 		if (!checkNew(data)) return false;
 		int ooo = picwidth * picheight;
@@ -186,7 +188,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		spriteData[i] = data;
 
 		// read color
-		if (spriteBankVersion == 2) {
+		if (spriteBankVersion == 2) { // RUN LENGTH COMPRESSED DATA
 			unsigned size = picwidth * picheight;
 			unsigned pip = 0;
 
@@ -230,7 +232,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 	for (int i = 0; i < total; i ++) {
 		int fromhere = 0;
 		int transColour = -1;
-		int size = picwidth * picheight;
+		int size = loadhere.sprites[i].surface.w * loadhere.sprites[i].surface.h;
 		while (fromhere < size) {
 			unsigned char s = spriteData[i][fromhere++];
 			if (s) {
@@ -239,33 +241,29 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 			}
 		}
 		fromhere = 0;
-
-		loadhere.sprites[i].surface.create(picwidth, picheight, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-		for (int y = 0; y < picheight; y++) {
-			for (int x = 0; x < picwidth; x ++) {
+		for (int y = 0; y < loadhere.sprites[i].surface.h; ++y) {
+			for (int x = 0; x < loadhere.sprites[i].surface.w; ++x) {
 				byte *target = (byte *)loadhere.sprites[i].surface.getBasePtr(x, y);
-				if (spriteBankVersion < 3) {
-					unsigned char s = spriteData[i][fromhere++];
-					if (s) {
-						target[0] = (byte)255;
-						target[1] = (byte)loadhere.myPalette.b[s];
-						target[2] = (byte)loadhere.myPalette.g[s];
-						target[3] = (byte)loadhere.myPalette.r[s];
-						transColour = s;
-					} else if (transColour >= 0) {
-						target[0] = (byte)0;
-						target[1] = (byte)loadhere.myPalette.b[transColour];
-						target[2] = (byte)loadhere.myPalette.g[transColour];
-						target[3] = (byte)loadhere.myPalette.r[transColour];
-					}
-					if (isFont) {
-						target = (byte *)loadhere.sprites[i].surface.getBasePtr(x, y);
-						if (s)
-						target[0] = loadhere.myPalette.r[s];
-						target[1] = (byte)255;
-						target[2] = (byte)255;
-						target[3] = (byte)255;
-					}
+				unsigned char s = spriteData[i][fromhere++];
+				if (s) {
+					target[0] = (byte)255;
+					target[1] = (byte)loadhere.myPalette.b[s];
+					target[2] = (byte)loadhere.myPalette.g[s];
+					target[3] = (byte)loadhere.myPalette.r[s];
+					transColour = s;
+				} else if (transColour >= 0) {
+					target[0] = (byte)0;
+					target[1] = (byte)loadhere.myPalette.b[transColour];
+					target[2] = (byte)loadhere.myPalette.g[transColour];
+					target[3] = (byte)loadhere.myPalette.r[transColour];
+				}
+				if (isFont) {
+					target = (byte *)loadhere.sprites[i].surface.getBasePtr(x, y);
+					if (s)
+					target[0] = loadhere.myPalette.r[s];
+					target[1] = (byte)255;
+					target[2] = (byte)255;
+					target[3] = (byte)255;
 				}
 			}
 		}
