@@ -35,6 +35,7 @@
 #include "stringy.h"
 #include "errors.h"
 #include "graphics.h"
+#include "sludge.h"
 
 namespace Sludge {
 
@@ -133,7 +134,7 @@ void setFatalInfo(const char *userFunc, const char *BIF) {
 	if (fatalInfo)
 		sprintf(fatalInfo, "Currently in this sub: %s\nCalling: %s", userFunc,
 				BIF);
-	debug("%s", fatalInfo);
+	debug(kSludgeDebugFatal, "%s", fatalInfo);
 }
 
 void setResourceForFatal(int n) {
