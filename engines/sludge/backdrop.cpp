@@ -45,10 +45,12 @@
 #include "graphics/palette.h"
 #include "sludge.h"
 #include "imgloader.h"
+#include "common/rect.h"
 
 namespace Sludge {
 
 extern inputType input;
+extern Graphics::Surface renderSurface;
 
 bool freeze();
 void unfreeze(bool);    // Because FREEZE.H needs a load of other includes
@@ -536,10 +538,7 @@ inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
 }
 
 void drawBackDrop() {
-	g_system->copyRectToScreen(backdropSurface.getPixels(),
-			backdropSurface.pitch, 0, 0, backdropSurface.w,
-			backdropSurface.h);
-	g_system->updateScreen();
+	renderSurface.copyRectToSurface(backdropSurface, 0, 0, Common::Rect(0, 0, backdropSurface.w, backdropSurface.h));
 #if 0
 	setPrimaryColor(1.0, 1.0, 1.0, 1.0);
 

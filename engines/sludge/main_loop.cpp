@@ -100,6 +100,7 @@ extern int specialSettings;
 extern inputType input;
 extern variableStack *noStack;
 extern Graphics::Surface backdropSurface;
+Graphics::Surface renderSurface;
 
 int dialogValue = 0;
 
@@ -473,6 +474,7 @@ int main_loop(char *filename)
 
 	SDL_EnableUNICODE(1);
 #endif
+	renderSurface.create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	weAreDoneSoQuit = 0;
 	while (!weAreDoneSoQuit) {
 		checkInput();
