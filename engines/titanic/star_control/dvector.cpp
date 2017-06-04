@@ -60,18 +60,18 @@ DVector DVector::fn3() const {
 	DVector vector = *this;
 	DVector dest;
 	dest._x = vector.normalize();
-	dest._z = acos(vector._y);
+	dest._y = acos(vector._y);
 
 	if (ABS(vector._z) < 0.00001) {
 		if (vector._x < 0.0) {
-			dest._y = 2 * M_PI - (M_PI / 2.0);
+			dest._z = 2 * M_PI - (M_PI / 2.0);
 		} else {
-			dest._y = M_PI / 2.0;
+			dest._z = M_PI / 2.0;
 		}
 	} else {
-		dest._y = atan(vector._x / vector._z);
+		dest._z = atan(vector._x / vector._z);
 		if (vector._x < 0.0)
-			dest._y += 2 * M_PI;
+			dest._z += 2 * M_PI;
 	}
 
 	return dest;
@@ -80,8 +80,8 @@ DVector DVector::fn3() const {
 DMatrix DVector::fn4(const DVector &v) {
 	const double FACTOR = 180.0 / M_PI;
 	DMatrix matrix1, matrix2, matrix3, matrix4;
-	DVector vector1 = fn3();
 
+	DVector vector1 = fn3();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
 	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
 	matrix3 = matrix1.fn4(matrix2);
@@ -91,7 +91,6 @@ DMatrix DVector::fn4(const DVector &v) {
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
 	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
 	matrix3 = matrix1.fn4(matrix2);
-	matrix4 = matrix1.fn1();
 
 	return matrix4.fn4(matrix3);
 }
