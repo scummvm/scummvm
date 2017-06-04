@@ -260,21 +260,20 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV5 -= row1;
 		tempV6 -= row1;
 
-		tempV1 = tempV7 = tempV1.fn5(pose);
-		tempV4 = tempV1 = tempV4.fn5(pose);
+		tempV1 = tempV1.fn5(pose);
+		tempV4 = tempV4.fn5(pose);
 		tempV5 = tempV5.fn5(pose);
 		tempV6 = tempV6.fn5(pose);
 
-		tempV4 = tempV4 - tempV1;
-		FVector tempV9 = tempV5 - tempV1;
-		FVector tempV10 = tempV6 - tempV1;
-
+		tempV4 -= tempV1;
+		tempV5 -= tempV1;
+		tempV6 -= tempV1;
 		tempV4.normalize();
-		tempV9.normalize();
-		tempV10.normalize();
+		tempV5.normalize();
+		tempV6.normalize();
 
 		tempV1 += row1;
-		m1.set(tempV4, tempV9, tempV10);
+		m1.set(tempV4, tempV5, tempV6);
 		_viewport.setOrientation(m1);
 		_viewport.setPosition(tempV1);
 	} else if (_matrixRow == 1) {
