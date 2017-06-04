@@ -235,86 +235,46 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		proc22(sub);
 	} else if (_matrixRow == 0) {
 		// 1 marker is locked in
+
 		FVector row1 = _matrix._row1;
-		FPose subX(X_AXIS, angles._y);
-		FPose subY(Y_AXIS, angles._x);
-		FPose sub(subX, subY);
+		FPose poseX(X_AXIS, angles._y);
+		FPose poseY(Y_AXIS, angles._x);
+		FPose pose(poseX, poseY);
 
 		FMatrix m1 = _viewport.getOrientation();
 		FVector tempV1 = _viewport._position;
-		FVector tempV2, tempV3, tempV4, tempV5, tempV6;
-		tempV2._y = m1._row1._y * 100000.0;
-		tempV2._z = m1._row1._z * 100000.0;
-		tempV3._x = m1._row1._x * 100000.0 + tempV1._x;
-		tempV4._x = tempV3._x;
-		tempV3._y = tempV2._y + tempV1._y;
-		tempV4._y = tempV3._y;
-		tempV3._z = tempV2._z + tempV1._z;
-		tempV4._z = tempV3._z;
-		tempV2._x = m1._row2._x * 100000.0;
-		tempV2._y = m1._row2._y * 100000.0;
-		tempV2._z = m1._row2._z * 100000.0;
-		tempV2._x = m1._row3._x * 100000.0;
-		tempV2._y = m1._row3._y * 100000.0;
-		tempV2._z = m1._row3._z * 100000.0;
-		tempV2._x = tempV2._x + tempV1._x;
-		tempV2._y = tempV2._y + tempV1._y;
-		tempV2._z = tempV2._z + tempV1._z;
-		tempV3._x = tempV2._x + tempV1._x;
-		tempV3._y = tempV2._y + tempV1._y;
-		tempV5._x = tempV2._x;
-		tempV5._y = tempV2._y;
-		tempV3._z = tempV2._z + tempV1._z;
-		tempV5._z = tempV2._z;
-		tempV6._x = tempV3._x;
-		tempV6._y = tempV3._y;
-		tempV6._z = tempV3._z;
-		tempV1._x = tempV1._x - row1._x;
-		tempV1._y = tempV1._y - row1._y;
-		tempV1._z = tempV1._z - row1._z;
-		tempV4._x = tempV3._x - row1._x;
-		tempV4._y = tempV4._y - row1._y;
-		tempV4._z = tempV4._z - row1._z;
-		tempV5._x = tempV2._x - row1._x;
+		FVector tempV2 = m1._row1 * 100000;
+		FVector tempV3 = tempV2 + tempV1;
+		FVector tempV4 = tempV3;
 
-		tempV5._y = tempV5._y - row1._y;
-		tempV5._z = tempV5._z - row1._z;
-		tempV6._x = tempV3._x - row1._x;
-		tempV6._y = tempV6._y - row1._y;
-		tempV6._z = tempV6._z - row1._z;
+		tempV2 = m1._row2 * 100000;
+		FVector tempV5 = m1._row3 * 100000;
+		FVector tempV6 = tempV2 + tempV1;
 
-		FVector modV1 = tempV1.fn5(sub);
-		FVector modV2 = tempV4.fn5(sub);
-		FVector modV3 = tempV5.fn5(sub);
-		FVector modV4 = tempV6.fn5(sub);
-		tempV1 = modV1;
-		tempV4 = modV2;
-		tempV5 = modV3;
-		tempV4 = modV4;
+		FVector tempV7 = tempV5 + tempV1;
+		tempV5 = tempV6;
+		tempV6 = tempV7;
 
-		tempV2._x = tempV4._x - tempV1._x;
-		tempV2._y = tempV4._y - tempV1._y;
-		tempV2._z = tempV4._z - tempV1._z;
-		tempV4._x = tempV2._x;
-		tempV4._y = tempV2._y;
-		tempV2._x = tempV5._x - tempV1._x;
-		tempV4._z = tempV2._z;
-		tempV5._x = tempV2._x;
-		tempV2._y = tempV5._y - tempV1._y;
-		tempV5._y = tempV2._y;
-		tempV2._z = tempV5._z - tempV1._z;
-		tempV5._z = tempV2._z;
-		tempV2._x = tempV6._x - tempV1._x;
-		tempV2._y = tempV6._y - tempV1._y;
-		tempV2._z = tempV6._z - tempV1._z;
-		tempV6 = tempV2;
+		tempV1 -= row1;
+		tempV4 -= row1;
+		tempV5 -= row1;
+		tempV6 -= row1;
+
+		tempV1 = tempV7 = tempV1.fn5(pose);
+		tempV4 = tempV1 = tempV4.fn5(pose);
+		tempV5 = tempV5.fn5(pose);
+		tempV6 = tempV6.fn5(pose);
+
+		tempV4 = tempV4 - tempV1;
+		FVector tempV9 = tempV5 - tempV1;
+		FVector tempV10 = tempV6 - tempV1;
 
 		tempV4.normalize();
-		tempV5.normalize();
-		tempV6.normalize();
-		tempV1 += row1;
+		tempV9.normalize();
+		tempV10.normalize();
 
-		m1.set(tempV4, tempV5, tempV6);
+		tempV1 += row1;
+		m1.set(tempV4, tempV9, tempV10);
 		_viewport.setOrientation(m1);
 		_viewport.setPosition(tempV1);
 	} else if (_matrixRow == 1) {
