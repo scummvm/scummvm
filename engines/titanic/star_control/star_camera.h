@@ -192,9 +192,20 @@ public:
 	 */
 	void clearIsMoved() { _isMoved = false; }
 
-	void fn1(CViewport *sub13, const FVector &v);
-	void fn2(FVector v1, FVector v2, FVector v3);
-	void fn3(CViewport *sub13, const FVector &v);
+	/**
+	 * Lock in the first matched star marker
+	 */
+	void lockMarker1(FVector v1, FVector v2, FVector v3);
+	
+	/**
+	 * Lock in the second matched star marker
+	 */
+	void lockMarker2(CViewport *viewport, const FVector &v);
+
+	/**
+	 * Lock in the third and final matched star marker
+	 */
+	void lockMarker3(CViewport *viewport, const FVector &v);
 };
 
 } // End of namespace Titanic

@@ -388,19 +388,19 @@ void CStarView::lockStar() {
 			switch (_starField->getMatchedIndex()) {
 			case -1:
 				// First star match
-				_camera.fn2(v1, v2, v3);
+				_camera.lockMarker1(v1, v2, v3);
 				_starField->incMatches();
 				break;
 
 			case 0:
 				// Second star match
-				_camera.fn3(&_photoViewport, v2);
+				_camera.lockMarker2(&_photoViewport, v2);
 				_starField->incMatches();
 				break;
 
 			case 1:
 				// Third star match
-				_camera.fn1(&_photoViewport, v2);
+				_camera.lockMarker3(&_photoViewport, v2);
 				_starField->incMatches();
 				break;
 

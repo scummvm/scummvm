@@ -426,55 +426,42 @@ void CStarCamera::deleteHandler() {
 	}
 }
 
-void CStarCamera::fn1(CViewport *viewport, const FVector &v) {
-	if (_matrixRow == 1) {
-		FMatrix newOr = viewport->getOrientation();
-		FMatrix oldOr = _viewport.getOrientation();
-		FVector newPos = viewport->_position;
-		FVector oldPos = _viewport._position;
+void CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
+	if (_matrixRow != -1)
+		return;
 
-		_mover->proc8(oldPos, newPos, oldOr, newOr);
-		CStarVector *sv = new CStarVector(this, v);
-		_mover->setVector(sv);
-	}
+	FVector tempV;
+	double val1, val2, val3, val4, val5;
+	double val6, val7, val8, val9;
+
+	val1 = _viewport._centerVector._y * v1._x;
+	tempV._z = _viewport._field10;
+	val2 = _viewport._centerVector._y * tempV._z * v3._x;
+	val3 = _viewport._centerVector._z * v1._y;
+	val4 = _viewport._centerVector._z * tempV._z;
+	val5 = val1 * v1._z / _viewport._centerVector._x;
+	v3._z = v1._z;
+	val6 = val4 * v3._y;
+	val7 = val3 * v1._z / _viewport._centerVector._x;
+	val8 = val6 / _viewport._centerVector._x;
+	val9 = val2 / _viewport._centerVector._x;
+	v3._x = val5 - _viewport._valArray[2];
+	v3._y = val7;
+	tempV._x = val9 - _viewport._valArray[2];
+	tempV._y = val8;
+
+	v3.normalize();
+	tempV.normalize();
+
+	FMatrix matrix = _viewport.getOrientation();
+	const FVector &pos = _viewport._position;
+	_mover->proc10(v3, tempV, pos, matrix);
+
+	CStarVector *sv = new CStarVector(this, v2);
+	_mover->setVector(sv);
 }
 
-void CStarCamera::fn2(FVector v1, FVector v2, FVector v3) {
-	// Calculations only done when the first marker is locked on
-	if (_matrixRow == -1) {
-		FVector tempV;
-		double val1, val2, val3, val4, val5;
-		double val6, val7, val8, val9;
-
-		val1 = _viewport._centerVector._y * v1._x;
-		tempV._z = _viewport._field10;
-		val2 = _viewport._centerVector._y * tempV._z * v3._x;
-		val3 = _viewport._centerVector._z * v1._y;
-		val4 = _viewport._centerVector._z * tempV._z;
-		val5 = val1 * v1._z / _viewport._centerVector._x;
-		v3._z = v1._z;
-		val6 = val4 * v3._y;
-		val7 = val3 * v1._z / _viewport._centerVector._x;
-		val8 = val6 / _viewport._centerVector._x;
-		val9 = val2 / _viewport._centerVector._x;
-		v3._x = val5 - _viewport._valArray[2];
-		v3._y = val7;
-		tempV._x = val9 - _viewport._valArray[2];
-		tempV._y = val8;
-
-		v3.normalize();
-		tempV.normalize();
-
-		FMatrix matrix = _viewport.getOrientation();
-		const FVector &pos = _viewport._position;
-		_mover->proc10(v3, tempV, pos, matrix);
-
-		CStarVector *sv = new CStarVector(this, v2);
-		_mover->setVector(sv);
-	}
-}
-
-void CStarCamera::fn3(CViewport *viewport, const FVector &v) {
+void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	if (_matrixRow != 0)
 		return;
 
@@ -572,6 +559,20 @@ void CStarCamera::fn3(CViewport *viewport, const FVector &v) {
 	FMatrix m6 = _viewport.getOrientation();
 	_mover->proc8(_viewport._position, tempV6, m6, m5);
 
+	CStarVector *sv = new CStarVector(this, v);
+	_mover->setVector(sv);
+}
+
+void CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
+	if (_matrixRow != 1)
+		return;
+
+	FMatrix newOr = viewport->getOrientation();
+	FMatrix oldOr = _viewport.getOrientation();
+	FVector newPos = viewport->_position;
+	FVector oldPos = _viewport._position;
+
+	_mover->proc8(oldPos, newPos, oldOr, newOr);
 	CStarVector *sv = new CStarVector(this, v);
 	_mover->setVector(sv);
 }
