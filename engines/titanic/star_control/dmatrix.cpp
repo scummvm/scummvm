@@ -150,7 +150,7 @@ DMatrix DMatrix::fn1() const {
 	double val7 = val2 + val1;
 	assert(!(val7 == 0.0 || fabs(val7 / (val1 - val2)) < 1.0e-10));
 
-	double val8 = val1;
+	double val8 = _row3._z * _row2._y;
 	double val9 = 1.0 / val7;
 
 	DMatrix m;
