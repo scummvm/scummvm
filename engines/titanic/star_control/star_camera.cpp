@@ -235,7 +235,6 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		proc22(sub);
 	} else if (_matrixRow == 0) {
 		// 1 marker is locked in
-
 		FVector row1 = _matrix._row1;
 		FPose poseX(X_AXIS, angles._y);
 		FPose poseY(Y_AXIS, angles._x);
@@ -354,7 +353,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	}
 }
 
-bool CStarCamera::addMatrixRow(const FVector &v) {
+bool CStarCamera::addMatrixRow(const FVector v) {
 	if (_matrixRow >= 2)
 		return false;
 
