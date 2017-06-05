@@ -81,7 +81,7 @@ char *getPrefsFilename(char *filename) {
 	return joined;
 }
 
-void readIniFile(char *filename) {
+void readIniFile(const char *filename) {
 
 	char *langName = getPrefsFilename(copyString(filename));
 
@@ -161,7 +161,7 @@ void readIniFile(char *filename) {
 	fd.close();
 }
 
-void saveIniFile(char *filename) {
+void saveIniFile(const char *filename) {
 #if 0
 	char *langName = getPrefsFilename(copyString(filename));
 	FILE *fp = fopen(langName, "wt");

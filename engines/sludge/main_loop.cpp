@@ -295,7 +295,7 @@ void checkInput() {
 #endif
 }
 
-int main_loop(char *filename)
+int main_loop(const char *filename)
 #if 0
 		try
 #endif
@@ -304,62 +304,9 @@ int main_loop(char *filename)
 	winWidth = 640;
 	winHeight = 480;
 
-	char *sludgeFile;
-
-#if 0
-	time_t t;
-	srand((unsigned) time(&t));
-
-	// bundleFolder is used to look for the game file
-	// and later to find the shader programs
-#ifdef __APPLE__
-	// bundleFolder is set in applicationDidFinishLaunching.
-#elif defined __unix__
-	bundleFolder = copyString(DATADIR); // DATADIR is defined in the Makefile.
-#else
-	bundleFolder = copyString(argv[0]);
-	int lastSlash = -1;
-	for (int i = 0; bundleFolder[i]; i ++) {
-		if (bundleFolder[i] == PATHSLASH) lastSlash = i;
-	}
-	bundleFolder[lastSlash + 1] = NULL;
-#endif
-
-#endif
-
-	sludgeFile = filename;
-	if (!sludgeFile) {
-		sludgeFile = joinStrings(bundleFolder, "gamedata.slg");
-		if (!(fileExists(sludgeFile))) {
-			delete sludgeFile;
-			sludgeFile = joinStrings(bundleFolder, "gamedata");
-			if (!(fileExists(sludgeFile))) {
-#if 0
-				sludgeFile = grabFileName();
-#endif
-			}
-		}
-	}
-
-#if 0
-#if defined __unix__ && !(defined __APPLE__)
-	if (!fileExists(sludgeFile)) {
-		fprintf(stderr, "Game file not found.\n");
-		printCmdlineUsage();
+	if (!initSludge(filename)) {
 		return 0;
 	}
-#endif
-#endif
-
-	// The player pressed cancel in the file selection dialogue,
-	// so we should quit now.
-	if (!sludgeFile)
-		return 0;
-
-	// OK, so we DO want to start up, then...
-	setGameFilePath(sludgeFile);
-	if (!initSludge(sludgeFile))
-		return 0;
 
 #if 0
 	/* Initialize the SDL library */

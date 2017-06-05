@@ -70,7 +70,7 @@ Common::Error SludgeEngine::run() {
 	_console = new SludgeConsole(this);
 
 	// debug log
-	main_loop("Welcome.slg");
+	main_loop(getGameFile());
 
 	return Common::kNoError;
 }
