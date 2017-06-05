@@ -459,11 +459,10 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 
 	DMatrix m1;
 	DVector tempV1 = _matrix._row1;
-	DMatrix m2(0, tempV1);
+	DMatrix m2(X_AXIS, tempV1);
 
 	tempV1 = v - _matrix._row1;
 	m1 = tempV1.fn5();
-
 	m1 = m1.fn4(m2);
 	m2 = m1.fn1();
 
@@ -476,14 +475,8 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 
 	FMatrix m5 = viewport->getOrientation();
 	DVector tempV3, tempV4;
-	tempV4._x = m5._row1._x * 1000000.0 + m4._row1._x;
-	tempV4._y = m5._row1._y * 1000000.0 + m4._row1._y;
-	tempV4._z = m5._row1._z * 1000000.0 + m4._row1._z;
-	tempV3._x = m5._row2._x * 1000000.0 + m4._row1._x;
-	tempV3._y = m5._row2._y * 1000000.0 + m4._row1._y;
-	tempV3._z = m5._row2._z * 1000000.0 + m4._row1._z;
-	m4._row3 = tempV4;
-	m4._row2 = tempV3;
+	m4._row3 = tempV4 = m5._row1 * 1000000.0 + m4._row1;
+	m4._row2 = tempV3 = m5._row2 * 1000000.0 + m4._row1;
 
 	tempV4._x = m5._row3._x * 1000000.0;
 	tempV4._y = m5._row3._y * 1000000.0;
