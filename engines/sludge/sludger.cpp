@@ -527,17 +527,13 @@ bool initSludge(char *filename) {
 	// There's no startup window on Linux and respecting this
 	// option from the ini file would disable commandline options.
 #if defined __unix__ && !(defined __APPLE__)
-#if 0
-	if (!showSetupWindow()) return 0;
-#endif
 	saveIniFile(filename);
 #else
 	if (!gameSettings.noStartWindow) {
-		if (!showSetupWindow()) return 0;
 		saveIniFile(filename);
 	}
 #endif
-
+	
 	// Now set file indices properly to the chosen language.
 	languageNum = getLanguageForFileB();
 	if (languageNum < 0)
