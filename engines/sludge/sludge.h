@@ -25,11 +25,14 @@
 
 #include "common/random.h"
 #include "engines/engine.h"
+#include "graphics/pixelformat.h"
 #include "gui/debugger.h"
 
 #include "sludge/console.h"
 
 namespace Sludge {
+
+extern SludgeEngine *g_sludge;
 
 class SludgeConsole;
 
@@ -57,6 +60,8 @@ public:
 	const char *getGameId() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
+	Graphics::PixelFormat getScreenPixelFormat() const;
+	Graphics::PixelFormat getOrigPixelFormat() const;
 
 	const char *getGameFile() const;
 
@@ -65,6 +70,8 @@ public:
 private:
 	SludgeConsole *_console;
 	Common::RandomSource *_rnd;
+	Graphics::PixelFormat _pixelFormat;
+	Graphics::PixelFormat _origFormat;
 };
 
 } // End of namespace Sludge

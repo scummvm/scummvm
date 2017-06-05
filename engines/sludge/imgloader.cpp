@@ -28,7 +28,6 @@
 #include "sludge/allfiles.h"
 #include "sludge/hsi.h"
 #include "sludge/imgloader.h"
-#include "sludge/colours.h"
 #include "sludge/sludge.h"
 
 namespace Sludge {
@@ -50,7 +49,7 @@ bool ImgLoader::loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surfa
 	if (!png.loadStream(*stream))
 		return false;
 	const Graphics::Surface *sourceSurface = png.getSurface();
-	Graphics::Surface *pngSurface = sourceSurface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), png.getPalette());
+	Graphics::Surface *pngSurface = sourceSurface->convertTo(g_sludge->getScreenPixelFormat(), png.getPalette());
 	dest->copyFrom(*pngSurface);
 	pngSurface->free();
 	delete pngSurface;

@@ -46,10 +46,10 @@
 #include "sludge/movie.h"
 #include "sludge/savedata.h"
 #include "sludge/freeze.h"
-#include "sludge/colours.h"
 #include "sludge/language.h"
 #include "sludge/thumbnail.h"
 #include "sludge/graphics.h"
+#include "sludge/sludge.h"
 #include "sludge/CommonCode/utf8.h"
 
 namespace Sludge {
@@ -849,7 +849,7 @@ builtIn(setBlankColour) {
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
 
-	currentBlankColour = makeColour(red & 255, green & 255, blue & 255);
+	currentBlankColour = g_sludge->getOrigPixelFormat().RGBToColor(red & 255, green & 255, blue & 255);
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;
 }

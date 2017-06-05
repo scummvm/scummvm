@@ -29,7 +29,6 @@
 #include "sludge/sprites.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
-#include "sludge/colours.h"
 #include "sludge/backdrop.h"
 #include "sludge/sludger.h"
 #include "sludge/zbuffer.h"
@@ -37,6 +36,7 @@
 #include "sludge/graphics.h"
 #include "sludge/imgloader.h"
 #include "sludge/shaders.h"
+#include "sludge/sludge.h"
 
 namespace Sludge {
 
@@ -181,9 +181,9 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		}
 
 		// init data
-		loadhere.sprites[i].surface.create(picwidth, picheight, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+		loadhere.sprites[i].surface.create(picwidth, picheight, g_sludge->getScreenPixelFormat());
 		if (isFont) {
-			loadhere.sprites[i].burnSurface.create(picwidth, picheight, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+			loadhere.sprites[i].burnSurface.create(picwidth, picheight, g_sludge->getScreenPixelFormat());
 		}
 		data = (byte *)new byte[picwidth * (picheight + 1)];
 		if (!checkNew(data)) return false;
@@ -230,7 +230,11 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		loadhere.myPalette.r[i + startIndex] = (byte)bigDataFile->readByte();
 		loadhere.myPalette.g[i + startIndex] = (byte)bigDataFile->readByte();
 		loadhere.myPalette.b[i + startIndex] = (byte)bigDataFile->readByte();
-		loadhere.myPalette.pal[i + startIndex] = makeColour(loadhere.myPalette.r[i + startIndex], loadhere.myPalette.g[i + startIndex], loadhere.myPalette.b[i + startIndex]);
+		loadhere.myPalette.pal[i + startIndex] =
+				(uint16)g_sludge->getOrigPixelFormat().RGBToColor(
+						loadhere.myPalette.r[i + startIndex],
+						loadhere.myPalette.g[i + startIndex],
+						loadhere.myPalette.b[i + startIndex]);
 	}
 	loadhere.myPalette.originalRed = loadhere.myPalette.originalGreen = loadhere.myPalette.originalBlue = 255;
 

@@ -28,7 +28,6 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/newfatal.h"
-#include "sludge/colours.h"
 #include "sludge/fileset.h"
 #include "sludge/backdrop.h"
 #include "sludge/moreio.h"
@@ -70,7 +69,7 @@ int cameraPX = 0, cameraPY = 0;
 
 unsigned int sceneWidth, sceneHeight;
 int lightMapNumber;
-unsigned int currentBlankColour = makeColour(0, 0, 0);
+unsigned int currentBlankColour = g_sludge->getOrigPixelFormat().RGBToColor(0, 0, 0);
 
 extern int cameraX, cameraY;
 extern float cameraZoom;

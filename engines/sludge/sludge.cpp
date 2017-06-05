@@ -32,6 +32,15 @@
 
 namespace Sludge {
 
+SludgeEngine *g_sludge;
+
+Graphics::PixelFormat SludgeEngine::getScreenPixelFormat() const { return _pixelFormat; }
+Graphics::PixelFormat SludgeEngine::getOrigPixelFormat() const {
+	return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	//return _origFormat;
+	// TODO: get segmentation fault when returning _origFormat
+}
+
 SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
 
@@ -62,9 +71,13 @@ SludgeEngine::~SludgeEngine() {
 }
 
 Common::Error SludgeEngine::run() {
+	// set global variable
+	g_sludge = this;
+
 	// init graphics
-	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	initGraphics(640, 480, false, &format);
+	_origFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(640, 480, false, &_pixelFormat);
 
 	// create console
 	_console = new SludgeConsole(this);

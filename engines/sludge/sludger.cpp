@@ -27,7 +27,6 @@
 #include "sludge/sludger.h"
 #include "sludge/backdrop.h"
 #include "sludge/cursors.h"
-#include "sludge/colours.h"
 #include "sludge/objtypes.h"
 #include "sludge/region.h"
 #include "sludge/sprites.h"
