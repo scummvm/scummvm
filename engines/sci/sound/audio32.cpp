@@ -842,6 +842,9 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	channel.startedAtTick = now;
 
 	if (_numActiveChannels == 1) {
+		if (_pausedAtTick) {
+			_pausedAtTick = now;
+		}
 		_startedAtTick = now;
 	}
 
@@ -868,18 +871,29 @@ bool Audio32::resume(const int16 channelIndex) {
 			AudioChannel &channel = getChannel(i);
 			if (!channel.pausedAtTick) {
 				channel.startedAtTick += now - _pausedAtTick;
+				if (channel.startedAtTick > now) {
+					warning("%s is being resumed in the future", channel.id.toString().c_str());
+				}
 			}
 		}
 
 		_startedAtTick += now - _pausedAtTick;
+		if (_startedAtTick > now) {
+			warning("Audio32 is being resumed in the future");
+		}
 		_pausedAtTick = 0;
 		return true;
 	} else if (channelIndex == kRobotChannel) {
 		for (int i = 0; i < _numActiveChannels; ++i) {
 			AudioChannel &channel = getChannel(i);
 			if (channel.robot) {
-				channel.startedAtTick += now - channel.pausedAtTick;
-				channel.pausedAtTick = 0;
+				if (channel.pausedAtTick) {
+					channel.startedAtTick += now - channel.pausedAtTick;
+					if (channel.startedAtTick > now) {
+						warning("Robot audio is being resumed in the future");
+					}
+					channel.pausedAtTick = 0;
+				}
 				return true;
 			}
 		}
@@ -887,6 +901,9 @@ bool Audio32::resume(const int16 channelIndex) {
 		AudioChannel &channel = getChannel(channelIndex);
 		if (channel.pausedAtTick) {
 			channel.startedAtTick += now - channel.pausedAtTick;
+			if (channel.startedAtTick > now) {
+				warning("%s is being resumed in the future", channel.id.toString().c_str());
+			}
 			channel.pausedAtTick = 0;
 			return true;
 		}
