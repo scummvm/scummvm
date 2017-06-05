@@ -19,15 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "allfiles.h"
-#include "errors.h"
-#include "moreio.h"
-#include "CommonCode/version.h"
-#include "sludger.h"
-#include "colours.h"
-#include "backdrop.h"
-#include "graphics.h"
-#include "newfatal.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/errors.h"
+#include "sludge/moreio.h"
+#include "sludge/sludger.h"
+#include "sludge/colours.h"
+#include "sludge/backdrop.h"
+#include "sludge/graphics.h"
+#include "sludge/newfatal.h"
+#include "sludge/CommonCode/version.h"
 
 namespace Sludge {
 

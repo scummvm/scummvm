@@ -22,7 +22,7 @@
 #ifndef SLUDGE_TALK_H
 #define SLUDGE_TALK_H
 
-#include "sprites.h"
+#include "sludge/sprites.h"
 
 namespace Sludge {
 

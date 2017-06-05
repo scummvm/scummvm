@@ -26,16 +26,16 @@
 #include <stdlib.h>
 #endif
 
-#include "allfiles.h"
-
 #include "common/debug.h"
-#include "platform-dependent.h"
-#include "CommonCode/version.h"
-#include "sound.h"
-#include "stringy.h"
-#include "errors.h"
-#include "graphics.h"
-#include "sludge.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/platform-dependent.h"
+#include "sludge/sound.h"
+#include "sludge/stringy.h"
+#include "sludge/errors.h"
+#include "sludge/graphics.h"
+#include "sludge/sludge.h"
+#include "sludge/CommonCode/version.h"
 
 namespace Sludge {
 

@@ -19,21 +19,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "debug.h"
-
-#include "allfiles.h"
-#include "variable.h"
-#include "newfatal.h"
-#include "stringy.h"
-#include "objtypes.h"
-#include "people.h"
-#include "fileset.h"
-
-#include "sludge.h"
-#include "common/debug.h"
 
 #include <dirent.h>
-#include "moreio.h"
+
+#include "common/debug.h"
+
+#include "sludge/debug.h"
+#include "sludge/allfiles.h"
+#include "sludge/variable.h"
+#include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/stringy.h"
+#include "sludge/objtypes.h"
+#include "sludge/people.h"
+#include "sludge/fileset.h"
+#include "sludge/sludge.h"
+
 #ifdef _WIN32
 #include "windows.h"
 

@@ -27,16 +27,16 @@
 #include <iconv.h>
 #endif
 
-#include "debug.h"
-#include "stringy.h"
-#include "allfiles.h"
-#include "moreio.h"
-#include "newfatal.h"
-#include "CommonCode/version.h"
-
 #include "common/file.h"
 #include "common/debug.h"
-#include "sludge.h"
+
+#include "sludge/debug.h"
+#include "sludge/stringy.h"
+#include "sludge/allfiles.h"
+#include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/sludge.h"
+#include "sludge/CommonCode/version.h"
 
 namespace Sludge {
 

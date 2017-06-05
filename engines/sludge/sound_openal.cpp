@@ -26,14 +26,14 @@
 #include "AL/alure.h"
 #endif
 
-#include "allfiles.h"
-#include "debug.h"
-#include "newfatal.h"
-#include "sound.h"
-#include "moreio.h"
-#include "fileset.h"
-
 #include "common/file.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/debug.h"
+#include "sludge/newfatal.h"
+#include "sludge/sound.h"
+#include "sludge/moreio.h"
+#include "sludge/fileset.h"
 
 #define MAX_SAMPLES 8
 #define MAX_MODS 3

@@ -25,9 +25,9 @@
 
 #include "graphics/surface.h"
 
-#include "colours.h"
-#include "hsi.h"
-#include "sludge.h"
+#include "sludge/colours.h"
+#include "sludge/hsi.h"
+#include "sludge/sludge.h"
 
 namespace Sludge {
 

@@ -19,11 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "allfiles.h"
-#include "sprites.h"
-#include "sprbanks.h"
-#include "newfatal.h"
-#include "debug.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/sprites.h"
+#include "sludge/sprbanks.h"
+#include "sludge/newfatal.h"
+#include "sludge/debug.h"
 
 namespace Sludge {
 

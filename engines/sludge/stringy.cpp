@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "allfiles.h"
-#include "newfatal.h"
+#include "sludge/allfiles.h"
+#include "sludge/newfatal.h"
 
 #ifndef SLUDGE_STRINGY_H
 #define SLUDGE_STRINGY_H
