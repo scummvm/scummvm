@@ -43,7 +43,7 @@ bool allowAnyFilename = true;
 void writeString(char *s, Common::WriteStream *stream) {
 	int a, len = strlen(s);
 	stream->writeUint16BE(len);
-	for (a = 0; a < len; ++a) {
+	for (a = 0; a < len; a++) {
 		stream->writeByte(s[a] + 1);
 	}
 }
@@ -54,7 +54,7 @@ char *readString(Common::SeekableReadStream *stream) {
 	if (!checkNew(s)) {
 		return NULL;
 	}
-	for (a = 0; a < len; ++a) {
+	for (a = 0; a < len; a++) {
 		s[a] = (char)(stream->readByte() - 1);
 	}
 	s[len] = 0;
@@ -187,7 +187,7 @@ char *encodeFilename(char *nameIn) {
 		return newName;
 	} else {
 		int a;
-		for (a = 0; nameIn[a]; ++a) {
+		for (a = 0; nameIn[a]; a++) {
 #ifdef _WIN32
 			if (nameIn[a] == '/') nameIn[a] = '\\';
 #else

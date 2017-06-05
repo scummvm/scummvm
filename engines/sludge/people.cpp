@@ -136,7 +136,7 @@ personaAnimation *copyAnim(personaAnimation *orig) {
 		if (!checkNew(newAnim->frames))
 			return NULL;
 
-		for (int a = 0; a < num; ++a) {
+		for (int a = 0; a < num; a++) {
 			newAnim->frames[a].frameNum = orig->frames[a].frameNum;
 			newAnim->frames[a].howMany = orig->frames[a].howMany;
 			newAnim->frames[a].noise = orig->frames[a].noise;
@@ -877,7 +877,7 @@ bool addPerson(int x, int y, int objNum, persona *p) {
 
 int timeForAnim(personaAnimation *fram) {
 	int total = 0;
-	for (int a = 0; a < fram->numFrames; ++a) {
+	for (int a = 0; a < fram->numFrames; a++) {
 		total += fram->frames[a].howMany;
 	}
 	return total;
@@ -976,7 +976,7 @@ bool saveAnim(personaAnimation *p, Common::WriteStream *stream) {
 	if (p->numFrames) {
 		stream->writeUint32LE(p->theSprites->ID);
 
-		for (int a = 0; a < p->numFrames; ++a) {
+		for (int a = 0; a < p->numFrames; a++) {
 			stream->writeUint32LE(p->frames[a].frameNum);
 			stream->writeUint32LE(p->frames[a].howMany);
 			stream->writeUint32LE(p->frames[a].noise);
@@ -995,7 +995,7 @@ bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream) {
 			return false;
 		p->theSprites = loadBankForAnim(a);
 
-		for (a = 0; a < p->numFrames; ++a) {
+		for (a = 0; a < p->numFrames; a++) {
 			p->frames[a].frameNum = stream->readUint32LE();
 			p->frames[a].howMany = stream->readUint32LE();
 			if (ssgVersion >= VERSION(2, 0)) {
@@ -1014,7 +1014,7 @@ bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream) {
  void debugCostume (char * message, persona * cossy) {
  FILE * db = fopen ("debuTURN.txt", "at");
  fprintf (db, "  %s costume with %i directions...\n", message, cossy->numDirections);
- for (int a = 0; a < cossy->numDirections * 3; ++a) {
+ for (int a = 0; a < cossy->numDirections * 3; a++) {
  fprintf (db, "      %i frames:", cossy->animation[a]->numFrames);
  for (int b = 0; b < cossy->animation[a]->numFrames; b ++) {
  fprintf (db, " %i", cossy->animation[a]->frames[b]);
@@ -1028,7 +1028,7 @@ bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream) {
 bool saveCostume(persona *cossy, Common::WriteStream *stream) {
 	int a;
 	stream->writeUint16BE(cossy->numDirections);
-	for (a = 0; a < cossy->numDirections * 3; ++a) {
+	for (a = 0; a < cossy->numDirections * 3; a++) {
 		if (!saveAnim(cossy->animation[a], stream))
 			return false;
 	}
@@ -1042,7 +1042,7 @@ bool loadCostume(persona *cossy, Common::SeekableReadStream *stream) {
 	cossy->animation = new personaAnimation *[cossy->numDirections * 3];
 	if (!checkNew(cossy->animation))
 		return false;
-	for (a = 0; a < cossy->numDirections * 3; ++a) {
+	for (a = 0; a < cossy->numDirections * 3; a++) {
 		cossy->animation[a] = new personaAnimation;
 		if (!checkNew(cossy->animation[a]))
 			return false;
@@ -1069,7 +1069,7 @@ bool savePeople(Common::WriteStream *stream) {
 	stream->writeUint16BE(countPeople);
 
 	me = allPeople;
-	for (a = 0; a < countPeople; ++a) {
+	for (a = 0; a < countPeople; a++) {
 
 		putFloat(me->x, stream);
 		putFloat(me->y, stream);
@@ -1132,7 +1132,7 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 	int a;
 
 	allPeople = NULL;
-	for (a = 0; a < countPeople; ++a) {
+	for (a = 0; a < countPeople; a++) {
 		me = new onScreenPerson;
 		if (!checkNew(me))
 			return false;

@@ -826,7 +826,7 @@ int playMovie(int fileNumber) {
 						}
 					}
 				}
-				++frameCounter;
+				frameCounter++;
 
 			} else {
 				movieHasEnded:

@@ -107,7 +107,7 @@ void saveStack(variableStack *vs, Common::WriteStream *stream) {
 
 	stream->writeUint16BE(elements);
 	search = vs;
-	for (a = 0; a < elements; ++a) {
+	for (a = 0; a < elements; a++) {
 		saveVariable(&search->thisVar, stream);
 		search = search->next;
 	}
@@ -333,7 +333,7 @@ void saveFunction(loadedFunction *fun, Common::WriteStream *stream) {
 		fatal(ERROR_GAME_SAVE_FROZEN);
 	}
 	saveStack(fun->stack, stream);
-	for (a = 0; a < fun->numLocals; ++a) {
+	for (a = 0; a < fun->numLocals; a++) {
 		saveVariable(&(fun->localVars[a]), stream);
 	}
 }
@@ -368,7 +368,7 @@ loadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 
 	buildFunc->stack = loadStack(stream, NULL);
 
-	for (a = 0; a < buildFunc->numLocals; ++a) {
+	for (a = 0; a < buildFunc->numLocals; a++) {
 		loadVariable(&(buildFunc->localVars[a]), stream);
 	}
 
@@ -442,7 +442,7 @@ bool saveGame(char *fname) {
 		thisFunction = thisFunction->next;
 	}
 
-	for (a = 0; a < numGlobals; ++a) {
+	for (a = 0; a < numGlobals; a++) {
 		saveVariable(&globalVars[a], fp);
 	}
 
@@ -543,7 +543,7 @@ bool loadGame(char *fname) {
 			charOrder = new char[257];
 			if (! checkNew(charOrder)) return false;
 
-			for (int a = 0; a < 256; ++a) {
+			for (int a = 0; a < 256; a++) {
 				x = fgetc(fp);
 				charOrder[x] = a;
 			}
@@ -591,7 +591,7 @@ bool loadGame(char *fname) {
 		buildList = &(rFunc->next);
 	}
 
-	for (a = 0; a < numGlobals; ++a) {
+	for (a = 0; a < numGlobals; a++) {
 		unlinkVar(globalVars[a]);
 		loadVariable(&globalVars[a], fp);
 	}
