@@ -60,7 +60,7 @@ bool HSIDecoder::loadStream(Common::SeekableReadStream &stream) {
 	for (uint16 y = 0; y < height; y++) {
 		uint16 x = 0;
 		while (x < width) {
-			unsigned short c = (unsigned short)stream.readUint16BE();
+			uint16 c = stream.readUint16BE();
 			if (c & 32) {
 				n = stream.readByte() + 1;
 				c -= 32;
