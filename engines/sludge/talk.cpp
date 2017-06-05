@@ -78,9 +78,7 @@ void killAllSpeech() {
 #define TF_min(a, b) ((a > b) ? b : a)
 
 inline void setObjFontColour(objectType *t) {
-#if 0
 	setFontColour(speech->talkCol, t->r, t->g, t->b);
-#endif
 }
 
 void addSpeechLine(char *theLine, int x, int &offset) {
@@ -203,7 +201,6 @@ int wrapSpeech(char *theText, int objT, int sampleFile, bool animPerson) {
 }
 
 void viewSpeech() {
-#if 0
 	int viewY = speech->speechY;
 	speechLine *viewLine = speech->allSpeech;
 	fixFont(speech->talkCol);
@@ -212,7 +209,6 @@ void viewSpeech() {
 		viewY -= fontHeight / cameraZoom;
 		viewLine = viewLine->next;
 	}
-#endif
 }
 
 void saveSpeech(speechStruct *sS, Common::WriteStream *stream) {

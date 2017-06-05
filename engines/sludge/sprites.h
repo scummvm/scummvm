@@ -31,6 +31,7 @@ struct onScreenPerson;
 struct sprite {
 	int xhot, yhot;
 	Graphics::Surface surface;
+	Graphics::Surface burnSurface;
 };
 
 class spritePalette {
