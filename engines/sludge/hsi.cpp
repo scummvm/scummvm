@@ -25,7 +25,6 @@
 
 #include "graphics/surface.h"
 
-#include "sludge/colours.h"
 #include "sludge/hsi.h"
 #include "sludge/sludge.h"
 
@@ -56,7 +55,7 @@ bool HSIDecoder::loadStream(Common::SeekableReadStream &stream) {
 	debug(kSludgeDebugGraphics, "picHeight : %i", height);
 
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	_surface->create(width, height, g_sludge->getScreenPixelFormat());
 	for (uint16 y = 0; y < height; y++) {
 		uint16 x = 0;
 		while (x < width) {
@@ -76,9 +75,7 @@ bool HSIDecoder::loadStream(Common::SeekableReadStream &stream) {
 					target[3] = (byte)0;
 				} else {
 					target[0] = (byte)255;
-					target[1] = (byte)blueValue(c);
-					target[2] = (byte)greenValue(c);
-					target[3] = (byte)redValue(c);
+					g_sludge->getOrigPixelFormat().colorToRGB(c, target[3], target[2], target[1]);
 				}
 				x++;
 			}

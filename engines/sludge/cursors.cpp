@@ -22,7 +22,6 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/cursors.h"
-#include "sludge/colours.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
 #include "sludge/people.h"

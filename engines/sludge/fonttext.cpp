@@ -24,7 +24,6 @@
 #include "sludge/allfiles.h"
 #include "sludge/stringy.h"
 #include "sludge/sprites.h"
-#include "sludge/colours.h"
 #include "sludge/fonttext.h"
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"

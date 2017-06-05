@@ -24,7 +24,6 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
-#include "sludge/colours.h"
 #include "sludge/sprites.h"
 #include "sludge/fonttext.h"
 #include "sludge/moreio.h"
