@@ -67,19 +67,13 @@ bool loadSpriteBank(char *filename, spriteBank &loadhere);
 bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont);
 
 void fontSprite(int x1, int y1, sprite &single, const spritePalette &fontPal);
-void flipFontSprite(int x1, int y1, sprite &single,
-		const spritePalette &fontPal);
+void flipFontSprite(int x1, int y1, sprite &single, const spritePalette &fontPal);
 
-bool scaleSprite(sprite &single, const spritePalette &fontPal,
-		onScreenPerson *thisPerson, bool mirror);
-void pasteSpriteToBackDrop(int x1, int y1, sprite &single,
-		const spritePalette &fontPal);
+bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, bool mirror);
+void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal);
 bool reserveSpritePal(spritePalette &sP, int n);
-void fixScaleSprite(int x1, int y1, sprite &single,
-		const spritePalette &fontPal, onScreenPerson *thisPerson,
-		const int camX, const int camY, bool);
-void burnSpriteToBackDrop(int x1, int y1, sprite &single,
-		const spritePalette &fontPal);
+void fixScaleSprite(int x1, int y1, sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, const int camX, const int camY, bool);
+void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal);
 
 } // End of namespace Sludge
 

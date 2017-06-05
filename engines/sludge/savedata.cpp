@@ -77,7 +77,7 @@ char *readStringEncoded(Common::File *fp) {
 	if (!checkNew(s))
 		return NULL;
 	for (a = 0; a < len; a++) {
-		s[a] = (char) (fp->readByte() ^ encode1);
+		s[a] = (char)(fp->readByte() ^ encode1);
 		encode1 += encode2;
 	}
 	s[len] = 0;
@@ -95,7 +95,7 @@ char *readTextPlain(Common::File *fp) {
 	startPos = fp->pos();
 
 	while (keepGoing) {
-		gotChar = (char) fp->readByte();
+		gotChar = (char)fp->readByte();
 		if ((gotChar == '\n') || (fp->eos())) {
 			keepGoing = false;
 		} else {
@@ -125,9 +125,7 @@ bool fileToStack(char *filename, stackHandler *sH) {
 
 	variable stringVar;
 	stringVar.varType = SVT_NULL;
-	const char *checker =
-			saveEncoding ?
-					"[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
+	const char *checker = saveEncoding ? "[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
 
 	Common::File fd;
 
@@ -153,14 +151,13 @@ bool fileToStack(char *filename, stackHandler *sH) {
 		return fatal("No such file", filename); //TODO: false value
 	}
 
-	encode1 = (unsigned char) saveEncoding & 255;
-	encode2 = (unsigned char) (saveEncoding >> 8);
+	encode1 = (unsigned char)saveEncoding & 255;
+	encode2 = (unsigned char)(saveEncoding >> 8);
 
 	while (*checker) {
 		if (fd.readByte() != *checker) {
 			fd.close();
-			return fatal(LOAD_ERROR "This isn't a SLUDGE custom data file:",
-					filename);
+			return fatal(LOAD_ERROR "This isn't a SLUDGE custom data file:", filename);
 		}
 		checker++;
 	}
@@ -170,8 +167,7 @@ bool fileToStack(char *filename, stackHandler *sH) {
 		if (strcmp(checker, "UN�LO�CKED")) {
 			fd.close();
 			return fatal(
-					LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:",
-					filename);
+			LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
 		}
 		delete checker;
 		checker = NULL;
@@ -184,25 +180,25 @@ bool fileToStack(char *filename, stackHandler *sH) {
 			if (fd.eos())
 				break;
 			switch (i) {
-			case 0: {
-				char *g = readStringEncoded(&fd);
-				makeTextVar(stringVar, g);
-				delete g;
-			}
-				break;
+				case 0: {
+					char *g = readStringEncoded(&fd);
+					makeTextVar(stringVar, g);
+					delete g;
+				}
+					break;
 
-			case 1:
-				setVariable(stringVar, SVT_INT, fd.readUint32LE());
-				break;
+				case 1:
+					setVariable(stringVar, SVT_INT, fd.readUint32LE());
+					break;
 
-			case 2:
-				setVariable(stringVar, SVT_INT, fd.readByte());
-				break;
+				case 2:
+					setVariable(stringVar, SVT_INT, fd.readByte());
+					break;
 
-			default:
-				fatal(LOAD_ERROR "Corrupt custom data file:", filename);
-				fd.close();
-				return false;
+				default:
+					fatal(LOAD_ERROR "Corrupt custom data file:", filename);
+					fd.close();
+					return false;
 			}
 		} else {
 			char *line = readTextPlain(&fd);

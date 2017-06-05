@@ -223,8 +223,8 @@ bool loadStatusBars(Common::SeekableReadStream *stream) {
 		if (! checkNew(newOne)) return false;
 		newOne->text = readString(stream);
 		newOne->next = NULL;
-		(* viewLine) = newOne;
-		viewLine = & (newOne->next);
+		(*viewLine) = newOne;
+		viewLine = &(newOne->next);
 	}
 	return true;
 }

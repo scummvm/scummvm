@@ -20,7 +20,7 @@
  *
  */
 #include "common/scummsys.h"
- 
+
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -32,10 +32,10 @@
 #include "main_loop.h"
 
 namespace Sludge {
- 
-SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
- : Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
- 
+
+SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc) :
+		Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
+
 	// register your random source
 	_rnd = new Common::RandomSource("sludge");
 
@@ -49,19 +49,19 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	// check init
 	debug("SludgeEngine::SludgeEngine");
 }
- 
+
 SludgeEngine::~SludgeEngine() {
 
 	// Dispose resources
 	delete _rnd;
- 
+
 	// Remove debug levels
 	DebugMan.clearAllDebugChannels();
-	
+
 	// Dispose console
 	delete _console;
 }
- 
+
 Common::Error SludgeEngine::run() {
 	// init graphics
 	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -69,12 +69,12 @@ Common::Error SludgeEngine::run() {
 
 	// create console
 	_console = new SludgeConsole(this);
- 
+
 	// debug log
 	main_loop("Welcome.slg");
- 
+
 	return Common::kNoError;
 }
- 
+
 } // End of namespace Sludge
 

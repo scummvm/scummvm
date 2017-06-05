@@ -104,8 +104,8 @@ bool saveThumbnail(Common::WriteStream *stream) {
 		GLuint *tmp = new GLuint [thumbWidth * thumbHeight];
 		if (! checkNew(image)) return false;
 		glReadPixels(viewportOffsetX, viewportOffsetY, thumbWidth, thumbHeight, GL_RGBA, GL_UNSIGNED_BYTE, tmp);
-		for (int y = 0; y < thumbHeight; y ++) {
-			for (int x = 0; x < thumbWidth; x ++) {
+		for (int y = 0; y < thumbHeight; y++) {
+			for (int x = 0; x < thumbWidth; x++) {
 				const GLuint a = tmp[y * thumbWidth + x];
 				image[y * thumbWidth + x] = ((a & 0x00f80000) >> (16 + 3)) | ((a & 0x0000fc00) >> (8 + 2 - 5)) | ((a & 0x000000f8) << (11 - 3));
 			}
@@ -122,8 +122,8 @@ bool saveThumbnail(Common::WriteStream *stream) {
 #endif
 		setPixelCoords(false);
 
-		for (int y = 0; y < thumbHeight; y ++) {
-			for (int x = 0; x < thumbWidth; x ++) {
+		for (int y = 0; y < thumbHeight; y++) {
+			for (int x = 0; x < thumbWidth; x++) {
 				put2bytes((*(image + y * thumbWidth + x)), fp);
 			}
 		}
@@ -167,7 +167,7 @@ void showThumbnail(char *filename, int atX, int atY) {
 		int t1, t2;
 		unsigned short c;
 		GLubyte *target;
-		for (t2 = 0; t2 < fileHeight; t2 ++) {
+		for (t2 = 0; t2 < fileHeight; t2++) {
 			t1 = 0;
 			while (t1 < fileWidth) {
 				c = (unsigned short) fp->readUint16BE();

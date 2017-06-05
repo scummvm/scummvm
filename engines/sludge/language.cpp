@@ -91,8 +91,7 @@ void readIniFile(char *filename) {
 
 	Common::File fd;
 	if (!fd.open(langName)) {
-		debug(kSludgeDebugDataLoad, "Fail to open language file : %s",
-				langName);
+		debug(kSludgeDebugDataLoad, "Fail to open language file : %s", langName);
 		return;
 	}
 
@@ -121,45 +120,45 @@ void readIniFile(char *filename) {
 			keepGoing = false;
 		}
 		switch (readChar) {
-		case '\n':
-		case '\r':
-			if (doingSecond) {
-				if (strcmp(lineSoFar, "LANGUAGE") == 0) {
-					gameSettings.languageID = stringToInt(secondSoFar);
-				} else if (strcmp(lineSoFar, "WINDOW") == 0) {
-					gameSettings.userFullScreen = !stringToInt(secondSoFar);
-				} else if (strcmp(lineSoFar, "REFRESH") == 0) {
-					gameSettings.refreshRate = stringToInt(secondSoFar);
-				} else if (strcmp(lineSoFar, "ANTIALIAS") == 0) {
-					gameSettings.antiAlias = stringToInt(secondSoFar);
-				} else if (strcmp(lineSoFar, "FIXEDPIXELS") == 0) {
-					gameSettings.fixedPixels = stringToInt(secondSoFar);
-				} else if (strcmp(lineSoFar, "NOSTARTWINDOW") == 0) {
-					gameSettings.noStartWindow = stringToInt(secondSoFar);
-				} else if (strcmp(lineSoFar, "DEBUGMODE") == 0) {
-					gameSettings.debugMode = stringToInt(secondSoFar);
+			case '\n':
+			case '\r':
+				if (doingSecond) {
+					if (strcmp(lineSoFar, "LANGUAGE") == 0) {
+						gameSettings.languageID = stringToInt(secondSoFar);
+					} else if (strcmp(lineSoFar, "WINDOW") == 0) {
+						gameSettings.userFullScreen = !stringToInt(secondSoFar);
+					} else if (strcmp(lineSoFar, "REFRESH") == 0) {
+						gameSettings.refreshRate = stringToInt(secondSoFar);
+					} else if (strcmp(lineSoFar, "ANTIALIAS") == 0) {
+						gameSettings.antiAlias = stringToInt(secondSoFar);
+					} else if (strcmp(lineSoFar, "FIXEDPIXELS") == 0) {
+						gameSettings.fixedPixels = stringToInt(secondSoFar);
+					} else if (strcmp(lineSoFar, "NOSTARTWINDOW") == 0) {
+						gameSettings.noStartWindow = stringToInt(secondSoFar);
+					} else if (strcmp(lineSoFar, "DEBUGMODE") == 0) {
+						gameSettings.debugMode = stringToInt(secondSoFar);
+					}
 				}
-			}
-			here = 0;
-			doingSecond = false;
-			lineSoFar[0] = 0;
-			secondSoFar[0] = 0;
-			break;
+				here = 0;
+				doingSecond = false;
+				lineSoFar[0] = 0;
+				secondSoFar[0] = 0;
+				break;
 
-		case '=':
-			doingSecond = true;
-			here = 0;
-			break;
+			case '=':
+				doingSecond = true;
+				here = 0;
+				break;
 
-		default:
-			if (doingSecond) {
-				secondSoFar[here++] = readChar;
-				secondSoFar[here] = 0;
-			} else {
-				lineSoFar[here++] = readChar;
-				lineSoFar[here] = 0;
-			}
-			break;
+			default:
+				if (doingSecond) {
+					secondSoFar[here++] = readChar;
+					secondSoFar[here] = 0;
+				} else {
+					lineSoFar[here++] = readChar;
+					lineSoFar[here] = 0;
+				}
+				break;
 		}
 	} while (keepGoing);
 
@@ -194,14 +193,12 @@ void makeLanguageTable(Common::File *table) {
 
 	for (unsigned int i = 0; i <= gameSettings.numLanguages; i++) {
 		languageTable[i] = i ? table->readUint16BE() : 0;
-		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i,
-				languageTable[i]);
+		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i, languageTable[i]);
 		languageName[i] = 0;
 		if (gameVersion >= VERSION(2, 0)) {
 			if (gameSettings.numLanguages) {
 				languageName[i] = readString(table);
-				debug(kSludgeDebugDataLoad, "languageName %i: %s\n", i,
-						languageName[i]);
+				debug(kSludgeDebugDataLoad, "languageName %i: %s\n", i, languageName[i]);
 			}
 		}
 	}

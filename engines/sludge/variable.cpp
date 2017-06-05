@@ -49,36 +49,36 @@ extern char *outputDir;
 
 void unlinkVar(variable &thisVar) {
 	switch (thisVar.varType) {
-	case SVT_STRING:
-		delete[] thisVar.varData.theString;
-		thisVar.varData.theString = NULL;
-		break;
+		case SVT_STRING:
+			delete[] thisVar.varData.theString;
+			thisVar.varData.theString = NULL;
+			break;
 
-	case SVT_STACK:
-		thisVar.varData.theStack->timesUsed--;
-		if (thisVar.varData.theStack->timesUsed <= 0) {
-			while (thisVar.varData.theStack->first)
-				trimStack(thisVar.varData.theStack->first);
-			delete thisVar.varData.theStack;
-			thisVar.varData.theStack = NULL;
-		}
-		break;
+		case SVT_STACK:
+			thisVar.varData.theStack->timesUsed--;
+			if (thisVar.varData.theStack->timesUsed <= 0) {
+				while (thisVar.varData.theStack->first)
+					trimStack(thisVar.varData.theStack->first);
+				delete thisVar.varData.theStack;
+				thisVar.varData.theStack = NULL;
+			}
+			break;
 
-	case SVT_FASTARRAY:
-		thisVar.varData.fastArray->timesUsed--;
-		if (thisVar.varData.theStack->timesUsed <= 0) {
-			delete thisVar.varData.fastArray->fastVariables;
-			delete[] thisVar.varData.fastArray;
-			thisVar.varData.fastArray = NULL;
-		}
-		break;
+		case SVT_FASTARRAY:
+			thisVar.varData.fastArray->timesUsed--;
+			if (thisVar.varData.theStack->timesUsed <= 0) {
+				delete thisVar.varData.fastArray->fastVariables;
+				delete[] thisVar.varData.fastArray;
+				thisVar.varData.fastArray = NULL;
+			}
+			break;
 
-	case SVT_ANIM:
-		deleteAnim(thisVar.varData.animHandler);
-		break;
+		case SVT_ANIM:
+			deleteAnim(thisVar.varData.animHandler);
+			break;
 
-	default:
-		break;
+		default:
+			break;
 	}
 }
 
@@ -101,8 +101,7 @@ personaAnimation *getAnimationFromVar(variable &thisVar) {
 	if (thisVar.varType == SVT_INT && thisVar.varData.intValue == 0)
 		return makeNullAnim();
 
-	fatal("Expecting an animation variable; found variable of type",
-			typeName[thisVar.varType]);
+	fatal("Expecting an animation variable; found variable of type", typeName[thisVar.varType]);
 	return NULL;
 }
 
@@ -116,27 +115,26 @@ persona *getCostumeFromVar(variable &thisVar) {
 	persona *p = NULL;
 
 	switch (thisVar.varType) {
-	case SVT_ANIM:
-		p = new persona;
-		if (!checkNew(p))
-			return NULL;
-		p->numDirections = 1;
-		p->animation = new personaAnimation *[3];
-		if (!checkNew(p->animation))
-			return NULL;
+		case SVT_ANIM:
+			p = new persona;
+			if (!checkNew(p))
+				return NULL;
+			p->numDirections = 1;
+			p->animation = new personaAnimation *[3];
+			if (!checkNew(p->animation))
+				return NULL;
 
-		for (int iii = 0; iii < 3; iii++)
-			p->animation[iii] = copyAnim(thisVar.varData.animHandler);
+			for (int iii = 0; iii < 3; iii++)
+				p->animation[iii] = copyAnim(thisVar.varData.animHandler);
 
-		break;
+			break;
 
-	case SVT_COSTUME:
-		return thisVar.varData.costumeHandler;
-		break;
+		case SVT_COSTUME:
+			return thisVar.varData.costumeHandler;
+			break;
 
-	default:
-		fatal("Expecting an animation variable; found variable of type",
-				typeName[thisVar.varType]);
+		default:
+			fatal("Expecting an animation variable; found variable of type", typeName[thisVar.varType]);
 	}
 
 	return p;
@@ -297,29 +295,29 @@ int compareVars(const variable &var1, const variable &var2) {
 	int re = 0;
 	if (var1.varType == var2.varType) {
 		switch (var1.varType) {
-		case SVT_NULL:
-			re = 1;
-			break;
+			case SVT_NULL:
+				re = 1;
+				break;
 
-		case SVT_COSTUME:
-			re = (var1.varData.costumeHandler == var2.varData.costumeHandler);
-			break;
+			case SVT_COSTUME:
+				re = (var1.varData.costumeHandler == var2.varData.costumeHandler);
+				break;
 
-		case SVT_ANIM:
-			re = (var1.varData.animHandler == var2.varData.animHandler);
-			break;
+			case SVT_ANIM:
+				re = (var1.varData.animHandler == var2.varData.animHandler);
+				break;
 
-		case SVT_STRING:
+			case SVT_STRING:
 
-			re = (strcmp(var1.varData.theString, var2.varData.theString) == 0);
-			break;
+				re = (strcmp(var1.varData.theString, var2.varData.theString) == 0);
+				break;
 
-		case SVT_STACK:
-			re = (var1.varData.theStack == var2.varData.theStack);
-			break;
+			case SVT_STACK:
+				re = (var1.varData.theStack == var2.varData.theStack);
+				break;
 
-		default:
-			re = (var1.varData.intValue == var2.varData.intValue);
+			default:
+				re = (var1.varData.intValue == var2.varData.intValue);
 		}
 	}
 	return re;
@@ -338,93 +336,92 @@ void makeTextVar(variable &thisVar, const char *txt) {
 bool loadStringToVar(variable &thisVar, int value) {
 
 	makeTextVar(thisVar, getNumberedString(value));
-	return (bool) (thisVar.varData.theString != NULL);
+	return (bool)(thisVar.varData.theString != NULL);
 }
 
 char *getTextFromAnyVar(const variable &from) {
 	switch (from.varType) {
-	case SVT_STRING:
-		return copyString(from.varData.theString);
+		case SVT_STRING:
+			return copyString(from.varData.theString);
 
-	case SVT_FASTARRAY: {
-		char *builder = copyString("FAST:");
-		char *builder2;
-		char *grabText;
+		case SVT_FASTARRAY: {
+			char *builder = copyString("FAST:");
+			char *builder2;
+			char *grabText;
 
-		for (int i = 0; i < from.varData.fastArray->size; i++) {
-			builder2 = joinStrings(builder, " ");
-			if (!builder2)
-				return NULL;
-			delete builder;
-			grabText = getTextFromAnyVar(
-					from.varData.fastArray->fastVariables[i]);
-			builder = joinStrings(builder2, grabText);
-			if (!builder)
-				return NULL;
-			delete grabText;
-			grabText = NULL;
-			delete builder2;
-			builder2 = NULL;
+			for (int i = 0; i < from.varData.fastArray->size; i++) {
+				builder2 = joinStrings(builder, " ");
+				if (!builder2)
+					return NULL;
+				delete builder;
+				grabText = getTextFromAnyVar(from.varData.fastArray->fastVariables[i]);
+				builder = joinStrings(builder2, grabText);
+				if (!builder)
+					return NULL;
+				delete grabText;
+				grabText = NULL;
+				delete builder2;
+				builder2 = NULL;
+			}
+			return builder;
 		}
-		return builder;
-	}
 
-	case SVT_STACK: {
-		char *builder = copyString("ARRAY:");
-		char *builder2;
-		char *grabText;
+		case SVT_STACK: {
+			char *builder = copyString("ARRAY:");
+			char *builder2;
+			char *grabText;
 
-		variableStack *stacky = from.varData.theStack->first;
+			variableStack *stacky = from.varData.theStack->first;
 
-		while (stacky) {
-			builder2 = joinStrings(builder, " ");
-			if (!builder2)
-				return NULL;
-			delete builder;
-			grabText = getTextFromAnyVar(stacky->thisVar);
-			builder = joinStrings(builder2, grabText);
-			if (!builder)
-				return NULL;
-			delete grabText;
-			grabText = NULL;
-			delete builder2;
-			builder2 = NULL;
-			stacky = stacky->next;
+			while (stacky) {
+				builder2 = joinStrings(builder, " ");
+				if (!builder2)
+					return NULL;
+				delete builder;
+				grabText = getTextFromAnyVar(stacky->thisVar);
+				builder = joinStrings(builder2, grabText);
+				if (!builder)
+					return NULL;
+				delete grabText;
+				grabText = NULL;
+				delete builder2;
+				builder2 = NULL;
+				stacky = stacky->next;
+			}
+			return builder;
 		}
-		return builder;
-	}
 
-	case SVT_INT: {
-		char *buff = new char[10];
-		if (!checkNew(buff))
-			return NULL;
-		sprintf(buff, "%i", from.varData.intValue);
-		return buff;
-	}
+		case SVT_INT: {
+			char *buff = new char[10];
+			if (!checkNew(buff))
+				return NULL;
+			sprintf(buff, "%i", from.varData.intValue);
+			return buff;
+		}
 
-	case SVT_FILE: {
+		case SVT_FILE: {
 //			char * buff = new char[15];
 //			if (! checkNew (buff)) return NULL;
 //			sprintf (buff, "FILE %i", from.varData.intValue);
-		return joinStrings("", resourceNameFromNum(from.varData.intValue));
-	}
+			return joinStrings("", resourceNameFromNum(from.varData.intValue));
+		}
 
-		/*      case SVT_ANIM:
-		 {
-		 char * buff = new char[20];
-		 if (! checkNew (buff)) return NULL;
-		 sprintf (buff, "%p", from.varData.animHandler);
-		 return buff;
-		 }*/
+			/*      case SVT_ANIM:
+			 {
+			 char * buff = new char[20];
+			 if (! checkNew (buff)) return NULL;
+			 sprintf (buff, "%p", from.varData.animHandler);
+			 return buff;
+			 }*/
 
-	case SVT_OBJTYPE: {
-		objectType *thisType = findObjectType(from.varData.intValue);
-		if (thisType)
-			return copyString(thisType->screenName);
-	}
+		case SVT_OBJTYPE: {
+			objectType *thisType = findObjectType(from.varData.intValue);
+			if (thisType)
+				return copyString(thisType->screenName);
+		}
 
-	default:
-		break;
+		default:
+			break;
 	}
 
 	return copyString(typeName[from.varType]);
@@ -432,23 +429,23 @@ char *getTextFromAnyVar(const variable &from) {
 
 bool getBoolean(const variable &from) {
 	switch (from.varType) {
-	case SVT_NULL:
-		return false;
+		case SVT_NULL:
+			return false;
 
-	case SVT_INT:
-		return (bool) (from.varData.intValue != 0);
+		case SVT_INT:
+			return (bool)(from.varData.intValue != 0);
 
-	case SVT_STACK:
-		return (bool) (from.varData.theStack->first != NULL);
+		case SVT_STACK:
+			return (bool)(from.varData.theStack->first != NULL);
 
-	case SVT_STRING:
-		return (bool) (from.varData.theString[0] != 0);
+		case SVT_STRING:
+			return (bool)(from.varData.theString[0] != 0);
 
-	case SVT_FASTARRAY:
-		return (bool) (from.varData.fastArray->size != 0);
+		case SVT_FASTARRAY:
+			return (bool)(from.varData.fastArray->size != 0);
 
-	default:
-		break;
+		default:
+			break;
 	}
 	return true;
 }
@@ -456,41 +453,41 @@ bool getBoolean(const variable &from) {
 bool copyMain(const variable &from, variable &to) {
 	to.varType = from.varType;
 	switch (to.varType) {
-	case SVT_INT:
-	case SVT_FUNC:
-	case SVT_BUILT:
-	case SVT_FILE:
-	case SVT_OBJTYPE:
-		to.varData.intValue = from.varData.intValue;
-		return true;
+		case SVT_INT:
+		case SVT_FUNC:
+		case SVT_BUILT:
+		case SVT_FILE:
+		case SVT_OBJTYPE:
+			to.varData.intValue = from.varData.intValue;
+			return true;
 
-	case SVT_FASTARRAY:
-		to.varData.fastArray = from.varData.fastArray;
-		to.varData.fastArray->timesUsed++;
-		return true;
+		case SVT_FASTARRAY:
+			to.varData.fastArray = from.varData.fastArray;
+			to.varData.fastArray->timesUsed++;
+			return true;
 
-	case SVT_STRING:
-		to.varData.theString = copyString(from.varData.theString);
-		return to.varData.theString ? true : false;
+		case SVT_STRING:
+			to.varData.theString = copyString(from.varData.theString);
+			return to.varData.theString ? true : false;
 
-	case SVT_STACK:
-		to.varData.theStack = from.varData.theStack;
-		to.varData.theStack->timesUsed++;
-		return true;
+		case SVT_STACK:
+			to.varData.theStack = from.varData.theStack;
+			to.varData.theStack->timesUsed++;
+			return true;
 
-	case SVT_COSTUME:
-		to.varData.costumeHandler = from.varData.costumeHandler;
-		return true;
+		case SVT_COSTUME:
+			to.varData.costumeHandler = from.varData.costumeHandler;
+			return true;
 
-	case SVT_ANIM:
-		to.varData.animHandler = copyAnim(from.varData.animHandler);
-		return true;
+		case SVT_ANIM:
+			to.varData.animHandler = copyAnim(from.varData.animHandler);
+			return true;
 
-	case SVT_NULL:
-		return true;
+		case SVT_NULL:
+			return true;
 
-	default:
-		break;
+		default:
+			break;
 	}
 	fatal("Unknown value type");
 	return false;
@@ -509,8 +506,7 @@ variable *fastArrayGetByIndex(fastArrayHandler *vS, unsigned int theIndex) {
 
 bool makeFastArraySize(variable &to, int size) {
 	if (size < 0)
-		return fatal(
-				"Can't create a fast array with a negative number of elements!");
+		return fatal("Can't create a fast array with a negative number of elements!");
 	unlinkVar(to);
 	to.varType = SVT_FASTARRAY;
 	to.varData.fastArray = new fastArrayHandler;
@@ -561,8 +557,7 @@ bool addVarToStack(const variable &va, variableStack *&thisStack) {
 		return false;
 	newStack->next = thisStack;
 	thisStack = newStack;
-	debug(kSludgeDebugStackMachine, "Variable %s was added to stack",
-			getTextFromAnyVar(va));
+	debug(kSludgeDebugStackMachine, "Variable %s was added to stack", getTextFromAnyVar(va));
 	return true;
 }
 
@@ -578,13 +573,11 @@ bool addVarToStackQuick(variable &va, variableStack *&thisStack) {
 
 	newStack->next = thisStack;
 	thisStack = newStack;
-	debug(kSludgeDebugStackMachine, "Variable %s was added to stack quick",
-			getTextFromAnyVar(va));
+	debug(kSludgeDebugStackMachine, "Variable %s was added to stack quick", getTextFromAnyVar(va));
 	return true;
 }
 
-bool stackSetByIndex(variableStack *vS, unsigned int theIndex,
-		const variable &va) {
+bool stackSetByIndex(variableStack *vS, unsigned int theIndex, const variable &va) {
 	while (theIndex--) {
 		vS = vS->next;
 		if (!vS)
@@ -603,8 +596,7 @@ variable *stackGetByIndex(variableStack *vS, unsigned int theIndex) {
 	return &(vS->thisVar);
 }
 
-int deleteVarFromStack(const variable &va, variableStack *&thisStack,
-		bool allOfEm) {
+int deleteVarFromStack(const variable &va, variableStack *&thisStack, bool allOfEm) {
 	variableStack * * huntVar = &thisStack;
 	variableStack *killMe;
 	int reply = 0;
@@ -640,12 +632,8 @@ variableStack *stackFindLast(variableStack *hunt) {
 bool getValueType(int &toHere, variableType vT, const variable &v) {
 	//if (! v) return false;
 	if (v.varType != vT) {
-		char *e1 =
-				joinStrings(
-						"Can only perform specified operation on a value which is of type ",
-						typeName[vT]);
-		char *e2 = joinStrings("... value supplied was of type ",
-				typeName[v.varType]);
+		char *e1 = joinStrings("Can only perform specified operation on a value which is of type ", typeName[vT]);
+		char *e2 = joinStrings("... value supplied was of type ", typeName[v.varType]);
 		fatal(e1, e2);
 
 		return false;
@@ -658,8 +646,7 @@ void trimStack(variableStack *&stack) {
 	variableStack *killMe = stack;
 	stack = stack->next;
 
-	debug(kSludgeDebugStackMachine, "Variable %s was removed from stack",
-			getTextFromAnyVar(killMe->thisVar));
+	debug(kSludgeDebugStackMachine, "Variable %s was removed from stack", getTextFromAnyVar(killMe->thisVar));
 
 	// When calling this, we've ALWAYS checked that stack != NULL
 	unlinkVar(killMe->thisVar);

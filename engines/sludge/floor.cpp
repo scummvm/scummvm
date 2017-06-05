@@ -42,17 +42,14 @@ bool pointInFloorPolygon(floorPolygon &floorPoly, int x, int y) {
 		xp_j = currentFloor->vertex[floorPoly.vertexID[j]].x;
 		yp_j = currentFloor->vertex[floorPoly.vertexID[j]].y;
 
-		if ((((yp_i <= y) && (y < yp_j)) || ((yp_j <= y) && (y < yp_i)))
-				&& (x < (xp_j - xp_i) * (y - yp_i) / (yp_j - yp_i) + xp_i)) {
-
+		if ((((yp_i <= y) && (y < yp_j)) || ((yp_j <= y) && (y < yp_i))) && (x < (xp_j - xp_i) * (y - yp_i) / (yp_j - yp_i) + xp_i)) {
 			c = !c;
 		}
 	}
 	return c;
 }
 
-bool getMatchingCorners(floorPolygon &a, floorPolygon &b, int &cornerA,
-		int &cornerB) {
+bool getMatchingCorners(floorPolygon &a, floorPolygon &b, int &cornerA, int &cornerB) {
 	int sharedVertices = 0;
 	int i, j;
 
@@ -147,8 +144,7 @@ bool setFloor(int fileNum) {
 		// Find out how many vertex IDs there are and reserve memory
 
 		currentFloor->polygon[i].numVertices = bigDataFile->readByte();
-		currentFloor->polygon[i].vertexID =
-				new int[currentFloor->polygon[i].numVertices];
+		currentFloor->polygon[i].vertexID = new int[currentFloor->polygon[i].numVertices];
 		if (!checkNew(currentFloor->polygon[i].vertexID))
 			return false;
 
@@ -196,8 +192,7 @@ bool setFloor(int fileNum) {
 	for (i = 0; i < currentFloor->numPolygons; i++) {
 		for (j = 0; j < currentFloor->numPolygons; j++) {
 			if (i != j) {
-				if (polysShareSide(currentFloor->polygon[i],
-						currentFloor->polygon[j])) {
+				if (polysShareSide(currentFloor->polygon[i], currentFloor->polygon[j])) {
 					currentFloor->matrix[i][j] = j;
 					distanceMatrix[i][j] = 1;
 				}
@@ -222,11 +217,7 @@ bool setFloor(int fileNum) {
 					// OK, so we don't know how to get from i to j...
 					for (int d = 0; d < currentFloor->numPolygons; d++) {
 						if (d != i && d != j) {
-							if (currentFloor->matrix[i][d] == d
-									&& currentFloor->matrix[d][j] >= 0
-									&& distanceMatrix[d][j]
-											<= lookForDistance) {
-
+							if (currentFloor->matrix[i][d] == d && currentFloor->matrix[d][j] >= 0 && distanceMatrix[d][j] <= lookForDistance) {
 								currentFloor->matrix[i][j] = d;
 								distanceMatrix[i][j] = lookForDistance + 1;
 								madeChange = true;
@@ -257,21 +248,11 @@ void drawFloor() {
 		nV = currentFloor->polygon[i].numVertices;
 		if (nV > 1) {
 			for (j = 1; j < nV; j++) {
-				drawLine(
-						currentFloor->vertex[currentFloor->polygon[i].vertexID[j
-								- 1]].x,
-						currentFloor->vertex[currentFloor->polygon[i].vertexID[j
-								- 1]].y,
-						currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x,
-						currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y);
+				drawLine(currentFloor->vertex[currentFloor->polygon[i].vertexID[j - 1]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[j - 1]].y,
+						currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y);
 			}
-			drawLine(
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].x,
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].y,
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[nV
-							- 1]].x,
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[nV
-							- 1]].y);
+			drawLine(currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].y,
+					currentFloor->vertex[currentFloor->polygon[i].vertexID[nV - 1]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[nV - 1]].y);
 		}
 	}
 }
@@ -286,8 +267,7 @@ int inFloor(int x, int y) {
 	return r;
 }
 
-bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2,
-		int y2, int xP, int yP) {
+bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2, int y2, int xP, int yP) {
 	int xDiff = x2 - x1;
 	int yDiff = y2 - y1;
 

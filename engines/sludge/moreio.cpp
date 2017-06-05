@@ -136,50 +136,50 @@ char *encodeFilename(char *nameIn) {
 		int i = 0;
 		while (*nameIn) {
 			switch (*nameIn) {
-			case '<':
-				newName[i++] = '_';
-				newName[i++] = 'L';
-				break;
-			case '>':
-				newName[i++] = '_';
-				newName[i++] = 'G';
-				break;
-			case '|':
-				newName[i++] = '_';
-				newName[i++] = 'P';
-				break;
-			case '_':
-				newName[i++] = '_';
-				newName[i++] = 'U';
-				break;
-			case '\"':
-				newName[i++] = '_';
-				newName[i++] = 'S';
-				break;
-			case '\\':
-				newName[i++] = '_';
-				newName[i++] = 'B';
-				break;
-			case '/':
-				newName[i++] = '_';
-				newName[i++] = 'F';
-				break;
-			case ':':
-				newName[i++] = '_';
-				newName[i++] = 'C';
-				break;
-			case '*':
-				newName[i++] = '_';
-				newName[i++] = 'A';
-				break;
-			case '?':
-				newName[i++] = '_';
-				newName[i++] = 'Q';
-				break;
+				case '<':
+					newName[i++] = '_';
+					newName[i++] = 'L';
+					break;
+				case '>':
+					newName[i++] = '_';
+					newName[i++] = 'G';
+					break;
+				case '|':
+					newName[i++] = '_';
+					newName[i++] = 'P';
+					break;
+				case '_':
+					newName[i++] = '_';
+					newName[i++] = 'U';
+					break;
+				case '\"':
+					newName[i++] = '_';
+					newName[i++] = 'S';
+					break;
+				case '\\':
+					newName[i++] = '_';
+					newName[i++] = 'B';
+					break;
+				case '/':
+					newName[i++] = '_';
+					newName[i++] = 'F';
+					break;
+				case ':':
+					newName[i++] = '_';
+					newName[i++] = 'C';
+					break;
+				case '*':
+					newName[i++] = '_';
+					newName[i++] = 'A';
+					break;
+				case '?':
+					newName[i++] = '_';
+					newName[i++] = 'Q';
+					break;
 
-			default:
-				newName[i++] = *nameIn;
-				break;
+				default:
+					newName[i++] = *nameIn;
+					break;
 			}
 			newName[i] = 0;
 			nameIn++;
@@ -211,48 +211,48 @@ char *decodeFilename(char *nameIn) {
 			if (*nameIn == '_') {
 				nameIn++;
 				switch (*nameIn) {
-				case 'L':
-					newName[i] = '<';
-					nameIn++;
-					break;
-				case 'G':
-					newName[i] = '>';
-					nameIn++;
-					break;
-				case 'P':
-					newName[i] = '|';
-					nameIn++;
-					break;
-				case 'U':
-					newName[i] = '_';
-					nameIn++;
-					break;
-				case 'S':
-					newName[i] = '\"';
-					nameIn++;
-					break;
-				case 'B':
-					newName[i] = '\\';
-					nameIn++;
-					break;
-				case 'F':
-					newName[i] = '/';
-					nameIn++;
-					break;
-				case 'C':
-					newName[i] = ':';
-					nameIn++;
-					break;
-				case 'A':
-					newName[i] = '*';
-					nameIn++;
-					break;
-				case 'Q':
-					newName[i] = '?';
-					nameIn++;
-					break;
-				default:
-					newName[i] = '_';
+					case 'L':
+						newName[i] = '<';
+						nameIn++;
+						break;
+					case 'G':
+						newName[i] = '>';
+						nameIn++;
+						break;
+					case 'P':
+						newName[i] = '|';
+						nameIn++;
+						break;
+					case 'U':
+						newName[i] = '_';
+						nameIn++;
+						break;
+					case 'S':
+						newName[i] = '\"';
+						nameIn++;
+						break;
+					case 'B':
+						newName[i] = '\\';
+						nameIn++;
+						break;
+					case 'F':
+						newName[i] = '/';
+						nameIn++;
+						break;
+					case 'C':
+						newName[i] = ':';
+						nameIn++;
+						break;
+					case 'A':
+						newName[i] = '*';
+						nameIn++;
+						break;
+					case 'Q':
+						newName[i] = '?';
+						nameIn++;
+						break;
+					default:
+						newName[i] = '_';
 				}
 			} else {
 				newName[i] = *nameIn;
