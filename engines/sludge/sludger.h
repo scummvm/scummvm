@@ -31,12 +31,10 @@
 
 namespace Sludge {
 
-#ifndef _WIN32
 typedef struct _FILETIME {
 	uint32 dwLowDateTime;
 	uint32 dwHighDateTime;
 } FILETIME;
-#endif
 
 struct variable;
 struct variableStack;

@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#if 0
-#include <errno.h>
-#include <stdint.h>
-#include <string.h>
-// For unicode conversion
-#include <iconv.h>
-#endif
 
 #include "common/file.h"
 #include "common/debug.h"
@@ -44,7 +37,7 @@ bool sliceBusy = true;
 
 Common::File *bigDataFile = NULL;
 
-uint32_t startOfDataIndex, startOfTextIndex, startOfSubIndex, startOfObjectIndex;
+uint32 startOfDataIndex, startOfTextIndex, startOfSubIndex, startOfObjectIndex;
 
 bool openSubSlice(int num) {
 //	FILE * dbug = fopen ("debuggy.txt", "at");

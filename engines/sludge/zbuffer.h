@@ -22,14 +22,6 @@
 #ifndef SLUDGE_ZBUFFER_H
 #define SLUDGE_ZBUFFER_H
 
-#if 0
-#if !defined(HAVE_GLES2)
-#include "GLee.h"
-#else
-#include <GLES2/gl2.h>
-#endif
-#endif
-
 namespace Sludge {
 
 struct zBufferData {

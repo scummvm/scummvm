@@ -22,15 +22,6 @@
 #ifndef SLUDGE_GRAPHICS_H
 #define SLUDGE_GRAPHICS_H
 
-#if 0
-#if !defined(HAVE_GLES2)
-#include "GLee.h"
-#else
-#include <GLES2/gl2.h>
-#include "eglport/eglport.h"
-#endif
-#endif
-
 #include "graphics/surface.h"
 
 namespace Sludge {

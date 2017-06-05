@@ -22,14 +22,6 @@
 #ifndef SLUDGE_SHADERS_H
 #define SLUDGE_SHADERS_H
 
-#if 0
-#if !defined(HAVE_GLES2)
-#include "GLee.h"
-#else
-#include <GLES2/gl2.h>
-#endif
-#endif
-
 namespace Sludge {
 
 char *shaderFileRead(const char *fn);

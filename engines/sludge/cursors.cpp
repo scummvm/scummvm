@@ -20,14 +20,6 @@
  *
  */
 
-#if 0
-#if !defined(HAVE_GLES2)
-#include "GLee.h"
-#else
-#include <GLES2/gl2.h>
-#endif
-#endif
-
 #include "sludge/allfiles.h"
 #include "sludge/cursors.h"
 #include "sludge/colours.h"

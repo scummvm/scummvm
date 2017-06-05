@@ -16,6 +16,7 @@
 
 class MkvReader : public mkvparser::IMkvReader
 {
+#if 0
     MkvReader(const MkvReader&);
     MkvReader& operator=(const MkvReader&);
 public:
@@ -32,6 +33,7 @@ private:
     long long m_length;
 	unsigned int m_start;
     int m_file;
+#endif
 };
 
 #endif //MKVREADER_HPP

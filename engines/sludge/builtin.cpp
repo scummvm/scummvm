@@ -20,10 +20,6 @@
  *
  */
 
-#if 0
-#include <SDL/SDL.h>
-#endif
-
 #include "sludge/debug.h"
 #include "sludge/allfiles.h"
 #include "sludge/sludger.h"
@@ -995,11 +991,7 @@ builtIn(launch) {
 		launchMe = copyString(newTextA);
 	} else {
 		char *gameDir;
-#ifdef _WIN32
-		gameDir = joinStrings(gamePath, "\\");
-#else
 		gameDir = joinStrings(gamePath, "/");
-#endif
 		launchMe = joinStrings(gameDir, newText);
 		delete newText;
 		if (!launchMe)

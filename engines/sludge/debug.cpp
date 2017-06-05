@@ -20,10 +20,6 @@
  *
  */
 
-#if 0
-#include <stdarg.h>
-#endif
-
 #include "sludge/allfiles.h"
 #include "sludge/debug.h"
 #include "sludge/language.h"

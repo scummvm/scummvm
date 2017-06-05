@@ -19,19 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#if 0
-#if defined __unix__ && !(defined __APPLE__)
-#include <png.h>
-#else
-#include <libpng/png.h>
-#endif
-
-#include <SDL/SDL.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <iconv.h>
-#endif
 
 #include "common/debug.h"
 
@@ -457,12 +444,6 @@ bool initSludge(char *filename) {
 			png_set_expand(png_ptr);
 			if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) png_set_gray_to_rgb(png_ptr);
 			if (bit_depth == 16) png_set_strip_16(png_ptr);
-#ifdef WIN32
-			// Windows wants a BGR bitmap
-			if (color_type == PNG_COLOR_TYPE_RGB ||
-					color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-			png_set_bgr(png_ptr);
-#endif
 
 			png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
 
@@ -500,16 +481,9 @@ bool initSludge(char *filename) {
 						n = 1;
 					}
 					while (n --) {
-#ifdef WIN32
-						// Windows wants a BGR bitmap
-						*p++ = (Uint8) blueValue(c);
-						*p++ = (Uint8) greenValue(c);
-						*p++ = (Uint8) redValue(c);
-#else
 						*p++ = (Uint8) redValue(c);
 						*p++ = (Uint8) greenValue(c);
 						*p++ = (Uint8) blueValue(c);
-#endif
 						*p++ = (Uint8) /*(c == transCol) ? 0 :*/255;
 
 						t1++;
@@ -541,11 +515,7 @@ bool initSludge(char *filename) {
 #if 0
 	changeToUserDir();
 
-#ifdef _WIN32
-	mkdir(gameName);
-#else
 	mkdir(gameName, 0000777);
-#endif
 
 	if (chdir(gameName)) return fatal("This game's preference folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", gameName);
 #endif
@@ -577,11 +547,7 @@ bool initSludge(char *filename) {
 	if (dataFol[0]) {
 		char *dataFolder = encodeFilename(dataFol);
 #if 0
-#ifdef _WIN32
-		mkdir(dataFolder);
-#else
 		mkdir(dataFolder, 0000777);
-#endif
 
 		if (chdir(dataFolder)) return fatal("This game's data folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", dataFolder);
 #endif

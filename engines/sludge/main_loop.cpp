@@ -19,38 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#if defined __unix__ && !(defined __APPLE__)
-#include "linuxstuff.h"
-#endif
-
-#if 0
-#ifdef _WIN32
-#include "winstuff.h"
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <unistd.h>
-
-#include <iostream>
-
-#include <stdexcept>
-
-#include <time.h>
-#include <sys/time.h>
-
-#if !defined(HAVE_GLES2)
-#include "GLee.h"
-#else
-#include <GLES2/gl2.h>
-#include "eglport/eglport.h"
-#endif
-
-#include <SDL/SDL.h>
-#include <SDL/SDL_syswm.h>
-#endif
 
 #include "common/debug.h"
 
@@ -80,12 +48,6 @@
 #include "sludge/CommonCode/specialsettings.h"
 
 namespace Sludge {
-
-#ifdef _WIN32
-#define PATHSLASH '\\'
-#else
-#define PATHSLASH '/'
-#endif
 
 extern bool runningFullscreen;
 
@@ -147,10 +109,6 @@ void setGameFilePath(char *f) {
 void saveHSI(Common::WriteStream *writer);
 
 extern bool reallyWantToQuit;
-
-#ifdef _WIN32
-#undef main
-#endif
 
 int weAreDoneSoQuit;
 
@@ -424,13 +382,6 @@ int main_loop(char *filename)
 	SDL_putenv((char *)"SDL_ENABLEAPPEVENTS=1");
 
 	setupOpenGLStuff();
-#endif
-
-#ifdef _WIN32
-	SDL_SysWMinfo wmInfo;
-	SDL_VERSION(&wmInfo.version);
-	SDL_GetWMInfo(&wmInfo);
-	hMainWindow = wmInfo.window;
 #endif
 
 	registerWindowForFatal();

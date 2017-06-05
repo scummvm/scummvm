@@ -15,6 +15,7 @@
 #include <cassert>
 #include <stdio.h>
 
+#if 0
 MkvReader::MkvReader() :
     m_file(0)
 {
@@ -116,3 +117,4 @@ int MkvReader::Read(long long offset, long len, unsigned char* buffer)
 
     return 0;  //success
 }
+#endif

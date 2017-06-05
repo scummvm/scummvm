@@ -23,11 +23,7 @@
 #ifndef SLUDGE_SOUND_H
 #define SLUDGE_SOUND_H
 
-#ifdef _WIN32
-#include <windows.h>
-#else
 #define HWND void *
-#endif
 
 #include "common/file.h"
 
