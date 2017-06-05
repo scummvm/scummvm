@@ -1,9 +1,10 @@
 MODULE := engines/supernova
 
 MODULE_OBJS := \
-	supernova.o \
 	console.o \
-	detection.o
+	detection.o \
+	graphics.o \
+	supernova.o \
 
 MODULE_DIRS += \
 	engines/supernova

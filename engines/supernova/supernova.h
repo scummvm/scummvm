@@ -51,20 +51,17 @@ private:
 	Common::RandomSource *_rnd;
 	Console *_console;
 	Audio::SoundHandle _soundHandle;
-	
-	// name is file ending of msn_data.xxx
-	// image decoded from file
-	// sections ??
-//	struct imageFile {
-//		Common::String name;
-//		MSNImageDecoder image;
-//	};
-//	Common::Array<imageFile> _images;
+	bool _gameRunning;
+	MSNImageDecoder _image;
+	byte _colorIndex;
 	
 	void initData();
+	void initPalette();
+	void updateEvents();
 	void playSound(int filenumber, int offset = 0);
+	void playSoundMod(int filenumber);
 	void stopSound();
-	void renderImage(int file, int section);
+	void renderImage(int filenumber, int section);
 };
 
 }
