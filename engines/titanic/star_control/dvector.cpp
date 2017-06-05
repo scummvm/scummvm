@@ -40,11 +40,12 @@ double DVector::getDistance(const DVector &src) {
 	return sqrt((src._x - _x) * (src._x - _x) + (src._y - _y) * (src._y - _y) + (src._z - _z) * (src._z - _z));
 }
 
-DVector *DVector::fn1(DVector &dest, const DMatrix &m) {
+DVector DVector::fn1(const DMatrix &m) {
+	DVector dest;
 	dest._x = m._row3._x * _z + m._row2._x * _y + _x * m._row1._x + m._row4._x;
 	dest._y = m._row2._y * _y + m._row3._y * _z + m._row1._y * _x + m._row4._y;
 	dest._z = m._row3._z * _z + m._row2._z * _y + m._row1._z * _x + m._row4._z;
-	return &dest;
+	return dest;
 }
 
 void DVector::fn2(double val) {

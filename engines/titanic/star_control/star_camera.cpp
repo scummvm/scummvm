@@ -321,23 +321,15 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV7._x = m3._row3._x * 1000000.0 + tempV3._x;
 
 		mrow3 = tempV8;
-		DVector *v = tempV3.fn1(tempV9, subX);
-		tempV3 = *v;
-		v = mrow1.fn1(tempV10, subX);
-		mrow1 = *v;
-		v = mrow2.fn1(tempV11, subX);
-		mrow2 = *v;
-		v = mrow3.fn1(tempV12, subX);
-		mrow3 = *v;
+		tempV3 = tempV3.fn1(subX);
+		mrow1 = mrow1.fn1(subX);
+		mrow2 = mrow2.fn1(subX);
+		mrow3 = mrow3.fn1(subX);
 
-		v = tempV3.fn1(tempV13, m1);
-		tempV3 = *v;
-		v = mrow1.fn1(tempV14, m1);
-		mrow1 = *v;
-		v = mrow2.fn1(tempV15, m1);
-		mrow2 = *v;
-		v = mrow3.fn1(tempV16, m1);
-		mrow3 = *v;
+		tempV3 = tempV3.fn1(m1);
+		mrow1 = mrow1.fn1(m1);
+		mrow2 = mrow2.fn1(m1);
+		mrow3 = mrow3.fn1(m1);
 
 		mrow1 -= tempV3;
 		mrow2 -= tempV3;
@@ -500,16 +492,11 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	tempV3._z = m5._row3._z * 1000000.0 + m4._row1._z;
 	m4._row4 = tempV3;
 
-	DVector *dv = tempV2.fn1(tempV3, m2);
-	tempV3 = *dv;
-	dv = m4._row1.fn1(tempV3, m2);
-	m4._row1 = *dv;
-	dv = m4._row3.fn1(tempV3, m2);
-	m4._row3 = *dv;
-	dv = m4._row2.fn1(tempV3, m2);
-	m4._row2 = *dv;
-	dv = m4._row4.fn1(tempV3, m2);
-	m4._row4 = *dv;
+	tempV3 = tempV2.fn1(m2);
+	m4._row1 = m4._row1.fn1(m2);
+	m4._row2 = m4._row2.fn1(m2);
+	m4._row3 = m4._row3.fn1(m2);
+	m4._row4 = m4._row4.fn1(m2);
 
 	// Find the angle that gives the minimum distance
 	DVector tempV5;
@@ -530,25 +517,16 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._row2.fn2((double)minDegree);
 	m4._row3.fn2((double)minDegree);
 	m4._row4.fn2((double)minDegree);
-	dv = m4._row1.fn1(tempV3, m1);
-	m4._row1 = *dv;
-	dv = m4._row3.fn1(tempV3, m1);
-	m4._row3 = *dv;
-	dv = m4._row2.fn1(tempV3, m1);
-	m4._row2 = *dv;
-	dv = m4._row4.fn1(tempV3, m1);
-	m4._row4 = *dv;
+	m4._row1 = m4._row1.fn1(m1);
+	m4._row2 = m4._row2.fn1(m1);
+	m4._row3 = m4._row3.fn1(m1);
+	m4._row4 = m4._row4.fn1(m1);
 
-	m4._row3._x -= m4._row1._x;
-	m4._row3._y -= m4._row1._y;
-	m4._row3._z -= m4._row1._z;
+	m4._row3 -= m4._row1;
 	m4._row2._x -= m4._row1._x;
 	m4._row2._y -= m4._row1._y;
 	m4._row2._z = m4._row2._z - m4._row1._z;
-
-	m4._row4._x = m4._row4._x - m4._row1._x;
-	m4._row4._y = m4._row4._y - m4._row1._y;
-	m4._row4._z = m4._row4._z - m4._row1._z;
+	m4._row4 -= m4._row1;
 
 	m4._row3.normalize();
 	m4._row2.normalize();
