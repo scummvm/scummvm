@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #endif
 
-#include "graphics.h"
-#include "allfiles.h"
+#include "sludge/graphics.h"
+#include "sludge/allfiles.h"
 
 namespace Sludge {
 

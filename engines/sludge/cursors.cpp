@@ -28,13 +28,13 @@
 #endif
 #endif
 
-#include "allfiles.h"
-#include "cursors.h"
-#include "colours.h"
-#include "sprites.h"
-#include "sprbanks.h"
-#include "people.h"
-#include "sludger.h"
+#include "sludge/allfiles.h"
+#include "sludge/cursors.h"
+#include "sludge/colours.h"
+#include "sludge/sprites.h"
+#include "sludge/sprbanks.h"
+#include "sludge/people.h"
+#include "sludge/sludger.h"
 
 namespace Sludge {
 

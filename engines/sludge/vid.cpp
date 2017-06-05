@@ -19,23 +19,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "allfiles.h"
 
 #ifndef _MSC_VER        // Microsoft compiler?
 #include <unistd.h>     // For unlink
 #else
 #include <io.h>
 #include <stdio.h>
-#endif
-
-#include "newfatal.h"
-#include "stringy.h"
-#if 0
 #include "vfw.h"
 #endif
-#include "sound.h"
-#include "colours.h"
-#include "fileset.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/newfatal.h"
+#include "sludge/stringy.h"
+#include "sludge/sound.h"
+#include "sludge/colours.h"
+#include "sludge/fileset.h"
 
 namespace Sludge {
 

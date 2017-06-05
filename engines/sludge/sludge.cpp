@@ -20,7 +20,6 @@
  *
  */
 #include "common/scummsys.h"
-
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -29,7 +28,7 @@
 #include "engines/util.h"
 
 #include "sludge/sludge.h"
-#include "main_loop.h"
+#include "sludge/main_loop.h"
 
 namespace Sludge {
 

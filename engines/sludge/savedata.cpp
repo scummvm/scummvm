@@ -21,15 +21,14 @@
  */
 #include <stdint.h>
 #include <unistd.h>
-#include <string.h>
-
-#include "allfiles.h"
-#include "debug.h"
-#include "variable.h"
-#include "newfatal.h"
-#include "moreio.h"
 
 #include "common/file.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/debug.h"
+#include "sludge/variable.h"
+#include "sludge/newfatal.h"
+#include "sludge/moreio.h"
 
 #define LOAD_ERROR "Can't load custom data...\n\n"
 

@@ -39,9 +39,9 @@ struct texture {
 #if 0
 	GLubyte *data;
 	GLuint name;
+	double texW, texH;
 #endif
 	Graphics::Surface surface;
-	double texW, texH;
 };
 
 #if 0

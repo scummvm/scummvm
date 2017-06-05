@@ -20,16 +20,16 @@
  *
  */
 
-#include "allfiles.h"
-#include "backdrop.h"
-#include "colours.h"
-#include "debug.h"
-#include "graphics.h"
-#include "newfatal.h"
-#include "moreio.h"
-
 #include "common/debug.h"
 #include "common/file.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/backdrop.h"
+#include "sludge/colours.h"
+#include "sludge/debug.h"
+#include "sludge/graphics.h"
+#include "sludge/moreio.h"
+#include "sludge/newfatal.h"
 
 namespace Sludge {
 

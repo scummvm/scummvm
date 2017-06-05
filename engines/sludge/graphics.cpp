@@ -23,25 +23,7 @@
 #include <stdarg.h>
 
 #include <SDL/SDL.h>
-#endif
 
-#include "allfiles.h"
-#include "debug.h"
-#include "platform-dependent.h"
-#include "CommonCode/specialsettings.h"
-#include "graphics.h"
-#include "language.h"
-#include "newfatal.h"
-#include "sprbanks.h"
-#include "zbuffer.h"
-#include "backdrop.h"
-#include "shaders.h"
-#include "movie.h"
-#include "stringy.h"
-
-#include "language.h" // for settings
-
-#if 0
 #if !defined(HAVE_GLES2)
 #ifdef _WIN32
 #include <GL\glu.h> // handy for gluErrorString
@@ -52,6 +34,20 @@
 #endif
 #endif
 #endif
+
+#include "sludge/allfiles.h"
+#include "sludge/debug.h"
+#include "sludge/platform-dependent.h"
+#include "sludge/graphics.h"
+#include "sludge/language.h"
+#include "sludge/newfatal.h"
+#include "sludge/sprbanks.h"
+#include "sludge/zbuffer.h"
+#include "sludge/backdrop.h"
+#include "sludge/shaders.h"
+#include "sludge/movie.h"
+#include "sludge/stringy.h"
+#include "sludge/CommonCode/specialsettings.h"
 
 namespace Sludge {
 
@@ -857,9 +853,8 @@ void setupOpenGLStuff() {
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-#endif
 	setGraphicsWindow(gameSettings.userFullScreen, false);
-
+#endif
 #if !defined(HAVE_GLES2)
 #if 0
 	/* Check for graphics capabilities... */

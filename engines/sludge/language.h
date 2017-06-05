@@ -22,9 +22,9 @@
 #ifndef LANGUAGE_H
 #define LANGUAGE_H
 
-#include "allfiles.h"
-
 #include "common/file.h"
+
+#include "sludge/allfiles.h"
 
 namespace Sludge {
 

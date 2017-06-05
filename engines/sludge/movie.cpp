@@ -21,31 +21,10 @@
  */
 #if 0
 #include <SDL/SDL.h>
-#endif
-
-#include <math.h>
-
-#include "CommonCode/specialsettings.h"
-
-#include "libwebm/mkvreader.hpp"
-#include "libwebm/mkvparser.hpp"
-
-#if 0
 #define VPX_CODEC_DISABLE_COMPAT 1
 #include "vpx/vpx_decoder.h"
 #include "vpx/vp8dx.h"
 #define interface (&vpx_codec_vp8_dx_algo)
-#endif
-
-#include "newfatal.h"
-#include "timing.h"
-#include "graphics.h"
-#include "movie.h"
-#include "shaders.h"
-
-#include "sound.h"
-
-#if 0
 #include "vorbis/codec.h"
 #define OV_EXCLUDE_STATIC_CALLBACKS
 #include "vorbis/vorbisfile.h"
@@ -55,6 +34,17 @@
 
 #include "AL/alure.h"
 #endif
+
+#include "sludge/CommonCode/specialsettings.h"
+#include "sludge/libwebm/mkvreader.hpp"
+#include "sludge/libwebm/mkvparser.hpp"
+
+#include "sludge/newfatal.h"
+#include "sludge/timing.h"
+#include "sludge/graphics.h"
+#include "sludge/movie.h"
+#include "sludge/shaders.h"
+#include "sludge/sound.h"
 
 namespace Sludge {
 

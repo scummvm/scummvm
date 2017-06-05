@@ -29,9 +29,9 @@
 #define HWND void *
 #endif
 
-#include "variable.h"
-
 #include "common/file.h"
+
+#include "sludge/variable.h"
 
 namespace Sludge {
 

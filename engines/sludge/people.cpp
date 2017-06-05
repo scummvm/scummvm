@@ -19,26 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "allfiles.h"
-#include <math.h>
+
 #include <stdlib.h>
 
-#include "CommonCode/version.h"
-#include "sprites.h"
-#include "sprbanks.h"
-#include "sludger.h"
-#include "objtypes.h"
-#include "region.h"
-#include "people.h"
-#include "talk.h"
-#include "newfatal.h"
-#include "variable.h"
-#include "moreio.h"
-#include "loadsave.h"
-#include "floor.h"
-#include "zbuffer.h"
-#include "sound.h"
-#include "debug.h"
+#include "sludge/allfiles.h"
+#include "sludge/sprites.h"
+#include "sludge/sprbanks.h"
+#include "sludge/sludger.h"
+#include "sludge/objtypes.h"
+#include "sludge/region.h"
+#include "sludge/people.h"
+#include "sludge/talk.h"
+#include "sludge/newfatal.h"
+#include "sludge/variable.h"
+#include "sludge/moreio.h"
+#include "sludge/loadsave.h"
+#include "sludge/floor.h"
+#include "sludge/zbuffer.h"
+#include "sludge/sound.h"
+#include "sludge/debug.h"
+#include "sludge/CommonCode/version.h"
 
 #define ANGLEFIX (180.0 / 3.14157)
 #define ANI_STAND 0

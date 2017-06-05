@@ -25,11 +25,11 @@
 #include "image/png.h"
 #include "graphics/surface.h"
 
-#include "allfiles.h"
-#include "hsi.h"
-#include "imgloader.h"
-#include "colours.h"
-#include "sludge.h"
+#include "sludge/allfiles.h"
+#include "sludge/hsi.h"
+#include "sludge/imgloader.h"
+#include "sludge/colours.h"
+#include "sludge/sludge.h"
 
 namespace Sludge {
 

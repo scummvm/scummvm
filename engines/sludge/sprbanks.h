@@ -22,7 +22,7 @@
 #ifndef SLUDGE_SPRBANKS_H
 #define SLUDGE_SPRBANKS_H
 
-#include "sprites.h"
+#include "sludge/sprites.h"
 
 namespace Sludge {
 

@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "allfiles.h"
-#include "stringy.h"
-#include "newfatal.h"
-#include "moreio.h"
-#include "language.h"
-#include "CommonCode/version.h"
-#include "platform-dependent.h"
 
-#include "sludge.h"
+#include "sludge/allfiles.h"
+#include "sludge/stringy.h"
+#include "sludge/newfatal.h"
+#include "sludge/moreio.h"
+#include "sludge/language.h"
+#include "sludge/platform-dependent.h"
+#include "sludge/sludge.h"
+#include "sludge/CommonCode/version.h"
 
 #include "common/debug.h"
 

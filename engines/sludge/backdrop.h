@@ -23,8 +23,8 @@
 #ifndef SLUDGE_BACKDROP_H
 #define SLUDGE_BACKDROP_H
 
-#include "variable.h"
-#include "graphics.h"
+#include "sludge/graphics.h"
+#include "sludge/variable.h"
 
 namespace Sludge {
 

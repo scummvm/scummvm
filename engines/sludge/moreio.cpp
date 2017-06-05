@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "allfiles.h"
-#include "moreio.h"
-#include "newfatal.h"
-#include "stringy.h"
-
-#include "sludge.h"
 
 #include "common/debug.h"
 #include "common/file.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/stringy.h"
+#include "sludge/sludge.h"
 
 #if defined __unix__ && !(defined __APPLE__)
 #include <endian.h>

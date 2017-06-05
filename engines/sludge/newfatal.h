@@ -22,7 +22,7 @@
 #ifndef SLUDGE_NEWFATAL_H
 #define SLUDGE_NEWFATAL_H
 
-#include "errors.h"
+#include "sludge/errors.h"
 
 namespace Sludge {
 

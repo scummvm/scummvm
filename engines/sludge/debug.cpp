@@ -24,9 +24,9 @@
 #include <stdarg.h>
 #endif
 
-#include "allfiles.h"
-#include "debug.h"
-#include "language.h"
+#include "sludge/allfiles.h"
+#include "sludge/debug.h"
+#include "sludge/language.h"
 
 namespace Sludge {
 

@@ -19,12 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+
 #include <stdint.h>
-#include "allfiles.h"
-#include "colours.h"
-#include "backdrop.h"
-#include "graphics.h"
-#include "newfatal.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/colours.h"
+#include "sludge/backdrop.h"
+#include "sludge/graphics.h"
+#include "sludge/newfatal.h"
 
 #if 0
 extern GLuint snapshotTextureName;

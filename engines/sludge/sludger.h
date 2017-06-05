@@ -24,12 +24,12 @@
 
 #include <stdint.h>
 
-#include "allfiles.h"
-#include "variable.h"
-#include "csludge.h"
-#include "language.h"
-
 #include "common/file.h"
+
+#include "sludge/allfiles.h"
+#include "sludge/variable.h"
+#include "sludge/csludge.h"
+#include "sludge/language.h"
 
 namespace Sludge {
 
