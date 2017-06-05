@@ -125,37 +125,38 @@ int paramNum[] = { -1, 0, 1, 1, -1, -1, 1, 3, 4, 1, 0, 0, 8, -1,    // SAY->MOVE
                  };
 
 bool failSecurityCheck(char *fn) {
-	if (fn == NULL) return true;
+	if (fn == NULL)
+		return true;
 
 	int a = 0;
 
 	while (fn[a]) {
 		switch (fn[a]) {
-		case ':':
-		case '\\':
-		case '/':
-		case '*':
-		case '?':
-		case '"':
-		case '<':
-		case '>':
-		case '|':
-			fatal("Filenames may not contain the following characters: \n\n\\  /  :  \"  <  >  |  ?  *\n\nConsequently, the following filename is not allowed:", fn);
-			return true;
+			case ':':
+			case '\\':
+			case '/':
+			case '*':
+			case '?':
+			case '"':
+			case '<':
+			case '>':
+			case '|':
+				fatal("Filenames may not contain the following characters: \n\n\\  /  :  \"  <  >  |  ?  *\n\nConsequently, the following filename is not allowed:", fn);
+				return true;
 		}
-		a ++;
+		a++;
 	}
 	return false;
 }
 
 loadedFunction *saverFunc;
 
-typedef builtReturn(* builtInSludgeFunc)(int numParams, loadedFunction *fun);
+typedef builtReturn (*builtInSludgeFunc)(int numParams, loadedFunction *fun);
 struct builtInFunctionData {
 	builtInSludgeFunc func;
 };
 
-#define builtIn(a)          static builtReturn builtIn_ ## a (int numParams, loadedFunction * fun)
+#define builtIn(a)          static builtReturn builtIn_ ## a (int numParams, loadedFunction *fun)
 #define UNUSEDALL           (void) (0 && sizeof(numParams) && sizeof (fun));
 
 static builtReturn sayCore(int numParams, loadedFunction *fun, bool sayIt) {
@@ -165,24 +166,27 @@ static builtReturn sayCore(int numParams, loadedFunction *fun, bool sayIt) {
 	killSpeechTimers();
 
 	switch (numParams) {
-	case 3:
-		if (!getValueType(fileNum, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
-		trimStack(fun->stack);
-	// No break; here
+		case 3:
+			if (!getValueType(fileNum, SVT_FILE, fun->stack->thisVar))
+				return BR_ERROR;
+			trimStack(fun->stack);
+			// No break; here
 
-	case 2:
-		newText = getTextFromAnyVar(fun->stack->thisVar);
-		if (!newText) return BR_ERROR;
-		trimStack(fun->stack);
-		if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
-		trimStack(fun->stack);
-		p = wrapSpeech(newText, objT, fileNum, sayIt);
-		fun->timeLeft = p;
-		//debugOut ("BUILTIN: sayCore: %s (%i)\n", newText, p);
-		fun->isSpeech = true;
-		delete newText;
-		newText = NULL;
-		return BR_KEEP_AND_PAUSE;
+		case 2:
+			newText = getTextFromAnyVar(fun->stack->thisVar);
+			if (!newText)
+				return BR_ERROR;
+			trimStack(fun->stack);
+			if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
+				return BR_ERROR;
+			trimStack(fun->stack);
+			p = wrapSpeech(newText, objT, fileNum, sayIt);
+			fun->timeLeft = p;
+			//debugOut ("BUILTIN: sayCore: %s (%i)\n", newText, p);
+			fun->isSpeech = true;
+			delete newText;
+			newText = NULL;
+			return BR_KEEP_AND_PAUSE;
 	}
 
 	fatal("Function should have either 2 or 3 parameters");
@@ -264,18 +268,21 @@ builtIn(getStatusText) {
 builtIn(getMatchingFiles) {
 	UNUSEDALL
 	char *newText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newText) return BR_ERROR;
+	if (!newText)
+		return BR_ERROR;
 	trimStack(fun->stack);
 	unlinkVar(fun->reg);
 
 	// Return value
 	fun->reg.varType = SVT_STACK;
 	fun->reg.varData.theStack = new stackHandler;
-	if (!checkNew(fun->reg.varData.theStack)) return BR_ERROR;
+	if (!checkNew(fun->reg.varData.theStack))
+		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
 	fun->reg.varData.theStack->last = NULL;
 	fun->reg.varData.theStack->timesUsed = 1;
-	if (!getSavedGamesStack(fun->reg.varData.theStack, newText)) return BR_ERROR;
+	if (!getSavedGamesStack(fun->reg.varData.theStack, newText))
+		return BR_ERROR;
 	delete newText;
 	newText = NULL;
 	return BR_CONTINUE;
@@ -293,7 +300,8 @@ builtIn(saveGame) {
 
 	char *aaaaa = encodeFilename(loadNow);
 	delete[] loadNow;
-	if (failSecurityCheck(aaaaa)) return BR_ERROR;      // Won't fail if encoded, how cool is that? OK, not very.
+	if (failSecurityCheck(aaaaa))
+		return BR_ERROR;      // Won't fail if encoded, how cool is that? OK, not very.
 
 	loadNow = joinStrings(":", aaaaa);
 	delete[] aaaaa;
@@ -309,7 +317,8 @@ builtIn(fileExists) {
 	trimStack(fun->stack);
 	char *aaaaa = encodeFilename(loadNow);
 	delete loadNow;
-	if (failSecurityCheck(aaaaa)) return BR_ERROR;
+	if (failSecurityCheck(aaaaa))
+		return BR_ERROR;
 #if 0
 	FILE *fp = fopen(aaaaa, "rb");
 	if (!fp) {
@@ -328,11 +337,11 @@ builtIn(fileExists) {
 	}
 #endif
 	// Return value
-	setVariable(fun->reg, SVT_INT, 0/*(fp != NULL)*/);//TODO:false value
+	setVariable(fun->reg, SVT_INT, 0/*(fp != NULL)*/);      //TODO:false value
 #if 0
-	if (fp) fclose(fp);
-	delete[] aaaaa;
-	loadNow = NULL;
+			if (fp) fclose(fp);
+			delete[] aaaaa;
+			loadNow = NULL;
 #endif
 	return BR_CONTINUE;
 }
@@ -347,7 +356,8 @@ builtIn(loadGame) {
 	if (frozenStuff) {
 		fatal("Can't load a saved game while the engine is frozen");
 	}
-	if (failSecurityCheck(loadNow)) return BR_ERROR;
+	if (failSecurityCheck(loadNow))
+		return BR_ERROR;
 	Common::File fd;
 	if (fd.open(loadNow)) {
 		fd.close();
@@ -372,13 +382,17 @@ builtIn(blankScreen) {
 builtIn(blankArea) {
 	UNUSEDALL
 	int x1, y1, x2, y2;
-	if (!getValueType(y2, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y2, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x2, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x2, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(y1, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y1, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x1, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x1, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	blankScreen(x1, y1, x2, y2);
 	return BR_CONTINUE;
@@ -393,11 +407,14 @@ builtIn(darkBackground) {
 builtIn(addOverlay) {
 	UNUSEDALL
 	int fileNumber, xPos, yPos;
-	if (!getValueType(yPos, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(yPos, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(xPos, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(xPos, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	loadBackDrop(fileNumber, xPos, yPos);
 	return BR_CONTINUE;
@@ -406,11 +423,14 @@ builtIn(addOverlay) {
 builtIn(mixOverlay) {
 	UNUSEDALL
 	int fileNumber, xPos, yPos;
-	if (!getValueType(yPos, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(yPos, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(xPos, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(xPos, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	mixBackDrop(fileNumber, xPos, yPos);
 	return BR_CONTINUE;
@@ -419,13 +439,16 @@ builtIn(mixOverlay) {
 builtIn(pasteImage) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	personaAnimation *pp = getAnimationFromVar(fun->stack->thisVar);
 	trimStack(fun->stack);
-	if (pp == NULL) return BR_CONTINUE;
+	if (pp == NULL)
+		return BR_CONTINUE;
 
 	pasteCursor(x, y, pp);
 	return BR_CONTINUE;
@@ -437,9 +460,11 @@ builtIn(pasteImage) {
 builtIn(setSceneDimensions) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	if (killResizeBackdrop(x, y)) {
 		blankScreen(0, 0, x, y);
@@ -451,35 +476,42 @@ builtIn(setSceneDimensions) {
 
 builtIn(aimCamera) {
 	UNUSEDALL
-	if (!getValueType(cameraY, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(cameraY, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(cameraX, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(cameraX, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	cameraX -= (float)(winWidth >> 1) / cameraZoom;
 	cameraY -= (float)(winHeight >> 1) / cameraZoom;
 
-	if (cameraX < 0) cameraX = 0;
-	else if (cameraX > sceneWidth - (float)winWidth / cameraZoom) cameraX = sceneWidth - (float)winWidth / cameraZoom;
-	if (cameraY < 0) cameraY = 0;
-	else if (cameraY > sceneHeight - (float)winHeight / cameraZoom) cameraY = sceneHeight - (float)winHeight / cameraZoom;
+	if (cameraX < 0)
+		cameraX = 0;
+	else if (cameraX > sceneWidth - (float)winWidth / cameraZoom)
+		cameraX = sceneWidth - (float)winWidth / cameraZoom;
+	if (cameraY < 0)
+		cameraY = 0;
+	else if (cameraY > sceneHeight - (float)winHeight / cameraZoom)
+		cameraY = sceneHeight - (float)winHeight / cameraZoom;
 	return BR_CONTINUE;
 }
-
 
 builtIn(zoomCamera) {
 	UNUSEDALL
 	int z;
-	if (!getValueType(z, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(z, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	input.mouseX = input.mouseX * cameraZoom;
 	input.mouseY = input.mouseY * cameraZoom;
 
-
-	cameraZoom = (float) z * 0.01;
-	if ((float) winWidth / cameraZoom > sceneWidth) cameraZoom = (float)winWidth / sceneWidth;
-	if ((float) winHeight / cameraZoom > sceneHeight) cameraZoom = (float)winHeight / sceneHeight;
+	cameraZoom = (float)z * 0.01;
+	if ((float)winWidth / cameraZoom > sceneWidth)
+		cameraZoom = (float)winWidth / sceneWidth;
+	if ((float)winHeight / cameraZoom > sceneHeight)
+		cameraZoom = (float)winHeight / sceneHeight;
 	setPixelCoords(false);
 
 	input.mouseX = input.mouseX / cameraZoom;
@@ -490,7 +522,6 @@ builtIn(zoomCamera) {
 
 #pragma mark -
 #pragma mark Variables
-
 
 builtIn(pickOne) {
 	UNUSEDALL
@@ -505,8 +536,9 @@ builtIn(pickOne) {
 #endif
 
 	// Return value
-	while (numParams --) {
-		if (i == numParams) copyVariable(fun->stack->thisVar, fun->reg);
+	while (numParams--) {
+		if (i == numParams)
+			copyVariable(fun->stack->thisVar, fun->reg);
 		trimStack(fun->stack);
 	}
 	return BR_CONTINUE;
@@ -520,9 +552,11 @@ builtIn(substring) {
 
 	//debugOut ("BUILTIN: substring\n");
 
-	if (!getValueType(length, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(length, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(start, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(start, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	wholeString = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
@@ -569,12 +603,14 @@ builtIn(newStack) {
 	// Return value
 	fun->reg.varType = SVT_STACK;
 	fun->reg.varData.theStack = new stackHandler;
-	if (!checkNew(fun->reg.varData.theStack)) return BR_ERROR;
+	if (!checkNew(fun->reg.varData.theStack))
+		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
 	fun->reg.varData.theStack->last = NULL;
 	fun->reg.varData.theStack->timesUsed = 1;
-	while (numParams --) {
-		if (!addVarToStack(fun->stack->thisVar, fun->reg.varData.theStack->first)) return BR_ERROR;
+	while (numParams--) {
+		if (!addVarToStack(fun->stack->thisVar, fun->reg.varData.theStack->first))
+			return BR_ERROR;
 		if (fun->reg.varData.theStack->last == NULL) {
 			fun->reg.varData.theStack->last = fun->reg.varData.theStack->first;
 		}
@@ -589,20 +625,20 @@ builtIn(newStack) {
 builtIn(stackSize) {
 	UNUSEDALL
 	switch (fun->stack->thisVar.varType) {
-	case SVT_STACK:
-		// Return value
-		setVariable(fun->reg, SVT_INT, stackSize(fun->stack->thisVar.varData.theStack));
-		trimStack(fun->stack);
-		return BR_CONTINUE;
+		case SVT_STACK:
+			// Return value
+			setVariable(fun->reg, SVT_INT, stackSize(fun->stack->thisVar.varData.theStack));
+			trimStack(fun->stack);
+			return BR_CONTINUE;
 
-	case SVT_FASTARRAY:
-		// Return value
-		setVariable(fun->reg, SVT_INT, fun->stack->thisVar.varData.fastArray->size);
-		trimStack(fun->stack);
-		return BR_CONTINUE;
+		case SVT_FASTARRAY:
+			// Return value
+			setVariable(fun->reg, SVT_INT, fun->stack->thisVar.varData.fastArray->size);
+			trimStack(fun->stack);
+			return BR_CONTINUE;
 
-	default:
-		break;
+		default:
+			break;
 	}
 	fatal("Parameter isn't a stack or a fast array.");
 	return BR_ERROR;
@@ -615,7 +651,8 @@ builtIn(copyStack) {
 		return BR_ERROR;
 	}
 	// Return value
-	if (!copyStack(fun->stack->thisVar, fun->reg)) return BR_ERROR;
+	if (!copyStack(fun->stack->thisVar, fun->reg))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	return BR_CONTINUE;
 }
@@ -651,8 +688,7 @@ builtIn(enqueue) {
 
 		fun->stack->next->thisVar.varData.theStack->last = fun->stack->next->thisVar.varData.theStack->first;
 	} else {
-		if (!addVarToStack(fun->stack->thisVar,
-		                    fun->stack->next->thisVar.varData.theStack->last->next))
+		if (!addVarToStack(fun->stack->thisVar, fun->stack->next->thisVar.varData.theStack->last->next))
 			return BR_ERROR;
 		fun->stack->next->thisVar.varData.theStack->last = fun->stack->next->thisVar.varData.theStack->last->next;
 	}
@@ -670,9 +706,7 @@ builtIn(deleteFromStack) {
 	}
 
 	// Return value
-	setVariable(fun->reg, SVT_INT,
-	            deleteVarFromStack(fun->stack->thisVar,
-	                               fun->stack->next->thisVar.varData.theStack->first, false));
+	setVariable(fun->reg, SVT_INT, deleteVarFromStack(fun->stack->thisVar, fun->stack->next->thisVar.varData.theStack->first, false));
 
 	// Horrible hacking because 'last' value might now be wrong!
 	fun->stack->next->thisVar.varData.theStack->last = stackFindLast(fun->stack->next->thisVar.varData.theStack->first);
@@ -690,9 +724,7 @@ builtIn(deleteAllFromStack) {
 	}
 
 	// Return value
-	setVariable(fun->reg, SVT_INT,
-	            deleteVarFromStack(fun->stack->thisVar,
-	                               fun->stack->next->thisVar.varData.theStack->first, true));
+	setVariable(fun->reg, SVT_INT, deleteVarFromStack(fun->stack->thisVar, fun->stack->next->thisVar.varData.theStack->first, true));
 
 	// Horrible hacking because 'last' value might now be wrong!
 	fun->stack->next->thisVar.varData.theStack->last = stackFindLast(fun->stack->next->thisVar.varData.theStack->first);
@@ -762,17 +794,21 @@ builtIn(random) {
 		return BR_ERROR;
 
 	trimStack(fun->stack);
-	if (num <= 0) num = 1;
+	if (num <= 0)
+		num = 1;
 	setVariable(fun->reg, SVT_INT, 0 /*rand() % num*/); //TODO:false value
 	return BR_CONTINUE;
 }
 
 static bool getRGBParams(int &red, int &green, int &blue, loadedFunction *fun) {
-	if (!getValueType(blue, SVT_INT, fun->stack->thisVar)) return false;
+	if (!getValueType(blue, SVT_INT, fun->stack->thisVar))
+		return false;
 	trimStack(fun->stack);
-	if (!getValueType(green, SVT_INT, fun->stack->thisVar)) return false;
+	if (!getValueType(green, SVT_INT, fun->stack->thisVar))
+		return false;
 	trimStack(fun->stack);
-	if (!getValueType(red, SVT_INT, fun->stack->thisVar)) return false;
+	if (!getValueType(red, SVT_INT, fun->stack->thisVar))
+		return false;
 	trimStack(fun->stack);
 	return true;
 }
@@ -784,7 +820,7 @@ builtIn(setStatusColour) {
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
 
-	statusBarColour((byte) red, (byte) green, (byte) blue);
+	statusBarColour((byte)red, (byte)green, (byte)blue);
 	return BR_CONTINUE;
 }
 
@@ -795,7 +831,7 @@ builtIn(setLitStatusColour) {
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
 
-	statusBarLitColour((byte) red, (byte) green, (byte) blue);
+	statusBarLitColour((byte)red, (byte)green, (byte)blue);
 	return BR_CONTINUE;
 }
 
@@ -806,7 +842,7 @@ builtIn(setPasteColour) {
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
 
-	setFontColour(pastePalette, (byte) red, (byte) green, (byte) blue);
+	setFontColour(pastePalette, (byte)red, (byte)green, (byte)blue);
 	return BR_CONTINUE;
 }
 
@@ -836,21 +872,24 @@ builtIn(setBurnColour) {
 	return BR_CONTINUE;
 }
 
-
 builtIn(setFont) {
 	UNUSEDALL
 	int fileNumber, newHeight;
-	if (!getValueType(newHeight, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(newHeight, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	//              newDebug ("  Height:", newHeight);
 	trimStack(fun->stack);
 	char *newText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newText) return BR_ERROR;
+	if (!newText)
+		return BR_ERROR;
 	//              newDebug ("  Character supported:", newText);
 	trimStack(fun->stack);
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	//              newDebug ("  File:", fileNumber);
 	trimStack(fun->stack);
-	if (!loadFont(fileNumber, newText, newHeight)) return BR_ERROR;
+	if (!loadFont(fileNumber, newText, newHeight))
+		return BR_ERROR;
 	//              newDebug ("  Done!");
 	delete newText;
 
@@ -860,7 +899,8 @@ builtIn(setFont) {
 builtIn(inFont) {
 	UNUSEDALL
 	char *newText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newText) return BR_ERROR;
+	if (!newText)
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	// Return value
@@ -874,11 +914,14 @@ builtIn(pasteString) {
 	char *newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	int y, x;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (x == IN_THE_CENTRE) x = (winWidth - stringWidth(newText)) >> 1;
+	if (x == IN_THE_CENTRE)
+		x = (winWidth - stringWidth(newText)) >> 1;
 	fixFont(pastePalette);
 	pasteStringToBackdrop(newText, x, y, pastePalette);
 	delete[] newText;
@@ -897,12 +940,14 @@ builtIn(anim) {
 
 	// Only remaining paramter is the file number
 	int fileNumber;
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	// Load the required sprite bank
 	loadedSpriteBank *sprBanky = loadBankForAnim(fileNumber);
-	if (!sprBanky) return BR_ERROR;    // File not found, fatal done already
+	if (!sprBanky)
+		return BR_ERROR;    // File not found, fatal done already
 	setBankFile(ba, sprBanky);
 
 	// Return value
@@ -914,16 +959,18 @@ builtIn(anim) {
 builtIn(costume) {
 	UNUSEDALL
 	persona *newPersona = new persona;
-	if (!checkNew(newPersona)) return BR_ERROR;
+	if (!checkNew(newPersona))
+		return BR_ERROR;
 	newPersona->numDirections = numParams / 3;
 	if (numParams == 0 || newPersona->numDirections * 3 != numParams) {
 		fatal("Illegal number of parameters (should be greater than 0 and divisible by 3)");
 		return BR_ERROR;
 	}
 	int iii;
-	newPersona->animation = new personaAnimation * [numParams];
-	if (!checkNew(newPersona->animation)) return BR_ERROR;
-	for (iii = numParams - 1; iii >= 0; iii --) {
+	newPersona->animation = new personaAnimation *[numParams];
+	if (!checkNew(newPersona->animation))
+		return BR_ERROR;
+	for (iii = numParams - 1; iii >= 0; iii--) {
 		newPersona->animation[iii] = getAnimationFromVar(fun->stack->thisVar);
 		trimStack(fun->stack);
 	}
@@ -936,16 +983,13 @@ builtIn(costume) {
 builtIn(launch) {
 	UNUSEDALL
 	char *newTextA = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newTextA) return BR_ERROR;
+	if (!newTextA)
+		return BR_ERROR;
 
 	char *newText = encodeFilename(newTextA);
 
 	trimStack(fun->stack);
-	if (newTextA[0] == 'h' &&
-	        newTextA[1] == 't' &&
-	        newTextA[2] == 't' &&
-	        newTextA[3] == 'p' &&
-	        (newTextA[4] == ':' || (newTextA[4] == 's' && newTextA[5] == ':'))) {
+	if (newTextA[0] == 'h' && newTextA[1] == 't' && newTextA[2] == 't' && newTextA[3] == 'p' && (newTextA[4] == ':' || (newTextA[4] == 's' && newTextA[5] == ':'))) {
 
 		// IT'S A WEBSITE!
 		launchMe = copyString(newTextA);
@@ -958,7 +1002,8 @@ builtIn(launch) {
 #endif
 		launchMe = joinStrings(gameDir, newText);
 		delete newText;
-		if (!launchMe) return BR_ERROR;
+		if (!launchMe)
+			return BR_ERROR;
 	}
 	delete newTextA;
 	setGraphicsWindow(false);
@@ -971,7 +1016,8 @@ builtIn(launch) {
 builtIn(pause) {
 	UNUSEDALL
 	int theTime;
-	if (!getValueType(theTime, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(theTime, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	if (theTime > 0) {
 		fun->timeLeft = theTime - 1;
@@ -990,9 +1036,11 @@ builtIn(completeTimers) {
 builtIn(callEvent) {
 	UNUSEDALL
 	int obj1, obj2;
-	if (!getValueType(obj2, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj2, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj1, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj1, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	int fNum = getCombinationFunction(obj1, obj2);
@@ -1022,7 +1070,6 @@ builtIn(quitGame) {
 	return BR_CONTINUE;
 }
 
-
 #pragma mark -
 #pragma mark Movie functions
 
@@ -1049,9 +1096,11 @@ builtIn(playMovie) {
 	UNUSEDALL
 	int fileNumber, r;
 
-	if (movieIsPlaying) return BR_PAUSE;
+	if (movieIsPlaying)
+		return BR_PAUSE;
 
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	r = playMovie(fileNumber);
@@ -1085,27 +1134,31 @@ builtIn(pauseMovie) {
 	return BR_CONTINUE;
 }
 
-
 #pragma mark -
 #pragma mark Audio functions
 
 builtIn(startMusic) {
 	UNUSEDALL
 	int fromTrack, musChan, fileNumber;
-	if (!getValueType(fromTrack, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fromTrack, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(musChan, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(musChan, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!playMOD(fileNumber, musChan, fromTrack)) return BR_CONTINUE;  //BR_ERROR;
+	if (!playMOD(fileNumber, musChan, fromTrack))
+		return BR_CONTINUE;  //BR_ERROR;
 	return BR_CONTINUE;
 }
 
 builtIn(stopMusic) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	stopMOD(v);
 	return BR_CONTINUE;
@@ -1114,9 +1167,11 @@ builtIn(stopMusic) {
 builtIn(setMusicVolume) {
 	UNUSEDALL
 	int musChan, v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(musChan, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(musChan, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setMusicVolume(musChan, v);
 	return BR_CONTINUE;
@@ -1125,7 +1180,8 @@ builtIn(setMusicVolume) {
 builtIn(setDefaultMusicVolume) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setDefaultMusicVolume(v);
 	return BR_CONTINUE;
@@ -1134,9 +1190,11 @@ builtIn(setDefaultMusicVolume) {
 builtIn(playSound) {
 	UNUSEDALL
 	int fileNumber;
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!startSound(fileNumber, false)) return BR_CONTINUE;    // Was BR_ERROR
+	if (!startSound(fileNumber, false))
+		return BR_CONTINUE;    // Was BR_ERROR
 	return BR_CONTINUE;
 }
 builtIn(loopSound) {
@@ -1148,9 +1206,11 @@ builtIn(loopSound) {
 		return BR_ERROR;
 	} else if (numParams < 2) {
 
-		if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+		if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+			return BR_ERROR;
 		trimStack(fun->stack);
-		if (!startSound(fileNumber, true)) return BR_CONTINUE;     // Was BR_ERROR
+		if (!startSound(fileNumber, true))
+			return BR_CONTINUE;     // Was BR_ERROR
 		return BR_CONTINUE;
 	} else {
 		// We have more than one sound to play!
@@ -1171,17 +1231,19 @@ builtIn(loopSound) {
 				return BR_ERROR;
 			}
 			s = new soundList;
-			if (!checkNew(s)) return BR_ERROR;
+			if (!checkNew(s))
+				return BR_ERROR;
 
-			s-> next = old;
-			s-> prev = NULL;
-			s-> sound = fileNumber;
+			s->next = old;
+			s->prev = NULL;
+			s->sound = fileNumber;
 			old = s;
 
 			trimStack(fun->stack);
 			numParams--;
 		}
-		while (s->next) s = s-> next;
+		while (s->next)
+			s = s->next;
 		if (doLoop > 1) {
 			s->next = old;
 			old->prev = s;
@@ -1197,7 +1259,8 @@ builtIn(loopSound) {
 builtIn(stopSound) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(v, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	huntKillSound(v);
 	return BR_CONTINUE;
@@ -1206,7 +1269,8 @@ builtIn(stopSound) {
 builtIn(setDefaultSoundVolume) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setDefaultSoundVolume(v);
 	return BR_CONTINUE;
@@ -1215,23 +1279,27 @@ builtIn(setDefaultSoundVolume) {
 builtIn(setSoundVolume) {
 	UNUSEDALL
 	int musChan, v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(musChan, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(musChan, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setSoundVolume(musChan, v);
 	return BR_CONTINUE;
 }
 
-
 builtIn(setSoundLoopPoints) {
 	UNUSEDALL
 	int musChan, theEnd, theStart;
-	if (!getValueType(theEnd, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(theEnd, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(theStart, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(theStart, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(musChan, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(musChan, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setSoundLoop(musChan, theStart, theEnd);
 	return BR_CONTINUE;
@@ -1246,7 +1314,8 @@ builtIn(setFloor) {
 		int v;
 		getValueType(v, SVT_FILE, fun->stack->thisVar);
 		trimStack(fun->stack);
-		if (!setFloor(v)) return BR_ERROR;
+		if (!setFloor(v))
+			return BR_ERROR;
 	} else {
 		trimStack(fun->stack);
 		setFloorNull();
@@ -1266,7 +1335,8 @@ builtIn(setZBuffer) {
 		int v;
 		getValueType(v, SVT_FILE, fun->stack->thisVar);
 		trimStack(fun->stack);
-		if (!setZBuffer(v)) return BR_ERROR;
+		if (!setZBuffer(v))
+			return BR_ERROR;
 	} else {
 		trimStack(fun->stack);
 		killZBuffer();
@@ -1277,40 +1347,42 @@ builtIn(setZBuffer) {
 builtIn(setLightMap) {
 	UNUSEDALL
 	switch (numParams) {
-	case 2:
-		if (!getValueType(lightMapMode, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
-		trimStack(fun->stack);
-		lightMapMode %= LIGHTMAPMODE_NUM;
-	// No break;
-
-	case 1:
-		if (fun->stack->thisVar.varType == SVT_FILE) {
-			int v;
-			getValueType(v, SVT_FILE, fun->stack->thisVar);
+		case 2:
+			if (!getValueType(lightMapMode, SVT_INT, fun->stack->thisVar))
+				return BR_ERROR;
 			trimStack(fun->stack);
-			if (!loadLightMap(v)) return BR_ERROR;
-			setVariable(fun->reg, SVT_INT, 1);
-		} else {
-			trimStack(fun->stack);
-			killLightMap();
-			setVariable(fun->reg, SVT_INT, 0);
-		}
-		break;
+			lightMapMode %= LIGHTMAPMODE_NUM;
+			// No break;
 
-	default:
-		fatal("Function should have either 2 or 3 parameters");
-		return BR_ERROR;
+		case 1:
+			if (fun->stack->thisVar.varType == SVT_FILE) {
+				int v;
+				getValueType(v, SVT_FILE, fun->stack->thisVar);
+				trimStack(fun->stack);
+				if (!loadLightMap(v))
+					return BR_ERROR;
+				setVariable(fun->reg, SVT_INT, 1);
+			} else {
+				trimStack(fun->stack);
+				killLightMap();
+				setVariable(fun->reg, SVT_INT, 0);
+			}
+			break;
+
+		default:
+			fatal("Function should have either 2 or 3 parameters");
+			return BR_ERROR;
 	}
 	return BR_CONTINUE;
 }
-
 
 #pragma mark -
 #pragma mark Objects
 
 builtIn(setSpeechMode) {
 	UNUSEDALL
-	if (!getValueType(speechMode, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(speechMode, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	if (speechMode < 0 || speechMode > 2) {
 		fatal("Valid parameters are be SPEECHANDTEXT, SPEECHONLY or TEXTONLY");
@@ -1351,9 +1423,11 @@ builtIn(rename) {
 	UNUSEDALL
 	char *newText = getTextFromAnyVar(fun->stack->thisVar);
 	int objT;
-	if (!newText) return BR_ERROR;
+	if (!newText)
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	objectType *o = findObjectType(objT);
 	delete o->screenName;
@@ -1364,7 +1438,8 @@ builtIn(rename) {
 builtIn(getObjectX) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	onScreenPerson *pers = findPerson(objectNumber);
@@ -1384,7 +1459,8 @@ builtIn(getObjectX) {
 builtIn(getObjectY) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	onScreenPerson *pers = findPerson(objectNumber);
@@ -1401,27 +1477,35 @@ builtIn(getObjectY) {
 	return BR_CONTINUE;
 }
 
-
 builtIn(addScreenRegion) {
 	UNUSEDALL
 	int sX, sY, x1, y1, x2, y2, di, objectNumber;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(sY, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(sY, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(sX, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(sX, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(y2, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y2, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x2, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x2, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(y1, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y1, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x1, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x1, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (addScreenRegion(x1, y1, x2, y2, sX, sY, di, objectNumber)) return BR_CONTINUE;
+	if (addScreenRegion(x1, y1, x2, y2, sX, sY, di, objectNumber))
+		return BR_CONTINUE;
 	return BR_ERROR;
 
 }
@@ -1429,7 +1513,8 @@ builtIn(addScreenRegion) {
 builtIn(removeScreenRegion) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	removeScreenRegion(objectNumber);
 	return BR_CONTINUE;
@@ -1453,23 +1538,29 @@ builtIn(addCharacter) {
 	int x, y, objectNumber;
 
 	p = getCostumeFromVar(fun->stack->thisVar);
-	if (p == NULL) return BR_ERROR;
+	if (p == NULL)
+		return BR_ERROR;
 
 	trimStack(fun->stack);
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (addPerson(x, y, objectNumber, p)) return BR_CONTINUE;
+	if (addPerson(x, y, objectNumber, p))
+		return BR_CONTINUE;
 	return BR_ERROR;
 }
 
 builtIn(hideCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setShown(false, objectNumber);
 	return BR_CONTINUE;
@@ -1478,7 +1569,8 @@ builtIn(hideCharacter) {
 builtIn(showCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setShown(true, objectNumber);
 	return BR_CONTINUE;
@@ -1494,9 +1586,11 @@ builtIn(removeAllCharacters) {
 builtIn(setCharacterDrawMode) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setDrawMode(di, obj);
 	return BR_CONTINUE;
@@ -1504,9 +1598,11 @@ builtIn(setCharacterDrawMode) {
 builtIn(setCharacterTransparency) {
 	UNUSEDALL
 	int obj, x;
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setPersonTransparency(obj, x);
 	return BR_CONTINUE;
@@ -1514,15 +1610,20 @@ builtIn(setCharacterTransparency) {
 builtIn(setCharacterColourise) {
 	UNUSEDALL
 	int obj, r, g, b, mix;
-	if (!getValueType(mix, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(mix, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(b, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(b, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(g, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(g, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(r, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(r, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setPersonColourise(obj, r, g, b, mix);
 	return BR_CONTINUE;
@@ -1531,18 +1632,21 @@ builtIn(setCharacterColourise) {
 builtIn(setScale) {
 	UNUSEDALL
 	int val1, val2;
-	if (!getValueType(val2, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(val2, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(val1, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(val1, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	setScale((short int) val1, (short int) val2);
+	setScale((short int)val1, (short int)val2);
 	return BR_CONTINUE;
 }
 
 builtIn(stopCharacter) {
 	UNUSEDALL
 	int obj;
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	// Return value
@@ -1553,7 +1657,8 @@ builtIn(stopCharacter) {
 builtIn(pasteCharacter) {
 	UNUSEDALL
 	int obj;
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	onScreenPerson *thisPerson = findPerson(obj);
@@ -1579,9 +1684,11 @@ builtIn(animate) {
 	UNUSEDALL
 	int obj;
 	personaAnimation *pp = getAnimationFromVar(fun->stack->thisVar);
-	if (pp == NULL) return BR_ERROR;
+	if (pp == NULL)
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	animatePerson(obj, pp);
 	setVariable(fun->reg, SVT_INT, timeForAnim(pp));
@@ -1592,9 +1699,11 @@ builtIn(setCostume) {
 	UNUSEDALL
 	int obj;
 	persona *pp = getCostumeFromVar(fun->stack->thisVar);
-	if (pp == NULL) return BR_ERROR;
+	if (pp == NULL)
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	animatePerson(obj, pp);
 	return BR_CONTINUE;
@@ -1603,9 +1712,11 @@ builtIn(setCostume) {
 builtIn(floatCharacter) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, floatCharacter(di, obj));
 	return BR_CONTINUE;
@@ -1614,9 +1725,11 @@ builtIn(floatCharacter) {
 builtIn(setCharacterWalkSpeed) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, setCharacterWalkSpeed(di, obj));
 	return BR_CONTINUE;
@@ -1625,9 +1738,11 @@ builtIn(setCharacterWalkSpeed) {
 builtIn(turnCharacter) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, turnPersonToFace(obj, di));
 	return BR_CONTINUE;
@@ -1636,9 +1751,11 @@ builtIn(turnCharacter) {
 builtIn(setCharacterExtra) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, setPersonExtra(obj, di));
 	return BR_CONTINUE;
@@ -1647,7 +1764,8 @@ builtIn(setCharacterExtra) {
 builtIn(removeCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	removeOneCharacter(objectNumber);
 	return BR_CONTINUE;
@@ -1655,50 +1773,60 @@ builtIn(removeCharacter) {
 
 static builtReturn moveChr(int numParams, loadedFunction *fun, bool force, bool immediate) {
 	switch (numParams) {
-	case 3: {
-		int x, y, objectNumber;
+		case 3: {
+			int x, y, objectNumber;
 
-		if (!getValueType(y, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
-		trimStack(fun->stack);
-		if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
-		trimStack(fun->stack);
-		if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
-		trimStack(fun->stack);
+			if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+				return BR_ERROR;
+			trimStack(fun->stack);
+			if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+				return BR_ERROR;
+			trimStack(fun->stack);
+			if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+				return BR_ERROR;
+			trimStack(fun->stack);
 
-		if (force) {
-			if (forceWalkingPerson(x, y, objectNumber, fun, -1)) return BR_PAUSE;
-		} else if (immediate) {
-			jumpPerson(x, y, objectNumber);
-		} else {
-			if (makeWalkingPerson(x, y, objectNumber, fun, -1)) return BR_PAUSE;
+			if (force) {
+				if (forceWalkingPerson(x, y, objectNumber, fun, -1))
+					return BR_PAUSE;
+			} else if (immediate) {
+				jumpPerson(x, y, objectNumber);
+			} else {
+				if (makeWalkingPerson(x, y, objectNumber, fun, -1))
+					return BR_PAUSE;
+			}
+			return BR_CONTINUE;
 		}
-		return BR_CONTINUE;
-	}
 
-	case 2: {
-		int toObj, objectNumber;
-		screenRegion *reggie;
+		case 2: {
+			int toObj, objectNumber;
+			screenRegion *reggie;
 
-		if (!getValueType(toObj, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
-		trimStack(fun->stack);
-		if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
-		trimStack(fun->stack);
-		reggie = getRegionForObject(toObj);
-		if (reggie == NULL) return BR_CONTINUE;
+			if (!getValueType(toObj, SVT_OBJTYPE, fun->stack->thisVar))
+				return BR_ERROR;
+			trimStack(fun->stack);
+			if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+				return BR_ERROR;
+			trimStack(fun->stack);
+			reggie = getRegionForObject(toObj);
+			if (reggie == NULL)
+				return BR_CONTINUE;
 
-		if (force) {
-			if (forceWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di)) return BR_PAUSE;
-		} else if (immediate) {
-			jumpPerson(reggie->sX, reggie->sY, objectNumber);
-		} else {
-			if (makeWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di)) return BR_PAUSE;
+			if (force) {
+				if (forceWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
+					return BR_PAUSE;
+			} else if (immediate) {
+				jumpPerson(reggie->sX, reggie->sY, objectNumber);
+			} else {
+				if (makeWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
+					return BR_PAUSE;
+			}
+			return BR_CONTINUE;
 		}
-		return BR_CONTINUE;
-	}
 
-	default:
-		fatal("Built-in function must have either 2 or 3 parameters.");
-		return BR_ERROR;
+		default:
+			fatal("Built-in function must have either 2 or 3 parameters.");
+			return BR_ERROR;
 	}
 }
 
@@ -1738,7 +1866,8 @@ builtIn(addStatus) {
 builtIn(statusText) {
 	UNUSEDALL
 	char *newText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newText) return BR_ERROR;
+	if (!newText)
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setStatusBar(newText);
 	delete newText;
@@ -1748,7 +1877,8 @@ builtIn(statusText) {
 builtIn(lightStatus) {
 	UNUSEDALL
 	int val;
-	if (!getValueType(val, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(val, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setLitStatus(val);
 	return BR_CONTINUE;
@@ -1757,9 +1887,11 @@ builtIn(lightStatus) {
 builtIn(positionStatus) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	positionStatus(x, y);
 	return BR_CONTINUE;
@@ -1768,26 +1900,28 @@ builtIn(positionStatus) {
 builtIn(alignStatus) {
 	UNUSEDALL
 	int val;
-	if (!getValueType(val, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(val, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	nowStatus->alignStatus = (short) val;
+	nowStatus->alignStatus = (short)val;
 	return BR_CONTINUE;
 }
 
 static bool getFuncNumForCallback(int numParams, loadedFunction *fun, int &functionNum) {
 	switch (numParams) {
-	case 0:
-		functionNum = 0;
-		break;
+		case 0:
+			functionNum = 0;
+			break;
 
-	case 1:
-		if (!getValueType(functionNum, SVT_FUNC, fun->stack->thisVar)) return false;
-		trimStack(fun->stack);
-		break;
+		case 1:
+			if (!getValueType(functionNum, SVT_FUNC, fun->stack->thisVar))
+				return false;
+			trimStack(fun->stack);
+			break;
 
-	default:
-		fatal("Too many parameters.");
-		return false;
+		default:
+			fatal("Too many parameters.");
+			return false;
 	}
 	return true;
 }
@@ -1866,7 +2000,8 @@ builtIn(spawnSub) {
 	UNUSEDALL
 	int functionNum;
 	if (getFuncNumForCallback(numParams, fun, functionNum)) {
-		if (!startNewFunctionNum(functionNum, 0, NULL, noStack)) return BR_ERROR;
+		if (!startNewFunctionNum(functionNum, 0, NULL, noStack))
+			return BR_ERROR;
 		return BR_CONTINUE;
 	}
 	return BR_ERROR;
@@ -1890,7 +2025,8 @@ builtIn(cancelSub) {
 builtIn(stringWidth) {
 	UNUSEDALL
 	char *theText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!theText) return BR_ERROR;
+	if (!theText)
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	// Return value
@@ -1902,17 +2038,18 @@ builtIn(stringWidth) {
 builtIn(hardScroll) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	hardScroll(v);
 	return BR_CONTINUE;
 }
 
-
 builtIn(isScreenRegion) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, getRegionForObject(objectNumber) != NULL);
 	return BR_CONTINUE;
@@ -1921,7 +2058,8 @@ builtIn(isScreenRegion) {
 builtIn(setSpeechSpeed) {
 	UNUSEDALL
 	int number;
-	if (!getValueType(number, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(number, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	speechSpeed = number * 0.01;
 	setVariable(fun->reg, SVT_INT, 1);
@@ -1931,7 +2069,8 @@ builtIn(setSpeechSpeed) {
 builtIn(setFontSpacing) {
 	UNUSEDALL
 	int fontSpaceI;
-	if (!getValueType(fontSpaceI, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fontSpaceI, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	fontSpace = fontSpaceI;
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, 1);
@@ -1941,7 +2080,8 @@ builtIn(setFontSpacing) {
 builtIn(transitionLevel) {
 	UNUSEDALL
 	int number;
-	if (!getValueType(number, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(number, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	if (number < 0)
@@ -1963,13 +2103,14 @@ builtIn(captureAllKeys) {
 	return BR_CONTINUE;
 }
 
-
 builtIn(spinCharacter) {
 	UNUSEDALL
 	int number, objectNumber;
-	if (!getValueType(number, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(number, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	onScreenPerson *thisPerson = findPerson(objectNumber);
@@ -1988,7 +2129,8 @@ builtIn(spinCharacter) {
 builtIn(getCharacterDirection) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	onScreenPerson *thisPerson = findPerson(objectNumber);
 	if (thisPerson) {
@@ -2002,7 +2144,8 @@ builtIn(getCharacterDirection) {
 builtIn(isCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	onScreenPerson *thisPerson = findPerson(objectNumber);
 	setVariable(fun->reg, SVT_INT, thisPerson != NULL);
@@ -2012,7 +2155,8 @@ builtIn(isCharacter) {
 builtIn(normalCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	onScreenPerson *thisPerson = findPerson(objectNumber);
 	if (thisPerson) {
@@ -2027,7 +2171,8 @@ builtIn(normalCharacter) {
 builtIn(isMoving) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	onScreenPerson *thisPerson = findPerson(objectNumber);
 	if (thisPerson) {
@@ -2041,9 +2186,11 @@ builtIn(isMoving) {
 builtIn(fetchEvent) {
 	UNUSEDALL
 	int obj1, obj2;
-	if (!getValueType(obj2, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj2, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj1, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(obj1, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	int fNum = getCombinationFunction(obj1, obj2);
@@ -2064,7 +2211,8 @@ builtIn(deleteFile) {
 	trimStack(fun->stack);
 	char *nam = encodeFilename(namNormal);
 	delete namNormal;
-	if (failSecurityCheck(nam)) return BR_ERROR;
+	if (failSecurityCheck(nam))
+		return BR_ERROR;
 	setVariable(fun->reg, SVT_INT, remove(nam));
 	delete nam;
 
@@ -2078,19 +2226,20 @@ builtIn(renameFile) {
 	temp = getTextFromAnyVar(fun->stack->thisVar);
 	char *newnam = encodeFilename(temp);
 	trimStack(fun->stack);
-	if (failSecurityCheck(newnam)) return BR_ERROR;
+	if (failSecurityCheck(newnam))
+		return BR_ERROR;
 	delete temp;
 
 	temp = getTextFromAnyVar(fun->stack->thisVar);
 	char *nam = encodeFilename(temp);
 	trimStack(fun->stack);
-	if (failSecurityCheck(nam)) return BR_ERROR;
+	if (failSecurityCheck(nam))
+		return BR_ERROR;
 	delete temp;
 
 	setVariable(fun->reg, SVT_INT, rename(nam, newnam));
 	delete nam;
 	delete newnam;
-
 
 	return BR_CONTINUE;
 }
@@ -2098,9 +2247,11 @@ builtIn(renameFile) {
 builtIn(cacheSound) {
 	UNUSEDALL
 	int fileNumber;
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (cacheSound(fileNumber) == -1) return BR_ERROR;
+	if (cacheSound(fileNumber) == -1)
+		return BR_ERROR;
 	return BR_CONTINUE;
 }
 
@@ -2109,11 +2260,14 @@ builtIn(burnString) {
 	char *newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	int y, x;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (x == IN_THE_CENTRE) x = (winWidth - stringWidth(newText)) >> 1;
+	if (x == IN_THE_CENTRE)
+		x = (winWidth - stringWidth(newText)) >> 1;
 	fixFont(pastePalette);
 	burnStringToBackdrop(newText, x, y, pastePalette);
 	delete[] newText;
@@ -2123,9 +2277,11 @@ builtIn(burnString) {
 builtIn(setCharacterSpinSpeed) {
 	UNUSEDALL
 	int speed, who;
-	if (!getValueType(speed, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(speed, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(who, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(who, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	onScreenPerson *thisPerson = findPerson(who);
@@ -2142,9 +2298,11 @@ builtIn(setCharacterSpinSpeed) {
 builtIn(setCharacterAngleOffset) {
 	UNUSEDALL
 	int angle, who;
-	if (!getValueType(angle, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(angle, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(who, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(who, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	onScreenPerson *thisPerson = findPerson(who);
@@ -2158,17 +2316,16 @@ builtIn(setCharacterAngleOffset) {
 	return BR_CONTINUE;
 }
 
-
 builtIn(transitionMode) {
 	UNUSEDALL
 	int n;
-	if (!getValueType(n, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(n, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	fadeMode = n;
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;
 }
-
 
 // Removed function - does nothing
 builtIn(_rem_updateDisplay) {
@@ -2182,11 +2339,13 @@ builtIn(getSoundCache) {
 	UNUSEDALL
 	fun->reg.varType = SVT_STACK;
 	fun->reg.varData.theStack = new stackHandler;
-	if (!checkNew(fun->reg.varData.theStack)) return BR_ERROR;
+	if (!checkNew(fun->reg.varData.theStack))
+		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
 	fun->reg.varData.theStack->last = NULL;
 	fun->reg.varData.theStack->timesUsed = 1;
-	if (!getSoundCacheStack(fun->reg.varData.theStack)) return BR_ERROR;
+	if (!getSoundCacheStack(fun->reg.varData.theStack))
+		return BR_ERROR;
 	return BR_CONTINUE;
 }
 
@@ -2194,19 +2353,22 @@ builtIn(saveCustomData) {
 	UNUSEDALL
 	// saveCustomData (thisStack, fileName);
 	char *fileNameB = getTextFromAnyVar(fun->stack->thisVar);
-	if (!checkNew(fileNameB)) return BR_ERROR;
+	if (!checkNew(fileNameB))
+		return BR_ERROR;
 
 	char *fileName = encodeFilename(fileNameB);
 	delete fileNameB;
 
-	if (failSecurityCheck(fileName)) return BR_ERROR;
+	if (failSecurityCheck(fileName))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	if (fun->stack->thisVar.varType != SVT_STACK) {
 		fatal("First parameter isn't a stack");
 		return BR_ERROR;
 	}
-	if (!stackToFile(fileName, fun->stack->thisVar)) return BR_ERROR;
+	if (!stackToFile(fileName, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	delete fileName;
 	return BR_CONTINUE;
@@ -2216,22 +2378,26 @@ builtIn(loadCustomData) {
 	UNUSEDALL
 
 	char *newTextA = getTextFromAnyVar(fun->stack->thisVar);
-	if (!checkNew(newTextA)) return BR_ERROR;
+	if (!checkNew(newTextA))
+		return BR_ERROR;
 
 	char *newText = encodeFilename(newTextA);
 	delete newTextA;
 
-	if (failSecurityCheck(newText)) return BR_ERROR;
+	if (failSecurityCheck(newText))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	unlinkVar(fun->reg);
 	fun->reg.varType = SVT_STACK;
 	fun->reg.varData.theStack = new stackHandler;
-	if (!checkNew(fun->reg.varData.theStack)) return BR_ERROR;
+	if (!checkNew(fun->reg.varData.theStack))
+		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
 	fun->reg.varData.theStack->last = NULL;
 	fun->reg.varData.theStack->timesUsed = 1;
-	if (!fileToStack(newText, fun->reg.varData.theStack)) return BR_ERROR;
+	if (!fileToStack(newText, fun->reg.varData.theStack))
+		return BR_ERROR;
 	delete newText;
 	return BR_CONTINUE;
 }
@@ -2239,7 +2405,8 @@ builtIn(loadCustomData) {
 builtIn(setCustomEncoding) {
 	UNUSEDALL
 	int n;
-	if (!getValueType(n, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(n, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	saveEncoding = n;
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, 1);
@@ -2249,7 +2416,8 @@ builtIn(setCustomEncoding) {
 builtIn(freeSound) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(v, SVT_FILE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	huntKillFreeSound(v);
 	return BR_CONTINUE;
@@ -2262,14 +2430,18 @@ builtIn(parallaxAdd) {
 		return BR_ERROR;
 	} else {
 		int wrapX, wrapY, v;
-		if (!getValueType(wrapY, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+		if (!getValueType(wrapY, SVT_INT, fun->stack->thisVar))
+			return BR_ERROR;
 		trimStack(fun->stack);
-		if (!getValueType(wrapX, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+		if (!getValueType(wrapX, SVT_INT, fun->stack->thisVar))
+			return BR_ERROR;
 		trimStack(fun->stack);
-		if (!getValueType(v, SVT_FILE, fun->stack->thisVar)) return BR_ERROR;
+		if (!getValueType(v, SVT_FILE, fun->stack->thisVar))
+			return BR_ERROR;
 		trimStack(fun->stack);
 
-		if (!loadParallax(v, wrapX, wrapY)) return BR_ERROR;
+		if (!loadParallax(v, wrapX, wrapY))
+			return BR_ERROR;
 		setVariable(fun->reg, SVT_INT, 1);
 	}
 	return BR_CONTINUE;
@@ -2285,19 +2457,23 @@ builtIn(parallaxClear) {
 builtIn(getPixelColour) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	unlinkVar(fun->reg);
 	fun->reg.varType = SVT_STACK;
 	fun->reg.varData.theStack = new stackHandler;
-	if (!checkNew(fun->reg.varData.theStack)) return BR_ERROR;
+	if (!checkNew(fun->reg.varData.theStack))
+		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
 	fun->reg.varData.theStack->last = NULL;
 	fun->reg.varData.theStack->timesUsed = 1;
-	if (!getRGBIntoStack(x, y, fun->reg.varData.theStack)) return BR_ERROR;
+	if (!getRGBIntoStack(x, y, fun->reg.varData.theStack))
+		return BR_ERROR;
 
 	return BR_CONTINUE;
 }
@@ -2305,22 +2481,22 @@ builtIn(getPixelColour) {
 builtIn(makeFastArray) {
 	UNUSEDALL
 	switch (fun->stack->thisVar.varType) {
-	case SVT_STACK: {
-		bool success = makeFastArrayFromStack(fun->reg, fun->stack->thisVar.varData.theStack);
-		trimStack(fun->stack);
-		return success ? BR_CONTINUE : BR_ERROR;
-	}
-	break;
+		case SVT_STACK: {
+			bool success = makeFastArrayFromStack(fun->reg, fun->stack->thisVar.varData.theStack);
+			trimStack(fun->stack);
+			return success ? BR_CONTINUE : BR_ERROR;
+		}
+			break;
 
-	case SVT_INT: {
-		int i = fun->stack->thisVar.varData.intValue;
-		trimStack(fun->stack);
-		return makeFastArraySize(fun->reg, i) ? BR_CONTINUE : BR_ERROR;
-	}
-	break;
+		case SVT_INT: {
+			int i = fun->stack->thisVar.varData.intValue;
+			trimStack(fun->stack);
+			return makeFastArraySize(fun->reg, i) ? BR_CONTINUE : BR_ERROR;
+		}
+			break;
 
-	default:
-		break;
+		default:
+			break;
 	}
 	fatal("Parameter must be a number or a stack.");
 	return BR_ERROR;
@@ -2329,7 +2505,8 @@ builtIn(makeFastArray) {
 builtIn(getCharacterScale) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	onScreenPerson *pers = findPerson(objectNumber);
@@ -2368,9 +2545,11 @@ builtIn(getFramesPerSecond) {
 builtIn(showThumbnail) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 
 	// Encode the name!Encode the name!
@@ -2390,9 +2569,11 @@ builtIn(showThumbnail) {
 
 builtIn(setThumbnailSize) {
 	UNUSEDALL
-	if (!getValueType(thumbHeight, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(thumbHeight, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(thumbWidth, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(thumbWidth, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	if (thumbWidth < 0 || thumbHeight < 0 || thumbWidth > winWidth || thumbHeight > winHeight) {
 		char buff[50];
@@ -2406,12 +2587,15 @@ builtIn(setThumbnailSize) {
 builtIn(hasFlag) {
 	UNUSEDALL
 	int objNum, flagIndex;
-	if (!getValueType(flagIndex, SVT_INT, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(flagIndex, SVT_INT, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(objNum, SVT_OBJTYPE, fun->stack->thisVar)) return BR_ERROR;
+	if (!getValueType(objNum, SVT_OBJTYPE, fun->stack->thisVar))
+		return BR_ERROR;
 	trimStack(fun->stack);
 	objectType *objT = findObjectType(objNum);
-	if (!objT) return BR_ERROR;
+	if (!objT)
+		return BR_ERROR;
 	setVariable(fun->reg, SVT_INT, objT->flags & (1 << flagIndex));
 	return BR_CONTINUE;
 }
@@ -2498,18 +2682,16 @@ builtIn(doBackgroundEffect) {
 #define FUNC(special,name)      {builtIn_ ## name},
 static builtInFunctionData builtInFunctionArray[] = {
 #include "CommonCode/functionlist.h"
-};
+		};
 #undef FUNC
 
 #define FUNC(special,name)      {#name},
 char builtInFunctionNames[][25] = {
 #include "CommonCode/functionlist.h"
-};
+		};
 #undef FUNC
 
 #define NUM_FUNCS           (sizeof (builtInFunctionArray) / sizeof (builtInFunctionArray[0]))
-
-
 
 builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
 	// fprintf (stderr, "Calling function %d: %s\n", whichFunc, builtInFunctionNames[whichFunc]);    fflush (stderr);
@@ -2518,18 +2700,15 @@ builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
 		//      deb ("IN:", (fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function");
 		//      deb ("GO:", (whichFunc < numBIFNames) ? allBIFNames[whichFunc] : "Unknown built-in function");
 
-		setFatalInfo(
-		    (fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
-		    (whichFunc < numBIFNames) ? allBIFNames[whichFunc] : "Unknown built-in function");
+		setFatalInfo((fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
+				(whichFunc < numBIFNames) ? allBIFNames[whichFunc] : "Unknown built-in function");
 	}
 
 	if (whichFunc < NUM_FUNCS) {
 		if (paramNum[whichFunc] != -1) {
 			if (paramNum[whichFunc] != numParams) {
 				char buff[100];
-				sprintf(buff, "Built in function must have %i parameter%s",
-				        paramNum[whichFunc],
-						(paramNum[whichFunc] == 1) ? "" : "s");
+				sprintf(buff, "Built in function must have %i parameter%s", paramNum[whichFunc], (paramNum[whichFunc] == 1) ? "" : "s");
 
 				fatal(copyString(buff));
 				return BR_ERROR;

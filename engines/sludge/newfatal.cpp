@@ -42,9 +42,7 @@ namespace Sludge {
 const char emergencyMemoryMessage[] = "Out of memory displaying error message!";
 
 static char *fatalMessage = NULL;
-static char *fatalInfo =
-		joinStrings("Initialisation error! Something went wrong before we even got started!",
-					"");
+static char *fatalInfo = joinStrings("Initialisation error! Something went wrong before we even got started!", "");
 
 extern int numResourceNames /* = 0*/;
 extern char * *allResourceNames /*= NULL*/;
@@ -85,9 +83,7 @@ void warning(const char *l) {
 void registerWindowForFatal() {
 	delete fatalInfo;
 	fatalInfo =
-			joinStrings(
-					"There's an error with this SLUDGE game! If you're designing this game, please turn on verbose error messages in the project manager and recompile. If not, please contact the author saying where and how this problem occured.",
-					"");
+			joinStrings("There's an error with this SLUDGE game! If you're designing this game, please turn on verbose error messages in the project manager and recompile. If not, please contact the author saying where and how this problem occured.", "");
 }
 
 #if 0
@@ -132,8 +128,7 @@ void setFatalInfo(const char *userFunc, const char *BIF) {
 	delete fatalInfo;
 	fatalInfo = new char[strlen(userFunc) + strlen(BIF) + 38];
 	if (fatalInfo)
-		sprintf(fatalInfo, "Currently in this sub: %s\nCalling: %s", userFunc,
-				BIF);
+		sprintf(fatalInfo, "Currently in this sub: %s\nCalling: %s", userFunc, BIF);
 	debug(kSludgeDebugFatal, "%s", fatalInfo);
 }
 
@@ -144,8 +139,7 @@ void setResourceForFatal(int n) {
 int fatal(const char *str1) {
 	if (numResourceNames && resourceForFatal != -1) {
 		const char *r = resourceNameFromNum(resourceForFatal);
-		char *newStr = new char[strlen(str1) + strlen(r) + strlen(fatalInfo)
-				+ 14];
+		char *newStr = new char[strlen(str1) + strlen(r) + strlen(fatalInfo) + 14];
 		if (checkNew(newStr)) {
 			sprintf(newStr, "%s\nResource: %s\n\n%s", fatalInfo, r, str1);
 			inFatal(newStr);

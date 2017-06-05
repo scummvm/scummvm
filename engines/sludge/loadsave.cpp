@@ -113,14 +113,13 @@ void saveStack(variableStack *vs, Common::WriteStream *stream) {
 	}
 }
 
-variableStack *loadStack(Common::SeekableReadStream *stream,
-		variableStack **last) {
+variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **last) {
 	int elements = stream->readUint16BE();
 	int a;
 	variableStack *first = NULL;
 	variableStack * * changeMe = &first;
 
-	for (a = 0; a < elements; ++a) {
+	for (a = 0; a < elements; a++) {
 		variableStack *nS = new variableStack;
 		if (!checkNew(nS))
 			return NULL;
@@ -147,7 +146,7 @@ bool saveStackRef(stackHandler *vs, Common::WriteStream *stream) {
 			return true;
 		}
 		s = s->next;
-		++a;
+		a++;
 	}
 	stream->writeByte(0);
 	saveStack(vs->first, stream);
@@ -233,36 +232,34 @@ bool saveVariable(variable *from, Common::WriteStream *stream) {
 
 	stream->writeByte(from->varType);
 	switch (from->varType) {
-	case SVT_INT:
-	case SVT_FUNC:
-	case SVT_BUILT:
-	case SVT_FILE:
-	case SVT_OBJTYPE:
-		stream->writeUint32LE(from->varData.intValue);
-		return true;
+		case SVT_INT:
+		case SVT_FUNC:
+		case SVT_BUILT:
+		case SVT_FILE:
+		case SVT_OBJTYPE:
+			stream->writeUint32LE(from->varData.intValue);
+			return true;
 
-	case SVT_STRING:
-		writeString(from->varData.theString, stream);
-		return true;
+		case SVT_STRING:
+			writeString(from->varData.theString, stream);
+			return true;
 
-	case SVT_STACK:
-		return saveStackRef(from->varData.theStack, stream);
+		case SVT_STACK:
+			return saveStackRef(from->varData.theStack, stream);
 
-	case SVT_COSTUME:
-		saveCostume(from->varData.costumeHandler, stream);
-		return false;
+		case SVT_COSTUME:
+			saveCostume(from->varData.costumeHandler, stream);
+			return false;
 
-	case SVT_ANIM:
-		saveAnim(from->varData.animHandler, stream);
-		return false;
+		case SVT_ANIM:
+			saveAnim(from->varData.animHandler, stream);
+			return false;
 
-	case SVT_NULL:
-		return false;
+		case SVT_NULL:
+			return false;
 
-	default:
-		fatal("Can't save variables of this type:",
-				(from->varType < SVT_NUM_TYPES) ?
-						typeName[from->varType] : "bad ID");
+		default:
+			fatal("Can't save variables of this type:", (from->varType < SVT_NUM_TYPES) ? typeName[from->varType] : "bad ID");
 	}
 	return true;
 }
@@ -270,45 +267,45 @@ bool saveVariable(variable *from, Common::WriteStream *stream) {
 bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
 	to->varType = (variableType)stream->readByte();
 	switch (to->varType) {
-	case SVT_INT:
-	case SVT_FUNC:
-	case SVT_BUILT:
-	case SVT_FILE:
-	case SVT_OBJTYPE:
-		to->varData.intValue = stream->readUint32LE();
-		return true;
+		case SVT_INT:
+		case SVT_FUNC:
+		case SVT_BUILT:
+		case SVT_FILE:
+		case SVT_OBJTYPE:
+			to->varData.intValue = stream->readUint32LE();
+			return true;
 
-	case SVT_STRING:
-		to->varData.theString = readString(stream);
-		return true;
+		case SVT_STRING:
+			to->varData.theString = readString(stream);
+			return true;
 
-	case SVT_STACK:
-		to->varData.theStack = loadStackRef(stream);
+		case SVT_STACK:
+			to->varData.theStack = loadStackRef(stream);
 #if DEBUG_STACKINESS
-		{
-			char *str = getTextFromAnyVar(*to);
-			stackDebug((stackfp, "just loaded %s\n", str));
-			delete str;
-		}
+			{
+				char *str = getTextFromAnyVar(*to);
+				stackDebug((stackfp, "just loaded %s\n", str));
+				delete str;
+			}
 #endif
-		return true;
+			return true;
 
-	case SVT_COSTUME:
-		to->varData.costumeHandler = new persona;
-		if (!checkNew(to->varData.costumeHandler))
-			return false;
-		loadCostume(to->varData.costumeHandler, stream);
-		return true;
+		case SVT_COSTUME:
+			to->varData.costumeHandler = new persona;
+			if (!checkNew(to->varData.costumeHandler))
+				return false;
+			loadCostume(to->varData.costumeHandler, stream);
+			return true;
 
-	case SVT_ANIM:
-		to->varData.animHandler = new personaAnimation;
-		if (!checkNew(to->varData.animHandler))
-			return false;
-		loadAnim(to->varData.animHandler, stream);
-		return true;
+		case SVT_ANIM:
+			to->varData.animHandler = new personaAnimation;
+			if (!checkNew(to->varData.animHandler))
+				return false;
+			loadAnim(to->varData.animHandler, stream);
+			return true;
 
-	default:
-		break;
+		default:
+			break;
 	}
 	return true;
 }

@@ -79,8 +79,7 @@ objectType *loadObjectType(int i) {
 			}
 
 			newType->numCom = bigDataFile->readUint16BE();
-			newType->allCombis =
-					(newType->numCom) ? new combination[newType->numCom] : NULL;
+			newType->allCombis = (newType->numCom) ? new combination[newType->numCom] : NULL;
 
 #if DEBUG_COMBINATIONS
 			FILE *callEventLog = fopen("callEventLog.txt", "at");

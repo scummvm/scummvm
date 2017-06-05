@@ -47,7 +47,7 @@ void showBoxes() {
 }
 
 void removeScreenRegion(int objectNum) {
-	screenRegion * * huntRegion = &allScreenRegions;
+	screenRegion ** huntRegion = &allScreenRegions;
 	screenRegion *killMe;
 
 	while (*huntRegion) {

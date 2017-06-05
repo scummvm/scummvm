@@ -74,8 +74,7 @@ bool getStream(DWORD type, timStream &intoHere) {
 	if (AVIFileGetStream(pAviFile, &intoHere.got, type, 0)) {
 		intoHere.got = NULL;
 		return true;
-	} else if (AVIStreamInfo(intoHere.got, &intoHere.info,
-			sizeof(AVISTREAMINFO))) {
+	} else if (AVIStreamInfo(intoHere.got, &intoHere.info, sizeof(AVISTREAMINFO))) {
 		return fatal("Can't get stream info");
 	} else if (AVIStreamReadFormat(intoHere.got, AVIStreamStart(intoHere.got),
 	NULL, &intoHere.chunkSize)) {
@@ -87,9 +86,7 @@ bool getStream(DWORD type, timStream &intoHere) {
 
 		if (!intoHere.chunk) {
 			return fatal("Out of memory");
-		} else if (AVIStreamReadFormat(intoHere.got,
-				AVIStreamStart(intoHere.got), intoHere.chunk,
-				&intoHere.chunkSize)) {
+		} else if (AVIStreamReadFormat(intoHere.got, AVIStreamStart(intoHere.got), intoHere.chunk, &intoHere.chunkSize)) {
 			return fatal("Couldn't read stream format");
 		}
 	}
@@ -231,14 +228,13 @@ return true;
 }
 
 bool nextVideoFrame() {
-LPBITMAPINFOHEADER lpbi = (LPBITMAPINFOHEADER) AVIStreamGetFrame(pgf,
-		videoFrameNum);
+LPBITMAPINFOHEADER lpbi = (LPBITMAPINFOHEADER)AVIStreamGetFrame(pgf, videoFrameNum);
 if (!lpbi) {
 	finishVideo();
 	return false;
 }
 
-BYTE *pData = (((BYTE *) lpbi) + lpbi->biSize);
+BYTE *pData = (((BYTE *)lpbi) + lpbi->biSize);
 
 int xOff = (winWidth - vidWidth) >> 1;
 int yOff = (winHeight + vidHeight) >> 1;
@@ -249,22 +245,20 @@ for (int y = 0; y < vidHeight; y++) {
 	unsigned short int *toHere = startingPoint;
 	for (int x = 0; x < vidWidth; x++) {
 		switch (vidBytesPerPixel) {
-		case 1:
-			(*toHere) = makeGrey(*pData);
-			break;
+			case 1:
+				(*toHere) = makeGrey(*pData);
+				break;
 
-		case 3:
-		case 4:
-			(*toHere) = makeColour(*(pData + 2), *(pData + 1), *pData);
-			break;
+			case 3:
+			case 4:
+				(*toHere) = makeColour(*(pData + 2), *(pData + 1), *pData);
+				break;
 
-		default: {
-			WORD Pixel16 = *((WORD *) pData);
-			(*toHere) = makeColour((((UINT)(Pixel16) >> 10) & 0x1F) << 3,
-					(((UINT)(Pixel16) >> 5) & 0x1F) << 3,
-					(((UINT)(Pixel16) >> 0) & 0x1F) << 3);
-		}
-			break;
+			default: {
+				WORD Pixel16 = *((WORD *)pData);
+				(*toHere) = makeColour((((UINT)(Pixel16) >> 10) & 0x1F) << 3, (((UINT)(Pixel16) >> 5) & 0x1F) << 3, (((UINT)(Pixel16) >> 0) & 0x1F) << 3);
+			}
+				break;
 		}
 		pData += vidBytesPerPixel;
 		toHere++;

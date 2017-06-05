@@ -56,9 +56,9 @@ namespace Sludge {
 #define ERROR_MUSIC_MEMORY_LOW      "Your computer doesn't have enough memory available to load a music resource that needs playing." _NO_MEMORY_GENERAL_
 #define ERROR_SOUND_MEMORY_LOW      "Your computer doesn't have enough memory available to load a sound resource that needs playing." _NO_MEMORY_GENERAL_
 #define ERROR_MUSIC_UNKNOWN         "I can't understand a piece of music which I've been told to play!\n\n" \
-	"Maybe it's stored in a format that SLUDGE doesn't know about... " \
-	"make sure you've got a recent version of the SLUDGE engine from http://opensludge.github.io/. " \
-	"Failing that, maybe the resource in question isn't a valid music format at all... in which case, contact the game's author and tell them what's happened."
+									"Maybe it's stored in a format that SLUDGE doesn't know about... " \
+									"make sure you've got a recent version of the SLUDGE engine from http://opensludge.github.io/. " \
+									"Failing that, maybe the resource in question isn't a valid music format at all... in which case, contact the game's author and tell them what's happened."
 #define ERROR_SOUND_UNKNOWN         "I can't understand a sample which I've been told to play!\nMake sure you've got the latest SLUDGE engine from http://opensludge.github.io/. Failing that, maybe the resource in question isn't a valid sound at all... in which case, contact the game's author and tell them what's happened."
 #define ERROR_MUSIC_ODDNESS         "I can't load a music resource I've been told to play. Sorry."
 #define ERROR_SOUND_ODDNESS         "I can't load a sound resource I've been told to play. Sorry."

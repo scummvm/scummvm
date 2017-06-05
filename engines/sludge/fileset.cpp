@@ -44,8 +44,7 @@ bool sliceBusy = true;
 
 Common::File *bigDataFile = NULL;
 
-uint32_t startOfDataIndex, startOfTextIndex, startOfSubIndex,
-		startOfObjectIndex;
+uint32_t startOfDataIndex, startOfTextIndex, startOfSubIndex, startOfObjectIndex;
 
 bool openSubSlice(int num) {
 //	FILE * dbug = fopen ("debuggy.txt", "at");
@@ -199,8 +198,7 @@ void finishAccess() {
 
 int32_t startIndex;
 
-void setFileIndices(Common::File *fp, int numLanguages,
-		unsigned int skipBefore) {
+void setFileIndices(Common::File *fp, int numLanguages, unsigned int skipBefore) {
 	if (fp) {
 		// Keep hold of the file handle, and let things get at it
 		bigDataFile = fp;

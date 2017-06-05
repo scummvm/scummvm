@@ -54,8 +54,7 @@ bool setFloor(int fileNum);
 void drawFloor();
 int inFloor(int x, int y);
 bool getMatchingCorners(floorPolygon &, floorPolygon &, int &, int &);
-bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2,
-		int y2, int xP, int yP);
+bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2, int y2, int xP, int yP);
 
 } // End of namespace Sludge
 

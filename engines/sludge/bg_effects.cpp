@@ -64,14 +64,14 @@ static int s_matrixEffectBase = 15;
 static int s_matrixEffectDivide = 4;
 static int s_matrixEffectWidth = 3;
 static int s_matrixEffectHeight = 3;
-static int s_matrixEffectData[9] = { -2, -1, 0, -1, 1, 1, 0, 1, 2};
+static int s_matrixEffectData[9] = {-2, -1, 0, -1, 1, 1, 0, 1, 2};
 static int s_matrixEffectBase = 16;
 #elif 0
 // Standard emboss
 static int s_matrixEffectDivide = 2;
 static int s_matrixEffectWidth = 3;
 static int s_matrixEffectHeight = 3;
-static int s_matrixEffectData[9] = { -1, 0, 0, 0, 0, 0, 0, 0, 1};
+static int s_matrixEffectData[9] = {-1, 0, 0, 0, 0, 0, 0, 0, 1};
 static int s_matrixEffectBase = 128;
 #elif 0
 // Horizontal blur
@@ -92,7 +92,7 @@ static int s_matrixEffectBase = 0;
 static int s_matrixEffectDivide = 1;
 static int s_matrixEffectWidth = 1;
 static int s_matrixEffectHeight = 1;
-static int s_matrixEffectData[9] = { -1};
+static int s_matrixEffectData[9] = {-1};
 static int s_matrixEffectBase = 255;
 #elif 0
 // Fog
@@ -136,7 +136,7 @@ static int *blur_allocateMemoryForEffect() {
 	s_matrixEffectData = NULL;
 
 	if (s_matrixEffectWidth && s_matrixEffectHeight) {
-		s_matrixEffectData = (int *) malloc(sizeof(int) * s_matrixEffectHeight * s_matrixEffectWidth);
+		s_matrixEffectData = (int *)malloc(sizeof(int) * s_matrixEffectHeight * s_matrixEffectWidth);
 		checkNew(s_matrixEffectData);
 	}
 	return s_matrixEffectData;
@@ -169,7 +169,7 @@ bool blur_createSettings(int numParams, variableStack *&stack) {
 		int width = 0;
 
 		variableStack *justToCheckSizes = stack;
-		for (int a = 0; a < height; a ++) {
+		for (int a = 0; a < height; a++) {
 			if (justToCheckSizes->thisVar.varType != SVT_STACK) {
 				error = "Third and subsequent parameters in setBackgroundEffect should be arrays";
 				break;
@@ -189,19 +189,19 @@ bool blur_createSettings(int numParams, variableStack *&stack) {
 			}
 		}
 
-		if (width == 0 && ! error) {
+		if (width == 0 && !error) {
 			error = "Empty arrays found in setBackgroundEffect parameters";
 		}
 
-		if (! error) {
+		if (!error) {
 			s_matrixEffectWidth = width;
 			s_matrixEffectHeight = height;
 
 			if (blur_allocateMemoryForEffect()) {
-				for (int y = height - 1; y >= 0; y --) {
+				for (int y = height - 1; y >= 0; y--) {
 					variableStack *eachNumber = stack->thisVar.varData.theStack->first;
-					if (! error) {
-						for (int x = 0; x < width; x ++) {
+					if (!error) {
+						for (int x = 0; x < width; x++) {
 							int arraySlot = x + (y * width);
 //							s_matrixEffectData[arraySlot] = (rand() % 4);
 							if (!getValueType(s_matrixEffectData[arraySlot], SVT_INT, eachNumber->thisVar)) {
@@ -213,13 +213,13 @@ bool blur_createSettings(int numParams, variableStack *&stack) {
 						trimStack(stack);
 					}
 				}
-				if (! error && !getValueType(s_matrixEffectDivide, SVT_INT, stack -> thisVar))
+				if (!error && !getValueType(s_matrixEffectDivide, SVT_INT, stack->thisVar))
 					error = "";
 				trimStack(stack);
-				if (! error && !getValueType(s_matrixEffectBase, SVT_INT, stack -> thisVar))
+				if (!error && !getValueType(s_matrixEffectBase, SVT_INT, stack->thisVar))
 					error = "";
 				trimStack(stack);
-				if (! error) {
+				if (!error) {
 					if (s_matrixEffectDivide) {
 						createNullThing = false;
 					} else {
@@ -249,7 +249,7 @@ bool blur_createSettings(int numParams, variableStack *&stack) {
 		fatal(error);
 	}
 
-	return ! createNullThing;
+	return !createNullThing;
 }
 
 static inline int clampi(int i, int min, int max) {
@@ -260,13 +260,13 @@ static inline void blur_createSourceLine(unsigned char *createLine, unsigned cha
 	int miniX;
 	memcpy(createLine + overlapOnLeft * 4, fromLine, width * 4);
 
-	for (miniX = 0; miniX < overlapOnLeft; miniX ++) {
+	for (miniX = 0; miniX < overlapOnLeft; miniX++) {
 		createLine[miniX * 4] = fromLine[0];
 		createLine[miniX * 4 + 1] = fromLine[1];
 		createLine[miniX * 4 + 2] = fromLine[2];
 	}
 
-	for (miniX = width + overlapOnLeft; miniX < width + s_matrixEffectWidth - 1; miniX ++) {
+	for (miniX = width + overlapOnLeft; miniX < width + s_matrixEffectWidth - 1; miniX++) {
 		createLine[miniX * 4] = fromLine[width * 4 - 4];
 		createLine[miniX * 4 + 1] = fromLine[width * 4 - 3];
 		createLine[miniX * 4 + 2] = fromLine[width * 4 - 2];
@@ -280,15 +280,16 @@ bool blurScreen() {
 		int y, x;
 		bool ok = true;
 		int overlapOnLeft = s_matrixEffectWidth / 2;
-		int overlapAbove  = s_matrixEffectHeight / 2;
+		int overlapAbove = s_matrixEffectHeight / 2;
 
 		unsigned char **sourceLine = new unsigned char *[s_matrixEffectHeight];
-		if (! checkNew(sourceLine)) return false;
+		if (!checkNew(sourceLine))
+			return false;
 
 		int picWidth = sceneWidth;
 		int picHeight = sceneHeight;
 
-		if (! NPOT_textures) {
+		if (!NPOT_textures) {
 			picWidth = getNextPOT(sceneWidth);
 			picHeight = getNextPOT(sceneHeight);
 		}
@@ -296,26 +297,26 @@ bool blurScreen() {
 		// Retrieve the texture
 		saveTexture(backdropTextureName, backdropTexture);
 
-		for (y = 0; y < s_matrixEffectHeight; y ++) {
+		for (y = 0; y < s_matrixEffectHeight; y++) {
 			sourceLine[y] = new unsigned char[(s_matrixEffectWidth - 1 + picWidth) * 4];
 			ok &= (sourceLine[y] != NULL);
 		}
 
 		if (ok) {
-			for (y = 0; y < s_matrixEffectHeight; y ++) {
+			for (y = 0; y < s_matrixEffectHeight; y++) {
 				int miniY = clampi(y - overlapAbove - 1, 0, sceneHeight - 1);
 
 				blur_createSourceLine(sourceLine[y], backdropTexture + miniY * picWidth * 4, overlapOnLeft, picWidth);
 			}
 
-			for (y = 0; y < sceneHeight; y ++) {
+			for (y = 0; y < sceneHeight; y++) {
 				thisLine = backdropTexture + y * picWidth * 4;
 
 				//-------------------------
 				// Scroll source lines
 				//-------------------------
 				unsigned char *tempLine = sourceLine[0];
-				for (int miniY = 0; miniY < s_matrixEffectHeight - 1; miniY ++) {
+				for (int miniY = 0; miniY < s_matrixEffectHeight - 1; miniY++) {
 					sourceLine[miniY] = sourceLine[miniY + 1];
 				}
 				sourceLine[s_matrixEffectHeight - 1] = tempLine;
@@ -325,19 +326,19 @@ bool blurScreen() {
 
 					blur_createSourceLine(sourceLine[h], backdropTexture + miniY * picWidth * 4, overlapOnLeft, picWidth);
 				}
-				for (x = 0; x < sceneWidth; x ++) {
+				for (x = 0; x < sceneWidth; x++) {
 					int totalRed = 0;
 					int totalGreen = 0;
 					int totalBlue = 0;
 					int *matrixElement = s_matrixEffectData;
-					for (int miniY = 0; miniY < s_matrixEffectHeight; ++ miniY) {
-						unsigned char *pixel = & sourceLine[miniY][x * 4];
-						for (int miniX = 0; miniX < s_matrixEffectWidth; ++ miniX) {
+					for (int miniY = 0; miniY < s_matrixEffectHeight; ++miniY) {
+						unsigned char *pixel = &sourceLine[miniY][x * 4];
+						for (int miniX = 0; miniX < s_matrixEffectWidth; ++miniX) {
 
-							totalRed    += pixel[0]     * * matrixElement;
-							totalGreen  += pixel[1]     * * matrixElement;
-							totalBlue   += pixel[2]     * * matrixElement;
-							++ matrixElement;
+							totalRed += pixel[0] * *matrixElement;
+							totalGreen += pixel[1] * *matrixElement;
+							totalBlue += pixel[2] * *matrixElement;
+							++matrixElement;
 							pixel += 4;
 						}
 					}
@@ -350,19 +351,19 @@ bool blurScreen() {
 					totalBlue = (totalBlue + s_matrixEffectDivide / 2) / s_matrixEffectDivide + s_matrixEffectBase;
 					totalBlue = (totalBlue < 0) ? 0 : ((totalBlue > 255) ? 255 : totalBlue);
 
-					* thisLine = totalRed;
-					++ thisLine;
-					* thisLine = totalGreen;
-					++ thisLine;
-					* thisLine = totalBlue;
-					++ thisLine;
-//					* thisLine = totalAlpha;
-					++ thisLine;
+					*thisLine = totalRed;
+					++thisLine;
+					*thisLine = totalGreen;
+					++thisLine;
+					*thisLine = totalBlue;
+					++thisLine;
+//					*thisLine = totalAlpha;
+					++thisLine;
 				}
 			}
 		}
 
-		for (y = 0; y < s_matrixEffectHeight; y ++) {
+		for (y = 0; y < s_matrixEffectHeight; y++) {
 			delete sourceLine[y];
 		}
 		delete sourceLine;

@@ -52,8 +52,7 @@ loadedSpriteBank *loadBankForAnim(int ID) {
 			debugOut("loadBankForAnim: New sprite bank created OK\n");
 			return returnMe;
 		} else {
-			debugOut(
-					"loadBankForAnim: I guess I couldn't load the sprites...\n");
+			debugOut("loadBankForAnim: I guess I couldn't load the sprites...\n");
 			return NULL;
 		}
 	} else

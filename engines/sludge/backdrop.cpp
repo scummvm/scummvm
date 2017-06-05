@@ -251,11 +251,11 @@ void killParallax() {
 bool reserveBackdrop() {
 	cameraX = 0;
 	cameraY = 0;
-	input.mouseX = (int) ((float) input.mouseX * cameraZoom);
-	input.mouseY = (int) ((float) input.mouseY * cameraZoom);
+	input.mouseX = (int)((float)input.mouseX * cameraZoom);
+	input.mouseY = (int)((float)input.mouseY * cameraZoom);
 	cameraZoom = 1.0;
-	input.mouseX = (int) ((float) input.mouseX / cameraZoom);
-	input.mouseY = (int) ((float) input.mouseY / cameraZoom);
+	input.mouseX = (int)((float)input.mouseX / cameraZoom);
+	input.mouseY = (int)((float)input.mouseY / cameraZoom);
 	setPixelCoords(false);
 	int picWidth = sceneWidth;
 	int picHeight = sceneHeight;
@@ -317,9 +317,7 @@ void loadBackDrop(int fileNum, int x, int y) {
 
 	if (!loadHSI(bigDataFile, x, y, false)) {
 		char mess[200];
-		sprintf(mess,
-				"Can't paste overlay image outside scene dimensions\n\nX = %i\nY = %i\nWidth = %i\nHeight = %i",
-				x, y, sceneWidth, sceneHeight);
+		sprintf(mess, "Can't paste overlay image outside scene dimensions\n\nX = %i\nY = %i\nWidth = %i\nHeight = %i", x, y, sceneWidth, sceneHeight);
 		fatal(mess);
 	}
 
@@ -348,10 +346,10 @@ void blankScreen(int x1, int y1, int x2, int y2) {
 		y1 = 0;
 	if (x1 < 0)
 		x1 = 0;
-	if (x2 > (int) sceneWidth)
-		x2 = (int) sceneWidth;
-	if (y2 > (int) sceneHeight)
-		y2 = (int) sceneHeight;
+	if (x2 > (int)sceneWidth)
+		x2 = (int)sceneWidth;
+	if (y2 > (int)sceneHeight)
+		y2 = (int)sceneHeight;
 
 	int picWidth = x2 - x1;
 	int picHeight = y2 - y1;
@@ -467,13 +465,11 @@ void darkScreen() {
 
 	int xoffset = 0;
 	while (xoffset < sceneWidth) {
-		int w = (sceneWidth - xoffset < viewportWidth) ?
-				sceneWidth - xoffset : viewportWidth;
+		int w = (sceneWidth - xoffset < viewportWidth) ? sceneWidth - xoffset : viewportWidth;
 
 		int yoffset = 0;
 		while (yoffset < sceneHeight) {
-			int h = (sceneHeight - yoffset < viewportHeight) ?
-					sceneHeight - yoffset : viewportHeight;
+			int h = (sceneHeight - yoffset < viewportHeight) ? sceneHeight - yoffset : viewportHeight;
 
 			// Render the scene - first the old backdrop
 #if 0
@@ -533,8 +529,7 @@ void darkScreen() {
 }
 
 inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
-	return (fX == 65535) ?
-			(sceneMax ? ((cX * boxMax) / sceneMax) : 0) : ((cX * fX) / 100);
+	return (fX == 65535) ? (sceneMax ? ((cX * boxMax) / sceneMax) : 0) : ((cX * fX) / 100);
 }
 
 void drawBackDrop() {
@@ -624,7 +619,8 @@ void drawBackDrop() {
 
 bool loadLightMap(int v) {
 	setResourceForFatal(v);
-	if (!openFileFromNum(v)) return fatal("Can't open light map.");
+	if (!openFileFromNum(v))
+		return fatal("Can't open light map.");
 
 	killLightMap();
 	lightMapNumber = v;
@@ -714,10 +710,12 @@ void reloadParallaxTextures() {
 
 bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) {
 	setResourceForFatal(v);
-	if (!openFileFromNum(v)) return fatal("Can't open parallax image");
+	if (!openFileFromNum(v))
+		return fatal("Can't open parallax image");
 
 	parallaxLayer *nP = new parallaxLayer;
-	if (!checkNew(nP)) return false;
+	if (!checkNew(nP))
+		return false;
 
 	nP->next = parallaxStuff;
 	parallaxStuff = nP;
@@ -924,15 +922,15 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	int realPicHeight = backdropSurface.h;
 
 	if (reserve) { // resize backdrop
-		if (!resizeBackdrop(realPicWidth, realPicHeight)) return false;
+		if (!resizeBackdrop(realPicWidth, realPicHeight))
+			return false;
 	}
 
 	if (x == IN_THE_CENTRE)
 		x = (sceneWidth - realPicWidth) >> 1;
 	if (y == IN_THE_CENTRE)
 		y = (sceneHeight - realPicHeight) >> 1;
-	if (x < 0 || x + realPicWidth > sceneWidth || y < 0
-			|| y + realPicHeight > sceneHeight) {
+	if (x < 0 || x + realPicWidth > sceneWidth || y < 0 || y + realPicHeight > sceneHeight) {
 		debug(kSludgeDebugGraphics, "Illegal back drop size");
 		return false;
 	}
@@ -957,9 +955,12 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	int realPicWidth = backdropSurface.w;
 	int realPicHeight = backdropSurface.h;
 
-	if (x == IN_THE_CENTRE) x = (sceneWidth - realPicWidth) >> 1;
-	if (y == IN_THE_CENTRE) y = (sceneHeight - realPicHeight) >> 1;
-	if (x < 0 || x + realPicWidth > sceneWidth || y < 0 || y + realPicHeight > sceneHeight) return false;
+	if (x == IN_THE_CENTRE)
+		x = (sceneWidth - realPicWidth) >> 1;
+	if (y == IN_THE_CENTRE)
+		y = (sceneHeight - realPicHeight) >> 1;
+	if (x < 0 || x + realPicWidth > sceneWidth || y < 0 || y + realPicHeight > sceneHeight)
+		return false;
 #if 0
 	float btx1, tx1;
 	float btx2, tx2;
@@ -1160,27 +1161,22 @@ void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
 #endif
 }
 #endif
-
 #if 0
 void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 	GLint tw, th;
 	glBindTexture(GL_TEXTURE_2D, texture);
 	getTextureDimensions(texture, &tw, &th);
 
-	GLushort *image = new GLushort [tw * th];
-	if (!checkNew(image)) return;
+	GLushort *image = new GLushort[tw * th];
+	if (!checkNew(image))
+		return;
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 //	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image);
 	setPixelCoords(true);
 
 	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-	const GLfloat texCoords[] = {
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 1.0f
-	};
+	const GLfloat texCoords[] = { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f };
 
 	int xoffset = 0;
 	while (xoffset < tw) {
@@ -1189,13 +1185,9 @@ void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 		int yoffset = 0;
 		while (yoffset < th) {
 			int h = (th - yoffset < viewportHeight) ? th - yoffset : viewportHeight;
-			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
-			const GLfloat vertices[] = {
-				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat)w - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat) - xoffset, (GLfloat) - yoffset + h, 0.,
-				(GLfloat)w - xoffset, (GLfloat) - yoffset + h, 0.
-			};
+			glClear (GL_COLOR_BUFFER_BIT);   // Clear The Screen
+			const GLfloat vertices[] = { (GLfloat)-xoffset, (GLfloat)-yoffset, 0., (GLfloat)w - xoffset, (GLfloat)-yoffset, 0., (GLfloat)-xoffset, (GLfloat)-yoffset + h, 0., (GLfloat)w - xoffset,
+					(GLfloat)-yoffset + h, 0. };
 
 			glUseProgram(shader.texture);
 			setPMVMatrix(shader.texture);
@@ -1203,7 +1195,7 @@ void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 			glUseProgram(0);
 
 			for (int i = 0; i < h; i++) {
-				glReadPixels(viewportOffsetX, viewportOffsetY + i, w, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image + xoffset + (yoffset + i)*tw);
+				glReadPixels(viewportOffsetX, viewportOffsetY + i, w, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image + xoffset + (yoffset + i) * tw);
 			}
 			yoffset += viewportHeight;
 		}
@@ -1214,32 +1206,34 @@ void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 	setPixelCoords(false);
 
 	int x, y, lookAhead;
-	unsigned short int *fromHere, * lookPointer;
+	unsigned short int *fromHere, *lookPointer;
 
 	stream->writeUint16BE(w);
 	stream->writeUint16BE(h);
 
-	for (y = 0; y < h; y ++) {
+	for (y = 0; y < h; y++) {
 		fromHere = image + (y * tw);
 		x = 0;
 		while (x < w) {
 			lookPointer = fromHere + 1;
-			for (lookAhead = x + 1; lookAhead < w; lookAhead ++) {
-				if (lookAhead - x == 256) break;
-				if (* fromHere != * lookPointer) break;
-				lookPointer ++;
+			for (lookAhead = x + 1; lookAhead < w; lookAhead++) {
+				if (lookAhead - x == 256)
+					break;
+				if (*fromHere != *lookPointer)
+					break;
+				lookPointer++;
 			}
 			if (lookAhead == x + 1) {
-				put2bytes((* fromHere) & 65503, stream);
+				put2bytes((*fromHere) & 65503, stream);
 			} else {
-				stream->writeUint16BE(* fromHere | 32);
+				stream->writeUint16BE(*fromHere | 32);
 				stream->writeByte(lookAhead - x - 1);
 			}
 			fromHere = lookPointer;
 			x = lookAhead;
 		}
 	}
-	delete [] image;
+	delete[] image;
 	image = NULL;
 }
 #endif

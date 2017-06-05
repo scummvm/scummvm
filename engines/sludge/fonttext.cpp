@@ -94,17 +94,16 @@ void pasteString(char *theText, int xOff, int y, spritePalette &thePal) {
 	if (!fontTableSize)
 		return;
 
-	xOff += (int) ((float) (fontSpace >> 1) / cameraZoom);
+	xOff += (int)((float)(fontSpace >> 1) / cameraZoom);
 	while (theText[a]) {
 		c = u8_nextchar(theText, &a);
 		mySprite = &theFont.sprites[fontInTable(c)];
 		fontSprite(xOff, y, *mySprite, thePal);
-		xOff += (int) ((double) (mySprite->surface.w + fontSpace) / cameraZoom);
+		xOff += (int)((double)(mySprite->surface.w + fontSpace) / cameraZoom);
 	}
 }
 
-void pasteStringToBackdrop(char *theText, int xOff, int y,
-		spritePalette &thePal) {
+void pasteStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
 	sprite *mySprite;
 	int a = 0;
 	uint32_t c;
@@ -121,8 +120,7 @@ void pasteStringToBackdrop(char *theText, int xOff, int y,
 	}
 }
 
-void burnStringToBackdrop(char *theText, int xOff, int y,
-		spritePalette &thePal) {
+void burnStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
 	sprite *mySprite;
 	int a = 0;
 	uint32_t c;

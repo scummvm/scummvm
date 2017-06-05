@@ -71,8 +71,7 @@ inline int TF_abs(int a) {
 }
 
 void setFrames(onScreenPerson &m, int a) {
-	m.myAnim = m.myPersona->animation[(a * m.myPersona->numDirections)
-			+ m.direction];
+	m.myAnim = m.myPersona->animation[(a * m.myPersona->numDirections) + m.direction];
 }
 
 personaAnimation *createPersonaAnim(int num, variableStack *&stacky) {
@@ -93,10 +92,8 @@ personaAnimation *createPersonaAnim(int num, variableStack *&stacky) {
 		} else if (stacky->thisVar.varType == SVT_FUNC) {
 			newP->frames[a].noise = -stacky->thisVar.varData.intValue;
 		} else if (stacky->thisVar.varType == SVT_STACK) {
-			getValueType(frameNum, SVT_INT,
-					stacky->thisVar.varData.theStack->first->thisVar);
-			getValueType(howMany, SVT_INT,
-					stacky->thisVar.varData.theStack->first->next->thisVar);
+			getValueType(frameNum, SVT_INT, stacky->thisVar.varData.theStack->first->thisVar);
+			getValueType(howMany, SVT_INT, stacky->thisVar.varData.theStack->first->next->thisVar);
 		} else {
 			getValueType(frameNum, SVT_INT, stacky->thisVar);
 			howMany = 1;
@@ -182,10 +179,7 @@ bool initPeople() {
 
 void spinStep(onScreenPerson *thisPerson) {
 	int diff = (thisPerson->angle + 360) - thisPerson->wantAngle;
-	int eachSlice =
-			thisPerson->spinSpeed ?
-					thisPerson->spinSpeed :
-					(360 / thisPerson->myPersona->numDirections);
+	int eachSlice = thisPerson->spinSpeed ? thisPerson->spinSpeed : (360 / thisPerson->myPersona->numDirections);
 	while (diff > 180) {
 		diff -= 360;
 	}
@@ -217,8 +211,7 @@ bool turnPersonToFace(int thisNum, int direc) {
 		thisPerson->walking = false;
 		thisPerson->spinning = false;
 		turnMeAngle(thisPerson, direc);
-		setFrames(*thisPerson,
-				(thisPerson == speech->currentTalker) ? ANI_TALK : ANI_STAND);
+		setFrames(*thisPerson, (thisPerson == speech->currentTalker) ? ANI_TALK : ANI_STAND);
 		return true;
 	}
 	return false;
@@ -295,106 +288,106 @@ enum drawModes {
 
 void setMyDrawMode(onScreenPerson *moveMe, int h) {
 	switch (h) {
-	case drawModeTransparent3:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 0;
-		moveMe->transparency = 64;
-		break;
-	case drawModeTransparent2:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 0;
-		moveMe->transparency = 128;
-		break;
-	case drawModeTransparent1:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 0;
-		moveMe->transparency = 192;
-		break;
-	case drawModeInvisible:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 0;
-		moveMe->transparency = 254;
-		break;
-	case drawModeDark1:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 192;
-		moveMe->transparency = 0;
-		break;
-	case drawModeDark2:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 128;
-		moveMe->transparency = 0;
-		break;
-	case drawModeDark3:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 64;
-		moveMe->transparency = 0;
-		break;
-	case drawModeBlack:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 255;
-		moveMe->transparency = 0;
-		break;
-	case drawModeShadow1:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 255;
-		moveMe->transparency = 64;
-		break;
-	case drawModeShadow2:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 255;
-		moveMe->transparency = 128;
-		break;
-	case drawModeShadow3:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 255;
-		moveMe->transparency = 192;
-		break;
-	case drawModeFoggy3:
-		moveMe->r = moveMe->g = moveMe->b = 128;
-		moveMe->colourmix = 192;
-		moveMe->transparency = 0;
-		break;
-	case drawModeFoggy2:
-		moveMe->r = moveMe->g = moveMe->b = 128;
-		moveMe->colourmix = 128;
-		moveMe->transparency = 0;
-		break;
-	case drawModeFoggy1:
-		moveMe->r = moveMe->g = moveMe->b = 128;
-		moveMe->colourmix = 64;
-		moveMe->transparency = 0;
-		break;
-	case drawModeFoggy4:
-		moveMe->r = moveMe->g = moveMe->b = 128;
-		moveMe->colourmix = 255;
-		moveMe->transparency = 0;
-		break;
-	case drawModeGlow3:
-		moveMe->r = moveMe->g = moveMe->b = 255;
-		moveMe->colourmix = 192;
-		moveMe->transparency = 0;
-		break;
-	case drawModeGlow2:
-		moveMe->r = moveMe->g = moveMe->b = 255;
-		moveMe->colourmix = 128;
-		moveMe->transparency = 0;
-		break;
-	case drawModeGlow1:
-		moveMe->r = moveMe->g = moveMe->b = 255;
-		moveMe->colourmix = 64;
-		moveMe->transparency = 0;
-		break;
-	case drawModeGlow4:
-		moveMe->r = moveMe->g = moveMe->b = 255;
-		moveMe->colourmix = 255;
-		moveMe->transparency = 0;
-		break;
-	default:
-		moveMe->r = moveMe->g = moveMe->b = 0;
-		moveMe->colourmix = 0;
-		moveMe->transparency = 0;
-		break;
+		case drawModeTransparent3:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 0;
+			moveMe->transparency = 64;
+			break;
+		case drawModeTransparent2:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 0;
+			moveMe->transparency = 128;
+			break;
+		case drawModeTransparent1:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 0;
+			moveMe->transparency = 192;
+			break;
+		case drawModeInvisible:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 0;
+			moveMe->transparency = 254;
+			break;
+		case drawModeDark1:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 192;
+			moveMe->transparency = 0;
+			break;
+		case drawModeDark2:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 128;
+			moveMe->transparency = 0;
+			break;
+		case drawModeDark3:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 64;
+			moveMe->transparency = 0;
+			break;
+		case drawModeBlack:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 255;
+			moveMe->transparency = 0;
+			break;
+		case drawModeShadow1:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 255;
+			moveMe->transparency = 64;
+			break;
+		case drawModeShadow2:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 255;
+			moveMe->transparency = 128;
+			break;
+		case drawModeShadow3:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 255;
+			moveMe->transparency = 192;
+			break;
+		case drawModeFoggy3:
+			moveMe->r = moveMe->g = moveMe->b = 128;
+			moveMe->colourmix = 192;
+			moveMe->transparency = 0;
+			break;
+		case drawModeFoggy2:
+			moveMe->r = moveMe->g = moveMe->b = 128;
+			moveMe->colourmix = 128;
+			moveMe->transparency = 0;
+			break;
+		case drawModeFoggy1:
+			moveMe->r = moveMe->g = moveMe->b = 128;
+			moveMe->colourmix = 64;
+			moveMe->transparency = 0;
+			break;
+		case drawModeFoggy4:
+			moveMe->r = moveMe->g = moveMe->b = 128;
+			moveMe->colourmix = 255;
+			moveMe->transparency = 0;
+			break;
+		case drawModeGlow3:
+			moveMe->r = moveMe->g = moveMe->b = 255;
+			moveMe->colourmix = 192;
+			moveMe->transparency = 0;
+			break;
+		case drawModeGlow2:
+			moveMe->r = moveMe->g = moveMe->b = 255;
+			moveMe->colourmix = 128;
+			moveMe->transparency = 0;
+			break;
+		case drawModeGlow1:
+			moveMe->r = moveMe->g = moveMe->b = 255;
+			moveMe->colourmix = 64;
+			moveMe->transparency = 0;
+			break;
+		case drawModeGlow4:
+			moveMe->r = moveMe->g = moveMe->b = 255;
+			moveMe->colourmix = 255;
+			moveMe->transparency = 0;
+			break;
+		default:
+			moveMe->r = moveMe->g = moveMe->b = 0;
+			moveMe->colourmix = 0;
+			moveMe->transparency = 0;
+			break;
 	}
 
 }
@@ -417,8 +410,7 @@ void setPersonTransparency(int ob, unsigned char x) {
 	moveMe->transparency = x;
 }
 
-void setPersonColourise(int ob, unsigned char r, unsigned char g,
-		unsigned char b, unsigned char colourmix) {
+void setPersonColourise(int ob, unsigned char r, unsigned char g, unsigned char b, unsigned char colourmix) {
 	onScreenPerson *moveMe = findPerson(ob);
 	if (!moveMe)
 		return;
@@ -474,20 +466,16 @@ void drawPeople() {
 				thisPerson->frameNum = 0;
 				thisPerson->frameTick = myAnim->frames[0].howMany;
 				if (myAnim->frames[thisPerson->frameNum].noise > 0) {
-					startSound(myAnim->frames[thisPerson->frameNum].noise,
-							false);
+					startSound(myAnim->frames[thisPerson->frameNum].noise, false);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-					thisPerson->frameTick =
-							thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				} else if (myAnim->frames[thisPerson->frameNum].noise) {
-					startNewFunctionNum(
-							-myAnim->frames[thisPerson->frameNum].noise, 0,
-							NULL, noStack);
+					startNewFunctionNum(-myAnim->frames[thisPerson->frameNum].noise, 0,
+					NULL, noStack);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-					thisPerson->frameTick =
-							thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				}
 			}
 			int fNumSign = myAnim->frames[thisPerson->frameNum].frameNum;
@@ -499,8 +487,7 @@ void drawPeople() {
 			}
 			if (m != 2) {
 				bool r = false;
-				r = scaleSprite(myAnim->theSprites->bank.sprites[fNum],
-						myAnim->theSprites->bank.myPalette, thisPerson, m);
+				r = scaleSprite(myAnim->theSprites->bank.sprites[fNum], myAnim->theSprites->bank.myPalette, thisPerson, m);
 				if (r) {
 					if (thisPerson->thisType->screenName[0]) {
 						if (personRegion.thisType != thisPerson->thisType)
@@ -514,24 +501,19 @@ void drawPeople() {
 		if (!--thisPerson->frameTick) {
 			thisPerson->frameNum++;
 			thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-			thisPerson->frameTick =
-					thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+			thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 			if (thisPerson->show && myAnim && myAnim->frames) {
 				if (myAnim->frames[thisPerson->frameNum].noise > 0) {
-					startSound(myAnim->frames[thisPerson->frameNum].noise,
-							false);
+					startSound(myAnim->frames[thisPerson->frameNum].noise, false);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-					thisPerson->frameTick =
-							thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				} else if (myAnim->frames[thisPerson->frameNum].noise) {
-					startNewFunctionNum(
-							-myAnim->frames[thisPerson->frameNum].noise, 0,
-							NULL, noStack);
+					startNewFunctionNum(-myAnim->frames[thisPerson->frameNum].noise, 0,
+					NULL, noStack);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
-					thisPerson->frameTick =
-							thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
+					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 				}
 			}
 		}
@@ -548,9 +530,7 @@ void makeSilent(onScreenPerson &me) {
 }
 
 bool handleClosestPoint(int &setX, int &setY, int &setPoly) {
-	int gotX = 320, gotY = 200, gotPoly = -1, i, j, xTest1, yTest1, xTest2,
-			yTest2, closestX, closestY, oldJ, currentDistance = 0xFFFFF,
-			thisDistance;
+	int gotX = 320, gotY = 200, gotPoly = -1, i, j, xTest1, yTest1, xTest2, yTest2, closestX, closestY, oldJ, currentDistance = 0xFFFFF, thisDistance;
 
 //	FILE * dbug = fopen ("debug_closest.txt", "at");
 //	fprintf (dbug, "\nGetting closest point to %i, %i\n", setX, setY);
@@ -559,16 +539,11 @@ bool handleClosestPoint(int &setX, int &setY, int &setPoly) {
 		oldJ = currentFloor->polygon[i].numVertices - 1;
 		for (j = 0; j < currentFloor->polygon[i].numVertices; j++) {
 //			fprintf (dbug, "Polygon %i, line %i... ", i, j);
-			xTest1 =
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x;
-			yTest1 =
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y;
-			xTest2 =
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].x;
-			yTest2 =
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].y;
-			closestPointOnLine(closestX, closestY, xTest1, yTest1, xTest2,
-					yTest2, setX, setY);
+			xTest1 = currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x;
+			yTest1 = currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y;
+			xTest2 = currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].x;
+			yTest2 = currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].y;
+			closestPointOnLine(closestX, closestY, xTest1, yTest1, xTest2, yTest2, setX, setY);
 //			fprintf (dbug, "closest point is %i, %i... ", closestX, closestY);
 			xTest1 = setX - closestX;
 			yTest1 = setY - closestY;
@@ -610,8 +585,7 @@ bool doBorderStuff(onScreenPerson *moveMe) {
 
 		// Grab the index of the second matching corner...
 		int ID, ID2;
-		if (!getMatchingCorners(currentFloor->polygon[moveMe->inPoly],
-				currentFloor->polygon[newPoly], ID, ID2))
+		if (!getMatchingCorners(currentFloor->polygon[moveMe->inPoly], currentFloor->polygon[newPoly], ID, ID2))
 			return fatal("Not a valid floor plan!");
 
 		// Remember that we're walking to the new polygon...
@@ -647,8 +621,7 @@ bool doBorderStuff(onScreenPerson *moveMe) {
 			dy23 *= dy23;
 			dy24 *= dy24;
 
-			if (sqrt((double) dx13 + dy13) + sqrt((double) dx23 + dy23)
-					< sqrt((double) dx14 + dy14) + sqrt((double) dx24 + dy24)) {
+			if (sqrt((double)dx13 + dy13) + sqrt((double)dx23 + dy23) < sqrt((double)dx14 + dy14) + sqrt((double)dx24 + dy24)) {
 				moveMe->thisStepX = x3;
 				moveMe->thisStepY = y3;
 			} else {
@@ -679,9 +652,7 @@ bool walkMe(onScreenPerson *thisPerson, bool move = true) {
 		if (s < 0.2)
 			s = 0.2;
 
-		maxDiff =
-				(TF_abs(xDiff) >= TF_abs(yDiff)) ?
-						TF_abs(xDiff) : TF_abs(yDiff);
+		maxDiff = (TF_abs(xDiff) >= TF_abs(yDiff)) ? TF_abs(xDiff) : TF_abs(yDiff);
 
 		if (TF_abs(maxDiff) > s) {
 			if (thisPerson->spinning) {
@@ -690,8 +661,7 @@ bool walkMe(onScreenPerson *thisPerson, bool move = true) {
 			}
 			s = maxDiff / s;
 			if (move)
-				moveAndScale(*thisPerson, thisPerson->x + xDiff / s,
-						thisPerson->y + yDiff / (s * 2));
+				moveAndScale(*thisPerson, thisPerson->x + xDiff / s, thisPerson->y + yDiff / (s * 2));
 			return true;
 		}
 
@@ -732,8 +702,7 @@ bool makeWalkingPerson(int x, int y, int objNum, loadedFunction *func, int di) {
 	moveMe->walkToY = y;
 	moveMe->walkToPoly = inFloor(x, y);
 	if (moveMe->walkToPoly == -1) {
-		if (!handleClosestPoint(moveMe->walkToX, moveMe->walkToY,
-				moveMe->walkToPoly))
+		if (!handleClosestPoint(moveMe->walkToX, moveMe->walkToY, moveMe->walkToPoly))
 			return false;
 	}
 
@@ -767,8 +736,7 @@ bool stopPerson(int o) {
 	return false;
 }
 
-bool forceWalkingPerson(int x, int y, int objNum, loadedFunction *func,
-		int di) {
+bool forceWalkingPerson(int x, int y, int objNum, loadedFunction *func, int di) {
 	if (x == 0 && y == 0)
 		return false;
 	onScreenPerson *moveMe = findPerson(objNum);
@@ -840,8 +808,7 @@ void walkAllPeople() {
 			spinStep(thisPerson);
 			setFrames(*thisPerson, ANI_STAND);
 		}
-		if ((!thisPerson->walking) && (!thisPerson->spinning)
-				&& thisPerson->continueAfterWalking) {
+		if ((!thisPerson->walking) && (!thisPerson->spinning) && thisPerson->continueAfterWalking) {
 			restartFunction(thisPerson->continueAfterWalking);
 			thisPerson->continueAfterWalking = NULL;
 		}
@@ -890,12 +857,10 @@ bool addPerson(int x, int y, int objNum, persona *p) {
 		if (fNumSigned < 0) {
 			newPerson->height = 5;
 		} else {
-			newPerson->height =
-					p->animation[0]->theSprites->bank.sprites[0].yhot + 5;
+			newPerson->height = p->animation[0]->theSprites->bank.sprites[0].yhot + 5;
 		}
 	} else {
-		newPerson->height = p->animation[0]->theSprites->bank.sprites[fNum].yhot
-				+ 5;
+		newPerson->height = p->animation[0]->theSprites->bank.sprites[fNum].yhot + 5;
 	}
 
 	// NOW ADD IT IN THE RIGHT PLACE
@@ -907,7 +872,7 @@ bool addPerson(int x, int y, int objNum, persona *p) {
 	newPerson->next = (*changethat);
 	(*changethat) = newPerson;
 
-	return (bool) (newPerson->thisType != NULL);
+	return (bool)(newPerson->thisType != NULL);
 }
 
 int timeForAnim(personaAnimation *fram) {
@@ -987,8 +952,7 @@ void removeOneCharacter(int i) {
 	onScreenPerson *p = findPerson(i);
 
 	if (p) {
-		if (overRegion == &personRegion
-				&& overRegion->thisType == p->thisType) {
+		if (overRegion == &personRegion && overRegion->thisType == p->thisType) {
 			overRegion = NULL;
 		}
 
@@ -997,8 +961,7 @@ void removeOneCharacter(int i) {
 		p->continueAfterWalking = NULL;
 		onScreenPerson * * killPeople;
 
-		for (killPeople = &allPeople; *killPeople != p; killPeople =
-				&((*killPeople)->next)) {
+		for (killPeople = &allPeople; *killPeople != p; killPeople = &((*killPeople)->next)) {
 			;
 		}
 

@@ -75,133 +75,140 @@ bool setZBuffer(int y) {
 	setResourceForFatal(y);
 
 	zBuffer.originalNum = y;
-	if (! openFileFromNum(y)) return false;
-	if (fgetc(bigDataFile) != 'S') return fatal("Not a Z-buffer file");
-	if (fgetc(bigDataFile) != 'z') return fatal("Not a Z-buffer file");
-	if (fgetc(bigDataFile) != 'b') return fatal("Not a Z-buffer file");
+	if (!openFileFromNum(y))
+		return false;
+	if (bigDataFile->readByte() != 'S')
+		return fatal("Not a Z-buffer file");
+	if (bigDataFile->readByte() != 'z')
+		return fatal("Not a Z-buffer file");
+	if (bigDataFile->readByte() != 'b')
+		return fatal("Not a Z-buffer file");
 
-	switch (fgetc(bigDataFile)) {
-		case 0:
-		zBuffer.width = 640;
-		zBuffer.height = 480;
-		break;
+	switch (bigDataFile->readByte()) {
+			case 0:
+				zBuffer.width = 640;
+				zBuffer.height = 480;
+				break;
 
-		case 1:
-		zBuffer.width = bigDataFile->readUint16BE();
-		zBuffer.height = bigDataFile->readUint16BE();
-		break;
+			case 1:
+				zBuffer.width = bigDataFile->readUint16BE();
+				zBuffer.height = bigDataFile->readUint16BE();
+				break;
 
-		default:
-		return fatal("Extended Z-buffer format not supported in this version of the SLUDGE engine");
-	}
-	if (zBuffer.width != sceneWidth || zBuffer.height != sceneHeight) {
-		char tmp[256];
-		sprintf(tmp, "Z-w: %d Z-h:%d w: %d, h:%d", zBuffer.width, zBuffer.height, sceneWidth, sceneHeight);
-		return fatal("Z-buffer width and height don't match scene width and height", tmp);
-	}
+			default:
+				return fatal("Extended Z-buffer format not supported in this version of the SLUDGE engine");
+		}
+		if (zBuffer.width != sceneWidth || zBuffer.height != sceneHeight) {
+			char tmp[256];
+			sprintf(tmp, "Z-w: %d Z-h:%d w: %d, h:%d", zBuffer.width, zBuffer.height, sceneWidth, sceneHeight);
+			return fatal("Z-buffer width and height don't match scene width and height", tmp);
+		}
 
-	zBuffer.numPanels = fgetc(bigDataFile);
-	for (y = 0; y < zBuffer.numPanels; y ++) {
-		yPalette[y] = bigDataFile->readUint16BE();
-	}
-	sortZPal(yPalette, sorted, zBuffer.numPanels);
-	for (y = 0; y < zBuffer.numPanels; y ++) {
-		zBuffer.panel[y] = yPalette[sorted[y]];
-		sortback[sorted[y]] = y;
-	}
+		zBuffer.numPanels = bigDataFile->readByte();
+		for (y = 0; y < zBuffer.numPanels; y++) {
+			yPalette[y] = bigDataFile->readUint16BE();
+		}
+		sortZPal(yPalette, sorted, zBuffer.numPanels);
+		for (y = 0; y < zBuffer.numPanels; y++) {
+			zBuffer.panel[y] = yPalette[sorted[y]];
+			sortback[sorted[y]] = y;
+		}
 
-	int picWidth = sceneWidth;
-	int picHeight = sceneHeight;
-	if (! NPOT_textures) {
-		picWidth = getNextPOT(picWidth);
-		picHeight = getNextPOT(picHeight);
-	}
-	zBuffer.tex = new GLubyte [picHeight * picWidth];
-	if (! checkNew(zBuffer.tex)) return false;
+		int picWidth = sceneWidth;
+		int picHeight = sceneHeight;
+		if (!NPOT_textures) {
+			picWidth = getNextPOT(picWidth);
+			picHeight = getNextPOT(picHeight);
+		}
+		zBuffer.tex = new GLubyte[picHeight * picWidth];
+		if (!checkNew(zBuffer.tex))
+			return false;
 
-	for (y = 0; y < sceneHeight; y ++) {
-		for (x = 0; x < sceneWidth; x ++) {
-			if (stillToGo == 0) {
-				n = fgetc(bigDataFile);
-				stillToGo = n >> 4;
-				if (stillToGo == 15) stillToGo = bigDataFile->readUint16BE() + 16l;
-				else stillToGo ++;
-				n &= 15;
+		for (y = 0; y < sceneHeight; y++) {
+			for (x = 0; x < sceneWidth; x++) {
+				if (stillToGo == 0) {
+					n = bigDataFile->readByte();
+					stillToGo = n >> 4;
+					if (stillToGo == 15)
+						stillToGo = bigDataFile->readUint16BE() + 16l;
+					else
+						stillToGo++;
+					n &= 15;
+				}
+				zBuffer.tex[y * picWidth + x] = sortback[n] * 16;
+				stillToGo--;
 			}
-			zBuffer.tex[y * picWidth + x] = sortback[n] * 16;
-			stillToGo --;
 		}
-	}
-	finishAccess();
+		finishAccess();
 #endif
-	setResourceForFatal(-1);
+		setResourceForFatal(-1);
 #if 0
-	if (! zBuffer.texName) glGenTextures(1, &zBuffer.texName);
-	glBindTexture(GL_TEXTURE_2D, zBuffer.texName);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		if (! zBuffer.texName) glGenTextures(1, &zBuffer.texName);
+		glBindTexture(GL_TEXTURE_2D, zBuffer.texName);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-	texImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, picWidth, picHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, zBuffer.tex, zBuffer.texName);
+		texImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, picWidth, picHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, zBuffer.tex, zBuffer.texName);
 #endif
-	return true;
-}
-
-void drawZBuffer(int x, int y, bool upsidedown) {
-	int i;
-#if 0
-	if (! zBuffer.tex) return;
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glDepthMask(GL_TRUE);
-
-	glUseProgram(shader.texture);
-
-	setPMVMatrix(shader.texture);
-
-	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glBindTexture(GL_TEXTURE_2D, zBuffer.texName);
-
-	setPrimaryColor(1.0, 1.0, 1.0, 1.0);
-
-	for (i = 1; i < zBuffer.numPanels; i++) {
-		GLfloat z = 1.0 - (double) i * (1.0 / 128.0);
-
-		GLfloat vy1 = -y, vy2 = zBuffer.height - y;
-		if (upsidedown) {
-			vy1 += zBuffer.height;
-			vy2 -= zBuffer.height;
-		}
-
-		const GLfloat vertices[] = {
-			(GLfloat) - x, vy1, z,
-			(GLfloat)zBuffer.width - x, vy1, z,
-			(GLfloat) - x, vy2, z,
-			(GLfloat)zBuffer.width - x, vy2, z
-		};
-
-		const GLfloat texCoords[] = {
-			0.0f, 0.0f,
-			backdropTexW, 0.0f,
-			0.0f, backdropTexH,
-			backdropTexW, backdropTexH
-		};
-
-		glUniform1i(glGetUniformLocation(shader.texture, "zBuffer"), 1);
-		glUniform1f(glGetUniformLocation(shader.texture, "zBufferLayer"), i);
-
-		drawQuad(shader.texture, vertices, 1, texCoords);
-		glUniform1i(glGetUniformLocation(shader.texture, "zBuffer"), 0);
+		return true;
 	}
 
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthMask(GL_FALSE);
-	glDisable(GL_BLEND);
-	glUseProgram(0);
-#endif
-}
+	void drawZBuffer(int x, int y, bool upsidedown) {
+		int i;
+#if 0
+		if (! zBuffer.tex) return;
 
-} // End of namespace Sludge
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glDepthMask(GL_TRUE);
+
+		glUseProgram(shader.texture);
+
+		setPMVMatrix(shader.texture);
+
+		//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glBindTexture(GL_TEXTURE_2D, zBuffer.texName);
+
+		setPrimaryColor(1.0, 1.0, 1.0, 1.0);
+
+		for (i = 1; i < zBuffer.numPanels; i++) {
+			GLfloat z = 1.0 - (double) i * (1.0 / 128.0);
+
+			GLfloat vy1 = -y, vy2 = zBuffer.height - y;
+			if (upsidedown) {
+				vy1 += zBuffer.height;
+				vy2 -= zBuffer.height;
+			}
+
+			const GLfloat vertices[] = {
+				(GLfloat) - x, vy1, z,
+				(GLfloat)zBuffer.width - x, vy1, z,
+				(GLfloat) - x, vy2, z,
+				(GLfloat)zBuffer.width - x, vy2, z
+			};
+
+			const GLfloat texCoords[] = {
+				0.0f, 0.0f,
+				backdropTexW, 0.0f,
+				0.0f, backdropTexH,
+				backdropTexW, backdropTexH
+			};
+
+			glUniform1i(glGetUniformLocation(shader.texture, "zBuffer"), 1);
+			glUniform1f(glGetUniformLocation(shader.texture, "zBufferLayer"), i);
+
+			drawQuad(shader.texture, vertices, 1, texCoords);
+			glUniform1i(glGetUniformLocation(shader.texture, "zBuffer"), 0);
+		}
+
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_BLEND);
+		glUseProgram(0);
+#endif
+	}
+
+	} // End of namespace Sludge

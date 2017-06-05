@@ -1672,8 +1672,7 @@ bool handleInput() {
 			delete tempString;
 			tempString = NULL;
 			tempStack->next = NULL;
-			if (!startNewFunctionNum(currentEvents->spaceFunction, 1, NULL,
-					tempStack))
+			if (!startNewFunctionNum(currentEvents->spaceFunction, 1, NULL, tempStack))
 				return false;
 		}
 	}

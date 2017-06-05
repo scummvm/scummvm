@@ -49,8 +49,7 @@ soundThing soundCache[MAX_SAMPLES];
 int defVol = 128;
 int defSoundVol = 255;
 
-char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile,
-		uint32_t size) {
+char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile, uint32_t size) {
 	char *allData = new char[size];
 	if (!allData)
 		return NULL;
@@ -147,11 +146,7 @@ bool playMOD(int f, int a, int fromTrack) {
 		if (!memImage)
 			return fatal(ERROR_MUSIC_MEMORY_LOW);
 
-		mod[a] =
-				BASS_MusicLoad(true, memImage, 0, length,
-						BASS_MUSIC_LOOP
-								| BASS_MUSIC_RAMP/*|BASS_MUSIC_PRESCAN needed too if we're going to set the position in bytes*/,
-						0);
+		mod[a] = BASS_MusicLoad(true, memImage, 0, length, BASS_MUSIC_LOOP | BASS_MUSIC_RAMP/*|BASS_MUSIC_PRESCAN needed too if we're going to set the position in bytes*/, 0);
 		delete memImage;
 
 		if (!mod[a]) {
@@ -162,10 +157,8 @@ bool playMOD(int f, int a, int fromTrack) {
 			if (!BASS_ChannelPlay(mod[a], true))
 				debugOut("playMOD: Error %d!\n", BASS_ErrorGetCode());
 
-			BASS_ChannelSetPosition(mod[a], MAKELONG(fromTrack, 0),
-					BASS_POS_MUSIC_ORDER);
-			BASS_ChannelFlags(mod[a], BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP,
-					BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP);
+			BASS_ChannelSetPosition(mod[a], MAKELONG(fromTrack, 0), BASS_POS_MUSIC_ORDER);
+			BASS_ChannelFlags(mod[a], BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP, BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP);
 		}
 		setResourceForFatal(-1);
 	}
@@ -175,8 +168,7 @@ bool playMOD(int f, int a, int fromTrack) {
 void setMusicVolume(int a, int v) {
 	int ret;
 	if (soundOK && mod[a]) {
-		ret = BASS_ChannelSetAttribute(mod[a], BASS_ATTRIB_VOL,
-				(float) v / 256);
+		ret = BASS_ChannelSetAttribute(mod[a], BASS_ATTRIB_VOL, (float)v / 256);
 		if (!ret) {
 			debugOut("setMusicVolume: Error %d\n", BASS_ErrorGetCode());
 		}
@@ -192,8 +184,7 @@ void setSoundVolume(int a, int v) {
 		int ch = findInSoundCache(a);
 		if (ch != -1) {
 			if (BASS_ChannelIsActive(soundCache[ch].mostRecentChannel)) {
-				BASS_ChannelSetAttribute(soundCache[ch].mostRecentChannel,
-						BASS_ATTRIB_VOL, (float) v / 256);
+				BASS_ChannelSetAttribute(soundCache[ch].mostRecentChannel, BASS_ATTRIB_VOL, (float)v / 256);
 			}
 		}
 	}
@@ -203,8 +194,7 @@ bool stillPlayingSound(int ch) {
 	if (soundOK)
 		if (ch != -1)
 			if (soundCache[ch].fileLoaded != -1)
-				if (BASS_ChannelIsActive(soundCache[ch].mostRecentChannel)
-						!= BASS_ACTIVE_STOPPED)
+				if (BASS_ChannelIsActive(soundCache[ch].mostRecentChannel) != BASS_ACTIVE_STOPPED)
 					return true;
 	return false;
 }
@@ -318,8 +308,7 @@ int cacheSound(int f) {
 
 	for (;;) {
 //		soundWarning ("  Trying to load sound into slot", a);
-		soundCache[a].sample = BASS_SampleLoad(true, memImage, 0, length, 65535,
-				0);
+		soundCache[a].sample = BASS_SampleLoad(true, memImage, 0, length, 65535, 0);
 
 		if (soundCache[a].sample) {
 			soundCache[a].fileLoaded = f;
@@ -345,15 +334,12 @@ bool startSound(int f, bool loopy) {
 		soundCache[a].looping = loopy;
 		soundCache[a].vol = defSoundVol;
 
-		soundCache[a].mostRecentChannel = BASS_SampleGetChannel(
-				soundCache[a].sample, false);
+		soundCache[a].mostRecentChannel = BASS_SampleGetChannel(soundCache[a].sample, false);
 		if (soundCache[a].mostRecentChannel) {
 			BASS_ChannelPlay(soundCache[a].mostRecentChannel, true);
-			BASS_ChannelSetAttribute(soundCache[a].mostRecentChannel,
-					BASS_ATTRIB_VOL, defSoundVol);
+			BASS_ChannelSetAttribute(soundCache[a].mostRecentChannel, BASS_ATTRIB_VOL, defSoundVol);
 			if (loopy) {
-				BASS_ChannelFlags(soundCache[a].mostRecentChannel,
-						BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP); // set LOOP flag
+				BASS_ChannelFlags(soundCache[a].mostRecentChannel, BASS_SAMPLE_LOOP, BASS_SAMPLE_LOOP); // set LOOP flag
 			}
 		}
 
