@@ -336,14 +336,14 @@ char *getTextFromAnyVar(const variable &from) {
 				builder2 = joinStrings(builder, " ");
 				if (!builder2)
 					return NULL;
-				delete builder;
+				delete[] builder;
 				grabText = getTextFromAnyVar(stacky->thisVar);
 				builder = joinStrings(builder2, grabText);
 				if (!builder)
 					return NULL;
-				delete grabText;
+				delete[] grabText;
 				grabText = NULL;
-				delete builder2;
+				delete[] builder2;
 				builder2 = NULL;
 				stacky = stacky->next;
 			}

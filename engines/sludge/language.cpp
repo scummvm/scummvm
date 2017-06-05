@@ -76,7 +76,7 @@ char *getPrefsFilename(char *filename) {
 
 	char *joined = joinStrings(f, ".ini");
 
-	delete filename;
+	delete[] filename;
 	filename = NULL;
 	return joined;
 }

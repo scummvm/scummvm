@@ -266,7 +266,7 @@ bool initSludge(const char *filename) {
 
 	if (strcmp(checker, "okSoFar"))
 		return fatal(ERROR_BAD_HEADER, filename);
-	delete checker;
+	delete[] checker;
 	checker = NULL;
 
 	unsigned char customIconLogo = fp->readByte();
@@ -509,7 +509,7 @@ bool initSludge(const char *filename) {
 
 	char *gameName = encodeFilename(gameNameOrig);
 
-	delete gameNameOrig;
+	delete[] gameNameOrig;
 
 #if 0
 	changeToUserDir();
@@ -767,10 +767,10 @@ void finishFunction(loadedFunction *fun) {
 	pauseFunction(fun);
 	if (fun->stack)
 		fatal(ERROR_NON_EMPTY_STACK);
-	delete fun->compiledLines;
+	delete[] fun->compiledLines;
 	for (a = 0; a < fun->numLocals; a++)
 		unlinkVar(fun->localVars[a]);
-	delete fun->localVars;
+	delete[] fun->localVars;
 	unlinkVar(fun->reg);
 	delete fun;
 	fun = NULL;
@@ -785,7 +785,7 @@ void abortFunction(loadedFunction *fun) {
 	delete fun->compiledLines;
 	for (a = 0; a < fun->numLocals; a++)
 		unlinkVar(fun->localVars[a]);
-	delete fun->localVars;
+	delete[] fun->localVars;
 	unlinkVar(fun->reg);
 	if (fun->calledBy)
 		abortFunction(fun->calledBy);

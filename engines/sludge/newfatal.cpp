@@ -81,7 +81,7 @@ void warning(const char *l) {
 }
 
 void registerWindowForFatal() {
-	delete fatalInfo;
+	delete[] fatalInfo;
 	fatalInfo =
 			joinStrings("There's an error with this SLUDGE game! If you're designing this game, please turn on verbose error messages in the project manager and recompile. If not, please contact the author saying where and how this problem occured.", "");
 }
@@ -126,7 +126,7 @@ int checkNew(const void *mem) {
 }
 
 void setFatalInfo(const char *userFunc, const char *BIF) {
-	delete fatalInfo;
+	delete[] fatalInfo;
 	fatalInfo = new char[strlen(userFunc) + strlen(BIF) + 38];
 	if (fatalInfo)
 		sprintf(fatalInfo, "Currently in this sub: %s\nCalling: %s", userFunc, BIF);
