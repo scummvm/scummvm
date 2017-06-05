@@ -49,64 +49,7 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ 0, 0 }
 };
  
-namespace Sludge {
-static const SludgeGameDescription gameDescriptions[] = {
-	{
-		{
-			"welcome",
-			"",
-			AD_ENTRY1("Welcome.slg", "50445503761cf6684fe3270d0860a4c3"),
-			Common::EN_ANY,
-			Common::kPlatformUnknown,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		0
-	},
-
-	{
-		{
-			"welcome2",
-			"",
-			AD_ENTRY1("Welcome.slg", "cb1f307c05b8ae4107bcc7f86a3d2f99"),
-			Common::EN_ANY,
-			Common::kPlatformUnknown,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		0
-	},
-
-	{
-		{
-			"welcomePng",
-			"",
-			AD_ENTRY1("Welcome.slg", "ff0d7ef0ce73b5503ef6b965928af6d6"),
-			Common::EN_ANY,
-			Common::kPlatformUnknown,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		0
-	},
-
-	{
-		{
-			"verbcoin",
-			"",
-			AD_ENTRY1("Welcome.slg", "e39ec315dcbf3a1137481f0a5fe1617d"),
-			Common::EN_ANY,
-			Common::kPlatformUnknown,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-		0
-	},
-
-	{ AD_TABLE_END_MARKER, 0 }
-};
-
-} // End of namespace Sludge
+#include "sludge/detection_tables.h"
 
 class SludgeMetaEngine : public AdvancedMetaEngine {
 public:
