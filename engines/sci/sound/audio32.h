@@ -28,7 +28,7 @@
 #include "common/array.h"          // for Array
 #include "common/mutex.h"          // for StackLock, Mutex
 #include "common/scummsys.h"       // for int16, uint8, uint32, uint16
-#include "engines/sci/resource.h"  // for ResourceId
+#include "sci/resource.h"          // for ResourceId
 #include "sci/engine/vm_types.h"   // for reg_t, NULL_REG
 #include "sci/video/robot_decoder.h" // for RobotAudioStream
 
