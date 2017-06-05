@@ -22,6 +22,8 @@
 #ifndef SLUDGE_PEOPLE_H
 #define SLUDGE_PEOPLE_H
 
+#include "sludge/variable.h"
+
 namespace Sludge {
 
 struct animFrame {

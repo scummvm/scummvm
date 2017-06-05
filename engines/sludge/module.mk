@@ -42,10 +42,9 @@ MODULE_OBJS := \
 	variable.o \
 	zbuffer.o \
 	CommonCode/utf8.o \
-#	linuxstuff.o \
-	shaders.o \
-	libwebm/mkvparser.o \
-	libwebm/mkvreader.o \
+#	shaders.o \
+#	libwebm/mkvparser.o \
+#	libwebm/mkvreader.o \
  
 MODULE_DIRS += \
 	engines/sludge

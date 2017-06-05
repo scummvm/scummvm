@@ -22,10 +22,6 @@
 #ifndef SLUDGE_FLOOR_H
 #define SLUDGE_FLOOR_H
 
-#ifdef _WIN32
-#include "windef.h"
-#endif
-
 namespace Sludge {
 
 struct floorPolygon {
@@ -33,12 +29,10 @@ struct floorPolygon {
 	int *vertexID;
 };
 
-#ifndef _WIN32
 struct POINT {
 	int x;
 	int y;
 };
-#endif
 
 struct flor {
 	int originalNum;

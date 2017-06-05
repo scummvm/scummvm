@@ -114,6 +114,7 @@ int inFatal(const char *str) {
 	atexit(displayFatal);
 	exit(1);
 #endif
+	return true;
 }
 
 int checkNew(const void *mem) {
