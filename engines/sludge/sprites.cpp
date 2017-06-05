@@ -181,6 +181,9 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 		// init data
 		loadhere.sprites[i].surface.create(picwidth, picheight, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+		if (isFont) {
+			loadhere.sprites[i].burnSurface.create(picwidth, picheight, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+		}
 		data = (byte *)new byte[picwidth * (picheight + 1)];
 		if (!checkNew(data)) return false;
 		int ooo = picwidth * picheight;
@@ -260,9 +263,9 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 					target[3] = (byte)loadhere.myPalette.r[transColour];
 				}
 				if (isFont) {
-					target = (byte *)loadhere.sprites[i].surface.getBasePtr(x, y);
+					target = (byte *)loadhere.sprites[i].burnSurface.getBasePtr(x, y);
 					if (s)
-					target[0] = loadhere.myPalette.r[s];
+						target[0] = loadhere.myPalette.r[s];
 					target[1] = (byte)255;
 					target[2] = (byte)255;
 					target[3] = (byte)255;
@@ -490,19 +493,24 @@ void burnSpriteToBackDrop(int x1, int y1, sprite &single,
 extern GLuint backdropTextureName;
 #endif
 
-void fontSprite(bool flip, int x, int y, sprite &single,
-		const spritePalette &fontPal) {
+void fontSprite(bool flip, int x, int y, sprite &single, const spritePalette &fontPal) {
+	float x1 = (float) x - (float) single.xhot / cameraZoom;
+	float y1 = (float) y - (float) single.yhot / cameraZoom;
+
+	// Use Transparent surface to scale and blit
+	Graphics::TransparentSurface tmp(single.surface, false);
+	Graphics::TransparentSurface tmp2(single.burnSurface, false);
+	tmp.blit(renderSurface, x1, y1, (flip? Graphics::FLIP_H : Graphics::FLIP_NONE));
+	tmp2.blit(renderSurface, x1, y1, (flip? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+
 #if 0
+	float x2 = x1 + (float) single.surface.w / cameraZoom;
+	float y2 = y1 + (float) single.surface.h / cameraZoom;
 	float tx1 = (float) (single.tex_x - 0.5) / fontPal.tex_w[single.texNum];
 	float ty1 = 0.0;
 	float tx2 = (float) (single.tex_x + single.width + (flip ? 1.0 : 0.5))
 			/ fontPal.tex_w[single.texNum];
 	float ty2 = (float) (single.height + 2) / fontPal.tex_h[single.texNum];
-
-	float x1 = (float) x - (float) single.xhot / cameraZoom;
-	float y1 = (float) y - (float) single.yhot / cameraZoom;
-	float x2 = x1 + (float) single.width / cameraZoom;
-	float y2 = y1 + (float) single.height / cameraZoom;
 
 	GLfloat vertices[] = {
 		x1, y1, 0.0f,
