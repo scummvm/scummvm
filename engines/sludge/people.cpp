@@ -20,8 +20,6 @@
  *
  */
 
-#include <stdlib.h>
-
 #include "sludge/allfiles.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"

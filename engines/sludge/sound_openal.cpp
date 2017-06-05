@@ -19,8 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <stdint.h>
-#include <stdio.h>
 
 #if 0
 #include "AL/alure.h"
@@ -369,7 +367,7 @@ void playStream(int a, bool isMOD, bool loopy) {
 }
 
 char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile,
-		uint32_t size) {
+		uint32 size) {
 	char *allData = new char[size];
 	if (!allData)
 		return NULL;
@@ -390,7 +388,7 @@ bool playMOD(int f, int a, int fromTrack) {
 	stopMOD(a);
 
 	setResourceForFatal(f);
-	uint32_t length = openFileFromNum(f);
+	uint32 length = openFileFromNum(f);
 	if (length == 0) {
 		finishAccess();
 		setResourceForFatal(-1);
@@ -532,7 +530,7 @@ int cacheSound(int f) {
 	a = findEmptySoundSlot();
 	freeSound(a);
 
-	uint32_t length = openFileFromNum(f);
+	uint32 length = openFileFromNum(f);
 	if (! length) return -1;
 
 	unsigned char *memImage;

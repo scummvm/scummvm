@@ -49,7 +49,7 @@ soundThing soundCache[MAX_SAMPLES];
 int defVol = 128;
 int defSoundVol = 255;
 
-char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile, uint32_t size) {
+char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile, uint32 size) {
 	char *allData = new char[size];
 	if (!allData)
 		return NULL;
@@ -137,7 +137,7 @@ bool playMOD(int f, int a, int fromTrack) {
 		stopMOD(a);
 
 		setResourceForFatal(f);
-		uint32_t length = openFileFromNum(f);
+		uint32 length = openFileFromNum(f);
 		if (length == 0)
 			return NULL;
 
@@ -287,7 +287,7 @@ int cacheSound(int f) {
 	a = findEmptySoundSlot();
 	freeSound(a);
 
-	uint32_t length = openFileFromNum(f);
+	uint32 length = openFileFromNum(f);
 	if (!length)
 		return -1;
 
