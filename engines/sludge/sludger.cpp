@@ -135,7 +135,7 @@ void saveHandlers(Common::WriteStream *stream) {
 	stream->writeUint16BE(currentEvents->spaceFunction);
 }
 
-Common::File *openAndVerify(char *filename, char extra1, char extra2,
+Common::File *openAndVerify(const char *filename, char extra1, char extra2,
 		const char *er, int &fileVersion) {
 	Common::File *fp = new Common::File();
 	if (!fp->open(filename)) {
@@ -186,7 +186,7 @@ Common::File *openAndVerify(char *filename, char extra1, char extra2,
 	return fp;
 }
 
-bool initSludge(char *filename) {
+bool initSludge(const char *filename) {
 	int a = 0;
 	mouseCursorAnim = makeNullAnim();
 

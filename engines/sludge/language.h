@@ -41,8 +41,8 @@ struct settingsStruct {
 
 extern settingsStruct gameSettings;
 
-void readIniFile(char *filename);
-void saveIniFile(char *filename);
+void readIniFile(const char *filename);
+void saveIniFile(const char *filename);
 int getLanguageForFileB();
 
 void makeLanguageTable(Common::File *table);

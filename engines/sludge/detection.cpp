@@ -37,6 +37,9 @@ int SludgeEngine::getGameType() const { return _gameDescription->gameType; }
 const char *SludgeEngine::getGameId() const { return _gameDescription->desc.gameId;}
 uint32 SludgeEngine::getFeatures() const { return _gameDescription->desc.flags; }
 Common::Language SludgeEngine::getLanguage() const { return _gameDescription->desc.language; }
+const char *SludgeEngine::getGameFile() const {
+	return _gameDescription->desc.filesDescriptions[0].fileName;
+}
 
 } // End of namespace Sludge
 

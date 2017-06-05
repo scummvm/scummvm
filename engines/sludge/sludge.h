@@ -58,6 +58,8 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 
+	const char *getGameFile() const;
+
 	const SludgeGameDescription *_gameDescription;
 
 private:
