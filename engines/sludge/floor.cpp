@@ -231,10 +231,10 @@ bool setFloor(int fileNum) {
 	} while (madeChange);
 
 	for (i = 0; i < currentFloor->numPolygons; i++) {
-		delete distanceMatrix[i];
+		delete[] distanceMatrix[i];
 	}
 
-	delete distanceMatrix;
+	delete []distanceMatrix;
 	distanceMatrix = NULL;
 
 	setResourceForFatal(-1);

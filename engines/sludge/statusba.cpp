@@ -78,7 +78,7 @@ void addStatusBar() {
 
 void setStatusBar(char *txt) {
 	if (nowStatus->firstStatusBar) {
-		delete nowStatus->firstStatusBar->text;
+		delete[] nowStatus->firstStatusBar->text;
 		nowStatus->firstStatusBar->text = copyString(txt);
 	}
 }

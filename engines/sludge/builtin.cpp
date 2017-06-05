@@ -180,7 +180,7 @@ static builtReturn sayCore(int numParams, loadedFunction *fun, bool sayIt) {
 			fun->timeLeft = p;
 			//debugOut ("BUILTIN: sayCore: %s (%i)\n", newText, p);
 			fun->isSpeech = true;
-			delete newText;
+			delete[] newText;
 			newText = NULL;
 			return BR_KEEP_AND_PAUSE;
 	}
@@ -887,7 +887,7 @@ builtIn(setFont) {
 	if (!loadFont(fileNumber, newText, newHeight))
 		return BR_ERROR;
 	//              newDebug ("  Done!");
-	delete newText;
+	delete[] newText;
 
 	return BR_CONTINUE;
 }
@@ -1862,7 +1862,7 @@ builtIn(statusText) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	setStatusBar(newText);
-	delete newText;
+	delete[] newText;
 	return BR_CONTINUE;
 }
 
