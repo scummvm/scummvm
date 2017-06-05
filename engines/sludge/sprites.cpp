@@ -225,7 +225,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	// Make palette for version 0, 1, 2
 	if (!reserveSpritePal(loadhere.myPalette, howmany + startIndex)) return false;
-	for (int i = 0; i < howmany; ++i) {
+	for (int i = 0; i < howmany; i++) {
 		loadhere.myPalette.r[i + startIndex] = (byte)bigDataFile->readByte();
 		loadhere.myPalette.g[i + startIndex] = (byte)bigDataFile->readByte();
 		loadhere.myPalette.b[i + startIndex] = (byte)bigDataFile->readByte();
@@ -246,8 +246,8 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 			}
 		}
 		fromhere = 0;
-		for (int y = 0; y < loadhere.sprites[i].surface.h; ++y) {
-			for (int x = 0; x < loadhere.sprites[i].surface.w; ++x) {
+		for (int y = 0; y < loadhere.sprites[i].surface.h; y++) {
+			for (int x = 0; x < loadhere.sprites[i].surface.w; x++) {
 				byte *target = (byte *)loadhere.sprites[i].surface.getBasePtr(x, y);
 				unsigned char s = spriteData[i][fromhere++];
 				if (s) {
