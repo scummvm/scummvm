@@ -48,7 +48,17 @@ public:
 	/** Add an entry to the list of available diary pages */
 	void addDiaryEntry(const Common::String &name);
 
+	/** Add a FMV entry to the list of movies available to play from the diary */
 	void addFMVEntry(const Common::String &filename, const Common::String &title, int gameDisc);
+
+	/** Start recording speech lines for a dialog */
+	void openDialog(const Common::String &title, const Common::String &characterName, int32 characterId);
+
+	/** Record a speech line for the previously opened dialog */
+	void logSpeech(const Common::String &line, int32 characterId);
+
+	/** Close the currently active dialog */
+	void closeDialog();
 
 	/** Reset all the game state data */
 	void clear();
@@ -66,11 +76,30 @@ private:
 		int gameDisc;
 	};
 
+	struct ConversationLogLine {
+		Common::String line;
+		int32 characterId;
+
+		ConversationLogLine();
+	};
+
+	struct ConversationLog {
+		Common::String title;
+		Common::String characterName;
+		int32 characterId;
+		int32 chapter;
+		bool dialogActive;
+		Common::Array<ConversationLogLine> lines;
+
+		ConversationLog();
+	};
+
 	bool hasFMVEntry(const Common::String &filename) const;
 	void saveLoad(ResourceSerializer *serializer);
 
 	Common::Array<Common::String> _diaryEntries;
 	Common::Array<FMVEntry> _fmvEntries;
+	Common::Array<ConversationLog> _conversationEntries;
 
 	bool _hasUnreadEntries;
 	uint32 _pageIndex;

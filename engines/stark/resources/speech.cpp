@@ -102,6 +102,10 @@ ItemVisual *Speech::getCharacterItem() const {
 	return location->getCharacterItem(_character);
 }
 
+int32 Speech::getCharacterId() {
+	return _character;
+}
+
 bool Speech::isPlaying() {
 	return _soundResource && _soundResource->isPlaying();
 }

@@ -306,5 +306,13 @@ Script *Dialog::getNextScript(Dialog::Reply *reply) {
 	return reply->_nextScriptReference.resolve<Script>();
 }
 
+Common::String Dialog::getDiaryTitle() const {
+	return _parent->getName();
+}
+
+int32 Dialog::getCharacter() const {
+	return _character;
+}
+
 } // End of namespace Resources
 } // End of namespace Stark

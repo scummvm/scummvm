@@ -62,7 +62,7 @@ public:
 	void syncAsResourceReference(T **object);
 
 	template<typename T>
-	void syncArraySize(Common::Array<T> &array);
+	void syncArraySize(Common::Array<T> &array, Version minVersion = 0, Version maxVersion = kLastVersion);
 };
 
 template<typename T>
@@ -81,7 +81,10 @@ void ResourceSerializer::syncAsResourceReference(T **object) {
 }
 
 template<typename T>
-void ResourceSerializer::syncArraySize(Common::Array<T> &array){
+void ResourceSerializer::syncArraySize(Common::Array<T> &array, Version minVersion, Version maxVersion) {
+	if (_version < minVersion || _version > maxVersion)
+		return;	// Ignore anything which is not supposed to be present in this save game version
+
 	uint32 size = array.size();
 	syncAsUint32LE(size);
 

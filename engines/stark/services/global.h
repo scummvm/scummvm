@@ -107,6 +107,10 @@ public:
 
 	/** Change the current chapter */
 	void setCurrentChapter(int32 value);
+
+	/** Get the name of a character by its id */
+	Common::String getCharacterName(int32 id);
+
 private:
 	uint _millisecondsPerGameloop;
 	Resources::Root *_root;

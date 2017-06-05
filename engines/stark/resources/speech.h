@@ -78,6 +78,9 @@ public:
 	/** Should the character change to the talk anim while this is playing? */
 	void setPlayTalkAnim(bool playTalkAnim);
 
+	/** Get the character's id - index in the KnowledgeSet */
+	int32 getCharacterId();
+
 protected:
 	void printData() override;
 

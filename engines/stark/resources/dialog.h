@@ -150,6 +150,12 @@ public:
 	/** Obtain the Script which should be executed after this dialog, if any */
 	Script *getNextScript(Reply *reply);
 
+	/** Get the dialog's title as shown in the diary */
+	Common::String getDiaryTitle() const;
+
+	/** Get the character's id - index in the KnowledgeSet */
+	int32 getCharacter() const;
+
 protected:
 	void printData() override;
 

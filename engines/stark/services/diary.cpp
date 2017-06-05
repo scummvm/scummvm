@@ -22,6 +22,8 @@
 
 #include "engines/stark/services/diary.h"
 
+#include "engines/stark/services/global.h"
+#include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
 
 namespace Stark {
@@ -95,11 +97,67 @@ void Diary::saveLoad(ResourceSerializer *serializer) {
 		serializer->syncAsUint32LE(_fmvEntries[i].gameDisc);
 	}
 
-	// TODO: Persist conversation entries
+	// Conversations
+	serializer->syncArraySize(_conversationEntries, 8);
+	for (uint i = 0; i < _conversationEntries.size(); i++) {
+		ConversationLog &entry = _conversationEntries[i];
+		serializer->syncAsSint32LE(entry.chapter);
+		serializer->syncAsSint32LE(entry.characterId);
+		serializer->syncAsString32(entry.characterName);
+		serializer->syncAsString32(entry.title);
+
+		serializer->syncArraySize(entry.lines);
+		for (uint j = 0; j < entry.lines.size(); j++) {
+			ConversationLogLine &logLine = entry.lines[j];
+			serializer->syncAsString32(logLine.line);
+			serializer->syncAsSint32LE(logLine.characterId);
+		}
+	}
 
 	// Misc
 	serializer->syncAsByte(_hasUnreadEntries);
 	serializer->syncAsUint32LE(_pageIndex);
 }
 
+void Diary::openDialog(const Common::String &title, const Common::String &characterName, int32 characterId) {
+	// Reuse the previous dialog if it has the same title
+	if (_conversationEntries.empty() || _conversationEntries.back().title != title) {
+		ConversationLog conversation;
+		conversation.title = title;
+		conversation.characterName = characterName;
+		conversation.characterId = characterId;
+		conversation.chapter = StarkGlobal->getCurrentChapter();
+		_conversationEntries.push_back(conversation);
+	}
+
+	_conversationEntries.back().dialogActive = true;
+}
+
+void Diary::closeDialog() {
+	if (!_conversationEntries.empty()) {
+		_conversationEntries.back().dialogActive = false;
+	}
+}
+
+void Diary::logSpeech(const Common::String &line, int32 characterId) {
+	ConversationLog &conversationLog = _conversationEntries.back();
+	if (conversationLog.dialogActive) {
+		ConversationLogLine logLine;
+		logLine.line = line;
+		logLine.characterId = characterId;
+
+		conversationLog.lines.push_back(logLine);
+	}
+}
+
+Diary::ConversationLog::ConversationLog() :
+		dialogActive(false),
+        chapter(0),
+        characterId(0) {
+}
+
+Diary::ConversationLogLine::ConversationLogLine() :
+		characterId(0) {
+
+}
 } // End of namespace Stark

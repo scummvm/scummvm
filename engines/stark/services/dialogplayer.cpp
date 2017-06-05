@@ -21,6 +21,8 @@
  */
 
 #include "engines/stark/services/dialogplayer.h"
+#include "engines/stark/services/diary.h"
+#include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 
@@ -45,6 +47,14 @@ void DialogPlayer::run(Resources::Dialog *dialog) {
 	reset();
 
 	StarkUserInterface->setInteractive(false);
+
+	if (!_currentDialog) {
+		Common::String dialogTitle = dialog->getDiaryTitle();
+		int32 characterId = dialog->getCharacter();
+		Common::String characterName = StarkGlobal->getCharacterName(characterId);
+
+		StarkDiary->openDialog(dialogTitle, characterName, characterId);
+	}
 
 	_currentDialog = dialog;
 	buildOptions();
@@ -146,6 +156,8 @@ void DialogPlayer::selectOption(uint32 index) {
 
 		Resources::Speech *speech = _currentReply->getCurrentSpeech();
 		if (speech) {
+			StarkDiary->logSpeech(speech->getPhrase(), speech->getCharacterId());
+
 			_speechReady = true;
 		} else {
 			onReplyEnd();
@@ -179,6 +191,10 @@ void DialogPlayer::onReplyEnd() {
 }
 
 void DialogPlayer::reset() {
+	if (_currentDialog) {
+		StarkDiary->closeDialog();
+	}
+
 	_currentDialog = nullptr;
 	_currentReply = nullptr;
 	_singleSpeech = nullptr;
@@ -205,6 +221,8 @@ void DialogPlayer::update() {
 		_currentReply->goToNextLine();
 		speech = _currentReply->getCurrentSpeech();
 		if (speech) {
+			StarkDiary->logSpeech(speech->getPhrase(), speech->getCharacterId());
+
 			_speechReady = true;
 		} else {
 			onReplyEnd();

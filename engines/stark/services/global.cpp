@@ -67,4 +67,10 @@ void Global::enableInventoryItem(int32 num) {
 	inventoryItems[num]->setEnabled(true);
 }
 
+Common::String Global::getCharacterName(int32 id) {
+	Resources::KnowledgeSet *characters = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kPersons);
+	Resources::Knowledge *character = characters->findChildWithIndex<Resources::Knowledge>(id);
+	return character->getName();
+}
+
 } // End of namespace Stark
