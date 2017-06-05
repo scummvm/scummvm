@@ -215,9 +215,9 @@ namespace Sludge {
 		_wchdir(szAppData);
 	}
 
-	uint32_t launch(char *f) {
+	uint32 launch(char *f) {
 		WCHAR *w_f = ConvertToUTF16(f);
-		uint32_t r = (uint32_t) ShellExecute(hMainWindow, TEXT("open"), w_f, NULL, TEXT("C:\\"), SW_SHOWNORMAL);
+		uint32 r = (uint32) ShellExecute(hMainWindow, TEXT("open"), w_f, NULL, TEXT("C:\\"), SW_SHOWNORMAL);
 		delete w_f;
 		return r;
 	}

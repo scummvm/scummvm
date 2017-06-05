@@ -20,8 +20,6 @@
  *
  */
 
-#include <dirent.h>
-
 #include "common/debug.h"
 
 #include "sludge/debug.h"
@@ -164,7 +162,7 @@ bool getSavedGamesStack(stackHandler *sH, char *ext) {
 
 	variable newName;
 	newName.varType = SVT_NULL;
-
+#if 0
 #ifdef _WIN32
 
 	WCHAR *w_pattern = ConvertToUTF16(pattern);
@@ -215,7 +213,7 @@ bool getSavedGamesStack(stackHandler *sH, char *ext) {
 	closedir(dir);
 
 #endif
-
+#endif
 	delete[] pattern;
 	pattern = NULL;
 	return true;

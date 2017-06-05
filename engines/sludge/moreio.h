@@ -22,8 +22,6 @@
 #ifndef SLUDGE_MOREIO_H
 #define SLUDGE_MOREIO_H
 
-#include <stdint.h>
-
 namespace Sludge {
 
 // Read

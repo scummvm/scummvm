@@ -38,10 +38,10 @@ int fontHeight = 0, numFontColours, loadedFontNum;
 char *fontOrderString = NULL;
 short fontSpace = -1;
 
-uint32_t *fontTable = NULL;
+uint32 *fontTable = NULL;
 unsigned int fontTableSize = 0;
 
-#define fontInTable(x) ((x<fontTableSize) ? fontTable[(uint32_t) x] : 0)
+#define fontInTable(x) ((x<fontTableSize) ? fontTable[(uint32) x] : 0)
 
 extern float cameraZoom;
 
@@ -56,7 +56,7 @@ bool isInFont(char *theText) {
 		return false;
 
 	int i = 0;
-	uint32_t c = u8_nextchar(theText, &i);
+	uint32 c = u8_nextchar(theText, &i);
 
 	return u8_strchr(fontOrderString, c, &i);
 }
@@ -67,7 +67,7 @@ int stringLength(char *theText) {
 
 int stringWidth(char *theText) {
 	int a = 0;
-	uint32_t c;
+	uint32 c;
 	int xOff = 0;
 
 	if (!fontTableSize)
@@ -84,7 +84,7 @@ int stringWidth(char *theText) {
 void pasteString(char *theText, int xOff, int y, spritePalette &thePal) {
 	sprite *mySprite;
 	int a = 0;
-	uint32_t c;
+	uint32 c;
 
 	if (!fontTableSize)
 		return;
@@ -101,7 +101,7 @@ void pasteString(char *theText, int xOff, int y, spritePalette &thePal) {
 void pasteStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
 	sprite *mySprite;
 	int a = 0;
-	uint32_t c;
+	uint32 c;
 
 	if (!fontTableSize)
 		return;
@@ -118,7 +118,7 @@ void pasteStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal
 void burnStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
 	sprite *mySprite;
 	int a = 0;
-	uint32_t c;
+	uint32 c;
 
 	if (!fontTableSize)
 		return;
@@ -167,7 +167,7 @@ void setFontColour(spritePalette &sP, byte r, byte g, byte b) {
 
 bool loadFont(int filenum, const char *charOrder, int h) {
 	int a = 0;
-	uint32_t c;
+	uint32 c;
 
 	delete[] fontOrderString;
 	fontOrderString = copyString(charOrder);
@@ -185,7 +185,7 @@ bool loadFont(int filenum, const char *charOrder, int h) {
 	fontTableSize++;
 
 	delete[] fontTable;
-	fontTable = new uint32_t[fontTableSize];
+	fontTable = new uint32[fontTableSize];
 	if (!checkNew(fontTable))
 		return false;
 

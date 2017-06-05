@@ -21,7 +21,6 @@
  */
 
 #ifndef _MSC_VER        // Microsoft compiler?
-#include <unistd.h>     // For unlink
 #else
 #include <io.h>
 #include <stdio.h>

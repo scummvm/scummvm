@@ -20,8 +20,6 @@
  *
  */
 
-#include <stdint.h>
-
 #include "sludge/allfiles.h"
 #include "sludge/colours.h"
 #include "sludge/backdrop.h"
@@ -147,7 +145,7 @@ void transitionSnapshotBox() {
 //----------------------------------------------------
 
 #define KK 17
-uint32_t randbuffer[KK][2];  // history buffer
+uint32 randbuffer[KK][2];  // history buffer
 int p1, p2;
 
 void resetRandW() {
@@ -199,8 +197,8 @@ void transitionDisolve() {
 		return;
 	}
 
-	uint32_t n;
-	uint32_t y;
+	uint32 n;
+	uint32 y;
 
 	GLubyte *toScreen = transitionTexture;
 	GLubyte *end = transitionTexture + (256 * 256 * 4);
@@ -267,8 +265,8 @@ void transitionTV() {
 #if 0
 	if (! transitionTextureName) reserveTransitionTexture();
 
-	uint32_t n;
-	uint32_t y;
+	uint32 n;
+	uint32 y;
 
 	GLubyte *toScreen = transitionTexture;
 	GLubyte *end = transitionTexture + (256 * 256 * 4);

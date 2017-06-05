@@ -68,7 +68,7 @@ void sortZPal(int *oldpal, int *newpal, int size) {
 bool setZBuffer(int y) {
 #if 0
 	int x, n;
-	uint32_t stillToGo = 0;
+	uint32 stillToGo = 0;
 	int yPalette[16], sorted[16], sortback[16];
 
 	killZBuffer();

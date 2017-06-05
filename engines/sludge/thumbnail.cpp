@@ -255,7 +255,7 @@ void showThumbnail(char *filename, int atX, int atY) {
 bool skipThumbnail(Common::SeekableReadStream *stream) {
 	thumbWidth = stream->readUint32LE();
 	thumbHeight = stream->readUint32LE();
-	uint32_t skippy = thumbWidth;
+	uint32 skippy = thumbWidth;
 	skippy *= thumbHeight << 1;
 	stream->seek(skippy, 1);
 	return (stream->readByte() == '!');

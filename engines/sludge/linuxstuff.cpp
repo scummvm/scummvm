@@ -185,7 +185,7 @@ void changeToUserDir() {
 	}
 }
 
-uint32_t launch(char *filename) {
+uint32 launch(char *filename) {
 	debugOut("Trying to launch: %s\n", filename);
 
 	if (!fileExists("/usr/bin/xdg-open")) {
