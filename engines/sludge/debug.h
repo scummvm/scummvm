@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SLUDGE_DEDBUG_H
-#define SLUDGE_DEGBUG_H
+#ifndef SLUDGE_DEBUG_H
+#define SLUDGE_DEBUG_H
 
 namespace Sludge {
 
