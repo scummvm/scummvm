@@ -181,9 +181,9 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		}
 
 		// init data
-		loadhere.sprites[i].surface.create(picwidth, picheight, g_sludge->getScreenPixelFormat());
+		loadhere.sprites[i].surface.create(picwidth, picheight, *g_sludge->getScreenPixelFormat());
 		if (isFont) {
-			loadhere.sprites[i].burnSurface.create(picwidth, picheight, g_sludge->getScreenPixelFormat());
+			loadhere.sprites[i].burnSurface.create(picwidth, picheight, *g_sludge->getScreenPixelFormat());
 		}
 		data = (byte *)new byte[picwidth * (picheight + 1)];
 		if (!checkNew(data)) return false;
@@ -231,7 +231,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		loadhere.myPalette.g[i + startIndex] = (byte)bigDataFile->readByte();
 		loadhere.myPalette.b[i + startIndex] = (byte)bigDataFile->readByte();
 		loadhere.myPalette.pal[i + startIndex] =
-				(uint16)g_sludge->getOrigPixelFormat().RGBToColor(
+				(uint16)g_sludge->getOrigPixelFormat()->RGBToColor(
 						loadhere.myPalette.r[i + startIndex],
 						loadhere.myPalette.g[i + startIndex],
 						loadhere.myPalette.b[i + startIndex]);

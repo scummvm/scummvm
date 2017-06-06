@@ -69,7 +69,9 @@ int cameraPX = 0, cameraPY = 0;
 
 unsigned int sceneWidth, sceneHeight;
 int lightMapNumber;
-unsigned int currentBlankColour = g_sludge->getOrigPixelFormat().RGBToColor(0, 0, 0);
+#if 0
+unsigned int currentBlankColour = g_sludge->getOrigPixelFormat()->RGBToColor(0, 0, 0);
+#endif
 
 extern int cameraX, cameraY;
 extern float cameraZoom;

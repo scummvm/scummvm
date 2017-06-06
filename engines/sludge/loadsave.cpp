@@ -74,7 +74,9 @@ extern bool captureAllKeys;
 extern bool allowAnyFilename;
 extern unsigned short saveEncoding;                 // in savedata.cpp
 extern unsigned char currentBurnR, currentBurnG, currentBurnB;
+#if 0
 extern unsigned int currentBlankColour;             // in backdrop.cpp
+#endif
 extern parallaxLayer *parallaxStuff;                //      "
 extern int lightMapMode;                    //      "
 extern int languageNum;
