@@ -187,10 +187,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		}
 		data = (byte *)new byte[picwidth * (picheight + 1)];
 		if (!checkNew(data)) return false;
-		int ooo = picwidth * picheight;
-		for (int tt = 0; tt < picwidth; tt++) {
-			data[ooo++] = 0;
-		}
+		memset(data + picwidth * picheight, 0, picwidth);
 		spriteData[i] = data;
 
 		// read color
