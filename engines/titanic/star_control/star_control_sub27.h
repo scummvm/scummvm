@@ -38,8 +38,8 @@ private:
 public:
 	virtual ~CStarControlSub27() {}
 
-	virtual void proc2(FVector &oldPos, FVector &newPos,
-		FMatrix &oldOrientation, FMatrix &newOrientation);
+	virtual void proc2(const FVector &oldPos, const FVector &newPos,
+		const FMatrix &oldOrientation, const FMatrix &newOrientation);
 	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
 };
 

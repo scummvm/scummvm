@@ -41,8 +41,8 @@ CStarControlSub23::CStarControlSub23() : _srcPos(0.0, 1000000.0, 0.0) {
 	_transitionPercentInc = 0.0;
 }
 
-void CStarControlSub23::proc2(FVector &oldPos, FVector &newPos,
-		FMatrix &oldOrientation, FMatrix &newOrientation) {
+void CStarControlSub23::proc2(const FVector &oldPos, const FVector &newPos,
+	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	_srcPos = oldPos;
 	_destPos = newPos;
 	_posDelta = _destPos - _srcPos;

@@ -25,8 +25,8 @@
 
 namespace Titanic {
 
-void CStarControlSub27::proc2(FVector &oldPos, FVector &newPos,
-	FMatrix &oldOrientation, FMatrix &newOrientation) {
+void CStarControlSub27::proc2(const FVector &oldPos, const FVector &newPos,
+	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	CStarControlSub23::proc2(oldPos, newPos, oldOrientation, newOrientation);
 
 	double distance = _distance;
