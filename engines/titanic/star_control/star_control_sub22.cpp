@@ -29,8 +29,8 @@ CStarControlSub22::CStarControlSub22(const CNavigationInfo *src) :
 		CCameraMover(src) {
 }
 
-void CStarControlSub22::proc8(FVector &oldPos, FVector &newPos,
-		FMatrix &oldOrientation, FMatrix &newOrientation) {
+void CStarControlSub22::proc8(const FVector &oldPos, const FVector &newPos,
+		const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	if (isLocked())
 		decLockCount();
 

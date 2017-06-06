@@ -457,16 +457,13 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	if (_matrixRow != 0)
 		return;
 
-	DMatrix m1;
-	DVector tempV1 = _matrix._row1;
-	DMatrix m2(X_AXIS, tempV1);
-
-	tempV1 = v - _matrix._row1;
-	m1 = tempV1.fn5();
+	DMatrix m2(X_AXIS, _matrix._row1);
+	DVector tempV1 = v - _matrix._row1;
+	DMatrix m1 = tempV1.fn5();
 	m1 = m1.fn4(m2);
 	m2 = m1.fn1();
-
-	DVector tempV2 = _viewport._position;
+	
+	FVector tempV2 = _viewport._position;
 	DMatrix m4;
 	m4._row1 = viewport->_position;
 	m4._row2 = DVector(0.0, 0.0, 0.0);
@@ -474,31 +471,46 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._row4 = DVector(0.0, 0.0, 0.0);
 
 	FMatrix m5 = viewport->getOrientation();
-	DVector tempV3, tempV4;
-	m4._row3 = tempV4 = m5._row1 * 1000000.0 + m4._row1;
-	m4._row2 = tempV3 = m5._row2 * 1000000.0 + m4._row1;
+	double yVal1 = m5._row1._y * 1000000.0;
+	double zVal1 = m5._row1._z * 1000000.0;
+	double xVal1 = m5._row2._x * 1000000.0;
+	double yVal2 = m5._row2._y * 1000000.0;
+	double zVal2 = m5._row2._z * 1000000.0;
+	double zVal3 = zVal1 + m4._row1._z;
+	double yVal3 = yVal1 + m4._row1._y;
+	double xVal2 = m5._row1._x * 1000000.0 + m4._row1._x;
+	double zVal4 = zVal2 + m4._row1._z;
+	double yVal4 = yVal2 + m4._row1._y;
+	double xVal3 = xVal1 + m4._row1._x;
 
-	tempV4._x = m5._row3._x * 1000000.0;
-	tempV4._y = m5._row3._y * 1000000.0;
-	tempV3._x = tempV4._x + m4._row1._x;
-	tempV3._y = tempV4._y + m4._row1._y;
+	DVector tempV4(xVal2, yVal3, zVal3);
+	DVector tempV3(xVal3, yVal4, zVal4);
+	m4._row3 = tempV4;
+
+	FVector tempV5;
+	tempV5._x = m5._row3._x * 1000000.0;
+	tempV5._y = m5._row3._y * 1000000.0;
+	m4._row2 = tempV3;
+
+	tempV3._x = tempV5._x + m4._row1._x;
+	tempV3._y = tempV5._y + m4._row1._y;
 	tempV3._z = m5._row3._z * 1000000.0 + m4._row1._z;
 	m4._row4 = tempV3;
 
-	tempV3 = tempV2.fn1(m2);
+	tempV2 = tempV2.fn1();
 	m4._row1 = m4._row1.fn1(m2);
-	m4._row2 = m4._row2.fn1(m2);
 	m4._row3 = m4._row3.fn1(m2);
+	m4._row2 = m4._row2.fn1(m2);
 	m4._row4 = m4._row4.fn1(m2);
 
 	// Find the angle that gives the minimum distance
-	DVector tempV5;
+	DVector tempPos;
 	double minDistance = 1.0e20;
 	int minDegree = 0;
 	for (int degree = 0; degree < 360; ++degree) {
-		tempV5 = m4._row1;
-		tempV5.fn2((double)degree);
-		double distance = tempV2.getDistance(tempV5);
+		tempPos = m4._row1;
+		tempPos.fn2((double)degree);
+		double distance = tempV2.getDistance(tempPos);
 
 		if (distance < minDistance) {
 			minDistance = distance;
@@ -516,9 +528,7 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._row4 = m4._row4.fn1(m1);
 
 	m4._row3 -= m4._row1;
-	m4._row2._x -= m4._row1._x;
-	m4._row2._y -= m4._row1._y;
-	m4._row2._z = m4._row2._z - m4._row1._z;
+	m4._row2 -= m4._row1;
 	m4._row4 -= m4._row1;
 
 	m4._row3.normalize();
@@ -526,9 +536,9 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._row4.normalize();
 	m5.set(m4._row3, m4._row2, m4._row4);
 
-	FVector tempV6 = m4._row1;
+	FVector newPos = m4._row1;
 	FMatrix m6 = _viewport.getOrientation();
-	_mover->proc8(_viewport._position, tempV6, m6, m5);
+	_mover->proc8(_viewport._position, newPos, m6, m5);
 
 	CStarVector *sv = new CStarVector(this, v);
 	_mover->setVector(sv);

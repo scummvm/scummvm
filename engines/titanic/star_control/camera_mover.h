@@ -72,8 +72,8 @@ public:
 	 */
 	virtual void stop();
 
-	virtual void proc8(FVector &oldPos, FVector &newPos,
-		FMatrix &oldOrientation, FMatrix &newOrientation) {}
+	virtual void proc8(const FVector &oldPos, const FVector &newPos,
+		const FMatrix &oldOrientation, const FMatrix &newOrientation) {}
 
 	/**
 	 * Start a movement to a given specified destination
