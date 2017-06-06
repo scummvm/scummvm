@@ -49,7 +49,7 @@ bool ImgLoader::loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surfa
 	if (!png.loadStream(*stream))
 		return false;
 	const Graphics::Surface *sourceSurface = png.getSurface();
-	Graphics::Surface *pngSurface = sourceSurface->convertTo(g_sludge->getScreenPixelFormat(), png.getPalette());
+	Graphics::Surface *pngSurface = sourceSurface->convertTo(*g_sludge->getScreenPixelFormat(), png.getPalette());
 	dest->copyFrom(*pngSurface);
 	pngSurface->free();
 	delete pngSurface;
