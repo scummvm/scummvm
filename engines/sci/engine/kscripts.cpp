@@ -49,13 +49,11 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 //  behavior of this call didn't change between sci0->sci1.1 parameter wise, which means getting called with
 //  1 or 3+ parameters is not right according to sierra sci
 reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
-	if (argc >= 2) {
-		ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
-		reg_t resnr = argv[1];
+	ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
+	reg_t resnr = argv[1];
 
-		if (restype == kResourceTypeMemory)
-			s->_segMan->freeHunkEntry(resnr);
-	}
+	if (restype == kResourceTypeMemory)
+		s->_segMan->freeHunkEntry(resnr);
 
 	return s->r_acc;
 }
