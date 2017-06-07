@@ -71,6 +71,12 @@ void syncWithSerializer(Common::Serializer &s, Common::Serializable &obj) {
 	obj.saveLoadWithSerializer(s);
 }
 
+void syncWithSerializer(Common::Serializer &s, ResourceId &obj) {
+	s.syncAsByte(obj._type);
+	s.syncAsUint16LE(obj._number);
+	s.syncAsUint32LE(obj._tuple);
+}
+
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 	// Segment and offset are accessed directly here
 	s.syncAsUint16LE(obj._segment);

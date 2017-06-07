@@ -164,6 +164,8 @@ class ResourceId {
 		return string;
 	}
 
+	friend void syncWithSerializer(Common::Serializer &s, ResourceId &obj);
+
 public:
 	ResourceId() : _type(kResourceTypeInvalid), _number(0), _tuple(0) { }
 
