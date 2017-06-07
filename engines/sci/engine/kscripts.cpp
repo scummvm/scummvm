@@ -45,7 +45,7 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }
 
-// Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
+// Unloads an arbitrary resource of type 'restype' with resource number 'resnr'
 //  behavior of this call didn't change between sci0->sci1.1 parameter wise, which means getting called with
 //  1 or 3+ parameters is not right according to sierra sci
 reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
