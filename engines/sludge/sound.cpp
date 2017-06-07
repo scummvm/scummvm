@@ -586,6 +586,7 @@ int cacheSound(int f) {
 
 bool startSound(int f, bool loopy) {
 	if (soundOK) {
+#if 0
 		cacheLoopySound = loopy;
 		int a = cacheSound(f);
 		if (a == -1) {
@@ -596,6 +597,7 @@ bool startSound(int f, bool loopy) {
 		soundCache[a].vol = defSoundVol;
 
 		playStream(a, false, loopy);
+#endif
 	}
 	return true;
 }
