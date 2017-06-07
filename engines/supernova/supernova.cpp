@@ -64,8 +64,6 @@ SupernovaEngine::~SupernovaEngine() {
 }
 
 Common::Error SupernovaEngine::run() {
-//	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
-//	initGraphics(kScreenWidth, kScreenHeight, &format);
 	initGraphics(kScreenWidth, kScreenHeight);
 	debug(_system->getScreenFormat().toString().c_str());
 	_console = new Console(this);
@@ -172,9 +170,9 @@ void SupernovaEngine::initPalette() {
 	    63, 0, 0,  0, 0,30,  0, 0,45, 40,40,40,
 	    20,50,63, 10,63,10, 60,60, 0, 63,10,10
 	};
-	Common::copy(init_pal, init_pal + sizeof(init_pal), pal);
 	
 	_system->getPaletteManager()->setPalette(pal, 0, 256);
+	_system->getPaletteManager()->setPalette(init_pal, 0, 16);
 }
 
 void SupernovaEngine::playSound(int filenumber, int offset) {
