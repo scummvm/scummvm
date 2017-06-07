@@ -30,7 +30,7 @@ MODULE_OBJS := \
 	savedata.o \
 	sludge.o \
 	sludger.o \
-	sound_openal.o \
+	sound.o \
 	sprbanks.o \
 	sprites.o \
 	statusba.o \
