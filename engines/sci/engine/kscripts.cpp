@@ -61,7 +61,11 @@ reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 	int state = argc > 2 ? argv[2].toUint16() : 1;
 	ResourceType type = g_sci->getResMan()->convertResType(argv[0].toUint16());
-	ResourceId id = ResourceId(type, argv[1].toUint16());
+	if (type == kResourceTypeSound && getSciVersion() >= SCI_VERSION_1_1) {
+		type = g_sci->_soundCmd->getSoundResourceType(argv[1].toUint16());
+	}
+
+	const ResourceId id(type, argv[1].toUint16());
 
 	Resource *which;
 
