@@ -52,9 +52,11 @@ void DVector::fn2(double angle) {
 	const double FACTOR = 2 * M_PI / 360.0;
 	double sinVal = sin(angle * FACTOR);
 	double cosVal = cos(angle * FACTOR);
+	double x = cosVal * _x - sinVal * _z;
+	double z = cosVal * _z + sinVal * _x;
 
-	_x = cosVal * _x - sinVal * _z;
-	_z = cosVal * _z + sinVal * _x;
+	_x = x;
+	_z = z;
 }
 
 DVector DVector::fn3() const {
