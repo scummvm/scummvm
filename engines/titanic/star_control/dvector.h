@@ -49,7 +49,7 @@ public:
 	double getDistance(const DVector &src);
 
 	DVector fn1(const DMatrix &m);
-	void fn2(double val);
+	void fn2(double angle);
 	DVector fn3() const;
 	DMatrix fn4(const DVector &v);
 	DMatrix fn5() const;
