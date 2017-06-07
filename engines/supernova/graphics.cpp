@@ -11,7 +11,8 @@ namespace Supernova {
 
 MSNImageDecoder::MSNImageDecoder()
 	: _surface(NULL)
-	, _palette(NULL) {
+	, _palette(NULL)
+	, _encodedImage(NULL) {
 }
 
 MSNImageDecoder::~MSNImageDecoder() {
@@ -72,6 +73,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 	
 	byte zwCodes[256];
+	Common::fill(zwCodes, zwCodes + 256, 0);
 	byte numRepeat = stream.readByte();
 	byte numZw = stream.readByte();
 	stream.read(zwCodes, numZw);
@@ -88,7 +90,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 				_encodedImage[i++] = value;
 			}
 		} else if (input < numZw) {
-			input = zwCodes[input];
+			input = zwCodes[input - numRepeat];
 			--input;
 			_encodedImage[i++] = input;
 			_encodedImage[i++] = input;
@@ -156,6 +158,10 @@ void MSNImageDecoder::destroy() {
 	if (_surface) {
 		_surface->free();
 		_surface = NULL;
+	}
+	if (_encodedImage) {
+		delete[] _encodedImage;
+		_encodedImage = NULL;
 	}
 }
 

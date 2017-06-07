@@ -9,7 +9,7 @@ class SeekableReadStream;
 }
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Supernova {
@@ -22,11 +22,6 @@ const byte initPalette[48] = {
 	 0,  0, 30,   0,  0, 45,  40, 40, 40,
 	20, 50, 63,  10, 63, 10,  60, 60,  0,
 	63, 10, 10
-};
-
-// TODO
-const byte defaultVGAPalette[] = {
-	0, 0, 0
 };
 
 class MSNImageDecoder : public Image::ImageDecoder {
