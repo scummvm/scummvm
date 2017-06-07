@@ -62,6 +62,7 @@ private:
 	void playSoundMod(int filenumber);
 	void stopSound();
 	void renderImage(int filenumber, int section);
+	void renderBox(int x, int y, int width, int height, byte color);
 };
 
 }
