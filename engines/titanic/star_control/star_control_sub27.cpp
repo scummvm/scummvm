@@ -44,7 +44,7 @@ void CStarControlSub27::proc2(const FVector &oldPos, const FVector &newPos,
 			_transitionPercentInc = 0.1;
 			_active = true;
 		} else {
-			_transitionPercentInc = 1.0 / distance;
+			_transitionPercentInc = 1.0 / _field4C;
 			_active = true;
 		}
 	}
