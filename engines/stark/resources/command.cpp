@@ -134,7 +134,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kItemSelectInInventory:
 		return opItemSelectInInventory(_arguments[1].referenceValue);
 	case kItemSetActivity:
-		return opItemSetActivity(nullptr, _arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
+		return opItemSetActivity(script, _arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kUseAnimHierarchy:
 		return opUseAnimHierachy(_arguments[1].referenceValue);
 	case kPlayAnimation:
