@@ -72,8 +72,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_clickField[i].next = stream.readByte();
 	}
 	
-	byte zwCodes[256];
-	Common::fill(zwCodes, zwCodes + 256, 0);
+	byte zwCodes[256] = {0};
 	byte numRepeat = stream.readByte();
 	byte numZw = stream.readByte();
 	stream.read(zwCodes, numZw);

@@ -74,7 +74,6 @@ Common::Error SupernovaEngine::run() {
 	_gameRunning = true;
 	while (_gameRunning) {
 		updateEvents();
-		renderImage(31, 0);
 		
 		_system->updateScreen();
 		_system->delayMillis(10);
@@ -215,6 +214,16 @@ void SupernovaEngine::renderImage(int filenumber, int section) {
 	_image.loadStream(file);
 	_image.loadSection(section);
 	_system->copyRectToScreen(_image.getSurface()->getPixels(), 320, 0, 0, 320, 200);
+}
+
+
+void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color) {
+	Graphics::Surface *screen = _system->lockScreen();
+	screen->drawLine(x, y, x + width, y, color);
+	screen->drawLine(x + width, y, x + width, y + height, color);
+	screen->drawLine(x + width, y + height, x, y + height, color);
+	screen->drawLine(x, y + height, x, y, color);
+	_system->unlockScreen();
 }
 
 }

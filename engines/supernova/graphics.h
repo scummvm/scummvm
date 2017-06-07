@@ -14,16 +14,6 @@ struct Surface;
 
 namespace Supernova {
 
-const byte initPalette[48] = {
-//   r   g   b
-	 0,  0,  0,  16, 16, 16,  22, 22, 22,
-	28, 28, 28,  63, 63, 63,   0, 52,  0,
-	 0, 63,  0,  54,  0,  0,  63,  0,  0,
-	 0,  0, 30,   0,  0, 45,  40, 40, 40,
-	20, 50, 63,  10, 63, 10,  60, 60,  0,
-	63, 10, 10
-};
-
 class MSNImageDecoder : public Image::ImageDecoder {
 public:
 	MSNImageDecoder();
