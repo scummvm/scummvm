@@ -78,7 +78,6 @@ void syncWithSerializer(Common::Serializer &s, ResourceId &obj) {
 }
 
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
-	// Segment and offset are accessed directly here
 	s.syncAsUint16LE(obj._segment);
 	s.syncAsUint16LE(obj._offset);
 }
