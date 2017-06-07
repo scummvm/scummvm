@@ -24,7 +24,13 @@
 #include "AL/alure.h"
 #endif
 
+#include "common/debug.h"
 #include "common/file.h"
+
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/wave.h"
+#include "audio/decoders/vorbis.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/debug.h"
@@ -32,6 +38,7 @@
 #include "sludge/sound.h"
 #include "sludge/moreio.h"
 #include "sludge/fileset.h"
+#include "sludge/sludge.h"
 
 #define MAX_SAMPLES 8
 #define MAX_MODS 3
@@ -585,8 +592,30 @@ int cacheSound(int f) {
 }
 
 bool startSound(int f, bool loopy) {
-	if (soundOK) {
+	if (loopy) // TODO: don't consider loop sound yet at this stage
+		return false;
+	// load sound
+	setResourceForFatal(f);
+	uint32 length = openFileFromNum(f);
+	Common::SeekableReadStream *memImage = bigDataFile->readStream(length);
+	if (memImage->size() != length || bigDataFile->err())
+		debug("Sound reading failed");
+	Audio::AudioStream *stream = Audio::makeWAVStream(memImage, DisposeAfterUse::NO);
+#ifdef USE_VORBIS
+	if (!stream) {
+		stream = Audio::makeVorbisStream(memImage, DisposeAfterUse::NO);
+	}
+#endif
+	delete memImage;
+	if (!stream)
+		return false;
+
+	// play sound
+	Audio::SoundHandle soundHandle;
+	g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 #if 0
+	if (soundOK) {
+
 		cacheLoopySound = loopy;
 		int a = cacheSound(f);
 		if (a == -1) {
@@ -597,8 +626,8 @@ bool startSound(int f, bool loopy) {
 		soundCache[a].vol = defSoundVol;
 
 		playStream(a, false, loopy);
-#endif
 	}
+#endif
 	return true;
 }
 
