@@ -667,7 +667,7 @@ int ResourceManager::addAppropriateSources() {
 
 			if (!foundVolume &&
 				// GK2 on Steam comes with an extra bogus resource map file;
-				// ignore it
+				// ignore it instead of treating it as a bad resource
 				(g_sci->getGameId() != GID_GK2 || mapFiles.size() != 2 || mapNumber != 1)) {
 
 				warning("Could not find corresponding volume for %s", mapName.c_str());
