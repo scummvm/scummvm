@@ -38,6 +38,7 @@
 //#include "graphics/fontman.h"
 
 #include "supernova/supernova.h"
+#include "supernova/msn_def.h"
 
 
 namespace Supernova {
@@ -74,6 +75,7 @@ Common::Error SupernovaEngine::run() {
 	_gameRunning = true;
 	while (_gameRunning) {
 		updateEvents();
+		renderImage(31, 0);
 		
 		_system->updateScreen();
 		_system->delayMillis(10);
@@ -216,6 +218,26 @@ void SupernovaEngine::renderImage(int filenumber, int section) {
 	_system->copyRectToScreen(_image.getSurface()->getPixels(), 320, 0, 0, 320, 200);
 }
 
+static int characterWidth(const char *text) {
+	int charWidth = 0;
+	while (*text != '\0') {
+		byte c = *text++;
+		if (c < 32) {
+			continue;
+		} else if (c == 225) {
+			c = 35;
+		}
+
+		for (size_t i = 0; i < 5; ++i) {
+			++charWidth;
+			if (font[c - 32][i] == 0xff) {
+				break;
+			}
+		}
+	}
+
+	return charWidth;
+}
 
 void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color) {
 	Graphics::Surface *screen = _system->lockScreen();
@@ -227,3 +249,4 @@ void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color)
 }
 
 }
+
