@@ -200,7 +200,7 @@ void ResourceManager::processWavePatch(ResourceId resourceId, const Common::Stri
 	Common::File file;
 	file.open(name);
 
-	updateResource(resourceId, resSrc, file.size(), name);
+	updateResource(resourceId, resSrc, 0, file.size(), name);
 	_sources.push_back(resSrc);
 
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", name.c_str());
