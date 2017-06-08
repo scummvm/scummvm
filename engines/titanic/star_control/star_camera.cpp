@@ -320,7 +320,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV7._y = m3._row3._y * 1000000.0 + tempV3._y;
 		tempV7._x = m3._row3._x * 1000000.0 + tempV3._x;
 
-		mrow3 = tempV8;
+		mrow3 = tempV8 = tempV7;
 		tempV3 = tempV3.fn1(subX);
 		mrow1 = mrow1.fn1(subX);
 		mrow2 = mrow2.fn1(subX);
