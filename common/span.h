@@ -942,7 +942,7 @@ public:
 		_span.allocateFromSpan(other._span);
 	}
 
-	inline SpanOwner &operator=(SpanOwner &other) {
+	inline SpanOwner &operator=(const SpanOwner &other) {
 		if (this == &other) {
 			return *this;
 		}
