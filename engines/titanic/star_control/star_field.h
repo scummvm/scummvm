@@ -23,7 +23,7 @@
 #ifndef TITANIC_STAR_FIELD_H
 #define TITANIC_STAR_FIELD_H
 
-#include "titanic/star_control/star_control_sub2.h"
+#include "titanic/star_control/star_field_base.h"
 #include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_crosshairs.h"
@@ -32,7 +32,7 @@
 
 namespace Titanic {
 
-class CStarField : public CStarControlSub2 {
+class CStarField : public CStarFieldBase {
 private:
 	CStarMarkers _markers;
 	CStarCrosshairs _crosshairs;

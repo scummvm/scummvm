@@ -448,8 +448,8 @@ MODULE_OBJS := \
 	star_control/orientation_changer.o \
 	star_control/star_camera.o \
 	star_control/star_closeup.o \
-	star_control/star_control_sub2.o \
 	star_control/star_crosshairs.o \
+	star_control/star_field_base.o \
 	star_control/star_field.o \
 	star_control/star_markers.o \
 	star_control/star_points1.o \

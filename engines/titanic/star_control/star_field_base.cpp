@@ -20,33 +20,39 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB2_H
-#define TITANIC_STAR_CONTROL_SUB2_H
-
-#include "titanic/star_control/base_stars.h"
+#include "titanic/star_control/star_field_base.h"
+#include "titanic/star_control/star_camera.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-class CStarControlSub2: public CBaseStars {
-public:
-	virtual ~CStarControlSub2() {}
+bool CStarFieldBase::setup() {
+	loadData("STARFIELD/132");
+	return true;
+}
 
-	virtual bool loadYale(int v1);
+bool CStarFieldBase::loadYale(int v1) {
+	clear();
+	error("Original loadYale not supported");
+	return true;
+}
 
-	/**
-	 * Selects a star
-	 */
-	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		const Common::Point &pt, void *handler = nullptr);
+bool CStarFieldBase::selectStar(CSurfaceArea *surfaceArea,
+		CStarCamera *camera, const Common::Point &pt, void *handler) {
+		int index = findStar(surfaceArea, camera, pt);
+	if (index == -1) {
+		return false;
+	} else if (!handler) {
+		debugC(DEBUG_BASIC, kDebugStarfield, "Select star %d", index);
+		camera->setDestination(_data[index]._position);
+		return true;
+	} else {
+		error("no handler ever passed in original");
+	}
+}
 
-	virtual bool loadStar();
-
-	/**
-	 * Setup the control
-	 */
-	bool setup();
-};
+bool CStarFieldBase::loadStar() {
+	error("loadStar not supported");
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_STAR_CONTROL_SUB2_H */
