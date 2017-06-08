@@ -67,6 +67,11 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 
 	const ResourceId id(type, argv[1].toUint16());
 
+	if (getSciVersion() == SCI_VERSION_1_1 &&
+		(type == kResourceTypeAudio36 || type == kResourceTypeSync36)) {
+		return s->r_acc;
+	}
+
 	Resource *which;
 
 	switch (state) {
