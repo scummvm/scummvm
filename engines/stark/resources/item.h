@@ -142,6 +142,7 @@ public:
 	virtual void readData(Formats::XRCReadStream *stream) override;
 	virtual void onAllLoaded() override;
 	virtual void saveLoad(ResourceSerializer *serializer) override;
+	virtual void saveLoadCurrent(ResourceSerializer *serializer) override;
 	virtual void onPreDestroy() override;
 
 	// Item API

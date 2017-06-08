@@ -235,6 +235,24 @@ void ItemVisual::saveLoad(ResourceSerializer *serializer) {
 	}
 }
 
+void ItemVisual::saveLoadCurrent(ResourceSerializer *serializer) {
+	Item::saveLoadCurrent(serializer);
+
+	// Apply the animation once again now the data from the item templates has been loaded.
+	// This ensures template level textures and models are applied when loading.
+	if (serializer->isLoading()) {
+		if (_animHierarchy) {
+			setAnimHierarchy(_animHierarchy);
+		}
+
+		if (_actionAnim) {
+			_actionAnim->applyToItem(this);
+		} else {
+			setAnimKind(_currentAnimKind);
+		}
+	}
+}
+
 void ItemVisual::onPreDestroy() {
 	if (_actionAnim) {
 		_actionAnim->removeFromItem(this);
