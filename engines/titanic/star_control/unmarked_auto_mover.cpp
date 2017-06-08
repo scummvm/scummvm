@@ -20,13 +20,13 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub24.h"
+#include "titanic/star_control/unmarked_auto_mover.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
 
-void CStarControlSub24::proc3(const FMatrix &srcOrient, const FMatrix &destOrient) {
-	CStarControlSub23::proc3(srcOrient, destOrient);
+void CUnmarkedAutoMover::proc3(const FMatrix &srcOrient, const FMatrix &destOrient) {
+	CCameraAutoMover::proc3(srcOrient, destOrient);
 	_orientationChanger.load(srcOrient, destOrient);
 	_transitionPercentInc = 0.1;
 	_transitionPercent = 0.0;
@@ -34,8 +34,8 @@ void CStarControlSub24::proc3(const FMatrix &srcOrient, const FMatrix &destOrien
 	_active = true;
 }
 
-void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
-	CStarControlSub23::setPath(srcV, destV, orientation);
+void CUnmarkedAutoMover::setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
+	CCameraAutoMover::setPath(srcV, destV, orientation);
 
 	if (_distance > 8000.0) {
 		_active = true;
@@ -73,7 +73,7 @@ void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const
 	}
 }
 
-int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
+int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	FVector v1, v2, v3, v4;
 
 	if (!_active)

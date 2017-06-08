@@ -24,13 +24,13 @@
 #define TITANIC_STAR_CONTROL_SUB21_H
 
 #include "titanic/star_control/camera_mover.h"
-#include "titanic/star_control/star_control_sub24.h"
+#include "titanic/star_control/unmarked_auto_mover.h"
 
 namespace Titanic {
 
 class CStarControlSub21 : public CCameraMover {
 private:
-	CStarControlSub24 _sub24;
+	CUnmarkedAutoMover _autoMover;
 public:
 	CStarControlSub21(const CNavigationInfo *src);
 	virtual ~CStarControlSub21() {}

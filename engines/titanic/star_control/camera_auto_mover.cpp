@@ -20,12 +20,12 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub23.h"
+#include "titanic/star_control/camera_auto_mover.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
 
-CStarControlSub23::CStarControlSub23() : _srcPos(0.0, 1000000.0, 0.0) {
+CCameraAutoMover::CCameraAutoMover() : _srcPos(0.0, 1000000.0, 0.0) {
 	_field4 = 0;
 	_active = false;
 	_distance = 0.0;
@@ -41,7 +41,7 @@ CStarControlSub23::CStarControlSub23() : _srcPos(0.0, 1000000.0, 0.0) {
 	_transitionPercentInc = 0.0;
 }
 
-void CStarControlSub23::proc2(const FVector &oldPos, const FVector &newPos,
+void CCameraAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
 	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	_srcPos = oldPos;
 	_destPos = newPos;
@@ -57,7 +57,7 @@ void CStarControlSub23::proc2(const FVector &oldPos, const FVector &newPos,
 	_field4C = 0;
 }
 
-void CStarControlSub23::proc3(const FMatrix &srcOrient, const FMatrix &destOrient) {
+void CCameraAutoMover::proc3(const FMatrix &srcOrient, const FMatrix &destOrient) {
 	_srcPos.clear();
 	_destPos.clear();
 	_transitionPercent = 1.0;
@@ -66,7 +66,7 @@ void CStarControlSub23::proc3(const FMatrix &srcOrient, const FMatrix &destOrien
 	_field34 = false;
 }
 
-void CStarControlSub23::setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
+void CCameraAutoMover::setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
 	_srcPos = srcV;
 	_destPos = destV;
 	_posDelta = _destPos - _srcPos;
@@ -81,7 +81,7 @@ void CStarControlSub23::setPath(const FVector &srcV, const FVector &destV, const
 	_transitionPercent = 1.0;
 }
 
-void CStarControlSub23::proc6(int val1, int val2, float val) {
+void CCameraAutoMover::proc6(int val1, int val2, float val) {
 	_field44 = val1;
 	_field4C = val1 + 62;
 	_field38 = val / (double)(val1 + val2 * 2);

@@ -34,14 +34,14 @@ void CStarControlSub22::proc8(const FVector &oldPos, const FVector &newPos,
 	if (isLocked())
 		decLockCount();
 
-	_sub27.proc2(oldPos, newPos, oldOrientation, newOrientation);
+	_autoMover.proc2(oldPos, newPos, oldOrientation, newOrientation);
 	incLockCount();
 }
 
 void CStarControlSub22::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
-	if (_sub27.isActive()) {
+	if (_autoMover.isActive()) {
 		decLockCount();
-		int val = _sub27.proc5(errorCode, pos, orientation);
+		int val = _autoMover.proc5(errorCode, pos, orientation);
 		if (val == 1)
 			incLockCount();
 		if (val == 2) {

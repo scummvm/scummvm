@@ -20,27 +20,32 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB24_H
-#define TITANIC_STAR_CONTROL_SUB24_H
+#ifndef TITANIC_MARKED_AUTO_MOVER_H
+#define TITANIC_MARKED_AUTO_MOVER_H
 
-#include "titanic/star_control/star_control_sub23.h"
+#include "titanic/star_control/camera_auto_mover.h"
 
 namespace Titanic {
 
-class CStarControlSub24 : public CStarControlSub23 {
-public:
-	virtual ~CStarControlSub24() {}
-
-	virtual void proc3(const FMatrix &srcOrient, const FMatrix &destOrient);
-
+/**
+ * Automatic camera mover used when one or more markers have been set
+ */
+class CMarkedAutoMover : public CCameraAutoMover {
+private:
 	/**
-	 * Sets the path to animate movement between
+	 * Given a vector, figures out how far is from the movement source, and
+	 * returns a vector on the proper point along the path to the destination
+	 * with that same distance from the source.
 	 */
-	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
+	void getVectorOnPath(FVector &pos) const;
+public:
+	virtual ~CMarkedAutoMover() {}
 
+	virtual void proc2(const FVector &oldPos, const FVector &newPos,
+		const FMatrix &oldOrientation, const FMatrix &newOrientation);
 	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB24_H */
+#endif /* TITANIC_MARKED_AUTO_MOVER_H */

@@ -38,7 +38,7 @@ void CStarControlSub21::moveTo(const FVector &srcV, const FVector &destV, const 
 
 	debugC(DEBUG_BASIC, kDebugStarfield, "Starfield move %s to %s", srcV.toString().c_str(),
 		destV.toString().c_str());
-	_sub24.setPath(srcV, destV, orientation);
+	_autoMover.setPath(srcV, destV, orientation);
 }
 
 void CStarControlSub21::proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {
@@ -50,14 +50,14 @@ void CStarControlSub21::proc10(const FVector &v1, const FVector &v2, const FVect
 	DMatrix matrix1 = vector2.fn4(vector1);
 	DMatrix matrix2 = matrix1.fn4(m);
 
-	_sub24.proc3(m, matrix2);
+	_autoMover.proc3(m, matrix2);
 	incLockCount();
 }
 
 void CStarControlSub21::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
-	if (_sub24.isActive()) {
+	if (_autoMover.isActive()) {
 		decLockCount();
-		int val = _sub24.proc5(errorCode, pos, orientation);
+		int val = _autoMover.proc5(errorCode, pos, orientation);
 		if (val == 1)
 			incLockCount();
 		if (val == 2) {

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB23_H
-#define TITANIC_STAR_CONTROL_SUB23_H
+#ifndef TITANIC_CAMERA_AUTO_MOVER_H
+#define TITANIC_CAMERA_AUTO_MOVER_H
 
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fmatrix.h"
@@ -30,7 +30,10 @@
 
 namespace Titanic {
 
-class CStarControlSub23 {
+/**
+ * Base class for automatic movement of the starview camera
+ */
+class CCameraAutoMover {
 protected:
 	int _field4;
 	bool _active;
@@ -50,8 +53,8 @@ protected:
 	double _transitionPercentInc;
 	COrientationChanger _orientationChanger;
 public:
-	CStarControlSub23();
-	virtual ~CStarControlSub23() {}
+	CCameraAutoMover();
+	virtual ~CCameraAutoMover() {}
 
 	virtual void proc2(const FVector &oldPos, const FVector &newPos,
 		const FMatrix &oldOrientation, const FMatrix &newOrientation);
@@ -65,4 +68,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB23_H */
+#endif /* TITANIC_CAMERA_AUTO_MOVER_H */

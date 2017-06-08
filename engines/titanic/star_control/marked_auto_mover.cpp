@@ -20,14 +20,14 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub27.h"
+#include "titanic/star_control/marked_auto_mover.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
 
-void CStarControlSub27::proc2(const FVector &oldPos, const FVector &newPos,
+void CMarkedAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
 	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
-	CStarControlSub23::proc2(oldPos, newPos, oldOrientation, newOrientation);
+	CCameraAutoMover::proc2(oldPos, newPos, oldOrientation, newOrientation);
 
 	double distance = _distance;
 	if (distance > 0.0) {
@@ -50,7 +50,7 @@ void CStarControlSub27::proc2(const FVector &oldPos, const FVector &newPos,
 	}
 }
 
-int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
+int CMarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (!_active)
 		return 0;
 
@@ -87,7 +87,7 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 	}
 }
 
-void CStarControlSub27::getVectorOnPath(FVector &pos) const {
+void CMarkedAutoMover::getVectorOnPath(FVector &pos) const {
 	double distance = _posDelta.getDistance(pos);
 	distance /= _distance;
 
