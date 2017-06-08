@@ -20,20 +20,20 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB21_H
-#define TITANIC_STAR_CONTROL_SUB21_H
+#ifndef TITANIC_UNMARKED_CAMERA_MOVER_H
+#define TITANIC_UNMARKED_CAMERA_MOVER_H
 
 #include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/unmarked_auto_mover.h"
 
 namespace Titanic {
 
-class CStarControlSub21 : public CCameraMover {
+class CUnmarkedCameraMover : public CCameraMover {
 private:
 	CUnmarkedAutoMover _autoMover;
 public:
-	CStarControlSub21(const CNavigationInfo *src);
-	virtual ~CStarControlSub21() {}
+	CUnmarkedCameraMover(const CNavigationInfo *src);
+	virtual ~CUnmarkedCameraMover() {}
 
 	/**
 	 * Start a movement to a given specified destination
@@ -50,4 +50,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB21_H */
+#endif /* TITANIC_UNMARKED_CAMERA_MOVER_H */

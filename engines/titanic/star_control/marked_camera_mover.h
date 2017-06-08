@@ -20,20 +20,20 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB22_H
-#define TITANIC_STAR_CONTROL_SUB22_H
+#ifndef TITANIC_MARKED_CAMERA_MOVER_H
+#define TITANIC_MARKED_CAMERA_MOVER_H
 
 #include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/marked_auto_mover.h"
 
 namespace Titanic {
 
-class CStarControlSub22 : public CCameraMover {
+class CMarkedCameraMover : public CCameraMover {
 private:
 	CMarkedAutoMover _autoMover;
 public:
-	CStarControlSub22(const CNavigationInfo *src);
-	virtual ~CStarControlSub22() {}
+	CMarkedCameraMover(const CNavigationInfo *src);
+	virtual ~CMarkedCameraMover() {}
 
 	virtual void proc8(const FVector &oldPos, const FVector &newPos,
 		const FMatrix &oldOrientation, const FMatrix &newOrientation);
@@ -46,4 +46,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB22_H */
+#endif /* TITANIC_MARKED_CAMERA_MOVER_H */

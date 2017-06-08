@@ -21,8 +21,8 @@
  */
 
 #include "titanic/star_control/star_camera.h"
-#include "titanic/star_control/star_control_sub21.h"
-#include "titanic/star_control/star_control_sub22.h"
+#include "titanic/star_control/unmarked_camera_mover.h"
+#include "titanic/star_control/marked_camera_mover.h"
 #include "titanic/star_control/dmatrix.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/titanic.h"
@@ -389,13 +389,13 @@ bool CStarCamera::setupHandler(const CNavigationInfo *src) {
 
 	switch (_matrixRow) {
 	case -1:
-		mover = new CStarControlSub21(src);
+		mover = new CUnmarkedCameraMover(src);
 		break;
 
 	case 0:
 	case 1:
 	case 2:
-		mover = new CStarControlSub22(src);
+		mover = new CMarkedCameraMover(src);
 		break;
 
 	default:

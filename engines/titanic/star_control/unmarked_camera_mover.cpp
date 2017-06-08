@@ -20,25 +20,41 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub22.h"
+#include "titanic/star_control/unmarked_camera_mover.h"
+#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/dvector.h"
+#include "titanic/titanic.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
 
-CStarControlSub22::CStarControlSub22(const CNavigationInfo *src) :
+CUnmarkedCameraMover::CUnmarkedCameraMover(const CNavigationInfo *src) :
 		CCameraMover(src) {
 }
 
-void CStarControlSub22::proc8(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation) {
+void CUnmarkedCameraMover::moveTo(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
 	if (isLocked())
 		decLockCount();
 
-	_autoMover.proc2(oldPos, newPos, oldOrientation, newOrientation);
+	debugC(DEBUG_BASIC, kDebugStarfield, "Starfield move %s to %s", srcV.toString().c_str(),
+		destV.toString().c_str());
+	_autoMover.setPath(srcV, destV, orientation);
+}
+
+void CUnmarkedCameraMover::proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {
+	if (isLocked())
+		decLockCount();
+
+	DVector vector1 = v1;
+	DVector vector2 = v2;
+	DMatrix matrix1 = vector2.fn4(vector1);
+	DMatrix matrix2 = matrix1.fn4(m);
+
+	_autoMover.proc3(m, matrix2);
 	incLockCount();
 }
 
-void CStarControlSub22::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
+void CUnmarkedCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (_autoMover.isActive()) {
 		decLockCount();
 		int val = _autoMover.proc5(errorCode, pos, orientation);
