@@ -1299,7 +1299,7 @@
 				<widget name = 'List' />
 				<widget name = 'Thumbnail'
 						width = '180'
-						height = '200'
+						height = '220'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
