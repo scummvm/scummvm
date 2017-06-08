@@ -157,10 +157,12 @@ enum AudioChannelIndex {
  * engine, since the system mixer does not support all the
  * features of SCI.
  */
-class Audio32 : public Audio::AudioStream {
+class Audio32 : public Audio::AudioStream, public Common::Serializable {
 public:
 	Audio32(ResourceManager *resMan);
 	~Audio32();
+
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	enum {
 		/**
@@ -205,6 +207,19 @@ public:
 	}
 
 	/**
+	 * Gets the number of currently active channels that are playing from
+	 * unlocked resources.
+	 *
+	 * @note In SSCI, this function would actually return the number of channels
+	 * whose audio data were not loaded into memory. In practice, the signal for
+	 * placing audio data into memory was a call to kLock, so since we do not
+	 * follow how SSCI works when it comes to resource management, the lock
+	 * state is used as an (apparently) successful proxy for this information
+	 * instead.
+	 */
+	uint8 getNumUnlockedChannels() const;
+
+	/**
 	 * Finds a channel that is already configured for the
 	 * given audio sample.
 	 *
@@ -219,7 +234,13 @@ public:
 	 */
 	int16 findChannelById(const ResourceId resourceId, const reg_t soundNode = NULL_REG) const;
 
+	/**
+	 * Sets or clears a lock on the given resource ID.
+	 */
+	void lockResource(const ResourceId resourceId, const bool lock);
+
 private:
+	typedef Common::Array<ResourceId> LockList;
 	typedef Common::Array<Resource *> UnlockList;
 
 	/**
@@ -250,6 +271,11 @@ private:
 	 * to be unlocked from the main thread.
 	 */
 	UnlockList _resourcesToUnlock;
+
+	/**
+	 * The list of resource IDs that have been locked by game scripts.
+	 */
+	LockList _lockedResourceIds;
 
 	/**
 	 * Gets the audio channel at the given index.

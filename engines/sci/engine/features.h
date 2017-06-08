@@ -113,6 +113,10 @@ public:
 		}
 	}
 
+	inline bool hasSci3Audio() const {
+		return getSciVersion() == SCI_VERSION_3 || g_sci->getGameId() == GID_GK2;
+	}
+
 	inline bool hasTransparentPicturePlanes() const {
 		const SciGameId &gid = g_sci->getGameId();
 

@@ -348,10 +348,22 @@ reg_t kDoAudioInit(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioWaitForPlay(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 0) {
+		if (g_sci->_features->hasSci3Audio()) {
+			return make_reg(0, g_sci->_audio32->getNumUnlockedChannels());
+		} else {
+			return make_reg(0, g_sci->_audio32->getNumActiveChannels());
+		}
+	}
+
 	return g_sci->_audio32->kernelPlay(false, argc, argv);
 }
 
 reg_t kDoAudioPlay(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 0) {
+		return make_reg(0, g_sci->_audio32->getNumActiveChannels());
+	}
+
 	return g_sci->_audio32->kernelPlay(true, argc, argv);
 }
 

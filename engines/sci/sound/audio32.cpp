@@ -354,6 +354,20 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 #pragma mark -
 #pragma mark Channel management
 
+uint8 Audio32::getNumUnlockedChannels() const {
+	Common::StackLock lock(_mutex);
+
+	uint8 numChannels = 0;
+	for (uint i = 0; i < _numActiveChannels; ++i) {
+		const AudioChannel &channel = getChannel(i);
+		if (!channel.robot && Common::find(_lockedResourceIds.begin(), _lockedResourceIds.end(), channel.id) == _lockedResourceIds.end()) {
+			++numChannels;
+		}
+	}
+
+	return numChannels;
+}
+
 int16 Audio32::findChannelByArgs(int argc, const reg_t *argv, const int startIndex, const reg_t soundNode) const {
 	// NOTE: argc/argv are already reduced by one in our engine because
 	// this call is always made from a subop, so no reduction for the
@@ -418,6 +432,21 @@ int16 Audio32::findChannelById(const ResourceId resourceId, const reg_t soundNod
 	}
 
 	return kNoExistingChannel;
+}
+
+void Audio32::lockResource(const ResourceId resourceId, const bool lock) {
+	Common::StackLock slock(_mutex);
+
+	LockList::iterator it = Common::find(_lockedResourceIds.begin(), _lockedResourceIds.end(), resourceId);
+	if (it != _lockedResourceIds.end()) {
+		if (!lock) {
+			_lockedResourceIds.erase(it);
+		}
+	} else {
+		if (lock) {
+			_lockedResourceIds.push_back(resourceId);
+		}
+	}
 }
 
 void Audio32::freeUnusedChannels() {
@@ -1037,10 +1066,6 @@ bool Audio32::hasSignal() const {
 reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
 
-	if (argc == 0) {
-		return make_reg(0, _numActiveChannels);
-	}
-
 	const int16 channelIndex = findChannelByArgs(argc, argv, 0, NULL_REG);
 	ResourceId resourceId;
 	bool loop;
@@ -1213,6 +1238,20 @@ void Audio32::printAudioList(Console *con) const {
 							 channel.fadeDuration,
 							 channel.stopChannelOnFade ? ", stopping" : "");
 		}
+	}
+
+	if (g_sci->_features->hasSci3Audio()) {
+		con->debugPrintf("\nLocks: ");
+		if (_lockedResourceIds.size()) {
+			const char *separator = "";
+			for (LockList::const_iterator it = _lockedResourceIds.begin(); it != _lockedResourceIds.end(); ++it) {
+				con->debugPrintf("%s%s", separator, it->toString().c_str());
+				separator = ", ";
+			}
+		} else {
+			con->debugPrintf("none");
+		}
+		con->debugPrintf("\n");
 	}
 }
 

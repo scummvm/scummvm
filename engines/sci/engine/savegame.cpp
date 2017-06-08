@@ -435,6 +435,10 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		g_sci->_gfxPalette32->saveLoadWithSerializer(s);
 		g_sci->_gfxRemap32->saveLoadWithSerializer(s);
 		g_sci->_gfxCursor32->saveLoadWithSerializer(s);
+		// TODO: SCI2 should be using Audio32 too, but is not yet.
+		if (g_sci->_audio32) {
+			g_sci->_audio32->saveLoadWithSerializer(s);
+		}
 		g_sci->_video32->saveLoadWithSerializer(s);
 	} else
 #endif
@@ -1015,6 +1019,14 @@ void GfxCursor32::saveLoadWithSerializer(Common::Serializer &s) {
 			_hideCount = hideCount;
 		}
 	}
+}
+
+void Audio32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (!g_sci->_features->hasSci3Audio() || s.getVersion() < 44) {
+		return;
+	}
+
+	syncArray(s, _lockedResourceIds);
 }
 
 void Video32::beforeSaveLoadWithSerializer(Common::Serializer &s) {
