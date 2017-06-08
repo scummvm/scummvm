@@ -104,7 +104,7 @@ public:
 		Math::Vector3d position;
 	};
 
-	struct Face {
+	struct RawFace {
 		uint32 vertexIndex[3];
 		uint32 normalIndex[3];
 		uint32 textureVertexIndex[3];
@@ -160,7 +160,7 @@ public:
 
 		uint32 faceCount = stream->readUint32LE();
 		for (uint i = 0; i < faceCount; i++) {
-			Face face;
+			RawFace face;
 			face.vertexIndex[0] = stream->readUint32LE();
 			face.vertexIndex[1] = stream->readUint32LE();
 			face.vertexIndex[2] = stream->readUint32LE();
@@ -251,7 +251,7 @@ public:
 		return _vertices;
 	}
 
-	const Common::Array<BiffMesh::Face> &getFaces() const {
+	const Common::Array<Face> &getFaces() const {
 		return _faces;
 	}
 
@@ -287,12 +287,12 @@ private:
 	Common::Array<KeyFrame> _keyFrames;
 
 	Common::Array<Vertex> _rawVertices;
-	Common::Array<Face> _rawFaces;
+	Common::Array<RawFace> _rawFaces;
 	Common::Array<Math::Vector3d> _rawNormals;
 	Common::Array<Math::Vector3d> _rawTexturePositions;
 
 	Common::Array<BiffMesh::Vertex> _vertices;
-	Common::Array<BiffMesh::Face> _faces;
+	Common::Array<Face> _faces;
 
 	bool _hasPhysics;
 };
@@ -342,8 +342,9 @@ public:
 		assert(attributeCount == 0); // Reading the attributes is not implemented
 	}
 
-	BiffMesh::Material toMaterial() const {
-		BiffMesh::Material material;
+	Material toMaterial() const {
+		Material material;
+		material.name = _name;
 		material.texture = _texture;
 		material.r = _diffuse.x();
 		material.g = _diffuse.y();
@@ -386,7 +387,7 @@ BiffMesh *BiffMeshReader::read(ArchiveReadStream *stream) {
 
 	tris[0]->reindex();
 
-	Common::Array<BiffMesh::Material> materials;
+	Common::Array<Material> materials;
 	for (uint i = 0; i < materialObjects.size(); i++) {
 		materials.push_back(materialObjects[i]->toMaterial());
 	}
@@ -422,11 +423,11 @@ const Common::Array<BiffMesh::Vertex> &BiffMesh::getVertices() const {
 	return _vertices;
 }
 
-const Common::Array<BiffMesh::Face> &BiffMesh::getFaces() const {
+const Common::Array<Face> &BiffMesh::getFaces() const {
 	return _faces;
 }
 
-const Common::Array<BiffMesh::Material> &BiffMesh::getMaterials() const {
+const Common::Array<Material> &BiffMesh::getMaterials() const {
 	return _materials;
 }
 

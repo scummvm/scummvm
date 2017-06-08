@@ -41,8 +41,8 @@ struct LightEntry;
 }
 
 class Model;
-class FaceNode;
-class MaterialNode;
+class Face;
+class Material;
 class SkeletonAnim;
 class AnimHandler;
 
@@ -77,7 +77,7 @@ protected:
 	bool _modelIsDirty;
 
 	Math::Matrix4 getModelMatrix(const Math::Vector3d &position, float direction);
-	const Gfx::Texture *resolveTexture(const MaterialNode *material) const;
+	const Gfx::Texture *resolveTexture(const Material *material) const;
 };
 
 } // End of namespace Stark

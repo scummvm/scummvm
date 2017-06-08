@@ -46,7 +46,7 @@ public:
 	void render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) override;
 
 protected:
-	typedef Common::HashMap<FaceNode *, uint32> FaceBufferMap;
+	typedef Common::HashMap<Face *, uint32> FaceBufferMap;
 
 	OpenGLSDriver *_gfx;
 	OpenGL::Shader *_shader;
@@ -57,7 +57,7 @@ protected:
 	void clearVertices();
 	void uploadVertices();
 	uint32 createModelVBO(const Model *model);
-	uint32 createFaceEBO(const FaceNode *face);
+	uint32 createFaceEBO(const Face *face);
 	void setBonePositionArrayUniform(const char *uniform);
 	void setBoneRotationArrayUniform(const char *uniform);
 	void setLightArrayUniform(const char *uniform, const LightEntryArray &lights);

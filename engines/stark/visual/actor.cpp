@@ -74,9 +74,9 @@ void VisualActor::setNewFace(char shape) {
 	_faceTextureName = shape;
 }
 
-const Gfx::Texture *VisualActor::resolveTexture(const MaterialNode *material) const {
+const Gfx::Texture *VisualActor::resolveTexture(const Material *material) const {
 	const Gfx::Texture *texture = nullptr;
-	if (_textureSetFacial && material->_name == "face") {
+	if (_textureSetFacial && material->name == "face") {
 		texture = _textureSetFacial->getTexture(Common::String::format("%c.bmp", _faceTextureName));
 
 		if (!texture) {
@@ -86,7 +86,7 @@ const Gfx::Texture *VisualActor::resolveTexture(const MaterialNode *material) co
 	}
 
 	if (!texture) {
-		texture = _textureSet->getTexture(material->_texName);
+		texture = _textureSet->getTexture(material->texture);
 	}
 
 	return texture;

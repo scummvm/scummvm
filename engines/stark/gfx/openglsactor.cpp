@@ -90,12 +90,12 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 	setBonePositionArrayUniform("bonePosition");
 	setLightArrayUniform("lights", lights);
 
-	Common::Array<FaceNode *> faces = _model->getFaces();
-	Common::Array<MaterialNode *> mats = _model->getMaterials();
+	Common::Array<Face *> faces = _model->getFaces();
+	Common::Array<Material *> mats = _model->getMaterials();
 
-	for (Common::Array<FaceNode *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
+	for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 		// For each face draw its vertices from the VBO, indexed by the EBO
-		const MaterialNode *material = mats[(*face)->_matIdx];
+		const Material *material = mats[(*face)->materialId];
 		const Gfx::Texture *tex = resolveTexture(material);
 		if (tex) {
 			tex->bind();
@@ -104,11 +104,11 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 		}
 
 		_shader->setUniform("textured", tex != nullptr);
-		_shader->setUniform("color", Math::Vector3d(material->_r, material->_g, material->_b));
+		_shader->setUniform("color", Math::Vector3d(material->r, material->g, material->b));
 
 		GLuint ebo = _faceEBO[*face];
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glDrawElements(GL_TRIANGLES, (*face)->_indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, (*face)->vertexIndices.size(), GL_UNSIGNED_INT, 0);
 	}
 
 	_shader->unbind();
@@ -128,8 +128,8 @@ void OpenGLSActorRenderer::clearVertices() {
 void OpenGLSActorRenderer::uploadVertices() {
 	_faceVBO = createModelVBO(_model);
 
-	Common::Array<FaceNode *> faces = _model->getFaces();
-	for (Common::Array<FaceNode *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
+	Common::Array<Face *> faces = _model->getFaces();
+	for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 		_faceEBO[*face] = createFaceEBO(*face);
 	}
 }
@@ -169,8 +169,8 @@ uint32 OpenGLSActorRenderer::createModelVBO(const Model *model) {
 	return vbo;
 }
 
-uint32 OpenGLSActorRenderer::createFaceEBO(const FaceNode *face) {
-	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->_indices.size(), &face->_indices[0]);
+uint32 OpenGLSActorRenderer::createFaceEBO(const Face *face) {
+	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices[0]);
 }
 
 void OpenGLSActorRenderer::setBonePositionArrayUniform(const char *uniform) {

@@ -46,23 +46,19 @@ public:
 	float _boneWeight;
 };
 
-class FaceNode {
-public:
-	FaceNode() : _matIdx(0) {}
+struct Face {
+	uint32 materialId;
+	Common::Array<uint32> vertexIndices;
 
-	~FaceNode() {
-	}
-
-	uint32 _matIdx;
-	Common::Array<uint32> _indices;
+	Face() : materialId(0) {}
 };
 
-class MaterialNode {
-public:
-	Common::String _name;
-	uint32 _unknown1;
-	Common::String _texName;
-	float _r, _g, _b;
+struct Material {
+	Common::String name;
+	Common::String texture;
+	float r, g, b;
+
+	Material() : r(0), g(0), b(0) {};
 };
 
 class BoneNode {
@@ -100,8 +96,8 @@ public:
 	void readFromStream(ArchiveReadStream *stream);
 
 	const Common::Array<VertNode *> &getVertices() const { return _vertices; }
-	const Common::Array<FaceNode *> &getFaces() const { return _faces; }
-	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
+	const Common::Array<Face *> &getFaces() const { return _faces; }
+	const Common::Array<Material *> &getMaterials() const { return _materials; }
 	const Common::Array<BoneNode *> &getBones() const { return _bones; };
 
 	/** Perform a collision test with a ray */
@@ -117,8 +113,8 @@ private:
 	float _u2;
 
 	Common::Array<VertNode *> _vertices;
-	Common::Array<MaterialNode *> _materials;
-	Common::Array<FaceNode *> _faces;
+	Common::Array<Material *> _materials;
+	Common::Array<Face *> _faces;
 	Common::Array<BoneNode *> _bones;
 };
 

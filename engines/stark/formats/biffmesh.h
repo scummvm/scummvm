@@ -23,6 +23,8 @@
 #ifndef STARK_FORMATS_BIFF_MESH_H
 #define STARK_FORMATS_BIFF_MESH_H
 
+#include "engines/stark/model/model.h"
+
 #include "common/array.h"
 
 #include "math/matrix4.h"
@@ -61,16 +63,6 @@ public:
 		Math::Vector3d position;
 		Math::Vector3d normal;
 		Math::Vector3d texturePosition;
-	};
-
-	struct Face {
-		Common::Array<uint32> vertexIndices;
-		uint32 materialId;
-	};
-
-	struct Material {
-		Common::String texture;
-		float r, g, b;
 	};
 
 	BiffMesh(const Common::Array<Vertex> &vertices, const Common::Array<Face> &faces, const Common::Array<Material> &materials);

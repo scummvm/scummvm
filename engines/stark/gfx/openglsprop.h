@@ -26,7 +26,7 @@
 #include "common/hashmap.h"
 
 #include "engines/stark/hash-ptr.h"
-#include "engines/stark/formats/biffmesh.h"
+#include "engines/stark/model/model.h"
 #include "engines/stark/visual/prop.h"
 
 namespace OpenGL {
@@ -47,7 +47,7 @@ public:
 	void render(const Math::Vector3d position, float direction) override;
 
 protected:
-	typedef Common::HashMap<const Formats::BiffMesh::Face *, uint32> FaceBufferMap;
+	typedef Common::HashMap<const Face *, uint32> FaceBufferMap;
 
 	Driver *_gfx;
 	OpenGL::Shader *_shader;
@@ -58,7 +58,7 @@ protected:
 	void clearVertices();
 	void uploadVertices();
 	uint32 createFaceVBO();
-	uint32 createFaceEBO(const Formats::BiffMesh::Face *face);
+	uint32 createFaceEBO(const Face *face);
 };
 
 } // End of namespace Gfx

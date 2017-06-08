@@ -22,10 +22,11 @@
 
 #include "engines/stark/gfx/openglsprop.h"
 
-#include "engines/stark/scene.h"
-#include "engines/stark/services/services.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
+#include "engines/stark/formats/biffmesh.h"
+#include "engines/stark/scene.h"
+#include "engines/stark/services/services.h"
 
 #include "graphics/opengl/shader.h"
 
@@ -68,11 +69,11 @@ void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction)
 	_shader->use(true);
 	_shader->setUniform("mvp", mvp);
 
-	const Common::Array<Formats::BiffMesh::Face> &faces = _model->getFaces();
-	const Common::Array<Formats::BiffMesh::Material> &materials = _model->getMaterials();
+	const Common::Array<Face> &faces = _model->getFaces();
+	const Common::Array<Material> &materials = _model->getMaterials();
 
-	for (Common::Array<Formats::BiffMesh::Face>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
-		const Formats::BiffMesh::Material &material = materials[face->materialId];
+	for (Common::Array<Face>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
+		const Material &material = materials[face->materialId];
 
 		// For each face draw its vertices from the VBO, indexed by the EBO
 		const Gfx::Texture *tex = _texture->getTexture(material.texture);
@@ -107,8 +108,8 @@ void OpenGLSPropRenderer::clearVertices() {
 void OpenGLSPropRenderer::uploadVertices() {
 	_faceVBO = createFaceVBO();
 
-	const Common::Array<Formats::BiffMesh::Face> &faces = _model->getFaces();
-	for (Common::Array<Formats::BiffMesh::Face>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
+	const Common::Array<Face> &faces = _model->getFaces();
+	for (Common::Array<Face>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 		_faceEBO[face] = createFaceEBO(face);
 	}
 }
@@ -119,7 +120,7 @@ uint32 OpenGLSPropRenderer::createFaceVBO() {
 	return OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 9 * vertices.size(), &vertices.front());
 }
 
-uint32 OpenGLSPropRenderer::createFaceEBO(const Formats::BiffMesh::Face *face) {
+uint32 OpenGLSPropRenderer::createFaceEBO(const Face *face) {
 	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices.front());
 }
 
