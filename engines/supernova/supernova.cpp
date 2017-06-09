@@ -76,6 +76,7 @@ Common::Error SupernovaEngine::run() {
 	while (_gameRunning) {
 		updateEvents();
 		renderImage(31, 0);
+		renderText("Das Schicksal", 44, 132, 4);
 		
 		_system->updateScreen();
 		_system->delayMillis(10);
@@ -239,12 +240,109 @@ static int characterWidth(const char *text) {
 	return charWidth;
 }
 
+void SupernovaEngine::renderMessage(char *text, MessagePosition position) {
+	char *row[20];
+	char *p = text;
+	size_t numRows = 0;
+	int rowWidthMax = 0;
+	int x = 0;
+	int y = 0;
+	byte textColor = 0;
+	
+	while (*p != '\0') {
+		row[numRows] = p;
+		++numRows;
+		while ((*p != '\0') && (*p != '|')) {
+			++p;
+		}
+		if (*p == '|') {
+			*p = '\0';
+			++p;
+		}
+	}
+	for (size_t i = 0; i < numRows; ++i) {
+		int rowWidth = characterWidth(row[i]);
+		if (rowWidth > rowWidthMax)
+			rowWidthMax = rowWidth;
+	}
+	
+	switch (position) {
+	case kMessageNormal:
+		x = rowWidthMax / 2 - 160;
+		textColor = COL_MELD;
+		break;
+	case kMessageTop:
+		x = rowWidthMax / 2 - 160;
+		textColor = 14;
+		break;
+	case kMessageCenter:
+		x = rowWidthMax / 2 - 160;
+		textColor = 15;
+		break;
+	case kMessageLeft:
+		x = 3;
+		textColor = 14;
+		break;
+	case kMessageRight:
+		x = 317 - rowWidthMax;
+		textColor = 13;
+		break;
+	}
+	
+	if (position == kMessageNormal) {
+		y = 70 - ((numRows * 9) / 2);
+	} else if (position == kMessageTop) {
+		y = 5;
+	} else {
+		y = 142;
+	}
+	
+	int message_columns = x - 3;
+	int message_rows = y - 3;
+	int message_width = rowWidthMax + 6;
+	int message_height = numRows * 9 + 5;
+	renderBox(message_columns,message_rows,message_width,message_height,HGR_MELD);
+	for (size_t i = 0; i < numRows; ++i) {
+		renderText(row[i], x, y, textColor);
+		y += 9;
+	}
+	
+//	timer1 = (Common::strnlen(text, BUFSIZ) + 20) * textspeed / 10;
+}
+
+void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
+	Graphics::Surface *screen = _system->lockScreen();
+	byte *cursor = static_cast<byte *>(screen->getBasePtr(x, y));
+	byte c;
+	while ((c = *text++) != '\0') {
+		if (c < 32) {
+			continue;
+		} else if (c == 225) {
+			c = 128;
+		}
+		
+		for (size_t i = 0; i < 5; ++i) {
+			if (font[c - 32][i] == 0xff) {
+				++cursor;
+				break;
+			}
+
+			byte *ascentLine = cursor;
+			for (byte j = font[c - 32][i]; j != 0; j >>= 1) {
+				if (j & 1) {
+					*cursor = color;
+				}
+				cursor += kScreenWidth;
+			}
+			cursor = ++ascentLine;
+		}
+	}
+	_system->unlockScreen();
+}
+
 void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color) {
 	Graphics::Surface *screen = _system->lockScreen();
-	screen->drawLine(x, y, x + width, y, color);
-	screen->drawLine(x + width, y, x + width, y + height, color);
-	screen->drawLine(x + width, y + height, x, y + height, color);
-	screen->drawLine(x, y + height, x, y, color);
+	screen->fillRect(Common::Rect(x, y, width, height), color);
 	_system->unlockScreen();
 }
 

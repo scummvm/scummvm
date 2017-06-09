@@ -363,6 +363,46 @@ enum {X,
 
 }
 
+enum MessagePosition {
+	kMessageNormal,
+	kMessageLeft,
+	kMessageRight,
+	kMessageCenter,
+	kMessageTop
+};
+
+// Colors
+#define HGR_BEF      1
+#define COL_BEF      5
+#define HGR_BEF_HELL 3
+#define COL_BEF_HELL 6
+
+#define HGR_INV      1
+#define COL_INV      7
+#define HGR_INV_HELL 2
+#define COL_INV_HELL 8
+
+#define HGR_BEF_ANZ  1
+#define COL_BEF_ANZ  5
+
+#define HGR_AUSG     1
+#define COL_AUSG     7
+
+#define HGR_MELD     2
+#define COL_MELD     4
+
+#define COL_LWIN     7
+#define HGR_LADEN   10
+#define COL_LADEN    4
+#define HGR_LADEN2   9
+#define COL_LADEN2  11
+#define HGR_NAME     9
+#define COL_NAME    15
+
+#define HGR_EDIT     9
+#define COL_EDIT     4
+
+
 const byte mouseNormal[64] = {
   0xff,0x3f,0xff,0x1f,0xff,0x0f,0xff,0x07,
   0xff,0x03,0xff,0x01,0xff,0x00,0x7f,0x00,

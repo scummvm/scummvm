@@ -33,6 +33,7 @@
 
 #include "supernova/console.h"
 #include "supernova/graphics.h"
+#include "supernova/msn_def.h"
 
 namespace Supernova {
 
@@ -62,7 +63,8 @@ private:
 	void playSoundMod(int filenumber);
 	void stopSound();
 	void renderImage(int filenumber, int section);
-	void renderText(const char *text, int x, int y);
+	void renderMessage(char *text, MessagePosition position);
+	void renderText(const char *text, int x, int y, byte color);
 	void renderBox(int x, int y, int width, int height, byte color);
 };
 
