@@ -45,7 +45,10 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_palette[717 - i] = stream.readByte();
 		}
 	}
-	g_system->getPaletteManager()->setPalette(_palette, 16, 240);
+	// 18bit VGA to 24bit CLUT8
+	for (size_t i = 0; i < 717; ++i) {
+		_palette[i] <<= 2;
+	}
 
 	byte numSections = stream.readByte();
 	for (size_t i = 0; i < kMaxSections; ++i) {

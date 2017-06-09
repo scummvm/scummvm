@@ -54,10 +54,15 @@ private:
 	Audio::SoundHandle _soundHandle;
 	bool _gameRunning;
 	MSNImageDecoder _image;
-	byte _colorIndex;
+	byte _incIndex;
+	byte _menuBrightness;
+	byte _brightness;
 	
 	void initData();
 	void initPalette();
+	void paletteFadeIn();
+	void paletteFadeOut();
+	void paletteBrightness();
 	void updateEvents();
 	void playSound(int filenumber, int offset = 0);
 	void playSoundMod(int filenumber);
