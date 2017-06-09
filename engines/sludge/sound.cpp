@@ -31,6 +31,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/mods/protracker.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/debug.h"
@@ -390,6 +391,30 @@ char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile,
 }
 
 bool playMOD(int f, int a, int fromTrack) {
+#if 0
+	// load sound
+	setResourceForFatal(f);
+	uint32 length = openFileFromNum(f);
+	if (length == 0) {
+		finishAccess();
+		setResourceForFatal(-1);
+		return false;
+	}
+
+	Common::SeekableReadStream *memImage = bigDataFile->readStream(length);
+	if (memImage->size() != length || bigDataFile->err())
+		debug("Sound reading failed");
+	Audio::AudioStream *stream = Audio::makeProtrackerStream(memImage);
+	//TODO: replace by xm file decoders
+	if (!stream)
+		return false;
+
+	// play sound
+	Audio::SoundHandle soundHandle;
+	g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundHandle,
+			stream, -1, Audio::Mixer::kMaxChannelVolume);
+#endif
+#if 0
 	if (!soundOK)
 		return true;
 	stopMOD(a);
@@ -401,7 +426,7 @@ bool playMOD(int f, int a, int fromTrack) {
 		setResourceForFatal(-1);
 		return false;
 	}
-#if 0
+
 	unsigned char *memImage;
 	memImage = (unsigned char *) loadEntireFileToMemory(bigDataFile, length);
 	if (! memImage) return fatal(ERROR_MUSIC_MEMORY_LOW);
