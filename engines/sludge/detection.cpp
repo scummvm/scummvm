@@ -46,8 +46,7 @@ const char *SludgeEngine::getGameFile() const {
 static const PlainGameDescriptor sludgeGames[] = {
 	{ "sludge", "Sludge Game" },
 	{ "welcome", "Welcome Example" },
-	{ "welcome2", "Welcome Example 2" },
-	{ "welcomePng", "Welcome For PNG Test" },
+	{ "welcomeloop", "Welcome Loop Test" },
 	{ "verbcoin", "Verb Coin" },
 	{ 0, 0 }
 };

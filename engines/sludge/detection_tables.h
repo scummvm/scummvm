@@ -49,6 +49,19 @@ static const SludgeGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		{
+			"welcomeloop",
+			"",
+			AD_ENTRY1s("WelcomeLoop.slg", "af6e20c7cfae9101f1a49236d45014ef", 34932),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
