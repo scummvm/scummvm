@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-05-24 06:16+0200\n"
+"POT-Creation-Date: 2017-06-09 20:19+0200\n"
 "PO-Revision-Date: 2017-03-03 22:26+0000\n"
 "Last-Translator: rafaelmessias <rmmartins@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -64,7 +64,7 @@ msgstr "Acima"
 #: gui/options.cpp:1714 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
-#: gui/saveload-dialog.cpp:717 gui/saveload-dialog.cpp:1111
+#: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: gui/updates-dialog.cpp:113 engines/engine.cpp:558
 #: backends/events/default/default-events.cpp:196
@@ -158,7 +158,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:525
 #: gui/launcher.cpp:529 gui/massadd.cpp:92 gui/options.cpp:1716
-#: gui/saveload-dialog.cpp:1112 engines/engine.cpp:477 engines/engine.cpp:488
+#: gui/saveload-dialog.cpp:1114 engines/engine.cpp:477 engines/engine.cpp:488
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -1523,15 +1523,15 @@ msgstr ""
 msgid "Grid view"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:528
+#: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:530
 msgid "No date saved"
 msgstr "Sem data salva"
 
-#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:529
+#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:531
 msgid "No time saved"
 msgstr "Sem hora salva"
 
-#: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:530
+#: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:532
 msgid "No playtime saved"
 msgstr "Sem tempo de jogo salvo"
 
@@ -1539,47 +1539,47 @@ msgstr "Sem tempo de jogo salvo"
 msgid "Do you really want to delete this saved game?"
 msgstr "Você realmente quer excluir este jogo salvo?"
 
-#: gui/saveload-dialog.cpp:554 gui/saveload-dialog.cpp:1060
+#: gui/saveload-dialog.cpp:556 gui/saveload-dialog.cpp:1062
 msgid "Date: "
 msgstr "Data: "
 
-#: gui/saveload-dialog.cpp:558 gui/saveload-dialog.cpp:1066
+#: gui/saveload-dialog.cpp:560 gui/saveload-dialog.cpp:1068
 msgid "Time: "
 msgstr "Hora: "
 
-#: gui/saveload-dialog.cpp:564 gui/saveload-dialog.cpp:1074
+#: gui/saveload-dialog.cpp:566 gui/saveload-dialog.cpp:1076
 msgid "Playtime: "
 msgstr "Tempo de jogo: "
 
-#: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
+#: gui/saveload-dialog.cpp:579 gui/saveload-dialog.cpp:667
 #, fuzzy
 msgid "Untitled saved game"
 msgstr "Não-titulado arquivo de save"
 
-#: gui/saveload-dialog.cpp:718
+#: gui/saveload-dialog.cpp:720
 msgid "Next"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:721
+#: gui/saveload-dialog.cpp:723
 msgid "Prev"
 msgstr ""
 
-#: gui/saveload-dialog.cpp:924
+#: gui/saveload-dialog.cpp:926
 #, fuzzy
 msgid "New Save"
 msgstr "Salvar"
 
-#: gui/saveload-dialog.cpp:924
+#: gui/saveload-dialog.cpp:926
 #, fuzzy
 msgid "Create a new saved game"
 msgstr "Falha ao salvar o jogo"
 
-#: gui/saveload-dialog.cpp:1053
+#: gui/saveload-dialog.cpp:1055
 #, fuzzy
 msgid "Name: "
 msgstr "Nome:"
 
-#: gui/saveload-dialog.cpp:1131
+#: gui/saveload-dialog.cpp:1133
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr ""
