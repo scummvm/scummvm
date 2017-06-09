@@ -380,6 +380,7 @@ int main_loop(const char *filename)
 		walkAllPeople();
 		handleInput();
 		sludgeDisplay();
+		handleSoundLists();
 		g_system->delayMillis(100);
 #if 0
 		Wait_Frame();

@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/list.h"
 #include "common/memstream.h"
 
 #include "audio/audiostream.h"
@@ -46,6 +47,10 @@ namespace Sludge {
 
 bool soundOK = false;
 bool SilenceIKillYou = false;
+
+// there's possibility that several sound list played at the same time
+typedef Common::List<soundList *> SoundListHandles;
+SoundListHandles soundListHandles;
 
 struct soundThing {
 	Audio::SoundHandle handle;
@@ -153,47 +158,6 @@ void setDefaultSoundVolume(int v) {
 void setSoundLoop(int a, int s, int e) {
 //#pragma unused (a,s,e)
 }
-
-/*
- * End of stream callbacks:
- */
-
-#if 0
-static void sound_eos_callback(void *cacheIndex, ALuint source) {
-	int *a = (int *)cacheIndex;
-
-	alDeleteSources(1, &source);
-	if (alGetError() != AL_NO_ERROR) {
-		debugOut("Failed to delete OpenAL source!\n");
-	}
-
-	soundCache[*a].playingOnSource = 0;
-	soundCache[*a].playing = false;
-	soundCache[*a].looping = false;
-
-}
-#endif
-
-#if 0
-static void mod_eos_callback(void *cacheIndex, ALuint source) {
-	int *a = (int *)cacheIndex;
-
-	alDeleteSources(1, &source);
-	if (alGetError() != AL_NO_ERROR) {
-		debugOut("Failed to delete OpenAL source!\n");
-	}
-
-	modCache[*a].playingOnSource = 0;
-
-	if (! alureDestroyStream(modCache[*a].stream, 0, NULL)) {
-		debugOut("Failed to destroy stream: %s\n",
-				alureGetErrorString());
-	}
-
-	modCache[*a].stream = NULL;
-	modCache[*a].playing = false;
-}
-#endif
 
 /*
  * Stopping things:
@@ -511,10 +475,10 @@ bool getSoundCacheStack(stackHandler *sH) {
 	return true;
 }
 
-soundList *deleteSoundFromList(soundList *s) {
+bool deleteSoundFromList(soundList *&s) {
 	// Don't delete a playing sound.
 	if (s->cacheIndex)
-		return NULL;
+		return false;
 
 	soundList *o = NULL;
 	if (!s->next) {
@@ -522,7 +486,8 @@ soundList *deleteSoundFromList(soundList *s) {
 		if (o)
 			o->next = NULL;
 		delete s;
-		return o;
+		s = o;
+		return (s != NULL);
 	}
 	if (s != s->next) {
 		o = s->next;
@@ -531,51 +496,56 @@ soundList *deleteSoundFromList(soundList *s) {
 			o->prev->next = o;
 	}
 	delete s;
-	return o;
+	s = o;
+	return (s != NULL);
 }
 
-#if 0
-static void list_eos_callback(void *list, ALuint source) {
-	soundList *s = (soundList *) list;
+void handleSoundLists() {
+	for (SoundListHandles::iterator it = soundListHandles.begin(); it != soundListHandles.end(); ++it) {
+		soundList *s = (*it);
+		int a = s->cacheIndex;
+		bool remove = false;
+		if (!g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) { // reach the end of stream
+			s->cacheIndex = false;
+			if (SilenceIKillYou) {
+				while (deleteSoundFromList(s))
+					;
+				remove = (s == NULL); // s not null if still playing
+			} else {
+				if (s->next) {
+					if (s->next == s) { // loop the same sound
+						int v = defSoundVol;
+						defSoundVol = soundCache[a].vol;
+						startSound(s->sound, true);
+						defSoundVol = v;
+						while (deleteSoundFromList(s))
+							;
+						remove = (s == NULL); // s not null if still playing
+					} else { // repush the next sound list
+						s->next->vol = soundCache[a].vol;
+						playSoundList(s->next);
+						remove = true; // remove this one
+					}
 
-	int a = s->cacheIndex;
-#if 0
-	alDeleteSources(1, &source);
-	if (alGetError() != AL_NO_ERROR) {
-		debugOut("Failed to delete OpenAL source!\n");
-	}
-#endif
-	soundCache[a].playingOnSource = 0;
-	soundCache[a].playing = false;
-	soundCache[a].looping = false;
-	s-> cacheIndex = false;
-	if (SilenceIKillYou) {
-		while (s = deleteSoundFromList(s));
-	} else {
-		if (s->next) {
-			if (s->next == s) {
-				int v = defSoundVol;
-				defSoundVol = soundCache[a].vol;
-				startSound(s->sound, true);
-				defSoundVol = v;
-				while (s = deleteSoundFromList(s));
-				return;
+				} else {
+					while (deleteSoundFromList(s))
+						;
+					remove = (s == NULL); // s not null if still playing
+				}
 			}
-			s->next->vol = soundCache[a].vol;
-			playSoundList(s->next);
-		} else {
-			while (s = deleteSoundFromList(s));
+		}
+		if (remove) {
+			it = soundListHandles.reverse_erase(it);
 		}
 	}
 }
-#endif
 
 // loop a list of sound
 void playSoundList(soundList *s) {
 	if (soundOK) {
 		// Load sound
 		Audio::AudioStream *stream;
-		int a = makeSoundAudioStream(s->sound, stream, true);
+		int a = makeSoundAudioStream(s->sound, stream, false);
 		if (a == -1) {
 			debugOut("Failed to cache sound!\n");
 			return;
@@ -589,6 +559,10 @@ void playSoundList(soundList *s) {
 			soundCache[a].vol = s->vol;
 		s-> cacheIndex = a;
 		g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundCache[a].handle, stream, -1, soundCache[a].vol);
+
+		// push sound list
+		soundListHandles.push_back(s);
+
 	}
 }
 

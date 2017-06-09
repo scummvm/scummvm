@@ -39,8 +39,9 @@ struct soundList {
 	int cacheIndex;
 	int vol;
 };
-soundList *deleteSoundFromList(soundList *s);
+bool deleteSoundFromList(soundList *&s);
 void playSoundList(soundList *s);
+void handleSoundLists(); // to produce the same effects as end of stream call back functions
 
 // GENERAL...
 bool initSoundStuff(HWND);
