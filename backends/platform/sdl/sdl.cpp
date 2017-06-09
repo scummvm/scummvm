@@ -432,7 +432,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 	char langName[9];
 	char ctryName[9];
 
-	const LCID languageIdentifier = GetThreadLocale();
+	const LCID languageIdentifier = GetUserDefaultUILanguage();
 
 	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
 		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
