@@ -361,11 +361,10 @@ int main_loop(const char *filename)
 		cursor = SDL_CreateCursor(&data, &data, 1, 1, 0, 0);
 		SDL_SetCursor(cursor);
 	}
-
+#endif
 	if (!(specialSettings & SPECIAL_SILENT)) {
 		initSoundStuff(hMainWindow);
 	}
-#endif
 
 	startNewFunctionNum(0, 0, NULL, noStack);
 
@@ -391,9 +390,7 @@ int main_loop(const char *filename)
 
 	delete[] gamePath;
 
-#if 0
 	killSoundStuff();
-#endif
 
 #if defined(HAVE_GLES2)
 	EGL_Close();

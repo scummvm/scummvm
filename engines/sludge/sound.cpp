@@ -20,12 +20,9 @@
  *
  */
 
-#if 0
-#include "AL/alure.h"
-#endif
-
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -48,21 +45,18 @@
 namespace Sludge {
 
 bool soundOK = false;
-bool cacheLoopySound = false;
 bool SilenceIKillYou = false;
 
 struct soundThing {
-#if 0
-	alureStream *stream;
-	ALuint playingOnSource;
-#endif
-	bool playing;
-	int fileLoaded, vol;    //Used for sounds only.
-	bool looping;           //Used for sounds only.
+	Audio::SoundHandle handle;
+	int fileLoaded, vol;    //Used for sounds only. (sound saving/loading)
+	bool looping;      		//Used for sounds only. (sound saving/loading)
 };
 
 soundThing soundCache[MAX_SAMPLES];
+#if 0
 soundThing modCache[MAX_MODS];
+#endif
 int intpointers[MAX_SAMPLES];
 
 int defVol = 128;
@@ -74,29 +68,15 @@ const float modLoudness = 0.95f;
  */
 
 bool initSoundStuff(HWND hwnd) {
-#if 0
-	if (!alureInitDevice(NULL, NULL)) {
-		debugOut("Failed to open OpenAL device: %s\n", alureGetErrorString());
-		return 1;
-	}
-
-	int a;
-	for (a = 0; a < MAX_SAMPLES; a ++) {
-		soundCache[a].stream = NULL;
-		soundCache[a].playing = false;
+	for (int a = 0; a < MAX_SAMPLES; a ++) {
 		soundCache[a].fileLoaded = -1;
 		soundCache[a].looping = false;
 		intpointers[a] = a;
 	}
-
-	for (a = 0; a < MAX_MODS; a ++) {
+#if 0
+	for (int a = 0; a < MAX_MODS; a ++) {
 		modCache[a].stream = NULL;
 		modCache[a].playing = false;
-	}
-
-	if (! alureUpdateInterval(0.01)) {
-		debugOut("Failed to set Alure update interval: %s\n", alureGetErrorString());
-		return 1;
 	}
 #endif
 	return soundOK = true;
@@ -105,28 +85,14 @@ bool initSoundStuff(HWND hwnd) {
 void killSoundStuff() {
 	if (!soundOK)
 		return;
-#if 0
+
 	SilenceIKillYou = true;
 	for (int i = 0; i < MAX_SAMPLES; i ++) {
-		if (soundCache[i].playing) {
-
-			if (! alureStopSource(soundCache[i].playingOnSource, AL_TRUE)) {
-				debugOut("Failed to stop source: %s\n",
-						alureGetErrorString());
-			}
-
-		}
-
-		if (soundCache[i].stream != NULL) {
-
-			if (! alureDestroyStream(soundCache[i].stream, 0, NULL)) {
-				debugOut("Failed to destroy stream: %s\n",
-						alureGetErrorString());
-			}
-
+		if (g_sludge->_mixer->isSoundHandleActive(soundCache[i].handle)) {
+			g_sludge->_mixer->stopHandle(soundCache[i].handle);
 		}
 	}
-
+#if 0
 	for (int i = 0; i < MAX_MODS; i ++) {
 		if (modCache[i].playing) {
 
@@ -146,11 +112,8 @@ void killSoundStuff() {
 
 		}
 	}
-
-	SilenceIKillYou = false;
-
-	alureShutdownDevice();
 #endif
+	SilenceIKillYou = false;
 }
 
 /*
@@ -160,12 +123,11 @@ void killSoundStuff() {
 void setMusicVolume(int a, int v) {
 	if (!soundOK)
 		return;
-
-	if (modCache[a].playing) {
 #if 0
+	if (modCache[a].playing) {
 		alSourcef(modCache[a].playingOnSource, AL_GAIN, (float) modLoudness * v / 256);
-#endif
 	}
+#endif
 }
 
 void setDefaultMusicVolume(int v) {
@@ -177,11 +139,9 @@ void setSoundVolume(int a, int v) {
 		return;
 	int ch = findInSoundCache(a);
 	if (ch != -1) {
-		if (soundCache[ch].playing) {
+		if (g_sludge->_mixer->isSoundHandleActive(soundCache[ch].handle)) {
 			soundCache[ch].vol = v;
-#if 0
-			alSourcef(soundCache[ch].playingOnSource, AL_GAIN, (float) v / 256);
-#endif
+			g_sludge->_mixer->setChannelVolume(soundCache[ch].handle, v);
 		}
 	}
 }
@@ -286,26 +246,15 @@ void huntKillSound(int filenum) {
 void freeSound(int a) {
 	if (!soundOK)
 		return;
-#if 0
-	// Clear OpenAL errors to make sure they don't block anything:
-	alGetError();
 
 	SilenceIKillYou = true;
 
-	if (soundCache[a].playing) {
-		if (! alureStopSource(soundCache[a].playingOnSource, AL_TRUE)) {
-			debugOut("Failed to stop source: %s\n",
-					alureGetErrorString());
-		}
-	}
-	if (! alureDestroyStream(soundCache[a].stream, 0, NULL)) {
-		debugOut("Failed to destroy stream: %s\n",
-				alureGetErrorString());
+	if (g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) {
+		g_sludge->_mixer->stopHandle(soundCache[a].handle);
 	}
 
-	soundCache[a].stream = NULL;
 	soundCache[a].fileLoaded = -1;
-#endif
+
 	SilenceIKillYou = false;
 }
 
@@ -321,75 +270,6 @@ void huntKillFreeSound(int filenum) {
 /*
  * Loading and playing:
  */
-
-void playStream(int a, bool isMOD, bool loopy) {
-#if 0
-	if (! soundOK) return;
-	ALboolean ok;
-	ALuint src;
-	soundThing *st;
-	void (*eos_callback)(void *userdata, ALuint source);
-
-	if (isMOD) {
-		st = &modCache[a];
-		eos_callback = mod_eos_callback;
-	} else {
-		st = &soundCache[a];
-		eos_callback = sound_eos_callback;
-	}
-
-	alGenSources(1, &src);
-	if (alGetError() != AL_NO_ERROR) {
-		debugOut("Failed to create OpenAL source!\n");
-		return;
-	}
-
-	if (isMOD) {
-		alSourcef(src, AL_GAIN, (float) modLoudness * defVol / 256);
-	} else {
-		alSourcef(src, AL_GAIN, (float) soundCache[a].vol / 256);
-	}
-
-	if (loopy) {
-		ok = alurePlaySourceStream(src, (*st).stream,
-				NUM_BUFS, -1, eos_callback, &intpointers[a]);
-	} else {
-		ok = alurePlaySourceStream(src, (*st).stream,
-				NUM_BUFS, 0, eos_callback, &intpointers[a]);
-	}
-
-	if (!ok) {
-
-		debugOut("Failed to play stream: %s\n", alureGetErrorString());
-		alDeleteSources(1, &src);
-		if (alGetError() != AL_NO_ERROR) {
-			debugOut("Failed to delete OpenAL source!\n");
-		}
-
-		(*st).playingOnSource = 0;
-	} else {
-		(*st).playingOnSource = src;
-		(*st).playing = true;
-	}
-#endif
-}
-
-char *loadEntireFileToMemory(Common::SeekableReadStream *inputFile,
-		uint32 size) {
-	char *allData = new char[size];
-	if (!allData)
-		return NULL;
-
-	size_t bytes_read = inputFile->read(allData, size);
-	if (bytes_read != size && inputFile->err()) {
-		debugOut("Reading error in loadEntireFileToMemory.\n");
-	}
-
-	finishAccess();
-
-	return allData;
-}
-
 bool playMOD(int f, int a, int fromTrack) {
 #if 0
 	// load sound
@@ -464,7 +344,7 @@ bool stillPlayingSound(int ch) {
 	if (soundOK)
 		if (ch != -1)
 			if (soundCache[ch].fileLoaded != -1)
-				if (soundCache[ch].playing)
+				if (g_sludge->_mixer->isSoundHandleActive(soundCache[ch].handle))
 					return true;
 
 	return false;
@@ -493,26 +373,16 @@ bool forceRemoveSound() {
 int emptySoundSlot = 0;
 
 int findEmptySoundSlot() {
-	int t;
-	for (t = 0; t < MAX_SAMPLES; t++) {
+	for (int t = 0; t < MAX_SAMPLES; t++) {
 		emptySoundSlot++;
 		emptySoundSlot %= MAX_SAMPLES;
-#if 0
-		if (soundCache[emptySoundSlot].stream == NULL)
-		return emptySoundSlot;
-#endif
-	}
-
-	for (t = 0; t < MAX_SAMPLES; t++) {
-		emptySoundSlot++;
-		emptySoundSlot %= MAX_SAMPLES;
-		if (!soundCache[emptySoundSlot].playing)
+		if (!g_sludge->_mixer->isSoundHandleActive(soundCache[emptySoundSlot].handle))
 			return emptySoundSlot;
 	}
 
 	// Argh! They're all playing! Let's trash the oldest that's not looping...
 
-	for (t = 0; t < MAX_SAMPLES; t++) {
+	for (int t = 0; t < MAX_SAMPLES; t++) {
 		emptySoundSlot++;
 		emptySoundSlot %= MAX_SAMPLES;
 		if (!soundCache[emptySoundSlot].looping)
@@ -527,132 +397,72 @@ int findEmptySoundSlot() {
 }
 
 int cacheSound(int f) {
+	return 0; // don't load source in advance
+}
 
+int makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, bool loopy) {
 	if (!soundOK)
 		return -1;
 
-	unsigned int chunkLength;
-	int retval;
-	bool loopy;
-#if 0
-	loopy = cacheLoopySound;
-	cacheLoopySound = false;
+	int a = findInSoundCache(f);
+	if (a != -1) { // if this sound has been loaded before
+		// still playing
+		if (g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) {
+			g_sludge->_mixer->stopHandle(soundCache[a].handle); // stop it
+		}
+	} else {
+		if (f == -2)
+			return -1;
+		a = findEmptySoundSlot();
+		freeSound(a);
+	}
 
 	setResourceForFatal(f);
-
-	if (! soundOK) return 0;
-
-	int a = findInSoundCache(f);
-	if (a != -1) {
-
-		if (soundCache[a].playing) {
-			if (! alureStopSource(soundCache[a].playingOnSource, AL_TRUE)) {
-				debugOut("Failed to stop source: %s\n",
-						alureGetErrorString());
-			}
-		}
-		if (! alureRewindStream(soundCache[a].stream)) {
-			debugOut("Failed to rewind stream: %s\n",
-					alureGetErrorString());
-		}
-
-		return a;
-	}
-	if (f == -2) return -1;
-	a = findEmptySoundSlot();
-	freeSound(a);
-
 	uint32 length = openFileFromNum(f);
-	if (! length) return -1;
+	if (!length)
+		return -1;
 
-	unsigned char *memImage;
+	uint curr_ptr = bigDataFile->pos();
+	Audio::RewindableAudioStream *stream = Audio::makeWAVStream(bigDataFile->readStream(length), DisposeAfterUse::NO);
 
-	bool tryAgain = true;
-
-	while (tryAgain) {
-		memImage = (unsigned char *)loadEntireFileToMemory(bigDataFile, length);
-		tryAgain = memImage == NULL;
-		if (tryAgain) {
-			if (! forceRemoveSound()) {
-				fatal(ERROR_SOUND_MEMORY_LOW);
-				return -1;
-			}
-		}
-	}
-
-	chunkLength = 19200;
-
-	// Small looping sounds need small chunklengths.
-	if (loopy) {
-		if (length < NUM_BUFS * chunkLength) {
-			chunkLength = length / NUM_BUFS;
-		}
-	} else if (length < chunkLength) {
-		chunkLength = length;
-	}
-
-	soundCache[a].stream = alureCreateStreamFromMemory(memImage, length, chunkLength, 0, NULL);
-
-	delete[] memImage;
-
-	if (soundCache[a].stream != NULL) {
-		soundCache[a].fileLoaded = f;
-		setResourceForFatal(-1);
-		retval = a;
-	} else {
-
-		debugOut("Failed to create stream from sound: %s\n",
-				alureGetErrorString());
-
-		warning(ERROR_SOUND_ODDNESS);
-		soundCache[a].stream = NULL;
-		soundCache[a].playing = false;
-		soundCache[a].playingOnSource = 0;
-		soundCache[a].fileLoaded = -1;
-		soundCache[a].looping = false;
-		retval = -1;
+#ifdef USE_VORBIS
+	if (!stream) {
+		bigDataFile->seek(curr_ptr);
+		stream = Audio::makeVorbisStream(bigDataFile->readStream(length), DisposeAfterUse::NO);
 	}
 #endif
-	return retval;
+	finishAccess();
+
+	if (stream) {
+		audiostream = Audio::makeLoopingAudioStream(stream, loopy ? 0 : 1);
+		soundCache[a].fileLoaded = f;
+		setResourceForFatal(-1);
+	} else {
+		audiostream = nullptr;
+		warning(ERROR_SOUND_ODDNESS);
+		soundCache[a].fileLoaded = -1;
+		soundCache[a].looping = false;
+		return -1;
+	}
+
+	return a;
 }
 
 bool startSound(int f, bool loopy) {
-	if (loopy) // TODO: don't consider loop sound yet at this stage
-		return false;
-	// load sound
-	setResourceForFatal(f);
-	uint32 length = openFileFromNum(f);
-	Common::SeekableReadStream *memImage = bigDataFile->readStream(length);
-	if (memImage->size() != length || bigDataFile->err())
-		debug("Sound reading failed");
-	Audio::AudioStream *stream = Audio::makeWAVStream(memImage, DisposeAfterUse::NO);
-#ifdef USE_VORBIS
-	if (!stream) {
-		stream = Audio::makeVorbisStream(memImage, DisposeAfterUse::NO);
-	}
-#endif
-	delete memImage;
-	if (!stream)
-		return false;
-
-	// play sound
-	Audio::SoundHandle soundHandle;
-	g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
-#if 0
 	if (soundOK) {
-
-		cacheLoopySound = loopy;
-		int a = cacheSound(f);
+		// Load sound
+		Audio::AudioStream *stream = nullptr;
+		int a = makeSoundAudioStream(f, stream, loopy);
 		if (a == -1) {
 			debugOut("Failed to cache sound!\n");
 			return false;
 		}
+
+		// play sound
 		soundCache[a].looping = loopy;
 		soundCache[a].vol = defSoundVol;
-
-		playStream(a, false, loopy);
+		g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundCache[a].handle, stream, -1, soundCache[a].vol);
 	}
-#endif
 	return true;
 }
 
@@ -760,54 +570,26 @@ static void list_eos_callback(void *list, ALuint source) {
 }
 #endif
 
+// loop a list of sound
 void playSoundList(soundList *s) {
-#if 0
 	if (soundOK) {
-		cacheLoopySound = true;
-		int a = cacheSound(s->sound);
+		// Load sound
+		Audio::AudioStream *stream;
+		int a = makeSoundAudioStream(s->sound, stream, true);
 		if (a == -1) {
 			debugOut("Failed to cache sound!\n");
 			return;
 		}
+
+		// Play sound
 		soundCache[a].looping = false;
 		if (s->vol < 0)
-		soundCache[a].vol = defSoundVol;
+			soundCache[a].vol = defSoundVol;
 		else
-		soundCache[a].vol = s->vol;
+			soundCache[a].vol = s->vol;
 		s-> cacheIndex = a;
-
-		ALboolean ok;
-		ALuint src;
-		soundThing *st;
-
-		st = &soundCache[a];
-
-		alGenSources(1, &src);
-		if (alGetError() != AL_NO_ERROR) {
-			debugOut("Failed to create OpenAL source!\n");
-			return;
-		}
-
-		alSourcef(src, AL_GAIN, (float) soundCache[a].vol / 256);
-
-		ok = alurePlaySourceStream(src, (*st).stream,
-				NUM_BUFS, 0, list_eos_callback, s);
-
-		if (!ok) {
-
-			debugOut("Failed to play stream: %s\n", alureGetErrorString());
-			alDeleteSources(1, &src);
-			if (alGetError() != AL_NO_ERROR) {
-				debugOut("Failed to delete OpenAL source!\n");
-			}
-
-			(*st).playingOnSource = 0;
-		} else {
-			(*st).playingOnSource = src;
-			(*st).playing = true;
-		}
+		g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundCache[a].handle, stream, -1, soundCache[a].vol);
 	}
-#endif
 }
 
 void playMovieStream(int a) {
