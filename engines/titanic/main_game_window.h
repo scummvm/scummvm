@@ -44,6 +44,12 @@ private:
 	uint32 _priorRightDownTime;
 private:
 	/**
+	 * Returns true if a savegame was selected to be loaded
+	 * from the ScummVM launcher
+	 */
+	bool isLoadingFromLauncher() const;
+
+	/**
 	 * Checks for the presence of any savegames and, if present,
 	 * lets the user pick one to resume
 	 */

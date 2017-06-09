@@ -54,18 +54,16 @@ void CMainGameWindow::applicationStarting() {
 	CScreenManager *screenManager = CScreenManager::setCurrent();
 	screenManager->setMode(640, 480, 16, 0, true);
 
-#if 0
 	// Show the initial copyright & info screen for the game
-	if (gDebugLevel <= 0) {
+	if (!isLoadingFromLauncher()) {
 		Image image;
 		image.load("Bitmap/TITANIC");
 		_vm->_screen->blitFrom(image, Point(
 			SCREEN_WIDTH / 2 - image.w / 2,
 			SCREEN_HEIGHT / 2 - image.h / 2
-		));
+			));
 		_vm->_events->sleep(5000);
 	}
-#endif
 
 	// Set up the game project, and get game slot
 	int saveSlot = getSavegameSlot();
@@ -104,6 +102,10 @@ int CMainGameWindow::getSavegameSlot() {
 	_project->setFilename("starship.prj");
 
 	return selectSavegame();
+}
+
+bool CMainGameWindow::isLoadingFromLauncher() const {
+	return ConfMan.hasKey("save_slot");
 }
 
 int CMainGameWindow::selectSavegame() {
