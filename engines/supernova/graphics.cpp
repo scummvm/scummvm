@@ -29,8 +29,8 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	size *= 16;      // a paragraph is 16 bytes
 	_encodedImage = new byte[size];
 
-	_palette = new byte[768];
-	g_system->getPaletteManager()->grabPalette(_palette, 0, 256);
+	_palette = new byte[717];
+	g_system->getPaletteManager()->grabPalette(_palette, 16, 240);
 
 	byte pal_diff;
 	byte flag = stream.readByte();
@@ -45,7 +45,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_palette[717 - i] = stream.readByte();
 		}
 	}
-	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
+	g_system->getPaletteManager()->setPalette(_palette, 16, 240);
 
 	byte numSections = stream.readByte();
 	for (size_t i = 0; i < kMaxSections; ++i) {
