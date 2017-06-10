@@ -644,7 +644,7 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 }
 
 void SciEngine::runGame() {
-	setTotalPlayTime(0);
+	setTotalPlayTime(17);
 
 	initStackBaseWithSelector(SELECTOR(play)); // Call the play selector
 
