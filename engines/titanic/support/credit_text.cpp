@@ -26,8 +26,8 @@
 namespace Titanic {
 
 CCreditText::CCreditText() : _screenManagerP(nullptr), _ticks(0),
-		_fontHeight(1), _objectP(nullptr), _totalHeight(0),
-		_yPos(0), _textR(0), _textG(0), _textB(0), _destR(0),
+		_fontHeight(1), _objectP(nullptr), _yOffset(0),
+		_priorInc(0), _textR(0), _textG(0), _textB(0), _destR(0),
 		_destG(0), _destB(0), _counter(0) {
 }
 
@@ -45,7 +45,7 @@ void CCreditText::load(CGameObject *obj, CScreenManager *screenManager,
 	setup();
 
 	_ticks = g_vm->_events->getTicksCount();
-	_yPos = 0;
+	_priorInc = 0;
 	_textR = 0xFF;
 	_textG = 0xFF;
 	_textB = 0xFF;
@@ -94,7 +94,7 @@ void CCreditText::setup() {
 	_screenManagerP->setFontNumber(oldFontNumber);
 	_groupIt = _groups.begin();
 	_lineIt = (*_groupIt)->_lines.begin();
-	_totalHeight = _objectP->getBounds().height() + _fontHeight * 2;
+	_yOffset = _objectP->getBounds().height() + _fontHeight * 2;
 }
 
 CString CCreditText::readLine(Common::SeekableReadStream *stream) {
@@ -164,17 +164,18 @@ bool CCreditText::draw() {
 	}
 
 	// Positioning adjustment, changing lines and/or group if necessary
-	int yDiff = (int)(g_vm->_events->getTicksCount() - _ticks) / 22 - _yPos;
+	int yDiff = (int)(g_vm->_events->getTicksCount() - _ticks) / 22 - _priorInc;
+
 	while (yDiff > 0) {
-		if (_totalHeight > 0) {
-			if (yDiff < _totalHeight) {
-				_totalHeight -= yDiff;
-				_yPos += yDiff;
+		if (_yOffset > 0) {
+			if (yDiff < _yOffset) {
+				_yOffset -= yDiff;
+				_priorInc += yDiff;
 				yDiff = 0;
 			} else {
-				yDiff -= _totalHeight;
-				_yPos += _totalHeight;
-				_totalHeight = 0;
+				yDiff -= _yOffset;
+				_priorInc += _yOffset;
+				_yOffset = 0;
 			}
 		} else {
 			if (yDiff < _fontHeight)
@@ -182,7 +183,7 @@ bool CCreditText::draw() {
 
 			++_lineIt;
 			yDiff -= _fontHeight;
-			_yPos += _fontHeight;
+			_priorInc += _fontHeight;
 
 			if (_lineIt == (*_groupIt)->_lines.end()) {
 				// Move to next line group
@@ -192,7 +193,7 @@ bool CCreditText::draw() {
 					return false;
 
 				_lineIt = (*_groupIt)->_lines.begin();
-				_totalHeight = _fontHeight * 3 / 2;
+				_yOffset = _fontHeight * 3 / 2;
 			}
 		}
 	}
@@ -202,7 +203,7 @@ bool CCreditText::draw() {
 	CCreditLines::iterator lineIt = _lineIt;
 
 	Point textPos;
-	for (textPos.y = _rect.top + _totalHeight; textPos.y <= _rect.bottom;
+	for (textPos.y = _rect.top + _yOffset; textPos.y <= _rect.bottom;
 			textPos.y += _fontHeight) {
 		int textR = _textR + _destR * _counter / 200;
 		int textG = _textG + _destG * _counter / 200;
