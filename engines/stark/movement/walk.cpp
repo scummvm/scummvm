@@ -67,6 +67,8 @@ void Walk::stop() {
 }
 
 void Walk::updatePath() const {
+	_path->reset();
+
 	Resources::Floor *floor = StarkGlobal->getCurrent()->getFloor();
 
 	Math::Vector3d startPosition = _item3D->getPosition3D();
@@ -77,21 +79,26 @@ void Walk::updatePath() const {
 
 	Resources::FloorFace *startFloorFace = floor->getFace(startFloorFaceIndex);
 	Resources::FloorEdge *startFloorEdge = startFloorFace->findNearestEdge(startPosition);
-
+	if (!startFloorEdge) {
+		// Unable to find enabled start edge
+		return;
+	}
 
 	int32 destinationFloorFaceIndex = floor->findFaceContainingPoint(_destination);
+	if (destinationFloorFaceIndex < 0) {
+		// Unable to find the destination's face
+		return;
+	}
+
 	Resources::FloorFace *destinationFloorFace = floor->getFace(destinationFloorFaceIndex);
 	Resources::FloorEdge *destinationFloorEdge = destinationFloorFace->findNearestEdge(_destination);
-
-	_path->reset();
-	if (!startFloorEdge || !destinationFloorEdge) {
-		// Unable to find enabled start and destination edges
+	if (!destinationFloorEdge) {
+		// Unable to find enabled destination edge
 		return;
 	}
 
 	ShortestPath pathSearch;
 	ShortestPath::NodeList edgePath = pathSearch.search(startFloorEdge, destinationFloorEdge);
-
 
 	for (ShortestPath::NodeList::const_iterator it = edgePath.begin(); it != edgePath.end(); it++) {
 		_path->addStep((*it)->getPosition());
