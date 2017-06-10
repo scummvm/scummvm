@@ -1186,6 +1186,7 @@ void ThreadResource::doRoom() {
 			}
 
 			vm._eventsManager->_intPtr._hasPalette = true;
+			vm._screen->_vPort->_flags |= DISPFLAG_8;
 			vm._screen->flipPage();
 			vm._eventsManager->sWaitFlip();
 		} while (!vm.shouldQuit() && !vm._eventsManager->_mouseClicked);
