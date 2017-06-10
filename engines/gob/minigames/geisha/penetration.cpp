@@ -1413,7 +1413,7 @@ void Penetration::updateAnims() {
 	int16 left = 0, top = 0, right = 0, bottom = 0;
 
 	// Clear the previous map animation frames
-	for (Common::List<ANIObject *>::iterator a = _mapAnims.reverse_begin();
+	for (Common::List<ANIObject *>::iterator a = _mapAnims.lastElement();
 			 a != _mapAnims.end(); --a) {
 
 		(*a)->clear(*_map, left, top, right, bottom);
@@ -1428,7 +1428,7 @@ void Penetration::updateAnims() {
 	}
 
 	// Clear the previous animation frames
-	for (Common::List<ANIObject *>::iterator a = _anims.reverse_begin();
+	for (Common::List<ANIObject *>::iterator a = _anims.lastElement();
 			 a != _anims.end(); --a) {
 
 		if ((*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom))

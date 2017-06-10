@@ -288,7 +288,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 
 	// Iterate through the scene items
 	SynchronizedList<SceneItem *>::iterator i;
-	for (i = g_globals->_sceneItems.reverse_begin(); i != g_globals->_sceneItems.end(); --i, ++colIndex) {
+	for (i = g_globals->_sceneItems.lastElement(); i != g_globals->_sceneItems.end(); --i, ++colIndex) {
 		SceneItem *o = *i;
 
 		// Draw the contents of the hotspot area

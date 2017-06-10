@@ -67,7 +67,7 @@ RenderObjectManager::RenderObjectManager(int width, int height, int framebufferC
 }
 
 RenderObjectManager::~RenderObjectManager() {
-	// Die Wurzel des Baumes löschen, damit werden alle BS_RenderObjects mitgelöscht.
+	// Die Wurzel des Baumes lï¿½schen, damit werden alle BS_RenderObjects mitgelï¿½scht.
 	_rootPtr.erase();
 	delete _uta;
 	delete _currQueue;
@@ -80,7 +80,7 @@ void RenderObjectManager::startFrame() {
 	// Verstrichene Zeit bestimmen
 	int timeElapsed = Kernel::getInstance()->getGfx()->getLastFrameDurationMicro();
 
-	// Alle BS_TimedRenderObject Objekte über den Framestart und die verstrichene Zeit in Kenntnis setzen
+	// Alle BS_TimedRenderObject Objekte ï¿½ber den Framestart und die verstrichene Zeit in Kenntnis setzen
 	RenderObjectList::iterator iter = _timedRenderObjects.begin();
 	for (; iter != _timedRenderObjects.end(); ++iter)
 		(*iter)->frameNotification(timeElapsed);
@@ -95,7 +95,7 @@ bool RenderObjectManager::render() {
 
 	_frameStarted = false;
 
-	// Die Render-Methode der Wurzel aufrufen. Dadurch wird das rekursive Rendern der Baumelemente angestoßen.
+	// Die Render-Methode der Wurzel aufrufen. Dadurch wird das rekursive Rendern der Baumelemente angestoï¿½en.
 
 	_currQueue->clear();
 	_rootPtr->preRender(_currQueue);
@@ -124,7 +124,7 @@ bool RenderObjectManager::render() {
 	// so don't need to be drawn in the first place which speeds things up a bit.
 	for (RectangleList::iterator rectIt = updateRects->begin(); rectIt != updateRects->end(); ++rectIt) {
 		int minZ = 0;
-		for (RenderObjectQueue::iterator it = _currQueue->reverse_begin(); it != _currQueue->end(); --it) {
+		for (RenderObjectQueue::iterator it = _currQueue->lastElement(); it != _currQueue->end(); --it) {
 			if ((*it)._renderObject->isVisible() && (*it)._renderObject->isSolid() &&
 				(*it)._renderObject->getBbox().contains(*rectIt)) {
 				minZ = (*it)._renderObject->getAbsoluteZ();
@@ -190,7 +190,7 @@ bool RenderObjectManager::persist(OutputPersistenceBlock &writer) {
 bool RenderObjectManager::unpersist(InputPersistenceBlock &reader) {
 	bool result = true;
 
-	// Alle Kinder des Wurzelknotens löschen. Damit werden alle BS_RenderObjects gelöscht.
+	// Alle Kinder des Wurzelknotens lï¿½schen. Damit werden alle BS_RenderObjects gelï¿½scht.
 	_rootPtr->deleteAllChildren();
 
 	// Alle BS_RenderObjects wieder hestellen.
@@ -199,7 +199,7 @@ bool RenderObjectManager::unpersist(InputPersistenceBlock &reader) {
 
 	reader.read(_frameStarted);
 
-	// Momentan gespeicherte Referenzen auf TimedRenderObjects löschen.
+	// Momentan gespeicherte Referenzen auf TimedRenderObjects lï¿½schen.
 	_timedRenderObjects.resize(0);
 
 	// Referenzen auf die TimedRenderObjects wieder herstellen.
