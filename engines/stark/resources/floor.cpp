@@ -279,12 +279,40 @@ bool FloorEdge::isFloorBorder() const {
 	return _faceIndex2 == -1;
 }
 
+bool FloorEdge::intersectLine2d(const Math::Line3d &s1, const Math::Line3d &s2) {
+	const Math::Vector3d &s1begin = s1.begin();
+	const Math::Vector3d &s1end = s1.end();
+	const Math::Vector3d &s2begin = s2.begin();
+	const Math::Vector3d &s2end = s2.end();
+
+	float denom = ((s2end.y() - s2begin.y()) * (s1end.x() - s1begin.x())) -
+	              ((s2end.x() - s2begin.x()) * (s1end.y() - s1begin.y()));
+
+	float nume_a = ((s2end.x() - s2begin.x()) * (s1begin.y() - s2begin.y())) -
+	               ((s2end.y() - s2begin.y()) * (s1begin.x() - s2begin.x()));
+
+	float nume_b = ((s1end.x() - s1begin.x()) * (s1begin.y() - s2begin.y())) -
+	               ((s1end.y() - s1begin.y()) * (s1begin.x() - s2begin.x()));
+
+	if (denom == 0.0f) {
+		return false; // Segments are collinear
+	}
+
+	float ua = nume_a / denom;
+	float ub = nume_b / denom;
+
+	// Non inclusive bounds check, one of the vertices of one segment being inside
+	// the other segment is not considered to be an intersection.
+	// This is the only difference with Line3d::intersectLine2d.
+	return ua > 0 && ua < 1 && ub > 0 && ub < 1;
+}
+
 bool FloorEdge::intersectsSegment(const Floor *floor, const Math::Line3d &segment) const {
 	Math::Vector3d vertex1 = floor->getVertex(_vertexIndex1);
 	Math::Vector3d vertex2 = floor->getVertex(_vertexIndex2);
-	Math::Line3d edgeSement = Math::Line3d(vertex1, vertex2);
+	Math::Line3d edgeSegment = Math::Line3d(vertex1, vertex2);
 
-	return edgeSement.intersectLine2d(segment, nullptr, false);
+	return intersectLine2d(edgeSegment, segment);
 }
 
 void FloorEdge::enable(bool e) {

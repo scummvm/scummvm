@@ -103,6 +103,7 @@ public:
 
 private:
 	void addNeighboursFromFace(const FloorFace *face);
+	static bool intersectLine2d(const Math::Line3d &s1, const Math::Line3d &s2);
 
 	uint16 _vertexIndex1;
 	uint16 _vertexIndex2;
