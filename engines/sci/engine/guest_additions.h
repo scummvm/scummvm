@@ -55,7 +55,7 @@ public:
 	 * Synchronises audio volume settings from ScummVM to the game. Called
 	 * whenever the ScummVM global menu is dismissed.
 	 */
-	void syncSoundSettings() const;
+	void syncSoundSettingsFromScummVM() const;
 
 	/**
 	 * Synchronises all audio settings from ScummVM to the game. Called when the
@@ -84,7 +84,7 @@ private:
 	 * Determines whether the current stack contains calls from audio controls
 	 * that indicate a user-initiated change of audio settings.
 	 */
-	bool shouldSyncAudio() const;
+	bool shouldSyncAudioToScummVM() const;
 
 #pragma mark -
 #pragma mark Hooks

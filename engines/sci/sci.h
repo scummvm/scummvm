@@ -260,7 +260,8 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
-	void syncSoundSettings();
+	void syncSoundSettings(); ///< from ScummVM to the game
+	void updateSoundMixerVolumes();
 	uint32 getTickCount();
 	void setTickCount(const uint32 ticks);
 

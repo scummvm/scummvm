@@ -68,7 +68,7 @@ GuestAdditions::GuestAdditions(EngineState *state, GameFeatures *features, Kerne
 
 #pragma mark -
 
-void GuestAdditions::syncSoundSettings() const {
+void GuestAdditions::syncSoundSettingsFromScummVM() const {
 #ifdef ENABLE_SCI32
 	if (_features->audioVolumeSyncUsesGlobals())
 		syncAudioVolumeGlobalsFromScummVM();
@@ -94,7 +94,7 @@ void GuestAdditions::invokeSelector(const reg_t objId, const Selector selector, 
 	::Sci::invokeSelector(_state, objId, selector, 0, _state->_executionStack.back().sp, argc, argv);
 }
 
-bool GuestAdditions::shouldSyncAudio() const {
+bool GuestAdditions::shouldSyncAudioToScummVM() const {
 	const SciGameId gameId = g_sci->getGameId();
 	Common::List<ExecStack>::const_iterator it;
 	for (it = _state->_executionStack.begin(); it != _state->_executionStack.end(); ++it) {
@@ -163,7 +163,7 @@ void GuestAdditions::writeVarHook(const int type, const int index, const reg_t v
 	if (type == VAR_GLOBAL) {
 #ifdef ENABLE_SCI32
 		if (getSciVersion() >= SCI_VERSION_2) {
-			if (_features->audioVolumeSyncUsesGlobals() && shouldSyncAudio()) {
+			if (_features->audioVolumeSyncUsesGlobals() && shouldSyncAudioToScummVM()) {
 				syncAudioVolumeGlobalsToScummVM(index, value);
 			} else if (g_sci->getGameId() == GID_GK1) {
 				syncGK1StartupVolumeFromScummVM(index, value);
@@ -179,7 +179,7 @@ void GuestAdditions::writeVarHook(const int type, const int index, const reg_t v
 }
 
 bool GuestAdditions::kDoSoundMasterVolumeHook(const int volume) const {
-	if (!_features->audioVolumeSyncUsesGlobals() && shouldSyncAudio()) {
+	if (!_features->audioVolumeSyncUsesGlobals() && shouldSyncAudioToScummVM()) {
 		syncMasterVolumeToScummVM(volume);
 		return true;
 	}
@@ -194,14 +194,14 @@ void GuestAdditions::sendSelectorHook(const reg_t sendObj, Selector &selector, r
 }
 
 bool GuestAdditions::audio32SetVolumeHook(const int16 channelIndex, int16 volume) const {
-	if (!_features->audioVolumeSyncUsesGlobals() && shouldSyncAudio()) {
+	if (!_features->audioVolumeSyncUsesGlobals() && shouldSyncAudioToScummVM()) {
 		volume = volume * Audio::Mixer::kMaxMixerVolume / Audio32::kMaxVolume;
 		if (Common::checkGameGUIOption(GUIO_LINKMUSICTOSFX, ConfMan.get("guioptions"))) {
 			ConfMan.setInt("music_volume", volume);
 		}
 		ConfMan.setInt("sfx_volume", volume);
 		ConfMan.setInt("speech_volume", volume);
-		g_engine->syncSoundSettings();
+		g_sci->updateSoundMixerVolumes();
 		return true;
 	}
 
@@ -209,7 +209,7 @@ bool GuestAdditions::audio32SetVolumeHook(const int16 channelIndex, int16 volume
 }
 
 void GuestAdditions::kDoSoundSetVolumeHook(const reg_t soundObj, const int16 volume) const {
-	if (g_sci->getGameId() == GID_GK1 && shouldSyncAudio()) {
+	if (g_sci->getGameId() == GID_GK1 && shouldSyncAudioToScummVM()) {
 		syncGK1AudioVolumeToScummVM(soundObj, volume);
 	}
 }
@@ -727,17 +727,8 @@ void GuestAdditions::syncMessageTypeToScummVMUsingLSL6HiresStrategy(const reg_t 
 #pragma mark Master volume sync
 
 void GuestAdditions::syncMasterVolumeFromScummVM() const {
-	const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
-
-	// When the volume changes from the ScummVM launcher, ScummVM automatically
-	// adjusts the software mixer in Engine::syncSoundSettings, but MIDI may not
-	// run through the ScummVM mixer so its master volume must be adjusted
-	// explicitly
-	if (g_sci->_soundCmd) {
-		g_sci->_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : musicVolume);
-	}
-
 #ifdef ENABLE_SCI32
+	const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
 	const int16 sfxVolume = (ConfMan.getInt("sfx_volume") + 1) * Audio32::kMaxVolume / Audio::Mixer::kMaxMixerVolume;
 
 	// Volume was changed from ScummVM during the game, so resync the
@@ -765,7 +756,7 @@ void GuestAdditions::syncMasterVolumeToScummVM(const int16 masterVolume) const {
 		ConfMan.setInt("sfx_volume", scummVMVolume);
 		ConfMan.setInt("speech_volume", scummVMVolume);
 	}
-	g_engine->syncSoundSettings();
+	g_sci->updateSoundMixerVolumes();
 }
 
 #ifdef ENABLE_SCI32
@@ -1003,11 +994,11 @@ void GuestAdditions::syncGK1AudioVolumeToScummVM(const reg_t soundObj, int16 vol
 	// have been set by the volume slider
 	if (objName == "gkMusic2") {
 		ConfMan.setInt("music_volume", volume);
-		g_engine->syncSoundSettings();
+		g_sci->updateSoundMixerVolumes();
 	} else if (objName == "gkSound3") {
 		ConfMan.setInt("sfx_volume", volume);
 		ConfMan.setInt("speech_volume", volume);
-		g_engine->syncSoundSettings();
+		g_sci->updateSoundMixerVolumes();
 	}
 }
 

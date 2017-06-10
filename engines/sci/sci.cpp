@@ -879,8 +879,21 @@ void SciEngine::pauseEngineIntern(bool pause) {
 }
 
 void SciEngine::syncSoundSettings() {
+	updateSoundMixerVolumes();
+	_guestAdditions->syncSoundSettingsFromScummVM();
+}
+
+void SciEngine::updateSoundMixerVolumes() {
 	Engine::syncSoundSettings();
-	_guestAdditions->syncSoundSettings();
+
+	// ScummVM adjusts the software mixer volume in Engine::syncSoundSettings,
+	// but MIDI either does not run through the ScummVM mixer (e.g. hardware
+	// synth) or it uses a kPlainSoundType channel type, so the master MIDI
+	// volume must be adjusted here for MIDI playback volume to be correct
+	if (_soundCmd) {
+		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
+		_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : musicVolume);
+	}
 }
 
 void SciEngine::loadMacExecutable() {
