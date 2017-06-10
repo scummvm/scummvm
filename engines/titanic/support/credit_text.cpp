@@ -203,7 +203,7 @@ bool CCreditText::draw() {
 	CCreditLines::iterator lineIt = _lineIt;
 
 	Point textPos;
-	for (textPos.y = _rect.top + _yOffset; textPos.y <= _rect.bottom;
+	for (textPos.y = _rect.top + _yOffset - yDiff; textPos.y <= _rect.bottom;
 			textPos.y += _fontHeight) {
 		int textR = _textR + _destR * _counter / 200;
 		int textG = _textG + _destG * _counter / 200;
