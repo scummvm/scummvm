@@ -47,7 +47,7 @@ namespace Sludge {
 
 bool soundOK = false;
 bool SilenceIKillYou = false;
-
+bool isHandlingSoundList = false;
 // there's possibility that several sound list played at the same time
 typedef Common::List<soundList *> SoundListHandles;
 SoundListHandles soundListHandles;
@@ -56,13 +56,13 @@ struct soundThing {
 	Audio::SoundHandle handle;
 	int fileLoaded, vol;    //Used for sounds only. (sound saving/loading)
 	bool looping;      		//Used for sounds only. (sound saving/loading)
+	bool inSoundList;
 };
 
 soundThing soundCache[MAX_SAMPLES];
 #if 0
 soundThing modCache[MAX_MODS];
 #endif
-int intpointers[MAX_SAMPLES];
 
 int defVol = 128;
 int defSoundVol = 255;
@@ -76,7 +76,7 @@ bool initSoundStuff(HWND hwnd) {
 	for (int a = 0; a < MAX_SAMPLES; a ++) {
 		soundCache[a].fileLoaded = -1;
 		soundCache[a].looping = false;
-		intpointers[a] = a;
+		soundCache[a].inSoundList = false;
 	}
 #if 0
 	for (int a = 0; a < MAX_MODS; a ++) {
@@ -215,6 +215,8 @@ void freeSound(int a) {
 
 	if (g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) {
 		g_sludge->_mixer->stopHandle(soundCache[a].handle);
+		if (soundCache[a].inSoundList)
+			handleSoundLists();
 	}
 
 	soundCache[a].fileLoaded = -1;
@@ -340,7 +342,7 @@ int findEmptySoundSlot() {
 	for (int t = 0; t < MAX_SAMPLES; t++) {
 		emptySoundSlot++;
 		emptySoundSlot %= MAX_SAMPLES;
-		if (!g_sludge->_mixer->isSoundHandleActive(soundCache[emptySoundSlot].handle))
+		if (!g_sludge->_mixer->isSoundHandleActive(soundCache[emptySoundSlot].handle) && !soundCache[emptySoundSlot].inSoundList)
 			return emptySoundSlot;
 	}
 
@@ -349,7 +351,7 @@ int findEmptySoundSlot() {
 	for (int t = 0; t < MAX_SAMPLES; t++) {
 		emptySoundSlot++;
 		emptySoundSlot %= MAX_SAMPLES;
-		if (!soundCache[emptySoundSlot].looping)
+		if (!soundCache[emptySoundSlot].looping && !soundCache[emptySoundSlot].inSoundList)
 			return emptySoundSlot;
 	}
 
@@ -373,6 +375,9 @@ int makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, bool loopy) {
 		// still playing
 		if (g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) {
 			g_sludge->_mixer->stopHandle(soundCache[a].handle); // stop it
+			if (soundCache[a].inSoundList) {
+				handleSoundLists();
+			}
 		}
 	} else {
 		if (f == -2)
@@ -501,12 +506,16 @@ bool deleteSoundFromList(soundList *&s) {
 }
 
 void handleSoundLists() {
+	if (isHandlingSoundList)
+		return;
+	isHandlingSoundList = true;
 	for (SoundListHandles::iterator it = soundListHandles.begin(); it != soundListHandles.end(); ++it) {
 		soundList *s = (*it);
 		int a = s->cacheIndex;
 		bool remove = false;
 		if (!g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) { // reach the end of stream
 			s->cacheIndex = false;
+			soundCache[a].inSoundList = false;
 			if (SilenceIKillYou) {
 				while (deleteSoundFromList(s))
 					;
@@ -538,6 +547,7 @@ void handleSoundLists() {
 			it = soundListHandles.reverse_erase(it);
 		}
 	}
+	isHandlingSoundList = false;
 }
 
 // loop a list of sound
@@ -559,6 +569,7 @@ void playSoundList(soundList *s) {
 			soundCache[a].vol = s->vol;
 		s-> cacheIndex = a;
 		g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundCache[a].handle, stream, -1, soundCache[a].vol);
+		soundCache[a].inSoundList = true;
 
 		// push sound list
 		soundListHandles.push_back(s);
