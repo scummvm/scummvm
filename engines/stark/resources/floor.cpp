@@ -49,7 +49,7 @@ Math::Vector3d Floor::getVertex(uint32 index) const {
 
 int32 Floor::findFaceContainingPoint(const Math::Vector3d &point) const {
 	for (uint32 i = 0; i < _faces.size(); i++) {
-		if (_faces[i]->isPointInside(point)) {
+		if (_faces[i]->hasVertices() && _faces[i]->isPointInside(point)) {
 			return i;
 		}
 	}
