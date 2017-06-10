@@ -169,7 +169,11 @@ void Walk::onGameLoop() {
 	if (direction.getMagnitude() != 0.0) {
 		_item3D->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
 	}
-	_item3D->setFloorFaceIndex(newFloorFaceIndex);
+	if (newFloorFaceIndex >= 0) {
+		// When unable to find the face containing the new position, keep the previous one
+		// to prevent draw order glitches.
+		_item3D->setFloorFaceIndex(newFloorFaceIndex);
+	}
 
 	changeItemAnim();
 }
