@@ -26,12 +26,6 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
-#include "sci/resource.h"
-#ifdef ENABLE_SCI32
-#include "audio/mixer.h"
-#include "sci/sound/audio32.h"
-#include "sci/sound/music.h"
-#endif
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/state.h"
