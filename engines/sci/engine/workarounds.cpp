@@ -419,6 +419,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ6,            -1, 64994, -1,               "Game", "restore",                         NULL,     1, { WORKAROUND_FAKE,   0 } }, // When trying to load an invalid save game from the launcher
 	{ GID_TORIN,          -1, 64017,  0,             "oFlags", "clear",                           NULL,     0, { WORKAROUND_FAKE,   0 } }, // entering Torin's home in the French version
 	{ GID_TORIN,       10000, 64029,  0,          "oMessager", "nextMsg",                         NULL,     3, { WORKAROUND_FAKE,   0 } }, // start of chapter one
+	{ GID_TORIN,          -1, 64892,  0,      "oEventHandler", "killAllEventHogs",                NULL,     1, { WORKAROUND_FAKE,   0 } }, // when pressing the hint button when the game is about to transition to a new room (race condition) - Trac#9810
 	{ GID_TORIN,       20100, 64964,  0,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // going down the cliff at the first screen of chapter 2 (washing area)
 	{ GID_TORIN,       61100, 64888,  0,              "Torin", "autorestore",                     NULL,    11, { WORKAROUND_FAKE,   0 } }, // after attempting to restore a save game saved with the wrong game version
 	SCI_WORKAROUNDENTRY_TERMINATOR
