@@ -534,8 +534,6 @@ void OSVideoSurface::clear() {
 void OSVideoSurface::playMovie(uint flags, CGameObject *obj) {
 	if (loadIfReady() && _movie)
 		_movie->play(flags, obj);
-
-	_ddSurface->fill(nullptr, 0);
 }
 
 void OSVideoSurface::playMovie(uint startFrame, uint endFrame, uint flags, CGameObject *obj) {
