@@ -202,6 +202,8 @@ void DialogPanel::reset() {
 	delete _subtitleVisual;
 	_subtitleVisual = nullptr;
 
+	_options.clear();
+
 	StarkDialogPlayer->reset();
 }
 
