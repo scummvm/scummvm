@@ -517,7 +517,7 @@ void HiRes4Engine::init() {
 	readCommands(*stream, _globalCommands);
 
 	stream.reset(readSkewedSectors(_boot, 0x06, 0x6, 1));
-	stream->skip(0x10);
+	stream->skip(0x15);
 	loadDroppedItemOffsets(*stream, IDI_HR4_NUM_ITEM_OFFSETS);
 
 	stream.reset(readSkewedSectors(_boot, 0x05, 0x0, 4));
