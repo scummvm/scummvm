@@ -157,9 +157,9 @@ public:
 	void update();
 
 	/**
-	 * Called when the view changes
+	 * Called when the room changes
 	 */
-	void viewChange();
+	void roomChange();
 
 	/**
 	 * Returns true if no transition is currently in progress

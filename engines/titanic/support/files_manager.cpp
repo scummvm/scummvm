@@ -92,10 +92,10 @@ bool CFilesManager::scanForFile(const CString &name) {
 	if (fileExists(fname))
 		return true;
 
-	// Couldn't find file. Start by calling the game manager's viewChange
+	// Couldn't find file. Start by calling the game manager's roomChange
 	// method, which handles all active scene objects freeing their resources
 	if (_gameManager)
-		_gameManager->viewChange();
+		_gameManager->roomChange();
 
 	return false;
 }

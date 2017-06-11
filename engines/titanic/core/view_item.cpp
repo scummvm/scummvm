@@ -102,7 +102,7 @@ void CViewItem::leaveView(CViewItem *newView) {
 			if (newRoom != oldRoom) {
 				CGameManager *gm = getGameManager();
 				if (gm)
-					gm->viewChange();
+					gm->roomChange();
 
 				CLeaveRoomMsg roomMsg(oldRoom, newRoom);
 				roomMsg.execute(oldRoom, nullptr, MSGFLAG_SCAN);

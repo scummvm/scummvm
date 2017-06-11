@@ -256,7 +256,7 @@ void CGameManager::updateDiskTicksCount() {
 	_lastDiskTicksCount = g_vm->_events->getTicksCount();
 }
 
-void CGameManager::viewChange() {
+void CGameManager::roomChange() {
 	delete _movie;
 	delete _movieSurface;
 
