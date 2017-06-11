@@ -45,27 +45,42 @@
 #include "kingdom/console.h"
 
 namespace Kingdom {
-enum KingdomDebugChannels {
-	kDebugGeneral = 1 << 0
-};
+	enum KingdomDebugChannels {
+		kDebugGeneral = 1 << 0
+	};
 
-class KingdomGame : public Engine {
-public:
-	KingdomGame(OSystem *syst, const ADGameDescription *gameDesc);
-	~KingdomGame();
+	class KingdomGame : public Engine {
+	public:
+		KingdomGame(OSystem *syst, const ADGameDescription *gameDesc);
+		~KingdomGame();
 
-	virtual Common::Error run();
+		virtual Common::Error run();
 
-	// Detection related functions
-	const ADGameDescription *_gameDescription;
-	const char *getGameId() const;
-	Common::Platform getPlatform() const;
+		// Detection related functions
+		const ADGameDescription *_gameDescription;
+		const char *getGameId() const;
+		Common::Platform getPlatform() const;
 
-private:
-	Console *_console;
+	private:
+		Console *_console;
 
-	void drawScreen();
-};
+		bool _LoopFlag;
+		int _GameMode;
+		int _StatPlay;
+
+		void drawScreen();
+		void SetupPics();
+		void InitTools();
+		void TitlePage();
+		void InitPlay();
+		void InitHelp();
+		void FadeToBlack2();
+		void GameHelp();
+		void GPLogic1();
+		void GPLogic2();
+		void GPLogic3();
+		void GPLogic4();
+	};
 } // End of namespace Kingdom
 
 #endif
