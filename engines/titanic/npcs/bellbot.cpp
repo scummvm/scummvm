@@ -144,6 +144,7 @@ bool CBellBot::Use(CUse *msg) {
 bool CBellBot::DismissBotMsg(CDismissBotMsg *msg) {
 	if (_npcFlags & NPCFLAG_MOVING) {
 		playClip("Walk Off", MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+		movieEvent();
 		if (_npcFlags & NPCFLAG_START_IDLING) {
 			_npcFlags &= ~NPCFLAG_START_IDLING;
 			performAction(true);
