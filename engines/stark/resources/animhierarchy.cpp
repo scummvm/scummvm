@@ -73,8 +73,8 @@ void AnimHierarchy::onAllLoaded() {
 	// ... or through another animation hierarchy
 	_animHierarchy = _animHierarchyReference.resolve<AnimHierarchy>();
 	if (_animHierarchy) {
-		for (uint i = 0; i < _animHierarchy->_animationReferences.size(); i++) {
-			_animations.push_back(_animHierarchy->_animationReferences[i].resolve<Anim>());
+		for (uint i = 0; i < _animHierarchy->_animations.size(); i++) {
+			_animations.push_back(_animHierarchy->_animations[i]);
 		}
 	}
 
