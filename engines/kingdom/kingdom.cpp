@@ -53,25 +53,46 @@ Common::Error KingdomGame::run() {
 	initGraphics(320, 200, false);
 	_console = new Console(this);
 
+	SetupPics();
+	InitTools();
+	TitlePage();
+
+	InitPlay();
+	InitHelp();
+
 	bool quit = false;
-
 	while (!quit) {
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
-				quit = true;
-				break;
+		_LoopFlag = false;
+		GameHelp();
+		if (_GameMode == 0) {
+			if (_StatPlay < 250)
+				GPLogic1();
+			if (_StatPlay > 249 && _StatPlay < 500)
+				GPLogic2();
+			if (_StatPlay > 499 && _StatPlay < 900)
+				GPLogic3();
+			if (_StatPlay > 899)
+				GPLogic4();
+		}
 
-			case Common::EVENT_LBUTTONDOWN:
-				break;
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
-					_console->attach();
-				break;
-			default:
-				break;
+		if (!_LoopFlag) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				switch (event.type) {
+				case Common::EVENT_QUIT:
+				case Common::EVENT_RTL:
+					quit = true;
+					break;
+
+				case Common::EVENT_LBUTTONDOWN:
+					break;
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
+						_console->attach();
+					break;
+				default:
+					break;
+				}
 			}
 		}
 
@@ -79,6 +100,7 @@ Common::Error KingdomGame::run() {
 		g_system->delayMillis(10);
 	}
 
+	FadeToBlack2();
 	return Common::kNoError;
 }
 
@@ -86,6 +108,50 @@ void KingdomGame::drawScreen() {
 	//TODO
 
 	_console->onFrame();
+}
+
+void KingdomGame::SetupPics() {
+	debug("STUB: SetupPics");
+}
+
+void KingdomGame::InitTools() {
+	debug("STUB: InitTools");
+}
+
+void KingdomGame::TitlePage() {
+	debug("STUB: TitlePage");
+}
+
+void KingdomGame::InitPlay() {
+	debug("STUB: InitPlay");
+}
+
+void KingdomGame::InitHelp() {
+	debug("STUB: InitHelp");
+}
+
+void KingdomGame::FadeToBlack2() {
+	debug("STUB: FadeToBlack2");
+}
+
+void KingdomGame::GameHelp() {
+	debug("STUB: GameHelp");
+}
+
+void KingdomGame::GPLogic1() {
+	debug("STUB: GPLogic1");
+}
+
+void KingdomGame::GPLogic2() {
+	debug("STUB: GPLogic2");
+}
+
+void KingdomGame::GPLogic3() {
+	debug("STUB: GPLogic3");
+}
+
+void KingdomGame::GPLogic4() {
+	debug("STUB: GPLogic4");
 }
 
 } // End of namespace Kingdom
