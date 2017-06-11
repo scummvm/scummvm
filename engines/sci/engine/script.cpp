@@ -112,9 +112,9 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 
 		// As mentioned above, the script and the heap together should not exceed 64KB
 		if (script->size() + heap->size() > 65535)
-			error("Script and heap sizes combined exceed 64K. This means a fundamental "
+			error("Script and heap %d sizes combined exceed 64K. This means a fundamental "
 					"design bug was made regarding SCI1.1 and newer games.\n"
-					"Please report this error to the ScummVM team");
+					"Please report this error to the ScummVM team", script_nr);
 	} else if (getSciVersion() == SCI_VERSION_3 && script->size() > 0x3FFFF) {
 		error("Script %d size exceeds 256K (it is %u bytes).\n"
 			  "Please report this error to the ScummVM team", script_nr, script->size());
@@ -218,7 +218,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 			_localsOffset = 0;
 
 		if (_localsOffset + _localsCount * 2 + 1 >= (int)_buf->size()) {
-			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, (int)_buf->size());
+			error("Locals extend beyond end of script %d: offset %04x, count %u vs size %u", _nr, _localsOffset, _localsCount, _buf->size());
 		}
 	}
 
@@ -653,7 +653,7 @@ Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 		obj_pos.incOffset(8);	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
 
 	if (obj_pos.getOffset() >= _buf->size())
-		error("Attempt to initialize object beyond end of script");
+		error("Attempt to initialize object beyond end of script %d (%u >= %u)", _nr, obj_pos.getOffset(), _buf->size());
 
 	// Get the object at the specified position and init it. This will
 	// automatically "allocate" space for it in the _objects map if necessary.
@@ -744,7 +744,7 @@ const SciSpan<const uint16> Script::getRelocationTableSci0Sci21() const {
 		}
 
 		if (relocationBlock != findBlockSCI0(SCI_OBJ_POINTERS, true)) {
-			warning("script.%u has multiple relocation tables", _nr);
+			warning("Script %d has multiple relocation tables", _nr);
 		}
 
 		numEntries = relocationBlock.getUint16SEAt(4);
@@ -783,13 +783,13 @@ const SciSpan<const uint16> Script::getRelocationTableSci0Sci21() const {
 
 		dataOffset = 2;
 	} else {
-		error("Invalid engine version called Script::getRelocationTableSci0Sci21");
+		error("Invalid engine version called Script::getRelocationTableSci0Sci21 on script %d", _nr);
 	}
 
 	// This check should work correctly even with SCI1.1+ because the relocation
 	// table is always at the very end of the heap in these games
 	if (dataOffset + numEntries * sizeof(uint16) != relocationBlock.size()) {
-		warning("script.%u unexpected relocation table size %u", _nr, relocationBlock.size());
+		warning("Script %d unexpected relocation table size %u", _nr, relocationBlock.size());
 	}
 
 	return relocationBlock.subspan<const uint16>(dataOffset, numEntries * sizeof(uint16));
@@ -860,7 +860,7 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
 	if (_numExports <= (uint)pubfunct) {
-		error("script.%d validateExportFunc(): pubfunct %d is invalid", _nr, pubfunct);
+		error("Script %d validateExportFunc(): pubfunct %d is invalid", _nr, pubfunct);
 	}
 
 	if (exportsAreWide)
@@ -890,7 +890,7 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	}
 
 	if (offset == -1 || offset >= (int)_buf->size())
-		error("Invalid export %d function pointer (%d) in script.%d", pubfunct, offset, _nr);
+		error("Invalid export %d function pointer (%d) in script %d", pubfunct, offset, _nr);
 
 	return offset;
 }
@@ -936,8 +936,8 @@ bool Script::isValidOffset(uint32 offset) const {
 
 SegmentRef Script::dereference(reg_t pointer) {
 	if (pointer.getOffset() > _buf->size()) {
-		error("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%u)",
-				  PRINT_REG(pointer), _buf->size());
+		error("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script %d segment (script size=%u)",
+				  PRINT_REG(pointer), _nr, _buf->size());
 		return SegmentRef();
 	}
 
@@ -957,7 +957,7 @@ LocalVariables *Script::allocLocalsSegment(SegManager *segMan) {
 		if (_localsSegment) {
 			locals = (LocalVariables *)segMan->getSegment(_localsSegment, SEG_TYPE_LOCALS);
 			if (!locals || locals->getType() != SEG_TYPE_LOCALS || locals->script_id != getScriptNumber())
-				error("Invalid script locals segment while allocating locals");
+				error("Invalid script %d locals segment while allocating locals", _nr);
 		} else
 			locals = (LocalVariables *)segMan->allocSegment(new LocalVariables(), &_localsSegment);
 
@@ -1057,7 +1057,7 @@ void Script::initializeClasses(SegManager *segMan) {
 			}
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
-				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d\n",
+				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d",
 						  species, species, segMan->classTableSize(), segMan->classTableSize(), _nr);
 
 			SegmentId segmentId = segMan->getScriptSegment(_nr);
@@ -1103,7 +1103,7 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 								// contain junk towards its end.
 								_objects.erase(addr.toUint16() - SCRIPT_OBJECT_MAGIC_OFFSET);
 							} else {
-								error("Failed to locate base object for object at %04X:%04X", PRINT_REG(addr));
+								error("Failed to locate base object for object at %04x:%04x in script %d", PRINT_REG(addr), _nr);
 							}
 						}
 					}
@@ -1253,7 +1253,7 @@ Common::Array<reg_t> Script::listAllOutgoingReferences(reg_t addr) const {
 			for (uint i = 0; i < obj->getVarCount(); i++)
 				tmp.push_back(obj->getVariable(i));
 		} else {
-			error("Request for outgoing script-object reference at %04x:%04x failed", PRINT_REG(addr));
+			error("Request for outgoing script-object reference at %04x:%04x failed in script %d", PRINT_REG(addr), _nr);
 		}
 	} else {
 		/*		warning("Unexpected request for outgoing script-object references at %04x:%04x", PRINT_REG(addr));*/
