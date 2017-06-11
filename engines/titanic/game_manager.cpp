@@ -265,7 +265,7 @@ void CGameManager::roomChange() {
 	_trueTalkManager.clear();
 
 	for (CTreeItem *treeItem = _project; treeItem; treeItem = treeItem->scan(_project))
-		treeItem->viewChange();
+		treeItem->freeSurface();
 
 	markAllDirty();
 }

@@ -248,7 +248,7 @@ Rect CGameObject::getBounds() const {
 	return (_surface && _surface->hasFrame()) ? _bounds : Rect();
 }
 
-void CGameObject::viewChange() {
+void CGameObject::freeSurface() {
 	// Handle freeing the surfaces of objects when their view is left
 	if (_surface) {
 		_resource = _surface->_resourceKey.getString();

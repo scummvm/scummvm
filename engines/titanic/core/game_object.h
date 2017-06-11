@@ -576,9 +576,9 @@ public:
 	virtual Rect getBounds() const;
 
 	/**
-	 * Called when the view changes
+	 * Free up any surface the object used
 	 */
-	virtual void viewChange();
+	virtual void freeSurface();
 
 	/**
 	 * Allows the item to draw itself
