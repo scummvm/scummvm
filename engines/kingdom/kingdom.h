@@ -67,6 +67,9 @@ namespace Kingdom {
 		bool _LoopFlag;
 		int _GameMode;
 		int _StatPlay;
+		Common::SeekableReadStream *_ArtPtr;
+		Common::SeekableReadStream *_RezPointers[509];
+		int _RezSize[509];
 
 		void drawScreen();
 		void SetupPics();
@@ -80,6 +83,11 @@ namespace Kingdom {
 		void GPLogic2();
 		void GPLogic3();
 		void GPLogic4();
+		void LoadAResource(int reznum);
+		void ShowPic(int reznum);
+		void InitCursor();
+		void SetMouse();
+		void InitMPlayer();
 	};
 } // End of namespace Kingdom
 
