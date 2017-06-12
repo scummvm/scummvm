@@ -612,6 +612,7 @@ int TTparser::loadRequests(TTword *word) {
 
 		if (status != 1) {
 			addToConceptList(word);
+			addNode(SEEK_STATE);
 			addNode(SEEK_MODIFIERS);
 		}
 		break;
