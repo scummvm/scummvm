@@ -30,7 +30,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_encodedImage = new byte[size];
 
 	_palette = new byte[717];
-	g_system->getPaletteManager()->grabPalette(_palette, 16, 240);
+	g_system->getPaletteManager()->grabPalette(_palette, 16, 239);
 
 	byte pal_diff;
 	byte flag = stream.readByte();
