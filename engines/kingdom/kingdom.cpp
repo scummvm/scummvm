@@ -31,11 +31,15 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "common/system.h"
+#include "image/iff.h"
 #include "engines/util.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "kingdom/kingdom.h"
+#include "kingdom/reznames.h"
 
 namespace Kingdom {
 
@@ -43,6 +47,10 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_console = nullptr;
 
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
+	for (int i = 0; i < 509; i++) {
+		_RezPointers[i] = nullptr;
+		_RezSize[i] = 0;
+	}
 }
 
 KingdomGame::~KingdomGame() {
@@ -111,11 +119,19 @@ void KingdomGame::drawScreen() {
 }
 
 void KingdomGame::SetupPics() {
-	debug("STUB: SetupPics");
+	// Load Pics\kingArt.art
+	LoadAResource(0x97);
+	_ArtPtr = _RezPointers[0x97 - 1];
 }
 
 void KingdomGame::InitTools() {
 	debug("STUB: InitTools");
+	//CHECKME: InitTimers?
+	ShowPic(124);
+	InitCursor();
+	SetMouse();
+	FadeToBlack2();
+	InitMPlayer();
 }
 
 void KingdomGame::TitlePage() {
@@ -152,6 +168,56 @@ void KingdomGame::GPLogic3() {
 
 void KingdomGame::GPLogic4() {
 	debug("STUB: GPLogic4");
+}
+
+void KingdomGame::LoadAResource(int reznum) {
+	// CHECKME: Weird off-by-one here?
+	reznum--;
+
+	Common::String path = Common::String(_RezNames[reznum]);
+	path.toUppercase();
+
+	debug("Loading resource: %i (%s)\n", reznum, path.c_str());
+
+	if(!_RezSize[reznum]) {
+		Common::File *file = new Common::File();
+		if(!file->open(path))
+			error("Failed to open %s", path);
+
+		_RezSize[reznum] = file->size();
+		file->seek(0, SEEK_SET);
+		_RezPointers[reznum] = file->readStream(_RezSize[reznum]);
+		file->close();
+		delete file;
+	}
+}
+
+void KingdomGame::ShowPic(int reznum) {
+	debug("STUB ShowPic %i\n", reznum);
+	LoadAResource(reznum);
+	Image::IFFDecoder decoder;
+	if (!decoder.loadStream(*_RezPointers[reznum - 1]))
+		return;
+
+	const byte *palette = decoder.getPalette();
+	int paletteColorCount = decoder.getPaletteColorCount();
+	g_system->getPaletteManager()->setPalette(palette, 0, paletteColorCount);
+
+	const Graphics::Surface *surface = decoder.getSurface();
+	g_system->copyRectToScreen(surface->getPixels(), 320, 0, 0, 320, 200);
+	g_system->updateScreen();
+}
+
+void KingdomGame::InitCursor() {
+	debug("STUB: InitCursor");
+}
+
+void KingdomGame::SetMouse() {
+	debug("STUB: SetMouse");
+}
+
+void KingdomGame::InitMPlayer() {
+	debug("STUB: InitMPlayer");
 }
 
 } // End of namespace Kingdom
