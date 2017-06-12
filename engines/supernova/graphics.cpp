@@ -36,18 +36,14 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	byte flag = stream.readByte();
 	if (flag == 0) {
 		pal_diff = 0;
-		_palette[141] = 0x38;
-		_palette[142] = 0x38;
-		_palette[143] = 0x38;
+		_palette[141] = 0xE0;
+		_palette[142] = 0xE0;
+		_palette[143] = 0xE0;
 	} else {
 		pal_diff = 1;
 		for (int i = flag * 3; i != 0; --i) {
-			_palette[717 - i] = stream.readByte();
+			_palette[717 - i] = stream.readByte() << 2;
 		}
-	}
-	// 18bit VGA to 24bit CLUT8
-	for (size_t i = 0; i < 717; ++i) {
-		_palette[i] <<= 2;
 	}
 
 	byte numSections = stream.readByte();
