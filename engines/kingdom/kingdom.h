@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/random.h"
 #include "engines/advancedDetector.h"
 #include "common/error.h"
 #include "engines/engine.h"
@@ -63,13 +64,51 @@ namespace Kingdom {
 
 	private:
 		Console *_console;
+		Common::RandomSource *_rnd;
 
 		bool _LoopFlag;
 		int _GameMode;
 		int _StatPlay;
+		bool _FstFwd;
+		bool _NoIFScreen;
+		bool _Sound;
+		int _FrameStop;
+		int _DaelonCntr;
+		bool _Spell1;
+		bool _Spell2;
+		bool _Spell3;
+		bool _ItemInhibit;
+		bool _ASMode;
+		bool _ATimerFlag;
+		bool _BTimerFlag;
+		bool _CTimerFlag;
+		bool _SkylarTimerFlag;
+		int _ATimer;
+		int _BTimer;
+		int _CTimer;
+		int _SkylarTimer;
+		bool _TideCntl;
+		bool _MapEx;
+		int _Health;
+		int _HealthOld;
+		int _HealthTmr;
+		int _TreeEyeTimer;
+		int _TreeHGTimer;
+		int _TreeHGUPic;
+		int _TreeLeftPic;
+		int _TreeRightPic;
+		int _TreeRightSta;
+		bool _TSIconOnly;
+		bool _LastObs;
+		bool _Pouch;
+		bool _NoMusic;
+		byte *_ASPtr;
+
 		Common::SeekableReadStream *_ArtPtr;
 		Common::SeekableReadStream *_RezPointers[509];
 		int _RezSize[509];
+		int8 _Inventory[19];
+		int _IconPic[7];
 
 		void drawScreen();
 		void SetupPics();
@@ -88,6 +127,8 @@ namespace Kingdom {
 		void InitCursor();
 		void SetMouse();
 		void InitMPlayer();
+		void PlayMovie(int movieNum);
+		void EnAll();
 	};
 } // End of namespace Kingdom
 
