@@ -90,8 +90,16 @@ bool IFFDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	while (1) {
+		if (stream.size() < stream.pos() + 8)
+			break;
+
 		const uint32 chunkType = stream.readUint32BE();
-		const uint32 chunkSize = stream.readUint32BE();
+		uint32 chunkSize = stream.readUint32BE();
+		// According to the format specs:
+		// "If ckData is an odd number of bytes long, a 0 pad byte follows which is not included in ckSize."
+		// => fix the length
+		if (chunkSize % 2)
+			chunkSize++;
 
 		if (stream.eos())
 			break;
@@ -110,6 +118,9 @@ bool IFFDecoder::loadStream(Common::SeekableReadStream &stream) {
 			loadBitmap(stream);
 			break;
 		default:
+			if (stream.size() < stream.pos() + (int32)chunkSize)
+				break;
+
 			stream.skip(chunkSize);
 		}
 	}
