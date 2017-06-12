@@ -45,6 +45,7 @@ namespace Kingdom {
 
 KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_console = nullptr;
+	_rnd = new Common::RandomSource("kingdom");
 
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
 	for (int i = 0; i < 509; i++) {
@@ -55,6 +56,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 KingdomGame::~KingdomGame() {
 	delete _console;
+	delete _rnd;
 }
 
 Common::Error KingdomGame::run() {
@@ -135,15 +137,72 @@ void KingdomGame::InitTools() {
 }
 
 void KingdomGame::TitlePage() {
-	debug("STUB: TitlePage");
+	if (shouldQuit())
+		return;
+
+	_FstFwd = true;
+	_NoIFScreen = true;
+	_Sound = false;
+	FadeToBlack2();
+	PlayMovie(200);
+	FadeToBlack2();
+	PlayMovie(206);
+	FadeToBlack2();
+	PlayMovie(198);
+	FadeToBlack2();
 }
 
 void KingdomGame::InitPlay() {
-	debug("STUB: InitPlay");
+	memset(_Inventory, 0xFF, 19);
+
+	//TODO: Init game flags, once the hardcoded logic is implemented and they are renamed
+
+	for (int i = 0; i < 7; i++)
+		_IconPic[i] = 89 + i;
+
+	_FrameStop = 0;
+	_GameMode = 0;
+	_DaelonCntr = 0;
+	_StatPlay = 10;
+	_Spell1 = false;
+	_Spell2 = false;
+	_Spell3 = false;
+	_ItemInhibit = false;
+	_ASMode = false;
+	_ATimerFlag = false;
+	_BTimerFlag = false;
+	_CTimerFlag = false;
+	_SkylarTimerFlag = false;
+	_ATimer = 0;
+	_BTimer = 0;
+	_CTimer = 0;
+	_SkylarTimer = 0;
+	_TideCntl = false;
+	_MapEx = false;
+	_Health = 12;
+	_HealthOld = 1;
+	_HealthTmr = 0;
+	_TreeEyeTimer = 0;
+	_TreeHGTimer = 0;
+	_TreeHGUPic = 147;
+	_TreeLeftPic = 0;
+	_TreeRightPic = 0;
+	_TreeRightSta = 1;
+	_TSIconOnly = false;
+	_LastObs = false;
+	EnAll();
+	_Pouch = true;
+	_NoIFScreen = true;
+	_NoMusic = false;
+	_FstFwd = true;
+	if (_ASPtr)
+		free(_ASPtr);
+
+	_ASPtr = nullptr;
 }
 
 void KingdomGame::InitHelp() {
-	debug("STUB: InitHelp");
+	_GameMode = 0;
 }
 
 void KingdomGame::FadeToBlack2() {
@@ -218,6 +277,14 @@ void KingdomGame::SetMouse() {
 
 void KingdomGame::InitMPlayer() {
 	debug("STUB: InitMPlayer");
+}
+
+void KingdomGame::PlayMovie(int movieNum) {
+	debug("STUB: PlayMovie");
+}
+
+void KingdomGame::EnAll() {
+	debug("STUB: EnAll");
 }
 
 } // End of namespace Kingdom
