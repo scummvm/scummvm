@@ -306,20 +306,20 @@ void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color)
 void SupernovaEngine::paletteBrightness() {
 	byte palette[768];
 	
-	_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	_system->getPaletteManager()->grabPalette(palette, 0, 255);
 	for (size_t i = 0; i < 48; ++i) {
 		palette[i] = (initVGAPalette[i] * _menuBrightness) >> 8;
 	}
-	for (size_t i = 48; i < 768; ++i) {
+	for (size_t i = 0; i < 717; ++i) {
 		const byte *imagePalette;
 		if (_image.getPalette()) {
 			imagePalette = _image.getPalette();
 		} else {
 			imagePalette = palette;
 		}
-		palette[i] = (imagePalette[i - 48] * _brightness) >> 8;
+		palette[i + 48] = (imagePalette[i] * _brightness) >> 8;
 	}
-	_system->getPaletteManager()->setPalette(palette, 0, 256);
+	_system->getPaletteManager()->setPalette(palette, 0, 255);
 }
 
 void SupernovaEngine::paletteFadeOut() {
