@@ -37,7 +37,7 @@
 
 #include "supernova/supernova.h"
 #include "supernova/msn_def.h"
-#include "supernova/rooms.h"
+//#include "supernova/rooms.h"
 
 
 namespace Supernova {
