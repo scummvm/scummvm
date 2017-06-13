@@ -54,6 +54,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	}
 
 	_ASPtr = nullptr;
+	_quit = false;
 }
 
 KingdomGame::~KingdomGame() {
@@ -72,8 +73,7 @@ Common::Error KingdomGame::run() {
 	InitPlay();
 	InitHelp();
 
-	bool quit = false;
-	while (!quit) {
+	while (!_quit) {
 		_LoopFlag = false;
 		GameHelp();
 		if (_GameMode == 0) {
@@ -87,26 +87,8 @@ Common::Error KingdomGame::run() {
 				GPLogic4();
 		}
 
-		if (!_LoopFlag) {
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				switch (event.type) {
-				case Common::EVENT_QUIT:
-				case Common::EVENT_RTL:
-					quit = true;
-					break;
-
-				case Common::EVENT_LBUTTONDOWN:
-					break;
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
-						_console->attach();
-					break;
-				default:
-					break;
-				}
-			}
-		}
+		if (!_LoopFlag)
+			GetUserInput();
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
@@ -129,7 +111,6 @@ void KingdomGame::SetupPics() {
 }
 
 void KingdomGame::InitTools() {
-	debug("STUB: InitTools");
 	//CHECKME: InitTimers?
 	ShowPic(124);
 	InitCursor();
@@ -139,6 +120,7 @@ void KingdomGame::InitTools() {
 }
 
 void KingdomGame::TitlePage() {
+	// TODO: Check on QuitFlag == 2
 	if (shouldQuit())
 		return;
 
@@ -230,7 +212,6 @@ void KingdomGame::GameHelp_Sub43C() {
 }
 
 void KingdomGame::GameHelp() {
-	debug("STUB: GameHelp");
 	if (!_GameMode) {
 		if (_UserInput == 0x43C) {
 			SaveAS();
@@ -274,13 +255,13 @@ void KingdomGame::GameHelp() {
 			_UserInput = 0;
 		}
 	}
-	if (_GameMode != 0)
+	if (_GameMode == 0)
 		return;
 
 	switch(_UserInput) {
 	case 0x240:
 		FadeToBlack2();
-		//TODO: Set _quitFlag
+		//TODO: Set _quitFlag to 1
 		break;
 	case 0x241:
 		GameHelp_Sub43C();
@@ -315,6 +296,7 @@ void KingdomGame::GameHelp() {
 		}
 		break;
 	case 0x244:
+		//TODO: Set _quitFlag to 2
 		break;
 	case 0x245: {
 		FadeToBlack1();
@@ -484,5 +466,28 @@ void KingdomGame::PlaySound(int v1) {
 
 void KingdomGame::EraseCursor() {
 	debug("STUB: EraseCursor");
+}
+
+void KingdomGame::GetUserInput() {
+	debug("STUB: GetUserInput");
+
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+				case Common::EVENT_QUIT:
+				case Common::EVENT_RTL:
+					_quit = true;
+					break;
+
+				case Common::EVENT_LBUTTONDOWN:
+					break;
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
+						_console->attach();
+					break;
+				default:
+					break;
+		}
+	}
 }
 } // End of namespace Kingdom

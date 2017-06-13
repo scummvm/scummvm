@@ -117,6 +117,7 @@ namespace Kingdom {
 		bool _KeyActive;
 		bool _IconRedraw;
 		bool _Replay;
+		bool _quit;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D77E;
@@ -161,6 +162,7 @@ namespace Kingdom {
 		void SaveGame();
 		void PlaySound(int v1);
 		void EraseCursor();
+		void GetUserInput();
 	};
 } // End of namespace Kingdom
 
