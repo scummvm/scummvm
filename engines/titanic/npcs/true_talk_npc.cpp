@@ -186,7 +186,7 @@ bool CTrueTalkNPC::TimerMsg(CTimerMsg *msg) {
 				animMsg.execute(this);
 			}
 
-			_npcFlags &= ~NPCFLAG_IDLING;
+			_npcFlags |= NPCFLAG_IDLING;
 		}
 	}
 
