@@ -217,7 +217,7 @@ void LauncherDialog::rebuild() {
 	clean();
 	build();
 	reflowLayout();
-	setFocusWidget(_firstWidget);
+	setDefaultFocusedWidget();
 }
 
 void LauncherDialog::open() {

@@ -437,7 +437,7 @@ void OptionsDialog::rebuild() {
 	build();
 	reflowLayout();
 	_tabWidget->setActiveTab(currentTab);
-	setFocusWidget(_firstWidget);
+	setDefaultFocusedWidget();
 }
 
 void OptionsDialog::open() {
