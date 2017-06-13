@@ -34,11 +34,10 @@
 #include "graphics/surface.h"
 #include "graphics/screen.h"
 #include "graphics/palette.h"
-//#include "graphics/font.h"
-//#include "graphics/fontman.h"
 
 #include "supernova/supernova.h"
 #include "supernova/msn_def.h"
+//#include "supernova/rooms.h"
 
 
 namespace Supernova {
@@ -48,7 +47,8 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	, _console(NULL)
     , _brightness(255)
     , _menuBrightness(255)
-    , _incIndex(10)
+    , _imageIndex(10)
+    , _sectionIndex(0)
 {
 //	const Common::FSNode gameDataDir(ConfMan.get("path"));
 //	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
@@ -79,6 +79,8 @@ Common::Error SupernovaEngine::run() {
 	while (_gameRunning) {
 		updateEvents();
 		
+		renderImage(_imageIndex, _sectionIndex);
+		renderText(Common::String::format("%u | %u", _imageIndex, _sectionIndex).c_str(), 0, 190, 15);
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
@@ -110,13 +112,16 @@ void SupernovaEngine::updateEvents() {
 				playSound(48, 13530);
 			}
 			if (event.kbd.keycode == Common::KEYCODE_w) {
-				renderImage(_incIndex, 0);
-				if (_incIndex == 31) {
+				_sectionIndex = 0;
+				++_imageIndex;
+				if (_imageIndex == 31) {
 					renderText("Das Schicksal", 44, 132, 4);
 					renderText("des Horst Hummel", 35, 142, 4);
 					renderText("Teil 1:", 64, 120, 12);
 				}
-				++_incIndex;
+			}
+			if (event.kbd.keycode == Common::KEYCODE_e) {
+				++_sectionIndex;
 			}
 			break;
 		default:

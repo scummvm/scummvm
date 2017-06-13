@@ -50,7 +50,8 @@ private:
 	Audio::SoundHandle _soundHandle;
 	bool _gameRunning;
 	MSNImageDecoder _image;
-	byte _incIndex;
+	byte _imageIndex;
+	byte _sectionIndex;
 	byte _menuBrightness;
 	byte _brightness;
 	
