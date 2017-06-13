@@ -37,10 +37,6 @@
 
 namespace Supernova {
 
-const int kScreenWidth  = 320;
-const int kScreenHeight = 200;
-const int kTextSpeed[] = {19, 14, 10, 7, 4};
-
 class SupernovaEngine : public Engine {
 public:
 	SupernovaEngine(OSystem *syst);
@@ -54,7 +50,8 @@ private:
 	Audio::SoundHandle _soundHandle;
 	bool _gameRunning;
 	MSNImageDecoder _image;
-	byte _incIndex;
+	byte _imageIndex;
+	byte _sectionIndex;
 	byte _menuBrightness;
 	byte _brightness;
 	
