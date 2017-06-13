@@ -1583,7 +1583,10 @@ bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
 		return concept->checkWordId1();
 
 	case 9:
-		if (!concept->checkWordId3() && _sentenceConcept->_concept2P) {
+		if (concept->checkWordId3())
+			return true;
+
+		if (_sentenceConcept->_concept2P) {
 			if (!_sentenceConcept->_concept2P->checkWordId2() || !concept->checkWordId2()) {
 				return _sentenceConcept->_concept2P->checkWordClass() &&
 					concept->checkWordClass();
