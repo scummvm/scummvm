@@ -205,12 +205,151 @@ void KingdomGame::InitHelp() {
 	_GameMode = 0;
 }
 
+void KingdomGame::FadeToBlack1() {
+	debug("STUB: FadeToBlack1");
+}
+
 void KingdomGame::FadeToBlack2() {
 	debug("STUB: FadeToBlack2");
 }
 
+void KingdomGame::GameHelp_Sub43C() {
+	FadeToBlack1();
+	_CurrMap = _ASMap;
+	DrawRect(4, 17, 228, 161, 0);
+	RestoreAS();
+	_UserInput = 0;
+	_GameMode = 0;
+	_IconsClosed = false;
+	_TreeLeftSta = _OldTLS;
+	_Eye = _OldEye;
+	_Help = _OldHelp;
+	_Pouch = _OldPouch;
+}
+
 void KingdomGame::GameHelp() {
 	debug("STUB: GameHelp");
+	if (!_GameMode) {
+		if (_UserInput == 0x43C) {
+			SaveAS();
+			_ASMap = _CurrMap;
+			_CurrMap = 0;
+			FadeToBlack1();
+			DrawRect(4, 17, 228, 161, 0);
+			DrawHelpScreen();
+			_GameMode = 1;
+			_OldTLS = _TreeLeftSta;
+			_TreeLeftSta = 0;
+			_IconsClosed = true;
+			_OldEye = _Eye;
+			_Eye = false;
+			_OldHelp = _Help;
+			_OldPouch = _Pouch;
+			_Pouch = false;
+			_UserInput = 0;
+		}
+		if (_UserInput == 0x44F) {
+			SaveAS();
+			_ASMap = _CurrMap;
+			_GameMode = 2;
+			_OldTLS = _TreeLeftSta;
+			_TreeLeftSta = 0;
+			_IconsClosed = true;
+			_OldEye = _Eye;
+			_Eye = false;
+			_OldHelp = _Help;
+			_Help = false;
+			_OldPouch = _Pouch;
+			FadeToBlack1();
+			DrawRect(4, 17, 228, 161, 0);
+			DrawInventory();
+
+			if (word_2D7CC == 1 || word_2D77E == 1 || _ItemInhibit)
+				_CurrMap = 10;
+			else
+				_CurrMap = 11;
+
+			_UserInput = 0;
+		}
+	}
+	if (_GameMode != 0)
+		return;
+
+	switch(_UserInput) {
+	case 0x240:
+		FadeToBlack2();
+		//TODO: Set _quitFlag
+		break;
+	case 0x241:
+		GameHelp_Sub43C();
+		return;
+		break;
+	case 0x242:
+		if (_NoMusic) {
+			_NoMusic = false;
+			PlaySound(1);
+		} else {
+			_NoMusic = true;
+			PlaySound(0);
+		}
+		DrawHelpScreen();
+		break;
+	case 0x243: {
+		FadeToBlack2();
+		_KeyActive = false;
+		_NoIFScreen = true;
+		PlaySound(0);
+		int var = _PMovie;
+		while(!_KeyActive) {
+			PlayMovie(54);
+			FadeToBlack2();
+		}
+		_PMovie = var;
+		_NoIFScreen = false;
+		ShowPic(106);
+		DrawHelpScreen();
+		_IconRedraw = true;
+		PlaySound(1);
+		}
+		break;
+	case 0x244:
+		break;
+	case 0x245: {
+		FadeToBlack1();
+		int var = _PMovie;
+		DrawRect(4, 17, 228, 161, 0);
+		PlayMovie(205);
+		FadeToBlack1();
+		DrawRect(4, 17, 228, 161, 0);
+		PlayMovie(199);
+		FadeToBlack1();
+		DrawRect(4, 17, 228, 161, 0);
+		DrawHelpScreen();
+		_PMovie = var;
+		}
+		break;
+	case 0x246:
+		SaveGame();
+		break;
+	case 0x43B:
+	case 0x43C:
+	case 0x44F:
+		GameHelp_Sub43C();
+		return;
+	}
+
+	if (_UserInput > 0x427 && _UserInput < 0x43A)
+		FShowPic(130 + _UserInput - 0x428);
+
+	if (_UserInput == 0x260) {
+		DrawInventory();
+		if (word_2D7CC == 1 || word_2D77E == 1)
+			_CurrMap = 10;
+		else
+			_CurrMap = 11;
+
+		_UserInput = 0;
+	}
 }
 
 void KingdomGame::GPLogic1() {
@@ -267,6 +406,10 @@ void KingdomGame::ShowPic(int reznum) {
 	g_system->updateScreen();
 }
 
+void KingdomGame::FShowPic(int v1) {
+	debug("STUB: FShowPic");
+}
+
 void KingdomGame::InitCursor() {
 	debug("STUB: InitCursor");
 }
@@ -287,4 +430,31 @@ void KingdomGame::EnAll() {
 	debug("STUB: EnAll");
 }
 
+void KingdomGame::SaveAS() {
+	debug("STUB: SaveAS");
+}
+
+void KingdomGame::RestoreAS() {
+	debug("STUB: RestoreAS");
+}
+
+void KingdomGame::DrawHelpScreen() {
+	debug("STUB: DrawHelpScreen");
+}
+
+void KingdomGame::DrawRect(int v1, int v2, int v3, int v4, int v5) {
+	debug("STUB: DrawRect)");
+}
+
+void KingdomGame::DrawInventory() {
+	debug("STUB: DrawInventory");
+}
+
+void KingdomGame::SaveGame() {
+	debug("STUB: SaveGame");
+}
+
+void KingdomGame::PlaySound(int v1) {
+	debug("STUB: PlaySound");
+}
 } // End of namespace Kingdom

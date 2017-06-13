@@ -103,12 +103,30 @@ namespace Kingdom {
 		bool _Pouch;
 		bool _NoMusic;
 		byte *_ASPtr;
+		int _ASMap;
+		int _CurrMap;
+		int _OldTLS;
+		int _TreeLeftSta;
+		bool _IconsClosed;
+		bool _OldEye;
+		bool _Eye;
+		bool _OldHelp;
+		bool _Help;
+		bool _OldPouch;
+		int _PMovie;
+		bool _KeyActive;
+		bool _IconRedraw;
+
+		// Game Flags - Will be renames later into _Nodes[]
+		int16 word_2D77E;
+		int16 word_2D7CC;
 
 		Common::SeekableReadStream *_ArtPtr;
 		Common::SeekableReadStream *_RezPointers[509];
 		int _RezSize[509];
 		int8 _Inventory[19];
 		int _IconPic[7];
+		uint16 _UserInput;
 
 		void drawScreen();
 		void SetupPics();
@@ -116,6 +134,7 @@ namespace Kingdom {
 		void TitlePage();
 		void InitPlay();
 		void InitHelp();
+		void FadeToBlack1();
 		void FadeToBlack2();
 		void GameHelp();
 		void GPLogic1();
@@ -124,11 +143,20 @@ namespace Kingdom {
 		void GPLogic4();
 		void LoadAResource(int reznum);
 		void ShowPic(int reznum);
+		void FShowPic(int v1);
 		void InitCursor();
 		void SetMouse();
 		void InitMPlayer();
 		void PlayMovie(int movieNum);
 		void EnAll();
+		void SaveAS();
+		void RestoreAS();
+		void DrawHelpScreen();
+		void DrawRect(int v1, int v2, int v3, int v4, int v5);
+		void DrawInventory();
+		void GameHelp_Sub43C();
+		void SaveGame();
+		void PlaySound(int v1);
 	};
 } // End of namespace Kingdom
 
