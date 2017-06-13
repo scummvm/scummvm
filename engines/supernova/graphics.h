@@ -26,7 +26,6 @@ public:
 	
 	bool loadSection(int _section);
 
-private:
 	static const int kMaxSections = 50;
 	static const int kMaxClickFields = 80;
 	
