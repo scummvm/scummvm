@@ -116,14 +116,15 @@ namespace Kingdom {
 		int _PMovie;
 		bool _KeyActive;
 		bool _IconRedraw;
+		bool _Replay;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D77E;
 		int16 word_2D7CC;
 
 		Common::SeekableReadStream *_ArtPtr;
-		Common::SeekableReadStream *_RezPointers[509];
-		int _RezSize[509];
+		Common::SeekableReadStream *_RezPointers[510];
+		int _RezSize[510];
 		int8 _Inventory[19];
 		int _IconPic[7];
 		uint16 _UserInput;
@@ -142,13 +143,15 @@ namespace Kingdom {
 		void GPLogic3();
 		void GPLogic4();
 		void LoadAResource(int reznum);
+		void ReleaseAResource(int reznum);
 		void ShowPic(int reznum);
-		void FShowPic(int v1);
+		void FShowPic(int reznum);
 		void InitCursor();
 		void SetMouse();
 		void InitMPlayer();
 		void PlayMovie(int movieNum);
 		void EnAll();
+		void DsAll();
 		void SaveAS();
 		void RestoreAS();
 		void DrawHelpScreen();
@@ -157,6 +160,7 @@ namespace Kingdom {
 		void GameHelp_Sub43C();
 		void SaveGame();
 		void PlaySound(int v1);
+		void EraseCursor();
 	};
 } // End of namespace Kingdom
 
