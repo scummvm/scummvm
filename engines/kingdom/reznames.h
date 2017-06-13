@@ -1,4 +1,5 @@
 char *_RezNames[] = {
+	"",
 	"Maps/KMAP001.lbm",
 	"Maps/KMAP002.lbm",
 	"Maps/KMAP003.lbm",
