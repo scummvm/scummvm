@@ -54,6 +54,7 @@ private:
 	byte _sectionIndex;
 	byte _menuBrightness;
 	byte _brightness;
+	uint _delay;
 	
 	void initData();
 	void initPalette();
@@ -64,7 +65,7 @@ private:
 	void playSound(int filenumber, int offset = 0);
 	void playSoundMod(int filenumber);
 	void stopSound();
-	void renderImage(int filenumber, int section);
+	void renderImage(int filenumber, int section, bool fullscreen = false);
 	void renderMessage(char *text, MessagePosition position);
 	void renderText(const char *text, int x, int y, byte color);
 	void renderBox(int x, int y, int width, int height, byte color);

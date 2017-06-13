@@ -49,6 +49,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
     , _menuBrightness(255)
     , _imageIndex(10)
     , _sectionIndex(0)
+    , _delay(33)
 {
 //	const Common::FSNode gameDataDir(ConfMan.get("path"));
 //	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
@@ -82,7 +83,7 @@ Common::Error SupernovaEngine::run() {
 		renderImage(_imageIndex, _sectionIndex);
 		renderText(Common::String::format("%u | %u", _imageIndex, _sectionIndex).c_str(), 0, 190, 15);
 		_system->updateScreen();
-		_system->delayMillis(10);
+		_system->delayMillis(_delay);
 	}
 	
 	//deinit timer/sound/..
@@ -121,7 +122,8 @@ void SupernovaEngine::updateEvents() {
 				}
 			}
 			if (event.kbd.keycode == Common::KEYCODE_e) {
-				++_sectionIndex;
+				renderImage(_imageIndex, 0);
+				renderImage(_imageIndex, ++_sectionIndex);
 			}
 			break;
 		default:
@@ -168,7 +170,7 @@ void playSoundMod(int filenumber)
 	// play Supernova MOD file
 }
 
-void SupernovaEngine::renderImage(int filenumber, int section) {
+void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) {
 	Common::File file;
 	if (!file.open(Common::String::format("msn_data.0%2d", filenumber))) {
 		error("File %s could not be read!", file.getName());
@@ -176,9 +178,19 @@ void SupernovaEngine::renderImage(int filenumber, int section) {
 	
 	_image.loadStream(file);
 	_image.loadSection(section);
-	_system->getPaletteManager()->setPalette(_image.getPalette(), 16, 240);
+	_system->getPaletteManager()->setPalette(_image.getPalette(), 16, 239);
 	paletteBrightness();
-	_system->copyRectToScreen(_image.getSurface()->getPixels(), 320, 0, 0, 320, 200);
+	if (fullscreen) {
+		_system->copyRectToScreen(_image.getSurface()->getPixels(), 320, 0, 0, 320, 200);
+	} else {
+		size_t offset = _image._section[section].y1 * 320 + _image._section[section].x1;
+		_system->copyRectToScreen(static_cast<const byte *>(_image.getSurface()->getPixels()) + offset,
+								  320,
+								  _image._section[section].x1,
+								  _image._section[section].y1,
+								  _image._section[section].x2 - _image._section[section].x1,
+								  _image._section[section].y2 - _image._section[section].y1);
+	}
 }
 
 static int characterWidth(const char *text) {
@@ -336,7 +348,7 @@ void SupernovaEngine::paletteFadeOut() {
 		paletteBrightness();
 		_brightness -= 20;
 		_system->updateScreen();
-		_system->delayMillis(10);
+		_system->delayMillis(_delay);
 	}
 	_menuBrightness = 0;
 	_brightness = 0;
@@ -353,7 +365,7 @@ void SupernovaEngine::paletteFadeIn() {
 		paletteBrightness();
 		_brightness += 20;
 		_system->updateScreen();
-		_system->delayMillis(10);
+		_system->delayMillis(_delay);
 	}
 	_menuBrightness = 255;
 	_brightness = 255;
