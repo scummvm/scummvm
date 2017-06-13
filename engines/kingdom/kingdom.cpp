@@ -48,10 +48,12 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_rnd = new Common::RandomSource("kingdom");
 
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
-	for (int i = 0; i < 509; i++) {
+	for (int i = 0; i < 510; i++) {
 		_RezPointers[i] = nullptr;
 		_RezSize[i] = 0;
 	}
+
+	_ASPtr = nullptr;
 }
 
 KingdomGame::~KingdomGame() {
@@ -123,7 +125,7 @@ void KingdomGame::drawScreen() {
 void KingdomGame::SetupPics() {
 	// Load Pics\kingArt.art
 	LoadAResource(0x97);
-	_ArtPtr = _RezPointers[0x97 - 1];
+	_ArtPtr = _RezPointers[0x97];
 }
 
 void KingdomGame::InitTools() {
@@ -369,9 +371,6 @@ void KingdomGame::GPLogic4() {
 }
 
 void KingdomGame::LoadAResource(int reznum) {
-	// CHECKME: Weird off-by-one here?
-	reznum--;
-
 	Common::String path = Common::String(_RezNames[reznum]);
 	path.toUppercase();
 
@@ -390,11 +389,19 @@ void KingdomGame::LoadAResource(int reznum) {
 	}
 }
 
+void KingdomGame::ReleaseAResource(int reznum) {
+	if (_RezSize[reznum]) {
+		delete _RezPointers[reznum];
+		_RezSize[reznum] = 0;
+	}
+}
+
 void KingdomGame::ShowPic(int reznum) {
-	debug("STUB ShowPic %i\n", reznum);
+	EraseCursor();
+
 	LoadAResource(reznum);
 	Image::IFFDecoder decoder;
-	if (!decoder.loadStream(*_RezPointers[reznum - 1]))
+	if (!decoder.loadStream(*_RezPointers[reznum]))
 		return;
 
 	const byte *palette = decoder.getPalette();
@@ -404,10 +411,15 @@ void KingdomGame::ShowPic(int reznum) {
 	const Graphics::Surface *surface = decoder.getSurface();
 	g_system->copyRectToScreen(surface->getPixels(), 320, 0, 0, 320, 200);
 	g_system->updateScreen();
+
+	ReleaseAResource(reznum);
 }
 
-void KingdomGame::FShowPic(int v1) {
-	debug("STUB: FShowPic");
+void KingdomGame::FShowPic(int reznum) {
+	EraseCursor();
+	FadeToBlack1();
+	DrawRect(4, 17, 228, 161, 0);
+	ShowPic(reznum);
 }
 
 void KingdomGame::InitCursor() {
@@ -427,7 +439,19 @@ void KingdomGame::PlayMovie(int movieNum) {
 }
 
 void KingdomGame::EnAll() {
-	debug("STUB: EnAll");
+	_Help = true;
+	_Eye = true;
+	_Replay = true;
+	_Pouch = true;
+	_FstFwd = true;
+}
+
+void KingdomGame::DsAll() {
+	_Help = false;
+	_Eye = false;
+	_Replay = false;
+	_Pouch = false;
+	_FstFwd = false;
 }
 
 void KingdomGame::SaveAS() {
@@ -456,5 +480,9 @@ void KingdomGame::SaveGame() {
 
 void KingdomGame::PlaySound(int v1) {
 	debug("STUB: PlaySound");
+}
+
+void KingdomGame::EraseCursor() {
+	debug("STUB: EraseCursor");
 }
 } // End of namespace Kingdom
