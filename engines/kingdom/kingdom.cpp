@@ -336,10 +336,6 @@ void KingdomGame::GameHelp() {
 	}
 }
 
-void KingdomGame::GPLogic2() {
-	debug("STUB: GPLogic2");
-}
-
 void KingdomGame::GPLogic3() {
 	debug("STUB: GPLogic3");
 }
@@ -554,5 +550,10 @@ void KingdomGame::CheckSaveGame() {
 
 void KingdomGame::CheckMainScreen() {
 	debug("STUB: CheckMainScreen");
+}
+
+bool KingdomGame::ChkDesertObstacles() {
+	debug("STUB: ChkDesertObstacles");
+	return false;
 }
 } // End of namespace Kingdom
