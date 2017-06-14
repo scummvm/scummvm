@@ -253,6 +253,9 @@ void Myst3Engine::openArchives() {
 	case Common::DE_DEU:
 		menuLanguage = "GERMAN";
 		break;
+	case Common::HE_ISR:
+		menuLanguage = "HEBREW";
+		break;
 	case Common::IT_ITA:
 		menuLanguage = "ITALIAN";
 		break;
@@ -294,6 +297,8 @@ void Myst3Engine::openArchives() {
 			textLanguage = "ENGLISH";
 			break;
 		}
+	} else if (getGameLanguage() == Common::HE_ISR) {
+		textLanguage = "ENGLISH"; // The Hebrew version does not have a "HEBREW.m3t" file
 	} else {
 		if (getGameLocalizationType() == kLocMonolingual || ConfMan.getInt("text_language")) {
 			textLanguage = menuLanguage;

@@ -101,6 +101,9 @@ static const Myst3GameDescription gameDescriptions[] = {
 	// Russian release (Russian only) (1.2)
 	MYST3ENTRY(Common::RU_RUS, "ENGLISH.m3t",  "57d36d8610043fda554a0708d71d2681", 0, kLocMonolingual)
 
+	// Hebrew release (Hebrew only) (1.2 - Patched using the patch CD)
+	MYST3ENTRY(Common::HE_ISR, "HEBREW.m3t",  "16fbbe420fed366249a8d44a759f966c", 0, kLocMonolingual) // #1348, BLooperZ
+
 	// Japanese release (1.2)
 	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "21bbd040bcfadd13b9dc84360c3de01d", 0, kLocMulti2)
 	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "1e7c3156417978a1187fa6bc0e2cfafc", "Subtitles only", kLocMulti2)
