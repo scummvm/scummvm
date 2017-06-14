@@ -2,6 +2,7 @@ MODULE := engines/kingdom
 
 MODULE_OBJS = \
 	kingdom.o \
+	GPLogic1.o \
 	console.o \
 	detection.o
 

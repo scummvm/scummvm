@@ -72,6 +72,7 @@ namespace Kingdom {
 		bool _FstFwd;
 		bool _NoIFScreen;
 		bool _Sound;
+		bool _LastSound;
 		int _FrameStop;
 		int _DaelonCntr;
 		bool _Spell1;
@@ -118,8 +119,33 @@ namespace Kingdom {
 		bool _IconRedraw;
 		bool _Replay;
 		bool _quit;
+		int _NodeNum;
+		int _NextNode;
+		bool _CursorDrawn;
+		bool _Wizard;
+		int _Zoom;
+		int _Pmovie;
+		bool _Resurrect;
+		bool _SaveFile;
 
 		// Game Flags - Will be renames later into _Nodes[]
+		int16 word_2D74C;
+		int16 word_2D74E;
+		int16 word_2D750;
+		int16 word_2D752;
+		int16 word_2D754;
+		int16 word_2D756;
+		int16 word_2D758;
+		int16 word_2D75A;
+		int16 word_2D75E;
+		int16 word_2D764;
+		int16 word_2D766;
+		int16 word_2D768;
+		int16 word_2D76A;
+		int16 word_2D76E;
+		int16 word_2D770;
+		int16 word_2D772;
+		int16 word_2D776;
 		int16 word_2D77E;
 		int16 word_2D7CC;
 
@@ -129,6 +155,7 @@ namespace Kingdom {
 		int8 _Inventory[19];
 		int _IconPic[7];
 		uint16 _UserInput;
+		uint16 _MouseButton;
 
 		void drawScreen();
 		void SetupPics();
@@ -140,6 +167,8 @@ namespace Kingdom {
 		void FadeToBlack2();
 		void GameHelp();
 		void GPLogic1();
+		void GPLogic1_SubSP10();
+		void GPLogic1_SubSP121();
 		void GPLogic2();
 		void GPLogic3();
 		void GPLogic4();
@@ -163,6 +192,23 @@ namespace Kingdom {
 		void PlaySound(int v1);
 		void EraseCursor();
 		void GetUserInput();
+		void EraseCursorAsm();
+		void RestoreGame();
+		void DrawLocation();
+		void ProcessMap(int mapNum, int zoom);
+		void ProcessMapInput(int mapNum);
+		void InventoryDel(int item);
+		void InventoryAdd(int item);
+		void DrawPic(int reznum);
+		void DisplayIcon(int reznum);
+		void SetATimer();
+		bool Wound();
+		void ReadMouse();
+		void RefreshSound();
+		void SwitchAS();
+		void IncreaseHealth();
+		void CheckSaveGame();
+		void CheckMainScreen();
 	};
 } // End of namespace Kingdom
 
