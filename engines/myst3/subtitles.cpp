@@ -90,6 +90,9 @@ void FontSubtitles::loadResources() {
 	} else if (_fontFace == "MS Gothic") {
 		// The Japanese font has to be supplied by the user
 		ttfFile = "msgothic.ttf";
+	} else if (_fontFace == "Arial2") {
+		// The Hebrew font has to be supplied by the user
+		ttfFile = "hebrew.ttf";
 	} else {
 		error("Unknown subtitles font face '%s'", _fontFace.c_str());
 	}
