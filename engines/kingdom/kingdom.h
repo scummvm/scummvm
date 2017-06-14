@@ -33,6 +33,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/mixer.h"
+#include "common/memstream.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/queue.h"
@@ -49,6 +50,9 @@ namespace Kingdom {
 	enum KingdomDebugChannels {
 		kDebugGeneral = 1 << 0
 	};
+
+	extern char *_RezNames[];
+	extern int _MapExit[];
 
 	class KingdomGame : public Engine {
 	public:
@@ -69,6 +73,7 @@ namespace Kingdom {
 		bool _LoopFlag;
 		int _GameMode;
 		int _StatPlay;
+		int _OldStatPlay;
 		bool _FstFwd;
 		bool _NoIFScreen;
 		bool _Sound;
@@ -130,6 +135,7 @@ namespace Kingdom {
 		bool _Resurrect;
 		bool _SaveFile;
 		int _LastObstacle;
+		int _MapStat;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D74C;
@@ -193,6 +199,7 @@ namespace Kingdom {
 		void GPLogic2_SubSP361();
 		void GPLogic3();
 		void GPLogic4();
+		void GPLogic4_SP901();
 		void LoadAResource(int reznum);
 		void ReleaseAResource(int reznum);
 		void ShowPic(int reznum);
@@ -225,12 +232,15 @@ namespace Kingdom {
 		void SetATimer();
 		bool Wound();
 		void ReadMouse();
+		void RefreshMouse();
 		void RefreshSound();
 		void SwitchAS();
 		void IncreaseHealth();
 		void CheckSaveGame();
 		void CheckMainScreen();
 		bool ChkDesertObstacles();
+		void SwitchMtoA();
+		void _DrawIcon(int x, int y, Common::MemoryReadStream icon);
 	};
 } // End of namespace Kingdom
 
