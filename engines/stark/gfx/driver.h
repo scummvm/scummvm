@@ -111,6 +111,9 @@ public:
 
 	virtual Graphics::PixelFormat getScreenFormat();
 
+	/** Grab a screenshot of the currently active viewport as defined by setViewport */
+	virtual Graphics::Surface *getViewportScreenshot() const = 0;
+
 	virtual void set3DMode() = 0;
 
 	static const int32 kOriginalWidth = 640;
@@ -124,6 +127,7 @@ public:
 
 protected:
 	void computeScreenViewport();
+	static void flipVertical(Graphics::Surface *s);
 
 	Common::Rect _screenViewport;
 };

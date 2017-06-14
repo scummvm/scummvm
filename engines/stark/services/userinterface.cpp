@@ -20,8 +20,9 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/stream.h"
+#include "common/system.h"
 
 #include "engines/stark/services/userinterface.h"
 
@@ -54,10 +55,13 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_gameWindow(nullptr),
 		_interactive(true),
 		_interactionAttemptDenied(false),
-		_currentScreen(kScreenGame) {
+		_currentScreen(kScreenGame),
+		_gameWindowThumbnail(nullptr) {
 }
 
 UserInterface::~UserInterface() {
+	freeGameScreenThumbnail();
+
 	delete _gameWindow;
 	delete _actionMenu;
 	delete _topMenu;
@@ -238,5 +242,43 @@ void UserInterface::optionsOpen() {
 	event.type = Common::EVENT_MAINMENU;
 	g_system->getEventManager()->pushEvent(event);
 }
+
+void UserInterface::saveGameScreenThumbnail() {
+	freeGameScreenThumbnail();
+
+	Graphics::Surface *big = _gameWindow->getScreenshot();
+	assert(big->format.bytesPerPixel == 4);
+
+	_gameWindowThumbnail = new Graphics::Surface();
+	_gameWindowThumbnail->create(kThumbnailWidth, kThumbnailHeight, big->format);
+
+	uint32 *dst = (uint32 *)_gameWindowThumbnail->getPixels();
+	for (uint i = 0; i < _gameWindowThumbnail->h; i++) {
+		for (uint j = 0; j < _gameWindowThumbnail->w; j++) {
+			uint32 srcX = big->w * j / _gameWindowThumbnail->w;
+			uint32 srcY = big->h * i / _gameWindowThumbnail->h;
+			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
+
+			// Copy RGBA pixel
+			*dst++ = *src;
+		}
+	}
+
+	big->free();
+	delete big;
+}
+
+void UserInterface::freeGameScreenThumbnail() {
+	if (_gameWindowThumbnail) {
+		_gameWindowThumbnail->free();
+		delete _gameWindowThumbnail;
+		_gameWindowThumbnail = nullptr;
+	}
+}
+
+const Graphics::Surface *UserInterface::getGameWindowThumbnail() const {
+	return _gameWindowThumbnail;
+}
+
 } // End of namespace Stark
 

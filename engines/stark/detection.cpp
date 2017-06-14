@@ -21,6 +21,7 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "engines/stark/savemetadata.h"
 #include "engines/stark/stark.h"
 #include "engines/stark/services/stateprovider.h"
 
@@ -314,7 +315,11 @@ public:
 		return
 			(f == kSupportsListSaves) ||
 			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSupportsDeleteSave);
+			(f == kSupportsDeleteSave) ||
+			(f == kSavesSupportThumbnail) ||
+			(f == kSavesSupportMetaInfo) ||
+			(f == kSavesSupportPlayTime) ||
+			(f == kSavesSupportCreationDate);
 	}
 
 	int getMaximumSaveSlot() const override {
@@ -344,9 +349,8 @@ public:
 			Common::String description;
 			Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(*filename);
 			if (save) {
-				StateReadStream *stream = new StateReadStream(save);
-				description = stream->readString();
-				delete stream;
+				StateReadStream stream(save);
+				description = stream.readString();
 			}
 
 			saveList.push_back(SaveStateDescriptor(atoi(slot), description));
@@ -354,6 +358,36 @@ public:
 
 		Common::sort(saveList.begin(), saveList.end(), cmpSave);
 		return saveList;
+	}
+
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
+		Common::String filename = StarkEngine::formatSaveName(target, slot);
+		Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);
+		if (!save) {
+			return SaveStateDescriptor();
+		}
+
+		SaveMetadata metadata;
+		Common::ErrorCode readError = metadata.read(save, filename);
+		if (readError != Common::kNoError) {
+			delete save;
+			return SaveStateDescriptor();
+		}
+
+		SaveStateDescriptor descriptor;
+		descriptor.setDescription(metadata.description);
+
+		if (metadata.version >= 9) {
+			Graphics::Surface *thumb = metadata.readGameScreenThumbnail(save);
+			descriptor.setThumbnail(thumb);
+			descriptor.setPlayTime(metadata.totalPlayTime);
+			descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
+			descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);
+		}
+
+		delete save;
+
+		return descriptor;
 	}
 
 	void removeSaveState(const char *target, int slot) const override {

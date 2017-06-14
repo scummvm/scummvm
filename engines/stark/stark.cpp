@@ -26,6 +26,7 @@
 #include "engines/stark/debug.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
+#include "engines/stark/savemetadata.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/archiveloader.h"
@@ -302,28 +303,13 @@ Common::Error StarkEngine::loadGameState(int slot) {
 		return _saveFileMan->getError();
 	}
 
-	StateReadStream *stream = new StateReadStream(save);
+	StateReadStream stream(save);
 
 	// Read the header
-	Common::String desc = stream->readString();
-
-	Common::String level = stream->readString();
-	uint levelIndex = strtol(level.c_str(), nullptr, 16);
-
-	Common::String location = stream->readString();
-	uint locationIndex = strtol(location.c_str(), nullptr, 16);
-
-	Common::String versionField = stream->readString();
-	if (!versionField.hasPrefix("Version:\t")) {
-		warning("The save file '%s' does not match the expected format", filename.c_str());
-		return Common::kReadingFailed;
-	}
-
-	uint version = atoi(&(versionField.c_str()[8]));
-	if (version < StateProvider::kMinSaveVersion || version > StateProvider::kSaveVersion) {
-		warning("The save file '%s' version (v%d) is not supported by this version of ResidualVM. Only versions v%d to v%d are allowed.",
-		        filename.c_str(), version, StateProvider::kMinSaveVersion, StateProvider::kSaveVersion);
-		return Common::kReadingFailed;
+	SaveMetadata metadata;
+	Common::ErrorCode metadataErrorCode = metadata.read(&stream, filename);
+	if (metadataErrorCode != Common::kNoError) {
+		return metadataErrorCode;
 	}
 
 	// Reset the UI
@@ -334,18 +320,29 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	// Clear the previous world resources
 	_resourceProvider->shutdown();
 
+	if (metadata.version >= 9) {
+		metadata.skipGameScreenThumbnail(&stream);
+	}
+
 	// Read the resource trees state
-	_stateProvider->readStateFromStream(stream, version);
+	_stateProvider->readStateFromStream(&stream, metadata.version);
 
 	// Read the diary state
-	_diary->readStateFromStream(stream, version);
+	_diary->readStateFromStream(&stream, metadata.version);
 
-	delete stream;
+	if (stream.eos()) {
+		warning("Unexpected end of file reached when reading '%s'", filename.c_str());
+		return Common::kReadingFailed;
+	}
 
 	// Initialize the world resources with the loaded state
 	_resourceProvider->initGlobal();
 	_resourceProvider->setShouldRestoreCurrentState();
-	_resourceProvider->requestLocationChange(levelIndex, locationIndex);
+	_resourceProvider->requestLocationChange(metadata.levelIndex, metadata.locationIndex);
+
+	if (metadata.version >= 9) {
+		setTotalPlayTime(metadata.totalPlayTime);
+	}
 
 	return Common::kNoError;
 }
@@ -366,32 +363,26 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	}
 
 	// 1. Write the header
-	// Save description
-	save->writeUint32LE(desc.size());
-	save->writeString(desc);
+	SaveMetadata metadata;
+	metadata.description = desc;
+	metadata.version = StateProvider::kSaveVersion;
+	metadata.levelIndex = _global->getCurrent()->getLevel()->getIndex();
+	metadata.locationIndex = _global->getCurrent()->getLocation()->getIndex();
+	metadata.totalPlayTime = getTotalPlayTime();
+	metadata.gameWindowThumbnail = _userInterface->getGameWindowThumbnail();
 
-	// Level
-	Common::String level = _global->getCurrent()->getLevel()->getIndexAsString();
-	save->writeUint32LE(level.size());
-	save->writeString(level);
+	TimeDate timeDate;
+	_system->getTimeAndDate(timeDate);
+	metadata.setSaveTime(timeDate);
 
-	// Location
-	Common::String location = _global->getCurrent()->getLocation()->getIndexAsString();
-	save->writeUint32LE(location.size());
-	save->writeString(location);
-
-	// Version
-	Common::String version = Common::String::format("Version:\t%02d", StateProvider::kSaveVersion);
-	save->writeUint32LE(version.size());
-	save->writeString(version);
+	metadata.write(save);
+	metadata.writeGameScreenThumbnail(save);
 
 	// 2. Write the resource trees state
 	_stateProvider->writeStateToStream(save);
 
 	// 3. Write the diary state
 	_diary->writeStateToStream(save);
-
-	//TODO: Write a screenshot and ResidualVM specific metadata
 
 	delete save;
 
@@ -419,5 +410,12 @@ void StarkEngine::pauseEngineIntern(bool pause) {
 	_global->getCurrent()->getLocation()->onEnginePause(pause);
 
 	_frameLimiter->pause(pause);
+
+	// Grab a game screen thumbnail in case we need one when writing a save file
+	if (pause) {
+		_userInterface->saveGameScreenThumbnail();
+	} else {
+		_userInterface->freeGameScreenThumbnail();
+	}
 }
 } // End of namespace Stark

@@ -121,7 +121,7 @@ public:
 	void writeStateToStream(Common::WriteStream *stream);
 
 	static const uint kMinSaveVersion = 6;
-	static const uint kSaveVersion = 8;
+	static const uint kSaveVersion = 9;
 
 private:
 	class ResourceTreeState {

@@ -66,6 +66,7 @@ MODULE_OBJS := \
 	resources/string.o \
 	resources/textureset.o \
 	resourcereference.o \
+	savemetadata.o \
 	scene.o \
 	services/archiveloader.o \
 	services/dialogplayer.o \

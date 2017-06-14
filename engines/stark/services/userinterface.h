@@ -26,6 +26,15 @@
 #include "common/rect.h"
 #include "common/str-array.h"
 
+namespace Common {
+struct SeekableReadStream;
+struct WriteStream;
+}
+
+namespace Graphics {
+struct Surface;
+}
+
 namespace Stark {
 
 namespace Gfx {
@@ -113,6 +122,19 @@ public:
 	/** Was a player interaction with the world denied during this non interactive period? */
 	bool wasInteractionDenied() const;
 
+	/** Grab a screenshot of the game screen and store it in the class context as a thumbnail */
+	void saveGameScreenThumbnail();
+
+	/** Clear the currently stored game screen thumbnail, if any */
+	void freeGameScreenThumbnail();
+
+	/** Get the currently stored game screen thumbnail, returns nullptr if there is not thumbnail stored */
+	const Graphics::Surface *getGameWindowThumbnail() const;
+
+	static const uint kThumbnailWidth = 160;
+	static const uint kThumbnailHeight = 92;
+	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;
+
 private:
 	typedef void (Window::*WindowHandler)();
 	void dispatchEvent(WindowHandler handler);
@@ -137,6 +159,8 @@ private:
 	Screen _currentScreen;
 	bool _interactive;
 	bool _interactionAttemptDenied;
+
+	Graphics::Surface *_gameWindowThumbnail;
 };
 
 } // End of namespace Stark

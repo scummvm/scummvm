@@ -26,6 +26,10 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Stark {
 
 class Cursor;
@@ -73,6 +77,9 @@ public:
 
 	/** Is the window visible */
 	bool isVisible() const;
+
+	/** Grab a screenshot of the window if it is visible */
+	Graphics::Surface *getScreenshot() const;
 
 protected:
 	virtual void onMouseMove(const Common::Point &pos) = 0;

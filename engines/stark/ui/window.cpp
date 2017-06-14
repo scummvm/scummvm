@@ -48,6 +48,15 @@ void Window::render() {
 	onRender();
 }
 
+Graphics::Surface *Window::getScreenshot() const {
+	if (!_visible) {
+		return nullptr;
+	}
+
+	_gfx->setViewport(_position, _unscaled);
+	return _gfx->getViewportScreenshot();
+}
+
 bool Window::isMouseInside() const {
 	if (!_visible) {
 		return false;
