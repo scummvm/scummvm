@@ -120,13 +120,16 @@ namespace Kingdom {
 		bool _Replay;
 		bool _quit;
 		int _NodeNum;
+		int _OldNode;
 		int _NextNode;
+		int _RobberyNode;
 		bool _CursorDrawn;
 		bool _Wizard;
 		int _Zoom;
 		int _Pmovie;
 		bool _Resurrect;
 		bool _SaveFile;
+		int _LastObstacle;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D74C;
@@ -146,7 +149,24 @@ namespace Kingdom {
 		int16 word_2D770;
 		int16 word_2D772;
 		int16 word_2D776;
+		int16 word_2D77A;
+		int16 word_2D77C;
 		int16 word_2D77E;
+		int16 word_2D780;
+		int16 word_2D784;
+		int16 word_2D786;
+		int16 word_2D78A;
+		int16 word_2D78C;
+		int16 word_2D78E;
+		int16 word_2D790;
+		int16 word_2D792;
+		int16 word_2D796;
+		int16 word_2D79A;
+		int16 word_2D79C;
+		int16 word_2D7A2;
+		int16 word_2D7A6;
+		int16 word_2D7AA;
+		int16 word_2D7BA;
 		int16 word_2D7CC;
 
 		Common::SeekableReadStream *_ArtPtr;
@@ -170,6 +190,7 @@ namespace Kingdom {
 		void GPLogic1_SubSP10();
 		void GPLogic1_SubSP121();
 		void GPLogic2();
+		void GPLogic2_SubSP361();
 		void GPLogic3();
 		void GPLogic4();
 		void LoadAResource(int reznum);
@@ -209,6 +230,7 @@ namespace Kingdom {
 		void IncreaseHealth();
 		void CheckSaveGame();
 		void CheckMainScreen();
+		bool ChkDesertObstacles();
 	};
 } // End of namespace Kingdom
 
