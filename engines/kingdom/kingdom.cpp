@@ -296,6 +296,7 @@ void KingdomGame::GameHelp() {
 		break;
 	case 0x244:
 		//TODO: Set _quitFlag to 2
+		_quit = true;
 		break;
 	case 0x245: {
 		FadeToBlack1();
@@ -436,7 +437,34 @@ void KingdomGame::SwitchAS() {
 }
 
 void KingdomGame::DrawHelpScreen() {
-	debug("STUB: DrawHelpScreen");
+	int picNum;
+
+	switch(_Health) {
+	case 2:
+		picNum = 166;
+		break;
+	case 4:
+		picNum = 165;
+		break;
+	case 6:
+		picNum = 164;
+		break;
+	case 8:
+		picNum = 163;
+		break;
+	case 10:
+		picNum = 162;
+		break;
+	case 12:
+	default:
+		picNum = 161;
+		break;
+	}
+
+	if (_NoMusic)
+		picNum += 6;
+
+	ShowPic(picNum);
 }
 
 void KingdomGame::DrawRect(int v1, int v2, int v3, int v4, int v5) {
@@ -473,19 +501,19 @@ void KingdomGame::GetUserInput() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-				case Common::EVENT_QUIT:
-				case Common::EVENT_RTL:
-					_quit = true;
-					break;
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			_quit = true;
+			break;
 
-				case Common::EVENT_LBUTTONDOWN:
-					break;
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
-						_console->attach();
-					break;
-				default:
-					break;
+		case Common::EVENT_LBUTTONDOWN:
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
+				_console->attach();
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -540,7 +568,12 @@ void KingdomGame::RefreshSound() {
 }
 
 void KingdomGame::IncreaseHealth() {
-	debug("STUB: IncreaseHealth");
+	if (_Health <= 3)
+		_Health = 4;
+	else if (_Health <= 7)
+		_Health = 8;
+	else
+		_Health = 12;
 }
 
 void KingdomGame::CheckSaveGame() {
@@ -553,7 +586,43 @@ void KingdomGame::CheckMainScreen() {
 
 bool KingdomGame::ChkDesertObstacles() {
 	debug("STUB: ChkDesertObstacles");
-	return false;
+	if (!_Wizard)
+		return false;
+
+	_NextNode = _NodeNum;
+	if (_LastObs) {
+		_LastObs = false;
+		return false;
+	}
+
+	if (word_2D77E || _rnd->getRandomNumber(6) == 0) {
+		if (!word_2D7A6 || _RobberyNode != _NodeNum) {
+			if (_LastObstacle != _NodeNum) {
+				if (_rnd->getRandomNumber(5) == 0) {
+					_StatPlay = 250;
+					_LastObstacle = _NodeNum;
+					_LastObs = true;
+					_LoopFlag = true;
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else {
+			_StatPlay = 490;
+			_LoopFlag = true;
+			return true;
+		}
+	} else {
+		_StatPlay = 280;
+		_RobberyNode = _NodeNum;
+		_LastObstacle = _NodeNum;
+		_LastObs = true;
+		_LoopFlag = true;
+		return true;
+	}
 }
 
 void KingdomGame::SwitchMtoA() {
