@@ -1,3 +1,27 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+namespace Kingdom {
+
 char *_RezNames[] = {
 	"",
 	"Maps/KMAP001.lbm",
@@ -510,3 +534,15 @@ char *_RezNames[] = {
 	"MovieLF/KLF208.lbm",
 	"MovieLF/KLF209.lbm",
 };
+
+int _MapExit[] = {
+	100,  90,  50, 420, 550, 110,  70,  80, 180, 190,
+	200, 210, 230, 240, 300, 290, 330, 360, 310, 370,
+	390,  60, 570,  30,  40, 340, 640, 520, 510, 500,
+	540, 320, 140, 270, 380, 580, 590, 610,   0,   0,
+	  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+	  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+	  0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+};
+
+}

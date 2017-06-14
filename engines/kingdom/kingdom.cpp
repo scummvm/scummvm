@@ -39,7 +39,6 @@
 #include "common/memstream.h"
 
 #include "kingdom/kingdom.h"
-#include "kingdom/reznames.h"
 
 namespace Kingdom {
 
@@ -340,10 +339,6 @@ void KingdomGame::GPLogic3() {
 	debug("STUB: GPLogic3");
 }
 
-void KingdomGame::GPLogic4() {
-	debug("STUB: GPLogic4");
-}
-
 void KingdomGame::LoadAResource(int reznum) {
 	Common::String path = Common::String(_RezNames[reznum]);
 	path.toUppercase();
@@ -468,6 +463,10 @@ void KingdomGame::ReadMouse() {
 	debug("STUB: ReadMouse");
 }
 
+void KingdomGame::RefreshMouse() {
+	debug ("STUB: RefreshMouse");
+}
+
 void KingdomGame::GetUserInput() {
 	debug("STUB: GetUserInput");
 
@@ -555,5 +554,13 @@ void KingdomGame::CheckMainScreen() {
 bool KingdomGame::ChkDesertObstacles() {
 	debug("STUB: ChkDesertObstacles");
 	return false;
+}
+
+void KingdomGame::SwitchMtoA() {
+	debug("STUB: SwitchMtoA");
+}
+
+void KingdomGame::_DrawIcon(int x, int y, Common::MemoryReadStream icon) {
+	debug("STUB: _DrawIcon");
 }
 } // End of namespace Kingdom

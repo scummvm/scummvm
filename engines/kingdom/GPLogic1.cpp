@@ -74,7 +74,7 @@ void KingdomGame::GPLogic1() {
 		ShowPic(106);
 		_StatPlay = 30;
 		_UserInput = 0;
-		_LoopFlag = 1;
+		_LoopFlag = true;
 		break;
 	case 30:
 		_NodeNum = 3;
@@ -785,12 +785,12 @@ void KingdomGame::GPLogic1() {
 		case 0x445:
 			if (word_2D766 || !_Wizard) {
 				_StatPlay = 120;
-				_LoopFlag = 1;
+				_LoopFlag = true;
 			}
 			break;
 		case 0x446:
 			_StatPlay = 80;
-			_LoopFlag = 1;
+			_LoopFlag = true;
 			_UserInput = 0;
 			break;
 		case 0x450:
