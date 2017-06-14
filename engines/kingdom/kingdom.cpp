@@ -336,10 +336,6 @@ void KingdomGame::GameHelp() {
 	}
 }
 
-void KingdomGame::GPLogic1() {
-	debug("STUB: GPLogic1");
-}
-
 void KingdomGame::GPLogic2() {
 	debug("STUB: GPLogic2");
 }
@@ -444,6 +440,10 @@ void KingdomGame::RestoreAS() {
 	debug("STUB: RestoreAS");
 }
 
+void KingdomGame::SwitchAS() {
+	debug("STUB: SwitchAS");
+}
+
 void KingdomGame::DrawHelpScreen() {
 	debug("STUB: DrawHelpScreen");
 }
@@ -468,6 +468,10 @@ void KingdomGame::EraseCursor() {
 	debug("STUB: EraseCursor");
 }
 
+void KingdomGame::ReadMouse() {
+	debug("STUB: ReadMouse");
+}
+
 void KingdomGame::GetUserInput() {
 	debug("STUB: GetUserInput");
 
@@ -489,5 +493,66 @@ void KingdomGame::GetUserInput() {
 					break;
 		}
 	}
+}
+
+void KingdomGame::EraseCursorAsm() {
+	debug("STUB: EraseCursorAsm");
+}
+
+void KingdomGame::RestoreGame() {
+	debug("STUB: RestoreGame");
+}
+
+void KingdomGame::DrawLocation() {
+	debug("STUB: DrawLocation");
+}
+
+void KingdomGame::ProcessMap(int mapNum, int zoom) {
+	debug("STUB: ProcessMap");
+}
+
+void KingdomGame::ProcessMapInput(int mapNum) {
+	debug("STUB: ProcessMapInput");
+}
+
+void KingdomGame::InventoryDel(int item) {
+	debug("STUB: InventoryDel");
+}
+
+void KingdomGame::InventoryAdd(int item) {
+	debug("STUB: InventoryAdd");
+}
+
+void KingdomGame::DrawPic(int reznum) {
+	debug("STUB: DrawPic");
+}
+
+void KingdomGame::DisplayIcon(int reznum) {
+	debug("STUB: DisplayIcon");
+}
+
+void KingdomGame::SetATimer() {
+	debug("STUB: SetATimer");
+}
+
+bool KingdomGame::Wound() {
+	debug("STUB: Wound");
+	return false;
+}
+
+void KingdomGame::RefreshSound() {
+	debug("STUB: RefreshSound");
+}
+
+void KingdomGame::IncreaseHealth() {
+	debug("STUB: IncreaseHealth");
+}
+
+void KingdomGame::CheckSaveGame() {
+	debug("STUB: CheckSaveGame");
+}
+
+void KingdomGame::CheckMainScreen() {
+	debug("STUB: CheckMainScreen");
 }
 } // End of namespace Kingdom
