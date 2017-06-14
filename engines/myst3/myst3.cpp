@@ -325,7 +325,7 @@ void Myst3Engine::openArchives() {
 
 	addArchive(textLanguage + ".m3t", true);
 
-	if (getGameLocalizationType() != kLocMonolingual || getPlatform() == Common::kPlatformXbox) {
+	if (getGameLocalizationType() != kLocMonolingual || getPlatform() == Common::kPlatformXbox || getGameLanguage() == Common::HE_ISR) {
 		addArchive(menuLanguage + ".m3u", true);
 	}
 
