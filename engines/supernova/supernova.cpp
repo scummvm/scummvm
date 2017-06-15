@@ -392,4 +392,35 @@ void SupernovaEngine::paletteFadeIn() {
 	_system->updateScreen();
 }
 
+Inventory::Inventory()
+    : _numObjects(0)
+{}
+
+// TODO: Update Inventory surface for scrolling
+void Inventory::add(Object &obj) {
+	if (_numObjects < kMaxCarry)
+		_inventory[_numObjects] = &obj;
+}
+
+// TODO: Update Inventory surface for scrolling
+void Inventory::remove(Object &obj) {
+	for (size_t i = 0; i < _numObjects; ++i) {
+		if (_inventory[i] == &obj) {
+			--_numObjects;
+			while (i < _numObjects) {
+				_inventory[i] = _inventory[i + 1];
+				++i;
+			}
+			obj.disableProperty(CARRIED);
+		}
+	}
+}
+
+Object *Inventory::get(size_t index) {
+	if (index < _numObjects)
+		return _inventory[index];
+
+	return NULL;
+}
+
 }
