@@ -54,6 +54,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 	_ASPtr = nullptr;
 	_quit = false;
+	_MouseValue = 0;
 }
 
 KingdomGame::~KingdomGame() {
@@ -509,24 +510,29 @@ void KingdomGame::RefreshMouse() {
 void KingdomGame::GetUserInput() {
 	debug("STUB: GetUserInput");
 
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
-			_quit = true;
-			break;
+	// CHECKME: _QuitFlag != 0
+	if (_quit)
+		return;
 
-		case Common::EVENT_LBUTTONDOWN:
-			break;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
-				_console->attach();
-			break;
-		default:
-			break;
-		}
+	_UserInput = WaitKey();
+
+	if (_quit)
+		return;
+
+	if (_UserInput == 0x2F5) {
+		_StatPlay = 600;
+		_LoopFlag = true;
 	}
+
+	if (_UserInput == 0x42B && _StatPlay == 53 && _GameMode == 0) {
+		_OldStatPlay = _StatPlay;
+		_StatPlay = 900;
+		_LoopFlag = true;
+	}
+
+	if (_UserInput == 0x12D && _CurrMap == 1)
+		// CHECKME: _quitFlag = 2;
+		_quit = true;
 }
 
 void KingdomGame::EraseCursorAsm() {
@@ -600,8 +606,12 @@ void KingdomGame::SetATimer() {
 }
 
 bool KingdomGame::Wound() {
-	debug("STUB: Wound");
-	return false;
+	bool retval = false;
+	if (_Health == 12 || _Health == 8 || _Health == 4) {
+		_Health -= 2;
+		retval = true;
+	}
+	return retval;
 }
 
 void KingdomGame::RefreshSound() {
@@ -671,5 +681,52 @@ void KingdomGame::SwitchMtoA() {
 
 void KingdomGame::_DrawIcon(int x, int y, Common::MemoryReadStream icon) {
 	debug("STUB: _DrawIcon");
+}
+
+int KingdomGame::WaitKey() {
+	int retval = 0;
+
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			_quit = true;
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			break;
+		case Common::EVENT_KEYDOWN:
+			// if keyboard used, retVal = getch() + 0x100
+			if (!event.kbd.hasFlags(Common::KBD_CTRL) && !event.kbd.hasFlags(Common::KBD_ALT))
+				retval = 0x100 + event.kbd.keycode;
+			else if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
+				_console->attach();
+			break;
+		case Common::EVENT_LBUTTONUP: // retval == 2?
+			if (_Eye)
+				retval= !_ASMode ? 0x43A : 0x43B;
+			break;
+		case Common::EVENT_RBUTTONUP: // retval == 1?
+			retval = _MouseValue;
+			break;
+		default:
+			RefreshSound();
+			CheckMainScreen();
+			if (_ATimerFlag) {
+				_ATimerFlag = false;
+				retval = 0x2F1;
+			} else if (_BTimerFlag) {
+				_BTimerFlag = false;
+				retval = 0x2F2;
+			} else if (_CTimerFlag) {
+				_CTimerFlag = false;
+				retval = 0x2F5;
+			} else
+				retval= 0;
+			break;
+		}
+	}
+	return retval;
 }
 } // End of namespace Kingdom

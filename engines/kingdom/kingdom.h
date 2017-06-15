@@ -137,6 +137,7 @@ namespace Kingdom {
 		bool _SaveFile;
 		int _LastObstacle;
 		int _MapStat;
+		int _MouseValue;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D74C;
@@ -242,6 +243,7 @@ namespace Kingdom {
 		bool ChkDesertObstacles();
 		void SwitchMtoA();
 		void _DrawIcon(int x, int y, Common::MemoryReadStream icon);
+		int KingdomGame::WaitKey();
 	};
 } // End of namespace Kingdom
 
