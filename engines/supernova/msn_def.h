@@ -17,7 +17,7 @@ const int kRoomsChap0 =  1;
 const int kRoomsChap1 = 16;
 const int kRoomsChap2 =  9;
 const int kRoomsChap3 = 21;
-
+const int kRoomsNum = kRoomsChap0 + kRoomsChap1 + kRoomsChap2 + kRoomsChap3;
 
 enum ObjectType {
 	NULLTYPE    =      0,
@@ -115,35 +115,52 @@ enum MessagePosition {
 };
 
 // Colors
-#define HGR_BEF      1
-#define COL_BEF      5
-#define HGR_BEF_HELL 3
-#define COL_BEF_HELL 6
+const int kColorBlack       =  0;
+const int kColorWhite25     =  1;
+const int kColorWhite35     =  2;
+const int kColorWhite44     =  3;
+const int kColorWhite99     =  4;
+const int kColorDarkGreen   =  5;
+const int kColorGreen       =  6;
+const int kColorDarkRed     =  7;
+const int kColorRed         =  8;
+const int kColorDarkBlue    =  9;
+const int kColorBlue        = 10;
+const int kColorWhite63     = 11;
+const int kColorLightBlue   = 12;
+const int kColorLightGreen  = 13;
+const int kColorLightYellow = 14;
+const int kColorLightRed    = 15;
 
-#define HGR_INV      1
-#define COL_INV      7
-#define HGR_INV_HELL 2
-#define COL_INV_HELL 8
+#define HGR_BEF      kColorWhite25
+#define COL_BEF      kColorDarkGreen
+#define HGR_BEF_HELL kColorWhite44
+#define COL_BEF_HELL kColorGreen
 
-#define HGR_BEF_ANZ  1
-#define COL_BEF_ANZ  5
+#define HGR_INV      kColorWhite25
+#define COL_INV      kColorDarkRed
+#define HGR_INV_HELL kColorWhite35
+#define COL_INV_HELL kColorRed
 
-#define HGR_AUSG     1
-#define COL_AUSG     7
+#define HGR_BEF_ANZ  kColorWhite25
+#define COL_BEF_ANZ  kColorDarkGreen
 
-#define HGR_MELD     2
-#define COL_MELD     4
+#define HGR_AUSG     kColorWhite25
+#define COL_AUSG     kColorDarkRed
 
-#define COL_LWIN     7
-#define HGR_LADEN   10
-#define COL_LADEN    4
-#define HGR_LADEN2   9
-#define COL_LADEN2  11
-#define HGR_NAME     9
-#define COL_NAME    15
+#define HGR_MELD     kColorWhite35
+#define COL_MELD     kColorWhite99
 
-#define HGR_EDIT     9
-#define COL_EDIT     4
+#define COL_LWIN     kColorDarkRed
+#define HGR_LADEN    kColorBlue
+#define COL_LADEN    kColorWhite99
+#define HGR_LADEN2   kColorDarkBlue
+#define COL_LADEN2   kColorWhite63
+#define HGR_NAME     kColorDarkBlue
+#define COL_NAME     kColorLightRed
+
+#define HGR_EDIT     kcolorDarkBlue
+#define COL_EDIT     kColorWhite99
 
 
 const byte mouseNormal[64] = {
