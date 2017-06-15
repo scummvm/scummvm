@@ -243,7 +243,7 @@ namespace Kingdom {
 		bool ChkDesertObstacles();
 		void SwitchMtoA();
 		void _DrawIcon(int x, int y, Common::MemoryReadStream icon);
-		int KingdomGame::WaitKey();
+		int WaitKey();
 	};
 } // End of namespace Kingdom
 
