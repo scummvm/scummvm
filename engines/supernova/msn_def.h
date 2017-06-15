@@ -398,6 +398,14 @@ struct Object {
 	    , _direction(direction)
 	{}
 
+	void setProperty(ObjectType type) {
+		_type |= type;
+	}
+
+	void disableProperty(ObjectType type) {
+		_type &= ~type;
+	}
+
 	const char *_name;
 	const char *_description;
 	ObjectID _id;
