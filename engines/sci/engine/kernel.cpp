@@ -656,7 +656,7 @@ void Kernel::mapFunctions() {
 					kernelSubMap++;
 				}
 				if (!subFunctionCount)
-					error("k%s[%x]: no subfunctions found for requested version", kernelName.c_str(), id);
+					error("k%s[%x]: no subfunctions found for requested version %s", kernelName.c_str(), id, getSciVersionDesc(mySubVersion));
 				// Now allocate required memory and go through it again
 				_kernelFuncs[id].subFunctionCount = subFunctionCount;
 				KernelSubFunction *subFunctions = new KernelSubFunction[subFunctionCount];
