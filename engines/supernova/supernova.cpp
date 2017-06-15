@@ -36,7 +36,6 @@
 #include "graphics/palette.h"
 
 #include "supernova/supernova.h"
-#include "supernova/msn_def.h"
 //#include "supernova/rooms.h"
 
 
@@ -61,13 +60,14 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 }
 
 SupernovaEngine::SupernovaEngine(OSystem *syst)
-	: Engine(syst)
-	, _console(NULL)
+    : Engine(syst)
+    , _console(NULL)
     , _brightness(255)
     , _menuBrightness(255)
     , _imageIndex(10)
     , _sectionIndex(0)
     , _delay(33)
+    , _gameRunning(true)
 {
 //	const Common::FSNode gameDataDir(ConfMan.get("path"));
 //	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
@@ -80,7 +80,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 
 SupernovaEngine::~SupernovaEngine() {
 	DebugMan.clearAllDebugChannels();
-	
+
 	delete _rnd;
 	delete _console;
 }
@@ -94,16 +94,17 @@ Common::Error SupernovaEngine::run() {
 	initPalette();
 	paletteFadeIn();
 
-	_gameRunning = true;
+	CursorMan.showMouse(true);
+
 	while (_gameRunning) {
 		updateEvents();
-		
+
 		renderImage(_imageIndex, _sectionIndex);
-		renderText(Common::String::format("%u | %u", _imageIndex, _sectionIndex).c_str(), 0, 190, 15);
+		renderText(Common::String::format("%u | %u", _imageIndex, _sectionIndex).c_str(), 0, 190, kColorLightRed);
 		_system->updateScreen();
 		_system->delayMillis(_delay);
 	}
-	
+
 	//deinit timer/sound/..
 	stopSound();
 
@@ -112,14 +113,14 @@ Common::Error SupernovaEngine::run() {
 
 void SupernovaEngine::updateEvents() {
 	Common::Event event;
-	
+
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
 			_gameRunning = false;
 			break;
-		
+
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
 				paletteFadeOut();
@@ -134,9 +135,9 @@ void SupernovaEngine::updateEvents() {
 				_sectionIndex = 0;
 				++_imageIndex;
 				if (_imageIndex == 31) {
-					renderText("Das Schicksal", 44, 132, 4);
-					renderText("des Horst Hummel", 35, 142, 4);
-					renderText("Teil 1:", 64, 120, 12);
+					renderText("Das Schicksal", 44, 132, kColorWhite99);
+					renderText("des Horst Hummel", 35, 142, kColorWhite99);
+					renderText("Teil 1:", 64, 120, kColorLightBlue);
 				}
 			}
 			if (event.kbd.keycode == Common::KEYCODE_e) {
@@ -162,7 +163,7 @@ void SupernovaEngine::playSound(int filenumber, int offset) {
 	if (!file->open(Common::String::format("msn_data.0%2d", filenumber))) {
 		error("File %s could not be read!", file->getName());
 	}
-	
+
 	file->seek(offset);
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(file, 11931, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN);
 	stopSound();
@@ -179,12 +180,12 @@ void playSoundMod(int filenumber)
 	if (filenumber != 49 || filenumber != 52) {
 		error("File not supposed to be played!");
 	}
-	
+
 	Common::File *file = new Common::File;
 	if (!file->open(Common::String::format("msn_data.0%2d", filenumber))) {
 		error("File %s could not be read!", file->getName());
 	}
-	
+
 	// play Supernova MOD file
 }
 
@@ -193,7 +194,7 @@ void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) 
 	if (!file.open(Common::String::format("msn_data.0%2d", filenumber))) {
 		error("File %s could not be read!", file.getName());
 	}
-	
+
 	_image.loadStream(file);
 	_image.loadSection(section);
 	_system->getPaletteManager()->setPalette(_image.getPalette(), 16, 239);
@@ -203,11 +204,11 @@ void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) 
 	} else {
 		size_t offset = _image._section[section].y1 * 320 + _image._section[section].x1;
 		_system->copyRectToScreen(static_cast<const byte *>(_image.getSurface()->getPixels()) + offset,
-								  320,
-								  _image._section[section].x1,
-								  _image._section[section].y1,
-								  _image._section[section].x2 - _image._section[section].x1,
-								  _image._section[section].y2 - _image._section[section].y1);
+		                          320,
+		                          _image._section[section].x1,
+		                          _image._section[section].y1,
+		                          _image._section[section].x2 - _image._section[section].x1,
+		                          _image._section[section].y2 - _image._section[section].y1);
 	}
 }
 
@@ -240,7 +241,7 @@ void SupernovaEngine::renderMessage(char *text, MessagePosition position) {
 	int x = 0;
 	int y = 0;
 	byte textColor = 0;
-	
+
 	while (*p != '\0') {
 		row[numRows] = p;
 		++numRows;
@@ -257,7 +258,7 @@ void SupernovaEngine::renderMessage(char *text, MessagePosition position) {
 		if (rowWidth > rowWidthMax)
 			rowWidthMax = rowWidth;
 	}
-	
+
 	switch (position) {
 	case kMessageNormal:
 		x = rowWidthMax / 2 - 160;
@@ -265,22 +266,22 @@ void SupernovaEngine::renderMessage(char *text, MessagePosition position) {
 		break;
 	case kMessageTop:
 		x = rowWidthMax / 2 - 160;
-		textColor = 14;
+		textColor = kColorLightYellow;
 		break;
 	case kMessageCenter:
 		x = rowWidthMax / 2 - 160;
-		textColor = 15;
+		textColor = kColorLightRed;
 		break;
 	case kMessageLeft:
 		x = 3;
-		textColor = 14;
+		textColor = kColorLightYellow;
 		break;
 	case kMessageRight:
 		x = 317 - rowWidthMax;
-		textColor = 13;
+		textColor = kColorLightGreen;
 		break;
 	}
-	
+
 	if (position == kMessageNormal) {
 		y = 70 - ((numRows * 9) / 2);
 	} else if (position == kMessageTop) {
@@ -288,17 +289,17 @@ void SupernovaEngine::renderMessage(char *text, MessagePosition position) {
 	} else {
 		y = 142;
 	}
-	
+
 	int message_columns = x - 3;
 	int message_rows = y - 3;
 	int message_width = rowWidthMax + 6;
 	int message_height = numRows * 9 + 5;
-	renderBox(message_columns,message_rows,message_width,message_height,HGR_MELD);
+	renderBox(message_columns, message_rows, message_width, message_height, HGR_MELD);
 	for (size_t i = 0; i < numRows; ++i) {
 		renderText(row[i], x, y, textColor);
 		y += 9;
 	}
-	
+
 //	timer1 = (Common::strnlen(text, BUFSIZ) + 20) * textspeed / 10;
 }
 
@@ -312,7 +313,7 @@ void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
 		} else if (c == 225) {
 			c = 128;
 		}
-		
+
 		for (size_t i = 0; i < 5; ++i) {
 			if (font[c - 32][i] == 0xff) {
 				++cursor;
@@ -340,7 +341,7 @@ void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color)
 
 void SupernovaEngine::paletteBrightness() {
 	byte palette[768];
-	
+
 	_system->getPaletteManager()->grabPalette(palette, 0, 255);
 	for (size_t i = 0; i < 48; ++i) {
 		palette[i] = (initVGAPalette[i] * _menuBrightness) >> 8;
@@ -360,7 +361,7 @@ void SupernovaEngine::paletteBrightness() {
 void SupernovaEngine::paletteFadeOut() {
 	// TODO: scene 0 (newspaper article in intro, mode 0x11)
 	//       needs to be handled differently
-	
+
 	while (_brightness > 20) {
 		_menuBrightness = _brightness;
 		paletteBrightness();
@@ -377,7 +378,7 @@ void SupernovaEngine::paletteFadeOut() {
 void SupernovaEngine::paletteFadeIn() {
 	// TODO: scene 0 (newspaper article in intro, mode 0x11)
 	//       needs to be handled differently
-	
+
 	while (_brightness < 235) {
 		_menuBrightness = _brightness;
 		paletteBrightness();
