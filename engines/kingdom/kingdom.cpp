@@ -379,7 +379,19 @@ void KingdomGame::ShowPic(int reznum) {
 	g_system->getPaletteManager()->setPalette(palette, 0, paletteColorCount);
 
 	const Graphics::Surface *surface = decoder.getSurface();
-	g_system->copyRectToScreen(surface->getPixels(), 320, 0, 0, 320, 200);
+
+	byte *data = (byte *)surface->getPixels();
+	::Graphics::Surface *screen = g_system->lockScreen();
+	for (uint curX = 0; curX < 320; curX++) {
+		for (uint curY = 0; curY < 200; curY++) {
+			byte *src = data + (curY * 320) + curX;
+			byte *dst = (byte *)screen->getBasePtr(curX, curY);
+			if (*src != 0xFF)
+				*dst = *src;
+		}
+	}
+	g_system->unlockScreen();
+
 	g_system->updateScreen();
 
 	ReleaseAResource(reznum);
@@ -585,7 +597,6 @@ void KingdomGame::CheckMainScreen() {
 }
 
 bool KingdomGame::ChkDesertObstacles() {
-	debug("STUB: ChkDesertObstacles");
 	if (!_Wizard)
 		return false;
 
