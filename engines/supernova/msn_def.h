@@ -352,6 +352,52 @@ const byte font[][5] = {
 	    0x2c, 0x34, 0x40, 0x2c, 0x30, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
+
+
+
+static ObjectType operator|(ObjectType a, ObjectType b) {
+	return ObjectType(+a | +b);
+}
+
+struct Object {
+	static const char *const defaultDescription;
+
+	Object()
+	    : _name("")
+	    , _description(Object::defaultDescription)
+	    , _id(NULLOBJECT)
+	    , _type(NULLTYPE)
+	    , _click(0)
+	    , _click2(0)
+	    , _section(0)
+	    , _exitRoom(NULLROOM)
+	    , _direction(0)
+	{}
+	Object(const char *name, const char *description, ObjectID id, ObjectType type,
+	       byte click, byte click2, byte section = 0, RoomID exitRoom = NULLROOM, byte direction = 0)
+	    : _name(name)
+	    , _description(description)
+	    , _id(id)
+	    , _type(type)
+	    , _click(click)
+	    , _click2(click2)
+	    , _section(section)
+	    , _exitRoom(exitRoom)
+	    , _direction(direction)
+	{}
+
+	const char *_name;
+	const char *_description;
+	ObjectID _id;
+	ObjectType _type;
+	byte _click;
+	byte _click2;
+	byte _section;
+	RoomID _exitRoom;
+	byte _direction;
+};
+
+
 }
 
 #endif // MSN_DEF_H
