@@ -42,6 +42,24 @@
 
 namespace Supernova {
 
+const char *const Object::defaultDescription = "Es ist nichts Besonderes daran.";
+
+ObjectType operator|(ObjectType a, ObjectType b) {
+	return static_cast<ObjectType>(+a | +b);
+}
+
+ObjectType operator^(ObjectType a, ObjectType b) {
+	return static_cast<ObjectType>(+a ^ +b);
+}
+
+ObjectType &operator|=(ObjectType &a, ObjectType b) {
+	return a = a | b;
+}
+
+ObjectType &operator^=(ObjectType &a, ObjectType b) {
+	return a = a ^ b;
+}
+
 SupernovaEngine::SupernovaEngine(OSystem *syst)
 	: Engine(syst)
 	, _console(NULL)
