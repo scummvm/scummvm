@@ -75,22 +75,28 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 			"", "", "", "", "", "", ""
 		};
 
+		CProximity prox;
+		prox._soundType = Audio::Mixer::kSpeechSoundType;
+
 		int randVal = _nameIndex ? getRandomNumber(2) : 0;
 		switch (randVal) {
 		case 0:
 		case 1:
-			_soundHandle = playSound("z#189.wav");
+			_soundHandle = playSound("z#189.wav", prox);
 			if (_nameIndex < 20) {
-				queueSound(waveNames1[_nameIndex], _soundHandle);
+				queueSound(waveNames1[_nameIndex], _soundHandle, 100, 0, false,
+					Audio::Mixer::kSpeechSoundType);
 				++_nameIndex;
 			} else {
-				queueSound(waveNames1[1 + getRandomNumber(17)], _soundHandle);
+				queueSound(waveNames1[1 + getRandomNumber(17)], _soundHandle,
+					100, 0, false, Audio::Mixer::kSpeechSoundType);
 			}
 			break;
 
 		case 2:
-			_soundHandle = playSound("z#189.wav");
-			queueSound(waveNames2[1 + getRandomNumber(35)], _soundHandle);
+			_soundHandle = playSound("z#189.wav", prox);
+			queueSound(waveNames2[1 + getRandomNumber(35)], _soundHandle,
+				100, 0, false, Audio::Mixer::kSpeechSoundType);
 			break;
 
 		default:

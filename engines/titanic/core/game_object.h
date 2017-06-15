@@ -229,8 +229,8 @@ protected:
 	 * @param balance		Sound balance (not actually used by original)
 	 * @param repeated		If true, sound will repeat indefinitely
 	 */
-	int queueSound(const CString &name, uint priorHandle, uint volume = 100,
-		int balance = 0, bool repeated = false);
+	int queueSound(const CString &name, uint priorHandle, uint volume = 100, int balance = 0,
+		bool repeated = false, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 
 	/**
 	 * Stop a sound

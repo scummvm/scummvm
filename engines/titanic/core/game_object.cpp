@@ -763,12 +763,14 @@ int CGameObject::playSound(const CString &name, CProximity &prox) {
 	return -1;
 }
 
-int CGameObject::queueSound(const CString &name, uint priorHandle, uint volume, int balance, bool repeated) {
+int CGameObject::queueSound(const CString &name, uint priorHandle, uint volume, int balance, bool repeated,
+		Audio::Mixer::SoundType soundType) {
 	CProximity prox;
 	prox._balance = balance;
 	prox._repeated = repeated;
 	prox._channelVolume = volume;
 	prox._priorSoundHandle = priorHandle;
+	prox._soundType = soundType;
 
 	return playSound(name, prox);
 }
