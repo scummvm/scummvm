@@ -55,7 +55,7 @@ private:
 	byte _menuBrightness;
 	byte _brightness;
 	uint _delay;
-	
+
 	void initData();
 	void initPalette();
 	void paletteFadeIn();
@@ -69,6 +69,19 @@ private:
 	void renderMessage(char *text, MessagePosition position);
 	void renderText(const char *text, int x, int y, byte color);
 	void renderBox(int x, int y, int width, int height, byte color);
+};
+
+class Inventory {
+public:
+	Inventory();
+
+	void add(Object &obj);
+	void remove(Object &obj);
+	Object *get(size_t index);
+
+private:
+	Object *_inventory[kMaxCarry];
+	size_t _numObjects;
 };
 
 }
