@@ -371,11 +371,6 @@ const byte font[][5] = {
 	};
 
 
-
-static ObjectType operator|(ObjectType a, ObjectType b) {
-	return ObjectType(+a | +b);
-}
-
 struct Object {
 	static const char *const defaultDescription;
 
