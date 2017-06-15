@@ -53,6 +53,7 @@ namespace Kingdom {
 
 	extern char *_RezNames[];
 	extern int _MapExit[];
+	extern int _EMLTable[];
 
 	class KingdomGame : public Engine {
 	public:
