@@ -391,7 +391,6 @@ void KingdomGame::ShowPic(int reznum) {
 		}
 	}
 	g_system->unlockScreen();
-
 	g_system->updateScreen();
 
 	ReleaseAResource(reznum);
@@ -539,7 +538,37 @@ void KingdomGame::RestoreGame() {
 }
 
 void KingdomGame::DrawLocation() {
-	debug("STUB: DrawLocation");
+	if (_DaelonCntr > 0)
+		_DaelonCntr--;
+
+	PlaySound(0);
+	_IconsClosed = true;
+	_TSIconOnly = false;
+	_ATimer = 0;
+	_ATimerFlag = false;
+
+	int emlValue = _EMLTable[_NodeNum];
+	if (emlValue > 0)
+		EnAll();
+
+	if (!_MapEx || !emlValue || _Resurrect) {
+		if (_StatPlay != 50)
+			_Resurrect = false;
+		_IconsClosed = false;
+	} else {
+		_MapEx = false;
+		SaveAS();
+		FShowPic(emlValue);
+		_BTimer = 16;
+		while(_BTimer) {
+			RefreshSound();
+			CheckMainScreen();
+		}
+		FadeToBlack1();
+		DrawRect(4, 17, 228, 161, 0);
+		_IconsClosed = false;
+		_TSIconOnly = false;
+	}
 }
 
 void KingdomGame::ProcessMap(int mapNum, int zoom) {
