@@ -229,7 +229,7 @@ void KingdomGame::GPLogic4_SP901() {
 	EraseCursor();
 	FadeToBlack2();
 	ShowPic(106);
-	// FIXME: _DrawIcon(4, 0, _ArtPtr[12 - _HealthOld]);
+	DrawIcon(4, 0, 12 - _HealthOld);
 	if (_TideCntl == 1)
 		DrawPic(178);
 	else
