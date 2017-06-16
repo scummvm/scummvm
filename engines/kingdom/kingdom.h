@@ -122,8 +122,10 @@ namespace Kingdom {
 		int _ASMap;
 		int _CurrMap;
 		int _OldTLS;
+		int _OldTRS;
 		int _TreeLeftSta;
 		bool _IconsClosed;
+		bool _OldIconsClosed;
 		bool _OldEye;
 		bool _Eye;
 		bool _OldHelp;
@@ -258,7 +260,7 @@ namespace Kingdom {
 		void CheckMainScreen();
 		bool ChkDesertObstacles();
 		void SwitchMtoA();
-		void _DrawIcon(int x, int y, Common::MemoryReadStream icon);
+		void DrawIcon(int x, int y, int index);
 		int WaitKey();
 		void DrawCursor();
 		int CursorType();
