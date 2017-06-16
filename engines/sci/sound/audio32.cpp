@@ -114,7 +114,9 @@ Audio32::Audio32(ResourceManager *resMan) :
 	_monitoredBufferSize(0),
 	_numMonitoredSamples(0) {
 
-	if (getSciVersion() < SCI_VERSION_3) {
+	if (getSciVersion() < SCI_VERSION_2_1_EARLY) {
+		_channels.resize(10);
+	} else if (getSciVersion() < SCI_VERSION_3) {
 		_channels.resize(5);
 	} else {
 		_channels.resize(8);
@@ -311,7 +313,22 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 		Audio::st_volume_t leftVolume, rightVolume;
 
 		if (channel.pan == -1 || !isStereo()) {
-			leftVolume = rightVolume = channel.volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume;
+			int volume = channel.volume;
+			if (getSciVersion() == SCI_VERSION_2) {
+				// NOTE: In SSCI, audio is decompressed into a temporary
+				// buffer, then the samples in that buffer are looped over,
+				// shifting each sample right 3, 2, or 1 bits to reduce the
+				// volume.
+				if (volume > 0 && volume <= 42) {
+					volume = 15;
+				} else if (volume > 42 && volume <= 84) {
+					volume = 31;
+				} else if (volume > 84 && volume < kMaxVolume) {
+					volume = 63;
+				}
+			}
+
+			leftVolume = rightVolume = volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume;
 		} else {
 			// TODO: This should match the SCI3 algorithm,
 			// which seems to halve the volume of each

@@ -102,11 +102,8 @@ public:
 		case GID_SQ6:
 			return true;
 		case GID_KQ7:
-		case GID_QFG4:
-			// (1) KQ7 1.51 (SCI2.1early) uses the non-standard attenuation, but
+			// KQ7 1.51 (SCI2.1early) uses the non-standard attenuation, but
 			// 2.00b (SCI2.1mid) does not
-			// (2) QFG4 CD is SCI2.1early; QFG4 floppy is SCI2 and does not use
-			// the SCI2.1 audio system
 			return getSciVersion() == SCI_VERSION_2_1_EARLY;
 		default:
 			return false;

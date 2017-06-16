@@ -81,7 +81,6 @@ struct SciKernelMapSubEntry {
 #define SIG_SOUNDSCI0      SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE
 #define SIG_SOUNDSCI1EARLY SCI_VERSION_1_EARLY, SCI_VERSION_1_EARLY
 #define SIG_SOUNDSCI1LATE  SCI_VERSION_1_LATE, SCI_VERSION_1_LATE
-#define SIG_SOUNDSCI21     SCI_VERSION_2_1_EARLY, SCI_VERSION_3
 
 #define SIGFOR_ALL   0x3f
 #define SIGFOR_DOS   1 << 0
@@ -152,32 +151,27 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundGlobalReverb),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
 #ifdef ENABLE_SCI32
-	{ SIG_SOUNDSCI21,      0, MAP_CALL(DoSoundMasterVolume),       "(i)",                  NULL },
-	{ SIG_SOUNDSCI21,      1, MAP_CALL(DoSoundMute),               "(i)",                  NULL },
-	{ SIG_SOUNDSCI21,      2, MAP_EMPTY(DoSoundRestore),           NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      3, MAP_CALL(DoSoundGetPolyphony),       "",                     NULL },
-	{ SIG_SOUNDSCI21,      4, MAP_CALL(DoSoundGetAudioCapability), "",                     NULL },
-	{ SIG_SOUNDSCI21,      5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
-	{ SIG_SOUNDSCI21,      6, MAP_CALL(DoSoundInit),               "o",                    NULL },
-	{ SIG_SOUNDSCI21,      7, MAP_CALL(DoSoundDispose),            "o",                    NULL },
-	{ SIG_SOUNDSCI21,      8, MAP_CALL(DoSoundPlay),               "o",                    kDoSoundPlay_workarounds },
-	// ^^ TODO: if this is really the only change between SCI1LATE AND SCI21, we could rename the
-	//     SIG_SOUNDSCI1LATE #define to SIG_SINCE_SOUNDSCI1LATE and make it being SCI1LATE+. Although
-	//     I guess there are many more changes somewhere
-	// TODO: Quest for Glory 4 (SCI2.1) uses the old scheme, we need to detect it accordingly
-	//        signature for SCI21 should be "o"
-	{ SIG_SOUNDSCI21,      9, MAP_CALL(DoSoundStop),               "o",                    NULL },
-	{ SIG_SOUNDSCI21,     10, MAP_CALL(DoSoundPause),              "[o0]i",                NULL },
-	{ SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               "oiiii",                kDoSoundFade_workarounds },
-	{ SIG_SOUNDSCI21,     12, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
-	{ SIG_SOUNDSCI21,     13, MAP_EMPTY(DoSoundDummy),             NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     14, MAP_CALL(DoSoundSetVolume),          "oi",                   NULL },
-	{ SIG_SOUNDSCI21,     15, MAP_CALL(DoSoundSetPriority),        "oi",                   NULL },
-	{ SIG_SOUNDSCI21,     16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
-	{ SIG_SOUNDSCI21,     17, MAP_CALL(DoSoundUpdateCues),         "o",                    NULL },
-	{ SIG_SOUNDSCI21,     18, MAP_CALL(DoSoundSendMidi),           "oiiii",                NULL },
-	{ SIG_SOUNDSCI21,     19, MAP_CALL(DoSoundGlobalReverb),       "(i)",                  NULL },
-	{ SIG_SOUNDSCI21,     20, MAP_CALL(DoSoundUpdate),             "o",                    NULL },
+	{ SIG_SCI32,           0, MAP_CALL(DoSoundMasterVolume),       "(i)",                  NULL },
+	{ SIG_SCI32,           1, MAP_CALL(DoSoundMute),               "(i)",                  NULL },
+	{ SIG_SCI32,           2, MAP_EMPTY(DoSoundRestore),           NULL,                   NULL },
+	{ SIG_SCI32,           3, MAP_CALL(DoSoundGetPolyphony),       "",                     NULL },
+	{ SIG_SCI32,           4, MAP_CALL(DoSoundGetAudioCapability), "",                     NULL },
+	{ SIG_SCI32,           5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
+	{ SIG_SCI32,           6, MAP_CALL(DoSoundInit),               "o",                    NULL },
+	{ SIG_SCI32,           7, MAP_CALL(DoSoundDispose),            "o",                    NULL },
+	{ SIG_SCI32,           8, MAP_CALL(DoSoundPlay),               "o",                    kDoSoundPlay_workarounds },
+	{ SIG_SCI32,           9, MAP_CALL(DoSoundStop),               "o",                    NULL },
+	{ SIG_SCI32,          10, MAP_CALL(DoSoundPause),              "[o0]i",                NULL },
+	{ SIG_SCI32,          11, MAP_CALL(DoSoundFade),               "oiiii",                kDoSoundFade_workarounds },
+	{ SIG_SCI32,          12, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
+	{ SIG_SCI32,          13, MAP_EMPTY(DoSoundDummy),             NULL,                   NULL },
+	{ SIG_SCI32,          14, MAP_CALL(DoSoundSetVolume),          "oi",                   NULL },
+	{ SIG_SCI32,          15, MAP_CALL(DoSoundSetPriority),        "oi",                   NULL },
+	{ SIG_SCI32,          16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
+	{ SIG_SCI32,          17, MAP_CALL(DoSoundUpdateCues),         "o",                    NULL },
+	{ SIG_SCI32,          18, MAP_CALL(DoSoundSendMidi),           "oiiii",                NULL },
+	{ SIG_SCI32,          19, MAP_CALL(DoSoundGlobalReverb),       "(i)",                  NULL },
+	{ SIG_SCI32,          20, MAP_CALL(DoSoundUpdate),             "o",                    NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
@@ -233,8 +227,9 @@ static const SciKernelMapSubEntry kDoAudio_subops[] = {
 	{ SIG_SCI32,          10, MAP_CALL(DoAudioBitDepth),           "(i)",                  NULL },
 	{ SIG_SCI32,          11, MAP_DUMMY(DoAudioDistort),           "(i)",                  NULL },
 	{ SIG_SCI32,          12, MAP_CALL(DoAudioMixing),             "(i)",                  NULL },
-	{ SIG_SCI32,          13, MAP_CALL(DoAudioChannels),           "(i)",                  NULL },
-	{ SIG_SCI32,          14, MAP_CALL(DoAudioPreload),            "(i)",                  NULL },
+	{ SIG_SCI2,           13, MAP_EMPTY(DoAudioSetBufferSize),     "i",                    NULL },
+	{ SIG_SINCE_SCI21,    13, MAP_CALL(DoAudioChannels),           "(i)",                  NULL },
+	{ SIG_SINCE_SCI21,    14, MAP_CALL(DoAudioPreload),            "(i)",                  NULL },
 	{ SIG_SINCE_SCI21MID, 15, MAP_CALL(DoAudioFade),               "(iiii)(i)(i)",         NULL },
 	{ SIG_SINCE_SCI21MID, 16, MAP_DUMMY(DoAudioFade36),            "iiiii(iii)(i)",        NULL },
 	{ SIG_SINCE_SCI21MID, 17, MAP_CALL(DoAudioHasSignal),          "",                     NULL },
@@ -670,9 +665,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                     NULL,            NULL },
 	{ MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "i(i*)",                 NULL,            kDisposeScript_workarounds },
 	{ MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
-	{ MAP_CALL(DoAudio),           SCI_VERSION_NONE, SCI_VERSION_2, SIGFOR_ALL, "i(.*)", NULL,         NULL }, // subop
+	{ MAP_CALL(DoAudio),           SIG_SCI16, SIGFOR_ALL,    "i(.*)",                 NULL,            NULL }, // subop
 #ifdef ENABLE_SCI32
-	{ "DoAudio", kDoAudio32,       SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",               kDoAudio_subops, NULL },
+	{ "DoAudio", kDoAudio32,       SIG_SCI32, SIGFOR_ALL,    "(.*)",                  kDoAudio_subops, NULL },
 #endif
 	{ MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
 	{ MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },

@@ -215,7 +215,7 @@ void SciMusic::pauseAll(bool pause) {
 #ifdef ENABLE_SCI32
 		// The entire DAC will have been paused by the caller;
 		// do not pause the individual samples too
-		if (_soundVersion >= SCI_VERSION_2_1_EARLY && (*i)->isSample) {
+		if (_soundVersion >= SCI_VERSION_2 && (*i)->isSample) {
 			continue;
 		}
 #endif
@@ -483,7 +483,11 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	if (pSnd->isSample) {
 #ifdef ENABLE_SCI32
-		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+		if (_soundVersion >= SCI_VERSION_2) {
+			// TODO: Sound number, loop state, and volume come from soundObj
+			// in SSCI. Getting them from MusicEntry could cause a bug if the
+			// soundObj was updated by a game script and not copied back to
+			// MusicEntry.
 			g_sci->_audio32->restart(ResourceId(kResourceTypeAudio, pSnd->resourceId), true, pSnd->loop != 0 && pSnd->loop != 1, pSnd->volume, pSnd->soundObj, false);
 			return;
 		} else
@@ -567,7 +571,7 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 		pSnd->isQueued = false;
 	if (pSnd->isSample) {
 #ifdef ENABLE_SCI32
-		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+		if (_soundVersion >= SCI_VERSION_2) {
 			g_sci->_audio32->stop(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj);
 		} else {
 #endif
@@ -642,7 +646,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 
 	if (pSnd->isSample) {
 #ifdef ENABLE_SCI32
-		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+		if (_soundVersion >= SCI_VERSION_2) {
 			g_sci->_audio32->stop(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj);
 		} else {
 #endif

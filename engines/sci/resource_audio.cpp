@@ -651,9 +651,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 	Channel *channel, *sampleChannel;
 
-	switch (_soundVersion) {
-	case SCI_VERSION_0_EARLY:
-	case SCI_VERSION_0_LATE:
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		// SCI0 only has a header of 0x11/0x21 byte length and the actual midi track follows afterwards
 		_trackCount = 1;
 		_tracks = new Track[_trackCount];
@@ -693,11 +691,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 			_tracks->digitalSampleEnd = 0;
 			sampleChannel->data += 44; // Skip over header
 		}
-		break;
-
-	case SCI_VERSION_1_EARLY:
-	case SCI_VERSION_1_LATE:
-	case SCI_VERSION_2_1_EARLY: {
+	} else if (_soundVersion >= SCI_VERSION_1_EARLY && _soundVersion <= SCI_VERSION_2_1_MIDDLE) {
 		SciSpan<const byte> data = *resource;
 		// Count # of tracks
 		_trackCount = 0;
@@ -799,11 +793,8 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 			}
 			++data; // Skipping 0xFF that closes channels list
 		}
-		break;
-	}
-
-	default:
-		error("SoundResource: SCI version %d is unsupported", _soundVersion);
+	} else {
+		error("SoundResource: SCI version %s is unsupported", getSciVersionDesc(_soundVersion));
 	}
 }
 

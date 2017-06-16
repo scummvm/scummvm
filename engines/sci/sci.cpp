@@ -315,7 +315,7 @@ Common::Error SciEngine::run() {
 	_guestAdditions = new GuestAdditions(_gamestate, _features, _kernel);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
+	if (getSciVersion() >= SCI_VERSION_2) {
 		_audio32 = new Audio32(_resMan);
 	} else
 #endif

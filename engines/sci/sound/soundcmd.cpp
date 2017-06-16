@@ -48,7 +48,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 	// resource number, but it's totally unrelated to the menu music).
 	// The GK1 demo (very late SCI1.1) does the same thing
 	// TODO: Check the QFG4 demo
-	_useDigitalSFX = (getSciVersion() >= SCI_VERSION_2 || g_sci->getGameId() == GID_GK1DEMO || ConfMan.getBool("prefer_digitalsfx"));
+	_useDigitalSFX = (_soundVersion >= SCI_VERSION_2 || g_sci->getGameId() == GID_GK1DEMO || ConfMan.getBool("prefer_digitalsfx"));
 
 	_music = new SciMusic(_soundVersion, _useDigitalSFX);
 	_music->init();
@@ -100,8 +100,8 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 		if (_useDigitalSFX || !newSound->soundRes) {
 			int sampleLen;
 #ifdef ENABLE_SCI32
-			if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
-				newSound->isSample = g_sci->getResMan()->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId));
+			if (_soundVersion >= SCI_VERSION_2) {
+				newSound->isSample = g_sci->getResMan()->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId)) != nullptr;
 			} else {
 #endif
 				newSound->pStreamAud = _audio->getAudioStream(newSound->resourceId, 65535, &sampleLen);
@@ -316,8 +316,8 @@ reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	const bool shouldPause = argc > 1 ? argv[1].toUint16() : false;
 	if (
-		(_soundVersion < SCI_VERSION_2_1_EARLY && !obj.getSegment()) ||
-		(_soundVersion >= SCI_VERSION_2_1_EARLY && obj.isNull())
+		(_soundVersion < SCI_VERSION_2 && !obj.getSegment()) ||
+		(_soundVersion >= SCI_VERSION_2 && obj.isNull())
 	) {
 		_music->pauseAll(shouldPause);
 #ifdef ENABLE_SCI32
@@ -501,7 +501,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 
 	if (musicSlot->isSample) {
 #ifdef ENABLE_SCI32
-		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+		if (_soundVersion >= SCI_VERSION_2) {
 			const int position = g_sci->_audio32->getPosition(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
 
 			if (position == -1) {
@@ -717,9 +717,8 @@ reg_t SoundCommandParser::kDoSoundSetVolume(EngineState *s, int argc, reg_t *arg
 	// SSCI unconditionally sets volume if it is digital audio
 	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
 		_music->soundSetVolume(musicSlot, value);
-	}
+	} else
 #endif
-
 	if (musicSlot->volume != value) {
 		musicSlot->volume = value;
 		_music->soundSetVolume(musicSlot, value);
@@ -783,27 +782,15 @@ reg_t SoundCommandParser::kDoSoundSetLoop(EngineState *s, int argc, reg_t *argv)
 		return s->r_acc;
 	}
 
-#ifdef ENABLE_SCI32
-	if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
-		if (value != -1) {
-			value = 1;
-		}
-	}
-#endif
-
-	if (value == -1) {
-		musicSlot->loop = 0xFFFF;
-	} else {
-		musicSlot->loop = 1; // actually plays the music once
-	}
-
-	writeSelectorValue(_segMan, obj, SELECTOR(loop), musicSlot->loop);
+	const uint16 loopCount = value == -1 ? 0xFFFF : 1;
+	writeSelectorValue(_segMan, obj, SELECTOR(loop), loopCount);
 
 #ifdef ENABLE_SCI32
-	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
+	if (_soundVersion >= SCI_VERSION_2_1_MIDDLE && musicSlot->isSample) {
 		g_sci->_audio32->setLoop(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj, value == -1);
-	}
+	} else
 #endif
+		musicSlot->loop = loopCount;
 
 	return s->r_acc;
 }
