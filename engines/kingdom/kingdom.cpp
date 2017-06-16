@@ -378,7 +378,7 @@ void KingdomGame::LoadAResource(int reznum) {
 	if(!_RezSize[reznum]) {
 		Common::File *file = new Common::File();
 		if(!file->open(path))
-			error("Failed to open %s", path);
+			error("Failed to open %s", path.c_str());
 
 		_RezSize[reznum] = file->size();
 		file->seek(0, SEEK_SET);
@@ -409,11 +409,11 @@ void KingdomGame::ShowPic(int reznum) {
 
 	const Graphics::Surface *surface = decoder.getSurface();
 
-	byte *data = (byte *)surface->getPixels();
+	const byte *data = (const byte *)surface->getPixels();
 	::Graphics::Surface *screen = g_system->lockScreen();
 	for (uint curX = 0; curX < 320; curX++) {
 		for (uint curY = 0; curY < 200; curY++) {
-			byte *src = data + (curY * 320) + curX;
+			const byte *src = data + (curY * 320) + curX;
 			byte *dst = (byte *)screen->getBasePtr(curX, curY);
 			if (*src != 0xFF)
 				*dst = *src;
