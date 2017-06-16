@@ -23,6 +23,7 @@
 #ifndef KINGDOM_KINGDOM_H
 #define KINGDOM_KINGDOM_H
 
+#include "Common/system.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/random.h"
@@ -70,6 +71,9 @@ namespace Kingdom {
 	private:
 		Console *_console;
 		Common::RandomSource *_rnd;
+
+		byte **_kingartData;
+		int32 *_kingartSize;
 
 		bool _LoopFlag;
 		int _GameMode;
@@ -138,6 +142,13 @@ namespace Kingdom {
 		int _LastObstacle;
 		int _MapStat;
 		int _MouseValue;
+		bool _CursorActive;
+		int _CursorDef;
+		int _OldCursorDef;
+		int _CursorX;
+		int _CursorY;
+		int _OldCursorX;
+		int _OldCursorY;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D74C;
@@ -177,7 +188,6 @@ namespace Kingdom {
 		int16 word_2D7BA;
 		int16 word_2D7CC;
 
-		Common::SeekableReadStream *_ArtPtr;
 		Common::SeekableReadStream *_RezPointers[510];
 		int _RezSize[510];
 		int8 _Inventory[19];
@@ -207,7 +217,10 @@ namespace Kingdom {
 		void ShowPic(int reznum);
 		void FShowPic(int reznum);
 		void InitCursor();
+		void InitMouse();
 		void SetMouse();
+		void ReadMouse();
+		void RefreshMouse();
 		void InitMPlayer();
 		void PlayMovie(int movieNum);
 		void EnAll();
@@ -233,8 +246,6 @@ namespace Kingdom {
 		void DisplayIcon(int reznum);
 		void SetATimer();
 		bool Wound();
-		void ReadMouse();
-		void RefreshMouse();
 		void RefreshSound();
 		void SwitchAS();
 		void IncreaseHealth();
@@ -244,6 +255,9 @@ namespace Kingdom {
 		void SwitchMtoA();
 		void _DrawIcon(int x, int y, Common::MemoryReadStream icon);
 		int WaitKey();
+		void DrawCursor();
+		int CursorType();
+		void LoadKingArt();
 	};
 } // End of namespace Kingdom
 
