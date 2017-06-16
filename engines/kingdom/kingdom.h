@@ -56,6 +56,12 @@ namespace Kingdom {
 	extern int _MapExit[];
 	extern int _EMLTable[];
 
+	struct KingArtEntry {
+		uint8 Width;
+		uint8 Height;
+		byte* data;
+	};
+
 	class KingdomGame : public Engine {
 	public:
 		KingdomGame(OSystem *syst, const ADGameDescription *gameDesc);
@@ -72,8 +78,7 @@ namespace Kingdom {
 		Console *_console;
 		Common::RandomSource *_rnd;
 
-		byte **_kingartData;
-		int32 *_kingartSize;
+		KingArtEntry *_kingartData;
 
 		bool _LoopFlag;
 		int _GameMode;
