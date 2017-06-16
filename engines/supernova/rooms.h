@@ -20,6 +20,10 @@ public:
 		_seen = seen;
 	}
 
+	int getFileNumber() const {
+		return _fileNumber;
+	}
+
 	virtual ~Room() {}
 	virtual void animation() {}
 	virtual void onEntrance() {}
