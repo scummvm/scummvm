@@ -370,6 +370,19 @@ enum ObjectID {
 	TICKETS
 };
 
+static const char *const guiCommands[] = {
+    "Gehe",
+    "Schau",
+    "Nimm",
+    "Öffne",
+    "Schließe",
+    "Drücke",
+    "Ziehe",
+    "Benutze",
+    "Rede",
+    "Gib"
+};
+
 ObjectType operator|(ObjectType a, ObjectType b);
 ObjectType operator&(ObjectType a, ObjectType b);
 ObjectType operator^(ObjectType a, ObjectType b);
