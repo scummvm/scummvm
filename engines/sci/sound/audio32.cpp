@@ -175,6 +175,35 @@ int Audio32::writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::R
 	return samplesWritten;
 }
 
+int16 Audio32::getNumChannelsToMix() const {
+	Common::StackLock lock(_mutex);
+	int16 numChannels = 0;
+	for (int16 channelIndex = 0; channelIndex < _numActiveChannels; ++channelIndex) {
+		const AudioChannel &channel = getChannel(channelIndex);
+		if (channelShouldMix(channel)) {
+			++numChannels;
+		}
+	}
+	return numChannels;
+}
+
+bool Audio32::channelShouldMix(const AudioChannel &channel) const {
+	if (channel.pausedAtTick ||
+		(channel.robot && (_robotAudioPaused || channel.stream->endOfStream()))) {
+
+		return false;
+	}
+
+	if (channel.fadeStartTick) {
+		const uint32 fadeElapsed = g_sci->getTickCount() - channel.fadeStartTick;
+		if (fadeElapsed > channel.fadeDuration && channel.stopChannelOnFade) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 // In earlier versions of SCI32 engine, audio mixing is
 // split into three different functions.
 //
@@ -227,47 +256,49 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 	// callback.
 	memset(buffer, 0, numSamples * sizeof(Audio::st_sample_t));
 
-	// This emulates the attenuated mixing mode of SSCI
-	// engine, which reduces the volume of the target
-	// buffer when each new channel is mixed in.
-	// Instead of manipulating the content of the target
-	// buffer when mixing (which would either require
-	// modification of RateConverter or an expensive second
-	// pass against the entire target buffer), we just
-	// scale the volume for each channel in advance, with
-	// the earliest (lowest) channel having the highest
-	// amount of attenuation (lowest volume).
-	uint8 attenuationAmount;
-	uint8 attenuationStepAmount;
+	// This emulates the attenuated mixing mode of SSCI engine, which reduces
+	// the volume of the target buffer when each new channel is mixed in.
+	// Instead of manipulating the content of the target buffer when mixing
+	// (which would either require modification of RateConverter or an expensive
+	// second pass against the entire target buffer), we just scale the volume
+	// for each channel in advance, with the earliest (lowest) channel having
+	// the highest amount of attenuation (lowest volume).
+	int8 attenuationAmount;
+	int8 attenuationStepAmount;
 	if (_useModifiedAttenuation) {
-		// channel | divisor
-		//       0 | 0  (>> 0)
-		//       1 | 4  (>> 2)
-		//       2 | 8...
-		attenuationAmount = _numActiveChannels * 2;
+		// Divides samples in target buffer by 4, and samples in source buffer
+		// by 0, when adding each channel to the output buffer.
+		// 1 channel:  0 >>0
+		// 2 channels: 0 >>2, 1 >>0
+		// 3 channels: 0 >>4, 1 >>2, 2 >>0
+		// 4 channels: 0 >>6, 1 >>4, 2 >>2, 3 >>0 ...
+		// Attenuation amounts are shift values.
+		attenuationAmount = (getNumChannelsToMix() - 1) * 2;
 		attenuationStepAmount = 2;
 	} else {
-		// channel | divisor
-		//       0 | 2  (>> 1)
-		//       1 | 4  (>> 2)
-		//       2 | 6...
-		if (!playOnlyMonitoredChannel && _numActiveChannels > 1) {
-			attenuationAmount = _numActiveChannels + 1;
-			attenuationStepAmount = 1;
-		} else {
-			attenuationAmount = 0;
-			attenuationStepAmount = 0;
-		}
+		// Divides samples in both target & source buffers by 2 when adding each
+		// channel to the output buffer.
+		// 1 channel:  0 >>0
+		// 2 channels: 0 >>1, 1 >>1
+		// 3 channels: 0 >>2, 1 >>2, 2 >>1
+		// 4 channels: 0 >>3, 1 >>3, 2 >>2, 3 >>1 ...
+		// Attenuation amounts are shift values.
+		attenuationAmount = getNumChannelsToMix() - 1;
+		attenuationStepAmount = 1;
 	}
 
 	int maxSamplesWritten = 0;
+	bool firstChannelWritten = false;
 
 	for (int16 channelIndex = 0; channelIndex < _numActiveChannels; ++channelIndex) {
-		attenuationAmount -= attenuationStepAmount;
-
 		const AudioChannel &channel = getChannel(channelIndex);
 
 		if (channel.pausedAtTick || (channel.robot && _robotAudioPaused)) {
+			continue;
+		}
+
+		if (channel.robot && channel.stream->endOfStream()) {
+			stop(channelIndex--);
 			continue;
 		}
 
@@ -275,18 +306,6 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 		// stopChannelOnFade flag set, so no longer exists
 		if (channel.fadeStartTick && processFade(channelIndex)) {
 			--channelIndex;
-			continue;
-		}
-
-		if (channel.robot) {
-			if (channel.stream->endOfStream()) {
-				stop(channelIndex--);
-			} else {
-				const int channelSamplesWritten = writeAudioInternal(channel.stream, channel.converter, buffer, numSamples, kMaxVolume, kMaxVolume, channel.loop);
-				if (channelSamplesWritten > maxSamplesWritten) {
-					maxSamplesWritten = channelSamplesWritten;
-				}
-			}
 			continue;
 		}
 
@@ -303,8 +322,14 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 		}
 
 		if (!playOnlyMonitoredChannel && _attenuatedMixing) {
+			assert(attenuationAmount >= 0);
 			leftVolume >>= attenuationAmount;
 			rightVolume >>= attenuationAmount;
+			if (!_useModifiedAttenuation && !firstChannelWritten) {
+				firstChannelWritten = true;
+			} else {
+				attenuationAmount -= attenuationStepAmount;
+			}
 		}
 
 		if (channelIndex == _monitoredChannelIndex) {

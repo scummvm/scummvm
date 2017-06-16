@@ -190,6 +190,18 @@ public:
 
 private:
 	/**
+	 * Determines the number of channels that will be mixed together during a
+	 * call to readBuffer.
+	 */
+	int16 getNumChannelsToMix() const;
+
+	/**
+	 * Determines whether or not the given audio channel will be mixed into the
+	 * output stream.
+	 */
+	bool channelShouldMix(const AudioChannel &channel) const;
+
+	/**
 	 * Mixes audio from the given source stream into the
 	 * target buffer using the given rate converter.
 	 */
