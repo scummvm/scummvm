@@ -23,7 +23,7 @@
 #ifndef KINGDOM_KINGDOM_H
 #define KINGDOM_KINGDOM_H
 
-#include "Common/system.h"
+#include "common/system.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/random.h"
