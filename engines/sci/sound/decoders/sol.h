@@ -33,7 +33,7 @@ enum SOLFlags {
 	kStereo     = 16
 };
 
-template <bool STEREO, bool S16BIT>
+template <bool STEREO, bool S16BIT, bool OLDDPCM8>
 class SOLStream : public Audio::SeekableAudioStream {
 private:
 	/**
