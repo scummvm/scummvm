@@ -57,7 +57,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_quit = false;
 	_MouseValue = 0;
 
-	_kingartData = nullptr;
+	_kingartEntries = nullptr;
 }
 
 KingdomGame::~KingdomGame() {
@@ -349,7 +349,7 @@ void KingdomGame::LoadKingArt() {
 	int val = kingartStream->readUint32LE();
 	int size = val / 4;
 	uint32 *kingartIdx = new uint32[size + 1];
-	_kingartData = new KingArtEntry[size];
+	_kingartEntries = new KingArtEntry[size];
 	kingartIdx[0] = val;
 	for (int i = 1; i < size; i++)
 		kingartIdx[i] = kingartStream->readUint32LE();
@@ -357,13 +357,13 @@ void KingdomGame::LoadKingArt() {
 
 	for (int i = 0; i < size; i++) {
 		int chunkSize = kingartIdx[i + 1] - kingartIdx[i];
-		_kingartData[i].Width = kingartStream->readByte();
-		_kingartData[i].Height = kingartStream->readByte();
+		_kingartEntries[i].Width = kingartStream->readByte();
+		_kingartEntries[i].Height = kingartStream->readByte();
 
-		assert(_kingartData[i].Width * _kingartData[i].Height == chunkSize - 2);
+		assert(_kingartEntries[i].Width * _kingartEntries[i].Height == chunkSize - 2);
 
-		_kingartData[i].data = new byte[chunkSize - 2];
-		kingartStream->read(_kingartData[i].data, chunkSize - 2);
+		_kingartEntries[i].data = new byte[chunkSize - 2];
+		kingartStream->read(_kingartEntries[i].data, chunkSize - 2);
 	}
 
 	delete[] kingartIdx;
@@ -790,7 +790,7 @@ int KingdomGame::CursorType() {
 }
 
 void KingdomGame::SetCursor(int cursor) {
-	KingArtEntry Cursor = _kingartData[cursor / 4];
+	KingArtEntry Cursor = _kingartEntries[cursor / 4];
 	CursorMan.replaceCursor(Cursor.data, Cursor.Width, Cursor.Height, 0, 0, 255);
 }
 

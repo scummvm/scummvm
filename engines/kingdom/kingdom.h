@@ -78,7 +78,7 @@ namespace Kingdom {
 		Console *_console;
 		Common::RandomSource *_rnd;
 
-		KingArtEntry *_kingartData;
+		KingArtEntry *_kingartEntries;
 
 		bool _LoopFlag;
 		int _GameMode;
