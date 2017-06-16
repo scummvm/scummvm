@@ -22,18 +22,16 @@
 #ifndef SLUDGE_FREEZE_H
 #define SLUDGE_FREEZE_H
 
+#include "graphics/surface.h"
+
 namespace Sludge {
 
 struct frozenStuffStruct {
 	onScreenPerson *allPeople;
 	screenRegion *allScreenRegions;
-#if 0
-	GLubyte *backdropTexture;
-	GLuint backdropTextureName;
-	GLuint lightMapTextureName;
-	GLubyte *lightMapTexture;
-	GLubyte *zBufferImage;
-#endif
+	Graphics::Surface backdropSurface;
+	Graphics::Surface lightMapSurface;
+	Graphics::Surface zBufferImage;
 	int zPanels;
 	parallaxLayer *parallaxStuff;
 	int lightMapNumber, zBufferNumber;

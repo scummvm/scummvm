@@ -22,15 +22,18 @@
 #ifndef SLUDGE_ZBUFFER_H
 #define SLUDGE_ZBUFFER_H
 
+#include "graphics/surface.h"
+
 namespace Sludge {
 
 struct zBufferData {
-	int width, height;
 //	bool loaded;
 	int numPanels;
 	int panel[16];
 	int originalNum;
+	Graphics::Surface surface;
 #if 0
+	int width, height;
 	GLubyte *tex;
 	GLuint texName;
 #endif
