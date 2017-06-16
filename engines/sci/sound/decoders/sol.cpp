@@ -54,13 +54,21 @@ static const byte tableDPCM8[8] = { 0, 1, 2, 3, 6, 10, 15, 21 };
  * Decompresses one channel of 16-bit DPCM compressed audio.
  */
 static void deDPCM16Channel(int16 *out, int16 &sample, uint8 delta) {
+	int32 nextSample = sample;
 	if (delta & 0x80) {
-		sample -= tableDPCM16[delta & 0x7f];
+		nextSample -= tableDPCM16[delta & 0x7f];
 	} else {
-		sample += tableDPCM16[delta];
+		nextSample += tableDPCM16[delta];
 	}
-	sample = CLIP<int16>(sample, -32768, 32767);
-	*out = sample;
+
+	// Emulating x86 16-bit signed register overflow
+	if (nextSample > 32767) {
+		nextSample -= 65536;
+	} else if (nextSample < -32768) {
+		nextSample += 65536;
+	}
+
+	*out = sample = nextSample;
 }
 
 /**
@@ -101,7 +109,6 @@ static void deDPCM8Nibble(int16 *out, uint8 &sample, uint8 delta) {
 	} else {
 		sample += tableDPCM8[delta & 7];
 	}
-	sample = CLIP<byte>(sample, 0, 255);
 	*out = ((lastSample + sample) << 7) ^ 0x8000;
 }
 
