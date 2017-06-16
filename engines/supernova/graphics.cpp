@@ -112,7 +112,7 @@ bool MSNImageDecoder::loadSection(int section) {
 	if (image < 128) {
 		do {
 			uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow;
-			if (offset == kInvalidAddress) {
+			if (offset == kInvalidAddress || _section[image].x2 == 0) {
 				return false;
 			}
 			int width = _section[image].x2 - _section[image].x1 + 1;
