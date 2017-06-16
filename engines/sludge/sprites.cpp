@@ -501,9 +501,13 @@ void fontSprite(bool flip, int x, int y, sprite &single, const spritePalette &fo
 
 	// Use Transparent surface to scale and blit
 	Graphics::TransparentSurface tmp(single.surface, false);
-	Graphics::TransparentSurface tmp2(single.burnSurface, false);
 	tmp.blit(renderSurface, x1, y1, (flip? Graphics::FLIP_H : Graphics::FLIP_NONE));
-	tmp2.blit(renderSurface, x1, y1, (flip? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+
+	if (single.burnSurface.getPixels() != nullptr) {
+		Graphics::TransparentSurface tmp2(single.burnSurface, false);
+		tmp2.blit(renderSurface, x1, y1, (flip? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+
+	}
 
 #if 0
 	float x2 = x1 + (float) single.surface.w / cameraZoom;
