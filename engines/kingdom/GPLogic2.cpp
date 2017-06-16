@@ -535,13 +535,13 @@ void KingdomGame::GPLogic2() {
 			_Sound = 0;
 		else
 			_Sound = 1;
-			_FrameStop = 185;
-			DsAll();
-			PlayMovie(94);
-			_CurrMap = 95;
-			SetATimer();
-			_UserInput = 0;
-			_StatPlay = 361;
+		_FrameStop = 185;
+		DsAll();
+		PlayMovie(94);
+		_CurrMap = 95;
+		SetATimer();
+		_UserInput = 0;
+		_StatPlay = 361;
 		break;
 	case 361:
 		switch(_UserInput) {
