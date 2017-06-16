@@ -23,6 +23,9 @@ public:
 	int getFileNumber() const {
 		return _fileNumber;
 	}
+	bool isSectionVisible(size_t index) const {
+		return _shown[index];
+	}
 	Object *getObject(size_t index) {
 		return &_objectState[index];
 	}
