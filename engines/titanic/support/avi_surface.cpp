@@ -203,7 +203,7 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 		if (newFrame != getFrame()) {
 			// The frame has been changed, so move to new position
 			seekToFrame(newFrame);
-			renderFrame();
+			return renderFrame();
 		}
 
 		// Get any events for the given position
