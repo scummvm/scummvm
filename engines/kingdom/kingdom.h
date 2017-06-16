@@ -258,6 +258,7 @@ namespace Kingdom {
 		void DrawCursor();
 		int CursorType();
 		void LoadKingArt();
+		void SetCursor(int cursor);
 	};
 } // End of namespace Kingdom
 
