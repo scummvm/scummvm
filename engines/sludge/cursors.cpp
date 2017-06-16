@@ -43,40 +43,37 @@ void pickAnimCursor(personaAnimation *pp) {
 }
 
 void displayCursor() {
-#if 0
-	if (mouseCursorAnim && mouseCursorAnim -> numFrames) {
+	if (mouseCursorAnim && mouseCursorAnim->numFrames) {
 
-		int spriteNum = mouseCursorAnim -> frames[mouseCursorFrameNum].frameNum;
+		int spriteNum = mouseCursorAnim->frames[mouseCursorFrameNum].frameNum;
 		int flipMe = 0;
 
 		if (spriteNum < 0) {
 			spriteNum = -spriteNum;
 			flipMe = 1;
-			if (spriteNum >= mouseCursorAnim -> theSprites -> bank.total) spriteNum = 0;
+			if (spriteNum >= mouseCursorAnim->theSprites->bank.total)
+				spriteNum = 0;
 		} else {
-			if (spriteNum >= mouseCursorAnim -> theSprites -> bank.total) flipMe = 2;
+			if (spriteNum >= mouseCursorAnim->theSprites->bank.total)
+				flipMe = 2;
 		}
 
 		if (flipMe != 2) {
-			(flipMe ? flipFontSprite : fontSprite)(input.mouseX, input.mouseY,
-					mouseCursorAnim -> theSprites -> bank.sprites[spriteNum],
-					mouseCursorAnim -> theSprites -> bank.myPalette /* ( spritePalette&) NULL*/);
+			(flipMe ? flipFontSprite : fontSprite)(input.mouseX, input.mouseY, mouseCursorAnim->theSprites->bank.sprites[spriteNum],
+					mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
 		}
 
-		if (++ mouseCursorCountUp >= mouseCursorAnim -> frames[mouseCursorFrameNum].howMany) {
+		if (++mouseCursorCountUp >= mouseCursorAnim->frames[mouseCursorFrameNum].howMany) {
 			mouseCursorCountUp = 0;
-			mouseCursorFrameNum ++;
-			mouseCursorFrameNum %= mouseCursorAnim -> numFrames;
+			mouseCursorFrameNum++;
+			mouseCursorFrameNum %= mouseCursorAnim->numFrames;
 		}
 	}
-#endif
 }
 
 void pasteCursor(int x, int y, personaAnimation *c) {
 	if (c->numFrames)
-		pasteSpriteToBackDrop(x, y,
-				c->theSprites->bank.sprites[c->frames[0].frameNum],
-				c->theSprites->bank.myPalette);
+		pasteSpriteToBackDrop(x, y, c->theSprites->bank.sprites[c->frames[0].frameNum], c->theSprites->bank.myPalette);
 }
 
 } // End of namespace Sludge
