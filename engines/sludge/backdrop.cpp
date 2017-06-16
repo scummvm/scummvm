@@ -57,7 +57,7 @@ GLfloat backdropTexH = 1.0;
 GLuint snapshotTextureName = 0;
 #endif
 
-texture lightMap;
+Graphics::Surface lightMap;
 Graphics::Surface backdropSurface;
 
 float snapTexW = 1.0;
@@ -215,8 +215,8 @@ void killBackDrop() {
 }
 
 void killLightMap() {
-	if (lightMap.surface.getPixels()) {
-		lightMap.surface.free();
+	if (lightMap.getPixels()) {
+		lightMap.free();
 	}
 	lightMapNumber = 0;
 #if 0
@@ -619,14 +619,14 @@ bool loadLightMap(int v) {
 	killLightMap();
 	lightMapNumber = v;
 
-	if (!ImgLoader::loadImage(bigDataFile, &lightMap.surface))
+	if (!ImgLoader::loadImage(bigDataFile, &lightMap))
 		return false;
 
-	int newPicWidth = lightMap.surface.w;
-	int newPicHeight = lightMap.surface.h;
+	int newPicWidth = lightMap.w;
+	int newPicHeight = lightMap.h;
 
 	if (lightMapMode == LIGHTMAPMODE_HOTSPOT) {
-		if (lightMap.surface.w != sceneWidth || lightMap.surface.h != sceneHeight) {
+		if (lightMap.w != sceneWidth || lightMap.h != sceneHeight) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
 		}
 	}
