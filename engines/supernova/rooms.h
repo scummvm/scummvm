@@ -23,6 +23,9 @@ public:
 	int getFileNumber() const {
 		return _fileNumber;
 	}
+	Object *getObject(size_t index) {
+		return _objectState[index];
+	}
 
 	virtual ~Room() {}
 	virtual void animation() {}
