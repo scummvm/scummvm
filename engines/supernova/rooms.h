@@ -24,7 +24,7 @@ public:
 		return _fileNumber;
 	}
 	Object *getObject(size_t index) {
-		return _objectState[index];
+		return &_objectState[index];
 	}
 
 	virtual ~Room() {}
