@@ -181,7 +181,7 @@ void KingdomGame::GPLogic4() {
 			_StatPlay = 994;
 		} else {
 			_BTimer = 36;
-			while (_BTimer != 0);
+			while (_BTimer != 0)
 				RefreshSound();
 			
 			_LoopFlag = true;
