@@ -60,6 +60,7 @@ HWND hMainWindow = NULL;
 int realWinWidth = 640, realWinHeight = 480;
 extern float cameraZoom;
 
+extern int desiredfps;
 extern int specialSettings;
 extern inputType input;
 extern variableStack *noStack;
@@ -381,7 +382,7 @@ int main_loop(const char *filename)
 		handleInput();
 		sludgeDisplay();
 		handleSoundLists();
-		g_system->delayMillis(100);
+		g_system->delayMillis(1000 / desiredfps);
 #if 0
 		Wait_Frame();
 #endif
