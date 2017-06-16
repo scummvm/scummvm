@@ -429,6 +429,14 @@ struct Object {
 		return _type & type;
 	}
 
+	static bool combine(Object &obj1, Object &obj2, ObjectID id1, ObjectID id2) {
+		if (obj1.hasProperty(COMBINABLE))
+			return (((obj1._id == id1) && (obj2._id == id2)) ||
+			        ((obj1._id == id2) && (obj2._id == id1)));
+		else
+			return false;
+	}
+
 	const char *_name;
 	const char *_description;
 	ObjectID _id;
