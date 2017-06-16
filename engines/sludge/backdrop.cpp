@@ -735,7 +735,7 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 
 	if (fracX == 65535) {
 		nP->wrapS = false;
-		if (nP->width < winWidth) {
+		if (nP->surface.w < winWidth) {
 			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
 			return false;
 		}
@@ -745,7 +745,7 @@ bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) 
 
 	if (fracY == 65535) {
 		nP->wrapT = false;
-		if (nP->height < winHeight) {
+		if (nP->surface.h < winHeight) {
 			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
 			return false;
 		}
