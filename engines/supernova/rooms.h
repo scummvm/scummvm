@@ -28,7 +28,7 @@ public:
 	}
 
 protected:
-	int _filenumber;
+	int _fileNumber;
 	bool _shown[kMaxSection];
 	Object _objectState[kMaxObject];
 
@@ -40,7 +40,7 @@ private:
 class StartingItems : public Room {
 public:
 	StartingItems() {
-		_filenumber = -1;
+		_fileNumber = -1;
 
 		_shown[0] = false;
 
@@ -63,7 +63,7 @@ public:
 class ShipCorridor : public Room {
 public:
 	ShipCorridor() {
-		_filenumber = 17;
+		_fileNumber = 17;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -88,7 +88,7 @@ public:
 class ShipHall: public Room {
 public:
 	ShipHall() {
-		_filenumber = 15;
+		_fileNumber = 15;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Luke", "Sie f�hrt ins Cockpit.", NULLOBJECT, OPEN | EXIT, 4, 5, 1, COCKPIT, 10);
@@ -105,7 +105,7 @@ public:
 class ShipSleepCabin: public Room {
 public:
 	ShipSleepCabin() {
-		_filenumber = 33;
+		_fileNumber = 33;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Luke", "Dies ist eine der Tiefschlafkammern.", CABINS, NULLTYPE, 0, 0, 0, NULLROOM, 0);
@@ -122,7 +122,7 @@ public:
 class ShipCockpit : public Room {
 public:
 	ShipCockpit() {
-		_filenumber = 9;
+		_fileNumber = 9;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Instrumente", "Hmm, sieht ziemlich kompliziert aus.", INSTRUMENTS, NULLTYPE, 2, 2, 0, NULLROOM, 0);
@@ -139,7 +139,7 @@ public:
 class ShipCabinL1: public Room {
 public:
 	ShipCabinL1() {
-		_filenumber = 21;
+		_fileNumber = 21;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = true;
@@ -165,7 +165,7 @@ public:
 class ShipCabinL2 : public Room {
 public:
 	ShipCabinL2() {
-		_filenumber = 21;
+		_fileNumber = 21;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -217,7 +217,7 @@ public:
 class ShipCabinL3 : public Room {
 public:
 	ShipCabinL3() {
-		_filenumber = 21;
+		_fileNumber = 21;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -257,7 +257,7 @@ public:
 class ShipCabinR1 : public Room {
 public:
 	ShipCabinR1() {
-		_filenumber = 22;
+		_fileNumber = 22;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = true;
@@ -277,7 +277,7 @@ public:
 class ShipCabinR2 : public Room {
 public:
 	ShipCabinR2() {
-		_filenumber = 22;
+		_fileNumber = 22;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -300,7 +300,7 @@ public:
 class ShipCabinR3 : public Room {
 public:
 	ShipCabinR3() {
-		_filenumber = 22;
+		_fileNumber = 22;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -350,7 +350,7 @@ public:
 class ShipCabinBathroom : public Room  {
 public:
 	ShipCabinBathroom() {
-		_filenumber = 23;
+		_fileNumber = 23;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Klo","Ein Klo mit Saugmechanismus.",TOILET,NULLTYPE,0,0,0);
@@ -362,7 +362,7 @@ public:
 class ShipAirlock : public Room {
 public:
 	ShipAirlock() {
-		_filenumber = 34;
+		_fileNumber = 34;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -387,7 +387,7 @@ public:
 class ShipHold : public Room {
 public:
 	ShipHold() {
-		_filenumber = 24;
+		_fileNumber = 24;
 		_shown[0] = true;
 
 		_objectState[0] = Object("",Object::defaultDescription,HOLD_WIRE,COMBINABLE,255,255,0);
@@ -411,7 +411,7 @@ public:
 class ShipLandingModule : public Room {
 public:
 	ShipLandingModule() {
-		_filenumber = 25;
+		_fileNumber = 25;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Steckdose",Object::defaultDescription,LANDINGMOD_SOCKET,COMBINABLE,1,1,0);
@@ -428,7 +428,7 @@ public:
 class ShipGenerator : public Room {
 public:
 	ShipGenerator() {
-		_filenumber = 18;
+		_fileNumber = 18;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -457,7 +457,7 @@ public:
 class ShipOuterSpace : public Room {
 public:
 	ShipOuterSpace() {
-		_filenumber = 4;
+		_fileNumber = 4;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Luke",Object::defaultDescription,NULLOBJECT,EXIT,0,0,0,GENERATOR,3);
