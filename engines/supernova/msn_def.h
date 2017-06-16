@@ -371,8 +371,10 @@ enum ObjectID {
 };
 
 ObjectType operator|(ObjectType a, ObjectType b);
+ObjectType operator&(ObjectType a, ObjectType b);
 ObjectType operator^(ObjectType a, ObjectType b);
 ObjectType &operator|=(ObjectType &a, ObjectType b);
+ObjectType &operator&=(ObjectType &a, ObjectType b);
 ObjectType &operator^=(ObjectType &a, ObjectType b);
 
 struct Object {
@@ -408,6 +410,10 @@ struct Object {
 
 	void disableProperty(ObjectType type) {
 		_type ^= type;
+	}
+
+	bool hasProperty(ObjectType type) const {
+		return _type & type;
 	}
 
 	const char *_name;

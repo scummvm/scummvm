@@ -47,12 +47,20 @@ ObjectType operator|(ObjectType a, ObjectType b) {
 	return static_cast<ObjectType>(+a | +b);
 }
 
+ObjectType operator&(ObjectType a, ObjectType b) {
+	return static_cast<ObjectType>(+a & +b);
+}
+
 ObjectType operator^(ObjectType a, ObjectType b) {
 	return static_cast<ObjectType>(+a ^ +b);
 }
 
 ObjectType &operator|=(ObjectType &a, ObjectType b) {
 	return a = a | b;
+}
+
+ObjectType &operator&=(ObjectType &a, ObjectType b) {
+	return a = a & b;
 }
 
 ObjectType &operator^=(ObjectType &a, ObjectType b) {
