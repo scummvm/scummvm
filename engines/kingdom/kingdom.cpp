@@ -37,6 +37,7 @@
 #include "common/debug-channels.h"
 #include "common/stream.h"
 #include "common/memstream.h"
+#include "graphics/cursorman.h"
 
 #include "kingdom/kingdom.h"
 
@@ -55,6 +56,9 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_ASPtr = nullptr;
 	_quit = false;
 	_MouseValue = 0;
+
+	_kingartData = nullptr;
+	_kingartSize = nullptr;
 }
 
 KingdomGame::~KingdomGame() {
@@ -105,12 +109,11 @@ void KingdomGame::drawScreen() {
 }
 
 void KingdomGame::SetupPics() {
-	// Load Pics\kingArt.art
-	LoadAResource(0x97);
-	_ArtPtr = _RezPointers[0x97];
+	LoadKingArt();
 }
 
 void KingdomGame::InitTools() {
+	InitMouse();
 	//CHECKME: InitTimers?
 	ShowPic(124);
 	InitCursor();
@@ -341,6 +344,29 @@ void KingdomGame::GPLogic3() {
 	debug("STUB: GPLogic3");
 }
 
+void KingdomGame::LoadKingArt() {
+	LoadAResource(0x97);
+	Common::SeekableReadStream *kingartStream = _RezPointers[0x97];
+	int val = kingartStream->readUint32LE();
+	int size = val / 4;
+	uint32 *kingartIdx = new uint32[size + 1];
+	_kingartData = new byte*[size];
+	_kingartSize = new int32[size];
+	kingartIdx[0] = val;
+	for (int i = 1; i < size; i++)
+		kingartIdx[i] = kingartStream->readUint32LE();
+	kingartIdx[size] = kingartStream->size();
+
+	for (int i = 0; i < size; i++) {
+		int chunkSize = kingartIdx[i + 1] - kingartIdx[i];
+		_kingartData[i] = new byte[chunkSize];
+		_kingartSize[i] = chunkSize;
+		kingartStream->read(_kingartData[i], chunkSize);
+	}
+
+	delete[] kingartIdx;
+}
+
 void KingdomGame::LoadAResource(int reznum) {
 	Common::String path = Common::String(_RezNames[reznum]);
 	path.toUppercase();
@@ -405,7 +431,15 @@ void KingdomGame::FShowPic(int reznum) {
 }
 
 void KingdomGame::InitCursor() {
-	debug("STUB: InitCursor");
+	InitMouse();
+	// 0x19C / 4
+	CursorMan.replaceCursor(_kingartData[103], 8, 8, 0, 0, 0);
+	_CursorDrawn = false;
+	DrawCursor();
+}
+
+void KingdomGame::InitMouse() {
+	_CursorActive = true;
 }
 
 void KingdomGame::SetMouse() {
@@ -705,7 +739,7 @@ int KingdomGame::WaitKey() {
 			break;
 		case Common::EVENT_LBUTTONUP: // retval == 2?
 			if (_Eye)
-				retval= !_ASMode ? 0x43A : 0x43B;
+				retval = !_ASMode ? 0x43A : 0x43B;
 			break;
 		case Common::EVENT_RBUTTONUP: // retval == 1?
 			retval = _MouseValue;
@@ -729,4 +763,27 @@ int KingdomGame::WaitKey() {
 	}
 	return retval;
 }
+
+void KingdomGame::DrawCursor() {
+	ReadMouse();
+
+	Common::Event event;
+	g_system->getEventManager()->pollEvent(event);
+	_CursorX = event.mouse.x;
+	_CursorY = event.mouse.y;
+	_CursorDef = CursorType();
+	CursorMan.replaceCursor(_kingartData[_CursorDef / 4], 8, 8, 0, 0, 0);
+	_OldCursorX = _CursorX;
+	_OldCursorY = _CursorY;
+	_OldCursorDef = _CursorDef;
+
+	CursorMan.showMouse(true);
+	_CursorDrawn = true;
+}
+
+int KingdomGame::CursorType() {
+	debug("STUB: CursorType");
+	return 0;
+}
+
 } // End of namespace Kingdom
