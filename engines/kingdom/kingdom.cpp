@@ -444,7 +444,9 @@ void KingdomGame::InitMouse() {
 }
 
 void KingdomGame::SetMouse() {
-	debug("STUB: SetMouse");
+	g_system->warpMouse(272, 157);
+	_CursorX = 272;
+	_CursorY = 157;
 }
 
 void KingdomGame::InitMPlayer() {
@@ -480,7 +482,13 @@ void KingdomGame::RestoreAS() {
 }
 
 void KingdomGame::SwitchAS() {
-	debug("STUB: SwitchAS");
+	_ASMode = 0;
+	_CurrMap = _ASMap;
+	_TreeLeftSta = _OldTLS;
+	_TreeRightSta = _OldTRS;
+	_Pouch = _OldPouch;
+	_Help = _OldHelp;
+	_IconsClosed = _OldIconsClosed;
 }
 
 void KingdomGame::DrawHelpScreen() {
@@ -711,11 +719,14 @@ bool KingdomGame::ChkDesertObstacles() {
 }
 
 void KingdomGame::SwitchMtoA() {
-	debug("STUB: SwitchMtoA");
+	SwitchAS();
+	FadeToBlack1();
+	DrawRect(4, 17, 228, 161, 0);
+	RestoreAS();
 }
 
-void KingdomGame::_DrawIcon(int x, int y, Common::MemoryReadStream icon) {
-	debug("STUB: _DrawIcon");
+void KingdomGame::DrawIcon(int x, int y, int index) {
+	debug("STUB: DrawIcon");
 }
 
 int KingdomGame::WaitKey() {
