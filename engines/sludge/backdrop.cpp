@@ -959,7 +959,7 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 		return false;
 
 	Graphics::TransparentSurface tmp(mixSurface, false);
-	tmp.blit(backdropSurface, x, y);
+	tmp.blit(backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255 >> 1, 255, 255));
 	mixSurface.free();
 ;
 #if 0
