@@ -73,7 +73,7 @@ bool getRGBIntoStack(unsigned int x, unsigned int y, stackHandler *sH);
 void killLightMap();
 bool loadLightMap(int v);
 
-extern texture lightMap;
+extern Graphics::Surface lightMap;
 
 // And background parallax scrolling
 

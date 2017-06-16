@@ -26,15 +26,6 @@
 
 namespace Sludge {
 
-struct texture {
-#if 0
-	GLubyte *data;
-	GLuint name;
-	double texW, texH;
-#endif
-	Graphics::Surface surface;
-};
-
 #if 0
 struct shaders {
 	GLuint paste;
