@@ -24,6 +24,7 @@
 #include "common/rect.h"
 #include "image/png.h"
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 #include "graphics/palette.h"
 
 #include "sludge/allfiles.h"
@@ -50,12 +51,13 @@ void unfreeze(bool);    // Because FREEZE.H needs a load of other includes
 #if 0
 GLubyte *backdropTexture = NULL;
 GLuint backdropTextureName = 0;
-bool backdropExists = false;
 GLfloat backdropTexW = 1.0;
 GLfloat backdropTexH = 1.0;
 
 GLuint snapshotTextureName = 0;
 #endif
+
+bool backdropExists = false;
 
 Graphics::Surface lightMap;
 Graphics::Surface backdropSurface;
@@ -210,8 +212,8 @@ void killBackDrop() {
 #if 0
 	deleteTextures(1, &backdropTextureName);
 	backdropTextureName = 0;
-	backdropExists = false;
 #endif
+	backdropExists = false;
 }
 
 void killLightMap() {
@@ -935,19 +937,19 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	renderToTexture(tmpTex, x, y, picWidth, picHeight, realPicWidth, realPicHeight);
 
 	deleteTextures(1, &tmpTex);
-
-	backdropExists = true;
 #endif
+	backdropExists = true;
 	return true;
 }
 
 bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	debug(kSludgeDebugGraphics, "Load mixHSI");
-	if (!ImgLoader::loadImage(stream, &backdropSurface, 0))
+	Graphics::Surface mixSurface;
+	if (!ImgLoader::loadImage(stream, &mixSurface, 0))
 		return false;
 
-	int realPicWidth = backdropSurface.w;
-	int realPicHeight = backdropSurface.h;
+	int realPicWidth = mixSurface.w;
+	int realPicHeight = mixSurface.h;
 
 	if (x == IN_THE_CENTRE)
 		x = (sceneWidth - realPicWidth) >> 1;
@@ -955,6 +957,11 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 		y = (sceneHeight - realPicHeight) >> 1;
 	if (x < 0 || x + realPicWidth > sceneWidth || y < 0 || y + realPicHeight > sceneHeight)
 		return false;
+
+	Graphics::TransparentSurface tmp(mixSurface, false);
+	tmp.blit(backdropSurface, x, y);
+	mixSurface.free();
+;
 #if 0
 	float btx1, tx1;
 	float btx2, tx2;
