@@ -448,6 +448,35 @@ struct Object {
 	byte _direction;
 };
 
+struct GameState {
+	int32  time;
+	int32  timeSleep;
+	int32  timeStarting;
+	int32  timeAlarm;
+	int32  timeAlarmSystem;
+	int32  eventTime;
+	int32  shipEnergy;
+	int32  landingModuleEnergy;
+	uint16 greatF;
+	int16  timeRobot;
+	int16  money;
+	char   coins;
+	char   shoes;
+	char   nameSeen;
+	char   destination;
+	char   benOverlay;
+	bool   language;
+	bool   corridorSearch;
+	bool   alarmOn;
+	bool   terminalStripConnected;
+	bool   terminalStripWire;
+	bool   cableConnected;
+	bool   powerOff;
+	bool   cockpitSeen;
+	bool   airlockSeen;
+	bool   holdSeen;
+	bool   dream;
+};
 
 }
 
