@@ -10,9 +10,9 @@
 namespace Supernova {
 
 MSNImageDecoder::MSNImageDecoder()
-	: _surface(NULL)
-	, _palette(NULL)
-	, _encodedImage(NULL) {
+    : _surface(NULL)
+    , _palette(NULL)
+    , _encodedImage(NULL) {
 }
 
 MSNImageDecoder::~MSNImageDecoder() {
@@ -21,7 +21,7 @@ MSNImageDecoder::~MSNImageDecoder() {
 
 bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
-	
+
 	size_t size = 0;
 	size  = (stream.readUint16LE() + 0xF) >> 4;
 	size |= (stream.readUint16LE() & 0xF) << 12;
@@ -61,7 +61,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_section[i].addressLow = stream.readUint16LE();
 		_section[i].addressHigh = stream.readByte();
 	}
-	
+
 	byte numClickFields = stream.readByte();
 	for (int i = 0; i < numClickFields; ++i) {
 		_clickField[i].x1 = stream.readUint16LE();
@@ -70,13 +70,13 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_clickField[i].y2 = stream.readByte();
 		_clickField[i].next = stream.readByte();
 	}
-	
+
 	byte zwCodes[256] = {0};
 	byte numRepeat = stream.readByte();
 	byte numZw = stream.readByte();
 	stream.read(zwCodes, numZw);
 	numZw += numRepeat;
-	
+
 	byte input = 0;
 	size_t i = 0;
 	// wat
@@ -97,7 +97,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_encodedImage[i++] = input;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -105,9 +105,9 @@ bool MSNImageDecoder::loadSection(int section) {
 	_surface = new Graphics::Surface;
 	_surface->create(320, 200, g_system->getScreenFormat());
 	byte *surfacePixels = static_cast<byte *>(_surface->getPixels());
-	
+
 	const uint32 kInvalidAddress = 0x00FFFFFF;
-	
+
 	size_t image = section;
 	if (image < 128) {
 		do {
@@ -124,7 +124,7 @@ bool MSNImageDecoder::loadSection(int section) {
 				destAddress += 320;
 				--height;
 			}
-			
+
 			image = _section[image].next;
 		} while (image != 0);
 	} else {
@@ -140,11 +140,11 @@ bool MSNImageDecoder::loadSection(int section) {
 				destAddress += 320;
 				--height;
 			}
-			
+
 			image = _section[image].next;
 		} while (image != 0);
 	}
-	
+
 	return true;
 }
 
