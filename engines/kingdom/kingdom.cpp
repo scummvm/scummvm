@@ -432,8 +432,7 @@ void KingdomGame::FShowPic(int reznum) {
 
 void KingdomGame::InitCursor() {
 	InitMouse();
-	// 0x19C / 4
-	CursorMan.replaceCursor(_kingartData[103], 8, 8, 0, 0, 0);
+	SetCursor(0x19C);
 	_CursorDrawn = false;
 	DrawCursor();
 }
@@ -772,7 +771,7 @@ void KingdomGame::DrawCursor() {
 	_CursorX = event.mouse.x;
 	_CursorY = event.mouse.y;
 	_CursorDef = CursorType();
-	CursorMan.replaceCursor(_kingartData[_CursorDef / 4], 8, 8, 0, 0, 0);
+	SetCursor(_CursorDef);
 	_OldCursorX = _CursorX;
 	_OldCursorY = _CursorY;
 	_OldCursorDef = _CursorDef;
@@ -781,9 +780,19 @@ void KingdomGame::DrawCursor() {
 	_CursorDrawn = true;
 }
 
+
 int KingdomGame::CursorType() {
 	debug("STUB: CursorType");
-	return 0;
+	// Default cursor
+	return 0x19C;
+}
+
+void KingdomGame::SetCursor(int cursor) {
+	byte* CursorData = _kingartData[cursor / 4];
+	uint8 CursorWidth = CursorData[0];
+	uint8 CursorHeight = CursorData[1];
+
+	CursorMan.replaceCursor(CursorData + 2, CursorWidth, CursorHeight, 0, 0, 255);
 }
 
 } // End of namespace Kingdom
