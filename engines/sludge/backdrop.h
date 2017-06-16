@@ -40,7 +40,7 @@ extern int lightMapMode;
 
 struct parallaxLayer {
 	Graphics::Surface surface;
-	int width, height, speedX, speedY;
+	int speedX, speedY;
 	bool wrapS, wrapT;
 	unsigned short fileNum, fractionX, fractionY;
 	int cameraX, cameraY;
