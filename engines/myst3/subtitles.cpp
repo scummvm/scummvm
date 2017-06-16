@@ -369,6 +369,11 @@ void Subtitles::loadFontSettings(int32 id) {
 		_fontCharsetCode = 128; // The Japanese subtitles are encoded in CP 932 / Shift JIS
 	}
 
+	if (_vm->getGameLanguage() == Common::HE_ISR) {
+		// The Hebrew subtitles are encoded in CP 1255, but the game data does not specify the appropriate encoding
+		_fontCharsetCode = 177;
+	}
+
 	if (_fontCharsetCode < 0) {
 		_fontCharsetCode = -_fontCharsetCode; // Negative values are GDI charset codes
 	}
