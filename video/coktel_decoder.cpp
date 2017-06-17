@@ -2617,7 +2617,14 @@ int DPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 			else
 				_buffer[i] += tableDPCM[data];
 
-			*buffer++ = _buffer[i] = CLIP<int32>(_buffer[i], -32768, 32767);
+			// Emulating x86 16-bit signed register overflow
+			if (_buffer[i] > 32767) {
+				_buffer[i] -= 65536;
+			} else if (_buffer[i] < -32768) {
+				_buffer[i] += 65536;
+			}
+
+			*buffer++ = _buffer[i];
 		}
 
 		samples += _channels;
