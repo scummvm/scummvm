@@ -55,7 +55,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x1000
+#define HEADER_SIZE 0x1100
 
 Common::File inputFile, outputFile;
 Common::PEResources resEng, resGer;
@@ -1097,25 +1097,34 @@ void writeResource(const char *name, Common::File *file) {
 	delete file;
 }
 
-void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) {
-	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
-
+void writeResource(const char *resName, const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr), resId);
 	assert(file);
-	writeResource(nameBuffer, file);
+	writeResource(resName, file);
+}
+
+void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) {
+	char nameBuffer[256];
+	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
+	writeResource(nameBuffer, sectionStr, resId, isEnglish);
+}
+
+void writeResource(const char *resName, const char *sectionStr, const char *resId, bool isEnglish = true) {
+	Common::PEResources &res = isEnglish ? resEng : resGer;
+	Common::File *file = res.getResource(getResId(sectionStr),
+		Common::WinResourceID(resId));
+	assert(file);
+	writeResource(resName, file);
 }
 
 void writeResource(const char *sectionStr, const char *resId, bool isEnglish = true) {
 	char nameBuffer[256];
 	sprintf(nameBuffer, "%s/%s", sectionStr, resId);
+	if (!isEnglish)
+		strcat(nameBuffer, "/DE");
 
-	Common::PEResources &res = isEnglish ? resEng : resGer;
-	Common::File *file = res.getResource(getResId(sectionStr),
-		Common::WinResourceID(resId));
-	assert(file);
-	writeResource(nameBuffer, file);
+	writeResource(nameBuffer, sectionStr, resId, isEnglish);
 }
 
 void writeBitmap(const char *name, Common::File *file) {
@@ -1489,13 +1498,18 @@ void writeData() {
 	writeResource("STFONT", 152);
 	writeResource("STFONT", 153);
 
+	writeResource("TEXT/STVOCAB", "TEXT", "STVOCAB.TXT");
+	writeResource("TEXT/JRQUOTES", "TEXT", "JRQUOTES.TXT");
+	writeResource("TEXT", 155);
+	if (!resGer.empty()) {
+		writeResource("TEXT/STVOCAB/DE", "TEXT", "STVOCABDE.TXT", false);
+		writeResource("TEXT/JRQUOTES/DE", "TEXT", "JRQUOTESDE.TXT", false);
+		writeResource("TEXT/155/DE", "TEXT", 155, false);
+	}
+
 	writeResource("STARFIELD", 132);
 	writeStarfieldPoints();
 	writeStarfieldPoints2();
-
-	writeResource("TEXT", "STVOCAB.TXT");
-	writeResource("TEXT", "JRQUOTES.TXT");
-	writeResource("TEXT", 155);
 
 	writeStringArray("TEXT/ITEM_DESCRIPTIONS", ITEM_DESCRIPTIONS, 46);
 	writeStringArray("TEXT/ITEM_DESCRIPTIONS/DE", ITEM_DESCRIPTIONS_DE, 46);
