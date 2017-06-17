@@ -117,7 +117,7 @@ static const char *const ITEM_DESCRIPTIONS[46] = {
 	"A photograph"
 };
 static const char *const ITEM_DESCRIPTIONS_DE[46] = {
-	"Der linke Arm des OberkellnerBots im Besitz eines Schl\xFC""ssels ",
+	"Der linke Arm des OberkellnerBots, im Besitz eines Schl\xFC""ssels ",
 	"Der linke Arm des OberkellnerBots",
 	"Der rechte Arm des OberkellnerBots, im Besitz von Titanias Geh\xF6""rmodul",
 	"Der rechte Arm des OberkellnerBots",
@@ -133,7 +133,7 @@ static const char *const ITEM_DESCRIPTIONS_DE[46] = {
 	"Titanias Gesichtsmodul",
 	"ziemlich fettiges H\xFC""hnchen",
 	"H\xFC""hnchen ohne alles",
-	"mit Starenp",
+	"mit Starenp\xFC""ree beschmiertes H\xFC""hnchen",
 	"mit Tomatensauce garniertes H\xFC""hnchen",
 	"mit Senfso\xDF""e \xFC""berzogenes H\xFC""hnchen",
 	"Ein zerschmetterter Fernsehapparat",
@@ -144,7 +144,7 @@ static const char *const ITEM_DESCRIPTIONS_DE[46] = {
 	"Eine Papageienfeder",
 	"Eine sch\xF6""ne fette saftige Zitrone",
 	"Ein leeres Bierglas",
-	"Ein Starenp",
+	"Ein Starenp\xFC""ree enthaltendes Bierglas",
 	"Ein Tomatenso\xDF""e enthaltendes Bierglas",
 	"Ein Senfso\xDF""e enthaltendes Bierglas",
 	"Ein Hammer",
@@ -154,8 +154,8 @@ static const char *const ITEM_DESCRIPTIONS_DE[46] = {
 	"Ein ziemlich langer Stab",
 	"Ein Magazin",
 	"Titanias Mund",
-	"Ein Schl\xFCssel",
-	"Eine supersaugfShige Serviette",
+	"Ein Schl\xFC""ssel",
+	"Eine supersaugf\xE4""hige Serviette",
 	"Titanias Nase",
 	"Eine Vogelstange",
 	"Ein Grammophonzylinder",
