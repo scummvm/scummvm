@@ -55,7 +55,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0xF00
+#define HEADER_SIZE 0xF80
 
 Common::File inputFile, outputFile;
 Common::PEResources resEng, resGer;
@@ -70,17 +70,20 @@ uint dataOffset = HEADER_SIZE;
 enum {
 	ENGLISH_10042C_DIFF = 0x401C00,
 	ENGLISH_10042B_DIFF = 0x401400,
-	ENGLISH_10042_DIFF = 0x402000
+	ENGLISH_10042_DIFF = 0x402000,
+	GERMAN_DIFF = 0x3DE500
 };
 enum Version {
 	ENGLISH_10042C = 0,
 	ENGLISH_10042B = 1,
-	ENGLISH_10042 = 2
+	ENGLISH_10042 = 2,
+	GERMAN = 3
 };
 Version _version;
 
-const int FILE_DIFF[3] = {
-	ENGLISH_10042C_DIFF, ENGLISH_10042B_DIFF, ENGLISH_10042_DIFF
+const int FILE_DIFF[4] = {
+	ENGLISH_10042C_DIFF, ENGLISH_10042B_DIFF, ENGLISH_10042_DIFF,
+	GERMAN_DIFF
 };
 
 static const char *const ITEM_NAMES[46] = {
@@ -112,6 +115,54 @@ static const char *const ITEM_DESCRIPTIONS[46] = {
 	"A super-absorbent napkin", "Titania's nose", "A perch", "A phonograph cylinder",
 	"A phonograph cylinder", "A phonograph cylinder", "A phonograph cylinder",
 	"A photograph"
+};
+static const char *const ITEM_DESCRIPTIONS_DE[46] = {
+	"Der linke Arm des OberkellnerBots im Besitz eines Schl\xFC""nssel\x73 ",
+	"Der linke Arm des OberkellnerBots",
+	"Der rechte Arm des OberkellnerBots, im Besitz von Titanias Geh\xF6""rmodul",
+	"Der rechte Arm des OberkellnerBots",
+	"Rote Sicherung",
+	"Gelbe Sicherung",
+	"Blaue Sicherung",
+	"Gr\xFC""ne Sicherung",
+	"Der Papagei",
+	"Titanias Gro\xDF""hirn",
+	"Titanias Geh\xF6""rmodul",
+	"Titanias Geruchsmodul",
+	"Titanias Sprachmodul",
+	"Titanias Gesichtsmodul",
+	"ziemlich fettiges H\xFC""hnchen",
+	"H\xFC""hnchen ohne alles",
+	"mit Starenp",
+	"mit Tomatensauce garniertes H\xFC""hnchen",
+	"mit Senfso\xDF""e \xFC""berzogenes H\xFC""hnchen",
+	"Ein zerschmetterter Fernsehapparat",
+	"Titanias Ohr",
+	"Titanias Ohr",
+	"Titanias Auge",
+	"Titanias Auge",
+	"Eine Papageienfeder",
+	"Eine sch\xF6""ne fette saftige Zitrone",
+	"Ein leeres Bierglas",
+	"Ein Starenp",
+	"Ein Tomatenso\xDF""e enthaltendes Bierglas",
+	"Ein Senfso\xDF""e enthaltendes Bierglas",
+	"Ein Hammer",
+	"Ein Schlauch",
+	"Das andere Ende eines Schlauchs",
+	"Der Kopf eines LiftBots",
+	"Ein ziemlich langer Stab",
+	"Ein Magazin",
+	"Titanias Mund",
+	"Ein Schl\xFCssel",
+	"Eine supersaugfShige Serviette",
+	"Titanias Nase",
+	"Eine Vogelstange",
+	"Ein Grammophonzylinder",
+	"Ein Grammophonzylinder",
+	"Ein Grammophonzylinder",
+	"Ein Grammophonzylinder",
+	"Ein Foto"
 };
 
 static const char *const ITEM_IDS[40] = {
@@ -147,7 +198,7 @@ const NumberEntry NUMBERS[76] = {
 	{ "and", 0, 1 },
 	{ "negative", 0, 10 },
 	{ "minus", 0, 10 },
-	{ "below zeor", 0, 8 },
+	{ "below zero", 0, 8 },
 	{ "degrees below zero", 0, 8 },
 	{ "nil", 0, 2 },
 	{ "zero", 0, 2 },
@@ -1286,6 +1337,7 @@ void writeData() {
 	writeResource("TEXT", 155);
 
 	writeStringArray("TEXT/ITEM_DESCRIPTIONS", ITEM_DESCRIPTIONS, 46);
+	writeStringArray("TEXT/ITEM_DESCRIPTIONS/DE", ITEM_DESCRIPTIONS_DE, 46);
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
@@ -1426,6 +1478,14 @@ void writeData() {
 	writeParrotLobbyLinkUpdaterEntries();
 }
 
+void writeGermanData() {
+	writeStringArray("TEXT/PHRASES/DE", 0x23EEC8 + GERMAN_DIFF, 178);
+	writeStringArray("TEXT/REPLACEMENTS1/DE", 0x23F198 + GERMAN_DIFF, 1362);
+	writeStringArray("TEXT/REPLACEMENTS2/DE", 0x2406E8 + GERMAN_DIFF, 816);
+	writeStringArray("TEXT/REPLACEMENTS3/DE", 0x2413B0 + GERMAN_DIFF, 608);
+	writeStringArray("TEXT/REPLACEMENTS4/DE", 0x241D38 + GERMAN_DIFF, 195);
+}
+
 void createScriptMap() {
 	Common::File inFile;
 	char line[80];
@@ -1503,8 +1563,13 @@ int main(int argc, char *argv[]) {
 
 	writeHeader();
 	writeData();
-	writeFinalEntryHeader();
 
+	if (argc >= 3) {
+		inputFile.open(argv[2]);
+		_version = GERMAN;
+		writeGermanData();
+	}
+	writeFinalEntryHeader();
 	inputFile.close();
 	outputFile.close();
 	return 0;
