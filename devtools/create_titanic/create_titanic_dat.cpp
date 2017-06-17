@@ -1484,6 +1484,7 @@ void writeGermanData() {
 	writeStringArray("TEXT/REPLACEMENTS2/DE", 0x2406E8 + GERMAN_DIFF, 816);
 	writeStringArray("TEXT/REPLACEMENTS3/DE", 0x2413B0 + GERMAN_DIFF, 608);
 	writeStringArray("TEXT/REPLACEMENTS4/DE", 0x241D38 + GERMAN_DIFF, 195);
+	writeStringArray("TEXT/PRONOUNS", 0x248610 + GERMAN_DIFF, 15);
 }
 
 void createScriptMap() {
