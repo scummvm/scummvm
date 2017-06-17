@@ -85,6 +85,7 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 		break;
 
 	case 1:
+		playMovie(23, 26, MOVIE_STOP_PREVIOUS);
 		playSound("a#32.wav");
 		playSound("a#31.wav");
 		addTimer(2, 2000, 0);
