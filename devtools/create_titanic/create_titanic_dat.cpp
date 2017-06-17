@@ -55,7 +55,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0xF80
+#define HEADER_SIZE 0x1000
 
 Common::File inputFile, outputFile;
 Common::PEResources resEng, resGer;
@@ -414,6 +414,90 @@ static const char *const MISSIVEOMAT_MESSAGES[3] = {
 	"Most of your Missives are routine construction matters which I ha"
 	"ve dealt with and deleted.  All Missives from Mr Scraliontis and "
 	"His Loftiness Leovinus are here."
+};
+
+static const char *const MISSIVEOMAT_MESSAGES_DE[3] = {
+	"Willkommen, Leovinus.\n"
+	"\n"
+	"Dies ist Ihr Depesch-O-Mat.\n"
+	"\n"
+	"Sie haben 1827 Elektrische Depeschen erhalten.\n"
+	"\n"
+	"Aus praktischen Gr\xFC""nden habe ich 453 Nachrichten von Leuten, "
+	"die Sie nicht kennen und die dachten, es w\xE4""re unheimlich geistreich, "
+	"sie an Sie weiterzusenden, gel\xF6""scht, darunter 63 Depeschen mit "
+	"doppelten oder dreifachen Ausrufezeichen\n"
+	"846 Depeschen von Mailing Listen, die Sie einmal f\xFC"
+	"r sehr interessant hielten, und von denen Sie jetzt keine Ahnung haben, "
+	"wie man sie l\xF6""schen kann: \n"
+	"962 Kettendepeschen,\n"
+	"1034 Anweisungen, wie man durch den Einsatz von Butter zum Million\xE4""r wird,\n"
+	"3 Yassakkanische Morddrohungen (diese Zahl ist im Vergleich zur Vorwoche leicht "
+	"gesunken, was durchaus erfreulich ist), \n"
+	"und eine Depesche von Ihrer Mutter, die ich mit beruhigenden Worten beantwortet habe.\n"
+	"\n"
+	"Auf folgende Depeschen m\xF6""chte ich Ihre besondere Aufmerksamkeit lenken. "
+	"Sie brauchen den Flunker Finder nicht zu aktivieren um zu sehen, warum. "
+	"Irgend etwas ist faul, und ich habe den Verdacht, da\xDF"" die beiden schleimigen "
+	"Quallen Brobostigon und Scraliontis wieder dahinter stecken.",
+
+	"Hallo Droot.  Ich habe Ihre letzten Depeschen ausgewertet.\n"
+	"Der Inhalt gliedert sich wie folgt:\n"
+	"\n"
+	"Gute Nachrichten 49%\n"
+	"Schlechte Nachrichten 48%\n"
+	"Mittelm\xE4\xDF""ige Nachrichten 4%\n"
+	"Belanglose Mailings und Familiendepeschen 5%\n"
+	"Sonderangebote der Blerontinischen Sand Gesellschaft 1% "
+	"(beachtenswert: die ziemlich h\xFC""bsche Miet-D\xFC""ne auf Seite 4)\n"
+	"\n"
+	"Insgesamt gesehen sind Sie Su\xDF""erst Erfolgreich.  Die Gesch\xE4""fte "
+	"Florieren weiterhin.  Ihre Aktien sind in Sicherheit. Ihr Haar "
+	"sieht wie immer Toll aus. Teppich 14 mu\xDF"" gereinigt werden.\n"
+	"\n"
+	"Es freut mich, berichten zu d\xFC""rfen, da\xDF"" keine weiteren "
+	"Kommentare zu Schwei\xDF""f\xFC\xDF""en gemeldet wurden.\n"
+	"\n"
+	"Empfehle dringend, alle Fischpaste-Aktien zu verkaufen, da Marktschwankungen.\n"
+	"\n"
+	"Da Ihr Gro\xDF""er Plan beinahe vollendet ist, war ich so frei, alle "
+	"nicht dringenden Depeschen zu beantworten und f\xFC""hre hierauffolgend nur "
+	"die Korrespondenz mit Manager Brobostigon und Ihrer Durchlauchtigsten Gro\xDF""kotz "
+	"Nervens\xE4""ge Leovinus auf.\n"
+	"\n"
+	"Achtung: Leovinus sch\xF6""pft langsam Verdacht.  Lassen Sie auch Brobostigon "
+	"nicht aus den Augen.\n"
+	"\n"
+	"\xFC""r den morgigen Stapellauf ist das Wetter heiter und sonnig.  "
+	"Um elf Uhr wird leichte Bew\xF6""lkung eingeschaltet. Ich schlage "
+	"den roten Anzug mit der Sch\xE4""rpe vor.\n"
+	"\n"
+	"Alle Geld\xFC""berweisungen werden \xFC""ber Decknamenkonten vor Mondaufgang getStigt.\n"
+	"\n"
+	"Achten Sie auf eine ausgewogene Ern\xE4""hrung.  Ihr Fischstand ist niedrig und Sie k\xF6"
+	"nnten am sp\xE4""ten Vormittag unter Entscheidungsschwankungen leiden.\n"
+	"\n"
+	"Hier sind Ihre Depeschen...",
+
+	"Hallo Antar, dies ist Ihr Depesch-O-Mat.\n"
+	"\n"
+	"Nicht, da\xDF"" Sie daran noch erinnert werden m\xFC"
+	"ssen, aber heute ist die Glorreiche D\xE4""mmerung eines Neuen Zeitalters "
+	"in der Luxusraumfahrt. \n"
+	"\n"
+	"Im allgemeinen zeigt meine Bewertung Ihrer Verfassung an diesem Morgen, "
+	"da\xDF"" Sie wohlauf sind, wenn auch nicht so reich, wie Sie es gerne w\xE4""ren.  "
+	"Ich hoffe, die interessante Zusammenarbeit mit Herrn Scraliontis wird bald "
+	"Fr\xFCh""chte tragen. \n"
+	"\n"
+	"Ich hoffe, Ihre Bl\xE4""hungen haben in der Nacht etwas nachgelassen.  "
+	"Was f\xFC""r ein betr\xFC""bliches Leiden f\xFC""r  "
+	"einen Mann in Ihrer Position.\n"
+	"\n"
+	"Bei den meisten eingegangenen Depeschen handelt es sich um routinem\xE4\xDF"
+	"ige Bauangelegenheiten, die ich bearbeitet und dann gel\xF6""scht "
+	"habe.  Alle Depeschen von Herrn Scraliontis und Ihrer Durchlauchtigen "
+	"Aufgeblasenheit Leovinus folgen."
 };
 
 struct BedheadEntry {
@@ -1234,6 +1318,21 @@ void writeMissiveOMatMessages() {
 	writeStringArray("TEXT/MISSIVEOMAT/TO", TO[_version], 58);
 }
 
+void writeMissiveOMatMessagesDE() {
+	outputFile.seek(dataOffset);
+
+	for (int idx = 0; idx < 3; ++idx)
+		outputFile.writeString(MISSIVEOMAT_MESSAGES_DE[idx]);
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("TEXT/MISSIVEOMAT/WELCOME/DE", dataOffset, size);
+	dataOffset += size;
+
+	writeStringArray("TEXT/MISSIVEOMAT/MESSAGES/DE", 0x5A9988, 58);
+	writeStringArray("TEXT/MISSIVEOMAT/FROM/DE", 0x5A97B8, 58);
+	writeStringArray("TEXT/MISSIVEOMAT/TO/DE", 0x5A98A0, 58);
+}
+
 void writeBedheadGroup(const BedheadEntry *data, int count) {
 	for (int idx = 0; idx < count; ++idx, ++data) {
 		outputFile.writeString(data->_name1);
@@ -1485,6 +1584,8 @@ void writeGermanData() {
 	writeStringArray("TEXT/REPLACEMENTS3/DE", 0x2413B0 + GERMAN_DIFF, 608);
 	writeStringArray("TEXT/REPLACEMENTS4/DE", 0x241D38 + GERMAN_DIFF, 195);
 	writeStringArray("TEXT/PRONOUNS/DE", 0x248610 + GERMAN_DIFF, 15);
+
+	writeMissiveOMatMessagesDE();
 }
 
 void createScriptMap() {
