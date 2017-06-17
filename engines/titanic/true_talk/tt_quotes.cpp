@@ -36,7 +36,7 @@ TTquotes::~TTquotes() {
 }
 
 void TTquotes::load() {
-	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/JRQUOTES.TXT");
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/JRQUOTES");
 	size_t size = r->readUint32LE();
 	_loaded = true;
 
