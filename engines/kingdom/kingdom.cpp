@@ -641,11 +641,15 @@ void KingdomGame::ProcessMapInput(int mapNum) {
 }
 
 void KingdomGame::InventoryDel(int item) {
-	debug("STUB: InventoryDel");
+	if (_Inventory[item] > 0)
+		_Inventory[item]--;
 }
 
 void KingdomGame::InventoryAdd(int item) {
-	debug("STUB: InventoryAdd");
+	if (item >= 4)
+		_Inventory[item] = 1;
+	else
+		_Inventory[item] = 3;
 }
 
 void KingdomGame::DrawPic(int reznum) {
