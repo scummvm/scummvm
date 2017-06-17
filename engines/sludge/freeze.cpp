@@ -249,6 +249,14 @@ void unfreeze(bool killImage) {
 	frozenStuff = frozenStuff->next;
 
 	overRegion = NULL;
+
+	// free current frozen screen struct
+	if (killMe->backdropSurface.getPixels())
+		killMe->backdropSurface.free();
+	if (killMe->lightMapSurface.getPixels())
+		killMe->lightMapSurface.free();
+	if (killMe->zBufferImage.getPixels())
+		killMe->zBufferImage.free();
 	delete killMe;
 	killMe = NULL;
 
