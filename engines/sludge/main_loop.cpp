@@ -21,6 +21,8 @@
  */
 
 #include "common/debug.h"
+#include "common/events.h"
+#include "common/keyboard.h"
 
 #include "graphics/surface.h"
 
@@ -114,28 +116,32 @@ extern bool reallyWantToQuit;
 int weAreDoneSoQuit;
 
 void checkInput() {
-	static bool fakeRightclick = false;
 #if 0
-	SDL_Event event;
+	static bool fakeRightclick = false;
+#endif
+	Common::Event event;
 
 	/* Check for events */
-	while (SDL_PollEvent(&event)) {
+	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-
+#if 0
 			case SDL_VIDEORESIZE:
-			realWinWidth = event.resize.w;
-			realWinHeight = event.resize.h;
-			setGraphicsWindow(false, true, true);
-			break;
+				realWinWidth = event.resize.w;
+				realWinHeight = event.resize.h;
+				setGraphicsWindow(false, true, true);
+				break;
+#endif
+			case Common::EVENT_MOUSEMOVE:
+				input.justMoved = true;
+				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
+				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
+				break;
 
-			case SDL_MOUSEMOTION:
-			input.justMoved = true;
-			input.mouseX = event.motion.x * ((float)winWidth / cameraZoom) / realWinWidth;
-			input.mouseY = event.motion.y * ((float)winHeight / cameraZoom) / realWinHeight;
-			break;
-
-			case SDL_MOUSEBUTTONDOWN:
-			if (event.button.button == SDL_BUTTON_LEFT) {
+			case Common::EVENT_LBUTTONDOWN:
+				input.leftClick = true;
+				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
+				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
+#if 0
 				if (SDL_GetModState() & KMOD_CTRL) {
 					input.rightClick = true;
 					fakeRightclick = true;
@@ -143,157 +149,95 @@ void checkInput() {
 					input.leftClick = true;
 					fakeRightclick = false;
 				}
-			}
-			if (event.button.button == SDL_BUTTON_RIGHT) input.rightClick = true;
-			input.mouseX = event.motion.x * ((float)winWidth / cameraZoom) / realWinWidth;
-			input.mouseY = event.motion.y * ((float)winHeight / cameraZoom) / realWinHeight;
-			break;
-
-			case SDL_MOUSEBUTTONUP:
-			if (event.button.button == SDL_BUTTON_LEFT) {
-				if (fakeRightclick) {
-					fakeRightclick = false;
-					input.rightRelease = true;
-				} else {
-					input.leftRelease = true;
-				}
-			}
-			if (event.button.button == SDL_BUTTON_RIGHT) input.rightRelease = true;
-			input.mouseX = event.motion.x * ((float)winWidth / cameraZoom) / realWinWidth;
-			input.mouseY = event.motion.y * ((float)winHeight / cameraZoom) / realWinHeight;
-			break;
-
-			case SDL_KEYDOWN:
-			// A Windows key is pressed - let's leave fullscreen.
-			if (runningFullscreen) {
-				if (event.key.keysym.sym == SDLK_LSUPER || event.key.keysym.sym == SDLK_LSUPER) {
-					setGraphicsWindow(!runningFullscreen);
-				}
-			}
-			// Ignore Command keypresses - they're for the OS to handle.
-			if (event.key.keysym.mod & KMOD_META) {
-				// Command+F - let's switch to/from full screen
-				if ('f' == event.key.keysym.unicode) {
-					setGraphicsWindow(!runningFullscreen);
-				}
+#endif
 				break;
-			} else if (event.key.keysym.mod & KMOD_ALT) {
-				// Alt + Enter also switches full screen mode
-				if (SDLK_RETURN == event.key.keysym.sym) {
-					setGraphicsWindow(!runningFullscreen);
+
+			case Common::EVENT_RBUTTONDOWN:
+				input.rightClick = true;
+				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
+				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
+				break;
+
+			case Common::EVENT_LBUTTONUP:
+				input.leftRelease = true;
+				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
+				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
+				break;
+
+			case Common::EVENT_RBUTTONUP:
+				input.rightRelease = true;
+				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
+				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
+				break;
+
+			case Common::EVENT_KEYDOWN:
+#if 0
+				// A Windows key is pressed - let's leave fullscreen.
+				if (runningFullscreen) {
+					if (event.key.keysym.sym == SDLK_LSUPER || event.key.keysym.sym == SDLK_LSUPER) {
+						setGraphicsWindow(!runningFullscreen);
+					}
 				}
-				if (SDLK_a == event.key.keysym.sym) {
-					gameSettings.antiAlias = !gameSettings.antiAlias;
+				// Ignore Command keypresses - they're for the OS to handle.
+				if (event.key.keysym.mod & KMOD_META) {
+					// Command+F - let's switch to/from full screen
+					if ('f' == event.key.keysym.unicode) {
+						setGraphicsWindow(!runningFullscreen);
+					}
+					break;
+				} else if (event.key.keysym.mod & KMOD_ALT) {
+					// Alt + Enter also switches full screen mode
+					if (SDLK_RETURN == event.key.keysym.sym) {
+						setGraphicsWindow(!runningFullscreen);
+					}
+					if (SDLK_a == event.key.keysym.sym) {
+						gameSettings.antiAlias = !gameSettings.antiAlias;
+						break;
+					}
+					// Allow Alt+F4 to quit
+					if (SDLK_F4 == event.key.keysym.sym) {
+						SDL_Event event;
+						event.type = SDL_QUIT;
+						SDL_PushEvent(&event);
+					}
+
 					break;
 				}
-				// Allow Alt+F4 to quit
-				if (SDLK_F4 == event.key.keysym.sym) {
-					SDL_Event event;
-					event.type = SDL_QUIT;
-					SDL_PushEvent(&event);
+#endif
+				switch (event.kbd.keycode) {
+
+					case Common::KEYCODE_BACKSPACE:
+						// fall through
+					case Common::KEYCODE_DELETE:
+						input.keyPressed = Common::KEYCODE_DELETE;
+						break;
+					default:
+						input.keyPressed = event.kbd.keycode;
+						break;
 				}
+				break;
 
-				break;
-			}
-			switch (event.key.keysym.sym) {
-				case SDLK_BACKSPACE:
-				case SDLK_DELETE: // Ok, mapping these to the same key is weird, I admit. But good?
-				input.keyPressed = 127;
-				break;
-				case SDLK_TAB:
-				input.keyPressed = 9;
-				break;
-				case SDLK_RETURN:
-				input.keyPressed = 13;
-				break;
-				case SDLK_ESCAPE:
-				input.keyPressed = 27;
-				break;
-				case SDLK_PAGEUP:
-				input.keyPressed = 63276;
-				break;
-				case SDLK_PAGEDOWN:
-				input.keyPressed = 63277;
-				break;
-				case SDLK_END:
-				input.keyPressed = 63275;
-				break;
-				case SDLK_HOME:
-				input.keyPressed = 63273;
-				break;
-				case SDLK_LEFT:
-				input.keyPressed = 63234;
-				break;
-				case SDLK_UP:
-				input.keyPressed = 63232;
-				break;
-				case SDLK_RIGHT:
-				input.keyPressed = 63235;
-				break;
-				case SDLK_DOWN:
-				input.keyPressed = 63233;
-				break;
-				case SDLK_F1:
-				input.keyPressed = 63236;
-				break;
-				case SDLK_F2:
-				input.keyPressed = 63237;
-				break;
-				case SDLK_F3:
-				input.keyPressed = 63238;
-				break;
-				case SDLK_F4:
-				input.keyPressed = 63239;
-				break;
-				case SDLK_F5:
-				input.keyPressed = 63240;
-				break;
-				case SDLK_F6:
-				input.keyPressed = 63241;
-				break;
-				case SDLK_F7:
-				input.keyPressed = 63242;
-				break;
-				case SDLK_F8:
-				input.keyPressed = 63243;
-				break;
-				case SDLK_F9:
-				input.keyPressed = 63244;
-				break;
-				case SDLK_F10:
-				input.keyPressed = 63245;
-				break;
-				case SDLK_F11:
-				input.keyPressed = 63246;
-				break;
-				case SDLK_F12:
-				input.keyPressed = 63247;
-				break;
-				default:
-				input.keyPressed = event.key.keysym.unicode;
-				break;
-			}
-			break;
-
-			case SDL_QUIT:
-			if (reallyWantToQuit) {
-				// The game file has requested that we quit
+			case Common::EVENT_QUIT:
 				weAreDoneSoQuit = 1;
-			} else {
-				// The request is from elsewhere - ask for confirmation.
-				setGraphicsWindow(false);
-				//fprintf (stderr, "%s %s\n", gameName, getNumberedString(2));
-				if (msgBoxQuestion(gameName, getNumberedString(2))) {
+#if 0
+				if (reallyWantToQuit) {
+					// The game file has requested that we quit
 					weAreDoneSoQuit = 1;
+				} else {
+					// The request is from elsewhere - ask for confirmation.
+					setGraphicsWindow(false);
+					//fprintf (stderr, "%s %s\n", gameName, getNumberedString(2));
+					if (msgBoxQuestion(gameName, getNumberedString(2))) {
+						weAreDoneSoQuit = 1;
+					}
 				}
-			}
-			break;
+#endif
+				break;
 
 			default:
-			break;
+				break;
 		}
 	}
-#endif
 }
 
 int main_loop(const char *filename)
