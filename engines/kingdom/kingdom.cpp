@@ -482,7 +482,7 @@ void KingdomGame::RestoreAS() {
 }
 
 void KingdomGame::SwitchAS() {
-	_ASMode = 0;
+	_ASMode = false;
 	_CurrMap = _ASMap;
 	_TreeLeftSta = _OldTLS;
 	_TreeRightSta = _OldTRS;
@@ -551,8 +551,6 @@ void KingdomGame::RefreshMouse() {
 }
 
 void KingdomGame::GetUserInput() {
-	debug("STUB: GetUserInput");
-
 	// CHECKME: _QuitFlag != 0
 	if (_quit)
 		return;
@@ -621,7 +619,21 @@ void KingdomGame::DrawLocation() {
 }
 
 void KingdomGame::ProcessMap(int mapNum, int zoom) {
-	debug("STUB: ProcessMap");
+	int var6 = _ZoomTable[mapNum][zoom][0];
+	if (!_ASMode)
+		SwitchAtoM();
+	FShowPic(var6);
+	_CurrMap = _ZoomTable[mapNum][zoom][1];
+
+	if (zoom > 0)
+		_TreeLeftSta = _ZoomTable[mapNum][zoom - 1][0] == 0 ? 0 : 3;
+	else
+		_TreeLeftSta = 0;
+
+	if (zoom < 8)
+		_TreeRightSta = _ZoomTable[mapNum][zoom + 1][0] == 0 ? 0 : 2;
+	else
+		_TreeRightSta = 0;
 }
 
 void KingdomGame::ProcessMapInput(int mapNum) {
@@ -716,6 +728,23 @@ bool KingdomGame::ChkDesertObstacles() {
 		_LoopFlag = true;
 		return true;
 	}
+}
+
+void KingdomGame::SwitchAtoM() {
+	_ASMode = true;
+	_ASMap = _CurrMap;
+	SaveAS();
+	_IconSel = 9;
+	_OldTLS = _TreeLeftSta;
+	_OldTRS = _TreeRightSta;
+	_OldPouch = _Pouch;
+	_OldHelp = _Help;
+	_OldIconsClosed = _IconsClosed;
+	_TreeLeftSta = 0;
+	_TreeRightSta = 0;
+	_Pouch = false;
+	_Help = false;
+	_IconsClosed = true;
 }
 
 void KingdomGame::SwitchMtoA() {
