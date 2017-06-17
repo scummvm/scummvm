@@ -720,7 +720,7 @@ void KingdomGame::GPLogic1() {
 			int oldPMovie = _PMovie;
 			PlayMovie(208);
 			_PMovie = oldPMovie;
-			_ASMode = 0;
+			_ASMode = false;
 			RestoreAS();
 			_Help = 1;
 			_Eye = 1;
@@ -735,7 +735,7 @@ void KingdomGame::GPLogic1() {
 			int oldPMovie = _PMovie;
 			PlayMovie(207);
 			_PMovie = oldPMovie;
-			_ASMode = 0;
+			_ASMode = false;
 			RestoreAS();
 			_Help = 1;
 			_Eye = 1;

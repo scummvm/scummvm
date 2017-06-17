@@ -55,7 +55,7 @@ namespace Kingdom {
 	extern char *_RezNames[];
 	extern int _MapExit[];
 	extern int _EMLTable[];
-
+	extern int _ZoomTable[81][9][2];
 	struct KingArtEntry {
 		uint8 Width;
 		uint8 Height;
@@ -156,6 +156,7 @@ namespace Kingdom {
 		int _CursorY;
 		int _OldCursorX;
 		int _OldCursorY;
+		int _IconSel;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D74C;
@@ -259,6 +260,7 @@ namespace Kingdom {
 		void CheckSaveGame();
 		void CheckMainScreen();
 		bool ChkDesertObstacles();
+		void SwitchAtoM();
 		void SwitchMtoA();
 		void DrawIcon(int x, int y, int index);
 		int WaitKey();

@@ -31,11 +31,11 @@ void KingdomGame::GPLogic4() {
 			PlaySound(0);
 			_ATimer = 133;
 		}
-		if (_ASMode == 1) {
+		if (_ASMode) {
 			SwitchMtoA();
 			_MapStat = 0;
 			_OldStatPlay--;
-			_ASMode = 0;
+			_ASMode = false;
 		}
 		SaveAS();
 		FadeToBlack2();
@@ -237,13 +237,13 @@ void KingdomGame::GPLogic4_SP901() {
 	
 	_IconRedraw = true;
 	if (_UserInput == 0x2F1) {
-		_ASMode = 0;
+		_ASMode = false;
 		RestoreAS();
 		_StatPlay = _OldStatPlay;
 		_LoopFlag = true;
 	} else {
 		if (_Health == 10 || _Health == 6 || _Health == 2 || _UserInput < 0x400 || _UserInput > 0x427) {
-			_ASMode = 0;
+			_ASMode = false;
 			RestoreAS();
 			_StatPlay = _OldStatPlay;
 		} else {
