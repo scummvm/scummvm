@@ -117,7 +117,7 @@ static const char *const ITEM_DESCRIPTIONS[46] = {
 	"A photograph"
 };
 static const char *const ITEM_DESCRIPTIONS_DE[46] = {
-	"Der linke Arm des OberkellnerBots im Besitz eines Schl\xFC""nssel\x73 ",
+	"Der linke Arm des OberkellnerBots im Besitz eines Schl\xFC""ssels ",
 	"Der linke Arm des OberkellnerBots",
 	"Der rechte Arm des OberkellnerBots, im Besitz von Titanias Geh\xF6""rmodul",
 	"Der rechte Arm des OberkellnerBots",
