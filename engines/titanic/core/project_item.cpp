@@ -488,6 +488,7 @@ SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
 bool CProjectItem::readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
 	header._thumbnail = nullptr;
+	header._totalFrames = 0;
 
 	// Validate the header Id
 	file->unsafeRead(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
