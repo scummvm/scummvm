@@ -194,6 +194,12 @@ void Scene::mouseClick(Common::Point coords) {
 	}
 }
 
+/**
+ * Loads scene information from test.rdi
+ * Note that the original loads everything with a single read into a structure,
+ * which is why there are some pointers saved in the resource file - however,
+ * these are set to zero
+ */
 void Scene::loadSceneInfo() {
 	const uint32 sceneInfoSize = 3784;
 	const uint32 headerRDI = MKTAG('R', 'D', 'I', '\0');
@@ -208,13 +214,13 @@ void Scene::loadSceneInfo() {
 	uint32 header = indexFile.readUint32BE();
 	if (header != headerRDI)
 		error("Invalid resource - %s", sceneIndexFileName);
+	indexFile.skip(2);	// room count, unused (set to 100)
 
 	indexFile.seek(sceneInfoSize * _curScene, SEEK_CUR);
 
-	// TODO: These can be set to larger numbers than MAX_DETAILS
 	_sceneInfo->staticDetailsCount = indexFile.readUint16LE();
 	_sceneInfo->animatedDetailsCount = indexFile.readUint16LE();
-	indexFile.skip(6);
+	indexFile.skip(4);	// pointer to sprites
 
 	// Animated details
 	for (int i = 0; i < MAX_DETAILS; i++) {
