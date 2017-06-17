@@ -232,7 +232,7 @@ bool Audio32::channelShouldMix(const AudioChannel &channel) const {
 // completely fill the audio buffer, the functionality of
 // all these original functions is combined here and
 // simplified.
-int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
+int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
 	if (_pausedAtTick != 0 || _numActiveChannels == 0) {
@@ -244,7 +244,6 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 	// the same time we need to be able to clear out any
 	// finished channels on a regular basis
 	_inAudioThread = true;
-
 	freeUnusedChannels();
 
 	const bool playOnlyMonitoredChannel = getSciVersion() != SCI_VERSION_3 && _monitoredChannelIndex != -1;
@@ -476,7 +475,7 @@ void Audio32::lockResource(const ResourceId resourceId, const bool lock) {
 
 void Audio32::freeUnusedChannels() {
 	Common::StackLock lock(_mutex);
-	for (int channelIndex = 0; channelIndex < _numActiveChannels; ++channelIndex) {
+	for (int16 channelIndex = 0; channelIndex < _numActiveChannels; ++channelIndex) {
 		const AudioChannel &channel = getChannel(channelIndex);
 		if (!channel.robot && channel.stream->endOfStream()) {
 			if (channel.loop) {
