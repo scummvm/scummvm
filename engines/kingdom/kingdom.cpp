@@ -748,7 +748,220 @@ void KingdomGame::CheckSaveGame() {
 }
 
 void KingdomGame::CheckMainScreen() {
-	debug("STUB: CheckMainScreen");
+	if (!_CTimerFlag || _StatPlay == 900 || _StatPlay == 901)
+		return;
+
+	_CTimerFlag = false;
+	if (_NoIFScreen)
+		return;
+
+	if (_HealthOld != _Health) {
+		if (_HealthTmr > 0)
+			_HealthTmr--;
+		else {
+			if (_Health <= _HealthOld)
+				_HealthOld--;
+			else
+				_HealthOld++;
+
+			int iconIndex;
+			if (_HealthOld == 0)
+				iconIndex = 12 - 1;
+			else
+				iconIndex = 12 - _HealthOld;
+
+			DrawIcon(4, 0, iconIndex);
+			_HealthTmr = 1;
+		}
+	}
+
+	if (_IconRedraw) {
+		_IconRedraw = false;
+		DrawIcon(4, 0, 12 - _HealthOld);
+		DrawIcon(11, 178, _IconPic[0]);
+		DrawIcon(38, 178, _IconPic[1]);
+		DrawIcon(65, 178, _IconPic[2]);
+		DrawIcon(92, 178, _IconPic[3]);
+		DrawIcon(119, 178, _IconPic[4]);
+		DrawIcon(146, 178, _IconPic[5]);
+		DrawIcon(173, 178, _IconPic[6]);
+		_TreeLeftPic = 0;
+		_TreeRightPic = 0;
+		_TreeEyeTimer = 0;
+		if (_SkylarTimer != 0 || _ATimer != 0) {
+			_TreeHGTimer = 0;
+			_TreeHGUPic = 0;
+		}
+		if (_TideCntl)
+			DrawPic(178);
+	}
+
+	for (int i = 0; i < 7; i++) {
+		int wrkNodeNum = _NodeNum;
+		if (_TSIconOnly)
+			wrkNodeNum = 79;
+		if (_NodeNum == 56 && _Inventory[8] < 1 && _Wizard)
+			wrkNodeNum = 80;
+		if (_NodeNum == 21 && word_2D770 == 9)
+			wrkNodeNum = 81;
+		int idx = _IconActTable[wrkNodeNum][i];
+
+		if (_Inventory[idx] >= 1 && word_2D77E != 1 && word_2D7CC != 1 && !_ItemInhibit && !_IconsClosed) {
+			if (_IconPic[i] != 12 + idx) {
+				if (_IconPic[i] == 89 + i)
+					_IconPic[i] = 96 + i;
+				else if (_IconPic[i] == 96 + i)
+					_IconPic[i] = 31;
+				else if (_IconPic[i] == 31)
+					_IconPic[i] = 32;
+				else if (_IconPic[i] == 32)
+					_IconPic[i] = 12 + idx;
+				else
+					_IconPic[i] = 89 + i;
+			} 
+		} else if (_IconSel != i && _IconPic[i] != 89 + i) {
+			if (_IconPic[i] != 12 + idx)
+				_IconPic[i] = 32;
+			else if (_IconPic[i] == 32)
+				_IconPic[i] = 31;
+			else if (_IconPic[i] == 31)
+				_IconPic[i] = 96 + i;
+			else if (_IconPic[i] == 96 + i)
+				_IconPic[i] = 32;
+			else
+				_IconPic[i] = 89 + i;
+		} else
+			continue;
+
+		int posX = (27 * i) + 11;
+		DrawIcon(posX, 178, _IconPic[i]);
+	}
+
+	switch (_TreeLeftSta) {
+	case 0:
+		if (_TreeLeftPic != 33) {
+			DrawIcon(243, 141, 33);
+			_TreeLeftPic = 33;
+		}
+		break;
+	case 1:
+		if (_TreeLeftPic != 34) {
+			DrawIcon(243, 141, 34);
+			_TreeLeftPic = 34;
+		}
+		break;
+	case 2:
+		if (!_Replay) {
+			if (_TreeLeftPic != 33) {
+				DrawIcon(243, 141, 33);
+				_TreeLeftPic = 33;
+			}
+		} else if (_TreeLeftPic != 35) {
+			DrawIcon(243, 141, 35);
+			_TreeLeftPic = 35;
+		}
+		break;
+	case 3:
+		if (_TreeLeftPic != 36) {
+			DrawIcon(243, 141, 36);
+			_TreeLeftPic = 36;
+		}
+		break;
+	default:
+		_TreeLeftPic = 33;
+		_TreeLeftSta = 0;
+		DrawIcon(243, 141, 33);
+		break;
+	}
+
+	switch (_TreeRightSta) {
+	case 0:
+		if (_TreeRightPic == 37) {
+			DrawIcon(290, 143, 37);
+			_TreeRightPic = 37;
+		}
+		break;
+	case 1:
+		if (_Help) {
+			if (_TreeRightPic != 38) {
+				DrawIcon(290, 143, 38);
+				_TreeRightPic = 38;
+			}
+		} else if (_TreeRightPic != 37) {
+			DrawIcon(290, 143, 37);
+			_TreeRightPic = 37;
+		}
+		break;
+	case 2:
+		if (_TreeRightPic != 39) {
+			DrawIcon(290, 143, 39);
+			_TreeRightPic = 39;
+		}
+		break;
+	default:
+		_TreeRightPic = 37;
+		_TreeRightSta = 0;
+		DrawIcon(290, 143, 37);
+		break;
+	}
+
+	if (_Eye) {
+		if (_TreeEyeTimer == 0) {
+			_TreeEyePic = _TEASeq[_TreeEyeSta][0];
+			DrawIcon(261, 51, _TreeEyePic);
+			_TreeEyeTimer, _TEASeq[_TreeEyeSta][1];
+			_TreeEyeSta++;
+			if (_TreeEyeSta == 5)
+				_TreeEyeSta = 0;
+		} else
+			_TreeEyeTimer--;
+	} else if (_TreeEyePic != 37) {
+		DrawIcon(261, 51, 146);
+		_TreeEyePic = 37;
+		_TreeEyeSta = 0;
+		_TreeEyeTimer = 0;
+	}
+
+	int timer = 0;
+	int delta = 7; // CHECKME: the variable is the same than the one used for the first for(), and the value should therefore be 7  
+	if (_SkylarTimer != 0) {
+		delta = 772;
+		timer = _SkylarTimer;
+	}
+	if (_ATimer != 0) {
+		delta = 19;
+		timer = _ATimer;
+	}
+
+	if (timer == 0) {
+		if (_TreeHGUPic != 147) {
+			EraseCursor();
+			DrawIcon(249, 171, 147);
+			_TreeHGUPic = 147;
+		}
+	} else if (_TreeHGTimer == 0) {
+		_TreeHGPic = _HGASeq[_TreeHGSta][0];
+		DrawIcon(249, 185, _TreeHGPic);
+		_TreeHGTimer = _HGASeq[_TreeHGSta][1];
+		_TreeHGSta++;
+		if (_TreeHGSta > 3)
+			_TreeHGSta = 0;
+
+		int var2 = 6;
+		while (true) {
+			if (timer <= 1)
+				break;
+
+			timer -= delta;
+			if (timer > 1)
+				var2--;
+			else {
+				DrawIcon(249, 171, 40 + var2);
+				_TreeHGUPic = 40 + var2;
+			}
+		}
+	} else
+		_TreeHGTimer--;
 }
 
 bool KingdomGame::ChkDesertObstacles() {
