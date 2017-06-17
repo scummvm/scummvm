@@ -317,6 +317,68 @@ static const CommonPhrase BELLBOT_COMMON_PHRASES[] = {
 	{ "sauce gets stuck to the chicken", 0x3156B, 0x00, 0 },
 	{ nullptr, 0, 0, 0 }
 };
+static const CommonPhrase BELLBOT_COMMON_PHRASES_DE[] = {
+	{ "was ist mit ihr los", 0x30ff9, 0x7b, 0 },
+	{ "was fehlt ihr", 0x30ff9, 0x7b, 0 },
+	{ "was hat sie denn", 0x30ff9, 0x7b, 0 },
+	{ "was ist denn mit ihr", 0x30ff9, 0x7b, 0 },
+	{ "was stimmt denn nicht mit ihr", 0x30ff9, 0x7b, 0 },
+	{ "was ist mit titania los", 0x30ff9, 0x7b, 0 },
+	{ "was fehlt titania", 0x30ff9, 0x7b, 0 },
+	{ " was ist denn mit titania", 0x30ff9, 0x7b, 0 },
+	{ "was ist denn mit titania los", 0x30ff9, 0x7b, 0 },
+	{ "etwas anderes zu essen", 0x30e1d, 0, 3 },
+	{ "noch zu essen", 0x30e1d, 0, 3 },
+	{ "noch essen", 0x30e1d, 0, 3 },
+	{ "anderes essen", 0x30e1d, 0, 3 },
+	{ "etwas gutes zu essen", 0x30e1d, 0, 3 },
+	{ "vernuenftiges essen", 0x30e1d, 0, 3 },
+	{ "leckeres essen", 0x30e1d, 0, 3 },
+	{ "lecker essen", 0x30e1d, 0, 3 },
+	{ "besseres essen", 0x30e1d, 0, 3 },
+	{ "gutes zu essen", 0x30e1d, 0, 3 },
+	{ "aufheitern", 0x31011, 0, 0 },
+	{ "heiter mich mal auf", 0x31011, 0, 0 },
+	{ "kriege ich ein besseres zimmer", 0x30e8a, 0, 3 },
+	{ "kriege ich ein besseres zimmer", 0x30e8a, 0, 2 },
+	{ "kriege ich eine bessere kabine", 0x30e8a, 0, 3 },
+	{ "kriege ich eine bessere kabine", 0x30e8a, 0, 2 },
+	{ "komme ich an eine schoenere kabine", 0x30e8a, 0, 3 },
+	{ "komme ich an eine schoenere kabine", 0x30e8a, 0, 2 },
+	{ "kriege ich eine schoenere kabine", 0x30e8a, 0, 3 },
+	{ "kriege ich eine schoenere kabine", 0x30e8a, 0, 2 },
+	{ "bekomme ich eine schoenere kabine", 0x30e8a, 0, 3 },
+	{ "bekomme ich eine schoenere kabine", 0x30e8a, 0, 2 },
+	{ "komme ich an eine bessere kabine", 0x30e8a, 0, 3 },
+	{ "komme ich an eine bessere kabine", 0x30e8a, 0, 2 },
+	{ "ich verstehe", 0x30d75, 0x6d, 0 },
+	{ "das wusste ich", 0x30d75, 0x6d, 0 },
+	{ "wusste ich es doch", 0x30d75, 0x6d, 0 },
+	{ "ich weiss", 0x30d75, 0x6d, 0 },
+	{ "ich kenne", 0x30d75, 0x6d, 0 },
+	{ "hilfst du nicht", 0x30d6f, 0x6d, 0 },
+	{ "du hilfst nicht", 0x30d6f, 0x6d, 0 },
+	{ "nicht hilfsbereit", 0x30d6f, 0x6d, 0 },
+	{ "nicht freundlich", 0x30d6f, 0x6d, 0 },
+	{ "nicht zuvorkommend", 0x30d6f, 0x6d, 0 },
+	{ "hilfst nicht", 0x30d6f, 0x6d, 0 },
+	{ "keine hilfe", 0x30d6f, 0x6d, 0 },
+	{ "hilfst du mir nicht", 0x30d6f, 0x6d, 0 },
+	{ "entschuldig", 0x30d76, 0x6d, 0 },
+	{ "verzeihung", 0x30d76, 0x6d, 0 },
+	{ "tut mir leid", 0x30d76, 0x6d, 0 },
+	{ "tut mir aber leid", 0x30d76, 0x6d, 0 },
+	{ "ich meinte es nicht so", 0x30d76, 0x6d, 0 },
+	{ "wollte ich nicht sagen", 0x30d76, 0x6d, 0 },
+	{ "nicht so gemeint", 0x30d76, 0x6d, 0 },
+	{ "nichts fuer ungut", 0x30d76, 0x6d, 0 },
+	{ "spielst du golf", 0x313b6, 0, 0 },
+	{ "golf spielen", 0x313b6, 0, 0 },
+	{ "spiele golf", 0x313b6, 0, 0 },
+	{ "sosse klebt am huhn fest", 0x3156b, 0, 0 },
+	{ "die sosse nicht von dem huehnchen los", 0x3156b, 0, 0 },
+	{ nullptr, 0, 0, 0 }
+};
 
 struct FrameRange {
 	int _startFrame;
@@ -1561,6 +1623,7 @@ void writeData() {
 	writeWords("Words/Doorbot", WORDS_DOORBOT[_version], 3);
 	writeWords("Words/Liftbot", WORDS_LIFTBOT[_version]);
 	writePhrases("Phrases/Bellbot", BELLBOT_COMMON_PHRASES);
+	writePhrases("Phrases/Bellbot/DE", BELLBOT_COMMON_PHRASES_DE);
 
 	writeResponseTree();
 	writeNumbers();
