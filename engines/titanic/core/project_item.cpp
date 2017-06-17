@@ -177,6 +177,7 @@ void CProjectItem::loadGame(int slotId) {
 	TitanicSavegameHeader header;
 	readSavegameHeader(&file, header);
 	delete header._thumbnail;
+	g_vm->_events->setTotalPlayTicks(header._totalFrames);
 
 	// Load the contents in
 	CProjectItem *newProject = loadData(&file);
@@ -545,7 +546,7 @@ void CProjectItem::writeSavegameHeader(SimpleFile *file, TitanicSavegameHeader &
 	file->writeUint16LE(td.tm_mday);
 	file->writeUint16LE(td.tm_hour);
 	file->writeUint16LE(td.tm_min);
-	file->writeUint32LE(g_vm->_events->getFrameCounter());
+	file->writeUint32LE(g_vm->_events->getTotalPlayTicks());
 }
 
 Graphics::Surface *CProjectItem::createThumbnail() {

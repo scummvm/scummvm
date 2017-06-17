@@ -31,7 +31,7 @@
 namespace Titanic {
 
 Events::Events(TitanicEngine *vm): _vm(vm), _frameCounter(1),
-		_priorFrameTime(0), _specialButtons(0) {
+		_totalFrames(0), _priorFrameTime(0), _specialButtons(0) {
 }
 
 void Events::pollEvents() {
@@ -109,6 +109,7 @@ bool Events::checkForNextFrameCounter() {
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
 		++_frameCounter;
+		++_totalFrames;
 		_priorFrameTime = milli;
 
 		// Handle any idle updates
@@ -128,6 +129,14 @@ bool Events::checkForNextFrameCounter() {
 
 uint32 Events::getTicksCount() const {
 	return _frameCounter * GAME_FRAME_TIME;
+}
+
+uint32 Events::getTotalPlayTicks() const {
+	return _totalFrames;
+}
+
+void Events::setTotalPlayTicks(uint frames) {
+	_totalFrames = frames;
 }
 
 void Events::sleep(uint time) {

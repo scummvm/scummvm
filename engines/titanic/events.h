@@ -91,6 +91,7 @@ private:
 	Common::Stack<CEventTarget *> _eventTargets;
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
+	uint _totalFrames;
 	Common::Point _mousePos;
 	uint _specialButtons;
 
@@ -147,9 +148,19 @@ public:
 	uint32 getFrameCounter() const { return _frameCounter; }
 
 	/**
-	 * Get the elapsed playtime
+	 * Return the current game ticks
 	 */
 	uint32 getTicksCount() const;
+
+	/**
+	 * Get the total number of playtime frames/ticks
+	 */
+	uint32 getTotalPlayTicks() const;
+
+	/**
+	 * Set the total number of frames/ticks played
+	 */
+	void setTotalPlayTicks(uint frames);
 
 	/**
 	 * Sleep for a specified period of time
