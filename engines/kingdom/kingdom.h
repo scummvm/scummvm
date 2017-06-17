@@ -57,6 +57,9 @@ namespace Kingdom {
 	extern int _EMLTable[];
 	extern int _ZoomTable[81][9][2];
 	extern int _IconActTable[82][7];
+	extern int _TEASeq[6][2];
+	extern int _HGASeq[4][2];
+
 	struct KingArtEntry {
 		uint8 Width;
 		uint8 Height;
@@ -110,11 +113,15 @@ namespace Kingdom {
 		int _HealthOld;
 		int _HealthTmr;
 		int _TreeEyeTimer;
+		int _TreeEyePic;
+		int _TreeEyeSta;
 		int _TreeHGTimer;
+		int _TreeHGPic;
 		int _TreeHGUPic;
 		int _TreeLeftPic;
 		int _TreeRightPic;
 		int _TreeRightSta;
+		int _TreeHGSta;
 		bool _TSIconOnly;
 		bool _LastObs;
 		bool _Pouch;
