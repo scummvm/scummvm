@@ -56,6 +56,7 @@ namespace Kingdom {
 	extern int _MapExit[];
 	extern int _EMLTable[];
 	extern int _ZoomTable[81][9][2];
+	extern int _IconActTable[82][7];
 	struct KingArtEntry {
 		uint8 Width;
 		uint8 Height;

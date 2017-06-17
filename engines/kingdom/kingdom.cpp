@@ -649,15 +649,72 @@ void KingdomGame::InventoryAdd(int item) {
 }
 
 void KingdomGame::DrawPic(int reznum) {
-	debug("STUB: DrawPic");
+	EraseCursor();
+	LoadAResource(reznum);
+
+	Image::IFFDecoder decoder;
+	if (!decoder.loadStream(*_RezPointers[reznum]))
+		return;
+
+	const Graphics::Surface *surface = decoder.getSurface();
+
+	const byte *data = (const byte *)surface->getPixels();
+	::Graphics::Surface *screen = g_system->lockScreen();
+	for (uint curX = 0; curX < 320; curX++) {
+		for (uint curY = 0; curY < 200; curY++) {
+			const byte *src = data + (curY * 320) + curX;
+			byte *dst = (byte *)screen->getBasePtr(curX, curY);
+			if (*src != 0xFF)
+				*dst = *src;
+		}
+	}
+	g_system->unlockScreen();
+	g_system->updateScreen();
+
+	ReleaseAResource(reznum);
 }
 
 void KingdomGame::DisplayIcon(int reznum) {
-	debug("STUB: DisplayIcon");
+	PlaySound(0);
+	PlaySound(30);
+	SaveAS();
+	FShowPic(reznum);
+	_BTimer = 76;
+	ReadMouse();
+	
+	while(_BTimer != 0 && _MouseButton == 0) {
+		RefreshSound();
+		ReadMouse();
+	}
+
+	FadeToBlack1();
+	DrawRect(4, 17, 228, 161, 0);
+	RestoreAS();
 }
 
 void KingdomGame::SetATimer() {
-	debug("STUB: SetATimer");
+	_ATimerFlag = true;
+	_ATimer = 0;
+	int wrkNodeNum = _NodeNum;
+	if (word_2D77E == 1 || word_2D7CC == 1)
+		return;
+
+	if (_TSIconOnly != 0)
+		wrkNodeNum = 79;
+
+	if (_NodeNum == 56 && _Inventory[8] < 1 && _Wizard)
+		wrkNodeNum = 80;
+	
+	for (int i = 0; i < 7; i++) {
+		int idx = _IconActTable[wrkNodeNum][i];
+		if (_Inventory[idx] > 0) {
+			_ATimerFlag = false;
+			_ATimer = _Wizard ? 114 : 133;
+			PlaySound(0);
+			PlaySound(34);
+			break;
+		}
+	}
 }
 
 bool KingdomGame::Wound() {
