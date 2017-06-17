@@ -392,6 +392,7 @@ ObjectType &operator^=(ObjectType &a, ObjectType b);
 
 struct Object {
 	static const char *const defaultDescription;
+	static const char *const takeMessage;
 
 	Object()
 	    : _name("")
@@ -465,7 +466,7 @@ struct GameState {
 	char   nameSeen;
 	char   destination;
 	char   benOverlay;
-	bool   language;
+	char   language;
 	bool   corridorSearch;
 	bool   alarmOn;
 	bool   terminalStripConnected;
