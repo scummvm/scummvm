@@ -1229,6 +1229,24 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 			scaledPosition.y = scaledPosition.y * 128 / screenItem._scale.y;
 		}
 
+		// TODO/HACK: When clicking at the very bottom edge of a scaled cel, it
+		// is possible that the calculated `scaledPosition` ends up one pixel
+		// outside of the bounds of the cel. It is not known yet whether this is
+		// a bug that also existed in SSCI (and so garbage memory would be read
+		// there), or if there is actually an error in our scaling of
+		// `ScreenItem::_screenRect` and/or `scaledPosition`. For now, just do
+		// an extra bounds check and return so games don't crash when a user
+		// clicks an unlucky point. Later, double-check the disassembly and
+		// either confirm this is a suitable fix (because SSCI just read bad
+		// memory) or fix the actual broken thing and remove this workaround.
+		if (scaledPosition.x < 0 ||
+			scaledPosition.y < 0 ||
+			scaledPosition.x >= celObj._width ||
+			scaledPosition.y >= celObj._height) {
+
+			return false;
+		}
+
 		uint8 pixel = celObj.readPixel(scaledPosition.x, scaledPosition.y, mirrorX);
 		return pixel != celObj._skipColor;
 	}
