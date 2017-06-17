@@ -45,10 +45,6 @@ uint32 TitanicEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
-bool TitanicEngine::isDemo() const {
-	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
-}
-
 Common::Language TitanicEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
@@ -73,7 +69,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Titanic Engine (c)";
+		return "Titanic Engine (c) The Digital Village";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -86,10 +82,12 @@ public:
 
 bool TitanicMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	    (f == kSupportsListSaves) ||
+		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSimpleSavesNames);
 }

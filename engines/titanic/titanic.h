@@ -149,8 +149,14 @@ public:
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
+	/**
+	 * Gets the game features
+	 */
 	uint32 getFeatures() const;
-	bool isDemo() const;
+
+	/**
+	 * Returns the language for the game
+	 */
 	Common::Language getLanguage() const;
 
 	/**
