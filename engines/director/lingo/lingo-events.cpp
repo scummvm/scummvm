@@ -21,6 +21,7 @@
  */
 
 #include "director/lingo/lingo.h"
+#include "director/frame.h"
 
 namespace Director {
 
