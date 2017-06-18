@@ -1032,9 +1032,15 @@ void KingdomGame::DrawIcon(int x, int y, int index) {
 	debug("STUB: DrawIcon");
 }
 
-int KingdomGame::WaitKey() {
-	int retval = 0;
+int KingdomGame::GetAKey() {
+	DrawCursor();
+	if (_MouseButton != 0 && _MouseDebound == 0) {
+		_MouseDebound = true;
+		return (_MouseButton == 2) ? 2 : 1;
+	}
 
+	int retval = 0;
+	_MouseDebound = false;
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -1079,6 +1085,10 @@ int KingdomGame::WaitKey() {
 	return retval;
 }
 
+int KingdomGame::WaitKey() {
+	return GetAKey();
+}
+
 void KingdomGame::DrawCursor() {
 	ReadMouse();
 
@@ -1086,7 +1096,8 @@ void KingdomGame::DrawCursor() {
 	g_system->getEventManager()->pollEvent(event);
 	_CursorX = event.mouse.x;
 	_CursorY = event.mouse.y;
-	_CursorDef = CursorType();
+
+	CursorType();
 	SetCursor(_CursorDef);
 	_OldCursorX = _CursorX;
 	_OldCursorY = _CursorY;
@@ -1096,13 +1107,149 @@ void KingdomGame::DrawCursor() {
 	_CursorDrawn = true;
 }
 
+void KingdomGame::CursorType() {
+	_MouseValue = 0;
+	if (_CurrMap != 1 && _StatPlay >= 30) {
+		int var2 = _StatPlay == 901 ? 80 : 0;
+		int var6 = _StatPlay == 901 ? 35 : 16;
+		for (int i = 0; i < var6 + 1; i++) {
+			if (i == var6) {
+				int tmpVal = checkMouseMapAS();
+				if (tmpVal == -1) {
+					CursorTypeExit();
+					return;
+				} else
+					_MouseValue = tmpVal;
+			} else if (_CursorX >= _MouseMapMS[var2 + i]._minX && _CursorX < _MouseMapMS[var2 + i]._maxX && _CursorY >= _MouseMapMS[var2 + i]._minY && _CursorY < _MouseMapMS[var2 + i]._maxY) {
+				_MouseValue = _MouseMapMS[var2 + i]._mouseValue;
+				break;
+			}
+		}
+	} else {
+		int tmpVal = checkMouseMapAS();
+		if (tmpVal == -1) {
+			CursorTypeExit();
+			return;
+		} else {
+			_MouseValue = tmpVal;
+		}
+	}
 
-int KingdomGame::CursorType() {
-	debug("STUB: CursorType");
-	// Default cursor
-	return 0x19C;
+	switch(_MouseValue) {
+	case 0x18A:
+		if (_Eye)
+			_MouseValue = _ASMode == 0 ? 0x43A : 0x43B;
+		else
+			_MouseValue = 0;
+		break;
+	case 0x18C:
+		if (_TreeLeftSta == 1)
+			_MouseValue = 0x43D;
+		else if (_TreeLeftSta == 3)
+			_MouseValue = 0x43F;
+		else if (_TreeLeftSta == 0)
+			_MouseValue = 0;
+		else if (_TreeLeftSta == 2 && _Replay)
+			_MouseValue = 0x43E;
+		else
+			_MouseValue = 0;
+		break;
+	case 0x18D:
+		if (_TreeRightSta == 1)
+			_MouseValue = _Help ? 0x43C : 0;
+		if (_TreeRightSta == 2)
+			_MouseValue = 0x440;
+		break;
+	case 0x24A:
+		if (_SaveFile == 0)
+			_MouseValue = 0;
+		break;
+	case 0x407:
+		if (_StatPlay == 182 && word_2D76A < 9)
+			_MouseValue = 0;
+		break;
+	case 0x40D:
+		if (word_2D77E == 1)
+			_MouseValue = 0;
+		break;
+	case 0x41F:
+		if (word_2D784 == 0)
+			_MouseValue = 0;
+		break;
+	case 0x422:
+	case 0x425:
+		if (!_Wizard)
+			_MouseValue = 0;
+		break;
+	case 0x428:
+		if (_NodeNum == 5 && _GameMode != 2 && _Spell1)
+			_MouseValue = 0;
+		break;
+	case 0x42A:
+		if (_NodeNum == 5 && _GameMode != 2 && _Spell2)
+			_MouseValue = 0;
+		break;
+	case 0x42B:
+		if (_NodeNum == 5 && _GameMode != 2 && _Spell3)
+			_MouseValue = 0;
+		break;
+	case 0x445:
+		if (_StatPlay == 161 && word_2D766 == 0 && _Wizard)
+			_MouseValue = 0x450;
+		break;
+	case 0x44F:
+		if (!_Pouch)
+			_MouseValue = 0;
+		break;
+	case 0457:
+		if (!_TideCntl)
+			_MouseValue = 0;
+		break;
+	}
+
+	_IconSelect = 9;
+	for (int var6 = 0; var6 < 8; var6++) {
+		if (_MouseValue == 181 + var6) {
+			int var2 = _NodeNum;
+			if (_TSIconOnly!= 0)
+				var2 = 79;
+			if (_NodeNum == 56 && _Inventory[8] < 1 && _Wizard)
+				var2 = 80;
+			int indx = _IconActTable[var2][var6];
+			if (_Inventory[indx] != 0 && word_2D77E != 1 && word_2D7CC != 1 && !_IconsClosed && !_ItemInhibit) {
+				_MouseValue = indx + 0x428;
+				_IconSelect = var6;
+				break;
+			}
+			_MouseValue = 0;
+		}
+	}
+
+	if (_CurrMap == 11) {
+		if (_MouseValue > 0x427 && _MouseValue < 0x43A) {
+			if (_Inventory[_MouseValue - 0x428] < 1)
+				_MouseValue = 0x241;
+		}
+	}
+	CursorTypeExit();
 }
 
+void KingdomGame::CursorTypeExit() {
+	if (_MouseValue >= 0x400)
+		_CursorDef = _CursorTable[_MouseValue - 0x400];
+	else 
+		_CursorDef = (_MouseValue != 0) ? 0x68 : 0x67;
+}
+
+int KingdomGame::checkMouseMapAS() {
+	int var6 = _CurrMap == 11 ? 32 : 16;
+	for (int i = 0; i < var6; i++) {
+		if (_CursorX >= _MouseMapAS[_CurrMap][i]._minX && _CursorX < _MouseMapAS[_CurrMap][i]._maxX
+		 && _CursorY >= _MouseMapAS[_CurrMap][i]._minY && _CursorY < _MouseMapAS[_CurrMap][i]._maxY)
+			return _MouseMapAS[_CurrMap][i]._mouseValue;
+	}
+	return -1;
+}
 void KingdomGame::SetCursor(int cursor) {
 	KingArtEntry Cursor = _kingartEntries[cursor / 4];
 	CursorMan.replaceCursor(Cursor.data, Cursor.Width, Cursor.Height, 0, 0, 255);
