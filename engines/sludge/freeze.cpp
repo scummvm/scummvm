@@ -70,37 +70,17 @@ void freezeGraphics() {
 	freezeSurface.create(w, h, *g_sludge->getScreenPixelFormat());
 
 	// Temporarily disable AA
+#if 0
 	int antiAlias = gameSettings.antiAlias;
 	gameSettings.antiAlias = 0;
-
-	int x = 0;
-	while (x < winWidth) {
-		int y = 0;
-
-		if (winWidth - x < realWinWidth) {
-			w = winWidth - x;
-		} else {
-			w = realWinWidth;
-		}
-
-		while (y < winHeight) {
-
-			if (winHeight - y < realWinHeight) {
-				h = winHeight - y;
-			} else {
-				h = realWinHeight;
-			}
-			drawBackDrop();// Draw the room
-			drawZBuffer(cameraX, cameraY, false);
-			drawPeople();// Then add any moving characters...
-			freezeSurface.copyFrom(renderSurface);
-
-			y += h;
-		}
-		x += w;
-	}
-
+#endif
+	drawBackDrop();// Draw the room
+	drawZBuffer(cameraX, cameraY, false);
+	drawPeople();// Then add any moving characters...
+	freezeSurface.copyFrom(renderSurface);
+#if 0
 	gameSettings.antiAlias = antiAlias;
+#endif
 }
 
 bool freeze() {
