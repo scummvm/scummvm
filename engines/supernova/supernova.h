@@ -84,6 +84,7 @@ private:
 	byte _menuBrightness;
 	byte _brightness;
 	uint _delay;
+	bool _messageDisplayed;
 
 	uint getDOSTicks();
 	void initData();
@@ -96,10 +97,12 @@ private:
 	void playSoundMod(int filenumber);
 	void stopSound();
 	void renderImage(int filenumber, int section, bool fullscreen = false);
-	void renderMessage(char *text, MessagePosition position);
+	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
+	void removeMessage();
 	void renderText(const char *text, int x, int y, byte color);
 	void renderBox(int x, int y, int width, int height, byte color);
 };
+
 
 class Inventory {
 public:
