@@ -767,6 +767,9 @@ reg_t SoundCommandParser::kDoSoundSetLoop(EngineState *s, int argc, reg_t *argv)
 
 	debugC(kDebugLevelSound, "kDoSound(setLoop): %04x:%04x, %d", PRINT_REG(obj), value);
 
+	const uint16 loopCount = value == -1 ? 0xFFFF : 1;
+	writeSelectorValue(_segMan, obj, SELECTOR(loop), loopCount);
+
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		// Apparently, it's perfectly normal for a game to call cmdSetSoundLoop
@@ -781,9 +784,6 @@ reg_t SoundCommandParser::kDoSoundSetLoop(EngineState *s, int argc, reg_t *argv)
 		}
 		return s->r_acc;
 	}
-
-	const uint16 loopCount = value == -1 ? 0xFFFF : 1;
-	writeSelectorValue(_segMan, obj, SELECTOR(loop), loopCount);
 
 #ifdef ENABLE_SCI32
 	if (_soundVersion >= SCI_VERSION_2_1_MIDDLE && musicSlot->isSample) {
