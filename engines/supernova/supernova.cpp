@@ -431,4 +431,41 @@ Object *Inventory::get(size_t index) {
 	return NULL;
 }
 
+ScreenBufferStack::ScreenBufferStack()
+    : _last(_buffer) {
+}
+
+void ScreenBufferStack::push(int x, int y, int width, int height, int pitch) {
+	if (_last == ARRAYEND(_buffer))
+		return;
+
+	byte *pixels = new byte[width * height];
+	const byte *screen = static_cast<byte *>(g_system->lockScreen()->getBasePtr(x, y));
+	for (int i = 0; i < height; ++i) {
+		Common::copy(screen, screen + width, pixels);
+		screen += pitch * i;
+	}
+	g_system->unlockScreen();
+
+	_last->_x = x;
+	_last->_y = y;
+	_last->_width = width;
+	_last->_height = height;
+	_last->_pitch = pitch;
+	_last->_pixels = pixels;
+
+	++_last;
+}
+
+void ScreenBufferStack::restore() {
+	if (_last == _buffer)
+		return;
+
+	g_system->lockScreen()->copyRectToSurface(
+	            _last->_pixels, _last->_width, _last->_x, _last->_y,
+	            _last->_width, _last->_height);
+	g_system->unlockScreen();
+	--_last;
+}
+
 }

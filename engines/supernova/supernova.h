@@ -37,6 +37,35 @@
 
 namespace Supernova {
 
+struct ScreenBuffer {
+	ScreenBuffer()
+	    : _x(0)
+	    , _y(0)
+	    , _width(0)
+	    , _height(0)
+	    , _pitch(0)
+	    , _pixels(0)
+	{}
+
+	byte *_pixels;
+	int _x;
+	int _y;
+	int _width;
+	int _height;
+	int _pitch;
+};
+class ScreenBufferStack {
+public:
+	ScreenBufferStack();
+
+	void push(int x, int y, int width, int height, int pitch = 320);
+	void restore();
+
+private:
+	ScreenBuffer _buffer[8];
+	ScreenBuffer *_last;
+};
+
 class SupernovaEngine : public Engine {
 public:
 	SupernovaEngine(OSystem *syst);
