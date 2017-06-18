@@ -809,14 +809,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD },
 
-	// Gabriel Knight - German Windows CD (from Tobis87)
-	// SCI interpreter version 2.000.000
-	{"gk1", "CD", {
-		{"resource.map", 0, "a7d3e55114c65647310373cb390815ba", 11392},
-		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13400497},
-		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD },
-
 	// Gabriel Knight - Spanish Windows CD (from jvprat)
 	// Executable scanning reports "2.000.000", VERSION file reports "1.000.000, April 13, 1995"
 	{"gk1", "CD", {
