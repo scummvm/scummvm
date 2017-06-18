@@ -50,6 +50,7 @@ extern inputType input;
 extern int cameraX, cameraY;
 extern float cameraZoom;
 extern Graphics::Surface renderSurface;
+extern Graphics::Surface backdropSurface;
 
 unsigned char currentBurnR = 0, currentBurnG = 0, currentBurnB = 0;
 
@@ -286,8 +287,11 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 	return true;
 }
 
-void pasteSpriteToBackDrop(int x1, int y1, sprite &single,
-		const spritePalette &fontPal) {
+void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal) {
+	x1 -= single.xhot;
+	y1 -= single.yhot;
+	Graphics::TransparentSurface tmp(single.surface, false);
+	tmp.blit(backdropSurface, x1, y1);
 #if 0
 	float tx1 = (float)(single.tex_x) / fontPal.tex_w[single.texNum];
 	float ty1 = 0.0;
@@ -382,8 +386,8 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single,
 		}
 		xoffset += viewportWidth;
 	}
-#endif
 	setPixelCoords(false);
+#endif
 }
 
 void burnSpriteToBackDrop(int x1, int y1, sprite &single,
