@@ -513,7 +513,7 @@ static const char *const MISSIVEOMAT_MESSAGES_DE[3] = {
 	"Sonderangebote der Blerontinischen Sand Gesellschaft 1% "
 	"(beachtenswert: die ziemlich h\xFC""bsche Miet-D\xFC""ne auf Seite 4)\n"
 	"\n"
-	"Insgesamt gesehen sind Sie Superst Erfolgreich.  Die Gesch\xE4""fte "
+	"Insgesamt gesehen sind Sie \xE4""u\xDF""erst Erfolgreich.  Die Gesch\xE4""fte "
 	"Florieren weiterhin.  Ihre Aktien sind in Sicherheit. Ihr Haar "
 	"sieht wie immer Toll aus. Teppich 14 mu\xDF"" gereinigt werden.\n"
 	"\n"
