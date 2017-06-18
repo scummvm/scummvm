@@ -576,6 +576,8 @@ private:
 	DirectorEngine *_vm;
 
 	int _floatPrecision;
+
+	bool dontPassEvent;
 };
 
 extern Lingo *g_lingo;
