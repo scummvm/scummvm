@@ -52,6 +52,20 @@ namespace Kingdom {
 		kDebugGeneral = 1 << 0
 	};
 
+	struct KingArtEntry {
+		uint8 Width;
+		uint8 Height;
+		byte* data;
+	};
+
+	struct HotSpot {
+		int16 _minX;
+		int16 _maxX;
+		int16 _minY;
+		int16 _maxY;
+		int16 _mouseValue;
+	};
+
 	extern char *_RezNames[];
 	extern int _MapExit[];
 	extern int _EMLTable[];
@@ -59,12 +73,9 @@ namespace Kingdom {
 	extern int _IconActTable[82][7];
 	extern int _TEASeq[6][2];
 	extern int _HGASeq[4][2];
-
-	struct KingArtEntry {
-		uint8 Width;
-		uint8 Height;
-		byte* data;
-	};
+	extern HotSpot _MouseMapMS[51];
+	extern int _CursorTable[96];
+	extern HotSpot _MouseMapAS[256][8];
 
 	class KingdomGame : public Engine {
 	public:
@@ -165,6 +176,8 @@ namespace Kingdom {
 		int _OldCursorX;
 		int _OldCursorY;
 		int _IconSel;
+		int _IconSelect;
+		bool _MouseDebound;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D74C;
@@ -273,9 +286,12 @@ namespace Kingdom {
 		void DrawIcon(int x, int y, int index);
 		int WaitKey();
 		void DrawCursor();
-		int CursorType();
+		void CursorType();
 		void LoadKingArt();
 		void SetCursor(int cursor);
+		int GetAKey();
+		int checkMouseMapAS();
+		void CursorTypeExit();
 	};
 } // End of namespace Kingdom
 
