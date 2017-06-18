@@ -56,6 +56,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_ASPtr = nullptr;
 	_quit = false;
 	_MouseValue = 0;
+	_CurrMap = 0;
 
 	_kingartEntries = nullptr;
 }
