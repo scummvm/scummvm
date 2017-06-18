@@ -632,6 +632,13 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 	Graphics::TransparentSurface tmp(single.surface, false);
 	tmp.blit(renderSurface, x1, y1, (mirror? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB(255, 255, 255, 255), diffX, diffY);
 
+	// Are we pointing at the sprite?
+	if (input.mouseX >= x1 && input.mouseX <= x2 && input.mouseY >= y1 && input.mouseY <= y2) {
+		if (thisPerson->extra & EXTRA_RECTANGULAR) return true;
+			return true;
+		}
+	return false;
+
 #if 0
 	GLfloat z;
 
