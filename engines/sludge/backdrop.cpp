@@ -457,71 +457,8 @@ void drawHorizontalLine(unsigned int x1, unsigned int y, unsigned int x2) {
 }
 
 void darkScreen() {
-	setPixelCoords(true);
-
-	int xoffset = 0;
-	while (xoffset < sceneWidth) {
-		int w = (sceneWidth - xoffset < viewportWidth) ? sceneWidth - xoffset : viewportWidth;
-
-		int yoffset = 0;
-		while (yoffset < sceneHeight) {
-			int h = (sceneHeight - yoffset < viewportHeight) ? sceneHeight - yoffset : viewportHeight;
-
-			// Render the scene - first the old backdrop
-#if 0
-			//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-			glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-			const GLfloat vertices[] = {
-				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat)sceneWidth - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat) - xoffset, (GLfloat)sceneHeight - yoffset, 0.,
-				(GLfloat)sceneWidth - xoffset, (GLfloat)sceneHeight - yoffset, 0.
-			};
-
-			const GLfloat texCoords[] = {
-				0.0f, 0.0f,
-				backdropTexW, 0.0f,
-				0.0f, backdropTexH,
-				backdropTexW, backdropTexH
-			};
-
-			glUseProgram(shader.texture);
-
-			setPMVMatrix(shader.texture);
-
-			drawQuad(shader.texture, vertices, 1, texCoords);
-
-			// Then the darkness
-			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-
-			glEnable(GL_BLEND);
-
-			glUseProgram(shader.color);
-
-			setPMVMatrix(shader.color);
-			setPrimaryColor(0.0f, 0.0f, 0.0f, 0.5f);
-			drawQuad(shader.color, vertices, 0);
-
-			glUseProgram(0);
-
-			glDisable(GL_BLEND);
-			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
-			// Copy Our ViewPort To The Texture
-			copyTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, viewportOffsetX, viewportOffsetY, w, h, backdropTextureName);
-
-			yoffset += h;
-
-			glClear(GL_COLOR_BUFFER_BIT);
-#endif
-		}
-		xoffset += w;
-	}
-
-	setPixelCoords(false);
+	Graphics::TransparentSurface tmp(backdropSurface, false);
+	tmp.blit(backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(0, 255 >> 1, 0, 0));
 }
 
 inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
