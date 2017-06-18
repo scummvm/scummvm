@@ -647,23 +647,23 @@ void GameManager::takeObject(Object &obj) {
 	_inventory.add(obj);
 }
 
-void GameManager::mouse_input() {
+void GameManager::mouseInput() {
 	// STUB
 }
 
-void GameManager::mouse_input2() {
+void GameManager::mouseInput2() {
 	// STUB
 }
 
-void GameManager::mouse_input3() {
+void GameManager::mouseInput3() {
 	// STUB
 }
 
-void GameManager::mouse_wait(int) {
+void GameManager::mouseWait(int) {
 	// STUB
 }
 
-void GameManager::room_brightness() {
+void GameManager::roomBrightness() {
 	// STUB
 }
 
@@ -671,19 +671,19 @@ void GameManager::palette() {
 	// STUB
 }
 
-void GameManager::show_menu() {
+void GameManager::showMenu() {
 	// STUB
 }
 
-void GameManager::exits() {
+void GameManager::drawMapExits() {
 	// STUB
 }
 
-void GameManager::anim_off() {
+void GameManager::animationOff() {
 	// STUB
 }
 
-void GameManager::anim_on() {
+void GameManager::animationOn() {
 	// STUB
 }
 
@@ -691,7 +691,7 @@ void GameManager::edit(int, int, char *, int) {
 	// STUB
 }
 
-void GameManager::load_overlay_start() {
+void GameManager::loadOverlayStart() {
 	// STUB
 }
 
@@ -758,19 +758,19 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == NEWSPAPER)) {
 		_vm->renderMessage("Es ist eine Art elektronische Zeitung.");
-		mouse_wait(_timer1);
+		mouseWait(_timer1);
 		_vm->removeMessage();
 		_vm->renderMessage("Halt, hier ist ein interessanter Artikel.");
-		mouse_wait(_timer1);
+		mouseWait(_timer1);
 		_vm->removeMessage();
 		_vm->renderImage(2,0);
 		_vm->setColor63(40);
-		mouse_input2();
+		mouseInput2();
 		_vm->renderRoom(*_currentRoom);
-		room_brightness();
+		roomBrightness();
 		palette();
-		show_menu();
-		exits();
+		showMenu();
+		drawMapExits();
 		_vm->renderMessage("Hmm, irgendwie komme|ich mir verarscht vor.");
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KEYCARD2)) {
 		_vm->renderMessage(obj1._description);
@@ -786,7 +786,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		char *min;
 		int stunden, minuten, i;
 		bool f;
-		anim_off();
+		animationOff();
 		_vm->saveScreen(88, 87, 144, 24);
 		_vm->renderBox(88, 87, 144, 24, kColorWhite35);
 		_vm->renderText("Neue Alarmzeit (hh:mm) :", 91, 90, kColorWhite99);
@@ -817,7 +817,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			stunden = atoi(t);
 			minuten = atoi(min);
 			if ((stunden > 23) || (minuten > 59)) f = true;
-			anim_on();
+			animationOn();
 		} while (f && (_key != Common::ASCII_ESCAPE));
 		_vm->restoreScreen();
 		if (_key != Common::ASCII_ESCAPE) {
@@ -959,7 +959,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage("Die Leitung ist hier unntz.");
 	else if ((verb == ACTION_LOOK) && (obj1._id == BOOK2)) {
 		_vm->renderMessage("Stark, das ist ja die Fortsetzung zum \"Anhalter\":|\"Das Restaurant am Ende des Universums\".");
-		mouse_wait(_timer1);
+		mouseWait(_timer1);
 		_vm->removeMessage();
 		_vm->renderMessage("Moment mal, es ist ein Lesezeichen drin,|auf dem \"Zweiundvierzig\" steht.");
 	} else {
@@ -1063,7 +1063,7 @@ void GameManager::executeRoom() {
 			}
 
 			if (_newOverlay) {
-				load_overlay_start();
+				loadOverlayStart();
 				_newOverlay = false;
 			}
 			if (_newRoom) {
