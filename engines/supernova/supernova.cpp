@@ -251,9 +251,10 @@ static int characterWidth(const char *text) {
 	return charWidth;
 }
 
-void SupernovaEngine::renderMessage(char *text, MessagePosition position) {
+void SupernovaEngine::renderMessage(const char *text, MessagePosition position) {
+	Common::String t(text);
 	char *row[20];
-	char *p = text;
+	Common::String::iterator p = t.begin();
 	size_t numRows = 0;
 	int rowWidthMax = 0;
 	int x = 0;
@@ -318,7 +319,13 @@ void SupernovaEngine::renderMessage(char *text, MessagePosition position) {
 		y += 9;
 	}
 
-//	timer1 = (Common::strnlen(text, BUFSIZ) + 20) * textspeed / 10;
+	_messageDisplayed = true;
+//	_timer1 = (Common::strnlen(text, BUFSIZ) + 20) * textspeed / 10;
+}
+
+void SupernovaEngine::removeMessage() {
+	// TODO: restore surface
+	_messageDisplayed = false;
 }
 
 void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
