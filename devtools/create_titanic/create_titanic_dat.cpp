@@ -55,7 +55,7 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0x1100
+#define HEADER_SIZE 0x1200
 
 Common::File inputFile, outputFile;
 Common::PEResources resEng, resGer;
@@ -71,7 +71,7 @@ enum {
 	ENGLISH_10042C_DIFF = 0x401C00,
 	ENGLISH_10042B_DIFF = 0x401400,
 	ENGLISH_10042_DIFF = 0x402000,
-	GERMAN_DIFF = 0x3DE500
+	GERMAN_DIFF = 0x401200
 };
 enum Version {
 	ENGLISH_10042C = 0,
@@ -488,7 +488,7 @@ static const char *const MISSIVEOMAT_MESSAGES_DE[3] = {
 	"Aus praktischen Gr\xFC""nden habe ich 453 Nachrichten von Leuten, "
 	"die Sie nicht kennen und die dachten, es w\xE4""re unheimlich geistreich, "
 	"sie an Sie weiterzusenden, gel\xF6""scht, darunter 63 Depeschen mit "
-	"doppelten oder dreifachen Ausrufezeichen\n"
+	"doppelten oder dreifachen Ausrufezeichen,\n"
 	"846 Depeschen von Mailing Listen, die Sie einmal f\xFC"
 	"r sehr interessant hielten, und von denen Sie jetzt keine Ahnung haben, "
 	"wie man sie l\xF6""schen kann: \n"
@@ -1637,7 +1637,6 @@ void writeData() {
 	writeWords("Words/Doorbot", WORDS_DOORBOT[_version], 3);
 	writeWords("Words/Liftbot", WORDS_LIFTBOT[_version]);
 	writePhrases("Phrases/Bellbot", BELLBOT_COMMON_PHRASES);
-	writePhrases("Phrases/Bellbot/DE", BELLBOT_COMMON_PHRASES_DE);
 
 	writeResponseTree();
 	writeNumbers();
@@ -1661,6 +1660,28 @@ void writeGermanData() {
 	writeStringArray("TEXT/REPLACEMENTS3/DE", 0x2413B0 + GERMAN_DIFF, 608);
 	writeStringArray("TEXT/REPLACEMENTS4/DE", 0x241D38 + GERMAN_DIFF, 195);
 	writeStringArray("TEXT/PRONOUNS/DE", 0x248610 + GERMAN_DIFF, 15);
+
+
+	const int SENTENCES_BARBOT[2] = { 0x5B00C0, 0x5C5AC8 };
+	const int SENTENCES_BELLBOT[20] = { 0x5CACF8, 0x5D1670 };
+	const int SENTENCES_DESKBOT[3] = { 0x5ED428, 0x5FCEA0, 0x5FCC30 };
+	const int SENTENCES_DOORBOT[4] = { 0x5FFFC8, 0x61A690, 0x61AA38 };
+
+	writeSentenceEntries("Sentences/Default/DE", 0x5C8C70);
+	writeSentenceEntries("Sentences/Barbot/DE", SENTENCES_BARBOT[0]);
+	writeSentenceEntries("Sentences/Barbot2/DE", SENTENCES_BARBOT[1]);
+	writeSentenceEntries("Sentences/Bellbot/DE", SENTENCES_BELLBOT[0]);
+	writeSentenceEntries("Sentences/Bellbot/1/DE", SENTENCES_BELLBOT[1]);
+	writeSentenceEntries("Sentences/Deskbot/DE", SENTENCES_DESKBOT[0]);
+	writeSentenceEntries("Sentences/Deskbot/2/DE", SENTENCES_DESKBOT[1]);
+	writeSentenceEntries("Sentences/Deskbot/3/DE", SENTENCES_DESKBOT[2]);
+	writeSentenceEntries("Sentences/Doorbot/DE", SENTENCES_DOORBOT[0]);
+	writeSentenceEntries("Sentences/Doorbot/1/DE", SENTENCES_DOORBOT[1]);
+	writeSentenceEntries("Sentences/Doorbot/2/DE", SENTENCES_DOORBOT[2]);
+	writeSentenceEntries("Sentences/Liftbot/DE", 0x61CAD0);
+	writeSentenceEntries("Sentences/MaitreD/DE", 0x629EE8);
+	writeSentenceEntries("Sentences/Parrot/DE", 0x633FFC);
+	writeSentenceEntries("Sentences/SuccUBus/DE", 0x637CD8);
 
 	writeMissiveOMatMessagesDE();
 }
