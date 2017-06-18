@@ -107,7 +107,8 @@ public:
 
 	void add(Object &obj);
 	void remove(Object &obj);
-	Object *get(size_t index);
+	Object *get(size_t index) const;
+	Object *get(ObjectID id) const;
 
 private:
 	Object *_inventory[kMaxCarry];
