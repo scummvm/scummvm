@@ -85,6 +85,7 @@ private:
 	byte _brightness;
 	uint _delay;
 
+	uint getDOSTicks();
 	void initData();
 	void initPalette();
 	void paletteFadeIn();
