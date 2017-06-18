@@ -29,11 +29,14 @@
 #include "common/array.h"
 #include "common/random.h"
 #include "common/scummsys.h"
+#include "common/events.h"
 #include "engines/engine.h"
 
 #include "supernova/console.h"
 #include "supernova/graphics.h"
+#include "supernova/rooms.h"
 #include "supernova/msn_def.h"
+
 
 namespace Supernova {
 
@@ -73,12 +76,15 @@ public:
 
 	virtual Common::Error run();
 
-private:
 	Common::RandomSource *_rnd;
 	Console *_console;
 	Audio::SoundHandle _soundHandle;
+	ScreenBufferStack _screenBuffer;
+	MSNImageDecoder _currentImage;
+	int _currentImageFilenumber;
+	Common::Event _event;
 	bool _gameRunning;
-	MSNImageDecoder _image;
+
 	byte _imageIndex;
 	byte _sectionIndex;
 	byte _menuBrightness;
@@ -97,10 +103,14 @@ private:
 	void playSoundMod(int filenumber);
 	void stopSound();
 	void renderImage(int filenumber, int section, bool fullscreen = false);
+	void saveScreen(int x, int y, int width, int height);
+	void restoreScreen();
+	void renderRoom(Room &room);
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
 	void removeMessage();
 	void renderText(const char *text, int x, int y, byte color);
 	void renderBox(int x, int y, int width, int height, byte color);
+	void setColor63(byte value);
 };
 
 
@@ -116,6 +126,50 @@ public:
 private:
 	Object *_inventory[kMaxCarry];
 	size_t _numObjects;
+};
+
+class GameManager {
+public:
+	GameManager(SupernovaEngine *vm, Common::Event *event);
+
+	void processInput();
+	void executeRoom();
+
+private:
+	SupernovaEngine *_vm;
+	Common::Event *_event;
+	uint16 _key;
+	Room *_currentRoom;
+	Room _rooms[kRoomsNum];
+	Inventory _inventory;
+	GameState _state;
+	Action _inputVerb;
+	Object _inputObject[2];
+	bool _waitEvent;
+	bool _newRoom;
+	bool _newOverlay;
+	int _timer1;
+	int _timer2;
+
+	void takeObject(Object &obj);
+
+	bool genericInteract(Action verb, Object &obj1, Object &obj2);
+	bool isHelmetOff();
+	void great(uint number);
+	bool airless();
+	void mouse_input();
+	void mouse_input2();
+	void mouse_input3();
+	void mouse_wait(int);
+	void room_brightness();
+	void palette();
+	void show_menu();
+	void exits();
+	void anim_off();
+	void anim_on();
+	void load_overlay_start();
+	void edit(int, int, char *, int);
+	int invertSection(int section);
 };
 
 }

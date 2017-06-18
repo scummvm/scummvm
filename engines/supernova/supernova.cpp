@@ -36,12 +36,12 @@
 #include "graphics/palette.h"
 
 #include "supernova/supernova.h"
-//#include "supernova/rooms.h"
 
 
 namespace Supernova {
 
 const char *const Object::defaultDescription = "Es ist nichts Besonderes daran.";
+const char *const Object::takeMessage = "Das mußt du erst nehmen.";
 
 ObjectType operator|(ObjectType a, ObjectType b) {
 	return static_cast<ObjectType>(+a | +b);
@@ -95,20 +95,65 @@ SupernovaEngine::~SupernovaEngine() {
 
 Common::Error SupernovaEngine::run() {
 	initGraphics(kScreenWidth, kScreenHeight);
-	debug(_system->getScreenFormat().toString().c_str());
 	_console = new Console(this);
 
 	initData();
 	initPalette();
 	paletteFadeIn();
+	GameManager gm(this, &_event);
 
 	CursorMan.showMouse(true);
 
 	while (_gameRunning) {
-		updateEvents();
 
-		renderImage(_imageIndex, _sectionIndex);
-		renderText(Common::String::format("%u | %u", _imageIndex, _sectionIndex).c_str(), 0, 190, kColorLightRed);
+		while (g_system->getEventManager()->pollEvent(_event)) {
+			switch (_event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+				_gameRunning = false;
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				if (_event.kbd.keycode == Common::KEYCODE_d && _event.kbd.hasFlags(Common::KBD_CTRL)) {
+					_console->attach();
+				}
+				if (_event.kbd.keycode == Common::KEYCODE_q) {
+					playSound(48, 13530);
+				}
+				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
+					++_imageIndex;
+					_sectionIndex = 0;
+				}
+				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
+					--_imageIndex;
+					_sectionIndex = 0;
+				}
+				if (_event.kbd.keycode == Common::KEYCODE_UP) {
+					++_sectionIndex;
+				}
+				if (_event.kbd.keycode == Common::KEYCODE_DOWN) {
+					--_sectionIndex;
+				}
+				break;
+
+			case Common::EVENT_LBUTTONUP:
+				break;
+			case Common::EVENT_RBUTTONUP:
+				// TODO: Determines verb depending on object properties
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				// TODO: Update status if mouse enters/leaves object
+				break;
+			default:
+				break;
+			}
+
+//			gm.processInput();
+		}
+
+		renderImage(_imageIndex, _sectionIndex, true);
+		renderText(Common::String::format("%3d | %3d", _imageIndex, _sectionIndex).c_str(),
+		           10, 190, kColorLightGreen);
 		_system->updateScreen();
 		_system->delayMillis(_delay);
 	}
@@ -130,43 +175,6 @@ uint SupernovaEngine::getDOSTicks() {
 }
 
 void SupernovaEngine::updateEvents() {
-	Common::Event event;
-
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
-			_gameRunning = false;
-			break;
-
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
-				paletteFadeOut();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_d && !event.kbd.hasFlags(Common::KBD_CTRL)) {
-				paletteFadeIn();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_q) {
-				playSound(48, 13530);
-			}
-			if (event.kbd.keycode == Common::KEYCODE_w) {
-				_sectionIndex = 0;
-				++_imageIndex;
-				if (_imageIndex == 31) {
-					renderText("Das Schicksal", 44, 132, kColorWhite99);
-					renderText("des Horst Hummel", 35, 142, kColorWhite99);
-					renderText("Teil 1:", 64, 120, kColorLightBlue);
-				}
-			}
-			if (event.kbd.keycode == Common::KEYCODE_e) {
-				renderImage(_imageIndex, 0);
-				renderImage(_imageIndex, ++_sectionIndex);
-			}
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 void SupernovaEngine::initData() {
@@ -213,20 +221,36 @@ void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) 
 		error("File %s could not be read!", file.getName());
 	}
 
-	_image.loadStream(file);
-	_image.loadSection(section);
-	_system->getPaletteManager()->setPalette(_image.getPalette(), 16, 239);
-	paletteBrightness();
-	if (fullscreen) {
-		_system->copyRectToScreen(_image.getSurface()->getPixels(), 320, 0, 0, 320, 200);
-	} else {
-		size_t offset = _image._section[section].y1 * 320 + _image._section[section].x1;
-		_system->copyRectToScreen(static_cast<const byte *>(_image.getSurface()->getPixels()) + offset,
-		                          320,
-		                          _image._section[section].x1,
-		                          _image._section[section].y1,
-		                          _image._section[section].x2 - _image._section[section].x1,
-		                          _image._section[section].y2 - _image._section[section].y1);
+	_currentImageFilenumber = filenumber;
+	if (_currentImage.loadStream(file) && _currentImage.loadSection(section)) {
+		_system->getPaletteManager()->setPalette(_currentImage.getPalette(), 16, 239);
+		paletteBrightness();
+		if (fullscreen) {
+			_system->copyRectToScreen(_currentImage.getSurface()->getPixels(), 320, 0, 0, 320, 200);
+		} else {
+			size_t offset = _currentImage._section[section].y1 * 320 + _currentImage._section[section].x1;
+			_system->copyRectToScreen(static_cast<const byte *>(_currentImage.getSurface()->getPixels()) + offset,
+			                          320,
+			                          _currentImage._section[section].x1,
+			                          _currentImage._section[section].y1,
+			                          _currentImage._section[section].x2 - _currentImage._section[section].x1,
+			                          _currentImage._section[section].y2 - _currentImage._section[section].y1);
+		}
+	}
+}
+
+void SupernovaEngine::saveScreen(int x, int y, int width, int height) {
+	_screenBuffer.push(x, y, width, height);
+}
+
+void SupernovaEngine::restoreScreen() {
+	_screenBuffer.restore();
+}
+
+void SupernovaEngine::renderRoom(Room &room) {
+	for (int i = 0; i < kMaxSection; ++i) {
+		if (room.isSectionVisible(i))
+			renderImage(room.getFileNumber(), i);
 	}
 }
 
@@ -373,8 +397,8 @@ void SupernovaEngine::paletteBrightness() {
 	}
 	for (size_t i = 0; i < 717; ++i) {
 		const byte *imagePalette;
-		if (_image.getPalette()) {
-			imagePalette = _image.getPalette();
+		if (_currentImage.getPalette()) {
+			imagePalette = _currentImage.getPalette();
 		} else {
 			imagePalette = palette;
 		}
@@ -416,6 +440,12 @@ void SupernovaEngine::paletteFadeIn() {
 	paletteBrightness();
 	_system->updateScreen();
 }
+
+void SupernovaEngine::setColor63(byte value) {
+	byte color[3] = {value, value, value};
+	_system->getPaletteManager()->setPalette(color, 63, 1);
+}
+
 
 Inventory::Inventory()
     : _numObjects(0)
@@ -496,5 +526,553 @@ void ScreenBufferStack::restore() {
 	g_system->unlockScreen();
 	--_last;
 }
+
+
+static const char *timeToString(int t) {
+	// TODO: Does ScummVM emulate PIT timings for DOS?
+
+	static char s[9];
+	strcpy(s," 0:00:00");
+	s[7] = t % 10 + '0';
+	t /= 10;
+	s[6] = t %  6 + '0';
+	t /=  6;
+	s[4] = t % 10 + '0';
+	t /= 10;
+	s[3] = t %  6 + '0';
+	t /=  6;
+	s[1] = t % 10 + '0';
+	t /= 10;
+	if (t)
+		s[0] = t+48;
+
+	return(s);
+}
+
+GameManager::GameManager(SupernovaEngine *vm, Common::Event *event) {
+//	_rooms[INTRO] = StartingItems();
+//	_rooms[CORRIDOR] = ShipCorridor();
+//	_rooms[HALL] = ShipHall();
+//	_rooms[SLEEP] = ShipSleepCabin();
+//	_rooms[COCKPIT] = ShipCockpit();
+//	_rooms[AIRLOCK] = ShipAirlock();
+//	_rooms[HOLD] = ShipHold();
+//	_rooms[LANDINGMODULE] = ShipLandingModule();
+//	_rooms[GENERATOR] = ShipGenerator();
+//	_rooms[OUTSIDE] = ShipOuterSpace();
+//	_rooms[CABIN_R1] = ShipCabinR1();
+//	_rooms[CABIN_R2] = ShipCabinR2();
+//	_rooms[CABIN_R3] = ShipCabinR3();
+//	_rooms[CABIN_L1] = ShipCabinL1();
+//	_rooms[CABIN_L2] = ShipCabinL2();
+//	_rooms[CABIN_L3] = ShipCabinL3();
+//	_rooms[BATHROOM] = ShipCabinBathroom();
+
+//	_rooms[ROCKS]
+//	_rooms[CAVE]
+//	_rooms[MEETUP]
+//	_rooms[ENTRANCE]
+//	_rooms[REST]
+//	_rooms[ROGER]
+//	_rooms[GLIDER]
+//	_rooms[MEETUP2]
+//	_rooms[MEETUP3]
+
+//	_rooms[CELL]
+//	_rooms[CORRIDOR1]
+//	_rooms[CORRIDOR2]
+//	_rooms[CORRIDOR3]
+//	_rooms[CORRIDOR4]
+//	_rooms[CORRIDOR5]
+//	_rooms[CORRIDOR6]
+//	_rooms[CORRIDOR7]
+//	_rooms[CORRIDOR8]
+//	_rooms[CORRIDOR9]
+//	_rooms[BCORRIDOR]
+//	_rooms[GUARD]
+//	_rooms[GUARD3]
+//	_rooms[OFFICE_L1]
+//	_rooms[OFFICE_L2]
+//	_rooms[OFFICE_R1]
+//	_rooms[OFFICE_R2]
+//	_rooms[OFFICE_L]
+//	_rooms[ELEVATOR]
+//	_rooms[STATION]
+//	_rooms[SIGN]
+
+	_currentRoom = &_rooms[0];
+	_vm = vm;
+	_event = event;
+}
+
+bool GameManager::isHelmetOff() {
+	Object *helmet = _inventory.get(HELMET);
+	if (helmet && helmet->hasProperty(WORN)) {
+		_vm->renderMessage("Irgendwie ist ein Raumhelm|beim Essen unpraktisch.");
+		return false;
+	}
+
+	return true;
+}
+
+void GameManager::great(uint number) {
+	if (number && (_state.greatF & (1 << number)))
+		return;
+
+	_vm->playSound(54, 8010);
+	_state.greatF |= 1 << number;
+}
+
+bool GameManager::airless() {
+	return (
+	((_currentRoom > &_rooms[AIRLOCK]) && (_currentRoom < &_rooms[CABIN_R1])) ||
+	((_currentRoom >  &_rooms[BATHROOM])&& (_currentRoom < &_rooms[ENTRANCE])) ||
+	((_currentRoom == &_rooms[AIRLOCK]) && (_currentRoom->getObject(1)->hasProperty(OPENED))) ||
+	(_currentRoom  >= &_rooms[MEETUP2])
+	);
+}
+
+void GameManager::processInput() {
+	//
+}
+
+void GameManager::takeObject(Object &obj) {
+	if (obj.hasProperty(CARRIED))
+		return;
+
+	if (obj._section != 0)
+		_vm->renderImage(_currentRoom->getFileNumber(), obj._section);
+	obj.setProperty(CARRIED);
+	obj._click = obj._click2 = 255;
+	_inventory.add(obj);
+}
+
+void GameManager::mouse_input() {
+	// STUB
+}
+
+void GameManager::mouse_input2() {
+	// STUB
+}
+
+void GameManager::mouse_input3() {
+	// STUB
+}
+
+void GameManager::mouse_wait(int) {
+	// STUB
+}
+
+void GameManager::room_brightness() {
+	// STUB
+}
+
+void GameManager::palette() {
+	// STUB
+}
+
+void GameManager::show_menu() {
+	// STUB
+}
+
+void GameManager::exits() {
+	// STUB
+}
+
+void GameManager::anim_off() {
+	// STUB
+}
+
+void GameManager::anim_on() {
+	// STUB
+}
+
+void GameManager::edit(int, int, char *, int) {
+	// STUB
+}
+
+void GameManager::load_overlay_start() {
+	// STUB
+}
+
+int GameManager::invertSection(int section) {
+	if (section < 128)
+		section += 128;
+	else
+		section -= 128;
+
+	return section;
+}
+
+
+bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
+	Room *r;
+	char t[150];
+
+	if ((verb == ACTION_USE) && (obj1._id == SCHNUCK)) {
+		if (isHelmetOff()) {
+			takeObject(obj1);
+			_vm->renderMessage("Schmeckt ganz gut.");
+			_inventory.remove(obj1);
+		}
+	} else if ((verb == ACTION_USE) && (obj1._id == EGG)) {
+		if (isHelmetOff()) {
+			takeObject(obj1);
+			if (obj1.hasProperty(OPENED))
+				_vm->renderMessage("Schmeckt ganz gut.");
+			else
+				_vm->renderMessage("Da war irgendetwas drin,|aber jetzt hast du es|mit runtergeschluckt.");
+
+			_inventory.remove(obj1);
+		}
+	} else if ((verb == ACTION_OPEN) && (obj1._id == EGG)) {
+		takeObject(obj1);
+		if (obj1.hasProperty(OPENED)) {
+			_vm->renderMessage("Du hast es doch schon geffnet.");
+		} else {
+			takeObject(*_rooms[ENTRANCE].getObject(8));
+			_vm->renderMessage("In dem Ei ist eine Tablette|in einer Plastikhlle.");
+			obj1.setProperty(OPENED);
+		}
+	} else if ((verb == ACTION_USE) && (obj1._id == PILL)) {
+		if (isHelmetOff()) {
+			_vm->renderMessage("Du iát die Tablette und merkst,|daá sich irgendetwas verndert hat.");
+			great(0);
+			_inventory.remove(obj1);
+			_state.language = 2;
+			takeObject(*_rooms[ENTRANCE].getObject(17));
+		}
+	} else if ((verb == ACTION_LOOK) && (obj1._id == PILL_HULL) &&
+	           (_state.language == 2)) {
+		_vm->renderMessage("Komisch! Auf einmal kannst du die Schrift lesen!|Darauf steht:\"Wenn Sie diese Schrift jetzt|lesen knnen, hat die Tablette gewirkt.\"");
+		_state.language = 1;
+	} else if ((verb == ACTION_OPEN) && (obj1._id == WALLET)) {
+		if (!_rooms[ROGER].getObject(3)->hasProperty(CARRIED)) {
+			_vm->renderMessage("Das muát du erst nehmen.");
+		} else if (_rooms[ROGER].getObject(7)->hasProperty(CARRIED)) {
+			_vm->renderMessage("Sie ist leer.");
+		} else {
+			_vm->renderMessage("Du findest 10 Buckazoids und eine Keycard.");
+			takeObject(*_rooms[ROGER].getObject(7));
+			takeObject(*_rooms[ROGER].getObject(8));
+		}
+	} else if ((verb == ACTION_LOOK) && (obj1._id == NEWSPAPER)) {
+		_vm->renderMessage("Es ist eine Art elektronische Zeitung.");
+		mouse_wait(_timer1);
+		_vm->removeMessage();
+		_vm->renderMessage("Halt, hier ist ein interessanter Artikel.");
+		mouse_wait(_timer1);
+		_vm->removeMessage();
+		_vm->renderImage(2,0);
+		_vm->setColor63(40);
+		mouse_input2();
+		_vm->renderRoom(*_currentRoom);
+		room_brightness();
+		palette();
+		show_menu();
+		exits();
+		_vm->renderMessage("Hmm, irgendwie komme|ich mir verarscht vor.");
+	} else if ((verb == ACTION_LOOK) && (obj1._id == KEYCARD2)) {
+		_vm->renderMessage(obj1._description);
+		obj1._description = "Es ist die Keycard des Commanders.";
+	} else if ((verb == ACTION_LOOK) && (obj1._id == WATCH)) {
+		_vm->renderMessage(Common::String::format(
+		    "Es ist eine Uhr mit extra|lautem Wecker. "
+		    "Sie hat einen|Knopf zum Verstellen der Alarmzeit.|"
+		    "Uhrzeit: %s   Alarmzeit: %s",
+		    timeToString(_vm->getDOSTicks() - _state.timeStarting),
+		    timeToString(_state.timeAlarm)).c_str());
+	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
+		char *min;
+		int stunden, minuten, i;
+		bool f;
+		anim_off();
+		_vm->saveScreen(88, 87, 144, 24);
+		_vm->renderBox(88, 87, 144, 24, kColorWhite35);
+		_vm->renderText("Neue Alarmzeit (hh:mm) :", 91, 90, kColorWhite99);
+		do {
+			t[0] = 0;
+			_vm->renderBox(91, 99, 138, 9, kColorDarkBlue);
+			do {
+				edit(91, 100, t, 5);
+			} while ((_key != Common::ASCII_RETURN) && (_key != Common::ASCII_ESCAPE));
+			f = false;
+			if (t[0] == ':') {
+				t[0] = 0;
+				min = &(t[1]);
+			} else if (t[1] == ':') {
+				t[1] = 0;
+				min = &(t[2]);
+			} else if (t[2] == ':') {
+				t[2] = 0;
+				min = &(t[3]);
+			} else {
+				f = true;
+			}
+
+			for (i = 0; i < strlen(t); i++)
+				if ((t[i] < '0') || (t[i] > '9')) f = true;
+			for (i = 0; i < strlen(min); i++)
+				if ((min[i] < '0') || (min[i] > '9')) f = true;
+			stunden = atoi(t);
+			minuten = atoi(min);
+			if ((stunden > 23) || (minuten > 59)) f = true;
+			anim_on();
+		} while (f && (_key != Common::ASCII_ESCAPE));
+		_vm->restoreScreen();
+		if (_key != Common::ASCII_ESCAPE) {
+			_state.timeAlarm = (stunden * 60 + minuten) * 1092.3888 + 8;
+			_state.timeAlarmSystem = _state.timeAlarm + _state.timeStarting;
+			_state.alarmOn = (_state.timeAlarmSystem > _vm->getDOSTicks());
+		}
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, WIRE)) {
+		r = &_rooms[CABIN_L3];
+		if (!r->getObject(8)->hasProperty(CARRIED)) {
+			if (r->isSectionVisible(26))
+				_vm->renderMessage(Object::takeMessage);
+			else
+				return false;
+		} else {
+			r->getObject(8)->_name = "Leitung mit Lsterklemme";
+			r = &_rooms[HOLD];
+			_inventory.remove(*r->getObject(2));
+			_state.terminalStripConnected = true;
+			_state.terminalStripWire = true;
+			_vm->renderMessage("Ok.");
+		}
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, SPOOL)) {
+		r = &_rooms[CABIN_L2];
+		takeObject(*r->getObject(9));
+		r->getObject(9)->_name = "Kabelrolle mit Lsterklemme";
+		r = &_rooms[HOLD];
+		_inventory.remove(*r->getObject(2));
+		_state.terminalStripConnected = true;
+		_vm->renderMessage("Ok.");
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, SPOOL)) {
+		r = &_rooms[CABIN_L3];
+		if (!_state.terminalStripConnected) {
+			if (r->isSectionVisible(26))
+				_vm->renderMessage("Womit denn?");
+			else
+				return false;
+		} else {
+			if (!r->getObject(8)->hasProperty(CARRIED)) {
+				_vm->renderMessage(Object::takeMessage);
+			} else {
+				r = &_rooms[CABIN_L2];
+				takeObject(*r->getObject(9));
+				r = &_rooms[CABIN_L3];
+				r->getObject(8)->_name = "langes Kabel mit Stecker";
+				r = &_rooms[CABIN_L2];
+				_inventory.remove(*r->getObject(9));
+				_state.cableConnected = true;
+				_vm->renderMessage("Ok.");
+			}
+		}
+	} else if ((verb == ACTION_USE) && (obj1._id == SUIT)) {
+		takeObject(obj1);
+		if ((_currentRoom >= &_rooms[ENTRANCE]) && (_currentRoom <= &_rooms[ROGER])) {
+			if (obj1.hasProperty(WORN)) {
+				_vm->renderMessage("Die Luft hier ist atembar,|du ziehst den Anzug aus.");
+				_rooms[AIRLOCK].getObject(4)->disableProperty(WORN);
+				_rooms[AIRLOCK].getObject(5)->disableProperty(WORN);
+				_rooms[AIRLOCK].getObject(6)->disableProperty(WORN);
+			} else
+				_vm->renderMessage("Hier drinnen brauchtst du deinen Anzug nicht.");
+		} else {
+			if (obj1.hasProperty(WORN)) {
+				r = &_rooms[AIRLOCK];
+				if (r->getObject(4)->hasProperty(WORN)) {
+					_vm->renderMessage("Du muát erst den Helm abnehmen.");
+				} else if (r->getObject(6)->hasProperty(WORN)) {
+					_vm->renderMessage("Du muát erst den Versorgungsteil abnehmen.");
+				} else {
+					obj1.disableProperty(WORN);
+					_vm->renderMessage("Du ziehst den Raumanzug aus.");
+				}
+			} else {
+				obj1.setProperty(WORN);
+				_vm->renderMessage("Du ziehst den Raumanzug an.");
+			}
+		}
+	} else if ((verb == ACTION_USE) && (obj1._id == HELMET)) {
+		takeObject(obj1);
+		if ((_currentRoom >= &_rooms[ENTRANCE]) && (_currentRoom <= &_rooms[ROGER])) {
+			if (obj1.hasProperty(WORN)) {
+				_vm->renderMessage("Die Luft hier ist atembar,|du ziehst den Anzug aus.");
+				_rooms[AIRLOCK].getObject(4)->disableProperty(WORN);
+				_rooms[AIRLOCK].getObject(5)->disableProperty(WORN);
+				_rooms[AIRLOCK].getObject(6)->disableProperty(WORN);
+			} else {
+				_vm->renderMessage("Hier drinnen brauchtst du deinen Anzug nicht.");
+			}
+		} else {
+			if (obj1.hasProperty(WORN)) {
+				if (airless()) {
+					//TODO: Death screen
+//					longjmp(dead, "Den Helm httest du|besser angelassen!");
+				}
+				obj1.disableProperty(WORN);
+				_vm->renderMessage("Du ziehst den Helm ab.");
+			} else {
+				r = &_rooms[AIRLOCK];
+				if (r->getObject(5)->hasProperty(WORN)) {
+					obj1.setProperty(WORN);
+					_vm->renderMessage("Du ziehst den Helm auf.");
+				} else {
+					_vm->renderMessage("Du muát erst den Anzug anziehen.");
+				}
+			}
+		}
+	} else if ((verb == ACTION_USE) && (obj1._id == LIFESUPPORT)) {
+		takeObject(obj1);
+		if ((_currentRoom >= &_rooms[ENTRANCE]) && (_currentRoom <= &_rooms[ROGER])) {
+			if (obj1.hasProperty(WORN)) {
+				_vm->renderMessage("Die Luft hier ist atembar,|du ziehst den Anzug aus.");
+				_rooms[AIRLOCK].getObject(4)->disableProperty(WORN);
+				_rooms[AIRLOCK].getObject(5)->disableProperty(WORN);
+				_rooms[AIRLOCK].getObject(6)->disableProperty(WORN);
+			} else
+				_vm->renderMessage("Hier drinnen brauchtst du deinen Anzug nicht.");
+		} else {
+			if (obj1.hasProperty(WORN)) {
+				if (airless()) {
+					//TODO: Death screen
+//					longjmp(dead, "Den Versorungsteil httest du|besser nicht abgenommen!");
+				}
+				obj1.disableProperty(WORN);
+				_vm->renderMessage("Du nimmst den Versorgungsteil ab.");
+			} else {
+				r = &_rooms[AIRLOCK];
+				if (r->getObject(5)->hasProperty(WORN)) {
+					obj1.setProperty(WORN);
+					_vm->renderMessage("Du ziehst den Versorgungsteil an.");
+				} else {
+					_vm->renderMessage("Du muát erst den Anzug anziehen.");
+				}
+			}
+		}
+	} else if ((verb == ACTION_WALK) && (obj1._id == BATHROOM_DOOR)) {
+//		*bathroom = current_room;
+		return false;
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, SOCKET))
+		_vm->renderMessage("Die Leitung ist hier unntz.");
+	else if ((verb == ACTION_LOOK) && (obj1._id == BOOK2)) {
+		_vm->renderMessage("Stark, das ist ja die Fortsetzung zum \"Anhalter\":|\"Das Restaurant am Ende des Universums\".");
+		mouse_wait(_timer1);
+		_vm->removeMessage();
+		_vm->renderMessage("Moment mal, es ist ein Lesezeichen drin,|auf dem \"Zweiundvierzig\" steht.");
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+void GameManager::executeRoom() {
+	bool validCommand = genericInteract(_inputVerb, _inputObject[0], _inputObject[1]);
+
+	if (!validCommand) {
+		validCommand = _currentRoom->interact(_inputVerb, _inputObject[0], _inputObject[1]);
+		if (!validCommand) {
+			switch (_inputVerb) {
+			case ACTION_LOOK    :
+				_vm->renderMessage(_inputObject[0]._description);
+				break;
+
+			case ACTION_WALK     :
+				if (_inputObject[0].hasProperty(CARRIED)) {
+					// You already carry this.
+					_vm->renderMessage("Das trgst du doch bei dir.");
+				} else if (!_inputObject[0].hasProperty(EXIT)) {
+					// You're already there.
+					_vm->renderMessage("Du bist doch schon da.");
+				} else if (_inputObject[0].hasProperty(OPEN) && !_inputObject[0].hasProperty(OPENED)) {
+					// This is closed
+					_vm->renderMessage("Das ist geschlossen.");
+				} else {
+					_currentRoom = &_rooms[_inputObject[0]._exitRoom];
+					return;
+				}
+				break;
+
+			case ACTION_TAKE     :
+				if (_inputObject[0].hasProperty(OPENED)) {
+					// You already have that
+					_vm->renderMessage("Das hast du doch schon.");
+				} else if (_inputObject[0].hasProperty(UNNECESSARY)) {
+					// You do not need that.
+					_vm->renderMessage("Das brauchst du nicht.");
+				} else if (!_inputObject[0].hasProperty(TAKE)) {
+					// You can't take that.
+					_vm->renderMessage("Das kannst du nicht nehmen.");
+				} else {
+					takeObject(_inputObject[0]);
+				}
+				break;
+
+			case ACTION_OPEN   :
+				if (!_inputObject[0].hasProperty(OPEN)) {
+					// This can't be opened
+					_vm->renderMessage("Das lát sich nicht ffnen.");
+				} else if (_inputObject[0].hasProperty(OPENED)) {
+					// This is already opened.
+					_vm->renderMessage("Das ist schon offen.");
+				} else if (_inputObject[0].hasProperty(CLOSED)) {
+					// This is locked.
+					_vm->renderMessage("Das ist verschlossen.");
+				} else {
+					_vm->renderImage(_vm->_currentImageFilenumber, _inputObject[0]._section);
+					_inputObject[0].setProperty(OPENED);
+					byte i = _inputObject[0]._click;
+					_inputObject[0]._click  = _inputObject[0]._click2;
+					_inputObject[0]._click2 = i;
+					_vm->playSound(54, 30030);
+				}
+				break;
+
+			case ACTION_CLOSE:
+				if (!_inputObject[0].hasProperty(OPEN) ||
+				    (_inputObject[0].hasProperty(CLOSED) &&
+				     _inputObject[0].hasProperty(OPENED))) {
+					// This can't be closed.
+					_vm->renderMessage("Das lát sich nicht schlieáen.");
+				} else if (!_inputObject[0].hasProperty(OPENED)) {
+					// This is already closed.
+					_vm->renderMessage("Das ist schon geschlossen.");
+				} else {
+					_vm->renderImage(_vm->_currentImageFilenumber, invertSection(_inputObject[0]._section));
+					_inputObject[0].disableProperty(OPENED);
+					byte i = _inputObject[0]._click;
+					_inputObject[0]._click  = _inputObject[0]._click2;
+					_inputObject[0]._click2 = i;
+					_vm->playSound(54, 31040);
+				}
+				break;
+
+			case ACTION_GIVE      :
+				if (_inputObject[0].hasProperty(CARRIED)) {
+					// Better keep it!
+					_vm->renderMessage("Behalt es lieber!");
+					break;
+				}
+
+			default:
+				// This is not possible.
+				_vm->renderMessage("Das geht nicht.");
+			}
+
+			if (_newOverlay) {
+				load_overlay_start();
+				_newOverlay = false;
+			}
+			if (_newRoom) {
+				_newRoom = false;
+				return;
+			}
+		}
+	}
+}
+
 
 }
