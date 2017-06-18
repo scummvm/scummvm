@@ -202,10 +202,8 @@ int SOLStream<STEREO, S16BIT, OLDDPCM8>::readBuffer(int16 *buffer, const int num
 	} else {
 		if (STEREO) {
 			deDPCM8Stereo(buffer, *_stream, bytesToRead, _dpcmCarry8.l, _dpcmCarry8.r);
-		} else if (OLDDPCM8) {
-			deDPCM8Mono<true>(buffer, *_stream, bytesToRead, _dpcmCarry8.l);
 		} else {
-			deDPCM8Mono<false>(buffer, *_stream, bytesToRead, _dpcmCarry8.l);
+			deDPCM8Mono<OLDDPCM8>(buffer, *_stream, bytesToRead, _dpcmCarry8.l);
 		}
 	}
 
