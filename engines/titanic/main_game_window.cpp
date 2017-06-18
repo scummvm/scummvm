@@ -363,6 +363,9 @@ void CMainGameWindow::keyDown(Common::KeyState keyState) {
 }
 
 bool CMainGameWindow::isMouseControlEnabled() const {
+	if (!_gameManager)
+		return false;
+
 	CScreenManager *screenMan = CScreenManager::_screenManagerPtr;
 	if (!screenMan || !screenMan->_mouseCursor)
 		return true;
