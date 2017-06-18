@@ -418,6 +418,9 @@ Inventory::Inventory()
 void Inventory::add(Object &obj) {
 	if (_numObjects < kMaxCarry)
 		_inventory[_numObjects] = &obj;
+
+//	if (inventory_amount>8) inventory_scroll = ((inventory_amount+1)/2)*2-8;
+//	show_inventory();
 }
 
 // TODO: Update Inventory surface for scrolling
@@ -434,9 +437,18 @@ void Inventory::remove(Object &obj) {
 	}
 }
 
-Object *Inventory::get(size_t index) {
+Object *Inventory::get(size_t index) const {
 	if (index < _numObjects)
 		return _inventory[index];
+
+	return NULL;
+}
+
+Object *Inventory::get(ObjectID id) const {
+	for (size_t i = 0; i < _numObjects; ++i) {
+		if (_inventory[i]->_id == id)
+			return _inventory[i];
+	}
 
 	return NULL;
 }
