@@ -46,7 +46,7 @@ void KingdomGame::GPLogic4() {
 			ReadMouse();
 			while (_BTimer && !_MouseButton) {
 				RefreshSound();
-				RefreshMouse();
+				ReadMouse();
 			}
 			
 			if (_ATimer > 0)
