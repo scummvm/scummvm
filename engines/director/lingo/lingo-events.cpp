@@ -162,9 +162,33 @@ void Lingo::runMovieScript(LEvent event) {
 }
 
 void Lingo::processFrameEvent(LEvent event) {
-	// Primary Event handler
-	// Score Script
-	// Movie Script
+	/* [in D4] the enterFrame, exitFrame, idle and timeout messages
+	 * are sent to a frame script and then a movie script.  If the
+	 * current frame has no frame script when the event occurs, the
+	 * message goes to movie scripts.
+	 * [...]
+	 * If more than one movie script handles the same message, Lingo
+	 * searches the movie scripts according to their order in the cast
+	 * window [p.81 of D4 docs]
+	 */
+	// TODO: Same for D2-3 or not?
+	Score *score = _vm->getCurrentScore();
+
+	if (event == kEventTimeout) {
+		primaryEventHandler(event);
+	}
+
+	if (g_lingo->dontPassEvent) {
+		g_lingo->dontPassEvent = false;
+	} else {
+		assert(score->_frames[score->getCurrentFrame()] != nullptr);
+		if (!g_lingo->_scripts[kFrameScript].contains(kFrameScript)) {
+			processEvent(event,
+						 kFrameScript,
+						 score->_frames[score->getCurrentFrame()]->_actionId);
+		}
+		runMovieScript(event);
+	}
 }
 
 void Lingo::processGenericEvent(LEvent event) {
