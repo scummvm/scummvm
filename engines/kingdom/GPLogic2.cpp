@@ -820,7 +820,7 @@ void KingdomGame::GPLogic2() {
 			if (!word_2D796) {
 				_ATimer = 0;
 				_Help = 1;
-				_Replay = 1;
+				_Replay = true;
 				_Pouch = 1;
 				_FstFwd = 1;
 				PlayMovie(107);
