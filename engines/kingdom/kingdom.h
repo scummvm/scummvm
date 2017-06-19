@@ -249,7 +249,6 @@ namespace Kingdom {
 		void InitMouse();
 		void SetMouse();
 		void ReadMouse();
-		void RefreshMouse();
 		void InitMPlayer();
 		void PlayMovie(int movieNum);
 		void EnAll();
