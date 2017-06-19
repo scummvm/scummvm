@@ -436,7 +436,7 @@ void KingdomGame::FShowPic(int reznum) {
 
 void KingdomGame::InitCursor() {
 	InitMouse();
-	SetCursor(0x19C);
+	SetCursor(0x19C / 4);
 	_CursorDrawn = false;
 	DrawCursor();
 }
@@ -1204,7 +1204,7 @@ void KingdomGame::CursorType() {
 		if (!_Pouch)
 			_MouseValue = 0;
 		break;
-	case 0457:
+	case 0x457:
 		if (!_TideCntl)
 			_MouseValue = 0;
 		break;
