@@ -75,7 +75,7 @@ namespace Kingdom {
 	extern int _HGASeq[4][2];
 	extern HotSpot _MouseMapMS[51];
 	extern int _CursorTable[96];
-	extern HotSpot _MouseMapAS[256][8];
+	extern HotSpot _MouseMapAS[128][16];
 
 	class KingdomGame : public Engine {
 	public:

@@ -57,6 +57,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_quit = false;
 	_MouseValue = 0;
 	_CurrMap = 0;
+	_StatPlay = 0;
 
 	_kingartEntries = nullptr;
 }
@@ -544,7 +545,8 @@ void KingdomGame::EraseCursor() {
 }
 
 void KingdomGame::ReadMouse() {
-	debug("STUB: ReadMouse");
+// No implementation needed?
+//	debug("STUB: ReadMouse");
 }
 
 void KingdomGame::RefreshMouse() {
@@ -1111,7 +1113,7 @@ void KingdomGame::DrawCursor() {
 void KingdomGame::CursorType() {
 	_MouseValue = 0;
 	if (_CurrMap != 1 && _StatPlay >= 30) {
-		int var2 = _StatPlay == 901 ? 80 : 0;
+		int var2 = _StatPlay == 901 ? 16 : 0;
 		int var6 = _StatPlay == 901 ? 35 : 16;
 		for (int i = 0; i < var6 + 1; i++) {
 			if (i == var6) {
@@ -1243,11 +1245,17 @@ void KingdomGame::CursorTypeExit() {
 }
 
 int KingdomGame::checkMouseMapAS() {
-	int var6 = _CurrMap == 11 ? 32 : 16;
-	for (int i = 0; i < var6; i++) {
+	for (int i = 0; i < 16; i++) {
 		if (_CursorX >= _MouseMapAS[_CurrMap][i]._minX && _CursorX < _MouseMapAS[_CurrMap][i]._maxX
-		 && _CursorY >= _MouseMapAS[_CurrMap][i]._minY && _CursorY < _MouseMapAS[_CurrMap][i]._maxY)
+			&& _CursorY >= _MouseMapAS[_CurrMap][i]._minY && _CursorY < _MouseMapAS[_CurrMap][i]._maxY)
 			return _MouseMapAS[_CurrMap][i]._mouseValue;
+	}
+	if (_CurrMap == 11) {
+		for (int i = 0; i < 16; i++) {
+			if (_CursorX >= _MouseMapAS[12][i]._minX && _CursorX < _MouseMapAS[12][i]._maxX
+				&& _CursorY >= _MouseMapAS[12][i]._minY && _CursorY < _MouseMapAS[12][i]._maxY)
+				return _MouseMapAS[12][i]._mouseValue;
+		}
 	}
 	return -1;
 }
