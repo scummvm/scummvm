@@ -115,8 +115,8 @@ void TTnpcData::resetFlags() {
 
 void TTnpcData::copyData() {
 	if (_array[20]) {
-		Common::copy_backward(&_array[16], &_array[136], &_array[24]);
-		Common::fill(&_array[20], &_array[28], 0);
+		Common::copy_backward(&_array[16], &_array[128], &_array[136]);
+		Common::fill(&_array[16], &_array[24], 0);
 	}
 }
 
