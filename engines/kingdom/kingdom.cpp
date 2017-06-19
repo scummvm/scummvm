@@ -1260,7 +1260,7 @@ int KingdomGame::checkMouseMapAS() {
 	return -1;
 }
 void KingdomGame::SetCursor(int cursor) {
-	KingArtEntry Cursor = _kingartEntries[cursor / 4];
+	KingArtEntry Cursor = _kingartEntries[cursor];
 	CursorMan.replaceCursor(Cursor.data, Cursor.Width, Cursor.Height, 0, 0, 255);
 }
 
