@@ -29,7 +29,7 @@ void KingdomGame::GPLogic1() {
 	case 10:
 		_NodeNum = 1;
 		InitPlay();
-		_Replay = 0;
+		_Replay = false;
 		GPLogic1_SubSP10();
 		break;
 	case 11:
@@ -716,7 +716,7 @@ void KingdomGame::GPLogic1() {
 		case 0x198: {
 			FadeToBlack1();
 			DrawRect(4, 17, 228, 161, 0);
-			_Replay = 1;
+			_Replay = true;
 			int oldPMovie = _PMovie;
 			PlayMovie(208);
 			_PMovie = oldPMovie;
@@ -731,7 +731,7 @@ void KingdomGame::GPLogic1() {
 		case 0x199: {
 			FadeToBlack1();
 			DrawRect(4, 17, 228, 161, 0);
-			_Replay = 1;
+			_Replay = true;
 			int oldPMovie = _PMovie;
 			PlayMovie(207);
 			_PMovie = oldPMovie;
@@ -778,7 +778,7 @@ void KingdomGame::GPLogic1() {
 			_Help = 0;
 			_Eye = 0;
 			_Pouch = 0;
-			_Replay = 0;
+			_Replay = false;
 			FShowPic(105);
 			_CurrMap = 86;
 			break;
@@ -834,7 +834,7 @@ void KingdomGame::GPLogic1() {
 			EnAll();
 			if (Wound()) {
 				_ATimer = 0;
-				_Replay = 0;
+				_Replay = false;
 				PlayMovie(31);
 				_StatPlay = _NextNode;
 				_LoopFlag = true;
@@ -847,7 +847,7 @@ void KingdomGame::GPLogic1() {
 			break;
 		case 0x42C:
 			_ATimer = 0;
-			_Replay = 0;
+			_Replay = false;
 			EnAll();
 			PlayMovie(34);
 			_UserInput = 0;
