@@ -38,7 +38,7 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "graphics/cursorman.h"
-
+#include "common/events.h"
 #include "kingdom/kingdom.h"
 
 namespace Kingdom {
@@ -545,12 +545,15 @@ void KingdomGame::EraseCursor() {
 }
 
 void KingdomGame::ReadMouse() {
-// No implementation needed?
-//	debug("STUB: ReadMouse");
-}
-
-void KingdomGame::RefreshMouse() {
-	debug ("STUB: RefreshMouse");
+	Common::Event event;
+	g_system->getEventManager()->pollEvent(event);
+	_CursorX = event.mouse.x;
+	_CursorY = event.mouse.y;
+	_MouseButton = 0;
+	if (event.type == Common::EVENT_LBUTTONUP)
+		_MouseButton |= 1;
+	if (event.type == Common::EVENT_RBUTTONUP)
+		_MouseButton |= 2;
 }
 
 void KingdomGame::GetUserInput() {
@@ -1039,7 +1042,7 @@ int KingdomGame::GetAKey() {
 	DrawCursor();
 	if (_MouseButton != 0 && _MouseDebound == 0) {
 		_MouseDebound = true;
-		return (_MouseButton == 2) ? 2 : 1;
+		return (_MouseButton & 2) ? 2 : 1;
 	}
 
 	int retval = 0;
