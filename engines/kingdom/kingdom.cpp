@@ -915,7 +915,7 @@ void KingdomGame::CheckMainScreen() {
 		if (_TreeEyeTimer == 0) {
 			_TreeEyePic = _TEASeq[_TreeEyeSta][0];
 			DrawIcon(261, 51, _TreeEyePic);
-			_TreeEyeTimer, _TEASeq[_TreeEyeSta][1];
+			_TreeEyeTimer = _TEASeq[_TreeEyeSta][1];
 			_TreeEyeSta++;
 			if (_TreeEyeSta == 5)
 				_TreeEyeSta = 0;
