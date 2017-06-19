@@ -1737,7 +1737,7 @@ int main(int argc, char *argv[]) {
 	}
 	resEng.loadFromEXE(argv[1]);
 
-	if (argc >= 3) {
+	if (argc == 4) {
 		resGer.loadFromEXE(argv[2]);
 	}
 
@@ -1764,7 +1764,7 @@ int main(int argc, char *argv[]) {
 	writeHeader();
 	writeData();
 
-	if (argc >= 3) {
+	if (argc == 4) {
 		inputFile.open(argv[2]);
 		_version = GERMAN;
 		writeGermanData();
