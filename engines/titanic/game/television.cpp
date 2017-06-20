@@ -236,8 +236,11 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (_channelNum == 3 && compareRoomNameTo("SGTState") && getPassengerClass() == THIRD_CLASS) {
-		playSound("z#47.wav");
-		_soundHandle = playSound("b#20.wav");
+		// You may be a winner
+		CProximity prox1, prox2;
+		prox1._soundType = prox2._soundType = Audio::Mixer::kSpeechSoundType;
+		playSound("z#47.wav", prox1);
+		_soundHandle = playSound("b#20.wav", prox2);
 		CMagazine *magazine = dynamic_cast<CMagazine *>(getRoot()->findByName("Magazine"));
 
 		if (magazine) {
