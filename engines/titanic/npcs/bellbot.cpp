@@ -98,7 +98,7 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 
 bool CBellBot::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_npcFlags & NPCFLAG_MOVING) {
-		performAction(1);
+		performAction(true);
 		_npcFlags &= ~NPCFLAG_START_IDLING;
 		CDismissBotMsg dismissMsg;
 		dismissMsg.execute(this);
