@@ -44,6 +44,11 @@ void KingdomGame::GPLogic1() {
 			_Wizard = true;
 			_ATimer = 0;
 			break;
+		case 0x192:
+			_ATimer = 0;
+			FadeToBlack2();
+			PlayMovie(1);
+			break;
 		case 0x193:
 			_ATimer = 0;
 			_KeyActive = 0;
