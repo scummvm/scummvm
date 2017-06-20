@@ -195,6 +195,11 @@ void unfreeze(bool killImage) {
 		loadLightMap(lightMapNumber);
 	}
 
+	if (killImage)
+			killBackDrop();
+	backdropSurface.copyFrom(frozenStuff->backdropSurface);
+	backdropExists = true;
+
 	killZBuffer();
 	zBuffer.surface.copyFrom(frozenStuff->zBufferImage);
 	zBuffer.originalNum = frozenStuff->zBufferNumber;
@@ -206,13 +211,6 @@ void unfreeze(bool killImage) {
 	killParallax();
 	parallaxStuff = frozenStuff->parallaxStuff;
 	reloadParallaxTextures();
-
-	if (killImage)
-		killBackDrop();
-	if (backdropSurface.getPixels())
-		backdropSurface.free();
-	backdropSurface.copyFrom(frozenStuff->backdropSurface);
-	backdropExists = true;
 
 	deleteAnim(mouseCursorAnim);
 	mouseCursorAnim = frozenStuff->mouseCursorAnim;
