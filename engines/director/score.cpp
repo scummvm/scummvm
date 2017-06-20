@@ -1241,7 +1241,7 @@ void Score::update() {
 		}
 	}
 
-	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventExitFrame);
 
 	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
 }
