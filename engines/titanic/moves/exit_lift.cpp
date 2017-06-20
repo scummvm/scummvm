@@ -63,7 +63,7 @@ bool CExitLift::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	} else if (floorNum > 27) {
 		switch (elevNum) {
 		case 1:
-		case 2:
+		case 3:
 			_viewName = "SgtLobby.Node 1.N";
 			break;
 		default:
