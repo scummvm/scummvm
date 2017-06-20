@@ -166,6 +166,8 @@ void Lingo::processInputEvent(LEvent event) {
 				g_lingo->processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
 			}
 			g_lingo->processEvent(event, kCastScript, currentFrame->_sprites[spriteId]->_castId);
+			g_lingo->processEvent(event, kFrameScript, score->_frames[score->getCurrentFrame()]->_actionId);
+			// TODO: Is the kFrameScript call above correct?
 		} else if (event == kEventMouseUp) {
 			// Frame script overrides sprite script
 			if (!currentFrame->_sprites[spriteId]->_scriptId)
