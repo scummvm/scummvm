@@ -149,23 +149,30 @@ void Lingo::processInputEvent(LEvent event) {
 	Frame *currentFrame = score->_frames[score->getCurrentFrame()];
 	assert(currentFrame != nullptr);
 	uint16 spriteId = score->_currentMouseDownSpriteId;
-	if (event == kEventMouseDown) {
-		if (_vm->getVersion() > 3) {
-			g_lingo->processEvent(kEventMouseDown, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
-			g_lingo->processEvent(kEventMouseDown, kCastScript, currentFrame->_sprites[spriteId]->_castId);
-		}
-		// TODO: Unhandled in D<3?
-	} else if (event == kEventMouseUp) {
-		if (_vm->getVersion() > 3) {
-			// TODO: check that this is the order of script execution!
-			g_lingo->processEvent(kEventMouseUp, kCastScript, currentFrame->_sprites[spriteId]->_castId);
-			g_lingo->processEvent(kEventMouseUp, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
-		} else {
-			// Frame script overrides sprite script
-			if (!currentFrame->_sprites[spriteId]->_scriptId)
-				g_lingo->processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
-			else
-				g_lingo->processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
+
+	primaryEventHandler(event);
+
+	if (g_lingo->dontPassEvent) {
+		g_lingo->dontPassEvent = false;
+	} else {
+		if (event == kEventMouseDown) {
+			if (_vm->getVersion() > 3) {
+				g_lingo->processEvent(kEventMouseDown, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
+				g_lingo->processEvent(kEventMouseDown, kCastScript, currentFrame->_sprites[spriteId]->_castId);
+			}
+			// TODO: Unhandled in D<3?
+		} else if (event == kEventMouseUp) {
+			if (_vm->getVersion() > 3) {
+				// TODO: check that this is the order of script execution!
+				g_lingo->processEvent(kEventMouseUp, kCastScript, currentFrame->_sprites[spriteId]->_castId);
+				g_lingo->processEvent(kEventMouseUp, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
+			} else {
+				// Frame script overrides sprite script
+				if (!currentFrame->_sprites[spriteId]->_scriptId)
+					g_lingo->processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
+				else
+					g_lingo->processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
+			}
 		}
 	}
 }
