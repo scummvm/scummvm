@@ -30,6 +30,8 @@
 #include "engines/engine.h"
 #include "director/cast.h"
 
+#define CHANNEL_COUNT 30
+
 namespace Common {
 class MacResManager;
 }
