@@ -1180,7 +1180,7 @@ void Score::update() {
 
 	// Enter and exit from previous frame (Director 4)
 	_lingo->processEvent(kEventEnterFrame);
-	_lingo->processEvent(kEventNone, kFrameScript, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventNone);
 	// TODO Director 6 - another order
 
 	if (_vm->getVersion() >= 6) {

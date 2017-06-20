@@ -267,6 +267,7 @@ void Lingo::processEvent(LEvent event) {
 		case kEventIdle:
 		case kEventEnterFrame:
 		case kEventExitFrame:
+		case kEventNone:
 			processFrameEvent(event);
 			break;
 
