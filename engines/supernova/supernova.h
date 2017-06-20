@@ -135,7 +135,6 @@ public:
 	void processInput();
 	void executeRoom();
 
-private:
 	SupernovaEngine *_vm;
 	Common::Event *_event;
 	uint16 _key;
