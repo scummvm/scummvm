@@ -235,6 +235,12 @@ void Lingo::processFrameEvent(LEvent event) {
 
 void Lingo::processGenericEvent(LEvent event) {
 	// Movie Script
+	int id = -1;
+	if (event == kEventStart)
+		id = 0;
+	else
+		warning("STUB: processGenericEvent called for something else than kEventStart or kEventPrepareMovie, additional logic probably needed");
+	g_lingo->processEvent(event, kMovieScript, id);
 }
 
 void Lingo::processEvent(LEvent event) {
@@ -251,6 +257,7 @@ void Lingo::processEvent(LEvent event) {
 			processFrameEvent(event);
 			break;
 
+		case kEventStart:
 		case kEventStartMovie:
 		case kEventStopMovie:
 		case kEventIdle:
