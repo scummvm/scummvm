@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-06-19 04:43+0200\n"
+"POT-Creation-Date: 2017-06-20 22:32+0200\n"
 "PO-Revision-Date: 2016-12-04 15:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -1637,28 +1637,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr "Vyberte Vzhled"
 
-#: gui/ThemeEngine.cpp:452
+#: gui/ThemeEngine.cpp:461
 msgid "Disabled GFX"
 msgstr "GFX zakázáno"
 
-#: gui/ThemeEngine.cpp:452
+#: gui/ThemeEngine.cpp:461
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX zakázáno"
 
-#: gui/ThemeEngine.cpp:453
+#: gui/ThemeEngine.cpp:462
 msgid "Standard Renderer"
 msgstr "Standardní Vykreslovaè"
 
-#: gui/ThemeEngine.cpp:453 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Standardní"
 
-#: gui/ThemeEngine.cpp:455
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased Renderer"
 msgstr "Vykreslovaè s vyhlazenými hranami"
 
-#: gui/ThemeEngine.cpp:455
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased"
 msgstr "S vyhlazenými hranami"
 

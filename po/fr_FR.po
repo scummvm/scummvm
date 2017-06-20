@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-06-19 04:43+0200\n"
+"POT-Creation-Date: 2017-06-20 22:32+0200\n"
 "PO-Revision-Date: 2017-04-23 15:57+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -1646,28 +1646,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr "Sélectionnez un Thème"
 
-#: gui/ThemeEngine.cpp:452
+#: gui/ThemeEngine.cpp:461
 msgid "Disabled GFX"
 msgstr "GFX désactivé"
 
-#: gui/ThemeEngine.cpp:452
+#: gui/ThemeEngine.cpp:461
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX désactivé"
 
-#: gui/ThemeEngine.cpp:453
+#: gui/ThemeEngine.cpp:462
 msgid "Standard Renderer"
 msgstr "Rendu Standard"
 
-#: gui/ThemeEngine.cpp:453 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Normal"
 
-#: gui/ThemeEngine.cpp:455
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased Renderer"
 msgstr "Rendu Anti-crénelé"
 
-#: gui/ThemeEngine.cpp:455
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased"
 msgstr "Anti-crénelé"
 

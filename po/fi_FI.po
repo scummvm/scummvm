@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-06-19 04:43+0200\n"
+"POT-Creation-Date: 2017-06-20 22:32+0200\n"
 "PO-Revision-Date: 2017-05-21 13:31+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -1629,28 +1629,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr "Valitse teema"
 
-#: gui/ThemeEngine.cpp:452
+#: gui/ThemeEngine.cpp:461
 msgid "Disabled GFX"
 msgstr "Disabloitu GFX"
 
-#: gui/ThemeEngine.cpp:452
+#: gui/ThemeEngine.cpp:461
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Disabloitu GFX"
 
-#: gui/ThemeEngine.cpp:453
+#: gui/ThemeEngine.cpp:462
 msgid "Standard Renderer"
 msgstr "Standardirenderöijä"
 
-#: gui/ThemeEngine.cpp:453 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Standardi"
 
-#: gui/ThemeEngine.cpp:455
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased Renderer"
 msgstr "Antialiasoitu renderöijä"
 
-#: gui/ThemeEngine.cpp:455
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased"
 msgstr "Antialiasoitu"
 

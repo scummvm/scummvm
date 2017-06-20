@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-06-19 04:43+0200\n"
+"POT-Creation-Date: 2017-06-20 22:32+0200\n"
 "PO-Revision-Date: 2017-01-30 14:50+0000\n"
 "Last-Translator: Vitor Santos <vitorhgsantos90@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -1625,28 +1625,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:452
+#: gui/ThemeEngine.cpp:461
 msgid "Disabled GFX"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:452
+#: gui/ThemeEngine.cpp:461
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:453
+#: gui/ThemeEngine.cpp:462
 msgid "Standard Renderer"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:453 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:455
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased Renderer"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:455
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased"
 msgstr ""
 
