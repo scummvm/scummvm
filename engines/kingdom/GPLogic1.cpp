@@ -73,6 +73,9 @@ void KingdomGame::GPLogic1() {
 			PlayMovie(54);
 			GPLogic1_SubSP10();
 			break;
+		default:
+			debug("Skipped UserInput %d(0x%04X) for _StatPlay 11", _UserInput, _UserInput);
+			break;
 		}
 		break;
 	case 20:
