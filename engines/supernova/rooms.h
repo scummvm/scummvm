@@ -26,6 +26,10 @@ public:
 	int getFileNumber() const {
 		return _fileNumber;
 	}
+
+	void setSectionVisible(size_t section, bool visible) {
+		_shown[section] = visible;
+	}
 	bool isSectionVisible(size_t index) const {
 		return _shown[index];
 	}
