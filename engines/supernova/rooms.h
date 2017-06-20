@@ -7,6 +7,9 @@
 
 namespace Supernova {
 
+class GameManager;
+class SupernovaEngine;
+
 class Room {
 public:
 	Room() {
@@ -41,6 +44,8 @@ protected:
 	int _fileNumber;
 	bool _shown[kMaxSection];
 	Object _objectState[kMaxObject];
+	SupernovaEngine *_vm;
+	GameManager *_gm;
 
 private:
 	bool _seen;
@@ -49,7 +54,10 @@ private:
 // Room 0
 class StartingItems : public Room {
 public:
-	StartingItems() {
+	StartingItems(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = -1;
 
 		_shown[0] = false;
@@ -72,7 +80,10 @@ public:
 // Spaceship
 class ShipCorridor : public Room {
 public:
-	ShipCorridor() {
+	ShipCorridor(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 17;
 		_shown[0] = true;
 		_shown[1] = false;
@@ -97,7 +108,10 @@ public:
 
 class ShipHall: public Room {
 public:
-	ShipHall() {
+	ShipHall(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 15;
 		_shown[0] = true;
 
@@ -114,7 +128,10 @@ public:
 
 class ShipSleepCabin: public Room {
 public:
-	ShipSleepCabin() {
+	ShipSleepCabin(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 33;
 		_shown[0] = true;
 
@@ -131,7 +148,10 @@ public:
 
 class ShipCockpit : public Room {
 public:
-	ShipCockpit() {
+	ShipCockpit(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 9;
 		_shown[0] = true;
 
@@ -148,7 +168,10 @@ public:
 
 class ShipCabinL1: public Room {
 public:
-	ShipCabinL1() {
+	ShipCabinL1(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 21;
 		_shown[0] = true;
 		_shown[1] = true;
@@ -174,7 +197,10 @@ public:
 
 class ShipCabinL2 : public Room {
 public:
-	ShipCabinL2() {
+	ShipCabinL2(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 21;
 		_shown[0] = true;
 		_shown[1] = false;
@@ -226,7 +252,10 @@ public:
 
 class ShipCabinL3 : public Room {
 public:
-	ShipCabinL3() {
+	ShipCabinL3(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 21;
 		_shown[0] = true;
 		_shown[1] = false;
@@ -266,7 +295,10 @@ public:
 
 class ShipCabinR1 : public Room {
 public:
-	ShipCabinR1() {
+	ShipCabinR1(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 22;
 		_shown[0] = true;
 		_shown[1] = true;
@@ -286,7 +318,10 @@ public:
 
 class ShipCabinR2 : public Room {
 public:
-	ShipCabinR2() {
+	ShipCabinR2(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 22;
 		_shown[0] = true;
 		_shown[1] = false;
@@ -309,7 +344,10 @@ public:
 
 class ShipCabinR3 : public Room {
 public:
-	ShipCabinR3() {
+	ShipCabinR3(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 22;
 		_shown[0] = true;
 		_shown[1] = false;
@@ -359,7 +397,10 @@ public:
 
 class ShipCabinBathroom : public Room  {
 public:
-	ShipCabinBathroom() {
+	ShipCabinBathroom(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 23;
 		_shown[0] = true;
 
@@ -371,7 +412,10 @@ public:
 
 class ShipAirlock : public Room {
 public:
-	ShipAirlock() {
+	ShipAirlock(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 34;
 		_shown[0] = true;
 		_shown[1] = false;
@@ -396,7 +440,10 @@ public:
 
 class ShipHold : public Room {
 public:
-	ShipHold() {
+	ShipHold(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 24;
 		_shown[0] = true;
 
@@ -420,7 +467,10 @@ public:
 
 class ShipLandingModule : public Room {
 public:
-	ShipLandingModule() {
+	ShipLandingModule(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 25;
 		_shown[0] = true;
 
@@ -437,7 +487,10 @@ public:
 
 class ShipGenerator : public Room {
 public:
-	ShipGenerator() {
+	ShipGenerator(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 18;
 		_shown[0] = true;
 		_shown[1] = false;
@@ -466,7 +519,10 @@ public:
 
 class ShipOuterSpace : public Room {
 public:
-	ShipOuterSpace() {
+	ShipOuterSpace(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
 		_fileNumber = 4;
 		_shown[0] = true;
 
