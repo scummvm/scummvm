@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-06-19 04:43+0200\n"
-"PO-Revision-Date: 2017-04-23 05:57+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/ru/>\n"
+"PO-Revision-Date: 2017-06-20 15:35+0000\n"
+"Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
+"Language-Team: Russian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Russian\n"
 
@@ -3588,28 +3588,37 @@ msgstr ""
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
+"Пожалуйста, воспользуйтесь другой программой для просмотра файла помощи игры:"
+" %s"
 
 #: engines/sci/engine/savegame.cpp:1304
+#, fuzzy
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "Формат файла сохранённой игры устарел, не могу загрузить его"
 
 #: engines/sci/engine/savegame.cpp:1306
-#, c-format
+#, c-format, fuzzy
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "Версия файла сохранения: %d, но максимальная поддерживаемая: %0d"
 
 #: engines/sci/engine/savegame.cpp:1317
+#, fuzzy
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"Этот файл сохранения был создан другой версией игры, не могу загрузить его"
 
 #: engines/sci/resource.cpp:813
+#, fuzzy
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Обнаружены недостающие или повреждённые ресурсы игры. Некоторые элементы "
+"игры могут работать неправильно. Пожалуйста, обратитесь к консоли за "
+"дальнейшей информации, а также проверьте, что файлы игры корректны."
 
 #: engines/sci/sci.cpp:394
 msgid ""
@@ -3620,6 +3629,7 @@ msgid ""
 msgstr ""
 
 #: engines/sci/sci.cpp:403
+#, fuzzy
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -3627,6 +3637,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"У вас включены субтитры, но субтитры игры King's Quest 7 не были закончены и "
+"поэтому отключены в итоговой версии игры. ScummVM может принудительно "
+"включить субтитры, но, поскольку они были убраны из игры, они не всегда "
+"будут верно отображаться и соответствовать речи персонажей. Это проблема "
+"игровых файлов, а не ScummVM."
 
 #: engines/sci/sci.cpp:427
 msgid ""
@@ -3642,6 +3657,7 @@ msgid ""
 msgstr ""
 
 #: engines/sci/sci.cpp:446
+#, fuzzy
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -3649,6 +3665,10 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Игра содержит пропатченные фанатами игровые скрипты. Эти патчи могут "
+"вызывать проблемы, поскольку сильно затрагивают скрипты. Исправляемые этими "
+"патчи ошибки в ScummVM не возникают, поэтому рекомендуется удалить эти патчи "
+"из папки с игрой, чтобы предотвратить непредвиденные ошибки в дальнейшем."
 
 #: engines/scumm/detection.cpp:1120
 msgid ""
