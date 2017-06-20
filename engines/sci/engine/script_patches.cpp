@@ -5588,12 +5588,27 @@ static const uint16 torinVolumeResetPatch2[] = {
 	PATCH_END
 };
 
+// Torin-specific version of sci2NumSavesSignature1/2
+// Applies to at least: English CD
+static const uint16 torinNumSavesSignature[] = {
+	SIG_MAGICDWORD,
+	0x36,       // push
+	0x35, 0x14, // ldi 20
+	0x20,       // ge?
+	SIG_END
+};
+
+static const uint16 torinNumSavesPatch[] = {
+	PATCH_ADDTOOFFSET(+1), // push
+	0x35, 0x63,            // ldi 99
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
 	{  true, 64000, "disable volume reset on startup 1/2",         1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
 	{  true, 64000, "disable volume reset on startup 2/2",         1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64866, "increase number of save games",               1, torinNumSavesSignature,            torinNumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
