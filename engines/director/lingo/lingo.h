@@ -193,6 +193,7 @@ private:
 	// lingo-events.cpp
 private:
 	void initEventHandlerTypes();
+	void primaryEventHandler(LEvent event);
 	void processInputEvent(LEvent event);
 	void processFrameEvent(LEvent event);
 	void processGenericEvent(LEvent event);

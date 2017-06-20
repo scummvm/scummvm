@@ -105,6 +105,39 @@ Symbol *Lingo::getHandler(Common::String &name) {
 	return _handlers[entityIndex];
 }
 
+void Lingo::primaryEventHandler(LEvent event) {
+	/* When an event occurs the message [...] is first sent to a
+	 * primary event handler: [... if exists it is executed] and the
+	 * event is passed on to other objects unless you explicitly stop
+	 * the message by including the dontPassEventCommand in the script
+	 * [D4 docs page 77]
+	 */
+	debugC(3, kDebugLingoExec, "STUB: primary event handler (%s) not implemented", _eventHandlerTypes[event]);
+	switch (event) {
+	case kEventMouseDown:
+	case kEventMouseUp:
+	case kEventKeyUp:
+	case kEventKeyDown:
+	case kEventTimeout:
+		// TODO
+		break;
+	default:
+		/* N.B.: No primary event handlers for events other than
+		 * keyup, keydown, mouseup, mousedown, timeout
+		 * [see: www.columbia.edu/itc/visualarts/r4110/s2001/handouts
+		 * /03_03_Event_Hierarchy.pdf]
+		 */
+		warning("primaryEventHandler() on event other than mouseDown, mouseUp, keyUp, keyDown, timeout");
+	}
+#ifdef DEBUG_DONTPASSEVENT
+	// #define DEBUG_DONTPASSEVENT to simulate raising of the dontPassEvent flag
+	g_lingo->dontPassEvent = true;
+	debugC(3, kDebugLingoExec, "STUB: primaryEventHandler raising dontPassEvent");
+#else
+	debugC(3, kDebugLingoExec, "STUB: primaryEventHandler not raising dontPassEvent");
+#endif
+}
+
 void Lingo::processInputEvent(LEvent event) {
 	// Primary Event handler
 	// Score Script
