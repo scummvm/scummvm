@@ -633,7 +633,16 @@ bool GameManager::airless() {
 }
 
 void GameManager::processInput() {
-	//
+	// STUB
+}
+
+void GameManager::turnoff() {
+	if (_state.powerOff)
+		return;
+
+	_state.powerOff = true;
+	roomBrightness();
+
 }
 
 void GameManager::takeObject(Object &obj) {
@@ -667,8 +676,33 @@ void GameManager::roomBrightness() {
 	// STUB
 }
 
+void GameManager::load_time() {
+	// STUB
+}
+
+void GameManager::saveTime() {
+	// STUB
+}
+
+void GameManager::saveGame(int) {
+	// STUB
+}
+
+void GameManager::errorTemp() {
+	// STUB
+}
+
+void GameManager::wait2(int) {
+	// STUB
+}
+
+void GameManager::screenShake() {
+	// STUB
+}
+
 void GameManager::palette() {
 	// STUB
+	// Adjust palette to brightness parameters and make it current
 }
 
 void GameManager::showMenu() {

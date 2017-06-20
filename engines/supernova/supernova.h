@@ -160,6 +160,13 @@ public:
 	void mouseInput2();
 	void mouseInput3();
 	void mouseWait(int);
+	void wait2(int);
+	void turnoff();
+	void screenShake();
+	void load_time();
+	void saveTime();
+	void saveGame(int);
+	void errorTemp();
 	void roomBrightness();
 	void palette();
 	void showMenu();
