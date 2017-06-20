@@ -37,7 +37,6 @@
 #include "common/debug-channels.h"
 #include "common/stream.h"
 #include "common/memstream.h"
-#include "graphics/cursorman.h"
 #include "common/events.h"
 #include "kingdom/kingdom.h"
 
@@ -545,15 +544,20 @@ void KingdomGame::EraseCursor() {
 }
 
 void KingdomGame::ReadMouse() {
-	Common::Event event;
-	g_system->getEventManager()->pollEvent(event);
-	_CursorX = event.mouse.x;
-	_CursorY = event.mouse.y;
 	_MouseButton = 0;
-	if (event.type == Common::EVENT_LBUTTONUP)
-		_MouseButton |= 1;
-	if (event.type == Common::EVENT_RBUTTONUP)
-		_MouseButton |= 2;
+
+	if (_CursorActive) {
+		Common::Event event;
+		g_system->getEventManager()->pollEvent(event);
+		_CursorX = event.mouse.x;
+		_CursorY = event.mouse.y;
+		if (event.type == Common::EVENT_LBUTTONUP)
+			_MouseButton |= 1;
+		if (event.type == Common::EVENT_RBUTTONUP)
+			_MouseButton |= 2;
+
+		g_system->getEventManager()->pushEvent(event);
+	}
 }
 
 void KingdomGame::GetUserInput() {
