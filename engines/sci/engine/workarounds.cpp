@@ -625,6 +625,8 @@ const SciWorkaroundEntry kFindKey_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kFrameOut_workarounds[] = {
+	{ GID_PQ4,           360,   360,  0,       "csFrontInset", "init",                      NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When clicking hand on the impounded white car on day 4 - bug #9848
+	{ GID_PQ4,           360,   360,  0,       "csFrontInset", "dispose",                   NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When clicking hand on the impounded white car on day 4
 	{ GID_PQ4,           360,   360,  0,        "copCarInset", "init",                      NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When clicking hand on the impounded police car on day 3
 	{ GID_PQ4,           360,   360,  0,        "copCarInset", "dispose",                   NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When exiting the impounded police car on day 3
 	{ GID_PQ4,           275,   275,  0,        "checkSherry", "changeState",               NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When encountering Sherry and Sam in the morgue on day 3
