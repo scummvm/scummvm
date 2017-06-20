@@ -140,11 +140,16 @@ void Lingo::primaryEventHandler(LEvent event) {
 }
 
 void Lingo::processInputEvent(LEvent event) {
-	// Primary Event handler
-	// Score Script
-	// Script of Cast Member
-	// Score Script
-	// Movie Script
+	/* When the mouseDown or mouseUp occurs over a sprite, the message
+	 * goes first to the sprite script, then to the script of the cast
+	 * member, to the frame script and finally to the movie scripts.
+	 *
+	 * When the mouseDown or mouseUp doesn't occur over a sprite, the
+	 * message goes to the frame script and then to the movie script.
+	 *
+	 * When more than one movie script [...]
+	 * [D4 docs] */
+
 	Score *score = _vm->getCurrentScore();
 	Frame *currentFrame = score->_frames[score->getCurrentFrame()];
 	assert(currentFrame != nullptr);
@@ -155,25 +160,20 @@ void Lingo::processInputEvent(LEvent event) {
 	if (g_lingo->dontPassEvent) {
 		g_lingo->dontPassEvent = false;
 	} else {
-		if (event == kEventMouseDown) {
-			if (_vm->getVersion() > 3) {
-				g_lingo->processEvent(kEventMouseDown, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
-				g_lingo->processEvent(kEventMouseDown, kCastScript, currentFrame->_sprites[spriteId]->_castId);
+		if (_vm->getVersion() > 3) {
+			if (true) {
+				// TODO: Check whether occurring over a sprite
+				g_lingo->processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
 			}
-			// TODO: Unhandled in D<3?
+			g_lingo->processEvent(event, kCastScript, currentFrame->_sprites[spriteId]->_castId);
 		} else if (event == kEventMouseUp) {
-			if (_vm->getVersion() > 3) {
-				// TODO: check that this is the order of script execution!
-				g_lingo->processEvent(kEventMouseUp, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
-				g_lingo->processEvent(kEventMouseUp, kCastScript, currentFrame->_sprites[spriteId]->_castId);
-			} else {
-				// Frame script overrides sprite script
-				if (!currentFrame->_sprites[spriteId]->_scriptId)
-					g_lingo->processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
-				else
-					g_lingo->processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
-			}
+			// Frame script overrides sprite script
+			if (!currentFrame->_sprites[spriteId]->_scriptId)
+				g_lingo->processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
+			else
+				g_lingo->processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
 		}
+		runMovieScript(event);
 	}
 }
 
