@@ -34,6 +34,16 @@ void KingdomGame::GPLogic1() {
 		break;
 	case 11:
 		switch(_UserInput) {
+		case 0x190:
+			_StatPlay = 20;
+			_Wizard = false;
+			_ATimer = 0;
+			break;
+		case 0x191:
+			_StatPlay = 20;
+			_Wizard = true;
+			_ATimer = 0;
+			break;
 		case 0x193:
 			_ATimer = 0;
 			_KeyActive = 0;
