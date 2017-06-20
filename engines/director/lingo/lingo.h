@@ -579,6 +579,9 @@ private:
 	int _floatPrecision;
 
 	bool dontPassEvent;
+
+public:
+	void executeImmediateScripts(Frame *frame);
 };
 
 extern Lingo *g_lingo;
