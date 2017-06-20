@@ -48,6 +48,8 @@ protected:
 private:
 	void loadCharset(int32 id);
 	void createTexture();
+	void readPhrases(const DirectorySubEntry *desc);
+	static Common::String fakeBidiProcessing(const Common::String &phrase);
 
 	/** Return a codepage usable by iconv from a GDI Charset as provided to CreateFont */
 	const char *getCodePage(uint32 gdiCharset);
@@ -135,6 +137,18 @@ bool FontSubtitles::loadSubtitles(int32 id) {
 	if (!desc)
 		return false;
 
+	readPhrases(desc);
+
+	if (_vm->getGameLanguage() == Common::HE_ISR) {
+		for (uint i = 0; i < _phrases.size(); i++) {
+			_phrases[i].string = fakeBidiProcessing(_phrases[i].string);
+		}
+	}
+
+	return true;
+}
+
+void FontSubtitles::readPhrases(const DirectorySubEntry *desc) {
 	Common::MemoryReadStream *crypted = desc->getData();
 
 	// Read the frames and associated text offsets
@@ -168,8 +182,48 @@ bool FontSubtitles::loadSubtitles(int32 id) {
 	}
 
 	delete crypted;
+}
 
-	return true;
+static bool isPunctuation(char c) {
+	return c == '.' || c == ',' || c == '\"'  || c == '!' || c == '?';
+}
+
+Common::String FontSubtitles::fakeBidiProcessing(const Common::String &phrase) {
+	// The Hebrew subtitles are stored in logical order:
+	// .ABC DEF GHI
+	// This line should be rendered in visual order as:
+	// .IHG FED CBA
+
+	// Notice how the dot is on the left both in logical and visual order. This is
+	// because it is in left to right order while the Hebrew characters are in right to
+	// left order. Text rendering code needs to apply what is called the BiDirectional
+	// algorithm to know which parts of an input string are LTR or RTL and how to render
+	// them. This is a quite complicated algorithm. Fortunately the subtitles in Myst III
+	// only require very specific BiDi processing. The punctuation signs at the beginning of
+	// each line need to be moved to the end so that they are visually to the left once
+	// the string is rendered from right to left.
+	// This method works around the need to implement proper BiDi processing
+	// by exploiting that fact.
+
+	uint punctuationCounter = 0;
+	while (punctuationCounter < phrase.size() && isPunctuation(phrase[punctuationCounter])) {
+		punctuationCounter++;
+	}
+
+	Common::String output = Common::String(phrase.c_str() + punctuationCounter);
+	for (uint i = 0; i < punctuationCounter; i++) {
+		output += phrase[i];
+	}
+
+	// Also reverse the string so that it is in visual order.
+	// This is necessary because our text rendering code does not actually support RTL.
+	for (int i = 0, j = output.size() - 1; i < j; i++, j--) {
+		char c = output[i];
+		output.setChar(output[j], i);
+		output.setChar(c, j);
+	}
+
+	return output;
 }
 
 void FontSubtitles::createTexture() {
