@@ -80,7 +80,7 @@ private:
 	/**
 	 * Handles basic initialization
 	 */
-	void initialize();
+	bool initialize();
 
 	/**
 	 * Handles game deinitialization
@@ -185,6 +185,11 @@ public:
 	 * and if it exists, returns it's description
 	 */
 	CString getSavegameName(int slot);
+
+	/**
+	 * Displays an error message in a GUI dialog
+	 */
+	void GUIError(const char *msg, ...) GCC_PRINTF(2, 3);
 };
 
 extern TitanicEngine *g_vm;

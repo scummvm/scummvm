@@ -52,11 +52,14 @@ private:
 	CFilesManagerList _list;
 	int _drive;
 	const CString _assetsPath;
-private:
-	void loadResourceIndex();
 public:
 	CFilesManager(TitanicEngine *vm);
 	~CFilesManager();
+
+	/**
+	 * Opens up the titanic.dat support file and loads it's index
+	 */
+	bool loadResourceIndex();
 
 	/**
 	 * Sets the game manager

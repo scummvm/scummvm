@@ -77,9 +77,14 @@ void TitanicEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addSubDirectoryMatching(gamePath, "assets");
 }
 
-void TitanicEngine::initialize() {
-	_debugger = new Debugger(this);
+bool TitanicEngine::initialize() {
 	_filesManager = new CFilesManager(this);
+	if (!_filesManager->loadResourceIndex()) {
+		delete _filesManager;
+		return false;
+	}
+
+	_debugger = new Debugger(this);
 
 	CSaveableObject::initClassList();
 	CEnterExitFirstClassState::init();
@@ -107,6 +112,7 @@ void TitanicEngine::initialize() {
 	setRoomNames();
 
 	_window->applicationStarting();
+	return true;
 }
 
 void TitanicEngine::deinitialize() {
@@ -132,14 +138,15 @@ void TitanicEngine::deinitialize() {
 }
 
 Common::Error TitanicEngine::run() {
-	initialize();
+	if (initialize()) {
+		// Main event loop
+		while (!shouldQuit()) {
+			_events->pollEventsAndWait();
+		}
 
-	// Main event loop
-	while (!shouldQuit()) {
-		_events->pollEventsAndWait();
+		deinitialize();
 	}
 
-	deinitialize();
 	return Common::kNoError;
 }
 
@@ -167,7 +174,6 @@ void TitanicEngine::setRoomNames() {
 		_roomNames.push_back(readStringFromStream(r));
 	delete r;
 }
-
 
 bool TitanicEngine::canLoadGameStateCurrently() {
 	if (!_window->_inputAllowed)
@@ -225,6 +231,18 @@ CString TitanicEngine::getSavegameName(int slot) {
 	}
 
 	return CString();
+}
+
+void TitanicEngine::GUIError(const char *msg, ...) {
+	char buffer[STRINGBUFLEN];
+	va_list va;
+
+	// Generate the full error message
+	va_start(va, msg);
+	vsnprintf(buffer, STRINGBUFLEN, msg, va);
+	va_end(va);
+
+	GUIErrorMessage(buffer);
 }
 
 } // End of namespace Titanic
