@@ -43,7 +43,7 @@ struct VideoData {
 	int32 height;
 };
 
-typedef uint32 MiscData[22];
+typedef Common::Array<uint32> MiscData;
 
 class Archive;
 
@@ -69,7 +69,6 @@ class DirectorySubEntry {
 			kDialogMovie = 74
 		};
 
-		DirectorySubEntry() {}
 		DirectorySubEntry(Archive *archive);
 
 		void readFromStream(Common::SeekableReadStream &inStream);

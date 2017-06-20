@@ -32,9 +32,6 @@ namespace Myst3 {
 
 DirectorySubEntry::DirectorySubEntry(Archive *archive) :
 		_archive(archive) {
-	for (uint i = 0; i < ARRAYSIZE(_miscData); i++) {
-		_miscData[i] = 0;
-	}
 }
 
 void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
@@ -61,12 +58,7 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 		_videoData.width = inStream.readSint32LE();
 		_videoData.height = inStream.readSint32LE();
 	} else if (_type == kNumMetadata || _type == kTextMetadata) {
-		if (_metadataSize > 20) {
-			warning("Too much metadata, skipping");
-			inStream.skip(_metadataSize * sizeof(uint32));
-			return;
-		}
-
+		_miscData.resize(_metadataSize + 2);
 		_miscData[0] = _offset;
 		_miscData[1] = _size;
 
@@ -129,8 +121,6 @@ Common::MemoryReadStream *DirectorySubEntry::getData() const {
 }
 
 uint32 DirectorySubEntry::getMiscData(uint index) const {
-	assert(index < 22);
-
 	return _miscData[index];
 }
 
@@ -141,7 +131,7 @@ Common::String DirectorySubEntry::getTextData(uint index) const {
 	memset(decrypted, 0, sizeof(decrypted));
 
 	uint8 *out = &decrypted[0];
-	while (_miscData[cnt / 4] && cnt < 89) {
+	while (cnt / 4 < _miscData.size() && cnt < 89) {
 		// XORed text stored in little endian 32 bit words
 		*out++ = (_miscData[cnt / 4] >> (8 * (3 - (cnt % 4)))) ^ key++;
 		cnt++;
