@@ -360,6 +360,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",                          NULL,     3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #5154
 	{ GID_PEPPER,        150,   928,  0,           "Narrator", "startText",                       NULL,     0, { WORKAROUND_FAKE,   0 } }, // happens during the non-interactive demo of Pepper
 	{ GID_PQ4,            -1,    25,  0,         "iconToggle", "select",                          NULL,     1, { WORKAROUND_FAKE,   0 } }, // when toggling the icon bar to auto-hide or not
+	{ GID_PQ4,           170,   170, -1,        "hideAndSeek", "handleEvent",                     NULL,     1, { WORKAROUND_FAKE,   0 } }, // when clicking to move right while still moving left during the Emo shootout - bug #9847
 	{ GID_PQ4,           275, 64964, -1,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // when Sherry walks out of the morgue on day 3
 	{ GID_PQ4,           240, 64964, -1,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // when encountering Sherry and the reporter outside the morgue at the end of day 3
 	{ GID_PQSWAT,         -1, 64950,  0,                 NULL, "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // Using any menus in-game
