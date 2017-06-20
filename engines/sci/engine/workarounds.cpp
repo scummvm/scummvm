@@ -772,6 +772,12 @@ const SciWorkaroundEntry kPalVarySetPercent_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kPalVarySetStart_workarounds[] = {
+	{ GID_PQ4,           170,   170,  0,             "getHit", "changeState",               NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Three extra parameters passed during the gunfight at the end of day 1
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kPalVaryMergeStart_workarounds[] = {
 	{ GID_PQ4,           170,   170,  0,             "getHit", "changeState",               NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Three extra parameters passed during the gunfight at the end of day 1
 	SCI_WORKAROUNDENTRY_TERMINATOR

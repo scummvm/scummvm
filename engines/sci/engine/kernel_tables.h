@@ -281,7 +281,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
 	{ SIG_SCI32,           5, MAP_CALL(PalVarySetTime),            "i",                    NULL },
 	{ SIG_SCI32,           6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
 	{ SIG_SCI32,           7, MAP_CALL(PalVarySetTarget),          "i",                    NULL },
-	{ SIG_SCI32,           8, MAP_CALL(PalVarySetStart),           "i",                    NULL },
+	{ SIG_SCI32,           8, MAP_CALL(PalVarySetStart),           "i",                    kPalVarySetStart_workarounds },
 	{ SIG_SCI32,           9, MAP_CALL(PalVaryMergeStart),         "i",                    kPalVaryMergeStart_workarounds },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
