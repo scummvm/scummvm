@@ -75,7 +75,7 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	if (!exeStream)
 		error("Failed to open EXE '%s'", getEXEName().c_str());
 
-	_lingo->processEvent(kEventStart, kMovieScript, 0);
+	_lingo->processEvent(kEventStart);
 
 	exeStream->seek(-4, SEEK_END);
 	exeStream->seek(exeStream->readUint32LE());
