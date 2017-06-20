@@ -164,8 +164,8 @@ void Lingo::processInputEvent(LEvent event) {
 		} else if (event == kEventMouseUp) {
 			if (_vm->getVersion() > 3) {
 				// TODO: check that this is the order of script execution!
-				g_lingo->processEvent(kEventMouseUp, kCastScript, currentFrame->_sprites[spriteId]->_castId);
 				g_lingo->processEvent(kEventMouseUp, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
+				g_lingo->processEvent(kEventMouseUp, kCastScript, currentFrame->_sprites[spriteId]->_castId);
 			} else {
 				// Frame script overrides sprite script
 				if (!currentFrame->_sprites[spriteId]->_scriptId)
