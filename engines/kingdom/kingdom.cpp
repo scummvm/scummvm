@@ -566,6 +566,12 @@ void KingdomGame::GetUserInput() {
 	if (_quit)
 		return;
 
+	if (_UserInput == 2 && _Eye)
+		_UserInput = _ASMode ? 0x43B : 0x43A;
+
+	if (_UserInput == 1)
+		_UserInput = _MouseValue;
+
 	if (_UserInput == 0x2F5) {
 		_StatPlay = 600;
 		_LoopFlag = true;
@@ -1040,7 +1046,7 @@ void KingdomGame::DrawIcon(int x, int y, int index) {
 
 int KingdomGame::GetAKey() {
 	DrawCursor();
-	if (_MouseButton != 0 && _MouseDebound == 0) {
+	if (_MouseButton != 0 && _MouseDebound == false) {
 		_MouseDebound = true;
 		return (_MouseButton & 2) ? 2 : 1;
 	}
