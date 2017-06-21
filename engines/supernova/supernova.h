@@ -160,16 +160,18 @@ public:
 	bool isHelmetOff();
 	void great(uint number);
 	bool airless();
+	void shock();
 	void mouseInput();
 	void mouseInput2();
 	void mouseInput3();
-	void mouseWait(int);
-	void wait2(int);
-	void turnoff();
+	void mouseWait(int delay);
+	void wait2(int delay);
+	void turnOff();
+	void turnOn();
 	void screenShake();
-	void load_time();
+	void loadTime();
 	void saveTime();
-	void saveGame(int);
+	bool saveGame(int number);
 	void errorTemp();
 	void roomBrightness();
 	void palette();
@@ -178,7 +180,9 @@ public:
 	void animationOff();
 	void animationOn();
 	void loadOverlayStart();
-	void edit(int, int, char *, int);
+	void openLocker(const Room *room, Object *obj, Object *lock, int section);
+	void closeLocker(const Room *room, Object *obj, Object *lock, int section);
+	void edit(char *text, int x, int y, int length);
 	int invertSection(int section);
 };
 
