@@ -1183,19 +1183,12 @@ void Score::update() {
 	_lingo->processEvent(kEventNone, kFrameScript, _frames[_currentFrame]->_actionId);
 	// TODO Director 6 - another order
 
-	// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
 	if (_vm->getVersion() >= 6) {
-		for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
-			if (_frames[_currentFrame]->_sprites[i]->_enabled) {
-				// TODO: Check if this is also possibly a kSpriteScript?
-				_lingo->processEvent(kEventBeginSprite, kCastScript, _frames[_currentFrame]->_sprites[i]->_scriptId);
-			}
-		}
-	}
-
-	// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
-	if (_vm->getVersion() >= 6)
+		_lingo->processEvent(kEventBeginSprite);
+		// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
 		_lingo->processEvent(kEventPrepareFrame);
+		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
+	}
 
 	Common::SortedArray<Label *>::iterator i;
 	if (_labels != NULL) {
