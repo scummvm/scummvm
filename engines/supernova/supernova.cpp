@@ -648,13 +648,16 @@ void GameManager::processInput() {
 	// STUB
 }
 
-void GameManager::turnoff() {
+void GameManager::turnOff() {
 	if (_state.powerOff)
 		return;
 
 	_state.powerOff = true;
 	roomBrightness();
 
+}
+void GameManager::turnOn() {
+	// STUB
 }
 
 void GameManager::takeObject(Object &obj) {
@@ -680,7 +683,7 @@ void GameManager::mouseInput3() {
 	// STUB
 }
 
-void GameManager::mouseWait(int) {
+void GameManager::mouseWait(int delay) {
 	// STUB
 }
 
@@ -688,7 +691,7 @@ void GameManager::roomBrightness() {
 	// STUB
 }
 
-void GameManager::load_time() {
+void GameManager::loadTime() {
 	// STUB
 }
 
@@ -696,15 +699,16 @@ void GameManager::saveTime() {
 	// STUB
 }
 
-void GameManager::saveGame(int) {
+bool GameManager::saveGame(int number) {
 	// STUB
+	return false;
 }
 
 void GameManager::errorTemp() {
 	// STUB
 }
 
-void GameManager::wait2(int) {
+void GameManager::wait2(int delay) {
 	// STUB
 }
 
@@ -715,6 +719,12 @@ void GameManager::screenShake() {
 void GameManager::palette() {
 	// STUB
 	// Adjust palette to brightness parameters and make it current
+}
+
+void GameManager::shock() {
+	// STUB
+	_vm->playSound(48, 10520);
+	// die
 }
 
 void GameManager::showMenu() {
@@ -733,11 +743,24 @@ void GameManager::animationOn() {
 	// STUB
 }
 
-void GameManager::edit(int, int, char *, int) {
+void GameManager::edit(char *text, int x, int y, int length) {
 	// STUB
 }
 
 void GameManager::loadOverlayStart() {
+	// STUB
+}
+
+void GameManager::openLocker(const Room *room, Object *obj, Object *lock, int section) {
+	_vm->renderImage(room->getFileNumber(), section);
+	obj->setProperty(OPENED);
+	lock->_click = 255;
+	int i = obj->_click;
+	obj->_click = obj->_click2;
+	obj->_click2 = i;
+}
+
+void GameManager::closeLocker(const Room *room, Object *obj, Object *lock, int section) {
 	// STUB
 }
 
@@ -840,7 +863,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			t[0] = 0;
 			_vm->renderBox(91, 99, 138, 9, kColorDarkBlue);
 			do {
-				edit(91, 100, t, 5);
+				edit(t, 91, 100, 5);
 			} while ((_key != Common::ASCII_RETURN) && (_key != Common::ASCII_ESCAPE));
 			f = false;
 			if (t[0] == ':') {
