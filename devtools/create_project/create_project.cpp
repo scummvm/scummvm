@@ -1770,18 +1770,20 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
 				shouldInclude.push(false);
 			else
-				shouldInclude.push(true);
+				shouldInclude.push(true && shouldInclude.top());
 		} else if (*i == "ifndef") {
 			if (tokens.size() < 2)
 				error("Malformed ifndef in " + moduleMkFile);
 			++i;
 
 			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
-				shouldInclude.push(true);
+				shouldInclude.push(true && shouldInclude.top());
 			else
 				shouldInclude.push(false);
 		} else if (*i == "else") {
-			shouldInclude.top() = !shouldInclude.top();
+			bool last = shouldInclude.top();
+			shouldInclude.pop();
+			shouldInclude.push(!last && shouldInclude.top());
 		} else if (*i == "endif") {
 			if (shouldInclude.size() <= 1)
 				error("endif without ifdef found in " + moduleMkFile);
