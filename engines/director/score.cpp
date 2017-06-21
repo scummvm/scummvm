@@ -72,8 +72,6 @@ Score::Score(DirectorEngine *vm) {
 	if (_vm->getVersion() <= 3) {
 		_lingo->executeScript(kMovieScript, 0);
 	}
-
-	_lingo->processEvent(kEventPrepareMovie, kMovieScript, 0);
 	_movieScriptCount = 0;
 	_labels = NULL;
 	_font = NULL;
