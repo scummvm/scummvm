@@ -1195,7 +1195,7 @@ void Score::update() {
 
 	// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	if (_vm->getVersion() >= 6)
-		_lingo->processEvent(kEventPrepareFrame, kFrameScript, _currentFrame);
+		_lingo->processEvent(kEventPrepareFrame);
 
 	Common::SortedArray<Label *>::iterator i;
 	if (_labels != NULL) {

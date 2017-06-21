@@ -205,12 +205,17 @@ void Lingo::processFrameEvent(LEvent event) {
 	if (g_lingo->dontPassEvent) {
 		g_lingo->dontPassEvent = false;
 	} else {
-		assert(score->_frames[score->getCurrentFrame()] != nullptr);
-		if (!g_lingo->_scripts[kFrameScript].contains(kFrameScript)) {
-			processEvent(event,
-						 kFrameScript,
-						 score->_frames[score->getCurrentFrame()]->_actionId);
+		int entity;
+
+		if (event == kEventPrepareFrame) {
+			entity = score->getCurrentFrame();
+		} else {
+			assert(score->_frames[score->getCurrentFrame()] != nullptr);
+			entity = score->_frames[score->getCurrentFrame()]->_actionId;
 		}
+		processEvent(event,
+		             kFrameScript,
+		             entity);
 		runMovieScript(event);
 	}
 }
