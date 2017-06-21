@@ -853,7 +853,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		    timeToString(_state.timeAlarm)).c_str());
 	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
 		char *min;
-		int stunden, minuten, i;
+		int hours, minutes;
 		bool f;
 		animationOff();
 		_vm->saveScreen(88, 87, 144, 24);
@@ -879,18 +879,18 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				f = true;
 			}
 
-			for (i = 0; i < strlen(t); i++)
+			for (size_t i = 0; i < strlen(t); i++)
 				if ((t[i] < '0') || (t[i] > '9')) f = true;
-			for (i = 0; i < strlen(min); i++)
+			for (size_t i = 0; i < strlen(min); i++)
 				if ((min[i] < '0') || (min[i] > '9')) f = true;
-			stunden = atoi(t);
-			minuten = atoi(min);
-			if ((stunden > 23) || (minuten > 59)) f = true;
+			hours = atoi(t);
+			minutes = atoi(min);
+			if ((hours > 23) || (minutes > 59)) f = true;
 			animationOn();
 		} while (f && (_key != Common::ASCII_ESCAPE));
 		_vm->restoreScreen();
 		if (_key != Common::ASCII_ESCAPE) {
-			_state.timeAlarm = (stunden * 60 + minuten) * 1092.3888 + 8;
+			_state.timeAlarm = (hours * 60 + minutes) * 1092.3888 + 8;
 			_state.timeAlarmSystem = _state.timeAlarm + _state.timeStarting;
 			_state.alarmOn = (_state.timeAlarmSystem > _vm->getDOSTicks());
 		}
@@ -1045,11 +1045,11 @@ void GameManager::executeRoom() {
 		validCommand = _currentRoom->interact(_inputVerb, _inputObject[0], _inputObject[1]);
 		if (!validCommand) {
 			switch (_inputVerb) {
-			case ACTION_LOOK    :
+			case ACTION_LOOK:
 				_vm->renderMessage(_inputObject[0]._description);
 				break;
 
-			case ACTION_WALK     :
+			case ACTION_WALK:
 				if (_inputObject[0].hasProperty(CARRIED)) {
 					// You already carry this.
 					_vm->renderMessage("Das trgst du doch bei dir.");
@@ -1065,7 +1065,7 @@ void GameManager::executeRoom() {
 				}
 				break;
 
-			case ACTION_TAKE     :
+			case ACTION_TAKE:
 				if (_inputObject[0].hasProperty(OPENED)) {
 					// You already have that
 					_vm->renderMessage("Das hast du doch schon.");
@@ -1080,7 +1080,7 @@ void GameManager::executeRoom() {
 				}
 				break;
 
-			case ACTION_OPEN   :
+			case ACTION_OPEN:
 				if (!_inputObject[0].hasProperty(OPEN)) {
 					// This can't be opened
 					_vm->renderMessage("Das lát sich nicht ffnen.");
@@ -1119,12 +1119,12 @@ void GameManager::executeRoom() {
 				}
 				break;
 
-			case ACTION_GIVE      :
+			case ACTION_GIVE:
 				if (_inputObject[0].hasProperty(CARRIED)) {
 					// Better keep it!
 					_vm->renderMessage("Behalt es lieber!");
-					break;
 				}
+				break;
 
 			default:
 				// This is not possible.
