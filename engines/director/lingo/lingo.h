@@ -198,6 +198,7 @@ private:
 	void processFrameEvent(LEvent event);
 	void processGenericEvent(LEvent event);
 	void runMovieScript(LEvent event);
+	void processSpriteEvent(LEvent event);
 public:
 	ScriptType event2script(LEvent ev);
 	Symbol *getHandler(Common::String &name);
