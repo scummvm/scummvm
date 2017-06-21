@@ -57,6 +57,10 @@ U32String convertToU32String(const char *fromCode, const String &string) {
 	if (iconv(handle, &src, &inSize, &dst, &outSize) == ((size_t)-1))
 		error("Failed to convert %s to UTF-32 string", fromCode);
 
+	// The conversion descriptor may still contain some state. Write it to the output buffer.
+	if (iconv(handle, nullptr, nullptr, &dst, &outSize) == ((size_t)-1))
+		error("Failed to convert the remaining state of %s to UTF-32 string", fromCode);
+
 	U32String output((const U32String::value_type *)buffer, (originalOutSize - outSize) / 4);
 
 	delete[] buffer;
