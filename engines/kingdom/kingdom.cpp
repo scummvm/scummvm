@@ -340,10 +340,6 @@ void KingdomGame::GameHelp() {
 	}
 }
 
-void KingdomGame::GPLogic3() {
-	debug("STUB: GPLogic3");
-}
-
 void KingdomGame::LoadKingArt() {
 	LoadAResource(0x97);
 	Common::SeekableReadStream *kingartStream = _RezPointers[0x97];
