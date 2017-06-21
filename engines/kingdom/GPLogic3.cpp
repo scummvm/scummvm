@@ -84,6 +84,30 @@ void KingdomGame::GPLogic3() {
 			break;
 		}
 		break;
+	case 701:
+		switch(_UserInput) {
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			break;
+		case 0x445:
+			_StatPlay = 650;
+			_LoopFlag = true;
+			break;
+		case 0x446:
+			_StatPlay = 780;
+			_LoopFlag = true;
+			break;
+		case 0x447:
+			_StatPlay = 660;
+			_LoopFlag = true;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
 	}
 }
 
