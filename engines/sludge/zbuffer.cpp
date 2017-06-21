@@ -31,6 +31,7 @@
 #include "sludge/newfatal.h"
 #include "sludge/graphics.h"
 #include "sludge/sludge.h"
+#include "sludge/sprites.h"
 
 namespace Sludge {
 
@@ -170,10 +171,7 @@ void drawZBuffer(int x, int y, bool upsidedown) {
 	if (!zBuffer.numPanels || !zBuffer.sprites)
 		return;
 
-	for (int i = 0; i < zBuffer.numPanels; ++i) {
-		Graphics::TransparentSurface tmp(zBuffer.sprites[i], false);
-		tmp.blit(renderSurface, 0, 0, (upsidedown ? Graphics::FLIP_V : Graphics::FLIP_NONE));
-	}
+	resetSpriteLayers(&zBuffer, x, y, upsidedown);
 
 #if 0
 	glEnable (GL_DEPTH_TEST);

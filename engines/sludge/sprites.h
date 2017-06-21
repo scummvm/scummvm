@@ -23,10 +23,12 @@
 #define SLUDGE_SPRITE_H
 
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 namespace Sludge {
 
 struct onScreenPerson;
+struct zBufferData;
 
 struct sprite {
 	int xhot, yhot;
@@ -74,6 +76,11 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &
 bool reserveSpritePal(spritePalette &sP, int n);
 void fixScaleSprite(int x1, int y1, sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, const int camX, const int camY, bool);
 void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal);
+
+void resetSpriteLayers(zBufferData *ptrZBuffer, int x, int y, bool upsidedown);
+void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width = -1, int height = -1);
+void displaySpriteLayers();
+void killSpriteLayers();
 
 } // End of namespace Sludge
 

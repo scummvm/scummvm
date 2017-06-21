@@ -77,6 +77,7 @@ extern unsigned char *gameIcon;
 extern int iconW, iconH;
 
 bool initSludge(const char *);
+void displayBase();
 void sludgeDisplay();
 int startNewFunctionNum(unsigned int, unsigned int, loadedFunction *, variableStack*&, bool = true);
 bool handleInput();
