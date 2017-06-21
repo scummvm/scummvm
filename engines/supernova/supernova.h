@@ -95,7 +95,7 @@ public:
 	int  _textCursorY;
 	int  _textColor;
 
-	uint getDOSTicks();
+	int  getDOSTicks();
 	void initData();
 	void initPalette();
 	void paletteFadeIn();
