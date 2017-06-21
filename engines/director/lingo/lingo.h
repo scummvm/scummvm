@@ -199,11 +199,11 @@ private:
 	void processGenericEvent(LEvent event);
 	void runMovieScript(LEvent event);
 	void processSpriteEvent(LEvent event);
+	void processEvent(LEvent event, ScriptType st, int entityId);
 public:
 	ScriptType event2script(LEvent ev);
 	Symbol *getHandler(Common::String &name);
 
-	void processEvent(LEvent event, ScriptType st, int entityId);
 	void processEvent(LEvent event);
 
 public:
