@@ -146,6 +146,21 @@ void Lingo::processInputEvent(LEvent event) {
 	// Movie Script
 }
 
+void Lingo::runMovieScript(LEvent event) {
+	/* If more than one movie script handles the same message, Lingo
+	 * searches the movie scripts according to their order in the cast
+	 * window [p.81 of D4 docs]
+	 */
+
+	for (uint i = 0; i < _scripts[kMovieScript].size(); i++) {
+		// processEvent(event,
+		//			 kMovieScript,
+		//			 ?);
+		// TODO: How do know which script handles the message?
+	}
+	debugC(3, kDebugLingoExec, "STUB: processEvent(event, kMovieScript, ?)");
+}
+
 void Lingo::processFrameEvent(LEvent event) {
 	// Primary Event handler
 	// Score Script
