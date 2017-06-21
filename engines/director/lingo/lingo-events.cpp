@@ -175,6 +175,10 @@ void Lingo::processInputEvent(LEvent event) {
 			else
 				g_lingo->processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
 		}
+		if (event == kEventKeyDown) {
+			// TODO: is the above condition necessary or useful?
+			g_lingo->processEvent(event, kGlobalScript, 0);
+		}
 		runMovieScript(event);
 	}
 }

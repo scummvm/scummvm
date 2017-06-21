@@ -110,7 +110,7 @@ void DirectorEngine::processEvents() {
 					warning("Keycode: %d", _keyCode);
 				}
 
-				_lingo->processEvent(kEventKeyDown, kGlobalScript, 0);
+				_lingo->processEvent(kEventKeyDown);
 				break;
 
 			default:
