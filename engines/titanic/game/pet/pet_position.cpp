@@ -153,7 +153,7 @@ bool CPETPosition::EnterViewMsg(CEnterViewMsg *msg) {
 			roomNum = 6;
 
 		if (pet) {
-			pet->setRooms1CC(1);
+			pet->setRoomsSublevel(1);
 			pet->setRoomsRoomNum(roomNum);
 			pet->resetRoomsHighlight();
 

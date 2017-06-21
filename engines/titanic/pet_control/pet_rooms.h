@@ -47,7 +47,7 @@ private:
 	int _floorNum;
 	int _elevatorNum;
 	int _roomNum;
-	int _field1CC;
+	int _sublevel;
 	int _wellEntry;
 	bool _elevatorBroken;
 private:
@@ -199,8 +199,8 @@ public:
 	int getElevatorNum() const { return _elevatorNum; }
 	void setRoomNum(int roomNum) { _roomNum = roomNum; }
 	int getRoomNum() const { return _roomNum; }
-	void set1CC(int val) { _field1CC = val; }
-	int get1CC() const { return _field1CC; }
+	void setSublevel(int level) { _sublevel = level; }
+	int getSublevel() const { return _sublevel; }
 
 	/**
 	 * Sets the entry number for arriving at the well
@@ -212,9 +212,12 @@ public:
 	 */
 	int getWellEntry() const { return _wellEntry; }
 
+	/**
+	 * Sets the broken elevator flag
+	 */
 	void setElevatorBroken(bool flag) { _elevatorBroken = flag; }
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_ROOMS_SECTION_H */
+#endif /* TITANIC_PET_ROOMS_H */

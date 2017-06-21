@@ -30,7 +30,7 @@ CPetRooms::CPetRooms() :
 		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr),
 		_chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
 		_chevRightOnLit(nullptr), _chevRightOffLit(nullptr),
-		_floorNum(1), _elevatorNum(0), _roomNum(0), _field1CC(1),
+		_floorNum(1), _elevatorNum(0), _roomNum(0), _sublevel(1),
 		_wellEntry(0), _elevatorBroken(true) {
 }
 
@@ -139,7 +139,7 @@ void CPetRooms::load(SimpleFile *file, int param) {
 		_floorNum = file->readNumber();
 		_elevatorNum = file->readNumber();
 		_roomNum = file->readNumber();
-		_field1CC = file->readNumber();
+		_sublevel = file->readNumber();
 		_wellEntry = file->readNumber();
 		_elevatorBroken = file->readNumber();
 	}
@@ -155,7 +155,7 @@ void CPetRooms::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_floorNum, indent);
 	file->writeNumberLine(_elevatorNum, indent);
 	file->writeNumberLine(_roomNum, indent);
-	file->writeNumberLine(_field1CC, indent);
+	file->writeNumberLine(_sublevel, indent);
 	file->writeNumberLine(_wellEntry, indent);
 	file->writeNumberLine(_elevatorBroken, indent);
 }
@@ -260,7 +260,7 @@ uint CPetRooms::getRoomFlags() const {
 				roomFlags.setElevatorNum(_elevatorNum == 1 || _elevatorNum == 2 ? 2 : 4);
 			}
 
-			roomFlags.setRoomBits(((_roomNum - 1) & 1) + (_field1CC > 1 ? 3 : 1));
+			roomFlags.setRoomBits(((_roomNum - 1) & 1) + (_sublevel > 1 ? 3 : 1));
 		} else {
 			roomFlags.setRoomBits(0);
 		}
@@ -268,7 +268,7 @@ uint CPetRooms::getRoomFlags() const {
 
 	case THIRD_CLASS:
 		roomFlags.setElevatorNum(_elevatorNum);
-		roomFlags.setRoomBits(_roomNum + _field1CC * 6 - 6);
+		roomFlags.setRoomBits(_roomNum + _sublevel * 6 - 6);
 		break;
 
 	default:

@@ -65,11 +65,11 @@ bool CSGTNavigation::StatusChangeMsg(CStatusChangeMsg *msg) {
 	if (isEquals("SGTLL")) {
 		static const int FRAMES[7] = { 0, 149, 112, 74, 0, 36, 74 };
 		_statics->_changeViewNum = msg->_newStatus;
-		if (pet->getRooms1CC() != _statics->_changeViewNum) {
+		if (pet->getRoomsSublevel() != _statics->_changeViewNum) {
 			changeView("SGTLittleLift.Node 1.N");
 		}
 
-		int startVal = pet->getRooms1CC();
+		int startVal = pet->getRoomsSublevel();
 		if (startVal > _statics->_changeViewNum)
 			playMovie(FRAMES[startVal], FRAMES[_statics->_changeViewNum], MOVIE_WAIT_FOR_FINISH);
 		else
@@ -77,7 +77,7 @@ bool CSGTNavigation::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 		_cursorId = _statics->_changeViewNum != 1 ? CURSOR_MOVE_FORWARD : CURSOR_INVALID;
 
-		pet->setRooms1CC(_statics->_changeViewNum);
+		pet->setRoomsSublevel(_statics->_changeViewNum);
 		pet->resetRoomsHighlight();
 	}
 
@@ -121,7 +121,7 @@ bool CSGTNavigation::EnterViewMsg(CEnterViewMsg *msg) {
 	if (isEquals("SGTLL")) {
 		static const int FRAMES[3] = { 0, 36, 74 };
 		CPetControl *pet = getPetControl();
-		loadFrame(FRAMES[pet->getRooms1CC() - 1]);
+		loadFrame(FRAMES[pet->getRoomsSublevel() - 1]);
 	}
 
 	return true;

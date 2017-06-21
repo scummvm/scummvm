@@ -98,7 +98,7 @@ bool CEnterSecClassState::StatusChangeMsg(CStatusChangeMsg *msg) {
 bool CEnterSecClassState::MovieEndMsg(CMovieEndMsg *msg) {
 	CPetControl *pet = getPetControl();
 	if (pet) {
-		pet->setRooms1CC(_mode);
+		pet->setRoomsSublevel(_mode);
 		pet->resetRoomsHighlight();
 	}
 
