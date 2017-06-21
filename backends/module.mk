@@ -56,7 +56,6 @@ MODULE_OBJS += \
 	cloud/onedrive/onedrivelistdirectoryrequest.o \
 	cloud/onedrive/onedriveuploadrequest.o
 endif
-endif
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
@@ -84,6 +83,7 @@ MODULE_OBJS += \
 	networking/sdl_net/localwebserver.o \
 	networking/sdl_net/reader.o \
 	networking/sdl_net/uploadfileclienthandler.o
+endif
 endif
 
 ifdef USE_ELF_LOADER
