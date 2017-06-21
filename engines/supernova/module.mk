@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	detection.o \
 	graphics.o \
 	supernova.o \
+	rooms.o
 
 MODULE_DIRS += \
 	engines/supernova
