@@ -20,29 +20,35 @@
  *
  */
 
+#include "common/debug.h"
+#include "graphics/pixelformat.h"
+#include "graphics/transparent_surface.h"
+
 #include "sludge/allfiles.h"
 #include "sludge/zbuffer.h"
 #include "sludge/fileset.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/graphics.h"
+#include "sludge/sludge.h"
 
 namespace Sludge {
 
 zBufferData zBuffer;
 extern int sceneWidth, sceneHeight;
+extern Graphics::Surface backdropSurface;
+extern Graphics::Surface renderSurface;
 
 void killZBuffer() {
-#if 0
-	if (zBuffer.tex) {
-		deleteTextures(1, &zBuffer.texName);
-		zBuffer.texName = 0;
-		delete zBuffer.tex;
-		zBuffer.tex = NULL;
+	if (zBuffer.sprites) {
+		for (int i = 0; i < zBuffer.numPanels; ++i) {
+			zBuffer.sprites[i].free();
+		}
+		delete []zBuffer.sprites;
+		zBuffer.sprites = nullptr;
 	}
 	zBuffer.numPanels = 0;
 	zBuffer.originalNum = 0;
-#endif
 }
 
 void sortZPal(int *oldpal, int *newpal, int size) {
@@ -65,18 +71,17 @@ void sortZPal(int *oldpal, int *newpal, int size) {
 	}
 }
 
-bool setZBuffer(int y) {
-#if 0
-	int x, n;
+bool setZBuffer(int num) {
+	debug("Setting zBuffer");
 	uint32 stillToGo = 0;
 	int yPalette[16], sorted[16], sortback[16];
 
 	killZBuffer();
 
-	setResourceForFatal(y);
+	setResourceForFatal(num);
 
-	zBuffer.originalNum = y;
-	if (!openFileFromNum(y))
+	zBuffer.originalNum = num;
+	if (!openFileFromNum(num))
 		return false;
 	if (bigDataFile->readByte() != 'S')
 		return fatal("Not a Z-buffer file");
@@ -85,81 +90,93 @@ bool setZBuffer(int y) {
 	if (bigDataFile->readByte() != 'b')
 		return fatal("Not a Z-buffer file");
 
+	int width, height;
 	switch (bigDataFile->readByte()) {
-			case 0:
-				zBuffer.width = 640;
-				zBuffer.height = 480;
-				break;
+		case 0:
+			width = 640;
+			height = 480;
+			break;
 
-			case 1:
-				zBuffer.width = bigDataFile->readUint16BE();
-				zBuffer.height = bigDataFile->readUint16BE();
-				break;
+		case 1:
+			width = bigDataFile->readUint16BE();
+			height = bigDataFile->readUint16BE();
+			break;
 
-			default:
-				return fatal("Extended Z-buffer format not supported in this version of the SLUDGE engine");
-		}
-		if (zBuffer.width != sceneWidth || zBuffer.height != sceneHeight) {
-			char tmp[256];
-			sprintf(tmp, "Z-w: %d Z-h:%d w: %d, h:%d", zBuffer.width, zBuffer.height, sceneWidth, sceneHeight);
-			return fatal("Z-buffer width and height don't match scene width and height", tmp);
-		}
-
-		zBuffer.numPanels = bigDataFile->readByte();
-		for (y = 0; y < zBuffer.numPanels; y++) {
-			yPalette[y] = bigDataFile->readUint16BE();
-		}
-		sortZPal(yPalette, sorted, zBuffer.numPanels);
-		for (y = 0; y < zBuffer.numPanels; y++) {
-			zBuffer.panel[y] = yPalette[sorted[y]];
-			sortback[sorted[y]] = y;
-		}
-
-		int picWidth = sceneWidth;
-		int picHeight = sceneHeight;
-		if (!NPOT_textures) {
-			picWidth = getNextPOT(picWidth);
-			picHeight = getNextPOT(picHeight);
-		}
-		zBuffer.tex = new GLubyte[picHeight * picWidth];
-		if (!checkNew(zBuffer.tex))
-			return false;
-
-		for (y = 0; y < sceneHeight; y++) {
-			for (x = 0; x < sceneWidth; x++) {
-				if (stillToGo == 0) {
-					n = bigDataFile->readByte();
-					stillToGo = n >> 4;
-					if (stillToGo == 15)
-						stillToGo = bigDataFile->readUint16BE() + 16l;
-					else
-						stillToGo++;
-					n &= 15;
-				}
-				zBuffer.tex[y * picWidth + x] = sortback[n] * 16;
-				stillToGo--;
-			}
-		}
-		finishAccess();
-#endif
-		setResourceForFatal(-1);
-#if 0
-		if (! zBuffer.texName) glGenTextures(1, &zBuffer.texName);
-		glBindTexture(GL_TEXTURE_2D, zBuffer.texName);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-		texImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, picWidth, picHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, zBuffer.tex, zBuffer.texName);
-#endif
-		return true;
+		default:
+			return fatal("Extended Z-buffer format not supported in this version of the SLUDGE engine");
+	}
+	if (width != sceneWidth || height != sceneHeight) {
+		char tmp[256];
+		sprintf(tmp, "Z-w: %d Z-h:%d w: %d, h:%d", width, height, sceneWidth, sceneHeight);
+		return fatal("Z-buffer width and height don't match scene width and height", tmp);
 	}
 
-	void drawZBuffer(int x, int y, bool upsidedown) {
-		int i;
+	zBuffer.numPanels = bigDataFile->readByte();
+	for (int y = 0; y < zBuffer.numPanels; y++) {
+		yPalette[y] = bigDataFile->readUint16BE();
+	}
+	sortZPal(yPalette, sorted, zBuffer.numPanels);
+	for (int y = 0; y < zBuffer.numPanels; y++) {
+		zBuffer.panel[y] = yPalette[sorted[y]];
+		sortback[sorted[y]] = y;
+	}
+
+	int picWidth = sceneWidth;
+	int picHeight = sceneHeight;
+
+	zBuffer.sprites = nullptr;
+	zBuffer.sprites = new Graphics::Surface[zBuffer.numPanels];
+
+	for (int i = 0; i < zBuffer.numPanels; ++i) {
+		zBuffer.sprites[i].create(picWidth, picHeight, *g_sludge->getScreenPixelFormat());
+	}
+
+	for (int y = 0; y < sceneHeight; y++) {
+		for (int x = 0; x < sceneWidth; x++) {
+			int n;
+			if (stillToGo == 0) {
+				n = bigDataFile->readByte();
+				stillToGo = n >> 4;
+				if (stillToGo == 15)
+					stillToGo = bigDataFile->readUint16BE() + 16l;
+				else
+					stillToGo++;
+				n &= 15;
+			}
+			for (int i = 0; i < zBuffer.numPanels; ++i) {
+				byte *target = (byte *)zBuffer.sprites[i].getBasePtr(x, y);
+				if (n && (sortback[i] == n || i == 0)) {
+					byte *source = (byte *)backdropSurface.getBasePtr(x, y);
+					target[0] = source[0];
+					target[1] = source[1];
+					target[2] = source[2];
+					target[3] = source[3];
+				} else {
+					target[0] = 0;
+					target[1] = 0;
+					target[2] = 0;
+					target[3] = 0;
+				}
+			}
+			stillToGo--;
+		}
+	}
+	finishAccess();
+	setResourceForFatal(-1);
+	return true;
+}
+
+void drawZBuffer(int x, int y, bool upsidedown) {
+	if (!zBuffer.numPanels || !zBuffer.sprites)
+		return;
+
+	for (int i = 0; i < zBuffer.numPanels; ++i) {
+		Graphics::TransparentSurface tmp(zBuffer.sprites[i], false);
+		tmp.blit(renderSurface, 0, 0, (upsidedown ? Graphics::FLIP_V : Graphics::FLIP_NONE));
+	}
+
 #if 0
-		if (! zBuffer.tex) return;
+	glEnable (GL_DEPTH_TEST);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);

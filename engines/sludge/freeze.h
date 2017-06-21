@@ -31,7 +31,7 @@ struct frozenStuffStruct {
 	screenRegion *allScreenRegions;
 	Graphics::Surface backdropSurface;
 	Graphics::Surface lightMapSurface;
-	Graphics::Surface zBufferImage;
+	Graphics::Surface *zBufferSprites;
 	int zPanels;
 	parallaxLayer *parallaxStuff;
 	int lightMapNumber, zBufferNumber;

@@ -31,12 +31,7 @@ struct zBufferData {
 	int numPanels;
 	int panel[16];
 	int originalNum;
-	Graphics::Surface surface;
-#if 0
-	int width, height;
-	GLubyte *tex;
-	GLuint texName;
-#endif
+	Graphics::Surface *sprites;
 };
 
 bool setZBuffer(int y);
