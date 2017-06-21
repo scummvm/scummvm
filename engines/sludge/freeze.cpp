@@ -109,10 +109,10 @@ bool freeze() {
 
 	newFreezer->parallaxStuff = parallaxStuff;
 	parallaxStuff = NULL;
-	newFreezer->zBufferImage.copyFrom(zBuffer.surface);
+	newFreezer->zBufferSprites = zBuffer.sprites;
 	newFreezer->zBufferNumber = zBuffer.originalNum;
 	newFreezer->zPanels = zBuffer.numPanels;
-	zBuffer.surface.free();
+	zBuffer.sprites = NULL;
 	// resizeBackdrop kills parallax stuff, light map, z-buffer...
 	if (!killResizeBackdrop(winWidth, winHeight))
 		return fatal("Can't create new temporary backdrop buffer");
@@ -196,12 +196,12 @@ void unfreeze(bool killImage) {
 	}
 
 	if (killImage)
-			killBackDrop();
+		killBackDrop();
 	backdropSurface.copyFrom(frozenStuff->backdropSurface);
 	backdropExists = true;
 
+	zBuffer.sprites = frozenStuff->zBufferSprites;
 	killZBuffer();
-	zBuffer.surface.copyFrom(frozenStuff->zBufferImage);
 	zBuffer.originalNum = frozenStuff->zBufferNumber;
 	zBuffer.numPanels = frozenStuff->zPanels;
 	if (zBuffer.numPanels) {
@@ -233,8 +233,6 @@ void unfreeze(bool killImage) {
 		killMe->backdropSurface.free();
 	if (killMe->lightMapSurface.getPixels())
 		killMe->lightMapSurface.free();
-	if (killMe->zBufferImage.getPixels())
-		killMe->zBufferImage.free();
 	delete killMe;
 	killMe = NULL;
 
