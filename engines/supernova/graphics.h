@@ -45,16 +45,16 @@ public:
 	virtual bool loadStream(Common::SeekableReadStream &stream);
 	virtual const Graphics::Surface *getSurface() const { return _surface; }
 	virtual const byte *getPalette() const { return _palette; }
-	
+
 	bool loadSection(int _section);
 
 	static const int kMaxSections = 50;
 	static const int kMaxClickFields = 80;
-	
+
 	Graphics::Surface *_surface;
 	byte *_palette;
 	byte *_encodedImage;
-	
+
 	struct Section {
 		int16  x1;
 		int16  x2;
