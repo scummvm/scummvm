@@ -165,13 +165,13 @@ Common::Error SupernovaEngine::run() {
 }
 
 // Emulates DOS int 1A/00
-uint SupernovaEngine::getDOSTicks() {
+int SupernovaEngine::getDOSTicks() {
 	TimeDate systemTime;
 	_system->getTimeAndDate(systemTime);
 
-	return static_cast<uint>((systemTime.tm_hour * 24 +
-	                          systemTime.tm_min  * 60 +
-	                          systemTime.tm_sec) * 18.2065);
+	return static_cast<int>((systemTime.tm_hour * 24 +
+	                         systemTime.tm_min  * 60 +
+	                         systemTime.tm_sec) * 18.2065);
 }
 
 void SupernovaEngine::updateEvents() {
