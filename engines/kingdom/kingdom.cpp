@@ -549,8 +549,10 @@ void KingdomGame::ReadMouse() {
 	if (_CursorActive) {
 		Common::Event event;
 		g_system->getEventManager()->pollEvent(event);
+		if (event.type == Common::EVENT_MOUSEMOVE) {
 		_CursorX = event.mouse.x;
 		_CursorY = event.mouse.y;
+		}
 		if (event.type == Common::EVENT_LBUTTONUP)
 			_MouseButton |= 1;
 		if (event.type == Common::EVENT_RBUTTONUP)
@@ -1081,6 +1083,10 @@ int KingdomGame::GetAKey() {
 		case Common::EVENT_RBUTTONUP: // retval == 1?
 			retval = _MouseValue;
 			break;
+		case Common::EVENT_MOUSEMOVE:
+			_CursorX = event.mouse.x;
+			_CursorY = event.mouse.y;
+
 		default:
 			RefreshSound();
 			CheckMainScreen();
@@ -1107,11 +1113,6 @@ int KingdomGame::WaitKey() {
 
 void KingdomGame::DrawCursor() {
 	ReadMouse();
-
-	Common::Event event;
-	g_system->getEventManager()->pollEvent(event);
-	_CursorX = event.mouse.x;
-	_CursorY = event.mouse.y;
 
 	CursorType();
 	SetCursor(_CursorDef);
