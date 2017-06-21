@@ -122,7 +122,7 @@ void DirectorEngine::processEvents() {
 		g_system->delayMillis(10);
 
 		if (sc->getCurrentFrame() > 0)
-			_lingo->processEvent(kEventIdle, kFrameScript, sc->getCurrentFrame());
+			_lingo->processEvent(kEventIdle);
 	}
 }
 
