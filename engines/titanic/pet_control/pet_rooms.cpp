@@ -260,7 +260,7 @@ uint CPetRooms::getRoomFlags() const {
 				roomFlags.setElevatorNum(_elevatorNum == 1 || _elevatorNum == 2 ? 2 : 4);
 			}
 
-			roomFlags.setRoomBits(((_roomNum - 1) & 1) + (_field1CC > 1 ? 3 : 2));
+			roomFlags.setRoomBits(((_roomNum - 1) & 1) + (_field1CC > 1 ? 3 : 1));
 		} else {
 			roomFlags.setRoomBits(0);
 		}
