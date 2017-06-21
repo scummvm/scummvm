@@ -562,23 +562,23 @@ static const char *timeToString(int t) {
 }
 
 GameManager::GameManager(SupernovaEngine *vm, Common::Event *event) {
-//	_rooms[INTRO] = StartingItems();
-//	_rooms[CORRIDOR] = ShipCorridor();
-//	_rooms[HALL] = ShipHall();
-//	_rooms[SLEEP] = ShipSleepCabin();
-//	_rooms[COCKPIT] = ShipCockpit();
-//	_rooms[AIRLOCK] = ShipAirlock();
-//	_rooms[HOLD] = ShipHold();
-//	_rooms[LANDINGMODULE] = ShipLandingModule();
-//	_rooms[GENERATOR] = ShipGenerator();
-//	_rooms[OUTSIDE] = ShipOuterSpace();
-//	_rooms[CABIN_R1] = ShipCabinR1();
-//	_rooms[CABIN_R2] = ShipCabinR2();
-//	_rooms[CABIN_R3] = ShipCabinR3();
-//	_rooms[CABIN_L1] = ShipCabinL1();
-//	_rooms[CABIN_L2] = ShipCabinL2();
-//	_rooms[CABIN_L3] = ShipCabinL3();
-//	_rooms[BATHROOM] = ShipCabinBathroom();
+	_rooms[INTRO] = StartingItems(vm, this);
+	_rooms[CORRIDOR] = ShipCorridor(vm, this);
+	_rooms[HALL] = ShipHall(vm, this);
+	_rooms[SLEEP] = ShipSleepCabin(vm, this);
+	_rooms[COCKPIT] = ShipCockpit(vm, this);
+	_rooms[AIRLOCK] = ShipAirlock(vm, this);
+	_rooms[HOLD] = ShipHold(vm, this);
+	_rooms[LANDINGMODULE] = ShipLandingModule(vm, this);
+	_rooms[GENERATOR] = ShipGenerator(vm, this);
+	_rooms[OUTSIDE] = ShipOuterSpace(vm, this);
+	_rooms[CABIN_R1] = ShipCabinR1(vm, this);
+	_rooms[CABIN_R2] = ShipCabinR2(vm, this);
+	_rooms[CABIN_R3] = ShipCabinR3(vm, this);
+	_rooms[CABIN_L1] = ShipCabinL1(vm, this);
+	_rooms[CABIN_L2] = ShipCabinL2(vm, this);
+	_rooms[CABIN_L3] = ShipCabinL3(vm, this);
+	_rooms[BATHROOM] = ShipCabinBathroom(vm, this);
 
 //	_rooms[ROCKS]
 //	_rooms[CAVE]

@@ -146,6 +146,7 @@ public:
 	Room _rooms[kRoomsNum];
 	Inventory _inventory;
 	GameState _state;
+	int _status;
 	Action _inputVerb;
 	Object _inputObject[2];
 	bool _waitEvent;
@@ -153,6 +154,8 @@ public:
 	bool _newOverlay;
 	int _timer1;
 	int _timer2;
+	// 0 PC Speaker | 1 SoundBlaster | 2 No Sound
+	int _soundDevice;
 
 	void takeObject(Object &obj);
 
