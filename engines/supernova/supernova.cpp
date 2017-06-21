@@ -355,6 +355,8 @@ void SupernovaEngine::removeMessage() {
 void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
 	Graphics::Surface *screen = _system->lockScreen();
 	byte *cursor = static_cast<byte *>(screen->getBasePtr(x, y));
+	const byte *basePtr = cursor;
+
 	byte c;
 	while ((c = *text++) != '\0') {
 		if (c < 32) {
@@ -380,6 +382,16 @@ void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
 		}
 	}
 	_system->unlockScreen();
+
+	size_t numChars = cursor - basePtr;
+	size_t absPosition = y * kScreenWidth + x + numChars;
+	_textCursorX = absPosition % kScreenWidth;
+	_textCursorY = absPosition / kScreenWidth;
+	_textColor = color;
+}
+
+void SupernovaEngine::renderText(const char *text) {
+	renderText(text, _textCursorX, _textCursorY, _textColor);
 }
 
 void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color) {

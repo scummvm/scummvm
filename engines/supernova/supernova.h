@@ -91,6 +91,9 @@ public:
 	byte _brightness;
 	uint _delay;
 	bool _messageDisplayed;
+	int  _textCursorX;
+	int  _textCursorY;
+	int  _textColor;
 
 	uint getDOSTicks();
 	void initData();
@@ -109,6 +112,7 @@ public:
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
 	void removeMessage();
 	void renderText(const char *text, int x, int y, byte color);
+	void renderText(const char *text);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void setColor63(byte value);
 };
