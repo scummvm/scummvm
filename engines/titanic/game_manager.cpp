@@ -136,6 +136,7 @@ void CGameManager::roomTransition(CRoomItem *oldRoom, CRoomItem *newRoom) {
 		_movieRoom = oldRoom;
 	} else {
 		movieKey = oldRoom->getExitMovieKey();
+		_movieRoom = nullptr;
 	}
 
 	CString filename = movieKey.getFilename();
