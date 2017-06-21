@@ -40,6 +40,26 @@
 
 namespace Sludge {
 
+// Sprite display informations
+struct SpriteDisplay {
+	int x, y;
+	int width, height;
+	Graphics::FLIP_FLAGS flip;
+	Graphics::Surface *surface;
+
+	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1) :
+			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h) {
+	}
+};
+
+// All sprites are sorted into different "layers" (up to 16) according to their relative y position to z-buffer zones
+struct SpriteLayers {
+	int numLayers;
+	Common::List<SpriteDisplay> layer[16];
+};
+
+SpriteLayers spriteLayers;
+
 extern zBufferData zBuffer;
 
 #if 0
@@ -639,14 +659,20 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 	}
 
 	// Use Transparent surface to scale and blit
-	Graphics::TransparentSurface tmp(single.surface, false);
-	tmp.blit(renderSurface, x1, y1, (mirror? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB(255, 255, 255, 255), diffX, diffY);
+	if (!zBuffer.numPanels) {
+		Graphics::TransparentSurface tmp(single.surface, false);
+		tmp.blit(renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, TS_ARGB(255, 255, 255, 255), diffX, diffY);
+	} else {
+		int d = ((!(thisPerson->extra & EXTRA_NOZB)) && zBuffer.numPanels) ? y + cameraY : sceneHeight + 1;
+		addSpriteDepth(&single.surface, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY);
+	}
 
 	// Are we pointing at the sprite?
 	if (input.mouseX >= x1 && input.mouseX <= x2 && input.mouseY >= y1 && input.mouseY <= y2) {
-		if (thisPerson->extra & EXTRA_RECTANGULAR) return true;
+		if (thisPerson->extra & EXTRA_RECTANGULAR)
 			return true;
-		}
+		return true;
+	}
 	return false;
 
 #if 0
@@ -780,6 +806,46 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 	}
 	return false;
 #endif
+}
+
+void resetSpriteLayers(zBufferData *pz, int x, int y, bool upsidedown) {
+	if (spriteLayers.numLayers > 0)
+		killSpriteLayers();
+	spriteLayers.numLayers = pz->numPanels;
+	for (int i = 0; i < spriteLayers.numLayers; ++i) {
+		SpriteDisplay node(x, y, (upsidedown ? Graphics::FLIP_V : Graphics::FLIP_NONE), &pz->sprites[i], pz->sprites[i].w, pz->sprites[i].h);
+		spriteLayers.layer[i].push_back(node);
+	}
+}
+
+void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width, int height) {
+	int i;
+	for (i = 1; i < zBuffer.numPanels; ++i) {
+		if (zBuffer.panel[i] >= depth) {
+			break;
+		}
+	}
+	--i;
+	SpriteDisplay node(x, y, flip, ptr, width, height);
+	spriteLayers.layer[i].push_back(node);
+}
+
+void displaySpriteLayers() {
+	for (int i = 0; i < spriteLayers.numLayers; ++i) {
+		Common::List<SpriteDisplay>::iterator it;
+		for (it = spriteLayers.layer[i].begin(); it != spriteLayers.layer[i].end(); ++it) {
+			Graphics::TransparentSurface tmp(*it->surface, false);
+			tmp.blit(renderSurface, it->x, it->y, it->flip, nullptr, TS_ARGB(255, 255, 255, 255), it->width, it->height);
+		}
+	}
+	killSpriteLayers();
+}
+
+void killSpriteLayers() {
+	for (int i = 0; i < spriteLayers.numLayers; ++i) {
+		spriteLayers.layer[i].clear();
+	}
+	spriteLayers.numLayers = 0;
 }
 
 // Paste a scaled sprite onto the backdrop

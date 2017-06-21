@@ -572,6 +572,14 @@ bool checkColourChange(bool reset) {
 #endif
 	return false;
 }
+
+void displayBase() {
+	drawBackDrop();// Draw the room
+	drawZBuffer(cameraX, cameraY, false);
+	drawPeople();// Then add any moving characters...
+	displaySpriteLayers();
+}
+
 void sludgeDisplay() {
 #if 0
 #if defined(HAVE_GLES2)
@@ -666,15 +674,7 @@ void sludgeDisplay() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// Clear The Screen
 	glDepthMask(GL_FALSE);
 #endif
-	drawBackDrop();// Draw the room
-	drawZBuffer(cameraX, cameraY, false);
-#if 0
-	glEnable(GL_DEPTH_TEST);
-#endif
-	drawPeople();// Then add any moving characters...
-#if 0
-	glDisable(GL_DEPTH_TEST);
-#endif
+	displayBase();
 	viewSpeech();// ...and anything being said
 	drawStatusBar();
 	displayCursor();

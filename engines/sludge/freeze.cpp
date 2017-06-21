@@ -74,9 +74,7 @@ void freezeGraphics() {
 	int antiAlias = gameSettings.antiAlias;
 	gameSettings.antiAlias = 0;
 #endif
-	drawBackDrop();// Draw the room
-	drawZBuffer(cameraX, cameraY, false);
-	drawPeople();// Then add any moving characters...
+	displayBase();
 	freezeSurface.copyFrom(renderSurface);
 #if 0
 	gameSettings.antiAlias = antiAlias;
