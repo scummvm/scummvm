@@ -96,6 +96,10 @@ public:
 	void kernelUpdateScreenItem(const reg_t object);
 	void kernelDeleteScreenItem(const reg_t object);
 	bool kernelSetNowSeen(const reg_t screenItemObject) const;
+	uint16 kernelObjectIntersection(const reg_t object1, const reg_t object2) const;
+
+private:
+	const Common::Rect getObjectNSRect(const reg_t object) const;
 
 #pragma mark -
 #pragma mark Planes

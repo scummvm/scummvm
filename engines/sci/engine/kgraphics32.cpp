@@ -245,9 +245,8 @@ reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv) {
-	Common::Rect objRect1 = g_sci->_gfxCompare->getNSRect(argv[0]);
-	Common::Rect objRect2 = g_sci->_gfxCompare->getNSRect(argv[1]);
-	return make_reg(0, objRect1.intersects(objRect2));
+	uint16 intersectArea = g_sci->_gfxFrameout->kernelObjectIntersection(argv[0], argv[1]);
+	return make_reg(0, intersectArea);
 }
 
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
