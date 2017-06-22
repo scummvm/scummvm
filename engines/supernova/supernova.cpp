@@ -72,7 +72,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
     , _console(NULL)
     , _brightness(255)
     , _menuBrightness(255)
-    , _imageIndex(10)
+    , _imageIndex(0)
     , _sectionIndex(0)
     , _delay(33)
     , _gameRunning(true)
@@ -218,7 +218,7 @@ void playSoundMod(int filenumber)
 
 void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) {
 	Common::File file;
-	if (!file.open(Common::String::format("msn_data.0%2d", filenumber))) {
+	if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
 		error("File %s could not be read!", file.getName());
 	}
 
