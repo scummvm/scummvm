@@ -81,7 +81,6 @@ public:
 	Audio::SoundHandle _soundHandle;
 	ScreenBufferStack _screenBuffer;
 	MSNImageDecoder _currentImage;
-	int _currentImageFilenumber;
 	Common::Event _event;
 	bool _gameRunning;
 
