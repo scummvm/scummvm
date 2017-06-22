@@ -222,11 +222,12 @@ void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) 
 		error("File %s could not be read!", file.getName());
 	}
 
-	if (_currentImage.loadStream(file) && _currentImage.loadSection(section)) {
+	if (_currentImage.loadStream(file) && _currentImage.loadSection(filenumber, section)) {
 		_system->getPaletteManager()->setPalette(_currentImage.getPalette(), 16, 239);
 		paletteBrightness();
 		if (fullscreen) {
-			_system->copyRectToScreen(_currentImage.getSurface()->getPixels(), 320, 0, 0, 320, 200);
+			_system->copyRectToScreen(_currentImage.getSurface()->getPixels(),
+			                          _currentImage._pitch, 0, 0, kScreenWidth, kScreenHeight);
 		} else {
 			size_t offset = _currentImage._section[section].y1 * 320 + _currentImage._section[section].x1;
 			_system->copyRectToScreen(static_cast<const byte *>(_currentImage.getSurface()->getPixels()) + offset,
