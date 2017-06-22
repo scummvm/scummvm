@@ -123,48 +123,72 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-bool MSNImageDecoder::loadSection(int section) {
+bool MSNImageDecoder::loadSection(int filenumber, int section) {
+	int imageWidth = 320;
+	int imageHeight = 200;
 	_surface = new Graphics::Surface;
-	_surface->create(320, 200, g_system->getScreenFormat());
-	byte *surfacePixels = static_cast<byte *>(_surface->getPixels());
+	_filenumber = filenumber;
 
-	const uint32 kInvalidAddress = 0x00FFFFFF;
+	if (filenumber == 1 || filenumber == 2) {
+		imageWidth = 640;
+		imageHeight = 480;
+		_pitch = 640;
 
-	size_t image = section;
-	if (image < 128) {
-		do {
-			uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow;
-			if (offset == kInvalidAddress || _section[image].x2 == 0) {
-				return false;
-			}
-			int width = _section[image].x2 - _section[image].x1 + 1;
-			int height = _section[image].y2 - _section[image].y1 + 1;
-			uint32 destAddress = 320 * _section[image].y1 + _section[image].x1;
-			while (height) {
-				Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
-				offset += width;
-				destAddress += 320;
-				--height;
-			}
-
-			image = _section[image].next;
-		} while (image != 0);
+		_surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
+		byte *surfacePixels = static_cast<byte *>(_surface->getPixels());
+		for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
+			*surfacePixels++ = (_encodedImage[i] & 0x80) ? 11 : 0;
+			*surfacePixels++ = (_encodedImage[i] & 0x40) ? 11 : 0;
+			*surfacePixels++ = (_encodedImage[i] & 0x20) ? 11 : 0;
+			*surfacePixels++ = (_encodedImage[i] & 0x10) ? 11 : 0;
+			*surfacePixels++ = (_encodedImage[i] & 0x08) ? 11 : 0;
+			*surfacePixels++ = (_encodedImage[i] & 0x04) ? 11 : 0;
+			*surfacePixels++ = (_encodedImage[i] & 0x02) ? 11 : 0;
+			*surfacePixels++ = (_encodedImage[i] & 0x01) ? 11 : 0;
+		}
 	} else {
-		image -= 128;
-		do {
-			int width = _section[image].x2 - _section[image].x1 + 1;
-			int height = _section[image].y2 - _section[image].y1 + 1;
-			uint32 destAddress = 320 * _section[image].y1 + _section[image].x1;
-			uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow + destAddress;
-			while (height) {
-				Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
-				offset += 320;
-				destAddress += 320;
-				--height;
-			}
+		_pitch = 320;
+		_surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
+		byte *surfacePixels = static_cast<byte *>(_surface->getPixels());
 
-			image = _section[image].next;
-		} while (image != 0);
+		const uint32 kInvalidAddress = 0x00FFFFFF;
+
+		size_t image = section;
+		if (image < 128) {
+			do {
+				uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow;
+				if (offset == kInvalidAddress || _section[image].x2 == 0) {
+					return false;
+				}
+				int width = _section[image].x2 - _section[image].x1 + 1;
+				int height = _section[image].y2 - _section[image].y1 + 1;
+				uint32 destAddress = imageWidth * _section[image].y1 + _section[image].x1;
+				while (height) {
+					Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
+					offset += width;
+					destAddress += imageWidth;
+					--height;
+				}
+
+				image = _section[image].next;
+			} while (image != 0);
+		} else {
+			image -= 128;
+			do {
+				int width = _section[image].x2 - _section[image].x1 + 1;
+				int height = _section[image].y2 - _section[image].y1 + 1;
+				uint32 destAddress = imageWidth * _section[image].y1 + _section[image].x1;
+				uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow + destAddress;
+				while (height) {
+					Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
+					offset += imageWidth;
+					destAddress += imageWidth;
+					--height;
+				}
+
+				image = _section[image].next;
+			} while (image != 0);
+		}
 	}
 
 	return true;
