@@ -178,6 +178,7 @@ namespace Kingdom {
 		int _IconSel;
 		int _IconSelect;
 		bool _MouseDebound;
+		int _RtnNode;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D74C;
