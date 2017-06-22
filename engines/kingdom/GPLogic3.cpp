@@ -108,6 +108,130 @@ void KingdomGame::GPLogic3() {
 			break;
 		}
 		break;
+	case 740:
+		_RtnNode = _NodeNum;
+		_NodeNum = 74;
+		DrawLocation();
+		DsAll();
+		PlayMovie(185);
+		_CurrMap = 10;
+		SetATimer();
+		_StatPlay = 741;
+		_UserInput = 0;
+		break;
+	case 780:
+		_NodeNum = 78;
+		DrawLocation();
+		_UserInput = 0;
+		_Eye = false;
+		PlayMovie(171);
+		_CurrMap = 124;
+		PlaySound(40);
+		_StatPlay = 781;
+		break;
+	case 781:
+		switch(_UserInput) {
+		case 0x428:
+		case 0x42A:
+			InventoryDel(_UserInput - 0x428);
+			_FrameStop = 64;
+			PlayMovie(173);
+			ShowPic(471);
+			_CurrMap = 124;
+			break;
+		case 0x429:
+			if (_Wizard) {
+				_FrameStop = 64;
+				PlayMovie(173);
+				InventoryDel(1);
+			} else {
+				_FrameStop = 66;
+				_FstFwd = false;
+				PlayMovie(172);
+				_FstFwd = true;
+				PlayMovie(201);
+			}
+
+			FShowPic(471);
+			_CurrMap = 124;
+			break;
+		case 0x439:
+			_FrameStop = 59;
+			_FstFwd = false;
+			PlayMovie(174);
+			_FstFwd = true;
+			PlayMovie(201);
+			FShowPic(471);
+			_CurrMap = 124;
+			break;
+		case 0x43E:
+			_Sound = _LastSound;
+			if (_PMovie == 173)
+				_FrameStop = 64;
+			if (_PMovie == 201) {
+				_FrameStop = 59;
+				_FstFwd = false;
+				PlayMovie(174);
+				_FstFwd = true;
+				PlayMovie(201);
+			} else {
+				PlayMovie(_PMovie);
+			}
+			if (_PMovie != 171) {
+				FShowPic(471);
+				_CurrMap = 124;
+			}
+			break;
+		case 0x445:
+			_StatPlay = 660;
+			_LoopFlag = true;
+			break;
+		case 0x446:
+			_StatPlay = (word_2D7CC == 1) ? 760 : 660;
+			_LoopFlag = true;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 790:
+		_NodeNum = 79;
+		DrawLocation();
+		DsAll();
+		PlayMovie(4);
+		_CurrMap = 8;
+		_StatPlay = 791;
+		SetATimer();
+		_UserInput = 0;
+		break;
+	case 791:
+		switch(_UserInput) {
+		case 0x2F1:
+			DsAll();
+			PlayMovie(204);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x445:
+			EnAll();
+			PlayMovie(10);
+			_StatPlay = 50;
+			_LoopFlag = true;
+			break;
+		case 0x446:
+			EnAll();
+			PlayMovie(10);
+			_StatPlay = 520;
+			_LoopFlag = true;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
 	}
 }
 
