@@ -216,9 +216,12 @@ namespace Kingdom {
 		int16 word_2D7A6;
 		int16 word_2D7AA;
 		int16 word_2D7B6;
+		int16 word_2D7B8;
 		int16 word_2D7BA;
 		int16 word_2D7C2;
 		int16 word_2D7CC;
+		int16 word_2D7D6;
+		int16 word_2D7DA;
 
 		Common::SeekableReadStream *_RezPointers[510];
 		int _RezSize[510];
