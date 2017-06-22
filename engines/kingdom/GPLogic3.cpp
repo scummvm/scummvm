@@ -108,6 +108,40 @@ void KingdomGame::GPLogic3() {
 			break;
 		}
 		break;
+	case 710:
+		_NodeNum = 71;
+		_UserInput = 0;
+		_Eye = false;
+		if (_Inventory[8] && _Inventory[14])
+			_Sound = true;
+		DsAll();
+		PlayMovie(165);
+		_CurrMap = 10;
+		SetATimer();
+		_StatPlay = _Wizard ? 712 : 711;
+		break;
+	case 720:
+		_NodeNum = 72;
+		_UserInput = 0;
+		_Eye = false;
+		switch (word_2D7D6) {
+		case 0:
+			word_2D7D6 = 1;
+			break;
+		case 1:
+			_FrameStop = 24;
+			word_2D7D6 = 2;
+			break;
+		default:
+			_FrameStop = 24;
+			word_2D7D6 = 3;
+			break;
+		}
+		PlayMovie(175);
+		_CurrMap = 118;
+		PlaySound(12);
+		_StatPlay = 721;
+		break;
 	case 740:
 		_RtnNode = _NodeNum;
 		_NodeNum = 74;
@@ -118,6 +152,90 @@ void KingdomGame::GPLogic3() {
 		SetATimer();
 		_StatPlay = 741;
 		_UserInput = 0;
+		break;
+	case 741:
+		switch(_UserInput) {
+		case 0x2F1:
+			DsAll();
+			PlayMovie(188);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x428:
+		case 0x429:
+		case 0x42A:
+			InventoryDel(_UserInput - 0x428);
+			_ATimer = 0;
+			PlayMovie(178);
+			_LoopFlag = true;
+			_UserInput = 753;
+			break;
+		case 0x432:
+			if (word_2D7DA) {
+				_Sound = false;
+				word_2D7DA = false;
+			} else
+				word_2D7DA = true;
+			break;
+		case 0x437:
+			_LoopFlag = true;
+			if (Wound()) {
+				_FrameStop = 88;
+				PlayMovie(187);
+				_StatPlay = 570;
+				word_2D7B8 = 1;
+			} else {
+				_FrameStop = 78;
+				PlayMovie(187);
+				_StatPlay = 993;
+			}
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 760:
+		_NodeNum = 76;
+		_Eye = false;
+		_UserInput = 0;
+		PlayMovie(189);
+		_CurrMap = 126;
+		PlaySound(21);
+		_StatPlay = 761;
+		break;
+	case 761:
+		switch(_UserInput) {
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			break;
+		case 0x445:
+			_StatPlay = 660;
+			_LoopFlag = true;
+			break;
+		case 0x44D:
+			PlayMovie(191);
+			word_2D7CC = 2;
+			_StatPlay = 660;
+			_LoopFlag = true;
+			break;
+		case 0x44E:
+			PlayMovie(192);
+			_StatPlay = 660;
+			_LoopFlag = true;
+			break;
+		case 0x458:
+			PlayMovie(190);
+			_StatPlay = 660;
+			_LoopFlag = true;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
 		break;
 	case 780:
 		_NodeNum = 78;
