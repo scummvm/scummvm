@@ -154,6 +154,7 @@ Common::Error SupernovaEngine::run() {
 		renderImage(_imageIndex, _sectionIndex, true);
 		renderText(Common::String::format("%3d | %3d", _imageIndex, _sectionIndex).c_str(),
 		           10, 190, kColorLightGreen);
+		_console->onFrame();
 		_system->updateScreen();
 		_system->delayMillis(_delay);
 	}
