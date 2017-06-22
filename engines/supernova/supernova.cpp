@@ -1092,7 +1092,7 @@ void GameManager::executeRoom() {
 					// This is locked.
 					_vm->renderMessage("Das ist verschlossen.");
 				} else {
-					_vm->renderImage(_vm->_currentImageFilenumber, _inputObject[0]._section);
+					_vm->renderImage(_currentRoom->getFileNumber(), _inputObject[0]._section);
 					_inputObject[0].setProperty(OPENED);
 					byte i = _inputObject[0]._click;
 					_inputObject[0]._click  = _inputObject[0]._click2;
@@ -1111,7 +1111,7 @@ void GameManager::executeRoom() {
 					// This is already closed.
 					_vm->renderMessage("Das ist schon geschlossen.");
 				} else {
-					_vm->renderImage(_vm->_currentImageFilenumber, invertSection(_inputObject[0]._section));
+					_vm->renderImage(_currentRoom->getFileNumber(), invertSection(_inputObject[0]._section));
 					_inputObject[0].disableProperty(OPENED);
 					byte i = _inputObject[0]._click;
 					_inputObject[0]._click  = _inputObject[0]._click2;
