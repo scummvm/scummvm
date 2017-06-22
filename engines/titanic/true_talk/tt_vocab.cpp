@@ -232,6 +232,27 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 	TTstring tempStr(str);
 	TTword *word = nullptr;
 
+	if (g_vm->isGerman()) {
+		static const char *const SUFFIXES[13] = {
+			"est", "em", "en", "er", "es", "et", "st",
+			"s", "e", "n", "t"
+		};
+
+		for (int idx = 0; idx < 13; ++idx) {
+			if (tempStr.hasSuffix(SUFFIXES[idx])) {
+				tempStr.deleteSuffix(strlen(SUFFIXES[idx]));
+				word = getPrimeWord(tempStr);
+				if (word)
+					break;
+				tempStr = str;
+			}
+		}
+
+		if (word)
+			word->setSynStr(str);
+		return word;
+	}
+
 	if (tempStr.hasSuffix("s")) {
 		tempStr.deleteSuffix(1);
 		word = getPrimeWord(tempStr);
