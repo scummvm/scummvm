@@ -20,6 +20,7 @@
  *
  */
 #include "common/debug.h"
+#include "common/stream.h"
 
 #include "engines/advancedDetector.h"
 
@@ -50,7 +51,18 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "verbcoin", "Verb Coin" },
 	{ 0, 0 }
 };
- 
+
+static ADGameDescription s_fallbackDesc = {
+	"",
+	"",
+	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+	Common::UNK_LANG,
+	Common::kPlatformWindows,
+	ADGF_NO_FLAGS,
+	GUIO0()
+};
+static char s_fallbackFileNameBuffer[51];
+
 #include "sludge/detection_tables.h"
 
 class SludgeMetaEngine : public AdvancedMetaEngine {
@@ -68,7 +80,6 @@ public:
 		return "Copyright (C) 2000-2014 Hungry Software and contributors";
 	}
  
- 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		const Sludge::SludgeGameDescription *gd = (const Sludge::SludgeGameDescription *)desc;
 			if (gd) {
@@ -76,7 +87,62 @@ public:
 			}
 			return gd != 0;
 	}
+
+	// for fall back detection
+	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 };
+
+const ADGameDescription *SludgeMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	// reset fallback description
+	s_fallbackDesc.gameId = "sludge";
+	s_fallbackDesc.extra = "";
+	s_fallbackDesc.language = Common::EN_ANY;
+	s_fallbackDesc.flags = ADGF_UNSTABLE;
+	s_fallbackDesc.platform = Common::kPlatformUnknown;
+	s_fallbackDesc.guiOptions = GUIO0();
+
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory())
+			continue;
+
+		Common::String fileName = file->getName();
+		fileName.toLowercase();
+		if (!(fileName.hasSuffix(".slg") || fileName == "gamedata"))
+			continue;
+
+		SearchMan.clear();
+		SearchMan.addDirectory(file->getParent().getName(), file->getParent());
+
+		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(file->getName());
+
+		if (!stream)
+			continue;
+
+		bool headerBad = false;
+		if (stream->readByte() != 'S')
+			headerBad = true;
+		if (stream->readByte() != 'L')
+			headerBad = true;
+		if (stream->readByte() != 'U')
+			headerBad = true;
+		if (stream->readByte() != 'D')
+			headerBad = true;
+		if (stream->readByte() != 'G')
+			headerBad = true;
+		if (stream->readByte() != 'E')
+			headerBad = true;
+		if (headerBad) {
+			continue;
+		}
+
+		strncpy(s_fallbackFileNameBuffer, fileName.c_str(), 50);
+		s_fallbackFileNameBuffer[50] = '\0';
+		s_fallbackDesc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
+
+		return &s_fallbackDesc;;
+	}
+	return 0;
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(SLUDGE)
 	REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
