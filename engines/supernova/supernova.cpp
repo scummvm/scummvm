@@ -216,7 +216,7 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool full
 		_system->copyRectToScreen(image.getSurface()->getPixels(),
 		                          image._pitch, 0, 0, kScreenWidth, kScreenHeight);
 	} else {
-		size_t offset = image._section[section].y1 * 320 + image._section[section].x1;
+		uint offset = image._section[section].y1 * 320 + image._section[section].x1;
 		_system->copyRectToScreen(static_cast<const byte *>(image.getSurface()->getPixels()) + offset,
 		                          320,
 		                          image._section[section].x1,
@@ -255,7 +255,7 @@ static int characterWidth(const char *text) {
 			c = 35;
 		}
 
-		for (size_t i = 0; i < 5; ++i) {
+		for (uint i = 0; i < 5; ++i) {
 			++charWidth;
 			if (font[c - 32][i] == 0xff) {
 				break;
@@ -270,7 +270,7 @@ void SupernovaEngine::renderMessage(const char *text, MessagePosition position) 
 	Common::String t(text);
 	char *row[20];
 	Common::String::iterator p = t.begin();
-	size_t numRows = 0;
+	uint numRows = 0;
 	int rowWidthMax = 0;
 	int x = 0;
 	int y = 0;
@@ -287,7 +287,7 @@ void SupernovaEngine::renderMessage(const char *text, MessagePosition position) 
 			++p;
 		}
 	}
-	for (size_t i = 0; i < numRows; ++i) {
+	for (uint i = 0; i < numRows; ++i) {
 		int rowWidth = characterWidth(row[i]);
 		if (rowWidth > rowWidthMax)
 			rowWidthMax = rowWidth;
@@ -329,7 +329,7 @@ void SupernovaEngine::renderMessage(const char *text, MessagePosition position) 
 	int message_width = rowWidthMax + 6;
 	int message_height = numRows * 9 + 5;
 	renderBox(message_columns, message_rows, message_width, message_height, HGR_MELD);
-	for (size_t i = 0; i < numRows; ++i) {
+	for (uint i = 0; i < numRows; ++i) {
 		renderText(row[i], x, y, textColor);
 		y += 9;
 	}
@@ -356,7 +356,7 @@ void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
 			c = 128;
 		}
 
-		for (size_t i = 0; i < 5; ++i) {
+		for (uint i = 0; i < 5; ++i) {
 			if (font[c - 32][i] == 0xff) {
 				++cursor;
 				break;
@@ -374,8 +374,8 @@ void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
 	}
 	_system->unlockScreen();
 
-	size_t numChars = cursor - basePtr;
-	size_t absPosition = y * kScreenWidth + x + numChars;
+	uint numChars = cursor - basePtr;
+	uint absPosition = y * kScreenWidth + x + numChars;
 	_textCursorX = absPosition % kScreenWidth;
 	_textCursorY = absPosition / kScreenWidth;
 	_textColor = color;
@@ -395,10 +395,10 @@ void SupernovaEngine::paletteBrightness() {
 	byte palette[768];
 
 	_system->getPaletteManager()->grabPalette(palette, 0, 255);
-	for (size_t i = 0; i < 48; ++i) {
+	for (uint i = 0; i < 48; ++i) {
 		palette[i] = (initVGAPalette[i] * _menuBrightness) >> 8;
 	}
-	for (size_t i = 0; i < 717; ++i) {
+	for (uint i = 0; i < 717; ++i) {
 		const byte *imagePalette;
 		if (_currentImage->getPalette()) {
 			imagePalette = _currentImage->getPalette();
@@ -465,7 +465,7 @@ void Inventory::add(Object &obj) {
 
 // TODO: Update Inventory surface for scrolling
 void Inventory::remove(Object &obj) {
-	for (size_t i = 0; i < _numObjects; ++i) {
+	for (uint i = 0; i < _numObjects; ++i) {
 		if (_inventory[i] == &obj) {
 			--_numObjects;
 			while (i < _numObjects) {
@@ -477,7 +477,7 @@ void Inventory::remove(Object &obj) {
 	}
 }
 
-Object *Inventory::get(size_t index) const {
+Object *Inventory::get(uint index) const {
 	if (index < _numObjects)
 		return _inventory[index];
 
@@ -485,7 +485,7 @@ Object *Inventory::get(size_t index) const {
 }
 
 Object *Inventory::get(ObjectID id) const {
-	for (size_t i = 0; i < _numObjects; ++i) {
+	for (uint i = 0; i < _numObjects; ++i) {
 		if (_inventory[i]->_id == id)
 			return _inventory[i];
 	}
@@ -870,9 +870,9 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				f = true;
 			}
 
-			for (size_t i = 0; i < strlen(t); i++)
+			for (uint i = 0; i < strlen(t); i++)
 				if ((t[i] < '0') || (t[i] > '9')) f = true;
-			for (size_t i = 0; i < strlen(min); i++)
+			for (uint i = 0; i < strlen(min); i++)
 				if ((min[i] < '0') || (min[i] > '9')) f = true;
 			hours = atoi(t);
 			minutes = atoi(min);
