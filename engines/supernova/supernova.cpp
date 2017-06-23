@@ -70,6 +70,7 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 SupernovaEngine::SupernovaEngine(OSystem *syst)
     : Engine(syst)
     , _console(NULL)
+    , _currentImage(_images)
     , _brightness(255)
     , _menuBrightness(255)
     , _imageIndex(0)
@@ -95,12 +96,12 @@ SupernovaEngine::~SupernovaEngine() {
 
 Common::Error SupernovaEngine::run() {
 	initGraphics(kScreenWidth, kScreenHeight);
-	_console = new Console(this);
+	GameManager gm(this, &_event);
+	_console = new Console(this, &gm);
 
 	initData();
 	initPalette();
 	paletteFadeIn();
-	GameManager gm(this, &_event);
 
 	CursorMan.showMouse(true);
 
@@ -116,23 +117,6 @@ Common::Error SupernovaEngine::run() {
 			case Common::EVENT_KEYDOWN:
 				if (_event.kbd.keycode == Common::KEYCODE_d && _event.kbd.hasFlags(Common::KBD_CTRL)) {
 					_console->attach();
-				}
-				if (_event.kbd.keycode == Common::KEYCODE_q) {
-					playSound(48, 13530);
-				}
-				if (_event.kbd.keycode == Common::KEYCODE_RIGHT) {
-					++_imageIndex;
-					_sectionIndex = 0;
-				}
-				if (_event.kbd.keycode == Common::KEYCODE_LEFT) {
-					--_imageIndex;
-					_sectionIndex = 0;
-				}
-				if (_event.kbd.keycode == Common::KEYCODE_UP) {
-					++_sectionIndex;
-				}
-				if (_event.kbd.keycode == Common::KEYCODE_DOWN) {
-					--_sectionIndex;
 				}
 				break;
 
@@ -151,10 +135,9 @@ Common::Error SupernovaEngine::run() {
 //			gm.processInput();
 		}
 
-		renderImage(_imageIndex, _sectionIndex, true);
+		_console->onFrame();
 		renderText(Common::String::format("%3d | %3d", _imageIndex, _sectionIndex).c_str(),
 		           10, 190, kColorLightGreen);
-		_console->onFrame();
 		_system->updateScreen();
 		_system->delayMillis(_delay);
 	}
@@ -179,6 +162,11 @@ void SupernovaEngine::updateEvents() {
 }
 
 void SupernovaEngine::initData() {
+	// Images
+	for (int i = 0; i < 44; ++i)
+		_images[i].init(i);
+
+	// Sound
 }
 
 void SupernovaEngine::initPalette() {
@@ -202,42 +190,44 @@ void SupernovaEngine::stopSound() {
 		_mixer->stopHandle(_soundHandle);
 }
 
-void playSoundMod(int filenumber)
+void SupernovaEngine::playSoundMod(int filenumber)
 {
 	if (filenumber != 49 || filenumber != 52) {
 		error("File not supposed to be played!");
 	}
 
 	Common::File *file = new Common::File;
-	if (!file->open(Common::String::format("msn_data.0%2d", filenumber))) {
+	if (!file->open(Common::String::format("msn_data.%03d", filenumber))) {
 		error("File %s could not be read!", file->getName());
 	}
 
 	// play Supernova MOD file
 }
 
-void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) {
-	Common::File file;
-	if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
-		error("File %s could not be read!", file.getName());
-	}
+void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool fullscreen) {
+	_currentImage = &image;
+	_imageIndex = image._filenumber;
+	_sectionIndex = section;
 
-	if (_currentImage.loadStream(file) && _currentImage.loadSection(filenumber, section)) {
-		_system->getPaletteManager()->setPalette(_currentImage.getPalette(), 16, 239);
-		paletteBrightness();
-		if (fullscreen) {
-			_system->copyRectToScreen(_currentImage.getSurface()->getPixels(),
-			                          _currentImage._pitch, 0, 0, kScreenWidth, kScreenHeight);
-		} else {
-			size_t offset = _currentImage._section[section].y1 * 320 + _currentImage._section[section].x1;
-			_system->copyRectToScreen(static_cast<const byte *>(_currentImage.getSurface()->getPixels()) + offset,
-			                          320,
-			                          _currentImage._section[section].x1,
-			                          _currentImage._section[section].y1,
-			                          _currentImage._section[section].x2 - _currentImage._section[section].x1,
-			                          _currentImage._section[section].y2 - _currentImage._section[section].y1);
-		}
+	image.loadSection(section);
+	_system->getPaletteManager()->setPalette(image.getPalette(), 16, 239);
+	paletteBrightness();
+	if (fullscreen) {
+		_system->copyRectToScreen(image.getSurface()->getPixels(),
+		                          image._pitch, 0, 0, kScreenWidth, kScreenHeight);
+	} else {
+		size_t offset = image._section[section].y1 * 320 + image._section[section].x1;
+		_system->copyRectToScreen(static_cast<const byte *>(image.getSurface()->getPixels()) + offset,
+		                          320,
+		                          image._section[section].x1,
+		                          image._section[section].y1,
+		                          image._section[section].x2 - image._section[section].x1,
+		                          image._section[section].y2 - image._section[section].y1);
 	}
+}
+
+void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) {
+	renderImage(_images[filenumber], section, fullscreen);
 }
 
 void SupernovaEngine::saveScreen(int x, int y, int width, int height) {
@@ -410,8 +400,8 @@ void SupernovaEngine::paletteBrightness() {
 	}
 	for (size_t i = 0; i < 717; ++i) {
 		const byte *imagePalette;
-		if (_currentImage.getPalette()) {
-			imagePalette = _currentImage.getPalette();
+		if (_currentImage->getPalette()) {
+			imagePalette = _currentImage->getPalette();
 		} else {
 			imagePalette = palette;
 		}

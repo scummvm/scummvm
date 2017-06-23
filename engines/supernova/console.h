@@ -28,6 +28,7 @@
 namespace Supernova {
 
 class SupernovaEngine;
+class GameManager;
 
 enum {
 	kDebugGeneral = 1 << 0
@@ -35,12 +36,16 @@ enum {
 
 class Console : public GUI::Debugger {
 public:
-	Console(Supernova::SupernovaEngine *vm);
+	Console(Supernova::SupernovaEngine *vm, Supernova::GameManager *gm);
 	virtual ~Console() {}
-	
-	bool cmdTest(int argc, const char **argv);
+
+	bool cmdRenderImage(int argc, const char **argv);
+	bool cmdPlaySound(int argc, const char **argv);
+	bool cmdList(int argc, const char **argv);
+	bool cmdInventory(int argc, const char **argv);
 private:
 	SupernovaEngine *_vm;
+	GameManager *_gm;
 };
 
 }

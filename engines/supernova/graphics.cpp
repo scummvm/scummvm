@@ -41,6 +41,18 @@ MSNImageDecoder::~MSNImageDecoder() {
 	destroy();
 }
 
+bool MSNImageDecoder::init(int filenumber) {
+	Common::File file;
+	if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
+		error("File %s could not be read!", file.getName());
+	}
+
+	_filenumber = filenumber;
+	loadStream(file);
+
+	return true;
+}
+
 bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
@@ -68,13 +80,13 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	byte numSections = stream.readByte();
+	_numSections = stream.readByte();
 	for (size_t i = 0; i < kMaxSections; ++i) {
 		_section[i].addressHigh = 0xff;
 		_section[i].addressLow = 0xffff;
 		_section[i].x2 = 0;
 	}
-	for (int i = 0; i < numSections; ++i) {
+	for (int i = 0; i < _numSections; ++i) {
 		_section[i].x1 = stream.readUint16LE();
 		_section[i].x2 = stream.readUint16LE();
 		_section[i].y1 = stream.readByte();
@@ -84,8 +96,8 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_section[i].addressHigh = stream.readByte();
 	}
 
-	byte numClickFields = stream.readByte();
-	for (int i = 0; i < numClickFields; ++i) {
+	_numClickFields = stream.readByte();
+	for (int i = 0; i < _numClickFields; ++i) {
 		_clickField[i].x1 = stream.readUint16LE();
 		_clickField[i].x2 = stream.readUint16LE();
 		_clickField[i].y1 = stream.readByte();
@@ -101,7 +113,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	byte input = 0;
 	size_t i = 0;
-	// wat
+
 	while (stream.read(&input, 1)) {
 		if (input < numRepeat) {
 			++input;
@@ -123,13 +135,16 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-bool MSNImageDecoder::loadSection(int filenumber, int section) {
+bool MSNImageDecoder::loadSection(int section) {
 	int imageWidth = 320;
 	int imageHeight = 200;
-	_surface = new Graphics::Surface;
-	_filenumber = filenumber;
 
-	if (filenumber == 1 || filenumber == 2) {
+	if (_surface)
+		_surface->free();
+
+	_surface = new Graphics::Surface;
+
+	if (_filenumber == 1 || _filenumber == 2) {
 		imageWidth = 640;
 		imageHeight = 480;
 		_pitch = 640;

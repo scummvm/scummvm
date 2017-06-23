@@ -27,20 +27,60 @@
 
 namespace Supernova {
 
-Console::Console(SupernovaEngine *vm)
+Console::Console(SupernovaEngine *vm, GameManager *gm)
 {
-	registerCmd("test", WRAP_METHOD(Console, cmdTest));
+	registerCmd("render", WRAP_METHOD(Console, cmdRenderImage));
+	registerCmd("play", WRAP_METHOD(Console, cmdPlaySound));
+	registerCmd("list", WRAP_METHOD(Console, cmdList));
+	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
+
+	_vm = vm;
+	_gm = gm;
 }
 
-bool Console::cmdTest(int argc, const char **argv)
-{
-	if (argc == 2) {
-		debugPrintf("Success!");
+bool Console::cmdRenderImage(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: render [filenumber] [section]\n");
 		return true;
-	} else {
-		debugPrintf("Failure!");
-		return false;
 	}
+
+	int filenumber = atoi(argv[1]);
+	int section = atoi(argv[2]);
+
+	_vm->renderImage(atoi(argv[1]), atoi(argv[2]));
+
+	return true;
+}
+
+bool Console::cmdPlaySound(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: play [filenumber] [offset]\n");
+		return true;
+	}
+
+	int filenumber = atoi(argv[1]);
+	int offset = atoi(argv[2]);
+
+	_vm->playSound(filenumber, offset);
+
+	return true;
+}
+
+bool Console::cmdList(int argc, const char **argv) {
+	// Objects in room and sections
+
+	return true;
+}
+
+bool Console::cmdInventory(int argc, const char **argv) {
+	if (argc != 2 || argc != 3) {
+		debugPrintf("Usage: inventory [list][add/remove [object]]");
+		return true;
+	}
+
+	// TODO
+
+	return true;
 }
 
 }

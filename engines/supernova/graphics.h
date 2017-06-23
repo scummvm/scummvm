@@ -46,13 +46,16 @@ public:
 	virtual const Graphics::Surface *getSurface() const { return _surface; }
 	virtual const byte *getPalette() const { return _palette; }
 
-	bool loadSection(int filenumber, int section);
+	bool loadSection(int section);
+	bool init(int filenumber);
 
 	static const int kMaxSections = 50;
 	static const int kMaxClickFields = 80;
 
 	int _filenumber;
 	int _pitch;
+	int _numSections;
+	int _numClickFields;
 	Graphics::Surface *_surface;
 	byte *_palette;
 	byte *_encodedImage;
