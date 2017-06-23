@@ -221,7 +221,9 @@ namespace Kingdom {
 		int16 word_2D7C2;
 		int16 word_2D7CC;
 		int16 word_2D7D6;
+		int16 word_2D7D8;
 		int16 word_2D7DA;
+
 
 		Common::SeekableReadStream *_RezPointers[510];
 		int _RezSize[510];
@@ -297,6 +299,7 @@ namespace Kingdom {
 		int GetAKey();
 		int checkMouseMapAS();
 		void CursorTypeExit();
+		void EndCredits();
 	};
 } // End of namespace Kingdom
 
