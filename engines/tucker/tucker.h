@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TUCKER_ENGINE_H
-#define TUCKER_ENGINE_H
+#ifndef TUCKER_TUCKER_H
+#define TUCKER_TUCKER_H
 
 #include "common/file.h"
 #include "common/util.h"
@@ -300,6 +300,7 @@ protected:
 	void updateCursorPos(int x, int y);
 	void setCursorNum(int num);
 	void setCursorType(int type);
+	void showCursor(bool visible);
 	void setupNewLocation();
 	void copyLocBitmap(const char *filename, int offset, bool isMask);
 	void updateMouseState();

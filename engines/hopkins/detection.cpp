@@ -111,7 +111,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Hopkins FBI (c)1997-2003 MP Entertainment";
+		return "Hopkins FBI (C)1997-2003 MP Entertainment";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -128,7 +128,8 @@ bool HopkinsMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Hopkins::HopkinsEngine::hasFeature(EngineFeature f) const {
@@ -153,7 +154,6 @@ SaveStateList HopkinsMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = Common::String::format("%s.0##", target);
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
 
 	Hopkins::hopkinsSavegameHeader header;
 
@@ -178,6 +178,8 @@ SaveStateList HopkinsMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

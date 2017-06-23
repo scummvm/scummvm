@@ -35,8 +35,12 @@ public:
 
 	virtual bool displayLogFile();
 
+	virtual bool openUrl(const Common::String &url);
+
 	virtual void init();
 	virtual void initBackend();
+
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
 protected:
 	/**
@@ -59,6 +63,10 @@ protected:
 	virtual Common::String getDefaultConfigFileName();
 
 	virtual Common::WriteStream *createLogFile();
+
+	virtual AudioCDManager *createAudioCDManager();
+
+	bool launchBrowser(const Common::String& client, const Common::String &url);
 };
 
 #endif

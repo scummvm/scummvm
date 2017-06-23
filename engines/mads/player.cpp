@@ -320,11 +320,11 @@ void Player::activateTrigger() {
 
 	_commandsAllowed |= _enableAtTarget;
 	_enableAtTarget = false;
-	
+
 	if (_walkTrigger) {
 		game._trigger = _walkTrigger;
 		game._triggerMode = SEQUENCE_TRIGGER_DAEMON;
-		
+
 		if (game._triggerMode != SEQUENCE_TRIGGER_DAEMON) {
 			action._activeAction = _walkTriggerAction;
 		}

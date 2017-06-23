@@ -299,6 +299,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 }
 
 void Journal::loadJournalFile(bool alreadyLoaded) {
+	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
@@ -381,20 +382,34 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	// If Holmes has something to say first, then take care of it
 	if (!replyOnly) {
 		// Handle the grammar
-		journalString += "Holmes ";
+		bool asked = false;
+
 		if (talk[journalEntry._statementNum]._statement.hasSuffix("?"))
-			journalString += "asked ";
-		else
-			journalString += "said to ";
+			asked = true;
 
 		if (talk._talkTo == 1) {
-			journalString += "me";
+			if (asked)
+				journalString += fixedText.getJournalText(kFixedJournalText_HolmesAskedMe);
+			else
+				journalString += fixedText.getJournalText(kFixedJournalText_HolmesSaidToTheInspector);
+
 		} else if ((talk._talkTo == 2 && IS_SERRATED_SCALPEL) || (talk._talkTo == 18 && IS_ROSE_TATTOO)) {
-			journalString += "the Inspector";
+			if (asked)
+				journalString += fixedText.getJournalText(kFixedJournalText_HolmesAskedTheInspector);
+			else
+				journalString += fixedText.getJournalText(kFixedJournalText_HolmesSaidToMe);
+
 		} else {
-			journalString += people._characters[talk._talkTo]._name;
+			const char *text = nullptr;
+			if (asked)
+				text = fixedText.getJournalText(kFixedJournalText_HolmesAskedPerson);
+			else
+				text = fixedText.getJournalText(kFixedJournalText_HolmesSaidToPerson);
+
+			journalString += Common::String::format(text, people._characters[talk._talkTo]._name);
 		}
-		journalString += ", \"";
+
+		journalString += "\"";
 
 		// Add the statement
 		journalString += statement._statement;
@@ -423,8 +438,9 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			}
 		}
 
-		// Is it a control character?
-		if (isPrintable(c)) {
+		if (c == '\r' || c == '\n') {
+			journalString += '\n';
+		} else if (isPrintable(c)) {
 			// Nope. Set flag for allowing control codes to insert spaces
 			ctrlSpace = true;
 			justChangedSpeaker = false;
@@ -457,28 +473,45 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 						journalString += "\"\n";
 
 						if (talk._talkTo == 1)
-							journalString += "I replied, \"";
+							journalString += fixedText.getJournalText(kFixedJournalText_IReplied);
 						else
-							journalString += "The reply was, \"";
+							journalString += fixedText.getJournalText(kFixedJournalText_TheReplyWas);
 					} else {
-						if (talk._talkTo == 1)
-							journalString += "I";
-						else if (talk._talkTo == inspectorId)
-							journalString += "The Inspector";
-						else
-							journalString += people._characters[talk._talkTo]._name;
-
 						const byte *strP = replyP + 1;
 						byte v;
 						do {
 							v = *strP++;
 						} while (v && (v < opcodes[0]) && (v != '.') && (v != '!') && (v != '?'));
 
+						bool asked = false;
+
 						if (v == '?')
-							journalString += " asked, \"";
-						else
-							journalString += " said, \"";
+							asked = true;
+
+						if (talk._talkTo == 1) {
+							if (asked)
+								journalString += fixedText.getJournalText(kFixedJournalText_IAsked);
+							else
+								journalString += fixedText.getJournalText(kFixedJournalText_ISaid);
+
+						} else if (talk._talkTo == inspectorId) {
+							if (asked)
+								journalString += fixedText.getJournalText(kFixedJournalText_TheInspectorAsked);
+							else
+								journalString += fixedText.getJournalText(kFixedJournalText_TheInspectorSaid);
+
+						} else {
+							const char *text = nullptr;
+							if (asked)
+								text = fixedText.getJournalText(kFixedJournalText_PersonAsked);
+							else
+								text = fixedText.getJournalText(kFixedJournalText_PersonSaid);
+
+							journalString += Common::String::format(text, people._characters[talk._talkTo]._name);
+						}
 					}
+
+					journalString += "\"";
 
 					startOfReply = false;
 				}
@@ -502,11 +535,13 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				justChangedSpeaker = true;
 			}
 
+			bool addPrefixThen = false;
+
 			if (!startOfReply) {
 				if (!commentFlag && !commentJustPrinted)
 					journalString += "\"\n";
 
-				journalString += "Then ";
+				addPrefixThen = true; // "Then" should get added to the sentence
 				commentFlag = false;
 			} else if (!replyOnly) {
 				journalString += "\"\n";
@@ -517,15 +552,6 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			if (IS_ROSE_TATTOO)
 				replyP++;
 
-			if (c == 0)
-				journalString += "Holmes";
-			else if (c == 1)
-				journalString += "I";
-			else if (c == inspectorId)
-				journalString += "the Inspector";
-			else
-				journalString += people._characters[c]._name;
-
 			if (IS_SERRATED_SCALPEL && _vm->getLanguage() == Common::DE_DEU)
 				Scalpel::ScalpelTalk::skipBadText(replyP);
 
@@ -535,10 +561,70 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				v = *strP++;
 			} while (v && v < opcodes[0] && v != '.' && v != '!' && v != '?');
 
+			bool asked = false;
+
 			if (v == '?')
-				journalString += " asked, \"";
-			else
-				journalString += " said, \"";
+				asked = true;
+
+			if (c == 0) {
+				// Holmes
+				if (addPrefixThen) {
+					if (asked)
+						journalString += fixedText.getJournalText(kFixedJournalText_ThenHolmesAsked);
+					else
+						journalString += fixedText.getJournalText(kFixedJournalText_ThenHolmesSaid);
+				} else {
+					if (asked)
+						journalString += fixedText.getJournalText(kFixedJournalText_HolmesAsked);
+					else
+						journalString += fixedText.getJournalText(kFixedJournalText_HolmesSaid);
+				}
+			} else if (c == 1) {
+				// I (Watson)
+				if (addPrefixThen) {
+					if (asked)
+						journalString += fixedText.getJournalText(kFixedJournalText_ThenIAsked);
+					else
+						journalString += fixedText.getJournalText(kFixedJournalText_ThenISaid);
+				} else {
+					if (asked)
+						journalString += fixedText.getJournalText(kFixedJournalText_IAsked);
+					else
+						journalString += fixedText.getJournalText(kFixedJournalText_ISaid);
+				}
+			} else if (c == inspectorId) {
+				// The Inspector
+				if (addPrefixThen) {
+					if (asked)
+						journalString += fixedText.getJournalText(kFixedJournalText_ThenTheInspectorAsked);
+					else
+						journalString += fixedText.getJournalText(kFixedJournalText_ThenTheInspectorSaid);
+				} else {
+					if (asked)
+						journalString += fixedText.getJournalText(kFixedJournalText_TheInspectorAsked);
+					else
+						journalString += fixedText.getJournalText(kFixedJournalText_TheInspectorSaid);
+				}
+			} else {
+				// Person
+				const char *text = nullptr;
+				if (addPrefixThen) {
+					if (asked)
+						text = fixedText.getJournalText(kFixedJournalText_ThenPersonAsked);
+					else
+						text = fixedText.getJournalText(kFixedJournalText_ThenPersonSaid);
+				} else {
+					if (asked)
+						text = fixedText.getJournalText(kFixedJournalText_PersonAsked);
+					else
+						text = fixedText.getJournalText(kFixedJournalText_PersonSaid);
+				}
+
+				journalString += Common::String::format(text, people._characters[c]._name);
+			}
+
+			journalString += "\"";
+
 		} else {
 			if (IS_SERRATED_SCALPEL) {
 				// Control code, so move past it and any parameters
@@ -718,8 +804,7 @@ bool Journal::isPrintable(byte ch) const {
 	if (ch < opcodes[0])
 		return true;
 
-	if (_vm->getGameID() == GType_SerratedScalpel && _vm->getLanguage() == Common::DE_DEU
-			&& ch >= 0xe0)
+	if (_vm->getLanguage() == Common::DE_DEU && ch == 0xe1) // accept German Sharp-S character
 		return true;
 
 	return false;

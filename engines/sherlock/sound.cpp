@@ -58,10 +58,9 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_soundPlaying = false;
 	_speechPlaying = false;
 	_curPriority = 0;
-	_soundVolume = 255;
-
-	_soundOn = true;
-	_speechOn = true;
+	_soundVolume = ConfMan.hasKey("sfx_volume") ? ConfMan.getInt("sfx_volume") : 255;
+	_soundOn = ConfMan.hasKey("mute") ? !ConfMan.getBool("mute") : true;
+	_speechOn = ConfMan.hasKey("speech_mute") ? !ConfMan.getBool("speech_mute") : true;
 
 	if (IS_3DO) {
 		// 3DO: we don't need to prepare anything for sound
@@ -73,7 +72,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		_vm->_res->addToCache("TITLE.SND");
 	else {
 		_vm->_res->addToCache("MUSIC.LIB");
-		
+
 		if (IS_ROSE_TATTOO) {
 			_vm->_res->addToCache("SOUND.LIB");
 		} else {
@@ -121,7 +120,9 @@ byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
 }
 
 bool Sound::playSound(const Common::String &name, WaitType waitType, int priority, const char *libraryFilename) {
-	stopSound();
+	// Scalpel has only a single sound handle, so it must be stopped before starting a new sound
+	if (IS_SERRATED_SCALPEL)
+		stopSound();
 
 	Common::String filename = formFilename(name);
 
@@ -239,7 +240,10 @@ Audio::SoundHandle &Sound::getFreeSoundHandle() {
 }
 
 void Sound::setVolume(int volume) {
-	warning("TODO: setVolume - %d", volume);
+	_soundVolume = volume;
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 }
 
 void Sound::playSpeech(const Common::String &name) {

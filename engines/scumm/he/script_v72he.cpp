@@ -119,7 +119,7 @@ byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim
 
 	id = findFreeArrayId();
 
-	debug(9,"defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", id, dim2start, dim2end, dim1start, dim1end);
+	debug(9, "defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", id, dim2start, dim2end, dim1start, dim1end);
 
 	if (array & 0x80000000) {
 		error("Can't define bit variable as array pointer");
@@ -227,6 +227,23 @@ int ScummEngine_v72he::setupStringArray(int size) {
 	writeVar(0, 0);
 	defineArray(0, kStringArray, 0, 0, 0, size + 1);
 	writeArray(0, 0, 0, 0);
+	return readVar(0);
+}
+
+int ScummEngine_v72he::setupStringArrayFromString(const char *cStr) {
+	// this is PUI_ScummStringArrayFromCString() found in PUSERMAC.cpp
+	// I can see how its done up there in setupStringArray()
+	// yet I'd note that 'SCUMMVAR_user_reserved' var was used instead of 0
+	// and strlen(), not strlen() + 1 was used
+	// plus, this function actually copies the string, not just 'sets up' the array
+
+	writeVar(0, 0);
+
+	int len = strlen(cStr) + 1;
+	byte *ptr = defineArray(0, kStringArray, 0, 0, 0, len);
+	if (ptr != nullptr)
+		Common::strlcpy((char*)ptr, cStr, len);
+
 	return readVar(0);
 }
 
@@ -699,13 +716,13 @@ void ScummEngine_v72he::o72_roomOps() {
 		setCurrentPalette(a);
 		break;
 
-	case 220:
+	case 220:		// SO_ROOM_COPY_PALETTE
 		a = pop();
 		b = pop();
 		copyPalColor(a, b);
 		break;
 
-	case 221:
+	case 221:		// SO_ROOM_SAVEGAME_BY_NAME
 		byte buffer[256];
 
 		copyScriptString((byte *)buffer, sizeof(buffer));
@@ -718,13 +735,13 @@ void ScummEngine_v72he::o72_roomOps() {
 		_saveTemporaryState = true;
 		break;
 
-	case 234:
+	case 234:		// SO_OBJECT_ORDER
 		b = pop();
 		a = pop();
 		swapObjects(a, b);
 		break;
 
-	case 236:
+	case 236:		// SO_ROOM_PALETTE_IN_ROOM
 		b = pop();
 		a = pop();
 		setRoomPalette(a, b);
@@ -752,43 +769,43 @@ void ScummEngine_v72he::o72_actorOps() {
 		return;
 
 	switch (subOp) {
-	case 21: // HE 80+
+	case 21: 		// SO_CONDITION (HE 80+)
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
 		break;
-	case 24: // HE 80+
+	case 24: 		// SO_TALK_CONDITION (HE 80+)
 		k = pop();
 		if (k == 0)
 			k = _rnd.getRandomNumberRng(1, 10);
 		a->_heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
 		break;
-	case 43: // HE 90+
+	case 43: 		// SO_PRIORITY (HE 90+)
 		a->_layer = pop();
 		a->_needRedraw = true;
 		break;
-	case 64:
+	case 64:		// SO_ACTOR_DEFAULT_CLIPPED
 		_actorClipOverride.bottom = pop();
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
 		adjustRect(_actorClipOverride);
 		break;
-	case 65: // HE 98+
+	case 65: 		// SO_AT (HE 98+)
 		j = pop();
 		i = pop();
 		a->putActor(i, j);
 		break;
-	case 67: // HE 99+
+	case 67:		// SO_CLIPPED (HE 99+)
 		a->_clipOverride.bottom = pop();
 		a->_clipOverride.right = pop();
 		a->_clipOverride.top = pop();
 		a->_clipOverride.left = pop();
 		adjustRect(a->_clipOverride);
 		break;
-	case 68: // HE 90+
+	case 68: // 	// SO_ERASE (HE 90+)
 		k = pop();
 		a->setHEFlag(1, k);
 		break;
@@ -887,10 +904,10 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->_talkPosY = pop();
 		a->_talkPosX = pop();
 		break;
-	case 156:		// HE 72+
+	case 156:		// SO_CHARSET (HE 72+)
 		a->_charset = pop();
 		break;
-	case 175:		// HE 99+
+	case 175:		// SO_ROOM_PALETTE (HE 99+)
 		a->_hePaletteNum = pop();
 		a->_needRedraw = true;
 		break;
@@ -907,15 +924,15 @@ void ScummEngine_v72he::o72_actorOps() {
 	case 217:		// SO_ACTOR_NEW
 		a->initActor(2);
 		break;
-	case 218:
+	case 218:		// SO_BACKGROUND_ON
 		a->drawActorToBackBuf(a->getPos().x, a->getPos().y);
 		break;
-	case 219:
+	case 219:		// SO_BACKGROUND_OFF
 		a->_drawToBackBuf = false;
 		a->_needRedraw = true;
 		a->_needBgReset = true;
 		break;
-	case 225:
+	case 225:		// SO_TALKIE
 		{
 		copyScriptString(string, sizeof(string));
 		int slot = pop();
@@ -1077,7 +1094,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 		memcpy(data, string, len);
 		break;
 
-	case 126:
+	case 126:		// SO_COMPLEX_ARRAY_ASSIGNMENT
 		len = getStackList(list, ARRAYSIZE(list));
 		dim1end = pop();
 		dim1start = pop();
@@ -1101,7 +1118,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 			dim2start++;
 		}
 		break;
-	case 127:
+	case 127:		// SO_COMPLEX_ARRAY_COPY_OPERATION
 		{
 			int a2_dim1end = pop();
 			int a2_dim1start = pop();
@@ -1118,7 +1135,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 			copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
 		}
 		break;
-	case 128:
+	case 128:		// SO_RANGE_ARRAY_ASSIGNMENT
 		b = pop();
 		c = pop();
 		dim1end = pop();
@@ -1149,7 +1166,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 			dim2start++;
 		}
 		break;
-	case 194:
+	case 194:		// SO_FORMATTED_STRING
 		decodeScriptString(string);
 		len = resStrLen(string);
 		data = defineArray(array, kStringArray, 0, 0, 0, len);
@@ -1482,6 +1499,26 @@ void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
 	if (slot != -1) {
 		_hOutFileTable[slot]->write(ah->data, size);
 	}
+}
+
+void ScummEngine_v72he::getStringFromArray(int arrayNumber, char *buffer, int maxLength) {
+	// I'm not really sure it belongs here and not some other version
+	// this is ARRAY_GetStringFromArray() from ARRAYS.cpp of SPUTM
+
+	// this function makes a C-string out of <arrayNumber> contents
+
+	VAR(0) = arrayNumber; // it was 0 in original code, but I've seen ScummVM Moonbase code which uses VAR_U32_ARRAY_UNK
+
+	int i, ch;
+	for (i = 0; i < maxLength; ++i) {
+		if (!(ch = readArray(0, 0, i))) {
+			break;
+		}
+
+		buffer[i] = ch;
+	}
+
+	buffer[i] = 0;
 }
 
 void ScummEngine_v72he::o72_writeFile() {

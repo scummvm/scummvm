@@ -44,7 +44,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	if (vm->getGameID() == GType_MartianMemorandum) {
 		int lastColor = s.readUint16LE();
 		_numColors = lastColor - _startColor;
-	} else 
+	} else
 		_numColors = s.readUint16LE();
 
 	// Load cells
@@ -131,6 +131,7 @@ void CharManager::loadChar(int charId) {
 	if (ce._animFile._fileNum != -1) {
 		Resource *data = _vm->_files->loadFile(ce._animFile);
 		_vm->_animation->loadAnimations(data);
+		delete data;
 	}
 
 	// Load script data

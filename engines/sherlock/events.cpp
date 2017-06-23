@@ -94,7 +94,7 @@ void Events::setCursor(CursorId cursorId) {
 void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY) {
 	_cursorId = INVALID_CURSOR;
 	_hotspotPos = Common::Point(hotspotX, hotspotY);
-	
+
 	if (!IS_3DO) {
 		// PC 8-bit palettized
 		CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0xff);
@@ -143,7 +143,7 @@ void Events::setCursor(CursorId cursorId, const Common::Point &cursorPos, const 
 
 	// Form a single surface containing both frames
 	Surface s(r.width(), r.height());
-	s.fill(TRANSPARENCY);
+	s.clear(TRANSPARENCY);
 
 	// Draw the passed image
 	Common::Point drawPos;
@@ -151,11 +151,11 @@ void Events::setCursor(CursorId cursorId, const Common::Point &cursorPos, const 
 		drawPos.x = -cursorPt.x;
 	if (cursorPt.y < 0)
 		drawPos.y = -cursorPt.y;
-	s.blitFrom(surface, Common::Point(drawPos.x, drawPos.y));
+	s.SHblitFrom(surface, Common::Point(drawPos.x, drawPos.y));
 
 	// Draw the cursor image
 	drawPos = Common::Point(MAX(cursorPt.x, (int16)0), MAX(cursorPt.y, (int16)0));
-	s.transBlitFrom(cursorImg, Common::Point(drawPos.x, drawPos.y));
+	s.SHtransBlitFrom(cursorImg, Common::Point(drawPos.x, drawPos.y));
 
 	// Set up hotspot position for cursor, adjusting for cursor image's position within the surface
 	Common::Point hotspot;
@@ -163,7 +163,7 @@ void Events::setCursor(CursorId cursorId, const Common::Point &cursorPos, const 
 		hotspot = Common::Point(8, 8);
 	hotspot += drawPos;
 	// Set the cursor
-	setCursor(s.getRawSurface(), hotspot.x, hotspot.y);
+	setCursor(s, hotspot.x, hotspot.y);
 }
 
 void Events::animateCursorIfNeeded() {
@@ -400,7 +400,7 @@ bool Events::checkInput() {
 
 void Events::incWaitCounter() {
 	setCursor(WAIT);
-	++_waitCounter;		
+	++_waitCounter;
 }
 
 void Events::decWaitCounter() {

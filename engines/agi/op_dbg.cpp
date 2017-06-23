@@ -28,16 +28,14 @@ namespace Agi {
 #define ip   (_game.logics[lognum].cIP)
 #define code (_game.logics[lognum].data)
 
-AgiInstruction logicNamesIf[] = {
-	{ "OR", "", NULL },
-	{ "NOT", "", NULL },
-	{ "ELSE", "", NULL },
-	{ "IF", "", NULL }
+const char *logicNamesIf[] = {
+	"OR", "NOT", "ELSE", "IF"
 };
 
 void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
-	AgiInstruction *x;
-	uint8 a, z;
+	AgiOpCodeEntry *curOpCodeTable;
+	uint8 parametersLeft, z;
+	uint8 logicNameIdx;
 	const char *c;
 
 	if (str) {
@@ -52,8 +50,6 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 	case 0xFD:
 	case 0xFE:
 	case 0xFF:
-		x = logicNamesIf;
-
 		if (_debug.opcodes) {
 			debugN(0, "%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
 			       "         ",
@@ -67,12 +63,13 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 			       (uint8) * (code + (7 + ip)) & 0xFF,
 			       (uint8) * (code + (8 + ip)) & 0xFF);
 		}
-		debugN(0, "%s ", (x + * (code + ip) - 0xFC)->name);
+		logicNameIdx = (*(code + ip)) - 0xFC;
+		debugN(0, "%s ", logicNamesIf[logicNameIdx]);
 		break;
 	default:
-		x = mode == lCOMMAND_MODE ? logicNamesCmd : logicNamesTest;
-		a = x[*(code + ip)].argumentsLength();
-		c = x[*(code + ip)].args;
+		curOpCodeTable = mode == lCOMMAND_MODE ? _opCodes : _opCodesCond;
+		parametersLeft = curOpCodeTable[*(code + ip)].parameterSize;
+		c = curOpCodeTable[*(code + ip)].parameters;
 
 		if (_debug.opcodes) {
 			debugN(0, "%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
@@ -87,9 +84,9 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 			       (uint8) * (code + (7 + ip)) & 0xFF,
 			       (uint8) * (code + (8 + ip)) & 0xFF);
 		}
-		debugN(0, "%s ", (x + * (code + ip))->name);
+		debugN(0, "%s ", (curOpCodeTable + * (code + ip))->name);
 
-		for (z = 1; a > 0;) {
+		for (z = 1; parametersLeft > 0;) {
 			if (*c == 'n') {
 				debugN(0, "%d", *(code + (ip + z)));
 			} else {
@@ -97,7 +94,7 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 			}
 			c++;
 			z++;
-			if (--a > 0)
+			if (--parametersLeft > 0)
 				debugN(0, ",");
 		}
 		break;

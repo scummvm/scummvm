@@ -39,6 +39,12 @@
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
 #include "testbed/testbed.h"
+#ifdef USE_CLOUD
+#include "testbed/cloud.h"
+#endif
+#ifdef USE_SDL_NET
+#include "testbed/webserver.h"
+#endif
 
 namespace Testbed {
 
@@ -134,6 +140,16 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	// Midi
 	ts = new MidiTestSuite();
 	_testsuiteList.push_back(ts);
+#ifdef USE_CLOUD
+	// Cloud
+	ts = new CloudTestSuite();
+	_testsuiteList.push_back(ts);
+#endif
+#ifdef USE_SDL_NET
+	// Webserver
+	ts = new WebserverTestSuite();
+	_testsuiteList.push_back(ts);
+#endif
 }
 
 TestbedEngine::~TestbedEngine() {

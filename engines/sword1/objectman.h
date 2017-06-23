@@ -62,7 +62,7 @@ private:
 	uint16  _liveList[TOTAL_SECTIONS];                  //which sections are active
 	uint8 *_cptData[TOTAL_SECTIONS];
 	static char _missingSubTitleStr[];
-	static const char *const _translationId2950145[7];        //translation for textId 2950145 (missing from cluster file for some langages)
+	static const char *const _translationId2950145[7];        //translation for textId 2950145 (missing from cluster file for some languages)
 	static const char *const _translationId8455194[7];        //translation for textId 8455194 (missing in the demo)
 	static const char *const _translationId8455195[7];        //translation for textId 8455195 (missing in the demo)
 	static const char *const _translationId8455196[7];        //translation for textId 8455196 (missing in the demo)

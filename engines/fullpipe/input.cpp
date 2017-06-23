@@ -56,6 +56,9 @@ InputController::~InputController() {
 	removeMessageHandler(126, -1);
 
 	g_fp->_inputController = 0;
+
+	for (uint i = 0; i < _cursorsArray.size(); i++)
+		delete _cursorsArray[i];
 }
 
 void InputController::setInputDisabled(bool state) {
@@ -175,20 +178,20 @@ void FullpipeEngine::defHandleKeyDown(int key) {
 
 	if (!input_cheats[_currentCheat][_currentCheatPos]) {
 		switch (_currentCheat) {
-		case 0:                               // HELP
+		case 0:								// HELP
 			winArcade();
 			break;
-		case 1:                               // STUFF
+		case 1:								// STUFF
 			getAllInventory();
 			break;
-		case 2:                               // FASTER
+		case 2:								// FASTER
 			_normalSpeed = !_normalSpeed;
 			break;
-		case 3:                               // OHWAIT
+		case 3:								// OHWAIT
 			_gamePaused = 1;
 			_flgGameIsRunning = 0;
 			break;
-		case 4:                               // MUSOFF
+		case 4:								// MUSOFF
 			if (_musicAllowed & 2)
 				setMusicAllowed(_musicAllowed & 0xFFFFFFFD);
 			else

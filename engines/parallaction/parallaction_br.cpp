@@ -320,7 +320,7 @@ void Parallaction_br::changeLocation() {
 
 	freeLocation(false);
 	// load new location
-	strcpy(_location._name, _newLocationName.c_str());
+	Common::strlcpy(_location._name, _newLocationName.c_str(), 100);
 	parseLocation(_location._name);
 
 	if (_location._startPosition.x != -1000) {

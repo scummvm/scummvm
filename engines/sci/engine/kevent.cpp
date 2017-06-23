@@ -24,6 +24,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/features.h"
+#include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/selector.h"
@@ -34,6 +35,9 @@
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/frameout.h"
+#endif
 
 namespace Sci {
 
@@ -58,10 +62,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	if (g_debug_simulated_key && (mask & SCI_EVENT_KEYBOARD)) {
 		// In case we use a simulated event we query the current mouse position
 		mousePos = g_sci->_gfxCursor->getPosition();
-#ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2_1_EARLY)
-			g_sci->_gfxCoordAdjuster->fromDisplayToScript(mousePos.y, mousePos.x);
-#endif
+
 		// Limit the mouse cursor position, if necessary
 		g_sci->_gfxCursor->refreshPosition();
 
@@ -73,23 +74,45 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		g_debug_simulated_key = 0;
 		return make_reg(0, 1);
 	}
-	
+
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
-	if (s->_delayedRestoreGame) {
-		// delayed restore game from ScummVM menu got triggered
-		gamestate_delayedrestore(s);
+	if (g_sci->_guestAdditions->kGetEventHook()) {
 		return NULL_REG;
 	}
 
 	// For a real event we use its associated mouse position
-	mousePos = curEvent.mousePos;
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1_EARLY)
-		g_sci->_gfxCoordAdjuster->fromDisplayToScript(mousePos.y, mousePos.x);
+	if (getSciVersion() >= SCI_VERSION_2) {
+		mousePos = curEvent.mousePosSci;
+
+		// Some games, like LSL6hires (when interacting with the menu bar) and
+		// Phant2 (when on the "click mouse" screen after restoring a game),
+		// have unthrottled loops that call kGetEvent but do not call kFrameOut.
+		// In these cases we still need to call OSystem::updateScreen to update
+		// the mouse cursor (in SSCI this was not necessary because mouse
+		// updates were made directly to hardware from an interrupt handler),
+		// and we need to throttle these calls so the game does not use 100%
+		// CPU.
+		// This situation seems to be detectable by looking at how many times
+		// kGetEvent has been called between calls to kFrameOut. During normal
+		// game operation, there are usually just 0 or 1 kGetEvent calls between
+		// kFrameOut calls; any more than that indicates that we are probably in
+		// one of these ugly loops and should be updating the screen &
+		// throttling the VM.
+		if (++s->_eventCounter > 2) {
+			g_system->updateScreen();
+			s->speedThrottler(10); // 10ms is an arbitrary value
+			s->_throttleTrigger = true;
+		}
+	} else {
 #endif
-	// Limit the mouse cursor position, if necessary
-	g_sci->_gfxCursor->refreshPosition();
+		mousePos = curEvent.mousePos;
+		// Limit the mouse cursor position, if necessary
+		g_sci->_gfxCursor->refreshPosition();
+#ifdef ENABLE_SCI32
+	}
+#endif
 
 	if (g_sci->getVocabulary())
 		g_sci->getVocabulary()->parser_event = NULL_REG; // Invalidate parser event
@@ -101,7 +124,25 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// question. Check GfxCursor::setPosition(), for a more detailed
 		// explanation and a list of cursor position workarounds.
 		if (s->_cursorWorkaroundRect.contains(mousePos.x, mousePos.y)) {
-			s->_cursorWorkaroundActive = false;
+			// For OpenPandora and possibly other platforms, that support analog-stick control + touch screen
+			// control at the same time: in case the cursor is currently at the coordinate set by the scripts,
+			// we will count down instead of immediately disabling the workaround.
+			// On OpenPandora the cursor position is set, but it's overwritten shortly afterwards by the
+			// touch screen. In this case we would sometimes disable the workaround, simply because the touch
+			// screen hasn't yet overwritten the position and thus the workaround would not work anymore.
+			// On OpenPandora it would sometimes work and sometimes not without this.
+			if (s->_cursorWorkaroundPoint == mousePos) {
+				// Cursor is still at the same spot as set by the scripts
+				if (s->_cursorWorkaroundPosCount > 0) {
+					s->_cursorWorkaroundPosCount--;
+				} else {
+					// Was for quite a bit of time at that spot, so disable workaround now
+					s->_cursorWorkaroundActive = false;
+				}
+			} else {
+				// Cursor has moved, but is within the rect -> disable workaround immediately
+				s->_cursorWorkaroundActive = false;
+			}
 		} else {
 			mousePos.x = s->_cursorWorkaroundPoint.x;
 			mousePos.y = s->_cursorWorkaroundPoint.y;
@@ -214,7 +255,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	// check bugs #3058865 and #3127824
 	if (s->_gameIsBenchmarking) {
 		// Game is benchmarking, don't add a delay
-	} else {
+	} else if (getSciVersion() < SCI_VERSION_2) {
 		g_system->delayMillis(10);
 	}
 
@@ -239,11 +280,12 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 	if (readSelectorValue(segMan, obj, SELECTOR(type)) == SCI_EVENT_KEYBOARD) { // Keyboard
 		uint16 message = readSelectorValue(segMan, obj, SELECTOR(message));
 		uint16 eventType = SCI_EVENT_DIRECTION;
-		// Check if the game is using cursor views. These games allowed control
-		// of the mouse cursor via the keyboard controls (the so called
-		// "PseudoMouse" functionality in script 933).
-		if (g_sci->_features->detectSetCursorType() == SCI_VERSION_1_1)
+		// It seems with SCI1 Sierra started to add the SCI_EVENT_DIRECTION bit instead of setting it directly.
+		// It was done inside the keyboard driver and is required for the PseudoMouse functionality and class
+		// to work (script 933).
+		if (g_sci->_features->detectPseudoMouseAbility() == kPseudoMouseAbilityTrue) {
 			eventType |= SCI_EVENT_KEYBOARD;
+		}
 
 		for (int i = 0; i < 9; i++) {
 			if (keyToDirMap[i].key == message) {
@@ -261,14 +303,13 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
-	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
 	if (obj.getSegment()) {
 		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
 		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 
-		g_sci->_gfxCoordAdjuster->kernelGlobalToLocal(x, y, planeObject);
+		g_sci->_gfxCoordAdjuster->kernelGlobalToLocal(x, y);
 
 		writeSelectorValue(segMan, obj, SELECTOR(x), x);
 		writeSelectorValue(segMan, obj, SELECTOR(y), y);
@@ -280,14 +321,13 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
-	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
 	if (obj.getSegment()) {
 		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
 		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 
-		g_sci->_gfxCoordAdjuster->kernelLocalToGlobal(x, y, planeObject);
+		g_sci->_gfxCoordAdjuster->kernelLocalToGlobal(x, y);
 
 		writeSelectorValue(segMan, obj, SELECTOR(x), x);
 		writeSelectorValue(segMan, obj, SELECTOR(y), y);
@@ -301,5 +341,77 @@ reg_t kJoystick(EngineState *s, int argc, reg_t *argv) {
 	debug(5, "Unimplemented syscall 'Joystick()'");
 	return NULL_REG;
 }
+
+#ifdef ENABLE_SCI32
+reg_t kGlobalToLocal32(EngineState *s, int argc, reg_t *argv) {
+	const reg_t result = argv[0];
+	const reg_t planeObj = argv[1];
+
+	bool visible = true;
+	Plane *plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(planeObj);
+	if (plane == nullptr) {
+		plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObj);
+		visible = false;
+	}
+	if (plane == nullptr) {
+		error("kGlobalToLocal: Plane %04x:%04x not found", PRINT_REG(planeObj));
+	}
+
+	const int16 x = readSelectorValue(s->_segMan, result, SELECTOR(x)) - plane->_gameRect.left;
+	const int16 y = readSelectorValue(s->_segMan, result, SELECTOR(y)) - plane->_gameRect.top;
+
+	writeSelectorValue(s->_segMan, result, SELECTOR(x), x);
+	writeSelectorValue(s->_segMan, result, SELECTOR(y), y);
+
+	return make_reg(0, visible);
+}
+
+reg_t kLocalToGlobal32(EngineState *s, int argc, reg_t *argv) {
+	const reg_t result = argv[0];
+	const reg_t planeObj = argv[1];
+
+	bool visible = true;
+	Plane *plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(planeObj);
+	if (plane == nullptr) {
+		plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObj);
+		visible = false;
+	}
+	if (plane == nullptr) {
+		error("kLocalToGlobal: Plane %04x:%04x not found", PRINT_REG(planeObj));
+	}
+
+	const int16 x = readSelectorValue(s->_segMan, result, SELECTOR(x)) + plane->_gameRect.left;
+	const int16 y = readSelectorValue(s->_segMan, result, SELECTOR(y)) + plane->_gameRect.top;
+
+	writeSelectorValue(s->_segMan, result, SELECTOR(x), x);
+	writeSelectorValue(s->_segMan, result, SELECTOR(y), y);
+
+	return make_reg(0, visible);
+}
+
+reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 1) {
+		g_sci->getEventManager()->setHotRectanglesActive((bool)argv[0].toUint16());
+		return s->r_acc;
+	}
+
+	const int16 numRects = argv[0].toSint16();
+	SciArray &hotRects = *s->_segMan->lookupArray(argv[1]);
+
+	Common::Array<Common::Rect> rects;
+	rects.resize(numRects);
+
+	for (int16 i = 0; i < numRects; ++i) {
+		rects[i].left   = hotRects.getAsInt16(i * 4);
+		rects[i].top    = hotRects.getAsInt16(i * 4 + 1);
+		rects[i].right  = hotRects.getAsInt16(i * 4 + 2) + 1;
+		rects[i].bottom = hotRects.getAsInt16(i * 4 + 3) + 1;
+	}
+
+	g_sci->getEventManager()->setHotRectanglesActive(true);
+	g_sci->getEventManager()->setHotRectangles(rects);
+	return s->r_acc;
+}
+#endif
 
 } // End of namespace Sci

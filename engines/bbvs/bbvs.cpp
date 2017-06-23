@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,6 +34,7 @@
 #include "bbvs/minigames/minigame.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/aiff.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
@@ -137,6 +138,21 @@ BbvsEngine::~BbvsEngine() {
 }
 
 void BbvsEngine::newGame() {
+	memset(_easterEggInput, 0, sizeof(_easterEggInput));
+	_gameTicks = 0;
+	_playVideoNumber = 0;
+	memset(_inventoryItemStatus, 0, sizeof(_inventoryItemStatus));
+	memset(_gameVars, 0, sizeof(_gameVars));
+	memset(_sceneVisited, 0, sizeof(_sceneVisited));
+
+	_mouseX = 160;
+	_mouseY = 120;
+	_mouseButtons = 0;
+
+	_currVerbNum = kVerbLook;
+	_currTalkObjectIndex = -1;
+	_currSceneNum = 0;
+
 	_currInventoryItem = -1;
 	_newSceneNum = 32;
 }
@@ -162,24 +178,10 @@ Common::Error BbvsEngine::run() {
 	_sound = new SoundMan();
 
 	allocSnapshot();
-	memset(_easterEggInput, 0, sizeof(_easterEggInput));
 
-	_gameTicks = 0;
-	_playVideoNumber = 0;
+	newGame();
+
 	_bootSaveSlot = -1;
-
-	memset(_inventoryItemStatus, 0, sizeof(_inventoryItemStatus));
-	memset(_gameVars, 0, sizeof(_gameVars));
-	memset(_sceneVisited, 0, sizeof(_sceneVisited));
-
-	_mouseX = 160;
-	_mouseY = 120;
-	_mouseButtons = 0;
-
-	_currVerbNum = kVerbLook;
-	_currInventoryItem = -1;
-	_currTalkObjectIndex = -1;
-	_currSceneNum = 0;
 	_newSceneNum = 31;
 
 	if (ConfMan.hasKey("save_slot"))

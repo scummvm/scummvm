@@ -45,6 +45,7 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	if (!ConfMan.getBool("use_cdaudio"))
 		_usesCdTrack = false;
 	_forceDOSTracks = false;
+	_pseudoMouseAbility = kPseudoMouseAbilityUninitialized;
 }
 
 reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc, int methodNum) {
@@ -76,7 +77,7 @@ bool GameFeatures::autoDetectSoundType() {
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 	uint16 intParam = 0xFFFF;
 	bool foundTarget = false;
@@ -142,8 +143,17 @@ SciVersion GameFeatures::detectDoSoundType() {
 			//  SCI0LATE. Although the last SCI0EARLY game (lsl2) uses SCI0LATE resources
 			_doSoundType = g_sci->getResMan()->detectEarlySound() ? SCI_VERSION_0_EARLY : SCI_VERSION_0_LATE;
 #ifdef ENABLE_SCI32
+		} else if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE &&
+				   g_sci->getGameId() != GID_SQ6 &&
+				   // Assuming MGDX uses SCI2.1early sound mode since SQ6 does
+				   // and it was released earlier, but not verified (Phar Lap
+				   // Windows-only release)
+				   g_sci->getGameId() != GID_MOTHERGOOSEHIRES) {
+			_doSoundType = SCI_VERSION_2_1_MIDDLE;
 		} else if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
 			_doSoundType = SCI_VERSION_2_1_EARLY;
+		} else if (getSciVersion() >= SCI_VERSION_2) {
+			_doSoundType = SCI_VERSION_2;
 #endif
 		} else if (SELECTOR(nodePtr) == -1) {
 			// No nodePtr selector, so this game is definitely using newer
@@ -223,7 +233,7 @@ bool GameFeatures::autoDetectLofsType(Common::String gameSuperClassName, int met
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
@@ -322,7 +332,7 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
@@ -447,7 +457,7 @@ SciVersion GameFeatures::detectMessageFunctionType() {
 	// Only v2 Message resources use the kGetMessage kernel function.
 	// v3-v5 use the kMessage kernel function.
 
-	if (READ_SCI11ENDIAN_UINT32(res->data) / 1000 == 2)
+	if (res->getUint32SEAt(0) / 1000 == 2)
 		_messageFunctionType = SCI_VERSION_1_LATE;
 	else
 		_messageFunctionType = SCI_VERSION_1_1;
@@ -484,7 +494,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
@@ -533,6 +543,85 @@ SciVersion GameFeatures::detectSci21KernelType() {
 }
 #endif
 
+bool GameFeatures::supportsSpeechWithSubtitles() const {
+	switch (g_sci->getGameId()) {
+	case GID_SQ4:
+	case GID_FREDDYPHARKAS:
+	case GID_ECOQUEST:
+	case GID_LSL6:
+	case GID_LAURABOW2:
+	case GID_KQ6:
+#ifdef ENABLE_SCI32
+	// TODO: Hoyle5, SCI3
+	case GID_GK1:
+	case GID_KQ7:
+	case GID_LSL6HIRES:
+	case GID_PQ4:
+	case GID_QFG4:
+	case GID_SQ6:
+	case GID_TORIN:
+#endif
+		return true;
+
+	default:
+		return false;
+	}
+}
+
+bool GameFeatures::audioVolumeSyncUsesGlobals() const {
+	switch (g_sci->getGameId()) {
+	case GID_GK1:
+	case GID_GK2:
+	case GID_LSL6HIRES:
+	case GID_PHANTASMAGORIA:
+	case GID_TORIN:
+		// TODO: SCI3
+		return true;
+	default:
+		return false;
+	}
+}
+
+MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		return kMessageTypeSyncStrategyNone;
+	}
+
+	if (getSciVersion() == SCI_VERSION_1_1 && g_sci->isCD()) {
+		return kMessageTypeSyncStrategyDefault;
+	}
+
+#ifdef ENABLE_SCI32
+	switch (g_sci->getGameId()) {
+	// TODO: Hoyle5, SCI3
+	case GID_GK1:
+	case GID_PQ4:
+	case GID_QFG4:
+		return g_sci->isCD() ? kMessageTypeSyncStrategyDefault : kMessageTypeSyncStrategyNone;
+
+	case GID_KQ7:
+	case GID_MOTHERGOOSEHIRES:
+	case GID_PHANTASMAGORIA:
+	case GID_SQ6:
+	case GID_TORIN:
+		return kMessageTypeSyncStrategyDefault;
+
+	case GID_LSL6HIRES:
+		return kMessageTypeSyncStrategyLSL6Hires;
+
+	case GID_SHIVERS:
+		return kMessageTypeSyncStrategyShivers;
+
+	case GID_GK2:
+	case GID_PQSWAT:
+	default:
+		break;
+	}
+#endif
+
+	return kMessageTypeSyncStrategyNone;
+}
+
 bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Motion", SELECTOR(doit));
@@ -540,7 +629,7 @@ bool GameFeatures::autoDetectMoveCountType() {
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 	bool foundTarget = false;
 
@@ -603,6 +692,52 @@ bool GameFeatures::useAltWinGMSound() {
 	} else {
 		return false;
 	}
+}
+
+// PseudoMouse was added during SCI1
+// PseudoMouseAbility is about a tiny difference in the keyboard driver, which sets the event type to either
+// 40h (old behaviour) or 44h (the keyboard driver actually added 40h to the existing value).
+// See engine/kevent.cpp, kMapKeyToDir - also script 933
+
+// SCI1EGA:
+// Quest for Glory 2 still used the old way.
+//
+// SCI1EARLY:
+// King's Quest 5 0.000.062 uses the old way.
+// Leisure Suit Larry 1 demo uses the new way, but no PseudoMouse class.
+// Fairy Tales uses the new way.
+// X-Mas 1990 uses the old way, no PseudoMouse class.
+// Space Quest 4 floppy (1.1) uses the new way.
+// Mixed Up Mother Goose uses the old way, no PseudoMouse class.
+//
+// SCI1MIDDLE:
+// Leisure Suit Larry 5 demo uses the new way.
+// Conquests of the Longbow demo uses the new way.
+// Leisure Suit Larry 1 (2.0) uses the new way.
+// Astro Chicken II uses the new way.
+PseudoMouseAbilityType GameFeatures::detectPseudoMouseAbility() {
+	if (_pseudoMouseAbility == kPseudoMouseAbilityUninitialized) {
+		if (getSciVersion() < SCI_VERSION_1_EARLY) {
+			// SCI1 EGA or earlier -> pseudo mouse ability is always disabled
+			_pseudoMouseAbility = kPseudoMouseAbilityFalse;
+
+		} else if (getSciVersion() == SCI_VERSION_1_EARLY) {
+			// For SCI1 early some games had it enabled, some others didn't.
+			// We try to find an object called "PseudoMouse". If it's found, we enable the ability otherwise we don't.
+			reg_t pseudoMouseAddr = _segMan->findObjectByName("PseudoMouse", 0);
+
+			if (pseudoMouseAddr != NULL_REG) {
+				_pseudoMouseAbility = kPseudoMouseAbilityTrue;
+			} else {
+				_pseudoMouseAbility = kPseudoMouseAbilityFalse;
+			}
+
+		} else {
+			// SCI1 middle or later -> pseudo mouse ability is always enabled
+			_pseudoMouseAbility = kPseudoMouseAbilityTrue;
+		}
+	}
+	return _pseudoMouseAbility;
 }
 
 } // End of namespace Sci

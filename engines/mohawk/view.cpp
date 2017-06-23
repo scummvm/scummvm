@@ -37,6 +37,23 @@ Module::~Module() {
 }
 
 Feature::Feature(View *view) : _view(view) {
+	_next = _prev = nullptr;
+	_drawProc = nullptr;
+	_moveProc = nullptr;
+	_doneProc = nullptr;
+	_frameProc = nullptr;
+	_timeProc = nullptr;
+	_region = 0;
+	_id = 0;
+	_scrbId = 0;
+	_storedScrbId = 0;
+	_flags = 0;
+	_nextTime = 0;
+	_delayTime = 0;
+	_dirty = false;
+	_needsReset = false;
+	_justReset = false;
+	_done = false;
 }
 
 Feature::~Feature() {
@@ -75,11 +92,10 @@ void Feature::setNodeDefaults(Feature *prev, Feature *next) {
 
 	_flags = 0;
 
-	_dirty = 1;
-	_needsReset = 1;
-	_justReset = 0; // old
-	_notifyDone = 0;
-	_done = 0; // new
+	_dirty = true;
+	_needsReset = true;
+	_justReset = false; // old
+	_done = false; // new
 
 	_nextTime = 0;
 	_delayTime = 0;
@@ -107,11 +123,11 @@ void Feature::resetFeatureScript(uint16 enabled, uint16 scrbId) {
 	resetFrame();
 	_nextTime = 0; // New feature code uses _view->_lastIdleTime, but should be equivalent.
 	_data.enabled = enabled;
-	_dirty = 1;
+	_dirty = true;
 
 	finishResetFeatureScript();
 
-	_needsReset = 0;
+	_needsReset = false;
 
 	if (_region) {
 		// TODO: mark _region as dirty
@@ -123,7 +139,6 @@ void Feature::resetFeatureScript(uint16 enabled, uint16 scrbId) {
 void Feature::resetFeature(bool notifyDone, Module::FeatureProc doneProc, uint16 scrbId) {
 	resetFeatureScript(1, scrbId);
 	_doneProc = doneProc;
-	_notifyDone = notifyDone;
 }
 
 void Feature::hide(bool clip) {
@@ -159,7 +174,7 @@ void Feature::moveAndUpdate(Common::Point newPos) {
 		return;
 
 	_nextTime = 0;
-	_dirty = 1;
+	_dirty = true;
 	// TODO: mark _data.bounds as dirty
 
 	if (_data.bitmapIds[0])
@@ -228,7 +243,7 @@ void OldFeature::resetScript() {
 }
 
 void OldFeature::finishResetFeatureScript() {
-	_justReset = 1;
+	_justReset = true;
 
 	if (_flags & kFeatureOldAdjustByPos) {
 		Common::SeekableReadStream *ourSCRB = _view->getSCRB(_data.scrbIndex, _scrbId);
@@ -240,6 +255,13 @@ void OldFeature::finishResetFeatureScript() {
 }
 
 NewFeature::NewFeature(View *view) : Feature(view) {
+	_unknown168 = 0;
+	_pickupProc = nullptr;
+	_dropProc = nullptr;
+	_dragMoveProc = nullptr;
+	_oldMoveProc = nullptr;
+	_dragFlags = 0;
+	_oldFlags = 0;
 }
 
 NewFeature::~NewFeature() {
@@ -307,7 +329,7 @@ void NewFeature::resetScript() {
 }
 
 void NewFeature::finishResetFeatureScript() {
-	_done = 0;
+	_done = false;
 }
 
 View::View(MohawkEngine *vm) : _vm(vm) {
@@ -319,6 +341,12 @@ View::View(MohawkEngine *vm) : _vm(vm) {
 		_compoundSHAPGroups[i] = 0;
 	}
 	_numSCRBGroups = 0;
+
+	_lastIdleTime = 0;
+	_needsUpdate = false;
+	_gfx = nullptr;
+	_rootNode = nullptr;
+	_cursorNode = nullptr;
 }
 
 View::~View() {
@@ -347,7 +375,7 @@ void View::idleView() {
 		}
 		if (node->_drawProc)
 			(_currentModule->*(node->_drawProc))(node);
-		node->_dirty = 0;
+		node->_dirty = false;
 	}
 
 	if (_needsUpdate) {

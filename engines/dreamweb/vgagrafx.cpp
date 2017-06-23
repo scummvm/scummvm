@@ -21,6 +21,7 @@
  */
 
 #include "dreamweb/dreamweb.h"
+#include "common/file.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 #include "image/pcx.h"

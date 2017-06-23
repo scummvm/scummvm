@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -43,7 +43,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("vspr0001.vnm", "7ffe9b9e7ca322db1d48e86f5130578e", 1166628),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS | ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	{
@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("vspr0001.vnm", "91c76b1048f93208cd7b1a05ebccb408", 1176976),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		GF_GUILANGSWITCH | ADGF_TESTING,
+		GF_GUILANGSWITCH | ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
@@ -69,7 +69,7 @@ static const char * const directoryGlobs[] = {
 class BbvsMetaEngine : public AdvancedMetaEngine {
 public:
 	BbvsMetaEngine() : AdvancedMetaEngine(Bbvs::gameDescriptions, sizeof(ADGameDescription), bbvsGames) {
-		_singleid = "bbvs";
+		_singleId = "bbvs";
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -97,7 +97,8 @@ bool BbvsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsLoadingDuringStartup) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate);
+	    (f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 }
 
 void BbvsMetaEngine::removeSaveState(const char *target, int slot) const {
@@ -116,7 +117,6 @@ SaveStateList BbvsMetaEngine::listSaves(const char *target) const {
 	pattern += ".###";
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
@@ -131,6 +131,8 @@ SaveStateList BbvsMetaEngine::listSaves(const char *target) const {
 			}
 		}
 	}
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

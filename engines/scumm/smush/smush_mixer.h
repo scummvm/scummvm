@@ -28,6 +28,10 @@
 #include "common/mutex.h"
 #include "scumm/sound.h"
 
+namespace Audio {
+class QueuingAudioStream;
+}
+
 namespace Scumm {
 
 class SmushChannel;

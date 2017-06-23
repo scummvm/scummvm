@@ -51,7 +51,7 @@ ScreenEffects::ScreenEffects(Screen *screen) : _screen(screen) {
 	vfxHeight = 0;
 
 	_fxPalette = new byte[768];
-	
+
 	_blendedPaletteStatus._active = false;
 	_blendedPaletteStatus._palette = _blendedPaletteStatus._newPalette = nullptr;
 	_blendedPaletteStatus._colorCount = 0;

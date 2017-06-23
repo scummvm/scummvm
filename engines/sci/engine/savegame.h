@@ -37,6 +37,16 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      44 - GK2+SCI3 audio resource locks
+ *      43 - stop saving SCI3 mustSetViewVisible array
+ *      42 - SCI3 robots and VM objects
+ *      41 - palette support for newer SCI2.1 games; stable SCI2/2.1 save games
+ *      40 - always store palvary variables
+ *      39 - Accurate SCI32 arrays/strings, score metadata, avatar metadata
+ *      38 - SCI32 cursor
+ *      37 - Segment entry data changed to pointers
+ *      36 - SCI32 bitmap segment
+ *      35 - SCI32 remap
  *      34 - SCI32 palettes, and store play time in ticks
  *      33 - new overridePriority flag in MusicEntry
  *      32 - new playBed flag in MusicEntry
@@ -59,8 +69,12 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 34,
+	CURRENT_SAVEGAME_VERSION = 44,
 	MINIMUM_SAVEGAME_VERSION = 14
+#ifdef ENABLE_SCI32
+	,
+	MINIMUM_SCI32_SAVEGAME_VERSION = 41
+#endif
 };
 
 // Savegame metadata
@@ -73,6 +87,13 @@ struct SavegameMetadata {
 	uint32 playTime;
 	uint16 gameObjectOffset;
 	uint16 script0Size;
+
+	// Used by Shivers 1
+	uint16 lowScore;
+	uint16 highScore;
+
+	// Used by MGDX
+	uint8 avatarId;
 };
 
 /**
@@ -84,8 +105,8 @@ struct SavegameMetadata {
  */
 bool gamestate_save(EngineState *s, Common::WriteStream *save, const Common::String &savename, const Common::String &version);
 
-// does a delayed saved game restore, used by ScummVM game menu - see detection.cpp / SciEngine::loadGameState()
-void gamestate_delayedrestore(EngineState *s);
+// does a few fixups right after restoring a saved game
+void gamestate_afterRestoreFixUp(EngineState *s, int savegameId);
 
 /**
  * Restores a game state from a directory.

@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "agi/agi.h"
 #include "agi/sprite.h"     // for commit_both()
 #include "agi/graphics.h"
@@ -37,6 +38,8 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 	_vm = vm;
 	_words = words;
 	_gfx = gfx;
+
+	_systemUI = NULL;
 
 	memset(&_messageState, 0, sizeof(_messageState));
 	_textPos.row = 0;
@@ -66,6 +69,7 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 
 	_inputStringRow = 0;
 	_inputStringColumn = 0;
+	_inputStringEntered = false;
 	_inputStringMaxLen = 0;
 	_inputStringCursorPos = 0;
 	_inputString[0] = 0;
@@ -73,6 +77,12 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 	configureScreen(2);
 
 	_messageBoxCancelled = false;
+
+	_optionCommandPromptWindow = false;
+
+	if (ConfMan.getBool("commandpromptwindow")) {
+		_optionCommandPromptWindow = true;
+	}
 }
 
 TextMgr::~TextMgr() {
@@ -87,7 +97,7 @@ void TextMgr::configureScreen(uint16 row_Min) {
 	_window_Row_Max = row_Min + 21;
 
 	// forward data to GfxMgr as well
-	_gfx->setRenderStartOffset(row_Min * FONT_DISPLAY_HEIGHT);
+	_gfx->setRenderStartOffset(row_Min * FONT_VISUAL_HEIGHT);
 }
 uint16 TextMgr::getWindowRowMin() {
 	return _window_Row_Min;
@@ -169,12 +179,22 @@ void TextMgr::charAttrib_Set(byte foreground, byte background) {
 			if (background) {
 				_textAttrib.combinedForeground = 3;
 				_textAttrib.combinedBackground = 8; // enable invert of colors
-			} else if (foreground > 14) {
+			} else {
 				if (foreground > 14) {
 					_textAttrib.combinedForeground = 3;
 				} else {
 					_textAttrib.combinedForeground = charAttrib_CGA_Conversion[foreground & 0x0F];
 				}
+				_textAttrib.combinedBackground = 0;
+			}
+			break;
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
+			if (background) {
+				_textAttrib.combinedForeground = 0;
+				_textAttrib.combinedBackground = 1;
+			} else {
+				_textAttrib.combinedForeground = 1;
 				_textAttrib.combinedBackground = 0;
 			}
 			break;
@@ -439,7 +459,7 @@ void TextMgr::drawMessageBox(const char *textPtr, int16 forcedHeight, int16 want
 	// Caller wants to force specified width/height? set it
 	if (forcedHeight)
 		_messageState.textSize_Height = forcedHeight;
-	
+
 	if (forcedWidth) {
 		if (wantedWidth)
 			_messageState.textSize_Width = wantedWidth;
@@ -465,7 +485,8 @@ void TextMgr::drawMessageBox(const char *textPtr, int16 forcedHeight, int16 want
 	_messageState.backgroundSize_Width = (_messageState.textSize_Width * FONT_VISUAL_WIDTH) + 10;
 	_messageState.backgroundSize_Height = (_messageState.textSize_Height * FONT_VISUAL_HEIGHT) + 10;
 	_messageState.backgroundPos_x = (_messageState.textPos.column * FONT_VISUAL_WIDTH) - 5;
-	_messageState.backgroundPos_y = (_messageState.textPos_Edge.row - _window_Row_Min + 1) * FONT_VISUAL_HEIGHT + 4;
+	_messageState.backgroundPos_y = (startingRow * FONT_VISUAL_HEIGHT) - 5;
+	// original AGI used lowerY here, calculated using (_messageState.textPos_Edge.row - _window_Row_Min + 1) * FONT_VISUAL_HEIGHT + 4;
 
 	// Hardcoded colors: white background and red lines
 	_gfx->drawBox(_messageState.backgroundPos_x, _messageState.backgroundPos_y, _messageState.backgroundSize_Width, _messageState.backgroundSize_Height, 15, 4);
@@ -486,10 +507,11 @@ void TextMgr::getMessageBoxInnerDisplayDimensions(int16 &x, int16 &y, int16 &wid
 	if (!_messageState.window_Active)
 		return;
 
-	y = _messageState.textPos.row * FONT_DISPLAY_HEIGHT;
-	x = _messageState.textPos.column * FONT_DISPLAY_WIDTH;
-	width = _messageState.textSize_Width * FONT_DISPLAY_WIDTH;
-	height = _messageState.textSize_Height * FONT_DISPLAY_HEIGHT;
+	y = _messageState.textPos.row;
+	x = _messageState.textPos.column;
+	width = _messageState.textSize_Width;
+	height = _messageState.textSize_Height;
+	_gfx->translateFontRectToDisplayScreen(x, y, width, height);
 }
 
 bool TextMgr::isMouseWithinMessageBox() {
@@ -498,10 +520,10 @@ bool TextMgr::isMouseWithinMessageBox() {
 	int16 mouseX = _vm->_mouse.pos.x;
 
 	if (_messageState.window_Active) {
-		_vm->adjustPosToGameScreen(mouseX, mouseY);
+		_gfx->translateDisplayPosToGameScreen(mouseX, mouseY);
 
-		if ((mouseX >= _messageState.backgroundPos_x) && (mouseX <= (_messageState.backgroundPos_x + _messageState.backgroundSize_Width))) {
-			if ((mouseY >= _messageState.backgroundPos_y - _messageState.backgroundSize_Height) && (mouseY <= (_messageState.backgroundPos_y))) {
+		if ((mouseX >= _messageState.backgroundPos_x) && (mouseX < (_messageState.backgroundPos_x + _messageState.backgroundSize_Width))) {
+			if ((mouseY >= _messageState.backgroundPos_y) && (mouseY < (_messageState.backgroundPos_y + _messageState.backgroundSize_Height))) {
 				return true;
 			}
 		}
@@ -580,12 +602,12 @@ void TextMgr::clearBlock(int16 row_Upper, int16 column_Upper, int16 row_Lower, i
 	charPos_Clip(row_Upper, column_Upper);
 	charPos_Clip(row_Lower, column_Lower);
 
-	int16 x = column_Upper * FONT_DISPLAY_WIDTH;
-	int16 y = row_Upper * FONT_DISPLAY_HEIGHT;
-	int16 width = (column_Lower + 1 - column_Upper) * FONT_DISPLAY_WIDTH;
-	int16 height = (row_Lower + 1 - row_Upper) * FONT_DISPLAY_HEIGHT;
+	int16 x = column_Upper;
+	int16 y = row_Upper;
+	int16 width = (column_Lower + 1 - column_Upper);
+	int16 height = (row_Lower + 1 - row_Upper);
+	_gfx->translateFontRectToDisplayScreen(x, y, width, height);
 
-	y = y + height - 1; // drawDisplayRect wants lower Y-coordinate
 	_gfx->drawDisplayRect(x, y, width, height, color);
 }
 
@@ -658,6 +680,30 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 	int16 maxChars = 0;
 	int16 scriptsInputLen = _vm->getVar(VM_VAR_MAX_INPUT_CHARACTERS);
 
+	bool acceptableInput = false;
+
+	// FEATURE: Sierra didn't check for valid characters (filtered out umlauts etc.)
+	// In text-mode this sort of worked at least with the DOS interpreter
+	// but as soon as invalid characters were used in graphics mode they weren't properly shown
+	switch (_vm->getLanguage()) {
+	case Common::RU_RUS:
+		if (newKey >= 0x20)
+			acceptableInput = true;
+		break;
+	default:
+		if ((newKey >= 0x20) && (newKey <= 0x7f))
+			acceptableInput = true;
+		break;
+	}
+
+	if (_optionCommandPromptWindow) {
+		// Forward to command prompt window, using last command
+		if (acceptableInput) {
+			promptCommandWindow(false, newKey);
+		}
+		return;
+	}
+
 	if (_messageState.dialogue_Open) {
 		maxChars = TEXT_STRING_MAX_SIZE - 4;
 	} else {
@@ -702,22 +748,6 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 	}
 	default:
 		if (maxChars > _promptCursorPos) {
-			bool acceptableInput = false;
-
-			// FEATURE: Sierra didn't check for valid characters (filtered out umlauts etc.)
-			// In text-mode this sort of worked at least with the DOS interpreter
-			// but as soon as invalid characters were used in graphics mode they weren't properly shown
-			switch (_vm->getLanguage()) {
-			case Common::RU_RUS:
-				if (newKey >= 0x20)
-					acceptableInput = true;
-				break;
-			default:
-				if ((newKey >= 0x20) && (newKey <= 0x7f))
-					acceptableInput = true;
-				break;
-			}
-
 			if (acceptableInput) {
 				_prompt[_promptCursorPos] = newKey;
 				_promptCursorPos++;
@@ -734,6 +764,11 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 }
 
 void TextMgr::promptCancelLine() {
+	if (_optionCommandPromptWindow) {
+		// Abort, in case command prompt window is active
+		return;
+	}
+
 	while (_promptCursorPos) {
 		promptKeyPress(0x08); // Backspace until prompt is empty
 	}
@@ -741,6 +776,12 @@ void TextMgr::promptCancelLine() {
 
 void TextMgr::promptEchoLine() {
 	int16 previousLen = strlen((char *)_promptPrevious);
+
+	if (_optionCommandPromptWindow) {
+		// Forward to command prompt window, using last command
+		promptCommandWindow(true, 0);
+		return;
+	}
 
 	if (_promptCursorPos < previousLen) {
 		inputEditOn();
@@ -758,6 +799,11 @@ void TextMgr::promptRedraw() {
 	char *textPtr = nullptr;
 
 	if (_promptEnabled) {
+		if (_optionCommandPromptWindow) {
+			// Abort, in case command prompt window is active
+			return;
+		}
+
 		inputEditOn();
 		clearLine(_promptRow, _textAttrib.background);
 		charPos_Set(_promptRow, 0);
@@ -775,6 +821,10 @@ void TextMgr::promptRedraw() {
 
 // for AGI1
 void TextMgr::promptClear() {
+	if (_optionCommandPromptWindow) {
+		// Abort, in case command prompt window is active
+		return;
+	}
 	clearLine(_promptRow, _textAttrib.background);
 }
 
@@ -782,6 +832,35 @@ void TextMgr::promptRememberForAutoComplete(bool entered) {
 #ifdef __DS__
 	DS::findWordCompletions((char *)_prompt);
 #endif
+}
+
+void TextMgr::promptCommandWindow(bool recallLastCommand, uint16 newKey) {
+	Common::String commandText;
+
+	if (recallLastCommand) {
+		commandText += Common::String((char *)_promptPrevious);
+	}
+	if (newKey) {
+		if (newKey != ' ') {
+			// Only add char, when it's not a space.
+			// Original AGI did not filter space, but it makes no sense to start with a space.
+			// Space would get filtered anyway during dictionary parsing.
+			commandText += newKey;
+		}
+	}
+
+	if (_systemUI->askForCommand(commandText)) {
+		if (commandText.size()) {
+			// Something actually was entered?
+			strncpy((char *)&_prompt, commandText.c_str(), sizeof(_prompt));
+			promptRememberForAutoComplete(true);
+			memcpy(&_promptPrevious, &_prompt, sizeof(_prompt));
+			// parse text
+			_vm->_words->parseUsingDictionary((char *)&_prompt);
+
+			_prompt[0] = 0;
+		}
+	}
 }
 
 bool TextMgr::stringWasEntered() {
@@ -807,6 +886,12 @@ void TextMgr::stringEdit(int16 stringMaxLen) {
 	// Remember current position for predictive dialog
 	_inputStringRow = _textPos.row;
 	_inputStringColumn = _textPos.column;
+
+	if (_inputCursorChar) {
+		// Cursor character is shown, which means we are one beyond the start of the input
+		// Adjust the column for predictive input dialog
+		_inputStringColumn--;
+	}
 
 	// Caller can set the input string
 	_inputStringCursorPos = 0;
@@ -941,8 +1026,18 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 
 	//memset(resultWrappedBuffer, 0, sizeof(resultWrappedBuffer)); for debugging
 
+	// Good testcases:
+	// King's Quest 1 intro:              the scrolling text is filled up with spaces, so that old lines are erased
+	// Apple IIgs restart system UI:      spaces used to make the window larger
+	// Gold Rush Stagecoach path room 60: "  Lake Michigan!", with max length 9 -> should get split into "  Lake" / "Michigan!"
+
 	while (originalText[curReadPos]) {
 		// Try to find out length of next word
+
+		// If first character is a space, skip it, so that we process at least this space
+		if (originalText[curReadPos] == ' ')
+			curReadPos++;
+
 		while (originalText[curReadPos]) {
 			if (originalText[curReadPos] == ' ')
 				break;
@@ -957,6 +1052,15 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 
 		if (wordLen >= lineWidthLeft) {
 			// Not enough space left
+
+			// If first character right after the new line is a space, skip over it
+			if (wordLen) {
+				if (originalText[wordStartPos] == ' ') {
+					wordStartPos++;
+					wordLen--;
+				}
+			}
+
 			if (wordLen > maxWidth) {
 				// Word way too long, split it in half
 				curReadPos = curReadPos - (wordLen - maxWidth);
@@ -973,14 +1077,6 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 			// Reached absolute maximum? -> exit now
 			if (boxHeight >= HEIGHT_MAX)
 				break;
-
-			// If first character right after the new line is a space, skip over it
-			if (wordLen) {
-				if (originalText[wordStartPos] == ' ') {
-					wordStartPos++;
-					wordLen--;
-				}
-			}
 		}
 
 		// Copy current word over
@@ -1005,10 +1101,6 @@ char *TextMgr::stringWordWrap(const char *originalText, int16 maxWidth, int16 *c
 		}
 
 		wordStartPos = curReadPos;
-
-		// Last word ended with a space, skip this space for reading the next word
-		if (wordEndChar == ' ')
-			curReadPos++;
 	}
 
 	resultWrappedBuffer[curWritePos] = 0;
@@ -1117,7 +1209,7 @@ char *TextMgr::stringPrintf(const char *originalText) {
 	}
 
 	assert(resultString.size() < sizeof(resultPrintfBuffer));
-	strcpy(resultPrintfBuffer, resultString.c_str());
+	Common::strlcpy(resultPrintfBuffer, resultString.c_str(), 2000);
 	return resultPrintfBuffer;
 }
 

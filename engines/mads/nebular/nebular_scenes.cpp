@@ -311,7 +311,7 @@ Common::String NebularScene::formAnimName(char sepChar, int suffixNum) {
 
 /*------------------------------------------------------------------------*/
 
-void SceneInfoNebular::loadCodes(MSurface &depthSurface, int variant) {
+void SceneInfoNebular::loadCodes(BaseSurface &depthSurface, int variant) {
 	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ".DAT"));
 	MadsPack codesPack(&f);
 	Common::SeekableReadStream *stream = codesPack.getItemStream(variant + 1);
@@ -322,9 +322,9 @@ void SceneInfoNebular::loadCodes(MSurface &depthSurface, int variant) {
 	f.close();
 }
 
-void SceneInfoNebular::loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) {
-	byte *destP = depthSurface.getData();
-	byte *endP = depthSurface.getBasePtr(0, depthSurface.h);
+void SceneInfoNebular::loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream) {
+	byte *destP = (byte *)depthSurface.getPixels();
+	byte *endP = (byte *)depthSurface.getBasePtr(0, depthSurface.h);
 
 	byte runLength = stream->readByte();
 	while (destP < endP && runLength > 0) {

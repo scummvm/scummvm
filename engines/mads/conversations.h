@@ -172,7 +172,7 @@ struct ScriptEntry {
 
 	DialogCommand _command;
 	Conditional _conditionals[3];
-	
+
 	// Extra parameters for different opcodes
 	int _index;
 	Common::Array<int> _entries;
@@ -338,7 +338,7 @@ private:
 	int _personSpeaking;
 	TextDialog *_dialog;
 	bool _dialogAltFlag;
-	
+
 	/**
 	 * Returns the record for the specified conversation, if it's loaded
 	 */
@@ -435,7 +435,7 @@ public:
 	 * Set the hero trigger
 	 */
 	void setHeroTrigger(int val);
-	
+
 	/**
 	 * Set the interlocutor trigger
 	 */
@@ -473,7 +473,7 @@ public:
 	void exportValue(int val);
 
 	void reset(int id);
-	
+
 	/**
 	 * Handles updating the conversation display
 	 */

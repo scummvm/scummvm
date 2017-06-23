@@ -202,11 +202,6 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 }
 
 
-#define ALIGN_NONE 0
-#define ALIGN_RIGHT 1
-#define ALIGN_LEFT -1
-#define ALIGN_CENTER 2
-
 /*  Format(targ_address, textresnr, index_inside_res, ...)
 ** or
 **  Format(targ_address, heap_text_addr, ...)
@@ -214,6 +209,13 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 ** the supplied parameters and writes it to the targ_address.
 */
 reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
+	enum {
+		ALIGN_NONE   = 0,
+		ALIGN_RIGHT  = 1,
+		ALIGN_LEFT   = -1,
+		ALIGN_CENTER = 2
+	};
+
 	uint16 *arguments;
 	reg_t dest = argv[0];
 	int maxsize = 4096; /* Arbitrary... */
@@ -301,15 +303,9 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			case 's': { /* Copy string */
 				reg_t reg = argv[startarg + paramindex];
 
-#ifdef ENABLE_SCI32
-				// If the string is a string object, get to the actual string in the data selector
-				if (s->_segMan->isObject(reg))
-					reg = readSelector(s->_segMan, reg, SELECTOR(data));
-#endif
-
 				Common::String tempsource = g_sci->getKernel()->lookupText(reg,
 				                                  arguments[paramindex + 1]);
-				int slen = strlen(tempsource.c_str());
+				int slen = tempsource.size();
 				int extralen = strLength - slen;
 				assert((target - targetbuf) + extralen <= maxsize);
 				if (extralen < 0)
@@ -379,12 +375,6 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			case 'u':
 				unsignedVar = true;
 			case 'd': { /* Copy decimal */
-				// In the new SCI2 kString function, %d is used for unsigned
-				// integers. An example is script 962 in Shivers - it uses %d
-				// to create file names.
-				if (getSciVersion() >= SCI_VERSION_2)
-					unsignedVar = true;
-
 				/* int templen; -- unused atm */
 				const char *format_string = "%d";
 
@@ -437,14 +427,6 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 	*target = 0; /* Terminate string */
 
-#ifdef ENABLE_SCI32
-	// Resize SCI32 strings if necessary
-	if (getSciVersion() >= SCI_VERSION_2) {
-		SciString *string = s->_segMan->lookupString(dest);
-		string->setSize(strlen(targetbuf) + 1);
-	}
-#endif
-
 	s->_segMan->strcpy(dest, targetbuf);
 
 	return dest; /* Return target addr */
@@ -456,31 +438,15 @@ reg_t kStrLen(EngineState *s, int argc, reg_t *argv) {
 
 
 reg_t kGetFarText(EngineState *s, int argc, reg_t *argv) {
-	Resource *textres = g_sci->getResMan()->findResource(ResourceId(kResourceTypeText, argv[0].toUint16()), 0);
-	char *seeker;
-	int counter = argv[1].toUint16();
-
-	if (!textres) {
-		error("text.%d does not exist", argv[0].toUint16());
-		return NULL_REG;
-	}
-
-	seeker = (char *)textres->data;
-
-	// The second parameter (counter) determines the number of the string
-	// inside the text resource.
-	while (counter--) {
-		while (*seeker++)
-			;
-	}
+	const Common::String text = g_sci->getKernel()->lookupText(make_reg(0, argv[0].toUint16()), argv[1].toUint16());
 
 	// If the third argument is NULL, allocate memory for the destination. This
 	// occurs in SCI1 Mac games. The memory will later be freed by the game's
 	// scripts.
 	if (argv[2] == NULL_REG)
-		s->_segMan->allocDynmem(strlen(seeker) + 1, "Mac FarText", &argv[2]);
+		s->_segMan->allocDynmem(text.size() + 1, "Mac FarText", &argv[2]);
 
-	s->_segMan->strcpy(argv[2], seeker); // Copy the string and get return value
+	s->_segMan->strcpy(argv[2], text.c_str()); // Copy the string and get return value
 	return argv[2];
 }
 
@@ -661,248 +627,238 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef ENABLE_SCI32
 
-reg_t kText(EngineState *s, int argc, reg_t *argv) {
-	switch (argv[0].toUint16()) {
-	case 0:
-		return kTextSize(s, argc - 1, argv + 1);
-	default:
-		// TODO: Other subops here too, perhaps kTextColors and kTextFonts
-		warning("kText(%d)", argv[0].toUint16());
-		break;
-	}
-
-	return s->r_acc;
-}
-
-// TODO: there is an unused second argument, happens at least in LSL6 right during the intro
-reg_t kStringNew(EngineState *s, int argc, reg_t *argv) {
-	reg_t stringHandle;
-	SciString *string = s->_segMan->allocateString(&stringHandle);
-	string->setSize(argv[0].toUint16());
-
-	// Make sure the first character is a null character
-	if (string->getSize() > 0)
-		string->setValue(0, 0);
-
-	return stringHandle;
-}
-
-reg_t kStringSize(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, s->_segMan->getString(argv[0]).size());
-}
-
-// At (return value at an index)
-reg_t kStringAt(EngineState *s, int argc, reg_t *argv) {
-	// Note that values are put in bytes to avoid sign extension
-	if (argv[0].getSegment() == s->_segMan->getStringSegmentId()) {
-		SciString *string = s->_segMan->lookupString(argv[0]);
-		byte val = string->getRawData()[argv[1].toUint16()];
-		return make_reg(0, val);
-	} else {
-		Common::String string = s->_segMan->getString(argv[0]);
-		byte val = string[argv[1].toUint16()];
-		return make_reg(0, val);
-	}
-}
-
-// Atput (put value at an index)
-reg_t kStringPutAt(EngineState *s, int argc, reg_t *argv) {
-	SciString *string = s->_segMan->lookupString(argv[0]);
-
-	uint32 index = argv[1].toUint16();
-	uint32 count = argc - 2;
-
-	if (index + count > 65535)
-		return NULL_REG;
-
-	if (string->getSize() < index + count)
-		string->setSize(index + count);
-
-	for (uint16 i = 0; i < count; i++)
-		string->setValue(i + index, argv[i + 2].toUint16());
-
-	return argv[0]; // We also have to return the handle
-}
-
-reg_t kStringFree(EngineState *s, int argc, reg_t *argv) {
-	// Freeing of strings is handled by the garbage collector
-	return s->r_acc;
-}
-
-reg_t kStringFill(EngineState *s, int argc, reg_t *argv) {
-	SciString *string = s->_segMan->lookupString(argv[0]);
-	uint16 index = argv[1].toUint16();
-
-	// A count of -1 means fill the rest of the array
-	uint16 count = argv[2].toSint16() == -1 ? string->getSize() - index : argv[2].toUint16();
-	uint16 stringSize = string->getSize();
-
-	if (stringSize < index + count)
-		string->setSize(index + count);
-
-	for (uint16 i = 0; i < count; i++)
-		string->setValue(i + index, argv[3].toUint16());
-
-	return argv[0];
-}
-
-reg_t kStringCopy(EngineState *s, int argc, reg_t *argv) {
-	const char *string2 = 0;
-	uint32 string2Size = 0;
-	Common::String string;
-
-	if (argv[2].getSegment() == s->_segMan->getStringSegmentId()) {
-		SciString *sstr;
-		sstr = s->_segMan->lookupString(argv[2]);
-		string2 = sstr->getRawData();
-		string2Size = sstr->getSize();
-	} else {
-		string = s->_segMan->getString(argv[2]);
-		string2 = string.c_str();
-		string2Size = string.size() + 1;
-	}
-
-	uint32 index1 = argv[1].toUint16();
-	uint32 index2 = argv[3].toUint16();
-
-	if (argv[0] == argv[2]) {
-		// source and destination string are one and the same
-		if (index1 == index2) {
-			// even same index? ignore this call
-			// Happens in KQ7, when starting a chapter
-			return argv[0];
-		}
-		// TODO: this will crash, when setSize() is triggered later
-		// we need to exactly replicate original interpreter behavior
-		warning("kString(Copy): source is the same as destination string");
-	}
-
-	// The original engine ignores bad copies too
-	if (index2 > string2Size)
-		return NULL_REG;
-
-	// A count of -1 means fill the rest of the array
-	uint32 count = argv[4].toSint16() == -1 ? string2Size - index2 + 1 : argv[4].toUint16();
-//	reg_t strAddress = argv[0];
-
-	SciString *string1 = s->_segMan->lookupString(argv[0]);
-	//SciString *string1 = !argv[1].isNull() ? s->_segMan->lookupString(argv[1]) : s->_segMan->allocateString(&strAddress);
-
-	if (string1->getSize() < index1 + count)
-		string1->setSize(index1 + count);
-
-	// Note: We're accessing from c_str() here because the
-	// string's size ignores the trailing 0 and therefore
-	// triggers an assert when doing string2[i + index2].
-	for (uint16 i = 0; i < count; i++)
-		string1->setValue(i + index1, string2[i + index2]);
-
-	return argv[0];
-}
-
-reg_t kStringCompare(EngineState *s, int argc, reg_t *argv) {
-	Common::String string1 = argv[0].isNull() ? "" : s->_segMan->getString(argv[0]);
-	Common::String string2 = argv[1].isNull() ? "" : s->_segMan->getString(argv[1]);
-
-	if (argc == 3) // Strncmp
-		return make_reg(0, strncmp(string1.c_str(), string2.c_str(), argv[2].toUint16()));
-	else           // Strcmp
-		return make_reg(0, strcmp(string1.c_str(), string2.c_str()));
-}
-
-// was removed for SCI2.1 Late+
-reg_t kStringDup(EngineState *s, int argc, reg_t *argv) {
-	reg_t stringHandle;
-
-	SciString *dupString = s->_segMan->allocateString(&stringHandle);
-
-	if (argv[0].getSegment() == s->_segMan->getStringSegmentId()) {
-		*dupString = *s->_segMan->lookupString(argv[0]);
-	} else {
-		dupString->fromString(s->_segMan->getString(argv[0]));
-	}
-
-	return stringHandle;
-}
-
-// was removed for SCI2.1 Late+
-reg_t kStringGetData(EngineState *s, int argc, reg_t *argv) {
-	if (!s->_segMan->isHeapObject(argv[0]))
-		return argv[0];
-
-	return readSelector(s->_segMan, argv[0], SELECTOR(data));
-}
-
-reg_t kStringLen(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, s->_segMan->strlen(argv[0]));
-}
-
-reg_t kStringPrintf(EngineState *s, int argc, reg_t *argv) {
-	reg_t stringHandle;
-	s->_segMan->allocateString(&stringHandle);
-
-	reg_t *adjustedArgs = new reg_t[argc + 1];
-	adjustedArgs[0] = stringHandle;
-	memcpy(&adjustedArgs[1], argv, argc * sizeof(reg_t));
-
-	kFormat(s, argc + 1, adjustedArgs);
-	delete[] adjustedArgs;
-	return stringHandle;
-}
-
-reg_t kStringPrintfBuf(EngineState *s, int argc, reg_t *argv) {
-	return kFormat(s, argc, argv);
-}
-
-reg_t kStringAtoi(EngineState *s, int argc, reg_t *argv) {
-	Common::String string = s->_segMan->getString(argv[0]);
-	return make_reg(0, (uint16)atoi(string.c_str()));
-}
-
-reg_t kStringTrim(EngineState *s, int argc, reg_t *argv) {
-	Common::String string = s->_segMan->getString(argv[0]);
-
-	string.trim();
-	// TODO: Second parameter (bitfield, trim from left, right, center)
-	warning("kStringTrim (%d)", argv[1].getOffset());
-	s->_segMan->strcpy(argv[0], string.c_str());
-	return NULL_REG;
-}
-
-reg_t kStringUpper(EngineState *s, int argc, reg_t *argv) {
-	Common::String string = s->_segMan->getString(argv[0]);
-
-	string.toUppercase();
-	s->_segMan->strcpy(argv[0], string.c_str());
-	return NULL_REG;
-}
-
-reg_t kStringLower(EngineState *s, int argc, reg_t *argv) {
-	Common::String string = s->_segMan->getString(argv[0]);
-
-	string.toLowercase();
-	s->_segMan->strcpy(argv[0], string.c_str());
-	return NULL_REG;
-}
-
-// Possibly kStringTranslate?
-reg_t kStringTrn(EngineState *s, int argc, reg_t *argv) {
-	warning("kStringTrn (argc = %d)", argc);
-	return NULL_REG;
-}
-
-// Possibly kStringTranslateExclude?
-reg_t kStringTrnExclude(EngineState *s, int argc, reg_t *argv) {
-	warning("kStringTrnExclude (argc = %d)", argc);
-	return NULL_REG;
-}
-
 reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, getSciVersion());
 	error("not supposed to call this");
 }
 
+reg_t kStringNew(EngineState *s, int argc, reg_t *argv) {
+	reg_t stringHandle;
+	const uint16 size = argv[0].toUint16();
+	s->_segMan->allocateArray(kArrayTypeString, size, &stringHandle);
+	return stringHandle;
+}
+
+reg_t kStringGetChar(EngineState *s, int argc, reg_t *argv) {
+	const uint16 index = argv[1].toUint16();
+
+	// Game scripts may contain static raw string data
+	if (!s->_segMan->isArray(argv[0])) {
+		const Common::String string = s->_segMan->getString(argv[0]);
+		if (index >= string.size()) {
+			return make_reg(0, 0);
+		}
+
+		return make_reg(0, (byte)string[index]);
+	}
+
+	SciArray &array = *s->_segMan->lookupArray(argv[0]);
+
+	if (index >= array.size()) {
+		return make_reg(0, 0);
+	}
+
+	return array.getAsID(index);
+}
+
+reg_t kStringFree(EngineState *s, int argc, reg_t *argv) {
+	s->_segMan->freeArray(argv[0]);
+	return s->r_acc;
+}
+
+reg_t kStringCompare(EngineState *s, int argc, reg_t *argv) {
+	const Common::String string1 = s->_segMan->getString(argv[0]);
+	const Common::String string2 = s->_segMan->getString(argv[1]);
+
+	int result;
+	if (argc == 3) {
+		result = strncmp(string1.c_str(), string2.c_str(), argv[2].toUint16());
+	} else {
+		result = strcmp(string1.c_str(), string2.c_str());
+	}
+
+	return make_reg(0, (result > 0) - (result < 0));
+}
+
+reg_t kStringGetData(EngineState *s, int argc, reg_t *argv) {
+	if (s->_segMan->isObject(argv[0])) {
+		return readSelector(s->_segMan, argv[0], SELECTOR(data));
+	}
+
+	return argv[0];
+}
+
+reg_t kStringLength(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, s->_segMan->getString(argv[0]).size());
+}
+
+namespace {
+	bool isFlag(const char c) {
+		return strchr("-+ 0#", c);
+	}
+
+	bool isPrecision(const char c) {
+		return strchr(".0123456789*", c);
+	}
+
+	bool isWidth(const char c) {
+		return strchr("0123456789*", c);
+	}
+
+	bool isLength(const char c) {
+		return strchr("hjlLtz", c);
+	}
+
+	bool isType(const char c) {
+		return strchr("dsuxXaAceEfFgGinop", c);
+	}
+
+	bool isSignedType(const char type) {
+		// For whatever reason, %d ends up being treated as unsigned in SSCI
+		return type == 'i';
+	}
+
+	bool isUnsignedType(const char type) {
+		return strchr("duxXoc", type);
+	}
+
+	bool isStringType(const char type) {
+		return type == 's';
+	}
+
+	Common::String readPlaceholder(const char *&in, reg_t arg) {
+		const char *const start = in;
+
+		assert(*in == '%');
+		++in;
+
+		while (isFlag(*in)) {
+			++in;
+		}
+		while (isWidth(*in)) {
+			++in;
+		}
+		while (isPrecision(*in)) {
+			++in;
+		}
+		while (isLength(*in)) {
+			++in;
+		}
+
+		char format[64];
+		format[0] = '\0';
+		const char type = *in++;
+		Common::strlcpy(format, start, MIN<size_t>(64, in - start + 1));
+
+		if (isType(type)) {
+			if (isSignedType(type)) {
+				const int value = arg.toSint16();
+				return Common::String::format(format, value);
+			} else if (isUnsignedType(type)) {
+				const uint value = arg.toUint16();
+				return Common::String::format(format, value);
+			} else if (isStringType(type)) {
+				Common::String value;
+				SegManager *segMan = g_sci->getEngineState()->_segMan;
+				if (segMan->isObject(arg)) {
+					value = segMan->getString(readSelector(segMan, arg, SELECTOR(data)));
+				} else {
+					value = segMan->getString(arg);
+				}
+				return Common::String::format(format, value.c_str());
+			} else {
+				error("Unsupported format type %c", type);
+			}
+		} else {
+			return Common::String::format("%s", format);
+		}
+	}
+}
+
+Common::String format(const Common::String &source, int argc, const reg_t *argv) {
+	Common::String out;
+	const char *in = source.c_str();
+	int argIndex = 0;
+	while (*in != '\0') {
+		if (*in == '%') {
+			if (in[1] == '%') {
+				in += 2;
+				out += "%";
+				continue;
+			}
+
+			if (argIndex < argc) {
+				out += readPlaceholder(in, argv[argIndex++]);
+			} else {
+				out += readPlaceholder(in, NULL_REG);
+			}
+		} else {
+			out += *in++;
+		}
+	}
+
+	return out;
+}
+
+reg_t kStringFormat(EngineState *s, int argc, reg_t *argv) {
+	reg_t stringHandle;
+	SciArray &target = *s->_segMan->allocateArray(kArrayTypeString, 0, &stringHandle);
+	reg_t source = argv[0];
+	// Str objects may be passed in place of direct references to string data
+	if (s->_segMan->isObject(argv[0])) {
+		source = readSelector(s->_segMan, argv[0], SELECTOR(data));
+	}
+	target.fromString(format(s->_segMan->getString(source), argc - 1, argv + 1));
+	return stringHandle;
+}
+
+reg_t kStringFormatAt(EngineState *s, int argc, reg_t *argv) {
+	SciArray &target = *s->_segMan->lookupArray(argv[0]);
+	reg_t source = argv[1];
+	// Str objects may be passed in place of direct references to string data
+	if (s->_segMan->isObject(argv[1])) {
+		source = readSelector(s->_segMan, argv[1], SELECTOR(data));
+	}
+	target.fromString(format(s->_segMan->getString(source), argc - 2, argv + 2));
+	return argv[0];
+}
+
+reg_t kStringToInteger(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, (uint16)s->_segMan->getString(argv[0]).asUint64());
+}
+
+reg_t kStringTrim(EngineState *s, int argc, reg_t *argv) {
+	SciArray &array = *s->_segMan->lookupArray(argv[0]);
+	const int8 flags = argv[1].toSint16();
+	const char showChar = argc > 2 ? argv[2].toSint16() : '\0';
+	array.trim(flags, showChar);
+	return s->r_acc;
+}
+
+reg_t kStringToUpperCase(EngineState *s, int argc, reg_t *argv) {
+	Common::String string = s->_segMan->getString(argv[0]);
+	string.toUppercase();
+	s->_segMan->strcpy(argv[0], string.c_str());
+	return argv[0];
+}
+
+reg_t kStringToLowerCase(EngineState *s, int argc, reg_t *argv) {
+	Common::String string = s->_segMan->getString(argv[0]);
+	string.toLowercase();
+	s->_segMan->strcpy(argv[0], string.c_str());
+	return argv[0];
+}
+
+reg_t kStringReplaceSubstring(EngineState *s, int argc, reg_t *argv) {
+	error("TODO: kStringReplaceSubstring not implemented");
+	return argv[3];
+}
+
+reg_t kStringReplaceSubstringEx(EngineState *s, int argc, reg_t *argv) {
+	error("TODO: kStringReplaceSubstringEx not implemented");
+	return argv[3];
+}
 #endif
 
 } // End of namespace Sci

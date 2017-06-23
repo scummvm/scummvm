@@ -1,21 +1,24 @@
 # Galician translation for ScummVM.
-# Copyright (C) 2010-2016 The ScummVM Team
+# Copyright (C) 2010-2017 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Santiago G. Sanz <s.sanz@uvigo.es>, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-02-01 21:58+0000\n"
-"PO-Revision-Date: 2016-02-02 09:10+0100\n"
-"Last-Translator: Santiago G. Sanz <s.sanz@uvigo.es>\n"
-"Language-Team: Santiago G. Sanz <s.sanz@uvigo.es>\n"
-"Language: Galego\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2017-06-20 22:32+0200\n"
+"PO-Revision-Date: 2016-11-28 15:51+0000\n"
+"Last-Translator: Santiago G. Sanz <santiagogarciasanz@gmail.com>\n"
+"Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/gl/>\n"
+"Language: gl_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.6\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2.9\n"
+"X-Language-name: Galego\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -38,46 +41,394 @@ msgstr "Mostrar ficheiros ocultos"
 msgid "Show files marked with the hidden attribute"
 msgstr "Mostra os ficheiros marcados co atributo Oculto."
 
-#: gui/browser.cpp:72
+#: gui/browser.cpp:72 gui/remotebrowser.cpp:56
 msgid "Go up"
 msgstr "Arriba"
 
-#: gui/browser.cpp:72 gui/browser.cpp:74
+#: gui/browser.cpp:72 gui/browser.cpp:74 gui/remotebrowser.cpp:56
+#: gui/remotebrowser.cpp:58
 msgid "Go to previous directory level"
 msgstr "Ir ao directorio superior"
 
-#: gui/browser.cpp:74
+#: gui/browser.cpp:74 gui/remotebrowser.cpp:58
 msgctxt "lowres"
 msgid "Go up"
 msgstr "Arriba"
 
-#: gui/browser.cpp:75 gui/chooser.cpp:46 gui/editrecorddialog.cpp:67
-#: gui/filebrowser-dialog.cpp:64 gui/fluidsynth-dialog.cpp:152
-#: gui/KeysDialog.cpp:43 gui/launcher.cpp:351 gui/massadd.cpp:95
-#: gui/options.cpp:1237 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:70
-#: gui/recorderdialog.cpp:156 gui/saveload-dialog.cpp:216
-#: gui/saveload-dialog.cpp:276 gui/saveload-dialog.cpp:547
-#: gui/saveload-dialog.cpp:931 gui/themebrowser.cpp:55 engines/engine.cpp:546
+#: gui/browser.cpp:75 gui/chooser.cpp:46 gui/editgamedialog.cpp:292
+#: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:64
+#: gui/fluidsynth-dialog.cpp:152 gui/KeysDialog.cpp:43 gui/massadd.cpp:95
+#: gui/options.cpp:1714 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
+#: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
+#: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
+#: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
+#: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
+#: gui/updates-dialog.cpp:113 engines/engine.cpp:558
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
-#: engines/parallaction/saveload.cpp:274 engines/scumm/dialogs.cpp:191
+#: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:865
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
-#: gui/filebrowser-dialog.cpp:65 gui/themebrowser.cpp:56
+#: gui/filebrowser-dialog.cpp:65 gui/remotebrowser.cpp:60
+#: gui/themebrowser.cpp:56
 msgid "Choose"
 msgstr "Elixir"
+
+#: gui/downloaddialog.cpp:48
+msgid "Select directory where to download game data"
+msgstr "Selecciona un directorio para descargar os datos de xogo"
+
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
+msgid "Select directory with game data"
+msgstr "Selecciona un directorio con datos de xogo"
+
+#: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
+msgid "From: "
+msgstr "De: "
+
+#: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
+msgid "To: "
+msgstr "Para: "
+
+#: gui/downloaddialog.cpp:63
+msgid "Cancel download"
+msgstr "Cancelar descarga"
+
+#: gui/downloaddialog.cpp:65
+msgctxt "lowres"
+msgid "Cancel download"
+msgstr "Cancelar descarga"
+
+#: gui/downloaddialog.cpp:67
+msgid "Hide"
+msgstr "Ocultar"
+
+#: gui/downloaddialog.cpp:117
+msgid ""
+"It looks like your connection is limited. Do you really want to download "
+"files with it?"
+msgstr ""
+"Parece que a conexión é limitada. Seguro que queres descargar ficheiros con "
+"ela?"
+
+#: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
+#: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
+#: gui/launcher.cpp:310 gui/launcher.cpp:418 gui/launcher.cpp:477
+#: gui/storagewizarddialog.cpp:112
+#: backends/events/symbiansdl/symbiansdl-events.cpp:190
+#: backends/platform/wince/CEActionsPocket.cpp:326
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
+#: backends/platform/wince/CELauncherDialog.cpp:83
+#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+#: engines/sci/graphics/controls32.cpp:827
+msgid "Yes"
+msgstr "Si"
+
+#: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
+#: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
+#: gui/launcher.cpp:310 gui/launcher.cpp:418 gui/launcher.cpp:477
+#: gui/storagewizarddialog.cpp:112
+#: backends/events/symbiansdl/symbiansdl-events.cpp:190
+#: backends/platform/wince/CEActionsPocket.cpp:326
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
+#: backends/platform/wince/CELauncherDialog.cpp:83
+#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+#: engines/sci/graphics/controls32.cpp:827
+msgid "No"
+msgstr "Non"
+
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:568
+msgid "ScummVM couldn't open the specified directory!"
+msgstr "ScummVM non foi quen de abrir o directorio!"
+
+#: gui/downloaddialog.cpp:146
+msgid ""
+"Cannot create a directory to download - the specified directory has a file "
+"with the same name."
+msgstr ""
+"Non se pode crear un directorio para descargar. O directorio especificado "
+"ten un ficheiro co mesmo nome."
+
+#: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
+#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:525
+#: gui/launcher.cpp:529 gui/massadd.cpp:92 gui/options.cpp:1716
+#: gui/saveload-dialog.cpp:1114 engines/engine.cpp:477 engines/engine.cpp:488
+#: backends/platform/wii/options.cpp:47
+#: backends/platform/wince/CELauncherDialog.cpp:54
+#: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
+#: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
+#: engines/sci/engine/kgraphics.cpp:74 engines/sci/graphics/controls32.cpp:824
+#: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1882
+#: engines/scumm/players/player_v3m.cpp:130
+#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
+#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
+#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
+#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/zvision/file/save_manager.cpp:224
+msgid "OK"
+msgstr "Aceptar"
+
+#: gui/downloaddialog.cpp:151
+#, c-format
+msgid ""
+"The \"%s\" already exists in the specified directory.\n"
+"Do you really want to download files into that directory?"
+msgstr ""
+"\"%s\" xa existe no directorio especificado.\n"
+"Seguro que queres descargar os ficheiros a ese directorio?"
+
+#: gui/downloaddialog.cpp:251
+#, c-format
+msgid "Downloaded %s %s / %s %s"
+msgstr "Descargado: %s %s / %s %s"
+
+#: gui/downloaddialog.cpp:258
+#, c-format
+msgid "Download speed: %s %s"
+msgstr "Velocidade de descarga: %s %s"
+
+#: gui/editgamedialog.cpp:132
+msgid "Game"
+msgstr "Xogo"
+
+#: gui/editgamedialog.cpp:136
+msgid "ID:"
+msgstr "ID:"
+
+#: gui/editgamedialog.cpp:136 gui/editgamedialog.cpp:138
+#: gui/editgamedialog.cpp:139
+msgid ""
+"Short game identifier used for referring to saved games and running the game "
+"from the command line"
+msgstr ""
+"Identificador curto do xogo para os ficheiros de gardado e a execución do "
+"xogo dende a liña de comandos"
+
+#: gui/editgamedialog.cpp:138
+msgctxt "lowres"
+msgid "ID:"
+msgstr "ID:"
+
+#: gui/editgamedialog.cpp:143 gui/editrecorddialog.cpp:59
+msgid "Name:"
+msgstr "Nome:"
+
+#: gui/editgamedialog.cpp:143 gui/editgamedialog.cpp:145
+#: gui/editgamedialog.cpp:146
+msgid "Full title of the game"
+msgstr "Título completo do xogo"
+
+#: gui/editgamedialog.cpp:145
+msgctxt "lowres"
+msgid "Name:"
+msgstr "Nome:"
+
+#: gui/editgamedialog.cpp:149
+msgid "Language:"
+msgstr "Idioma:"
+
+#: gui/editgamedialog.cpp:149 gui/editgamedialog.cpp:150
+msgid ""
+"Language of the game. This will not turn your Spanish game version into "
+"English"
+msgstr "Idioma do xogo. Non converterá a versión galega do xogo en inglesa"
+
+#: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:165 gui/options.cpp:123
+#: gui/options.cpp:1023 gui/options.cpp:1036 gui/options.cpp:1609
+#: audio/null.cpp:41
+msgid "<default>"
+msgstr "<por defecto>"
+
+#: gui/editgamedialog.cpp:161
+msgid "Platform:"
+msgstr "Plataforma:"
+
+#: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:163
+#: gui/editgamedialog.cpp:164
+msgid "Platform the game was originally designed for"
+msgstr "Plataforma para a que se desenvolvera o xogo inicialmente"
+
+#: gui/editgamedialog.cpp:163
+msgctxt "lowres"
+msgid "Platform:"
+msgstr "Plataforma:"
+
+#: gui/editgamedialog.cpp:176
+msgid "Engine"
+msgstr "Motor"
+
+#: gui/editgamedialog.cpp:184 gui/options.cpp:1379 gui/options.cpp:1464
+msgid "Graphics"
+msgstr "Gráficos"
+
+#: gui/editgamedialog.cpp:184 gui/options.cpp:1379 gui/options.cpp:1464
+msgid "GFX"
+msgstr "Efectos gráficos"
+
+#: gui/editgamedialog.cpp:187
+msgid "Override global graphic settings"
+msgstr "Anular a configuración dos gráficos"
+
+#: gui/editgamedialog.cpp:189
+msgctxt "lowres"
+msgid "Override global graphic settings"
+msgstr "Anular a configuración dos gráficos"
+
+#: gui/editgamedialog.cpp:196 gui/options.cpp:1491
+msgid "Audio"
+msgstr "Son"
+
+#: gui/editgamedialog.cpp:199
+msgid "Override global audio settings"
+msgstr "Anular a configuración do son"
+
+#: gui/editgamedialog.cpp:201
+msgctxt "lowres"
+msgid "Override global audio settings"
+msgstr "Anular a configuración do son"
+
+#: gui/editgamedialog.cpp:210 gui/options.cpp:1496
+msgid "Volume"
+msgstr "Volume"
+
+#: gui/editgamedialog.cpp:212 gui/options.cpp:1498
+msgctxt "lowres"
+msgid "Volume"
+msgstr "Volume"
+
+#: gui/editgamedialog.cpp:215
+msgid "Override global volume settings"
+msgstr "Anular a configuración do volume"
+
+#: gui/editgamedialog.cpp:217
+msgctxt "lowres"
+msgid "Override global volume settings"
+msgstr "Anular a configuración do volume"
+
+#: gui/editgamedialog.cpp:226 gui/options.cpp:1506
+msgid "MIDI"
+msgstr "MIDI"
+
+#: gui/editgamedialog.cpp:229
+msgid "Override global MIDI settings"
+msgstr "Anular a configuración de MIDI"
+
+#: gui/editgamedialog.cpp:231
+msgctxt "lowres"
+msgid "Override global MIDI settings"
+msgstr "Anular a configuración de MIDI"
+
+#: gui/editgamedialog.cpp:241 gui/options.cpp:1516
+msgid "MT-32"
+msgstr "MT-32"
+
+#: gui/editgamedialog.cpp:244
+msgid "Override global MT-32 settings"
+msgstr "Anular a configuración de MT-32"
+
+#: gui/editgamedialog.cpp:246
+msgctxt "lowres"
+msgid "Override global MT-32 settings"
+msgstr "Anular a configuración de MT-32"
+
+#: gui/editgamedialog.cpp:255 gui/options.cpp:1523
+msgid "Paths"
+msgstr "Camiños"
+
+#: gui/editgamedialog.cpp:257 gui/options.cpp:1525
+msgctxt "lowres"
+msgid "Paths"
+msgstr "Camiños"
+
+#: gui/editgamedialog.cpp:264
+msgid "Game Path:"
+msgstr "Camiño do xogo:"
+
+#: gui/editgamedialog.cpp:266
+msgctxt "lowres"
+msgid "Game Path:"
+msgstr "Camiño do xogo:"
+
+#: gui/editgamedialog.cpp:271 gui/options.cpp:1549
+msgid "Extra Path:"
+msgstr "Camiño adicional:"
+
+#: gui/editgamedialog.cpp:271 gui/editgamedialog.cpp:273
+#: gui/editgamedialog.cpp:274
+msgid "Specifies path to additional data used by the game"
+msgstr "Especifica o camiño dos datos adicionais usados no xogo"
+
+#: gui/editgamedialog.cpp:273 gui/options.cpp:1551
+msgctxt "lowres"
+msgid "Extra Path:"
+msgstr "Camiño adicional:"
+
+#: gui/editgamedialog.cpp:280 gui/options.cpp:1533
+msgid "Save Path:"
+msgstr "Camiño de gardado:"
+
+#: gui/editgamedialog.cpp:280 gui/editgamedialog.cpp:282
+#: gui/editgamedialog.cpp:283 gui/options.cpp:1533 gui/options.cpp:1535
+#: gui/options.cpp:1536
+msgid "Specifies where your saved games are put"
+msgstr "Especifica o lugar dos ficheiros de gardado"
+
+#: gui/editgamedialog.cpp:282 gui/options.cpp:1535
+msgctxt "lowres"
+msgid "Save Path:"
+msgstr "Camiño de gardado:"
+
+#: gui/editgamedialog.cpp:301 gui/editgamedialog.cpp:398
+#: gui/editgamedialog.cpp:457 gui/editgamedialog.cpp:518 gui/options.cpp:1544
+#: gui/options.cpp:1552 gui/options.cpp:1561 gui/options.cpp:1741
+#: gui/options.cpp:1747 gui/options.cpp:1755 gui/options.cpp:1778
+#: gui/options.cpp:1811 gui/options.cpp:1817 gui/options.cpp:1824
+#: gui/options.cpp:1832 gui/options.cpp:2027 gui/options.cpp:2030
+#: gui/options.cpp:2037 gui/options.cpp:2047
+msgctxt "path"
+msgid "None"
+msgstr "Ningún"
+
+#: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:404
+#: gui/editgamedialog.cpp:522 gui/options.cpp:1735 gui/options.cpp:1805
+#: gui/options.cpp:2033 backends/platform/wii/options.cpp:56
+msgid "Default"
+msgstr "Predefinido"
+
+#: gui/editgamedialog.cpp:450 gui/options.cpp:2041
+msgid "Select SoundFont"
+msgstr "Seleccionar SoundFont"
+
+#: gui/editgamedialog.cpp:489
+msgid "Select additional game directory"
+msgstr "Selecciona un directorio con datos adicionais"
+
+#: gui/editgamedialog.cpp:502 gui/options.cpp:1964
+msgid "Select directory for saved games"
+msgstr "Selecciona un directorio para ficheiros de gardado"
+
+#: gui/editgamedialog.cpp:508
+msgid ""
+"Saved games sync feature doesn't work with non-default directories. If you "
+"want your saved games to sync, use default directory."
+msgstr ""
+"A característica de sincronización de partidas gardadas non funciona con "
+"directorios non predeterminados. Para sincronizar as partidas gardadas, "
+"emprega o directorio predeterminado."
+
+#: gui/editgamedialog.cpp:534
+msgid "This game ID is already taken. Please choose another one."
+msgstr "Este ID de xogo xa está en uso. Selecciona outro."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
 msgstr "Autor:"
-
-#: gui/editrecorddialog.cpp:59 gui/launcher.cpp:204
-msgid "Name:"
-msgstr "Nome:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
@@ -98,26 +449,6 @@ msgstr "Introducir nome de ficheiro para gardar"
 #: gui/filebrowser-dialog.cpp:132
 msgid "Do you really want to overwrite the file?"
 msgstr "Seguro que queres sobreescribir o ficheiro?"
-
-#: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:795 gui/launcher.cpp:943 gui/launcher.cpp:1002
-#: backends/events/symbiansdl/symbiansdl-events.cpp:186
-#: backends/platform/wince/CEActionsPocket.cpp:326
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:83
-#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
-msgid "Yes"
-msgstr "Si"
-
-#: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:795 gui/launcher.cpp:943 gui/launcher.cpp:1002
-#: backends/events/symbiansdl/symbiansdl-events.cpp:186
-#: backends/platform/wince/CEActionsPocket.cpp:326
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:83
-#: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
-msgid "No"
-msgstr "Non"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
@@ -171,7 +502,7 @@ msgstr "Seno"
 msgid "Triangle"
 msgstr "Triángulo"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:1168
+#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:1569
 msgid "Misc"
 msgstr "Misc."
 
@@ -204,25 +535,6 @@ msgid "Reset all FluidSynth settings to their default values."
 msgstr ""
 "Restablece a configuración de FluidSynth aos seus valores predefinidos."
 
-#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:352
-#: gui/launcher.cpp:1050 gui/launcher.cpp:1054 gui/massadd.cpp:92
-#: gui/options.cpp:1238 gui/saveload-dialog.cpp:932 engines/engine.cpp:465
-#: engines/engine.cpp:476 backends/platform/wii/options.cpp:47
-#: backends/platform/wince/CELauncherDialog.cpp:54
-#: engines/agos/animation.cpp:558 engines/drascula/saveload.cpp:49
-#: engines/groovie/script.cpp:408 engines/parallaction/saveload.cpp:274
-#: engines/scumm/dialogs.cpp:193 engines/scumm/scumm.cpp:1834
-#: engines/scumm/players/player_v3m.cpp:130
-#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
-#: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
-#: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
-#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
-#: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
-#: engines/sword2/animation.cpp:471
-msgid "OK"
-msgstr "Aceptar"
-
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
@@ -241,15 +553,15 @@ msgstr "Pechar"
 msgid "Mouse click"
 msgstr "Premer co rato"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:322
+#: gui/gui-manager.cpp:126 base/main.cpp:340
 msgid "Display keyboard"
 msgstr "Mostrar teclado"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:326
+#: gui/gui-manager.cpp:130 base/main.cpp:344
 msgid "Remap keys"
 msgstr "Asignar teclas"
 
-#: gui/gui-manager.cpp:133 base/main.cpp:329 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:347 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Activar/desactivar pantalla completa"
 
@@ -267,7 +579,6 @@ msgid "Associated key : %s"
 msgstr "Tecla asociada: %s"
 
 #: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
-#, c-format
 msgid "Associated key : none"
 msgstr "Tecla asociada: ningunha"
 
@@ -283,327 +594,111 @@ msgstr "Preme a tecla para asociala"
 msgid "Choose an action to map"
 msgstr "Elixe unha acción para asignala"
 
-#: gui/launcher.cpp:193
-msgid "Game"
-msgstr "Xogo"
-
-#: gui/launcher.cpp:197
-msgid "ID:"
-msgstr "ID:"
-
-#: gui/launcher.cpp:197 gui/launcher.cpp:199 gui/launcher.cpp:200
-msgid ""
-"Short game identifier used for referring to saved games and running the game "
-"from the command line"
-msgstr ""
-"Identificador curto do xogo para os ficheiros de gardado e a execución do "
-"xogo dende a liña de comandos"
-
-#: gui/launcher.cpp:199
-msgctxt "lowres"
-msgid "ID:"
-msgstr "ID:"
-
-#: gui/launcher.cpp:204 gui/launcher.cpp:206 gui/launcher.cpp:207
-msgid "Full title of the game"
-msgstr "Título completo do xogo"
-
-#: gui/launcher.cpp:206
-msgctxt "lowres"
-msgid "Name:"
-msgstr "Nome:"
-
-#: gui/launcher.cpp:210
-msgid "Language:"
-msgstr "Idioma:"
-
-#: gui/launcher.cpp:210 gui/launcher.cpp:211
-msgid ""
-"Language of the game. This will not turn your Spanish game version into "
-"English"
-msgstr "Idioma do xogo. Non converterá a versión galega do xogo en inglesa"
-
-#: gui/launcher.cpp:212 gui/launcher.cpp:226 gui/options.cpp:87
-#: gui/options.cpp:735 gui/options.cpp:748 gui/options.cpp:1208
-#: audio/null.cpp:41
-msgid "<default>"
-msgstr "<por defecto>"
-
-#: gui/launcher.cpp:222
-msgid "Platform:"
-msgstr "Plataforma:"
-
-#: gui/launcher.cpp:222 gui/launcher.cpp:224 gui/launcher.cpp:225
-msgid "Platform the game was originally designed for"
-msgstr "Plataforma para a que se desenvolvera o xogo inicialmente"
-
-#: gui/launcher.cpp:224
-msgctxt "lowres"
-msgid "Platform:"
-msgstr "Plataforma:"
-
-#: gui/launcher.cpp:237
-msgid "Engine"
-msgstr "Motor"
-
-#: gui/launcher.cpp:245 gui/options.cpp:1071 gui/options.cpp:1088
-msgid "Graphics"
-msgstr "Gráficos"
-
-#: gui/launcher.cpp:245 gui/options.cpp:1071 gui/options.cpp:1088
-msgid "GFX"
-msgstr "Efectos gráficos"
-
-#: gui/launcher.cpp:248
-msgid "Override global graphic settings"
-msgstr "Anular a configuración dos gráficos"
-
-#: gui/launcher.cpp:250
-msgctxt "lowres"
-msgid "Override global graphic settings"
-msgstr "Anular a configuración dos gráficos"
-
-#: gui/launcher.cpp:257 gui/options.cpp:1094
-msgid "Audio"
-msgstr "Son"
-
-#: gui/launcher.cpp:260
-msgid "Override global audio settings"
-msgstr "Anular a configuración do son"
-
-#: gui/launcher.cpp:262
-msgctxt "lowres"
-msgid "Override global audio settings"
-msgstr "Anular a configuración do son"
-
-#: gui/launcher.cpp:271 gui/options.cpp:1099
-msgid "Volume"
-msgstr "Volume"
-
-#: gui/launcher.cpp:273 gui/options.cpp:1101
-msgctxt "lowres"
-msgid "Volume"
-msgstr "Volume"
-
-#: gui/launcher.cpp:276
-msgid "Override global volume settings"
-msgstr "Anular a configuración do volume"
-
-#: gui/launcher.cpp:278
-msgctxt "lowres"
-msgid "Override global volume settings"
-msgstr "Anular a configuración do volume"
-
-#: gui/launcher.cpp:286 gui/options.cpp:1109
-msgid "MIDI"
-msgstr "MIDI"
-
-#: gui/launcher.cpp:289
-msgid "Override global MIDI settings"
-msgstr "Anular a configuración de MIDI"
-
-#: gui/launcher.cpp:291
-msgctxt "lowres"
-msgid "Override global MIDI settings"
-msgstr "Anular a configuración de MIDI"
-
-#: gui/launcher.cpp:300 gui/options.cpp:1115
-msgid "MT-32"
-msgstr "MT-32"
-
-#: gui/launcher.cpp:303
-msgid "Override global MT-32 settings"
-msgstr "Anular a configuración de MT-32"
-
-#: gui/launcher.cpp:305
-msgctxt "lowres"
-msgid "Override global MT-32 settings"
-msgstr "Anular a configuración de MT-32"
-
-#: gui/launcher.cpp:314 gui/options.cpp:1122
-msgid "Paths"
-msgstr "Camiños"
-
-#: gui/launcher.cpp:316 gui/options.cpp:1124
-msgctxt "lowres"
-msgid "Paths"
-msgstr "Camiños"
-
-#: gui/launcher.cpp:323
-msgid "Game Path:"
-msgstr "Camiño do xogo:"
-
-#: gui/launcher.cpp:325
-msgctxt "lowres"
-msgid "Game Path:"
-msgstr "Camiño do xogo:"
-
-#: gui/launcher.cpp:330 gui/options.cpp:1148
-msgid "Extra Path:"
-msgstr "Camiño adicional:"
-
-#: gui/launcher.cpp:330 gui/launcher.cpp:332 gui/launcher.cpp:333
-msgid "Specifies path to additional data used by the game"
-msgstr "Especifica o camiño dos datos adicionais usados no xogo"
-
-#: gui/launcher.cpp:332 gui/options.cpp:1150
-msgctxt "lowres"
-msgid "Extra Path:"
-msgstr "Camiño adicional:"
-
-#: gui/launcher.cpp:339 gui/options.cpp:1132
-msgid "Save Path:"
-msgstr "Camiño de gardado:"
-
-#: gui/launcher.cpp:339 gui/launcher.cpp:341 gui/launcher.cpp:342
-#: gui/options.cpp:1132 gui/options.cpp:1134 gui/options.cpp:1135
-msgid "Specifies where your saved games are put"
-msgstr "Especifica o lugar dos ficheiros de gardado"
-
-#: gui/launcher.cpp:341 gui/options.cpp:1134
-msgctxt "lowres"
-msgid "Save Path:"
-msgstr "Camiño de gardado:"
-
-#: gui/launcher.cpp:360 gui/launcher.cpp:459 gui/launcher.cpp:517
-#: gui/launcher.cpp:571 gui/options.cpp:1143 gui/options.cpp:1151
-#: gui/options.cpp:1160 gui/options.cpp:1275 gui/options.cpp:1281
-#: gui/options.cpp:1289 gui/options.cpp:1319 gui/options.cpp:1325
-#: gui/options.cpp:1332 gui/options.cpp:1425 gui/options.cpp:1428
-#: gui/options.cpp:1440
-msgctxt "path"
-msgid "None"
-msgstr "Ningún"
-
-#: gui/launcher.cpp:365 gui/launcher.cpp:465 gui/launcher.cpp:575
-#: gui/options.cpp:1269 gui/options.cpp:1313 gui/options.cpp:1431
-#: backends/platform/wii/options.cpp:56
-msgid "Default"
-msgstr "Predefinido"
-
-#: gui/launcher.cpp:510 gui/options.cpp:1434
-msgid "Select SoundFont"
-msgstr "Seleccionar SoundFont"
-
-#: gui/launcher.cpp:529 gui/launcher.cpp:682
-msgid "Select directory with game data"
-msgstr "Selecciona un directorio con datos de xogo"
-
-#: gui/launcher.cpp:547
-msgid "Select additional game directory"
-msgstr "Selecciona un directorio con datos adicionais"
-
-#: gui/launcher.cpp:559 gui/options.cpp:1377
-msgid "Select directory for saved games"
-msgstr "Selecciona un directorio para ficheiros de gardado"
-
-#: gui/launcher.cpp:586
-msgid "This game ID is already taken. Please choose another one."
-msgstr "Este ID de xogo xa está en uso. Selecciona outro."
-
-#: gui/launcher.cpp:626 engines/dialogs.cpp:111
+#: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:98
 msgid "~Q~uit"
 msgstr "~S~aír"
 
-#: gui/launcher.cpp:626 backends/platform/sdl/macosx/appmenu_osx.mm:106
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:106
 msgid "Quit ScummVM"
 msgstr "Saír de ScummVM"
 
-#: gui/launcher.cpp:627
+#: gui/launcher.cpp:142
 msgid "A~b~out..."
 msgstr "Ace~r~ca de..."
 
-#: gui/launcher.cpp:627 backends/platform/sdl/macosx/appmenu_osx.mm:80
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:80
 msgid "About ScummVM"
 msgstr "Acerca de ScummVM"
 
-#: gui/launcher.cpp:628
+#: gui/launcher.cpp:143
 msgid "~O~ptions..."
 msgstr "~O~pcións..."
 
-#: gui/launcher.cpp:628
+#: gui/launcher.cpp:143
 msgid "Change global ScummVM options"
 msgstr "Cambiar as opcións de ScummVM"
 
-#: gui/launcher.cpp:630
+#: gui/launcher.cpp:145
 msgid "~S~tart"
 msgstr "~I~niciar"
 
-#: gui/launcher.cpp:630
+#: gui/launcher.cpp:145
 msgid "Start selected game"
 msgstr "Iniciar o xogo seleccionado"
 
-#: gui/launcher.cpp:633
+#: gui/launcher.cpp:148
 msgid "~L~oad..."
 msgstr "~C~argar..."
 
-#: gui/launcher.cpp:633
+#: gui/launcher.cpp:148
 msgid "Load saved game for selected game"
 msgstr "Cargar partida do xogo seleccionado"
 
-#: gui/launcher.cpp:638
+#: gui/launcher.cpp:153
 msgid "~A~dd Game..."
 msgstr "Eng~a~dir xogo..."
 
-#: gui/launcher.cpp:638 gui/launcher.cpp:645
+#: gui/launcher.cpp:153 gui/launcher.cpp:160
 msgid "Hold Shift for Mass Add"
 msgstr "Manter premido MAIÚS para engadir en masa"
 
-#: gui/launcher.cpp:640
+#: gui/launcher.cpp:155
 msgid "~E~dit Game..."
 msgstr "~E~ditar xogo..."
 
-#: gui/launcher.cpp:640 gui/launcher.cpp:647
+#: gui/launcher.cpp:155 gui/launcher.cpp:162
 msgid "Change game options"
 msgstr "Cambiar as opcións do xogo"
 
-#: gui/launcher.cpp:642
+#: gui/launcher.cpp:157
 msgid "~R~emove Game"
 msgstr "Elimina~r~ xogo"
 
-#: gui/launcher.cpp:642 gui/launcher.cpp:649
+#: gui/launcher.cpp:157 gui/launcher.cpp:164
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Eliminar o xogo da lista. Os ficheiros de datos non se modifican"
 
-#: gui/launcher.cpp:645
+#: gui/launcher.cpp:160
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "Eng~a~dir xogo..."
 
-#: gui/launcher.cpp:647
+#: gui/launcher.cpp:162
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "~E~ditar xogo..."
 
-#: gui/launcher.cpp:649
+#: gui/launcher.cpp:164
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "Elimina~r~ xogo"
 
-#: gui/launcher.cpp:657
+#: gui/launcher.cpp:172
 msgid "Search in game list"
 msgstr "Buscar na lista de xogos"
 
-#: gui/launcher.cpp:661 gui/launcher.cpp:1224
+#: gui/launcher.cpp:176 gui/launcher.cpp:774
 msgid "Search:"
 msgstr "Buscar:"
 
-#: gui/launcher.cpp:685 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:718
-#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:600
+#: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
+#: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:734
+#: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
+#: engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Cargar partida:"
 
-#: gui/launcher.cpp:685 engines/dialogs.cpp:115
+#: gui/launcher.cpp:200 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/myst.cpp:245
-#: engines/mohawk/riven.cpp:718 engines/pegasus/pegasus.cpp:353
-#: engines/scumm/dialogs.cpp:189 engines/tsage/scenes.cpp:600
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:103
+#: engines/mohawk/riven.cpp:734 engines/parallaction/saveload.cpp:194
+#: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
+#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
 msgstr "Cargar"
 
-#: gui/launcher.cpp:794
+#: gui/launcher.cpp:309
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -611,39 +706,39 @@ msgstr ""
 "Queres executar o detector de xogos en masa? É posible que se engada un gran "
 "número de xogos."
 
-#: gui/launcher.cpp:843
-msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM non foi quen de abrir o directorio!"
+#: gui/launcher.cpp:368
+msgid "This directory cannot be used yet, it is being downloaded into!"
+msgstr "Aínda non se pode empregar este directorio. A descarga non rematou!"
 
-#: gui/launcher.cpp:855
-msgid "ScummVM could not find any game in the specified directory!"
-msgstr "ScummVM non foi quen de atopar xogos no directorio!"
-
-#: gui/launcher.cpp:869
-msgid "Pick the game:"
-msgstr "Elixe o xogo:"
-
-#: gui/launcher.cpp:943
+#: gui/launcher.cpp:418
 msgid "Do you really want to remove this game configuration?"
 msgstr "Seguro que queres eliminar esta configuración de xogo?"
 
-#: gui/launcher.cpp:1001
+#: gui/launcher.cpp:476
 msgid "Do you want to load saved game?"
 msgstr "Queres cargar a partida gardada?"
 
-#: gui/launcher.cpp:1050
+#: gui/launcher.cpp:525
 msgid "This game does not support loading games from the launcher."
 msgstr "O xogo non permite cargar partidas dende o iniciador."
 
-#: gui/launcher.cpp:1054
+#: gui/launcher.cpp:529
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM non foi quen de atopar un motor para executar o xogo!"
 
-#: gui/launcher.cpp:1161
+#: gui/launcher.cpp:580
+msgid "ScummVM could not find any game in the specified directory!"
+msgstr "ScummVM non foi quen de atopar xogos no directorio!"
+
+#: gui/launcher.cpp:593
+msgid "Pick the game:"
+msgstr "Elixe o xogo:"
+
+#: gui/launcher.cpp:711
 msgid "Mass Add..."
 msgstr "Engadir en masa..."
 
-#: gui/launcher.cpp:1163
+#: gui/launcher.cpp:713
 msgid "Record..."
 msgstr "Gravar..."
 
@@ -686,132 +781,202 @@ msgstr "Cambiar ao xogo"
 msgid "Fast replay"
 msgstr "Repetición rápida"
 
-#: gui/options.cpp:85
+#: gui/options.cpp:121 common/updates.cpp:56
 msgid "Never"
 msgstr "Nunca"
 
-#: gui/options.cpp:85
+#: gui/options.cpp:121
 msgid "every 5 mins"
 msgstr "cada 5 min"
 
-#: gui/options.cpp:85
+#: gui/options.cpp:121
 msgid "every 10 mins"
 msgstr "cada 10 min"
 
-#: gui/options.cpp:85
+#: gui/options.cpp:121
 msgid "every 15 mins"
 msgstr "cada 15 min"
 
-#: gui/options.cpp:85
+#: gui/options.cpp:121
 msgid "every 30 mins"
 msgstr "cada 30 min"
 
-#: gui/options.cpp:87
+#: gui/options.cpp:123
 msgid "8 kHz"
 msgstr "8 kHz"
 
-#: gui/options.cpp:87
+#: gui/options.cpp:123
 msgid "11 kHz"
 msgstr "11 kHz"
 
-#: gui/options.cpp:87
+#: gui/options.cpp:123
 msgid "22 kHz"
 msgstr "22 kHz"
 
-#: gui/options.cpp:87
+#: gui/options.cpp:123
 msgid "44 kHz"
 msgstr "44 kHz"
 
-#: gui/options.cpp:87
+#: gui/options.cpp:123
 msgid "48 kHz"
 msgstr "48 kHz"
 
-#: gui/options.cpp:255 gui/options.cpp:479 gui/options.cpp:580
-#: gui/options.cpp:649 gui/options.cpp:857
+#: gui/options.cpp:356 gui/options.cpp:664 gui/options.cpp:802
+#: gui/options.cpp:879 gui/options.cpp:1148
 msgctxt "soundfont"
 msgid "None"
 msgstr "Ningunha"
 
-#: gui/options.cpp:389
+#: gui/options.cpp:527
 msgid "Failed to apply some of the graphic options changes:"
 msgstr "Erro ao aplicar os cambios na configuración dos gráficos:"
 
-#: gui/options.cpp:401
+#: gui/options.cpp:539
 msgid "the video mode could not be changed."
 msgstr "non se puido cambiar o modo de vídeo."
 
-#: gui/options.cpp:407
-msgid "the fullscreen setting could not be changed"
-msgstr "non se puido cambiar a configuración de pantalla completa."
-
-#: gui/options.cpp:413
+#: gui/options.cpp:545
 msgid "the aspect ratio setting could not be changed"
 msgstr "non se puido cambiar a proporción."
 
-#: gui/options.cpp:732
+#: gui/options.cpp:551
+msgid "the fullscreen setting could not be changed"
+msgstr "non se puido cambiar a configuración de pantalla completa."
+
+#: gui/options.cpp:557
+msgid "the filtering setting could not be changed"
+msgstr "non se puido cambiar a configuración de filtrado."
+
+#: gui/options.cpp:958
+msgid "Show On-screen control"
+msgstr ""
+
+#: gui/options.cpp:962
+#, fuzzy
+msgid "Touchpad mouse mode"
+msgstr "Modo Panel táctil desactivado."
+
+#: gui/options.cpp:966
+msgid "Swap Menu and Back buttons"
+msgstr ""
+
+#: gui/options.cpp:971
+#, fuzzy
+msgid "Pointer Speed:"
+msgstr "Velocidade:"
+
+#: gui/options.cpp:971 gui/options.cpp:973 gui/options.cpp:974
+msgid "Speed for keyboard/joystick mouse pointer control"
+msgstr ""
+
+#: gui/options.cpp:973
+#, fuzzy
+msgctxt "lowres"
+msgid "Pointer Speed:"
+msgstr "Velocidade:"
+
+#: gui/options.cpp:984
+msgid "Joy Deadzone:"
+msgstr ""
+
+#: gui/options.cpp:984 gui/options.cpp:986 gui/options.cpp:987
+msgid "Analog joystick Deadzone"
+msgstr ""
+
+#: gui/options.cpp:986
+msgctxt "lowres"
+msgid "Joy Deadzone:"
+msgstr ""
+
+#: gui/options.cpp:1000
+msgid "HW Shader:"
+msgstr ""
+
+#: gui/options.cpp:1000 gui/options.cpp:1002
+msgid "Different hardware shaders give different visual effects"
+msgstr ""
+
+#: gui/options.cpp:1002
+msgctxt "lowres"
+msgid "HW Shader:"
+msgstr ""
+
+#: gui/options.cpp:1003
+msgid "Different shaders give different visual effects"
+msgstr ""
+
+#: gui/options.cpp:1020
 msgid "Graphics mode:"
 msgstr "Gráficos:"
 
-#: gui/options.cpp:746
+#: gui/options.cpp:1034
 msgid "Render mode:"
 msgstr "Procesamento:"
 
-#: gui/options.cpp:746 gui/options.cpp:747
+#: gui/options.cpp:1034 gui/options.cpp:1035
 msgid "Special dithering modes supported by some games"
 msgstr "Modos de interpolación de cores compatibles con algúns xogos"
 
-#: gui/options.cpp:758
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
+#: gui/options.cpp:1046 backends/graphics/openglsdl/openglsdl-graphics.cpp:616
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2570
 msgid "Fullscreen mode"
 msgstr "Pantalla completa"
 
-#: gui/options.cpp:761
+#: gui/options.cpp:1049
+msgid "Filter graphics"
+msgstr "Filtrar gráficos"
+
+#: gui/options.cpp:1049
+msgid "Use linear filtering when scaling graphics"
+msgstr "Empregar filtrado linear ao escalar gráficos"
+
+#: gui/options.cpp:1052
 msgid "Aspect ratio correction"
 msgstr "Corrección de proporción"
 
-#: gui/options.cpp:761
+#: gui/options.cpp:1052
 msgid "Correct aspect ratio for 320x200 games"
 msgstr "Corrixir a proporción para os xogos en 320x200"
 
-#: gui/options.cpp:769
+#: gui/options.cpp:1060
 msgid "Preferred Device:"
 msgstr "Dispositivo preferido:"
 
-#: gui/options.cpp:769
+#: gui/options.cpp:1060
 msgid "Music Device:"
 msgstr "Dispositivo de música:"
 
-#: gui/options.cpp:769 gui/options.cpp:771
+#: gui/options.cpp:1060 gui/options.cpp:1062
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Especifica o dispositivo ou emulador de tarxeta de son preferido"
 
-#: gui/options.cpp:769 gui/options.cpp:771 gui/options.cpp:772
+#: gui/options.cpp:1060 gui/options.cpp:1062 gui/options.cpp:1063
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Especifica o dispositivo ou emulador de tarxeta de son de saída"
 
-#: gui/options.cpp:771
+#: gui/options.cpp:1062
 msgctxt "lowres"
 msgid "Preferred Dev.:"
 msgstr "Disp. preferido:"
 
-#: gui/options.cpp:771
+#: gui/options.cpp:1062
 msgctxt "lowres"
 msgid "Music Device:"
 msgstr "Disp. música:"
 
-#: gui/options.cpp:798
+#: gui/options.cpp:1089
 msgid "AdLib emulator:"
 msgstr "Emulador de AdLib:"
 
-#: gui/options.cpp:798 gui/options.cpp:799
+#: gui/options.cpp:1089 gui/options.cpp:1090
 msgid "AdLib is used for music in many games"
 msgstr "Moitos xogos empregan AdLib para a música"
 
-#: gui/options.cpp:809
+#: gui/options.cpp:1100
 msgid "Output rate:"
 msgstr "Taxa de saída:"
 
-#: gui/options.cpp:809 gui/options.cpp:810
+#: gui/options.cpp:1100 gui/options.cpp:1101
 msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
@@ -819,84 +984,80 @@ msgstr ""
 "A maior valor, maior calidade do son, mais talvez non sexa compatible coa "
 "tarxeta"
 
-#: gui/options.cpp:820
+#: gui/options.cpp:1111
 msgid "GM Device:"
 msgstr "Dispositivo de GM:"
 
-#: gui/options.cpp:820
+#: gui/options.cpp:1111
 msgid "Specifies default sound device for General MIDI output"
 msgstr ""
 "Especifica o dispositivo de son por defecto para a saída de General MIDI"
 
-#: gui/options.cpp:831
+#: gui/options.cpp:1122
 msgid "Don't use General MIDI music"
 msgstr "Non empregar música en General MIDI"
 
-#: gui/options.cpp:842 gui/options.cpp:908
+#: gui/options.cpp:1133 gui/options.cpp:1195
 msgid "Use first available device"
 msgstr "Empregar o primeiro dispositivo dispoñible"
 
-#: gui/options.cpp:854
+#: gui/options.cpp:1145
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:854 gui/options.cpp:856 gui/options.cpp:857
+#: gui/options.cpp:1145 gui/options.cpp:1147 gui/options.cpp:1148
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
 "SoundFont é compatible con algunhas tarxetas de son, FluidSynth e Timidity"
 
-#: gui/options.cpp:856
+#: gui/options.cpp:1147
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:862
+#: gui/options.cpp:1153
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Modo AdLib/MIDI mixto"
 
-#: gui/options.cpp:862
+#: gui/options.cpp:1153
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "Empregar xeración de son MIDI e máis AdLib"
 
-#: gui/options.cpp:865
+#: gui/options.cpp:1156
 msgid "MIDI gain:"
 msgstr "Ganancia de MIDI:"
 
-#: gui/options.cpp:872
-msgid "FluidSynth Settings"
-msgstr "Configuración de FluidSynth"
-
-#: gui/options.cpp:879
+#: gui/options.cpp:1166
 msgid "MT-32 Device:"
 msgstr "Dispositivo de MT-32:"
 
-#: gui/options.cpp:879
+#: gui/options.cpp:1166
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
 "Especifica o dispositivo por defecto para a saída de Roland MT-32/LAPC1/"
 "CM32l/CM64"
 
-#: gui/options.cpp:884
+#: gui/options.cpp:1171
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Roland MT-32 verdadeiro (sen emulación de GM)"
 
-#: gui/options.cpp:884 gui/options.cpp:886
+#: gui/options.cpp:1171 gui/options.cpp:1173
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
 "Marcar para empregar o hardware compatible con Roland conectado ao sistema"
 
-#: gui/options.cpp:886
+#: gui/options.cpp:1173
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 (sen emulación de GM)"
 
-#: gui/options.cpp:889
+#: gui/options.cpp:1176
 msgid "Roland GS Device (enable MT-32 mappings)"
 msgstr "Dispositivo Roland GS (activar atribución MT-32)"
 
-#: gui/options.cpp:889
+#: gui/options.cpp:1176
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
@@ -904,176 +1065,362 @@ msgstr ""
 "Marcar para activar a atribución de parches e emular MT-32 nun dispositivo "
 "Roland GS"
 
-#: gui/options.cpp:898
+#: gui/options.cpp:1185
 msgid "Don't use Roland MT-32 music"
 msgstr "Non empregar música en Roland MT-32"
 
-#: gui/options.cpp:925
+#: gui/options.cpp:1212
 msgid "Text and Speech:"
 msgstr "Texto e voz:"
 
-#: gui/options.cpp:929 gui/options.cpp:939
+#: gui/options.cpp:1216 gui/options.cpp:1226
 msgid "Speech"
 msgstr "Voz"
 
-#: gui/options.cpp:930 gui/options.cpp:940
+#: gui/options.cpp:1217 gui/options.cpp:1227
 msgid "Subtitles"
 msgstr "Subtítulos"
 
-#: gui/options.cpp:931
+#: gui/options.cpp:1218
 msgid "Both"
 msgstr "Ambos"
 
-#: gui/options.cpp:933
+#: gui/options.cpp:1220
 msgid "Subtitle speed:"
 msgstr "Velocidade dos subtítulos:"
 
-#: gui/options.cpp:935
+#: gui/options.cpp:1222
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Texto e voz:"
 
-#: gui/options.cpp:939
+#: gui/options.cpp:1226
 msgid "Spch"
 msgstr "Voz"
 
-#: gui/options.cpp:940
+#: gui/options.cpp:1227
 msgid "Subs"
 msgstr "Subs"
 
-#: gui/options.cpp:941
+#: gui/options.cpp:1228
 msgctxt "lowres"
 msgid "Both"
 msgstr "Ambos"
 
-#: gui/options.cpp:941
+#: gui/options.cpp:1228
 msgid "Show subtitles and play speech"
 msgstr "Mostrar os subtítulos e reproducir as voces"
 
-#: gui/options.cpp:943
+#: gui/options.cpp:1230
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Velocidade subs:"
 
-#: gui/options.cpp:959
+#: gui/options.cpp:1246
 msgid "Music volume:"
 msgstr "Volume de música:"
 
-#: gui/options.cpp:961
+#: gui/options.cpp:1248
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Volume música:"
 
-#: gui/options.cpp:968
+#: gui/options.cpp:1255
 msgid "Mute All"
 msgstr "Silenciar todo"
 
-#: gui/options.cpp:971
+#: gui/options.cpp:1258
 msgid "SFX volume:"
 msgstr "Volume de efectos:"
 
-#: gui/options.cpp:971 gui/options.cpp:973 gui/options.cpp:974
+#: gui/options.cpp:1258 gui/options.cpp:1260 gui/options.cpp:1261
 msgid "Special sound effects volume"
 msgstr "Volume dos efectos de son"
 
-#: gui/options.cpp:973
+#: gui/options.cpp:1260
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Volume efectos:"
 
-#: gui/options.cpp:981
+#: gui/options.cpp:1268
 msgid "Speech volume:"
 msgstr "Volume de voz:"
 
-#: gui/options.cpp:983
+#: gui/options.cpp:1270
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Volume voz:"
 
-#: gui/options.cpp:1140
+#: gui/options.cpp:1472
+msgid "Shader"
+msgstr ""
+
+#: gui/options.cpp:1484
+#, fuzzy
+msgid "Control"
+msgstr "Rato"
+
+#: gui/options.cpp:1510
+msgid "FluidSynth Settings"
+msgstr "Configuración de FluidSynth"
+
+#: gui/options.cpp:1541
 msgid "Theme Path:"
 msgstr "Camiño do tema:"
 
-#: gui/options.cpp:1142
+#: gui/options.cpp:1543
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Camiño tema:"
 
-#: gui/options.cpp:1148 gui/options.cpp:1150 gui/options.cpp:1151
+#: gui/options.cpp:1549 gui/options.cpp:1551 gui/options.cpp:1552
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Especificar o camiño dos datos adicionais de todos os xogos ou de ScummVM"
 
-#: gui/options.cpp:1157
+#: gui/options.cpp:1558
 msgid "Plugins Path:"
 msgstr "Camiño dos complementos:"
 
-#: gui/options.cpp:1159
+#: gui/options.cpp:1560
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Camiño complementos:"
 
-#: gui/options.cpp:1170
+#: gui/options.cpp:1571
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Misc."
 
-#: gui/options.cpp:1172
+#: gui/options.cpp:1573
 msgid "Theme:"
 msgstr "Tema:"
 
-#: gui/options.cpp:1176
+#: gui/options.cpp:1577
 msgid "GUI Renderer:"
 msgstr "Procesamento da interfaz:"
 
-#: gui/options.cpp:1188
+#: gui/options.cpp:1589
 msgid "Autosave:"
 msgstr "Autogardado:"
 
-#: gui/options.cpp:1190
+#: gui/options.cpp:1591
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Autogardado:"
 
-#: gui/options.cpp:1198
+#: gui/options.cpp:1599
 msgid "Keys"
 msgstr "Teclas"
 
-#: gui/options.cpp:1205
+#: gui/options.cpp:1606
 msgid "GUI Language:"
 msgstr "Idioma de interfaz:"
 
-#: gui/options.cpp:1205
+#: gui/options.cpp:1606
 msgid "Language of ScummVM GUI"
 msgstr "Idioma da interfaz de ScummVM"
 
-#: gui/options.cpp:1364
-msgid "You have to restart ScummVM before your changes will take effect."
-msgstr "Debes reiniciar ScummVM para que os cambios teñan efecto."
+#: gui/options.cpp:1634
+msgid "Update check:"
+msgstr "Comprobación de actualizacións:"
 
-#: gui/options.cpp:1384
+#: gui/options.cpp:1634
+msgid "How often to check ScummVM updates"
+msgstr "Frecuencia de comprobación das actualizacións de ScummVM"
+
+#: gui/options.cpp:1646
+msgid "Check now"
+msgstr "Comprobar agora"
+
+#: gui/options.cpp:1654
+msgid "Cloud"
+msgstr "Nube"
+
+#: gui/options.cpp:1656
+msgctxt "lowres"
+msgid "Cloud"
+msgstr "Nube"
+
+#: gui/options.cpp:1661
+msgid "Storage:"
+msgstr "Almacenamento:"
+
+#: gui/options.cpp:1661
+msgid "Active cloud storage"
+msgstr "Almacenamento na nube activo"
+
+#: gui/options.cpp:1668 gui/options.cpp:2244
+msgid "<none>"
+msgstr "<ningún>"
+
+#: gui/options.cpp:1672 backends/platform/wii/options.cpp:114
+msgid "Username:"
+msgstr "Nome de usuario:"
+
+#: gui/options.cpp:1672
+msgid "Username used by this storage"
+msgstr "Nome de usuario empregado por este almacenamento"
+
+#: gui/options.cpp:1675
+msgid "Used space:"
+msgstr "Espazo empregado:"
+
+#: gui/options.cpp:1675
+msgid "Space used by ScummVM's saved games on this storage"
+msgstr ""
+"Espazo empregado polas partidas gardadas de ScummVM neste almacenamento."
+
+#: gui/options.cpp:1678
+msgid "Last sync time:"
+msgstr "Última sincronización:"
+
+#: gui/options.cpp:1678
+msgid "When the last saved games sync for this storage occured"
+msgstr ""
+"O momento da última sincronización das partidas gardadas neste almacenamento."
+
+#: gui/options.cpp:1681 gui/storagewizarddialog.cpp:71
+msgid "Connect"
+msgstr "Conectar"
+
+#: gui/options.cpp:1681
+msgid "Open wizard dialog to connect your cloud storage account"
+msgstr ""
+"Abre o diálogo do asistente para conectar coa túa conta de almacenamento na "
+"nube."
+
+#: gui/options.cpp:1682
+msgid "Refresh"
+msgstr "Actualizar"
+
+#: gui/options.cpp:1682
+msgid "Refresh current cloud storage information (username and usage)"
+msgstr ""
+"Actualiza a información do almacenamento na nube actual (nome de usuario e "
+"espazo empregado)."
+
+#: gui/options.cpp:1683
+msgid "Download"
+msgstr "Descargar"
+
+#: gui/options.cpp:1683
+msgid "Open downloads manager dialog"
+msgstr "Abre o diálogo do xestor de descargas."
+
+#: gui/options.cpp:1685
+msgid "Run server"
+msgstr "Executar servidor"
+
+#: gui/options.cpp:1685
+msgid "Run local webserver"
+msgstr "Executar servidor web local"
+
+#: gui/options.cpp:1686 gui/options.cpp:2354
+msgid "Not running"
+msgstr "Non se está a executar"
+
+#: gui/options.cpp:1690
+msgid "/root/ Path:"
+msgstr "Camiño de /root/:"
+
+#: gui/options.cpp:1690 gui/options.cpp:1692 gui/options.cpp:1693
+msgid "Specifies which directory the Files Manager can access"
+msgstr "Especifica o directorio de acceso do xestor de ficheiros."
+
+#: gui/options.cpp:1692
+msgctxt "lowres"
+msgid "/root/ Path:"
+msgstr "Camiño de /root/:"
+
+#: gui/options.cpp:1702
+msgid "Server's port:"
+msgstr "Porto do servidor:"
+
+#: gui/options.cpp:1702
+msgid ""
+"Which port is used by the server\n"
+"Auth with server is not available with non-default port"
+msgstr ""
+"O porto empregado polo servidor.\n"
+"Autenticación non dispoñible con portos non predeterminados."
+
+#: gui/options.cpp:1715
+msgid "Apply"
+msgstr "Aplicar"
+
+#: gui/options.cpp:1858
+msgid "Failed to change cloud storage!"
+msgstr "Erro ao cambiar o almacenamento na nube!"
+
+#: gui/options.cpp:1861
+msgid "Another cloud storage is already active."
+msgstr "Xa está activo outro almacenamento na nube."
+
+#: gui/options.cpp:1929
+#, fuzzy
+msgid "Theme does not support selected language!"
+msgstr "O complemento do motor non é compatible cos ficheiros de gardado"
+
+#: gui/options.cpp:1932
+#, fuzzy
+msgid "Theme cannot be loaded!"
+msgstr "Non se puido cargar a partida"
+
+#: gui/options.cpp:1935
+msgid ""
+"\n"
+"Misc settings will be restored."
+msgstr ""
+
+#: gui/options.cpp:1971
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Non é posible escribir no directorio elixido. Selecciona outro."
 
-#: gui/options.cpp:1393
+#: gui/options.cpp:1980
 msgid "Select directory for GUI themes"
 msgstr "Seleccionar directorio para temas de interfaz"
 
-#: gui/options.cpp:1403
+#: gui/options.cpp:1990
 msgid "Select directory for extra files"
 msgstr "Seleccionar directorio para ficheiros adicionais"
 
-#: gui/options.cpp:1414
+#: gui/options.cpp:2001
 msgid "Select directory for plugins"
 msgstr "Seleccionar directorio para complementos"
 
-#: gui/options.cpp:1467
+#: gui/options.cpp:2013
+msgid "Select directory for Files Manager /root/"
+msgstr "Seleccionar directorio para /root/ de xestor de ficheiros"
+
+#: gui/options.cpp:2251
+#, c-format
+msgid "%llu bytes"
+msgstr "%llu bytes"
+
+#: gui/options.cpp:2259
+msgid "<right now>"
+msgstr "<agora mesmo>"
+
+#: gui/options.cpp:2261
+msgid "<never>"
+msgstr "<nunca>"
+
+#: gui/options.cpp:2345
+msgid "Stop server"
+msgstr "Deter servidor"
+
+#: gui/options.cpp:2346
+msgid "Stop local webserver"
+msgstr "Deter servidor web local"
+
+#: gui/options.cpp:2437
 msgid ""
-"The theme you selected does not support your current language. If you want "
-"to use this theme you need to switch to another language first."
+"Request failed.\n"
+"Check your Internet connection."
 msgstr ""
-"O tema seleccionado non é compatible co idioma actual. Para empregar o tema, "
-"deberás cambiar antes o idioma da interfaz."
+"Erro ao solicitar.\n"
+"Comproba a túa conexión á Internet."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1084,195 +1431,295 @@ msgstr "# seguinte"
 msgid "add"
 msgstr "engadir"
 
-#: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:164
+#: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:167
 msgid "Delete char"
 msgstr "Eliminar carácter"
 
-#: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:168
+#: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:171
 msgid "<"
 msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
-#: gui/predictivedialog.cpp:99 gui/predictivedialog.cpp:572
+#: gui/predictivedialog.cpp:99 gui/predictivedialog.cpp:575
 msgid "*  Pre"
 msgstr "*  Pre"
 
 #. I18N: 'Num' means Numbers
-#: gui/predictivedialog.cpp:575
+#: gui/predictivedialog.cpp:578
 msgid "*  Num"
 msgstr "*  Núm"
 
 #. I18N: 'Abc' means Latin alphabet input
-#: gui/predictivedialog.cpp:578
+#: gui/predictivedialog.cpp:581
 msgid "*  Abc"
 msgstr "*  Abc"
 
-#: gui/recorderdialog.cpp:64
+#: gui/recorderdialog.cpp:63
 msgid "Recorder or Playback Gameplay"
 msgstr "Partida gravada ou reproducida"
 
-#: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
-#: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
+#: gui/recorderdialog.cpp:68 gui/recorderdialog.cpp:155
+#: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:443
 msgid "Delete"
 msgstr "Eliminar"
 
-#: gui/recorderdialog.cpp:71
+#: gui/recorderdialog.cpp:70
 msgid "Record"
 msgstr "Gravar"
 
-#: gui/recorderdialog.cpp:72
+#: gui/recorderdialog.cpp:71
 msgid "Playback"
 msgstr "Reproducir"
 
-#: gui/recorderdialog.cpp:74
+#: gui/recorderdialog.cpp:73
 msgid "Edit"
 msgstr "Editar"
 
+#: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
+#: gui/recorderdialog.cpp:252
+msgid "Author: "
+msgstr "Autor: "
+
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
-msgid "Author: "
-msgstr "Autor:"
-
-#: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
-#: gui/recorderdialog.cpp:254
 msgid "Notes: "
-msgstr "Notas:"
+msgstr "Notas: "
 
-#: gui/recorderdialog.cpp:155
+#: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
 msgstr "Seguro que queres eliminar esta gravación?"
 
-#: gui/recorderdialog.cpp:174
+#: gui/recorderdialog.cpp:173
 msgid "Unknown Author"
 msgstr "Autor descoñecido"
 
-#: gui/saveload-dialog.cpp:167
+#: gui/remotebrowser.cpp:128
+msgid "ScummVM could not access the directory!"
+msgstr "ScummVM non foi quen de acceder ao directorio!"
+
+#: gui/saveload-dialog.cpp:334
 msgid "List view"
 msgstr "Lista"
 
-#: gui/saveload-dialog.cpp:168
+#: gui/saveload-dialog.cpp:335
 msgid "Grid view"
 msgstr "Grade"
 
-#: gui/saveload-dialog.cpp:211 gui/saveload-dialog.cpp:360
+#: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:530
 msgid "No date saved"
 msgstr "Non hai data gardada"
 
-#: gui/saveload-dialog.cpp:212 gui/saveload-dialog.cpp:361
+#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:531
 msgid "No time saved"
 msgstr "Non hai hora gardada"
 
-#: gui/saveload-dialog.cpp:213 gui/saveload-dialog.cpp:362
+#: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:532
 msgid "No playtime saved"
 msgstr "Non hai tempo de xogo gardado"
 
-#: gui/saveload-dialog.cpp:275
+#: gui/saveload-dialog.cpp:442
 msgid "Do you really want to delete this saved game?"
 msgstr "Seguro que queres eliminar esta partida?"
 
-#: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:884
+#: gui/saveload-dialog.cpp:556 gui/saveload-dialog.cpp:1062
 msgid "Date: "
-msgstr "Data:"
+msgstr "Data: "
 
-#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:890
+#: gui/saveload-dialog.cpp:560 gui/saveload-dialog.cpp:1068
 msgid "Time: "
-msgstr "Hora:"
+msgstr "Hora: "
 
-#: gui/saveload-dialog.cpp:395 gui/saveload-dialog.cpp:898
+#: gui/saveload-dialog.cpp:566 gui/saveload-dialog.cpp:1076
 msgid "Playtime: "
-msgstr "Tempo de xogo:"
+msgstr "Tempo de xogo: "
 
-#: gui/saveload-dialog.cpp:408 gui/saveload-dialog.cpp:496
-msgid "Untitled savestate"
+#: gui/saveload-dialog.cpp:579 gui/saveload-dialog.cpp:667
+#, fuzzy
+msgid "Untitled saved game"
 msgstr "Partida sen título"
 
-#: gui/saveload-dialog.cpp:548
+#: gui/saveload-dialog.cpp:720
 msgid "Next"
 msgstr "Seg."
 
-#: gui/saveload-dialog.cpp:551
+#: gui/saveload-dialog.cpp:723
 msgid "Prev"
 msgstr "Ant."
 
-#: gui/saveload-dialog.cpp:748
+#: gui/saveload-dialog.cpp:926
 msgid "New Save"
 msgstr "Novo ficheiro"
 
-#: gui/saveload-dialog.cpp:748
-msgid "Create a new save game"
+#: gui/saveload-dialog.cpp:926
+msgid "Create a new saved game"
 msgstr "Crea un novo ficheiro de gardado"
 
-#: gui/saveload-dialog.cpp:877
+#: gui/saveload-dialog.cpp:1055
 msgid "Name: "
-msgstr "Nome:"
+msgstr "Nome: "
 
-#: gui/saveload-dialog.cpp:949
+#: gui/saveload-dialog.cpp:1133
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Introduce unha descrición para o espazo %d:"
+
+#: gui/storagewizarddialog.cpp:55
+#, c-format
+msgid "%s Storage Connection Wizard"
+msgstr "Asistente de conexión ao almacenamento de %s"
+
+#: gui/storagewizarddialog.cpp:58
+msgid "Navigate to the following URL:"
+msgstr "Ir á seguinte URL:"
+
+#: gui/storagewizarddialog.cpp:61
+msgid "Obtain the code from the storage, enter it"
+msgstr "Obtén o código do almacenamento."
+
+#: gui/storagewizarddialog.cpp:62
+msgid "in the following field and press 'Connect':"
+msgstr "Escríbeo neste campo e preme Conectar:"
+
+#: gui/storagewizarddialog.cpp:69
+msgid "Open URL"
+msgstr "Abrir URL"
+
+#: gui/storagewizarddialog.cpp:70
+msgid "Paste"
+msgstr "Pegar"
+
+#: gui/storagewizarddialog.cpp:70
+msgid "Pastes clipboard contents into fields"
+msgstr "Pega o contido do portapapeis nos campos."
+
+#: gui/storagewizarddialog.cpp:78
+msgid "You will be directed to ScummVM's page where"
+msgstr "Irás á páxina de ScummVM para facilitar"
+
+#: gui/storagewizarddialog.cpp:79
+msgid "you should allow it to access your storage."
+msgstr "os permisos de acceso ao teu almacenamento."
+
+#: gui/storagewizarddialog.cpp:112
+msgid "Another Storage is active. Do you want to interrupt it?"
+msgstr "Hai outro almacenamento activo. Seguro que queres interrompelo?"
+
+#: gui/storagewizarddialog.cpp:121
+msgid "Wait until current Storage finishes up and try again."
+msgstr "Agarda a que finalice o almacenamento actual e téntao de novo."
+
+#: gui/storagewizarddialog.cpp:182
+#, c-format
+msgid "Field %s has a mistake in it."
+msgstr "O campo %s ten un erro."
+
+#: gui/storagewizarddialog.cpp:184
+#, c-format
+msgid "Fields %s have mistakes in them."
+msgstr "Os campos %s teñen erros."
+
+#: gui/storagewizarddialog.cpp:199
+msgid "All OK!"
+msgstr "Todo correcto!"
+
+#: gui/storagewizarddialog.cpp:201
+msgid "Invalid code"
+msgstr "Código non válido"
+
+#: gui/storagewizarddialog.cpp:209
+msgid ""
+"Failed to open URL!\n"
+"Please navigate to this page manually."
+msgstr ""
+"Erro ao abrir a URL!\n"
+"Por favor, accede a esta páxina manualmente."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
 msgstr "Seleccionar tema"
 
-#: gui/ThemeEngine.cpp:347
+#: gui/ThemeEngine.cpp:461
 msgid "Disabled GFX"
 msgstr "Efectos gráficos desactivados"
 
-#: gui/ThemeEngine.cpp:347
+#: gui/ThemeEngine.cpp:461
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Efectos desactivados"
 
-#: gui/ThemeEngine.cpp:348
+#: gui/ThemeEngine.cpp:462
 msgid "Standard Renderer"
 msgstr "Procesamento estándar"
 
-#: gui/ThemeEngine.cpp:348 engines/scumm/dialogs.cpp:663
+#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Estándar"
 
-#: gui/ThemeEngine.cpp:350
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased Renderer"
 msgstr "Procesamento antidistorsión"
 
-#: gui/ThemeEngine.cpp:350
+#: gui/ThemeEngine.cpp:464
 msgid "Antialiased"
 msgstr "Antidistorsión"
 
-#: gui/widget.cpp:323 gui/widget.cpp:325 gui/widget.cpp:331 gui/widget.cpp:333
+#: gui/updates-dialog.cpp:51
+msgid ""
+"ScummVM now supports automatic check for updates\n"
+"which requires access to the Internet.\n"
+"\n"
+"Would you like to enable this feature?"
+msgstr ""
+"ScummVM agora ofrece a busca automática\n"
+"de actualizacións. Require acceso á Internet.\n"
+"\n"
+"Queres activar esta característica?"
+
+#: gui/updates-dialog.cpp:55
+msgid "(You can always enable it in the options dialog on the Misc tab)"
+msgstr "(Podes actívalo no diálogo de opción da pestana Misc.)"
+
+#: gui/updates-dialog.cpp:92
+msgid "Check for updates automatically"
+msgstr "Buscar actualizacións automaticamente"
+
+#: gui/updates-dialog.cpp:111
+msgid "Proceed"
+msgstr "Continuar"
+
+#: gui/widget.cpp:375 gui/widget.cpp:377 gui/widget.cpp:383 gui/widget.cpp:385
 msgid "Clear value"
 msgstr "Limpar valor"
 
-#: base/main.cpp:237
+#: base/main.cpp:253
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "O motor non é compatible co nivel de depuración %s"
 
-#: base/main.cpp:309
+#: base/main.cpp:327
 msgid "Menu"
 msgstr "Menú"
 
-#: base/main.cpp:312 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:330 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Omitir"
 
-#: base/main.cpp:315 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:333 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Pausa"
 
-#: base/main.cpp:318
+#: base/main.cpp:336
 msgid "Skip line"
 msgstr "Omitir liña"
 
-#: base/main.cpp:510
+#: base/main.cpp:547
 msgid "Error running game:"
 msgstr "Erro de execución do xogo:"
 
-#: base/main.cpp:557
+#: base/main.cpp:594
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Non se puido atopar un motor para executar o xogo seleccionado"
 
@@ -1329,7 +1776,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Non se atopou un complemento axeitado para o motor"
 
 #: common/error.cpp:68
-msgid "Engine plugin does not support save states"
+#, fuzzy
+msgid "Engine plugin does not support saved games"
 msgstr "O complemento do motor non é compatible cos ficheiros de gardado"
 
 #: common/error.cpp:71
@@ -1357,38 +1805,52 @@ msgstr "PC-9821 (256 cores)"
 msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 cores)"
 
-#: common/rendermode.cpp:71
+#: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules verde"
 
-#: common/rendermode.cpp:72
+#: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules ámbar"
 
-#: engines/advancedDetector.cpp:317
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr "O xogo de %s semella ser descoñecido."
+#: common/updates.cpp:58
+msgid "Daily"
+msgstr "Diariamente"
 
-#: engines/advancedDetector.cpp:318
-msgid "Please, report the following data to the ScummVM team along with name"
-msgstr "Facilita esta información ao equipo de ScummVM, xunto co nome"
+#: common/updates.cpp:60
+msgid "Weekly"
+msgstr "Semanalmente"
 
-#: engines/advancedDetector.cpp:320
-msgid "of the game you tried to add and its version/language/etc.:"
-msgstr "do xogo que tentaches engadir, xunto coa versión, lingua, etc.:"
+#: common/updates.cpp:62
+msgid "Monthly"
+msgstr "Mensualmente"
+
+#: common/updates.cpp:64
+msgid "<Bad value>"
+msgstr "<Valor erróneo>"
+
+#: engines/advancedDetector.cpp:335
+#, fuzzy, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version, language, etc.:"
+msgstr ""
+"O xogo en %s semella descoñecido.\n"
+"Por favor, envía estes datos ao equipo de ScummVM xunto co nome\n"
+"do xogo que queres engadir, a súa versión, lingua, etc.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
 msgstr "~R~etomar"
 
-#: engines/dialogs.cpp:87
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:96
 msgid "~L~oad"
 msgstr "~C~argar"
 
-#: engines/dialogs.cpp:91
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:97
 msgid "~S~ave"
 msgstr "~G~ardar"
 
@@ -1413,11 +1875,20 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~V~olver ao Iniciador"
 
-#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:714
-#: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:336
-#: engines/dreamweb/saveload.cpp:261 engines/neverhood/menumodule.cpp:877
-#: engines/pegasus/pegasus.cpp:377 engines/sci/engine/kfile.cpp:769
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/dialogs.cpp:116 engines/agi/saveload.cpp:761
+#: engines/avalanche/parser.cpp:1900 engines/cge/events.cpp:72
+#: engines/cge2/events.cpp:65 engines/cine/various.cpp:348
+#: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:196
+#: engines/drascula/saveload.cpp:384 engines/dreamweb/saveload.cpp:262
+#: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
+#: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
+#: engines/sci/engine/guest_additions.cpp:418
+#: engines/sci/engine/guest_additions.cpp:459 engines/sci/engine/kfile.cpp:932
+#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
+#: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Gardar partida:"
 
@@ -1426,11 +1897,20 @@ msgstr "Gardar partida:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/agi/saveload.cpp:714 engines/cruise/menu.cpp:212
-#: engines/drascula/saveload.cpp:336 engines/dreamweb/saveload.cpp:261
-#: engines/neverhood/menumodule.cpp:877 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:769 engines/scumm/dialogs.cpp:188
-#: engines/toltecs/menu.cpp:281 engines/tsage/scenes.cpp:598
+#: engines/agi/saveload.cpp:761 engines/avalanche/parser.cpp:1900
+#: engines/cge/events.cpp:72 engines/cge2/events.cpp:65
+#: engines/cine/various.cpp:348 engines/cruise/menu.cpp:212
+#: engines/dm/loadsave.cpp:196 engines/drascula/saveload.cpp:384
+#: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
+#: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
+#: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
+#: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
+#: engines/sci/engine/guest_additions.cpp:418
+#: engines/sci/engine/guest_additions.cpp:459 engines/sci/engine/kfile.cpp:932
+#: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
+#: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Gardar"
 
@@ -1445,21 +1925,21 @@ msgstr ""
 "adicional."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Gamestate save failed (%s)! Please consult the README for basic information, "
+"Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
 "Erro ao gardar (%s)! Consulta o ficheiro README para obter información "
 "básica e máis instrucións para acadar asistencia adicional."
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:109
-#: engines/mohawk/dialogs.cpp:170 engines/tsage/dialogs.cpp:106
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
+#: engines/tsage/dialogs.cpp:112
 msgid "~O~K"
 msgstr "~A~ceptar"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:110
-#: engines/mohawk/dialogs.cpp:171 engines/tsage/dialogs.cpp:107
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:101
+#: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
 msgstr "~C~ancelar"
 
@@ -1467,23 +1947,27 @@ msgstr "~C~ancelar"
 msgid "~K~eys"
 msgstr "~T~eclas"
 
-#: engines/engine.cpp:339
+#: engines/engine.cpp:346
 msgid "Could not initialize color format."
 msgstr "Non se puido iniciar o formato de cor."
 
-#: engines/engine.cpp:347
+#: engines/engine.cpp:354
 msgid "Could not switch to video mode: '"
 msgstr "Non se puido cambiar ao modo de vídeo: '"
 
-#: engines/engine.cpp:356
+#: engines/engine.cpp:363
 msgid "Could not apply aspect ratio setting."
 msgstr "Non se puido aplicar a configuración de proporción."
 
-#: engines/engine.cpp:361
+#: engines/engine.cpp:368
 msgid "Could not apply fullscreen setting."
 msgstr "Non se puido aplicar a configuración de pantalla completa."
 
-#: engines/engine.cpp:461
+#: engines/engine.cpp:373
+msgid "Could not apply filtering setting."
+msgstr "Non se puido aplicar a configuración de filtrado."
+
+#: engines/engine.cpp:473
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1497,7 +1981,7 @@ msgstr ""
 "os ficheiros de datos ao disco duro. Consulta\n"
 "o ficheiro README para obter máis información."
 
-#: engines/engine.cpp:472
+#: engines/engine.cpp:484
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1511,30 +1995,30 @@ msgstr ""
 "do xogo. Consulta o ficheiro README\n"
 "para obter máis información."
 
-#: engines/engine.cpp:530
-#, c-format
+#: engines/engine.cpp:542
+#, fuzzy, c-format
 msgid ""
-"Gamestate load failed (%s)! Please consult the README for basic information, "
-"and for instructions on how to obtain further assistance."
+"Failed to load saved game (%s)! Please consult the README for basic "
+"information, and for instructions on how to obtain further assistance."
 msgstr ""
 "Erro ao cargar (%s)! Consulta o ficheiro README para obter información "
 "básica e máis instrucións para acadar asistencia adicional."
 
-#: engines/engine.cpp:543
+#: engines/engine.cpp:555
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
-"ScummVM. As such, it is likely to be unstable, and any saves you make might "
-"not work in future versions of ScummVM."
+"ScummVM. As such, it is likely to be unstable, and any saved game you make "
+"might not work in future versions of ScummVM."
 msgstr ""
 "Ollo: o xogo que vas iniciar non é aínda totalmente compatible con ScummVM. "
 "Por iso, talvez sexa inestable e os ficheiros de gardado talvez non "
 "funcionen en futuras versións de ScummVM."
 
-#: engines/engine.cpp:546
+#: engines/engine.cpp:558
 msgid "Start anyway"
 msgstr "Iniciar de todos os xeitos"
 
-#: audio/adlib.cpp:2291
+#: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
 msgstr "Emulador de AdLib"
 
@@ -1615,11 +2099,11 @@ msgstr "FM-Towns Audio"
 msgid "PC-98 Audio"
 msgstr "PC-98 Audio"
 
-#: audio/softsynth/mt32.cpp:200
+#: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
 msgstr "Iniciando emulador de MT-32"
 
-#: audio/softsynth/mt32.cpp:426
+#: audio/softsynth/mt32.cpp:437
 msgid "MT-32 Emulator"
 msgstr "Emulador de MT-32"
 
@@ -1634,6 +2118,39 @@ msgstr "Emulador de IBM PCjr"
 #: audio/softsynth/sid.cpp:1430
 msgid "C64 Audio Emulator"
 msgstr "Emulador de C64 Audio"
+
+#: backends/cloud/storage.cpp:211
+msgid "Saved games sync complete."
+msgstr "Sincronización de partidas gardadas completada."
+
+#: backends/cloud/storage.cpp:222
+msgid "Saved games sync was cancelled."
+msgstr "Cancelouse a sincronización de partidas gardadas."
+
+#: backends/cloud/storage.cpp:224
+msgid ""
+"Saved games sync failed.\n"
+"Check your Internet connection."
+msgstr ""
+"Erro ao sincronizar as partidas gardadas.\n"
+"Comproba a túa conexión á Internet."
+
+#: backends/cloud/storage.cpp:328
+#, c-format
+msgid ""
+"Download complete.\n"
+"Failed to download %u files."
+msgstr ""
+"Descarga completada.\n"
+"Erro ao descargar %u ficheiros."
+
+#: backends/cloud/storage.cpp:330
+msgid "Download complete."
+msgstr "Descarga completada."
+
+#: backends/cloud/storage.cpp:340
+msgid "Download failed."
+msgstr "Erro ao descargar."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -1651,42 +2168,42 @@ msgstr "Seguro que queres saír?"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: engines/scumm/dialogs.cpp:192 engines/scumm/help.cpp:83
+#: engines/scumm/dialogs.cpp:188 engines/scumm/help.cpp:83
 #: engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Saír"
 
-#: backends/events/gph/gph-events.cpp:385
-#: backends/events/gph/gph-events.cpp:428
-#: backends/events/openpandora/op-events.cpp:168
+#: backends/events/gph/gph-events.cpp:391
+#: backends/events/gph/gph-events.cpp:434
+#: backends/events/openpandora/op-events.cpp:174
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Modo Pantalla táctil: premer botón primario"
 
-#: backends/events/gph/gph-events.cpp:387
-#: backends/events/gph/gph-events.cpp:430
-#: backends/events/openpandora/op-events.cpp:170
+#: backends/events/gph/gph-events.cpp:393
+#: backends/events/gph/gph-events.cpp:436
+#: backends/events/openpandora/op-events.cpp:176
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Modo Pantalla táctil: premer botón secundario"
 
-#: backends/events/gph/gph-events.cpp:389
-#: backends/events/gph/gph-events.cpp:432
-#: backends/events/openpandora/op-events.cpp:172
+#: backends/events/gph/gph-events.cpp:395
+#: backends/events/gph/gph-events.cpp:438
+#: backends/events/openpandora/op-events.cpp:178
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Modo Pantalla táctil: apuntar co rato (sen premer)"
 
-#: backends/events/gph/gph-events.cpp:409
+#: backends/events/gph/gph-events.cpp:415
 msgid "Maximum Volume"
 msgstr "Volume máximo"
 
-#: backends/events/gph/gph-events.cpp:411
+#: backends/events/gph/gph-events.cpp:417
 msgid "Increasing Volume"
 msgstr "Subindo volume"
 
-#: backends/events/gph/gph-events.cpp:417
+#: backends/events/gph/gph-events.cpp:423
 msgid "Minimal Volume"
 msgstr "Volume mínimo"
 
-#: backends/events/gph/gph-events.cpp:419
+#: backends/events/gph/gph-events.cpp:425
 msgid "Decreasing Volume"
 msgstr "Baixando volume"
 
@@ -1698,78 +2215,92 @@ msgstr "Premer activado"
 msgid "Clicking Disabled"
 msgstr "Premer desactivado"
 
-#: backends/events/openpandora/op-events.cpp:174
+#: backends/events/openpandora/op-events.cpp:180
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Modo Pantalla táctil: apuntar co rato (premer na cruceta)"
 
-#: backends/events/symbiansdl/symbiansdl-events.cpp:186
+#: backends/events/symbiansdl/symbiansdl-events.cpp:190
 msgid "Do you want to quit ?"
 msgstr "Queres saír?"
 
 #. I18N: Trackpad mode toggle status.
-#: backends/events/webossdl/webossdl-events.cpp:308
+#: backends/events/webossdl/webossdl-events.cpp:332
 msgid "Trackpad mode is now"
 msgstr "O modo Panel táctil está"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
-#: backends/events/webossdl/webossdl-events.cpp:311
-#: backends/events/webossdl/webossdl-events.cpp:338
+#: backends/events/webossdl/webossdl-events.cpp:335
+#: backends/events/webossdl/webossdl-events.cpp:362
 msgid "ON"
 msgstr "ACTIVADO"
 
-#: backends/events/webossdl/webossdl-events.cpp:311
-#: backends/events/webossdl/webossdl-events.cpp:338
+#: backends/events/webossdl/webossdl-events.cpp:335
+#: backends/events/webossdl/webossdl-events.cpp:362
 msgid "OFF"
 msgstr "DESACTIVADO"
 
-#: backends/events/webossdl/webossdl-events.cpp:315
+#: backends/events/webossdl/webossdl-events.cpp:339
 msgid "Swipe two fingers to the right to toggle."
 msgstr "Arrastra dous dedos á dereita para cambiar o estado."
 
 #. I18N: Auto-drag toggle status.
-#: backends/events/webossdl/webossdl-events.cpp:335
+#: backends/events/webossdl/webossdl-events.cpp:359
 msgid "Auto-drag mode is now"
 msgstr "O modo Autoarrastrar está"
 
-#: backends/events/webossdl/webossdl-events.cpp:342
+#: backends/events/webossdl/webossdl-events.cpp:366
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Arrastra tres dedos á dereita para cambiar o estado."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:119
+#: backends/graphics/opengl/opengl-graphics.cpp:151
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:120
-msgid "OpenGL (No filtering)"
-msgstr "OpenGL (Sen filtraxe)"
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2572
+msgid "Windowed mode"
+msgstr "Modo en ventá"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
+#, c-format
+msgid "Resolution: %dx%d"
+msgstr "Resolución: %dx%d"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2448
+msgid "Enabled aspect ratio correction"
+msgstr "Corrección de proporción activada"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2454
+msgid "Disabled aspect ratio correction"
+msgstr "Corrección de proporción desactivada"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:775
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
+msgid "Filtering enabled"
+msgstr "Filtrado activado"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:777
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
+msgid "Filtering disabled"
+msgstr "Filtrado desactivado"
+
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:56
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:95
 msgid "Normal (no scaling)"
 msgstr "Normal (sen escala)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (sen escala)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2212
-msgid "Enabled aspect ratio correction"
-msgstr "Corrección de proporción activada"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2218
-msgid "Disabled aspect ratio correction"
-msgstr "Corrección de proporción desactivada"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2273
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
 msgid "Active graphics filter:"
 msgstr "Filtro de gráficos activo:"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2315
-msgid "Windowed mode"
-msgstr "Modo en ventá"
 
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
@@ -1800,7 +2331,7 @@ msgid "Windows MIDI"
 msgstr "Windows MIDI"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
-#: engines/scumm/dialogs.cpp:291
+#: engines/scumm/dialogs.cpp:287
 msgid "~C~lose"
 msgstr "~P~echar"
 
@@ -2111,10 +2642,6 @@ msgstr "Servidor:"
 msgid "Share:"
 msgstr "Disco compartido:"
 
-#: backends/platform/wii/options.cpp:114
-msgid "Username:"
-msgstr "Nome de usuario:"
-
 #: backends/platform/wii/options.cpp:118
 msgid "Password:"
 msgstr "Contrasinal:"
@@ -2237,7 +2764,7 @@ msgstr "Queres cargar ou gardar a partida?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "   Seguro que queres saír?"
+msgstr "   Seguro que queres saír?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2249,11 +2776,11 @@ msgstr "Rotar"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Empregando driver de SDL"
+msgstr "Empregando o controlador de SDL "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Pantalla"
+msgstr "Pantalla "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -2292,24 +2819,69 @@ msgstr ""
 "Non esquezas asignar unha tecla á acción Ocultar barra de ferramentas para "
 "ver o inventario completo"
 
-#: backends/updates/macosx/macosx-updates.mm:67
+#: backends/updates/macosx/macosx-updates.mm:79
 msgid "Check for Updates..."
 msgstr "Buscar actualizacións..."
 
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:974
+#: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
+#: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
+#: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
+#: engines/toon/toon.cpp:4918
+#, c-format
+msgid "Unable to locate the '%s' engine data file."
+msgstr ""
+
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:988
+#: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
+#: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
+#: engines/toon/toon.cpp:4930
+#, c-format
+msgid "The '%s' engine data file is corrupt."
+msgstr ""
+
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:999
+#: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
+#: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
+#: engines/toon/toon.cpp:4941
+#, c-format
+msgid ""
+"Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
+"%d.%d."
+msgstr ""
+
+#: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
+msgid "Color mode"
+msgstr "Modo de cor"
+
+#: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
+msgid "Use color graphics"
+msgstr "Empregar gráficos en cor"
+
+#: engines/adl/detection.cpp:65
+msgid "Scanlines"
+msgstr "Liñas de varrido"
+
+#: engines/adl/detection.cpp:66
+msgid "Show scanlines"
+msgstr "Mostra liñas de varrido."
+
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
-#: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:47
-#: engines/neverhood/detection.cpp:160 engines/sci/detection.cpp:404
-#: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
+#: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
+#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:440
+#: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
+#: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Empregar pantallas orixinais de gardado e carga"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
-#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:161 engines/sci/detection.cpp:405
-#: engines/toltecs/detection.cpp:201
-msgid "Use the original save/load screens, instead of the ScummVM ones"
+#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
+#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:441
+#: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#, fuzzy
+msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
-"Empregar as pantallas orixinais de gardado e carga, no canto das de ScummVM"
+"Emprega as pantallas orixinais de gardado e carga, no canto das de ScummVM."
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
@@ -2320,8 +2892,8 @@ msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
-"Empregar unha paleta alternativa, común para todos os xogos de Amiga (uso "
-"antigo)"
+"Emprega unha paleta alternativa, común para todos os xogos de Amiga (uso "
+"antigo)."
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
@@ -2334,22 +2906,60 @@ msgstr ""
 "Activa a compatibilidade co rato. Permite o uso do rato para o movemento e "
 "os menús do xogo."
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/agi/detection.cpp:177
+msgid "Use Hercules hires font"
+msgstr "Empregar fonte Hercules de alta resolución"
+
+#: engines/agi/detection.cpp:178
+msgid "Uses Hercules hires font, when font file is available."
+msgstr "Emprega a fonte Hércules de alta resolución se está dispoñible."
+
+#: engines/agi/detection.cpp:187
+msgid "Pause when entering commands"
+msgstr "Pausar ao introducir comandos"
+
+#: engines/agi/detection.cpp:188
+msgid ""
+"Shows a command prompt window and pauses the game (like in SCI) instead of a "
+"real-time prompt."
+msgstr ""
+"Mostra unha ventá de comandos e pausa o xogo (como en SCI), no canto de "
+"facelo en tempo real."
+
+#: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
+#: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
+#: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
+#: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:397
+#: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
+#: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
+#: engines/neverhood/menumodule.cpp:893
+#: engines/sci/engine/guest_additions.cpp:437
+#: engines/sci/engine/guest_additions.cpp:475
+#: engines/sci/engine/kfile.cpp:1051 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
+#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Restaurar xogo:"
 
-#: engines/agi/saveload.cpp:727 engines/drascula/saveload.cpp:349
-#: engines/dreamweb/saveload.cpp:169 engines/neverhood/menumodule.cpp:890
-#: engines/sci/engine/kfile.cpp:868 engines/toltecs/menu.cpp:256
+#: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
+#: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
+#: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
+#: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:397
+#: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
+#: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
+#: engines/neverhood/menumodule.cpp:893
+#: engines/sci/engine/guest_additions.cpp:437
+#: engines/sci/engine/guest_additions.cpp:475
+#: engines/sci/engine/kfile.cpp:1051 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
+#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Restaurar"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:2377
-#, c-format
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
+#, fuzzy, c-format
 msgid ""
-"Failed to load game state from file:\n"
+"Failed to load saved game from file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2357,10 +2967,10 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:2370
-#, c-format
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
+#, fuzzy, c-format
 msgid ""
-"Failed to save game state to file:\n"
+"Failed to save game to file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2368,10 +2978,10 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:2388
-#, c-format
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
+#, fuzzy, c-format
 msgid ""
-"Successfully saved game state in file:\n"
+"Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2379,7 +2989,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/animation.cpp:557
+#: engines/agos/animation.cpp:558
 #, c-format
 msgid "Cutscene file '%s' not found!"
 msgstr "Non se atopou o ficheiro de secuencia %s!"
@@ -2393,10 +3003,11 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Activa o modo accesible para daltonismo de xeito predeterminado."
 
 #: engines/drascula/saveload.cpp:47
+#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Drascula that should be "
+"ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -2410,22 +3021,24 @@ msgstr ""
 "Preme Aceptar para convertilos. Se non, volverás ver esta mensaxe a próxima "
 "vez que inicies o xogo.\n"
 
-#: engines/dreamweb/detection.cpp:57
+#: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
 msgstr "Empregar modo Paleta intensa"
 
-#: engines/dreamweb/detection.cpp:58
+#: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
 msgstr "Mostrar os gráficos coa paletta intensa do xogo"
 
-#: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1470
+#: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-msgid "Failed to load game state from file."
+#, fuzzy
+msgid "Failed to load saved game from file."
 msgstr "Erro ao cargar a partida do ficheiro."
 
-#: engines/gob/inter_v2.cpp:1540 engines/gob/inter_geisha.cpp:263
+#: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-msgid "Failed to save game state to file."
+#, fuzzy
+msgid "Failed to save game to file."
 msgstr "Erro ao gardar a partida no ficheiro."
 
 #: engines/gob/inter_v5.cpp:107
@@ -2440,7 +3053,7 @@ msgstr "Velocidade de vídeo rápida"
 msgid "Play movies at an increased speed"
 msgstr "Reproducir vídeos a máis velocidade"
 
-#: engines/groovie/script.cpp:408
+#: engines/groovie/script.cpp:407
 msgid "Failed to save game"
 msgstr "Erro ao gardar a partida"
 
@@ -2510,6 +3123,72 @@ msgstr "Barras de vida"
 msgid "Enable hit point bar graphs"
 msgstr "Activa as barras de vida."
 
+#: engines/kyra/eobcommon.cpp:331 engines/kyra/lol.cpp:481
+msgid "Move Forward"
+msgstr "Mover cara diante"
+
+#: engines/kyra/eobcommon.cpp:332 engines/kyra/lol.cpp:482
+msgid "Move Back"
+msgstr "Mover cara atrás"
+
+#: engines/kyra/eobcommon.cpp:333
+msgid "Move Left"
+msgstr "Mover á esquerda"
+
+#: engines/kyra/eobcommon.cpp:334
+msgid "Move Right"
+msgstr "Mover á dereita"
+
+#: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
+#: engines/pegasus/pegasus.cpp:2509
+msgid "Turn Left"
+msgstr "Xirar á esquerda"
+
+#: engines/kyra/eobcommon.cpp:336 engines/kyra/lol.cpp:486
+#: engines/pegasus/pegasus.cpp:2510
+msgid "Turn Right"
+msgstr "Xirar á dereita"
+
+#: engines/kyra/eobcommon.cpp:337
+msgid "Open/Close Inventory"
+msgstr "Abrir/Pechar inventario"
+
+#: engines/kyra/eobcommon.cpp:338
+msgid "Switch Inventory/Character screen"
+msgstr "Cambiar pantalla de inventario/personaxe"
+
+#: engines/kyra/eobcommon.cpp:339
+msgid "Camp"
+msgstr "Acampar"
+
+#: engines/kyra/eobcommon.cpp:340
+msgid "Cast Spell"
+msgstr "Lanzar feitizo"
+
+#: engines/kyra/eobcommon.cpp:343
+msgid "Spell Level 1"
+msgstr "Nivel de feitizos 1"
+
+#: engines/kyra/eobcommon.cpp:344
+msgid "Spell Level 2"
+msgstr "Nivel de feitizos 2"
+
+#: engines/kyra/eobcommon.cpp:345
+msgid "Spell Level 3"
+msgstr "Nivel de feitizos 3"
+
+#: engines/kyra/eobcommon.cpp:346
+msgid "Spell Level 4"
+msgstr "Nivel de feitizos 4"
+
+#: engines/kyra/eobcommon.cpp:347
+msgid "Spell Level 5"
+msgstr "Nivel de feitizos 5"
+
+#: engines/kyra/eobcommon.cpp:356
+msgid "Spell Level 6"
+msgstr "Nivel de feitizos 6"
+
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
 msgstr "Ataque 1"
@@ -2522,14 +3201,6 @@ msgstr "Ataque 2"
 msgid "Attack 3"
 msgstr "Ataque 3"
 
-#: engines/kyra/lol.cpp:481
-msgid "Move Forward"
-msgstr "Mover cara diante"
-
-#: engines/kyra/lol.cpp:482
-msgid "Move Back"
-msgstr "Mover cara atrás"
-
 #: engines/kyra/lol.cpp:483
 msgid "Slide Left"
 msgstr "Esvarar á esquerda"
@@ -2537,14 +3208,6 @@ msgstr "Esvarar á esquerda"
 #: engines/kyra/lol.cpp:484
 msgid "Slide Right"
 msgstr "Esvarar á dereita"
-
-#: engines/kyra/lol.cpp:485 engines/pegasus/pegasus.cpp:2509
-msgid "Turn Left"
-msgstr "Xirar á esquerda"
-
-#: engines/kyra/lol.cpp:486 engines/pegasus/pegasus.cpp:2510
-msgid "Turn Right"
-msgstr "Xirar á dereita"
 
 #: engines/kyra/lol.cpp:487
 msgid "Rest"
@@ -2575,11 +3238,11 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
 msgid ""
-"The following original save game file has been found in your game path:\n"
+"The following original saved game file has been found in your game path:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Do you wish to use this save game file with ScummVM?\n"
+"Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
 "Atopouse o seguinte ficheiro de gardado orixinal:\n"
@@ -2592,18 +3255,17 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
 msgid ""
-"A save game file was found in the specified slot %d. Overwrite?\n"
+"A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
 "Atopouse un ficheiro de gardado no espazo %d. Sobreescribir?\n"
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you "
-"will\n"
+"%d original saved games have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game later you will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
 "\n"
@@ -2615,49 +3277,127 @@ msgstr ""
 "\".\n"
 "\n"
 
+#: engines/mads/detection.cpp:91
+msgid "Easy mouse interface"
+msgstr "Interface de rato sinxela"
+
+#: engines/mads/detection.cpp:92
+msgid "Shows object names when hovering the mouse over them"
+msgstr "Mostra os nomes dos obxectos ao apuntar co rato."
+
+#: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
+msgid "Animated inventory items"
+msgstr "Obxectos de inventario animados"
+
+#: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
+msgid "Animated game interface"
+msgstr "Interface de xogo animada"
+
+#: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
+msgid "Naughty game mode"
+msgstr "Modo de xogo rebelde"
+
+#: engines/mohawk/detection.cpp:169
+msgid "Play the Myst fly by movie"
+msgstr "Reproducir o filme de imaxes aéreas de Myst"
+
+#: engines/mohawk/detection.cpp:170
+msgid "The Myst fly by movie was not played by the original engine."
+msgstr "O filme de imaxes aéreas de Myst non se reproduciu co motor orixinal."
+
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
+#: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
 msgid "~Z~ip Mode Activated"
 msgstr "Modo ~C~omprimido activado"
 
-#: engines/mohawk/dialogs.cpp:93
+#: engines/mohawk/dialogs.cpp:182
 msgid "~T~ransitions Enabled"
 msgstr "~T~ransicións activadas"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:95
+#: engines/mohawk/dialogs.cpp:184
 msgid "~D~rop Page"
 msgstr "~D~eixar folla"
 
-#: engines/mohawk/dialogs.cpp:99
-msgid "~S~how Map"
-msgstr "Mo~s~trar mapa"
+#: engines/mohawk/dialogs.cpp:188
+msgid "Show ~M~ap"
+msgstr "Mostrar ~m~apa"
 
-#: engines/mohawk/dialogs.cpp:105
-msgid "~M~ain Menu"
-msgstr "~M~enú principal"
+#: engines/mohawk/dialogs.cpp:194
+msgid "Main Men~u~"
+msgstr "Menú ~p~rincipal"
 
-#: engines/mohawk/dialogs.cpp:168
+#: engines/mohawk/dialogs.cpp:268
 msgid "~W~ater Effect Enabled"
 msgstr "Efecto de ~a~uga activado"
 
-#: engines/neverhood/detection.cpp:167
+#: engines/mohawk/riven.cpp:150
+msgid ""
+"You're missing a Riven executable. The Windows executable is 'riven.exe' or "
+"'rivendmo.exe'. "
+msgstr ""
+"Falta un executable de Riven. O executable de Windows é riven.exe ou "
+"rivendmo.exe. "
+
+#: engines/mohawk/riven.cpp:151
+msgid ""
+"Using the 'arcriven.z' installer file also works. In addition, you can use "
+"the Mac 'Riven' executable."
+msgstr ""
+"Tamén podes empregar o ficheiro do instalador arcriven.z ou o executable de "
+"Mac."
+
+#: engines/mohawk/riven.cpp:162
+msgid ""
+"You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
+"works."
+msgstr ""
+"Falta o ficheiro extras.mhk. Tamén podes empregar o ficheiro do instalador "
+"arcriven.z."
+
+#: engines/mohawk/riven_external.cpp:213
+msgid ""
+"Exploration beyond this point available only within the full version of\n"
+"the game."
+msgstr ""
+"A exploración alén deste punto só está dispoñible coa versión\n"
+"completa do xogo.\n"
+
+#: engines/mohawk/riven_external.cpp:655
+msgid ""
+"At this point, the Riven Demo would\n"
+"ask if you would like to open a web browser\n"
+"to bring you to the Red Orb store to buy\n"
+"the game. ScummVM cannot do that and\n"
+"the site no longer exists."
+msgstr ""
+"Neste punto, a demo de Riven preguntaría\n"
+"se queres abrir un navegador para ir á\n"
+"tenda de Red Orb e mercar o xogo.\n"
+"ScummVM non pode facer iso e o sitio web\n"
+"xa non existe."
+
+#: engines/mohawk/mohawk.cpp:61
+msgid "The game is paused. Press any key to continue."
+msgstr "Xogo en pausa. Pulsa calquera tecla para continuar."
+
+#: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
 msgstr "Omitir as escenas do Salón dos rexistros"
 
-#: engines/neverhood/detection.cpp:168
+#: engines/neverhood/detection.cpp:185
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr "Permite ao xogador saltar as escenas do Salón dos rexistros"
 
-#: engines/neverhood/detection.cpp:174
+#: engines/neverhood/detection.cpp:191
 msgid "Scale the making of videos to full screen"
 msgstr "Redimensionar vídeos a pantalla completa"
 
-#: engines/neverhood/detection.cpp:175
+#: engines/neverhood/detection.cpp:192
 msgid "Scale the making of videos, so that they use the whole screen"
 msgstr "Redimensionar a creación de vídeos en pantalla completa"
 
-#: engines/parallaction/saveload.cpp:133
+#: engines/parallaction/saveload.cpp:130
 #, c-format
 msgid ""
 "Can't save game in slot %i\n"
@@ -2666,17 +3406,26 @@ msgstr ""
 "Non se pode gardar a partida no espazo %i\n"
 "\n"
 
-#: engines/parallaction/saveload.cpp:204
+#: engines/parallaction/saveload.cpp:194
+msgid "Load file"
+msgstr "Cargar ficheiro"
+
+#: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
 msgstr "Cargando..."
 
-#: engines/parallaction/saveload.cpp:219
+#: engines/parallaction/saveload.cpp:209
+msgid "Save file"
+msgstr "Gardar ficheiro"
+
+#: engines/parallaction/saveload.cpp:216
 msgid "Saving game..."
 msgstr "Gardando..."
 
-#: engines/parallaction/saveload.cpp:272
+#: engines/parallaction/saveload.cpp:269
+#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Nippon Safes that should be "
+"ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
 "The old names are no longer supported, so you will not be able to load your "
 "games if you don't convert them.\n"
@@ -2691,11 +3440,12 @@ msgstr ""
 "Preme Aceptar para cambialos. Se non, volverás ver esta mensaxe a próxima "
 "vez que inicies o xogo.\n"
 
-#: engines/parallaction/saveload.cpp:319
-msgid "ScummVM successfully converted all your savefiles."
+#: engines/parallaction/saveload.cpp:316
+#, fuzzy
+msgid "ScummVM successfully converted all your saved games."
 msgstr "ScummVM converteu correctamente todos os ficheiros de gardado."
 
-#: engines/parallaction/saveload.cpp:321
+#: engines/parallaction/saveload.cpp:318
 msgid ""
 "ScummVM printed some warnings in your console window and can't guarantee all "
 "your files have been converted.\n"
@@ -2708,8 +3458,9 @@ msgstr ""
 "Contacta co equipo de ScummVM."
 
 #: engines/pegasus/pegasus.cpp:714
-msgid "Invalid save file name"
-msgstr "Nome de ficheiro non válido"
+#, fuzzy
+msgid "Invalid file name for saving"
+msgstr "Introducir nome de ficheiro para gardar"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -2751,37 +3502,45 @@ msgstr "Intro alternativa"
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Emprega unha introdución alternativa para o xogo (só versión en CD)."
 
-#: engines/sci/detection.cpp:374
+#: engines/sci/detection.cpp:400
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Omitir interpolación de cores EGA (fondos de cor completa)"
 
-#: engines/sci/detection.cpp:375
+#: engines/sci/detection.cpp:401
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Omite a interpolación de cores EGA. Os gráficos móstranse con cores "
 "completas."
 
-#: engines/sci/detection.cpp:384
+#: engines/sci/detection.cpp:410
 msgid "Enable high resolution graphics"
 msgstr "Activar gráficos de alta resolución"
 
-#: engines/sci/detection.cpp:385
+#: engines/sci/detection.cpp:411
 msgid "Enable high resolution graphics/content"
 msgstr "Activa os gráficos ou o contido de alta resolución."
 
-#: engines/sci/detection.cpp:394
+#: engines/sci/detection.cpp:420
+msgid "Enable black-lined video"
+msgstr "Activar vídeo con bordos"
+
+#: engines/sci/detection.cpp:421
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr "Debuxa liñas negras sobre os vídeos para aumentar a nitidez aparente."
+
+#: engines/sci/detection.cpp:430
 msgid "Prefer digital sound effects"
 msgstr "Preferir efectos de son dixitais"
 
-#: engines/sci/detection.cpp:395
+#: engines/sci/detection.cpp:431
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Dá preferencia aos efectos de son dixitais no canto dos sintéticos."
 
-#: engines/sci/detection.cpp:414
+#: engines/sci/detection.cpp:450
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Empregar IMF/Yamaha FB-01 para a saída de MIDI"
 
-#: engines/sci/detection.cpp:415
+#: engines/sci/detection.cpp:451
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -2789,149 +3548,262 @@ msgstr ""
 "Emprega unha tarxeta IBM Music Feature ou un módulo de sintetizador Yamaha "
 "FB-01 FM para a saída de MIDI."
 
-#: engines/sci/detection.cpp:425
+#: engines/sci/detection.cpp:461
 msgid "Use CD audio"
 msgstr "Empregar son de CD"
 
-#: engines/sci/detection.cpp:426
+#: engines/sci/detection.cpp:462
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Emprega son de CD no canto do do xogo, de ser o caso."
 
-#: engines/sci/detection.cpp:436
+#: engines/sci/detection.cpp:472
 msgid "Use Windows cursors"
 msgstr "Empregar cursores de Windows"
 
-#: engines/sci/detection.cpp:437
+#: engines/sci/detection.cpp:473
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Emprega os cursores de Windows (máis pequenos e monocromos) no canto dos de "
 "DOS."
 
-#: engines/sci/detection.cpp:447
+#: engines/sci/detection.cpp:483
 msgid "Use silver cursors"
 msgstr "Empregar cursores prateados"
 
-#: engines/sci/detection.cpp:448
+#: engines/sci/detection.cpp:484
+#, fuzzy
 msgid ""
-"Use the alternate set of silver cursors, instead of the normal golden ones"
+"Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Emprega o xogo de cursores prateados alternativo, no canto dos dourados "
 "normais."
 
-#: engines/scumm/dialogs.cpp:176
+#: engines/sci/detection.cpp:813
+#, fuzzy
+msgid "(Autosave)"
+msgstr "Autogardado:"
+
+#: engines/sci/engine/kgraphics.cpp:985
+msgid ""
+"Characters saved inside ScummVM are shown automatically. Character files "
+"saved in the original interpreter need to be put inside ScummVM's saved "
+"games directory and a prefix needs to be added depending on which game it "
+"was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
+"Example: 'qfg2-thief.sav'."
+msgstr ""
+
+#: engines/sci/engine/kgraphics32.cpp:351
+#, c-format
+msgid "Please use an external viewer to open the game's help file: %s"
+msgstr ""
+
+#: engines/sci/engine/savegame.cpp:1304
+msgid "The format of this saved game is obsolete, unable to load it"
+msgstr ""
+
+#: engines/sci/engine/savegame.cpp:1306
+#, c-format
+msgid "Savegame version is %d, maximum supported is %0d"
+msgstr ""
+
+#: engines/sci/engine/savegame.cpp:1317
+msgid ""
+"This saved game was created with a different version of the game, unable to "
+"load it"
+msgstr ""
+
+#: engines/sci/resource.cpp:813
+msgid ""
+"Missing or corrupt game resources have been detected. Some game features may "
+"not work properly. Please check the console for more information, and verify "
+"that your game files are valid."
+msgstr ""
+
+#: engines/sci/sci.cpp:394
+msgid ""
+"A known buggy game script has been detected, which could prevent you from "
+"progressing later on in the game, during the sequence with the Green Man's "
+"riddles. Please, apply the latest patch for this game by Sierra to avoid "
+"possible problems."
+msgstr ""
+
+#: engines/sci/sci.cpp:403
+msgid ""
+"Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
+"disabled in the release version of the game. ScummVM allows the subtitles to "
+"be re-enabled, but because they were removed from the original game, they do "
+"not always render properly or reflect the actual game speech. This is not a "
+"ScummVM bug -- it is a problem with the game's assets."
+msgstr ""
+
+#: engines/sci/sci.cpp:427
+msgid ""
+"You have selected General MIDI as a sound device. Sierra has provided after-"
+"market support for General MIDI for this game in their \"General MIDI Utility"
+"\". Please, apply this patch in order to enjoy MIDI music with this game. "
+"Once you have obtained it, you can unpack all of the included *.PAT files in "
+"your ScummVM extras folder and ScummVM will add the appropriate patch "
+"automatically. Alternatively, you can follow the instructions in the READ.ME "
+"file included in the patch and rename the associated *.PAT file to 4.PAT and "
+"place it in the game folder. Without this patch, General MIDI music for this "
+"game will sound badly distorted."
+msgstr ""
+
+#: engines/sci/sci.cpp:446
+msgid ""
+"Your game is patched with a fan made script patch. Such patches have been "
+"reported to cause issues, as they modify game scripts extensively. The "
+"issues that these patches fix do not occur in ScummVM, so you are advised to "
+"remove this patch from your game folder in order to avoid having unexpected "
+"errors and/or issues later on."
+msgstr ""
+
+#: engines/scumm/detection.cpp:1120
+#, fuzzy
+msgid ""
+"Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
+"version (in particular, not a fan-made translation), please, report the\n"
+"following data to the ScummVM team along with the name of the game you "
+"tried\n"
+"to add and its version, language, etc.:\n"
+msgstr ""
+"A túa versión do xogo semella descoñecida. Se non é unha versión\n"
+"modificada por afeccionados (en particular, unha tradución feita por\n"
+"afeccionados), envía os seguintes datos ao equipo de ScummVM,\n"
+"xunto co nome do xogo que queres engadir, a súa versión, lingua, etc.:"
+
+#: engines/scumm/detection.cpp:1138
+msgid ""
+"The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
+"piracy.\n"
+"The full version is available for purchase from the iTunes Store."
+msgstr ""
+"A versión Lite de Putt-Putt Saves the Zoo iOS non é compatíbel para evitar a "
+"piratería.\n"
+"A versión completa está dispoñíbel para mercar na tenda de iTunes."
+
+#: engines/scumm/detection.cpp:1341
+msgid "Show Object Line"
+msgstr "Mostrar liña de obsecto"
+
+#: engines/scumm/detection.cpp:1342
+msgid "Show the names of objects at the bottom of the screen"
+msgstr "Mostra os nomes dos obxectos na parte inferior da pantalla"
+
+#: engines/scumm/dialogs.cpp:172
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
 msgstr "Insire o disco %c e preme o botón para continuar."
 
-#: engines/scumm/dialogs.cpp:177
+#: engines/scumm/dialogs.cpp:173
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
 msgstr "Non se puido atopar %s, (%c%d). Preme o botón."
 
-#: engines/scumm/dialogs.cpp:178
+#: engines/scumm/dialogs.cpp:174
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
 msgstr "Erro ao ler o disco %c, (%c%d). Preme o botón."
 
-#: engines/scumm/dialogs.cpp:179
+#: engines/scumm/dialogs.cpp:175
 msgid "Game Paused.  Press SPACE to Continue."
 msgstr "Xogo en pausa. Pulsa a barra espazadora para continuar."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
-#: engines/scumm/dialogs.cpp:183
+#: engines/scumm/dialogs.cpp:179
 msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "Seguro que queres reiniciar? (S/N)S"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-#: engines/scumm/dialogs.cpp:185
+#: engines/scumm/dialogs.cpp:181
 msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "Seguro que queres saír? (S/N)S"
 
-#: engines/scumm/dialogs.cpp:190
+#: engines/scumm/dialogs.cpp:186
 msgid "Play"
 msgstr "Xogar"
 
-#: engines/scumm/dialogs.cpp:194
+#: engines/scumm/dialogs.cpp:190
 msgid "Insert save/load game disk"
 msgstr "Inserir disco de gardado/carga"
 
-#: engines/scumm/dialogs.cpp:195
+#: engines/scumm/dialogs.cpp:191
 msgid "You must enter a name"
 msgstr "Debes introducir un nome"
 
-#: engines/scumm/dialogs.cpp:196
+#: engines/scumm/dialogs.cpp:192
 msgid "The game was NOT saved (disk full?)"
 msgstr "Non se puido gardar a partida (disco cheo?)"
 
-#: engines/scumm/dialogs.cpp:197
+#: engines/scumm/dialogs.cpp:193
 msgid "The game was NOT loaded"
 msgstr "Non se puido cargar a partida"
 
-#: engines/scumm/dialogs.cpp:198
+#: engines/scumm/dialogs.cpp:194
 #, c-format
 msgid "Saving '%s'"
 msgstr "Gardando %s"
 
-#: engines/scumm/dialogs.cpp:199
+#: engines/scumm/dialogs.cpp:195
 #, c-format
 msgid "Loading '%s'"
 msgstr "Cargando %s"
 
-#: engines/scumm/dialogs.cpp:200
+#: engines/scumm/dialogs.cpp:196
 msgid "Name your SAVE game"
 msgstr "Introduce un nome para a partida gardada"
 
-#: engines/scumm/dialogs.cpp:201
+#: engines/scumm/dialogs.cpp:197
 msgid "Select a game to LOAD"
 msgstr "Selecciona unha partida para cargala"
 
-#: engines/scumm/dialogs.cpp:202
+#: engines/scumm/dialogs.cpp:198
 msgid "Game title)"
 msgstr "Título)"
 
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:288
+#: engines/scumm/dialogs.cpp:284
 msgid "~P~revious"
 msgstr "~A~nterior"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:290
+#: engines/scumm/dialogs.cpp:286
 msgid "~N~ext"
 msgstr "~S~eguinte"
 
-#: engines/scumm/dialogs.cpp:602
+#: engines/scumm/dialogs.cpp:598
 msgid "Speech Only"
 msgstr "Só voz"
 
-#: engines/scumm/dialogs.cpp:603
+#: engines/scumm/dialogs.cpp:599
 msgid "Speech and Subtitles"
 msgstr "Voz e subtítulos"
 
-#: engines/scumm/dialogs.cpp:604
+#: engines/scumm/dialogs.cpp:600
 msgid "Subtitles Only"
 msgstr "Só subtítulos"
 
-#: engines/scumm/dialogs.cpp:612
+#: engines/scumm/dialogs.cpp:608
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Voz e subs"
 
-#: engines/scumm/dialogs.cpp:658
+#: engines/scumm/dialogs.cpp:654
 msgid "Select a Proficiency Level."
 msgstr "Selecciona un nivel de habilidade."
 
-#: engines/scumm/dialogs.cpp:660
+#: engines/scumm/dialogs.cpp:656
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Consulta o manual de Loom(TM) para obter axuda."
 
-#: engines/scumm/dialogs.cpp:664
+#: engines/scumm/dialogs.cpp:660
 msgid "Practice"
 msgstr "Práctica"
 
-#: engines/scumm/dialogs.cpp:665
+#: engines/scumm/dialogs.cpp:661
 msgid "Expert"
 msgstr "Experto"
 
@@ -2972,7 +3844,8 @@ msgid "Ctrl"
 msgstr "CTRL"
 
 #: engines/scumm/help.cpp:80
-msgid "Load game state 1-10"
+#, fuzzy
+msgid "Load saved game 1-10"
 msgstr "Cargar partida 1-10"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
@@ -2982,7 +3855,8 @@ msgid "Alt"
 msgstr "ALT"
 
 #: engines/scumm/help.cpp:81
-msgid "Save game state 1-10"
+#, fuzzy
+msgid "Save game 1-10"
 msgstr "Gardar partida 1-10"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
@@ -3468,23 +4342,23 @@ msgstr "Voar á dereita"
 msgid "Fly to lower right"
 msgstr "Voar á dereita abaixo"
 
-#: engines/scumm/input.cpp:580
+#: engines/scumm/input.cpp:578
 msgid "Snap scroll on"
 msgstr "Axuste de desprazamento SI"
 
-#: engines/scumm/input.cpp:582
+#: engines/scumm/input.cpp:580
 msgid "Snap scroll off"
 msgstr "Axuste de desprazamento NON"
 
-#: engines/scumm/input.cpp:595
+#: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Volume de música:"
+msgstr "Volume de música: "
 
-#: engines/scumm/input.cpp:612
+#: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Velocidade dos subtítulos:"
+msgstr "Velocidade dos subtítulos: "
 
-#: engines/scumm/scumm.cpp:1832
+#: engines/scumm/scumm.cpp:1880
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3493,7 +4367,7 @@ msgstr ""
 "A compatibilidade nativa con MIDI precisa a actualización de Roland\n"
 "de LucasArts, mais falla %s. Empregarase AdLib."
 
-#: engines/scumm/scumm.cpp:2644
+#: engines/scumm/scumm.cpp:2733
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -3519,21 +4393,53 @@ msgstr ""
 "Erro ao buscar o executable de Monkey Island para Macintosh\n"
 "do que empregar os instrumentos. A música desactivarase."
 
-#: engines/sky/compact.cpp:130
+#: engines/sherlock/detection.cpp:81
+msgid "Pixellated scene transitions"
+msgstr "Transicións de escenas pixeladas"
+
+#: engines/sherlock/detection.cpp:82
+msgid "When changing scenes, a randomized pixel transition is done"
+msgstr "Ao mudar de escena, mostrase una transición pixelada aleatoria."
+
+#: engines/sherlock/detection.cpp:91
+msgid "Don't show hotspots when moving mouse"
+msgstr "Non mostrar puntos de acceso ao mover o rato"
+
+#: engines/sherlock/detection.cpp:92
 msgid ""
-"Unable to find \"sky.cpt\" file!\n"
-"Please download it from www.scummvm.org"
+"Only show hotspot names after you actually click on a hotspot or action "
+"button"
 msgstr ""
-"O ficheiro sky.cpt non se atopa!\n"
-"Descárgao dende www.scummvm.org"
+"Só mostra os nomes dos puntos de acceso despois de premer nun punto de "
+"acceso ou un botón de acción."
+
+#: engines/sherlock/detection.cpp:101
+msgid "Show character portraits"
+msgstr "Mostrar retratos de personaxes"
+
+#: engines/sherlock/detection.cpp:102
+msgid "Show portraits for the characters when conversing"
+msgstr "Mostra os retratos dos personaxes nas conversas."
+
+#: engines/sherlock/detection.cpp:111
+msgid "Slide dialogs into view"
+msgstr "Deslizar pantallas"
+
+#: engines/sherlock/detection.cpp:112
+msgid "Slide UI dialogs into view, rather than simply showing them immediately"
+msgstr "Desliza as pantallas da IU, no canto de mostralas directamente."
+
+#: engines/sherlock/detection.cpp:121
+msgid "Transparent windows"
+msgstr "Ventás transparentes"
+
+#: engines/sherlock/detection.cpp:122
+msgid "Show windows with a partially transparent background"
+msgstr "Mostra ventás cun fondo parcialmente transparente."
 
 #: engines/sky/compact.cpp:141
-msgid ""
-"The \"sky.cpt\" file has an incorrect size.\n"
-"Please (re)download it from www.scummvm.org"
+msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr ""
-"O ficheiro sky.cpt ten un tamaño incorrecto.\n"
-"Descárgao (de novo) dende www.scummvm.org"
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -3541,7 +4447,7 @@ msgstr "Intro de disquete"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr "Empregar a introdución da versión en disquete (só versión en CD)"
+msgstr "Emprega a introdución da versión en disquete (só versión en CD)."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
@@ -3567,10 +4473,11 @@ msgid "Cutscene '%s' not found"
 msgstr "Non se atopou a secuencia %s"
 
 #: engines/sword1/control.cpp:863
+#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Broken Sword 1 that should be "
-"converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"ScummVM found that you have old saved games for Broken Sword 1 that should "
+"be converted.\n"
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -3587,8 +4494,8 @@ msgstr ""
 #: engines/sword1/control.cpp:1232
 #, c-format
 msgid ""
-"Target new save game already exists!\n"
-"Would you like to keep the old save game (%s) or the new one (%s)?\n"
+"Target new saved game already exists!\n"
+"Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
 "Xa existe unha partida con ese nome!\n"
 "Queres conservar a vella (%s) ou a nova (%s)?\n"
@@ -3618,21 +4525,50 @@ msgstr "Mostrar etiquetas"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr "Mostrar as etiquetas dos obxectos ao apuntar co rato"
+msgstr "Mostra as etiquetas dos obxectos ao apuntar co rato."
 
-#: engines/teenagent/resources.cpp:95
+#: engines/sword25/detection.cpp:46
+msgid "Use English speech"
+msgstr "Empregar voces en inglés"
+
+#: engines/sword25/detection.cpp:47
 msgid ""
-"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+"Use English speech instead of German for every language other than German"
 msgstr ""
-"Falta o ficheiro teenagent.dat. Descárgao dende o sitio web de ScummVM."
+"Emprega as voces en inglés no canto de alemán para o resto dos idiomas."
 
-#: engines/teenagent/resources.cpp:116
+#: engines/teenagent/resources.cpp:118
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
 "O ficheiro teenagent.dat está comprimido e zlib non foi incluído neste "
 "executable. Descomprime o ficheiro"
+
+#: engines/tony/tony.cpp:258
+#, c-format
+msgid "Font variant not present in '%s' engine data file."
+msgstr ""
+
+#: engines/toon/toon.cpp:222
+#, c-format
+msgid "Saved game in slot #%d "
+msgstr "Xogo gardado no espazo %d "
+
+#: engines/toon/toon.cpp:226
+#, c-format
+msgid "Could not quick save into slot #%d"
+msgstr "Erro ao gardar rápido no espazo %d"
+
+#: engines/toon/toon.cpp:239
+#, fuzzy, c-format
+msgid "Saved game #%d quick loaded"
+msgstr "Carga rápida exitosa dos datos gardados %d"
+
+#: engines/toon/toon.cpp:243
+#, fuzzy, c-format
+msgid "Could not quick load the saved game #%d"
+msgstr "Erro de carga rápida dos datos gardados %d"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -3641,6 +4577,14 @@ msgstr "Mostrar FPS"
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr "Mostra o número actual de FPS na esquina superior esquerda."
+
+#: engines/wintermute/detection.cpp:68
+msgid "Sprite bilinear filtering (SLOW)"
+msgstr ""
+
+#: engines/wintermute/detection.cpp:69
+msgid "Apply bilinear filtering to individual sprites"
+msgstr ""
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
@@ -3677,9 +4621,102 @@ msgid "Use high resolution MPEG video"
 msgstr "Empregar modo de vídeo MPEG de alta resolución"
 
 #: engines/zvision/detection_tables.h:92
-msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
+#, fuzzy
+msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Emprega o vídeo MPEG da versión en DVD, no canto da AVI de baixa resolución."
+"Emprega o vídeo MPEG da versión en DVD, no canto do AVI de baixa resolución."
+
+#: engines/zvision/file/save_manager.cpp:220
+#, fuzzy, c-format
+msgid ""
+"This saved game uses version %u, but this engine only supports up to version "
+"%d. You will need an updated version of the engine to use this saved game."
+msgstr ""
+"Estes datos gardados empregan a versión %u. No entanto, o motor só é "
+"compatíbel até a versión %d. Cómpre descargar unha versión actualizada do "
+"motor para empregar estes datos gardados."
+
+#~ msgid ""
+#~ "The theme you selected does not support your current language. If you "
+#~ "want to use this theme you need to switch to another language first."
+#~ msgstr ""
+#~ "O tema seleccionado non é compatible co idioma actual. Para empregar o "
+#~ "tema, deberás cambiar antes o idioma da interfaz."
+
+#, fuzzy
+#~ msgid "Speed multiplier for mouse emulation"
+#~ msgstr "Simular botón primario do rato"
+
+#, fuzzy
+#~ msgctxt "lowres"
+#~ msgid "Mouse Speed:"
+#~ msgstr "Velocidade:"
+
+#~ msgid ""
+#~ "Unable to find \"sky.cpt\" file!\n"
+#~ "Please download it from www.scummvm.org"
+#~ msgstr ""
+#~ "O ficheiro sky.cpt non se atopa!\n"
+#~ "Descárgao dende www.scummvm.org"
+
+#~ msgid ""
+#~ "The \"sky.cpt\" file has an incorrect size.\n"
+#~ "Please (re)download it from www.scummvm.org"
+#~ msgstr ""
+#~ "O ficheiro sky.cpt ten un tamaño incorrecto.\n"
+#~ "Descárgao (de novo) dende www.scummvm.org"
+
+#~ msgid ""
+#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Falta o ficheiro teenagent.dat. Descárgao dende o sitio web de ScummVM."
+
+#~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
+#~ msgstr "Falta o ficheiro toon.dat. Descárgao dende o sitio web de ScummVM."
+
+#~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "O ficheiro toon.dat está danado. Descárgao dende o sitio web de ScummVM."
+
+#~ msgid ""
+#~ "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it "
+#~ "from the ScummVM website"
+#~ msgstr ""
+#~ "A versión do ficheiro toon.dat é incorrecta. Versión esperada: %d.%d. "
+#~ "Versión dispoñíbel: %d.%d. Descárgao dende o sitio web de ScummVM."
+
+#~ msgid "Invalid save file name"
+#~ msgstr "Nome de ficheiro non válido"
+
+#~ msgid "Use original savegame dialog"
+#~ msgstr "Empregar pantalla orixinal de gardado"
+
+#~ msgid ""
+#~ "Files button in-game shows original savegame dialog rather than the "
+#~ "ScummVM menu"
+#~ msgstr ""
+#~ "O botón de ficheiros do xogo mostra a pantalla orixinal de gardado no "
+#~ "canto do menú de ScummVM."
+
+#~ msgid "The game in '%s' seems to be unknown."
+#~ msgstr "O xogo de %s semella ser descoñecido."
+
+#~ msgid ""
+#~ "Please, report the following data to the ScummVM team along with name"
+#~ msgstr "Facilita esta información ao equipo de ScummVM, xunto co nome"
+
+#~ msgid "of the game you tried to add and its version/language/etc.:"
+#~ msgstr "do xogo que tentaches engadir, xunto coa versión, lingua, etc.:"
+
+#~ msgid "You have to restart ScummVM before your changes will take effect."
+#~ msgstr "Debes reiniciar ScummVM para que os cambios teñan efecto."
+
+#~ msgid "OpenGL (No filtering)"
+#~ msgstr "OpenGL (Sen filtraxe)"
+
+#, fuzzy
+#~ msgid "Specifies where Files Manager can access to"
+#~ msgstr "Especifica o lugar dos ficheiros de gardado"
 
 #~ msgid "EGA undithering"
 #~ msgstr "Non interpolación EGA"
@@ -3724,6 +4761,3 @@ msgstr ""
 
 #~ msgid "Active filter mode: Nearest"
 #~ msgstr "Modo de filtro activo: máis próximo"
-
-#~ msgid "Enable Roland GS Mode"
-#~ msgstr "Activar modo Roland GS"

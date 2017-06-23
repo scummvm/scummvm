@@ -21,6 +21,7 @@
  */
 
 #include "common/events.h"
+#include "gui/predictivedialog.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
@@ -130,7 +131,7 @@ void AgiEngine::processScummVMEvents() {
 			}
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) {
+			if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_SHIFT) && event.kbd.keycode == Common::KEYCODE_d) {
 				_console->attach();
 				break;
 			}
@@ -246,6 +247,29 @@ void AgiEngine::processScummVMEvents() {
 				default:
 					break;
 				}
+
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_LEFT:
+				case Common::KEYCODE_RIGHT:
+				case Common::KEYCODE_UP:
+				case Common::KEYCODE_DOWN:
+				case Common::KEYCODE_HOME:
+				case Common::KEYCODE_END:
+				case Common::KEYCODE_PAGEUP:
+				case Common::KEYCODE_PAGEDOWN:
+				case Common::KEYCODE_KP4:
+				case Common::KEYCODE_KP6:
+				case Common::KEYCODE_KP8:
+				case Common::KEYCODE_KP2:
+				case Common::KEYCODE_KP9:
+				case Common::KEYCODE_KP3:
+				case Common::KEYCODE_KP7:
+				case Common::KEYCODE_KP1:
+					_keyHoldModeLastKey = event.kbd.keycode;
+					break;
+				default:
+					break;
+				}
 			}
 			if (key)
 				keyEnqueue(key);
@@ -254,9 +278,36 @@ void AgiEngine::processScummVMEvents() {
 		case Common::EVENT_KEYUP:
 			if (_keyHoldMode) {
 				// Original AGI actually created direction events in here
-				// We don't do that, that's why we create a stationary event instead, which will
-				// result in a direction change to 0 in handleController().
-				keyEnqueue(AGI_KEY_STATIONARY);
+				// but only in case the last pressed cursor key was released, in other cases it did nothing.
+				// So when you pressed and held down left and then pressed up, and then released left,
+				// direction wouldn't be changed at all.
+				//
+				// We don't create direction events in here, that's why we create a stationary event instead,
+				// which will result in a direction change to 0 in handleController().
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_LEFT:
+				case Common::KEYCODE_RIGHT:
+				case Common::KEYCODE_UP:
+				case Common::KEYCODE_DOWN:
+				case Common::KEYCODE_HOME:
+				case Common::KEYCODE_END:
+				case Common::KEYCODE_PAGEUP:
+				case Common::KEYCODE_PAGEDOWN:
+				case Common::KEYCODE_KP4:
+				case Common::KEYCODE_KP6:
+				case Common::KEYCODE_KP8:
+				case Common::KEYCODE_KP2:
+				case Common::KEYCODE_KP9:
+				case Common::KEYCODE_KP3:
+				case Common::KEYCODE_KP7:
+				case Common::KEYCODE_KP1:
+					if (_keyHoldModeLastKey == event.kbd.keycode) {
+						keyEnqueue(AGI_KEY_STATIONARY);
+					}
+					break;
+				default:
+					break;
+				}
 			}
 			break;
 
@@ -292,7 +343,8 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 
 	if (!cycleInnerLoopIsActive()) {
 		// Only do this, when no inner loop is currently active
-		Common::Rect displayLineRect(DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
+		Common::Rect displayLineRect = _gfx->getFontRectForDisplayScreen(0, 0, FONT_COLUMN_CHARACTERS, 1);
+//		Common::Rect displayLineRect(_gfx->getDisplayScreenWidth(), _gfx->getDisplayFontHeight());
 
 		if (displayLineRect.contains(_mouse.pos)) {
 			// Mouse is inside first line of the screen
@@ -307,7 +359,7 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 			// Prompt is currently enabled
 			int16 promptRow = _text->promptRow_Get();
 
-			displayLineRect.moveTo(0, promptRow * FONT_DISPLAY_HEIGHT);
+			displayLineRect.moveTo(0, promptRow * _gfx->getDisplayFontHeight());
 
 			if (displayLineRect.contains(_mouse.pos)) {
 				// and user clicked within the line of the prompt
@@ -330,9 +382,7 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 			_text->stringPos_Get(stringRow, stringColumn);
 			stringMaxLen = _text->stringGetMaxLen();
 
-			Common::Rect displayRect(stringMaxLen * FONT_DISPLAY_WIDTH, FONT_DISPLAY_HEIGHT);
-			displayRect.moveTo(stringColumn * FONT_DISPLAY_WIDTH, stringRow * FONT_DISPLAY_HEIGHT);
-
+			Common::Rect displayRect = _gfx->getFontRectForDisplayScreen(stringColumn, stringRow, stringMaxLen, 1);
 			if (displayRect.contains(_mouse.pos)) {
 				// user clicked inside the input space
 				showPredictiveDialog();
@@ -472,7 +522,7 @@ bool AgiEngine::handleController(uint16 key) {
 						// in case you walked to the log by using the mouse, so don't!!!
 						int16 egoDestinationX = _mouse.pos.x;
 						int16 egoDestinationY = _mouse.pos.y;
-						adjustPosToGameScreen(egoDestinationX, egoDestinationY);
+						_gfx->translateDisplayPosToGameScreen(egoDestinationX, egoDestinationY);
 
 						screenObjEgo->motionType = kMotionEgo;
 						if (egoDestinationX < (screenObjEgo->xSize / 2)) {

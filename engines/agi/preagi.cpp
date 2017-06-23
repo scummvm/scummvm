@@ -20,16 +20,15 @@
  *
  */
 
-#include "common/config-manager.h"
+#include "audio/mixer.h"
+#include "audio/softsynth/pcspk.h"
+
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/random.h"
-#include "common/textconsole.h"
 
 #include "agi/preagi.h"
 #include "agi/graphics.h"
-#include "agi/keyboard.h"
-#include "agi/text.h"
 
 namespace Agi {
 
@@ -52,13 +51,15 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 	memset(&_game, 0, sizeof(struct AgiGame));
 	memset(&_debug, 0, sizeof(struct AgiDebug));
 	memset(&_mouse, 0, sizeof(struct Mouse));
+
+	_speakerHandle = new Audio::SoundHandle();
 }
 
 void PreAgiEngine::initialize() {
 	initRenderMode();
 
 	_font = new GfxFont(this);
-	_gfx = new GfxMgr(this);
+	_gfx = new GfxMgr(this, _font);
 	_picture = new PictureMgr(this, _gfx);
 
 	_font->init();
@@ -76,7 +77,7 @@ void PreAgiEngine::initialize() {
 	_gfx->initVideo();
 
 	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, _speakerHandle,
 	                   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	debugC(2, kDebugLevelMain, "Detect game");
@@ -91,8 +92,9 @@ void PreAgiEngine::initialize() {
 }
 
 PreAgiEngine::~PreAgiEngine() {
-	_mixer->stopHandle(_speakerHandle);
+	_mixer->stopHandle(*_speakerHandle);
 	delete _speakerStream;
+	delete _speakerHandle;
 
 	delete _picture;
 	delete _gfx;
@@ -112,7 +114,7 @@ void PreAgiEngine::clearScreen(int attr, bool overrideDefault) {
 }
 
 void PreAgiEngine::clearGfxScreen(int attr) {
-	_gfx->drawDisplayRect(0, 0, GFX_WIDTH - 1, IDI_MAX_ROW_PIC * 8 - 1, (attr & 0xF0) / 0x10);
+	_gfx->drawDisplayRect(0, 0, DISPLAY_DEFAULT_WIDTH - 1, IDI_MAX_ROW_PIC * 8 - 1, (attr & 0xF0) / 0x10);
 }
 
 // String functions

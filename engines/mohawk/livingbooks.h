@@ -714,6 +714,7 @@ public:
 
 	Common::RandomSource *_rnd;
 
+	Sound *_sound;
 	LBGraphics *_gfx;
 	bool _needsRedraw, _needsUpdate;
 

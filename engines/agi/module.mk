@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	font.o \
 	global.o \
 	graphics.o \
-	id.o \
 	inv.o \
 	keyboard.o \
 	loader_v1.o \

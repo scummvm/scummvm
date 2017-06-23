@@ -485,11 +485,6 @@ int ScalpelJournal::getSearchString(bool printError) {
 
 	screen.makeField(Common::Rect(12, 185, 307, 196));
 
-	screen.fillRect(Common::Rect(12, 185, 307, 186), BUTTON_BOTTOM);
-	screen.vLine(12, 185, 195, BUTTON_BOTTOM);
-	screen.hLine(13, 195, 306, BUTTON_TOP);
-	screen.hLine(306, 186, 195, BUTTON_TOP);
-
 	if (printError) {
 		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - screen.stringWidth(_fixedTextSearchNotFound)) / 2, 185),
 			INV_FOREGROUND, "%s", _fixedTextSearchNotFound.c_str());

@@ -39,13 +39,44 @@ enum FixedTextActionId {
 	kFixedTextAction_Use
 };
 
+enum FixedJournalTextId {
+	// Holmes asked/said...
+	kFixedJournalText_HolmesAskedMe = 0,
+	kFixedJournalText_HolmesAskedTheInspector,
+	kFixedJournalText_HolmesAskedPerson,
+	kFixedJournalText_HolmesSaidToMe,
+	kFixedJournalText_HolmesSaidToTheInspector,
+	kFixedJournalText_HolmesSaidToPerson,
+	// I asked/said
+	kFixedJournalText_IReplied,
+	kFixedJournalText_TheReplyWas,
+	// Holmes/I/The Inspector/Person asked/said (without "Then" prefix)
+	kFixedJournalText_HolmesAsked,
+	kFixedJournalText_HolmesSaid,
+	kFixedJournalText_IAsked,
+	kFixedJournalText_ISaid,
+	kFixedJournalText_TheInspectorAsked,
+	kFixedJournalText_TheInspectorSaid,
+	kFixedJournalText_PersonAsked,
+	kFixedJournalText_PersonSaid,
+	// Then Holmes/I/The Inspector/Person asked/said
+	kFixedJournalText_ThenHolmesAsked,
+	kFixedJournalText_ThenHolmesSaid,
+	kFixedJournalText_ThenIAsked,
+	kFixedJournalText_ThenISaid,
+	kFixedJournalText_ThenTheInspectorAsked,
+	kFixedJournalText_ThenTheInspectorSaid,
+	kFixedJournalText_ThenPersonAsked,
+	kFixedJournalText_ThenPersonSaid
+};
+
 class SherlockEngine;
 
 class FixedText {
 protected:
 	SherlockEngine *_vm;
 
-	FixedText(SherlockEngine *vm) : _vm(vm) {}
+	FixedText(SherlockEngine *vm);
 public:
 	static FixedText *init(SherlockEngine *vm);
 	virtual ~FixedText() {}
@@ -59,6 +90,20 @@ public:
 	 * Get action message
 	 */
 	virtual const Common::String getActionMessage(FixedTextActionId actionId, int messageIndex) = 0;
+
+	/**
+	 * Gets journal text
+	 */
+	const char *getJournalText(int fixedJournalTextId);
+
+	/**
+	 * Gets object "Picked Up" text
+	 */
+	const char *getObjectPickedUpText();
+
+private:
+	const char *const *_fixedJournalTextArray;
+	const char *_fixedObjectPickedUpText;
 };
 
 } // End of namespace Sherlock

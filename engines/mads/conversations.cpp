@@ -72,7 +72,7 @@ void GameConversations::load(int id) {
 	_conversations[slotIndex]._convId = id;
 
 	// Load the conversation data
-	Common::String cnvFilename = Common::String::format("CONV%03d.CNV", id);	
+	Common::String cnvFilename = Common::String::format("CONV%03d.CNV", id);
 	_conversations[slotIndex]._data.load(cnvFilename);
 
 	// Load the conversation's CND data
@@ -371,7 +371,7 @@ void GameConversations::update(bool flag) {
 			_personSpeaking = 0;
 			executeEntry(_verbId);
 			generateMessage(_runningConv->_cnd._messageList1, _runningConv->_cnd._messageList3);
-		
+
 			if (_heroTrigger && _popupVisible) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
 				_vm->_game->_trigger = _heroTrigger;
@@ -438,7 +438,7 @@ void GameConversations::generateMessage(Common::Array<int> &messageList, Common:
 
 	// Create the new text dialog
 	_dialog = new TextDialog(_vm, FONT_INTERFACE,
-		Common::Point(_popupX[_personSpeaking], _popupY[_personSpeaking]), 
+		Common::Point(_popupX[_personSpeaking], _popupY[_personSpeaking]),
 		portrait, _popupMaxLen[_personSpeaking]);
 
 	// Add in the lines
@@ -785,7 +785,7 @@ void ConversationConditionals::load(const Common::String &filename) {
 
 	// **** Section: Imports *************************************************
 	int streamNum = 1;
-	
+
 	_importVariables.resize(importsCount);
 	if (importsCount > 0) {
 		convFile = convFileUnpacked.getItemStream(streamNum++);
@@ -848,7 +848,7 @@ void DialogScript::load(Common::SeekableReadStream &s, uint startingOffset) {
 		instructionOffsets[startingOffset + s.pos()] = size();
 		push_back(ScriptEntry());
 		ScriptEntry &se = (*this)[size() - 1];
-		
+
 		// Load the instruction
 		se.load(s);
 	}

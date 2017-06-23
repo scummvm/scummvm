@@ -764,4 +764,7 @@ const char *BaseFrame::scToString() {
 	return "[frame]";
 }
 
+Common::String BaseFrame::debuggerToString() const {
+	return Common::String::format("%p: Frame \"%s\": #subframes %d ", (const void *)this, getName(), _subframes.size());
+}
 } // End of namespace Wintermute

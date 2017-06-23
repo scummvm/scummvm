@@ -38,9 +38,13 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 	_askForVerificationMouseLockedButtonNr = -1;
 	_askForVerificationMouseActiveButtonNr = -1;
 
+	clearSavedGameSlots();
+
 	_textStatusScore = "Score:%v3 of %v7";
 	_textStatusSoundOn = "Sound:on";
 	_textStatusSoundOff = "Sound:off";
+
+	_textEnterCommand = "Enter input\n\n";
 
 	_textPause = "      Game paused.\nPress Enter to continue.";
 	_textPauseButton = nullptr;
@@ -212,6 +216,47 @@ const char *SystemUI::getInventoryTextReturnToGame() {
 	return _textInventoryReturnToGame;
 }
 
+bool SystemUI::askForCommand(Common::String &commandText) {
+	// Let user enter the command (this was originally only available for Hercules rendering, we allow it everywhere)
+	bool previousEditState = _text->inputGetEditStatus();
+	byte previousEditCursor = _text->inputGetCursorChar();
+
+	_text->drawMessageBox(_textEnterCommand, 0, 36, true);
+
+	_text->inputEditOn();
+
+	_text->charPos_Push();
+	_text->charAttrib_Push();
+
+	_text->charPos_SetInsideWindow(2, 0);
+	_text->charAttrib_Set(15, 0);
+	_text->clearBlockInsideWindow(2, 0, 36, 0); // input line is supposed to be black
+	_text->inputSetCursorChar('_');
+
+	_text->stringSet(commandText.c_str()); // Set current command text (may be a command recall)
+
+	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_GETSTRING);
+	_text->stringEdit(35); // only allow up to 35 characters
+
+	_text->charAttrib_Pop();
+	_text->charPos_Pop();
+	_text->inputSetCursorChar(previousEditCursor);
+	if (!previousEditState) {
+		_text->inputEditOff();
+	}
+
+	_text->closeWindow();
+
+	if (!_text->stringWasEntered()) {
+		// User cancelled? exit now
+		return false;
+	}
+
+	commandText.clear();
+	commandText += (char *)_text->_inputString;
+	return true;
+}
+
 int16 SystemUI::figureOutAutomaticSaveGameSlot(const char *automaticSaveDescription) {
 	int16 matchedGameSlotId = -1;
 	int16 freshGameSlotId   = -1;
@@ -327,7 +372,7 @@ int16 SystemUI::askForRestoreGameSlot() {
 	int16 restoreGameSlotNr = -1;
 
 	// Fill saved game slot cache
-	readSavedGameSlots(true, true); // filter empty/corrupt slots, but including auto-save slot
+	readSavedGameSlots(true, true); // filter empty/corrupt slots, but include auto-save slot
 
 	if (_savedGameArray.size() == 0) {
 		// no saved games
@@ -526,12 +571,12 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 	SystemUISavedGameEntry savedGameEntry;
 	Common::String saveDescription;
 	uint32         saveDate = 0;
-	uint16         saveTime = 0;
+	uint32         saveTime = 0;
 	bool           saveIsValid = false;
 
 	int16  mostRecentSlotNr = -1;
 	uint32 mostRecentSlotSaveDate = 0;
-	uint16 mostRecentSlotSaveTime = 0;
+	uint32 mostRecentSlotSaveTime = 0;
 
 	clearSavedGameSlots();
 
@@ -540,7 +585,7 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 	slotIdArray.push_back(SYSTEMUI_SAVEDGAME_MAXIMUM_SLOTS); // so that the loop will process all slots
 
 	SavedGameSlotIdArray::iterator it;
-	SavedGameSlotIdArray::iterator end = slotIdArray.end();;
+	SavedGameSlotIdArray::iterator end = slotIdArray.end();
 
 	for (it = slotIdArray.begin(); it != end; it++) {
 		curSlotId = *it;
@@ -638,6 +683,9 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 void SystemUI::figureOutAutomaticSavedGameSlot(const char *automaticSaveDescription, int16 &matchedGameSlotId, int16 &freshGameSlotId) {
 	bool foundFresh = false;
 
+	matchedGameSlotId = -1;
+	freshGameSlotId = -1;
+
 	for (uint16 slotNr = 0; slotNr < _savedGameArray.size(); slotNr++) {
 		SystemUISavedGameEntry *savedGameEntry = &_savedGameArray[slotNr];
 
@@ -653,7 +701,7 @@ void SystemUI::figureOutAutomaticSavedGameSlot(const char *automaticSaveDescript
 			// no new slot found yet
 			if (!savedGameEntry->exists) {
 				// and current slot doesn't exist
-				if (slotNr) {
+				if (savedGameEntry->slotId) {
 					// and slot is not the auto-save slot -> remember this slot
 					freshGameSlotId = savedGameEntry->slotId;
 					foundFresh = true;
@@ -746,21 +794,23 @@ bool SystemUI::askForVerification(const char *verifyText, const char *button1Tex
 		// Buttons enabled, calculate button coordinates
 		int16 msgBoxX = 0, msgBoxY = 0, msgBoxLowerY = 0;
 		int16 msgBoxWidth = 0, msgBoxHeight = 0;
+		int16 fontHeight = _gfx->getDisplayFontHeight();
+		int16 fontWidth = _gfx->getDisplayFontWidth();
 
 		_text->getMessageBoxInnerDisplayDimensions(msgBoxX, msgBoxY, msgBoxWidth, msgBoxHeight);
-		// Adjust Y coordinate to lower edge
+		// Calculate lower Y
 		msgBoxLowerY = msgBoxY + (msgBoxHeight - 1);
 
 		buttonEntry.active = false;
 		if (button1Text) {
 			buttonEntry.text = button1Text;
-			buttonEntry.textWidth = strlen(button1Text) * FONT_DISPLAY_WIDTH;
+			buttonEntry.textWidth = strlen(button1Text) * _gfx->getDisplayFontWidth();
 			buttonEntry.isDefault = true;
 			_buttonArray.push_back(buttonEntry);
 		}
 		if (button2Text) {
 			buttonEntry.text = button2Text;
-			buttonEntry.textWidth = strlen(button2Text) * FONT_DISPLAY_WIDTH;
+			buttonEntry.textWidth = strlen(button2Text) * _gfx->getDisplayFontWidth();
 			buttonEntry.isDefault = false;
 			_buttonArray.push_back(buttonEntry);
 		}
@@ -768,37 +818,30 @@ bool SystemUI::askForVerification(const char *verifyText, const char *button1Tex
 		// Render-Mode specific calculations
 		switch (_vm->_renderMode) {
 		case Common::kRenderApple2GS:
-			_buttonArray[0].rect = Common::Rect(14 + _buttonArray[0].textWidth, FONT_DISPLAY_HEIGHT + 6);
-			_buttonArray[0].rect.moveTo(msgBoxX + 2, msgBoxLowerY - (8 + FONT_DISPLAY_HEIGHT + 2));
-				
+			_buttonArray[0].rect = createRect(msgBoxX, +2, msgBoxLowerY - fontHeight, -(8 + 2), _buttonArray[0].textWidth, +14, fontHeight, +6);
+
 			if (_buttonArray.size() > 1) {
-				int16 adjustedX = msgBoxX + msgBoxWidth - 10;
-				_buttonArray[1].rect = Common::Rect(14 + _buttonArray[1].textWidth, FONT_DISPLAY_HEIGHT + 6);
-				adjustedX -= _buttonArray[1].rect.width();
-				_buttonArray[1].rect.moveTo(adjustedX, msgBoxLowerY - (8 + FONT_DISPLAY_HEIGHT + 2));
+				int16 adjustedX = msgBoxX + msgBoxWidth - _buttonArray[1].textWidth; // - 10;
+				_buttonArray[1].rect = createRect(adjustedX, -(14 + 10), _buttonArray[0].rect.top, 0, _buttonArray[1].textWidth, +14, fontHeight, +6);
 			}
 			break;
 
-		case Common::kRenderAmiga:
-			_buttonArray[0].rect = Common::Rect(4 + _buttonArray[0].textWidth + 4, 2 + FONT_DISPLAY_HEIGHT + 2);
-			_buttonArray[0].rect.moveTo(msgBoxX, msgBoxLowerY - _buttonArray[0].rect.height());
+		case Common::kRenderAmiga: {
+			_buttonArray[0].rect = createRect(msgBoxX, 0, msgBoxLowerY - fontHeight, -(2 + 2), _buttonArray[0].textWidth, +(4 + 4), fontHeight, +(2 + 2));
 
 			if (_buttonArray.size() > 1) {
-				int16 adjustedX = msgBoxX + msgBoxWidth;
-				_buttonArray[1].rect = Common::Rect(4 + _buttonArray[1].textWidth + 4, 2 + FONT_DISPLAY_HEIGHT + 2);
-				adjustedX -= _buttonArray[1].rect.width();
-				_buttonArray[1].rect.moveTo(adjustedX, msgBoxLowerY - _buttonArray[1].rect.height());
+				int16 adjustedX = msgBoxX + msgBoxWidth - _buttonArray[1].textWidth;
+				_buttonArray[1].rect = createRect(adjustedX, -(4 + 4), _buttonArray[0].rect.top, 0, _buttonArray[1].textWidth, +(4 + 4), fontHeight, +(2 + 2));
 			}
 			break;
+		}
 
 		case Common::kRenderAtariST:
-			_buttonArray[0].rect = Common::Rect(_buttonArray[0].textWidth, FONT_DISPLAY_HEIGHT);
-			_buttonArray[0].rect.moveTo(msgBoxX + (5 * FONT_DISPLAY_WIDTH), msgBoxLowerY - FONT_DISPLAY_HEIGHT);
+			_buttonArray[0].rect = createRect(msgBoxX + (5 * fontWidth), 0, msgBoxLowerY - fontHeight, 0, _buttonArray[0].textWidth, 0, fontHeight, 0);
+
 			if (_buttonArray.size() > 1) {
-				int16 adjustedX = msgBoxX + msgBoxWidth - (5 * FONT_DISPLAY_WIDTH);
-				_buttonArray[1].rect = Common::Rect(_buttonArray[1].textWidth, FONT_DISPLAY_HEIGHT);
-				adjustedX -= _buttonArray[1].rect.width();
-				_buttonArray[1].rect.moveTo(adjustedX, msgBoxLowerY - _buttonArray[1].rect.height());
+				int16 adjustedX = msgBoxX + msgBoxWidth - (5 * fontWidth + _buttonArray[1].textWidth);
+				_buttonArray[1].rect = createRect(adjustedX, 0, _buttonArray[0].rect.top, 0, _buttonArray[1].textWidth, 0, fontHeight, 0);
 			}
 			break;
 
@@ -932,7 +975,7 @@ void SystemUI::askForVerificationKeyPress(uint16 newKey) {
 	if (executeButton) {
 		if (_askForVerificationMouseActiveButtonNr >= 0) {
 			SystemUIButtonEntry *button = &_buttonArray[_askForVerificationMouseActiveButtonNr];
-		
+
 			if (button->active) {
 				if (!button->isDefault) {
 					// Not default button? -> that's cancel
@@ -944,6 +987,25 @@ void SystemUI::askForVerificationKeyPress(uint16 newKey) {
 		// Remove button lock in case it was locked
 		_askForVerificationMouseLockedButtonNr = -1;
 	}
+}
+
+Common::Rect SystemUI::createRect(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight) {
+	switch (_gfx->getUpscaledHires()) {
+	case DISPLAY_UPSCALED_DISABLED:
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		adjX *= 2; adjY *= 2;
+		adjWidth *= 2; adjHeight *= 2;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+	x += adjX; y += adjY;
+	width += adjWidth; height += adjHeight;
+	Common::Rect newRect(width, height);
+	newRect.moveTo(x, y);
+	return newRect;
 }
 
 #define SYSTEMUI_BUTTONEDGE_APPLEIIGS_WIDTH 8
@@ -993,20 +1055,20 @@ void SystemUI::drawButtonAppleIIgs(SystemUIButtonEntry *button) {
 	}
 
 	// draw base box for it
-	_gfx->drawDisplayRect(button->rect.left, button->rect.bottom - 1, button->rect.width(), button->rect.height(), backgroundColor, false);
+	_gfx->drawDisplayRect(button->rect.left, button->rect.top, button->rect.width(), button->rect.height(), backgroundColor, false);
 
 	// draw inner lines
-	_gfx->drawDisplayRect(button->rect.left + 1, button->rect.top - 1, button->rect.width() - 2, 1, 0, false); // upper horizontal
-	_gfx->drawDisplayRect(button->rect.left - 2, button->rect.bottom - 2, 2, button->rect.height() - 2, 0, false); // left vertical
-	_gfx->drawDisplayRect(button->rect.right, button->rect.bottom - 2, 2, button->rect.height() - 2, 0, false); // right vertical
-	_gfx->drawDisplayRect(button->rect.left + 1, button->rect.bottom, button->rect.width() - 2, 1, 0, false); // lower horizontal
+	_gfx->drawDisplayRect(button->rect.left, +1, button->rect.top, -1, button->rect.width(), -2, 0, 1, 0, false); // lower horizontal
+	_gfx->drawDisplayRect(button->rect.left, -2, button->rect.top, +1, 0, 2, button->rect.height(), -2, 0, false); // left vertical
+	_gfx->drawDisplayRect(button->rect.right, 0, button->rect.top, +1, 0, 2, button->rect.height(), -2, 0, false); // right vertical
+	_gfx->drawDisplayRect(button->rect.left, +1, button->rect.bottom, 0, button->rect.width(), -2, 0, 1, 0, false); // upper horizontal
 
 	if (button->isDefault) {
 		// draw outer lines
-		_gfx->drawDisplayRect(button->rect.left, button->rect.top - 3, button->rect.width(), 1, 0, false); // upper horizontal
-		_gfx->drawDisplayRect(button->rect.left - 5, button->rect.bottom - 2, 2, button->rect.height() - 2, 0, false); // left vertical
-		_gfx->drawDisplayRect(button->rect.right + 3, button->rect.bottom - 2, 2, button->rect.height() - 2, 0, false); // right vertical
-		_gfx->drawDisplayRect(button->rect.left, button->rect.bottom + 2, button->rect.width(), 1, 0, false); // lower horizontal
+		_gfx->drawDisplayRect(button->rect.left, 0, button->rect.top, -3, button->rect.width(), 0, 0, 1, 0, false); // upper horizontal
+		_gfx->drawDisplayRect(button->rect.left, -5, button->rect.top, +2, 0, 2, button->rect.height(), -2, 0, false); // left vertical
+		_gfx->drawDisplayRect(button->rect.right, +3, button->rect.top, +2, 0, 2, button->rect.height(), -2, 0, false); // right vertical
+		_gfx->drawDisplayRect(button->rect.left, 0, button->rect.bottom, +2, button->rect.width(), 0, 0, 1, 0, false); // lower horizontal
 
 		if (button->active)
 			edgeBitmap = buttonEdgeAppleIIgsDefaultActive;
@@ -1021,18 +1083,18 @@ void SystemUI::drawButtonAppleIIgs(SystemUIButtonEntry *button) {
 	}
 
 	// draw edge graphics
-	drawButtonAppleIIgsEdgePixels(button->rect.left - 5, button->rect.top - 3, edgeBitmap, false, false);
-	drawButtonAppleIIgsEdgePixels(button->rect.right + 4, button->rect.top - 3, edgeBitmap, true, false);
-	drawButtonAppleIIgsEdgePixels(button->rect.left - 5, button->rect.bottom + 2, edgeBitmap, false, true);
-	drawButtonAppleIIgsEdgePixels(button->rect.right + 4, button->rect.bottom + 2, edgeBitmap, true, true);
+	drawButtonAppleIIgsEdgePixels(button->rect.left, -5, button->rect.top, -3, edgeBitmap, false, false);
+	drawButtonAppleIIgsEdgePixels(button->rect.right, +4, button->rect.top, -3, edgeBitmap, true, false);
+	drawButtonAppleIIgsEdgePixels(button->rect.left, -5, button->rect.bottom, +2, edgeBitmap, false, true);
+	drawButtonAppleIIgsEdgePixels(button->rect.right, +4, button->rect.bottom, +2, edgeBitmap, true, true);
 
 	// Button text
-	_gfx->drawStringOnDisplay(button->rect.left + 7, button->rect.top + 3, button->text, foregroundColor, backgroundColor);
+	_gfx->drawStringOnDisplay(button->rect.left, +7, button->rect.top, +3, button->text, foregroundColor, backgroundColor);
 
-	_gfx->copyDisplayRectToScreen(button->rect.left - 5, button->rect.top - 3, button->rect.width() + 10, button->rect.height() + 6);
+	_gfx->copyDisplayRectToScreen(button->rect.left, -5, button->rect.top, -3, button->rect.width(), +10, button->rect.height(), +6);
 }
 
-void SystemUI::drawButtonAppleIIgsEdgePixels(int16 x, int16 y, byte *edgeBitmap, bool mirrored, bool upsideDown) {
+void SystemUI::drawButtonAppleIIgsEdgePixels(int16 x, int16 adjX, int16 y, int16 adjY, byte *edgeBitmap, bool mirrored, bool upsideDown) {
 	int8 directionY = upsideDown ? -1 : +1;
 	int8 directionX = mirrored ? -1 : +1;
 	int8 curY = 0;
@@ -1050,9 +1112,9 @@ void SystemUI::drawButtonAppleIIgsEdgePixels(int16 x, int16 y, byte *edgeBitmap,
 
 		while (widthLeft) {
 			if (curBitmapByte & curBitmapBit) {
-				_gfx->putPixelOnDisplay(x + curX, y + curY, 0);
+				_gfx->putPixelOnDisplay(x, adjX + curX, y, adjY + curY, 0);
 			} else {
-				_gfx->putPixelOnDisplay(x + curX, y + curY, 15);
+				_gfx->putPixelOnDisplay(x, adjX + curX, y, adjY + curY, 15);
 			}
 
 			curBitmapBit = curBitmapBit >> 1;
@@ -1087,12 +1149,11 @@ void SystemUI::drawButtonAmiga(SystemUIButtonEntry *button) {
 	}
 
 	// draw base box for it
-	_gfx->drawDisplayRect(button->rect.left, button->rect.bottom - 1, button->rect.width(), button->rect.height(), backgroundColor, false);
+	_gfx->drawDisplayRect(button->rect.left, button->rect.top, button->rect.width(), button->rect.height(), backgroundColor, false);
 
 	// Button text
-	_gfx->drawStringOnDisplay(button->rect.left + 4, button->rect.top + 2, button->text, foregroundColor, backgroundColor);
+	_gfx->drawStringOnDisplay(button->rect.left, +4, button->rect.top, +2, button->text, foregroundColor, backgroundColor);
 
-	// draw base box for it
 	_gfx->copyDisplayRectToScreen(button->rect.left, button->rect.top, button->rect.width(), button->rect.height());
 }
 

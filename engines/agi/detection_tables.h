@@ -24,12 +24,14 @@ namespace Agi {
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD          GUIO_GAMEOPTIONS1
 #define GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE  GUIO_GAMEOPTIONS2
-#define GAMEOPTION_DISABLE_MOUSE               GUIO_GAMEOPTIONS3
+#define GAMEOPTION_DISABLE_MOUSE              GUIO_GAMEOPTIONS3
+#define GAMEOPTION_USE_HERCULES_FONT          GUIO_GAMEOPTIONS4
+#define GAMEOPTION_COMMAND_PROMPT_WINDOW      GUIO_GAMEOPTIONS5
 // TODO: properly implement GAMEOPTIONs
 
-#define GAMEOPTIONS_DEFAULT                   GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE)
-#define GAMEOPTIONS_AMIGA                     GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE)
-#define GAMEOPTIONS_FANMADE_MOUSE             GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GAMEOPTIONS_DEFAULT                   GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
+#define GAMEOPTIONS_AMIGA                     GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
+#define GAMEOPTIONS_FANMADE_MOUSE             GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
 
 #define GAME_LVFPN(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
 		{ \
@@ -573,7 +575,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sq2", "2.0D 1988-03-14 3.5\"", "85390bde8958c39830e1adbe9fff87f3", 0x2936, GID_SQ2),
 
 	// Space Quest 2 (IIgs) 2.0A 7/25/88 (CE)
-	GAME_P("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2936, GID_SQ2, Common::kPlatformApple2GS),
+	// We have to see this as AGI < 2.936, because otherwise a set.pri.base call would somewhat break
+	// priority in SQ2, when entering Vohaul's vault.
+	// The Apple IIgs AGI included with SQ2 is the same as the one included with KQ3.
+	// We currently consider KQ3 IIgs to be a 2.917-equivalent.
+	// The SQ2 IIgs AGI definitely has 177 kernel functions, but it seems that Sierra shuffled the last few around / added a few extras at the end.
+	// For KQ3 set.pri.base is called with parameters that seem to be sound resources, which means
+	// set.pri.base was possibly discard.sound. For KQ4 onwards it seems this was cleaned up.
+	GAME_P("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2917, GID_SQ2, Common::kPlatformApple2GS),
 
 	{
 		// Space Quest 2 (Amiga) 2.0F
@@ -849,6 +858,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Tex McPhilip 2 - Road To Divinity (v1.5)", "7387e8df854440bc26620ca0ea43af9a"),
 	FANMADE("Tex McPhilip 3 - A Destiny of Sin (Demo v0.25)", "992d12031a486ad84e592ff5d7c9d782"),
 	FANMADE("The 13th Disciple (v1.00)", "887719ad59afce9a41ec057dbb73ad73"),
+	FANMADE("The 13th Disciple (v1.01)", "58e3ec1b9ac1a79901c472aaa59db832"),
 	FANMADE("The Adventures of a Crazed Hermit", "6e3086cbb794d3299a9c5a9792295511"),
 	FANMADE("The Gourd of the Beans", "246f4d94946afb547482d44a53616d06"),
 	FANMADE("The Grateful Dead", "c2146631afacf8cb455ce24f3d2d46e7"),

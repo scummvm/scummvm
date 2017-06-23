@@ -82,7 +82,7 @@ public:
 
 	virtual void reflowLayout();
 	virtual void lostFocus();
-	virtual void receivedFocus() {}
+	virtual void receivedFocus(int x = -1, int y = -1) { if (x >= 0 && y >= 0) handleMouseMoved(x, y, 0); }
 
 protected:
 	virtual void open();
@@ -106,6 +106,8 @@ protected:
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 	Widget *findWidget(const char *name);
 	void removeWidget(Widget *widget);
+
+	void setDefaultFocusedWidget();
 
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }

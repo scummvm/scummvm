@@ -37,16 +37,14 @@
 
 namespace Agi {
 
-#define getGameID() state->_vm->getGameID()
 #define getFeatures() state->_vm->getFeatures()
-#define getVersion() state->_vm->getVersion()
 #define getLanguage() state->_vm->getLanguage()
 
 void cmdIncrement(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 varNr = parameter[0];
 	byte   varVal = vm->getVar(varNr);
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		if (varVal < 0xf0) {
 			varVal++;
 			vm->setVar(varNr, varVal);
@@ -82,7 +80,7 @@ void cmdAssignN(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// variable to the correct value here
 	// Fixes bug #1942476 - "AGI: Fan(Get Outta SQ) - Score
 	// is lost on restart"
-	if (getGameID() == GID_GETOUTTASQ && varNr == 7)
+	if (vm->getGameID() == GID_GETOUTTASQ && varNr == 7)
 		vm->setVar(varNr, 8);
 }
 
@@ -224,7 +222,7 @@ void cmdToggle(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdSetV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 flagNr = parameter[0];
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		vm->setVar(flagNr, 1);
 	} else {
 		flagNr = vm->getVar(flagNr);
@@ -236,7 +234,7 @@ void cmdSetV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdResetV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 flagNr = parameter[0];
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		vm->setVar(flagNr, 0);
 	} else {
 		flagNr = vm->getVar(flagNr);
@@ -248,7 +246,7 @@ void cmdResetV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdToggleV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 flagNr = parameter[0];
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		byte value = vm->getVar(flagNr);
 		vm->setVar(flagNr, value ^ 1);
 	} else {
@@ -468,7 +466,7 @@ void cmdSetCel(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
 	vm->setCel(screenObj, celNr);
-	if (getVersion() >= 0x2000) {
+	if (vm->getVersion() >= 0x2000) {
 		screenObj->flags &= ~fDontupdate;
 	}
 }
@@ -663,7 +661,7 @@ void cmdWordToString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 stringNr = parameter[0];
 	uint16 wordNr = parameter[1];
 
-	strcpy(state->strings[stringNr], state->_vm->_words->getEgoWord(wordNr));
+	Common::strlcpy(state->strings[stringNr], state->_vm->_words->getEgoWord(wordNr), MAX_STRINGLEN);
 }
 
 void cmdOpenDialogue(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -747,6 +745,11 @@ void cmdResetScanStart(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdSaveGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (vm->getVersion() >= 0x2272) {
+		// this was only donce since 2.272
+		state->_vm->_sound->stopSound();
+	}
+
 	vm->inGameTimerPause();
 
 	if (state->automaticSave) {
@@ -764,6 +767,11 @@ void cmdSaveGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdLoadGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (vm->getVersion() >= 0x2272) {
+		// this was only donce since 2.272
+		state->_vm->_sound->stopSound();
+	}
+
 	vm->inGameTimerPause();
 
 	if (state->automaticSave) {
@@ -890,6 +898,19 @@ void cmdObjStatusF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // unk_181: Deactivate keypressed control (default control of ego)
 void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (!(getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
+		// set.simple is called by Larry 1 on Apple IIgs at the store, after answering the 555-6969 phone.
+		// load.sound(16) is called right before it. Interpreter is 2.440-like.
+		// it's called with parameter 16.
+		// Original interpreter doesn't seem to play any sound.
+		// TODO: Figure out what's going on. It can't be automatic saving of course.
+		// Also getting called in KQ1, when planting beans - parameter 12.
+		// And when killing the witch - parameter 40.
+		if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
+			// was not available before 2.2425, but also not available in 2.440
+			warning("set.simple called, although not available for current AGI version");
+			return;
+		}
+
 		int16 stringNr = parameter[0];
 		const char *textPtr = nullptr;
 
@@ -897,7 +918,10 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 		// Try to get description for automatic saves
 		textPtr = state->strings[stringNr];
+
 		strncpy(state->automaticSaveDescription, textPtr, sizeof(state->automaticSaveDescription));
+		state->automaticSaveDescription[sizeof(state->automaticSaveDescription) - 1] = 0;
+
 		if (state->automaticSaveDescription[0]) {
 			// We got it and it's set, so enable automatic saving
 			state->automaticSave = true;
@@ -917,25 +941,30 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		spritesMgr->drawAllSpriteLists();
 		state->pictureShown = false;
 
+		// Loading trigger
+		vm->artificialDelayTrigger_DrawPicture(resourceNr);
+
 		// Show the picture. Similar to void cmdShow_pic(AgiGame *state, AgiEngine *vm, uint8 *p).
 		vm->setFlag(VM_FLAG_OUTPUT_MODE, false);
 		vm->_text->closeWindow();
 		vm->_picture->showPic();
 		state->pictureShown = true;
-
-		// Loading trigger
-		vm->loadingTrigger_DrawPicture();
 	}
 }
 
+// push.script was not available until 2.425, and also not available in 2.440
 void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() >= 0x2915) {
-		debug(0, "pop.script");
+	if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
+		// was not available before 2.2425, but also not available in 2.440
+		warning("pop.script called, although not available for current AGI version");
+		return;
 	}
+
+	debug(0, "pop.script");
 }
 
 void cmdDiscardSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() >= 0x2936) {
+	if (vm->getVersion() >= 0x2936) {
 		debug(0, "discard.sound");
 	}
 }
@@ -953,8 +982,18 @@ void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // but show.mouse is never called afterwards. Game running under emulator doesn't seem to hide the mouse cursor.
 // TODO: figure out, what exactly happens. Probably some hacked-in command and not related to mouse cursor for that game?
 void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x3000)
+	if (vm->getVersion() < 0x3000) {
+		// was not available before 3.086
+		warning("hide.mouse, although not available for current AGI version");
 		return;
+	}
+
+	if ((vm->getGameID() == GID_MH1) && (vm->getPlatform() == Common::kPlatformApple2GS)) {
+		// Called right after beating arcade sequence on day 4 in the hospital Parameter is "1".
+		// Right before cutscene. show.mouse isn't called. Probably different function.
+		warning("hide.mouse called, disabled for MH1 Apple IIgs");
+		return;
+	}
 
 	// WORKAROUND: Turns off current movement that's being caused with the mouse.
 	// This fixes problems with too many popup boxes appearing in the Amiga
@@ -972,14 +1011,18 @@ void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdAllowMenu(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (vm->getVersion() < 0x3098) {
+		// was not available before 3.098
+		warning("allow.menu called, although not available for current AGI version");
+		return;
+	}
+
 	uint16 allowed = parameter[0];
 
-	if (getVersion() >= 0x3098) {
-		if (allowed) {
-			state->_vm->_menu->accessAllow();
-		} else {
-			state->_vm->_menu->accessDeny();
-		}
+	if (allowed) {
+		state->_vm->_menu->accessAllow();
+	} else {
+		state->_vm->_menu->accessDeny();
 	}
 }
 
@@ -997,23 +1040,30 @@ void cmdFenceMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // HoldKey was added in 2.425
 // There was no way to disable this mode until 3.098 though
 void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x2425)
+	if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
+		// was not available before 2.425, but also not available in 2.440
+		warning("hold.key called, although not available for current AGI version");
 		return;
+	}
 
 	vm->_keyHoldMode = true;
 }
 
 void cmdReleaseKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x3098)
+	if (vm->getVersion() < 0x3098) {
+		// was not available before 3.098
+		warning("release.key called, although not available for current AGI version");
 		return;
+	}
 
 	vm->_keyHoldMode = false;
 }
 
 void cmdAdjEgoMoveToXY(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	const AgiOpCodeEntry *opCodeTable = vm->getOpCodesTable();
 	int8 x, y;
 
-	switch (logicNamesCmd[182].argumentsLength()) {
+	switch (opCodeTable[182].parameterSize) {
 	// The 2 arguments version is used at least in Amiga Gold Rush!
 	// (v2.05 1989-03-09, Amiga AGI 2.316) in logics 130 and 150
 	// (Using arguments (0, 0), (0, 7), (0, 8), (9, 9) and (-9, 9)).
@@ -1094,7 +1144,7 @@ void cmdDrawPicV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->_text->promptClear();
 
 	// Loading trigger
-	vm->loadingTrigger_DrawPicture();
+	vm->artificialDelayTrigger_DrawPicture(resourceNr);
 }
 
 void cmdDrawPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1106,6 +1156,7 @@ void cmdDrawPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	spritesMgr->eraseSprites();
 	vm->_picture->decodePicture(resourceNr, true);
+
 	spritesMgr->buildAllSpriteLists();
 	spritesMgr->drawAllSpriteLists();
 	state->pictureShown = false;
@@ -1123,11 +1174,11 @@ void cmdDrawPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// above the ground), flag 103 is reset, thereby fixing this issue. Note
 	// that this is a script bug and occurs in the original interpreter as well.
 	// Fixes bug #3056: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
-	if (getGameID() == GID_SQ1 && resourceNr == 20)
+	if (vm->getGameID() == GID_SQ1 && resourceNr == 20)
 		vm->setFlag(103, false);
 
 	// Loading trigger
-	vm->loadingTrigger_DrawPicture();
+	vm->artificialDelayTrigger_DrawPicture(resourceNr);
 }
 
 void cmdShowPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1179,7 +1230,7 @@ void cmdOverlayPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	state->pictureShown = false;
 
 	// Loading trigger
-	vm->loadingTrigger_DrawPicture();
+	vm->artificialDelayTrigger_DrawPicture(resourceNr);
 }
 
 void cmdShowPriScreen(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1196,7 +1247,7 @@ void cmdAnimateObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 objectNr = parameter[0];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		if (screenObj->flags & fDidntMove)
 			return;
 	} else {
@@ -1207,7 +1258,7 @@ void cmdAnimateObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	debugC(4, kDebugLevelScripts, "animate vt entry #%d", objectNr);
 	screenObj->flags = fAnimated | fUpdate | fCycling;
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		screenObj->flags |= fDidntMove;
 	}
 
@@ -1238,7 +1289,7 @@ void cmdDraw(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	debugC(4, kDebugLevelScripts, "draw entry %d", screenObj->objectNr);
 
 	screenObj->flags |= fUpdate;
-	if (getVersion() >= 0x3000) {
+	if (vm->getVersion() >= 0x3000) {
 		state->_vm->setLoop(screenObj, screenObj->currentLoopNr);
 		state->_vm->setCel(screenObj, screenObj->currentCelNr);
 	}
@@ -1454,6 +1505,8 @@ void cmdReverseLoop(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->flags |= (fDontupdate | fUpdate | fCycling);
 	screenObj->loop_flag = loopFlag;
 	state->_vm->setFlag(screenObj->loop_flag, false);
+
+	vm->cyclerActivated(screenObj);
 }
 
 void cmdReverseLoopV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1479,6 +1532,8 @@ void cmdEndOfLoop(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->flags |= (fDontupdate | fUpdate | fCycling);
 	screenObj->loop_flag = loopFlag;
 	vm->setFlag(screenObj->loop_flag, false);
+
+	vm->cyclerActivated(screenObj);
 }
 
 void cmdEndOfLoopV1(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1584,13 +1639,15 @@ void cmdFollowEgo(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->follow_flag = followFlag;
 	screenObj->follow_count = 255;
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		vm->setVar(screenObj->follow_flag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
 		vm->setFlag(screenObj->follow_flag, false);
 		screenObj->flags |= fUpdate;
 	}
+
+	vm->motionActivated(screenObj);
 }
 
 void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1611,7 +1668,7 @@ void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (stepSize != 0)
 		screenObj->stepSize = stepSize;
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		vm->setVar(moveFlag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
@@ -1619,11 +1676,13 @@ void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		screenObj->flags |= fUpdate;
 	}
 
+	vm->motionActivated(screenObj);
+
 	if (objectNr == 0)
 		state->playerControl = false;
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
-	if (getVersion() > 0x2272)
+	if (vm->getVersion() > 0x2272)
 		vm->moveObj(screenObj);
 }
 
@@ -1647,11 +1706,13 @@ void cmdMoveObjF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setFlag(screenObj->move_flag, false);
 	screenObj->flags |= fUpdate;
 
+	vm->motionActivated(screenObj);
+
 	if (objectNr == 0)
 		state->playerControl = false;
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
-	if (getVersion() > 0x2272)
+	if (vm->getVersion() > 0x2272)
 		vm->moveObj(screenObj);
 }
 
@@ -1663,11 +1724,13 @@ void cmdWander(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		state->playerControl = false;
 
 	screenObj->motionType = kMotionWander;
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
 		screenObj->flags |= fUpdate;
 	}
+
+	vm->motionActivated(screenObj);
 }
 
 void cmdSetGameID(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -1727,7 +1790,7 @@ void cmdVersion(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	Common::String verMsg = TITLE " v%s";
 
-	int ver = getVersion();
+	int ver = vm->getVersion();
 	int maj = (ver >> 12) & 0xf;
 	int min = ver & 0xfff;
 
@@ -1857,7 +1920,7 @@ void cmdDistance(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// wouldn't chase Rosella around anymore. If it had worked correctly the zombie
 	// wouldn't have come up at all or it would have come up and gone back down
 	// immediately. The latter approach is the one implemented here.
-	if (getGameID() == GID_KQ4 && (vm->getVar(VM_VAR_CURRENT_ROOM) == 16 || vm->getVar(VM_VAR_CURRENT_ROOM) == 18) && destVarNr >= 221 && destVarNr <= 223) {
+	if (vm->getGameID() == GID_KQ4 && (vm->getVar(VM_VAR_CURRENT_ROOM) == 16 || vm->getVar(VM_VAR_CURRENT_ROOM) == 18) && destVarNr >= 221 && destVarNr <= 223) {
 		// Rooms 16 and 18 are graveyards where three zombies come up at night. They use logics 16 and 18.
 		// Variables 221-223 are used to save the distance between each zombie and Rosella.
 		// Variables 155, 156 and 162 are used to save the state of each zombie in room 16.
@@ -1961,7 +2024,7 @@ void cmdGetString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	// copy string to destination
 	// TODO: not sure if set all the time or only when ENTER is pressed
-	strcpy(&state->_vm->_game.strings[stringDestNr][0], (char *)textMgr->_inputString);
+	Common::strlcpy(&state->_vm->_game.strings[stringDestNr][0], (char *)textMgr->_inputString, MAX_STRINGLEN);
 
 	textMgr->charPos_Pop();
 
@@ -2049,12 +2112,12 @@ void cmdSetString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// CM: to avoid crash in Groza (str = 150)
 	if (stringNr > MAX_STRINGS)
 		return;
-	strcpy(state->strings[stringNr], state->_curLogic->texts[textNr]);
+	Common::strlcpy(state->strings[stringNr], state->_curLogic->texts[textNr], MAX_STRINGLEN);
 }
 
 void cmdDisplay(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// V1 has 4 args
-	int16 textNr = (getVersion() >= 0x2000 ? parameter[2] : parameter[3]);
+	int16 textNr = (vm->getVersion() >= 0x2000 ? parameter[2] : parameter[3]);
 	int16 textRow = parameter[0];
 	int16 textColumn = parameter[1];
 
@@ -2132,6 +2195,7 @@ void cmdPrintAtV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	state->_vm->_text->printAt(textNr, textRow, textColumn, textWidth);
 }
 
+// push.script was not available until 2.425, and also not available in 2.440
 void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// We run AGIMOUSE always as a side effect
 	//if (getFeatures() & GF_AGIMOUSE || true) {
@@ -2139,13 +2203,27 @@ void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setVar(VM_VAR_MOUSE_X, vm->_mouse.pos.x / 2);
 	vm->setVar(VM_VAR_MOUSE_Y, vm->_mouse.pos.y);
 	/*} else {
-	    if (getVersion() >= 0x2915) {
+	    if (vm->getVersion() >= 0x2915) {
 	        debug(0, "push.script");
 	    }
 	}*/
 }
 
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if ((vm->getVersion() != 0x2425) && (vm->getVersion() < 0x2936)) {
+		// was only available in the 2.425 interpreter and from 2.936 (last AGI2 version) onwards
+		// Called during KQ3 (Apple IIgs):
+		//  - picking up chicken (parameter = 50)
+		//  - opening store/tavern door (parameter = 19)
+		//  - when pirates say "Land Ho" (parameter = 16)
+		//  - when killing the dragon (parameter = 4)
+		// Also called by SQ2 (Apple IIgs):
+		//  - in Vohaul's lair (SQ2 currently gets this call through, which breaks some priority)
+		// TODO: Figure out what's going on
+		warning("set.pri.base called, although not available for current AGI version");
+		return;
+	}
+
 	uint16 priorityBase = parameter[0];
 
 	debug(0, "Priority base set to %d", priorityBase);
@@ -2159,7 +2237,7 @@ void cmdMousePosn(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	int16 mouseX = vm->_mouse.pos.x;
 	int16 mouseY = vm->_mouse.pos.y;
 
-	state->_vm->adjustPosToGameScreen(mouseX, mouseY);
+	vm->_gfx->translateDisplayPosToGameScreen(mouseX, mouseY);
 
 	vm->setVar(destVarNr1, mouseX);
 	vm->setVar(destVarNr2, mouseY);
@@ -2240,7 +2318,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 	AgiGame *state = &_game;
 	uint8 op = 0;
 	uint8 p[CMD_BSIZE] = { 0 };
-	int num = 0;
+	int curParameterSize = 0;
 	ScriptPos sp;
 	//int logic_index = 0;
 
@@ -2285,6 +2363,9 @@ int AgiEngine::runLogic(int16 logicNr) {
 		}
 #endif
 
+		// Just a counter for every instruction, that got executed
+		_instructionCounter++;
+
 		_game.execStack.back().curIP = state->_curLogic->cIP;
 
 		char st[101];
@@ -2304,7 +2385,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 			debugC(2, kDebugLevelScripts, "%sreturn() // Logic %d", st, logicNr);
 			debugC(2, kDebugLevelScripts, "=================");
 
-//			if (getVersion() < 0x2000) {
+//			if (vm->getVersion() < 0x2000) {
 //				if (logic_index < state->max_logics) {
 //					n = state->logic_list[++logic_index];
 //					state->_curLogic = &state->logics[n];
@@ -2319,14 +2400,18 @@ int AgiEngine::runLogic(int16 logicNr) {
 			_game.execStack.pop_back();
 			return 1;
 		default:
-			num = logicNamesCmd[op].argumentsLength();
-			memmove(p, state->_curLogic->data + state->_curLogic->cIP, num);
-			memset(p + num, 0, CMD_BSIZE - num);
+			curParameterSize = _opCodes[op].parameterSize;
+			memmove(p, state->_curLogic->data + state->_curLogic->cIP, curParameterSize);
+			memset(p + curParameterSize, 0, CMD_BSIZE - curParameterSize);
 
-			debugC(2, kDebugLevelScripts, "%s%s(%d %d %d)", st, logicNamesCmd[op].name, p[0], p[1], p[2]);
+			debugC(2, kDebugLevelScripts, "%s%s(%d %d %d)", st, _opCodes[op].name, p[0], p[1], p[2]);
 
-			_agiCommands[op](&_game, this, p);
-			state->_curLogic->cIP += num;
+			if (!_opCodes[op].functionPtr) {
+				error("Illegal opcode %x in logic %d, ip %d", op, state->curLogicNr, state->_curLogic->cIP);
+			}
+
+			_opCodes[op].functionPtr(&_game, this, p);
+			state->_curLogic->cIP += curParameterSize;
 		}
 
 //		if ((op == 0x0B || op == 0x3F || op == 0x40) && logic_index < state->max_logics) {
@@ -2347,9 +2432,9 @@ int AgiEngine::runLogic(int16 logicNr) {
 }
 
 void AgiEngine::executeAgiCommand(uint8 op, uint8 *p) {
-	debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logicNamesCmd[op].name, p[0], p[1], p[2]);
+	debugC(2, kDebugLevelScripts, "%s(%d %d %d)", _opCodes[op].name, p[0], p[1], p[2]);
 
-	_agiCommands[op](&_game, this, p);
+	_opCodes[op].functionPtr(&_game, this, p);
 }
 
 } // End of namespace Agi

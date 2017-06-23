@@ -89,8 +89,7 @@ Scene::~Scene() {
 }
 
 void Scene::restrictScene() {
-	_sceneSurface.init(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT, MADS_SCREEN_WIDTH,
-		_vm->_screen.getPixels(), Graphics::PixelFormat::createFormatCLUT8());
+	_sceneSurface.create(*_vm->_screen, Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT));
 }
 
 void Scene::clearVocab() {
@@ -517,7 +516,7 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	if (_posAdjust != Common::Point(0, 0))
 		warning("Adjust used %d %d", _posAdjust.x, _posAdjust.y);
 	// Copy background for the dirty areas to the screen
-	_dirtyAreas.copy(&_backgroundSurface, &_vm->_screen, _posAdjust);
+	_dirtyAreas.copy(&_backgroundSurface, _vm->_screen, _posAdjust);
 
 	// Handle dirty areas for foreground objects
 	_spriteSlots.setDirtyAreas();
@@ -528,11 +527,11 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	_spriteSlots.drawSprites(&_sceneSurface);
 
 	// Draw text elements onto the view
-	_textDisplay.draw(&_vm->_screen);
+	_textDisplay.draw(_vm->_screen);
 
 	if (transitionType) {
 		// Fading in the screen
-		_vm->_screen.transition(transitionType, surfaceFlag);
+		_vm->_screen->transition(transitionType, surfaceFlag);
 		_vm->_sound->startQueuedCommands();
 	} else {
 		// Copy dirty areas to the screen

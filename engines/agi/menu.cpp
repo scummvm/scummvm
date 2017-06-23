@@ -49,8 +49,8 @@ GfxMenu::GfxMenu(AgiEngine *vm, GfxMgr *gfx, PictureMgr *picture, TextMgr *text)
 	_drawnMenuNr = -1;
 	_drawnMenuHeight = 0;
 	_drawnMenuWidth = 0;
-	_drawnMenuRow = 0;
-	_drawnMenuColumn = 0;
+	_drawnMenuY = 0;
+	_drawnMenuX = 0;
 }
 
 GfxMenu::~GfxMenu() {
@@ -64,6 +64,8 @@ GfxMenu::~GfxMenu() {
 }
 
 void GfxMenu::addMenu(const char *menuText) {
+	int16 curColumnEnd = _setupMenuColumn;
+
 	// already submitted? in that case no further changes possible
 	if (_submitted)
 		return;
@@ -72,6 +74,18 @@ void GfxMenu::addMenu(const char *menuText) {
 
 	menuEntry->text = menuText;
 	menuEntry->textLen = menuEntry->text.size();
+
+	// Cut menu name in case menu bar is full
+	// Happens in at least the fan game Get Outta Space Quest
+	// Original interpreter had graphical issues in this case
+	// TODO: this whole code needs to get reworked anyway to support different types of menu bars depending on platform
+	curColumnEnd += menuEntry->textLen;
+	while ((menuEntry->textLen) && (curColumnEnd > 40)) {
+		menuEntry->text.deleteLastChar();
+		menuEntry->textLen--;
+		curColumnEnd--;
+	}
+
 	menuEntry->row = 0;
 	menuEntry->column = _setupMenuColumn;
 	menuEntry->itemCount = 0;
@@ -309,8 +323,9 @@ void GfxMenu::execute() {
 
 	// Unless we are in "via mouse" mode. In that case check current mouse position
 	if (viaMouse) {
-		int16 mouseRow = _vm->_mouse.pos.y / FONT_DISPLAY_HEIGHT;
-		int16 mouseColumn = _vm->_mouse.pos.x / FONT_DISPLAY_WIDTH;
+		int16 mouseRow = _vm->_mouse.pos.y;
+		int16 mouseColumn = _vm->_mouse.pos.x;
+		_gfx->translateDisplayPosToFontScreen(mouseColumn, mouseRow);
 
 		mouseFindMenuSelection(mouseRow, mouseColumn, _drawnMenuNr, _mouseModeItemNr);
 	}
@@ -354,7 +369,7 @@ void GfxMenu::execute() {
 			// WORKAROUND: Playarea starts right at the stop, so instead of clearing that part, render it from playarea
 			// Required for at least Donald Duck
 			// This was not done by original AGI, which means the upper pixel line were cleared in this case.
-			_gfx->render_Block(0, (1 * FONT_VISUAL_HEIGHT) - 1, SCRIPT_WIDTH, FONT_VISUAL_HEIGHT);
+			_gfx->render_Block(0, 0, SCRIPT_WIDTH, FONT_VISUAL_HEIGHT);
 		} else {
 			_text->clearLine(0, 0);
 		}
@@ -364,6 +379,10 @@ void GfxMenu::execute() {
 void GfxMenu::drawMenuName(int16 menuNr, bool inverted) {
 	GuiMenuEntry *menuEntry = _array[menuNr];
 	bool disabledLook = false;
+
+	// Don't draw in case there is no text
+	if (!menuEntry->text.size())
+		return;
 
 	if (!inverted) {
 		_text->charAttrib_Set(0, _text->calculateTextBackground(15));
@@ -409,10 +428,11 @@ void GfxMenu::drawMenu(int16 selectedMenuNr, int16 selectedMenuItemNr) {
 	// calculate active menu dimensions
 	_drawnMenuHeight = (menuEntry->itemCount + 2) * FONT_VISUAL_HEIGHT;
 	_drawnMenuWidth  = (menuEntry->maxItemTextLen * FONT_VISUAL_WIDTH) + 8;
-	_drawnMenuRow    = (menuEntry->itemCount + 3 - _text->getWindowRowMin()) * FONT_VISUAL_HEIGHT - 1;
-	_drawnMenuColumn = (itemEntry->column - 1) * FONT_VISUAL_WIDTH;
+	_drawnMenuY      = (1 - _text->getWindowRowMin()) * FONT_VISUAL_HEIGHT;
+	//(menuEntry->itemCount + 3 - _text->getWindowRowMin()) * FONT_VISUAL_HEIGHT - 1;
+	_drawnMenuX      = (itemEntry->column - 1) * FONT_VISUAL_WIDTH;
 
-	_gfx->drawBox(_drawnMenuColumn, _drawnMenuRow, _drawnMenuWidth, _drawnMenuHeight, 15, 0);
+	_gfx->drawBox(_drawnMenuX, _drawnMenuY, _drawnMenuWidth, _drawnMenuHeight, 15, 0);
 
 	while (itemCount) {
 		if (itemNr == selectedMenuItemNr) {
@@ -430,7 +450,7 @@ void GfxMenu::removeActiveMenu(int16 selectedMenuNr) {
 	drawMenuName(selectedMenuNr, false);
 
 	// overwrite actual menu items by rendering play screen
-	_gfx->render_Block(_drawnMenuColumn, _drawnMenuRow, _drawnMenuWidth, _drawnMenuHeight);
+	_gfx->render_Block(_drawnMenuX, _drawnMenuY, _drawnMenuWidth, _drawnMenuHeight);
 }
 
 void GfxMenu::keyPress(uint16 newKey) {
@@ -531,8 +551,10 @@ void GfxMenu::keyPress(uint16 newKey) {
 // In "via mouse" mode, we check if user let go of the left mouse button and then select the item that way
 void GfxMenu::mouseEvent(uint16 newKey) {
 	// Find out, where current mouse cursor actually is
-	int16 mouseRow = _vm->_mouse.pos.y / FONT_DISPLAY_HEIGHT;
-	int16 mouseColumn = _vm->_mouse.pos.x / FONT_DISPLAY_WIDTH;
+	int16 mouseRow = _vm->_mouse.pos.y;
+	int16 mouseColumn = _vm->_mouse.pos.x;
+
+	_gfx->translateDisplayPosToFontScreen(mouseColumn, mouseRow);
 
 	int16 activeMenuNr, activeItemNr;
 	mouseFindMenuSelection(mouseRow, mouseColumn, activeMenuNr, activeItemNr);
@@ -620,7 +642,7 @@ void GfxMenu::mouseFindMenuSelection(int16 mouseRow, int16 mouseColumn, int16 &a
 
 		if (mouseRow == menuEntry->row) {
 			// line match
-			if ((mouseColumn >= menuEntry->column) && (mouseColumn <= (menuEntry->column + menuEntry->textLen))) {
+			if ((mouseColumn >= menuEntry->column) && (mouseColumn < (menuEntry->column + menuEntry->textLen))) {
 				// full match
 				activeMenuNr = menuNr;
 				activeMenuItemNr = -1; // no item selected
@@ -642,7 +664,7 @@ void GfxMenu::mouseFindMenuSelection(int16 mouseRow, int16 mouseColumn, int16 &a
 
 			if (mouseRow == itemEntry->row) {
 				// line match
-				if ((mouseColumn >= itemEntry->column) && (mouseColumn <= (itemEntry->column + itemEntry->textLen))) {
+				if ((mouseColumn >= itemEntry->column) && (mouseColumn < (itemEntry->column + itemEntry->textLen))) {
 					// full match
 					if (itemEntry->enabled) {
 						// Only see it, when it's currently enabled

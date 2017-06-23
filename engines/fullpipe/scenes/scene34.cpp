@@ -189,7 +189,7 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 	mq->setFlags(mq->getFlags() | 1);
 	mq->chain(0);
 
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 }
 
 void sceneHandler34_animateLeaveBoard(ExCommand *cmd) {
@@ -337,7 +337,7 @@ int sceneHandler34(ExCommand *cmd) {
 		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
 		g_fp->_aniMan->_flags &= 0xFEFF;
 
-		getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_keyCode);
+		getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_param);
 
 		break;
 
@@ -419,8 +419,8 @@ int sceneHandler34(ExCommand *cmd) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
 			if (ani) {
-				if ((ani->_id == ANI_STOOL_34 && cmd->_keyCode == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_keyCode == ANI_INV_STOOL)) {
-					getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_keyCode);
+				if ((ani->_id == ANI_STOOL_34 && cmd->_param == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_param == ANI_INV_STOOL)) {
+					getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_param);
 
 					cmd->_messageKind = 0;
 				}
@@ -434,11 +434,11 @@ int sceneHandler34(ExCommand *cmd) {
 				}
 			}
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);
 						break;
@@ -457,6 +457,8 @@ int sceneHandler34(ExCommand *cmd) {
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
 		}
 
 		--g_vars->scene34_fliesCountdown;

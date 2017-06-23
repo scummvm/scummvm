@@ -1,0 +1,11 @@
+put 1.0 / 3
+set the floatPrecision to 6
+put 1.0 / 3
+put the loch of sprite 4
+set the loch of sprite 5 to 10
+set the castnum of sprite 8 to the number of cast "A Blank Castmember"
+
+put the date
+put the long date
+put the abbreviated time
+put the short time

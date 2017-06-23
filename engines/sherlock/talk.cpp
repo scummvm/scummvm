@@ -28,9 +28,11 @@
 #include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_talk.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 
 namespace Sherlock {
 
@@ -170,7 +172,7 @@ void Talk::talkTo(const Common::String filename) {
 	// Turn on the Exit option
 	ui._endKeyActive = true;
 
-	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() && 
+	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() &&
 			(IS_SERRATED_SCALPEL || people._allowWalkAbort))) {
 		// Only interrupt if trying to do an action, and not just if player is walking around the scene
 		if (people._allowWalkAbort)
@@ -306,8 +308,14 @@ void Talk::talkTo(const Common::String filename) {
 	if (_scriptMoreFlag && _scriptSelect != 100)
 		select = _scriptSelect;
 
-	if (select == -1)
+	if (select == -1) {
+		if (IS_ROSE_TATTOO) {
+			static_cast<Tattoo::TattooUserInterface *>(&ui)->putMessage(
+				"%s", _vm->_fixedText->getText(Tattoo::kFixedText_NoEffect));
+			return;
+		}
 		error("Couldn't find statement to display");
+	}
 
 	// Add the statement into the journal and talk history
 	if (_talkTo != -1 && !_talkHistory[_converseNum][select])
@@ -1187,7 +1195,7 @@ OpcodeReturn Talk::cmdWalkToCAnimation(const byte *&str) {
 	++str;
 	CAnim &animation = scene._cAnim[str[0] - 1];
 	people[HOLMES].walkToCoords(animation._goto[0], animation._goto[0]._facing);
-	
+
 	return _talkToAbort ? RET_EXIT : RET_SUCCESS;
 }
 

@@ -47,7 +47,7 @@ void WidgetPassword::show() {
 
 	// Create the surface
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 	makeInfoArea();
 
 	// Draw the header area
@@ -55,8 +55,8 @@ void WidgetPassword::show() {
 	_surface.hLine(3, _surface.fontHeight() + 7, _bounds.width() - 4, INFO_TOP);
 	_surface.hLine(3, _surface.fontHeight() + 8, _bounds.width() - 4, INFO_MIDDLE);
 	_surface.hLine(3, _surface.fontHeight() + 9, _bounds.width() - 4, INFO_BOTTOM);
-	_surface.transBlitFrom(images[4], Common::Point(0, _surface.fontHeight() + 7 - 1));
-	_surface.transBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width, _surface.fontHeight() + 7 - 1));
+	_surface.SHtransBlitFrom(images[4], Common::Point(0, _surface.fontHeight() + 7 - 1));
+	_surface.SHtransBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width, _surface.fontHeight() + 7 - 1));
 
 	// Set the password entry data
 	_cursorPos = Common::Point(_surface.widestChar(), _surface.fontHeight() + 12);
@@ -119,7 +119,7 @@ void WidgetPassword::handleEvents() {
 		_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _cursorPos.x + width, _cursorPos.y + _surface.fontHeight()), TRANSPARENCY);
 		if (currentChar != ' ')
 			_surface.writeString(Common::String::format("%c", _password[_index]), _cursorPos, COMMAND_HIGHLIGHTED);
-		
+
 		switch (keycode) {
 		case Common::KEYCODE_LEFT:
 			_cursorPos.x -= _surface.charWidth(_password[_index - 1]);
@@ -136,7 +136,7 @@ void WidgetPassword::handleEvents() {
 		case Common::KEYCODE_END:
 			_cursorPos.x = _surface.stringWidth(_password) + _surface.widestChar();
 			_index = _password.size();
-			
+
 			while (_index > 0 && _password[_index - 1] == ' ') {
 				_cursorPos.x -= _surface.charWidth(_password[_index - 1]);
 				--_index;
@@ -187,7 +187,7 @@ void WidgetPassword::handleEvents() {
 
 void WidgetPassword::close() {
 	Talk &talk = *_vm->_talk;
-	
+
 	banishWindow();
 	if (talk._talkToAbort)
 		return;

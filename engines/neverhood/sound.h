@@ -25,21 +25,21 @@
 
 #include "audio/audiostream.h"
 #include "common/array.h"
-#include "graphics/surface.h"
-#include "neverhood/neverhood.h"
-#include "neverhood/resource.h"
+#include "neverhood/resourceman.h"
+
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Audio {
+class SoundHandle;
+}
 
 namespace Neverhood {
 
-// Convert volume from percent to 0..255
-#define VOLUME(volume) (Audio::Mixer::kMaxChannelVolume / 100 * (volume))
-
-// Convert panning from percent (50% equals center) to -127..0..+127
-#define PANNING(panning) (254 / 100 * (panning) - 127)
-
+class NeverhoodEngine;
 class AudioResourceManSoundItem;
 class AudioResourceManMusicItem;
-class AudioResourceMan;
 
 class SoundResource {
 public:
@@ -213,6 +213,7 @@ private:
 class AudioResourceManSoundItem {
 public:
 	AudioResourceManSoundItem(NeverhoodEngine *vm, uint32 fileHash);
+	~AudioResourceManSoundItem();
 	void loadSound();
 	void unloadSound();
 	void setVolume(int16 volume);
@@ -229,12 +230,13 @@ protected:
 	bool _isPlaying;
 	int16 _volume;
 	int16 _panning;
-	Audio::SoundHandle _soundHandle;
+	Audio::SoundHandle *_soundHandle;
 };
 
 class AudioResourceManMusicItem {
 public:
 	AudioResourceManMusicItem(NeverhoodEngine *vm, uint32 fileHash);
+	~AudioResourceManMusicItem();
 	void playMusic(int16 fadeVolumeStep);
 	void stopMusic(int16 fadeVolumeStep);
 	void unloadMusic();
@@ -258,7 +260,7 @@ protected:
 	bool _isFadingOut;
 	int16 _fadeVolume;
 	int16 _fadeVolumeStep;
-	Audio::SoundHandle _soundHandle;
+	Audio::SoundHandle *_soundHandle;
 };
 
 class AudioResourceMan {

@@ -48,22 +48,22 @@ void WidgetQuit::show() {
 
 	// Create the surface
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 	makeInfoArea();
 
 	// Draw the message text
-	_surface.writeString(FIXED(AreYouSureYou), Common::Point((_surface.w() - _surface.stringWidth(FIXED(AreYouSureYou))) / 2, 5), INFO_TOP);
-	_surface.writeString(FIXED(WishToQuit), Common::Point((_surface.w() - _surface.stringWidth(FIXED(WishToQuit))) / 2,
+	_surface.writeString(FIXED(AreYouSureYou), Common::Point((_surface.width() - _surface.stringWidth(FIXED(AreYouSureYou))) / 2, 5), INFO_TOP);
+	_surface.writeString(FIXED(WishToQuit), Common::Point((_surface.width() - _surface.stringWidth(FIXED(WishToQuit))) / 2,
 		_surface.fontHeight() + 9), INFO_TOP);
 
 	// Draw the horizontal bars seperating the commands and the message
 	int yp = (_surface.fontHeight() + 4) * 2 + 3;
 	for (int idx = 0; idx < 2; ++idx) {
-		_surface.transBlitFrom(images[4], Common::Point(0, yp - 1));
-		_surface.transBlitFrom(images[5], Common::Point(_surface.w() - images[5]._width, yp - 1));
-		_surface.hLine(3, yp, _surface.w() - 4, INFO_TOP);
-		_surface.hLine(3, yp + 1, _surface.w() - 4, INFO_MIDDLE);
-		_surface.hLine(3, yp + 2, _surface.w() - 4, INFO_BOTTOM);
+		_surface.SHtransBlitFrom(images[4], Common::Point(0, yp - 1));
+		_surface.SHtransBlitFrom(images[5], Common::Point(_surface.width() - images[5]._width, yp - 1));
+		_surface.hLine(3, yp, _surface.width() - 4, INFO_TOP);
+		_surface.hLine(3, yp + 1, _surface.width() - 4, INFO_MIDDLE);
+		_surface.hLine(3, yp + 2, _surface.width() - 4, INFO_BOTTOM);
 
 		const char *btn = (idx == 0) ? YES : NO;
 		_surface.writeString(btn, Common::Point((_bounds.width() - _surface.stringWidth(btn)) / 2, yp + 5), INFO_TOP);
@@ -129,11 +129,11 @@ void WidgetQuit::handleEvents() {
 	if (_select != _oldSelect) {
 		byte color = (_select == 1) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 		int yp = (_surface.fontHeight() + 4) * 2 + 8;
-		_surface.writeString(FIXED(Yes), Common::Point((_surface.w() - _surface.stringWidth(FIXED(Yes))) / 2, yp), color);
-		
+		_surface.writeString(FIXED(Yes), Common::Point((_surface.width() - _surface.stringWidth(FIXED(Yes))) / 2, yp), color);
+
 		color = (_select == 0) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 		yp += (_surface.fontHeight() + 7);
-		_surface.writeString(FIXED(No), Common::Point((_surface.w() - _surface.stringWidth(FIXED(No))) / 2, yp), color);
+		_surface.writeString(FIXED(No), Common::Point((_surface.width() - _surface.stringWidth(FIXED(No))) / 2, yp), color);
 	}
 	_oldSelect = _select;
 

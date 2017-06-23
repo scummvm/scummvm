@@ -3795,6 +3795,11 @@ void ScummEngine::fadeOut(int effect) {
 		_textSurface.fillRect(Common::Rect(0, vs->topline * _textSurfaceMultiplier, _textSurface.pitch, (vs->topline + vs->h) * _textSurfaceMultiplier), 0);
 #endif
 
+	// V0 wipes the text area before fading out
+	if (_game.version == 0) {
+		updateDirtyScreen(kTextVirtScreen);
+	}
+
 	// TheDig can disable fadeIn(), and may call fadeOut() several times
 	// successively. Disabling the _screenEffectFlag check forces the screen
 	// to get cleared. This fixes glitches, at least, in the first cutscenes

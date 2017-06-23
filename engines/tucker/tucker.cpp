@@ -710,6 +710,10 @@ void TuckerEngine::setCursorType(int type) {
 	CursorMan.showMouse(_cursorType < 2);
 }
 
+void TuckerEngine::showCursor(bool visible) {
+	CursorMan.showMouse(visible);
+}
+
 void TuckerEngine::setupNewLocation() {
 	debug(2, "setupNewLocation() current %d next %d", _locationNum, _nextLocationNum);
 	_locationNum = _nextLocationNum;

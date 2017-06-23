@@ -827,49 +827,51 @@ void GameNebular::step() {
 	if (_player._visible && _player._stepEnabled && !_player._moving &&
 		(_player._facing == _player._turnToFacing)) {
 		if (_scene._frameStartTime >= (uint32)_globals[kWalkerTiming]) {
-			int randomVal = _vm->getRandomNumber(29999);
-			if (_globals[kSexOfRex] == REX_MALE) {
-				switch (_player._facing) {
-				case FACING_SOUTHWEST:
-				case FACING_SOUTHEAST:
-				case FACING_NORTHWEST:
-				case FACING_NORTHEAST:
-					if (randomVal < 200) {
-						_player.addWalker(-1, 0);
-						_player.addWalker(1, 0);
-					}
-					break;
-
-				case FACING_WEST:
-				case FACING_EAST:
-					if (randomVal < 500) {
-						for (int count = 0; count < 10; ++count) {
+			if (_player._stopWalkers.empty()) {
+				int randomVal = _vm->getRandomNumber(29999);
+				if (_globals[kSexOfRex] == REX_MALE) {
+					switch (_player._facing) {
+					case FACING_SOUTHWEST:
+					case FACING_SOUTHEAST:
+					case FACING_NORTHWEST:
+					case FACING_NORTHEAST:
+						if (randomVal < 200) {
+							_player.addWalker(-1, 0);
 							_player.addWalker(1, 0);
 						}
+						break;
+
+					case FACING_WEST:
+					case FACING_EAST:
+						if (randomVal < 500) {
+							for (int count = 0; count < 10; ++count) {
+								_player.addWalker(1, 0);
+							}
+						}
+						break;
+
+					case FACING_SOUTH:
+						if (randomVal < 500) {
+							for (int count = 0; count < 10; ++count) {
+								_player.addWalker((randomVal < 250) ? 1 : 2, 0);
+							}
+						} else if (randomVal < 750) {
+							for (int count = 0; count < 5; ++count) {
+								_player.addWalker(1, 0);
+							}
+
+							_player.addWalker(0, 0);
+							_player.addWalker(0, 0);
+
+							for (int count = 0; count < 5; ++count) {
+								_player.addWalker(2, 0);
+							}
+						}
+						break;
+
+					default:
+						break;
 					}
-					break;
-
-				case FACING_SOUTH:
-					if (randomVal < 500) {
-						for (int count = 0; count < 10; ++count) {
-							_player.addWalker((randomVal < 250) ? 1 : 2, 0);
-						}
-					} else if (randomVal < 750) {
-						for (int count = 0; count < 5; ++count) {
-							_player.addWalker(1, 0);
-						}
-
-						_player.addWalker(0, 0);
-						_player.addWalker(0, 0);
-
-						for (int count = 0; count < 5; ++count) {
-							_player.addWalker(2, 0);
-						}
-					}
-					break;
-
-				default:
-					break;
 				}
 			}
 

@@ -40,7 +40,7 @@ const int ENV_POINTS[6][3] = {
 
 /*----------------------------------------------------------------*/
 
-ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String &target) : 
+ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String &target) :
 	SaveManager(vm, target), _envMode(SAVEMODE_NONE) {
 
 	_fixedTextExit = FIXED(LoadSave_Exit);
@@ -262,14 +262,14 @@ bool ScalpelSaveManager::promptForDescription(int slot) {
 			xp -= screen.charWidth(saveName.lastChar());
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
 			saveName.deleteLastChar();
-		
+
 		} else if (keyState.keycode == Common::KEYCODE_RETURN && saveName.compareToIgnoreCase(EMPTY_SAVEGAME_SLOT)) {
 			done = 1;
 
 		} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
 			done = -1;
-		
+
 		} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && saveName.size() < 50
 				&& (xp + screen.charWidth(keyState.ascii)) < 308) {
 			char c = (char)keyState.ascii;

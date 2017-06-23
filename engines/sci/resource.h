@@ -30,6 +30,7 @@
 #include "sci/graphics/helpers.h"		// for ViewType
 #include "sci/decompressor.h"
 #include "sci/sci.h"
+#include "sci/util.h"
 
 namespace Common {
 class File;
@@ -42,6 +43,8 @@ class SeekableReadStream;
 namespace Sci {
 
 enum {
+	kResourceHeaderSize = 2, ///< patch type + header size
+
 	/** The maximum allowed size for a compressed or decompressed resource */
 	SCI_MAX_RESOURCE_SIZE = 0x0400000
 };
@@ -84,7 +87,10 @@ enum ResourceType {
 	kResourceTypePatch,
 	kResourceTypeBitmap,
 	kResourceTypePalette,
-	kResourceTypeCdAudio,
+	kResourceTypeCdAudio = 12,
+#ifdef ENABLE_SCI32
+	kResourceTypeWave = 12,
+#endif
 	kResourceTypeAudio,
 	kResourceTypeSync,
 	kResourceTypeMessage,
@@ -158,6 +164,8 @@ class ResourceId {
 		return string;
 	}
 
+	friend void syncWithSerializer(Common::Serializer &s, ResourceId &obj);
+
 public:
 	ResourceId() : _type(kResourceTypeInvalid), _number(0), _tuple(0) { }
 
@@ -171,21 +179,17 @@ public:
 	}
 
 	Common::String toString() const {
-		char buf[32];
-
-		snprintf(buf, 32, "%s.%d", getResourceTypeName(_type), _number);
-		Common::String retStr = buf;
+		Common::String retStr = Common::String::format("%s.%d", getResourceTypeName(_type), _number);
 
 		if (_tuple != 0) {
-			snprintf(buf, 32, "(%d, %d, %d, %d)", _tuple >> 24, (_tuple >> 16) & 0xff, (_tuple >> 8) & 0xff, _tuple & 0xff);
-			retStr += buf;
+			retStr += Common::String::format("(%d, %d, %d, %d)", _tuple >> 24, (_tuple >> 16) & 0xff, (_tuple >> 8) & 0xff, _tuple & 0xff);
 		}
 
 		return retStr;
 	}
 
 	// Convert from a resource ID to a base36 patch name
-	Common::String toPatchNameBase36() {
+	Common::String toPatchNameBase36() const {
 		Common::String output;
 
 		output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
@@ -212,6 +216,10 @@ public:
 		return (_type == other._type) && (_number == other._number) && (_tuple == other._tuple);
 	}
 
+	bool operator!=(const ResourceId &other) const {
+		return !operator==(other);
+	}
+
 	bool operator<(const ResourceId &other) const {
 		return (_type < other._type) || ((_type == other._type) && (_number < other._number))
 			    || ((_type == other._type) && (_number == other._number) && (_tuple < other._tuple));
@@ -223,7 +231,7 @@ struct ResourceIdHash : public Common::UnaryFunction<ResourceId, uint> {
 };
 
 /** Class for storing resources in memory */
-class Resource {
+class Resource : public SciSpan<const byte> {
 	friend class ResourceManager;
 
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
@@ -237,11 +245,12 @@ class Resource {
 	friend class ChunkResourceSource;
 #endif
 
-// NOTE : Currently most member variables lack the underscore prefix and have
-// public visibility to let the rest of the engine compile without changes.
-public:
-	byte *data;
-	uint32 size;
+protected:
+	/**
+	 * Holds the extra header data from view, pic, and palette patches so that
+	 * these patches can be rewritten to disk as valid patch files by the
+	 * `diskdump` debugger command.
+	 */
 	byte *_header;
 	uint32 _headerSize;
 
@@ -259,12 +268,18 @@ public:
 	 */
 	void writeToStream(Common::WriteStream *stream) const;
 
+#ifdef ENABLE_SCI32
+	Common::SeekableReadStream *makeStream() const;
+#endif
+
 	const Common::String &getResourceLocation() const;
 
 	// FIXME: This audio specific method is a hack. After all, why should a
 	// Resource have audio specific methods? But for now we keep this, as it
 	// eases transition.
 	uint32 getAudioCompressionType() const;
+
+	uint16 getNumLockers() const { return _lockers; }
 
 protected:
 	ResourceId _id;	// TODO: _id could almost be made const, only readResourceInfo() modifies it...
@@ -285,6 +300,7 @@ protected:
 
 typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash> ResourceMap;
 
+class IntMapResourceSource;
 class ResourceManager {
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
 	// ease transition to the ResourceSource class system.
@@ -305,7 +321,7 @@ public:
 	/**
 	 * Creates a new SCI resource manager.
 	 */
-	ResourceManager();
+	ResourceManager(const bool detectionMode = false);
 	~ResourceManager();
 
 
@@ -313,11 +329,6 @@ public:
 	 * Initializes the resource manager.
 	 */
 	void init();
-
-	/**
-	 * Similar to the function above, only called from the fallback detector
-	 */
-	void initForDetection();
 
 	/**
 	 * Adds all of the resource files for a game
@@ -369,7 +380,7 @@ public:
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
-	void changeAudioDirectory(Common::String path);
+	void changeAudioDirectory(const Common::String &path);
 	bool isGMTrackIncluded();
 	bool isSci11Mac() const { return _volVersion == kResVersionSci11Mac; }
 	ViewType getViewType() const { return _viewType; }
@@ -391,9 +402,32 @@ public:
 	 * resource manager.
 	 */
 	void addResourcesFromChunk(uint16 id);
+
+	/**
+	 * Updates the currently active disc number.
+	 */
+	void findDisc(const int16 discNo);
+
+	/**
+	 * Gets the currently active disc number.
+	 */
+	int16 getCurrentDiscNo() const { return _currentDiscNo; }
+
+private:
+	/**
+	 * The currently active disc number.
+	 */
+	int16 _currentDiscNo;
+
+	/**
+	 * If true, the game has multiple audio volumes that contain different
+	 * audio files for each disc.
+	 */
+	bool _multiDiscAudio;
+
+public:
 #endif
 
-	bool detectHires();
 	// Detects, if standard font of current game includes extended characters (>0x80)
 	bool detectFontExtended();
 	// Detects, if SCI1.1 game uses palette merging
@@ -404,7 +438,7 @@ public:
 	/**
 	 * Finds the internal Sierra ID of the current game from script 0.
 	 */
-	Common::String findSierraGameId();
+	Common::String findSierraGameId(const bool isBE);
 
 	/**
 	 * Finds the location of the game object from script 0.
@@ -412,7 +446,7 @@ public:
 	 *        games. Needs to be false when the heap is accessed directly inside
 	 *        findSierraGameId().
 	 */
-	reg_t findGameObject(bool addSci11ScriptOffset = true);
+	reg_t findGameObject(const bool addSci11ScriptOffset, const bool isBE);
 
 	/**
 	 * Converts a map resource type to our type
@@ -422,13 +456,13 @@ public:
 	ResourceType convertResType(byte type);
 
 protected:
+	bool _detectionMode;
+
 	// Maximum number of bytes to allow being allocated for resources
 	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
 	// for resources which are not explicitly locked. However, a warning will be
 	// issued whenever this limit is exceeded.
-	enum {
-		MAX_MEMORY = 256 * 1024	// 256KB
-	};
+	int _maxMemoryLRU;
 
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
 	Common::List<ResourceSource *> _sources;
@@ -486,11 +520,19 @@ protected:
 	 */
 	const char *versionDescription(ResVersion version) const;
 
+	/**
+	 * All calls to getVolumeFile must be followed with a corresponding
+	 * call to disposeVolumeFileStream once the stream is finished being used.
+	 * Do NOT call delete directly on returned streams, as they may be cached.
+	 */
 	Common::SeekableReadStream *getVolumeFile(ResourceSource *source);
+	void disposeVolumeFileStream(Common::SeekableReadStream *fileStream, ResourceSource *source);
 	void loadResource(Resource *res);
 	void freeOldResources();
-	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0);
-	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 size);
+	bool validateResource(const ResourceId &resourceId, const Common::String &sourceMapLocation, const Common::String &sourceName, const uint32 offset, const uint32 size, const uint32 sourceSize) const;
+	Resource *addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0, const Common::String &sourceMapLocation = Common::String("(no map location)"));
+	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 size, const Common::String &sourceMapLocation = Common::String("(no map location)"));
+	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation = Common::String("(no map location)"));
 	void removeAudioResource(ResourceId resId);
 
 	/**--- Resource map decoding functions ---*/
@@ -516,7 +558,7 @@ protected:
 	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
-	int readAudioMapSCI11(ResourceSource *map);
+	int readAudioMapSCI11(IntMapResourceSource *map);
 
 	/**
 	 * Reads SCI1 audio map files.
@@ -539,7 +581,7 @@ protected:
 	 * Process wave files as patches for Audio resources.
 	 */
 	void readWaveAudioPatches();
-	void processWavePatch(ResourceId resourceId, Common::String name);
+	void processWavePatch(ResourceId resourceId, const Common::String &name);
 
 	/**
 	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
@@ -562,6 +604,9 @@ protected:
 	bool checkResourceDataForSignature(Resource *resource, const byte *signature);
 	bool checkResourceForSignatures(ResourceType resourceType, uint16 resourceNr, const byte *signature1, const byte *signature2);
 	void detectSciVersion();
+
+private:
+	bool _hasBadResources;
 };
 
 class SoundResource {
@@ -571,11 +616,21 @@ public:
 		byte flags;
 		byte poly;
 		uint16 prio;
-		uint16 size;
-		byte *data;
+		SciSpan<const byte> data;
 		uint16 curPos;
 		long time;
 		byte prev;
+
+		Channel() :
+			number(0),
+			flags(0),
+			poly(0),
+			prio(0),
+			data(),
+			curPos(0) {
+			time = 0;
+			prev = 0;
+		}
 	};
 
 	struct Track {

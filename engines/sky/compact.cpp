@@ -126,11 +126,11 @@ static const uint32 turnTableOffsets[] = {
 
 SkyCompact::SkyCompact() {
 	_cptFile = new Common::File();
-	if (!_cptFile->open("sky.cpt")) {
-		GUI::MessageDialog dialog(_("Unable to find \"sky.cpt\" file!\n"
-								  "Please download it from www.scummvm.org"), _("OK"), NULL);
-		dialog.runModal();
-		error("Unable to find \"sky.cpt\" file\nPlease download it from www.scummvm.org");
+	Common::String filename = "sky.cpt";
+	if (!_cptFile->open(filename.c_str())) {
+                Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
+                GUIErrorMessage(msg);
+                error("%s", msg.c_str());
 	}
 
 	uint16 fileVersion = _cptFile->readUint16LE();
@@ -138,7 +138,7 @@ SkyCompact::SkyCompact() {
 		error("unknown \"sky.cpt\" version");
 
 	if (SKY_CPT_SIZE != _cptFile->size()) {
-		GUI::MessageDialog dialog(_("The \"sky.cpt\" file has an incorrect size.\nPlease (re)download it from www.scummvm.org"), _("OK"), NULL);
+		GUI::MessageDialog dialog(_("The \"sky.cpt\" engine data file has an incorrect size."), _("OK"), NULL);
 		dialog.runModal();
 		error("Incorrect sky.cpt size (%d, expected: %d)", _cptFile->size(), SKY_CPT_SIZE);
 	}
@@ -236,6 +236,8 @@ SkyCompact::SkyCompact() {
 	for (cnt = 0; cnt < _numSaveIds; cnt++)
 		_saveIds[cnt] = FROM_LE_16(_saveIds[cnt]);
 	_resetDataPos = _cptFile->pos();
+
+	checkAndFixOfficerBluntError();
 }
 
 SkyCompact::~SkyCompact() {
@@ -255,6 +257,21 @@ SkyCompact::~SkyCompact() {
 	free(_compacts);
 	_cptFile->close();
 	delete _cptFile;
+}
+
+/* WORKAROUND for bug #2687:
+	The first release of scummvm with externalized, binary compact data has one broken 16 bit reference.
+	When talking to Officer Blunt on ground level while in a crouched position, the game enters an
+	unfinishable state because Blunt jumps into the lake and can no longer be interacted with.
+	This fixes the problem when playing with a broken sky.cpt */
+#define SCUMMVM_BROKEN_TALK_INDEX 158
+void SkyCompact::checkAndFixOfficerBluntError() {
+	// Retrieve the table with the animation ids to use for talking
+	uint16 *talkTable = (uint16*)fetchCpt(CPT_TALK_TABLE_LIST);
+	if (talkTable[SCUMMVM_BROKEN_TALK_INDEX] == ID_SC31_GUARD_TALK) {
+		debug(1, "SKY.CPT with Officer Blunt bug encountered, fixing talk gfx.");
+		talkTable[SCUMMVM_BROKEN_TALK_INDEX] = ID_SC31_GUARD_TALK2;
+	}
 }
 
 // needed for some workaround where the engine has to check if it's currently processing joey, for example

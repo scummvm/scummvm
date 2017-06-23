@@ -21,8 +21,7 @@
  */
 
 #include "common/random.h"
-
-#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "agi/agi.h"
 
@@ -75,6 +74,7 @@ SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm,
 	_useChorus = true;  // FIXME: Currently always true?
 
 	switch (_vm->_soundemu) {
+	default:
 	case SOUND_EMU_NONE:
 		_waveform = waveformRamp;
 		_env = true;
@@ -94,11 +94,11 @@ SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm,
 		debug(0, "Initializing sound: envelopes disabled");
 	}
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 SoundGenSarien::~SoundGenSarien() {
-	_mixer->stopHandle(_soundHandle);
+	_mixer->stopHandle(*_soundHandle);
 
 	free(_sndBuffer);
 }

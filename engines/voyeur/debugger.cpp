@@ -21,7 +21,7 @@
  */
 
 #include "voyeur/debugger.h"
-#include "voyeur/graphics.h"
+#include "voyeur/screen.h"
 #include "voyeur/voyeur.h"
 #include "voyeur/staticres.h"
 

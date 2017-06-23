@@ -69,13 +69,15 @@ public:
 	bool quitDialog();
 
 private:
-	
+
 
 public:
 	const char *getInventoryTextNothing();
 	const char *getInventoryTextYouAreCarrying();
 	const char *getInventoryTextSelectItems();
 	const char *getInventoryTextReturnToGame();
+
+	bool askForCommand(Common::String &commandText);
 
 	int16 figureOutAutomaticSaveGameSlot(const char *automaticSaveDescription);
 	int16 figureOutAutomaticRestoreGameSlot(const char *automaticSaveDescription);
@@ -107,9 +109,12 @@ private:
 private:
 	SystemUIButtonArray _buttonArray;
 
+	Common::Rect createRect(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight);
+	//void moveRect(int16 x, int16 adjX, int16 y, int16 adjY);
+
 	void drawButton(SystemUIButtonEntry *button);
 	void drawButtonAppleIIgs(SystemUIButtonEntry *buttonEntry);
-	void drawButtonAppleIIgsEdgePixels(int16 x, int16 y, byte *edgeBitmap, bool mirrored, bool upsideDown);
+	void drawButtonAppleIIgsEdgePixels(int16 x, int16 adjX, int16 y, int16 adjY, byte *edgeBitmap, bool mirrored, bool upsideDown);
 	void drawButtonAmiga(SystemUIButtonEntry *buttonEntry);
 	void drawButtonAtariST(SystemUIButtonEntry *buttonEntry);
 
@@ -126,6 +131,8 @@ private:
 	const char *_textStatusScore;
 	const char *_textStatusSoundOn;
 	const char *_textStatusSoundOff;
+
+	const char *_textEnterCommand;
 
 	const char *_textPause;
 	const char *_textPauseButton;

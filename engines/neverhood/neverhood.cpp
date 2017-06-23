@@ -24,6 +24,8 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
+#include "audio/mixer.h"
+
 #include "base/plugins.h"
 #include "base/version.h"
 

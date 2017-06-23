@@ -72,11 +72,11 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 	loadInv();
 
 	if (mode == INVENTORY_DONT_DISPLAY) {
-		screen._backBuffer = &screen._backBuffer2;
+		screen.activateBackBuffer2();
 	}
 
 	// Draw the window background
-	Surface &bb = *screen._backBuffer;
+	Surface &bb = *screen.getBackBuffer();
 	bb.fillRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y1 + 10), BORDER_COLOR);
 	bb.fillRect(Common::Rect(0, CONTROLS_Y1 + 10, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
 	bb.fillRect(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y1 + 10,
@@ -109,7 +109,7 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 	_invMode = (InvMode)((int)mode);
 
 	if (mode != PLAIN_INVENTORY) {
-		assert(mode < sizeof(_hotkeysIndexed));
+		assert((uint)mode < sizeof(_hotkeysIndexed));
 		ui._oldKey = _hotkeysIndexed[mode];
 	} else {
 		ui._oldKey = -1;
@@ -128,7 +128,7 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 		ui._windowOpen = true;
 	} else {
 		// Reset the screen back buffer to the first buffer now that drawing is done
-		screen._backBuffer = &screen._backBuffer1;
+		screen.activateBackBuffer1();
 	}
 
 	assert(IS_SERRATED_SCALPEL);
@@ -196,12 +196,12 @@ void ScalpelInventory::invCommands(bool slamIt) {
 
 void ScalpelInventory::highlight(int index, byte color) {
 	Screen &screen = *_vm->_screen;
-	Surface &bb = *screen._backBuffer;
+	Surface &bb = *screen.getBackBuffer();
 	int slot = index - _invIndex;
 	ImageFrame &frame = (*_invShapes[slot])[0];
 
 	bb.fillRect(Common::Rect(8 + slot * 52, 165, (slot + 1) * 52, 194), color);
-	bb.transBlitFrom(frame, Common::Point(6 + slot * 52 + ((47 - frame._width) / 2),
+	bb.SHtransBlitFrom(frame, Common::Point(6 + slot * 52 + ((47 - frame._width) / 2),
 		163 + ((33 - frame._height) / 2)));
 	screen.slamArea(8 + slot * 52, 165, 44, 30);
 }
@@ -217,12 +217,12 @@ void ScalpelInventory::refreshInv() {
 	ui._infoFlag = true;
 	ui.clearInfo();
 
-	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(0, CONTROLS_Y),
+	screen._backBuffer2.SHblitFrom(screen._backBuffer1, Common::Point(0, CONTROLS_Y),
 		Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 	ui.examine();
 
 	if (!talk._talkToAbort) {
-		screen._backBuffer2.blitFrom((*ui._controlPanel)[0], Common::Point(0, CONTROLS_Y));
+		screen._backBuffer2.SHblitFrom((*ui._controlPanel)[0], Common::Point(0, CONTROLS_Y));
 		loadInv();
 	}
 }
@@ -264,7 +264,7 @@ void ScalpelInventory::putInv(InvSlamMode slamIt) {
 
 		// Draw the item image
 		ImageFrame &frame = (*_invShapes[itemNum])[0];
-		bb.transBlitFrom(frame, Common::Point(6 + itemNum * 52 + ((47 - frame._width) / 2),
+		bb.SHtransBlitFrom(frame, Common::Point(6 + itemNum * 52 + ((47 - frame._width) / 2),
 			163 + ((33 - frame._height) / 2)));
 	}
 
@@ -278,9 +278,9 @@ void ScalpelInventory::putInv(InvSlamMode slamIt) {
 		invCommands(0);
 	}
 	else if (slamIt == SLAM_SECONDARY_BUFFER) {
-		screen._backBuffer = &screen._backBuffer2;
+		screen.activateBackBuffer2();
 		invCommands(0);
-		screen._backBuffer = &screen._backBuffer1;
+		screen.activateBackBuffer1();
 	}
 }
 

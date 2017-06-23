@@ -49,6 +49,7 @@ void criticalSection(void *arg);
 TestExitStatus testDateTime();
 TestExitStatus testTimers();
 TestExitStatus testMutexes();
+TestExitStatus testOpenUrl();
 // add more here
 
 } // End of namespace MiscTests
@@ -69,7 +70,7 @@ public:
 		return "Misc";
 	}
 	const char *getDescription() const {
-		return "Miscellaneous: Timers/Mutexes/Datetime";
+		return "Miscellaneous: Timers/Mutexes/Datetime/openUrl";
 	}
 };
 

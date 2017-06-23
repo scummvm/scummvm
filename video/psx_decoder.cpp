@@ -24,7 +24,6 @@
 // MDEC video emulation based on http://kenai.com/downloads/jpsxdec/Old/PlayStation1_STR_format1-00.txt
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "common/bitstream.h"
 #include "common/huffman.h"

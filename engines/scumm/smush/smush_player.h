@@ -24,7 +24,11 @@
 #define SCUMM_SMUSH_PLAYER_H
 
 #include "common/util.h"
-#include "scumm/sound.h"
+
+namespace Audio {
+class SoundHandle;
+class QueuingAudioStream;
+}
 
 namespace Scumm {
 
@@ -61,10 +65,10 @@ private:
 	bool _skipNext;
 	uint32 _frame;
 
-	Audio::SoundHandle _IACTchannel;
+	Audio::SoundHandle *_IACTchannel;
 	Audio::QueuingAudioStream *_IACTstream;
 
-	Audio::SoundHandle _compressedFileSoundHandle;
+	Audio::SoundHandle *_compressedFileSoundHandle;
 	bool _compressedFileMode;
 	byte _IACToutput[4096];
 	int32 _IACTpos;

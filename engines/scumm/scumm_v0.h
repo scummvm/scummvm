@@ -70,6 +70,10 @@ public:
 
 	byte walkboxFindTarget(Actor *a, int destbox, Common::Point walkdest);
 
+	/* Delay calculation */
+	void DelayReset();
+	int DelayCalculateDelta();
+
 protected:
 	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 

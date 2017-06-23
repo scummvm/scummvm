@@ -40,6 +40,11 @@ struct MessageTuple {
 
 	MessageTuple(byte noun_ = 0, byte verb_ = 0, byte cond_ = 0, byte seq_ = 1)
 		: noun(noun_), verb(verb_), cond(cond_), seq(seq_) { }
+
+	Common::String toString() const {
+		return Common::String::format("noun %d, verb %d, cond %d, seq %d",
+									  noun, verb, cond, seq);
+	}
 };
 
 class CursorStack : public Common::Stack<MessageTuple> {
@@ -73,7 +78,7 @@ private:
 	bool getRecord(CursorStack &stack, bool recurse, MessageRecord &record);
 	void outputString(reg_t buf, const Common::String &str);
 	Common::String processString(const char *s);
-	int hexDigitToInt(char h);
+	int hexDigitToWrongInt(char h);
 	bool stringHex(Common::String &outStr, const Common::String &inStr, uint &index);
 	bool stringLit(Common::String &outStr, const Common::String &inStr, uint &index);
 	bool stringStage(Common::String &outStr, const Common::String &inStr, uint &index);

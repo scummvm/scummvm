@@ -647,9 +647,9 @@ public:
 class SceneInfoDragonsphere : public SceneInfo {
 	friend class SceneInfo;
 protected:
-	virtual void loadCodes(MSurface &depthSurface, int variant);
+	virtual void loadCodes(BaseSurface &depthSurface, int variant);
 
-	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream);
+	virtual void loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream);
 
 	/**
 	* Constructor

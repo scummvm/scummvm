@@ -20,13 +20,14 @@
  *
  */
 
-#ifndef AGI_H
-#define AGI_H
+#ifndef AGI_AGI_H
+#define AGI_AGI_H
 
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/util.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
 #include "common/stack.h"
@@ -42,8 +43,6 @@
 #include "agi/picture.h"
 #include "agi/logic.h"
 #include "agi/sound.h"
-
-#include "gui/predictivedialog.h"
 
 namespace Common {
 class RandomSource;
@@ -148,17 +147,17 @@ enum BooterDisks {
 // position and position.v.
 //
 enum AgiGameFeatures {
-	GF_AGIMOUSE    = (1 << 0),
+	GF_AGIMOUSE    = (1 << 0), // this disables "Click-to-walk mouse interface"
 	GF_AGDS        = (1 << 1),
-	GF_AGI256      = (1 << 2),
-	GF_AGI256_2    = (1 << 3),
-	GF_AGIPAL      = (1 << 4),
-	GF_MACGOLDRUSH = (1 << 5),
-	GF_FANMADE     = (1 << 6),
-	GF_MENUS       = (1 << 7),
-	GF_ESCPAUSE    = (1 << 8),
+	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
+	GF_AGI256_2    = (1 << 3), // marks fanmade AGI-256-2 games
+	GF_AGIPAL      = (1 << 4), // marks game using fanmade AGIPAL extension
+	GF_MACGOLDRUSH = (1 << 5), // use "grdir" instead of "dir" for volume loading
+	GF_FANMADE     = (1 << 6), // marks fanmade games
+	GF_MENUS       = (1 << 7), // not used anymore
+	GF_ESCPAUSE    = (1 << 8), // not used anymore, we detect this internally
 	GF_OLDAMIGAV20 = (1 << 9),
-	GF_CLIPCOORDS  = (1 << 10),
+	GF_CLIPCOORDS  = (1 << 10), // not used atm
 	GF_2GSOLDSOUND = (1 << 11)
 };
 
@@ -467,8 +466,6 @@ struct AgiGame {
 
 	ScreenObjEntry addToPicView;
 
-	int32 ver;                      /**< detected game version */
-
 	bool automaticSave;             /**< set by CmdSetSimple() */
 	char automaticSaveDescription[SAVEDGAME_DESCRIPTION_LEN + 1];
 
@@ -704,7 +701,35 @@ public:
 	}
 };
 
-typedef void (*AgiCommand)(AgiGame *state, AgiEngine *vm, uint8 *p);
+enum AgiArtificialDelayTriggerType {
+	ARTIFICIALDELAYTYPE_NEWROOM = 0,
+	ARTIFICIALDELAYTYPE_NEWPICTURE = 1,
+	ARTIFICIALDELAYTYPE_END = -1
+};
+
+struct AgiArtificialDelayEntry {
+	uint32 gameId;
+	Common::Platform platform;
+	AgiArtificialDelayTriggerType triggerType;
+	int16 orgNr;
+	int16 newNr;
+	uint16 millisecondsDelay;
+};
+
+typedef void (*AgiOpCodeFunction)(AgiGame *state, AgiEngine *vm, uint8 *p);
+
+struct AgiOpCodeEntry {
+	const char *name;
+	const char *parameters;
+	AgiOpCodeFunction functionPtr;
+	uint16     parameterSize;
+};
+
+struct AgiOpCodeDefinitionEntry {
+	const char *name;
+	const char *parameters;
+	AgiOpCodeFunction functionPtr;
+};
 
 class AgiEngine : public AgiBase {
 protected:
@@ -723,8 +748,6 @@ public:
 
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &description);
-
-	void adjustPosToGameScreen(int16 &x, int16 &y);
 
 private:
 	int _keyQueue[KEY_QUEUE_SIZE];
@@ -746,7 +769,7 @@ public:
 
 	SavedGameSlotIdArray getSavegameSlotIds();
 	Common::String getSavegameFilename(int16 slotId) const;
-	bool getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint16 &saveTime, bool &saveIsValid);
+	bool getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid);
 
 	int saveGame(const Common::String &fileName, const Common::String &descriptionString);
 	int loadGame(const Common::String &fileName, bool checkId = true);
@@ -844,8 +867,23 @@ public:
 	void unloadLogic(int16 logicNr);
 	int runLogic(int16 logicNr);
 	void debugConsole(int, int, const char *);
-	int testIfCode(int);
+	bool testIfCode(int16 logicNr);
 	void executeAgiCommand(uint8, uint8 *);
+
+private:
+	bool _veryFirstInitialCycle; /**< signals, that currently the very first cycle is executed (restarts, etc. do not count!) */
+	uint32 _instructionCounter; /**< counts every instruction, that got executed, can wrap around */
+
+	bool _setVolumeBrokenFangame;
+
+	void resetGetVarSecondsHeuristic();
+	void getVarSecondsHeuristicTrigger();
+	uint32 _getVarSecondsHeuristicLastInstructionCounter; /**< last time VM_VAR_SECONDS were read */
+	uint16 _getVarSecondsHeuristicCounter; /**< how many times heuristic was triggered */
+
+	uint32 _playTimeInSecondsAdjust; /**< milliseconds to adjust for calculating current play time in seconds, see setVarSecondsTrigger() */
+
+	void setVarSecondsTrigger(byte newSeconds);
 
 public:
 	// Some submethods of testIfCode
@@ -899,6 +937,8 @@ private:
 	void checkMotion(ScreenObjEntry *screenObj);
 
 public:
+	void motionActivated(ScreenObjEntry *screenObj);
+	void cyclerActivated(ScreenObjEntry *screenObj);
 	void checkAllMotions();
 	void moveObj(ScreenObjEntry *screenObj);
 	void inDestination(ScreenObjEntry *screenObj);
@@ -908,6 +948,7 @@ public:
 	int getDirection(int16 objX, int16 objY, int16 destX, int16 destY, int16 stepSize);
 
 	bool _keyHoldMode;
+	Common::KeyCode _keyHoldModeLastKey;
 
 	// Keyboard
 	int doPollKeyboard();
@@ -924,10 +965,18 @@ public:
 
 	void nonBlockingText_IsShown();
 	void nonBlockingText_Forget();
-	void nonBlockingText_CycleDone();
 
-	void loadingTrigger_NewRoom(int16 newRoomNr);
-	void loadingTrigger_DrawPicture();
+	void artificialDelay_Reset();
+	void artificialDelay_CycleDone();
+
+	uint16 artificialDelay_SearchTable(AgiArtificialDelayTriggerType triggerType, int16 orgNr, int16 newNr);
+
+	void artificialDelayTrigger_NewRoom(int16 newRoomNr);
+	void artificialDelayTrigger_DrawPicture(int16 newPictureNr);
+
+private:
+	int16 _artificialDelayCurrentRoom;
+	int16 _artificialDelayCurrentPicture;
 
 public:
 	void redrawScreen();
@@ -942,17 +991,20 @@ public:
 	void inGameTimerUpdate();
 
 private:
-	uint32 _lastUsedPlayTimeInCycles; // 20 per second
+	uint32 _lastUsedPlayTimeInCycles; // 40 per second
 	uint32 _lastUsedPlayTimeInSeconds; // actual seconds
 	uint32 _passedPlayTimeCycles; // increased by 1 every time we passed a cycle
 
 private:
-	AgiCommand _agiCommands[183];
-	AgiCommand _agiCondCommands[256];
+	AgiOpCodeEntry _opCodes[256]; // always keep those at 256, so that there is no way for invalid memory access
+	AgiOpCodeEntry _opCodesCond[256];
 
-	void setupOpcodes();
+	void setupOpCodes(uint16 version);
+
+public:
+	const AgiOpCodeEntry *getOpCodesTable() { return _opCodes; }
 };
 
 } // End of namespace Agi
 
-#endif /* AGI_H */
+#endif /* AGI_AGI_H */

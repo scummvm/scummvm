@@ -20,9 +20,11 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 // Miles Audio
@@ -33,10 +35,12 @@
 namespace Access {
 
 SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+	_effectsHandle = new Audio::SoundHandle();
 }
 
 SoundManager::~SoundManager() {
 	clearSounds();
+	delete _effectsHandle;
 }
 
 void SoundManager::clearSounds() {
@@ -47,8 +51,8 @@ void SoundManager::clearSounds() {
 
 	_soundTable.clear();
 
-	if (_mixer->isSoundHandleActive(_effectsHandle))
-		_mixer->stopHandle(_effectsHandle);
+	if (_mixer->isSoundHandleActive(*_effectsHandle))
+		_mixer->stopHandle(*_effectsHandle);
 
 	while (_queue.size()) {
 		delete _queue[0]._stream;
@@ -151,14 +155,14 @@ void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIn
 		error("Unknown format");
 
 	if (loop) {
-		_queue.push_back(QueuedSound(new Audio::LoopingAudioStream(audioStream, 0, 
+		_queue.push_back(QueuedSound(new Audio::LoopingAudioStream(audioStream, 0,
 			DisposeAfterUse::NO), soundIndex));
 	} else {
 		_queue.push_back(QueuedSound(audioStream, soundIndex));
 	}
 
-	if (!_mixer->isSoundHandleActive(_effectsHandle))
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectsHandle,
+	if (!_mixer->isSoundHandleActive(*_effectsHandle))
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _effectsHandle,
 						_queue[0]._stream, -1, _mixer->kMaxChannelVolume, 0,
 						DisposeAfterUse::NO);
 }
@@ -166,20 +170,20 @@ void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIn
 void SoundManager::checkSoundQueue() {
 	debugC(5, kDebugSound, "checkSoundQueue");
 
-	if (_queue.empty() || _mixer->isSoundHandleActive(_effectsHandle))
+	if (_queue.empty() || _mixer->isSoundHandleActive(*_effectsHandle))
 		return;
 
 	delete _queue[0]._stream;
 	_queue.remove_at(0);
 
 	if (_queue.size() && _queue[0]._stream)
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectsHandle,
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _effectsHandle,
 		   _queue[0]._stream, -1, _mixer->kMaxChannelVolume, 0,
 		   DisposeAfterUse::NO);
 }
 
 bool SoundManager::isSFXPlaying() {
-	return _mixer->isSoundHandleActive(_effectsHandle);
+	return _mixer->isSoundHandleActive(*_effectsHandle);
 }
 
 void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
@@ -196,7 +200,7 @@ void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
 void SoundManager::stopSound() {
 	debugC(3, kDebugSound, "stopSound");
 
-	_mixer->stopHandle(_effectsHandle);
+	_mixer->stopHandle(*_effectsHandle);
 }
 
 void SoundManager::freeSounds() {

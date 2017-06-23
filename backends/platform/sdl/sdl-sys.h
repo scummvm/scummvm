@@ -52,6 +52,72 @@ typedef struct { int FAKE; } FAKE_FILE;
 #define strncasecmp FAKE_strncasecmp
 #endif
 
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_exit)
+#undef exit
+#define exit FAKE_exit
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_abort)
+#undef abort
+#define abort FAKE_abort
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_system)
+#undef system
+#define system FAKE_system
+#endif
+
+// Fix compilation with MacPorts SDL 2
+// It needs various (usually forbidden) symbols from time.h
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_asctime)
+	#undef asctime
+	#define asctime FAKE_asctime
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_clock)
+	#undef clock
+	#define clock FAKE_clock
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_ctime)
+	#undef ctime
+	#define ctime FAKE_ctime
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_difftime)
+	#undef difftime
+	#define difftime FAKE_difftime
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getdate)
+	#undef getdate
+	#define getdate FAKE_getdate
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_gmtime)
+	#undef gmtime
+	#define gmtime FAKE_gmtime
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_localtime)
+	#undef localtime
+	#define localtime FAKE_localtime
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mktime)
+	#undef mktime
+	#define mktime FAKE_mktime
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_time)
+	#undef time
+	#define time FAKE_time
+	#endif
+
+#endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 // HACK: SDL might include windows.h which defines its own ARRAYSIZE.
 // However, we want to use the version from common/util.h. Thus, we make sure
 // that we actually have this definition after including the SDL headers.
@@ -112,7 +178,7 @@ typedef struct { int FAKE; } FAKE_FILE;
 #endif
 
 // In a moment of brilliance Xlib.h included by SDL_syswm.h #defines the
-// following names. In a moment of mental breakdown, which occured upon
+// following names. In a moment of mental breakdown, which occurred upon
 // gazing at Xlib.h, LordHoto decided to undefine them to prevent havoc.
 #ifdef Status
 #undef Status
@@ -145,6 +211,71 @@ typedef struct { int FAKE; } FAKE_FILE;
 #undef strncasecmp
 #define strncasecmp    FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_exit)
+#undef exit
+#define exit(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_abort)
+#undef abort
+#define abort() FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_system)
+#undef system
+#define system(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+// re-forbid all those time.h symbols again (if they were forbidden)
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_asctime)
+	#undef asctime
+	#define asctime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_clock)
+	#undef clock
+	#define clock() FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_ctime)
+	#undef ctime
+	#define ctime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_difftime)
+	#undef difftime
+	#define difftime(a,b) FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getdate)
+	#undef getdate
+	#define getdate(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_gmtime)
+	#undef gmtime
+	#define gmtime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_localtime)
+	#undef localtime
+	#define localtime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mktime)
+	#undef mktime
+	#define mktime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_time)
+	#undef time
+	#define time(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+#endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 // SDL 2 has major API changes. We redefine constants which got renamed to
 // ease the transition. This is sometimes dangerous because the values changed

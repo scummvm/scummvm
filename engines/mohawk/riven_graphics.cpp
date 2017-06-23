@@ -23,6 +23,7 @@
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_sound.h"
 
 #include "common/system.h"
 #include "engines/util.h"
@@ -51,6 +52,8 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 
 	_creditsImage = 302;
 	_creditsPos = 0;
+
+	_transitionSpeed = 0;
 }
 
 RivenGraphics::~RivenGraphics() {
@@ -109,6 +112,7 @@ void RivenGraphics::drawPLST(uint16 x) {
 void RivenGraphics::updateScreen(Common::Rect updateRect) {
 	if (_updatesEnabled) {
 		_vm->runUpdateScreenScript();
+		_vm->_sound->triggerDrawSound();
 
 		if (_dirtyScreen) {
 			_activatedPLSTs.clear();

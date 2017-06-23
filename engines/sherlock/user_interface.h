@@ -102,7 +102,7 @@ public:
 
 	/**
 	 * Draw the user interface onto the screen's back buffers
-	 */	
+	 */
 	virtual void drawInterface(int bufferNum = 3) {}
 
 	/**

@@ -21,7 +21,7 @@
  */
 
 #include "voyeur/files.h"
-#include "voyeur/graphics.h"
+#include "voyeur/screen.h"
 #include "voyeur/voyeur.h"
 #include "voyeur/staticres.h"
 
@@ -461,7 +461,7 @@ void ThreadResource::parsePlayCommands() {
 					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + i * 2)._picResource;
 					pal = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + i * 2 + 1)._cMapResource;
 
-					_vm->_graphicsManager->_vPort->setupViewPort(pic);
+					_vm->_screen->_vPort->setupViewPort(pic);
 					pal->startFade();
 
 					_vm->flipPageAndWaitForFade();
@@ -980,10 +980,10 @@ int ThreadResource::doApt() {
 	_vm->_soundManager->startVOCPlay(_vm->_soundManager->getVOCFileName(_vm->_currentVocId));
 	_vm->_currentVocId = 151;
 
-	_vm->_graphicsManager->setColor(129, 82, 82, 82);
-	_vm->_graphicsManager->setColor(130, 112, 112, 112);
-	_vm->_graphicsManager->setColor(131, 215, 215, 215);
-	_vm->_graphicsManager->setColor(132, 235, 235, 235);
+	_vm->_screen->setColor(129, 82, 82, 82);
+	_vm->_screen->setColor(130, 112, 112, 112);
+	_vm->_screen->setColor(131, 215, 215, 215);
+	_vm->_screen->setColor(132, 235, 235, 235);
 
 	_vm->_eventsManager->_intPtr._hasPalette = true;
 
@@ -1044,7 +1044,7 @@ int ThreadResource::doApt() {
 					// Draw the text description for the highlighted hotspot
 					pic = _vm->_bVoy->boltEntry(_vm->_playStampGroupId +
 						hotspotId + 6)._picResource;
-					_vm->_graphicsManager->sDrawPic(pic, _vm->_graphicsManager->_vPort,
+					_vm->_screen->sDrawPic(pic, _vm->_screen->_vPort,
 						Common::Point(106, 200));
 				}
 
@@ -1112,10 +1112,10 @@ void ThreadResource::doRoom() {
 	if (!vm._bVoy->getBoltGroup(vm._playStampGroupId))
 		return;
 
-	vm._graphicsManager->_backColors = vm._bVoy->boltEntry(vm._playStampGroupId + 1)._cMapResource;
-	vm._graphicsManager->_backgroundPage = vm._bVoy->boltEntry(vm._playStampGroupId)._picResource;
-	vm._graphicsManager->_vPort->setupViewPort(vm._graphicsManager->_backgroundPage);
-	vm._graphicsManager->_backColors->startFade();
+	vm._screen->_backColors = vm._bVoy->boltEntry(vm._playStampGroupId + 1)._cMapResource;
+	vm._screen->_backgroundPage = vm._bVoy->boltEntry(vm._playStampGroupId)._picResource;
+	vm._screen->_vPort->setupViewPort(vm._screen->_backgroundPage);
+	vm._screen->_backColors->startFade();
 
 	voy._fadingStep1 = 2;
 	voy._fadingStep2 = 0;
@@ -1144,7 +1144,7 @@ void ThreadResource::doRoom() {
 	bool breakFlag = false;
 	while (!vm.shouldQuit() && !breakFlag) {
 		_vm->_voyeurArea = AREA_ROOM;
-		vm._graphicsManager->setColor(128, 0, 255, 0);
+		vm._screen->setColor(128, 0, 255, 0);
 		vm._eventsManager->_intPtr._hasPalette = true;
 
 		do {
@@ -1186,7 +1186,8 @@ void ThreadResource::doRoom() {
 			}
 
 			vm._eventsManager->_intPtr._hasPalette = true;
-			vm._graphicsManager->flipPage();
+			vm._screen->_vPort->_flags |= DISPFLAG_8;
+			vm._screen->flipPage();
 			vm._eventsManager->sWaitFlip();
 		} while (!vm.shouldQuit() && !vm._eventsManager->_mouseClicked);
 
@@ -1234,13 +1235,13 @@ void ThreadResource::doRoom() {
 			// WORKAROUND: Skipped code from the original, that freed the group,
 			// reloaded it, and reloaded the cursors
 
-			vm._graphicsManager->_backColors = vm._bVoy->boltEntry(
+			vm._screen->_backColors = vm._bVoy->boltEntry(
 				vm._playStampGroupId + 1)._cMapResource;
-			vm._graphicsManager->_backgroundPage = vm._bVoy->boltEntry(
+			vm._screen->_backgroundPage = vm._bVoy->boltEntry(
 				vm._playStampGroupId)._picResource;
 
-			vm._graphicsManager->_vPort->setupViewPort();
-			vm._graphicsManager->_backColors->startFade();
+			vm._screen->_vPort->setupViewPort();
+			vm._screen->_backColors->startFade();
 			_vm->flipPageAndWait();
 
 			while (!vm.shouldQuit() && (vm._eventsManager->_fadeStatus & 1))
@@ -1265,7 +1266,7 @@ void ThreadResource::doRoom() {
 
 			_vm->flipPageAndWait();
 
-			vm._graphicsManager->fadeUpICF1();
+			vm._screen->fadeUpICF1();
 			voy._eventFlags &= EVTFLAG_RECORDING;
 			vm._eventsManager->showCursor();
 		}
@@ -1350,7 +1351,7 @@ int ThreadResource::doInterface() {
 	_vm->_soundManager->startVOCPlay(fname);
 	_vm->_eventsManager->getMouseInfo();
 
-	_vm->_graphicsManager->setColor(240, 220, 220, 220);
+	_vm->_screen->setColor(240, 220, 220, 220);
 	_vm->_eventsManager->_intPtr._hasPalette = true;
 	_vm->_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 
@@ -1424,20 +1425,20 @@ int ThreadResource::doInterface() {
 
 		// Regularly update the time display
 		if (_vm->_voy->_RTANum & 2) {
-			_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort,
+			_vm->_screen->drawANumber(_vm->_screen->_vPort,
 				_vm->_gameMinute / 10, Common::Point(190, 25));
-			_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort,
+			_vm->_screen->drawANumber(_vm->_screen->_vPort,
 				_vm->_gameMinute % 10, Common::Point(201, 25));
 
 			if (_vm->_voy->_RTANum & 4) {
 				int v = _vm->_gameHour / 10;
-				_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort,
+				_vm->_screen->drawANumber(_vm->_screen->_vPort,
 					v == 0 ? 10 : v, Common::Point(161, 25));
-				_vm->_graphicsManager->drawANumber(_vm->_graphicsManager->_vPort,
+				_vm->_screen->drawANumber(_vm->_screen->_vPort,
 					_vm->_gameHour % 10, Common::Point(172, 25));
 
 				pic = _vm->_bVoy->boltEntry(_vm->_voy->_isAM ? 272 : 273)._picResource;
-				_vm->_graphicsManager->sDrawPic(pic, _vm->_graphicsManager->_vPort,
+				_vm->_screen->sDrawPic(pic, _vm->_screen->_vPort,
 					Common::Point(215, 27));
 			}
 		}
@@ -1605,16 +1606,16 @@ void ThreadResource::loadTheApt() {
 
 		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
 		_vm->_voy->_aptLoadMode = -1;
-		_vm->_graphicsManager->_backgroundPage = _vm->_bVoy->boltEntry(
+		_vm->_screen->_backgroundPage = _vm->_bVoy->boltEntry(
 			_vm->_playStampGroupId + 5)._picResource;
-		_vm->_graphicsManager->_vPort->setupViewPort(
-			_vm->_graphicsManager->_backgroundPage);
+		_vm->_screen->_vPort->setupViewPort(
+			_vm->_screen->_backgroundPage);
 	} else {
 		_vm->_bVoy->getBoltGroup(_vm->_playStampGroupId);
-		_vm->_graphicsManager->_backgroundPage = _vm->_bVoy->boltEntry(
+		_vm->_screen->_backgroundPage = _vm->_bVoy->boltEntry(
 			_vm->_playStampGroupId + 5)._picResource;
-		_vm->_graphicsManager->_vPort->setupViewPort(
-			_vm->_graphicsManager->_backgroundPage);
+		_vm->_screen->_vPort->setupViewPort(
+			_vm->_screen->_backgroundPage);
 	}
 
 	CMapResource *pal = _vm->_bVoy->boltEntry(_vm->_playStampGroupId + 4)._cMapResource;
@@ -1624,10 +1625,10 @@ void ThreadResource::loadTheApt() {
 }
 
 void ThreadResource::freeTheApt() {
-	_vm->_graphicsManager->fadeDownICF1(5);
+	_vm->_screen->fadeDownICF1(5);
 	_vm->flipPageAndWaitForFade();
 
-	_vm->_graphicsManager->fadeUpICF1();
+	_vm->_screen->fadeUpICF1();
 
 	if (_vm->_currentVocId != -1) {
 		_vm->_soundManager->stopVOCPlay();
@@ -1635,17 +1636,17 @@ void ThreadResource::freeTheApt() {
 	}
 
 	if (_vm->_voy->_aptLoadMode == -1) {
-		_vm->_graphicsManager->fadeDownICF(6);
+		_vm->_screen->fadeDownICF(6);
 	} else {
 		doAptAnim(2);
 	}
 
 	if (_vm->_voy->_aptLoadMode == 140) {
-		_vm->_graphicsManager->screenReset();
-		_vm->_graphicsManager->resetPalette();
+		_vm->_screen->screenReset();
+		_vm->_screen->resetPalette();
 	}
 
-	_vm->_graphicsManager->_vPort->setupViewPort(nullptr);
+	_vm->_screen->_vPort->setupViewPort(nullptr);
 	_vm->_bVoy->freeBoltGroup(_vm->_playStampGroupId);
 	_vm->_playStampGroupId = -1;
 	_vm->_voy->_viewBounds = nullptr;
@@ -1705,7 +1706,7 @@ void ThreadResource::doAptAnim(int mode) {
 
 		for (int idx = 0; (idx < 6) && !_vm->shouldQuit(); ++idx) {
 			PictureResource *pic = _vm->_bVoy->boltEntry(id + idx + 1)._picResource;
-			_vm->_graphicsManager->_vPort->setupViewPort(pic);
+			_vm->_screen->_vPort->setupViewPort(pic);
 			pal->startFade();
 
 			_vm->flipPageAndWait();

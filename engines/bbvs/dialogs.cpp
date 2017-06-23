@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -22,9 +22,12 @@
 
 #include "bbvs/dialogs.h"
 #include "common/events.h"
-#include "gui/gui-manager.h"
-#include "gui/ThemeEval.h"
+#include "gui/widget.h"
 #include "engines/advancedDetector.h"
+
+namespace GUI {
+class CommandSender;
+}
 
 namespace Bbvs {
 
@@ -92,8 +95,8 @@ void MainMenu::init() {
 }
 
 void MainMenu::reflowLayout() {
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	const int screenW = _vm->_system->getOverlayWidth();
+	const int screenH = _vm->_system->getOverlayHeight();
 
 	const int buttonWidth = screenW * 70 / 320;
 	const int buttonHeight = screenH * 14 / 240;
@@ -102,7 +105,7 @@ void MainMenu::reflowLayout() {
 	_w = 2 * buttonWidth  + buttonPadding;
 	_h = 3 * buttonHeight + 3 * buttonPadding;
 	_x = (screenW - _w) / 2;
-	_y = screenH - _h;
+	_y = screenH - _h - 2;
 
 	int x = 0, y = 0;
 

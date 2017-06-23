@@ -56,76 +56,76 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			switch (loop) {
 			case GUI::ACTION_UP:
 				if (ev.type == SDL_KEYDOWN) {
-					_km.y_vel = -1;
+					_km.y_vel = -1 * MULTIPLIER;
 					_km.y_down_count = 1;
 				} else {
-					_km.y_vel = 0;
+					_km.y_vel = 0 * MULTIPLIER;
 					_km.y_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_DOWN:
 				if (ev.type == SDL_KEYDOWN) {
-					_km.y_vel = 1;
+					_km.y_vel = 1 * MULTIPLIER;
 					_km.y_down_count = 1;
 				} else {
-					_km.y_vel = 0;
+					_km.y_vel = 0 * MULTIPLIER;
 					_km.y_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_LEFT:
 				if (ev.type == SDL_KEYDOWN) {
-					_km.x_vel = -1;
+					_km.x_vel = -1 * MULTIPLIER;
 					_km.x_down_count = 1;
 				} else {
-					_km.x_vel = 0;
+					_km.x_vel = 0 * MULTIPLIER;
 					_km.x_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_RIGHT:
 				if (ev.type == SDL_KEYDOWN) {
-					_km.x_vel = 1;
+					_km.x_vel = 1 * MULTIPLIER;
 					_km.x_down_count = 1;
 				} else {
-					_km.x_vel = 0;
+					_km.x_vel = 0 * MULTIPLIER;
 					_km.x_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_LEFTCLICK:
 				event.type = (ev.type == SDL_KEYDOWN ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP);
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_RIGHTCLICK:
 				event.type = (ev.type == SDL_KEYDOWN ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP);
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_ZONE:
 				if (ev.type == SDL_KEYDOWN) {
 					for (int i = 0; i < TOTAL_ZONES; i++)
-						if (_km.x >= _zones[i].x && _km.y >= _zones[i].y &&
-							_km.x <= _zones[i].x + _zones[i].width && _km.y <= _zones[i].y + _zones[i].height
+						if ( (_km.x / MULTIPLIER) >= _zones[i].x && (_km.y / MULTIPLIER) >= _zones[i].y &&
+							(_km.x / MULTIPLIER) <= _zones[i].x + _zones[i].width && (_km.y / MULTIPLIER <= _zones[i].y + _zones[i].height
 							) {
-							_mouseXZone[i] = _km.x;
-							_mouseYZone[i] = _km.y;
+							_mouseXZone[i] = _km.x / MULTIPLIER;
+							_mouseYZone[i] = _km.y / MULTIPLIER;
 							break;
 						}
 						_currentZone++;
@@ -133,6 +133,10 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 							_currentZone = 0;
 						event.type = Common::EVENT_MOUSEMOVE;
 						processMouseEvent(event, _mouseXZone[_currentZone], _mouseYZone[_currentZone]);
+						// update KbdMouse
+						_km.x = _mouseXZone[_currentZone] * MULTIPLIER;
+						_km.y = _mouseYZone[_currentZone] * MULTIPLIER;
+
 						if (_graphicsManager) {
 							_graphicsManager->getWindow()->warpMouseInWindow(event.mouse.x, event.mouse.y);
 						}

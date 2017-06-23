@@ -56,6 +56,7 @@ result TizenGraphicsManager::Construct() {
 	loadEgl();
 
 	// Notify the OpenGL code about our context.
+	setContextType(OpenGL::kContextGLES);
 
 	// We default to RGB565 and RGBA5551 which is closest to the actual output
 	// mode we setup.
@@ -102,7 +103,7 @@ Common::List<Graphics::PixelFormat> TizenGraphicsManager::getSupportedFormats() 
 }
 
 bool TizenGraphicsManager::hasFeature(OSystem::Feature f) {
-	bool result = 
+	bool result =
 			(f == OSystem::kFeatureVirtualKeyboard ||
 			OpenGLGraphicsManager::hasFeature(f));
 	return result;
@@ -205,4 +206,8 @@ bool TizenGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeig
 
 void TizenGraphicsManager::refreshScreen() {
 	eglSwapBuffers(_eglDisplay, _eglSurface);
+}
+
+void *TizenGraphicsManager::getProcAddress(const char *name) const {
+	return eglGetProcAddress(name);
 }

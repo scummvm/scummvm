@@ -37,7 +37,7 @@ void WidgetCredits::initCredits() {
 	Screen &screen = *_vm->_screen;
 	Common::SeekableReadStream *stream = res.load("credits.txt");
 	int spacing = screen.fontHeight() * 2;
-	int yp = screen.h();
+	int yp = screen.height();
 
 	_creditsActive = true;
 	_creditLines.clear();
@@ -49,7 +49,7 @@ void WidgetCredits::initCredits() {
 			const char *p = line.c_str() + 12;
 			while ((*p < '0') || (*p > '9'))
 				p++;
-			
+
 			_creditSpeed = atoi(p);
 		} else if (line.hasPrefix("Y Spacing")) {
 			const char *p = line.c_str() + 12;
@@ -60,7 +60,7 @@ void WidgetCredits::initCredits() {
 		} else {
 			int width = screen.stringWidth(line) + 2;
 
-			_creditLines.push_back(CreditLine(line, Common::Point((screen.w() - width) / 2 + 1, yp), width));
+			_creditLines.push_back(CreditLine(line, Common::Point((screen.width() - width) / 2 + 1, yp), width));
 			yp += spacing;
 		}
 	}
@@ -73,7 +73,7 @@ void WidgetCredits::initCredits() {
 		if (p != nullptr && p[1] == '>') {
 			cl._line2 = Common::String(p + 3);
 			cl._line = Common::String(cl._line.c_str(), p);
-			
+
 			int width = cl._width;
 			int width1 = screen.stringWidth(cl._line);
 			int width2 = screen.stringWidth(cl._line2);
@@ -120,10 +120,10 @@ void WidgetCredits::close() {
 
 void WidgetCredits::drawCredits() {
 	Screen &screen = *_vm->_screen;
-	Common::Rect screenRect(0, 0, screen.w(), screen.h());
+	Common::Rect screenRect(0, 0, screen.width(), screen.height());
 	Surface &bb1 = screen._backBuffer1;
 
-	for (uint idx = 0; idx < _creditLines.size() && _creditLines[idx]._position.y < screen.h(); ++idx) {
+	for (uint idx = 0; idx < _creditLines.size() && _creditLines[idx]._position.y < screen.height(); ++idx) {
 		if (screenRect.contains(_creditLines[idx]._position)) {
 			if (!_creditLines[idx]._line2.empty()) {
 				int x1 = _creditLines[idx]._position.x;
@@ -176,7 +176,7 @@ void WidgetCredits::drawCredits() {
 
 void WidgetCredits::blitCredits() {
 	Screen &screen = *_vm->_screen;
-	Common::Rect screenRect(0, -_creditSpeed, screen.w(), screen.h() + _creditSpeed);
+	Common::Rect screenRect(0, -_creditSpeed, screen.width(), screen.height() + _creditSpeed);
 
 	for (uint idx = 0; idx < _creditLines.size(); ++idx) {
 		if (screenRect.contains(_creditLines[idx]._position)) {
@@ -185,14 +185,12 @@ void WidgetCredits::blitCredits() {
 
 			screen.slamRect(r);
 		}
-
-		_creditLines[idx]._position.y -= _creditSpeed;
 	}
 }
 
 void WidgetCredits::eraseCredits() {
 	Screen &screen = *_vm->_screen;
-	Common::Rect screenRect(0, -_creditSpeed, screen.w(), screen.h() + _creditSpeed);
+	Common::Rect screenRect(0, -_creditSpeed, screen.width(), screen.height() + _creditSpeed);
 
 	for (uint idx = 0; idx < _creditLines.size(); ++idx) {
 		if (screenRect.contains(_creditLines[idx]._position)) {
@@ -200,7 +198,10 @@ void WidgetCredits::eraseCredits() {
 			r.moveTo(_creditLines[idx]._position.x, _creditLines[idx]._position.y - 1 + _creditSpeed);
 
 			screen.restoreBackground(r);
+			screen.slamRect(r);
 		}
+
+		_creditLines[idx]._position.y -= _creditSpeed;
 	}
 
 	if (_creditLines[_creditLines.size() - 1]._position.y < -_creditSpeed) {

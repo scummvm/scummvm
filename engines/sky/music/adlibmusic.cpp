@@ -26,8 +26,12 @@
 
 #include "sky/music/adlibmusic.h"
 #include "sky/music/adlibchannel.h"
-#include "audio/mixer.h"
+#include "audio/fmopl.h"
 #include "sky/sky.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace Sky {
 

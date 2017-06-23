@@ -33,27 +33,28 @@ namespace Agi {
 Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	registerCmd("debug",      WRAP_METHOD(Console, Cmd_Debug));
-	registerCmd("cont",       WRAP_METHOD(Console, Cmd_Cont));
-	registerCmd("agiver",     WRAP_METHOD(Console, Cmd_Agiver));
-	registerCmd("version",    WRAP_METHOD(Console, Cmd_Version));
-	registerCmd("flags",      WRAP_METHOD(Console, Cmd_Flags));
-	registerCmd("logic0",     WRAP_METHOD(Console, Cmd_Logic0));
-	registerCmd("objs",       WRAP_METHOD(Console, Cmd_Objs));
-	registerCmd("runopcode",  WRAP_METHOD(Console, Cmd_RunOpcode));
-	registerCmd("opcode",     WRAP_METHOD(Console, Cmd_Opcode));
-	registerCmd("step",       WRAP_METHOD(Console, Cmd_Step));
-	registerCmd("trigger",    WRAP_METHOD(Console, Cmd_Trigger));
-	registerCmd("vars",       WRAP_METHOD(Console, Cmd_Vars));
-	registerCmd("setvar",     WRAP_METHOD(Console, Cmd_SetVar));
-	registerCmd("setflag",    WRAP_METHOD(Console, Cmd_SetFlag));
-	registerCmd("setobj",     WRAP_METHOD(Console, Cmd_SetObj));
-	registerCmd("room",       WRAP_METHOD(Console, Cmd_Room));
-	registerCmd("bt",         WRAP_METHOD(Console, Cmd_BT));
-	registerCmd("show_map",   WRAP_METHOD(Console, Cmd_ShowMap));
-	registerCmd("screenobj",  WRAP_METHOD(Console, Cmd_ScreenObj));
-	registerCmd("vmvars",     WRAP_METHOD(Console, Cmd_VmVars));
-	registerCmd("vmflags",    WRAP_METHOD(Console, Cmd_VmFlags));
+	registerCmd("debug",           WRAP_METHOD(Console, Cmd_Debug));
+	registerCmd("cont",            WRAP_METHOD(Console, Cmd_Cont));
+	registerCmd("agiver",          WRAP_METHOD(Console, Cmd_Agiver));
+	registerCmd("version",         WRAP_METHOD(Console, Cmd_Version));
+	registerCmd("flags",           WRAP_METHOD(Console, Cmd_Flags));
+	registerCmd("logic0",          WRAP_METHOD(Console, Cmd_Logic0));
+	registerCmd("objs",            WRAP_METHOD(Console, Cmd_Objs));
+	registerCmd("runopcode",       WRAP_METHOD(Console, Cmd_RunOpcode));
+	registerCmd("opcode",          WRAP_METHOD(Console, Cmd_Opcode));
+	registerCmd("step",            WRAP_METHOD(Console, Cmd_Step));
+	registerCmd("trigger",         WRAP_METHOD(Console, Cmd_Trigger));
+	registerCmd("vars",            WRAP_METHOD(Console, Cmd_Vars));
+	registerCmd("setvar",          WRAP_METHOD(Console, Cmd_SetVar));
+	registerCmd("setflag",         WRAP_METHOD(Console, Cmd_SetFlag));
+	registerCmd("setobj",          WRAP_METHOD(Console, Cmd_SetObj));
+	registerCmd("room",            WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("bt",              WRAP_METHOD(Console, Cmd_BT));
+	registerCmd("show_map",        WRAP_METHOD(Console, Cmd_ShowMap));
+	registerCmd("screenobj",       WRAP_METHOD(Console, Cmd_ScreenObj));
+	registerCmd("vmvars",          WRAP_METHOD(Console, Cmd_VmVars));
+	registerCmd("vmflags",         WRAP_METHOD(Console, Cmd_VmFlags));
+	registerCmd("disableautosave", WRAP_METHOD(Console, Cmd_DisableAutomaticSave));
 }
 
 bool Console::Cmd_SetVar(int argc, const char **argv) {
@@ -93,16 +94,18 @@ bool Console::Cmd_SetObj(int argc, const char **argv) {
 }
 
 bool Console::Cmd_RunOpcode(int argc, const char **argv) {
+	const AgiOpCodeEntry *opCodes = _vm->getOpCodesTable();
+
 	if (argc < 2) {
 		debugPrintf("Usage: runopcode <name> <parameter0> ....\n");
 		return true;
 	}
 
-	for (int i = 0; logicNamesCmd[i].name; i++) {
-		if (!strcmp(argv[1], logicNamesCmd[i].name)) {
+	for (int i = 0; opCodes[i].name; i++) {
+		if (!strcmp(argv[1], opCodes[i].name)) {
 			uint8 p[16];
-			if ((argc - 2) != logicNamesCmd[i].argumentsLength()) {
-				debugPrintf("AGI command wants %d arguments\n", logicNamesCmd[i].argumentsLength());
+			if ((argc - 2) != opCodes[i].parameterSize) {
+				debugPrintf("AGI command wants %d arguments\n", opCodes[i].parameterSize);
 				return 0;
 			}
 			p[0] = argv[2] ? (char)strtoul(argv[2], NULL, 0) : 0;
@@ -111,7 +114,7 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 			p[3] = argv[5] ? (char)strtoul(argv[5], NULL, 0) : 0;
 			p[4] = argv[6] ? (char)strtoul(argv[6], NULL, 0) : 0;
 
-			debugC(5, kDebugLevelMain, "Opcode: %s %s %s %s", logicNamesCmd[i].name, argv[1], argv[2], argv[3]);
+			debugC(5, kDebugLevelMain, "Opcode: %s %s %s %s", opCodes[i].name, argv[1], argv[2], argv[3]);
 
 			_vm->executeAgiCommand(i, p);
 
@@ -391,24 +394,26 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 }
 
 bool Console::Cmd_BT(int argc, const char **argv) {
+	const AgiOpCodeEntry *opCodes = _vm->getOpCodesTable();
+
 	debugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.curLogicNr, _vm->_game.execStack.size());
 
 	uint8 *code = NULL;
 	uint8 op = 0;
 	uint8 p[CMD_BSIZE] = { 0 };
-	int num;
+	int parameterSize;
 	Common::Array<ScriptPos>::iterator it;
 
 	for (it = _vm->_game.execStack.begin(); it != _vm->_game.execStack.end(); ++it) {
 		code = _vm->_game.logics[it->script].data;
 		op = code[it->curIP];
-		num = logicNamesCmd[op].argumentsLength();
-		memmove(p, &code[it->curIP], num);
-		memset(p + num, 0, CMD_BSIZE - num);
+		parameterSize = opCodes[op].parameterSize;
+		memmove(p, &code[it->curIP], parameterSize);
+		memset(p + parameterSize, 0, CMD_BSIZE - parameterSize);
 
-		debugPrintf("%d(%d): %s(", it->script, it->curIP, logicNamesCmd[op].name);
+		debugPrintf("%d(%d): %s(", it->script, it->curIP, opCodes[op].name);
 
-		for (int i = 0; i < num; i++)
+		for (int i = 0; i < parameterSize; i++)
 			debugPrintf("%d, ", p[i]);
 
 		debugPrintf(")\n");
@@ -606,6 +611,18 @@ bool Console::Cmd_VmFlags(int argc, const char **argv) {
 			debugPrintf("flag %d set.\n", flagNr);
 		}
 	}
+	return true;
+}
+
+bool Console::Cmd_DisableAutomaticSave(int argc, const char **argv) {
+	if (!_vm->_game.automaticSave) {
+		debugPrintf("Automatic saving is currently not enabled\n");
+		return true;
+	}
+
+	_vm->_game.automaticSave = false;
+
+	debugPrintf("Automatic saving DISABLED!\n");
 	return true;
 }
 

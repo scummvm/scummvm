@@ -111,7 +111,7 @@ enum {
 };
 
 struct CSTimeEvent {
-	CSTimeEvent() { }
+	CSTimeEvent() : type(0), param1(0), param2(0) { }
 	CSTimeEvent(uint16 t, uint16 p1, uint16 p2) : type(t), param1(p1), param2(p2) { }
 
 	uint16 type;
@@ -136,6 +136,7 @@ public:
 
 	Common::RandomSource *_rnd;
 
+	Sound *_sound;
 	CSTimeGraphics *_gfx;
 	bool _needsUpdate;
 

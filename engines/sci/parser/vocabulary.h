@@ -30,6 +30,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/vm_types.h"
+#include "sci/util.h"
 
 namespace Common {
 
@@ -156,7 +157,7 @@ typedef Common::Array<synonym_t> SynonymList;
 struct AltInput {
 	const char *_input;
 	const char *_replacement;
-	unsigned int _inputLength;
+	uint32 _inputLength;
 	bool _prefix;
 };
 
@@ -260,7 +261,7 @@ public:
 	 * For debugging only.
 	 * @param pos	pointer to the data to dump
 	 */
-	void debugDecipherSaidBlock(const byte *pos);
+	void debugDecipherSaidBlock(const SciSpan<const byte> &data);
 
 	/**
 	 * Prints the parser suffixes to the debug console.

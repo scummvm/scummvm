@@ -87,7 +87,7 @@ void OSystem_Wii::initSfx() {
 									SFX_THREAD_STACKSIZE, SFX_THREAD_PRIO);
 
 		if (res) {
-			printf("ERROR creating sfx thread: %d\n", res);
+			printf("ERROR creating sfx thread: %ld\n", res);
 			LWP_CloseQueue(sfx_queue);
 			return;
 		}

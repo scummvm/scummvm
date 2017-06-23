@@ -36,6 +36,10 @@ public:
 
 	virtual bool displayLogFile();
 
+	virtual bool openUrl(const Common::String &url);
+
+	virtual Common::String getScreenshotsPath();
+
 protected:
 	/**
 	 * The path of the currently open log file, if any.
@@ -49,6 +53,10 @@ protected:
 
 	virtual Common::String getDefaultConfigFileName();
 	virtual Common::WriteStream *createLogFile();
+
+	// Override createAudioCDManager() to get our Mac-specific
+	// version.
+	virtual AudioCDManager *createAudioCDManager();
 };
 
 #endif

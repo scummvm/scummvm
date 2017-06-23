@@ -73,12 +73,12 @@ protected:
 	void cmdAnim();
 	void cmdSetFlag();
 	void cmdCheckFlag();
-	
+
 	/**
 	 * Jump to another script
 	 */
 	void cmdGoto();
-	
+
 	void cmdAddScore();
 	void cmdSetInventory();
 	void cmdCheckInventory();
@@ -162,7 +162,7 @@ public:
 	void freeScriptData();
 
 	void searchForSequence();
-	
+
 	int executeScript();
 
 	void findNull();

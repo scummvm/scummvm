@@ -21,7 +21,7 @@
  */
 
 #include "voyeur/files.h"
-#include "voyeur/graphics.h"
+#include "voyeur/screen.h"
 #include "voyeur/voyeur.h"
 #include "voyeur/staticres.h"
 
@@ -359,7 +359,7 @@ void BoltFile::resolveIt(uint32 id, byte **p) {
 	}
 }
 
-void BoltFile::resolveFunction(uint32 id, GraphicMethodPtr *fn) {
+void BoltFile::resolveFunction(uint32 id, ScreenMethodPtr *fn) {
 	if ((int32)id == -1)
 		*fn = NULL;
 	else
@@ -485,8 +485,8 @@ void BVoyBoltFile::initViewPortList() {
 	_state._curMemberPtr->_viewPortListResource = res = new ViewPortListResource(
 		_state, _state._curMemberPtr->_data);
 
-	_state._vm->_graphicsManager->_viewPortListPtr = res;
-	_state._vm->_graphicsManager->_vPort = res->_entries[0];
+	_state._vm->_screen->_viewPortListPtr = res;
+	_state._vm->_screen->_vPort = res->_entries[0];
 }
 
 void BVoyBoltFile::initFontInfo() {
@@ -752,24 +752,24 @@ DisplayResource::DisplayResource(VoyeurEngine *vm) {
 
 void DisplayResource::sFillBox(int width, int height) {
 	assert(_vm);
-	bool saveBack = _vm->_graphicsManager->_saveBack;
-	_vm->_graphicsManager->_saveBack = false;
+	bool saveBack = _vm->_screen->_saveBack;
+	_vm->_screen->_saveBack = false;
 
 	PictureResource pr;
 	pr._flags = DISPFLAG_1;
 	pr._select = 0xff;
 	pr._pick = 0;
-	pr._onOff = _vm->_graphicsManager->_drawPtr->_penColor;
+	pr._onOff = _vm->_screen->_drawPtr->_penColor;
 	pr._bounds = Common::Rect(0, 0, width, height);
 
-	_vm->_graphicsManager->sDrawPic(&pr, this, _vm->_graphicsManager->_drawPtr->_pos);
-	_vm->_graphicsManager->_saveBack = saveBack;
+	_vm->_screen->sDrawPic(&pr, this, _vm->_screen->_drawPtr->_pos);
+	_vm->_screen->_saveBack = saveBack;
 }
 
 bool DisplayResource::clipRect(Common::Rect &rect) {
 	Common::Rect clippingRect;
-	if (_vm->_graphicsManager->_clipPtr) {
-		clippingRect = *_vm->_graphicsManager->_clipPtr;
+	if (_vm->_screen->_clipPtr) {
+		clippingRect = *_vm->_screen->_clipPtr;
 	} else if (_flags & DISPFLAG_VIEWPORT) {
 		clippingRect = ((ViewPortResource *)this)->_clipRect;
 	} else {
@@ -804,18 +804,18 @@ bool DisplayResource::clipRect(Common::Rect &rect) {
 }
 
 int DisplayResource::drawText(const Common::String &msg) {
-	GraphicsManager &gfxManager = *_vm->_graphicsManager;
-	assert(gfxManager._fontPtr);
-	assert(gfxManager._fontPtr->_curFont);
-	FontInfoResource &fontInfo = *gfxManager._fontPtr;
-	PictureResource &fontChar = *_vm->_graphicsManager->_fontChar;
+	Screen &screen = *_vm->_screen;
+	assert(screen._fontPtr);
+	assert(screen._fontPtr->_curFont);
+	FontInfoResource &fontInfo = *screen._fontPtr;
+	PictureResource &fontChar = *_vm->_screen->_fontChar;
 	FontResource &fontData = *fontInfo._curFont;
 	int xShadows[9] = { 0, 1, 1, 1, 0, -1, -1, -1, 0 };
 	int yShadows[9] = { 0, 1, 0, -1, -1, -1, 0, 1, 1 };
 
-	Common::Rect *clipPtr = gfxManager._clipPtr;
+	Common::Rect *clipPtr = screen._clipPtr;
 	if (!(fontInfo._picFlags & DISPFLAG_1))
-		gfxManager._clipPtr = NULL;
+		screen._clipPtr = NULL;
 
 	int minChar = fontData._minChar;
 	int padding = fontData._padding;
@@ -834,7 +834,7 @@ int DisplayResource::drawText(const Common::String &msg) {
 		(ViewPortResource *)this;
 
 	if ((fontInfo._fontFlags & DISPFLAG_1) || fontInfo._justify ||
-			(gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT))) {
+			(screen._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT))) {
 		msgWidth = viewPort->textWidth(msg);
 		yp = pos.y;
 		xp = pos.x;
@@ -898,18 +898,18 @@ int DisplayResource::drawText(const Common::String &msg) {
 		}
 	}
 
-	if (gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT)) {
+	if (screen._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT)) {
 		viewPort->addSaveRect(viewPort->_pageIndex, viewPort->_fontRect);
 	}
 
 	if (fontInfo._fontFlags & DISPFLAG_1) {
-		gfxManager._drawPtr->_pos = Common::Point(viewPort->_fontRect.left, viewPort->_fontRect.top);
-		gfxManager._drawPtr->_penColor = fontInfo._backColor;
+		screen._drawPtr->_pos = Common::Point(viewPort->_fontRect.left, viewPort->_fontRect.top);
+		screen._drawPtr->_penColor = fontInfo._backColor;
 		sFillBox(viewPort->_fontRect.width(), viewPort->_fontRect.height());
 	}
 
-	bool saveBack = gfxManager._saveBack;
-	gfxManager._saveBack = false;
+	bool saveBack = screen._saveBack;
+	screen._saveBack = false;
 
 	int count = 0;
 	if (fontInfo._fontFlags & DISPFLAG_4)
@@ -970,7 +970,7 @@ int DisplayResource::drawText(const Common::String &msg) {
 			uint16 offset = READ_LE_UINT16(fontData._charOffsets + charValue * 2);
 			fontChar._imgData = fontData._charImages + offset * 2;
 
-			gfxManager.sDrawPic(&fontChar, this, Common::Point(xp, yp));
+			screen.sDrawPic(&fontChar, this, Common::Point(xp, yp));
 
 			fontChar._imgData = NULL;
 			xp += charWidth + padding;
@@ -982,8 +982,8 @@ int DisplayResource::drawText(const Common::String &msg) {
 	if (fontInfo._justify == ALIGN_LEFT)
 		fontInfo._pos.x = xp;
 
-	gfxManager._saveBack = saveBack;
-	gfxManager._clipPtr = clipPtr;
+	screen._saveBack = saveBack;
+	screen._clipPtr = clipPtr;
 
 	return msgWidth;
 }
@@ -993,7 +993,7 @@ int DisplayResource::textWidth(const Common::String &msg) {
 		return 0;
 
 	const char *msgP = msg.c_str();
-	FontResource &fontData = *_vm->_graphicsManager->_fontPtr->_curFont;
+	FontResource &fontData = *_vm->_screen->_fontPtr->_curFont;
 	int minChar = fontData._minChar;
 	int maxChar = fontData._maxChar;
 	int padding = fontData._padding;
@@ -1085,9 +1085,9 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 				mode = 226;
 		}
 
-		if (mode != state._vm->_graphicsManager->_SVGAMode) {
-			state._vm->_graphicsManager->_SVGAMode = mode;
-			state._vm->_graphicsManager->clearPalette();
+		if (mode != state._vm->_screen->_SVGAMode) {
+			state._vm->_screen->_SVGAMode = mode;
+			state._vm->_screen->clearPalette();
 		}
 
 		int screenOffset = READ_LE_UINT32(&src[18]) & 0xffff;
@@ -1096,13 +1096,14 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 		if (_flags & PICFLAG_CLEAR_SCREEN) {
 			// Clear screen picture. That's right. This game actually has a picture
 			// resource flag to clear the screen! Bizarre.
-			Graphics::Surface &s = state._vm->_graphicsManager->_screenSurface;
-			s.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+			state._vm->_screen->clear();
 		} else {
 			// Direct screen loading picture. In this case, the raw data of the resource
 			// is directly decompressed into the screen surface. Again, bizarre.
-			byte *pDest = (byte *)state._vm->_graphicsManager->_screenSurface.getPixels();
+			Screen &screen = *state._vm->_screen;
+			byte *pDest = (byte *)screen.getPixels();
 			state.decompress(pDest, SCREEN_WIDTH * SCREEN_HEIGHT, state._curMemberPtr->_mode);
+			screen.markAllDirty();
 		}
 	} else {
 		if (_flags & PICFLAG_CLEAR_SCREEN00) {
@@ -1249,13 +1250,13 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 		ys + READ_LE_UINT16(src + 0x4C));
 
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x7A), &dummy);
-	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x7E), (GraphicMethodPtr *)&_fn1);
-	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x82), (GraphicMethodPtr *)&_setupFn);
-	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x86), (GraphicMethodPtr *)&_addFn);
-	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x8A), (GraphicMethodPtr *)&_restoreFn);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x7E), (ScreenMethodPtr *)&_fn1);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x82), (ScreenMethodPtr *)&_setupFn);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x86), (ScreenMethodPtr *)&_addFn);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x8A), (ScreenMethodPtr *)&_restoreFn);
 
 	if (!_restoreFn && _addFn)
-		_addFn = &GraphicsManager::addRectNoSaveBack;
+		_addFn = &Screen::addRectNoSaveBack;
 }
 
 ViewPortResource::~ViewPortResource() {
@@ -1327,19 +1328,19 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clippi
 	_restoreFn = restoreFn;
 
 	if (setupFn)
-		(_state._vm->_graphicsManager->*setupFn)(this);
+		(_state._vm->_screen->*setupFn)(this);
 }
 
 void ViewPortResource::setupViewPort() {
-	setupViewPort(_state._vm->_graphicsManager->_backgroundPage, NULL,
-		&GraphicsManager::setupMCGASaveRect, &GraphicsManager::addRectOptSaveRect,
-		&GraphicsManager::restoreMCGASaveRect);
+	setupViewPort(_state._vm->_screen->_backgroundPage, NULL,
+		&Screen::setupMCGASaveRect, &Screen::addRectOptSaveRect,
+		&Screen::restoreMCGASaveRect);
 }
 
 void ViewPortResource::setupViewPort(PictureResource *pic, Common::Rect *clippingRect) {
 	setupViewPort(pic, clippingRect,
-		&GraphicsManager::setupMCGASaveRect, &GraphicsManager::addRectOptSaveRect,
-		&GraphicsManager::restoreMCGASaveRect);
+		&Screen::setupMCGASaveRect, &Screen::addRectOptSaveRect,
+		&Screen::restoreMCGASaveRect);
 }
 
 void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
@@ -1347,7 +1348,7 @@ void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
 
 	if (clipRect(rect)) {
 		if (_addFn) {
-			(_state._vm->_graphicsManager->*_addFn)(this, pageIndex, rect);
+			(_state._vm->_screen->*_addFn)(this, pageIndex, rect);
 		} else if (_rectListCount[pageIndex] != -1) {
 			_rectListPtr[pageIndex]->push_back(rect);
 		}
@@ -1355,26 +1356,26 @@ void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
 }
 
 void ViewPortResource::fillPic(byte onOff) {
-	_state._vm->_graphicsManager->fillPic(this, onOff);
+	_state._vm->_screen->fillPic(this, onOff);
 }
 
 void ViewPortResource::drawIfaceTime() {
 	// Hour display
-	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort,
+	_state._vm->_screen->drawANumber(_state._vm->_screen->_vPort,
 		(_state._vm->_gameHour / 10) == 0 ? 10 : _state._vm->_gameHour / 10,
 		Common::Point(161, 25));
-	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort,
+	_state._vm->_screen->drawANumber(_state._vm->_screen->_vPort,
 		_state._vm->_gameHour % 10, Common::Point(172, 25));
 
 	// Minute display
-	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort,
+	_state._vm->_screen->drawANumber(_state._vm->_screen->_vPort,
 		_state._vm->_gameMinute / 10, Common::Point(190, 25));
-	_state._vm->_graphicsManager->drawANumber(_state._vm->_graphicsManager->_vPort,
+	_state._vm->_screen->drawANumber(_state._vm->_screen->_vPort,
 		_state._vm->_gameMinute % 10, Common::Point(201, 25));
 
 	// AM/PM indicator
 	PictureResource *pic = _state._vm->_bVoy->boltEntry(_state._vm->_voy->_isAM ? 272 : 273)._picResource;
-	_state._vm->_graphicsManager->sDrawPic(pic, _state._vm->_graphicsManager->_vPort,
+	_state._vm->_screen->sDrawPic(pic, _state._vm->_screen->_vPort,
 		Common::Point(215, 27));
 }
 
@@ -1382,9 +1383,9 @@ void ViewPortResource::drawPicPerm(PictureResource *pic, const Common::Point &pt
 	Common::Rect bounds = pic->_bounds;
 	bounds.translate(pt.x, pt.y);
 
-	bool saveBack = _state._vm->_graphicsManager->_saveBack;
-	_state._vm->_graphicsManager->_saveBack = false;
-	_state._vm->_graphicsManager->sDrawPic(pic, this, pt);
+	bool saveBack = _state._vm->_screen->_saveBack;
+	_state._vm->_screen->_saveBack = false;
+	_state._vm->_screen->sDrawPic(pic, this, pt);
 	clipRect(bounds);
 
 	for (int pageIndex = 0; pageIndex < _pageCount; ++pageIndex) {
@@ -1393,7 +1394,7 @@ void ViewPortResource::drawPicPerm(PictureResource *pic, const Common::Point &pt
 		}
 	}
 
-	_state._vm->_graphicsManager->_saveBack = saveBack;
+	_state._vm->_screen->_saveBack = saveBack;
 }
 /*------------------------------------------------------------------------*/
 
@@ -1526,7 +1527,7 @@ CMapResource::CMapResource(BoltFilesState &state, const byte *src): _vm(state._v
 	_entries = new byte[count * 3];
 	Common::copy(src + 6, src + 6 + 3 * count, _entries);
 
-	int palIndex = state._vm->_graphicsManager->_viewPortListPtr->_palIndex;
+	int palIndex = state._vm->_screen->_viewPortListPtr->_palIndex;
 	if (_end > palIndex)
 		_end = palIndex;
 	if (_start > palIndex)

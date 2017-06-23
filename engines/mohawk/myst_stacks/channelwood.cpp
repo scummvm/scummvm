@@ -363,11 +363,12 @@ void Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uint16 var, uint16 a
 
 void Channelwood::o_waterTankValveOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Do Water Tank Valve Open Animation", op);
-	Common::Rect rect = _invokingResource->getRect();
+	Common::Rect rect = getInvokingResource<MystArea>()->getRect();
 
 	for (uint i = 0; i < 2; i++)
 		for (uint16 imageId = 3601; imageId >= 3595; imageId--) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
+			_vm->pollAndDiscardEvents();
 			_vm->_system->updateScreen();
 		}
 
@@ -377,7 +378,7 @@ void Channelwood::o_waterTankValveOpen(uint16 op, uint16 var, uint16 argc, uint1
 void Channelwood::o_leverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever start move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	lever->drawFrame(0);
 	_vm->_cursor->setCursor(700);
 	_leverPulled = false;
@@ -386,7 +387,7 @@ void Channelwood::o_leverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *a
 void Channelwood::o_leverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 
 	if (lever->pullLeverV()) {
 		if (!_leverPulled) {
@@ -401,7 +402,7 @@ void Channelwood::o_leverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 void Channelwood::o_leverMoveFail(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 
 	if (lever->pullLeverV()) {
 		if (!_leverPulled) {
@@ -419,7 +420,7 @@ void Channelwood::o_leverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	debugC(kDebugScript, "Opcode %d: Generic lever end move", op);
 
 	// Get current lever frame
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 
 	// Release lever
 	lever->releaseLeverV();
@@ -439,7 +440,7 @@ void Channelwood::o_leverEndMoveResumeBackground(uint16 op, uint16 var, uint16 a
 void Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	o_leverEndMove(op, var, argc, argv);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = lever->getList3(0);
 	if (soundId)
 		_vm->_sound->replaceSoundMyst(soundId);
@@ -461,7 +462,7 @@ void Channelwood::o_leverElev3EndMove(uint16 op, uint16 var, uint16 argc, uint16
 void Channelwood::o_pumpLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Pump lever move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 
 	if (lever->pullLeverV()) {
 		uint16 soundId = lever->getList2(0);
@@ -475,7 +476,7 @@ void Channelwood::o_pumpLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *ar
 void Channelwood::o_pumpLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	o_leverEndMove(op, var, argc, argv);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = lever->getList3(0);
 	if (soundId)
 		_vm->_sound->replaceBackgroundMyst(soundId, 36864);
@@ -484,7 +485,7 @@ void Channelwood::o_pumpLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 
 void Channelwood::o_stairsDoorToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play stairs door video", op);
 
-	MystResourceType6 *movie = static_cast<MystResourceType6 *>(_invokingResource);
+	MystAreaVideo *movie = getInvokingResource<MystAreaVideo>();
 
 	if (_state.stairsUpperDoorState) {
 		// Close door, play the open movie backwards
@@ -500,7 +501,7 @@ void Channelwood::o_stairsDoorToggle(uint16 op, uint16 var, uint16 argc, uint16 
 void Channelwood::o_valveHandleMove1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
 
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	if (handle->getRect().contains(mouse)) {
@@ -516,7 +517,7 @@ void Channelwood::o_valveHandleMove1(uint16 op, uint16 var, uint16 argc, uint16 
 void Channelwood::o_valveHandleMoveStart1(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move start", op);
 
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
 		_vm->_sound->replaceSoundMyst(soundId);
@@ -528,7 +529,7 @@ void Channelwood::o_valveHandleMoveStart1(uint16 op, uint16 var, uint16 argc, ui
 void Channelwood::o_valveHandleMoveStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move stop", op);
 
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 
 	// Update state with valve position
 	if (_tempVar <= 5)
@@ -551,7 +552,7 @@ void Channelwood::o_valveHandleMoveStop(uint16 op, uint16 var, uint16 argc, uint
 void Channelwood::o_valveHandleMove2(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
 
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	if (handle->getRect().contains(mouse)) {
@@ -567,7 +568,7 @@ void Channelwood::o_valveHandleMove2(uint16 op, uint16 var, uint16 argc, uint16 
 void Channelwood::o_valveHandleMoveStart2(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move start", op);
 
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
 		_vm->_sound->replaceSoundMyst(soundId);
@@ -579,7 +580,7 @@ void Channelwood::o_valveHandleMoveStart2(uint16 op, uint16 var, uint16 argc, ui
 void Channelwood::o_valveHandleMove3(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move", op);
 
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	if (handle->getRect().contains(mouse)) {
@@ -595,7 +596,7 @@ void Channelwood::o_valveHandleMove3(uint16 op, uint16 var, uint16 argc, uint16 
 void Channelwood::o_valveHandleMoveStart3(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Valve handle move start", op);
 
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
 		_vm->_sound->replaceSoundMyst(soundId);
@@ -621,24 +622,32 @@ void Channelwood::o_hologramMonitor(uint16 op, uint16 var, uint16 argc, uint16 *
 		switch (button) {
 		case 0:
 			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monalgh", kChannelwoodStack));
+			if (!handle)
+				error("Failed to open monalgh movie");
+			handle->moveTo(227, 70);
 			break;
 		case 1:
 			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monamth", kChannelwoodStack));
+			if (!handle)
+				error("Failed to open monamth movie");
+			handle->moveTo(227, 70);
 			break;
 		case 2:
 			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monasirs", kChannelwoodStack));
+			if (!handle)
+				error("Failed to open monasirs movie");
+			handle->moveTo(227, 70);
 			break;
 		case 3:
 			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack));
+			if (!handle)
+				error("Failed to open monsmsg movie");
+			handle->moveTo(226, 68);
 			break;
 		default:
 			warning("Opcode %d Control Variable Out of Range", op);
 			break;
 		}
-
-		// Move the video to the right location
-		if (handle)
-			handle->moveTo(227, 70);
 	}
 }
 
@@ -680,17 +689,18 @@ void Channelwood::o_hologramTemple(uint16 op, uint16 var, uint16 argc, uint16 *a
 void Channelwood::o_executeMouseUp(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Execute mouse up", op);
 
-	MystResourceType5 *resource = static_cast<MystResourceType5 *>(_vm->_resources[argv[0]]);
+	MystArea *resource = _vm->getViewResource<MystArea>(argv[0]);
 	resource->handleMouseUp();
 }
 
 void Channelwood::o_waterTankValveClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Do Water Tank Valve Close Animation", op);
-	Common::Rect rect = _invokingResource->getRect();
+	Common::Rect rect = getInvokingResource<MystArea>()->getRect();
 
 	for (uint i = 0; i < 2; i++)
 		for (uint16 imageId = 3595; imageId <= 3601; imageId++) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
+			_vm->pollAndDiscardEvents();
 			_vm->_system->updateScreen();
 		}
 
@@ -747,13 +757,14 @@ void Channelwood::o_soundReplace(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 	uint16 soundId = argv[0];
 
-	// TODO: If is foreground playing
-	_vm->_sound->replaceSoundMyst(soundId);
+	if (!_vm->_sound->isPlaying()) {
+		_vm->_sound->replaceSoundMyst(soundId);
+	}
 }
 
 void Channelwood::o_lever_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generic lever init", op);
-	_leverAction = static_cast<MystResourceType5 *>(_invokingResource);
+	_leverAction = getInvokingResource<MystArea>();
 }
 
 void Channelwood::o_pipeValve_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

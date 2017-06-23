@@ -95,6 +95,21 @@ struct VideoState {
 	}
 };
 
+/**
+ * Trace information about a VM function call.
+ */
+struct SciCallOrigin {
+	int scriptNr; //< The source script of the function
+	Common::String objectName; //< The name of the object being called
+	Common::String methodName; //< The name of the method being called
+	int localCallOffset; //< The byte offset of a local script subroutine called by the origin method. -1 if not in a local subroutine.
+	int roomNr; //< The room that was loaded at the time of the call
+
+	Common::String toString() const {
+		return Common::String::format("method %s::%s (room %d, script %d, localCall %x)", objectName.c_str(), methodName.c_str(), roomNr, scriptNr, localCallOffset);
+	}
+};
+
 struct EngineState : public Common::Serializable {
 public:
 	EngineState(SegManager *segMan);
@@ -113,7 +128,9 @@ public:
 	void speedThrottler(uint32 neededSleep);
 	void wait(int16 ticks);
 
-	uint32 _throttleCounter; /**< total times kAnimate was invoked */
+#ifdef ENABLE_SCI32
+	uint32 _eventCounter; /**< total times kGetEvent was invoked since the last call to kFrameOut */
+#endif
 	uint32 _throttleLastTime; /**< last time kAnimate was invoked */
 	bool _throttleTrigger;
 	bool _gameIsBenchmarking;
@@ -127,17 +144,13 @@ public:
 	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
 	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
 
-#ifdef ENABLE_SCI32
-	VirtualIndexFile *_virtualIndexFile;
-#endif
-
 	// see detection.cpp / SciEngine::loadGameState()
-	bool _delayedRestoreGame;  // boolean, that triggers delayed restore (triggered by ScummVM menu)
 	int _delayedRestoreGameId; // the saved game id, that it supposed to get restored (triggered by ScummVM menu)
 
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
 	bool _cursorWorkaroundActive; // Refer to GfxCursor::setPosition()
+	int16 _cursorWorkaroundPosCount; // When the cursor is reported to be at the previously set coordinate, we won't disable the workaround unless it happened for this many times
 	Common::Point _cursorWorkaroundPoint;
 	Common::Rect _cursorWorkaroundRect;
 
@@ -199,14 +212,18 @@ public:
 	uint16 _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
 
+	// TODO: Excise video code from the state manager
 	VideoState _videoState;
-	uint16 _vmdPalStart, _vmdPalEnd;
-	bool _syncedAudioOptions;
 
 	/**
 	 * Resets the engine state.
 	 */
 	void reset(bool isRestoring);
+
+	/**
+	 * Finds and returns the origin of the current call.
+	 */
+	SciCallOrigin getCurrentCallOrigin() const;
 };
 
 } // End of namespace Sci

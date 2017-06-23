@@ -293,7 +293,7 @@ private:
 	/**
 	 * Constructor for internal VideoManager use
 	 */
-	VideoHandle(VideoEntryPtr ptr);
+	explicit VideoHandle(VideoEntryPtr ptr);
 
 	/**
 	 * The video entry this is associated with
@@ -346,9 +346,11 @@ private:
 	// Utility functions for managing entries
 	VideoEntryPtr open(uint16 id);
 	VideoEntryPtr open(const Common::String &fileName);
-	
+
 	VideoList::iterator findEntry(VideoEntryPtr ptr);
 	void removeEntry(VideoEntryPtr ptr);
+
+	bool drawNextFrame(VideoEntryPtr videoEntry);
 
 	// Dithering control
 	bool _enableDither;

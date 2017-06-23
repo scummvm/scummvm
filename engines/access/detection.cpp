@@ -94,7 +94,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Access Engine (c) 1989-1994 Access Software";
+		return "Access Engine (C) 1989-1994 Access Software";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -111,7 +111,8 @@ bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Access::AccessEngine::hasFeature(EngineFeature f) const {
@@ -146,7 +147,6 @@ SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 	Access::AccessSavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -167,6 +167,8 @@ SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

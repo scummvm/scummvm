@@ -102,7 +102,7 @@ int scene32_updateCursor() {
 	g_fp->updateCursorCommon();
 
 	if (g_fp->_objectIdAtCursor == PIC_SC32_LADDER && g_fp->_cursorId == PIC_CSR_ITN)
-		g_fp->_cursorId = g_vars->scene32_dudeOnLadder ? PIC_CSR_GOD : PIC_CSR_GOU; // TODO FIXME doublecheck
+		g_fp->_cursorId = g_vars->scene32_dudeOnLadder ? PIC_CSR_GOD : PIC_CSR_GOU;
 
 	return g_fp->_cursorId;
 }
@@ -185,7 +185,7 @@ void sceneHandler32_trySit(ExCommand *cmd) {
 		ex->_parentId = ANI_MAN;
 		ex->_messageKind = 1;
 		ex->_messageNum = MV_MAN32_SITDOWN;
-		ex->_keyCode = g_fp->_aniMan->_okeyCode;
+		ex->_param = g_fp->_aniMan->_odelay;
 
 		g_vars->scene32_dudeIsSitting = true;
 
@@ -355,6 +355,8 @@ int sceneHandler32(ExCommand *cmd) {
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
 		}
 
 		if (!g_vars->scene32_flag->_movement) {

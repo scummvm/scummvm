@@ -25,6 +25,9 @@
 #include "common/file.h"
 #include "common/array.h"
 #include "common/list.h"
+#include "common/memstream.h"
+
+#include "graphics/thumbnail.h"
 
 #include "fullpipe/objects.h"
 #include "fullpipe/gameloader.h"
@@ -36,6 +39,245 @@
 #include "fullpipe/constants.h"
 
 namespace Fullpipe {
+
+bool GameLoader::readSavegame(const char *fname) {
+	SaveHeader header;
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(fname);
+
+	if (!saveFile) {
+		warning("Cannot open save %s for loading", fname);
+		return false;
+	}
+
+	header.version = saveFile->readUint32LE();
+	saveFile->read(header.magic, 32);
+	header.updateCounter = saveFile->readUint32LE();
+	header.unkField = saveFile->readUint32LE();
+	header.encSize = saveFile->readUint32LE();
+
+	debugC(3, kDebugLoading, "version: %d magic: %s updateCounter: %d unkField: %d encSize: %d, pos: %d",
+			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
+
+	if (header.version != 48)
+		return false;
+
+	_updateCounter = header.updateCounter;
+
+	byte *data = (byte *)malloc(header.encSize);
+	saveFile->read(data, header.encSize);
+
+	byte *map = (byte *)malloc(800);
+	saveFile->read(map, 800);
+
+	Common::MemoryReadStream *tempStream = new Common::MemoryReadStream(map, 800);
+	MfcArchive temp(tempStream);
+
+	if (_savegameCallback)
+		_savegameCallback(&temp, false);
+
+	delete tempStream;
+	delete saveFile;
+
+	// Deobfuscate the data
+	for (int i = 0; i < header.encSize; i++)
+		data[i] -= i & 0x7f;
+
+	Common::MemoryReadStream *archiveStream = new Common::MemoryReadStream(data, header.encSize);
+	MfcArchive *archive = new MfcArchive(archiveStream);
+
+	GameVar *var = (GameVar *)archive->readClass();
+
+	GameVar *v = _gameVar->getSubVarByName("OBJSTATES");
+
+	if (!v) {
+		v = _gameVar->addSubVarAsInt("OBJSTATES", 0);
+
+		if (!v) {
+			warning("No state to save");
+			delete archiveStream;
+			delete archive;
+			return false;
+		}
+	}
+
+	addVar(var, v);
+
+	getGameLoaderInventory()->loadPartial(*archive);
+
+	uint32 arrSize = archive->readUint32LE();
+
+	debugC(3, kDebugLoading, "Reading %d infos", arrSize);
+
+	for (uint i = 0; i < arrSize; i++) {
+		_sc2array[i]._picAniInfosCount = archive->readUint32LE();
+
+		if (_sc2array[i]._picAniInfosCount)
+			debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
+
+		free(_sc2array[i]._picAniInfos);
+		_sc2array[i]._picAniInfos = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * _sc2array[i]._picAniInfosCount);
+
+		for (int j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
+			_sc2array[i]._picAniInfos[j] = new PicAniInfo();
+			_sc2array[i]._picAniInfos[j]->load(*archive);
+		}
+
+		_sc2array[i]._isLoaded = 0;
+	}
+
+	delete archiveStream;
+	delete archive;
+
+	getGameLoaderInventory()->rebuildItemRects();
+
+	PreloadItem preloadItem;
+
+	v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+
+	if (v) {
+		if (g_fp->_currentScene)
+			preloadItem.preloadId1 = g_fp->_currentScene->_sceneId & 0xffff;
+		else
+			preloadItem.preloadId1 = 0;
+
+		preloadItem.param = v->getSubVarAsInt("Entrance");
+		preloadItem.preloadId2 = 0;
+		preloadItem.sceneId = v->getSubVarAsInt("Scene");
+
+		if (_preloadCallback) {
+			if (!_preloadCallback(preloadItem, 0))
+				return false;
+		}
+
+		clearGlobalMessageQueueList1();
+
+		if (g_fp->_currentScene)
+			unloadScene(g_fp->_currentScene->_sceneId);
+
+		g_fp->_currentScene = 0;
+
+		if (_preloadCallback)
+			_preloadCallback(preloadItem, 50);
+
+		loadScene(preloadItem.sceneId);
+
+		ExCommand *ex = new ExCommand(preloadItem.sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags = 2;
+		ex->_param = preloadItem.param;
+
+		if (_preloadCallback)
+			_preloadCallback(preloadItem, 100);
+
+		ex->postMessage();
+	}
+
+	return true;
+}
+
+void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc) {
+	int day = (header.date >> 24) & 0xFF;
+	int month = (header.date >> 16) & 0xFF;
+	int year = header.date & 0xFFFF;
+	desc.setSaveDate(year, month, day);
+	int hour = (header.time >> 8) & 0xFF;
+	int minutes = header.time & 0xFF;
+	desc.setSaveTime(hour, minutes);
+	desc.setPlayTime(header.playtime * 1000);
+
+	desc.setDescription(header.saveName);
+}
+
+void fillDummyHeader(Fullpipe::FullpipeSavegameHeader &header) {
+	// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
+	header.date = (20 << 24) | (9 << 16) | 2016;
+	header.time = (9 << 8) | 56;
+	header.playtime = 1000;
+}
+
+bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
+	header.thumbnail = NULL;
+
+	uint oldPos = in->pos();
+
+	in->seek(-4, SEEK_END);
+
+	int headerOffset = in->readUint32LE();
+
+	// Sanity check
+	if (headerOffset >= in->pos() || headerOffset == 0) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		fillDummyHeader(header);
+		return false;
+	}
+
+	in->seek(headerOffset, SEEK_SET);
+
+	in->read(header.id, 6);
+
+	// Validate the header Id
+	if (strcmp(header.id, "SVMCR")) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		fillDummyHeader(header);
+		return false;
+	}
+
+	header.version = in->readByte();
+	if (header.version != FULLPIPE_SAVEGAME_VERSION) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		fillDummyHeader(header);
+		return false;
+	}
+
+	header.date = in->readUint32LE();
+	header.time = in->readUint16LE();
+	header.playtime = in->readUint32LE();
+
+	// Generate savename
+	SaveStateDescriptor desc;
+
+	parseSavegameHeader(header, desc);
+	header.saveName = Common::String::format("%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
+
+	// Get the thumbnail
+	header.thumbnail = Graphics::loadThumbnail(*in);
+
+	in->seek(oldPos, SEEK_SET); // Rewind the file
+
+	if (!header.thumbnail)
+		return false;
+
+	return true;
+}
+
+void GameLoader::addVar(GameVar *var, GameVar *subvar) {
+	if (var && subvar) {
+		int type = var->_varType;
+		if (type == subvar->_varType && (!type || type == 1))
+			subvar->_value.intValue = var->_value.intValue;
+
+		for (GameVar *v = var->_subVars; v; v = v->_nextVarObj) {
+			GameVar *nv = subvar->getSubVarByName(v->_varName.c_str());
+			if (!nv) {
+				nv = new GameVar;
+				nv->_varName = v->_varName;
+				nv->_varType = v->_varType;
+
+				subvar->addSubVar(nv);
+			}
+
+			addVar(v, nv);
+		}
+	}
+}
+
+void gameLoaderSavegameCallback(MfcArchive *archive, bool mode) {
+	if (mode)
+		for (int i = 0; i < 200; i++)
+			archive->writeUint32LE(g_fp->_mapTable[i]);
+	else
+		for (int i = 0; i < 200; i++)
+			g_fp->_mapTable[i] = archive->readUint32LE();
+}
 
 bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	_gameLoader = new GameLoader();
@@ -50,8 +292,13 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	addMessageHandlerByIndex(global_messageHandler1, 0, 4);
 
 	_inventory = getGameLoaderInventory();
-	_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
-	_inventory->addItem(ANI_INV_MAP, 1);
+
+	if (isDemo() && getLanguage() == Common::RU_RUS) {
+		_inventory->addItem(ANI_INV_HAMMER, 1);
+	} else {
+		_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
+		_inventory->addItem(ANI_INV_MAP, 1);
+	}
 
 	_inventory->rebuildItemRects();
 
@@ -60,7 +307,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;
-	// _readSavegameCallback = gameLoaderReadSavegameCallback; // TODO
+	_gameLoader->_savegameCallback = gameLoaderSavegameCallback;
 
 	_aniMan = accessScene(SC_COMMON)->getAniMan();
 	_scene2 = 0;
@@ -81,6 +328,9 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
 
+	if (scene == -1)
+		return true;
+
 	if (scene) {
 		_gameLoader->loadScene(726);
 		_gameLoader->gotoScene(726, TrubaLeft);
@@ -92,8 +342,13 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 			_gameLoader->loadScene(SC_INTRO1);
 			_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
 		} else {
-			_gameLoader->loadScene(SC_1);
-			_gameLoader->gotoScene(SC_1, TrubaLeft);
+			if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS) {
+				_gameLoader->loadScene(SC_9);
+				_gameLoader->gotoScene(SC_9, TrubaDown);
+			} else {
+				_gameLoader->loadScene(SC_1);
+				_gameLoader->gotoScene(SC_1, TrubaLeft);
+			}
 		}
 	}
 
@@ -105,17 +360,15 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 GameProject::GameProject() {
 	_field_4 = 0;
-	_headerFilename = 0;
 	_field_10 = 12;
 
 	_sceneTagList = 0;
 }
 
 bool GameProject::load(MfcArchive &file) {
-	debug(5, "GameProject::load()");
+	debugC(5, kDebugLoading, "GameProject::load()");
 
 	_field_4 = 0;
-	_headerFilename = 0;
 	_field_10 = 12;
 
 	g_fp->_gameProjectVersion = file.readUint32LE();
@@ -124,10 +377,10 @@ bool GameProject::load(MfcArchive &file) {
 
 	_headerFilename = file.readPascalString();
 
-	debug(1, "_gameProjectVersion = %d", g_fp->_gameProjectVersion);
-	debug(1, "_pictureScale = %d", g_fp->_pictureScale);
-	debug(1, "_scrollSpeed = %d", g_fp->_scrollSpeed);
-	debug(1, "_headerFilename = %s", _headerFilename);
+	debugC(1, kDebugLoading, "_gameProjectVersion = %d", g_fp->_gameProjectVersion);
+	debugC(1, kDebugLoading, "_pictureScale = %d", g_fp->_pictureScale);
+	debugC(1, kDebugLoading, "_scrollSpeed = %d", g_fp->_scrollSpeed);
+	debugC(1, kDebugLoading, "_headerFilename = %s", _headerFilename.c_str());
 
 	_sceneTagList = new SceneTagList();
 
@@ -145,8 +398,6 @@ bool GameProject::load(MfcArchive &file) {
 }
 
 GameProject::~GameProject() {
-	free(_headerFilename);
-
 	delete _sceneTagList;
 }
 
@@ -158,7 +409,8 @@ GameVar::GameVar() {
 	_field_14 = 0;
 	_varType = 0;
 	_value.floatValue = 0;
-	_varName = 0;
+
+	_objtype = kObjTypeGameVar;
 }
 
 GameVar::~GameVar() {
@@ -197,32 +449,33 @@ GameVar::~GameVar() {
 		delete s;
 		s = _field_14;
 	}
-
-	free(_varName);
 }
 
 bool GameVar::load(MfcArchive &file) {
 	_varName = file.readPascalString();
 	_varType = file.readUint32LE();
 
-	debugN(6, "[%03d] ", file.getLevel());
+	debugCN(6, kDebugLoading, "[%03d] ", file.getLevel());
 	for (int i = 0; i < file.getLevel(); i++)
-		debugN(6, " ");
+		debugCN(6, kDebugLoading, " ");
 
-	debugN(6, "<%s>: ", transCyrillic((byte *)_varName));
+	debugCN(6, kDebugLoading, "<%s>: ", transCyrillic(_varName));
 
 	switch (_varType) {
 	case 0:
 		_value.intValue = file.readUint32LE();
-		debug(6, "d --> %d", _value.intValue);
+		debugC(6, kDebugLoading, "d --> %d", _value.intValue);
 		break;
 	case 1:
 		_value.intValue = file.readUint32LE(); // FIXME
-		debug(6, "f --> %f", _value.floatValue);
+		debugC(6, kDebugLoading, "f --> %f", _value.floatValue);
 		break;
-	case 2:
-		_value.stringValue = file.readPascalString();
-		debug(6, "s --> %s", _value.stringValue);
+	case 2: {
+		Common::String str = file.readPascalString();
+		_value.stringValue = (char *)calloc(str.size() + 1, 1);
+		Common::strlcpy(_value.stringValue, str.c_str(), str.size() + 1);
+		debugC(6, kDebugLoading, "s --> %s", _value.stringValue);
+		}
 		break;
 	default:
 		error("Unknown var type: %d (0x%x)", _varType, _varType);
@@ -239,18 +492,18 @@ bool GameVar::load(MfcArchive &file) {
 	return true;
 }
 
-GameVar *GameVar::getSubVarByName(const char *name) {
+GameVar *GameVar::getSubVarByName(const Common::String &name) {
 	GameVar *sv = 0;
 
 	if (_subVars != 0) {
 		sv = _subVars;
-		for (;sv && scumm_stricmp(sv->_varName, name); sv = sv->_nextVarObj)
+		for (;sv && scumm_stricmp(sv->_varName.c_str(), name.c_str()); sv = sv->_nextVarObj)
 			;
 	}
 	return sv;
 }
 
-bool GameVar::setSubVarAsInt(const char *name, int value) {
+bool GameVar::setSubVarAsInt(const Common::String &name, int value) {
 	GameVar *var = getSubVarByName(name);
 
 	if (var) {
@@ -265,13 +518,12 @@ bool GameVar::setSubVarAsInt(const char *name, int value) {
 	var = new GameVar();
 	var->_varType = 0;
 	var->_value.intValue = value;
-	var->_varName = (char *)calloc(strlen(name) + 1, 1);
-	strcpy(var->_varName, name);
+	var->_varName = name;
 
 	return addSubVar(var);
 }
 
-int GameVar::getSubVarAsInt(const char *name) {
+int GameVar::getSubVarAsInt(const Common::String &name) {
 	GameVar *var = getSubVarByName(name);
 
 	if (var)
@@ -280,7 +532,7 @@ int GameVar::getSubVarAsInt(const char *name) {
 		return 0;
 }
 
-GameVar *GameVar::addSubVarAsInt(const char *name, int value) {
+GameVar *GameVar::addSubVarAsInt(const Common::String &name, int value) {
 	if (getSubVarByName(name)) {
 		return 0;
 	} else {
@@ -289,8 +541,7 @@ GameVar *GameVar::addSubVarAsInt(const char *name, int value) {
 		var->_varType = 0;
 		var->_value.intValue = value;
 
-		var->_varName = (char *)calloc(strlen(name) + 1, 1);
-		strcpy(var->_varName, name);
+		var->_varName = name;
 
 		return (addSubVar(var) != 0) ? var : 0;
 	}
@@ -342,7 +593,7 @@ GameVar *GameVar::getSubVarByIndex(int idx) {
 }
 
 bool PicAniInfo::load(MfcArchive &file) {
-	debug(5, "PicAniInfo::load()");
+	debugC(5, kDebugLoading, "PicAniInfo::load()");
 
 	type = file.readUint32LE();
 	objectId = file.readUint16LE();
@@ -350,8 +601,8 @@ bool PicAniInfo::load(MfcArchive &file) {
 	field_8 = file.readUint32LE();
 	sceneId = file.readUint16LE();
 	field_E = file.readUint16LE();
-	ox = file.readUint32LE();
-	oy = file.readUint32LE();
+	ox = file.readSint32LE();
+	oy = file.readSint32LE();
 	priority = file.readUint32LE();
 	staticsId = file.readUint16LE();
 	movementId = file.readUint16LE();

@@ -42,7 +42,7 @@ class Message : public CObject {
 	int _sceneClickY;
 	int _field_20;
 	int _field_24;
-	int _keyCode;
+	int _param;
 	int _field_2C;
 	int _field_30;
 	int _field_34;
@@ -94,7 +94,7 @@ class ExCommand2 : public ExCommand {
 
 class ObjstateCommand : public ExCommand {
  public:
-	char *_objCommandName;
+	Common::String _objCommandName;
 	int _value;
 
  public:
@@ -111,7 +111,7 @@ class MessageQueue : public CObject {
   public:
 	int _id;
 	int _flags;
-	char *_queueName;
+	Common::String _queueName;
 	int16 _dataId;
 	CObject *_field_14;
 	int _counter;
@@ -142,9 +142,9 @@ class MessageQueue : public CObject {
 	ExCommand *getExCommandByIndex(uint idx);
 	void deleteExCommandByIndex(uint idx, bool doFree);
 
-	void transferExCommands(MessageQueue *mq);
+	void mergeQueue(MessageQueue *mq);
 
-	void replaceKeyCode(int key1, int key2);
+	void setParamInt(int key1, int key2);
 
 	bool chain(StaticANIObject *ani);
 	void update();

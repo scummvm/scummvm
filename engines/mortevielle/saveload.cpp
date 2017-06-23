@@ -237,7 +237,7 @@ bool SavegameManager::readSavegameHeader(Common::InSaveFile *in, SavegameHeader 
 
 SaveStateList SavegameManager::listSaves(const Common::String &target) {
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
 	sort(files.begin(), files.end());	// Sort (hopefully ensuring we are sorted numerically..)

@@ -19,7 +19,7 @@ Table of Contents:
  * 3.2 Datafiles
  * 3.3 Multi-CD games notes
  * 3.4 Known Problems
- * 3.5 Beneath a Steel Sky notes 
+ * 3.5 Beneath a Steel Sky notes
  * 3.6 Broken Sword games notes
  * * 3.6.1 Broken Sword
  * * 3.6.2 Broken Sword II
@@ -30,12 +30,12 @@ Table of Contents:
  * 3.9 Dragon History notes
  * 3.10 Flight of the Amazon Queen notes
  * 3.11 Gobliiins notes
- * 3.12 Inherit the Earth: Quest for the Orb notes 
+ * 3.12 Inherit the Earth: Quest for the Orb notes
  * 3.13 Maniac Mansion Apple II/NES notes
  * 3.14 Mickey's Space Adventure notes
  * 3.15 Nippon Safes Inc. Amiga notes
  * 3.16 Simon the Sorcerer notes
- * 3.17 The Curse of Monkey Island notes 
+ * 3.17 The Curse of Monkey Island notes
  * 3.18 The Feeble Files notes
  * 3.19 The Legend of Kyrandia notes
  * 3.20 Troll's Tale notes
@@ -43,15 +43,15 @@ Table of Contents:
  * 3.22 Sierra AGI games: Predictive Input Dialog notes
  * 3.23 Sierra SCI games: Simultaneous speech and subtitles
  * 3.24 Zork games notes
- * 3.25 Commodore64 games notes 
- * 3.26 Macintosh games notes 
+ * 3.25 Commodore64 games notes
+ * 3.26 Macintosh games notes
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
- * 5.2 Language Options
+ * 5.2 Global Menu
  * 5.3 Graphics Filters
- * 5.4 Global Menu
- * 5.5 Hotkeys
+ * 5.4 Hotkeys
+ * 5.5 Language Options
 6.0) Saved Games
  * 6.1 Autosaves
  * 6.2 Converting saved games
@@ -81,8 +81,9 @@ Table of Contents:
 8.0) Configuration file
  * 8.1 Recognized configuration keywords
  * 8.2 Custom game options that can be toggled via the GUI
-9.0) Compiling
-10.0) Credits
+9.0) Screenshots (SDL backend only)
+10.0) Compiling
+11.0) Credits
 
 
 1.0) Introduction:
@@ -307,6 +308,7 @@ Sierra (SCI) Games:
      EcoQuest: The Search for Cetus              [ecoquest]
      EcoQuest 2: Lost Secret of the Rainforest   [ecoquest2]
      Freddy Pharkas: Frontier Pharmacist         [freddypharkas]
+     Gabriel Knight: Sins of the Fathers         [gk1]
      Hoyle's Book of Games 1                     [hoyle1]
      Hoyle's Book of Games 2                     [hoyle2]
      Hoyle's Book of Games 3                     [hoyle3]
@@ -316,6 +318,8 @@ Sierra (SCI) Games:
      King's Quest IV                             [kq4sci]
      King's Quest V                              [kq5]
      King's Quest VI                             [kq6]
+     King's Quest VII                            [kq7]
+     King's Questions                            [kquestions]
      Laura Bow: The Colonel's Bequest            [laurabow]
      Laura Bow 2: The Dagger of Amon Ra          [laurabow2]
      Leisure Suit Larry 1                        [lsl1sci]
@@ -323,22 +327,29 @@ Sierra (SCI) Games:
      Leisure Suit Larry 3                        [lsl3]
      Leisure Suit Larry 5                        [lsl5]
      Leisure Suit Larry 6                        [lsl6]
+     Leisure Suit Larry 6 (hires)                [lsl6hires]
      Mixed-up Fairy Tales                        [fairytales]
      Mixed-up Mother Goose                       [mothergoose]
      Pepper's Adventures in Time                 [pepper]
+     Phantasmagoria                              [phantasmagoria]
      Police Quest 1                              [pq1sci]
      Police Quest 2                              [pq2]
      Police Quest 3                              [pq3]
+     Police Quest 4                              [pq4]
      Quest for Glory 1/Hero's Quest              [qfg1]
      Quest for Glory 1                           [qfg1vga]
      Quest for Glory 2                           [qfg2]
      Quest for Glory 3                           [qfg3]
      Slater & Charlie Go Camping                 [slater]
+     Shivers                                     [shivers]
      Space Quest I                               [sq1sci]
      Space Quest III                             [sq3]
      Space Quest IV                              [sq4]
      Space Quest V                               [sq5]
+     Space Quest 6                               [sq6]
      The Island of Dr. Brain                     [islandbrain]
+     The Beast Within: A Gabriel Knight Mystery  [gk2]
+     Torin's Passage                             [torin]
 
 Other Games:
      3 Skulls of the Toltecs                     [toltecs]
@@ -367,13 +378,15 @@ Other Games:
      Inherit the Earth: Quest for the Orb        [ite]
      Lands of Lore: The Throne of Chaos          [lol]
      Mortville Manor                             [mortevielle]
+     Myst / Myst: Masterpiece Edition            [myst]
      Nippon Safes Inc.                           [nippon]
-     Rex Nebular and the Cosmic Gender Bender	   [nebular]
+     Rex Nebular and the Cosmic Gender Bender    [nebular]
      Ringworld: Revenge Of The Patriarch         [ringworld]
      Return to Ringworld                         [ringworld2]
      Sfinx                                       [sfinx]
      Soltys                                      [soltys]
      The Journeyman Project: Pegasus Prime       [pegasus]
+     The Labyrinth of Time                       [lab]
      The Legend of Kyrandia                      [kyra1]
      The Legend of Kyrandia: The Hand of Fate    [kyra2]
      The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
@@ -388,6 +401,7 @@ Other Games:
      Tony Tough and the Night of Roasted Moths   [tony]
      Touche: The Adventures of the Fifth
          Musketeer                               [touche]
+     U.F.O.s / Gnap: Der Schurke aus dem All     [gnap]
      Voyeur                                      [voyeur]
      Zork: Grand Inquisitor                      [zgi]
      Zork Nemesis: The Forbidden Lands           [znemesis]
@@ -835,7 +849,7 @@ then consult:
   <http://wiki.scummvm.org/index.php/HOWTO-Mac_Games>
 
 Although it primarily talks about SCUMM games, it mentions the
-"HFVExplorer" utility which you need to extract the files. Note that you
+"HFSExplorer" utility which you need to extract the files. Note that you
 have to put the speech data "Inherit the Earth Voices" in the same
 directory as the game data which is stored in:
 
@@ -1051,10 +1065,17 @@ The CD games where speech and subtitles can be shown simultaneously
 are:
   EcoQuest 1 CD
   Freddy Pharkas CD
+  Gabriel Knight CD
   King's Quest 6 CD
+  King's Quest VII CD
   Laura Bow 2 CD
   Leisure Suit Larry 6 CD
+  Leisure Suit Larry 6 (hires) CD
+  Police Quest 4 CD
+  Shivers CD
   Space Quest 4 CD
+  Space Quest 6 CD
+  Torin's Passage CD
 
 EcoQuest 1 CD:
     Speech and text can be toggled via the game's "Mode" option in the
@@ -1065,10 +1086,20 @@ Freddy Pharkas CD:
     audio options can be used to toggle this feature. Note that some
     spoken dialog is missing from the game texts.
 
+Gabriel Knight CD:
+    Speech and text can be toggled via the "Text" and "Voice" buttons
+    in the game's settings dialog, or via ScummVM's audio options.
+
 King's Quest 6 CD:
     Speech and text can be toggled via the "Mode" button in the options
     dialog (with an extra "Dual" setting added in ScummVM), or via
     ScummVM's audio options.
+
+King's Quest VII CD:
+    There is no in-game option to toggle speech and text. Only ScummVM's
+    audio options can be used to toggle this feature. Note that the
+    subtitles were disabled in the official release of this game, so
+    some subtitles may be wrong or missing.
 
 Laura Bow 2 CD:
     Speech and text can be toggled via the "Mode" button in the options
@@ -1080,10 +1111,34 @@ Leisure Suit Larry 6 CD:
     in-game option to toggle text only. Only ScummVM's audio options can
     be used to enable the text only mode.
 
+Leisure Suit Larry 6 (hires) CD:
+    Text can be toggled by selecting the "Text On/Off" option from the
+    in-game "Game" menu, or via ScummVM's audio options. Speech cannot
+    be disabled.
+
+Police Quest 4 CD:
+    Either speech only or text only can be selected from the game's
+    settings dialog. Only ScummVM's audio options can be used to enable
+    text+speech mode.
+
+Shivers CD:
+    Text can be toggled by selecting the "Text" option from the game's
+    settings dialog, or via ScummVM's audio options. Note that only
+    videos have subtitles in this game.
+
 Space Quest 4 CD:
     Speech and text can be toggled via the "Display Mode" button in the
     options dialog, or via ScummVM's audio options.
 
+Space Quest 6 CD:
+    Speech and text can be toggled via the "Speech" and "Text" buttons
+    in the game's settings dialog, or via ScummVM's audio options.
+
+Torin's Passage CD:
+    Text can be toggled by selecting "Closed Captioning" from the
+    in-game "Game" menu. Speech can be disabled by selecting "Audio
+    Mixer" from the in-game "Game" menu and setting the speech volume
+    to zero.
 
 3.24) Zork games notes:
 ----- -----------------
@@ -1205,7 +1260,7 @@ a Macintosh for this, accessing the CD/floppy data might be tricky. The
 reason for this is that the mac uses a special disk format called HFS
 which other systems usually do not support. However, there are various
 free tools which allow reading such HFS volumes. For example
-"HFVExplorer" for Windows and "hfsutils" for Linux and other Unix-like
+"HFSExplorer" for Windows and "hfsutils" for Linux and other Unix-like
 operating systems.
 
 Most of the newer games on the Macintosh shipped with only a single data
@@ -1306,6 +1361,10 @@ arguments -- see the next section.
   -z, --list-games         Display list of supported games and exit
   -t, --list-targets       Display list of configured targets and exit
   --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified
+  --auto-detect            Display a list of games from current or specified
+                           directory and start the first one found. Use
+                           --path=PATH before--auto-detect to specify a
+                           directory.
   --console                Enable the console window (default: enabled) (Windows only)
 
   -c, --config=CONFIG      Use alternate configuration file
@@ -1314,6 +1373,10 @@ arguments -- see the next section.
   -f, --fullscreen         Force full-screen mode
   -F, --no-fullscreen      Force windowed mode
   -g, --gfx-mode=MODE      Select graphics scaler (see also section 5.3)
+  --filtering              Force filtered graphics mode
+  --no-filtering           Force unfiltered graphics mode
+
+
   --gui-theme=THEME        Select GUI theme (default, modern, classic)
   --themepath=PATH         Path to where GUI themes are stored
   --list-themes            Display list of all usable GUI themes
@@ -1487,6 +1550,7 @@ other games.
     Ctrl-F5                - Displays the Global Menu
     Cmd-q                  - Quit (Mac OS X)
     Ctrl-q                 - Quit (other unices including Linux)
+    Alt-F4                 - Quit (Windows)
     Ctrl-z                 - Quit (other platforms)
     Ctrl-u                 - Mute all sounds
     Ctrl-m                 - Toggle mouse capture
@@ -1498,6 +1562,7 @@ other games.
                              modern monitors. Aspect-ratio correction
                              stretches the image to use 320x240 pixels
                              instead, or a multiple thereof
+    Ctrl-Alt f             - Enable/disable graphics filtering
     Alt-Enter              - Toggles full screen/windowed
     Alt-s                  - Make a screenshot (SDL backend only)
     Ctrl-F7                - Open virtual keyboard (if enabled)
@@ -1741,8 +1806,8 @@ The platforms that currently have a different default directory are:
     $HOME/Documents/ScummVM Savegames/
 
     Other unices:
-    We follow the XDG Base Directory Specification. This means our
-    configuration can be found in:
+    We follow the XDG Base Directory Specification. This means by default
+    saved games can be found in:
     $XDG_DATA_HOME/scummvm/saves/
 
     If XDG_DATA_HOME is not defined or empty, ~/.local/share will be used
@@ -2422,8 +2487,8 @@ The following keywords are recognized:
     aspect_ratio       bool     Enable aspect ratio correction
     gfx_mode           string   Graphics mode (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
-                                hq2x, hq3x, tv2x, dotmatrix, opengl_linear,
-                                opengl_nearest)
+                                hq2x, hq3x, tv2x, dotmatrix, opengl)
+    filtering          bool     Enable graphics filtering
 
     confirm_exit       bool     Ask for confirmation by the user before
                                 quitting (SDL backend only).
@@ -2614,7 +2679,25 @@ once or readded in the ScummVM launcher's game list. This will update the
 configuration of each entry, allowing the custom options to be shown.
 
 
-9.0) Compiling:
+9.0) Screenshots (SDL backend only):
+---- -------------------------------
+On systems using the SDL backend (for example Windows, Mac or Linux) you can use
+alt+s to take snapshots (see section 5.4 - Hotkeys).
+
+You can specify the directory in which you want the screenshots to be created in
+the config file. To do so add a screenshotpath value under the [scummvm] section:
+
+[scummvm]
+screenshotpath=/path/to/screenshots/
+
+The default location, when no screenshot path is defined in the config file,
+depends on the OS:
+  Windows: In Users\username\My Pictures\ScummVM Screenshots.
+  macOS X: On the Desktop.
+  Any other OS: In the current directory.
+
+
+10.0) Compiling:
 ---- ----------
 For an up-to-date overview on how to compile ScummVM for various
 platforms, please consult our Wiki, in particular this page:
@@ -2640,18 +2723,12 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 
 
    Windows:
-   * Dev-C++
-      Please refer to:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP>
    * MinGW
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW>
    * Visual Studio (MSVC)
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio>
-   * Windows CE/Mobile
-      Please refer to:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE>
 
    Linux:
    * GCC
@@ -2660,7 +2737,7 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 
    AmigaOS4:
       Please refer to:
-      <http://wiki.scummvm.org/index.php/AmigaOS>
+      <http://wiki.scummvm.org/index.php/AmigaOS4>
 
    Apple iPhone:
       Please refer to:
@@ -2701,10 +2778,6 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo>
 
-   Nintendo DS:
-      Please refer to:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS>
-
    Nintendo Wii and Gamecube:
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii>
@@ -2733,11 +2806,11 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian>
 
 
-10.0) Credits
+11.0) Credits
 ----- -------
 Please refer to our extensive Credits list at:
 
-  <http://www.scummvm.org/credits/>
+  <http://www.scummvm.org/credits>
 
 
 ------------------------------------------------------------------------

@@ -1043,12 +1043,12 @@ void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 
 			if (value & 0x10) {
 				_timers[0].smpTillCb = _timers[0].smpPerCb;
-				_timers[0].smpTillCbRem = _timers[0].smpTillCbRem;
+				_timers[0].smpTillCbRem = _timers[0].smpPerCbRem;
 			}
 
 			if (value & 0x20) {
 				_timers[1].smpTillCb = _timers[1].smpPerCb;
-				_timers[1].smpTillCbRem = _timers[1].smpTillCbRem;
+				_timers[1].smpTillCbRem = _timers[1].smpPerCbRem;
 			}
 		} else if (l == 2) {
 			// LFO

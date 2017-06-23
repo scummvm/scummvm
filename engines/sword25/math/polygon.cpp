@@ -29,8 +29,6 @@
  *
  */
 
-#include <math.h>
-
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 

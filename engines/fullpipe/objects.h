@@ -33,7 +33,7 @@ class SceneTagList;
 class GameProject : public CObject {
  public:
 	int _field_4;
-	char *_headerFilename;
+	Common::String _headerFilename;
 	SceneTagList *_sceneTagList;
 	int _field_10;
 
@@ -44,7 +44,7 @@ class GameProject : public CObject {
 };
 
 struct PicAniInfo {
-	int32 type;
+	uint32 type;
 	int16 objectId;
 	int16 field_6;
 	int32 field_8;
@@ -61,6 +61,10 @@ struct PicAniInfo {
 	int32 someDynamicPhaseIndex;
 
 	bool load(MfcArchive &file);
+	void save(MfcArchive &file);
+	void print();
+
+	PicAniInfo() { memset(this, 0, sizeof(PicAniInfo)); }
 };
 
 union VarValue {
@@ -76,7 +80,7 @@ class GameVar : public CObject {
 	GameVar *_parentVarObj;
 	GameVar *_subVars;
 	GameVar *_field_14;
-	char *_varName;
+	Common::String _varName;
 	VarValue _value;
 	int _varType;
 
@@ -85,10 +89,11 @@ class GameVar : public CObject {
 	virtual ~GameVar();
 
 	virtual bool load(MfcArchive &file);
-	GameVar *getSubVarByName(const char *name);
-	bool setSubVarAsInt(const char *name, int value);
-	int getSubVarAsInt(const char *name);
-	GameVar *addSubVarAsInt(const char *name, int value);
+	virtual void save(MfcArchive &file);
+	GameVar *getSubVarByName(const Common::String &name);
+	bool setSubVarAsInt(const Common::String &name, int value);
+	int getSubVarAsInt(const Common::String &name);
+	GameVar *addSubVarAsInt(const Common::String &name, int value);
 	bool addSubVar(GameVar *subvar);
 	int getSubVarsCount();
 	GameVar *getSubVarByIndex(int idx);

@@ -53,7 +53,7 @@ private:
 	 * Initializes the variables needed for the dart game
 	 */
 	void initDarts();
-	
+
 	/**
 	 * Frees the images used by the dart game
 	 */
@@ -98,7 +98,7 @@ private:
 	 * Returns true if a mouse button or key is pressed.
 	 */
 	int dartHit();
-	
+
 	/**
 	 * Return the score of the given location on the dart-board
 	 */

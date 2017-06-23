@@ -26,6 +26,7 @@
 #define GUIO_NONE            "\000"
 #define GUIO_NOSUBTITLES     "\001"
 #define GUIO_NOMUSIC         "\002"
+// GUIO_NOSPEECH is a combination of GUIO_NOSPEECHVOLUME and GUIO_NOSUBTITLES
 #define GUIO_NOSPEECH        "\003"
 #define GUIO_NOSFX           "\004"
 #define GUIO_NOMIDI          "\005"
@@ -58,6 +59,10 @@
 #define GUIO_RENDERATARIST   "\042"
 #define GUIO_RENDERMACINTOSH "\043"
 
+#define GUIO_LINKSPEECHTOSFX "\044"
+#define GUIO_LINKMUSICTOSFX  "\045"
+#define GUIO_NOSPEECHVOLUME  "\046"
+
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
 #define GUIO_GAMEOPTIONS1    "\050"
@@ -68,6 +73,7 @@
 #define GUIO_GAMEOPTIONS6    "\055"
 #define GUIO_GAMEOPTIONS7    "\056"
 #define GUIO_GAMEOPTIONS8    "\057"
+#define GUIO_GAMEOPTIONS9    "\060"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)

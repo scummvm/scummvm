@@ -68,7 +68,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_ORIGINAL_SAVELOAD,
 		{
 			_s("Use original save/load screens"),
-			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
 			false
 		}
@@ -80,12 +80,12 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
-		_singleid = "cine";
-		_guioptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
+		_singleId = "cine";
+		_guiOptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 
-	virtual GameDescriptor findGame(const char *gameid) const {
-		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	virtual GameDescriptor findGame(const char *gameId) const {
+		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const {
@@ -137,7 +137,6 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern += ".#";
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());
 	Common::StringArray::const_iterator file;
 
 	Common::String filename = target;
@@ -169,6 +168,8 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 	delete in;
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

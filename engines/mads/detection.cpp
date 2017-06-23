@@ -149,7 +149,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "MADS (c)";
+		return "MADS (C)";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -166,7 +166,8 @@ bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames);
 }
 
 bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
@@ -192,7 +193,6 @@ SaveStateList MADSMetaEngine::listSaves(const char *target) const {
 	MADS::MADSSavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -213,6 +213,8 @@ SaveStateList MADSMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

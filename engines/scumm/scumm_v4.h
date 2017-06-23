@@ -35,7 +35,7 @@ class ScummEngine_v4 : public ScummEngine_v5 {
 public:
 
 	/**
-	 * Prepared savegame used by the orginal save/load dialog.
+	 * Prepared savegame used by the original save/load dialog.
 	 * Must be valid as long as the savescreen is active. As we are not
 	 * notified when the savescreen is closed, memory is only freed on a game
 	 * reset, at the destruction of the engine or when the original save/load

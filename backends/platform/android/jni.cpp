@@ -76,6 +76,8 @@ bool JNI::_ready_for_events = 0;
 
 jmethodID JNI::_MID_getDPI = 0;
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
+jmethodID JNI::_MID_openUrl = 0;
+jmethodID JNI::_MID_isConnectionLimited = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
@@ -230,6 +232,41 @@ void JNI::displayMessageOnOSD(const char *msg) {
 	}
 
 	env->DeleteLocalRef(java_msg);
+}
+
+bool JNI::openUrl(const char *url) {
+	bool success = true;
+	JNIEnv *env = JNI::getEnv();
+	jstring javaUrl = env->NewStringUTF(url);
+
+	env->CallVoidMethod(_jobj, _MID_openUrl, javaUrl);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Failed to open URL");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+		success = false;
+	}
+
+	env->DeleteLocalRef(javaUrl);
+	return success;
+}
+
+bool JNI::isConnectionLimited() {
+	bool limited = false;
+	JNIEnv *env = JNI::getEnv();
+	limited = env->CallBooleanMethod(_jobj, _MID_isConnectionLimited);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Failed to check whether connection's limited");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+		limited = true;
+	}
+
+	return limited;
 }
 
 void JNI::setWindowCaption(const char *caption) {
@@ -411,6 +448,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
 	FIND_METHOD(, getDPI, "([F)V");
 	FIND_METHOD(, displayMessageOnOSD, "(Ljava/lang/String;)V");
+	FIND_METHOD(, openUrl, "(Ljava/lang/String;)V");
+	FIND_METHOD(, isConnectionLimited, "()Z");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");

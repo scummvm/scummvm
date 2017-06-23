@@ -24,7 +24,10 @@
 #define GOB_SOUND_PCSPEAKER_H
 
 #include "audio/mixer.h"
-#include "audio/softsynth/pcspk.h"
+
+namespace Audio {
+class PCSpeaker;
+}
 
 namespace Gob {
 

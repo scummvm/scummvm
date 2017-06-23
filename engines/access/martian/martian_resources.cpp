@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -58,7 +58,7 @@ const byte ICON_PALETTE[] = {
 	0x00, 0x0A, 0x1A, 0x00, 0x0D, 0x1F,
 	0x00, 0x11, 0x28, 0x00, 0x15, 0x30,
 	0x00, 0x19, 0x39, 0x00, 0x1B, 0x3F,
-	0x00, 0x2D, 0x3A 
+	0x00, 0x2D, 0x3A
 };
 
 const int RMOUSE[10][2] = {

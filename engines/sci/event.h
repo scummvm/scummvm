@@ -39,11 +39,20 @@ struct SciEvent {
 	uint16 character;
 
 	/**
-	 * The mouse position at the time the event was created.
-	 *
-	 * These are display coordinates!
+	 * The mouse position at the time the event was created,
+	 * in display coordinates.
 	 */
 	Common::Point mousePos;
+
+#ifdef ENABLE_SCI32
+	/**
+	 * The mouse position at the time the event was created,
+	 * in script coordinates.
+	 */
+	Common::Point mousePosSci;
+
+	int16 hotRectangleIndex;
+#endif
 };
 
 /*Values for type*/
@@ -53,12 +62,18 @@ struct SciEvent {
 #define SCI_EVENT_KEYBOARD        (1 << 2)
 #define SCI_EVENT_DIRECTION       (1 << 6)
 #define SCI_EVENT_SAID            (1 << 7)
+#ifdef ENABLE_SCI32
+#define SCI_EVENT_HOT_RECTANGLE   (1 << 8)
+#endif
 /*Fake values for other events*/
 #define SCI_EVENT_QUIT            (1 << 11)
 #define SCI_EVENT_PEEK            (1 << 15)
 #define SCI_EVENT_ANY             0x7fff
 
 /* Keycodes of special keys: */
+#ifdef ENABLE_SCI32
+#define SCI_KEY_ETX           3
+#endif
 #define SCI_KEY_ESC          27
 #define SCI_KEY_BACKSPACE     8
 #define SCI_KEY_ENTER        13
@@ -121,13 +136,24 @@ public:
 	~EventManager();
 
 	void updateScreen();
-	SciEvent getSciEvent(unsigned int mask);
+	SciEvent getSciEvent(uint32 mask);
 
 private:
 	SciEvent getScummVMEvent();
 
 	const bool _fontIsExtended;
 	Common::List<SciEvent> _events;
+#ifdef ENABLE_SCI32
+public:
+	void setHotRectanglesActive(const bool active);
+	void setHotRectangles(const Common::Array<Common::Rect> &rects);
+	void checkHotRectangles(const Common::Point &mousePosition);
+
+private:
+	bool _hotRectanglesActive;
+	Common::Array<Common::Rect> _hotRects;
+	int16 _activeRectIndex;
+#endif
 };
 
 } // End of namespace Sci

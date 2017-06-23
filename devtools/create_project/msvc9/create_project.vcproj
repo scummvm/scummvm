@@ -45,7 +45,7 @@
 				RuntimeLibrary="3"
 				WarningLevel="4"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4003;4512;4127"
+				DisableSpecificWarnings="4003;4512;4127;4100"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -170,6 +170,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\cmake.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\codeblocks.cpp"
 				>
 			</File>
@@ -197,6 +201,10 @@
 			>
 			<File
 				RelativePath="..\create_project.h"
+				>
+			</File>
+			<File
+				RelativePath="..\cmake.h"
 				>
 			</File>
 			<File

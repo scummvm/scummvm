@@ -32,8 +32,8 @@
 #include "common/rect.h"
 #include "common/stack.h"
 #include "common/util.h"
+#include "audio/mixer.h"
 
-#include "agos/sound.h"
 #include "agos/vga.h"
 
 /**
@@ -77,10 +77,14 @@ uint fileReadItemID(Common::SeekableReadStream *in);
 class MoviePlayer;
 #endif
 
+class Sound;
 class MidiPlayer;
 
 struct Child;
 struct SubObject;
+struct RoomState;
+struct SubRoom;
+struct SubSuperRoom;
 
 struct Item;
 struct WindowBlock;

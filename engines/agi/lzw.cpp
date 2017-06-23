@@ -72,6 +72,7 @@ LZWDecoder::LZWDecoder() {
 	appendCharacter = (uint8 *)malloc(TABLE_SIZE * sizeof(uint8));
 	inputBitCount = 0;  // Number of bits in input bit buffer
 	inputBitBuffer = 0L;
+	BITS = MAX_VALUE = MAX_CODE = 0;
 }
 
 LZWDecoder::~LZWDecoder() {

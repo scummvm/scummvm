@@ -25,7 +25,7 @@
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_scripts.h"
-#include "mohawk/sound.h"
+#include "mohawk/riven_sound.h"
 #include "mohawk/video.h"
 
 #include "common/memstream.h"
@@ -309,54 +309,44 @@ void RivenScript::switchCard(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 3: play an SLST from the script
 void RivenScript::playScriptSLST(uint16 op, uint16 argc, uint16 *argv) {
-	SLSTRecord slstRecord;
 	int offset = 0, j = 0;
+	uint16 soundCount = argv[offset++];
 
+	SLSTRecord slstRecord;
 	slstRecord.index = 0;		// not set by the scripts, so we set it to 0
-	slstRecord.sound_count = argv[0];
-	slstRecord.sound_ids = new uint16[slstRecord.sound_count];
+	slstRecord.soundIds.resize(soundCount);
 
-	offset = slstRecord.sound_count;
-
-	for (j = 0; j < slstRecord.sound_count; j++)
-		slstRecord.sound_ids[j] = argv[offset++];
-	slstRecord.fade_flags = argv[offset++];
+	for (j = 0; j < soundCount; j++)
+		slstRecord.soundIds[j] = argv[offset++];
+	slstRecord.fadeFlags = argv[offset++];
 	slstRecord.loop = argv[offset++];
-	slstRecord.global_volume = argv[offset++];
+	slstRecord.globalVolume = argv[offset++];
 	slstRecord.u0 = argv[offset++];
-	slstRecord.u1 = argv[offset++];
+	slstRecord.suspend = argv[offset++];
 
-	slstRecord.volumes = new uint16[slstRecord.sound_count];
-	slstRecord.balances = new int16[slstRecord.sound_count];
-	slstRecord.u2 = new uint16[slstRecord.sound_count];
+	slstRecord.volumes.resize(soundCount);
+	slstRecord.balances.resize(soundCount);
+	slstRecord.u2.resize(soundCount);
 
-	for (j = 0; j < slstRecord.sound_count; j++)
+	for (j = 0; j < soundCount; j++)
 		slstRecord.volumes[j] = argv[offset++];
 
-	for (j = 0; j < slstRecord.sound_count; j++)
+	for (j = 0; j < soundCount; j++)
 		slstRecord.balances[j] = argv[offset++];	// negative = left, 0 = center, positive = right
 
-	for (j = 0; j < slstRecord.sound_count; j++)
+	for (j = 0; j < soundCount; j++)
 		slstRecord.u2[j] = argv[offset++];			// Unknown
 
 	// Play the requested sound list
 	_vm->_sound->playSLST(slstRecord);
-	_vm->_activatedSLST = true;
-
-	delete[] slstRecord.sound_ids;
-	delete[] slstRecord.volumes;
-	delete[] slstRecord.balances;
-	delete[] slstRecord.u2;
 }
 
 // Command 4: play local tWAV resource (twav_id, volume, block)
 void RivenScript::playSound(uint16 op, uint16 argc, uint16 *argv) {
-	byte volume = Sound::convertRivenVolume(argv[1]);
+	uint16 volume = argv[1];
+	bool playOnDraw = argv[2] == 1;
 
-	if (argv[2] == 1)
-		_vm->_sound->playSoundBlocking(argv[0], volume);
-	else
-		_vm->_sound->playSound(argv[0], volume);
+	_vm->_sound->playSound(argv[0], volume, playOnDraw);
 }
 
 // Command 7: set variable value (variable, value)

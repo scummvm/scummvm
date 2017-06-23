@@ -34,6 +34,8 @@ InventoryMgr::InventoryMgr(AgiEngine *agi, GfxMgr *gfx, TextMgr *text, SystemUI 
 	_gfx = gfx;
 	_text = text;
 	_systemUI = systemUI;
+
+	_activeItemNr = -1;
 }
 
 InventoryMgr::~InventoryMgr() {

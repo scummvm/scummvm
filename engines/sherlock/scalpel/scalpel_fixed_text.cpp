@@ -105,6 +105,14 @@ static const char *const fixedTextEN[] = {
 	"Tarot Cards",
 	"An ornate key",
 	"A pawn ticket",
+	// SH1: User Interface
+	"No, thank you.",
+	"You can't do that.",
+	"Done...",
+	"Use ",
+	" on %s",
+	"Give ",
+	" to %s",
 	// SH1: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -250,6 +258,14 @@ static const char *const fixedTextDE[] = {
 	"Ein Tarot-Kartenspiel", // original interpreter: "Ein Tarock-Kartenspiel" [sic]
 	"Ein verzierter Schl\201ssel",
 	"Ein Pfandschein",
+	// SH1: User Interface
+	"Nein, vielen Dank.",
+	"Nein, das geht wirklich nicht.", // original: "Nein, das geht wirklich nicht"
+	"Fertig...",
+	"Benutze ",
+	" mit %s",
+	"Gib ", // original: "Gebe "
+	" an %s", // original: " zu %s"
 	// SH1: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -316,6 +332,7 @@ static const char *const fixedTextDE[] = {
 // up-side down exclamation mark - 0xAD / octal 255
 // up-side down question mark - 0xA8 / octal 250
 // n with a wave on top - 0xA4 / octal 244
+// more characters see engines/sherlock/fixed_text.cpp
 static const char *const fixedTextES[] = {
 	// Game hotkeys
 	"VMHTACIUDNFO",
@@ -394,6 +411,14 @@ static const char *const fixedTextES[] = {
 	"Unas cartas de Tarot",
 	"Una llave muy vistosa",
 	"Una papeleta de empe\244o",
+	// SH1: User Interface
+	"No, gracias.",
+	"No puedes hacerlo.", // original: "No puedes hacerlo"
+	"Hecho...",
+	"Usar ",
+	" sobre %s",
+	"Dar ",
+	" a %s",
 	// SH1: People names
 	"Sherlock Holmes",
 	"Dr. Watson",
@@ -517,7 +542,7 @@ static const char *const fixedTextDE_ActionMove[] = {
 	"L\204\341t sich nicht bewegen",
 	"Festged\201belt in der Erde...",
 	"Oha, VIEL zu schwer",
-	"Der andere Kiste ist im Weg" // [sic]
+	"Die andere Kiste ist im Weg" // original: "Der andere Kiste ist im Weg"
 };
 
 static const char *const fixedTextES_ActionMove[] = {
@@ -616,8 +641,6 @@ static const FixedTextActionEntry fixedTextES_Actions[] = {
 
 // =========================================
 
-// TODO:
-// It seems there was a French version of Sherlock Holmes 2
 static const FixedTextLanguageEntry fixedTextLanguages[] = {
 	{ Common::DE_DEU,   fixedTextDE, fixedTextDE_Actions },
 	{ Common::ES_ESP,   fixedTextES, fixedTextES_Actions },

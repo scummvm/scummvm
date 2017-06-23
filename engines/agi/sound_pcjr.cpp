@@ -54,6 +54,7 @@
  *
  */
 
+#include "audio/mixer.h"
 #include "agi/agi.h"
 #include "agi/sound.h"
 #include "agi/sound_pcjr.h"
@@ -123,7 +124,7 @@ SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 	memset(_channel, 0, sizeof(_channel));
 	memset(_tchannel, 0, sizeof(_tchannel));
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_v1data = NULL;
 	_v1size = 0;
@@ -132,7 +133,7 @@ SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 SoundGenPCJr::~SoundGenPCJr() {
 	free(_chanData);
 
-	_mixer->stopHandle(_soundHandle);
+	_mixer->stopHandle(*_soundHandle);
 }
 
 void SoundGenPCJr::play(int resnum) {

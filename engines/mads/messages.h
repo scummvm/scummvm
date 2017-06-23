@@ -170,7 +170,7 @@ public:
 	 * Draw any text in the list to the specified surface
 	 * @param surface	Surface
 	 */
-	void draw(MSurface *s);
+	void draw(BaseSurface *s);
 
 	/**
 	 * Determine dirty areas for active text areas

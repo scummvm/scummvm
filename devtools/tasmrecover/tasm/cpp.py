@@ -49,12 +49,12 @@ class cpp:
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -107,7 +107,7 @@ namespace %s {
 				self.indirection = 0
 				self.used_data_offsets.add((name,offset))
 				return "offset_%s" % (name,)
-		
+
 		g = self.context.get_global(name)
 		if isinstance(g, op.const):
 			value = self.expand_equ(g.value)
@@ -129,7 +129,7 @@ namespace %s {
 			else:
 				raise Exception("invalid indirection %d" %self.indirection)
 		return value
-	
+
 	def get_size(self, expr):
 		#print 'get_size("%s")' %expr
 		try:
@@ -184,7 +184,7 @@ namespace %s {
 		m = re.match(r'seg\s+(.*?)$', expr)
 		if m is not None:
 			return "data"
-		
+
 		match_id = True
 		m = re.match(r'offset\s+(.*?)$', expr)
 		if m is not None:
@@ -233,7 +233,7 @@ namespace %s {
 			expr = re.sub(r'\b[a-zA-Z_][a-zA-Z0-9_]+\b', self.expand_cb, expr)
 			indirection = self.indirection
 			#print "AFTER: %d" %indirection
-		
+
 		if indirection == 1:
 			if size == 1:
 				expr = "%s.byte(%s)" %(seg_prefix, expr)
@@ -248,7 +248,7 @@ namespace %s {
 		else:
 			raise Exception("invalid indirection %d" %indirection)
 		return expr
-	
+
 	def mangle_label(self, name):
 		name = name.lower()
 		return re.sub(r'\$', '_tmp', name)
@@ -272,19 +272,19 @@ namespace %s {
 						self.unbounded[i] = (name, proc, pos)
 				return self.mangle_label(name)
 			self.unbounded.append((name, proc, pos))
-		
+
 		return self.mangle_label(name)
 
 	def jump_to_label(self, name):
 		jump_proc = False
 		if name in self.blacklist:
 			jump_proc = True
-		
+
 		if self.context.has_global(name) :
 			g = self.context.get_global(name)
 			if isinstance(g, proc_module.proc):
 				jump_proc = True
-		
+
 		if jump_proc:
 			if name in self.function_name_remapping:
 				return "{ %s(); return; }" %self.function_name_remapping[name]
@@ -295,10 +295,10 @@ namespace %s {
 			if name in self.proc.retlabels:
 				return "return /* (%s) */" % (name)
 			return "goto %s" %self.resolve_label(name)
-	
+
 	def _label(self, name):
 		self.body += "%s:\n" %self.mangle_label(name)
-	
+
 	def schedule(self, name):
 		name = name.lower()
 		if name in self.proc_queue or name in self.proc_done or name in self.failed:
@@ -402,37 +402,37 @@ namespace %s {
 		self.body += "\tif (flags.s())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jns(self, label):
-		self.body += "\tif (!flags.s())\n\t\t%s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!flags.s())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jz(self, label):
-		self.body += "\tif (flags.z())\n\t\t%s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (flags.z())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jnz(self, label):
-		self.body += "\tif (!flags.z())\n\t\t%s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!flags.z())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jl(self, label):
-		self.body += "\tif (flags.l())\n\t\t%s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (flags.l())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jg(self, label):
-		self.body += "\tif (!flags.le())\n\t\t%s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!flags.le())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jle(self, label):
-		self.body += "\tif (flags.le())\n\t\t%s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (flags.le())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jge(self, label):
-		self.body += "\tif (!flags.l())\n\t\t%s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (!flags.l())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jc(self, label):
-		self.body += "\tif (flags.c())\n\t\t%s;\n" %(self.jump_to_label(label)) 
+		self.body += "\tif (flags.c())\n\t\t%s;\n" %(self.jump_to_label(label))
 
 	def _jnc(self, label):
-		self.body += "\tif (!flags.c())\n\t\t%s;\n" %(self.jump_to_label(label)) 
-	
+		self.body += "\tif (!flags.c())\n\t\t%s;\n" %(self.jump_to_label(label))
+
 	def _xchg(self, dst, src):
 		self.body += "\t_xchg(%s, %s);\n" %self.parse2(dst, src)
 
 	def _jmp(self, label):
-		self.body += "\t%s;\n" %(self.jump_to_label(label)) 
+		self.body += "\t%s;\n" %(self.jump_to_label(label))
 
 	def _loop(self, label):
 		self.body += "\tif (--cx)\n\t\t%s;\n" %self.jump_to_label(label)
@@ -490,7 +490,7 @@ namespace %s {
 			else:
 				print "No procedure named %s, trying label" %name
 				off, src_proc, skip = self.context.get_offset(name)
-				
+
 				self.proc = proc_module.proc(name)
 				self.proc.stmts = copy(src_proc.stmts)
 				self.proc.labels = copy(src_proc.labels)
@@ -501,8 +501,8 @@ namespace %s {
 				#		o, p, s = self.context.get_offset(s.label)
 				#		if p == src_proc and s < skip:
 				#			skip = s
-			
-			
+
+
 			self.proc_addr.append((name, self.proc.offset))
 			self.body = str()
 			if name in self.function_name_remapping:
@@ -522,7 +522,7 @@ namespace %s {
 					s = proc.stmts[p]
 					if isinstance(s, op.basejmp):
 						self.resolve_label(s.label)
-			
+
 			#adding statements
 			#BIG FIXME: this is quite ugly to handle code analysis from the code generation. rewrite me!
 			for label, proc, offset in self.unbounded:
@@ -554,7 +554,7 @@ namespace %s {
 
 	def get_type(self, width):
 		return "uint%d_t" %(width * 8)
-	
+
 	def write_stubs(self, fname, procs):
 		fd = open(fname, "wt")
 		fd.write("namespace %s {\n" %self.namespace)
@@ -634,7 +634,7 @@ namespace %s {
 				offsets.append((k.capitalize(), v.offset))
 			elif isinstance(v, op.const):
 				offsets.append((k.capitalize(), self.expand_equ(v.value))) #fixme: try to save all constants here
-		
+
 		offsets = sorted(offsets, key=lambda t: t[1])
 		for o in offsets:
 			self.hd.write("static const uint16 k%s = %s;\n" %o)
@@ -667,9 +667,9 @@ public:
 
 		self.hd.write("};\n\n} // End of namespace DreamGen\n\n#endif\n")
 		self.hd.close()
-		
+
 		self.fd.write("void %sContext::__start() { %s\t%s(); \n}\n" %(self.namespace, data_impl, start))
-		
+
 		if self.skip_dispatch_call == False:
 			self.fd.write("\nvoid %sContext::__dispatch_call(uint16 addr) {\n\tswitch(addr) {\n" %self.namespace)
 			self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
@@ -677,6 +677,6 @@ public:
 				self.fd.write("\t\tcase addr_%s: %s(); break;\n" %(name, name))
 			self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)ax);")
 			self.fd.write("\n\t}\n}")
-		
+
 		self.fd.write("\n} // End of namespace DreamGen\n")
 		self.fd.close()

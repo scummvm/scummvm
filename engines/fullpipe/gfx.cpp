@@ -30,6 +30,7 @@
 #include "fullpipe/gameloader.h"
 
 #include "common/memstream.h"
+#include "graphics/transparent_surface.h"
 
 namespace Fullpipe {
 
@@ -40,7 +41,6 @@ Background::Background() {
 	_bigPictureArray1Count = 0;
 	_bigPictureArray2Count = 0;
 	_bigPictureArray = 0;
-	_bgname = 0;
 	_palette = 0;
 }
 
@@ -58,7 +58,7 @@ Background::~Background() {
 }
 
 bool Background::load(MfcArchive &file) {
-	debug(5, "Background::load()");
+	debugC(5, kDebugLoading, "Background::load()");
 	_bgname = file.readPascalString();
 
 	int count = file.readUint16LE();
@@ -80,7 +80,7 @@ bool Background::load(MfcArchive &file) {
 
 	_bigPictureArray = (BigPicture ***)calloc(_bigPictureArray1Count, sizeof(BigPicture **));
 
-	debug(6, "bigPictureArray[%d][%d]", _bigPictureArray1Count, _bigPictureArray2Count);
+	debugC(6, kDebugLoading, "bigPictureArray[%d][%d]", _bigPictureArray1Count, _bigPictureArray2Count);
 
 	for (int i = 0; i < _bigPictureArray1Count; i++) {
 		_bigPictureArray[i] = (BigPicture **)calloc(_bigPictureArray2Count, sizeof(BigPicture *));
@@ -95,7 +95,7 @@ bool Background::load(MfcArchive &file) {
 }
 
 void Background::addPictureObject(PictureObject *pct) {
-	if (pct->_okeyCode)
+	if (pct->_odelay)
 		pct->renumPictures(&_picObjList);
 
 	bool inserted = false;
@@ -137,7 +137,7 @@ PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
 }
 
 bool PictureObject::load(MfcArchive &file, bool bigPicture) {
-	debug(5, "PictureObject::load()");
+	debugC(5, kDebugLoading, "PictureObject::load()");
 	GameObject::load(file);
 
 	if (bigPicture)
@@ -206,7 +206,7 @@ bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (picAniInfo->type & 2) {
 		setOXY(picAniInfo->ox, picAniInfo->oy);
 		_priority = picAniInfo->priority;
-		_okeyCode = picAniInfo->field_8;
+		_odelay = picAniInfo->field_8;
 		setFlags(picAniInfo->flags);
 		_field_8 = picAniInfo->field_24;
 
@@ -251,7 +251,7 @@ void PictureObject::setOXY2() {
 }
 
 GameObject::GameObject() {
-	_okeyCode = 0;
+	_odelay = 0;
 	_flags = 0;
 	_id = 0;
 	_ox = 0;
@@ -259,16 +259,14 @@ GameObject::GameObject() {
 	_priority = 0;
 	_field_20 = 0;
 	_field_8 = 0;
-	_objectName = 0;
 }
 
 GameObject::GameObject(GameObject *src) {
-	_okeyCode = 1;
+	_odelay = 1;
 	_flags = 0;
 	_id = src->_id;
 
-	_objectName = (char *)calloc(strlen(src->_objectName) + 1, 1);
-	strncpy(_objectName, src->_objectName, strlen(src->_objectName));
+	_objectName = src->_objectName;
 
 	_ox = src->_ox;
 	_oy = src->_oy;
@@ -278,20 +276,19 @@ GameObject::GameObject(GameObject *src) {
 }
 
 GameObject::~GameObject() {
-	free(_objectName);
 }
 
 bool GameObject::load(MfcArchive &file) {
-	debug(5, "GameObject::load()");
-	_okeyCode = 0;
+	debugC(5, kDebugLoading, "GameObject::load()");
+	_odelay = 0;
 	_flags = 0;
 	_field_20 = 0;
 
 	_id = file.readUint16LE();
 
 	_objectName = file.readPascalString();
-	_ox = file.readUint32LE();
-	_oy = file.readUint32LE();
+	_ox = file.readSint32LE();
+	_oy = file.readSint32LE();
 	_priority = file.readUint16LE();
 
 	if (g_fp->_gameProjectVersion >= 11) {
@@ -311,14 +308,14 @@ void GameObject::renumPictures(Common::Array<StaticANIObject *> *lst) {
 
 	for (uint i = 0; i < lst->size(); i++) {
 		if (_id == ((GameObject *)((*lst)[i]))->_id)
-			buf[((GameObject *)((*lst)[i]))->_okeyCode] = 1;
+			buf[((GameObject *)((*lst)[i]))->_odelay] = 1;
 	}
 
-	if (buf[_okeyCode]) {
+	if (buf[_odelay]) {
 		uint count;
 		for (count = 1; buf[count] && count < lst->size() + 2; count++)
 			;
-		_okeyCode = count;
+		_odelay = count;
 	}
 
 	free(buf);
@@ -329,14 +326,14 @@ void GameObject::renumPictures(Common::Array<PictureObject *> *lst) {
 
 	for (uint i = 0; i < lst->size(); i++) {
 		if (_id == ((GameObject *)((*lst)[i]))->_id)
-			buf[((GameObject *)((*lst)[i]))->_okeyCode] = 1;
+			buf[((GameObject *)((*lst)[i]))->_odelay] = 1;
 	}
 
-	if (buf[_okeyCode]) {
+	if (buf[_odelay]) {
 		uint count;
 		for (count = 1; buf[count] && count < lst->size() + 2; count++)
 			;
-		_okeyCode = count;
+		_odelay = count;
 	}
 
 	free(buf);
@@ -347,13 +344,12 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 		info->type = 2;
 		info->objectId = _id;
 		info->sceneId = 0;
-		info->field_8 = _okeyCode;
+		info->field_8 = _odelay;
 		info->flags = _flags;
 		info->field_24 = _field_8;
 		info->ox = _ox;
 		info->oy = _oy;
 		info->priority = _priority;
-		warning("Yep %d", _id);
 
 		return true;
 	}
@@ -363,7 +359,7 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 
 		info->type = (ani->_messageQueueId << 16) | 1;
 		info->objectId = ani->_id;
-		info->field_8 = ani->_okeyCode;
+		info->field_8 = ani->_odelay;
 		info->sceneId = ani->_sceneId;
 		info->flags = ani->_flags;
 		info->field_24 = ani->_field_8;
@@ -399,18 +395,23 @@ bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 		return false;
 	}
 
-	if (picAniInfo->type & 3) {
+	if (picAniInfo->type & 2) {
 		setOXY(picAniInfo->ox, picAniInfo->oy);
 		_priority = picAniInfo->priority;
-		_okeyCode = picAniInfo->field_8;
+		_odelay = picAniInfo->field_8;
 		setFlags(picAniInfo->flags);
 		_field_8 = picAniInfo->field_24;
+
+		return true;
 	}
 
 	if (picAniInfo->type & 1) {
 		StaticANIObject *ani = (StaticANIObject *)this;
 
 		ani->_messageQueueId = (picAniInfo->type >> 16) & 0xffff;
+		ani->_odelay = picAniInfo->field_8;
+		ani->setFlags(picAniInfo->flags);
+		ani->_field_8 = picAniInfo->field_24;
 
 		if (picAniInfo->staticsId) {
 			ani->_statics = ani->getStaticsById(picAniInfo->staticsId);
@@ -426,10 +427,15 @@ bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 			ani->_movement = 0;
 		}
 
+		ani->setOXY(picAniInfo->ox, picAniInfo->oy);
+		ani->_priority = picAniInfo->priority;
+
 		ani->setSomeDynamicPhaseIndex(picAniInfo->someDynamicPhaseIndex);
+
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 Picture::Picture() {
@@ -464,12 +470,12 @@ Picture::~Picture() {
 }
 
 void Picture::freePicture() {
-	debug(5, "Picture::freePicture(): file: %s", _memfilename);
+	debugC(5, kDebugMemory, "Picture::freePicture(): file: %s", _memfilename.c_str());
 
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			//free(_bitmap);
+			delete _bitmap;
 			_bitmap = 0;
 		}
 	}
@@ -480,7 +486,6 @@ void Picture::freePicture() {
 	}
 
 	if (_convertedBitmap) {
-		free(_convertedBitmap->_pixels);
 		delete _convertedBitmap;
 		_convertedBitmap = 0;
 	}
@@ -492,11 +497,11 @@ void Picture::freePixelData() {
 }
 
 bool Picture::load(MfcArchive &file) {
-	debug(5, "Picture::load()");
+	debugC(5, kDebugLoading, "Picture::load()");
 	MemoryObject::load(file);
 
-	_x = file.readUint32LE();
-	_y = file.readUint32LE();
+	_x = file.readSint32LE();
+	_y = file.readSint32LE();
 	_field_44 = file.readUint16LE();
 
 	assert(g_fp->_gameProjectVersion >= 2);
@@ -526,7 +531,7 @@ bool Picture::load(MfcArchive &file) {
 
 	getData();
 
-	debug(5, "Picture::load: loaded <%s>", _memfilename);
+	debugC(5, kDebugLoading, "Picture::load: loaded <%s>", _memfilename.c_str());
 
 	return true;
 }
@@ -546,7 +551,7 @@ void Picture::setAOIDs() {
 }
 
 void Picture::init() {
-	debug(5, "Picture::init(), %s", _memfilename);
+	debugC(5, kDebugLoading, "Picture::init(), %s", _memfilename.c_str());
 
 	MemoryObject::getData();
 
@@ -567,7 +572,7 @@ Common::Point *Picture::getDimensions(Common::Point *p) {
 void Picture::getDibInfo() {
 	int off = _dataSize & ~0xf;
 
-	debug(9, "Picture::getDibInfo: _dataSize: %d", _dataSize);
+	debugC(9, kDebugLoading, "Picture::getDibInfo: _dataSize: %d", _dataSize);
 
 	if (!_dataSize) {
 		warning("Picture::getDibInfo(): Empty data size");
@@ -579,19 +584,19 @@ void Picture::getDibInfo() {
 	}
 
 	if (!_data) {
-		warning("Picture::getDibInfo: data is empty <%s>", _memfilename);
+		warning("Picture::getDibInfo: data is empty <%s>", _memfilename.c_str());
 
 		MemoryObject::load();
+
+		if (!_data)
+			error("Picture::getDibInfo: error loading object #%d", _cnum);
 	}
 
 	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off - 32, 32);
-
 	_bitmap->load(s);
-	_bitmap->_pixels = _data;
+	delete s;
 
-	_bitmap->decode((int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
-
-	_bitmap->_pixels = 0;
+	_bitmap->decode(_data, (int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
 }
 
 Bitmap *Picture::getPixelData() {
@@ -605,7 +610,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 	int x1 = x;
 	int y1 = y;
 
-	debug(7, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename);
+	debugC(7, kDebugDrawing, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename.c_str());
 
 	if (x != -1)
 		x1 = x;
@@ -620,7 +625,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 		return;
 
 	if ((_alpha & 0xff) < 0xff) {
-		debug(7, "Picture:draw: alpha = %0x", _alpha);
+		debugC(7, kDebugDrawing, "Picture:draw: alpha = %0x", _alpha);
 	}
 
 	byte *pal = _paletteData;
@@ -668,8 +673,8 @@ void Picture::displayPicture() {
 	if (!_dataSize)
 		return;
 
-	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
+	g_fp->_backgroundSurface->fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(0, 0), g_fp->_backgroundSurface->pitch, 0, 0, 800, 600);
 
 	draw(0, 0, 0, 0);
 
@@ -740,6 +745,9 @@ int Picture::getPixelAtPosEx(int x, int y) {
 	if (x < 0 || y < 0)
 		return 0;
 
+	warning("STUB: Picture::getPixelAtPosEx(%d, %d)", x, y);
+
+	// It looks like this doesn't really work. TODO. FIXME
 	if (x < (g_fp->_pictureScale + _width - 1) / g_fp->_pictureScale &&
 			y < (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale &&
 			_memoryObject2 != 0 && _memoryObject2->_rows != 0)
@@ -753,12 +761,12 @@ Bitmap::Bitmap() {
 	_y = 0;
 	_width = 0;
 	_height = 0;
-	_pixels = 0;
 	_type = 0;
 	_dataSize = 0;
 	_flags = 0;
 	_surface = 0;
 	_flipping = Graphics::FLIP_NONE;
+	_copied_surface = false;
 }
 
 Bitmap::Bitmap(Bitmap *src) {
@@ -769,25 +777,23 @@ Bitmap::Bitmap(Bitmap *src) {
 	_type = src->_type;
 	_width = src->_width;
 	_height = src->_height;
-	_pixels = src->_pixels;
 	_surface = new Graphics::TransparentSurface(*src->_surface);
+	_copied_surface = true;
 	_flipping = src->_flipping;
 }
 
 Bitmap::~Bitmap() {
-	if (_pixels)
-		free(_pixels);
-
+	if (!_copied_surface)
+		_surface->free();
 	delete _surface;
-
-	_pixels = 0;
+	_surface = 0;
 }
 
 void Bitmap::load(Common::ReadStream *s) {
-	debug(5, "Bitmap::load()");
+	debugC(5, kDebugLoading, "Bitmap::load()");
 
-	_x = s->readUint32LE();
-	_y = s->readUint32LE();
+	_x = s->readSint32LE();
+	_y = s->readSint32LE();
 	_width = s->readUint32LE();
 	_height = s->readUint32LE();
 	s->readUint32LE(); // pixels
@@ -795,8 +801,8 @@ void Bitmap::load(Common::ReadStream *s) {
 	_dataSize = s->readUint32LE();
 	_flags = s->readUint32LE();
 
-	debug(8, "Bitmap: x: %d y: %d w: %d h: %d dataSize: 0x%x", _x, _y, _width, _height, _dataSize);
-	debug(8, "Bitmap: type: %s (0x%04x) flags: 0x%x", Common::tag2string(_type).c_str(), _type, _flags);
+	debugC(8, kDebugLoading, "Bitmap: x: %d y: %d w: %d h: %d dataSize: 0x%x", _x, _y, _width, _height, _dataSize);
+	debugC(8, kDebugLoading, "Bitmap: type: %s (0x%04x) flags: 0x%x", Common::tag2string(_type).c_str(), _type, _flags);
 }
 
 bool Bitmap::isPixelHitAtPos(int x, int y) {
@@ -806,22 +812,22 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 	if (!_surface)
 		return false;
 
-	return ((*((int32 *)_surface->getBasePtr(x, y)) & 0xff000000) != 0);
+	return ((*((int32 *)_surface->getBasePtr(x - _x, y - _y)) & 0xff) != 0);
 }
 
-void Bitmap::decode(int32 *palette) {
+void Bitmap::decode(byte *pixels, int32 *palette) {
 	_surface = new Graphics::TransparentSurface;
 
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
-		putDibRB(palette);
+		putDibRB(pixels, palette);
 	else
-		putDibCB(palette);
+		putDibCB(pixels, palette);
 }
 
-void Bitmap::putDib(int x, int y, int32 *palette, int alpha) {
-	debug(7, "Bitmap::putDib(%d, %d)", x, y);
+void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
+	debugC(7, kDebugDrawing, "Bitmap::putDib(%d, %d)", x, y);
 
 	int x1 = x - g_fp->_sceneRect.left;
 	int y1 = y - g_fp->_sceneRect.top;
@@ -830,33 +836,26 @@ void Bitmap::putDib(int x, int y, int32 *palette, int alpha) {
 		return;
 
 	Common::Rect sub(0, 0, _width, _height);
+	sub.translate(x, y);
+	sub.clip(g_fp->_sceneRect);
+	sub.translate(-x, -y);
 
-	if (x1 < 0) {
-		sub.left = -x1;
-		x1 = 0;
-	}
-
-	if (y1 < 0) {
-		sub.top = -y1;
-		y1 = 0;
-	}
-
-	if (x1 + sub.width() > 799)
-		sub.right -= x1 + sub.width() - 799;
-
-	if (y1 + sub.height() > 599)
-		sub.bottom -= y1 + sub.height() - 599;
-
-	if (sub.width() <= 0 || sub.height() <= 0)
+	if (sub.isEmpty())
 		return;
+
+	if (x1 < 0)
+		x1 = 0;
+
+	if (y1 < 0)
+		y1 = 0;
 
 	int alphac = TS_ARGB(0xff, alpha, 0xff, 0xff);
 
-	_surface->blit(g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(x1, y1), g_fp->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
+	_surface->blit(*g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(x1, y1), g_fp->_backgroundSurface->pitch, x1, y1, sub.width(), sub.height());
 }
 
-bool Bitmap::putDibRB(int32 *palette) {
+bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
 	uint32 *curDestPtr;
 	int endy;
 	int x;
@@ -868,11 +867,11 @@ bool Bitmap::putDibRB(int32 *palette) {
 	uint16 *srcPtr;
 
 	if (!palette) {
-		debug(2, "Bitmap::putDibRB(): Both global and local palettes are empty");
+		debugC(2, kDebugDrawing, "Bitmap::putDibRB(): Both global and local palettes are empty");
 		return false;
 	}
 
-	debug(8, "Bitmap::putDibRB()");
+	debugC(8, kDebugDrawing, "Bitmap::putDibRB()");
 
 	endy = _height - 1;
 
@@ -881,7 +880,7 @@ bool Bitmap::putDibRB(int32 *palette) {
 
 	y = endy;
 
-	srcPtr = (uint16 *)_pixels;
+	srcPtr = (uint16 *)pixels;
 
 	bool breakup = false;
 	for (y = endy; y >= starty && !breakup; y--) {
@@ -919,7 +918,7 @@ bool Bitmap::putDibRB(int32 *palette) {
 				}
 
 				if (fillLen > 0 || start1 >= 0) {
-					if (x <= 799 + 1 || (fillLen += 799 - x + 1, fillLen > 0)) {
+					if (x <= _width + 1 || (fillLen += _width - x + 1, fillLen > 0)) {
 						if (y <= endy) {
 							int bgcolor = palette[(pixel >> 8) & 0xff];
 							curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
@@ -941,8 +940,8 @@ bool Bitmap::putDibRB(int32 *palette) {
 					}
 				}
 
-				if (x > 799 + 1) {
-					fillLen += 799 - x + 1;
+				if (x > _width + 1) {
+					fillLen += _width - x + 1;
 					if (fillLen <= 0)
 						continue;
 				}
@@ -958,7 +957,7 @@ bool Bitmap::putDibRB(int32 *palette) {
 	return false;
 }
 
-void Bitmap::putDibCB(int32 *palette) {
+void Bitmap::putDibCB(byte *pixels, int32 *palette) {
 	uint32 *curDestPtr;
 	int endx;
 	int endy;
@@ -977,10 +976,10 @@ void Bitmap::putDibCB(int32 *palette) {
 	bpp = cb05_format ? 2 : 1;
 	pitch = (bpp * _width + 3) & 0xFFFFFFFC;
 
-	byte *srcPtr = &_pixels[pitch * endy];
+	byte *srcPtr = &pixels[pitch * endy];
 
 	if (endy < _height)
-		srcPtr = &_pixels[pitch * (_height - 1)];
+		srcPtr = &pixels[pitch * (_height - 1)];
 
 	int starty = 0;
 	int startx = 0;
@@ -1122,34 +1121,37 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_
 }
 
 Bitmap *Bitmap::reverseImage(bool flip) {
-	if (flip)
-		_flipping = Graphics::FLIP_H;
-	else
-		_flipping = Graphics::FLIP_NONE;
+	Bitmap *b = new Bitmap(this);
 
-	return this;
+	if (flip)
+		b->_flipping ^= Graphics::FLIP_H;
+
+	return b;
 }
 
 Bitmap *Bitmap::flipVertical() {
-	_flipping = Graphics::FLIP_V;
+	Bitmap *b = new Bitmap(this);
 
-	return this;
+	b->_flipping ^= Graphics::FLIP_V;
+
+	return b;
 }
 
 void Bitmap::drawShaded(int type, int x, int y, byte *palette, int alpha) {
-	warning("STUB: Bitmap::drawShaded(%d, %d, %d)", type, x, y);
+	if (alpha != 255)
+		warning("STUB: Bitmap::drawShaded(%d, %d, %d, %d)", type, x, y, alpha);
 
 	putDib(x, y, (int32 *)palette, alpha);
 }
 
 void Bitmap::drawRotated(int x, int y, int angle, byte *palette, int alpha) {
-	warning("STUB: Bitmap::drawShaded(%d, %d, %d)", x, y, angle);
+	warning("STUB: Bitmap::drawRotated(%d, %d, %d, %d)", x, y, angle, alpha);
 
 	putDib(x, y, (int32 *)palette, alpha);
 }
 
 bool BigPicture::load(MfcArchive &file) {
-	debug(5, "BigPicture::load()");
+	debugC(5, kDebugLoading, "BigPicture::load()");
 	Picture::load(file);
 
 	return true;
@@ -1171,15 +1173,7 @@ void BigPicture::draw(int x, int y, int style, int angle) {
 		if (y != -1)
 			ny = y;
 
-		if (_alpha < 0xFF) {
-			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, v9);
-		}
-
-		_bitmap->putDib(nx, ny, 0, 0xff);
-
-		if (_alpha < 0xFF) {
-			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
-		}
+		_bitmap->putDib(nx, ny, 0, _alpha);
 	}
 }
 
@@ -1190,7 +1184,7 @@ Shadows::Shadows() {
 }
 
 bool Shadows::load(MfcArchive &file) {
-	debug(5, "Shadows::load()");
+	debugC(5, kDebugLoading, "Shadows::load()");
 	_sceneId = file.readUint32LE();
 	_staticAniObjectId = file.readUint32LE();
 	_movementId = file.readUint32LE();
@@ -1253,26 +1247,35 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 }
 
 void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
-	warning("STUB: FullpipeEngine::drawAlphaRectangle()");
+	for (int y = y1; y < y2; y++) {
+		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface->getBasePtr(x1, y);
+
+		for (int x = x1; x < x2; x++) {
+			uint32 color = *ptr;
+			color = (((color >> 24) & 0xff) * alpha / 0xff) << 24 |
+					(((color >> 16) & 0xff) * alpha / 0xff) << 16 |
+					(((color >>  8) & 0xff) * alpha / 0xff) <<  8 |
+					(color & 0xff);
+			*ptr = color;
+			ptr++;
+		}
+	}
 }
 
 void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
-	warning("STUB: FullpipeEngine::sceneFade()");
-
-#if 0
 	for (int dim = 0; dim < 255; dim += 20) {
-		v5 = GetTickCount();
-		vrtSetAlphaBlendMode(*(_DWORD *)virt, 0, 255);
+		int ticks = g_fp->_system->getMillis();
 		sc->draw();
-		drawAlphaRectangle(0, 0, 800, 600, direction ? 255 - dim : dim);
-		vrtFlush(*(_DWORD *)virt);
-		v7 = GetTickCount();
-		if ( v7 - v5 < 42 )
-			Sleep(v5 - v7 + 42);
-	}
-    vrtSetAlphaBlendMode(*(_DWORD *)virt, 0, 255);
-#endif
 
+		drawAlphaRectangle(0, 0, g_fp->_backgroundSurface->w, g_fp->_backgroundSurface->h, direction ? dim : 255 - dim);
+		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(0, 0), g_fp->_backgroundSurface->pitch, 0, 0, 800, 600);
+
+		g_fp->_system->updateScreen();
+		ticks = g_fp->_system->getMillis() - ticks;
+
+		if (ticks < 42)
+			g_fp->_system->delayMillis(42 - ticks);
+	}
 }
 
 } // End of namespace Fullpipe

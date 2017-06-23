@@ -43,8 +43,30 @@ struct WizImage {
 	int state;
 	int flags;
 	int shadow;
-	int field_390;
+	int zbuffer;
 	int palette;
+};
+
+struct FontProperties {
+	byte string[4096];
+	byte fontName[4096];
+	int fgColor;
+	int bgColor;
+	int style;
+	int size;
+	int xPos;
+	int yPos;
+};
+
+struct EllipseProperties {
+	int px;
+	int py;
+	int qx;
+	int qy;
+	int kx;
+	int ky;
+	int lod;
+	int color;
 };
 
 struct WizParameters {
@@ -77,27 +99,13 @@ struct WizParameters {
 	int remapNum;
 	int dstResNum;
 	uint16 fillColor;
-	byte string1[4096];
-	byte string2[4096];
-	int field_2399;
-	int field_239D;
-	int field_23A1;
-	int field_23A5;
-	int field_23A9;
-	int field_23AD;
-	int field_23B1;
-	int field_23B5;
-	int field_23B9;
-	int field_23BD;
-	int field_23C1;
-	int field_23C5;
-	int field_23C9;
-	int field_23CD;
+	FontProperties fontProperties;
+	EllipseProperties ellipseProperties;
 	Common::Rect box2;
-	int field_23DE;
+	int blendFlags;
 	int spriteId;
 	int spriteGroup;
-	int field_23EA;
+	int conditionBits;
 	WizImage img;
 };
 
@@ -109,6 +117,9 @@ enum WizImageFlags {
 	kWIFMarkBufferDirty = 0x10,
 	kWIFBlitToMemBuffer = 0x20,
 	kWIFIsPolygon = 0x40,
+	kWIFZPlaneOn = 0x80,
+	kWIFZPlaneOff = 0x100,
+	kWIFUseShadow = 0x200,
 	kWIFFlipX = 0x400,
 	kWIFFlipY = 0x800
 };
@@ -130,7 +141,31 @@ enum WizProcessFlags {
 	kWPFFillColor = 0x20000,
 	kWPFClipBox2 = 0x40000,
 	kWPFMaskImg = 0x80000,
-	kWPFParams = 0x100000
+	kWPFParams = 0x100000,
+	kWPFZBuffer = 0x200000
+};
+
+enum WizCompositeFlags {
+	kWCFConditionBits = 0x01,
+	kWCFSubState = 0x02,
+	kWCFXDelta = 0x04,
+	kWCFYDelta = 0x08,
+	kWCFDrawFlags = 0x10,
+	kWCFSubConditionBits = 0x20
+};
+
+enum WizSpcConditionTypes {
+	kWSPCCTBits = 0xc0000000,
+	kWSPCCTOr   = 0x00000000,
+	kWSPCCTAnd  = 0x40000000,
+	kWSPCCTNot  = 0x80000000
+};
+
+enum WizMoonSystemBits {
+	kWMSBRopMask = 0xff,
+	kWMSBRopParamMask = 0xff00,
+	kWMSBReservedBits = (kWMSBRopMask | kWMSBRopParamMask),
+	kWMSBRopParamRShift = 8
 };
 
 enum {
@@ -185,14 +220,19 @@ public:
 	void remapWizImagePal(const WizParameters *params);
 
 	void getWizImageDim(int resNum, int state, int32 &w, int32 &h);
+	void getWizImageDim(uint8 *dataPtr, int state, int32 &w, int32 &h);
 	int getWizImageStates(int resnum);
+	int getWizImageStates(const uint8 *ptr);
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
+	int isWizPixelNonTransparent(uint8 *data, int state, int x, int y, int flags);
+	int isPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint8 bitdepth);
 	uint16 getWizPixelColor(int resnum, int state, int x, int y);
 	int getWizImageData(int resNum, int state, int type);
 
 	void flushWizBuffer();
 
 	void getWizImageSpot(int resId, int state, int32 &x, int32 &y);
+	void getWizImageSpot(uint8 *data, int state, int32 &x, int32 &y);
 	void loadWizCursor(int resId, int palette);
 
 	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
@@ -202,7 +242,8 @@ public:
 	void displayWizImage(WizImage *pwi);
 	void processWizImage(const WizParameters *params);
 
-	uint8 *drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr);
+	uint8 *drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int zbuffer, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr, uint32 conditionBits);
+	void drawWizImageEx(uint8 *dst, uint8 *src, uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits);
 	void drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette);
 	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int palette);
 	void drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette);
@@ -210,6 +251,12 @@ public:
 
 #ifdef USE_RGB_COLOR
 	static void copyMaskWizImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr);
+
+	void copyCompositeWizImage(uint8 *dst, uint8 *wizPtr, uint8 *wizd, uint8 *maskPtr, int dstPitch, int dstType,
+		int dstw, int dsth, int srcx, int srcy, int srcw, int srch, int state, const Common::Rect *clipBox,
+		int flags, const uint8 *palPtr, int transColor, uint8 bitDepth, const uint8 *xmapPtr, uint32 conditionBits);
+	void copy555WizImage(uint8 *dst, uint8 *wizd, int dstPitch, int dstType,
+			int dstw, int dsth, int srcx, int srcy, const Common::Rect *clipBox, uint32 conditionBits);
 #endif
 
 	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, uint8 bitdepth);
@@ -230,7 +277,6 @@ public:
 	template<int type> static void write8BitColor(uint8 *dst, const uint8 *src, int dstType, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
 	static void writeColor(uint8 *dstPtr, int dstType, uint16 color);
 
-	int isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint8 bitdepth);
 	uint16 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, uint16 color);
 	uint16 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, uint16 color);
 	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect& rCapt);

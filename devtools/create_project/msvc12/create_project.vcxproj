@@ -52,7 +52,7 @@
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <DisableSpecificWarnings>4003;4512;4127</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4003;4512;4127;4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -102,6 +102,7 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\cmake.cpp" />
     <ClCompile Include="..\codeblocks.cpp" />
     <ClCompile Include="..\create_project.cpp" />
     <ClCompile Include="..\msbuild.cpp" />
@@ -110,6 +111,7 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     <ClCompile Include="..\xcode.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\cmake.h" />
     <ClInclude Include="..\codeblocks.h" />
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\create_project.h" />

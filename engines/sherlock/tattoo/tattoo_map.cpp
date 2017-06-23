@@ -70,7 +70,7 @@ int TattooMap::show() {
 	}
 
 	if (music._musicOn) {
-		// See if Holmes or Watson is the active character	
+		// See if Holmes or Watson is the active character
 		Common::String song;
 		if (_vm->readFlags(FLAG_PLAYER_IS_HOLMES))
 			// Player is Holmes
@@ -86,7 +86,7 @@ int TattooMap::show() {
 	}
 
 	screen.initPaletteFade(1364485);
-	
+
 	// Load the custom mouse cursors for the map
 	ImageFile cursors("omouse.vgs");
 	events.setCursor(cursors[0]._frame);
@@ -105,7 +105,8 @@ int TattooMap::show() {
 	// Load the map image and draw it to the back buffer
 	ImageFile *map = new ImageFile("map.vgs");
 	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2);
-	screen._backBuffer1.blitFrom((*map)[0], Common::Point(0, 0));
+	screen._backBuffer1.SHblitFrom((*map)[0], Common::Point(0, 0));
+	screen.activateBackBuffer1();
 	delete map;
 
 	screen.clear();
@@ -114,7 +115,7 @@ int TattooMap::show() {
 
 	// Copy the map drawn in the back buffer to the secondary back buffer
 	screen._backBuffer2.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2);
-	screen._backBuffer2.blitFrom(screen._backBuffer1);
+	screen._backBuffer2.SHblitFrom(screen._backBuffer1);
 
 	// Display the built map to the screen
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
@@ -148,12 +149,12 @@ int TattooMap::show() {
 
 		if (_targetScroll.x < 0)
 			_targetScroll.x = 0;
-		if ((_targetScroll.x + SHERLOCK_SCREEN_WIDTH) > screen._backBuffer1.w())
-			_targetScroll.x = screen._backBuffer1.w() - SHERLOCK_SCREEN_WIDTH;
+		if ((_targetScroll.x + SHERLOCK_SCREEN_WIDTH) > screen._backBuffer1.width())
+			_targetScroll.x = screen._backBuffer1.width() - SHERLOCK_SCREEN_WIDTH;
 		if (_targetScroll.y < 0)
 			_targetScroll.y = 0;
-		if ((_targetScroll.y + SHERLOCK_SCREEN_HEIGHT) > screen._backBuffer1.h())
-			_targetScroll.y = screen._backBuffer1.h() - SHERLOCK_SCREEN_HEIGHT;
+		if ((_targetScroll.y + SHERLOCK_SCREEN_HEIGHT) > screen._backBuffer1.height())
+			_targetScroll.y = screen._backBuffer1.height() - SHERLOCK_SCREEN_HEIGHT;
 
 		// Check the keyboard
 		if (events.kbHit()) {
@@ -166,8 +167,8 @@ int TattooMap::show() {
 				break;
 
 			case Common::KEYCODE_END:
-				_targetScroll.x = screen._backBuffer1.w() - SHERLOCK_SCREEN_WIDTH;
-				_targetScroll.y = screen._backBuffer1.h() - SHERLOCK_SCREEN_HEIGHT;
+				_targetScroll.x = screen._backBuffer1.width() - SHERLOCK_SCREEN_WIDTH;
+				_targetScroll.y = screen._backBuffer1.height() - SHERLOCK_SCREEN_HEIGHT;
 				break;
 
 			case Common::KEYCODE_PAGEUP:
@@ -178,8 +179,8 @@ int TattooMap::show() {
 
 			case Common::KEYCODE_PAGEDOWN:
 				_targetScroll.y += SHERLOCK_SCREEN_HEIGHT;
-				if (_targetScroll.y > (screen._backBuffer1.h() - SHERLOCK_SCREEN_HEIGHT))
-					_targetScroll.y = screen._backBuffer1.h() - SHERLOCK_SCREEN_HEIGHT;
+				if (_targetScroll.y > (screen._backBuffer1.height() - SHERLOCK_SCREEN_HEIGHT))
+					_targetScroll.y = screen._backBuffer1.height() - SHERLOCK_SCREEN_HEIGHT;
 				break;
 
 			case Common::KEYCODE_SPACE:
@@ -224,6 +225,7 @@ int TattooMap::show() {
 	// Reset the back buffers back to standard size
 	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	screen._backBuffer2.create(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	screen.activateBackBuffer1();
 
 	return result;
 }
@@ -296,7 +298,7 @@ void TattooMap::loadData() {
 void TattooMap::drawMapIcons() {
 	Debugger &debugger = *_vm->_debugger;
 	Screen &screen = *_vm->_screen;
-	
+
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		if (debugger._showAllLocations != LOC_DISABLED)
 			_vm->setFlagsDirect(idx + 1);
@@ -304,7 +306,7 @@ void TattooMap::drawMapIcons() {
 		if (_data[idx]._iconNum != -1 && _vm->readFlags(idx + 1)) {
 			MapEntry &mapEntry = _data[idx];
 			ImageFrame &img = (*_iconImages)[mapEntry._iconNum];
-			screen._backBuffer1.transBlitFrom(img._frame, Common::Point(mapEntry.x - img._width / 2,
+			screen._backBuffer1.SHtransBlitFrom(img._frame, Common::Point(mapEntry.x - img._width / 2,
 				mapEntry.y - img._height / 2));
 		}
 	}
@@ -342,7 +344,7 @@ void TattooMap::checkMapNames(bool slamIt) {
 			const Common::String &desc = _data[_bgFound]._description;
 			_mapTooltip.setText(desc);
 		}
-	
+
 		_oldBgFound = _bgFound;
 	}
 
@@ -355,10 +357,10 @@ void TattooMap::restoreArea(const Common::Rect &bounds) {
 	Screen &screen = *_vm->_screen;
 
 	Common::Rect r = bounds;
-	r.clip(Common::Rect(0, 0, screen._backBuffer1.w(), screen._backBuffer1.h()));
+	r.clip(Common::Rect(0, 0, screen._backBuffer1.width(), screen._backBuffer1.height()));
 
 	if (!r.isEmpty())
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(r.left, r.top), r);
+		screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(r.left, r.top), r);
 }
 
 void TattooMap::showCloseUp(int closeUpNum) {
@@ -407,7 +409,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 			screen._currentScroll.y + closeUp.y / 100 - picSize.y / 2);
 
 		restoreArea(oldBounds);
-		screen._backBuffer1.transBlitFrom(pic[0], pt, false, 0, scaleVal);
+		screen._backBuffer1.SHtransBlitFrom(pic[0], pt, false, 0, scaleVal);
 
 		screen.slamRect(oldBounds);
 		screen.slamArea(pt.x, pt.y, picSize.x, picSize.y);
@@ -426,7 +428,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 		screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2 + pic[0]._height);
 
 	restoreArea(oldBounds);
-	screen._backBuffer1.transBlitFrom(pic[0], Common::Point(r.left, r.top));
+	screen._backBuffer1.SHtransBlitFrom(pic[0], Common::Point(r.left, r.top));
 	screen.slamRect(oldBounds);
 	screen.slamRect(r);
 

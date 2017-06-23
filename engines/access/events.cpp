@@ -65,9 +65,9 @@ void EventsManager::setNormalCursor(CursorType cursorId) {
 
 void EventsManager::setCursor(CursorType cursorId) {
 	if (cursorId == _cursorId)
-		return;	
+		return;
 	_cursorId = cursorId;
-	
+
 	if (cursorId == CURSOR_INVENTORY) {
 		// Set the cursor
 		CursorMan.replaceCursor(_invCursor.getPixels(), _invCursor.w, _invCursor.h,
@@ -115,7 +115,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 	}
 }
 
-void EventsManager::setCursorData(Graphics::Surface *src, const Common::Rect &r) {
+void EventsManager::setCursorData(Graphics::ManagedSurface *src, const Common::Rect &r) {
 	_invCursor.create(r.width(), r.height(), Graphics::PixelFormat::createFormatCLUT8());
 	_invCursor.copyRectToSurface(*src, 0, 0, r);
 }
@@ -209,9 +209,9 @@ void EventsManager::keyControl(Common::KeyCode keycode, bool isKeyDown) {
 		}
 		return;
 	}
-	
+
 	_keyCode = keycode;
-	
+
 	switch (keycode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:
@@ -281,8 +281,7 @@ void EventsManager::nextFrame() {
 	// Give time to the debugger
 	_vm->_debugger->onFrame();
 
-	// TODO: Refactor for dirty rects
-	_vm->_screen->updateScreen();
+	_vm->_screen->update();
 }
 
 void EventsManager::nextTimer() {

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -44,6 +44,8 @@ GraphicsMan::GraphicsMan(PrinceEngine *vm) : _vm(vm), _changed(false) {
 
 	_shadowTable70 = (byte *)malloc(256);
 	_shadowTable50 = (byte *)malloc(256);
+
+	_roomBackground = 0;
 }
 
 GraphicsMan::~GraphicsMan() {
@@ -279,7 +281,7 @@ void GraphicsMan::drawTransparentWithTransDrawNode(Graphics::Surface *screen, Dr
 							// first and last row at the same time (height = 1) - no anti-alias
 							continue;
 						}
-						// new color value based on orginal screen surface color and sprite's edge pixel color
+						// new color value based on original screen surface color and sprite's edge pixel color
 						*dst2 = transTableData[*dst2 * 256 + value];
 					}
 				}

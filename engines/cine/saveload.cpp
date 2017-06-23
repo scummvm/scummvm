@@ -691,6 +691,11 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	}
 
 	if (strlen(bgName)) {
+		if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
+			char buffer[20];
+			removeExtention(buffer, bgName);
+			g_sound->setBgMusic(atoi(buffer + 1));
+		}
 		loadBg(bgName);
 	}
 

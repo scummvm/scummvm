@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CGE_H
-#define CGE_H
+#ifndef CGE_CGE_H
+#define CGE_CGE_H
 
 #include "common/random.h"
 #include "common/savefile.h"

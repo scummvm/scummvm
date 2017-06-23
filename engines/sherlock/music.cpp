@@ -26,6 +26,7 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
+#include "audio/audiostream.h"
 // for Miles Audio (Sherlock Holmes 2)
 #include "audio/miles.h"
 // for 3DO digital music
@@ -195,7 +196,7 @@ bool MidiParser_SH::loadMusic(byte *musData, uint32 musDataSize) {
 
 	_numTracks = 1;
 	_tracks[0] = pos;
-	
+
 	_ppqn = 1;
 	setTempo(16667);
 	setTrack(0);
@@ -222,14 +223,14 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_midiParser = NULL;
 	_musicType = MT_NULL;
 	_musicPlaying = false;
-	_musicOn = false;
 	_midiOption = false;
-	_musicVolume = 0;
 	_midiMusicData = nullptr;
+	_musicVolume = ConfMan.hasKey("music_volume") ? ConfMan.getInt("music_volume") : 255;
+	_musicOn = false;
 
 	if (IS_3DO) {
 		// 3DO - uses digital samples for music
-		_musicOn = true;
+		_musicOn = ConfMan.hasKey("music_mute") ? !ConfMan.getBool("music_mute") : true;
 		return;
 	}
 
@@ -328,7 +329,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			}
 		}
 
-		_musicOn = true;
+		_musicOn = ConfMan.hasKey("music_mute") ? !ConfMan.getBool("music_mute") : true;
 	}
 }
 
@@ -580,6 +581,7 @@ bool Music::waitUntilMSec(uint32 msecTarget, uint32 msecMax, uint32 additionalDe
 
 void Music::setMusicVolume(int volume) {
 	_musicVolume = volume;
+	_musicOn = volume > 0;
 	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 }
 

@@ -45,23 +45,25 @@
 #include "agi/systemui.h"
 #include "agi/words.h"
 
-#define SAVEGAME_CURRENT_VERSION 8
+#define SAVEGAME_CURRENT_VERSION 11
 
 //
-// Version 0 (Sarien): view table has 64 entries
-// Version 1 (Sarien): view table has 256 entries (needed in KQ3)
-// Version 2 (ScummVM): first ScummVM version
-// Version 3 (ScummVM): added AGIPAL save/load support
-// Version 4 (ScummVM): added thumbnails and save creation date/time
-// Version 5 (ScummVM): Added game md5
-// Version 6 (ScummVM): Added game played time
-// Version 7 (ScummVM): Added controller key mappings
-//                       required for some games for quick-loading from ScummVM main menu
-//                       for games, that do not set all key mappings right at the start
-//                      Added automatic save data (for command SetSimple)
-// Version 8 (ScummVM): Added Hold-Key-Mode boolean
-//                       required for at least Mixed Up Mother Goose
-//                       gets set at the start of the game only
+// Version 0 (Sarien):   view table has 64 entries
+// Version 1 (Sarien):   view table has 256 entries (needed in KQ3)
+// Version 2 (ScummVM):  first ScummVM version
+// Version 3 (ScummVM):  added AGIPAL save/load support
+// Version 4 (ScummVM):  added thumbnails and save creation date/time
+// Version 5 (ScummVM):  Added game md5
+// Version 6 (ScummVM):  Added game played time
+// Version 7 (ScummVM):  Added controller key mappings
+//                        required for some games for quick-loading from ScummVM main menu
+//                        for games, that do not set all key mappings right at the start
+//                       Added automatic save data (for command SetSimple)
+// Version 8 (ScummVM):  Added Hold-Key-Mode boolean
+//                        required for at least Mixed Up Mother Goose
+//                        gets set at the start of the game only
+// Version 9 (ScummVM):  Added seconds to saved game time stamp
+// Version 10 (ScummVM): Added priorityTableSet boolean
 
 namespace Agi {
 
@@ -109,12 +111,14 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save date (%d)", saveDate);
 	out->writeUint16BE(saveTime);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save time (%d)", saveTime);
+	// Version 9+: save seconds of current time as well
+	out->writeByte(curTime.tm_sec & 0xFF);
 	out->writeUint32BE(playTime);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing play time (%d)", playTime);
 
 	out->writeByte(2); // was _game.state, 2 = STATE_RUNNING
 
-	strcpy(gameIDstring, _game.id);
+	Common::strlcpy(gameIDstring, _game.id, 8);
 	out->write(gameIDstring, 8);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
 
@@ -171,9 +175,11 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 		out->writeSint16BE(0);
 	}
 
-	// TODO: save if priority table was modified
 	for (i = 0; i < SCRIPT_HEIGHT; i++)
-		out->writeByte(_gfx->priorityFromY(i));
+		out->writeByte(_gfx->saveLoadGetPriority(i));
+
+	// Version 10+: Save, if priority table got modified (set.pri.base opcode)
+	out->writeSint16BE((int16)_gfx->saveLoadWasPriorityTableModified());
 
 	out->writeSint16BE((int16)_game.gfxMode);
 	out->writeByte(_text->inputGetCursorChar());
@@ -260,6 +266,8 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 
 		out->writeByte(screenObj->motionType);
 		out->writeByte(screenObj->cycle);
+		// Version 11+: loop_flag, was saved previously under vt.parm1
+		out->writeByte(screenObj->loop_flag);
 		out->writeByte(screenObj->priority);
 
 		out->writeUint16BE(screenObj->flags);
@@ -338,6 +346,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	int16 parm[7];
 	Common::InSaveFile *in;
 	bool totalPlayTimeWasSet = false;
+	byte oldLoopFlag = 0;
 
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::loadGame(%s)", fileName.c_str());
 
@@ -384,7 +393,10 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		Graphics::skipThumbnail(*in);
 
 		in->readUint32BE(); // save date
-		in->readUint16BE(); // save time
+		in->readUint16BE(); // save time (hour + minute)
+		if (saveVersion >= 9) {
+			in->readByte(); // save time seconds
+		}
 		if (saveVersion >= 6) {
 			uint32 playTime = in->readUint32BE();
 			inGameTimerReset(playTime * 1000);
@@ -494,7 +506,21 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	}
 
 	for (i = 0; i < SCRIPT_HEIGHT; i++)
-		_gfx->setPriority(i, in->readByte());
+		_gfx->saveLoadSetPriority(i, in->readByte());
+
+	if (saveVersion >= 10) {
+		// Version 10+: priority table was modified by scripts
+		int16 priorityTableWasModified = in->readSint16BE();
+
+		if (priorityTableWasModified) {
+			_gfx->saveLoadSetPriorityTableModifiedBool(true);
+		} else {
+			_gfx->saveLoadSetPriorityTableModifiedBool(false);
+		}
+	} else {
+		// Try to figure it out by ourselves
+		_gfx->saveLoadFigureOutPriorityTableModifiedBool();
+	}
 
 	_text->closeWindow();
 
@@ -611,6 +637,10 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 		screenObj->motionType = (MotionType)in->readByte();
 		screenObj->cycle = (CycleType)in->readByte();
+		if (saveVersion >= 11) {
+			// Version 11+: loop_flag, was previously vt.parm1
+			screenObj->loop_flag = in->readByte();
+		}
 		screenObj->priority = in->readByte();
 
 		screenObj->flags = in->readUint16BE();
@@ -618,7 +648,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		// this was done so that saved games compatibility isn't broken
 		switch (screenObj->motionType) {
 		case kMotionNormal:
-			in->readByte();
+			oldLoopFlag = in->readByte();
 			in->readByte();
 			in->readByte();
 			in->readByte();
@@ -628,12 +658,14 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 			in->readByte();
 			in->readByte();
 			in->readByte();
+			oldLoopFlag = screenObj->wander_count;
 			break;
 		case kMotionFollowEgo:
 			screenObj->follow_stepSize = in->readByte();
 			screenObj->follow_flag = in->readByte();
 			screenObj->follow_count = in->readByte();
 			in->readByte();
+			oldLoopFlag = screenObj->follow_stepSize;
 			break;
 		case kMotionEgo:
 		case kMotionMoveObj:
@@ -641,13 +673,21 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 			screenObj->move_y = in->readByte();
 			screenObj->move_stepSize = in->readByte();
 			screenObj->move_flag = in->readByte();
+			oldLoopFlag = screenObj->move_x;
 			break;
 		default:
 			error("unknown motion-type");
 		}
-	}
-	for (i = vtEntries; i < SCREENOBJECTS_MAX; i++) {
-		memset(&_game.screenObjTable[i], 0, sizeof(ScreenObjEntry));
+		if (saveVersion < 11) {
+			if (saveVersion < 7) {
+				// Recreate loop_flag from motion-type (was previously vt.parm1)
+				// vt.parm1 was shared for multiple uses
+				screenObj->loop_flag = oldLoopFlag;
+			} else {
+				// for Version 7-10 we can't really do anything, it was not saved
+				screenObj->loop_flag = 0; // set it to 0
+			}
+		}
 	}
 
 	// Fix some pointers in screenObjTable
@@ -693,7 +733,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	_words->clearEgoWords();
 
 	// don't delay anything right after restoring a game
-	nonBlockingText_Forget();
+	artificialDelay_Reset();
 
 	_sprites->eraseSprites();
 	_sprites->buildAllSpriteLists();
@@ -704,7 +744,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	_text->promptRedraw();
 
 	// copy everything over (we should probably only copy over the remaining parts of the screen w/o play screen
-	_gfx->copyDisplayRectToScreen(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	_gfx->copyDisplayToScreen();
 
 	// Sync volume settings from ScummVM system settings, so that VM volume variable is overwritten
 	setVolumeViaSystemSetting();
@@ -789,7 +829,7 @@ SavedGameSlotIdArray AgiEngine::getSavegameSlotIds() {
 	filenames = _saveFileMan->listSavefiles(_targetName + ".###");
 
 	Common::StringArray::iterator it;
-	Common::StringArray::iterator end = filenames.end();;
+	Common::StringArray::iterator end = filenames.end();
 
 	// convert to lower-case, just to be sure
 	for (it = filenames.begin(); it != end; it++) {
@@ -813,7 +853,7 @@ Common::String AgiEngine::getSavegameFilename(int16 slotId) const {
 	return saveLoadSlot;
 }
 
-bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint16 &saveTime, bool &saveIsValid) {
+bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid) {
 	Common::InSaveFile *in;
 	Common::String fileName = getSavegameFilename(slotId);
 	char saveGameDescription[31];
@@ -875,7 +915,10 @@ bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescrip
 			Graphics::skipThumbnail(*in);
 
 			saveDate = in->readUint32BE();
-			saveTime = in->readUint16BE();
+			saveTime = in->readUint16BE() << 8;
+			if (saveVersion >= 9) {
+				saveTime |= in->readByte(); // add seconds (only available since saved game version 9+)
+			}
 
 			// save date is DDMMYYYY, we need a proper format
 			byte saveDateDay = saveDate >> 24;

@@ -231,7 +231,6 @@ const int kyra1FloppyNeed[] = {
 	k1NewGameString,
 	k1ConfigStrings,
 	k1AudioTracks,
-	k1AudioTracks2,
 	k1AudioTracksIntro,
 	-1
 };
@@ -317,7 +316,6 @@ const int kyra1FloppyOldNeed[] = {
 	k1NewGameString,
 	k1ConfigStrings,
 	k1AudioTracks,
-	k1AudioTracks2,
 	k1AudioTracksIntro,
 	-1
 };
@@ -405,7 +403,6 @@ const int kyra1CDNeed[] = {
 	k1NewGameString,
 	k1ConfigStrings,
 	k1AudioTracks,
-	k1AudioTracks2,
 	k1AudioTracksIntro,
 	-1
 };

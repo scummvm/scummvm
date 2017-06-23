@@ -54,7 +54,7 @@ void WidgetFiles::show(SaveMode mode) {
 		createSavegameList();
 
 		// Set up the display area
-		_bounds = Common::Rect(SHERLOCK_SCREEN_WIDTH * 2 / 3, (_surface.fontHeight() + 1) * 
+		_bounds = Common::Rect(SHERLOCK_SCREEN_WIDTH * 2 / 3, (_surface.fontHeight() + 1) *
 			(FILES_LINES_COUNT + 1) + 17);
 		_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
 
@@ -107,41 +107,41 @@ void WidgetFiles::render(FilesRenderMode mode) {
 	byte color;
 
 	if (mode == RENDER_ALL) {
-		_surface.fill(TRANSPARENCY);
+		_surface.clear(TRANSPARENCY);
 		makeInfoArea();
 
 		switch (_fileMode) {
 		case SAVEMODE_LOAD:
 			_surface.writeString(FIXED(LoadGame),
-				Common::Point((_surface.w() - _surface.stringWidth(FIXED(LoadGame))) / 2, 5), INFO_TOP);
+				Common::Point((_surface.width() - _surface.stringWidth(FIXED(LoadGame))) / 2, 5), INFO_TOP);
 			break;
 
 		case SAVEMODE_SAVE:
 			_surface.writeString(FIXED(SaveGame),
-				Common::Point((_surface.w() - _surface.stringWidth(FIXED(SaveGame))) / 2, 5), INFO_TOP);
+				Common::Point((_surface.width() - _surface.stringWidth(FIXED(SaveGame))) / 2, 5), INFO_TOP);
 			break;
 
 		default:
 			break;
 		}
 
-		_surface.hLine(3, _surface.fontHeight() + 7, _surface.w() - 4, INFO_TOP);
-		_surface.hLine(3, _surface.fontHeight() + 8, _surface.w() - 4, INFO_MIDDLE);
-		_surface.hLine(3, _surface.fontHeight() + 9, _surface.w() - 4, INFO_BOTTOM);
-		_surface.transBlitFrom(images[4], Common::Point(0, _surface.fontHeight() + 6));
-		_surface.transBlitFrom(images[5], Common::Point(_surface.w() - images[5]._width, _surface.fontHeight() + 6));
+		_surface.hLine(3, _surface.fontHeight() + 7, _surface.width() - 4, INFO_TOP);
+		_surface.hLine(3, _surface.fontHeight() + 8, _surface.width() - 4, INFO_MIDDLE);
+		_surface.hLine(3, _surface.fontHeight() + 9, _surface.width() - 4, INFO_BOTTOM);
+		_surface.SHtransBlitFrom(images[4], Common::Point(0, _surface.fontHeight() + 6));
+		_surface.SHtransBlitFrom(images[5], Common::Point(_surface.width() - images[5]._width, _surface.fontHeight() + 6));
 
-		int xp = _surface.w() - BUTTON_SIZE - 6;
+		int xp = _surface.width() - BUTTON_SIZE - 6;
 		_surface.vLine(xp, _surface.fontHeight() + 10, _bounds.height() - 4, INFO_TOP);
 		_surface.vLine(xp + 1, _surface.fontHeight() + 10, _bounds.height() - 4, INFO_MIDDLE);
 		_surface.vLine(xp + 2, _surface.fontHeight() + 10, _bounds.height() - 4, INFO_BOTTOM);
-		_surface.transBlitFrom(images[6], Common::Point(xp - 1, _surface.fontHeight() + 8));
-		_surface.transBlitFrom(images[7], Common::Point(xp - 1, _bounds.height() - 4));
+		_surface.SHtransBlitFrom(images[6], Common::Point(xp - 1, _surface.fontHeight() + 8));
+		_surface.SHtransBlitFrom(images[7], Common::Point(xp - 1, _bounds.height() - 4));
 	}
 
 	int xp = _surface.stringWidth("00.") + _surface.widestChar() + 5;
 	int yp = _surface.fontHeight() + 14;
-	
+
 	for (int idx = _savegameIndex; idx < (_savegameIndex + FILES_LINES_COUNT); ++idx) {
 		if (idx == _selector && mode != RENDER_ALL)
 			color = COMMAND_HIGHLIGHTED;
@@ -149,8 +149,8 @@ void WidgetFiles::render(FilesRenderMode mode) {
 			color = INFO_TOP;
 
 		if (mode == RENDER_NAMES_AND_SCROLLBAR)
-			_surface.fillRect(Common::Rect(4, yp, _surface.w() - BUTTON_SIZE - 9, yp + _surface.fontHeight()), TRANSPARENCY);
-			
+			_surface.fillRect(Common::Rect(4, yp, _surface.width() - BUTTON_SIZE - 9, yp + _surface.fontHeight()), TRANSPARENCY);
+
 		Common::String numStr = Common::String::format("%d.", idx + 1);
 		_surface.writeString(numStr, Common::Point(_surface.widestChar(), yp), color);
 		_surface.writeString(_savegames[idx], Common::Point(xp, yp), color);
@@ -170,7 +170,7 @@ void WidgetFiles::handleEvents() {
 	Common::KeyState keyState = ui._keyState;
 
 	// Handle scrollbar events
-	ScrollHighlight oldHighlight = ui._scrollHighlight;	
+	ScrollHighlight oldHighlight = ui._scrollHighlight;
 	handleScrollbarEvents(_savegameIndex, FILES_LINES_COUNT, _savegames.size());
 
 	int oldScrollIndex = _savegameIndex;
@@ -258,11 +258,11 @@ bool WidgetFiles::getFilename() {
 	assert(_selector != -1);
 	Common::Point pt(_surface.stringWidth("00.") + _surface.widestChar() + 5,
 		_surface.fontHeight() + 14 + (_selector - _savegameIndex) * (_surface.fontHeight() + 1));
-	
+
 	Common::String numStr = Common::String::format("%d.", _selector + 1);
 	_surface.writeString(numStr, Common::Point(_surface.widestChar(), pt.y), COMMAND_HIGHLIGHTED);
 
-	Common::String filename = _savegames[_selector];	
+	Common::String filename = _savegames[_selector];
 
 	if (isSlotEmpty(_selector)) {
 		index = 0;
@@ -324,11 +324,11 @@ bool WidgetFiles::getFilename() {
 				filename.setChar(' ', index);
 			}
 
-			_surface.fillRect(Common::Rect(pt.x, pt.y, _surface.w() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
+			_surface.fillRect(Common::Rect(pt.x, pt.y, _surface.width() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
 			_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
 
 		} else if ((keyState.keycode == Common::KEYCODE_LEFT && index > 0)
-				|| (keyState.keycode == Common::KEYCODE_RIGHT && index < 49 && pt.x < (_bounds.right - BUTTON_SIZE - 20)) 
+				|| (keyState.keycode == Common::KEYCODE_RIGHT && index < 49 && pt.x < (_bounds.right - BUTTON_SIZE - 20))
 				|| (keyState.keycode == Common::KEYCODE_HOME && index > 0)
 				|| (keyState.keycode == Common::KEYCODE_END)) {
 			_surface.fillRect(Common::Rect(pt.x, pt.y, pt.x + width, pt.y + _surface.fontHeight()), TRANSPARENCY);
@@ -345,7 +345,7 @@ bool WidgetFiles::getFilename() {
 				pt.x += _surface.charWidth(filename[index]);
 				++index;
 				break;
-			
+
 			case Common::KEYCODE_HOME:
 				pt.x = _surface.stringWidth("00.") + _surface.widestChar() + 5;
 				index = 0;
@@ -376,7 +376,7 @@ bool WidgetFiles::getFilename() {
 
 			_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.right - BUTTON_SIZE - 9, pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
 			_surface.writeString(filename + index, pt, COMMAND_HIGHLIGHTED);
-		
+
 		} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
 			done = 1;
 
@@ -387,13 +387,13 @@ bool WidgetFiles::getFilename() {
 		}
 
 		if ((keyState.ascii >= ' ') && (keyState.ascii <= 'z') && (index < 50)) {
-			if (pt.x + _surface.charWidth(keyState.ascii) < _surface.w() - BUTTON_SIZE - 20) {
+			if (pt.x + _surface.charWidth(keyState.ascii) < _surface.w - BUTTON_SIZE - 20) {
 				if (insert)
 					filename.insertChar(keyState.ascii, index);
 				else
 					filename.setChar(keyState.ascii, index);
 
-				_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.width() - BUTTON_SIZE - 9, 
+				_surface.fillRect(Common::Rect(pt.x, pt.y, _bounds.width() - BUTTON_SIZE - 9,
 					pt.y + _surface.fontHeight() - 1), TRANSPARENCY);
 				_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
 				pt.x += _surface.charWidth(keyState.ascii);

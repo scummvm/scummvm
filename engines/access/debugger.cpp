@@ -94,7 +94,7 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 			debugPrintf("Unused Room Number\n");
 			return true;
 		}
-			
+
 		_vm->_player->_roomNumber = newRoom;
 
 		_vm->_room->_function = FN_CLEAR1;

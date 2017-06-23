@@ -56,13 +56,12 @@ public:
 	void fadeFromBlack();
 
 	void clearScreenPalette();
-	void setBasePalette();
 	void setPaletteToScreen();
 	const byte *getPalette() const { return _palette; }
 
 protected:
-	MohawkSurface *decodeImage(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
+	MohawkSurface *decodeImage(uint16 id) override;
+	MohawkEngine *getVM() override { return (MohawkEngine *)_vm; }
 
 private:
 	MohawkEngine_Myst *_vm;
@@ -86,6 +85,9 @@ private:
 	void transitionSlideToBottom(Common::Rect rect, uint16 steps, uint16 delay);
 	void transitionPartialToRight(Common::Rect rect, uint32 width, uint32 steps);
 	void transitionPartialToLeft(Common::Rect rect, uint32 width, uint32 steps);
+
+	void remapSurfaceToSystemPalette(MohawkSurface *mhkSurface);
+	byte getColorIndex(const byte *palette, byte red, byte green, byte blue);
 };
 
 } // End of namespace Mohawk

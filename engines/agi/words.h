@@ -57,7 +57,7 @@ public:
 	void unloadDictionary();
 
 	void clearEgoWords();
-	void parseUsingDictionary(char *rawUserInput);
+	void parseUsingDictionary(const char *rawUserInput);
 
 private:
 	void  cleanUpInput(const char *userInput, Common::String &cleanInput);

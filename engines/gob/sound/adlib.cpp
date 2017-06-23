@@ -283,7 +283,12 @@ void AdLib::initOPL() {
 		_voiceOn  [i] = 0;
 	}
 
-	_opl->reset();
+	/* NOTE: We used to completely reset the OPL here, via _opl->reset(). However,
+	 * with the OPL timer change in 73e8ac2a, reset() must not be called while
+	 * the callback is still active. With the Gob AdLib rewrite in 03ef6689,
+	 * this reset shouldn't be necessary anymore either, since this function
+	 * here cleans everything properly anyway. If suddenly a certain piece of
+	 * music in a Gob game sounds weird, we need to re-examine that. */
 
 	initOperatorVolumes();
 	resetFreqs();

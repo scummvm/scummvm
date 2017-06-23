@@ -142,7 +142,7 @@ void Player::loadTexPalette() {
 	int size = texPal->_size;
 	assert(size == 768);
 	_manPal1 = new byte[size];
-	memcpy(_manPal1, texPal->data(), size);	
+	memcpy(_manPal1, texPal->data(), size);
 }
 
 void Player::loadSprites(const Common::String &name) {

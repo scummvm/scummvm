@@ -35,7 +35,7 @@ Inventory::~Inventory() {
 }
 
 bool Inventory::load(MfcArchive &file) {
-	debug(5, "Inventory::load()");
+	debugC(5, kDebugLoading | kDebugInventory, "Inventory::load()");
 
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();
@@ -94,6 +94,11 @@ Inventory2::~Inventory2() {
 }
 
 bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially
+	for (uint i = 0; i < _inventoryItems.size(); i++)
+		delete _inventoryItems[i];
+
+	_inventoryItems.clear();
+
 	int numInvs = file.readUint32LE();
 
 	for (int i = 0; i < numInvs; i++) {
@@ -101,6 +106,17 @@ bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartiall
 		t->itemId = file.readUint16LE();
 		t->count = file.readUint16LE();
 		_inventoryItems.push_back(t);
+	}
+
+	return true;
+}
+
+bool Inventory2::savePartial(MfcArchive &file) {
+	file.writeUint32LE(_inventoryItems.size());
+
+	for (uint i = 0; i < _inventoryItems.size(); i++) {
+		file.writeUint16LE(_inventoryItems[i]->itemId);
+		file.writeUint16LE(_inventoryItems[i]->count);
 	}
 
 	return true;
@@ -119,11 +135,35 @@ void Inventory2::addItem2(StaticANIObject *obj) {
 }
 
 void Inventory2::removeItem(int itemId, int count) {
-	warning("STUB: Inventory2::removeItem(%d, %d)", itemId, count);
+	debugC(2, kDebugInventory, "Inventory2::removeItem(%d, %d)", itemId, count);
+
+	while (count) {
+		int i;
+		for (i = _inventoryItems.size() - 1; i >= 0; i--) {
+			if (_inventoryItems[i]->itemId == itemId) {
+				if (_selectedId == itemId)
+					unselectItem(false);
+
+				if (_inventoryItems[i]->count > count) {
+					_inventoryItems[i]->count -= count;
+				} else {
+					count -= _inventoryItems[i]->count;
+					_inventoryItems.remove_at(i);
+				}
+
+				if (getCountItemsWithId(itemId) < 0)
+					getInventoryPoolItemFieldCById(itemId);
+
+				break;
+			}
+		}
+	}
 }
 
 void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority) {
 	int idx = getInventoryItemIndexById(itemId);
+
+	debugC(2, kDebugInventory, "removeItem2(*, %d, %d, %d, %d)", itemId, x, y, priority);
 
 	if (idx >= 0) {
 		if (_inventoryItems[idx]->count) {
@@ -187,10 +227,14 @@ int Inventory2::getItemFlags(int itemId) {
 }
 
 void Inventory2::rebuildItemRects() {
+	debugC(2, kDebugInventory, "rebuildItemRects()");
+
 	_scene = g_fp->accessScene(_sceneId);
 
 	if (!_scene)
 		return;
+
+	_inventoryIcons.clear();
 
 	_picture = _scene->getBigPicture(0, 0);
 	_picture->setAlpha(50);
@@ -203,7 +247,7 @@ void Inventory2::rebuildItemRects() {
 
 		for (uint j = 0; j < _itemsPool.size(); j++) {
 			if (_itemsPool[j]->pictureObjectNormal == pic->_id) {
-				if (pic->_okeyCode)
+				if (pic->_odelay)
 					_scene->deletePictureObject(pic);
 				else
 					pic->_flags &= 0xFFFB;
@@ -271,7 +315,7 @@ void Inventory2::draw() {
 			else
 				icn->pictureObjectNormal->drawAt(icn->x1, icn->y1 + 10);
 		}
-    }
+	}
 
 	if (!_isInventoryOut)
 		goto LABEL_30;
@@ -406,7 +450,7 @@ bool Inventory2::unselectItem(bool flag) {
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
 		if (_inventoryIcons[i]->isSelected)
 			_inventoryIcons[i]->isSelected = false;
-   }
+	}
 
 	g_fp->getGameLoaderInputController()->setCursorItemPicture(0);
 
@@ -442,7 +486,7 @@ int Inventory2::getHoveredItem(Common::Point *point) {
 			icn->isMouseHover = true;
 			return icn->inventoryItemId;
 		}
-    }
+	}
 
 	return 0;
 }

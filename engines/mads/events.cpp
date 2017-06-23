@@ -98,7 +98,7 @@ void EventsManager::changeCursor() {
 		// Check for hotspot indication pixels along the right-hand and bottom
 		// row. Put together, these give the cursor's hotspot x,y
 		int hotspotX = 0, hotspotY = 0;
-		byte *cursorData = cursor->getData();
+		const byte *cursorData = (const byte *)cursor->getPixels();
 		for (int idx = 0; idx < cursor->w; ++idx) {
 			if (cursorData[(cursor->h - 1) * cursor->w + idx] != transIndex)
 				hotspotX = idx;
@@ -110,7 +110,7 @@ void EventsManager::changeCursor() {
 		// Reduce the cursor data to remove the last column from each row, since
 		// the cursor routines don't have a pitch option
 		byte *destCursor = new byte[(cursor->w - 1) * (cursor->h - 1)];
-		byte *srcP = cursorData;
+		const byte *srcP = cursorData;
 		byte *destP = destCursor;
 
 		for (int idx = 0; idx < (cursor->h - 1); ++idx) {
@@ -217,7 +217,7 @@ bool EventsManager::checkForNextFrameCounter() {
 		_vm->_debugger->onFrame();
 
 		// Display the frame
-		_vm->_screen.updateScreen();
+		_vm->_screen->update();
 
 		// Signal the ScummVM debugger
 		_vm->_debugger->onFrame();

@@ -93,11 +93,11 @@ NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) 
 
 	g_fp->_currArchive = this;
 
-	debug(0, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
+	debugC(0, kDebugLoading, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
 
 NGIArchive::~NGIArchive() {
-	debug(0, "NGIArchive Destructor Called");
+	debugC(0, kDebugLoading, "NGIArchive Destructor Called");
 	NgiHeadersMap::iterator it = _headers.begin();
 	for ( ; it != _headers.end(); ++it) {
 		delete it->_value;

@@ -38,6 +38,11 @@ namespace MADS {
 MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _randomSource("MADS") {
 
+	// Set up debug channels
+	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+
 	// Initialize game/engine options
 	_easyMouse = true;
 	_invObjectsAnimated = true;
@@ -58,6 +63,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_resources = nullptr;
 	_sound = nullptr;
 	_audio = nullptr;
+	_screen = nullptr;
 }
 
 MADSEngine::~MADSEngine() {
@@ -77,11 +83,6 @@ MADSEngine::~MADSEngine() {
 }
 
 void MADSEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-
 	// Initial sub-system engine references
 	MSurface::setVm(this);
 	MSprite::setVm(this);
@@ -94,22 +95,15 @@ void MADSEngine::initialize() {
 	_palette = new Palette(this);
 	Font::init(this);
 	_font = new Font();
-	_screen.init();
+	_screen = new Screen();
 	_sound = new SoundManager(this, _mixer);
 	_audio = new AudioPlayer(_mixer, getGameID());
 	_game = Game::init(this);
-
-	switch (getGameID()) {
-	case GType_RexNebular:
-		_gameConv = nullptr;
-		break;
-	default:
-		_gameConv = new GameConversations(this);
-	}
+	_gameConv = new GameConversations(this);
 
 	loadOptions();
 
-	_screen.empty();
+	_screen->clear();
 }
 
 void MADSEngine::loadOptions() {

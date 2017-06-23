@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DRASCULA_H
-#define DRASCULA_H
+#ifndef DRASCULA_DRASCULA_H
+#define DRASCULA_DRASCULA_H
 
 #include "common/scummsys.h"
 #include "common/archive.h"
@@ -325,6 +325,13 @@ public:
 	virtual ~DrasculaEngine();
 	virtual bool hasFeature(EngineFeature f) const;
 
+	virtual void syncSoundSettings();
+
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canSaveGameStateCurrently();
+
 	Common::RandomSource *_rnd;
 	const DrasculaGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -429,7 +436,7 @@ public:
 
 	int frame_y;
 	int curX, curY, characterMoved, curDirection, trackProtagonist, _characterFrame;
-	int hare_se_ve;		// TODO: what is this for?
+	int characterVisible;
 	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;
@@ -455,6 +462,7 @@ public:
 	int currentChapter;
 	bool _loadedDifferentChapter;
 	int _currentSaveSlot;
+	bool _canSaveLoad;
 	int _color;
 	int musicStopped;
 	int _mouseX, _mouseY, _leftMouseButton, _rightMouseButton;
@@ -488,17 +496,17 @@ public:
 	void addKeyToBuffer(Common::KeyState& key);
 	void flushKeyBuffer();
 	void selectVerb(int);
-	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);
+	int updateVolume(int prevVolume, int prevVolumeY);
 	void volumeControls();
 
 	bool saveLoadScreen();
 	bool scummVMSaveLoadDialog(bool isSave);
 	Common::String enterName(Common::String &selectedName);
 	void loadSaveNames();
-	void saveGame(int slot, Common::String &desc);
+	void saveGame(int slot, const Common::String &desc);
 	bool loadGame(int slot);
 	void checkForOldSaveGames();
-	void convertSaveGame(int slot, Common::String &desc);
+	void convertSaveGame(int slot, const Common::String &desc);
 
 	void print_abc(const char *, int, int);
 	void delay(int ms);
@@ -784,4 +792,4 @@ protected:
 
 } // End of namespace Drascula
 
-#endif /* DRASCULA_H */
+#endif /* DRASCULA_DRASCULA_H */

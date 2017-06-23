@@ -82,7 +82,11 @@ void Ps2SaveFileManager::mcSplit(char *full, char *game, char *ext) {
 	// TODO
 }
 
-Common::InSaveFile *Ps2SaveFileManager::openForLoading(const Common::String &filename) {
+void Ps2SaveFileManager::updateSavefilesList(Common::StringArray &lockedFiles) {
+	// TODO: implement this (locks files, preventing them from being listed, saved or loaded)
+}
+
+Common::InSaveFile *Ps2SaveFileManager::openRawFile(const Common::String &filename) {
 	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
 	Common::SeekableReadStream *sf;
 
@@ -141,7 +145,12 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const Common::String &fil
 
 	// _screen->wantAnim(false);
 
-	return Common::wrapCompressedReadStream(sf);
+	return sf;
+}
+
+Common::InSaveFile *Ps2SaveFileManager::openForLoading(const Common::String &filename) {
+	Common::SeekableReadStream *sf = openRawFile(filename);
+	return (sf == NULL ? NULL : Common::wrapCompressedReadStream(sf));
 }
 
 Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &filename, bool compress) {
@@ -192,7 +201,7 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &fil
 	}
 
 	_screen->wantAnim(false);
-	return compress ? Common::wrapCompressedWriteStream(sf) : sf;
+	return new Common::OutSaveFile(compress ? Common::wrapCompressedWriteStream(sf) : sf);
 }
 
 bool Ps2SaveFileManager::removeSavefile(const Common::String &filename) {

@@ -23,13 +23,8 @@
 #ifndef ACCESS_VIDEO_MOVIE_DECODER_H
 #define ACCESS_VIDEO_MOVIE_DECODER_H
 
-#include "common/rect.h"
 #include "video/video_decoder.h"
-#include "audio/decoders/raw.h"
-
-namespace Audio {
-class QueuingAudioStream;
-}
+#include "audio/audiostream.h"
 
 namespace Common {
 class SeekableReadStream;

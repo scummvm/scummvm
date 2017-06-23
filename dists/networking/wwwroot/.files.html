@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+	<head>
+		<title>ScummVM</title>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div class='header'>
+				<center><img src="logo.png"/></center>
+			</div>
+			<div class="controls">
+				<table class="buttons"><tr>
+					<td><a href="javascript:show('create_directory');">{create_directory_button}</a></td>
+					<td><a href="javascript:show('upload_file');">{upload_files_button}</a></td>
+				</tr></table>
+				<div id="create_directory" class="modal">
+					<p>{create_directory_desc}</p>
+					<form action="create">
+						<input type="hidden" name="path" value="{path}"/>
+						<input type="text" name="directory_name" value=""/>
+						<input type="submit" value="{create_directory_button}"/>
+					</form>
+				</div>
+				<div id="upload_file" class="modal">
+					<p>{upload_file_desc}</p>
+					<form action="upload?path={path}" method="post" enctype="multipart/form-data">
+						<!-- we don't need "[]" in the name, as our webserver is not using PHP -->
+						<!-- "allowdirs" is a proposal, not implemented yet -->
+						<input type="file" name="upload_file-f" allowdirs multiple/>
+						<br/><br/>
+						<p>{or_upload_directory_desc}</p>
+						<!-- "directory"/"webkitdirectory" works in Chrome only yet, "multiple" is just in case here -->
+						<input type="file" name="upload_file-d" directory webkitdirectory multiple/>
+						<input type="submit" value="{upload_file_button}"/>
+					</form>
+				</div>
+			</div>
+			<div class="content">
+				<table class="files_list">
+					<td></td><td><b class="directory_name">{index_of_directory}</b></td><td></td>
+					{content}
+				</table>
+			</div>
+		</div>
+		<script>
+			function show(id) {
+				var e = document.getElementById(id);
+				var visible = (e.style.display == "block");
+				if (visible) id = ""; //hide
+
+				e = document.getElementById("create_directory");
+				e.style.display = (e.id == id ? "block" : "none");
+				e = document.getElementById("upload_file");
+				e.style.display = (e.id == id ? "block" : "none");
+			}
+		</script>
+	</body>
+</html>

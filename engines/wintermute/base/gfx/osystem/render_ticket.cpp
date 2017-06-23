@@ -27,6 +27,7 @@
  */
 
 
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "graphics/transform_tools.h"
@@ -59,7 +60,12 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		// TransformTools.)
 		if (_transform._angle != Graphics::kDefaultAngle) {
 			Graphics::TransparentSurface src(*_surface, false);
-			Graphics::Surface *temp = src.rotoscale(transform);
+			Graphics::Surface *temp;
+			if (owner->_gameRef->getBilinearFiltering()) {
+				temp = src.rotoscaleT<Graphics::FILTER_BILINEAR>(transform);
+			} else {
+				temp = src.rotoscaleT<Graphics::FILTER_NEAREST>(transform);
+			}
 			_surface->free();
 			delete _surface;
 			_surface = temp;
@@ -67,7 +73,12 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 					dstRect->height() != srcRect->height()) &&
 					_transform._numTimesX * _transform._numTimesY == 1) {
 			Graphics::TransparentSurface src(*_surface, false);
-			Graphics::Surface *temp = src.scale(dstRect->width(), dstRect->height());
+			Graphics::Surface *temp;
+			if (owner->_gameRef->getBilinearFiltering()) {
+				temp = src.scaleT<Graphics::FILTER_BILINEAR>(dstRect->width(), dstRect->height());
+			} else {
+				temp = src.scaleT<Graphics::FILTER_NEAREST>(dstRect->width(), dstRect->height());
+			}
 			_surface->free();
 			delete _surface;
 			_surface = temp;

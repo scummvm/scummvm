@@ -28,6 +28,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "lab/lab.h"
 
 #include "lab/anim.h"
@@ -395,7 +397,7 @@ void LabEngine::processMonitor(const Common::String &ntext, TextFont *monitorFon
 					// Exit button
 					return;
 				}
-					
+
 				if (mouseX <= _utils->vgaScaleX(59)) {
 					// Back button
 					if (isInteractive) {

@@ -142,7 +142,7 @@ void Room::takePicture() {
 		_vm->_player->_roomNumber = 7;
 		_vm->_room->_function = FN_CLEAR1;
 		return;
-	} else if (result >= 0) 
+	} else if (result >= 0)
 		_vm->_player->_move = (Direction)(result + 1);
 
 	_vm->_player->_scrollFlag = false;
@@ -714,6 +714,8 @@ void Room::executeCommand(int commandId) {
 	screen.plotImage(spr, 1, Common::Point(143, 177));
 	screen.plotImage(spr, _selectCommand + 2,
 		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
+
+	delete spr;
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxSelect = true;

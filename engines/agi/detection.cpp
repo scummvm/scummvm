@@ -145,7 +145,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_ORIGINAL_SAVELOAD,
 		{
 			_s("Use original save/load screens"),
-			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
 			false
 		}
@@ -171,6 +171,26 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_USE_HERCULES_FONT,
+		{
+			_s("Use Hercules hires font"),
+			_s("Uses Hercules hires font, when font file is available."),
+			"herculesfont",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_COMMAND_PROMPT_WINDOW,
+		{
+			_s("Pause when entering commands"),
+			_s("Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt."),
+			"commandpromptwindow",
+			false
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -182,8 +202,8 @@ class AgiMetaEngine : public AdvancedMetaEngine {
 
 public:
 	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
-		_singleid = "agi";
-		_guioptions = GUIO1(GUIO_NOSPEECH);
+		_singleId = "agi";
+		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual const char *getName() const {
@@ -211,7 +231,8 @@ bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
 	    (f == kSavesSupportCreationDate) ||
-	    (f == kSavesSupportPlayTime);
+	    (f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool AgiBase::hasFeature(EngineFeature f) const {
@@ -261,7 +282,6 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -299,6 +319,8 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -359,6 +381,9 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 			uint32 saveDate = in->readUint32BE();
 			uint16 saveTime = in->readUint16BE();
+			if (saveVersion >= 9) {
+				in->readByte(); // skip over seconds of saveTime (not needed here)
+			}
 			if (saveVersion >= 6) {
 				uint32 playTime = in->readUint32BE();
 				descriptor.setPlayTime(playTime * 1000);
@@ -543,13 +568,13 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 		// Override the gameid & extra values in g_fallbackDesc.desc. This only works
 		// until the fallback detector is called again, and while the MetaEngine instance
 		// is alive (as else the string storage is modified/deleted).
-		g_fallbackDesc.desc.gameid = _gameid.c_str();
+		g_fallbackDesc.desc.gameId = _gameid.c_str();
 		g_fallbackDesc.desc.extra = _extra.c_str();
 
 		Common::String fallbackWarning;
 
 		fallbackWarning = "Your game version has been detected using fallback matching as a\n";
-		fallbackWarning += Common::String::format("variant of %s (%s).\n", g_fallbackDesc.desc.gameid, g_fallbackDesc.desc.extra);
+		fallbackWarning += Common::String::format("variant of %s (%s).\n", g_fallbackDesc.desc.gameId, g_fallbackDesc.desc.extra);
 		fallbackWarning += "If this is an original and unmodified version or new made Fanmade game,\n";
 		fallbackWarning += "please report any, information previously printed by ScummVM to the team.\n";
 

@@ -151,7 +151,7 @@ IntuiMessage *EventManager::getMsg() {
 			message._msgClass = kMessageButtonUp;
 			message._code = lastButtonHit->_buttonId;
 			message._qualifier = _keyPressed.flags;
-			
+
 			return &message;
 		} else
 			return nullptr;

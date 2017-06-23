@@ -22,6 +22,7 @@
 
 #include "neverhood/console.h"
 #include "neverhood/scene.h"
+#include "neverhood/smackerplayer.h"
 
 namespace Neverhood {
 

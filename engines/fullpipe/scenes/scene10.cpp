@@ -65,7 +65,7 @@ int scene10_updateCursor() {
 	if (g_fp->_objectIdAtCursor == ANI_PACHKA || g_fp->_objectIdAtCursor == ANI_GUM) {
 		if (g_fp->_cursorId == PIC_CSR_ITN) {
 			if (g_vars->scene10_hasGum)
-				g_fp->_cursorId = (sceneHandler10_inflaterIsBlind() != 0) ? PIC_CSR_ITN_RED : PIC_CSR_ITN_GREEN;
+				g_fp->_cursorId = (sceneHandler10_inflaterIsBlind() != 0) ? PIC_CSR_ITN_GREEN : PIC_CSR_ITN_RED;
 			else
 				g_fp->_cursorId = PIC_CSR_DEFAULT;
 		}
@@ -129,7 +129,7 @@ int sceneHandler10(ExCommand *ex) {
 	switch(ex->_messageNum) {
 	case MSG_LIFT_CLOSEDOOR:
 		g_fp->lift_closedoorSeq();
-        break;
+		break;
 
 	case MSG_LIFT_EXITLIFT:
 		g_fp->lift_exitSeq(ex);
@@ -144,7 +144,7 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case MSG_SC10_LADDERTOBACK:
-        g_vars->scene10_ladder->_priority = 49;
+		g_vars->scene10_ladder->_priority = 49;
 		break;
 
 	case MSG_SC10_LADDERTOFORE:
@@ -176,7 +176,7 @@ int sceneHandler10(ExCommand *ex) {
 	case 29:
 		{
 			if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
-				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_keyCode);
+				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_param);
 				ex->_messageKind = 0;
 
 				return 0;

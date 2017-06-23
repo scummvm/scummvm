@@ -201,7 +201,7 @@ Common::String DragonsphereScene::formAnimName(char sepChar, int suffixNum) {
 
 /*------------------------------------------------------------------------*/
 
-void SceneInfoDragonsphere::loadCodes(MSurface &depthSurface, int variant) {
+void SceneInfoDragonsphere::loadCodes(BaseSurface &depthSurface, int variant) {
 	Common::String ext = Common::String::format(".WW%d", variant);
 	Common::String fileName = Resources::formatName(RESPREFIX_RM, _sceneId, ext);
 	if (!Common::File::exists(fileName))
@@ -217,8 +217,8 @@ void SceneInfoDragonsphere::loadCodes(MSurface &depthSurface, int variant) {
 	f.close();
 }
 
-void SceneInfoDragonsphere::loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) {
-	byte *destP = depthSurface.getData();
+void SceneInfoDragonsphere::loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream) {
+	byte *destP = (byte *)depthSurface.getPixels();
 	byte *walkMap = new byte[stream->size()];
 	stream->read(walkMap, stream->size());
 

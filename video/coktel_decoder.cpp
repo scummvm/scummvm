@@ -1691,7 +1691,7 @@ bool VMDDecoder::openExternalCodec() {
 		if (_videoCodec == kVideoCodecIndeo3) {
 			_isPaletted = false;
 
-			_codec = new Image::Indeo3Decoder(_width, _height);
+			_codec = new Image::Indeo3Decoder(_width, _height, g_system->getScreenFormat().bpp());
 
 		} else {
 			warning("VMDDecoder::openExternalCodec(): Unknown video codec FourCC \"%s\"",
@@ -2617,7 +2617,14 @@ int DPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 			else
 				_buffer[i] += tableDPCM[data];
 
-			*buffer++ = _buffer[i] = CLIP<int32>(_buffer[i], -32768, 32767);
+			// Emulating x86 16-bit signed register overflow
+			if (_buffer[i] > 32767) {
+				_buffer[i] -= 65536;
+			} else if (_buffer[i] < -32768) {
+				_buffer[i] += 65536;
+			}
+
+			*buffer++ = _buffer[i];
 		}
 
 		samples += _channels;
@@ -2808,6 +2815,10 @@ bool AdvancedVMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 void AdvancedVMDDecoder::close() {
 	VideoDecoder::close();
 	_decoder->close();
+}
+
+void AdvancedVMDDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp) {
+	_decoder->setSurfaceMemory(mem, width, height, bpp);
 }
 
 AdvancedVMDDecoder::VMDVideoTrack::VMDVideoTrack(VMDDecoder *decoder) : _decoder(decoder) {

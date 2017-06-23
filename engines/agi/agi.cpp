@@ -37,7 +37,6 @@
 #include "graphics/cursorman.h"
 
 #include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 #include "agi/agi.h"
 #include "agi/font.h"
@@ -174,6 +173,7 @@ int AgiEngine::agiInit() {
 #endif
 
 	_keyHoldMode = false;
+	_keyHoldModeLastKey = Common::KEYCODE_INVALID;
 
 	_game.mouseFence.setWidth(0); // Reset
 
@@ -283,18 +283,7 @@ void AgiBase::initRenderMode() {
 
 	switch (platform) {
 	case Common::kPlatformDOS:
-		switch (configRenderMode) {
-		case Common::kRenderCGA:
-			_renderMode = Common::kRenderCGA;
-			break;
-		// Hercules is not supported atm
-		//case Common::kRenderHercA:
-		//case Common::kRenderHercG:
-		//	_renderMode = Common::kRenderHercG;
-		//	break;
-		default:
-			break;
-		}
+		// Keep EGA
 		break;
 	case Common::kPlatformAmiga:
 		_renderMode = Common::kRenderAmiga;
@@ -305,12 +294,30 @@ void AgiBase::initRenderMode() {
 	case Common::kPlatformAtariST:
 		_renderMode = Common::kRenderAtariST;
 		break;
+	case Common::kPlatformMacintosh:
+		_renderMode = Common::kRenderMacintosh;
+		break;
 	default:
 		break;
 	}
 
 	// If render mode is explicitly set, force rendermode
 	switch (configRenderMode) {
+	case Common::kRenderCGA:
+		_renderMode = Common::kRenderCGA;
+		break;
+	case Common::kRenderEGA:
+		_renderMode = Common::kRenderEGA;
+		break;
+	case Common::kRenderVGA:
+		_renderMode = Common::kRenderVGA;
+		break;
+	case Common::kRenderHercG:
+		_renderMode = Common::kRenderHercG;
+		break;
+	case Common::kRenderHercA:
+		_renderMode = Common::kRenderHercA;
+		break;
 	case Common::kRenderAmiga:
 		_renderMode = Common::kRenderAmiga;
 		break;
@@ -319,6 +326,9 @@ void AgiBase::initRenderMode() {
 		break;
 	case Common::kRenderAtariST:
 		_renderMode = Common::kRenderAtariST;
+		break;
+	case Common::kRenderMacintosh:
+		_renderMode = Common::kRenderMacintosh;
 		break;
 	default:
 		break;
@@ -384,10 +394,19 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	resetControllers();
 
-	setupOpcodes();
 	_game._curLogic = NULL;
+	_veryFirstInitialCycle = true;
+	_instructionCounter = 0;
+	resetGetVarSecondsHeuristic();
+
+	_setVolumeBrokenFangame = false; // for further study see AgiEngine::setVolumeViaScripts()
 
 	_lastSaveTime = 0;
+
+	_playTimeInSecondsAdjust = 0;
+	_lastUsedPlayTimeInCycles = 0;
+	_lastUsedPlayTimeInSeconds = 0;
+	_passedPlayTimeCycles = 0;
 
 	memset(_keyQueue, 0, sizeof(_keyQueue));
 
@@ -404,6 +423,10 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_inventory = nullptr;
 
 	_keyHoldMode = false;
+	_keyHoldModeLastKey = Common::KEYCODE_INVALID;
+
+	_artificialDelayCurrentRoom = 0;
+	_artificialDelayCurrentPicture = 0;
 }
 
 void AgiEngine::initialize() {
@@ -446,7 +469,7 @@ void AgiEngine::initialize() {
 	_console = new Console(this);
 	_words = new Words(this);
 	_font = new GfxFont(this);
-	_gfx = new GfxMgr(this);
+	_gfx = new GfxMgr(this, _font);
 	_sound = new SoundMgr(this, _mixer);
 	_picture = new PictureMgr(this, _gfx);
 	_sprites = new SpritesMgr(this, _gfx);
@@ -455,6 +478,8 @@ void AgiEngine::initialize() {
 	_inventory = new InventoryMgr(this, _gfx, _text, _systemUI);
 
 	_font->init();
+	_gfx->initVideo();
+
 	_text->init(_systemUI);
 
 	_game.gameFlags = 0;
@@ -462,8 +487,6 @@ void AgiEngine::initialize() {
 	_text->charAttrib_Set(15, 0);
 
 	_game.name[0] = '\0';
-
-	_gfx->initVideo();
 
 	_lastSaveTime = 0;
 
@@ -474,6 +497,8 @@ void AgiEngine::initialize() {
 	} else {
 		warning("Could not open AGI game");
 	}
+	// finally set up actual VM opcodes, because we should now have figured out the right AGI version
+	setupOpCodes(getVersion());
 
 	debugC(2, kDebugLevelMain, "Init sound");
 }
@@ -490,19 +515,6 @@ void AgiEngine::redrawScreen() {
 	_picture->showPic();
 	_text->statusDraw();
 	_text->promptRedraw();
-}
-
-// Adjust a given coordinate to the local game screen
-// Used on mouse cursor coordinates before passing them to scripts
-void AgiEngine::adjustPosToGameScreen(int16 &x, int16 &y) {
-	x = x / 2; // 320 -> 160
-	y = y - _gfx->getRenderStartOffsetY(); // remove status bar line
-	if (y < 0) {
-		y = 0;
-	}
-	if (y >= SCRIPT_HEIGHT) {
-		y = SCRIPT_HEIGHT + 1; // 1 beyond
-	}
 }
 
 AgiEngine::~AgiEngine() {
@@ -548,17 +560,28 @@ void AgiEngine::syncSoundSettings() {
 	setVolumeViaSystemSetting();
 }
 
+// WORKAROUND:
+// Sometimes Sierra printed some text on the screen and did a room change immediately afterwards expecting the
+// interpreter to load the data for a bit of time. This of course doesn't happen in our AGI, so we try to
+// detect such situations via heuristic and then delay the game for a bit.
+// In those cases a wait mouse cursor will be shown.
+//
 // Scenes that need this:
 //
+// Gold Rush:
+//  - During Stagecoach path, after getting solving the steep hill "Congratulations!!!" (NewRoom)
+//  - when following your mule "Yet right on his tail!!!" (NewRoom/NewPicture - but room 123 stays the same)
 // Manhunter 1:
 //  - intro text screen (DrawPic)
 //  - MAD "zooming in..." during intro and other scenes, for example room 124 (NewRoom)
 //     The NewRoom call is not done during the same cycle as the "zooming in..." print call.
 // Space Quest 1:
 //  - right at the start of the game (NewRoom)
+//  - right at the end of the asteroids "That was mighty close!" (NewRoom)
 // Space Quest 2
 //  - right at the start of the game (NewRoom)
 //  - after exiting the very first room, a message pops up, that isn't readable without it (NewRoom)
+//  - Climbing into shuttle on planet Labion. "You open the hatch and head on in." (NewRoom)
 
 
 // Games, that must not be triggered:
@@ -575,7 +598,14 @@ void AgiEngine::nonBlockingText_Forget() {
 	_game.nonBlockingTextShown = false;
 	_game.nonBlockingTextCyclesLeft = 0;
 }
-void AgiEngine::nonBlockingText_CycleDone() {
+
+void AgiEngine::artificialDelay_Reset() {
+	nonBlockingText_Forget();
+	_artificialDelayCurrentRoom = -1;
+	_artificialDelayCurrentPicture = -1;
+}
+
+void AgiEngine::artificialDelay_CycleDone() {
 	if (_game.nonBlockingTextCyclesLeft) {
 		_game.nonBlockingTextCyclesLeft--;
 
@@ -586,30 +616,97 @@ void AgiEngine::nonBlockingText_CycleDone() {
 	}
 }
 
-void AgiEngine::loadingTrigger_NewRoom(int16 newRoomNr) {
-	if (_game.nonBlockingTextShown) {
-		_game.nonBlockingTextShown = false;
+// WORKAROUND:
+// On Apple IIgs, there are situations like for example the Police Quest 1 intro, where music is playing
+// and then the scripts switch to a new room, expecting it to load for a bit of time. In ScummVM this results
+// in music getting cut off, because our loading is basically done in an instant. This also happens in the
+// original interpreter, when you use a faster CPU in emulation.
+//
+// That's why there is an additional table, where one can add such situations to it.
+// These issues are basically impossible to detect, because sometimes music is also supposed to play throughout
+// multiple rooms.
+//
+// Normally all text-based issues should get detected by the current heuristic. Do not add those in here.
 
-		int16 curRoomNr = getVar(VM_VAR_CURRENT_ROOM);
+//         script, description,                                       signature                   patch
+static const AgiArtificialDelayEntry artificialDelayTable[] = {
+	{ GID_GOLDRUSH,   Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWROOM,     14,  21, 2200 }, // Stagecoach path: right after getting on it in Brooklyn
+	{ GID_PQ1,        Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE,   1,   2, 2200 }, // Intro: music track is supposed to finish before credits screen. Developers must have assumed that room loading would take that long.
+	{ GID_MH1,        Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE, 155, 183, 2200 }, // Happens, when hitting fingers at bar
+	{ GID_AGIDEMO,    Common::kPlatformUnknown,  ARTIFICIALDELAYTYPE_END,         -1,  -1,    0 }
+};
 
-		if (newRoomNr != curRoomNr) {
-			if (!_game.automaticRestoreGame) {
-				// wait a bit, we detected non-blocking text
-				wait(2000, true); // 2 seconds, set busy
+uint16 AgiEngine::artificialDelay_SearchTable(AgiArtificialDelayTriggerType triggerType, int16 orgNr, int16 newNr) {
+	if (getPlatform() != Common::kPlatformApple2GS) {
+		return 0;
+	}
+
+	const AgiArtificialDelayEntry *delayEntry = artificialDelayTable;
+
+	while (delayEntry->triggerType != ARTIFICIALDELAYTYPE_END) {
+		if (triggerType == delayEntry->triggerType) {
+			if ((orgNr == delayEntry->orgNr) && (newNr == delayEntry->newNr)) {
+				if ((getGameID() == delayEntry->gameId) && (getPlatform() == delayEntry->platform)) {
+					warning("artificial delay forced");
+					return delayEntry->millisecondsDelay;
+				}
 			}
 		}
+
+		delayEntry++;
 	}
+	return 0;
 }
 
-void AgiEngine::loadingTrigger_DrawPicture() {
-	if (_game.nonBlockingTextShown) {
-		_game.nonBlockingTextShown = false;
+void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
+	uint16 millisecondsDelay = 0;
 
-		if (!_game.automaticRestoreGame) {
-			// wait a bit, we detected non-blocking text
-			wait(2000, true); // 2 seconds, set busy
+	//warning("artificial delay trigger: room %d -> new room %d", _artificialDelayCurrentRoom, newRoomNr);
+
+	if (!_game.automaticRestoreGame) {
+		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWROOM, _artificialDelayCurrentRoom, newRoomNr);
+
+		if (_game.nonBlockingTextShown) {
+			if (newRoomNr != _artificialDelayCurrentRoom) {
+				if (millisecondsDelay < 2000) {
+					// wait a bit, we detected non-blocking text
+					millisecondsDelay = 2000; // 2 seconds
+				}
+			}
+		}
+
+		if (millisecondsDelay) {
+			wait(millisecondsDelay, true); // set busy mouse cursor
+			_game.nonBlockingTextShown = false;
 		}
 	}
+
+	_artificialDelayCurrentRoom = newRoomNr;
+}
+
+void AgiEngine::artificialDelayTrigger_DrawPicture(int16 newPictureNr) {
+	uint16 millisecondsDelay = 0;
+
+	//warning("artificial delay trigger: picture %d -> new picture %d", _artificialDelayCurrentPicture, newPictureNr);
+
+	if (!_game.automaticRestoreGame) {
+		millisecondsDelay = artificialDelay_SearchTable(ARTIFICIALDELAYTYPE_NEWPICTURE, _artificialDelayCurrentPicture, newPictureNr);
+
+		if (_game.nonBlockingTextShown) {
+			if (newPictureNr != _artificialDelayCurrentPicture) {
+				if (millisecondsDelay < 2000) {
+					// wait a bit, we detected non-blocking text
+					millisecondsDelay = 2000; // 2 seconds, set busy
+				}
+			}
+		}
+
+		if (millisecondsDelay) {
+			wait(millisecondsDelay, true); // set busy mouse cursor
+			_game.nonBlockingTextShown = false;
+		}
+	}
+	_artificialDelayCurrentPicture = newPictureNr;
 }
 
 } // End of namespace Agi

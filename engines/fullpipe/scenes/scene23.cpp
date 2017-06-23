@@ -192,24 +192,24 @@ void sceneHandler23_spinWheel1() {
 	int mv = 0;
 
 	switch (g_vars->scene23_calend0->_statics->_staticsId) {
-    case ST_CND_0:
+	case ST_CND_0:
 		mv = MV_CND_0_1;
 		break;
 
-    case ST_CND_1:
+	case ST_CND_1:
 		mv = MV_CND_1_2;
 		break;
 
-    case ST_CND_2:
+	case ST_CND_2:
 		mv = MV_CND_2_3;
 		break;
 
-    case ST_CND_3:
+	case ST_CND_3:
 		g_vars->scene23_calend0->changeStatics2(ST_CND_9);
 		mv = MV_CND_9_0;
 		break;
 
-    default:
+	default:
 		break;
 	}
 
@@ -224,47 +224,47 @@ void sceneHandler23_spinWheel2and4(StaticANIObject *ani) {
 	int mv = 0;
 
 	switch (ani->_statics->_staticsId) {
-    case ST_CND_0:
+	case ST_CND_0:
 		mv = MV_CND_0_1;
 		break;
 
-    case ST_CND_1:
+	case ST_CND_1:
 		mv = MV_CND_1_2;
 		break;
 
-    case ST_CND_2:
+	case ST_CND_2:
 		mv = MV_CND_2_3;
 		break;
 
-    case ST_CND_3:
+	case ST_CND_3:
 		mv = MV_CND_3_4;
 		break;
 
-    case ST_CND_4:
+	case ST_CND_4:
 		mv = MV_CND_4_5;
 		break;
 
-    case ST_CND_5:
+	case ST_CND_5:
 		mv = MV_CND_5_6;
 		break;
 
-    case ST_CND_6:
+	case ST_CND_6:
 		mv = MV_CND_6_7;
 		break;
 
-    case ST_CND_7:
+	case ST_CND_7:
 		mv = MV_CND_7_8;
 		break;
 
-    case ST_CND_8:
+	case ST_CND_8:
 		mv = MV_CND_8_9;
 		break;
 
-    case ST_CND_9:
+	case ST_CND_9:
 		mv = MV_CND_9_0;
 		break;
 
-    default:
+	default:
 		break;
 	}
 
@@ -351,20 +351,20 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 
 void sceneHandler23_sendClick(StaticANIObject *ani) {
 	int msg = 0;
-	switch (ani->_okeyCode) {
-    case 0:
+	switch (ani->_odelay) {
+	case 0:
 		msg = MSG_SC23_CLICKBTN1;
 		break;
-    case 1:
+	case 1:
 		msg = MSG_SC23_CLICKBTN2;
 		break;
-    case 2:
+	case 2:
 		msg = MSG_SC23_CLICKBTN3;
 		break;
-    case 3:
+	case 3:
 		msg = MSG_SC23_CLICKBTN4;
 		break;
-    default:
+	default:
 		break;
 	}
 
@@ -537,7 +537,7 @@ int sceneHandler23(ExCommand *cmd) {
 			}
 
 			if (ani && ani->_id == ANI_HANDLE23) {
-				handleObjectInteraction(g_fp->_aniMan, ani, cmd->_keyCode);
+				handleObjectInteraction(g_fp->_aniMan, ani, cmd->_param);
 				cmd->_messageKind = 0;
 			} else {
 				sceneHandler23_fromStool(cmd);

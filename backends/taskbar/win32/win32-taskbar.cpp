@@ -28,8 +28,22 @@
 
 #if defined(WIN32) && defined(USE_TASKBAR)
 
+// HACK: To get __MINGW64_VERSION_foo defines we need to manually include
+// _mingw.h in this file because we do not include any system headers at this
+// point on purpose. The defines are required to detect whether this is a
+// classic MinGW toolchain or a MinGW-w64 based one.
+#if defined(__MINGW32__)
+#include <_mingw.h>
+#endif
+
 // Needed for taskbar functions
-#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64__)
+// HACK: MinGW-w64 based toolchains include the symbols we require in their
+// headers. The 32 bit incarnation only defines __MINGW32__. This leads to
+// build breakage due to clashes with our compat header. Luckily MinGW-w64
+// based toolchains define __MINGW64_VERSION_foo macros inside _mingw.h,
+// which is included from all system headers. Thus we abuse that to detect
+// them.
+#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 	#include "backends/taskbar/win32/mingw-compat.h"
 #else
 	// We use functionality introduced with Win7 in this file.
@@ -71,7 +85,7 @@ const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0
 
 Win32TaskbarManager::Win32TaskbarManager(SdlWindow *window) : _window(window), _taskbar(NULL), _count(0), _icon(NULL) {
 	// Do nothing if not running on Windows 7 or later
-	if (!isWin7OrLater())
+	if (!confirmWindowsVersion(10, 0) && !confirmWindowsVersion(6, 1))
 		return;
 
 	CoInitialize(NULL);
@@ -386,14 +400,14 @@ BOOL VerifyVersionInfoFunc(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwType
    return verifyVersionInfo(lpVersionInformation, dwTypeMask, dwlConditionMask);
 }
 
-bool Win32TaskbarManager::isWin7OrLater() {
+bool Win32TaskbarManager::confirmWindowsVersion(uint majorVersion, uint minorVersion) {
 	OSVERSIONINFOEX versionInfo;
 	DWORDLONG conditionMask = 0;
 
 	ZeroMemory(&versionInfo, sizeof(OSVERSIONINFOEX));
 	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	versionInfo.dwMajorVersion = 6;
-	versionInfo.dwMinorVersion = 1;
+	versionInfo.dwMajorVersion = majorVersion;
+	versionInfo.dwMinorVersion = minorVersion;
 
 	conditionMask = VerSetConditionMaskFunc(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
 	conditionMask = VerSetConditionMaskFunc(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);

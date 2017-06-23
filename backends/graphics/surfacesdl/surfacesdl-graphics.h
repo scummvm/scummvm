@@ -105,6 +105,9 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
+	virtual const OSystem::GraphicsMode *getSupportedShaders() const;
+	virtual int getShader() const;
+	virtual bool setShader(int id);
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
@@ -145,6 +148,7 @@ public:
 
 #ifdef USE_OSD
 	virtual void displayMessageOnOSD(const char *msg);
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon);
 #endif
 
 	// Override from Common::EventObserver
@@ -161,18 +165,28 @@ public:
 protected:
 #ifdef USE_OSD
 	/** Surface containing the OSD message */
-	SDL_Surface *_osdSurface;
-	/** Transparency level of the OSD */
-	uint8 _osdAlpha;
+	SDL_Surface *_osdMessageSurface;
+	/** Transparency level of the OSD message */
+	uint8 _osdMessageAlpha;
 	/** When to start the fade out */
-	uint32 _osdFadeStartTime;
+	uint32 _osdMessageFadeStartTime;
 	/** Enum with OSD options */
 	enum {
 		kOSDFadeOutDelay = 2 * 1000,	/** < Delay before the OSD is faded out (in milliseconds) */
 		kOSDFadeOutDuration = 500,		/** < Duration of the OSD fade out (in milliseconds) */
-		kOSDColorKey = 1,				/** < Transparent color key */
 		kOSDInitialAlpha = 80			/** < Initial alpha level, in percent */
 	};
+	/** Screen rectangle where the OSD message is drawn */
+	SDL_Rect getOSDMessageRect() const;
+	/** Clear the currently displayed OSD message if any */
+	void removeOSDMessage();
+	/** Surface containing the OSD background activity icon */
+	SDL_Surface *_osdIconSurface;
+	/** Screen rectangle where the OSD background activity icon is drawn */
+	SDL_Rect getOSDIconRect() const;
+
+	void updateOSD();
+	void drawOSD();
 #endif
 
 	/** Hardware screen */
@@ -187,8 +201,9 @@ protected:
 	int _windowWidth, _windowHeight;
 	void deinitializeRenderer();
 	void setWindowResolution(int width, int height);
+	void recreateScreenTexture();
 
-	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
+	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 	void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
 #endif
 
@@ -226,6 +241,9 @@ protected:
 		bool needHotswap;
 		bool needUpdatescreen;
 		bool normal1xScaler;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		bool needTextureUpdate;
+#endif
 #ifdef USE_RGB_COLOR
 		bool formatChanged;
 #endif
@@ -239,6 +257,10 @@ protected:
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		bool filtering;
+#endif
+
 		int mode;
 		int scaleFactor;
 
@@ -251,8 +273,22 @@ protected:
 	};
 	VideoState _videoMode, _oldVideoMode;
 
-	// Original BPP to restore the video mode on unload
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
+	/**
+	 * Original BPP to restore the video mode on unload.
+	 *
+	 * This is required to make listing video modes for the OpenGL output work
+	 * on Windows 8+. On these systems OpenGL modes are only available for
+	 * 32bit formats. However, we setup a 16bit format and thus mode listings
+	 * for OpenGL will return an empty list afterwards.
+	 *
+	 * In theory we might require this behavior on non-Win32 platforms too.
+	 * However, SDL sometimes gives us invalid pixel formats for X11 outputs
+	 * causing crashes when trying to setup the original pixel format.
+	 * See bug #7038 "IRIX: X BadMatch when trying to start any 640x480 game".
+	 */
 	uint8 _originalBitsPerPixel;
+#endif
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
@@ -268,6 +304,9 @@ protected:
 	Graphics::Surface _framebuffer;
 
 	int _screenChangeCount;
+
+	int _currentShader;
+	int _numShaders;
 
 	enum {
 		NUM_DIRTY_RECT = 100,
@@ -351,6 +390,7 @@ protected:
 	virtual void blitCursor();
 
 	virtual void internUpdateScreen();
+	virtual void updateShader();
 
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
@@ -358,6 +398,9 @@ protected:
 
 	virtual void setFullscreenMode(bool enable);
 	virtual void setAspectRatioCorrection(bool enable);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	virtual void setFilteringMode(bool enable);
+#endif
 
 	virtual int effectiveScreenHeight() const;
 

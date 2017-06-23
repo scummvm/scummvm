@@ -33,7 +33,7 @@ namespace Sci {
 class SciEngine;
 struct List;
 
-reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printBytecode);
+reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, bool printBytecode);
 bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpOffset);
 
 class Console : public GUI::Debugger {
@@ -41,7 +41,10 @@ public:
 	Console(SciEngine *engine);
 	virtual ~Console();
 
-	int printObject(reg_t pos);
+#ifdef ENABLE_SCI32
+	void printArray(reg_t reg);
+	void printBitmap(reg_t reg);
+#endif
 
 private:
 	virtual void preEnter();
@@ -74,6 +77,7 @@ private:
 	bool cmdResourceInfo(int argc, const char **argv);
 	bool cmdResourceTypes(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
+	bool cmdAllocList(int argc, const char **argv);
 	bool cmdHexgrep(int argc, const char **argv);
 	bool cmdVerifyScripts(int argc, const char **argv);
 	// Game
@@ -96,7 +100,9 @@ private:
 	bool cmdAnimateList(int argc, const char **argv);
 	bool cmdWindowList(int argc, const char **argv);
 	bool cmdPlaneList(int argc, const char **argv);
+	bool cmdVisiblePlaneList(int argc, const char **argv);
 	bool cmdPlaneItemList(int argc, const char **argv);
+	bool cmdVisiblePlaneItemList(int argc, const char **argv);
 	bool cmdSavedBits(int argc, const char **argv);
 	bool cmdShowSavedBits(int argc, const char **argv);
 	// Segments
@@ -120,6 +126,7 @@ private:
 	bool cmdSfx01Track(int argc, const char **argv);
 	bool cmdShowInstruments(int argc, const char **argv);
 	bool cmdMapInstrument(int argc, const char **argv);
+	bool cmdAudioList(int argc, const char **argv);
 	// Script
 	bool cmdAddresses(int argc, const char **argv);
 	bool cmdRegisters(int argc, const char **argv);
@@ -137,14 +144,17 @@ private:
 	bool cmdSend(int argc, const char **argv);
 	bool cmdGo(int argc, const char **argv);
 	bool cmdLogKernel(int argc, const char **argv);
+	bool cmdMapVocab994(int argc, const char **argv);
 	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);
+	bool cmdBreakpointAction(int argc, const char **argv);
 	bool cmdBreakpointMethod(int argc, const char **argv);
 	bool cmdBreakpointRead(int argc, const char **argv);
 	bool cmdBreakpointWrite(int argc, const char **argv);
 	bool cmdBreakpointKernel(int argc, const char **argv);
 	bool cmdBreakpointFunction(int argc, const char **argv);
+	bool cmdBreakpointAddress(int argc, const char **argv);
 	// VM
 	bool cmdScriptSteps(int argc, const char **argv);
 	bool cmdScriptObjects(int argc, const char **argv);
@@ -156,6 +166,7 @@ private:
 	bool cmdValueType(int argc, const char **argv);
 	bool cmdViewListNode(int argc, const char **argv);
 	bool cmdViewReference(int argc, const char **argv);
+	bool cmdDumpReference(int argc, const char **argv);
 	bool cmdViewObject(int argc, const char **argv);
 	bool cmdViewActiveObject(int argc, const char **argv);
 	bool cmdViewAccumulatorObject(int argc, const char **argv);
@@ -166,7 +177,8 @@ private:
 	void printBasicVarInfo(reg_t variable);
 
 	bool segmentInfo(int nr);
-	void printList(List *list);
+	void printList(reg_t addr);
+	void printList(const List &list);
 	int printNode(reg_t addr);
 	void hexDumpReg(const reg_t *data, int len, int regsPerLine = 4, int startOffset = 0, bool isArray = false);
 	void printOffsets(int scriptNr, uint16 showType);
@@ -178,6 +190,8 @@ private:
 	 * does not dissect script exports
 	 */
 	void printKernelCallsFound(int kernelFuncNum, bool showFoundScripts);
+
+	void printBreakpoint(int index, const Breakpoint &bp);
 
 	SciEngine *_engine;
 	DebugState &_debugState;

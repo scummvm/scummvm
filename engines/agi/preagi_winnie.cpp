@@ -292,7 +292,7 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 			}
 
 			// extract menu string
-			strcpy(szMenu, (char *)(buffer + pc));
+			Common::strlcpy(szMenu, (char *)(buffer + pc), 121);
 			XOR80(szMenu);
 			break;
 		default:

@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 
+#include "audio/audiostream.h"
 #include "audio/mods/protracker.h"
 
 #include "gob/sound/protracker.h"

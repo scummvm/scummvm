@@ -21,8 +21,10 @@
  */
 
 #include "backends/graphics/opengl/texture.h"
-#include "backends/graphics/opengl/extensions.h"
-#include "backends/graphics/opengl/debug.h"
+#include "backends/graphics/opengl/shader.h"
+#include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/pipelines/clut8.h"
+#include "backends/graphics/opengl/framebuffer.h"
 
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -41,94 +43,140 @@ static GLuint nextHigher2(GLuint v) {
 	return ++v;
 }
 
-GLint Texture::_maxTextureSize = 0;
 
-void Texture::queryTextureInformation() {
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
-	debug(5, "OpenGL maximum texture size: %d", _maxTextureSize);
+GLTexture::GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType)
+    : _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType),
+      _width(0), _height(0), _logicalWidth(0), _logicalHeight(0),
+      _texCoords(), _glFilter(GL_NEAREST),
+      _glTexture(0) {
+	create();
 }
 
-Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
-    : _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType), _format(format), _glFilter(GL_NEAREST),
-      _glTexture(0), _textureData(), _userPixelData(), _allDirty(false) {
-	recreateInternalTexture();
+GLTexture::~GLTexture() {
+	GL_CALL_SAFE(glDeleteTextures, (1, &_glTexture));
 }
 
-Texture::~Texture() {
-	releaseInternalTexture();
-	_textureData.free();
-}
-
-void Texture::releaseInternalTexture() {
-	GLCALL(glDeleteTextures(1, &_glTexture));
-	_glTexture = 0;
-}
-
-void Texture::recreateInternalTexture() {
-	// Release old texture name in case it exists.
-	releaseInternalTexture();
-
-	// Get a new texture name.
-	GLCALL(glGenTextures(1, &_glTexture));
-
-	// Set up all texture parameters.
-	GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-	GLCALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-
-	// In case there is an actual texture setup we reinitialize it.
-	if (_textureData.getPixels()) {
-		// Allocate storage for OpenGL texture.
-		GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
-		       _textureData.h, 0, _glFormat, _glType, NULL));
-
-		// Mark dirts such that it will be completely refreshed the next time.
-		flagDirty();
-	}
-}
-
-void Texture::enableLinearFiltering(bool enable) {
+void GLTexture::enableLinearFiltering(bool enable) {
 	if (enable) {
 		_glFilter = GL_LINEAR;
 	} else {
 		_glFilter = GL_NEAREST;
 	}
 
-	GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+	bind();
 
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
-	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
 }
 
-void Texture::allocate(uint width, uint height) {
-	uint texWidth = width, texHeight = height;
-	if (!g_extNPOTSupported) {
-		texWidth  = nextHigher2(texWidth);
-		texHeight = nextHigher2(texHeight);
-	}
+void GLTexture::destroy() {
+	GL_CALL(glDeleteTextures(1, &_glTexture));
+	_glTexture = 0;
+}
 
-	// In case the needed texture dimension changed we will reinitialize the
-	// texture.
-	if (texWidth != _textureData.w || texHeight != _textureData.h) {
-		// Create a buffer for the texture data.
-		_textureData.create(texWidth, texHeight, _format);
+void GLTexture::create() {
+	// Release old texture name in case it exists.
+	destroy();
 
-		// Set the texture.
-		GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+	// Get a new texture name.
+	GL_CALL(glGenTextures(1, &_glTexture));
 
+	// Set up all texture parameters.
+	bind();
+	GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+	// If a size is specified, allocate memory for it.
+	if (_width != 0 && _height != 0) {
 		// Allocate storage for OpenGL texture.
-		GLCALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _textureData.w,
-		       _textureData.h, 0, _glFormat, _glType, NULL));
+		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width, _height,
+		                     0, _glFormat, _glType, NULL));
 	}
-
-	// Create a sub-buffer for raw access.
-	_userPixelData = _textureData.getSubArea(Common::Rect(width, height));
 }
 
-void Texture::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcPtr, uint srcPitch) {
+void GLTexture::bind() const {
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
+}
+
+void GLTexture::setSize(uint width, uint height) {
+	const uint oldWidth  = _width;
+	const uint oldHeight = _height;
+
+	if (!g_context.NPOTSupported) {
+		_width  = nextHigher2(width);
+		_height = nextHigher2(height);
+	} else {
+		_width  = width;
+		_height = height;
+	}
+
+	_logicalWidth  = width;
+	_logicalHeight = height;
+
+	// If a size is specified, allocate memory for it.
+	if (width != 0 && height != 0) {
+		const GLfloat texWidth = (GLfloat)width / _width;
+		const GLfloat texHeight = (GLfloat)height / _height;
+
+		_texCoords[0] = 0;
+		_texCoords[1] = 0;
+
+		_texCoords[2] = texWidth;
+		_texCoords[3] = 0;
+
+		_texCoords[4] = 0;
+		_texCoords[5] = texHeight;
+
+		_texCoords[6] = texWidth;
+		_texCoords[7] = texHeight;
+
+		// Allocate storage for OpenGL texture if necessary.
+		if (oldWidth != _width || oldHeight != _height) {
+			bind();
+			GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width,
+			                     _height, 0, _glFormat, _glType, NULL));
+		}
+	}
+}
+
+void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &src) {
+	// Set the texture on the active texture unit.
+	bind();
+
+	// Update the actual texture.
+	// Although we have the area of the texture buffer we want to update we
+	// cannot take advantage of the left/right boundries here because it is
+	// not possible to specify a pitch to glTexSubImage2D. To be precise, with
+	// plain OpenGL we could set GL_UNPACK_ROW_LENGTH to achieve this. However,
+	// OpenGL ES 1.0 does not support GL_UNPACK_ROW_LENGTH. Thus, we are left
+	// with the following options:
+	//
+	// 1) (As we do right now) Simply always update the whole texture lines of
+	//    rect changed. This is simplest to implement. In case performance is
+	//    really an issue we can think of switching to another method.
+	//
+	// 2) Copy the dirty rect to a temporary buffer and upload that by using
+	//    glTexSubImage2D. This is what the Android backend does. It is more
+	//    complicated though.
+	//
+	// 3) Use glTexSubImage2D per line changed. This is what the old OpenGL
+	//    graphics manager did but it is much slower! Thus, we do not use it.
+	GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, area.top, src.w, area.height(),
+	                       _glFormat, _glType, src.getBasePtr(0, area.top)));
+}
+
+//
+// Surface
+//
+
+Surface::Surface()
+    : _allDirty(false), _dirtyArea() {
+}
+
+void Surface::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcPtr, uint srcPitch) {
 	Graphics::Surface *dstSurf = getSurface();
 	assert(x + w <= dstSurf->w);
 	assert(y + h <= dstSurf->h);
@@ -159,50 +207,74 @@ void Texture::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcP
 	}
 }
 
-void Texture::fill(uint32 color) {
+void Surface::fill(uint32 color) {
 	Graphics::Surface *dst = getSurface();
 	dst->fillRect(Common::Rect(dst->w, dst->h), color);
 
 	flagDirty();
 }
 
-void Texture::draw(GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
-	// Only do any processing when the Texture is initialized.
-	if (!_textureData.getPixels()) {
-		return;
+Common::Rect Surface::getDirtyArea() const {
+	if (_allDirty) {
+		return Common::Rect(getWidth(), getHeight());
+	} else {
+		return _dirtyArea;
 	}
-
-	// First update any potentional changes.
-	updateTexture();
-
-	// Set the texture.
-	GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-
-	// Calculate the texture rect that will be drawn.
-	const GLfloat texWidth = (GLfloat)_userPixelData.w / _textureData.w;
-	const GLfloat texHeight = (GLfloat)_userPixelData.h / _textureData.h;
-	const GLfloat texcoords[4*2] = {
-		0,        0,
-		texWidth, 0,
-		0,        texHeight,
-		texWidth, texHeight
-	};
-	GLCALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));
-
-	// Calculate the screen rect where the texture will be drawn.
-	const GLfloat vertices[4*2] = {
-		x,     y,
-		x + w, y,
-		x,     y + h,
-		x + w, y + h
-	};
-	GLCALL(glVertexPointer(2, GL_FLOAT, 0, vertices));
-
-	// Draw the texture to the screen buffer.
-	GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
-void Texture::updateTexture() {
+//
+// Surface implementations
+//
+
+Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
+    : Surface(), _format(format), _glTexture(glIntFormat, glFormat, glType),
+      _textureData(), _userPixelData() {
+}
+
+Texture::~Texture() {
+	_textureData.free();
+}
+
+void Texture::destroy() {
+	_glTexture.destroy();
+}
+
+void Texture::recreate() {
+	_glTexture.create();
+
+	// In case image date exists assure it will be completely refreshed next
+	// time.
+	if (_textureData.getPixels()) {
+		flagDirty();
+	}
+}
+
+void Texture::enableLinearFiltering(bool enable) {
+	_glTexture.enableLinearFiltering(enable);
+}
+
+void Texture::allocate(uint width, uint height) {
+	// Assure the texture can contain our user data.
+	_glTexture.setSize(width, height);
+
+	// In case the needed texture dimension changed we will reinitialize the
+	// texture data buffer.
+	if (_glTexture.getWidth() != _textureData.w || _glTexture.getHeight() != _textureData.h) {
+		// Create a buffer for the texture data.
+		_textureData.create(_glTexture.getWidth(), _glTexture.getHeight(), _format);
+	}
+
+	// Create a sub-buffer for raw access.
+	_userPixelData = _textureData.getSubArea(Common::Rect(width, height));
+
+	// The whole texture is dirty after we changed the size. This fixes
+	// multiple texture size changes without any actual update in between.
+	// Without this we might try to write a too big texture into the GL
+	// texture.
+	flagDirty();
+}
+
+void Texture::updateGLTexture() {
 	if (!isDirty()) {
 		return;
 	}
@@ -211,7 +283,7 @@ void Texture::updateTexture() {
 
 	// In case we use linear filtering we might need to duplicate the last
 	// pixel row/column to avoid glitches with filtering.
-	if (_glFilter == GL_LINEAR) {
+	if (_glTexture.isLinearFilteringEnabled()) {
 		if (dirtyArea.right == _userPixelData.w && _userPixelData.w != _textureData.w) {
 			uint height = dirtyArea.height();
 
@@ -238,40 +310,10 @@ void Texture::updateTexture() {
 		}
 	}
 
-	// Set the texture.
-	GLCALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
-
-	// Update the actual texture.
-	// Although we keep track of the dirty part of the texture buffer we
-	// cannot take advantage of the left/right boundries here because it is
-	// not possible to specify a pitch to glTexSubImage2D. To be precise, with
-	// plain OpenGL we could set GL_UNPACK_ROW_LENGTH to achieve this. However,
-	// OpenGL ES 1.0 does not support GL_UNPACK_ROW_LENGTH. Thus, we are left
-	// with the following options:
-	//
-	// 1) (As we do right now) Simply always update the whole texture lines of
-	//    rect changed. This is simplest to implement. In case performance is
-	//    really an issue we can think of switching to another method.
-	//
-	// 2) Copy the dirty rect to a temporary buffer and upload that by using
-	//    glTexSubImage2D. This is what the Android backend does. It is more
-	//    complicated though.
-	//
-	// 3) Use glTexSubImage2D per line changed. This is what the old OpenGL
-	//    graphics manager did but it is much slower! Thus, we do not use it.
-	GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, dirtyArea.top, _textureData.w, dirtyArea.height(),
-	                       _glFormat, _glType, _textureData.getBasePtr(0, dirtyArea.top)));
+	_glTexture.updateArea(dirtyArea, _textureData);
 
 	// We should have handled everything, thus not dirty anymore.
 	clearDirty();
-}
-
-Common::Rect Texture::getDirtyArea() const {
-	if (_allDirty) {
-		return Common::Rect(_userPixelData.w, _userPixelData.h);
-	} else {
-		return _dirtyArea;
-	}
 }
 
 TextureCLUT8::TextureCLUT8(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
@@ -301,6 +343,25 @@ Graphics::PixelFormat TextureCLUT8::getFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
+void TextureCLUT8::setColorKey(uint colorKey) {
+	// We remove all alpha bits from the palette entry of the color key.
+	// This makes sure its properly handled as color key.
+	const uint32 aMask = (0xFF >> _format.aLoss) << _format.aShift;
+
+	if (_format.bytesPerPixel == 2) {
+		uint16 *palette = (uint16 *)_palette + colorKey;
+		*palette &= ~aMask;
+	} else if (_format.bytesPerPixel == 4) {
+		uint32 *palette = (uint32 *)_palette + colorKey;
+		*palette &= ~aMask;
+	} else {
+		warning("TextureCLUT8::setColorKey: Unsupported pixel depth %d", _format.bytesPerPixel);
+	}
+
+	// A palette changes means we need to refresh the whole surface.
+	flagDirty();
+}
+
 namespace {
 template<typename ColorType>
 inline void convertPalette(ColorType *dst, const byte *src, uint colors, const Graphics::PixelFormat &format) {
@@ -312,14 +373,12 @@ inline void convertPalette(ColorType *dst, const byte *src, uint colors, const G
 } // End of anonymous namespace
 
 void TextureCLUT8::setPalette(uint start, uint colors, const byte *palData) {
-	const Graphics::PixelFormat &hardwareFormat = getHardwareFormat();
-
-	if (hardwareFormat.bytesPerPixel == 2) {
-		convertPalette<uint16>((uint16 *)_palette + start, palData, colors, hardwareFormat);
-	} else if (hardwareFormat.bytesPerPixel == 4) {
-		convertPalette<uint32>((uint32 *)_palette + start, palData, colors, hardwareFormat);
+	if (_format.bytesPerPixel == 2) {
+		convertPalette<uint16>((uint16 *)_palette + start, palData, colors, _format);
+	} else if (_format.bytesPerPixel == 4) {
+		convertPalette<uint32>((uint32 *)_palette + start, palData, colors, _format);
 	} else {
-		warning("TextureCLUT8::setPalette: Unsupported pixel depth: %d", hardwareFormat.bytesPerPixel);
+		warning("TextureCLUT8::setPalette: Unsupported pixel depth: %d", _format.bytesPerPixel);
 	}
 
 	// A palette changes means we need to refresh the whole surface.
@@ -343,7 +402,7 @@ inline void doPaletteLookUp(PixelType *dst, const byte *src, uint width, uint he
 }
 } // End of anonymous namespace
 
-void TextureCLUT8::updateTexture() {
+void TextureCLUT8::updateGLTexture() {
 	if (!isDirty()) {
 		return;
 	}
@@ -368,7 +427,223 @@ void TextureCLUT8::updateTexture() {
 	}
 
 	// Do generic handling of updating the texture.
-	Texture::updateTexture();
+	Texture::updateGLTexture();
 }
+
+#if !USE_FORCED_GL
+TextureRGB555::TextureRGB555()
+    : Texture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
+      _rgb555Data() {
+}
+
+TextureRGB555::~TextureRGB555() {
+	_rgb555Data.free();
+}
+
+void TextureRGB555::allocate(uint width, uint height) {
+	Texture::allocate(width, height);
+
+	// We only need to reinitialize our RGB555 surface when the output size
+	// changed.
+	if (width == _rgb555Data.w && height == _rgb555Data.h) {
+		return;
+	}
+
+	_rgb555Data.create(width, height, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+}
+
+Graphics::PixelFormat TextureRGB555::getFormat() const {
+	return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+}
+
+void TextureRGB555::updateTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	const Common::Rect dirtyArea = getDirtyArea();
+
+	uint16 *dst = (uint16 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint dstAdd = outSurf->pitch - 2 * dirtyArea.width();
+
+	const uint16 *src = (const uint16 *)_rgb555Data.getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint srcAdd = _rgb555Data.pitch - 2 * dirtyArea.width();
+
+	for (int height = dirtyArea.height(); height > 0; --height) {
+		for (int width = dirtyArea.width(); width > 0; --width) {
+			const uint16 color = *src++;
+
+			*dst++ =   ((color & 0x7C00) << 1)                             // R
+			         | (((color & 0x03E0) << 1) | ((color & 0x0200) >> 4)) // G
+			         | (color & 0x001F);                                   // B
+		}
+
+		src = (const uint16 *)((const byte *)src + srcAdd);
+		dst = (uint16 *)((byte *)dst + dstAdd);
+	}
+
+	// Do generic handling of updating the texture.
+	Texture::updateGLTexture();
+}
+#endif // !USE_FORCED_GL
+
+#if !USE_FORCED_GLES
+
+// _clut8Texture needs 8 bits internal precision, otherwise graphics glitches
+// can occur. GL_ALPHA does not have any internal precision requirements.
+// However, in practice (according to fuzzie) it's 8bit. If we run into
+// problems, we need to switch to GL_R8 and GL_RED, but that is only supported
+// for ARB_texture_rg and GLES3+ (EXT_rexture_rg does not support GL_R8).
+TextureCLUT8GPU::TextureCLUT8GPU()
+    : _clut8Texture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE),
+      _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
+      _target(new TextureTarget()), _clut8Pipeline(new CLUT8LookUpPipeline()),
+      _clut8Vertices(), _clut8Data(), _userPixelData(), _palette(),
+      _paletteDirty(false) {
+	// Allocate space for 256 colors.
+	_paletteTexture.setSize(256, 1);
+
+	// Setup pipeline.
+	_clut8Pipeline->setFramebuffer(_target);
+	_clut8Pipeline->setPaletteTexture(&_paletteTexture);
+	_clut8Pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+TextureCLUT8GPU::~TextureCLUT8GPU() {
+	delete _clut8Pipeline;
+	delete _target;
+	_clut8Data.free();
+}
+
+void TextureCLUT8GPU::destroy() {
+	_clut8Texture.destroy();
+	_paletteTexture.destroy();
+	_target->destroy();
+}
+
+void TextureCLUT8GPU::recreate() {
+	_clut8Texture.create();
+	_paletteTexture.create();
+	_target->create();
+
+	// In case image date exists assure it will be completely refreshed next
+	// time.
+	if (_clut8Data.getPixels()) {
+		flagDirty();
+		_paletteDirty = true;
+	}
+}
+
+void TextureCLUT8GPU::enableLinearFiltering(bool enable) {
+	_target->getTexture()->enableLinearFiltering(enable);
+}
+
+void TextureCLUT8GPU::allocate(uint width, uint height) {
+	// Assure the texture can contain our user data.
+	_clut8Texture.setSize(width, height);
+	_target->setSize(width, height);
+
+	// In case the needed texture dimension changed we will reinitialize the
+	// texture data buffer.
+	if (_clut8Texture.getWidth() != _clut8Data.w || _clut8Texture.getHeight() != _clut8Data.h) {
+		// Create a buffer for the texture data.
+		_clut8Data.create(_clut8Texture.getWidth(), _clut8Texture.getHeight(), Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	// Create a sub-buffer for raw access.
+	_userPixelData = _clut8Data.getSubArea(Common::Rect(width, height));
+
+	// Setup structures for internal rendering to _glTexture.
+	_clut8Vertices[0] = 0;
+	_clut8Vertices[1] = 0;
+
+	_clut8Vertices[2] = width;
+	_clut8Vertices[3] = 0;
+
+	_clut8Vertices[4] = 0;
+	_clut8Vertices[5] = height;
+
+	_clut8Vertices[6] = width;
+	_clut8Vertices[7] = height;
+
+	// The whole texture is dirty after we changed the size. This fixes
+	// multiple texture size changes without any actual update in between.
+	// Without this we might try to write a too big texture into the GL
+	// texture.
+	flagDirty();
+}
+
+Graphics::PixelFormat TextureCLUT8GPU::getFormat() const {
+	return Graphics::PixelFormat::createFormatCLUT8();
+}
+
+void TextureCLUT8GPU::setColorKey(uint colorKey) {
+	_palette[colorKey * 4 + 3] = 0x00;
+
+	_paletteDirty = true;
+}
+
+void TextureCLUT8GPU::setPalette(uint start, uint colors, const byte *palData) {
+	byte *dst = _palette + start * 4;
+
+	while (colors-- > 0) {
+		memcpy(dst, palData, 3);
+		dst[3] = 0xFF;
+
+		dst += 4;
+		palData += 3;
+	}
+
+	_paletteDirty = true;
+}
+
+const GLTexture &TextureCLUT8GPU::getGLTexture() const {
+	return *_target->getTexture();
+}
+
+void TextureCLUT8GPU::updateGLTexture() {
+	const bool needLookUp = Surface::isDirty() || _paletteDirty;
+
+	// Update CLUT8 texture if necessary.
+	if (Surface::isDirty()) {
+		_clut8Texture.updateArea(getDirtyArea(), _clut8Data);
+		clearDirty();
+	}
+
+	// Update palette if necessary.
+	if (_paletteDirty) {
+		Graphics::Surface palSurface;
+		palSurface.init(256, 1, 256, _palette,
+#ifdef SCUMM_LITTLE_ENDIAN
+		                Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24) // ABGR8888
+#else
+		                Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0) // RGBA8888
+#endif
+		               );
+
+		_paletteTexture.updateArea(Common::Rect(256, 1), palSurface);
+		_paletteDirty = false;
+	}
+
+	// In case any data changed, do color look up and store result in _target.
+	if (needLookUp) {
+		lookUpColors();
+	}
+}
+
+void TextureCLUT8GPU::lookUpColors() {
+	// Setup pipeline to do color look up.
+	Pipeline *oldPipeline = g_context.setPipeline(_clut8Pipeline);
+
+	// Do color look up.
+	g_context.getActivePipeline()->drawTexture(_clut8Texture, _clut8Vertices);
+
+	// Restore old state.
+	g_context.setPipeline(oldPipeline);
+}
+#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL

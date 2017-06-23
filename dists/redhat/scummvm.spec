@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 1.8.0git
+Version		: 1.10.0git
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
@@ -18,7 +18,7 @@ Url             : http://www.scummvm.org
 Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.bz2
 Source2		: faad2-2.7.tar.bz2
-Source3		: mpeg2dec-0.4.1.tar.bz2
+Source3		: mpeg2dec-0.5.1.tar.bz2
 Patch0		: libmad-0.15.1b-fixes-1.patch
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
@@ -28,8 +28,12 @@ BuildRequires: libvorbis-devel
 BuildRequires: flac-devel
 BuildRequires: zlib-devel
 BuildRequires: nasm
-BuildRequires: SDL-devel >= 1.2.2
+BuildRequires: SDL2-devel
 BuildRequires: freetype-devel
+BuildRequires: fluidsynth-devel
+BuildRequires: libtheora-devel
+BuildRequires: libpng-devel
+BuildRequires: libjpeg-turbo-devel
 
 #------------------------------------------------------------------------------
 #   Description
@@ -55,7 +59,7 @@ mkdir tmp
 %build
 (cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
 (cd faad2-2.7; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-(cd mpeg2dec-0.4.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
+(cd mpeg2dec-0.5.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
 ./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-faad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix} --enable-release
 make
 
@@ -80,6 +84,8 @@ install -m644 -D dists/engine-data/tony.dat %{buildroot}%{_datadir}/scummvm/tony
 install -m644 -D dists/engine-data/toon.dat %{buildroot}%{_datadir}/scummvm/toon.dat
 install -m644 -D dists/engine-data/wintermute.zip %{buildroot}%{_datadir}/scummvm/wintermute.zip
 install -m644 -D dists/engine-data/neverhood.dat %{buildroot}%{_datadir}/scummvm/neverhood.dat
+install -m644 -D dists/engine-data/mort.dat %{buildroot}%{_datadir}/scummvm/mort.dat
+install -m644 -D dists/engine-data/access.dat %{buildroot}%{_datadir}/scummvm/access.dat
 desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
 
 %clean
@@ -122,6 +128,8 @@ fi
 %{_datadir}/scummvm/toon.dat
 %{_datadir}/scummvm/wintermute.zip
 %{_datadir}/scummvm/neverhood.dat
+%{_datadir}/scummvm/mort.dat
+%{_datadir}/scummvm/access.dat
 %{_mandir}/man6/scummvm.6*
 
 #------------------------------------------------------------------------------

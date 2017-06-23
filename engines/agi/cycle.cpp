@@ -30,6 +30,7 @@
 #include "agi/keyboard.h"
 #include "agi/menu.h"
 #include "agi/systemui.h"
+#include "agi/appleIIgs_timedelay_overwrite.h"
 
 namespace Agi {
 
@@ -44,7 +45,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	int i;
 
 	// Loading trigger
-	loadingTrigger_NewRoom(newRoomNr);
+	artificialDelayTrigger_NewRoom(newRoomNr);
 
 	debugC(4, kDebugLevelMain, "*** room %d ***", newRoomNr);
 	_sound->stopSound();
@@ -141,6 +142,9 @@ void AgiEngine::interpretCycle() {
 	oldScore = getVar(VM_VAR_SCORE);
 	oldSound = getFlag(VM_FLAG_SOUND_ON);
 
+	// Reset script heuristic here
+	resetGetVarSecondsHeuristic();
+
 	_game.exitAllLogics = false;
 	while (runLogic(0) == 0 && !(shouldQuit() || _restartGame)) {
 		setVar(VM_VAR_WORD_NOT_FOUND, 0);
@@ -149,10 +153,12 @@ void AgiEngine::interpretCycle() {
 		oldScore = getVar(VM_VAR_SCORE);
 		setFlag(VM_FLAG_ENTERED_CLI, false);
 		_game.exitAllLogics = false;
-		nonBlockingText_CycleDone();
+		_veryFirstInitialCycle = false;
+		artificialDelay_CycleDone();
 		resetControllers();
 	}
-	nonBlockingText_CycleDone();
+	_veryFirstInitialCycle = false;
+	artificialDelay_CycleDone();
 	resetControllers();
 
 	screenObjEgo->direction = getVar(VM_VAR_EGO_DIRECTION);
@@ -219,9 +225,10 @@ uint16 AgiEngine::processAGIEvents() {
 		// no inner loop active at the moment, regular processing
 
 		if (key) {
-			setVar(VM_VAR_KEY, key & 0xFF);
 			if (!handleController(key)) {
 				if (key) {
+					// Only set VAR_KEY, when no controller/direction was detected
+					setVar(VM_VAR_KEY, key & 0xFF);
 					if (_text->promptIsEnabled()) {
 						_text->promptKeyPress(key);
 					}
@@ -288,6 +295,8 @@ uint16 AgiEngine::processAGIEvents() {
 
 int AgiEngine::playGame() {
 	int ec = errOK;
+	const AgiAppleIIgsDelayOverwriteGameEntry *appleIIgsDelayOverwrite = nullptr;
+	const AgiAppleIIgsDelayOverwriteRoomEntry *appleIIgsDelayRoomOverwrite = nullptr;
 
 	debugC(2, kDebugLevelMain, "initializing...");
 	debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
@@ -306,7 +315,7 @@ int AgiEngine::playGame() {
 	setFlag(VM_FLAG_LOGIC_ZERO_FIRST_TIME, true); // not in 2.917
 	setFlag(VM_FLAG_NEW_ROOM_EXEC, true);         // needed for MUMG and SQ2!
 	setFlag(VM_FLAG_SOUND_ON, true);              // enable sound
-	setVar(VM_VAR_TIME_DELAY, 2);                 // "normal" speed
+	// do not set VM_VAR_TIME_DELAY, original AGI did not do it (in the data segment it was simply set to 0)
 
 	_game.gfxMode = true;
 	_text->promptRow_Set(22);
@@ -335,7 +344,17 @@ int AgiEngine::playGame() {
 		}
 	}
 
-	nonBlockingText_Forget();
+	artificialDelay_Reset();
+
+	if (getPlatform() == Common::kPlatformApple2GS) {
+		// Look up, if there is a time delay overwrite table for the current game
+		appleIIgsDelayOverwrite = appleIIgsDelayOverwriteGameTable;
+		while (appleIIgsDelayOverwrite->gameId != GID_AGIDEMO) {
+			if (appleIIgsDelayOverwrite->gameId == getGameID())
+				break; // game found
+			appleIIgsDelayOverwrite++;
+		}
+	}
 
 	do {
 		processAGIEvents();
@@ -352,9 +371,72 @@ int AgiEngine::playGame() {
 			// Normally that game runs at TIME_DELAY 1.
 			// Maybe a script patch for this game would make sense.
 			// TODO: needs further investigation
+
+			int16 timeDelayOverwrite = -99;
+
+			// Now check, if we got a time delay overwrite entry for current room
+			if (appleIIgsDelayOverwrite->roomTable) {
+				byte curRoom = getVar(VM_VAR_CURRENT_ROOM);
+				int16 curPictureNr = _picture->getResourceNr();
+
+				appleIIgsDelayRoomOverwrite = appleIIgsDelayOverwrite->roomTable;
+				while (appleIIgsDelayRoomOverwrite->fromRoom >= 0) {
+					if ((appleIIgsDelayRoomOverwrite->fromRoom <= curRoom) && (appleIIgsDelayRoomOverwrite->toRoom >= curRoom)) {
+						if ((appleIIgsDelayRoomOverwrite->activePictureNr == curPictureNr) || (appleIIgsDelayRoomOverwrite->activePictureNr == -1)) {
+							if (appleIIgsDelayRoomOverwrite->onlyWhenPlayerNotInControl) {
+								if (_game.playerControl) {
+									// Player is actually currently in control? -> then skip this entry
+									appleIIgsDelayRoomOverwrite++;
+									continue;
+								}
+							}
+							timeDelayOverwrite = appleIIgsDelayRoomOverwrite->timeDelayOverwrite;
+							break;
+						}
+					}
+					appleIIgsDelayRoomOverwrite++;
+				}
+
+				if (timeDelayOverwrite == -99) {
+					// use default time delay in case no room specific one was found
+					timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
+				}
+			} else {
+				timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
+			}
+
+			if (timeDelayOverwrite >= 0) {
+				if (timeDelayOverwrite != timeDelay) {
+					// delayOverwrite is not the same as the delay taken from the scripts? overwrite it
+					//warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
+
+					setVar(VM_VAR_TIME_DELAY, timeDelayOverwrite - 1); // adjust for Apple IIgs
+					timeDelay = timeDelayOverwrite;
+				}
+			}
 		}
 
+		// Increment the delay value by one, so that we wait for at least 1 cycle
+		// In Original AGI 1 cycle was 50 milliseconds, so 20 frames per second
+		// So TIME_DELAY 1 resulted in around 20 frames per second
+		//               2 resulted in around 10 frames per second
+		//               0 however resulted in no limits at all, so the game ran as fast as possible
+		// We obviously do not want the game to run as fast as possible, so we will use 40 frames per second instead.
+		timeDelay = timeDelay * 2;
+		if (!timeDelay)
+			timeDelay = 1;
+
+		// Our cycle counter runs at 25 milliseconds.
+		// So time delay has to be 1 for the originally unlimited speed - for our 40 fps
+		//                         2 for 20 frames per second
+		//                         4 for 10 frames per second
+		//                         and so on.
+
 		if (_passedPlayTimeCycles >= timeDelay) {
+			// code to check for executed cycles
+			// TimeDate time;
+			// g_system->getTimeAndDate(time);
+			// warning("cycle %d", time.tm_sec);
 			inGameTimerResetPassedCycles();
 
 			interpretCycle();
@@ -396,7 +478,7 @@ int AgiEngine::runGame() {
 
 		if (_restartGame) {
 			setFlag(VM_FLAG_RESTART_GAME, true);
-			setVar(VM_VAR_TIME_DELAY, 2);   // "normal" speed
+			// do not set VM_VAR_TIME_DELAY, original AGI did not do it
 
 			// Reset in-game timer
 			inGameTimerReset();
@@ -438,7 +520,13 @@ int AgiEngine::runGame() {
 			break;
 		case Common::kRenderHercA:
 		case Common::kRenderHercG:
-			setVar(VM_VAR_MONITOR, kAgiMonitorHercules);
+			// Set EGA for now. Some games place text differently, when this is set to kAgiMonitorHercules.
+			// Text placement was different for Hercules rendering (16x12 instead of 16x16). There also was
+			// not enough space left for the prompt at the bottom. This was caused by the Hercules resolution.
+			// We don't have this restriction and we also support the regular prompt for Hercules mode.
+			// In theory Sierra could have had special Hercules code inside their games.
+			// TODO: check this.
+			setVar(VM_VAR_MONITOR, kAgiMonitorEga);
 			break;
 		// Don't know if Amiga AGI games use a different value than kAgiMonitorEga
 		// for vMonitor so I just use kAgiMonitorEga for them (As was done before too).

@@ -20,20 +20,15 @@
  *
  */
 
-#ifndef DREAMWEB_H
-#define DREAMWEB_H
+#ifndef DREAMWEB_DREAMWEB_H
+#define DREAMWEB_DREAMWEB_H
 
 #include "common/error.h"
-#include "common/file.h"
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/rect.h"
-#include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
 
 #include "engines/engine.h"
 
@@ -44,6 +39,10 @@
 #define SCUMMVM_HEADER MKTAG('S', 'C', 'V', 'M')
 #define SCUMMVM_BLOCK_MAGIC_SIZE 0x1234
 #define SAVEGAME_VERSION 1
+
+namespace Common {
+class File;
+}
 
 namespace DreamWeb {
 

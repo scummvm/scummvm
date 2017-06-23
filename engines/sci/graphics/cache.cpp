@@ -95,15 +95,21 @@ int16 GfxCache::kernelViewGetCelHeight(GuiResourceId viewId, int16 loopNo, int16
 }
 
 int16 GfxCache::kernelViewGetLoopCount(GuiResourceId viewId) {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		return CelObjView::getNumLoops(viewId);
+	}
+#endif
 	return getView(viewId)->getLoopCount();
 }
 
 int16 GfxCache::kernelViewGetCelCount(GuiResourceId viewId, int16 loopNo) {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		return CelObjView::getNumCels(viewId, loopNo);
+	}
+#endif
 	return getView(viewId)->getCelCount(loopNo);
-}
-
-byte GfxCache::kernelViewGetColorAtCoordinate(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 x, int16 y) {
-	return getView(viewId)->getColorAtCoordinate(loopNo, celNo, x, y);
 }
 
 } // End of namespace Sci

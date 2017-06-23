@@ -218,7 +218,7 @@ void Animation::drawFrameWithMask(Graphics::Surface &surface, int32 frame, int16
 
 void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 frame, int16 xx, int16 yy, int32 zz, Picture *mask, int32 scale) {
 	debugC(5, kDebugAnim, "drawFrameWithMaskAndScale(surface, %d, %d, %d, %d, mask, %d)", frame, xx, yy, zz, scale);
-	
+
 	int16 dataFrame = frame;
 
 	if (_frames[frame]._ref != -1)

@@ -41,9 +41,16 @@ cecho ()	# Color-echo. Argument $1 = message, Argument $2 = color
 {
 	local default_msg="No message passed."   # Doesn't really need to be a local variable.
 	message=${1:-$default_msg}               # Defaults to default message.
-	color=${2:-$black}                       # Defaults to black, if not specified.
-	echo -e "$color$message"
-	tput sgr0                                # Reset to normal.
+
+	# We only output colors when stdout is outputting to a terminal.
+	# This avoids color codes being output in log files created on buildbot.
+	if [ -t 1 -a -n "$TERM" ]; then
+		color=${2:-$black}                       # Defaults to black, if not specified.
+		echo -e "$color$message"
+		tput -T"$TERM" sgr0                      # Reset to normal.
+	else
+		echo "$message"
+	fi
 	return
 } 
 

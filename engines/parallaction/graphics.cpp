@@ -743,6 +743,8 @@ Gfx::Gfx(Parallaction* vm) :
 	_nextProjectorPos = 0;
 	_hbCircleRadius = 0;
 
+	_overlayMode = false;
+
 	_unpackedBitmap = new byte[MAXIMUM_UNPACKED_BITMAP_SIZE];
 	assert(_unpackedBitmap);
 

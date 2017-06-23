@@ -50,7 +50,7 @@ private:
 	 * Show the ScummVM Save Game dialog
 	 */
 	void showScummVMSaveDialog();
-	
+
 	/**
 	 * Show the ScummVM Load Game dialog
 	 */

@@ -185,16 +185,24 @@ void CampScene::mWhileDoOpen() {
 	_vm->_numAnimTimers = 0;
 	_vm->_images.clear();
 
-	if (_vm->_conversation == 2) {
-		// Cutscene at end of Chapter 6
-		Resource *spriteData = _vm->_files->loadFile(28, 37);
-		_vm->_objectsTable[28] = new SpriteResource(_vm, spriteData);
-		delete spriteData;
+	if (_vm->isCD()) {
+		if (_vm->_conversation == 2) {
+			// Cutscene at end of Chapter 6
+			Resource *spriteData = _vm->_files->loadFile(28, 37);
+			_vm->_objectsTable[28] = new SpriteResource(_vm, spriteData);
+			delete spriteData;
 
-		_vm->_animation->freeAnimationData();
-		animResource = _vm->_files->loadFile(28, 38);
-		_vm->_animation->loadAnimations(animResource);
-		delete animResource;
+			_vm->_animation->freeAnimationData();
+			animResource = _vm->_files->loadFile(28, 38);
+			_vm->_animation->loadAnimations(animResource);
+			delete animResource;
+		}
+	} else {
+		_vm->freeCells();
+		_vm->_oldRects.clear();
+		_vm->_newRects.clear();
+		_vm->_numAnimTimers = 0;
+		_vm->_images.clear();
 	}
 }
 
@@ -1325,7 +1333,7 @@ void Cast::doCast(int param1) {
 		for (int idx = 0; idx < 5 && !_vm->shouldQuit() &&
 				!_vm->_events->isKeyMousePressed(); ++idx)
 			_vm->_events->pollEventsAndWait();
-		
+
 		if (_vm->_events->isKeyMousePressed())
 			break;
 
@@ -1674,7 +1682,7 @@ void River::updateObstacles() {
 
 void River::riverSetPhysX() {
 	int xAmt = (_vm->_scrollCol * 16) + _vm->_scrollX;
-	
+
 	for (RiverStruct *cur = _topList; cur <= _botList; ++cur) {
 		cur->_xp = xAmt - (_screenVertX - cur->_riverX);
 	}

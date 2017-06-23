@@ -568,6 +568,8 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
+	void setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp);
+
 private:
 	class VMDVideoTrack : public FixedRateVideoTrack {
 	public:

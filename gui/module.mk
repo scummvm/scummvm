@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	console.o \
 	debugger.o \
 	dialog.o \
+	editgamedialog.o \
 	error.o \
 	EventRecorder.o \
 	filebrowser-dialog.o \
@@ -24,12 +25,16 @@ MODULE_OBJS := \
 	ThemeLayout.o \
 	ThemeParser.o \
 	Tooltip.o \
+	animation/Animation.o \
+	animation/RepeatAnimationWrapper.o \
+	animation/SequenceAnimationComposite.o \
 	widget.o \
 	widgets/editable.o \
 	widgets/edittext.o \
 	widgets/list.o \
 	widgets/popup.o \
 	widgets/scrollbar.o \
+	widgets/scrollcontainer.o \
 	widgets/tab.o
 
 # HACK: create_project's XCode generator relies on the following ifdef
@@ -53,6 +58,15 @@ MODULE_OBJS += \
 endif
 endif
 
+ifdef USE_CLOUD
+ifdef USE_LIBCURL
+MODULE_OBJS += \
+	downloaddialog.o \
+	remotebrowser.o \
+	storagewizarddialog.o
+endif
+endif
+
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \
 	editrecorddialog.o \
@@ -63,6 +77,11 @@ endif
 ifdef USE_FLUIDSYNTH
 MODULE_OBJS += \
 	fluidsynth-dialog.o
+endif
+
+ifdef USE_UPDATES
+MODULE_OBJS += \
+	updates-dialog.o
 endif
 
 # Include common rules

@@ -38,6 +38,7 @@
  *  - sherlock
  *  - sword1
  *  - sword2
+ *	- titanic
  *  - tony
  *  - tucker
  *  - wintermute
@@ -56,7 +57,7 @@ class SeekableReadStream;
 
 namespace Audio {
 
-class RewindableAudioStream;
+class SeekableAudioStream;
 
 /**
  * Try to load a WAVE from the given seekable stream. Returns true if
@@ -82,9 +83,9 @@ extern bool loadWAVFromStream(
  *
  * @param stream			the SeekableReadStream from which to read the WAVE data
  * @param disposeAfterUse	whether to delete the stream after use
- * @return	a new RewindableAudioStream, or NULL, if an error occurred
+ * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeWAVStream(
+SeekableAudioStream *makeWAVStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 

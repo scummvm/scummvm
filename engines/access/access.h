@@ -156,8 +156,8 @@ public:
 	MusicManager *_midi;
 	VideoPlayer *_video;
 
-	ASurface *_destIn;
-	ASurface *_current;
+	BaseSurface *_destIn;
+	BaseSurface *_current;
 	ASurface _buffer1;
 	ASurface _buffer2;
 	ASurface _vidBuf;
@@ -280,8 +280,8 @@ public:
 	/**
 	 * Draw a string on a given surface and update text positioning
 	 */
-	void printText(ASurface *s, const Common::String &msg);
-	void speakText(ASurface *s, const Common::String &msg);
+	void printText(BaseSurface *s, const Common::String &msg);
+	void speakText(BaseSurface *s, const Common::String &msg);
 
 	/**
 	 * Load a savegame

@@ -980,12 +980,12 @@ bool DrasculaEngine::room_59(int fl) {
 			playSound(12);
 			pause(19);
 			stopSound();
-			hare_se_ve = 0;
+			characterVisible = 0;
 			updateRoom();
 			copyRect(101, 34, curX - 4, curY - 1, 37, 70, drawSurface3, screenSurface);
 			copyBackground(0, 0, 0, 0, 320, 200, screenSurface, bgSurface);
 			updateScreen();
-			hare_se_ve = 1;
+			characterVisible = 1;
 			clearRoom();
 			loadPic("tlef0.alg", bgSurface, COMPLETE_PAL);
 			loadPic("tlef1.alg", drawSurface3);
@@ -1399,7 +1399,7 @@ void DrasculaEngine::update_58_pre() {
 }
 
 void DrasculaEngine::update_58() {
-	if (hare_se_ve == 1)
+	if (characterVisible == 1)
 		copyRect(67, 139, 140, 147, 12, 16, drawSurface3, screenSurface);
 }
 
@@ -1845,7 +1845,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	}
 
 	if (currentChapter == 5)
-		hare_se_ve = 1;
+		characterVisible = 1;
 
 	updateVisible();
 
@@ -1885,7 +1885,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	if (currentChapter == 5) {
 		if (_roomNumber == 45)
-			hare_se_ve = 0;
+			characterVisible = 0;
 		if (_roomNumber == 49 && flags[7] == 0) {
 			playTalkSequence(4);	// sequence 4, chapter 5
 		}
@@ -1961,7 +1961,7 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 		}
 
 		if (currentChapter == 5)
-			hare_se_ve = 1;
+			characterVisible = 1;
 
 		clearRoom();
 		if (!sscanf(_targetSurface[doorNumber], "%d", &roomNum)) {

@@ -35,10 +35,10 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
-#include "audio/mididrv.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/mods/rjp1.h"
 
 #define	SB_HEADER_SIZE_V104 110
 #define	SB_HEADER_SIZE_V110 122

@@ -350,6 +350,11 @@ class Actor_v0 : public Actor_v2 {
 public:
 	Common::Point _CurrentWalkTo, _NewWalkTo;
 
+	Common::Array<byte> _walkboxHistory;
+
+	byte _walkboxQueue[0x10];
+	byte _walkboxQueueIndex;
+
 	byte _costCommandNew;
 	byte _costCommand;
 	byte _miscflags;
@@ -380,6 +385,12 @@ public:
 
 	bool _limb_flipped[8];
 
+private:
+
+	bool walkBoxQueueAdd(int box);
+	bool walkBoxQueueFind(int box);
+	void walkboxQueueReverse();
+
 public:
 	Actor_v0(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
 
@@ -400,6 +411,9 @@ public:
 	byte actorWalkX();
 	byte actorWalkY();
 	byte updateWalkbox();
+
+	void walkBoxQueueReset();
+	bool walkBoxQueuePrepare();
 
 	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
 	AdjustBoxResult adjustPosInBorderWalkbox(AdjustBoxResult box);

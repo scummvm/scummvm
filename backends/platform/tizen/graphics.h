@@ -63,6 +63,8 @@ protected:
 
 	void refreshScreen();
 
+	void *getProcAddress(const char *name) const;
+
 	const Graphics::Font *getFontOSD();
 
 private:

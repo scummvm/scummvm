@@ -25,13 +25,17 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "sci/sci.h"
+#include "sci/graphics/helpers.h"
+#include "sci/util.h"
 
 namespace Sci {
 
-#define SCI_CURSOR_SCI0_HEIGHTWIDTH 16
-#define SCI_CURSOR_SCI0_RESOURCESIZE 68
-
-#define SCI_CURSOR_SCI0_TRANSPARENCYCOLOR 1
+enum {
+	SCI_CURSOR_SCI0_HEIGHTWIDTH = 16,
+	SCI_CURSOR_SCI0_RESOURCESIZE = 68,
+	SCI_CURSOR_SCI0_TRANSPARENCYCOLOR = 1
+};
 
 class GfxView;
 class GfxPalette;
@@ -53,7 +57,7 @@ public:
 	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
 	~GfxCursor();
 
-	void init(GfxCoordAdjuster *coordAdjuster, EventManager *event);
+	void init(GfxCoordAdjuster16 *coordAdjuster, EventManager *event);
 
 	void kernelShow();
 	void kernelHide();
@@ -77,13 +81,21 @@ public:
 	 */
 	void kernelSetMoveZone(Common::Rect zone);
 
-	void kernelClearZoomZone();
+	/**
+	 * Creates a dynamic zoom cursor, that is used to zoom on specific parts of the screen,
+	 * using a separate larger picture. This was only used by two SCI1.1 games, Laura Bow 2
+	 * (for examining the glyphs), and Freddy Pharkas (for examining the prescription with
+	 * the whisky glass).
+	 *
+	 * In the Mac version of Freddy Pharkas, this was removed completely, and the scene has
+	 * been redesigned to work without this functionality. There was no version of LB2 for
+	 * the Macintosh platform.
+	 */
 	void kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor);
+	void kernelClearZoomZone();
 
 	void kernelSetPos(Common::Point pos);
 	void kernelMoveCursor(Common::Point pos);
-
-	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
 
 private:
 	void purgeCache();
@@ -91,7 +103,7 @@ private:
 	ResourceManager *_resMan;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
-	GfxCoordAdjuster *_coordAdjuster;
+	GfxCoordAdjuster16 *_coordAdjuster;
 	EventManager *_event;
 
 	int _upscaledHires;
@@ -107,7 +119,7 @@ private:
 	GfxView *_zoomPicView;
 	byte _zoomColor;
 	byte _zoomMultiplier;
-	byte *_cursorSurface;
+	Common::SpanOwner<SciSpan<byte> > _cursorSurface;
 
 	CursorCache _cachedCursors;
 
@@ -124,9 +136,6 @@ private:
 	// these instead and replace the game's gold cursors with their silver
 	// equivalents.
 	bool _useSilverSQ4CDCursors;
-
-	// Mac versions of games use a remap list to remap their cursors
-	Common::Array<uint16> _macCursorRemap;
 };
 
 } // End of namespace Sci

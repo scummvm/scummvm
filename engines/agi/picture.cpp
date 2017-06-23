@@ -44,6 +44,8 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_minCommand = 0xf0;
 	_flags = 0;
 	_currentStep = 0;
+
+	_width = _height = 0;
 }
 
 void PictureMgr::putVirtPixel(int x, int y) {
@@ -394,9 +396,6 @@ void PictureMgr::drawPictureC64() {
 			_patCode = getNextByte();
 			plotBrush();
 			break;
-		case 0xfb:
-			draw_LineShort();
-			break;
 		case 0xff: // end of data
 			return;
 		default:
@@ -432,6 +431,9 @@ void PictureMgr::drawPictureV1() {
 			draw_LineAbsolute();
 			_scrOn = true;
 			_priOn = false;
+			break;
+		case 0xfb:
+			draw_LineShort();
 			break;
 		case 0xff: // end of data
 			return;
@@ -1001,7 +1003,7 @@ void PictureMgr::clear() {
 void PictureMgr::showPic() {
 	debugC(8, kDebugLevelMain, "Show picture!");
 
-	_gfx->render_Block(0, 167, SCRIPT_WIDTH, SCRIPT_HEIGHT);
+	_gfx->render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT);
 }
 
 /**
@@ -1014,8 +1016,7 @@ void PictureMgr::showPic(int16 x, int16 y, int16 pic_width, int16 pic_height) {
 
 	debugC(8, kDebugLevelMain, "Show picture!");
 
-	// render block requires lower left coordinate!
-	_gfx->render_Block(x, pic_height + y - 1, pic_width, pic_height);
+	_gfx->render_Block(x, y, pic_width, pic_height);
 }
 
 void PictureMgr::showPicWithTransition() {
@@ -1038,13 +1039,13 @@ void PictureMgr::showPicWithTransition() {
 		case Common::kRenderAmiga:
 		case Common::kRenderApple2GS:
 			// Platform Amiga/Apple II GS -> render and do Amiga transition
-			_gfx->render_Block(0, 167, SCRIPT_WIDTH, SCRIPT_HEIGHT, false);
+			_gfx->render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT, false);
 			_gfx->transition_Amiga();
 			return;
 			break;
 		case Common::kRenderAtariST:
 			// Platform Atari ST used a different transition, looks "high-res" (full 320x168)
-			_gfx->render_Block(0, 167, SCRIPT_WIDTH, SCRIPT_HEIGHT, false);
+			_gfx->render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT, false);
 			_gfx->transition_AtariSt();
 			return;
 		default:
@@ -1054,7 +1055,7 @@ void PictureMgr::showPicWithTransition() {
 		}
 	}
 
-	_gfx->render_Block(0, 167, SCRIPT_WIDTH, SCRIPT_HEIGHT);
+	_gfx->render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT);
 }
 
 // preagi needed functions (for plotPattern)

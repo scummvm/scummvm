@@ -102,7 +102,7 @@ void Darts::playDarts() {
 			score -= lastDart;
 			_roundScore += lastDart;
 
-			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(DART_INFO_X, DART_INFO_Y - 1),
+			screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(DART_INFO_X, DART_INFO_Y - 1),
 				Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			screen.print(Common::Point(DART_INFO_X, DART_INFO_Y), DART_COL_FORE, "Dart # %d", idx + 1);
 			screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 10), DART_COL_FORE, "Scored %d points", lastDart);
@@ -154,7 +154,7 @@ void Darts::playDarts() {
 				events.wait(20);
 			}
 
-			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(DART_INFO_X, DART_INFO_Y - 1),
+			screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(DART_INFO_X, DART_INFO_Y - 1),
 				Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 		}
@@ -166,8 +166,8 @@ void Darts::playDarts() {
 		done |= _vm->shouldQuit();
 
 		if (!done) {
-			screen._backBuffer2.blitFrom((*_dartImages)[0], Common::Point(0, 0));
-			screen._backBuffer1.blitFrom(screen._backBuffer2);
+			screen._backBuffer2.SHblitFrom((*_dartImages)[0], Common::Point(0, 0));
+			screen._backBuffer1.SHblitFrom(screen._backBuffer2);
 			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 		}
 	} while (!done);
@@ -185,7 +185,7 @@ void Darts::loadDarts() {
 	_dartImages = new ImageFile("darts.vgs");
 	screen.setPalette(_dartImages->_palette);
 
-	screen._backBuffer1.blitFrom((*_dartImages)[0], Common::Point(0, 0));
+	screen._backBuffer1.SHblitFrom((*_dartImages)[0], Common::Point(0, 0));
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
@@ -245,7 +245,7 @@ void Darts::showNames(int playerNum) {
 	screen.slamArea(STATUS_INFO_X + 50, STATUS_INFO_Y + 10, 81, 12);
 
 	// Make a copy of the back buffer to the secondary one
-	screen._backBuffer2.blitFrom(screen._backBuffer1);
+	screen._backBuffer2.SHblitFrom(screen._backBuffer1);
 }
 
 void Darts::showStatus(int playerNum) {
@@ -253,7 +253,7 @@ void Darts::showStatus(int playerNum) {
 	byte color;
 
 	// Copy scoring screen from secondary back buffer. This will erase any previously displayed status/score info
-	screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 10),
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 10),
 		Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, SHERLOCK_SCREEN_WIDTH, STATUS_INFO_Y + 48));
 
 	color = (playerNum == 0) ? PLAYER_COLOR : DART_COL_FORE;
@@ -292,7 +292,7 @@ int Darts::throwDart(int dartNum, int computer) {
 	if (_vm->shouldQuit())
 		return 0;
 
-	screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(DART_INFO_X, DART_INFO_Y - 1),
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(DART_INFO_X, DART_INFO_Y - 1),
 		Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 	screen.slamRect(Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
@@ -309,9 +309,9 @@ int Darts::throwDart(int dartNum, int computer) {
 
 	// Copy the bars to the secondary back buffer so that they remain fixed at their selected values
 	// whilst the dart is being animated at being thrown at the board
-	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(DARTBARHX - 1, DARTHORIZY - 1),
+	screen._backBuffer2.SHblitFrom(screen._backBuffer1, Common::Point(DARTBARHX - 1, DARTHORIZY - 1),
 		Common::Rect(DARTBARHX - 1, DARTHORIZY - 1, DARTBARHX + DARTBARSIZE + 3, DARTHORIZY + 10));
-	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(DARTBARVX - 1, DARTHEIGHTY - 1),
+	screen._backBuffer2.SHblitFrom(screen._backBuffer1, Common::Point(DARTBARVX - 1, DARTHEIGHTY - 1),
 		Common::Rect(DARTBARVX - 1, DARTHEIGHTY - 1, DARTBARVX + 11, DARTHEIGHTY + DARTBARSIZE + 3));
 
 	// Convert height and width to relative range of -50 to 50, where 0,0 is the exact centre of the board
@@ -344,7 +344,7 @@ void Darts::drawDartThrow(const Common::Point &pt) {
 
 		// Draw the dart
 		Common::Point drawPos(pos.x - frame._width / 2, pos.y - frame._height);
-		screen._backBuffer1.transBlitFrom(frame, drawPos);
+		screen._backBuffer1.SHtransBlitFrom(frame, drawPos);
 		screen.slamArea(drawPos.x, drawPos.y, frame._width, frame._height);
 
 		// Handle erasing old dart frame area
@@ -352,14 +352,14 @@ void Darts::drawDartThrow(const Common::Point &pt) {
 			screen.slamRect(oldDrawBounds);
 
 		oldDrawBounds = Common::Rect(drawPos.x, drawPos.y, drawPos.x + frame._width, drawPos.y + frame._height);
-		screen._backBuffer1.blitFrom(screen._backBuffer2, drawPos, oldDrawBounds);
+		screen._backBuffer1.SHblitFrom(screen._backBuffer2, drawPos, oldDrawBounds);
 
 		events.wait(2);
 	}
 
 	// Draw dart in final "stuck to board" form
-	screen._backBuffer1.transBlitFrom((*_dartImages)[22], Common::Point(oldDrawBounds.left, oldDrawBounds.top));
-	screen._backBuffer2.transBlitFrom((*_dartImages)[22], Common::Point(oldDrawBounds.left, oldDrawBounds.top));
+	screen._backBuffer1.SHtransBlitFrom((*_dartImages)[22], Common::Point(oldDrawBounds.left, oldDrawBounds.top));
+	screen._backBuffer2.SHtransBlitFrom((*_dartImages)[22], Common::Point(oldDrawBounds.left, oldDrawBounds.top));
 	screen.slamRect(oldDrawBounds);
 }
 
@@ -368,8 +368,8 @@ void Darts::erasePowerBars() {
 
 	screen._backBuffer1.fillRect(Common::Rect(DARTBARHX, DARTHORIZY, DARTBARHX + DARTBARSIZE, DARTHORIZY + 10), BLACK);
 	screen._backBuffer1.fillRect(Common::Rect(DARTBARVX, DARTHEIGHTY, DARTBARVX + 10, DARTHEIGHTY + DARTBARSIZE), BLACK);
-	screen._backBuffer1.transBlitFrom((*_dartImages)[2], Common::Point(DARTBARHX - 1, DARTHORIZY - 1));
-	screen._backBuffer1.transBlitFrom((*_dartImages)[3], Common::Point(DARTBARVX - 1, DARTHEIGHTY - 1));
+	screen._backBuffer1.SHtransBlitFrom((*_dartImages)[2], Common::Point(DARTBARHX - 1, DARTHORIZY - 1));
+	screen._backBuffer1.SHtransBlitFrom((*_dartImages)[3], Common::Point(DARTBARVX - 1, DARTHEIGHTY - 1));
 	screen.slamArea(DARTBARHX - 1, DARTHORIZY - 1, DARTBARSIZE + 3, 11);
 	screen.slamArea(DARTBARVX - 1, DARTHEIGHTY - 1, 11, DARTBARSIZE + 3);
 }
@@ -398,17 +398,17 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 
 		if (isVertical) {
 			screen._backBuffer1.hLine(pt.x, pt.y + DARTBARSIZE - 1 - idx, pt.x + 8, color);
-			screen._backBuffer1.transBlitFrom((*_dartImages)[3], Common::Point(pt.x - 1, pt.y - 1));
+			screen._backBuffer1.SHtransBlitFrom((*_dartImages)[3], Common::Point(pt.x - 1, pt.y - 1));
 			screen.slamArea(pt.x, pt.y + DARTBARSIZE - 1 - idx, 8, 2);
 		} else {
 			screen._backBuffer1.vLine(pt.x + idx, pt.y, pt.y + 8, color);
-			screen._backBuffer1.transBlitFrom((*_dartImages)[2], Common::Point(pt.x - 1, pt.y - 1));
+			screen._backBuffer1.SHtransBlitFrom((*_dartImages)[2], Common::Point(pt.x - 1, pt.y - 1));
 			screen.slamArea(pt.x + idx, pt.y, 1, 8);
 		}
 
 		if (!(idx % 8))
 			events.wait(1);
-	
+
 		++idx;
 	} while (!done);
 

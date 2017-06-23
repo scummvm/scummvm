@@ -68,6 +68,11 @@ enum AlphaType {
 	ALPHA_FULL = 2
 };
 
+enum TFilteringMode {
+	FILTER_NEAREST = 0,
+	FILTER_BILINEAR = 1
+};
+
 /**
  * A transparent graphics surface, which implements alpha blitting.
  */
@@ -123,6 +128,14 @@ struct TransparentSurface : public Graphics::Surface {
 	                  uint color = TS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
 	                  TSpriteBlendMode blend = BLEND_NORMAL);
+	Common::Rect blitClip(Graphics::Surface &target, Common::Rect clippingArea,
+						int posX = 0, int posY = 0,
+						int flipping = FLIP_NONE,
+						Common::Rect *pPartRect = nullptr,
+						uint color = TS_ARGB(255, 255, 255, 255),
+						int width = -1, int height = -1,
+						TSpriteBlendMode blend = BLEND_NORMAL);
+
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 
 	/**
@@ -133,8 +146,10 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @param newHeight the resulting height.
 	 * @see TransformStruct
 	 */
-	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
+	template <TFilteringMode filteringMode>
+	TransparentSurface *scaleT(uint16 newWidth, uint16 newHeight) const;
 
+	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 	/**
 	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and
 	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
@@ -142,7 +157,20 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
 	 *
 	 */
+	template <TFilteringMode filteringMode>
+	TransparentSurface *rotoscaleT(const TransformStruct &transform) const;
+
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
+
+	TransparentSurface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
+
+	float getRatio() {
+		if (!w)
+			return 0;
+
+		return h / (float)w;
+	}
+
 	AlphaType getAlphaMode() const;
 	void setAlphaMode(AlphaType);
 private:

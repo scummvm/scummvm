@@ -20,16 +20,13 @@
  *
  */
 
-#include "agos/agos.h"
 #include "agos/drivers/accolade/mididriver.h"
 
-#include "common/file.h"
-#include "common/mutex.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
 #include "audio/fmopl.h"
-#include "audio/softsynth/emumidi.h"
+#include "audio/mididrv.h"
 
 namespace AGOS {
 

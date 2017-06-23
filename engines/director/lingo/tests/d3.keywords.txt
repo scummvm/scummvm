@@ -1,0 +1,264 @@
+
+ -
+ -
+()
+*
+/
+&
+&&
++
+<
+<=
+<>
+=
+>
+>=
+abs
+alert
+and
+backColor
+BACKSPACE
+beep
+beepOn
+bottom
+buttonStyle
+cast hilite
+cast name
+cast number
+cast picture
+cast size
+cast text
+castNum
+centerStage
+char
+chars
+charToNum
+checkBoxAccess
+checkBoxType
+clearGlobals
+clickOn
+closeDA
+closeResFile
+closeXLib
+colorDepth
+colorQD
+commandDown
+constrainH
+constraint
+constrainV
+contains
+continue
+controlDown
+controller
+cursor
+cursor
+date
+delay
+delete
+directToStage
+do
+dontPassEvent
+doubleClick
+duration
+editableText
+EMPTY
+ENTER
+exit
+exitLock
+factory
+factory
+FALSE
+field
+field textAlign
+field textFont
+field textHeight
+field textSize
+field textStyle
+fixStageSize
+floatp
+floatPrecision
+foreColor
+frame
+framesToHMS
+freeBlock
+freeBytes
+fullColorPermit
+global
+go to
+go to movie
+height
+hilite
+HMStoFrames
+if
+imageDirect
+immediate
+ink
+installMenu
+instance
+integer
+integerp
+item
+key
+keyCode
+keyDownScript
+label
+labelList
+lastClick
+lastEvent
+lastKey
+lastRoll
+left
+length
+line
+lineSize
+locH
+locV
+loop
+machineType
+macro
+marker
+maxInteger
+mci
+memorySize
+menu checkMark
+menu enabled
+menu name
+menu script
+menu:
+method
+mod
+mouseCast
+mouseChar
+mouseDown
+mouseDownScript
+mouseH
+mouseItem
+mouseLine
+mouseUp
+mouseUpScript
+mouseV
+mouseWord
+moveableSprite
+movie
+movieRate
+movieTime
+multiSound
+not
+nothing
+numToChar
+objectp
+offset
+on
+on idle
+on startMovie
+on stepMovie
+on stopMovie
+open
+openDA
+openResFile
+openXLib
+optionDown
+or
+pathName
+pattern
+pause
+pauseState
+perFrameHook
+play
+play done
+play movie
+playAccel
+preLoad
+preLoadCast
+printFrom
+puppet
+puppetPalette
+puppetSound
+puppetSprite
+puppetTempo
+puppetTransition
+put
+put after
+put before
+put into
+quickTimePresent
+quit
+QUOTE
+ramNeeded
+random
+repeat while
+repeat with
+restart
+result
+return
+RETURN
+right
+rollover
+romanLingo
+selection
+selEnd
+selStart
+set
+setCallBack
+shiftDown
+showGlobals
+showLocals
+showResFile
+showXlib
+shutDown
+sound
+sound fadeIn
+sound fadeOut
+sound playFile
+sound stop
+sound volume
+soundBusy
+soundEnabled
+soundLevel
+sprite s intersects
+sprite s within
+spriteBox
+sqrt
+stageBottom
+stageColor
+stageLeft
+stageRight
+stageTop
+starts
+startTime
+startTimer
+stillDown
+stopTime
+stretch
+string
+stringp
+switchColorDepth
+symbolp
+TAB
+ticks
+time
+timeoutKeydown
+timeoutLapsed
+timeoutLength
+timeoutMouse
+timeoutPlay
+timeoutScript
+timer
+top
+trails
+TRUE
+type
+unLoad
+unLoadCast
+updateStage
+value
+visibility
+volume
+when keyDown
+when mouseDown
+when mouseUp
+when timeOut
+width
+word
+xfactoryList
+zoomBox

@@ -31,11 +31,10 @@ inline void debug(const char *s, ...) {}
 inline void debug(int level, const char *s, ...) {}
 inline void debugN(const char *s, ...) {}
 inline void debugN(int level, const char *s, ...) {}
-inline void debugC(int level, uint32 engineChannel, const char *s, ...) {}
-inline void debugC(uint32 engineChannel, const char *s, ...) {}
-inline void debugCN(int level, uint32 engineChannel, const char *s, ...) {}
-inline void debugCN(uint32 engineChannel, const char *s, ...) {}
-
+inline void debugC(int level, uint32 debugChannels, const char *s, ...) {}
+inline void debugC(uint32 debugChannels, const char *s, ...) {}
+inline void debugCN(int level, uint32 debugChannels, const char *s, ...) {}
+inline void debugCN(uint32 debugChannels, const char *s, ...) {}
 
 #else
 
@@ -111,12 +110,34 @@ void debugCN(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
 #endif
 
 /**
+ * Returns true if the debug level is set to the specified level
+ */
+bool debugLevelSet(int level);
+
+/**
+ * Returns true if the debug level and channel are active
+ *
+ * @param level debug level to check against. If set to -1, only channel check is active
+ * @see enableDebugChannel
+ */
+bool debugChannelSet(int level, uint32 debugChannels);
+
+/**
  * The debug level. Initially set to -1, indicating that no debug output
  * should be shown. Positive values usually imply an increasing number of
  * debug output shall be generated, the higher the value, the more verbose the
  * information (although the exact semantics are up to the engines).
  */
 extern int gDebugLevel;
+
+/**
+ * Specify if we want to show only the debug channels and suppress
+ * the non-channeled output.
+ *
+ * This option is useful when you want to have higher levels of channels
+ * visible without the noise from other subsystems or OSystem.
+ */
+extern bool gDebugChannelsOnly;
 
 //Global constant for EventRecorder debug channel
 enum GlobalDebugLevels {

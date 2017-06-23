@@ -65,7 +65,8 @@ typedef signed long int int32;
 #undef remove
 #endif
 
-#define SMALL_SCREEN_DEVICE
+#define GUI_ONLY_FULLSCREEN
+#define GUI_ENABLE_KEYSDIALOG
 
 #define DISABLE_COMMAND_LINE
 #define USE_RGB_COLOR

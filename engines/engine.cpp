@@ -223,7 +223,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 			g_system->setGraphicsMode(gfxMode.c_str());
 
 			// HACK: For OpenGL modes, we will still honor the graphics scale override
-			if (defaultTo1XScaler && (gfxMode.equalsIgnoreCase("opengl_linear") || gfxMode.equalsIgnoreCase("opengl_nearest")))
+			if (defaultTo1XScaler && gfxMode.equalsIgnoreCase("opengl"))
 				g_system->resetGraphicsScale();
 		}
 	}
@@ -242,6 +242,10 @@ void initCommonGFX(bool defaultTo1XScaler) {
 	// (De)activate fullscreen mode as determined by the config settings
 	if (gameDomain && gameDomain->contains("fullscreen"))
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+	
+	// (De)activate filtering mode as determined by the config settings
+	if (gameDomain && gameDomain->contains("filtering"))
+		g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 }
 
 // Please leave the splash screen in working order for your releases, even if they're commercial.
@@ -269,8 +273,8 @@ void splashScreen() {
 
 	// Load logo
 	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
-	int lx = (g_system->getOverlayWidth() - logo->w) / 2;
-	int ly = (g_system->getOverlayHeight() - logo->h) / 2;
+	int lx = MAX((g_system->getOverlayWidth() - logo->w) / 2, 0);
+	int ly = MAX((g_system->getOverlayHeight() - logo->h) / 2, 0);
 
 	// Print version information
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
@@ -283,7 +287,10 @@ void splashScreen() {
 	screen.free();
 
 	// Draw logo
-	g_system->copyRectToOverlay(logo->getPixels(), logo->pitch, lx, ly, logo->w, logo->h);
+	int lw = MIN<uint16>(logo->w, g_system->getOverlayWidth() - lx);
+	int lh = MIN<uint16>(logo->h, g_system->getOverlayHeight() - ly);
+
+	g_system->copyRectToOverlay(logo->getPixels(), logo->pitch, lx, ly, lw, lh);
 	logo->free();
 	delete logo;
 
@@ -292,7 +299,7 @@ void splashScreen() {
 	Common::Event event;
 	while (time0 + 600 > g_system->getMillis()) {
 		g_system->updateScreen();
-		g_system->getEventManager()->pollEvent(event);
+		(void)g_system->getEventManager()->pollEvent(event);
 		g_system->delayMillis(10);
 	}
 	g_system->hideOverlay();
@@ -359,6 +366,11 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 
 	if (gfxError & OSystem::kTransactionFullscreenFailed) {
 		GUI::MessageDialog dialog(_("Could not apply fullscreen setting."));
+		dialog.runModal();
+	}
+
+	if (gfxError & OSystem::kTransactionFilteringFailed) {
+		GUI::MessageDialog dialog(_("Could not apply filtering setting."));
 		dialog.runModal();
 	}
 }
@@ -527,7 +539,7 @@ void Engine::openMainMenuDialog() {
 	if (_saveSlotToLoad >= 0) {
 		Common::Error status = loadGameState(_saveSlotToLoad);
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Gamestate load failed (%s)! "
+			Common::String failMessage = Common::String::format(_("Failed to load saved game (%s)! "
 				  "Please consult the README for basic information, and for "
 				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
@@ -542,7 +554,7 @@ bool Engine::warnUserAboutUnsupportedGame() {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
 		GUI::MessageDialog alert(_("WARNING: The game you are about to start is"
 			" not yet fully supported by ScummVM. As such, it is likely to be"
-			" unstable, and any saves you make might not work in future"
+			" unstable, and any saved game you make might not work in future"
 			" versions of ScummVM."), _("Start anyway"), _("Cancel"));
 		return alert.runModal() == GUI::kMessageOK;
 	}

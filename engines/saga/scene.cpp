@@ -969,9 +969,8 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 		case SAGA_OBJECT:
 			break;
 		case SAGA_BG_IMAGE: // Scene background resource
-			if (_bg.loaded) {
+			if (_bg.loaded)
 				error("Scene::processSceneResources() Multiple background resources encountered");
-			}
 
 			debug(3, "Loading background resource.");
 
@@ -987,9 +986,9 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			memcpy(_bg.pal, palPointer, sizeof(_bg.pal));
 			break;
 		case SAGA_BG_MASK: // Scene background mask resource
-			if (_bgMask.loaded) {
+			if (_bgMask.loaded)
 				error("Scene::ProcessSceneResources(): Duplicate background mask resource encountered");
-			}
+
 			debug(3, "Loading BACKGROUND MASK resource.");
 			_vm->decodeBGImage(resourceData, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
 			_bgMask.loaded = true;
@@ -1014,47 +1013,38 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			_actionMap->load(resourceData);
 			break;
 		case SAGA_ISO_IMAGES:
-			if (!(_sceneDescription.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO))
 				error("Scene::ProcessSceneResources(): not Iso mode");
-			}
 
 			debug(3, "Loading isometric images resource.");
 
 			_vm->_isoMap->loadImages(resourceData);
 			break;
 		case SAGA_ISO_MAP:
-			if (!(_sceneDescription.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO))
 				error("Scene::ProcessSceneResources(): not Iso mode");
-			}
 
 			debug(3, "Loading isometric map resource.");
-
 			_vm->_isoMap->loadMap(resourceData);
 			break;
 		case SAGA_ISO_PLATFORMS:
-			if (!(_sceneDescription.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO))
 				error("Scene::ProcessSceneResources(): not Iso mode");
-			}
 
 			debug(3, "Loading isometric platforms resource.");
-
 			_vm->_isoMap->loadPlatforms(resourceData);
 			break;
 		case SAGA_ISO_METATILES:
-			if (!(_sceneDescription.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO))
 				error("Scene::ProcessSceneResources(): not Iso mode");
-			}
 
 			debug(3, "Loading isometric metatiles resource.");
-
 			_vm->_isoMap->loadMetaTiles(resourceData);
 			break;
 		case SAGA_ANIM:
 			{
 				uint16 animId = resource->resourceType - 14;
-
 				debug(3, "Loading animation resource animId=%i", animId);
-
 				_vm->_anim->load(animId, resourceData);
 			}
 			break;
@@ -1063,9 +1053,8 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			loadSceneEntryList(resourceData);
 			break;
 		case SAGA_ISO_MULTI:
-			if (!(_sceneDescription.flags & kSceneFlagISO)) {
+			if (!(_sceneDescription.flags & kSceneFlagISO))
 				error("Scene::ProcessSceneResources(): not Iso mode");
-			}
 
 			debug(3, "Loading isometric multi resource.");
 

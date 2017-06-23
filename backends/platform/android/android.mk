@@ -1,9 +1,9 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-ANDROID_VERSIONCODE = 6
+ANDROID_VERSIONCODE = 16
 
-ANDROID_TARGET_VERSION = 14
+ANDROID_TARGET_VERSION = 23
 
 NDK_BUILD = $(ANDROID_NDK)/ndk-build APP_ABI=$(ABI)
 SDK_ANDROID = $(ANDROID_SDK)/tools/android
@@ -20,6 +20,7 @@ RESOURCES = \
 	$(PATH_BUILD_RES)/layout/main.xml \
 	$(PATH_BUILD_RES)/drawable/scummvm.png \
 	$(PATH_BUILD_RES)/drawable/scummvm_big.png \
+	$(PATH_BUILD_RES)/drawable-xhdpi/leanback_icon.png \
 	$(PATH_BUILD_RES)/drawable-xhdpi/ouya_icon.png
 
 DIST_ANDROID_MK = $(PATH_DIST)/jni/Android.mk

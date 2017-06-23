@@ -103,7 +103,7 @@ void WidgetFoolscap::show() {
 
 	// Set up the window background
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.blitFrom(paperFrame, Common::Point(0, 0));
+	_surface.SHblitFrom(paperFrame, Common::Point(0, 0));
 
 	// If they have already solved the puzzle, put the answer on the graphic
 	if (_vm->readFlags(299)) {
@@ -125,7 +125,7 @@ void WidgetFoolscap::show() {
 	// Show the window
 	summonWindow();
 	ui._menuMode = FOOLSCAP_MODE;
-} 
+}
 
 void WidgetFoolscap::handleEvents() {
 	Events &events = *_vm->_events;
@@ -265,7 +265,7 @@ void WidgetFoolscap::handleKeyboardEvents() {
 void WidgetFoolscap::restoreChar() {
 	Screen &screen = *_vm->_screen;
 	ImageFrame &bgFrame = (*_images)[0];
-	_surface.blitFrom(bgFrame, _cursorPos, Common::Rect(_cursorPos.x, _cursorPos.y,
+	_surface.SHblitFrom(bgFrame, _cursorPos, Common::Rect(_cursorPos.x, _cursorPos.y,
 		_cursorPos.x + screen.widestChar(), _cursorPos.y + screen.fontHeight()));
 }
 

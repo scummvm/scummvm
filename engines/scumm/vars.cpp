@@ -341,6 +341,19 @@ void ScummEngine_v90he::setupScummVars() {
 		VAR_NUM_UNK = 131;
 	}
 }
+
+void ScummEngine_v100he::setupScummVars() {
+	ScummEngine_v90he::setupScummVars();
+
+	if (_game.id == GID_MOONBASE) {
+		VAR_U32_USER_VAR_A = 108;
+		VAR_U32_USER_VAR_B = 109;
+		VAR_U32_USER_VAR_C = 110;
+		VAR_U32_USER_VAR_D = 111;
+		VAR_U32_USER_VAR_E = 112;
+		VAR_U32_USER_VAR_F = 113;
+	}
+}
 #endif
 
 #ifdef ENABLE_SCUMM_7_8

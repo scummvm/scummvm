@@ -34,7 +34,7 @@ class DLObject {
   void *segment, *symtab;
   char *strtab;
   int symbol_cnt;
-  void *dtors_start, *dtors_end;
+  void *dtors_start, *dtors_end, *dso_handle;
 
   void seterror(const char *fmt, ...);
   void unload();

@@ -76,7 +76,7 @@ public:
 
 	void allNotesOff();
 
-	const byte *getMixedData() const { return _mixedData; }
+	const SciSpan<const byte> &getMixedData() const { return *_mixedData; }
 	byte getSongReverb();
 
 	void sendFromScriptToDriver(uint32 midi);
@@ -90,8 +90,8 @@ public:
 protected:
 	void parseNextEvent(EventInfo &info);
 	bool processEvent(const EventInfo &info, bool fireEvents = true);
-	byte *midiMixChannels();
-	byte *midiFilterChannels(int channelMask);
+	void midiMixChannels();
+	void midiFilterChannels(int channelMask);
 	byte midiGetNextChannel(long ticker);
 	void resetStateTracking();
 	void trackState(uint32 midi);
@@ -103,7 +103,7 @@ protected:
 	bool _mainThreadCalled;
 
 	SciVersion _soundVersion;
-	byte *_mixedData;
+	Common::SpanOwner<SciSpan<const byte> > _mixedData;
 	SoundResource::Track *_track;
 	MusicEntry *_pSnd;
 	uint32 _loopTick;

@@ -49,8 +49,8 @@ class Interaction : public CObject {
 	MessageQueue *_messageQueue;
 	int _sceneId;
 	int _field_28;
-	int _flags;
-	char *_actionName;
+	uint _flags;
+	Common::String _actionName;
 
  public:
 	Interaction();

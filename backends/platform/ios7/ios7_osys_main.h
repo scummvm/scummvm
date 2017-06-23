@@ -111,6 +111,10 @@ protected:
 
 	char *_lastErrorMessage;
 
+#ifdef IPHONE_SANDBOXED
+	Common::String _chrootBasePath;
+#endif
+
 public:
 
 	OSystem_iOS7();
@@ -119,6 +123,9 @@ public:
 	static OSystem_iOS7 *sharedInstance();
 
 	virtual void initBackend();
+	
+	virtual void engineInit();
+	virtual void engineDone();
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);

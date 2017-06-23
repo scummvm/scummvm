@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "agi/agi.h"
 #include "agi/font.h"
 #include "agi/text.h"
@@ -31,6 +32,7 @@ GfxFont::GfxFont(AgiBase *vm) {
 
 	_fontData = nullptr;
 	_fontDataAllocated = nullptr;
+	_fontIsHires = false;
 }
 
 GfxFont::~GfxFont() {
@@ -619,52 +621,71 @@ static const uint8 fontData_ExtendedRussian[] = {
 };
 
 void GfxFont::init() {
-	switch (_vm->_renderMode) {
-	case Common::kRenderAmiga:
-		// Try user-file first, if that fails use our internal inaccurate topaz font
-		loadFontScummVMFile("agi-font-amiga.bin");
-		if (!_fontData) {
-			loadFontAmigaPseudoTopaz();
-		}
-		break;
-	case Common::kRenderApple2GS:
-		// Special font, stored in file AGIFONT
-		loadFontAppleIIgs();
-		break;
-	case Common::kRenderAtariST:
-		// TODO: Atari ST uses another font
-		// Seems to be the standard Atari ST 8x8 system font
-		loadFontScummVMFile("agi-font-atarist.bin");
-		if (!_fontData) {
-			loadFontAtariST("agi-font-atarist-system.fnt");
-			if (!_fontData) {
-				// TODO: in case we find a recreation of the font, add it in here
-			}
-		}
-		break;
-	case Common::kRenderCGA:
-	case Common::kRenderEGA:
-	case Common::kRenderVGA:
-		switch (_vm->getGameID()) {
-		case GID_MICKEY:
-			// load mickey mouse font from interpreter file
-			loadFontMickey();
+	if (ConfMan.getBool("herculesfont")) {
+		// User wants, that we use Hercules hires font, try to load it
+		loadFontHercules();
+	} else {
+		switch (_vm->_renderMode) {
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
+			// Render mode is Hercules, we try to load Hercules hires font
+			loadFontHercules();
 			break;
 		default:
-			loadFontScummVMFile("agi-font-dos.bin");
 			break;
 		}
-		break;
-
-	default:
-		break;
 	}
 
 	if (!_fontData) {
-		// no font assigned?
-		// use regular PC-BIOS font (taken from Dos-Box with a few modifications)
-		_fontData = fontData_PCBIOS;
-		debug("AGI: Using PC-BIOS font");
+		switch (_vm->_renderMode) {
+		case Common::kRenderAmiga:
+			// Try user-file first, if that fails use our internal inaccurate topaz font
+			loadFontScummVMFile("agi-font-amiga.bin");
+			if (!_fontData) {
+				loadFontAmigaPseudoTopaz();
+			}
+			break;
+		case Common::kRenderApple2GS:
+			// Special font, stored in file AGIFONT
+			loadFontAppleIIgs();
+			break;
+		case Common::kRenderAtariST:
+			// TODO: Atari ST uses another font
+			// Seems to be the standard Atari ST 8x8 system font
+			loadFontScummVMFile("agi-font-atarist.bin");
+			if (!_fontData) {
+				loadFontAtariST("agi-font-atarist-system.fnt");
+				if (!_fontData) {
+					// TODO: in case we find a recreation of the font, add it in here
+				}
+			}
+			break;
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
+		case Common::kRenderCGA:
+		case Common::kRenderEGA:
+		case Common::kRenderVGA:
+			switch (_vm->getGameID()) {
+			case GID_MICKEY:
+				// load mickey mouse font from interpreter file
+				loadFontMickey();
+				break;
+			default:
+				loadFontScummVMFile("agi-font-dos.bin");
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		if (!_fontData) {
+			// no font assigned?
+			// use regular PC-BIOS font (taken from Dos-Box with a few modifications)
+			_fontData = fontData_PCBIOS;
+			debug("AGI: Using PC-BIOS font");
+		}
 	}
 
 	if (_vm->getLanguage() == Common::RU_RUS) {
@@ -678,6 +699,10 @@ const byte *GfxFont::getFontData() {
 	return _fontData;
 }
 
+bool GfxFont::isFontHires() {
+	return _fontIsHires;
+}
+
 void GfxFont::overwriteSaveRestoreDialogCharacter() {
 	// overwrite character 0x1A with the standard Sierra arrow to the right character
 	// required for the original save/restore dialogs
@@ -686,6 +711,11 @@ void GfxFont::overwriteSaveRestoreDialogCharacter() {
 
 // Overwrite extended character set (0x80-0xFF) with Russian characters
 void GfxFont::overwriteExtendedWithRussianSet() {
+	if (_fontIsHires) {
+		// TODO: Implement overwriting hires font characters too
+		return;
+	}
+
 	if (!_fontDataAllocated) {
 		// nothing allocated, we need to allocate space ourselves to be able to modify an internal font
 		_fontDataAllocated = (uint8 *)calloc(256, 8);
@@ -829,6 +859,11 @@ void GfxFont::loadFontAmigaPseudoTopaz() {
 			assert((topazBitOffset & 7) == 0);
 
 			topazByteOffset = topazBitOffset >> 3;
+
+			// Security check, although we are working on static const data from within ScummVM
+			uint maxOffset = (topazByteOffset + ((topazHeight - 1) * topazModulo));
+			assert(maxOffset < sizeof(fontData_AmigaPseudoTopaz));
+
 			for (uint16 curHeight = 0; curHeight < topazHeight; curHeight++) {
 				*fontData = topazData[topazByteOffset];
 				fontData++;
@@ -1158,6 +1193,104 @@ void GfxFont::loadFontAtariST(Common::String fontFilename) {
 	overwriteSaveRestoreDialogCharacter();
 
 	debug("AGI: Using Atari ST 8x8 system font");
+}
+
+// Loads a Sierra Hercules font file
+void GfxFont::loadFontHercules() {
+	Common::File fontFile;
+	int32 fontFileSize = 0;
+	byte *fontData = nullptr;
+	byte *rawData = nullptr;
+
+	uint16 rawDataPos = 0;
+	uint16 curCharNr = 0;
+	uint16 curCharLine = 0;
+
+	if (fontFile.open("hgc_font")) {
+		// hgc_font file found, this is interleaved font data 16x12, should be 3072 bytes
+		// 24 bytes per character, 128 characters
+		fontFileSize = fontFile.size();
+		if (fontFileSize == (128 * 24)) {
+			// size seems to be fine
+			fontData = (uint8 *)calloc(256, 32);
+			_fontDataAllocated = fontData;
+
+			rawData = (byte *)calloc(128, 24);
+			fontFile.read(rawData, 128 * 24);
+
+			// convert interleaved 16x12 -> non-interleaved 16x16
+			for (curCharNr = 0; curCharNr < 128; curCharNr++) {
+				fontData += 4; // skip the first 2 lines
+				for (curCharLine = 0; curCharLine < 6; curCharLine++) {
+					fontData[0] = rawData[rawDataPos + 2 + 0];
+					fontData[1] = rawData[rawDataPos + 2 + 1];
+					fontData[2] = rawData[rawDataPos + 0 + 0];
+					fontData[3] = rawData[rawDataPos + 0 + 1];
+					rawDataPos += 4;
+					fontData += 4;
+				}
+				fontData += 4; // skip the last 2 lines
+			}
+
+			free(rawData);
+		} else {
+			warning("Fontfile 'hgc_font': unexpected file size");
+		}
+		fontFile.close();
+
+	}
+
+	// It seems hgc_graf.ovl holds a low-res font. It makes no real sense to use it.
+	// This was only done to AGI3 games and those rendered differently (2 pixel lines -> 3 pixel lines instead of 4)
+	// User could copy hgc_font from another AGI game over to get the hires font working.
+#if 0
+	if (!_fontDataAllocated) {
+		if (fontFile.open("hgc_graf.ovl")) {
+			// hgc_graf.ovl file found, this is font data + code. non-interleaved font data, should be 3075 bytes
+			// 16 bytes per character, 128 characters, 2048 bytes of font data, starting offset 21
+			fontFileSize = fontFile.size();
+			if (fontFileSize == 3075) {
+				// size seems to be fine
+				fontData = (uint8 *)calloc(256, 32);
+				_fontDataAllocated = fontData;
+
+				fontFile.seek(21);
+				rawData = (byte *)calloc(128, 16);
+				fontFile.read(rawData, 128 * 16);
+
+				// repeat every line 2 times to get 16x16 pixels
+				for (curCharNr = 0; curCharNr < 128; curCharNr++) {
+					for (curCharLine = 0; curCharLine < 8; curCharLine++) {
+						fontData[0] = rawData[rawDataPos + 0];
+						fontData[1] = rawData[rawDataPos + 1];
+						fontData[2] = rawData[rawDataPos + 0];
+						fontData[3] = rawData[rawDataPos + 1];
+						rawDataPos += 2;
+						fontData += 4;
+					}
+				}
+
+				free(rawData);
+
+			} else {
+				warning("Fontfile 'hgc_graf.ovl': unexpected file size");
+			}
+			fontFile.close();
+		}
+	}
+#endif
+
+	if (_fontDataAllocated) {
+		// font loaded
+		_fontData = _fontDataAllocated;
+		_fontIsHires = true;
+
+		debug("AGI: Using Hercules hires font");
+
+	} else {
+		// Continue, if no file was not found
+		warning("Could not open/use file 'hgc_font' for Hercules hires font");
+	}
 }
 
 } // End of namespace Agi

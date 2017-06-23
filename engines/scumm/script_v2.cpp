@@ -31,6 +31,10 @@
 
 namespace Scumm {
 
+    // Helper functions for ManiacMansion workarounds
+#define MM_SCRIPT(script)  (script + (_game.version == 0 ? 0 : 5))
+#define MM_VALUE(v0,v1)    (_game.version == 0 ? v0 : v1)
+
 #define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v2, x)
 
 void ScummEngine_v2::setupOpcodes() {
@@ -1131,9 +1135,6 @@ void ScummEngine_v2::o2_putActor() {
 	x = getVarOrDirectByte(PARAM_2);
 	y = getVarOrDirectByte(PARAM_3);
 
-	if (_game.id == GID_MANIAC && _game.version <= 1 && _game.platform != Common::kPlatformNES)
-		a->setFacing(180);
-
 	a->putActor(x, y);
 }
 
@@ -1181,29 +1182,57 @@ void ScummEngine_v2::o2_startScript() {
 	// (which makes Ted go answer the door bell) is simply ignored. This
 	// way, the door bell still chimes, but Ted ignores it.
 	if (_game.id == GID_MANIAC) {
-		if (_game.version >= 1 && script == 87) {
-			if (isScriptRunning(88) || isScriptRunning(89))
-				return;
-		}
-		// Script numbers are different in V0
-		if (_game.version == 0 && script == 82) {
-			if (isScriptRunning(83) || isScriptRunning(84))
+		if (script == MM_SCRIPT(82)) {
+			if (isScriptRunning(MM_SCRIPT(83)) || isScriptRunning(MM_SCRIPT(84)))
 				return;
 		}
 	}
+
+    // WORKAROUND bug #4556: Purple Tentacle can appear in the lab, after being 
+    // chased out and end up stuck in the room. This bug is triggered if the player
+    // enters the lab within 45 minutes of first entering the mansion and has chased Purple Tentacle
+    // out. Eventually the cutscene with Purple Tentacle chasing Sandy in the lab
+    // will play. This script leaves Purple Tentacle in the room causing him to become
+    // a permanent resident.
+    // Our fix is simply to prevent the Cutscene playing, if the lab has already been stormed
+    if (_game.id == GID_MANIAC) {
+        if (_game.version >= 1 && script == 155) {
+            if (VAR(120) == 1)
+                return;
+        }
+        // Script numbers are different in V0
+        if (_game.version == 0 && script == 150) {
+            if (VAR(104) == 1)
+                return;
+        }
+    }
 
 	runScript(script, 0, 0, 0);
 }
 
 void ScummEngine_v2::stopScriptCommon(int script) {
+    
+    // WORKAROUND bug #4112: If you enter the lab while Dr. Fred has the powered turned off
+    // to repair the Zom-B-Matic, the script will be stopped and the power will never turn
+    // back on. This fix forces the power on, when the player enters the lab, 
+    // if the script which turned it off is running
+    if (_game.id == GID_MANIAC && _roomResource == 4 && isScriptRunning(MM_SCRIPT(138))) {
+
+        if (vm.slot[_currentScript].number == MM_VALUE(130, 163)) {
+
+            if (script == MM_SCRIPT(138)) {
+
+                int obj = MM_VALUE(124, 157);
+                putState(obj, getState(obj) & ~kObjectState_08);
+            }
+        }
+    }
+
 	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == 10001) {
 	// FIXME: Nasty hack for bug #915575
 	// Don't let the exit script for room 26 stop the script (116), when
 	// switching to the dungeon (script 89)
-		if (_game.version >= 1 && script == 116 && isScriptRunning(89))
-			return;
-		// Script numbers are different in V0
-		if (_game.version == 0 && script == 111 && isScriptRunning(84))
+		if (script == MM_SCRIPT(111) && isScriptRunning(MM_SCRIPT(84)))
 			return;
 	}
 
@@ -1276,6 +1305,35 @@ void ScummEngine_v2::o2_putActorInRoom() {
 			a->setFacing(180);
 
 		a->putActor(0, 0, 0);
+	}
+
+	// WORKAROUND bug #2285: Caponians dont disguise after using blue crystal
+	// This is for a game scripting oversight.
+	// After first using the blue crystal, a cutscene of the two Caponians plays (script-96),
+	// locking object 344 (which prevents the cutscene playing again) and setting Var[245] to 0x18.
+	// script-5 uses this variable to set the Caponian costume
+	// On first apperance after using the blue crystal, the Caponians now will have the disguise on
+	//
+	// If you visit the spacecraft and ring the doorbell, Var[245] will be set to 0x1C (Disguise off)
+	// Using the blue crystal again, will result in the Caponian appearing without his disguise
+	// as Var[245] is never set back to 0x18. This WORKAROUND fixes the problem by ensuring
+	// Var[245] is set to have the Disguise on in most situations
+	//
+	// We don't touch the variable in the following situations
+	//  If the Caponian is being put into the space ship room, or the current room is the 
+	//  space ship and the Caponian is being put into the backroom of the telephone company (you didnt show your fan club card)
+	if (_game.id == GID_ZAK && _game.version <= 2 && act == 7) {
+		// Is script-96 cutscene done
+		if ((getState(344) & kObjectStateLocked)) {
+			// Not 'putting' in the space ship
+			if (room != 10) {
+				// not putting in telephone back room, and not in space ship
+				if (room != 16 && _currentRoom != 10) {
+					// Set caponian costume to 'disguise on'
+					writeVar(245, 0x18);
+				}
+			}
+		}
 	}
 }
 

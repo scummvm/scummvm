@@ -129,7 +129,7 @@ bool AgiEngine::checkPriority(ScreenObjEntry *screenObj) {
 			screenPriority = _gfx->getPriority(curX, curY);
 
 			if (screenPriority == 0) {  // unconditional black. no go at all!
-				touchedControl = 0;
+				touchedControl = false;
 				break;
 			}
 

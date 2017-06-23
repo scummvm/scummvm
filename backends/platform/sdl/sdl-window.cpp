@@ -150,7 +150,7 @@ bool SdlWindow::hasMouseFocus() const {
 
 void SdlWindow::warpMouseInWindow(uint x, uint y) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_window) {
+	if (_window && hasMouseFocus()) {
 		SDL_WarpMouseInWindow(_window, x, y);
 	}
 #else

@@ -58,7 +58,7 @@ Common::String PixelFormat::toString() const {
 		digits += '0' + 8 - componentLoss;
 	}
 
-	return letters + digits;
+	return letters + digits + '@' + ('0' + bytesPerPixel);
 }
 
 } // End of namespace Graphics

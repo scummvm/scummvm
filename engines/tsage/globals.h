@@ -25,11 +25,11 @@
 
 #include "common/random.h"
 #include "tsage/core.h"
-#include "tsage/dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/events.h"
 #include "tsage/sound.h"
 #include "tsage/saveload.h"
+#include "tsage/screen.h"
 #include "tsage/user_interface.h"
 
 namespace TsAGE {
@@ -38,7 +38,7 @@ class Globals : public SavedObject {
 private:
 	static void dispatchSound(ASound *obj);
 public:
-	GfxSurface _screenSurface;
+	Screen _screen;
 	GfxManager _gfxManagerInstance;
 	Common::List<GfxManager *> _gfxManagers;
 	SceneHandler *_sceneHandler;

@@ -81,7 +81,9 @@ Player::Player() :
 	_isMIDI(false),
 	_supportsPercussion(false),
 	_se(0),
-	_vol_chan(0) {
+	_vol_chan(0),
+	_abort(false),
+	_music_tick(0) {
 }
 
 Player::~Player() {

@@ -50,7 +50,7 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::createAudioStream() {
 	_audioStream = _queueStream;
 }
 
-void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *stream) {			
+void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *stream) {
 	RawChunkStream::RawChunk chunk = _decoder.readNextChunk(stream);
 	delete stream;
 

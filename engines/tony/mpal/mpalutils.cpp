@@ -37,6 +37,8 @@ namespace MPAL {
  * @param resId					MPAL resource to open
  */
 RMRes::RMRes(uint32 resID) {
+	_buf = NULL;
+
 	_h = g_vm->_resUpdate.queryResource(resID);
 	if (_h == NULL)
 		_h = mpalQueryResource(resID);

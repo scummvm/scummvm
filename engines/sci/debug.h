@@ -31,7 +31,7 @@ namespace Sci {
 // These types are used both as identifiers and as elements of bitfields
 enum BreakpointType {
 	/**
-	 * Break when a selector is executed. Data contains (char *) selector name
+	 * Break when a selector is executed. Data contains selector name
 	 * (in the format Object::Method)
 	 */
 	BREAK_SELECTOREXEC  = 1 << 0, // break when a function selector is executed
@@ -39,16 +39,28 @@ enum BreakpointType {
 	BREAK_SELECTORWRITE = 1 << 2, // break when a variable selector is written
 
 	/**
-	 * Break when an exported function is called. Data contains
+	 * Break when an exported function is called. _address contains
 	 * script_no << 16 | export_no.
 	 */
-	BREAK_EXPORT        = 1 << 3
+	BREAK_EXPORT        = 1 << 3,
+	BREAK_ADDRESS       = 1 << 4, // break when pc is at _regAddress
+	BREAK_KERNEL        = 1 << 5  // break on named kernel call
+};
+
+enum BreakpointAction {
+	BREAK_NONE,      // ignore breakpoint
+	BREAK_BREAK,     // break into debugger when breakpoint is triggered
+	BREAK_LOG,       // log the breakpoint, and don't break into debugger
+	BREAK_BACKTRACE, // show a backtrace, and don't break into debugger
+	BREAK_INSPECT    // show object, and don't break into debugger
 };
 
 struct Breakpoint {
-	BreakpointType type;
-	uint32 address;  ///< Breakpoints on exports
-	Common::String name; ///< Breakpoints on selector names
+	BreakpointType _type;
+	uint32 _address;     ///< Breakpoints on exports
+	reg32_t _regAddress; ///< Breakpoints on addresses
+	Common::String _name; ///< Breakpoints on selector names
+	BreakpointAction _action;
 };
 
 enum DebugSeeking {
@@ -72,6 +84,8 @@ struct DebugState {
 	StackPtr old_sp;
 	Common::List<Breakpoint> _breakpoints;   //< List of breakpoints
 	int _activeBreakpointTypes;  //< Bit mask specifying which types of breakpoints are active
+
+	void updateActiveBreakpointTypes();
 };
 
 // Various global variables used for debugging are declared here

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MOHAWK_H
-#define MOHAWK_H
+#ifndef MOHAWK_MOHAWK_H
+#define MOHAWK_MOHAWK_H
 
 #include "common/scummsys.h"
 #include "common/array.h"
@@ -100,7 +100,6 @@ public:
 
 	bool hasFeature(EngineFeature f) const;
 
-	Sound *_sound;
 	VideoManager *_video;
 	CursorManager *_cursor;
 

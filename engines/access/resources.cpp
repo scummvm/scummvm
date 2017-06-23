@@ -24,6 +24,7 @@
 #include "access/access.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
+#include "common/translation.h"
 
 namespace Access {
 
@@ -38,8 +39,9 @@ Resources *Resources::init(AccessEngine *vm) {
 
 bool Resources::load(Common::String &errorMessage) {
 	Common::File f;
-	if (!f.open("access.dat")) {
-		errorMessage = "Could not locate required access.dat file";
+	Common::String filename = "access.dat";
+	if (!f.open(filename.c_str())) {
+		errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		return false;
 	}
 
@@ -47,7 +49,7 @@ bool Resources::load(Common::String &errorMessage) {
 	char buffer[4];
 	f.read(buffer, 4);
 	if (strncmp(buffer, "SVMA", 4)) {
-		errorMessage = "Located access.dat file had invalid contents";
+		errorMessage = Common::String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
 		return false;
 	}
 
@@ -56,8 +58,8 @@ bool Resources::load(Common::String &errorMessage) {
 	uint version = f.readUint16LE();
 	if (version != expectedVersion) {
 		errorMessage = Common::String::format(
-			"Incorrect version of access.dat found. Expected %d but got %d",
-			expectedVersion, version);
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+			filename.c_str(), expectedVersion, 0, version, 0);
 		return false;
 	}
 

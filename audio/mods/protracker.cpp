@@ -24,8 +24,6 @@
 #include "audio/mods/paula.h"
 #include "audio/mods/module.h"
 
-#include "audio/audiostream.h"
-
 #include "common/textconsole.h"
 
 namespace Modules {

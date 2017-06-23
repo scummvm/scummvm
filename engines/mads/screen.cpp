@@ -69,7 +69,6 @@ void DirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) {
 	_active = true;
 }
 
-
 void DirtyArea::setSpriteSlot(const SpriteSlot *spriteSlot) {
 	int width, height;
 	Scene &scene = _vm->_game->_scene;
@@ -156,7 +155,7 @@ void DirtyArea::setUISlot(const UISlot *slot) {
 
 /*------------------------------------------------------------------------*/
 
-DirtyAreas::DirtyAreas(MADSEngine *vm) : _vm(vm) {
+DirtyAreas::DirtyAreas(MADSEngine *vm) /* : _vm(vm) */ {
 	DirtyArea::_vm = vm;
 
 	for (int i = 0; i < DIRTY_AREAS_SIZE; ++i) {
@@ -202,7 +201,7 @@ void DirtyAreas::mergeAreas(int idx1, int idx2) {
 	da1._textActive = true;
 }
 
-void DirtyAreas::copy(MSurface *srcSurface, MSurface *destSurface, const Common::Point &posAdjust) {
+void DirtyAreas::copy(BaseSurface *srcSurface, BaseSurface *destSurface, const Common::Point &posAdjust) {
 	for (uint i = 0; i < size(); ++i) {
 		const Common::Rect &srcBounds = (*this)[i]._bounds;
 
@@ -215,12 +214,13 @@ void DirtyAreas::copy(MSurface *srcSurface, MSurface *destSurface, const Common:
 		Common::Point destPos(srcBounds.left, srcBounds.top);
 
 		if ((*this)[i]._active && bounds.isValidRect()) {
-			srcSurface->copyTo(destSurface, bounds, destPos);
+			destSurface->blitFrom(*srcSurface, bounds, destPos);
 		}
 	}
 }
 
 void DirtyAreas::copyToScreen() {
+/*
 	for (uint i = 0; i < size(); ++i) {
 		const Common::Rect &bounds = (*this)[i]._bounds;
 
@@ -229,9 +229,10 @@ void DirtyAreas::copyToScreen() {
 			continue;
 
 		if ((*this)[i]._active && (*this)[i]._bounds.isValidRect()) {
-			_vm->_screen.copyRectToScreen(bounds);
+			_vm->_screen->copyRectToScreen(bounds);
 		}
 	}
+	*/
 }
 
 void DirtyAreas::reset() {
@@ -554,38 +555,17 @@ void ScreenObjects::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-ScreenSurface::ScreenSurface() {
+Screen::Screen(): BaseSurface() {
+	// Create the screen surface separately on another surface, since the screen
+	// surface will be subject to change as the clipping area is altered
+	_rawSurface.create(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
+	resetClipBounds();
+
 	_shakeCountdown = -1;
 	_random = 0x4D2;
-	_surfacePixels = nullptr;
 }
 
-void ScreenSurface::init() {
-	// Set the size for the screen
-	setSize(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
-
-	// Store a copy of the raw pixels pointer for the screen, since the surface
-	// itself may be later changed to only a subset of the screen
-	_surfacePixels = (byte *)getPixels();
-	_freeFlag = false;
-}
-
-ScreenSurface::~ScreenSurface() {
-	::free(_surfacePixels);
-}
-
-void ScreenSurface::copyRectToScreen(const Common::Rect &bounds) {
-	const byte *buf = getBasePtr(bounds.left, bounds.top);
-
-	Common::Rect destBounds = bounds;
-	destBounds.translate(_clipBounds.left, _clipBounds.top);
-
-	if (bounds.width() != 0 && bounds.height() != 0)
-		g_system->copyRectToScreen(buf, this->pitch, destBounds.left, destBounds.top,
-		destBounds.width(), destBounds.height());
-}
-
-void ScreenSurface::updateScreen() {
+void Screen::update() {
 	if (_shakeCountdown >= 0) {
 		_random = _random * 5 + 1;
 		int offset = (_random >> 8) & 3;
@@ -596,27 +576,42 @@ void ScreenSurface::updateScreen() {
 		// offset width shown at the very right. The offset changes to give
 		// an effect of shaking the screen
 		offset *= 4;
-		const byte *buf = getBasePtr(offset, 0);
-		g_system->copyRectToScreen(buf, this->pitch, 0, 0,
-			this->pitch - offset, this->h);
+		const byte *buf = (const byte *)getBasePtr(offset, 0);
+		g_system->copyRectToScreen(buf, this->pitch, 0, 0, this->pitch - offset, this->h);
 		if (offset > 0)
-			g_system->copyRectToScreen(this->pixels, this->pitch,
+			g_system->copyRectToScreen(getPixels(), this->pitch,
 				this->pitch - offset, 0, offset, this->h);
+		return;
 	}
 
-	g_system->updateScreen();
+	// Reset any clip bounds if active whilst the screen is updated
+	Common::Rect clipBounds = getClipBounds();
+	resetClipBounds();
+
+	// Update the screen
+	Graphics::Screen::update();
+
+	// Revert back to whatever clipping is active
+	setClipBounds(clipBounds);
 }
 
-void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag) {
+void Screen::transition(ScreenTransition transitionType, bool surfaceFlag) {
 	Palette &pal = *_vm->_palette;
 	Scene &scene = _vm->_game->_scene;
 	byte palData[PALETTE_SIZE];
 
+	// The original loads the new scene to the screen surface for some of the
+	// transition types like fade out/in, so we need to clear the dirty rects so
+	// it doesn't prematurely get blitted to the physical screen before fade out
+	Common::Rect clipBounds = getClipBounds();
+	clearDirtyRects();
+
  	switch (transitionType) {
 	case kTransitionFadeIn:
-	case kTransitionFadeOutIn:
+	case kTransitionFadeOutIn: {
 		Common::fill(&pal._colorValues[0], &pal._colorValues[3], 0);
 		Common::fill(&pal._colorFlags[0], &pal._colorFlags[3], false);
+		resetClipBounds();
 
 		if (transitionType == kTransitionFadeOutIn) {
 			// Fade out
@@ -628,9 +623,11 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 		Common::fill(&palData[0], &palData[PALETTE_SIZE], 0);
 		pal.setFullPalette(palData);
 
-		copyRectToScreen(getBounds());
+		markAllDirty();
+		update();
 		pal.fadeIn(palData, pal._mainPalette, 0, 256, 0, 1, 1, 16);
 		break;
+	}
 
 	case kTransitionBoxInBottomLeft:
 	case kTransitionBoxInBottomRight:
@@ -666,21 +663,15 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 		// Quick transitions
 		break;
 	}
+
+	// Reset clipping
+	markAllDirty();
+	setClipBounds(clipBounds);
 }
 
-void ScreenSurface::setClipBounds(const Common::Rect &r) {
-	_clipBounds = r;
-	setPixels(_surfacePixels + pitch * r.top + r.left, r.width(), r.height());
-	this->pitch = MADS_SCREEN_WIDTH;
-}
-
-void ScreenSurface::resetClipBounds() {
-	setClipBounds(Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
-}
-
-void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entrySide,
+void Screen::panTransition(MSurface &newScreen, byte *palData, int entrySide,
 		const Common::Point &srcPos, const Common::Point &destPos,
-		ThroughBlack throughBlack, bool setPalette, int numTicks) {
+		ThroughBlack throughBlack, bool setPalette_, int numTicks) {
 	EventsManager &events = *_vm->_events;
 	Palette &palette = *_vm->_palette;
 	Common::Point size;
@@ -702,7 +693,7 @@ void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entryS
 		startX = size.x - 1;
 	deltaX = startX ? -1 : 1;
 
-	if (setPalette & !throughBlack)
+	if (setPalette_ & !throughBlack)
 		palette.setFullPalette(palData);
 
 	// TODO: Original uses a different frequency ticks counter. Need to
@@ -735,28 +726,28 @@ void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entryS
 					srcPos.x + xAt + 1, srcPos.y + size.y));
 			}
 
-			copyRectToScreen(Common::Rect(xAt, destPos.y, xAt + 1, destPos.y + size.y));
-
 			// Slight delay
 			events.pollEvents();
 			g_system->delayMillis(1);
 		}
 
-		if ((setPalette && !loop) || throughBlack == THROUGH_BLACK2)
+		if ((setPalette_ && !loop) || throughBlack == THROUGH_BLACK2)
 			palette.setFullPalette(palData);
 	}
 
 	if (throughBlack == THROUGH_BLACK2) {
+		/*
 		Common::Rect r(srcPos.x, srcPos.y, srcPos.x + size.x, srcPos.y + size.y);
 		copyRectToSurface(newScreen, destPos.x, destPos.y, r);
 		copyRectToScreen(r);
+		*/
 	}
 }
 
 /**
  * Translates the current screen from the old palette to the new palette
  */
-void ScreenSurface::swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteMap) {
+void Screen::swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteMap) {
 	Palette &palette = *_vm->_palette;
 	byte oldPalette[PALETTE_SIZE];
 	byte oldMap[PALETTE_COUNT];
@@ -775,7 +766,7 @@ void ScreenSurface::swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteM
 		destP += 2 * RGB_SIZE;
 	}
 
-	Common::Rect oldClip = _clipBounds;
+	Common::Rect oldClip = getClipBounds();
 	resetClipBounds();
 
 	copyRectTranslate(*this, oldMap, Common::Point(0, 0),
@@ -790,7 +781,7 @@ void ScreenSurface::swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteM
  * Palettes consist of 128 RGB entries for the foreground and background
  * respectively, with the two interleaved together. So the start
  */
-void ScreenSurface::swapPalette(const byte *palData, byte swapTable[PALETTE_COUNT],
+void Screen::swapPalette(const byte *palData, byte swapTable[PALETTE_COUNT],
 		bool foreground) {
 	int start = foreground ? 1 : 0;
 	const byte *dynamicList = &palData[start * RGB_SIZE];
@@ -815,5 +806,12 @@ void ScreenSurface::swapPalette(const byte *palData, byte swapTable[PALETTE_COUN
 	}
 }
 
+void Screen::setClipBounds(const Common::Rect &r) {
+	create(_rawSurface, r);
+}
+
+void Screen::resetClipBounds() {
+	setClipBounds(Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
+}
 
 } // End of namespace MADS

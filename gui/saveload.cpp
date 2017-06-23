@@ -25,7 +25,6 @@
 
 #include "gui/saveload.h"
 #include "gui/saveload-dialog.h"
-#include "gui/gui-manager.h"
 
 #include "engines/metaengine.h"
 
@@ -68,7 +67,7 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 	g_system->getTimeAndDate(curTime);
 	curTime.tm_year += 1900; // fixup year
 	curTime.tm_mon++; // fixup month
-	return Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+	return Common::String::format("%04d-%02d-%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
 #else
 	return Common::String::format("Save %d", slot + 1);
 #endif
@@ -87,6 +86,10 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 	selectChooser(**plugin);
 	if (!_impl)
 		return -1;
+
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+	_impl->runSaveSync(ConfMan.hasKey("savepath", target));
+#endif
 
 	// Set up the game domain as newly active domain, so
 	// target specific savepath will be checked

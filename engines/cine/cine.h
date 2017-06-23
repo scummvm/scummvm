@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CINE_H
-#define CINE_H
+#ifndef CINE_CINE_H
+#define CINE_CINE_H
 
 
 #include "common/scummsys.h"

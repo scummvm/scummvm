@@ -29,6 +29,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/file.h"
 
 #include "gui/message.h"
 
@@ -378,7 +379,7 @@ void LabEngine::decIncInv(uint16 *curInv, bool decreaseFl) {
 		newInv = 1;
 
 	interfaceOff();
-	
+
 	while (newInv && (newInv <= _numInv)) {
 		if (_conditions->in(newInv) && !_inventory[newInv]._bitmapName.empty()) {
 			_nextFileName = getInvName(newInv);

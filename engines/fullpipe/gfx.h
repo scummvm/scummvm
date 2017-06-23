@@ -23,6 +23,11 @@
 #ifndef FULLPIPE_GFX_H
 #define FULLPIPE_GFX_H
 
+namespace Graphics {
+	struct Surface;
+	struct TransparentSurface;
+}
+
 namespace Fullpipe {
 
 class DynamicPhase;
@@ -34,22 +39,22 @@ struct Bitmap {
 	int _y;
 	int _width;
 	int _height;
-	byte *_pixels;
 	int _type;
 	int _dataSize;
 	int _flags;
 	Graphics::TransparentSurface *_surface;
 	int _flipping;
+	bool _copied_surface;
 
 	Bitmap();
 	Bitmap(Bitmap *src);
 	~Bitmap();
 
 	void load(Common::ReadStream *s);
-	void decode(int32 *palette);
-	void putDib(int x, int y, int32 *palette, int alpha);
-	bool putDibRB(int32 *palette);
-	void putDibCB(int32 *palette);
+	void decode(byte *pixels, int32 *palette);
+	void putDib(int x, int y, int32 *palette, byte alpha);
+	bool putDibRB(byte *pixels, int32 *palette);
+	void putDibCB(byte *pixels, int32 *palette);
 
 	void colorFill(uint32 *dest, int len, int32 color);
 	void paletteFill(uint32 *dest, byte *src, int len, int32 *palette);
@@ -123,11 +128,11 @@ class BigPicture : public Picture {
 
 class GameObject : public CObject {
   public:
-	int16 _okeyCode;
+	int16 _odelay;
 	int _field_8;
 	int16 _flags;
 	int16 _id;
-	char *_objectName;
+	Common::String _objectName;
 	int _ox;
 	int _oy;
 	int _priority;
@@ -144,7 +149,7 @@ class GameObject : public CObject {
 	void renumPictures(Common::Array<PictureObject *> *lst);
 	void setFlags(int16 flags) { _flags = flags; }
 	void clearFlags() { _flags = 0; }
-	const char *getName() { return _objectName; }
+	Common::String getName() { return _objectName; }
 
 	bool getPicAniInfo(PicAniInfo *info);
 	bool setPicAniInfo(PicAniInfo *info);
@@ -180,7 +185,7 @@ class Background : public CObject {
   public:
 	Common::Array<PictureObject *> _picObjList;
 
-	char *_bgname;
+	Common::String _bgname;
 	int _x;
 	int _y;
 	int16 _messageQueueId;

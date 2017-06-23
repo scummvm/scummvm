@@ -24,6 +24,7 @@
 #define SCI_ENGINE_SCRIPT_H
 
 #include "common/str.h"
+#include "sci/util.h"
 #include "sci/engine/segment.h"
 #include "sci/engine/script_patches.h"
 
@@ -47,12 +48,16 @@ enum ScriptObjectTypes {
 	SCI_OBJ_LOCALVARS
 };
 
-typedef Common::HashMap<uint16, Object> ObjMap;
+typedef Common::HashMap<uint32, Object> ObjMap;
 
 enum ScriptOffsetEntryTypes {
 	SCI_SCR_OFFSET_TYPE_OBJECT = 0, // classes are handled by this type as well
 	SCI_SCR_OFFSET_TYPE_STRING,
 	SCI_SCR_OFFSET_TYPE_SAID
+};
+
+enum {
+	kNoRelocation = 0xFFFFFFFF
 };
 
 struct offsetLookupArrayEntry {
@@ -67,19 +72,18 @@ typedef Common::Array<offsetLookupArrayEntry> offsetLookupArrayType;
 class Script : public SegmentObj {
 private:
 	int _nr; /**< Script number */
-	byte *_buf; /**< Static data buffer, or NULL if not used */
-	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
+	Common::SpanOwner<SciSpan<byte> > _buf; /**< Static data buffer, or NULL if not used */
+	SciSpan<byte> _script; /**< Script size includes alignment byte */
+	SciSpan<byte> _heap; /**< Start of heap if SCI1.1, NULL otherwise */
 
 	int _lockers; /**< Number of classes and objects that require this script */
-	size_t _scriptSize;
-	size_t _heapSize;
-	size_t _bufSize;
 
-	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
-	uint16 _numExports; /**< Number of entries in the exports table */
+	SciSpan<const uint16> _exports; /**< Exports block or 0 if not present */
+	uint16 _numExports; /**< Number of export entries */
+	SciSpan<const byte> _synonyms; /**< Synonyms block or 0 if not present */
+	uint16 _numSynonyms; /**< Number of synonym entries */
 
-	const byte *_synonyms; /**< Synonyms block or 0 if not present */
-	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
+	int _codeOffset; /**< The absolute offset of the VM code block */
 
 	int _localsOffset;
 	uint16 _localsCount;
@@ -102,10 +106,19 @@ public:
 	int getLocalsOffset() const { return _localsOffset; }
 	uint16 getLocalsCount() const { return _localsCount; }
 
-	uint32 getScriptSize() const { return _scriptSize; }
-	uint32 getHeapSize() const { return _heapSize; }
-	uint32 getBufSize() const { return _bufSize; }
-	const byte *getBuf(uint offset = 0) const { return _buf + offset; }
+	uint32 getScriptSize() const { return _script.size(); }
+	uint32 getHeapSize() const { return _heap.size(); }
+	uint32 getBufSize() const { return _buf->size(); }
+	inline uint32 getHeapOffset() const {
+		if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
+			return _script.size();
+		}
+
+		return 0;
+	}
+
+	const byte *getBuf(uint offset = 0) const { return _buf->getUnsafeDataAt(offset); }
+	SciSpan<const byte> getSpan(uint offset) const { return _buf->subspan(offset); }
 
 	int getScriptNumber() const { return _nr; }
 	SegmentId getLocalsSegment() const { return _localsSegment; }
@@ -113,16 +126,16 @@ public:
 	void syncLocalsBlock(SegManager *segMan);
 	ObjMap &getObjectMap() { return _objects; }
 	const ObjMap &getObjectMap() const { return _objects; }
-	bool offsetIsObject(uint16 offset) const;
+	bool offsetIsObject(uint32 offset) const;
 
 public:
 	Script();
 	~Script();
 
-	void freeScript();
+	void freeScript(const bool keepLocalsSegment = false);
 	void load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher);
 
-	virtual bool isValidOffset(uint16 offset) const;
+	virtual bool isValidOffset(uint32 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
@@ -139,8 +152,8 @@ public:
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
-	Object *getObject(uint16 offset);
-	const Object *getObject(uint16 offset) const;
+	Object *getObject(uint32 offset);
+	const Object *getObject(uint32 offset) const;
 
 	/**
 	 * Initializes an object within the segment manager
@@ -190,10 +203,10 @@ public:
 	void setLockers(int lockers);
 
 	/**
-	 * Retrieves a pointer to the exports of this script
-	 * @return	pointer to the exports.
+	 * Retrieves the offset of the export table in the script
+	 * @return	the exports offset.
 	 */
-	const uint16 *getExportTable() const { return _exportTable; }
+	uint getExportsOffset() const { return _exports.sourceByteOffset(); }
 
 	/**
 	 * Retrieves the number of exports of script.
@@ -205,7 +218,7 @@ public:
 	 * Retrieves a pointer to the synonyms associated with this script
 	 * @return	pointer to the synonyms, in non-parsed format.
 	 */
-	const byte *getSynonyms() const { return _synonyms; }
+	const SciSpan<const byte> &getSynonyms() const { return _synonyms; }
 
 	/**
 	 * Retrieves the number of synonyms associated with this script.
@@ -242,34 +255,29 @@ public:
 	}
 
 	/**
-	 * Copies a byte string into a script's heap representation.
-	 * @param dst	script-relative offset of the destination area
-	 * @param src	pointer to the data source location
-	 * @param n		number of bytes to copy
-	 */
-	void mcpyInOut(int dst, const void *src, size_t n);
-
-	/**
 	 * Finds the pointer where a block of a specific type starts from,
 	 * in SCI0 - SCI1 games
 	 */
-	byte *findBlockSCI0(int type, int startBlockIndex = -1);
+	SciSpan<const byte> findBlockSCI0(ScriptObjectTypes type, bool findLastBlock = false) const;
 
 	/**
 	 * Syncs the string heap of a script. Used when saving/loading.
 	 */
 	void syncStringHeap(Common::Serializer &ser);
 
+#ifdef ENABLE_SCI32
 	/**
 	 * Resolve a relocation in an SCI3 script
 	 * @param offset        The offset to relocate from
 	 */
-	int relocateOffsetSci3(uint32 offset);
+	int relocateOffsetSci3(uint32 offset) const;
+#endif
 
 	/**
-	 * Gets an offset to the beginning of the code block in a SCI3 script
+	 * Gets an offset to the beginning of the code block in a SCI1.1 or later
+	 * script
 	 */
-	int getCodeBlockOffsetSci3() { return READ_SCI11ENDIAN_UINT32(_buf); }
+	int getCodeBlockOffset() { return _codeOffset; }
 
 	/**
 	 * Get the offset array
@@ -279,29 +287,45 @@ public:
 	uint16 getOffsetStringCount() { return _offsetLookupStringCount; };
 	uint16 getOffsetSaidCount() { return _offsetLookupSaidCount; };
 
+	/**
+	 * @returns kNoRelocation if no relocation exists for the given offset,
+	 * otherwise returns a delta for the offset to its relocated position.
+	 */
+	uint32 getRelocationOffset(const uint32 offset) const;
+
 private:
+	/**
+	 * Returns a Span containing the relocation table for a SCI0-SCI2.1 script.
+	 * (The SCI0-SCI2.1 relocation table is simply a list of all of the
+	 * offsets in the script heap whose values should be treated as pointers to
+	 * objects (vs just being numbers).)
+	 */
+	const SciSpan<const uint16> getRelocationTableSci0Sci21() const;
+
 	/**
 	 * Processes a relocation block within a SCI0-SCI2.1 script
 	 *  This function is idempotent, but it must only be called after all
 	 *  objects have been instantiated, or a run-time error will occur.
-	 * @param obj_pos	Location (segment, offset) of the block
 	 */
-	void relocateSci0Sci21(reg_t block);
+	void relocateSci0Sci21(const SegmentId segmentId);
 
+#ifdef ENABLE_SCI32
 	/**
 	 * Processes a relocation block within a SCI3 script
 	 *  This function is idempotent, but it must only be called after all
 	 *  objects have been instantiated, or a run-time error will occur.
-	 * @param obj_pos	Location (segment, offset) of the block
 	 */
-	void relocateSci3(reg_t block);
+	void relocateSci3(const SegmentId segmentId);
+#endif
 
 	bool relocateLocal(SegmentId segment, int location);
 
+#ifdef ENABLE_SCI32
 	/**
 	 * Gets a pointer to the beginning of the objects in a SCI3 script
 	 */
-	const byte *getSci3ObjectsPointer();
+	SciSpan<const byte> getSci3ObjectsPointer();
+#endif
 
 	/**
 	 * Initializes the script's objects (SCI0)
@@ -317,12 +341,14 @@ private:
 	 */
 	void initializeObjectsSci11(SegManager *segMan, SegmentId segmentId);
 
+#ifdef ENABLE_SCI32
 	/**
 	 * Initializes the script's objects (SCI3)
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
 	 */
 	void initializeObjectsSci3(SegManager *segMan, SegmentId segmentId);
+#endif
 
 	LocalVariables *allocLocalsSegment(SegManager *segMan);
 

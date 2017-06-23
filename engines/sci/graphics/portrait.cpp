@@ -39,12 +39,6 @@ Portrait::Portrait(ResourceManager *resMan, EventManager *event, GfxScreen *scre
 	init();
 }
 
-Portrait::~Portrait() {
-	delete[] _lipSyncDataOffsetTable;
-	delete[] _bitmaps;
-	delete[] _fileData;
-}
-
 void Portrait::init() {
 	// .BIN files are loaded from actors directory and from .\ directory
 	// header:
@@ -90,31 +84,28 @@ void Portrait::init() {
 	// 4 bytes appended, seem to be random
 	//   9E11120E for alex
 	//   9E9E9E9E for vizier
-	int32 fileSize = 0;
-	Common::SeekableReadStream *file =
-		SearchMan.createReadStreamForMember("actors/" + _resourceName + ".bin");
+	Common::String fileName = "actors/" + _resourceName + ".bin";
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(fileName);
+		;
 	if (!file) {
-		file = SearchMan.createReadStreamForMember(_resourceName + ".bin");
+		fileName = _resourceName + ".bin";
+		file = SearchMan.createReadStreamForMember(fileName);
 		if (!file)
 			error("portrait %s.bin not found", _resourceName.c_str());
 	}
-	fileSize = file->size();
-	_fileData = new byte[fileSize];
-	file->read(_fileData, fileSize);
+	_fileData->allocateFromStream(*file, Common::kSpanMaxSize, fileName);
 	delete file;
 
-	if (strncmp((char *)_fileData, "WIN", 3)) {
+	if (strncmp((const char *)_fileData->getUnsafeDataAt(0, 3), "WIN", 3)) {
 		error("portrait %s doesn't have valid header", _resourceName.c_str());
 	}
-	_width = READ_LE_UINT16(_fileData + 3);
-	_height = READ_LE_UINT16(_fileData + 5);
-	_bitmapCount = READ_LE_UINT16(_fileData + 7);
-	_lipSyncIDCount = READ_LE_UINT16(_fileData + 11);
+	_width = _fileData->getUint16LEAt(3);
+	_height = _fileData->getUint16LEAt(5);
+	_bitmaps.resize(_fileData->getUint16LEAt(7));
+	_lipSyncIDCount = _fileData->getUint16LEAt(11);
 
-	_bitmaps = new PortraitBitmap[_bitmapCount];
-
-	uint16 portraitPaletteSize = READ_LE_UINT16(_fileData + 13);
-	byte *data = _fileData + 17;
+	uint16 portraitPaletteSize = _fileData->getUint16LEAt(13);
+	SciSpan<const byte> data = _fileData->subspan(17);
 	// Read palette
 	memset(&_portraitPalette, 0, sizeof(Palette));
 	uint16 palSize = 0, palNr = 0;
@@ -128,42 +119,40 @@ void Portrait::init() {
 	}
 
 	// Read all bitmaps
-	PortraitBitmap *curBitmap = _bitmaps;
 	uint16 bitmapNr;
 	uint16 bytesPerLine;
 
-	for (bitmapNr = 0; bitmapNr < _bitmapCount; bitmapNr++) {
-		curBitmap->width = READ_LE_UINT16(data + 2);
-		curBitmap->height = READ_LE_UINT16(data + 4);
-		bytesPerLine = READ_LE_UINT16(data + 6);
-		if (bytesPerLine < curBitmap->width)
+	for (bitmapNr = 0; bitmapNr < _bitmaps.size(); bitmapNr++) {
+		PortraitBitmap &curBitmap = _bitmaps[bitmapNr];
+		curBitmap.width = data.getUint16LEAt(2);
+		curBitmap.height = data.getUint16LEAt(4);
+		bytesPerLine = data.getUint16LEAt(6);
+		if (bytesPerLine < curBitmap.width)
 			error("kPortrait: bytesPerLine larger than actual width");
-		curBitmap->extraBytesPerLine = bytesPerLine - curBitmap->width;
-		curBitmap->rawBitmap = data + 14;
-		data += 14 + (curBitmap->height * bytesPerLine);
-		curBitmap++;
+		curBitmap.extraBytesPerLine = bytesPerLine - curBitmap.width;
+		curBitmap.rawBitmap = data.subspan(14, curBitmap.width * curBitmap.height);
+		data += 14 + (curBitmap.height * bytesPerLine);
 	}
 
 	// Offset table follows
-	curBitmap = _bitmaps;
-	int32 offsetTableSize = READ_LE_UINT32(data);
-	assert((bitmapNr + 1) * 14 <= offsetTableSize);
+	uint32 offsetTableSize = data.getUint32LEAt(0);
+	assert((bitmapNr + 1U) * 14U <= offsetTableSize);
 	data += 4;
-	byte *dataOffsetTable = data + 14; // we skip first bitmap offsets
-	for (bitmapNr = 0; bitmapNr < _bitmapCount; bitmapNr++) {
-		curBitmap->displaceX = READ_LE_UINT16(dataOffsetTable);
-		curBitmap->displaceY = READ_LE_UINT16(dataOffsetTable + 2);
+	SciSpan<const byte> dataOffsetTable = data.subspan(14); // we skip first bitmap offsets
+	for (bitmapNr = 0; bitmapNr < _bitmaps.size(); bitmapNr++) {
+		PortraitBitmap &curBitmap = _bitmaps[bitmapNr];
+		curBitmap.displaceX = dataOffsetTable.getUint16LEAt(0);
+		curBitmap.displaceY = dataOffsetTable.getUint16LEAt(2);
 		dataOffsetTable += 14;
-		curBitmap++;
 	}
 	data += offsetTableSize;
 
 	// raw lip-sync ID table follows
 	uint32 lipSyncIDTableSize;
 
-	lipSyncIDTableSize = READ_LE_UINT32(data);
+	lipSyncIDTableSize = data.getUint32LEAt(0);
 	data += 4;
-	assert( lipSyncIDTableSize == (_lipSyncIDCount * 4) );
+	assert(lipSyncIDTableSize == _lipSyncIDCount * 4);
 	_lipSyncIDTable = data;
 	data += lipSyncIDTableSize;
 
@@ -174,23 +163,23 @@ void Portrait::init() {
 	uint16 lipSyncDataNr;
 	uint16 lipSyncCurOffset;
 
-	lipSyncDataTableSize = READ_LE_UINT32(data);
+	lipSyncDataTableSize = data.getUint32LEAt(0);
 	data += 4;
-	assert( lipSyncDataTableSize == 0x220 ); // always this size, just a safety-check
+	assert(lipSyncDataTableSize == 0x220); // always this size, just a safety-check
 
 	_lipSyncData = data;
 	lipSyncDataTableLastOffset = lipSyncDataTableSize - 1;
-	_lipSyncDataOffsetTable = new uint16[ _lipSyncIDCount ];
+	_lipSyncDataOffsetTable.resize(_lipSyncIDCount);
 
 	lipSyncDataNr = 0;
 	lipSyncCurOffset = 0;
-	while ( (lipSyncCurOffset < lipSyncDataTableSize) && (lipSyncDataNr < _lipSyncIDCount) ) {
+	while (lipSyncCurOffset < lipSyncDataTableSize && lipSyncDataNr < _lipSyncIDCount) {
 		// We are currently at the start of ID-frame data
 		_lipSyncDataOffsetTable[lipSyncDataNr] = lipSyncCurOffset;
 
 		// Look for end of ID-frame data
 		lipSyncData = *data++; lipSyncCurOffset++;
-		while ( (lipSyncData != 0xFF) && (lipSyncCurOffset < lipSyncDataTableLastOffset) ) {
+		while (lipSyncData != 0xFF && lipSyncCurOffset < lipSyncDataTableLastOffset) {
 			// Either terminator (0xFF) or frame-data (1 byte tick count and 1 byte bitmap ID)
 			data++;
 			lipSyncData = *data++;
@@ -198,7 +187,6 @@ void Portrait::init() {
 		}
 		lipSyncDataNr++;
 	}
-	_lipSyncDataOffsetTableEnd = data;
 	// last 4 bytes seem to be garbage
 }
 
@@ -277,7 +265,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	// Do animation depending on rave resource till audio is done playing
 	int16 raveTicks;
 	uint16 raveID;
-	byte *raveLipSyncData;
+	SciSpan<const byte> raveLipSyncData;
 	byte raveLipSyncTicks;
 	byte raveLipSyncBitmapNr;
 	int timerPosition = 0;
@@ -286,7 +274,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	SciEvent curEvent;
 	bool userAbort = false;
 
-	while ((raveOffset < raveResource->size) && (!userAbort)) {
+	while (raveOffset < raveResource->size() && !userAbort) {
 		// rave string starts with tick count, followed by lipSyncID, tick count and so on
 		raveTicks = raveGetTicks(raveResource, &raveOffset);
 		if (raveTicks < 0)
@@ -297,7 +285,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		if (raveID) {
 			raveLipSyncData = raveGetLipSyncData(raveID);
 		} else {
-			raveLipSyncData = NULL;
+			raveLipSyncData = SciSpan<const byte>();
 		}
 
 #ifdef DEBUG_PORTRAIT
@@ -318,7 +306,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				if (curEvent.type == SCI_EVENT_MOUSE_PRESS ||
 					(curEvent.type == SCI_EVENT_KEYBOARD && curEvent.character == SCI_KEY_ESC) ||
 					g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame ||
-					g_sci->getEngineState()->_delayedRestoreGame)
+					g_sci->getEngineState()->_delayedRestoreGameId != -1)
 					userAbort = true;
 				curPosition = _audio->getAudioPosition();
 			} while ((curPosition != -1) && (curPosition < timerPosition) && (!userAbort));
@@ -330,7 +318,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			//  Tick = 0xFF is the terminator for the data
 			timerPositionWithin = timerPosition;
 			raveLipSyncTicks = *raveLipSyncData++;
-			while ( (raveLipSyncData < _lipSyncDataOffsetTableEnd) && (raveLipSyncTicks != 0xFF) ) {
+			while (raveLipSyncData.size() && raveLipSyncTicks != 0xFF) {
 				if (raveLipSyncTicks)
 					raveLipSyncTicks--; // 1 -> wait 0 ticks, 2 -> wait 1 tick, etc.
 				timerPositionWithin += raveLipSyncTicks;
@@ -357,7 +345,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				// bitmap nr within sync data is base 1, we need base 0
 				raveLipSyncBitmapNr--;
 
-				if (raveLipSyncBitmapNr < _bitmapCount) {
+				if (raveLipSyncBitmapNr < _bitmaps.size()) {
 					drawBitmap(0);
 					drawBitmap(raveLipSyncBitmapNr);
 					bitsShow();
@@ -435,14 +423,14 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 // returns ASCII ticks from lip sync string as uint16
 int16 Portrait::raveGetTicks(Resource *resource, uint *offset) {
 	uint curOffset = *offset;
-	byte *curData = resource->data + curOffset;
+	SciSpan<const byte> curData = resource->subspan(curOffset);
 	byte curByte;
 	uint16 curValue = 0;
 
-	if (curOffset >= resource->size)
+	if (curOffset >= resource->size())
 		return -1;
 
-	while (curOffset < resource->size) {
+	while (curOffset < resource->size()) {
 		curByte = *curData++; curOffset++;
 		if ( curByte == ' ' )
 			break;
@@ -460,11 +448,11 @@ int16 Portrait::raveGetTicks(Resource *resource, uint *offset) {
 // returns ASCII ID from lip sync string as uint16
 uint16 Portrait::raveGetID(Resource *resource, uint *offset) {
 	uint curOffset = *offset;
-	byte *curData = resource->data + curOffset;
+	SciSpan<const byte> curData = resource->subspan(curOffset);
 	byte curByte = 0;
 	uint16 curValue = 0;
 
-	while (curOffset < resource->size) {
+	while (curOffset < resource->size()) {
 		curByte = *curData++; curOffset++;
 		if ( curByte == ' ' )
 			break;
@@ -480,9 +468,9 @@ uint16 Portrait::raveGetID(Resource *resource, uint *offset) {
 }
 
 // Searches for a specific lip sync ID and returns pointer to lip sync data or NULL in case ID was not found
-byte *Portrait::raveGetLipSyncData(uint16 raveID) {
+SciSpan<const byte> Portrait::raveGetLipSyncData(const uint16 raveID) {
 	uint lipSyncIDNr = 0;
-	byte *lipSyncIDPtr = _lipSyncIDTable;
+	SciSpan<const byte> lipSyncIDPtr = _lipSyncIDTable;
 	byte lipSyncIDByte1, lipSyncIDByte2;
 	uint16 lipSyncID;
 
@@ -490,20 +478,19 @@ byte *Portrait::raveGetLipSyncData(uint16 raveID) {
 	while (lipSyncIDNr < _lipSyncIDCount) {
 		lipSyncIDByte1 = *lipSyncIDPtr++;
 		lipSyncIDByte2 = *lipSyncIDPtr++;
-		lipSyncID = ( lipSyncIDByte1 << 8 ) | lipSyncIDByte2;
+		lipSyncID = (lipSyncIDByte1 << 8) | lipSyncIDByte2;
 
-		if ( lipSyncID == raveID ) {
-			return _lipSyncData + _lipSyncDataOffsetTable[lipSyncIDNr];
+		if (lipSyncID == raveID) {
+			return _lipSyncData.subspan(_lipSyncDataOffsetTable[lipSyncIDNr]);
 		}
 
 		lipSyncIDNr++;
 		lipSyncIDPtr += 2; // ID is every 4 bytes
 	}
-	return NULL;
+	return SciSpan<const byte>();
 }
 
 void Portrait::drawBitmap(uint16 bitmapNr) {
-	byte *data = _bitmaps[bitmapNr].rawBitmap;
 	uint16 bitmapHeight = _bitmaps[bitmapNr].height;
 	uint16 bitmapWidth = _bitmaps[bitmapNr].width;
 	Common::Point bitmapPosition = _position;
@@ -511,6 +498,7 @@ void Portrait::drawBitmap(uint16 bitmapNr) {
 	bitmapPosition.x += _bitmaps[bitmapNr].displaceX;
 	bitmapPosition.y += _bitmaps[bitmapNr].displaceY;
 
+	const byte *data = _bitmaps[bitmapNr].rawBitmap.getUnsafeDataAt(0, bitmapWidth * bitmapHeight);
 	for (int y = 0; y < bitmapHeight; y++) {
 		for (int x = 0; x < bitmapWidth; x++) {
 			_screen->putPixelOnDisplay(bitmapPosition.x + x, bitmapPosition.y + y, _portraitPalette.mapping[*data++]);

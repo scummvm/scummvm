@@ -30,6 +30,10 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
+#ifdef JOY_ANALOG
+#include "math.h"
+#endif
+
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
 #define JOY_DEADZONE 3200
@@ -110,13 +114,51 @@ SdlEventSource::~SdlEventSource() {
 int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	Common::KeyCode key = SDLToOSystemKeycode(sdlKey);
 
+	// Keep unicode in case it's regular ASCII text or in case we didn't get a valid keycode
+	//
+	// We need to use unicode in those cases, simply because SDL1.x passes us non-layout-adjusted keycodes.
+	// So unicode is the only way to get layout-adjusted keys.
+	if (unicode < 0x20) {
+		// don't use unicode, in case it's control characters
+		unicode = 0;
+	} else {
+		// Use unicode, in case keycode is invalid.
+		// Umlauts and others will set KEYCODE_INVALID on SDL2, so in such a case always keep unicode.
+		if (key != Common::KEYCODE_INVALID) {
+			// keycode is valid, check further also depending on modifiers
+			if (mod & (KMOD_CTRL | KMOD_ALT)) {
+				// Ctrl and/or Alt is active
+				//
+				// We need to restrict unicode to only up to 0x7E, because on macOS the option/alt key will switch to
+				// an alternate keyboard, which will cause us to receive Unicode characters for some keys, which are outside
+				// of the ASCII range (e.g. alt-x will get us U+2248). We need to return 'x' for alt-x, so using unicode
+				// in that case would break alt-shortcuts.
+				if (unicode > 0x7E)
+					unicode = 0; // do not allow any characters above 0x7E
+			} else {
+				// We must not restrict as much as when Ctrl/Alt-modifiers are active, otherwise
+				// we wouldn't let umlauts through for SDL1. For SDL1 umlauts may set for example KEYCODE_QUOTE, KEYCODE_MINUS, etc.
+				if (unicode > 0xFF)
+					unicode = 0; // do not allow any characters above 0xFF
+			}
+		}
+	}
+
+	// Attention:
+	// When using SDL1.x, we will get scancodes via sdlKey, that are raw scancodes, so NOT adjusted to keyboard layout/
+	// mapping. So for example for certain locales, we will get KEYCODE_y, when 'z' is pressed and so on.
+	// When using SDL2.x however, we will get scancodes based on the keyboard layout.
+
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
 		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
+		if ((mod & KMOD_NUM) == 0)
+			return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
 		return key - Common::KEYCODE_KP0 + '0';
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
 	} else if (unicode) {
+		// Return unicode in case it's stil set and wasn't filtered.
 		return unicode;
 	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
@@ -135,17 +177,18 @@ void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 		_graphicsManager->notifyMousePos(Common::Point(x, y));
 		_graphicsManager->transformMouseCoordinates(event.mouse);
 	}
-
-	// Update the "keyboard mouse" coords
-	_km.x = x;
-	_km.y = y;
 }
 
-void SdlEventSource::handleKbdMouse() {
+bool SdlEventSource::handleKbdMouse(Common::Event &event) {
+	// returns true if an event is generated
 	// Skip recording of these events
 	uint32 curTime = g_system->getMillis(true);
 
 	if (curTime >= _km.last_time + _km.delay_time) {
+
+		int16 oldKmX = _km.x;
+		int16 oldKmY = _km.y;
+
 		_km.last_time = curTime;
 		if (_km.x_down_count == 1) {
 			_km.x_down_time = curTime;
@@ -158,60 +201,119 @@ void SdlEventSource::handleKbdMouse() {
 
 		if (_km.x_vel || _km.y_vel) {
 			if (_km.x_down_count) {
-				if (curTime > _km.x_down_time + _km.delay_time * 12) {
+				if (curTime > _km.x_down_time + 300) {
 					if (_km.x_vel > 0)
-						_km.x_vel++;
+						_km.x_vel += MULTIPLIER;
 					else
-						_km.x_vel--;
-				} else if (curTime > _km.x_down_time + _km.delay_time * 8) {
+						_km.x_vel -= MULTIPLIER;
+				} else if (curTime > _km.x_down_time + 200) {
 					if (_km.x_vel > 0)
-						_km.x_vel = 5;
+						_km.x_vel = 5 * MULTIPLIER;
 					else
-						_km.x_vel = -5;
+						_km.x_vel = -5 * MULTIPLIER;
 				}
 			}
 			if (_km.y_down_count) {
-				if (curTime > _km.y_down_time + _km.delay_time * 12) {
+				if (curTime > _km.y_down_time + 300) {
 					if (_km.y_vel > 0)
-						_km.y_vel++;
+						_km.y_vel += MULTIPLIER;
 					else
-						_km.y_vel--;
-				} else if (curTime > _km.y_down_time + _km.delay_time * 8) {
+						_km.y_vel -= MULTIPLIER;
+				} else if (curTime > _km.y_down_time + 200) {
 					if (_km.y_vel > 0)
-						_km.y_vel = 5;
+						_km.y_vel = 5 * MULTIPLIER;
 					else
-						_km.y_vel = -5;
+						_km.y_vel = -5 * MULTIPLIER;
 				}
 			}
 
-			_km.x += _km.x_vel;
-			_km.y += _km.y_vel;
+			int16 speedFactor = 25;
+
+			if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
+				switch (ConfMan.getInt("kbdmouse_speed")) {
+				// 0.25 keyboard pointer speed
+				case 0:
+					speedFactor = 100;
+					break;
+				// 0.5 speed
+				case 1:
+					speedFactor = 50;
+					break;
+				// 0.75 speed
+				case 2:
+					speedFactor = 33;
+					break;
+				// 1.0 speed
+				case 3:
+					speedFactor = 25;
+					break;
+				// 1.25 speed
+				case 4:
+					speedFactor = 20;
+					break;
+				// 1.5 speed
+				case 5:
+					speedFactor = 17;
+					break;
+				// 1.75 speed
+				case 6:
+					speedFactor = 14;
+					break;
+				// 2.0 speed
+				case 7:
+					speedFactor = 12;
+					break;
+				default:
+					speedFactor = 25;
+				}
+			}
+
+			// - The modifier key makes the mouse movement slower
+			// - The extra factor "delay/speedFactor" ensures velocities 
+			// are independent of the kbdMouse update rate
+			// - all velocities were originally chosen
+			// at a delay of 25, so that is the reference used here
+			// - note: operator order is important to avoid overflow
+			if (_km.modifier) {
+				_km.x += ((_km.x_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
+				_km.y += ((_km.y_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
+			} else {
+				_km.x += (_km.x_vel * ((int16)_km.delay_time)) / speedFactor;
+				_km.y += (_km.y_vel * ((int16)_km.delay_time)) / speedFactor;
+			}
 
 			if (_km.x < 0) {
 				_km.x = 0;
-				_km.x_vel = -1;
+				_km.x_vel = -1 * MULTIPLIER;
 				_km.x_down_count = 1;
-			} else if (_km.x > _km.x_max) {
-				_km.x = _km.x_max;
-				_km.x_vel = 1;
+			} else if (_km.x > _km.x_max * MULTIPLIER) {
+				_km.x = _km.x_max * MULTIPLIER;
+				_km.x_vel = 1 * MULTIPLIER;
 				_km.x_down_count = 1;
 			}
 
 			if (_km.y < 0) {
 				_km.y = 0;
-				_km.y_vel = -1;
+				_km.y_vel = -1 * MULTIPLIER;
 				_km.y_down_count = 1;
-			} else if (_km.y > _km.y_max) {
-				_km.y = _km.y_max;
-				_km.y_vel = 1;
+			} else if (_km.y > _km.y_max * MULTIPLIER) {
+				_km.y = _km.y_max * MULTIPLIER;
+				_km.y_vel = 1 * MULTIPLIER;
 				_km.y_down_count = 1;
 			}
 
 			if (_graphicsManager) {
-				_graphicsManager->getWindow()->warpMouseInWindow((Uint16)_km.x, (Uint16)_km.y);
+				_graphicsManager->getWindow()->warpMouseInWindow((Uint16)(_km.x / MULTIPLIER), (Uint16)(_km.y / MULTIPLIER));
+			}
+
+			if (_km.x != oldKmX || _km.y != oldKmY) {
+				event.type = Common::EVENT_MOUSEMOVE;
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
@@ -387,7 +489,6 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 }
 
 bool SdlEventSource::pollEvent(Common::Event &event) {
-	handleKbdMouse();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// In case we still need to send a key up event for a key down from a
@@ -413,6 +514,12 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 		if (dispatchSDLEvent(ev, event))
 			return true;
 	}
+
+	// Handle mouse control via analog joystick and keyboard
+	if (handleKbdMouse(event)) {
+		return true;
+	}
+
 	return false;
 }
 
@@ -438,16 +545,11 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
 		Sint32 yDir = ev.wheel.y;
-#if SDL_VERSION_ATLEAST(2, 0, 4)
-		if (ev.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
-			yDir *= -1;
-		}
-#endif
 		// HACK: It seems we want the mouse coordinates supplied
 		// with a mouse wheel event. However, SDL2 does not supply
 		// these, thus we use whatever we got last time. It seems
 		// these are always stored in _km.x, _km.y.
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 		if (yDir < 0) {
 			event.type = Common::EVENT_WHEELDOWN;
 			return true;
@@ -517,15 +619,17 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
 
+	SDLKey sdlKeycode = obtainKeycode(ev.key.keysym);
+
 	// Handle scroll lock as a key modifier
-	if (ev.key.keysym.sym == SDLK_SCROLLOCK)
+	if (sdlKeycode == SDLK_SCROLLOCK)
 		_scrollLock = !_scrollLock;
 
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
 
 	// Ctrl-m toggles mouse capture
-	if (event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'm') {
+	if (event.kbd.hasFlags(Common::KBD_CTRL) && sdlKeycode == 'm') {
 		if (_graphicsManager) {
 			_graphicsManager->getWindow()->toggleMouseGrab();
 		}
@@ -534,26 +638,26 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 #if defined(MACOSX)
 	// On Macintosh, Cmd-Q quits
-	if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
+	if ((ev.key.keysym.mod & KMOD_META) && sdlKeycode == 'q') {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
 #elif defined(POSIX)
 	// On other *nix systems, Control-Q quits
-	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
+	if ((ev.key.keysym.mod & KMOD_CTRL) && sdlKeycode == 'q') {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
 #else
 	// Ctrl-z quits
-	if ((event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'z')) {
+	if ((event.kbd.hasFlags(Common::KBD_CTRL) && sdlKeycode == 'z')) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
 
 	#ifdef WIN32
 	// On Windows, also use the default Alt-F4 quit combination
-	if ((ev.key.keysym.mod & KMOD_ALT) && ev.key.keysym.sym == SDLK_F4) {
+	if ((ev.key.keysym.mod & KMOD_ALT) && sdlKeycode == SDLK_F4) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
@@ -561,7 +665,7 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 #endif
 
 	// Ctrl-u toggles mute
-	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'u') {
+	if ((ev.key.keysym.mod & KMOD_CTRL) && sdlKeycode == 'u') {
 		event.type = Common::EVENT_MUTE;
 		return true;
 	}
@@ -570,8 +674,8 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		return true;
 
 	event.type = Common::EVENT_KEYDOWN;
-	event.kbd.keycode = SDLToOSystemKeycode(ev.key.keysym.sym);
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
+	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
+	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
 
 	return true;
 }
@@ -580,6 +684,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
+	SDLKey sdlKeycode = obtainKeycode(ev.key.keysym);
 	SDLMod mod = SDL_GetModState();
 
 	// Check if this is an event handled by handleKeyDown(), and stop if it is
@@ -587,21 +692,21 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	// Check if the Ctrl key is down, so that we can trap cases where the
 	// user has the Ctrl key down, and has just released a special key
 	if (mod & KMOD_CTRL) {
-		if (ev.key.keysym.sym == 'm' ||	// Ctrl-m toggles mouse capture
+		if (sdlKeycode == 'm' ||	// Ctrl-m toggles mouse capture
 #if defined(MACOSX)
 			// Meta - Q, handled below
 #elif defined(POSIX)
-			ev.key.keysym.sym == 'q' ||	// On other *nix systems, Control-Q quits
+			sdlKeycode == 'q' ||	// On other *nix systems, Control-Q quits
 #else
-			ev.key.keysym.sym == 'z' ||	// Ctrl-z quit
+			sdlKeycode == 'z' ||	// Ctrl-z quit
 #endif
-			ev.key.keysym.sym == 'u')	// Ctrl-u toggles mute
+			sdlKeycode == 'u')	// Ctrl-u toggles mute
 			return false;
 	}
 
 	// Same for other keys (Meta and Alt)
 #if defined(MACOSX)
-	if ((mod & KMOD_META) && ev.key.keysym.sym == 'q')
+	if ((mod & KMOD_META) && sdlKeycode == 'q')
 		return false;	// On Macintosh, Cmd-Q quits
 #endif
 
@@ -609,8 +714,8 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	// continue normally
 
 	event.type = Common::EVENT_KEYUP;
-	event.kbd.keycode = SDLToOSystemKeycode(ev.key.keysym.sym);
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, 0);
+	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
+	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, 0);
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	SDLModToOSystemKeyFlags(mod, event);
@@ -625,6 +730,9 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	processMouseEvent(event, ev.motion.x, ev.motion.y);
+	// update KbdMouse
+	_km.x = ev.motion.x * MULTIPLIER;
+	_km.y = ev.motion.y * MULTIPLIER;
 
 	return true;
 }
@@ -648,6 +756,9 @@ bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 		return false;
 
 	processMouseEvent(event, ev.button.x, ev.button.y);
+	// update KbdMouse
+	_km.x = ev.button.x * MULTIPLIER;
+	_km.y = ev.button.y * MULTIPLIER;
 
 	return true;
 }
@@ -664,6 +775,9 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	else
 		return false;
 	processMouseEvent(event, ev.button.x, ev.button.y);
+	// update KbdMouse
+	_km.x = ev.button.x * MULTIPLIER;
+	_km.y = ev.button.y * MULTIPLIER;
 
 	return true;
 }
@@ -671,10 +785,10 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONDOWN;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else {
 		event.type = Common::EVENT_KEYDOWN;
 		switch (ev.jbutton.button) {
@@ -702,10 +816,10 @@ bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONUP;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else {
 		event.type = Common::EVENT_KEYUP;
 		switch (ev.jbutton.button) {
@@ -731,23 +845,26 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 }
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+
 	int axis = ev.jaxis.value;
+#ifdef JOY_ANALOG
+	// conversion factor between keyboard mouse and joy axis value
+	int vel_to_axis = (1500 / MULTIPLIER);
+#else
 	if (axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
-		event.type = Common::EVENT_MOUSEMOVE;
 	} else if (axis < -JOY_DEADZONE) {
 		axis += JOY_DEADZONE;
-		event.type = Common::EVENT_MOUSEMOVE;
 	} else
 		axis = 0;
+#endif
 
 	if (ev.jaxis.axis == JOY_XAXIS) {
 #ifdef JOY_ANALOG
-		_km.x_vel = axis / 2000;
-		_km.x_down_count = 0;
+		_km.joy_x = axis;
 #else
 		if (axis != 0) {
-			_km.x_vel = (axis > 0) ? 1:-1;
+			_km.x_vel = (axis > 0) ? 1 * MULTIPLIER:-1 * MULTIPLIER;
 			_km.x_down_count = 1;
 		} else {
 			_km.x_vel = 0;
@@ -759,11 +876,10 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 		axis = -axis;
 #endif
 #ifdef JOY_ANALOG
-		_km.y_vel = -axis / 2000;
-		_km.y_down_count = 0;
+		_km.joy_y = -axis;
 #else
 		if (axis != 0) {
-			_km.y_vel = (-axis > 0) ? 1: -1;
+			_km.y_vel = (-axis > 0) ? 1 * MULTIPLIER: -1 * MULTIPLIER;
 			_km.y_down_count = 1;
 		} else {
 			_km.y_vel = 0;
@@ -771,10 +887,31 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 		}
 #endif
 	}
+#ifdef JOY_ANALOG
+	// radial and scaled analog joystick deadzone
+	float analogX = (float)_km.joy_x;
+	float analogY = (float)_km.joy_y;
+	float deadZone = (float)JOY_DEADZONE;
+	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone))
+		deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
+	float scalingFactor = 1.0f;
+	float magnitude = 0.0f;
 
-	processMouseEvent(event, _km.x, _km.y);
+	magnitude = sqrt(analogX * analogX + analogY * analogY);
 
-	return true;
+	if (magnitude >= deadZone) {
+		_km.x_down_count = 0;
+		_km.y_down_count = 0;
+		scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
+		_km.x_vel = (int16)(analogX * scalingFactor * 32768.0f / vel_to_axis);
+		_km.y_vel = (int16)(analogY * scalingFactor * 32768.0f / vel_to_axis);
+	} else {
+		_km.x_vel = 0;
+		_km.y_vel = 0;
+	}
+#endif
+
+	return false;
 }
 
 bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
@@ -845,11 +982,14 @@ bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
-void SdlEventSource::resetKeyboadEmulation(int16 x_max, int16 y_max) {
+void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.x_max = x_max;
 	_km.y_max = y_max;
-	_km.delay_time = 25;
+	_km.delay_time = 12;
 	_km.last_time = 0;
+	_km.modifier = false;
+	_km.joy_x = 0;
+	_km.joy_y = 0;
 }
 
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
@@ -868,9 +1008,62 @@ bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
 	return false;
 }
 
+SDLKey SdlEventSource::obtainKeycode(const SDL_keysym keySym) {
+#if !SDL_VERSION_ATLEAST(2, 0, 0) && defined(WIN32) && !defined(_WIN32_WCE)
+	// WORKAROUND: SDL 1.2 on Windows does not use the user configured keyboard layout,
+	// resulting in "keySym.sym" values to always be those expected for an US keyboard.
+	// For example, SDL returns SDLK_Q when pressing the 'A' key on an AZERTY keyboard.
+	// This defeats the purpose of keycodes which is to be able to refer to a key without
+	// knowing where it is physically located.
+	// We work around this issue by querying the currently active Windows keyboard layout
+	// using the scancode provided by SDL.
+
+	if (keySym.sym >= SDLK_0 && keySym.sym <= SDLK_9) {
+		// The keycode returned by SDL is kept for the number keys.
+		// Querying the keyboard layout for those would return the base key values
+		// for AZERTY keyboards, which are not numbers. For example, SDLK_1 would
+		// map to SDLK_AMPERSAND. This is theoretically correct but practically unhelpful,
+		// because it makes it impossible to handle key combinations such as "ctrl-1".
+		return keySym.sym;
+	}
+
+	int vk = MapVirtualKey(keySym.scancode, MAPVK_VSC_TO_VK);
+	if (vk) {
+		int ch = (MapVirtualKey(vk, MAPVK_VK_TO_CHAR) & 0x7FFF);
+		// The top bit of the result of MapVirtualKey with MAPVK_VSC_TO_VK signals
+		// a dead key was pressed. In that case we keep the value of the accent alone.
+		if (ch) {
+			if (ch >= 'A' && ch <= 'Z') {
+				// Windows returns uppercase ASCII whereas SDL expects lowercase
+				return (SDLKey)(SDLK_a + (ch - 'A'));
+			} else {
+				return (SDLKey)ch;
+			}
+		}
+	}
+#endif
+
+	return keySym.sym;
+}
+
 uint32 SdlEventSource::obtainUnicode(const SDL_keysym keySym) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Event events[2];
+
+	// Update the event queue here to give SDL a chance to insert TEXTINPUT
+	// events for KEYDOWN events. Otherwise we have a high chance that on
+	// Windows the TEXTINPUT event is not in the event queue at this point.
+	// In this case we will get two events with ascii values due to mapKey
+	// and dispatchSDLEvent. This results in nasty double input of characters
+	// in the GUI.
+	//
+	// FIXME: This is all a bit fragile because in mapKey we derive the ascii
+	// value from the key code if no unicode value is given. This is legacy
+	// behavior and should be removed anyway. If that is removed, we might not
+	// even need to do this peeking here but instead can rely on the
+	// SDL_TEXTINPUT case in dispatchSDLEvent to introduce keydown/keyup with
+	// proper ASCII values (but with KEYCODE_INVALID as keycode).
+	SDL_PumpEvents();
 
 	// In SDL2, the unicode field has been removed from the keysym struct.
 	// Instead a SDL_TEXTINPUT event is generated on key combinations that

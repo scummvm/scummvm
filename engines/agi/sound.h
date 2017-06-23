@@ -23,7 +23,10 @@
 #ifndef AGI_SOUND_H
 #define AGI_SOUND_H
 
-#include "audio/mixer.h"
+namespace Audio {
+class Mixer;
+class SoundHandle;
+}
 
 namespace Agi {
 
@@ -71,11 +74,8 @@ class SoundMgr;
 
 class SoundGen {
 public:
-	SoundGen(AgiBase *vm, Audio::Mixer *pMixer) : _vm(vm), _mixer(pMixer) {
-		_sampleRate = pMixer->getOutputRate();
-	}
-
-	virtual ~SoundGen() {}
+	SoundGen(AgiBase *vm, Audio::Mixer *pMixer);
+	virtual ~SoundGen();
 
 	virtual void play(int resnum) = 0;
 	virtual void stop(void) = 0;
@@ -83,7 +83,7 @@ public:
 	AgiBase *_vm;
 
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
+	Audio::SoundHandle *_soundHandle;
 
 	uint32 _sampleRate;
 };

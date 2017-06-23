@@ -37,9 +37,6 @@
 
 namespace Wintermute {
 
-//typedef std::string AnsiString;
-//typedef std::string Utf8String;
-//typedef std::wstring WideString;
 typedef Common::String AnsiString;
 typedef Common::String Utf8String;
 typedef Common::U32String WideString;

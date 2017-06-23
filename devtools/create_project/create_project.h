@@ -86,6 +86,11 @@ struct EngineDesc {
 	 * Whether the engine should be included in the build or not.
 	 */
 	bool enable;
+	
+	/**
+	 * Features required for this engine.
+	 */
+	StringList requiredFeatures;
 
 	/**
 	 * A list of all available sub engine names. Sub engines are engines
@@ -229,15 +234,17 @@ struct BuildSetup {
 	StringList testDirs;  ///< List of all folders containing tests
 
 	bool devTools;         ///< Generate project files for the tools
-	bool tests;             ///< Generate project files for the tests
+	bool tests;            ///< Generate project files for the tests
 	bool runBuildEvents;   ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
 	bool createInstaller;  ///< Create NSIS installer after the build
+	bool useSDL2;          ///< Whether to use SDL2 or not.
 
 	BuildSetup() {
 		devTools        = false;
 		tests           = false;
 		runBuildEvents  = false;
 		createInstaller = false;
+		useSDL2         = true;
 	}
 };
 

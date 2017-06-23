@@ -26,6 +26,8 @@
 #include "graphics/palette.h"
 
 #include "agos/agos.h"
+#include "agos/intern.h"
+#include "agos/sound.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone();

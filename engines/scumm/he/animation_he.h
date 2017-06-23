@@ -23,7 +23,9 @@
 #if !defined(SCUMM_HE_ANIMATION_H) && defined(ENABLE_HE)
 #define SCUMM_HE_ANIMATION_H
 
-#include "audio/mixer.h"
+namespace Audio {
+class Mixer;
+}
 
 namespace Common {
 class String;

@@ -2280,4 +2280,7 @@ bool AdGame::onScriptShutdown(ScScript *script) {
 	return STATUS_OK;
 }
 
+Common::String AdGame::debuggerToString() const {
+	return Common::String::format("%p: Game \"%s\"", (const void *)this, getName());
+}
 } // End of namespace Wintermute

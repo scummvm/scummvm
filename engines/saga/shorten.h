@@ -30,9 +30,14 @@
 #define SOUND_SHORTEN_H
 
 #include "common/scummsys.h"
-#include "common/stream.h"
 
-#include "audio/audiostream.h"
+namespace Audio {
+class AudioStream;
+}
+
+namespace Common {
+class ReadStream;
+}
 
 namespace Saga {
 

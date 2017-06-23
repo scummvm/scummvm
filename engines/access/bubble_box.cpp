@@ -165,7 +165,7 @@ void BubbleBox::printBubble(const Common::String &msg) {
 
 void BubbleBox::printBubble_v1(const Common::String &msg) {
 	drawBubble(_bubbles.size() - 1);
-	
+
 	// Loop through drawing the lines
 	Common::String s = msg;
 	Common::String line;
@@ -228,7 +228,7 @@ void BubbleBox::drawBubble(int index) {
 
 void BubbleBox::doBox(int item, int box) {
 	FontManager &fonts = _vm->_fonts;
-	ASurface &screen = *_vm->_screen;
+	Screen &screen = *_vm->_screen;
 
 	_startItem = item;
 	_startBox = box;
@@ -369,7 +369,7 @@ void BubbleBox::displayBoxData() {
 		_vm->_screen->drawRect();
 		_vm->_events->showCursor();
 	}
-	
+
 	_vm->_events->hideCursor();
 	int oldPStartY = _boxPStartY;
 	++_boxPStartY;
@@ -474,7 +474,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	--_vm->_screen->_orgX2;
 	--_vm->_screen->_orgY2;
 	_vm->_screen->_lColor = 0xF9;
-	
+
 	// Draw the inner border
 	_vm->_screen->drawBox();
 
@@ -611,6 +611,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_vm->_events->showCursor();
 		warning("TODO: pop values");
 		_vm->_screen->restoreScreen();
+		delete icons;
 		return retval_;
 	}
 
@@ -642,7 +643,9 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			}
 		}
 	}
-	
+
+	delete icons;
+
 	_vm->_screen->restoreScreen();
 	_vm->_boxDataStart = _startItem;
 	_vm->_boxSelectYOld = -1;
@@ -732,7 +735,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 
 			if (_type != TYPE_3)
 				continue;
-			
+
 			if ((_vm->_events->_mousePos.x < tmpX) || (_vm->_events->_mousePos.x > tmpX + 144))
 				continue;
 

@@ -24,6 +24,7 @@
 #include "common/error.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "mohawk/mohawk.h"
 #include "mohawk/cursors.h"
@@ -40,14 +41,12 @@ MohawkEngine::MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc)
 	// Setup mixer
 	syncSoundSettings();
 
-	_sound = 0;
 	_video = 0;
 	_pauseDialog = 0;
 	_cursor = 0;
 }
 
 MohawkEngine::~MohawkEngine() {
-	delete _sound;
 	delete _video;
 	delete _pauseDialog;
 	delete _cursor;
@@ -58,22 +57,19 @@ MohawkEngine::~MohawkEngine() {
 }
 
 Common::Error MohawkEngine::run() {
-	_sound = new Sound(this);
 	_video = new VideoManager(this);
-	_pauseDialog = new PauseDialog(this, "The game is paused. Press any key to continue.");
+	_pauseDialog = new PauseDialog(this, _("The game is paused. Press any key to continue."));
 
 	return Common::kNoError;
 }
 
 void MohawkEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
 	if (pause) {
 		_video->pauseVideos();
-		_sound->pauseSound();
-		_sound->pauseSLST();
 	} else {
 		_video->resumeVideos();
-		_sound->resumeSound();
-		_sound->resumeSLST();
 		_system->updateScreen();
 	}
 }

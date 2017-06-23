@@ -51,6 +51,8 @@ Dialog::Dialog(int x, int y, int w, int h)
 	// will for example crash after returning to the launcher when the user
 	// started a 640x480 game with a non 1x scaler.
 	g_gui.checkScreenChange();
+
+	_result = -1;
 }
 
 Dialog::Dialog(const Common::String &name)
@@ -66,6 +68,8 @@ Dialog::Dialog(const Common::String &name)
 	// Fixes bug #1590596: "HE: When 3x graphics are choosen, F5 crashes game"
 	// and bug #1595627: "SCUMM: F5 crashes game (640x480)"
 	g_gui.checkScreenChange();
+
+	_result = -1;
 }
 
 int Dialog::runModal() {
@@ -84,13 +88,7 @@ void Dialog::open() {
 	_visible = true;
 	g_gui.openDialog(this);
 
-	Widget *w = _firstWidget;
-	// Search for the first objects that wantsFocus() (if any) and give it the focus
-	while (w && !w->wantsFocus()) {
-		w = w->_next;
-	}
-
-	setFocusWidget(w);
+	setDefaultFocusedWidget();
 }
 
 void Dialog::close() {
@@ -109,16 +107,18 @@ void Dialog::reflowLayout() {
 	// changed, so any cached image may be invalid. The subsequent redraw
 	// should be treated as the very first draw.
 
+	GuiObject::reflowLayout();
+
 	Widget *w = _firstWidget;
 	while (w) {
 		w->reflowLayout();
 		w = w->_next;
 	}
-
-	GuiObject::reflowLayout();
 }
 
 void Dialog::lostFocus() {
+	_dragWidget = NULL;
+
 	if (_tickleWidget) {
 		_tickleWidget->lostFocus();
 	}
@@ -134,6 +134,16 @@ void Dialog::setFocusWidget(Widget *widget) {
 		widget->receivedFocus();
 
 	_focusedWidget = widget;
+}
+
+void Dialog::setDefaultFocusedWidget() {
+	Widget *w = _firstWidget;
+	// Search for the first objects that wantsFocus() (if any) and give it the focus
+	while (w && !w->wantsFocus()) {
+		w = w->_next;
+	}
+
+	setFocusWidget(w);
 }
 
 void Dialog::releaseFocus() {
@@ -355,11 +365,11 @@ Widget *Dialog::findWidget(const char *name) {
 }
 
 void Dialog::removeWidget(Widget *del) {
-	if (del == _mouseWidget)
+	if (del == _mouseWidget || del->containsWidget(_mouseWidget))
 		_mouseWidget = NULL;
-	if (del == _focusedWidget)
+	if (del == _focusedWidget || del->containsWidget(_focusedWidget))
 		_focusedWidget = NULL;
-	if (del == _dragWidget)
+	if (del == _dragWidget || del->containsWidget(_dragWidget))
 		_dragWidget = NULL;
 
 	GuiObject::removeWidget(del);

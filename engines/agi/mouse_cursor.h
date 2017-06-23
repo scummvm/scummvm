@@ -178,6 +178,29 @@ static const byte MOUSECURSOR_AMIGA_BUSY[] = {
 	1,1,1,1,1,1,1,1,1,1,1,1,1
 };
 
+/**
+ * A Macintosh-style busy cursor showing an hourglass (10x14).
+ * 0 = Transparent.
+ * 1 = Black     (#000000 in 24-bit RGB).
+ * 2 = White (#FFFFFF in 24-bit RGB).
+ */
+static const byte MOUSECURSOR_MACINTOSH_BUSY[] = {
+	0,0,1,1,1,1,1,1,0,0,
+	0,0,1,1,1,1,1,1,0,0,
+	0,0,1,1,1,1,1,1,0,0,
+	0,1,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,1,2,2,2,1,
+	1,2,2,2,2,1,2,2,2,1,
+	1,2,2,2,2,1,2,2,2,1,
+	1,2,2,1,1,1,2,2,2,1,
+	1,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,2,2,2,1,
+	0,1,2,2,2,2,2,2,1,0,
+	0,0,1,1,1,1,1,1,0,0,
+	0,0,1,1,1,1,1,1,0,0,
+	0,0,1,1,1,1,1,1,0,0
+};
+
 } // End of namespace Agi
 
 #endif /* AGI_MOUSE_CURSOR_H */

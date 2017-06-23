@@ -307,7 +307,7 @@ int initCt(const char *ctpName) {
 	MemFree(ptr);
 
 	if (ctpName != currentCtpName)
-		strcpy(currentCtpName, ctpName);
+		Common::strlcpy(currentCtpName, ctpName, 40);
 
 	numberOfWalkboxes = segementSizeTable[6] / 2;	// get the number of walkboxes
 

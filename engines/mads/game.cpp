@@ -498,7 +498,7 @@ void Game::loadGame(int slotNumber) {
 	_scene._currentSceneId = -2;
 	_sectionNumber = _scene._nextSceneId / 100;
 	_scene._frameStartTime = _vm->_events->getFrameCounter();
-	_vm->_screen._shakeCountdown = -1;
+	_vm->_screen->_shakeCountdown = -1;
 
 	// Default the selected inventory item to the first one, if the player has any
 	_scene._userInterface._selectedInvIndex = _objects._inventoryList.size() > 0 ? 0 : -1;
@@ -600,7 +600,8 @@ void Game::createThumbnail() {
 	uint8 thumbPalette[PALETTE_SIZE];
 	_vm->_palette->grabPalette(thumbPalette, 0, PALETTE_COUNT);
 	_saveThumb = new Graphics::Surface();
-	::createThumbnail(_saveThumb, _vm->_screen.getData(), MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
+	::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(),
+		MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, thumbPalette);
 }
 
 void Game::syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int masterId) {

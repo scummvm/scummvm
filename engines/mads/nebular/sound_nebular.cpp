@@ -20,15 +20,14 @@
  *
  */
 
-#include "audio/audiostream.h"
 #include "audio/fmopl.h"
-#include "audio/decoders/raw.h"
 #include "common/algorithm.h"
-#include "common/debug.h"
 #include "common/md5.h"
-#include "common/memstream.h"
-#include "mads/sound.h"
 #include "mads/nebular/sound_nebular.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace MADS {
 
@@ -195,7 +194,7 @@ ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filenam
 		_channelData[i]._freqBase = 0;
 		_channelData[i]._field6 = 0;
 	}
-	
+
 	for (int i = 0; i < ADLIB_CHANNEL_COUNT; ++i)
 		_channels[i]._owner = this;
 

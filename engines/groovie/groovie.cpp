@@ -20,9 +20,6 @@
  *
  */
 
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
-
 #include "groovie/groovie.h"
 #include "groovie/cursor.h"
 #include "groovie/detection.h"
@@ -56,6 +53,18 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false), _font(NULL),
 	_spookyMode(false) {
 
+	// Initialize the custom debug levels
+	DebugMan.addDebugChannel(kDebugVideo, "Video", "Debug video and audio playback");
+	DebugMan.addDebugChannel(kDebugResource, "Resource", "Debug resource management");
+	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
+	DebugMan.addDebugChannel(kDebugUnknown, "Unknown", "Report values of unknown data in files");
+	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Show the hotspots");
+	DebugMan.addDebugChannel(kDebugCursor, "Cursor", "Debug cursor decompression / switching");
+	DebugMan.addDebugChannel(kDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
+	DebugMan.addDebugChannel(kDebugScriptvars, "Scriptvars", "Print out any change to script variables");
+	DebugMan.addDebugChannel(kDebugCell, "Cell", "Debug the cell game (in the microscope)");
+	DebugMan.addDebugChannel(kDebugFast, "Fast", "Play videos quickly, with no sound (unstable)");
+
 	// Adding the default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "groovie");
@@ -66,18 +75,6 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	_modeSpeed = kGroovieSpeedNormal;
 	if (ConfMan.hasKey("fast_movie_speed") && ConfMan.getBool("fast_movie_speed"))
 		_modeSpeed = kGroovieSpeedFast;
-
-	// Initialize the custom debug levels
-	DebugMan.addDebugChannel(kDebugVideo, "Video", "Debug video and audio playback");
-	DebugMan.addDebugChannel(kDebugResource, "Resource", "Debug resouce management");
-	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
-	DebugMan.addDebugChannel(kDebugUnknown, "Unknown", "Report values of unknown data in files");
-	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Show the hotspots");
-	DebugMan.addDebugChannel(kDebugCursor, "Cursor", "Debug cursor decompression / switching");
-	DebugMan.addDebugChannel(kDebugMIDI, "MIDI", "Debug MIDI / XMIDI files");
-	DebugMan.addDebugChannel(kDebugScriptvars, "Scriptvars", "Print out any change to script variables");
-	DebugMan.addDebugChannel(kDebugCell, "Cell", "Debug the cell game (in the microscope)");
-	DebugMan.addDebugChannel(kDebugFast, "Fast", "Play videos quickly, with no sound (unstable)");
 }
 
 GroovieEngine::~GroovieEngine() {
@@ -257,11 +254,7 @@ Common::Error GroovieEngine::run() {
 	// the same cd
 	if (getPlatform() != Common::kPlatformIOS) {
 		checkCD();
-
-		// Initialize the CD
-		int cd_num = ConfMan.getInt("cdrom");
-		if (cd_num >= 0)
-			_system->getAudioCDManager()->openCD(cd_num);
+		_system->getAudioCDManager()->open();
 	}
 
 	while (!shouldQuit()) {

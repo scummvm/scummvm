@@ -57,18 +57,18 @@ ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int
 }
 
 bool ExCommand::load(MfcArchive &file) {
-	debug(5, "ExCommand::load()");
+	debugC(5, kDebugLoading, "ExCommand::load()");
 
 	_parentId = file.readUint16LE();
 	_messageKind = file.readUint32LE();
-	_x = file.readUint32LE();
-	_y = file.readUint32LE();
+	_x = file.readSint32LE();
+	_y = file.readSint32LE();
 	_field_14 = file.readUint32LE();
 	_sceneClickX = file.readUint32LE();
 	_sceneClickY = file.readUint32LE();
 	_field_20 = file.readUint32LE();
 	_field_24 = file.readUint32LE();
-	_keyCode = file.readUint32LE();
+	_param = file.readUint32LE();
 	_field_2C = file.readUint32LE();
 	_field_30 = file.readUint32LE();
 	_field_34 = file.readUint32LE();
@@ -135,7 +135,7 @@ void ExCommand::setf3c(int val) {
 
 void ExCommand::firef34() {
 	if (_field_34) {
-		if (_field_3C >= _keyCode) {
+		if (_field_3C >= _param) {
 			_field_34 = 0;
 
 			sendMessage();
@@ -192,7 +192,7 @@ Message::Message() {
 	_sceneClickY = 0;
 	_field_20 = 0;
 	_field_24 = 0;
-	_keyCode = 0;
+	_param = 0;
 	_field_2C = 0;
 	_field_30 = 0;
 	_field_34 = 0;
@@ -208,7 +208,7 @@ Message::Message(Message *src) {
 	_sceneClickY = src->_sceneClickY;
 	_field_20 = src->_field_20;
 	_field_24 = src->_field_24;
-	_keyCode = src->_keyCode;
+	_param = src->_param;
 	_field_2C = src->_field_2C;
 	_field_30 = src->_field_30;
 	_field_34 = src->_field_34;
@@ -224,7 +224,7 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, 
 	_sceneClickY = sceneClickY;
 	_field_24 = a7;
 	_field_20 = a10;
-	_keyCode = 0;
+	_param = 0;
 	_field_2C = 0;
 	_field_30 = 0;
 	_field_34 = 0;
@@ -232,22 +232,21 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, 
 
 ObjstateCommand::ObjstateCommand() {
 	_value = 0;
-	_objCommandName = 0;
+	_objtype = kObjTypeObjstateCommand;
 }
 
 ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : ExCommand(src) {
 	_value = src->_value;
-	_objCommandName = (char *)calloc(strlen(src->_objCommandName) + 1, 1);
+	_objtype = kObjTypeObjstateCommand;
 
-	strncpy(_objCommandName, src->_objCommandName, strlen(src->_objCommandName));
+	_objCommandName = src->_objCommandName;
 }
 
 ObjstateCommand::~ObjstateCommand() {
-	free(_objCommandName);
 }
 
 bool ObjstateCommand::load(MfcArchive &file) {
-	debug(5, "ObjStateCommand::load()");
+	debugC(5, kDebugLoading, "ObjStateCommand::load()");
 
 	_objtype = kObjTypeObjstateCommand;
 
@@ -271,7 +270,6 @@ MessageQueue::MessageQueue() {
 	_id = 0;
 	_isFinished = 0;
 	_flags = 0;
-	_queueName = 0;
 	_counter = 0;
 	_field_38 = 0;
 	_flag1 = 0;
@@ -284,7 +282,6 @@ MessageQueue::MessageQueue(int dataId) {
 	_id = g_fp->_globalMessageQueueList->compact();
 	_isFinished = 0;
 	_flags = 0;
-	_queueName = 0;
 	_counter = 0;
 	_field_38 = 0;
 	_flag1 = 0;
@@ -310,7 +307,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_id = g_fp->_globalMessageQueueList->compact();
 	_dataId = src->_dataId;
 	_flags = src->_flags;
-	_queueName = 0;
+	_queueName = "";
 
 	g_fp->_globalMessageQueueList->addMessageQueue(this);
 
@@ -336,12 +333,10 @@ MessageQueue::~MessageQueue() {
 	}
 
 	finish();
-
-	free(_queueName);
 }
 
 bool MessageQueue::load(MfcArchive &file) {
-	debug(5, "MessageQueue::load()");
+	debugC(5, kDebugLoading, "MessageQueue::load()");
 
 	_dataId = file.readUint16LE();
 
@@ -457,7 +452,7 @@ void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
 	_exCommands.erase(it);
 }
 
-void MessageQueue::transferExCommands(MessageQueue *mq) {
+void MessageQueue::mergeQueue(MessageQueue *mq) { // Original belongs to AniHandler
 	while (mq->_exCommands.size()) {
 		_exCommands.push_back(mq->_exCommands.front());
 		mq->_exCommands.pop_front();
@@ -500,7 +495,10 @@ bool MessageQueue::checkGlobalExCommandList1() {
 			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27)
 				continue;
 
-			if (ex1->_keyCode != ex->_keyCode && ex1->_keyCode != -1 && ex->_keyCode != -1)
+			if (ex1->_parentId != ex->_parentId)
+				continue;
+
+			if (ex1->_param != ex->_param && ex1->_param != -1 && ex->_param != -1)
 				continue;
 
 			MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
@@ -531,7 +529,12 @@ bool MessageQueue::checkGlobalExCommandList2() {
 				continue;
 			}
 
-			if (ex1->_keyCode != ex->_keyCode && ex1->_keyCode != -1 && ex->_keyCode != -1) {
+			if (ex1->_parentId != ex->_parentId) {
+				it++;
+				continue;
+			}
+
+			if (ex1->_param != ex->_param && ex1->_param != -1 && ex->_param != -1) {
 				it++;
 				continue;
 			}
@@ -577,14 +580,14 @@ void MessageQueue::finish() {
 		mq->update();
 }
 
-void MessageQueue::replaceKeyCode(int key1, int key2) {
+void MessageQueue::setParamInt(int key1, int key2) {
 	for (uint i = 0; i < getCount(); i++) {
 		ExCommand *ex = getExCommandByIndex(i);
 		int k = ex->_messageKind;
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
-					&& ex->_keyCode == key1)
-			ex->_keyCode = key2;
-    }
+					&& ex->_param == key1)
+			ex->_param = key2;
+	}
 }
 
 int MessageQueue::calcDuration(StaticANIObject *obj) {
@@ -615,10 +618,10 @@ void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newPa
 		int k = ex->_messageKind;
 
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
-			 && ex->_keyCode == oldParam28
+			 && ex->_param == oldParam28
 			 && ex->_parentId == objId)
-			ex->_keyCode = newParam28;
-    }
+			ex->_param = newParam28;
+	}
 }
 
 int MessageQueue::activateExCommandsByKind(int kind) {
@@ -682,7 +685,7 @@ int GlobalMessageQueueList::compact() {
 		useList[i] = 0;
 
 	for (uint i = 0; i < size();) {
-		if (((MessageQueue *)_storage[i])->_isFinished) {
+		if (_storage[i]->_isFinished) {
 			disableQueueById(_storage[i]->_id);
 			remove_at(i);
 		} else {
@@ -962,7 +965,7 @@ bool chainObjQueue(StaticANIObject *obj, int queueId, int flags) {
 void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
 	ExCommand *ex = new ExCommand(parentId, 17, 64, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_keyCode = keyCode;
+	ex->_param = keyCode;
 	ex->_excFlags |= 3;
 	ex->_x = x;
 	ex->_y = y;

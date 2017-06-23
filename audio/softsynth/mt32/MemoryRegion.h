@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,11 +18,19 @@
 #ifndef MT32EMU_MEMORY_REGION_H
 #define MT32EMU_MEMORY_REGION_H
 
+#include <cstddef>
+
+#include "globals.h"
+#include "Types.h"
+#include "Structures.h"
+
 namespace MT32Emu {
 
 enum MemoryRegionType {
 	MR_PatchTemp, MR_RhythmTemp, MR_TimbreTemp, MR_Patches, MR_Timbres, MR_System, MR_Display, MR_Reset
 };
+
+class Synth;
 
 class MemoryRegion {
 private:
@@ -84,7 +92,7 @@ public:
 	}
 	void read(unsigned int entry, unsigned int off, Bit8u *dst, unsigned int len) const;
 	void write(unsigned int entry, unsigned int off, const Bit8u *src, unsigned int len, bool init = false) const;
-};
+}; // class MemoryRegion
 
 class PatchTempMemoryRegion : public MemoryRegion {
 public:
@@ -112,13 +120,13 @@ public:
 };
 class DisplayMemoryRegion : public MemoryRegion {
 public:
-	DisplayMemoryRegion(Synth *useSynth) : MemoryRegion(useSynth, NULL, NULL, MR_Display, MT32EMU_MEMADDR(0x200000), MAX_SYSEX_SIZE - 1, 1) {}
+	DisplayMemoryRegion(Synth *useSynth) : MemoryRegion(useSynth, NULL, NULL, MR_Display, MT32EMU_MEMADDR(0x200000), SYSEX_BUFFER_SIZE - 1, 1) {}
 };
 class ResetMemoryRegion : public MemoryRegion {
 public:
 	ResetMemoryRegion(Synth *useSynth) : MemoryRegion(useSynth, NULL, NULL, MR_Reset, MT32EMU_MEMADDR(0x7F0000), 0x3FFF, 1) {}
 };
 
-}
+} // namespace MT32Emu
 
-#endif
+#endif // #ifndef MT32EMU_MEMORY_REGION_H

@@ -820,16 +820,19 @@ const char *const TinselEngine::_textFiles[][3] = {
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
-		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
-	_vm = this;
-
-	_config = new Config(this);
-
+		_console(0), _sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
 	// Register debug flags
 	DebugMan.addDebugChannel(kTinselDebugAnimations, "animations", "Animations debugging");
 	DebugMan.addDebugChannel(kTinselDebugActions, "actions", "Actions debugging");
 	DebugMan.addDebugChannel(kTinselDebugSound, "sound", "Sound debugging");
 	DebugMan.addDebugChannel(kTinselDebugMusic, "music", "Music debugging");
+
+	_vm = this;
+
+	_gameId = 0;
+	_driver = NULL;
+
+	_config = new Config(this);
 
 	// Setup mixer
 	syncSoundSettings();
@@ -841,9 +844,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 		if (!scumm_stricmp(g->gameid, gameid))
 			_gameId = g->id;
 
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
+	_system->getAudioCDManager()->open();
 
 	_mousePos.x = 0;
 	_mousePos.y = 0;
@@ -975,7 +976,7 @@ Common::Error TinselEngine::run() {
 		// Check for time to do next game cycle
 		if ((g_system->getMillis() > timerVal + GAME_FRAME_DELAY)) {
 			timerVal = g_system->getMillis();
-			_system->getAudioCDManager()->updateCD();
+			_system->getAudioCDManager()->update();
 			NextGameCycle();
 		}
 

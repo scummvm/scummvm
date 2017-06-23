@@ -63,7 +63,7 @@ public:
 	uint32 getMaxUsedSlot();
 	bool getSaveExists(int slot);
 	bool initLoad(const Common::String &filename);
-	bool initSave(const char *desc);
+	bool initSave(const Common::String &desc);
 	bool getBytes(byte *buffer, uint32 size);
 	bool putBytes(byte *buffer, uint32 size);
 	uint32 _offset;
@@ -86,7 +86,7 @@ public:
 	bool transferCharPtr(const char *name, char **val);
 	bool transferString(const char *name, Common::String *val);
 	bool transferVector2(const char *name, Vector2 *val);
-	BasePersistenceManager(const char *savePrefix = nullptr, bool deleteSingleton = false);
+	BasePersistenceManager(const Common::String &savePrefix = "", bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
 

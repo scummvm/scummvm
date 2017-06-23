@@ -591,35 +591,40 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	_fontHeight = 8;
 	_curId = 0;
 
-	const byte *replacementData = NULL;
+	const byte *replacementMap = NULL, *replacementData = NULL;
 	int replacementChars = 0;
 
 	switch (language) {
 	case Common::DE_DEU:
 		if (_vm->_game.version == 0) {
-			replacementData = germanCharsetDataV0;
+			replacementMap = germanCharsetDataV0;
 			replacementChars = sizeof(germanCharsetDataV0) / 2;
 		} else {
-			replacementData = germanCharsetDataV2;
+			replacementMap = germanCharsetDataV2;
 			replacementChars = sizeof(germanCharsetDataV2) / 2;
 		}
+		replacementData = specialCharsetData;
 		break;
 	case Common::FR_FRA:
-		replacementData = frenchCharsetDataV2;
+		replacementMap = frenchCharsetDataV2;
 		replacementChars = sizeof(frenchCharsetDataV2) / 2;
+		replacementData = specialCharsetData;
 		break;
 	case Common::IT_ITA:
-		replacementData = italianCharsetDataV2;
+		replacementMap = italianCharsetDataV2;
 		replacementChars = sizeof(italianCharsetDataV2) / 2;
+		replacementData = specialCharsetData;
 		break;
 	case Common::ES_ESP:
-		replacementData = spanishCharsetDataV2;
+		replacementMap = spanishCharsetDataV2;
 		replacementChars = sizeof(spanishCharsetDataV2) / 2;
+		replacementData = specialCharsetData;
 		break;
 	case Common::RU_RUS:
 		if (((_vm->_game.id == GID_MANIAC) || (_vm->_game.id == GID_ZAK)) && (_vm->_game.version == 2)) {
-			replacementData = russCharsetDataV2;
+			replacementMap = russCharsetDataV2;
 			replacementChars = sizeof(russCharsetDataV2) / 2;
+			replacementData = russianCharsetDataV2;
 		} else {
 			_fontPtr = russianCharsetDataV2;
 		}
@@ -629,20 +634,16 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 		break;
 	}
 
-	if (replacementData) {
+	if (replacementMap && replacementData) {
 		_fontPtr = new byte[sizeof(englishCharsetDataV2)];
 		_deleteFontPtr = true;
 		memcpy(const_cast<byte *>(_fontPtr), englishCharsetDataV2, sizeof(englishCharsetDataV2));
 
 		for (int i = 0; i < replacementChars; i++) {
-			int ch1 = replacementData[2 * i];
-			int ch2 = replacementData[2 * i + 1];
+			int ch1 = replacementMap[2 * i];
+			int ch2 = replacementMap[2 * i + 1];
 
-			if (((_vm->_game.id == GID_MANIAC) || (_vm->_game.id == GID_ZAK)) && (_vm->_game.version == 2)) {
-				memcpy(const_cast<byte *>(_fontPtr) + 8 * ch1, russianCharsetDataV2 + 8 * ch2, 8);
-			} else {
-				memcpy(const_cast<byte *>(_fontPtr) + 8 * ch1, specialCharsetData + 8 * ch2, 8);
-			}
+			memcpy(const_cast<byte *>(_fontPtr) + 8 * ch1, replacementData + 8 * ch2, 8);
 		}
 	} else
 		_deleteFontPtr = false;

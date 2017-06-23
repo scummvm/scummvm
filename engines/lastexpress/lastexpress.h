@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef LASTEXPRESS_H
-#define LASTEXPRESS_H
+#ifndef LASTEXPRESS_LASTEXPRESS_H
+#define LASTEXPRESS_LASTEXPRESS_H
 
 #include "lastexpress/debug.h"
 #include "lastexpress/eventhandler.h"
@@ -146,4 +146,4 @@ private:
 
 } // End of namespace LastExpress
 
-#endif // LASTEXPRESS_H
+#endif // LASTEXPRESS_LASTEXPRESS_H

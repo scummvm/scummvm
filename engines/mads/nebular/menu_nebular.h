@@ -35,7 +35,7 @@ class MADSEngine;
 
 namespace Nebular {
 
-enum MADSGameAction { 
+enum MADSGameAction {
 	START_GAME, RESUME_GAME, SHOW_INTRO, CREDITS, QUOTES, EXIT,
 	SETS, EVOLVE
 };

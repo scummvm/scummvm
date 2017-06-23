@@ -25,6 +25,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_system
 
 #include "common/scummsys.h"
 
@@ -36,6 +37,14 @@
 #include "backends/fs/posix/posix-fs.h"
 #include "backends/taskbar/unity/unity-taskbar.h"
 
+#ifdef USE_LINUXCD
+#include "backends/audiocd/linux/linux-audiocd.h"
+#endif
+
+#include "common/textconsole.h"
+
+#include <stdlib.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -73,7 +82,7 @@ void OSystem_POSIX::initBackend() {
 }
 
 bool OSystem_POSIX::hasFeature(Feature f) {
-	if (f == kFeatureDisplayLogFile)
+	if (f == kFeatureDisplayLogFile || f == kFeatureOpenUrl)
 		return true;
 	return OSystem_SDL::hasFeature(f);
 }
@@ -134,6 +143,24 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	}
 
 	return configFile;
+}
+
+void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+#ifdef DATA_PATH
+	const char *snap = getenv("SNAP");
+	if (snap) {
+		Common::String dataPath = Common::String(snap) + DATA_PATH;
+		Common::FSNode dataNode(dataPath);
+		if (dataNode.exists() && dataNode.isDirectory()) {
+			// This is the same priority which is used for the data path (below),
+			// but we insert this one first, so it will be searched first.
+			s.add(dataPath, new Common::FSDirectory(dataNode, 4), priority);
+		}
+	}
+#endif
+
+	// For now, we always add the data path, just in case SNAP doesn't make sense.
+	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
 }
 
 Common::WriteStream *OSystem_POSIX::createLogFile() {
@@ -238,5 +265,58 @@ bool OSystem_POSIX::displayLogFile() {
 	return WIFEXITED(status) && WEXITSTATUS(status) == 0;
 }
 
+bool OSystem_POSIX::openUrl(const Common::String &url) {
+	// inspired by Qt's "qdesktopservices_x11.cpp"
+
+	// try "standards"
+	if (launchBrowser("xdg-open", url))
+		return true;
+	if (launchBrowser(getenv("DEFAULT_BROWSER"), url))
+		return true;
+	if (launchBrowser(getenv("BROWSER"), url))
+		return true;
+
+	// try desktop environment specific tools
+	if (launchBrowser("gnome-open", url)) // gnome
+		return true;
+	if (launchBrowser("kfmclient openURL", url)) // kde
+		return true;
+	if (launchBrowser("exo-open", url)) // xfce
+		return true;
+
+	// try browser names
+	if (launchBrowser("firefox", url))
+		return true;
+	if (launchBrowser("mozilla", url))
+		return true;
+	if (launchBrowser("netscape", url))
+		return true;
+	if (launchBrowser("opera", url))
+		return true;
+	if (launchBrowser("chromium-browser", url))
+		return true;
+	if (launchBrowser("google-chrome", url))
+		return true;
+
+	warning("openUrl() (POSIX) failed to open URL");
+	return false;
+}
+
+bool OSystem_POSIX::launchBrowser(const Common::String& client, const Common::String &url) {
+	// FIXME: system's input must be heavily escaped
+	// well, when url's specified by user
+	// it's OK now (urls are hardcoded somewhere in GUI)
+	Common::String cmd = client + " " + url;
+	return (system(cmd.c_str()) != -1);
+}
+
+
+AudioCDManager *OSystem_POSIX::createAudioCDManager() {
+#ifdef USE_LINUXCD
+	return createLinuxAudioCDManager();
+#else
+	return OSystem_SDL::createAudioCDManager();
+#endif
+}
 
 #endif

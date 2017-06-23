@@ -24,9 +24,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/translation.h"
-
-#include "gui/message.h"
-#include "gui/gui-manager.h"
+#include "audio/mixer.h"
 
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"

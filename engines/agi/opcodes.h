@@ -23,20 +23,7 @@
 #ifndef AGI_OPCODES_H
 #define AGI_OPCODES_H
 
-#include <string.h>
-
 namespace Agi {
-
-struct AgiInstruction {
-	const char *name;
-	const char *args;
-	AgiCommand func;
-
-	int argumentsLength() { return strlen(args); }
-};
-
-extern AgiInstruction *logicNamesTest;
-extern AgiInstruction *logicNamesCmd;
 
 void cmdIncrement(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDecrement(AgiGame *state, AgiEngine *vm, uint8 *p);

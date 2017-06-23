@@ -26,11 +26,11 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/resourceman.h"
 #include "neverhood/scene.h"
-#include "neverhood/smackerplayer.h"
 
 namespace Neverhood {
 
 class DiskplayerScene;
+class SmackerPlayer;
 
 class AsDiskplayerSceneKey : public AnimatedSprite {
 public:

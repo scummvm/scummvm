@@ -29,6 +29,7 @@
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/scalpel_screen.h"
+#include "sherlock/scalpel/3do/scalpel_3do_screen.h"
 #include "sherlock/scalpel/tsage/logo.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
@@ -371,8 +372,8 @@ bool ScalpelEngine::showCityCutscene() {
 
 	if (finished) {
 		ImageFile titleImages_LondonNovember("title2.vgs", true);
-		_screen->_backBuffer1.blitFrom(*_screen);
-		_screen->_backBuffer2.blitFrom(*_screen);
+		_screen->_backBuffer1.SHblitFrom(*_screen);
+		_screen->_backBuffer2.SHblitFrom(*_screen);
 
 		Common::Point londonPosition;
 
@@ -386,19 +387,19 @@ bool ScalpelEngine::showCityCutscene() {
 		}
 
 		// London, England
-		_screen->_backBuffer1.transBlitFrom(titleImages_LondonNovember[0], londonPosition);
+		_screen->_backBuffer1.SHtransBlitFrom(titleImages_LondonNovember[0], londonPosition);
 		_screen->randomTransition();
 		finished = _events->delay(1000, true);
 
 		// November, 1888
 		if (finished) {
-			_screen->_backBuffer1.transBlitFrom(titleImages_LondonNovember[1], Common::Point(100, 100));
+			_screen->_backBuffer1.SHtransBlitFrom(titleImages_LondonNovember[1], Common::Point(100, 100));
 			_screen->randomTransition();
 			finished = _events->delay(5000, true);
 		}
 
 		// Transition out the title
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2);
+		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2);
 		_screen->randomTransition();
 	}
 
@@ -407,8 +408,8 @@ bool ScalpelEngine::showCityCutscene() {
 
 	if (finished) {
 		ImageFile titleImages_SherlockHolmesTitle("title.vgs", true);
-		_screen->_backBuffer1.blitFrom(*_screen);
-		_screen->_backBuffer2.blitFrom(*_screen);
+		_screen->_backBuffer1.SHblitFrom(*_screen);
+		_screen->_backBuffer2.SHblitFrom(*_screen);
 
 		Common::Point lostFilesPosition;
 		Common::Point sherlockHolmesPosition;
@@ -427,17 +428,17 @@ bool ScalpelEngine::showCityCutscene() {
 		}
 
 		// The Lost Files of
-		_screen->_backBuffer1.transBlitFrom(titleImages_SherlockHolmesTitle[0], lostFilesPosition);
+		_screen->_backBuffer1.SHtransBlitFrom(titleImages_SherlockHolmesTitle[0], lostFilesPosition);
 		// Sherlock Holmes
-		_screen->_backBuffer1.transBlitFrom(titleImages_SherlockHolmesTitle[1], sherlockHolmesPosition);
+		_screen->_backBuffer1.SHtransBlitFrom(titleImages_SherlockHolmesTitle[1], sherlockHolmesPosition);
 		// copyright
-		_screen->_backBuffer1.transBlitFrom(titleImages_SherlockHolmesTitle[2], copyrightPosition);
+		_screen->_backBuffer1.SHtransBlitFrom(titleImages_SherlockHolmesTitle[2], copyrightPosition);
 
 		_screen->verticalTransition();
 		finished = _events->delay(4000, true);
 
 		if (finished) {
-			_screen->_backBuffer1.blitFrom(_screen->_backBuffer2);
+			_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2);
 			_screen->randomTransition();
 			finished = _events->delay(2000);
 		}
@@ -461,7 +462,7 @@ bool ScalpelEngine::showCityCutscene() {
 				// English, width 175, height 38
 				alleyPosition = Common::Point(72, 51);
 			}
-			_screen->transBlitFrom(titleImages_SherlockHolmesTitle[3], alleyPosition);
+			_screen->SHtransBlitFrom(titleImages_SherlockHolmesTitle[3], alleyPosition);
 			_screen->fadeIn(palette, 3);
 
 			// Wait until the track got looped and the first few notes were played
@@ -506,7 +507,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 	}
 
 	if (finished) {
-		// quick fade out 
+		// quick fade out
 		_screen->fadeToBlack(1);
 
 		// wait until after third "scream" in music happened
@@ -537,7 +538,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 			earlyTheFollowingMorningPosition = Common::Point(35, 52);
 		}
 
-		_screen->transBlitFrom(titleImages_EarlyTheFollowingMorning[0], earlyTheFollowingMorningPosition);
+		_screen->SHtransBlitFrom(titleImages_EarlyTheFollowingMorning[0], earlyTheFollowingMorningPosition);
 
 		// fast fade-in
 		_screen->fadeIn(palette, 1);
@@ -641,23 +642,23 @@ bool ScalpelEngine::scrollCredits() {
 	delete stream;
 
 	// Save a copy of the screen background for use in drawing each credit frame
-	_screen->_backBuffer1.blitFrom(*_screen);
+	_screen->_backBuffer1.SHblitFrom(*_screen);
 
 	// Loop for showing the credits
 	for(int idx = 0; idx < 600 && !_events->kbHit() && !shouldQuit(); ++idx) {
 		// Copy the entire screen background before writing text
-		_screen->blitFrom(_screen->_backBuffer1);
+		_screen->SHblitFrom(_screen->_backBuffer1);
 
 		// Write the text appropriate for the next frame
 		if (idx < 400)
-			_screen->transBlitFrom(creditsImages[0], Common::Point(10, 200 - idx), false, 0);
+			_screen->SHtransBlitFrom(creditsImages[0], Common::Point(10, 200 - idx), false, 0);
 		if (idx > 200)
-			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false, 0);
+			_screen->SHtransBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false, 0);
 
 		// Don't show credit text on the top and bottom ten rows of the screen
-		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, _screen->w(), 10));
-		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, _screen->h() - 10),
-			Common::Rect(0, _screen->h() - 10, _screen->w(), _screen->h()));
+		_screen->SHblitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, _screen->width(), 10));
+		_screen->SHblitFrom(_screen->_backBuffer1, Common::Point(0, _screen->height() - 10),
+			Common::Rect(0, _screen->height() - 10, _screen->width(), _screen->height()));
 
 		_events->delay(100);
 	}
@@ -670,7 +671,7 @@ bool ScalpelEngine::show3DOSplash() {
 	// 3DO EA Splash screen
 	ImageFile3DO titleImage_3DOSplash("3DOSplash.cel", kImageFile3DOType_Cel);
 
-	_screen->transBlitFrom(titleImage_3DOSplash[0]._frame, Common::Point(0, -20));
+	_screen->SHtransBlitFrom(titleImage_3DOSplash[0]._frame, Common::Point(0, -20));
 	bool finished = _events->delay(3000, true);
 
 	if (finished) {
@@ -706,7 +707,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		_sound->playAiff("prologue/sounds/rain.aiff", 15, true);
 
 		// Fade screen to grey
-		screen._backBuffer1.fill(0xCE59); // RGB565: 25, 50, 25 (grey)
+		screen._backBuffer1.clear(0xCE59); // RGB565: 25, 50, 25 (grey)
 		screen.fadeIntoScreen3DO(2);
 	}
 
@@ -715,16 +716,16 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	}
 
 	if (finished) {
-		screen._backBuffer1.fill(0); // fill backbuffer with black to avoid issues during fade from white
+		screen._backBuffer1.clear(0); // fill backbuffer with black to avoid issues during fade from white
 		finished = _animation->play3DO("26open1", true, 1, true, 2);
 	}
 
 	if (finished) {
-		screen._backBuffer2.blitFrom(screen._backBuffer1);
+		screen._backBuffer2.SHblitFrom(screen._backBuffer1);
 
 		// "London, England"
 		ImageFile3DO titleImage_London("title2a.cel", kImageFile3DOType_Cel);
-		screen._backBuffer1.transBlitFrom(titleImage_London[0]._frame, Common::Point(30, 50));
+		screen._backBuffer1.SHtransBlitFrom(titleImage_London[0]._frame, Common::Point(30, 50));
 
 		screen.fadeIntoScreen3DO(1);
 		finished = _events->delay(1500, true);
@@ -732,7 +733,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		if (finished) {
 			// "November, 1888"
 			ImageFile3DO titleImage_November("title2b.cel", kImageFile3DOType_Cel);
-			screen._backBuffer1.transBlitFrom(titleImage_November[0]._frame, Common::Point(100, 100));
+			screen._backBuffer1.SHtransBlitFrom(titleImage_November[0]._frame, Common::Point(100, 100));
 
 			screen.fadeIntoScreen3DO(1);
 			finished = _music->waitUntilMSec(14700, 0, 0, 5000);
@@ -740,8 +741,8 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 		if (finished) {
 			// Restore screen
-			_screen->_backBuffer1.blitFrom(screen._backBuffer2);
-			_screen->blitFrom(screen._backBuffer1);
+			_screen->_backBuffer1.SHblitFrom(screen._backBuffer2);
+			_screen->SHblitFrom(screen._backBuffer1);
 		}
 	}
 
@@ -751,7 +752,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	if (finished) {
 		// "Sherlock Holmes" (title)
 		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel", kImageFile3DOType_Cel);
-		screen._backBuffer1.transBlitFrom(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
+		screen._backBuffer1.SHtransBlitFrom(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
 
 		// Blend in
 		screen.fadeIntoScreen3DO(2);
@@ -761,7 +762,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		if (finished) {
 			ImageFile3DO titleImage_Copyright("title1c.cel", kImageFile3DOType_Cel);
 
-			screen.transBlitFrom(titleImage_Copyright[0]._frame, Common::Point(20, 190));
+			screen.SHtransBlitFrom(titleImage_Copyright[0]._frame, Common::Point(20, 190));
 			finished = _events->delay(3500, true);
 		}
 	}
@@ -780,7 +781,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	if (finished) {
 		// "In the alley behind the Regency Theatre..."
 		ImageFile3DO titleImage_InTheAlley("title1d.cel", kImageFile3DOType_Cel);
-		screen._backBuffer1.transBlitFrom(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
+		screen._backBuffer1.SHtransBlitFrom(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
 
 		// Fade in
 		screen.fadeIntoScreen3DO(4);
@@ -819,7 +820,7 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 		ImageFile3DO titleImage_ScreamingVictim("scream.cel", kImageFile3DOType_Cel);
 
 		screen.clear();
-		screen.transBlitFrom(titleImage_ScreamingVictim[0]._frame, Common::Point(0, 0));
+		screen.SHtransBlitFrom(titleImage_ScreamingVictim[0]._frame, Common::Point(0, 0));
 
 		// Play "scream.aiff"
 		if (_sound->_voices)
@@ -848,7 +849,7 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 	if (finished) {
 		// "Early the following morning on Baker Street..."
 		ImageFile3DO titleImage_EarlyTheFollowingMorning("title3.cel", kImageFile3DOType_Cel);
-		screen._backBuffer1.transBlitFrom(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
+		screen._backBuffer1.SHtransBlitFrom(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
 
 		// Fade in
 		screen.fadeIntoScreen3DO(4);
@@ -908,7 +909,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 		ImageFile3DO titleImage_CoffeeNote("note.cel", kImageFile3DOType_Cel);
 
 		_screen->clear();
-		_screen->transBlitFrom(titleImage_CoffeeNote[0]._frame, Common::Point(0, 0));
+		_screen->SHtransBlitFrom(titleImage_CoffeeNote[0]._frame, Common::Point(0, 0));
 
 		if (_sound->_voices) {
 			finished = _sound->playSound("prologue/sounds/note.aiff", WAIT_KBD_OR_FINISH);
@@ -937,7 +938,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 		// TODO: Brighten the image, possibly by doing a partial fade
 		// to white.
 
-		_screen->_backBuffer2.blitFrom(_screen->_backBuffer1);
+		_screen->_backBuffer2.SHblitFrom(_screen->_backBuffer1);
 
 		for (int nr = 1; finished && nr <= 4; nr++) {
 			char filename[15];
@@ -945,8 +946,8 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 			ImageFile3DO *creditsImage = new ImageFile3DO(filename, kImageFile3DOType_Cel);
 			ImageFrame *creditsFrame = &(*creditsImage)[0];
 			for (int i = 0; finished && i < 200 + creditsFrame->_height; i++) {
-				_screen->blitFrom(_screen->_backBuffer2);
-				_screen->transBlitFrom(creditsFrame->_frame, Common::Point((320 - creditsFrame->_width) / 2, 200 - i));
+				_screen->SHblitFrom(_screen->_backBuffer2);
+				_screen->SHtransBlitFrom(creditsFrame->_frame, Common::Point((320 - creditsFrame->_width) / 2, 200 - i));
 				if (!_events->delay(70, true))
 					finished = false;
 			}
@@ -998,7 +999,7 @@ void ScalpelEngine::showLBV(const Common::String &filename) {
 	delete stream;
 
 	_screen->setPalette(images._palette);
-	_screen->_backBuffer1.blitFrom(images[0]);
+	_screen->_backBuffer1.SHblitFrom(images[0]);
 	_screen->verticalTransition();
 }
 
@@ -1156,7 +1157,7 @@ void ScalpelEngine::eraseBrumwellMirror() {
 
 	// If player is in range of the mirror, then restore background from the secondary back buffer
 	if (Common::Rect(70, 100, 200, 200).contains(pt)) {
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(137, 18),
+		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(137, 18),
 			Common::Rect(137, 18, 184, 74));
 	}
 }
@@ -1218,20 +1219,20 @@ void ScalpelEngine::doBrumwellMirror() {
 		bool flipped = people[HOLMES]._sequenceNumber == WALK_LEFT || people[HOLMES]._sequenceNumber == STOP_LEFT
 			|| people[HOLMES]._sequenceNumber == WALK_UPRIGHT || people[HOLMES]._sequenceNumber == STOP_UPRIGHT
 			|| people[HOLMES]._sequenceNumber == WALK_DOWNLEFT || people[HOLMES]._sequenceNumber == STOP_DOWNLEFT;
-		_screen->_backBuffer1.transBlitFrom(imageFrame, pt + Common::Point(38, -imageFrame._frame.h - 25), flipped);
+		_screen->_backBuffer1.SHtransBlitFrom(imageFrame, pt + Common::Point(38, -imageFrame._frame.h - 25), flipped);
 
 		// Redraw the mirror borders to prevent the drawn image of Holmes from appearing outside of the mirror
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(114, 18),
+		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(114, 18),
 			Common::Rect(114, 18, 137, 114));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(137, 70),
+		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(137, 70),
 			Common::Rect(137, 70, 142, 114));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(142, 71),
+		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(142, 71),
 			Common::Rect(142, 71, 159, 114));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(159, 72),
+		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(159, 72),
 			Common::Rect(159, 72, 170, 116));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(170, 73),
+		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(170, 73),
 			Common::Rect(170, 73, 184, 114));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(184, 18),
+		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(184, 18),
 			Common::Rect(184, 18, 212, 114));
 	}
 }
@@ -1272,7 +1273,7 @@ void ScalpelEngine::showScummVMRestoreDialog() {
 bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos, bool isPortrait) {
 	Scalpel3DOScreen &screen = *(Scalpel3DOScreen *)_screen;
 	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
-	Graphics::Surface tempSurface;
+	Graphics::ManagedSurface tempSurface;
 
 	Common::Point framePos(pos.x, pos.y);
 	ImageFile3DO *frameImageFile = nullptr;
@@ -1307,7 +1308,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 
 	// If we're to show the movie at half-size, we'll need a temporary intermediate surface
 	if (halfSize)
-		tempSurface.create(width / 2, height / 2, _screen->getPixelFormat());
+		tempSurface.create(width / 2, height / 2);
 
 	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
@@ -1371,19 +1372,19 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 					}
 
 					// Point the drawing frame to the temporary surface
-					frame = &tempSurface;
+					frame = &tempSurface.rawSurface();
 				}
 
 				if (isPortrait && !frameShown) {
 					// Draw the frame (not the frame of the video, but a frame around the video) itself
-					_screen->transBlitFrom(frameImage->_frame, framePos);
+					_screen->SHtransBlitFrom(frameImage->_frame, framePos);
 					frameShown = true;
 				}
 
 				if (isPortrait && !halfSize) {
 					screen.rawBlitFrom(*frame, Common::Point(pos.x * 2, pos.y * 2));
 				} else {
-					_screen->blitFrom(*frame, pos);
+					_screen->SHblitFrom(*frame, pos);
 				}
 
 				_screen->update();
@@ -1413,9 +1414,9 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 	}
 
 	// Restore scene
-	screen._backBuffer1.blitFrom(screen._backBuffer2);
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2);
 	_scene->updateBackground();
-	screen.slamArea(0, 0, screen.w(), CONTROLS_Y);
+	screen.slamArea(0, 0, screen.width(), CONTROLS_Y);
 
 	return !skipVideo;
 }

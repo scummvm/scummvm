@@ -35,6 +35,8 @@
 #include "fullpipe/gameloader.h"
 #include "fullpipe/behavior.h"
 
+#include "audio/mixer.h"
+
 namespace Fullpipe {
 
 static const int scene04_speakerPhases[] = {
@@ -42,6 +44,8 @@ static const int scene04_speakerPhases[] = {
 	0, 2,  3, -1, -1, -1,
 	0, 2, -1, -1, -1, -1
 };
+
+void sceneHandler04_putKozyawkaBack(StaticANIObject *ani);
 
 void scene04_speakerCallback(int *phase) {
 	if (g_vars->scene04_soundPlaying) {
@@ -60,7 +64,19 @@ void scene04_speakerCallback(int *phase) {
 	}
 }
 
+void scene04_springCallback(int *phase) {
+	// do nothing
+}
+
 void scene04_initScene(Scene *sc) {
+	debugC(1, kDebugSceneLogic, "scene04_initScene()");
+
+#if 0
+	Inventory2 *inv = getGameLoaderInventory();
+	inv->addItem(ANI_INV_COIN, 1);
+	inv->rebuildItemRects();
+#endif
+
 	g_vars->scene04_dudeOnLadder = false;
 	g_vars->scene04_bottle = sc->getPictureObjectById(PIC_SC4_BOTTLE, 0);
 	g_vars->scene04_hand = sc->getStaticANIObject1ById(ANI_HAND, -1);
@@ -114,6 +130,8 @@ void scene04_initScene(Scene *sc) {
 		plank->_flags |= 8;
 
 	if (g_fp->getObjectState(sO_Jar_4) == g_fp->getObjectEnumState(sO_Jar_4, sO_UpsideDown)) {
+		debugC(2, kDebugSceneLogic, "scene04: Jar is upside down");
+
 		g_vars->scene04_bottleObjList.clear();
 		g_vars->scene04_kozyawkiObjList.clear();
 
@@ -124,10 +142,12 @@ void scene04_initScene(Scene *sc) {
 		g_vars->scene04_clockCanGo = false;
 		g_vars->scene04_objectIsTaken = false;
 	} else {
+		debugC(2, kDebugSceneLogic, "scene04: Jar is NOT upside down");
+
 		StaticANIObject *spring = sc->getStaticANIObject1ById(ANI_SPRING, -1);
 
 		if (spring)
-			spring->_callback2 = 0;
+			spring->_callback2 = scene04_springCallback;
 
 		g_vars->scene04_bottleObjList.clear();
 		g_vars->scene04_bottleObjList.push_back(sc->getPictureObjectById(PIC_SC4_BOTTLE, 0));
@@ -136,6 +156,8 @@ void scene04_initScene(Scene *sc) {
 		g_vars->scene04_kozyawkiObjList.clear();
 
 		if (koz) {
+			debugC(2, kDebugSceneLogic, "scene04: We're in koz");
+
 			koz->loadMovementsPixelData();
 
 			koz->_statics = koz->getStaticsById(ST_KZW_EMPTY);
@@ -158,6 +180,8 @@ void scene04_initScene(Scene *sc) {
 
 		g_vars->scene04_clockCanGo = true;
 		g_vars->scene04_objectIsTaken = true;
+
+		debugC(2, kDebugSceneLogic, "scene04: kozObjList size: %d", g_vars->scene04_kozyawkiObjList.size());
 	}
 
 	g_vars->scene04_bottleIsTaken = false;
@@ -191,6 +215,8 @@ void scene04_initScene(Scene *sc) {
 
 	g_vars->scene04_speakerVariant = 0;
 	g_vars->scene04_speakerPhase = 0;
+
+	g_vars->scene04_musicStage = 0;
 
 	g_fp->initArcadeKeys("SC_4");
 }
@@ -283,14 +309,14 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 
 	ExCommand *ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_TOLADDER, 0, 0, 0, 1, 0, 0, 0);
 
-	ex1->_keyCode = g_fp->_aniMan->_okeyCode;
+	ex1->_param = g_fp->_aniMan->_odelay;
 	ex1->_excFlags |= 2;
 
 	mq->addExCommandToEnd(ex1);
 
 	ExCommand *ex2 = new ExCommand(ANI_MAN, 1, MV_MAN_STOPLADDER, 0, 0, 0, 1, 0, 0, 0);
 
-	ex2->_keyCode = g_fp->_aniMan->_okeyCode;
+	ex2->_param = g_fp->_aniMan->_odelay;
 	ex2->_excFlags |= 2;
 
 	mq->addExCommandToEnd(ex2);
@@ -393,23 +419,23 @@ void sceneHandler04_jumpOnLadder() {
 
 	g_fp->_aniMan->changeStatics2(ST_MAN_LADDERDOWN);
 
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_MAN);
+	aniHandler.attachObject(ANI_MAN);
 
-	mgminfo.ani = g_fp->_aniMan;
-	mgminfo.staticsId2 = ST_MAN_ONPLANK;
-	mgminfo.x1 = 938;
-	mgminfo.y1 = 442;
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_MAN_JUMPONPLANK;
+	mkQueue.ani = g_fp->_aniMan;
+	mkQueue.staticsId2 = ST_MAN_ONPLANK;
+	mkQueue.x1 = 938;
+	mkQueue.y1 = 442;
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_MAN_JUMPONPLANK;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		mq->_flags |= 1;
@@ -460,21 +486,21 @@ void sceneHandler04_dropBottle() {
 }
 
 void sceneHandler04_gotoLadder(ExCommand *ex) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_MAN);
+	aniHandler.attachObject(ANI_MAN);
 
-	mgminfo.ani = g_fp->_aniMan;
-	mgminfo.staticsId2 = ST_MAN_UP;
-	mgminfo.x1 = 1095;
-	mgminfo.y1 = 434;
-	mgminfo.field_1C = 12;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_MAN_PLANKTOLADDER;
+	mkQueue.ani = g_fp->_aniMan;
+	mkQueue.staticsId2 = ST_MAN_UP;
+	mkQueue.x1 = 1095;
+	mkQueue.y1 = 434;
+	mkQueue.field_1C = 12;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_MAN_PLANKTOLADDER;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
@@ -482,13 +508,13 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 		ExCommand *ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_TOLADDER, 0, 0, 0, 1, 0, 0, 0);
 		ex1->_excFlags = 2;
 		ex1->_field_24 = 1;
-		ex1->_keyCode = -1;
+		ex1->_param = -1;
 		mq->addExCommandToEnd(ex1);
 
 		ExCommand *ex2 = new ExCommand(ANI_MAN, 1, MV_MAN_STOPLADDER, 0, 0, 0, 1, 0, 0, 0);
 		ex2->_excFlags = 2;
 		ex2->_field_24 = 1;
-		ex2->_keyCode = -1;
+		ex2->_param = -1;
 		mq->addExCommandToEnd(ex2);
 
 		ExCommand *ex3 = new ExCommand(g_fp->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
@@ -507,7 +533,7 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 
 		if (mq->chain(g_fp->_aniMan)) {
 			g_fp->_aniMan->_priority = 12;
-			g_fp->_aniMan->_flags |= 1;
+			g_fp->_aniMan->_flags |= 0x100;
 		} else {
 			delete mq;
 		}
@@ -550,48 +576,50 @@ void sceneHandler04_raisePlank() {
 }
 
 MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_KOZAWKA);
+	debugC(2, kDebugSceneLogic, "scene04: kozFly3 (OK)");
 
-	mgminfo.ani = ani;
-	mgminfo.staticsId2 = ST_KZW_SIT;
-	mgminfo.x1 = (int)(723.0 - phase * 185.0);
-	mgminfo.y1 = 486;
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_KZW_JUMP;
+	aniHandler.attachObject(ANI_KOZAWKA);
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	mkQueue.ani = ani;
+	mkQueue.staticsId2 = ST_KZW_SIT;
+	mkQueue.x1 = (int)(723.0 - phase * 185.0);
+	mkQueue.y1 = 486;
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_KZW_JUMP;
+
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 
 		for (int i = 0; i < 5; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			ex->_keyCode = ani->_okeyCode;
+			ex->_param = ani->_odelay;
 			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 	}
 
@@ -599,35 +627,37 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_KOZAWKA);
+	debugC(2, kDebugSceneLogic, "scene04: kozFly5 (OK)");
 
-	mgminfo.ani = ani;
-	mgminfo.staticsId2 = ST_KZW_JUMPOUT;
-	mgminfo.x1 = 525;
-	mgminfo.y1 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_KZW_JUMPHIT;
+	aniHandler.attachObject(ANI_KOZAWKA);
 
-	MessageQueue *mq1 = mgm.genMovement(&mgminfo);
+	mkQueue.ani = ani;
+	mkQueue.staticsId2 = ST_KZW_JUMPOUT;
+	mkQueue.x1 = 525;
+	mkQueue.y1 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_KZW_JUMPHIT;
 
-	memset(&mgminfo, 0, sizeof(mgminfo));
-	mgminfo.ani = ani;
-	mgminfo.staticsId1 = ST_KZW_JUMPOUT;
-	mgminfo.staticsId2 = ST_KZW_SIT;
-	mgminfo.x2 = 525;
-	mgminfo.y2 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
-	mgminfo.y1 = 486;
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 117;
-	mgminfo.movementId = MV_KZW_JUMPOUT;
+	MessageQueue *mq1 = aniHandler.makeRunQueue(&mkQueue);
 
-	MessageQueue *mq2 = mgm.genMovement(&mgminfo);
+	memset(&mkQueue, 0, sizeof(mkQueue));
+	mkQueue.ani = ani;
+	mkQueue.staticsId1 = ST_KZW_JUMPOUT;
+	mkQueue.staticsId2 = ST_KZW_SIT;
+	mkQueue.x2 = 525;
+	mkQueue.y2 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
+	mkQueue.y1 = 486;
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 117;
+	mkQueue.movementId = MV_KZW_JUMPOUT;
+
+	MessageQueue *mq2 = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq1 && mq2) {
 		mq1->addExCommandToEnd(mq2->getExCommandByIndex(0)->createClone());
@@ -637,29 +667,29 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq1->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq1->addExCommandToEnd(ex);
 
 		for (int i = 0; i < 5; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			ex->_keyCode = ani->_okeyCode;
+			ex->_param = ani->_odelay;
 			mq1->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq1->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq1->addExCommandToEnd(ex);
 	}
 
@@ -670,38 +700,40 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_KOZAWKA);
+	debugC(2, kDebugSceneLogic, "scene04: kozFly6 (OK)");
 
-	mgminfo.ani = ani;
-	mgminfo.staticsId2 = ST_KZW_SIT;
-	mgminfo.x1 = 397 - 4 * g_fp->_rnd->getRandomNumber(1);
-	mgminfo.field_1C = ani->_priority;
-	mgminfo.y1 = g_vars->scene04_bottle->_oy - 4 * g_fp->_rnd->getRandomNumber(1) + 109;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_KZW_JUMPROTATE;
+	aniHandler.attachObject(ANI_KOZAWKA);
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	mkQueue.ani = ani;
+	mkQueue.staticsId2 = ST_KZW_SIT;
+	mkQueue.x1 = 397 - 4 * g_fp->_rnd->getRandomNumber(1);
+	mkQueue.field_1C = ani->_priority;
+	mkQueue.y1 = g_vars->scene04_bottle->_oy - 4 * g_fp->_rnd->getRandomNumber(1) + 109;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_KZW_JUMPROTATE;
+
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_RAISEHEAD, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 
 		g_vars->scene04_kozHeadRaised = true;
@@ -728,21 +760,23 @@ void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *poin
 }
 
 MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_KOZAWKA);
+	debugC(2, kDebugSceneLogic, "scene04: kozFly7");
 
-	mgminfo.ani = ani;
-	mgminfo.staticsId2 = 560;
-	mgminfo.x1 = (int)(250.0 - phase * 100.0);
-	mgminfo.y1 = 455;
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_KZW_JUMPROTATE;
+	aniHandler.attachObject(ANI_KOZAWKA);
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	mkQueue.ani = ani;
+	mkQueue.staticsId2 = 560;
+	mkQueue.x1 = (int)(250.0 - phase * 100.0);
+	mkQueue.y1 = 455;
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_KZW_JUMPROTATE;
+
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		sceneHandler04_kozMove(ani->getMovementById(MV_KZW_JUMPROTATE), 1, 9, g_vars->scene04_jumpRotateKozyawki, phase * 0.5 + 1.5);
@@ -751,29 +785,29 @@ MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 
 		for (int i = 0; i < 2; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			ex->_keyCode = ani->_okeyCode;
+			ex->_param = ani->_odelay;
 			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		mq->addExCommandToEnd(ex);
 	}
 
@@ -885,7 +919,7 @@ void sceneHandler04_showCoin() {
 void sceneHandler04_stopSound() {
 	g_vars->scene04_soundPlaying = false;
 
-	warning("STUB: sceneHandler04_stopSound()");
+	g_fp->stopSoundStream2();
 }
 
 void sceneHandler04_animOutOfBottle(ExCommand *ex) {
@@ -907,21 +941,31 @@ void sceneHandler04_animOutOfBottle(ExCommand *ex) {
 }
 
 void sceneHandler04_walkKozyawka() {
+	debugC(1, kDebugSceneLogic, "scene04: walkKozyawka");
+
 	if (g_vars->scene04_kozyawkiObjList.size()) {
+		debugC(1, kDebugSceneLogic, "scene04: walkKozyawka: getting one");
+
 		g_vars->scene04_walkingKozyawka = g_vars->scene04_kozyawkiObjList.front();
 		g_vars->scene04_kozyawkiObjList.pop_front();
 
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_KOZAW_WALK), 0, 1);
-		mq->replaceKeyCode(-1, g_vars->scene04_walkingKozyawka->_okeyCode);
+		mq->setParamInt(-1, g_vars->scene04_walkingKozyawka->_odelay);
 		mq->chain(0);
 	}
 }
 
 void sceneHandler04_bottleUpdateObjects(int off) {
 	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
-		GameObject *obj = *it;
+		if ((*it)->_objtype == kObjTypeStaticANIObject) {
+			StaticANIObject *st = (StaticANIObject *)*it;
 
-		obj->setOXY(obj->_ox, off + obj->_oy);
+			st->setOXY(st->_ox, off + st->_oy);
+		} else {
+			GameObject *obj = *it;
+
+			obj->setOXY(obj->_ox, off + obj->_oy);
+		}
 	}
 }
 
@@ -949,7 +993,8 @@ void sceneHandler04_springWobble() {
 	if (g_vars->scene04_bottleWeight < newdelta)
 		g_vars->scene04_springOffset--;
 
-	if ((oldDynIndex <= g_vars->scene04_bottleWeight && newdelta > g_vars->scene04_bottleWeight) || newdelta <= g_vars->scene04_bottleWeight) {
+	if ((oldDynIndex <= g_vars->scene04_bottleWeight && newdelta > g_vars->scene04_bottleWeight)
+		|| (oldDynIndex > g_vars->scene04_bottleWeight && newdelta <= g_vars->scene04_bottleWeight)) {
 		g_vars->scene04_springDelay++;
 
 		if (g_vars->scene04_springOffset && g_vars->scene04_springDelay > 1) {
@@ -979,7 +1024,7 @@ void sceneHandler04_springWobble() {
 void sceneHandler04_leaveScene() {
 	g_fp->_aniMan2 = 0;
 
-    MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC4_MANTOBOTTLE), 0, 0);
+	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC4_MANTOBOTTLE), 0, 0);
 	ExCommand *ex = 0;
 
 	for (uint i = 0; i < mq->getCount(); i++) {
@@ -1030,11 +1075,40 @@ void sceneHandler04_liftBottle() {
 }
 
 void sceneHandler04_startSounds(const char *snd1, const char *snd2, const char *snd3) {
-	warning("STUB: sceneHandler04_startSounds()");
+	g_fp->playOggSound(snd1, g_fp->_soundStream2);
 
-	// playFile(snd1);
-	// playFile(snd2);
-	// playFile(snd3);
+	g_fp->_stream2playing = true;
+
+	g_vars->scene04_musicStage = 1;
+}
+
+void updateSound() {
+	switch (g_vars->scene04_musicStage) {
+	case 0:
+		return;
+
+	case 1:
+		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream2)) {
+			g_fp->playOggSound("sc4_loop.ogg", g_fp->_soundStream3);
+			g_vars->scene04_musicStage = 2;
+		}
+		break;
+	case 2:
+		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream3)) {
+			if (g_fp->_stream2playing) { // Looop it
+				g_fp->playOggSound("sc4_loop.ogg", g_fp->_soundStream3);
+			} else {
+				g_fp->playOggSound("sc4_stop2.ogg", g_fp->_soundStream4);
+				g_vars->scene04_musicStage = 3;
+			}
+		}
+		break;
+	case 3:
+		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream4)) {
+			g_vars->scene04_musicStage = 0;
+		}
+		break;
+	}
 }
 
 void sceneHandler04_goClock() {
@@ -1091,18 +1165,18 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 
 					if (g_fp->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN) {
 						ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_LOOKLADDERRV, 0, 0, 0, 1, 0, 0, 0);
-						ex1->_keyCode = g_fp->_aniMan->_okeyCode;
+						ex1->_param = g_fp->_aniMan->_odelay;
 						ex1->_excFlags |= 2;
 						mq->addExCommandToEnd(ex1);
 					}
 
 					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_STARTLADDERD, 0, 0, 0, 1, 0, 0, 0);
-					ex1->_keyCode = g_fp->_aniMan->_okeyCode;
+					ex1->_param = g_fp->_aniMan->_odelay;
 					ex1->_excFlags |= 2;
 					mq->addExCommandToEnd(ex1);
 
 					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_FROMLADDER, 0, 0, 0, 1, 0, 0, 0);
-					ex1->_keyCode = g_fp->_aniMan->_okeyCode;
+					ex1->_param = g_fp->_aniMan->_odelay;
 					ex1->_excFlags |= 2;
 					mq->addExCommandToEnd(ex1);
 
@@ -1154,6 +1228,8 @@ void sceneHandler04_handTake() {
 }
 
 void sceneHandler04_putKozyawkaBack(StaticANIObject *ani) {
+	debugC(2, kDebugSceneLogic, "scene04: putKozyawkaBack");
+
 	g_vars->scene04_bottleObjList.push_back(ani);
 	g_vars->scene04_kozyawkiAni.push_back(ani);
 
@@ -1333,6 +1409,8 @@ int sceneHandler04(ExCommand *ex) {
 		break;
 
 	case MSG_KOZAWRESTART:
+		debugC(1, kDebugSceneLogic, "scene04: kozawRestart");
+
 		if (g_vars->scene04_walkingKozyawka) {
 			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_walkingKozyawka);
 			g_vars->scene04_walkingKozyawka->hide();
@@ -1369,7 +1447,11 @@ int sceneHandler04(ExCommand *ex) {
 				}
 
 				res = 1;
+			}
 
+			g_fp->sceneAutoScrolling();
+
+			if (g_fp->_aniMan2) {
 				if (g_vars->scene04_soundPlaying) {
 					if (g_fp->_aniMan->_movement) {
 						if (g_fp->_aniMan->_movement->_id == MV_MAN_TOLADDER) {
@@ -1464,10 +1546,10 @@ int sceneHandler04(ExCommand *ex) {
 				ex->_messageKind = 0;
 			} else if (g_vars->scene04_dudeOnLadder) {
 				sceneHandler04_leaveLadder(ex);
-			} else if (!ani || !canInteractAny(g_fp->_aniMan, ani, ex->_keyCode)) {
+			} else if (!ani || !canInteractAny(g_fp->_aniMan, ani, ex->_param)) {
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picid, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic,ex->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic,ex->_param)) {
 					if ((g_fp->_sceneRect.right - ex->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (ex->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
 						g_fp->processArcade(ex);
@@ -1558,6 +1640,8 @@ int sceneHandler04(ExCommand *ex) {
 		g_vars->scene04_coinPut = true;
 		break;
 	}
+
+	updateSound();
 
 	return 0;
 }

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -341,14 +341,14 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 
 	while (i < stringlen) {
 		if (text[i] == '<') {
-			// Flush the currentWord to the currentSentence			
+			// Flush the currentWord to the currentSentence
 			currentSentence += currentWord;
 			sentenceWidth += wordWidth;
 
 			// Reset the word variables
 			currentWord.clear();
 			wordWidth = 0;
-			
+
 			// Parse the style tag
 			uint startTextPosition = i;
 			while (i < stringlen && text[i] != '>') {
@@ -388,13 +388,13 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 				if (!currentSentence.empty()) {
 					textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, textColor), sentencePixelOffset, currentLineNumber));
 				}
-				
+
 				// Set line width
 				lineWidths.push_back(lineWidth + sentenceWidth - (numSpaces * spaceWidth));
 
 				currentSentence.clear();
 				sentenceWidth = 0;
-				
+
 				// Update the offsets
 				sentencePixelOffset.x = 0u;
 				sentencePixelOffset.y += lineHeight;
@@ -446,7 +446,7 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 
 				// We track the number of spaces so we can disregard their width in lineWidth calculations
 				++numSpaces;
-			} else {			
+			} else {
 				// If the word causes the line to overflow, render the sentence and start a new line
 				if (lineWidth + sentenceWidth + wordWidth > dest.w) {
 					// Only render out content
@@ -482,7 +482,7 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	if (!currentWord.empty() || !currentSentence.empty()) {
 		currentSentence += currentWord;
 		sentenceWidth += wordWidth;
-		
+
 		textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, currentState.getTextColor(_engine)), sentencePixelOffset, currentLineNumber));
 	}
 

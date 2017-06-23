@@ -81,6 +81,18 @@ int ModularBackend::getGraphicsMode() const {
 	return _graphicsManager->getGraphicsMode();
 }
 
+const OSystem::GraphicsMode *ModularBackend::getSupportedShaders() const {
+	return _graphicsManager->getSupportedShaders();
+}
+
+bool ModularBackend::setShader(int id) {
+	return _graphicsManager->setShader(id);
+}
+
+int ModularBackend::getShader() const {
+	return _graphicsManager->getShader();
+}
+
 void ModularBackend::resetGraphicsScale() {
 	_graphicsManager->resetGraphicsScale();
 }
@@ -239,6 +251,10 @@ Audio::Mixer *ModularBackend::getMixer() {
 
 void ModularBackend::displayMessageOnOSD(const char *msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
+}
+
+void ModularBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
+	_graphicsManager->displayActivityIconOnOSD(icon);
 }
 
 void ModularBackend::quit() {

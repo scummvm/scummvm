@@ -61,7 +61,7 @@ public:
 	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
 		_maxScanDepth = 2;
 		_directoryGlobs = ZVision::directoryGlobs;
-		_singleid = "zvision";
+		_singleId = "zvision";
 	}
 
 	virtual const char *getName() const {
@@ -87,7 +87,8 @@ bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+		(f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 		//(f == kSavesSupportPlayTime);
 }
 
@@ -132,7 +133,6 @@ SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)*/
 
 	SaveStateList saveList;
 	// We only use readSaveGameHeader() here, which doesn't need an engine callback
@@ -155,6 +155,8 @@ SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {
 
 	delete zvisionSaveMan;
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -164,26 +166,7 @@ int ZVisionMetaEngine::getMaximumSaveSlot() const {
 
 void ZVisionMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::String filename = Common::String::format("%s.%03u", target, slot);
-
-	saveFileMan->removeSavefile(filename.c_str());
-
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".###";
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
-
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-
-		// Rename every slot greater than the deleted slot,
-		if (slotNum > slot) {
-			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
-			filename = Common::String::format("%s.%03u", target, ++slot);
-		}
-	}
+	saveFileMan->removeSavefile(Common::String::format("%s.%03u", target, slot));
 }
 
 SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

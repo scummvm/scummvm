@@ -21,8 +21,10 @@
  */
 
 #include "common/config-manager.h"
+#include "audio/mixer.h"
 
 #include "agi/agi.h"
+#include "agi/graphics.h"
 
 namespace Agi {
 
@@ -53,14 +55,21 @@ void AgiBase::flipFlag(int16 flagNr) {
 void AgiEngine::setVar(int16 varNr, byte newValue) {
 	_game.vars[varNr] = newValue;
 
-	if (varNr == VM_VAR_VOLUME) {
+	switch (varNr) {
+	case VM_VAR_SECONDS:
+		setVarSecondsTrigger(newValue);
+		break;
+	case VM_VAR_VOLUME:
 		setVolumeViaScripts(newValue);
+		break;
 	}
 }
 
 byte AgiEngine::getVar(int16 varNr) {
 	switch (varNr) {
 	case VM_VAR_SECONDS:
+		getVarSecondsHeuristicTrigger();
+		// is supposed to fall through
 	case VM_VAR_MINUTES:
 	case VM_VAR_HOURS:
 	case VM_VAR_DAYS:
@@ -79,7 +88,32 @@ byte AgiEngine::getVar(int16 varNr) {
 // 15 - mute
 void AgiEngine::setVolumeViaScripts(byte newVolume) {
 	newVolume = CLIP<byte>(newVolume, 0, 15);
-	newVolume = 15 - newVolume; // turn volume around
+
+	if (_veryFirstInitialCycle) {
+		// WORKAROUND:
+		// The very first cycle is currently running and volume got changed
+		// This is surely the initial value. For plenty of fan games, a default of 15 is set
+		// Which actually means "mute" in AGI, but AGI on PC used PC speaker, which did not use
+		// volume setting. We do. So we detect such a situation and set a flag, so that the
+		// volume will get interpreted "correctly" for those fan games.
+		// Note: not all fan games are broken in that regard!
+		// See bug #7035
+		if (getFeatures() & GF_FANMADE) {
+			// We only check for fan games, Sierra always did it properly of course
+			if (newVolume == 15) {
+				// Volume gets set to mute at the start?
+				// Probably broken fan game detected, set flag
+				debug("Broken volume in fan game detected, enabling workaround");
+				_setVolumeBrokenFangame = true;
+			}
+		}
+	}
+
+	if (!_setVolumeBrokenFangame) {
+		// In AGI 15 is mute, 0 is loudest
+		// Some fan games set this incorrectly as 15 for loudest, 0 for mute
+		newVolume = 15 - newVolume; // turn volume around
+	}
 
 	int scummVMVolume = newVolume * Audio::Mixer::kMaxMixerVolume / 15;
 	bool scummVMMute = false;
@@ -135,10 +169,42 @@ void AgiEngine::setVolumeViaSystemSetting() {
 	_game.vars[VM_VAR_VOLUME] = internalVolume;
 }
 
+void AgiEngine::resetGetVarSecondsHeuristic() {
+	_getVarSecondsHeuristicLastInstructionCounter = 0;
+	_getVarSecondsHeuristicCounter = 0;
+}
+
+// Called, when the scripts read VM_VAR_SECONDS
+void AgiEngine::getVarSecondsHeuristicTrigger() {
+	uint32 counterDifference = _instructionCounter - _getVarSecondsHeuristicLastInstructionCounter;
+
+	if (counterDifference <= 3) {
+		// Seconds were read within 3 instructions
+		_getVarSecondsHeuristicCounter++;
+		if (_getVarSecondsHeuristicCounter > 20) {
+			// More than 20 times in a row? This really seems to be an inner loop waiting for seconds to change
+			// This happens in at least:
+			// Police Quest 1 - Poker game (room 75, responsible script 81)
+
+			// Wait a few milliseconds, get events and update screen
+			// We MUST NOT process AGI events in here
+			wait(10);
+			processScummVMEvents();
+			_gfx->updateScreen();
+
+			_getVarSecondsHeuristicCounter = 0;
+		}
+	} else {
+		_getVarSecondsHeuristicCounter = 0;
+	}
+	_getVarSecondsHeuristicLastInstructionCounter = _instructionCounter;
+}
+
 // In-Game timer, used for timer VM Variables
 void AgiEngine::inGameTimerReset(uint32 newPlayTime) {
 	_lastUsedPlayTimeInCycles = newPlayTime / 50;
 	_lastUsedPlayTimeInSeconds = newPlayTime / 1000;
+	_playTimeInSecondsAdjust = 0; // no adjust for now
 	setTotalPlayTime(newPlayTime);
 	inGameTimerResetPassedCycles();
 }
@@ -158,12 +224,30 @@ uint32 AgiEngine::inGameTimerGetPassedCycles() {
 	return _passedPlayTimeCycles;
 }
 
+// Seconds got set by the game
+// This happens in Mixed Up Mother Goose. The game syncs the songs to VM_VAR_SECONDS, but instead
+// of only reading them, it sets it to 0 and then checks if it reached a certain second.
+// The original interpreter didn't reset the internal cycles counter. Which means the timing was never accurate,
+// because the cycles counter may just overflow right after setting the seconds, which means a second
+// increase almost immediately happened. We even fix this issue by adjusting for it.
+void AgiEngine::setVarSecondsTrigger(byte newSeconds) {
+	// Adjust in game timer, so that VM timer variables are accurate
+	inGameTimerUpdate();
+
+	// Adjust VM seconds again
+	_game.vars[VM_VAR_SECONDS] = newSeconds;
+
+	// Calculate milliseconds adjust (see comment above)
+	uint32 curPlayTimeMilliseconds = inGameTimerGet();
+	_playTimeInSecondsAdjust = curPlayTimeMilliseconds % 1000;
+}
+
 // This is called, when one of the timer variables is read
 // We calculate the latest variables, according to current official playtime
 // This is also called in the main loop, because the game needs to be sync'd to 20 cycles per second
 void AgiEngine::inGameTimerUpdate() {
 	uint32 curPlayTimeMilliseconds = inGameTimerGet();
-	uint32 curPlayTimeCycles = curPlayTimeMilliseconds / 50;
+	uint32 curPlayTimeCycles = curPlayTimeMilliseconds / 25;
 
 	if (curPlayTimeCycles == _lastUsedPlayTimeInCycles) {
 		// No difference, skip updating
@@ -178,6 +262,14 @@ void AgiEngine::inGameTimerUpdate() {
 	_lastUsedPlayTimeInCycles = curPlayTimeCycles;
 
 	// Now calculate current play time in seconds
+	if (_playTimeInSecondsAdjust) {
+		// Apply adjust from setVarSecondsTrigger()
+		if (curPlayTimeMilliseconds >= _playTimeInSecondsAdjust) {
+			curPlayTimeMilliseconds -= _playTimeInSecondsAdjust;
+		} else {
+			curPlayTimeMilliseconds = 0;
+		}
+	}
 	uint32 curPlayTimeSeconds = curPlayTimeMilliseconds / 1000;
 
 	if (curPlayTimeSeconds == _lastUsedPlayTimeInSeconds) {
@@ -185,26 +277,50 @@ void AgiEngine::inGameTimerUpdate() {
 		return;
 	}
 
-	uint32 secondsLeft = 0;
-	byte   curDays = 0;
-	byte   curHours = 0;
-	byte   curMinutes = 0;
-	byte   curSeconds = 0;
+	int32 playTimeSecondsDelta = curPlayTimeSeconds - _lastUsedPlayTimeInSeconds;
 
-	curDays = curPlayTimeSeconds / 86400;
-	secondsLeft = curPlayTimeSeconds % 86400;
+	if (playTimeSecondsDelta > 0) {
+		// Read and write to VM vars directly to avoid endless loop
+		uint32 secondsLeft = playTimeSecondsDelta;
+		byte   curSeconds = _game.vars[VM_VAR_SECONDS];
+		byte   curMinutes = _game.vars[VM_VAR_MINUTES];
+		byte   curHours = _game.vars[VM_VAR_HOURS];
+		byte   curDays = _game.vars[VM_VAR_DAYS];
 
-	curHours = secondsLeft / 3600;
-	secondsLeft = secondsLeft % 3600;
+		// Add delta to VM variables
+		if (secondsLeft >= 86400) {
+			curDays += secondsLeft / 86400;
+			secondsLeft = secondsLeft % 86400;
+		}
+		if (secondsLeft >= 3600) {
+			curHours += secondsLeft / 3600;
+			secondsLeft = secondsLeft % 3600;
+		}
+		if (secondsLeft >= 60) {
+			curMinutes += secondsLeft / 60;
+			secondsLeft = secondsLeft % 60;
+		}
+		curSeconds += secondsLeft;
 
-	curMinutes = secondsLeft / 60;
-	curSeconds = secondsLeft % 60;
+		while (curSeconds > 59) {
+			curSeconds -= 60;
+			curMinutes++;
+		}
+		while (curMinutes > 59) {
+			curMinutes -= 60;
+			curHours++;
+		}
+		while (curHours > 23) {
+			curHours -= 24;
+			curDays++;
+		}
 
-	// directly set them, otherwise we would go into an endless loop
-	_game.vars[VM_VAR_SECONDS] = curSeconds;
-	_game.vars[VM_VAR_MINUTES] = curMinutes;
-	_game.vars[VM_VAR_HOURS] = curHours;
-	_game.vars[VM_VAR_DAYS] = curDays;
+		// directly set them
+		_game.vars[VM_VAR_SECONDS] = curSeconds;
+		_game.vars[VM_VAR_MINUTES] = curMinutes;
+		_game.vars[VM_VAR_HOURS] = curHours;
+		_game.vars[VM_VAR_DAYS] = curDays;
+	}
 
 	_lastUsedPlayTimeInSeconds = curPlayTimeSeconds;
 }

@@ -211,6 +211,11 @@ Common::WriteStream *DSFileSystemNode::createWriteStream() {
 	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
 
+bool DSFileSystemNode::create(bool isDirectoryFlag) {
+	error("Not supported");
+	return false;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GBAMPFileSystemNode - File system using GBA Movie Player and CF card //
 //////////////////////////////////////////////////////////////////////////
@@ -266,7 +271,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path) {
 	_path = path;
 }
 
-GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDir) {
+GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDirectoryFlag) {
 	//consolePrintf("'%s'",path.c_str());
 
 	int lastSlash = 3;
@@ -279,7 +284,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDir)
 	_displayName = Common::String(path.c_str() + lastSlash + 1);
 	_path = path;
 	_isValid = true;
-	_isDirectory = isDir;
+	_isDirectory = isDirectoryFlag;
 }
 
 
@@ -391,6 +396,11 @@ Common::SeekableReadStream *GBAMPFileSystemNode::createReadStream() {
 Common::WriteStream *GBAMPFileSystemNode::createWriteStream() {
 	Common::WriteStream *stream = DSFileStream::makeFromPath(getPath(), true);
 	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
+}
+
+bool GBAMPFileSystemNode::create(bool isDirectoryFlag) {
+	error("Not supported");
+	return false;
 }
 
 

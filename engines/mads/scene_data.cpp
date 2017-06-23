@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -128,7 +128,7 @@ SceneInfo *SceneInfo::init(MADSEngine *vm) {
 }
 
 void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
-		int flags, DepthSurface &depthSurface, MSurface &bgSurface) {
+		int flags, DepthSurface &depthSurface, BaseSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
 
 	// Figure out the resource to use
@@ -242,13 +242,13 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	int height = _height;
 
 	if (!bgSurface.getPixels() || (bgSurface.w != width) || (bgSurface.h != height)) {
-		bgSurface.setSize(width, height);
+		bgSurface.create(width, height);
 	}
 
 	if (_depthStyle == 2)
 		width >>= 2;
 	if (!depthSurface.getPixels()) {
-		depthSurface.setSize(width, height);
+		depthSurface.create(width, height);
 	}
 
 	loadCodes(depthSurface, variant);
@@ -288,7 +288,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		assert(asset && _depthStyle != 2);
 
 		MSprite *spr = asset->getFrame(si._frameNumber);
-		bgSurface.copyFrom(spr, si._position, si._depth, &depthSurface,
+		bgSurface.copyFrom(*spr, si._position, si._depth, &depthSurface,
 			si._scale, false, spr->getTransparencyIndex());
 	}
 
@@ -299,7 +299,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 	}
 }
 
-void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &resName, int flags, MSurface &bgSurface) {
+void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &resName, int flags, BaseSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
 	Common::String resourceName;
 	bool isV2 = (_vm->getGameID() != GType_RexNebular);
@@ -351,7 +351,7 @@ void SceneInfo::loadPalette(int sceneId, int artFileNum, const Common::String &r
 	}
 }
 
-void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName, int flags, MSurface &bgSurface) {
+void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName, int flags, BaseSurface &bgSurface) {
 	bool sceneFlag = sceneId >= 0;
 	Common::String resourceName;
 	Common::SeekableReadStream *stream;
@@ -397,7 +397,7 @@ void SceneInfo::loadMadsV1Background(int sceneId, const Common::String &resName,
 	artFile.close();
 }
 
-void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName, int flags, MSurface &bgSurface) {
+void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName, int flags, BaseSurface &bgSurface) {
 	Common::String tileMapResourceName = Resources::formatName(RESPREFIX_RM, sceneId, ".MM");
 	File tileMapFile(tileMapResourceName);
 	MadsPack tileMapPack(&tileMapFile);
@@ -455,7 +455,7 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 		newHeight = tileCount * tileHeight;
 
 	if (bgSurface.w != newWidth || bgSurface.h != newHeight)
-		bgSurface.setSize(newWidth, newHeight);
+		bgSurface.create(newWidth, newHeight);
 
 	// --------------------------------------------------------------------------------
 
@@ -477,7 +477,7 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 
 		//debugCN(kDebugGraphics, "Tile: %i, compressed size: %i\n", i, compressedTileDataSize);
 
-		newTile->empty();
+		newTile->clear();
 
 		byte *compressedTileData = new byte[compressedTileDataSize];
 
@@ -503,7 +503,8 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 			TileSetIterator tile = tileSet.begin();
 			for (int i = 0; i < tileIndex; i++)
 				++tile;
-			((*tile).get())->copyTo(&bgSurface, Common::Point(x * tileWidth, y * tileHeight));
+
+			bgSurface.blitFrom(*(*tile).get(), Common::Point(x * tileWidth, y * tileHeight));
 			((*tile).get())->free();
 		}
 	}

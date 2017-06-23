@@ -26,6 +26,11 @@
 	<string>@VERSION@</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<false/>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchImages</key>

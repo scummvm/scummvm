@@ -174,7 +174,7 @@ Common::String PhantomScene::formAnimName(char sepChar, int suffixNum) {
 
 /*------------------------------------------------------------------------*/
 
-void SceneInfoPhantom::loadCodes(MSurface &depthSurface, int variant) {
+void SceneInfoPhantom::loadCodes(BaseSurface &depthSurface, int variant) {
 	Common::String ext = Common::String::format(".WW%d", variant);
 	Common::String fileName = Resources::formatName(RESPREFIX_RM, _sceneId, ext);
 	if (!Common::File::exists(fileName))
@@ -190,8 +190,8 @@ void SceneInfoPhantom::loadCodes(MSurface &depthSurface, int variant) {
 	f.close();
 }
 
-void SceneInfoPhantom::loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) {
-	byte *destP = depthSurface.getData();
+void SceneInfoPhantom::loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream) {
+	byte *destP = (byte *)depthSurface.getPixels();
 	byte *walkMap = new byte[stream->size()];
 	stream->read(walkMap, stream->size());
 

@@ -27,7 +27,7 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-const PeopleData PEOPLE_DATA[TATTOO_MAX_PEOPLE] = { 
+const PeopleData PEOPLE_DATA[TATTOO_MAX_PEOPLE] = {
 	{ "HOLM", kFixedText_People_SherlockHolmes },
 	{ "WATS", kFixedText_People_DrWatson },
 	{ "HUDS", kFixedText_People_MrsHudson },

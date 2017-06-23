@@ -28,10 +28,10 @@
 #include "common/mutex.h"
 #include "scumm/music.h"
 #include "scumm/players/player_mac.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
 
+namespace Audio {
 class Mixer;
+}
 
 namespace Scumm {
 

@@ -148,23 +148,24 @@ void ScalpelUserInterface::reset() {
 void ScalpelUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 
-	const ImageFrame &src = (*_controlPanel)[0];
+	const Graphics::Surface &src = (*_controlPanel)[0]._frame;
 	int16 x = (!IS_3DO) ? 0 : UI_OFFSET_3DO;
 
 	if (bufferNum & 1) {
 		if (IS_3DO)
 			screen._backBuffer1.fillRect(Common::Rect(0, CONTROLS_Y,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BLACK);
-		screen._backBuffer1.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
+		screen._backBuffer1.SHtransBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	}
 	if (bufferNum & 2) {
 		if (IS_3DO)
 			screen._backBuffer2.fillRect(Common::Rect(0, CONTROLS_Y,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BLACK);
-		screen._backBuffer2.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
+		screen._backBuffer2.SHtransBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	}
 	if (bufferNum == 3)
-		screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
+		screen._backBuffer2.SHfillRect(Common::Rect(0, INFO_LINE,
+			SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10), INFO_BLACK);
 }
 
 void ScalpelUserInterface::handleInput() {
@@ -426,7 +427,7 @@ void ScalpelUserInterface::depressButton(int num) {
 	offsetButton3DO(pt, num);
 
 	ImageFrame &frame = (*_controls)[num];
-	screen._backBuffer1.transBlitFrom(frame, pt);
+	screen._backBuffer1.SHtransBlitFrom(frame, pt);
 	screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 }
 
@@ -442,7 +443,7 @@ void ScalpelUserInterface::restoreButton(int num) {
 	events.setCursor(ARROW);
 
 	// Restore the UI on the back buffer
-	screen._backBuffer1.blitFrom(screen._backBuffer2, pt,
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2, pt,
 		Common::Rect(pt.x, pt.y, pt.x + 90, pt.y + 19));
 	screen.slamArea(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h);
 
@@ -489,7 +490,7 @@ void ScalpelUserInterface::toggleButton(uint16 num) {
 			ImageFrame &frame = (*_controls)[num];
 			Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
 			offsetButton3DO(pt, num);
-			screen._backBuffer1.transBlitFrom(frame, pt);
+			screen._backBuffer1.SHtransBlitFrom(frame, pt);
 			screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 		}
 	} else {
@@ -501,7 +502,7 @@ void ScalpelUserInterface::toggleButton(uint16 num) {
 
 void ScalpelUserInterface::clearInfo() {
 	if (_infoFlag) {
-		_vm->_screen->vgaBar(Common::Rect(IS_3DO ? 33 : 16, INFO_LINE, 
+		_vm->_screen->vgaBar(Common::Rect(IS_3DO ? 33 : 16, INFO_LINE,
 			SHERLOCK_SCREEN_WIDTH - (IS_3DO ? 33 : 19), INFO_LINE + 10), INFO_BLACK);
 		_infoFlag = false;
 		_oldLook = -1;
@@ -605,74 +606,92 @@ void ScalpelUserInterface::lookScreen(const Common::Point &pt) {
 				// If inventory is active and an item is selected for a Use or Give action
 				if ((_menuMode == INV_MODE || _menuMode == USE_MODE || _menuMode == GIVE_MODE) &&
 						(inv._invMode == INVMODE_USE || inv._invMode == INVMODE_GIVE)) {
-					int width1 = 0, width2 = 0;
-					int x, width;
+					int width1 = 0, width2 = 0, width3 = 0;
+					int x;
+
 					if (inv._invMode == INVMODE_USE) {
 						// Using an object
-						x = width = screen.stringWidth("Use ");
+						Common::String useText1 = FIXED(UserInterface_Use);
+						Common::String useText2;
+						Common::String useText3;
 
-						if (temp < 1000 && scene._bgShapes[temp]._aType != PERSON)
+						x = width1 = screen.stringWidth(useText1);
+
+						if (temp < 1000 && scene._bgShapes[temp]._aType != PERSON) {
 							// It's not a person, so make it lowercase
-							tempStr.setChar(tolower(tempStr[0]), 0);
-
-						x += screen.stringWidth(tempStr);
+							switch (_vm->getLanguage()) {
+							case Common::DE_DEU:
+							case Common::ES_ESP:
+								// don't do this for German + Spanish version
+								break;
+							default:
+								tempStr.setChar(tolower(tempStr[0]), 0);
+								break;
+							}
+						}
 
 						// If we're using an inventory object, add in the width
 						// of the object name and the " on "
 						if (_selector != -1) {
-							width1 = screen.stringWidth(inv[_selector]._name);
-							x += width1;
-							width2 = screen.stringWidth(" on ");
+							useText2 = inv[_selector]._name;
+							width2 = screen.stringWidth(useText2);
 							x += width2;
+
+							useText3 = Common::String::format(FIXED(UserInterface_UseOn), tempStr.c_str());
+
+						} else {
+							useText3 = tempStr;
 						}
+
+						width3 = screen.stringWidth(useText3);
+						x += width3;
 
 						// If the line will be too long, keep cutting off characters
 						// until the string will fit
 						while (x > 280) {
-							x -= screen.charWidth(tempStr.lastChar());
-							tempStr.deleteLastChar();
+							x -= screen.charWidth(useText3.lastChar());
+							useText3.deleteLastChar();
 						}
 
 						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
 						screen.print(Common::Point(xStart, INFO_LINE + 1),
-							INFO_FOREGROUND, "Use ");
+							INFO_FOREGROUND, "%s", useText1.c_str());
 
 						if (_selector != -1) {
-							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-								TALK_FOREGROUND, "%s", inv[_selector]._name.c_str());
-							screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
-								INFO_FOREGROUND, " on ");
-							screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
-								INFO_FOREGROUND, "%s", tempStr.c_str());
+							screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+								TALK_FOREGROUND, "%s", useText2.c_str());
+							screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + 1),
+								INFO_FOREGROUND, "%s", useText3.c_str());
 						} else {
-							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-								INFO_FOREGROUND, "%s", tempStr.c_str());
+							screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+								INFO_FOREGROUND, "%s", useText3.c_str());
 						}
 					} else if (temp >= 0 && temp < 1000 && _selector != -1 &&
 							scene._bgShapes[temp]._aType == PERSON) {
+						Common::String giveText1 = FIXED(UserInterface_Give);
+						Common::String giveText2 = inv[_selector]._name;
+						Common::String giveText3 = Common::String::format(FIXED(UserInterface_GiveTo), tempStr.c_str());
+
 						// Giving an object to a person
-						width1 = screen.stringWidth(inv[_selector]._name);
-						x = width = screen.stringWidth("Give ");
-						x += width1;
-						width2 = screen.stringWidth(" to ");
+						x = width1 = screen.stringWidth(giveText1);
+						width2 = screen.stringWidth(giveText2);
 						x += width2;
-						x += screen.stringWidth(tempStr);
+						width3 = screen.stringWidth(giveText3);
+						x += width3;
 
 						// Ensure string will fit on-screen
 						while (x > 280) {
-							x -= screen.charWidth(tempStr.lastChar());
-							tempStr.deleteLastChar();
+							x -= screen.charWidth(giveText3.lastChar());
+							giveText3.deleteLastChar();
 						}
 
 						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
 						screen.print(Common::Point(xStart, INFO_LINE + 1),
-							INFO_FOREGROUND, "Give ");
-						screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-							TALK_FOREGROUND, "%s", inv[_selector]._name.c_str());
-						screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
-							INFO_FOREGROUND, " to ");
-						screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
-							INFO_FOREGROUND, "%s", tempStr.c_str());
+							INFO_FOREGROUND, "%s", giveText1.c_str());
+						screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+							TALK_FOREGROUND, "%s", giveText2.c_str());
+						screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + 1),
+							INFO_FOREGROUND, "%s", giveText3.c_str());
 					}
 				} else {
 					screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", tempStr.c_str());
@@ -909,7 +928,7 @@ void ScalpelUserInterface::doEnvControl() {
 			} while (saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) && moreKeys);
 		} else if ((found == 5 && events._released) || _key == saves._hotkeyQuit) {
 			clearWindow();
-			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, saves._fixedTextQuitGameQuestion.c_str());
+			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "%s", saves._fixedTextQuitGameQuestion.c_str());
 			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
 
 			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136, saves._fixedTextQuitGameYes);
@@ -1254,7 +1273,7 @@ void ScalpelUserInterface::doLookControl() {
 				// Need to close the window and depress the Look button
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 				offsetButton3DO(pt, 0);
-				screen._backBuffer2.blitFrom((*_controls)[0], pt);
+				screen._backBuffer2.SHblitFrom((*_controls)[0], pt);
 				banishWindow(true);
 
 				_windowBounds.top = CONTROLS_Y1;
@@ -1278,14 +1297,14 @@ void ScalpelUserInterface::doLookControl() {
 			// Looking at an inventory object
 			// Backup the user interface
 			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1);
-			tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
+			tempSurface.SHblitFrom(screen._backBuffer2, Common::Point(0, 0),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 			inv.drawInventory(INVENTORY_DONT_DISPLAY);
 			banishWindow(true);
 
 			// Restore the ui
-			screen._backBuffer2.blitFrom(tempSurface, Common::Point(0, CONTROLS_Y1));
+			screen._backBuffer2.SHblitFrom(tempSurface, Common::Point(0, CONTROLS_Y1));
 
 			_windowBounds.top = CONTROLS_Y1;
 			_key = _oldKey = _hotkeyLook;
@@ -1869,7 +1888,7 @@ void ScalpelUserInterface::journalControl() {
 	// Reset the palette
 	screen.setPalette(screen._cMap);
 
-	screen._backBuffer1.blitFrom(screen._backBuffer2);
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2);
 	scene.updateBackground();
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
@@ -1903,9 +1922,9 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 				offsetButton3DO(pt, 0);
 
-				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
-					Common::Rect(pt.x, pt.y, pt.x + tempSurface.w(), pt.y + tempSurface.h()));
-				screen._backBuffer2.transBlitFrom((*_controls)[0], pt);
+				tempSurface.SHblitFrom(screen._backBuffer2, Common::Point(0, 0),
+					Common::Rect(pt.x, pt.y, pt.x + tempSurface.width(), pt.y + tempSurface.height()));
+				screen._backBuffer2.SHtransBlitFrom((*_controls)[0], pt);
 
 				banishWindow(1);
 				events.setCursor(MAGNIFY);
@@ -1915,7 +1934,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				_menuMode = LOOK_MODE;
 				events.clearEvents();
 
-				screen._backBuffer2.blitFrom(tempSurface, pt);
+				screen._backBuffer2.SHblitFrom(tempSurface, pt);
 			} else {
 				events.setCursor(ARROW);
 				banishWindow(true);
@@ -1949,7 +1968,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 		return;
 	}
 
-	Surface &bb = *screen._backBuffer;
+	Surface &bb = *screen.getBackBuffer();
 	if (firstTime) {
 		// Only draw the border on the first call
 		_infoFlag = true;
@@ -2053,9 +2072,9 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 
 	if (slideUp) {
 		// Gradually slide up the display of the window
-		for (int idx = 1; idx <= bgSurface.h(); idx += 2) {
-			screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
-				Common::Rect(0, 0, bgSurface.w(), idx));
+		for (int idx = 1; idx <= bgSurface.height(); idx += 2) {
+			screen.getBackBuffer()->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
+				Common::Rect(0, 0, bgSurface.width(), idx));
 			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
@@ -2063,21 +2082,21 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 		}
 	} else {
 		// Gradually slide down the display of the window
-		for (int idx = 1; idx <= bgSurface.h(); idx += 2) {
-			screen._backBuffer->blitFrom(bgSurface,
-				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h()),
-				Common::Rect(0, bgSurface.h() - idx, bgSurface.w(), bgSurface.h()));
-			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h(),
-				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - bgSurface.h() + idx));
+		for (int idx = 1; idx <= bgSurface.height(); idx += 2) {
+			screen.getBackBuffer()->SHblitFrom(bgSurface,
+				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
+				Common::Rect(0, bgSurface.height() - idx, bgSurface.width(), bgSurface.height()));
+			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height(),
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - bgSurface.height() + idx));
 
 			events.delay(10);
 		}
 	}
 
 	// Final display of the entire window
-	screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h()),
-		Common::Rect(0, 0, bgSurface.w(), bgSurface.h()));
-	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h(), bgSurface.w(), bgSurface.h());
+	screen.getBackBuffer()->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
+		Common::Rect(0, 0, bgSurface.width(), bgSurface.height()));
+	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height(), bgSurface.width(), bgSurface.height());
 
 	_windowOpen = true;
 }
@@ -2088,10 +2107,10 @@ void ScalpelUserInterface::summonWindow(bool slideUp, int height) {
 	// Extract the window that's been drawn on the back buffer
 	Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - height);
 	Common::Rect r(0, height, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	tempSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), r);
+	tempSurface.SHblitFrom(screen._backBuffer1, Common::Point(0, 0), r);
 
 	// Remove drawn window with original user interface
-	screen._backBuffer1.blitFrom(screen._backBuffer2,
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 		Common::Point(0, height), r);
 
 	// Display the window gradually on-screen
@@ -2115,7 +2134,7 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 					Common::copy_backward(pSrc, pSrcEnd, pDest);
 
 					// Restore lines from the ui in the secondary back buffer
-					screen._backBuffer1.blitFrom(screen._backBuffer2,
+					screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 						Common::Point(0, CONTROLS_Y),
 						Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + idx));
 
@@ -2125,14 +2144,14 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 				}
 
 				// Restore final two old lines
-				screen._backBuffer1.blitFrom(screen._backBuffer2,
+				screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 					Common::Point(0, SHERLOCK_SCREEN_HEIGHT - 2),
 					Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 2,
 						SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 				screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - 2, SHERLOCK_SCREEN_WIDTH, 2);
 			} else {
 				// Restore old area to completely erase window
-				screen._backBuffer1.blitFrom(screen._backBuffer2,
+				screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 					Common::Point(0, CONTROLS_Y),
 					Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
@@ -2152,7 +2171,7 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 			}
 
 			// Show entire final area
-			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(0, CONTROLS_Y1),
+			screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(0, CONTROLS_Y1),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		}
@@ -2234,7 +2253,7 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
 				_infoFlag = true;
 				clearInfo();
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Done...");
+				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", FIXED(UserInterface_Done));
 				_menuCounter = 25;
 			}
 		}
@@ -2244,9 +2263,9 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 		clearInfo();
 
 		if (giveMode) {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "No, thank you.");
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", FIXED(UserInterface_NoThankYou));
 		} else if (fixedTextActionId == kFixedTextAction_Invalid) {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that.");
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", FIXED(UserInterface_YouCantDoThat));
 		} else {
 			Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, 0);
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());

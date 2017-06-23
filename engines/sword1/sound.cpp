@@ -37,7 +37,6 @@
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/decoders/wave.h"
 #include "audio/decoders/xa.h"
 
 namespace Sword1 {
@@ -125,22 +124,29 @@ void Sound::checkSpeechFileEndianness() {
 	uint32 index = _cowHeader[locIndex + (localNo * 2) - 1];
 	if (sampleSize) {
 		uint32 size;
+		bool leOk = false, beOk = false;
 		// Compute average of difference between two consecutive samples for both BE and LE
 		_bigEndianSpeech = false;
-		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
+		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size, &leOk);
 		uint32 maxSamples = size > 2000 ? 2000 : size;
 		double le_diff = endiannessHeuristicValue(data, size, maxSamples);
 		delete[] data;
 		_bigEndianSpeech = true;
-		data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
+		data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size, &beOk);
 		double be_diff = endiannessHeuristicValue(data, size, maxSamples);
 		delete [] data;
 		// Set the big endian flag
-		_bigEndianSpeech = (be_diff < le_diff);
+		if (leOk && !beOk)
+			_bigEndianSpeech = false;
+		else if (beOk && !leOk)
+			_bigEndianSpeech = true;
+		else
+			_bigEndianSpeech = (be_diff < le_diff);
 		if (_bigEndianSpeech)
 			debug(6, "Mac version: using big endian speech file");
 		else
 			debug(6, "Mac version: using little endian speech file");
+		debug(8, "Speech decompression memory check: big endian = %s, little endian = %s", beOk ? "good" : "bad", leOk ? "good" : "bad");
 		debug(8, "Speech endianness heuristic: average = %f for BE and %f for LE (%d samples)", be_diff, le_diff, maxSamples);
 	}
 }
@@ -446,7 +452,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		return false;
 }
 
-int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
+int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size, bool* ok) {
 	uint8 *fBuf = (uint8 *)malloc(cSize);
 	_cowFile.seek(index);
 	_cowFile.read(fBuf, cSize);
@@ -456,6 +462,8 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		headerPos++;
 
 	if (headerPos < 100) {
+		if (ok != 0)
+			*ok = true;
 		int32 resSize;
 		int16 *srcData;
 		uint32 srcPos;
@@ -508,8 +516,11 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 			srcPos++;
 			if (length < 0) {
 				length = -length;
-				if (length > samplesLeft)
+				if (length > samplesLeft) {
 					length = samplesLeft;
+					if (ok != 0)
+						*ok = false;
+				}
 				int16 value;
 				if (_bigEndianSpeech) {
 					value = (int16)SWAP_BYTES_16(*((uint16 *)(srcData + srcPos)));
@@ -520,8 +531,11 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 					dstData[dstPos++] = value;
 				srcPos++;
 			} else {
-				if (length > samplesLeft)
+				if (length > samplesLeft) {
 					length = samplesLeft;
+					if (ok != 0)
+						*ok = false;
+				}
 				if (_bigEndianSpeech) {
 					for (uint16 cnt = 0; cnt < (uint16)length; cnt++)
 						dstData[dstPos++] = (int16)SWAP_BYTES_16(*((uint16 *)(srcData + (srcPos++))));
@@ -535,6 +549,8 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		}
 		if (samplesLeft > 0) {
 			memset(dstData + dstPos, 0, samplesLeft * 2);
+			if (ok != 0)
+				*ok = false;
 		}
 		if (_cowMode == CowDemo) // demo has wave output size embedded in the compressed data
 			*(uint32 *)dstData = 0;
@@ -543,6 +559,8 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		calcWaveVolume(dstData, resSize);
 		return dstData;
 	} else {
+		if (ok != 0)
+			*ok = false;
 		free(fBuf);
 		warning("Sound::uncompressSpeech(): DATA tag not found in wave header");
 		*size = 0;

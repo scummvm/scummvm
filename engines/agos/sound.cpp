@@ -217,7 +217,7 @@ static void convertVolume(int &vol) {
 }
 
 static void convertPan(int &pan) {
-	// DirectSound was orginally used, which specifies volume
+	// DirectSound was originally used, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
 	// rather than a linear one.
 	//

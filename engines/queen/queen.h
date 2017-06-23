@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUEEN_H
-#define QUEEN_H
+#ifndef QUEEN_QUEEN_H
+#define QUEEN_QUEEN_H
 
 #include "engines/engine.h"
 #include "common/random.h"

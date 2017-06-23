@@ -31,6 +31,7 @@
 #include "config.h"
 #include "create_project.h"
 
+#include "cmake.h"
 #include "codeblocks.h"
 #include "msvc.h"
 #include "visualstudio.h"
@@ -53,7 +54,7 @@
 #define USE_WIN32_API
 #endif
 
-#ifdef USE_WIN32_API
+#if (defined(_WIN32) || defined(WIN32))
 #include <windows.h>
 #else
 #include <sstream>
@@ -83,10 +84,18 @@ std::string unifyPath(const std::string &path);
  * @param exe Name of the executable.
  */
 void displayHelp(const char *exe);
+
+/**
+ * Build a list of options to enable or disable GCC warnings
+ *
+ * @param globalWarnings Resulting list of warnings
+ */
+void addGCCWarnings(StringList &globalWarnings);
 } // End of anonymous namespace
 
 enum ProjectType {
 	kProjectNone,
+	kProjectCMake,
 	kProjectCodeBlocks,
 	kProjectMSVC,
 	kProjectXcode
@@ -125,7 +134,6 @@ int main(int argc, char *argv[]) {
 
 	ProjectType projectType = kProjectNone;
 	int msvcVersion = 12;
-	bool useSDL2 = false;
 
 	// Parse command line arguments
 	using std::cout;
@@ -141,6 +149,14 @@ int main(int argc, char *argv[]) {
 			cout.setf(std::ios_base::right, std::ios_base::adjustfield);
 
 			return 0;
+
+		} else if (!std::strcmp(argv[i], "--cmake")) {
+			if (projectType != kProjectNone) {
+				std::cerr << "ERROR: You cannot pass more than one project type!\n";
+				return -1;
+			}
+
+			projectType = kProjectCMake;
 
 		} else if (!std::strcmp(argv[i], "--codeblocks")) {
 			if (projectType != kProjectNone) {
@@ -176,7 +192,7 @@ int main(int argc, char *argv[]) {
 
 			msvcVersion = atoi(argv[++i]);
 
-			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12 && msvcVersion != 14) {
+			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12 && msvcVersion != 14 && msvcVersion != 15) {
 				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
 				return -1;
 			}
@@ -268,8 +284,8 @@ int main(int argc, char *argv[]) {
 			setup.devTools = true;
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
-		} else if (!std::strcmp(argv[i], "--sdl2")) {
-			useSDL2 = true;
+		} else if (!std::strcmp(argv[i], "--sdl1")) {
+			setup.useSDL2 = false;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -283,6 +299,19 @@ int main(int argc, char *argv[]) {
 
 		for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 			j->enable = false;
+	}
+	
+	// Disable engines for which we are missing dependencies
+	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
+		if (i->enable) {
+			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
+				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
+				if (feature != setup.features.end() && !feature->enable) {
+					setEngineBuildState(i->name, setup.engines, false);
+					break;
+				}
+			}
+		}
 	}
 
 	// Print status
@@ -335,10 +364,7 @@ int main(int argc, char *argv[]) {
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
-	// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
-	if (projectType != kProjectXcode) {
-		setup.defines.push_back("WIN32");
-	} else {
+	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
 		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
 		// correct target by the Xcode project provider.
@@ -347,13 +373,54 @@ int main(int argc, char *argv[]) {
 		// the files, according to the target.
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
+	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
+		// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
+		setup.defines.push_back("WIN32");
+	} else {
+		// As a last resort, select the backend files to build based on the platform used to build create_project.
+		// This is broken when cross compiling.
+#if defined(_WIN32) || defined(WIN32)
+		setup.defines.push_back("WIN32");
+#else
+		setup.defines.push_back("POSIX");
+#endif
 	}
+
+	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false;
+	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable) {
+			if (!strcmp(i->name, "updates"))
+				updatesEnabled = true;
+			else if (!strcmp(i->name, "libcurl"))
+				curlEnabled = true;
+			else if (!strcmp(i->name, "sdlnet"))
+				sdlnetEnabled = true;
+		}
+	}
+
+	if (updatesEnabled) {
+		setup.defines.push_back("USE_SPARKLE");
+		if (projectType != kProjectXcode)
+			setup.libraries.push_back("winsparkle");
+		else
+			setup.libraries.push_back("sparkle");
+	}
+
+	if (curlEnabled && projectType == kProjectMSVC)
+		setup.defines.push_back("CURL_STATICLIB");
+	if (sdlnetEnabled && projectType == kProjectMSVC)
+		setup.libraries.push_back("iphlpapi");
+
 	setup.defines.push_back("SDL_BACKEND");
-	if (!useSDL2) {
-		cout << "\nLinking to SDL 1.2\n\n";
+	if (!setup.useSDL2) {
+		cout << "\nBuilding against SDL 1.2\n\n";
 		setup.libraries.push_back("sdl");
 	} else {
-		cout << "\nLinking to SDL 2.0\n\n";
+		cout << "\nBuilding against SDL 2.0\n\n";
+		// TODO: This also defines USE_SDL2 in the preprocessor, we don't do
+		// this in our configure/make based build system. Adapt create_project
+		// to replicate this behavior.
+		setup.defines.push_back("USE_SDL2");
 		setup.libraries.push_back("sdl2");
 	}
 	setup.libraries.push_back("winmm");
@@ -380,49 +447,25 @@ int main(int argc, char *argv[]) {
 		std::cerr << "ERROR: No project type has been specified!\n";
 		return -1;
 
+	case kProjectCMake:
+		if (setup.devTools || setup.tests) {
+			std::cerr << "ERROR: Building tools or tests is not supported for the CMake project type!\n";
+			return -1;
+		}
+
+		addGCCWarnings(globalWarnings);
+
+		provider = new CreateProjectTool::CMakeProvider(globalWarnings, projectWarnings);
+
+		break;
+
 	case kProjectCodeBlocks:
 		if (setup.devTools || setup.tests) {
 			std::cerr << "ERROR: Building tools or tests is not supported for the CodeBlocks project type!\n";
 			return -1;
 		}
 
-		////////////////////////////////////////////////////////////////////////////
-		// Code::Blocks is using GCC behind the scenes, so we need to pass a list
-		// of options to enable or disable warnings
-		////////////////////////////////////////////////////////////////////////////
-		//
-		// -Wall
-		//   enable all warnings
-		//
-		// -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
-		//   disable annoying and not-so-useful warnings
-		//
-		// -Wpointer-arith -Wcast-qual -Wcast-align
-		// -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
-		//   enable even more warnings...
-		//
-		// -fno-rtti -fno-exceptions -fcheck-new
-		//   disable RTTI and exceptions, and enable checking of pointers returned
-		//   by "new"
-		//
-		////////////////////////////////////////////////////////////////////////////
-
-		globalWarnings.push_back("-Wall");
-		globalWarnings.push_back("-Wno-long-long");
-		globalWarnings.push_back("-Wno-multichar");
-		globalWarnings.push_back("-Wno-unknown-pragmas");
-		globalWarnings.push_back("-Wno-reorder");
-		globalWarnings.push_back("-Wpointer-arith");
-		globalWarnings.push_back("-Wcast-qual");
-		globalWarnings.push_back("-Wcast-align");
-		globalWarnings.push_back("-Wshadow");
-		globalWarnings.push_back("-Wimplicit");
-		globalWarnings.push_back("-Wnon-virtual-dtor");
-		globalWarnings.push_back("-Wwrite-strings");
-		// The following are not warnings at all... We should consider adding them to
-		// a different list of parameters.
-		globalWarnings.push_back("-fno-exceptions");
-		globalWarnings.push_back("-fcheck-new");
+		addGCCWarnings(globalWarnings);
 
 		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
 
@@ -506,6 +549,8 @@ int main(int argc, char *argv[]) {
 		// 4355 ('this' : used in base member initializer list)
 		//   only disabled for specific engines where it is used in a safe way
 		//
+		// 4373 (previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers)
+		//
 		// 4510 ('class' : default constructor could not be generated)
 		//
 		// 4511 ('class' : copy constructor could not be generated)
@@ -534,7 +579,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("6385");
 		globalWarnings.push_back("6386");
 
-		if (msvcVersion == 14) {
+		if (msvcVersion == 14 || msvcVersion == 15) {
 			globalWarnings.push_back("4267");
 			globalWarnings.push_back("4577");
 		}
@@ -554,6 +599,8 @@ int main(int argc, char *argv[]) {
 		projectWarnings["kyra"].push_back("4610");
 
 		projectWarnings["m4"].push_back("4355");
+
+		projectWarnings["sci"].push_back("4373");
 
 		if (msvcVersion == 9)
 			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion);
@@ -636,6 +683,7 @@ void displayHelp(const char *exe) {
 	        " Additionally there are the following switches for changing various settings:\n"
 	        "\n"
 	        "Project specific settings:\n"
+	        " --cmake                  build CMake project files\n"
 	        " --codeblocks             build Code::Blocks project files\n"
 	        " --msvc                   build Visual Studio project files\n"
 	        " --xcode                  build XCode project files\n"
@@ -653,7 +701,8 @@ void displayHelp(const char *exe) {
 	        "                           11 stands for \"Visual Studio 2012\"\n"
 	        "                           12 stands for \"Visual Studio 2013\"\n"
 	        "                           14 stands for \"Visual Studio 2015\"\n"
-	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
+	        "                           15 stands for \"Visual Studio 2017\"\n"
+	        "                           The default is \"12\", thus \"Visual Studio 2013\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
 	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
@@ -677,7 +726,7 @@ void displayHelp(const char *exe) {
 	        " --disable-<name>         disable inclusion of the feature \"name\"\n"
 	        "\n"
 	        "SDL settings:\n"
-	        " --sdl2                   link to SDL 2.0, instead of SDL 1.2\n"
+	        " --sdl1                   link to SDL 1.2, instead of SDL 2.0\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";
@@ -688,6 +737,41 @@ void displayHelp(const char *exe) {
 	for (FeatureList::const_iterator i = features.begin(); i != features.end(); ++i)
 		cout << ' ' << (i->enable ? " enabled" : "disabled") << " | " << std::setw((std::streamsize)15) << i->name << std::setw((std::streamsize)0) << " | " << i->description << '\n';
 	cout.setf(std::ios_base::right, std::ios_base::adjustfield);
+}
+
+void addGCCWarnings(StringList &globalWarnings) {
+	////////////////////////////////////////////////////////////////////////////
+	//
+	// -Wall
+	//   enable all warnings
+	//
+	// -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
+	//   disable annoying and not-so-useful warnings
+	//
+	// -Wpointer-arith -Wcast-qual -Wcast-align
+	// -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
+	//   enable even more warnings...
+	//
+	// -fno-exceptions -fcheck-new
+	//   disable exceptions, and enable checking of pointers returned by "new"
+	//
+	////////////////////////////////////////////////////////////////////////////
+
+	globalWarnings.push_back("-Wall");
+	globalWarnings.push_back("-Wno-long-long");
+	globalWarnings.push_back("-Wno-multichar");
+	globalWarnings.push_back("-Wno-unknown-pragmas");
+	globalWarnings.push_back("-Wno-reorder");
+	globalWarnings.push_back("-Wpointer-arith");
+	globalWarnings.push_back("-Wcast-qual");
+	globalWarnings.push_back("-Wcast-align");
+	globalWarnings.push_back("-Wshadow");
+	globalWarnings.push_back("-Wnon-virtual-dtor");
+	globalWarnings.push_back("-Wwrite-strings");
+	// The following are not warnings at all... We should consider adding them to
+	// a different list of parameters.
+	globalWarnings.push_back("-fno-exceptions");
+	globalWarnings.push_back("-fcheck-new");
 }
 
 /**
@@ -836,7 +920,7 @@ namespace {
  */
 bool parseEngine(const std::string &line, EngineDesc &engine) {
 	// Format:
-	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"]
+	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"] ["base games"] ["dependencies"]
 	TokenList tokens = tokenize(line);
 
 	if (tokens.size() < 4)
@@ -851,8 +935,14 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 	engine.name = *token; ++token;
 	engine.desc = *token; ++token;
 	engine.enable = (*token == "yes"); ++token;
-	if (token != tokens.end())
+	if (token != tokens.end()) {
 		engine.subEngines = tokenize(*token);
+		++token;
+		if (token != tokens.end())
+			++token;
+		if (token != tokens.end())
+			engine.requiredFeatures = tokenize(*token);
+	}
 
 	return true;
 }
@@ -935,31 +1025,37 @@ TokenList tokenize(const std::string &input, char separator) {
 namespace {
 const Feature s_features[] = {
 	// Libraries
-	{      "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
-	{       "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
+	{      "libz",        "USE_ZLIB", "zlib",             true,  "zlib (compression) support" },
+	{       "mad",         "USE_MAD", "libmad",           true,  "libmad (MP3) support" },
 	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
 	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   true, "FLAC support" },
-	{       "png",         "USE_PNG", "libpng",           true, "libpng support" },
+	{       "png",         "USE_PNG", "libpng16",         true,  "libpng support" },
 	{      "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
 	{     "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
 	{    "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
 	{  "freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
 	{      "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
 	{"fluidsynth",  "USE_FLUIDSYNTH", "libfluidsynth",    true, "FluidSynth support" },
+	{   "libcurl",     "USE_LIBCURL", "libcurl",          true, "libcurl support" },
+	{    "sdlnet",     "USE_SDL_NET", "SDL_net",          true, "SDL_net support" },
 
 	// Feature flags
 	{            "bink",             "USE_BINK",         "", true,  "Bink video support" },
 	{         "scalers",          "USE_SCALERS",         "", true,  "Scalers" },
 	{       "hqscalers",       "USE_HQ_SCALERS",         "", true,  "HQ scalers" },
 	{           "16bit",        "USE_RGB_COLOR",         "", true,  "16bit color support" },
+	{         "highres",          "USE_HIGHRES",         "", true,  "high resolution" },
 	{         "mt32emu",          "USE_MT32EMU",         "", true,  "integrated MT-32 emulator" },
 	{            "nasm",             "USE_NASM",         "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{          "opengl",           "USE_OPENGL", "opengl32", true,  "OpenGL support" },
+	{          "opengl",           "USE_OPENGL",         "", true,  "OpenGL support" },
+	{        "opengles",             "USE_GLES",         "", true,  "forced OpenGL ES mode" },
 	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
+	{           "cloud",            "USE_CLOUD",         "", true,  "Cloud integration support" },
 	{     "translation",      "USE_TRANSLATION",         "", true,  "Translation support" },
 	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
 	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
 	{   "eventrecorder", "ENABLE_EVENTRECORDER",         "", false, "Event recorder support"},
+	{         "updates",          "USE_UPDATES",         "", false, "Updates support"},
 	{      "langdetect",       "USE_DETECTLANG",         "", true,  "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                                      // is just no current way of properly detecting this...
 };
@@ -1156,7 +1252,7 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
 
 FileList listDirectory(const std::string &dir) {
 	FileList result;
-#ifdef USE_WIN32_API
+#if defined(_WIN32) || defined(WIN32)
 	WIN32_FIND_DATA fileInformation;
 	HANDLE fileHandle = FindFirstFile((dir + "/*").c_str(), &fileInformation);
 
@@ -1452,7 +1548,8 @@ void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &p
 	StringList duplicate;
 
 	for (StringList::const_iterator i = includeList.begin(); i != includeList.end(); ++i) {
-		const std::string fileName = getLastPathComponent(*i);
+		std::string fileName = getLastPathComponent(*i);
+		std::transform(fileName.begin(), fileName.end(), fileName.begin(), tolower);
 
 		// Leave out non object file names.
 		if (fileName.size() < 2 || fileName.compare(fileName.size() - 2, 2, ".o"))
@@ -1465,7 +1562,9 @@ void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &p
 		// Search for duplicates
 		StringList::const_iterator j = i; ++j;
 		for (; j != includeList.end(); ++j) {
-			if (fileName == getLastPathComponent(*j)) {
+			std::string candidateFileName = getLastPathComponent(*j);
+			std::transform(candidateFileName.begin(), candidateFileName.end(), candidateFileName.begin(), tolower);
+			if (fileName == candidateFileName) {
 				duplicate.push_back(fileName);
 				break;
 			}

@@ -23,7 +23,7 @@
 #ifndef FULLPIPE_MOTION_H
 #define FULLPIPE_MOTION_H
 
-#include "fullpipe/mgm.h"
+#include "fullpipe/anihandler.h"
 
 namespace Fullpipe {
 
@@ -62,7 +62,7 @@ public:
 	virtual int method40() { return 0; }
 	virtual bool canDropInventory(StaticANIObject *ani, int x, int y) { return false; }
 	virtual int method48() { return -1; }
-	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
+	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 
 	void enableLinks(const char *linkName, bool enable);
 	MovGraphLink *getLinkByName(const char *name);
@@ -113,9 +113,9 @@ public:
 	virtual int detachObject(StaticANIObject *obj);
 	virtual void detachAllObjects();
 	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
-	void initMovGraph2();
+	void initMctlGraph();
 	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, double *minDistancePtr);
 	void replaceNodeX(int from, int to);
 
@@ -149,7 +149,7 @@ public:
 	int _ladder_field_20;
 	int _ladder_field_24;
 	Common::Array<MctlLadderMovement *> _ladmovements;
-	MGM _mgm;
+	AniHandler _aniHandler;
 
 public:
 	MctlLadder();
@@ -160,7 +160,7 @@ public:
 	virtual int detachObject(StaticANIObject *obj) { return 1; }
 	virtual void detachAllObjects();
 	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
 	MessageQueue *controllerWalkTo(StaticANIObject *ani, int off);
 
@@ -218,17 +218,17 @@ public:
 
 class MovGraphLink : public CObject {
  public:
-	MovGraphNode *_movGraphNode1;
-	MovGraphNode *_movGraphNode2;
+	MovGraphNode *_graphSrc;
+	MovGraphNode *_graphDst;
 	DWordArray _dwordArray1;
 	DWordArray _dwordArray2;
-	int _flags;
+	uint32 _flags;
 	int _field_38;
 	int _field_3C;
-	double _z;
+	double _length;
 	double _angle;
 	MovGraphReact *_movGraphReact;
-	char *_name;
+	Common::String _name;
 
   public:
 	MovGraphLink();
@@ -264,7 +264,7 @@ struct MovGraphItem {
 	StaticANIObject *ani;
 	int field_4;
 	MovArr movarr;
-	Common::Array<MovItem *> *movitems;
+	Common::Array<MovItem *> *mi_movitems;
 	int count;
 	int field_30;
 	int field_34;
@@ -282,7 +282,7 @@ public:
 	int _field_44;
 	Common::Array<MovGraphItem *> _items;
 	MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter);
-	MGM _mgm;
+	AniHandler _aniHandler;
 
 public:
 	MovGraph();
@@ -299,21 +299,21 @@ public:
 	virtual void setSelFunc(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter));
 	virtual bool resetPosition(StaticANIObject *ani, int flag);
 	virtual bool canDropInventory(StaticANIObject *ani, int x, int y);
-	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual MessageQueue *method50(StaticANIObject *ani, MovArr *movarr, int staticsId);
 
-	double calcDistance(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
+	double putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
 	void recalcLinkParams();
 	bool getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr);
 	MovGraphNode *calcOffset(int ox, int oy);
 	int getObjectIndex(StaticANIObject *ani);
-	Common::Array<MovArr *> *genMovArr(int x, int y, int *arrSize, int flag1, int flag2);
+	Common::Array<MovArr *> *getHitPoints(int x, int y, int *arrSize, int flag1, int flag2);
 	void findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array<MovGraphLink *> &tempObList1, Common::Array<MovGraphLink *> &tempObList2);
-	Common::Array<MovItem *> *calcMovItems(MovArr *movarr1, MovArr *movarr2, int *listCount);
+	Common::Array<MovItem *> *getPaths(MovArr *movarr1, MovArr *movarr2, int *listCount);
 	void genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
-	bool calcChunk(int idx, int x, int y, MovArr *arr, int a6);
+	bool getHitPoint(int idx, int x, int y, MovArr *arr, int a6);
 	MessageQueue *sub1(StaticANIObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9);
-	MessageQueue *fillMGMinfo(StaticANIObject *ani, MovArr *movarr, int staticsId);
+	MessageQueue *makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int staticsId);
 	void setEnds(MovStep *step1, MovStep *step2);
 };
 
@@ -326,7 +326,7 @@ struct MG2I {
 	int _my;
 };
 
-struct MovGraph2ItemSub {
+struct MctlAniSub {
 	int _staticsId2;
 	int _staticsId1;
 	MG2I _walk[3];
@@ -339,14 +339,14 @@ struct LinkInfo {
 	MovGraphNode *node;
 };
 
-struct MovInfo1Sub {
+struct MctlMQSub {
 	int subIndex;
 	int x;
 	int y;
 	int distance;
 };
 
-struct MovInfo1 {
+struct MctlMQ {
 	int index;
 	Common::Point pt1;
 	Common::Point pt2;
@@ -354,50 +354,50 @@ struct MovInfo1 {
 	int distance2;
 	int subIndex;
 	int item1Index;
-	Common::Array<MovInfo1Sub *> items;
+	Common::Array<MctlMQSub *> items;
 	int itemsCount;
 	int flags;
 
-	MovInfo1() { clear(); }
-	MovInfo1(MovInfo1 *src);
+	MctlMQ() { clear(); }
+	MctlMQ(MctlMQ *src);
 	void clear();
 };
 
-struct MovGraph2Item { // 744
+struct MctlAni { // 744
 	int _objectId;
 	StaticANIObject *_obj;
-	MovGraph2ItemSub _subItems[4];  // 184
+	MctlAniSub _subItems[4];  // 184
 };
 
-class MovGraph2 : public MovGraph {
+class MctlGraph : public MovGraph {
 public:
-	Common::Array<MovGraph2Item *> _items2;
+	Common::Array<MctlAni *> _items2;
 
 public:
 	virtual void attachObject(StaticANIObject *obj);
 	virtual int detachObject(StaticANIObject *obj);
 	virtual void detachAllObjects();
 	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
-	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
+	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
-	int getItemIndexByGameObjectId(int objectId);
-	int getItemSubIndexByStaticsId(int index, int staticsId);
-	int getItemSubIndexByMovementId(int index, int movId);
-	int getItemSubIndexByMGM(int idx, StaticANIObject *ani);
+	int getObjIndex(int objectId);
+	int getDirByStatics(int index, int staticsId);
+	int getDirByMovement(int index, int movId);
+	int getDirByPoint(int idx, StaticANIObject *ani);
 
-	int getShortSide(MovGraphLink *lnk, int x, int y);
-	int findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *a3, Common::Point *a4);
+	int getDirBySize(MovGraphLink *lnk, int x, int y);
+	int getLinkDir(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *a3, Common::Point *a4);
 
-	bool initDirections(StaticANIObject *obj, MovGraph2Item *item);
-	void buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst);
-	MessageQueue *buildMovInfo1MessageQueue(MovInfo1 *movInfo);
+	bool fillData(StaticANIObject *obj, MctlAni *item);
+	void generateList(MctlMQ *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst);
+	MessageQueue *makeWholeQueue(MctlMQ *mctlMQ);
 
-	MovGraphNode *findNode(int x, int y, int fuzzyMatch);
-	MovGraphLink *findLink1(int x, int y, int idx, int fuzzyMatch);
-	MovGraphLink *findLink2(int x, int y);
-	double findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj);
+	MovGraphNode *getHitNode(int x, int y, int strictMatch);
+	MovGraphLink *getHitLink(int x, int y, int idx, int fuzzyMatch);
+	MovGraphLink *getNearestLink(int x, int y);
+	double iterate(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj);
 
-	MessageQueue *genMovement(MovInfo1 *movinfo);
+	MessageQueue *makeLineQueue(MctlMQ *movinfo);
 };
 
 class MctlConnectionPoint : public CObject {
