@@ -62,6 +62,8 @@ void TTparser::loadArrays() {
 	loadArray(_replacements1, "TEXT/REPLACEMENTS1");
 	loadArray(_replacements2, "TEXT/REPLACEMENTS2");
 	loadArray(_replacements3, "TEXT/REPLACEMENTS3");
+	if (g_vm->isGerman())
+		loadArray(_replacements4, "TEXT/REPLACEMENTS4");
 	loadArray(_phrases, "TEXT/PHRASES");
 	loadArray(_pronouns, "TEXT/PRONOUNS");
 
@@ -80,6 +82,9 @@ int TTparser::preprocess(TTsentence *sentence) {
 	_sentence = sentence;
 	if (normalize(sentence))
 		return 0;
+
+	if (g_vm->isGerman())
+		preprocessGerman(sentence->_normalizedLine);
 
 	// Scan for and replace common slang and contractions with verbose versions
 	searchAndReplace(sentence->_normalizedLine, _replacements1);
@@ -1716,6 +1721,38 @@ int TTparser::processModifiers(int modifier, TTword *word) {
 	}
 
 	return 0;
+}
+
+void TTparser::preprocessGerman(TTstring &line) {
+	static const char *const SUFFIXES[12] = {
+		" ", "est ", "em ", "en ", "er ", "es ",
+		"et ", "st ", "s ", "e ", "n ", "t "
+	};
+
+	for (uint idx = 0; idx < _replacements4.size(); idx += 3) {
+		if (!line.hasSuffix(_replacements4[idx + 2]))
+			continue;
+		const char *lineP = line.c_str();
+		const char *p = strstr(lineP, _replacements4[idx].c_str());
+		if (!p || p == lineP || *(p - 1) != ' ')
+			continue;
+
+		const char *wordEndP = p + _replacements4[idx].size();
+		
+		for (int sIdx = 0; sIdx < 12; ++sIdx) {
+			const char *suffixP = SUFFIXES[sIdx];
+			if (!strncmp(wordEndP, suffixP, strlen(suffixP))) {
+				// Form a new line with the replacement word
+				const char *nextWordP = wordEndP + strlen(suffixP);
+				line = Common::String::format("%s %s %s",
+					Common::String(lineP, p).c_str(),
+					_replacements4[idx + 1].c_str(),
+					nextWordP
+					);
+				return;
+			}
+		}
+	}
 }
 
 } // End of namespace Titanic
