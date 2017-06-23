@@ -146,7 +146,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 					goto escape;
 				}
 				l = atol(input);
-				for (size_t i = 0; i < strlen(input); i++) {
+				for (uint i = 0; i < strlen(input); i++) {
 					if ((input[i] < '0') || (input[i] > '9')) {
 						l = 0;
 					}

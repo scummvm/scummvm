@@ -49,13 +49,13 @@ public:
 		return _fileNumber;
 	}
 
-	void setSectionVisible(size_t section, bool visible) {
+	void setSectionVisible(uint section, bool visible) {
 		_shown[section] = visible;
 	}
-	bool isSectionVisible(size_t index) const {
+	bool isSectionVisible(uint index) const {
 		return _shown[index];
 	}
-	Object *getObject(size_t index) {
+	Object *getObject(uint index) {
 		return &_objectState[index];
 	}
 

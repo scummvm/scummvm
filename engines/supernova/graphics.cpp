@@ -56,7 +56,7 @@ bool MSNImageDecoder::init(int filenumber) {
 bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
-	size_t size = 0;
+	uint size = 0;
 	size  = (stream.readUint16LE() + 0xF) >> 4;
 	size |= (stream.readUint16LE() & 0xF) << 12;
 	size += 0x70;    // zus_paragraph
@@ -81,7 +81,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	_numSections = stream.readByte();
-	for (size_t i = 0; i < kMaxSections; ++i) {
+	for (uint i = 0; i < kMaxSections; ++i) {
 		_section[i].addressHigh = 0xff;
 		_section[i].addressLow = 0xffff;
 		_section[i].x2 = 0;
@@ -112,7 +112,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	numZw += numRepeat;
 
 	byte input = 0;
-	size_t i = 0;
+	uint i = 0;
 
 	while (stream.read(&input, 1)) {
 		if (input < numRepeat) {
@@ -168,7 +168,7 @@ bool MSNImageDecoder::loadSection(int section) {
 
 		const uint32 kInvalidAddress = 0x00FFFFFF;
 
-		size_t image = section;
+		uint image = section;
 		if (image < 128) {
 			do {
 				uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow;
