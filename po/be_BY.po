@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-06-20 22:32+0200\n"
-"PO-Revision-Date: 2017-06-20 16:01+0000\n"
+"PO-Revision-Date: 2017-06-23 17:44+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
-"Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/be/>\n"
+"Language-Team: Belarusian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/be/>\n"
 "Language: be_BY\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Belarusian\n"
 
@@ -850,7 +850,7 @@ msgstr "рэжым фільтравання не можа быць зменены"
 
 #: gui/options.cpp:958
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Паказаць кіравнне экранам"
 
 #: gui/options.cpp:962
 msgid "Touchpad mouse mode"
@@ -865,8 +865,9 @@ msgid "Pointer Speed:"
 msgstr "Хуткасць паказальніка:"
 
 #: gui/options.cpp:971 gui/options.cpp:973 gui/options.cpp:974
+#, fuzzy
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Кіраванне хуткасцю паказальніка мышы/джойсціка"
 
 #: gui/options.cpp:973
 msgctxt "lowres"
@@ -2843,6 +2844,7 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
+"Няправільная версія файла рухавічка %s. Чакалася %d.%d, але знойдзена %d.%d."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
 msgid "Color mode"
@@ -3343,12 +3345,15 @@ msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
+"Не хапае файла 'extras.mhk'. Замест яго можна карыстацца файлам 'arcriven.z'."
 
 #: engines/mohawk/riven_external.cpp:213
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
+"Даследванне далей цяперашняй мяжы даступна толькі\n"
+"ў поўнай версіі гульні."
 
 #: engines/mohawk/riven_external.cpp:655
 msgid ""
@@ -3358,6 +3363,11 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"Зараз дэмаверсія Riven запрасіла б вас\n"
+"адкрыць веб-браўзар, каб перайсці ў\n"
+"магазін Red Orb для набыцця гульні.\n"
+"ScummVM не можа гэтага зрабіць, акрамя\n"
+"таго, гэты магазін больш не існуе."
 
 #: engines/mohawk/mohawk.cpp:61
 msgid "The game is paused. Press any key to continue."
@@ -3405,7 +3415,6 @@ msgid "Saving game..."
 msgstr "Захоўваю гульню..."
 
 #: engines/parallaction/saveload.cpp:269
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
@@ -3415,11 +3424,12 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
 "ScummVM знайшоў у вас старыя захаванні гульні Nippon Safes, якія неабходна "
-"пераназваць. Старыя назвы больш не падтрымліваюцца, і таму вы не зможаце "
-"загрузіць захаванні, калі не пераназавяце іх.\n"
+"пераназваць.\n"
+"Старыя назвы больш не падтрымліваюцца, і таму вы не зможаце загрузіць "
+"захаванні, калі не пераназавяце іх.\n"
 "\n"
-"Націсніце ОК, каб пераназваць іх зараз, у адваротным выпадку гэтае ж "
-"паведамленне з'явіцца пры наступным запуску гульні.\n"
+"Націсніце ОК, каб пераназваць іх зараз, інакш гэта паведамленне з'явіцца пры "
+"наступным запуску гульні.\n"
 
 #: engines/parallaction/saveload.cpp:316
 #, fuzzy
@@ -3439,9 +3449,8 @@ msgstr ""
 "Калі ласка, паведаміце пра гэта камандзе ScummVM."
 
 #: engines/pegasus/pegasus.cpp:714
-#, fuzzy
 msgid "Invalid file name for saving"
-msgstr "Увядзіце імя файла для запісу"
+msgstr "Няправільнае імя файла для запісу"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -3556,16 +3565,14 @@ msgid "Use silver cursors"
 msgstr "Выкарыстоўваць срэбныя курсоры"
 
 #: engines/sci/detection.cpp:484
-#, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных залатых"
 
 #: engines/sci/detection.cpp:813
-#, fuzzy
 msgid "(Autosave)"
-msgstr "Аўтазахаванне:"
+msgstr "(Аўтазахаванне)"
 
 #: engines/sci/engine/kgraphics.cpp:985
 msgid ""
@@ -3580,21 +3587,24 @@ msgstr ""
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
+"Калі ласка, скарыстайцеся іншай праграмай для прагляду файла дапамогі гульні:"
+" %s"
 
 #: engines/sci/engine/savegame.cpp:1304
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "Фармат захаванай гульні састарэў, не магу прачытаць яго"
 
 #: engines/sci/engine/savegame.cpp:1306
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "Версія файла захавання %d, але максімальна падтрымваецца %0d"
 
 #: engines/sci/engine/savegame.cpp:1317
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"Гэты файл захавання быў створаны іншай версіяй гульні, не магу прачытаць яго"
 
 #: engines/sci/resource.cpp:813
 msgid ""
@@ -3602,6 +3612,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Знойдзены адсутныя або пашкоджаныя файлы рэсурсаў гульні. Некаторыя элементы "
+"гульні могуць працаваць няправільна. Калі ласка, звярніцеся да кансолі за "
+"далейшай інфармацыяй і праверце, што файлы гульні карэктны."
 
 #: engines/sci/sci.cpp:394
 msgid ""
@@ -3619,6 +3632,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"Субтытры ў гульні King's Quest 7 не былі скончаны і таму вымкнуты ў "
+"канчатковай версіі гульні. ScummVM можа іх уключыць, але паколькі яны былі "
+"выдалены з гульні, то яны не заўсёды будуць правільна адлюстроўвацца і "
+"супадаць з гаворкай персанажаў. Гэта праблема не ScummVM, а зыходных "
+"рэсурсаў гульні."
 
 #: engines/sci/sci.cpp:427
 msgid ""
@@ -3650,6 +3668,10 @@ msgid ""
 "tried\n"
 "to add and its version, language, etc.:\n"
 msgstr ""
+"Здаецца, ваша версія гульні невядома. Калі яна НЕ была зменена\n"
+"фанатамі (у прыватнасці, не з'яўляецца фанацкім перакладам),\n"
+"калі ласка, паведаміце камандзе ScummVM наступныя дадзеныя\n"
+"разам з назвай гульні, яе версіяй, мовай і інш.:\n"
 
 #: engines/scumm/detection.cpp:1138
 msgid ""
@@ -3657,6 +3679,8 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"Каб пазбегнуць пірацтва, Lite-версія гульні Putt-Putt Saves the Zoo для iOS\n"
+"не падтрымліваецца. Поўную версію гульні можна набыць у iTunes Store."
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show Object Line"
@@ -3819,7 +3843,6 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
-#, fuzzy
 msgid "Load saved game 1-10"
 msgstr "Загрузіць гульню 1-10"
 
@@ -3830,7 +3853,6 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Save game 1-10"
 msgstr "Захаваць гульню 1-10"
 
@@ -4416,7 +4438,7 @@ msgstr "Паказваць вокны з часткова празрыстым фонам"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "Файл дадзеных рухавічка sky.cpt мае няправільны памер."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4449,7 +4471,6 @@ msgid "Cutscene '%s' not found"
 msgstr "Застаўка '%s' не знойдзена"
 
 #: engines/sword1/control.cpp:863
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -4460,11 +4481,11 @@ msgid ""
 "time you start the game.\n"
 msgstr ""
 "ScummVM выявіў у вас захаванні гульні Broken Sword 1 у старым фармаце.\n"
-"Стары фармат больш не падтрымліваецца, і, каб загрузіць захаванні, яны "
-"павінны быць пераведзены ў новы фармат.\n"
+"Стары фармат больш не падтрымліваецца, і вы не зможаце загрузіць іх, калі не "
+"пераведзеце ў новы фармат.\n"
 "\n"
-"Націсніце ОК, каб перавесці іх у новы фармат зараз, у адваротным выпадку "
-"гэта паведамленне з'явіцца зноў пры наступным запуску гульні.\n"
+"Націсніце ОК, каб перавесці іх у новы фармат зараз, інакш гэта паведамленне "
+"зноў з'явіцца пры наступным запуску гульні.\n"
 
 #: engines/sword1/control.cpp:1232
 #, c-format
@@ -4524,31 +4545,27 @@ msgstr ""
 #: engines/tony/tony.cpp:258
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "Варыянт шрыфту адсутны ў файле рухавічка %s."
 
 #: engines/toon/toon.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
-"Не магу захаваць гульню ў пазіцыю %i\n"
-"\n"
+msgstr "Гульня захавана ў слот %d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "Не атрымалася хутка захаваць гульню ў слот %d"
 
 #: engines/toon/toon.cpp:239
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
-"Не магу захаваць гульню ў пазіцыю %i\n"
-"\n"
+msgstr "Захаваная гульня №%d загружана"
 
 #: engines/toon/toon.cpp:243
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "Вы жадаеце загрузіць гульню?"
+msgstr "Не атрымалася хутка загрузіць захаваную гульню №%d"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4560,11 +4577,11 @@ msgstr "Паказаць у верхнім левым куце бягучую колькасць кадраў у секунду"
 
 #: engines/wintermute/detection.cpp:68
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "Білінейная фільтрацыя спрайтаў (марудна)"
 
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "Ужываць білінейную фільтрацыю для індывідуальных спрайтаў"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
@@ -4601,10 +4618,9 @@ msgid "Use high resolution MPEG video"
 msgstr "Выкарыстоўваць відэа MPEG высокага адрознення"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Выкарыстоўваць MPEG-відэа з DVD-версіі замест відэа нізкага адрознення ў "
+"Выкарыстоўваць відэа MPEG з DVD-версіі замест відэа нізкага адрознення ў "
 "фармаце AVI"
 
 #: engines/zvision/file/save_manager.cpp:220
@@ -4613,6 +4629,8 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+"Гэты файл захаванай гульні мае версію %u, але рухавічок падтрымвае версіі да "
+"%d. Вам патрэбна новая версія ScummVM для карыстання гэтым файлам."
 
 #~ msgid ""
 #~ "The theme you selected does not support your current language. If you "
