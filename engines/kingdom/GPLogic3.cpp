@@ -120,6 +120,43 @@ void KingdomGame::GPLogic3() {
 		SetATimer();
 		_StatPlay = _Wizard ? 712 : 711;
 		break;
+	case 711:
+		switch(_UserInput) {
+		case 0x2F1:
+			_Replay = false;
+			PlayMovie(166);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x428:
+		case 0x429:
+		case 0x42A:
+			InventoryDel(_UserInput - 0x428);
+			_Replay = false;
+			_ATimer = 0;
+			PlayMovie(178);
+			PlayMovie(166);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x430:
+			_ATimer = 0;
+			_NodeNum = 0;
+			_IconsClosed = true;
+			_FstFwd = false;
+			PlayMovie(167);
+			_FstFwd = false;
+			PlayMovie(170);
+			PlaySound(25);
+			EndCredits();
+			_LoopFlag = true;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
 	case 720:
 		_NodeNum = 72;
 		_UserInput = 0;
@@ -141,6 +178,84 @@ void KingdomGame::GPLogic3() {
 		_CurrMap = 118;
 		PlaySound(12);
 		_StatPlay = 721;
+		break;
+	case 731:
+		switch(_UserInput) {
+		case 0x43E:
+			if (word_2D7D8 > 2)
+				_FrameStop = 23;
+				_Sound = _LastSound;
+				PlayMovie(_Pmovie);
+			break;
+		case 0x441:
+			switch (word_2D7D8) {
+			case 1:
+			case 2:
+				_StatPlay = 720;
+				break;
+			case 3:
+				_StatPlay = 720;
+				word_2D7D6 = 1;
+				break;
+			default:
+				_StatPlay = 680;
+				break;
+			}
+			_CurrMap = 10;
+			_LoopFlag = true;
+			break;
+		case 0x448:
+			switch(word_2D7D8) {
+			case 3:
+				_StatPlay = 690;
+				break;
+			case 4:
+				_StatPlay = 720;
+				word_2D7D6 = 1;
+				break;
+			default:
+				_StatPlay = 680;
+				break;
+			}
+			break;
+		case 0x44B:
+			switch(word_2D7D8) {
+			case 1:
+				_StatPlay = 720;
+				break;
+			case 3:
+			case 4:
+				_StatPlay = 720;
+				word_2D7D6 = 1;
+				break;
+			default:
+				_StatPlay= 680;
+				break;
+			}
+
+			_CurrMap = 10;
+			_LoopFlag = true;
+			break;
+		case 0x44C:
+			switch(word_2D7D8) {
+			case 1:
+			case 2:
+				_StatPlay = 720;
+				break;
+			case 4:
+				_StatPlay = 720;
+				word_2D7D6 = 1;
+				break;
+			default:
+				_StatPlay = 680;
+				break;
+			}
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
 		break;
 	case 740:
 		_RtnNode = _NodeNum;
@@ -353,4 +468,7 @@ void KingdomGame::GPLogic3() {
 	}
 }
 
+void KingdomGame::EndCredits() {
+	debug("STUB: EndCredits");
+}
 } // NameSpace
