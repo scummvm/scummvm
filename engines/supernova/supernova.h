@@ -80,7 +80,8 @@ public:
 	Console *_console;
 	Audio::SoundHandle _soundHandle;
 	ScreenBufferStack _screenBuffer;
-	MSNImageDecoder _currentImage;
+	MSNImageDecoder _images[44];
+	MSNImageDecoder *_currentImage;
 	Common::Event _event;
 	bool _gameRunning;
 
@@ -104,6 +105,7 @@ public:
 	void playSound(int filenumber, int offset = 0);
 	void playSoundMod(int filenumber);
 	void stopSound();
+	void renderImage(MSNImageDecoder &image, int section, bool fullscreen = false);
 	void renderImage(int filenumber, int section, bool fullscreen = false);
 	void saveScreen(int x, int y, int width, int height);
 	void restoreScreen();
