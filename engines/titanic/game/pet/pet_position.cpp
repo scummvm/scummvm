@@ -243,7 +243,9 @@ bool CPETPosition::LeaveViewMsg(CLeaveViewMsg *msg) {
 			return true;
 		} else if (oldView == "SgtLobby.Node 1.S") {
 			return true;
-		} else if (oldView == "BottomOfWell.Node 10.E" || oldView == "BottomOfWell.Node 11.W") {
+		} else if (oldView == "BottomOfWell.Node 10.E") {
+			pet->setRoomsElevatorNum(3);
+		} else if (oldView == "BottomOfWell.Node 11.W") {
 			pet->setRoomsElevatorNum(1);
 			return true;
 		}
