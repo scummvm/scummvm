@@ -54,7 +54,7 @@ public:
 	static int _seasonFrame;
 	static bool _turnOn;
 	static int _seasonUnused;
-	static int _floorNum;
+	static int _eyeFloorNum;
 	static bool _channel4Glyph;
 	static bool _eyeFlag;
 public:

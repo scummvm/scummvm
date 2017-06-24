@@ -48,7 +48,7 @@ END_MESSAGE_MAP()
 int CTelevision::_seasonFrame;
 bool CTelevision::_turnOn;
 int CTelevision::_seasonUnused;
-int CTelevision::_floorNum;
+int CTelevision::_eyeFloorNum;
 bool CTelevision::_channel4Glyph;
 bool CTelevision::_eyeFlag;
 
@@ -60,7 +60,7 @@ void CTelevision::init() {
 	_seasonFrame = 531;
 	_turnOn = true;
 	_seasonUnused = 0;
-	_floorNum = 27;
+	_eyeFloorNum = 27;
 	_channel4Glyph = true;
 	_eyeFlag = true;
 }
@@ -77,7 +77,7 @@ void CTelevision::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_isOn, indent);
 	file->writeNumberLine(_seasonUnused, indent);
 	file->writeNumberLine(_unused, indent);
-	file->writeNumberLine(_floorNum, indent);
+	file->writeNumberLine(_eyeFloorNum, indent);
 	file->writeNumberLine(_soundHandle, indent);
 	file->writeNumberLine(_channel4Glyph, indent);
 	file->writeNumberLine(_eyeFlag, indent);
@@ -94,7 +94,7 @@ void CTelevision::load(SimpleFile *file) {
 	_isOn = file->readNumber() != 0;
 	_seasonUnused = file->readNumber();
 	_unused = file->readNumber();
-	_floorNum = file->readNumber();
+	_eyeFloorNum = file->readNumber();
 	_soundHandle = file->readNumber();
 	_channel4Glyph = file->readNumber();
 	_eyeFlag = file->readNumber();
@@ -261,7 +261,7 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 		else
 			petDisplayMessage(NOTHING_ON_CHANNEL);
 	} else if (_channelNum == 5 && *CGetLiftEye2::_destObject != "NULL") {
-		loadFrame(393 + _floorNum);
+		loadFrame(393 + _eyeFloorNum);
 	} else {
 		petDisplayMessage(NOTHING_ON_CHANNEL);
 	}
@@ -270,7 +270,7 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CTelevision::ShipSettingMsg(CShipSettingMsg *msg) {
-	_floorNum = msg->_value;
+	_eyeFloorNum = msg->_value;
 	return true;
 }
 
