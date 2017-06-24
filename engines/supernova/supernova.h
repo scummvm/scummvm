@@ -88,6 +88,8 @@ public:
 	} _soundSamples[kAudioNumSamples];
 	Common::Event _event;
 	bool _gameRunning;
+	int _screenWidth;
+	int _screenHeight;
 
 	byte _imageIndex;
 	byte _sectionIndex;
