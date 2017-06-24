@@ -157,6 +157,99 @@ void KingdomGame::GPLogic3() {
 			break;
 		}
 		break;
+	case 712:
+		switch(_UserInput) {
+		case 0x2F1:
+			_Replay = false;
+			PlayMovie(166);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x428:
+		case 0x429:
+		case 0x42A:
+			InventoryDel(_UserInput - 0x428);
+			_Replay = false;
+			_ATimer = 0;
+			PlayMovie(178);
+			PlayMovie(166);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x430:
+			_ATimer = 0;
+			if (word_2D7D4 != 2) {
+				PlayMovie(57);
+				_StatPlay = 993;
+			} else {
+				_NodeNum = 0;
+				_IconsClosed = true;
+				_FstFwd = false;
+				PlayMovie(55);
+				_FstFwd = false;
+				PlayMovie(184);
+				PlaySound(25);
+				EndCredits();
+			}
+			_LoopFlag = true;
+			break;
+		case 0x432:
+			_ATimer = 0;
+			_Replay = false;
+			PlayMovie(168);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x433:
+			if ((_Inventory[8] > 0 && _Inventory[14] > 0) || word_2D7D4 == 2) {
+				_Replay = false;
+				PlayMovie(166);
+				_StatPlay = 993;
+			} else {
+				_ATimer = 0;
+				EnAll();
+				PlayMovie(169);
+				_StatPlay = 580;
+				InventoryDel(11);
+				word_2D7AA = 0;
+			}
+			_LoopFlag = true;
+			break;
+		case 0x436:
+			_ATimer = 0;
+			PlaySound(0);
+			PlayMovie(193);
+			ShowPic(128);
+			InventoryDel(14);
+			word_2D7D4 = 2;
+			SetATimer();
+			break;
+
+		case 0x437:
+			_ATimer = 0;
+			if (word_2D7D4 == 2) {
+				_NodeNum = 0;
+				_IconsClosed = true;
+				_FstFwd = false;
+				PlayMovie(56);
+				_FstFwd = false;
+				PlayMovie(184);
+				PlaySound(25);
+				EndCredits();
+				_quit = true;
+//--				_QuitFlag = true;
+			} else {
+				PlayMovie(58);
+				_StatPlay = 993;
+			}
+			_LoopFlag = true;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
 	case 720:
 		_NodeNum = 72;
 		_UserInput = 0;
@@ -178,6 +271,32 @@ void KingdomGame::GPLogic3() {
 		_CurrMap = 118;
 		PlaySound(12);
 		_StatPlay = 721;
+		break;
+	case 730:
+		_NodeNum = 73;
+		_UserInput = 0;
+		_Eye = false;
+		switch(word_2D7D8) {
+		case 0:
+			word_2D7D8 = 1;
+			break;
+		case 1:
+			_Sound = true;
+			word_2D7D8 = 2;
+			break;
+		case 2:
+			_FrameStop = 23;
+			word_2D7D8 = 3;
+			break;
+		default:
+			_FrameStop = 23;
+			word_2D7D8 = 4;
+			break;
+		}
+		PlayMovie(176);
+		_CurrMap = 117;
+		PlaySound(36);
+		_StatPlay = 731;
 		break;
 	case 731:
 		switch(_UserInput) {
