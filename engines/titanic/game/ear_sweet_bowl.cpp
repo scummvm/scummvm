@@ -42,6 +42,7 @@ void CEarSweetBowl::load(SimpleFile *file) {
 }
 
 bool CEarSweetBowl::MovieEndMsg(CMovieEndMsg *msg) {
+	setVisible(false);
 	CIsEarBowlPuzzleDone doneMsg;
 	doneMsg.execute(findRoom());
 
