@@ -129,7 +129,7 @@ void KingdomGame::GPLogic1() {
 			break;
 		case 0x43E:
 			_Sound = _LastSound;
-			PlayMovie(_Pmovie);
+			PlayMovie(_PMovie);
 			break;
 		default:
 			if (_UserInput)
