@@ -66,7 +66,7 @@ namespace Kingdom {
 		int16 _mouseValue;
 	};
 
-	extern char *_RezNames[];
+	extern const char *_RezNames[];
 	extern int _MapExit[];
 	extern int _EMLTable[];
 	extern int _ZoomTable[81][9][2];
