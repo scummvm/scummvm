@@ -113,6 +113,9 @@ static const char *const selectorNameTable[] = {
 	"detailLevel",  // GK2 benchmarking
 	"view",         // RAMA benchmarking
 	"test",         // Torin
+	"get",          // Torin
+	"set",          // Torin
+	"clear",        // Torin
 #endif
 	NULL
 };
@@ -152,7 +155,10 @@ enum ScriptPatcherSelectors {
 	SELECTOR_posn,
 	SELECTOR_detailLevel,
 	SELECTOR_view,
-	SELECTOR_test
+	SELECTOR_test,
+	SELECTOR_get,
+	SELECTOR_set,
+	SELECTOR_clear
 #endif
 };
 
@@ -5607,55 +5613,105 @@ static const uint16 torinNumSavesPatch[] = {
 };
 
 // In Escarpa, it is possible for Boogle to be left outside of Torin's bag
-// before attempting to worm into the dragon's cave. When this happens, Boogle
-// can be on the wrong side of the navigable area barrier, and cannot move
-// through it to continue the cutscene. In contrast, when Boogle is in Torin's
-// bag, the game moves Boogle out of the bag and into a position that is
-// guaranteed to work. This patch simply removes the bag check so that Boogle is
-// unconditionally repositioned for the cutscene.
+// when fast-forwarding through the exit animation of the seraglio. If this
+// happens, when the player goes from the seraglio to the dragon's cave and then
+// tries to worm Boogle to the left side of the cave, the game will hang because
+// Boogle is on the wrong side of the navigable area barrier and cannot move
+// through it to continue the cutscene. This patch fixes the fast-forward code
+// in the seraglio so that Boogle's in-the-bag flag is set when fast forwarding.
 // Applies to at least: English CD
-static const uint16 torinBoogleWormInSignature[] = {
-	0x38, SIG_SELECTOR16(test),   // pushi test
+static const uint16 torinSeraglioBoogleFlagSignature[] = {
+	0x35, 0x00,                 // ldi 0
+	SIG_MAGICDWORD,
+	0xa3, 0x00,                 // sal 0
+	0x38, SIG_SELECTOR16(test), // pushi test
+	SIG_ADDTOOFFSET(0x5a),      // all the rest of the method
+	SIG_END
+};
+
+static const uint16 torinSeraglioBoogleFlagPatch[] = {
+	// @1e5f
+	// ldi 0, sal 0 removed from here (+4 bytes)
+
+	// @1e5f (+4 bytes)
+	// local[0] = /* oFlags */ ScriptID(64017, 0);
+	0x7a,                        // push2
+	0x38, PATCH_UINT16(0xfa11),  // pushi 64017
+	0x76,                        // push0
+	0x43, 0x02, PATCH_UINT16(4), // callk ScriptID[2], 4
+	0xa3, 0x00,                  // sal 0 (-2 bytes)
+
+	// @1e6a (+2 bytes)
+	// acc = local[0].test(94);
+	0x38, PATCH_SELECTOR16(test), // pushi test
 	0x78,                         // push1
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0xe8),       // pushi $232 (boogle in bag flag)
-	0x7a,                         // push2
-	0x38, SIG_UINT16(0xfa11),     // pushi 64017
-	0x76,                         // push0
-	0x43, 0x02, SIG_UINT16(0x04), // callk ScriptID[2], 4
-	0x4a, SIG_UINT16(0x06),       // send 6
-	0x30, SIG_ADDTOOFFSET(+2),    // bnt
-	SIG_END
-};
+	0x39, 0x5e,                   // pushi 94
+	0x4a, PATCH_UINT16(0x06),     // send 6
 
-static const uint16 torinBoogleWormInPatch[] = {
-	0x32, PATCH_UINT16(0x13),     // jmp [to boogle init]
-	PATCH_END
-};
+	// @1e73 (+2 bytes)
+	// if (!acc) goto elseCase;
+	0x30, PATCH_UINT16(0x34),     // bnt 0x31 + 3
 
-// The previous patch for this bug will cause Boogle to glitch back to the
-// entrance when Boogle is wormed to the left, then unwormed, then wormed to the
-// left again without exiting and re-entering the dragon's cave. To keep this
-// from happening, this patch causes Boogle to walk back to the entrance when
-// unworming, instead of stopping in the middle of the screen.
-// Applies to at least: English CD
-static const uint16 torinBoogleWormSignature[] = {
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x29e), // pushi 670
-	0x38, SIG_UINT16(0xc2),  // pushi 194
-	SIG_END
-};
+	// @1e76 (+2 bytes)
+	// global[0].get(ScriptID(64001, 0).get(20));
+	0x38, PATCH_SELECTOR16(get), // pushi get
+	0x78,                        // push1
+	0x38, PATCH_SELECTOR16(get), // pushi get
+	0x78,                        // push1
+	0x39, 0x14,                  // pushi 20
+	0x7a,                        // push2
+	0x38, PATCH_UINT16(0xfa01),  // pushi 64001
+	0x76,                        // push0
+	0x43, 0x02, PATCH_UINT16(4), // callk ScriptID[2], 4
+	0x4a, PATCH_UINT16(0x06),    // send 6
+	0x36,                        // push
+	0x81, 0x00,                  // lag 0 (ego)
+	0x4a, PATCH_UINT16(0x06),    // send 6
 
-static const uint16 torinBoogleWormPatch[] = {
-	0x38, SIG_UINT16(940),
-	0x38, SIG_UINT16(216),
+	// @1e92 (+2 bytes)
+	// local[0].set(52);
+	0x38, PATCH_SELECTOR16(set), // pushi set
+	0x78,                        // push1
+	0x39, 0x34,                  // pushi 52
+	0x83, 0x00,                  // lal 0 (+7 byte)
+	0x4a, PATCH_UINT16(0x06),    // send 6
+
+	// @1e9d (+9 bytes)
+	// goto endOfBranch;
+	0x33, 0x0b,                  // jmp [to end of conditional branch] (+1 byte)
+
+	// @1e9f (+10 bytes)
+	// elseCase: local[0].clear(97);
+	0x38, PATCH_SELECTOR16(clear), // pushi clear
+	0x78,                          // push1
+	0x39, 0x61,                    // pushi 97
+	0x83, 0x00,                    // lal 0 (+7 bytes)
+	0x4a, PATCH_UINT16(0x06),      // send 6
+
+	// @1eaa (+17 bytes)
+	// endOfBranch: local[0].set(232);
+	0x38, PATCH_SELECTOR16(set),   // pushi set (-3 bytes)
+	0x78,                          // push1 (-1 byte)
+	0x38, PATCH_UINT16(0xe8),      // pushi 232 (Boogle-in-bag flag) (-3 bytes)
+	0x83, 0x00,                    // lal 0 (-2 bytes)
+	0x4a, PATCH_UINT16(0x06),      // send 6 (-3 bytes)
+
+	// @1eb6 (+5 bytes)
+	// local[0] = 0; self.dispose();
+	0x38, PATCH_SELECTOR16(dispose), // pushi dispose
+	0x76,                            // push0
+	0x3c,                            // dup (-1 byte)
+	0xab, 0x00,                      // ssl 0 (-2 bytes)
+	0x54, PATCH_UINT16(4),           // self 4
+	0x48,                            // ret
+
+	// @1ec1 (+2 bytes)
 	PATCH_END
 };
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
-	{  true, 20400, "fix hang when worming into dragon cave 1/2",  1, torinBoogleWormInSignature,        torinBoogleWormInPatch },
-	{  true, 20400, "fix hang when worming into dragon cave 2/2",  1, torinBoogleWormSignature,          torinBoogleWormPatch },
+	{  true, 20600, "fix wrong boogle bag flag on fast-forward",   1, torinSeraglioBoogleFlagSignature,  torinSeraglioBoogleFlagPatch },
 	{  true, 64000, "disable volume reset on startup 1/2",         1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
 	{  true, 64000, "disable volume reset on startup 2/2",         1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
 	{  true, 64866, "increase number of save games",               1, torinNumSavesSignature,            torinNumSavesPatch },
