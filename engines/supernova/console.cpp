@@ -53,15 +53,13 @@ bool Console::cmdRenderImage(int argc, const char **argv) {
 }
 
 bool Console::cmdPlaySound(int argc, const char **argv) {
-	if (argc != 3) {
-		debugPrintf("Usage: play [filenumber] [offset]\n");
+	if (argc != 2) {
+		debugPrintf("Usage: play [0-%d]\n", kAudioNumSamples - 1);
 		return true;
 	}
 
-	int filenumber = atoi(argv[1]);
-	int offset = atoi(argv[2]);
-
-	_vm->playSound(filenumber, offset);
+	int sample = Common::String(argv[1]).asUint64();
+	_vm->playSound(static_cast<AudioIndex>(sample));
 
 	return true;
 }
