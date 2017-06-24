@@ -26,11 +26,11 @@
 
 namespace Titanic {
 
-void TTtalker::speechStarted(const CString &dialogueStr, uint dialogueId, uint speechHandle) {
+void TTtalker::speechStarted(const CString &dialogueStr, uint dialogueId, uint speechDuration) {
 	_line = dialogueStr;
 	_dialogueId = dialogueId;
 
-	CTrueTalkNotifySpeechStartedMsg msg(speechHandle, dialogueId, 0);
+	CTrueTalkNotifySpeechStartedMsg msg(speechDuration, dialogueId, 0);
 	msg.execute(_npc, nullptr, MSGFLAG_BREAK_IF_HANDLED);
 }
 
