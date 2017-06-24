@@ -24,7 +24,7 @@
 
 namespace Kingdom {
 
-char *_RezNames[] = {
+const char *_RezNames[] = {
 	"",
 	"Maps/KMAP001.lbm",
 	"Maps/KMAP002.lbm",
