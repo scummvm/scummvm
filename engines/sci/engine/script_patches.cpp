@@ -5633,9 +5633,29 @@ static const uint16 torinBoogleWormInPatch[] = {
 	PATCH_END
 };
 
+// The previous patch for this bug will cause Boogle to glitch back to the
+// entrance when Boogle is wormed to the left, then unwormed, then wormed to the
+// left again without exiting and re-entering the dragon's cave. To keep this
+// from happening, this patch causes Boogle to walk back to the entrance when
+// unworming, instead of stopping in the middle of the screen.
+// Applies to at least: English CD
+static const uint16 torinBoogleWormSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x29e), // pushi 670
+	0x38, SIG_UINT16(0xc2),  // pushi 194
+	SIG_END
+};
+
+static const uint16 torinBoogleWormPatch[] = {
+	0x38, SIG_UINT16(940),
+	0x38, SIG_UINT16(216),
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
-	{  true, 20400, "fix hang when worming into dragon cave",      1, torinBoogleWormInSignature,        torinBoogleWormInPatch },
+	{  true, 20400, "fix hang when worming into dragon cave 1/2",  1, torinBoogleWormInSignature,        torinBoogleWormInPatch },
+	{  true, 20400, "fix hang when worming into dragon cave 2/2",  1, torinBoogleWormSignature,          torinBoogleWormPatch },
 	{  true, 64000, "disable volume reset on startup 1/2",         1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
 	{  true, 64000, "disable volume reset on startup 2/2",         1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
 	{  true, 64866, "increase number of save games",               1, torinNumSavesSignature,            torinNumSavesPatch },
