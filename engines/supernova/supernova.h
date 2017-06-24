@@ -82,6 +82,10 @@ public:
 	ScreenBufferStack _screenBuffer;
 	MSNImageDecoder _images[44];
 	MSNImageDecoder *_currentImage;
+	struct SoundSample {
+		byte *_buffer;
+		int _length;
+	} _soundSamples[kAudioNumSamples];
 	Common::Event _event;
 	bool _gameRunning;
 
@@ -102,7 +106,7 @@ public:
 	void paletteFadeOut();
 	void paletteBrightness();
 	void updateEvents();
-	void playSound(int filenumber, int offset = 0);
+	void playSound(AudioIndex sample);
 	void playSoundMod(int filenumber);
 	void stopSound();
 	void renderImage(MSNImageDecoder &image, int section, bool fullscreen = false);

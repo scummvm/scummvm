@@ -29,7 +29,7 @@ namespace Supernova {
 bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == BUTTON)) {
 		if (_objectState[6].hasProperty(OPENED)) {
-			_vm->playSound(54, 24020);
+			_vm->playSound(kAudioDoorSound);
 			_objectState[6].disableProperty(OPENED);
 			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 8);
 			_shown[9] = false;
@@ -39,7 +39,7 @@ bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->wait2(2);
 			_vm->renderImage(_gm->_currentRoom->getFileNumber(), _gm->invertSection(7));
 		} else {
-			_vm->playSound(54, 24020);
+			_vm->playSound(kAudioDoorSound);
 			_objectState[6].setProperty(OPENED);
 			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 7);
 			_gm->wait2(2);
@@ -239,7 +239,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->wait2(18);
 			_vm->paletteFadeIn();
 			if (_gm->_state.time == 0) {
-				_vm->playSound(45);
+				_vm->playSound(kAudioCrash);
 				_gm->screenShake();
 				_gm->wait2(18);
 				_vm->renderMessage("Was war das?");
@@ -447,7 +447,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderImage(this->getFileNumber(), 14);
 				this->setSectionVisible(15, false);
 				for (int i = 3; i; i--) {
-					_vm->playSound(48, 13530);
+					_vm->playSound(kAudioTurntable);
 					if (_gm->_soundDevice) {
 						do {
 							if (this->isSectionVisible(13)) {
@@ -580,7 +580,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == BUTTON1)) {
 		if (!this->getObject(1)->hasProperty(OPENED)) {
 			_vm->renderImage(this->getFileNumber(), 10);
-			_vm->playSound(54, 24020);
+			_vm->playSound(kAudioDoorSound);
 			if (this->getObject(0)->hasProperty(OPENED)) {
 				this->getObject(0)->disableProperty(OPENED);
 				_vm->renderImage(this->getFileNumber(), 1);
@@ -606,7 +606,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!this->getObject(0)->hasProperty(OPENED)) {
 			_vm->renderImage(this->getFileNumber(), 11);
 			if (this->getObject(1)->hasProperty(OPENED)) {
-				_vm->playSound(54, 24020);
+				_vm->playSound(kAudioDoorSound);
 				this->getObject(1)->disableProperty(OPENED);
 				_vm->renderImage(this->getFileNumber(), 4);
 				_gm->wait2(2);
@@ -649,7 +649,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->wait2(3);
 				_vm->renderImage(this->getFileNumber(), 17);
 				this->setSectionVisible(16, false);
-				_vm->playSound(54, 24020);
+				_vm->playSound(kAudioDoorSound);
 				_vm->renderImage(this->getFileNumber(), 5);
 				this->setSectionVisible(6, false);
 				_gm->wait2(2);
@@ -860,7 +860,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_OPEN) && (obj1._id == OUTERHATCH)) {
 		if (obj1.hasProperty(OPENED))
 			return false;
-		_vm->playSound(54, 24020);
+		_vm->playSound(kAudioDoorSound);
 		_vm->renderImage(this->getFileNumber(), 1);
 		if (this->isSectionVisible(7))
 			_vm->renderImage(this->getFileNumber(), 10);
@@ -869,14 +869,14 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_rooms[HOLD].setSectionVisible(3, true);
 		obj1.setProperty(OPENED);
 		obj1._click = 2;
-		_vm->playSound(54, 30030);
+		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == OUTERHATCH)) {
 		if (!obj1.hasProperty(OPENED))
 			return false;
 		if (this->isSectionVisible(11) || this->isSectionVisible(12)) {
 			_vm->renderMessage("Das Seil ist im Weg.");
 		} else {
-			_vm->playSound(54, 24020);
+			_vm->playSound(kAudioDoorSound);
 			_vm->renderImage(this->getFileNumber(), _gm->invertSection(1));
 			this->setSectionVisible(10, false);
 			if (this->isSectionVisible(13))
@@ -884,7 +884,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_rooms[HOLD].setSectionVisible(3, false);
 			obj1.disableProperty(OPENED);
 			obj1._click = 1;
-			_vm->playSound(54, 31040);
+			_vm->playSound(kAudioDoorClose);
 		}
 	} else if ((verb == ACTION_WALK) && (obj1._id == OUTERHATCH) &&
 	           this->isSectionVisible(7)) {
@@ -918,7 +918,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		else
 			_vm->renderImage(this->getFileNumber(), 4);
 	} else if ((verb == ACTION_OPEN) && (obj1._id == TRAP)) {
-		_vm->playSound(54, 24020);
+		_vm->playSound(kAudioDoorSound);
 		_vm->renderImage(this->getFileNumber(), 2);
 		if (this->getObject(11)->_click == 11)
 			_vm->renderImage(this->getFileNumber(), 3);
@@ -928,7 +928,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		obj1._click = 6;
 
 		obj1._click2 = 5;
-		_vm->playSound(54, 30030);
+		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == TRAP)) {
 		if (this->isSectionVisible(9))
 			_vm->renderMessage("Das Kabel ist im Weg.");

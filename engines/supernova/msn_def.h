@@ -49,6 +49,35 @@ enum MessagePosition {
 	kMessageTop
 };
 
+enum AudioIndex {
+	kAudioGreat,                // 44|0
+	kAudioCrash,                // 45|0
+	kAudioVoiceHalt,            // 46|0
+	kAudioUndef1,               // 46|2510
+	kAudioUndef2,               // 46|4020
+	kAudioVoiceSupernova,       // 47|0
+	kAudioVoiceYeah,            // 47|24010
+	kAudioUndef3,               // 48|0
+	kAudioUndef4,               // 48|2510
+	kAudioShock,                // 48|10520
+	kAudioTurntable,            // 48|13530
+	kAudioUndef5,               // 50|0
+	kAudioUndef6,               // 50|12786
+	kAudioDeath,                // 53|0
+	kAudioAlarm,                // 54|0
+	kAudioUndef7,               // 54|8010
+	kAudioDoorSound,            // 54|24020
+	kAudioDoorOpen,             // 54|30030
+	kAudioDoorClose,            // 54|31040
+	kAudioNumSamples
+};
+
+struct AudioInfo {
+	int _filenumber;
+	int _offsetStart;
+	int _offsetEnd;
+};
+
 // Colors
 const int kColorBlack       =  0;
 const int kColorWhite25     =  1;

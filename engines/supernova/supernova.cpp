@@ -37,8 +37,29 @@
 
 #include "supernova/supernova.h"
 
-
 namespace Supernova {
+
+const AudioInfo audioInfo[kAudioNumSamples] = {
+    {44,     0,    -1},
+    {45,     0,    -1},
+    {46,     0,  2510},
+    {46,  2510,  4020},
+    {46,  4020,    -1},
+    {47,     0, 24010},
+    {47, 24010,    -1},
+    {48,     0,  2510},
+    {48,  2510, 10520},
+    {48, 10520, 13530},
+    {48, 13530,    -1},
+    {50,     0, 12786},
+    {50, 12786,    -1},
+    {53,     0,    -1},
+    {54,     0,  8010},
+    {54,  8010, 24020},
+    {54, 24020, 30030},
+    {54, 30030, 31040},
+    {54, 31040,    -1}
+};
 
 const char *const Object::defaultDescription = "Es ist nichts Besonderes daran.";
 const char *const Object::takeMessage = "Das mußt du erst nehmen.";
@@ -92,6 +113,9 @@ SupernovaEngine::~SupernovaEngine() {
 
 	delete _rnd;
 	delete _console;
+	for (int i = 0; i < kAudioNumSamples; ++i) {
+		delete[] _soundSamples[i]._buffer;
+	}
 }
 
 Common::Error SupernovaEngine::run() {
@@ -167,20 +191,37 @@ void SupernovaEngine::initData() {
 		_images[i].init(i);
 
 	// Sound
+	Common::File file;
+
+	for (int i = 0; i < kAudioNumSamples; ++i) {
+		if (!file.open(Common::String::format("msn_data.%03d", audioInfo[i]._filenumber))) {
+			error("File %s could not be read!", file.getName());
+		}
+
+		if (audioInfo[i]._offsetEnd == -1) {
+			file.seek(0, SEEK_END);
+			_soundSamples[i]._length = file.pos() - audioInfo[i]._offsetStart;
+		} else {
+			_soundSamples[i]._length = audioInfo[i]._offsetEnd - audioInfo[i]._offsetStart;
+		}
+		_soundSamples[i]._buffer = new byte[_soundSamples[i]._length];
+		file.seek(audioInfo[i]._offsetStart);
+		file.read(_soundSamples[i]._buffer, _soundSamples[i]._length);
+		file.close();
+	}
 }
 
 void SupernovaEngine::initPalette() {
 	_system->getPaletteManager()->setPalette(initVGAPalette, 0, 256);
 }
 
-void SupernovaEngine::playSound(int filenumber, int offset) {
-	Common::File *file = new Common::File;
-	if (!file->open(Common::String::format("msn_data.0%2d", filenumber))) {
-		error("File %s could not be read!", file->getName());
-	}
+void SupernovaEngine::playSound(AudioIndex sample) {
+	if (sample > kAudioNumSamples - 1)
+		return;
 
-	file->seek(offset);
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(file, 11931, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
+	            _soundSamples[sample]._buffer, _soundSamples[sample]._length,
+	            11931, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 	stopSound();
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audioStream);
 }
@@ -622,7 +663,7 @@ void GameManager::great(uint number) {
 	if (number && (_state.greatF & (1 << number)))
 		return;
 
-	_vm->playSound(54, 8010);
+	_vm->playSound(kAudioUndef7);
 	_state.greatF |= 1 << number;
 }
 
@@ -714,7 +755,7 @@ void GameManager::palette() {
 
 void GameManager::shock() {
 	// STUB
-	_vm->playSound(48, 10520);
+	_vm->playSound(kAudioShock);
 	// die
 }
 
@@ -1087,7 +1128,7 @@ void GameManager::executeRoom() {
 					byte i = _inputObject[0]._click;
 					_inputObject[0]._click  = _inputObject[0]._click2;
 					_inputObject[0]._click2 = i;
-					_vm->playSound(54, 30030);
+					_vm->playSound(kAudioDoorOpen);
 				}
 				break;
 
@@ -1106,7 +1147,7 @@ void GameManager::executeRoom() {
 					byte i = _inputObject[0]._click;
 					_inputObject[0]._click  = _inputObject[0]._click2;
 					_inputObject[0]._click2 = i;
-					_vm->playSound(54, 31040);
+					_vm->playSound(kAudioDoorClose);
 				}
 				break;
 
