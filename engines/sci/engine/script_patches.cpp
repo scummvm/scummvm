@@ -112,6 +112,7 @@ static const char *const selectorNameTable[] = {
 	"posn",         // SCI2 benchmarking script
 	"detailLevel",  // GK2 benchmarking
 	"view",         // RAMA benchmarking
+	"test",         // Torin
 #endif
 	NULL
 };
@@ -150,7 +151,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_scrollSelections,
 	SELECTOR_posn,
 	SELECTOR_detailLevel,
-	SELECTOR_view
+	SELECTOR_view,
+	SELECTOR_test
 #endif
 };
 
@@ -5604,8 +5606,36 @@ static const uint16 torinNumSavesPatch[] = {
 	PATCH_END
 };
 
+// In Escarpa, it is possible for Boogle to be left outside of Torin's bag
+// before attempting to worm into the dragon's cave. When this happens, Boogle
+// can be on the wrong side of the navigable area barrier, and cannot move
+// through it to continue the cutscene. In contrast, when Boogle is in Torin's
+// bag, the game moves Boogle out of the bag and into a position that is
+// guaranteed to work. This patch simply removes the bag check so that Boogle is
+// unconditionally repositioned for the cutscene.
+// Applies to at least: English CD
+static const uint16 torinBoogleWormInSignature[] = {
+	0x38, SIG_SELECTOR16(test),   // pushi test
+	0x78,                         // push1
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0xe8),       // pushi $232 (boogle in bag flag)
+	0x7a,                         // push2
+	0x38, SIG_UINT16(0xfa11),     // pushi 64017
+	0x76,                         // push0
+	0x43, 0x02, SIG_UINT16(0x04), // callk ScriptID[2], 4
+	0x4a, SIG_UINT16(0x06),       // send 6
+	0x30, SIG_ADDTOOFFSET(+2),    // bnt
+	SIG_END
+};
+
+static const uint16 torinBoogleWormInPatch[] = {
+	0x32, PATCH_UINT16(0x13),     // jmp [to boogle init]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
+	{  true, 20400, "fix hang when worming into dragon cave",      1, torinBoogleWormInSignature,        torinBoogleWormInPatch },
 	{  true, 64000, "disable volume reset on startup 1/2",         1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
 	{  true, 64000, "disable volume reset on startup 2/2",         1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
 	{  true, 64866, "increase number of save games",               1, torinNumSavesSignature,            torinNumSavesPatch },
