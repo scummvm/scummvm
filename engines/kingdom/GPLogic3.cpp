@@ -26,6 +26,17 @@ namespace Kingdom {
 
 void KingdomGame::GPLogic3() {
 	switch(_StatPlay) {
+	case 552:
+		ProcessMapInput(55);
+		if (!word_2D7B4 && _StatPlay == 560) {
+			_StatPlay = 551;
+			_UserInput = 0x190;
+			_LoopFlag = true;
+		}
+		break;
+	case 582:
+		ProcessMapInput(58);
+		break;
 	case 621:
 		switch(_UserInput) {
 		case 0x428:
@@ -484,8 +495,8 @@ void KingdomGame::GPLogic3() {
 		case 0x43E:
 			if (word_2D7D8 > 2)
 				_FrameStop = 23;
-				_Sound = _LastSound;
-				PlayMovie(_PMovie);
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
 			break;
 		case 0x441:
 			switch (word_2D7D8) {
