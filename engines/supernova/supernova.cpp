@@ -98,6 +98,8 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
     , _sectionIndex(0)
     , _delay(33)
     , _gameRunning(true)
+    , _screenWidth(320)
+    , _screenHeight(200)
 {
 //	const Common::FSNode gameDataDir(ConfMan.get("path"));
 //	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
@@ -119,8 +121,8 @@ SupernovaEngine::~SupernovaEngine() {
 }
 
 Common::Error SupernovaEngine::run() {
-	initGraphics(kScreenWidth, kScreenHeight);
 	GameManager gm(this, &_event);
+	initGraphics(_screenWidth, _screenHeight);
 	_console = new Console(this, &gm);
 
 	initData();
@@ -253,17 +255,37 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool full
 	image.loadSection(section);
 	_system->getPaletteManager()->setPalette(image.getPalette(), 16, 239);
 	paletteBrightness();
+
+	Common::Rect sectionRect(image._section[section].x1,
+	                         image._section[section].y1,
+	                         image._section[section].x2 - image._section[section].x1,
+	                         image._section[section].y2 - image._section[section].y1);
+	if (image._filenumber == 1 || image._filenumber == 2) {
+		sectionRect.setWidth(640);
+		sectionRect.setHeight(480);
+
+		if (_screenWidth != 640) {
+			_screenWidth = 640;
+			_screenHeight = 480;
+			initGraphics(_screenWidth, _screenHeight);
+		}
+	} else {
+		if (_screenWidth != 320) {
+			_screenWidth = 320;
+			_screenHeight = 200;
+			initGraphics(_screenWidth, _screenHeight);
+		}
+	}
+
 	if (fullscreen) {
 		_system->copyRectToScreen(image.getSurface()->getPixels(),
-		                          image._pitch, 0, 0, kScreenWidth, kScreenHeight);
+		                          image._pitch, 0, 0, _screenWidth, _screenHeight);
 	} else {
-		uint offset = image._section[section].y1 * 320 + image._section[section].x1;
+		uint offset = image._section[section].y1 * image._pitch + image._section[section].x1;
 		_system->copyRectToScreen(static_cast<const byte *>(image.getSurface()->getPixels()) + offset,
-		                          320,
-		                          image._section[section].x1,
-		                          image._section[section].y1,
-		                          image._section[section].x2 - image._section[section].x1,
-		                          image._section[section].y2 - image._section[section].y1);
+		                          image._pitch,
+		                          sectionRect.top, sectionRect.left,
+		                          sectionRect.width(), sectionRect.height());
 	}
 }
 
