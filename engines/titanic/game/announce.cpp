@@ -57,7 +57,7 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 	if (!_enabled)
 		return false;
 
-	if (msg->_timerCtr == 1) {
+	if (msg->_actionVal == 1) {
 		CString numStr = "0";
 		CString waveNames1[20] = {
 			"z#181.wav", "z#211.wav", "z#203.wav", "z#202.wav", "z#201.wav",
@@ -108,7 +108,7 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 		if (getRandomNumber(3) == 0)
 			addTimer(2, 4000, 0);
 
-	} else if (msg->_timerCtr == 2) {
+	} else if (msg->_actionVal == 2) {
 		CParrotSpeakMsg speakMsg;
 		speakMsg._target = "Announcements";
 		speakMsg.execute("PerchedParrot");
