@@ -450,7 +450,7 @@ bool CParrot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_FINISH 
 			| NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
 			&& _visible && _state == PARROT_IN_CAGE) {
-		if (!compareViewNameTo("ParrotLobby.Node 1.N"))
+		if (compareViewNameTo("ParrotLobby.Node 1.N"))
 			msg->_names = NAMES;
 	}
 
