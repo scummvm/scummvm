@@ -162,7 +162,6 @@ namespace Kingdom {
 		bool _CursorDrawn;
 		bool _Wizard;
 		int _Zoom;
-		int _Pmovie;
 		bool _Resurrect;
 		bool _SaveFile;
 		int _LastObstacle;
@@ -220,11 +219,11 @@ namespace Kingdom {
 		int16 word_2D7BA;
 		int16 word_2D7C2;
 		int16 word_2D7CC;
+		int16 word_2D7D0;
 		int16 word_2D7D4;
 		int16 word_2D7D6;
 		int16 word_2D7D8;
 		int16 word_2D7DA;
-
 
 		Common::SeekableReadStream *_RezPointers[510];
 		int _RezSize[510];
