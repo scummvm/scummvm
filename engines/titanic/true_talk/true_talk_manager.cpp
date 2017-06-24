@@ -271,7 +271,6 @@ TTnpcScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
 
 	if (!script) {
 		// Fall back on the default NPC script
-		warning("Could not find NPC script for %s, using fallback", npc->getName().c_str());
 		script = _scripts.getNpcScript(101);
 	}
 
