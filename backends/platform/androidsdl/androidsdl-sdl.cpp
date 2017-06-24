@@ -35,8 +35,8 @@ void OSystem_ANDROIDSDL::initBackend() {
 	if (_graphicsManager == 0)
 		_graphicsManager = new AndroidSdlGraphicsManager(_eventSource, _window);
 
-	if (!ConfMan.hasKey("browser_lastpath"))
-		ConfMan.set("browser_lastpath", "/storage");
+	if (!ConfMan.hasKey("browser_lastpath") || (ConfMan.hasKey("browser_lastpath") && (ConfMan.get("browser_lastpath") == "/storage")))
+		ConfMan.set("browser_lastpath", getenv("SDCARD"));
 
 	if (!ConfMan.hasKey("gfx_mode"))
 		ConfMan.set("gfx_mode", "2x");
