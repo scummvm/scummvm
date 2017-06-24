@@ -465,10 +465,10 @@ bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 
 	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_FINISH 
 			| NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
-			&& _visible && _state == PARROT_IN_CAGE && !compareViewNameTo("ParrotLobby.Node 1.N")) {
+			&& _visible && _state == PARROT_IN_CAGE && compareViewNameTo("ParrotLobby.Node 1.N")) {
 		CGameObject *dragItem = getDraggingObject();
 		if (!dragItem || dragItem->getName() == "Chicken") {
-			if (!_coreReplaced ||getRandomNumber(3) != 0) {
+			if (!_coreReplaced || getRandomNumber(3) != 0) {
 				if (getRandomNumber(1)) {
 					startTalking(this, 280267, findView());
 				} else {
