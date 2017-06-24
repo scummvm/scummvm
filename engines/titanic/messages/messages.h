@@ -274,7 +274,7 @@ MESSAGE2(CHoseConnectedMsg, bool, connected, true, CGameObject *, object, nullpt
 MESSAGE0(CInitializeAnimMsg);
 MESSAGE1(CIsEarBowlPuzzleDone, int, value, 0);
 MESSAGE3(CIsHookedOnMsg, Rect, rect, Rect(), bool, isHooked, false, CString, armName, "");
-MESSAGE1(CIsParrotPresentMsg, bool, value, false);
+MESSAGE1(CIsParrotPresentMsg, bool, isPresent, false);
 MESSAGE1(CKeyCharMsg, int, key, 32);
 MESSAGE2(CLeaveNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nullptr);
 MESSAGE2(CLeaveRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nullptr);
@@ -296,7 +296,7 @@ MESSAGE2(CNPCPlayAnimationMsg, const char *const *, names, nullptr, int, maxDura
 MESSAGE1(CNPCPlayIdleAnimationMsg, const char *const *, names, 0);
 MESSAGE3(CNPCPlayTalkingAnimationMsg, uint, speechDuration, 0, int, value2, 0, const char *const *, names, nullptr);
 MESSAGE0(CNPCQueueIdleAnimMsg);
-MESSAGE1(CNutPuzzleMsg, CString, value, "");
+MESSAGE1(CNutPuzzleMsg, CString, action, "");
 MESSAGE1(COnSummonBotMsg, int, value, 0);
 MESSAGE0(COpeningCreditsMsg);
 MESSAGE1(CPanningAwayFromParrotMsg, CMovePlayerTo *, target, nullptr);

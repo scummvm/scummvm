@@ -53,7 +53,7 @@ bool CEarSweetBowl::MovieEndMsg(CMovieEndMsg *msg) {
 		CIsParrotPresentMsg parrotMsg;
 		parrotMsg.execute(findRoom());
 
-		if (parrotMsg._value) {
+		if (parrotMsg._isPresent) {
 			CNutPuzzleMsg nutMsg("Jiggle");
 			nutMsg.execute("NutsParrotPlayer");
 		}

@@ -45,7 +45,7 @@ void CBowlUnlocker::load(SimpleFile *file) {
 }
 
 bool CBowlUnlocker::NutPuzzleMsg(CNutPuzzleMsg *msg) {
-	if (msg->_value == "UnlockBowl") {
+	if (msg->_action == "UnlockBowl") {
 		setVisible(true);
 		playMovie(MOVIE_NOTIFY_OBJECT);
 	}

@@ -195,7 +195,7 @@ void CMainGameWindow::drawView() {
 }
 
 void CMainGameWindow::drawViewContents(CScreenManager *screenManager) {
-	// Get a reference to the reference, validating that it's present
+	// Get a reference to the room, validating that it's present
 	if (!screenManager)
 		return;
 	CViewItem *view = _gameManager->getView();

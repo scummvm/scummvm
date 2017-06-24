@@ -86,7 +86,7 @@ bool CCarryParrot::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CCarryParrot::IsParrotPresentMsg(CIsParrotPresentMsg *msg) {
-	msg->_value = true;
+	msg->_isPresent = true;
 	return true;
 }
 

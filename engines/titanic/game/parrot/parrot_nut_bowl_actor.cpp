@@ -104,9 +104,9 @@ bool CParrotNutBowlActor::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CParrotNutBowlActor::NutPuzzleMsg(CNutPuzzleMsg *msg) {
-	if (msg->_value == "NutsGone")
+	if (msg->_action == "NutsGone")
 		_state = 1;
-	else if (msg->_value == "BowlUnlocked")
+	else if (msg->_action == "BowlUnlocked")
 		_state = 2;
 
 	return true;
