@@ -56,9 +56,9 @@ bool CPetFrame::reset() {
 			_modeButtons[idx].reset(resName, _petControl, MODE_SELECTED);
 		}
 
-		for (uint idx = 0; idx < _petAreas.size(); ++idx) {
+		for (uint idx = 0; idx < 7; ++idx) {
 			CString resName = Common::String::format("3Pettitle%d", idx + 1);
-			_titles[idx].reset(resName, _petControl, MODE_UNSELECTED);
+			_titles[idx].setup(MODE_UNSELECTED, resName, _petControl);
 		}
 
 		for (int idx = 0; idx < TOTAL_GLYPHS; ++idx) {

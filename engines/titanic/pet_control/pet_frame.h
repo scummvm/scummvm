@@ -36,7 +36,7 @@ class CPetFrame : public CPetSection {
 private:
 	Common::Array<PetArea> _petAreas;
 	Common::Array<CPetGfxElement> _modeButtons;
-	CPetGfxElement _titles[6];
+	CPetGfxElement _titles[7];
 	CPetGfxElement _modeBackground;
 	CPetGfxElement _val2;
 	CPetGfxElement _val3;

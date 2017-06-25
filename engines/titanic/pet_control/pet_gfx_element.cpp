@@ -54,9 +54,9 @@ void CPetGfxElement::reset(const CString &name, CPetControl *petControl, PetElem
 	if (classNum >= FIRST_CLASS && classNum <= THIRD_CLASS) {
 		numString = CString(classNum);
 	} else if (classNum == UNCHECKED) {
-		int stateC = petControl->getPriorClass();
-		if (stateC == 1)
-			numString = CString(stateC);
+		int priorClass = petControl->getPriorClass();
+		if (priorClass == 1)
+			numString = CString(priorClass);
 	}
 
 	CString resName = numString + name;
