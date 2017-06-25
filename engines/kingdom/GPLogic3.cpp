@@ -26,6 +26,26 @@ namespace Kingdom {
 
 void KingdomGame::GPLogic3() {
 	switch(_StatPlay) {
+	case 522:
+		ProcessMapInput(52);
+		break;
+	case 530:
+		_NodeNum = 53;
+		DrawLocation();
+		_UserInput = 0;
+		_FstFwd = false;
+		if (_Inventory[7] <= 0 && _Wizard)
+			_TSIconOnly = false;
+		else {
+			_FrameStop = 24;
+			_TSIconOnly = true;
+		}
+		_Eye = false;
+		PlayMovie(70);
+		_CurrMap = 99;
+		PlaySound(8);
+		_StatPlay = 531;
+		break;
 	case 552:
 		ProcessMapInput(55);
 		if (!word_2D7B4 && _StatPlay == 560) {
@@ -286,6 +306,32 @@ void KingdomGame::GPLogic3() {
 		_CurrMap = 114;
 		PlaySound(21);
 		_StatPlay = 591;
+		break;
+	case 591:
+		switch(_UserInput) {
+		case 0x43A:
+			_StatPlay = 592;
+			_Zoom = 2;
+			ProcessMap(59, _Zoom);
+			_UserInput = 0;
+			break;
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			ShowPic(444);
+			break;
+		case 0x445:
+			_StatPlay = 660;
+			_LoopFlag = true;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 592:
+		ProcessMapInput(59);
 		break;
 	case 600:
 		SetMouse();
