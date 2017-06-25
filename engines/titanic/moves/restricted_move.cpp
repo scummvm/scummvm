@@ -57,7 +57,8 @@ bool CRestrictedMove::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		playSound("a#17.wav");
 		petDisplayMessage(1, CHECK_IN_AT_RECEPTION);
 	} else if (compareViewNameTo("Titania.Node 1.S")) {
-		playSound("z#226.wav");
+		CProximity prox(Audio::Mixer::kSpeechSoundType);
+		playSound("z#226.wav", prox);
 		changeView(_destination);
 	}
 

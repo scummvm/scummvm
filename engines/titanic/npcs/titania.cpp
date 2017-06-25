@@ -175,7 +175,8 @@ bool CTitania::ActMsg(CActMsg *msg) {
 
 		if (_centralCore && _eye1 && _eye2 && _ear1 && _ear2 && _nose && _mouth
 				&& _speechCentre && _olfactoryCentre && _auditoryCentre) {
-			playSound("z#47.wav");
+			CProximity prox(Audio::Mixer::kSpeechSoundType);
+			playSound("z#47.wav", prox);
 
 			CActMsg actMsg("Woken");
 			actMsg.execute("MouthSlot");

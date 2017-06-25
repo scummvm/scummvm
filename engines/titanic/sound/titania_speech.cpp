@@ -54,6 +54,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 	CActMsg actMsg;
 
 	if (msg->_action == "TitaniaSpeech") {
+		CProximity prox(Audio::Mixer::kSpeechSoundType);
 		switch (_actionNum) {
 		case 1:
 			movieSetAudioTiming(true);
@@ -79,7 +80,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 			visibleMsg.execute("TitaniaStillControl");
 			loadSound("a#10.wav");
 			playMovie(585, 706, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
-			playSound("a#10.wav");
+			playSound("a#10.wav", prox);
 			break;
 
 		case 4:
@@ -87,7 +88,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 			visibleMsg.execute("TitaniaStillControl");
 			loadSound("a#9.wav");
 			playMovie(707, 905, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
-			playSound("a#9.wav");
+			playSound("a#9.wav", prox);
 			break;
 
 		case 5:
@@ -95,7 +96,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 			visibleMsg.execute("TitaniaStillControl");
 			loadSound("a#8.wav");
 			playMovie(906, 938, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
-			playSound("a#8.wav");
+			playSound("a#8.wav", prox);
 			break;
 
 		default:
@@ -122,8 +123,10 @@ bool CTitaniaSpeech::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CTitaniaSpeech::MovieFrameMsg(CMovieFrameMsg *msg) {
 	int frame = getMovieFrame();
-	if (!frame)
-		playSound("a#12.wav");
+	if (frame == 0) {
+		CProximity prox(Audio::Mixer::kSpeechSoundType);
+		playSound("a#12.wav", prox);
+	}
 
 	return true;
 }
@@ -138,7 +141,8 @@ bool CTitaniaSpeech::TimerMsg(CTimerMsg *msg) {
 		++_actionNum;
 		actMsg.execute(this);
 	} else if (msg->_action == "Para2") {
-		playSound("a#11.wav");
+		CProximity prox(Audio::Mixer::kSpeechSoundType);
+		playSound("a#11.wav", prox);
 	} else {
 		frameMsg._frameNumber = _backgroundFrame++;
 		frameMsg.execute("TitaniaStillControl");
