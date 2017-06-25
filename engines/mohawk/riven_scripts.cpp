@@ -561,38 +561,16 @@ void RivenSimpleCommand::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) 
 	// time of a specified movie. However, every use in the game is for
 	// delaying an activateSLST opcode.
 
-	uint32 scriptSize = 6 + (argc - 4) * 2;
-
-	// Create our dummy script
-	byte *scriptBuf = (byte *)malloc(scriptSize);
-	WRITE_BE_UINT16(scriptBuf, 1);            // One command
-	WRITE_BE_UINT16(scriptBuf + 2, argv[3]);  // One opcode
-	WRITE_BE_UINT16(scriptBuf + 4, argc - 4); // argc - 4 args
-
-	for (int i = 0; i < argc - 4; i++)
-		WRITE_BE_UINT16(scriptBuf + 6 + (i * 2), argv[i + 4]);
-
-	// Build a script out of 'er
-	Common::SeekableReadStream *scriptStream = new Common::MemoryReadStream(scriptBuf, scriptSize, DisposeAfterUse::YES);
-	RivenScriptPtr script = _vm->_scriptMan->readScript(scriptStream);
-
 	uint32 delayTime = (argv[1] << 16) + argv[2];
 
-	if (delayTime > 0) {
-		// Store the script
-		RivenScriptManager::StoredMovieOpcode storedOp;
-		storedOp.script = script;
-		storedOp.time = delayTime;
-		storedOp.id = argv[0];
+	// Store the script
+	RivenScriptManager::StoredMovieOpcode storedOp;
+	storedOp.script = _vm->_scriptMan->createScriptFromData(1, argv[3], 1, argv[4]);
+	storedOp.time = delayTime;
+	storedOp.id = argv[0];
 
-		// Store the opcode for later
-		_vm->_scriptMan->setStoredMovieOpcode(storedOp);
-	} else {
-		// Run immediately if we have no delay
-		_vm->_scriptMan->runScript(script, false);
-	}
-
-	delete scriptStream;
+	// Store the opcode for later
+	_vm->_scriptMan->setStoredMovieOpcode(storedOp);
 }
 
 // Command 39: activate PLST record (card picture lists)
