@@ -26,6 +26,86 @@ namespace Kingdom {
 
 void KingdomGame::GPLogic3() {
 	switch(_StatPlay) {
+	case 500:
+		_NodeNum = 50;
+		DrawLocation();
+		_UserInput = 0;
+		_Resurrect = false;
+		if (!_Wizard)
+			word_2D7AA = 1;
+		switch(word_2D7AA) {
+		case 0:
+			PlayMovie(123);
+			_CurrMap = 102;
+			break;
+		case 1:
+			word_2D7AA = 2;
+			PlayMovie(126);
+			_CurrMap = 10;
+			_TSIconOnly = true;
+			break;
+		default:
+			word_2D7AA = 1;
+			_Sound = true;
+			PlayMovie(126);
+			_CurrMap = 10;
+			_TSIconOnly = true;
+			break;
+		}
+		PlaySound(29);
+		_StatPlay = 501;
+		break;
+	case 501:
+		switch(_UserInput) {
+		case 0x428:
+		case 0x429:
+		case 0x42A:
+			if (!word_2D7AA) {
+				InventoryDel(_UserInput - 0x428);
+				SaveAS();
+				PlayMovie(178);
+				RestoreAS();
+				_UserInput = 0;
+			}
+			break;
+		case 0x433:
+			if (!word_2D7AA) {
+				DsAll();
+				PlayMovie(125);
+				_StatPlay = 993;
+				_LoopFlag = true;
+			} else
+				DisplayIcon(141);
+
+			break;
+		case 0x439:
+			if (!word_2D7AA) {
+				PlayMovie(124);
+				word_2D7AA = 1;
+				InventoryAdd(11);
+				_UserInput = 0;
+				_CurrMap = 10;
+			}
+			break;
+		case 0x43A:
+			_StatPlay = 502;
+			_Zoom = 2;
+			ProcessMap(50, _Zoom);
+			_UserInput = 0;
+			break;
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 502:
+		ProcessMapInput(50);
+		break;
 	case 510:
 		_NodeNum = 51;
 		DrawLocation();
@@ -34,6 +114,44 @@ void KingdomGame::GPLogic3() {
 		_CurrMap = 10;
 		PlaySound(6);
 		_StatPlay = 511;
+		break;
+	case 511:
+		switch(_UserInput) {
+		case 0x434:
+			if (_Inventory[6] >= 1)
+				DisplayIcon(142);
+			else {
+				PlayMovie(128);
+				word_2D7AC = 9;
+				InventoryAdd(12);
+				_UserInput = 0;
+				_CurrMap = 10;
+				PlaySound(30);
+			}
+			break;
+		case 0x43A:
+			_StatPlay = 512;
+			_Zoom = 2;
+			ProcessMap(51, _Zoom);
+			_UserInput = 0;
+			break;
+		case 0x43E:
+			PlayMovie(_PMovie);
+			break;
+		case 0x457:
+			_TideCntl = false;
+			DrawPic(179);
+			PlayMovie(127);
+			_CurrMap = 103;
+			_UserInput = 0;
+			PlaySound(0);
+			PlaySound(6);
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
 		break;
 	case 512:
 		ProcessMapInput(51);
@@ -728,6 +846,51 @@ void KingdomGame::GPLogic3() {
 			break;
 		}
 		break;
+	case 651:
+		switch(_UserInput) {
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			ShowPic(453);
+			break;
+		case 0x445:
+			_StatPlay = 700;
+			_LoopFlag = true;
+			break;
+		case 0x446:
+			if (word_2D7CC == 1) {
+				_StatPlay = 660;
+				_LoopFlag = true;
+			} else {
+				_StatPlay = 790;
+				_LoopFlag = true;
+			}
+			break;
+		case 0x447:
+			_StatPlay = 710;
+			_LoopFlag = true;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 660:
+		_NodeNum = 66;
+		_Eye = false;
+		_UserInput = 0;
+		if (word_2D7CA == 0)
+			word_2D7CA = 1;
+		else {
+			_Sound = true;
+			word_2D7CA = 0;
+		}
+		PlayMovie(154);
+		_CurrMap = 70;
+		PlaySound(40);
+		_StatPlay = 661;
+		break;
 	case 661:
 		switch(_UserInput) {
 		case 0x43E:
@@ -865,6 +1028,24 @@ void KingdomGame::GPLogic3() {
 				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
 			break;
 		}
+		break;
+	case 692:
+		ProcessMapInput(69);
+		break;
+	case 700:
+		_NodeNum = 70;
+		_UserInput = 0;
+		_Eye = false;
+		if (word_2D7D2 & _Wizard) {
+			word_2D7D2 = 0;
+			_Sound = false;
+		} else
+			word_2D7D2 = 1;
+
+		PlayMovie(164);
+		_CurrMap = 74;
+		PlaySound(10);
+		_StatPlay = 701;
 		break;
 	case 701:
 		switch(_UserInput) {
