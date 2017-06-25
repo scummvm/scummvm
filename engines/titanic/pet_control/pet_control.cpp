@@ -357,9 +357,15 @@ bool CPetControl::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 			result = true;
 			setArea(PET_ROOMS);
 			break;
-		case Common::KEYCODE_F5:
+		case Common::KEYCODE_F6:
 			result = true;
 			setArea(PET_REAL_LIFE);
+			break;
+		case Common::KEYCODE_F8:
+			if (g_vm->isGerman()) {
+				result = true;
+				setArea(PET_TRANSLATION);
+			}
 			break;
 		default:
 			break;
