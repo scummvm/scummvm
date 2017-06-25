@@ -218,6 +218,7 @@ namespace Kingdom {
 		int16 word_2D7B6;
 		int16 word_2D7B8;
 		int16 word_2D7BA;
+		int16 word_2D7BC;
 		int16 word_2D7C0;
 		int16 word_2D7C2;
 		int16 word_2D7CC;

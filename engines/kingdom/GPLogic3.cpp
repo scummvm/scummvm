@@ -271,6 +271,22 @@ void KingdomGame::GPLogic3() {
 	case 582:
 		ProcessMapInput(58);
 		break;
+	case 590:
+		_NodeNum = 59;
+		DrawLocation();
+		_UserInput = 0;
+		if (word_2D7BC == 0)
+			word_2D7BC = 1;
+		else {
+			_Sound = true;
+			word_2D7BC = 0;
+		}
+		PlayMovie(144);
+		ShowPic(144);
+		_CurrMap = 114;
+		PlaySound(21);
+		_StatPlay = 591;
+		break;
 	case 600:
 		SetMouse();
 		EraseCursor();
@@ -307,6 +323,69 @@ void KingdomGame::GPLogic3() {
 		PlaySound(36);
 		_StatPlay = 611;
 		_Eye = false;
+		break;
+	case 611:
+		switch(_UserInput) {
+		case 0x428:
+		case 0x429:
+		case 0x42A:
+			InventoryDel(_UserInput - 0x428);
+			DsAll();
+			PlayMovie(148);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x432:
+			PlayMovie(147);
+			_Inventory[5] = -1;
+			word_2D780 = 0;
+			_CurrMap = 116;
+			break;
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			break;
+		case 0x441:
+			// Cascade on purpose
+		case 0x448:
+			_CurrMap = 10;
+			_ItemInhibit = true;
+			_StatPlay = 730;
+			_LoopFlag = true;
+			break;
+		case 0x44B:
+			_CurrMap = 10;
+			_StatPlay = 680;
+			_LoopFlag = true;
+			break;
+		case 0x451:
+			_CurrMap = 10;
+			_StatPlay = 690;
+			_LoopFlag = true;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 620:
+		_NodeNum = 62;
+		DrawLocation();
+		_UserInput = 0;
+		_Eye = false;
+		if (word_2D7C2 == 0) {
+			PlayMovie(149);
+			_CurrMap = 122;
+		} else {
+			_FrameStop = 24;
+			PlayMovie(202);
+			_CurrMap = 121;
+			word_2D7C2 = 9;
+		}
+		_TSIconOnly = true;
+		PlaySound(8);
+		_StatPlay = 621;
 		break;
 	case 621:
 		switch(_UserInput) {
