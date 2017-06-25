@@ -34,8 +34,279 @@ void KingdomGame::GPLogic3() {
 			_LoopFlag = true;
 		}
 		break;
+	case 560:
+		_NodeNum = 56;
+		DrawLocation();
+		_UserInput = 0;
+		if (_Wizard) {
+			_FrameStop = 50;
+			EnAll();
+			PlayMovie(135);
+			ShowPic(435);
+			word_2D7B6 = 1;
+			PlaySound(8);
+			_StatPlay = 561;
+			_CurrMap = 106;
+			_TSIconOnly = true;
+		} else {
+			DsAll();
+			PlayMovie(135);
+			_CurrMap = 10;
+			SetATimer();
+			word_2D7B6 = 0;
+			_StatPlay = 561;
+		}
+		break;
+	case 561:
+		switch(_UserInput) {
+		case 0x2F1:
+			_ATimer = 0;
+			DsAll();
+			PlayMovie(136);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x428:
+		case 0x429:
+		case 0x42A:
+			_ATimer = 0;
+			if (!word_2D7B6) {
+				InventoryDel(_UserInput - 0x428);
+				SaveAS();
+				PlayMovie(178);
+				RestoreAS();
+				_UserInput = 753;
+				_LoopFlag = true;
+			}
+			break;
+		case 0x42C:
+			_ATimer = 0;
+			if (!word_2D7B6) {
+				_FstFwd = false;
+				_Replay = true;
+				PlayMovie(138);
+				EnAll();
+				PlaySound(8);
+				word_2D7B6 = 1;
+				InventoryDel(4);
+				word_2D772 = 0;
+				_CurrMap = 88;
+				_TSIconOnly = true;
+			}
+			break;
+		case 0x438:
+			_ATimer = 0;
+			if (!word_2D7B6) {
+				EnAll();
+				_FstFwd = false;
+				_Replay = true;
+				PlayMovie(137);
+				EnAll();
+				PlaySound(8);
+				word_2D7B6 = 1;
+				_CurrMap = 106;
+				_TSIconOnly = true;
+			}
+			break;
+		case 0x43A:
+			_StatPlay = 562;
+			_Zoom = 2;
+			ProcessMap(56, _Zoom);
+			_UserInput = 0;
+			break;
+		case 0x43E:
+			_FstFwd = false;
+			if (_PMovie == 135 && word_2D7B6) {
+				_FrameStop = 50;
+				PlayMovie(135);
+			} else if (word_2D7B6)
+				PlayMovie(_PMovie);
+			else {
+				_UserInput = 753;
+				_ATimer = 0;
+				_LoopFlag = true;
+			}
+			break;
+		case 0x445:
+			_StatPlay = 530;
+			_LoopFlag = true;
+			_UserInput = 0;
+			break;
+		case 0x446:
+			_StatPlay = 620;
+			_LoopFlag = true;
+			_UserInput = 0;
+			break;
+		case 0x452:
+			_StatPlay = 550;
+			_LoopFlag = true;
+			_UserInput = 0;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 562:
+		ProcessMapInput(56);
+		break;
+	case 570:
+		if (word_2D7B8) {
+			if (_RtnNode != 34)
+				_Sound = true;
+			_NodeNum = 57;
+			DrawLocation();
+			word_2D7B8 = 0;
+			_UserInput = 0;
+			PlayMovie(139);
+			PlaySound(27);
+			_CurrMap = 10;
+			_StatPlay = 571;
+		} else {
+			_StatPlay = 740;
+			_LoopFlag = true;
+		}
+		break;
+	case 571:
+		switch(_UserInput) {
+		case 0x43A:
+			_StatPlay = 572;
+			_Zoom = 2;
+			ProcessMap(57, _Zoom);
+			_UserInput = 0;
+			break;
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 572:
+		ProcessMapInput(57);
+		break;
+	case 580:
+		_NodeNum = 58;
+		DrawLocation();
+		_IconsClosed = true;
+		_UserInput = 0;
+		switch(word_2D7BA) {
+		case 0:
+			_Sound = true;
+			PlayMovie(140);
+			_CurrMap = 113;
+			word_2D7BA = 1;
+			break;
+		case 1:
+			PlayMovie(140);
+			_CurrMap = 113;
+			word_2D7BA = 0;
+			break;
+		case 8:
+			_TSIconOnly = true;
+			PlayMovie(143);
+			_CurrMap = 10;
+			word_2D7BA = 9;
+			break;
+		case 9:
+			_TSIconOnly = true;
+			_Sound = true;
+			PlayMovie(143);
+			_CurrMap = 10;
+			break;
+		}
+		PlaySound(27);
+		_StatPlay = 581;
+		break;
+	case 581:
+		switch(_UserInput) {
+		case 0x430:
+			PlayMovie(141);
+			word_2D7BA = 8;
+			InventoryAdd(13);
+			_TSIconOnly = true;
+			_CurrMap = 10;
+			PlaySound(30);
+		// No break on purpose
+		case 0x428:
+		case 0x429:
+		case 0x42A:
+			if (word_2D7BA < 8) {
+				InventoryDel(_UserInput - 0x428);
+				SaveAS();
+				PlayMovie(178);
+				RestoreAS();
+			}
+			_UserInput = 0;
+			break;
+		case 0x435:
+			if (word_2D7BA >= 8)
+				DisplayIcon(143);
+			else {
+				DsAll();
+				PlayMovie(142);
+				_StatPlay = 993;
+				_LoopFlag = true;
+			}
+		case 0x43A:
+			_StatPlay = 582;
+			_Zoom = 2;
+			ProcessMap(58, _Zoom);
+			_UserInput = 0;
+			break;
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
 	case 582:
 		ProcessMapInput(58);
+		break;
+	case 600:
+		SetMouse();
+		EraseCursor();
+		FadeToBlack2();
+		ShowPic(106);
+		DrawIcon(4, 0, 12 - _HealthOld);
+		_ASMode = false;
+		_NodeNum = 60;
+		DrawLocation();
+		_UserInput = 0;
+		DsAll();
+		PlayMovie(145);
+		_StatPlay = 992;
+		_LoopFlag = true;
+		break;
+	case 610:
+		_NodeNum = 61;
+		DrawLocation();
+		_UserInput = 0;
+		word_2D7D6 = 0;
+		word_2D7D8 = 0;
+		if (word_2D7C0 == 0)
+			word_2D7C0 = 1;
+		else
+			_Sound = true;
+
+		PlayMovie(146);
+		if (word_2D7D0 == 9) {
+			_ItemInhibit = true;
+			_TSIconOnly = true;
+		}
+		
+		_CurrMap = 115;
+		PlaySound(36);
+		_StatPlay = 611;
+		_Eye = false;
 		break;
 	case 621:
 		switch(_UserInput) {
