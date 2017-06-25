@@ -71,7 +71,7 @@ bool CEndSequenceControl::EnterRoomMsg(CEnterRoomMsg *msg) {
 	petHide();
 	disableMouse();
 	addTimer(1, 1000, 0);
-	playGlobalSound("a#15.wav", -1, true, true, 0);
+	playGlobalSound("a#15.wav", -1, true, true, 0, Audio::Mixer::kSpeechSoundType);
 	return true;
 }
 
