@@ -26,6 +26,55 @@ namespace Kingdom {
 
 void KingdomGame::GPLogic3() {
 	switch(_StatPlay) {
+	case 510:
+		_NodeNum = 51;
+		DrawLocation();
+		_UserInput = 0;
+		PlayMovie(129);
+		_CurrMap = 10;
+		PlaySound(6);
+		_StatPlay = 511;
+		break;
+	case 512:
+		ProcessMapInput(51);
+		break;
+	case 520:
+		_NodeNum = 52;
+		DrawLocation();
+		_UserInput = 0;
+		if (word_2D7AE == 0)
+			word_2D7AE = 1;
+		else {
+			_Sound = true;
+			word_2D7AE = false;
+		}
+		PlayMovie(130);
+		_CurrMap = 111;
+		_StatPlay = 521;
+		PlaySound(31);
+		break;
+	case 521:
+		switch(_UserInput) {
+		case 0x404:
+			_StatPlay = 550;
+			_LoopFlag = true;
+			break;
+		case 0x43A:
+			_StatPlay = 522;
+			_Zoom = 2;
+			ProcessMap(52, _Zoom);
+			_UserInput = 0;
+			break;
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
 	case 522:
 		ProcessMapInput(52);
 		break;
@@ -45,6 +94,194 @@ void KingdomGame::GPLogic3() {
 		_CurrMap = 99;
 		PlaySound(8);
 		_StatPlay = 531;
+		break;
+	case 531:
+		switch(_UserInput) {
+		case 0x428:
+			if (word_2D7B0 == 0) {
+				PlayMovie(71);
+				InventoryAdd(14);
+				InventoryDel(0);
+				_TSIconOnly = true;
+				PlaySound(25);
+			}
+			_UserInput = 0;
+			break;
+		case 0x429:
+		case 0x42A:
+			InventoryDel(_UserInput - 0x428);
+			SaveAS();
+			PlayMovie(178);
+			RestoreAS();
+			_UserInput = 0;
+			break;
+		case 0x43E:
+			_FstFwd = false;
+			if (_Inventory[7] > 0 && _PMovie == 70)
+				_FrameStop = 24;
+			if (!_Wizard && _PMovie == 70)
+				_FrameStop = 24;
+			PlayMovie(_PMovie);
+			break;
+		case 0x445:
+			_NodeNum = 56;
+			_UserInput = 0;
+			_FrameStop = 50;
+			EnAll();
+			PlayMovie(135);
+			_CurrMap = 106;
+			word_2D7B6 = 1;
+			PlaySound(8);
+			_TSIconOnly = true;
+			_StatPlay = 561;
+			break;
+		case 0x452:
+			_StatPlay = 630;
+			_LoopFlag = true;
+			_UserInput = 0;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 540:
+		_NodeNum = 54;
+		DrawLocation();
+		_UserInput = 0;
+		if (!_Wizard) {
+			_Sound = true;
+			_CurrMap = 55;
+		} else {
+			if (!word_2D7B2)
+				word_2D7B2 = 1;
+			else {
+				_Sound = true;
+				word_2D7B2 = 0;
+			}
+			_CurrMap = 112;
+		}
+
+		PlayMovie(132);
+		ShowPic(432);
+		_StatPlay = 541;
+		PlaySound(22);
+		break;
+	case 541:
+		switch(_UserInput) {
+		case 0x404:
+			_StatPlay = 550;
+			_LoopFlag = true;
+			_UserInput = 0;
+			break;
+		case 0x43A:
+			_StatPlay = 542;
+			_Zoom = 2;
+			ProcessMap(54, _Zoom);
+			_UserInput = 0;
+			break;
+		case 0x43E:
+			_Sound = _LastSound;
+			PlayMovie(_PMovie);
+			ShowPic(432);
+			break;
+		case 0x453:
+			_Sound = _LastSound;
+			PlayMovie(131);
+			PlaySound(32);
+			FShowPic(432);
+			// Useless, but present in the original
+			// _CurrMap = 10;
+			_CurrMap = 55;
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
+		break;
+	case 542:
+		ProcessMapInput(54);
+		break;
+	case 550:
+		_NodeNum = 55;
+		DrawLocation();
+		_UserInput = 0;
+		PlayMovie(133);
+		if (word_2D7B4 != 9)
+			word_2D7B4 = 0;
+		_TSIconOnly = true;
+		_CurrMap = 104;
+		_StatPlay = 551;
+		PlaySound(8);
+		break;
+	case 551:
+		switch(_UserInput) {
+		case 0x2F1:
+			_ATimer = 0;
+			DsAll();
+			PlayMovie(134);
+			_StatPlay = 993;
+			_LoopFlag = true;
+			break;
+		case 0x42C:
+			_ATimer = 0;
+			if (word_2D7B4 == 1) {
+				EnAll();
+				PlayMovie(183);
+				FShowPic(433);
+				PlaySound(8);
+				word_2D7B4 = 9;
+				_TSIconOnly = true;
+			}
+			break;
+		case 0x43A:
+			if (word_2D7B4 == 1) {
+				DsAll();
+				PlayMovie(134);
+				_StatPlay = 993;
+				_LoopFlag = true;
+			} else {
+				_StatPlay = 552;
+				_Zoom = 2;
+				ProcessMap(55, _Zoom);
+				_UserInput = 0;
+			}
+			break;
+		case 0x43E:
+			_ATimer = 0;
+			PlayMovie(_PMovie);
+			if (_PMovie == 183)
+				FShowPic(433);
+			break;
+		case 0x452:
+			_ATimer = 0;
+			switch(word_2D7B4) {
+			case 0:
+				DsAll();
+				PlayMovie(69);
+				_TSIconOnly = false;
+				word_2D7B4 = 1;
+				SetATimer();
+				break;
+			case 1:
+				DsAll();
+				PlayMovie(134);
+				_StatPlay = 993;
+				_LoopFlag = true;
+				break;
+			case 9:
+				_StatPlay = 560;
+				_LoopFlag = true;
+				break;
+			}
+			break;
+		default:
+			if (_UserInput)
+				debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _UserInput, _UserInput, _StatPlay);
+			break;
+		}
 		break;
 	case 552:
 		ProcessMapInput(55);
