@@ -681,6 +681,9 @@ Common::String RivenSimpleCommand::describe() const {
 	} else if (_type == kRivenCommandIncrementVariable) { // Use the variable name
 		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
 		desc = Common::String::format("%s += %d", varName.c_str(), _arguments[1]);
+	} else if (_type == kRivenCommandSetVariable) { // Use the variable name
+		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
+		desc = Common::String::format("%s = %d", varName.c_str(), _arguments[1]);
 	} else {
 		desc = Common::String::format("%s(", _opcodes[_type].desc);
 		for (uint16 j = 0; j < _arguments.size(); j++) {
