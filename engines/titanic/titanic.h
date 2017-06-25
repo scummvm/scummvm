@@ -72,6 +72,8 @@ enum TitanicDebugChannels {
 
 #define MAX_SAVES 99
 
+#define SOUND(enName, deName) (g_vm->isGerman() ? deName : enName)
+
 struct TitanicGameDescription;
 class TitanicEngine;
 

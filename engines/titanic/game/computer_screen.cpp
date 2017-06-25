@@ -22,6 +22,7 @@
 
 #include "titanic/game/computer_screen.h"
 #include "titanic/messages/messages.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -75,44 +76,53 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 
 	switch (msg->_actionVal) {
 	case 0:
-		loadSound("a#32.wav");
-		loadSound("a#31.wav");
-		loadSound("a#33.wav");
-		loadSound("a#30.wav");
-		loadSound("a#29.wav");
-		playSound("a#25.wav");
+		if (!g_vm->isGerman()) {
+			loadSound("a#32.wav");
+			loadSound("a#31.wav");
+			loadSound("a#33.wav");
+			loadSound("a#30.wav");
+			loadSound("a#29.wav");
+			playSound("a#25.wav");
+		} else {
+			loadSound("a#27.wav");
+			loadSound("a#26.wav");
+			loadSound("a#28.wav");
+			loadSound("a#25.wav");
+			loadSound("a#24.wav");
+			playSound("a#20.wav");
+		}
 		addTimer(1, 2000, 0);
 		break;
 
 	case 1:
 		playMovie(23, 26, MOVIE_STOP_PREVIOUS);
-		playSound("a#32.wav");
-		playSound("a#31.wav");
+		playSound(SOUND("a#32.wav", "a#27.wav"));
+		playSound(SOUND("a#31.wav", "a#26.wav"));
 		addTimer(2, 2000, 0);
 		break;
 
 	case 2: {
 		CChangeMusicMsg musicMsg(CString(), 1);
 		musicMsg.execute("HomeMusicPlayer");
-		playSound("a#33.wav");
-		playSound("a#31.wav");
+		playSound(SOUND("a#33.wav", "a#28.wav"));
+		playSound(SOUND("a#31.wav", "a#26.wav"));
 		changeView("Home.Node 4.E", "");
 		playClip(51, 150);
-		playSound("a#31.wav");
+		playSound(SOUND("a#31.wav", "a#26.wav"));
 		playClip(151, 200);
 
-		handle = playSound("a#27.wav");
+		handle = playSound(SOUND("a#27.wav", "a#22.wav"));
 		playClip(200, 306);
-		playSound("a#30.wav");
+		playSound(SOUND("a#30.wav", "a#25.wav"));
 		stopSound(handle, 0);
 
 		playClip(306, 338);
-		handle = playSound("a#28.wav");
+		handle = playSound(SOUND("a#28.wav", "a#23.wav"));
 		playClip(338, 392);
-		playSound("a#29.wav");
+		playSound(SOUND("a#29.wav", "a#24.wav"));
 		stopSound(handle);
 
-		handle = playSound("y#662.wav");
+		handle = playSound(SOUND("y#662.wav", "y#0.wav"));
 		setSoundVolume(handle, 10, 2);
 		playClip(392, 450);
 		startTalking("Doorbot", 0x3611A);
