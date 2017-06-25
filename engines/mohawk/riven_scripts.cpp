@@ -462,13 +462,12 @@ void RivenSimpleCommand::stopSound(uint16 op, uint16 argc, uint16 *argv) {
 // Command 13: set mouse cursor (cursor_id)
 void RivenSimpleCommand::changeCursor(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_cursor->setCursor(argv[0]);
-	_vm->_system->updateScreen();
 }
 
 // Command 14: pause script execution (delay in ms, u1)
 void RivenSimpleCommand::delay(uint16 op, uint16 argc, uint16 *argv) {
 	if (argv[0] > 0)
-		_vm->delayAndUpdate(argv[0]);
+		_vm->delay(argv[0]);
 }
 
 // Command 17: call external command
