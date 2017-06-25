@@ -307,6 +307,14 @@ void RivenStack::onKeyPressed(const Common::KeyCode keyCode) {
 	_keyPressed = keyCode;
 }
 
+Common::Point RivenStack::getMousePosition() const {
+	return _mousePosition;
+}
+
+Common::Point RivenStack::getMouseDragStartPosition() const {
+	return _mouseDragStartPosition;
+}
+
 RivenNameList::RivenNameList() {
 
 }

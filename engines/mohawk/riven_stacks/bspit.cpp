@@ -391,11 +391,11 @@ void BSpit::xbisland190_opencard(uint16 argc, uint16 *argv) {
 }
 
 void BSpit::xbisland190_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(41, 9);
+	resetDomeSliders(9);
 }
 
 void BSpit::xbisland190_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(41, 9);
+	dragDomeSlider(9);
 }
 
 void BSpit::xbisland190_slidermw(uint16 argc, uint16 *argv) {

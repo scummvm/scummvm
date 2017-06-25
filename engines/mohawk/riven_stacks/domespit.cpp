@@ -28,8 +28,6 @@
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_video.h"
 
-#include "common/events.h"
-
 namespace Mohawk {
 namespace RivenStacks {
 
@@ -66,7 +64,7 @@ void DomeSpit::runDomeCheck() {
 		_vm->_vars["domecheck"] = 1;
 }
 
-void DomeSpit::resetDomeSliders(uint16 soundId, uint16 startHotspot) {
+void DomeSpit::resetDomeSliders(uint16 startHotspot) {
 	// The rightmost slider should move left until it finds the next slider,
 	// then those two continue until they find the third slider. This continues
 	// until all five sliders have returned their starting slots.
@@ -86,9 +84,9 @@ void DomeSpit::resetDomeSliders(uint16 soundId, uint16 startHotspot) {
 			// If we have at least one found slider, it has now moved
 			// so we should redraw and play a tick sound
 			if (slidersFound) {
-				_vm->_sound->playSound(soundId);
+				_vm->_sound->playCardSound("aBigTic");
 				drawDomeSliders(startHotspot);
-				_vm->_system->delayMillis(100);
+				_vm->delay(20);
 			}
 		}
 	}
@@ -117,83 +115,67 @@ void DomeSpit::checkDomeSliders() {
 
 void DomeSpit::checkSliderCursorChange(uint16 startHotspot) {
 	// Set the cursor based on _sliderState and what hotspot we're over
-	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
-		RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(startHotspot + i);
-		if (hotspot->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
-			if (_sliderState & (1 << (24 - i)))
-				_vm->_cursor->setCursor(kRivenOpenHandCursor);
-			else
-				_vm->_cursor->setCursor(kRivenMainCursor);
-			_vm->_system->updateScreen();
-			break;
-		}
+	int16 sliderSlot = getSliderSlotAtPos(startHotspot, getMousePosition());
+
+	if (sliderSlot >= 0 && isSliderAtSlot(sliderSlot)) {
+		_vm->_cursor->setCursor(kRivenOpenHandCursor);
+	} else {
+		_vm->_cursor->setCursor(kRivenMainCursor);
 	}
 }
 
-void DomeSpit::dragDomeSlider(uint16 soundId, uint16 startHotspot) {
-	int16 foundSlider = -1;
-
+int16 DomeSpit::getSliderSlotAtPos(uint16 startHotspot, const Common::Point &pos) const {
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
 		RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(startHotspot + i);
-		if (hotspot->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
-			// If the slider is not at this hotspot, we can't do anything else
-			if (!(_sliderState & (1 << (24 - i))))
-				return;
-
-			foundSlider = i;
-			break;
+		if (hotspot->containsPoint(pos)) {
+			return i;
 		}
 	}
 
+	return -1;
+}
+
+bool DomeSpit::isSliderAtSlot(int16 slot) const {
+	return _sliderState & (1 << (24 - slot));
+}
+
+void DomeSpit::dragDomeSlider(uint16 startHotspot) {
+	int16 draggedSliderSlot = getSliderSlotAtPos(startHotspot, getMousePosition());
+
 	// We're not over any slider
-	if (foundSlider < 0)
+	if (draggedSliderSlot < 0 || !isSliderAtSlot(draggedSliderSlot)) {
 		return;
+	}
 
 	// We've clicked down, so show the closed hand cursor
 	_vm->_cursor->setCursor(kRivenClosedHandCursor);
-	_vm->_system->updateScreen();
 
-	bool done = false;
-	while (!done) {
-		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					if (foundSlider < 24 && !(_sliderState & (1 << (23 - foundSlider)))) {
-						RivenHotspot *nextHotspot = _vm->getCard()->getHotspotByBlstId(startHotspot + foundSlider + 1);
-						if (nextHotspot->containsPoint(event.mouse)) {
-							// We've moved the slider right one space
-							_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
-							foundSlider++;
-							_sliderState |= 1 << (24 - foundSlider);
+	while (mouseIsDown() && !_vm->shouldQuit()) {
+		int16 hoveredHotspot = getSliderSlotAtPos(startHotspot, getMousePosition());
+		if (hoveredHotspot >= 0) {
+			if (hoveredHotspot > draggedSliderSlot && draggedSliderSlot < 24 && !isSliderAtSlot(draggedSliderSlot + 1)) {
+				// We've moved the slider right one space
+				_sliderState &= ~(_sliderState & (1 << (24 - draggedSliderSlot)));
+				draggedSliderSlot++;
+				_sliderState |= 1 << (24 - draggedSliderSlot);
 
-							// Now play a click sound and redraw
-							_vm->_sound->playSound(soundId);
-							drawDomeSliders(startHotspot);
-						}
-					} else if (foundSlider > 0 && !(_sliderState & (1 << (25 - foundSlider)))) {
-						RivenHotspot *previousHotspot = _vm->getCard()->getHotspotByBlstId(startHotspot + foundSlider - 1);
-						if (previousHotspot->containsPoint(event.mouse)) {
-							// We've moved the slider left one space
-							_sliderState &= ~(_sliderState & (1 << (24 - foundSlider)));
-							foundSlider--;
-							_sliderState |= 1 << (24 - foundSlider);
+				// Now play a click sound and redraw
+				_vm->_sound->playCardSound("aBigTic");
+				drawDomeSliders(startHotspot);
+			}
+			if (hoveredHotspot < draggedSliderSlot && draggedSliderSlot > 0 && !isSliderAtSlot(draggedSliderSlot - 1)) {
+				// We've moved the slider left one space
+				_sliderState &= ~(_sliderState & (1 << (24 - draggedSliderSlot)));
+				draggedSliderSlot--;
+				_sliderState |= 1 << (24 - draggedSliderSlot);
 
-							// Now play a click sound and redraw
-							_vm->_sound->playSound(soundId);
-							drawDomeSliders(startHotspot);
-						}
-					} else
-						_vm->_system->updateScreen(); // A normal update for the cursor
-					break;
-				case Common::EVENT_LBUTTONUP:
-					done = true;
-					break;
-				default:
-					break;
+				// Now play a click sound and redraw
+				_vm->_sound->playCardSound("aBigTic");
+				drawDomeSliders(startHotspot);
 			}
 		}
-		_vm->_system->delayMillis(10);
+
+		_vm->doFrame();
 	}
 
 	// Check to see if we have the right combination

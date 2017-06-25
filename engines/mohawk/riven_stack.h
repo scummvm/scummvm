@@ -127,6 +127,12 @@ public:
 	/** Is the left mouse button currently pressed? */
 	bool mouseIsDown() const;
 
+	/** Get the current mouse position */
+	Common::Point getMousePosition() const;
+
+	/** Get the mouse position when dragging started */
+	Common::Point getMouseDragStartPosition() const;
+
 	/** Force the left mouse button to be considered unpressed until the next mouse click */
 	void mouseForceUp();
 

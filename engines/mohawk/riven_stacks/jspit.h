@@ -94,7 +94,7 @@ private:
 	int jspitElevatorLoop();
 	void redrawWharkNumberPuzzle(uint16 overlay, uint16 number);
 
-	void sunnersPlayVideo(RivenVideo *video, uint32 destCardGlobalId);
+	void sunnersPlayVideo(RivenVideo *video, uint32 destCardGlobalId, bool sunnersShouldFlee);
 };
 
 } // End of namespace RivenStacks
