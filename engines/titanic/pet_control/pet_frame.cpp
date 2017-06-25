@@ -56,7 +56,7 @@ bool CPetFrame::reset() {
 			_modeButtons[idx].reset(resName, _petControl, MODE_SELECTED);
 		}
 
-		for (uint idx = 0; idx < 7; ++idx) {
+		for (uint idx = 0; idx < ARRAYSIZE(_titles); ++idx) {
 			CString resName = Common::String::format("3Pettitle%d", idx + 1);
 			_titles[idx].setup(MODE_UNSELECTED, resName, _petControl);
 		}
@@ -130,10 +130,11 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 		}
 		_modeButtons[PET_CONVERSATION].setMode(MODE_SELECTED);
 
-		const int XLIST[] = { 73, 54, 85, 109, 38, 71 };
-		for (int idx = 0; idx < 6; ++idx) {
+		const int XLIST_EN[] = { 73, 54, 85, 109, 38, 71 };
+		for (uint idx = 0; idx < _petAreas.size(); ++idx) {
 			_titles[idx].setBounds(Rect(0, 0, 110, 11));
-			_titles[idx].translate(600 - XLIST[idx], 471);
+			_titles[idx].translate(g_vm->isGerman() ? 608 - 107 :
+				608 - XLIST_EN[idx], 471);
 		}
 	}
 
