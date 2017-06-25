@@ -152,7 +152,7 @@ public:
 	bool _activatedPLST;
 	bool _activatedSLST;
 	void runLoadDialog();
-	void delayAndUpdate(uint32 ms);
+	void delay(uint32 ms);
 
 	// Timer
 	void installTimer(TimerProc *proc, uint32 time);

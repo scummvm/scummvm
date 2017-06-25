@@ -447,21 +447,11 @@ Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, ui
 	return _extrasFile->getResource(tag, id);
 }
 
-void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
+void MohawkEngine_Riven::delay(uint32 ms) {
 	uint32 startTime = _system->getMillis();
 
 	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
-		_sound->updateSLST();
-		_stack->onFrame();
-		_video->updateMovies();
-
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event))
-			;
-
-		_system->updateScreen();
-
-		_system->delayMillis(10); // Ease off the CPU
+		doFrame();
 	}
 }
 
