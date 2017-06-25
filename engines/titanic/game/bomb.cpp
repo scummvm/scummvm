@@ -158,7 +158,7 @@ bool CBomb::StatusChangeMsg(CStatusChangeMsg *msg) {
 			break;
 		}
 
-		_soundHandle = queueSound(name, _soundHandle, _volume);
+		_soundHandle = queueSound(name, _soundHandle, _volume, Audio::Mixer::kSpeechSoundType);
 	}
 
 	return true;
@@ -174,7 +174,6 @@ bool CBomb::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 	if (_active) {
 		stopSound(_soundHandle);
-		//stopSound(_unusedHandle);
 
 		if (_numCorrectWheels < CORRECT_WHEELS) {
 			_tappedCtr = MIN(_tappedCtr + 1, 23);
@@ -201,7 +200,7 @@ bool CBomb::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 				break;
 			}
 
-			_soundHandle = queueSound(name, _soundHandle, _volume);
+			_soundHandle = queueSound(name, _soundHandle, _volume, Audio::Mixer::kSpeechSoundType);
 			_countdown = 999;
 		}
 	} else {
@@ -258,7 +257,7 @@ bool CBomb::ActMsg(CActMsg *msg) {
 			break;
 		}
 
-		_soundHandle = queueSound(name, _soundHandle, _volume);
+		_soundHandle = queueSound(name, _soundHandle, _volume, Audio::Mixer::kSpeechSoundType);
 		_countdown = 999;
 	}
 
@@ -267,7 +266,8 @@ bool CBomb::ActMsg(CActMsg *msg) {
 
 bool CBomb::TurnOn(CTurnOn *msg) {
 	if (!_active) {
-		_soundHandle = playSound("z#389.wav", _volume);
+		CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+		_soundHandle = playSound("z#389.wav", prox);
 		_active = true;
 
 		// WORKAROUND: Only reset the code wheels back to 'O' value
@@ -295,8 +295,9 @@ bool CBomb::TurnOn(CTurnOn *msg) {
 
 bool CBomb::TimerMsg(CTimerMsg *msg) {
 	if (msg->_action == "Disarmed") {
+		CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
 		stopSound(_soundHandle);
-		playSound("z#364.wav", _volume);
+		playSound("z#364.wav", prox);
 
 		CActMsg actMsg1("Disarm Bomb");
 		actMsg1.execute("EndExplodeShip");
@@ -330,8 +331,9 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 
 					if (_countdown >= 100) {
 						// Play "x hundred and" or just "x hundred"
+						CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
 						CString hName = remainder ? HUNDREDS_AND_WAVS[hundreds] : HUNDREDS_WAVS[hundreds];
-						_soundHandle = playSound(hName, _volume);
+						_soundHandle = playSound(hName, prox);
 					}
 
 					CString ctrName = COUNTDOWN_WAVS[remainder];
@@ -342,9 +344,10 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 
 					// Play the sub-hundred portion of the countdown amount
 					if (_soundHandle > 0) {
-						_soundHandle = queueSound(ctrName, _soundHandle, _volume);
+						_soundHandle = queueSound(ctrName, _soundHandle, _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 					} else {
-						_soundHandle = playSound(ctrName, _volume);
+						CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+						_soundHandle = playSound(ctrName, prox);
 					}
 
 					// Reduce countdown and schedule another timer
@@ -352,7 +355,7 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 					addTimer(0, 1000, 0);
 				}
 			} else {
-				// Bomb speech currently active, so schedule the method'
+				// Bomb speech currently active, so schedule the method
 				// to re-trigger after 100ms to check if speech is finished
 				addTimer(0, 100, 0);
 			}

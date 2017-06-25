@@ -61,6 +61,7 @@ public:
 	Audio::Mixer::SoundType _soundType;
 public:
 	CProximity();
+	CProximity(Audio::Mixer::SoundType soundType, int volume = 100);
 };
 
 } // End of namespace Titanic
