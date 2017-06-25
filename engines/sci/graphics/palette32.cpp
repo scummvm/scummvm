@@ -415,12 +415,19 @@ int16 GfxPalette32::matchColor(const uint8 r, const uint8 g, const uint8 b) {
 }
 
 void GfxPalette32::submit(const Palette &palette) {
-	const Palette oldSourcePalette(_sourcePalette);
-	mergePalette(_sourcePalette, palette);
+	// If `_needsUpdate` is already set, there is no need to test whether
+	// this palette submission causes a change to `_sourcePalette` since it is
+	// going to be updated already anyway
+	if (_needsUpdate) {
+		mergePalette(_sourcePalette, palette);
+	} else {
+		const Palette oldSourcePalette(_sourcePalette);
+		mergePalette(_sourcePalette, palette);
 
-	if (!_needsUpdate && _sourcePalette != oldSourcePalette) {
-		++_version;
-		_needsUpdate = true;
+		if (_sourcePalette != oldSourcePalette) {
+			++_version;
+			_needsUpdate = true;
+		}
 	}
 }
 
@@ -429,15 +436,7 @@ void GfxPalette32::submit(const HunkPalette &hunkPalette) {
 		return;
 	}
 
-	const Palette oldSourcePalette(_sourcePalette);
-	const Palette palette = hunkPalette.toPalette();
-	mergePalette(_sourcePalette, palette);
-
-	if (!_needsUpdate && oldSourcePalette != _sourcePalette) {
-		++_version;
-		_needsUpdate = true;
-	}
-
+	submit(hunkPalette.toPalette());
 	hunkPalette.setVersion(_version);
 }
 
