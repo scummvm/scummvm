@@ -211,11 +211,11 @@ void GSpit::xgisland25_opencard(uint16 argc, uint16 *argv) {
 }
 
 void GSpit::xgisland25_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(16, 11);
+	resetDomeSliders(11);
 }
 
 void GSpit::xgisland25_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(16, 11);
+	dragDomeSlider(11);
 }
 
 void GSpit::xgisland25_slidermw(uint16 argc, uint16 *argv) {

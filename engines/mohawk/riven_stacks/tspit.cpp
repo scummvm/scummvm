@@ -429,11 +429,11 @@ void TSpit::xtisland5056_opencard(uint16 argc, uint16 *argv) {
 }
 
 void TSpit::xtisland5056_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(37, 24);
+	resetDomeSliders(24);
 }
 
 void TSpit::xtisland5056_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(37, 24);
+	dragDomeSlider(24);
 }
 
 void TSpit::xtisland5056_slidermw(uint16 argc, uint16 *argv) {

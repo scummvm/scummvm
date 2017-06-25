@@ -38,11 +38,13 @@ public:
 protected:
 	void runDomeCheck();
 	void runDomeButtonMovie();
-	void resetDomeSliders(uint16 soundId, uint16 startHotspot);
+	void resetDomeSliders(uint16 startHotspot);
 	void checkDomeSliders();
 	void checkSliderCursorChange(uint16 startHotspot);
-	void dragDomeSlider(uint16 soundId, uint16 startHotspot);
+	void dragDomeSlider(uint16 startHotspot);
 	void drawDomeSliders(uint16 startHotspot);
+	int16 getSliderSlotAtPos(uint16 startHotspot, const Common::Point &pos) const;
+	bool isSliderAtSlot(int16 slot) const;
 	Common::String buildCardResourceName(const Common::String &name) const;
 
 	uint32 _sliderState;

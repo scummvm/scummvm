@@ -116,11 +116,11 @@ void PSpit::xpisland25_opencard(uint16 argc, uint16 *argv) {
 }
 
 void PSpit::xpisland25_resetsliders(uint16 argc, uint16 *argv) {
-	resetDomeSliders(10, 14);
+	resetDomeSliders(14);
 }
 
 void PSpit::xpisland25_slidermd(uint16 argc, uint16 *argv) {
-	dragDomeSlider(10, 14);
+	dragDomeSlider(14);
 }
 
 void PSpit::xpisland25_slidermw(uint16 argc, uint16 *argv) {
