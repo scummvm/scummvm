@@ -429,7 +429,6 @@ void RivenCard::updateMouseCursor() {
 	}
 
 	_vm->_cursor->setCursor(cursor);
-	_vm->_system->updateScreen();
 }
 
 void RivenCard::leave() {
