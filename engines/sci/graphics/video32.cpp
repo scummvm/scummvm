@@ -866,7 +866,6 @@ void VMDPlayer::renderFrame() const {
 	const bool dirtyPalette = _decoder->hasDirtyPalette();
 	if (dirtyPalette && !_ignorePalettes) {
 		Palette palette;
-		palette.timestamp = g_sci->getTickCount();
 		for (uint16 i = 0; i < _startColor; ++i) {
 			palette.colors[i].used = false;
 		}
