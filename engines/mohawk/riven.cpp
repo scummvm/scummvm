@@ -517,10 +517,6 @@ bool MohawkEngine_Riven::isZipVisitedCard(const Common::String &hotspotName) con
 }
 
 bool MohawkEngine_Riven::canLoadGameStateCurrently() {
-	return !(getFeatures() & GF_DEMO);
-}
-
-bool MohawkEngine_Riven::canSaveGameStateCurrently() {
 	if (getFeatures() & GF_DEMO) {
 		return false;
 	}
@@ -530,6 +526,10 @@ bool MohawkEngine_Riven::canSaveGameStateCurrently() {
 	}
 
 	return true;
+}
+
+bool MohawkEngine_Riven::canSaveGameStateCurrently() {
+	return canLoadGameStateCurrently();
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {
