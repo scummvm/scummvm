@@ -276,7 +276,7 @@ namespace Kingdom {
 		void SaveAS();
 		void RestoreAS();
 		void DrawHelpScreen();
-		void DrawRect(int v1, int v2, int v3, int v4, int v5);
+		void DrawRect(uint v1, uint v2, uint v3, uint v4, int v5);
 		void DrawInventory();
 		void GameHelp_Sub43C();
 		void SaveGame();
