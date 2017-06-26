@@ -532,7 +532,75 @@ void KingdomGame::DrawRect(uint minX, uint minY, uint maxX, uint maxY, int color
 }
 
 void KingdomGame::DrawInventory() {
-	debug("STUB: DrawInventory");
+	FShowPic(108);
+	if (word_2D77E == 1 || word_2D7CC == 1 || _ItemInhibit)
+		return;
+
+	if (_Inventory[0] > 0)
+		DrawIcon(136, 102, 180);
+
+	if (_Inventory[1] > 0)
+		DrawIcon(73, 65, 175);
+
+	if (_Inventory[2] > 0)
+		DrawIcon(171, 96, 179);
+
+	if (_Inventory[3] > 0)
+		DrawIcon(120, 34, 174);
+
+	if (_Inventory[4] > 0)
+		DrawIcon(160, 41, 177);
+
+	if (_Inventory[5] > 0)
+		DrawIcon(21, 124, 184);
+
+	if (_Inventory[6] > 0)
+		DrawIcon(201, 42, 178);
+
+	if (_Inventory[7] > 0)
+		DrawIcon(76, 119, 186);
+
+	if (_Inventory[8] > 0)
+		DrawIcon(18, 31, 170);
+
+	if (_Inventory[9] > 0)
+		DrawIcon(57, 88, 185);
+
+	if (_Inventory[10] > 0)
+		DrawIcon(182, 124, 181);
+
+	if (_Inventory[11] > 0)
+		DrawIcon(176, 26, 183);
+
+	if (_Inventory[12] > 0)
+		DrawIcon(54, 23, 171);
+
+	if (_Inventory[13] > 0)
+		DrawIcon(120, 133, 182);
+
+	if (_Inventory[14] > 0)
+		DrawIcon(94, 92, 187);
+
+	if (_Inventory[15] > 0)
+		DrawIcon(135, 67, 176);
+
+	if (_Inventory[16] > 0)
+		DrawIcon(84, 30, 173);
+
+	if (_Inventory[17] > 0)
+		DrawIcon(20, 78, 172);
+
+	if (_Inventory[0] > 0)
+		DrawIcon(158, 117, 134 + _Inventory[0]);
+
+	if (_Inventory[1] > 0)
+		DrawIcon(94, 67, 134 + _Inventory[1]);
+
+	if (_Inventory[2] > 0)
+		DrawIcon(193, 105, 134 + _Inventory[2]);
+
+	if (_Inventory[3] > 0)
+		DrawIcon(131, 39, 134 + _Inventory[3]);
 }
 
 void KingdomGame::SaveGame() {
