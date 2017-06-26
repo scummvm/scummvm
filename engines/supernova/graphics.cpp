@@ -28,6 +28,7 @@
 #include "graphics/surface.h"
 
 #include "graphics.h"
+#include "msn_def.h"
 
 namespace Supernova {
 
@@ -152,14 +153,14 @@ bool MSNImageDecoder::loadSection(int section) {
 		_surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
 		byte *surfacePixels = static_cast<byte *>(_surface->getPixels());
 		for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
-			*surfacePixels++ = (_encodedImage[i] & 0x80) ? 11 : 0;
-			*surfacePixels++ = (_encodedImage[i] & 0x40) ? 11 : 0;
-			*surfacePixels++ = (_encodedImage[i] & 0x20) ? 11 : 0;
-			*surfacePixels++ = (_encodedImage[i] & 0x10) ? 11 : 0;
-			*surfacePixels++ = (_encodedImage[i] & 0x08) ? 11 : 0;
-			*surfacePixels++ = (_encodedImage[i] & 0x04) ? 11 : 0;
-			*surfacePixels++ = (_encodedImage[i] & 0x02) ? 11 : 0;
-			*surfacePixels++ = (_encodedImage[i] & 0x01) ? 11 : 0;
+			*surfacePixels++ = (_encodedImage[i] & 0x80) ? kColorWhite63 : kColorBlack;
+			*surfacePixels++ = (_encodedImage[i] & 0x40) ? kColorWhite63 : kColorBlack;
+			*surfacePixels++ = (_encodedImage[i] & 0x20) ? kColorWhite63 : kColorBlack;
+			*surfacePixels++ = (_encodedImage[i] & 0x10) ? kColorWhite63 : kColorBlack;
+			*surfacePixels++ = (_encodedImage[i] & 0x08) ? kColorWhite63 : kColorBlack;
+			*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite63 : kColorBlack;
+			*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite63 : kColorBlack;
+			*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite63 : kColorBlack;
 		}
 	} else {
 		_pitch = 320;
