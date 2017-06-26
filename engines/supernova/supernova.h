@@ -80,6 +80,8 @@ public:
 	Console *_console;
 	Audio::SoundHandle _soundHandle;
 	ScreenBufferStack _screenBuffer;
+	byte _mouseNormal[256];
+	byte _mouseWait[256];
 	MSNImageDecoder _images[44];
 	MSNImageDecoder *_currentImage;
 	struct SoundSample {

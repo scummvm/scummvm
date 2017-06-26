@@ -95,6 +95,7 @@ const int kColorLightBlue   = 12;
 const int kColorLightGreen  = 13;
 const int kColorLightYellow = 14;
 const int kColorLightRed    = 15;
+const int kColorCursorTransparent = kColorWhite25;
 
 #define HGR_BEF      kColorWhite25
 #define COL_BEF      kColorDarkGreen
