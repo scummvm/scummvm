@@ -333,9 +333,6 @@ void RivenGraphics::updateScreen(const Common::Rect &updateRect) {
 			_effectScreen->copyRectToSurface(*_mainScreen, updateRect.left, updateRect.top, updateRect);
 			_vm->_system->copyRectToScreen(_effectScreen->getBasePtr(updateRect.left, updateRect.top), _effectScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
 
-			// Finally, update the screen.
-			_vm->_system->updateScreen();
-
 			_scheduledTransition = kRivenTransitionNone;
 		} else {
 			runScheduledTransition();
