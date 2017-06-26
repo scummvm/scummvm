@@ -267,7 +267,7 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool full
 		if (_screenWidth != 640) {
 			_screenWidth = 640;
 			_screenHeight = 480;
-			initGraphics(_screenWidth, _screenHeight, false);
+			initGraphics(_screenWidth, _screenHeight, true);
 		}
 	} else {
 		if (_screenWidth != 320) {
