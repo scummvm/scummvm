@@ -1679,6 +1679,34 @@ void KingdomGame::GPLogic3() {
 }
 
 void KingdomGame::EndCredits() {
-	debug("STUB: EndCredits");
+	_NodeNum = 0;
+	_BTimer = 190;
+	ReadMouse();
+
+	while(_BTimer != 0 && _MouseButton == 0) {
+		RefreshSound();
+		CheckMainScreen();
+		ReadMouse();
+	}
+
+	FadeToBlack1();
+	DrawRect(4, 17, 228, 161, 0);
+	PlaySound(0);
+	DsAll();
+	_IconsClosed = true;
+	PlayMovie(199);
+	DsAll();
+	PlayMovie(205);
+	DsAll();
+	FadeToBlack1();
+	DrawRect(4, 17, 228, 161, 0);
+	PlayMovie(201);
+	FShowPic(125);
+	_CurrMap = 3;
+	DsAll();
+	_Pouch = false;
+	memset(_Inventory, 0xFF, 19);
+	_StatPlay = 994;
+	_LoopFlag = true;
 }
 } // NameSpace
