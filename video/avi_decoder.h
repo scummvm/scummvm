@@ -229,9 +229,19 @@ protected:
 		 * Returns true if at the end of the video track
 		 */
 		virtual bool endOfTrack() const;
-	protected:
+
+		/**
+		 * Get track frame rate
+		 */
 		Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
+		/**
+		 * Force sets a new frame rate
+		 */
+		void setFrameRate(const Common::Rational &r) {
+			_vidsHeader.rate = r.getNumerator();
+			_vidsHeader.scale = r.getDenominator();
+		}
 	private:
 		AVIStreamHeader _vidsHeader;
 		BitmapInfoHeader _bmInfo;

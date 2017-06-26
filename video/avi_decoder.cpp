@@ -717,10 +717,6 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 
 	// Update any secondary video track for transparencies
 	if (_videoTracks.size() == 2) {
-		// Set it's frame number
-		AVIVideoTrack *videoTrack2 = static_cast<AVIVideoTrack *>(_videoTracks.back().track);
-		videoTrack2->setCurFrame((int)frame - 1);
-
 		// Find the index entry for the frame
 		int indexFrame = frame;
 		OldIndex *entry = nullptr;
@@ -728,6 +724,10 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 			entry = _indexEntries.find(_videoTracks.back().index, indexFrame);
 		} while (!entry && indexFrame-- > 0);
 		assert(entry);
+
+		// Set it's frame number
+		AVIVideoTrack *videoTrack2 = static_cast<AVIVideoTrack *>(_videoTracks.back().track);
+		videoTrack2->setCurFrame(indexFrame - 1);
 
 		// Read in the frame
 		Common::SeekableReadStream *chunk = nullptr;
@@ -746,6 +746,9 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 				handleNextPacket(status);
 			}
 		}
+
+		videoTrack2->setCurFrame((int)frame - 1);
+		videoTrack2->setFrameRate(videoTrack->getFrameRate());
 	}
 
 	// Set the video track's frame
