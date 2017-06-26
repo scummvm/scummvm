@@ -52,6 +52,7 @@ bool CLongStick::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	} else if (msg->_other->isEquals("Bomb")) {
 		CActMsg actMsg("Hit");
 		actMsg.execute("Bomb");
+		petAddToInventory();
 	} else {
 		return CCarry::UseWithOtherMsg(msg);
 	}
