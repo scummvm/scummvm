@@ -129,6 +129,8 @@ Common::Error SupernovaEngine::run() {
 	initPalette();
 	paletteFadeIn();
 
+	CursorMan.replaceCursor(_mouseWait, 16, 16, 0, 0, kColorCursorTransparent);
+	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
 	CursorMan.showMouse(true);
 
 	while (_gameRunning) {
@@ -210,6 +212,23 @@ void SupernovaEngine::initData() {
 		file.seek(audioInfo[i]._offsetStart);
 		file.read(_soundSamples[i]._buffer, _soundSamples[i]._length);
 		file.close();
+	}
+
+	// Cursor
+	const uint16 *bufferNormal = reinterpret_cast<const uint16 *>(mouseNormal);
+	const uint16 *bufferWait = reinterpret_cast<const uint16 *>(mouseWait);
+	for (uint i = 0; i < sizeof(mouseNormal) / 4; ++i) {
+		for (uint bit = 0; bit < 16; ++bit) {
+			uint mask = 0x8000 >> bit;
+			uint bitIndex = i * 16 + bit;
+
+			_mouseNormal[bitIndex] = (bufferNormal[i] & mask) ? kColorCursorTransparent : kColorBlack;
+			if (bufferNormal[i + 16] & mask)
+				_mouseNormal[bitIndex] = kColorLightRed;
+			_mouseWait[bitIndex] = (bufferWait[i] & mask) ? kColorCursorTransparent : kColorBlack;
+			if (bufferWait[i + 16] & mask)
+				_mouseWait[bitIndex] = kColorLightRed;
+		}
 	}
 }
 
