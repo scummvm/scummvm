@@ -519,8 +519,16 @@ void KingdomGame::DrawHelpScreen() {
 	ShowPic(picNum);
 }
 
-void KingdomGame::DrawRect(int v1, int v2, int v3, int v4, int v5) {
-	debug("STUB: DrawRect)");
+void KingdomGame::DrawRect(uint minX, uint minY, uint maxX, uint maxY, int color) {
+	::Graphics::Surface *screen = g_system->lockScreen();
+	for (uint curX = minX; curX < maxX; curX++) {
+		for (uint curY = minY; curY < maxY; curY++) {
+			byte *dst = (byte *)screen->getBasePtr(curX, curY);
+			*dst = color;
+		}
+	}
+	g_system->unlockScreen();
+	g_system->updateScreen();
 }
 
 void KingdomGame::DrawInventory() {
@@ -651,7 +659,43 @@ void KingdomGame::ProcessMap(int mapNum, int zoom) {
 }
 
 void KingdomGame::ProcessMapInput(int mapNum) {
-	debug("STUB: ProcessMapInput");
+	switch(_UserInput) {
+	case 0x43B:
+	case 0x443:
+		SwitchMtoA();
+		_MapStat = 0;
+		_StatPlay--;
+		break;
+	case 0x43F:
+		if (_TreeLeftSta == 3) {
+			_Zoom--;
+			ProcessMap(mapNum, _Zoom);
+		} else
+			_UserInput = 0;
+		break;
+	case 0x440:
+		if (_TreeRightSta == 2) {
+			_Zoom++;
+			ProcessMap(mapNum, _Zoom);
+		} else
+			_UserInput = 0;
+		break;
+	default:
+		if (_UserInput > 0x3FF && _UserInput < 0x428) {
+			_StatPlay = _MapExit[_UserInput - 0x400];
+			_MapEx = true;
+			_LoopFlag = true;
+			SwitchAS();
+		}
+
+		if (_UserInput > 0x440) {
+			SwitchMtoA();
+			_MapStat = false;
+			_StatPlay--;
+			_LoopFlag = true;
+		}
+		break;
+	}
 }
 
 void KingdomGame::InventoryDel(int item) {
