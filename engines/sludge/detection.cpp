@@ -49,6 +49,7 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "welcome", "Welcome Example" },
 	{ "welcomeloop", "Welcome Loop Test" },
 	{ "verbcoin", "Verb Coin" },
+	{ "robinsrescue", "Robin's Rescue" },
 	{ 0, 0 }
 };
 
