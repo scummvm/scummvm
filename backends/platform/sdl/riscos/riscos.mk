@@ -8,6 +8,9 @@ riscosdist: $(EXECUTABLE)
 	cp ${srcdir}/dists/riscos/!Sprites11,ff9 !ScummVM/!Sprites11,ff9
 	mkdir -p !ScummVM/data
 	cp $(DIST_FILES_THEMES) !ScummVM/data/
+ifdef DIST_FILES_NETWORKING
+	cp $(DIST_FILES_NETWORKING) !ScummVM/data/
+endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) !ScummVM/data/
 endif
