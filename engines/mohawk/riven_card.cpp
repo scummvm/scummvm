@@ -232,6 +232,10 @@ SLSTRecord RivenCard::getSound(uint16 index) const {
 	error("Could not find sound %d in card %d", index, _id);
 }
 
+void RivenCard::overrideSound(uint16 index, uint16 withIndex) {
+	_soundList[index].soundIds = _soundList[withIndex].soundIds;
+}
+
 void RivenCard::loadHotspots(uint16 id) {
 	Common::SeekableReadStream *inStream = _vm->getResource(ID_HSPT, id);
 

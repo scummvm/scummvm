@@ -80,6 +80,8 @@ public:
 	/** Get the card's sound description with the specified index */
 	SLSTRecord getSound(uint16 index) const;
 
+	void overrideSound(uint16 index, uint16 withIndex);
+
 	/** Play the card's movie with the specified index */
 	void playMovie(uint16 index, bool queue = false);
 
