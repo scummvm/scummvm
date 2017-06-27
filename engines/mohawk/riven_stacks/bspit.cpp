@@ -36,25 +36,25 @@ namespace RivenStacks {
 BSpit::BSpit(MohawkEngine_Riven *vm) :
 		DomeSpit(vm, kStackBspit, "bSliders.190", "bSliderBG.190") {
 
-//	REGISTER_COMMAND(BSpit, xblabopenbook);
-//	REGISTER_COMMAND(BSpit, xblabbookprevpage);
-//	REGISTER_COMMAND(BSpit, xblabbooknextpage);
-//	REGISTER_COMMAND(BSpit, xsoundplug);
-//	REGISTER_COMMAND(BSpit, xbchangeboiler);
-//	REGISTER_COMMAND(BSpit, xbupdateboiler);
-//	REGISTER_COMMAND(BSpit, xbsettrap);
-//	REGISTER_COMMAND(BSpit, xbcheckcatch);
-//	REGISTER_COMMAND(BSpit, xbait);
-//	REGISTER_COMMAND(BSpit, xbfreeytram);
-//	REGISTER_COMMAND(BSpit, xbaitplate);
-//	REGISTER_COMMAND(BSpit, xbisland190_opencard);
-//	REGISTER_COMMAND(BSpit, xbisland190_resetsliders);
-//	REGISTER_COMMAND(BSpit, xbisland190_slidermd);
-//	REGISTER_COMMAND(BSpit, xbisland190_slidermw);
-//	REGISTER_COMMAND(BSpit, xbscpbtn);
-//	REGISTER_COMMAND(BSpit, xbisland_domecheck);
-//	REGISTER_COMMAND(BSpit, xvalvecontrol);
-//	REGISTER_COMMAND(BSpit, xbchipper);
+	REGISTER_COMMAND(BSpit, xblabopenbook);
+	REGISTER_COMMAND(BSpit, xblabbookprevpage);
+	REGISTER_COMMAND(BSpit, xblabbooknextpage);
+	REGISTER_COMMAND(BSpit, xsoundplug);
+	REGISTER_COMMAND(BSpit, xbchangeboiler);
+	REGISTER_COMMAND(BSpit, xbupdateboiler);
+	REGISTER_COMMAND(BSpit, xbsettrap);
+	REGISTER_COMMAND(BSpit, xbcheckcatch);
+	REGISTER_COMMAND(BSpit, xbait);
+	REGISTER_COMMAND(BSpit, xbfreeytram);
+	REGISTER_COMMAND(BSpit, xbaitplate);
+	REGISTER_COMMAND(BSpit, xbisland190_opencard);
+	REGISTER_COMMAND(BSpit, xbisland190_resetsliders);
+	REGISTER_COMMAND(BSpit, xbisland190_slidermd);
+	REGISTER_COMMAND(BSpit, xbisland190_slidermw);
+	REGISTER_COMMAND(BSpit, xbscpbtn);
+	REGISTER_COMMAND(BSpit, xbisland_domecheck);
+	REGISTER_COMMAND(BSpit, xvalvecontrol);
+	REGISTER_COMMAND(BSpit, xbchipper);
 }
 
 void BSpit::xblabopenbook(uint16 argc, uint16 *argv) {
@@ -65,17 +65,22 @@ void BSpit::xblabopenbook(uint16 argc, uint16 *argv) {
 	_vm->getCard()->drawPicture(page);
 
 	if (page == 14) {
-		// Draw the dome combination
-		// The images for the numbers are tBMP's 364 through 368
-		// The start point is at (240, 82)
-		uint32 domeCombo = _vm->_vars["adomecombo"];
-		static const uint16 kNumberWidth = 32;
-		static const uint16 kNumberHeight = 24;
-		static const uint16 kDstX = 240;
-		static const uint16 kDstY = 82;
-		byte numCount = 0;
+		labBookDrawDomeCombination();
+	}
+}
 
-		for (int bitPos = 24; bitPos >= 0; bitPos--) {
+void BSpit::labBookDrawDomeCombination() const {
+	// Draw the dome combination
+	// The images for the numbers are tBMP's 364 through 368
+	// The start point is at (240, 82)
+	uint32 domeCombo = _vm->_vars["adomecombo"];
+	static const uint16 kNumberWidth = 32;
+	static const uint16 kNumberHeight = 24;
+	static const uint16 kDstX = 240;
+	static const uint16 kDstY = 82;
+	byte numCount = 0;
+
+	for (int bitPos = 24; bitPos >= 0; bitPos--) {
 			if (domeCombo & (1 << bitPos)) {
 				uint16 offset = (24 - bitPos) * kNumberWidth;
 				Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
@@ -85,51 +90,102 @@ void BSpit::xblabopenbook(uint16 argc, uint16 *argv) {
 			}
 		}
 
-		assert(numCount == 5); // Sanity check
-	}
+	assert(numCount == 5); // Sanity check
 }
 
 void BSpit::xblabbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["blabpage"];
 
-	// Decrement the page if it's not the first page
-	if (page == 1)
-		return;
-	page--;
+	// Keep turning pages while the mouse is pressed
+	bool firstPageTurn = true;
+	while (mouseIsDown() || firstPageTurn) {
+		// Check for the first page
+		if (page == 1)
+			return;
 
-	// Play the page turning sound
-	_vm->_sound->playSound(22);
+		if (!pageTurn(kRivenTransitionWipeRight)) {
+			return;
+		}
 
-	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(kRivenTransitionWipeRight);
-	_vm->getCard()->drawPicture(page);
+		// Update the page number
+		page--;
+		firstPageTurn = false;
+
+		_vm->getCard()->drawPicture(page);
+
+		if (page == 14) {
+			labBookDrawDomeCombination();
+		}
+
+		_vm->doFrame();
+	}
 }
 
 void BSpit::xblabbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["blabpage"];
 
-	// Increment the page if it's not the last page
-	if (page == 22)
-		return;
-	page++;
+	// Keep turning pages while the mouse is pressed
+	bool firstPageTurn = true;
+	while ((mouseIsDown() || firstPageTurn) && !_vm->shouldQuit()) {
+		// Check for the last page
+		if (page == 22)
+			return;
+
+		if (!pageTurn(kRivenTransitionWipeLeft)) {
+			return;
+		}
+
+		// Update the page number
+		page++;
+		firstPageTurn = false;
+
+		_vm->getCard()->drawPicture(page);
+
+		if (page == 14) {
+			labBookDrawDomeCombination();
+		}
+
+		_vm->doFrame();
+	}
+}
+
+bool BSpit::pageTurn(RivenTransition transition) {
+	// Wait until the previous page turn sound completes
+	while (_vm->_sound->isEffectPlaying() && !_vm->shouldQuit()) {
+		if (!mouseIsDown()) {
+			return false;
+		}
+
+		_vm->doFrame();
+	}
 
 	// Play the page turning sound
-	_vm->_sound->playSound(23);
+	const char *soundName = nullptr;
+	if (_vm->_rnd->getRandomBit())
+		soundName = "aPage1";
+	else
+		soundName = "aPage2";
+
+	_vm->_sound->playCardSound(soundName, 51, true);
 
 	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(kRivenTransitionWipeLeft);
-	_vm->getCard()->drawPicture(page);
+	_vm->_gfx->scheduleTransition(transition);
+
+	return true;
 }
 
 void BSpit::xsoundplug(uint16 argc, uint16 *argv) {
-	if (_vm->_vars["bheat"] != 0)
-		_vm->getCard()->playSound(1);
-	else if (_vm->_vars["bcratergg"] != 0)
-		_vm->getCard()->playSound(2);
-	else
-		_vm->getCard()->playSound(3);
+	if (_vm->_vars["bcratergg"] == 0) {
+		if (_vm->_vars["bblrwtr"] == 0) {
+			_vm->getCard()->overrideSound(0, 2);
+		} else {
+			_vm->getCard()->overrideSound(0, 3);
+		}
+	} else {
+		_vm->getCard()->overrideSound(0, 1);
+	}
 }
 
 void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
@@ -151,12 +207,12 @@ void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
 			if (platform == 1)
 				_vm->getCard()->playMovie(22);
 			else
-			_vm->getCard()->playMovie(19);
+				_vm->getCard()->playMovie(19);
 		} else {
 			if (platform == 1)
 				_vm->getCard()->playMovie(16);
 			else
-			_vm->getCard()->playMovie(13);
+				_vm->getCard()->playMovie(13);
 		}
 	} else if (argv[0] == 2 && water != 0) {
 		if (heat == 1) {
@@ -164,13 +220,13 @@ void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
 			if (platform == 1)
 				_vm->getCard()->playMovie(23);
 			else
-			_vm->getCard()->playMovie(20);
+				_vm->getCard()->playMovie(20);
 		} else {
 			// Turning off the heat
 			if (platform == 1)
 				_vm->getCard()->playMovie(18);
 			else
-			_vm->getCard()->playMovie(15);
+				_vm->getCard()->playMovie(15);
 		}
 	} else if (argv[0] == 3) {
 		if (platform == 1) {
@@ -179,18 +235,20 @@ void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
 				if (heat == 1)
 					_vm->getCard()->playMovie(24);
 				else
-				_vm->getCard()->playMovie(17);
-			} else
+					_vm->getCard()->playMovie(17);
+			} else {
 				_vm->getCard()->playMovie(11);
+			}
 		} else {
 			// Raising the platform
 			if (water == 1) {
 				if (heat == 1)
 					_vm->getCard()->playMovie(21);
 				else
-				_vm->getCard()->playMovie(14);
-			} else
+					_vm->getCard()->playMovie(14);
+			} else {
 				_vm->getCard()->playMovie(9);
+			}
 		}
 	}
 
@@ -280,33 +338,20 @@ void BSpit::xbcheckcatch(uint16 argc, uint16 *argv) {
 void BSpit::xbait(uint16 argc, uint16 *argv) {
 	// Set the cursor to the pellet
 	_vm->_cursor->setCursor(kRivenPelletCursor);
-	_vm->_system->updateScreen();
 
 	// Loop until the player lets go (or quits)
-	Common::Event event;
-	bool mouseDown = true;
-	while (mouseDown) {
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONUP)
-				mouseDown = false;
-			else if (event.type == Common::EVENT_MOUSEMOVE)
-				_vm->_system->updateScreen();
-			else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL)
-				return;
-		}
-
-		_vm->_system->delayMillis(10); // Take it easy on the CPU
+	while (mouseIsDown() && !_vm->shouldQuit()) {
+		_vm->doFrame();
 	}
 
 	// Set back the cursor
 	_vm->_cursor->setCursor(kRivenMainCursor);
-	_vm->_system->updateScreen();
 
 	RivenHotspot *bait = _vm->getCard()->getHotspotByBlstId(9);
 	RivenHotspot *baitPlate = _vm->getCard()->getHotspotByBlstId(16);
 
 	// Set the bait if we put it on the plate
-	if (baitPlate->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
+	if (baitPlate->containsPoint(getMousePosition())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCard()->drawPicture(4);
 
@@ -351,30 +396,18 @@ void BSpit::xbaitplate(uint16 argc, uint16 *argv) {
 	_vm->getCard()->drawPicture(3);
 
 	// Loop until the player lets go (or quits)
-	Common::Event event;
-	bool mouseDown = true;
-	while (mouseDown) {
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONUP)
-				mouseDown = false;
-			else if (event.type == Common::EVENT_MOUSEMOVE)
-				_vm->_system->updateScreen();
-			else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL)
-				return;
-		}
-
-		_vm->_system->delayMillis(10); // Take it easy on the CPU
+	while (mouseIsDown() && !_vm->shouldQuit()) {
+		_vm->doFrame();
 	}
 
 	// Set back the cursor
 	_vm->_cursor->setCursor(kRivenMainCursor);
-	_vm->_system->updateScreen();
 
 	RivenHotspot *bait = _vm->getCard()->getHotspotByBlstId(9);
 	RivenHotspot *baitPlate = _vm->getCard()->getHotspotByBlstId(16);
 
 	// Set the bait if we put it on the plate, remove otherwise
-	if (baitPlate->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
+	if (baitPlate->containsPoint(getMousePosition())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCard()->drawPicture(4);
 		bait->enable(false); // Disable bait hotspot
@@ -411,94 +444,87 @@ void BSpit::xbisland_domecheck(uint16 argc, uint16 *argv) {
 }
 
 void BSpit::xvalvecontrol(uint16 argc, uint16 *argv) {
-	Common::Point startPos = _vm->_system->getEventManager()->getMousePos();
-
-	// Get the variable for the valve
-	uint32 &valve = _vm->_vars["bvalve"];
-
-	int changeX = 0;
-	int changeY = 0;
-	bool done = false;
+	Common::Point startPos = getMouseDragStartPosition();
 
 	// Set the cursor to the closed position
 	_vm->_cursor->setCursor(kRivenClosedHandCursor);
-	_vm->_system->updateScreen();
 
-	while (!done) {
-		Common::Event event;
+	while (mouseIsDown()) {
+		Common::Point mousePos = getMousePosition();
+		int changeX = mousePos.x - startPos.x;
+		int changeY = startPos.y - mousePos.y;
 
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					changeX = event.mouse.x - startPos.x;
-					changeY = startPos.y - event.mouse.y;
-					_vm->_system->updateScreen();
-					break;
-				case Common::EVENT_LBUTTONUP:
-					// FIXME: These values for changes in x/y could be tweaked.
-					if (valve == 0 && changeY <= -10) {
-						valve = 1;
-						_vm->_cursor->setCursor(kRivenHideCursor);
-						_vm->_system->updateScreen();
-						RivenVideo *video = _vm->_video->openSlot(2);
-						video->playBlocking();
-						_vm->refreshCard();
-					} else if (valve == 1) {
-						if (changeX >= 0 && changeY >= 10) {
-							valve = 0;
-							_vm->_cursor->setCursor(kRivenHideCursor);
-							_vm->_system->updateScreen();
-							RivenVideo *video = _vm->_video->openSlot(3);
-							video->playBlocking();
-							_vm->refreshCard();
-						} else if (changeX <= -10 && changeY <= 10) {
-							valve = 2;
-							_vm->_cursor->setCursor(kRivenHideCursor);
-							_vm->_system->updateScreen();
-							RivenVideo *video = _vm->_video->openSlot(1);
-							video->playBlocking();
-							_vm->refreshCard();
-						}
-					} else if (valve == 2 && changeX >= 10) {
-						valve = 1;
-						_vm->_cursor->setCursor(kRivenHideCursor);
-						_vm->_system->updateScreen();
-						RivenVideo *video = _vm->_video->openSlot(4);
-						video->playBlocking();
-						_vm->refreshCard();
-					}
-					done = true;
-				default:
-					break;
+		// Get the variable for the valve
+		uint32 valve = _vm->_vars["bvalve"];
+
+		// FIXME: These values for changes in x/y could be tweaked.
+		if (valve == 0 && changeY <= -10) {
+			valveChangePosition(1, 2, 2);
+		} else if (valve == 1) {
+			if (changeX >= 0 && changeY >= 10) {
+				valveChangePosition(0, 3, 1);
+			} else if (changeX <= -10 && changeY <= 10) {
+				valveChangePosition(2, 1, 3);
 			}
+		} else if (valve == 2 && changeX >= 10) {
+			valveChangePosition(1, 4, 2);
 		}
-		_vm->_system->delayMillis(10);
+
+		_vm->doFrame();
 	}
+}
+
+void BSpit::valveChangePosition(uint32 valvePosition, uint16 videoId, uint16 pictureId) {
+	RivenVideo *video = _vm->_video->openSlot(videoId);
+	video->seek(0);
+	video->playBlocking();
+
+	_vm->getCard()->drawPicture(pictureId);
 
 	// If we changed state and the new state is that the valve is flowing to
 	// the boiler, we need to update the boiler state.
-	if (valve == 1) {
-		if (_vm->_vars["bidvlv"] == 1) { // Check which way the water is going at the boiler
-			if (_vm->_vars["bblrarm"] == 1) {
+	if (valvePosition == 1) {
+		// Check which way the water is going at the boiler
+		if (_vm->_vars["bidvlv"] == 1) {
+			if (_vm->_vars["bblrarm"] == 1 && _vm->_vars["bblrwtr"] == 1) {
 				// If the pipe is open, make sure the water is drained out
 				_vm->_vars["bheat"] = 0;
 				_vm->_vars["bblrwtr"] = 0;
-			} else {
+				_vm->_sound->playCardSound("bBlrFar");
+			}
+
+			if (_vm->_vars["bblrarm"] == 0 && _vm->_vars["bblrwtr"] == 0) {
 				// If the pipe is closed, fill the boiler again
 				_vm->_vars["bheat"] = _vm->_vars["bblrvalve"];
 				_vm->_vars["bblrwtr"] = 1;
+				_vm->_sound->playCardSound("bBlrFar");
 			}
 		} else {
 			// Have the grating inside the boiler match the switch outside
 			_vm->_vars["bblrgrt"] = (_vm->_vars["bblrsw"] == 1) ? 0 : 1;
 		}
 	}
+
+	_vm->_vars["bvalve"] = valvePosition;
 }
 
 void BSpit::xbchipper(uint16 argc, uint16 *argv) {
-	// Why is this an external command....?
-	if (_vm->_vars["bvalve"] == 2) {
+	Common::Point startPos = getMouseDragStartPosition();
+
+	bool pulledLever = false;
+	while (mouseIsDown() && !_vm->shouldQuit()) {
+		Common::Point pos = getMousePosition();
+		if (pos.y > startPos.y) {
+			pulledLever = true;
+			break;
+		}
+
+		_vm->doFrame();
+	}
+
+	if (pulledLever) {
 		RivenVideo *video = _vm->_video->openSlot(2);
+		video->seek(0);
 		video->playBlocking();
 	}
 }
