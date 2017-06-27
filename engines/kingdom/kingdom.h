@@ -178,6 +178,8 @@ namespace Kingdom {
 		int _IconSelect;
 		bool _MouseDebound;
 		int _RtnNode;
+		int _SoundNumber;
+		Audio::SoundHandle _soundHandle;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 word_2D74C;
