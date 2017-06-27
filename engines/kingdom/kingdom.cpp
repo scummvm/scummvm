@@ -38,6 +38,10 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/events.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
+
 #include "kingdom/kingdom.h"
 
 namespace Kingdom {
@@ -57,6 +61,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_MouseValue = 0;
 	_CurrMap = 0;
 	_StatPlay = 0;
+	_SoundNumber = -1;
 
 	_kingartEntries = nullptr;
 }
@@ -607,8 +612,31 @@ void KingdomGame::SaveGame() {
 	debug("STUB: SaveGame");
 }
 
-void KingdomGame::PlaySound(int v1) {
-	debug("STUB: PlaySound");
+void KingdomGame::PlaySound(int idx) {
+	if (idx > 43 || _SoundNumber == idx)
+		return;
+
+	// Stop Sound
+	if (_mixer->isSoundHandleActive(_soundHandle)) {
+		_mixer->stopHandle(_soundHandle);
+		ReleaseAResource(idx);
+	}
+
+	_SoundNumber = idx;
+	if (_SoundNumber == 0 || _NoMusic)
+		return;
+
+	int realIdx = _SoundNumber + 200; // Or +250, depending in the original on the sound card
+	debug("PlaySound %d : %s", idx, _RezNames[realIdx]);
+	LoadAResource(realIdx);
+
+	Common::SeekableReadStream *soundStream = _RezPointers[realIdx];
+	Audio::RewindableAudioStream *rewindableStream = Audio::makeRawStream(soundStream, 22050, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, rewindableStream);
+
+//	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(rewindableStream, false);
+//	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, stream);
 }
 
 void KingdomGame::EraseCursor() {
@@ -857,7 +885,7 @@ bool KingdomGame::Wound() {
 }
 
 void KingdomGame::RefreshSound() {
-	debug("STUB: RefreshSound");
+//	debug("STUB: RefreshSound");
 }
 
 void KingdomGame::IncreaseHealth() {
