@@ -403,7 +403,7 @@ bool AVISurface::renderFrame() {
 			s->free();
 			delete s;
 		} else {
-			_videoSurface->getRawSurface()->blitFrom(frameSurface);
+			_videoSurface->getRawSurface()->transBlitFrom(frameSurface, _videoSurface->getTransparencyColor());
 		}
 
 		_videoSurface->unlock();
