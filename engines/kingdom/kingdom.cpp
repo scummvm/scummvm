@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/translation.h"
 
 #include "common/config-manager.h"
 #include "common/error.h"
@@ -322,7 +323,7 @@ void KingdomGame::GameHelp() {
 		}
 		break;
 	case 0x246:
-		SaveGame();
+		saveGame();
 		break;
 	case 0x43B:
 	case 0x43C:
@@ -608,12 +609,191 @@ void KingdomGame::DrawInventory() {
 		DrawIcon(131, 39, 134 + _Inventory[3]);
 }
 
-void KingdomGame::SaveGame() {
-	debug("STUB: SaveGame");
+Common::String KingdomGame::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
-void KingdomGame::RestoreGame() {
+void KingdomGame::saveGame() {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	int16 savegameId = dialog->runModalWithCurrentTarget();
+	Common::String savegameDescription = dialog->getResultString();
+	delete dialog;
+	if (savegameId < 0)
+		return; // dialog aborted
+	saveGameState(savegameId, savegameDescription);
+}
+
+void KingdomGame::restoreGame() {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	int16 savegameId = dialog->runModalWithCurrentTarget();
+	delete dialog;
+
+	if (savegameId < 0)
+		return; // dialog aborted
+
+	Common::String savegameFile = generateSaveName(savegameId);
+	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(savegameFile);
+	if (!loadFile)
+		return;
+}
+
+Common::Error KingdomGame::saveGameState(int slot, const Common::String &desc) {
+	Common::String savegameFile = generateSaveName(slot);
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::OutSaveFile *out = saveMan->openForSaving(savegameFile);
+
+	if (!out)
+		return Common::kCreatingFileFailed;
+
+	KingdomSavegameHeader header;
+	header._saveName = desc;
+	writeSavegameHeader(out, header);
+
+	Common::Serializer s(nullptr, out);
+	synchronize(s);
+
+	out->finalize();
+	delete out;
+
+	return Common::kNoError;
+}
+
+Common::Error KingdomGame::loadGameState(int slot) {
 	debug("STUB: RestoreGame");
+	Common::String savegameFile = generateSaveName(slot);
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *inFile = saveMan->openForLoading(savegameFile);
+	if (!inFile)
+		return Common::kReadingFailed;
+
+	Common::Serializer s(inFile, nullptr);
+
+	KingdomSavegameHeader header;
+	if (!readSavegameHeader(inFile, header))
+		error("Invalid savegame");
+
+	if (header._thumbnail) {
+		header._thumbnail->free();
+		delete header._thumbnail;
+	}
+
+	// Load most of the savegame data
+	synchronize(s);
+	delete inFile;
+
+	return Common::kNoError;
+}
+
+void KingdomGame::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_StatPlay);
+	s.syncAsSint16LE(_ASMap);
+	s.syncAsSint16LE(_DaelonCntr);
+	s.syncAsSint16LE(_Health);
+	s.syncAsSint16LE(_HealthOld);
+	s.syncAsSint16LE(_LastObstacle);
+	s.syncAsSint16LE(_NextNode);
+	s.syncAsSint16LE(_NodeNum);
+	s.syncAsSint16LE(_PMovie);
+	s.syncAsSint16LE(_RtnNode);
+	s.syncAsSint16LE(_RobberyNode);
+	s.syncAsSint16LE(_SoundNumber);
+	s.syncAsSint16LE(_TreeEyePic);
+	s.syncAsSint16LE(_TreeEyeSta);
+	s.syncAsSint16LE(_TreeHGPic);
+	s.syncAsSint16LE(_TreeHGSta);
+	s.syncAsSint16LE(_OldTLS);
+	s.syncAsSint16LE(_CTimer);
+	s.syncAsSint16LE(_SkylarTimer);
+
+	// TODO: synchronize the _Node array when it's ready
+	for (int i = 0; i < 18; i++)
+		s.syncAsSint16LE(_Inventory[i]);
+
+	s.syncAsByte(_OldEye);
+	s.syncAsByte(_FstFwd);
+	s.syncAsByte(_Help);
+	s.syncAsByte(_ItemInhibit);
+	s.syncAsByte(_LastObs);
+	s.syncAsByte(_LastSound);
+	s.syncAsByte(_MapEx);
+	s.syncAsByte(_NoMusic);
+	s.syncAsByte(_OldPouch);
+	s.syncAsByte(_Replay);
+	s.syncAsByte(_Spell1);
+	s.syncAsByte(_Spell2);
+	s.syncAsByte(_Spell3);
+	s.syncAsByte(_TideCntl);
+	s.syncAsByte(_Wizard);
+	s.syncAsByte(_TSIconOnly);
+	s.syncAsByte(_CTimerFlag);
+	s.syncAsByte(_SkylarTimerFlag);
+
+
+	// Present in the original. Looks unused.
+	// s.syncAsSint16LE(_StatMap);
+}
+
+const char *const SAVEGAME_STR = "KTFR";
+#define SAVEGAME_STR_SIZE 4
+#define KTFR_SAVEGAME_VERSION 1
+
+void KingdomGame::writeSavegameHeader(Common::OutSaveFile *out, KingdomSavegameHeader &header) {
+	// Write out a savegame header
+	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+
+	out->writeByte(KTFR_SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->writeString(header._saveName);
+	out->writeByte('\0');
+
+	Common::MemoryWriteStreamDynamic *tempThumbnail = new Common::MemoryWriteStreamDynamic;
+	Graphics::saveThumbnail(*tempThumbnail);
+	out->write(tempThumbnail->getData(), tempThumbnail->size());
+	delete tempThumbnail;
+
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+}
+
+bool KingdomGame::readSavegameHeader(Common::InSaveFile *in, KingdomSavegameHeader &header) {
+	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
+	header._thumbnail = nullptr;
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
+	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
+		return false;
+
+	header._version = in->readByte();
+	if (header._version > KTFR_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header._saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header._saveName += ch;
+
+	// Get the thumbnail
+	header._thumbnail = Graphics::loadThumbnail(*in);
+	if (!header._thumbnail)
+		return false;
+
+	// Read in save date/time
+	header._year = in->readSint16LE();
+	header._month = in->readSint16LE();
+	header._day = in->readSint16LE();
+	header._hour = in->readSint16LE();
+	header._minute = in->readSint16LE();
+
+	return true;
 }
 
 void KingdomGame::PlaySound(int idx) {
@@ -638,8 +818,10 @@ void KingdomGame::PlaySound(int idx) {
 	Audio::RewindableAudioStream *rewindableStream = Audio::makeRawStream(soundStream, 22050, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, rewindableStream);
-
-//	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(rewindableStream, false);
+//  In the original, there's an array describing whether a sound should loop or not.
+//  The array is full of 'false'. If a variant uses looping sound/music, the following code
+//	and the loop array should be added.
+//	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(rewindableStream, _loopArray[idx]);
 //	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, stream);
 }
 
