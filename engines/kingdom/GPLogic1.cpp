@@ -68,7 +68,7 @@ void KingdomGame::GPLogic1() {
 			FadeToBlack2();
 			SetMouse();
 			EraseCursor();
-			RestoreGame();
+			restoreGame();
 			break;
 		case 0x2F1:
 			EraseCursorAsm();
@@ -1055,7 +1055,7 @@ void KingdomGame::GPLogic1() {
 			IncreaseHealth();
 		} else {
 			PlayMovie(40);
-			_TideCntl = 1;
+			_TideCntl = true;
 			DrawPic(178);
 		}
 		PlaySound(42);
