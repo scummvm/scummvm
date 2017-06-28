@@ -22,6 +22,7 @@ lib*.a
 /ScummVM.app
 /scummvm.docktileplugin
 /\!ScummVM
+/*,e1f
 /scummvm-ps3.pkg
 /*.ipk
 /.project

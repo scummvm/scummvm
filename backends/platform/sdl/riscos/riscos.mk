@@ -1,7 +1,7 @@
 # Special target to create an RISC OS snapshot installation
-riscosdist: $(EXECUTABLE)
+riscosdist: scummvm$(EXEEXT)
 	mkdir -p !ScummVM
-	elf2aif $(EXECUTABLE) !ScummVM/$(EXECUTABLE),ff8
+	elf2aif scummvm$(EXEEXT) !ScummVM/scummvm,ff8
 	cp ${srcdir}/dists/riscos/!Boot,feb !ScummVM/!Boot,feb
 	cp ${srcdir}/dists/riscos/!Run,feb !ScummVM/!Run,feb
 	cp ${srcdir}/dists/riscos/!Sprites,ff9 !ScummVM/!Sprites,ff9
