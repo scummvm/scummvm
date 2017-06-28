@@ -91,13 +91,15 @@ extern SDL_Event quit_event;
 #endif
 
 int inFatal(const char *str) {
+	error(str);
+	delete []str;
 #if 0
 	FILE *fatFile = fopen("fatal.txt", "wt");
 	if (fatFile) {
 		fprintf(fatFile, "FATAL:\n%s\n", str);
 		fclose(fatFile);
 	}
-#endif
+
 	fatalMessage = copyString(str);
 	if (fatalMessage == NULL)
 		fatalMessage = copyString("Out of memory");
@@ -108,7 +110,6 @@ int inFatal(const char *str) {
 	EGL_Close();
 #endif
 
-#if 0
 	SDL_Quit();
 
 	atexit(displayFatal);

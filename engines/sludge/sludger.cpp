@@ -850,18 +850,14 @@ bool continueFunction(loadedFunction *fun) {
 
 	while (keepLooping) {
 		advanceNow = true;
+		debug(kSludgeDebugStackMachine, "Executing command line %i : ", fun->runThisLine);
 		param = fun->compiledLines[fun->runThisLine].param;
 		com = fun->compiledLines[fun->runThisLine].theCommand;
 //		fprintf (stderr, "com: %d param: %d (%s)\n", com, param,
 //				(com < numSludgeCommands) ? sludgeText[com] : ERROR_UNKNOWN_MCODE); fflush(stderr);
 
 		if (numBIFNames) {
-			setFatalInfo(
-					(fun->originalNumber < numUserFunc) ?
-							allUserFunc[fun->originalNumber] :
-							"Unknown user function",
-					(com < numSludgeCommands) ?
-							sludgeText[com] : ERROR_UNKNOWN_MCODE);
+			setFatalInfo((fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function", (com < numSludgeCommands) ? sludgeText[com] : ERROR_UNKNOWN_MCODE);
 //			newDebug (
 //				(com < numSludgeCommands) ? sludgeText[com] : "Unknown SLUDGE machine code",
 //				param);
