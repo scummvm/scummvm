@@ -186,6 +186,8 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 				return false;
 			}
 		}
+		finishAccess();
+		setResourceForFatal(-1);
 		return true;
 	}
 
