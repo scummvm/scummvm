@@ -33,8 +33,7 @@
 namespace Supernova {
 
 MSNImageDecoder::MSNImageDecoder()
-    : _surface(NULL)
-    , _palette(NULL)
+    : _palette(NULL)
     , _encodedImage(NULL) {
 }
 
@@ -133,77 +132,73 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
+	loadSections();
+
 	return true;
 }
 
-bool MSNImageDecoder::loadSection(int section) {
-	int imageWidth = 320;
-	int imageHeight = 200;
+bool MSNImageDecoder::loadSections() {
+	bool isNewspaper = _filenumber == 1 || _filenumber == 2;
+	int imageWidth = isNewspaper ? 640 : 320;
+	int imageHeight = isNewspaper ? 480 : 200;
+	_pitch = imageWidth;
 
-	if (_surface)
-		_surface->free();
+	for (int section = 0; section < _numSections; ++section) {
+		Graphics::Surface *surface = new Graphics::Surface;
+		_sectionSurfaces.push_back(surface);
+		surface->create(imageWidth,
+		                imageHeight,
+		                g_system->getScreenFormat());
+		byte *surfacePixels = static_cast<byte *>(surface->getPixels());
 
-	_surface = new Graphics::Surface;
-
-	if (_filenumber == 1 || _filenumber == 2) {
-		imageWidth = 640;
-		imageHeight = 480;
-		_pitch = 640;
-
-		_surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
-		byte *surfacePixels = static_cast<byte *>(_surface->getPixels());
-		for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
-			*surfacePixels++ = (_encodedImage[i] & 0x80) ? kColorWhite63 : kColorBlack;
-			*surfacePixels++ = (_encodedImage[i] & 0x40) ? kColorWhite63 : kColorBlack;
-			*surfacePixels++ = (_encodedImage[i] & 0x20) ? kColorWhite63 : kColorBlack;
-			*surfacePixels++ = (_encodedImage[i] & 0x10) ? kColorWhite63 : kColorBlack;
-			*surfacePixels++ = (_encodedImage[i] & 0x08) ? kColorWhite63 : kColorBlack;
-			*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite63 : kColorBlack;
-			*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite63 : kColorBlack;
-			*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite63 : kColorBlack;
-		}
-	} else {
-		_pitch = 320;
-		_surface->create(imageWidth, imageHeight, g_system->getScreenFormat());
-		byte *surfacePixels = static_cast<byte *>(_surface->getPixels());
-
-		const uint32 kInvalidAddress = 0x00FFFFFF;
-
-		uint image = section;
-		if (image < 128) {
-			do {
-				uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow;
-				if (offset == kInvalidAddress || _section[image].x2 == 0) {
-					return false;
-				}
-				int width = _section[image].x2 - _section[image].x1 + 1;
-				int height = _section[image].y2 - _section[image].y1 + 1;
-				uint32 destAddress = imageWidth * _section[image].y1 + _section[image].x1;
-				while (height) {
-					Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
-					offset += width;
-					destAddress += imageWidth;
-					--height;
-				}
-
-				image = _section[image].next;
-			} while (image != 0);
+		if (isNewspaper) {
+			for (int i = 0; i < imageWidth * imageHeight / 8; ++i) {
+				*surfacePixels++ = (_encodedImage[i] & 0x80) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x40) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x20) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x10) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x08) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x04) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x02) ? kColorWhite63 : kColorBlack;
+				*surfacePixels++ = (_encodedImage[i] & 0x01) ? kColorWhite63 : kColorBlack;
+			}
 		} else {
-			image -= 128;
-			do {
-				int width = _section[image].x2 - _section[image].x1 + 1;
-				int height = _section[image].y2 - _section[image].y1 + 1;
-				uint32 destAddress = imageWidth * _section[image].y1 + _section[image].x1;
-				uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow + destAddress;
-				while (height) {
-					Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
-					offset += imageWidth;
-					destAddress += imageWidth;
-					--height;
-				}
+			uint image = section;
+			if (image < 128) {
+				do {
+					uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow;
+					if (offset == kInvalidAddress || _section[image].x2 == 0) {
+						return false;
+					}
+					int width = _section[image].x2 - _section[image].x1 + 1;
+					int height = _section[image].y2 - _section[image].y1 + 1;
+					uint32 destAddress = imageWidth * _section[image].y1 + _section[image].x1;
+					while (height) {
+						Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
+						offset += width;
+						destAddress += imageWidth;
+						--height;
+					}
 
-				image = _section[image].next;
-			} while (image != 0);
+					image = _section[image].next;
+				} while (image != 0);
+			} else {
+				image -= 128;
+				do {
+					int width = _section[image].x2 - _section[image].x1 + 1;
+					int height = _section[image].y2 - _section[image].y1 + 1;
+					uint32 destAddress = imageWidth * _section[image].y1 + _section[image].x1;
+					uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow + destAddress;
+					while (height) {
+						Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
+						offset += imageWidth;
+						destAddress += imageWidth;
+						--height;
+					}
+
+					image = _section[image].next;
+				} while (image != 0);
+			}
 		}
 	}
 
@@ -215,13 +210,13 @@ void MSNImageDecoder::destroy() {
 		delete[] _palette;
 		_palette = NULL;
 	}
-	if (_surface) {
-		_surface->free();
-		_surface = NULL;
-	}
 	if (_encodedImage) {
 		delete[] _encodedImage;
 		_encodedImage = NULL;
+	}
+	for (Common::Array<Graphics::Surface *>::iterator it = _sectionSurfaces.begin();
+	     it != _sectionSurfaces.end(); ++it) {
+		(*it)->free();
 	}
 }
 
