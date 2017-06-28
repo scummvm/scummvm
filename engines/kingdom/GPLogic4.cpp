@@ -96,13 +96,13 @@ void KingdomGame::GPLogic4() {
 				word_2D7A6 = 0;
 			}
 
-			_ItemInhibit = 0;
-			_TideCntl = 0;
+			_ItemInhibit = false;
+			_TideCntl = false;
 			DrawPic(179);
 			_SkylarTimer = 0;
 			_SkylarTimerFlag = 0;
 			EnAll();
-			_MapEx = 1;
+			_MapEx = true;
 			_NodeNum = 5;
 			DrawLocation();
 			PlaySound(0);
@@ -144,13 +144,13 @@ void KingdomGame::GPLogic4() {
 				word_2D7A6 = 0;
 			}
 
-			_ItemInhibit = 0;
-			_TideCntl = 0;
+			_ItemInhibit = false;
+			_TideCntl = false;
 			DrawPic(179);
 			_SkylarTimer = 0;
 			_SkylarTimerFlag = 0;
 			EnAll();
-			_MapEx = 1;
+			_MapEx = true;
 			_NodeNum = 27;
 			DrawLocation();
 			_Resurrect = 1;
@@ -192,13 +192,13 @@ void KingdomGame::GPLogic4() {
 			if (word_2D7CC == 1)
 				word_2D7CC = 0;
 
-			_ItemInhibit = 0;
-			_TideCntl = 0;
+			_ItemInhibit = false;
+			_TideCntl = false;
 			DrawPic(179);
 			_SkylarTimer = 0;
 			_SkylarTimerFlag = 0;
 			EnAll();
-			_MapEx = 1;
+			_MapEx = true;
 			_NodeNum = 52;
 			DrawLocation();
 			_Resurrect = 1;
@@ -230,7 +230,7 @@ void KingdomGame::GPLogic4_SP901() {
 	FadeToBlack2();
 	ShowPic(106);
 	DrawIcon(4, 0, 12 - _HealthOld);
-	if (_TideCntl == 1)
+	if (_TideCntl)
 		DrawPic(178);
 	else
 		DrawPic(179);

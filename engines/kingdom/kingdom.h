@@ -45,6 +45,11 @@
 #include "graphics/surface.h"
 #include "image/bmp.h"
 
+#include "common/savefile.h"
+#include "gui/saveload.h"
+#include "graphics/thumbnail.h"
+#include "common/serializer.h"
+
 #include "kingdom/console.h"
 
 namespace Kingdom {
@@ -76,6 +81,15 @@ namespace Kingdom {
 	extern HotSpot _MouseMapMS[51];
 	extern int _CursorTable[96];
 	extern HotSpot _MouseMapAS[128][16];
+
+	struct KingdomSavegameHeader {
+		uint32 _signature;
+		uint8 _version;
+		Common::String _saveName;
+		Graphics::Surface *_thumbnail;
+		int _year, _month, _day;
+		int _hour, _minute;
+	};
 
 	class KingdomGame : public Engine {
 	public:
@@ -239,7 +253,7 @@ namespace Kingdom {
 
 		Common::SeekableReadStream *_RezPointers[510];
 		int _RezSize[510];
-		int8 _Inventory[19];
+		int _Inventory[19];
 		int _IconPic[7];
 		uint16 _UserInput;
 		uint16 _MouseButton;
@@ -279,12 +293,10 @@ namespace Kingdom {
 		void DrawRect(uint v1, uint v2, uint v3, uint v4, int v5);
 		void DrawInventory();
 		void GameHelp_Sub43C();
-		void SaveGame();
 		void PlaySound(int v1);
 		void EraseCursor();
 		void GetUserInput();
 		void EraseCursorAsm();
-		void RestoreGame();
 		void DrawLocation();
 		void ProcessMap(int mapNum, int zoom);
 		void ProcessMapInput(int mapNum);
@@ -311,6 +323,14 @@ namespace Kingdom {
 		int checkMouseMapAS();
 		void CursorTypeExit();
 		void EndCredits();
+		void saveGame();
+		void restoreGame();
+		virtual Common::Error loadGameState(int slot);
+		virtual Common::Error saveGameState(int slot, const Common::String &desc);
+		Common::String generateSaveName(int slot);
+		static bool readSavegameHeader(Common::InSaveFile *in, KingdomSavegameHeader &header);
+		void writeSavegameHeader(Common::OutSaveFile *out, KingdomSavegameHeader &header);
+		void synchronize(Common::Serializer &s);
 	};
 } // End of namespace Kingdom
 
