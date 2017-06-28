@@ -226,15 +226,15 @@ void setFileIndices(Common::File *fp, int numLanguages, unsigned int skipBefore)
 
 	startOfSubIndex = fp->pos() + 4;
 	fp->seek(fp->readUint32LE(), SEEK_CUR);
-	debug(kSludgeDebugDataLoad, "startOfSubIndex: %i", startOfTextIndex);
+	debug(kSludgeDebugDataLoad, "startOfSubIndex: %i", startOfSubIndex);
 
 	startOfObjectIndex = fp->pos() + 4;
 	fp->seek(fp->readUint32LE(), SEEK_CUR);
-	debug(kSludgeDebugDataLoad, "startOfObjectIndex: %i", startOfTextIndex);
+	debug(kSludgeDebugDataLoad, "startOfObjectIndex: %i", startOfObjectIndex);
 
 	// Remember that the data section starts here
 	startOfDataIndex = fp->pos();
-	debug(kSludgeDebugDataLoad, "startOfDataIndex: %i", startOfTextIndex);
+	debug(kSludgeDebugDataLoad, "startOfDataIndex: %i", startOfDataIndex);
 }
 
 } // End of namespace Sludge
