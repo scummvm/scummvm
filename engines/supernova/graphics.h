@@ -43,20 +43,20 @@ public:
 
 	virtual void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
+	virtual const Graphics::Surface *getSurface() const { return _sectionSurfaces[0]; }
 	virtual const byte *getPalette() const { return _palette; }
 
-	bool loadSection(int section);
 	bool init(int filenumber);
 
 	static const int kMaxSections = 50;
 	static const int kMaxClickFields = 80;
+	static const uint32 kInvalidAddress = 0x00FFFFFF;
 
 	int _filenumber;
 	int _pitch;
 	int _numSections;
 	int _numClickFields;
-	Graphics::Surface *_surface;
+	Common::Array<Graphics::Surface *> _sectionSurfaces;
 	byte *_palette;
 	byte *_encodedImage;
 
@@ -77,6 +77,9 @@ public:
 		byte   y2;
 		byte   next;
 	} _clickField[kMaxClickFields];
+
+private:
+	bool loadSections();
 };
 
 }

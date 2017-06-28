@@ -267,18 +267,20 @@ void SupernovaEngine::playSoundMod(int filenumber)
 }
 
 void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool fullscreen) {
+	if (section > image._numSections - 1)
+		return;
+
 	_currentImage = &image;
 	_imageIndex = image._filenumber;
 	_sectionIndex = section;
 
-	image.loadSection(section);
 	_system->getPaletteManager()->setPalette(image.getPalette(), 16, 239);
 	paletteBrightness();
 
 	Common::Rect sectionRect(image._section[section].x1,
 	                         image._section[section].y1,
-	                         image._section[section].x2 - image._section[section].x1,
-	                         image._section[section].y2 - image._section[section].y1);
+	                         image._section[section].x2,
+	                         image._section[section].y2);
 	if (image._filenumber == 1 || image._filenumber == 2) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);
@@ -297,11 +299,11 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool full
 	}
 
 	if (fullscreen) {
-		_system->copyRectToScreen(image.getSurface()->getPixels(),
+		_system->copyRectToScreen(image._sectionSurfaces[section]->getPixels(),
 		                          image._pitch, 0, 0, _screenWidth, _screenHeight);
 	} else {
 		uint offset = image._section[section].y1 * image._pitch + image._section[section].x1;
-		_system->copyRectToScreen(static_cast<const byte *>(image.getSurface()->getPixels()) + offset,
+		_system->copyRectToScreen(static_cast<const byte *>(image._sectionSurfaces[section]->getPixels()) + offset,
 		                          image._pitch,
 		                          sectionRect.top, sectionRect.left,
 		                          sectionRect.width(), sectionRect.height());
@@ -309,6 +311,9 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool full
 }
 
 void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) {
+	if (filenumber > ARRAYSIZE(_images) - 1)
+		return;
+
 	renderImage(_images[filenumber], section, fullscreen);
 }
 
