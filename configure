@@ -487,8 +487,8 @@ find_libcurlconfig() {
 #
 get_system_exe_extension() {
 	case $1 in
-	arm-*riscos)
-		_exeext=",ff8"
+	riscos)
+		_exeext=",e1f"
 		;;
 	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
 		_exeext=".elf"
