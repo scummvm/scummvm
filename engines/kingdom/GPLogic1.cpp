@@ -1372,9 +1372,7 @@ void KingdomGame::GPLogic1_SubSP10() {
 	PlaySound(18);
 	FadeToBlack2();
 	ShowPic(115);
-	CheckSaveGame();
-	if (_SaveFile)
-		ShowPic(114);
+	ShowPic(114);
 
 	_CurrMap = 4;
 	_UserInput = 0;

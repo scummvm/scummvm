@@ -442,7 +442,7 @@ void KingdomGame::InitCursor() {
 }
 
 void KingdomGame::InitMouse() {
-	_CursorActive = true;
+	// No implementation required
 }
 
 void KingdomGame::SetMouse() {
@@ -612,6 +612,10 @@ void KingdomGame::SaveGame() {
 	debug("STUB: SaveGame");
 }
 
+void KingdomGame::RestoreGame() {
+	debug("STUB: RestoreGame");
+}
+
 void KingdomGame::PlaySound(int idx) {
 	if (idx > 43 || _SoundNumber == idx)
 		return;
@@ -646,20 +650,18 @@ void KingdomGame::EraseCursor() {
 void KingdomGame::ReadMouse() {
 	_MouseButton = 0;
 
-	if (_CursorActive) {
-		Common::Event event;
-		g_system->getEventManager()->pollEvent(event);
-		if (event.type == Common::EVENT_MOUSEMOVE) {
-		_CursorX = event.mouse.x;
-		_CursorY = event.mouse.y;
-		}
-		if (event.type == Common::EVENT_LBUTTONUP)
-			_MouseButton |= 1;
-		if (event.type == Common::EVENT_RBUTTONUP)
-			_MouseButton |= 2;
-
-		g_system->getEventManager()->pushEvent(event);
+	Common::Event event;
+	g_system->getEventManager()->pollEvent(event);
+	if (event.type == Common::EVENT_MOUSEMOVE) {
+	_CursorX = event.mouse.x;
+	_CursorY = event.mouse.y;
 	}
+	if (event.type == Common::EVENT_LBUTTONUP)
+		_MouseButton |= 1;
+	if (event.type == Common::EVENT_RBUTTONUP)
+		_MouseButton |= 2;
+
+	g_system->getEventManager()->pushEvent(event);
 }
 
 void KingdomGame::GetUserInput() {
@@ -696,10 +698,6 @@ void KingdomGame::GetUserInput() {
 
 void KingdomGame::EraseCursorAsm() {
 	debug("STUB: EraseCursorAsm");
-}
-
-void KingdomGame::RestoreGame() {
-	debug("STUB: RestoreGame");
 }
 
 void KingdomGame::DrawLocation() {
@@ -885,7 +883,7 @@ bool KingdomGame::Wound() {
 }
 
 void KingdomGame::RefreshSound() {
-//	debug("STUB: RefreshSound");
+//	No implementation needed in ScummVM
 }
 
 void KingdomGame::IncreaseHealth() {
@@ -895,10 +893,6 @@ void KingdomGame::IncreaseHealth() {
 		_Health = 8;
 	else
 		_Health = 12;
-}
-
-void KingdomGame::CheckSaveGame() {
-	debug("STUB: CheckSaveGame");
 }
 
 void KingdomGame::CheckMainScreen() {
@@ -1314,8 +1308,9 @@ void KingdomGame::CursorType() {
 			_MouseValue = 0x440;
 		break;
 	case 0x24A:
-		if (_SaveFile == 0)
-			_MouseValue = 0;
+		// if (_SaveFile == 0)
+		_MouseValue = 0;
+		debug("CursorType: Unhandled 0x24A");
 		break;
 	case 0x407:
 		if (_StatPlay == 182 && word_2D76A < 9)
