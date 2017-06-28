@@ -163,11 +163,9 @@ namespace Kingdom {
 		bool _Wizard;
 		int _Zoom;
 		bool _Resurrect;
-		bool _SaveFile;
 		int _LastObstacle;
 		int _MapStat;
 		int _MouseValue;
-		bool _CursorActive;
 		int _CursorDef;
 		int _OldCursorDef;
 		int _CursorX;
@@ -299,7 +297,6 @@ namespace Kingdom {
 		void RefreshSound();
 		void SwitchAS();
 		void IncreaseHealth();
-		void CheckSaveGame();
 		void CheckMainScreen();
 		bool ChkDesertObstacles();
 		void SwitchAtoM();
