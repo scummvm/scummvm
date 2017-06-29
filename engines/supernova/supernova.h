@@ -27,15 +27,17 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "common/array.h"
+#include "common/events.h"
 #include "common/random.h"
 #include "common/scummsys.h"
-#include "common/events.h"
 #include "engines/engine.h"
+#include "common/file.h"
+#include "common/memstream.h"
 
 #include "supernova/console.h"
 #include "supernova/graphics.h"
-#include "supernova/rooms.h"
 #include "supernova/msn_def.h"
+#include "supernova/rooms.h"
 
 
 namespace Supernova {
@@ -124,6 +126,8 @@ public:
 	void renderText(const char *text);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void setColor63(byte value);
+
+	Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 };
 
 
@@ -196,7 +200,9 @@ public:
 	void closeLocker(const Room *room, Object *obj, Object *lock, int section);
 	void edit(char *text, int x, int y, int length);
 	int invertSection(int section);
+	void command_print();
 };
+
 
 }
 

@@ -31,6 +31,7 @@ Console::Console(SupernovaEngine *vm, GameManager *gm)
 {
 	registerCmd("render", WRAP_METHOD(Console, cmdRenderImage));
 	registerCmd("play", WRAP_METHOD(Console, cmdPlaySound));
+	registerCmd("music", WRAP_METHOD(Console, cmdMusic));
 	registerCmd("list", WRAP_METHOD(Console, cmdList));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 
@@ -62,6 +63,15 @@ bool Console::cmdPlaySound(int argc, const char **argv) {
 	_vm->playSound(static_cast<AudioIndex>(sample));
 
 	return true;
+}
+
+bool Console::cmdMusic(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: music [49/52]\n");
+		return true;
+	}
+
+	_vm->playSoundMod(atoi(argv[1]));
 }
 
 bool Console::cmdList(int argc, const char **argv) {

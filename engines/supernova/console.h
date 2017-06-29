@@ -41,6 +41,7 @@ public:
 
 	bool cmdRenderImage(int argc, const char **argv);
 	bool cmdPlaySound(int argc, const char **argv);
+	bool cmdMusic(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
 	bool cmdInventory(int argc, const char **argv);
 private:
