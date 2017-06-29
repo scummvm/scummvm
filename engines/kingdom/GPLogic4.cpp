@@ -91,9 +91,9 @@ void KingdomGame::GPLogic4() {
 				RefreshSound();
 			
 			_LoopFlag = true;
-			if (word_2D77E == 1) {
-				word_2D77E = 0;
-				word_2D7A6 = 0;
+			if (_Nodes[29] == 1) {
+				_Nodes[29] = 0;
+				_Nodes[49] = 0;
 			}
 
 			_ItemInhibit = false;
@@ -106,7 +106,7 @@ void KingdomGame::GPLogic4() {
 			_NodeNum = 5;
 			DrawLocation();
 			PlaySound(0);
-			if (word_2D750 > 0) {
+			if (_Nodes[5] > 0) {
 				PlayMovie(197);
 				_Resurrect = 1;
 			}
@@ -139,9 +139,9 @@ void KingdomGame::GPLogic4() {
 				RefreshSound();
 
 			_LoopFlag = true;
-			if (word_2D77E == 1) {
-				word_2D77E = 0;
-				word_2D7A6 = 0;
+			if (_Nodes[29] == 1) {
+				_Nodes[29] = 0;
+				_Nodes[49] = 0;
 			}
 
 			_ItemInhibit = false;
@@ -185,12 +185,12 @@ void KingdomGame::GPLogic4() {
 				RefreshSound();
 			
 			_LoopFlag = true;
-			if (word_2D77E == 1) {
-				word_2D77E = 0;
-				word_2D7A6 = 0;
+			if (_Nodes[29] == 1) {
+				_Nodes[29] = 0;
+				_Nodes[49] = 0;
 			}
-			if (word_2D7CC == 1)
-				word_2D7CC = 0;
+			if (_Nodes[68] == 1)
+				_Nodes[68] = 0;
 
 			_ItemInhibit = false;
 			_TideCntl = false;
