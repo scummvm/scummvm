@@ -1759,6 +1759,12 @@ psp)
 		exit 1
 	fi
 	;;
+riscos)
+	if test -z "$GCCSDK_INSTALL_ENV"; then
+		echo "Please set GCCSDK_INSTALL_ENV in your environment. export GCCSDK_INSTALL_ENV=<path to GCCSDK_INSTALL_ENV>"
+		exit 1
+	fi
+	;;
 tizen)
 	if test -z "$TIZEN_ROOTSTRAP"; then
 		echo "Please set TIZEN_ROOTSTRAP in your environment. export TIZEN_ROOTSTRAP=<path to Tizen SDK device profile>"
