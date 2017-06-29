@@ -57,6 +57,9 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 		_RezSize[i] = 0;
 	}
 
+	for (int i = 0; i < 99; i++)
+		_Nodes[i] = 0;
+
 	_ASPtr = nullptr;
 	_quit = false;
 	_MouseValue = 0;
@@ -148,7 +151,8 @@ void KingdomGame::TitlePage() {
 void KingdomGame::InitPlay() {
 	memset(_Inventory, 0xFF, 19);
 
-	//TODO: Init game flags, once the hardcoded logic is implemented and they are renamed
+	for (int i = 0; i < 99; i++)
+		_Nodes[i] = 0;
 
 	for (int i = 0; i < 7; i++)
 		_IconPic[i] = 89 + i;
@@ -256,7 +260,7 @@ void KingdomGame::GameHelp() {
 			DrawRect(4, 17, 228, 161, 0);
 			DrawInventory();
 
-			if (word_2D7CC == 1 || word_2D77E == 1 || _ItemInhibit)
+			if (_Nodes[68] == 1 || _Nodes[29] == 1 || _ItemInhibit)
 				_CurrMap = 10;
 			else
 				_CurrMap = 11;
@@ -337,7 +341,7 @@ void KingdomGame::GameHelp() {
 
 	if (_UserInput == 0x260) {
 		DrawInventory();
-		if (word_2D7CC == 1 || word_2D77E == 1)
+		if (_Nodes[68] == 1 || _Nodes[29] == 1)
 			_CurrMap = 10;
 		else
 			_CurrMap = 11;
@@ -539,7 +543,7 @@ void KingdomGame::DrawRect(uint minX, uint minY, uint maxX, uint maxY, int color
 
 void KingdomGame::DrawInventory() {
 	FShowPic(108);
-	if (word_2D77E == 1 || word_2D7CC == 1 || _ItemInhibit)
+	if (_Nodes[29] == 1 || _Nodes[68] == 1 || _ItemInhibit)
 		return;
 
 	if (_Inventory[0] > 0)
@@ -705,9 +709,11 @@ void KingdomGame::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_CTimer);
 	s.syncAsSint16LE(_SkylarTimer);
 
-	// TODO: synchronize the _Node array when it's ready
 	for (int i = 0; i < 18; i++)
 		s.syncAsSint16LE(_Inventory[i]);
+
+	for (int i = 0; i < 99; i++)
+		s.syncAsSint16LE(_Nodes[i]);
 
 	s.syncAsByte(_OldEye);
 	s.syncAsByte(_FstFwd);
@@ -727,7 +733,6 @@ void KingdomGame::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_TSIconOnly);
 	s.syncAsByte(_CTimerFlag);
 	s.syncAsByte(_SkylarTimerFlag);
-
 
 	// Present in the original. Looks unused.
 	// s.syncAsSint16LE(_StatMap);
@@ -1034,7 +1039,7 @@ void KingdomGame::SetATimer() {
 	_ATimerFlag = true;
 	_ATimer = 0;
 	int wrkNodeNum = _NodeNum;
-	if (word_2D77E == 1 || word_2D7CC == 1)
+	if (_Nodes[29] == 1 || _Nodes[68] == 1)
 		return;
 
 	if (_TSIconOnly != 0)
@@ -1132,11 +1137,11 @@ void KingdomGame::CheckMainScreen() {
 			wrkNodeNum = 79;
 		if (_NodeNum == 56 && _Inventory[8] < 1 && _Wizard)
 			wrkNodeNum = 80;
-		if (_NodeNum == 21 && word_2D770 == 9)
+		if (_NodeNum == 21 && _Nodes[21] == 9)
 			wrkNodeNum = 81;
 		int idx = _IconActTable[wrkNodeNum][i];
 
-		if (_Inventory[idx] >= 1 && word_2D77E != 1 && word_2D7CC != 1 && !_ItemInhibit && !_IconsClosed) {
+		if (_Inventory[idx] >= 1 && _Nodes[29] != 1 && _Nodes[68] != 1 && !_ItemInhibit && !_IconsClosed) {
 			if (_IconPic[i] != 12 + idx) {
 				if (_IconPic[i] == 89 + i)
 					_IconPic[i] = 96 + i;
@@ -1304,8 +1309,8 @@ bool KingdomGame::ChkDesertObstacles() {
 		return false;
 	}
 
-	if (word_2D77E || _rnd->getRandomNumber(6) == 0) {
-		if (!word_2D7A6 || _RobberyNode != _NodeNum) {
+	if (_Nodes[29] || _rnd->getRandomNumber(6) == 0) {
+		if (!_Nodes[49] || _RobberyNode != _NodeNum) {
 			if (_LastObstacle != _NodeNum) {
 				if (_rnd->getRandomNumber(5) == 0) {
 					_StatPlay = 250;
@@ -1495,15 +1500,15 @@ void KingdomGame::CursorType() {
 		debug("CursorType: Unhandled 0x24A");
 		break;
 	case 0x407:
-		if (_StatPlay == 182 && word_2D76A < 9)
+		if (_StatPlay == 182 && _Nodes[18] < 9)
 			_MouseValue = 0;
 		break;
 	case 0x40D:
-		if (word_2D77E == 1)
+		if (_Nodes[29] == 1)
 			_MouseValue = 0;
 		break;
 	case 0x41F:
-		if (word_2D784 == 0)
+		if (_Nodes[32] == 0)
 			_MouseValue = 0;
 		break;
 	case 0x422:
@@ -1524,7 +1529,7 @@ void KingdomGame::CursorType() {
 			_MouseValue = 0;
 		break;
 	case 0x445:
-		if (_StatPlay == 161 && word_2D766 == 0 && _Wizard)
+		if (_StatPlay == 161 && _Nodes[16] == 0 && _Wizard)
 			_MouseValue = 0x450;
 		break;
 	case 0x44F:
@@ -1546,7 +1551,7 @@ void KingdomGame::CursorType() {
 			if (_NodeNum == 56 && _Inventory[8] < 1 && _Wizard)
 				var2 = 80;
 			int indx = _IconActTable[var2][var6];
-			if (_Inventory[indx] != 0 && word_2D77E != 1 && word_2D7CC != 1 && !_IconsClosed && !_ItemInhibit) {
+			if (_Inventory[indx] != 0 && _Nodes[29] != 1 && _Nodes[68] != 1 && !_IconsClosed && !_ItemInhibit) {
 				_MouseValue = indx + 0x428;
 				_IconSelect = var6;
 				break;
