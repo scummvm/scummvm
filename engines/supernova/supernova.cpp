@@ -121,6 +121,8 @@ SupernovaEngine::~SupernovaEngine() {
 	for (int i = 0; i < kAudioNumSamples; ++i) {
 		delete[] _soundSamples[i]._buffer;
 	}
+	delete _soundMusic[0];
+	delete _soundMusic[1];
 }
 
 Common::Error SupernovaEngine::run() {
@@ -217,6 +219,9 @@ void SupernovaEngine::initData() {
 		file.close();
 	}
 
+	_soundMusic[0] = convertToMod("msn_data.049");
+	_soundMusic[1] = convertToMod("msn_data.052");
+
 	// Cursor
 	const uint16 *bufferNormal = reinterpret_cast<const uint16 *>(mouseNormal);
 	const uint16 *bufferWait = reinterpret_cast<const uint16 *>(mouseWait);
@@ -261,14 +266,11 @@ void SupernovaEngine::playSoundMod(int filenumber)
 		return;
 	}
 
-	Common::MemoryReadStream *modBuffer;
-	modBuffer = convertToMod(Common::String::format("msn_data.%03d", filenumber).c_str());
-
-	if (modBuffer) {
-		Audio::AudioStream *audioStream = Audio::makeProtrackerStream(modBuffer);
-		stopSound();
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream);
-	}
+	int index = filenumber == 49 ? 0 : 1;
+	Audio::AudioStream *audioStream = Audio::makeProtrackerStream(_soundMusic[index]);
+	stopSound();
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream,
+	                   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
 void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool fullscreen) {

@@ -90,6 +90,7 @@ public:
 		byte *_buffer;
 		int _length;
 	} _soundSamples[kAudioNumSamples];
+	Common::MemoryReadStream *_soundMusic[2];
 	Common::Event _event;
 	bool _gameRunning;
 	int _screenWidth;
