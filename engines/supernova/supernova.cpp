@@ -230,11 +230,11 @@ void SupernovaEngine::initData() {
 			uint mask = 0x8000 >> bit;
 			uint bitIndex = i * 16 + bit;
 
-			_mouseNormal[bitIndex] = (bufferNormal[i] & mask) ? kColorCursorTransparent : kColorBlack;
-			if (bufferNormal[i + 16] & mask)
+			_mouseNormal[bitIndex] = (READ_LE_UINT16(bufferNormal + i) & mask) ? kColorCursorTransparent : kColorBlack;
+			if (READ_LE_UINT16(bufferNormal + i + 16) & mask)
 				_mouseNormal[bitIndex] = kColorLightRed;
-			_mouseWait[bitIndex] = (bufferWait[i] & mask) ? kColorCursorTransparent : kColorBlack;
-			if (bufferWait[i + 16] & mask)
+			_mouseWait[bitIndex] = (READ_LE_UINT16(bufferWait + i) & mask) ? kColorCursorTransparent : kColorBlack;
+			if (READ_LE_UINT16(bufferWait + i + 16) & mask)
 				_mouseWait[bitIndex] = kColorLightRed;
 		}
 	}
