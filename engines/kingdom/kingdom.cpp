@@ -1392,6 +1392,11 @@ int KingdomGame::GetAKey() {
 				retval = 0x100 + event.kbd.keycode;
 			else if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
 				_console->attach();
+			else if (event.kbd.keycode == Common::KEYCODE_c && event.kbd.hasFlags(Common::KBD_CTRL)) {
+				_UserInput = 0x12D;
+				// _QuitFlag = 2;
+				_quit = true; 
+			}
 			break;
 		case Common::EVENT_LBUTTONUP: // retval == 2?
 			if (_Eye)
