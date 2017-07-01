@@ -546,7 +546,7 @@ bool initSludge(const char *filename) {
 
 		if (chdir(dataFolder)) return fatal("This game's data folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", dataFolder);
 #endif
-		delete dataFolder;
+		delete []dataFolder;
 	}
 
 	positionStatus(10, winHeight - 15);

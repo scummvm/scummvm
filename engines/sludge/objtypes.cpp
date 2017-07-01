@@ -166,8 +166,8 @@ void removeObjectType(objectType *oT) {
 //			fclose (debuggy2);
 
 			*huntRegion = oT->next;
-			delete oT->allCombis;
-			delete oT->screenName;
+			delete []oT->allCombis;
+			delete []oT->screenName;
 			delete oT;
 			return;
 		} else {
