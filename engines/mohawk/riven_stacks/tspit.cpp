@@ -37,24 +37,24 @@ namespace RivenStacks {
 TSpit::TSpit(MohawkEngine_Riven *vm) :
 		DomeSpit(vm, kStackTspit, "tsliders.190", "tsliderbg.190") {
 
-	REGISTER_COMMAND(TSpit, xtexterior300_telescopedown); // TODO: Check endgame
-	REGISTER_COMMAND(TSpit, xtexterior300_telescopeup);   // TODO: Check endgame
-	REGISTER_COMMAND(TSpit, xtisland390_covercombo); // Done
-	REGISTER_COMMAND(TSpit, xtatrusgivesbooks);      // Done
-	REGISTER_COMMAND(TSpit, xtchotakesbook);         // Done
-	REGISTER_COMMAND(TSpit, xthideinventory);        // Done
-//	REGISTER_COMMAND(TSpit, xt7500_checkmarbles);
-//	REGISTER_COMMAND(TSpit, xt7600_setupmarbles);
-//	REGISTER_COMMAND(TSpit, xt7800_setup);
-//	REGISTER_COMMAND(TSpit, xdrawmarbles);
-//	REGISTER_COMMAND(TSpit, xtakeit);
-//	REGISTER_COMMAND(TSpit, xtscpbtn);
-//	REGISTER_COMMAND(TSpit, xtisland4990_domecheck);
-//	REGISTER_COMMAND(TSpit, xtisland5056_opencard);
-//	REGISTER_COMMAND(TSpit, xtisland5056_resetsliders);
-//	REGISTER_COMMAND(TSpit, xtisland5056_slidermd);
-//	REGISTER_COMMAND(TSpit, xtisland5056_slidermw);
-//	REGISTER_COMMAND(TSpit, xtatboundary);
+	REGISTER_COMMAND(TSpit, xtexterior300_telescopedown);
+	REGISTER_COMMAND(TSpit, xtexterior300_telescopeup);
+	REGISTER_COMMAND(TSpit, xtisland390_covercombo);
+	REGISTER_COMMAND(TSpit, xtatrusgivesbooks);
+	REGISTER_COMMAND(TSpit, xtchotakesbook);
+	REGISTER_COMMAND(TSpit, xthideinventory);
+	REGISTER_COMMAND(TSpit, xt7500_checkmarbles);
+	REGISTER_COMMAND(TSpit, xt7600_setupmarbles);
+	REGISTER_COMMAND(TSpit, xt7800_setup);
+	REGISTER_COMMAND(TSpit, xdrawmarbles);
+	REGISTER_COMMAND(TSpit, xtakeit);
+	REGISTER_COMMAND(TSpit, xtscpbtn);
+	REGISTER_COMMAND(TSpit, xtisland4990_domecheck);
+	REGISTER_COMMAND(TSpit, xtisland5056_opencard);
+	REGISTER_COMMAND(TSpit, xtisland5056_resetsliders);
+	REGISTER_COMMAND(TSpit, xtisland5056_slidermd);
+	REGISTER_COMMAND(TSpit, xtisland5056_slidermw);
+	REGISTER_COMMAND(TSpit, xtatboundary);
 }
 
 void TSpit::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
@@ -79,9 +79,10 @@ void TSpit::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 		uint16 movieCode = telescopeCover ? 1 : 2;
 		RivenVideo *video = _vm->_video->openSlot(movieCode);
 		video->enable();
-		video->setBounds(timeIntervals[telescopePos], timeIntervals[telescopePos - 1] + 7);
+		video->seek(timeIntervals[telescopePos]);
 		_vm->_sound->playCardSound("tTeleMove"); // Play the moving sound
-		video->playBlocking();
+		video->playBlocking(timeIntervals[telescopePos - 1]);
+		video->stop();
 
 		// Now move the telescope down a position and refresh
 		telescopePos--;
@@ -125,9 +126,10 @@ void TSpit::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	uint16 movieCode = _vm->_vars["ttelecover"] ? 4 : 5;
 	RivenVideo *video = _vm->_video->openSlot(movieCode);
 	video->enable();
-	video->setBounds(timeIntervals[telescopePos - 1], timeIntervals[telescopePos] + 7);
+	video->seek(timeIntervals[telescopePos - 1]);
 	_vm->_sound->playCardSound("tTeleMove"); // Play the moving sound
-	video->playBlocking();
+	video->playBlocking(timeIntervals[telescopePos]);
+	video->stop();
 
 	// Now move the telescope up a position and refresh
 	telescopePos++;
@@ -271,7 +273,7 @@ void TSpit::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
 	// Note that each of the small marble images is exactly 4x2
 	// The original seems to scale the marble images from extras.mhk, but
 	// we're using the pre-scaled images in the stack.
-	uint16 baseBitmapId = _vm->findResourceID(ID_TBMP, "*tsmallred");
+	uint16 baseBitmapId = _vm->findResourceID(ID_TBMP, buildCardResourceName("tsmallred"));
 
 	for (uint16 i = 0; i < kMarbleCount; i++) {
 		uint32 var = _vm->_vars[s_marbleNames[i]];
@@ -321,6 +323,7 @@ void TSpit::xt7800_setup(uint16 argc, uint16 *argv) {
 }
 
 void TSpit::drawMarbles() {
+	_vm->_gfx->beginScreenUpdate();
 	for (uint32 i = 0; i < kMarbleCount; i++) {
 		// Don't draw the marble if we're holding it
 		if (_vm->_vars["themarble"] - 1 == i)
@@ -336,6 +339,7 @@ void TSpit::drawMarbles() {
 		rect.bottom -= 2;
 		_vm->_gfx->drawExtrasImage(i + 200, rect);
 	}
+	_vm->_gfx->applyScreenUpdate();
 }
 
 void TSpit::xdrawmarbles(uint16 argc, uint16 *argv) {
@@ -352,7 +356,7 @@ void TSpit::xtakeit(uint16 argc, uint16 *argv) {
 
 	for (uint32 i = 0; i < kMarbleCount; i++) {
 		RivenHotspot *marbleHotspot = _vm->getCard()->getHotspotByName(s_marbleNames[i]);
-		if (marbleHotspot->containsPoint(_vm->_system->getEventManager()->getMousePos())) {
+		if (marbleHotspot->containsPoint(getMousePosition())) {
 			marble = i + 1;
 			break;
 		}
@@ -365,19 +369,8 @@ void TSpit::xtakeit(uint16 argc, uint16 *argv) {
 	_vm->getCard()->drawPicture(1);
 
 	// Loop until the player lets go (or quits)
-	Common::Event event;
-	bool mouseDown = true;
-	while (mouseDown) {
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONUP)
-				mouseDown = false;
-			else if (event.type == Common::EVENT_MOUSEMOVE)
-				_vm->_system->updateScreen();
-			else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL)
-				return;
-		}
-
-		_vm->_system->delayMillis(10); // Take it easy on the CPU
+	while (mouseIsDown() && !_vm->shouldQuit()) {
+		_vm->doFrame();
 	}
 
 	// Check if we landed in a valid location and no other marble has that location
@@ -389,7 +382,7 @@ void TSpit::xtakeit(uint16 argc, uint16 *argv) {
 			Common::Rect testHotspot = generateMarbleGridRect(x, y);
 
 			// Let's try to place the marble!
-			if (testHotspot.contains(_vm->_system->getEventManager()->getMousePos())) {
+			if (testHotspot.contains(getMousePosition())) {
 				// Set this as the position
 				setMarbleX(marblePos, x);
 				setMarbleY(marblePos, y);
@@ -412,8 +405,7 @@ void TSpit::xtakeit(uint16 argc, uint16 *argv) {
 	// Check the new hotspots and refresh everything
 	marble = 0;
 	setMarbleHotspots();
-	_vm->updateCurrentHotspot();
-	_vm->_gfx->updateScreen();
+	drawMarbles();
 }
 
 void TSpit::xtscpbtn(uint16 argc, uint16 *argv) {
