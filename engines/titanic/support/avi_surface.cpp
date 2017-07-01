@@ -149,6 +149,7 @@ bool AVISurface::startAtFrame(int frameNumber) {
 	_decoder->start();
 
 	// Seek to the starting frame
+	_currentFrame = -1;
 	seekToFrame(frameNumber);
 
 	// If we're in reverse playback, set the decoder to play in reverse

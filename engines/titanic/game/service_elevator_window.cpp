@@ -70,16 +70,16 @@ bool CServiceElevatorWindow::ServiceElevatorFloorChangeMsg(CServiceElevatorFloor
 		int count = clip->_endFrame - clip->_startFrame;
 		int startFrame = clip->_startFrame + count * FACTORS[msg->_startFloor] / 100;
 		int endFrame = clip->_startFrame + count * FACTORS[msg->_endFloor] / 100;
+
 		double rate = (startFrame < endFrame ? 1.0 : -1.0) * count / fps;
+		setMovieFrameRate(rate);
 
 		if (_notifyFlag) {
 			// Service elevator indicator
 			playMovie(startFrame, endFrame, MOVIE_NOTIFY_OBJECT);
-			setMovieFrameRate(rate);
 		} else {
 			// Background outside elevator
 			playMovie(startFrame, endFrame, 0);
-			setMovieFrameRate(rate);
 
 			if (_intoSpace)
 				playClip("Into Space");
