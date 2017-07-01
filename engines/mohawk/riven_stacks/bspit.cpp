@@ -28,8 +28,6 @@
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_video.h"
 
-#include "common/events.h"
-
 namespace Mohawk {
 namespace RivenStacks {
 

@@ -62,7 +62,6 @@ public:
 	void enableCardUpdateScript(bool enable);
 
 	void copyImageToScreen(uint16 image, uint32 left, uint32 top, uint32 right, uint32 bottom);
-	void updateScreen(const Common::Rect &updateRect = Common::Rect(0, 0, 608, 392));
 	void drawRect(const Common::Rect &rect, bool active);
 	void drawImageRect(uint16 id, const Common::Rect &srcRect, const Common::Rect &dstRect);
 	void drawExtrasImage(uint16 id, const Common::Rect &dstRect);
@@ -139,6 +138,7 @@ private:
 	bool _dirtyScreen;
 
 	Graphics::PixelFormat _pixelFormat;
+	void updateScreen(const Common::Rect &updateRect = Common::Rect(0, 0, 608, 392));
 	void clearMainScreen();
 
 	// Credits

@@ -194,6 +194,8 @@ void DomeSpit::drawDomeSliders(uint16 startHotspot) {
 	uint16 bitmapId = _vm->findResourceID(ID_TBMP, buildCardResourceName(_sliderBmpName));
 	uint16 bgBitmapId = _vm->findResourceID(ID_TBMP, buildCardResourceName(_sliderBgBmpName));
 
+	_vm->_gfx->beginScreenUpdate();
+
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
 		RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(startHotspot + i);
 
@@ -208,7 +210,7 @@ void DomeSpit::drawDomeSliders(uint16 startHotspot) {
 			_vm->_gfx->drawImageRect(bgBitmapId, srcRect, dstRect);
 	}
 
-	_vm->_gfx->updateScreen();
+	_vm->_gfx->applyScreenUpdate();
 }
 
 Common::String DomeSpit::buildCardResourceName(const Common::String &name) const {

@@ -93,13 +93,6 @@ public:
 	/** Disable the video */
 	void disable();
 
-	/**
-	 * Set the bounds of the video
-	 *
-	 * This automatically seeks to the start time
-	 */
-	void setBounds(uint32 startTime, uint32 endTime);
-
 	/** Seek to the given time */
 	void seek(uint32 time);
 
