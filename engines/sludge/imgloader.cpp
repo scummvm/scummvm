@@ -44,10 +44,22 @@ bool ImgLoader::loadImage(Common::SeekableReadStream *stream, Graphics::Surface 
 	return true;
 }
 
-bool ImgLoader::loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surface *dest) {
+bool ImgLoader::loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, bool checkSig) {
 	::Image::PNGDecoder png;
+
+	// set skip signature
+	if (!checkSig) {
+		png.setSkipSignature(true);
+	}
+
 	if (!png.loadStream(*stream))
 		return false;
+
+	// set value back
+	if (!checkSig) {
+		png.setSkipSignature(false);
+	}
+
 	const Graphics::Surface *sourceSurface = png.getSurface();
 	Graphics::Surface *pngSurface = sourceSurface->convertTo(*g_sludge->getScreenPixelFormat(), png.getPalette());
 	dest->copyFrom(*pngSurface);
