@@ -3799,7 +3799,7 @@ static const uint16 pq3PatchGiveLocketPoints[] = {
 	0x4a, 0x06,                          // send 06 - Inv::at(25h)
 	0x4a, 0x06,                          // send 06 - locket::state(1)
 	// optimized code, saving 9 bytes
-	0x38, SIG_UINT16(0x009b),            // pushi 009bh (owner)
+	0x38, PATCH_UINT16(0x009b),          // pushi 009bh (owner)
 	0x76,                                // push0
 	0x4a, 0x04,                          // send 04 - locket::owner
 	PATCH_END
