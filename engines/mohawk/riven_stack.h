@@ -81,6 +81,8 @@ public:
 	RivenStack(MohawkEngine_Riven *vm, uint16 id);
 	virtual ~RivenStack();
 
+	typedef Common::Functor0<void> TimerProc;
+
 	/** Get the id of the stack */
 	uint16 getId() const;
 
@@ -111,6 +113,9 @@ public:
 
 	/** Install a timer for the current card if one is defined */
 	virtual void installCardTimer();
+
+	/** Clear any currently installed timer */
+	void removeTimer();
 
 	/** Handle a mouse down event */
 	void onMouseDown(const Common::Point &mouse);
@@ -162,6 +167,9 @@ protected:
 	/** Register an external command for use by the scripts */
 	void registerCommand(const Common::String &name, ExternalCommand *command);
 
+	/** Register a proc for planned execution */
+	void installTimer(TimerProc *proc, uint32 time);
+
 private:
 	typedef Common::HashMap<Common::String, Common::SharedPtr<ExternalCommand>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CommandsMap;
 
@@ -170,9 +178,13 @@ private:
 			#method, new Common::Functor2Mem<uint16, uint16 *, void, cls>(this, &cls::method) \
 		)
 
+#define TIMER(cls, method) \
+		new Common::Functor0Mem<void, cls>(this, &cls::method)
+
 	void loadResourceNames();
 	void loadCardIdMap();
 	void setCurrentStackVariable();
+	void checkTimer();
 
 	uint16 _id;
 
@@ -192,6 +204,10 @@ private:
 	bool _mouseIsDown;
 	Common::Point _mousePosition;
 	Common::Point _mouseDragStartPosition;
+
+	// Timer
+	Common::SharedPtr<TimerProc> _timerProc;
+	uint32 _timerTime;
 };
 
 namespace RivenStacks {

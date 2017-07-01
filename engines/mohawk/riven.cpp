@@ -72,8 +72,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 
 	DebugMan.addDebugChannel(kRivenDebugScript, "Script", "Track Script Execution");
 
-	removeTimer();
-
 	// NOTE: We can never really support CD swapping. All of the music files
 	// (*_Sounds.mhk) are stored on disc 1. They are copied to the hard drive
 	// during install and used from there. The same goes for the extras.mhk
@@ -195,7 +193,6 @@ Common::Error MohawkEngine_Riven::run() {
 
 void MohawkEngine_Riven::doFrame() {
 	// Update background running things
-	checkTimer();
 	_sound->updateSLST();
 	_video->updateMovies();
 
@@ -425,7 +422,7 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 
 void MohawkEngine_Riven::refreshCard() {
 	// Clear any timer still floating around
-	removeTimer();
+	_stack->removeTimer();
 
 	_card->enter(true);
 
@@ -469,27 +466,6 @@ Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
 	return _saveLoad->saveGame(slot, desc);
-}
-
-void MohawkEngine_Riven::installTimer(TimerProc *proc, uint32 time) {
-	removeTimer();
-	_timerProc = Common::SharedPtr<TimerProc>(proc);
-	_timerTime = time + getTotalPlayTime();
-}
-
-void MohawkEngine_Riven::checkTimer() {
-	if (!_timerProc)
-		return;
-
-	// NOTE: If the specified timer function is called, it is its job to remove the timer!
-	if (getTotalPlayTime() >= _timerTime) {
-		(*_timerProc)();
-	}
-}
-
-void MohawkEngine_Riven::removeTimer() {
-	_timerProc.reset();
-	_timerTime = 0;
 }
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {

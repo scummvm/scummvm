@@ -282,7 +282,7 @@ void BSpit::xbupdateboiler(uint16 argc, uint16 *argv) {
 
 void BSpit::ytramTrapTimer() {
 	// Remove this timer
-	_vm->removeTimer();
+	removeTimer();
 
 	// Check if we've caught a Ytram
 	checkYtramCatch(true);
@@ -296,7 +296,7 @@ void BSpit::xbsettrap(uint16 argc, uint16 *argv) {
 	_vm->_vars["bytramtime"] = timeUntilCatch + _vm->getTotalPlayTime();
 
 	// And set the timer too
-	_vm->installTimer(TIMER(BSpit, ytramTrapTimer), timeUntilCatch);
+	installTimer(TIMER(BSpit, ytramTrapTimer), timeUntilCatch);
 }
 
 void BSpit::checkYtramCatch(bool playSound) {
@@ -307,7 +307,7 @@ void BSpit::checkYtramCatch(bool playSound) {
 	// If the trap still has not gone off, reinstall our timer
 	// This is in case you set the trap, walked away, and returned
 	if (_vm->getTotalPlayTime() < ytramTime) {
-		_vm->installTimer(TIMER(BSpit, ytramTrapTimer), ytramTime - _vm->getTotalPlayTime());
+		installTimer(TIMER(BSpit, ytramTrapTimer), ytramTime - _vm->getTotalPlayTime());
 		return;
 	}
 

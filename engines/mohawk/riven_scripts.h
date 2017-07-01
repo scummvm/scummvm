@@ -23,6 +23,8 @@
 #ifndef RIVEN_SCRIPTS_H
 #define RIVEN_SCRIPTS_H
 
+#include "mohawk/riven_stack.h"
+
 #include "common/str-array.h"
 #include "common/ptr.h"
 #include "common/textconsole.h"
@@ -91,6 +93,7 @@ enum RivenCommandType {
 class MohawkEngine_Riven;
 class RivenCommand;
 class RivenScript;
+class RivenScriptManager;
 struct MLSTRecord;
 
 typedef Common::SharedPtr<RivenScript> RivenScriptPtr;
@@ -360,6 +363,18 @@ private:
 	uint16 _stackId;
 	uint32 _cardId;
 	bool _byStackId; // Otherwise by stack name id
+};
+
+class RivenTimerCommand : public RivenCommand {
+public:
+	RivenTimerCommand(MohawkEngine_Riven *vm, const Common::SharedPtr<RivenStack::TimerProc> &timerProc);
+
+	// RivenCommand API
+	virtual void dump(byte tabs) override;
+	virtual void execute() override;
+
+private:
+	Common::SharedPtr<RivenStack::TimerProc> _timerProc;
 };
 
 } // End of namespace Mohawk

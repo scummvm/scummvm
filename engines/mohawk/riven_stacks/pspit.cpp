@@ -80,7 +80,7 @@ void PSpit::catherineIdleTimer() {
 
 	_vm->_vars["pcathtime"] = timeUntilNextMovie + _vm->getTotalPlayTime();
 
-	_vm->installTimer(TIMER(PSpit, catherineIdleTimer), timeUntilNextMovie);
+	installTimer(TIMER(PSpit, catherineIdleTimer), timeUntilNextMovie);
 }
 
 void PSpit::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
@@ -131,7 +131,7 @@ void PSpit::installCardTimer() {
 	if (getCurrentCardGlobalId() == 0x3a85) {
 		// Top of elevator on prison island
 		// Handle Catherine hardcoded videos
-		_vm->installTimer(TIMER(PSpit, catherineIdleTimer), _vm->_rnd->getRandomNumberRng(1, 33) * 1000);
+		installTimer(TIMER(PSpit, catherineIdleTimer), _vm->_rnd->getRandomNumberRng(1, 33) * 1000);
 	} else {
 		RivenStack::installCardTimer();
 	}

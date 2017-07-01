@@ -425,7 +425,7 @@ void GSpit::catherineViewerIdleTimer() {
 	video->play();
 
 	// Reset the timer
-	_vm->installTimer(TIMER(GSpit, catherineViewerIdleTimer), video->getDuration() + _vm->_rnd->getRandomNumber(60) * 1000);
+	installTimer(TIMER(GSpit, catherineViewerIdleTimer), video->getDuration() + _vm->_rnd->getRandomNumber(60) * 1000);
 }
 
 void GSpit::xglview_prisonon(uint16 argc, uint16 *argv) {
@@ -473,7 +473,7 @@ void GSpit::xglview_prisonon(uint16 argc, uint16 *argv) {
 	}
 
 	// Create the timer for the next video
-	_vm->installTimer(TIMER(GSpit, catherineViewerIdleTimer), timeUntilNextMovie);
+	installTimer(TIMER(GSpit, catherineViewerIdleTimer), timeUntilNextMovie);
 }
 
 void GSpit::xglview_prisonoff(uint16 argc, uint16 *argv) {
@@ -483,7 +483,7 @@ void GSpit::xglview_prisonoff(uint16 argc, uint16 *argv) {
 	_vm->_vars["glview"] = 0;
 
 	// Remove the timer we set in xglview_prisonon()
-	_vm->removeTimer();
+	removeTimer();
 
 	// Play the 'turn off' movie after stopping any videos still playing
 	_vm->_video->closeVideos();
