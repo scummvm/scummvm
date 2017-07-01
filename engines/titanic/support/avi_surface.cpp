@@ -138,12 +138,8 @@ bool AVISurface::startAtFrame(int frameNumber) {
 		// Default to starting frame of first movie range
 		frameNumber = _movieRangeInfo.front()->_startFrame;
 
-	if (frameNumber > _movieRangeInfo.front()->_endFrame) {
-		if (!isReversed())
-			setFrameRate(-DEFAULT_FPS);
-		if (frameNumber == (int)_decoder->getFrameCount())
-			--frameNumber;
-	}
+	if (frameNumber == (int)_decoder->getFrameCount())
+		--frameNumber;
 
 	// Start the playback
 	_decoder->start();
