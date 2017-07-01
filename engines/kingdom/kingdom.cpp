@@ -1083,7 +1083,7 @@ void KingdomGame::IncreaseHealth() {
 }
 
 void KingdomGame::CheckMainScreen() {
-	if (!_CTimerFlag || _StatPlay == 900 || _StatPlay == 901)
+	if (_CTimerFlag || _StatPlay == 900 || _StatPlay == 901)
 		return;
 
 	_CTimerFlag = false;
@@ -1418,8 +1418,8 @@ int KingdomGame::GetAKey() {
 			} else if (_BTimerFlag) {
 				_BTimerFlag = false;
 				retval = 0x2F2;
-			} else if (_CTimerFlag) {
-				_CTimerFlag = false;
+			} else if (_SkylarTimerFlag) {
+				_SkylarTimerFlag = false;
 				retval = 0x2F5;
 			} else
 				retval= 0;
