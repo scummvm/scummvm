@@ -281,6 +281,9 @@ void AVISurface::setupDecompressor() {
 			_videoSurface->_flipVertically = true;
 		}
 	}
+
+	// Set a default frame rate
+	_frameRate = DEFAULT_FPS;
 }
 
 void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedSurface &dest) {
