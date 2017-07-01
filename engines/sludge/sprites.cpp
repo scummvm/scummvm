@@ -175,15 +175,12 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	// version 3, sprite is png
 	if (spriteBankVersion == 3) {
+		debug("png sprite");
 		for (int i = 0; i < total; i++) {
-			howmany = bigDataFile->readByte();
-			startIndex = 1;
-
 			loadhere.sprites[i].xhot = getSigned(bigDataFile);
 			loadhere.sprites[i].yhot = getSigned(bigDataFile);
-
-			if (!ImgLoader::loadPNGImage(bigDataFile, &loadhere.sprites[i].surface)) {
-				return false;
+			if (!ImgLoader::loadPNGImage(bigDataFile, &loadhere.sprites[i].surface, false)) {
+				return fatal("fail to read png sprite");
 			}
 		}
 		finishAccess();
