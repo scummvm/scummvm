@@ -39,12 +39,12 @@ namespace RivenStacks {
 ASpit::ASpit(MohawkEngine_Riven *vm) :
 		RivenStack(vm, kStackAspit) {
 
-	REGISTER_COMMAND(ASpit, xastartupbtnhide);    // Inaccurate but sufficient
-	REGISTER_COMMAND(ASpit, xasetupcomplete);     // Inaccurate but sufficient
-	REGISTER_COMMAND(ASpit, xaatrusopenbook);     // Done
-	REGISTER_COMMAND(ASpit, xaatrusbookback);     // Done
-	REGISTER_COMMAND(ASpit, xaatrusbookprevpage); // Done
-	REGISTER_COMMAND(ASpit, xaatrusbooknextpage); // Done
+	REGISTER_COMMAND(ASpit, xastartupbtnhide);
+	REGISTER_COMMAND(ASpit, xasetupcomplete);
+	REGISTER_COMMAND(ASpit, xaatrusopenbook);
+	REGISTER_COMMAND(ASpit, xaatrusbookback);
+	REGISTER_COMMAND(ASpit, xaatrusbookprevpage);
+	REGISTER_COMMAND(ASpit, xaatrusbooknextpage);
 	REGISTER_COMMAND(ASpit, xacathopenbook);
 	REGISTER_COMMAND(ASpit, xacathbookback);
 	REGISTER_COMMAND(ASpit, xacathbookprevpage);
@@ -52,14 +52,14 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(ASpit, xtrapbookback);
 	REGISTER_COMMAND(ASpit, xatrapbookclose);
 	REGISTER_COMMAND(ASpit, xatrapbookopen);
-	REGISTER_COMMAND(ASpit, xarestoregame);       // Done
-//	REGISTER_COMMAND(ASpit, xadisablemenureturn);
-//	REGISTER_COMMAND(ASpit, xaenablemenureturn);
-//	REGISTER_COMMAND(ASpit, xalaunchbrowser);
-//	REGISTER_COMMAND(ASpit, xadisablemenuintro);
-//	REGISTER_COMMAND(ASpit, xaenablemenuintro);
-//	REGISTER_COMMAND(ASpit, xademoquit);
-//	REGISTER_COMMAND(ASpit, xaexittomain);
+	REGISTER_COMMAND(ASpit, xarestoregame);
+	REGISTER_COMMAND(ASpit, xadisablemenureturn);
+	REGISTER_COMMAND(ASpit, xaenablemenureturn);
+	REGISTER_COMMAND(ASpit, xalaunchbrowser);
+	REGISTER_COMMAND(ASpit, xadisablemenuintro);
+	REGISTER_COMMAND(ASpit, xaenablemenuintro);
+	REGISTER_COMMAND(ASpit, xademoquit);
+	REGISTER_COMMAND(ASpit, xaexittomain);
 }
 
 void ASpit::xastartupbtnhide(uint16 argc, uint16 *argv) {
@@ -332,8 +332,7 @@ void ASpit::xadisablemenuintro(uint16 argc, uint16 *argv) {
 	// playing the intro. Ctrl+p will play the intro movies instead.
 	// The original also had this shortcut.
 
-	// Hide the "exit" button here
-	//_vm->_inventory->forceVisible(false);
+	_vm->_inventory->forceHidden(true);
 }
 
 void ASpit::xaenablemenuintro(uint16 argc, uint16 *argv) {
@@ -342,7 +341,7 @@ void ASpit::xaenablemenuintro(uint16 argc, uint16 *argv) {
 	// The original also had this shortcut.
 
 	// Show the "exit" button here
-	//_vm->_inventory->forceVisible(true);
+	_vm->_inventory->forceHidden(false);
 }
 
 void ASpit::xademoquit(uint16 argc, uint16 *argv) {

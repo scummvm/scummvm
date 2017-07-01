@@ -33,7 +33,8 @@ namespace Mohawk {
 RivenInventory::RivenInventory(MohawkEngine_Riven *vm) :
 		_vm(vm),
 		_inventoryDrawn(false),
-		_forceVisible(false) {
+		_forceVisible(false),
+		_forceHidden(false) {
 
 	_atrusJournalRect1 = Common::Rect(295, 402, 313, 426);
 	_atrusJournalRect2 = Common::Rect(259, 402, 278, 426);
@@ -176,6 +177,10 @@ bool RivenInventory::isVisible() const {
 		return true;
 	}
 
+	if (_forceHidden) {
+		return false;
+	}
+
 	if (_vm->getFeatures() & GF_DEMO) {
 		// The inventory is always visible in the demo
 		return true;
@@ -207,6 +212,10 @@ void RivenInventory::onFrame() {
 
 void RivenInventory::forceVisible(bool visible) {
 	_forceVisible = visible;
+}
+
+void RivenInventory::forceHidden(bool hidden) {
+	_forceHidden = hidden;
 }
 
 } // End of namespace Mohawk
