@@ -80,6 +80,7 @@ public:
 	/** Get the card's sound description with the specified index */
 	SLSTRecord getSound(uint16 index) const;
 
+	/** Replace an ambient sound list with another one */
 	void overrideSound(uint16 index, uint16 withIndex);
 
 	/** Play the card's movie with the specified index */
@@ -103,6 +104,7 @@ public:
 	/** Get the hotspot with the specified BLST id */
 	RivenHotspot *getHotspotByBlstId(const uint16 blstId) const;
 
+	/** Get the currently hovered hotspot if any */
 	RivenHotspot *getCurHotspot() const;
 
 	/** Get all the hotspots in the card. To be used for debugging features only */
