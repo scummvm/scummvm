@@ -39,7 +39,7 @@
 
 namespace Image {
 
-PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0) {
+PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0), _skipSignature(false) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -99,12 +99,14 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #ifdef USE_PNG
 	destroy();
 
-	// First, check the PNG signature
-	if (stream.readUint32BE() != MKTAG(0x89, 'P', 'N', 'G')) {
-		return false;
-	}
-	if (stream.readUint32BE() != MKTAG(0x0d, 0x0a, 0x1a, 0x0a)) {
-		return false;
+	// First, check the PNG signature (if not set to skip it)
+	if (!_skipSignature) {
+		if (stream.readUint32BE() != MKTAG(0x89, 'P', 'N', 'G')) {
+			return false;
+		}
+		if (stream.readUint32BE() != MKTAG(0x0d, 0x0a, 0x1a, 0x0a)) {
+			return false;
+		}
 	}
 
 	// The following is based on the guide provided in:
