@@ -34,13 +34,13 @@ namespace RivenStacks {
 PSpit::PSpit(MohawkEngine_Riven *vm) :
 		DomeSpit(vm, kStackPspit, "psliders.25", "psliderbg.25") {
 
-//	REGISTER_COMMAND(PSpit, xpisland990_elevcombo);
-//	REGISTER_COMMAND(PSpit, xpscpbtn);
-//	REGISTER_COMMAND(PSpit, xpisland290_domecheck);
-//	REGISTER_COMMAND(PSpit, xpisland25_opencard);
-//	REGISTER_COMMAND(PSpit, xpisland25_resetsliders);
-//	REGISTER_COMMAND(PSpit, xpisland25_slidermd);
-//	REGISTER_COMMAND(PSpit, xpisland25_slidermw);
+	REGISTER_COMMAND(PSpit, xpisland990_elevcombo);
+	REGISTER_COMMAND(PSpit, xpscpbtn);
+	REGISTER_COMMAND(PSpit, xpisland290_domecheck);
+	REGISTER_COMMAND(PSpit, xpisland25_opencard);
+	REGISTER_COMMAND(PSpit, xpisland25_resetsliders);
+	REGISTER_COMMAND(PSpit, xpisland25_slidermd);
+	REGISTER_COMMAND(PSpit, xpisland25_slidermw);
 }
 
 void PSpit::catherineIdleTimer() {
@@ -69,11 +69,8 @@ void PSpit::catherineIdleTimer() {
 
 	// Play the movie, blocking
 	_vm->getCard()->playMovie(movie);
-	_vm->_cursor->hideCursor();
 	RivenVideo *video = _vm->_video->openSlot(movie);
 	video->playBlocking();
-	_vm->_cursor->showCursor();
-	_vm->_system->updateScreen();
 
 	// Install the next timer for the next video
 	uint32 timeUntilNextMovie = _vm->_rnd->getRandomNumber(120) * 1000;
@@ -86,6 +83,7 @@ void PSpit::catherineIdleTimer() {
 void PSpit::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
 	// Play button sound based on argv[0]
 	_vm->_sound->playSound(argv[0] + 5);
+	_vm->delay(500);
 
 	// It is impossible to get here if Gehn is not trapped. However,
 	// the original also disallows brute forcing the ending if you have
