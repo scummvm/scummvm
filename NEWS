@@ -34,10 +34,15 @@ For a more comprehensive changelog of the latest experimental code, see:
  Composer:
    - Added save/load from General Main Menu.
 
-Drascula:
-  - Added handling of the master volume and fix volume synchronization between
-    the game and ScummVM options.
-  - Added possibility to load and save games using GMM.
+ Drascula:
+   - Added handling of the master volume and fix volume synchronization between
+     the game and ScummVM options.
+   - Added possibility to load and save games using GMM.
+
+ SCI
+   - Fixed a script bug in Police Quest 3 to now grant 10 points when giving the
+     locket to Marie. Now it's possible to beat the game with a perfect score.
+     This bug is also present, when using the original interpreter.
 
 1.9.1 (YYYY-MM-DD)
  General:
