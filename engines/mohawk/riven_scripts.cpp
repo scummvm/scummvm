@@ -43,7 +43,8 @@ static void printTabs(byte tabs) {
 
 RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) :
 		_vm(vm),
-		_runningQueuedScripts(false) {
+		_runningQueuedScripts(false),
+		_stoppingAllScripts(false) {
 
 	_storedMovieOpcode.time = 0;
 	_storedMovieOpcode.id = 0;
@@ -94,9 +95,7 @@ RivenScriptList RivenScriptManager::readScripts(Common::ReadStream *stream) {
 }
 
 void RivenScriptManager::stopAllScripts() {
-// TODO: Restore
-//	for (uint32 i = 0; i < _currentScripts.size(); i++)
-//		_currentScripts[i]->stopRunning();
+	_stoppingAllScripts = true;
 }
 
 void RivenScriptManager::setStoredMovieOpcode(const StoredMovieOpcode &op) {
@@ -125,7 +124,7 @@ void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
 	}
 
 	if (!queue) {
-		script->run();
+		script->run(this);
 	} else {
 		_queue.push_back(script);
 	}
@@ -139,11 +138,12 @@ void RivenScriptManager::runQueuedScripts() {
 	_runningQueuedScripts = true;
 
 	for (uint i = 0; i < _queue.size(); i++) {
-		_queue[i]->run();
+		_queue[i]->run(this);
 	}
 
 	_queue.clear();
 
+	_stoppingAllScripts = false; // Once the queue is empty, all scripts have been stopped
 	_runningQueuedScripts = false;
 }
 
@@ -191,8 +191,11 @@ bool RivenScriptManager::runningQueuedScripts() const {
 	return _runningQueuedScripts;
 }
 
+bool RivenScriptManager::stoppingAllScripts() const {
+	return _stoppingAllScripts;
+}
+
 RivenScript::RivenScript() {
-	_continueRunning = true;
 }
 
 RivenScript::~RivenScript() {
@@ -204,8 +207,12 @@ void RivenScript::dumpScript(byte tabs) {
 	}
 }
 
-void RivenScript::run() {
-	for (uint i = 0; i < _commands.size() && _continueRunning; i++) {
+void RivenScript::run(RivenScriptManager *scriptManager) {
+	for (uint i = 0; i < _commands.size(); i++) {
+		if (scriptManager->stoppingAllScripts()) {
+			return;
+		}
+
 		_commands[i]->execute();
 	}
 }
