@@ -188,10 +188,12 @@ struct MLSTRecord {
 	uint16 playbackSlot;
 	uint16 left;
 	uint16 top;
-	uint16 u0[3];
+	uint16 lowBoundTime;
+	uint16 startTime;
+	uint16 highBoundTime;
 	uint16 loop;
 	uint16 volume;
-	uint16 u1;
+	uint16 rate;
 };
 
 /**
