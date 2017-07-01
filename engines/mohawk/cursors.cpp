@@ -251,28 +251,33 @@ void LivingBooksCursorManager_v2::setCursor(const Common::String &name) {
 }
 
 PECursorManager::PECursorManager(const Common::String &appName) {
-	_exe = new Common::PEResources();
-
-	if (!_exe->loadFromEXE(appName)) {
+	Common::PEResources exe;
+	if (!exe.loadFromEXE(appName)) {
 		// Not all have cursors anyway, so this is not a problem
-		delete _exe;
-		_exe = 0;
+		return;
+	}
+
+	const Common::Array<Common::WinResourceID> cursorGroups = exe.getNameList(Common::kPEGroupCursor);
+
+	_cursors.resize(cursorGroups.size());
+	for (uint i = 0; i < cursorGroups.size(); i++) {
+		_cursors[i].id = cursorGroups[i].getID();
+		_cursors[i].cursorGroup = Graphics::WinCursorGroup::createCursorGroup(exe, cursorGroups[i]);
 	}
 }
 
 PECursorManager::~PECursorManager() {
-	delete _exe;
+	for (uint i = 0; i < _cursors.size(); i++) {
+		delete _cursors[i].cursorGroup;
+	}
 }
 
 void PECursorManager::setCursor(uint16 id) {
-	if (_exe) {
-		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, id);
-
-		if (cursorGroup) {
-			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
+	for (uint i = 0; i < _cursors.size(); i++) {
+		if (_cursors[i].id == id) {
+			Graphics::Cursor *cursor = _cursors[i].cursorGroup->cursors[0].cursor;
 			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
-			delete cursorGroup;
 			return;
 		}
 	}
