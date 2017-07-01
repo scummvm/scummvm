@@ -30,6 +30,7 @@
 #include "mohawk/resource.h"
 
 #include "common/events.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -177,8 +178,8 @@ uint16 RivenStack::getComboDigit(uint32 correctCombo, uint32 digit) {
 }
 
 void RivenStack::runDemoBoundaryDialog() {
-	GUI::MessageDialog dialog("Exploration beyond this point available only within the full version of\n"
-			                          "the game.");
+	GUI::MessageDialog dialog(_("Exploration beyond this point available only within the full version of\n"
+			                          "the game."));
 	dialog.runModal();
 }
 

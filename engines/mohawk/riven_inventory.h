@@ -51,6 +51,9 @@ public:
 	/** Force the inventory to be visible even in situations where it usually is not */
 	void forceVisible(bool visible);
 
+	/** Force the inventory to be hidden even in situations where it usually is not */
+	void forceHidden(bool hidden);
+
 private:
 	bool isVisible() const;
 	void draw();
@@ -60,6 +63,7 @@ private:
 
 	bool _inventoryDrawn;
 	bool _forceVisible;
+	bool _forceHidden;
 
 	// Rects for the inventory object positions
 	Common::Rect _atrusJournalRect1;
