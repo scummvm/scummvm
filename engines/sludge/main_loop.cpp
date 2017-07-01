@@ -255,7 +255,7 @@ int main_loop(const char *filename)
 		return 0;
 	}
 
-	initGraphics(winWidth, winHeight, false, g_sludge->getScreenPixelFormat());
+	initGraphics(winWidth, winHeight, true, g_sludge->getScreenPixelFormat());
 
 	// Init screen surface
 	renderSurface.create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
