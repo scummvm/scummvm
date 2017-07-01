@@ -80,6 +80,8 @@ bool setZBuffer(int num) {
 		zBufferToSet = num;
 		return true;
 	}
+
+	debug (kSludgeDebugGraphics, "Setting zBuffer");
 	uint32 stillToGo = 0;
 	int yPalette[16], sorted[16], sortback[16];
 

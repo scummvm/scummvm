@@ -175,7 +175,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	// version 3, sprite is png
 	if (spriteBankVersion == 3) {
-		debug("png sprite");
+		debug(kSludgeDebugGraphics, "png sprite");
 		for (int i = 0; i < total; i++) {
 			loadhere.sprites[i].xhot = getSigned(bigDataFile);
 			loadhere.sprites[i].yhot = getSigned(bigDataFile);
