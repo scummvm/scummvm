@@ -333,7 +333,7 @@ void ASpit::xadisablemenuintro(uint16 argc, uint16 *argv) {
 	// The original also had this shortcut.
 
 	// Hide the "exit" button here
-	_vm->_inventory->hide();
+	//_vm->_inventory->forceVisible(false);
 }
 
 void ASpit::xaenablemenuintro(uint16 argc, uint16 *argv) {
@@ -342,7 +342,7 @@ void ASpit::xaenablemenuintro(uint16 argc, uint16 *argv) {
 	// The original also had this shortcut.
 
 	// Show the "exit" button here
-	_vm->_inventory->show();
+	//_vm->_inventory->forceVisible(true);
 }
 
 void ASpit::xademoquit(uint16 argc, uint16 *argv) {

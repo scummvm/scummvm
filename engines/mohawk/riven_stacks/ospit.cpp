@@ -122,9 +122,9 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 				_vm->_sound->playSound(0);                          // Play the link sound again
 				_vm->_gfx->scheduleTransition(kRivenTransitionBlend);
 				_vm->changeToCard(_vm->getStack()->getCardStackId(0x2885));    // Link out!
-				_vm->_inventory->show();
+				_vm->_inventory->forceVisible(true);
 				_vm->delay(2000);
-				_vm->_inventory->hide();
+				_vm->_inventory->forceVisible(false);
 				_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
 				return;
 			}
