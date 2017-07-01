@@ -232,13 +232,6 @@ void MohawkEngine_Riven::doFrame() {
 			case Common::KEYCODE_SPACE:
 				pauseGame();
 				break;
-			case Common::KEYCODE_F4:
-				_showHotspots = !_showHotspots;
-				if (_showHotspots) {
-					_card->drawHotspotRects();
-				} else
-					refreshCard();
-				break;
 			case Common::KEYCODE_F5:
 				runDialog(*_optionsDialog);
 				if (_optionsDialog->getLoadSlot() >= 0)

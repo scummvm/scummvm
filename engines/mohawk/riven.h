@@ -91,6 +91,9 @@ public:
 	RivenScriptManager *_scriptMan;
 	RivenInventory *_inventory;
 
+	// Display debug rectangles around the hotspots
+	bool _showHotspots;
+
 	GUI::Debugger *getDebugger();
 
 	bool canLoadGameStateCurrently();
@@ -111,9 +114,6 @@ private:
 	// Stack/Card-related functions and variables
 	RivenCard *_card;
 	RivenStack *_stack;
-
-	// Hotspot related functions and variables
-	bool _showHotspots;
 
 	// Variables
 	void initVars();
