@@ -394,6 +394,7 @@ RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
 	registerCmd("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
 	registerCmd("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
+	registerVar("show_hotspots",  &_vm->_showHotspots);
 }
 
 RivenConsole::~RivenConsole() {
