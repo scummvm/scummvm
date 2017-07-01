@@ -79,6 +79,10 @@ void RivenCard::enter(bool unkMovies) {
 	initializeZipMode();
 	_vm->_gfx->applyScreenUpdate(true);
 
+	if (_vm->_showHotspots) {
+		drawHotspotRects();
+	}
+
 	runScript(kCardEnterScript);
 }
 
