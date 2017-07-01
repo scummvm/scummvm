@@ -124,7 +124,6 @@ public:
 	RivenStack *constructStackById(uint16 id);
 	void changeToCard(uint16 dest);
 	void changeToStack(uint16);
-	void refreshCard();
 	RivenCard *getCard() const { return _card; }
 	RivenStack *getStack() const { return _stack; }
 

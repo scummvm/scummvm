@@ -518,7 +518,7 @@ void JSpit::xjlagoon800_alert(uint16 argc, uint16 *argv) {
 		RivenVideo *leaving2 = _vm->_video->openSlot(6);
 		leaving2->playBlocking();
 		sunners = 2;
-		_vm->refreshCard();
+		_vm->getCard()->enter(false);
 	}
 }
 
@@ -536,7 +536,7 @@ void JSpit::xjlagoon1500_alert(uint16 argc, uint16 *argv) {
 		RivenVideo *leavingVideo = _vm->_video->openSlot(2);
 		leavingVideo->playBlocking();
 		sunners = 2;
-		_vm->refreshCard();
+		_vm->getCard()->enter(false);
 	}
 }
 

@@ -389,7 +389,7 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 	_gfx->clearCache();
 
 	if (!(getFeatures() & GF_DEMO)) {
-		for (byte i = 0; i < 13; i++)
+		for (byte i = 0; i < ARRAYSIZE(rivenSpecialChange); i++)
 			if (_stack->getId() == rivenSpecialChange[i].startStack && dest == _stack->getCardStackId(
 					rivenSpecialChange[i].startCardRMAP)) {
 				changeToStack(rivenSpecialChange[i].targetStack);
@@ -397,26 +397,18 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 			}
 	}
 
+	// Clear any timer still floating around
+	_stack->removeTimer();
+
 	if (_card) {
 		_card->leave();
 		delete _card;
 	}
 	_card = new RivenCard(this, dest);
-
-	refreshCard(); // Handles hotspots and scripts
-}
-
-void MohawkEngine_Riven::refreshCard() {
-	// Clear any timer still floating around
-	_stack->removeTimer();
-
 	_card->enter(true);
 
-	if (_showHotspots)
-		_card->drawHotspotRects();
-
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
-	_stack->onMouseMove(_eventMan->getMousePos());
+	_stack->onMouseMove(_stack->getMousePosition());
 
 	// Finally, install any hardcoded timer
 	_stack->installCardTimer();

@@ -489,7 +489,7 @@ void RivenSimpleCommand::transition(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 19: reload card
 void RivenSimpleCommand::refreshCard(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->refreshCard();
+	_vm->getCard()->enter(false);
 }
 
 // Command 20: begin screen update
