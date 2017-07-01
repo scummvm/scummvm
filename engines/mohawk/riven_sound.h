@@ -154,7 +154,7 @@ private:
  */
 class RivenSound {
 public:
-	RivenSound(MohawkEngine_Riven *vm, Audio::RewindableAudioStream *rewindStream);
+	RivenSound(MohawkEngine_Riven *vm, Audio::RewindableAudioStream *rewindStream, Audio::Mixer::SoundType mixerType);
 	~RivenSound();
 
 	/** Start playing the sound stream passed to the constructor */
@@ -178,7 +178,7 @@ public:
 	/** Change the balance */
 	void setBalance(int16 balance);
 
-	/** Set the sound to indefinitely loop. Must be called before startting the playback */
+	/** Set the sound to indefinitely loop. Must be called before starting the playback */
 	void setLooping(bool loop);
 
 private:
@@ -188,6 +188,7 @@ private:
 	MohawkEngine_Riven *_vm;
 
 	Audio::SoundHandle _handle;
+	Audio::Mixer::SoundType _mixerType;
 	Audio::RewindableAudioStream *_stream;
 
 	uint16 _volume;
