@@ -25,8 +25,6 @@
 
 #include "mohawk/riven_stack.h"
 
-#include "mohawk/riven_graphics.h"
-
 namespace Mohawk {
 namespace RivenStacks {
 
@@ -71,7 +69,9 @@ public:
 	void xaexittomain(uint16 argc, uint16 *argv);
 
 private:
-	bool pageTurn(RivenTransition transition);
+	void cathBookDrawTelescopeCombination();
+
+	void cathBookDrawPage(uint32 page);
 };
 
 } // End of namespace RivenStacks

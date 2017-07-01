@@ -350,6 +350,31 @@ void RivenStack::removeTimer() {
 	_timerTime = 0;
 }
 
+bool RivenStack::pageTurn(RivenTransition transition) {
+	// Wait until the previous page turn sound completes
+	while (_vm->_sound->isEffectPlaying() && !_vm->shouldQuit()) {
+		if (!mouseIsDown()) {
+			return false;
+		}
+
+		_vm->doFrame();
+	}
+
+	// Play the page turning sound
+	const char *soundName = nullptr;
+	if (_vm->_rnd->getRandomBit())
+		soundName = "aPage1";
+	else
+		soundName = "aPage2";
+
+	_vm->_sound->playCardSound(soundName, 51, true);
+
+	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(transition);
+
+	return true;
+}
+
 RivenNameList::RivenNameList() {
 
 }
