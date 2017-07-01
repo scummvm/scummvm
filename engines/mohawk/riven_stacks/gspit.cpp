@@ -28,34 +28,32 @@
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_video.h"
 
-#include "common/events.h"
-
 namespace Mohawk {
 namespace RivenStacks {
 
 GSpit::GSpit(MohawkEngine_Riven *vm) :
 		DomeSpit(vm, kStackGspit, "gsliders.190", "gsliderbg.190") {
 
-//	REGISTER_COMMAND(GSpit, xgresetpins);
-//	REGISTER_COMMAND(GSpit, xgrotatepins);
-//	REGISTER_COMMAND(GSpit, xgpincontrols);
-//	REGISTER_COMMAND(GSpit, xgisland25_opencard);
-//	REGISTER_COMMAND(GSpit, xgisland25_resetsliders);
-//	REGISTER_COMMAND(GSpit, xgisland25_slidermd);
-//	REGISTER_COMMAND(GSpit, xgisland25_slidermw);
-//	REGISTER_COMMAND(GSpit, xgscpbtn);
-//	REGISTER_COMMAND(GSpit, xgisland1490_domecheck);
-//	REGISTER_COMMAND(GSpit, xgplateau3160_dopools);
-//	REGISTER_COMMAND(GSpit, xgwt200_scribetime);
-//	REGISTER_COMMAND(GSpit, xgwt900_scribe);
-//	REGISTER_COMMAND(GSpit, xgplaywhark);
-//	REGISTER_COMMAND(GSpit, xgrviewer);
-//	REGISTER_COMMAND(GSpit, xgwharksnd);
-//	REGISTER_COMMAND(GSpit, xglview_prisonoff);
-//	REGISTER_COMMAND(GSpit, xglview_villageoff);
-//	REGISTER_COMMAND(GSpit, xglviewer);
-//	REGISTER_COMMAND(GSpit, xglview_prisonon);
-//	REGISTER_COMMAND(GSpit, xglview_villageon);
+	REGISTER_COMMAND(GSpit, xgresetpins);
+	REGISTER_COMMAND(GSpit, xgrotatepins);
+	REGISTER_COMMAND(GSpit, xgpincontrols);
+	REGISTER_COMMAND(GSpit, xgisland25_opencard);
+	REGISTER_COMMAND(GSpit, xgisland25_resetsliders);
+	REGISTER_COMMAND(GSpit, xgisland25_slidermd);
+	REGISTER_COMMAND(GSpit, xgisland25_slidermw);
+	REGISTER_COMMAND(GSpit, xgscpbtn);
+	REGISTER_COMMAND(GSpit, xgisland1490_domecheck);
+	REGISTER_COMMAND(GSpit, xgplateau3160_dopools);
+	REGISTER_COMMAND(GSpit, xgwt200_scribetime);
+	REGISTER_COMMAND(GSpit, xgwt900_scribe);
+	REGISTER_COMMAND(GSpit, xgplaywhark);
+	REGISTER_COMMAND(GSpit, xgrviewer);
+	REGISTER_COMMAND(GSpit, xgwharksnd);
+	REGISTER_COMMAND(GSpit, xglview_prisonoff);
+	REGISTER_COMMAND(GSpit, xglview_villageoff);
+	REGISTER_COMMAND(GSpit, xglviewer);
+	REGISTER_COMMAND(GSpit, xglview_prisonon);
+	REGISTER_COMMAND(GSpit, xglview_villageon);
 }
 
 void GSpit::lowerPins() {
@@ -77,9 +75,10 @@ void GSpit::lowerPins() {
 
 	// Play the video of the pins going down
 	RivenVideo *video = _vm->_video->openSlot(upMovie);
-	assert(video);
-	video->setBounds(startTime, startTime + 550);
-	video->playBlocking();
+	video->enable();
+	video->seek(startTime);
+	video->playBlocking(startTime + 550);
+	video->disable();
 
 	upMovie = 0;
 }
@@ -87,7 +86,6 @@ void GSpit::lowerPins() {
 void GSpit::xgresetpins(uint16 argc, uint16 *argv) {
 	// As the function name suggests, this resets the pins
 	lowerPins();
-	_vm->_vars["gupmoov"] = 0;
 }
 
 void GSpit::xgrotatepins(uint16 argc, uint16 *argv) {
@@ -109,9 +107,10 @@ void GSpit::xgrotatepins(uint16 argc, uint16 *argv) {
 
 	// Play the video of the pins rotating
 	RivenVideo *video = _vm->_video->openSlot(_vm->_vars["gupmoov"]);
-	assert(video);
-	video->setBounds(startTime, startTime + 1215);
-	video->playBlocking();
+	video->enable();
+	video->seek(startTime);
+	video->playBlocking(startTime + 1215);
+	video->disable();
 }
 
 void GSpit::xgpincontrols(uint16 argc, uint16 *argv) {
@@ -120,7 +119,7 @@ void GSpit::xgpincontrols(uint16 argc, uint16 *argv) {
 	RivenHotspot *panel = _vm->getCard()->getHotspotByBlstId(13);
 
 	// Get our mouse position and adjust it to the beginning of the hotspot
-	Common::Point mousePos = _vm->_system->getEventManager()->getMousePos();
+	Common::Point mousePos = getMousePosition();
 	mousePos.x -= panel->getRect().left;
 	mousePos.y -= panel->getRect().top;
 
@@ -197,8 +196,10 @@ void GSpit::xgpincontrols(uint16 argc, uint16 *argv) {
 	RivenVideo *handle = _vm->_video->openSlot(pinMovieCodes[imagePos - 1]);
 	assert(handle);
 	uint32 startTime = 9630 - pinPos * 600;
-	handle->setBounds(startTime, startTime + 550);
-	handle->playBlocking();
+	handle->enable();
+	handle->seek(startTime);
+	handle->playBlocking(startTime + 550);
+	handle->disable();
 
 	// Update the relevant variables
 	_vm->_vars["gupmoov"] = pinMovieCodes[imagePos - 1];
@@ -232,10 +233,10 @@ void GSpit::xgisland1490_domecheck(uint16 argc, uint16 *argv) {
 
 void GSpit::xgplateau3160_dopools(uint16 argc, uint16 *argv) {
 	// Play the deactivation of a pool if one is active and a different one is activated
-	_vm->_cursor->setCursor(kRivenHideCursor);
-	_vm->_system->updateScreen();
-	RivenVideo *video = _vm->_video->openSlot(_vm->_vars["glkbtns"] * 2);
-	video->playBlocking();
+	if (_vm->_vars["glkbtns"] != 0) {
+		RivenVideo *video = _vm->_video->openSlot(_vm->_vars["glkbtns"] * 2);
+		video->playBlocking();
+	}
 }
 
 void GSpit::xgwt200_scribetime(uint16 argc, uint16 *argv) {
@@ -260,11 +261,13 @@ void GSpit::xgrviewer(uint16 argc, uint16 *argv) {
 	uint32 &viewerLight = _vm->_vars["grview"];
 	if (viewerLight == 1) {
 		viewerLight = 0;
-		_vm->_sound->playSound(27);
-		_vm->refreshCard();
+		_vm->_sound->playCardSound("gScpBtnUp", 255, true);
+		_vm->getCard()->enter(false);
 
 		// Delay a bit before turning
-		_vm->_system->delayMillis(200);
+		while (_vm->_sound->isEffectPlaying()) {
+			_vm->doFrame();
+		}
 	}
 
 	// Calculate how much we're moving
@@ -276,13 +279,15 @@ void GSpit::xgrviewer(uint16 argc, uint16 *argv) {
 
 	// Now play the movie
 	RivenVideo *video = _vm->_video->openSlot(1);
-	assert(video);
-	video->setBounds(s_viewerTimeIntervals[curPos], s_viewerTimeIntervals[newPos]);
-	video->playBlocking();
+	video->enable();
+	video->seek(s_viewerTimeIntervals[curPos]);
+	video->playBlocking(s_viewerTimeIntervals[newPos]);
+	video->disable();
+	video->stop();
 
 	// Set the new position and let the card's scripts take over again
 	curPos = newPos % 6; // Clip it to 0-5
-	_vm->refreshCard();
+	_vm->getCard()->enter(false);
 }
 
 void GSpit::xgplaywhark(uint16 argc, uint16 *argv) {
@@ -328,11 +333,28 @@ void GSpit::xgplaywhark(uint16 argc, uint16 *argv) {
 	// For whatever reason the devs felt fit, code 31 is used for all of the videos
 	RivenVideo *video = _vm->_video->openSlot(31);
 	video->playBlocking();
-	_vm->refreshCard();
 }
 
 void GSpit::xgwharksnd(uint16 argc, uint16 *argv) {
-	// TODO: Random background whark videos
+	uint32 wharkVisits = _vm->_vars["gwhark"];
+
+	// If we're at 5 or more, the whark will no longer visit us :(
+	if (wharkVisits >= 5) {
+		return;
+	}
+
+	uint soundId = _vm->_rnd->getRandomNumberRng(1, 36);
+	if (soundId >= 10) {
+		// No whark this time
+		return;
+	}
+
+	// Wait for the whark to come
+	uint delay = _vm->_rnd->getRandomNumberRng(1, 30) + 120;
+	_vm->delay(delay);
+
+	// Play a random whark sound
+	_vm->_sound->playCardSound(Common::String::format("gWharkSolo%d", soundId));
 }
 
 void GSpit::xglviewer(uint16 argc, uint16 *argv) {
@@ -348,9 +370,11 @@ void GSpit::xglviewer(uint16 argc, uint16 *argv) {
 
 	// Now play the movie
 	RivenVideo *video = _vm->_video->openSlot(1);
-	assert(video);
-	video->setBounds(s_viewerTimeIntervals[curPos], s_viewerTimeIntervals[newPos]);
-	video->playBlocking();
+	video->enable();
+	video->seek(s_viewerTimeIntervals[curPos]);
+	video->playBlocking(s_viewerTimeIntervals[newPos]);
+	video->disable();
+	video->stop();
 
 	// Set the new position to the variable
 	curPos = newPos % 6; // Clip it to 0-5
@@ -430,10 +454,8 @@ void GSpit::xglview_prisonon(uint16 argc, uint16 *argv) {
 		cathState = 1;
 
 	// Turn on the viewer
-	_vm->_cursor->hideCursor();
 	RivenVideo *turnOn = _vm->_video->openSlot(turnOnMovie);
 	turnOn->playBlocking();
-	_vm->_cursor->showCursor();
 
 	uint32 timeUntilNextMovie;
 
@@ -465,10 +487,8 @@ void GSpit::xglview_prisonoff(uint16 argc, uint16 *argv) {
 
 	// Play the 'turn off' movie after stopping any videos still playing
 	_vm->_video->closeVideos();
-	_vm->_cursor->hideCursor();
 	RivenVideo *video = _vm->_video->openSlot(5);
 	video->playBlocking();
-	_vm->_cursor->showCursor();
 
 	// Redraw the viewer
 	_vm->getCard()->drawPicture(1);

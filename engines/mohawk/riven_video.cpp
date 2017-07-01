@@ -97,12 +97,6 @@ uint32 RivenVideo::getDuration() const {
 	return _video->getDuration().msecs();
 }
 
-void RivenVideo::setBounds(uint32 startTime, uint32 endTime) {
-	assert(_video);
-	_video->setEndTime(Audio::Timestamp(0, endTime, 600));
-	_video->seek(Audio::Timestamp(0, startTime, 600));
-}
-
 void RivenVideo::seek(uint32 time) {
 	assert(_video);
 
