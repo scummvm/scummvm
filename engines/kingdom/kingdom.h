@@ -125,9 +125,9 @@ namespace Kingdom {
 		bool _ItemInhibit;
 		bool _ASMode;
 		bool _ATimerFlag;
-		bool _BTimerFlag;
-		bool _CTimerFlag;
-		bool _SkylarTimerFlag;
+		bool _BTimerFlag; // TODO: this flag is always false: to be refactored
+		bool _CTimerFlag; // TODO: this flag is always false: to be refactored
+		bool _SkylarTimerFlag; // TODO: this flag is always false: to be refactored
 		int _ATimer;
 		int _BTimer;
 		int _CTimer;
