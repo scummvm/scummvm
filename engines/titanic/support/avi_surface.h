@@ -57,6 +57,13 @@ public:
 	 * Returns the specified video track
 	 */
 	Video::AVIDecoder::AVIVideoTrack &getVideoTrack(uint idx);
+
+	/**
+	 * Returns the transparency video track, if present
+	 */
+	AVIVideoTrack *getTransparencyTrack() {
+		return static_cast<AVIVideoTrack *>(_transparencyTrack.track);
+	}
 };
 
 class AVISurface {

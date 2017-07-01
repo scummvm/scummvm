@@ -55,7 +55,7 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	if (!_decoder->loadFile(_movieName))
 		error("Could not open video - %s", key.getString().c_str());
 
-	_streamCount = _decoder->videoTrackCount();
+	_streamCount = _decoder->getTransparencyTrack() ? 2 : 1;
 
 	_soundManager = nullptr;
 	_hasAudio = false;
@@ -222,7 +222,7 @@ void AVISurface::setVideoSurface(CVideoSurface *surface) {
 
 	// Handling for secondary video stream
 	if (_streamCount == 2) {
-		const Common::String &streamName = _decoder->getVideoTrack(1).getName();
+		const Common::String &streamName = _decoder->getTransparencyTrack()->getName();
 
 		if (streamName == "mask0") {
 			_videoSurface->_transparencyMode = TRANS_MASK0;
@@ -243,7 +243,9 @@ void AVISurface::setupDecompressor() {
 		return;
 
 	for (int idx = 0; idx < _streamCount; ++idx) {
-		Graphics::PixelFormat format = _decoder->getVideoTrack(idx).getPixelFormat();
+		Graphics::PixelFormat format = (idx == 0) ?
+			_decoder->getVideoTrack(0).getPixelFormat() :
+			_decoder->getTransparencyTrack()->getPixelFormat();
 		int decoderPitch = _decoder->getWidth() * format.bytesPerPixel;
 		bool flag = false;
 
