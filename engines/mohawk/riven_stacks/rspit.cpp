@@ -34,10 +34,10 @@ namespace RivenStacks {
 RSpit::RSpit(MohawkEngine_Riven *vm) :
 		RivenStack(vm, kStackRspit) {
 
-//	REGISTER_COMMAND(RSpit, xrshowinventory);
-//	REGISTER_COMMAND(RSpit, xrhideinventory);
-//	REGISTER_COMMAND(RSpit, xrcredittime);
-//	REGISTER_COMMAND(RSpit, xrwindowsetup);
+	REGISTER_COMMAND(RSpit, xrshowinventory);
+	REGISTER_COMMAND(RSpit, xrhideinventory);
+	REGISTER_COMMAND(RSpit, xrcredittime);
+	REGISTER_COMMAND(RSpit, xrwindowsetup);
 }
 
 void RSpit::xrcredittime(uint16 argc, uint16 *argv) {
@@ -52,14 +52,9 @@ void RSpit::xrcredittime(uint16 argc, uint16 *argv) {
 }
 
 void RSpit::xrshowinventory(uint16 argc, uint16 *argv) {
-	// Give the trap book and Catherine's journal to the player
-	_vm->_vars["atrapbook"] = 1;
-	_vm->_vars["acathbook"] = 1;
-	_vm->_inventory->show();
 }
 
 void RSpit::xrhideinventory(uint16 argc, uint16 *argv) {
-	_vm->_inventory->hide();
 }
 
 void RSpit::rebelPrisonWindowTimer() {
@@ -67,10 +62,10 @@ void RSpit::rebelPrisonWindowTimer() {
 	uint16 movie = _vm->_rnd->getRandomNumberRng(2, 13);
 	_vm->getCard()->playMovie(movie);
 	RivenVideo *video = _vm->_video->openSlot(movie);
-	video->play();
+	video->playBlocking();
 
 	// Ensure the next video starts after this one ends
-	uint32 timeUntilNextVideo = video->getDuration() + _vm->_rnd->getRandomNumberRng(38, 58) * 1000;
+	uint32 timeUntilNextVideo = _vm->_rnd->getRandomNumberRng(38, 58) * 1000;
 
 	// Save the time in case we leave the card and return
 	_vm->_vars["rvillagetime"] = timeUntilNextVideo + _vm->getTotalPlayTime();
@@ -111,7 +106,6 @@ void RSpit::xrwindowsetup(uint16 argc, uint16 *argv) {
 	// Install our timer and we're on our way
 	installTimer(TIMER(RSpit, rebelPrisonWindowTimer), timeUntilNextVideo);
 }
-
 
 } // End of namespace RivenStacks
 } // End of namespace Mohawk
