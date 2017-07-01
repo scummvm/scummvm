@@ -248,7 +248,6 @@ void MohawkEngine_Riven::doFrame() {
 				}
 				break;
 			default:
-				// TODO: Pass the keypress to the game only if it was not consumed by the engine
 				_stack->onKeyPressed(event.kbd.keycode);
 				break;
 			}
@@ -417,14 +416,10 @@ void MohawkEngine_Riven::refreshCard() {
 		_card->drawHotspotRects();
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
-	updateCurrentHotspot();
+	_stack->onMouseMove(_eventMan->getMousePos());
 
 	// Finally, install any hardcoded timer
 	_stack->installCardTimer();
-}
-
-void MohawkEngine_Riven::updateCurrentHotspot() {
-	_card->onMouseMove(_eventMan->getMousePos());
 }
 
 Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, uint16 id) {

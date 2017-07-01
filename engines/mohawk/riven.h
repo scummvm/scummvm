@@ -130,7 +130,6 @@ public:
 
 	// Hotspot functions/variables
 	Common::Array<ZipMode> _zipModeData;
-	void updateCurrentHotspot();
 	void addZipVisitedCard(uint16 cardId, uint16 cardNameId);
 	bool isZipVisitedCard(const Common::String &hotspotName) const;
 
