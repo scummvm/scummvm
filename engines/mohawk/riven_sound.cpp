@@ -61,7 +61,7 @@ void RivenSoundManager::playSound(uint16 id, uint16 volume, bool playOnDraw) {
 		return;
 	}
 
-	_effect = new RivenSound(_vm, rewindStream);
+	_effect = new RivenSound(_vm, rewindStream, Audio::Mixer::kSFXSoundType);
 	_effect->setVolume(volume);
 
 	_effectPlayOnDraw = playOnDraw;
@@ -138,7 +138,7 @@ void RivenSoundManager::addAmbientSounds(const SLSTRecord &record) {
 		for (uint i = oldSize; i < _ambientSounds.sounds.size(); i++) {
 			Audio::RewindableAudioStream *stream = makeAudioStream(record.soundIds[i]);
 
-			RivenSound *sound = new RivenSound(_vm, stream);
+			RivenSound *sound = new RivenSound(_vm, stream, Audio::Mixer::kMusicSoundType);
 			sound->setVolume(record.volumes[i]);
 			sound->setBalance(record.balances[i]);
 
@@ -310,12 +310,13 @@ bool RivenSoundManager::isEffectPlaying() const {
 	return _effect != nullptr && _effect->isPlaying();
 }
 
-RivenSound::RivenSound(MohawkEngine_Riven *vm, Audio::RewindableAudioStream *rewindStream) :
+RivenSound::RivenSound(MohawkEngine_Riven *vm, Audio::RewindableAudioStream *rewindStream, Audio::Mixer::SoundType mixerType) :
 		_vm(vm),
 		_volume(Audio::Mixer::kMaxChannelVolume),
 		_balance(0),
 		_looping(false),
-		_stream(rewindStream) {
+		_stream(rewindStream),
+		_mixerType(mixerType) {
 
 }
 
@@ -371,7 +372,7 @@ void RivenSound::play() {
 
 	int8 mixerBalance = convertBalance(_balance);
 	byte mixerVolume = convertVolume(_volume);
-	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, playStream, -1, mixerVolume, mixerBalance);
+	_vm->_mixer->playStream(_mixerType, &_handle, playStream, -1, mixerVolume, mixerBalance);
 	_stream = nullptr;
 }
 
