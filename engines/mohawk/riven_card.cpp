@@ -523,12 +523,12 @@ void RivenCard::dump() const {
 		debug("playbackSlot: %d", _movieList[i].playbackSlot);
 		debug("left: %d", _movieList[i].left);
 		debug("top: %d", _movieList[i].top);
-		debug("u0[0]: %d", _movieList[i].u0[0]);
-		debug("u0[1]: %d", _movieList[i].u0[1]);
-		debug("u0[2]: %d", _movieList[i].u0[2]);
+		debug("lowBoundTime: %d", _movieList[i].lowBoundTime);
+		debug("startTime: %d", _movieList[i].startTime);
+		debug("highBoundTime: %d", _movieList[i].highBoundTime);
 		debug("loop: %d", _movieList[i].loop);
 		debug("volume: %d", _movieList[i].volume);
-		debug("u1: %d", _movieList[i].u1);
+		debug("rate: %d", _movieList[i].rate);
 		debugN("\n");
 	}
 }
@@ -546,20 +546,24 @@ void RivenCard::loadCardMovieList(uint16 id) {
 		mlstRecord.playbackSlot = mlstStream->readUint16BE();
 		mlstRecord.left = mlstStream->readUint16BE();
 		mlstRecord.top = mlstStream->readUint16BE();
-
-		for (byte j = 0; j < 2; j++)
-			if (mlstStream->readUint16BE() != 0)
-				warning("u0[%d] in MLST non-zero", j);
-
-		if (mlstStream->readUint16BE() != 0xFFFF)
-			warning("u0[2] in MLST not 0xFFFF");
-
+		mlstRecord.lowBoundTime = mlstStream->readUint16BE();
+		mlstRecord.startTime = mlstStream->readUint16BE();
+		mlstRecord.highBoundTime = mlstStream->readUint16BE();
 		mlstRecord.loop = mlstStream->readUint16BE();
 		mlstRecord.volume = mlstStream->readUint16BE();
-		mlstRecord.u1 = mlstStream->readUint16BE();
+		mlstRecord.rate = mlstStream->readUint16BE();
 
-		if (mlstRecord.u1 != 1)
-			warning("mlstRecord.u1 not 1");
+		if (mlstRecord.lowBoundTime != 0)
+			warning("lowBoundTime in MLST not 0");
+
+		if (mlstRecord.startTime != 0)
+			warning("startTime in MLST not 0");
+
+		if (mlstRecord.highBoundTime != 0xFFFF)
+			warning("highBoundTime in MLST not 0xFFFF");
+
+		if (mlstRecord.rate != 1)
+			warning("mlstRecord.rate not 1");
 	}
 
 	delete mlstStream;
