@@ -31,9 +31,9 @@
 namespace Mohawk {
 
 RivenInventory::RivenInventory(MohawkEngine_Riven *vm) :
-		_vm(vm) {
-
-	_inventoryDrawn = false;
+		_vm(vm),
+		_inventoryDrawn(false),
+		_forceVisible(false) {
 
 	_atrusJournalRect1 = Common::Rect(295, 402, 313, 426);
 	_atrusJournalRect2 = Common::Rect(259, 402, 278, 426);
@@ -48,11 +48,7 @@ RivenInventory::~RivenInventory() {
 
 }
 
-void RivenInventory::show() {
-	// Don't redraw the inventory
-	if (_inventoryDrawn)
-		return;
-
+void RivenInventory::draw() {
 	// Clear the inventory area
 	clearArea();
 
@@ -63,17 +59,13 @@ void RivenInventory::show() {
 		// but has hacked tBMP 101 with "EXIT". *sigh*
 		_vm->_gfx->drawExtrasImageToScreen(101, _demoExitRect);
 	} else {
-		// We don't want to show the inventory on setup screens or in other journals.
-		if (_vm->getStack()->getId() == kStackAspit)
-			return;
-
 		// There are three books and three vars. We have three different
 		// combinations. At the start you have just Atrus' journal. Later,
 		// you get Catherine's journal and the trap book. Near the end,
 		// you lose the trap book and have just the two journals.
 
-		bool hasCathBook = _vm->_vars["acathbook"] != 0;
-		bool hasTrapBook = _vm->_vars["atrapbook"] != 0;
+		bool hasCathBook = _vm->_vars["rrebel"] == 5 || _vm->_vars["rrebel"] == 6;
+		bool hasTrapBook = _vm->_vars["atrapbook"] == 1;
 
 		if (!hasCathBook) {
 			_vm->_gfx->drawExtrasImageToScreen(101, _atrusJournalRect1);
@@ -86,20 +78,6 @@ void RivenInventory::show() {
 			_vm->_gfx->drawExtrasImageToScreen(100, _trapBookRect3);
 		}
 	}
-
-	_vm->_system->updateScreen();
-	_inventoryDrawn = true;
-}
-
-void RivenInventory::hide() {
-	// Don't hide the inventory twice
-	if (!_inventoryDrawn)
-		return;
-
-	// Clear the area
-	clearArea();
-
-	_inventoryDrawn = false;
 }
 
 void RivenInventory::clearArea() {
@@ -116,9 +94,9 @@ void RivenInventory::clearArea() {
 }
 
 void RivenInventory::checkClick(const Common::Point &mousePos) {
-	// Don't even bother. We're not in the inventory portion of the screen.
-	if (mousePos.y < 392)
-		return;
+	if (!isVisible()) {
+		return; // Don't even bother.
+	}
 
 	// In the demo, check if we've clicked the exit button
 	if (_vm->getFeatures() & GF_DEMO) {
@@ -149,37 +127,31 @@ void RivenInventory::checkClick(const Common::Point &mousePos) {
 
 	// See RivenGraphics::show() for an explanation
 	// of the variables' meanings.
-	bool hasCathBook = _vm->_vars["acathbook"] != 0;
-	bool hasTrapBook = _vm->_vars["atrapbook"] != 0;
+	bool hasCathBook = _vm->_vars["rrebel"] == 5 || _vm->_vars["rrebel"] == 6;
+	bool hasTrapBook = _vm->_vars["atrapbook"] == 1;
 
 	// Go to the book if a hotspot contains the mouse
 	if (!hasCathBook) {
 		if (_atrusJournalRect1.contains(mousePos)) {
-			hide();
 			_vm->changeToStack(kStackAspit);
 			_vm->changeToCard(5);
 		}
 	} else if (!hasTrapBook) {
 		if (_atrusJournalRect2.contains(mousePos)) {
-			hide();
 			_vm->changeToStack(kStackAspit);
 			_vm->changeToCard(5);
 		} else if (_cathJournalRect2.contains(mousePos)) {
-			hide();
 			_vm->changeToStack(kStackAspit);
 			_vm->changeToCard(6);
 		}
 	} else {
 		if (_atrusJournalRect3.contains(mousePos)) {
-			hide();
 			_vm->changeToStack(kStackAspit);
 			_vm->changeToCard(5);
 		} else if (_cathJournalRect3.contains(mousePos)) {
-			hide();
 			_vm->changeToStack(kStackAspit);
 			_vm->changeToCard(6);
 		} else if (_trapBookRect3.contains(mousePos)) {
-			hide();
 			_vm->changeToStack(kStackAspit);
 			_vm->changeToCard(7);
 		}
@@ -197,6 +169,44 @@ void RivenInventory::backFromItemScript() const {
 	RivenCommand *back = new RivenStackChangeCommand(_vm, backStackId, backCardId, true);
 	RivenScriptPtr backScript = _vm->_scriptMan->createScriptWithCommand(back);
 	_vm->_scriptMan->runScript(backScript, true);
+}
+
+bool RivenInventory::isVisible() const {
+	if (_forceVisible) {
+		return true;
+	}
+
+	if (_vm->getFeatures() & GF_DEMO) {
+		// The inventory is always visible in the demo
+		return true;
+	}
+
+	// We don't want to show the inventory on setup screens or in other journals.
+	if (_vm->getStack()->getId() == kStackAspit)
+		return false;
+
+	// We don't want to show the inventory while scripts are running
+	if (_vm->_scriptMan->runningQueuedScripts())
+		return false;
+
+	Common::Point mouse = _vm->getStack()->getMousePosition();
+	return mouse.y >= 392;
+}
+
+void RivenInventory::onFrame() {
+	bool visible = isVisible();
+
+	if (visible && !_inventoryDrawn) {
+		draw();
+		_inventoryDrawn = true;
+	} else if (!visible && _inventoryDrawn) {
+		clearArea();
+		_inventoryDrawn = false;
+	}
+}
+
+void RivenInventory::forceVisible(bool visible) {
+	_forceVisible = visible;
 }
 
 } // End of namespace Mohawk

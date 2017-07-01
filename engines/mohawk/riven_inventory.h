@@ -39,24 +39,27 @@ public:
 	RivenInventory(MohawkEngine_Riven *vm);
 	virtual ~RivenInventory();
 
-	/** Make the inventory visible */
-	void show();
-
-	/** Make the inventory invisible */
-	void hide();
-
 	/** Handle a click event in the inventory area */
 	void checkClick(const Common::Point &mousePos);
 
 	/** Go back to the game from an inventory item detail view */
 	void backFromItemScript() const;
 
+	/** Make the inventory visible and draw it as necessary */
+	void onFrame();
+
+	/** Force the inventory to be visible even in situations where it usually is not */
+	void forceVisible(bool visible);
+
 private:
+	bool isVisible() const;
+	void draw();
 	void clearArea();
 
 	MohawkEngine_Riven *_vm;
 
 	bool _inventoryDrawn;
+	bool _forceVisible;
 
 	// Rects for the inventory object positions
 	Common::Rect _atrusJournalRect1;

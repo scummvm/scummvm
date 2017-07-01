@@ -202,14 +202,6 @@ void MohawkEngine_Riven::doFrame() {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
 			_stack->onMouseMove(event.mouse);
-
-			if (!(getFeatures() & GF_DEMO)) {
-				// Check to show the inventory, but it is always "showing" in the demo
-				if (_eventMan->getMousePos().y >= 392)
-					_inventory->show();
-				else
-					_inventory->hide();
-			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_stack->onMouseDown(_eventMan->getMousePos());
@@ -273,6 +265,8 @@ void MohawkEngine_Riven::doFrame() {
 		// otherwise infinite looping will happen.
 		_scriptMan->runQueuedScripts();
 	}
+
+	_inventory->onFrame();
 
 	// Update the screen once per frame
 	_system->updateScreen();
