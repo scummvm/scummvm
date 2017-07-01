@@ -35,7 +35,7 @@ void KingdomGame::GPLogic2() {
 		if (_Nodes[24] != 0 || highNode) {
 			_Eye = 1;
 			PlayMovie(72);
-			_ATimerFlag = 0;
+			_ATimerFlag = false;
 			_ATimer = 114;
 			PlaySound(34);
 			_UserInput = 0;
