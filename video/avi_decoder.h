@@ -337,8 +337,10 @@ protected:
 
 	void handleNextPacket(TrackStatus& status);
 	bool shouldQueueAudio(TrackStatus& status);
-	Common::Array<TrackStatus> _videoTracks, _audioTracks;
+	void seekTransparencyFrame(int frame);
 
+	Common::Array<TrackStatus> _videoTracks, _audioTracks;
+	TrackStatus _transparencyTrack;
 public:
 	virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);
 
