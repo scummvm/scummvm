@@ -886,6 +886,11 @@ protected:
 	TrackListIterator getTrackListEnd() { return _internalTracks.end(); }
 
 	/**
+	 * Removes a specified track
+	 */
+	void eraseTrack(Track *track);
+
+	/**
 	 * The internal seek function that does the actual seeking.
 	 *
 	 * @see seek()
