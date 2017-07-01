@@ -26,9 +26,8 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_inventory.h"
 #include "mohawk/riven_video.h"
-
-#include "common/events.h"
 
 namespace Mohawk {
 namespace RivenStacks {
@@ -36,14 +35,14 @@ namespace RivenStacks {
 OSpit::OSpit(MohawkEngine_Riven *vm) :
 		RivenStack(vm, kStackOspit) {
 
-//	REGISTER_COMMAND(OSpit, xorollcredittime);
-//	REGISTER_COMMAND(OSpit, xbookclick);
-//	REGISTER_COMMAND(OSpit, xooffice30_closebook);
-//	REGISTER_COMMAND(OSpit, xobedroom5_closedrawer);
-//	REGISTER_COMMAND(OSpit, xogehnopenbook);
-//	REGISTER_COMMAND(OSpit, xogehnbookprevpage);
-//	REGISTER_COMMAND(OSpit, xogehnbooknextpage);
-//	REGISTER_COMMAND(OSpit, xgwatch);
+	REGISTER_COMMAND(OSpit, xorollcredittime);
+	REGISTER_COMMAND(OSpit, xbookclick);
+	REGISTER_COMMAND(OSpit, xooffice30_closebook);
+	REGISTER_COMMAND(OSpit, xobedroom5_closedrawer);
+	REGISTER_COMMAND(OSpit, xogehnopenbook);
+	REGISTER_COMMAND(OSpit, xogehnbookprevpage);
+	REGISTER_COMMAND(OSpit, xogehnbooknextpage);
+	REGISTER_COMMAND(OSpit, xgwatch);
 }
 
 void OSpit::xorollcredittime(uint16 argc, uint16 *argv) {
@@ -68,10 +67,6 @@ void OSpit::xorollcredittime(uint16 argc, uint16 *argv) {
 }
 
 void OSpit::xbookclick(uint16 argc, uint16 *argv) {
-	// Hide the cursor
-	_vm->_cursor->setCursor(kRivenHideCursor);
-	_vm->_system->updateScreen();
-
 	// Let's hook onto our video
 	RivenVideo *video = _vm->_video->getSlot(argv[0]);
 
@@ -94,77 +89,53 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 
 	// Just let the video play while we wait until Gehn opens the trap book for us
 	while (video->getTime() < startTime && !_vm->shouldQuit()) {
-		_vm->_video->updateMovies();
-		_vm->_system->updateScreen();
-
-		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event))
-			;
-
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 
 	// Break out if we're quitting
 	if (_vm->shouldQuit())
 		return;
-
-	// Update our hotspot stuff
-	if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos()))
-		_vm->_cursor->setCursor(kRivenOpenHandCursor);
-	else
-		_vm->_cursor->setCursor(kRivenMainCursor);
-
-	_vm->_system->updateScreen();
 
 	// OK, Gehn has opened the trap book and has asked us to go in. Let's watch
 	// and see what the player will do...
 	while (video->getTime() < endTime && !_vm->shouldQuit()) {
-		_vm->_video->updateMovies();
+		if (hotspotRect.contains(getMousePosition()))
+			_vm->_cursor->setCursor(kRivenOpenHandCursor);
+		else
+			_vm->_cursor->setCursor(kRivenMainCursor);
 
-		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos()))
-						_vm->_cursor->setCursor(kRivenOpenHandCursor);
-					else
-						_vm->_cursor->setCursor(kRivenMainCursor);
-					break;
-				case Common::EVENT_LBUTTONUP:
-					if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos())) {
-						// OK, we've used the trap book! We go for ride lady!
-						_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
-						_vm->_video->closeVideos();                          // Stop all videos
-						_vm->_cursor->setCursor(kRivenHideCursor);          // Hide the cursor
-						_vm->getCard()->drawPicture(3);                  // Black out the screen
-						_vm->_sound->playSound(0);                          // Play the link sound
-						_vm->getCard()->playMovie(7);    // Activate Gehn Link Video
-						RivenVideo *linkVideo = _vm->_video->openSlot(1);             // Play Gehn Link Video
-						linkVideo->playBlocking();
-						_vm->_vars["agehn"] = 4;                            // Set Gehn to the trapped state
-						_vm->_vars["atrapbook"] = 1;                        // We've got the trap book again
-						_vm->_sound->playSound(0);                          // Play the link sound again
-						_vm->changeToCard(_vm->getStack()->getCardStackId(0x2885));    // Link out!
-						return;
-					}
-					break;
-				default:
-					break;
+		if (mouseIsDown()) {
+			if (hotspotRect.contains(getMousePosition())) {
+				// OK, we've used the trap book! We go for ride lady!
+				_vm->_video->closeVideos();                          // Stop all videos
+				_vm->_cursor->setCursor(kRivenHideCursor);          // Hide the cursor
+				_vm->_gfx->scheduleTransition(kRivenTransitionBlend);
+				_vm->getCard()->drawPicture(3);                  // Black out the screen
+				_vm->_sound->playSound(0);                          // Play the link sound
+				_vm->delay(12000);
+				_vm->getCard()->playMovie(7);    // Activate Gehn Link Video
+				RivenVideo *linkVideo = _vm->_video->openSlot(1);             // Play Gehn Link Video
+				linkVideo->playBlocking();
+				_vm->_vars["ocage"] = 1;
+				_vm->_vars["agehn"] = 4;                            // Set Gehn to the trapped state
+				_vm->_vars["atrapbook"] = 1;                        // We've got the trap book again
+				_vm->_sound->playSound(0);                          // Play the link sound again
+				_vm->_gfx->scheduleTransition(kRivenTransitionBlend);
+				_vm->changeToCard(_vm->getStack()->getCardStackId(0x2885));    // Link out!
+				_vm->_inventory->show();
+				_vm->delay(2000);
+				_vm->_inventory->hide();
+				_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
+				return;
 			}
 		}
 
-		_vm->_system->updateScreen();
-
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 
 	// Break out if we're quitting
 	if (_vm->shouldQuit())
 		return;
-
-	// Hide the cursor again
-	_vm->_cursor->setCursor(kRivenHideCursor);
-	_vm->_system->updateScreen();
 
 	// If there was no click and this is the third time Gehn asks us to
 	// use the trap book, he will shoot the player. Dead on arrival.
@@ -190,6 +161,7 @@ void OSpit::xooffice30_closebook(uint16 argc, uint16 *argv) {
 
 	// Play the movie
 	RivenVideo *video = _vm->_video->openSlot(1);
+	video->seek(0);
 	video->playBlocking();
 
 	// Set the hotspots into their correct states
@@ -201,9 +173,7 @@ void OSpit::xooffice30_closebook(uint16 argc, uint16 *argv) {
 	nullHotspot->enable(false);
 	openBook->enable(true);
 
-	// We now need to draw PLST 1 and refresh, but PLST 1 is
-	// drawn when refreshing anyway, so don't worry about that.
-	_vm->refreshCard();
+	_vm->getCard()->drawPicture(1);
 }
 
 void OSpit::xobedroom5_closedrawer(uint16 argc, uint16 *argv) {
@@ -221,71 +191,69 @@ void OSpit::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["ogehnpage"];
 
-	// Decrement the page if it's not the first page
-	if (page == 1)
-		return;
-	page--;
+	// Keep turning pages while the mouse is pressed
+	bool firstPageTurn = true;
+	while (mouseIsDown() || firstPageTurn) {
+		// Check for the first page
+		if (page == 1)
+			return;
 
-	// Play the page turning sound
-	_vm->_sound->playSound(12);
+		if (!pageTurn(kRivenTransitionWipeRight)) {
+			return;
+		}
 
-	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(kRivenTransitionWipeRight);
-	_vm->getCard()->drawPicture(page);
+		// Update the page number
+		page--;
+		firstPageTurn = false;
+
+		_vm->getCard()->drawPicture(page);
+		_vm->doFrame();
+	}
 }
 
 void OSpit::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["ogehnpage"];
 
-	// Increment the page if it's not the last page
-	if (page == 13)
-		return;
-	page++;
+	// Keep turning pages while the mouse is pressed
+	bool firstPageTurn = true;
+	while ((mouseIsDown() || firstPageTurn) && !_vm->shouldQuit()) {
+		// Check for the last page
+		if (page == 13)
+			return;
 
-	// Play the page turning sound
-	_vm->_sound->playSound(13);
+		if (!pageTurn(kRivenTransitionWipeLeft)) {
+			return;
+		}
 
-	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(kRivenTransitionWipeLeft);
-	_vm->getCard()->drawPicture(page);
+		// Update the page number
+		page++;
+		firstPageTurn = false;
+
+		_vm->getCard()->drawPicture(page);
+		_vm->doFrame();
+	}
 }
 
 void OSpit::xgwatch(uint16 argc, uint16 *argv) {
 	// Hide the cursor
 	_vm->_cursor->setCursor(kRivenHideCursor);
-	_vm->_system->updateScreen();
 
-	uint32 &prisonCombo = _vm->_vars["pcorrectorder"];
-	uint32 soundTime = _vm->_system->getMillis() - 500; // Start the first sound instantly
+	uint32 prisonCombo = _vm->_vars["pcorrectorder"];
+
 	byte curSound = 0;
+	while (curSound < 5 && !_vm->shouldQuit()) {
+		// Play a sound every half second
+		_vm->_sound->playSound(getComboDigit(prisonCombo, curSound) + 13);
+		_vm->delay(500);
 
-	while (!_vm->shouldQuit()) {
-		// Play the next sound every half second
-		if (_vm->_system->getMillis() - soundTime >= 500) {
-			if (curSound == 5) // Break out after the last sound is done
-				break;
-
-			_vm->_sound->playSound(getComboDigit(prisonCombo, curSound) + 13);
-			curSound++;
-			soundTime = _vm->_system->getMillis();
-		}
-
-		// Poll events just to check for quitting
-		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event)) {}
-
-		// Cut down on CPU usage
-		_vm->_system->delayMillis(10);
+		curSound++;
 	}
 
 	// Now play the video for the watch
 	_vm->getCard()->playMovie(1);
 	RivenVideo *watchVideo = _vm->_video->openSlot(1);
 	watchVideo->playBlocking();
-
-	// And, finally, refresh
-	_vm->refreshCard();
 }
 
 } // End of namespace RivenStacks
