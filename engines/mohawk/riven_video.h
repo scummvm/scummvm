@@ -105,15 +105,14 @@ public:
 	/** Is the video playing? */
 	bool isPlaying() const;
 
-	/** Get the volume of the video */
-	int getVolume() const;
-
 	/** Set the volume of the video */
 	void setVolume(int volume);
 
-	void drawNextFrame();
-
+	/** Checks if a video is playing and is waiting to display the next frame */
 	bool needsUpdate() const;
+
+	/** Draw the next frame to the system screen */
+	void drawNextFrame();
 private:
 	// Non-changing variables
 	MohawkEngine_Riven *_vm;

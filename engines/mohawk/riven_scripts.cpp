@@ -427,9 +427,6 @@ void RivenSimpleCommand::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 	if (hotspot) {
 		hotspot->enable(true);
 	}
-
-	// Recheck our current hotspot because it may have now changed
-	_vm->updateCurrentHotspot();
 }
 
 // Command 10: disable hotspot (blst_id)
@@ -438,9 +435,6 @@ void RivenSimpleCommand::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
 	if (hotspot) {
 		hotspot->enable(false);
 	}
-
-	// Recheck our current hotspot because it may have now changed
-	_vm->updateCurrentHotspot();
 }
 
 // Command 12: stop sounds (flags)
@@ -609,9 +603,6 @@ void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *arg
 // Command 43: activate BLST record (card hotspot enabling lists)
 void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->getCard()->activateHotspotEnableRecord(argv[0]);
-
-	// Recheck our current hotspot because it may have now changed
-	_vm->updateCurrentHotspot();
 }
 
 // Command 44: activate FLST record (information on which SFXE resource this card should use)

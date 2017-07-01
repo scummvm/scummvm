@@ -125,11 +125,6 @@ bool RivenVideo::isPlaying() const {
 	return _playing;
 }
 
-int RivenVideo::getVolume() const {
-	assert(_video);
-	return _video->getVolume();
-}
-
 void RivenVideo::setVolume(int volume) {
 	assert(_video);
 	_video->setVolume(CLIP(volume, 0, 255));
