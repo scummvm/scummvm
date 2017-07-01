@@ -45,13 +45,13 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(ASpit, xaatrusbookback);     // Done
 	REGISTER_COMMAND(ASpit, xaatrusbookprevpage); // Done
 	REGISTER_COMMAND(ASpit, xaatrusbooknextpage); // Done
-//	REGISTER_COMMAND(ASpit, xacathopenbook);
-//	REGISTER_COMMAND(ASpit, xacathbookback);
-//	REGISTER_COMMAND(ASpit, xacathbookprevpage);
-//	REGISTER_COMMAND(ASpit, xacathbooknextpage);
-//	REGISTER_COMMAND(ASpit, xtrapbookback);
-//	REGISTER_COMMAND(ASpit, xatrapbookclose);
-//	REGISTER_COMMAND(ASpit, xatrapbookopen);
+	REGISTER_COMMAND(ASpit, xacathopenbook);
+	REGISTER_COMMAND(ASpit, xacathbookback);
+	REGISTER_COMMAND(ASpit, xacathbookprevpage);
+	REGISTER_COMMAND(ASpit, xacathbooknextpage);
+	REGISTER_COMMAND(ASpit, xtrapbookback);
+	REGISTER_COMMAND(ASpit, xatrapbookclose);
+	REGISTER_COMMAND(ASpit, xatrapbookopen);
 	REGISTER_COMMAND(ASpit, xarestoregame);       // Done
 //	REGISTER_COMMAND(ASpit, xadisablemenureturn);
 //	REGISTER_COMMAND(ASpit, xaenablemenureturn);
@@ -77,7 +77,7 @@ void ASpit::xasetupcomplete(uint16 argc, uint16 *argv) {
 
 void ASpit::xaatrusopenbook(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 &page = _vm->_vars["aatruspage"];
+	uint32 &page = _vm->_vars["aatrusbook"];
 
 	// Set hotspots depending on the page
 	RivenHotspot *openBook = _vm->getCard()->getHotspotByName("openBook");
@@ -101,34 +101,9 @@ void ASpit::xaatrusbookback(uint16 argc, uint16 *argv) {
 	_vm->_inventory->backFromItemScript();
 }
 
-bool ASpit::pageTurn(RivenTransition transition) {
-	// Wait until the previous page turn sound completes
-	while (_vm->_sound->isEffectPlaying() && !_vm->shouldQuit()) {
-		if (!mouseIsDown()) {
-			return false;
-		}
-
-		_vm->doFrame();
-	}
-
-	// Play the page turning sound
-	const char *soundName = nullptr;
-	if (_vm->_rnd->getRandomBit())
-		soundName = "aPage1";
-	else
-		soundName = "aPage2";
-
-	_vm->_sound->playCardSound(soundName, 51, true);
-
-	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(transition);
-
-	return true;
-}
-
 void ASpit::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 &page = _vm->_vars["aatruspage"];
+	uint32 &page = _vm->_vars["aatrusbook"];
 
 	// Keep turning pages while the mouse is pressed
 	bool firstPageTurn = true;
@@ -152,7 +127,7 @@ void ASpit::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 
 void ASpit::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
-	uint32 &page = _vm->_vars["aatruspage"];
+	uint32 &page = _vm->_vars["aatrusbook"];
 
 	// Keep turning pages while the mouse is pressed
 	bool firstPageTurn = true;
@@ -176,7 +151,7 @@ void ASpit::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 
 void ASpit::xacathopenbook(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 page = _vm->_vars["acathpage"];
+	uint32 page = _vm->_vars["acathbook"];
 
 	// Set hotspots depending on the page
 	RivenHotspot *openBook = _vm->getCard()->getHotspotByName("openBook");
@@ -192,7 +167,10 @@ void ASpit::xacathopenbook(uint16 argc, uint16 *argv) {
 		openBook->enable(false);
 	}
 
-	// Draw the image of the page
+	cathBookDrawPage(page);
+}
+
+void ASpit::cathBookDrawPage(uint32 page) {// Draw the image of the page
 	_vm->getCard()->drawPicture(page);
 
 	// Draw the white page edges
@@ -202,22 +180,25 @@ void ASpit::xacathopenbook(uint16 argc, uint16 *argv) {
 		_vm->getCard()->drawPicture(51);
 
 	if (page == 28) {
-		// Draw the telescope combination
-		// The images for the numbers are tBMP's 13 through 17.
-		// The start point is at (156, 247)
-		uint32 teleCombo = _vm->_vars["tcorrectorder"];
-		static const uint16 kNumberWidth = 32;
-		static const uint16 kNumberHeight = 25;
-		static const uint16 kDstX = 156;
-		static const uint16 kDstY = 247;
+		cathBookDrawTelescopeCombination();
+	}
+}
 
-		for (byte i = 0; i < 5; i++) {
+void ASpit::cathBookDrawTelescopeCombination() {// Draw the telescope combination
+	// The images for the numbers are tBMP's 13 through 17.
+	// The start point is at (156, 247)
+	uint32 teleCombo = _vm->_vars["tcorrectorder"];
+	static const uint16 kNumberWidth = 32;
+	static const uint16 kNumberHeight = 25;
+	static const uint16 kDstX = 156;
+	static const uint16 kDstY = 247;
+
+	for (byte i = 0; i < 5; i++) {
 			uint16 offset = (getComboDigit(teleCombo, i) - 1) * kNumberWidth;
 			Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
 			Common::Rect dstRect = Common::Rect(i * kNumberWidth + kDstX, kDstY, (i + 1) * kNumberWidth + kDstX, kDstY + kNumberHeight);
 			_vm->_gfx->drawImageRect(i + 13, srcRect, dstRect);
 		}
-	}
 }
 
 void ASpit::xacathbookback(uint16 argc, uint16 *argv) {
@@ -226,36 +207,52 @@ void ASpit::xacathbookback(uint16 argc, uint16 *argv) {
 
 void ASpit::xacathbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 &page = _vm->_vars["acathpage"];
+	uint32 &page = _vm->_vars["acathbook"];
 
-	// Increment the page if it's not the first page
-	if (page == 1)
-		return;
-	page--;
+	// Keep turning pages while the mouse is pressed
+	bool firstPageTurn = true;
+	while (mouseIsDown() || firstPageTurn) {
+		// Check for the first page
+		if (page == 1)
+			return;
 
-	// Play the page turning sound
-	_vm->_sound->playSound(5);
+		if (!pageTurn(kRivenTransitionWipeDown)) {
+			return;
+		}
 
-	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(kRivenTransitionWipeDown);
-	_vm->getCard()->drawPicture(page);
+		// Update the page number
+		page--;
+		firstPageTurn = false;
+
+		cathBookDrawPage(page);
+
+		_vm->doFrame();
+	}
 }
 
 void ASpit::xacathbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the variable
-	uint32 &page = _vm->_vars["acathpage"];
+	uint32 &page = _vm->_vars["acathbook"];
 
-	// Increment the page if it's not the last page
-	if (page == 49)
-		return;
-	page++;
+	// Keep turning pages while the mouse is pressed
+	bool firstPageTurn = true;
+	while ((mouseIsDown() || firstPageTurn) && !_vm->shouldQuit()) {
+		// Check for the last page
+		if (page == 49)
+			return;
 
-	// Play the page turning sound
-	_vm->_sound->playSound(6);
+		if (!pageTurn(kRivenTransitionWipeUp)) {
+			return;
+		}
 
-	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(kRivenTransitionWipeUp);
-	_vm->getCard()->drawPicture(page);
+		// Update the page number
+		page++;
+		firstPageTurn = false;
+
+		cathBookDrawPage(page);
+
+		_vm->doFrame();
+	}
 }
 
 void ASpit::xtrapbookback(uint16 argc, uint16 *argv) {
@@ -268,20 +265,24 @@ void ASpit::xatrapbookclose(uint16 argc, uint16 *argv) {
 	// Close the trap book
 	_vm->_vars["atrap"] = 0;
 
-	// Play the page turning sound
-	_vm->_sound->playSound(8);
+	pageTurn(kRivenTransitionWipeRight);
 
-	_vm->refreshCard();
+	// Stop the flyby movie to prevent a glitch where the book does not actually
+	// close because the movie continues to draw over the closed book picture.
+	// This glitch also happened in the original engine with transitions disabled.
+	RivenVideo *flyby = _vm->_video->getSlot(1);
+	flyby->close();
+
+	_vm->getCard()->enter(false);
 }
 
 void ASpit::xatrapbookopen(uint16 argc, uint16 *argv) {
 	// Open the trap book
 	_vm->_vars["atrap"] = 1;
 
-	// Play the page turning sound
-	_vm->_sound->playSound(9);
+	pageTurn(kRivenTransitionWipeLeft);
 
-	_vm->refreshCard();
+	_vm->getCard()->enter(false);
 }
 
 void ASpit::xarestoregame(uint16 argc, uint16 *argv) {

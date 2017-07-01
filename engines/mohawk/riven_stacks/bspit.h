@@ -23,7 +23,6 @@
 #ifndef RIVEN_STACKS_BSPIT_H
 #define RIVEN_STACKS_BSPIT_H
 
-#include <engines/mohawk/riven_graphics.h>
 #include "mohawk/riven_stacks/domespit.h"
 
 namespace Mohawk {
@@ -74,8 +73,6 @@ public:
 	void valveChangePosition(uint32 valvePosition, uint16 videoId, uint16 pictureId);
 
 	void labBookDrawDomeCombination() const;
-
-	bool pageTurn(Mohawk::RivenTransition transition);
 };
 
 } // End of namespace RivenStacks

@@ -138,7 +138,7 @@ private:
 	bool _dirtyScreen;
 
 	Graphics::PixelFormat _pixelFormat;
-	void updateScreen(const Common::Rect &updateRect = Common::Rect(0, 0, 608, 392));
+	void updateScreen();
 	void clearMainScreen();
 
 	// Credits

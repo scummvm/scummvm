@@ -294,8 +294,8 @@ void MohawkEngine_Riven::initVars() {
 	_vars["bblrwtr"] = 1;
 	_vars["bfans"] = 1;
 	_vars["bytrap"] = 2;
-	_vars["aatruspage"] = 1;
-	_vars["acathpage"] = 1;
+	_vars["aatrusbook"] = 1;
+	_vars["acathbook"] = 1;
 	_vars["bheat"] = 1;
 	_vars["blabpage"] = 1;
 	_vars["waterenabled"] = 1;

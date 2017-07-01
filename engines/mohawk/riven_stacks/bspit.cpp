@@ -149,31 +149,6 @@ void BSpit::xblabbooknextpage(uint16 argc, uint16 *argv) {
 	}
 }
 
-bool BSpit::pageTurn(RivenTransition transition) {
-	// Wait until the previous page turn sound completes
-	while (_vm->_sound->isEffectPlaying() && !_vm->shouldQuit()) {
-		if (!mouseIsDown()) {
-			return false;
-		}
-
-		_vm->doFrame();
-	}
-
-	// Play the page turning sound
-	const char *soundName = nullptr;
-	if (_vm->_rnd->getRandomBit())
-		soundName = "aPage1";
-	else
-		soundName = "aPage2";
-
-	_vm->_sound->playCardSound(soundName, 51, true);
-
-	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(transition);
-
-	return true;
-}
-
 void BSpit::xsoundplug(uint16 argc, uint16 *argv) {
 	if (_vm->_vars["bcratergg"] == 0) {
 		if (_vm->_vars["bblrwtr"] == 0) {

@@ -29,6 +29,8 @@
 #include "common/rect.h"
 #include "common/str-array.h"
 
+#include "mohawk/riven_graphics.h"
+
 namespace Mohawk {
 
 class MohawkEngine_Riven;
@@ -153,11 +155,12 @@ public:
 	// Common external commands
 	void xflies(uint16 argc, uint16 *argv); // Start the "flies" effect
 
-	// TODO: Misc stuff move elsewhere
+	// Miscellaneous
 	uint16 getComboDigit(uint32 correctCombo, uint32 digit);
 	void runDemoBoundaryDialog();
 	void runEndGame(uint16 videoCode, uint32 delay);
 	void runCredits(uint16 video, uint32 delay);
+	bool pageTurn(RivenTransition transition);
 
 protected:
 	typedef Common::Functor2<uint16, uint16 *, void> ExternalCommand;

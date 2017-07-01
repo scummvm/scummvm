@@ -26,6 +26,7 @@
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_stack.h"
+#include "mohawk/riven_video.h"
 
 #include "common/system.h"
 #include "engines/util.h"
@@ -324,11 +325,13 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 	applyScreenUpdate();
 }
 
-void RivenGraphics::updateScreen(const Common::Rect &updateRect) {
+void RivenGraphics::updateScreen() {
 	if (_dirtyScreen) {
-		// Copy to screen if there's no transition. Otherwise transition. ;)
+		// Copy to screen if there's no transition. Otherwise transition.
 		if (_scheduledTransition == kRivenTransitionNone
 		    || _transitionMode == kRivenTransitionModeDisabled) {
+			const Common::Rect updateRect = Common::Rect(0, 0, 608, 392);
+
 			// mainScreen -> effectScreen -> systemScreen
 			_effectScreen->copyRectToSurface(*_mainScreen, updateRect.left, updateRect.top, updateRect);
 			_vm->_system->copyRectToScreen(_effectScreen->getBasePtr(updateRect.left, updateRect.top), _effectScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
