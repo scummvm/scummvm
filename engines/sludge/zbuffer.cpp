@@ -35,6 +35,7 @@
 
 namespace Sludge {
 
+int zBufferToSet = -1;
 zBufferData zBuffer;
 extern int sceneWidth, sceneHeight;
 extern Graphics::Surface backdropSurface;
@@ -73,7 +74,12 @@ void sortZPal(int *oldpal, int *newpal, int size) {
 }
 
 bool setZBuffer(int num) {
-	debug("Setting zBuffer");
+	// if the backdrop has not been set yet
+	// set zbuffer later
+	if (!backdropSurface.getPixels()) {
+		zBufferToSet = num;
+		return true;
+	}
 	uint32 stillToGo = 0;
 	int yPalette[16], sorted[16], sortback[16];
 
