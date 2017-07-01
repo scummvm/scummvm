@@ -817,4 +817,19 @@ void RivenStackChangeCommand::dump(byte tabs) {
 	debugN("changeStack(%d, %d);\n", _stackId, _cardId);
 }
 
+RivenTimerCommand::RivenTimerCommand(MohawkEngine_Riven *vm, const Common::SharedPtr<RivenStack::TimerProc> &timerProc) :
+	RivenCommand(vm),
+	_timerProc(timerProc) {
+
+}
+
+void RivenTimerCommand::execute() {
+	(*_timerProc)();
+}
+
+void RivenTimerCommand::dump(byte tabs) {
+	printTabs(tabs);
+	debugN("doTimer();\n");
+}
+
 } // End of namespace Mohawk

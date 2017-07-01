@@ -76,7 +76,7 @@ void RSpit::rebelPrisonWindowTimer() {
 	_vm->_vars["rvillagetime"] = timeUntilNextVideo + _vm->getTotalPlayTime();
 
 	// Reinstall this timer with the new time
-	_vm->installTimer(TIMER(RSpit, rebelPrisonWindowTimer), timeUntilNextVideo);
+	installTimer(TIMER(RSpit, rebelPrisonWindowTimer), timeUntilNextVideo);
 }
 
 void RSpit::xrwindowsetup(uint16 argc, uint16 *argv) {
@@ -86,7 +86,7 @@ void RSpit::xrwindowsetup(uint16 argc, uint16 *argv) {
 
 	// If we have time leftover from a previous run, set up the timer again
 	if (_vm->getTotalPlayTime() < villageTime) {
-		_vm->installTimer(TIMER(RSpit, rebelPrisonWindowTimer), villageTime - _vm->getTotalPlayTime());
+		installTimer(TIMER(RSpit, rebelPrisonWindowTimer), villageTime - _vm->getTotalPlayTime());
 		return;
 	}
 
@@ -109,7 +109,7 @@ void RSpit::xrwindowsetup(uint16 argc, uint16 *argv) {
 	// the timer to reinstall itself...
 
 	// Install our timer and we're on our way
-	_vm->installTimer(TIMER(RSpit, rebelPrisonWindowTimer), timeUntilNextVideo);
+	installTimer(TIMER(RSpit, rebelPrisonWindowTimer), timeUntilNextVideo);
 }
 
 

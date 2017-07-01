@@ -570,7 +570,7 @@ void JSpit::sunnersPlayVideo(RivenVideo *video, uint32 destCardGlobalId, bool su
 void JSpit::sunnersTopStairsTimer() {
 	// If the sunners are gone, we have no video to play
 	if (_vm->_vars["jsunners"] != 0) {
-		_vm->removeTimer();
+		removeTimer();
 		return;
 	}
 
@@ -595,13 +595,13 @@ void JSpit::sunnersTopStairsTimer() {
 		sunnerTime = timerTime + _vm->getTotalPlayTime();
 	}
 
-	_vm->installTimer(TIMER(JSpit, sunnersTopStairsTimer), timerTime);
+	installTimer(TIMER(JSpit, sunnersTopStairsTimer), timerTime);
 }
 
 void JSpit::sunnersMidStairsTimer() {
 	// If the sunners are gone, we have no video to play
 	if (_vm->_vars["jsunners"] != 0) {
-		_vm->removeTimer();
+		removeTimer();
 		return;
 	}
 
@@ -634,13 +634,13 @@ void JSpit::sunnersMidStairsTimer() {
 		sunnerTime = timerTime + _vm->getTotalPlayTime();
 	}
 
-	_vm->installTimer(TIMER(JSpit, sunnersMidStairsTimer), timerTime);
+	installTimer(TIMER(JSpit, sunnersMidStairsTimer), timerTime);
 }
 
 void JSpit::sunnersLowerStairsTimer() {
 	// If the sunners are gone, we have no video to play
 	if (_vm->_vars["jsunners"] != 0) {
-		_vm->removeTimer();
+		removeTimer();
 		return;
 	}
 
@@ -665,13 +665,13 @@ void JSpit::sunnersLowerStairsTimer() {
 		sunnerTime = timerTime + _vm->getTotalPlayTime();
 	}
 
-	_vm->installTimer(TIMER(JSpit, sunnersLowerStairsTimer), timerTime);
+	installTimer(TIMER(JSpit, sunnersLowerStairsTimer), timerTime);
 }
 
 void JSpit::sunnersBeachTimer() {
 	// If the sunners are gone, we have no video to play
 	if (_vm->_vars["jsunners"] != 0) {
-		_vm->removeTimer();
+		removeTimer();
 		return;
 	}
 
@@ -700,7 +700,7 @@ void JSpit::sunnersBeachTimer() {
 		sunnerTime = timerTime + _vm->getTotalPlayTime();
 	}
 
-	_vm->installTimer(TIMER(JSpit, sunnersBeachTimer), timerTime);
+	installTimer(TIMER(JSpit, sunnersBeachTimer), timerTime);
 }
 
 void JSpit::xjschool280_resetleft(uint16 argc, uint16 *argv) {
@@ -786,16 +786,16 @@ void JSpit::xjatboundary(uint16 argc, uint16 *argv) {
 void JSpit::installCardTimer() {
 	switch (getCurrentCardGlobalId()) {
 		case 0x77d6: // Sunners, top of stairs
-			_vm->installTimer(TIMER(JSpit, sunnersTopStairsTimer), 500);
+			installTimer(TIMER(JSpit, sunnersTopStairsTimer), 500);
 			break;
 		case 0x79bd: // Sunners, middle of stairs
-			_vm->installTimer(TIMER(JSpit, sunnersMidStairsTimer), 500);
+			installTimer(TIMER(JSpit, sunnersMidStairsTimer), 500);
 			break;
 		case 0x7beb: // Sunners, bottom of stairs
-			_vm->installTimer(TIMER(JSpit, sunnersLowerStairsTimer), 500);
+			installTimer(TIMER(JSpit, sunnersLowerStairsTimer), 500);
 			break;
 		case 0xb6ca: // Sunners, shoreline
-			_vm->installTimer(TIMER(JSpit, sunnersBeachTimer), 500);
+			installTimer(TIMER(JSpit, sunnersBeachTimer), 500);
 			break;
 		default:
 			RivenStack::installCardTimer();

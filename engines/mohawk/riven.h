@@ -99,11 +99,6 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool hasFeature(EngineFeature f) const;
 
-	typedef Common::Functor0<void> TimerProc;
-
-#define TIMER(cls, method) \
-		new Common::Functor0Mem<void, cls>(this, &cls::method)
-
 	void doFrame();
 
 private:
@@ -122,10 +117,6 @@ private:
 
 	// Variables
 	void initVars();
-
-	// Timer
-	Common::SharedPtr<TimerProc> _timerProc;
-	uint32 _timerTime;
 
 	void pauseEngineIntern(bool) override;
 public:
@@ -153,11 +144,6 @@ public:
 	bool _activatedSLST;
 	void runLoadDialog();
 	void delay(uint32 ms);
-
-	// Timer
-	void installTimer(TimerProc *proc, uint32 time);
-	void checkTimer();
-	void removeTimer();
 };
 
 } // End of namespace Mohawk

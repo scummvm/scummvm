@@ -40,6 +40,8 @@ RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 		_id(id),
 		_mouseIsDown(false),
 		_keyPressed(Common::KEYCODE_INVALID) {
+	removeTimer();
+
 	loadResourceNames();
 	loadCardIdMap();
 	setCurrentStackVariable();
@@ -282,6 +284,8 @@ void RivenStack::onFrame() {
 		return;
 	}
 
+	checkTimer();
+
 	_vm->_gfx->updateEffects();
 
 	RivenScriptPtr script(new RivenScript());
@@ -313,6 +317,33 @@ Common::Point RivenStack::getMousePosition() const {
 
 Common::Point RivenStack::getMouseDragStartPosition() const {
 	return _mouseDragStartPosition;
+}
+
+void RivenStack::installTimer(TimerProc *proc, uint32 time) {
+	removeTimer();
+	_timerProc = Common::SharedPtr<TimerProc>(proc);
+	_timerTime = time + _vm->getTotalPlayTime();
+}
+
+void RivenStack::checkTimer() {
+	if (!_timerProc) {
+		return;
+	}
+
+	// NOTE: If the specified timer function is called, it is its job to remove the timer!
+
+	// Timers are queued as script commands so that they don't run when the doFrame method
+	// is called from an inner game loop.
+	if (_vm->getTotalPlayTime() >= _timerTime) {
+		RivenScriptPtr script = _vm->_scriptMan->createScriptWithCommand(
+				new RivenTimerCommand(_vm, _timerProc));
+		_vm->_scriptMan->runScript(script, true);
+	}
+}
+
+void RivenStack::removeTimer() {
+	_timerProc.reset();
+	_timerTime = 0;
 }
 
 RivenNameList::RivenNameList() {
