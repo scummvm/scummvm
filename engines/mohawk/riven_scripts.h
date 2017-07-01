@@ -188,10 +188,25 @@ public:
 	/** Run queued scripts */
 	void runQueuedScripts();
 
+	/**
+	 * Are queued scripts currently running?
+	 *
+	 * The game is mostly non-interactive while scripts are running.
+	 * This method is used to check if user interaction should be permitted.
+	 */
 	bool runningQueuedScripts() const;
 
+	/**
+	 * Stop running all the scripts
+	 *
+	 * This is effective immediately after the current command completes.
+	 * The next command in the script is not executed. The next scripts
+	 * in the queue are skipped until the queue is empty.
+	 * Scripts execution then resumes normally.
+	 */
 	void stopAllScripts();
 
+	/** Should all the scripts stop immediately? */
 	bool stoppingAllScripts() const;
 
 	struct StoredMovieOpcode {
@@ -364,6 +379,12 @@ private:
 	bool _byStackId; // Otherwise by stack name id
 };
 
+/**
+ * A command to delay execution of card specific hardcoded scripts
+ *
+ * Timers are queued as script commands so that they don't run when the doFrame method
+ * is called from an inner game loop.
+ */
 class RivenTimerCommand : public RivenCommand {
 public:
 	RivenTimerCommand(MohawkEngine_Riven *vm, const Common::SharedPtr<RivenStack::TimerProc> &timerProc);
