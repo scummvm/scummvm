@@ -100,7 +100,7 @@ void KingdomGame::GPLogic4() {
 			_TideCntl = false;
 			DrawPic(179);
 			_SkylarTimer = 0;
-			_SkylarTimerFlag = 0;
+			_SkylarTimerFlag = false;
 			EnAll();
 			_MapEx = true;
 			_NodeNum = 5;
@@ -148,7 +148,7 @@ void KingdomGame::GPLogic4() {
 			_TideCntl = false;
 			DrawPic(179);
 			_SkylarTimer = 0;
-			_SkylarTimerFlag = 0;
+			_SkylarTimerFlag = false;
 			EnAll();
 			_MapEx = true;
 			_NodeNum = 27;
@@ -196,7 +196,7 @@ void KingdomGame::GPLogic4() {
 			_TideCntl = false;
 			DrawPic(179);
 			_SkylarTimer = 0;
-			_SkylarTimerFlag = 0;
+			_SkylarTimerFlag = false;
 			EnAll();
 			_MapEx = true;
 			_NodeNum = 52;
