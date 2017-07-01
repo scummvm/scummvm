@@ -258,7 +258,7 @@ void JSpit::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	_vm->getCard()->drawPicture(1);
 	_vm->_gfx->applyScreenUpdate();
 
-	_vm->_cursor->setCursor(3000);
+	_vm->_cursor->setCursor(kRivenMainCursor);
 	mouseForceUp();
 
 	if (_vm->_vars["jgallows"] == 1) {

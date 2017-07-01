@@ -28,9 +28,12 @@
 namespace Common {
 class MacResManager;
 class NEResources;
-class PEResources;
 class SeekableReadStream;
 class String;
+}
+
+namespace Graphics {
+struct WinCursorGroup;
 }
 
 #include "mohawk/resource.h"
@@ -170,10 +173,15 @@ public:
 	~PECursorManager();
 
 	void setCursor(uint16 id);
-	bool hasSource() const { return _exe != 0; }
+	bool hasSource() const { return !_cursors.empty(); }
 
 private:
-	Common::PEResources *_exe;
+	struct CursorItem {
+		uint16 id;
+		Graphics::WinCursorGroup *cursorGroup;
+	};
+
+	Common::Array<CursorItem> _cursors;
 };
 
 } // End of namespace Mohawk
