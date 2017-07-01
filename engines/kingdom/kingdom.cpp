@@ -635,10 +635,7 @@ void KingdomGame::restoreGame() {
 	if (savegameId < 0)
 		return; // dialog aborted
 
-	Common::String savegameFile = generateSaveName(savegameId);
-	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(savegameFile);
-	if (!loadFile)
-		return;
+	loadGameState(savegameId);
 }
 
 Common::Error KingdomGame::saveGameState(int slot, const Common::String &desc) {
@@ -663,7 +660,6 @@ Common::Error KingdomGame::saveGameState(int slot, const Common::String &desc) {
 }
 
 Common::Error KingdomGame::loadGameState(int slot) {
-	debug("STUB: RestoreGame");
 	Common::String savegameFile = generateSaveName(slot);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *inFile = saveMan->openForLoading(savegameFile);
@@ -684,6 +680,35 @@ Common::Error KingdomGame::loadGameState(int slot) {
 	// Load most of the savegame data
 	synchronize(s);
 	delete inFile;
+
+	free(_ASPtr);
+	_ASPtr = nullptr;
+
+	PlaySound(_SoundNumber);
+	for (int i = 0; i < 7; i++)
+		_IconPic[i] = 89 + i;
+	
+	_FrameStop = 0;
+	_GameMode = 0;
+	_ASMode = false;
+	_HealthTmr = 0;
+	_NoIFScreen = false;
+	_IconRedraw = true;
+	_TreeRightSta = 1;
+	_ATimerFlag = false;
+	_ATimer = 0;
+	_BTimerFlag = false;
+	_BTimer = 0;
+	_TreeEyeTimer = 0;
+	_TreeEyePic = 0;
+	_TreeHGUPic = 0;
+	_CursorDrawn = false;
+	ShowPic(106);
+	_GameMode = 0;
+	_IconsClosed = false;
+	DrawRect(4, 17, 228, 161, 0);
+	_UserInput = 0x43E;
+	_LoopFlag = true;
 
 	return Common::kNoError;
 }
@@ -1477,7 +1502,7 @@ void KingdomGame::CursorType() {
 	switch(_MouseValue) {
 	case 0x18A:
 		if (_Eye)
-			_MouseValue = _ASMode == 0 ? 0x43A : 0x43B;
+			_MouseValue = !_ASMode ? 0x43A : 0x43B;
 		else
 			_MouseValue = 0;
 		break;
