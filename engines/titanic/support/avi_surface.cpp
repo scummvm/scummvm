@@ -30,6 +30,8 @@
 
 namespace Titanic {
 
+#define DEFAULT_FPS 15.0
+
 Video::AVIDecoder::AVIVideoTrack &AVIDecoder::getVideoTrack(uint idx) {
 	assert(idx < _videoTracks.size());
 	AVIVideoTrack *track = static_cast<AVIVideoTrack *>(_videoTracks[idx].track);
@@ -48,7 +50,6 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	// correct detection of when range playbacks have finished
 	_currentFrame = -1;
 	_priorFrame = -1;
-	_isReversed = false;
 
 	// Create a decoder
 	_decoder = new AVIDecoder(Audio::Mixer::kPlainSoundType);
@@ -59,7 +60,7 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 
 	_soundManager = nullptr;
 	_hasAudio = false;
-	_frameRate = 0.0;
+	_frameRate = DEFAULT_FPS;
 }
 
 AVISurface::~AVISurface() {
@@ -108,7 +109,6 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 
 	if (_movieRangeInfo.size() == 1) {
 		// First play call, so start the movie playing
-		setReversed(info->_isReversed);
 		return startAtFrame(initialFrame);
 	} else {
 		return true;
@@ -137,8 +137,13 @@ bool AVISurface::startAtFrame(int frameNumber) {
 	if (frameNumber == -1)
 		// Default to starting frame of first movie range
 		frameNumber = _movieRangeInfo.front()->_startFrame;
-	if (_isReversed && frameNumber == (int)_decoder->getFrameCount())
-		--frameNumber;
+
+	if (frameNumber > _movieRangeInfo.front()->_endFrame) {
+		if (!isReversed())
+			setFrameRate(-DEFAULT_FPS);
+		if (frameNumber == (int)_decoder->getFrameCount())
+			--frameNumber;
+	}
 
 	// Start the playback
 	_decoder->start();
@@ -147,18 +152,18 @@ bool AVISurface::startAtFrame(int frameNumber) {
 	seekToFrame(frameNumber);
 
 	// If we're in reverse playback, set the decoder to play in reverse
-	if (_isReversed) {
+	if (isReversed())
 		_decoder->setReverse(true);
-		_decoder->setRate(Common::Rational(-1));
-	}
+	setFrameRate(_frameRate);
 
+	// Render the first frame
 	renderFrame();
 
 	return true;
 }
 
 void AVISurface::seekToFrame(uint frameNumber) {
-	if (_isReversed && frameNumber == _decoder->getFrameCount())
+	if (isReversed() && frameNumber == _decoder->getFrameCount())
 		--frameNumber;
 
 	if ((int)frameNumber != _currentFrame) {
@@ -172,17 +177,13 @@ void AVISurface::seekToFrame(uint frameNumber) {
 	}
 }
 
-void AVISurface::setReversed(bool isReversed) {
-	_isReversed = isReversed;
-}
-
 bool AVISurface::handleEvents(CMovieEventList &events) {
 	if (!isPlaying())
 		return true;
 
 	CMovieRangeInfo *info = _movieRangeInfo.front();
 	_priorFrame = _currentFrame;
-	_currentFrame += _isReversed ? -1 : 1;
+	_currentFrame += isReversed() ? -1 : 1;
 
 	int newFrame = _currentFrame;
 	if ((info->_isReversed && newFrame < info->_endFrame) ||
@@ -201,7 +202,7 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 				// Not empty, so move onto new first one
 				info = _movieRangeInfo.front();
 				newFrame = info->_startFrame;
-				setReversed(info->_isReversed);
+				setFrameRate(1.0);
 			}
 		}
 	}
@@ -348,8 +349,8 @@ bool AVISurface::isNextFrame() {
 		return _decoder->getTimeToNextFrame() == 0;
 
 	// We're at the end of the video, so we need to manually
-	// keep track of frame delays. Hardcoded at the moment for 15FPS
-	const uint FRAME_TIME = 1000 / 15;
+	// keep track of frame delays.
+	const uint FRAME_TIME = 1000 / DEFAULT_FPS;
 	uint32 currTime = g_system->getMillis();
 	if (currTime >= (_priorFrameTime + FRAME_TIME)) {
 		_priorFrameTime = currTime;
@@ -438,16 +439,17 @@ bool AVISurface::addEvent(int *frameNumber, CGameObject *obj) {
 }
 
 void AVISurface::setFrameRate(double rate) {
-	// Assert that the decoder is already playing, since otherwise setting
-	// the decoder rate would prematurely start playback
-	assert(_decoder->isPlaying());
+	if (!_decoder->isPlaying()) {
+		// Store the new frame rate
+		_frameRate = rate;
+	} else {
+		// Convert rate from fps to relative to 1.0 (normal speed)
+		const int PRECISION = 10000;
+		double playRate = rate / DEFAULT_FPS;
+		Common::Rational pRate((int)(playRate * PRECISION), PRECISION);
 
-	// Convert rate from fps to relative to 1.0 (normal speed)
-	const int PRECISION = 10000;
-	double playRate = rate / 15.0;	// Standard 15 FPS
-	Common::Rational pRate((int)(playRate * PRECISION), PRECISION);
-
-	_decoder->setRate(pRate);
+		_decoder->setRate(pRate);
+	}
 }
 
 Graphics::ManagedSurface *AVISurface::getSecondarySurface() {

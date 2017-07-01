@@ -74,7 +74,7 @@ private:
 	int _streamCount;
 	Graphics::ManagedSurface *_movieFrameSurface[2];
 	Graphics::ManagedSurface *_framePixels;
-	bool _isReversed;
+	double _frameRate;
 	int _currentFrame, _priorFrame;
 	uint32 _priorFrameTime;
 	Common::String _movieName;
@@ -105,18 +105,12 @@ protected:
 	bool startAtFrame(int frameNumber);
 
 	/**
-	 * Sets whether the movie is playing in reverse
-	 */
-	void setReversed(bool isReversed);
-
-	/**
 	 * Seeks to a given frame number in the video
 	 */
 	virtual void seekToFrame(uint frameNumber);
 public:
 	CSoundManager *_soundManager;
 	bool _hasAudio;
-	double _frameRate;
 public:
 	AVISurface(const CResourceKey &key);
 	virtual ~AVISurface();
@@ -229,6 +223,11 @@ public:
 	 * Returns the pixel depth of the movie in bits
 	 */
 	uint getBitDepth() const;
+
+	/**
+	 * Returns true if the movie is to play backwards
+	 */
+	bool isReversed() const { return _frameRate < 0.0; }
 };
 
 } // End of namespace Titanic
