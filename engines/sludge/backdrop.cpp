@@ -58,6 +58,7 @@ GLuint snapshotTextureName = 0;
 #endif
 
 bool backdropExists = false;
+extern int zBufferToSet;
 
 Graphics::Surface lightMap;
 Graphics::Surface backdropSurface;
@@ -319,6 +320,12 @@ void loadBackDrop(int fileNum, int x, int y) {
 
 	finishAccess();
 	setResourceForFatal(-1);
+
+	// set zBuffer if it's not set
+	if (zBufferToSet >= 0) {
+		setZBuffer(zBufferToSet);
+		zBufferToSet = -1;
+	}
 }
 
 void mixBackDrop(int fileNum, int x, int y) {
@@ -876,6 +883,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	deleteTextures(1, &tmpTex);
 #endif
 	backdropExists = true;
+
 	return true;
 }
 
