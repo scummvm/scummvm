@@ -3741,6 +3741,77 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+
+// ===========================================================================
+// Police Quest 3
+
+// The player can give the locket to Marie on day 6, which was supposed to grant
+// 10 points. Sadly no version did so, so it was not possible to complete the game
+// with a perfect score (460 points).
+
+// Those 10 points are mentioned in the official Sierra hint book for day 6,
+// which is why we consider this to be accurate.
+
+// This bug occurs of course also, when using the original interpreter.
+
+// We fix this issue by granting those 10 points.
+
+// Applies to at least: English PC floppy, English Amiga, German PC floppy
+// Responsible method: giveLocket::changeState(1), script 36
+// Fixes bug: #9862
+static const uint16 pq3SignatureGiveLocketPoints[] = {
+	// selectors hardcoded in here, it seems all game versions use the same selector ids
+	0x39, 0x20,                          // pushi 20h (state)
+	0x78,                                // push1
+	0x78,                                // push1
+	0x39, 0x43,                          // pushi 43h (at)
+	0x78,                                // push1
+	SIG_MAGICDWORD,
+	0x39, 0x25,                          // pushi 25h
+	0x81, 0x09,                          // lag global[9]
+	0x4a, 0x06,                          // send 06 - Inv::at(25h)
+	0x4a, 0x06,                          // send 06 - locket::state(1)
+	0x38, SIG_UINT16(0x009b),            // pushi 009bh (owner)
+	0x76,                                // push0
+	0x39, 0x43,                          // pushi 43h (at)
+	0x78,                                // push1
+	0x39, 0x25,                          // pushi 25h
+	0x81, 0x09,                          // lag global[9]
+	0x4a, 0x06,                          // send 06 - Inv:at(25h)
+	0x4a, 0x04,                          // send 04 - locket::owner
+	SIG_END
+};
+
+static const uint16 pq3PatchGiveLocketPoints[] = {
+	// new code for points, 9 bytes
+	0x7a,                                // push2
+	0x38, PATCH_UINT16(0x00ff),          // pushi 0x00ff - using last flag slot, seems to be unused
+	0x39, 0x0a,                          // pushi 10d - 10 points
+	0x45, 0x06, 0x04,                    // callb export000_6, 4
+	// original code
+	0x39, 0x20,                          // pushi 20h (state)
+	0x78,                                // push1
+	0x78,                                // push1
+	0x39, 0x43,                          // pushi 43h (at)
+	0x78,                                // push1
+	0x39, 0x25,                          // pushi 25h
+	0x81, 0x09,                          // lag global[9]
+	0x4a, 0x06,                          // send 06 - Inv::at(25h)
+	0x4a, 0x06,                          // send 06 - locket::state(1)
+	// optimized code, saving 9 bytes
+	0x38, SIG_UINT16(0x009b),            // pushi 009bh (owner)
+	0x76,                                // push0
+	0x4a, 0x04,                          // send 04 - locket::owner
+	PATCH_END
+};
+
+//          script, description,                                 signature                     patch
+static const SciScriptPatcherEntry pq3Signatures[] = {
+	{  true, 36, "give locket missing points",                1, pq3SignatureGiveLocketPoints, pq3PatchGiveLocketPoints },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+
 #ifdef ENABLE_SCI32
 #pragma mark -
 #pragma mark Police Quest 4
@@ -6234,6 +6305,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 #endif
 	case GID_PQ1:
 		signatureTable = pq1vgaSignatures;
+		break;
+	case GID_PQ3:
+		signatureTable = pq3Signatures;
 		break;
 #ifdef ENABLE_SCI32
 	case GID_PQ4:
