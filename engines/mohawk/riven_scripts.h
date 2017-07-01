@@ -122,13 +122,10 @@ public:
 	 * Script execution must go through the ScriptManager,
 	 * this method should not be called directly.
 	 */
-	void run();
+	void run(RivenScriptManager *scriptManager);
 
 	/** Print script details to the standard output */
 	void dumpScript(byte tabs);
-
-	/** Stop the script after the current command */
-	void stopRunning() { _continueRunning = false; }
 
 	/** Append the commands of the other script to this script */
 	RivenScript &operator+=(const RivenScript &other);
@@ -138,7 +135,6 @@ public:
 
 private:
 	Common::Array<RivenCommandPtr> _commands;
-	bool _continueRunning;
 };
 
 /** Append the commands of the rhs Script to those of the lhs Script */
@@ -196,6 +192,8 @@ public:
 
 	void stopAllScripts();
 
+	bool stoppingAllScripts() const;
+
 	struct StoredMovieOpcode {
 		RivenScriptPtr script;
 		uint32 time;
@@ -213,6 +211,7 @@ private:
 
 	Common::Array<RivenScriptPtr> _queue;
 	bool _runningQueuedScripts;
+	bool _stoppingAllScripts;
 
 	StoredMovieOpcode _storedMovieOpcode;
 
