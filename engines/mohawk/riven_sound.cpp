@@ -150,7 +150,7 @@ void RivenSoundManager::addAmbientSounds(const SLSTRecord &record) {
 }
 
 void RivenSoundManager::setTargetVolumes(const SLSTRecord &record) {
-	for (uint i = 0; i < record.volumes.size(); i++) {
+	for (uint i = 0; i < MIN(_ambientSounds.sounds.size(), record.volumes.size()); i++) {
 		_ambientSounds.sounds[i].targetVolume = record.volumes[i] * record.globalVolume / 256;
 		_ambientSounds.sounds[i].targetBalance = record.balances[i];
 	}
