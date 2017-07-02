@@ -29,7 +29,7 @@
 #include "common/ptr.h"
 #include "common/textconsole.h"
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 op, const ArgumentArray &args)
 
 namespace Common {
 class ReadStream;
@@ -271,7 +271,7 @@ public:
 
 private:
 	typedef Common::Array<uint16> ArgumentArray;
-	typedef void (RivenSimpleCommand::*OpcodeProcRiven)(uint16 op, uint16 argc, uint16 *argv);
+	typedef void (RivenSimpleCommand::*OpcodeProcRiven)(uint16 op, const ArgumentArray &args);
 	struct RivenOpcode {
 		OpcodeProcRiven proc;
 		const char *desc;
