@@ -62,12 +62,12 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(ASpit, xaexittomain);
 }
 
-void ASpit::xastartupbtnhide(uint16 argc, uint16 *argv) {
+void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	// The original game hides the start/setup buttons depending on an ini entry.
 	// It's safe to ignore this command.
 }
 
-void ASpit::xasetupcomplete(uint16 argc, uint16 *argv) {
+void ASpit::xasetupcomplete(const ArgumentArray &args) {
 	// The original game sets an ini entry to disable the setup button and use the
 	// start button only. It's safe to ignore this part of the command.
 	uint16 menuCardId = getCardStackId(0xE2E);
@@ -75,7 +75,7 @@ void ASpit::xasetupcomplete(uint16 argc, uint16 *argv) {
 	_vm->_scriptMan->runScript(goToMenuScript, false);
 }
 
-void ASpit::xaatrusopenbook(uint16 argc, uint16 *argv) {
+void ASpit::xaatrusopenbook(const ArgumentArray &args) {
 	// Get the variable
 	uint32 &page = _vm->_vars["aatrusbook"];
 
@@ -97,11 +97,11 @@ void ASpit::xaatrusopenbook(uint16 argc, uint16 *argv) {
 	_vm->getCard()->drawPicture(page);
 }
 
-void ASpit::xaatrusbookback(uint16 argc, uint16 *argv) {
+void ASpit::xaatrusbookback(const ArgumentArray &args) {
 	_vm->_inventory->backFromItemScript();
 }
 
-void ASpit::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
+void ASpit::xaatrusbookprevpage(const ArgumentArray &args) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["aatrusbook"];
 
@@ -125,7 +125,7 @@ void ASpit::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 	}
 }
 
-void ASpit::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
+void ASpit::xaatrusbooknextpage(const ArgumentArray &args) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["aatrusbook"];
 
@@ -149,7 +149,7 @@ void ASpit::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 	}
 }
 
-void ASpit::xacathopenbook(uint16 argc, uint16 *argv) {
+void ASpit::xacathopenbook(const ArgumentArray &args) {
 	// Get the variable
 	uint32 page = _vm->_vars["acathbook"];
 
@@ -201,11 +201,11 @@ void ASpit::cathBookDrawTelescopeCombination() {// Draw the telescope combinatio
 		}
 }
 
-void ASpit::xacathbookback(uint16 argc, uint16 *argv) {
+void ASpit::xacathbookback(const ArgumentArray &args) {
 	_vm->_inventory->backFromItemScript();
 }
 
-void ASpit::xacathbookprevpage(uint16 argc, uint16 *argv) {
+void ASpit::xacathbookprevpage(const ArgumentArray &args) {
 	// Get the variable
 	uint32 &page = _vm->_vars["acathbook"];
 
@@ -230,7 +230,7 @@ void ASpit::xacathbookprevpage(uint16 argc, uint16 *argv) {
 	}
 }
 
-void ASpit::xacathbooknextpage(uint16 argc, uint16 *argv) {
+void ASpit::xacathbooknextpage(const ArgumentArray &args) {
 	// Get the variable
 	uint32 &page = _vm->_vars["acathbook"];
 
@@ -255,13 +255,13 @@ void ASpit::xacathbooknextpage(uint16 argc, uint16 *argv) {
 	}
 }
 
-void ASpit::xtrapbookback(uint16 argc, uint16 *argv) {
+void ASpit::xtrapbookback(const ArgumentArray &args) {
 	// Return to where we were before entering the book
 	_vm->_vars["atrap"] = 0;
 	_vm->_inventory->backFromItemScript();
 }
 
-void ASpit::xatrapbookclose(uint16 argc, uint16 *argv) {
+void ASpit::xatrapbookclose(const ArgumentArray &args) {
 	// Close the trap book
 	_vm->_vars["atrap"] = 0;
 
@@ -276,7 +276,7 @@ void ASpit::xatrapbookclose(uint16 argc, uint16 *argv) {
 	_vm->getCard()->enter(false);
 }
 
-void ASpit::xatrapbookopen(uint16 argc, uint16 *argv) {
+void ASpit::xatrapbookopen(const ArgumentArray &args) {
 	// Open the trap book
 	_vm->_vars["atrap"] = 1;
 
@@ -285,24 +285,24 @@ void ASpit::xatrapbookopen(uint16 argc, uint16 *argv) {
 	_vm->getCard()->enter(false);
 }
 
-void ASpit::xarestoregame(uint16 argc, uint16 *argv) {
+void ASpit::xarestoregame(const ArgumentArray &args) {
 	// Launch the load game dialog
 	_vm->runLoadDialog();
 }
 
-void ASpit::xadisablemenureturn(uint16 argc, uint16 *argv) {
+void ASpit::xadisablemenureturn(const ArgumentArray &args) {
 	// This function would normally enable the Windows menu item for
 	// returning to the main menu. Ctrl+r will do this instead.
 	// The original also had this shortcut.
 }
 
-void ASpit::xaenablemenureturn(uint16 argc, uint16 *argv) {
+void ASpit::xaenablemenureturn(const ArgumentArray &args) {
 	// This function would normally enable the Windows menu item for
 	// returning to the main menu. Ctrl+r will do this instead.
 	// The original also had this shortcut.
 }
 
-void ASpit::xalaunchbrowser(uint16 argc, uint16 *argv) {
+void ASpit::xalaunchbrowser(const ArgumentArray &args) {
 	// Well, we can't launch a browser for obvious reasons ;)
 	// The original text is as follows (for reference):
 
@@ -327,7 +327,7 @@ void ASpit::xalaunchbrowser(uint16 argc, uint16 *argv) {
 	dialog.runModal();
 }
 
-void ASpit::xadisablemenuintro(uint16 argc, uint16 *argv) {
+void ASpit::xadisablemenuintro(const ArgumentArray &args) {
 	// This function would normally enable the Windows menu item for
 	// playing the intro. Ctrl+p will play the intro movies instead.
 	// The original also had this shortcut.
@@ -335,7 +335,7 @@ void ASpit::xadisablemenuintro(uint16 argc, uint16 *argv) {
 	_vm->_inventory->forceHidden(true);
 }
 
-void ASpit::xaenablemenuintro(uint16 argc, uint16 *argv) {
+void ASpit::xaenablemenuintro(const ArgumentArray &args) {
 	// This function would normally enable the Windows menu item for
 	// playing the intro. Ctrl+p will play the intro movies instead.
 	// The original also had this shortcut.
@@ -344,12 +344,12 @@ void ASpit::xaenablemenuintro(uint16 argc, uint16 *argv) {
 	_vm->_inventory->forceHidden(false);
 }
 
-void ASpit::xademoquit(uint16 argc, uint16 *argv) {
+void ASpit::xademoquit(const ArgumentArray &args) {
 	// Exactly as it says on the tin. In the demo, this function quits.
 	_vm->quitGame();
 }
 
-void ASpit::xaexittomain(uint16 argc, uint16 *argv) {
+void ASpit::xaexittomain(const ArgumentArray &args) {
 	// One could potentially implement this function, but there would be no
 	// point. This function is only used in the demo's aspit card 9 update
 	// screen script. However, card 9 is not accessible from the game without

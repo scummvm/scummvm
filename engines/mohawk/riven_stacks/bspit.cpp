@@ -55,7 +55,7 @@ BSpit::BSpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(BSpit, xbchipper);
 }
 
-void BSpit::xblabopenbook(uint16 argc, uint16 *argv) {
+void BSpit::xblabopenbook(const ArgumentArray &args) {
 	// Get the variable
 	uint32 page = _vm->_vars["blabpage"];
 
@@ -91,7 +91,7 @@ void BSpit::labBookDrawDomeCombination() const {
 	assert(numCount == 5); // Sanity check
 }
 
-void BSpit::xblabbookprevpage(uint16 argc, uint16 *argv) {
+void BSpit::xblabbookprevpage(const ArgumentArray &args) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["blabpage"];
 
@@ -120,7 +120,7 @@ void BSpit::xblabbookprevpage(uint16 argc, uint16 *argv) {
 	}
 }
 
-void BSpit::xblabbooknextpage(uint16 argc, uint16 *argv) {
+void BSpit::xblabbooknextpage(const ArgumentArray &args) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["blabpage"];
 
@@ -149,7 +149,7 @@ void BSpit::xblabbooknextpage(uint16 argc, uint16 *argv) {
 	}
 }
 
-void BSpit::xsoundplug(uint16 argc, uint16 *argv) {
+void BSpit::xsoundplug(const ArgumentArray &args) {
 	if (_vm->_vars["bcratergg"] == 0) {
 		if (_vm->_vars["bblrwtr"] == 0) {
 			_vm->getCard()->overrideSound(0, 2);
@@ -161,7 +161,7 @@ void BSpit::xsoundplug(uint16 argc, uint16 *argv) {
 	}
 }
 
-void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
+void BSpit::xbchangeboiler(const ArgumentArray &args) {
 	uint32 heat = _vm->_vars["bheat"];
 	uint32 water = _vm->_vars["bblrwtr"];
 	uint32 platform = _vm->_vars["bblrgrt"];
@@ -169,7 +169,7 @@ void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
 	// Stop any background videos
 	_vm->_video->closeVideos();
 
-	if (argv[0] == 1) {
+	if (args[0] == 1) {
 		// Water is filling/draining from the boiler
 		if (water == 0) {
 			if (platform == 1)
@@ -187,7 +187,7 @@ void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
 			else
 				_vm->getCard()->playMovie(13);
 		}
-	} else if (argv[0] == 2 && water != 0) {
+	} else if (args[0] == 2 && water != 0) {
 		if (heat == 1) {
 			// Turning on the heat
 			if (platform == 1)
@@ -201,7 +201,7 @@ void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
 			else
 				_vm->getCard()->playMovie(15);
 		}
-	} else if (argv[0] == 3) {
+	} else if (args[0] == 3) {
 		if (platform == 1) {
 			// Lowering the platform
 			if (water == 1) {
@@ -225,16 +225,16 @@ void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
 		}
 	}
 
-	if (argc > 1)
-		_vm->getCard()->playSound(argv[1]);
-	else if (argv[0] == 2)
+	if (args.size() > 1)
+		_vm->getCard()->playSound(args[1]);
+	else if (args[0] == 2)
 		_vm->getCard()->playSound(1);
 
 	RivenVideo *video = _vm->_video->openSlot(11);
 	video->playBlocking();
 }
 
-void BSpit::xbupdateboiler(uint16 argc, uint16 *argv) {
+void BSpit::xbupdateboiler(const ArgumentArray &args) {
 	if (_vm->_vars["bheat"] != 0) {
 		if (_vm->_vars["bblrgrt"] == 0) {
 			_vm->getCard()->playMovie(8);
@@ -263,7 +263,7 @@ void BSpit::ytramTrapTimer() {
 	checkYtramCatch(true);
 }
 
-void BSpit::xbsettrap(uint16 argc, uint16 *argv) {
+void BSpit::xbsettrap(const ArgumentArray &args) {
 	// Set the Ytram trap
 
 	// We can catch the Ytram between 10 seconds and 3 minutes from now
@@ -303,12 +303,12 @@ void BSpit::checkYtramCatch(bool playSound) {
 		_vm->_sound->playSound(33);
 }
 
-void BSpit::xbcheckcatch(uint16 argc, uint16 *argv) {
+void BSpit::xbcheckcatch(const ArgumentArray &args) {
 	// Just pass our parameter along...
-	checkYtramCatch(argv[0] != 0);
+	checkYtramCatch(args[0] != 0);
 }
 
-void BSpit::xbait(uint16 argc, uint16 *argv) {
+void BSpit::xbait(const ArgumentArray &args) {
 	// Set the cursor to the pellet
 	_vm->_cursor->setCursor(kRivenPelletCursor);
 
@@ -333,7 +333,7 @@ void BSpit::xbait(uint16 argc, uint16 *argv) {
 	}
 }
 
-void BSpit::xbfreeytram(uint16 argc, uint16 *argv) {
+void BSpit::xbfreeytram(const ArgumentArray &args) {
 	// Play a random Ytram movie after freeing it
 	uint16 mlstId;
 
@@ -363,7 +363,7 @@ void BSpit::xbfreeytram(uint16 argc, uint16 *argv) {
 	_vm->getCard()->drawPicture(4);
 }
 
-void BSpit::xbaitplate(uint16 argc, uint16 *argv) {
+void BSpit::xbaitplate(const ArgumentArray &args) {
 	// Remove the pellet from the plate and put it in your hand
 	_vm->_cursor->setCursor(kRivenPelletCursor);
 	_vm->getCard()->drawPicture(3);
@@ -392,31 +392,31 @@ void BSpit::xbaitplate(uint16 argc, uint16 *argv) {
 	}
 }
 
-void BSpit::xbisland190_opencard(uint16 argc, uint16 *argv) {
+void BSpit::xbisland190_opencard(const ArgumentArray &args) {
 	checkDomeSliders();
 }
 
-void BSpit::xbisland190_resetsliders(uint16 argc, uint16 *argv) {
+void BSpit::xbisland190_resetsliders(const ArgumentArray &args) {
 	resetDomeSliders(9);
 }
 
-void BSpit::xbisland190_slidermd(uint16 argc, uint16 *argv) {
+void BSpit::xbisland190_slidermd(const ArgumentArray &args) {
 	dragDomeSlider(9);
 }
 
-void BSpit::xbisland190_slidermw(uint16 argc, uint16 *argv) {
+void BSpit::xbisland190_slidermw(const ArgumentArray &args) {
 	checkSliderCursorChange(9);
 }
 
-void BSpit::xbscpbtn(uint16 argc, uint16 *argv) {
+void BSpit::xbscpbtn(const ArgumentArray &args) {
 	runDomeButtonMovie();
 }
 
-void BSpit::xbisland_domecheck(uint16 argc, uint16 *argv) {
+void BSpit::xbisland_domecheck(const ArgumentArray &args) {
 	runDomeCheck();
 }
 
-void BSpit::xvalvecontrol(uint16 argc, uint16 *argv) {
+void BSpit::xvalvecontrol(const ArgumentArray &args) {
 	Common::Point startPos = getMouseDragStartPosition();
 
 	// Set the cursor to the closed position
@@ -481,7 +481,7 @@ void BSpit::valveChangePosition(uint32 valvePosition, uint16 videoId, uint16 pic
 	_vm->_vars["bvalve"] = valvePosition;
 }
 
-void BSpit::xbchipper(uint16 argc, uint16 *argv) {
+void BSpit::xbchipper(const ArgumentArray &args) {
 	Common::Point startPos = getMouseDragStartPosition();
 
 	bool pulledLever = false;

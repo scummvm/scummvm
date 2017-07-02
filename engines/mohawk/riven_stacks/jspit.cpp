@@ -64,7 +64,7 @@ JSpit::JSpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(JSpit, xjatboundary);
 }
 
-void JSpit::xreseticons(uint16 argc, uint16 *argv) {
+void JSpit::xreseticons(const ArgumentArray &args) {
 	// Reset the icons when going to Tay (rspit)
 	_vm->_vars["jicons"] = 0;
 	_vm->_vars["jiconorder"] = 0;
@@ -87,11 +87,11 @@ static byte countDepressedIcons(uint32 iconOrderVar) {
 		return 0;
 }
 
-void JSpit::xicon(uint16 argc, uint16 *argv) {
+void JSpit::xicon(const ArgumentArray &args) {
 	// Set atemp as the status of whether or not the icon can be depressed.
-	if (_vm->_vars["jicons"] & (1 << (argv[0] - 1))) {
+	if (_vm->_vars["jicons"] & (1 << (args[0] - 1))) {
 		// This icon is depressed. Allow depression only if the last depressed icon was this one.
-		if ((_vm->_vars["jiconorder"] & 0x1f) == argv[0])
+		if ((_vm->_vars["jiconorder"] & 0x1f) == args[0])
 			_vm->_vars["atemp"] = 1;
 		else
 			_vm->_vars["atemp"] = 2;
@@ -99,7 +99,7 @@ void JSpit::xicon(uint16 argc, uint16 *argv) {
 		_vm->_vars["atemp"] = 0;
 }
 
-void JSpit::xcheckicons(uint16 argc, uint16 *argv) {
+void JSpit::xcheckicons(const ArgumentArray &args) {
 	// Reset the icons if this is the sixth icon
 	uint32 &iconOrderVar = _vm->_vars["jiconorder"];
 	if (countDepressedIcons(iconOrderVar) == 5) {
@@ -114,19 +114,19 @@ void JSpit::xcheckicons(uint16 argc, uint16 *argv) {
 	}
 }
 
-void JSpit::xtoggleicon(uint16 argc, uint16 *argv) {
+void JSpit::xtoggleicon(const ArgumentArray &args) {
 	// Get the variables
 	uint32 &iconsDepressed = _vm->_vars["jicons"];
 	uint32 &iconOrderVar = _vm->_vars["jiconorder"];
 
-	if (iconsDepressed & (1 << (argv[0] - 1))) {
+	if (iconsDepressed & (1 << (args[0] - 1))) {
 		// The icon is depressed, now unpress it
-		iconsDepressed &= ~(1 << (argv[0] - 1));
+		iconsDepressed &= ~(1 << (args[0] - 1));
 		iconOrderVar >>= 5;
 	} else {
 		// The icon is not depressed, now depress it
-		iconsDepressed |= 1 << (argv[0] - 1);
-		iconOrderVar = (iconOrderVar << 5) + argv[0];
+		iconsDepressed |= 1 << (args[0] - 1);
+		iconOrderVar = (iconOrderVar << 5) + args[0];
 	}
 
 	// Check if the puzzle is complete now and assign 1 to jrbook if the puzzle is complete.
@@ -134,7 +134,7 @@ void JSpit::xtoggleicon(uint16 argc, uint16 *argv) {
 		_vm->_vars["jrbook"] = 1;
 }
 
-void JSpit::xjtunnel103_pictfix(uint16 argc, uint16 *argv) {
+void JSpit::xjtunnel103_pictfix(const ArgumentArray &args) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
 	uint32 iconsDepressed = _vm->_vars["jicons"];
 
@@ -159,7 +159,7 @@ void JSpit::xjtunnel103_pictfix(uint16 argc, uint16 *argv) {
 	_vm->_gfx->applyScreenUpdate();
 }
 
-void JSpit::xjtunnel104_pictfix(uint16 argc, uint16 *argv) {
+void JSpit::xjtunnel104_pictfix(const ArgumentArray &args) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
 	uint32 iconsDepressed = _vm->_vars["jicons"];
 
@@ -186,7 +186,7 @@ void JSpit::xjtunnel104_pictfix(uint16 argc, uint16 *argv) {
 	_vm->_gfx->applyScreenUpdate();
 }
 
-void JSpit::xjtunnel105_pictfix(uint16 argc, uint16 *argv) {
+void JSpit::xjtunnel105_pictfix(const ArgumentArray &args) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
 	uint32 iconsDepressed = _vm->_vars["jicons"];
 
@@ -211,7 +211,7 @@ void JSpit::xjtunnel105_pictfix(uint16 argc, uint16 *argv) {
 	_vm->_gfx->applyScreenUpdate();
 }
 
-void JSpit::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
+void JSpit::xjtunnel106_pictfix(const ArgumentArray &args) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
 	uint32 iconsDepressed = _vm->_vars["jicons"];
 
@@ -236,7 +236,7 @@ void JSpit::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
 	_vm->_gfx->applyScreenUpdate();
 }
 
-void JSpit::xvga1300_carriage(uint16 argc, uint16 *argv) {
+void JSpit::xvga1300_carriage(const ArgumentArray &args) {
 	// Run the gallows's carriage
 
 	RivenVideo *handleVideo = _vm->_video->openSlot(1);
@@ -333,23 +333,23 @@ void JSpit::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	}
 }
 
-void JSpit::xjdome25_resetsliders(uint16 argc, uint16 *argv) {
+void JSpit::xjdome25_resetsliders(const ArgumentArray &args) {
 	resetDomeSliders(10);
 }
 
-void JSpit::xjdome25_slidermd(uint16 argc, uint16 *argv) {
+void JSpit::xjdome25_slidermd(const ArgumentArray &args) {
 	dragDomeSlider(10);
 }
 
-void JSpit::xjdome25_slidermw(uint16 argc, uint16 *argv) {
+void JSpit::xjdome25_slidermw(const ArgumentArray &args) {
 	checkSliderCursorChange(10);
 }
 
-void JSpit::xjscpbtn(uint16 argc, uint16 *argv) {
+void JSpit::xjscpbtn(const ArgumentArray &args) {
 	runDomeButtonMovie();
 }
 
-void JSpit::xjisland3500_domecheck(uint16 argc, uint16 *argv) {
+void JSpit::xjisland3500_domecheck(const ArgumentArray &args) {
 	runDomeCheck();
 }
 
@@ -373,7 +373,7 @@ int JSpit::jspitElevatorLoop() {
 	return 0;
 }
 
-void JSpit::xhandlecontrolup(uint16 argc, uint16 *argv) {
+void JSpit::xhandlecontrolup(const ArgumentArray &args) {
 	int changeLevel = jspitElevatorLoop();
 
 	// If we've moved the handle down, go down a floor
@@ -405,7 +405,7 @@ void JSpit::xhandlecontrolup(uint16 argc, uint16 *argv) {
 	}
 }
 
-void JSpit::xhandlecontroldown(uint16 argc, uint16 *argv) {
+void JSpit::xhandlecontroldown(const ArgumentArray &args) {
 	int changeLevel = jspitElevatorLoop();
 
 	// If we've moved the handle up, go up a floor
@@ -420,7 +420,7 @@ void JSpit::xhandlecontroldown(uint16 argc, uint16 *argv) {
 	}
 }
 
-void JSpit::xhandlecontrolmid(uint16 argc, uint16 *argv) {
+void JSpit::xhandlecontrolmid(const ArgumentArray &args) {
 	int changeLevel = jspitElevatorLoop();
 
 	if (changeLevel == 0)
@@ -460,32 +460,32 @@ void JSpit::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 	_vm->_scriptMan->runScript(changeCard, false);
 }
 
-void JSpit::xjplaybeetle_550(uint16 argc, uint16 *argv) {
+void JSpit::xjplaybeetle_550(const ArgumentArray &args) {
 	// Play a beetle animation 25% of the time
 	_vm->_vars["jplaybeetle"] = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
-void JSpit::xjplaybeetle_600(uint16 argc, uint16 *argv) {
+void JSpit::xjplaybeetle_600(const ArgumentArray &args) {
 	// Play a beetle animation 25% of the time
 	_vm->_vars["jplaybeetle"] = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
-void JSpit::xjplaybeetle_950(uint16 argc, uint16 *argv) {
+void JSpit::xjplaybeetle_950(const ArgumentArray &args) {
 	// Play a beetle animation 25% of the time
 	_vm->_vars["jplaybeetle"] = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
-void JSpit::xjplaybeetle_1050(uint16 argc, uint16 *argv) {
+void JSpit::xjplaybeetle_1050(const ArgumentArray &args) {
 	// Play a beetle animation 25% of the time
 	_vm->_vars["jplaybeetle"] = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
-void JSpit::xjplaybeetle_1450(uint16 argc, uint16 *argv) {
+void JSpit::xjplaybeetle_1450(const ArgumentArray &args) {
 	// Play a beetle animation 25% of the time as long as the girl is not present
 	_vm->_vars["jplaybeetle"] = (_vm->_rnd->getRandomNumberRng(0, 3) == 0 && _vm->_vars["jgirl"] != 1) ? 1 : 0;
 }
 
-void JSpit::xjlagoon700_alert(uint16 argc, uint16 *argv) {
+void JSpit::xjlagoon700_alert(const ArgumentArray &args) {
 	// Handle sunner reactions (mid-staircase)
 	uint32 sunners = _vm->_vars["jsunners"];
 
@@ -500,7 +500,7 @@ void JSpit::xjlagoon700_alert(uint16 argc, uint16 *argv) {
 	sunnersPlayVideo(sunnerAlertVideo, 0x7BEB, true);
 }
 
-void JSpit::xjlagoon800_alert(uint16 argc, uint16 *argv) {
+void JSpit::xjlagoon800_alert(const ArgumentArray &args) {
 	// Handle sunner reactions (lower-staircase)
 
 	uint32 &sunners = _vm->_vars["jsunners"];
@@ -522,7 +522,7 @@ void JSpit::xjlagoon800_alert(uint16 argc, uint16 *argv) {
 	}
 }
 
-void JSpit::xjlagoon1500_alert(uint16 argc, uint16 *argv) {
+void JSpit::xjlagoon1500_alert(const ArgumentArray &args) {
 	// Handle sunner reactions (beach)
 
 	uint32 &sunners = _vm->_vars["jsunners"];
@@ -703,12 +703,12 @@ void JSpit::sunnersBeachTimer() {
 	installTimer(TIMER(JSpit, sunnersBeachTimer), timerTime);
 }
 
-void JSpit::xjschool280_resetleft(uint16 argc, uint16 *argv) {
+void JSpit::xjschool280_resetleft(const ArgumentArray &args) {
 	// Dummy function. This resets the unneeded video timing variable (dropLeftStart) in
 	// the DVD version.
 }
 
-void JSpit::xjschool280_resetright(uint16 argc, uint16 *argv) {
+void JSpit::xjschool280_resetright(const ArgumentArray &args) {
 	// Dummy function. This resets the unneeded video timing variable (dropRightStart) in
 	// the DVD version.
 }
@@ -721,7 +721,7 @@ void JSpit::redrawWharkNumberPuzzle(uint16 overlay, uint16 number) {
 	_vm->_gfx->applyScreenUpdate();
 }
 
-void JSpit::xschool280_playwhark(uint16 argc, uint16 *argv) {
+void JSpit::xschool280_playwhark(const ArgumentArray &args) {
 	// The "monstrous" whark puzzle that teaches the number system
 
 	uint32 *posVar;
@@ -779,7 +779,7 @@ void JSpit::xschool280_playwhark(uint16 argc, uint16 *argv) {
 	rotateRight->enable(!rotateRight->isEnabled());
 }
 
-void JSpit::xjatboundary(uint16 argc, uint16 *argv) {
+void JSpit::xjatboundary(const ArgumentArray &args) {
 	runDemoBoundaryDialog();
 }
 

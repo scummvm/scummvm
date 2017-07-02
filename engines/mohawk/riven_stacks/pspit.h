@@ -39,15 +39,15 @@ public:
 	virtual void installCardTimer() override;
 
 	// External commands - Prison Elevator
-	void xpisland990_elevcombo(uint16 argc, uint16 *argv);	// Param1: button
+	void xpisland990_elevcombo(const ArgumentArray &args);	// Param1: button
 
 	// External commands - Dome
-	void xpscpbtn(uint16 argc, uint16 *argv);
-	void xpisland290_domecheck(uint16 argc, uint16 *argv);
-	void xpisland25_opencard(uint16 argc, uint16 *argv);
-	void xpisland25_resetsliders(uint16 argc, uint16 *argv);
-	void xpisland25_slidermd(uint16 argc, uint16 *argv);
-	void xpisland25_slidermw(uint16 argc, uint16 *argv);
+	void xpscpbtn(const ArgumentArray &args);
+	void xpisland290_domecheck(const ArgumentArray &args);
+	void xpisland25_opencard(const ArgumentArray &args);
+	void xpisland25_resetsliders(const ArgumentArray &args);
+	void xpisland25_slidermd(const ArgumentArray &args);
+	void xpisland25_slidermw(const ArgumentArray &args);
 
 	// Timer callbacks
 	void catherineIdleTimer();

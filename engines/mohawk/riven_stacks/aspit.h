@@ -36,37 +36,37 @@ public:
 	ASpit(MohawkEngine_Riven *vm);
 
 	// External commands - Main Menu
-	void xastartupbtnhide(uint16 argc, uint16 *argv);
-	void xasetupcomplete(uint16 argc, uint16 *argv);
+	void xastartupbtnhide(const ArgumentArray &args);
+	void xasetupcomplete(const ArgumentArray &args);
 
 	// External commands - Atrus' Journal
-	void xaatrusopenbook(uint16 argc, uint16 *argv);
-	void xaatrusbookback(uint16 argc, uint16 *argv);
-	void xaatrusbookprevpage(uint16 argc, uint16 *argv);
-	void xaatrusbooknextpage(uint16 argc, uint16 *argv);
+	void xaatrusopenbook(const ArgumentArray &args);
+	void xaatrusbookback(const ArgumentArray &args);
+	void xaatrusbookprevpage(const ArgumentArray &args);
+	void xaatrusbooknextpage(const ArgumentArray &args);
 
 	// External commands - Catherine's Journal
-	void xacathopenbook(uint16 argc, uint16 *argv);
-	void xacathbookback(uint16 argc, uint16 *argv);
-	void xacathbookprevpage(uint16 argc, uint16 *argv);
-	void xacathbooknextpage(uint16 argc, uint16 *argv);
+	void xacathopenbook(const ArgumentArray &args);
+	void xacathbookback(const ArgumentArray &args);
+	void xacathbookprevpage(const ArgumentArray &args);
+	void xacathbooknextpage(const ArgumentArray &args);
 
 	// External commands - Trap Book
-	void xtrapbookback(uint16 argc, uint16 *argv);
-	void xatrapbookclose(uint16 argc, uint16 *argv);
-	void xatrapbookopen(uint16 argc, uint16 *argv);
+	void xtrapbookback(const ArgumentArray &args);
+	void xatrapbookclose(const ArgumentArray &args);
+	void xatrapbookopen(const ArgumentArray &args);
 
 	// External commands - DVD-specific
-	void xarestoregame(uint16 argc, uint16 *argv);
+	void xarestoregame(const ArgumentArray &args);
 
 	// External commands - Demo-specific
-	void xadisablemenureturn(uint16 argc, uint16 *argv);
-	void xaenablemenureturn(uint16 argc, uint16 *argv);
-	void xalaunchbrowser(uint16 argc, uint16 *argv);
-	void xadisablemenuintro(uint16 argc, uint16 *argv);
-	void xaenablemenuintro(uint16 argc, uint16 *argv);
-	void xademoquit(uint16 argc, uint16 *argv);
-	void xaexittomain(uint16 argc, uint16 *argv);
+	void xadisablemenureturn(const ArgumentArray &args);
+	void xaenablemenureturn(const ArgumentArray &args);
+	void xalaunchbrowser(const ArgumentArray &args);
+	void xadisablemenuintro(const ArgumentArray &args);
+	void xaenablemenuintro(const ArgumentArray &args);
+	void xademoquit(const ArgumentArray &args);
+	void xaexittomain(const ArgumentArray &args);
 
 private:
 	void cathBookDrawTelescopeCombination();

@@ -40,7 +40,7 @@ RSpit::RSpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(RSpit, xrwindowsetup);
 }
 
-void RSpit::xrcredittime(uint16 argc, uint16 *argv) {
+void RSpit::xrcredittime(const ArgumentArray &args) {
 	// Nice going, you used the trap book on Tay.
 
 	// The game chooses what ending based on agehn for us,
@@ -51,10 +51,10 @@ void RSpit::xrcredittime(uint16 argc, uint16 *argv) {
 	runEndGame(1, 1500);
 }
 
-void RSpit::xrshowinventory(uint16 argc, uint16 *argv) {
+void RSpit::xrshowinventory(const ArgumentArray &args) {
 }
 
-void RSpit::xrhideinventory(uint16 argc, uint16 *argv) {
+void RSpit::xrhideinventory(const ArgumentArray &args) {
 }
 
 void RSpit::rebelPrisonWindowTimer() {
@@ -74,7 +74,7 @@ void RSpit::rebelPrisonWindowTimer() {
 	installTimer(TIMER(RSpit, rebelPrisonWindowTimer), timeUntilNextVideo);
 }
 
-void RSpit::xrwindowsetup(uint16 argc, uint16 *argv) {
+void RSpit::xrwindowsetup(const ArgumentArray &args) {
 	// Randomize what effect happens when you look out into the middle of Tay
 
 	uint32 villageTime = _vm->_vars["rvillagetime"];

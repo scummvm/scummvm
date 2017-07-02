@@ -36,34 +36,34 @@ public:
 	GSpit(MohawkEngine_Riven *vm);
 
 	// External commands - Pins
-	void xgresetpins(uint16 argc, uint16 *argv);
-	void xgrotatepins(uint16 argc, uint16 *argv);
-	void xgpincontrols(uint16 argc, uint16 *argv);
+	void xgresetpins(const ArgumentArray &args);
+	void xgrotatepins(const ArgumentArray &args);
+	void xgpincontrols(const ArgumentArray &args);
 
 	// External commands - Dome
-	void xgisland25_opencard(uint16 argc, uint16 *argv);
-	void xgisland25_resetsliders(uint16 argc, uint16 *argv);
-	void xgisland25_slidermd(uint16 argc, uint16 *argv);
-	void xgisland25_slidermw(uint16 argc, uint16 *argv);
-	void xgscpbtn(uint16 argc, uint16 *argv);
-	void xgisland1490_domecheck(uint16 argc, uint16 *argv);
+	void xgisland25_opencard(const ArgumentArray &args);
+	void xgisland25_resetsliders(const ArgumentArray &args);
+	void xgisland25_slidermd(const ArgumentArray &args);
+	void xgisland25_slidermw(const ArgumentArray &args);
+	void xgscpbtn(const ArgumentArray &args);
+	void xgisland1490_domecheck(const ArgumentArray &args);
 
 	// External commands - Mapping
-	void xgplateau3160_dopools(uint16 argc, uint16 *argv);
+	void xgplateau3160_dopools(const ArgumentArray &args);
 
 	// External commands - Scribe Taking the Tram
-	void xgwt200_scribetime(uint16 argc, uint16 *argv);
-	void xgwt900_scribe(uint16 argc, uint16 *argv);
+	void xgwt200_scribetime(const ArgumentArray &args);
+	void xgwt900_scribe(const ArgumentArray &args);
 
 	// External commands - Periscope/Prison Viewer
-	void xgplaywhark(uint16 argc, uint16 *argv);
-	void xgrviewer(uint16 argc, uint16 *argv);
-	void xgwharksnd(uint16 argc, uint16 *argv);
-	void xglview_prisonoff(uint16 argc, uint16 *argv);
-	void xglview_villageoff(uint16 argc, uint16 *argv);
-	void xglviewer(uint16 argc, uint16 *argv);
-	void xglview_prisonon(uint16 argc, uint16 *argv);
-	void xglview_villageon(uint16 argc, uint16 *argv);
+	void xgplaywhark(const ArgumentArray &args);
+	void xgrviewer(const ArgumentArray &args);
+	void xgwharksnd(const ArgumentArray &args);
+	void xglview_prisonoff(const ArgumentArray &args);
+	void xglview_villageoff(const ArgumentArray &args);
+	void xglviewer(const ArgumentArray &args);
+	void xglview_prisonon(const ArgumentArray &args);
+	void xglview_villageon(const ArgumentArray &args);
 
 	// Timer handlers
 	void catherineViewerIdleTimer();

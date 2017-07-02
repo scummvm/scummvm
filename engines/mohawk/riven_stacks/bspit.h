@@ -36,35 +36,35 @@ public:
 	BSpit(MohawkEngine_Riven *vm);
 
 	// External commands - Gehn's Lab Journal
-	void xblabopenbook(uint16 argc, uint16 *argv);
-	void xblabbooknextpage(uint16 argc, uint16 *argv);
-	void xblabbookprevpage(uint16 argc, uint16 *argv);
+	void xblabopenbook(const ArgumentArray &args);
+	void xblabbooknextpage(const ArgumentArray &args);
+	void xblabbookprevpage(const ArgumentArray &args);
 
 	// External commands - Boiler Puzzle
-	void xsoundplug(uint16 argc, uint16 *argv);
-	void xbchangeboiler(uint16 argc, uint16 *argv);
-	void xbupdateboiler(uint16 argc, uint16 *argv);
+	void xsoundplug(const ArgumentArray &args);
+	void xbchangeboiler(const ArgumentArray &args);
+	void xbupdateboiler(const ArgumentArray &args);
 
 	// External commands - Frog Trap
-	void xbsettrap(uint16 argc, uint16 *argv);
-	void xbcheckcatch(uint16 argc, uint16 *argv);
-	void xbait(uint16 argc, uint16 *argv);
-	void xbfreeytram(uint16 argc, uint16 *argv);
-	void xbaitplate(uint16 argc, uint16 *argv);
+	void xbsettrap(const ArgumentArray &args);
+	void xbcheckcatch(const ArgumentArray &args);
+	void xbait(const ArgumentArray &args);
+	void xbfreeytram(const ArgumentArray &args);
+	void xbaitplate(const ArgumentArray &args);
 
 	// External commands - Dome
-	void xbisland190_opencard(uint16 argc, uint16 *argv);
-	void xbisland190_resetsliders(uint16 argc, uint16 *argv);
-	void xbisland190_slidermd(uint16 argc, uint16 *argv);
-	void xbisland190_slidermw(uint16 argc, uint16 *argv);
-	void xbscpbtn(uint16 argc, uint16 *argv);
-	void xbisland_domecheck(uint16 argc, uint16 *argv);
+	void xbisland190_opencard(const ArgumentArray &args);
+	void xbisland190_resetsliders(const ArgumentArray &args);
+	void xbisland190_slidermd(const ArgumentArray &args);
+	void xbisland190_slidermw(const ArgumentArray &args);
+	void xbscpbtn(const ArgumentArray &args);
+	void xbisland_domecheck(const ArgumentArray &args);
 
 	// External commands - Water Control
-	void xvalvecontrol(uint16 argc, uint16 *argv);
+	void xvalvecontrol(const ArgumentArray &args);
 
 	// External commands - Run the Wood Chipper
-	void xbchipper(uint16 argc, uint16 *argv);
+	void xbchipper(const ArgumentArray &args);
 
 	// Time callback
 	void ytramTrapTimer();
