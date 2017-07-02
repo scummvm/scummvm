@@ -192,9 +192,8 @@ void KingdomGame::InitPlay() {
 	_NoIFScreen = true;
 	_NoMusic = false;
 	_FstFwd = true;
-	if (_ASPtr)
-		free(_ASPtr);
 
+	delete[] _ASPtr;
 	_ASPtr = nullptr;
 }
 
@@ -481,11 +480,45 @@ void KingdomGame::DsAll() {
 }
 
 void KingdomGame::SaveAS() {
-	debug("STUB: SaveAS");
+	byte palette[256 * 3];
+	delete[] _ASPtr;
+	_ASPtr = new byte[224 * 146 + 768];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+
+	::Graphics::Surface *screen = g_system->lockScreen();
+	for (uint curX = 0; curX < 224; curX++) {
+		for (uint curY = 0; curY < 146; curY++) {
+			byte *ptr = (byte *)screen->getBasePtr(curX + 4, curY + 15);
+			_ASPtr[curY * 224 + curX] = *ptr;
+		}
+	}
+
+	for (uint i = 0; i < 768; i++)
+		_ASPtr[224 * 146 + i] = palette[i];
+
+	g_system->unlockScreen();
+	g_system->updateScreen();
 }
 
 void KingdomGame::RestoreAS() {
-	debug("STUB: RestoreAS");
+	byte palette[256 * 3];
+	for (uint i = 0; i < 768; i++)
+		palette[i] = _ASPtr[224 * 146 + i];
+
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+	::Graphics::Surface *screen = g_system->lockScreen();
+	for (uint curX = 0; curX < 224; curX++) {
+		for (uint curY = 0; curY < 146; curY++) {
+			byte *ptr = (byte *)screen->getBasePtr(curX + 4, curY + 15);
+			*ptr = _ASPtr[curY * 224 + curX];
+		}
+	}
+
+	g_system->unlockScreen();
+	g_system->updateScreen();
+	delete[] _ASPtr;
+	_ASPtr = nullptr;
 }
 
 void KingdomGame::SwitchAS() {
@@ -681,7 +714,7 @@ Common::Error KingdomGame::loadGameState(int slot) {
 	synchronize(s);
 	delete inFile;
 
-	free(_ASPtr);
+	delete[] _ASPtr;
 	_ASPtr = nullptr;
 
 	PlaySound(_SoundNumber);
