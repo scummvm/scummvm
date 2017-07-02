@@ -276,12 +276,12 @@ RivenSimpleCommand::~RivenSimpleCommand() {
 }
 
 RivenSimpleCommand *RivenSimpleCommand::createFromStream(MohawkEngine_Riven *vm, RivenCommandType type, Common::ReadStream *stream) {
-	uint16 argCount = stream->readUint16BE();
+	uint16 argc = stream->readUint16BE();
 
 	Common::Array<uint16> arguments;
-	arguments.resize(argCount);
+	arguments.resize(argc);
 
-	for (uint16 i = 0; i < argCount; i++) {
+	for (uint16 i = 0; i < argc; i++) {
 		arguments[i] = stream->readUint16BE();
 	}
 
@@ -362,83 +362,83 @@ void RivenSimpleCommand::setupOpcodes() {
 ////////////////////////////////
 
 // Command 1: draw tBMP resource (tbmp_id, left, top, right, bottom, u0, u1, u2, u3)
-void RivenSimpleCommand::drawBitmap(uint16 op, uint16 argc, uint16 *argv) {
-	if (argc < 5) // Copy the image to the whole screen, ignoring the rest of the parameters
-		_vm->_gfx->copyImageToScreen(argv[0], 0, 0, 608, 392);
+void RivenSimpleCommand::drawBitmap(uint16 op, const ArgumentArray &args) {
+	if (args.size() < 5) // Copy the image to the whole screen, ignoring the rest of the parameters
+		_vm->_gfx->copyImageToScreen(args[0], 0, 0, 608, 392);
 	else          // Copy the image to a certain part of the screen
-		_vm->_gfx->copyImageToScreen(argv[0], argv[1], argv[2], argv[3], argv[4]);
+		_vm->_gfx->copyImageToScreen(args[0], args[1], args[2], args[3], args[4]);
 }
 
 // Command 2: go to card (card id)
-void RivenSimpleCommand::switchCard(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->changeToCard(argv[0]);
+void RivenSimpleCommand::switchCard(uint16 op, const ArgumentArray &args) {
+	_vm->changeToCard(args[0]);
 }
 
 // Command 3: play an SLST from the script
-void RivenSimpleCommand::playScriptSLST(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::playScriptSLST(uint16 op, const ArgumentArray &args) {
 	int offset = 0, j = 0;
-	uint16 soundCount = argv[offset++];
+	uint16 soundCount = args[offset++];
 
 	SLSTRecord slstRecord;
 	slstRecord.index = 0;		// not set by the scripts, so we set it to 0
 	slstRecord.soundIds.resize(soundCount);
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.soundIds[j] = argv[offset++];
-	slstRecord.fadeFlags = argv[offset++];
-	slstRecord.loop = argv[offset++];
-	slstRecord.globalVolume = argv[offset++];
-	slstRecord.u0 = argv[offset++];
-	slstRecord.suspend = argv[offset++];
+		slstRecord.soundIds[j] = args[offset++];
+	slstRecord.fadeFlags = args[offset++];
+	slstRecord.loop = args[offset++];
+	slstRecord.globalVolume = args[offset++];
+	slstRecord.u0 = args[offset++];
+	slstRecord.suspend = args[offset++];
 
 	slstRecord.volumes.resize(soundCount);
 	slstRecord.balances.resize(soundCount);
 	slstRecord.u2.resize(soundCount);
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.volumes[j] = argv[offset++];
+		slstRecord.volumes[j] = args[offset++];
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.balances[j] = argv[offset++];	// negative = left, 0 = center, positive = right
+		slstRecord.balances[j] = args[offset++];	// negative = left, 0 = center, positive = right
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.u2[j] = argv[offset++];			// Unknown
+		slstRecord.u2[j] = args[offset++];			// Unknown
 
 	// Play the requested sound list
 	_vm->_sound->playSLST(slstRecord);
 }
 
 // Command 4: play local tWAV resource (twav_id, volume, block)
-void RivenSimpleCommand::playSound(uint16 op, uint16 argc, uint16 *argv) {
-	uint16 volume = argv[1];
-	bool playOnDraw = argv[2] == 1;
+void RivenSimpleCommand::playSound(uint16 op, const ArgumentArray &args) {
+	uint16 volume = args[1];
+	bool playOnDraw = args[2] == 1;
 
-	_vm->_sound->playSound(argv[0], volume, playOnDraw);
+	_vm->_sound->playSound(args[0], volume, playOnDraw);
 }
 
 // Command 7: set variable value (variable, value)
-void RivenSimpleCommand::setVariable(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->getStackVar(argv[0]) = argv[1];
+void RivenSimpleCommand::setVariable(uint16 op, const ArgumentArray &args) {
+	_vm->getStackVar(args[0]) = args[1];
 }
 
 // Command 9: enable hotspot (blst_id)
-void RivenSimpleCommand::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
-	RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(argv[0]);
+void RivenSimpleCommand::enableHotspot(uint16 op, const ArgumentArray &args) {
+	RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(args[0]);
 	if (hotspot) {
 		hotspot->enable(true);
 	}
 }
 
 // Command 10: disable hotspot (blst_id)
-void RivenSimpleCommand::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
-	RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(argv[0]);
+void RivenSimpleCommand::disableHotspot(uint16 op, const ArgumentArray &args) {
+	RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(args[0]);
 	if (hotspot) {
 		hotspot->enable(false);
 	}
 }
 
 // Command 12: stop sounds (flags)
-void RivenSimpleCommand::stopSound(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::stopSound(uint16 op, const ArgumentArray &args) {
 	// WORKAROUND: The Play Riven/Visit Riven/Start New Game buttons
 	// in the main menu call this function to stop ambient sounds
 	// after the change stack call to Temple Island. However, this
@@ -453,151 +453,151 @@ void RivenSimpleCommand::stopSound(uint16 op, uint16 argc, uint16 *argv) {
 	// bit 0 is normal sound stopping
 	// bit 1 is ambient sound stopping
 	// Having no flags set means clear all
-	if (argv[0] & 2 || argv[0] == 0)
+	if (args[0] & 2 || args[0] == 0)
 		_vm->_sound->stopAllSLST();
 
-	if (argv[0] & 1 || argv[0] == 0)
+	if (args[0] & 1 || args[0] == 0)
 		_vm->_sound->stopSound();
 }
 
 // Command 13: set mouse cursor (cursor_id)
-void RivenSimpleCommand::changeCursor(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_cursor->setCursor(argv[0]);
+void RivenSimpleCommand::changeCursor(uint16 op, const ArgumentArray &args) {
+	_vm->_cursor->setCursor(args[0]);
 }
 
 // Command 14: pause script execution (delay in ms, u1)
-void RivenSimpleCommand::delay(uint16 op, uint16 argc, uint16 *argv) {
-	if (argv[0] > 0)
-		_vm->delay(argv[0]);
+void RivenSimpleCommand::delay(uint16 op, const ArgumentArray &args) {
+	if (args[0] > 0)
+		_vm->delay(args[0]);
 }
 
 // Command 17: call external command
-void RivenSimpleCommand::runExternalCommand(uint16 op, uint16 argc, uint16 *argv) {
-	uint16 commandNameid = argv[0];
-	uint16 argumentCount = argv[1];
+void RivenSimpleCommand::runExternalCommand(uint16 op, const ArgumentArray &args) {
+	uint16 commandNameid = args[0];
+	uint16 argumentCount = args[1];
 
-	Common::Array<uint16> commandArgs(argv + 2, argumentCount);
+	Common::Array<uint16> commandArgs(argumentCount ? &args[2] : nullptr, argumentCount);
 
 	_vm->getStack()->runCommand(commandNameid, commandArgs);
 }
 
 // Command 18: transition
-// Note that this opcode has 1 or 5 parameters, depending on argc
+// Note that this opcode has 1 or 5 parameters, depending on args.size()
 // Parameter 0: transition type
 // Parameters 1-4: transition rectangle
-void RivenSimpleCommand::transition(uint16 op, uint16 argc, uint16 *argv) {
-	if (argc == 1)
-		_vm->_gfx->scheduleTransition((RivenTransition) argv[0]);
+void RivenSimpleCommand::transition(uint16 op, const ArgumentArray &args) {
+	if (args.size() == 1)
+		_vm->_gfx->scheduleTransition((RivenTransition) args[0]);
 	else
-		_vm->_gfx->scheduleTransition((RivenTransition) argv[0], Common::Rect(argv[1], argv[2], argv[3], argv[4]));
+		_vm->_gfx->scheduleTransition((RivenTransition) args[0], Common::Rect(args[1], args[2], args[3], args[4]));
 }
 
 // Command 19: reload card
-void RivenSimpleCommand::refreshCard(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::refreshCard(uint16 op, const ArgumentArray &args) {
 	_vm->getCard()->enter(false);
 }
 
 // Command 20: begin screen update
-void RivenSimpleCommand::beginScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::beginScreenUpdate(uint16 op, const ArgumentArray &args) {
 	_vm->_gfx->beginScreenUpdate();
 }
 
 // Command 21: apply screen update
-void RivenSimpleCommand::applyScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::applyScreenUpdate(uint16 op, const ArgumentArray &args) {
 	_vm->_gfx->applyScreenUpdate();
 }
 
 // Command 24: increment variable (variable, value)
-void RivenSimpleCommand::incrementVariable(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->getStackVar(argv[0]) += argv[1];
+void RivenSimpleCommand::incrementVariable(uint16 op, const ArgumentArray &args) {
+	_vm->getStackVar(args[0]) += args[1];
 }
 
 // Command 28: disable a movie
-void RivenSimpleCommand::disableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	RivenVideo *video = _vm->_video->openSlot(argv[0]);
+void RivenSimpleCommand::disableMovie(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
 	if (video)
 		video->disable();
 }
 
 // Command 29: disable all movies
-void RivenSimpleCommand::disableAllMovies(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::disableAllMovies(uint16 op, const ArgumentArray &args) {
 	_vm->_video->disableAllMovies();
 }
 
 // Command 31: enable a movie
-void RivenSimpleCommand::enableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	RivenVideo *video = _vm->_video->openSlot(argv[0]);
+void RivenSimpleCommand::enableMovie(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
 	video->enable();
 }
 
 // Command 32: play foreground movie - blocking (movie_id)
-void RivenSimpleCommand::playMovieBlocking(uint16 op, uint16 argc, uint16 *argv) {
-	RivenVideo *video = _vm->_video->openSlot(argv[0]);
+void RivenSimpleCommand::playMovieBlocking(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
 	video->setLooping(false);
 	video->enable();
 	video->playBlocking();
 }
 
 // Command 33: play background movie - nonblocking (movie_id)
-void RivenSimpleCommand::playMovie(uint16 op, uint16 argc, uint16 *argv) {
-	RivenVideo *video = _vm->_video->openSlot(argv[0]);
+void RivenSimpleCommand::playMovie(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
 	video->enable();
 	video->play();
 }
 
 // Command 34: stop a movie
-void RivenSimpleCommand::stopMovie(uint16 op, uint16 argc, uint16 *argv) {
-	RivenVideo *video = _vm->_video->openSlot(argv[0]);
+void RivenSimpleCommand::stopMovie(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
 	video->stop();
 }
 
 // Command 36: unknown
-void RivenSimpleCommand::unk_36(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::unk_36(uint16 op, const ArgumentArray &args) {
 }
 
 // Command 37: fade ambient sounds
-void RivenSimpleCommand::fadeAmbientSounds(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::fadeAmbientSounds(uint16 op, const ArgumentArray &args) {
 	// Similar to stopSound(), but does fading
 	_vm->_sound->stopAllSLST(true);
 }
 
 // Command 38: Store an opcode for use when playing a movie (movie id, time high, time low, opcode, arguments...)
-void RivenSimpleCommand::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::storeMovieOpcode(uint16 op, const ArgumentArray &args) {
 	// This opcode is used to delay an opcode's usage based on the elapsed
 	// time of a specified movie. However, every use in the game is for
 	// delaying an activateSLST opcode.
 
-	uint32 delayTime = (argv[1] << 16) + argv[2];
+	uint32 delayTime = (args[1] << 16) + args[2];
 
 	// Store the script
 	RivenScriptManager::StoredMovieOpcode storedOp;
-	storedOp.script = _vm->_scriptMan->createScriptFromData(1, argv[3], 1, argv[4]);
+	storedOp.script = _vm->_scriptMan->createScriptFromData(1, args[3], 1, args[4]);
 	storedOp.time = delayTime;
-	storedOp.id = argv[0];
+	storedOp.id = args[0];
 
 	// Store the opcode for later
 	_vm->_scriptMan->setStoredMovieOpcode(storedOp);
 }
 
 // Command 39: activate PLST record (card picture lists)
-void RivenSimpleCommand::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::activatePLST(uint16 op, const ArgumentArray &args) {
 	_vm->_activatedPLST = true;
 
-	RivenCard::Picture picture = _vm->getCard()->getPicture(argv[0]);
+	RivenCard::Picture picture = _vm->getCard()->getPicture(args[0]);
 	_vm->_gfx->copyImageToScreen(picture.id, picture.rect.left, picture.rect.top, picture.rect.right, picture.rect.bottom);
 }
 
 // Command 40: activate SLST record (card ambient sound lists)
-void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::activateSLST(uint16 op, const ArgumentArray &args) {
 	_vm->_activatedSLST = true;
 
-	SLSTRecord slstRecord = _vm->getCard()->getSound(argv[0]);
+	SLSTRecord slstRecord = _vm->getCard()->getSound(args[0]);
 	_vm->_sound->playSLST(slstRecord);
 }
 
 // Command 41: activate MLST record and play
-void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
-	MLSTRecord mlstRecord = _vm->getCard()->getMovie(argv[0]);
+void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, const ArgumentArray &args) {
+	MLSTRecord mlstRecord = _vm->getCard()->getMovie(args[0]);
 	activateMLST(mlstRecord);
 
 	RivenVideo *video = _vm->_video->openSlot(mlstRecord.playbackSlot);
@@ -606,17 +606,17 @@ void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *arg
 }
 
 // Command 43: activate BLST record (card hotspot enabling lists)
-void RivenSimpleCommand::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->getCard()->activateHotspotEnableRecord(argv[0]);
+void RivenSimpleCommand::activateBLST(uint16 op, const ArgumentArray &args) {
+	_vm->getCard()->activateHotspotEnableRecord(args[0]);
 }
 
 // Command 44: activate FLST record (information on which SFXE resource this card should use)
-void RivenSimpleCommand::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->getCard()->activateWaterEffect(argv[0]);
+void RivenSimpleCommand::activateFLST(uint16 op, const ArgumentArray &args) {
+	_vm->getCard()->activateWaterEffect(args[0]);
 }
 
 // Command 45: do zip mode
-void RivenSimpleCommand::zipMode(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::zipMode(uint16 op, const ArgumentArray &args) {
 	assert(_vm->getCard() && _vm->getCard()->getCurHotspot());
 
 	// Check the ZIPS records to see if we have a match to the hotspot name
@@ -630,8 +630,8 @@ void RivenSimpleCommand::zipMode(uint16 op, uint16 argc, uint16 *argv) {
 }
 
 // Command 46: activate MLST record (movie lists)
-void RivenSimpleCommand::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
-	MLSTRecord mlstRecord = _vm->getCard()->getMovie(argv[0]);
+void RivenSimpleCommand::activateMLST(uint16 op, const ArgumentArray &args) {
+	MLSTRecord mlstRecord = _vm->getCard()->getMovie(args[0]);
 	activateMLST(mlstRecord);
 }
 
@@ -688,14 +688,7 @@ void RivenSimpleCommand::execute() {
 		debugC(kRivenDebugScript, "Running opcode: %s", describe().c_str());
 	}
 
-	uint16 *argValues = new uint16[_arguments.size()];
-
-	for (uint16 k = 0; k < _arguments.size(); k++)
-		argValues[k] = _arguments[k];
-
-	(this->*(_opcodes[_type].proc)) (_type, _arguments.size(), argValues);
-
-	delete[] argValues;
+	(this->*(_opcodes[_type].proc)) (_type, _arguments);
 }
 
 RivenSwitchCommand::RivenSwitchCommand(MohawkEngine_Riven *vm) :
