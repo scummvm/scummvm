@@ -56,6 +56,9 @@ sky.cpt                FILE    "dists/engine-data/sky.cpt"
 #if ENABLE_TEENAGENT  == STATIC_PLUGIN
 teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
 #endif
+#if ENABLE_TITANIC    == STATIC_PLUGIN
+titanic.dat            FILE    "dists/engine-data/titanic.dat"
+#endif
 #if ENABLE_TONY       == STATIC_PLUGIN
 tony.dat               FILE    "dists/engine-data/tony.dat"
 #endif
