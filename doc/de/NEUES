@@ -3,12 +3,32 @@ Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
 1.10.0 (DD.MM.YYYY)
+ Neue Spiele:
+   - Unterstützung für Full Pipe hinzugefügt.
+
+ Neue Spiele (Sierra SCI2 - SCI2.1):
+   - Unterstützung für Gabriel Knight hinzugefügt.
+   - Unterstützung für Gabriel Knight 2 hinzugefügt.
+   - Unterstützung für King's Quest VII hinzugefügt.
+   - Unterstützung für King's Questions hinzugefügt.
+   - Unterstützung für Leisure Suit Larry 6 (hires) hinzugefügt.
+   - Unterstützung für Phantasmagoria hinzugefügt.
+   - Unterstützung für Police Quest 4 hinzugefügt.
+   - Unterstützung für Shivers hinzugefügt.
+   - Unterstützung für Space Quest 6 hinzugefügt.
+   - Unterstützung für Torin's Passage hinzugefügt.
+
+ Neue Portierungen:
+   - Portierung für PSP Vita hinzugefügt.
+
  Allgemein:
    - Kommandozeilen-Option hinzugefügt, mit der das aktuelle oder ein gewähltes
      Verzeichnis nach unterstützten Spielen durchsucht werden kann.
    - Viele Optionen der Benutzeroberfläche können nun übernommen werden, ohne
      den Optionen-Dialog zu schließen.
    - Sprache der Benutzeroberfläche kann ohne Programmneustart geändert werden.
+   - Integrierter Munt MT-32-Emulator auf Version 2.0.3 aktualisiert.
+   - Verbesserte Joystick-Bedienung.
 
  AGOS:
    - Einstellung für die Untertitel-Geschwindigkeit in der hebräischen Version von
@@ -17,10 +37,25 @@ Programmcodes finden Sie auf Englisch unter:
  Composer:
    - Unterstützung für das Speichern und Laden von Spielständen aus dem Hauptmenü heraus hinzugefügt.
 
+ Drascula:
+   - Lautstärke-Regelung hinzugefügt und Lautstärke-Synchronisation zwischen dem Spiel
+     und den ScummVM-Einstellungen korrigiert.
+   - Spielstände können jetzt mithilfe des GMM gespeichert und geladen werden.
+
+ SCI:
+   - Skript-Fehler in Police Quest 3 behoben. Wenn der Spieler Marie das Medaillon
+     übergibt, erhält er dafür 10 Punkte. Damit ist es jetzt möglich, das Spiel mit
+     einer perfekten Punktzahl zu beenden. Dieser Fehler ist auch im Originalspiel
+     vorhanden.
+
 1.9.1 (DD.MM.YYYY)
  Allgemein:
    - Option für bilineare Filterung im SDL2-Vollbildmodus hinzugefügt.
    - Fehler behoben, der einen Absturz im Optionen-Dialog der Benutzeroberfläche verursacht.
+
+ Drascula:
+   - Fehler korrigiert, der es unmöglich machte, mehr als einmal in der Gaststätte mit
+     dem Trunkenbold zu sprechen.
 
  Kyra:
    - Pufferüberlauf in "Lands of Lore" behoben.
@@ -28,6 +63,15 @@ Programmcodes finden Sie auf Englisch unter:
  MADS:
    - Fehler behoben, der einen Absturz verursacht, wenn "Rex Nebular and the Cosmic Gender Bender"
      gestartet wird.
+
+ SCI:
+   - Skript-Fehler in Laura Bow 2: Dagger of Amon Ra behoben, der es unmöglich machte,
+     einen bestimmten Raum im Museum (Raum 350) zu verlassen.
+     Dieser Fehler ist auch im Originalspiel vorhanden.
+
+ TsAGE:
+   - Kürzlich aufgetretenen Fehler behoben, der verursachte, dass die Animationen
+     in Return to Ringworld nicht abgespielt werden.
 
 1.9.0 (17.10.2016)
  Neue Spiele:
