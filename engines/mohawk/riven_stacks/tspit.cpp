@@ -57,7 +57,7 @@ TSpit::TSpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(TSpit, xtatboundary);
 }
 
-void TSpit::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
+void TSpit::xtexterior300_telescopedown(const ArgumentArray &args) {
 	// First, show the button movie
 	RivenVideo *buttonVideo = _vm->_video->openSlot(3);
 	buttonVideo->seek(0);
@@ -101,7 +101,7 @@ void TSpit::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 	}
 }
 
-void TSpit::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
+void TSpit::xtexterior300_telescopeup(const ArgumentArray &args) {
 	// First, show the button movie
 	RivenVideo *buttonVideo = _vm->_video->openSlot(3);
 	buttonVideo->seek(0);
@@ -163,11 +163,11 @@ void TSpit::xtopenfissure() {
 	}
 }
 
-void TSpit::xtisland390_covercombo(uint16 argc, uint16 *argv) {
-	// Called when clicking the telescope cover buttons. argv[0] is the button number (1...5).
+void TSpit::xtisland390_covercombo(const ArgumentArray &args) {
+	// Called when clicking the telescope cover buttons. args[0] is the button number (1...5).
 	uint32 &correctDigits = _vm->_vars["tcovercombo"];
 
-	if (correctDigits < 5 && argv[0] == getComboDigit(_vm->_vars["tcorrectorder"], correctDigits))
+	if (correctDigits < 5 && args[0] == getComboDigit(_vm->_vars["tcorrectorder"], correctDigits))
 		correctDigits++;
 	else
 		correctDigits = 0;
@@ -179,16 +179,16 @@ void TSpit::xtisland390_covercombo(uint16 argc, uint16 *argv) {
 }
 
 // Atrus' Journal and Trap Book are added to inventory
-void TSpit::xtatrusgivesbooks(uint16 argc, uint16 *argv) {
+void TSpit::xtatrusgivesbooks(const ArgumentArray &args) {
 	// Give the player Atrus' Journal and the Trap book
 }
 
 // Trap Book is removed from inventory
-void TSpit::xtchotakesbook(uint16 argc, uint16 *argv) {
+void TSpit::xtchotakesbook(const ArgumentArray &args) {
 	// And now Cho takes the trap book
 }
 
-void TSpit::xthideinventory(uint16 argc, uint16 *argv) {
+void TSpit::xthideinventory(const ArgumentArray &args) {
 }
 
 // Marble Puzzle related constants
@@ -227,7 +227,7 @@ static Common::Rect generateMarbleGridRect(uint16 x, uint16 y) {
 	return Common::Rect(offsetX, offsetY, offsetX + kMarbleHotspotSize, offsetY + kMarbleHotspotSize);
 }
 
-void TSpit::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
+void TSpit::xt7500_checkmarbles(const ArgumentArray &args) {
 	// Set apower if the marbles are in their correct spot.
 
 	bool valid = true;
@@ -249,7 +249,7 @@ void TSpit::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
 		_vm->_vars["apower"] = 0;
 }
 
-void TSpit::xt7600_setupmarbles(uint16 argc, uint16 *argv) {
+void TSpit::xt7600_setupmarbles(const ArgumentArray &args) {
 	// Draw the small marbles when we're a step away from the waffle
 
 	// Convert from marble X coordinate to screen X coordinate
@@ -309,7 +309,7 @@ void TSpit::setMarbleHotspots() {
 	}
 }
 
-void TSpit::xt7800_setup(uint16 argc, uint16 *argv) {
+void TSpit::xt7800_setup(const ArgumentArray &args) {
 	// First, let's store the base receptacle hotspots for the marbles
 	if (_marbleBaseHotspots.empty())
 		for (uint16 i = 0; i < kMarbleCount; i++) {
@@ -342,12 +342,12 @@ void TSpit::drawMarbles() {
 	_vm->_gfx->applyScreenUpdate();
 }
 
-void TSpit::xdrawmarbles(uint16 argc, uint16 *argv) {
+void TSpit::xdrawmarbles(const ArgumentArray &args) {
 	// Draw marbles in the closeup
 	drawMarbles();
 }
 
-void TSpit::xtakeit(uint16 argc, uint16 *argv) {
+void TSpit::xtakeit(const ArgumentArray &args) {
 	// Pick up and move a marble
 
 	// First, let's figure out what marble we're now holding
@@ -408,31 +408,31 @@ void TSpit::xtakeit(uint16 argc, uint16 *argv) {
 	drawMarbles();
 }
 
-void TSpit::xtscpbtn(uint16 argc, uint16 *argv) {
+void TSpit::xtscpbtn(const ArgumentArray &args) {
 	runDomeButtonMovie();
 }
 
-void TSpit::xtisland4990_domecheck(uint16 argc, uint16 *argv) {
+void TSpit::xtisland4990_domecheck(const ArgumentArray &args) {
 	runDomeCheck();
 }
 
-void TSpit::xtisland5056_opencard(uint16 argc, uint16 *argv) {
+void TSpit::xtisland5056_opencard(const ArgumentArray &args) {
 	checkDomeSliders();
 }
 
-void TSpit::xtisland5056_resetsliders(uint16 argc, uint16 *argv) {
+void TSpit::xtisland5056_resetsliders(const ArgumentArray &args) {
 	resetDomeSliders(24);
 }
 
-void TSpit::xtisland5056_slidermd(uint16 argc, uint16 *argv) {
+void TSpit::xtisland5056_slidermd(const ArgumentArray &args) {
 	dragDomeSlider(24);
 }
 
-void TSpit::xtisland5056_slidermw(uint16 argc, uint16 *argv) {
+void TSpit::xtisland5056_slidermw(const ArgumentArray &args) {
 	checkSliderCursorChange(24);
 }
 
-void TSpit::xtatboundary(uint16 argc, uint16 *argv) {
+void TSpit::xtatboundary(const ArgumentArray &args) {
 	runDemoBoundaryDialog();
 }
 

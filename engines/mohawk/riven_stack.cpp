@@ -154,22 +154,22 @@ void RivenStack::dump() const {
 	}
 }
 
-void RivenStack::runCommand(uint16 argc, uint16 *argv) {
-	Common::String externalCommandName = getName(kExternalCommandNames, argv[0]);
+void RivenStack::runCommand(uint16 commandNameId, const ArgumentArray &args) {
+	Common::String externalCommandName = getName(kExternalCommandNames, commandNameId);
 
 	if (!_commands.contains(externalCommandName)) {
 		error("Unknown external command \'%s\'", externalCommandName.c_str());
 	}
 
-	(*_commands[externalCommandName])(argv[1], argv[1] ? argv + 2 : nullptr);
+	(*_commands[externalCommandName])(args);
 }
 
 void RivenStack::registerCommand(const Common::String &name, ExternalCommand *command) {
 	_commands[name] = Common::SharedPtr<ExternalCommand>(command);
 }
 
-void RivenStack::xflies(uint16 argc, uint16 *argv) {
-	_vm->_gfx->setFliesEffect(argv[1], argv[0] == 1);
+void RivenStack::xflies(const ArgumentArray &args) {
+	_vm->_gfx->setFliesEffect(args[1], args[0] == 1);
 }
 
 uint16 RivenStack::getComboDigit(uint32 correctCombo, uint32 digit) {

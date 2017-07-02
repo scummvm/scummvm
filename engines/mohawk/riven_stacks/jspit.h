@@ -40,49 +40,49 @@ public:
 	virtual void installCardTimer() override;
 
 	// External commands - Rebel Tunnel Puzzle
-	void xreseticons(uint16 argc, uint16 *argv);
-	void xicon(uint16 argc, uint16 *argv);
-	void xcheckicons(uint16 argc, uint16 *argv);
-	void xtoggleicon(uint16 argc, uint16 *argv);
-	void xjtunnel103_pictfix(uint16 argc, uint16 *argv);
-	void xjtunnel104_pictfix(uint16 argc, uint16 *argv);
-	void xjtunnel105_pictfix(uint16 argc, uint16 *argv);
-	void xjtunnel106_pictfix(uint16 argc, uint16 *argv);
+	void xreseticons(const ArgumentArray &args);
+	void xicon(const ArgumentArray &args);
+	void xcheckicons(const ArgumentArray &args);
+	void xtoggleicon(const ArgumentArray &args);
+	void xjtunnel103_pictfix(const ArgumentArray &args);
+	void xjtunnel104_pictfix(const ArgumentArray &args);
+	void xjtunnel105_pictfix(const ArgumentArray &args);
+	void xjtunnel106_pictfix(const ArgumentArray &args);
 
 	// External commands - Lower the gallows carriage
-	void xvga1300_carriage(uint16 argc, uint16 *argv);
+	void xvga1300_carriage(const ArgumentArray &args);
 
 	// External commands - Dome
-	void xjdome25_resetsliders(uint16 argc, uint16 *argv);
-	void xjdome25_slidermd(uint16 argc, uint16 *argv);
-	void xjdome25_slidermw(uint16 argc, uint16 *argv);
-	void xjscpbtn(uint16 argc, uint16 *argv);
-	void xjisland3500_domecheck(uint16 argc, uint16 *argv);
+	void xjdome25_resetsliders(const ArgumentArray &args);
+	void xjdome25_slidermd(const ArgumentArray &args);
+	void xjdome25_slidermw(const ArgumentArray &args);
+	void xjscpbtn(const ArgumentArray &args);
+	void xjisland3500_domecheck(const ArgumentArray &args);
 
 	// External commands - Whark Elevator
-	void xhandlecontroldown(uint16 argc, uint16 *argv);
-	void xhandlecontrolmid(uint16 argc, uint16 *argv);
-	void xhandlecontrolup(uint16 argc, uint16 *argv);
+	void xhandlecontroldown(const ArgumentArray &args);
+	void xhandlecontrolmid(const ArgumentArray &args);
+	void xhandlecontrolup(const ArgumentArray &args);
 
 	// External commands - Beetle
-	void xjplaybeetle_550(uint16 argc, uint16 *argv);
-	void xjplaybeetle_600(uint16 argc, uint16 *argv);
-	void xjplaybeetle_950(uint16 argc, uint16 *argv);
-	void xjplaybeetle_1050(uint16 argc, uint16 *argv);
-	void xjplaybeetle_1450(uint16 argc, uint16 *argv);
+	void xjplaybeetle_550(const ArgumentArray &args);
+	void xjplaybeetle_600(const ArgumentArray &args);
+	void xjplaybeetle_950(const ArgumentArray &args);
+	void xjplaybeetle_1050(const ArgumentArray &args);
+	void xjplaybeetle_1450(const ArgumentArray &args);
 
 	// External commands - Creatures in the Lagoon
-	void xjlagoon700_alert(uint16 argc, uint16 *argv);
-	void xjlagoon800_alert(uint16 argc, uint16 *argv);
-	void xjlagoon1500_alert(uint16 argc, uint16 *argv);
+	void xjlagoon700_alert(const ArgumentArray &args);
+	void xjlagoon800_alert(const ArgumentArray &args);
+	void xjlagoon1500_alert(const ArgumentArray &args);
 
 	// External commands - Play the Whark Game
-	void xschool280_playwhark(uint16 argc, uint16 *argv);
-	void xjschool280_resetleft(uint16 argc, uint16 *argv); // DVD only
-	void xjschool280_resetright(uint16 argc, uint16 *argv); // DVD only
+	void xschool280_playwhark(const ArgumentArray &args);
+	void xjschool280_resetleft(const ArgumentArray &args); // DVD only
+	void xjschool280_resetright(const ArgumentArray &args); // DVD only
 
 	// External commands - Demo-specific
-	void xjatboundary(uint16 argc, uint16 *argv);
+	void xjatboundary(const ArgumentArray &args);
 
 	// Timer callbacks
 	void sunnersTopStairsTimer();

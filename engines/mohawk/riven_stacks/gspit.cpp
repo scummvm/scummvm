@@ -83,12 +83,12 @@ void GSpit::lowerPins() {
 	upMovie = 0;
 }
 
-void GSpit::xgresetpins(uint16 argc, uint16 *argv) {
+void GSpit::xgresetpins(const ArgumentArray &args) {
 	// As the function name suggests, this resets the pins
 	lowerPins();
 }
 
-void GSpit::xgrotatepins(uint16 argc, uint16 *argv) {
+void GSpit::xgrotatepins(const ArgumentArray &args) {
 	// Rotate the pins, if necessary
 
 	if (_vm->_vars["gpinup"] == 0)
@@ -113,7 +113,7 @@ void GSpit::xgrotatepins(uint16 argc, uint16 *argv) {
 	video->disable();
 }
 
-void GSpit::xgpincontrols(uint16 argc, uint16 *argv) {
+void GSpit::xgpincontrols(const ArgumentArray &args) {
 	// Handle a click on a section of an island
 
 	RivenHotspot *panel = _vm->getCard()->getHotspotByBlstId(13);
@@ -207,31 +207,31 @@ void GSpit::xgpincontrols(uint16 argc, uint16 *argv) {
 	curImage = image;
 }
 
-void GSpit::xgisland25_opencard(uint16 argc, uint16 *argv) {
+void GSpit::xgisland25_opencard(const ArgumentArray &args) {
 	checkDomeSliders();
 }
 
-void GSpit::xgisland25_resetsliders(uint16 argc, uint16 *argv) {
+void GSpit::xgisland25_resetsliders(const ArgumentArray &args) {
 	resetDomeSliders(11);
 }
 
-void GSpit::xgisland25_slidermd(uint16 argc, uint16 *argv) {
+void GSpit::xgisland25_slidermd(const ArgumentArray &args) {
 	dragDomeSlider(11);
 }
 
-void GSpit::xgisland25_slidermw(uint16 argc, uint16 *argv) {
+void GSpit::xgisland25_slidermw(const ArgumentArray &args) {
 	checkSliderCursorChange(11);
 }
 
-void GSpit::xgscpbtn(uint16 argc, uint16 *argv) {
+void GSpit::xgscpbtn(const ArgumentArray &args) {
 	runDomeButtonMovie();
 }
 
-void GSpit::xgisland1490_domecheck(uint16 argc, uint16 *argv) {
+void GSpit::xgisland1490_domecheck(const ArgumentArray &args) {
 	runDomeCheck();
 }
 
-void GSpit::xgplateau3160_dopools(uint16 argc, uint16 *argv) {
+void GSpit::xgplateau3160_dopools(const ArgumentArray &args) {
 	// Play the deactivation of a pool if one is active and a different one is activated
 	if (_vm->_vars["glkbtns"] != 0) {
 		RivenVideo *video = _vm->_video->openSlot(_vm->_vars["glkbtns"] * 2);
@@ -239,12 +239,12 @@ void GSpit::xgplateau3160_dopools(uint16 argc, uint16 *argv) {
 	}
 }
 
-void GSpit::xgwt200_scribetime(uint16 argc, uint16 *argv) {
+void GSpit::xgwt200_scribetime(const ArgumentArray &args) {
 	// Get the current time
 	_vm->_vars["gscribetime"] = _vm->_system->getMillis();
 }
 
-void GSpit::xgwt900_scribe(uint16 argc, uint16 *argv) {
+void GSpit::xgwt900_scribe(const ArgumentArray &args) {
 	uint32 &scribeVar = _vm->_vars["gscribe"];
 
 	if (scribeVar == 1 && _vm->_system->getMillis() > _vm->_vars["gscribetime"] + 40000)
@@ -253,7 +253,7 @@ void GSpit::xgwt900_scribe(uint16 argc, uint16 *argv) {
 
 static const uint16 s_viewerTimeIntervals[] = { 0, 816, 1617, 2416, 3216, 4016, 4816, 5616, 6416, 7216, 8016, 8816 };
 
-void GSpit::xgrviewer(uint16 argc, uint16 *argv) {
+void GSpit::xgrviewer(const ArgumentArray &args) {
 	// This controls the viewer on the right side of the 'throne' on Garden Island
 	// (It shows the colors of the marbles)
 
@@ -290,7 +290,7 @@ void GSpit::xgrviewer(uint16 argc, uint16 *argv) {
 	_vm->getCard()->enter(false);
 }
 
-void GSpit::xgplaywhark(uint16 argc, uint16 *argv) {
+void GSpit::xgplaywhark(const ArgumentArray &args) {
 	// The whark response to using the lights
 
 	// If we've gotten a visit already since we turned out the light, bail out
@@ -335,7 +335,7 @@ void GSpit::xgplaywhark(uint16 argc, uint16 *argv) {
 	video->playBlocking();
 }
 
-void GSpit::xgwharksnd(uint16 argc, uint16 *argv) {
+void GSpit::xgwharksnd(const ArgumentArray &args) {
 	uint32 wharkVisits = _vm->_vars["gwhark"];
 
 	// If we're at 5 or more, the whark will no longer visit us :(
@@ -357,7 +357,7 @@ void GSpit::xgwharksnd(uint16 argc, uint16 *argv) {
 	_vm->_sound->playCardSound(Common::String::format("gWharkSolo%d", soundId));
 }
 
-void GSpit::xglviewer(uint16 argc, uint16 *argv) {
+void GSpit::xglviewer(const ArgumentArray &args) {
 	// This controls the viewer on the left side of the 'throne' on Garden Island
 	// (It shows the village from the middle of the lake)
 
@@ -383,13 +383,13 @@ void GSpit::xglviewer(uint16 argc, uint16 *argv) {
 	_vm->getCard()->drawPicture(curPos + 2);
 }
 
-void GSpit::xglview_villageon(uint16 argc, uint16 *argv) {
+void GSpit::xglview_villageon(const ArgumentArray &args) {
 	// Turn on the left viewer to 'village mode'
 	_vm->_vars["glview"] = 2;
 	_vm->getCard()->drawPicture(_vm->_vars["glviewpos"] + 2);
 }
 
-void GSpit::xglview_villageoff(uint16 argc, uint16 *argv) {
+void GSpit::xglview_villageoff(const ArgumentArray &args) {
 	// Turn off the left viewer when in 'village mode' (why is this external?)
 	_vm->_vars["glview"] = 0;
 	_vm->getCard()->drawPicture(1);
@@ -428,7 +428,7 @@ void GSpit::catherineViewerIdleTimer() {
 	installTimer(TIMER(GSpit, catherineViewerIdleTimer), video->getDuration() + _vm->_rnd->getRandomNumber(60) * 1000);
 }
 
-void GSpit::xglview_prisonon(uint16 argc, uint16 *argv) {
+void GSpit::xglview_prisonon(const ArgumentArray &args) {
 	// Activate random background Catherine videos
 
 	// Turn on the left viewer to 'prison mode'
@@ -476,7 +476,7 @@ void GSpit::xglview_prisonon(uint16 argc, uint16 *argv) {
 	installTimer(TIMER(GSpit, catherineViewerIdleTimer), timeUntilNextMovie);
 }
 
-void GSpit::xglview_prisonoff(uint16 argc, uint16 *argv) {
+void GSpit::xglview_prisonoff(const ArgumentArray &args) {
 	// Deactivate random background Catherine videos
 
 	// Update the viewer state (now off)

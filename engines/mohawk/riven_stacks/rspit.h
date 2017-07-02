@@ -36,10 +36,10 @@ public:
 	RSpit(MohawkEngine_Riven *vm);
 
 	// External commands
-	void xrcredittime(uint16 argc, uint16 *argv);
-	void xrshowinventory(uint16 argc, uint16 *argv);
-	void xrhideinventory(uint16 argc, uint16 *argv);
-	void xrwindowsetup(uint16 argc, uint16 *argv);
+	void xrcredittime(const ArgumentArray &args);
+	void xrshowinventory(const ArgumentArray &args);
+	void xrhideinventory(const ArgumentArray &args);
+	void xrwindowsetup(const ArgumentArray &args);
 
 	// Timer callbacks
 	void rebelPrisonWindowTimer();

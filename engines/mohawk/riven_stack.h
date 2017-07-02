@@ -83,6 +83,7 @@ public:
 	RivenStack(MohawkEngine_Riven *vm, uint16 id);
 	virtual ~RivenStack();
 
+	typedef Common::Array<uint16> ArgumentArray;
 	typedef Common::Functor0<void> TimerProc;
 
 	/** Get the id of the stack */
@@ -108,7 +109,7 @@ public:
 	uint32 getCardGlobalId(uint16 cardId) const;
 
 	/** Run an external command with the specified parameters */
-	void runCommand(uint16 argc, uint16 *argv);
+	void runCommand(uint16 commandNameId, const Common::Array<uint16> &args);
 
 	/** Write all of the stack's data including its cards to standard output */
 	void dump() const;
@@ -153,7 +154,7 @@ public:
 	void keyForceUp();
 
 	// Common external commands
-	void xflies(uint16 argc, uint16 *argv); // Start the "flies" effect
+	void xflies(const ArgumentArray &args); // Start the "flies" effect
 
 	// Miscellaneous
 	uint16 getComboDigit(uint32 correctCombo, uint32 digit);
@@ -163,7 +164,7 @@ public:
 	bool pageTurn(RivenTransition transition);
 
 protected:
-	typedef Common::Functor2<uint16, uint16 *, void> ExternalCommand;
+	typedef Common::Functor1<const ArgumentArray &, void> ExternalCommand;
 
 	MohawkEngine_Riven *_vm;
 
@@ -178,7 +179,7 @@ private:
 
 #define REGISTER_COMMAND(cls, method) \
 		registerCommand( \
-			#method, new Common::Functor2Mem<uint16, uint16 *, void, cls>(this, &cls::method) \
+			#method, new Common::Functor1Mem<const Common::Array<uint16> &, void, cls>(this, &cls::method) \
 		)
 
 #define TIMER(cls, method) \

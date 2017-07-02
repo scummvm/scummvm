@@ -80,9 +80,9 @@ void PSpit::catherineIdleTimer() {
 	installTimer(TIMER(PSpit, catherineIdleTimer), timeUntilNextMovie);
 }
 
-void PSpit::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
-	// Play button sound based on argv[0]
-	_vm->_sound->playSound(argv[0] + 5);
+void PSpit::xpisland990_elevcombo(const ArgumentArray &args) {
+	// Play button sound based on args[0]
+	_vm->_sound->playSound(args[0] + 5);
 	_vm->delay(500);
 
 	// It is impossible to get here if Gehn is not trapped. However,
@@ -95,33 +95,33 @@ void PSpit::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
 
 	// pelevcombo keeps count of how many buttons we have pressed in the correct order.
 	// When pelevcombo is 5, clicking the handle will show the video freeing Catherine.
-	if (correctDigits < 5 && argv[0] == getComboDigit(_vm->_vars["pcorrectorder"], correctDigits))
+	if (correctDigits < 5 && args[0] == getComboDigit(_vm->_vars["pcorrectorder"], correctDigits))
 		correctDigits++;
 	else
 		correctDigits = 0;
 }
 
-void PSpit::xpscpbtn(uint16 argc, uint16 *argv) {
+void PSpit::xpscpbtn(const ArgumentArray &args) {
 	runDomeButtonMovie();
 }
 
-void PSpit::xpisland290_domecheck(uint16 argc, uint16 *argv) {
+void PSpit::xpisland290_domecheck(const ArgumentArray &args) {
 	runDomeCheck();
 }
 
-void PSpit::xpisland25_opencard(uint16 argc, uint16 *argv) {
+void PSpit::xpisland25_opencard(const ArgumentArray &args) {
 	checkDomeSliders();
 }
 
-void PSpit::xpisland25_resetsliders(uint16 argc, uint16 *argv) {
+void PSpit::xpisland25_resetsliders(const ArgumentArray &args) {
 	resetDomeSliders(14);
 }
 
-void PSpit::xpisland25_slidermd(uint16 argc, uint16 *argv) {
+void PSpit::xpisland25_slidermd(const ArgumentArray &args) {
 	dragDomeSlider(14);
 }
 
-void PSpit::xpisland25_slidermw(uint16 argc, uint16 *argv) {
+void PSpit::xpisland25_slidermw(const ArgumentArray &args) {
 	checkSliderCursorChange(14);
 }
 

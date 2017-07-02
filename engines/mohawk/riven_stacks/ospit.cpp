@@ -45,7 +45,7 @@ OSpit::OSpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(OSpit, xgwatch);
 }
 
-void OSpit::xorollcredittime(uint16 argc, uint16 *argv) {
+void OSpit::xorollcredittime(const ArgumentArray &args) {
 	// WORKAROUND: The special change stuff only handles one destination and it would
 	// be messy to modify the way that currently works. If we use the trap book on Tay,
 	// we should be using the Tay end game sequences.
@@ -66,26 +66,26 @@ void OSpit::xorollcredittime(uint16 argc, uint16 *argv) {
 		runEndGame(3, 8000);
 }
 
-void OSpit::xbookclick(uint16 argc, uint16 *argv) {
+void OSpit::xbookclick(const ArgumentArray &args) {
 	// Let's hook onto our video
-	RivenVideo *video = _vm->_video->getSlot(argv[0]);
+	RivenVideo *video = _vm->_video->getSlot(args[0]);
 
 	// Convert from the standard QuickTime base time to milliseconds
 	// The values are in terms of 1/600 of a second.
 	// Have I said how much I just *love* QuickTime? </sarcasm>
-	uint32 startTime = argv[1] * 1000 / 600;
-	uint32 endTime = argv[2] * 1000 / 600;
+	uint32 startTime = args[1] * 1000 / 600;
+	uint32 endTime = args[2] * 1000 / 600;
 
 	// Track down our hotspot
-	Common::String hotspotName = Common::String::format("touchBook%d", argv[3]);
+	Common::String hotspotName = Common::String::format("touchBook%d", args[3]);
 	RivenHotspot *hotspot = _vm->getCard()->getHotspotByName(hotspotName);
 	Common::Rect hotspotRect = hotspot->getRect();
 
 	debug(0, "xbookclick:");
-	debug(0, "\tVideo Code = %d", argv[0]);
+	debug(0, "\tVideo Code = %d", args[0]);
 	debug(0, "\tStart Time = %dms", startTime);
 	debug(0, "\tEnd Time   = %dms", endTime);
-	debug(0, "\tHotspot    = %d -> %s", argv[3], hotspotName.c_str());
+	debug(0, "\tHotspot    = %d -> %s", args[3], hotspotName.c_str());
 
 	// Just let the video play while we wait until Gehn opens the trap book for us
 	while (video->getTime() < startTime && !_vm->shouldQuit()) {
@@ -142,7 +142,7 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 	// Run the credits from here.
 	if (_vm->_vars["agehn"] == 3) {
 		_vm->_scriptMan->stopAllScripts();
-		runCredits(argv[0], 5000);
+		runCredits(args[0], 5000);
 		return;
 	}
 
@@ -150,7 +150,7 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 	video->playBlocking();
 }
 
-void OSpit::xooffice30_closebook(uint16 argc, uint16 *argv) {
+void OSpit::xooffice30_closebook(const ArgumentArray &args) {
 	// Close the blank linking book if it's open
 	uint32 &book = _vm->_vars["odeskbook"];
 	if (book != 1)
@@ -176,18 +176,18 @@ void OSpit::xooffice30_closebook(uint16 argc, uint16 *argv) {
 	_vm->getCard()->drawPicture(1);
 }
 
-void OSpit::xobedroom5_closedrawer(uint16 argc, uint16 *argv) {
+void OSpit::xobedroom5_closedrawer(const ArgumentArray &args) {
 	// Close the drawer if open when clicking on the journal.
 	RivenVideo *video = _vm->_video->openSlot(2);
 	video->playBlocking();
 	_vm->_vars["ostanddrawer"] = 0;
 }
 
-void OSpit::xogehnopenbook(uint16 argc, uint16 *argv) {
+void OSpit::xogehnopenbook(const ArgumentArray &args) {
 	_vm->getCard()->drawPicture(_vm->_vars["ogehnpage"]);
 }
 
-void OSpit::xogehnbookprevpage(uint16 argc, uint16 *argv) {
+void OSpit::xogehnbookprevpage(const ArgumentArray &args) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["ogehnpage"];
 
@@ -211,7 +211,7 @@ void OSpit::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 	}
 }
 
-void OSpit::xogehnbooknextpage(uint16 argc, uint16 *argv) {
+void OSpit::xogehnbooknextpage(const ArgumentArray &args) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["ogehnpage"];
 
@@ -235,7 +235,7 @@ void OSpit::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 	}
 }
 
-void OSpit::xgwatch(uint16 argc, uint16 *argv) {
+void OSpit::xgwatch(const ArgumentArray &args) {
 	// Hide the cursor
 	_vm->_cursor->setCursor(kRivenHideCursor);
 

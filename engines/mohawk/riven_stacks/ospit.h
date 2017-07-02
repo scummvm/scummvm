@@ -36,22 +36,22 @@ public:
 	OSpit(MohawkEngine_Riven *vm);
 
 	// External commands - Death!
-	void xorollcredittime(uint16 argc, uint16 *argv);
+	void xorollcredittime(const ArgumentArray &args);
 
 	// External commands - Trap Book Puzzle
-	void xbookclick(uint16 argc, uint16 *argv); // Four params -- movie_sref, start_time, end_time, u0
+	void xbookclick(const ArgumentArray &args); // Four params -- movie_sref, start_time, end_time, u0
 
 	// External commands - Blank Linking Book
-	void xooffice30_closebook(uint16 argc, uint16 *argv);
+	void xooffice30_closebook(const ArgumentArray &args);
 
 	// External commands - Gehn's Journal
-	void xobedroom5_closedrawer(uint16 argc, uint16 *argv);
-	void xogehnopenbook(uint16 argc, uint16 *argv);
-	void xogehnbookprevpage(uint16 argc, uint16 *argv);
-	void xogehnbooknextpage(uint16 argc, uint16 *argv);
+	void xobedroom5_closedrawer(const ArgumentArray &args);
+	void xogehnopenbook(const ArgumentArray &args);
+	void xogehnbookprevpage(const ArgumentArray &args);
+	void xogehnbooknextpage(const ArgumentArray &args);
 
 	// External commands - Elevator Combination
-	void xgwatch(uint16 argc, uint16 *argv);
+	void xgwatch(const ArgumentArray &args);
 
 };
 

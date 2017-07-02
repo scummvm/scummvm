@@ -473,7 +473,12 @@ void RivenSimpleCommand::delay(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 17: call external command
 void RivenSimpleCommand::runExternalCommand(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->getStack()->runCommand(argc, argv);
+	uint16 commandNameid = argv[0];
+	uint16 argumentCount = argv[1];
+
+	Common::Array<uint16> commandArgs(argv + 2, argumentCount);
+
+	_vm->getStack()->runCommand(commandNameid, commandArgs);
 }
 
 // Command 18: transition
