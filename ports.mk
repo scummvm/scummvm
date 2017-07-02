@@ -320,6 +320,7 @@ endif
 ifdef USE_FLUIDSYNTH
 OSX_STATIC_LIBS += \
                 -liconv -framework CoreMIDI -framework CoreAudio\
+                -framework AudioUnit \
                 $(STATICLIBPATH)/lib/libfluidsynth.a \
                 $(STATICLIBPATH)/lib/libglib-2.0.a \
                 $(STATICLIBPATH)/lib/libintl.a
