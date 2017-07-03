@@ -418,6 +418,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ6,            -1, 64964,  0,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // during the game
 	{ GID_SQ6,           210,   210,  0,       "buttonSecret", "doVerb",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // after winning the first round of stooge fighter 3
 	{ GID_SQ6,            -1, 64994, -1,               "Game", "restore",                         NULL,     1, { WORKAROUND_FAKE,   0 } }, // When trying to load an invalid save game from the launcher
+	{ GID_SQ6,            -1, 64921, -1,              "Print", "addEdit",                         NULL,     1, { WORKAROUND_FAKE,   0 } }, // When trying to use the game debugger's flag setting command
 	{ GID_TORIN,          -1, 64017,  0,             "oFlags", "clear",                           NULL,     0, { WORKAROUND_FAKE,   0 } }, // entering Torin's home in the French version
 	{ GID_TORIN,       10000, 64029,  0,          "oMessager", "nextMsg",                         NULL,     3, { WORKAROUND_FAKE,   0 } }, // start of chapter one
 	{ GID_TORIN,          -1, 64892,  0,      "oEventHandler", "killAllEventHogs",                NULL,     1, { WORKAROUND_FAKE,   0 } }, // when pressing the hint button when the game is about to transition to a new room (race condition) - Trac#9810
