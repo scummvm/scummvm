@@ -70,6 +70,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_kingartEntries = nullptr;
 
 	_tickCount = 0;
+	_oldTime = g_system->getMillis();
 }
 
 KingdomGame::~KingdomGame() {
@@ -118,7 +119,11 @@ void KingdomGame::refreshScreen() {
 }
 
 void KingdomGame::checkTimers() {
-	g_system->delayMillis(10);
+	uint32 newTime = g_system->getMillis();
+	int32 delay = 11 - (newTime - _oldTime);
+	if (delay > 0)
+		g_system->delayMillis(delay);
+	_oldTime = newTime;
 	_tickCount++;
 
 	if (_tickCount == 5) {
