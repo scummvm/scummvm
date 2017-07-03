@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-06-20 22:32+0200\n"
+"POT-Creation-Date: 2017-07-03 08:50+0200\n"
 "PO-Revision-Date: 2016-11-28 15:51+0000\n"
 "Last-Translator: Santiago G. Sanz <santiagogarciasanz@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -594,7 +594,7 @@ msgstr "Preme a tecla para asociala"
 msgid "Choose an action to map"
 msgstr "Elixe unha acción para asignala"
 
-#: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:98
+#: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:100
 msgid "~Q~uit"
 msgstr "~S~aír"
 
@@ -682,7 +682,7 @@ msgid "Search:"
 msgstr "Buscar:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:734
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:430
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -691,8 +691,8 @@ msgstr "Cargar partida:"
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:103
-#: engines/mohawk/riven.cpp:734 engines/parallaction/saveload.cpp:194
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
+#: engines/mohawk/riven.cpp:430 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -1846,11 +1846,11 @@ msgstr ""
 msgid "~R~esume"
 msgstr "~R~etomar"
 
-#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:96
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:98
 msgid "~L~oad"
 msgstr "~C~argar"
 
-#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:97
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:99
 msgid "~S~ave"
 msgstr "~G~ardar"
 
@@ -1881,7 +1881,7 @@ msgstr "~V~olver ao Iniciador"
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:196
 #: engines/drascula/saveload.cpp:384 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
-#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/guest_additions.cpp:418
 #: engines/sci/engine/guest_additions.cpp:459 engines/sci/engine/kfile.cpp:932
@@ -1903,7 +1903,7 @@ msgstr "Gardar partida:"
 #: engines/dm/loadsave.cpp:196 engines/drascula/saveload.cpp:384
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/dialogs.cpp:106 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/guest_additions.cpp:418
 #: engines/sci/engine/guest_additions.cpp:459 engines/sci/engine/kfile.cpp:932
@@ -1933,12 +1933,12 @@ msgstr ""
 "Erro ao gardar (%s)! Consulta o ficheiro README para obter información "
 "básica e máis instrucións para acadar asistencia adicional."
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:102
 #: engines/tsage/dialogs.cpp:112
 msgid "~O~K"
 msgstr "~A~ceptar"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:101
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:103
 #: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
 msgstr "~C~ancelar"
@@ -3306,32 +3306,60 @@ msgid "The Myst fly by movie was not played by the original engine."
 msgstr "O filme de imaxes aéreas de Myst non se reproduciu co motor orixinal."
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
+#: engines/mohawk/dialogs.cpp:183 engines/mohawk/dialogs.cpp:269
 msgid "~Z~ip Mode Activated"
 msgstr "Modo ~C~omprimido activado"
 
-#: engines/mohawk/dialogs.cpp:182
+#: engines/mohawk/dialogs.cpp:184
 msgid "~T~ransitions Enabled"
 msgstr "~T~ransicións activadas"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:184
+#: engines/mohawk/dialogs.cpp:186
 msgid "~D~rop Page"
 msgstr "~D~eixar folla"
 
-#: engines/mohawk/dialogs.cpp:188
+#: engines/mohawk/dialogs.cpp:190
 msgid "Show ~M~ap"
 msgstr "Mostrar ~m~apa"
 
-#: engines/mohawk/dialogs.cpp:194
+#: engines/mohawk/dialogs.cpp:196
 msgid "Main Men~u~"
 msgstr "Menú ~p~rincipal"
 
-#: engines/mohawk/dialogs.cpp:268
+#: engines/mohawk/dialogs.cpp:270
 msgid "~W~ater Effect Enabled"
 msgstr "Efecto de ~a~uga activado"
 
-#: engines/mohawk/riven.cpp:150
+#: engines/mohawk/dialogs.cpp:272
+#, fuzzy
+msgid "Transitions:"
+msgstr "~T~ransicións activadas"
+
+#: engines/mohawk/dialogs.cpp:274
+#, fuzzy
+msgid "Disabled"
+msgstr "Efectos gráficos desactivados"
+
+#: engines/mohawk/dialogs.cpp:275
+#, fuzzy
+msgid "Fastest"
+msgstr "Pegar"
+
+#: engines/mohawk/dialogs.cpp:276
+#, fuzzy
+msgid "Normal"
+msgstr "OpenGL Normal"
+
+#: engines/mohawk/dialogs.cpp:277
+msgid "Best"
+msgstr ""
+
+#: engines/mohawk/mohawk.cpp:58
+msgid "The game is paused. Press any key to continue."
+msgstr "Xogo en pausa. Pulsa calquera tecla para continuar."
+
+#: engines/mohawk/riven.cpp:141
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
@@ -3339,7 +3367,7 @@ msgstr ""
 "Falta un executable de Riven. O executable de Windows é riven.exe ou "
 "rivendmo.exe. "
 
-#: engines/mohawk/riven.cpp:151
+#: engines/mohawk/riven.cpp:142
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
@@ -3347,7 +3375,7 @@ msgstr ""
 "Tamén podes empregar o ficheiro do instalador arcriven.z ou o executable de "
 "Mac."
 
-#: engines/mohawk/riven.cpp:162
+#: engines/mohawk/riven.cpp:153
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
@@ -3355,7 +3383,7 @@ msgstr ""
 "Falta o ficheiro extras.mhk. Tamén podes empregar o ficheiro do instalador "
 "arcriven.z."
 
-#: engines/mohawk/riven_external.cpp:213
+#: engines/mohawk/riven_stack.cpp:181
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
@@ -3363,7 +3391,7 @@ msgstr ""
 "A exploración alén deste punto só está dispoñible coa versión\n"
 "completa do xogo.\n"
 
-#: engines/mohawk/riven_external.cpp:655
+#: engines/mohawk/riven_stacks/aspit.cpp:322
 msgid ""
 "At this point, the Riven Demo would\n"
 "ask if you would like to open a web browser\n"
@@ -3376,10 +3404,6 @@ msgstr ""
 "tenda de Red Orb e mercar o xogo.\n"
 "ScummVM non pode facer iso e o sitio web\n"
 "xa non existe."
-
-#: engines/mohawk/mohawk.cpp:61
-msgid "The game is paused. Press any key to continue."
-msgstr "Xogo en pausa. Pulsa calquera tecla para continuar."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -4740,9 +4764,6 @@ msgstr ""
 
 #~ msgid "MPEG2 cutscenes are no longer supported"
 #~ msgstr "Xa non hai compatibilidade coas secuencias en MPEG2"
-
-#~ msgid "OpenGL Normal"
-#~ msgstr "OpenGL Normal"
 
 #~ msgid "OpenGL Conserve"
 #~ msgstr "OpenGL Conserve"

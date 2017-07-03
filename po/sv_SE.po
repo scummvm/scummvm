@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-06-20 22:32+0200\n"
+"POT-Creation-Date: 2017-07-03 08:50+0200\n"
 "PO-Revision-Date: 2017-01-06 09:18+0000\n"
 "Last-Translator: Petter Sjölund <ignalina@mac.com>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -596,7 +596,7 @@ msgstr "Tryck på en tangent för att ställa in"
 msgid "Choose an action to map"
 msgstr "Välj en handling att ställa in"
 
-#: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:98
+#: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:100
 msgid "~Q~uit"
 msgstr "~A~vsluta"
 
@@ -684,7 +684,7 @@ msgid "Search:"
 msgstr "Sök:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:734
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:430
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -693,8 +693,8 @@ msgstr "Ladda spel:"
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:103
-#: engines/mohawk/riven.cpp:734 engines/parallaction/saveload.cpp:194
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
+#: engines/mohawk/riven.cpp:430 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -1844,11 +1844,11 @@ msgstr ""
 msgid "~R~esume"
 msgstr "~F~ortsätt"
 
-#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:96
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:98
 msgid "~L~oad"
 msgstr "~L~adda"
 
-#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:97
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:99
 msgid "~S~ave"
 msgstr "~S~para"
 
@@ -1879,7 +1879,7 @@ msgstr "Åte~r~vänd till launcher"
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:196
 #: engines/drascula/saveload.cpp:384 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
-#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/guest_additions.cpp:418
 #: engines/sci/engine/guest_additions.cpp:459 engines/sci/engine/kfile.cpp:932
@@ -1901,7 +1901,7 @@ msgstr "Spara spelet:"
 #: engines/dm/loadsave.cpp:196 engines/drascula/saveload.cpp:384
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/dialogs.cpp:106 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/guest_additions.cpp:418
 #: engines/sci/engine/guest_additions.cpp:459 engines/sci/engine/kfile.cpp:932
@@ -1931,12 +1931,12 @@ msgstr ""
 "Kunde inte spara data (%s)! Läs README-filen för grundläggande information "
 "och instruktioner för hur du kan få mer hjälp."
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:102
 #: engines/tsage/dialogs.cpp:112
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:101
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:103
 #: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
 msgstr "A~v~bryt"
@@ -3304,32 +3304,60 @@ msgid "The Myst fly by movie was not played by the original engine."
 msgstr "Flygvideon i Myst visades inte i originalspelet."
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
+#: engines/mohawk/dialogs.cpp:183 engines/mohawk/dialogs.cpp:269
 msgid "~Z~ip Mode Activated"
 msgstr "~Z~ipläge aktiverat"
 
-#: engines/mohawk/dialogs.cpp:182
+#: engines/mohawk/dialogs.cpp:184
 msgid "~T~ransitions Enabled"
 msgstr "Öv~e~rgångar aktiverade"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:184
+#: engines/mohawk/dialogs.cpp:186
 msgid "~D~rop Page"
 msgstr "Släpp si~d~a"
 
-#: engines/mohawk/dialogs.cpp:188
+#: engines/mohawk/dialogs.cpp:190
 msgid "Show ~M~ap"
 msgstr "~V~isa karta"
 
-#: engines/mohawk/dialogs.cpp:194
+#: engines/mohawk/dialogs.cpp:196
 msgid "Main Men~u~"
 msgstr "Huvud~m~eny"
 
-#: engines/mohawk/dialogs.cpp:268
+#: engines/mohawk/dialogs.cpp:270
 msgid "~W~ater Effect Enabled"
 msgstr "~V~atteneffekt aktiverad"
 
-#: engines/mohawk/riven.cpp:150
+#: engines/mohawk/dialogs.cpp:272
+#, fuzzy
+msgid "Transitions:"
+msgstr "Öv~e~rgångar aktiverade"
+
+#: engines/mohawk/dialogs.cpp:274
+#, fuzzy
+msgid "Disabled"
+msgstr "Inaktiverad GFX"
+
+#: engines/mohawk/dialogs.cpp:275
+#, fuzzy
+msgid "Fastest"
+msgstr "Klistra in"
+
+#: engines/mohawk/dialogs.cpp:276
+#, fuzzy
+msgid "Normal"
+msgstr "OpenGL normal"
+
+#: engines/mohawk/dialogs.cpp:277
+msgid "Best"
+msgstr ""
+
+#: engines/mohawk/mohawk.cpp:58
+msgid "The game is paused. Press any key to continue."
+msgstr "Spelet pausat. Tryck på valfri tangent för att fortsätta."
+
+#: engines/mohawk/riven.cpp:141
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
@@ -3337,7 +3365,7 @@ msgstr ""
 "Rivens huvudprogram saknas. Windowsprogrammet heter 'riven.exe' eller "
 "'rivendmo.exe'. "
 
-#: engines/mohawk/riven.cpp:151
+#: engines/mohawk/riven.cpp:142
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
@@ -3345,7 +3373,7 @@ msgstr ""
 "Det går även bra med installationsfilen 'arcriven.z', eller "
 "Macintoshprogrammet 'Riven'."
 
-#: engines/mohawk/riven.cpp:162
+#: engines/mohawk/riven.cpp:153
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
@@ -3353,13 +3381,13 @@ msgstr ""
 "Filen 'extras.mhk' saknas. Det går även bra att använda installationsfilen "
 "'arcriven.z' i stället."
 
-#: engines/mohawk/riven_external.cpp:213
+#: engines/mohawk/riven_stack.cpp:181
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr "För fortsatt utforskande krävs den fullständiga versionen av spelet."
 
-#: engines/mohawk/riven_external.cpp:655
+#: engines/mohawk/riven_stacks/aspit.cpp:322
 msgid ""
 "At this point, the Riven Demo would\n"
 "ask if you would like to open a web browser\n"
@@ -3372,10 +3400,6 @@ msgstr ""
 "för att gå in på Red Orb-butiken och köpa\n"
 "spelet. Det här går inte i ScummVM, och\n"
 "sidan i fråga finns inte längre."
-
-#: engines/mohawk/mohawk.cpp:61
-msgid "The game is paused. Press any key to continue."
-msgstr "Spelet pausat. Tryck på valfri tangent för att fortsätta."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -4720,9 +4744,6 @@ msgstr ""
 
 #~ msgid "MPEG2 cutscenes are no longer supported"
 #~ msgstr "MPEG2 filmscener stöds inte längre"
-
-#~ msgid "OpenGL Normal"
-#~ msgstr "OpenGL normal"
 
 #~ msgid "OpenGL Conserve"
 #~ msgstr "OpenGL konservation"
