@@ -49,7 +49,7 @@ struct ScreenBuffer {
 	    , _width(0)
 	    , _height(0)
 	    , _pitch(0)
-	    , _pixels(0)
+	    , _pixels(NULL)
 	{}
 
 	byte *_pixels;
