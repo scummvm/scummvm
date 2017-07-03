@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-03 08:50+0200\n"
-"PO-Revision-Date: 2017-05-22 15:13+0000\n"
+"PO-Revision-Date: 2017-07-03 13:25+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3358,28 +3358,24 @@ msgid "~W~ater Effect Enabled"
 msgstr "~W~assereffekt aktiviert"
 
 #: engines/mohawk/dialogs.cpp:272
-#, fuzzy
 msgid "Transitions:"
-msgstr "Über~g~änge aktiviert"
+msgstr "Übergänge:"
 
 #: engines/mohawk/dialogs.cpp:274
-#, fuzzy
 msgid "Disabled"
-msgstr "GFX ausgeschaltet"
+msgstr "Ausgeschaltet"
 
 #: engines/mohawk/dialogs.cpp:275
-#, fuzzy
 msgid "Fastest"
-msgstr "Einfügen"
+msgstr "Schnellste"
 
 #: engines/mohawk/dialogs.cpp:276
-#, fuzzy
 msgid "Normal"
-msgstr "OpenGL: normal"
+msgstr "Normal"
 
 #: engines/mohawk/dialogs.cpp:277
 msgid "Best"
-msgstr ""
+msgstr "Beste"
 
 #: engines/mohawk/mohawk.cpp:58
 msgid "The game is paused. Press any key to continue."
