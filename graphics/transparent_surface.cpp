@@ -793,21 +793,17 @@ TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transf
 template <TFilteringMode filteringMode>
 TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight) const {
 
-	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
-	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
-
 	TransparentSurface *target = new TransparentSurface();
 
-	assert(format.bytesPerPixel == 4);
+	int srcW = w;
+	int srcH = h;
+	int dstW = newWidth;
+	int dstH = newHeight;
 
-	int srcW = srcRect.width();
-	int srcH = srcRect.height();
-	int dstW = dstRect.width();
-	int dstH = dstRect.height();
-
-	target->create((uint16)dstW, (uint16)dstH, this->format);
+	target->create((uint16)dstW, (uint16)dstH, format);
 
 	if (filteringMode == FILTER_BILINEAR) {
+		assert(format.bytesPerPixel == 4);
 
 		bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
 
@@ -954,25 +950,29 @@ TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight
 		delete[] say;
 
 	} else {
-
 		int *scaleCacheX = new int[dstW];
 		for (int x = 0; x < dstW; x++) {
 			scaleCacheX[x] = (x * srcW) / dstW;
 		}
 
-		for (int y = 0; y < dstH; y++) {
-			uint32 *destP = (uint32 *)target->getBasePtr(0, y);
-			const uint32 *srcP = (const uint32 *)getBasePtr(0, (y * srcH) / dstH);
-			for (int x = 0; x < dstW; x++) {
-				*destP++ = srcP[scaleCacheX[x]];
-			}
+		switch (format.bytesPerPixel) {
+		case 1:
+			scaleNN<uint8>(scaleCacheX, target);
+			break;
+		case 2:
+			scaleNN<uint16>(scaleCacheX, target);
+			break;
+		case 4:
+			scaleNN<uint32>(scaleCacheX, target);
+			break;
+		default:
+			error("Can only scale 8bpp, 16bpp, and 32bpp");
 		}
-		delete[] scaleCacheX;
 
+		delete[] scaleCacheX;
 	}
 
 	return target;
-
 }
 
 TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, const byte *palette) const {
@@ -1053,11 +1053,25 @@ TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, 
 	return surface;
 }
 
+template <typename Size>
+void TransparentSurface::scaleNN(int *scaleCacheX, TransparentSurface *target) const {
+	for (int y = 0; y < target->h; y++) {
+		Size *destP = (Size *)target->getBasePtr(0, y);
+		const Size *srcP = (const Size *)getBasePtr(0, (y * h) / target->h);
+		for (int x = 0; x < target->w; x++) {
+			*destP++ = srcP[scaleCacheX[x]];
+		}
+	}
+}
 
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_NEAREST>(const TransformStruct &transform) const;
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_BILINEAR>(const TransformStruct &transform) const;
 template TransparentSurface *TransparentSurface::scaleT<FILTER_NEAREST>(uint16 newWidth, uint16 newHeight) const;
 template TransparentSurface *TransparentSurface::scaleT<FILTER_BILINEAR>(uint16 newWidth, uint16 newHeight) const;
+
+template void TransparentSurface::scaleNN<uint8>(int *scaleCacheX, TransparentSurface *target) const;
+template void TransparentSurface::scaleNN<uint16>(int *scaleCacheX, TransparentSurface *target) const;
+template void TransparentSurface::scaleNN<uint32>(int *scaleCacheX, TransparentSurface *target) const;
 
 TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
 	return rotoscaleT<FILTER_BILINEAR>(transform);

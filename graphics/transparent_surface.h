@@ -150,6 +150,7 @@ struct TransparentSurface : public Graphics::Surface {
 	TransparentSurface *scaleT(uint16 newWidth, uint16 newHeight) const;
 
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
+
 	/**
 	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and
 	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
@@ -176,6 +177,8 @@ struct TransparentSurface : public Graphics::Surface {
 private:
 	AlphaType _alphaMode;
 
+	template <typename Size>
+	void scaleNN(int *scaleCacheX, TransparentSurface *target) const;
 };
 
 /**
