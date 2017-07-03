@@ -460,7 +460,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 		case 10562:
 			if (_introMovieNum == 1) {
 				stopAnimTimer(_timerId);
-				_timerId = addTimer(2, getRandomNumber(5000), 0);
+				_timerId = addTimer(2, getRandomNumber(5000) + 5000, 0);
 			}
 			break;
 
