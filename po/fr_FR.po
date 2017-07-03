@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-03 08:50+0200\n"
-"PO-Revision-Date: 2017-04-23 15:57+0000\n"
+"PO-Revision-Date: 2017-07-03 10:14+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3343,28 +3343,24 @@ msgid "~W~ater Effect Enabled"
 msgstr "~E~ffets de l'Eau Activés"
 
 #: engines/mohawk/dialogs.cpp:272
-#, fuzzy
 msgid "Transitions:"
-msgstr "T~r~ansitions activées"
+msgstr "Transitions :"
 
 #: engines/mohawk/dialogs.cpp:274
-#, fuzzy
 msgid "Disabled"
-msgstr "GFX désactivé"
+msgstr "Désactivé"
 
 #: engines/mohawk/dialogs.cpp:275
-#, fuzzy
 msgid "Fastest"
-msgstr "Coller"
+msgstr "Rapide"
 
 #: engines/mohawk/dialogs.cpp:276
-#, fuzzy
 msgid "Normal"
-msgstr "OpenGL Normal"
+msgstr "Normal"
 
 #: engines/mohawk/dialogs.cpp:277
 msgid "Best"
-msgstr ""
+msgstr "Meilleur"
 
 #: engines/mohawk/mohawk.cpp:58
 msgid "The game is paused. Press any key to continue."
@@ -3622,26 +3618,40 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"Les personnages sauvegardés depuis ScummVM sont listés automatiquement. Les "
+"personages sauvegardés avec l'exécutable d'origine doivent être déplacés "
+"dans le répertoire de Sauvegarde de ScummVM et renommés avec un préfix "
+"indiquant le jeux à partir duquel ils ont été sauvegardés : 'qfg1' pour "
+"Quest for Glory 1, 'qfg2' for Quest for Glory 2. Par exemple : "
+"'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:351
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
+"Veuillez utiliser une application externe pour ouvrir le fichier d'Aide du "
+"jeu : %s"
 
 #: engines/sci/engine/savegame.cpp:1304
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
+"Le format de ce fichier de sauvegarde est obsolète. Le fichier ne peut être "
+"chargé."
 
 #: engines/sci/engine/savegame.cpp:1306
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
+"La version du fichier de sauvegarde est %d, mais la version maximum "
+"supportée est %0d"
 
 #: engines/sci/engine/savegame.cpp:1317
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"Cette sauvegarde a été créé par une version différente du jeu et ne peut "
+"être chargée"
 
 #: engines/sci/resource.cpp:813
 msgid ""
@@ -3649,6 +3659,10 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Des fichiers de ressources du jeu sont manquants ou corrompus. Certaines "
+"fonctionnalités peuvent ne pas marcher correctement. Veuillez vérifier la "
+"console pour plus d'information, et vérifier que vos fichier de jeu sont "
+"valides."
 
 #: engines/sci/sci.cpp:394
 msgid ""
@@ -3657,6 +3671,10 @@ msgid ""
 "riddles. Please, apply the latest patch for this game by Sierra to avoid "
 "possible problems."
 msgstr ""
+"Un script connu pour être buggé a été détecté, ce qui pourrait vous bloquer "
+"plus tard dans le jeu pendant la séquence avec les énigmes du \"Green Man\". "
+"Il est recommandé d'appliquer les derniers correctifs de Sierra pour ce jeu "
+"pour éviter tout problème."
 
 #: engines/sci/sci.cpp:403
 msgid ""
@@ -3666,6 +3684,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"Les sous-titres sont activés, mais les sous-titres de King Quest 7 sont "
+"incomplets et étaient désactivés dans le jeu original. ScummVM permet aux "
+"sous-titres d'être activés, mais ils ne sont pas toujours affichés "
+"correctement ou ne correspondent pas toujours à ce qui est dit. Ce n'est pas "
+"un bogue dans ScummVM, mais un problème avec les données du jeu."
 
 #: engines/sci/sci.cpp:427
 msgid ""
@@ -3679,6 +3702,16 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"Vous avez sélectionné le son General MIDI. Sierra a ajouté le support pour "
+"General MIDI après la mise sur le marché de ce jeu par le biais de leur \""
+"General MIDI Utility\". Veuillez appliquer ce correctifs pour pouvoir "
+"utiliser la musique MIDI avec ce jeu. Une fois que vous avez obtenu le "
+"correctif, vous pouvez extraire tous les fichiers *.PAT dans le répertoire "
+"Extra de ScummVM. Autrement vous pouvez aussi suivre les instructions du "
+"fichier READ.ME du correctifs, renommer le fichier *.PAT correspondant en "
+"4.PAT et le placer dans le répertoire contenant les fichiers de données du "
+"jeu. En l'absence de ce patch la musique General MIDI pour ce jeu est "
+"fortement déformée."
 
 #: engines/sci/sci.cpp:446
 msgid ""
@@ -3688,6 +3721,12 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Votre jeu contient un correctifs de script fait par des fans. Ces correctifs "
+"peuvent modifier les scripts du jeu en profondeur et sont connus pour "
+"introduire des problèmes. De plus les problèmes corrigés par ces correctifs "
+"sont déjà corrigé par ScummVM, donc nous recommandons d'enlever ces "
+"correctifs de votre répertoire contenant les données du jeu pour éviter tout "
+"problème."
 
 #: engines/scumm/detection.cpp:1120
 msgid ""
