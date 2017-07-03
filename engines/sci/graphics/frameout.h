@@ -24,6 +24,7 @@
 #define SCI_GRAPHICS_FRAMEOUT_H
 
 #include "engines/util.h"                // for initGraphics
+#include "sci/event.h"
 #include "sci/graphics/plane32.h"
 #include "sci/graphics/screen_item32.h"
 
@@ -370,6 +371,17 @@ public:
 #pragma mark -
 #pragma mark Mouse cursor
 private:
+	void updateMousePositionForRendering() const {
+		// In SSCI, mouse events were received via hardware interrupt, so the
+		// mouse cursor would always get updated immediately when the user moved
+		// the mouse. ScummVM must poll for mouse events from the backend
+		// instead, so we poll just before rendering so that the latest mouse
+		// position is rendered instead of whatever position it was at the last
+		// time kGetEvent was called. Without this, the mouse appears stuck
+		// during loops that do not make calls to kGetEvent, like transitions.
+		g_sci->getEventManager()->getSciEvent(SCI_EVENT_PEEK);
+	}
+
 	/**
 	 * Determines whether or not the point given by
 	 * `position` is inside of the given screen item.
