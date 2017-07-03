@@ -1610,9 +1610,8 @@ void KingdomGame::CursorType() {
 			_MouseValue = 0x440;
 		break;
 	case 0x24A:
-		// if (_SaveFile == 0)
-		_MouseValue = 0;
-		debug("CursorType: Unhandled 0x24A");
+		// Restore game.
+		// No more check in ScummVM, we display the load screen
 		break;
 	case 0x407:
 		if (_StatPlay == 182 && _Nodes[18] < 9)
