@@ -609,6 +609,7 @@ void Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 
 		uint16 soundId = soundReceiverCurrentSound(source, *_soundReceiverPosition);
 		_vm->_sound->replaceBackgroundMyst(soundId);
 		_vm->_system->delayMillis(1000);
+		_vm->pollAndDiscardEvents();
 	}
 
 	_soundReceiverPosition = oldPosition;
@@ -870,6 +871,7 @@ void Selenitic::soundLockCheckSolution(MystAreaSlider *slider, uint16 value, uin
 	slider->drawConditionalDataToScreen(2);
 	_vm->_sound->replaceSoundMyst(soundLockCurrentSound(value / 12, false));
 	_vm->_system->delayMillis(1500);
+	_vm->pollAndDiscardEvents();
 
 	if (value / 12 != solution)
 		solved = false;

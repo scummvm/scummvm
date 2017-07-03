@@ -201,6 +201,7 @@ public:
 
 	bool _showResourceRects;
 
+	VideoManager *_video;
 	Sound *_sound;
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
@@ -270,6 +271,8 @@ private:
 	void loadCursorHints();
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
+
+	void pauseEngineIntern(bool) override;
 };
 
 template<class T>

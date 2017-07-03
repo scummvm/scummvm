@@ -74,7 +74,7 @@ bool Archive::hasResource(uint32 tag, const Common::String &resName) const {
 	const ResourceMap &resMap = _types[tag];
 
 	for (ResourceMap::const_iterator it = resMap.begin(); it != resMap.end(); it++)
-		if (it->_value.name.matchString(resName))
+		if (it->_value.name.equalsIgnoreCase(resName))
 			return true;
 
 	return false;
@@ -113,7 +113,7 @@ uint16 Archive::findResourceID(uint32 tag, const Common::String &resName) const 
 	const ResourceMap &resMap = _types[tag];
 
 	for (ResourceMap::const_iterator it = resMap.begin(); it != resMap.end(); it++)
-		if (it->_value.name.matchString(resName))
+		if (it->_value.name.equalsIgnoreCase(resName))
 			return it->_key;
 
 	return 0xFFFF;

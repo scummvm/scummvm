@@ -934,6 +934,16 @@ public:
 	void petShow();
 
 	/**
+	 * Increment the number of PET area (tab) locks
+	 */
+	void petIncAreaLocks();
+
+	/**
+	 * Decrement the number of PET area (tab) locks
+	 */
+	void petDecAreaLocks();
+
+	/**
 	 * Shows the text cursor in the current section, if applicable
 	 */
 	void petShowCursor();

@@ -910,4 +910,21 @@ bool VideoDecoder::hasAudio() const {
 	return false;
 }
 
+void VideoDecoder::eraseTrack(Track *track) {
+	for (uint idx = 0; idx < _externalTracks.size(); ++idx) {
+		if (_externalTracks[idx] == track)
+			_externalTracks.remove_at(idx);
+	}
+
+	for (uint idx = 0; idx < _internalTracks.size(); ++idx) {
+		if (_internalTracks[idx] == track)
+			_internalTracks.remove_at(idx);
+	}
+
+	for (uint idx = 0; idx < _tracks.size(); ++idx) {
+		if (_tracks[idx] == track)
+			_tracks.remove_at(idx);
+	}
+}
+
 } // End of namespace Video

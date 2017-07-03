@@ -176,9 +176,10 @@ void TitanicEngine::setRoomNames() {
 }
 
 bool TitanicEngine::canLoadGameStateCurrently() {
-	if (!_window->_inputAllowed)
+	CGameManager *gameManager = _window->_gameManager;
+	if (!_window->_inputAllowed || !gameManager->_gameState._petActive)
 		return false;
-	CProjectItem *project = _window->_gameManager->_project;
+	CProjectItem *project = gameManager->_project;
 	if (project) {
 		CPetControl *pet = project->getPetControl();
 		if (pet && !pet->isAreaUnlocked())

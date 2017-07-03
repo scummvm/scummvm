@@ -23,6 +23,8 @@
 #include "common/str.h"
 
 #include "mohawk/riven.h"
+#include "mohawk/riven_stack.h"
+#include "mohawk/riven_graphics.h"
 
 namespace Mohawk {
 
@@ -268,7 +270,7 @@ static const char *variableNames[] = {
 };
 
 uint32 &MohawkEngine_Riven::getStackVar(uint32 index) {
-	Common::String name = getName(VariableNames, index);
+	Common::String name = getStack()->getName(kVariableNames, index);
 
 	if (!_vars.contains(name))
 		error("Could not find variable '%s' (stack variable %d)", name.c_str(), index);
@@ -292,9 +294,10 @@ void MohawkEngine_Riven::initVars() {
 	_vars["bblrwtr"] = 1;
 	_vars["bfans"] = 1;
 	_vars["bytrap"] = 2;
-	_vars["aatruspage"] = 1;
-	_vars["acathpage"] = 1;
+	_vars["aatrusbook"] = 1;
+	_vars["acathbook"] = 1;
 	_vars["bheat"] = 1;
+	_vars["blabpage"] = 1;
 	_vars["waterenabled"] = 1;
 	_vars["ogehnpage"] = 1;
 	_vars["bblrsw"] = 1;
@@ -304,7 +307,7 @@ void MohawkEngine_Riven::initVars() {
 	_vars["bmagcar"] = 1;
 	_vars["gnmagcar"] = 1;
 	_vars["omusicplayer"] = 1;
-	_vars["transitionmode"] = kRivenTransitionSpeedFastest;
+	_vars["transitionmode"] = kRivenTransitionModeFastest;
 	_vars["tdomeelev"] = 1;
 
 	// Randomize the telescope combination

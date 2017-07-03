@@ -203,6 +203,10 @@ void VideoManager::playMovieBlockingCentered(const Common::String &fileName, boo
 	waitUntilMovieEnds(VideoHandle(ptr));
 }
 
+void VideoManager::waitUntilMovieEnds(const VideoEntryPtr &video) {
+	waitUntilMovieEnds(VideoHandle(video));
+}
+
 void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	if (!videoHandle)
 		return;
@@ -231,7 +235,6 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 					break;
 				case Common::KEYCODE_ESCAPE:
 					continuePlaying = false;
-					_vm->doVideoTimer(videoHandle, true);
 					break;
 				default:
 					break;
@@ -322,9 +325,6 @@ bool VideoManager::updateMovies() {
 			}
 		}
 
-		// Check the video time
-		_vm->doVideoTimer(VideoHandle(*it), false);
-
 		// Remember to increase the iterator
 		it++;
 	}
@@ -401,100 +401,6 @@ bool VideoManager::drawNextFrame(VideoEntryPtr videoEntry) {
 	return true;
 }
 
-void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
-	Common::SeekableReadStream *mlstStream = _vm->getResource(ID_MLST, card);
-	uint16 recordCount = mlstStream->readUint16BE();
-
-	for (uint16 i = 0; i < recordCount; i++) {
-		MLSTRecord mlstRecord;
-		mlstRecord.index = mlstStream->readUint16BE();
-		mlstRecord.movieID = mlstStream->readUint16BE();
-		mlstRecord.code = mlstStream->readUint16BE();
-		mlstRecord.left = mlstStream->readUint16BE();
-		mlstRecord.top = mlstStream->readUint16BE();
-
-		for (byte j = 0; j < 2; j++)
-			if (mlstStream->readUint16BE() != 0)
-				warning("u0[%d] in MLST non-zero", j);
-
-		if (mlstStream->readUint16BE() != 0xFFFF)
-			warning("u0[2] in MLST not 0xFFFF");
-
-		mlstRecord.loop = mlstStream->readUint16BE();
-		mlstRecord.volume = mlstStream->readUint16BE();
-		mlstRecord.u1 = mlstStream->readUint16BE();
-
-		if (mlstRecord.u1 != 1)
-			warning("mlstRecord.u1 not 1");
-
-		// We've found a match, add it
-		if (mlstRecord.index == mlstId) {
-			// Make sure we don't have any duplicates
-			for (uint32 j = 0; j < _mlstRecords.size(); j++)
-				if (_mlstRecords[j].index == mlstRecord.index || _mlstRecords[j].code == mlstRecord.code) {
-					_mlstRecords.remove_at(j);
-					j--;
-				}
-
-			_mlstRecords.push_back(mlstRecord);
-			break;
-		}
-	}
-
-	delete mlstStream;
-}
-
-void VideoManager::clearMLST() {
-	_mlstRecords.clear();
-}
-
-VideoHandle VideoManager::playMovieRiven(uint16 id) {
-	for (uint16 i = 0; i < _mlstRecords.size(); i++) {
-		if (_mlstRecords[i].code == id) {
-			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s, Volume = %d", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping", _mlstRecords[i].volume);
-
-			VideoEntryPtr ptr = open(_mlstRecords[i].movieID);
-			if (ptr) {
-				ptr->moveTo(_mlstRecords[i].left, _mlstRecords[i].top);
-				ptr->setLooping(_mlstRecords[i].loop != 0);
-				ptr->setVolume(_mlstRecords[i].volume);
-				ptr->start();
-			}
-
-			return VideoHandle(ptr);
-		}
-	}
-
-	return VideoHandle();
-}
-
-void VideoManager::playMovieBlockingRiven(uint16 id) {
-	for (uint16 i = 0; i < _mlstRecords.size(); i++) {
-		if (_mlstRecords[i].code == id) {
-			debug(1, "Play tMOV %d (blocking) at (%d, %d), Volume = %d", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].volume);
-			VideoEntryPtr ptr = open(_mlstRecords[i].movieID);
-			ptr->moveTo(_mlstRecords[i].left, _mlstRecords[i].top);
-			ptr->setVolume(_mlstRecords[i].volume);
-			ptr->start();
-			waitUntilMovieEnds(VideoHandle(ptr));
-			return;
-		}
-	}
-}
-
-void VideoManager::stopMovieRiven(uint16 id) {
-	debug(2, "Stopping movie %d", id);
-	VideoHandle handle = findVideoHandleRiven(id);
-	if (handle)
-		removeEntry(handle._ptr);
-}
-
-void VideoManager::disableAllMovies() {
-	debug(2, "Disabling all movies");
-	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
-		(*it)->setEnabled(false);
-}
-
 VideoEntryPtr VideoManager::open(uint16 id) {
 	// If this video is already playing, return that handle
 	VideoHandle oldHandle = findVideoHandle(id);
@@ -546,16 +452,6 @@ VideoEntryPtr VideoManager::open(const Common::String &fileName) {
 	_videos.push_back(entry);
 
 	return entry;
-}
-
-VideoHandle VideoManager::findVideoHandleRiven(uint16 id) {
-	for (uint16 i = 0; i < _mlstRecords.size(); i++)
-		if (_mlstRecords[i].code == id)
-			for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
-				if ((*it)->getID() == _mlstRecords[i].movieID)
-					return VideoHandle(*it);
-
-	return VideoHandle();
 }
 
 VideoHandle VideoManager::findVideoHandle(uint16 id) {

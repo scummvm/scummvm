@@ -120,6 +120,7 @@ void AVIDecoder::initCommon() {
 	_videoTrackCounter = _audioTrackCounter = 0;
 	_lastAddedTrack = nullptr;
 	memset(&_header, 0, sizeof(_header));
+	_transparencyTrack.track = nullptr;
 }
 
 bool AVIDecoder::isSeekable() const {
@@ -129,10 +130,10 @@ bool AVIDecoder::isSeekable() const {
 }
 
 const Graphics::Surface *AVIDecoder::decodeNextTransparency() {
-	if (_videoTracks.size() != 2)
+	if (!_transparencyTrack.track)
 		return nullptr;
 
-	AVIVideoTrack *track = static_cast<AVIVideoTrack *>(_videoTracks[1].track);
+	AVIVideoTrack *track = static_cast<AVIVideoTrack *>(_transparencyTrack.track);
 	return track->decodeNextFrame();
 }
 
@@ -392,15 +393,21 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		} else if (_videoTracks.empty()) {
 			_videoTracks.push_back(status);
 		} else {
-			// Secondary video track
-			assert(_videoTracks.size() == 1);
+			// Secondary video track. For now we assume it will always be a
+			// transparency information track
 			status.chunkSearchOffset = getVideoTrackOffset(index);
+			assert(!_transparencyTrack.track);
 			assert(status.chunkSearchOffset != 0);
 
-			// Add the video track to the list
-			_videoTracks.push_back(status);
+			// Copy the track status information into the transparency track field
+			_transparencyTrack = status;
 		}
 	}
+
+	// If there is a transparency track, remove it from the video decoder's track list.
+	// This is to stop it being included in calls like getFrameCount
+	if (_transparencyTrack.track)
+		eraseTrack(_transparencyTrack.track);
 
 	// Check if this is a special Duck Truemotion video
 	checkTruemotion1();
@@ -423,6 +430,9 @@ void AVIDecoder::close() {
 
 	_videoTracks.clear();
 	_audioTracks.clear();
+
+	delete _transparencyTrack.track;
+	_transparencyTrack.track = nullptr;
 }
 
 void AVIDecoder::readNextPacket() {
@@ -433,6 +443,10 @@ void AVIDecoder::readNextPacket() {
 	// Handle the video first
 	for (uint idx = 0; idx < _videoTracks.size(); ++idx)
 		handleNextPacket(_videoTracks[idx]);
+
+	// Handle any transparency track
+	if (_transparencyTrack.track)
+		handleNextPacket(_transparencyTrack);
 
 	// Handle audio tracks next
 	for (uint idx = 0; idx < _audioTracks.size(); ++idx)
@@ -715,41 +729,9 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 		videoTrack->decodeFrame(chunk);
 	}
 
-	// Update any secondary video track for transparencies
-	if (_videoTracks.size() == 2) {
-		// Find the index entry for the frame
-		int indexFrame = frame;
-		OldIndex *entry = nullptr;
-		do {
-			entry = _indexEntries.find(_videoTracks.back().index, indexFrame);
-		} while (!entry && indexFrame-- > 0);
-		assert(entry);
-
-		// Set it's frame number
-		AVIVideoTrack *videoTrack2 = static_cast<AVIVideoTrack *>(_videoTracks.back().track);
-		videoTrack2->setCurFrame(indexFrame - 1);
-
-		// Read in the frame
-		Common::SeekableReadStream *chunk = nullptr;
-		_fileStream->seek(entry->offset + 8);
-		_videoTracks.back().chunkSearchOffset = entry->offset;
-
-		if (entry->size != 0)
-			chunk = _fileStream->readStream(entry->size);
-		videoTrack2->decodeFrame(chunk);
-
-		if (indexFrame < (int)frame) {
-			TrackStatus &status = _videoTracks.back();
-			while (status.chunkSearchOffset < _movieListEnd && indexFrame++ < (int)frame) {
-				// There was no index entry for the desired frame, so an earlier one was decoded.
-				// We now have to sequentially decode frames until we get to the desired frame
-				handleNextPacket(status);
-			}
-		}
-
-		videoTrack2->setCurFrame((int)frame - 1);
-		videoTrack2->setFrameRate(videoTrack->getFrameRate());
-	}
+	// Update any transparency track if present
+	if (_transparencyTrack.track)
+		seekTransparencyFrame(frame);
 
 	// Set the video track's frame
 	videoTrack->setCurFrame((int)frame - 1);
@@ -757,6 +739,44 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 	// Set the video track's search offset to the right spot
 	_videoTracks[0].chunkSearchOffset = _indexEntries[frameIndex].offset;
 	return true;
+}
+
+void AVIDecoder::seekTransparencyFrame(int frame) {
+	TrackStatus &status = _transparencyTrack;
+	AVIVideoTrack *transTrack = static_cast<AVIVideoTrack *>(status.track);
+
+	// Find the index entry for the frame
+	int indexFrame = frame;
+	OldIndex *entry = nullptr;
+	do {
+		entry = _indexEntries.find(status.index, indexFrame);
+	} while (!entry && indexFrame-- > 0);
+	assert(entry);
+
+	// Set it's frame number
+	transTrack->setCurFrame(indexFrame - 1);
+
+	// Read in the frame
+	Common::SeekableReadStream *chunk = nullptr;
+	_fileStream->seek(entry->offset + 8);
+	status.chunkSearchOffset = entry->offset;
+
+	if (entry->size != 0)
+		chunk = _fileStream->readStream(entry->size);
+	transTrack->decodeFrame(chunk);
+
+	if (indexFrame < (int)frame) {
+		while (status.chunkSearchOffset < _movieListEnd && indexFrame++ < (int)frame) {
+			// There was no index entry for the desired frame, so an earlier one was decoded.
+			// We now have to sequentially skip frames until we get to the desired frame
+			_fileStream->readUint32BE();
+			uint32 size = _fileStream->readUint32LE() - 8;
+			_fileStream->skip(size & 1);
+			status.chunkSearchOffset = _fileStream->pos();
+		}
+	}
+
+	transTrack->setCurFrame((int)frame - 1);
 }
 
 byte AVIDecoder::getStreamIndex(uint32 tag) {

@@ -95,6 +95,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 		case 6:
 			if (clipExistsByEnd("Cloak On", msg->_endFrame)) {
 				petShow();
+				petDecAreaLocks();
 				stateSetSoundMakerAllowed(true);
 				changeView("ServiceElevator.Node 1.S");
 				changeView("ServiceElevator.Node 1.N");
@@ -444,6 +445,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 		case 10560:
 			petShow();
 			petSetArea(PET_CONVERSATION);
+			petIncAreaLocks();
 			stopAnimTimer(_timerId);
 			_timerId = addTimer(1, 1000, 0);
 			break;

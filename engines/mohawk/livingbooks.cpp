@@ -145,6 +145,7 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 	_rnd = new Common::RandomSource("livingbooks");
 
 	_sound = NULL;
+	_video = NULL;
 	_page = NULL;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -160,6 +161,7 @@ MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
 
 	delete _console;
 	delete _sound;
+	delete _video;
 	delete _gfx;
 	delete _rnd;
 	_bookInfoFile.clear();
@@ -184,6 +186,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 		error("Could not find xRes/yRes variables");
 
 	_gfx = new LBGraphics(this, _screenWidth, _screenHeight);
+	_video = new VideoManager(this);
 	_sound = new Sound(this);
 
 	if (getGameType() != GType_LIVINGBOOKSV1)
@@ -285,6 +288,17 @@ Common::Error MohawkEngine_LivingBooks::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void MohawkEngine_LivingBooks::pauseEngineIntern(bool pause) {
+	MohawkEngine::pauseEngineIntern(pause);
+
+	if (pause) {
+		_video->pauseVideos();
+	} else {
+		_video->resumeVideos();
+		_system->updateScreen();
+	}
 }
 
 void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
