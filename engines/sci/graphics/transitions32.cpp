@@ -83,7 +83,6 @@ void GfxTransitions32::addShowRect(const Common::Rect &rect) {
 
 void GfxTransitions32::sendShowRects() {
 	g_sci->_gfxFrameout->showBits();
-	clearShowRects();
 	throttle();
 }
 
