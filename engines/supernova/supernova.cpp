@@ -481,7 +481,7 @@ void SupernovaEngine::renderText(const char *text) {
 
 void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color) {
 	Graphics::Surface *screen = _system->lockScreen();
-	screen->fillRect(Common::Rect(x, y, width, height), color);
+	screen->fillRect(Common::Rect(x, y, x + width, y + height), color);
 	_system->unlockScreen();
 }
 
