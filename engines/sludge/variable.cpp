@@ -516,7 +516,7 @@ bool addVarToStack(const variable &va, variableStack *&thisStack) {
 		return false;
 	newStack->next = thisStack;
 	thisStack = newStack;
-	debug(kSludgeDebugStackMachine, "Variable %s was added to stack", getTextFromAnyVar(va));
+	//debug(kSludgeDebugStackMachine, "Variable %s was added to stack", getTextFromAnyVar(va));
 	return true;
 }
 
@@ -532,7 +532,7 @@ bool addVarToStackQuick(variable &va, variableStack *&thisStack) {
 
 	newStack->next = thisStack;
 	thisStack = newStack;
-	debug(kSludgeDebugStackMachine, "Variable %s was added to stack quick", getTextFromAnyVar(va));
+	//debug(kSludgeDebugStackMachine, "Variable %s was added to stack quick", getTextFromAnyVar(va));
 	return true;
 }
 
@@ -605,48 +605,11 @@ void trimStack(variableStack *&stack) {
 	variableStack *killMe = stack;
 	stack = stack->next;
 
-	debug(kSludgeDebugStackMachine, "Variable %s was removed from stack", getTextFromAnyVar(killMe->thisVar));
+	//debug(kSludgeDebugStackMachine, "Variable %s was removed from stack", getTextFromAnyVar(killMe->thisVar));
 
 	// When calling this, we've ALWAYS checked that stack != NULL
 	unlinkVar(killMe->thisVar);
 	delete killMe;
 }
-/*
- void debugVar (FILE * fp, const variable & thisVar) {
- switch (thisVar.varType) {
- case SVT_INT:
- fprintf (fp, "integer value %i", thisVar.varData.intValue);
- break;
-
- case SVT_FUNC:
- fprintf (fp, "pointer to function %i", thisVar.varData.intValue);
- break;
-
- case SVT_BUILT:
- fprintf (fp, "pointer to bif %i", thisVar.varData.intValue);
- break;
-
- case SVT_OBJTYPE:
- fprintf (fp, "object type %i", thisVar.varData.intValue);
- break;
-
- case SVT_STRING:
- fprintf (fp, "\"%s\"", thisVar.varData.theString);
- break;
-
- case SVT_FILE:
- fprintf (fp, "file handle %i", thisVar.varData.intValue);
- break;
-
- case SVT_NULL:
- fprintf (fp, "null");
- break;
-
- default:
- fprintf (fp, "unknown variable type");
- break;
- }
- }
- */
 
 } // End of namespace Sludge
