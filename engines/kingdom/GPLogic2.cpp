@@ -872,6 +872,7 @@ void KingdomGame::GPLogic2() {
 				PlayMovie(120);
 				_BTimer = 34;
 				while(_BTimer != 0) {
+					checkTimers();
 					RefreshSound();
 					CheckMainScreen();
 				}

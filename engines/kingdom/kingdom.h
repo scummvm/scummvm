@@ -191,7 +191,9 @@ namespace Kingdom {
 		bool _MouseDebound;
 		int _RtnNode;
 		int _SoundNumber;
+		bool _PalStepFlag;
 		Audio::SoundHandle _soundHandle;
+		int _tickCount;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 _Nodes[99];
@@ -276,6 +278,8 @@ namespace Kingdom {
 		static bool readSavegameHeader(Common::InSaveFile *in, KingdomSavegameHeader &header);
 		void writeSavegameHeader(Common::OutSaveFile *out, KingdomSavegameHeader &header);
 		void synchronize(Common::Serializer &s);
+		void refreshScreen();
+		void checkTimers();
 	};
 } // End of namespace Kingdom
 

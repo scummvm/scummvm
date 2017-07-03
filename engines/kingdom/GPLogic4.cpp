@@ -45,6 +45,7 @@ void KingdomGame::GPLogic4() {
 			_BTimer = 38;
 			ReadMouse();
 			while (_BTimer && !_MouseButton) {
+				checkTimers();
 				RefreshSound();
 				ReadMouse();
 			}
@@ -87,8 +88,10 @@ void KingdomGame::GPLogic4() {
 			_StatPlay = 994;
 		} else {
 			_BTimer = 36;
-			while(_BTimer)
+			while(_BTimer) {
+				checkTimers();
 				RefreshSound();
+			}
 			
 			_LoopFlag = true;
 			if (_Nodes[29] == 1) {
@@ -135,8 +138,10 @@ void KingdomGame::GPLogic4() {
 			_StatPlay = 994;
 		} else {
 			_BTimer = 36;
-			while(_BTimer != 0)
+			while(_BTimer != 0) {
+				checkTimers();
 				RefreshSound();
+			}
 
 			_LoopFlag = true;
 			if (_Nodes[29] == 1) {
@@ -181,8 +186,10 @@ void KingdomGame::GPLogic4() {
 			_StatPlay = 994;
 		} else {
 			_BTimer = 36;
-			while (_BTimer != 0)
+			while (_BTimer != 0) {
+				checkTimers();
 				RefreshSound();
+			}
 			
 			_LoopFlag = true;
 			if (_Nodes[29] == 1) {

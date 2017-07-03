@@ -68,6 +68,8 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_SoundNumber = -1;
 
 	_kingartEntries = nullptr;
+
+	_tickCount = 0;
 }
 
 KingdomGame::~KingdomGame() {
@@ -103,12 +105,55 @@ Common::Error KingdomGame::run() {
 		if (!_LoopFlag)
 			GetUserInput();
 
-		g_system->updateScreen();
-		g_system->delayMillis(10);
+		refreshScreen();
 	}
 
 	FadeToBlack2();
 	return Common::kNoError;
+}
+
+void KingdomGame::refreshScreen() {
+	g_system->updateScreen();
+	checkTimers();
+}
+
+void KingdomGame::checkTimers() {
+	g_system->delayMillis(10);
+	_tickCount++;
+
+	if (_tickCount == 5) {
+		_tickCount = 0;
+	} else
+		return;
+
+	if (_ATimer != 0) {
+		_ATimer--;
+		if (_ATimer == 0)
+			_ATimerFlag = true;
+	}
+
+	if (_BTimer != 0) {
+		_BTimer--;
+		if (_BTimer == 0)
+			_BTimerFlag = true;
+	}
+
+	if (_CTimer != 0) {
+		_CTimer--;
+		if (_CTimer == 0) {
+			_CTimerFlag = true;
+			_CTimer = 4;
+		}
+	} else
+		_CTimer = 4;
+
+	if (_SkylarTimer != 0) {
+		_SkylarTimer--;
+		if (_SkylarTimer == 0)
+			_SkylarTimerFlag = true;
+	}
+
+	_PalStepFlag = false;
 }
 
 void KingdomGame::drawScreen() {
@@ -969,6 +1014,7 @@ void KingdomGame::DrawLocation() {
 		FShowPic(emlValue);
 		_BTimer = 16;
 		while(_BTimer) {
+			checkTimers();
 			RefreshSound();
 			CheckMainScreen();
 		}
@@ -1084,6 +1130,7 @@ void KingdomGame::DisplayIcon(int reznum) {
 	ReadMouse();
 	
 	while(_BTimer != 0 && _MouseButton == 0) {
+		checkTimers();
 		RefreshSound();
 		ReadMouse();
 	}
