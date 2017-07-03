@@ -589,6 +589,18 @@ void CGameObject::petHide() {
 	}
 }
 
+void CGameObject::petIncAreaLocks() {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->incAreaLocks();
+}
+
+void CGameObject::petDecAreaLocks() {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->decAreaLocks();
+}
+
 void CGameObject::petSetRemoteTarget() {
 	CPetControl *pet = getPetControl();
 	if (pet)
