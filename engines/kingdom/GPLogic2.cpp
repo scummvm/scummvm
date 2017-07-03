@@ -33,7 +33,7 @@ void KingdomGame::GPLogic2() {
 		DrawLocation();
 		DsAll();
 		if (_Nodes[24] != 0 || highNode) {
-			_Eye = 1;
+			_Eye = true;
 			PlayMovie(72);
 			_ATimerFlag = false;
 			_ATimer = 114;
@@ -856,7 +856,7 @@ void KingdomGame::GPLogic2() {
 		if (_Nodes[41])
 			_Sound = 1;
 
-		_Eye = 0;
+		_Eye = false;
 		PlayMovie(111);
 		PlaySound(26);
 		_CurrMap = 97;
@@ -953,7 +953,7 @@ void KingdomGame::GPLogic2() {
 	case 430:
 		_NodeNum = 43;
 		DrawLocation();
-		_Eye = 0;
+		_Eye = false;
 		_UserInput = 0;
 		if (_Nodes[44] == 9) {
 			_TSIconOnly = 1;
@@ -977,7 +977,7 @@ void KingdomGame::GPLogic2() {
 		}
 		_StatPlay = 431;
 		PlaySound(20);
-		_Eye = 0;
+		_Eye = false;
 		break;
 	case 431:
 		switch(_UserInput) {
@@ -1100,7 +1100,7 @@ void KingdomGame::GPLogic2() {
 		}
 		break;
 	case 460:
-		_Eye = 0;
+		_Eye = false;
 		_NodeNum = 46;
 		DrawLocation();
 		_UserInput = 0;

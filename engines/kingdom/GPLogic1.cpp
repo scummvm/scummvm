@@ -48,6 +48,7 @@ void KingdomGame::GPLogic1() {
 			_ATimer = 0;
 			FadeToBlack2();
 			PlayMovie(1);
+			GPLogic1_SubSP10();
 			break;
 		case 0x193:
 			_ATimer = 0;
@@ -236,7 +237,7 @@ void KingdomGame::GPLogic1() {
 				_StatPlay = 51;
 				_LoopFlag = true;
 			} else {
-				_Eye = 0;
+				_Eye = false;
 				PlayMovie(61);
 				PlaySound(1);
 
@@ -650,7 +651,7 @@ void KingdomGame::GPLogic1() {
 			PlayMovie(25);
 			_CurrMap = 15;
 		}
-		_Eye = 0;
+		_Eye = false;
 		PlaySound(3);
 		_StatPlay = 121;
 		break;
@@ -744,7 +745,7 @@ void KingdomGame::GPLogic1() {
 		PlaySound(3);
 		_CurrMap = 16;
 		_StatPlay = 151;
-		_Eye = 0;
+		_Eye = false;
 		break;
 	case 151:
 		switch(_UserInput) {
@@ -785,9 +786,9 @@ void KingdomGame::GPLogic1() {
 			_PMovie = oldPMovie;
 			_ASMode = false;
 			RestoreAS();
-			_Help = 1;
-			_Eye = 1;
-			_Pouch = 1;
+			_Help = true;
+			_Eye = true;
+			_Pouch = true;
 			_CurrMap = 85;
 			}
 			break;
@@ -800,9 +801,9 @@ void KingdomGame::GPLogic1() {
 			_PMovie = oldPMovie;
 			_ASMode = false;
 			RestoreAS();
-			_Help = 1;
-			_Eye = 1;
-			_Pouch = 1;
+			_Help = true;
+			_Eye = true;
+			_Pouch = true;
 			_CurrMap = 85;
 			}
 			break;
@@ -839,9 +840,9 @@ void KingdomGame::GPLogic1() {
 			break;
 		case 0x444:
 			SaveAS();
-			_Help = 0;
-			_Eye = 0;
-			_Pouch = 0;
+			_Help = false;
+			_Eye = false;
+			_Pouch = false;
 			_Replay = false;
 			FShowPic(105);
 			_CurrMap = 86;
