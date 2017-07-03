@@ -194,6 +194,7 @@ namespace Kingdom {
 		bool _PalStepFlag;
 		Audio::SoundHandle _soundHandle;
 		int _tickCount;
+		uint32 _oldTime;
 
 		// Game Flags - Will be renames later into _Nodes[]
 		int16 _Nodes[99];
