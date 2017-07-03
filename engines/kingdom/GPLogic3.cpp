@@ -1684,6 +1684,7 @@ void KingdomGame::EndCredits() {
 	ReadMouse();
 
 	while(_BTimer != 0 && _MouseButton == 0) {
+		checkTimers();
 		RefreshSound();
 		CheckMainScreen();
 		ReadMouse();
