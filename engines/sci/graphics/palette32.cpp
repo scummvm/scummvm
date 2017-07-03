@@ -461,7 +461,23 @@ void GfxPalette32::updateHardware() {
 
 	byte bpal[3 * 256];
 
-	for (int i = 0; i < ARRAYSIZE(_currentPalette.colors) - 1; ++i) {
+	// HACK: There are resources in a couple of Windows-only games that seem to
+	// include bogus palette entries above 236. SSCI does a lot of extra work
+	// when running in Windows to shift palettes and rewrite view & pic pixel
+	// data on-the-fly to account for the way Windows palettes work, which
+	// seems to end up masking the fact that there is some bad palette data.
+	// Since only one demo and one game seem to have this problem, we instead
+	// "fix" the problem here by ignoring attempts to send high palette entries
+	// to the backend. This makes those high pixels render black, which seems to
+	// match what would happen in the original interpreter, and saves us from
+	// having to clutter up the engine with a bunch of palette shifting garbage.
+	int maxIndex = ARRAYSIZE(_currentPalette.colors) - 2;
+	if (g_sci->getGameId() == GID_HOYLE5 ||
+		(g_sci->getGameId() == GID_GK2 && g_sci->isDemo())) {
+		maxIndex = 235;
+	}
+
+	for (int i = 0; i <= maxIndex; ++i) {
 		_currentPalette.colors[i] = _nextPalette.colors[i];
 
 		// All color entries MUST be copied, not just "used" entries, otherwise
