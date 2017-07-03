@@ -24,8 +24,6 @@
 #include "common/system.h"
 
 namespace Common {
-
-DECLARE_SINGLETON(OSDMessageQueue);
 	
 OSDMessageQueue::OSDMessageQueue() : _lastUpdate(0) {
 }

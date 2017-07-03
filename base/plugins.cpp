@@ -446,10 +446,6 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 
 #include "engines/metaengine.h"
 
-namespace Common {
-DECLARE_SINGLETON(EngineManager);
-}
-
 /**
  * This function works for both cached and uncached PluginManagers.
  * For the cached version, most of the logic here will short circuit.
@@ -538,10 +534,6 @@ const EnginePlugin::List &EngineManager::getPlugins() const {
 // Music plugins
 
 #include "audio/musicplugin.h"
-
-namespace Common {
-DECLARE_SINGLETON(MusicManager);
-}
 
 const MusicPlugin::List &MusicManager::getPlugins() const {
 	return (const MusicPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);

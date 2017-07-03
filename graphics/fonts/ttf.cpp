@@ -668,9 +668,5 @@ Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode size
 
 } // End of namespace Graphics
 
-namespace Common {
-DECLARE_SINGLETON(Graphics::TTFLibrary);
-} // End of namespace Common
-
 #endif
 
