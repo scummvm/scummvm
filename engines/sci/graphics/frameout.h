@@ -358,12 +358,6 @@ public:
 	};
 
 	/**
-	 * Draws a portion of the current screen buffer to
-	 * hardware. Used to display show styles in SCI2.1mid+.
-	 */
-	void showRect(const Common::Rect &rect);
-
-	/**
 	 * Shakes the screen.
 	 */
 	void shakeScreen(const int16 numShakes, const ShakeDirection direction);
