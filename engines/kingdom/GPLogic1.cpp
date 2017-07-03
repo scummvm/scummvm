@@ -811,6 +811,7 @@ void KingdomGame::GPLogic1() {
 			_BTimer = 190;
 			ReadMouse();
 			while(_BTimer != 0 && _MouseButton == 0) {
+				checkTimers();
 				RefreshSound();
 				ReadMouse();
 			}
@@ -863,6 +864,7 @@ void KingdomGame::GPLogic1() {
 			ReadMouse();
 
 			while(_BTimer != 0 && _MouseButton == 0) {
+				checkTimers();
 				RefreshSound();
 				ReadMouse();
 			}
@@ -1387,6 +1389,7 @@ void KingdomGame::GPLogic1_SubSP121() {
 	ReadMouse();
 	
 	while (_BTimer != 0 && _MouseButton == 0) {
+		checkTimers();
 		RefreshSound();
 		CheckMainScreen();
 		ReadMouse();
