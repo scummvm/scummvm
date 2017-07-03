@@ -284,6 +284,4 @@ void SearchManager::clear() {
 	addDirectory(".", ".", -2);
 }
 
-DECLARE_SINGLETON(SearchManager);
-
 } // namespace Common
