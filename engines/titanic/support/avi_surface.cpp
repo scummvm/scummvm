@@ -109,6 +109,10 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 
 	if (_movieRangeInfo.size() == 1) {
 		// First play call, so start the movie playing
+		bool isReversePlayback = _movieRangeInfo.front()->_endFrame < _movieRangeInfo.front()->_startFrame;
+
+		if (isReversed() != isReversePlayback)
+			setFrameRate(isReversePlayback ? -DEFAULT_FPS : DEFAULT_FPS);
 		return startAtFrame(initialFrame);
 	} else {
 		return true;
@@ -199,7 +203,7 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 				// Not empty, so move onto new first one
 				info = _movieRangeInfo.front();
 				newFrame = info->_startFrame;
-				setFrameRate(1.0);
+				setFrameRate(info->_endFrame < info->_startFrame ? -DEFAULT_FPS : DEFAULT_FPS);
 			}
 		}
 	}
@@ -439,10 +443,10 @@ bool AVISurface::addEvent(int *frameNumber, CGameObject *obj) {
 }
 
 void AVISurface::setFrameRate(double rate) {
-	if (!_decoder->isPlaying()) {
-		// Store the new frame rate
-		_frameRate = rate;
-	} else {
+	// Store the new frame rate
+	_frameRate = rate;
+
+	if (_decoder->isPlaying()) {
 		// Convert rate from fps to relative to 1.0 (normal speed)
 		const int PRECISION = 10000;
 		double playRate = rate / DEFAULT_FPS;
