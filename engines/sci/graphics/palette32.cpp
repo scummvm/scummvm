@@ -44,7 +44,7 @@ HunkPalette::HunkPalette(const SciSpan<const byte> &rawPalette) :
 	// set to 14, but the *actual* size of the header structure used in SSCI is
 	// 13, which is reflected by `kHunkPaletteHeaderSize`.
 	// _headerSize(rawPalette[0]),
-	_numPalettes(rawPalette.getUint8At(10)),
+	_numPalettes(rawPalette.getUint8At(kNumPaletteEntriesOffset)),
 	_data() {
 	assert(_numPalettes == 0 || _numPalettes == 1);
 	if (_numPalettes) {
@@ -54,7 +54,7 @@ HunkPalette::HunkPalette(const SciSpan<const byte> &rawPalette) :
 }
 
 void HunkPalette::setVersion(const uint32 version) const {
-	if (_numPalettes != _data.getUint8At(10)) {
+	if (_numPalettes != _data.getUint8At(kNumPaletteEntriesOffset)) {
 		error("Invalid HunkPalette");
 	}
 
@@ -74,10 +74,10 @@ const HunkPalette::EntryHeader HunkPalette::getEntryHeader() const {
 	const SciSpan<const byte> data(getPalPointer());
 
 	EntryHeader header;
-	header.startColor = data.getUint8At(10);
-	header.numColors = data.getUint16SEAt(14);
-	header.used = data.getUint8At(16);
-	header.sharedUsed = data.getUint8At(17);
+	header.startColor = data.getUint8At(kEntryStartColorOffset);
+	header.numColors = data.getUint16SEAt(kEntryNumColorsOffset);
+	header.used = data.getUint8At(kEntryUsedOffset);
+	header.sharedUsed = data.getUint8At(kEntrySharedUsedOffset);
 	header.version = data.getUint32SEAt(kEntryVersionOffset);
 
 	return header;

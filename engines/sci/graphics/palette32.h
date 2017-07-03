@@ -56,6 +56,12 @@ public:
 private:
 	enum {
 		/**
+		 * The offset into the HunkPalette header of the number of palettes in
+		 * the HunkPalette.
+		 */
+		kNumPaletteEntriesOffset = 10,
+
+		/**
 		 * The size of the HunkPalette header.
 		 */
 		kHunkPaletteHeaderSize = 13,
@@ -63,7 +69,32 @@ private:
 		/**
 		 * The size of a palette entry header.
 		 */
-		kEntryHeaderSize = 22,
+		kEntryHeaderSize = 22
+	};
+
+	enum {
+		/**
+		 * The offset of the start color within the palette entry header.
+		 */
+		kEntryStartColorOffset = 10,
+
+		/**
+		 * The offset of the color count within the palette entry header.
+		 */
+		kEntryNumColorsOffset = 14,
+
+		/**
+		 * The offset of the shared used palette index flag within the palette
+		 * entry header.
+		 */
+		kEntryUsedOffset = 16,
+
+		/**
+		 * The offset of the flag within the palette entry header that says
+		 * whether or not the corresponding palette data includes used flags for
+		 * each palette index individually.
+		 */
+		kEntrySharedUsedOffset = 17,
 
 		/**
 		 * The offset of the hunk palette version within the palette entry
