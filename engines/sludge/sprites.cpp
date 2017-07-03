@@ -75,21 +75,6 @@ extern Graphics::Surface backdropSurface;
 unsigned char currentBurnR = 0, currentBurnG = 0, currentBurnB = 0;
 
 void forgetSpriteBank(spriteBank &forgetme) {
-#if 0
-	deleteTextures(forgetme.myPalette.numTextures, forgetme.myPalette.tex_names);
-	if (forgetme.isFont) {
-		deleteTextures(forgetme.myPalette.numTextures, forgetme.myPalette.burnTex_names);
-		delete [] forgetme.myPalette.burnTex_names;
-		forgetme.myPalette.burnTex_names = NULL;
-	}
-
-	delete [] forgetme.myPalette.tex_names;
-	forgetme.myPalette.tex_names = NULL;
-	delete[] forgetme.myPalette.tex_w;
-	forgetme.myPalette.tex_w = NULL;
-	delete[] forgetme.myPalette.tex_h;
-	forgetme.myPalette.tex_h = NULL;
-#endif
 	if (forgetme.myPalette.pal) {
 		delete[] forgetme.myPalette.pal;
 		forgetme.myPalette.pal = NULL;
@@ -101,7 +86,12 @@ void forgetSpriteBank(spriteBank &forgetme) {
 		forgetme.myPalette.b = NULL;
 	}
 
-	delete forgetme.sprites;
+	for (int i = 0; i < forgetme.total; ++i) {
+		forgetme.sprites[i].surface.free();
+		forgetme.sprites[i].burnSurface.free();
+	}
+
+	delete []forgetme.sprites;
 	forgetme.sprites = NULL;
 
 	// TODO: also remove sprite bank from allLoadedBanks
