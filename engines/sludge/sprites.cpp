@@ -317,7 +317,7 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &
 	x1 -= single.xhot;
 	y1 -= single.yhot;
 	Graphics::TransparentSurface tmp(single.surface, false);
-	tmp.blit(backdropSurface, x1, y1);
+	tmp.blit(backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 #if 0
 	float tx1 = (float)(single.tex_x) / fontPal.tex_w[single.texNum];
 	float ty1 = 0.0;
@@ -530,7 +530,7 @@ void fontSprite(bool flip, int x, int y, sprite &single, const spritePalette &fo
 
 	// Use Transparent surface to scale and blit
 	Graphics::TransparentSurface tmp(single.surface, false);
-	tmp.blit(renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE));
+	tmp.blit(renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 	if (single.burnSurface.getPixels() != nullptr) {
 		Graphics::TransparentSurface tmp2(single.burnSurface, false);
