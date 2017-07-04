@@ -72,9 +72,7 @@ int cameraPX = 0, cameraPY = 0;
 
 unsigned int sceneWidth, sceneHeight;
 int lightMapNumber;
-#if 0
-unsigned int currentBlankColour = g_sludge->getOrigPixelFormat()->RGBToColor(0, 0, 0);
-#endif
+unsigned int currentBlankColour = TS_ARGB(255, 0, 0, 0);
 
 extern int cameraX, cameraY;
 extern float cameraZoom;
@@ -344,6 +342,10 @@ void mixBackDrop(int fileNum, int x, int y) {
 }
 
 void blankScreen(int x1, int y1, int x2, int y2) {
+	// in case of no backdrop added at all
+	if (!backdropSurface.getPixels()) {
+		return;
+	}
 
 	if (y1 < 0)
 		y1 = 0;
@@ -354,8 +356,8 @@ void blankScreen(int x1, int y1, int x2, int y2) {
 	if (y2 > (int)sceneHeight)
 		y2 = (int)sceneHeight;
 
-	int picWidth = x2 - x1;
-	int picHeight = y2 - y1;
+	backdropSurface.fillRect(Common::Rect(x1, y1, x2, y2), currentBlankColour);
+
 #if 0
 	setPixelCoords(true);
 
@@ -473,6 +475,8 @@ inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
 }
 
 void drawBackDrop() {
+	if (!backdropExists)
+		return;
 	renderSurface.copyRectToSurface(backdropSurface, 0, 0, Common::Rect(0, 0, backdropSurface.w, backdropSurface.h));
 #if 0
 	setPrimaryColor(1.0, 1.0, 1.0, 1.0);
