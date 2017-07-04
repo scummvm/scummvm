@@ -609,8 +609,6 @@ void setDrawMode(onScreenPerson *thisPerson) {
 extern GLuint backdropTextureName;
 #endif
 
-bool checkColourChange(bool reset);
-
 bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, bool mirror) {
 	float x = thisPerson->x;
 	float y = thisPerson->y;
@@ -660,7 +658,15 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 	if (input.mouseX >= x1 && input.mouseX <= x2 && input.mouseY >= y1 && input.mouseY <= y2) {
 		if (thisPerson->extra & EXTRA_RECTANGULAR)
 			return true;
-		return true;
+
+		// check if point to non transparent part
+		int pixelx = (int)(single.surface.w * (input.mouseX - x1) / (x2 - x1));
+		int pixely = (int)(single.surface.h * (input.mouseY - y1) / (y2 - y1));
+		uint32 *colorPtr = (uint32 *)single.surface.getBasePtr(pixelx, pixely);
+
+		uint8 a, r, g, b;
+		g_sludge->getScreenPixelFormat()->colorToARGB(*colorPtr, a, r, g, b);
+		return a != 0;
 	}
 	return false;
 
