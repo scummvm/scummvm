@@ -102,6 +102,7 @@ namespace Kingdom {
 		const ADGameDescription *_gameDescription;
 		const char *getGameId() const;
 		Common::Platform getPlatform() const;
+		static bool readSavegameHeader(Common::InSaveFile *in, KingdomSavegameHeader &header);
 
 	private:
 		Console *_console;
@@ -275,8 +276,7 @@ namespace Kingdom {
 		void restoreGame();
 		virtual Common::Error loadGameState(int slot);
 		virtual Common::Error saveGameState(int slot, const Common::String &desc);
-		Common::String generateSaveName(int slot);
-		static bool readSavegameHeader(Common::InSaveFile *in, KingdomSavegameHeader &header);
+		Common::String getSavegameFilename(int slot);
 		void writeSavegameHeader(Common::OutSaveFile *out, KingdomSavegameHeader &header);
 		void synchronize(Common::Serializer &s);
 		void refreshScreen();
