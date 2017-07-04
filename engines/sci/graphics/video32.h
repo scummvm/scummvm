@@ -68,19 +68,20 @@ private:
 	SEQDecoder *_decoder;
 
 	/**
-	 * The plane where the SEQ will be drawn.
-	 */
-	Plane *_plane;
-
-	/**
-	 * The screen item representing the SEQ surface.
-	 */
-	ScreenItem *_screenItem;
-
-	/**
 	 * Renders a single frame of video.
 	 */
-	void renderFrame(SciBitmap &bitmap) const;
+	void renderFrame() const;
+
+	/**
+	 * Stops playback and closes the currently open SEQ stream.
+	 */
+	void close();
+
+	/**
+	 * The rectangle where the video will be drawn,
+	 * in screen coordinates.
+	 */
+	Common::Rect _drawRect;
 };
 
 #pragma mark -

@@ -724,10 +724,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #ifdef ENABLE_SCI32
 #define GUIO_GK1_FLOPPY GUIO2(GUIO_NOSPEECH, \
                               GAMEOPTION_ORIGINAL_SAVELOAD)
-#define GUIO_GK1_CD_DOS GUIO3(GUIO_LINKSPEECHTOSFX, \
-                              GAMEOPTION_ORIGINAL_SAVELOAD, \
-                              GAMEOPTION_HIGH_RESOLUTION_GRAPHICS)
-#define GUIO_GK1_CD_WIN GUIO4(GUIO_LINKSPEECHTOSFX, \
+#define GUIO_GK1_CD     GUIO4(GUIO_LINKSPEECHTOSFX, \
                               GAMEOPTION_ORIGINAL_SAVELOAD, \
                               GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
                               GAMEOPTION_HQ_VIDEO)
@@ -779,7 +776,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10996},
 		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 12581736},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD_DOS },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD },
 
 	// Gabriel Knight - English Windows CD (from jvprat)
 	// Executable scanning reports "2.000.000", VERSION file reports "01.100.000"
@@ -787,7 +784,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10996},
 		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 12581736},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD_WIN },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD },
 
 	// Gabriel Knight - German DOS CD (from Tobis87)
 	// SCI interpreter version 2.000.000
@@ -795,7 +792,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "a7d3e55114c65647310373cb390815ba", 11392},
 		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13400497},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD_DOS },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD },
 
 	// Gabriel Knight - Spanish DOS CD (from jvprat)
 	// Executable scanning reports "2.000.000", VERSION file reports "1.000.000, April 13, 1995"
@@ -803,7 +800,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "7cb6e9bba15b544ec7a635c45bde9953", 11404},
 		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13381599},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD_DOS },
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD },
 
 	// Gabriel Knight - French DOS CD (from Hkz)
 	// VERSION file reports "1.000.000, May 3, 1994"
@@ -811,7 +808,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "55f909ba93a2515042a08d8a2da8414e", 11392},
 		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13325145},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD_DOS },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD },
 
 	// Gabriel Knight - Spanish Windows CD (from jvprat)
 	// Executable scanning reports "2.000.000", VERSION file reports "1.000.000, April 13, 1995"
@@ -819,7 +816,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "7cb6e9bba15b544ec7a635c45bde9953", 11404},
 		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13381599},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD_WIN },
+		Common::ES_ESP, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_GK1_CD },
 
 	// Gabriel Knight - English Macintosh (Floppy!)
 	// This version is hi-res ONLY, so it should NOT get GAMEOPTION_HIGH_RESOLUTION_GRAPHICS
@@ -834,8 +831,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_GK1_MAC },
 
 #undef GUIO_GK1_FLOPPY
-#undef GUIO_GK1_CD_DOS
-#undef GUIO_GK1_CD_WIN
+#undef GUIO_GK1_CD
 #undef GUIO_GK1_MAC
 
 #define GUIO_GK2_DEMO GUIO8(GUIO_NOSUBTITLES, \
@@ -3915,8 +3911,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #define GUIO_QFG4_FLOPPY GUIO2(GUIO_NOSPEECH, \
                                GAMEOPTION_ORIGINAL_SAVELOAD)
-#define GUIO_QFG4_CD     GUIO2(GUIO_LINKSPEECHTOSFX, \
-                               GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUIO_QFG4_CD     GUIO3(GUIO_LINKSPEECHTOSFX, \
+                               GAMEOPTION_ORIGINAL_SAVELOAD, \
+                               GAMEOPTION_HQ_VIDEO)
 
 	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by markcool in bug report #2723852)
 	// SCI interpreter version 2.000.000 (a guess?)

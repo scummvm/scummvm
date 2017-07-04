@@ -75,55 +75,138 @@ static bool flushEvents(EventManager *eventMan) {
 	return false;
 }
 
+static void directWriteToSystem(Video::VideoDecoder *decoder, const Common::Rect &drawRect, const bool setSystemPalette, const Graphics::Surface *nextFrame = nullptr) {
+
+	// VMDPlayer needs to decode the frame early so it can submit palette
+	// updates; calling decodeNextFrame again loses frames
+	if (!nextFrame) {
+		nextFrame = decoder->decodeNextFrame();
+	}
+	assert(nextFrame);
+
+	if (setSystemPalette &&
+		g_system->getScreenFormat().bytesPerPixel == 1 &&
+		decoder->hasDirtyPalette()) {
+
+		const uint8 *palette = decoder->getPalette();
+		assert(palette);
+		g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+		// KQ7 1.x has videos encoded using Microsoft Video 1 where palette 0 is
+		// white and 255 is black, which is basically the opposite of DOS/Win
+		// SCI palettes. So, when drawing to an 8bpp hwscreen, whenever a new
+		// palette is seen, the screen must be re-filled with the new black
+		// entry to ensure areas outside the video are always black and not some
+		// other color
+		for (int color = 0; color < 256; ++color) {
+			if (palette[0] == 0 && palette[1] == 0 && palette[2] == 0) {
+				g_system->fillScreen(color);
+				break;
+			}
+			palette += 3;
+		}
+	}
+
+	bool freeConvertedFrame;
+	Graphics::Surface *convertedFrame;
+	// Avoid creating a duplicate copy of the surface when it is not necessary
+	if (decoder->getPixelFormat() == g_system->getScreenFormat()) {
+		freeConvertedFrame = false;
+		convertedFrame = const_cast<Graphics::Surface *>(nextFrame);
+	} else {
+		freeConvertedFrame = true;
+		convertedFrame = nextFrame->convertTo(g_system->getScreenFormat(), decoder->getPalette());
+	}
+	assert(convertedFrame);
+
+	if (decoder->getWidth() != drawRect.width() || decoder->getHeight() != drawRect.height()) {
+		Graphics::Surface *const unscaledFrame(convertedFrame);
+		const Graphics::TransparentSurface tsUnscaledFrame(*unscaledFrame);
+#ifdef USE_RGB_COLOR
+		if (g_system->getScreenFormat().bytesPerPixel != 1) {
+			convertedFrame = tsUnscaledFrame.scaleT<Graphics::FILTER_BILINEAR>(drawRect.width(), drawRect.height());
+		} else {
+#else
+		{
+#endif
+			convertedFrame = tsUnscaledFrame.scaleT<Graphics::FILTER_NEAREST>(drawRect.width(), drawRect.height());
+		}
+		assert(convertedFrame);
+		if (freeConvertedFrame) {
+			unscaledFrame->free();
+			delete unscaledFrame;
+		}
+		freeConvertedFrame = true;
+	}
+
+	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, drawRect.left, drawRect.top, convertedFrame->w, convertedFrame->h);
+	g_sci->_gfxFrameout->updateScreen();
+	if (freeConvertedFrame) {
+		convertedFrame->free();
+		delete convertedFrame;
+	}
+}
+
 #pragma mark SEQPlayer
 
 SEQPlayer::SEQPlayer(SegManager *segMan, EventManager *eventMan) :
 	_segMan(segMan),
 	_eventMan(eventMan),
-	_decoder(nullptr),
-	_plane(nullptr),
-	_screenItem(nullptr) {}
+	_decoder(nullptr) {}
 
 void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const int16 x, const int16 y) {
-	delete _decoder;
+
+	close();
+
 	_decoder = new SEQDecoder(numTicks);
 	if (!_decoder->loadFile(fileName)) {
 		warning("[SEQPlayer::play]: Failed to load %s", fileName.c_str());
+		delete _decoder;
 		return;
 	}
 
-	// NOTE: In the original engine, video was output directly to the hardware,
-	// bypassing the game's rendering engine. Instead of doing this, we use a
-	// mechanism that is very similar to that used by the VMD player, which
-	// allows the SEQ to be drawn into a bitmap ScreenItem and displayed using
-	// the normal graphics system.
-	reg_t bitmapId;
-	SciBitmap &bitmap = *_segMan->allocateBitmap(&bitmapId, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, kLowResX, kLowResY, 0, false, false);
-	bitmap.getBuffer().fillRect(Common::Rect(_decoder->getWidth(), _decoder->getHeight()), 0);
+	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
+	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
 
-	CelInfo32 celInfo;
-	celInfo.type = kCelTypeMem;
-	celInfo.bitmap = bitmapId;
+	const int16 scaledWidth = (_decoder->getWidth() * Ratio(screenWidth, scriptWidth)).toInt();
+	const int16 scaledHeight = (_decoder->getHeight() * Ratio(screenHeight, scriptHeight)).toInt();
 
-	_plane = new Plane(Common::Rect(kLowResX, kLowResY), kPlanePicColored);
-	g_sci->_gfxFrameout->addPlane(*_plane);
+	// Normally we would use the coordinates passed into the play function
+	// to position the video, but since we are scaling the video (which SSCI
+	// did not do), the coordinates are not correct. Since videos are always
+	// intended to play in the center of the screen, we just recalculate the
+	// origin here.
+	_drawRect.left = (screenWidth - scaledWidth) / 2;
+	_drawRect.top = (screenHeight - scaledHeight) / 2;
+	_drawRect.setWidth(scaledWidth);
+	_drawRect.setHeight(scaledHeight);
 
-	// Normally we would use the x, y coordinates passed into the play function
-	// to position the screen item, but because the video frame bitmap is
-	// drawn in low-resolution coordinates, it gets automatically scaled up by
-	// the engine (pixel doubling with aspect ratio correction). As a result,
-	// the animation does not need the extra offsets from the game in order to
-	// be correctly positioned in the middle of the window, so we ignore them.
-	_screenItem = new ScreenItem(_plane->_object, celInfo, Common::Point(0, 0), ScaleInfo());
-	g_sci->_gfxFrameout->addScreenItem(*_screenItem);
-	g_sci->_gfxFrameout->frameOut(true);
+#ifdef USE_RGB_COLOR
+	// Optimize rendering performance for unscaled videos, and allow
+	// better-than-NN interpolation for videos that are scaled
+	if (ConfMan.getBool("enable_hq_video") &&
+		(_decoder->getWidth() != scaledWidth || _decoder->getHeight() != scaledHeight)) {
+		// TODO: Search for and use the best supported format (which may be
+		// lower than 32bpp) once the scaling code in Graphics supports
+		// 16bpp/24bpp, and once the SDL backend can correctly communicate
+		// supported pixel formats above whatever format is currently used by
+		// _hwsurface. Right now, this will just crash ScummVM if the backend
+		// does not support a 32bpp pixel format, which sucks since this code
+		// really ought to be able to fall back to NN scaling for games with
+		// 256-color videos.
+		const Graphics::PixelFormat format = Graphics::createPixelFormat<8888>();
+		g_sci->_gfxFrameout->setPixelFormat(format);
+	}
+#endif
+
 	_decoder->start();
 
 	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
 		g_sci->sleep(_decoder->getTimeToNextFrame());
-
 		while (_decoder->needsUpdate()) {
-			renderFrame(bitmap);
+			renderFrame();
 		}
 
 		// SSCI did not allow SEQ animations to be bypassed like this
@@ -149,34 +232,24 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 		}
 	}
 
-	_segMan->freeBitmap(bitmapId);
-	g_sci->_gfxFrameout->deletePlane(*_plane);
-	g_sci->_gfxFrameout->frameOut(true);
-	_screenItem = nullptr;
-	_plane = nullptr;
+	close();
 }
 
-void SEQPlayer::renderFrame(SciBitmap &bitmap) const {
-	const Graphics::Surface *surface = _decoder->decodeNextFrame();
+void SEQPlayer::renderFrame() const {
+	directWriteToSystem(_decoder, _drawRect, true);
+}
 
-	bitmap.getBuffer().copyRectToSurface(*surface, 0, 0, Common::Rect(surface->w, surface->h));
-
-	const bool dirtyPalette = _decoder->hasDirtyPalette();
-	if (dirtyPalette) {
-		Palette palette;
-		const byte *rawPalette = _decoder->getPalette();
-		for (int i = 0; i < ARRAYSIZE(palette.colors); ++i) {
-			palette.colors[i].r = *rawPalette++;
-			palette.colors[i].g = *rawPalette++;
-			palette.colors[i].b = *rawPalette++;
-			palette.colors[i].used = true;
-		}
-
-		g_sci->_gfxPalette32->submit(palette);
+void SEQPlayer::close() {
+#ifdef USE_RGB_COLOR
+	if (g_system->getScreenFormat().bytesPerPixel != 1) {
+		const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+		g_sci->_gfxFrameout->setPixelFormat(format);
 	}
+#endif
 
-	g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-	g_sci->_gfxFrameout->frameOut(true);
+	g_system->fillScreen(0);
+	delete _decoder;
+	_decoder = nullptr;
 }
 
 #pragma mark -
@@ -365,78 +438,8 @@ uint16 AVIPlayer::getDuration() const {
 	return _decoder->getFrameCount();
 }
 
-template <Graphics::TFilteringMode MODE>
-static void writeFrameToSystem(const Graphics::Surface *nextFrame, Video::VideoDecoder *decoder, const Common::Rect &drawRect) {
-	assert(nextFrame);
-
-	bool freeConvertedFrame;
-	Graphics::Surface *convertedFrame;
-	// Avoid creating a duplicate copy of the surface when it is not necessary
-	if (decoder->getPixelFormat() == g_system->getScreenFormat()) {
-		freeConvertedFrame = false;
-		convertedFrame = const_cast<Graphics::Surface *>(nextFrame);
-	} else {
-		freeConvertedFrame = true;
-		convertedFrame = nextFrame->convertTo(g_system->getScreenFormat(), decoder->getPalette());
-	}
-	assert(convertedFrame);
-
-	if (decoder->getWidth() != drawRect.width() || decoder->getHeight() != drawRect.height()) {
-		Graphics::Surface *const unscaledFrame(convertedFrame);
-		const Graphics::TransparentSurface tsUnscaledFrame(*unscaledFrame);
-		convertedFrame = tsUnscaledFrame.scaleT<MODE>(drawRect.width(), drawRect.height());
-		assert(convertedFrame);
-		if (freeConvertedFrame) {
-			unscaledFrame->free();
-			delete unscaledFrame;
-		}
-		freeConvertedFrame = true;
-	}
-
-	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, drawRect.left, drawRect.top, convertedFrame->w, convertedFrame->h);
-	g_sci->_gfxFrameout->updateScreen();
-	if (freeConvertedFrame) {
-		convertedFrame->free();
-		delete convertedFrame;
-	}
-}
-
 void AVIPlayer::renderFrame() const {
-	// TODO: Improve efficiency by making changes to common Graphics code that
-	// allow reuse of a single conversion surface for all frames
-
-	const Graphics::Surface *nextFrame = _decoder->decodeNextFrame();
-	assert(nextFrame);
-
-	if (g_system->getScreenFormat().bytesPerPixel == 1 && _decoder->hasDirtyPalette()) {
-		const uint8 *palette = _decoder->getPalette();
-		assert(palette);
-		g_system->getPaletteManager()->setPalette(palette, 0, 256);
-
-		// KQ7 1.x has videos encoded using Microsoft Video 1 where palette 0 is
-		// white and 255 is black, which is basically the opposite of DOS/Win
-		// SCI palettes. So, when drawing to an 8bpp hwscreen, whenever a new
-		// palette is seen, the screen must be re-filled with the new black
-		// entry to ensure areas outside the video are always black and not some
-		// other color
-		for (int color = 0; color < 256; ++color) {
-			if (palette[0] == 0 && palette[1] == 0 && palette[2] == 0) {
-				g_system->fillScreen(color);
-				break;
-			}
-			palette += 3;
-		}
-	}
-
-#ifdef USE_RGB_COLOR
-	if (g_system->getScreenFormat().bytesPerPixel != 1) {
-		writeFrameToSystem<Graphics::FILTER_BILINEAR>(nextFrame, _decoder, _drawRect);
-	} else {
-#else
-	{
-#endif
-		writeFrameToSystem<Graphics::FILTER_NEAREST>(nextFrame, _decoder, _drawRect);
-	}
+	directWriteToSystem(_decoder, _drawRect, true);
 }
 
 AVIPlayer::EventFlags AVIPlayer::playUntilEvent(EventFlags flags) {
@@ -821,7 +824,7 @@ void VMDPlayer::renderOverlay() const {
 			redrawGameScreen();
 		}
 
-		writeFrameToSystem<Graphics::FILTER_BILINEAR>(nextFrame, _decoder, _drawRect);
+		directWriteToSystem(_decoder, _drawRect, false, nextFrame);
 	} else {
 #else
 	{
