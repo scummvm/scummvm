@@ -319,12 +319,8 @@ int main_loop(const char *filename)
 
 	startNewFunctionNum(0, 0, NULL, noStack);
 
-#if 0
 	Init_Timer();
 
-	SDL_EnableUNICODE(1);
-#endif
-	renderSurface.create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	weAreDoneSoQuit = 0;
 	while (!weAreDoneSoQuit) {
 		checkInput();
@@ -332,10 +328,7 @@ int main_loop(const char *filename)
 		handleInput();
 		sludgeDisplay();
 		handleSoundLists();
-		g_system->delayMillis(1000 / desiredfps);
-#if 0
 		Wait_Frame();
-#endif
 	}
 
 	debugOut("Bye!\n\n");
