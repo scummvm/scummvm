@@ -1474,7 +1474,22 @@ void KingdomGame::SwitchMtoA() {
 }
 
 void KingdomGame::DrawIcon(int x, int y, int index) {
-	debug("STUB: DrawIcon");
+	const byte *data = _kingartEntries[index].data;
+	int width = _kingartEntries[index].Width;
+	int height = _kingartEntries[index].Height;
+
+	::Graphics::Surface *screen = g_system->lockScreen();
+	for (uint curX = 0; curX < width; curX++) {
+		for (uint curY = 0; curY < height; curY++) {
+			const byte *src = data + (curY * width) + curX;
+			byte *dst = (byte *)screen->getBasePtr(curX + x, curY + y);
+			if (*src != 0xFF)
+				*dst = *src;
+		}
+	}
+	g_system->unlockScreen();
+	g_system->updateScreen();
+
 }
 
 int KingdomGame::GetAKey() {

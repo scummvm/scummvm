@@ -105,7 +105,7 @@ void KingdomGame::GPLogic1() {
 			if (!_Wizard) {
 				_StatPlay = 50;
 				_LoopFlag = true;
-				return;
+				break;
 			}
 		}
 		DrawLocation();
