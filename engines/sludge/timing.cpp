@@ -20,33 +20,35 @@
  *
  */
 
+#include "sludge/allfiles.h"
+#include "sludge/timing.h"
+
 namespace Sludge {
 
 int desiredfps = 300;               //holds desired frames per second
 
-#if 0
-Uint32 starttime, endtime;
-Uint32 desired_frame_time;
+uint32 starttime, endtime;
+uint32 desired_frame_time;
 
 void Init_Timer(void) {
 	desired_frame_time = 1000 / desiredfps;
-	starttime = SDL_GetTicks();
+	starttime = g_system->getMillis();
 }
 
 void Init_Special_Timer(int t) {
 	desired_frame_time = 1000 / t;
-	starttime = SDL_GetTicks();
+	starttime = g_system->getMillis();
 }
 
 void Wait_Frame(void) {
-	static Uint32 addNextTime = 0;
-	Uint32 timetaken;
+	static uint32 addNextTime = 0;
+	uint32 timetaken;
 
 	for (;;) {
-		endtime = SDL_GetTicks();
+		endtime = g_system->getMillis();
 		timetaken = addNextTime + endtime - starttime;
 		if (timetaken >= desired_frame_time) break;
-		SDL_Delay(1);
+		g_system->delayMillis(1);
 	}
 
 	addNextTime = timetaken - desired_frame_time;
@@ -54,7 +56,5 @@ void Wait_Frame(void) {
 
 	starttime = endtime;
 }
-#endif
 
-}
-               // End of namespace Sludge
+} // End of namespace Sludge
