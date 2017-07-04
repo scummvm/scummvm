@@ -23,9 +23,15 @@
 #include "audio/mixer.h"                 // for Audio::Mixer::kSFXSoundType
 #include "common/config-manager.h"       // for ConfMan
 #include "common/textconsole.h"          // for warning, error
+#ifndef USE_RGB_COLOR
+#include "common/translation.h"          // for _
+#endif
 #include "common/util.h"                 // for ARRAYSIZE
 #include "common/system.h"               // for g_system
 #include "engine.h"                      // for Engine, g_engine
+#include "graphics/colormasks.h"         // for createPixelFormat
+#include "graphics/palette.h"            // for PaletteManager
+#include "graphics/transparent_surface.h" // for TransparentSurface
 #include "sci/console.h"                 // for Console
 #include "sci/engine/features.h"         // for GameFeatures
 #include "sci/engine/state.h"            // for EngineState
@@ -176,14 +182,9 @@ void SEQPlayer::renderFrame(SciBitmap &bitmap) const {
 #pragma mark -
 #pragma mark AVIPlayer
 
-AVIPlayer::AVIPlayer(SegManager *segMan, EventManager *eventMan) :
-	_segMan(segMan),
+AVIPlayer::AVIPlayer(EventManager *eventMan) :
 	_eventMan(eventMan),
 	_decoder(new Video::AVIDecoder(Audio::Mixer::kSFXSoundType)),
-	_scaleBuffer(nullptr),
-	_plane(nullptr),
-	_screenItem(nullptr),
-	_bitmap(NULL_REG),
 	_status(kAVINotOpen) {}
 
 AVIPlayer::~AVIPlayer() {
@@ -200,125 +201,99 @@ AVIPlayer::IOStatus AVIPlayer::open(const Common::String &fileName) {
 		return kIOFileNotFound;
 	}
 
+#ifndef USE_RGB_COLOR
+	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on
+	// a system with no RGB support
+	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
+		void showScummVMDialog(const Common::String &message);
+		showScummVMDialog(Common::String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
+		_decoder->close();
+		return kIOFileNotFound;
+	}
+#endif
+
 	_status = kAVIOpen;
 	return kIOSuccess;
 }
 
-AVIPlayer::IOStatus AVIPlayer::init1x(const int16 x, const int16 y, int16 width, int16 height) {
+AVIPlayer::IOStatus AVIPlayer::init(const bool pixelDouble) {
+	// Calls to initialize the AVI player in SCI can be made in a few ways:
+	//
+	// * kShowMovie(WinInit, x, y) to render the video at (x,y) using its
+	//   original resolution, or
+	// * kShowMovie(WinInit, x, y, w, h) to render the video at (x,y) with
+	//   rescaling to the given width and height, or
+	// * kShowMovie(WinInitDouble, x, y) to render the video at (x,y) with
+	//   rescaling to double the original resolution.
+	//
+	// Unfortunately, the values passed by game scripts are frequently wrong:
+	//
+	// * KQ7 passes origin coordinates that cause videos to be misaligned on the
+	//   Y-axis;
+	// * GK1 passes width and height that change the aspect ratio of the videos,
+	//   even though they were rendered with square pixels (and in the case of
+	//   CREDITS.AVI, cause the video to be badly downscaled);
+	// * The GK2 demo does all of these things at the same time.
+	//
+	// Fortunately, whenever all of these games play an AVI, they are just
+	// trying to play a video at the center of the screen. So, we ignore the
+	// values that the game sends, and instead calculate the correct dimensions
+	// and origin based on the video data, only allowing games to specify
+	// whether or not the videos should be scaled up 2x.
+
 	if (_status == kAVINotOpen) {
 		return kIOFileNotFound;
 	}
 
-	_pixelDouble = false;
+	g_sci->_gfxCursor32->hide();
 
-	if (!width || !height) {
-		const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-		const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-		const Ratio screenToScriptX(scriptWidth, screenWidth);
-		const Ratio screenToScriptY(scriptHeight, screenHeight);
-		width = (_decoder->getWidth() * screenToScriptX).toInt();
-		height = (_decoder->getHeight() * screenToScriptY).toInt();
+	int16 width = _decoder->getWidth();
+	int16 height = _decoder->getHeight();
+	if (pixelDouble) {
+		width *= 2;
+		height *= 2;
 	}
 
-	// QFG4CD gives non-multiple-of-2 values for width and height of the intro
-	// video, which would normally be OK except the source video is a pixel
-	// bigger in each dimension so it just causes part of the video to get cut
-	// off
-	width = (width + 1) & ~1;
-	height = (height + 1) & ~1;
+	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
+	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
 
-	// GK1 CREDITS.AVI is not rendered correctly in SSCI because it is a 640x480
-	// video and the game script gives the wrong dimensions.
-	// Since this is the only high-resolution AVI ever used by any SCI game,
-	// just set the draw rectangle to draw across the entire screen
-	if (g_sci->getGameId() == GID_GK1 && _decoder->getWidth() > 320) {
-		_drawRect.left = 0;
-		_drawRect.top = 0;
-		_drawRect.right = 320;
-		_drawRect.bottom = 200;
+	// When scaling videos, they must not grow larger than the hardware screen
+	// or else the engine will crash. This is particularly important for the GK1
+	// CREDITS.AVI since the game sends extra width/height arguments, causing it
+	// to be treated as needing upscaling even though it does not.
+	width = MIN<int16>(width, screenWidth);
+	height = MIN<int16>(height, screenHeight);
+
+	_drawRect.left = (screenWidth - width) / 2;
+	_drawRect.top = (screenHeight - height) / 2;
+	_drawRect.setWidth(width);
+	_drawRect.setHeight(height);
+
+#ifdef USE_RGB_COLOR
+	// Optimize rendering performance for unscaled videos, and allow
+	// better-than-NN interpolation for videos that are scaled
+	if (ConfMan.getBool("enable_hq_video") &&
+		(_decoder->getWidth() != width || _decoder->getHeight() != height)) {
+
+		// TODO: Search for and use the best supported format (which may be
+		// lower than 32bpp) once the scaling code in Graphics supports
+		// 16bpp/24bpp, and once the SDL backend can correctly communicate
+		// supported pixel formats above whatever format is currently used by
+		// _hwsurface. Right now, this will just crash ScummVM if the backend
+		// does not support a 32bpp pixel format, which sucks since this code
+		// really ought to be able to fall back to NN scaling for games with
+		// 256-color videos.
+		const Graphics::PixelFormat format = Graphics::createPixelFormat<8888>();
+		g_sci->_gfxFrameout->setPixelFormat(format);
 	} else {
-		_drawRect.left = x;
-		_drawRect.top = y;
-		_drawRect.right = x + width;
-		_drawRect.bottom = y + height;
-	}
-
-	init();
-
-	return kIOSuccess;
-}
-
-AVIPlayer::IOStatus AVIPlayer::init2x(const int16 x, const int16 y) {
-	if (_status == kAVINotOpen) {
-		return kIOFileNotFound;
-	}
-
-	_drawRect.left = x;
-	_drawRect.top = y;
-	_drawRect.right = x + _decoder->getWidth() * 2;
-	_drawRect.bottom = y + _decoder->getHeight() * 2;
-	_pixelDouble = true;
-
-	init();
-
-	return kIOSuccess;
-}
-
-void AVIPlayer::init() {
-	int16 xRes;
-	int16 yRes;
-
-	// GK1 CREDITS.AVI or KQ7 1.51 half-size videos
-	if ((g_sci->_gfxFrameout->_isHiRes && _decoder->getWidth() > 320) ||
-		(g_sci->getGameId() == GID_KQ7 && getSciVersion() == SCI_VERSION_2_1_EARLY && _drawRect.width() <= 160)) {
-		xRes = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-		yRes = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-	} else {
-		xRes = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-
-		const Ratio videoRatio(_decoder->getWidth(), _decoder->getHeight());
-		const Ratio screenRatio(4, 3);
-
-		// Videos that already have a 4:3 aspect ratio should not receive any
-		// aspect ratio correction
-		if (videoRatio == screenRatio) {
-			yRes = 240;
-		} else {
-			yRes = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-		}
-	}
-
-	_plane = new Plane(_drawRect);
-	g_sci->_gfxFrameout->addPlane(*_plane);
-
-	if (_decoder->getPixelFormat().bytesPerPixel == 1) {
-		SciBitmap &bitmap = *_segMan->allocateBitmap(&_bitmap, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, xRes, yRes, 0, false, false);
-		bitmap.getBuffer().fillRect(Common::Rect(_decoder->getWidth(), _decoder->getHeight()), 0);
-
-		CelInfo32 celInfo;
-		celInfo.type = kCelTypeMem;
-		celInfo.bitmap = _bitmap;
-
-		_screenItem = new ScreenItem(_plane->_object, celInfo, Common::Point(), ScaleInfo());
-		g_sci->_gfxFrameout->addScreenItem(*_screenItem);
-		g_sci->_gfxFrameout->frameOut(true);
-	} else {
-		// Attempting to draw a palettized cursor into a 24bpp surface will
-		// cause memory corruption, so hide the cursor in this mode (SCI did not
-		// have a 24bpp mode but just directed VFW to display videos instead)
-		g_sci->_gfxCursor32->hide();
-
+#else
+	{
+#endif
 		const Graphics::PixelFormat format = _decoder->getPixelFormat();
 		g_sci->_gfxFrameout->setPixelFormat(format);
-
-		if (_pixelDouble) {
-			const int16 width = _drawRect.width();
-			const int16 height = _drawRect.height();
-			_scaleBuffer = calloc(1, width * height * format.bytesPerPixel);
-		}
 	}
+
+	return kIOSuccess;
 }
 
 AVIPlayer::IOStatus AVIPlayer::play(const int16 from, const int16 to, const int16, const bool async) {
@@ -344,6 +319,7 @@ AVIPlayer::IOStatus AVIPlayer::play(const int16 from, const int16 to, const int1
 
 void AVIPlayer::renderVideo() const {
 	_decoder->start();
+
 	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
 		g_sci->sleep(_decoder->getTimeToNextFrame());
 		while (_decoder->needsUpdate()) {
@@ -357,24 +333,18 @@ AVIPlayer::IOStatus AVIPlayer::close() {
 		return kIOSuccess;
 	}
 
-	free(_scaleBuffer);
-	_scaleBuffer = nullptr;
-
-	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
+#ifdef USE_RGB_COLOR
+	if (g_system->getScreenFormat().bytesPerPixel != 1) {
 		const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 		g_sci->_gfxFrameout->setPixelFormat(format);
-		g_sci->_gfxCursor32->unhide();
 	}
+#endif
+
+	g_system->fillScreen(0);
+	g_sci->_gfxCursor32->unhide();
 
 	_decoder->close();
 	_status = kAVINotOpen;
-	if (_bitmap != NULL_REG) {
-		_segMan->freeBitmap(_bitmap);
-		_bitmap = NULL_REG;
-	}
-	g_sci->_gfxFrameout->deletePlane(*_plane);
-	_plane = nullptr;
-	_screenItem = nullptr;
 	return kIOSuccess;
 }
 
@@ -395,91 +365,77 @@ uint16 AVIPlayer::getDuration() const {
 	return _decoder->getFrameCount();
 }
 
-void AVIPlayer::renderFrame() const {
-	const Graphics::Surface *surface = _decoder->decodeNextFrame();
+template <Graphics::TFilteringMode MODE>
+static void writeFrameToSystem(const Graphics::Surface *nextFrame, Video::VideoDecoder *decoder, const Common::Rect &drawRect) {
+	assert(nextFrame);
 
-	if (surface->format.bytesPerPixel == 1) {
-		SciBitmap &bitmap = *_segMan->lookupBitmap(_bitmap);
-		if (surface->w > bitmap.getWidth() || surface->h > bitmap.getHeight()) {
-			warning("Attempted to draw a video frame larger than the destination bitmap");
-			return;
-		}
-
-		// KQ7 1.51 encodes videos with palette entry 0 as white, which makes
-		// the area around the video turn white too, since it is coded to use
-		// palette entry 0. This happens to work in the original game because
-		// the video is rendered by VfW, not in the engine itself. To fix this,
-		// we just modify the incoming pixel data from the video so if a pixel
-		// is using entry 0, we change it to use entry 255, which is guaranteed
-		// to always be white
-		if (getSciVersion() == SCI_VERSION_2_1_EARLY && g_sci->getGameId() == GID_KQ7) {
-			uint8 *target = bitmap.getPixels();
-			const uint8 *source = (const uint8 *)surface->getPixels();
-			const uint8 *end = (const uint8 *)surface->getPixels() + surface->w * surface->h;
-
-			while (source != end) {
-				const uint8 value = *source++;
-				*target++ = value == 0 ? 255 : value;
-			}
-		} else {
-			bitmap.getBuffer().copyRectToSurface(*surface, 0, 0, Common::Rect(surface->w, surface->h));
-		}
-
-		const bool dirtyPalette = _decoder->hasDirtyPalette();
-		if (dirtyPalette) {
-			Palette palette;
-			const byte *rawPalette = _decoder->getPalette();
-			for (int i = 0; i < ARRAYSIZE(palette.colors); ++i) {
-				palette.colors[i].r = *rawPalette++;
-				palette.colors[i].g = *rawPalette++;
-				palette.colors[i].b = *rawPalette++;
-				palette.colors[i].used = true;
-			}
-
-			// Prevent KQ7 1.51 from setting entry 0 to white
-			palette.colors[0].used = false;
-
-			g_sci->_gfxPalette32->submit(palette);
-		}
-
-		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-		g_sci->_gfxFrameout->frameOut(true);
+	bool freeConvertedFrame;
+	Graphics::Surface *convertedFrame;
+	// Avoid creating a duplicate copy of the surface when it is not necessary
+	if (decoder->getPixelFormat() == g_system->getScreenFormat()) {
+		freeConvertedFrame = false;
+		convertedFrame = const_cast<Graphics::Surface *>(nextFrame);
 	} else {
-		assert(surface->format.bytesPerPixel == 4);
+		freeConvertedFrame = true;
+		convertedFrame = nextFrame->convertTo(g_system->getScreenFormat(), decoder->getPalette());
+	}
+	assert(convertedFrame);
 
-		const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-		const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-
-		Common::Rect drawRect(_drawRect);
-		mulru(drawRect, Ratio(screenWidth, scriptWidth), Ratio(screenHeight, scriptHeight), 1);
-
-		if (_pixelDouble) {
-			const uint32 *source = (const uint32 *)surface->getPixels();
-			uint32 *target = (uint32 *)_scaleBuffer;
-			// target pitch here is in uint32s, not bytes, because the surface
-			// bpp is 4
-			const uint16 pitch = surface->pitch / 2;
-			for (int y = 0; y < surface->h; ++y) {
-				for (int x = 0; x < surface->w; ++x) {
-					const uint32 value = *source++;
-
-					target[0] = value;
-					target[1] = value;
-					target[pitch] = value;
-					target[pitch + 1] = value;
-					target += 2;
-				}
-				target += pitch;
-			}
-
-			g_system->copyRectToScreen(_scaleBuffer, surface->pitch * 2, drawRect.left, drawRect.top, _drawRect.width(), _drawRect.height());
-		} else {
-			g_system->copyRectToScreen(surface->getPixels(), surface->pitch, drawRect.left, drawRect.top, surface->w, surface->h);
+	if (decoder->getWidth() != drawRect.width() || decoder->getHeight() != drawRect.height()) {
+		Graphics::Surface *const unscaledFrame(convertedFrame);
+		const Graphics::TransparentSurface tsUnscaledFrame(*unscaledFrame);
+		convertedFrame = tsUnscaledFrame.scaleT<MODE>(drawRect.width(), drawRect.height());
+		assert(convertedFrame);
+		if (freeConvertedFrame) {
+			unscaledFrame->free();
+			delete unscaledFrame;
 		}
+		freeConvertedFrame = true;
+	}
 
-		g_sci->_gfxFrameout->updateScreen();
+	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, drawRect.left, drawRect.top, convertedFrame->w, convertedFrame->h);
+	g_sci->_gfxFrameout->updateScreen();
+	if (freeConvertedFrame) {
+		convertedFrame->free();
+		delete convertedFrame;
+	}
+}
+
+void AVIPlayer::renderFrame() const {
+	// TODO: Improve efficiency by making changes to common Graphics code that
+	// allow reuse of a single conversion surface for all frames
+
+	const Graphics::Surface *nextFrame = _decoder->decodeNextFrame();
+	assert(nextFrame);
+
+	if (g_system->getScreenFormat().bytesPerPixel == 1 && _decoder->hasDirtyPalette()) {
+		const uint8 *palette = _decoder->getPalette();
+		assert(palette);
+		g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+		// KQ7 1.x has videos encoded using Microsoft Video 1 where palette 0 is
+		// white and 255 is black, which is basically the opposite of DOS/Win
+		// SCI palettes. So, when drawing to an 8bpp hwscreen, whenever a new
+		// palette is seen, the screen must be re-filled with the new black
+		// entry to ensure areas outside the video are always black and not some
+		// other color
+		for (int color = 0; color < 256; ++color) {
+			if (palette[0] == 0 && palette[1] == 0 && palette[2] == 0) {
+				g_system->fillScreen(color);
+				break;
+			}
+			palette += 3;
+		}
+	}
+
+#ifdef USE_RGB_COLOR
+	if (g_system->getScreenFormat().bytesPerPixel != 1) {
+		writeFrameToSystem<Graphics::FILTER_BILINEAR>(nextFrame, _decoder, _drawRect);
+	} else {
+#else
+	{
+#endif
+		writeFrameToSystem<Graphics::FILTER_NEAREST>(nextFrame, _decoder, _drawRect);
 	}
 }
 

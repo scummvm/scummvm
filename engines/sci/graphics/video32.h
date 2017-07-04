@@ -23,6 +23,9 @@
 #ifndef SCI_GRAPHICS_VIDEO32_H
 #define SCI_GRAPHICS_VIDEO32_H
 
+#ifdef USE_RGB_COLOR
+#include "common/config-manager.h" // for ConfMan
+#endif
 #include "common/rect.h"          // for Rect
 #include "common/scummsys.h"      // for int16, uint8, uint16, int32
 #include "common/str.h"           // for String
@@ -110,7 +113,7 @@ public:
 		kEventFlagHotRectangle = 8
 	};
 
-	AVIPlayer(SegManager *segMan, EventManager *eventMan);
+	AVIPlayer(EventManager *eventMan);
 	~AVIPlayer();
 
 	/**
@@ -122,14 +125,7 @@ public:
 	 * Initializes the AVI rendering parameters for the
 	 * current AVI. This must be called after `open`.
 	 */
-	IOStatus init1x(const int16 x, const int16 y, const int16 width, const int16 height);
-
-	/**
-	 * Initializes the AVI rendering parameters for the
-	 * current AVI, in pixel-doubling mode. This must
-	 * be called after `open`.
-	 */
-	IOStatus init2x(const int16 x, const int16 y);
+	IOStatus init(const bool pixelDouble);
 
 	/**
 	 * Begins playback of the current AVI.
@@ -160,7 +156,6 @@ public:
 private:
 	typedef Common::HashMap<uint16, AVIStatus> StatusMap;
 
-	SegManager *_segMan;
 	EventManager *_eventMan;
 	Video::AVIDecoder *_decoder;
 
@@ -170,46 +165,10 @@ private:
 	AVIStatus _status;
 
 	/**
-	 * The plane where the AVI will be drawn.
-	 */
-	Plane *_plane;
-
-	/**
-	 * The screen item representing the AVI surface,
-	 * in 8bpp mode. In 24bpp mode, video is drawn
-	 * directly to the screen.
-	 */
-	ScreenItem *_screenItem;
-
-	/**
-	 * The bitmap used to render video output in
-	 * 8bpp mode.
-	 */
-	reg_t _bitmap;
-
-	/**
 	 * The rectangle where the video will be drawn,
-	 * in game script coordinates.
+	 * in screen coordinates.
 	 */
 	Common::Rect _drawRect;
-
-	/**
-	 * The scale buffer for pixel-doubled videos
-	 * drawn in 24bpp mode.
-	 */
-	void *_scaleBuffer;
-
-	/**
-	 * In SCI2.1, whether or not the video should
-	 * be pixel doubled for playback.
-	 */
-	bool _pixelDouble;
-
-	/**
-	 * Performs common initialisation for both
-	 * scaled and unscaled videos.
-	 */
-	void init();
 
 	/**
 	 * Renders video without event input until the
@@ -657,7 +616,7 @@ class Video32 : public Common::Serializable {
 public:
 	Video32(SegManager *segMan, EventManager *eventMan) :
 	_SEQPlayer(segMan, eventMan),
-	_AVIPlayer(segMan, eventMan),
+	_AVIPlayer(eventMan),
 	_VMDPlayer(segMan, eventMan),
 	_robotPlayer(segMan),
 	_duckPlayer(segMan, eventMan) {}
