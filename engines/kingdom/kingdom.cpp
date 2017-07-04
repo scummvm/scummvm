@@ -696,7 +696,7 @@ void KingdomGame::DrawInventory() {
 		DrawIcon(131, 39, 134 + _Inventory[3]);
 }
 
-Common::String KingdomGame::generateSaveName(int slot) {
+Common::String KingdomGame::getSavegameFilename(int slot) {
 	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
@@ -722,7 +722,7 @@ void KingdomGame::restoreGame() {
 }
 
 Common::Error KingdomGame::saveGameState(int slot, const Common::String &desc) {
-	Common::String savegameFile = generateSaveName(slot);
+	Common::String savegameFile = getSavegameFilename(slot);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *out = saveMan->openForSaving(savegameFile);
 
@@ -743,7 +743,7 @@ Common::Error KingdomGame::saveGameState(int slot, const Common::String &desc) {
 }
 
 Common::Error KingdomGame::loadGameState(int slot) {
-	Common::String savegameFile = generateSaveName(slot);
+	Common::String savegameFile = getSavegameFilename(slot);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *inFile = saveMan->openForLoading(savegameFile);
 	if (!inFile)
@@ -1479,8 +1479,8 @@ void KingdomGame::DrawIcon(int x, int y, int index) {
 	int height = _kingartEntries[index].Height;
 
 	::Graphics::Surface *screen = g_system->lockScreen();
-	for (uint curX = 0; curX < width; curX++) {
-		for (uint curY = 0; curY < height; curY++) {
+	for (int curX = 0; curX < width; curX++) {
+		for (int curY = 0; curY < height; curY++) {
 			const byte *src = data + (curY * width) + curX;
 			byte *dst = (byte *)screen->getBasePtr(curX + x, curY + y);
 			if (*src != 0xFF)
