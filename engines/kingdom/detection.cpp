@@ -40,6 +40,8 @@ static const PlainGameDescriptor kingdomGames[] = {
 
 namespace Kingdom {
 
+#define MAX_SAVES 99
+
 static const ADGameDescription gameDescriptions[] = {
 	// Kingdom PC DOS Demo version, provided by Strangerke
 	{
@@ -84,10 +86,20 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual int getMaximumSaveSlot() const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool KingdomMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return
+	    (f == kSupportsListSaves) ||
+	    (f == kSupportsLoadingDuringStartup) ||
+	    (f == kSupportsDeleteSave) ||
+	    (f == kSavesSupportMetaInfo) ||
+	    (f == kSavesSupportThumbnail) ||
+	    (f == kSavesSupportCreationDate);
 }
 
 bool KingdomMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -95,6 +107,72 @@ bool KingdomMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 		*engine = new Kingdom::KingdomGame(syst, desc);
 
 	return desc != nullptr;
+}
+
+int KingdomMetaEngine::getMaximumSaveSlot() const {
+	return MAX_SAVES;
+}
+
+SaveStateList KingdomMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String saveDesc;
+	Common::String pattern = Common::String::format("%s.0##", target);
+
+	filenames = saveFileMan->listSavefiles(pattern);
+
+	Kingdom::KingdomSavegameHeader header;
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		const char *ext = strrchr(file->c_str(), '.');
+		int slot = ext ? atoi(ext + 1) : -1;
+
+		if (slot >= 0 && slot < MAX_SAVES) {
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+
+			if (in) {
+				if (Kingdom::KingdomGame::readSavegameHeader(in, header)) {
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+
+					header._thumbnail->free();
+					delete header._thumbnail;
+				}
+
+				delete in;
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
+}
+
+void KingdomMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(filename);
+}
+
+SaveStateDescriptor KingdomMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+
+	if (f) {
+		Kingdom::KingdomSavegameHeader header;
+		Kingdom::KingdomGame::readSavegameHeader(f, header);
+		delete f;
+
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, header._saveName);
+		desc.setThumbnail(header._thumbnail);
+		desc.setSaveDate(header._year, header._month, header._day);
+		desc.setSaveTime(header._hour, header._minute);
+
+		return desc;
+	}
+
+	return SaveStateDescriptor();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KINGDOM)
