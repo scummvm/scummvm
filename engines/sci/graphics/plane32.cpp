@@ -26,6 +26,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/helpers.h"
 #include "sci/graphics/lists32.h"
 #include "sci/graphics/plane32.h"
 #include "sci/graphics/remap32.h"
@@ -261,8 +262,6 @@ void Plane::deleteAllPics() {
 
 #pragma mark -
 #pragma mark Plane - Rendering
-
-extern int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]);
 
 void Plane::breakDrawListByPlanes(DrawList &drawList, const PlaneList &planeList) const {
 	const int nextPlaneIndex = planeList.findIndexByObject(_object) + 1;

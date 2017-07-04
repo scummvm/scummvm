@@ -846,13 +846,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                             GUIO_NOLAUNCHLOAD, \
                             GUIO_NOASPECT, \
                             GAMEOPTION_HQ_VIDEO)
-#define GUIO_GK2      GUIO7(GUIO_NOSUBTITLES, \
+#define GUIO_GK2      GUIO8(GUIO_NOSUBTITLES, \
                             GUIO_NOSFX, \
                             GUIO_NOSPEECHVOLUME, \
                             GUIO_NOMIDI, \
                             GUIO_NOASPECT, \
                             GAMEOPTION_ORIGINAL_SAVELOAD, \
-                            GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
+                            GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                            GAMEOPTION_HQ_VIDEO)
 #define GUIO_GK2_MAC  GUIO_GK2
 
 	// Gabriel Knight 2 - English Windows Non-Interactive Demo
@@ -2695,10 +2696,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                              GUIO_NOMIDI, \
                              GUIO_NOLAUNCHLOAD, \
                              GAMEOPTION_ORIGINAL_SAVELOAD)
-#define GUIO_LSL7      GUIO4(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+#define GUIO_LSL7      GUIO5(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                              GUIO_NOASPECT, \
                              GUIO_NOMIDI, \
-                             GAMEOPTION_ORIGINAL_SAVELOAD)
+                             GAMEOPTION_ORIGINAL_SAVELOAD, \
+                             GAMEOPTION_HQ_VIDEO)
 
 	// Larry 7 - English DOS Demo (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 2.100.002
@@ -2758,9 +2760,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #define GUIO_LIGHTHOUSE_DEMO GUIO3(GUIO_NOSPEECH, \
                                    GUIO_NOASPECT, \
                                    GAMEOPTION_ORIGINAL_SAVELOAD)
-#define GUIO_LIGHTHOUSE      GUIO3(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+#define GUIO_LIGHTHOUSE      GUIO4(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                                    GUIO_NOASPECT, \
-                                   GAMEOPTION_ORIGINAL_SAVELOAD)
+                                   GAMEOPTION_ORIGINAL_SAVELOAD, \
+                                   GAMEOPTION_HQ_VIDEO)
 
 	// Lighthouse - English Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.00"
@@ -2979,11 +2982,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #ifdef ENABLE_SCI32
 
-#define GUIO_PHANTASMAGORIA_DEMO GUIO5(GUIO_NOSUBTITLES, \
+#define GUIO_PHANTASMAGORIA_DEMO GUIO6(GUIO_NOSUBTITLES, \
                                        GUIO_NOASPECT, \
                                        GUIO_NOLAUNCHLOAD, \
                                        GUIO_LINKSPEECHTOSFX, \
-                                       GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
+                                       GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                                       GAMEOPTION_HQ_VIDEO)
 #define GUIO_PHANTASMAGORIA      GUIO_PHANTASMAGORIA_DEMO
 #define GUIO_PHANTASMAGORIA_MAC  GUIO_PHANTASMAGORIA_DEMO
 
@@ -3509,12 +3513,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                                GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
                                GUIO_NOLAUNCHLOAD)
-#define GUIO_PQSWAT      GUIO6(GUIO_NOSUBTITLES, \
+#define GUIO_PQSWAT      GUIO7(GUIO_NOSUBTITLES, \
                                GUIO_NOMIDI, \
                                GUIO_LINKMUSICTOSFX, \
                                GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
-                               GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
+                               GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                               GAMEOPTION_HQ_VIDEO)
 
 	// Police Quest: SWAT - English DOS/Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "0.001.200"
@@ -3957,14 +3962,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_QFG4_CD
 
 // TODO: Correct GUIOs
-#define GUIO_RAMA_DEMO GUIO4(GUIO_NOMIDI, \
+#define GUIO_RAMA_DEMO GUIO5(GUIO_NOMIDI, \
                              GUIO_NOLAUNCHLOAD, \
                              GUIO_NOASPECT, \
-                             GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
-#define GUIO_RAMA      GUIO4(GUIO_NOMIDI, \
+                             GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                             GAMEOPTION_HQ_VIDEO)
+#define GUIO_RAMA      GUIO5(GUIO_NOMIDI, \
                              GUIO_NOASPECT, \
                              GAMEOPTION_ORIGINAL_SAVELOAD, \
-                             GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
+                             GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                             GAMEOPTION_HQ_VIDEO)
 
 	// RAMA - English DOS/Windows Demo
 	// Executable scanning reports "2.100.002", VERSION file reports "000.000.008"
@@ -4040,11 +4047,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                                 GUIO_LINKSPEECHTOSFX, \
                                 GUIO_LINKMUSICTOSFX, \
                                 GUIO_NOASPECT)
-#define GUIO_SHIVERS      GUIO5(GUIO_NOMIDI, \
+#define GUIO_SHIVERS      GUIO6(GUIO_NOMIDI, \
                                 GUIO_LINKSPEECHTOSFX, \
                                 GUIO_LINKMUSICTOSFX, \
                                 GUIO_NOASPECT, \
-                                GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
+                                GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                                GAMEOPTION_HQ_VIDEO)
 
 	// Shivers - English Windows (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.02"
@@ -4661,10 +4669,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #define GUIO_SQ6_DEMO GUIO3(GUIO_NOLAUNCHLOAD, \
                             GUIO_LINKSPEECHTOSFX, \
                             GUIO_NOASPECT)
-#define GUIO_SQ6      GUIO4(GUIO_LINKSPEECHTOSFX, \
+#define GUIO_SQ6      GUIO5(GUIO_LINKSPEECHTOSFX, \
                             GUIO_NOASPECT, \
                             GAMEOPTION_ORIGINAL_SAVELOAD, \
-                            GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
+                            GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                            GAMEOPTION_HQ_VIDEO)
 
 	// Space Quest 6 - English DOS/Win3.11 CD (from the Space Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
@@ -4740,10 +4749,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #define GUIO_TORIN_DEMO GUIO3(GUIO_NOMIDI, \
                               GUIO_NOLAUNCHLOAD, \
                               GUIO_NOASPECT)
-#define GUIO_TORIN      GUIO4(GUIO_NOMIDI, \
+#define GUIO_TORIN      GUIO5(GUIO_NOMIDI, \
                               GUIO_NOASPECT, \
                               GAMEOPTION_ORIGINAL_SAVELOAD, \
-                              GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
+                              GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                              GAMEOPTION_HQ_VIDEO)
 #define GUIO_TORIN_MAC  GUIO_TORIN
 
 	// Torin's Passage - English Windows Interactive Demo

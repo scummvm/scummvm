@@ -340,6 +340,19 @@ public:
 	void palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *showStyle);
 
 	/**
+	 * Draws the given rect from the internal screen buffer to hardware without
+	 * processing any other graphics updates except for cursor changes.
+	 */
+	void directFrameOut(const Common::Rect &showRect);
+
+#ifdef USE_RGB_COLOR
+	/**
+	 * Sends the entire internal screen buffer and palette to hardware.
+	 */
+	void resetHardware();
+#endif
+
+	/**
 	 * Modifies the raw pixel data for the next frame with
 	 * new palette indexes based on matched style ranges.
 	 */

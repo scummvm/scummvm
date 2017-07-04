@@ -46,6 +46,7 @@
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/helpers.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/plane32.h"
@@ -548,47 +549,20 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 	showBits();
 }
 
-/**
- * Determines the parts of `r` that aren't overlapped by `other`.
- * Returns -1 if `r` and `other` have no intersection.
- * Returns number of returned parts (in `outRects`) otherwise.
- * (In particular, this returns 0 if `r` is contained in `other`.)
- */
-int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]) {
-	if (!r.intersects(other)) {
-		return -1;
-	}
-
-	int splitCount = 0;
-	if (r.top < other.top) {
-		Common::Rect &t = outRects[splitCount++];
-		t = r;
-		t.bottom = other.top;
-		r.top = other.top;
-	}
-
-	if (r.bottom > other.bottom) {
-		Common::Rect &t = outRects[splitCount++];
-		t = r;
-		t.top = other.bottom;
-		r.bottom = other.bottom;
-	}
-
-	if (r.left < other.left) {
-		Common::Rect &t = outRects[splitCount++];
-		t = r;
-		t.right = other.left;
-		r.left = other.left;
-	}
-
-	if (r.right > other.right) {
-		Common::Rect &t = outRects[splitCount++];
-		t = r;
-		t.left = other.right;
-	}
-
-	return splitCount;
+void GfxFrameout::directFrameOut(const Common::Rect &showRect) {
+	updateMousePositionForRendering();
+	_showList.add(showRect);
+	showBits();
 }
+
+#ifdef USE_RGB_COLOR
+void GfxFrameout::resetHardware() {
+	updateMousePositionForRendering();
+	_showList.add(Common::Rect(getCurrentBuffer().screenWidth, getCurrentBuffer().screenHeight));
+	g_system->getPaletteManager()->setPalette(_palette->getHardwarePalette(), 0, 256);
+	showBits();
+}
+#endif
 
 /**
  * Determines the parts of `middleRect` that aren't overlapped
@@ -1041,7 +1015,21 @@ void GfxFrameout::showBits() {
 			continue;
 		}
 
-		g_system->copyRectToScreen(sourceBuffer, _currentBuffer.screenWidth, rounded.left, rounded.top, rounded.width(), rounded.height());
+#ifdef USE_RGB_COLOR
+		if (g_system->getScreenFormat() != _currentBuffer.format) {
+			// This happens (at least) when playing a video in Shivers with
+			// HQ video on & subtitles on
+			Graphics::Surface *screenSurface = _currentBuffer.getSubArea(rounded).convertTo(g_system->getScreenFormat(), _palette->getHardwarePalette());
+			assert(screenSurface);
+			g_system->copyRectToScreen(screenSurface->getPixels(), screenSurface->pitch, rounded.left, rounded.top, screenSurface->w, screenSurface->h);
+			screenSurface->free();
+			delete screenSurface;
+		} else {
+#else
+		{
+#endif
+			g_system->copyRectToScreen(sourceBuffer, _currentBuffer.screenWidth, rounded.left, rounded.top, rounded.width(), rounded.height());
+		}
 	}
 
 	_cursor->donePainting();

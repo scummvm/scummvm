@@ -562,9 +562,10 @@ VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFl
 	return kIOError;
 }
 
-void VMDPlayer::init(const int16 x, const int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor) {
-	_x = getSciVersion() >= SCI_VERSION_3 ? x : (x & ~1);
-	_y = y;
+void VMDPlayer::init(int16 x, const int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor) {
+	if (getSciVersion() < SCI_VERSION_3) {
+		x &= ~1;
+	}
 	_doublePixels = flags & kPlayFlagDoublePixels;
 	_blackLines = ConfMan.getBool("enable_black_lined_video") && (flags & kPlayFlagBlackLines);
 	// If ScummVM has been configured to disable black lines on video playback,
@@ -579,6 +580,11 @@ void VMDPlayer::init(const int16 x, const int16 y, const PlayFlags flags, const 
 	_blackPalette = flags & kPlayFlagBlackPalette;
 #endif
 	_stretchVertical = flags & kPlayFlagStretchVertical;
+
+	_drawRect = Common::Rect(x,
+							 y,
+							 x + (_decoder->getWidth() << _doublePixels),
+							 y + (_decoder->getHeight() << (_doublePixels || _stretchVertical)));
 }
 
 VMDPlayer::IOStatus VMDPlayer::close() {
@@ -586,32 +592,10 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 		return kIOSuccess;
 	}
 
-	_decoder->close();
-	_isOpen = false;
-	_isInitialized = false;
-	_ignorePalettes = false;
-
-	if (_bundledVmd) {
-		g_sci->getResMan()->unlockResource(_bundledVmd);
-		_bundledVmd = nullptr;
-	}
-
-	if (_bitmapId != NULL_REG) {
-		_segMan->freeBitmap(_bitmapId);
-		_bitmapId = NULL_REG;
-	}
-
-	if (!_planeIsOwned && _screenItem != nullptr) {
-		g_sci->_gfxFrameout->deleteScreenItem(*_screenItem);
-		_screenItem = nullptr;
-	} else if (_plane != nullptr) {
-		g_sci->_gfxFrameout->deletePlane(*_plane);
-		_plane = nullptr;
-	}
-
-	if (!_leaveLastFrame && _leaveScreenBlack) {
-		// This call *actually* deletes the plane/screen item
-		g_sci->_gfxFrameout->frameOut(true);
+	if (_isComposited) {
+		closeComposited();
+	} else {
+		closeOverlay();
 	}
 
 	if (_blackoutPlane != nullptr) {
@@ -624,13 +608,24 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 
+	_decoder->close();
+
+	if (_bundledVmd) {
+		g_sci->getResMan()->unlockResource(_bundledVmd);
+		_bundledVmd = nullptr;
+	}
+
 	if (!_showCursor) {
 		g_sci->_gfxCursor32->unhide();
 	}
 
+	_isOpen = false;
+	_isInitialized = false;
+	_ignorePalettes = false;
 	_lastYieldedFrameNo = 0;
 	_planeIsOwned = true;
 	_priority = 0;
+	_drawRect = Common::Rect();
 	return kIOSuccess;
 }
 
@@ -695,69 +690,20 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			g_sci->_gfxCursor32->hide();
 		}
 
-		Common::Rect vmdRect(_x,
-							 _y,
-							 _x + _decoder->getWidth(),
-							 _y + _decoder->getHeight());
-		ScaleInfo vmdScaleInfo;
-
 		if (!_blackoutRect.isEmpty() && _planeIsOwned) {
 			_blackoutPlane = new Plane(_blackoutRect);
 			g_sci->_gfxFrameout->addPlane(*_blackoutPlane);
 		}
 
-		if (_doublePixels) {
-			vmdScaleInfo.x = 256;
-			vmdScaleInfo.y = 256;
-			vmdScaleInfo.signal = kScaleSignalManual;
-			vmdRect.right += vmdRect.width();
-			vmdRect.bottom += vmdRect.height();
-		} else if (_stretchVertical) {
-			vmdScaleInfo.y = 256;
-			vmdScaleInfo.signal = kScaleSignalManual;
-			vmdRect.bottom += vmdRect.height();
-		}
-
-		const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-		const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-
-		SciBitmap &vmdBitmap = *_segMan->allocateBitmap(&_bitmapId, vmdRect.width(), vmdRect.height(), 255, 0, 0, screenWidth, screenHeight, 0, false, false);
-		vmdBitmap.getBuffer().fillRect(Common::Rect(vmdRect.width(), vmdRect.height()), 0);
-
-		if (screenWidth != scriptWidth || screenHeight != scriptHeight) {
-			mulru(vmdRect, Ratio(scriptWidth, screenWidth), Ratio(scriptHeight, screenHeight), 1);
-		}
-
-		CelInfo32 vmdCelInfo;
-		vmdCelInfo.bitmap = _bitmapId;
-		_decoder->setSurfaceMemory(vmdBitmap.getPixels(), vmdBitmap.getWidth(), vmdBitmap.getHeight(), 1);
-
-		if (_planeIsOwned) {
-			_x = 0;
-			_y = 0;
-			_plane = new Plane(vmdRect, kPlanePicColored);
-			if (_priority) {
-				_plane->_priority = _priority;
-			}
-			g_sci->_gfxFrameout->addPlane(*_plane);
-			_screenItem = new ScreenItem(_plane->_object, vmdCelInfo, Common::Point(), vmdScaleInfo);
+		if (shouldUseCompositing()) {
+			_isComposited = true;
+			_usingHighColor = false;
+			initComposited();
 		} else {
-			_screenItem = new ScreenItem(_plane->_object, vmdCelInfo, Common::Point(_x, _y), vmdScaleInfo);
-			if (_priority) {
-				_screenItem->_priority = _priority;
-			}
+			_isComposited = false;
+			_usingHighColor = shouldUseHighColor();
+			initOverlay();
 		}
-
-		if (_blackLines) {
-			_screenItem->_drawBlackLines = true;
-		}
-
-		// NOTE: There was code for positioning the screen item using insetRect
-		// here, but none of the game scripts seem to use this functionality.
-
-		g_sci->_gfxFrameout->addScreenItem(*_screenItem);
 
 		_decoder->start();
 	}
@@ -830,66 +776,245 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 	return stopFlag;
 }
 
+void VMDPlayer::initOverlay() {
+	g_sci->_gfxFrameout->frameOut(true);
+
+#ifdef USE_RGB_COLOR
+	// TODO: Allow interpolation for videos where the cursor is drawn, either by
+	// writing to an intermediate 4bpp surface and using that surface during
+	// cursor drawing, or by promoting the cursor code to use CursorMan, if
+	// possible
+	if (_usingHighColor) {
+		// TODO: 8888 is used here because 4bpp is the only format currently
+		// supported by the common scaling code
+		const Graphics::PixelFormat format = Graphics::createPixelFormat<8888>();
+		g_sci->_gfxFrameout->setPixelFormat(format);
+		redrawGameScreen();
+	}
+#endif
+}
+
+#ifdef USE_RGB_COLOR
+void VMDPlayer::redrawGameScreen() const {
+	Graphics::Surface *game = g_sci->_gfxFrameout->getCurrentBuffer().convertTo(g_system->getScreenFormat(), g_sci->_gfxPalette32->getHardwarePalette());
+
+	Common::Rect rects[4];
+	int splitCount = splitRects(Common::Rect(game->w, game->h), _drawRect, rects);
+	if (splitCount != -1) {
+		while (splitCount--) {
+			const Common::Rect &drawRect = rects[splitCount];
+			g_system->copyRectToScreen(game->getBasePtr(drawRect.left, drawRect.top), game->pitch, drawRect.left, drawRect.top, drawRect.width(), drawRect.height());
+		}
+	}
+
+	game->free();
+	delete game;
+}
+#endif
+
+void VMDPlayer::renderOverlay() const {
+	const Graphics::Surface *nextFrame = _decoder->decodeNextFrame();
+
+#ifdef USE_RGB_COLOR
+	if (_usingHighColor) {
+		if (updatePalette()) {
+			redrawGameScreen();
+		}
+
+		writeFrameToSystem<Graphics::FILTER_BILINEAR>(nextFrame, _decoder, _drawRect);
+	} else {
+#else
+	{
+#endif
+		updatePalette();
+
+		Graphics::Surface out = g_sci->_gfxFrameout->getCurrentBuffer().getSubArea(_drawRect);
+
+		const int lineCount = _blackLines ? 2 : 1;
+		if (_doublePixels) {
+			for (int16 y = 0; y < _drawRect.height(); y += lineCount) {
+				const uint8 *source = (uint8 *)nextFrame->getBasePtr(0, y >> 1);
+				uint8 *target = (uint8 *)out.getBasePtr(0, y);
+				for (int16 x = 0; x < _decoder->getWidth(); ++x) {
+					*target++ = *source;
+					*target++ = *source++;
+				}
+			}
+		} else if (_blackLines) {
+			for (int16 y = 0; y < _drawRect.height(); y += lineCount) {
+				const uint8 *source = (uint8 *)nextFrame->getBasePtr(0, y);
+				uint8 *target = (uint8 *)out.getBasePtr(0, y);
+				memcpy(target, source, _drawRect.width());
+			}
+		} else {
+			out.copyRectToSurface(nextFrame->getPixels(), nextFrame->pitch, 0, 0, nextFrame->w, nextFrame->h);
+		}
+
+		g_sci->_gfxFrameout->directFrameOut(_drawRect);
+	}
+}
+
+bool VMDPlayer::updatePalette() const {
+	if (_ignorePalettes || !_decoder->hasDirtyPalette()) {
+		return false;
+	}
+
+	Palette palette;
+	for (uint16 i = 0; i < _startColor; ++i) {
+		palette.colors[i].used = false;
+	}
+	for (uint16 i = _endColor + 1; i < ARRAYSIZE(palette.colors); ++i) {
+		palette.colors[i].used = false;
+	}
+#if SCI_VMD_BLACK_PALETTE
+	if (_blackPalette) {
+		for (uint16 i = _startColor; i <= _endColor; ++i) {
+			palette.colors[i].r = palette.colors[i].g = palette.colors[i].b = 0;
+			palette.colors[i].used = true;
+		}
+	} else
+#endif
+		fillPalette(palette);
+
+	if (_isComposited) {
+		SciBitmap *bitmap = _segMan->lookupBitmap(_bitmapId);
+		bitmap->setPalette(palette);
+		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
+		g_sci->_gfxFrameout->frameOut(true);
+	} else {
+		g_sci->_gfxPalette32->submit(palette);
+		g_sci->_gfxPalette32->updateForFrame();
+		g_sci->_gfxPalette32->updateHardware();
+	}
+
+#if SCI_VMD_BLACK_PALETTE
+	if (_blackPalette) {
+		fillPalette(palette);
+		if (_isComposited) {
+			SciBitmap *bitmap = _segMan->lookupBitmap(_bitmapId);
+			bitmap->setPalette(palette);
+		}
+		g_sci->_gfxPalette32->submit(palette);
+		g_sci->_gfxPalette32->updateForFrame();
+		g_sci->_gfxPalette32->updateHardware();
+	}
+#endif
+
+	return true;
+}
+
+void VMDPlayer::closeOverlay() {
+#ifdef USE_RGB_COLOR
+	if (_usingHighColor) {
+		g_sci->_gfxFrameout->setPixelFormat(Graphics::PixelFormat::createFormatCLUT8());
+		g_sci->_gfxFrameout->resetHardware();
+	} else {
+#else
+	{
+#endif
+		g_sci->_gfxFrameout->frameOut(true, _drawRect);
+	}
+}
+
+void VMDPlayer::initComposited() {
+	ScaleInfo vmdScaleInfo;
+
+	if (_doublePixels) {
+		vmdScaleInfo.x *= 2;
+		vmdScaleInfo.y *= 2;
+		vmdScaleInfo.signal = kScaleSignalManual;
+	} else if (_stretchVertical) {
+		vmdScaleInfo.y *= 2;
+		vmdScaleInfo.signal = kScaleSignalManual;
+	}
+
+	const uint32 hunkPaletteSize = HunkPalette::calculateHunkPaletteSize(256, false);
+	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
+	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+
+	SciBitmap &vmdBitmap = *_segMan->allocateBitmap(&_bitmapId, _drawRect.width(), _drawRect.height(), 255, 0, 0, screenWidth, screenHeight, hunkPaletteSize, false, false);
+	vmdBitmap.getBuffer().fillRect(Common::Rect(_drawRect.width(), _drawRect.height()), 0);
+
+	CelInfo32 vmdCelInfo;
+	vmdCelInfo.bitmap = _bitmapId;
+	_decoder->setSurfaceMemory(vmdBitmap.getPixels(), vmdBitmap.getWidth(), vmdBitmap.getHeight(), 1);
+
+	if (_planeIsOwned) {
+		_plane = new Plane(_drawRect, kPlanePicColored);
+		if (_priority) {
+			_plane->_priority = _priority;
+		}
+		g_sci->_gfxFrameout->addPlane(*_plane);
+		_screenItem = new ScreenItem(_plane->_object, vmdCelInfo, Common::Point(), vmdScaleInfo);
+	} else {
+		_screenItem = new ScreenItem(_plane->_object, vmdCelInfo, Common::Point(_drawRect.left, _drawRect.top), vmdScaleInfo);
+		if (_priority) {
+			_screenItem->_priority = _priority;
+		}
+	}
+
+	if (_blackLines) {
+		_screenItem->_drawBlackLines = true;
+	}
+
+	// NOTE: There was code for positioning the screen item using insetRect
+	// here, but none of the game scripts seem to use this functionality.
+
+	g_sci->_gfxFrameout->addScreenItem(*_screenItem);
+}
+
+void VMDPlayer::renderComposited() const {
+	// This writes directly to the CelObjMem we already created,
+	// so no need to take its return value
+	_decoder->decodeNextFrame();
+	if (!updatePalette()) {
+		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
+		g_sci->_gfxFrameout->frameOut(true);
+	}
+}
+
+void VMDPlayer::closeComposited() {
+	if (_bitmapId != NULL_REG) {
+		_segMan->freeBitmap(_bitmapId);
+		_bitmapId = NULL_REG;
+	}
+
+	if (!_planeIsOwned && _screenItem != nullptr) {
+		g_sci->_gfxFrameout->deleteScreenItem(*_screenItem);
+		_screenItem = nullptr;
+	} else if (_plane != nullptr) {
+		g_sci->_gfxFrameout->deletePlane(*_plane);
+		_plane = nullptr;
+	}
+
+	if (!_leaveLastFrame && _leaveScreenBlack) {
+		// This call *actually* deletes the plane/screen item
+		g_sci->_gfxFrameout->frameOut(true);
+	}
+}
+
 #pragma mark -
 #pragma mark VMDPlayer - Rendering
 
 void VMDPlayer::renderFrame() const {
-	// This writes directly to the CelObjMem we already created,
-	// so no need to take its return value
-	_decoder->decodeNextFrame();
-
-	// NOTE: Normally this would write a hunk palette at the end of the
-	// video bitmap that CelObjMem would read out and submit, but instead
-	// we are just submitting it directly here because the decoder exposes
-	// this information a little bit differently than the one in SSCI
-	const bool dirtyPalette = _decoder->hasDirtyPalette();
-	if (dirtyPalette && !_ignorePalettes) {
-		Palette palette;
-		for (uint16 i = 0; i < _startColor; ++i) {
-			palette.colors[i].used = false;
-		}
-		for (uint16 i = _endColor; i < 256; ++i) {
-			palette.colors[i].used = false;
-		}
-#if SCI_VMD_BLACK_PALETTE
-		if (_blackPalette) {
-			for (uint16 i = _startColor; i <= _endColor; ++i) {
-				palette.colors[i].r = palette.colors[i].g = palette.colors[i].b = 0;
-				palette.colors[i].used = true;
-			}
-		} else
-#endif
-			fillPalette(palette);
-
-		g_sci->_gfxPalette32->submit(palette);
-		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-		g_sci->_gfxFrameout->frameOut(true);
-
-#if SCI_VMD_BLACK_PALETTE
-		if (_blackPalette) {
-			fillPalette(palette);
-			g_sci->_gfxPalette32->submit(palette);
-			g_sci->_gfxPalette32->updateForFrame();
-			g_sci->_gfxPalette32->updateHardware();
-		}
-#endif
+	if (_isComposited) {
+		renderComposited();
 	} else {
-		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-		g_sci->_gfxFrameout->frameOut(true);
+		renderOverlay();
 	}
 }
 
 void VMDPlayer::fillPalette(Palette &palette) const {
 	const byte *vmdPalette = _decoder->getPalette() + _startColor * 3;
 	for (uint16 i = _startColor; i <= _endColor; ++i) {
-		int16 r = *vmdPalette++;
-		int16 g = *vmdPalette++;
-		int16 b = *vmdPalette++;
+		uint8 r = *vmdPalette++;
+		uint8 g = *vmdPalette++;
+		uint8 b = *vmdPalette++;
 
 		if (_boostPercent != 100 && i >= _boostStartColor && i <= _boostEndColor) {
-			r = CLIP<int16>(r * _boostPercent / 100, 0, 255);
-			g = CLIP<int16>(g * _boostPercent / 100, 0, 255);
-			b = CLIP<int16>(b * _boostPercent / 100, 0, 255);
+			r = CLIP(r * _boostPercent / 100, 0, 255);
+			g = CLIP(g * _boostPercent / 100, 0, 255);
+			b = CLIP(b * _boostPercent / 100, 0, 255);
 		}
 
 		palette.colors[i].r = r;

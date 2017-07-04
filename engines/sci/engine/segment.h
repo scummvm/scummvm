@@ -29,6 +29,9 @@
 #include "sci/engine/vm.h"
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/util.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/palette32.h"
+#endif
 
 namespace Sci {
 
@@ -1026,7 +1029,7 @@ public:
 		setRemap(remap);
 		setDataSize(width * height);
 		WRITE_SCI11ENDIAN_UINT32(_data + 16, 0);
-		setHunkPaletteOffset(paletteSize > 0 ? (width * height) : 0);
+		setHunkPaletteOffset(paletteSize > 0 ? (bitmapHeaderSize + width * height) : 0);
 		setDataOffset(bitmapHeaderSize);
 		setUncompressedDataOffset(bitmapHeaderSize);
 		setControlOffset(0);
@@ -1099,17 +1102,7 @@ public:
 
 	BITMAP_PROPERTY(32, DataSize, 12);
 
-	inline uint32 getHunkPaletteOffset() const {
-		return READ_SCI11ENDIAN_UINT32(_data + 20);
-	}
-
-	inline void setHunkPaletteOffset(uint32 hunkPaletteOffset) {
-		if (hunkPaletteOffset) {
-			hunkPaletteOffset += getBitmapHeaderSize();
-		}
-
-		WRITE_SCI11ENDIAN_UINT32(_data + 20, hunkPaletteOffset);
-	}
+	BITMAP_PROPERTY(32, HunkPaletteOffset, 20);
 
 	BITMAP_PROPERTY(32, DataOffset, 24);
 
@@ -1160,6 +1153,14 @@ public:
 			return nullptr;
 		}
 		return _data + getHunkPaletteOffset();
+	}
+
+	inline void setPalette(const Palette &palette) {
+		byte *paletteData = getHunkPalette();
+		if (paletteData != nullptr) {
+			SciSpan<byte> paletteSpan(paletteData, getRawSize() - getHunkPaletteOffset());
+			HunkPalette::write(paletteSpan, palette);
+		}
 	}
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);

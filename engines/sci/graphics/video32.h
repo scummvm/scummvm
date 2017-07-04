@@ -308,6 +308,14 @@ private:
 	 */
 	int _lastYieldedFrameNo;
 
+	void initOverlay();
+	void renderOverlay() const;
+	void closeOverlay();
+
+	void initComposited();
+	void renderComposited() const;
+	void closeComposited();
+
 	/**
 	 * Plays the VMD until an event occurs (e.g. user
 	 * presses escape, clicks, etc.).
@@ -330,10 +338,9 @@ public:
 
 private:
 	/**
-	 * The location of the VMD plane, in game script
-	 * coordinates.
+	 * The rectangle where the video will be drawn, in screen coordinates.
 	 */
-	int16 _x, _y;
+	Common::Rect _drawRect;
 
 	/**
 	 * The plane where the VMD will be drawn.
@@ -399,9 +406,25 @@ private:
 	bool _ignorePalettes;
 
 	/**
+	 * Whether or not rendering mode is composited.
+	 */
+	bool _isComposited;
+
+	/**
+	 * Whether or not rendering of the video is being performed in high color or
+	 * better.
+	 */
+	bool _usingHighColor;
+
+	/**
 	 * Renders a frame of video to the output bitmap.
 	 */
 	void renderFrame() const;
+
+	/**
+	 * Updates the system with palette data from the video.
+	 */
+	bool updatePalette() const;
 
 	/**
 	 * Fills the given palette with RGB values from
@@ -409,6 +432,47 @@ private:
 	 * it is enabled.
 	 */
 	void fillPalette(Palette &palette) const;
+
+#ifdef USE_RGB_COLOR
+	/**
+	 * Redraws areas of the screen outside of the video to the system buffer.
+	 * This is used when
+	 */
+	void redrawGameScreen() const;
+#endif
+
+	/**
+	 * Determines whether or not the VMD player should upgrade the renderer to
+	 * high color depth when rendering the video.
+	 *
+	 * @TODO It should be possible in the future to allow high color composited
+	 * video, but this will require additional work in GfxFrameout and
+	 * GfxCursor32 since the internal buffer and cursor code are 8bpp only.
+	 */
+	bool shouldUseHighColor() const {
+#ifdef USE_RGB_COLOR
+		return ConfMan.getBool("enable_hq_video") &&
+			_priority == 0 &&
+			(_doublePixels || _stretchVertical) &&
+			!_leaveLastFrame &&
+			!_showCursor &&
+			!_blackLines;
+#else
+		return false;
+#endif
+	}
+
+	/**
+	 * Determines whether or not the video should use the compositing renderer
+	 * instead of the overlay renderer.
+	 */
+	bool shouldUseCompositing() const {
+#ifdef USE_RGB_COLOR
+		return getSciVersion() == SCI_VERSION_3 && !shouldUseHighColor();
+#else
+		return getSciVersion() == SCI_VERSION_3;
+#endif
+	}
 
 #pragma mark -
 #pragma mark VMDPlayer - Blackout

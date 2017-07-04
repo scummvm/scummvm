@@ -53,6 +53,29 @@ HunkPalette::HunkPalette(const SciSpan<const byte> &rawPalette) :
 	}
 }
 
+void HunkPalette::write(SciSpan<byte> &out, const Palette &palette) {
+	const uint8 numPalettes = 1;
+	const uint16 paletteOffset = kHunkPaletteHeaderSize + 2 * numPalettes;
+
+	out[kNumPaletteEntriesOffset] = numPalettes;
+	out[kHunkPaletteHeaderSize + 2] = paletteOffset;
+
+	SciSpan<byte> entry = out.subspan(paletteOffset);
+	entry[kEntryStartColorOffset] = 0;
+	entry.setUint16SEAt(kEntryNumColorsOffset, ARRAYSIZE(palette.colors));
+	entry[kEntryUsedOffset] = 1;
+	entry[kEntrySharedUsedOffset] = 0;
+	entry.setUint32SEAt(kEntryVersionOffset, 1);
+
+	SciSpan<byte> paletteData = entry.subspan(kEntryHeaderSize);
+	for (uint i = 0; i < ARRAYSIZE(palette.colors); ++i) {
+		*paletteData++ = palette.colors[i].used;
+		*paletteData++ = palette.colors[i].r;
+		*paletteData++ = palette.colors[i].g;
+		*paletteData++ = palette.colors[i].b;
+	}
+}
+
 void HunkPalette::setVersion(const uint32 version) const {
 	if (_numPalettes != _data.getUint8At(kNumPaletteEntriesOffset)) {
 		error("Invalid HunkPalette");
@@ -333,6 +356,9 @@ static const uint8 gammaTables[GfxPalette32::numGammaTables][256] = {
 	// Palette versioning
 	_version(1),
 	_needsUpdate(false),
+#ifdef USE_RGB_COLOR
+	_hardwarePalette(),
+#endif
 	_currentPalette(),
 	_sourcePalette(),
 	_nextPalette(),
@@ -459,7 +485,11 @@ void GfxPalette32::updateHardware() {
 		return;
 	}
 
-	byte bpal[3 * 256];
+#ifdef USE_RGB_COLOR
+	uint8 *bpal = _hardwarePalette;
+#else
+	uint8 bpal[256 * 3];
+#endif
 
 	// HACK: There are resources in a couple of Windows-only games that seem to
 	// include bogus palette entries above 236. SSCI does a lot of extra work
@@ -508,7 +538,13 @@ void GfxPalette32::updateHardware() {
 		bpal[255 * 3 + 2] = 0;
 	}
 
-	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
+	// If the system is in a high color mode, which can happen during video
+	// playback, attempting to send the palette to OSystem is illegal and will
+	// result in a crash
+	if (g_system->getScreenFormat().bytesPerPixel == 1) {
+		g_system->getPaletteManager()->setPalette(bpal, 0, 256);
+	}
+
 	_gammaChanged = false;
 }
 
