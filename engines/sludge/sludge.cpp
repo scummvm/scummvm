@@ -25,8 +25,6 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 
-#include "engines/util.h"
-
 #include "sludge/sludge.h"
 #include "sludge/main_loop.h"
 
@@ -81,7 +79,6 @@ Common::Error SludgeEngine::run() {
 	// init graphics
 	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_pixelFormat = new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	initGraphics(640, 480, false, _pixelFormat);
 
 	// create console
 	_console = new SludgeConsole(this);

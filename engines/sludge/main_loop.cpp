@@ -24,6 +24,8 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 
+#include "engines/util.h"
+
 #include "graphics/surface.h"
 
 #include "sludge/allfiles.h"
@@ -253,6 +255,10 @@ int main_loop(const char *filename)
 		return 0;
 	}
 
+	initGraphics(winWidth, winHeight, false, g_sludge->getScreenPixelFormat());
+
+	// Init screen surface
+	renderSurface.create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 #if 0
 	/* Initialize the SDL library */
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
