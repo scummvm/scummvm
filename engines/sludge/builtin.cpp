@@ -91,9 +91,7 @@ extern unsigned char brightnessLevel;
 extern unsigned char fadeMode;
 extern unsigned short saveEncoding;
 extern frozenStuffStruct *frozenStuff;
-#if 0
 extern unsigned int currentBlankColour;
-#endif
 extern unsigned int languageID;
 extern unsigned char currentBurnR, currentBurnG, currentBurnB;
 
@@ -850,9 +848,8 @@ builtIn(setBlankColour) {
 
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
-#if 0
+
 	currentBlankColour = g_sludge->getOrigPixelFormat()->RGBToColor(red & 255, green & 255, blue & 255);
-#endif
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;
 }
