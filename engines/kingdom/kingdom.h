@@ -114,9 +114,9 @@ namespace Kingdom {
 		int _gameMode;
 		int _statPlay;
 		int _oldStatPlay;
-		bool _FstFwd;
-		bool _NoIFScreen;
-		bool _Sound;
+		bool _fstFwd;
+		bool _noIFScreen;
+		bool _sound;
 		bool _LastSound;
 		int _FrameStop;
 		int _DaelonCntr;

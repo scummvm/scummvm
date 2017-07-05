@@ -78,7 +78,7 @@ void KingdomGame::GPLogic4() {
 		
 		if (_Health == 0) {
 			PlayMovie(194);
-			_NoIFScreen = 1;
+			_noIFScreen = true;
 			FShowPic(107);
 			_CurrMap = 3;
 			DsAll();
@@ -128,7 +128,7 @@ void KingdomGame::GPLogic4() {
 		
 		if (_Health == 0) {
 			PlayMovie(194);
-			_NoIFScreen = 1;
+			_noIFScreen = true;
 			FShowPic(107);
 			_CurrMap = 3;
 			DsAll();
@@ -176,7 +176,7 @@ void KingdomGame::GPLogic4() {
 		
 		if (_Health == 0) {
 			PlayMovie(194);
-			_NoIFScreen = 1;
+			_noIFScreen = true;
 			FShowPic(107);
 			_CurrMap = 3;
 			DsAll();
