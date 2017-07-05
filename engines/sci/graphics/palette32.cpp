@@ -527,6 +527,12 @@ void GfxPalette32::updateHardware() {
 		}
 	}
 
+#ifndef USE_RGB_COLOR
+	// When creating a raw palette on the stack, any skipped area of the palette
+	// needs to be blacked out or else it will contain garbage memory
+	memset(bpal + (maxIndex + 1) * 3, 0, (255 - maxIndex - 1) * 3);
+#endif
+
 	if (g_sci->getPlatform() != Common::kPlatformMacintosh) {
 		// The last color must always be white
 		bpal[255 * 3    ] = 255;
