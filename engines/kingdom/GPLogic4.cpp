@@ -27,38 +27,38 @@ namespace Kingdom {
 void KingdomGame::GPLogic4() {
 	switch(_statPlay) {
 	case 900:
-		if (_ATimer > 0) {
+		if (_aTimer > 0) {
 			PlaySound(0);
-			_ATimer = 133;
+			_aTimer = 133;
 		}
-		if (_ASMode) {
+		if (_asMode) {
 			SwitchMtoA();
 			_MapStat = 0;
 			_oldStatPlay--;
-			_ASMode = false;
+			_asMode = false;
 		}
 		SaveAS();
 		FadeToBlack2();
 
-		if (_Health == 10 || _Health == 6 || _Health == 2) {
+		if (_health == 10 || _health == 6 || _health == 2) {
 			ShowPic(121);
-			_BTimer = 38;
+			_bTimer = 38;
 			ReadMouse();
-			while (_BTimer && !_MouseButton) {
+			while (_bTimer && !_MouseButton) {
 				checkTimers();
 				RefreshSound();
 				ReadMouse();
 			}
 			
-			if (_ATimer > 0)
+			if (_aTimer > 0)
 				SetATimer();
 			
 			_UserInput = 0;
 			GPLogic4_SP901();
 		} else {
-			if (_ATimer > 0) {
+			if (_aTimer > 0) {
 				SetATimer();
-				_ATimer = 133;
+				_aTimer = 133;
 			}
 			ShowPic(120);
 			_statPlay = 901;
@@ -71,12 +71,12 @@ void KingdomGame::GPLogic4() {
 		_CurrMap = 10;
 		_UserInput = 0;
 		PlaySound(0);
-		if (_Health == 10 || _Health == 6 || _Health == 2)
-			_Health -= 2;
+		if (_health == 10 || _health == 6 || _health == 2)
+			_health -= 2;
 		else
-			_Health -= 4;
+			_health -= 4;
 		
-		if (_Health == 0) {
+		if (_health == 0) {
 			PlayMovie(194);
 			_noIFScreen = true;
 			FShowPic(107);
@@ -87,8 +87,8 @@ void KingdomGame::GPLogic4() {
 			memset(_Inventory, -1, 19);
 			_statPlay = 994;
 		} else {
-			_BTimer = 36;
-			while(_BTimer) {
+			_bTimer = 36;
+			while(_bTimer) {
 				checkTimers();
 				RefreshSound();
 			}
@@ -99,13 +99,13 @@ void KingdomGame::GPLogic4() {
 				_Nodes[49] = 0;
 			}
 
-			_ItemInhibit = false;
-			_TideCntl = false;
+			_itemInhibit = false;
+			_tideCntl = false;
 			DrawPic(179);
-			_SkylarTimer = 0;
-			_SkylarTimerFlag = false;
+			_skylarTimer = 0;
+			_skylarTimerFlag = false;
 			EnAll();
-			_MapEx = true;
+			_mapEx = true;
 			_NodeNum = 5;
 			DrawLocation();
 			PlaySound(0);
@@ -121,12 +121,12 @@ void KingdomGame::GPLogic4() {
 		_CurrMap = 10;
 		_UserInput = 0;
 		PlaySound(0);
-		if (_Health == 10 || _Health == 6 || _Health == 2)
-			_Health -= 2;
+		if (_health == 10 || _health == 6 || _health == 2)
+			_health -= 2;
 		else
-			_Health -= 4;
+			_health -= 4;
 		
-		if (_Health == 0) {
+		if (_health == 0) {
 			PlayMovie(194);
 			_noIFScreen = true;
 			FShowPic(107);
@@ -137,8 +137,8 @@ void KingdomGame::GPLogic4() {
 			memset(_Inventory, -1, 19);
 			_statPlay = 994;
 		} else {
-			_BTimer = 36;
-			while(_BTimer != 0) {
+			_bTimer = 36;
+			while(_bTimer != 0) {
 				checkTimers();
 				RefreshSound();
 			}
@@ -149,13 +149,13 @@ void KingdomGame::GPLogic4() {
 				_Nodes[49] = 0;
 			}
 
-			_ItemInhibit = false;
-			_TideCntl = false;
+			_itemInhibit = false;
+			_tideCntl = false;
 			DrawPic(179);
-			_SkylarTimer = 0;
-			_SkylarTimerFlag = false;
+			_skylarTimer = 0;
+			_skylarTimerFlag = false;
 			EnAll();
-			_MapEx = true;
+			_mapEx = true;
 			_NodeNum = 27;
 			DrawLocation();
 			_Resurrect = 1;
@@ -169,12 +169,12 @@ void KingdomGame::GPLogic4() {
 		_CurrMap = 10;
 		_UserInput = 0;
 		PlaySound(0);
-		if (_Health == 10 || _Health == 6 || _Health == 2)
-			_Health -= 2;
+		if (_health == 10 || _health == 6 || _health == 2)
+			_health -= 2;
 		else
-			_Health -= 4;
+			_health -= 4;
 		
-		if (_Health == 0) {
+		if (_health == 0) {
 			PlayMovie(194);
 			_noIFScreen = true;
 			FShowPic(107);
@@ -185,8 +185,8 @@ void KingdomGame::GPLogic4() {
 			memset(_Inventory, -1, 19);
 			_statPlay = 994;
 		} else {
-			_BTimer = 36;
-			while (_BTimer != 0) {
+			_bTimer = 36;
+			while (_bTimer != 0) {
 				checkTimers();
 				RefreshSound();
 			}
@@ -199,13 +199,13 @@ void KingdomGame::GPLogic4() {
 			if (_Nodes[68] == 1)
 				_Nodes[68] = 0;
 
-			_ItemInhibit = false;
-			_TideCntl = false;
+			_itemInhibit = false;
+			_tideCntl = false;
 			DrawPic(179);
-			_SkylarTimer = 0;
-			_SkylarTimerFlag = false;
+			_skylarTimer = 0;
+			_skylarTimerFlag = false;
 			EnAll();
-			_MapEx = true;
+			_mapEx = true;
 			_NodeNum = 52;
 			DrawLocation();
 			_Resurrect = 1;
@@ -236,21 +236,21 @@ void KingdomGame::GPLogic4_SP901() {
 	EraseCursor();
 	FadeToBlack2();
 	ShowPic(106);
-	DrawIcon(4, 0, 12 - _HealthOld);
-	if (_TideCntl)
+	DrawIcon(4, 0, 12 - _healthOld);
+	if (_tideCntl)
 		DrawPic(178);
 	else
 		DrawPic(179);
 	
 	_IconRedraw = true;
 	if (_UserInput == 0x2F1) {
-		_ASMode = false;
+		_asMode = false;
 		RestoreAS();
 		_statPlay = _oldStatPlay;
 		_loopFlag = true;
 	} else {
-		if (_Health == 10 || _Health == 6 || _Health == 2 || _UserInput < 0x400 || _UserInput > 0x427) {
-			_ASMode = false;
+		if (_health == 10 || _health == 6 || _health == 2 || _UserInput < 0x400 || _UserInput > 0x427) {
+			_asMode = false;
 			RestoreAS();
 			_statPlay = _oldStatPlay;
 		} else {
@@ -259,7 +259,7 @@ void KingdomGame::GPLogic4_SP901() {
 			Wound();
 			PlayMovie(10);
 			InventoryDel(3);
-			_TSIconOnly = 0;
+			_tsIconOnly = false;
 			EnAll();
 			SwitchAS();
 			_MapStat = 0;
