@@ -1135,7 +1135,7 @@ void Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv
 
 	if (!_state.clockTowerBridgeOpen && correctTime) {
 		_vm->_sound->replaceSoundMyst(soundId);
-		_vm->_system->delayMillis(500);
+		_vm->wait(500);
 
 		// Gears rise up
 		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack));
@@ -1150,7 +1150,7 @@ void Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		_vm->redrawArea(12);
 	} else if (_state.clockTowerBridgeOpen && !correctTime) {
 		_vm->_sound->replaceSoundMyst(soundId);
-		_vm->_system->delayMillis(500);
+		_vm->wait(500);
 
 		// Gears sink down
 		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack));
@@ -1179,7 +1179,7 @@ void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 	_vm->_gfx->copyImageSectionToScreen(4699, src, dest);
 	_vm->_system->updateScreen();
 
-	_vm->_system->delayMillis(200);
+	_vm->wait(200);
 
 	_vm->_gfx->copyBackBufferToScreen(dest);
 	_vm->_system->updateScreen();
@@ -1315,7 +1315,7 @@ void Myst::imagerValidation_run() {
 
 		_imagerValidationStep++;
 
-		_vm->_system->delayMillis(50);
+		_vm->wait(50);
 
 		_imagerRedButton->drawConditionalDataToScreen(0);
 
@@ -1763,7 +1763,7 @@ void Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		uint32 end = _vm->_system->getMillis() + 32 * ABS(distance) / 50 + 800;
 
 		while (end > _vm->_system->getMillis()) {
-			_vm->_system->delayMillis(50);
+			_vm->wait(50);
 
 			observatoryUpdateVisualizer(_vm->_rnd->getRandomNumber(409), _vm->_rnd->getRandomNumber(409));
 
@@ -2231,35 +2231,35 @@ void Myst::rocketCheckSolution() {
 	soundId = rocketSliderGetSound(_rocketSlider1->_pos.y);
 	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider1->drawConditionalDataToScreen(2);
-	_vm->_system->delayMillis(250);
+	_vm->wait(250);
 	if (soundId != 9558)
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider2->_pos.y);
 	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider2->drawConditionalDataToScreen(2);
-	_vm->_system->delayMillis(250);
+	_vm->wait(250);
 	if (soundId != 9546)
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider3->_pos.y);
 	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider3->drawConditionalDataToScreen(2);
-	_vm->_system->delayMillis(250);
+	_vm->wait(250);
 	if (soundId != 9543)
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider4->_pos.y);
 	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider4->drawConditionalDataToScreen(2);
-	_vm->_system->delayMillis(250);
+	_vm->wait(250);
 	if (soundId != 9553)
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider5->_pos.y);
 	_vm->_sound->replaceSoundMyst(soundId);
 	_rocketSlider5->drawConditionalDataToScreen(2);
-	_vm->_system->delayMillis(250);
+	_vm->wait(250);
 	if (soundId != 9560)
 		solved = false;
 
@@ -3011,7 +3011,7 @@ void Myst::clockGearsCheckSolution() {
 		_clockWeightPosition = 2214;
 
 		_vm->_sound->replaceSoundMyst(6113);
-		_vm->_system->delayMillis(1000);
+		_vm->wait(1000);
 		_vm->_sound->replaceSoundMyst(7113);
 
 		// Gear opening video
@@ -3067,7 +3067,7 @@ void Myst::clockReset() {
 	// Close gear
 	if (_state.gearsOpen) {
 		_vm->_sound->replaceSoundMyst(6113);
-		_vm->_system->delayMillis(1000);
+		_vm->wait(1000);
 		_vm->_sound->replaceSoundMyst(7113);
 
 		// Gear closing movie
@@ -3544,33 +3544,33 @@ void Myst::observatory_run() {
 		if (observatoryIsDDMMYYYY2400()) {
 			_vm->_sound->replaceSoundMyst(8500);
 			_observatoryDaySlider->drawConditionalDataToScreen(2);
-			_vm->_system->delayMillis(200);
+			_vm->wait(200);
 			_vm->redrawResource(_observatoryDaySlider);
 
 			_vm->_sound->replaceSoundMyst(8500);
 			_observatoryMonthSlider->drawConditionalDataToScreen(2);
-			_vm->_system->delayMillis(200);
+			_vm->wait(200);
 			_vm->redrawResource(_observatoryMonthSlider);
 		} else {
 			_vm->_sound->replaceSoundMyst(8500);
 			_observatoryMonthSlider->drawConditionalDataToScreen(2);
-			_vm->_system->delayMillis(200);
+			_vm->wait(200);
 			_vm->redrawResource(_observatoryMonthSlider);
 
 			_vm->_sound->replaceSoundMyst(8500);
 			_observatoryDaySlider->drawConditionalDataToScreen(2);
-			_vm->_system->delayMillis(200);
+			_vm->wait(200);
 			_vm->redrawResource(_observatoryDaySlider);
 		}
 
 		_vm->_sound->replaceSoundMyst(8500);
 		_observatoryYearSlider->drawConditionalDataToScreen(2);
-		_vm->_system->delayMillis(200);
+		_vm->wait(200);
 		_vm->redrawResource(_observatoryYearSlider);
 
 		_vm->_sound->replaceSoundMyst(8500);
 		_observatoryTimeSlider->drawConditionalDataToScreen(2);
-		_vm->_system->delayMillis(200);
+		_vm->wait(200);
 		_vm->redrawResource(_observatoryTimeSlider);
 
 		_vm->_cursor->showCursor();

@@ -363,7 +363,7 @@ void Selenitic::mazeRunnerBacktrack(uint16 &oldPosition) {
 		}
 
 		_mazeRunnerCompass->drawConditionalDataToScreen(_mazeRunnerDirection);
-		_vm->_system->delayMillis(150);
+		_vm->wait(150);
 	}
 }
 
@@ -608,8 +608,7 @@ void Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 
 		soundReceiverDrawView();
 		uint16 soundId = soundReceiverCurrentSound(source, *_soundReceiverPosition);
 		_vm->_sound->replaceBackgroundMyst(soundId);
-		_vm->_system->delayMillis(1000);
-		_vm->pollAndDiscardEvents();
+		_vm->wait(1000);
 	}
 
 	_soundReceiverPosition = oldPosition;
@@ -870,8 +869,7 @@ void Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *a
 void Selenitic::soundLockCheckSolution(MystAreaSlider *slider, uint16 value, uint16 solution, bool &solved) {
 	slider->drawConditionalDataToScreen(2);
 	_vm->_sound->replaceSoundMyst(soundLockCurrentSound(value / 12, false));
-	_vm->_system->delayMillis(1500);
-	_vm->pollAndDiscardEvents();
+	_vm->wait(1500);
 
 	if (value / 12 != solution)
 		solved = false;

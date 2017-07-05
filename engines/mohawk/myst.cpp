@@ -370,16 +370,16 @@ bool MohawkEngine_Myst::pollEvent(Common::Event &event) {
 	return eventReturned;
 }
 
-bool MohawkEngine_Myst::skippableWait(uint32 duration) {
-	uint32 end = _system->getMillis() + duration;
+bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
+	uint32 end = getTotalPlayTime() + duration;
 	bool skipped = false;
 
-	while (_system->getMillis() < end && !skipped) {
+	while (getTotalPlayTime() < end && !skipped && !shouldQuit()) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONUP:
-				skipped = true;
+				skipped = skippable;
 				break;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
@@ -387,7 +387,7 @@ bool MohawkEngine_Myst::skippableWait(uint32 duration) {
 					pauseGame();
 					break;
 				case Common::KEYCODE_ESCAPE:
-					skipped = true;
+					skipped = skippable;
 					break;
 				default:
 					break;

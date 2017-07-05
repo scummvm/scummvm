@@ -401,7 +401,7 @@ void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint
 				break;
 
 			_vm->redrawArea(12);
-			_vm->_system->delayMillis(100);
+			_vm->wait(100);
 		}
 
 		// Increment position
@@ -633,7 +633,7 @@ void Mechanical::elevatorGoMiddle_run() {
 				_vm->_sound->playSoundBlocking(13120);
 				_vm->_sound->replaceSoundMyst(8120);
 				_vm->_gfx->copyImageToBackBuffer(6327, Common::Rect(544, 333));
-				_vm->_system->delayMillis(500);
+				_vm->wait(500);
 				_vm->_sound->replaceSoundMyst(9120);
 				static uint16 moviePos[2] = { 3540, 5380 };
 				o_elevatorWindowMovie(121, 0, 2, moviePos);
@@ -690,7 +690,7 @@ void Mechanical::o_elevatorWaitTimeout(uint16 op, uint16 var, uint16 argc, uint1
 	// Wait while the elevator times out
 	while (_elevatorGoingMiddle) {
 		runPersistentScripts();
-		_vm->skippableWait(10);
+		_vm->_system->delayMillis(10);
 	}
 }
 
@@ -788,7 +788,7 @@ void Mechanical::elevatorRotation_run() {
 
 		_vm->_sound->replaceSoundMyst(_elevatorRotationSoundId);
 		_vm->redrawArea(11);
-		_vm->_system->delayMillis(100);
+		_vm->wait(100);
 	}
 }
 
@@ -913,7 +913,7 @@ void Mechanical::fortressSimulation_run() {
 	if (_fortressSimulationInit) {
 		// Init sequence
 		_vm->_sound->replaceBackgroundMyst(_fortressSimulationStartSound1, 65535);
-		_vm->skippableWait(5000);
+		_vm->wait(5000, true);
 		_vm->_sound->replaceSoundMyst(_fortressSimulationStartSound2);
 
 		// Update movie while the sound is playing

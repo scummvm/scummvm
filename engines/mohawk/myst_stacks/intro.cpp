@@ -155,7 +155,7 @@ void Intro::mystLinkBook_run() {
 	if (_startTime == 1) {
 		_startTime = 0;
 
-		if (!_vm->skippableWait(5000)) {
+		if (!_vm->wait(5000, true)) {
 			_linkBookMovie->playMovie();
 			_vm->_gfx->copyImageToBackBuffer(4, Common::Rect(544, 333));
 			_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));

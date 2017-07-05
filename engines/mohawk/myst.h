@@ -188,7 +188,7 @@ public:
 	void checkCursorHints();
 	MystArea *updateCurrentResource();
 	void pollAndDiscardEvents();
-	bool skippableWait(uint32 duration);
+	bool wait(uint32 duration, bool skippable = false);
 
 	MystSoundBlock readSoundBlock(Common::ReadStream *stream) const;
 	void applySoundBlock(const MystSoundBlock &block);
