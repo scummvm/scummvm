@@ -56,80 +56,191 @@ namespace Graphics { struct Surface; }
 
 namespace Sci {
 
-/**
- * @returns true if the player should quit
- */
-static bool flushEvents(EventManager *eventMan) {
+static void flushEvents(EventManager *eventMan) {
 	// Flushing all the keyboard and mouse events out of the event manager
 	// keeps events queued from before the start of playback from accidentally
 	// activating a video stop flag
 	for (;;) {
-		const SciEvent event = eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_MOUSE_PRESS | SCI_EVENT_MOUSE_RELEASE | SCI_EVENT_HOT_RECTANGLE | SCI_EVENT_QUIT);
+		const SciEvent event = eventMan->getSciEvent(SCI_EVENT_ANY & ~SCI_EVENT_QUIT);
 		if (event.type == SCI_EVENT_NONE) {
 			break;
-		} else if (event.type == SCI_EVENT_QUIT) {
-			return true;
 		}
 	}
+}
+
+bool VideoPlayer::open(const Common::String &fileName) {
+	if (!_decoder->loadFile(fileName)) {
+		warning("Failed to load %s", fileName.c_str());
+		return false;
+	}
+
+#ifndef USE_RGB_COLOR
+	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on
+	// a system with no RGB support
+	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
+		void showScummVMDialog(const Common::String &message);
+		showScummVMDialog(Common::String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
+		_decoder->close();
+		return false;
+	}
+#endif
+
+	return true;
+}
+
+bool VideoPlayer::startHQVideo() {
+#ifdef USE_RGB_COLOR
+	// Optimize rendering performance for unscaled videos, and allow
+	// better-than-NN interpolation for videos that are scaled
+	if (shouldStartHQVideo()) {
+		// TODO: Search for and use the best supported format (which may be
+		// lower than 32bpp) once the scaling code in Graphics supports
+		// 16bpp/24bpp, and once the SDL backend can correctly communicate
+		// supported pixel formats above whatever format is currently used by
+		// _hwsurface. Right now, this will either show an error dialog (OpenGL)
+		// or just crash entirely (SDL) if the backend does not support this
+		// 32bpp pixel format, which sucks since this code really ought to be
+		// able to fall back to NN scaling for games with 256-color videos
+		// without any error.
+		const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		g_sci->_gfxFrameout->setPixelFormat(format);
+		_hqVideoMode = (g_system->getScreenFormat() == format);
+		return _hqVideoMode;
+	} else {
+		_hqVideoMode = false;
+	}
+#endif
 
 	return false;
 }
 
-static void directWriteToSystem(Video::VideoDecoder *decoder, const Common::Rect &drawRect, const bool setSystemPalette, const Graphics::Surface *nextFrame = nullptr) {
-
-	// VMDPlayer needs to decode the frame early so it can submit palette
-	// updates; calling decodeNextFrame again loses frames
-	if (!nextFrame) {
-		nextFrame = decoder->decodeNextFrame();
+bool VideoPlayer::endHQVideo() {
+#ifdef USE_RGB_COLOR
+	if (g_system->getScreenFormat().bytesPerPixel != 1) {
+		const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+		g_sci->_gfxFrameout->setPixelFormat(format);
+		assert(g_system->getScreenFormat() == format);
+		_hqVideoMode = false;
+		return true;
 	}
-	assert(nextFrame);
+#endif
 
-	if (setSystemPalette &&
-		g_system->getScreenFormat().bytesPerPixel == 1 &&
-		decoder->hasDirtyPalette()) {
+	return false;
+}
 
-		const uint8 *palette = decoder->getPalette();
-		assert(palette);
-		g_system->getPaletteManager()->setPalette(palette, 0, 256);
+VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, const uint32 maxSleepMs) {
+	flushEvents(_eventMan);
+	_decoder->start();
 
-		// KQ7 1.x has videos encoded using Microsoft Video 1 where palette 0 is
-		// white and 255 is black, which is basically the opposite of DOS/Win
-		// SCI palettes. So, when drawing to an 8bpp hwscreen, whenever a new
-		// palette is seen, the screen must be re-filled with the new black
-		// entry to ensure areas outside the video are always black and not some
-		// other color
-		for (int color = 0; color < 256; ++color) {
-			if (palette[0] == 0 && palette[1] == 0 && palette[2] == 0) {
-				g_system->fillScreen(color);
-				break;
+	EventFlags stopFlag = kEventFlagNone;
+	for (;;) {
+		g_sci->sleep(MIN(_decoder->getTimeToNextFrame(), maxSleepMs));
+		const Graphics::Surface *nextFrame = nullptr;
+		// If a decoder needs more than one update per loop, this means we are
+		// running behind and should skip rendering these frames (but must still
+		// submit any palettes from skipped frames)
+		while (_decoder->needsUpdate()) {
+			nextFrame = _decoder->decodeNextFrame();
+			if (_decoder->hasDirtyPalette()) {
+				submitPalette(_decoder->getPalette());
 			}
-			palette += 3;
+		}
+
+		// Some frames may contain only audio and/or palette data; this occurs
+		// with Duck videos and is not an error
+		if (nextFrame) {
+			renderFrame(*nextFrame);
+		}
+
+		stopFlag = checkForEvent(flags);
+		if (stopFlag != kEventFlagNone) {
+			break;
 		}
 	}
 
+	return stopFlag;
+}
+
+VideoPlayer::EventFlags VideoPlayer::checkForEvent(const EventFlags flags) {
+	if (g_engine->shouldQuit() || _decoder->endOfVideo()) {
+		return kEventFlagEnd;
+	}
+
+	SciEvent event = _eventMan->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK);
+	if ((flags & kEventFlagMouseDown) && event.type == SCI_EVENT_MOUSE_PRESS) {
+		return kEventFlagMouseDown;
+	}
+
+	event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
+	if ((flags & kEventFlagEscapeKey) && event.type == SCI_EVENT_KEYBOARD) {
+		if (getSciVersion() < SCI_VERSION_3) {
+			while ((event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD)),
+				   event.type != SCI_EVENT_NONE) {
+				if (event.character == SCI_KEY_ESC) {
+					return kEventFlagEscapeKey;
+				}
+			}
+		} else if (event.character == SCI_KEY_ESC) {
+			return kEventFlagEscapeKey;
+		}
+	}
+
+	return kEventFlagNone;
+}
+
+void VideoPlayer::submitPalette(const uint8 palette[256 * 3]) const {
+#ifdef USE_RGB_COLOR
+	if (g_system->getScreenFormat().bytesPerPixel != 1) {
+		return;
+	}
+#endif
+
+	assert(palette);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+	// KQ7 1.x has videos encoded using Microsoft Video 1 where palette 0 is
+	// white and 255 is black, which is basically the opposite of DOS/Win
+	// SCI palettes. So, when drawing to an 8bpp hwscreen, whenever a new
+	// palette is seen, the screen must be re-filled with the new black
+	// entry to ensure areas outside the video are always black and not some
+	// other color
+	for (int color = 0; color < 256; ++color) {
+		if (palette[0] == 0 && palette[1] == 0 && palette[2] == 0) {
+			g_system->fillScreen(color);
+			break;
+		}
+		palette += 3;
+	}
+}
+
+void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 	bool freeConvertedFrame;
 	Graphics::Surface *convertedFrame;
 	// Avoid creating a duplicate copy of the surface when it is not necessary
-	if (decoder->getPixelFormat() == g_system->getScreenFormat()) {
+	if (_decoder->getPixelFormat() == g_system->getScreenFormat()) {
 		freeConvertedFrame = false;
-		convertedFrame = const_cast<Graphics::Surface *>(nextFrame);
+		convertedFrame = const_cast<Graphics::Surface *>(&nextFrame);
 	} else {
 		freeConvertedFrame = true;
-		convertedFrame = nextFrame->convertTo(g_system->getScreenFormat(), decoder->getPalette());
+		convertedFrame = nextFrame.convertTo(g_system->getScreenFormat(), _decoder->getPalette());
 	}
 	assert(convertedFrame);
 
-	if (decoder->getWidth() != drawRect.width() || decoder->getHeight() != drawRect.height()) {
+	if (_decoder->getWidth() != _drawRect.width() || _decoder->getHeight() != _drawRect.height()) {
 		Graphics::Surface *const unscaledFrame(convertedFrame);
+		// TODO: The only reason TransparentSurface is used here because it is
+		// where common scaler code is right now.
 		const Graphics::TransparentSurface tsUnscaledFrame(*unscaledFrame);
 #ifdef USE_RGB_COLOR
-		if (g_system->getScreenFormat().bytesPerPixel != 1) {
-			convertedFrame = tsUnscaledFrame.scaleT<Graphics::FILTER_BILINEAR>(drawRect.width(), drawRect.height());
+		if (_hqVideoMode) {
+			convertedFrame = tsUnscaledFrame.scaleT<Graphics::FILTER_BILINEAR>(_drawRect.width(), _drawRect.height());
 		} else {
-#else
+#elif 1
 		{
+#else
+		}
 #endif
-			convertedFrame = tsUnscaledFrame.scaleT<Graphics::FILTER_NEAREST>(drawRect.width(), drawRect.height());
+			convertedFrame = tsUnscaledFrame.scaleT<Graphics::FILTER_NEAREST>(_drawRect.width(), _drawRect.height());
 		}
 		assert(convertedFrame);
 		if (freeConvertedFrame) {
@@ -139,29 +250,50 @@ static void directWriteToSystem(Video::VideoDecoder *decoder, const Common::Rect
 		freeConvertedFrame = true;
 	}
 
-	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, drawRect.left, drawRect.top, convertedFrame->w, convertedFrame->h);
+	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, _drawRect.left, _drawRect.top, convertedFrame->w, convertedFrame->h);
 	g_sci->_gfxFrameout->updateScreen();
+
 	if (freeConvertedFrame) {
 		convertedFrame->free();
 		delete convertedFrame;
 	}
 }
 
+template <typename PixelType>
+void VideoPlayer::renderLQToSurface(Graphics::Surface &out, const Graphics::Surface &nextFrame, const bool doublePixels, const bool blackLines) const {
+
+	const int lineCount = blackLines ? 2 : 1;
+	if (doublePixels) {
+		for (int16 y = 0; y < nextFrame.h * 2; y += lineCount) {
+			const PixelType *source = (const PixelType *)nextFrame.getBasePtr(0, y >> 1);
+			PixelType *target = (PixelType *)out.getBasePtr(0, y);
+			for (int16 x = 0; x < nextFrame.w; ++x) {
+				*target++ = *source;
+				*target++ = *source++;
+			}
+		}
+	} else if (blackLines) {
+		for (int16 y = 0; y < nextFrame.h; y += lineCount) {
+			const PixelType *source = (const PixelType *)nextFrame.getBasePtr(0, y);
+			PixelType *target = (PixelType *)out.getBasePtr(0, y);
+			memcpy(target, source, out.w * sizeof(PixelType));
+		}
+	} else {
+		out.copyRectToSurface(nextFrame.getPixels(), nextFrame.pitch, 0, 0, nextFrame.w, nextFrame.h);
+	}
+}
+
 #pragma mark SEQPlayer
 
-SEQPlayer::SEQPlayer(SegManager *segMan, EventManager *eventMan) :
-	_segMan(segMan),
-	_eventMan(eventMan),
-	_decoder(nullptr) {}
+SEQPlayer::SEQPlayer(EventManager *eventMan) :
+	VideoPlayer(eventMan) {}
 
-void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const int16 x, const int16 y) {
+void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const int16, const int16) {
 
-	close();
+	_decoder.reset(new SEQDecoder(numTicks));
 
-	_decoder = new SEQDecoder(numTicks);
-	if (!_decoder->loadFile(fileName)) {
-		warning("[SEQPlayer::play]: Failed to load %s", fileName.c_str());
-		delete _decoder;
+	if (!VideoPlayer::open(fileName)) {
+		_decoder.reset();
 		return;
 	}
 
@@ -183,113 +315,34 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 	_drawRect.setWidth(scaledWidth);
 	_drawRect.setHeight(scaledHeight);
 
-#ifdef USE_RGB_COLOR
-	// Optimize rendering performance for unscaled videos, and allow
-	// better-than-NN interpolation for videos that are scaled
-	if (ConfMan.getBool("enable_hq_video") &&
-		(_decoder->getWidth() != scaledWidth || _decoder->getHeight() != scaledHeight)) {
-		// TODO: Search for and use the best supported format (which may be
-		// lower than 32bpp) once the scaling code in Graphics supports
-		// 16bpp/24bpp, and once the SDL backend can correctly communicate
-		// supported pixel formats above whatever format is currently used by
-		// _hwsurface. Right now, this will just crash ScummVM if the backend
-		// does not support a 32bpp pixel format, which sucks since this code
-		// really ought to be able to fall back to NN scaling for games with
-		// 256-color videos.
-		const Graphics::PixelFormat format = Graphics::createPixelFormat<8888>();
-		g_sci->_gfxFrameout->setPixelFormat(format);
-	}
-#endif
-
-	_decoder->start();
-
-	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
-		g_sci->sleep(_decoder->getTimeToNextFrame());
-		while (_decoder->needsUpdate()) {
-			renderFrame();
-		}
-
-		// SSCI did not allow SEQ animations to be bypassed like this
-		SciEvent event = _eventMan->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK);
-		if (event.type == SCI_EVENT_MOUSE_PRESS) {
-			break;
-		}
-
-		event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
-		if (event.type == SCI_EVENT_KEYBOARD) {
-			bool stop = false;
-			while ((event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD)),
-				   event.type != SCI_EVENT_NONE) {
-				if (event.character == SCI_KEY_ESC) {
-					stop = true;
-					break;
-				}
-			}
-
-			if (stop) {
-				break;
-			}
-		}
-	}
-
-	close();
-}
-
-void SEQPlayer::renderFrame() const {
-	directWriteToSystem(_decoder, _drawRect, true);
-}
-
-void SEQPlayer::close() {
-#ifdef USE_RGB_COLOR
-	if (g_system->getScreenFormat().bytesPerPixel != 1) {
-		const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-		g_sci->_gfxFrameout->setPixelFormat(format);
-	}
-#endif
-
+	startHQVideo();
+	playUntilEvent(kEventFlagMouseDown | kEventFlagEscapeKey);
+	endHQVideo();
 	g_system->fillScreen(0);
-	delete _decoder;
-	_decoder = nullptr;
+	_decoder.reset();
 }
 
 #pragma mark -
 #pragma mark AVIPlayer
 
 AVIPlayer::AVIPlayer(EventManager *eventMan) :
-	_eventMan(eventMan),
-	_decoder(new Video::AVIDecoder(Audio::Mixer::kSFXSoundType)),
+	VideoPlayer(eventMan, new Video::AVIDecoder(Audio::Mixer::kSFXSoundType)),
 	_status(kAVINotOpen) {}
-
-AVIPlayer::~AVIPlayer() {
-	close();
-	delete _decoder;
-}
 
 AVIPlayer::IOStatus AVIPlayer::open(const Common::String &fileName) {
 	if (_status != kAVINotOpen) {
 		close();
 	}
 
-	if (!_decoder->loadFile(fileName)) {
+	if (!VideoPlayer::open(fileName)) {
 		return kIOFileNotFound;
 	}
-
-#ifndef USE_RGB_COLOR
-	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on
-	// a system with no RGB support
-	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
-		void showScummVMDialog(const Common::String &message);
-		showScummVMDialog(Common::String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
-		_decoder->close();
-		return kIOFileNotFound;
-	}
-#endif
 
 	_status = kAVIOpen;
 	return kIOSuccess;
 }
 
-AVIPlayer::IOStatus AVIPlayer::init(const bool pixelDouble) {
+AVIPlayer::IOStatus AVIPlayer::init(const bool doublePixels) {
 	// Calls to initialize the AVI player in SCI can be made in a few ways:
 	//
 	// * kShowMovie(WinInit, x, y) to render the video at (x,y) using its
@@ -322,7 +375,7 @@ AVIPlayer::IOStatus AVIPlayer::init(const bool pixelDouble) {
 
 	int16 width = _decoder->getWidth();
 	int16 height = _decoder->getHeight();
-	if (pixelDouble) {
+	if (doublePixels) {
 		width *= 2;
 		height *= 2;
 	}
@@ -342,28 +395,8 @@ AVIPlayer::IOStatus AVIPlayer::init(const bool pixelDouble) {
 	_drawRect.setWidth(width);
 	_drawRect.setHeight(height);
 
-#ifdef USE_RGB_COLOR
-	// Optimize rendering performance for unscaled videos, and allow
-	// better-than-NN interpolation for videos that are scaled
-	if (ConfMan.getBool("enable_hq_video") &&
-		(_decoder->getWidth() != width || _decoder->getHeight() != height)) {
-
-		// TODO: Search for and use the best supported format (which may be
-		// lower than 32bpp) once the scaling code in Graphics supports
-		// 16bpp/24bpp, and once the SDL backend can correctly communicate
-		// supported pixel formats above whatever format is currently used by
-		// _hwsurface. Right now, this will just crash ScummVM if the backend
-		// does not support a 32bpp pixel format, which sucks since this code
-		// really ought to be able to fall back to NN scaling for games with
-		// 256-color videos.
-		const Graphics::PixelFormat format = Graphics::createPixelFormat<8888>();
-		g_sci->_gfxFrameout->setPixelFormat(format);
-	} else {
-#else
-	{
-#endif
-		const Graphics::PixelFormat format = _decoder->getPixelFormat();
-		g_sci->_gfxFrameout->setPixelFormat(format);
+	if (!startHQVideo() && _decoder->getPixelFormat().bytesPerPixel != 1) {
+		g_sci->_gfxFrameout->setPixelFormat(_decoder->getPixelFormat());
 	}
 
 	return kIOSuccess;
@@ -379,10 +412,8 @@ AVIPlayer::IOStatus AVIPlayer::play(const int16 from, const int16 to, const int1
 		_decoder->setEndFrame(to);
 	}
 
-	if (!async) {
-		renderVideo();
-	} else if (getSciVersion() == SCI_VERSION_2_1_EARLY) {
-		playUntilEvent((EventFlags)(kEventFlagEnd | kEventFlagEscapeKey));
+	if (!async || getSciVersion() == SCI_VERSION_2_1_EARLY) {
+		playUntilEvent(kEventFlagNone);
 	} else {
 		_status = kAVIPlaying;
 	}
@@ -390,15 +421,11 @@ AVIPlayer::IOStatus AVIPlayer::play(const int16 from, const int16 to, const int1
 	return kIOSuccess;
 }
 
-void AVIPlayer::renderVideo() const {
-	_decoder->start();
-
-	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
-		g_sci->sleep(_decoder->getTimeToNextFrame());
-		while (_decoder->needsUpdate()) {
-			renderFrame();
-		}
-	}
+AVIPlayer::EventFlags AVIPlayer::playUntilEvent(const EventFlags flags, const uint32 maxSleepMs) {
+	// NOTE: In SSCI, whether or not a video could be skipped was controlled by
+	// game scripts; here, we always allow skipping video with the mouse or
+	// escape key, to improve the user experience
+	return VideoPlayer::playUntilEvent(flags | kEventFlagMouseDown | kEventFlagEscapeKey, maxSleepMs);
 }
 
 AVIPlayer::IOStatus AVIPlayer::close() {
@@ -406,16 +433,15 @@ AVIPlayer::IOStatus AVIPlayer::close() {
 		return kIOSuccess;
 	}
 
-#ifdef USE_RGB_COLOR
-	if (g_system->getScreenFormat().bytesPerPixel != 1) {
-		const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-		g_sci->_gfxFrameout->setPixelFormat(format);
+	if (!endHQVideo()) {
+		// This fixes a single-frame white flash after playback of the KQ7 1.x
+		// videos, which replace palette entry 0 with white
+		const uint8 black[3] = { 0, 0, 0 };
+		g_system->getPaletteManager()->setPalette(black, 0, 1);
 	}
-#endif
 
 	g_system->fillScreen(0);
 	g_sci->_gfxCursor32->unhide();
-
 	_decoder->close();
 	_status = kAVINotOpen;
 	return kIOSuccess;
@@ -438,59 +464,12 @@ uint16 AVIPlayer::getDuration() const {
 	return _decoder->getFrameCount();
 }
 
-void AVIPlayer::renderFrame() const {
-	directWriteToSystem(_decoder, _drawRect, true);
-}
-
-AVIPlayer::EventFlags AVIPlayer::playUntilEvent(EventFlags flags) {
-	_decoder->start();
-
-	EventFlags stopFlag = kEventFlagNone;
-	while (!g_engine->shouldQuit()) {
-		if (_decoder->endOfVideo()) {
-			stopFlag = kEventFlagEnd;
-			break;
-		}
-
-		g_sci->sleep(_decoder->getTimeToNextFrame());
-		while (_decoder->needsUpdate()) {
-			renderFrame();
-		}
-
-		SciEvent event = _eventMan->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK);
-		if ((flags & kEventFlagMouseDown) && event.type == SCI_EVENT_MOUSE_PRESS) {
-			stopFlag = kEventFlagMouseDown;
-			break;
-		}
-
-		event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
-		if ((flags & kEventFlagEscapeKey) && event.type == SCI_EVENT_KEYBOARD) {
-			bool stop = false;
-			while ((event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD)),
-				   event.type != SCI_EVENT_NONE) {
-				if (event.character == SCI_KEY_ESC) {
-					stop = true;
-					break;
-				}
-			}
-
-			if (stop) {
-				stopFlag = kEventFlagEscapeKey;
-				break;
-			}
-		}
-	}
-
-	return stopFlag;
-}
-
 #pragma mark -
 #pragma mark VMDPlayer
 
-VMDPlayer::VMDPlayer(SegManager *segMan, EventManager *eventMan) :
+VMDPlayer::VMDPlayer(EventManager *eventMan, SegManager *segMan) :
+	VideoPlayer(eventMan, new Video::AdvancedVMDDecoder(Audio::Mixer::kSFXSoundType)),
 	_segMan(segMan),
-	_eventMan(eventMan),
-	_decoder(new Video::AdvancedVMDDecoder(Audio::Mixer::kSFXSoundType)),
 
 	_isOpen(false),
 	_isInitialized(false),
@@ -525,7 +504,6 @@ VMDPlayer::VMDPlayer(SegManager *segMan, EventManager *eventMan) :
 
 VMDPlayer::~VMDPlayer() {
 	close();
-	delete _decoder;
 }
 
 #pragma mark -
@@ -673,14 +651,11 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 	return playUntilEvent(flags);
 }
 
-VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
-	if (flushEvents(_eventMan)) {
-		return kEventFlagEnd;
-	}
-
+VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags, const uint32) {
 	if (flags & kEventFlagReverse) {
 		// NOTE: This flag may not work properly since SSCI does not care
 		// if a video has audio, but the VMD decoder does.
+		warning("VMD reverse playback flag was set. Please report this event to the bug tracker");
 		const bool success = _decoder->setReverse(true);
 		assert(success);
 		_decoder->setVolume(0);
@@ -700,86 +675,53 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 
 		if (shouldUseCompositing()) {
 			_isComposited = true;
-			_usingHighColor = false;
 			initComposited();
 		} else {
 			_isComposited = false;
-			_usingHighColor = shouldUseHighColor();
 			initOverlay();
 		}
-
-		_decoder->start();
 	}
 
-	EventFlags stopFlag = kEventFlagNone;
-	while (!g_engine->shouldQuit()) {
-		if (_decoder->endOfVideo()) {
-			stopFlag = kEventFlagEnd;
-			break;
-		}
+	// Sleeping any more than 1/60th of a second will make the mouse feel
+	// very sluggish during VMD action sequences because the frame rate of
+	// VMDs is usually only 15fps
+	return VideoPlayer::playUntilEvent(flags, 10);
+}
 
-		// Sleeping any more than 1/60th of a second will make the mouse feel
-		// very sluggish during VMD action sequences because the frame rate of
-		// VMDs is usually only 15fps
-		g_sci->sleep(MIN<uint32>(10, _decoder->getTimeToNextFrame()));
-		while (_decoder->needsUpdate()) {
-			renderFrame();
-		}
+VMDPlayer::EventFlags VMDPlayer::checkForEvent(const EventFlags flags) {
+	const int currentFrameNo = _decoder->getCurFrame();
 
-		const int currentFrameNo = _decoder->getCurFrame();
-
-		if (currentFrameNo == _yieldFrame) {
-			stopFlag = kEventFlagEnd;
-			break;
-		}
-
-		if (_yieldInterval > 0 &&
-			currentFrameNo != _lastYieldedFrameNo &&
-			(currentFrameNo % _yieldInterval) == 0
-		) {
-			_lastYieldedFrameNo = currentFrameNo;
-			stopFlag = kEventFlagYieldToVM;
-			break;
-		}
-
-		SciEvent event = _eventMan->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK);
-		if ((flags & kEventFlagMouseDown) && event.type == SCI_EVENT_MOUSE_PRESS) {
-			stopFlag = kEventFlagMouseDown;
-			break;
-		}
-
-		event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
-		if ((flags & kEventFlagEscapeKey) && event.type == SCI_EVENT_KEYBOARD) {
-			bool stop = false;
-			if (getSciVersion() < SCI_VERSION_3) {
-				while ((event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD)),
-					   event.type != SCI_EVENT_NONE) {
-					if (event.character == SCI_KEY_ESC) {
-						stop = true;
-						break;
-					}
-				}
-			} else {
-				stop = (event.character == SCI_KEY_ESC);
-			}
-
-			if (stop) {
-				stopFlag = kEventFlagEscapeKey;
-				break;
-			}
-		}
-
-		event = _eventMan->getSciEvent(SCI_EVENT_HOT_RECTANGLE | SCI_EVENT_PEEK);
-		if ((flags & kEventFlagHotRectangle) && event.type == SCI_EVENT_HOT_RECTANGLE) {
-			stopFlag = kEventFlagHotRectangle;
-			break;
-		}
+	if (currentFrameNo == _yieldFrame) {
+		return kEventFlagEnd;
 	}
 
-	return stopFlag;
+	if (_yieldInterval > 0 &&
+		currentFrameNo != _lastYieldedFrameNo &&
+		(currentFrameNo % _yieldInterval) == 0) {
+
+		_lastYieldedFrameNo = currentFrameNo;
+		return kEventFlagYieldToVM;
+	}
+
+	EventFlags stopFlag = VideoPlayer::checkForEvent(flags);
+	if (stopFlag) {
+		return stopFlag;
+	}
+
+	const SciEvent event = _eventMan->getSciEvent(SCI_EVENT_HOT_RECTANGLE | SCI_EVENT_PEEK);
+	if ((flags & kEventFlagHotRectangle) && event.type == SCI_EVENT_HOT_RECTANGLE) {
+		return kEventFlagHotRectangle;
+	}
+
+	return kEventFlagNone;
 }
 
 void VMDPlayer::initOverlay() {
+	// Make sure that any pending graphics changes from the game are submitted
+	// before starting playback, since if they aren't, and the video player
+	// yields back to the VM in the middle of playback, there may be a flash of
+	// content that draws over the video. (This happens when subtitles are
+	// enabled in Shivers.)
 	g_sci->_gfxFrameout->frameOut(true);
 
 #ifdef USE_RGB_COLOR
@@ -787,11 +729,7 @@ void VMDPlayer::initOverlay() {
 	// writing to an intermediate 4bpp surface and using that surface during
 	// cursor drawing, or by promoting the cursor code to use CursorMan, if
 	// possible
-	if (_usingHighColor) {
-		// TODO: 8888 is used here because 4bpp is the only format currently
-		// supported by the common scaling code
-		const Graphics::PixelFormat format = Graphics::createPixelFormat<8888>();
-		g_sci->_gfxFrameout->setPixelFormat(format);
+	if (startHQVideo()) {
 		redrawGameScreen();
 	}
 #endif
@@ -799,7 +737,12 @@ void VMDPlayer::initOverlay() {
 
 #ifdef USE_RGB_COLOR
 void VMDPlayer::redrawGameScreen() const {
+	if (!_hqVideoMode) {
+		return;
+	}
+
 	Graphics::Surface *game = g_sci->_gfxFrameout->getCurrentBuffer().convertTo(g_system->getScreenFormat(), g_sci->_gfxPalette32->getHardwarePalette());
+	assert(game);
 
 	Common::Rect rects[4];
 	int splitCount = splitRects(Common::Rect(game->w, game->h), _drawRect, rects);
@@ -815,51 +758,22 @@ void VMDPlayer::redrawGameScreen() const {
 }
 #endif
 
-void VMDPlayer::renderOverlay() const {
-	const Graphics::Surface *nextFrame = _decoder->decodeNextFrame();
-
+void VMDPlayer::renderOverlay(const Graphics::Surface &nextFrame) const {
 #ifdef USE_RGB_COLOR
-	if (_usingHighColor) {
-		if (updatePalette()) {
-			redrawGameScreen();
-		}
-
-		directWriteToSystem(_decoder, _drawRect, false, nextFrame);
-	} else {
-#else
-	{
-#endif
-		updatePalette();
-
-		Graphics::Surface out = g_sci->_gfxFrameout->getCurrentBuffer().getSubArea(_drawRect);
-
-		const int lineCount = _blackLines ? 2 : 1;
-		if (_doublePixels) {
-			for (int16 y = 0; y < _drawRect.height(); y += lineCount) {
-				const uint8 *source = (uint8 *)nextFrame->getBasePtr(0, y >> 1);
-				uint8 *target = (uint8 *)out.getBasePtr(0, y);
-				for (int16 x = 0; x < _decoder->getWidth(); ++x) {
-					*target++ = *source;
-					*target++ = *source++;
-				}
-			}
-		} else if (_blackLines) {
-			for (int16 y = 0; y < _drawRect.height(); y += lineCount) {
-				const uint8 *source = (uint8 *)nextFrame->getBasePtr(0, y);
-				uint8 *target = (uint8 *)out.getBasePtr(0, y);
-				memcpy(target, source, _drawRect.width());
-			}
-		} else {
-			out.copyRectToSurface(nextFrame->getPixels(), nextFrame->pitch, 0, 0, nextFrame->w, nextFrame->h);
-		}
-
-		g_sci->_gfxFrameout->directFrameOut(_drawRect);
+	if (_hqVideoMode) {
+		VideoPlayer::renderFrame(nextFrame);
+		return;
 	}
+#endif
+
+	Graphics::Surface out = g_sci->_gfxFrameout->getCurrentBuffer().getSubArea(_drawRect);
+	renderLQToSurface<uint8>(out, nextFrame, _doublePixels, _blackLines);
+	g_sci->_gfxFrameout->directFrameOut(_drawRect);
 }
 
-bool VMDPlayer::updatePalette() const {
-	if (_ignorePalettes || !_decoder->hasDirtyPalette()) {
-		return false;
+void VMDPlayer::submitPalette(const uint8 rawPalette[256 * 3]) const {
+	if (_ignorePalettes) {
+		return;
 	}
 
 	Palette palette;
@@ -877,13 +791,15 @@ bool VMDPlayer::updatePalette() const {
 		}
 	} else
 #endif
-		fillPalette(palette);
+		fillPalette(rawPalette, palette);
 
 	if (_isComposited) {
 		SciBitmap *bitmap = _segMan->lookupBitmap(_bitmapId);
 		bitmap->setPalette(palette);
-		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-		g_sci->_gfxFrameout->frameOut(true);
+		// NOTE: SSCI calls updateScreenItem and frameOut here, but this should
+		// not be necessary in ScummVM since the new palette gets submitted
+		// before the next frame is rendered, and the frame rendering call will
+		// perform the same operations.
 	} else {
 		g_sci->_gfxPalette32->submit(palette);
 		g_sci->_gfxPalette32->updateForFrame();
@@ -892,7 +808,7 @@ bool VMDPlayer::updatePalette() const {
 
 #if SCI_VMD_BLACK_PALETTE
 	if (_blackPalette) {
-		fillPalette(palette);
+		fillPalette(rawPalette, palette);
 		if (_isComposited) {
 			SciBitmap *bitmap = _segMan->lookupBitmap(_bitmapId);
 			bitmap->setPalette(palette);
@@ -903,20 +819,25 @@ bool VMDPlayer::updatePalette() const {
 	}
 #endif
 
-	return true;
+#ifdef USE_RGB_COLOR
+	// Changes to the palette may affect areas outside of the video; when the
+	// engine is rendering video in high color, palette changes will only take
+	// effect once the entire screen is redrawn to the high color surface
+	redrawGameScreen();
+#endif
 }
 
 void VMDPlayer::closeOverlay() {
 #ifdef USE_RGB_COLOR
-	if (_usingHighColor) {
-		g_sci->_gfxFrameout->setPixelFormat(Graphics::PixelFormat::createFormatCLUT8());
-		g_sci->_gfxFrameout->resetHardware();
-	} else {
-#else
-	{
-#endif
-		g_sci->_gfxFrameout->frameOut(true, _drawRect);
+	if (_hqVideoMode) {
+		if (endHQVideo()) {
+			g_sci->_gfxFrameout->resetHardware();
+		}
+		return;
 	}
+#endif
+
+	g_sci->_gfxFrameout->frameOut(true, _drawRect);
 }
 
 void VMDPlayer::initComposited() {
@@ -940,7 +861,10 @@ void VMDPlayer::initComposited() {
 
 	CelInfo32 vmdCelInfo;
 	vmdCelInfo.bitmap = _bitmapId;
-	_decoder->setSurfaceMemory(vmdBitmap.getPixels(), vmdBitmap.getWidth(), vmdBitmap.getHeight(), 1);
+
+	Video::AdvancedVMDDecoder *decoder = dynamic_cast<Video::AdvancedVMDDecoder *>(_decoder.get());
+	assert(decoder);
+	decoder->setSurfaceMemory(vmdBitmap.getPixels(), vmdBitmap.getWidth(), vmdBitmap.getHeight(), 1);
 
 	if (_planeIsOwned) {
 		_plane = new Plane(_drawRect, kPlanePicColored);
@@ -967,13 +891,8 @@ void VMDPlayer::initComposited() {
 }
 
 void VMDPlayer::renderComposited() const {
-	// This writes directly to the CelObjMem we already created,
-	// so no need to take its return value
-	_decoder->decodeNextFrame();
-	if (!updatePalette()) {
-		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-		g_sci->_gfxFrameout->frameOut(true);
-	}
+	g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
+	g_sci->_gfxFrameout->frameOut(true);
 }
 
 void VMDPlayer::closeComposited() {
@@ -999,16 +918,16 @@ void VMDPlayer::closeComposited() {
 #pragma mark -
 #pragma mark VMDPlayer - Rendering
 
-void VMDPlayer::renderFrame() const {
+void VMDPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 	if (_isComposited) {
 		renderComposited();
 	} else {
-		renderOverlay();
+		renderOverlay(nextFrame);
 	}
 }
 
-void VMDPlayer::fillPalette(Palette &palette) const {
-	const byte *vmdPalette = _decoder->getPalette() + _startColor * 3;
+void VMDPlayer::fillPalette(const uint8 rawPalette[256 * 3], Palette &outPalette) const {
+	const byte *vmdPalette = rawPalette + _startColor * 3;
 	for (uint16 i = _startColor; i <= _endColor; ++i) {
 		uint8 r = *vmdPalette++;
 		uint8 g = *vmdPalette++;
@@ -1020,10 +939,10 @@ void VMDPlayer::fillPalette(Palette &palette) const {
 			b = CLIP(b * _boostPercent / 100, 0, 255);
 		}
 
-		palette.colors[i].r = r;
-		palette.colors[i].g = g;
-		palette.colors[i].b = b;
-		palette.colors[i].used = true;
+		outPalette.colors[i].r = r;
+		outPalette.colors[i].g = g;
+		outPalette.colors[i].b = b;
+		outPalette.colors[i].used = true;
 	}
 }
 
@@ -1051,7 +970,7 @@ void VMDPlayer::restrictPalette(const uint8 startColor, const int16 endColor) {
 #pragma mark DuckPlayer
 
 DuckPlayer::DuckPlayer(SegManager *segMan, EventManager *eventMan) :
-	_eventMan(eventMan),
+	VideoPlayer(eventMan),
 	_decoder(new Video::AVIDecoder(Audio::Mixer::kSFXSoundType)),
 	_plane(nullptr),
 	_status(kDuckClosed),

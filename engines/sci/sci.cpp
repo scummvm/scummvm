@@ -838,6 +838,10 @@ int SciEngine::inQfGImportRoom() const {
 }
 
 void SciEngine::sleep(uint32 msecs) {
+	if (!msecs) {
+		return;
+	}
+
 	uint32 time;
 	const uint32 wakeUpTime = g_system->getMillis() + msecs;
 
@@ -860,7 +864,6 @@ void SciEngine::sleep(uint32 msecs) {
 				g_system->delayMillis(wakeUpTime - time);
 			break;
 		}
-
 	}
 }
 

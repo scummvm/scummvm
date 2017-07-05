@@ -26,6 +26,7 @@
 #ifdef USE_RGB_COLOR
 #include "common/config-manager.h" // for ConfMan
 #endif
+#include "common/ptr.h"
 #include "common/rect.h"          // for Rect
 #include "common/scummsys.h"      // for int16, uint8, uint16, int32
 #include "common/str.h"           // for String
@@ -45,53 +46,160 @@ class SegManager;
 class SEQDecoder;
 struct Palette;
 
+/**
+ * An abstract class implementing common video playback functionality for SCI
+ * engine.
+ */
+class VideoPlayer {
+public:
+	enum EventFlags {
+		kEventFlagNone         = 0,
+		kEventFlagEnd          = 1,
+		kEventFlagEscapeKey    = 2,
+		kEventFlagMouseDown    = 4,
+		kEventFlagHotRectangle = 8,
+		kEventFlagToFrame      = 0x10,
+		kEventFlagYieldToVM    = 0x20,
+		kEventFlagReverse      = 0x80
+	};
+
+	friend EventFlags operator|(const EventFlags a, const EventFlags b) {
+		return static_cast<EventFlags>((int)a | (int)b);
+	}
+
+	VideoPlayer(EventManager *eventMan, Video::VideoDecoder *decoder = nullptr) :
+		_eventMan(eventMan),
+		_decoder(decoder)
+#ifdef USE_RGB_MODE
+		,
+		_hqVideoMode(false)
+#endif
+		{}
+
+	virtual ~VideoPlayer() {}
+
+protected:
+	EventManager *_eventMan;
+
+	/**
+	 * The video decoder to use for video playback by this player.
+	 */
+	Common::ScopedPtr<Video::VideoDecoder> _decoder;
+
+	/**
+	 * Attempts to open a video by filename and performs basic validation to
+	 * ensure that the current system is actually capable of playing back the
+	 * video.
+	 */
+	bool open(const Common::String &fileName);
+
+	/**
+	 * Reinitializes the system hardware surface for playback of high-quality
+	 * scaled video if the current video meets the necessary criteria for this
+	 * playback mode.
+	 *
+	 * @returns whether or not the system surface was reinitialized for
+	 * high-quality scaled video.
+	 */
+	bool startHQVideo();
+
+	/**
+	 * Determines whether or not the currently loaded video meets the criteria
+	 * for high-quality scaled output.
+	 */
+	virtual bool shouldStartHQVideo() const {
+#ifdef USE_RGB_COLOR
+		if (!ConfMan.getBool("enable_hq_video")) {
+			return false;
+		}
+
+		if (_decoder->getWidth() == _drawRect.width() &&
+			_decoder->getHeight() == _drawRect.height()) {
+			return false;
+		}
+
+		return true;
+#else
+		return false;
+#endif
+	}
+
+	/**
+	 * Restores the hardware surface back to CLUT8 after video playback.
+	 */
+	bool endHQVideo();
+
+	/**
+	 * Plays a video until an event in the given `flags` is encountered, or
+	 * until the end of the video is reached.
+	 *
+	 * @param maxSleepMs An optional parameter defining the maximum number of
+	 * milliseconds that the video player should sleep between video frames.
+	 */
+	virtual EventFlags playUntilEvent(const EventFlags flags, const uint32 maxSleepMs = 0xFFFFFFFF);
+
+	/**
+	 * Checks to see if an event has occurred that should cause the video player
+	 * to yield back to the VM.
+	 */
+	virtual EventFlags checkForEvent(const EventFlags flags);
+
+	/**
+	 * Submits a palette from the video to the system.
+	 */
+	virtual void submitPalette(const uint8 palette[256 * 3]) const;
+
+	/**
+	 * Renders a video frame to the system.
+	 */
+	virtual void renderFrame(const Graphics::Surface &nextFrame) const;
+
+	/**
+	 * Renders a video frame to an intermediate surface using low-quality
+	 * scaling, black-lining, or direct copy, depending upon the passed flags.
+	 */
+	template <typename PixelType>
+	void renderLQToSurface(Graphics::Surface &out, const Graphics::Surface &nextFrame, const bool doublePixels, const bool blackLines) const;
+
+	/**
+	 * The rectangle where the video will be drawn, in screen coordinates.
+	 */
+	Common::Rect _drawRect;
+
+#ifdef USE_RGB_COLOR
+	/**
+	 * Whether or not the player is currently in high-quality video rendering
+	 * mode.
+	 */
+	bool _hqVideoMode;
+#endif
+};
+
 #pragma mark SEQPlayer
 
 /**
  * SEQPlayer is used to play SEQ animations.
  * Used by DOS versions of GK1 and QFG4CD.
  */
-class SEQPlayer {
+class SEQPlayer : public VideoPlayer {
 public:
-	SEQPlayer(SegManager *segMan, EventManager *eventMan);
+	SEQPlayer(EventManager *eventMan);
 
 	/**
-	 * Plays a SEQ animation with the given
-	 * file name, with each frame being displayed
-	 * for `numTicks` ticks.
+	 * Plays a SEQ animation with the given file name, with each frame being
+	 * displayed for `numTicks` ticks.
 	 */
 	void play(const Common::String &fileName, const int16 numTicks, const int16 x, const int16 y);
-
-private:
-	SegManager *_segMan;
-	EventManager *_eventMan;
-	SEQDecoder *_decoder;
-
-	/**
-	 * Renders a single frame of video.
-	 */
-	void renderFrame() const;
-
-	/**
-	 * Stops playback and closes the currently open SEQ stream.
-	 */
-	void close();
-
-	/**
-	 * The rectangle where the video will be drawn,
-	 * in screen coordinates.
-	 */
-	Common::Rect _drawRect;
 };
 
 #pragma mark -
 #pragma mark AVIPlayer
 
 /**
- * AVIPlayer is used to play AVI videos. Used by
- * Windows versions of GK1CD, KQ7, and QFG4CD.
+ * AVIPlayer is used to play AVI videos.
+ * Used by Windows versions of GK1CD, KQ7, and QFG4CD.
  */
-class AVIPlayer {
+class AVIPlayer : public VideoPlayer {
 public:
 	enum IOStatus {
 		kIOSuccess      = 0,
@@ -106,16 +214,7 @@ public:
 		kAVIPaused   = 3
 	};
 
-	enum EventFlags {
-		kEventFlagNone         = 0,
-		kEventFlagEnd          = 1,
-		kEventFlagEscapeKey    = 2,
-		kEventFlagMouseDown    = 4,
-		kEventFlagHotRectangle = 8
-	};
-
 	AVIPlayer(EventManager *eventMan);
-	~AVIPlayer();
 
 	/**
 	 * Opens a stream to an AVI resource.
@@ -123,15 +222,17 @@ public:
 	IOStatus open(const Common::String &fileName);
 
 	/**
-	 * Initializes the AVI rendering parameters for the
-	 * current AVI. This must be called after `open`.
+	 * Initializes the AVI rendering parameters for the current AVI. This must
+	 * be called after `open`.
 	 */
-	IOStatus init(const bool pixelDouble);
+	IOStatus init(const bool doublePixels);
 
 	/**
 	 * Begins playback of the current AVI.
 	 */
 	IOStatus play(const int16 from, const int16 to, const int16 showStyle, const bool cue);
+
+	virtual EventFlags playUntilEvent(const EventFlags flags, const uint32 maxSleepMs = 0xFFFFFFFF) override;
 
 	/**
 	 * Stops playback and closes the currently open AVI stream.
@@ -148,39 +249,11 @@ public:
 	 */
 	uint16 getDuration() const;
 
-	/**
-	 * Plays the AVI until an event occurs (e.g. user
-	 * presses escape, clicks, etc.).
-	 */
-	EventFlags playUntilEvent(const EventFlags flags);
-
 private:
-	typedef Common::HashMap<uint16, AVIStatus> StatusMap;
-
-	EventManager *_eventMan;
-	Video::AVIDecoder *_decoder;
-
 	/**
 	 * Playback status of the player.
 	 */
 	AVIStatus _status;
-
-	/**
-	 * The rectangle where the video will be drawn,
-	 * in screen coordinates.
-	 */
-	Common::Rect _drawRect;
-
-	/**
-	 * Renders video without event input until the
-	 * video is complete.
-	 */
-	void renderVideo() const;
-
-	/**
-	 * Renders a single frame of video.
-	 */
-	void renderFrame() const;
 };
 
 #pragma mark -
@@ -188,10 +261,10 @@ private:
 
 /**
  * VMDPlayer is used to play VMD videos.
- * Used by Phant1, GK2, PQ:SWAT, Shivers, SQ6,
- * Torin, and Lighthouse.
+ * Used by LSL7, Phant1, GK2, PQ:SWAT, Shivers, SQ6, Rama, Torin, and
+ * Lighthouse.
  */
-class VMDPlayer {
+class VMDPlayer : public VideoPlayer {
 public:
 	enum OpenFlags {
 		kOpenFlagNone = 0,
@@ -214,17 +287,6 @@ public:
 		kPlayFlagStretchVertical  = 0x100
 	};
 
-	enum EventFlags {
-		kEventFlagNone         = 0,
-		kEventFlagEnd          = 1,
-		kEventFlagEscapeKey    = 2,
-		kEventFlagMouseDown    = 4,
-		kEventFlagHotRectangle = 8,
-		kEventFlagToFrame      = 0x10,
-		kEventFlagYieldToVM    = 0x20,
-		kEventFlagReverse      = 0x80
-	};
-
 	enum VMDStatus {
 		kVMDNotOpen  = 0,
 		kVMDOpen     = 1,
@@ -234,13 +296,11 @@ public:
 		kVMDFinished = 5
 	};
 
-	VMDPlayer(SegManager *segMan, EventManager *eventMan);
-	~VMDPlayer();
+	VMDPlayer(EventManager *eventMan, SegManager *segMan);
+	virtual ~VMDPlayer();
 
 private:
 	SegManager *_segMan;
-	EventManager *_eventMan;
-	Video::AdvancedVMDDecoder *_decoder;
 
 #pragma mark -
 #pragma mark VMDPlayer - Playback
@@ -251,8 +311,8 @@ public:
 	IOStatus open(const Common::String &fileName, const OpenFlags flags);
 
 	/**
-	 * Initializes the VMD rendering parameters for the
-	 * current VMD. This must be called after `open`.
+	 * Initializes the VMD rendering parameters for the current VMD. This must
+	 * be called after `open`.
 	 */
 	void init(const int16 x, const int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor);
 
@@ -271,64 +331,48 @@ public:
 
 private:
 	/**
-	 * Whether or not a VMD stream has been opened with
-	 * `open`.
+	 * Whether or not a VMD stream has been opened with `open`.
 	 */
 	bool _isOpen;
 
 	/**
-	 * Whether or not a VMD player has been initialised
-	 * with `init`.
+	 * Whether or not a VMD player has been initialized with `init`.
 	 */
 	bool _isInitialized;
 
 	/**
-	 * The Resource object for VMDs that are read out
-	 * of a resource bundle instead of being streamed
-	 * from the filesystem.
+	 * The Resource object for VMDs that are read out of a resource bundle
+	 * instead of being streamed from the filesystem.
 	 */
 	Resource *_bundledVmd;
 
 	/**
-	 * For VMDs played with the `kEventFlagToFrame` flag,
-	 * the target frame for yielding back to the SCI VM.
+	 * For VMDs played with the `kEventFlagToFrame` flag, the target frame for
+	 * yielding back to the SCI VM.
 	 */
 	int32 _yieldFrame;
 
 	/**
-	 * For VMDs played with the `kEventFlagYieldToVM` flag,
-	 * the number of frames that should be rendered until
-	 * yielding back to the SCI VM.
+	 * For VMDs played with the `kEventFlagYieldToVM` flag, the number of frames
+	 * that should be rendered until yielding back to the SCI VM.
 	 */
 	int32 _yieldInterval;
 
 	/**
-	 * For VMDs played with the `kEventFlagYieldToVM` flag,
-	 * the last frame when control of the main thread was
-	 * yielded back to the SCI VM.
+	 * For VMDs played with the `kEventFlagYieldToVM` flag, the last frame when
+	 * control of the main thread was yielded back to the SCI VM.
 	 */
 	int _lastYieldedFrameNo;
 
-	void initOverlay();
-	void renderOverlay() const;
-	void closeOverlay();
-
-	void initComposited();
-	void renderComposited() const;
-	void closeComposited();
-
-	/**
-	 * Plays the VMD until an event occurs (e.g. user
-	 * presses escape, clicks, etc.).
-	 */
-	EventFlags playUntilEvent(const EventFlags flags);
+	virtual EventFlags playUntilEvent(const EventFlags flags, const uint32 = 0xFFFFFFFF) override;
+	virtual EventFlags checkForEvent(const EventFlags flags) override;
 
 #pragma mark -
 #pragma mark VMDPlayer - Rendering
 public:
 	/**
-	 * Causes the VMD player to ignore all palettes in
-	 * the currently playing video.
+	 * Causes the VMD player to ignore all palettes in the currently playing
+	 * video.
 	 */
 	void ignorePalettes() { _ignorePalettes = true; }
 
@@ -337,12 +381,18 @@ public:
 	 */
 	void setPlane(const int16 priority, const reg_t planeId);
 
-private:
+protected:
 	/**
-	 * The rectangle where the video will be drawn, in screen coordinates.
+	 * Renders a frame of video to the output bitmap.
 	 */
-	Common::Rect _drawRect;
+	virtual void renderFrame(const Graphics::Surface &nextFrame) const override;
 
+	/**
+	 * Updates the system with palette data from the video.
+	 */
+	virtual void submitPalette(const uint8 palette[256 * 3]) const override;
+
+private:
 	/**
 	 * The plane where the VMD will be drawn.
 	 */
@@ -358,11 +408,9 @@ private:
 	 */
 	reg_t _bitmapId;
 
-	// TODO: planeIsOwned and priority are used in SCI3+ only
-
 	/**
-	 * If true, the plane for this VMD was set
-	 * externally and is not owned by this VMDPlayer.
+	 * If true, the plane for this VMD was set externally and is not owned by
+	 * this VMDPlayer.
 	 */
 	bool _planeIsOwned;
 
@@ -378,26 +426,24 @@ private:
 	bool _doublePixels;
 
 	/**
-	 * Whether or not the video should be pixel doubled
-	 * vertically only.
+	 * Whether or not the video should be pixel doubled vertically only.
 	 */
 	bool _stretchVertical;
 
 	/**
-	 * Whether or not black lines should be rendered
-	 * across the video.
+	 * Whether or not black lines should be rendered across the video.
 	 */
 	bool _blackLines;
 
 	/**
-	 * Whether or not the playback area of the VMD
-	 * should be left black at the end of playback.
+	 * Whether or not the playback area of the VMD should be left black at the
+	 * end of playback.
 	 */
 	bool _leaveScreenBlack;
 
 	/**
-	 * Whether or not the area of the VMD should be left
-	 * displaying the final frame of the video.
+	 * Whether or not the area of the VMD should be left displaying the final
+	 * frame of the video.
 	 */
 	bool _leaveLastFrame;
 
@@ -412,35 +458,18 @@ private:
 	bool _isComposited;
 
 	/**
-	 * Whether or not rendering of the video is being performed in high color or
-	 * better.
+	 * Fills the given palette with RGB values from the VMD palette, applying
+	 * brightness boost if it is enabled.
 	 */
-	bool _usingHighColor;
-
-	/**
-	 * Renders a frame of video to the output bitmap.
-	 */
-	void renderFrame() const;
-
-	/**
-	 * Updates the system with palette data from the video.
-	 */
-	bool updatePalette() const;
-
-	/**
-	 * Fills the given palette with RGB values from
-	 * the VMD palette, applying brightness boost if
-	 * it is enabled.
-	 */
-	void fillPalette(Palette &palette) const;
+	void fillPalette(const uint8 rawPalette[256 * 3], Palette &outPalette) const;
 
 #ifdef USE_RGB_COLOR
 	/**
 	 * Redraws areas of the screen outside of the video to the system buffer.
-	 * This is used when
+	 * This is used whenever palette changes occur and the video is rendering in
+	 * high color mode.
 	 */
 	void redrawGameScreen() const;
-#endif
 
 	/**
 	 * Determines whether or not the VMD player should upgrade the renderer to
@@ -450,18 +479,18 @@ private:
 	 * video, but this will require additional work in GfxFrameout and
 	 * GfxCursor32 since the internal buffer and cursor code are 8bpp only.
 	 */
-	bool shouldUseHighColor() const {
-#ifdef USE_RGB_COLOR
-		return ConfMan.getBool("enable_hq_video") &&
-			_priority == 0 &&
-			(_doublePixels || _stretchVertical) &&
-			!_leaveLastFrame &&
-			!_showCursor &&
-			!_blackLines;
-#else
-		return false;
-#endif
+	virtual bool shouldStartHQVideo() const override {
+		if (!VideoPlayer::shouldStartHQVideo()) {
+			return false;
+		}
+
+		if (_priority != 0 || _leaveLastFrame || _showCursor || _blackLines) {
+			return false;
+		}
+
+		return true;
 	}
+#endif
 
 	/**
 	 * Determines whether or not the video should use the compositing renderer
@@ -469,18 +498,26 @@ private:
 	 */
 	bool shouldUseCompositing() const {
 #ifdef USE_RGB_COLOR
-		return getSciVersion() == SCI_VERSION_3 && !shouldUseHighColor();
+		return getSciVersion() == SCI_VERSION_3 && !shouldStartHQVideo();
 #else
 		return getSciVersion() == SCI_VERSION_3;
 #endif
 	}
 
+	void initOverlay();
+	void renderOverlay(const Graphics::Surface &nextFrame) const;
+	void closeOverlay();
+
+	void initComposited();
+	void renderComposited() const;
+	void closeComposited();
+
 #pragma mark -
 #pragma mark VMDPlayer - Blackout
 public:
 	/**
-	 * Sets the area of the screen that should be blacked out
-	 * during VMD playback.
+	 * Sets the area of the screen that should be blacked out during VMD
+	 * playback.
 	 */
 	void setBlackoutArea(const Common::Rect &rect) { _blackoutRect = rect; }
 
@@ -491,8 +528,8 @@ private:
 	Common::Rect _blackoutRect;
 
 	/**
-	 * An optional plane that will be used to black out
-	 * areas of the screen outside of the VMD surface.
+	 * An optional plane that will be used to black out areas of the screen
+	 * outside of the VMD surface.
 	 */
 	Plane *_blackoutPlane;
 
@@ -500,37 +537,33 @@ private:
 #pragma mark VMDPlayer - Palette
 public:
 	/**
-	 * Restricts use of the system palette by VMD playback to
-	 * the given range of palette indexes.
+	 * Restricts use of the system palette by VMD playback to the given range of
+	 * palette indexes.
 	 */
 	void restrictPalette(const uint8 startColor, const int16 endColor);
 
 private:
 	/**
-	 * The first color in the system palette that the VMD
-	 * can write to.
+	 * The first color in the system palette that the VMD can write to.
 	 */
 	uint8 _startColor;
 
 	/**
-	 * The last color in the system palette that the VMD
-	 * can write to.
+	 * The last color in the system palette that the VMD can write to.
 	 */
 	uint8 _endColor;
 
 	/**
-	 * If true, video frames are rendered after a blank
-	 * palette is submitted to the palette manager,
-	 * which is then restored after the video pixels
-	 * have already been rendered.
+	 * If true, video frames are rendered after a blank palette is submitted to
+	 * the palette manager, which is then restored after the video pixels have
+	 * already been rendered.
 	 *
-	 * This functionality is currently disabled because it seems like
-	 * it was designed for a different graphics architecture where
-	 * pixel data could be rendered before the video card's palette
-	 * had been updated. This is not possible in ScummVM because the
-	 * palette & pixel data are rendered simultaneously when
-	 * OSystem::updateScreen is called, rather than immediately
-	 * after they are sent to the backend.
+	 * This functionality is currently disabled because it seems like it was
+	 * designed for a different graphics architecture where pixel data could be
+	 * rendered before the video card's palette had been updated. This is not
+	 * possible in ScummVM because the palette & pixel data are rendered
+	 * simultaneously when OSystem::updateScreen is called, rather than
+	 * immediately after they are sent to the backend.
 	 */
 #ifdef SCI_VMD_BLACK_PALETTE
 	bool _blackPalette;
@@ -540,21 +573,18 @@ private:
 #pragma mark VMDPlayer - Brightness boost
 private:
 	/**
-	 * The amount of brightness boost for the video.
-	 * Values above 100 increase brightness; values below
-	 * 100 reduce it.
+	 * The amount of brightness boost for the video. Values above 100 increase
+	 * brightness; values below 100 reduce it.
 	 */
 	int16 _boostPercent;
 
 	/**
-	 * The first color in the palette that should be
-	 * brightness boosted.
+	 * The first color in the palette that should be brightness boosted.
 	 */
 	uint8 _boostStartColor;
 
 	/**
-	 * The last color in the palette that should be
-	 * brightness boosted.
+	 * The last color in the palette that should be brightness boosted.
 	 */
 	uint8 _boostEndColor;
 
@@ -562,17 +592,15 @@ private:
 #pragma mark VMDPlayer - Mouse cursor
 public:
 	/**
-	 * Sets whether or not the mouse cursor should be drawn.
-	 * This does not have any effect during playback, but can
-	 * be used to prevent the mouse cursor from being shown
-	 * again after the video has finished.
+	 * Sets whether or not the mouse cursor should be drawn. This does not have
+	 * any effect during playback, but can be used to prevent the mouse cursor
+	 * from being shown again after the video has finished.
 	 */
 	void setShowCursor(const bool shouldShow) { _showCursor = shouldShow; }
 
 private:
 	/**
-	 * Whether or not the mouse cursor should be shown
-	 * during playback.
+	 * Whether or not the mouse cursor should be shown during playback.
 	 */
 	bool _showCursor;
 };
@@ -580,7 +608,7 @@ private:
 #pragma mark -
 #pragma mark DuckPlayer
 
-class DuckPlayer {
+class DuckPlayer : public VideoPlayer {
 public:
 	enum DuckStatus {
 		kDuckClosed  = 0,
@@ -674,15 +702,14 @@ private:
 #pragma mark Video32
 
 /**
- * Video32 provides facilities for playing back
- * video in SCI engine.
+ * Video32 provides facilities for playing back video in SCI engine.
  */
 class Video32 : public Common::Serializable {
 public:
 	Video32(SegManager *segMan, EventManager *eventMan) :
-	_SEQPlayer(segMan, eventMan),
+	_SEQPlayer(eventMan),
 	_AVIPlayer(eventMan),
-	_VMDPlayer(segMan, eventMan),
+	_VMDPlayer(eventMan, segMan),
 	_robotPlayer(segMan),
 	_duckPlayer(segMan, eventMan) {}
 
