@@ -25,7 +25,7 @@
 namespace Kingdom {
 
 void KingdomGame::GPLogic4() {
-	switch(_StatPlay) {
+	switch(_statPlay) {
 	case 900:
 		if (_ATimer > 0) {
 			PlaySound(0);
@@ -34,7 +34,7 @@ void KingdomGame::GPLogic4() {
 		if (_ASMode) {
 			SwitchMtoA();
 			_MapStat = 0;
-			_OldStatPlay--;
+			_oldStatPlay--;
 			_ASMode = false;
 		}
 		SaveAS();
@@ -61,7 +61,7 @@ void KingdomGame::GPLogic4() {
 				_ATimer = 133;
 			}
 			ShowPic(120);
-			_StatPlay = 901;
+			_statPlay = 901;
 		}
 		break;
 	case 901:
@@ -85,7 +85,7 @@ void KingdomGame::GPLogic4() {
 			_Pouch = 0;
 			PlaySound(1);
 			memset(_Inventory, -1, 19);
-			_StatPlay = 994;
+			_statPlay = 994;
 		} else {
 			_BTimer = 36;
 			while(_BTimer) {
@@ -93,7 +93,7 @@ void KingdomGame::GPLogic4() {
 				RefreshSound();
 			}
 			
-			_LoopFlag = true;
+			_loopFlag = true;
 			if (_Nodes[29] == 1) {
 				_Nodes[29] = 0;
 				_Nodes[49] = 0;
@@ -114,7 +114,7 @@ void KingdomGame::GPLogic4() {
 				_Resurrect = 1;
 			}
 			InventoryDel(12);
-			_StatPlay = 50;
+			_statPlay = 50;
 		}
 		break;
 	case 992:
@@ -135,7 +135,7 @@ void KingdomGame::GPLogic4() {
 			_Pouch = 0;
 			PlaySound(1);
 			memset(_Inventory, -1, 19);
-			_StatPlay = 994;
+			_statPlay = 994;
 		} else {
 			_BTimer = 36;
 			while(_BTimer != 0) {
@@ -143,7 +143,7 @@ void KingdomGame::GPLogic4() {
 				RefreshSound();
 			}
 
-			_LoopFlag = true;
+			_loopFlag = true;
 			if (_Nodes[29] == 1) {
 				_Nodes[29] = 0;
 				_Nodes[49] = 0;
@@ -162,7 +162,7 @@ void KingdomGame::GPLogic4() {
 			PlaySound(0);
 			PlayMovie(195);
 			InventoryDel(12);
-			_StatPlay = 270;
+			_statPlay = 270;
 		}
 		break;
 	case 993:
@@ -183,7 +183,7 @@ void KingdomGame::GPLogic4() {
 			_Pouch = 0;
 			PlaySound(1);
 			memset(_Inventory, -1, 19);
-			_StatPlay = 994;
+			_statPlay = 994;
 		} else {
 			_BTimer = 36;
 			while (_BTimer != 0) {
@@ -191,7 +191,7 @@ void KingdomGame::GPLogic4() {
 				RefreshSound();
 			}
 			
-			_LoopFlag = true;
+			_loopFlag = true;
 			if (_Nodes[29] == 1) {
 				_Nodes[29] = 0;
 				_Nodes[49] = 0;
@@ -212,7 +212,7 @@ void KingdomGame::GPLogic4() {
 			PlaySound(0);
 			PlayMovie(196);
 			InventoryDel(12);
-			_StatPlay = 520;
+			_statPlay = 520;
 		}
 		break;
 	case 994:
@@ -246,15 +246,15 @@ void KingdomGame::GPLogic4_SP901() {
 	if (_UserInput == 0x2F1) {
 		_ASMode = false;
 		RestoreAS();
-		_StatPlay = _OldStatPlay;
-		_LoopFlag = true;
+		_statPlay = _oldStatPlay;
+		_loopFlag = true;
 	} else {
 		if (_Health == 10 || _Health == 6 || _Health == 2 || _UserInput < 0x400 || _UserInput > 0x427) {
 			_ASMode = false;
 			RestoreAS();
-			_StatPlay = _OldStatPlay;
+			_statPlay = _oldStatPlay;
 		} else {
-			_StatPlay = _MapExit[_UserInput - 0x400];
+			_statPlay = _mapExit[_UserInput - 0x400];
 			_UserInput = 0;
 			Wound();
 			PlayMovie(10);
@@ -265,7 +265,7 @@ void KingdomGame::GPLogic4_SP901() {
 			_MapStat = 0;
 		}
 		_UserInput = 0;
-		_LoopFlag = true;
+		_loopFlag = true;
 	}
 }
 

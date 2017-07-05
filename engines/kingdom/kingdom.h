@@ -58,9 +58,9 @@ namespace Kingdom {
 	};
 
 	struct KingArtEntry {
-		uint8 Width;
-		uint8 Height;
-		byte* data;
+		uint8 _width;
+		uint8 _height;
+		byte* _data;
 	};
 
 	struct HotSpot {
@@ -71,16 +71,16 @@ namespace Kingdom {
 		int16 _mouseValue;
 	};
 
-	extern const char *_RezNames[];
-	extern int _MapExit[];
-	extern int _EMLTable[];
-	extern int _ZoomTable[81][9][2];
-	extern int _IconActTable[82][7];
-	extern int _TEASeq[6][2];
-	extern int _HGASeq[4][2];
-	extern HotSpot _MouseMapMS[51];
-	extern int _CursorTable[96];
-	extern HotSpot _MouseMapAS[128][16];
+	extern const char *_rezNames[];
+	extern int _mapExit[];
+	extern int _emlTable[];
+	extern int _zoomTable[81][9][2];
+	extern int _iconActTable[82][7];
+	extern int _cursorTable[96];
+	extern int _teaSeq[6][2];
+	extern int _hgaSeq[4][2];
+	extern HotSpot _mouseMapMS[51];
+	extern HotSpot _mouseMapAS[128][16];
 
 	struct KingdomSavegameHeader {
 		uint32 _signature;
@@ -110,10 +110,10 @@ namespace Kingdom {
 
 		KingArtEntry *_kingartEntries;
 
-		bool _LoopFlag;
-		int _GameMode;
-		int _StatPlay;
-		int _OldStatPlay;
+		bool _loopFlag;
+		int _gameMode;
+		int _statPlay;
+		int _oldStatPlay;
 		bool _FstFwd;
 		bool _NoIFScreen;
 		bool _Sound;
