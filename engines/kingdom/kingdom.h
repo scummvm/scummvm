@@ -72,6 +72,7 @@ namespace Kingdom {
 	};
 
 	extern const char *_rezNames[];
+	extern const char *_movieNames[];
 	extern int _mapExit[];
 	extern int _emlTable[];
 	extern int _zoomTable[81][9][2];
@@ -117,7 +118,8 @@ namespace Kingdom {
 		bool _fstFwd;
 		bool _noIFScreen;
 		bool _sound;
-		bool _LastSound;
+		bool _lastSound;
+		bool _fullScreen;
 		int _FrameStop;
 		int _DaelonCntr;
 		bool _Spell1;
@@ -174,7 +176,7 @@ namespace Kingdom {
 		int _OldNode;
 		int _NextNode;
 		int _RobberyNode;
-		bool _CursorDrawn;
+		bool _CursorDrawn; // CHECKME: Useless
 		bool _Wizard;
 		int _Zoom;
 		bool _Resurrect;
