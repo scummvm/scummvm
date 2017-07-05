@@ -511,6 +511,63 @@ void KingdomGame::InitMPlayer() {
 
 void KingdomGame::PlayMovie(int movieNum) {
 	debug("STUB: PlayMovie");
+
+	if (movieNum == 1 || movieNum == 3 || movieNum == 54 || movieNum == 198 || movieNum == 200 || movieNum == 206)
+		_fullScreen = true;
+	else
+		_fullScreen = false;
+
+	_mixer->stopAll();
+
+	_ATimer = 0;
+	_ASMode = 0;
+
+	EraseCursor();
+
+	if (!_fullScreen) {
+		_TreeLeftSta = (_fstFwd == 0) ? 0 : 1;
+		_TreeRightSta = 0;
+		_IconSel = _IconSelect;
+		_IconsClosed = true;
+		CheckMainScreen();
+		SetMouse();
+		_OldCursorX = _CursorX;
+		_OldCursorY = _CursorY;
+	}
+
+	_PMovie = movieNum;
+	ReadMouse();
+	_MouseButton = 0;
+	_KeyActive = false;
+	const char *path = _movieNames[movieNum];
+	// Check if the file is available. If not the original does the following: _ATimer = 55, display of error with a check of timer, exit
+	// That can be replaced by an error()
+
+	/* Original behavior. To be uncommented when the codec is available
+	_track = _sound;
+	_vidState = 0;
+
+	if (_fullScreen)
+		MVE_RunMovie(fileHandle, 0, 0, _track);
+	else
+		MVE_RunMovie(fileHandle, 6, 17, _track);
+	
+	MVE_ReleaseMem();
+	*/
+
+	if (!_fullScreen) {
+		_TreeRightSta = 1;
+		_IconsClosed = false;
+		_IconSel = 9;
+		_TreeLeftSta = _Replay == 0 ? 0 : 2;
+		CheckMainScreen();
+		DrawCursor();
+		_fstFwd = true;
+		_FrameStop = 0;
+		_lastSound = _sound;
+		_sound = false;
+		_UserInput = 0;
+	}
 }
 
 void KingdomGame::EnAll() {
@@ -828,7 +885,7 @@ void KingdomGame::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_Help);
 	s.syncAsByte(_ItemInhibit);
 	s.syncAsByte(_LastObs);
-	s.syncAsByte(_LastSound);
+	s.syncAsByte(_lastSound);
 	s.syncAsByte(_MapEx);
 	s.syncAsByte(_NoMusic);
 	s.syncAsByte(_OldPouch);
@@ -939,7 +996,7 @@ void KingdomGame::PlaySound(int idx) {
 }
 
 void KingdomGame::EraseCursor() {
-	debug("STUB: EraseCursor");
+	CursorMan.showMouse(false);
 }
 
 void KingdomGame::ReadMouse() {
@@ -992,7 +1049,7 @@ void KingdomGame::GetUserInput() {
 }
 
 void KingdomGame::EraseCursorAsm() {
-	debug("STUB: EraseCursorAsm");
+	CursorMan.showMouse(false);
 }
 
 void KingdomGame::DrawLocation() {
