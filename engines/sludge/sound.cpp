@@ -189,21 +189,16 @@ void stopMOD(int i) {
 void huntKillSound(int filenum) {
 	if (!soundOK)
 		return;
-#if 0
-	// Clear OpenAL errors to make sure they don't block anything:
-	alGetError();
 
 	int gotSlot = findInSoundCache(filenum);
 	if (gotSlot == -1) return;
 
 	SilenceIKillYou = true;
 
-	if (soundCache[gotSlot].playing) {
-		if (! alureStopSource(soundCache[gotSlot].playingOnSource, AL_TRUE)) {
-			debugOut("Failed to stop source: %s\n", alureGetErrorString());
-		}
+	if (g_sludge->_mixer->isSoundHandleActive(soundCache[gotSlot].handle)) {
+		g_sludge->_mixer->stopHandle(soundCache[gotSlot].handle);
 	}
-#endif
+
 	SilenceIKillYou = false;
 }
 
