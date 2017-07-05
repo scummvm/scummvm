@@ -66,7 +66,7 @@ private:
 	uint _lastSpeakTime;
 	int _newXp;
 	int _newXc;
-	bool _canEatChicken;
+	bool _triedEatChicken;
 	int _eatOffsetX;
 	CMovePlayerTo *_panTarget;
 public:

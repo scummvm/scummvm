@@ -188,14 +188,14 @@ bool CChicken::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 
 bool CChicken::ParrotTriesChickenMsg(CParrotTriesChickenMsg *msg) {
 	if (_temperature > 0)
-		msg->_value1 = 1;
+		msg->_isHot = true;
 
 	if (_condiment == "Tomato") {
-		msg->_value2 = 1;
+		msg->_condiment = 1;
 	} else if (_condiment == "Mustard") {
-		msg->_value2 = 2;
+		msg->_condiment = 2;
 	} else if (_condiment == "Bird") {
-		msg->_value2 = 3;
+		msg->_condiment = 3;
 	}
 
 	return true;

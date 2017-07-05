@@ -60,7 +60,7 @@ CParrot::CParrot() : CTrueTalkNPC() {
 	_lastSpeakTime = 0;
 	_newXp = 73;
 	_newXc = 58;
-	_canEatChicken = false;
+	_triedEatChicken = false;
 	_eatOffsetX = 0;
 	_panTarget = nullptr;
 
@@ -84,7 +84,7 @@ void CParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_lastSpeakTime, indent);
 	file->writeNumberLine(_newXp, indent);
 	file->writeNumberLine(_newXc, indent);
-	file->writeNumberLine(_canEatChicken, indent);
+	file->writeNumberLine(_triedEatChicken, indent);
 	file->writeNumberLine(_eatOffsetX, indent);
 	file->writeNumberLine(_state, indent);
 	file->writeNumberLine(_coreReplaced, indent);
@@ -108,7 +108,7 @@ void CParrot::load(SimpleFile *file) {
 	_lastSpeakTime = file->readNumber();
 	_newXp = file->readNumber();
 	_newXc = file->readNumber();
-	_canEatChicken = file->readNumber();
+	_triedEatChicken = file->readNumber();
 	_eatOffsetX = file->readNumber();
 	_state = (ParrotState)file->readNumber();
 	_coreReplaced = file->readNumber();
@@ -133,7 +133,7 @@ bool CParrot::ActMsg(CActMsg *msg) {
 		if (_state == PARROT_IN_CAGE) {
 			stopMovie();
 			startTalking(this, 280275, findView());
-			_canEatChicken = false;
+			_triedEatChicken = false;
 		}
 	} else if (msg->_action == "EnteringFromTOW" &&
 			(_state == PARROT_IN_CAGE || _state == PARROT_ESCAPED)) {
@@ -325,7 +325,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 		}
 
 		petSetArea(PET_CONVERSATION);
-		_canEatChicken = false;
+		_triedEatChicken = false;
 		_npcFlags |= NPCFLAG_START_IDLING;
 	}
 
@@ -590,28 +590,28 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 			_npcFlags |= NPCFLAG_MOVE_LEFT;
 			playClip("Walk Left Intro", MOVIE_NOTIFY_OBJECT);
 		}
-	} else if (chickenFlag && pt.y >= 90 && pt.y <= 280 && !_canEatChicken) {
+	} else if (chickenFlag && pt.y >= 90 && pt.y <= 280 && !_triedEatChicken) {
 		CParrotTriesChickenMsg triesMsg;
 		triesMsg.execute(dragObject);
 
 		CTrueTalkTriggerActionMsg triggerMsg;
 		int &action = triggerMsg._action;
-		switch (triesMsg._value2) {
+		switch (triesMsg._condiment) {
 		case 1:
-			action = 280056 + (triesMsg._value1 ? 234 : 0);
+			action = 280056 + (triesMsg._isHot ? 234 : 0);
 			break;
 		case 2:
-			action = 280055 + (triesMsg._value1 ? 234 : 0);
+			action = 280055 + (triesMsg._isHot ? 234 : 0);
 			break;
 		case 3:
-			action = 280054 + (triesMsg._value1 ? 234 : 0);
+			action = 280054 + (triesMsg._isHot ? 234 : 0);
 			break;
 		default:
-			action = 280053 + (triesMsg._value1 ? 234 : 0);
+			action = 280053 + (triesMsg._isHot ? 213 : 0);
 			break;
 		}
 
-		if (action != 280266) {
+		if (action == 280266) {
 			if (pt.x < 75) {
 				// Parrot needs to reach outside the cage
 				_npcFlags |= NPCFLAG_CHICKEN_OUTSIDE_CAGE;
@@ -637,7 +637,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		if (chickenFlag) {
 			triggerMsg._param2 = 1;
 			triggerMsg.execute(this);
-			_canEatChicken = true;
+			_triedEatChicken = true;
 		}
 	}
 

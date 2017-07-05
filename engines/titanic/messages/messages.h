@@ -301,7 +301,7 @@ MESSAGE1(COnSummonBotMsg, int, value, 0);
 MESSAGE0(COpeningCreditsMsg);
 MESSAGE1(CPanningAwayFromParrotMsg, CMovePlayerTo *, target, nullptr);
 MESSAGE2(CParrotSpeakMsg, CString, target, "", CString, action, "");
-MESSAGE2(CParrotTriesChickenMsg, int, value1, 0, int, value2, 0);
+MESSAGE2(CParrotTriesChickenMsg, bool, isHot, false, int, condiment, 0);
 MESSAGE1(CPhonographPlayMsg, int, value, 0);
 MESSAGE0(CPhonographReadyToPlayMsg);
 MESSAGE1(CPhonographRecordMsg, bool, canRecord, false);
