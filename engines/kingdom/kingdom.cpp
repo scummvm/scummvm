@@ -71,6 +71,14 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 	_tickCount = 0;
 	_oldTime = g_system->getMillis();
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MAPS");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "PICS");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "SOUNDS");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "SOUNDM");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MOVIELF");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MOVIES");
 }
 
 KingdomGame::~KingdomGame() {
