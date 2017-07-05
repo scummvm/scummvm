@@ -139,31 +139,31 @@ void KingdomGame::checkTimers() {
 	} else
 		return;
 
-	if (_ATimer != 0) {
-		_ATimer--;
-		if (_ATimer == 0)
-			_ATimerFlag = true;
+	if (_aTimer != 0) {
+		_aTimer--;
+		if (_aTimer == 0)
+			_aTimerFlag = true;
 	}
 
-	if (_BTimer != 0) {
-		_BTimer--;
-		if (_BTimer == 0)
-			_BTimerFlag = true;
+	if (_bTimer != 0) {
+		_bTimer--;
+		if (_bTimer == 0)
+			_bTimerFlag = true;
 	}
 
-	if (_CTimer != 0) {
-		_CTimer--;
-		if (_CTimer == 0) {
-			_CTimerFlag = true;
-			_CTimer = 4;
+	if (_cTimer != 0) {
+		_cTimer--;
+		if (_cTimer == 0) {
+			_cTimerFlag = true;
+			_cTimer = 4;
 		}
 	} else
-		_CTimer = 4;
+		_cTimer = 4;
 
-	if (_SkylarTimer != 0) {
-		_SkylarTimer--;
-		if (_SkylarTimer == 0)
-			_SkylarTimerFlag = true;
+	if (_skylarTimer != 0) {
+		_skylarTimer--;
+		if (_skylarTimer == 0)
+			_skylarTimerFlag = true;
 	}
 
 	_PalStepFlag = false;
@@ -215,36 +215,36 @@ void KingdomGame::InitPlay() {
 	for (int i = 0; i < 7; i++)
 		_IconPic[i] = 89 + i;
 
-	_FrameStop = 0;
+	_frameStop = 0;
 	_gameMode = 0;
-	_DaelonCntr = 0;
+	_daelonCntr = 0;
 	_statPlay = 10;
-	_Spell1 = false;
-	_Spell2 = false;
-	_Spell3 = false;
-	_ItemInhibit = false;
-	_ASMode = false;
-	_ATimerFlag = false;
-	_BTimerFlag = false;
-	_CTimerFlag = false;
-	_SkylarTimerFlag = false;
-	_ATimer = 0;
-	_BTimer = 0;
-	_CTimer = 0;
-	_SkylarTimer = 0;
-	_TideCntl = false;
-	_MapEx = false;
-	_Health = 12;
-	_HealthOld = 1;
-	_HealthTmr = 0;
-	_TreeEyeTimer = 0;
-	_TreeHGTimer = 0;
-	_TreeHGUPic = 147;
-	_TreeLeftPic = 0;
-	_TreeRightPic = 0;
-	_TreeRightSta = 1;
-	_TSIconOnly = false;
-	_LastObs = false;
+	_spell1 = false;
+	_spell2 = false;
+	_spell3 = false;
+	_itemInhibit = false;
+	_asMode = false;
+	_aTimerFlag = false;
+	_bTimerFlag = false;
+	_cTimerFlag = false;
+	_skylarTimerFlag = false;
+	_aTimer = 0;
+	_bTimer = 0;
+	_cTimer = 0;
+	_skylarTimer = 0;
+	_tideCntl = false;
+	_mapEx = false;
+	_health = 12;
+	_healthOld = 1;
+	_healthTmr = 0;
+	_treeEyeTimer = 0;
+	_treeHGTimer = 0;
+	_treeHGUPic = 147;
+	_treeLeftPic = 0;
+	_treeRightPic = 0;
+	_treeRightSta = 1;
+	_tsIconOnly = false;
+	_lastObs = false;
 	EnAll();
 	_Pouch = true;
 	_noIFScreen = true;
@@ -317,7 +317,7 @@ void KingdomGame::GameHelp() {
 			DrawRect(4, 17, 228, 161, 0);
 			DrawInventory();
 
-			if (_Nodes[68] == 1 || _Nodes[29] == 1 || _ItemInhibit)
+			if (_Nodes[68] == 1 || _Nodes[29] == 1 || _itemInhibit)
 				_CurrMap = 10;
 			else
 				_CurrMap = 11;
@@ -527,14 +527,14 @@ void KingdomGame::PlayMovie(int movieNum) {
 
 	_mixer->stopAll();
 
-	_ATimer = 0;
-	_ASMode = 0;
+	_aTimer = 0;
+	_asMode = false;
 
 	EraseCursor();
 
 	if (!_fullScreen) {
 		_TreeLeftSta = (_fstFwd == 0) ? 0 : 1;
-		_TreeRightSta = 0;
+		_treeRightSta = 0;
 		_IconSel = _IconSelect;
 		_IconsClosed = true;
 		CheckMainScreen();
@@ -564,14 +564,14 @@ void KingdomGame::PlayMovie(int movieNum) {
 	*/
 
 	if (!_fullScreen) {
-		_TreeRightSta = 1;
+		_treeRightSta = 1;
 		_IconsClosed = false;
 		_IconSel = 9;
 		_TreeLeftSta = _Replay == 0 ? 0 : 2;
 		CheckMainScreen();
 		DrawCursor();
 		_fstFwd = true;
-		_FrameStop = 0;
+		_frameStop = 0;
 		_lastSound = _sound;
 		_sound = false;
 		_UserInput = 0;
@@ -637,10 +637,10 @@ void KingdomGame::RestoreAS() {
 }
 
 void KingdomGame::SwitchAS() {
-	_ASMode = false;
+	_asMode = false;
 	_CurrMap = _ASMap;
 	_TreeLeftSta = _OldTLS;
-	_TreeRightSta = _OldTRS;
+	_treeRightSta = _OldTRS;
 	_Pouch = _OldPouch;
 	_Help = _OldHelp;
 	_IconsClosed = _OldIconsClosed;
@@ -649,7 +649,7 @@ void KingdomGame::SwitchAS() {
 void KingdomGame::DrawHelpScreen() {
 	int picNum;
 
-	switch(_Health) {
+	switch(_health) {
 	case 2:
 		picNum = 166;
 		break;
@@ -691,7 +691,7 @@ void KingdomGame::DrawRect(uint minX, uint minY, uint maxX, uint maxY, int color
 
 void KingdomGame::DrawInventory() {
 	FShowPic(108);
-	if (_Nodes[29] == 1 || _Nodes[68] == 1 || _ItemInhibit)
+	if (_Nodes[29] == 1 || _Nodes[68] == 1 || _itemInhibit)
 		return;
 
 	if (_Inventory[0] > 0)
@@ -836,20 +836,20 @@ Common::Error KingdomGame::loadGameState(int slot) {
 	for (int i = 0; i < 7; i++)
 		_IconPic[i] = 89 + i;
 	
-	_FrameStop = 0;
+	_frameStop = 0;
 	_gameMode = 0;
-	_ASMode = false;
-	_HealthTmr = 0;
+	_asMode = false;
+	_healthTmr = 0;
 	_noIFScreen = false;
 	_IconRedraw = true;
-	_TreeRightSta = 1;
-	_ATimerFlag = false;
-	_ATimer = 0;
-	_BTimerFlag = false;
-	_BTimer = 0;
-	_TreeEyeTimer = 0;
-	_TreeEyePic = 0;
-	_TreeHGUPic = 0;
+	_treeRightSta = 1;
+	_aTimerFlag = false;
+	_aTimer = 0;
+	_bTimerFlag = false;
+	_bTimer = 0;
+	_treeEyeTimer = 0;
+	_treeEyePic = 0;
+	_treeHGUPic = 0;
 	_CursorDrawn = false;
 	ShowPic(106);
 	_gameMode = 0;
@@ -864,9 +864,9 @@ Common::Error KingdomGame::loadGameState(int slot) {
 void KingdomGame::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_statPlay);
 	s.syncAsSint16LE(_ASMap);
-	s.syncAsSint16LE(_DaelonCntr);
-	s.syncAsSint16LE(_Health);
-	s.syncAsSint16LE(_HealthOld);
+	s.syncAsSint16LE(_daelonCntr);
+	s.syncAsSint16LE(_health);
+	s.syncAsSint16LE(_healthOld);
 	s.syncAsSint16LE(_LastObstacle);
 	s.syncAsSint16LE(_NextNode);
 	s.syncAsSint16LE(_NodeNum);
@@ -874,13 +874,13 @@ void KingdomGame::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_RtnNode);
 	s.syncAsSint16LE(_RobberyNode);
 	s.syncAsSint16LE(_SoundNumber);
-	s.syncAsSint16LE(_TreeEyePic);
-	s.syncAsSint16LE(_TreeEyeSta);
-	s.syncAsSint16LE(_TreeHGPic);
-	s.syncAsSint16LE(_TreeHGSta);
+	s.syncAsSint16LE(_treeEyePic);
+	s.syncAsSint16LE(_treeEyeSta);
+	s.syncAsSint16LE(_treeHGPic);
+	s.syncAsSint16LE(_treeHGSta);
 	s.syncAsSint16LE(_OldTLS);
-	s.syncAsSint16LE(_CTimer);
-	s.syncAsSint16LE(_SkylarTimer);
+	s.syncAsSint16LE(_cTimer);
+	s.syncAsSint16LE(_skylarTimer);
 
 	for (int i = 0; i < 18; i++)
 		s.syncAsSint16LE(_Inventory[i]);
@@ -891,21 +891,21 @@ void KingdomGame::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_OldEye);
 	s.syncAsByte(_fstFwd);
 	s.syncAsByte(_Help);
-	s.syncAsByte(_ItemInhibit);
-	s.syncAsByte(_LastObs);
+	s.syncAsByte(_itemInhibit);
+	s.syncAsByte(_lastObs);
 	s.syncAsByte(_lastSound);
-	s.syncAsByte(_MapEx);
+	s.syncAsByte(_mapEx);
 	s.syncAsByte(_NoMusic);
 	s.syncAsByte(_OldPouch);
 	s.syncAsByte(_Replay);
-	s.syncAsByte(_Spell1);
-	s.syncAsByte(_Spell2);
-	s.syncAsByte(_Spell3);
-	s.syncAsByte(_TideCntl);
+	s.syncAsByte(_spell1);
+	s.syncAsByte(_spell2);
+	s.syncAsByte(_spell3);
+	s.syncAsByte(_tideCntl);
 	s.syncAsByte(_Wizard);
-	s.syncAsByte(_TSIconOnly);
-	s.syncAsByte(_CTimerFlag);
-	s.syncAsByte(_SkylarTimerFlag);
+	s.syncAsByte(_tsIconOnly);
+	s.syncAsByte(_cTimerFlag);
+	s.syncAsByte(_skylarTimerFlag);
 
 	// Present in the original. Looks unused.
 	// s.syncAsSint16LE(_StatMap);
@@ -1035,7 +1035,7 @@ void KingdomGame::GetUserInput() {
 		return;
 
 	if (_UserInput == 2 && _Eye)
-		_UserInput = _ASMode ? 0x43B : 0x43A;
+		_UserInput = _asMode ? 0x43B : 0x43A;
 
 	if (_UserInput == 1)
 		_UserInput = _MouseValue;
@@ -1061,29 +1061,29 @@ void KingdomGame::EraseCursorAsm() {
 }
 
 void KingdomGame::DrawLocation() {
-	if (_DaelonCntr > 0)
-		_DaelonCntr--;
+	if (_daelonCntr > 0)
+		_daelonCntr--;
 
 	PlaySound(0);
 	_IconsClosed = true;
-	_TSIconOnly = false;
-	_ATimer = 0;
-	_ATimerFlag = false;
+	_tsIconOnly = false;
+	_aTimer = 0;
+	_aTimerFlag = false;
 
 	int emlValue = _emlTable[_NodeNum];
 	if (emlValue > 0)
 		EnAll();
 
-	if (!_MapEx || !emlValue || _Resurrect) {
+	if (!_mapEx || !emlValue || _Resurrect) {
 		if (_statPlay != 50)
 			_Resurrect = false;
 		_IconsClosed = false;
 	} else {
-		_MapEx = false;
+		_mapEx = false;
 		SaveAS();
 		FShowPic(emlValue);
-		_BTimer = 16;
-		while(_BTimer) {
+		_bTimer = 16;
+		while(_bTimer) {
 			checkTimers();
 			RefreshSound();
 			CheckMainScreen();
@@ -1091,13 +1091,13 @@ void KingdomGame::DrawLocation() {
 		FadeToBlack1();
 		DrawRect(4, 17, 228, 161, 0);
 		_IconsClosed = false;
-		_TSIconOnly = false;
+		_tsIconOnly = false;
 	}
 }
 
 void KingdomGame::ProcessMap(int mapNum, int zoom) {
 	int var6 = _zoomTable[mapNum][zoom][0];
-	if (!_ASMode)
+	if (!_asMode)
 		SwitchAtoM();
 	FShowPic(var6);
 	_CurrMap = _zoomTable[mapNum][zoom][1];
@@ -1108,9 +1108,9 @@ void KingdomGame::ProcessMap(int mapNum, int zoom) {
 		_TreeLeftSta = 0;
 
 	if (zoom < 8)
-		_TreeRightSta = _zoomTable[mapNum][zoom + 1][0] == 0 ? 0 : 2;
+		_treeRightSta = _zoomTable[mapNum][zoom + 1][0] == 0 ? 0 : 2;
 	else
-		_TreeRightSta = 0;
+		_treeRightSta = 0;
 }
 
 void KingdomGame::ProcessMapInput(int mapNum) {
@@ -1129,7 +1129,7 @@ void KingdomGame::ProcessMapInput(int mapNum) {
 			_UserInput = 0;
 		break;
 	case 0x440:
-		if (_TreeRightSta == 2) {
+		if (_treeRightSta == 2) {
 			_Zoom++;
 			ProcessMap(mapNum, _Zoom);
 		} else
@@ -1138,7 +1138,7 @@ void KingdomGame::ProcessMapInput(int mapNum) {
 	default:
 		if (_UserInput > 0x3FF && _UserInput < 0x428) {
 			_statPlay = _mapExit[_UserInput - 0x400];
-			_MapEx = true;
+			_mapEx = true;
 			_loopFlag = true;
 			SwitchAS();
 		}
@@ -1196,10 +1196,10 @@ void KingdomGame::DisplayIcon(int reznum) {
 	PlaySound(30);
 	SaveAS();
 	FShowPic(reznum);
-	_BTimer = 76;
+	_bTimer = 76;
 	ReadMouse();
 	
-	while(_BTimer != 0 && _MouseButton == 0) {
+	while(_bTimer != 0 && _MouseButton == 0) {
 		checkTimers();
 		RefreshSound();
 		ReadMouse();
@@ -1211,13 +1211,13 @@ void KingdomGame::DisplayIcon(int reznum) {
 }
 
 void KingdomGame::SetATimer() {
-	_ATimerFlag = true;
-	_ATimer = 0;
+	_aTimerFlag = true;
+	_aTimer = 0;
 	int wrkNodeNum = _NodeNum;
 	if (_Nodes[29] == 1 || _Nodes[68] == 1)
 		return;
 
-	if (_TSIconOnly != 0)
+	if (_tsIconOnly)
 		wrkNodeNum = 79;
 
 	if (_NodeNum == 56 && _Inventory[8] < 1 && _Wizard)
@@ -1226,8 +1226,8 @@ void KingdomGame::SetATimer() {
 	for (int i = 0; i < 7; i++) {
 		int idx = _iconActTable[wrkNodeNum][i];
 		if (_Inventory[idx] > 0) {
-			_ATimerFlag = false;
-			_ATimer = _Wizard ? 114 : 133;
+			_aTimerFlag = false;
+			_aTimer = _Wizard ? 114 : 133;
 			PlaySound(0);
 			PlaySound(34);
 			break;
@@ -1237,8 +1237,8 @@ void KingdomGame::SetATimer() {
 
 bool KingdomGame::Wound() {
 	bool retval = false;
-	if (_Health == 12 || _Health == 8 || _Health == 4) {
-		_Health -= 2;
+	if (_health == 12 || _health == 8 || _health == 4) {
+		_health -= 2;
 		retval = true;
 	}
 	return retval;
@@ -1249,45 +1249,45 @@ void KingdomGame::RefreshSound() {
 }
 
 void KingdomGame::IncreaseHealth() {
-	if (_Health <= 3)
-		_Health = 4;
-	else if (_Health <= 7)
-		_Health = 8;
+	if (_health <= 3)
+		_health = 4;
+	else if (_health <= 7)
+		_health = 8;
 	else
-		_Health = 12;
+		_health = 12;
 }
 
 void KingdomGame::CheckMainScreen() {
-	if (_CTimerFlag || _statPlay == 900 || _statPlay == 901)
+	if (_cTimerFlag || _statPlay == 900 || _statPlay == 901)
 		return;
 
-	_CTimerFlag = false;
+	_cTimerFlag = false;
 	if (_noIFScreen)
 		return;
 
-	if (_HealthOld != _Health) {
-		if (_HealthTmr > 0)
-			_HealthTmr--;
+	if (_healthOld != _health) {
+		if (_healthTmr > 0)
+			_healthTmr--;
 		else {
-			if (_Health <= _HealthOld)
-				_HealthOld--;
+			if (_health <= _healthOld)
+				_healthOld--;
 			else
-				_HealthOld++;
+				_healthOld++;
 
 			int iconIndex;
-			if (_HealthOld == 0)
+			if (_healthOld == 0)
 				iconIndex = 12 - 1;
 			else
-				iconIndex = 12 - _HealthOld;
+				iconIndex = 12 - _healthOld;
 
 			DrawIcon(4, 0, iconIndex);
-			_HealthTmr = 1;
+			_healthTmr = 1;
 		}
 	}
 
 	if (_IconRedraw) {
 		_IconRedraw = false;
-		DrawIcon(4, 0, 12 - _HealthOld);
+		DrawIcon(4, 0, 12 - _healthOld);
 		DrawIcon(11, 178, _IconPic[0]);
 		DrawIcon(38, 178, _IconPic[1]);
 		DrawIcon(65, 178, _IconPic[2]);
@@ -1295,20 +1295,20 @@ void KingdomGame::CheckMainScreen() {
 		DrawIcon(119, 178, _IconPic[4]);
 		DrawIcon(146, 178, _IconPic[5]);
 		DrawIcon(173, 178, _IconPic[6]);
-		_TreeLeftPic = 0;
-		_TreeRightPic = 0;
-		_TreeEyeTimer = 0;
-		if (_SkylarTimer != 0 || _ATimer != 0) {
-			_TreeHGTimer = 0;
-			_TreeHGUPic = 0;
+		_treeLeftPic = 0;
+		_treeRightPic = 0;
+		_treeEyeTimer = 0;
+		if (_skylarTimer != 0 || _aTimer != 0) {
+			_treeHGTimer = 0;
+			_treeHGUPic = 0;
 		}
-		if (_TideCntl)
+		if (_tideCntl)
 			DrawPic(178);
 	}
 
 	for (int i = 0; i < 7; i++) {
 		int wrkNodeNum = _NodeNum;
-		if (_TSIconOnly)
+		if (_tsIconOnly)
 			wrkNodeNum = 79;
 		if (_NodeNum == 56 && _Inventory[8] < 1 && _Wizard)
 			wrkNodeNum = 80;
@@ -1316,7 +1316,7 @@ void KingdomGame::CheckMainScreen() {
 			wrkNodeNum = 81;
 		int idx = _iconActTable[wrkNodeNum][i];
 
-		if (_Inventory[idx] >= 1 && _Nodes[29] != 1 && _Nodes[68] != 1 && !_ItemInhibit && !_IconsClosed) {
+		if (_Inventory[idx] >= 1 && _Nodes[29] != 1 && _Nodes[68] != 1 && !_itemInhibit && !_IconsClosed) {
 			if (_IconPic[i] != 12 + idx) {
 				if (_IconPic[i] == 89 + i)
 					_IconPic[i] = 96 + i;
@@ -1349,113 +1349,113 @@ void KingdomGame::CheckMainScreen() {
 
 	switch (_TreeLeftSta) {
 	case 0:
-		if (_TreeLeftPic != 33) {
+		if (_treeLeftPic != 33) {
 			DrawIcon(243, 141, 33);
-			_TreeLeftPic = 33;
+			_treeLeftPic = 33;
 		}
 		break;
 	case 1:
-		if (_TreeLeftPic != 34) {
+		if (_treeLeftPic != 34) {
 			DrawIcon(243, 141, 34);
-			_TreeLeftPic = 34;
+			_treeLeftPic = 34;
 		}
 		break;
 	case 2:
 		if (!_Replay) {
-			if (_TreeLeftPic != 33) {
+			if (_treeLeftPic != 33) {
 				DrawIcon(243, 141, 33);
-				_TreeLeftPic = 33;
+				_treeLeftPic = 33;
 			}
-		} else if (_TreeLeftPic != 35) {
+		} else if (_treeLeftPic != 35) {
 			DrawIcon(243, 141, 35);
-			_TreeLeftPic = 35;
+			_treeLeftPic = 35;
 		}
 		break;
 	case 3:
-		if (_TreeLeftPic != 36) {
+		if (_treeLeftPic != 36) {
 			DrawIcon(243, 141, 36);
-			_TreeLeftPic = 36;
+			_treeLeftPic = 36;
 		}
 		break;
 	default:
-		_TreeLeftPic = 33;
+		_treeLeftPic = 33;
 		_TreeLeftSta = 0;
 		DrawIcon(243, 141, 33);
 		break;
 	}
 
-	switch (_TreeRightSta) {
+	switch (_treeRightSta) {
 	case 0:
-		if (_TreeRightPic == 37) {
+		if (_treeRightPic == 37) {
 			DrawIcon(290, 143, 37);
-			_TreeRightPic = 37;
+			_treeRightPic = 37;
 		}
 		break;
 	case 1:
 		if (_Help) {
-			if (_TreeRightPic != 38) {
+			if (_treeRightPic != 38) {
 				DrawIcon(290, 143, 38);
-				_TreeRightPic = 38;
+				_treeRightPic = 38;
 			}
-		} else if (_TreeRightPic != 37) {
+		} else if (_treeRightPic != 37) {
 			DrawIcon(290, 143, 37);
-			_TreeRightPic = 37;
+			_treeRightPic = 37;
 		}
 		break;
 	case 2:
-		if (_TreeRightPic != 39) {
+		if (_treeRightPic != 39) {
 			DrawIcon(290, 143, 39);
-			_TreeRightPic = 39;
+			_treeRightPic = 39;
 		}
 		break;
 	default:
-		_TreeRightPic = 37;
-		_TreeRightSta = 0;
+		_treeRightPic = 37;
+		_treeRightSta = 0;
 		DrawIcon(290, 143, 37);
 		break;
 	}
 
 	if (_Eye) {
-		if (_TreeEyeTimer == 0) {
-			_TreeEyePic = _teaSeq[_TreeEyeSta][0];
-			DrawIcon(261, 51, _TreeEyePic);
-			_TreeEyeTimer = _teaSeq[_TreeEyeSta][1];
-			_TreeEyeSta++;
-			if (_TreeEyeSta == 5)
-				_TreeEyeSta = 0;
+		if (_treeEyeTimer == 0) {
+			_treeEyePic = _teaSeq[_treeEyeSta][0];
+			DrawIcon(261, 51, _treeEyePic);
+			_treeEyeTimer = _teaSeq[_treeEyeSta][1];
+			_treeEyeSta++;
+			if (_treeEyeSta == 5)
+				_treeEyeSta = 0;
 		} else
-			_TreeEyeTimer--;
-	} else if (_TreeEyePic != 37) {
+			_treeEyeTimer--;
+	} else if (_treeEyePic != 37) {
 		DrawIcon(261, 51, 146);
-		_TreeEyePic = 37;
-		_TreeEyeSta = 0;
-		_TreeEyeTimer = 0;
+		_treeEyePic = 37;
+		_treeEyeSta = 0;
+		_treeEyeTimer = 0;
 	}
 
 	int timer = 0;
 	int delta = 7; // CHECKME: the variable is the same than the one used for the first for(), and the value should therefore be 7  
-	if (_SkylarTimer != 0) {
+	if (_skylarTimer != 0) {
 		delta = 772;
-		timer = _SkylarTimer;
+		timer = _skylarTimer;
 	}
-	if (_ATimer != 0) {
+	if (_aTimer != 0) {
 		delta = 19;
-		timer = _ATimer;
+		timer = _aTimer;
 	}
 
 	if (timer == 0) {
-		if (_TreeHGUPic != 147) {
+		if (_treeHGUPic != 147) {
 			EraseCursor();
 			DrawIcon(249, 171, 147);
-			_TreeHGUPic = 147;
+			_treeHGUPic = 147;
 		}
-	} else if (_TreeHGTimer == 0) {
-		_TreeHGPic = _hgaSeq[_TreeHGSta][0];
-		DrawIcon(249, 185, _TreeHGPic);
-		_TreeHGTimer = _hgaSeq[_TreeHGSta][1];
-		_TreeHGSta++;
-		if (_TreeHGSta > 3)
-			_TreeHGSta = 0;
+	} else if (_treeHGTimer == 0) {
+		_treeHGPic = _hgaSeq[_treeHGSta][0];
+		DrawIcon(249, 185, _treeHGPic);
+		_treeHGTimer = _hgaSeq[_treeHGSta][1];
+		_treeHGSta++;
+		if (_treeHGSta > 3)
+			_treeHGSta = 0;
 
 		int var2 = 6;
 		while (true) {
@@ -1467,11 +1467,11 @@ void KingdomGame::CheckMainScreen() {
 				var2--;
 			else {
 				DrawIcon(249, 171, 40 + var2);
-				_TreeHGUPic = 40 + var2;
+				_treeHGUPic = 40 + var2;
 			}
 		}
 	} else
-		_TreeHGTimer--;
+		_treeHGTimer--;
 }
 
 bool KingdomGame::ChkDesertObstacles() {
@@ -1479,8 +1479,8 @@ bool KingdomGame::ChkDesertObstacles() {
 		return false;
 
 	_NextNode = _NodeNum;
-	if (_LastObs) {
-		_LastObs = false;
+	if (_lastObs) {
+		_lastObs = false;
 		return false;
 	}
 
@@ -1490,7 +1490,7 @@ bool KingdomGame::ChkDesertObstacles() {
 				if (_rnd->getRandomNumber(5) == 0) {
 					_statPlay = 250;
 					_LastObstacle = _NodeNum;
-					_LastObs = true;
+					_lastObs = true;
 					_loopFlag = true;
 					return true;
 				} else {
@@ -1508,24 +1508,24 @@ bool KingdomGame::ChkDesertObstacles() {
 		_statPlay = 280;
 		_RobberyNode = _NodeNum;
 		_LastObstacle = _NodeNum;
-		_LastObs = true;
+		_lastObs = true;
 		_loopFlag = true;
 		return true;
 	}
 }
 
 void KingdomGame::SwitchAtoM() {
-	_ASMode = true;
+	_asMode = true;
 	_ASMap = _CurrMap;
 	SaveAS();
 	_IconSel = 9;
 	_OldTLS = _TreeLeftSta;
-	_OldTRS = _TreeRightSta;
+	_OldTRS = _treeRightSta;
 	_OldPouch = _Pouch;
 	_OldHelp = _Help;
 	_OldIconsClosed = _IconsClosed;
 	_TreeLeftSta = 0;
-	_TreeRightSta = 0;
+	_treeRightSta = 0;
 	_Pouch = false;
 	_Help = false;
 	_IconsClosed = true;
@@ -1590,7 +1590,7 @@ int KingdomGame::GetAKey() {
 			break;
 		case Common::EVENT_LBUTTONUP: // retval == 2?
 			if (_Eye)
-				retval = !_ASMode ? 0x43A : 0x43B;
+				retval = !_asMode ? 0x43A : 0x43B;
 			break;
 		case Common::EVENT_RBUTTONUP: // retval == 1?
 			retval = _MouseValue;
@@ -1602,14 +1602,14 @@ int KingdomGame::GetAKey() {
 		default:
 			RefreshSound();
 			CheckMainScreen();
-			if (_ATimerFlag) {
-				_ATimerFlag = false;
+			if (_aTimerFlag) {
+				_aTimerFlag = false;
 				retval = 0x2F1;
-			} else if (_BTimerFlag) {
-				_BTimerFlag = false;
+			} else if (_bTimerFlag) {
+				_bTimerFlag = false;
 				retval = 0x2F2;
-			} else if (_SkylarTimerFlag) {
-				_SkylarTimerFlag = false;
+			} else if (_skylarTimerFlag) {
+				_skylarTimerFlag = false;
 				retval = 0x2F5;
 			} else
 				retval= 0;
@@ -1667,7 +1667,7 @@ void KingdomGame::CursorType() {
 	switch(_MouseValue) {
 	case 0x18A:
 		if (_Eye)
-			_MouseValue = !_ASMode ? 0x43A : 0x43B;
+			_MouseValue = !_asMode ? 0x43A : 0x43B;
 		else
 			_MouseValue = 0;
 		break;
@@ -1684,9 +1684,9 @@ void KingdomGame::CursorType() {
 			_MouseValue = 0;
 		break;
 	case 0x18D:
-		if (_TreeRightSta == 1)
+		if (_treeRightSta == 1)
 			_MouseValue = _Help ? 0x43C : 0;
-		if (_TreeRightSta == 2)
+		if (_treeRightSta == 2)
 			_MouseValue = 0x440;
 		break;
 	case 0x24A:
@@ -1711,15 +1711,15 @@ void KingdomGame::CursorType() {
 			_MouseValue = 0;
 		break;
 	case 0x428:
-		if (_NodeNum == 5 && _gameMode != 2 && _Spell1)
+		if (_NodeNum == 5 && _gameMode != 2 && _spell1)
 			_MouseValue = 0;
 		break;
 	case 0x42A:
-		if (_NodeNum == 5 && _gameMode != 2 && _Spell2)
+		if (_NodeNum == 5 && _gameMode != 2 && _spell2)
 			_MouseValue = 0;
 		break;
 	case 0x42B:
-		if (_NodeNum == 5 && _gameMode != 2 && _Spell3)
+		if (_NodeNum == 5 && _gameMode != 2 && _spell3)
 			_MouseValue = 0;
 		break;
 	case 0x445:
@@ -1731,7 +1731,7 @@ void KingdomGame::CursorType() {
 			_MouseValue = 0;
 		break;
 	case 0x457:
-		if (!_TideCntl)
+		if (!_tideCntl)
 			_MouseValue = 0;
 		break;
 	}
@@ -1740,12 +1740,12 @@ void KingdomGame::CursorType() {
 	for (int var6 = 0; var6 < 8; var6++) {
 		if (_MouseValue == 181 + var6) {
 			int var2 = _NodeNum;
-			if (_TSIconOnly!= 0)
+			if (_tsIconOnly)
 				var2 = 79;
 			if (_NodeNum == 56 && _Inventory[8] < 1 && _Wizard)
 				var2 = 80;
 			int indx = _iconActTable[var2][var6];
-			if (_Inventory[indx] != 0 && _Nodes[29] != 1 && _Nodes[68] != 1 && !_IconsClosed && !_ItemInhibit) {
+			if (_Inventory[indx] != 0 && _Nodes[29] != 1 && _Nodes[68] != 1 && !_IconsClosed && !_itemInhibit) {
 				_MouseValue = indx + 0x428;
 				_IconSelect = var6;
 				break;
