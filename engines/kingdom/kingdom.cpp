@@ -186,9 +186,9 @@ void KingdomGame::TitlePage() {
 	if (shouldQuit())
 		return;
 
-	_FstFwd = true;
-	_NoIFScreen = true;
-	_Sound = false;
+	_fstFwd = true;
+	_noIFScreen = true;
+	_sound = false;
 	FadeToBlack2();
 	PlayMovie(200);
 	FadeToBlack2();
@@ -239,9 +239,9 @@ void KingdomGame::InitPlay() {
 	_LastObs = false;
 	EnAll();
 	_Pouch = true;
-	_NoIFScreen = true;
+	_noIFScreen = true;
 	_NoMusic = false;
-	_FstFwd = true;
+	_fstFwd = true;
 
 	delete[] _ASPtr;
 	_ASPtr = nullptr;
@@ -342,7 +342,7 @@ void KingdomGame::GameHelp() {
 	case 0x243: {
 		FadeToBlack2();
 		_KeyActive = false;
-		_NoIFScreen = true;
+		_noIFScreen = true;
 		PlaySound(0);
 		int var = _PMovie;
 		while(!_KeyActive) {
@@ -350,7 +350,7 @@ void KingdomGame::GameHelp() {
 			FadeToBlack2();
 		}
 		_PMovie = var;
-		_NoIFScreen = false;
+		_noIFScreen = false;
 		ShowPic(106);
 		DrawHelpScreen();
 		_IconRedraw = true;
@@ -518,7 +518,7 @@ void KingdomGame::EnAll() {
 	_Eye = true;
 	_Replay = true;
 	_Pouch = true;
-	_FstFwd = true;
+	_fstFwd = true;
 }
 
 void KingdomGame::DsAll() {
@@ -526,7 +526,7 @@ void KingdomGame::DsAll() {
 	_Eye = false;
 	_Replay = false;
 	_Pouch = false;
-	_FstFwd = false;
+	_fstFwd = false;
 }
 
 void KingdomGame::SaveAS() {
@@ -775,7 +775,7 @@ Common::Error KingdomGame::loadGameState(int slot) {
 	_gameMode = 0;
 	_ASMode = false;
 	_HealthTmr = 0;
-	_NoIFScreen = false;
+	_noIFScreen = false;
 	_IconRedraw = true;
 	_TreeRightSta = 1;
 	_ATimerFlag = false;
@@ -824,7 +824,7 @@ void KingdomGame::synchronize(Common::Serializer &s) {
 		s.syncAsSint16LE(_Nodes[i]);
 
 	s.syncAsByte(_OldEye);
-	s.syncAsByte(_FstFwd);
+	s.syncAsByte(_fstFwd);
 	s.syncAsByte(_Help);
 	s.syncAsByte(_ItemInhibit);
 	s.syncAsByte(_LastObs);
@@ -1197,7 +1197,7 @@ void KingdomGame::CheckMainScreen() {
 		return;
 
 	_CTimerFlag = false;
-	if (_NoIFScreen)
+	if (_noIFScreen)
 		return;
 
 	if (_HealthOld != _Health) {
