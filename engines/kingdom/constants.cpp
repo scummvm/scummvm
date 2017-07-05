@@ -24,7 +24,7 @@
 
 namespace Kingdom {
 
-const char *_RezNames[] = {
+const char *_rezNames[] = {
 	"",
 	"Maps/KMAP001.lbm",
 	"Maps/KMAP002.lbm",
@@ -537,7 +537,7 @@ const char *_RezNames[] = {
 	"MovieLF/KLF209.lbm",
 };
 
-int _MapExit[] = {
+int _mapExit[] = {
 	  0, 100,  90,  50, 420, 550, 110,  70,  80, 180,
 	190, 200, 210, 230, 240, 300, 290, 330, 360, 310,
 	370, 390,  60, 570,  30,  40, 340, 640, 520, 510,
@@ -548,7 +548,7 @@ int _MapExit[] = {
 	  0
 };
 
-int _EMLTable[] = {
+int _emlTable[] = {
 	 0,  0,  0, 65, 66, 69,  0, 59,  0, 60,
 	61, 63,  0,  0, 62,  0,  0,  0, 58,  0,
 	63, 67, 67,  0, 70, 75,  0, 77,  0, 72,
@@ -559,7 +559,7 @@ int _EMLTable[] = {
 	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0
 };
 
-int _ZoomTable[81][9][2] = {
+int _zoomTable[81][9][2] = {
 	// The first array is a dummy one used to fix an stupid trick on the index in the original
 	{{   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}},
 	{{   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   8, 0x0A}, {   4, 0x0A}, {   2, 0x0A}, {   1, 0x0A}, {   0, 0x0A}},
@@ -644,7 +644,7 @@ int _ZoomTable[81][9][2] = {
 	{{   0, 0x0A}, {0x3A, 0x0A}, {0x12, 0x24}, {0x0B, 0x0A}, {   8, 0x0A}, {   5, 0x0A}, {   4, 0x0A}, {   2, 0x0A}, {   1, 0x0A}} 
 };
 
-int _IconActTable[82][7] = {
+int _iconActTable[82][7] = {
 	{18, 18, 18, 18, 18, 18, 18},
 	{18, 18, 18, 18, 18, 18, 18},
 	{18, 18, 18, 18, 18, 18, 18},
@@ -729,7 +729,7 @@ int _IconActTable[82][7] = {
 	{ 3, 18, 18, 18,  0, 18, 18} 
 };
 
-int _TEASeq[6][2] = {
+int _teaSeq[6][2] = {
 	{138, 24},
 	{139,  3},
 	{138, 12},
@@ -738,14 +738,14 @@ int _TEASeq[6][2] = {
 	{141,  2}
 };
 
-int _HGASeq[4][2] = {
+int _hgaSeq[4][2] = {
 	{47, 0},
 	{48, 0},
 	{49, 0},
 	{50, 0}
 };
 
-HotSpot _MouseMapMS[51] = {
+HotSpot _mouseMapMS[51] = {
 	{ 11,  35, 178, 197, 0x181},
 	{ 38,  62, 178, 197, 0x182},
 	{ 65,  89, 178, 197, 0x183},
@@ -799,7 +799,7 @@ HotSpot _MouseMapMS[51] = {
 	{  0,   0,   0,   0,     0}
 };
 
-int _CursorTable[96] = {
+int _cursorTable[96] = {
 	 51,  52,  53,  54,  55,  56,  57,  58,  59,  60,
 	 61,  62,  63,  64,  65,  66,  67,  68,  69,  70,
 	 71,  72,  73,  74,  75,  76,  77,  78,  79,  80,
@@ -812,7 +812,7 @@ int _CursorTable[96] = {
 	  0,   0,   0,   0,   0,   0
 };
 
-HotSpot _MouseMapAS[128][16] = {
+HotSpot _mouseMapAS[128][16] = {
 	{
 		{15, 110, 48, 62, 0x240},
 		{61, 176, 30, 44, 0x241},
