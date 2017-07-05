@@ -47,7 +47,7 @@ RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) :
 		_stoppingAllScripts(false) {
 
 	_storedMovieOpcode.time = 0;
-	_storedMovieOpcode.id = 0;
+	_storedMovieOpcode.slot = 0;
 }
 
 RivenScriptManager::~RivenScriptManager() {
@@ -101,7 +101,7 @@ void RivenScriptManager::stopAllScripts() {
 void RivenScriptManager::setStoredMovieOpcode(const StoredMovieOpcode &op) {
 	clearStoredMovieOpcode();
 	_storedMovieOpcode.script = op.script;
-	_storedMovieOpcode.id = op.id;
+	_storedMovieOpcode.slot = op.slot;
 	_storedMovieOpcode.time = op.time;
 }
 
@@ -115,7 +115,7 @@ void RivenScriptManager::runStoredMovieOpcode() {
 void RivenScriptManager::clearStoredMovieOpcode() {
 	_storedMovieOpcode.script = RivenScriptPtr();
 	_storedMovieOpcode.time = 0;
-	_storedMovieOpcode.id = 0;
+	_storedMovieOpcode.slot = 0;
 }
 
 void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
@@ -573,7 +573,7 @@ void RivenSimpleCommand::storeMovieOpcode(uint16 op, const ArgumentArray &args) 
 	RivenScriptManager::StoredMovieOpcode storedOp;
 	storedOp.script = _vm->_scriptMan->createScriptFromData(1, args[3], 1, args[4]);
 	storedOp.time = delayTime;
-	storedOp.id = args[0];
+	storedOp.slot = args[0];
 
 	// Store the opcode for later
 	_vm->_scriptMan->setStoredMovieOpcode(storedOp);

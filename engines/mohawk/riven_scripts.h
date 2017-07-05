@@ -212,10 +212,10 @@ public:
 	struct StoredMovieOpcode {
 		RivenScriptPtr script;
 		uint32 time;
-		uint16 id;
+		uint16 slot;
 	};
 
-	uint16 getStoredMovieOpcodeID() { return _storedMovieOpcode.id; }
+	uint16 getStoredMovieOpcodeSlot() { return _storedMovieOpcode.slot; }
 	uint32 getStoredMovieOpcodeTime() { return _storedMovieOpcode.time; }
 	void setStoredMovieOpcode(const StoredMovieOpcode &op);
 	void runStoredMovieOpcode();

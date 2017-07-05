@@ -257,9 +257,9 @@ void RivenVideo::playBlocking(int32 endTime) {
 	}
 
 	// Execute the stored opcode
-	uint16 storedOpcodeId = _vm->_scriptMan->getStoredMovieOpcodeID();
+	uint16 storedOpcodeMovieSlot = _vm->_scriptMan->getStoredMovieOpcodeSlot();
 	uint32 storedOpcodeTime = _vm->_scriptMan->getStoredMovieOpcodeTime();
-	if (_id == storedOpcodeId && getTime() >= storedOpcodeTime) { // CHECKME: Suspicious use of time units
+	if (_slot == storedOpcodeMovieSlot && getTime() >= storedOpcodeTime) { // CHECKME: Suspicious use of time units
 		_vm->_scriptMan->runStoredMovieOpcode();
 	}
 
