@@ -1009,108 +1009,7 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 #endif
 	return true;
 }
-#if 0
-void saveCorePNG(Common::WriteStream *stream, GLuint texture, int w, int h) {
-	GLint tw, th;
 
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	getTextureDimensions(texture, &tw, &th);
-
-	GLubyte *image = new GLubyte [tw * th * 4];
-	if (!checkNew(image)) return;
-
-	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-//	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-
-#ifdef HAVE_GLES2
-	GLuint old_fbo, new_fbo;
-	GLint old_vp[4];
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint *)&old_fbo);
-	glGetIntegerv(GL_VIEWPORT, old_vp);
-	glGenFramebuffers(1, &new_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, new_fbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-	glViewport(0, 0, tw, th);
-	glReadPixels(0, 0, tw, th, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	glBindFramebuffer(GL_FRAMEBUFFER, old_fbo);
-	glViewport(old_vp[0], old_vp[1], old_vp[2], old_vp[3]);
-	glDeleteFramebuffers(1, &new_fbo);
-#else
-	setPixelCoords(true);
-	const GLfloat texCoords[] = {
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 1.0f
-	};
-
-	int xoffset = 0;
-	while (xoffset < tw) {
-		int w = (tw - xoffset < viewportWidth) ? tw - xoffset : viewportWidth;
-
-		int yoffset = 0;
-		while (yoffset < th) {
-			int h = (th - yoffset < viewportHeight) ? th - yoffset : viewportHeight;
-
-			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
-			const GLfloat vertices[] = {
-				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat)tw - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat) - xoffset, (GLfloat) - yoffset + th, 0.,
-				(GLfloat)tw - xoffset, (GLfloat) - yoffset + th, 0.
-			};
-
-			glUseProgram(shader.texture);
-
-			setPMVMatrix(shader.texture);
-
-			drawQuad(shader.texture, vertices, 1, texCoords);
-
-			glUseProgram(0);
-
-			for (int i = 0; i < h; i++) {
-				glReadPixels(viewportOffsetX, viewportOffsetY + i, w, 1, GL_RGBA, GL_UNSIGNED_BYTE, image + xoffset * 4 + (yoffset + i) * 4 * tw);
-			}
-			yoffset += viewportHeight;
-		}
-
-		xoffset += viewportWidth;
-	}
-	setPixelCoords(false);
-
-	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!png_ptr) {
-		fatal("Error saving image!");
-		return;
-	}
-
-	png_infop info_ptr = png_create_info_struct(png_ptr);
-	if (!info_ptr) {
-		png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
-		fatal("Error saving image!");
-		return;
-	}
-
-	png_init_io(png_ptr, writer);
-
-	png_set_IHDR(png_ptr, info_ptr, w, h,
-			8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-
-	unsigned char *row_pointers[h];
-
-	for (int i = 0; i < h; i++) {
-		row_pointers[i] = image + 4 * i * tw;
-	}
-
-	png_set_rows(png_ptr, info_ptr, row_pointers);
-	png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-
-	delete [] image;
-	image = NULL;
-#endif
-}
-#endif
 #if 0
 void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 	GLint tw, th;
@@ -1188,11 +1087,9 @@ void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 }
 #endif
 
-#if 0
 void saveHSI(Common::WriteStream *stream) {
-	saveCorePNG(stream, backdropTextureName, sceneWidth, sceneHeight);
+	Image::writePNG(*stream, backdropSurface);
 }
-#endif
 
 void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *stream) {
 	if (me) {
