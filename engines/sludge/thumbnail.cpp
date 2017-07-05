@@ -132,8 +132,8 @@ bool saveThumbnail(Common::WriteStream *stream) {
 		unfreeze(true);
 	}
 	fputc('!', fp);
-	return true;
 #endif
+	return true;
 }
 
 void showThumbnail(char *filename, int atX, int atY) {
@@ -252,12 +252,15 @@ void showThumbnail(char *filename, int atX, int atY) {
 }
 
 bool skipThumbnail(Common::SeekableReadStream *stream) {
+#if 0
 	thumbWidth = stream->readUint32LE();
 	thumbHeight = stream->readUint32LE();
 	uint32 skippy = thumbWidth;
 	skippy *= thumbHeight << 1;
 	stream->seek(skippy, 1);
 	return (stream->readByte() == '!');
+#endif
+	return true;
 }
 
 } // End of namespace Sludge

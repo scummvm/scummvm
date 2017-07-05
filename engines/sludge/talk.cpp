@@ -213,7 +213,6 @@ void viewSpeech() {
 }
 
 void saveSpeech(speechStruct *sS, Common::WriteStream *stream) {
-#if 0
 	speechLine *viewLine = sS->allSpeech;
 
 	stream->writeByte(sS->talkCol.originalRed);
@@ -242,11 +241,9 @@ void saveSpeech(speechStruct *sS, Common::WriteStream *stream) {
 		viewLine = viewLine->next;
 	}
 	stream->writeByte(0);
-#endif
 }
 
 bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream) {
-#if 0
 	speech->currentTalker = NULL;
 	killAllSpeech();
 	byte r = stream->readByte();
@@ -281,7 +278,6 @@ bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream) {
 		(* viewLine) = newOne;
 		viewLine = &(newOne->next);
 	}
-#endif
 	return true;
 }
 

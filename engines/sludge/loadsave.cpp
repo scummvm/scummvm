@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/savefile.h"
+
 #include "sludge/allfiles.h"
 #include "sludge/sprites.h"
 #include "sludge/fonttext.h"
@@ -41,6 +43,8 @@
 #include "sludge/fileset.h"
 #include "sludge/debug.h"
 #include "sludge/loadsave.h"
+#include "sludge/bg_effects.h"
+#include "sludge/thumbnail.h"
 #include "sludge/CommonCode/version.h"
 
 namespace Sludge {
@@ -74,9 +78,7 @@ extern bool captureAllKeys;
 extern bool allowAnyFilename;
 extern unsigned short saveEncoding;                 // in savedata.cpp
 extern unsigned char currentBurnR, currentBurnG, currentBurnB;
-#if 0
 extern unsigned int currentBlankColour;             // in backdrop.cpp
-#endif
 extern parallaxLayer *parallaxStuff;                //      "
 extern int lightMapMode;                    //      "
 extern int languageNum;
@@ -383,28 +385,28 @@ loadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 //----------------------------------------------------------------------
 
 bool saveGame(char *fname) {
-#if 0
-	int a;
+	Common::OutSaveFile *fp = g_system->getSavefileManager()->openForSaving(fname);
 
-	FILE *fp = fopen(fname, "wb");
-	if (fp == NULL) return false;
+	if (fp == NULL)
+		return false;
 
-	fprintf(fp, "SLUDSA");
-	fputc(0, fp);
-	fputc(0, fp);
-	fputc(MAJOR_VERSION, fp);
-	fputc(MINOR_VERSION, fp);
+	fp->writeString("SLUDSA");
+	fp->writeByte(0);
+	fp->writeByte(0);
+	fp->writeByte(MAJOR_VERSION);
+	fp->writeByte(MINOR_VERSION);
 
-	if (! saveThumbnail(fp)) return false;
+	if (!saveThumbnail(fp))
+		return false;
 
-	fwrite(&fileTime, sizeof(FILETIME), 1, fp);
+	fp->write(&fileTime, sizeof(FILETIME));
 
 	// DON'T ADD ANYTHING NEW BEFORE THIS POINT!
 
-	fputc(allowAnyFilename, fp);
-	fputc(captureAllKeys, fp);
-	fputc(true, fp);// updateDisplay
-	fputc(fontTableSize > 0, fp);
+	fp->writeByte(allowAnyFilename);
+	fp->writeByte(captureAllKeys);
+	fp->writeByte(true);
+	fp->writeByte(fontTableSize > 0);
 
 	if (fontTableSize > 0) {
 		fp->writeUint16BE(loadedFontNum);
@@ -418,7 +420,7 @@ bool saveGame(char *fname) {
 	fp->writeUint16BE(cameraY);
 	putFloat(cameraZoom, fp);
 
-	fputc(brightnessLevel, fp);
+	fp->writeByte(brightnessLevel);
 	saveHSI(fp);
 
 	// Save event handlers
@@ -434,7 +436,7 @@ bool saveGame(char *fname) {
 	loadedFunction *thisFunction = allRunningFunctions;
 	int countFunctions = 0;
 	while (thisFunction) {
-		countFunctions ++;
+		countFunctions++;
 		thisFunction = thisFunction->next;
 	}
 	fp->writeUint16BE(countFunctions);
@@ -445,30 +447,36 @@ bool saveGame(char *fname) {
 		thisFunction = thisFunction->next;
 	}
 
-	for (a = 0; a < numGlobals; a++) {
+	for (int a = 0; a < numGlobals; a++) {
 		saveVariable(&globalVars[a], fp);
 	}
 
 	savePeople(fp);
 
 	if (currentFloor->numPolygons) {
-		fputc(1, fp);
+		fp->writeByte(1);
 		fp->writeUint16BE(currentFloor->originalNum);
-	} else fputc(0, fp);
+	} else {
+		fp->writeByte(0);
+	}
 
-	if (zBuffer.tex) {
-		fputc(1, fp);
+	if (zBuffer.numPanels > 0) {
+		fp->writeByte(1);
 		fp->writeUint16BE(zBuffer.originalNum);
-	} else fputc(0, fp);
+	} else {
+		fp->writeByte(0);
+	}
 
-	if (lightMap.data) {
-		fputc(1, fp);
+	if (lightMap.getPixels()) {
+		fp->writeByte(1);
 		fp->writeUint16BE(lightMapNumber);
-	} else fputc(0, fp);
+	} else {
+		fp->writeByte(0);
+	}
 
-	fputc(lightMapMode, fp);
-	fputc(speechMode, fp);
-	fputc(fadeMode, fp);
+	fp->writeByte(lightMapMode);
+	fp->writeByte(speechMode);
+	fp->writeByte(fadeMode);
 	saveSpeech(speech, fp);
 	saveStatusBars(fp);
 	saveSounds(fp);
@@ -478,19 +486,21 @@ bool saveGame(char *fname) {
 	blur_saveSettings(fp);
 
 	fp->writeUint16BE(currentBlankColour);
-	fputc(currentBurnR, fp);
-	fputc(currentBurnG, fp);
-	fputc(currentBurnB, fp);
+	fp->writeByte(currentBurnR);
+	fp->writeByte(currentBurnG);
+	fp->writeByte(currentBurnB);
 
 	saveParallaxRecursive(parallaxStuff, fp);
-	fputc(0, fp);
+	fp->writeByte(0);
 
-	fputc(languageNum, fp);     // Selected language
+	fp->writeByte(languageNum); // Selected language
 
 	saveSnapshot(fp);
 
-	fclose(fp);
-#endif
+	fp->flush();
+	fp->finalize();
+	delete fp;
+
 	clearStackLib();
 	return true;
 }
@@ -502,39 +512,65 @@ bool saveGame(char *fname) {
 int ssgVersion;
 
 bool loadGame(char *fname) {
-#if 0
-	FILE *fp;
+	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(fname);
 	FILETIME savedGameTime;
-	int a;
 
-	while (allRunningFunctions) finishFunction(allRunningFunctions);
+	while (allRunningFunctions)
+		finishFunction(allRunningFunctions);
 
-	fp = openAndVerify(fname, 'S', 'A', ERROR_GAME_LOAD_NO, ssgVersion);
-	if (fp == NULL) return false;
+	if (fp == NULL)
+		return false;
+
+	bool headerBad = false;
+	if (fp->readByte() != 'S')
+		headerBad = true;
+	if (fp->readByte() != 'L')
+		headerBad = true;
+	if (fp->readByte() != 'U')
+		headerBad = true;
+	if (fp->readByte() != 'D')
+		headerBad = true;
+	if (fp->readByte() != 'S')
+		headerBad = true;
+	if (fp->readByte() != 'A')
+		headerBad = true;
+	if (headerBad) {
+		fatal(ERROR_GAME_LOAD_NO, fname);
+		return NULL;
+	}
+	char c;
+	c = fp->readByte();
+	while ((c = fp->readByte()))
+		;
+
+	int majVersion = fp->readByte();
+	int minVersion = fp->readByte();
+	ssgVersion = majVersion * 256 + minVersion;
+
 
 	if (ssgVersion >= VERSION(1, 4)) {
-		if (! skipThumbnail(fp)) return fatal(ERROR_GAME_LOAD_CORRUPT, fname);
+		if (!skipThumbnail(fp))
+			return fatal(ERROR_GAME_LOAD_CORRUPT, fname);
 	}
 
-	size_t bytes_read = fread(&savedGameTime, sizeof(FILETIME), 1, fp);
-	if (bytes_read != sizeof(FILETIME) && ferror(fp)) {
+	uint32 bytes_read = fp->read(&savedGameTime, sizeof(FILETIME));
+	if (bytes_read != sizeof(FILETIME) && fp->err()) {
 		debugOut("Reading error in loadGame.\n");
 	}
 
-	if (savedGameTime.dwLowDateTime != fileTime.dwLowDateTime ||
-			savedGameTime.dwHighDateTime != fileTime.dwHighDateTime) {
+	if (savedGameTime.dwLowDateTime != fileTime.dwLowDateTime || savedGameTime.dwHighDateTime != fileTime.dwHighDateTime) {
 		return fatal(ERROR_GAME_LOAD_WRONG, fname);
 	}
 
 	// DON'T ADD ANYTHING NEW BEFORE THIS POINT!
 
 	if (ssgVersion >= VERSION(1, 4)) {
-		allowAnyFilename = fgetc(fp);
+		allowAnyFilename = fp->readByte();
 	}
-	captureAllKeys = fgetc(fp);
-	fgetc(fp);  // updateDisplay (part of movie playing)
+	captureAllKeys = fp->readByte();
+	fp->readByte();  // updateDisplay (part of movie playing)
 
-	bool fontLoaded = fgetc(fp);
+	bool fontLoaded = fp->readByte();
 	int fontNum;
 	char *charOrder;
 	if (fontLoaded) {
@@ -544,10 +580,11 @@ bool loadGame(char *fname) {
 		if (ssgVersion < VERSION(2, 2)) {
 			int x;
 			charOrder = new char[257];
-			if (! checkNew(charOrder)) return false;
+			if (!checkNew(charOrder))
+				return false;
 
 			for (int a = 0; a < 256; a++) {
-				x = fgetc(fp);
+				x = fp->readByte();
 				charOrder[x] = a;
 			}
 			charOrder[256] = 0;
@@ -556,7 +593,7 @@ bool loadGame(char *fname) {
 		}
 	}
 	loadFont(fontNum, charOrder, fontHeight);
-	delete [] charOrder;
+	delete []charOrder;
 
 	fontSpace = getSigned(fp);
 
@@ -572,53 +609,59 @@ bool loadGame(char *fname) {
 		camerZ = 1.0;
 	}
 
-	brightnessLevel = fgetc(fp);
+	brightnessLevel = fp->readByte();
 
 	loadHSI(fp, 0, 0, true);
 	loadHandlers(fp);
 	loadRegions(fp);
 
 	mouseCursorAnim = new personaAnimation;
-	if (! checkNew(mouseCursorAnim)) return false;
-	if (! loadAnim(mouseCursorAnim, fp)) return false;
+	if (!checkNew(mouseCursorAnim))
+		return false;
+	if (!loadAnim(mouseCursorAnim, fp))
+		return false;
 	mouseCursorFrameNum = fp->readUint16BE();
 
 	loadedFunction *rFunc;
-	loadedFunction * * buildList = &allRunningFunctions;
+	loadedFunction **buildList = &allRunningFunctions;
 
 	int countFunctions = fp->readUint16BE();
-	while (countFunctions --) {
+	while (countFunctions--) {
 		rFunc = loadFunction(fp);
 		rFunc->next = NULL;
-		(* buildList) = rFunc;
+		(*buildList) = rFunc;
 		buildList = &(rFunc->next);
 	}
 
-	for (a = 0; a < numGlobals; a++) {
+	for (int a = 0; a < numGlobals; a++) {
 		unlinkVar(globalVars[a]);
 		loadVariable(&globalVars[a], fp);
 	}
 
 	loadPeople(fp);
 
-	if (fgetc(fp)) {
-		if (! setFloor(fp->readUint16BE())) return false;
-	} else setFloorNull();
+	if (fp->readByte()) {
+		if (!setFloor(fp->readUint16BE()))
+			return false;
+	} else
+		setFloorNull();
 
-	if (fgetc(fp)) {
-		if (! setZBuffer(fp->readUint16BE())) return false;
+	if (fp->readByte()) {
+		if (!setZBuffer(fp->readUint16BE()))
+			return false;
 	}
 
-	if (fgetc(fp)) {
-		if (! loadLightMap(fp->readUint16BE())) return false;
+	if (fp->readByte()) {
+		if (!loadLightMap(fp->readUint16BE()))
+			return false;
 	}
 
 	if (ssgVersion >= VERSION(1, 4)) {
-		lightMapMode = fgetc(fp) % 3;
+		lightMapMode = fp->readByte() % 3;
 	}
 
-	speechMode = fgetc(fp);
-	fadeMode = fgetc(fp);
+	speechMode = fp->readByte();
+	fadeMode = fp->readByte();
 	loadSpeech(speech, fp);
 	loadStatusBars(fp);
 	loadSounds(fp);
@@ -628,7 +671,7 @@ bool loadGame(char *fname) {
 	if (ssgVersion >= VERSION(1, 6)) {
 		if (ssgVersion < VERSION(2, 0)) {
 			// aaLoad
-			fgetc(fp);
+			fp->readByte();
 			getFloat(fp);
 			getFloat(fp);
 		}
@@ -638,20 +681,21 @@ bool loadGame(char *fname) {
 
 	if (ssgVersion >= VERSION(1, 3)) {
 		currentBlankColour = fp->readUint16BE();
-		currentBurnR = fgetc(fp);
-		currentBurnG = fgetc(fp);
-		currentBurnB = fgetc(fp);
+		currentBurnR = fp->readByte();
+		currentBurnG = fp->readByte();
+		currentBurnB = fp->readByte();
 
 		// Read parallax layers
-		while (fgetc(fp)) {
+		while (fp->readByte()) {
 			int im = fp->readUint16BE();
 			int fx = fp->readUint16BE();
 			int fy = fp->readUint16BE();
 
-			if (! loadParallax(im, fx, fy)) return false;
+			if (!loadParallax(im, fx, fy))
+				return false;
 		}
 
-		int selectedLanguage = fgetc(fp);
+		int selectedLanguage = fp->readByte();
 		if (selectedLanguage != languageNum) {
 			// Load the saved language!
 			languageNum = selectedLanguage;
@@ -661,17 +705,17 @@ bool loadGame(char *fname) {
 
 	nosnapshot();
 	if (ssgVersion >= VERSION(1, 4)) {
-		if (fgetc(fp)) {
-			if (! restoreSnapshot(fp)) return false;
+		if (fp->readByte()) {
+			if (!restoreSnapshot(fp))
+				return false;
 		}
 	}
 
-	fclose(fp);
+	delete fp;
 
 	cameraX = camerX;
 	cameraY = camerY;
 	cameraZoom = camerZ;
-#endif
 
 	clearStackLib();
 	return true;

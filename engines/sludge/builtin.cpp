@@ -347,7 +347,7 @@ builtIn(loadGame) {
 	char *aaaaa = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	loadNow = encodeFilename(aaaaa);
-	delete aaaaa;
+	delete []aaaaa;
 
 	if (frozenStuff) {
 		fatal("Can't load a saved game while the engine is frozen");
@@ -359,9 +359,10 @@ builtIn(loadGame) {
 		fd.close();
 		return BR_KEEP_AND_PAUSE;
 	}
-	delete loadNow;
+	delete []loadNow;
 	loadNow = NULL;
 
+	debug("not find sav file");
 	return BR_CONTINUE;
 }
 
