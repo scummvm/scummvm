@@ -181,7 +181,7 @@ bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
 		}
 		break;
 
-	case ACTION_REMOVE:
+	case ACTION_CHANGE:
 		if (_item == invAction->_item && _owner) {
 			int v = populateItem(_item, 0);
 			_background = owner->getBackground(v);
