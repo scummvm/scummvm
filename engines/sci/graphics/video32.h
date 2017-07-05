@@ -608,6 +608,10 @@ private:
 #pragma mark -
 #pragma mark DuckPlayer
 
+/**
+ * DuckPlayer is used to play Duck TrueMotion videos.
+ * Used by Phantasmagoria 2.
+ */
 class DuckPlayer : public VideoPlayer {
 public:
 	enum DuckStatus {
@@ -617,9 +621,7 @@ public:
 		kDuckPaused  = 3
 	};
 
-	DuckPlayer(SegManager *segMan, EventManager *eventMan);
-
-	~DuckPlayer();
+	DuckPlayer(EventManager *eventMan, SegManager *segMan);
 
 	/**
 	 * Opens a stream to a Duck resource.
@@ -637,9 +639,8 @@ public:
 	void play(const int lastFrameNo);
 
 	/**
-	 * Sets a flag indicating that an opaque plane should be added
-	 * to the graphics manager underneath the video surface during
-	 * playback.
+	 * Sets a flag indicating that an opaque plane should be added to the
+	 * graphics manager underneath the video surface during playback.
 	 */
 	void setDoFrameOut(const bool value) { _doFrameOut = value; }
 
@@ -647,17 +648,24 @@ public:
 	 * Sets the volume of the decoder.
 	 */
 	void setVolume(const uint8 value) {
-		_volume = (uint)value * Audio::Mixer::kMaxChannelVolume / Audio32::kMaxVolume;
+		_volume = value * Audio::Mixer::kMaxChannelVolume / Audio32::kMaxVolume;
 		_decoder->setVolume(_volume);
 	}
 
-private:
-	EventManager *_eventMan;
-	Video::AVIDecoder *_decoder;
+protected:
+	virtual bool shouldStartHQVideo() const override {
+		if (!VideoPlayer::shouldStartHQVideo() || _blackLines) {
+			return false;
+		}
 
+		return true;
+	}
+
+	virtual void renderFrame(const Graphics::Surface &nextFrame) const override;
+
+private:
 	/**
-	 * An empty plane drawn behind the video when the doFrameOut
-	 * flag is true.
+	 * An empty plane drawn behind the video when the doFrameOut flag is true.
 	 */
 	Plane *_plane;
 
@@ -665,11 +673,6 @@ private:
 	 * The player status.
 	 */
 	DuckStatus _status;
-
-	/**
-	 * The screen rect where the video should be drawn.
-	 */
-	Common::Rect _drawRect;
 
 	/**
 	 * The playback volume for the player.
@@ -683,19 +686,14 @@ private:
 	bool _doFrameOut;
 
 	/**
-	 * If true, the video will be pixel doubled during playback.
+	 * Whether or not the video should be pixel doubled.
 	 */
-	bool _pixelDouble;
+	bool _doublePixels;
 
 	/**
-	 * The buffer used to perform scaling of the video.
+	 * Whether or not black lines should be rendered across the video.
 	 */
-	byte *_scaleBuffer;
-
-	/**
-	 * Renders the current frame to the system video buffer.
-	 */
-	void renderFrame() const;
+	bool _blackLines;
 };
 
 #pragma mark -
@@ -711,7 +709,7 @@ public:
 	_AVIPlayer(eventMan),
 	_VMDPlayer(eventMan, segMan),
 	_robotPlayer(segMan),
-	_duckPlayer(segMan, eventMan) {}
+	_duckPlayer(eventMan, segMan) {}
 
 	void beforeSaveLoadWithSerializer(Common::Serializer &ser);
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);

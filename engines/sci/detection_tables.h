@@ -3117,10 +3117,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #ifdef ENABLE_SCI3_GAMES
 
 // TODO: Correct GUIOs
-#define GUIO_PHANTASMAGORIA2 GUIO4(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
-                                   GUIO_NOASPECT, \
+#define GUIO_PHANTASMAGORIA2 GUIO5(GUIO_NOASPECT, \
                                    GUIO_NOMIDI, \
-                                   GAMEOPTION_ORIGINAL_SAVELOAD)
+                                   GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                                   GAMEOPTION_ORIGINAL_SAVELOAD, \
+                                   GAMEOPTION_HQ_VIDEO)
 
 	// Some versions of Phantasmagoria 2 were heavily censored.
 	// Censored versions (data files are currently unknown to us): UK, Australia, first English release in Germany

@@ -969,21 +969,12 @@ void VMDPlayer::restrictPalette(const uint8 startColor, const int16 endColor) {
 #pragma mark -
 #pragma mark DuckPlayer
 
-DuckPlayer::DuckPlayer(SegManager *segMan, EventManager *eventMan) :
-	VideoPlayer(eventMan),
-	_decoder(new Video::AVIDecoder(Audio::Mixer::kSFXSoundType)),
+DuckPlayer::DuckPlayer(EventManager *eventMan, SegManager *segMan) :
+	VideoPlayer(eventMan, new Video::AVIDecoder(Audio::Mixer::kSFXSoundType)),
 	_plane(nullptr),
 	_status(kDuckClosed),
-	_drawRect(),
 	_volume(Audio::Mixer::kMaxChannelVolume),
-	_doFrameOut(false),
-	_pixelDouble(false),
-	_scaleBuffer(nullptr) {}
-
-DuckPlayer::~DuckPlayer() {
-	close();
-	delete _decoder;
-}
+	_doFrameOut(false) {}
 
 void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, const int16 x, const int16 y) {
 	if (_status != kDuckClosed) {
@@ -991,19 +982,22 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 	}
 
 	const Common::String fileName = Common::String::format("%u.duk", resourceId);
-	if (!_decoder->loadFile(fileName)) {
-		error("Can't open %s", fileName.c_str());
+
+	if (!VideoPlayer::open(fileName)) {
+		return;
 	}
 
 	_decoder->setVolume(_volume);
-	_pixelDouble = displayMode != 0;
 
-	const int16 scale = _pixelDouble ? 2 : 1;
+	_doublePixels = displayMode != 0;
+	_blackLines = ConfMan.getBool("enable_black_lined_video") &&
+				 (displayMode == 1 || displayMode == 3);
+
 	// SSCI seems to incorrectly calculate the draw rect by scaling the origin
 	// in addition to the width/height for the BR point
 	_drawRect = Common::Rect(x, y,
-							 x + _decoder->getWidth() * scale,
-							 y + _decoder->getHeight() * scale);
+							 x + (_decoder->getWidth() << _doublePixels),
+							 y + (_decoder->getHeight() << _doublePixels));
 
 	g_sci->_gfxCursor32->hide();
 
@@ -1013,59 +1007,33 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 
-	const Graphics::PixelFormat format = _decoder->getPixelFormat();
-
-	if (_pixelDouble) {
-		assert(_scaleBuffer == nullptr);
-		_scaleBuffer = new byte[_drawRect.width() * _drawRect.height() * format.bytesPerPixel];
+	if (!startHQVideo() && _decoder->getPixelFormat().bytesPerPixel != 1) {
+		g_sci->_gfxFrameout->setPixelFormat(_decoder->getPixelFormat());
 	}
-
-	g_sci->_gfxFrameout->setPixelFormat(format);
 
 	_status = kDuckOpen;
 }
 
 void DuckPlayer::play(const int lastFrameNo) {
-	flushEvents(_eventMan);
+	// This status check does not exist in the original interpreter, but is
+	// necessary to avoid a crash if the engine cannot find or render the video
+	// for playback. Game scripts receive no feedback from the kernel regarding
+	// whether or not an attempt to open a Duck video actually succeeded, so
+	// they can only assume it always succeeds (and so always call to `play`
+	// even if they shouldn't).
+	if (_status == kDuckClosed) {
+		return;
+	}
 
 	if (_status != kDuckPlaying) {
 		_status = kDuckPlaying;
-		_decoder->start();
 	}
 
-	while (!g_engine->shouldQuit()) {
-		if (_decoder->endOfVideo() || (lastFrameNo != -1 && _decoder->getCurFrame() >= lastFrameNo)) {
-			break;
-		}
-
-		g_sci->sleep(_decoder->getTimeToNextFrame());
-		while (_decoder->needsUpdate()) {
-			renderFrame();
-		}
-
-		SciEvent event = _eventMan->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK);
-		if (event.type == SCI_EVENT_MOUSE_PRESS) {
-			flushEvents(_eventMan);
-			break;
-		}
-
-		event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
-		if (event.type == SCI_EVENT_KEYBOARD) {
-			bool stop = false;
-			while ((event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD)),
-				   event.type != SCI_EVENT_NONE) {
-				if (event.character == SCI_KEY_ESC) {
-					stop = true;
-					break;
-				}
-			}
-
-			if (stop) {
-				flushEvents(_eventMan);
-				break;
-			}
-		}
+	if (lastFrameNo != -1) {
+		_decoder->setEndFrame(lastFrameNo);
 	}
+
+	playUntilEvent(kEventFlagMouseDown | kEventFlagEscapeKey);
 }
 
 void DuckPlayer::close() {
@@ -1075,8 +1043,7 @@ void DuckPlayer::close() {
 
 	_decoder->close();
 
-	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	g_sci->_gfxFrameout->setPixelFormat(format);
+	endHQVideo();
 
 	g_sci->_gfxCursor32->unhide();
 
@@ -1086,109 +1053,28 @@ void DuckPlayer::close() {
 		_plane = nullptr;
 	}
 
-	_pixelDouble = false;
-	delete[] _scaleBuffer;
-	_scaleBuffer = nullptr;
-
+	_drawRect = Common::Rect();
 	_status = kDuckClosed;
+	_volume = Audio::Mixer::kMaxChannelVolume;
+	_doFrameOut = false;
 }
 
-static inline uint16 interpolate(const Graphics::PixelFormat &format, const uint16 p1, const uint16 p2) {
-	uint8 r1, g1, b1, r2, g2, b2;
-	format.colorToRGB(p1, r1, g1, b1);
-	format.colorToRGB(p2, r2, g2, b2);
-	return format.RGBToColor((r1 + r2) >> 1, (g1 + g2) >> 1, (b1 + b2) >> 1);
-}
-
-void DuckPlayer::renderFrame() const {
-	const Graphics::Surface *surface = _decoder->decodeNextFrame();
-
-	// Audio-only or non-updated frame
-	if (surface == nullptr) {
+void DuckPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
+#ifdef USE_RGB_COLOR
+	if (_hqVideoMode) {
+		VideoPlayer::renderFrame(nextFrame);
 		return;
 	}
-
-	assert(surface->format.bytesPerPixel == 2);
-
-	if (_pixelDouble) {
-		const uint16 *source = (const uint16 *)surface->getPixels();
-		const Graphics::PixelFormat &format = surface->format;
-		uint16 *target = (uint16 *)_scaleBuffer;
-
-#ifndef SCI_DUCK_NO_INTERPOLATION
-		// divide by 2 gets pixel pitch instead of byte pitch for source
-		const uint16 sourcePitch = surface->pitch >> 1;
 #endif
 
-		const uint16 targetPitch = surface->pitch;
-		const bool blackLined = ConfMan.getBool("enable_black_lined_video");
-		for (int y = 0; y < surface->h - 1; ++y) {
-			for (int x = 0; x < surface->w - 1; ++x) {
-#ifndef SCI_DUCK_NO_INTERPOLATION
-				const uint16 a = source[0];
-				const uint16 b = source[1];
-				const uint16 c = source[sourcePitch];
-				const uint16 d = source[sourcePitch + 1];
-
-				target[0] = a;
-				target[1] = interpolate(format, a, b);
-#else
-				const uint16 value = *source;
-				target[0] = value;
-				target[1] = value;
-#endif
-				if (!blackLined) {
-#ifndef SCI_DUCK_NO_INTERPOLATION
-					target[targetPitch] = interpolate(format, a, c);
-					target[targetPitch + 1] = interpolate(format, target[1], interpolate(format, c, d));
-#else
-					target[targetPitch] = value;
-					target[targetPitch + 1] = value;
-#endif
-				}
-
-				target += 2;
-				++source;
-			}
-
-			const uint16 value = *source++;
-			target[0] = value;
-			target[1] = value;
-			if (!blackLined) {
-				target[targetPitch] = value;
-				target[targetPitch + 1] = value;
-			}
-			target += 2;
-
-			if (blackLined) {
-				memset(target, 0, targetPitch * format.bytesPerPixel);
-			}
-
-			target += targetPitch;
-		}
-
-		for (int x = 0; x < surface->w; ++x) {
-			const uint16 lastValue = *source++;
-			target[0] = lastValue;
-			target[1] = lastValue;
-
-			if (!blackLined) {
-				target[targetPitch] = lastValue;
-				target[targetPitch + 1] = lastValue;
-				target += 2;
-			}
-		}
-
-		if (blackLined) {
-			memset(target, 0, targetPitch);
-		}
-
-		g_system->copyRectToScreen(_scaleBuffer, surface->pitch * 2, _drawRect.left, _drawRect.top, _drawRect.width(), _drawRect.height());
-	} else {
-		g_system->copyRectToScreen(surface->getPixels(), surface->pitch, _drawRect.left, _drawRect.top, surface->w, surface->h);
+	Graphics::Surface out;
+	out.create(_drawRect.width(), _drawRect.height(), nextFrame.format);
+	renderLQToSurface<uint16>(out, nextFrame, _doublePixels, _blackLines);
+	if (out.format != g_system->getScreenFormat()) {
+		out.convertToInPlace(g_system->getScreenFormat());
 	}
-
-	g_sci->_gfxFrameout->updateScreen();
+	g_system->copyRectToScreen(out.getPixels(), out.pitch, _drawRect.left, _drawRect.top, out.w, out.h);
+	out.free();
 }
 
 } // End of namespace Sci
