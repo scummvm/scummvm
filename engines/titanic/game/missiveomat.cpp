@@ -229,6 +229,9 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 
 	switch (msg->_action) {
 	case MESSAGE_SHOW: {
+		if (_account == NO_ACCOUNT)
+			break;
+
 		CRoomItem *room = findRoom();
 		CTreeItem *btnOk = room->findByName("MissiveOMat OK Button");
 		CTreeItem *btnNext = room->findByName("MissiveOMat Next Button");
