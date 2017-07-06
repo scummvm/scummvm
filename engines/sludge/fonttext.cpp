@@ -28,17 +28,17 @@
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
 #include "sludge/platform-dependent.h"
-#include "sludge/CommonCode/utf8.h"
+#include "sludge/utf8.h"
 
 namespace Sludge {
 
 spriteBank theFont;
 int fontHeight = 0, numFontColours, loadedFontNum;
-char *fontOrderString = NULL;
+Common::U32String fontOrderString;
 short fontSpace = -1;
 
 uint32 *fontTable = NULL;
-unsigned int fontTableSize = 0;
+uint fontTableSize = 0;
 
 #define fontInTable(x) ((x<fontTableSize) ? fontTable[(uint32) x] : 0)
 
@@ -50,30 +50,33 @@ bool isInFont(char *theText) {
 	if (!theText[0])
 		return 0;
 
+	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+
 	// We don't want to compare strings. Only single characters allowed!
-	if (u8_strlen(theText) > 1)
+	if (str32.size() > 1)
 		return false;
 
-	int i = 0;
-	uint32 c = u8_nextchar(theText, &i);
+	uint32 c = str32[0];
 
-	return u8_strchr(fontOrderString, c, &i);
+	// check if font order contains the utf8 char
+	return fontOrderString.contains(c);
 }
 
 int stringLength(char *theText) {
-	return u8_strlen(theText);
+	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+	return str32.size();
 }
 
 int stringWidth(char *theText) {
-	int a = 0;
-	uint32 c;
 	int xOff = 0;
 
 	if (!fontTableSize)
 		return 0;
 
-	while (theText[a]) {
-		c = u8_nextchar(theText, &a);
+	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+
+	for (uint i = 0; i < str32.size(); ++i) {
+		uint32 c = str32[i];
 		xOff += theFont.sprites[fontInTable(c)].surface.w + fontSpace;
 	}
 
@@ -81,51 +84,46 @@ int stringWidth(char *theText) {
 }
 
 void pasteString(char *theText, int xOff, int y, spritePalette &thePal) {
-	sprite *mySprite;
-	int a = 0;
-	uint32 c;
-
 	if (!fontTableSize)
 		return;
 
 	xOff += (int)((float)(fontSpace >> 1) / cameraZoom);
-	while (theText[a]) {
-		c = u8_nextchar(theText, &a);
-		mySprite = &theFont.sprites[fontInTable(c)];
+
+	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+
+	for (uint32 i = 0; i < str32.size(); ++i) {
+		uint32 c = str32[i];
+		sprite *mySprite = &theFont.sprites[fontInTable(c)];
 		fontSprite(xOff, y, *mySprite, thePal);
 		xOff += (int)((double)(mySprite->surface.w + fontSpace) / cameraZoom);
 	}
 }
 
 void pasteStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
-	sprite *mySprite;
-	int a = 0;
-	uint32 c;
-
 	if (!fontTableSize)
 		return;
 
+	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+
 	xOff += fontSpace >> 1;
-	while (theText[a]) {
-		c = u8_nextchar(theText, &a);
-		mySprite = &theFont.sprites[fontInTable(c)];
+	for (uint32 i = 0; i < str32.size(); ++i) {
+		uint32 c = str32[i];
+		sprite *mySprite = &theFont.sprites[fontInTable(c)];
 		pasteSpriteToBackDrop(xOff, y, *mySprite, thePal);
 		xOff += mySprite->surface.w + fontSpace;
 	}
 }
 
 void burnStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
-	sprite *mySprite;
-	int a = 0;
-	uint32 c;
-
 	if (!fontTableSize)
 		return;
 
+	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+
 	xOff += fontSpace >> 1;
-	while (theText[a]) {
-		c = u8_nextchar(theText, &a);
-		mySprite = &theFont.sprites[fontInTable(c)];
+	for (uint i = 0; i < str32.size(); ++i) {
+		uint32 c = str32[i];
+		sprite *mySprite = &theFont.sprites[fontInTable(c)];
 		burnSpriteToBackDrop(xOff, y, *mySprite, thePal);
 		xOff += mySprite->surface.w + fontSpace;
 	}
@@ -165,38 +163,35 @@ void setFontColour(spritePalette &sP, byte r, byte g, byte b) {
 }
 
 bool loadFont(int filenum, const char *charOrder, int h) {
-	int a = 0;
-	uint32 c;
-
-	delete[] fontOrderString;
-	fontOrderString = copyString(charOrder);
+	fontOrderString.clear();
+	fontOrderString = UTF8Converter::convertUtf8ToUtf32(charOrder);
 
 	forgetSpriteBank(theFont);
 
 	loadedFontNum = filenum;
 
+	// get max value among all utf8 chars
 	fontTableSize = 0;
-	while (charOrder[a]) {
-		c = u8_nextchar(charOrder, &a);
+	for (uint32 i = 0; i < fontOrderString.size(); ++i) {
+		uint32 c = fontOrderString[i];
 		if (c > fontTableSize)
 			fontTableSize = c;
 	}
 	fontTableSize++;
 
+	// create an index table from utf8 char to the index
 	delete[] fontTable;
 	fontTable = new uint32[fontTableSize];
 	if (!checkNew(fontTable))
 		return false;
 
-	for (a = 0; a < fontTableSize; a++) {
-		fontTable[a] = 0;
+	for (uint i = 0; i < fontTableSize; i++) {
+		fontTable[i] = 0;
 	}
-	a = 0;
-	int i = 0;
-	while (charOrder[a]) {
-		c = u8_nextchar(charOrder, &a);
+
+	for (uint i = 0; i < fontOrderString.size(); ++i) {
+		uint32 c = fontOrderString[i];
 		fontTable[c] = i;
-		i++;
 	}
 
 	if (!loadSpriteBank(filenum, theFont, true)) {

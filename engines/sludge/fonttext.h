@@ -22,6 +22,8 @@
 #ifndef SLUDGE_FONTTEXT_H
 #define SLUDGE_FONTTEXT_H
 
+#include "common/ustr.h"
+
 namespace Sludge {
 
 bool loadFont(int filenum, const char *charOrder, int);
