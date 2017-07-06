@@ -22,21 +22,23 @@
 #ifndef SLUDGE_NEWFATAL_H
 #define SLUDGE_NEWFATAL_H
 
+#include "common/str.h"
+
 #include "sludge/errors.h"
 
 namespace Sludge {
 
 bool hasFatal();
 
-int fatal(const char *str);
-int fatal(const char *str1, const char *str2);
+int fatal(const Common::String &str);
+int fatal(const Common::String &str1, const Common::String &str2);
 int checkNew(const void *mem);
 void displayFatal();
 void registerWindowForFatal();
-void setFatalInfo(const char *userFunc, const char *BIF);
-void warning(const char *l);
+void setFatalInfo(const Common::String &userFunc, const Common::String &BIF);
+void warning(const Common::String &l);
 void setResourceForFatal(int n);
-char *resourceNameFromNum(int i);
+const char *resourceNameFromNum(int i);
 
 } // End of namespace Sludge
 

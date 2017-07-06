@@ -591,8 +591,10 @@ variableStack *stackFindLast(variableStack *hunt) {
 bool getValueType(int &toHere, variableType vT, const variable &v) {
 	//if (! v) return false;
 	if (v.varType != vT) {
-		char *e1 = joinStrings("Can only perform specified operation on a value which is of type ", typeName[vT]);
-		char *e2 = joinStrings("... value supplied was of type ", typeName[v.varType]);
+		Common::String e1 = "Can only perform specified operation on a value which is of type ";
+		e1 += typeName[vT];
+		Common::String e2 = "... value supplied was of type ";
+		e2 += typeName[v.varType];
 		fatal(e1, e2);
 
 		return false;

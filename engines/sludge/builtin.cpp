@@ -2569,8 +2569,7 @@ builtIn(setThumbnailSize) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (thumbWidth < 0 || thumbHeight < 0 || thumbWidth > winWidth || thumbHeight > winHeight) {
-		char buff[50];
-		sprintf(buff, "%d x %d", thumbWidth, thumbHeight);
+		Common::String buff = thumbWidth + " x " + thumbHeight;
 		fatal("Invalid thumbnail size", buff);
 		return BR_ERROR;
 	}
