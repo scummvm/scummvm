@@ -489,13 +489,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		_glContext = nullptr;
 	}
 
-	_window->destroyWindow();
-
-	uint32 flags = SDL_WINDOW_OPENGL;
+	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 	if (_wantsFullScreen) {
 		flags |= SDL_WINDOW_FULLSCREEN;
-	} else {
-		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
 	// Request a OpenGL (ES) context we can use.
@@ -503,11 +499,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
 
-	if (!_window->createWindow(width, height, flags)) {
+	if (!_window->createOrUpdateWindow(width, height, flags)) {
 		// We treat fullscreen requests as a "hint" for now. This means in
 		// case it is not available we simply ignore it.
 		if (_wantsFullScreen) {
-			_window->createWindow(width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+			_window->createOrUpdateWindow(width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 		}
 
 		if (!_window->getSDLWindow()) {

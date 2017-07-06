@@ -156,9 +156,7 @@ public:
 
 	// SdlGraphicsManager interface
 	virtual void notifyVideoExpose();
-#ifdef USE_SDL_RESIZABLE_WINDOW
 	virtual void notifyResize(const uint width, const uint height);
-#endif
 	virtual void transformMouseCoordinates(Common::Point &point);
 	virtual void notifyMousePos(Common::Point mouse);
 
