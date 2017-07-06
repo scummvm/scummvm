@@ -153,35 +153,35 @@ namespace Kingdom {
 		bool _tsIconOnly;
 		bool _lastObs;
 		bool _Pouch;
-		bool _NoMusic;
-		byte *_ASPtr;
-		int _ASMap;
-		int _CurrMap;
-		int _OldTLS;
-		int _OldTRS;
-		int _TreeLeftSta;
-		bool _IconsClosed;
-		bool _OldIconsClosed;
-		bool _OldEye;
-		bool _Eye;
-		bool _OldHelp;
-		bool _Help;
-		bool _OldPouch;
-		int _PMovie;
-		bool _KeyActive;
-		bool _IconRedraw;
-		bool _Replay;
+		bool _noMusic; // TODO: Synchronize this flag with the launcher
+		byte *_asPtr;
+		int _asMap;
+		int _currMap;
+		int _oldTLS;
+		int _oldTRS;
+		int _treeLeftSta;
+		bool _iconsClosed;
+		bool _oldIconsClosed;
+		bool _oldEye;
+		bool _eye;
+		bool _oldHelp;
+		bool _help;
+		bool _oldPouch;
+		int _pMovie;
+		bool _keyActive;
+		bool _iconRedraw;
+		bool _replay;
 		bool _quit;
-		int _NodeNum;
-		int _OldNode;
-		int _NextNode;
-		int _RobberyNode;
-		bool _CursorDrawn; // CHECKME: Useless
-		bool _Wizard;
-		int _Zoom;
-		bool _Resurrect;
-		int _LastObstacle;
-		int _MapStat;
+		int _nodeNum;
+		int _oldNode; // CHECKME: Useless? If so, to be removed
+		int _nextNode;
+		int _robberyNode;
+		bool _cursorDrawn; // CHECKME: Useless
+		bool _wizard;
+		int _zoom;
+		bool _resurrect;
+		int _lastObstacle;
+		int _mapStat; // CHECKME: Useless? If so, to be removed
 		int _MouseValue;
 		int _CursorDef;
 		int _OldCursorDef;

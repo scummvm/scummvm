@@ -33,7 +33,7 @@ void KingdomGame::GPLogic4() {
 		}
 		if (_asMode) {
 			SwitchMtoA();
-			_MapStat = 0;
+			_mapStat = 0;
 			_oldStatPlay--;
 			_asMode = false;
 		}
@@ -68,7 +68,7 @@ void KingdomGame::GPLogic4() {
 		GPLogic4_SP901();
 		break;
 	case 991:
-		_CurrMap = 10;
+		_currMap = 10;
 		_UserInput = 0;
 		PlaySound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
@@ -80,7 +80,7 @@ void KingdomGame::GPLogic4() {
 			PlayMovie(194);
 			_noIFScreen = true;
 			FShowPic(107);
-			_CurrMap = 3;
+			_currMap = 3;
 			DsAll();
 			_Pouch = 0;
 			PlaySound(1);
@@ -106,19 +106,19 @@ void KingdomGame::GPLogic4() {
 			_skylarTimerFlag = false;
 			EnAll();
 			_mapEx = true;
-			_NodeNum = 5;
+			_nodeNum = 5;
 			DrawLocation();
 			PlaySound(0);
 			if (_Nodes[5] > 0) {
 				PlayMovie(197);
-				_Resurrect = 1;
+				_resurrect = true;
 			}
 			InventoryDel(12);
 			_statPlay = 50;
 		}
 		break;
 	case 992:
-		_CurrMap = 10;
+		_currMap = 10;
 		_UserInput = 0;
 		PlaySound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
@@ -130,7 +130,7 @@ void KingdomGame::GPLogic4() {
 			PlayMovie(194);
 			_noIFScreen = true;
 			FShowPic(107);
-			_CurrMap = 3;
+			_currMap = 3;
 			DsAll();
 			_Pouch = 0;
 			PlaySound(1);
@@ -156,9 +156,9 @@ void KingdomGame::GPLogic4() {
 			_skylarTimerFlag = false;
 			EnAll();
 			_mapEx = true;
-			_NodeNum = 27;
+			_nodeNum = 27;
 			DrawLocation();
-			_Resurrect = 1;
+			_resurrect = true;
 			PlaySound(0);
 			PlayMovie(195);
 			InventoryDel(12);
@@ -166,7 +166,7 @@ void KingdomGame::GPLogic4() {
 		}
 		break;
 	case 993:
-		_CurrMap = 10;
+		_currMap = 10;
 		_UserInput = 0;
 		PlaySound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
@@ -178,7 +178,7 @@ void KingdomGame::GPLogic4() {
 			PlayMovie(194);
 			_noIFScreen = true;
 			FShowPic(107);
-			_CurrMap = 3;
+			_currMap = 3;
 			DsAll();
 			_Pouch = 0;
 			PlaySound(1);
@@ -206,9 +206,9 @@ void KingdomGame::GPLogic4() {
 			_skylarTimerFlag = false;
 			EnAll();
 			_mapEx = true;
-			_NodeNum = 52;
+			_nodeNum = 52;
 			DrawLocation();
-			_Resurrect = 1;
+			_resurrect = true;
 			PlaySound(0);
 			PlayMovie(196);
 			InventoryDel(12);
@@ -242,7 +242,7 @@ void KingdomGame::GPLogic4_SP901() {
 	else
 		DrawPic(179);
 	
-	_IconRedraw = true;
+	_iconRedraw = true;
 	if (_UserInput == 0x2F1) {
 		_asMode = false;
 		RestoreAS();
@@ -262,7 +262,7 @@ void KingdomGame::GPLogic4_SP901() {
 			_tsIconOnly = false;
 			EnAll();
 			SwitchAS();
-			_MapStat = 0;
+			_mapStat = 0;
 		}
 		_UserInput = 0;
 		_loopFlag = true;
