@@ -299,17 +299,15 @@ CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight_) {
 	if (_glyphs.hasFlags(roomFlags))
 		return nullptr;
 
-	if (_glyphs.size() >= 32)
-		// Too many rooms already
-		return nullptr;
-
-	// Do a preliminary scan of the glyph list for any glyph that is
-	// no longer valid, and thus can be removed
-	for (CPetRoomsGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
-		CPetRoomsGlyph *glyph = dynamic_cast<CPetRoomsGlyph *>(*i);
-		if (!glyph->isAssigned()) {
-			_glyphs.erase(i);
-			break;
+	if (_glyphs.size() >= 32) {
+		// Too many room glyphs present. Scan for and remove the first
+		// glyph that isn't for an assigned bedroom
+		for (CPetRoomsGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
+			CPetRoomsGlyph *glyph = dynamic_cast<CPetRoomsGlyph *>(*i);
+			if (!glyph->isAssigned()) {
+				_glyphs.erase(i);
+				break;
+			}
 		}
 	}
 
