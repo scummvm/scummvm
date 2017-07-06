@@ -59,20 +59,19 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 
 	if (msg->_actionVal == 1) {
 		CString numStr = "0";
-		CString waveNames1[20] = {
+		CString waveNames1[18] = {
 			"z#181.wav", "z#211.wav", "z#203.wav", "z#202.wav", "z#201.wav",
 			"z#200.wav", "z#199.wav", "z#198.wav", "z#197.wav", "z#196.wav",
 			"z#210.wav", "z#209.wav", "z#208.wav", "z#207.wav", "z#206.wav",
-			"z#205.wav", "z#204.wav", "z#145.wav", "", ""
+			"z#205.wav", "z#204.wav", "z#145.wav"
 		};
-		CString waveNames2[37] = {
+		CString waveNames2[30] = {
 			"z#154.wav", "z#153.wav", "z#152.wav", "z#151.wav", "z#150.wav",
 			"z#149.wav", "z#148.wav", "z#169.wav", "z#171.wav", "z#178.wav",
 			"z#176.wav", "z#177.wav", "z#165.wav", "z#170.wav", "z#180.wav",
 			"z#156.wav", "z#172.wav", "z#173.wav", "z#160.wav", "z#158.wav",
 			"z#161.wav", "z#179.wav", "z#163.wav", "z#164.wav", "z#162.wav",
-			"z#159.wav", "z#175.wav", "z#166.wav", "z#174.wav", "z#157.wav",
-			"", "", "", "", "", "", ""
+			"z#159.wav", "z#175.wav", "z#166.wav", "z#174.wav", "z#157.wav"
 		};
 
 		CProximity prox;
@@ -83,19 +82,19 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 		case 0:
 		case 1:
 			_soundHandle = playSound("z#189.wav", prox);
-			if (_nameIndex < 20) {
+			if (_nameIndex < 18) {
 				queueSound(waveNames1[_nameIndex], _soundHandle, 100, 0, false,
 					Audio::Mixer::kSpeechSoundType);
 				++_nameIndex;
 			} else {
-				queueSound(waveNames1[1 + getRandomNumber(17)], _soundHandle,
+				queueSound(waveNames1[getRandomNumber(17)], _soundHandle,
 					100, 0, false, Audio::Mixer::kSpeechSoundType);
 			}
 			break;
 
 		case 2:
 			_soundHandle = playSound("z#189.wav", prox);
-			queueSound(waveNames2[1 + getRandomNumber(35)], _soundHandle,
+			queueSound(waveNames2[getRandomNumber(29)], _soundHandle,
 				100, 0, false, Audio::Mixer::kSpeechSoundType);
 			break;
 
