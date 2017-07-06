@@ -19,12 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#if 0
-#include <SDL/SDL.h>
-
-#include <string.h>
-#include <stdlib.h>
-#endif
 
 #include "common/debug.h"
 
@@ -41,8 +35,8 @@ namespace Sludge {
 
 const char emergencyMemoryMessage[] = "Out of memory displaying error message!";
 
-static char *fatalMessage = NULL;
-static char *fatalInfo = joinStrings("Initialisation error! Something went wrong before we even got started!", "");
+static Common::String fatalMessage;
+static Common::String fatalInfo = "Initialisation error! Something went wrong before we even got started!";
 
 extern int numResourceNames /* = 0*/;
 extern char * *allResourceNames /*= NULL*/;
@@ -60,20 +54,20 @@ const char *resourceNameFromNum(int i) {
 }
 
 bool hasFatal() {
-	if (fatalMessage)
+	if (!fatalMessage.empty())
 		return true;
 	return false;
 }
 
 void displayFatal() {
-	if (fatalMessage) {
+	if (!fatalMessage.empty()) {
 #if 0
 		msgBox("SLUDGE v" TEXT_VERSION " fatal error!", fatalMessage);
 #endif
 	}
 }
 
-void warning(const char *l) {
+void warning(const Common::String &l) {
 #if 0
 	setGraphicsWindow(false);
 	msgBox("SLUDGE v" TEXT_VERSION " non-fatal indigestion report", l);
@@ -81,40 +75,12 @@ void warning(const char *l) {
 }
 
 void registerWindowForFatal() {
-	delete[] fatalInfo;
-	fatalInfo =
-			joinStrings("There's an error with this SLUDGE game! If you're designing this game, please turn on verbose error messages in the project manager and recompile. If not, please contact the author saying where and how this problem occured.", "");
+	fatalInfo = "There's an error with this SLUDGE game! If you're designing this game, please turn on verbose error messages in the project manager and recompile. If not, please contact the author saying where and how this problem occured.";
 }
 
-#if 0
-extern SDL_Event quit_event;
-#endif
-
-int inFatal(const char *str) {
-	error(str);
-	delete []str;
-#if 0
-	FILE *fatFile = fopen("fatal.txt", "wt");
-	if (fatFile) {
-		fprintf(fatFile, "FATAL:\n%s\n", str);
-		fclose(fatFile);
-	}
-
-	fatalMessage = copyString(str);
-	if (fatalMessage == NULL)
-		fatalMessage = copyString("Out of memory");
-
+int inFatal(const Common::String &str) {
 	killSoundStuff();
-
-#if defined(HAVE_GLES2)
-	EGL_Close();
-#endif
-
-	SDL_Quit();
-
-	atexit(displayFatal);
-	exit(1);
-#endif
+	error(str.c_str());
 	return true;
 }
 
@@ -126,45 +92,30 @@ int checkNew(const void *mem) {
 	return 1;
 }
 
-void setFatalInfo(const char *userFunc, const char *BIF) {
-	delete[] fatalInfo;
-	fatalInfo = new char[strlen(userFunc) + strlen(BIF) + 38];
-	if (fatalInfo)
-		sprintf(fatalInfo, "Currently in this sub: %s\nCalling: %s", userFunc, BIF);
-	debug(kSludgeDebugFatal, "%s", fatalInfo);
+void setFatalInfo(const Common::String &userFunc, const Common::String &BIF) {
+	fatalInfo = "Currently in this sub: " + userFunc + "\nCalling: " + BIF;
+	debug(kSludgeDebugFatal, "%s", fatalInfo.c_str());
 }
 
 void setResourceForFatal(int n) {
 	resourceForFatal = n;
 }
 
-int fatal(const char *str1) {
+int fatal(const Common::String &str1) {
 	if (numResourceNames && resourceForFatal != -1) {
-		const char *r = resourceNameFromNum(resourceForFatal);
-		char *newStr = new char[strlen(str1) + strlen(r) + strlen(fatalInfo) + 14];
-		if (checkNew(newStr)) {
-			sprintf(newStr, "%s\nResource: %s\n\n%s", fatalInfo, r, str1);
-			inFatal(newStr);
-		} else
-			fatal(emergencyMemoryMessage);
+		Common::String r = resourceNameFromNum(resourceForFatal);
+		Common::String newStr = fatalInfo + "\nResource: " + r + "\n\n" + str1;
+		inFatal(newStr);
 	} else {
-		char *newStr = new char[strlen(str1) + strlen(fatalInfo) + 3];
-		if (checkNew(newStr)) {
-			sprintf(newStr, "%s\n\n%s", fatalInfo, str1);
-			inFatal(newStr);
-		} else
-			fatal(emergencyMemoryMessage);
+		Common::String newStr = fatalInfo + "\n\n" + str1;
+		inFatal(newStr);
 	}
 	return 0;
 }
 
-int fatal(const char *str1, const char *str2) {
-	char *newStr = new char[strlen(str1) + strlen(str2) + 2];
-	if (checkNew(newStr)) {
-		sprintf(newStr, "%s %s", str1, str2);
-		fatal(newStr);
-	} else
-		fatal(emergencyMemoryMessage);
+int fatal(const Common::String &str1, const Common::String &str2) {
+	Common::String newStr = str1 + " " + str2;
+	fatal(newStr);
 	return 0;
 }
 
