@@ -44,7 +44,7 @@ void KingdomGame::GPLogic4() {
 			ShowPic(121);
 			_bTimer = 38;
 			ReadMouse();
-			while (_bTimer && !_MouseButton) {
+			while (_bTimer && !_mouseButton) {
 				checkTimers();
 				RefreshSound();
 				ReadMouse();
@@ -53,7 +53,7 @@ void KingdomGame::GPLogic4() {
 			if (_aTimer > 0)
 				SetATimer();
 			
-			_UserInput = 0;
+			_userInput = 0;
 			GPLogic4_SP901();
 		} else {
 			if (_aTimer > 0) {
@@ -69,7 +69,7 @@ void KingdomGame::GPLogic4() {
 		break;
 	case 991:
 		_currMap = 10;
-		_UserInput = 0;
+		_userInput = 0;
 		PlaySound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
 			_health -= 2;
@@ -84,7 +84,7 @@ void KingdomGame::GPLogic4() {
 			DsAll();
 			_Pouch = 0;
 			PlaySound(1);
-			memset(_Inventory, -1, 19);
+			memset(_inventory, -1, 19);
 			_statPlay = 994;
 		} else {
 			_bTimer = 36;
@@ -94,9 +94,9 @@ void KingdomGame::GPLogic4() {
 			}
 			
 			_loopFlag = true;
-			if (_Nodes[29] == 1) {
-				_Nodes[29] = 0;
-				_Nodes[49] = 0;
+			if (_nodes[29] == 1) {
+				_nodes[29] = 0;
+				_nodes[49] = 0;
 			}
 
 			_itemInhibit = false;
@@ -109,7 +109,7 @@ void KingdomGame::GPLogic4() {
 			_nodeNum = 5;
 			DrawLocation();
 			PlaySound(0);
-			if (_Nodes[5] > 0) {
+			if (_nodes[5] > 0) {
 				PlayMovie(197);
 				_resurrect = true;
 			}
@@ -119,7 +119,7 @@ void KingdomGame::GPLogic4() {
 		break;
 	case 992:
 		_currMap = 10;
-		_UserInput = 0;
+		_userInput = 0;
 		PlaySound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
 			_health -= 2;
@@ -134,7 +134,7 @@ void KingdomGame::GPLogic4() {
 			DsAll();
 			_Pouch = 0;
 			PlaySound(1);
-			memset(_Inventory, -1, 19);
+			memset(_inventory, -1, 19);
 			_statPlay = 994;
 		} else {
 			_bTimer = 36;
@@ -144,9 +144,9 @@ void KingdomGame::GPLogic4() {
 			}
 
 			_loopFlag = true;
-			if (_Nodes[29] == 1) {
-				_Nodes[29] = 0;
-				_Nodes[49] = 0;
+			if (_nodes[29] == 1) {
+				_nodes[29] = 0;
+				_nodes[49] = 0;
 			}
 
 			_itemInhibit = false;
@@ -167,7 +167,7 @@ void KingdomGame::GPLogic4() {
 		break;
 	case 993:
 		_currMap = 10;
-		_UserInput = 0;
+		_userInput = 0;
 		PlaySound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
 			_health -= 2;
@@ -182,7 +182,7 @@ void KingdomGame::GPLogic4() {
 			DsAll();
 			_Pouch = 0;
 			PlaySound(1);
-			memset(_Inventory, -1, 19);
+			memset(_inventory, -1, 19);
 			_statPlay = 994;
 		} else {
 			_bTimer = 36;
@@ -192,12 +192,12 @@ void KingdomGame::GPLogic4() {
 			}
 			
 			_loopFlag = true;
-			if (_Nodes[29] == 1) {
-				_Nodes[29] = 0;
-				_Nodes[49] = 0;
+			if (_nodes[29] == 1) {
+				_nodes[29] = 0;
+				_nodes[49] = 0;
 			}
-			if (_Nodes[68] == 1)
-				_Nodes[68] = 0;
+			if (_nodes[68] == 1)
+				_nodes[68] = 0;
 
 			_itemInhibit = false;
 			_tideCntl = false;
@@ -216,7 +216,7 @@ void KingdomGame::GPLogic4() {
 		}
 		break;
 	case 994:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x190:
 			InitPlay();
 			// TODO _QuitFlag = 1;
@@ -243,19 +243,19 @@ void KingdomGame::GPLogic4_SP901() {
 		DrawPic(179);
 	
 	_iconRedraw = true;
-	if (_UserInput == 0x2F1) {
+	if (_userInput == 0x2F1) {
 		_asMode = false;
 		RestoreAS();
 		_statPlay = _oldStatPlay;
 		_loopFlag = true;
 	} else {
-		if (_health == 10 || _health == 6 || _health == 2 || _UserInput < 0x400 || _UserInput > 0x427) {
+		if (_health == 10 || _health == 6 || _health == 2 || _userInput < 0x400 || _userInput > 0x427) {
 			_asMode = false;
 			RestoreAS();
 			_statPlay = _oldStatPlay;
 		} else {
-			_statPlay = _mapExit[_UserInput - 0x400];
-			_UserInput = 0;
+			_statPlay = _mapExit[_userInput - 0x400];
+			_userInput = 0;
 			Wound();
 			PlayMovie(10);
 			InventoryDel(3);
@@ -264,7 +264,7 @@ void KingdomGame::GPLogic4_SP901() {
 			SwitchAS();
 			_mapStat = 0;
 		}
-		_UserInput = 0;
+		_userInput = 0;
 		_loopFlag = true;
 	}
 }

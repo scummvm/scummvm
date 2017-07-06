@@ -32,13 +32,13 @@ void KingdomGame::GPLogic2() {
 
 		DrawLocation();
 		DsAll();
-		if (_Nodes[24] != 0 || highNode) {
+		if (_nodes[24] != 0 || highNode) {
 			_eye = true;
 			PlayMovie(72);
 			_aTimerFlag = false;
 			_aTimer = 114;
 			PlaySound(34);
-			_UserInput = 0;
+			_userInput = 0;
 			_currMap = 10;
 			_statPlay = 251;
 		} else {
@@ -53,7 +53,7 @@ void KingdomGame::GPLogic2() {
 		}
 		break;
 	case 251:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x2F1:
 			_aTimer = 0;
 			PlayMovie(73);
@@ -66,7 +66,7 @@ void KingdomGame::GPLogic2() {
 			_zoom = 2;
 			ProcessMap(30, _zoom);
 			SetATimer();
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		}
 		break;
@@ -81,10 +81,10 @@ void KingdomGame::GPLogic2() {
 		_currMap = 10;
 		SetATimer();
 		_statPlay = 261;
-		_UserInput = 0;
+		_userInput = 0;
 		break;
 	case 261:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x2F1:
 			_aTimer = 0;
 			DsAll();
@@ -99,7 +99,7 @@ void KingdomGame::GPLogic2() {
 			PlayMovie(178);
 			RestoreAS();
 			SetATimer();
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x42A:
 			InventoryDel(2);
@@ -108,14 +108,14 @@ void KingdomGame::GPLogic2() {
 			PlayMovie(178);
 			RestoreAS();
 			SetATimer();
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x42C:
 			_aTimer = 0;
 			EnAll();
 			PlayMovie(76);
-			_Nodes[26] = 1;
-			_UserInput = 0;
+			_nodes[26] = 1;
+			_userInput = 0;
 			_statPlay = 290;
 			_lastObs = true;
 			_lastObstacle = 29;
@@ -142,29 +142,29 @@ void KingdomGame::GPLogic2() {
 	case 270:
 		_nodeNum = 27;
 		DrawLocation();
-		if (_Nodes[28] == 1)
-			_Nodes[28] = 9;
-		if (_Nodes[28] == 9 || _Nodes[29] != 0) {
+		if (_nodes[28] == 1)
+			_nodes[28] = 9;
+		if (_nodes[28] == 9 || _nodes[29] != 0) {
 			if (_wizard)
 				_sound = true;
 		} else {
 			_sound = false;
-			_Nodes[28] = 1;
+			_nodes[28] = 1;
 		}
 		PlayMovie(80);
 		PlaySound(18);
 		_currMap = 10;
 		_statPlay = 271;
-		_Nodes[28] = 1;
-		_UserInput = 0;
+		_nodes[28] = 1;
+		_userInput = 0;
 		break;
 	case 271:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43A:
 			_statPlay = 272;
 			_zoom = 2;
 			ProcessMap(27, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -178,12 +178,12 @@ void KingdomGame::GPLogic2() {
 	case 280:
 		_nodeNum = 28;
 		DrawLocation();
-		_UserInput = 0;
+		_userInput = 0;
 		DsAll();
 		_fstFwd = false;
 		PlayMovie(81);
 		_currMap = 10;
-		_Nodes[29] = _Nodes[39] = 1;
+		_nodes[29] = _nodes[39] = 1;
 		_statPlay = _robberyNode * 10;
 		EnAll();
 		_loopFlag = true;
@@ -191,39 +191,39 @@ void KingdomGame::GPLogic2() {
 	case 290:
 		_oldNode = _nodeNum;
 		if (!_wizard) {
-			_Nodes[26] = 9;
-			_Nodes[30] = 8;
+			_nodes[26] = 9;
+			_nodes[30] = 8;
 		}
-		if (_Nodes[26] == 0) {
+		if (_nodes[26] == 0) {
 			_statPlay = 260;
 			_loopFlag = true;
 			_nextNode = 29;
 		} else {
-			if (_Nodes[26] == 2)
+			if (_nodes[26] == 2)
 				PlayMovie(79);
 			_nodeNum = 29;
-			if (_Nodes[26] <= 2 || !ChkDesertObstacles()) {
+			if (_nodes[26] <= 2 || !ChkDesertObstacles()) {
 				DrawLocation();
-				_Nodes[26]++;
-				_UserInput = 0;
-				switch (_Nodes[30]) {
+				_nodes[26]++;
+				_userInput = 0;
+				switch (_nodes[30]) {
 				case 0:
 					_sound = false;
 					PlayMovie(82);
 					_currMap = 89;
-					_Nodes[30] = 1;
+					_nodes[30] = 1;
 					break;
 				case 1:
 					_sound = true;
 					PlayMovie(82);
 					_currMap = 89;
-					_Nodes[30] = 0;
+					_nodes[30] = 0;
 					break;
 				case 8:
 					_sound = false;
 					PlayMovie(85);
 					_currMap = 10;
-					_Nodes[30] = 9;
+					_nodes[30] = 9;
 					_tsIconOnly = true;
 					break;
 				default:
@@ -240,18 +240,18 @@ void KingdomGame::GPLogic2() {
 			
 		break;
 	case 291:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x431:
 			_tsIconOnly = true;
 			PlayMovie(83);
 			PlaySound(30);
 			InventoryAdd(10);
-			_Nodes[30] = 8;
-			_UserInput = 0;
+			_nodes[30] = 8;
+			_userInput = 0;
 			_currMap = 10;
 			break;
 		case 0x432:
-			if (_Nodes[30] >= 8)
+			if (_nodes[30] >= 8)
 				DisplayIcon(140);
 			else {
 				DsAll();
@@ -264,7 +264,7 @@ void KingdomGame::GPLogic2() {
 			_statPlay = 292;
 			_zoom = 2;
 			ProcessMap(29, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -276,7 +276,7 @@ void KingdomGame::GPLogic2() {
 		ProcessMapInput(29);
 		break;
 	case 300:
-		if (_Nodes[24] == 0) {
+		if (_nodes[24] == 0) {
 			_loopFlag = true;
 			_statPlay = 250;
 		} else {
@@ -291,12 +291,12 @@ void KingdomGame::GPLogic2() {
 		}
 		break;
 	case 301:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43A:
 			_statPlay = 302;
 			_zoom = 2;
 			ProcessMap(30, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -316,18 +316,18 @@ void KingdomGame::GPLogic2() {
 			PlaySound(18);
 			_currMap = 90;
 			_statPlay = 311;
-			_Nodes[32] = 1;
+			_nodes[32] = 1;
 			_aTimer = 0;
-			_UserInput = 0;
+			_userInput = 0;
 		}
 		break;
 	case 311:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43A:
 			_statPlay = 312;
 			_zoom = 2;
 			ProcessMap(31, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -349,14 +349,14 @@ void KingdomGame::GPLogic2() {
 		_oldNode = _nodeNum;
 		_nodeNum = 32;
 		DrawLocation();
-		_UserInput = 0;
+		_userInput = 0;
 		IncreaseHealth();
-		if (_Nodes[33] != 9 && _wizard) {
+		if (_nodes[33] != 9 && _wizard) {
 			_sound = false;
-			_Nodes[33] = 9;
+			_nodes[33] = 9;
 		} else {
 			_sound = true;
-			_Nodes[33] = 1;
+			_nodes[33] = 1;
 		}
 		PlayMovie(87);
 		PlaySound(18);
@@ -364,12 +364,12 @@ void KingdomGame::GPLogic2() {
 		_statPlay = 321;
 		break;
 	case 321:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43A:
 			_statPlay = 322;
 			_zoom = 2;
 			ProcessMap(32, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -385,8 +385,8 @@ void KingdomGame::GPLogic2() {
 		_nodeNum = 33;
 		if (!ChkDesertObstacles()) {
 			DrawLocation();
-			_UserInput = 0;
-			if (_Nodes[32] == 0)
+			_userInput = 0;
+			if (_nodes[32] == 0)
 				_sound = false;
 			else
 				_sound = true;
@@ -397,12 +397,12 @@ void KingdomGame::GPLogic2() {
 		}
 		break;
 	case 331:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43A:
 			_statPlay = 332;
 			_zoom = 2;
 			ProcessMap(33, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -414,7 +414,7 @@ void KingdomGame::GPLogic2() {
 		ProcessMapInput(33);
 		break;
 	case 340:
-		if (_Nodes[36] == 0) {
+		if (_nodes[36] == 0) {
 			_statPlay = 350;
 			_loopFlag = true;
 			_nextNode = 34;
@@ -423,8 +423,8 @@ void KingdomGame::GPLogic2() {
 			_nodeNum = 34;
 			if (!ChkDesertObstacles()) {
 				DrawLocation();
-				_UserInput = 0;
-				if (_Nodes[35] == 9 || _Nodes[41] == 0 || !_wizard) {
+				_userInput = 0;
+				if (_nodes[35] == 9 || _nodes[41] == 0 || !_wizard) {
 					PlayMovie(91);
 					_currMap = 92;
 				} else {
@@ -432,7 +432,7 @@ void KingdomGame::GPLogic2() {
 					ShowPic(389);
 					_currMap = 91;
 				}
-				if (_Nodes[35] == 9)
+				if (_nodes[35] == 9)
 					_tsIconOnly = true;
 				PlaySound(26);
 				_statPlay = 341;
@@ -440,14 +440,14 @@ void KingdomGame::GPLogic2() {
 		}
 		break;
 	case 341:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x431:
-			if (_Nodes[35] == 9)
+			if (_nodes[35] == 9)
 				DisplayIcon(139);
 			else {
 				PlayMovie(90);
 				InventoryAdd(9);
-				_Nodes[35] = 9;
+				_nodes[35] = 9;
 				_currMap = 93;
 			}
 			break;
@@ -455,7 +455,7 @@ void KingdomGame::GPLogic2() {
 			_statPlay = 342;
 			_zoom = 2;
 			ProcessMap(34, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -465,13 +465,13 @@ void KingdomGame::GPLogic2() {
 			break;
 		case 0x445:
 			_statPlay = 410;
-			_UserInput = 0;
+			_userInput = 0;
 			_currMap = 10;
 			_loopFlag = true;
 			break;
 		case 0x446:
 			_statPlay = 400;
-			_UserInput = 0;
+			_userInput = 0;
 			_currMap = 10;
 			_loopFlag = true;
 			break;
@@ -482,8 +482,8 @@ void KingdomGame::GPLogic2() {
 		break;
 	case 350:
 		if (!_wizard)
-			_Nodes[36] = 1;
-		if (_Nodes[36] == 1) {
+			_nodes[36] = 1;
+		if (_nodes[36] == 1) {
 			_statPlay = _nextNode * 10;
 			_loopFlag = true;
 		} else {
@@ -493,18 +493,18 @@ void KingdomGame::GPLogic2() {
 			PlayMovie(92);
 			_currMap = 94;
 			SetATimer();
-			_UserInput = 0;
+			_userInput = 0;
 			_statPlay = 351;
 		}
 		break;
 	case 351:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x428:
 		case 0x429:
-			InventoryDel(_UserInput - 0x428);
+			InventoryDel(_userInput - 0x428);
 			_aTimer = 0;
 			PlayMovie(178);
-			_UserInput = 0x2F1;
+			_userInput = 0x2F1;
 			_loopFlag = true;
 		// No break on purpose
 		case 0x2F1:
@@ -519,8 +519,8 @@ void KingdomGame::GPLogic2() {
 			EnAll();
 			PlayMovie(179);
 			InventoryDel(2);
-			_Nodes[36] = 1;
-			_UserInput = 0;
+			_nodes[36] = 1;
+			_userInput = 0;
 			_statPlay = _nextNode * 10;
 			_lastObs = true;
 			_lastObstacle = _nextNode;
@@ -531,7 +531,7 @@ void KingdomGame::GPLogic2() {
 	case 360:
 		_nodeNum = 36;
 		DrawLocation();
-		if (_Nodes[37] == 0)
+		if (_nodes[37] == 0)
 			_sound = false;
 		else
 			_sound = true;
@@ -540,11 +540,11 @@ void KingdomGame::GPLogic2() {
 		PlayMovie(94);
 		_currMap = 95;
 		SetATimer();
-		_UserInput = 0;
+		_userInput = 0;
 		_statPlay = 361;
 		break;
 	case 361:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x2F1:
 			_aTimer = 0;
 			DsAll();
@@ -558,10 +558,10 @@ void KingdomGame::GPLogic2() {
 			PlayMovie(97);
 			InventoryDel(0);
 			PlaySound(5);
-			_Nodes[37] = 1;
-			_UserInput = 0;
+			_nodes[37] = 1;
+			_userInput = 0;
 			_currMap = 10;
-			if (_Nodes[43] == 0) {
+			if (_nodes[43] == 0) {
 				_statPlay = 420;
 				_oldNode = _nodeNum;
 				_nodeNum = 42;
@@ -576,8 +576,8 @@ void KingdomGame::GPLogic2() {
 			PlayMovie(98);
 			InventoryDel(2);
 			PlaySound(5);
-			_Nodes[37] = 1;
-			_UserInput = 0;
+			_nodes[37] = 1;
+			_userInput = 0;
 			_currMap = 10;
 			_tsIconOnly = true;
 			break;
@@ -587,8 +587,8 @@ void KingdomGame::GPLogic2() {
 			PlayMovie(100);
 			InventoryDel(6);
 			PlaySound(5);
-			_Nodes[37] = 1;
-			_UserInput = 0;
+			_nodes[37] = 1;
+			_userInput = 0;
 			_currMap = 10;
 			_tsIconOnly = true;
 			break;
@@ -597,8 +597,8 @@ void KingdomGame::GPLogic2() {
 			EnAll();
 			PlayMovie(96);
 			PlaySound(5);
-			_Nodes[37] = 9;
-			_UserInput = 0;
+			_nodes[37] = 9;
+			_userInput = 0;
 			_currMap = 10;
 			_statPlay = 420;
 			_oldNode = _nodeNum;
@@ -616,7 +616,7 @@ void KingdomGame::GPLogic2() {
 			_statPlay = 362;
 			_zoom = 2;
 			ProcessMap(36, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -630,15 +630,15 @@ void KingdomGame::GPLogic2() {
 	case 370:
 		_nodeNum = 37;
 		DrawLocation();
-		_UserInput = 0;
-		_Nodes[38] = 0;
+		_userInput = 0;
+		_nodes[38] = 0;
 		PlayMovie(102);
 		PlaySound(20);
 		_currMap = 109;
 		_statPlay = 371;
 		break;
 	case 371:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x413:
 			_statPlay = 440;
 			_currMap = 10;
@@ -648,7 +648,7 @@ void KingdomGame::GPLogic2() {
 			_statPlay = 372;
 			_zoom = 2;
 			ProcessMap(37, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -664,29 +664,29 @@ void KingdomGame::GPLogic2() {
 		_nodeNum =38;
 		if (!ChkDesertObstacles()) {
 			DrawLocation();
-			_UserInput = 0;
+			_userInput = 0;
 			PlayMovie(159);
 			_currMap = 10;
 			PlaySound(7);
-			_Nodes[39] = 1;
+			_nodes[39] = 1;
 			_statPlay = 381;
 		}
 		break;
 	case 381:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x428:
 		case 0x429:
 		case 0x42A:
-			if (_wizard && _Nodes[39] != 9) {
-				InventoryDel(_UserInput - 0x428);
+			if (_wizard && _nodes[39] != 9) {
+				InventoryDel(_userInput - 0x428);
 				SaveAS();
 				PlayMovie(178);
 				RestoreAS();
 			}
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x430:
-			if (_wizard && _Nodes[39] != 9) {
+			if (_wizard && _nodes[39] != 9) {
 				DsAll();
 				PlayMovie(162);
 				_statPlay = 992;
@@ -694,38 +694,38 @@ void KingdomGame::GPLogic2() {
 			}
 			break;
 		case 0x433:
-			if (_wizard && _Nodes[39] != 9) {
+			if (_wizard && _nodes[39] != 9) {
 				PlayMovie(161);
 				InventoryDel(11);
-				_Nodes[51] = 0;
-				_UserInput = 0;
+				_nodes[51] = 0;
+				_userInput = 0;
 			}
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x435:
-			if (_wizard && _Nodes[39] != 9) {
+			if (_wizard && _nodes[39] != 9) {
 				PlayMovie(160);
 				InventoryDel(13);
-				_Nodes[39] = 9;
-				_Nodes[59] = 0;
-				_UserInput = 0;
+				_nodes[39] = 9;
+				_nodes[59] = 0;
+				_userInput = 0;
 				_tsIconOnly = true;
 				_currMap = 108;
 			}
 			break;
 		case 0x437:
-			if (_wizard && _Nodes[39] != 9) {
+			if (_wizard && _nodes[39] != 9) {
 				PlayMovie(163);
 				InventoryDel(15);
-				_Nodes[12] = 0;
+				_nodes[12] = 0;
 			}
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43A:
 			_statPlay = 382;
 			_zoom = 2;
 			ProcessMap(38, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 		break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -739,8 +739,8 @@ void KingdomGame::GPLogic2() {
 		}
 		break;
 	case 382:
-		if (_wizard && (_Nodes[39] != 9) && (_UserInput == 0x413))
-			_UserInput = 0;
+		if (_wizard && (_nodes[39] != 9) && (_userInput == 0x413))
+			_userInput = 0;
 
 		ProcessMapInput(38);
 		break;
@@ -757,12 +757,12 @@ void KingdomGame::GPLogic2() {
 	case 400:
 		_nodeNum = 40;
 		if (!_wizard)
-			_Nodes[41] = 2;
-		if (_Nodes[41]) {
-			if (_Nodes[41] == 1)
-				_Nodes[41] = 2;
+			_nodes[41] = 2;
+		if (_nodes[41]) {
+			if (_nodes[41] == 1)
+				_nodes[41] = 2;
 			else {
-				_Nodes[41] = 1;
+				_nodes[41] = 1;
 				_sound = true;
 			}
 		} else {
@@ -772,11 +772,11 @@ void KingdomGame::GPLogic2() {
 			SetATimer();
 		}
 		
-		_UserInput = 0;
+		_userInput = 0;
 		_statPlay = 401;
 		break;
 	case 401:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x2F1:
 			_aTimer = 0;
 			DsAll();
@@ -787,37 +787,37 @@ void KingdomGame::GPLogic2() {
 		case 0x428:
 		case 0x429:
 		case 0x42A:
-			if (!_Nodes[41]) {
-				InventoryDel(_UserInput - 0x428);
+			if (!_nodes[41]) {
+				InventoryDel(_userInput - 0x428);
 				_aTimer = 0;
 				PlayMovie(178);
-				_UserInput = 753;
+				_userInput = 753;
 				_loopFlag = true;
 				_currMap = 10;
 			}
 			break;
 		case 0x42C:
-			if (!_Nodes[41]) {
+			if (!_nodes[41]) {
 				_aTimer = 0;
 				DsAll();
 				PlayMovie(108);
-				_UserInput = 0;
+				_userInput = 0;
 				_statPlay = 992;
 				_loopFlag = true;
 			}
 			break;
 		case 0x42E:
-			if (!_Nodes[41]) {
+			if (!_nodes[41]) {
 				_aTimer = 0;
 				PlayMovie(109);
 				InventoryDel(6);
-				_Nodes[43] = 0;
-				_UserInput = 0;
+				_nodes[43] = 0;
+				_userInput = 0;
 				_aTimer = 136;
 			}
 			break;
 		case 0x437:
-			if (!_Nodes[41]) {
+			if (!_nodes[41]) {
 				_aTimer = 0;
 				_help = true;
 				_replay = true;
@@ -825,8 +825,8 @@ void KingdomGame::GPLogic2() {
 				_fstFwd = true;
 				PlayMovie(107);
 				PlaySound(26);
-				_Nodes[41] = 1;
-				_UserInput = 0;
+				_nodes[41] = 1;
+				_userInput = 0;
 				_currMap = 96;
 				_tsIconOnly = true;
 				_loopFlag = true;
@@ -840,7 +840,7 @@ void KingdomGame::GPLogic2() {
 		case 0x441:
 			_statPlay = 460;
 			_currMap = 10;
-			_UserInput = 0;
+			_userInput = 0;
 			_loopFlag = true;
 			break;
 		}
@@ -852,8 +852,8 @@ void KingdomGame::GPLogic2() {
 	case 410:
 		_nodeNum = 41;
 		DrawLocation();
-		_UserInput = 0;
-		if (_Nodes[41])
+		_userInput = 0;
+		if (_nodes[41])
 			_sound = true;
 
 		_eye = false;
@@ -863,7 +863,7 @@ void KingdomGame::GPLogic2() {
 		_statPlay = 411;
 		break;
 	case 411:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43E:
 			_sound = _lastSound;
 			if (_pMovie == 120) {
@@ -881,13 +881,13 @@ void KingdomGame::GPLogic2() {
 			PlayMovie(_pMovie);
 			break;
 		case 0x445:
-			_UserInput = 0;
+			_userInput = 0;
 			_loopFlag = true;
 			_currMap = 10;
 			_statPlay = 450;
 			break;
 		case 0x446:
-			_UserInput = 0;
+			_userInput = 0;
 			_loopFlag = true;
 			_currMap = 10;
 			_statPlay = 460;
@@ -895,7 +895,7 @@ void KingdomGame::GPLogic2() {
 		}
 		break;
 	case 420:
-		if (_Nodes[37] == 9 || _Nodes[29] == 1 || !_wizard) {
+		if (_nodes[37] == 9 || _nodes[29] == 1 || !_wizard) {
 			_oldNode = _nodeNum;
 			_nodeNum = 42;
 			if (!ChkDesertObstacles()) {
@@ -908,28 +908,28 @@ void KingdomGame::GPLogic2() {
 		}
 		break;
 	case 421:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x428:
 		case 0x429:
 		case 0x42A:
-			InventoryDel(_UserInput - 0x428);
+			InventoryDel(_userInput - 0x428);
 			SaveAS();
 			PlayMovie(178);
 			RestoreAS();
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x42E:
-			if (_Nodes[43])
+			if (_nodes[43])
 				DisplayIcon(136);
 			else {
-				if (_Nodes[35] == 9) {
+				if (_nodes[35] == 9) {
 					_sound = false;
 				} else {
 					_sound = true;
 				}
 				PlayMovie(113);
 				InventoryAdd(6);
-				_Nodes[43] = 9;
+				_nodes[43] = 9;
 				_currMap = 10;
 			}
 			_tsIconOnly = true;
@@ -938,7 +938,7 @@ void KingdomGame::GPLogic2() {
 			_statPlay = 422;
 			_zoom = 2;
 			ProcessMap(42, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -954,12 +954,12 @@ void KingdomGame::GPLogic2() {
 		_nodeNum = 43;
 		DrawLocation();
 		_eye = false;
-		_UserInput = 0;
-		if (_Nodes[44] == 9) {
+		_userInput = 0;
+		if (_nodes[44] == 9) {
 			_tsIconOnly = true;
 			PlayMovie(118);
 			_currMap = 80;
-		} else if (_Inventory[12] <= 0) {
+		} else if (_inventory[12] <= 0) {
 			PlayMovie(115);
 			ShowPic(415);
 			_currMap = 78;
@@ -971,7 +971,7 @@ void KingdomGame::GPLogic2() {
 			PlaySound(25);
 			InventoryDel(12);
 			InventoryAdd(16);
-			_Nodes[44] = 9;
+			_nodes[44] = 9;
 			_currMap = 79;
 			_tsIconOnly = true;
 		}
@@ -980,12 +980,12 @@ void KingdomGame::GPLogic2() {
 		_eye = false;
 		break;
 	case 431:
-		switch(_UserInput) {
+		switch(_userInput) {
 			case 0x40A:
 				PlayMovie(10);
 				_statPlay = 200;
-				if (_Nodes[44] != 9)
-					_Nodes[20] = 1;
+				if (_nodes[44] != 9)
+					_nodes[20] = 1;
 				_currMap = 10;
 				_loopFlag = true;
 				break;
@@ -1010,15 +1010,15 @@ void KingdomGame::GPLogic2() {
 			case 0x428:
 			case 0x429:
 			case 0x42A:
-				if (_Nodes[44] != 9) {
-					InventoryDel(_UserInput - 0x428);
+				if (_nodes[44] != 9) {
+					InventoryDel(_userInput - 0x428);
 					SaveAS();
 					PlayMovie(178);
 					RestoreAS();
 				}
 				break;
 			case 0x438:
-				if (_Nodes[44] == 9) {
+				if (_nodes[44] == 9) {
 					DisplayIcon(146);
 				} else {
 					DsAll();
@@ -1034,8 +1034,8 @@ void KingdomGame::GPLogic2() {
 	case 440:
 		_nodeNum = 44;
 		DrawLocation();
-		_UserInput = 0;
-		if (_Inventory[12] > 0 || _Nodes[44] == 9)
+		_userInput = 0;
+		if (_inventory[12] > 0 || _nodes[44] == 9)
 			_sound = true;
 
 		PlayMovie(119);
@@ -1044,12 +1044,12 @@ void KingdomGame::GPLogic2() {
 		_statPlay = 441;
 		break;
 	case 441:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43A:
 			_statPlay = 442;
 			_zoom = 2;
 			ProcessMap(44, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -1067,8 +1067,8 @@ void KingdomGame::GPLogic2() {
 		break;
 	case 450:
 		_nodeNum = 45;
-		_UserInput = 0;
-		if (!_Nodes[41]) {
+		_userInput = 0;
+		if (!_nodes[41]) {
 			DsAll();
 			PlayMovie(120);
 			_statPlay = 992;
@@ -1083,7 +1083,7 @@ void KingdomGame::GPLogic2() {
 		}
 		break;
 	case 451:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43E:
 			_sound = _lastSound;
 			_fstFwd = false;
@@ -1103,11 +1103,11 @@ void KingdomGame::GPLogic2() {
 		_eye = false;
 		_nodeNum = 46;
 		DrawLocation();
-		_UserInput = 0;
-		if (_Nodes[47] && _wizard)
-			_Nodes[47] = 1;
+		_userInput = 0;
+		if (_nodes[47] && _wizard)
+			_nodes[47] = 1;
 		else {
-			_Nodes[47] = 0;
+			_nodes[47] = 0;
 			_sound = true;
 		}
 		PlayMovie(121);
@@ -1116,21 +1116,21 @@ void KingdomGame::GPLogic2() {
 		_statPlay = 461;
 		break;
 	case 461:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43E:
 			_sound = _lastSound;
 			PlayMovie(_pMovie);
 			break;
 		case 0x445:
 			_statPlay = 340;
-			_UserInput = 0;
+			_userInput = 0;
 			_loopFlag = true;
 			_currMap = 10;
 			_lastObs = true;
 			break;
 		case 0x446:
 			_statPlay = 400;
-			_UserInput = 0;
+			_userInput = 0;
 			_loopFlag = true;
 			_currMap = 10;
 			break;
@@ -1141,19 +1141,19 @@ void KingdomGame::GPLogic2() {
 		break;
 	case 480:
 		_nodeNum = 48;
-		_UserInput = 0;
+		_userInput = 0;
 		PlayMovie(114);
 		_currMap = 10;
 		_statPlay = 481;
-		_Nodes[49] = 1;
+		_nodes[49] = 1;
 		break;
 	case 481:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x43A:
 			_statPlay = 482;
 			_zoom = 2;
 			ProcessMap(48, _zoom);
-			_UserInput = 0;
+			_userInput = 0;
 			break;
 		case 0x43E:
 			_sound = _lastSound;
@@ -1173,17 +1173,17 @@ void KingdomGame::GPLogic2() {
 		_currMap = 101;
 		_statPlay = 491;
 		_aTimer = 0;
-		_UserInput = 0;
+		_userInput = 0;
 		break;
 	case 491:
-		switch(_UserInput) {
+		switch(_userInput) {
 		case 0x428:
 		case 0x42A:
 		case 0x42B:
-			InventoryDel(_UserInput - 0x428);
+			InventoryDel(_userInput - 0x428);
 			_aTimer = 0;
 			PlayMovie(178);
-			_UserInput = 753;
+			_userInput = 753;
 			_loopFlag = true;
 			_currMap = 10;
 			break;
@@ -1194,12 +1194,12 @@ void KingdomGame::GPLogic2() {
 			break;
 		case 0x44A:
 			_currMap = 10;
-			_UserInput = 0;
+			_userInput = 0;
 			_aTimer = 0;
 			EnAll();
 			PlayMovie(181);
-			_Nodes[29] = 9;
-			_Nodes[49] = 0;
+			_nodes[29] = 9;
+			_nodes[49] = 0;
 			_statPlay = _nextNode * 10;
 			_loopFlag = true;
 			break;
@@ -1210,19 +1210,19 @@ void KingdomGame::GPLogic2() {
 
 void KingdomGame::GPLogic2_SubSP361() {
 	EnAll();
-	_UserInput = 0;
+	_userInput = 0;
 	PlaySound(19);
-	if (_Nodes[29] == 1) {
+	if (_nodes[29] == 1) {
 		_statPlay = 480;
 		_loopFlag = true;
 		_currMap = 10;
 	} else {
-		if (_Inventory[6] == 1 || !_wizard) {
-			if (_Nodes[43] != 1 || _wizard)
-				_Nodes[43] = 1;
+		if (_inventory[6] == 1 || !_wizard) {
+			if (_nodes[43] != 1 || _wizard)
+				_nodes[43] = 1;
 			else {
 				_sound = true;
-				_Nodes[43] = 2;
+				_nodes[43] = 2;
 			}
 			PlayMovie(122);
 			_currMap = 10;
