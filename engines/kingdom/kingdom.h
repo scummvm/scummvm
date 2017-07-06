@@ -182,32 +182,31 @@ namespace Kingdom {
 		bool _resurrect;
 		int _lastObstacle;
 		int _mapStat; // CHECKME: Useless? If so, to be removed
-		int _MouseValue;
-		int _CursorDef;
-		int _OldCursorDef;
-		int _CursorX;
-		int _CursorY;
-		int _OldCursorX;
-		int _OldCursorY;
-		int _IconSel;
-		int _IconSelect;
-		bool _MouseDebound;
-		int _RtnNode;
-		int _SoundNumber;
-		bool _PalStepFlag;
+		int _mouseValue;
+		int _cursorDef; // TODO: Could be removed by using the return value of CursorTypeExit()
+		int _oldCursorDef; // CHECKME: Unused in our implementation?
+		int _cursorX;
+		int _cursorY;
+		int _oldCursorX; // CHECKME: Unused in out implementation?
+		int _oldCursorY; // CHECKME: Unused in out implementation?
+		int _iconSel;
+		int _iconSelect;
+		bool _mouseDebound;
+		int _rtnNode;
+		int _soundNumber;
+		bool _palStepFlag;
 		Audio::SoundHandle _soundHandle;
 		int _tickCount;
 		uint32 _oldTime;
 
-		// Game Flags - Will be renames later into _Nodes[]
-		int16 _Nodes[99];
+		int16 _nodes[99];
 
-		Common::SeekableReadStream *_RezPointers[510];
-		int _RezSize[510];
-		int _Inventory[19];
-		int _IconPic[7];
-		uint16 _UserInput;
-		uint16 _MouseButton;
+		Common::SeekableReadStream *_rezPointers[510];
+		int _rezSize[510];
+		int _inventory[19];
+		int _iconPic[7];
+		uint16 _userInput;
+		uint16 _mouseButton;
 
 		void drawScreen();
 		void SetupPics();
