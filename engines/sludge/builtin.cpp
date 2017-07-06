@@ -50,7 +50,7 @@
 #include "sludge/thumbnail.h"
 #include "sludge/graphics.h"
 #include "sludge/sludge.h"
-#include "sludge/CommonCode/utf8.h"
+#include "sludge/utf8.h"
 
 namespace Sludge {
 
@@ -558,9 +558,12 @@ builtIn(substring) {
 	wholeString = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 
-	if (u8_strlen(wholeString) < start + length) {
-		length = u8_strlen(wholeString) - start;
-		if (u8_strlen(wholeString) < start) {
+	UTF8Converter convert(wholeString);
+	Common::U32String str32 = convert.getU32String();
+
+	if (str32.size() < start + length) {
+		length = str32.size() - start;
+		if (str32.size() < start) {
 			start = 0;
 		}
 	}
@@ -568,8 +571,8 @@ builtIn(substring) {
 		length = 0;
 	}
 
-	int startoffset = u8_offset(wholeString, start);
-	int endoffset = u8_offset(wholeString, start + length);
+	int startoffset = convert.getOriginOffset(start);
+	int endoffset = convert.getOriginOffset(start + length);
 
 	newString = new char[endoffset - startoffset + 1];
 	if (!checkNew(newString)) {
@@ -580,7 +583,7 @@ builtIn(substring) {
 	newString[endoffset - startoffset] = 0;
 
 	makeTextVar(fun->reg, newString);
-	delete newString;
+	delete []newString;
 	return BR_CONTINUE;
 }
 

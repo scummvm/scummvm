@@ -39,9 +39,9 @@ MODULE_OBJS := \
 	thumbnail.o \
 	timing.o \
 	transition.o \
+	utf8.o \
 	variable.o \
 	zbuffer.o \
-	CommonCode/utf8.o \
 #	shaders.o \
 #	libwebm/mkvparser.o \
 #	libwebm/mkvreader.o \
