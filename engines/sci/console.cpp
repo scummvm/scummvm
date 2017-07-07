@@ -423,7 +423,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" sfx01_track - Dumps a track of a SCI01 song\n");
 	debugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
 	debugPrintf(" map_instrument - Dynamically maps an MT-32 instrument to a GM instrument\n");
-	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2.1+)\n");
+	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2+)\n");
 	debugPrintf("\n");
 	debugPrintf("Script:\n");
 	debugPrintf(" addresses - Provides information on how to pass addresses\n");
