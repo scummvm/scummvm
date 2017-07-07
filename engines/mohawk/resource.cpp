@@ -297,6 +297,7 @@ bool MohawkArchive::openStream(Common::SeekableReadStream *stream) {
 			// than passing _stream at the right offset). We may want to do that in the future, though.
 			if (tag == ID_TMOV) {
 				uint16 nextFileIndex = index;
+				res.size = 0;
 				while (res.size == 0) {
 					if (nextFileIndex == fileTable.size())
 						res.size = stream->size() - fileTable[index - 1].offset;
