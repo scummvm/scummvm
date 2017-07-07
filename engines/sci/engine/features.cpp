@@ -694,6 +694,23 @@ bool GameFeatures::useAltWinGMSound() {
 	}
 }
 
+bool GameFeatures::generalMidiOnly() {
+#ifdef ENABLE_SCI32
+	switch (g_sci->getGameId()) {
+	case GID_MOTHERGOOSEHIRES:
+		return true;
+	case GID_KQ7: {
+		SoundResource sound(13, g_sci->getResMan(), detectDoSoundType());
+		return (sound.getTrackByType(/* AdLib */ 0) == nullptr);
+	}
+	default:
+		break;
+	}
+#endif
+
+	return false;
+}
+
 // PseudoMouse was added during SCI1
 // PseudoMouseAbility is about a tiny difference in the keyboard driver, which sets the event type to either
 // 40h (old behaviour) or 44h (the keyboard driver actually added 40h to the existing value).

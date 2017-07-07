@@ -68,7 +68,16 @@ void SciMusic::init() {
 	_dwTempo = 0;
 
 	Common::Platform platform = g_sci->getPlatform();
-	uint32 deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
+	uint32 deviceFlags;
+#ifdef ENABLE_SCI32
+	if (g_sci->_features->generalMidiOnly()) {
+		deviceFlags = MDT_MIDI;
+	} else {
+#endif
+		deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
+#ifdef ENABLE_SCI32
+	}
+#endif
 
 	// Default to MIDI for Windows versions of SCI1.1 games, as their
 	// soundtrack is written for GM.
@@ -93,6 +102,11 @@ void SciMusic::init() {
 		warning("A Windows CD version with an alternate MIDI soundtrack has been chosen, "
 				"but no MIDI music device has been selected. Reverting to the DOS soundtrack");
 		g_sci->_features->forceDOSTracks();
+#ifdef ENABLE_SCI32
+	} else if (g_sci->_features->generalMidiOnly() && _musicType != MT_GM) {
+		warning("This game only supports General MIDI, but a non-GM device has "
+				"been selected. Some music may be wrong or missing");
+#endif
 	}
 
 	switch (_musicType) {

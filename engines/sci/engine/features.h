@@ -229,6 +229,11 @@ public:
 	bool useAltWinGMSound();
 
 	/**
+	 * Checks if the game only supports General MIDI for music playback.
+	 */
+	bool generalMidiOnly();
+
+	/**
 	 * Forces DOS soundtracks in Windows CD versions when the user hasn't
 	 * selected a MIDI output device
 	 */
