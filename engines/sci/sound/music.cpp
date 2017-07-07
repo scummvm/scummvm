@@ -131,12 +131,6 @@ void SciMusic::init() {
 			// HACK: The Fun Seeker's Guide demo doesn't have patch 3 and the version
 			// of the Adlib driver (adl.drv) that it includes is unsupported. That demo
 			// doesn't have any sound anyway, so this shouldn't be fatal.
-		} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
-			// HACK: Mixed-Up Mother Goose Deluxe does not seem to use synthesized music,
-			// so just set a default tempo (for fading)
-			// TODO: Review this
-			_dwTempo = 1000000 / 250;
-			warning("Temporary music hack for MUMG Deluxe");
 		} else {
 			error("Failed to initialize sound driver");
 		}
