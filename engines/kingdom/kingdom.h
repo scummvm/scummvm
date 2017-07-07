@@ -152,7 +152,7 @@ namespace Kingdom {
 		int _treeHGSta;
 		bool _tsIconOnly;
 		bool _lastObs;
-		bool _Pouch;
+		bool _pouch;
 		bool _noMusic; // TODO: Synchronize this flag with the launcher
 		byte *_asPtr;
 		int _asMap;
@@ -209,14 +209,14 @@ namespace Kingdom {
 		uint16 _mouseButton;
 
 		void drawScreen();
-		void SetupPics();
-		void InitTools();
-		void TitlePage();
-		void InitPlay();
-		void InitHelp();
-		void FadeToBlack1();
-		void FadeToBlack2();
-		void GameHelp();
+		void setupPics();
+		void initTools();
+		void titlePage();
+		void initPlay();
+		void initHelp();
+		void fadeToBlack1();
+		void fadeToBlack2();
+		void gameHelp();
 		void GPLogic1();
 		void GPLogic1_SubSP10();
 		void GPLogic1_SubSP121();

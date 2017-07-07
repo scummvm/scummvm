@@ -691,7 +691,7 @@ void KingdomGame::GPLogic3() {
 	case 600:
 		SetMouse();
 		EraseCursor();
-		FadeToBlack2();
+		fadeToBlack2();
 		ShowPic(106);
 		DrawIcon(4, 0, 12 - _healthOld);
 		_asMode = false;
@@ -1690,7 +1690,7 @@ void KingdomGame::EndCredits() {
 		ReadMouse();
 	}
 
-	FadeToBlack1();
+	fadeToBlack1();
 	DrawRect(4, 17, 228, 161, 0);
 	PlaySound(0);
 	DsAll();
@@ -1699,13 +1699,13 @@ void KingdomGame::EndCredits() {
 	DsAll();
 	PlayMovie(205);
 	DsAll();
-	FadeToBlack1();
+	fadeToBlack1();
 	DrawRect(4, 17, 228, 161, 0);
 	PlayMovie(201);
 	FShowPic(125);
 	_currMap = 3;
 	DsAll();
-	_Pouch = false;
+	_pouch = false;
 	memset(_inventory, 0xFF, 19);
 	_statPlay = 994;
 	_loopFlag = true;
