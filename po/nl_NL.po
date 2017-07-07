@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-08-06 13:13+0200\n"
-"PO-Revision-Date: 2017-07-07 09:49+0000\n"
+"PO-Revision-Date: 2017-08-06 17:29+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/nl/>\n"
+"Language-Team: Dutch "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3374,7 +3374,7 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:409
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "U mist de volgende vereiste Riven gegevensbestanden:\n"
 
 #: engines/mohawk/riven_stack.cpp:182
 msgid ""
