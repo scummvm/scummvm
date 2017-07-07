@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-07 02:15+0200\n"
-"PO-Revision-Date: 2017-07-03 09:23+0000\n"
+"PO-Revision-Date: 2017-07-07 13:29+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3527,12 +3527,12 @@ msgstr ""
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Käytä korkealaatuista videoskaalausta"
 
 #: engines/sci/detection.cpp:432
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Käytä bilineaarista suodatinta grafiikan skaalauksessa"
+msgstr ""
+"Käytä lineaarista interpolaatiota videoiden suurentamisessa jos mahdollista"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
