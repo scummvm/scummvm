@@ -28,7 +28,7 @@ void KingdomGame::GPLogic1() {
 	switch(_statPlay) {
 	case 10:
 		_nodeNum = 1;
-		InitPlay();
+		initPlay();
 		_replay = false;
 		GPLogic1_SubSP10();
 		break;
@@ -46,7 +46,7 @@ void KingdomGame::GPLogic1() {
 			break;
 		case 0x192:
 			_aTimer = 0;
-			FadeToBlack2();
+			fadeToBlack2();
 			PlayMovie(1);
 			GPLogic1_SubSP10();
 			break;
@@ -56,7 +56,7 @@ void KingdomGame::GPLogic1() {
 			_noIFScreen = true;
 			PlaySound(0);
 			while(!_keyActive) {
-				FadeToBlack2();
+				fadeToBlack2();
 				PlayMovie(54);
 			}
 			GPLogic1_SubSP10();
@@ -66,7 +66,7 @@ void KingdomGame::GPLogic1() {
 			_quit = true;
 			break;
 		case 0x24A:
-			FadeToBlack2();
+			fadeToBlack2();
 			SetMouse();
 			EraseCursor();
 			restoreGame();
@@ -74,7 +74,7 @@ void KingdomGame::GPLogic1() {
 		case 0x2F1:
 			EraseCursorAsm();
 			_cursorDrawn = false;
-			FadeToBlack2();
+			fadeToBlack2();
 			PlaySound(0);
 			PlayMovie(54);
 			GPLogic1_SubSP10();
@@ -86,11 +86,11 @@ void KingdomGame::GPLogic1() {
 		}
 		break;
 	case 20:
-		InitPlay();
+		initPlay();
 		_noIFScreen = false;
 		EraseCursorAsm();
 		_cursorDrawn = false;
-		FadeToBlack2();
+		fadeToBlack2();
 		ShowPic(106);
 		_statPlay = 30;
 		_userInput = 0;
@@ -778,7 +778,7 @@ void KingdomGame::GPLogic1() {
 	case 161:
 		switch(_userInput) {
 		case 0x198: {
-			FadeToBlack1();
+			fadeToBlack1();
 			DrawRect(4, 17, 228, 161, 0);
 			_replay = true;
 			int oldPMovie = _pMovie;
@@ -788,12 +788,12 @@ void KingdomGame::GPLogic1() {
 			RestoreAS();
 			_help = true;
 			_eye = true;
-			_Pouch = true;
+			_pouch = true;
 			_currMap = 85;
 			}
 			break;
 		case 0x199: {
-			FadeToBlack1();
+			fadeToBlack1();
 			DrawRect(4, 17, 228, 161, 0);
 			_replay = true;
 			int oldPMovie = _pMovie;
@@ -803,7 +803,7 @@ void KingdomGame::GPLogic1() {
 			RestoreAS();
 			_help = true;
 			_eye = true;
-			_Pouch = true;
+			_pouch = true;
 			_currMap = 85;
 			}
 			break;
@@ -842,7 +842,7 @@ void KingdomGame::GPLogic1() {
 			SaveAS();
 			_help = false;
 			_eye = false;
-			_Pouch = false;
+			_pouch = false;
 			_replay = false;
 			FShowPic(105);
 			_currMap = 86;
@@ -870,7 +870,7 @@ void KingdomGame::GPLogic1() {
 				ReadMouse();
 			}
 
-			FadeToBlack1();
+			fadeToBlack1();
 			DrawRect(4, 17, 228, 161, 0);
 			RestoreAS();
 			break;	
@@ -1373,7 +1373,7 @@ void KingdomGame::GPLogic1() {
 void KingdomGame::GPLogic1_SubSP10() {
 	PlaySound(0);
 	PlaySound(18);
-	FadeToBlack2();
+	fadeToBlack2();
 	ShowPic(115);
 	ShowPic(114);
 

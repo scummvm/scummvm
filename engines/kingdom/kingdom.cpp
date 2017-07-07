@@ -120,7 +120,7 @@ void KingdomGame::initVariables() {
 	_replay = false;
 	_resurrect = false;
 //	_quitFlag = 0;
-	_Pouch = false;
+	_pouch = false;
 	_pMovie = 0;
 //	_options = 0;
 	_oldPouch = false;
@@ -183,16 +183,16 @@ Common::Error KingdomGame::run() {
 	initGraphics(320, 200, false);
 	_console = new Console(this);
 
-	SetupPics();
-	InitTools();
-	TitlePage();
+	setupPics();
+	initTools();
+	titlePage();
 
-	InitPlay();
-	InitHelp();
+	initPlay();
+	initHelp();
 
 	while (!_quit) {
 		_loopFlag = false;
-		GameHelp();
+		gameHelp();
 		if (_gameMode == 0) {
 			if (_statPlay < 250)
 				GPLogic1();
@@ -210,7 +210,7 @@ Common::Error KingdomGame::run() {
 		refreshScreen();
 	}
 
-	FadeToBlack2();
+	fadeToBlack2();
 	return Common::kNoError;
 }
 
@@ -268,21 +268,21 @@ void KingdomGame::drawScreen() {
 	_console->onFrame();
 }
 
-void KingdomGame::SetupPics() {
+void KingdomGame::setupPics() {
 	LoadKingArt();
 }
 
-void KingdomGame::InitTools() {
+void KingdomGame::initTools() {
 	InitMouse();
 	//CHECKME: InitTimers?
 	ShowPic(124);
 	InitCursor();
 	SetMouse();
-	FadeToBlack2();
+	fadeToBlack2();
 	InitMPlayer();
 }
 
-void KingdomGame::TitlePage() {
+void KingdomGame::titlePage() {
 	// TODO: Check on QuitFlag == 2
 	if (shouldQuit())
 		return;
@@ -290,16 +290,16 @@ void KingdomGame::TitlePage() {
 	_fstFwd = true;
 	_noIFScreen = true;
 	_sound = false;
-	FadeToBlack2();
+	fadeToBlack2();
 	PlayMovie(200);
-	FadeToBlack2();
+	fadeToBlack2();
 	PlayMovie(206);
-	FadeToBlack2();
+	fadeToBlack2();
 	PlayMovie(198);
-	FadeToBlack2();
+	fadeToBlack2();
 }
 
-void KingdomGame::InitPlay() {
+void KingdomGame::initPlay() {
 	memset(_inventory, 0xFF, 19);
 
 	for (int i = 0; i < 99; i++)
@@ -339,7 +339,7 @@ void KingdomGame::InitPlay() {
 	_tsIconOnly = false;
 	_lastObs = false;
 	EnAll();
-	_Pouch = true;
+	_pouch = true;
 	_noIFScreen = true;
 	_noMusic = false;
 	_fstFwd = true;
@@ -348,20 +348,20 @@ void KingdomGame::InitPlay() {
 	_asPtr = nullptr;
 }
 
-void KingdomGame::InitHelp() {
+void KingdomGame::initHelp() {
 	_gameMode = 0;
 }
 
-void KingdomGame::FadeToBlack1() {
+void KingdomGame::fadeToBlack1() {
 	debug("STUB: FadeToBlack1");
 }
 
-void KingdomGame::FadeToBlack2() {
+void KingdomGame::fadeToBlack2() {
 	debug("STUB: FadeToBlack2");
 }
 
 void KingdomGame::GameHelp_Sub43C() {
-	FadeToBlack1();
+	fadeToBlack1();
 	_currMap = _asMap;
 	DrawRect(4, 17, 228, 161, 0);
 	RestoreAS();
@@ -371,16 +371,16 @@ void KingdomGame::GameHelp_Sub43C() {
 	_treeLeftSta = _oldTLS;
 	_eye = _oldEye;
 	_help = _oldHelp;
-	_Pouch = _oldPouch;
+	_pouch = _oldPouch;
 }
 
-void KingdomGame::GameHelp() {
+void KingdomGame::gameHelp() {
 	if (!_gameMode) {
 		if (_userInput == 0x43C) {
 			SaveAS();
 			_asMap = _currMap;
 			_currMap = 0;
-			FadeToBlack1();
+			fadeToBlack1();
 			DrawRect(4, 17, 228, 161, 0);
 			DrawHelpScreen();
 			_gameMode = 1;
@@ -390,8 +390,8 @@ void KingdomGame::GameHelp() {
 			_oldEye = _eye;
 			_eye = false;
 			_oldHelp = _help;
-			_oldPouch = _Pouch;
-			_Pouch = false;
+			_oldPouch = _pouch;
+			_pouch = false;
 			_userInput = 0;
 		}
 		if (_userInput == 0x44F) {
@@ -405,8 +405,8 @@ void KingdomGame::GameHelp() {
 			_eye = false;
 			_oldHelp = _help;
 			_help = false;
-			_oldPouch = _Pouch;
-			FadeToBlack1();
+			_oldPouch = _pouch;
+			fadeToBlack1();
 			DrawRect(4, 17, 228, 161, 0);
 			DrawInventory();
 
@@ -423,7 +423,7 @@ void KingdomGame::GameHelp() {
 
 	switch(_userInput) {
 	case 0x240:
-		FadeToBlack2();
+		fadeToBlack2();
 		//TODO: Set _quitFlag to 1
 		break;
 	case 0x241:
@@ -441,14 +441,14 @@ void KingdomGame::GameHelp() {
 		DrawHelpScreen();
 		break;
 	case 0x243: {
-		FadeToBlack2();
+		fadeToBlack2();
 		_keyActive = false;
 		_noIFScreen = true;
 		PlaySound(0);
 		int var = _pMovie;
 		while(!_keyActive) {
 			PlayMovie(54);
-			FadeToBlack2();
+			fadeToBlack2();
 		}
 		_pMovie = var;
 		_noIFScreen = false;
@@ -463,14 +463,14 @@ void KingdomGame::GameHelp() {
 		_quit = true;
 		break;
 	case 0x245: {
-		FadeToBlack1();
+		fadeToBlack1();
 		int var = _pMovie;
 		DrawRect(4, 17, 228, 161, 0);
 		PlayMovie(205);
-		FadeToBlack1();
+		fadeToBlack1();
 		DrawRect(4, 17, 228, 161, 0);
 		PlayMovie(199);
-		FadeToBlack1();
+		fadeToBlack1();
 		DrawRect(4, 17, 228, 161, 0);
 		DrawHelpScreen();
 		_pMovie = var;
@@ -584,7 +584,7 @@ void KingdomGame::ShowPic(int reznum) {
 
 void KingdomGame::FShowPic(int reznum) {
 	EraseCursor();
-	FadeToBlack1();
+	fadeToBlack1();
 	DrawRect(4, 17, 228, 161, 0);
 	ShowPic(reznum);
 }
@@ -675,7 +675,7 @@ void KingdomGame::EnAll() {
 	_help = true;
 	_eye = true;
 	_replay = true;
-	_Pouch = true;
+	_pouch = true;
 	_fstFwd = true;
 }
 
@@ -683,7 +683,7 @@ void KingdomGame::DsAll() {
 	_help = false;
 	_eye = false;
 	_replay = false;
-	_Pouch = false;
+	_pouch = false;
 	_fstFwd = false;
 }
 
@@ -734,7 +734,7 @@ void KingdomGame::SwitchAS() {
 	_currMap = _asMap;
 	_treeLeftSta = _oldTLS;
 	_treeRightSta = _oldTRS;
-	_Pouch = _oldPouch;
+	_pouch = _oldPouch;
 	_help = _oldHelp;
 	_iconsClosed = _oldIconsClosed;
 }
@@ -1181,7 +1181,7 @@ void KingdomGame::DrawLocation() {
 			RefreshSound();
 			CheckMainScreen();
 		}
-		FadeToBlack1();
+		fadeToBlack1();
 		DrawRect(4, 17, 228, 161, 0);
 		_iconsClosed = false;
 		_tsIconOnly = false;
@@ -1298,7 +1298,7 @@ void KingdomGame::DisplayIcon(int reznum) {
 		ReadMouse();
 	}
 
-	FadeToBlack1();
+	fadeToBlack1();
 	DrawRect(4, 17, 228, 161, 0);
 	RestoreAS();
 }
@@ -1614,19 +1614,19 @@ void KingdomGame::SwitchAtoM() {
 	_iconSel = 9;
 	_oldTLS = _treeLeftSta;
 	_oldTRS = _treeRightSta;
-	_oldPouch = _Pouch;
+	_oldPouch = _pouch;
 	_oldHelp = _help;
 	_oldIconsClosed = _iconsClosed;
 	_treeLeftSta = 0;
 	_treeRightSta = 0;
-	_Pouch = false;
+	_pouch = false;
 	_help = false;
 	_iconsClosed = true;
 }
 
 void KingdomGame::SwitchMtoA() {
 	SwitchAS();
-	FadeToBlack1();
+	fadeToBlack1();
 	DrawRect(4, 17, 228, 161, 0);
 	RestoreAS();
 }
@@ -1820,7 +1820,7 @@ void KingdomGame::CursorType() {
 			_mouseValue = 0x450;
 		break;
 	case 0x44F:
-		if (!_Pouch)
+		if (!_pouch)
 			_mouseValue = 0;
 		break;
 	case 0x457:
