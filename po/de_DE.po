@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-07 02:15+0200\n"
-"PO-Revision-Date: 2017-07-03 13:25+0000\n"
+"PO-Revision-Date: 2017-07-07 06:52+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3580,9 +3580,8 @@ msgid "Use high-quality video scaling"
 msgstr ""
 
 #: engines/sci/detection.cpp:432
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Verwende bilineare Filterung zur Grafik-Skalierung"
+msgstr "Verwende bilineare Filterung zur Skalierung von Videos, sofern möglich"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
