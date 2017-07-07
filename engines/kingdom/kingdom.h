@@ -282,6 +282,7 @@ namespace Kingdom {
 		void synchronize(Common::Serializer &s);
 		void refreshScreen();
 		void checkTimers();
+		void initVariables();
 	};
 } // End of namespace Kingdom
 

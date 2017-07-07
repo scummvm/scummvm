@@ -52,21 +52,9 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_rnd = new Common::RandomSource("kingdom");
 
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
-	for (int i = 0; i < 510; i++) {
-		_rezPointers[i] = nullptr;
-		_rezSize[i] = 0;
-	}
-
-	for (int i = 0; i < 99; i++)
-		_nodes[i] = 0;
 
 	_asPtr = nullptr;
 	_quit = false;
-	_mouseValue = 0;
-	_currMap = 0;
-	_statPlay = 0;
-	_soundNumber = -1;
-
 	_kingartEntries = nullptr;
 
 	_tickCount = 0;
@@ -79,6 +67,111 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	SearchMan.addSubDirectoryMatching(gameDataDir, "SOUNDM");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MOVIELF");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MOVIES");
+
+	initVariables();
+}
+
+void KingdomGame::initVariables() {
+	_tsIconOnly = false;
+	_treeRightSta = 0;
+	_treeRightPic = 0;
+	_treeLeftSta = 0;
+	_treeLeftPic = 0;
+	_treeHGUPic = 0;
+	_treeHGTimer = 0;
+	_treeHGSta = 0;
+	_treeHGPic = 0;
+	_treeEyeTimer = 0;
+	_treeEyeSta = 0;
+	_treeEyePic = 0;
+	_noIFScreen = false;
+	_iconSel = 0;
+	_iconSelect = 0;
+	_iconsClosed = false;
+	for (int i = 0; i < 7; i++)
+		_iconPic[i] = 0;
+
+	_iconRedraw = 0;
+	_healthTmr = 0;
+	_healthOld = 0;
+	_health = 0;
+	_palStepFlag = 0;
+	_skylarTimerFlag = 0;
+	_skylarTimer = 0;
+	_cTimerFlag = 0;
+	_cTimer = 0;
+	_bTimerFlag = 0;
+	_bTimer = 0;
+	_aTimerFlag = 0;
+	_aTimer = 0;
+	_zoom = 0;
+	_wizard = 0; 
+	_userInput = 0;
+	_tideCntl = 0;
+//	_track = 0;
+//	_statMap = 0;
+	_statPlay = 0;
+	_spell3 = 0;
+	_spell2 = 0;
+	_spell1 = 0;
+	_soundNumber = 0;
+	_robberyNode = 0;
+	_rtnNode = 0;
+	_replay = false;
+	_resurrect = false;
+//	_quitFlag = 0;
+	_Pouch = false;
+	_pMovie = 0;
+//	_options = 0;
+	_oldPouch = false;
+	_oldHelp = false;
+	_oldEye = false;
+	_oldTRS = 0;
+	_oldTLS = 0;
+	_oldStatPlay = 0;
+	_oldNode = 0;
+	_oldIconsClosed = false;
+	_fstFwd = false;
+	_noMusic = false;
+	_nodeNum = 0;
+	_nextNode = 0;
+	_mouseValue = 0;
+	_mapEx = 0;
+	_mapStat = 0;
+	_loopFlag = false;
+	_lastSound = 0;
+	_lastObs = 0;
+	_lastObstacle = 0;
+	_keyActive = false;
+	_help = false;
+	_itemInhibit = false;
+//	_iconW = 0;
+	_gameMode = 0;
+	_fullScreen = false;
+	_frameStop = 0;
+	_eye = false;
+	_daelonCntr = 0;
+	_sound = 0;
+	_asMode = false;
+	for (int i = 0; i < 99; i++)
+		_nodes[i] = 0;
+	for (int i = 0; i < 510; i++) {
+		_rezPointers[i] = nullptr;
+		_rezSize[i] = 0;
+	}
+	_mouseDebound = false;
+	_mouseButton = 0;
+//	_cursorActive = false;
+	_cursorDrawn = false;
+	_oldCursorY = 0;
+	_oldCursorX = 0;
+//	_cursorShape = nullptr;
+	_oldCursorDef = 0;
+	_cursorDef = 0;
+	_cursorY = 0;
+	_cursorX = 0;
+	_currMap = 0;
+	_asMap = 0;
 }
 
 KingdomGame::~KingdomGame() {
