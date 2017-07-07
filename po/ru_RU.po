@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-07 02:15+0200\n"
+"POT-Creation-Date: 2017-07-08 01:44+0200\n"
 "PO-Revision-Date: 2017-06-20 15:35+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -69,7 +69,7 @@ msgstr "Вверх"
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
-#: engines/sword1/control.cpp:865
+#: engines/sword1/control.cpp:874
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -168,7 +168,7 @@ msgstr ""
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
 #: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
-#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword1/control.cpp:874 engines/sword1/logic.cpp:1633
 #: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
 #: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
 #: engines/zvision/file/save_manager.cpp:224
@@ -4509,7 +4509,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "Заставка '%s' не найдена"
 
-#: engines/sword1/control.cpp:863
+#: engines/sword1/control.cpp:872
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -4527,7 +4527,7 @@ msgstr ""
 "Нажмите ОК, чтобы перевести их в новый формат сейчас, в противном случае это "
 "сообщение появится снова при следующем запуске игры.\n"
 
-#: engines/sword1/control.cpp:1232
+#: engines/sword1/control.cpp:1246
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -4536,11 +4536,11 @@ msgstr ""
 "Сохранение игры с таким именем уже существует!\n"
 "Вы хотите оставить старое название (%s) или сделать новое (%s)?\n"
 
-#: engines/sword1/control.cpp:1235
+#: engines/sword1/control.cpp:1249
 msgid "Keep the old one"
 msgstr "Оставить старое"
 
-#: engines/sword1/control.cpp:1235
+#: engines/sword1/control.cpp:1249
 msgid "Keep the new one"
 msgstr "Сделать новое"
 

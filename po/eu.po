@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-07 02:15+0200\n"
+"POT-Creation-Date: 2017-07-08 01:44+0200\n"
 "PO-Revision-Date: 2016-12-04 13:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -68,7 +68,7 @@ msgstr "Joan gora"
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
-#: engines/sword1/control.cpp:865
+#: engines/sword1/control.cpp:874
 msgid "Cancel"
 msgstr "Utzi"
 
@@ -164,7 +164,7 @@ msgstr ""
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
 #: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
-#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword1/control.cpp:874 engines/sword1/logic.cpp:1633
 #: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
 #: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
 #: engines/zvision/file/save_manager.cpp:224
@@ -4486,7 +4486,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "Ez da '%s' bideoa aurkitu"
 
-#: engines/sword1/control.cpp:863
+#: engines/sword1/control.cpp:872
 #, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
@@ -4505,7 +4505,7 @@ msgstr ""
 "Sakatu Ados orain konbertitzeko, bestela berriz galdetuko dizut jokoa berriz "
 "martxan jartzen duzunean.\n"
 
-#: engines/sword1/control.cpp:1232
+#: engines/sword1/control.cpp:1246
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -4514,11 +4514,11 @@ msgstr ""
 "Gordetako partida jadanik existitzen da!\n"
 "Gordetako partida zaharra (%s) ala berria (%s) mantendu nahi zenuke?\n"
 
-#: engines/sword1/control.cpp:1235
+#: engines/sword1/control.cpp:1249
 msgid "Keep the old one"
 msgstr "Zaharra mantendu"
 
-#: engines/sword1/control.cpp:1235
+#: engines/sword1/control.cpp:1249
 msgid "Keep the new one"
 msgstr "Berria mantendu"
 
