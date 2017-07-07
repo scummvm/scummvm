@@ -821,7 +821,7 @@ void KingdomGame::GPLogic2() {
 				_aTimer = 0;
 				_help = true;
 				_replay = true;
-				_Pouch = 1;
+				_pouch = true;
 				_fstFwd = true;
 				PlayMovie(107);
 				PlaySound(26);

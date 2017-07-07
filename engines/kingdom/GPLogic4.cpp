@@ -38,7 +38,7 @@ void KingdomGame::GPLogic4() {
 			_asMode = false;
 		}
 		SaveAS();
-		FadeToBlack2();
+		fadeToBlack2();
 
 		if (_health == 10 || _health == 6 || _health == 2) {
 			ShowPic(121);
@@ -82,7 +82,7 @@ void KingdomGame::GPLogic4() {
 			FShowPic(107);
 			_currMap = 3;
 			DsAll();
-			_Pouch = 0;
+			_pouch = false;
 			PlaySound(1);
 			memset(_inventory, -1, 19);
 			_statPlay = 994;
@@ -132,7 +132,7 @@ void KingdomGame::GPLogic4() {
 			FShowPic(107);
 			_currMap = 3;
 			DsAll();
-			_Pouch = 0;
+			_pouch = false;
 			PlaySound(1);
 			memset(_inventory, -1, 19);
 			_statPlay = 994;
@@ -180,7 +180,7 @@ void KingdomGame::GPLogic4() {
 			FShowPic(107);
 			_currMap = 3;
 			DsAll();
-			_Pouch = 0;
+			_pouch = false;
 			PlaySound(1);
 			memset(_inventory, -1, 19);
 			_statPlay = 994;
@@ -218,7 +218,7 @@ void KingdomGame::GPLogic4() {
 	case 994:
 		switch(_userInput) {
 		case 0x190:
-			InitPlay();
+			initPlay();
 			// TODO _QuitFlag = 1;
 			_quit = true;
 			break;
@@ -234,7 +234,7 @@ void KingdomGame::GPLogic4() {
 void KingdomGame::GPLogic4_SP901() {
 	SetMouse();
 	EraseCursor();
-	FadeToBlack2();
+	fadeToBlack2();
 	ShowPic(106);
 	DrawIcon(4, 0, 12 - _healthOld);
 	if (_tideCntl)
