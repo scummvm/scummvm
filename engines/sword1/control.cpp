@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/memstream.h"
 
 #include "graphics/palette.h"
 #include "graphics/thumbnail.h"
@@ -239,6 +240,7 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
 	_selectedButton = 255;
 	_panelShown = false;
+	_tempThumbnail = 0;
 }
 
 void Control::askForCd() {
@@ -299,6 +301,11 @@ static int volToBalance(int volL, int volR) {
 }
 
 uint8 Control::runPanel() {
+	// Make a thumbnail of the screen before displaying the menu in case we want to save
+	// the game from the menu.
+	_tempThumbnail = new Common::MemoryWriteStreamDynamic;
+	Graphics::saveThumbnail(*_tempThumbnail);
+
 	_panelShown = true;
 	_mouseDown = false;
 	_restoreBuf = NULL;
@@ -418,6 +425,8 @@ uint8 Control::runPanel() {
 	_music->startMusic(Logic::_scriptVars[CURRENT_MUSIC], 1);
 	_sound->newScreen(Logic::_scriptVars[SCREEN]);
 	_panelShown = false;
+	delete _tempThumbnail;
+	_tempThumbnail = 0;
 	return retVal;
 }
 
@@ -1105,8 +1114,13 @@ void Control::saveGameToFile(uint8 slot) {
 	outf->write(_saveNames[slot].c_str(), 40);
 	outf->writeByte(SAVEGAME_VERSION);
 
-	if (!isPanelShown()) // Generate a thumbnail only if we are outside of game menu
+	// Saving can occur either delayed from the GMM (in which case the panel is now shown and we can make
+	// a thumbnail now) or from the game menu (the panel, in which case we created the _tempThumbnail just
+	// before showing the panel).
+	if (!isPanelShown())
 		Graphics::saveThumbnail(*outf);
+	else if (_tempThumbnail)
+		outf->write(_tempThumbnail->getData(), _tempThumbnail->size());
 
 	// Date / time
 	TimeDate curTime;
