@@ -50,8 +50,9 @@ void OSpit::xorollcredittime(const ArgumentArray &args) {
 	// be messy to modify the way that currently works. If we use the trap book on Tay,
 	// we should be using the Tay end game sequences.
 	if (_vm->_vars["returnstackid"] == kStackRspit) {
-		_vm->changeToStack(kStackRspit);
-		_vm->changeToCard(2);
+		RivenScriptPtr script = _vm->_scriptMan->createScriptWithCommand(
+				new RivenStackChangeCommand(_vm, kStackRspit, 0x3338, true));
+		_vm->_scriptMan->runScript(script, false);
 		return;
 	}
 
