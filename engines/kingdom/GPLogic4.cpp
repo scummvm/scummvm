@@ -32,7 +32,7 @@ void KingdomGame::GPLogic4() {
 			_aTimer = 133;
 		}
 		if (_asMode) {
-			SwitchMtoA();
+			switchMtoA();
 			_mapStat = 0;
 			_oldStatPlay--;
 			_asMode = false;
@@ -46,18 +46,18 @@ void KingdomGame::GPLogic4() {
 			readMouse();
 			while (_bTimer && !_mouseButton) {
 				checkTimers();
-				RefreshSound();
+				refreshSound();
 				readMouse();
 			}
 			
 			if (_aTimer > 0)
-				SetATimer();
+				setATimer();
 			
 			_userInput = 0;
 			GPLogic4_SP901();
 		} else {
 			if (_aTimer > 0) {
-				SetATimer();
+				setATimer();
 				_aTimer = 133;
 			}
 			showPic(120);
@@ -90,7 +90,7 @@ void KingdomGame::GPLogic4() {
 			_bTimer = 36;
 			while(_bTimer) {
 				checkTimers();
-				RefreshSound();
+				refreshSound();
 			}
 			
 			_loopFlag = true;
@@ -101,19 +101,19 @@ void KingdomGame::GPLogic4() {
 
 			_itemInhibit = false;
 			_tideCntl = false;
-			DrawPic(179);
+			drawPic(179);
 			_skylarTimer = 0;
 			_skylarTimerFlag = false;
 			enAll();
 			_mapEx = true;
 			_nodeNum = 5;
-			DrawLocation();
+			drawLocation();
 			playSound(0);
 			if (_nodes[5] > 0) {
 				playMovie(197);
 				_resurrect = true;
 			}
-			InventoryDel(12);
+			inventoryDel(12);
 			_statPlay = 50;
 		}
 		break;
@@ -140,7 +140,7 @@ void KingdomGame::GPLogic4() {
 			_bTimer = 36;
 			while(_bTimer != 0) {
 				checkTimers();
-				RefreshSound();
+				refreshSound();
 			}
 
 			_loopFlag = true;
@@ -151,17 +151,17 @@ void KingdomGame::GPLogic4() {
 
 			_itemInhibit = false;
 			_tideCntl = false;
-			DrawPic(179);
+			drawPic(179);
 			_skylarTimer = 0;
 			_skylarTimerFlag = false;
 			enAll();
 			_mapEx = true;
 			_nodeNum = 27;
-			DrawLocation();
+			drawLocation();
 			_resurrect = true;
 			playSound(0);
 			playMovie(195);
-			InventoryDel(12);
+			inventoryDel(12);
 			_statPlay = 270;
 		}
 		break;
@@ -188,7 +188,7 @@ void KingdomGame::GPLogic4() {
 			_bTimer = 36;
 			while (_bTimer != 0) {
 				checkTimers();
-				RefreshSound();
+				refreshSound();
 			}
 			
 			_loopFlag = true;
@@ -201,17 +201,17 @@ void KingdomGame::GPLogic4() {
 
 			_itemInhibit = false;
 			_tideCntl = false;
-			DrawPic(179);
+			drawPic(179);
 			_skylarTimer = 0;
 			_skylarTimerFlag = false;
 			enAll();
 			_mapEx = true;
 			_nodeNum = 52;
-			DrawLocation();
+			drawLocation();
 			_resurrect = true;
 			playSound(0);
 			playMovie(196);
-			InventoryDel(12);
+			inventoryDel(12);
 			_statPlay = 520;
 		}
 		break;
@@ -233,14 +233,14 @@ void KingdomGame::GPLogic4() {
 
 void KingdomGame::GPLogic4_SP901() {
 	setMouse();
-	EraseCursor();
+	eraseCursor();
 	fadeToBlack2();
 	showPic(106);
-	DrawIcon(4, 0, 12 - _healthOld);
+	drawIcon(4, 0, 12 - _healthOld);
 	if (_tideCntl)
-		DrawPic(178);
+		drawPic(178);
 	else
-		DrawPic(179);
+		drawPic(179);
 	
 	_iconRedraw = true;
 	if (_userInput == 0x2F1) {
@@ -256,12 +256,12 @@ void KingdomGame::GPLogic4_SP901() {
 		} else {
 			_statPlay = _mapExit[_userInput - 0x400];
 			_userInput = 0;
-			Wound();
+			wound();
 			playMovie(10);
-			InventoryDel(3);
+			inventoryDel(3);
 			_tsIconOnly = false;
 			enAll();
-			SwitchAS();
+			switchAS();
 			_mapStat = 0;
 		}
 		_userInput = 0;
