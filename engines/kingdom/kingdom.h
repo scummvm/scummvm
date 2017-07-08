@@ -225,25 +225,25 @@ namespace Kingdom {
 		void GPLogic3();
 		void GPLogic4();
 		void GPLogic4_SP901();
-		void LoadAResource(int reznum);
-		void ReleaseAResource(int reznum);
-		void ShowPic(int reznum);
-		void FShowPic(int reznum);
-		void InitCursor();
-		void InitMouse();
-		void SetMouse();
-		void ReadMouse();
-		void InitMPlayer();
-		void PlayMovie(int movieNum);
-		void EnAll();
-		void DsAll();
-		void SaveAS();
-		void RestoreAS();
-		void DrawHelpScreen();
-		void DrawRect(uint v1, uint v2, uint v3, uint v4, int v5);
-		void DrawInventory();
-		void GameHelp_Sub43C();
-		void PlaySound(int v1);
+		void loadAResource(int reznum);
+		void releaseAResource(int reznum);
+		void showPic(int reznum);
+		void fShowPic(int reznum);
+		void initCursor();
+		void initMouse();
+		void setMouse();
+		void readMouse();
+		void initMPlayer();
+		void playMovie(int movieNum);
+		void enAll(); // TODO: Rename later as enableAll
+		void dsAll(); // TODO: Rename later as disableAll
+		void saveAS(); // TODO: Rename later as saveVideoBackground
+		void restoreAS(); // TODO: Rename later as restoreVideoBackground
+		void drawHelpScreen();
+		void drawRect(uint minX, uint minY, uint maxX, uint maxY, int color);
+		void drawInventory();
+		void gameHelp_Sub43C();
+		void playSound(int idx);
 		void EraseCursor();
 		void GetUserInput();
 		void EraseCursorAsm();
