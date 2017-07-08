@@ -633,7 +633,6 @@ void RivenGraphics::updateCredits() {
 
 		// Now flush the new screen
 		_vm->_system->copyRectToScreen(_mainScreen->getPixels(), _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
-		_vm->_system->updateScreen();
 	}
 }
 
