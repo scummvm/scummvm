@@ -410,7 +410,7 @@ uint8 Control::runPanel() {
 		ConfMan.setInt("sfx_volume", (int)((volR + volL) / 2));
 		ConfMan.setInt("sfx_balance", volToBalance(volL, volR));
 
-		ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText == 1);
+		ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText);
 		ConfMan.flushToDisk();
 	}
 
@@ -503,8 +503,8 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 		           (id == BUTTON_DONE) || (id == BUTTON_VOLUME_PANEL))
 			return id;
 		else if (id == BUTTON_TEXT) {
-			SwordEngine::_systemVars.showText ^= 1;
-			_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
+			SwordEngine::_systemVars.showText = !SwordEngine::_systemVars.showText;
+			_buttons[5]->setSelected(SwordEngine::_systemVars.showText ? 1 : 0);
 		} else if (id == BUTTON_QUIT) {
 			if (getConfirm(_lStrings[STR_QUIT]))
 				Engine::quitGame();
@@ -566,7 +566,7 @@ void Control::setupMainPanel() {
 		createButtons(_deathButtons, 3);
 	else {
 		createButtons(_panelButtons, 7);
-		_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
+		_buttons[5]->setSelected(SwordEngine::_systemVars.showText ? 1 : 0);
 	}
 
 	if (SwordEngine::_systemVars.controlPanelMode == CP_THEEND) // end of game
