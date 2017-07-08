@@ -389,15 +389,15 @@ void SupernovaEngine::renderMessage(const char *text, MessagePosition position) 
 
 	switch (position) {
 	case kMessageNormal:
-		x = rowWidthMax / 2 - 160;
+		x = 160 - rowWidthMax / 2;
 		textColor = COL_MELD;
 		break;
 	case kMessageTop:
-		x = rowWidthMax / 2 - 160;
+		x = 160 - rowWidthMax / 2;
 		textColor = kColorLightYellow;
 		break;
 	case kMessageCenter:
-		x = rowWidthMax / 2 - 160;
+		x = 160 - rowWidthMax / 2;
 		textColor = kColorLightRed;
 		break;
 	case kMessageLeft:
