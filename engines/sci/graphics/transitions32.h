@@ -337,6 +337,12 @@ private:
 	void configure21EarlyHorizontalWipe(PlaneShowStyle &showStyle, const int16 priority);
 
 	/**
+	 * Initializes the given PlaneShowStyle for a
+	 * horizontal shutter effect for SCI2 to 2.1early.
+	 */
+	void configure21EarlyHorizontalShutter(PlaneShowStyle &showStyle, const int16 priority);
+
+	/**
 	 * Initializes the given PlaneShowStyle for an
 	 * iris effect for SCI2 to 2.1early.
 	 */
@@ -364,7 +370,7 @@ private:
 	 * Performs a transition that renders into a room
 	 * with a horizontal shutter effect.
 	 */
-	void processHShutterOut(PlaneShowStyle &showStyle);
+	bool processHShutterOut(PlaneShowStyle &showStyle);
 
 	/**
 	 * Performs a transition that renders to black
