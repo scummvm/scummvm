@@ -28,7 +28,7 @@ void KingdomGame::GPLogic4() {
 	switch(_statPlay) {
 	case 900:
 		if (_aTimer > 0) {
-			PlaySound(0);
+			playSound(0);
 			_aTimer = 133;
 		}
 		if (_asMode) {
@@ -37,17 +37,17 @@ void KingdomGame::GPLogic4() {
 			_oldStatPlay--;
 			_asMode = false;
 		}
-		SaveAS();
+		saveAS();
 		fadeToBlack2();
 
 		if (_health == 10 || _health == 6 || _health == 2) {
-			ShowPic(121);
+			showPic(121);
 			_bTimer = 38;
-			ReadMouse();
+			readMouse();
 			while (_bTimer && !_mouseButton) {
 				checkTimers();
 				RefreshSound();
-				ReadMouse();
+				readMouse();
 			}
 			
 			if (_aTimer > 0)
@@ -60,7 +60,7 @@ void KingdomGame::GPLogic4() {
 				SetATimer();
 				_aTimer = 133;
 			}
-			ShowPic(120);
+			showPic(120);
 			_statPlay = 901;
 		}
 		break;
@@ -70,20 +70,20 @@ void KingdomGame::GPLogic4() {
 	case 991:
 		_currMap = 10;
 		_userInput = 0;
-		PlaySound(0);
+		playSound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
 			_health -= 2;
 		else
 			_health -= 4;
 		
 		if (_health == 0) {
-			PlayMovie(194);
+			playMovie(194);
 			_noIFScreen = true;
-			FShowPic(107);
+			fShowPic(107);
 			_currMap = 3;
-			DsAll();
+			dsAll();
 			_pouch = false;
-			PlaySound(1);
+			playSound(1);
 			memset(_inventory, -1, 19);
 			_statPlay = 994;
 		} else {
@@ -104,13 +104,13 @@ void KingdomGame::GPLogic4() {
 			DrawPic(179);
 			_skylarTimer = 0;
 			_skylarTimerFlag = false;
-			EnAll();
+			enAll();
 			_mapEx = true;
 			_nodeNum = 5;
 			DrawLocation();
-			PlaySound(0);
+			playSound(0);
 			if (_nodes[5] > 0) {
-				PlayMovie(197);
+				playMovie(197);
 				_resurrect = true;
 			}
 			InventoryDel(12);
@@ -120,20 +120,20 @@ void KingdomGame::GPLogic4() {
 	case 992:
 		_currMap = 10;
 		_userInput = 0;
-		PlaySound(0);
+		playSound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
 			_health -= 2;
 		else
 			_health -= 4;
 		
 		if (_health == 0) {
-			PlayMovie(194);
+			playMovie(194);
 			_noIFScreen = true;
-			FShowPic(107);
+			fShowPic(107);
 			_currMap = 3;
-			DsAll();
+			dsAll();
 			_pouch = false;
-			PlaySound(1);
+			playSound(1);
 			memset(_inventory, -1, 19);
 			_statPlay = 994;
 		} else {
@@ -154,13 +154,13 @@ void KingdomGame::GPLogic4() {
 			DrawPic(179);
 			_skylarTimer = 0;
 			_skylarTimerFlag = false;
-			EnAll();
+			enAll();
 			_mapEx = true;
 			_nodeNum = 27;
 			DrawLocation();
 			_resurrect = true;
-			PlaySound(0);
-			PlayMovie(195);
+			playSound(0);
+			playMovie(195);
 			InventoryDel(12);
 			_statPlay = 270;
 		}
@@ -168,20 +168,20 @@ void KingdomGame::GPLogic4() {
 	case 993:
 		_currMap = 10;
 		_userInput = 0;
-		PlaySound(0);
+		playSound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
 			_health -= 2;
 		else
 			_health -= 4;
 		
 		if (_health == 0) {
-			PlayMovie(194);
+			playMovie(194);
 			_noIFScreen = true;
-			FShowPic(107);
+			fShowPic(107);
 			_currMap = 3;
-			DsAll();
+			dsAll();
 			_pouch = false;
-			PlaySound(1);
+			playSound(1);
 			memset(_inventory, -1, 19);
 			_statPlay = 994;
 		} else {
@@ -204,13 +204,13 @@ void KingdomGame::GPLogic4() {
 			DrawPic(179);
 			_skylarTimer = 0;
 			_skylarTimerFlag = false;
-			EnAll();
+			enAll();
 			_mapEx = true;
 			_nodeNum = 52;
 			DrawLocation();
 			_resurrect = true;
-			PlaySound(0);
-			PlayMovie(196);
+			playSound(0);
+			playMovie(196);
 			InventoryDel(12);
 			_statPlay = 520;
 		}
@@ -232,10 +232,10 @@ void KingdomGame::GPLogic4() {
 }
 
 void KingdomGame::GPLogic4_SP901() {
-	SetMouse();
+	setMouse();
 	EraseCursor();
 	fadeToBlack2();
-	ShowPic(106);
+	showPic(106);
 	DrawIcon(4, 0, 12 - _healthOld);
 	if (_tideCntl)
 		DrawPic(178);
@@ -245,22 +245,22 @@ void KingdomGame::GPLogic4_SP901() {
 	_iconRedraw = true;
 	if (_userInput == 0x2F1) {
 		_asMode = false;
-		RestoreAS();
+		restoreAS();
 		_statPlay = _oldStatPlay;
 		_loopFlag = true;
 	} else {
 		if (_health == 10 || _health == 6 || _health == 2 || _userInput < 0x400 || _userInput > 0x427) {
 			_asMode = false;
-			RestoreAS();
+			restoreAS();
 			_statPlay = _oldStatPlay;
 		} else {
 			_statPlay = _mapExit[_userInput - 0x400];
 			_userInput = 0;
 			Wound();
-			PlayMovie(10);
+			playMovie(10);
 			InventoryDel(3);
 			_tsIconOnly = false;
-			EnAll();
+			enAll();
 			SwitchAS();
 			_mapStat = 0;
 		}
