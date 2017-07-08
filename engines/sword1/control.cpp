@@ -399,18 +399,31 @@ uint8 Control::runPanel() {
 	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
 		uint8 volL, volR;
 		_music->giveVolume(&volL, &volR);
-		ConfMan.setInt("music_volume", (int)((volR + volL) / 2));
-		ConfMan.setInt("music_balance", volToBalance(volL, volR));
+		int vol = (int)((volR + volL) / 2);
+		int volBalance = volToBalance(volL, volR);
+		if (vol != ConfMan.getInt("music_volume"))
+			ConfMan.setInt("music_volume", vol);
+		if (volBalance != ConfMan.getInt("music_balance"))
+			ConfMan.setInt("music_balance", volBalance);
 
 		_sound->giveSpeechVol(&volL, &volR);
-		ConfMan.setInt("speech_volume", (int)((volR + volL) / 2));
-		ConfMan.setInt("speech_balance", volToBalance(volL, volR));
+		vol = (int)((volR + volL) / 2);
+		volBalance = volToBalance(volL, volR);
+		if (vol != ConfMan.getInt("speech_volume"))
+			ConfMan.setInt("speech_volume", vol);
+		if (volBalance != ConfMan.getInt("speech_balance"))
+			ConfMan.setInt("speech_balance", volBalance);
 
 		_sound->giveSfxVol(&volL, &volR);
-		ConfMan.setInt("sfx_volume", (int)((volR + volL) / 2));
-		ConfMan.setInt("sfx_balance", volToBalance(volL, volR));
+		vol = (int)((volR + volL) / 2);
+		volBalance = volToBalance(volL, volR);
+		if (vol != ConfMan.getInt("sfx_volume"))
+			ConfMan.setInt("sfx_volume", vol);
+		if (volBalance != ConfMan.getInt("sfx_balance"))
+			ConfMan.setInt("sfx_balance", volBalance);
 
-		ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText);
+		if (SwordEngine::_systemVars.showText != ConfMan.getBool("subtitles"))
+			ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText);
 		ConfMan.flushToDisk();
 	}
 
