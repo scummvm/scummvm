@@ -195,7 +195,7 @@ void CGameManager::update() {
 			_bounds.combine(textCursor->getCursorBounds());
 
 		// Set the screen's modified area bounds
-		screenManager->setSurfaceBounds(SURFACE_BACKBUFFER, _bounds);
+		screenManager->setSurfaceBounds(SURFACE_PRIMARY, _bounds);
 
 		// Handle redrawing the view if there is any changed area
 		if (!_bounds.isEmpty()) {
