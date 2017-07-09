@@ -104,6 +104,7 @@ namespace Kingdom {
 		const char *getGameId() const;
 		Common::Platform getPlatform() const;
 		static bool readSavegameHeader(Common::InSaveFile *in, KingdomSavegameHeader &header);
+		bool isDemo() const;
 
 	private:
 		Console *_console;
