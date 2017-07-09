@@ -69,11 +69,11 @@ static const char HELP_STRING[] =
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified\n"
-	"  -a, --add                Add a game from current or specified directory\n"
+	"  -a, --add                Add all games from current or specified directory.\n"
+	"                           If --game=ID is passed only the game with id ID is added. See also --detect\n"
 	"                           Use --path=PATH before -a, --add to specify a directory.\n"
-	"  --massadd                Add all games from current or specified directory and all sub directories\n"
-	"                           Use --path=PATH before --massadd to specify a directory.\n"
-	"  --detect                 Display a list of games from current or specified directory\n"
+	"  --game=ID                In combination with --add, only adds the game with id ID. See also --detect\n"
+	"  --detect                 Display a list of games with their ID from current or specified directory\n"
 	"                           without adding it to the config. Use --path=PATH before --detect\n"
 	"                           to specify a directory.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
@@ -267,6 +267,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("gui_saveload_last_pos", "0");
 
 	ConfMan.registerDefault("gui_browser_show_hidden", false);
+	ConfMan.registerDefault("game", "");
 
 #ifdef USE_FLUIDSYNTH
 	// The settings are deliberately stored the same way as in Qsynth. The
@@ -420,9 +421,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_COMMAND
 
 			DO_COMMAND('a', "add")
-			END_COMMAND
-
-			DO_LONG_COMMAND("massadd")
 			END_COMMAND
 
 			DO_LONG_COMMAND("detect")
@@ -601,6 +599,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("gui-theme")
+			END_OPTION
+
+			DO_LONG_OPTION("game")
 			END_OPTION
 
 			DO_LONG_OPTION("themepath")
@@ -801,24 +802,19 @@ static void listAudioDevices() {
 }
 
 /** Display all games in the given directory, or current directory if empty */
-static GameList getGameList(Common::String path) {
-	if (path.empty())
-		path = ".";
-
-	//Current directory
-	Common::FSNode dir(path);
+static GameList getGameList(Common::FSNode dir) {
 	Common::FSList files;
 
 	//Collect all files from directory
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-		printf("Path %s does not exist or is not a directory.\n", path.c_str());
+		printf("Path %s does not exist or is not a directory.\n", dir.getPath().c_str());
 		return GameList();
 	}
 
 	// detect Games
 	GameList candidates(EngineMan.detectGames(files));
 	if (candidates.empty()) {
-		printf("ScummVM could not find any game in %s\n", path.c_str());
+		printf("ScummVM could not find any game in %s\n", dir.getPath().c_str());
 	} else {
 		Common::String dataPath = dir.getPath();
 		// add game data path
@@ -857,7 +853,11 @@ static bool addGameToConf(const GameDescriptor &gd) {
 
 /** Display all games in the given directory, return ID of first detected game */
 static Common::String detectGames(Common::String path) {
-	GameList candidates = getGameList(path);
+	if (path.empty())
+		path = ".";
+	//Current directory
+	Common::FSNode dir(path);
+	GameList candidates = getGameList(dir);
 	if (candidates.empty())
 		return Common::String();
 
@@ -871,97 +871,42 @@ static Common::String detectGames(Common::String path) {
 	return candidates[0].gameid();
 }
 
-/** Add one of the games in the given directory, or current directory if empty */
-static bool addGame(Common::String path) {
-	GameList candidates = getGameList(path);
-	if (candidates.empty())
-		return false;
-
-	int idx = 0;
-	// Pick one if there are several games
-	if (candidates.size() > 1) {
-		// Print game list
-		printf("Several games are detected. Please pick one game to add: \n");
-		int i = 1;
-		for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++i, ++v) {
-			printf("%2i. %s : %s\n", i, v->gameid().c_str(), v->description().c_str());
-		}
-
-		// Get user input
-		if (scanf("%i", &idx) != 1) {
-			printf("Invalid index. No game added.\n");
-			return false;
-		}
-		--idx;
-		if (idx < 0 || idx >= (int)candidates.size()) {
-			printf("Invalid index. No game added.\n");
-			return false;
+static int recAddGames(Common::FSNode dir, Common::String game, bool recursive=true) {
+	int count = 0;
+	GameList list = getGameList(dir);
+	for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
+		if (v->gameid().c_str() != game && !game.empty()) {
+			printf("Found %s, only adding %s per --game option, ignoring...\n", v->gameid().c_str(), game.c_str());
+		} else if (!addGameToConf(*v)) {
+			// TODO Is it reall the case that !addGameToConf iff already added?
+			printf("Found %s, but has already been added, skipping\n", v->gameid().c_str());
+		} else {
+			printf("Found %s, adding...\n", v->gameid().c_str());
+			count++;
 		}
 	}
 
-	if (!addGameToConf(candidates[idx])) {
-		printf("This game has already been added.\n");
-		return false;
+	if (recursive) {
+		Common::FSList files;
+		if (dir.getChildren(files, Common::FSNode::kListDirectoriesOnly)) {
+			for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
+				count += recAddGames(*file, game);
+			}
+		}
 	}
 
-	// save to disk
-	ConfMan.flushToDisk();
-	return true;
+	return count;
 }
 
-static bool massAddGame(Common::String path) {
+static bool addGames(Common::String path, Common::String game) {
 	if (path.empty())
 		path = ".";
-
-	// Current directory
-	Common::FSNode startDir(path);
-	Common::Stack<Common::FSNode> scanStack;
-	scanStack.push(startDir);
-
-	// Number of games added
-	int n = 0, ndetect = 0;
-	while (!scanStack.empty()) {
-
-		Common::FSNode dir = scanStack.pop();
-		Common::FSList files;
-		Common::String dataPath = dir.getPath();
-
-		//Collect all files from directory
-		if (!dir.getChildren(files, Common::FSNode::kListAll))
-			continue;
-
-		// Get game list and add games
-		GameList candidates(EngineMan.detectGames(files));
-		if (!candidates.empty()) {
-			for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
-				++ndetect;
-				(*v)["path"] = dataPath;
-				if (addGameToConf(*v)) {
-					++n;
-				}
-			}
-		}
-
-		// Recurse into all subdirs
-		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
-			if (file->isDirectory()) {
-				scanStack.push(*file);
-			}
-		}
-	}
-
-	// Return and print info
-	if (n > 0) {
-		// save to disk
-		ConfMan.flushToDisk();
-		return true;
-	} else if (ndetect == 0){
-		printf("ScummVM could not find any game in %s and its sub directories\n", path.c_str());
-		return false;
-	} else {
-		printf("All games in %s and its sub directories have already been added\n", path.c_str());
-		return false;
-	}
+	//Current directory
+	Common::FSNode dir(path);
+	int added = recAddGames(dir, game);
+	printf("Added %d games\n", added);
+	ConfMan.flushToDisk();
+	return true;
 }
 
 #ifdef DETECTOR_TESTING_HACK
@@ -1201,11 +1146,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		detectGames(settings["path"]);
 		return true;
 	} else if (command == "add") {
-		addGame(settings["path"]);
-		return true;
-	} else if (command == "massadd") {
-		massAddGame(settings["path"]);
-		return true;
+		return (addGames(settings["path"], settings["game"]) > 0);
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {
