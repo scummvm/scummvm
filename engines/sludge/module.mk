@@ -42,8 +42,6 @@ MODULE_OBJS := \
 	utf8.o \
 	variable.o \
 	zbuffer.o \
-#	libwebm/mkvparser.o \
-#	libwebm/mkvreader.o \
  
 MODULE_DIRS += \
 	engines/sludge
