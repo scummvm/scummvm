@@ -66,6 +66,7 @@ public:
 #pragma mark Screen items
 private:
 	void remapMarkRedraw();
+	bool getNowSeenRect(const reg_t screenItemObject, Common::Rect &result) const;
 
 public:
 	/**
@@ -97,6 +98,7 @@ public:
 	void kernelUpdateScreenItem(const reg_t object);
 	void kernelDeleteScreenItem(const reg_t object);
 	bool kernelSetNowSeen(const reg_t screenItemObject) const;
+	int16 kernelObjectIntersect(const reg_t object1, const reg_t object2) const;
 
 #pragma mark -
 #pragma mark Planes

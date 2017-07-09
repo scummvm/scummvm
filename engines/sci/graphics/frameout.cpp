@@ -1253,33 +1253,78 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 	return true;
 }
 
-bool GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
+bool GfxFrameout::getNowSeenRect(const reg_t screenItemObject, Common::Rect &result) const {
 	const reg_t planeObject = readSelector(_segMan, screenItemObject, SELECTOR(plane));
-
-	Plane *plane = _planes.findByObject(planeObject);
+	const Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
-		error("kSetNowSeen: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(screenItemObject));
+		error("getNowSeenRect: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(screenItemObject));
 	}
 
-	ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
+	const ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
 	if (screenItem == nullptr) {
+		// NOTE: MGDX is assumed to use the older getNowSeenRect since it was
+		// released before SQ6, but this has not been verified since it cannot
+		// be disassembled at the moment (Phar Lap Windows-only release)
+		// (See also kSetNowSeen32)
+		if (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
+			g_sci->getGameId() == GID_SQ6 ||
+			g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+
+			error("getNowSeenRect: Unable to find screen item %04x:%04x", PRINT_REG(screenItemObject));
+		}
+
+		warning("getNowSeenRect: Unable to find screen item %04x:%04x", PRINT_REG(screenItemObject));
 		return false;
 	}
 
-	Common::Rect result = screenItem->getNowSeenRect(*plane);
+	result = screenItem->getNowSeenRect(*plane);
+
+	return true;
+}
+
+bool GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
+	Common::Rect nsrect;
+
+	bool found = getNowSeenRect(screenItemObject, nsrect);
+
+	if (!found)
+		return false;
 
 	if (g_sci->_features->usesAlternateSelectors()) {
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(left), result.left);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(top), result.top);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(right), result.right - 1);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(bottom), result.bottom - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(left), nsrect.left);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(top), nsrect.top);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(right), nsrect.right - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(bottom), nsrect.bottom - 1);
 	} else {
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsLeft), result.left);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsLeft), nsrect.left);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), nsrect.top);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), nsrect.right - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), nsrect.bottom - 1);
 	}
 	return true;
+}
+
+int16 GfxFrameout::kernelObjectIntersect(const reg_t object1, const reg_t object2) const {
+	Common::Rect nsrect1, nsrect2;
+
+	bool found1 = getNowSeenRect(object1, nsrect1);
+	bool found2 = getNowSeenRect(object2, nsrect2);
+
+	// If both objects were not found, SSCI would probably return an
+	// intersection area of 1 since SSCI's invalid/uninitialized rect has an
+	// area of 1. We (mostly) ignore that corner case here.
+	if (!found1 && !found2)
+		warning("Both objects not found in kObjectIntersect");
+
+	// If one object was not found, SSCI would use its invalid/uninitialized
+	// rect for it, which is at coordinates 0x89ABCDEF. This can't intersect
+	// valid rects, so we return 0.
+	if (!found1 || !found2)
+		return 0;
+
+	const Common::Rect intersection = nsrect1.findIntersectingRect(nsrect2);
+
+	return intersection.width() * intersection.height();
 }
 
 void GfxFrameout::remapMarkRedraw() {
