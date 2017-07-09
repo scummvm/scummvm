@@ -449,12 +449,14 @@ void KingdomGame::gameHelp() {
 		_keyActive = false;
 		_noIFScreen = true;
 		playSound(0);
-		int var = _pMovie;
+		// The demo isn't saving pMovie.
+		// It's obviously a bug and this behavior wasn't kept in ScummVM
+		int oldPMovie = _pMovie;
 		while(!_keyActive) {
 			playMovie(54);
 			fadeToBlack2();
 		}
-		_pMovie = var;
+		_pMovie = oldPMovie;
 		_noIFScreen = false;
 		showPic(106);
 		drawHelpScreen();
@@ -468,7 +470,9 @@ void KingdomGame::gameHelp() {
 		break;
 	case 0x245: {
 		fadeToBlack1();
-		int var = _pMovie;
+		// The demo isn't saving pMovie.
+		// It's obviously a bug and this behavior wasn't kept in ScummVM
+		int oldPMovie = _pMovie;
 		drawRect(4, 17, 228, 161, 0);
 		playMovie(205);
 		fadeToBlack1();
@@ -477,7 +481,7 @@ void KingdomGame::gameHelp() {
 		fadeToBlack1();
 		drawRect(4, 17, 228, 161, 0);
 		drawHelpScreen();
-		_pMovie = var;
+		_pMovie = oldPMovie;
 		}
 		break;
 	case 0x246:
