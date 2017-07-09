@@ -42,7 +42,6 @@ MODULE_OBJS := \
 	utf8.o \
 	variable.o \
 	zbuffer.o \
-#	shaders.o \
 #	libwebm/mkvparser.o \
 #	libwebm/mkvreader.o \
  

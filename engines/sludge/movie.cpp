@@ -43,7 +43,6 @@
 #include "sludge/timing.h"
 #include "sludge/graphics.h"
 #include "sludge/movie.h"
-#include "sludge/shaders.h"
 #include "sludge/sound.h"
 
 namespace Sludge {

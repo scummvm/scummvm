@@ -35,7 +35,6 @@
 #include "sludge/debug.h"
 #include "sludge/graphics.h"
 #include "sludge/imgloader.h"
-#include "sludge/shaders.h"
 #include "sludge/sludge.h"
 
 namespace Sludge {
