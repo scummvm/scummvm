@@ -70,7 +70,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
 	_curCard = 0;
-	_needsUpdate = false;
 	_canSafelySaveLoad = false;
 	_curResource = -1;
 	_hoverResource = nullptr;
@@ -264,13 +263,12 @@ Common::Error MohawkEngine_Myst::run() {
 	Common::Event event;
 	while (!shouldQuit()) {
 		// Update any background videos
-		_needsUpdate = _video->updateMovies();
+		_video->updateMovies();
 		_scriptParser->runPersistentScripts();
 
 		while (pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
-				_needsUpdate = true;
 				bool mouseClicked = _system->getEventManager()->getButtonState() & 1;
 
 				// Keep the same resource when dragging
@@ -349,10 +347,7 @@ Common::Error MohawkEngine_Myst::run() {
 			}
 		}
 
-		if (_needsUpdate) {
-			_system->updateScreen();
-			_needsUpdate = false;
-		}
+		_system->updateScreen();
 
 		// Cut down on CPU usage
 		_system->delayMillis(10);
@@ -643,7 +638,6 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 		} else {
 			_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 			_system->updateScreen();
-			_needsUpdate = false;
 		}
 	}
 

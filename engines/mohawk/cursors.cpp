@@ -93,12 +93,10 @@ MystCursorManager::~MystCursorManager() {
 
 void MystCursorManager::showCursor() {
 	CursorMan.showMouse(true);
-	_vm->_needsUpdate = true;
 }
 
 void MystCursorManager::hideCursor() {
 	CursorMan.showMouse(false);
-	_vm->_needsUpdate = true;
 }
 
 void MystCursorManager::setCursor(uint16 id) {
@@ -139,8 +137,6 @@ void MystCursorManager::setCursor(uint16 id) {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), false, &pixelFormat);
 	}
-
-	_vm->_needsUpdate = true;
 }
 
 void MystCursorManager::setDefaultCursor() {
