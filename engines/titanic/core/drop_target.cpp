@@ -98,6 +98,7 @@ bool CDropTarget::DropObjectMsg(CDropObjectMsg *msg) {
 	if (_hideItem)
 		msg->_item->setVisible(false);
 
+	_itemName = msg->_item->getName();
 	CDropZoneGotObjectMsg gotMsg(this);
 	gotMsg.execute(msg->_item);
 	playSound(_soundName);
@@ -176,7 +177,7 @@ bool CDropTarget::DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg) {
 				obj->petAddToInventory();
 			}
 
-			setVisible(true);
+			obj->setVisible(true);
 			CDropZoneLostObjectMsg lostMsg(this);
 			lostMsg.execute(obj);
 		}
