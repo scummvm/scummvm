@@ -263,8 +263,15 @@ private:
 	void loadResources();
 	void drawResourceRects();
 	void checkCurrentResource();
-	MystArea *_activeResource;
+
+	/** Area of type kMystAreaHover being hovered by the mouse, if any */
 	MystAreaHover *_hoverResource;
+
+	/** Active area being hovered by the mouse, if any */
+	MystArea *_activeResource;
+
+	/** Active area being clicked on / dragged, if any */
+	MystArea *_clickedResource;
 
 	Common::Array<MystCursorHint> _cursorHints;
 	void loadCursorHints();

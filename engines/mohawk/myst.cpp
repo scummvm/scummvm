@@ -71,8 +71,10 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_showResourceRects = false;
 	_curCard = 0;
 	_canSafelySaveLoad = false;
-	_activeResource = nullptr;
+
 	_hoverResource = nullptr;
+	_activeResource = nullptr;
+	_clickedResource = nullptr;
 
 	_sound = nullptr;
 	_video = nullptr;
@@ -269,26 +271,21 @@ Common::Error MohawkEngine_Myst::run() {
 		while (pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
-				bool mouseClicked = _system->getEventManager()->getButtonState() & 1;
-
-				// Keep the same resource when dragging
-				if (!mouseClicked) {
-					checkCurrentResource();
-				}
-				if (_activeResource && _activeResource->isEnabled() && mouseClicked) {
-					_activeResource->handleMouseDrag();
+				if (_clickedResource && _clickedResource->isEnabled()) {
+					_clickedResource->handleMouseDrag();
 				}
 				break;
 			}
 			case Common::EVENT_LBUTTONUP:
-				if (_activeResource && _activeResource->isEnabled()) {
-					_activeResource->handleMouseUp();
+				if (_clickedResource && _clickedResource->isEnabled()) {
+					_clickedResource->handleMouseUp();
+					_clickedResource = nullptr;
 				}
-				checkCurrentResource();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				if (_activeResource && _activeResource->isEnabled()) {
-					_activeResource->handleMouseDown();
+					_clickedResource = _activeResource;
+					_clickedResource->handleMouseDown();
 				}
 				break;
 			case Common::EVENT_KEYDOWN:
@@ -343,6 +340,8 @@ Common::Error MohawkEngine_Myst::run() {
 				break;
 			}
 		}
+
+		checkCurrentResource();
 
 		_system->updateScreen();
 
@@ -641,6 +640,8 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	// Make sure we have the right cursor showing
 	_hoverResource = nullptr;
 	_activeResource = nullptr;
+	_clickedResource = nullptr;
+
 	checkCurrentResource();
 
 	// Debug: Show resource rects
@@ -685,8 +686,6 @@ void MohawkEngine_Myst::checkCurrentResource() {
 }
 
 MystArea *MohawkEngine_Myst::updateCurrentResource() {
-	checkCurrentResource();
-
 	return _activeResource;
 }
 
