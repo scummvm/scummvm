@@ -302,7 +302,7 @@ bool Channelwood::pipeChangeValve(bool open, uint16 mask) {
 void Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Bridge rise / skink video", op);
 
-	VideoHandle bridge = _vm->_video->playMovie(_vm->wrapMovieFilename("bridge", kChannelwoodStack));
+	VideoEntryPtr bridge = _vm->_video->playMovie(_vm->wrapMovieFilename("bridge", kChannelwoodStack));
 	if (!bridge)
 		error("Failed to open 'bridge' movie");
 
@@ -324,7 +324,7 @@ void Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 	_vm->_sound->replaceSoundMyst(soundId);
-	VideoHandle pipe = _vm->_video->playMovie(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack));
+	VideoEntryPtr pipe = _vm->_video->playMovie(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack));
 	if (!pipe)
 		error("Failed to open 'pipebrid' movie");
 
@@ -617,32 +617,32 @@ void Channelwood::o_hologramMonitor(uint16 op, uint16 var, uint16 argc, uint16 *
 
 		_vm->_video->stopVideos();
 
-		VideoHandle handle;
+		VideoEntryPtr video;
 
 		switch (button) {
 		case 0:
-			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monalgh", kChannelwoodStack));
-			if (!handle)
+			video = _vm->_video->playMovie(_vm->wrapMovieFilename("monalgh", kChannelwoodStack));
+			if (!video)
 				error("Failed to open monalgh movie");
-			handle->moveTo(227, 70);
+			video->moveTo(227, 70);
 			break;
 		case 1:
-			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monamth", kChannelwoodStack));
-			if (!handle)
+			video = _vm->_video->playMovie(_vm->wrapMovieFilename("monamth", kChannelwoodStack));
+			if (!video)
 				error("Failed to open monamth movie");
-			handle->moveTo(227, 70);
+			video->moveTo(227, 70);
 			break;
 		case 2:
-			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monasirs", kChannelwoodStack));
-			if (!handle)
+			video = _vm->_video->playMovie(_vm->wrapMovieFilename("monasirs", kChannelwoodStack));
+			if (!video)
 				error("Failed to open monasirs movie");
-			handle->moveTo(227, 70);
+			video->moveTo(227, 70);
 			break;
 		case 3:
-			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack));
-			if (!handle)
+			video = _vm->_video->playMovie(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack));
+			if (!video)
 				error("Failed to open monsmsg movie");
-			handle->moveTo(226, 68);
+			video->moveTo(226, 68);
 			break;
 		default:
 			warning("Opcode %d Control Variable Out of Range", op);

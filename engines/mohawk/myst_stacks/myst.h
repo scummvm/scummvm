@@ -199,7 +199,7 @@ protected:
 	MystAreaSlider *_rocketSlider5; // 264
 	uint16 _rocketSliderSound; // 294
 	uint16 _rocketLeverPosition; // 296
-	VideoHandle _rocketLinkBook; // 268
+	VideoEntryPtr _rocketLinkBook; // 268
 
 	bool _libraryCombinationBookPagesTurning;
 	int16 _libraryBookPage; // 86
@@ -235,8 +235,8 @@ protected:
 
 	uint16 _clockTurningWheel;
 
-	VideoHandle _clockGearsVideos[3]; // 148 to 156
-	VideoHandle _clockWeightVideo; // 160
+	VideoEntryPtr _clockGearsVideos[3]; // 148 to 156
+	VideoEntryPtr _clockWeightVideo; // 160
 	uint16 _clockGearsPositions[3]; // 164 to 168
 	uint16 _clockWeightPosition; // 172
 	bool _clockMiddleGearMovedAlone; // 176
@@ -261,10 +261,10 @@ protected:
 	uint16 _cabinMatchState; // 60
 	uint32 _matchGoOutTime; // 144
 
-	VideoHandle _cabinFireMovie; // 240
+	VideoEntryPtr _cabinFireMovie; // 240
 
 	bool _cabinGaugeMovieEnabled;
-	VideoHandle _cabinGaugeMovie; // 244
+	VideoEntryPtr _cabinGaugeMovie; // 244
 
 	bool _boilerPressureIncreasing;
 	bool _boilerPressureDecreasing;

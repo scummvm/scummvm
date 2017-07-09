@@ -319,7 +319,7 @@ void Mechanical::o_snakeBoxTrigger(uint16 op, uint16 var, uint16 argc, uint16 *a
 void Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Play Stairs Movement Movie", op);
 
-	VideoHandle staircase = _vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack));
+	VideoEntryPtr staircase = _vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack));
 	if (!staircase)
 		error("Failed to open hhstairs movie");
 
@@ -578,7 +578,7 @@ void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, uint16 argc, uint1
 
 	debugC(kDebugScript, "Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
 
-	VideoHandle window = _vm->_video->playMovie(_vm->wrapMovieFilename("ewindow", kMechanicalStack));
+	VideoEntryPtr window = _vm->_video->playMovie(_vm->wrapMovieFilename("ewindow", kMechanicalStack));
 	if (!window)
 		error("Failed to open ewindow movie");
 
@@ -655,7 +655,7 @@ void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *
 
 	debugC(kDebugScript, "Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
 
-	VideoHandle window = _vm->_video->playMovie(_vm->wrapMovieFilename("hcelev", kMechanicalStack));
+	VideoEntryPtr window = _vm->_video->playMovie(_vm->wrapMovieFilename("hcelev", kMechanicalStack));
 	if (!window)
 		error("Failed to open hcelev movie");
 
@@ -667,7 +667,7 @@ void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *
 void Mechanical::o_fortressRotationSetPosition(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Set fortress position", op);
 
-	VideoHandle gears = _fortressRotationGears->getMovieHandle();
+	VideoEntryPtr gears = _fortressRotationGears->getVideo();
 	uint32 moviePosition = Audio::Timestamp(gears->getTime(), 600).totalNumberOfFrames();
 
 	// Myst ME short movie workaround, explained in o_fortressRotation_init
@@ -801,7 +801,7 @@ void Mechanical::o_elevatorRotation_init(uint16 op, uint16 var, uint16 argc, uin
 }
 
 void Mechanical::fortressRotation_run() {
-	VideoHandle gears = _fortressRotationGears->getMovieHandle();
+	VideoEntryPtr gears = _fortressRotationGears->getVideo();
 
 	double oldRate = gears->getRate().toDouble();
 	uint32 moviePosition = Audio::Timestamp(gears->getTime(), 600).totalNumberOfFrames();
@@ -877,7 +877,7 @@ void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uin
 
 	_fortressRotationGears = getInvokingResource<MystAreaVideo>();
 
-	VideoHandle gears = _fortressRotationGears->playMovie();
+	VideoEntryPtr gears = _fortressRotationGears->playMovie();
 	gears->setLooping(true);
 	gears->seek(Audio::Timestamp(0, 1800 * _fortressPosition, 600));
 	gears->setRate(0);
@@ -917,7 +917,7 @@ void Mechanical::fortressSimulation_run() {
 		_vm->_sound->replaceSoundMyst(_fortressSimulationStartSound2);
 
 		// Update movie while the sound is playing
-		VideoHandle startup = _fortressSimulationStartup->playMovie();
+		VideoEntryPtr startup = _fortressSimulationStartup->playMovie();
 		while (_vm->_sound->isPlaying(_fortressSimulationStartSound2)) {
 			if (_vm->_video->updateMovies())
 				_vm->_system->updateScreen();
@@ -937,7 +937,7 @@ void Mechanical::fortressSimulation_run() {
 		_vm->_system->updateScreen();
 
 		_fortressSimulationStartup->pauseMovie(true);
-		VideoHandle holo = _fortressSimulationHolo->playMovie();
+		VideoEntryPtr holo = _fortressSimulationHolo->playMovie();
 		holo->setLooping(true);
 		holo->setRate(0);
 
@@ -949,7 +949,7 @@ void Mechanical::fortressSimulation_run() {
 
 		_fortressSimulationInit = false;
 	} else {
-		VideoHandle holo = _fortressSimulationHolo->getMovieHandle();
+		VideoEntryPtr holo = _fortressSimulationHolo->getVideo();
 
 		double oldRate = holo->getRate().toDouble();
 

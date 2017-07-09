@@ -1139,7 +1139,7 @@ void Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		_vm->wait(500);
 
 		// Gears rise up
-		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack));
+		VideoEntryPtr gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack));
 		if (!gears)
 			error("Failed to open gears movie");
 
@@ -1154,7 +1154,7 @@ void Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		_vm->wait(500);
 
 		// Gears sink down
-		VideoHandle gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack));
+		VideoEntryPtr gears = _vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack));
 		if (!gears)
 			error("Failed to open gears movie");
 
@@ -1202,7 +1202,7 @@ void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 		if (_state.imagerActive) {
 			// Mountains disappearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
-			VideoHandle mountain = _vm->_video->playMovie(file);
+			VideoEntryPtr mountain = _vm->_video->playMovie(file);
 			if (!mountain)
 				error("Failed to open '%s'", file.c_str());
 
@@ -1213,7 +1213,7 @@ void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 		} else {
 			// Mountains appearing
 			Common::String file = _vm->wrapMovieFilename("vltmntn", kMystStack);
-			VideoHandle mountain = _vm->_video->playMovie(file);
+			VideoEntryPtr mountain = _vm->_video->playMovie(file);
 			if (!mountain)
 				error("Failed to open '%s'", file.c_str());
 
@@ -1230,14 +1230,14 @@ void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 			_vm->_sound->replaceSoundMyst(argv[1]);
 
 			// Water disappearing
-			VideoHandle water = _imagerMovie->playMovie();
+			VideoEntryPtr water = _imagerMovie->playMovie();
 			water->setBounds(Audio::Timestamp(0, 4204, 600), Audio::Timestamp(0, 6040, 600));
 			water->setLooping(false);
 
 			_state.imagerActive = 0;
 		} else {
 			// Water appearing
-			VideoHandle water = _imagerMovie->playMovie();
+			VideoEntryPtr water = _imagerMovie->playMovie();
 			water->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 1814, 600));
 			_vm->_video->waitUntilMovieEnds(water);
 
@@ -2979,7 +2979,7 @@ void Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 	// Let movies stop playing
 	for (uint i = 0; i < ARRAYSIZE(videos); i++) {
-		VideoHandle handle = _vm->_video->findVideoHandle(_vm->wrapMovieFilename(videos[i], kMystStack));
+		VideoEntryPtr handle = _vm->_video->findVideo(_vm->wrapMovieFilename(videos[i], kMystStack));
 		if (handle)
 			_vm->_video->waitUntilMovieEnds(handle);
 	}
@@ -3063,7 +3063,7 @@ void Myst::clockReset() {
 
 	// Let movies stop playing
 	for (uint i = 0; i < ARRAYSIZE(videos); i++) {
-		VideoHandle handle = _vm->_video->findVideoHandle(_vm->wrapMovieFilename(videos[i], kMystStack));
+		VideoEntryPtr handle = _vm->_video->findVideo(_vm->wrapMovieFilename(videos[i], kMystStack));
 		if (handle)
 			_vm->_video->waitUntilMovieEnds(handle);
 	}
@@ -3077,7 +3077,7 @@ void Myst::clockReset() {
 		_vm->_sound->replaceSoundMyst(7113);
 
 		// Gear closing movie
-		VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack));
+		VideoEntryPtr handle = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack));
 		if (!handle)
 			error("Failed to open cl1wggat movie");
 
@@ -3355,7 +3355,7 @@ void Myst::imager_run() {
 	_imagerRunning = false;
 
 	if (_state.imagerActive && _state.imagerSelection == 67) {
-		VideoHandle water = _imagerMovie->playMovie();
+		VideoEntryPtr water = _imagerMovie->playMovie();
 		water->setBounds(Audio::Timestamp(0, 1814, 600), Audio::Timestamp(0, 4204, 600));
 		water->setLooping(true);
 	}
@@ -3469,7 +3469,7 @@ void Myst::gullsFly1_run() {
 			else
 				x = _vm->_rnd->getRandomNumber(160) + 260;
 
-			VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
+			VideoEntryPtr handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
 			if (!handle)
 				error("Failed to open gulls movie");
 
@@ -3614,7 +3614,7 @@ void Myst::gullsFly2_run() {
 	if (time > _gullsNextTime) {
 		uint16 video = _vm->_rnd->getRandomNumber(3);
 		if (video != 3) {
-			VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
+			VideoEntryPtr handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
 			if (!handle)
 				error("Failed to open gulls movie");
 
@@ -3769,7 +3769,7 @@ void Myst::greenBook_run() {
 		_vm->_sound->stopSound();
 		_vm->_sound->pauseBackgroundMyst();
 
-		VideoHandle book = _vm->_video->playMovie(file);
+		VideoEntryPtr book = _vm->_video->playMovie(file);
 		if (!book)
 			error("Failed to open '%s'", file.c_str());
 
@@ -3783,7 +3783,7 @@ void Myst::greenBook_run() {
 			_tempVar = 0;
 		}
 	} else if (_tempVar == 2 && !_vm->_video->isVideoPlaying()) {
-		VideoHandle book = _vm->_video->playMovie(file);
+		VideoEntryPtr book = _vm->_video->playMovie(file);
 		if (!book)
 			error("Failed to open '%s'", file.c_str());
 
@@ -3812,7 +3812,7 @@ void Myst::gullsFly3_run() {
 		if (video != 3) {
 			uint16 x = _vm->_rnd->getRandomNumber(280) + 135;
 
-			VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
+			VideoEntryPtr handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
 			if (!handle)
 				error("Failed to open gulls movie");
 
@@ -3851,8 +3851,8 @@ void Myst::o_treeEntry_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_boiler_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Exit boiler card", op);
 
-	_cabinGaugeMovie = VideoHandle();
-	_cabinFireMovie = VideoHandle();
+	_cabinGaugeMovie = VideoEntryPtr();
+	_cabinFireMovie = VideoEntryPtr();
 
 	_cabinGaugeMovieEnabled = false;
 }

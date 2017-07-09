@@ -272,20 +272,20 @@ bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
 		fileName = argv[1];
 	}
 
-	VideoHandle handle = _vm->_video->playMovie(fileName);
-	if (!handle) {
+	VideoEntryPtr video = _vm->_video->playMovie(fileName);
+	if (!video) {
 		debugPrintf("Failed to open movie '%s'\n", fileName.c_str());
 		return true;
 	}
 
 	if (argc == 4) {
-		handle->setX(atoi(argv[2]));
-		handle->setY(atoi(argv[3]));
+		video->setX(atoi(argv[2]));
+		video->setY(atoi(argv[3]));
 	} else if (argc > 4) {
-		handle->setX(atoi(argv[3]));
-		handle->setY(atoi(argv[4]));
+		video->setX(atoi(argv[3]));
+		video->setY(atoi(argv[4]));
 	} else {
-		handle->center();
+		video->center();
 	}
 
 	return false;

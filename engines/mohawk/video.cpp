@@ -24,6 +24,8 @@
 #include "mohawk/resource.h"
 #include "mohawk/video.h"
 
+#include "mohawk/myst.h"
+
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/events.h"
@@ -138,13 +140,7 @@ void VideoEntry::setVolume(int volume) {
 	_video->setVolume(CLIP(volume, 0, 255));
 }
 
-VideoHandle::VideoHandle(VideoEntryPtr ptr) : _ptr(ptr) {
-}
-
-VideoHandle::VideoHandle(const VideoHandle &handle) : _ptr(handle._ptr) {
-}
-
-VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
+VideoManager::VideoManager(MohawkEngine *vm) : _vm(vm) {
 	// Set dithering enabled, if required
 	_enableDither = (_vm->getGameType() == GType_MYST || _vm->getGameType() == GType_MAKINGOF) && !(_vm->getFeatures() & GF_ME);
 }
@@ -184,7 +180,7 @@ void VideoManager::playMovieBlocking(const Common::String &fileName, uint16 x, u
 	}
 
 	ptr->start();
-	waitUntilMovieEnds(VideoHandle(ptr));
+	waitUntilMovieEnds(ptr);
 }
 
 void VideoManager::playMovieBlockingCentered(const Common::String &fileName, bool clearScreen) {
@@ -200,20 +196,20 @@ void VideoManager::playMovieBlockingCentered(const Common::String &fileName, boo
 
 	ptr->center();
 	ptr->start();
-	waitUntilMovieEnds(VideoHandle(ptr));
+	waitUntilMovieEnds(ptr);
 }
 
-void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
-	if (!videoHandle)
+void VideoManager::waitUntilMovieEnds(const VideoEntryPtr &video) {
+	if (!video)
 		return;
 
 	// Sanity check
-	if (videoHandle._ptr->isLooping())
+	if (video->isLooping())
 		error("Called waitUntilMovieEnds() on a looping video");
 
 	bool continuePlaying = true;
 
-	while (!videoHandle->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
+	while (!video->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
 		if (updateMovies())
 			_vm->_system->updateScreen();
 
@@ -245,25 +241,25 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	}
 
 	// Ensure it's removed
-	removeEntry(videoHandle._ptr);
+	removeEntry(video);
 }
 
-VideoHandle VideoManager::playMovie(const Common::String &fileName) {
+VideoEntryPtr VideoManager::playMovie(const Common::String &fileName) {
 	VideoEntryPtr ptr = open(fileName);
 	if (!ptr)
-		return VideoHandle();
+		return VideoEntryPtr();
 
 	ptr->start();
-	return VideoHandle(ptr);
+	return ptr;
 }
 
-VideoHandle VideoManager::playMovie(uint16 id) {
+VideoEntryPtr VideoManager::playMovie(uint16 id) {
 	VideoEntryPtr ptr = open(id);
 	if (!ptr)
-		return VideoHandle();
+		return VideoEntryPtr();
 
 	ptr->start();
-	return VideoHandle(ptr);
+	return ptr;
 }
 
 bool VideoManager::updateMovies() {
@@ -376,9 +372,9 @@ bool VideoManager::drawNextFrame(VideoEntryPtr videoEntry) {
 
 VideoEntryPtr VideoManager::open(uint16 id) {
 	// If this video is already playing, return that handle
-	VideoHandle oldHandle = findVideoHandle(id);
-	if (oldHandle._ptr)
-		return oldHandle._ptr;
+	VideoEntryPtr oldVideo = findVideo(id);
+	if (oldVideo)
+		return oldVideo;
 
 	// Otherwise, create a new entry
 	Video::QuickTimeDecoder *video = new Video::QuickTimeDecoder();
@@ -399,9 +395,9 @@ VideoEntryPtr VideoManager::open(uint16 id) {
 
 VideoEntryPtr VideoManager::open(const Common::String &fileName) {
 	// If this video is already playing, return that entry
-	VideoHandle oldHandle = findVideoHandle(fileName);
-	if (oldHandle._ptr)
-		return oldHandle._ptr;
+	VideoEntryPtr oldVideo = findVideo(fileName);
+	if (oldVideo)
+		return oldVideo;
 
 	// Otherwise, create a new entry
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
@@ -427,26 +423,26 @@ VideoEntryPtr VideoManager::open(const Common::String &fileName) {
 	return entry;
 }
 
-VideoHandle VideoManager::findVideoHandle(uint16 id) {
+VideoEntryPtr VideoManager::findVideo(uint16 id) {
 	if (id == 0)
-		return VideoHandle();
+		return VideoEntryPtr();
 
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 		if ((*it)->getID() == id)
-			return VideoHandle(*it);
+			return *it;
 
-	return VideoHandle();
+	return VideoEntryPtr();
 }
 
-VideoHandle VideoManager::findVideoHandle(const Common::String &fileName) {
+VideoEntryPtr VideoManager::findVideo(const Common::String &fileName) {
 	if (fileName.empty())
-		return VideoHandle();
+		return VideoEntryPtr();
 
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 		if ((*it)->getFileName().equalsIgnoreCase(fileName))
-			return VideoHandle(*it);
+			return *it;
 
-	return VideoHandle();
+	return VideoEntryPtr();
 }
 
 bool VideoManager::isVideoPlaying() {
@@ -457,11 +453,11 @@ bool VideoManager::isVideoPlaying() {
 	return false;
 }
 
-void VideoManager::drawVideoFrame(VideoHandle handle, const Audio::Timestamp &time) {
-	assert(handle);
-	handle->seek(time);
-	drawNextFrame(handle._ptr);
-	handle->stop();
+void VideoManager::drawVideoFrame(const VideoEntryPtr &video, const Audio::Timestamp &time) {
+	assert(video);
+	video->seek(time);
+	drawNextFrame(video);
+	video->stop();
 }
 
 VideoManager::VideoList::iterator VideoManager::findEntry(VideoEntryPtr ptr) {

@@ -211,9 +211,9 @@ MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, Common::SeekableReadStream *
 	debugC(kDebugResource, "\tplayRate: %d", _playRate);
 }
 
-VideoHandle MystAreaVideo::playMovie() {
+VideoEntryPtr MystAreaVideo::playMovie() {
 	// Check if the video is already running
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 
 	// If the video is not running, play it
 	if (!handle) {
@@ -245,15 +245,15 @@ VideoHandle MystAreaVideo::playMovie() {
 
 	if (_playBlocking) {
 		_vm->_video->waitUntilMovieEnds(handle);
-		return VideoHandle();
+		return VideoEntryPtr();
 	}
 
 	return handle;
 }
 
-VideoHandle MystAreaVideo::getMovieHandle() {
+VideoEntryPtr MystAreaVideo::getVideo() {
 	// If the video is already in the manager, just return the handle
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 	if (!handle) {
 		// If the video has not been loaded yet, do it but don't start playing it
 		handle = _vm->_video->playMovie(_videoFile);
@@ -271,12 +271,12 @@ void MystAreaVideo::handleCardChange() {
 }
 
 bool MystAreaVideo::isPlaying() {
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 	return handle && !handle->endOfVideo();
 }
 
 void MystAreaVideo::pauseMovie(bool pause) {
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 	if (handle && !handle->endOfVideo())
 		handle->pause(pause);
 }

@@ -427,7 +427,7 @@ void Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	uint16 startTime = argv[0];
 	uint16 endTime = argv[1];
 
-	VideoHandle book = _vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack));
+	VideoEntryPtr book = _vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack));
 	if (!book)
 		error("Failed to open bkroom movie");
 
@@ -598,7 +598,7 @@ void Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint16 argc, uint16 *a
 	// uint16 direction = argv[2];
 
 	_hologramDisplay->setBlocking(false);
-	VideoHandle displayMovie = _hologramDisplay->playMovie();
+	VideoEntryPtr displayMovie = _hologramDisplay->playMovie();
 
 	if (_hologramTurnedOn) {
 		if (_hologramDisplayPos)
@@ -629,7 +629,7 @@ void Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, uint16 argc, uint
 		// Draw handle movie frame
 		uint16 selectionPos = position * 1500 / 243;
 
-		VideoHandle handleMovie = _hologramSelection->playMovie();
+		VideoEntryPtr handleMovie = _hologramSelection->playMovie();
 		_vm->_video->drawVideoFrame(handleMovie, Audio::Timestamp(0, selectionPos, 600));
 
 		_hologramDisplayPos = position * 1450 / 243 + 350;
@@ -637,7 +637,7 @@ void Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, uint16 argc, uint
 		// Draw display movie frame
 		if (_hologramTurnedOn) {
 			_hologramDisplay->setBlocking(false);
-			VideoHandle displayMovie = _hologramDisplay->playMovie();
+			VideoEntryPtr displayMovie = _hologramDisplay->playMovie();
 			_vm->_video->drawVideoFrame(displayMovie, Audio::Timestamp(0, _hologramDisplayPos, 600));
 		}
 	}
@@ -679,7 +679,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 
 	if (_state.chestValveState) {
 		// Valve closing
-		VideoHandle valve = _vm->_video->playMovie(movie);
+		VideoEntryPtr valve = _vm->_video->playMovie(movie);
 		if (!valve)
 			error("Failed to open '%s'", movie.c_str());
 
@@ -688,7 +688,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 		_vm->_video->waitUntilMovieEnds(valve);
 	} else if (_state.chestWaterState) {
 		// Valve opening, spilling water
-		VideoHandle valve = _vm->_video->playMovie(movie);
+		VideoEntryPtr valve = _vm->_video->playMovie(movie);
 		if (!valve)
 			error("Failed to open '%s'", movie.c_str());
 
@@ -711,7 +711,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 		_vm->_sound->resumeBackgroundMyst();
 	} else {
 		// Valve opening
-		VideoHandle valve = _vm->_video->playMovie(movie);
+		VideoEntryPtr valve = _vm->_video->playMovie(movie);
 		if (!valve)
 			error("Failed to open '%s'", movie.c_str());
 
@@ -738,7 +738,7 @@ void Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 	Common::String movie = _vm->wrapMovieFilename("openloc", kStoneshipStack);
 
-	VideoHandle lock = _vm->_video->playMovie(movie);
+	VideoEntryPtr lock = _vm->_video->playMovie(movie);
 	if (!lock)
 		error("Failed to open '%s'", movie.c_str());
 

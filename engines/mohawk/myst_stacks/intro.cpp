@@ -96,16 +96,16 @@ void Intro::introMovies_run() {
 	// Play Intro Movies
 	// This is all quite messy...
 
-	VideoHandle handle;
+	VideoEntryPtr video;
 
 	switch (_introStep) {
 	case 0:
 		_introStep = 1;
-		handle = _vm->_video->playMovie(_vm->wrapMovieFilename("broder", kIntroStack));
-		if (!handle)
+		video = _vm->_video->playMovie(_vm->wrapMovieFilename("broder", kIntroStack));
+		if (!video)
 			error("Failed to open broder movie");
 
-		handle->center();
+		video->center();
 		break;
 	case 1:
 		if (!_vm->_video->isVideoPlaying())
@@ -113,11 +113,11 @@ void Intro::introMovies_run() {
 		break;
 	case 2:
 		_introStep = 3;
-		handle = _vm->_video->playMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
-		if (!handle)
+		video = _vm->_video->playMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
+		if (!video)
 			error("Failed to open cyanlogo movie");
 
-		handle->center();
+		video->center();
 		break;
 	case 3:
 		if (!_vm->_video->isVideoPlaying())
@@ -127,11 +127,11 @@ void Intro::introMovies_run() {
 		_introStep = 5;
 
 		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
-			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("intro", kIntroStack));
-			if (!handle)
+			video = _vm->_video->playMovie(_vm->wrapMovieFilename("intro", kIntroStack));
+			if (!video)
 				error("Failed to open intro movie");
 
-			handle->center();
+			video->center();
 		}
 		break;
 	case 5:

@@ -3828,8 +3828,8 @@ LBMovieItem::~LBMovieItem() {
 
 void LBMovieItem::update() {
 	if (_playing) {
-		VideoHandle videoHandle = _vm->_video->findVideoHandle(_resourceId);
-		if (!videoHandle || videoHandle->endOfVideo())
+		VideoEntryPtr video = _vm->_video->findVideo(_resourceId);
+		if (!video || video->endOfVideo())
 			done(true);
 	}
 
@@ -3840,11 +3840,11 @@ bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
 		if ((_loaded && _enabled && _globalEnabled) || _phase == kLBPhaseNone) {
 			debug("toggled video for phase %d", _phase);
-			VideoHandle handle = _vm->_video->playMovie(_resourceId);
-			if (!handle)
+			VideoEntryPtr video = _vm->_video->playMovie(_resourceId);
+			if (!video)
 				error("Failed to open tMOV %d", _resourceId);
 
-			handle->moveTo(_rect.left, _rect.top);
+			video->moveTo(_rect.left, _rect.top);
 			return true;
 		}
 	}
