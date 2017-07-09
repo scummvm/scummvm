@@ -36,8 +36,6 @@
 #endif
 
 #include "sludge/CommonCode/specialsettings.h"
-#include "sludge/libwebm/mkvreader.hpp"
-#include "sludge/libwebm/mkvparser.hpp"
 
 #include "sludge/newfatal.h"
 #include "sludge/timing.h"
