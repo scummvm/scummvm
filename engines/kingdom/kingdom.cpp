@@ -1293,6 +1293,8 @@ void KingdomGame::drawPic(int reznum) {
 }
 
 void KingdomGame::displayIcon(int reznum) {
+	// The demo isn't calling playsound(0).
+	// We keep the call because it stops properly the previous sound, if any.
 	playSound(0);
 	playSound(30);
 	saveAS();
