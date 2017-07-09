@@ -166,33 +166,25 @@ void VideoManager::stopVideos() {
 	_videos.clear();
 }
 
-void VideoManager::playMovieBlocking(const Common::String &fileName, uint16 x, uint16 y, bool clearScreen) {
+void VideoManager::playMovieBlocking(const Common::String &fileName, uint16 x, uint16 y) {
 	VideoEntryPtr ptr = open(fileName);
 	if (!ptr)
 		return;
 
 	ptr->moveTo(x, y);
-
-	// Clear screen if requested
-	if (clearScreen) {
-		_vm->_system->fillScreen(_vm->_system->getScreenFormat().RGBToColor(0, 0, 0));
-		_vm->_system->updateScreen();
-	}
-
 	ptr->start();
+
 	waitUntilMovieEnds(ptr);
 }
 
-void VideoManager::playMovieBlockingCentered(const Common::String &fileName, bool clearScreen) {
+void VideoManager::playMovieBlockingCentered(const Common::String &fileName) {
 	VideoEntryPtr ptr = open(fileName);
 	if (!ptr)
 		return;
 
-	// Clear screen if requested
-	if (clearScreen) {
-		_vm->_system->fillScreen(_vm->_system->getScreenFormat().RGBToColor(0, 0, 0));
-		_vm->_system->updateScreen();
-	}
+	// Clear screen
+	_vm->_system->fillScreen(_vm->_system->getScreenFormat().RGBToColor(0, 0, 0));
+	_vm->_system->updateScreen();
 
 	ptr->center();
 	ptr->start();

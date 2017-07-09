@@ -240,8 +240,8 @@ public:
 	virtual ~VideoManager();
 
 	// Generic movie functions
-	void playMovieBlocking(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
-	void playMovieBlockingCentered(const Common::String &filename, bool clearScreen = true);
+	void playMovieBlocking(const Common::String &filename, uint16 x, uint16 y);
+	void playMovieBlockingCentered(const Common::String &filename);
 	VideoEntryPtr playMovie(const Common::String &filename);
 	VideoEntryPtr playMovie(uint16 id);
 	bool updateMovies();
