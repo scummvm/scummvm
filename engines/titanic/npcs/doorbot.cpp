@@ -108,7 +108,8 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 			break;
 
 		case 9:
-			startTalking(this, 221468);
+			if (msg->_endFrame == 949)
+				startTalking(this, 221468);
 			break;
 
 		case 11:
