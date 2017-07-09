@@ -263,7 +263,7 @@ private:
 	void loadResources();
 	void drawResourceRects();
 	void checkCurrentResource();
-	int16 _curResource;
+	MystArea *_activeResource;
 	MystAreaHover *_hoverResource;
 
 	Common::Array<MystCursorHint> _cursorHints;

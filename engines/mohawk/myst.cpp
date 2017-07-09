@@ -71,7 +71,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_showResourceRects = false;
 	_curCard = 0;
 	_canSafelySaveLoad = false;
-	_curResource = -1;
+	_activeResource = nullptr;
 	_hoverResource = nullptr;
 
 	_sound = nullptr;
@@ -275,23 +275,20 @@ Common::Error MohawkEngine_Myst::run() {
 				if (!mouseClicked) {
 					checkCurrentResource();
 				}
-				if (_curResource >= 0 && _resources[_curResource]->isEnabled() && mouseClicked) {
-					debug(2, "Sending mouse move event to resource %d", _curResource);
-					_resources[_curResource]->handleMouseDrag();
+				if (_activeResource && _activeResource->isEnabled() && mouseClicked) {
+					_activeResource->handleMouseDrag();
 				}
 				break;
 			}
 			case Common::EVENT_LBUTTONUP:
-				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
-					debug(2, "Sending mouse up event to resource %d", _curResource);
-					_resources[_curResource]->handleMouseUp();
+				if (_activeResource && _activeResource->isEnabled()) {
+					_activeResource->handleMouseUp();
 				}
 				checkCurrentResource();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
-					debug(2, "Sending mouse up event to resource %d", _curResource);
-					_resources[_curResource]->handleMouseDown();
+				if (_activeResource && _activeResource->isEnabled()) {
+					_activeResource->handleMouseDown();
 				}
 				break;
 			case Common::EVENT_KEYDOWN:
@@ -643,7 +640,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 
 	// Make sure we have the right cursor showing
 	_hoverResource = nullptr;
-	_curResource = -1;
+	_activeResource = nullptr;
 	checkCurrentResource();
 
 	// Debug: Show resource rects
@@ -661,8 +658,6 @@ void MohawkEngine_Myst::drawResourceRects() {
 }
 
 void MohawkEngine_Myst::checkCurrentResource() {
-	// See what resource we're over
-	bool foundResource = false;
 	const Common::Point &mouse = _system->getEventManager()->getMousePos();
 
 	// Tell previous resource the mouse is no longer hovering it
@@ -671,22 +666,20 @@ void MohawkEngine_Myst::checkCurrentResource() {
 		_hoverResource = nullptr;
 	}
 
-	for (uint16 i = 0; i < _resources.size(); i++)
+	// See what resource we're over
+	_activeResource = nullptr;
+	for (uint16 i = 0; i < _resources.size(); i++) {
 		if (_resources[i]->contains(mouse)) {
 			if (_hoverResource != _resources[i] && _resources[i]->type == kMystAreaHover) {
 				_hoverResource = static_cast<MystAreaHover *>(_resources[i]);
 				_hoverResource->handleMouseEnter();
 			}
 
-			if (!foundResource && _resources[i]->canBecomeActive()) {
-				_curResource = i;
-				foundResource = true;
+			if (!_activeResource && _resources[i]->canBecomeActive()) {
+				_activeResource = _resources[i];
 			}
 		}
-
-	// Set the resource to none if we're not over any
-	if (!foundResource)
-		_curResource = -1;
+	}
 
 	checkCursorHints();
 }
@@ -694,10 +687,7 @@ void MohawkEngine_Myst::checkCurrentResource() {
 MystArea *MohawkEngine_Myst::updateCurrentResource() {
 	checkCurrentResource();
 
-	if (_curResource >= 0)
-		return _resources[_curResource];
-	else
-		return nullptr;
+	return _activeResource;
 }
 
 void MohawkEngine_Myst::loadCard() {
@@ -996,7 +986,7 @@ void MohawkEngine_Myst::checkCursorHints() {
 
 	// Check all the cursor hints to see if we're in a hotspot that contains a hint.
 	for (uint16 i = 0; i < _cursorHints.size(); i++)
-		if (_cursorHints[i].id == _curResource && _resources[_cursorHints[i].id]->isEnabled()) {
+		if (_resources[_cursorHints[i].id] == _activeResource && _activeResource->isEnabled()) {
 			if (_cursorHints[i].cursor == -1) {
 				uint16 var_value = _scriptParser->getVar(_cursorHints[i].variableHint.var);
 
