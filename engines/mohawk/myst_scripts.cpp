@@ -85,6 +85,7 @@ MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) :
 	_savedCardId = 0;
 	_savedCursorId = 0;
 	_tempVar = 0;
+	_scriptNestingLevel = 0;
 }
 
 MystScriptParser::~MystScriptParser() {
@@ -160,6 +161,7 @@ void MystScriptParser::runScript(MystScript script, MystArea *invokingResource) 
 	// Scripted drawing takes more time to simulate older hardware
 	// This way opcodes can't overwrite what the previous ones drew too quickly
 	_vm->_gfx->enableDrawingTimeSimulation(true);
+	_scriptNestingLevel++;
 
 	for (uint16 i = 0; i < script->size(); i++) {
 		MystScriptEntry &entry = (*script)[i];
@@ -173,12 +175,14 @@ void MystScriptParser::runScript(MystScript script, MystArea *invokingResource) 
 		runOpcode(entry.opcode, entry.var, entry.argc, entry.argv);
 	}
 
+	_scriptNestingLevel--;
 	_vm->_gfx->enableDrawingTimeSimulation(false);
 }
 
 void MystScriptParser::runOpcode(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	bool ranOpcode = false;
+	_scriptNestingLevel++;
 
+	bool ranOpcode = false;
 	for (uint16 i = 0; i < _opcodes.size(); i++)
 		if (_opcodes[i]->op == op) {
 			(this->*(_opcodes[i]->proc)) (op, var, argc, argv);
@@ -188,6 +192,12 @@ void MystScriptParser::runOpcode(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 	if (!ranOpcode)
 		warning("Trying to run invalid opcode %d", op);
+
+	_scriptNestingLevel--;
+}
+
+bool MystScriptParser::isScriptRunning() const {
+	return _scriptNestingLevel > 0;
 }
 
 const Common::String MystScriptParser::getOpcodeDesc(uint16 op) {

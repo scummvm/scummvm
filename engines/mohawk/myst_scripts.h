@@ -69,6 +69,13 @@ public:
 	MystScript readScript(Common::SeekableReadStream *stream, MystScriptType type);
 	void setInvokingResource(MystArea *resource) { _invokingResource = resource; }
 
+	/**
+	 * Is a script is running?
+	 *
+	 * Allows to detect if some inner loop is running instead of the main loop.
+	 */
+	bool isScriptRunning() const;
+
 	virtual void disablePersistentScripts() = 0;
 	virtual void runPersistentScripts() = 0;
 
@@ -167,6 +174,7 @@ protected:
 
 private:
 	MystArea *_invokingResource;
+	int32 _scriptNestingLevel;
 };
 
 template<class T>

@@ -246,13 +246,7 @@ private:
 
 	bool _runExitScript;
 
-	/**
-	 * Saving / Loading is only allowed from the main event loop
-	 */
-	bool _canSafelySaveLoad;
 	bool hasGameSaveSupport() const;
-
-	bool pollEvent(Common::Event &event);
 
 	void dropPage();
 

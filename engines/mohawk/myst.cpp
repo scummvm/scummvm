@@ -70,7 +70,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
 	_curCard = 0;
-	_canSafelySaveLoad = false;
 
 	_hoverResource = nullptr;
 	_activeResource = nullptr;
@@ -275,7 +274,7 @@ void MohawkEngine_Myst::doFrame() {
 	_scriptParser->runPersistentScripts();
 
 	Common::Event event;
-	while (pollEvent(event)) {
+	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
 				if (_clickedResource && _clickedResource->isEnabled()) {
@@ -312,11 +311,9 @@ void MohawkEngine_Myst::doFrame() {
 						_needsShowDemoMenu = false;
 						_needsShowCredits = false;
 
-						_canSafelySaveLoad = true;
 						runDialog(*_optionsDialog);
 						if (_optionsDialog->getLoadSlot() >= 0)
 							loadGameState(_optionsDialog->getLoadSlot());
-						_canSafelySaveLoad = false;
 
 						if (_needsPageDrop) {
 							dropPage();
@@ -354,15 +351,6 @@ void MohawkEngine_Myst::doFrame() {
 
 	// Cut down on CPU usage
 	_system->delayMillis(10);
-}
-
-bool MohawkEngine_Myst::pollEvent(Common::Event &event) {
-	// Saving / Loading is allowed from the GMM only when the main event loop is running
-	_canSafelySaveLoad = true;
-	bool eventReturned =  _eventMan->pollEvent(event);
-	_canSafelySaveLoad = false;
-
-	return eventReturned;
 }
 
 bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
@@ -1122,12 +1110,25 @@ bool MohawkEngine_Myst::hasGameSaveSupport() const {
 }
 
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {
-	// No loading in the demo/makingof
-	return _canSafelySaveLoad && hasGameSaveSupport();
+	if (_scriptParser->isScriptRunning()) {
+		return false;
+	}
+
+	if (_clickedResource) {
+		// Can't save while dragging resources
+		return false;
+	}
+
+	if (!hasGameSaveSupport()) {
+		// No loading in the demo/makingof
+		return false;
+	}
+
+	return true;
 }
 
 bool MohawkEngine_Myst::canSaveGameStateCurrently() {
-	if (!_canSafelySaveLoad) {
+	if (!canLoadGameStateCurrently()) {
 		return false;
 	}
 
