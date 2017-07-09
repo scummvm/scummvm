@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-12 22:04+0200\n"
-"PO-Revision-Date: 2017-07-09 21:03+0000\n"
-"Last-Translator: wreednumero2 <william.reed@gmx.de>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"PO-Revision-Date: 2017-07-13 07:14+0000\n"
+"Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3577,7 +3577,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Qualitativ hochwertige Videoskalierung verwenden"
 
 #: engines/sci/detection.cpp:432
 msgid "Use linear interpolation when upscaling videos, where possible"
