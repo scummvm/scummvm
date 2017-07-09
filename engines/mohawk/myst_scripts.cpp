@@ -831,7 +831,7 @@ void MystScriptParser::o_delay(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 	debugC(kDebugScript, "\tTime: %d", time);
 
-	_vm->_system->delayMillis(time);
+	_vm->wait(time);
 }
 
 void MystScriptParser::o_changeStack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
