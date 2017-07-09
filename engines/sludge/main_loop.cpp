@@ -337,10 +337,6 @@ int main_loop(const char *filename)
 
 	killSoundStuff();
 
-#if defined(HAVE_GLES2)
-	EGL_Close();
-#endif
-
 #if 0
 	/* Clean up the SDL library */
 	SDL_Quit();

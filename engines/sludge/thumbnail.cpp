@@ -99,7 +99,6 @@ bool saveThumbnail(Common::WriteStream *stream) {
 		thumbnailTextureName = 0;
 
 		// Save Our ViewPort
-#ifdef HAVE_GLES2
 		GLushort *image = new GLushort [thumbWidth * thumbHeight];
 		GLuint *tmp = new GLuint [thumbWidth * thumbHeight];
 		if (! checkNew(image)) return false;
@@ -111,12 +110,6 @@ bool saveThumbnail(Common::WriteStream *stream) {
 			}
 		}
 		delete[] tmp;
-#else
-		GLushort *image = new GLushort [thumbWidth * thumbHeight];
-		if (! checkNew(image)) return false;
-
-		glReadPixels(viewportOffsetX, viewportOffsetY, thumbWidth, thumbHeight, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image);
-#endif
 
 		glUseProgram(0);
 #endif

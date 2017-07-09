@@ -26,31 +26,6 @@
 
 namespace Sludge {
 
-#if 0
-struct shaders {
-	GLuint paste;
-	GLuint smartScaler;
-	GLuint yuv;
-	GLuint texture;
-	GLuint color;
-};
-#endif
-
-struct textureList {
-#if 0
-	GLuint name;
-	GLsizei width;
-	GLsizei height;
-#endif
-	struct textureList *next;
-};
-
-#if 0
-// From Backdrop.cpp, but they're here anyway
-extern GLubyte *backdropTexture;
-extern GLfloat backdropTexW, backdropTexH;
-#endif
-
 extern unsigned int winWidth, winHeight;
 extern int viewportHeight, viewportWidth;
 extern int viewportOffsetX, viewportOffsetY;
@@ -58,49 +33,10 @@ extern int realWinWidth, realWinHeight;
 
 extern bool NPOT_textures;
 
-#if 0
-extern shaders shader;
-extern GLfloat aPMVMatrix[];
-
-void setPrimaryColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-void setSecondaryColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-
-void drawQuad(GLint program, const GLfloat *vertices, int numTexCoords, ...);
-
-void setPMVMatrix(GLint program);
-#endif
-
 void setPixelCoords(bool pixels);
-void setGraphicsWindow(bool fullscreen, bool restoreGraphics = true,
-		bool resize = false);
-
-void setupOpenGLStuff();
+void setGraphicsWindow(bool fullscreen, bool restoreGraphics = true, bool resize = false);
 
 int getNextPOT(int n);
-
-#if 0
-void saveTexture(GLuint tex, GLubyte *data);
-
-void dcopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border, GLuint name, const char *file, int line);
-void dcopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height, GLuint name, const char *file, int line);
-void dtexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *data, GLuint name, const char *file, int line);
-void dtexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *data, GLuint name, const char *file, int line);
-
-#define copyTexImage2D(target, level, internalformat, x, y,  width, height, border, name) dcopyTexImage2D(target,  level,  internalformat,  x,  y,  width,height, border, name, __FILE__, __LINE__)
-
-#define copyTexSubImage2D(target,  level,  xoffset,yoffset, x,  y,   width,   height, name) dcopyTexSubImage2D(target,  level,  xoffset,  yoffset,  x,  y,   width,  height, name, __FILE__, __LINE__)
-
-#define texImage2D(target,  level,  internalformat,  width,  height,  border,  format, type,  data,name) dtexImage2D( target,   level,  internalformat, width, height, border,  format,  type,  data, name, __FILE__, __LINE__)
-
-#define texSubImage2D( target,  level,   xoffset,   yoffset,   width,  height, format,  type,   data,name) dtexSubImage2D( target, level,   xoffset,  yoffset,  width,  height, format,  type,  data,  name, __FILE__, __LINE__)
-
-void deleteTextures(GLsizei n, const GLuint *textures);
-
-void getTextureDimensions(GLuint name, GLint *width, GLint *height);
-
-int printOglError(const char *file, int line);
-#define printOpenGLError() printOglError(__FILE__, __LINE__)
-#endif
 
 }
  // End of namespace Sludge

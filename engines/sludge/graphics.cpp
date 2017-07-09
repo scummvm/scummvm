@@ -21,15 +21,12 @@
  */
 
 #include "sludge/allfiles.h"
-#include "sludge/debug.h"
-#include "sludge/platform-dependent.h"
 #include "sludge/graphics.h"
 #include "sludge/language.h"
 #include "sludge/newfatal.h"
 #include "sludge/sprbanks.h"
 #include "sludge/zbuffer.h"
 #include "sludge/backdrop.h"
-#include "sludge/shaders.h"
 #include "sludge/movie.h"
 #include "sludge/stringy.h"
 #include "sludge/CommonCode/specialsettings.h"
@@ -48,232 +45,10 @@ extern int specialSettings;
 
 void setMovieViewport();
 
-#if 0
-extern GLuint backdropTextureName;
-extern GLuint snapshotTextureName;
-#endif
-
 extern unsigned int sceneWidth, sceneHeight;
 extern zBufferData zBuffer;
 extern int lightMapNumber;
-#if 0
-extern GLuint yTextureName;
-extern GLuint uTextureName;
-extern GLuint vTextureName;
-//extern GLubyte * ytex, * utex, * vtex;
 
-shaders shader;
-GLfloat aPMVMatrix[16];
-
-void sludgeDisplay();
-
-GLfloat primaryColor[4];
-GLfloat secondaryColor[4];
-#endif
-
-struct textureList *firstTexture = NULL;
-
-textureList *addTexture() {
-	textureList *newTexture = new textureList;
-	newTexture->next = firstTexture;
-	firstTexture = newTexture;
-	return newTexture;
-}
-
-#if 0
-void deleteTextures(GLsizei n, const GLuint *textures) {
-	if (firstTexture == NULL) {
-		//debugOut("Deleting texture while list is already empty.\n");
-	} else {
-		for (int i = 0; i < n; i++) {
-			bool found = false;
-			textureList *list = firstTexture;
-			if (list->name == textures[i]) {
-				found = true;
-				firstTexture = list->next;
-				delete list;
-				continue;
-			}
-
-			while (list->next) {
-				if (list->next->name == textures[i]) {
-					found = true;
-					textureList *deleteMe = list->next;
-					list->next = list->next->next;
-					delete deleteMe;
-					break;
-				}
-				list = list->next;
-			}
-			//if (!found)
-			//  debugOut("Deleting texture that was not in list.\n");
-		}
-	}
-
-	glDeleteTextures(n, textures);
-
-}
-
-void getTextureDimensions(GLuint name, GLint *width, GLint *height) {
-	textureList *list = firstTexture;
-	while (list) {
-		if (list->name == name) {
-			*width = list->width;
-			*height = list->height;
-#if !defined(HAVE_GLES2)
-			//For the following test it is assumed that glBindTexture is always
-			//called for the right texture before getTextureDimensions.
-			GLint tw, th;
-			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &tw);
-			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &th);
-			if (tw != *width || th != *height) {
-				debugOut("Warning: Texture dimensions don't match: They are %ix%i, but SLUDGEs bookkeeping says %ix%i.\n", tw, th, *width, *height);
-			}
-#endif
-			return;
-		}
-		list = list->next;
-	}
-	fatal("Texture not found in list.\n");
-}
-
-void storeTextureDimensions(GLuint name, GLsizei width, GLsizei height, const char *file, int line) {
-	if (! NPOT_textures && !(((height & (height - 1)) == 0) || ((width & (width - 1)) == 0))) {
-		debugOut("I was told to create a texture with dimensions %ix%i in %s @ line %d although NPOT textures are disabled.\n", width, height, file, line);
-		//height = getNextPOT(height);
-		//width = getNextPOT(width);
-	}
-
-	textureList *list = firstTexture;
-	while (list) {
-		if (list->name == name) {
-			//debugOut("Texture dimensions are overwritten.\n");
-			break;
-		}
-		list = list->next;
-	}
-	if (list == NULL) {
-		list = addTexture();
-	}
-	list->name = name;
-	list->width = width;
-	list->height = height;
-
-}
-#endif
-
-#ifdef HAVE_GLES2
-void glesCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height) {
-	// Work around for broken glCopy(Sub)TexImage2D...
-	void *tmp = malloc(width * height * 4);
-	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, tmp);
-	glTexSubImage2D(target, level, xoffset, yoffset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, tmp);
-	free(tmp);
-}
-void glesCopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border) {
-	// Work around for broken glCopy(Sub)TexImage2D...
-	void *tmp = malloc(width * height * 4);
-	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, tmp);
-	glTexImage2D(target, level, GL_RGBA, width, height, border, GL_RGBA, GL_UNSIGNED_BYTE, tmp);
-	free(tmp);
-}
-#endif
-
-#if 0
-void dcopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border, GLuint name, const char *file, int line) {
-
-	glBindTexture(GL_TEXTURE_2D, name);
-#ifdef HAVE_GLES2_
-	glesCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-#else
-	glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-#endif
-}
-
-void dcopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height, GLuint name, const char *file, int line) {
-	glBindTexture(GL_TEXTURE_2D, name);
-#ifdef HAVE_GLES2_
-	glesCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-#else
-	glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-#endif
-}
-
-void dtexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height,
-		GLint border, GLenum format, GLenum type, const GLvoid *data, GLuint name, const char *file, int line) {
-	storeTextureDimensions(name, width, height, file, line);
-	glBindTexture(GL_TEXTURE_2D, name);
-	glTexImage2D(target, level, internalformat, width, height, border, format, type, data);
-}
-
-void dtexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-		GLenum format, GLenum type, const GLvoid *data, GLuint name, const char *file, int line) {
-	storeTextureDimensions(name, width, height, file, line);
-	glBindTexture(GL_TEXTURE_2D, name);
-	glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, data);
-}
-
-void setPrimaryColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
-	primaryColor[0] = r;
-	primaryColor[1] = g;
-	primaryColor[2] = b;
-	primaryColor[3] = a;
-}
-
-void setSecondaryColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
-	secondaryColor[0] = r;
-	secondaryColor[1] = g;
-	secondaryColor[2] = b;
-	secondaryColor[3] = a;
-}
-
-void drawQuad(GLint program, const GLfloat *vertices, int numTexCoords, ...) {
-	int i, vertexLoc, texCoordLocs[numTexCoords];
-	const GLfloat *texCoords[numTexCoords];
-
-	va_list vl;
-	va_start(vl, numTexCoords);
-	for (i = 0; i < numTexCoords; i++) {
-		texCoords[i] = va_arg(vl, const GLfloat *);
-	}
-	va_end(vl);
-
-	glUniform4f(glGetUniformLocation(program, "myColor"), primaryColor[0], primaryColor[1], primaryColor[2], primaryColor[3]);
-	if (program == shader.smartScaler || program == shader.paste) {
-		glUniform4f(glGetUniformLocation(program, "mySecondaryColor"), secondaryColor[0], secondaryColor[1], secondaryColor[2], secondaryColor[3]);
-	}
-
-	vertexLoc = glGetAttribLocation(program, "myVertex");
-	texCoordLocs[0] = glGetAttribLocation(program, "myUV0");
-	if (numTexCoords > 1) texCoordLocs[1] = glGetAttribLocation(program, "myUV1");
-	if (numTexCoords > 2) texCoordLocs[2] = glGetAttribLocation(program, "myUV2");
-	if (numTexCoords > 3) texCoordLocs[3] = glGetAttribLocation(program, "myUV3");
-
-	glEnableVertexAttribArray(vertexLoc);
-	glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, GL_FALSE, 0, vertices);
-
-	for (i = 0; i < numTexCoords; i++) {
-		if (texCoords[i]) {
-			glEnableVertexAttribArray(texCoordLocs[i]);
-			glVertexAttribPointer(texCoordLocs[i], 2, GL_FLOAT, GL_FALSE, 0, texCoords[i]);
-		}
-	}
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	for (i = 0; i < numTexCoords; i++) {
-		if (texCoords[i]) {
-			glDisableVertexAttribArray(texCoordLocs[i]);
-		}
-	}
-	glDisableVertexAttribArray(vertexLoc);
-
-}
-
-void setPMVMatrix(GLint program) {
-	glUniformMatrix4fv(glGetUniformLocation(program, "myPMVMatrix"), 1, GL_FALSE, aPMVMatrix);
-}
-#endif
 // This is for swapping settings between rendering to texture or to the screen
 void setPixelCoords(bool pixels) {
 	static int current = -1;
@@ -324,40 +99,6 @@ void setPixelCoords(bool pixels) {
 	}
 #endif
 }
-
-int desktopW = 0, desktopH = 0;
-bool runningFullscreen = false;
-
-#if defined(HAVE_GLES2)
-void saveTexture(GLuint tex, GLubyte *data) {
-	// use an FBO to easily grab the texture...
-	static GLuint fbo = 0;
-	GLuint old_fbo;
-	GLint tw, th;
-	GLint old_vp[4];
-	if (fbo == 0) {
-		glGenFramebuffers(1, &fbo);
-	}
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint *)&old_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
-	getTextureDimensions(tex, &tw, &th);
-	glGetIntegerv(GL_VIEWPORT, old_vp);
-	glViewport(0, 0, tw, th);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glReadPixels(0, 0, tw, th, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	glViewport(old_vp[0], old_vp[1], old_vp[2], old_vp[3]);
-	glBindFramebuffer(GL_FRAMEBUFFER, old_fbo);
-}
-#else
-#if 0
-void saveTexture(GLuint tex, GLubyte *data) {
-
-	glBindTexture(GL_TEXTURE_2D, tex);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-}
-#endif
-#endif
 
 // This is for setting windowed or fullscreen graphics.
 // Used for switching, and for initial window creation.
@@ -419,11 +160,8 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 
 	if (fullscreen) {
 		specialSettings &= ~SPECIAL_INVISIBLE;
-#if !defined(HAVE_GLES2)
-		videoflags = SDL_OPENGL | SDL_FULLSCREEN;
-#else
+
 		videoflags = SDL_SWSURFACE | SDL_FULLSCREEN;
-#endif
 
 		if (gameSettings.fixedPixels) {
 			viewportWidth = realWinWidth = winWidth;
@@ -450,11 +188,7 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 		}
 
 	} else {
-#if !defined(HAVE_GLES2)
-		videoflags = SDL_OPENGL/* | SDL_RESIZABLE*/;
-#else
 		videoflags = SDL_SWSURFACE;
-#endif
 
 		if (resize) {
 			float realAspect = (float) desktopW / desktopH;
@@ -511,14 +245,12 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 	}
 	debugOut("Video mode %d %d set successfully.\n", realWinWidth, realWinHeight);
 
-#if defined(HAVE_GLES2)
 	if (EGL_Open()) {
 		msgBox("Startup Error", "Couldn't initialize EGL.");
 		SDL_Quit();
 		exit(1);
 	}
 	EGL_Init();
-#endif
 
 	GLint uniform;
 	const char *Vertex;
@@ -526,9 +258,6 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 
 	Vertex = shaderFileRead("scale.vert");
 
-#if !defined(HAVE_GLES2)
-	Fragment = shaderFileRead("scale.frag");
-#else
 	/*  const GLubyte *str;
 	 int glDerivativesAvailable;
 	 str = glGetString (GL_EXTENSIONS);
@@ -541,7 +270,6 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 //	}
 
 	Fragment = joinStrings("precision mediump float;\n", Fragment);
-#endif
 
 	if (! Vertex || ! Fragment) {
 		fatal("Error loading \"scale\" shader program!", "Try re-installing the game. (scale.frag, scale_noaa.frag or scale.vert was not found.)");
@@ -579,9 +307,7 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 	Vertex = shaderFileRead("fixScaleSprite.vert");
 	Fragment = shaderFileRead("fixScaleSprite.frag");
 
-#if defined(HAVE_GLES2)
 	Fragment = joinStrings("precision mediump float;\n", Fragment);
-#endif
 
 	if (! Vertex || ! Fragment) {
 		fatal("Error loading \"fixScaleSprite\" shader program!", "Try re-installing the game. (fixScaleSprite.frag or fixScaleSprite.vert was not found.)");
@@ -610,9 +336,7 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 	Vertex = shaderFileRead("yuv.vert");
 	Fragment = shaderFileRead("yuv.frag");
 
-#if defined(HAVE_GLES2)
 	Fragment = joinStrings("precision mediump float;\n", Fragment);
-#endif
 
 	if (! Vertex || ! Fragment) {
 		fatal("Error loading \"yuv\" shader program!", "Try re-installing the game. (yuv.frag or yuv.vert was not found.)");
@@ -639,9 +363,7 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 	Vertex = shaderFileRead("texture.vert");
 	Fragment = shaderFileRead("texture.frag");
 
-#if defined(HAVE_GLES2)
 	Fragment = joinStrings("precision mediump float;\n", Fragment);
-#endif
 
 	if (! Vertex || ! Fragment) {
 		fatal("Error loading \"texture\" shader program!", "Try re-installing the game. (texture.frag or texture.vert was not found.)");
@@ -669,9 +391,7 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 	Vertex = shaderFileRead("color.vert");
 	Fragment = shaderFileRead("color.frag");
 
-#if defined(HAVE_GLES2)
 	Fragment = joinStrings("precision mediump float;\n", Fragment);
-#endif
 
 	if (! Vertex || ! Fragment) {
 		fatal("Error loading \"color\" shader program!", "Try re-installing the game. (color.frag or color.vert was not found.)");
@@ -765,85 +485,6 @@ void setGraphicsWindow(bool fullscreen, bool restoreGraphics, bool resize) {
 #endif
 }
 
-void setupOpenGLStuff() {
-
-	/*
-	 * Time to setup our requested window attributes for our OpenGL window.
-	 * We want *at least* 8 bits of red, green and blue. We also want at least a 16-bit
-	 * depth buffer.
-	 *
-	 * The last thing we do is request a double buffered window. '1' turns on double
-	 * buffering, '0' turns it off.
-	 */
-#if 0
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	setGraphicsWindow(gameSettings.userFullScreen, false);
-#endif
-#if !defined(HAVE_GLES2)
-#if 0
-	/* Check for graphics capabilities... */
-	if (GLEE_VERSION_2_0) {
-		// Yes! Textures can be any size!
-		NPOT_textures = true;
-		debugOut("OpenGL 2.0! All is good.\n");
-	} else {
-		if (GLEE_VERSION_1_5) {
-			debugOut("OpenGL 1.5!\n");
-		} else if (GLEE_VERSION_1_4) {
-			debugOut("OpenGL 1.4!\n");
-		} else if (GLEE_VERSION_1_3) {
-			debugOut("OpenGL 1.3!\n");
-		} else if (GLEE_VERSION_1_2) {
-			debugOut("OpenGL 1.2!\n");
-		}
-
-		if (GLEE_ARB_texture_non_power_of_two) {
-			// Yes! Textures can be any size!
-			NPOT_textures = true;
-		} else {
-			// Workaround needed for lesser graphics cards. Let's hope this works...
-			NPOT_textures = false;
-			debugOut("Warning: Old graphics card! GLEE_ARB_texture_non_power_of_two not supported.\n");
-		}
-
-		if (GLEE_ARB_shading_language_100) {
-			debugOut("ARB_shading_language_100 supported.\n");
-		} else {
-			debugOut("Warning: Old graphics card! ARB_shading_language_100 not supported. Try updating your drivers.\n");
-		}
-		if (GLEE_ARB_shader_objects) {
-			debugOut("ARB_shader_objects supported.\n");
-		} else {
-			fatal("Error: Old graphics card! ARB_shader_objects not supported.\n");
-		}
-		if (GLEE_ARB_vertex_shader) {
-			debugOut("ARB_vertex_shader supported.\n");
-		} else {
-			fatal("Error: Old graphics card! ARB_vertex_shader not supported.\n");
-		}
-		if (GLEE_ARB_fragment_shader) {
-			debugOut("ARB_fragment_shader supported.\n");
-		} else {
-			fatal("Error: Old graphics card! ARB_fragment_shader not supported.\n");
-		}
-	}
-#else
-	NPOT_textures = false;
-#endif
-#endif
-	int n;
-#if 0
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, (GLint *) &n);
-#endif
-	debugOut("Max texture image units: %d\n", n);
-
-}
-
 // I found this function on a coding forum on the 'net.
 // Looks a bit weird, but it should work.
 int getNextPOT(int n) {
@@ -855,26 +496,6 @@ int getNextPOT(int n) {
 	n |= n >> 1;
 	++n;
 	return n;
-}
-
-int printOglError(const char *file, int line) {
-	/* Returns 1 if an OpenGL error occurred, 0 otherwise. */
-	int retCode = 0;
-#if 0
-	GLenum glErr;
-
-	glErr = glGetError();
-	while (glErr != GL_NO_ERROR) {
-#if !defined(HAVE_GLES2)
-		debugOut("glError in file %s @ line %d: %s\n", file, line, gluErrorString(glErr));
-#else
-		debugOut("glError in file %s @ line %d: error code %i\n", file, line, glErr);
-#endif
-		retCode = 1;
-		glErr = glGetError();
-	}
-#endif
-	return retCode;
 }
 
 } // End of namespace Sludge

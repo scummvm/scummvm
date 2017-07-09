@@ -607,11 +607,6 @@ int playMovie(int fileNumber) {
 	int frameCounter = 0;
 
 	movieStartTick = SDL_GetTicks();
-#ifdef HAVE_GLES2
-	GLuint old_fbo;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint *)&old_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#endif
 
 	while (movieIsPlaying) {
 
@@ -932,18 +927,14 @@ int playMovie(int fileNumber) {
 			}
 
 			glFlush();
-#if !defined(HAVE_GLES2)
-			SDL_GL_SwapBuffers();
-#else
+
 			EGL_SwapBuffers();
-#endif
 
 		}
 		videoUpdated = false;
 	}
 
 	// Cleanup
-#ifdef HAVE_GLES2
 	glBindFramebuffer(GL_FRAMEBUFFER, old_fbo);
 
 	movieIsPlaying = nothing;
@@ -985,7 +976,7 @@ int playMovie(int fileNumber) {
 	Init_Timer();
 
 	glViewport(viewportOffsetX, viewportOffsetY, viewportWidth, viewportHeight);
-#endif
+
 	setPixelCoords(false);
 #endif
 	return 1;

@@ -525,13 +525,8 @@ bool initSludge(const char *filename) {
 
 	// There's no startup window on Linux and respecting this
 	// option from the ini file would disable commandline options.
-#if defined __unix__ && !(defined __APPLE__)
 	saveIniFile(filename);
-#else
-	if (!gameSettings.noStartWindow) {
-		saveIniFile(filename);
-	}
-#endif
+
 	
 	// Now set file indices properly to the chosen language.
 	languageNum = getLanguageForFileB();
@@ -581,99 +576,6 @@ void displayBase() {
 }
 
 void sludgeDisplay() {
-#if 0
-#if defined(HAVE_GLES2)
-#ifndef GL_DEPTH24_STENCIL8
-#define GL_DEPTH24_STENCIL8 0x88F0
-#endif
-	// create an FBO
-	static GLuint fbo = 0;
-	static GLuint fbo_tex = 0;
-	static GLuint fbo_rbo = 0;
-	static float fbo_tex_w, fbo_tex_h;
-	static GLuint fbo_shad, fbo_vert, fbo_frag;
-	if (fbo == 0) {
-		// create FBO
-		int width = 1;
-		while (width < realWinWidth) width *= 2;
-		int height = 1;
-		while (height < realWinHeight) height *= 2;
-		glGenFramebuffers(1, &fbo);
-		glGenTextures(1, &fbo_tex);
-		glGenRenderbuffers(1, &fbo_rbo);
-		glBindTexture(GL_TEXTURE_2D, fbo_tex);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindRenderbuffer(GL_RENDERBUFFER, fbo_rbo);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex, 0);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo_rbo);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo_rbo);
-		GLenum ret = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		printf("Screen is %dx%d, FBO(%dx%d) Status = 0x%04X\n", realWinWidth, realWinHeight, width, height, ret);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-		fbo_tex_w = (float)realWinWidth / width;
-		fbo_tex_h = (float)realWinHeight / height;
-		// create shader for blitting the fbo...
-		const char _blit_vsh[] = "                              \n\t"
-		"attribute highp vec2 aPosition;                        \n\t"
-		"attribute highp vec2 aTexCoord;                        \n\t"
-		"varying mediump vec2 vTexCoord;                        \n\t"
-		"void main(){                                           \n\t"
-		"gl_Position = vec4(aPosition.x, aPosition.y, 0.0, 1.0);\n\t"
-		"vTexCoord = aTexCoord;                                 \n\t"
-		"}                                                      \n\t";
-
-		const char _blit_fsh[] = "                              \n\t"
-		"uniform sampler2D uTex;                                \n\t"
-		"varying mediump vec2 vTexCoord;                        \n\t"
-		"void main(){                                           \n\t"
-		"gl_FragColor = texture2D(uTex, vTexCoord);             \n\t"
-		"}                                                      \n\t";
-
-		GLint success;
-		fbo_frag = glCreateShader(GL_FRAGMENT_SHADER);
-		const char *src[1];
-		src[0] = _blit_fsh;
-		glShaderSource(fbo_frag, 1, src, NULL);
-		glCompileShader(fbo_frag);
-		glGetShaderiv(fbo_frag, GL_COMPILE_STATUS, &success);
-		if (!success) {
-			printf("Failed to produce default fragment shader.\n");
-		}
-		fbo_vert = glCreateShader(GL_VERTEX_SHADER);
-		src[0] = _blit_vsh;
-		glShaderSource(fbo_vert, 1, src, NULL);
-		glCompileShader(fbo_vert);
-		glGetShaderiv(fbo_vert, GL_COMPILE_STATUS, &success);
-		if (!success) {
-			printf("Failed to produce default vertex shader.\n");
-		}
-		fbo_shad = glCreateProgram();
-		glBindAttribLocation(fbo_shad, 0, "aPosition");
-		glBindAttribLocation(fbo_shad, 1, "aTexCoord");
-		glAttachShader(fbo_shad, fbo_frag);
-		glAttachShader(fbo_shad, fbo_vert);
-		glLinkProgram(fbo_shad);
-		glGetProgramiv(fbo_shad, GL_LINK_STATUS, &success);
-		if (!success) {
-			printf("Failed to link default program.\n");
-		}
-		glUniform1i(glGetUniformLocation(fbo_shad, "uTex"), 0);
-
-	}
-#endif
-
-	glDepthMask(GL_TRUE);
-//	glClearColor(0.5, 0.5, 1.0, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// Clear The Screen
-	glDepthMask(GL_FALSE);
-#endif
 	displayBase();
 	viewSpeech();// ...and anything being said
 	drawStatusBar();
@@ -681,42 +583,6 @@ void sludgeDisplay() {
 	g_system->copyRectToScreen((byte *)renderSurface.getPixels(), renderSurface.pitch, 0, 0, renderSurface.w, renderSurface.h);
 	g_system->updateScreen();
 	if (brightnessLevel < 255) fixBrightness();// This is for transitionLevel special effects
-#if 0
-	glFlush();
-#if !defined(HAVE_GLES2)
-	SDL_GL_SwapBuffers();
-#else
-	if (fbo) {
-		// blit the FBO now
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		GLuint old_prog;
-		glGetIntegerv(GL_CURRENT_PROGRAM, (GLint *)&old_prog);
-		glUseProgram(fbo_shad);
-		glViewport(0, 0, realWinWidth, realWinHeight);
-		const float vert[] = {
-			-1.0, -1.0, +0.0, +0.0,
-			+1.0, -1.0, fbo_tex_w, +0.0,
-			-1.0, +1.0, +0.0, fbo_tex_h,
-			+1.0, +1.0, fbo_tex_w, fbo_tex_h
-		};
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fbo_tex);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (float *)vert);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (float *)vert + 2);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(old_prog);
-		glViewport(viewportOffsetX, viewportOffsetY, viewportWidth, viewportHeight);
-	}
-	EGL_SwapBuffers();
-	if (fbo) {
-		// Rebind FBO now
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	}
-#endif
-#endif
 }
 
 void pauseFunction(loadedFunction *fun) {
