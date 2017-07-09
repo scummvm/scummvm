@@ -202,8 +202,13 @@ Common::Error KingdomGame::run() {
 				GPLogic1();
 			if (_statPlay > 249 && _statPlay < 500)
 				GPLogic2();
-			if (_statPlay > 499 && _statPlay < 900)
-				GPLogic3();
+			if (_statPlay > 499 && _statPlay < 900) {
+				if (!isDemo())
+					GPLogic3();
+				else
+					warning("Unexpected GPL3 opcode found in demo: %d", _statPlay);
+			}
+
 			if (_statPlay > 899)
 				GPLogic4();
 		}
