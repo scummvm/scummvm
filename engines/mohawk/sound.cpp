@@ -293,31 +293,6 @@ Audio::SoundHandle *Sound::replaceSoundMyst(uint16 id, byte volume, bool loop) {
 	return playSound(id, volume, loop);
 }
 
-void Sound::playSoundBlocking(uint16 id, byte volume) {
-	Audio::SoundHandle *handle = playSound(id, volume);
-
-	while (_vm->_mixer->isSoundHandleActive(*handle) && !_vm->shouldQuit()) {
-		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					switch (event.kbd.keycode) {
-						case Common::KEYCODE_SPACE:
-							_vm->pauseGame();
-							break;
-						default:
-							break;
-					}
-				default:
-					break;
-			}
-		}
-
-		// Cut down on CPU usage
-		_vm->_system->delayMillis(10);
-	}
-}
-
 void Sound::playMidi(uint16 id) {
 	uint32 idTag;
 	if (!(_vm->getFeatures() & GF_HASMIDI)) {

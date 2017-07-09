@@ -902,12 +902,12 @@ void Myst::o_courtyardBoxesCheckSolution(uint16 op, uint16 var, uint16 argc, uin
 	if (_state.courtyardImageBoxes == 50 && !_state.shipFloating) {
 		_vm->_cursor->hideCursor();
 		_state.shipFloating = 1;
-		_vm->_sound->playSoundBlocking(soundId);
+		_vm->playSoundBlocking(soundId);
 		_vm->_cursor->showCursor();
 	} else if (_state.courtyardImageBoxes != 50 && _state.shipFloating) {
 		_vm->_cursor->hideCursor();
 		_state.shipFloating = 0;
-		_vm->_sound->playSoundBlocking(soundId);
+		_vm->playSoundBlocking(soundId);
 		_vm->_cursor->showCursor();
 	}
 }
@@ -1097,7 +1097,7 @@ void Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	}
 
 	_vm->_cursor->hideCursor();
-	_vm->_sound->playSoundBlocking(soundIdAddPage);
+	_vm->playSoundBlocking(soundIdAddPage);
 	_vm->setMainCursor(kDefaultMystCursor);
 
 	// Add page to book
@@ -1269,11 +1269,11 @@ void Myst::o_imagerEraseButton(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 		return;
 	} else if (_imagerValidationStep < 7) {
 		// Too early
-		_vm->_sound->playSoundBlocking(_imagerSound[2]);
+		_vm->playSoundBlocking(_imagerSound[2]);
 		_imagerValidationStep = 0;
 		return;
 	} else if (_imagerValidationStep < 11) {
-		_vm->_sound->playSoundBlocking(_imagerSound[3]);
+		_vm->playSoundBlocking(_imagerSound[3]);
 
 		// Erase selected video from imager
 		switch (_state.imagerSelection) {
@@ -3375,12 +3375,12 @@ void Myst::libraryBookcaseTransform_run(void) {
 		if (_state.libraryBookcaseDoor) {
 			_vm->_gfx->copyImageSectionToBackBuffer(11179, Common::Rect(0, 0, 106, 81), Common::Rect(0, 72, 106, 153));
 			_vm->_gfx->runTransition(kTransitionBottomToTop, Common::Rect(0, 72, 106, 153), 5, 10);
-			_vm->_sound->playSoundBlocking(7348);
+			_vm->playSoundBlocking(7348);
 			_vm->_sound->replaceBackgroundMyst(4348, 16384);
 		} else {
 			_vm->_gfx->copyImageSectionToBackBuffer(11178, Common::Rect(0, 0, 107, 67), Common::Rect(437, 84, 544, 151));
 			_vm->_gfx->copyBackBufferToScreen(Common::Rect(437, 84, 544, 151));
-			_vm->_sound->playSoundBlocking(7348);
+			_vm->playSoundBlocking(7348);
 			_vm->_sound->replaceBackgroundMyst(4334, 16384);
 		}
 

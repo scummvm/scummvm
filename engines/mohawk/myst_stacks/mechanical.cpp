@@ -611,7 +611,7 @@ void Mechanical::elevatorGoMiddle_run() {
 			}
 
 			// Blip
-			_vm->_sound->playSoundBlocking(14120);
+			_vm->playSoundBlocking(14120);
 
 			// Restore button
 			if (_elevatorInCabin) {
@@ -626,11 +626,11 @@ void Mechanical::elevatorGoMiddle_run() {
 
 				// Elevator going to middle animation
 				_vm->_cursor->hideCursor();
-				_vm->_sound->playSoundBlocking(11120);
+				_vm->playSoundBlocking(11120);
 				_vm->_gfx->copyImageToBackBuffer(6118, Common::Rect(544, 333));
 				_vm->_sound->replaceSoundMyst(12120);
 				_vm->_gfx->runTransition(kTransitionSlideToLeft, Common::Rect(177, 0, 370, 333), 25, 0);
-				_vm->_sound->playSoundBlocking(13120);
+				_vm->playSoundBlocking(13120);
 				_vm->_sound->replaceSoundMyst(8120);
 				_vm->_gfx->copyImageToBackBuffer(6327, Common::Rect(544, 333));
 				_vm->wait(500);
@@ -866,7 +866,7 @@ void Mechanical::fortressRotation_run() {
 			gears->seek(Audio::Timestamp(0, 1800 * (_fortressPosition % 2), 600));
 		}
 
-		_vm->_sound->playSoundBlocking(_fortressRotationSounds[_fortressPosition]);
+		_vm->playSoundBlocking(_fortressRotationSounds[_fortressPosition]);
 
 		_gearsWereRunning = false;
 	}
@@ -1023,7 +1023,7 @@ void Mechanical::fortressSimulation_run() {
 			// END HACK
 
 			holo->seek(Audio::Timestamp(0, 1800 * simulationPosition, 600));
-			_vm->_sound->playSoundBlocking(	_fortressRotationSounds[simulationPosition]);
+			_vm->playSoundBlocking(	_fortressRotationSounds[simulationPosition]);
 
 			_gearsWereRunning = false;
 		}

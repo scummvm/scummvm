@@ -29,6 +29,8 @@
 #include "mohawk/myst_scripts.h"
 #include "mohawk/video.h"
 
+#include "audio/mixer.h"
+
 #include "common/events.h"
 #include "common/random.h"
 
@@ -229,6 +231,8 @@ public:
 	void playMovieBlocking(const Common::String &filename, uint16 x, uint16 y);
 	void playMovieBlockingCentered(const Common::String &filename);
 	void waitUntilMovieEnds(const VideoEntryPtr &video);
+
+	void playSoundBlocking(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume);
 
 	GUI::Debugger *getDebugger() override { return _console; }
 

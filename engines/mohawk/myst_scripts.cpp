@@ -650,7 +650,7 @@ void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, uint16 argc, u
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 	_vm->_sound->stopSound();
-	_vm->_sound->playSoundBlocking(soundId);
+	_vm->playSoundBlocking(soundId);
 }
 
 void MystScriptParser::o_copyBackBufferToScreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

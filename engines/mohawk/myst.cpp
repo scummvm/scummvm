@@ -268,6 +268,14 @@ void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
 	_video->removeEntry(video);
 }
 
+void MohawkEngine_Myst::playSoundBlocking(uint16 id, byte volume) {
+	_sound->playSound(id, volume);
+
+	while (_sound->isPlaying() && !shouldQuit()) {
+		doFrame();
+	}
+}
+
 Common::Error MohawkEngine_Myst::run() {
 	MohawkEngine::run();
 
@@ -478,7 +486,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	_sound->stopBackgroundMyst();
 	_video->stopVideos();
 	if (linkSrcSound)
-		_sound->playSoundBlocking(linkSrcSound);
+		playSoundBlocking(linkSrcSound);
 
 	// Delete the previous stack and move the current stack to the previous one
 	// There's probably a better way to do this, but the script classes shouldn't
@@ -588,7 +596,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	changeToCard(card, kTransitionCopy);
 
 	if (linkDstSound)
-		_sound->playSoundBlocking(linkDstSound);
+		playSoundBlocking(linkDstSound);
 }
 
 uint16 MohawkEngine_Myst::getCardBackgroundId() {
