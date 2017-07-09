@@ -179,6 +179,10 @@ KingdomGame::~KingdomGame() {
 	delete _rnd;
 }
 
+bool KingdomGame::isDemo() const {
+	return (bool)(_gameDescription->flags & ADGF_DEMO);
+}
+
 Common::Error KingdomGame::run() {
 	initGraphics(320, 200, false);
 	_console = new Console(this);
@@ -1322,7 +1326,8 @@ void KingdomGame::setATimer() {
 			_aTimerFlag = false;
 			_aTimer = _wizard ? 114 : 133;
 			playSound(0);
-			playSound(34);
+			if (!isDemo())
+				playSound(34);
 			break;
 		}
 	}
