@@ -244,7 +244,7 @@ VideoEntryPtr MystAreaVideo::playMovie() {
 	}
 
 	if (_playBlocking) {
-		_vm->_video->waitUntilMovieEnds(handle);
+		_vm->waitUntilMovieEnds(handle);
 		return VideoEntryPtr();
 	}
 

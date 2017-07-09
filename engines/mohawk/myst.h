@@ -27,6 +27,7 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/resource_cache.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/video.h"
 
 #include "common/events.h"
 #include "common/random.h"
@@ -225,6 +226,10 @@ public:
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState() { return _cache.enabled; }
 
+	void playMovieBlocking(const Common::String &filename, uint16 x, uint16 y);
+	void playMovieBlockingCentered(const Common::String &filename);
+	void waitUntilMovieEnds(const VideoEntryPtr &video);
+
 	GUI::Debugger *getDebugger() override { return _console; }
 
 	bool canLoadGameStateCurrently() override;
@@ -269,6 +274,9 @@ private:
 
 	/** Active area being clicked on / dragged, if any */
 	MystArea *_clickedResource;
+
+	// Input
+	bool _escapePressed;
 
 	Common::Array<MystCursorHint> _cursorHints;
 	void loadCursorHints();

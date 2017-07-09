@@ -84,6 +84,8 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_optionsDialog = nullptr;
 
 	_prevStack = nullptr;
+
+	_escapePressed = false;
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -220,6 +222,52 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieN
 	return Common::String("qtw/") + prefix + movieName + ".mov";
 }
 
+
+void MohawkEngine_Myst::playMovieBlocking(const Common::String &fileName, uint16 x, uint16 y) {
+	VideoEntryPtr video = _video->playMovie(fileName);
+	if (!video) {
+		error("Failed to open the '%s' movie", fileName.c_str());
+	}
+
+	video->moveTo(x, y);
+
+	waitUntilMovieEnds(video);
+}
+
+void MohawkEngine_Myst::playMovieBlockingCentered(const Common::String &fileName) {
+	VideoEntryPtr video = _video->playMovie(fileName);
+	if (!video) {
+		error("Failed to open the '%s' movie", fileName.c_str());
+	}
+
+	// Clear screen
+	_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
+
+	video->center();
+	waitUntilMovieEnds(video);
+}
+
+void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
+	assert(video);
+
+	// Sanity check
+	if (video->isLooping())
+		error("Called waitUntilMovieEnds() on a looping video");
+
+	while (!video->endOfVideo() && !shouldQuit()) {
+		doFrame();
+
+		// Allow skipping
+		if (_escapePressed) {
+			_escapePressed = false;
+			break;
+		}
+	}
+
+	// Ensure it's removed
+	_video->removeEntry(video);
+}
+
 Common::Error MohawkEngine_Myst::run() {
 	MohawkEngine::run();
 
@@ -336,6 +384,18 @@ void MohawkEngine_Myst::doFrame() {
 							_needsShowCredits = false;
 						}
 						break;
+					case Common::KEYCODE_ESCAPE:
+						_escapePressed = true;
+						break;
+					default:
+						break;
+				}
+				break;
+			case Common::EVENT_KEYUP:
+				switch (event.kbd.keycode) {
+					case Common::KEYCODE_ESCAPE:
+						_escapePressed = false;
+						break;
 					default:
 						break;
 				}
@@ -355,36 +415,17 @@ void MohawkEngine_Myst::doFrame() {
 
 bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
 	uint32 end = getTotalPlayTime() + duration;
-	bool skipped = false;
 
-	while (getTotalPlayTime() < end && !skipped && !shouldQuit()) {
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_LBUTTONUP:
-				skipped = skippable;
-				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
-					pauseGame();
-					break;
-				case Common::KEYCODE_ESCAPE:
-					skipped = skippable;
-					break;
-				default:
-					break;
-			}
-			default:
-				break;
-			}
+	while (getTotalPlayTime() < end && !shouldQuit()) {
+		doFrame();
+
+		if (_escapePressed && skippable) {
+			_escapePressed = false;
+			return true; // Return true if skipped
 		}
-
-		// Cut down on CPU usage
-		_system->delayMillis(10);
 	}
 
-	return skipped;
+	return false;
 }
 
 void MohawkEngine_Myst::pollAndDiscardEvents() {
@@ -539,8 +580,9 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 			break;
 		}
 
-		if (flyby)
-			_video->playMovieBlockingCentered(wrapMovieFilename(flyby, kMasterpieceOnly));
+		if (flyby) {
+			playMovieBlockingCentered(wrapMovieFilename(flyby, kMasterpieceOnly));
+		}
 	}
 
 	changeToCard(card, kTransitionCopy);

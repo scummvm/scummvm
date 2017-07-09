@@ -314,7 +314,7 @@ void Channelwood::o_bridgeToggle(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	else
 		bridge->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 3050, 600));
 
-	_vm->_video->waitUntilMovieEnds(bridge);
+	_vm->waitUntilMovieEnds(bridge);
 }
 
 void Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -336,7 +336,7 @@ void Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	else
 		pipe->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 3040, 600));
 
-	_vm->_video->waitUntilMovieEnds(pipe);
+	_vm->waitUntilMovieEnds(pipe);
 	_vm->_sound->resumeBackgroundMyst();
 }
 
@@ -667,16 +667,16 @@ void Channelwood::o_hologramTemple(uint16 op, uint16 var, uint16 argc, uint16 *a
 	// Used on Card 3333 (Temple Hologram)
 	switch (_state.holoprojectorSelection) {
 	case 0:
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoalgh", kChannelwoodStack), 139, 64);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("holoalgh", kChannelwoodStack), 139, 64);
 		break;
 	case 1:
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoamth", kChannelwoodStack), 127, 73);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("holoamth", kChannelwoodStack), 127, 73);
 		break;
 	case 2:
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holoasir", kChannelwoodStack), 139, 64);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("holoasir", kChannelwoodStack), 139, 64);
 		break;
 	case 3:
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("holosmsg", kChannelwoodStack), 127, 45);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("holosmsg", kChannelwoodStack), 127, 45);
 		break;
 	default:
 		warning("Opcode %d Control Variable Out of Range", op);
@@ -748,7 +748,7 @@ void Channelwood::o_elevatorMovies(uint16 op, uint16 var, uint16 argc, uint16 *a
 	}
 
 	_vm->_sound->pauseBackgroundMyst();
-	_vm->_video->playMovieBlocking(movie, x, y);
+	_vm->playMovieBlocking(movie, x, y);
 	_vm->_sound->resumeBackgroundMyst();
 }
 

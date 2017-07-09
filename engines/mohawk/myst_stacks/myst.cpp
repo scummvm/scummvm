@@ -887,9 +887,9 @@ void Myst::o_fireplaceRotation(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	debugC(kDebugScript, "\tmovieNum: %d", movieNum);
 
 	if (movieNum)
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("fpout", kMystStack), 167, 4);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("fpout", kMystStack), 167, 4);
 	else
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("fpin", kMystStack), 167, 4);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("fpin", kMystStack), 167, 4);
 }
 
 void Myst::o_courtyardBoxesCheckSolution(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1145,7 +1145,7 @@ void Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv
 
 		gears->moveTo(305, 33);
 		gears->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 650, 600));
-		_vm->_video->waitUntilMovieEnds(gears);
+		_vm->waitUntilMovieEnds(gears);
 
 		_state.clockTowerBridgeOpen = 1;
 		_vm->redrawArea(12);
@@ -1160,7 +1160,7 @@ void Myst::o_clockWheelsExecute(uint16 op, uint16 var, uint16 argc, uint16 *argv
 
 		gears->moveTo(305, 33);
 		gears->setBounds(Audio::Timestamp(0, 700, 600), Audio::Timestamp(0, 1300, 600));
-		_vm->_video->waitUntilMovieEnds(gears);
+		_vm->waitUntilMovieEnds(gears);
 
 		_state.clockTowerBridgeOpen = 0;
 		_vm->redrawArea(12);
@@ -1239,7 +1239,7 @@ void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 			// Water appearing
 			VideoEntryPtr water = _imagerMovie->playMovie();
 			water->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 1814, 600));
-			_vm->_video->waitUntilMovieEnds(water);
+			_vm->waitUntilMovieEnds(water);
 
 			// Water looping
 			water = _imagerMovie->playMovie();
@@ -1340,10 +1340,10 @@ void Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint16 argc, uint16 *
 
 	switch (argv[0]) {
 	case 0:
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("libdown", kMystStack), 216, 78);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("libdown", kMystStack), 216, 78);
 		break;
 	case 1:
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("libup", kMystStack), 216, 78);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("libup", kMystStack), 216, 78);
 		break;
 	default:
 		break;
@@ -2279,7 +2279,7 @@ void Myst::rocketCheckSolution() {
 
 		_rocketLinkBook->moveTo(224, 41);
 		_rocketLinkBook->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 660, 600));
-		_vm->_video->waitUntilMovieEnds(_rocketLinkBook);
+		_vm->waitUntilMovieEnds(_rocketLinkBook);
 
 		// Book looping closed
 		_rocketLinkBook = _vm->_video->playMovie(movieFile);
@@ -2981,7 +2981,7 @@ void Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	for (uint i = 0; i < ARRAYSIZE(videos); i++) {
 		VideoEntryPtr handle = _vm->_video->findVideo(_vm->wrapMovieFilename(videos[i], kMystStack));
 		if (handle)
-			_vm->_video->waitUntilMovieEnds(handle);
+			_vm->waitUntilMovieEnds(handle);
 	}
 
 	if (_clockMiddleGearMovedAlone)
@@ -3013,7 +3013,7 @@ void Myst::clockGearsCheckSolution() {
 		_clockWeightVideo->setBounds(
 				Audio::Timestamp(0, _clockWeightPosition, 600),
 				Audio::Timestamp(0, 2214, 600));
-		_vm->_video->waitUntilMovieEnds(_clockWeightVideo);
+		_vm->waitUntilMovieEnds(_clockWeightVideo);
 		_clockWeightPosition = 2214;
 
 		_vm->_sound->replaceSoundMyst(6113);
@@ -3021,7 +3021,7 @@ void Myst::clockGearsCheckSolution() {
 		_vm->_sound->replaceSoundMyst(7113);
 
 		// Gear opening video
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cl1wggat", kMystStack), 195, 225);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("cl1wggat", kMystStack), 195, 225);
 		_state.gearsOpen = 1;
 		_vm->redrawArea(40);
 
@@ -3065,7 +3065,7 @@ void Myst::clockReset() {
 	for (uint i = 0; i < ARRAYSIZE(videos); i++) {
 		VideoEntryPtr handle = _vm->_video->findVideo(_vm->wrapMovieFilename(videos[i], kMystStack));
 		if (handle)
-			_vm->_video->waitUntilMovieEnds(handle);
+			_vm->waitUntilMovieEnds(handle);
 	}
 
 	_vm->_sound->replaceSoundMyst(10113);
@@ -3084,7 +3084,7 @@ void Myst::clockReset() {
 		handle->moveTo(195, 225);
 		handle->seek(handle->getDuration());
 		handle->setRate(-1);
-		_vm->_video->waitUntilMovieEnds(handle);
+		_vm->waitUntilMovieEnds(handle);
 
 		// Redraw gear
 		_state.gearsOpen = 0;

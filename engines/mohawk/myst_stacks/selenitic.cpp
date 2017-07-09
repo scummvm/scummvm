@@ -484,7 +484,7 @@ void Selenitic::mazeRunnerPlayVideo(uint16 video, uint16 pos) {
 
 	if (!file.empty()) {
 		const Common::Rect &dest = _mazeRunnerWindow->getRect();
-		_vm->_video->playMovieBlocking(file, dest.left, dest.top);
+		_vm->playMovieBlocking(file, dest.left, dest.top);
 	}
 }
 

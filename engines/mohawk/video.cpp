@@ -166,76 +166,6 @@ void VideoManager::stopVideos() {
 	_videos.clear();
 }
 
-void VideoManager::playMovieBlocking(const Common::String &fileName, uint16 x, uint16 y) {
-	VideoEntryPtr ptr = open(fileName);
-	if (!ptr)
-		return;
-
-	ptr->moveTo(x, y);
-	ptr->start();
-
-	waitUntilMovieEnds(ptr);
-}
-
-void VideoManager::playMovieBlockingCentered(const Common::String &fileName) {
-	VideoEntryPtr ptr = open(fileName);
-	if (!ptr)
-		return;
-
-	// Clear screen
-	_vm->_system->fillScreen(_vm->_system->getScreenFormat().RGBToColor(0, 0, 0));
-	_vm->_system->updateScreen();
-
-	ptr->center();
-	ptr->start();
-	waitUntilMovieEnds(ptr);
-}
-
-void VideoManager::waitUntilMovieEnds(const VideoEntryPtr &video) {
-	if (!video)
-		return;
-
-	// Sanity check
-	if (video->isLooping())
-		error("Called waitUntilMovieEnds() on a looping video");
-
-	bool continuePlaying = true;
-
-	while (!video->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
-		if (updateMovies())
-			_vm->_system->updateScreen();
-
-		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_RTL:
-			case Common::EVENT_QUIT:
-				continuePlaying = false;
-				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
-					_vm->pauseGame();
-					break;
-				case Common::KEYCODE_ESCAPE:
-					continuePlaying = false;
-					break;
-				default:
-					break;
-			}
-			default:
-				break;
-			}
-		}
-
-		// Cut down on CPU usage
-		_vm->_system->delayMillis(10);
-	}
-
-	// Ensure it's removed
-	removeEntry(video);
-}
-
 VideoEntryPtr VideoManager::playMovie(const Common::String &fileName) {
 	VideoEntryPtr ptr = open(fileName);
 	if (!ptr)
@@ -456,8 +386,8 @@ VideoManager::VideoList::iterator VideoManager::findEntry(VideoEntryPtr ptr) {
 	return Common::find(_videos.begin(), _videos.end(), ptr);
 }
 
-void VideoManager::removeEntry(VideoEntryPtr ptr) {
-	VideoManager::VideoList::iterator it = findEntry(ptr);
+void VideoManager::removeEntry(const VideoEntryPtr &video) {
+	VideoManager::VideoList::iterator it = findEntry(video);
 	if (it != _videos.end())
 		_videos.erase(it);
 }

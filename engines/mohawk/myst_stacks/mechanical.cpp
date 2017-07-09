@@ -331,7 +331,7 @@ void Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, ui
 		staircase->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 840, 600));
 	}
 
-	_vm->_video->waitUntilMovieEnds(staircase);
+	_vm->waitUntilMovieEnds(staircase);
 }
 
 void Mechanical::o_elevatorRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -584,7 +584,7 @@ void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, uint16 argc, uint1
 
 	window->moveTo(253, 0);
 	window->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
-	_vm->_video->waitUntilMovieEnds(window);
+	_vm->waitUntilMovieEnds(window);
 }
 
 void Mechanical::o_elevatorGoMiddle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -661,7 +661,7 @@ void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *
 
 	window->moveTo(206, 38);
 	window->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
-	_vm->_video->waitUntilMovieEnds(window);
+	_vm->waitUntilMovieEnds(window);
 }
 
 void Mechanical::o_fortressRotationSetPosition(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -681,7 +681,7 @@ void Mechanical::o_fortressRotationSetPosition(uint16 op, uint16 var, uint16 arg
 void Mechanical::o_mystStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Myst book staircase video", op);
 
-	_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("sstairs", kMechanicalStack), 199, 108);
+	_vm->playMovieBlocking(_vm->wrapMovieFilename("sstairs", kMechanicalStack), 199, 108);
 }
 
 void Mechanical::o_elevatorWaitTimeout(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -925,7 +925,7 @@ void Mechanical::fortressSimulation_run() {
 			_vm->_system->delayMillis(10);
 		}
 		_vm->_sound->replaceBackgroundMyst(_fortressSimulationStartSound1, 65535);
-		_vm->_video->waitUntilMovieEnds(startup);
+		_vm->waitUntilMovieEnds(startup);
 		_vm->_sound->stopBackgroundMyst();
 		_vm->_sound->replaceSoundMyst(_fortressSimulationStartSound2);
 

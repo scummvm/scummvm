@@ -433,7 +433,7 @@ void Stoneship::o_cabinBookMovie(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 	book->moveTo(159, 99);
 	book->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
-	_vm->_video->waitUntilMovieEnds(book);
+	_vm->waitUntilMovieEnds(book);
 }
 
 void Stoneship::o_drawerOpenSirius(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -608,7 +608,7 @@ void Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint16 argc, uint16 *a
 		displayMovie->setBounds(Audio::Timestamp(0, startPoint, 600), Audio::Timestamp(0, endPoint, 600));
 	}
 
-	_vm->_video->waitUntilMovieEnds(displayMovie);
+	_vm->waitUntilMovieEnds(displayMovie);
 }
 
 void Stoneship::o_hologramSelectionStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -685,7 +685,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 
 		valve->moveTo(97, 267);
 		valve->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 350, 600));
-		_vm->_video->waitUntilMovieEnds(valve);
+		_vm->waitUntilMovieEnds(valve);
 	} else if (_state.chestWaterState) {
 		// Valve opening, spilling water
 		VideoEntryPtr valve = _vm->_video->playMovie(movie);
@@ -694,7 +694,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 
 		valve->moveTo(97, 267);
 		valve->setBounds(Audio::Timestamp(0, 350, 600), Audio::Timestamp(0, 650, 600));
-		_vm->_video->waitUntilMovieEnds(valve);
+		_vm->waitUntilMovieEnds(valve);
 
 		_vm->_sound->playSound(3132);
 
@@ -705,7 +705,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 
 			valve->moveTo(97, 267);
 			valve->setBounds(Audio::Timestamp(0, 650, 600), Audio::Timestamp(0, 750, 600));
-			_vm->_video->waitUntilMovieEnds(valve);
+			_vm->waitUntilMovieEnds(valve);
 		}
 
 		_vm->_sound->resumeBackgroundMyst();
@@ -718,7 +718,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 		valve->moveTo(97, 267);
 		valve->seek(Audio::Timestamp(0, 350, 600));
 		valve->setRate(-1);
-		_vm->_video->waitUntilMovieEnds(valve);
+		_vm->waitUntilMovieEnds(valve);
 	}
 }
 
@@ -744,7 +744,7 @@ void Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 	lock->moveTo(187, 71);
 	lock->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 750, 600));
-	_vm->_video->waitUntilMovieEnds(lock);
+	_vm->waitUntilMovieEnds(lock);
 
 	_vm->_sound->playSound(2143);
 
@@ -754,7 +754,7 @@ void Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 
 	lock->moveTo(187, 71);
 	lock->setBounds(Audio::Timestamp(0, 750, 600), Audio::Timestamp(0, 10000, 600));
-	_vm->_video->waitUntilMovieEnds(lock);
+	_vm->waitUntilMovieEnds(lock);
 
 	if (_state.pumpState != 4)
 		_vm->_sound->playSound(4143);
@@ -773,19 +773,19 @@ void Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	switch (movieId) {
 	case 0:
 		// Card 2251
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tunaup", kStoneshipStack), 149, 161);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("tunaup", kStoneshipStack), 149, 161);
 		break;
 	case 1:
 		// Card 2247
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tunadown", kStoneshipStack), 218, 150);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("tunadown", kStoneshipStack), 218, 150);
 		break;
 	case 2:
 		// Card 2289
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tuncup", kStoneshipStack), 259, 161);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("tuncup", kStoneshipStack), 259, 161);
 		break;
 	case 3:
 		// Card 2285
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("tuncdown", kStoneshipStack), 166, 150);
+		_vm->playMovieBlocking(_vm->wrapMovieFilename("tuncdown", kStoneshipStack), 166, 150);
 		break;
 	default:
 		warning("Opcode 120 MovieId Out Of Range");

@@ -240,8 +240,6 @@ public:
 	virtual ~VideoManager();
 
 	// Generic movie functions
-	void playMovieBlocking(const Common::String &filename, uint16 x, uint16 y);
-	void playMovieBlockingCentered(const Common::String &filename);
 	VideoEntryPtr playMovie(const Common::String &filename);
 	VideoEntryPtr playMovie(uint16 id);
 	bool updateMovies();
@@ -253,8 +251,8 @@ public:
 	// Handle functions
 	VideoEntryPtr findVideo(uint16 id);
 	VideoEntryPtr findVideo(const Common::String &fileName);
-	void waitUntilMovieEnds(const VideoEntryPtr &video);
 	void drawVideoFrame(const VideoEntryPtr &video, const Audio::Timestamp &time);
+	void removeEntry(const VideoEntryPtr &video);
 
 protected:
 	MohawkEngine *_vm;
@@ -268,7 +266,6 @@ protected:
 	VideoEntryPtr open(const Common::String &fileName);
 
 	VideoList::iterator findEntry(VideoEntryPtr ptr);
-	void removeEntry(VideoEntryPtr ptr);
 
 	bool drawNextFrame(VideoEntryPtr videoEntry);
 
