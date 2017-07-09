@@ -1282,6 +1282,27 @@ bool GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 	return true;
 }
 
+const Common::Rect GfxFrameout::getObjectNSRect(const reg_t object) const {
+	const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
+	Plane *plane = _planes.findByObject(planeObject);
+	if (plane == nullptr)
+		error("getObjectNSRect: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(object));
+
+	ScreenItem *screenItem = plane->_screenItemList.findByObject(object);
+	if (screenItem == nullptr)
+		error("getObjectNSRect: Screen item not found for object %04x:%04x", PRINT_REG(object));
+
+	return screenItem->getNowSeenRect(*plane);
+}
+
+uint16 GfxFrameout::kernelObjectIntersection(const reg_t object1, const reg_t object2) const {
+	const Common::Rect nowSeen1 = getObjectNSRect(object1);
+	const Common::Rect nowSeen2 = getObjectNSRect(object2);
+	Common::Rect intersection = nowSeen1;
+	intersection.clip(nowSeen2);
+	return intersection.width() * intersection.height();
+}
+
 void GfxFrameout::remapMarkRedraw() {
 	for (PlaneList::const_iterator it = _planes.begin(); it != _planes.end(); ++it) {
 		Plane *p = *it;
