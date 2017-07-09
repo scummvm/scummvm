@@ -608,7 +608,7 @@ void Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint16 argc, uint16 *a
 		displayMovie->setBounds(Audio::Timestamp(0, startPoint, 600), Audio::Timestamp(0, endPoint, 600));
 	}
 
-	_vm->_video->delayUntilMovieEnds(displayMovie);
+	_vm->_video->waitUntilMovieEnds(displayMovie);
 }
 
 void Stoneship::o_hologramSelectionStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

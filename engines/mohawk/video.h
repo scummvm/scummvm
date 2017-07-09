@@ -305,13 +305,10 @@ public:
 	void stopVideos();
 	bool isVideoPlaying();
 
-	void waitUntilMovieEnds(const VideoEntryPtr &video);
-
 	// Handle functions
 	VideoHandle findVideoHandle(uint16 id);
 	VideoHandle findVideoHandle(const Common::String &fileName);
 	void waitUntilMovieEnds(VideoHandle handle);
-	void delayUntilMovieEnds(VideoHandle handle);
 	void drawVideoFrame(VideoHandle handle, const Audio::Timestamp &time);
 
 private:

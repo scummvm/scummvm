@@ -2981,7 +2981,7 @@ void Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	for (uint i = 0; i < ARRAYSIZE(videos); i++) {
 		VideoHandle handle = _vm->_video->findVideoHandle(_vm->wrapMovieFilename(videos[i], kMystStack));
 		if (handle)
-			_vm->_video->delayUntilMovieEnds(handle);
+			_vm->_video->waitUntilMovieEnds(handle);
 	}
 
 	if (_clockMiddleGearMovedAlone)
@@ -3065,7 +3065,7 @@ void Myst::clockReset() {
 	for (uint i = 0; i < ARRAYSIZE(videos); i++) {
 		VideoHandle handle = _vm->_video->findVideoHandle(_vm->wrapMovieFilename(videos[i], kMystStack));
 		if (handle)
-			_vm->_video->delayUntilMovieEnds(handle);
+			_vm->_video->waitUntilMovieEnds(handle);
 	}
 
 	_vm->_sound->replaceSoundMyst(10113);

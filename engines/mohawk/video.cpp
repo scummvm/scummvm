@@ -203,10 +203,6 @@ void VideoManager::playMovieBlockingCentered(const Common::String &fileName, boo
 	waitUntilMovieEnds(VideoHandle(ptr));
 }
 
-void VideoManager::waitUntilMovieEnds(const VideoEntryPtr &video) {
-	waitUntilMovieEnds(VideoHandle(video));
-}
-
 void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	if (!videoHandle)
 		return;
@@ -243,29 +239,6 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 				break;
 			}
 		}
-
-		// Cut down on CPU usage
-		_vm->_system->delayMillis(10);
-	}
-
-	// Ensure it's removed
-	removeEntry(videoHandle._ptr);
-}
-
-void VideoManager::delayUntilMovieEnds(VideoHandle videoHandle) {
-	// FIXME: Why is this separate from waitUntilMovieEnds?
-	// It seems to only cut out the event loop (which is bad).
-
-	if (!videoHandle)
-		return;
-
-	// Sanity check
-	if (videoHandle._ptr->isLooping())
-		error("Called delayUntilMovieEnds() on a looping video");
-
-	while (!videoHandle->endOfVideo() && !_vm->shouldQuit()) {
-		if (updateMovies())
-			_vm->_system->updateScreen();
 
 		// Cut down on CPU usage
 		_vm->_system->delayMillis(10);
