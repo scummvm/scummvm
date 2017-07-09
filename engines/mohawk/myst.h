@@ -190,6 +190,9 @@ public:
 	void pollAndDiscardEvents();
 	bool wait(uint32 duration, bool skippable = false);
 
+	/** Update the game state according to events and update the screen */
+	void doFrame();
+
 	MystSoundBlock readSoundBlock(Common::ReadStream *stream) const;
 	void applySoundBlock(const MystSoundBlock &block);
 

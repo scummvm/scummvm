@@ -262,14 +262,21 @@ Common::Error MohawkEngine_Myst::run() {
 	// Test Load Function...
 	loadHelp(10000);
 
-	Common::Event event;
 	while (!shouldQuit()) {
-		// Update any background videos
-		_video->updateMovies();
-		_scriptParser->runPersistentScripts();
+		doFrame();
+	}
 
-		while (pollEvent(event)) {
-			switch (event.type) {
+	return Common::kNoError;
+}
+
+void MohawkEngine_Myst::doFrame() {
+	// Update any background videos
+	_video->updateMovies();
+	_scriptParser->runPersistentScripts();
+
+	Common::Event event;
+	while (pollEvent(event)) {
+		switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
 				if (_clickedResource && _clickedResource->isEnabled()) {
 					_clickedResource->handleMouseDrag();
@@ -290,66 +297,63 @@ Common::Error MohawkEngine_Myst::run() {
 				break;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
-				case Common::KEYCODE_d:
-					if (event.kbd.flags & Common::KBD_CTRL) {
-						_console->attach();
-						_console->onFrame();
-					}
-					break;
-				case Common::KEYCODE_SPACE:
-					pauseGame();
-					break;
-				case Common::KEYCODE_F5:
-					_needsPageDrop = false;
-					_needsShowMap = false;
-					_needsShowDemoMenu = false;
-					_needsShowCredits = false;
-
-					_canSafelySaveLoad = true;
-					runDialog(*_optionsDialog);
-					if (_optionsDialog->getLoadSlot() >= 0)
-						loadGameState(_optionsDialog->getLoadSlot());
-					_canSafelySaveLoad = false;
-
-					if (_needsPageDrop) {
-						dropPage();
+					case Common::KEYCODE_d:
+						if (event.kbd.flags & Common::KBD_CTRL) {
+							_console->attach();
+							_console->onFrame();
+						}
+						break;
+					case Common::KEYCODE_SPACE:
+						pauseGame();
+						break;
+					case Common::KEYCODE_F5:
 						_needsPageDrop = false;
-					}
-
-					if (_needsShowMap) {
-						_scriptParser->showMap();
 						_needsShowMap = false;
-					}
-
-					if (_needsShowDemoMenu) {
-						changeToStack(kDemoStack, 2002, 0, 0);
 						_needsShowDemoMenu = false;
-					}
-
-					if (_needsShowCredits) {
-						_cursor->hideCursor();
-						changeToStack(kCreditsStack, 10000, 0, 0);
 						_needsShowCredits = false;
-					}
-					break;
-				default:
-					break;
+
+						_canSafelySaveLoad = true;
+						runDialog(*_optionsDialog);
+						if (_optionsDialog->getLoadSlot() >= 0)
+							loadGameState(_optionsDialog->getLoadSlot());
+						_canSafelySaveLoad = false;
+
+						if (_needsPageDrop) {
+							dropPage();
+							_needsPageDrop = false;
+						}
+
+						if (_needsShowMap) {
+							_scriptParser->showMap();
+							_needsShowMap = false;
+						}
+
+						if (_needsShowDemoMenu) {
+							changeToStack(kDemoStack, 2002, 0, 0);
+							_needsShowDemoMenu = false;
+						}
+
+						if (_needsShowCredits) {
+							_cursor->hideCursor();
+							changeToStack(kCreditsStack, 10000, 0, 0);
+							_needsShowCredits = false;
+						}
+						break;
+					default:
+						break;
 				}
 				break;
 			default:
 				break;
-			}
 		}
-
-		checkCurrentResource();
-
-		_system->updateScreen();
-
-		// Cut down on CPU usage
-		_system->delayMillis(10);
 	}
 
-	return Common::kNoError;
+	checkCurrentResource();
+
+	_system->updateScreen();
+
+	// Cut down on CPU usage
+	_system->delayMillis(10);
 }
 
 bool MohawkEngine_Myst::pollEvent(Common::Event &event) {
