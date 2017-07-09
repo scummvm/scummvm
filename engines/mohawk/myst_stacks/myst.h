@@ -191,6 +191,7 @@ protected:
 	bool _generatorControlRoomRunning;
 	uint16 _generatorVoltage; // 58
 
+	uint16 _rocketPianoSound; // 292
 	MystAreaSlider *_rocketSlider1; // 248
 	MystAreaSlider *_rocketSlider2; // 252
 	MystAreaSlider *_rocketSlider3; // 256
@@ -198,7 +199,7 @@ protected:
 	MystAreaSlider *_rocketSlider5; // 264
 	uint16 _rocketSliderSound; // 294
 	uint16 _rocketLeverPosition; // 296
-	VideoHandle _rocketLinkBook;
+	VideoHandle _rocketLinkBook; // 268
 
 	bool _libraryCombinationBookPagesTurning;
 	int16 _libraryBookPage; // 86

@@ -60,6 +60,7 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_observatoryCurrentSlider = nullptr;
 	_butterfliesMoviePlayed = false;
 	_state.treeLastMoveTime = _vm->_system->getMillis();
+	_rocketPianoSound = 0;
 }
 
 Myst::~Myst() {
@@ -2318,9 +2319,11 @@ void Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 	_vm->_system->updateScreen();
 
 	// Play note
+	_rocketPianoSound = 0;
 	if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
-		uint16 soundId = key->getList1(0);
-		_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
+		_vm->_sound->pauseBackgroundMyst();
+		_rocketPianoSound = key->getList1(0);
+		_vm->_sound->replaceSoundMyst(_rocketPianoSound, Audio::Mixer::kMaxChannelVolume, true);
 	}
 }
 
@@ -2358,7 +2361,10 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 			// Play note
 			if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 				uint16 soundId = key->getList1(0);
-				_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
+				if (soundId != _rocketPianoSound) {
+					_rocketPianoSound = soundId;
+					_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
+				}
 			}
 		} else {
 			// Not pressing a key anymore
