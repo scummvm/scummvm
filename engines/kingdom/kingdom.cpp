@@ -1416,9 +1416,9 @@ void KingdomGame::checkMainScreen() {
 		int wrkNodeNum = _nodeNum;
 		if (_tsIconOnly)
 			wrkNodeNum = 79;
-		if (_nodeNum == 56 && _inventory[8] < 1 && _wizard)
+		if (_nodeNum == 56 && _inventory[16] < 1 && _wizard)
 			wrkNodeNum = 80;
-		if (_nodeNum == 21 && _nodes[21] == 9)
+		if (_nodeNum == 21 && _nodes[21] == 9 && !isDemo())
 			wrkNodeNum = 81;
 		int idx = _iconActTable[wrkNodeNum][i];
 
