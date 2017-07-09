@@ -982,7 +982,7 @@ void Selenitic::soundReceiverIncreaseSpeed() {
 
 void Selenitic::soundReceiverUpdateSound() {
 	uint16 soundId = soundReceiverCurrentSound(_state.soundReceiverCurrentSource, *_soundReceiverPosition);
-	_vm->_sound->replaceSoundMyst(soundId);
+	_vm->_sound->replaceBackgroundMyst(soundId);
 }
 
 uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
