@@ -23,7 +23,6 @@
 #include "common/debug.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/platform-dependent.h"
 #include "sludge/sludger.h"
 #include "sludge/backdrop.h"
 #include "sludge/cursors.h"

@@ -23,7 +23,6 @@
 #include "common/debug.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/platform-dependent.h"
 #include "sludge/sound.h"
 #include "sludge/stringy.h"
 #include "sludge/errors.h"

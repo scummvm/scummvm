@@ -27,7 +27,6 @@
 #include "sludge/fonttext.h"
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
-#include "sludge/platform-dependent.h"
 #include "sludge/utf8.h"
 
 namespace Sludge {

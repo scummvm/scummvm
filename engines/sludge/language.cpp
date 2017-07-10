@@ -25,7 +25,6 @@
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
 #include "sludge/language.h"
-#include "sludge/platform-dependent.h"
 #include "sludge/sludge.h"
 #include "sludge/CommonCode/version.h"
 
