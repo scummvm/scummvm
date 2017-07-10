@@ -72,13 +72,15 @@ static const char HELP_STRING[] =
 	"  -a, --add                Add all games from current or specified directory.\n"
 	"                           If --game=ID is passed only the game with id ID is added. See also --detect\n"
 	"                           Use --path=PATH before -a, --add to specify a directory.\n"
-	"  --game=ID                In combination with --add, only adds the game with id ID. See also --detect\n"
-	"  --detect                 Display a list of games with their ID from current or specified directory\n"
-	"                           without adding it to the config. Use --path=PATH before --detect\n"
-	"                           to specify a directory.\n"
+	"  --detect                 Display a list of games with their ID from current or\n"
+	"                           specified directory without adding it to the config.\n"
+	"                           Use --path=PATH before --detect to specify a directory.\n"
+	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
+	"                           detect the game with id ID.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH before --auto-detect\n"
 	"                           to specify a directory.\n"
+	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
@@ -604,6 +606,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("game")
 			END_OPTION
 
+			DO_LONG_OPTION_BOOL("recursive")
+			END_OPTION
+
 			DO_LONG_OPTION("themepath")
 				Common::FSNode path(option);
 				if (!path.exists()) {
@@ -813,14 +818,10 @@ static GameList getGameList(Common::FSNode dir) {
 
 	// detect Games
 	GameList candidates(EngineMan.detectGames(files));
-	if (candidates.empty()) {
-		printf("ScummVM could not find any game in %s\n", dir.getPath().c_str());
-	} else {
-		Common::String dataPath = dir.getPath();
-		// add game data path
-		for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
-			(*v)["path"] = dataPath;
-		}
+	Common::String dataPath = dir.getPath();
+	// add game data path
+	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
+		(*v)["path"] = dataPath;
 	}
 	return candidates;
 }
@@ -851,15 +852,38 @@ static bool addGameToConf(const GameDescriptor &gd) {
 	return true;
 }
 
+static GameList recListGames(Common::FSNode dir, bool recursive) {
+	GameList list = getGameList(dir);
+
+	if (recursive) {
+		Common::FSList files;
+		dir.getChildren(files, Common::FSNode::kListDirectoriesOnly);
+		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
+			GameList rec = recListGames(*file, recursive);
+			for (GameList::const_iterator game = rec.begin(); game != rec.end(); ++game)
+				list.push_back(*game);
+		}
+	}
+
+	return list;
+}
+
 /** Display all games in the given directory, return ID of first detected game */
-static Common::String detectGames(Common::String path) {
+static Common::String detectGames(Common::String path, Common::String recursiveOptStr) {
 	if (path.empty())
 		path = ".";
+	bool recursive = (recursiveOptStr == "true");
 	//Current directory
 	Common::FSNode dir(path);
-	GameList candidates = getGameList(dir);
-	if (candidates.empty())
+	GameList candidates = recListGames(dir, recursive);
+
+	if (candidates.empty()) {
+		printf("ScummVM could not find any game in %s\n", dir.getPath().c_str());
+		if (!recursive) {
+			printf("Consider using --recursive to search inside subdirectories\n");
+		}
 		return Common::String();
+	}
 
 	// Print all the candidate found
 	printf("ID                   Description\n");
@@ -871,7 +895,7 @@ static Common::String detectGames(Common::String path) {
 	return candidates[0].gameid();
 }
 
-static int recAddGames(Common::FSNode dir, Common::String game, bool recursive=true) {
+static int recAddGames(Common::FSNode dir, Common::String game, bool recursive) {
 	int count = 0;
 	GameList list = getGameList(dir);
 	for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
@@ -890,7 +914,7 @@ static int recAddGames(Common::FSNode dir, Common::String game, bool recursive=t
 		Common::FSList files;
 		if (dir.getChildren(files, Common::FSNode::kListDirectoriesOnly)) {
 			for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
-				count += recAddGames(*file, game);
+				count += recAddGames(*file, game, recursive);
 			}
 		}
 	}
@@ -898,13 +922,17 @@ static int recAddGames(Common::FSNode dir, Common::String game, bool recursive=t
 	return count;
 }
 
-static bool addGames(Common::String path, Common::String game) {
+static bool addGames(Common::String path, Common::String game, Common::String recursiveOptStr) {
 	if (path.empty())
 		path = ".";
+	bool recursive = (recursiveOptStr == "true");
 	//Current directory
 	Common::FSNode dir(path);
-	int added = recAddGames(dir, game);
+	int added = recAddGames(dir, game, recursive);
 	printf("Added %d games\n", added);
+	if (added == 0 && recursive == false) {
+		printf("Consider using --recursive to search inside subdirectories\n");
+	}
 	ConfMan.flushToDisk();
 	return true;
 }
@@ -1138,15 +1166,23 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		// If auto-detects fails (returns an empty ID) return true to close ScummVM.
 		// If we get a non-empty ID, we store it in command so that it gets processed together with the
 		// other command line options below.
-		command = detectGames(settings["path"]);
-		if (command.empty())
+		if (settings["recursive"] == "true") {
+			printf("Autodetection not supported with --recursive; are you sure you didn't want --detect?\n");
 			return true;
+			// There is not a particularly good technical reason for this.
+			// From an UX point of view, however, it might get confusing.
+			// Consider removing this if consensus says otherwise.
+		} else {
+			command = detectGames(settings["path"], settings["recursive"]);
+			if (command.empty())
+				return true;
+		}
 	} else if (command == "detect") {
-		// Ignore the return value of detectGame.
-		detectGames(settings["path"]);
+		detectGames(settings["path"], settings["recursive"]);
 		return true;
 	} else if (command == "add") {
-		return (addGames(settings["path"], settings["game"]) > 0);
+		addGames(settings["path"], settings["game"], settings["recursive"]);
+		return true;
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {
