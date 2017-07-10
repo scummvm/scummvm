@@ -174,7 +174,7 @@ bool setFloor(int fileNum) {
 	// Now build the movement martix
 
 	currentFloor->matrix = new int *[currentFloor->numPolygons];
-	int * * distanceMatrix = new int *[currentFloor->numPolygons];
+	int **distanceMatrix = new int *[currentFloor->numPolygons];
 
 	if (!checkNew(currentFloor->matrix))
 		return false;

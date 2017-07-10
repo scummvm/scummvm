@@ -38,7 +38,7 @@ static Common::String fatalMessage;
 static Common::String fatalInfo = "Initialisation error! Something went wrong before we even got started!";
 
 extern int numResourceNames /* = 0*/;
-extern char * *allResourceNames /*= NULL*/;
+extern char **allResourceNames /*= NULL*/;
 
 int resourceForFatal = -1;
 

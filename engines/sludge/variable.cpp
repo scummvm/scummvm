@@ -555,7 +555,7 @@ variable *stackGetByIndex(variableStack *vS, uint theIndex) {
 }
 
 int deleteVarFromStack(const variable &va, variableStack *&thisStack, bool allOfEm) {
-	variableStack * * huntVar = &thisStack;
+	variableStack **huntVar = &thisStack;
 	variableStack *killMe;
 	int reply = 0;
 

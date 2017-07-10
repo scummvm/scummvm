@@ -263,7 +263,7 @@ bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream) {
 	}
 
 	// Read what's being said
-	speechLine * * viewLine = &sS->allSpeech;
+	speechLine **viewLine = &sS->allSpeech;
 	speechLine *newOne;
 	speech->lastFile = -1;
 	while (stream->readByte()) {

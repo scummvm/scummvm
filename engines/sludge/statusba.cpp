@@ -216,7 +216,7 @@ bool loadStatusBars(Common::SeekableReadStream *stream) {
 	setFontColour(verbLinePalette, nowStatus->statusR, nowStatus->statusG, nowStatus->statusB);
 	setFontColour(litVerbLinePalette, nowStatus->statusLR, nowStatus->statusLG, nowStatus->statusLB);
 	// Read what's being said
-	statusBar * * viewLine = & (nowStatus->firstStatusBar);
+	statusBar **viewLine = & (nowStatus->firstStatusBar);
 	statusBar *newOne;
 	while (stream->readByte()) {
 		newOne = new statusBar;

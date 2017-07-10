@@ -48,7 +48,7 @@ void showBoxes() {
 }
 
 void removeScreenRegion(int objectNum) {
-	screenRegion ** huntRegion = &allScreenRegions;
+	screenRegion **huntRegion = &allScreenRegions;
 	screenRegion *killMe;
 
 	while (*huntRegion) {
@@ -93,7 +93,7 @@ void loadRegions(Common::SeekableReadStream *stream) {
 	int numRegions = stream->readUint16BE();
 
 	screenRegion *newRegion;
-	screenRegion * * pointy = &allScreenRegions;
+	screenRegion **pointy = &allScreenRegions;
 
 	while (numRegions--) {
 		newRegion = new screenRegion;

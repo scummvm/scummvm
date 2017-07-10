@@ -157,7 +157,7 @@ int getCombinationFunction(int withThis, int thisObject) {
 }
 
 void removeObjectType(objectType *oT) {
-	objectType * * huntRegion = &allObjectTypes;
+	objectType **huntRegion = &allObjectTypes;
 
 	while (*huntRegion) {
 		if ((*huntRegion) == oT) {

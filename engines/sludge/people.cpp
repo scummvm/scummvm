@@ -415,7 +415,7 @@ void setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix) {
 extern screenRegion *overRegion;
 
 void shufflePeople() {
-	onScreenPerson * * thisReference = &allPeople;
+	onScreenPerson **thisReference = &allPeople;
 	onScreenPerson *A, *B;
 
 	if (!allPeople)
@@ -855,7 +855,7 @@ bool addPerson(int x, int y, int objNum, persona *p) {
 	}
 
 	// NOW ADD IT IN THE RIGHT PLACE
-	onScreenPerson * * changethat = &allPeople;
+	onScreenPerson **changethat = &allPeople;
 
 	while (((*changethat) != NULL) && ((*changethat)->y < y))
 		changethat = &((*changethat)->next);
@@ -918,7 +918,7 @@ void killAllPeople() {
 
 void killMostPeople() {
 	onScreenPerson *killPeople;
-	onScreenPerson * * lookyHere = &allPeople;
+	onScreenPerson **lookyHere = &allPeople;
 
 	while (*lookyHere) {
 		if ((*lookyHere)->extra & EXTRA_NOREMOVE) {
@@ -950,7 +950,7 @@ void removeOneCharacter(int i) {
 		if (p->continueAfterWalking)
 			abortFunction(p->continueAfterWalking);
 		p->continueAfterWalking = NULL;
-		onScreenPerson * * killPeople;
+		onScreenPerson **killPeople;
 
 		for (killPeople = &allPeople; *killPeople != p; killPeople = &((*killPeople)->next)) {
 			;
@@ -1113,7 +1113,7 @@ bool savePeople(Common::WriteStream *stream) {
 }
 
 bool loadPeople(Common::SeekableReadStream *stream) {
-	onScreenPerson * * pointy = &allPeople;
+	onScreenPerson **pointy = &allPeople;
 	onScreenPerson *me;
 
 	scaleHorizon = stream->readSint16LE();

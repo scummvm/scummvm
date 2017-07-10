@@ -76,8 +76,8 @@ extern uint sceneWidth, sceneHeight;
 extern int numBIFNames, numUserFunc;
 extern char builtInFunctionNames[][25];
 
-extern char * *allUserFunc;
-extern char * *allBIFNames;
+extern char **allUserFunc;
+extern char **allBIFNames;
 extern inputType input;
 extern char *loadNow;
 

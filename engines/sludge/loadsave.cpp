@@ -122,7 +122,7 @@ variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **las
 	int elements = stream->readUint16BE();
 	int a;
 	variableStack *first = NULL;
-	variableStack * * changeMe = &first;
+	variableStack **changeMe = &first;
 
 	for (a = 0; a < elements; a++) {
 		variableStack *nS = new variableStack;
