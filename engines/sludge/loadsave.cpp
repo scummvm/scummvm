@@ -418,7 +418,7 @@ bool saveGame(char *fname) {
 	// Save backdrop
 	fp->writeUint16BE(cameraX);
 	fp->writeUint16BE(cameraY);
-	putFloat(cameraZoom, fp);
+	fp->writeFloatLE(cameraZoom);
 
 	fp->writeByte(brightnessLevel);
 	saveHSI(fp);
@@ -604,7 +604,7 @@ bool loadGame(char *fname) {
 	int camerY = fp->readUint16BE();
 	float camerZ;
 	if (ssgVersion >= VERSION(2, 0)) {
-		camerZ = getFloat(fp);
+		camerZ = fp->readFloatLE();
 	} else {
 		camerZ = 1.0;
 	}
@@ -672,8 +672,8 @@ bool loadGame(char *fname) {
 		if (ssgVersion < VERSION(2, 0)) {
 			// aaLoad
 			fp->readByte();
-			getFloat(fp);
-			getFloat(fp);
+			fp->readFloatLE();
+			fp->readFloatLE();
 		}
 
 		blur_loadSettings(fp);

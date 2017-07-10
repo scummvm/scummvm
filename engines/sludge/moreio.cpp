@@ -29,13 +29,6 @@
 #include "sludge/stringy.h"
 #include "sludge/sludge.h"
 
-#if defined __unix__ && !(defined __APPLE__)
-#include <endian.h>
-#if __BYTE_ORDER == __BIG_ENDIAN
-#define __BIG_ENDIAN__
-#endif
-#endif
-
 namespace Sludge {
 
 bool allowAnyFilename = true;
@@ -60,41 +53,6 @@ char *readString(Common::SeekableReadStream *stream) {
 	s[len] = 0;
 	debug(kSludgeDebugDataLoad, "Read string of length %i: %s", len, s);
 	return s;
-}
-
-float floatSwap(float f) {
-	union {
-		float f;
-		byte b[4];
-	} dat1, dat2;
-
-	dat1.f = f;
-	dat2.b[0] = dat1.b[3];
-	dat2.b[1] = dat1.b[2];
-	dat2.b[2] = dat1.b[1];
-	dat2.b[3] = dat1.b[0];
-	return dat2.f;
-}
-
-float getFloat(Common::SeekableReadStream *stream) {
-	float f;
-	uint bytes_read = stream->read(&f, sizeof(float));
-	if (bytes_read != sizeof(float) && stream->err()) {
-		debug("Reading error in getFloat.\n");
-	}
-
-#ifdef  __BIG_ENDIAN__
-	return floatSwap(f);
-#else
-	return f;
-#endif
-}
-
-void putFloat(float f, Common::WriteStream *stream) {
-#ifdef  __BIG_ENDIAN__
-	f = floatSwap(f);
-#endif
-	stream->write(&f, sizeof(float));
 }
 
 char *encodeFilename(char *nameIn) {

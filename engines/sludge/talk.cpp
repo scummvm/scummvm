@@ -216,7 +216,7 @@ void saveSpeech(speechStruct *sS, Common::WriteStream *stream) {
 	stream->writeByte(sS->talkCol.originalGreen);
 	stream->writeByte(sS->talkCol.originalBlue);
 
-	putFloat(speechSpeed, stream);
+	stream->writeFloatLE(speechSpeed);
 
 	// Write y co-ordinate
 	stream->writeUint16BE(sS->speechY);
@@ -248,7 +248,7 @@ bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream) {
 	byte b = stream->readByte();
 	setFontColour(sS->talkCol, r, g, b);
 
-	speechSpeed = getFloat(stream);
+	speechSpeed = stream->readFloatLE();
 
 	// Read y co-ordinate
 	sS->speechY = stream->readUint16BE();

@@ -69,8 +69,8 @@ objectType *loadObjectType(int i) {
 			if (gameVersion >= VERSION(1, 6)) {
 				// aaLoad
 				bigDataFile->readByte();
-				getFloat(bigDataFile);
-				getFloat(bigDataFile);
+				bigDataFile->readFloatLE();
+				bigDataFile->readFloatLE();
 			}
 
 			if (gameVersion >= VERSION(1, 4)) {
