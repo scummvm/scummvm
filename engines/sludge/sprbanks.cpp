@@ -20,11 +20,13 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "sludge/allfiles.h"
+#include "sludge/sludge.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
 #include "sludge/newfatal.h"
-#include "sludge/debug.h"
 
 namespace Sludge {
 
@@ -33,7 +35,6 @@ extern spriteBank theFont;
 extern int loadedFontNum, fontTableSize;
 
 loadedSpriteBank *loadBankForAnim(int ID) {
-	//debugOut ("loadBankForAnim: Looking for sprite bank with ID %d\n", ID);
 	loadedSpriteBank *returnMe = allLoadedBanks;
 	while (returnMe) {
 		if (returnMe->ID == ID) {
@@ -43,17 +44,16 @@ loadedSpriteBank *loadBankForAnim(int ID) {
 		returnMe = returnMe->next;
 	}
 	returnMe = new loadedSpriteBank;
-	//debugOut ("loadBankForAnim: No existing sprite bank with ID %d\n", ID);
 	if (checkNew(returnMe)) {
 		returnMe->ID = ID;
 		if (loadSpriteBank(ID, returnMe->bank, false)) {
 			returnMe->timesUsed = 0;
 			returnMe->next = allLoadedBanks;
 			allLoadedBanks = returnMe;
-			debugOut("loadBankForAnim: New sprite bank created OK\n");
+			debug(kSludgeDebugDataLoad, "loadBankForAnim: New sprite bank created OK");
 			return returnMe;
 		} else {
-			debugOut("loadBankForAnim: I guess I couldn't load the sprites...\n");
+			debug(kSludgeDebugDataLoad, "loadBankForAnim: I guess I couldn't load the sprites...");
 			return NULL;
 		}
 	} else

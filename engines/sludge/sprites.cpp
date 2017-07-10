@@ -32,7 +32,6 @@
 #include "sludge/backdrop.h"
 #include "sludge/sludger.h"
 #include "sludge/zbuffer.h"
-#include "sludge/debug.h"
 #include "sludge/graphics.h"
 #include "sludge/imgloader.h"
 #include "sludge/sludge.h"
@@ -225,7 +224,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		} else { // RAW DATA
 			size_t bytes_read = bigDataFile->read(data, picwidth * picheight);
 			if (bytes_read != picwidth * picheight && bigDataFile->err()) {
-				debugOut("Reading error in loadSpriteBank.\n");
+				warning("Reading error in loadSpriteBank.");
 			}
 		}
 	}

@@ -41,7 +41,6 @@
 #include "sludge/statusba.h"
 #include "sludge/sound.h"
 #include "sludge/fileset.h"
-#include "sludge/debug.h"
 #include "sludge/loadsave.h"
 #include "sludge/bg_effects.h"
 #include "sludge/thumbnail.h"
@@ -555,7 +554,7 @@ bool loadGame(char *fname) {
 
 	uint32 bytes_read = fp->read(&savedGameTime, sizeof(FILETIME));
 	if (bytes_read != sizeof(FILETIME) && fp->err()) {
-		debugOut("Reading error in loadGame.\n");
+		warning("Reading error in loadGame.");
 	}
 
 	if (savedGameTime.dwLowDateTime != fileTime.dwLowDateTime || savedGameTime.dwHighDateTime != fileTime.dwHighDateTime) {

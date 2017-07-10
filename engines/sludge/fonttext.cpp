@@ -20,7 +20,6 @@
  *
  */
 
-#include "sludge/debug.h"
 #include "sludge/allfiles.h"
 #include "sludge/stringy.h"
 #include "sludge/sprites.h"
