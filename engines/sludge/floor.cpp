@@ -159,7 +159,7 @@ bool setFloor(int fileNum) {
 	// Find out how many vertices there are and reserve memory
 
 	i = bigDataFile->readUint16BE();
-	currentFloor->vertex = new POINT[i];
+	currentFloor->vertex = new Common::Point[i];
 	if (!checkNew(currentFloor->vertex))
 		return false;
 
