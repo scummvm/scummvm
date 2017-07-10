@@ -108,13 +108,13 @@ int deleteVarFromStack(const variable &va, variableStack *&thisStack,
 variableStack *stackFindLast(variableStack *hunt);
 bool copyStack(const variable &from, variable &to);
 int stackSize(const stackHandler *me);
-bool stackSetByIndex(variableStack *, unsigned int, const variable &);
-variable *stackGetByIndex(variableStack *, unsigned int);
+bool stackSetByIndex(variableStack *, uint, const variable &);
+variable *stackGetByIndex(variableStack *, uint);
 bool getSavedGamesStack(stackHandler *sH, char *ext);
 
 bool makeFastArrayFromStack(variable &to, const stackHandler *stacky);
 bool makeFastArraySize(variable &to, int size);
-variable *fastArrayGetByIndex(fastArrayHandler *vS, unsigned int theIndex);
+variable *fastArrayGetByIndex(fastArrayHandler *vS, uint theIndex);
 
 #define DEBUG_STACKINESS    0
 

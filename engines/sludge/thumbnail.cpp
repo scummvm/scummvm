@@ -158,12 +158,12 @@ void showThumbnail(char *filename, int atX, int atY) {
 		if (thumbnailTexture == NULL) return;
 
 		int t1, t2;
-		unsigned short c;
+		uint16 c;
 		GLubyte *target;
 		for (t2 = 0; t2 < fileHeight; t2++) {
 			t1 = 0;
 			while (t1 < fileWidth) {
-				c = (unsigned short) fp->readUint16BE();
+				c = (uint16) fp->readUint16BE();
 				target = thumbnailTexture + 4 * picWidth * t2 + t1 * 4;
 				target[0] = (GLubyte) redValue(c);
 				target[1] = (GLubyte) greenValue(c);

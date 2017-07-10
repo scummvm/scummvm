@@ -66,13 +66,13 @@ variable *launchResult = NULL;
 extern int lastFramesPerSecond, thumbWidth, thumbHeight;
 extern bool allowAnyFilename;
 extern bool captureAllKeys;
-extern short fontSpace;
+extern int16 fontSpace;
 extern eventHandlers *currentEvents;
 extern variableStack *noStack;
 extern statusStuff *nowStatus;
 extern screenRegion *overRegion;
 extern HWND hMainWindow;
-extern unsigned int sceneWidth, sceneHeight;
+extern uint sceneWidth, sceneHeight;
 extern int numBIFNames, numUserFunc;
 extern char builtInFunctionNames[][25];
 
@@ -86,13 +86,13 @@ extern GLuint backdropTextureName;
 #endif
 
 extern float speechSpeed;
-extern unsigned char brightnessLevel;
-extern unsigned char fadeMode;
-extern unsigned short saveEncoding;
+extern byte brightnessLevel;
+extern byte fadeMode;
+extern uint16 saveEncoding;
 extern frozenStuffStruct *frozenStuff;
-extern unsigned int currentBlankColour;
-extern unsigned int languageID;
-extern unsigned char currentBurnR, currentBurnG, currentBurnB;
+extern uint currentBlankColour;
+extern uint languageID;
+extern byte currentBurnR, currentBurnG, currentBurnB;
 
 int paramNum[] = { -1, 0, 1, 1, -1, -1, 1, 3, 4, 1, 0, 0, 8, -1,    // SAY->MOVEMOUSE
                    -1, 0, 0, -1, -1, 1, 1, 1, 1, 4, 1, 1, 2, 1,// FOCUS->REMOVEREGION
@@ -1633,7 +1633,7 @@ builtIn(setScale) {
 	if (!getValueType(val1, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setScale((short int)val1, (short int)val2);
+	setScale((int16)val1, (int16)val2);
 	return BR_CONTINUE;
 }
 
@@ -1898,7 +1898,7 @@ builtIn(alignStatus) {
 	if (!getValueType(val, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	nowStatus->alignStatus = (short)val;
+	nowStatus->alignStatus = (int16)val;
 	return BR_CONTINUE;
 }
 

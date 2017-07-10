@@ -61,11 +61,11 @@ struct loadedFunction {
 	variable *localVars;
 	variableStack *stack;
 	variable reg;
-	unsigned int runThisLine;
+	uint runThisLine;
 	loadedFunction *calledBy;
 	loadedFunction *next;
 	bool returnSomething, isSpeech, unfreezable, cancelMe;
-	unsigned char freezerLevel;
+	byte freezerLevel;
 };
 
 struct inputType {
@@ -73,13 +73,13 @@ struct inputType {
 	int mouseX, mouseY, keyPressed;
 };
 
-extern unsigned char *gameIcon;
+extern byte *gameIcon;
 extern int iconW, iconH;
 
 bool initSludge(const char *);
 void displayBase();
 void sludgeDisplay();
-int startNewFunctionNum(unsigned int, unsigned int, loadedFunction *, variableStack*&, bool = true);
+int startNewFunctionNum(uint, uint, loadedFunction *, variableStack*&, bool = true);
 bool handleInput();
 void restartFunction(loadedFunction *fun);
 bool loadFunctionCode(loadedFunction *newFunc);

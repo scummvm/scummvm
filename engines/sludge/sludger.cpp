@@ -57,7 +57,7 @@ namespace Sludge {
 extern personaAnimation *mouseCursorAnim;
 extern spritePalette pastePalette;
 extern int dialogValue;
-extern unsigned int sceneWidth, sceneHeight;
+extern uint sceneWidth, sceneHeight;
 extern char *launchMe;
 extern variable *launchResult;
 
@@ -73,10 +73,10 @@ char * *allResourceNames = NULL;
 int selectedLanguage = 0;
 int languageNum = -1;
 
-unsigned char *gameIcon = NULL;
+byte *gameIcon = NULL;
 int iconW = 0, iconH = 0;
 
-unsigned char *gameLogo = NULL;
+byte *gameLogo = NULL;
 int logoW = 0, logoH = 0;
 
 int gameVersion;
@@ -85,7 +85,7 @@ FILETIME fileTime;
 extern int desiredfps;
 bool captureAllKeys = false;
 
-unsigned char brightnessLevel = 255;
+byte brightnessLevel = 255;
 
 eventHandlers mainHandlers;
 eventHandlers *currentEvents = &mainHandlers;
@@ -237,7 +237,7 @@ bool initSludge(const char *filename) {
 
 	delete[] readString(fp);  // Unused - was used for registration purposes.
 
-	size_t bytes_read = fp->read(&fileTime, sizeof(FILETIME));
+	uint bytes_read = fp->read(&fileTime, sizeof(FILETIME));
 	if (bytes_read != sizeof(FILETIME) && fp->err()) {
 		debug("Reading error in initSludge.");
 	}
@@ -268,7 +268,7 @@ bool initSludge(const char *filename) {
 	delete[] checker;
 	checker = NULL;
 
-	unsigned char customIconLogo = fp->readByte();
+	byte customIconLogo = fp->readByte();
 	debug(kSludgeDebugDataLoad, "Game icon type: %i", customIconLogo);
 
 	if (customIconLogo & 1) {
@@ -341,14 +341,14 @@ bool initSludge(const char *filename) {
 
 		}
 
-		gameIcon = new unsigned char [iconW * iconH * 4];
+		gameIcon = new byte [iconW * iconH * 4];
 		if (!gameIcon) return fatal("Can't reserve memory for game icon.");
 
 		int32_t transCol = 63519;
 		Uint8 *p = (Uint8 *) gameIcon;
 
 		if (fileIsPNG) {
-			unsigned char *row_pointers[iconH];
+			byte *row_pointers[iconH];
 			for (int i = 0; i < iconH; i++)
 			row_pointers[i] = p + 4 * i * iconW;
 
@@ -360,7 +360,7 @@ bool initSludge(const char *filename) {
 			for (int t2 = 0; t2 < iconH; t2 ++) {
 				int t1 = 0;
 				while (t1 < iconW) {
-					unsigned short c = (unsigned short) fp->readUint16BE();
+					uint16 c = (uint16) fp->readUint16BE();
 					if (c & 32) {
 						n = fgetc(fp) + 1;
 						c -= 32;
@@ -452,14 +452,14 @@ bool initSludge(const char *filename) {
 
 		if ((logoW != 310) || (logoH != 88)) return fatal("Game logo have wrong dimensions. (Should be 310x88)");
 
-		gameLogo = new unsigned char [logoW * logoH * 4];
+		gameLogo = new byte [logoW * logoH * 4];
 		if (!gameLogo) return fatal("Can't reserve memory for game logo.");
 
 		// int32_t transCol = 63519;
 		Uint8 *p = (Uint8 *) gameLogo;
 
 		if (fileIsPNG) {
-			unsigned char *row_pointers[logoH];
+			byte *row_pointers[logoH];
 			for (int i = 0; i < logoH; i++)
 			row_pointers[i] = p + 4 * i * logoW;
 
@@ -471,7 +471,7 @@ bool initSludge(const char *filename) {
 			for (int t2 = 0; t2 < logoH; t2 ++) {
 				int t1 = 0;
 				while (t1 < logoW) {
-					unsigned short c = (unsigned short) fp->readUint16BE();
+					uint16 c = (uint16) fp->readUint16BE();
 					if (c & 32) {
 						n = fgetc(fp) + 1;
 						c -= 32;
@@ -701,7 +701,7 @@ void unfreezeSubs() {
 bool continueFunction(loadedFunction *fun) {
 	bool keepLooping = true;
 	bool advanceNow;
-	unsigned int param;
+	uint param;
 	sludgeCommand com;
 
 	if (fun->cancelMe) {
@@ -1219,7 +1219,7 @@ bool runSludge() {
 bool loadFunctionCode(loadedFunction *newFunc) {
 
 	debug(kSludgeDebugDataLoad, "Current address: %i", bigDataFile->pos());
-	unsigned int numLines, numLinesRead;
+	uint numLines, numLinesRead;
 
 	if (!openSubSlice(newFunc->originalNumber))
 		return false;
@@ -1256,7 +1256,7 @@ bool loadFunctionCode(loadedFunction *newFunc) {
 	return true;
 }
 
-int startNewFunctionNum(unsigned int funcNum, unsigned int numParamsExpected,
+int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 		loadedFunction *calledBy, variableStack *&vStack, bool returnSommet) {
 	loadedFunction *newFunc = new loadedFunction;
 	checkNew(newFunc);

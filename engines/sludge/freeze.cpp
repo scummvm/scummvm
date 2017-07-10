@@ -51,12 +51,12 @@ extern eventHandlers *currentEvents;
 extern personaAnimation *mouseCursorAnim;
 extern int mouseCursorFrameNum;
 extern int cameraX, cameraY;
-extern unsigned int sceneWidth, sceneHeight;
+extern uint sceneWidth, sceneHeight;
 extern float cameraZoom;
 extern zBufferData zBuffer;
 extern bool backdropExists;
 frozenStuffStruct *frozenStuff = NULL;
-extern unsigned int sceneWidth, sceneHeight;
+extern uint sceneWidth, sceneHeight;
 Graphics::Surface freezeSurface;
 
 void shufflePeople();

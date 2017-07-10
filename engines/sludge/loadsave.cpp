@@ -67,17 +67,17 @@ extern char *fontOrderString;                       // "    "   "
 extern FILETIME fileTime;                           // In sludger.cpp
 extern int speechMode;                              // "    "   "
 extern int lightMapNumber;                          // In backdrop.cpp
-extern unsigned int sceneWidth, sceneHeight;        // "    "   "
+extern uint sceneWidth, sceneHeight;        // "    "   "
 extern int cameraX, cameraY;                        // "    "   "
 extern float cameraZoom;
-extern unsigned char brightnessLevel;               // "    "   "
-extern short fontSpace;                             // in textfont.cpp
-extern unsigned char fadeMode;                      // In transition.cpp
+extern byte brightnessLevel;               // "    "   "
+extern int16 fontSpace;                             // in textfont.cpp
+extern byte fadeMode;                      // In transition.cpp
 extern bool captureAllKeys;
 extern bool allowAnyFilename;
-extern unsigned short saveEncoding;                 // in savedata.cpp
-extern unsigned char currentBurnR, currentBurnG, currentBurnB;
-extern unsigned int currentBlankColour;             // in backdrop.cpp
+extern uint16 saveEncoding;                 // in savedata.cpp
+extern byte currentBurnR, currentBurnG, currentBurnB;
+extern uint currentBlankColour;             // in backdrop.cpp
 extern parallaxLayer *parallaxStuff;                //      "
 extern int lightMapMode;                    //      "
 extern int languageNum;

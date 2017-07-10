@@ -74,7 +74,7 @@ bool openObjectSlice(int num) {
 	return sliceBusy = true;
 }
 
-unsigned int openFileFromNum(int num) {
+uint openFileFromNum(int num) {
 //	FILE * dbug = fopen ("debuggy.txt", "at");
 
 	if (sliceBusy) {
@@ -124,16 +124,16 @@ char *convertString(char *s) {
 		}
 	}
 
-	size_t len1 = strlen(s) + 1;
-	size_t len2 = 65535;
-	size_t iconv_value =
+	uint len1 = strlen(s) + 1;
+	uint len2 = 65535;
+	uint iconv_value =
 #ifdef _WIN32
 	iconv(convert, (const char **) tmp1, &len1, tmp2, &len2);
 #else
 	iconv(convert, (char **) tmp1, &len1, tmp2, &len2);
 #endif
 
-	if (iconv_value == (size_t) - 1) {
+	if (iconv_value == (uint) - 1) {
 		switch (errno) {
 			/* See "man 3 iconv" for an explanation. */
 			case EILSEQ:
@@ -190,7 +190,7 @@ void finishAccess() {
 
 int32_t startIndex;
 
-void setFileIndices(Common::File *fp, int numLanguages, unsigned int skipBefore) {
+void setFileIndices(Common::File *fp, int numLanguages, uint skipBefore) {
 	if (fp) {
 		// Keep hold of the file handle, and let things get at it
 		bigDataFile = fp;

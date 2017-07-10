@@ -38,11 +38,11 @@ struct sprite {
 
 class spritePalette {
 public:
-	unsigned short int *pal;
-	unsigned char *r;
-	unsigned char *g;
-	unsigned char *b;
-	unsigned char originalRed, originalGreen, originalBlue, total;
+	uint16 *pal;
+	byte *r;
+	byte *g;
+	byte *b;
+	byte originalRed, originalGreen, originalBlue, total;
 
 	spritePalette() : pal(0), r(0), g(0), b(0), total(0) {
 		originalRed = originalGreen = originalBlue = 255;

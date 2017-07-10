@@ -69,7 +69,7 @@ void debugSounds();
 void loadSounds(Common::SeekableReadStream *stream);
 void saveSounds(Common::WriteStream *stream);
 
-unsigned int getSoundSource(int index);
+uint getSoundSource(int index);
 
 } // End of namespace Sludge
 

@@ -31,7 +31,7 @@ struct statusBar {
 
 struct statusStuff {
 	statusBar *firstStatusBar;
-	unsigned short alignStatus;
+	uint16 alignStatus;
 	int litStatus;
 	int statusX, statusY;
 	int statusR, statusG, statusB;
@@ -44,8 +44,8 @@ void setStatusBar(char *txt);
 void clearStatusBar();
 void addStatusBar();
 void killLastStatus();
-void statusBarColour(unsigned char r, unsigned char g, unsigned char b);
-void statusBarLitColour(unsigned char r, unsigned char g, unsigned char b);
+void statusBarColour(byte r, byte g, byte b);
+void statusBarLitColour(byte r, byte g, byte b);
 void setLitStatus(int i);
 const char *statusBarText();
 void positionStatus(int, int);

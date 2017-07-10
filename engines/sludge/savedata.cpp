@@ -31,7 +31,7 @@
 
 namespace Sludge {
 
-unsigned short saveEncoding = false;
+uint16 saveEncoding = false;
 char encode1 = 0;
 char encode2 = 0;
 
@@ -106,7 +106,7 @@ char *readTextPlain(Common::File *fp) {
 		reply = new char[stringSize + 1];
 		if (reply == NULL)
 			return NULL;
-		size_t bytes_read = fp->read(reply, stringSize);
+		uint bytes_read = fp->read(reply, stringSize);
 		if (bytes_read != stringSize && fp->err()) {
 			warning("Reading error in readTextPlain.");
 		}
@@ -147,8 +147,8 @@ bool fileToStack(char *filename, stackHandler *sH) {
 		return fatal("No such file", filename); //TODO: false value
 	}
 
-	encode1 = (unsigned char)saveEncoding & 255;
-	encode2 = (unsigned char)(saveEncoding >> 8);
+	encode1 = (byte)saveEncoding & 255;
+	encode2 = (byte)(saveEncoding >> 8);
 
 	while (*checker) {
 		if (fd.readByte() != *checker) {
@@ -227,8 +227,8 @@ bool stackToFile(char *filename, const variable &from) {
 
 	variableStack *hereWeAre = from.varData.theStack -> first;
 
-	encode1 = (unsigned char) saveEncoding & 255;
-	encode2 = (unsigned char)(saveEncoding >> 8);
+	encode1 = (byte)saveEncoding & 255;
+	encode2 = (byte)(saveEncoding >> 8);
 
 	if (saveEncoding) {
 		fprintf(fp, "[Custom data (encoded)]\r\n");

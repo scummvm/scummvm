@@ -26,7 +26,7 @@
 
 namespace Sludge {
 
-extern unsigned int winWidth, winHeight;
+extern uint winWidth, winHeight;
 extern int viewportHeight, viewportWidth;
 extern int viewportOffsetX, viewportOffsetY;
 extern int realWinWidth, realWinHeight;

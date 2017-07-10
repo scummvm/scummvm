@@ -267,8 +267,8 @@ bool playMOD(int f, int a, int fromTrack) {
 		return false;
 	}
 
-	unsigned char *memImage;
-	memImage = (unsigned char *) loadEntireFileToMemory(bigDataFile, length);
+	byte *memImage;
+	memImage = (byte *) loadEntireFileToMemory(bigDataFile, length);
 	if (! memImage) return fatal(ERROR_MUSIC_MEMORY_LOW);
 
 	modCache[a].stream = alureCreateStreamFromMemory(memImage, length, 19200, 0, NULL);
@@ -641,7 +641,7 @@ int initMovieSound(int f, ALenum format, int audioChannels, ALuint samplerate,
 }
 #endif
 
-unsigned int getSoundSource(int index) {
+uint getSoundSource(int index) {
 	return 0; /*soundCache[index].playingOnSource;*/ //TODO:false value
 }
 

@@ -51,7 +51,7 @@ uint32 UTF8Converter::nextchar(const char *s, int *i) {
 
 	do {
 		ch <<= 6;
-		ch += (unsigned char)s[(*i)++];
+		ch += (byte)s[(*i)++];
 		sz++;
 	} while (s[*i] && !isutf(s[*i]));
 	ch -= offsetsFromUTF8[sz - 1];
