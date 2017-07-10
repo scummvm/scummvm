@@ -185,6 +185,32 @@ public:
 	}
 #endif
 
+
+	/**
+	 * Write the given 32-bit floating point value stored
+	 * in little endian(LSB first) order into the stream.
+	 */
+	FORCEINLINE void writeFloatLE(float value) {
+		uint32 n;
+
+		memcpy(&n, &value, 4);
+
+		writeUint32LE(n);
+	}
+
+
+	/**
+	 * Write the given 32-bit floating point value stored
+	 * in big endian order into the stream.
+	 */
+	FORCEINLINE void writeFloatBE(float value) {
+		uint32 n;
+
+		memcpy(&n, &value, 4);
+
+		writeUint32BE(n);
+	}
+
 	/**
 	 * Write the given string to the stream.
 	 * This writes str.size() characters, but no terminating zero byte.
@@ -410,6 +436,22 @@ public:
 	 */
 	FORCEINLINE float readFloatLE() {
 		uint32 n = readUint32LE();
+		float f;
+
+		memcpy(&f, &n, 4);
+
+		return f;
+	}
+
+	/**
+	 * Read a 32-bit floating point value stored in big endian
+	 * order from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE float readFloatBE() {
+		uint32 n = readUint32BE();
 		float f;
 
 		memcpy(&f, &n, 4);
