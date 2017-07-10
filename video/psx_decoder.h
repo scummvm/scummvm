@@ -125,7 +125,7 @@ private:
 
 	class PSXAudioTrack : public AudioTrack {
 	public:
-		PSXAudioTrack(Common::SeekableReadStream *sector);
+		PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType);
 		~PSXAudioTrack();
 
 		bool endOfTrack() const;

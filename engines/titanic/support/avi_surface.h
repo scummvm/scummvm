@@ -43,10 +43,9 @@ enum MovieFlag {
 
 class AVIDecoder : public Video::AVIDecoder {
 public:
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
-		Video::AVIDecoder(soundType) {}
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
-		Video::AVIDecoder(frameRateOverride, soundType) {}
+	AVIDecoder() {}
+	AVIDecoder(const Common::Rational &frameRateOverride) :
+		Video::AVIDecoder(frameRateOverride) {}
 
 	/**
 	 * Returns the number of video tracks the decoder has

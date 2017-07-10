@@ -326,8 +326,10 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 #pragma mark AVIPlayer
 
 AVIPlayer::AVIPlayer(EventManager *eventMan) :
-	VideoPlayer(eventMan, new Video::AVIDecoder(Audio::Mixer::kSFXSoundType)),
-	_status(kAVINotOpen) {}
+	VideoPlayer(eventMan, new Video::AVIDecoder()),
+	_status(kAVINotOpen) {
+	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
+}
 
 AVIPlayer::IOStatus AVIPlayer::open(const Common::String &fileName) {
 	if (_status != kAVINotOpen) {
@@ -970,11 +972,13 @@ void VMDPlayer::restrictPalette(const uint8 startColor, const int16 endColor) {
 #pragma mark DuckPlayer
 
 DuckPlayer::DuckPlayer(EventManager *eventMan, SegManager *segMan) :
-	VideoPlayer(eventMan, new Video::AVIDecoder(Audio::Mixer::kSFXSoundType)),
+	VideoPlayer(eventMan, new Video::AVIDecoder()),
 	_plane(nullptr),
 	_status(kDuckClosed),
 	_volume(Audio::Mixer::kMaxChannelVolume),
-	_doFrameOut(false) {}
+	_doFrameOut(false) {
+	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
+}
 
 void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, const int16 x, const int16 y) {
 	if (_status != kDuckClosed) {

@@ -595,8 +595,6 @@ private:
 	public:
 		VMDAudioTrack(VMDDecoder *decoder);
 
-		Audio::Mixer::SoundType getSoundType() const;
-
 	protected:
 		virtual Audio::AudioStream *getAudioStream() const;
 

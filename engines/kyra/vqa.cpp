@@ -105,7 +105,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *stream) {
 		case MKTAG('V','Q','H','D'):
 			handleVQHD(_fileStream);
 			if (_header.flags & 1) {
-				audioTrack = new VQAAudioTrack(&_header);
+				audioTrack = new VQAAudioTrack(&_header, getSoundType());
 				addTrack(audioTrack);
 			}
 			foundVQHD = true;
@@ -282,7 +282,8 @@ void VQADecoder::readNextPacket() {
 
 // -----------------------------------------------------------------------
 
-VQADecoder::VQAAudioTrack::VQAAudioTrack(const VQAHeader *header) {
+VQADecoder::VQAAudioTrack::VQAAudioTrack(const VQAHeader *header, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
 	_audioStream = Audio::makeQueuingAudioStream(header->freq, false);
 }
 

@@ -1349,7 +1349,9 @@ void BinkDecoder::BinkVideoTrack::IDCTPut(DecodeContext &ctx, int16 *block) {
 	}
 }
 
-BinkDecoder::BinkAudioTrack::BinkAudioTrack(BinkDecoder::AudioInfo &audio) : _audioInfo(&audio) {
+BinkDecoder::BinkAudioTrack::BinkAudioTrack(BinkDecoder::AudioInfo &audio, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType),
+		_audioInfo(&audio) {
 	_audioStream = Audio::makeQueuingAudioStream(_audioInfo->outSampleRate, _audioInfo->outChannels == 2);
 }
 
@@ -1598,7 +1600,7 @@ void BinkDecoder::initAudioTrack(AudioInfo &audio) {
 	else if (audio.codec == kAudioCodecDCT)
 		audio.dct  = new Common::DCT(frameLenBits, Common::DCT::DCT_III);
 
-	addTrack(new BinkAudioTrack(audio));
+	addTrack(new BinkAudioTrack(audio, getSoundType()));
 }
 
 } // End of namespace Video

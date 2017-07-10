@@ -59,7 +59,7 @@ class BigHuffmanTree;
  */
 class SmackerDecoder : public VideoDecoder {
 public:
-	SmackerDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
+	SmackerDecoder();
 	virtual ~SmackerDecoder();
 
 	virtual bool loadStream(Common::SeekableReadStream *stream);
@@ -164,8 +164,6 @@ private:
 		bool isRewindable() const { return true; }
 		bool rewind();
 
-		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
-
 		void queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize);
 		void queuePCM(byte *buffer, uint32 bufferSize);
 
@@ -173,7 +171,6 @@ private:
 		Audio::AudioStream *getAudioStream() const;
 
 	private:
-		Audio::Mixer::SoundType _soundType;
 		Audio::QueuingAudioStream *_audioStream;
 		AudioInfo _audioInfo;
 	};
@@ -186,8 +183,6 @@ private:
 	byte *_frameTypes;
 
 	uint32 _firstFrameStart;
-
-	Audio::Mixer::SoundType _soundType;
 };
 
 } // End of namespace Video

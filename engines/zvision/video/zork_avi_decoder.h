@@ -31,8 +31,7 @@ namespace ZVision {
 
 class ZorkAVIDecoder : public Video::AVIDecoder {
 public:
-	ZorkAVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
-		Video::AVIDecoder(soundType) {}
+	ZorkAVIDecoder() {}
 
 	virtual ~ZorkAVIDecoder() {}
 

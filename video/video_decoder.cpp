@@ -40,6 +40,7 @@ VideoDecoder::VideoDecoder() {
 	_playbackRate = 0;
 	_audioVolume = Audio::Mixer::kMaxChannelVolume;
 	_audioBalance = 0;
+	_soundType = Audio::Mixer::kPlainSoundType;
 	_pauseLevel = 0;
 	_needsUpdate = false;
 	_lastTimeChange = 0;
@@ -141,6 +142,15 @@ void VideoDecoder::setBalance(int8 balance) {
 	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
 			((AudioTrack *)*it)->setBalance(_audioBalance);
+}
+
+Audio::Mixer::SoundType VideoDecoder::getSoundType() const {
+	return _soundType;
+}
+
+void VideoDecoder::setSoundType(Audio::Mixer::SoundType soundType) {
+	assert(!isVideoLoaded());
+	_soundType = soundType;
 }
 
 bool VideoDecoder::isVideoLoaded() const {
@@ -577,7 +587,11 @@ Audio::Timestamp VideoDecoder::FixedRateVideoTrack::getDuration() const {
 	return getFrameTime(getFrameCount());
 }
 
-VideoDecoder::AudioTrack::AudioTrack() : _volume(Audio::Mixer::kMaxChannelVolume), _balance(0), _muted(false) {
+VideoDecoder::AudioTrack::AudioTrack(Audio::Mixer::SoundType soundType) :
+		_volume(Audio::Mixer::kMaxChannelVolume),
+		_soundType(soundType),
+		_balance(0),
+		_muted(false) {
 }
 
 bool VideoDecoder::AudioTrack::endOfTrack() const {
@@ -605,7 +619,7 @@ void VideoDecoder::AudioTrack::start() {
 	Audio::AudioStream *stream = getAudioStream();
 	assert(stream);
 
-	g_system->getMixer()->playStream(getSoundType(), &_handle, stream, -1, _muted ? 0 : getVolume(), getBalance(), DisposeAfterUse::NO);
+	g_system->getMixer()->playStream(_soundType, &_handle, stream, -1, _muted ? 0 : getVolume(), getBalance(), DisposeAfterUse::NO);
 
 	// Pause the audio again if we're still paused
 	if (isPaused())
@@ -624,7 +638,7 @@ void VideoDecoder::AudioTrack::start(const Audio::Timestamp &limit) {
 
 	stream = Audio::makeLimitingAudioStream(stream, limit, DisposeAfterUse::NO);
 
-	g_system->getMixer()->playStream(getSoundType(), &_handle, stream, -1, _muted ? 0 : getVolume(), getBalance(), DisposeAfterUse::YES);
+	g_system->getMixer()->playStream(_soundType, &_handle, stream, -1, _muted ? 0 : getVolume(), getBalance(), DisposeAfterUse::YES);
 
 	// Pause the audio again if we're still paused
 	if (isPaused())
@@ -679,7 +693,8 @@ bool VideoDecoder::SeekableAudioTrack::seek(const Audio::Timestamp &time) {
 	return stream->seek(time);
 }
 
-VideoDecoder::StreamFileAudioTrack::StreamFileAudioTrack() {
+VideoDecoder::StreamFileAudioTrack::StreamFileAudioTrack(Audio::Mixer::SoundType soundType) :
+		SeekableAudioTrack(soundType) {
 	_stream = 0;
 }
 
@@ -737,7 +752,7 @@ bool VideoDecoder::addStreamFileTrack(const Common::String &baseName) {
 	if (!isVideoLoaded())
 		return false;
 
-	StreamFileAudioTrack *track = new StreamFileAudioTrack();
+	StreamFileAudioTrack *track = new StreamFileAudioTrack(getSoundType());
 
 	bool result = track->loadFromFile(baseName);
 
