@@ -596,6 +596,7 @@ void RivenGraphics::beginCredits() {
 
 	// And clear our screen too
 	clearMainScreen();
+	_effectScreen->fillRect(Common::Rect(0, 0, 608, 392), _pixelFormat.RGBToColor(0, 0, 0));
 }
 
 void RivenGraphics::updateCredits() {
