@@ -2593,7 +2593,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 6 - English/German/French DOS CD - LOWRES
 	// SCI interpreter version 1.001.115
-	{"lsl6", "", {
+	{"lsl6", "CD", {
 		{"resource.map", 0, "0b91234b7112782962cb480b7791b6e2", 7263},
 		{"resource.000", 0, "57d5fe8bb9e044158514476ea7678eb0", 5754790},
 		AD_LISTEND},
@@ -2601,7 +2601,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 6 - German DOS CD - LOWRES (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 1.001.115
-	{"lsl6", "", {
+	{"lsl6", "CD", {
 		{"resource.map", 0, "bafe85f32738854135991d4324ad147e", 7268},
 		{"resource.000", 0, "f6cbc6da7b90ea135883e0759848ca2c", 5773160},
 		AD_LISTEND},
@@ -2609,7 +2609,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 6 - French DOS CD - LOWRES (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 1.001.115
-	{"lsl6", "", {
+	{"lsl6", "CD", {
 		{"resource.map", 0, "97797ea775baaf18a1907d357d3c0ea6", 7268},
 		{"resource.000", 0, "f6cbc6da7b90ea135883e0759848ca2c", 5776092},
 		AD_LISTEND},
