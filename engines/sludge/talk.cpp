@@ -75,9 +75,6 @@ void killAllSpeech() {
 	}
 }
 
-#define TF_max(a, b) ((a > b) ? a : b)
-#define TF_min(a, b) ((a > b) ? b : a)
-
 inline void setObjFontColour(objectType *t) {
 	setFontColour(speech->talkCol, t->r, t->g, t->b);
 }
