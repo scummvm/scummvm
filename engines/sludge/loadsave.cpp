@@ -44,6 +44,7 @@
 #include "sludge/loadsave.h"
 #include "sludge/bg_effects.h"
 #include "sludge/thumbnail.h"
+#include "sludge/utf8.h"
 #include "sludge/CommonCode/version.h"
 
 namespace Sludge {
@@ -63,7 +64,7 @@ extern personaAnimation *mouseCursorAnim;           // In cursor.cpp
 extern int mouseCursorFrameNum;                     // "    "   "
 extern int loadedFontNum, fontHeight, fontTableSize;    // In fonttext.cpp
 extern int numFontColours;                          // "    "   "
-extern char *fontOrderString;                       // "    "   "
+extern UTF8Converter fontOrder;                       // "    "   "
 extern FILETIME fileTime;                           // In sludger.cpp
 extern int speechMode;                              // "    "   "
 extern int lightMapNumber;                          // In backdrop.cpp
@@ -410,7 +411,7 @@ bool saveGame(char *fname) {
 	if (fontTableSize > 0) {
 		fp->writeUint16BE(loadedFontNum);
 		fp->writeUint16BE(fontHeight);
-		writeString(fontOrderString, fp);
+		writeString(fontOrder.getUTF8String(), fp);
 	}
 	putSigned(fontSpace, fp);
 

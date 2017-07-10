@@ -70,7 +70,12 @@ public:
 	/**
 	 * get converted U32String
 	 */
-	Common::U32String getU32String() { return _str32; };
+	Common::U32String getU32String() const { return _str32; };
+
+	/**
+	 * get origin UTF8String
+	 */
+	Common::String getUTF8String() const { return _str; };
 
 	/** Convert UTF8 String to UTF32 String
 	 */

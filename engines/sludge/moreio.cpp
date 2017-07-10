@@ -40,8 +40,8 @@ namespace Sludge {
 
 bool allowAnyFilename = true;
 
-void writeString(char *s, Common::WriteStream *stream) {
-	int a, len = strlen(s);
+void writeString(Common::String s, Common::WriteStream *stream) {
+	int a, len = s.size();
 	stream->writeUint16BE(len);
 	for (a = 0; a < len; a++) {
 		stream->writeByte(s[a] + 1);
