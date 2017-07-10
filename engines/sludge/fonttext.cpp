@@ -32,7 +32,7 @@ namespace Sludge {
 
 spriteBank theFont;
 int fontHeight = 0, numFontColours, loadedFontNum;
-Common::U32String fontOrderString;
+UTF8Converter fontOrder;
 int16 fontSpace = -1;
 
 uint32 *fontTable = NULL;
@@ -57,7 +57,7 @@ bool isInFont(char *theText) {
 	uint32 c = str32[0];
 
 	// check if font order contains the utf8 char
-	return fontOrderString.contains(c);
+	return fontOrder.getU32String().contains(c);
 }
 
 int stringLength(char *theText) {
@@ -161,14 +161,14 @@ void setFontColour(spritePalette &sP, byte r, byte g, byte b) {
 }
 
 bool loadFont(int filenum, const char *charOrder, int h) {
-	fontOrderString.clear();
-	fontOrderString = UTF8Converter::convertUtf8ToUtf32(charOrder);
+	fontOrder.setUTF8String(charOrder);
 
 	forgetSpriteBank(theFont);
 
 	loadedFontNum = filenum;
 
 	// get max value among all utf8 chars
+	Common::U32String fontOrderString = fontOrder.getU32String();
 	fontTableSize = 0;
 	for (uint32 i = 0; i < fontOrderString.size(); ++i) {
 		uint32 c = fontOrderString[i];
