@@ -189,7 +189,7 @@ public:
 	void setMainCursor(uint16 cursor);
 	uint16 getMainCursor() { return _mainCursor; }
 	void checkCursorHints();
-	MystArea *updateCurrentResource();
+	MystArea *forceUpdateClickedResource();
 	void pollAndDiscardEvents();
 	bool wait(uint32 duration, bool skippable = false);
 
@@ -280,7 +280,10 @@ private:
 	MystArea *_clickedResource;
 
 	// Input
+	bool _mouseClicked;
+	bool _mouseMoved;
 	bool _escapePressed;
+	bool _interactive; // Is the game currently interactive
 
 	Common::Array<MystCursorHint> _cursorHints;
 	void loadCursorHints();
@@ -288,6 +291,8 @@ private:
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
 
 	void pauseEngineIntern(bool) override;
+
+	void updateActiveResource();
 };
 
 template<class T>

@@ -2345,7 +2345,7 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(0).wdib, src, dest);
 
 	if (piano.contains(mouse)) {
-		MystArea *resource = _vm->updateCurrentResource();
+		MystArea *resource = _vm->forceUpdateClickedResource();
 		if (resource && resource->type == kMystAreaDrag) {
 			// Press new key
 			key = static_cast<MystAreaDrag *>(resource);
@@ -2372,8 +2372,6 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 			_vm->_sound->resumeBackgroundMyst();
 		}
 	}
-
-	_vm->_system->updateScreen();
 }
 
 void Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

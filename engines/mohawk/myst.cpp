@@ -85,7 +85,10 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 
 	_prevStack = nullptr;
 
+	_mouseClicked = false;
+	_mouseMoved = false;
 	_escapePressed = false;
+	_interactive = true;
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -248,7 +251,7 @@ void MohawkEngine_Myst::playMovieBlockingCentered(const Common::String &fileName
 }
 
 void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
-	assert(video);
+	_interactive = false;
 
 	// Sanity check
 	if (video->isLooping())
@@ -266,14 +269,17 @@ void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
 
 	// Ensure it's removed
 	_video->removeEntry(video);
+	_interactive = true;
 }
 
 void MohawkEngine_Myst::playSoundBlocking(uint16 id, byte volume) {
+	_interactive = false;
 	_sound->playSound(id, volume);
 
 	while (_sound->isPlaying() && !shouldQuit()) {
 		doFrame();
 	}
+	_interactive = true;
 }
 
 Common::Error MohawkEngine_Myst::run() {
@@ -332,23 +338,14 @@ void MohawkEngine_Myst::doFrame() {
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-			case Common::EVENT_MOUSEMOVE: {
-				if (_clickedResource && _clickedResource->isEnabled()) {
-					_clickedResource->handleMouseDrag();
-				}
+			case Common::EVENT_MOUSEMOVE:
+				_mouseMoved = true;
 				break;
-			}
 			case Common::EVENT_LBUTTONUP:
-				if (_clickedResource && _clickedResource->isEnabled()) {
-					_clickedResource->handleMouseUp();
-					_clickedResource = nullptr;
-				}
+				_mouseClicked = false;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				if (_activeResource && _activeResource->isEnabled()) {
-					_clickedResource = _activeResource;
-					_clickedResource->handleMouseDown();
-				}
+				_mouseClicked = true;
 				break;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
@@ -413,7 +410,10 @@ void MohawkEngine_Myst::doFrame() {
 		}
 	}
 
-	checkCurrentResource();
+	if (!_scriptParser->isScriptRunning() && _interactive) {
+		updateActiveResource();
+		checkCurrentResource();
+	}
 
 	_system->updateScreen();
 
@@ -462,7 +462,9 @@ void MohawkEngine_Myst::pauseEngineIntern(bool pause) {
 		_video->pauseVideos();
 	} else {
 		_video->resumeVideos();
-		_system->updateScreen();
+
+		// We may have missed events while paused
+		_mouseClicked = (_eventMan->getButtonState() & 1) != 0;
 	}
 }
 
@@ -638,6 +640,9 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	_cache.clear();
 	_gfx->clearCache();
 
+	_mouseClicked = false;
+	_mouseMoved = false;
+	_escapePressed = false;
 	_curCard = card;
 
 	// Load a bunch of stuff
@@ -679,13 +684,6 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 		}
 	}
 
-	// Make sure we have the right cursor showing
-	_hoverResource = nullptr;
-	_activeResource = nullptr;
-	_clickedResource = nullptr;
-
-	checkCurrentResource();
-
 	// Debug: Show resource rects
 	if (_showResourceRects)
 		drawResourceRects();
@@ -700,6 +698,18 @@ void MohawkEngine_Myst::drawResourceRects() {
 	_system->updateScreen();
 }
 
+void MohawkEngine_Myst::updateActiveResource() {
+	const Common::Point &mouse = _system->getEventManager()->getMousePos();
+
+	_activeResource = nullptr;
+	for (uint16 i = 0; i < _resources.size(); i++) {
+		if (_resources[i]->contains(mouse) && _resources[i]->canBecomeActive()) {
+			_activeResource = _resources[i];
+			break;
+		}
+	}
+}
+
 void MohawkEngine_Myst::checkCurrentResource() {
 	const Common::Point &mouse = _system->getEventManager()->getMousePos();
 
@@ -709,26 +719,45 @@ void MohawkEngine_Myst::checkCurrentResource() {
 		_hoverResource = nullptr;
 	}
 
-	// See what resource we're over
-	_activeResource = nullptr;
 	for (uint16 i = 0; i < _resources.size(); i++) {
-		if (_resources[i]->contains(mouse)) {
-			if (_hoverResource != _resources[i] && _resources[i]->type == kMystAreaHover) {
-				_hoverResource = static_cast<MystAreaHover *>(_resources[i]);
-				_hoverResource->handleMouseEnter();
-			}
-
-			if (!_activeResource && _resources[i]->canBecomeActive()) {
-				_activeResource = _resources[i];
-			}
+		if (_resources[i]->contains(mouse) && _resources[i]->type == kMystAreaHover
+			&& _hoverResource != _resources[i]) {
+			_hoverResource = static_cast<MystAreaHover *>(_resources[i]);
+			_hoverResource->handleMouseEnter();
 		}
 	}
+
+	if (!_mouseClicked && _clickedResource) {
+		if (_clickedResource->isEnabled()) {
+			_clickedResource->handleMouseUp();
+		}
+		_clickedResource = nullptr;
+	}
+
+	if (_mouseMoved && _clickedResource) {
+		if (_clickedResource->isEnabled()) {
+			_clickedResource->handleMouseDrag();
+		}
+	}
+
+	if (_mouseClicked && !_clickedResource) {
+		if (_activeResource && _activeResource->isEnabled()) {
+			_clickedResource = _activeResource;
+			_clickedResource->handleMouseDown();
+		}
+	}
+
+	_mouseMoved = false;
 
 	checkCursorHints();
 }
 
-MystArea *MohawkEngine_Myst::updateCurrentResource() {
-	return _activeResource;
+MystArea *MohawkEngine_Myst::forceUpdateClickedResource() {
+	updateActiveResource();
+
+	_clickedResource = _activeResource;
+
+	return _clickedResource;
 }
 
 void MohawkEngine_Myst::loadCard() {
@@ -891,6 +920,9 @@ void MohawkEngine_Myst::unloadCard() {
 	_view.conditionalImages.clear();
 	_view.soundBlock.soundList.clear();
 	_view.scriptResources.clear();
+	_hoverResource = nullptr;
+	_activeResource = nullptr;
+	_clickedResource = nullptr;
 }
 
 void MohawkEngine_Myst::runInitScript() {
@@ -1160,7 +1192,7 @@ bool MohawkEngine_Myst::hasGameSaveSupport() const {
 }
 
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {
-	if (_scriptParser->isScriptRunning()) {
+	if (_scriptParser->isScriptRunning() || !_interactive) {
 		return false;
 	}
 
