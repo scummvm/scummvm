@@ -471,7 +471,7 @@ void drawPeople() {
 			}
 			int fNumSign = myAnim->frames[thisPerson->frameNum].frameNum;
 			int m = fNumSign < 0;
-			int fNum = abs(fNumSign);
+			int fNum = ABS(fNumSign);
 			if (fNum >= myAnim->theSprites->bank.total) {
 				fNum = 0;
 				m = 2 - m;
@@ -643,9 +643,9 @@ bool walkMe(onScreenPerson *thisPerson, bool move = true) {
 		if (s < 0.2)
 			s = 0.2;
 
-		maxDiff = (abs(xDiff) >= abs(yDiff)) ? abs(xDiff) : abs(yDiff);
+		maxDiff = (ABS(xDiff) >= ABS(yDiff)) ? ABS(xDiff) : ABS(yDiff);
 
-		if (abs(maxDiff) > s) {
+		if (ABS(maxDiff) > s) {
 			if (thisPerson->spinning) {
 				spinStep(thisPerson);
 				setFrames(*thisPerson, ANI_WALK);

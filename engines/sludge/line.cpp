@@ -63,8 +63,8 @@ void drawLine(int x1, int y1, int x2, int y2) {
 	} else
 		y = y1;
 
-	int diffX = abs(x2 - x1);
-	int diffY = abs(y2 - y1);
+	int diffX = ABS(x2 - x1);
+	int diffY = ABS(y2 - y1);
 
 	if (!diffX) {
 		diffX = 1;
