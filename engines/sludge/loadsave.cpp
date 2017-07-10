@@ -413,7 +413,7 @@ bool saveGame(char *fname) {
 		fp->writeUint16BE(fontHeight);
 		writeString(fontOrder.getUTF8String(), fp);
 	}
-	putSigned(fontSpace, fp);
+	fp->writeSint16LE(fontSpace);
 
 	// Save backdrop
 	fp->writeUint16BE(cameraX);
@@ -595,7 +595,7 @@ bool loadGame(char *fname) {
 	loadFont(fontNum, charOrder, fontHeight);
 	delete []charOrder;
 
-	fontSpace = getSigned(fp);
+	fontSpace = fp->readSint16LE();
 
 	killAllPeople();
 	killAllRegions();

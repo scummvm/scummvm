@@ -178,7 +178,7 @@ void saveStatusBars(Common::WriteStream *stream) {
 	statusBar *viewLine = nowStatus->firstStatusBar;
 
 	stream->writeUint16BE(nowStatus->alignStatus);
-	putSigned(nowStatus->litStatus, stream);
+	stream->writeSint16LE(nowStatus->litStatus);
 	stream->writeUint16BE(nowStatus->statusX);
 	stream->writeUint16BE(nowStatus->statusY);
 
@@ -202,7 +202,7 @@ bool loadStatusBars(Common::SeekableReadStream *stream) {
 	clearStatusBar();
 
 	nowStatus->alignStatus = stream->readUint16BE();
-	nowStatus->litStatus = getSigned(stream);
+	nowStatus->litStatus = stream->readSint16LE();
 	nowStatus->statusX = stream->readUint16BE();
 	nowStatus->statusY = stream->readUint16BE();
 
