@@ -23,7 +23,6 @@
 #include "common/file.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/debug.h"
 #include "sludge/variable.h"
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
@@ -109,7 +108,7 @@ char *readTextPlain(Common::File *fp) {
 			return NULL;
 		size_t bytes_read = fp->read(reply, stringSize);
 		if (bytes_read != stringSize && fp->err()) {
-			debugOut("Reading error in readTextPlain.\n");
+			warning("Reading error in readTextPlain.");
 		}
 		fp->readByte();  // Skip the newline character
 		reply[stringSize] = 0;

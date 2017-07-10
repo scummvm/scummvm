@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	builtin.o \
 	console.o \
 	cursors.o \
-	debug.o \
 	detection.o \
 	fileset.o \
 	floor.o \

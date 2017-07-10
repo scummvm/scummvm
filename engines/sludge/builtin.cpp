@@ -20,7 +20,6 @@
  *
  */
 
-#include "sludge/debug.h"
 #include "sludge/allfiles.h"
 #include "sludge/sludger.h"
 #include "sludge/builtin.h"

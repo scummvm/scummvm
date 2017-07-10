@@ -29,7 +29,6 @@
 #include "graphics/surface.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/debug.h"
 #include "sludge/language.h"
 #include "sludge/stringy.h"
 #include "sludge/sludger.h"
@@ -329,8 +328,6 @@ int main_loop(const char *filename)
 		handleSoundLists();
 		Wait_Frame();
 	}
-
-	debugOut("Bye!\n\n");
 
 	delete[] gamePath;
 

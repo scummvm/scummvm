@@ -20,7 +20,6 @@
  *
  */
 #include "sludge/allfiles.h"
-#include "sludge/debug.h"
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/sprites.h"
@@ -82,7 +81,6 @@ void freezeGraphics() {
 }
 
 bool freeze() {
-	debugOut("calling freeze()\n");
 	frozenStuffStruct *newFreezer = new frozenStuffStruct;
 	if (!checkNew(newFreezer))
 		return false;

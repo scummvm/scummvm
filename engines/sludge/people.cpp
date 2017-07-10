@@ -35,7 +35,6 @@
 #include "sludge/floor.h"
 #include "sludge/zbuffer.h"
 #include "sludge/sound.h"
-#include "sludge/debug.h"
 #include "sludge/CommonCode/version.h"
 
 #define ANGLEFIX (180.0 / 3.14157)

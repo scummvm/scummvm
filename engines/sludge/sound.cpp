@@ -32,7 +32,6 @@
 #include "audio/mods/protracker.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/debug.h"
 #include "sludge/newfatal.h"
 #include "sludge/sound.h"
 #include "sludge/moreio.h"
@@ -418,7 +417,7 @@ bool startSound(int f, bool loopy) {
 		Audio::AudioStream *stream = nullptr;
 		int a = makeSoundAudioStream(f, stream, loopy);
 		if (a == -1) {
-			debugOut("Failed to cache sound!\n");
+			warning("Failed to cache sound!");
 			return false;
 		}
 
@@ -552,7 +551,7 @@ void playSoundList(soundList *s) {
 		Audio::AudioStream *stream;
 		int a = makeSoundAudioStream(s->sound, stream, false);
 		if (a == -1) {
-			debugOut("Failed to cache sound!\n");
+			warning("Failed to cache sound!");
 			return;
 		}
 

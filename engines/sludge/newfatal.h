@@ -36,7 +36,6 @@ int checkNew(const void *mem);
 void displayFatal();
 void registerWindowForFatal();
 void setFatalInfo(const Common::String &userFunc, const Common::String &BIF);
-void warning(const Common::String &l);
 void setResourceForFatal(int n);
 const char *resourceNameFromNum(int i);
 

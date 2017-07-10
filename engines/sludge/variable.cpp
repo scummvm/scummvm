@@ -22,7 +22,6 @@
 
 #include "common/debug.h"
 
-#include "sludge/debug.h"
 #include "sludge/allfiles.h"
 #include "sludge/variable.h"
 #include "sludge/moreio.h"
