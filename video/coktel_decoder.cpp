@@ -2784,6 +2784,7 @@ void VMDDecoder::setAutoStartSound(bool autoStartSound) {
 }
 
 AdvancedVMDDecoder::AdvancedVMDDecoder(Audio::Mixer::SoundType soundType) {
+	setSoundType(soundType);
 	_decoder = new VMDDecoder(g_system->getMixer(), soundType);
 	_decoder->setAutoStartSound(false);
 }
@@ -2860,11 +2861,9 @@ Common::Rational AdvancedVMDDecoder::VMDVideoTrack::getFrameRate() const {
 	return _decoder->getFrameRate();
 }
 
-AdvancedVMDDecoder::VMDAudioTrack::VMDAudioTrack(VMDDecoder *decoder) : _decoder(decoder) {
-}
-
-Audio::Mixer::SoundType AdvancedVMDDecoder::VMDAudioTrack::getSoundType() const {
-	return _decoder->getSoundType();
+AdvancedVMDDecoder::VMDAudioTrack::VMDAudioTrack(VMDDecoder *decoder) :
+		AudioTrack(decoder->getSoundType()),
+		_decoder(decoder) {
 }
 
 Audio::AudioStream *AdvancedVMDDecoder::VMDAudioTrack::getAudioStream() const {

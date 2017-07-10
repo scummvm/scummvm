@@ -52,7 +52,7 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	_priorFrame = -1;
 
 	// Create a decoder
-	_decoder = new AVIDecoder(Audio::Mixer::kPlainSoundType);
+	_decoder = new AVIDecoder();
 	if (!_decoder->loadFile(_movieName))
 		error("Could not open video - %s", key.getString().c_str());
 

@@ -76,13 +76,13 @@ enum {
 };
 
 
-AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) :
-		_frameRateOverride(0), _soundType(soundType) {
+AVIDecoder::AVIDecoder() :
+		_frameRateOverride(0) {
 	initCommon();
 }
 
-AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType) :
-	_frameRateOverride(frameRateOverride), _soundType(soundType) {
+AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride) :
+		_frameRateOverride(frameRateOverride) {
 	initCommon();
 }
 
@@ -91,7 +91,7 @@ AVIDecoder::~AVIDecoder() {
 }
 
 AVIDecoder::AVIAudioTrack *AVIDecoder::createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo) {
-	return new AVIAudioTrack(sHeader, wvInfo, _soundType);
+	return new AVIAudioTrack(sHeader, wvInfo, getSoundType());
 }
 
 bool AVIDecoder::seekToFrame(uint frame) {
@@ -1007,8 +1007,13 @@ void AVIDecoder::AVIVideoTrack::setDither(const byte *palette) {
 	_videoCodec->setDither(Image::Codec::kDitherTypeVFW, palette);
 }
 
-AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType)
-		: _audsHeader(streamHeader), _wvInfo(waveFormat), _soundType(soundType), _audioStream(0), _packetStream(0), _curChunk(0) {
+AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType),
+		_audsHeader(streamHeader),
+		_wvInfo(waveFormat),
+		_audioStream(0),
+		_packetStream(0),
+		_curChunk(0) {
 }
 
 AVIDecoder::AVIAudioTrack::~AVIAudioTrack() {

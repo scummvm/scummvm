@@ -277,7 +277,7 @@ uint32 BigHuffmanTree::getCode(Common::BitStream &bs) {
 	return v;
 }
 
-SmackerDecoder::SmackerDecoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
+SmackerDecoder::SmackerDecoder() {
 	_fileStream = 0;
 	_firstFrameStart = 0;
 	_frameTypes = 0;
@@ -369,7 +369,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 			if (_header.audioInfo[i].compression == kCompressionRDFT || _header.audioInfo[i].compression == kCompressionDCT)
 				warning("Unhandled Smacker v2 audio compression");
 
-			addTrack(new SmackerAudioTrack(_header.audioInfo[i], _soundType));
+			addTrack(new SmackerAudioTrack(_header.audioInfo[i], getSoundType()));
 		}
 	}
 
@@ -754,7 +754,8 @@ void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream
 }
 
 SmackerDecoder::SmackerAudioTrack::SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType) :
-		_audioInfo(audioInfo), _soundType(soundType) {
+		AudioTrack(soundType),
+		_audioInfo(audioInfo) {
 	_audioStream = Audio::makeQueuingAudioStream(_audioInfo.sampleRate, _audioInfo.isStereo);
 }
 

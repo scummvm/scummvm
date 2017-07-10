@@ -320,7 +320,7 @@ private:
 
 	class BinkAudioTrack : public AudioTrack {
 	public:
-		BinkAudioTrack(AudioInfo &audio);
+		BinkAudioTrack(AudioInfo &audio, Audio::Mixer::SoundType soundType);
 		~BinkAudioTrack();
 
 		/** Decode an audio packet. */
