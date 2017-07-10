@@ -165,8 +165,8 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 	if (spriteBankVersion == 3) {
 		debug(kSludgeDebugGraphics, "png sprite");
 		for (int i = 0; i < total; i++) {
-			loadhere.sprites[i].xhot = getSigned(bigDataFile);
-			loadhere.sprites[i].yhot = getSigned(bigDataFile);
+			loadhere.sprites[i].xhot = bigDataFile->readSint16LE();
+			loadhere.sprites[i].yhot = bigDataFile->readSint16LE();
 			if (!ImgLoader::loadPNGImage(bigDataFile, &loadhere.sprites[i].surface, false)) {
 				return fatal("fail to read png sprite");
 			}
@@ -183,8 +183,8 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		if (spriteBankVersion == 2) {
 			picwidth = bigDataFile->readUint16BE();
 			picheight = bigDataFile->readUint16BE();
-			loadhere.sprites[i].xhot = getSigned(bigDataFile);
-			loadhere.sprites[i].yhot = getSigned(bigDataFile);
+			loadhere.sprites[i].xhot = bigDataFile->readSint16LE();
+			loadhere.sprites[i].yhot = bigDataFile->readSint16LE();
 		} else {
 			picwidth = (byte)bigDataFile->readByte();
 			picheight = (byte)bigDataFile->readByte();

@@ -1049,8 +1049,8 @@ bool savePeople(Common::WriteStream *stream) {
 	onScreenPerson *me = allPeople;
 	int countPeople = 0, a;
 
-	putSigned(scaleHorizon, stream);
-	putSigned(scaleDivide, stream);
+	stream->writeSint16LE(scaleHorizon);
+	stream->writeSint16LE(scaleDivide);
 
 	while (me) {
 		countPeople++;
@@ -1081,7 +1081,7 @@ bool savePeople(Common::WriteStream *stream) {
 		stream->writeUint16BE(me->frameTick);
 		stream->writeUint16BE(me->walkSpeed);
 		stream->writeUint16BE(me->spinSpeed);
-		putSigned(me->floaty, stream);
+		stream->writeSint16LE(me->floaty);
 		stream->writeByte(me->show);
 		stream->writeByte(me->walking);
 		stream->writeByte(me->spinning);
@@ -1095,9 +1095,9 @@ bool savePeople(Common::WriteStream *stream) {
 		stream->writeUint16BE(me->angle);
 		stream->writeUint16BE(me->angleOffset);
 		stream->writeUint16BE(me->wantAngle);
-		putSigned(me->directionWhenDoneWalking, stream);
-		putSigned(me->inPoly, stream);
-		putSigned(me->walkToPoly, stream);
+		stream->writeSint16LE(me->directionWhenDoneWalking);
+		stream->writeSint16LE(me->inPoly);
+		stream->writeSint16LE(me->walkToPoly);
 
 		stream->writeByte(me->r);
 		stream->writeByte(me->g);
@@ -1116,8 +1116,8 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 	onScreenPerson * * pointy = &allPeople;
 	onScreenPerson *me;
 
-	scaleHorizon = getSigned(stream);
-	scaleDivide = getSigned(stream);
+	scaleHorizon = stream->readSint16LE();
+	scaleDivide = stream->readSint16LE();
 
 	int countPeople = stream->readUint16BE();
 	int a;
@@ -1156,7 +1156,7 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 		me->frameTick = stream->readUint16BE();
 		me->walkSpeed = stream->readUint16BE();
 		me->spinSpeed = stream->readUint16BE();
-		me->floaty = getSigned(stream);
+		me->floaty = stream->readSint16LE();
 		me->show = stream->readByte();
 		me->walking = stream->readByte();
 		me->spinning = stream->readByte();
@@ -1175,9 +1175,9 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 			me->angleOffset = 0;
 		}
 		me->wantAngle = stream->readUint16BE();
-		me->directionWhenDoneWalking = getSigned(stream);
-		me->inPoly = getSigned(stream);
-		me->walkToPoly = getSigned(stream);
+		me->directionWhenDoneWalking = stream->readSint16LE();
+		me->inPoly = stream->readSint16LE();
+		me->walkToPoly = stream->readSint16LE();
 		if (ssgVersion >= VERSION(2, 0)) {
 			me->r = stream->readByte();
 			me->g = stream->readByte();
