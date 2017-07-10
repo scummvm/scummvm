@@ -30,7 +30,6 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/debug.h"
-#include "sludge/platform-dependent.h"
 #include "sludge/language.h"
 #include "sludge/stringy.h"
 #include "sludge/sludger.h"
