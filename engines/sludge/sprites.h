@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SLUDGE_SPRITE_H
-#define SLUDGE_SPRITE_H
+#ifndef SLUDGE_SPRITES_H
+#define SLUDGE_SPRITES_H
 
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"

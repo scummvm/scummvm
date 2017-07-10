@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef LANGUAGE_H
-#define LANGUAGE_H
+#ifndef SLUDGE_LANGUAGE_H
+#define SLUDGE_LANGUAGE_H
 
 #include "common/file.h"
 

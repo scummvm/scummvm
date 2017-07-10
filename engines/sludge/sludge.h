@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SLUDGE_H
-#define SLUDGE_H
+#ifndef SLUDGE_SLUDGE_H
+#define SLUDGE_SLUDGE_H
 
 #include "common/random.h"
 #include "engines/engine.h"
