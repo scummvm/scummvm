@@ -1062,14 +1062,14 @@ bool savePeople(Common::WriteStream *stream) {
 	me = allPeople;
 	for (a = 0; a < countPeople; a++) {
 
-		putFloat(me->x, stream);
-		putFloat(me->y, stream);
+		stream->writeFloatLE(me->x);
+		stream->writeFloatLE(me->y);
 
 		saveCostume(me->myPersona, stream);
 		saveAnim(me->myAnim, stream);
 		stream->writeByte(me->myAnim == me->lastUsedAnim);
 
-		putFloat(me->scale, stream);
+		stream->writeFloatLE(me->scale);
 
 		stream->writeUint16BE(me->extra);
 		stream->writeUint16BE(me->height);
@@ -1136,15 +1136,15 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 		if (!checkNew(me->myAnim))
 			return false;
 
-		me->x = getFloat(stream);
-		me->y = getFloat(stream);
+		me->x = stream->readFloatLE();
+		me->y = stream->readFloatLE();
 
 		loadCostume(me->myPersona, stream);
 		loadAnim(me->myAnim, stream);
 
 		me->lastUsedAnim = stream->readByte() ? me->myAnim : NULL;
 
-		me->scale = getFloat(stream);
+		me->scale = stream->readFloatLE();
 
 		me->extra = stream->readUint16BE();
 		me->height = stream->readUint16BE();
@@ -1194,8 +1194,8 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 			if (ssgVersion < VERSION(2, 0)) {
 				// aaLoad
 				stream->readByte();
-				getFloat(stream);
-				getFloat(stream);
+				stream->readFloatLE();
+				stream->readFloatLE();
 			}
 		}
 

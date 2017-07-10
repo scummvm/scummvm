@@ -256,8 +256,8 @@ bool initSludge(const char *filename) {
 		fp->readByte();
 		// aaLoad
 		fp->readByte();
-		getFloat(fp);
-		getFloat(fp);
+		fp->readFloatLE();
+		fp->readFloatLE();
 	}
 
 	char *checker = readString(fp);
