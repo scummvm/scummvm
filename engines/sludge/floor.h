@@ -22,6 +22,8 @@
 #ifndef SLUDGE_FLOOR_H
 #define SLUDGE_FLOOR_H
 
+#include "common/rect.h"
+
 namespace Sludge {
 
 struct floorPolygon {
@@ -29,14 +31,9 @@ struct floorPolygon {
 	int *vertexID;
 };
 
-struct POINT {
-	int x;
-	int y;
-};
-
 struct flor {
 	int originalNum;
-	POINT *vertex;
+	Common::Point *vertex;
 	int numPolygons;
 	floorPolygon *polygon;
 	int * *matrix;
