@@ -57,8 +57,8 @@ extern flor *currentFloor;
 
 extern inputType input;
 onScreenPerson *allPeople = NULL;
-short int scaleHorizon = 75;
-short int scaleDivide = 150;
+int16 scaleHorizon = 75;
+int16 scaleDivide = 150;
 extern screenRegion *allScreenRegions;
 
 #define TF_max(a, b) ((a > b) ? a : b)
@@ -225,7 +225,7 @@ bool setPersonExtra(int thisNum, int extra) {
 	return false;
 }
 
-void setScale(short int h, short int d) {
+void setScale(int16 h, int16 d) {
 	scaleHorizon = h;
 	scaleDivide = d;
 }
@@ -397,7 +397,7 @@ void setDrawMode(int h, int ob) {
 	setMyDrawMode(moveMe, h);
 }
 
-void setPersonTransparency(int ob, unsigned char x) {
+void setPersonTransparency(int ob, byte x) {
 	onScreenPerson *moveMe = findPerson(ob);
 	if (!moveMe)
 		return;
@@ -407,7 +407,7 @@ void setPersonTransparency(int ob, unsigned char x) {
 	moveMe->transparency = x;
 }
 
-void setPersonColourise(int ob, unsigned char r, unsigned char g, unsigned char b, unsigned char colourmix) {
+void setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix) {
 	onScreenPerson *moveMe = findPerson(ob);
 	if (!moveMe)
 		return;

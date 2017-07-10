@@ -65,7 +65,7 @@ char *readString(Common::SeekableReadStream *stream) {
 float floatSwap(float f) {
 	union {
 		float f;
-		unsigned char b[4];
+		byte b[4];
 	} dat1, dat2;
 
 	dat1.f = f;
@@ -78,7 +78,7 @@ float floatSwap(float f) {
 
 float getFloat(Common::SeekableReadStream *stream) {
 	float f;
-	size_t bytes_read = stream->read(&f, sizeof(float));
+	uint bytes_read = stream->read(&f, sizeof(float));
 	if (bytes_read != sizeof(float) && stream->err()) {
 		debug("Reading error in getFloat.\n");
 	}
@@ -97,8 +97,8 @@ void putFloat(float f, Common::WriteStream *stream) {
 	stream->write(&f, sizeof(float));
 }
 
-short shortSwap(short s) {
-	unsigned char b1, b2;
+int16 shortSwap(int16 s) {
+	byte b1, b2;
 
 	b1 = s & 255;
 	b2 = (s >> 8) & 255;
@@ -106,10 +106,10 @@ short shortSwap(short s) {
 	return (b1 << 8) + b2;
 }
 
-short getSigned(Common::SeekableReadStream *stream) {
-	short f;
-	size_t bytes_read = stream->read(&f, sizeof(short));
-	if (bytes_read != sizeof(short) && stream->err()) {
+int16 getSigned(Common::SeekableReadStream *stream) {
+	int16 f;
+	uint bytes_read = stream->read(&f, sizeof(int16));
+	if (bytes_read != sizeof(int16) && stream->err()) {
 		debug("Reading error in getSigned.\n");
 	}
 #ifdef  __BIG_ENDIAN__
@@ -118,11 +118,11 @@ short getSigned(Common::SeekableReadStream *stream) {
 	return f;
 }
 
-void putSigned(short f, Common::WriteStream *stream) {
+void putSigned(int16 f, Common::WriteStream *stream) {
 #ifdef  __BIG_ENDIAN__
 	f = shortSwap(f);
 #endif
-	stream->write(&f, sizeof(short));
+	stream->write(&f, sizeof(int16));
 }
 
 char *encodeFilename(char *nameIn) {

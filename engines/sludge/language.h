@@ -29,10 +29,10 @@
 namespace Sludge {
 
 struct settingsStruct {
-	unsigned int languageID;
-	unsigned int numLanguages;
+	uint languageID;
+	uint numLanguages;
 	bool userFullScreen;
-	unsigned int refreshRate;
+	uint refreshRate;
 	int antiAlias;
 	bool fixedPixels;
 	bool noStartWindow;

@@ -33,7 +33,7 @@
 
 namespace Sludge {
 
-unsigned int winWidth, winHeight;
+uint winWidth, winHeight;
 int viewportHeight, viewportWidth;
 int viewportOffsetX = 0, viewportOffsetY = 0;
 
@@ -45,7 +45,7 @@ extern int specialSettings;
 
 void setMovieViewport();
 
-extern unsigned int sceneWidth, sceneHeight;
+extern uint sceneWidth, sceneHeight;
 extern zBufferData zBuffer;
 extern int lightMapNumber;
 

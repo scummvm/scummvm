@@ -32,7 +32,7 @@
 namespace Sludge {
 
 #if 0
-//extern unsigned short int * * backDropImage;
+//extern uint16 * * backDropImage;
 extern GLuint backdropTextureName;
 #endif
 
@@ -147,7 +147,7 @@ void blur_loadSettings(Common::SeekableReadStream *stream) {
 	s_matrixEffectBase = stream->readUint32LE();
 
 	if (blur_allocateMemoryForEffect()) {
-		size_t bytes_read = stream->read(s_matrixEffectData, sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight);
+		uint bytes_read = stream->read(s_matrixEffectData, sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight);
 		if (bytes_read != sizeof(int) * s_matrixEffectWidth * s_matrixEffectHeight && stream->err()) {
 			debug("Reading error in blur_loadSettings.");
 		}
@@ -254,7 +254,7 @@ static inline int clampi(int i, int min, int max) {
 	return (i >= max) ? max : ((i <= min) ? min : i);
 }
 
-static inline void blur_createSourceLine(unsigned char *createLine, unsigned char *fromLine, int overlapOnLeft, int width) {
+static inline void blur_createSourceLine(byte *createLine, byte *fromLine, int overlapOnLeft, int width) {
 	int miniX;
 	memcpy(createLine + overlapOnLeft * 4, fromLine, width * 4);
 
@@ -274,13 +274,13 @@ static inline void blur_createSourceLine(unsigned char *createLine, unsigned cha
 bool blurScreen() {
 #if 0
 	if (s_matrixEffectWidth && s_matrixEffectHeight && s_matrixEffectDivide && s_matrixEffectData) {
-		unsigned char *thisLine;
+		byte *thisLine;
 		int y, x;
 		bool ok = true;
 		int overlapOnLeft = s_matrixEffectWidth / 2;
 		int overlapAbove = s_matrixEffectHeight / 2;
 
-		unsigned char **sourceLine = new unsigned char *[s_matrixEffectHeight];
+		byte **sourceLine = new byte *[s_matrixEffectHeight];
 		if (!checkNew(sourceLine))
 			return false;
 
@@ -296,7 +296,7 @@ bool blurScreen() {
 		saveTexture(backdropTextureName, backdropTexture);
 
 		for (y = 0; y < s_matrixEffectHeight; y++) {
-			sourceLine[y] = new unsigned char[(s_matrixEffectWidth - 1 + picWidth) * 4];
+			sourceLine[y] = new byte[(s_matrixEffectWidth - 1 + picWidth) * 4];
 			ok &= (sourceLine[y] != NULL);
 		}
 
@@ -313,7 +313,7 @@ bool blurScreen() {
 				//-------------------------
 				// Scroll source lines
 				//-------------------------
-				unsigned char *tempLine = sourceLine[0];
+				byte *tempLine = sourceLine[0];
 				for (int miniY = 0; miniY < s_matrixEffectHeight - 1; miniY++) {
 					sourceLine[miniY] = sourceLine[miniY + 1];
 				}
@@ -330,7 +330,7 @@ bool blurScreen() {
 					int totalBlue = 0;
 					int *matrixElement = s_matrixEffectData;
 					for (int miniY = 0; miniY < s_matrixEffectHeight; ++miniY) {
-						unsigned char *pixel = &sourceLine[miniY][x * 4];
+						byte *pixel = &sourceLine[miniY][x * 4];
 						for (int miniX = 0; miniX < s_matrixEffectWidth; ++miniX) {
 
 							totalRed += pixel[0] * *matrixElement;

@@ -33,7 +33,7 @@ namespace Sludge {
 spriteBank theFont;
 int fontHeight = 0, numFontColours, loadedFontNum;
 Common::U32String fontOrderString;
-short fontSpace = -1;
+int16 fontSpace = -1;
 
 uint32 *fontTable = NULL;
 uint fontTableSize = 0;

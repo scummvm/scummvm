@@ -70,9 +70,9 @@ int lightMapMode = LIGHTMAPMODE_PIXEL;
 parallaxLayer *parallaxStuff = NULL;
 int cameraPX = 0, cameraPY = 0;
 
-unsigned int sceneWidth, sceneHeight;
+uint sceneWidth, sceneHeight;
 int lightMapNumber;
-unsigned int currentBlankColour = TS_ARGB(255, 0, 0, 0);
+uint currentBlankColour = TS_ARGB(255, 0, 0, 0);
 
 extern int cameraX, cameraY;
 extern float cameraZoom;
@@ -147,14 +147,14 @@ bool snapshot() {
 }
 
 bool restoreSnapshot(Common::SeekableReadStream *stream) {
-	unsigned int picWidth = stream->readUint16BE();
-	unsigned int picHeight = stream->readUint16BE();
+	uint picWidth = stream->readUint16BE();
+	uint picHeight = stream->readUint16BE();
 
 	if ((picWidth != winWidth) || (picHeight != winHeight))
 		return false;
 
-	unsigned int t1, t2, n;
-	unsigned short c;
+	uint t1, t2, n;
+	uint16 c;
 #if 0
 	GLubyte *target;
 	if (!NPOT_textures) {
@@ -170,7 +170,7 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 	for (t2 = 0; t2 < winHeight; t2++) {
 		t1 = 0;
 		while (t1 < winWidth) {
-			c = (unsigned short)stream->readUint16BE();
+			c = (uint16)stream->readUint16BE();
 			if (c & 32) {
 				n = stream->readByte() + 1;
 				c -= 32;
@@ -416,11 +416,11 @@ void hardScroll(int distance) {
 
 	setPixelCoords(true);
 
-	unsigned int xoffset = 0;
+	uint xoffset = 0;
 	while (xoffset < sceneWidth) {
 		int w = (sceneWidth - xoffset < viewportWidth) ? sceneWidth - xoffset : viewportWidth;
 
-		unsigned int yoffset = 0;
+		uint yoffset = 0;
 		while (yoffset < sceneHeight) {
 			int h = (sceneHeight - yoffset < viewportHeight) ? sceneHeight - yoffset : viewportHeight;
 
@@ -457,11 +457,11 @@ void hardScroll(int distance) {
 #endif
 }
 
-void drawVerticalLine(unsigned int x, unsigned int y1, unsigned int y2) {
+void drawVerticalLine(uint x, uint y1, uint y2) {
 	drawLine(x, y1, x, y2);
 }
 
-void drawHorizontalLine(unsigned int x1, unsigned int y, unsigned int x2) {
+void drawHorizontalLine(uint x1, uint y, uint x2) {
 	drawLine(x1, y, x2, y);
 }
 
@@ -652,7 +652,7 @@ void reloadParallaxTextures() {
 #endif
 }
 
-bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY) {
+bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 	setResourceForFatal(v);
 	if (!openFileFromNum(v))
 		return fatal("Can't open parallax image");
@@ -1055,7 +1055,7 @@ void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
 	setPixelCoords(false);
 
 	int x, y, lookAhead;
-	unsigned short int *fromHere, *lookPointer;
+	uint16 *fromHere, *lookPointer;
 
 	stream->writeUint16BE(w);
 	stream->writeUint16BE(h);
@@ -1101,7 +1101,7 @@ void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *stream) {
 	}
 }
 
-bool getRGBIntoStack(unsigned int x, unsigned int y, stackHandler *sH) {
+bool getRGBIntoStack(uint x, uint y, stackHandler *sH) {
 #if 0
 	if (x >= sceneWidth || y >= sceneHeight) {
 		return fatal("Co-ordinates are outside current scene!");

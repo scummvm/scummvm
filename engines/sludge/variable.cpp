@@ -456,7 +456,7 @@ bool copyVariable(const variable &from, variable &to) {
 	return copyMain(from, to);
 }
 
-variable *fastArrayGetByIndex(fastArrayHandler *vS, unsigned int theIndex) {
+variable *fastArrayGetByIndex(fastArrayHandler *vS, uint theIndex) {
 	if (theIndex < 0 || theIndex >= vS->size)
 		return NULL;
 	return &vS->fastVariables[theIndex];
@@ -535,7 +535,7 @@ bool addVarToStackQuick(variable &va, variableStack *&thisStack) {
 	return true;
 }
 
-bool stackSetByIndex(variableStack *vS, unsigned int theIndex, const variable &va) {
+bool stackSetByIndex(variableStack *vS, uint theIndex, const variable &va) {
 	while (theIndex--) {
 		vS = vS->next;
 		if (!vS)
@@ -544,7 +544,7 @@ bool stackSetByIndex(variableStack *vS, unsigned int theIndex, const variable &v
 	return copyVariable(va, vS->thisVar);
 }
 
-variable *stackGetByIndex(variableStack *vS, unsigned int theIndex) {
+variable *stackGetByIndex(variableStack *vS, uint theIndex) {
 	while (theIndex--) {
 		vS = vS->next;
 		if (!vS) {

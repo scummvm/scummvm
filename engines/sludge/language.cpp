@@ -36,7 +36,7 @@ int *languageTable;
 char **languageName;
 settingsStruct gameSettings;
 
-unsigned int stringToInt(char *s) {
+uint stringToInt(char *s) {
 	int i = 0;
 	bool negative = false;
 	for (;;) {
@@ -103,7 +103,7 @@ void readIniFile(const char *filename) {
 
 	char lineSoFar[257] = "";
 	char secondSoFar[257] = "";
-	unsigned char here = 0;
+	byte here = 0;
 	char readChar = ' ';
 	bool keepGoing = true;
 	bool doingSecond = false;
@@ -186,7 +186,7 @@ void makeLanguageTable(Common::File *table) {
 	if (!checkNew(languageName))
 		return;
 
-	for (unsigned int i = 0; i <= gameSettings.numLanguages; i++) {
+	for (uint i = 0; i <= gameSettings.numLanguages; i++) {
 		languageTable[i] = i ? table->readUint16BE() : 0;
 		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i, languageTable[i]);
 		languageName[i] = 0;
@@ -202,7 +202,7 @@ void makeLanguageTable(Common::File *table) {
 int getLanguageForFileB() {
 	int indexNum = -1;
 
-	for (unsigned int i = 0; i <= gameSettings.numLanguages; i++) {
+	for (uint i = 0; i <= gameSettings.numLanguages; i++) {
 		if (languageTable[i] == gameSettings.languageID)
 			indexNum = i;
 	}

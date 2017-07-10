@@ -70,7 +70,7 @@ extern float cameraZoom;
 extern Graphics::Surface renderSurface;
 extern Graphics::Surface backdropSurface;
 
-unsigned char currentBurnR = 0, currentBurnG = 0, currentBurnB = 0;
+byte currentBurnR = 0, currentBurnG = 0, currentBurnB = 0;
 
 void forgetSpriteBank(spriteBank &forgetme) {
 	if (forgetme.myPalette.pal) {
@@ -104,17 +104,17 @@ bool reserveSpritePal(spritePalette &sP, int n) {
 		delete[] sP.b;
 	}
 
-	sP.pal = new unsigned short int[n];
+	sP.pal = new uint16[n];
 	if (!checkNew(sP.pal))
 		return false;
 
-	sP.r = new unsigned char[n];
+	sP.r = new byte[n];
 	if (!checkNew(sP.r))
 		return false;
-	sP.g = new unsigned char[n];
+	sP.g = new byte[n];
 	if (!checkNew(sP.g))
 		return false;
-	sP.b = new unsigned char[n];
+	sP.b = new byte[n];
 	if (!checkNew(sP.b))
 		return false;
 	sP.total = n;
@@ -222,7 +222,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 				}
 			}
 		} else { // RAW DATA
-			size_t bytes_read = bigDataFile->read(data, picwidth * picheight);
+			uint bytes_read = bigDataFile->read(data, picwidth * picheight);
 			if (bytes_read != picwidth * picheight && bigDataFile->err()) {
 				warning("Reading error in loadSpriteBank.");
 			}
@@ -256,7 +256,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		int transColour = -1;
 		int size = loadhere.sprites[i].surface.w * loadhere.sprites[i].surface.h;
 		while (fromhere < size) {
-			unsigned char s = spriteData[i][fromhere++];
+			byte s = spriteData[i][fromhere++];
 			if (s) {
 				transColour = s;
 				break;
@@ -266,7 +266,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		for (int y = 0; y < loadhere.sprites[i].surface.h; y++) {
 			for (int x = 0; x < loadhere.sprites[i].surface.w; x++) {
 				byte *target = (byte *)loadhere.sprites[i].surface.getBasePtr(x, y);
-				unsigned char s = spriteData[i][fromhere++];
+				byte s = spriteData[i][fromhere++];
 				if (s) {
 					target[0] = (byte)255;
 					target[1] = (byte)loadhere.myPalette.b[s];
@@ -589,7 +589,7 @@ void flipFontSprite(int x, int y, sprite &single, const spritePalette &fontPal) 
 	fontSprite(true, x, y, single, fontPal);
 }
 
-unsigned char curLight[3];
+byte curLight[3];
 
 void setDrawMode(onScreenPerson *thisPerson) {
 #if 0

@@ -67,7 +67,7 @@ struct onScreenPerson {
 	int direction, directionWhenDoneWalking;
 	struct objectType *thisType;
 	int extra, spinSpeed;
-	unsigned char r, g, b, colourmix, transparency;
+	byte r, g, b, colourmix, transparency;
 };
 
 // Initialisation and creation
@@ -85,15 +85,15 @@ void removeOneCharacter(int i);
 
 // Things which affect or use all characters
 onScreenPerson *findPerson(int v);
-void setScale(short int h, short int d);
+void setScale(int16 h, int16 d);
 
 // Things which affect one character
 void makeTalker(onScreenPerson &me);
 void makeSilent(onScreenPerson &me);
 void setShown(bool h, int ob);
 void setDrawMode(int h, int ob);
-void setPersonTransparency(int ob, unsigned char x);
-void setPersonColourise(int ob, unsigned char r, unsigned char g, unsigned char b, unsigned char colourmix);
+void setPersonTransparency(int ob, byte x);
+void setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix);
 
 // Moving 'em
 void movePerson(int x, int y, int objNum);

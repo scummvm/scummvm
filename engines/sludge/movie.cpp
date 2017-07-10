@@ -69,7 +69,7 @@ float movieAspect = 1.6;
 #if 0
 typedef struct audioBuffers {
 	char *buffer;
-	unsigned int size;
+	uint size;
 	audioBuffers *next;
 	Uint32 time_ms;
 }audioBuffers;
@@ -120,7 +120,7 @@ void audio_queue_init(audioQueue *q) {
 	q->cond = SDL_CreateCond();
 
 }
-int audio_queue_put(audioQueue *q, char *buffer, unsigned int size, long long time_ms) {
+int audio_queue_put(audioQueue *q, char *buffer, uint size, long long time_ms) {
 
 	audioBuffers *audioBuf = new audioBuffers;
 	if (!audioBuf)
@@ -275,10 +275,10 @@ void setMovieViewport() {
 	}
 }
 
-static uint64_t xiph_lace_value(unsigned char **np) {
+static uint64_t xiph_lace_value(byte **np) {
 	uint64_t lace;
 	uint64_t value;
-	unsigned char *p = *np;
+	byte *p = *np;
 
 	lace = *p++;
 	value = lace;
@@ -300,8 +300,8 @@ bool fakeAudio = false;
 // send audio to audio device...
 ALuint feedAudio(void *userdata, ALubyte *data, ALuint length) {
 	static char *buffer = NULL;
-	static unsigned int bufOffset = 0;
-	static unsigned int bufSize = 0;
+	static uint bufOffset = 0;
+	static uint bufSize = 0;
 
 	ALuint got = 0;
 	int bufLen;
@@ -443,8 +443,8 @@ int playMovie(int fileNumber) {
 			audioBitDepth = pAudioTrack->GetBitDepth();
 			audioSampleRate = pAudioTrack->GetSamplingRate();
 
-			size_t audioHeaderSize;
-			const unsigned char *audioHeader = pAudioTrack->GetCodecPrivate(audioHeaderSize);
+			uint audioHeaderSize;
+			const byte *audioHeader = pAudioTrack->GetCodecPrivate(audioHeaderSize);
 
 			if (audioHeaderSize < 1) {
 				warning("Strange audio track in movie.");
@@ -452,9 +452,9 @@ int playMovie(int fileNumber) {
 				continue;
 			}
 
-			unsigned char *p = (unsigned char *)audioHeader;
+			byte *p = (byte *)audioHeader;
 
-			unsigned int count = *p++ + 1;
+			uint count = *p++ + 1;
 			if (count != 3) {
 				warning("Strange audio track in movie.");
 				audioTrack = -1;
@@ -529,7 +529,7 @@ int playMovie(int fileNumber) {
 	if (vpx_codec_dec_init(&codec, interface, NULL, 0))
 	die_codec(&codec, "Failed to initialize decoder for movie.");
 
-	unsigned char *frame = new unsigned char[256 * 1024];
+	byte *frame = new byte[256 * 1024];
 	if (! checkNew(frame)) return false;
 
 	const mkvparser::Cluster *pCluster = pSegment->GetFirst();
@@ -647,7 +647,7 @@ int playMovie(int fileNumber) {
 
 				if (size > sizeof(frame)) {
 					if (frame) delete [] frame;
-					frame = new unsigned char[size];
+					frame = new byte[size];
 					if (! checkNew(frame)) return 0;
 				}
 				/*
@@ -673,7 +673,7 @@ int playMovie(int fileNumber) {
 						if (img->fmt != VPX_IMG_FMT_I420)
 						fatal("Movie error. The movie is not in I420 colour format, which is the only one I can hanlde at the moment.");
 
-						unsigned int y;
+						uint y;
 
 						GLubyte *ytex = NULL;
 						GLubyte *utex = NULL;
@@ -688,7 +688,7 @@ int playMovie(int fileNumber) {
 
 						}
 
-						unsigned char *buf = img->planes[0];
+						byte *buf = img->planes[0];
 						for (y = 0; y < img->d_h; y++) {
 							memcpy(ytex + y * img->d_w, buf, img->d_w);
 							buf += img->stride[0];
@@ -762,7 +762,7 @@ int playMovie(int fileNumber) {
 										vorbis_fpu_setround(&fpu);
 										for (i = 0; i < audioChannels; i++) { /* It's faster in this order */
 											float *src = pcm[i];
-											short *dest = ((short *)buffer) + i;
+											int16 *dest = ((int16 *)buffer) + i;
 											for (j = 0; j < numSamples; j++) {
 												val = vorbis_ftoi(src[j] * 32768.f);
 												if (val > 32767)val = 32767;
@@ -778,7 +778,7 @@ int playMovie(int fileNumber) {
 										vorbis_fpu_setround(&fpu);
 										for (i = 0; i < audioChannels; i++) {
 											float *src = pcm[i];
-											short *dest = ((short *)buffer) + i;
+											int16 *dest = ((int16 *)buffer) + i;
 											for (j = 0; j < numSamples; j++) {
 												val = vorbis_ftoi(src[j] * 32768.f);
 												if (val > 32767)val = 32767;

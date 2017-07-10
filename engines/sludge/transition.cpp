@@ -31,11 +31,11 @@ extern GLuint snapshotTextureName;
 
 namespace Sludge {
 
-extern unsigned char brightnessLevel;
+extern byte brightnessLevel;
 
 extern float snapTexW, snapTexH;
 
-unsigned char fadeMode = 2;
+byte fadeMode = 2;
 
 //----------------------------------------------------
 // PROPER BRIGHTNESS FADING

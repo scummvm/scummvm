@@ -35,14 +35,14 @@ enum {
 	LIGHTMAPMODE_NUM
 };
 
-extern unsigned int winWidth, winHeight, sceneWidth, sceneHeight;
+extern uint winWidth, winHeight, sceneWidth, sceneHeight;
 extern int lightMapMode;
 
 struct parallaxLayer {
 	Graphics::Surface surface;
 	int speedX, speedY;
 	bool wrapS, wrapT;
-	unsigned short fileNum, fractionX, fractionY;
+	uint16 fileNum, fractionX, fractionY;
 	int cameraX, cameraY;
 	parallaxLayer *next;
 	parallaxLayer *prev;
@@ -63,10 +63,10 @@ void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h);
 #endif
 bool loadHSI(Common::SeekableReadStream *stream, int, int, bool);
 bool mixHSI(Common::SeekableReadStream *stream, int x = 0, int y = 0);
-void drawHorizontalLine(unsigned int, unsigned int, unsigned int);
-void drawVerticalLine(unsigned int, unsigned int, unsigned int);
+void drawHorizontalLine(uint, uint, uint);
+void drawVerticalLine(uint, uint, uint);
 void hardScroll(int distance);
-bool getRGBIntoStack(unsigned int x, unsigned int y, stackHandler *sH);
+bool getRGBIntoStack(uint x, uint y, stackHandler *sH);
 
 // Also the light map stuff
 
@@ -78,7 +78,7 @@ extern Graphics::Surface lightMap;
 // And background parallax scrolling
 
 void killParallax();
-bool loadParallax(unsigned short v, unsigned short fracX, unsigned short fracY);
+bool loadParallax(uint16 v, uint16 fracX, uint16 fracY);
 void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *fp);
 void reloadParallaxTextures();
 

@@ -32,10 +32,10 @@ struct objectType {
 	char *screenName;
 	int objectNum;
 	objectType *next;
-	unsigned char r, g, b;
+	byte r, g, b;
 	int numCom;
 	int speechGap, walkSpeed, wrapSpeech, spinSpeed;
-	unsigned short int flags;
+	uint16 flags;
 	combination *allCombis;
 };
 
