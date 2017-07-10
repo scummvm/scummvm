@@ -25,6 +25,10 @@
 #include "common/system.h"
 #include "common/stack.h"
 
+namespace Common {
+DECLARE_SINGLETON(Graphics::CursorManager);
+}
+
 namespace Graphics {
 
 CursorManager::~CursorManager() {

@@ -31,6 +31,10 @@
 #include "common/endian.h"
 #include "audio/midiparser.h"
 
+namespace Common {
+DECLARE_SINGLETON(Lure::SoundManager);
+}
+
 namespace Lure {
 
 //#define SOUND_CROP_CHANNELS

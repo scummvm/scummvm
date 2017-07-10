@@ -26,6 +26,10 @@
 
 #include "common/translation.h"
 
+namespace Common {
+DECLARE_SINGLETON(Graphics::FontManager);
+}
+
 namespace Graphics {
 
 FORWARD_DECLARE_FONT(g_sysfont);

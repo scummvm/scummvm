@@ -88,7 +88,14 @@ protected:
 	static T *_singleton;
 };
 
-template<class T> T *Singleton<T>::_singleton = 0;
+/**
+ * Note that you need to use this macro from the Common namespace.
+ *
+ * This is because C++ requires initial explicit specialization
+ * to be placed in the same namespace as the template.
+ */
+#define DECLARE_SINGLETON(T) \
+	template<> T *Singleton<T>::_singleton = 0
 
 } // End of namespace Common
 

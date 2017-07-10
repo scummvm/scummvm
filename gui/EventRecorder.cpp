@@ -25,6 +25,10 @@
 
 #ifdef ENABLE_EVENTRECORDER
 
+namespace Common {
+DECLARE_SINGLETON(GUI::EventRecorder);
+}
+
 #include "common/debug-channels.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/mixer/sdl/sdl-mixer.h"

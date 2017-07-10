@@ -40,6 +40,8 @@
 
 namespace Common {
 
+DECLARE_SINGLETON(TranslationManager);
+
 bool operator<(const TLanguage &l, const TLanguage &r) {
 	return strcmp(l.name, r.name) < 0;
 }

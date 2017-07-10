@@ -27,6 +27,10 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
+namespace Common {
+DECLARE_SINGLETON(OpenGL::ShaderManager);
+}
+
 namespace OpenGL {
 
 namespace {

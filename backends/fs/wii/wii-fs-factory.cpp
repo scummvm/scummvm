@@ -43,6 +43,10 @@
 #include <smb.h>
 #endif
 
+namespace Common {
+DECLARE_SINGLETON(WiiFilesystemFactory);
+}
+
 WiiFilesystemFactory::WiiFilesystemFactory() :
 	_dvdMounted(false),
 	_smbMounted(false),

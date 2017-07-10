@@ -32,6 +32,9 @@
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "common/system.h"
+namespace Common {
+DECLARE_SINGLETON(Wintermute::BaseEngine);
+}
 
 namespace Wintermute {
 

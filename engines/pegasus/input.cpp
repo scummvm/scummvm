@@ -30,6 +30,10 @@
 #include "pegasus/input.h"
 #include "pegasus/pegasus.h"
 
+namespace Common {
+DECLARE_SINGLETON(Pegasus::InputDeviceManager);
+}
+
 namespace Pegasus {
 
 InputDeviceManager::InputDeviceManager() {

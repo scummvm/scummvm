@@ -32,6 +32,11 @@
 #include "backends/networking/sdl_net/localwebserver.h"
 #endif
 
+namespace Common {
+
+DECLARE_SINGLETON(Cloud::CloudManager);
+
+}
 
 namespace Cloud {
 

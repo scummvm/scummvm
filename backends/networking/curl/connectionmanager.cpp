@@ -29,6 +29,12 @@
 #include "common/timer.h"
 #include <curl/curl.h>
 
+namespace Common {
+
+DECLARE_SINGLETON(Networking::ConnectionManager);
+
+}
+
 namespace Networking {
 
 ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false), _frame(0) {
