@@ -399,7 +399,7 @@ void blankScreen(int x1, int y1, int x2, int y2) {
 }
 
 void hardScroll(int distance) {
-	if (abs(distance) >= sceneHeight) {
+	if (ABS(distance) >= sceneHeight) {
 		blankScreen(0, 0, sceneWidth, sceneHeight);
 		return;
 	}
