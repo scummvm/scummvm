@@ -61,12 +61,6 @@ int16 scaleHorizon = 75;
 int16 scaleDivide = 150;
 extern screenRegion *allScreenRegions;
 
-#define TF_max(a, b) ((a > b) ? a : b)
-
-inline int TF_abs(int a) {
-	return (a > 0) ? a : -a;
-}
-
 void setFrames(onScreenPerson &m, int a) {
 	m.myAnim = m.myPersona->animation[(a * m.myPersona->numDirections) + m.direction];
 }
@@ -649,9 +643,9 @@ bool walkMe(onScreenPerson *thisPerson, bool move = true) {
 		if (s < 0.2)
 			s = 0.2;
 
-		maxDiff = (TF_abs(xDiff) >= TF_abs(yDiff)) ? TF_abs(xDiff) : TF_abs(yDiff);
+		maxDiff = (abs(xDiff) >= abs(yDiff)) ? abs(xDiff) : abs(yDiff);
 
-		if (TF_abs(maxDiff) > s) {
+		if (abs(maxDiff) > s) {
 			if (thisPerson->spinning) {
 				spinStep(thisPerson);
 				setFrames(*thisPerson, ANI_WALK);
