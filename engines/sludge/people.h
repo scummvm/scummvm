@@ -47,7 +47,7 @@ struct personaAnimation {
 };
 
 struct persona {
-	personaAnimation * *animation;
+	personaAnimation **animation;
 	int numDirections;
 };
 

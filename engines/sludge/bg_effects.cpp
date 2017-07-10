@@ -32,7 +32,7 @@
 namespace Sludge {
 
 #if 0
-//extern uint16 * * backDropImage;
+//extern uint16 **backDropImage;
 extern GLuint backdropTextureName;
 #endif
 
@@ -333,9 +333,9 @@ bool blurScreen() {
 						byte *pixel = &sourceLine[miniY][x * 4];
 						for (int miniX = 0; miniX < s_matrixEffectWidth; ++miniX) {
 
-							totalRed += pixel[0] * *matrixElement;
-							totalGreen += pixel[1] * *matrixElement;
-							totalBlue += pixel[2] * *matrixElement;
+							totalRed += pixel[0] **matrixElement;
+							totalGreen += pixel[1] **matrixElement;
+							totalBlue += pixel[2] **matrixElement;
 							++matrixElement;
 							pixel += 4;
 						}

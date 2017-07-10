@@ -65,11 +65,11 @@ extern bool reallyWantToQuit;
 extern Graphics::Surface renderSurface;
 
 int numBIFNames = 0;
-char * *allBIFNames = NULL;
+char **allBIFNames = NULL;
 int numUserFunc = 0;
-char * *allUserFunc = NULL;
+char **allUserFunc = NULL;
 int numResourceNames = 0;
-char * *allResourceNames = NULL;
+char **allResourceNames = NULL;
 int selectedLanguage = 0;
 int languageNum = -1;
 
@@ -585,7 +585,7 @@ void sludgeDisplay() {
 }
 
 void pauseFunction(loadedFunction *fun) {
-	loadedFunction * * huntAndDestroy = &allRunningFunctions;
+	loadedFunction **huntAndDestroy = &allRunningFunctions;
 	while (*huntAndDestroy) {
 		if (fun == *huntAndDestroy) {
 			(*huntAndDestroy) = (*huntAndDestroy)->next;

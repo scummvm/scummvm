@@ -36,7 +36,7 @@ struct flor {
 	Common::Point *vertex;
 	int numPolygons;
 	floorPolygon *polygon;
-	int * *matrix;
+	int **matrix;
 };
 
 bool initFloor();
