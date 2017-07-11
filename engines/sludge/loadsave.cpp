@@ -281,7 +281,7 @@ bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
 			return true;
 
 		case SVT_STRING:
-			to->varData.theString = readString(stream);
+			to->varData.theString = createCString(readString(stream));
 			return true;
 
 		case SVT_STACK:
@@ -384,7 +384,7 @@ loadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 // Save everything
 //----------------------------------------------------------------------
 
-bool saveGame(char *fname) {
+bool saveGame(const Common::String &fname) {
 	Common::OutSaveFile *fp = g_system->getSavefileManager()->openForSaving(fname);
 
 	if (fp == NULL)
@@ -511,7 +511,7 @@ bool saveGame(char *fname) {
 
 int ssgVersion;
 
-bool loadGame(char *fname) {
+bool loadGame(const Common::String &fname) {
 	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(fname);
 	FILETIME savedGameTime;
 
@@ -572,28 +572,25 @@ bool loadGame(char *fname) {
 
 	bool fontLoaded = fp->readByte();
 	int fontNum;
-	char *charOrder;
+	Common::String charOrder = "";
 	if (fontLoaded) {
 		fontNum = fp->readUint16BE();
 		fontHeight = fp->readUint16BE();
 
 		if (ssgVersion < VERSION(2, 2)) {
-			int x;
-			charOrder = new char[257];
-			if (!checkNew(charOrder))
-				return false;
-
+			char *tmp = new char[257];
 			for (int a = 0; a < 256; a++) {
-				x = fp->readByte();
-				charOrder[x] = a;
+				int x = fp->readByte();
+				tmp[x] = a;
 			}
-			charOrder[256] = 0;
+			tmp[256] = 0;
+			charOrder = tmp;
+			delete []tmp;
 		} else {
 			charOrder = readString(fp);
 		}
 	}
 	loadFont(fontNum, charOrder, fontHeight);
-	delete []charOrder;
 
 	fontSpace = fp->readSint16LE();
 

@@ -25,11 +25,11 @@
 namespace Sludge {
 
 // Read & Write
-char *readString(Common::SeekableReadStream *stream);
+Common::String readString(Common::SeekableReadStream *stream);
 void writeString(Common::String s, Common::WriteStream *stream);
 
-char *encodeFilename(char *nameIn);
-char *decodeFilename(char *nameIn);
+Common::String encodeFilename(const Common::String &nameIn);
+Common::String decodeFilename(const Common::String &nameIn);
 
 } // End of namespace Sludge
 

@@ -27,7 +27,6 @@
 #include "sludge/sprites.h"
 #include "sludge/fonttext.h"
 #include "sludge/moreio.h"
-#include "sludge/stringy.h"
 #include "sludge/newfatal.h"
 #include "sludge/statusba.h"
 
@@ -49,7 +48,6 @@ void killLastStatus() {
 	if (nowStatus->firstStatusBar) {
 		statusBar *kill = nowStatus->firstStatusBar;
 		nowStatus->firstStatusBar = kill->next;
-		delete kill->text;
 		delete kill;
 	}
 }
@@ -61,7 +59,6 @@ void clearStatusBar() {
 	while (stat) {
 		kill = stat;
 		stat = stat->next;
-		delete kill->text;
 		delete kill;
 	}
 	nowStatus->firstStatusBar = NULL;
@@ -71,15 +68,15 @@ void addStatusBar() {
 	statusBar *newStat = new statusBar;
 	if (checkNew(newStat)) {
 		newStat->next = nowStatus->firstStatusBar;
-		newStat->text = copyString("");
+		newStat->text.clear();
 		nowStatus->firstStatusBar = newStat;
 	}
 }
 
-void setStatusBar(char *txt) {
+void setStatusBar(Common::String &txt) {
 	if (nowStatus->firstStatusBar) {
-		delete[] nowStatus->firstStatusBar->text;
-		nowStatus->firstStatusBar->text = copyString(txt);
+		nowStatus->firstStatusBar->text.clear();
+		nowStatus->firstStatusBar->text = txt;
 	}
 }
 
@@ -166,7 +163,7 @@ void initStatusBar() {
 	statusBarLitColour(255, 255, 128);
 }
 
-const char *statusBarText() {
+const Common::String &statusBarText() {
 	if (nowStatus->firstStatusBar) {
 		return nowStatus->firstStatusBar->text;
 	} else {

@@ -26,7 +26,6 @@
 #include "sludge/variable.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
-#include "sludge/stringy.h"
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
 #include "sludge/fileset.h"
@@ -43,7 +42,7 @@ extern char *outputDir;
 void unlinkVar(variable &thisVar) {
 	switch (thisVar.varType) {
 		case SVT_STRING:
-			delete[] thisVar.varData.theString;
+			delete []thisVar.varData.theString;
 			thisVar.varData.theString = NULL;
 			break;
 
@@ -143,10 +142,9 @@ int stackSize(const stackHandler *me) {
 	return r;
 }
 
-bool getSavedGamesStack(stackHandler *sH, char *ext) {
-	char *pattern = joinStrings("*", ext);
-	if (!pattern)
-		return false;
+bool getSavedGamesStack(stackHandler *sH, const Common::String &ext) {
+	Common::String pattern = "*";
+	pattern += ext;
 
 	variable newName;
 	newName.varType = SVT_NULL;
@@ -173,8 +171,6 @@ bool getSavedGamesStack(stackHandler *sH, char *ext) {
 
 	closedir(dir);
 #endif
-	delete[] pattern;
-	pattern = NULL;
 	return true;
 }
 
@@ -238,14 +234,12 @@ void addVariablesInSecond(variable &var1, variable &var2) {
 	if (var1.varType == SVT_INT && var2.varType == SVT_INT) {
 		var2.varData.intValue += var1.varData.intValue;
 	} else {
-		char *string1 = getTextFromAnyVar(var1);
-		char *string2 = getTextFromAnyVar(var2);
+		Common::String string1 = getTextFromAnyVar(var1);
+		Common::String string2 = getTextFromAnyVar(var2);
 
 		unlinkVar(var2);
-		var2.varData.theString = joinStrings(string1, string2);
+		var2.varData.theString = createCString(string1 + string2);
 		var2.varType = SVT_STRING;
-		delete[] string1;
-		delete[] string2;
 	}
 }
 
@@ -285,65 +279,59 @@ void compareVariablesInSecond(const variable &var1, variable &var2) {
 	setVariable(var2, SVT_INT, compareVars(var1, var2));
 }
 
-void makeTextVar(variable &thisVar, const char *txt) {
+char *createCString(const Common::String &s) {
+	uint n = s.size() + 1;
+	char *res = new char[n];
+	if (!checkNew(res)) {
+		fatal("createCString : Unable to copy String");
+		return NULL;
+	}
+	memcpy(res, s.c_str(), n);
+	return res;
+}
+
+void makeTextVar(variable &thisVar, const Common::String &txt) {
 	unlinkVar(thisVar);
 	thisVar.varType = SVT_STRING;
-	thisVar.varData.theString = copyString(txt);
+	thisVar.varData.theString = createCString(txt);
 }
 
 bool loadStringToVar(variable &thisVar, int value) {
-
 	makeTextVar(thisVar, getNumberedString(value));
 	return (bool)(thisVar.varData.theString != NULL);
 }
 
-char *getTextFromAnyVar(const variable &from) {
+Common::String getTextFromAnyVar(const variable &from) {
 	switch (from.varType) {
 		case SVT_STRING:
-			return copyString(from.varData.theString);
+			return from.varData.theString;
 
 		case SVT_FASTARRAY: {
-			char *builder = copyString("FAST:");
-			char *builder2;
-			char *grabText;
+			Common::String builder = "FAST:";
+			Common::String builder2 = "";
+			Common::String grabText = "";
 
 			for (int i = 0; i < from.varData.fastArray->size; i++) {
-				builder2 = joinStrings(builder, " ");
-				if (!builder2)
-					return NULL;
-				delete builder;
+				builder2 = builder + " ";
 				grabText = getTextFromAnyVar(from.varData.fastArray->fastVariables[i]);
-				builder = joinStrings(builder2, grabText);
-				if (!builder)
-					return NULL;
-				delete grabText;
-				grabText = NULL;
-				delete builder2;
-				builder2 = NULL;
+				builder.clear();
+				builder = builder2 + grabText;
 			}
 			return builder;
 		}
 
 		case SVT_STACK: {
-			char *builder = copyString("ARRAY:");
-			char *builder2;
-			char *grabText;
+			Common::String builder = "ARRAY:";
+			Common::String builder2 = "";
+			Common::String grabText = "";
 
 			variableStack *stacky = from.varData.theStack->first;
 
 			while (stacky) {
-				builder2 = joinStrings(builder, " ");
-				if (!builder2)
-					return NULL;
-				delete[] builder;
+				builder2 = builder + " ";
 				grabText = getTextFromAnyVar(stacky->thisVar);
-				builder = joinStrings(builder2, grabText);
-				if (!builder)
-					return NULL;
-				delete[] grabText;
-				grabText = NULL;
-				delete[] builder2;
-				builder2 = NULL;
+				builder.clear();
+				builder = builder2 + grabText;
 				stacky = stacky->next;
 			}
 			return builder;
@@ -351,17 +339,14 @@ char *getTextFromAnyVar(const variable &from) {
 
 		case SVT_INT: {
 			char *buff = new char[10];
-			if (!checkNew(buff))
-				return NULL;
 			sprintf(buff, "%i", from.varData.intValue);
-			return buff;
+			Common::String res = buff;
+			delete []buff;
+			return res;
 		}
 
 		case SVT_FILE: {
-//			char * buff = new char[15];
-//			if (! checkNew (buff)) return NULL;
-//			sprintf (buff, "FILE %i", from.varData.intValue);
-			return joinStrings("", resourceNameFromNum(from.varData.intValue));
+			return resourceNameFromNum(from.varData.intValue);
 		}
 
 			/*      case SVT_ANIM:
@@ -375,14 +360,15 @@ char *getTextFromAnyVar(const variable &from) {
 		case SVT_OBJTYPE: {
 			objectType *thisType = findObjectType(from.varData.intValue);
 			if (thisType)
-				return copyString(thisType->screenName);
+				return thisType->screenName;
+			break;
 		}
 
 		default:
 			break;
 	}
 
-	return copyString(typeName[from.varType]);
+	return typeName[from.varType];
 }
 
 bool getBoolean(const variable &from) {
@@ -425,7 +411,7 @@ bool copyMain(const variable &from, variable &to) {
 			return true;
 
 		case SVT_STRING:
-			to.varData.theString = copyString(from.varData.theString);
+			to.varData.theString = createCString(from.varData.theString);
 			return to.varData.theString ? true : false;
 
 		case SVT_STACK:

@@ -23,7 +23,6 @@
 #include "common/file.h"
 #include "common/debug.h"
 
-#include "sludge/stringy.h"
 #include "sludge/allfiles.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
@@ -95,7 +94,7 @@ uint openFileFromNum(int num) {
 
 // Converts a string from Windows CP-1252 to UTF-8.
 // This is needed for old games.
-char *convertString(char *s) {
+Common::String convertString(const Common::String &s) {
 #if 0
 	static char *buf = NULL;
 
@@ -158,7 +157,7 @@ char *convertString(char *s) {
 	return s; //TODO: false value
 }
 
-char *getNumberedString(int value) {
+Common::String getNumberedString(int value) {
 
 	if (sliceBusy) {
 		fatal("Can't read from data file", "I'm already reading something");
@@ -169,7 +168,7 @@ char *getNumberedString(int value) {
 	value = bigDataFile->readUint32LE();
 	bigDataFile->seek(value, 0);
 
-	char *s = readString(bigDataFile);
+	Common::String s = readString(bigDataFile);
 
 	if (gameVersion < VERSION(2, 2)) {
 		// This is an older game - We need to convert the string to UTF-8

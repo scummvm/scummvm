@@ -118,7 +118,7 @@ objectType *loadObjectType(int i) {
 
 objectType *loadObjectRef(Common::SeekableReadStream *stream) {
 	objectType *r = loadObjectType(stream->readUint16BE());
-	delete r->screenName;
+	r->screenName.clear();
 	r->screenName = readString(stream);
 	return r;
 }
@@ -161,13 +161,8 @@ void removeObjectType(objectType *oT) {
 
 	while (*huntRegion) {
 		if ((*huntRegion) == oT) {
-//			FILE * debuggy2 = fopen ("debug.txt", "at");
-//			fprintf (debuggy2, "DELETING OBJECT TYPE: %p %s\n", oT, oT -> screenName);
-//			fclose (debuggy2);
-
 			*huntRegion = oT->next;
 			delete []oT->allCombis;
-			delete []oT->screenName;
 			delete oT;
 			return;
 		} else {

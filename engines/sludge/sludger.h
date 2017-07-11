@@ -76,7 +76,7 @@ struct inputType {
 extern byte *gameIcon;
 extern int iconW, iconH;
 
-bool initSludge(const char *);
+bool initSludge(const Common::String &);
 void displayBase();
 void sludgeDisplay();
 int startNewFunctionNum(uint, uint, loadedFunction *, variableStack*&, bool = true);
@@ -88,7 +88,7 @@ void saveHandlers(Common::WriteStream *stream);
 
 void finishFunction(loadedFunction *fun);
 void abortFunction(loadedFunction *fun);
-Common::File *openAndVerify(const char *filename, char extra1, char extra2, const char *er, int &fileVersion);
+Common::File *openAndVerify(const Common::String &filename, char extra1, char extra2, const char *er, int &fileVersion);
 
 void freezeSubs();
 void unfreezeSubs();

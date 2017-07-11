@@ -28,7 +28,6 @@
 #include "sludge/zbuffer.h"
 #include "sludge/backdrop.h"
 #include "sludge/movie.h"
-#include "sludge/stringy.h"
 #include "sludge/CommonCode/specialsettings.h"
 
 namespace Sludge {

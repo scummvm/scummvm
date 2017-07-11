@@ -56,7 +56,7 @@ struct stackHandler {
 
 union variableData {
 	signed int intValue;
-	char *theString;
+	const char *theString;
 	stackHandler *theStack;
 	struct personaAnimation *animHandler;
 	struct persona *costumeHandler;
@@ -84,15 +84,16 @@ bool copyVariable(const variable &from, variable &to);
 bool loadStringToVar(variable &thisVar, int value);
 void newAnimationVariable(variable &thisVar, struct personaAnimation *i);
 void newCostumeVariable(variable &thisVar, struct persona *i);
-void makeTextVar(variable &thisVar, const char *txt);
+void makeTextVar(variable &thisVar, const Common::String &txt);
 void addVariablesInSecond(variable &var1, variable &var2);
 void compareVariablesInSecond(const variable &var1, variable &var2);
+char *createCString(const Common::String &s);
 
 // Misc.
 
 void unlinkVar(variable &thisVar);
-char *getNumberedString(int value);
-char *getTextFromAnyVar(const variable &from);
+Common::String getNumberedString(int value);
+Common::String getTextFromAnyVar(const variable &from);
 struct persona *getCostumeFromVar(variable &thisVar);
 struct personaAnimation *getAnimationFromVar(variable &thisVar);
 bool getBoolean(const variable &from);
@@ -110,7 +111,7 @@ bool copyStack(const variable &from, variable &to);
 int stackSize(const stackHandler *me);
 bool stackSetByIndex(variableStack *, uint, const variable &);
 variable *stackGetByIndex(variableStack *, uint);
-bool getSavedGamesStack(stackHandler *sH, char *ext);
+bool getSavedGamesStack(stackHandler *sH, const Common::String &ext);
 
 bool makeFastArrayFromStack(variable &to, const stackHandler *stacky);
 bool makeFastArraySize(variable &to, int size);

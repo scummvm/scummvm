@@ -30,7 +30,6 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/language.h"
-#include "sludge/stringy.h"
 #include "sludge/sludger.h"
 #include "sludge/backdrop.h"
 #include "sludge/language.h"
@@ -71,9 +70,9 @@ Graphics::Surface renderSurface;
 
 int dialogValue = 0;
 
-char *gameName = NULL;
-char *gamePath = NULL;
-char *bundleFolder;
+Common::String gameName = "";
+Common::String gamePath = "";
+Common::String bundleFolder = "";
 
 void setGameFilePath(char *f) {
 	char currentDir[1000];
@@ -328,8 +327,6 @@ int main_loop(const char *filename)
 		handleSoundLists();
 		Wait_Frame();
 	}
-
-	delete[] gamePath;
 
 	killSoundStuff();
 

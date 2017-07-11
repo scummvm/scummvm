@@ -33,7 +33,6 @@
 #include "sludge/people.h"
 #include "sludge/talk.h"
 #include "sludge/newfatal.h"
-#include "sludge/stringy.h"
 #include "sludge/moreio.h"
 #include "sludge/statusba.h"
 #include "sludge/builtin.h"
@@ -58,18 +57,18 @@ extern personaAnimation *mouseCursorAnim;
 extern spritePalette pastePalette;
 extern int dialogValue;
 extern uint sceneWidth, sceneHeight;
-extern char *launchMe;
+extern Common::String launchMe;
 extern variable *launchResult;
 
 extern bool reallyWantToQuit;
 extern Graphics::Surface renderSurface;
 
 int numBIFNames = 0;
-char **allBIFNames = NULL;
+Common::String *allBIFNames;
 int numUserFunc = 0;
-char **allUserFunc = NULL;
+Common::String *allUserFunc = NULL;
 int numResourceNames = 0;
-char **allResourceNames = NULL;
+Common::String *allResourceNames = NULL;
 int selectedLanguage = 0;
 int languageNum = -1;
 
@@ -99,7 +98,7 @@ extern loadedFunction *saverFunc;
 loadedFunction *allRunningFunctions = NULL;
 screenRegion *lastRegion = NULL;
 variableStack *noStack = NULL;
-char *loadNow = NULL;
+Common::String loadNow;
 inputType input;
 variable *globalVars;
 int numGlobals;
@@ -133,7 +132,7 @@ void saveHandlers(Common::WriteStream *stream) {
 	stream->writeUint16BE(currentEvents->spaceFunction);
 }
 
-Common::File *openAndVerify(const char *filename, char extra1, char extra2,
+Common::File *openAndVerify(const Common::String &filename, char extra1, char extra2,
 		const char *er, int &fileVersion) {
 	Common::File *fp = new Common::File();
 	if (!fp->open(filename)) {
@@ -184,12 +183,11 @@ Common::File *openAndVerify(const char *filename, char extra1, char extra2,
 	return fp;
 }
 
-bool initSludge(const char *filename) {
+bool initSludge(const Common::String &filename) {
 	int a = 0;
 	mouseCursorAnim = makeNullAnim();
 
-	Common::File *fp = openAndVerify(filename, 'G', 'E', ERROR_BAD_HEADER,
-			gameVersion);
+	Common::File *fp = openAndVerify(filename, 'G', 'E', ERROR_BAD_HEADER, gameVersion);
 	if (!fp)
 		return false;
 
@@ -197,31 +195,34 @@ bool initSludge(const char *filename) {
 	if (c) {
 		numBIFNames = fp->readUint16BE();
 		debug(kSludgeDebugDataLoad, "numBIFNames %i", numBIFNames);
-		allBIFNames = new char *[numBIFNames];
+		allBIFNames = new Common::String[numBIFNames];
 		if (!checkNew(allBIFNames))
 			return false;
 
 		for (int fn = 0; fn < numBIFNames; fn++) {
+			allBIFNames[fn].clear();
 			allBIFNames[fn] = readString(fp);
 		}
 		numUserFunc = fp->readUint16BE();
 		debug(kSludgeDebugDataLoad, "numUserFunc %i", numUserFunc);
-		allUserFunc = new char *[numUserFunc];
+		allUserFunc = new Common::String[numUserFunc];
 		if (!checkNew(allUserFunc))
 			return false;
 
 		for (int fn = 0; fn < numUserFunc; fn++) {
+			allUserFunc[fn].clear();
 			allUserFunc[fn] = readString(fp);
 		}
 		if (gameVersion >= VERSION(1, 3)) {
 			numResourceNames = fp->readUint16BE();
 			debug(kSludgeDebugDataLoad, "numResourceNames %i",
 					numResourceNames);
-			allResourceNames = new char *[numResourceNames];
+			allResourceNames = new Common::String[numResourceNames];
 			if (!checkNew(allResourceNames))
 				return false;
 
 			for (int fn = 0; fn < numResourceNames; fn++) {
+				allResourceNames[fn].clear();
 				allResourceNames[fn] = readString(fp);
 			}
 		}
@@ -235,17 +236,15 @@ bool initSludge(const char *filename) {
 	debug(kSludgeDebugDataLoad, "specialSettings : %i", specialSettings);
 	desiredfps = 1000 / fp->readByte();
 
-	delete[] readString(fp);  // Unused - was used for registration purposes.
+	readString(fp);  // Unused - was used for registration purposes.
 
 	uint bytes_read = fp->read(&fileTime, sizeof(FILETIME));
 	if (bytes_read != sizeof(FILETIME) && fp->err()) {
 		debug("Reading error in initSludge.");
 	}
 
-	char *dataFol =
-			(gameVersion >= VERSION(1, 3)) ?
-					readString(fp) : joinStrings("", "");
-	debug(kSludgeDebugDataLoad, "dataFol : %s", dataFol);
+	Common::String dataFol = (gameVersion >= VERSION(1, 3)) ? readString(fp) : "";
+	debug(kSludgeDebugDataLoad, "dataFol : %s", dataFol.c_str());
 
 	gameSettings.numLanguages =
 			(gameVersion >= VERSION(1, 3)) ? (fp->readByte()) : 0;
@@ -260,13 +259,11 @@ bool initSludge(const char *filename) {
 		fp->readFloatLE();
 	}
 
-	char *checker = readString(fp);
-	debug(kSludgeDebugDataLoad, "checker : %s", checker);
+	Common::String checker = readString(fp);
+	debug(kSludgeDebugDataLoad, "checker : %s", checker.c_str());
 
-	if (strcmp(checker, "okSoFar"))
+	if (checker != "okSoFar")
 		return fatal(ERROR_BAD_HEADER, filename);
-	delete[] checker;
-	checker = NULL;
 
 	byte customIconLogo = fp->readByte();
 	debug(kSludgeDebugDataLoad, "Game icon type: %i", customIconLogo);
@@ -504,11 +501,9 @@ bool initSludge(const char *filename) {
 	// Get the original (untranslated) name of the game and convert it to Unicode.
 	// We use this to find saved preferences and saved games.
 	setFileIndices(fp, gameSettings.numLanguages, 0);
-	char *gameNameOrig = getNumberedString(1);
+	Common::String gameNameOrig = getNumberedString(1);
 
-	char *gameName = encodeFilename(gameNameOrig);
-
-	delete[] gameNameOrig;
+	Common::String gameName = encodeFilename(gameNameOrig);
 
 #if 0
 	changeToUserDir();
@@ -517,7 +512,6 @@ bool initSludge(const char *filename) {
 
 	if (chdir(gameName)) return fatal("This game's preference folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", gameName);
 #endif
-	delete[] gameName;
 
 	// Get user settings
 	readIniFile(filename);
@@ -533,14 +527,13 @@ bool initSludge(const char *filename) {
 		return fatal("Can't find the translation data specified!");
 	setFileIndices(NULL, gameSettings.numLanguages, languageNum);
 
-	if (dataFol[0]) {
-		char *dataFolder = encodeFilename(dataFol);
+	if (!dataFol.empty()) {
+		Common::String dataFolder = encodeFilename(dataFol);
 #if 0
 		mkdir(dataFolder, 0000777);
 
 		if (chdir(dataFolder)) return fatal("This game's data folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", dataFolder);
 #endif
-		delete []dataFolder;
 	}
 
 	positionStatus(10, winHeight - 15);
@@ -647,10 +640,10 @@ void abortFunction(loadedFunction *fun) {
 	pauseFunction(fun);
 	while (fun->stack)
 		trimStack(fun->stack);
-	delete fun->compiledLines;
+	delete []fun->compiledLines;
 	for (a = 0; a < fun->numLocals; a++)
 		unlinkVar(fun->localVars[a]);
-	delete[] fun->localVars;
+	delete []fun->localVars;
 	unlinkVar(fun->reg);
 	if (fun->calledBy)
 		abortFunction(fun->calledBy);
@@ -1201,16 +1194,15 @@ bool runSludge() {
 		thisFunction = nextFunction;
 	}
 
-	if (loadNow) {
+	if (!loadNow.empty()) {
 		if (loadNow[0] == ':') {
-			saveGame(loadNow + 1);
+			saveGame(loadNow.c_str() + 1);
 			setVariable(saverFunc->reg, SVT_INT, 1);
 		} else {
 			if (!loadGame(loadNow))
 				return false;
 		}
-		delete loadNow;
-		loadNow = NULL;
+		loadNow.clear();
 	}
 
 	return true;
@@ -1315,14 +1307,14 @@ bool handleInput() {
 	}
 //	lastFramesPerSecond = theTime.wSecond;
 #endif
-	if (launchMe) {
+	if (!launchMe.empty()) {
 		if (l) {
 			// Still paused because of spawned thingy...
 		} else {
 			l = 1;
 
 			setVariable(*launchResult, SVT_INT, 0/*launch(launchMe) > 31*/); //TODO:false value
-			launchMe = NULL;
+			launchMe.clear();
 			launchResult = NULL;
 		}
 		return true;
@@ -1379,19 +1371,19 @@ bool handleInput() {
 			return false;
 	}
 	if (input.keyPressed && currentEvents->spaceFunction) {
-		char *tempString = NULL;
+		Common::String tempString = "";
 		switch (input.keyPressed) {
 		case 127:
-			tempString = copyString("BACKSPACE");
+			tempString = "BACKSPACE";
 			break;
 		case 9:
-			tempString = copyString("TAB");
+			tempString = "TAB";
 			break;
 		case 13:
-			tempString = copyString("ENTER");
+			tempString = "ENTER";
 			break;
 		case 27:
-			tempString = copyString("ESCAPE");
+			tempString = "ESCAPE";
 			break;
 			/*
 			 case 1112:  tempString = copyString ("ALT+F1");     break;
@@ -1410,90 +1402,89 @@ bool handleInput() {
 			 case 2019:  tempString = copyString ("PAUSE");      break;
 			 */
 		case 63276:
-			tempString = copyString("PAGE UP");
+			tempString = "PAGE UP";
 			break;
 		case 63277:
-			tempString = copyString("PAGE DOWN");
+			tempString = "PAGE DOWN";
 			break;
 		case 63275:
-			tempString = copyString("END");
+			tempString = "END";
 			break;
 		case 63273:
-			tempString = copyString("HOME");
+			tempString = "HOME";
 			break;
 		case 63234:
-			tempString = copyString("LEFT");
+			tempString = "LEFT";
 			break;
 		case 63232:
-			tempString = copyString("UP");
+			tempString = "UP";
 			break;
 		case 63235:
-			tempString = copyString("RIGHT");
+			tempString = "RIGHT";
 			break;
 		case 63233:
-			tempString = copyString("DOWN");
+			tempString = "DOWN";
 			break;
 			/*
 			 case 2045:   tempString = copyString ("INSERT");     break;
 			 case 2046:   tempString = copyString ("DELETE");     break;
 			 */
 		case 63236:
-			tempString = copyString("F1");
+			tempString = "F1";
 			break;
 		case 63237:
-			tempString = copyString("F2");
+			tempString = "F2";
 			break;
 		case 63238:
-			tempString = copyString("F3");
+			tempString = "F3";
 			break;
 		case 63239:
-			tempString = copyString("F4");
+			tempString = "F4";
 			break;
 		case 63240:
-			tempString = copyString("F5");
+			tempString = "F5";
 			break;
 		case 63241:
-			tempString = copyString("F6");
+			tempString = "F6";
 			break;
 		case 63242:
-			tempString = copyString("F7");
+			tempString = "F7";
 			break;
 		case 63243:
-			tempString = copyString("F8");
+			tempString = "F8";
 			break;
 		case 63244:
-			tempString = copyString("F9");
+			tempString = "F9";
 			break;
 		case 63245:
-			tempString = copyString("F10");
+			tempString = "F10";
 			break;
 		case 63246:
-			tempString = copyString("F11");
+			tempString = "F11";
 			break;
 		case 63247:
-			tempString = copyString("F12");
+			tempString = "F12";
 			break;
 
 		default:
 			if (input.keyPressed >= 256) {
-				//if (captureAllKeys) {
-				tempString = copyString("ABCDEF");
-				sprintf(tempString, "%i", input.keyPressed);
+				char tmp[7] = "ABCDEF";
+				sprintf(tmp, "%i", input.keyPressed);
+				tempString = tmp;
 				//}
 			} else {
-				tempString = copyString(" ");
-				tempString[0] = input.keyPressed;
+				char tmp[2] = " ";
+				tmp[0] = input.keyPressed;
+				tempString = tmp;
 			}
 		}
 
-		if (tempString) {
+		if (!tempString.empty()) {
 			variableStack *tempStack = new variableStack;
 			if (!checkNew(tempStack))
 				return false;
 			initVarNew(tempStack->thisVar);
 			makeTextVar(tempStack->thisVar, tempString);
-			delete tempString;
-			tempString = NULL;
 			tempStack->next = NULL;
 			if (!startNewFunctionNum(currentEvents->spaceFunction, 1, NULL, tempStack))
 				return false;

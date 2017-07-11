@@ -25,7 +25,6 @@
 #include "sludge/allfiles.h"
 #include "sludge/sludger.h"
 #include "sludge/builtin.h"
-#include "sludge/stringy.h"
 #include "sludge/newfatal.h"
 #include "sludge/cursors.h"
 #include "sludge/statusba.h"
@@ -55,14 +54,14 @@
 
 namespace Sludge {
 
-extern char *gamePath;
+extern Common::String gamePath;
 
 int speechMode = 0;
 int cameraX, cameraY;
 float cameraZoom = 1.0;
 spritePalette pastePalette;
 
-char *launchMe = NULL;
+Common::String launchMe = NULL;
 variable *launchResult = NULL;
 
 extern int lastFramesPerSecond, thumbWidth, thumbHeight;
@@ -78,10 +77,10 @@ extern uint sceneWidth, sceneHeight;
 extern int numBIFNames, numUserFunc;
 extern char builtInFunctionNames[][25];
 
-extern char **allUserFunc;
-extern char **allBIFNames;
+extern Common::String *allUserFunc;
+extern Common::String *allBIFNames;
 extern inputType input;
-extern char *loadNow;
+extern Common::String loadNow;
 
 #if 0
 extern GLuint backdropTextureName;
@@ -121,14 +120,12 @@ int paramNum[] = { -1, 0, 1, 1, -1, -1, 1, 3, 4, 1, 0, 0, 8, -1,    // SAY->MOVE
                    1, 0, 0                                     // playMovie, stopMovie, pauseMovie
                  };
 
-bool failSecurityCheck(char *fn) {
-	if (fn == NULL)
+bool failSecurityCheck(const Common::String &fn) {
+	if (fn.empty())
 		return true;
 
-	int a = 0;
-
-	while (fn[a]) {
-		switch (fn[a]) {
+	for (int i = 0; i < fn.size(); ++i) {
+		switch (fn[i]) {
 			case ':':
 			case '\\':
 			case '/':
@@ -141,7 +138,6 @@ bool failSecurityCheck(char *fn) {
 				fatal("Filenames may not contain the following characters: \n\n\\  /  :  \"  <  >  |  ?  *\n\nConsequently, the following filename is not allowed:", fn);
 				return true;
 		}
-		a++;
 	}
 	return false;
 }
@@ -158,7 +154,7 @@ struct builtInFunctionData {
 
 static builtReturn sayCore(int numParams, loadedFunction *fun, bool sayIt) {
 	int fileNum = -1;
-	char *newText;
+	Common::String newText;
 	int objT, p;
 	killSpeechTimers();
 
@@ -171,8 +167,6 @@ static builtReturn sayCore(int numParams, loadedFunction *fun, bool sayIt) {
 
 		case 2:
 			newText = getTextFromAnyVar(fun->stack->thisVar);
-			if (!newText)
-				return BR_ERROR;
 			trimStack(fun->stack);
 			if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
 				return BR_ERROR;
@@ -181,8 +175,6 @@ static builtReturn sayCore(int numParams, loadedFunction *fun, bool sayIt) {
 			fun->timeLeft = p;
 			//debugOut ("BUILTIN: sayCore: %s (%i)\n", newText, p);
 			fun->isSpeech = true;
-			delete[] newText;
-			newText = NULL;
 			return BR_KEEP_AND_PAUSE;
 	}
 
@@ -264,9 +256,7 @@ builtIn(getStatusText) {
 
 builtIn(getMatchingFiles) {
 	UNUSEDALL
-	char *newText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newText)
-		return BR_ERROR;
+	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	unlinkVar(fun->reg);
 
@@ -280,8 +270,6 @@ builtIn(getMatchingFiles) {
 	fun->reg.varData.theStack->timesUsed = 1;
 	if (!getSavedGamesStack(fun->reg.varData.theStack, newText))
 		return BR_ERROR;
-	delete newText;
-	newText = NULL;
 	return BR_CONTINUE;
 }
 
@@ -295,13 +283,12 @@ builtIn(saveGame) {
 	loadNow = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 
-	char *aaaaa = encodeFilename(loadNow);
-	delete[] loadNow;
+	Common::String aaaaa = encodeFilename(loadNow);
+	loadNow.clear();
 	if (failSecurityCheck(aaaaa))
 		return BR_ERROR;      // Won't fail if encoded, how cool is that? OK, not very.
 
-	loadNow = joinStrings(":", aaaaa);
-	delete[] aaaaa;
+	loadNow = ":" + aaaaa;
 
 	setVariable(fun->reg, SVT_INT, 0);
 	saverFunc = fun;
@@ -312,8 +299,8 @@ builtIn(fileExists) {
 	UNUSEDALL
 	loadNow = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
-	char *aaaaa = encodeFilename(loadNow);
-	delete loadNow;
+	Common::String aaaaa = encodeFilename(loadNow);
+	loadNow.clear();
 	if (failSecurityCheck(aaaaa))
 		return BR_ERROR;
 #if 0
@@ -345,28 +332,24 @@ builtIn(fileExists) {
 
 builtIn(loadGame) {
 	UNUSEDALL
-	char *aaaaa = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String aaaaa = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
+	loadNow.clear();
 	loadNow = encodeFilename(aaaaa);
-	delete []aaaaa;
 
 	if (frozenStuff) {
 		fatal("Can't load a saved game while the engine is frozen");
 	}
 	if (failSecurityCheck(loadNow))
 		return BR_ERROR;
-	Common::File fd;
-	if (fd.open(loadNow)) {
-		fd.close();
 	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(loadNow);
 	if (fp) {
 		delete fp;
 		return BR_KEEP_AND_PAUSE;
 	}
-	delete []loadNow;
-	loadNow = NULL;
-
 	debug("not find sav file");
+
+	loadNow.clear();
 	return BR_CONTINUE;
 }
 
@@ -547,8 +530,7 @@ builtIn(pickOne) {
 
 builtIn(substring) {
 	UNUSEDALL
-	char *wholeString;
-	char *newString;
+	Common::String wholeString;
 	int start, length;
 
 	//debugOut ("BUILTIN: substring\n");
@@ -562,12 +544,13 @@ builtIn(substring) {
 	wholeString = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 
-	UTF8Converter convert(wholeString);
+	UTF8Converter convert;
+	convert.setUTF8String(wholeString);
 	Common::U32String str32 = convert.getU32String();
 
-	if (str32.size() < start + length) {
+	if ((int)str32.size() < start + length) {
 		length = str32.size() - start;
-		if (str32.size() < start) {
+		if ((int)str32.size() < start) {
 			start = 0;
 		}
 	}
@@ -578,25 +561,17 @@ builtIn(substring) {
 	int startoffset = convert.getOriginOffset(start);
 	int endoffset = convert.getOriginOffset(start + length);
 
-	newString = new char[endoffset - startoffset + 1];
-	if (!checkNew(newString)) {
-		return BR_ERROR;
-	}
-
-	memcpy(newString, wholeString + startoffset, endoffset - startoffset);
-	newString[endoffset - startoffset] = 0;
+	Common::String newString(wholeString.begin() + startoffset, wholeString.begin() + endoffset);
 
 	makeTextVar(fun->reg, newString);
-	delete []newString;
 	return BR_CONTINUE;
 }
 
 builtIn(stringLength) {
 	UNUSEDALL
-	char *newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, stringLength(newText));
-	delete[] newText;
 	return BR_CONTINUE;
 }
 
@@ -883,9 +858,7 @@ builtIn(setFont) {
 		return BR_ERROR;
 	//              newDebug ("  Height:", newHeight);
 	trimStack(fun->stack);
-	char *newText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newText)
-		return BR_ERROR;
+	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	//              newDebug ("  Character supported:", newText);
 	trimStack(fun->stack);
 	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
@@ -895,27 +868,22 @@ builtIn(setFont) {
 	if (!loadFont(fileNumber, newText, newHeight))
 		return BR_ERROR;
 	//              newDebug ("  Done!");
-	delete[] newText;
-
 	return BR_CONTINUE;
 }
 
 builtIn(inFont) {
 	UNUSEDALL
-	char *newText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newText)
-		return BR_ERROR;
+	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 
 	// Return value
-
 	setVariable(fun->reg, SVT_INT, isInFont(newText));
 	return BR_CONTINUE;
 }
 
 builtIn(pasteString) {
 	UNUSEDALL
-	char *newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	int y, x;
 	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
@@ -928,7 +896,6 @@ builtIn(pasteString) {
 		x = (winWidth - stringWidth(newText)) >> 1;
 	fixFont(pastePalette);
 	pasteStringToBackdrop(newText, x, y, pastePalette);
-	delete[] newText;
 	return BR_CONTINUE;
 }
 
@@ -986,26 +953,24 @@ builtIn(costume) {
 
 builtIn(launch) {
 	UNUSEDALL
-	char *newTextA = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newTextA)
-		return BR_ERROR;
+	Common::String newTextA = getTextFromAnyVar(fun->stack->thisVar);
 
-	char *newText = encodeFilename(newTextA);
+	Common::String newText = encodeFilename(newTextA);
 
 	trimStack(fun->stack);
 	if (newTextA[0] == 'h' && newTextA[1] == 't' && newTextA[2] == 't' && newTextA[3] == 'p' && (newTextA[4] == ':' || (newTextA[4] == 's' && newTextA[5] == ':'))) {
 
 		// IT'S A WEBSITE!
-		launchMe = copyString(newTextA);
+		launchMe.clear();
+		launchMe = newTextA;
 	} else {
-		char *gameDir;
-		gameDir = joinStrings(gamePath, "/");
-		launchMe = joinStrings(gameDir, newText);
-		delete newText;
-		if (!launchMe)
+		Common::String gameDir = gamePath;
+		gameDir += "/";
+		launchMe.clear();
+		launchMe = gameDir + newText;
+		if (launchMe.empty())
 			return BR_ERROR;
 	}
-	delete newTextA;
 	setGraphicsWindow(false);
 	setVariable(fun->reg, SVT_INT, 1);
 	launchResult = &fun->reg;
@@ -1421,16 +1386,14 @@ builtIn(getOverObject) {
 
 builtIn(rename) {
 	UNUSEDALL
-	char *newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	int objT;
-	if (!newText)
-		return BR_ERROR;
 	trimStack(fun->stack);
 	if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	objectType *o = findObjectType(objT);
-	delete o->screenName;
+	o->screenName.clear();
 	o->screenName = newText;
 	return BR_CONTINUE;
 }
@@ -1865,12 +1828,9 @@ builtIn(addStatus) {
 
 builtIn(statusText) {
 	UNUSEDALL
-	char *newText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!newText)
-		return BR_ERROR;
+	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	setStatusBar(newText);
-	delete[] newText;
 	return BR_CONTINUE;
 }
 
@@ -2024,14 +1984,11 @@ builtIn(cancelSub) {
 
 builtIn(stringWidth) {
 	UNUSEDALL
-	char *theText = getTextFromAnyVar(fun->stack->thisVar);
-	if (!theText)
-		return BR_ERROR;
+	Common::String theText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 
 	// Return value
 	setVariable(fun->reg, SVT_INT, stringWidth(theText));
-	delete theText;
 	return BR_CONTINUE;
 }
 
@@ -2207,39 +2164,36 @@ builtIn(fetchEvent) {
 builtIn(deleteFile) {
 	UNUSEDALL
 
-	char *namNormal = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String namNormal = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
-	char *nam = encodeFilename(namNormal);
-	delete namNormal;
+	Common::String nam = encodeFilename(namNormal);
+	namNormal.clear();
 	if (failSecurityCheck(nam))
 		return BR_ERROR;
-	setVariable(fun->reg, SVT_INT, remove(nam));
-	delete nam;
+	setVariable(fun->reg, SVT_INT, remove(nam.c_str()));
 
 	return BR_CONTINUE;
 }
 
 builtIn(renameFile) {
 	UNUSEDALL
-	char *temp;
+	Common::String temp;
 
+	temp.clear();
 	temp = getTextFromAnyVar(fun->stack->thisVar);
-	char *newnam = encodeFilename(temp);
+	Common::String newnam = encodeFilename(temp);
 	trimStack(fun->stack);
 	if (failSecurityCheck(newnam))
 		return BR_ERROR;
-	delete temp;
+	temp.clear();
 
 	temp = getTextFromAnyVar(fun->stack->thisVar);
-	char *nam = encodeFilename(temp);
+	Common::String nam = encodeFilename(temp);
 	trimStack(fun->stack);
 	if (failSecurityCheck(nam))
 		return BR_ERROR;
-	delete temp;
 
-	setVariable(fun->reg, SVT_INT, rename(nam, newnam));
-	delete nam;
-	delete newnam;
+	setVariable(fun->reg, SVT_INT, rename(nam.c_str(), newnam.c_str()));
 
 	return BR_CONTINUE;
 }
@@ -2257,7 +2211,7 @@ builtIn(cacheSound) {
 
 builtIn(burnString) {
 	UNUSEDALL
-	char *newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	int y, x;
 	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
@@ -2270,7 +2224,6 @@ builtIn(burnString) {
 		x = (winWidth - stringWidth(newText)) >> 1;
 	fixFont(pastePalette);
 	burnStringToBackdrop(newText, x, y, pastePalette);
-	delete[] newText;
 	return BR_CONTINUE;
 }
 
@@ -2352,12 +2305,9 @@ builtIn(getSoundCache) {
 builtIn(saveCustomData) {
 	UNUSEDALL
 	// saveCustomData (thisStack, fileName);
-	char *fileNameB = getTextFromAnyVar(fun->stack->thisVar);
-	if (!checkNew(fileNameB))
-		return BR_ERROR;
+	Common::String fileNameB = getTextFromAnyVar(fun->stack->thisVar);
 
-	char *fileName = encodeFilename(fileNameB);
-	delete fileNameB;
+	Common::String fileName = encodeFilename(fileNameB);
 
 	if (failSecurityCheck(fileName))
 		return BR_ERROR;
@@ -2370,19 +2320,15 @@ builtIn(saveCustomData) {
 	if (!stackToFile(fileName, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	delete fileName;
 	return BR_CONTINUE;
 }
 
 builtIn(loadCustomData) {
 	UNUSEDALL
 
-	char *newTextA = getTextFromAnyVar(fun->stack->thisVar);
-	if (!checkNew(newTextA))
-		return BR_ERROR;
+	Common::String newTextA = getTextFromAnyVar(fun->stack->thisVar);
 
-	char *newText = encodeFilename(newTextA);
-	delete newTextA;
+	Common::String newText = encodeFilename(newTextA);
 
 	if (failSecurityCheck(newText))
 		return BR_ERROR;
@@ -2398,7 +2344,6 @@ builtIn(loadCustomData) {
 	fun->reg.varData.theStack->timesUsed = 1;
 	if (!fileToStack(newText, fun->reg.varData.theStack))
 		return BR_ERROR;
-	delete newText;
 	return BR_CONTINUE;
 }
 
@@ -2553,17 +2498,10 @@ builtIn(showThumbnail) {
 	trimStack(fun->stack);
 
 	// Encode the name!Encode the name!
-	char *aaaaa = getTextFromAnyVar(fun->stack->thisVar);
-	//              deb ("Got name:", aaaaa;)
+	Common::String aaaaa = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
-	//              deb ("About to encode", aaaaa);
-	char *file = encodeFilename(aaaaa);
-	//              deb ("Made new name", file);
-	//              deb ("aaaaa is still ", aaaaa);
-	delete[] aaaaa;
-	//              deb ("Deleted", "aaaaa");
+	Common::String file = encodeFilename(aaaaa);
 	showThumbnail(file, x, y);
-	delete[] file;
 	return BR_CONTINUE;
 }
 
@@ -2631,7 +2569,7 @@ builtIn(_rem_registryGetString) {
 
 builtIn(quitWithFatalError) {
 	UNUSEDALL
-	char *mess = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String mess = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	fatal(mess);
 	return BR_ERROR;
@@ -2693,12 +2631,7 @@ char builtInFunctionNames[][25] = {
 #define NUM_FUNCS           (sizeof (builtInFunctionArray) / sizeof (builtInFunctionArray[0]))
 
 builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
-	// fprintf (stderr, "Calling function %d: %s\n", whichFunc, builtInFunctionNames[whichFunc]);    fflush (stderr);
 	if (numBIFNames) {
-
-		//      deb ("IN:", (fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function");
-		//      deb ("GO:", (whichFunc < numBIFNames) ? allBIFNames[whichFunc] : "Unknown built-in function");
-
 		setFatalInfo((fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
 				(whichFunc < numBIFNames) ? allBIFNames[whichFunc] : "Unknown built-in function");
 	}
@@ -2708,8 +2641,8 @@ builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
 			if (paramNum[whichFunc] != numParams) {
 				char buff[100];
 				sprintf(buff, "Built in function must have %i parameter%s", paramNum[whichFunc], (paramNum[whichFunc] == 1) ? "" : "s");
-
-				fatal(copyString(buff));
+				Common::String msg = buff;
+				fatal(msg);
 				return BR_ERROR;
 			}
 		}

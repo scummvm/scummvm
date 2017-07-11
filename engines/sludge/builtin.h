@@ -34,7 +34,7 @@ enum builtReturn {
 	BR_ALREADY_GONE
 };
 
-bool failSecurityCheck(char *fn);
+bool failSecurityCheck(const Common::String &fn);
 builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun);
 
 } // End of namespace Sludge

@@ -480,7 +480,7 @@ void drawPeople() {
 				bool r = false;
 				r = scaleSprite(myAnim->theSprites->bank.sprites[fNum], myAnim->theSprites->bank.myPalette, thisPerson, m);
 				if (r) {
-					if (thisPerson->thisType->screenName[0]) {
+					if (!thisPerson->thisType->screenName.empty()) {
 						if (personRegion.thisType != thisPerson->thisType)
 							lastRegion = NULL;
 						personRegion.thisType = thisPerson->thisType;

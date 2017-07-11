@@ -24,7 +24,6 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/sound.h"
-#include "sludge/stringy.h"
 #include "sludge/errors.h"
 #include "sludge/graphics.h"
 #include "sludge/sludge.h"
@@ -38,11 +37,11 @@ static Common::String fatalMessage;
 static Common::String fatalInfo = "Initialisation error! Something went wrong before we even got started!";
 
 extern int numResourceNames /* = 0*/;
-extern char **allResourceNames /*= NULL*/;
+extern Common::String *allResourceNames /*= ""*/;
 
 int resourceForFatal = -1;
 
-const char *resourceNameFromNum(int i) {
+const Common::String &resourceNameFromNum(int i) {
 	if (i == -1)
 		return NULL;
 	if (numResourceNames == 0)

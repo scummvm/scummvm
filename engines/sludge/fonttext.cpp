@@ -21,7 +21,6 @@
  */
 
 #include "sludge/allfiles.h"
-#include "sludge/stringy.h"
 #include "sludge/sprites.h"
 #include "sludge/fonttext.h"
 #include "sludge/newfatal.h"
@@ -42,10 +41,10 @@ uint fontTableSize = 0;
 
 extern float cameraZoom;
 
-bool isInFont(char *theText) {
+bool isInFont(const Common::String &theText) {
 	if (!fontTableSize)
 		return 0;
-	if (!theText[0])
+	if (theText.empty())
 		return 0;
 
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
@@ -60,12 +59,12 @@ bool isInFont(char *theText) {
 	return fontOrder.getU32String().contains(c);
 }
 
-int stringLength(char *theText) {
+int stringLength(const Common::String &theText) {
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
 	return str32.size();
 }
 
-int stringWidth(char *theText) {
+int stringWidth(const Common::String &theText) {
 	int xOff = 0;
 
 	if (!fontTableSize)
@@ -81,7 +80,7 @@ int stringWidth(char *theText) {
 	return xOff;
 }
 
-void pasteString(char *theText, int xOff, int y, spritePalette &thePal) {
+void pasteString(const Common::String &theText, int xOff, int y, spritePalette &thePal) {
 	if (!fontTableSize)
 		return;
 
@@ -97,7 +96,7 @@ void pasteString(char *theText, int xOff, int y, spritePalette &thePal) {
 	}
 }
 
-void pasteStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
+void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, spritePalette &thePal) {
 	if (!fontTableSize)
 		return;
 
@@ -112,7 +111,7 @@ void pasteStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal
 	}
 }
 
-void burnStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal) {
+void burnStringToBackdrop(const Common::String &theText, int xOff, int y, spritePalette &thePal) {
 	if (!fontTableSize)
 		return;
 
@@ -160,7 +159,7 @@ void setFontColour(spritePalette &sP, byte r, byte g, byte b) {
 	sP.originalBlue = b;
 }
 
-bool loadFont(int filenum, const char *charOrder, int h) {
+bool loadFont(int filenum, const Common::String &charOrder, int h) {
 	fontOrder.setUTF8String(charOrder);
 
 	forgetSpriteBank(theFont);
