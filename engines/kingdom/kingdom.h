@@ -51,6 +51,7 @@
 #include "common/serializer.h"
 
 #include "kingdom/console.h"
+#include "kingdom/logic.h"
 
 namespace Kingdom {
 	enum KingdomDebugChannels {
@@ -108,14 +109,15 @@ namespace Kingdom {
 
 	private:
 		Console *_console;
-		Common::RandomSource *_rnd;
+		Logic *_logic;
 
 		KingArtEntry *_kingartEntries;
 
+	public:
+		Common::RandomSource *_rnd;
+
 		bool _loopFlag;
 		int _gameMode;
-		int _statPlay;
-		int _oldStatPlay;
 		bool _fstFwd;
 		bool _noIFScreen;
 		bool _sound;
@@ -123,9 +125,6 @@ namespace Kingdom {
 		bool _fullScreen;
 		int _frameStop;
 		int _daelonCntr;
-		bool _spell1;
-		bool _spell2;
-		bool _spell3;
 		bool _itemInhibit;
 		bool _asMode;
 		bool _aTimerFlag;
@@ -136,10 +135,7 @@ namespace Kingdom {
 		int _bTimer;
 		int _cTimer;
 		int _skylarTimer;
-		bool _tideCntl;
 		bool _mapEx;
-		int _health;
-		int _healthOld;
 		int _healthTmr;
 		int _treeEyeTimer;
 		int _treeEyePic;
@@ -152,37 +148,21 @@ namespace Kingdom {
 		int _treeRightSta;
 		int _treeHGSta;
 		bool _tsIconOnly;
-		bool _lastObs;
-		bool _pouch;
 		bool _noMusic; // TODO: Synchronize this flag with the launcher
 		byte *_asPtr;
 		int _asMap;
-		int _currMap;
 		int _oldTLS;
 		int _oldTRS;
 		int _treeLeftSta;
 		bool _iconsClosed;
 		bool _oldIconsClosed;
-		bool _oldEye;
-		bool _eye;
-		bool _oldHelp;
-		bool _help;
-		bool _oldPouch;
 		int _pMovie;
 		bool _keyActive;
 		bool _iconRedraw;
-		bool _replay;
 		bool _quit;
-		int _nodeNum;
-		int _oldNode; // CHECKME: Useless? If so, to be removed
-		int _nextNode;
-		int _robberyNode;
 		bool _cursorDrawn; // CHECKME: Useless
 		bool _wizard;
 		int _zoom;
-		bool _resurrect;
-		int _lastObstacle;
-		int _mapStat; // CHECKME: Useless? If so, to be removed
 		int _mouseValue;
 		int _cursorDef; // TODO: Could be removed by using the return value of CursorTypeExit()
 		int _oldCursorDef; // CHECKME: Unused in our implementation?
@@ -193,18 +173,14 @@ namespace Kingdom {
 		int _iconSel;
 		int _iconSelect;
 		bool _mouseDebound;
-		int _rtnNode;
 		int _soundNumber;
 		bool _palStepFlag;
 		Audio::SoundHandle _soundHandle;
 		int _tickCount;
 		uint32 _oldTime;
 
-		int16 _nodes[99];
-
 		Common::SeekableReadStream *_rezPointers[510];
 		int _rezSize[510];
-		int _inventory[19];
 		int _iconPic[7];
 		uint16 _userInput;
 		uint16 _mouseButton;
@@ -217,15 +193,6 @@ namespace Kingdom {
 		void initHelp();
 		void fadeToBlack1();
 		void fadeToBlack2();
-		void gameHelp();
-		void GPLogic1();
-		void GPLogic1_SubSP10();
-		void GPLogic1_SubSP121();
-		void GPLogic2();
-		void GPLogic2_SubSP361();
-		void GPLogic3();
-		void GPLogic4();
-		void GPLogic4_SP901();
 		void loadAResource(int reznum);
 		void releaseAResource(int reznum);
 		void showPic(int reznum);
@@ -236,14 +203,11 @@ namespace Kingdom {
 		void readMouse();
 		void initMPlayer();
 		void playMovie(int movieNum);
-		void enAll(); // TODO: Rename later as enableAll
-		void dsAll(); // TODO: Rename later as disableAll
 		void saveAS(); // TODO: Rename later as saveVideoBackground
 		void restoreAS(); // TODO: Rename later as restoreVideoBackground
 		void drawHelpScreen();
 		void drawRect(uint minX, uint minY, uint maxX, uint maxY, int color);
 		void drawInventory();
-		void gameHelp_Sub43C();
 		void playSound(int idx);
 		void eraseCursor();
 		void getUserInput();
@@ -251,17 +215,11 @@ namespace Kingdom {
 		void drawLocation();
 		void processMap(int mapNum, int zoom);
 		void processMapInput(int mapNum);
-		void inventoryDel(int item);
-		void inventoryAdd(int item);
 		void drawPic(int reznum);
 		void displayIcon(int reznum);
 		void setATimer();
-		bool wound();
 		void refreshSound();
-		void switchAS();
-		void increaseHealth();
 		void checkMainScreen();
-		bool chkDesertObstacles();
 		void switchAtoM();
 		void switchMtoA();
 		void drawIcon(int x, int y, int index);
@@ -273,7 +231,6 @@ namespace Kingdom {
 		int getAKey();
 		int checkMouseMapAS();
 		void cursorTypeExit();
-		void endCredits();
 		void saveGame();
 		void restoreGame();
 		virtual Common::Error loadGameState(int slot);
