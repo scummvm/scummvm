@@ -36,6 +36,8 @@ class Room {
 public:
 	Room() {
 		_seen = false;
+		for (int i = 0; i < kMaxSection; ++i)
+			_shown[i] = false;
 	}
 
 	bool hasSeen() {
@@ -101,6 +103,8 @@ public:
 		    Object("Discman", "Es ist eine \"Mad Monkeys\"-CD darin.", DISCMAN,
 		           TAKE | COMBINABLE, 255, 255, 0, NULLROOM, 0);
 	}
+
+	virtual void onEntrance();
 };
 
 // Spaceship
@@ -415,7 +419,7 @@ public:
 		_objectState[20] = Object("Schrank",Object::defaultDescription,NULLOBJECT,OPEN | CLOSED,1,1,0);
 		_objectState[21] = Object("Fach",Object::defaultDescription,NULLOBJECT,OPEN | CLOSED,2,2,0);
 		_objectState[22] = Object("Steckdose",Object::defaultDescription,SOCKET,COMBINABLE,4,4,0);
-		_objectState[23] = Object("Toilette",Object::defaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,2);
+		_objectState[23] = Object("Toilette",Object::defaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -432,7 +436,7 @@ public:
 
 		_objectState[0] = Object("Klo","Ein Klo mit Saugmechanismus.",TOILET,NULLTYPE,0,0,0);
 		_objectState[1] = Object("Dusche",Object::defaultDescription,SHOWER,NULLTYPE,1,1,0);
-		_objectState[2] = Object("Ausgang",Object::defaultDescription,BATHROOM_EXIT,EXIT,255,255,0,NULLROOM,2);
+		_objectState[2] = Object("Ausgang",Object::defaultDescription,BATHROOM_EXIT,EXIT,255,255,0,CABIN_R3,2);
 	}
 };
 
