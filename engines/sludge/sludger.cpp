@@ -57,7 +57,6 @@ extern personaAnimation *mouseCursorAnim;
 extern spritePalette pastePalette;
 extern int dialogValue;
 extern uint sceneWidth, sceneHeight;
-extern Common::String launchMe;
 extern variable *launchResult;
 
 extern bool reallyWantToQuit;
@@ -98,7 +97,6 @@ extern loadedFunction *saverFunc;
 loadedFunction *allRunningFunctions = NULL;
 screenRegion *lastRegion = NULL;
 variableStack *noStack = NULL;
-Common::String loadNow;
 inputType input;
 variable *globalVars;
 int numGlobals;
@@ -1194,15 +1192,15 @@ bool runSludge() {
 		thisFunction = nextFunction;
 	}
 
-	if (!loadNow.empty()) {
-		if (loadNow[0] == ':') {
-			saveGame(loadNow.c_str() + 1);
+	if (!g_sludge->loadNow.empty()) {
+		if (g_sludge->loadNow[0] == ':') {
+			saveGame(g_sludge->loadNow.c_str() + 1);
 			setVariable(saverFunc->reg, SVT_INT, 1);
 		} else {
-			if (!loadGame(loadNow))
+			if (!loadGame(g_sludge->loadNow))
 				return false;
 		}
-		loadNow.clear();
+		g_sludge->loadNow.clear();
 	}
 
 	return true;
@@ -1307,14 +1305,14 @@ bool handleInput() {
 	}
 //	lastFramesPerSecond = theTime.wSecond;
 #endif
-	if (!launchMe.empty()) {
+	if (!g_sludge->launchMe.empty()) {
 		if (l) {
 			// Still paused because of spawned thingy...
 		} else {
 			l = 1;
 
 			setVariable(*launchResult, SVT_INT, 0/*launch(launchMe) > 31*/); //TODO:false value
-			launchMe.clear();
+			g_sludge->launchMe.clear();
 			launchResult = NULL;
 		}
 		return true;

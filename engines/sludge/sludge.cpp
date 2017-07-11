@@ -50,6 +50,16 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 
 	// check init
 	debug("SludgeEngine::SludgeEngine");
+
+	// Init Strings
+	launchMe = "";
+	loadNow = "";
+	gameName = "";
+	gamePath = "";
+	bundleFolder = "";
+
+	fatalMessage = "";
+	fatalInfo = "Initialisation error! Something went wrong before we even got started!";
 }
 
 SludgeEngine::~SludgeEngine() {

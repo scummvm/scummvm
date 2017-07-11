@@ -70,10 +70,6 @@ Graphics::Surface renderSurface;
 
 int dialogValue = 0;
 
-Common::String gameName = "";
-Common::String gamePath = "";
-Common::String bundleFolder = "";
-
 void setGameFilePath(char *f) {
 	char currentDir[1000];
 #if 0
@@ -295,7 +291,7 @@ int main_loop(const char *filename)
 	initStatusBar();
 	resetRandW();
 
-	gameName = getNumberedString(1);
+	g_sludge->gameName = getNumberedString(1);
 
 #if 0
 	SDL_WM_SetCaption(gameName, gameName);
