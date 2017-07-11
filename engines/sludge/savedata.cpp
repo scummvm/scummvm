@@ -31,6 +31,7 @@
 
 namespace Sludge {
 
+const char UTF8_CHECKER[] = {'U', 'N', -17, -65, -67, 'L', 'O', -17, -65, -67, 'C', 'K', 'E', 'D', '\0'};
 uint16 saveEncoding = false;
 char encode1 = 0;
 char encode2 = 0;
@@ -137,7 +138,7 @@ bool fileToStack(const Common::String &filename, stackHandler *sH) {
 
 	if (saveEncoding) {
 		checker = readStringEncoded(&fd);
-		if (checker == "UN�LO�CKED") {
+		if (checker == UTF8_CHECKER) {
 			fd.close();
 			return fatal(
 			LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
@@ -206,7 +207,7 @@ bool stackToFile(const Common::String &filename, const variable &from) {
 
 	if (saveEncoding) {
 		fprintf(fp, "[Custom data (encoded)]\r\n");
-		writeStringEncoded("UN�LO�CKED", fp);
+		writeStringEncoded(UTF8_CHECKER, fp);
 	} else {
 		fprintf(fp, "[Custom data (ASCII)]\n");
 	}
