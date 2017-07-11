@@ -1001,21 +1001,7 @@ bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream) {
 	}
 	return true;
 }
-/*
- void debugCostume (char * message, persona * cossy) {
- FILE * db = fopen ("debuTURN.txt", "at");
- fprintf (db, "  %s costume with %i directions...\n", message, cossy->numDirections);
- for (int a = 0; a < cossy->numDirections * 3; a++) {
- fprintf (db, "      %i frames:", cossy->animation[a]->numFrames);
- for (int b = 0; b < cossy->animation[a]->numFrames; b ++) {
- fprintf (db, " %i", cossy->animation[a]->frames[b]);
- }
- fprintf (db, "\n");
 
- }
- fclose (db);
- }
- */
 bool saveCostume(persona *cossy, Common::WriteStream *stream) {
 	int a;
 	stream->writeUint16BE(cossy->numDirections);
