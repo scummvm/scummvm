@@ -422,18 +422,23 @@ enum ObjectID {
 	TICKETS
 };
 
-static const char *const guiCommands[] = {
+static const char *const guiCommand_DE[] = {
     "Gehe",
     "Schau",
     "Nimm",
-    "Öffne",
-    "Schließe",
-    "Drücke",
+    "\231ffne",
+    "Schlie\341e",
+    "Dr\201cke",
     "Ziehe",
     "Benutze",
     "Rede",
     "Gib"
 };
+
+static const char *guiStatusCommand_DE[10] =
+{"Gehe zu ","Schau ","Nimm ","\231ffne ","Schlie\341e ","Dr\201cke ","Ziehe ","Benutze ","Rede mit ","Gib "};
+static const char *guiStatusCommand_EN[10] =
+{"Go to ", "Look at ", "Take ", "Open ", "Close ", "Press ", "Pull ", "Use ", "Talk to ", "Give "};
 
 ObjectType operator|(ObjectType a, ObjectType b);
 ObjectType operator&(ObjectType a, ObjectType b);
