@@ -23,8 +23,17 @@
 #include "common/system.h"
 
 #include "supernova/supernova.h"
+#include "supernova/state.h"
 
 namespace Supernova {
+
+void StartingItems::onEntrance() {
+	for (int i = 0; i < 3; ++i)
+		_gm->_inventory.add(*getObject(i));
+
+	this->setRoomSeen(true);
+	_gm->changeRoom(CABIN_R3);
+}
 
 bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == BUTTON)) {
@@ -165,7 +174,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 		_shown[kMaxSection - 1] = false;
 	} else if (((verb == ACTION_WALK) || (verb == ACTION_USE)) &&
 	           ((obj1._id == CABINS) || (obj1._id == CABIN))) {
-		r = &_gm->_rooms[AIRLOCK];
+		r = _gm->_rooms[AIRLOCK];
 		if (!(obj1._id == CABIN) || !(_shown[5])) {
 			_vm->renderMessage("Es würde wenig bringen,|sich in eine Schlafkammer zu legen,|die nicht eingeschaltet ist.");
 		} else if (r->getObject(5)->hasProperty(WORN)) {
@@ -174,7 +183,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->paletteFadeOut();
 			_vm->renderImage(_gm->_currentRoom->getFileNumber(), _gm->invertSection(5));
 			_vm->renderImage(_gm->_currentRoom->getFileNumber(), _gm->invertSection(4));
-			r = &_gm->_rooms[GENERATOR];
+			r = _gm->_rooms[GENERATOR];
 			if (r->isSectionVisible(9)) {
 				energy = &_gm->_state.landingModuleEnergy;
 			} else {
@@ -186,7 +195,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			if (_gm->_state.timeSleep >= *energy) {
 				_gm->_state.timeSleep = *energy;
 				if (r->isSectionVisible(9)) {
-					r = &_gm->_rooms[LANDINGMODULE]; // Monitors off
+					r = _gm->_rooms[LANDINGMODULE]; // Monitors off
 					r->setSectionVisible(2, false);
 					r->setSectionVisible(7, false);
 					r->setSectionVisible(8, false);
@@ -196,18 +205,18 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 			if (_gm->_state.timeSleep == _gm->_state.time) {
 				_vm->renderImage(_gm->_currentRoom->getFileNumber(), 3);  // landed
-				r = &_gm->_rooms[COCKPIT];
+				r = _gm->_rooms[COCKPIT];
 				r->setSectionVisible(23, true);
-				r = &_gm->_rooms[CABIN_R2];
+				r = _gm->_rooms[CABIN_R2];
 				r->setSectionVisible(5, false);
 				r->setSectionVisible(6, true);
 				r->getObject(2)->_click = 10;
-				r = &_gm->_rooms[HOLD];
+				r = _gm->_rooms[HOLD];
 				r->setSectionVisible(0, false);
 				r->setSectionVisible(1, true);
 				r->getObject(1)->_click = 255;
 				r->getObject(3)->_click = 255;
-				r = &_gm->_rooms[GENERATOR];
+				r = _gm->_rooms[GENERATOR];
 				r->setSectionVisible(6, false);
 				r->setSectionVisible(7, true);
 				r->getObject(1)->_click = 14;
@@ -226,7 +235,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_state.alarmOn = (_gm->_state.timeAlarmSystem > _vm->getDOSTicks());
 			if (!*energy) {
 				_gm->turnOff();
-				r = &_gm->_rooms[GENERATOR];
+				r = _gm->_rooms[GENERATOR];
 				r->setSectionVisible(4, r->isSectionVisible(2));
 			}
 			if (_gm->_state.time == 0) {
@@ -287,7 +296,7 @@ void ShipSleepCabin::animation() {
 	}
 }
 void ShipSleepCabin::onEntrance() {
-	if (_gm->_state.dream && (_gm->_rooms[CAVE].getObject(1)->_exitRoom == MEETUP3)) {
+	if (_gm->_state.dream && (_gm->_rooms[CAVE]->getObject(1)->_exitRoom == MEETUP3)) {
 		_vm->renderMessage("Du wachst mit brummendem Schädel auf|und merkst, daß du nur geträumt hast.");
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
@@ -495,7 +504,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE2))
 		_vm->renderMessage("Schneid doch besser ein|lngeres Stck Kabel ab!");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE)) {
-		r = &_gm->_rooms[AIRLOCK];
+		r = _gm->_rooms[AIRLOCK];
 		if (!this->isSectionVisible(10) && !r->getObject(5)->hasProperty(WORN)) {
 			_vm->renderImage(this->getFileNumber(), 25);
 			_gm->shock();
@@ -554,10 +563,10 @@ bool ShipCabinR3::interact(Action verb, Object &obj1, Object &obj2) {
 	}
 
 	else if ((verb == ACTION_TAKE) && (obj1._id == DISCMAN) &&
-	         !_gm->_rooms[0].getObject(3)->hasProperty(CARRIED)) {
+	         !_gm->_rooms[0]->getObject(3)->hasProperty(CARRIED)) {
 		this->getObject(10)->_click = 34; // Locker empty
 		obj1._click = 255;
-		_gm->takeObject(*_gm->_rooms[0].getObject(3));
+		_gm->takeObject(*_gm->_rooms[0]->getObject(3));
 		_vm->renderImage(this->getFileNumber(), 16);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == ROPE) &&
 	           obj1.hasProperty(CARRIED)) {
@@ -657,7 +666,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 				this->setSectionVisible(5, false);
 				_gm->wait2(2);
 				_vm->renderImage(this->getFileNumber(), _gm->invertSection(4));
-				r = &_gm->_rooms[AIRLOCK];
+				r = _gm->_rooms[AIRLOCK];
 				if (!r->getObject(4)->hasProperty(WORN) ||
 				    !r->getObject(5)->hasProperty(WORN) ||
 				    !r->getObject(6)->hasProperty(WORN)) {
@@ -715,12 +724,12 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(this->getFileNumber(), 5);
 			this->getObject(0)->_name = "langes Kabel mit Stecker";
 			this->getObject(0)->_click = 10;
-			r = &_gm->_rooms[CABIN_L2];
+			r = _gm->_rooms[CABIN_L2];
 			_gm->_inventory.remove(*this->getObject(9));
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, GENERATOR_TOP)) {
 		if (this->isSectionVisible(5)) {
-			r = &_gm->_rooms[GENERATOR];
+			r = _gm->_rooms[GENERATOR];
 			r->getObject(0)->_click = 15;
 			r->getObject(1)->_click = 13;
 			r->setSectionVisible(6, false);
@@ -743,7 +752,7 @@ void ShipHold::onEntrance() {
 	if (!this->hasSeen())
 		_vm->renderMessage("Was ist denn das fr ein Chaos?|Und auáerdem fehlt das Notraumschiff!|Jetzt wird mir einiges klar.|Die anderen sind geflchtet,|und ich habe es verpennt.");
 	this->setRoomSeen(true);
-	_gm->_rooms[COCKPIT].setRoomSeen(true);
+	_gm->_rooms[COCKPIT]->setRoomSeen(true);
 }
 
 bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
@@ -752,7 +761,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(obj1._description);
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, PEN, LANDINGMOD_BUTTON)) {
 		if (_gm->_state.landingModuleEnergy) {
-			r = &_gm->_rooms[GENERATOR];
+			r = _gm->_rooms[GENERATOR];
 			if (this->isSectionVisible(7)) {
 				_vm->renderImage(this->getFileNumber(), _gm->invertSection(9));
 				_vm->renderImage(this->getFileNumber(), _gm->invertSection(2));
@@ -770,7 +779,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 //				load("MSN_DATA.025");
 				_gm->roomBrightness();
 				_vm->paletteBrightness();
-				r = &_gm->_rooms[SLEEP];
+				r = _gm->_rooms[SLEEP];
 				r->setSectionVisible(1, false);
 				r->setSectionVisible(2, false);
 				_gm->wait2(2);
@@ -791,7 +800,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 	else if ((verb == ACTION_USE) && (obj1._id == KEYBOARD))
 		_vm->renderMessage("Laá lieber die Finger davon!");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, LANDINGMOD_SOCKET)) {
-		r = &_gm->_rooms[CABIN_L3];
+		r = _gm->_rooms[CABIN_L3];
 		_gm->_inventory.remove(*r->getObject(8));
 		this->getObject(4)->_name = r->getObject(8)->_name;
 		_vm->renderImage(this->getFileNumber(), 4);
@@ -808,7 +817,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, TERMINALSTRIP)) {
 		_vm->renderImage(this->getFileNumber(), 11);
 		this->getObject(4)->_name = "Leitung mit Lsterklemme";
-		r = &_gm->_rooms[HOLD];
+		r = _gm->_rooms[HOLD];
 		_gm->_inventory.remove(*r->getObject(2));
 		_gm->_state.terminalStripConnected = true;
 		_gm->_state.terminalStripWire = true;
@@ -819,19 +828,19 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(this->getFileNumber(), 5);
 			this->getObject(4)->_name = "langes Kabel mit Stecker";
 			this->getObject(4)->_click = 6;
-			r = &_gm->_rooms[CABIN_L2];
+			r = _gm->_rooms[CABIN_L2];
 			_gm->_inventory.remove(*r->getObject(9));
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, LANDINGMOD_HATCH)) {
 		if (this->getObject(5)->hasProperty(OPENED)) {
-			r = &_gm->_rooms[HOLD];
+			r = _gm->_rooms[HOLD];
 			if (this->isSectionVisible(5)) {
-				_gm->_rooms[HOLD].setSectionVisible(5, false);
+				_gm->_rooms[HOLD]->setSectionVisible(5, false);
 				r->getObject(0)->_click = 10;
 
 			} else
 				r->getObject(0)->_click = 9;
-			_gm->_rooms[HOLD].setSectionVisible(4, false);
+			_gm->_rooms[HOLD]->setSectionVisible(4, false);
 			r->getObject(0)->_name = this->getObject(4)->_name;
 			_vm->renderImage(this->getFileNumber(), _gm->invertSection(5));
 			_vm->renderImage(this->getFileNumber(), _gm->invertSection(4));
@@ -866,7 +875,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(this->getFileNumber(), 10);
 		if (this->isSectionVisible(13))
 			_vm->renderImage(this->getFileNumber(), 13);
-		_gm->_rooms[HOLD].setSectionVisible(3, true);
+		_gm->_rooms[HOLD]->setSectionVisible(3, true);
 		obj1.setProperty(OPENED);
 		obj1._click = 2;
 		_vm->playSound(kAudioDoorOpen);
@@ -881,7 +890,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			this->setSectionVisible(10, false);
 			if (this->isSectionVisible(13))
 				_vm->renderImage(this->getFileNumber(), 13);
-			_gm->_rooms[HOLD].setSectionVisible(3, false);
+			_gm->_rooms[HOLD]->setSectionVisible(3, false);
 			obj1.disableProperty(OPENED);
 			obj1._click = 1;
 			_vm->playSound(kAudioDoorClose);
@@ -944,12 +953,12 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(this->getFileNumber(), 3);
 		_vm->renderImage(this->getFileNumber(), 9);
 		this->getObject(0)->_click = 16;
-		r = &_gm->_rooms[LANDINGMODULE];
+		r = _gm->_rooms[LANDINGMODULE];
 		if (_gm->_state.landingModuleEnergy && r->isSectionVisible(7))
 			_gm->turnOn();
 		else
 			_vm->renderImage(this->getFileNumber(), 4);
-		_gm->_rooms[HOLD].setSectionVisible(7, true);
+		_gm->_rooms[HOLD]->setSectionVisible(7, true);
 		_gm->great(3);
 	} else if ((verb == ACTION_PULL) && (obj1._id == GENERATOR_WIRE) &&
 	           (obj1._click == 16)) {
@@ -960,7 +969,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(this->getFileNumber(), 8);
 		obj1._click = 15;
 		_gm->turnOff();
-		_gm->_rooms[HOLD].setSectionVisible(7, false);
+		_gm->_rooms[HOLD]->setSectionVisible(7, false);
 	} else if ((verb == ACTION_USE) &&
 	           (Object::combine(obj1, obj2, WIRE, CLIP) ||
 	            Object::combine(obj1, obj2, SPOOL, CLIP)) &&
@@ -973,7 +982,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage("Es zeigt volle Spannung an.");
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LADDER, ROPE)) {
 		_vm->renderImage(this->getFileNumber(), 13);
-		r = &_gm->_rooms[CABIN_R3];
+		r = _gm->_rooms[CABIN_R3];
 		_gm->_inventory.remove(*r->getObject(9));
 		this->getObject(3)->_click = 18;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, OUTERHATCH, GENERATOR_ROPE)) {
@@ -988,7 +997,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			} else {
 				_vm->renderImage(this->getFileNumber(), 12);
 			}
-			r = &_gm->_rooms[OUTSIDE];
+			r = _gm->_rooms[OUTSIDE];
 			r->setSectionVisible(1, true);
 			r->getObject(1)->_click = 1;
 			this->getObject(3)->_click = 17;

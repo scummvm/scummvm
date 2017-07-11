@@ -107,6 +107,7 @@ public:
 	int  _textColor;
 
 	int  getDOSTicks();
+	int  characterWidth(const char *text);
 	void initData();
 	void initPalette();
 	void paletteFadeIn();
@@ -127,83 +128,10 @@ public:
 	void renderText(const char *text);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void setColor63(byte value);
+	void command_print();
 
 	Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 };
-
-
-class Inventory {
-public:
-	Inventory();
-
-	void add(Object &obj);
-	void remove(Object &obj);
-	Object *get(uint index) const;
-	Object *get(ObjectID id) const;
-
-private:
-	Object *_inventory[kMaxCarry];
-	uint _numObjects;
-};
-
-class GameManager {
-public:
-	GameManager(SupernovaEngine *vm, Common::Event *event);
-
-	void processInput();
-	void executeRoom();
-
-	SupernovaEngine *_vm;
-	Common::Event *_event;
-	uint16 _key;
-	Room *_currentRoom;
-	Room _rooms[kRoomsNum];
-	Inventory _inventory;
-	GameState _state;
-	int _status;
-	Action _inputVerb;
-	Object _inputObject[2];
-	bool _waitEvent;
-	bool _newRoom;
-	bool _newOverlay;
-	int _timer1;
-	int _timer2;
-	// 0 PC Speaker | 1 SoundBlaster | 2 No Sound
-	int _soundDevice;
-
-	void takeObject(Object &obj);
-
-	bool genericInteract(Action verb, Object &obj1, Object &obj2);
-	bool isHelmetOff();
-	void great(uint number);
-	bool airless();
-	void shock();
-	void mouseInput();
-	void mouseInput2();
-	void mouseInput3();
-	void mouseWait(int delay);
-	void wait2(int delay);
-	void turnOff();
-	void turnOn();
-	void screenShake();
-	void loadTime();
-	void saveTime();
-	bool saveGame(int number);
-	void errorTemp();
-	void roomBrightness();
-	void palette();
-	void showMenu();
-	void drawMapExits();
-	void animationOff();
-	void animationOn();
-	void loadOverlayStart();
-	void openLocker(const Room *room, Object *obj, Object *lock, int section);
-	void closeLocker(const Room *room, Object *obj, Object *lock, int section);
-	void edit(char *text, int x, int y, int length);
-	int invertSection(int section);
-	void command_print();
-};
-
 
 }
 

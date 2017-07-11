@@ -422,7 +422,7 @@ enum ObjectID {
 	TICKETS
 };
 
-static const char *const guiCommands[] = {
+static const char *const guiCommand_DE[] = {
     "Gehe",
     "Schau",
     "Nimm",
@@ -434,6 +434,11 @@ static const char *const guiCommands[] = {
     "Rede",
     "Gib"
 };
+
+static const char *guiStatusCommand_DE[10] =
+{"Gehe zu ","Schau ","Nimm ","\231ffne ","Schlie\341e ","Dr\201cke ","Ziehe ","Benutze ","Rede mit ","Gib "};
+static const char *guiStatusCommand_EN[10] =
+{"Go to ", "Look at ", "Take ", "Open ", "Close ", "Press ", "Pull ", "Use ", "Talk to ", "Give "};
 
 ObjectType operator|(ObjectType a, ObjectType b);
 ObjectType operator&(ObjectType a, ObjectType b);
@@ -499,36 +504,6 @@ struct Object {
 	byte _section;
 	RoomID _exitRoom;
 	byte _direction;
-};
-
-struct GameState {
-	int32  time;
-	int32  timeSleep;
-	int32  timeStarting;
-	int32  timeAlarm;
-	int32  timeAlarmSystem;
-	int32  eventTime;
-	int32  shipEnergy;
-	int32  landingModuleEnergy;
-	uint16 greatF;
-	int16  timeRobot;
-	int16  money;
-	char   coins;
-	char   shoes;
-	char   nameSeen;
-	char   destination;
-	char   benOverlay;
-	char   language;
-	bool   corridorSearch;
-	bool   alarmOn;
-	bool   terminalStripConnected;
-	bool   terminalStripWire;
-	bool   cableConnected;
-	bool   powerOff;
-	bool   cockpitSeen;
-	bool   airlockSeen;
-	bool   holdSeen;
-	bool   dream;
 };
 
 }
