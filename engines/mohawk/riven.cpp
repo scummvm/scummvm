@@ -287,18 +287,24 @@ void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
 
 // Stack/Card-Related Functions
 
-void MohawkEngine_Riven::changeToStack(uint16 n) {
+void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	// The endings are in reverse order because of the way the 1.02 patch works.
 	// The only "Data3" file is j_Data3.mhk from that patch. Patch files have higher
 	// priorities over the regular files and are therefore loaded and checked first.
 	static const char *endings[] = { "_Data3.mhk", "_Data2.mhk", "_Data1.mhk", "_Data.mhk", "_Sounds.mhk" };
 
 	// Don't change stack to the current stack (if the files are loaded)
-	if (_stack && _stack->getId() == n && !_mhk.empty())
+	if (_stack && _stack->getId() == stackId && !_mhk.empty())
 		return;
 
-	// Stop any videos playing
+	// Free resources that may rely on the current stack data being loaded
+	if (_card) {
+		_card->leave();
+		delete _card;
+		_card = nullptr;
+	}
 	_video->removeVideos();
+	_sound->stopAllSLST();
 
 	// Clear the graphics cache; images aren't used across stack boundaries
 	_gfx->clearCache();
@@ -309,7 +315,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	_mhk.clear();
 
 	// Get the prefix character for the destination stack
-	char prefix = RivenStacks::getName(n)[0];
+	char prefix = RivenStacks::getName(stackId)[0];
 
 	// Load any file that fits the patterns
 	for (int i = 0; i < ARRAYSIZE(endings); i++) {
@@ -324,13 +330,10 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 
 	// Make sure we have loaded files
 	if (_mhk.empty())
-		error("Could not load stack %s", RivenStacks::getName(n));
-
-	// Stop any currently playing sounds
-	_sound->stopAllSLST();
+		error("Could not load stack %s", RivenStacks::getName(stackId));
 
 	delete _stack;
-	_stack = constructStackById(n);
+	_stack = constructStackById(stackId);
 }
 
 RivenStack *MohawkEngine_Riven::constructStackById(uint16 id) {

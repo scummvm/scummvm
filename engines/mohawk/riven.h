@@ -123,7 +123,7 @@ public:
 	// Stack/card/script funtions
 	RivenStack *constructStackById(uint16 id);
 	void changeToCard(uint16 dest);
-	void changeToStack(uint16);
+	void changeToStack(uint16 stackId);
 	RivenCard *getCard() const { return _card; }
 	RivenStack *getStack() const { return _stack; }
 
