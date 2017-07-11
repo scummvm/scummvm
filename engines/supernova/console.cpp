@@ -45,9 +45,6 @@ bool Console::cmdRenderImage(int argc, const char **argv) {
 		return true;
 	}
 
-	int filenumber = atoi(argv[1]);
-	int section = atoi(argv[2]);
-
 	_vm->renderImage(atoi(argv[1]), atoi(argv[2]));
 
 	return true;
@@ -72,6 +69,8 @@ bool Console::cmdMusic(int argc, const char **argv) {
 	}
 
 	_vm->playSoundMod(atoi(argv[1]));
+
+	return true;
 }
 
 bool Console::cmdList(int argc, const char **argv) {
