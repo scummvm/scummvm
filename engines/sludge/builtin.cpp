@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/savefile.h"
+
 #include "sludge/allfiles.h"
 #include "sludge/sludger.h"
 #include "sludge/builtin.h"
@@ -356,6 +358,9 @@ builtIn(loadGame) {
 	Common::File fd;
 	if (fd.open(loadNow)) {
 		fd.close();
+	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(loadNow);
+	if (fp) {
+		delete fp;
 		return BR_KEEP_AND_PAUSE;
 	}
 	delete []loadNow;
