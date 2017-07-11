@@ -29,7 +29,7 @@ struct combination {
 };
 
 struct objectType {
-	char *screenName;
+	Common::String screenName;
 	int objectNum;
 	objectType *next;
 	byte r, g, b;

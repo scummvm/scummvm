@@ -27,7 +27,7 @@ namespace Sludge {
 bool saveThumbnail(Common::WriteStream *stream);
 bool skipThumbnail(Common::SeekableReadStream *stream);
 
-void showThumbnail(char *filename, int x, int y);
+void showThumbnail(const Common::String &filename, int x, int y);
 
 } // End of namespace Sludge
 

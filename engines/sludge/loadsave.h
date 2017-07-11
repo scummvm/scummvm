@@ -24,8 +24,8 @@
 
 namespace Sludge {
 
-bool saveGame(char *fname);
-bool loadGame(char *fname);
+bool saveGame(const Common::String &fname);
+bool loadGame(const Common::String &fname);
 
 bool saveVariable(variable *from, Common::WriteStream *stream);
 bool loadVariable(variable *to, Common::SeekableReadStream *stream);

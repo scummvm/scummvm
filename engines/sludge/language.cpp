@@ -21,7 +21,6 @@
  */
 
 #include "sludge/allfiles.h"
-#include "sludge/stringy.h"
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
 #include "sludge/language.h"
@@ -33,60 +32,39 @@
 namespace Sludge {
 
 int *languageTable;
-char **languageName;
+Common::String *languageName;
 settingsStruct gameSettings;
 
-uint stringToInt(char *s) {
-	int i = 0;
-	bool negative = false;
-	for (;;) {
-		if (*s >= '0' && *s <= '9') {
-			i *= 10;
-			i += *s - '0';
-			s++;
-		} else if (*s == '-') {
-			negative = !negative;
-			s++;
-		} else {
-			if (negative)
-				return -i;
-			return i;
-		}
-	}
-}
-
-char *getPrefsFilename(char *filename) {
+Common::String getPrefsFilename(Common::String filename) {
 	// Yes, this trashes the original string, but
 	// we also free it at the end (warning!)...
 
-	int n, i;
-
-	n = strlen(filename);
+	int n = filename.size();
 
 	if (n > 4 && filename[n - 4] == '.') {
-		filename[n - 4] = 0;
+		filename.setChar(0, n - 4);
 	}
 
-	char *f = filename;
-	for (i = 0; i < n; i++) {
+	// get file name from dir
+	int pos = 0;
+	for (int i = 0; i < n; i++) {
 		if (filename[i] == '/')
-			f = filename + i + 1;
+			pos = i + 1;
 	}
 
-	char *joined = joinStrings(f, ".ini");
+	Common::String f = filename.c_str() + pos;
+	Common::String joined = f + ".ini";
 
-	delete[] filename;
-	filename = NULL;
 	return joined;
 }
 
-void readIniFile(const char *filename) {
+void readIniFile(const Common::String &filename) {
 
-	char *langName = getPrefsFilename(copyString(filename));
+	Common::String langName = getPrefsFilename(filename);
 
 	Common::File fd;
 	if (!fd.open(langName)) {
-		debug(kSludgeDebugDataLoad, "Fail to open language file : %s", langName);
+		debug(kSludgeDebugDataLoad, "Fail to open language file : %s", langName.c_str());
 		return;
 	}
 
@@ -98,12 +76,8 @@ void readIniFile(const char *filename) {
 	gameSettings.noStartWindow = false;
 	gameSettings.debugMode = false;
 
-	delete langName;
-	langName = NULL;
-
-	char lineSoFar[257] = "";
-	char secondSoFar[257] = "";
-	byte here = 0;
+	Common::String lineSoFar = "";
+	Common::String secondSoFar = "";
 	char readChar = ' ';
 	bool keepGoing = true;
 	bool doingSecond = false;
@@ -118,40 +92,36 @@ void readIniFile(const char *filename) {
 			case '\n':
 			case '\r':
 				if (doingSecond) {
-					if (strcmp(lineSoFar, "LANGUAGE") == 0) {
-						gameSettings.languageID = stringToInt(secondSoFar);
-					} else if (strcmp(lineSoFar, "WINDOW") == 0) {
-						gameSettings.userFullScreen = !stringToInt(secondSoFar);
-					} else if (strcmp(lineSoFar, "REFRESH") == 0) {
-						gameSettings.refreshRate = stringToInt(secondSoFar);
-					} else if (strcmp(lineSoFar, "ANTIALIAS") == 0) {
-						gameSettings.antiAlias = stringToInt(secondSoFar);
-					} else if (strcmp(lineSoFar, "FIXEDPIXELS") == 0) {
-						gameSettings.fixedPixels = stringToInt(secondSoFar);
-					} else if (strcmp(lineSoFar, "NOSTARTWINDOW") == 0) {
-						gameSettings.noStartWindow = stringToInt(secondSoFar);
-					} else if (strcmp(lineSoFar, "DEBUGMODE") == 0) {
-						gameSettings.debugMode = stringToInt(secondSoFar);
+					if (lineSoFar == "LANGUAGE") {
+						gameSettings.languageID = (uint)secondSoFar.asUint64();
+					} else if (lineSoFar == "WINDOW") {
+						gameSettings.userFullScreen = !secondSoFar.asUint64();
+					} else if (lineSoFar == "REFRESH") {
+						gameSettings.refreshRate = (uint)secondSoFar.asUint64();
+					} else if (lineSoFar == "ANTIALIAS") {
+						gameSettings.antiAlias = (int)secondSoFar.asUint64();
+					} else if (lineSoFar == "FIXEDPIXELS") {
+						gameSettings.fixedPixels = secondSoFar.asUint64();
+					} else if (lineSoFar == "NOSTARTWINDOW") {
+						gameSettings.noStartWindow = secondSoFar.asUint64();
+					} else if (lineSoFar == "DEBUGMODE") {
+						gameSettings.debugMode = secondSoFar.asUint64();
 					}
 				}
-				here = 0;
 				doingSecond = false;
-				lineSoFar[0] = 0;
-				secondSoFar[0] = 0;
+				lineSoFar.clear();
+				secondSoFar.clear();
 				break;
 
 			case '=':
 				doingSecond = true;
-				here = 0;
 				break;
 
 			default:
 				if (doingSecond) {
-					secondSoFar[here++] = readChar;
-					secondSoFar[here] = 0;
+					secondSoFar += readChar;
 				} else {
-					lineSoFar[here++] = readChar;
-					lineSoFar[here] = 0;
+					lineSoFar += readChar;
 				}
 				break;
 		}
@@ -160,7 +130,7 @@ void readIniFile(const char *filename) {
 	fd.close();
 }
 
-void saveIniFile(const char *filename) {
+void saveIniFile(const Common::String &filename) {
 #if 0
 	char *langName = getPrefsFilename(copyString(filename));
 	FILE *fp = fopen(langName, "wt");
@@ -182,18 +152,18 @@ void makeLanguageTable(Common::File *table) {
 	if (!checkNew(languageTable))
 		return;
 
-	languageName = new char *[gameSettings.numLanguages + 1];
+	languageName = new Common::String[gameSettings.numLanguages + 1];
 	if (!checkNew(languageName))
 		return;
 
 	for (uint i = 0; i <= gameSettings.numLanguages; i++) {
 		languageTable[i] = i ? table->readUint16BE() : 0;
 		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i, languageTable[i]);
-		languageName[i] = 0;
+		languageName[i].clear();
 		if (gameVersion >= VERSION(2, 0)) {
 			if (gameSettings.numLanguages) {
 				languageName[i] = readString(table);
-				debug(kSludgeDebugDataLoad, "languageName %i: %s\n", i, languageName[i]);
+				debug(kSludgeDebugDataLoad, "languageName %i: %s\n", i, languageName[i].c_str());
 			}
 		}
 	}

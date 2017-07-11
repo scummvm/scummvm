@@ -32,7 +32,6 @@ MODULE_OBJS := \
 	sprbanks.o \
 	sprites.o \
 	statusba.o \
-	stringy.o \
 	talk.o \
 	thumbnail.o \
 	timing.o \

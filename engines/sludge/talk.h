@@ -27,7 +27,7 @@
 namespace Sludge {
 
 struct speechLine {
-	char *textLine;
+	Common::String textLine;
 	speechLine *next;
 	int x;
 };
@@ -39,7 +39,7 @@ struct speechStruct {
 	spritePalette talkCol;
 };
 
-int wrapSpeech(char *theText, int objT, int sampleFile, bool);
+int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool);
 void viewSpeech();
 void killAllSpeech();
 int isThereAnySpeechGoingOn();

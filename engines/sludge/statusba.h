@@ -22,10 +22,12 @@
 #ifndef SLUDGE_STATUSBA_H
 #define SLUDGE_STATUSBA_H
 
+#include "common/str.h"
+
 namespace Sludge {
 
 struct statusBar {
-	char *text;
+	Common::String text;
 	statusBar *next;
 };
 
@@ -40,14 +42,14 @@ struct statusStuff {
 
 void initStatusBar();
 
-void setStatusBar(char *txt);
+void setStatusBar(Common::String &txt);
 void clearStatusBar();
 void addStatusBar();
 void killLastStatus();
 void statusBarColour(byte r, byte g, byte b);
 void statusBarLitColour(byte r, byte g, byte b);
 void setLitStatus(int i);
-const char *statusBarText();
+const Common::String &statusBarText();
 void positionStatus(int, int);
 void drawStatusBar();
 

@@ -26,7 +26,6 @@
 #include "sludge/allfiles.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
-#include "sludge/stringy.h"
 #include "sludge/sludge.h"
 
 namespace Sludge {
@@ -41,157 +40,132 @@ void writeString(Common::String s, Common::WriteStream *stream) {
 	}
 }
 
-char *readString(Common::SeekableReadStream *stream) {
-	int a, len = stream->readUint16BE();
-	char *s = new char[len + 1];
-	if (!checkNew(s)) {
-		return NULL;
+Common::String readString(Common::SeekableReadStream *stream) {
+	int len = stream->readUint16BE();
+	Common::String res = "";
+	for (int a = 0; a < len; a++) {
+		res += (char)(stream->readByte() - 1);
 	}
-	for (a = 0; a < len; a++) {
-		s[a] = (char)(stream->readByte() - 1);
-	}
-	s[len] = 0;
-	debug(kSludgeDebugDataLoad, "Read string of length %i: %s", len, s);
-	return s;
+	debug(kSludgeDebugDataLoad, "Read string of length %i: %s", len, res.c_str());
+	return res;
 }
 
-char *encodeFilename(char *nameIn) {
-	if (!nameIn)
-		return NULL;
+Common::String encodeFilename(const Common::String &nameIn) {
+	Common::String newName = "";
+	if (nameIn.empty())
+		return newName;
 	if (allowAnyFilename) {
-		char *newName = new char[strlen(nameIn) * 2 + 1];
-		if (!checkNew(newName))
-			return NULL;
-
-		int i = 0;
-		while (*nameIn) {
-			switch (*nameIn) {
+		for (uint i = 0; i < nameIn.size(); ++i) {
+			switch (nameIn[i]) {
 				case '<':
-					newName[i++] = '_';
-					newName[i++] = 'L';
+					newName += '_';
+					newName += 'L';
 					break;
 				case '>':
-					newName[i++] = '_';
-					newName[i++] = 'G';
+					newName += '_';
+					newName += 'G';
 					break;
 				case '|':
-					newName[i++] = '_';
-					newName[i++] = 'P';
+					newName += '_';
+					newName += 'P';
 					break;
 				case '_':
-					newName[i++] = '_';
-					newName[i++] = 'U';
+					newName += '_';
+					newName += 'U';
 					break;
 				case '\"':
-					newName[i++] = '_';
-					newName[i++] = 'S';
+					newName += '_';
+					newName += 'S';
 					break;
 				case '\\':
-					newName[i++] = '_';
-					newName[i++] = 'B';
+					newName += '_';
+					newName += 'B';
 					break;
 				case '/':
-					newName[i++] = '_';
-					newName[i++] = 'F';
+					newName += '_';
+					newName += 'F';
 					break;
 				case ':':
-					newName[i++] = '_';
-					newName[i++] = 'C';
+					newName += '_';
+					newName += 'C';
 					break;
 				case '*':
-					newName[i++] = '_';
-					newName[i++] = 'A';
+					newName += '_';
+					newName += 'A';
 					break;
 				case '?':
-					newName[i++] = '_';
-					newName[i++] = 'Q';
+					newName += '_';
+					newName += 'Q';
 					break;
 
 				default:
-					newName[i++] = *nameIn;
+					newName += nameIn[i];
 					break;
 			}
-			newName[i] = 0;
-			nameIn++;
 		}
-		return newName;
 	} else {
-		int a;
-		for (a = 0; nameIn[a]; a++) {
-			if (nameIn[a] == '\\')
-				nameIn[a] = '/';
+		newName.clear();
+		newName = nameIn;
+		for (uint i = 0; i < newName.size(); ++i) {
+			if (newName[i] == '\\')
+				newName.setChar('/', i);
 		}
-
-		return copyString(nameIn);
 	}
+	return newName;
 }
 
-char *decodeFilename(char *nameIn) {
+Common::String decodeFilename(const Common::String &nameIn) {
+	Common::String newName ="";
 	if (allowAnyFilename) {
-		char *newName = new char[strlen(nameIn) + 1];
-		if (!checkNew(newName))
-			return NULL;
-
-		int i = 0;
-		while (*nameIn) {
-			if (*nameIn == '_') {
-				nameIn++;
-				switch (*nameIn) {
+		for (uint i = 0; i < nameIn.size(); ++i) {
+			if (nameIn[i] == '_') {
+				++i;
+				switch (nameIn[i]) {
 					case 'L':
-						newName[i] = '<';
-						nameIn++;
+						newName += '<';
 						break;
 					case 'G':
-						newName[i] = '>';
-						nameIn++;
+						newName += '>';
 						break;
 					case 'P':
-						newName[i] = '|';
-						nameIn++;
+						newName += '|';
 						break;
 					case 'U':
-						newName[i] = '_';
-						nameIn++;
+						newName += '_';
 						break;
 					case 'S':
-						newName[i] = '\"';
-						nameIn++;
+						newName += '\"';
 						break;
 					case 'B':
-						newName[i] = '\\';
-						nameIn++;
+						newName += '\\';
 						break;
 					case 'F':
-						newName[i] = '/';
-						nameIn++;
+						newName += '/';
 						break;
 					case 'C':
-						newName[i] = ':';
-						nameIn++;
+						newName += ':';
 						break;
 					case 'A':
-						newName[i] = '*';
-						nameIn++;
+						newName += '*';
 						break;
 					case 'Q':
-						newName[i] = '?';
-						nameIn++;
+						newName += '?';
 						break;
 					default:
-						newName[i] = '_';
+						newName += '_';
+						--i;
+						break;
 				}
 			} else {
-				newName[i] = *nameIn;
-				nameIn++;
+				newName += nameIn[i];
 			}
-			i++;
-
 		}
-		newName[i] = 0;
 		return newName;
 	} else {
-		return copyString(nameIn);
+		newName.clear();
+		newName = nameIn;
 	}
+	return newName;
 }
 
 } // End of namespace Sludge

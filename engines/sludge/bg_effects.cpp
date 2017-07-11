@@ -158,7 +158,7 @@ void blur_loadSettings(Common::SeekableReadStream *stream) {
 
 bool blur_createSettings(int numParams, variableStack *&stack) {
 	bool createNullThing = true;
-	const char *error = NULL;
+	Common::String error = "";
 
 	if (numParams >= 3) {
 		// PARAMETERS: base, divide, stack (, stack (, stack...))
@@ -187,18 +187,18 @@ bool blur_createSettings(int numParams, variableStack *&stack) {
 			}
 		}
 
-		if (width == 0 && !error) {
+		if (width == 0 && error.empty()) {
 			error = "Empty arrays found in setBackgroundEffect parameters";
 		}
 
-		if (!error) {
+		if (error.empty()) {
 			s_matrixEffectWidth = width;
 			s_matrixEffectHeight = height;
 
 			if (blur_allocateMemoryForEffect()) {
 				for (int y = height - 1; y >= 0; y--) {
 					variableStack *eachNumber = stack->thisVar.varData.theStack->first;
-					if (!error) {
+					if (error.empty()) {
 						for (int x = 0; x < width; x++) {
 							int arraySlot = x + (y * width);
 //							s_matrixEffectData[arraySlot] = (rand() % 4);
@@ -211,13 +211,13 @@ bool blur_createSettings(int numParams, variableStack *&stack) {
 						trimStack(stack);
 					}
 				}
-				if (!error && !getValueType(s_matrixEffectDivide, SVT_INT, stack->thisVar))
+				if (error.empty() && !getValueType(s_matrixEffectDivide, SVT_INT, stack->thisVar))
 					error = "";
 				trimStack(stack);
-				if (!error && !getValueType(s_matrixEffectBase, SVT_INT, stack->thisVar))
+				if (error.empty() && !getValueType(s_matrixEffectBase, SVT_INT, stack->thisVar))
 					error = "";
 				trimStack(stack);
-				if (!error) {
+				if (error.empty()) {
 					if (s_matrixEffectDivide) {
 						createNullThing = false;
 					} else {
@@ -243,7 +243,7 @@ bool blur_createSettings(int numParams, variableStack *&stack) {
 		s_matrixEffectData = NULL;
 	}
 
-	if (error && error[0]) {
+	if (!error.empty()) {
 		fatal(error);
 	}
 

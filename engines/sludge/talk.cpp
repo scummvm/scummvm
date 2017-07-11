@@ -32,7 +32,6 @@
 #include "sludge/sound.h"
 #include "sludge/fonttext.h"
 #include "sludge/newfatal.h"
-#include "sludge/stringy.h"
 #include "sludge/moreio.h"
 
 namespace Sludge {
@@ -70,7 +69,6 @@ void killAllSpeech() {
 	while (speech->allSpeech) {
 		killMe = speech->allSpeech;
 		speech->allSpeech = speech->allSpeech->next;
-		delete[] killMe->textLine;
 		delete killMe;
 	}
 }
@@ -79,7 +77,7 @@ inline void setObjFontColour(objectType *t) {
 	setFontColour(speech->talkCol, t->r, t->g, t->b);
 }
 
-void addSpeechLine(char *theLine, int x, int &offset) {
+void addSpeechLine(const Common::String &theLine, int x, int &offset) {
 	int halfWidth = (stringWidth(theLine) >> 1) / cameraZoom;
 	int xx1 = x - (halfWidth);
 	int xx2 = x + (halfWidth);
@@ -87,7 +85,8 @@ void addSpeechLine(char *theLine, int x, int &offset) {
 	checkNew(newLine);
 
 	newLine->next = speech->allSpeech;
-	newLine->textLine = copyString(theLine);
+	newLine->textLine.clear();
+	newLine->textLine = theLine;
 	newLine->x = xx1;
 	speech->allSpeech = newLine;
 	if ((xx1 < 5) && (offset < (5 - xx1))) {
@@ -102,12 +101,12 @@ int isThereAnySpeechGoingOn() {
 	return speech->allSpeech ? speech->lookWhosTalking : -1;
 }
 
-int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
+int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int sampleFile) {
 	int a, offset = 0;
 
 	killAllSpeech();
 
-	int speechTime = (strlen(theText) + 20) * speechSpeed;
+	int speechTime = (theText.size() + 20) * speechSpeed;
 	if (speechTime < 1)
 		speechTime = 1;
 	if (sampleFile != -1) {
@@ -123,23 +122,26 @@ int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
 	}
 	speech->speechY = y;
 
-	while (strlen(theText) > wrap) {
+	char *tmp, *txt;
+	tmp = txt = createCString(theText);
+	while ((int)strlen(txt) > wrap) {
 		a = wrap;
-		while (theText[a] != ' ') {
+		while (txt[a] != ' ') {
 			a--;
 			if (a == 0) {
 				a = wrap;
 				break;
 			}
 		}
-		theText[a] = 0;
-		addSpeechLine(theText, x, offset);
-		theText[a] = ' ';
-		theText += a + 1;
+		txt[a] = 0;
+		addSpeechLine(txt, x, offset);
+		txt[a] = ' ';
+		txt += a + 1;
 		y -= fontHeight / cameraZoom;
 	}
-	addSpeechLine(theText, x, offset);
+	addSpeechLine(txt, x, offset);
 	y -= fontHeight / cameraZoom;
+	delete []tmp;
 
 	if (y < 0)
 		speech->speechY -= y;
@@ -158,7 +160,7 @@ int wrapSpeechXY(char *theText, int x, int y, int wrap, int sampleFile) {
 	return speechTime;
 }
 
-int wrapSpeechPerson(char *theText, onScreenPerson &thePerson, int sampleFile,
+int wrapSpeechPerson(const Common::String &theText, onScreenPerson &thePerson, int sampleFile,
 		bool animPerson) {
 	int i = wrapSpeechXY(theText, thePerson.x - cameraX,
 			thePerson.y - cameraY
@@ -172,7 +174,7 @@ int wrapSpeechPerson(char *theText, onScreenPerson &thePerson, int sampleFile,
 	return i;
 }
 
-int wrapSpeech(char *theText, int objT, int sampleFile, bool animPerson) {
+int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool animPerson) {
 	int i;
 
 	speech->lookWhosTalking = objT;

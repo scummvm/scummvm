@@ -35,7 +35,7 @@ uint16 saveEncoding = false;
 char encode1 = 0;
 char encode2 = 0;
 
-extern char *gamePath;
+extern Common::String gamePath;
 
 /*
  void loadSaveDebug (char * com) {
@@ -56,28 +56,25 @@ extern char *gamePath;
  fclose (ffpp);
  }
  */
-
-void writeStringEncoded(const char *s, Common::WriteStream *stream) {
-	int a, len = strlen(s);
+void writeStringEncoded(const Common::String &s, Common::WriteStream *stream) {
+	int len = s.size();
 
 	stream->writeUint16BE(len);
-	for (a = 0; a < len; a++) {
+	for (int a = 0; a < len; a++) {
 		stream->writeByte(s[a] ^ encode1);
 		encode1 += encode2;
 	}
 }
 
-char *readStringEncoded(Common::File *fp) {
-	int a, len = fp->readUint16BE();
-	char *s = new char[len + 1];
-	if (!checkNew(s))
-		return NULL;
-	for (a = 0; a < len; a++) {
-		s[a] = (char)(fp->readByte() ^ encode1);
+Common::String readStringEncoded(Common::File *fp) {
+	int len = fp->readUint16BE();
+	Common::String res = "";
+
+	for (int a = 0; a < len; a++) {
+		res += (char)(fp->readByte() ^ encode1);
 		encode1 += encode2;
 	}
-	s[len] = 0;
-	return s;
+	return res;
 }
 
 char *readTextPlain(Common::File *fp) {
@@ -117,11 +114,11 @@ char *readTextPlain(Common::File *fp) {
 	return reply;
 }
 
-bool fileToStack(char *filename, stackHandler *sH) {
+bool fileToStack(const Common::String &filename, stackHandler *sH) {
 
 	variable stringVar;
 	stringVar.varType = SVT_NULL;
-	const char *checker = saveEncoding ? "[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
+	Common::String checker = saveEncoding ? "[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
 
 	Common::File fd;
 
@@ -150,23 +147,20 @@ bool fileToStack(char *filename, stackHandler *sH) {
 	encode1 = (byte)saveEncoding & 255;
 	encode2 = (byte)(saveEncoding >> 8);
 
-	while (*checker) {
-		if (fd.readByte() != *checker) {
+	for (uint i = 0; i < checker.size(); ++i) {
+		if (fd.readByte() != checker[i]) {
 			fd.close();
 			return fatal(LOAD_ERROR "This isn't a SLUDGE custom data file:", filename);
 		}
-		checker++;
 	}
 
 	if (saveEncoding) {
-		char *checker = readStringEncoded(&fd);
-		if (strcmp(checker, "UN�LO�CKED")) {
+		checker = readStringEncoded(&fd);
+		if (checker == "UN�LO�CKED") {
 			fd.close();
 			return fatal(
 			LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
 		}
-		delete checker;
-		checker = NULL;
 	}
 
 	for (;;) {
@@ -177,9 +171,8 @@ bool fileToStack(char *filename, stackHandler *sH) {
 				break;
 			switch (i) {
 				case 0: {
-					char *g = readStringEncoded(&fd);
+					Common::String g = readStringEncoded(&fd);
 					makeTextVar(stringVar, g);
-					delete g;
 				}
 					break;
 
@@ -220,7 +213,7 @@ bool fileToStack(char *filename, stackHandler *sH) {
 	return true;
 }
 
-bool stackToFile(char *filename, const variable &from) {
+bool stackToFile(const Common::String &filename, const variable &from) {
 #if 0
 	FILE *fp = fopen(filename, saveEncoding ? "wb" : "wt");
 	if (!fp) return fatal("Can't create file", filename);

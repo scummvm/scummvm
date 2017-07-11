@@ -33,7 +33,7 @@ void setFileIndices(Common::File *fp, int, uint);
 uint openFileFromNum(int num);
 bool openSubSlice(int num);
 bool openObjectSlice(int num);
-char *getNumberedString(int value);
+Common::String getNumberedString(int value);
 
 bool startAccess();
 void finishAccess();

@@ -129,7 +129,7 @@ bool saveThumbnail(Common::WriteStream *stream) {
 	return true;
 }
 
-void showThumbnail(char *filename, int atX, int atY) {
+void showThumbnail(const Common::String &filename, int atX, int atY) {
 #if 0
 	GLubyte *thumbnailTexture = NULL;
 	GLuint thumbnailTextureName = 0;
