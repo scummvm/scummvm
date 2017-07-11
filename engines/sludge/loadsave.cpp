@@ -227,14 +227,6 @@ stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 // For saving and loading variables...
 //----------------------------------------------------------------------
 bool saveVariable(variable *from, Common::WriteStream *stream) {
-#if DEBUG_STACKINESS
-	{
-		char *str = getTextFromAnyVar(*from);
-		stackDebug((stackfp, "in saveVariable, type %d, %s\n", from->varType, str));
-		delete str;
-	}
-#endif
-
 	stream->writeByte(from->varType);
 	switch (from->varType) {
 		case SVT_INT:
@@ -286,13 +278,6 @@ bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
 
 		case SVT_STACK:
 			to->varData.theStack = loadStackRef(stream);
-#if DEBUG_STACKINESS
-			{
-				char *str = getTextFromAnyVar(*to);
-				stackDebug((stackfp, "just loaded %s\n", str));
-				delete str;
-			}
-#endif
 			return true;
 
 		case SVT_COSTUME:

@@ -37,25 +37,6 @@ char encode2 = 0;
 
 extern Common::String gamePath;
 
-/*
- void loadSaveDebug (char * com) {
- FILE * ffpp = fopen ("debuggy.txt", "at");
- fprintf (ffpp, "%s\n", com);
- fclose (ffpp);
- }
-
- void loadSaveDebug (char com) {
- FILE * ffpp = fopen ("debuggy.txt", "at");
- fprintf (ffpp, "%c\n", com);
- fclose (ffpp);
- }
-
- void loadSaveDebug (int com) {
- FILE * ffpp = fopen ("debuggy.txt", "at");
- fprintf (ffpp, "%d\n", com);
- fclose (ffpp);
- }
- */
 void writeStringEncoded(const Common::String &s, Common::WriteStream *stream) {
 	int len = s.size();
 

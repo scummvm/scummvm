@@ -37,8 +37,6 @@ const char *typeName[] = { "undefined", "number", "user function", "string",
 		"built-in function", "file", "stack", "object type", "animation",
 		"costume" };
 
-extern char *outputDir;
-
 void unlinkVar(variable &thisVar) {
 	switch (thisVar.varType) {
 		case SVT_STRING:
@@ -184,43 +182,14 @@ bool copyStack(const variable &from, variable &to) {
 	to.varData.theStack->timesUsed = 1;
 	variableStack *a = from.varData.theStack->first;
 
-#if DEBUG_STACKINESS
-	{
-		char *str = getTextFromAnyVar(from);
-		stackDebug((stackfp, "in copyStack, copying %s\n", str));
-		delete[] str;
-	}
-#endif
-
 	while (a) {
 		addVarToStack(a->thisVar, to.varData.theStack->first);
 		if (to.varData.theStack->last == NULL) {
-#if DEBUG_STACKINESS
-			stackDebug((stackfp, "LAST"));
-#endif
 			to.varData.theStack->last = to.varData.theStack->first;
 		}
-
-#if DEBUG_STACKINESS
-		{
-			char *str = getTextFromAnyVar(a->thisVar);
-			stackDebug((stackfp, "\ta->thisVar = %s (%p)\n", str, to.varData.theStack->first));
-			delete[] str;
-		}
-#endif
-
 		a = a->next;
 	}
 
-#if DEBUG_STACKINESS
-	{
-		char *str = getTextFromAnyVar(to);
-		stackDebug((stackfp, "finished copy, got %s\n", str));
-		delete[] str;
-		stackDebug((stackfp, "first = %p\n", to.varData.theStack->first));
-		stackDebug((stackfp, "last = %p\n", to.varData.theStack->last));
-	}
-#endif
 	return true;
 }
 
@@ -260,7 +229,6 @@ int compareVars(const variable &var1, const variable &var2) {
 				break;
 
 			case SVT_STRING:
-
 				re = (strcmp(var1.varData.theString, var2.varData.theString) == 0);
 				break;
 
