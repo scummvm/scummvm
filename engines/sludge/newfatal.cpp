@@ -33,9 +33,6 @@ namespace Sludge {
 
 const char emergencyMemoryMessage[] = "Out of memory displaying error message!";
 
-static Common::String fatalMessage;
-static Common::String fatalInfo = "Initialisation error! Something went wrong before we even got started!";
-
 extern int numResourceNames /* = 0*/;
 extern Common::String *allResourceNames /*= ""*/;
 
@@ -52,13 +49,13 @@ const Common::String &resourceNameFromNum(int i) {
 }
 
 bool hasFatal() {
-	if (!fatalMessage.empty())
+	if (!g_sludge->fatalMessage.empty())
 		return true;
 	return false;
 }
 
 void displayFatal() {
-	if (!fatalMessage.empty()) {
+	if (!g_sludge->fatalMessage.empty()) {
 #if 0
 		msgBox("SLUDGE v" TEXT_VERSION " fatal error!", fatalMessage);
 #endif
@@ -66,7 +63,7 @@ void displayFatal() {
 }
 
 void registerWindowForFatal() {
-	fatalInfo = "There's an error with this SLUDGE game! If you're designing this game, please turn on verbose error messages in the project manager and recompile. If not, please contact the author saying where and how this problem occured.";
+	g_sludge->fatalInfo = "There's an error with this SLUDGE game! If you're designing this game, please turn on verbose error messages in the project manager and recompile. If not, please contact the author saying where and how this problem occured.";
 }
 
 int inFatal(const Common::String &str) {
@@ -84,8 +81,8 @@ int checkNew(const void *mem) {
 }
 
 void setFatalInfo(const Common::String &userFunc, const Common::String &BIF) {
-	fatalInfo = "Currently in this sub: " + userFunc + "\nCalling: " + BIF;
-	debug(kSludgeDebugFatal, "%s", fatalInfo.c_str());
+	g_sludge->fatalInfo = "Currently in this sub: " + userFunc + "\nCalling: " + BIF;
+	debug(kSludgeDebugFatal, "%s", g_sludge->fatalInfo.c_str());
 }
 
 void setResourceForFatal(int n) {
@@ -95,10 +92,10 @@ void setResourceForFatal(int n) {
 int fatal(const Common::String &str1) {
 	if (numResourceNames && resourceForFatal != -1) {
 		Common::String r = resourceNameFromNum(resourceForFatal);
-		Common::String newStr = fatalInfo + "\nResource: " + r + "\n\n" + str1;
+		Common::String newStr = g_sludge->fatalInfo + "\nResource: " + r + "\n\n" + str1;
 		inFatal(newStr);
 	} else {
-		Common::String newStr = fatalInfo + "\n\n" + str1;
+		Common::String newStr = g_sludge->fatalInfo + "\n\n" + str1;
 		inFatal(newStr);
 	}
 	return 0;

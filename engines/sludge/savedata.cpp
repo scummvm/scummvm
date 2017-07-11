@@ -36,8 +36,6 @@ uint16 saveEncoding = false;
 char encode1 = 0;
 char encode2 = 0;
 
-extern Common::String gamePath;
-
 void writeStringEncoded(const Common::String &s, Common::WriteStream *stream) {
 	int len = s.size();
 

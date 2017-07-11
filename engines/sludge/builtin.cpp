@@ -54,14 +54,11 @@
 
 namespace Sludge {
 
-extern Common::String gamePath;
-
 int speechMode = 0;
 int cameraX, cameraY;
 float cameraZoom = 1.0;
 spritePalette pastePalette;
 
-Common::String launchMe = NULL;
 variable *launchResult = NULL;
 
 extern int lastFramesPerSecond, thumbWidth, thumbHeight;
@@ -80,7 +77,6 @@ extern char builtInFunctionNames[][25];
 extern Common::String *allUserFunc;
 extern Common::String *allBIFNames;
 extern inputType input;
-extern Common::String loadNow;
 
 #if 0
 extern GLuint backdropTextureName;
@@ -280,15 +276,15 @@ builtIn(saveGame) {
 		fatal("Can't save game state while the engine is frozen");
 	}
 
-	loadNow = getTextFromAnyVar(fun->stack->thisVar);
+	g_sludge->loadNow = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 
-	Common::String aaaaa = encodeFilename(loadNow);
-	loadNow.clear();
+	Common::String aaaaa = encodeFilename(g_sludge->loadNow);
+	g_sludge->loadNow.clear();
 	if (failSecurityCheck(aaaaa))
 		return BR_ERROR;      // Won't fail if encoded, how cool is that? OK, not very.
 
-	loadNow = ":" + aaaaa;
+	g_sludge->loadNow = ":" + aaaaa;
 
 	setVariable(fun->reg, SVT_INT, 0);
 	saverFunc = fun;
@@ -297,10 +293,10 @@ builtIn(saveGame) {
 
 builtIn(fileExists) {
 	UNUSEDALL
-	loadNow = getTextFromAnyVar(fun->stack->thisVar);
+	g_sludge->loadNow = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
-	Common::String aaaaa = encodeFilename(loadNow);
-	loadNow.clear();
+	Common::String aaaaa = encodeFilename(g_sludge->loadNow);
+	g_sludge->loadNow.clear();
 	if (failSecurityCheck(aaaaa))
 		return BR_ERROR;
 #if 0
@@ -334,22 +330,22 @@ builtIn(loadGame) {
 	UNUSEDALL
 	Common::String aaaaa = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
-	loadNow.clear();
-	loadNow = encodeFilename(aaaaa);
+	g_sludge->loadNow.clear();
+	g_sludge->loadNow = encodeFilename(aaaaa);
 
 	if (frozenStuff) {
 		fatal("Can't load a saved game while the engine is frozen");
 	}
-	if (failSecurityCheck(loadNow))
+	if (failSecurityCheck(g_sludge->loadNow))
 		return BR_ERROR;
-	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(loadNow);
+	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(g_sludge->loadNow);
 	if (fp) {
 		delete fp;
 		return BR_KEEP_AND_PAUSE;
 	}
 	debug("not find sav file");
 
-	loadNow.clear();
+	g_sludge->loadNow.clear();
 	return BR_CONTINUE;
 }
 
@@ -961,14 +957,14 @@ builtIn(launch) {
 	if (newTextA[0] == 'h' && newTextA[1] == 't' && newTextA[2] == 't' && newTextA[3] == 'p' && (newTextA[4] == ':' || (newTextA[4] == 's' && newTextA[5] == ':'))) {
 
 		// IT'S A WEBSITE!
-		launchMe.clear();
-		launchMe = newTextA;
+		g_sludge->launchMe.clear();
+		g_sludge->launchMe = newTextA;
 	} else {
-		Common::String gameDir = gamePath;
+		Common::String gameDir = g_sludge->gamePath;
 		gameDir += "/";
-		launchMe.clear();
-		launchMe = gameDir + newText;
-		if (launchMe.empty())
+		g_sludge->launchMe.clear();
+		g_sludge->launchMe = gameDir + newText;
+		if (g_sludge->launchMe.empty())
 			return BR_ERROR;
 	}
 	setGraphicsWindow(false);

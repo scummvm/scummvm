@@ -53,6 +53,15 @@ protected:
 	virtual Common::Error run();
 
 public:
+	// global String variables
+	Common::String launchMe;
+	Common::String loadNow;
+	Common::String gameName;
+	Common::String gamePath;
+	Common::String bundleFolder;
+	Common::String fatalMessage;
+	Common::String fatalInfo;
+
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();
 
