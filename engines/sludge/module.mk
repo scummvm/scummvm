@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	hsi.o \
 	imgloader.o \
 	language.o \
-	line.o \
 	loadsave.o \
 	main_loop.o \
 	memwatch.o \

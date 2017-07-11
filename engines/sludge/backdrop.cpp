@@ -34,7 +34,6 @@
 #include "sludge/moreio.h"
 #include "sludge/zbuffer.h"
 #include "sludge/graphics.h"
-#include "sludge/line.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/variable.h"
@@ -458,11 +457,11 @@ void hardScroll(int distance) {
 }
 
 void drawVerticalLine(uint x, uint y1, uint y2) {
-	drawLine(x, y1, x, y2);
+	backdropSurface.drawLine(x, y1, x, y2, backdropSurface.format.ARGBToColor(255, 0, 0, 0));
 }
 
 void drawHorizontalLine(uint x1, uint y, uint x2) {
-	drawLine(x1, y, x2, y);
+	backdropSurface.drawLine(x1, y, x2, y, backdropSurface.format.ARGBToColor(255, 0, 0, 0));
 }
 
 void darkScreen() {

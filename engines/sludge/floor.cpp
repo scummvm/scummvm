@@ -20,14 +20,17 @@
  *
  */
 
+#include "graphics/surface.h"
+
 #include "sludge/allfiles.h"
 #include "sludge/newfatal.h"
 #include "sludge/fileset.h"
 #include "sludge/moreio.h"
 #include "sludge/floor.h"
-#include "sludge/line.h"
 
 namespace Sludge {
+
+extern Graphics::Surface backdropSurface;
 
 flor *currentFloor = NULL;
 
@@ -245,15 +248,16 @@ bool setFloor(int fileNum) {
 void drawFloor() {
 	int i, j, nV;
 	for (i = 0; i < currentFloor->numPolygons; i++) {
-//		drawLine (i, 0, i + 5, 100);
 		nV = currentFloor->polygon[i].numVertices;
 		if (nV > 1) {
 			for (j = 1; j < nV; j++) {
-				drawLine(currentFloor->vertex[currentFloor->polygon[i].vertexID[j - 1]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[j - 1]].y,
-						currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y);
+				backdropSurface.drawLine(currentFloor->vertex[currentFloor->polygon[i].vertexID[j - 1]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[j - 1]].y,
+						currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y,
+						backdropSurface.format.ARGBToColor(255, 0, 0, 0));
 			}
-			drawLine(currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].y,
-					currentFloor->vertex[currentFloor->polygon[i].vertexID[nV - 1]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[nV - 1]].y);
+			backdropSurface.drawLine(currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[0]].y,
+					currentFloor->vertex[currentFloor->polygon[i].vertexID[nV - 1]].x, currentFloor->vertex[currentFloor->polygon[i].vertexID[nV - 1]].y,
+					backdropSurface.format.ARGBToColor(255, 0, 0, 0));
 		}
 	}
 }
