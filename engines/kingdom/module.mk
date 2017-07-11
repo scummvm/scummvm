@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	GPLogic2.o \
 	GPLogic3.o \
 	GPLogic4.o \
+	logic.o \
 	console.o \
 	detection.o
 
