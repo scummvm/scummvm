@@ -330,6 +330,7 @@ bool CPetControl::KeyCharMsg(CKeyCharMsg *msg) {
 	if (isInputLocked())
 		return false;
 
+	makeDirty();
 	return _sections[_currentArea]->KeyCharMsg(msg);
 }
 
