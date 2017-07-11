@@ -21,46 +21,47 @@
  */
 
 #include "kingdom/kingdom.h"
+#include "kingdom/logic.h"
 
 namespace Kingdom {
 
-void KingdomGame::GPLogic4() {
+void Logic::GPLogic4() {
 	switch(_statPlay) {
 	case 900:
-		if (_aTimer > 0) {
-			playSound(0);
-			_aTimer = 133;
+		if (_vm->_aTimer > 0) {
+			_vm->playSound(0);
+			_vm->_aTimer = 133;
 		}
-		if (_asMode) {
-			switchMtoA();
+		if (_vm->_asMode) {
+			_vm->switchMtoA();
 			_mapStat = 0;
 			_oldStatPlay--;
-			_asMode = false;
+			_vm->_asMode = false;
 		}
-		saveAS();
-		fadeToBlack2();
+		_vm->saveAS();
+		_vm->fadeToBlack2();
 
 		if (_health == 10 || _health == 6 || _health == 2) {
-			showPic(121);
-			_bTimer = 38;
-			readMouse();
-			while (_bTimer && !_mouseButton) {
-				checkTimers();
-				refreshSound();
-				readMouse();
+			_vm->showPic(121);
+			_vm->_bTimer = 38;
+			_vm->readMouse();
+			while (_vm->_bTimer && !_vm->_mouseButton) {
+				_vm->checkTimers();
+				_vm->refreshSound();
+				_vm->readMouse();
 			}
 			
-			if (_aTimer > 0)
-				setATimer();
+			if (_vm->_aTimer > 0)
+				_vm->setATimer();
 			
-			_userInput = 0;
+			_vm->_userInput = 0;
 			GPLogic4_SP901();
 		} else {
-			if (_aTimer > 0) {
-				setATimer();
-				_aTimer = 133;
+			if (_vm->_aTimer > 0) {
+				_vm->setATimer();
+				_vm->_aTimer = 133;
 			}
-			showPic(120);
+			_vm->showPic(120);
 			_statPlay = 901;
 		}
 		break;
@@ -69,48 +70,48 @@ void KingdomGame::GPLogic4() {
 		break;
 	case 991:
 		_currMap = 10;
-		_userInput = 0;
-		playSound(0);
+		_vm->_userInput = 0;
+		_vm->playSound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
 			_health -= 2;
 		else
 			_health -= 4;
 		
 		if (_health == 0) {
-			playMovie(194);
-			_noIFScreen = true;
-			fShowPic(107);
+			_vm->playMovie(194);
+			_vm->_noIFScreen = true;
+			_vm->fShowPic(107);
 			_currMap = 3;
 			dsAll();
 			_pouch = false;
-			playSound(1);
+			_vm->playSound(1);
 			memset(_inventory, -1, 19);
 			_statPlay = 994;
 		} else {
-			_bTimer = 36;
-			while(_bTimer) {
-				checkTimers();
-				refreshSound();
+			_vm->_bTimer = 36;
+			while(_vm->_bTimer) {
+				_vm->checkTimers();
+				_vm->refreshSound();
 			}
 			
-			_loopFlag = true;
+			_vm->_loopFlag = true;
 			if (_nodes[29] == 1) {
 				_nodes[29] = 0;
 				_nodes[49] = 0;
 			}
 
-			_itemInhibit = false;
+			_vm->_itemInhibit = false;
 			_tideCntl = false;
-			drawPic(179);
-			_skylarTimer = 0;
-			_skylarTimerFlag = false;
+			_vm->drawPic(179);
+			_vm->_skylarTimer = 0;
+			_vm->_skylarTimerFlag = false;
 			enAll();
-			_mapEx = true;
+			_vm->_mapEx = true;
 			_nodeNum = 5;
-			drawLocation();
-			playSound(0);
+			_vm->drawLocation();
+			_vm->playSound(0);
 			if (_nodes[5] > 0) {
-				playMovie(197);
+				_vm->playMovie(197);
 				_resurrect = true;
 			}
 			inventoryDel(12);
@@ -119,79 +120,79 @@ void KingdomGame::GPLogic4() {
 		break;
 	case 992:
 		_currMap = 10;
-		_userInput = 0;
-		playSound(0);
+		_vm->_userInput = 0;
+		_vm->playSound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
 			_health -= 2;
 		else
 			_health -= 4;
 		
 		if (_health == 0) {
-			playMovie(194);
-			_noIFScreen = true;
-			fShowPic(107);
+			_vm->playMovie(194);
+			_vm->_noIFScreen = true;
+			_vm->fShowPic(107);
 			_currMap = 3;
 			dsAll();
 			_pouch = false;
-			playSound(1);
+			_vm->playSound(1);
 			memset(_inventory, -1, 19);
 			_statPlay = 994;
 		} else {
-			_bTimer = 36;
-			while(_bTimer != 0) {
-				checkTimers();
-				refreshSound();
+			_vm->_bTimer = 36;
+			while(_vm->_bTimer != 0) {
+				_vm->checkTimers();
+				_vm->refreshSound();
 			}
 
-			_loopFlag = true;
+			_vm->_loopFlag = true;
 			if (_nodes[29] == 1) {
 				_nodes[29] = 0;
 				_nodes[49] = 0;
 			}
 
-			_itemInhibit = false;
+			_vm->_itemInhibit = false;
 			_tideCntl = false;
-			drawPic(179);
-			_skylarTimer = 0;
-			_skylarTimerFlag = false;
+			_vm->drawPic(179);
+			_vm->_skylarTimer = 0;
+			_vm->_skylarTimerFlag = false;
 			enAll();
-			_mapEx = true;
+			_vm->_mapEx = true;
 			_nodeNum = 27;
-			drawLocation();
+			_vm->drawLocation();
 			_resurrect = true;
-			playSound(0);
-			playMovie(195);
+			_vm->playSound(0);
+			_vm->playMovie(195);
 			inventoryDel(12);
 			_statPlay = 270;
 		}
 		break;
 	case 993:
 		_currMap = 10;
-		_userInput = 0;
-		playSound(0);
+		_vm->_userInput = 0;
+		_vm->playSound(0);
 		if (_health == 10 || _health == 6 || _health == 2)
 			_health -= 2;
 		else
 			_health -= 4;
 		
 		if (_health == 0) {
-			playMovie(194);
-			_noIFScreen = true;
-			fShowPic(107);
+			_vm->playMovie(194);
+			_vm->_noIFScreen = true;
+			_vm->fShowPic(107);
 			_currMap = 3;
 			dsAll();
 			_pouch = false;
-			playSound(1);
+			_vm->playSound(1);
 			memset(_inventory, -1, 19);
 			_statPlay = 994;
 		} else {
-			_bTimer = 36;
-			while (_bTimer != 0) {
-				checkTimers();
-				refreshSound();
+			_vm->_bTimer = 36;
+			while (_vm->_bTimer != 0) {
+				_vm->checkTimers();
+				_vm->refreshSound();
 			}
 			
-			_loopFlag = true;
+			_vm->_loopFlag = true;
 			if (_nodes[29] == 1) {
 				_nodes[29] = 0;
 				_nodes[49] = 0;
@@ -199,73 +200,73 @@ void KingdomGame::GPLogic4() {
 			if (_nodes[68] == 1)
 				_nodes[68] = 0;
 
-			_itemInhibit = false;
+			_vm->_itemInhibit = false;
 			_tideCntl = false;
-			drawPic(179);
-			_skylarTimer = 0;
-			_skylarTimerFlag = false;
+			_vm->drawPic(179);
+			_vm->_skylarTimer = 0;
+			_vm->_skylarTimerFlag = false;
 			enAll();
-			_mapEx = true;
+			_vm->_mapEx = true;
 			_nodeNum = 52;
-			drawLocation();
+			_vm->drawLocation();
 			_resurrect = true;
-			playSound(0);
-			playMovie(196);
+			_vm->playSound(0);
+			_vm->playMovie(196);
 			inventoryDel(12);
 			_statPlay = 520;
 		}
 		break;
 	case 994:
-		switch(_userInput) {
+		switch(_vm->_userInput) {
 		case 0x190:
-			initPlay();
+			_vm->initPlay();
 			// TODO _QuitFlag = 1;
-			_quit = true;
+			_vm->_quit = true;
 			break;
 		case 0x191:
 			// TODO _QuitFlag = 2;
-			_quit = true;
+			_vm->_quit = true;
 			break;
 		}
 		break;
 	}
 }
 
-void KingdomGame::GPLogic4_SP901() {
-	setMouse();
-	eraseCursor();
-	fadeToBlack2();
-	showPic(106);
-	drawIcon(4, 0, 12 - _healthOld);
+void Logic::GPLogic4_SP901() {
+	_vm->setMouse();
+	_vm->eraseCursor();
+	_vm->fadeToBlack2();
+	_vm->showPic(106);
+	_vm->drawIcon(4, 0, 12 - _healthOld);
 	if (_tideCntl)
-		drawPic(178);
+		_vm->drawPic(178);
 	else
-		drawPic(179);
+		_vm->drawPic(179);
 	
-	_iconRedraw = true;
-	if (_userInput == 0x2F1) {
-		_asMode = false;
-		restoreAS();
+	_vm->_iconRedraw = true;
+	if (_vm->_userInput == 0x2F1) {
+		_vm->_asMode = false;
+		_vm->restoreAS();
 		_statPlay = _oldStatPlay;
-		_loopFlag = true;
+		_vm->_loopFlag = true;
 	} else {
-		if (_health == 10 || _health == 6 || _health == 2 || _userInput < 0x400 || _userInput > 0x427) {
-			_asMode = false;
-			restoreAS();
+		if (_health == 10 || _health == 6 || _health == 2 || _vm->_userInput < 0x400 || _vm->_userInput > 0x427) {
+			_vm->_asMode = false;
+			_vm->restoreAS();
 			_statPlay = _oldStatPlay;
 		} else {
-			_statPlay = _mapExit[_userInput - 0x400];
-			_userInput = 0;
+			_statPlay = _mapExit[_vm->_userInput - 0x400];
+			_vm->_userInput = 0;
 			wound();
-			playMovie(10);
+			_vm->playMovie(10);
 			inventoryDel(3);
-			_tsIconOnly = false;
+			_vm->_tsIconOnly = false;
 			enAll();
 			switchAS();
 			_mapStat = 0;
 		}
-		_userInput = 0;
-		_loopFlag = true;
+		_vm->_userInput = 0;
+		_vm->_loopFlag = true;
 	}
 }
 

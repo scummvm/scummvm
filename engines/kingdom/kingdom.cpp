@@ -53,6 +53,8 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
 
+	_logic = nullptr;
+
 	_asPtr = nullptr;
 	_quit = false;
 	_kingartEntries = nullptr;
@@ -93,8 +95,6 @@ void KingdomGame::initVariables() {
 
 	_iconRedraw = 0;
 	_healthTmr = 0;
-	_healthOld = 0;
-	_health = 0;
 	_palStepFlag = 0;
 	_skylarTimerFlag = 0;
 	_skylarTimer = 0;
@@ -107,54 +107,30 @@ void KingdomGame::initVariables() {
 	_zoom = 0;
 	_wizard = 0; 
 	_userInput = 0;
-	_tideCntl = 0;
 //	_track = 0;
 //	_statMap = 0;
-	_statPlay = 0;
-	_spell3 = 0;
-	_spell2 = 0;
-	_spell1 = 0;
-	_soundNumber = 0;
-	_robberyNode = 0;
-	_rtnNode = 0;
-	_replay = false;
-	_resurrect = false;
 //	_quitFlag = 0;
-	_pouch = false;
+	_soundNumber = 0;
 	_pMovie = 0;
 //	_options = 0;
-	_oldPouch = false;
-	_oldHelp = false;
-	_oldEye = false;
 	_oldTRS = 0;
 	_oldTLS = 0;
-	_oldStatPlay = 0;
-	_oldNode = 0;
 	_oldIconsClosed = false;
 	_fstFwd = false;
 	_noMusic = false;
-	_nodeNum = 0;
-	_nextNode = 0;
 	_mouseValue = 0;
 	_mapEx = 0;
-	_mapStat = 0;
 	_loopFlag = false;
 	_lastSound = 0;
-	_lastObs = 0;
-	_lastObstacle = 0;
 	_keyActive = false;
-	_help = false;
 	_itemInhibit = false;
 //	_iconW = 0;
 	_gameMode = 0;
 	_fullScreen = false;
 	_frameStop = 0;
-	_eye = false;
 	_daelonCntr = 0;
 	_sound = 0;
 	_asMode = false;
-	for (int i = 0; i < 99; i++)
-		_nodes[i] = 0;
 	for (int i = 0; i < 510; i++) {
 		_rezPointers[i] = nullptr;
 		_rezSize[i] = 0;
@@ -170,12 +146,12 @@ void KingdomGame::initVariables() {
 	_cursorDef = 0;
 	_cursorY = 0;
 	_cursorX = 0;
-	_currMap = 0;
 	_asMap = 0;
 }
 
 KingdomGame::~KingdomGame() {
 	delete _console;
+	delete _logic;
 	delete _rnd;
 }
 
@@ -187,6 +163,9 @@ Common::Error KingdomGame::run() {
 	initGraphics(320, 200, false);
 	_console = new Console(this);
 
+	_logic = new Logic(this);
+	_logic->initVariables();
+
 	setupPics();
 	initTools();
 	titlePage();
@@ -196,21 +175,21 @@ Common::Error KingdomGame::run() {
 
 	while (!_quit) {
 		_loopFlag = false;
-		gameHelp();
+		_logic->gameHelp();
 		if (_gameMode == 0) {
-			if (_statPlay < 250)
-				GPLogic1();
-			if (_statPlay > 249 && _statPlay < 500)
-				GPLogic2();
-			if (_statPlay > 499 && _statPlay < 900) {
+			if (_logic->_statPlay < 250)
+				_logic->GPLogic1();
+			if (_logic->_statPlay > 249 && _logic->_statPlay < 500)
+				_logic->GPLogic2();
+			if (_logic->_statPlay > 499 && _logic->_statPlay < 900) {
 				if (!isDemo())
-					GPLogic3();
+					_logic->GPLogic3();
 				else
-					warning("Unexpected GPL3 opcode found in demo: %d", _statPlay);
+					warning("Unexpected GPL3 opcode found in demo: %d", _logic->_statPlay);
 			}
 
-			if (_statPlay > 899)
-				GPLogic4();
+			if (_logic->_statPlay > 899)
+				_logic->GPLogic4();
 		}
 
 		if (!_loopFlag)
@@ -309,21 +288,12 @@ void KingdomGame::titlePage() {
 }
 
 void KingdomGame::initPlay() {
-	memset(_inventory, 0xFF, 19);
-
-	for (int i = 0; i < 99; i++)
-		_nodes[i] = 0;
-
 	for (int i = 0; i < 7; i++)
 		_iconPic[i] = 89 + i;
 
 	_frameStop = 0;
 	_gameMode = 0;
 	_daelonCntr = 0;
-	_statPlay = 10;
-	_spell1 = false;
-	_spell2 = false;
-	_spell3 = false;
 	_itemInhibit = false;
 	_asMode = false;
 	_aTimerFlag = false;
@@ -334,10 +304,7 @@ void KingdomGame::initPlay() {
 	_bTimer = 0;
 	_cTimer = 0;
 	_skylarTimer = 0;
-	_tideCntl = false;
 	_mapEx = false;
-	_health = 12;
-	_healthOld = 1;
 	_healthTmr = 0;
 	_treeEyeTimer = 0;
 	_treeHGTimer = 0;
@@ -346,15 +313,14 @@ void KingdomGame::initPlay() {
 	_treeRightPic = 0;
 	_treeRightSta = 1;
 	_tsIconOnly = false;
-	_lastObs = false;
-	enAll();
-	_pouch = true;
 	_noIFScreen = true;
 	_noMusic = false;
 	_fstFwd = true;
 
 	delete[] _asPtr;
 	_asPtr = nullptr;
+
+	_logic->initPlay();
 }
 
 void KingdomGame::initHelp() {
@@ -367,150 +333,6 @@ void KingdomGame::fadeToBlack1() {
 
 void KingdomGame::fadeToBlack2() {
 	debug("STUB: FadeToBlack2");
-}
-
-void KingdomGame::gameHelp_Sub43C() {
-	fadeToBlack1();
-	_currMap = _asMap;
-	drawRect(4, 17, 228, 161, 0);
-	restoreAS();
-	_userInput = 0;
-	_gameMode = 0;
-	_iconsClosed = false;
-	_treeLeftSta = _oldTLS;
-	_eye = _oldEye;
-	_help = _oldHelp;
-	_pouch = _oldPouch;
-}
-
-void KingdomGame::gameHelp() {
-	if (!_gameMode) {
-		if (_userInput == 0x43C) {
-			saveAS();
-			_asMap = _currMap;
-			_currMap = 0;
-			fadeToBlack1();
-			drawRect(4, 17, 228, 161, 0);
-			drawHelpScreen();
-			_gameMode = 1;
-			_oldTLS = _treeLeftSta;
-			_treeLeftSta = 0;
-			_iconsClosed = true;
-			_oldEye = _eye;
-			_eye = false;
-			_oldHelp = _help;
-			_oldPouch = _pouch;
-			_pouch = false;
-			_userInput = 0;
-		}
-		if (_userInput == 0x44F) {
-			saveAS();
-			_asMap = _currMap;
-			_gameMode = 2;
-			_oldTLS = _treeLeftSta;
-			_treeLeftSta = 0;
-			_iconsClosed = true;
-			_oldEye = _eye;
-			_eye = false;
-			_oldHelp = _help;
-			_help = false;
-			_oldPouch = _pouch;
-			fadeToBlack1();
-			drawRect(4, 17, 228, 161, 0);
-			drawInventory();
-
-			if (_nodes[68] == 1 || _nodes[29] == 1 || _itemInhibit)
-				_currMap = 10;
-			else
-				_currMap = 11;
-
-			_userInput = 0;
-		}
-	}
-	if (_gameMode == 0)
-		return;
-
-	switch(_userInput) {
-	case 0x240:
-		fadeToBlack2();
-		//TODO: Set _quitFlag to 1
-		break;
-	case 0x241:
-		gameHelp_Sub43C();
-		return;
-		break;
-	case 0x242:
-		if (_noMusic) {
-			_noMusic = false;
-			playSound(1);
-		} else {
-			_noMusic = true;
-			playSound(0);
-		}
-		drawHelpScreen();
-		break;
-	case 0x243: {
-		fadeToBlack2();
-		_keyActive = false;
-		_noIFScreen = true;
-		playSound(0);
-		// The demo isn't saving pMovie.
-		// It's obviously a bug and this behavior wasn't kept in ScummVM
-		int oldPMovie = _pMovie;
-		while(!_keyActive) {
-			playMovie(54);
-			fadeToBlack2();
-		}
-		_pMovie = oldPMovie;
-		_noIFScreen = false;
-		showPic(106);
-		drawHelpScreen();
-		_iconRedraw = true;
-		playSound(1);
-		}
-		break;
-	case 0x244:
-		//TODO: Set _quitFlag to 2
-		_quit = true;
-		break;
-	case 0x245: {
-		fadeToBlack1();
-		// The demo isn't saving pMovie.
-		// It's obviously a bug and this behavior wasn't kept in ScummVM
-		int oldPMovie = _pMovie;
-		drawRect(4, 17, 228, 161, 0);
-		playMovie(205);
-		fadeToBlack1();
-		drawRect(4, 17, 228, 161, 0);
-		playMovie(199);
-		fadeToBlack1();
-		drawRect(4, 17, 228, 161, 0);
-		drawHelpScreen();
-		_pMovie = oldPMovie;
-		}
-		break;
-	case 0x246:
-		saveGame();
-		break;
-	case 0x43B:
-	case 0x43C:
-	case 0x44F:
-		gameHelp_Sub43C();
-		return;
-	}
-
-	if (_userInput > 0x427 && _userInput < 0x43A)
-		fShowPic(130 + _userInput - 0x428);
-
-	if (_userInput == 0x260) {
-		drawInventory();
-		if (_nodes[68] == 1 || _nodes[29] == 1)
-			_currMap = 10;
-		else
-			_currMap = 11;
-
-		_userInput = 0;
-	}
 }
 
 void KingdomGame::loadKingArt() {
@@ -673,7 +495,7 @@ void KingdomGame::playMovie(int movieNum) {
 		_treeRightSta = 1;
 		_iconsClosed = false;
 		_iconSel = 9;
-		_treeLeftSta = _replay ? 2 : 0;
+		_treeLeftSta = _logic->_replay ? 2 : 0;
 		checkMainScreen();
 		drawCursor();
 		_fstFwd = true;
@@ -682,22 +504,6 @@ void KingdomGame::playMovie(int movieNum) {
 		_sound = false;
 		_userInput = 0;
 	}
-}
-
-void KingdomGame::enAll() {
-	_help = true;
-	_eye = true;
-	_replay = true;
-	_pouch = true;
-	_fstFwd = true;
-}
-
-void KingdomGame::dsAll() {
-	_help = false;
-	_eye = false;
-	_replay = false;
-	_pouch = false;
-	_fstFwd = false;
 }
 
 void KingdomGame::saveAS() {
@@ -742,20 +548,10 @@ void KingdomGame::restoreAS() {
 	_asPtr = nullptr;
 }
 
-void KingdomGame::switchAS() {
-	_asMode = false;
-	_currMap = _asMap;
-	_treeLeftSta = _oldTLS;
-	_treeRightSta = _oldTRS;
-	_pouch = _oldPouch;
-	_help = _oldHelp;
-	_iconsClosed = _oldIconsClosed;
-}
-
 void KingdomGame::drawHelpScreen() {
 	int picNum;
 
-	switch(_health) {
+	switch(_logic->_health) {
 	case 2:
 		picNum = 166;
 		break;
@@ -797,74 +593,74 @@ void KingdomGame::drawRect(uint minX, uint minY, uint maxX, uint maxY, int color
 
 void KingdomGame::drawInventory() {
 	fShowPic(108);
-	if (_nodes[29] == 1 || _nodes[68] == 1 || _itemInhibit)
+	if (_logic->_nodes[29] == 1 || _logic->_nodes[68] == 1 || _itemInhibit)
 		return;
 
-	if (_inventory[0] > 0)
+	if (_logic->_inventory[0] > 0)
 		drawIcon(136, 102, 180);
 
-	if (_inventory[1] > 0)
+	if (_logic->_inventory[1] > 0)
 		drawIcon(73, 65, 175);
 
-	if (_inventory[2] > 0)
+	if (_logic->_inventory[2] > 0)
 		drawIcon(171, 96, 179);
 
-	if (_inventory[3] > 0)
+	if (_logic->_inventory[3] > 0)
 		drawIcon(120, 34, 174);
 
-	if (_inventory[4] > 0)
+	if (_logic->_inventory[4] > 0)
 		drawIcon(160, 41, 177);
 
-	if (_inventory[5] > 0)
+	if (_logic->_inventory[5] > 0)
 		drawIcon(21, 124, 184);
 
-	if (_inventory[6] > 0)
+	if (_logic->_inventory[6] > 0)
 		drawIcon(201, 42, 178);
 
-	if (_inventory[7] > 0)
+	if (_logic->_inventory[7] > 0)
 		drawIcon(76, 119, 186);
 
-	if (_inventory[8] > 0)
+	if (_logic->_inventory[8] > 0)
 		drawIcon(18, 31, 170);
 
-	if (_inventory[9] > 0)
+	if (_logic->_inventory[9] > 0)
 		drawIcon(57, 88, 185);
 
-	if (_inventory[10] > 0)
+	if (_logic->_inventory[10] > 0)
 		drawIcon(182, 124, 181);
 
-	if (_inventory[11] > 0)
+	if (_logic->_inventory[11] > 0)
 		drawIcon(176, 26, 183);
 
-	if (_inventory[12] > 0)
+	if (_logic->_inventory[12] > 0)
 		drawIcon(54, 23, 171);
 
-	if (_inventory[13] > 0)
+	if (_logic->_inventory[13] > 0)
 		drawIcon(120, 133, 182);
 
-	if (_inventory[14] > 0)
+	if (_logic->_inventory[14] > 0)
 		drawIcon(94, 92, 187);
 
-	if (_inventory[15] > 0)
+	if (_logic->_inventory[15] > 0)
 		drawIcon(135, 67, 176);
 
-	if (_inventory[16] > 0)
+	if (_logic->_inventory[16] > 0)
 		drawIcon(84, 30, 173);
 
-	if (_inventory[17] > 0)
+	if (_logic->_inventory[17] > 0)
 		drawIcon(20, 78, 172);
 
-	if (_inventory[0] > 0)
-		drawIcon(158, 117, 134 + _inventory[0]);
+	if (_logic->_inventory[0] > 0)
+		drawIcon(158, 117, 134 + _logic->_inventory[0]);
 
-	if (_inventory[1] > 0)
-		drawIcon(94, 67, 134 + _inventory[1]);
+	if (_logic->_inventory[1] > 0)
+		drawIcon(94, 67, 134 + _logic->_inventory[1]);
 
-	if (_inventory[2] > 0)
-		drawIcon(193, 105, 134 + _inventory[2]);
+	if (_logic->_inventory[2] > 0)
+		drawIcon(193, 105, 134 + _logic->_inventory[2]);
 
-	if (_inventory[3] > 0)
-		drawIcon(131, 39, 134 + _inventory[3]);
+	if (_logic->_inventory[3] > 0)
+		drawIcon(131, 39, 134 + _logic->_inventory[3]);
 }
 
 Common::String KingdomGame::getSavegameFilename(int slot) {
@@ -968,17 +764,9 @@ Common::Error KingdomGame::loadGameState(int slot) {
 }
 
 void KingdomGame::synchronize(Common::Serializer &s) {
-	s.syncAsSint16LE(_statPlay);
 	s.syncAsSint16LE(_asMap);
 	s.syncAsSint16LE(_daelonCntr);
-	s.syncAsSint16LE(_health);
-	s.syncAsSint16LE(_healthOld);
-	s.syncAsSint16LE(_lastObstacle);
-	s.syncAsSint16LE(_nextNode);
-	s.syncAsSint16LE(_nodeNum);
 	s.syncAsSint16LE(_pMovie);
-	s.syncAsSint16LE(_rtnNode);
-	s.syncAsSint16LE(_robberyNode);
 	s.syncAsSint16LE(_soundNumber);
 	s.syncAsSint16LE(_treeEyePic);
 	s.syncAsSint16LE(_treeEyeSta);
@@ -987,31 +775,17 @@ void KingdomGame::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_oldTLS);
 	s.syncAsSint16LE(_cTimer);
 	s.syncAsSint16LE(_skylarTimer);
-
-	for (int i = 0; i < 18; i++)
-		s.syncAsSint16LE(_inventory[i]);
-
-	for (int i = 0; i < 99; i++)
-		s.syncAsSint16LE(_nodes[i]);
-
-	s.syncAsByte(_oldEye);
 	s.syncAsByte(_fstFwd);
-	s.syncAsByte(_help);
 	s.syncAsByte(_itemInhibit);
-	s.syncAsByte(_lastObs);
 	s.syncAsByte(_lastSound);
 	s.syncAsByte(_mapEx);
 	s.syncAsByte(_noMusic);
-	s.syncAsByte(_oldPouch);
-	s.syncAsByte(_replay);
-	s.syncAsByte(_spell1);
-	s.syncAsByte(_spell2);
-	s.syncAsByte(_spell3);
-	s.syncAsByte(_tideCntl);
 	s.syncAsByte(_wizard);
 	s.syncAsByte(_tsIconOnly);
 	s.syncAsByte(_cTimerFlag);
 	s.syncAsByte(_skylarTimerFlag);
+
+	_logic->synchronize(s);
 
 	// Present in the original. Looks unused.
 	// s.syncAsSint16LE(_StatMap);
@@ -1140,24 +914,24 @@ void KingdomGame::getUserInput() {
 	if (_quit)
 		return;
 
-	if (_userInput == 2 && _eye)
+	if (_userInput == 2 && _logic->_eye)
 		_userInput = _asMode ? 0x43B : 0x43A;
 
 	if (_userInput == 1)
 		_userInput = _mouseValue;
 
 	if (_userInput == 0x2F5) {
-		_statPlay = 600;
+		_logic->_statPlay = 600;
 		_loopFlag = true;
 	}
 
-	if (_userInput == 0x42B && _statPlay == 53 && _gameMode == 0) {
-		_oldStatPlay = _statPlay;
-		_statPlay = 900;
+	if (_userInput == 0x42B && _logic->_statPlay == 53 && _gameMode == 0) {
+		_logic->_oldStatPlay = _logic->_statPlay;
+		_logic->_statPlay = 900;
 		_loopFlag = true;
 	}
 
-	if (_userInput == 0x12D && _currMap == 1)
+	if (_userInput == 0x12D && _logic->_currMap == 1)
 		// CHECKME: _quitFlag = 2;
 		_quit = true;
 }
@@ -1176,13 +950,13 @@ void KingdomGame::drawLocation() {
 	_aTimer = 0;
 	_aTimerFlag = false;
 
-	int emlValue = _emlTable[_nodeNum];
+	int emlValue = _emlTable[_logic->_nodeNum];
 	if (emlValue > 0)
-		enAll();
+		_logic->enAll();
 
-	if (!_mapEx || !emlValue || _resurrect) {
-		if (_statPlay != 50)
-			_resurrect = false;
+	if (!_mapEx || !emlValue || _logic->_resurrect) {
+		if (_logic->_statPlay != 50)
+			_logic->_resurrect = false;
 		_iconsClosed = false;
 	} else {
 		_mapEx = false;
@@ -1206,7 +980,7 @@ void KingdomGame::processMap(int mapNum, int zoom) {
 	if (!_asMode)
 		switchAtoM();
 	fShowPic(var6);
-	_currMap = _zoomTable[mapNum][zoom][1];
+	_logic->_currMap = _zoomTable[mapNum][zoom][1];
 
 	if (zoom > 0)
 		_treeLeftSta = _zoomTable[mapNum][zoom - 1][0] == 0 ? 0 : 3;
@@ -1224,8 +998,8 @@ void KingdomGame::processMapInput(int mapNum) {
 	case 0x43B:
 	case 0x443:
 		switchMtoA();
-		_mapStat = 0;
-		_statPlay--;
+		_logic->_mapStat = 0;
+		_logic->_statPlay--;
 		break;
 	case 0x43F:
 		if (_treeLeftSta == 3) {
@@ -1243,32 +1017,20 @@ void KingdomGame::processMapInput(int mapNum) {
 		break;
 	default:
 		if (_userInput > 0x3FF && _userInput < 0x428) {
-			_statPlay = _mapExit[_userInput - 0x400];
+			_logic->_statPlay = _mapExit[_userInput - 0x400];
 			_mapEx = true;
 			_loopFlag = true;
-			switchAS();
+			_logic->switchAS();
 		}
 
 		if (_userInput > 0x440) {
 			switchMtoA();
-			_mapStat = false;
-			_statPlay--;
+			_logic->_mapStat = false;
+			_logic->_statPlay--;
 			_loopFlag = true;
 		}
 		break;
 	}
-}
-
-void KingdomGame::inventoryDel(int item) {
-	if (_inventory[item] > 0)
-		_inventory[item]--;
-}
-
-void KingdomGame::inventoryAdd(int item) {
-	if (item >= 4)
-		_inventory[item] = 1;
-	else
-		_inventory[item] = 3;
 }
 
 void KingdomGame::drawPic(int reznum) {
@@ -1321,19 +1083,19 @@ void KingdomGame::displayIcon(int reznum) {
 void KingdomGame::setATimer() {
 	_aTimerFlag = true;
 	_aTimer = 0;
-	int wrkNodeNum = _nodeNum;
-	if (_nodes[29] == 1 || _nodes[68] == 1)
+	int wrkNodeNum = _logic->_nodeNum;
+	if (_logic->_nodes[29] == 1 || _logic->_nodes[68] == 1)
 		return;
 
 	if (_tsIconOnly)
 		wrkNodeNum = 79;
 
-	if (_nodeNum == 56 && _inventory[8] < 1 && _wizard)
+	if (_logic->_nodeNum == 56 && _logic->_inventory[8] < 1 && _wizard)
 		wrkNodeNum = 80;
 	
 	for (int i = 0; i < 7; i++) {
 		int idx = _iconActTable[wrkNodeNum][i];
-		if (_inventory[idx] > 0) {
+		if (_logic->_inventory[idx] > 0) {
 			_aTimerFlag = false;
 			_aTimer = _wizard ? 114 : 133;
 			playSound(0);
@@ -1344,52 +1106,34 @@ void KingdomGame::setATimer() {
 	}
 }
 
-bool KingdomGame::wound() {
-	bool retval = false;
-	if (_health == 12 || _health == 8 || _health == 4) {
-		_health -= 2;
-		retval = true;
-	}
-	return retval;
-}
-
 void KingdomGame::refreshSound() {
 // No implementation needed in ScummVM
 // The only useful check is against _sndReplayTbl, which determines
 // which sound should be replayed. But this array contains only false
 }
 
-void KingdomGame::increaseHealth() {
-	if (_health <= 3)
-		_health = 4;
-	else if (_health <= 7)
-		_health = 8;
-	else
-		_health = 12;
-}
-
 void KingdomGame::checkMainScreen() {
-	if (_cTimerFlag || _statPlay == 900 || _statPlay == 901)
+	if (_cTimerFlag || _logic->_statPlay == 900 || _logic->_statPlay == 901)
 		return;
 
 	_cTimerFlag = false;
 	if (_noIFScreen)
 		return;
 
-	if (_healthOld != _health) {
+	if (_logic->_healthOld != _logic->_health) {
 		if (_healthTmr > 0)
 			_healthTmr--;
 		else {
-			if (_health <= _healthOld)
-				_healthOld--;
+			if (_logic->_health <= _logic->_healthOld)
+				_logic->_healthOld--;
 			else
-				_healthOld++;
+				_logic->_healthOld++;
 
 			int iconIndex;
-			if (_healthOld == 0)
+			if (_logic->_healthOld == 0)
 				iconIndex = 12 - 1;
 			else
-				iconIndex = 12 - _healthOld;
+				iconIndex = 12 - _logic->_healthOld;
 
 			drawIcon(4, 0, iconIndex);
 			_healthTmr = 1;
@@ -1398,7 +1142,7 @@ void KingdomGame::checkMainScreen() {
 
 	if (_iconRedraw) {
 		_iconRedraw = false;
-		drawIcon(4, 0, 12 - _healthOld);
+		drawIcon(4, 0, 12 - _logic->_healthOld);
 		drawIcon(11, 178, _iconPic[0]);
 		drawIcon(38, 178, _iconPic[1]);
 		drawIcon(65, 178, _iconPic[2]);
@@ -1413,21 +1157,21 @@ void KingdomGame::checkMainScreen() {
 			_treeHGTimer = 0;
 			_treeHGUPic = 0;
 		}
-		if (_tideCntl)
+		if (_logic->_tideCntl)
 			drawPic(178);
 	}
 
 	for (int i = 0; i < 7; i++) {
-		int wrkNodeNum = _nodeNum;
+		int wrkNodeNum = _logic->_nodeNum;
 		if (_tsIconOnly)
 			wrkNodeNum = 79;
-		if (_nodeNum == 56 && _inventory[16] < 1 && _wizard)
+		if (_logic->_nodeNum == 56 && _logic->_inventory[16] < 1 && _wizard)
 			wrkNodeNum = 80;
-		if (_nodeNum == 21 && _nodes[21] == 9 && !isDemo())
+		if (_logic->_nodeNum == 21 && _logic->_nodes[21] == 9 && !isDemo())
 			wrkNodeNum = 81;
 		int idx = _iconActTable[wrkNodeNum][i];
 
-		if (_inventory[idx] >= 1 && _nodes[29] != 1 && _nodes[68] != 1 && !_itemInhibit && !_iconsClosed) {
+		if (_logic->_inventory[idx] >= 1 && _logic->_nodes[29] != 1 && _logic->_nodes[68] != 1 && !_itemInhibit && !_iconsClosed) {
 			if (_iconPic[i] != 12 + idx) {
 				if (_iconPic[i] == 89 + i)
 					_iconPic[i] = 96 + i;
@@ -1472,7 +1216,7 @@ void KingdomGame::checkMainScreen() {
 		}
 		break;
 	case 2:
-		if (!_replay) {
+		if (!_logic->_replay) {
 			if (_treeLeftPic != 33) {
 				drawIcon(243, 141, 33);
 				_treeLeftPic = 33;
@@ -1503,7 +1247,7 @@ void KingdomGame::checkMainScreen() {
 		}
 		break;
 	case 1:
-		if (_help) {
+		if (_logic->_help) {
 			if (_treeRightPic != 38) {
 				drawIcon(290, 143, 38);
 				_treeRightPic = 38;
@@ -1526,7 +1270,7 @@ void KingdomGame::checkMainScreen() {
 		break;
 	}
 
-	if (_eye) {
+	if (_logic->_eye) {
 		if (_treeEyeTimer == 0) {
 			_treeEyePic = _teaSeq[_treeEyeSta][0];
 			drawIcon(261, 51, _treeEyePic);
@@ -1585,65 +1329,25 @@ void KingdomGame::checkMainScreen() {
 		_treeHGTimer--;
 }
 
-bool KingdomGame::chkDesertObstacles() {
-	if (!_wizard)
-		return false;
-
-	_nextNode = _nodeNum;
-	if (_lastObs) {
-		_lastObs = false;
-		return false;
-	}
-
-	if (_nodes[29] || _rnd->getRandomNumber(6) == 0) {
-		if (!_nodes[49] || _robberyNode != _nodeNum) {
-			if (_lastObstacle != _nodeNum) {
-				if (_rnd->getRandomNumber(5) == 0) {
-					_statPlay = 250;
-					_lastObstacle = _nodeNum;
-					_lastObs = true;
-					_loopFlag = true;
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		} else {
-			_statPlay = 490;
-			_loopFlag = true;
-			return true;
-		}
-	} else {
-		_statPlay = 280;
-		_robberyNode = _nodeNum;
-		_lastObstacle = _nodeNum;
-		_lastObs = true;
-		_loopFlag = true;
-		return true;
-	}
-}
-
 void KingdomGame::switchAtoM() {
 	_asMode = true;
-	_asMap = _currMap;
+	_asMap = _logic->_currMap;
 	saveAS();
 	_iconSel = 9;
 	_oldTLS = _treeLeftSta;
 	_oldTRS = _treeRightSta;
-	_oldPouch = _pouch;
-	_oldHelp = _help;
+	_logic->_oldPouch = _logic->_pouch;
+	_logic->_oldHelp = _logic->_help;
 	_oldIconsClosed = _iconsClosed;
 	_treeLeftSta = 0;
 	_treeRightSta = 0;
-	_pouch = false;
-	_help = false;
+	_logic->_pouch = false;
+	_logic->_help = false;
 	_iconsClosed = true;
 }
 
 void KingdomGame::switchMtoA() {
-	switchAS();
+	_logic->switchAS();
 	fadeToBlack1();
 	drawRect(4, 17, 228, 161, 0);
 	restoreAS();
@@ -1700,7 +1404,7 @@ int KingdomGame::getAKey() {
 			}
 			break;
 		case Common::EVENT_LBUTTONUP: // retval == 2?
-			if (_eye)
+			if (_logic->_eye)
 				retval = !_asMode ? 0x43A : 0x43B;
 			break;
 		case Common::EVENT_RBUTTONUP: // retval == 1?
@@ -1749,9 +1453,9 @@ void KingdomGame::drawCursor() {
 
 void KingdomGame::cursorType() {
 	_mouseValue = 0;
-	if (_currMap != 1 && _statPlay >= 30) {
-		int var2 = _statPlay == 901 ? 16 : 0;
-		int var6 = _statPlay == 901 ? 35 : 16;
+	if (_logic->_currMap != 1 && _logic->_statPlay >= 30) {
+		int var2 = _logic->_statPlay == 901 ? 16 : 0;
+		int var6 = _logic->_statPlay == 901 ? 35 : 16;
 		for (int i = 0; i < var6 + 1; i++) {
 			if (i == var6) {
 				int tmpVal = checkMouseMapAS();
@@ -1777,7 +1481,7 @@ void KingdomGame::cursorType() {
 
 	switch(_mouseValue) {
 	case 0x18A:
-		if (_eye)
+		if (_logic->_eye)
 			_mouseValue = !_asMode ? 0x43A : 0x43B;
 		else
 			_mouseValue = 0;
@@ -1789,14 +1493,14 @@ void KingdomGame::cursorType() {
 			_mouseValue = 0x43F;
 		else if (_treeLeftSta == 0)
 			_mouseValue = 0;
-		else if (_treeLeftSta == 2 && _replay)
+		else if (_treeLeftSta == 2 && _logic->_replay)
 			_mouseValue = 0x43E;
 		else
 			_mouseValue = 0;
 		break;
 	case 0x18D:
 		if (_treeRightSta == 1)
-			_mouseValue = _help ? 0x43C : 0;
+			_mouseValue = _logic->_help ? 0x43C : 0;
 		if (_treeRightSta == 2)
 			_mouseValue = 0x440;
 		break;
@@ -1805,15 +1509,15 @@ void KingdomGame::cursorType() {
 		// No more check in ScummVM, we display the load screen
 		break;
 	case 0x407:
-		if (_statPlay == 182 && _nodes[18] < 9)
+		if (_logic->_statPlay == 182 && _logic->_nodes[18] < 9)
 			_mouseValue = 0;
 		break;
 	case 0x40D:
-		if (_nodes[29] == 1)
+		if (_logic->_nodes[29] == 1)
 			_mouseValue = 0;
 		break;
 	case 0x41F:
-		if (_nodes[32] == 0)
+		if (_logic->_nodes[32] == 0)
 			_mouseValue = 0;
 		break;
 	case 0x422:
@@ -1822,27 +1526,27 @@ void KingdomGame::cursorType() {
 			_mouseValue = 0;
 		break;
 	case 0x428:
-		if (_nodeNum == 5 && _gameMode != 2 && _spell1)
+		if (_logic->_nodeNum == 5 && _gameMode != 2 && _logic->_spell1)
 			_mouseValue = 0;
 		break;
 	case 0x42A:
-		if (_nodeNum == 5 && _gameMode != 2 && _spell2)
+		if (_logic->_nodeNum == 5 && _gameMode != 2 && _logic->_spell2)
 			_mouseValue = 0;
 		break;
 	case 0x42B:
-		if (_nodeNum == 5 && _gameMode != 2 && _spell3)
+		if (_logic->_nodeNum == 5 && _gameMode != 2 && _logic->_spell3)
 			_mouseValue = 0;
 		break;
 	case 0x445:
-		if (_statPlay == 161 && _nodes[16] == 0 && _wizard)
+		if (_logic->_statPlay == 161 && _logic->_nodes[16] == 0 && _wizard)
 			_mouseValue = 0x450;
 		break;
 	case 0x44F:
-		if (!_pouch)
+		if (!_logic->_pouch)
 			_mouseValue = 0;
 		break;
 	case 0x457:
-		if (!_tideCntl)
+		if (!_logic->_tideCntl)
 			_mouseValue = 0;
 		break;
 	}
@@ -1850,13 +1554,13 @@ void KingdomGame::cursorType() {
 	_iconSelect = 9;
 	for (int var6 = 0; var6 < 8; var6++) {
 		if (_mouseValue == 181 + var6) {
-			int var2 = _nodeNum;
+			int var2 = _logic->_nodeNum;
 			if (_tsIconOnly)
 				var2 = 79;
-			if (_nodeNum == 56 && _inventory[8] < 1 && _wizard)
+			if (_logic->_nodeNum == 56 && _logic->_inventory[8] < 1 && _wizard)
 				var2 = 80;
 			int indx = _iconActTable[var2][var6];
-			if (_inventory[indx] != 0 && _nodes[29] != 1 && _nodes[68] != 1 && !_iconsClosed && !_itemInhibit) {
+			if (_logic->_inventory[indx] != 0 && _logic->_nodes[29] != 1 && _logic->_nodes[68] != 1 && !_iconsClosed && !_itemInhibit) {
 				_mouseValue = indx + 0x428;
 				_iconSelect = var6;
 				break;
@@ -1865,9 +1569,9 @@ void KingdomGame::cursorType() {
 		}
 	}
 
-	if (_currMap == 11) {
+	if (_logic->_currMap == 11) {
 		if (_mouseValue > 0x427 && _mouseValue < 0x43A) {
-			if (_inventory[_mouseValue - 0x428] < 1)
+			if (_logic->_inventory[_mouseValue - 0x428] < 1)
 				_mouseValue = 0x241;
 		}
 	}
@@ -1883,11 +1587,11 @@ void KingdomGame::cursorTypeExit() {
 
 int KingdomGame::checkMouseMapAS() {
 	for (int i = 0; i < 16; i++) {
-		if (_cursorX >= _mouseMapAS[_currMap][i]._minX && _cursorX < _mouseMapAS[_currMap][i]._maxX
-			&& _cursorY >= _mouseMapAS[_currMap][i]._minY && _cursorY < _mouseMapAS[_currMap][i]._maxY)
-			return _mouseMapAS[_currMap][i]._mouseValue;
+		if (_cursorX >= _mouseMapAS[_logic->_currMap][i]._minX && _cursorX < _mouseMapAS[_logic->_currMap][i]._maxX
+			&& _cursorY >= _mouseMapAS[_logic->_currMap][i]._minY && _cursorY < _mouseMapAS[_logic->_currMap][i]._maxY)
+			return _mouseMapAS[_logic->_currMap][i]._mouseValue;
 	}
-	if (_currMap == 11) {
+	if (_logic->_currMap == 11) {
 		for (int i = 0; i < 16; i++) {
 			if (_cursorX >= _mouseMapAS[12][i]._minX && _cursorX < _mouseMapAS[12][i]._maxX
 				&& _cursorY >= _mouseMapAS[12][i]._minY && _cursorY < _mouseMapAS[12][i]._maxY)
