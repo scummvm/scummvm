@@ -31,18 +31,10 @@ namespace Sludge {
 struct settingsStruct {
 	uint languageID;
 	uint numLanguages;
-	bool userFullScreen;
-	uint refreshRate;
-	int antiAlias;
-	bool fixedPixels;
-	bool noStartWindow;
-	bool debugMode;
 };
 
 extern settingsStruct gameSettings;
 
-void readIniFile(const Common::String &filename);
-void saveIniFile(const Common::String &filename);
 int getLanguageForFileB();
 
 void makeLanguageTable(Common::File *table);
