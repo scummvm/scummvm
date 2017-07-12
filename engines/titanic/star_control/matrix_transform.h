@@ -23,7 +23,7 @@
 #ifndef TITANIC_MATRIX_TRANSFORM_H
 #define TITANIC_MATRIX_TRANSFORM_H
 
-#include "titanic/star_control/DAffine.h"
+#include "titanic/star_control/daffine.h"
 
 namespace Titanic {
 

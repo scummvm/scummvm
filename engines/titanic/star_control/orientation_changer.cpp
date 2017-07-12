@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/orientation_changer.h"
-#include "titanic/star_control/DAffine.h"
+#include "titanic/star_control/daffine.h"
 
 namespace Titanic {
 

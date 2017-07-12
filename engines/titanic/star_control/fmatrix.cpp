@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/fmatrix.h"
-#include "titanic/star_control/DAffine.h"
+#include "titanic/star_control/daffine.h"
 
 namespace Titanic {
 

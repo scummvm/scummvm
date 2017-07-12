@@ -23,7 +23,7 @@
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/unmarked_camera_mover.h"
 #include "titanic/star_control/marked_camera_mover.h"
-#include "titanic/star_control/DAffine.h"
+#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/titanic.h"
 

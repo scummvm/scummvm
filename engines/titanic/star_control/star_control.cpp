@@ -23,7 +23,7 @@
 #include "titanic/support/screen_manager.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/star_control/star_control.h"
-#include "titanic/star_control/DAffine.h"
+#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fpose.h"
 #include "titanic/star_control/star_camera.h"
