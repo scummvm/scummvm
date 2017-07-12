@@ -54,7 +54,7 @@ CMatrixTransform CMatrixTransform::resize(double factor) const {
 	return dest;
 }
 
-void CMatrixTransform::fn4(const DMatrix &m) {
+void CMatrixTransform::fn4(const DAffine &m) {
 	double total = m._col1._x + m._col3._z + m._col2._y + 1.0;
 
 	if (total <= 0.00001) {

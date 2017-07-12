@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/fmatrix.h"
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/DAffine.h"
 
 namespace Titanic {
 
@@ -29,7 +29,7 @@ FMatrix::FMatrix() :
 	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
 }
 
-FMatrix::FMatrix(const DMatrix &src) {
+FMatrix::FMatrix(const DAffine &src) {
 	copyFrom(src);
 }
 
@@ -39,7 +39,7 @@ FMatrix::FMatrix(const FMatrix &src) {
 	_row3 = src._row3;
 }
 
-void FMatrix::copyFrom(const DMatrix &src) {
+void FMatrix::copyFrom(const DAffine &src) {
 	_row1 = src._col1;
 	_row2 = src._col2;
 	_row3 = src._col3;

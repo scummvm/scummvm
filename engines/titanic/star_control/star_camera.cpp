@@ -23,7 +23,7 @@
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/unmarked_camera_mover.h"
 #include "titanic/star_control/marked_camera_mover.h"
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/DAffine.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/titanic.h"
 
@@ -278,21 +278,21 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	} else if (_matrixRow == 1) {
 		// 2 markers locked in
 		FVector tempV2;
-		DMatrix m1, m2, sub;
+		DAffine m1, m2, sub;
 		DVector mrow1, mrow2, mrow3;
 		DVector tempV1, diffV, multV, multV2, tempV3, tempV4, tempV5, tempV6, tempV7;
 		DVector tempV8, tempV9, tempV10, tempV11, tempV12;
 		DVector tempV13, tempV14, tempV15, tempV16;
 
-		DMatrix subX(0, _matrix._row1);
-		DMatrix subY(Y_AXIS, angles._y);
+		DAffine subX(0, _matrix._row1);
+		DAffine subY(Y_AXIS, angles._y);
 
 		tempV1 = _matrix._row2 - _matrix._row1;
 		diffV = tempV1;
 		m1 = diffV.fn5();
-		m1 = m1.fn4(subX);
-		subX = m1.fn1();
-		subX = subX.fn4(subY);
+		m1 = m1.compose(subX);
+		subX = m1.inverseTransform();
+		subX = subX.compose(subY);
 
 		FMatrix m3 = _viewport.getOrientation();
 		tempV2 = _viewport._position;
@@ -345,7 +345,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	}
 }
 
-bool CStarCamera::addMatrixRow(const FVector v) {
+bool CStarCamera::adDAffineRow(const FVector v) {
 	if (_matrixRow >= 2)
 		return false;
 
@@ -457,14 +457,14 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	if (_matrixRow != 0)
 		return;
 
-	DMatrix m2(X_AXIS, _matrix._row1);
+	DAffine m2(X_AXIS, _matrix._row1);
 	DVector tempV1 = v - _matrix._row1;
-	DMatrix m1 = tempV1.fn5();
-	m1 = m1.fn4(m2);
-	m2 = m1.fn1();
+	DAffine m1 = tempV1.fn5();
+	m1 = m1.compose(m2);
+	m2 = m1.inverseTransform();
 	
 	DVector tempV2 = _viewport._position;
-	DMatrix m4;
+	DAffine m4;
 	m4._col1 = viewport->_position;
 	m4._col2 = DVector(0.0, 0.0, 0.0);
 	m4._col3 = DVector(0.0, 0.0, 0.0);

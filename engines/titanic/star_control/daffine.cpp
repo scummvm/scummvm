@@ -20,19 +20,19 @@
  *
  */
 
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/matrix_transform.h"
 
 namespace Titanic {
 
-DMatrix *DMatrix::_static;
+DAffine *DAffine::_static;
 
-DMatrix::DMatrix() :
+DAffine::DAffine() :
 	_col1(0.0, 0.0, 0.0), _col2(0.0, 0.0, 0.0), _col3(0.0, 0.0, 0.0) {
 }
 
-DMatrix::DMatrix(int mode, const DVector &src) {
+DAffine::DAffine(int mode, const DVector &src) {
 	switch (mode) {
 	case 0:
 		_col1._x = 1.0;
@@ -55,26 +55,26 @@ DMatrix::DMatrix(int mode, const DVector &src) {
 	}
 }
 
-DMatrix::DMatrix(Axis axis, double amount) {
+DAffine::DAffine(Axis axis, double amount) {
 	setRotationMatrix(axis, amount);
 }
 
-DMatrix::DMatrix(const FMatrix &src) {
+DAffine::DAffine(const FMatrix &src) {
 	_col1 = src._row1;
 	_col2 = src._row2;
 	_col3 = src._row3;
 }
 
-void DMatrix::init() {
+void DAffine::init() {
 	_static = nullptr;
 }
 
-void DMatrix::deinit() {
+void DAffine::deinit() {
 	delete _static;
 	_static = nullptr;
 }
 
-void DMatrix::setRotationMatrix(Axis axis, double amount) {
+void DAffine::setRotationMatrix(Axis axis, double amount) {
 	const double FACTOR = 0.0174532925199433;
 	double sinVal = sin(amount * FACTOR);
 	double cosVal = cos(amount * FACTOR);
@@ -109,7 +109,7 @@ void DMatrix::setRotationMatrix(Axis axis, double amount) {
 	}
 }
 
-DMatrix DMatrix::fn1() const {
+DAffine DAffine::inverseTransform() const {
 	double val1 = _col1._x * _col3._z * _col2._y;
 	double val2 = 0.0;
 	double val3 = val1;
@@ -153,7 +153,7 @@ DMatrix DMatrix::fn1() const {
 	double val8 = _col3._z * _col2._y;
 	double val9 = 1.0 / val7;
 
-	DMatrix m;
+	DAffine m;
 	m._col1._x = (val8 - val3) * val9;
 	m._col2._x = -((_col3._z * _col2._x - _col3._x * _col2._z) * val9);
 	m._col3._x = (_col3._y * _col2._x - _col3._x * _col2._y) * val9;
@@ -174,7 +174,7 @@ DMatrix DMatrix::fn1() const {
 	return m;
 }
 
-void DMatrix::loadTransform(const CMatrixTransform &src) {
+void DAffine::loadTransform(const CMatrixTransform &src) {
 	double total = src.fn1();
 	double factor = (total <= 0.0) ? 0.0 : 2.0 / total;
 	DVector temp1V = src._vector * factor;
@@ -201,8 +201,8 @@ void DMatrix::loadTransform(const CMatrixTransform &src) {
 	_col4._z = 0;
 }
 
-DMatrix DMatrix::fn4(const DMatrix &m) {
-	DMatrix dm;
+DAffine DAffine::compose(const DAffine &m) {
+	DAffine dm;
 	dm._col1._x = m._col3._x * _col1._z + m._col2._x * _col1._y
 		+ m._col1._x * _col1._x;
 	dm._col1._y = _col1._x * m._col1._y + m._col3._y * _col1._z

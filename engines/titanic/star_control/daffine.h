@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_DMATRIX_H
-#define TITANIC_DMATRIX_H
+#ifndef TITANIC_DAFFINE_H
+#define TITANIC_DAFFINE_H
 
 #include "titanic/star_control/dvector.h"
 #include "titanic/star_control/fvector.h"
@@ -32,12 +32,14 @@ class FMatrix;
 class CMatrixTransform;
 
 /**
- * Double based matrix class.
- * @remarks		TODO: See if it can be merged with FMatrix
+ * Affine transformation.
+ *
+ * Handles transformation functions between affine spaces,
+ * which preserves points, straight lines and planes
  */
-class DMatrix {
+class DAffine {
 private:
-	static DMatrix *_static;
+	static DAffine *_static;
 public:
 	DVector _col1;
 	DVector _col2;
@@ -47,23 +49,23 @@ public:
 	static void init();
 	static void deinit();
 public:
-	DMatrix();
-	DMatrix(int mode, const DVector &src);
-	DMatrix(Axis axis, double amount);
-	DMatrix(const FMatrix &src);
+	DAffine();
+	DAffine(int mode, const DVector &src);
+	DAffine(Axis axis, double amount);
+	DAffine(const FMatrix &src);
 
 	/**
 	 * Sets up a matrix for rotating on a given axis by a given amount
 	 */
 	void setRotationMatrix(Axis axis, double amount);
 
-	DMatrix fn1() const;
+	DAffine inverseTransform() const;
 
 	void loadTransform(const CMatrixTransform &src);
 
-	DMatrix fn4(const DMatrix &m);
+	DAffine compose(const DAffine &m);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_DMATRIX_H */
+#endif /* TITANIC_DAFFINE_H */
