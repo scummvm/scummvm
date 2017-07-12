@@ -2612,19 +2612,11 @@ builtIn(doBackgroundEffect) {
 
 //-------------------------------------
 
-#define FUNC(special,name)      {builtIn_ ## name},
-static builtInFunctionData builtInFunctionArray[] = {
-#include "CommonCode/functionlist.h"
-		};
-#undef FUNC
+} // End of namespace Sludge
 
-#define FUNC(special,name)      {#name},
-char builtInFunctionNames[][25] = {
 #include "CommonCode/functionlist.h"
-		};
-#undef FUNC
 
-#define NUM_FUNCS           (sizeof (builtInFunctionArray) / sizeof (builtInFunctionArray[0]))
+namespace Sludge {
 
 builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
 	if (numBIFNames) {
