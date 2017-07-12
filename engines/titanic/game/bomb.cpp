@@ -158,7 +158,7 @@ bool CBomb::StatusChangeMsg(CStatusChangeMsg *msg) {
 			break;
 		}
 
-		_soundHandle = queueSound(name, _soundHandle, _volume, Audio::Mixer::kSpeechSoundType);
+		_soundHandle = queueSound(name, _soundHandle, _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 	}
 
 	return true;
@@ -200,7 +200,7 @@ bool CBomb::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 				break;
 			}
 
-			_soundHandle = queueSound(name, _soundHandle, _volume, Audio::Mixer::kSpeechSoundType);
+			_soundHandle = queueSound(name, _soundHandle, _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 			_countdown = 999;
 		}
 	} else {
@@ -257,7 +257,7 @@ bool CBomb::ActMsg(CActMsg *msg) {
 			break;
 		}
 
-		_soundHandle = queueSound(name, _soundHandle, _volume, Audio::Mixer::kSpeechSoundType);
+		_soundHandle = queueSound(name, _soundHandle, _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 		_countdown = 999;
 	}
 
