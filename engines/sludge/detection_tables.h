@@ -49,6 +49,18 @@ static const SludgeGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		{
+			"verbcoin",
+			"",
+			AD_ENTRY1s("Verb Coin.slg", "e39ec315dcbf3a1137481f0a5fe1617d", 980270),
+			Common::DE_DEU,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		1
+	},
 
 	{
 		{

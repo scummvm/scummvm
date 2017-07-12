@@ -31,12 +31,12 @@
 
 namespace Sludge {
 
-int *languageTable;
+uint *languageTable;
 Common::String *languageName;
 settingsStruct gameSettings;
 
 void makeLanguageTable(Common::File *table) {
-	languageTable = new int[gameSettings.numLanguages + 1];
+	languageTable = new uint[gameSettings.numLanguages + 1];
 	if (!checkNew(languageTable))
 		return;
 
@@ -64,7 +64,6 @@ int getLanguageForFileB() {
 		if (languageTable[i] == gameSettings.languageID)
 			indexNum = i;
 	}
-
 	return indexNum;
 }
 

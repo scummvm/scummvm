@@ -30,11 +30,10 @@ namespace Sludge {
 
 struct SludgeGameDescription {
 	ADGameDescription desc;
-
-	int gameType;
+	uint languageID;
 };
 
-int SludgeEngine::getGameType() const { return _gameDescription->gameType; }
+uint SludgeEngine::getLanguageID() const { return _gameDescription->languageID; }
 const char *SludgeEngine::getGameId() const { return _gameDescription->desc.gameId;}
 uint32 SludgeEngine::getFeatures() const { return _gameDescription->desc.flags; }
 Common::Language SludgeEngine::getLanguage() const { return _gameDescription->desc.language; }

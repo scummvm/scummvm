@@ -511,14 +511,9 @@ bool initSludge(const Common::String &filename) {
 	if (chdir(gameName)) return fatal("This game's preference folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", gameName);
 #endif
 
-	// Get user settings
-	readIniFile(filename);
+	// Get language selected by user
+	gameSettings.languageID = g_sludge->getLanguageID();
 
-	// There's no startup window on Linux and respecting this
-	// option from the ini file would disable commandline options.
-	saveIniFile(filename);
-
-	
 	// Now set file indices properly to the chosen language.
 	languageNum = getLanguageForFileB();
 	if (languageNum < 0)

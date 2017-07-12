@@ -65,7 +65,7 @@ public:
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();
 
-	int getGameType() const;
+	uint getLanguageID() const;
 	const char *getGameId() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
