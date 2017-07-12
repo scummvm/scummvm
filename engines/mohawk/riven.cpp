@@ -27,6 +27,7 @@
 #include "common/translation.h"
 #include "common/system.h"
 #include "gui/saveload.h"
+#include "gui/message.h"
 
 #include "mohawk/cursors.h"
 #include "mohawk/installer_archive.h"
@@ -173,10 +174,10 @@ Common::Error MohawkEngine_Riven::run() {
 		// Load game from launcher/command line if requested
 		int gameToLoad = ConfMan.getInt("save_slot");
 
-		// Attempt to load the game. On failure, just send us to the main menu.
-		if (_saveLoad->loadGame(gameToLoad).getCode() != Common::kNoError) {
-			changeToStack(kStackAspit);
-			changeToCard(1);
+		// Attempt to load the game.
+		Common::Error loadError = _saveLoad->loadGame(gameToLoad);
+		if (loadError.getCode() != Common::kNoError) {
+			return loadError;
 		}
 	} else {
 		// Otherwise, start us off at aspit's card 1 (the main menu)
@@ -227,7 +228,7 @@ void MohawkEngine_Riven::doFrame() {
 			case Common::KEYCODE_F5:
 				runDialog(*_optionsDialog);
 				if (_optionsDialog->getLoadSlot() >= 0)
-					loadGameState(_optionsDialog->getLoadSlot());
+					loadGameStateAndDisplayError(_optionsDialog->getLoadSlot());
 				_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 				_card->initializeZipMode();
 				break;
@@ -433,12 +434,24 @@ void MohawkEngine_Riven::runLoadDialog() {
 	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
 
 	int slot = slc.runModalWithCurrentTarget();
-	if (slot >= 0)
-		loadGameState(slot);
+	if (slot >= 0) {
+		loadGameStateAndDisplayError(slot);
+	}
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 	return _saveLoad->loadGame(slot);
+}
+
+void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
+	assert(slot >= 0);
+
+	Common::Error loadError = loadGameState(slot);
+
+	if (loadError.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(loadError.getDesc());
+		dialog.runModal();
+	}
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {

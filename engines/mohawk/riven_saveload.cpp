@@ -180,9 +180,9 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 	delete vers;
 	if ((saveGameVersion == kCDSaveGameVersion && (_vm->getFeatures() & GF_DVD))
 		|| (saveGameVersion == kDVDSaveGameVersion && !(_vm->getFeatures() & GF_DVD))) {
-		warning("Incompatible saved game versions. No support for this yet");
+		warning("Unable to load: Saved game created using an incompatible game version - CD vs DVD");
 		delete mhk;
-		return Common::Error(Common::kUnknownError, "Incompatible save version");
+		return Common::Error(Common::kUnknownError, "Saved game created using an incompatible game version - CD vs DVD");
 	}
 
 	// Now, we'll read in the variable values.
