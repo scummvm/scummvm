@@ -50,6 +50,7 @@ private:
 
 	uint32 _value;   ///< Current value.
 	uint8  _inValue; ///< Position within the current value.
+	uint32 _size;
 
 	/** Read a data value. */
 	inline uint32 readData() {
@@ -75,7 +76,7 @@ private:
 
 	/** Read the next data value. */
 	inline void readValue() {
-		if ((size() - pos()) < valueBits)
+		if ((_size - pos()) < valueBits)
 			error("BitStreamImpl::readValue(): End of bit stream reached");
 
 		_value = readData();
@@ -94,6 +95,8 @@ public:
 
 		if ((valueBits != 8) && (valueBits != 16) && (valueBits != 32))
 			error("BitStreamImpl: Invalid memory layout %d, %d, %d", valueBits, isLE, isMSB2LSB);
+
+		_size = (_stream->size() & ~((uint32) ((valueBits >> 3) - 1))) * 8;
 	}
 
 	/** Create a bit stream using this input data stream. */
@@ -102,6 +105,8 @@ public:
 
 		if ((valueBits != 8) && (valueBits != 16) && (valueBits != 32))
 			error("BitStreamImpl: Invalid memory layout %d, %d, %d", valueBits, isLE, isMSB2LSB);
+
+		_size = (_stream->size() & ~((uint32) ((valueBits >> 3) - 1))) * 8;
 	}
 
 	~BitStreamImpl() {
@@ -253,11 +258,11 @@ public:
 
 	/** Return the stream size in bits. */
 	uint32 size() const {
-		return (_stream->size() & ~((uint32) ((valueBits >> 3) - 1))) * 8;
+		return _size;
 	}
 
 	bool eos() const {
-		return _stream->eos() || (pos() >= size());
+		return _stream->eos() || (pos() >= _size);
 	}
 };
 
