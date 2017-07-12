@@ -40,9 +40,9 @@ FMatrix::FMatrix(const FMatrix &src) {
 }
 
 void FMatrix::copyFrom(const DMatrix &src) {
-	_row1 = src._row1;
-	_row2 = src._row2;
-	_row3 = src._row3;
+	_row1 = src._col1;
+	_row2 = src._col2;
+	_row3 = src._col3;
 }
 
 void FMatrix::load(SimpleFile *file, int param) {

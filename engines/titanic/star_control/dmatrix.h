@@ -39,10 +39,10 @@ class DMatrix {
 private:
 	static DMatrix *_static;
 public:
-	DVector _row1;
-	DVector _row2;
-	DVector _row3;
-	DVector _row4;
+	DVector _col1;
+	DVector _col2;
+	DVector _col3;
+	DVector _col4;
 public:
 	static void init();
 	static void deinit();

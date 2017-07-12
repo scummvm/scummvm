@@ -42,9 +42,9 @@ double DVector::getDistance(const DVector &src) {
 
 DVector DVector::fn1(const DMatrix &m) {
 	DVector dest;
-	dest._x = m._row3._x * _z + m._row2._x * _y + m._row1._x * _x + m._row4._x;
-	dest._y = m._row2._y * _y + m._row3._y * _z + m._row1._y * _x + m._row4._y;
-	dest._z = m._row3._z * _z + m._row2._z * _y + m._row1._z * _x + m._row4._z;
+	dest._x = m._col3._x * _z + m._col2._x * _y + m._col1._x * _x + m._col4._x;
+	dest._y = m._col2._y * _y + m._col3._y * _z + m._col1._y * _x + m._col4._y;
+	dest._z = m._col3._z * _z + m._col2._z * _y + m._col1._z * _x + m._col4._z;
 	return dest;
 }
 
