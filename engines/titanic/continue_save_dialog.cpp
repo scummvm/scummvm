@@ -96,6 +96,8 @@ void CContinueSaveDialog::render() {
 	Graphics::Screen &screen = *g_vm->_screen;
 	screen.clear();
 	screen.blitFrom(_backdrop, Common::Point(48, 22));
+	CScreenManager::_screenManagerPtr->setSurfaceBounds(SURFACE_PRIMARY,
+		Rect(48, 22, 48 + _backdrop.w, 22 + _backdrop.h));
 
 	if (_evilTwinShown)
 		screen.blitFrom(_evilTwin, Common::Point(78, 59));
