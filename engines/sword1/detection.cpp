@@ -213,18 +213,31 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 		if (!filesFound[i] || psxFilesFound)
 			psxDemoFilesFound = false;
 
+	GameDescriptor gd;
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1DemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1DemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && pcFilesFound && psxFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1PSXSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1PSXSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && pcFilesFound && psxDemoFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1PSXDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1PSXDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && pcFilesFound && !psxFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1FullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1FullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && macFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1MacFullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1MacFullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && macDemoFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1MacDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1MacDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+	else
+		return detectedGames;
+
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::PT_BRA));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CZ_CZE));
+
+	detectedGames.push_back(gd);
 
 	return detectedGames;
 }
