@@ -321,7 +321,7 @@ void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedS
 				src.format.colorToARGB(*pSrc, a, r, g, b);
 				assert(a == 0 || a == 0xff);
 
-				*pDest = (a == 0) ? transPixel : dest.format.RGBToColor(r, g, b);
+				*pDest = (a == 0 && _streamCount == 1) ? transPixel : dest.format.RGBToColor(r, g, b);
 			}
 		}
 	}
@@ -412,7 +412,7 @@ bool AVISurface::renderFrame() {
 			s->free();
 			delete s;
 		} else {
-			_videoSurface->getRawSurface()->transBlitFrom(frameSurface, _videoSurface->getTransparencyColor());
+			_videoSurface->getRawSurface()->blitFrom(frameSurface);
 		}
 
 		_videoSurface->unlock();
