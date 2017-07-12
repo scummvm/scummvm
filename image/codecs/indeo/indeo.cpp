@@ -1258,16 +1258,15 @@ int IndeoDecoderBase::decodeCodedBlocks(GetBits *gb, IVIBandDesc *band,
 	// zero column flags
 	memset(colFlags, 0, sizeof(colFlags));
 	while (scanPos <= numCoeffs) {
-		sym = gb->getVLC2(band->_blkVlc._tab->_table,
-			IVI_VLC_BITS, 1);
+		sym = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS);
 		if (sym == rvmap->_eobSym)
 			break; // End of block
 
 		// Escape - run/val explicitly coded using 3 vlc codes
 		if (sym == rvmap->_escSym) {
-			run = gb->getVLC2(band->_blkVlc._tab->_table, IVI_VLC_BITS, 1) + 1;
-			lo = gb->getVLC2(band->_blkVlc._tab->_table, IVI_VLC_BITS, 1);
-			hi = gb->getVLC2(band->_blkVlc._tab->_table, IVI_VLC_BITS, 1);
+			run = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS) + 1;
+			lo = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS);
+			hi = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS);
 			// merge them and convert into signed val
 			val = IVI_TOSIGNED((hi << 6) | lo);
 		} else {

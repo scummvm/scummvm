@@ -54,7 +54,37 @@ public:
 	 *                  read the longest vlc code
 	 *                  = (max_vlc_length + bits - 1) / bits
 	 */
-	int getVLC2(int16 (*table)[2], int bits, int maxDepth);
+	template <int maxDepth>
+	int getVLC2(int16 (*table)[2], int bits) {
+		int code;
+		int n, nbBits;
+		unsigned int index;
+
+		index = peekBits(bits);
+		code  = table[index][0];
+		n     = table[index][1];
+
+		if (maxDepth > 1 && n < 0) {
+			skip(bits);
+			nbBits = -n;
+
+			index = peekBits(nbBits) + code;
+			code = table[index][0];
+			n = table[index][1];
+
+			if (maxDepth > 2 && n < 0) {
+				skip(nbBits);
+				nbBits = -n;
+
+				index = peekBits(nbBits) + code;
+				code = table[index][0];
+				n = table[index][1];
+			}
+		}
+
+		skip(n);
+		return code;
+	}
 };
 
 } // End of namespace Indeo
