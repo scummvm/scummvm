@@ -878,9 +878,9 @@ static Common::String detectGames(Common::String path, Common::String recursiveO
 	GameList candidates = recListGames(dir, recursive);
 
 	if (candidates.empty()) {
-		printf("ScummVM could not find any game in %s\n", dir.getPath().c_str());
+		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().c_str());
 		if (!recursive) {
-			printf("Consider using --recursive to search inside subdirectories\n");
+			printf("WARNING: Consider using --recursive *before* --add or --detect to search inside subdirectories\n");
 		}
 		return Common::String();
 	}
@@ -1167,15 +1167,18 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		// If we get a non-empty ID, we store it in command so that it gets processed together with the
 		// other command line options below.
 		if (settings["recursive"] == "true") {
-			printf("Autodetection not supported with --recursive; are you sure you didn't want --detect?\n");
+			printf("ERROR: Autodetection not supported with --recursive; are you sure you didn't want --detect?\n");
+			err = Common::kUnknownError;
 			return true;
 			// There is not a particularly good technical reason for this.
 			// From an UX point of view, however, it might get confusing.
 			// Consider removing this if consensus says otherwise.
 		} else {
 			command = detectGames(settings["path"], settings["recursive"]);
-			if (command.empty())
+			if (command.empty()) {
+				err = Common::kNoGameDataFoundError;
 				return true;
+			}
 		}
 	} else if (command == "detect") {
 		detectGames(settings["path"], settings["recursive"]);
