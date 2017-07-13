@@ -45,7 +45,7 @@
 #include "sludge/bg_effects.h"
 #include "sludge/thumbnail.h"
 #include "sludge/utf8.h"
-#include "sludge/CommonCode/version.h"
+#include "sludge/version.h"
 
 namespace Sludge {
 

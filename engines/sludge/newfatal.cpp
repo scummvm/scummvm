@@ -27,7 +27,7 @@
 #include "sludge/errors.h"
 #include "sludge/graphics.h"
 #include "sludge/sludge.h"
-#include "sludge/CommonCode/version.h"
+#include "sludge/version.h"
 
 namespace Sludge {
 

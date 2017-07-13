@@ -26,7 +26,7 @@
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
 #include "sludge/fileset.h"
-#include "sludge/CommonCode/version.h"
+#include "sludge/version.h"
 
 namespace Sludge {
 

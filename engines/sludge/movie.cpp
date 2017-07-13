@@ -35,7 +35,7 @@
 #include "AL/alure.h"
 #endif
 
-#include "sludge/CommonCode/specialsettings.h"
+#include "sludge/specialsettings.h"
 
 #include "sludge/newfatal.h"
 #include "sludge/timing.h"
