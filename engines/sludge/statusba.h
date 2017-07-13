@@ -49,7 +49,7 @@ void killLastStatus();
 void statusBarColour(byte r, byte g, byte b);
 void statusBarLitColour(byte r, byte g, byte b);
 void setLitStatus(int i);
-const Common::String &statusBarText();
+const Common::String statusBarText();
 void positionStatus(int, int);
 void drawStatusBar();
 

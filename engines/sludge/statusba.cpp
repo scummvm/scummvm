@@ -163,7 +163,7 @@ void initStatusBar() {
 	statusBarLitColour(255, 255, 128);
 }
 
-const Common::String &statusBarText() {
+const Common::String statusBarText() {
 	if (nowStatus->firstStatusBar) {
 		return nowStatus->firstStatusBar->text;
 	} else {

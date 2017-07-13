@@ -49,10 +49,11 @@ extern int lightMapNumber;
 
 // This is for swapping settings between rendering to texture or to the screen
 void setPixelCoords(bool pixels) {
+#if 0
 	static int current = -1;
 //	if (current == pixels) return;
 	current = pixels;
-#if 0
+
 	glBindTexture(GL_TEXTURE_2D, backdropTextureName);
 
 	if (pixels) {

@@ -178,7 +178,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	// version 0, 1, 2
 	for (int i = 0; i < total; i++) {
-		int picwidth, picheight;
+		uint picwidth, picheight;
 		// load sprite width, height, relative position
 		if (spriteBankVersion == 2) {
 			picwidth = bigDataFile->readUint16BE();
@@ -205,8 +205,8 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 		// read color
 		if (spriteBankVersion == 2) { // RUN LENGTH COMPRESSED DATA
-			unsigned size = picwidth * picheight;
-			unsigned pip = 0;
+			uint size = picwidth * picheight;
+			uint pip = 0;
 
 			while (pip < size) {
 				byte col = bigDataFile->readByte();

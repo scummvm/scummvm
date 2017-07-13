@@ -895,20 +895,20 @@ bool continueFunction(loadedFunction *fun) {
 					if (!grab) {
 						setVariable(fun->reg, SVT_NULL, 0);
 					} else {
-						int ii;
+						int kk;
 						switch (com) {
 						case SLU_INCREMENT_INDEX:
-							if (!getValueType(ii, SVT_INT, *grab))
+							if (!getValueType(kk, SVT_INT, *grab))
 								return false;
-							setVariable(fun->reg, SVT_INT, ii);
-							grab->varData.intValue = ii + 1;
+							setVariable(fun->reg, SVT_INT, kk);
+							grab->varData.intValue = kk + 1;
 							break;
 
 						case SLU_DECREMENT_INDEX:
-							if (!getValueType(ii, SVT_INT, *grab))
+							if (!getValueType(kk, SVT_INT, *grab))
 								return false;
-							setVariable(fun->reg, SVT_INT, ii);
-							grab->varData.intValue = ii - 1;
+							setVariable(fun->reg, SVT_INT, kk);
+							grab->varData.intValue = kk - 1;
 							break;
 
 						default:

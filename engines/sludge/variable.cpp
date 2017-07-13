@@ -141,12 +141,13 @@ int stackSize(const stackHandler *me) {
 }
 
 bool getSavedGamesStack(stackHandler *sH, const Common::String &ext) {
+#if 0
 	Common::String pattern = "*";
 	pattern += ext;
 
 	variable newName;
 	newName.varType = SVT_NULL;
-#if 0
+
 	DIR *dir = opendir(".");
 	if (!dir)
 		return false;
@@ -411,7 +412,7 @@ bool copyVariable(const variable &from, variable &to) {
 }
 
 variable *fastArrayGetByIndex(fastArrayHandler *vS, uint theIndex) {
-	if (theIndex < 0 || theIndex >= vS->size)
+	if ((int)theIndex >= vS->size)
 		return NULL;
 	return &vS->fastVariables[theIndex];
 }

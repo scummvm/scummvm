@@ -189,7 +189,7 @@ void finishAccess() {
 
 int32 startIndex;
 
-void setFileIndices(Common::File *fp, int numLanguages, uint skipBefore) {
+void setFileIndices(Common::File *fp, uint numLanguages, uint skipBefore) {
 	if (fp) {
 		// Keep hold of the file handle, and let things get at it
 		bigDataFile = fp;

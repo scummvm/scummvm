@@ -120,7 +120,7 @@ bool failSecurityCheck(const Common::String &fn) {
 	if (fn.empty())
 		return true;
 
-	for (int i = 0; i < fn.size(); ++i) {
+	for (uint i = 0; i < fn.size(); ++i) {
 		switch (fn[i]) {
 			case ':':
 			case '\\':
@@ -1077,9 +1077,8 @@ builtIn(playMovie) {
 
 builtIn(stopMovie) {
 	UNUSEDALL
-	int r;
 
-	r = stopMovie();
+	stopMovie();
 
 	setVariable(fun->reg, SVT_INT, 0);
 	return BR_CONTINUE;
@@ -1087,9 +1086,8 @@ builtIn(stopMovie) {
 
 builtIn(pauseMovie) {
 	UNUSEDALL
-	int r;
 
-	r = pauseMovie();
+	pauseMovie();
 
 	setVariable(fun->reg, SVT_INT, 0);
 	return BR_CONTINUE;
@@ -2509,7 +2507,7 @@ builtIn(setThumbnailSize) {
 	if (!getValueType(thumbWidth, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (thumbWidth < 0 || thumbHeight < 0 || thumbWidth > winWidth || thumbHeight > winHeight) {
+	if (thumbWidth < 0 || thumbHeight < 0 || thumbWidth > (int)winWidth || thumbHeight > (int)winHeight) {
 		Common::String buff = thumbWidth + " x " + thumbHeight;
 		fatal("Invalid thumbnail size", buff);
 		return BR_ERROR;

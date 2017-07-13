@@ -37,7 +37,7 @@ void displayFatal();
 void registerWindowForFatal();
 void setFatalInfo(const Common::String &userFunc, const Common::String &BIF);
 void setResourceForFatal(int n);
-const Common::String &resourceNameFromNum(int i);
+const Common::String resourceNameFromNum(int i);
 
 } // End of namespace Sludge
 

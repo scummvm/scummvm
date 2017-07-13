@@ -38,7 +38,7 @@ extern Common::String *allResourceNames /*= ""*/;
 
 int resourceForFatal = -1;
 
-const Common::String &resourceNameFromNum(int i) {
+const Common::String resourceNameFromNum(int i) {
 	if (i == -1)
 		return NULL;
 	if (numResourceNames == 0)

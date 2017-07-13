@@ -151,10 +151,9 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 
 	if ((picWidth != winWidth) || (picHeight != winHeight))
 		return false;
-
+#if 0
 	uint t1, t2, n;
 	uint16 c;
-#if 0
 	GLubyte *target;
 	if (!NPOT_textures) {
 		picWidth = getNextPOT(picWidth);
@@ -164,7 +163,6 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 	}
 	GLubyte *snapshotTexture = new GLubyte [picHeight * picWidth * 4];
 	if (!snapshotTexture) return fatal("Out of memory while restoring snapshot.");
-#endif
 
 	for (t2 = 0; t2 < winHeight; t2++) {
 		t1 = 0;
@@ -176,7 +174,7 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 			} else {
 				n = 1;
 			}
-#if 0
+
 			while (n --) {
 				target = snapshotTexture + 4 * picWidth * t2 + t1 * 4;
 				target[0] = (GLubyte) redValue(c);
@@ -185,10 +183,9 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 				target[3] = (GLubyte) 255;
 				t1++;
 			}
-#endif
 		}
 	}
-#if 0
+
 	if (!snapshotTextureName) glGenTextures(1, &snapshotTextureName);
 	glBindTexture(GL_TEXTURE_2D, snapshotTextureName);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -251,9 +248,10 @@ bool reserveBackdrop() {
 	input.mouseX = (int)((float)input.mouseX / cameraZoom);
 	input.mouseY = (int)((float)input.mouseY / cameraZoom);
 	setPixelCoords(false);
+#if 0
 	int picWidth = sceneWidth;
 	int picHeight = sceneHeight;
-#if 0
+
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	if (backdropTexture) delete backdropTexture;
@@ -398,7 +396,7 @@ void blankScreen(int x1, int y1, int x2, int y2) {
 }
 
 void hardScroll(int distance) {
-	if (ABS(distance) >= sceneHeight) {
+	if (ABS(distance) >= (int)sceneHeight) {
 		blankScreen(0, 0, sceneWidth, sceneHeight);
 		return;
 	}
@@ -571,6 +569,7 @@ bool loadLightMap(int v) {
 	if (!ImgLoader::loadImage(bigDataFile, &lightMap))
 		return false;
 
+#if 0
 	int newPicWidth = lightMap.w;
 	int newPicHeight = lightMap.h;
 
@@ -580,7 +579,6 @@ bool loadLightMap(int v) {
 		}
 	}
 
-#if 0
 	if (!NPOT_textures) {
 		newPicWidth = getNextPOT(lightMap.w);
 		newPicHeight = getNextPOT(lightMap.h);
@@ -590,9 +588,7 @@ bool loadLightMap(int v) {
 		lightMap.texW = 1.0;
 		lightMap.texH = 1.0;
 	}
-#endif
 
-#if 0
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 #endif
 #if 0
@@ -667,6 +663,7 @@ bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 	}
 	nP->prev = NULL;
 
+#if 0
 	int picWidth;
 	int picHeight;
 
@@ -702,7 +699,6 @@ bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 		nP->wrapT = true;
 	}
 
-#if 0
 	glGenTextures(1, &nP->textureName);
 	glBindTexture(GL_TEXTURE_2D, nP->textureName);
 	if (nP->wrapS)
@@ -861,8 +857,8 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	if (!ImgLoader::loadImage(stream, &backdropSurface, (int)reserve))
 		return false;
 
-	int realPicWidth = backdropSurface.w;
-	int realPicHeight = backdropSurface.h;
+	uint realPicWidth = backdropSurface.w;
+	uint realPicHeight = backdropSurface.h;
 
 	if (reserve) { // resize backdrop
 		if (!resizeBackdrop(realPicWidth, realPicHeight))
@@ -896,8 +892,8 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	if (!ImgLoader::loadImage(stream, &mixSurface, 0))
 		return false;
 
-	int realPicWidth = mixSurface.w;
-	int realPicHeight = mixSurface.h;
+	uint realPicWidth = mixSurface.w;
+	uint realPicHeight = mixSurface.h;
 
 	if (x == IN_THE_CENTRE)
 		x = (sceneWidth - realPicWidth) >> 1;
