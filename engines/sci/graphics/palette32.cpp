@@ -566,11 +566,12 @@ Palette GfxPalette32::getPaletteFromResource(const GuiResourceId resourceId) con
 }
 
 void GfxPalette32::mergePalette(Palette &to, const Palette &from) {
-	// The last color is always white in SCI, so it is not copied. (Some
-	// palettes, particularly in KQ7, try to set the last color, which causes
-	// unnecessary palette updates since the last color is forced by SSCI to a
-	// specific value)
-	for (int i = 0; i < ARRAYSIZE(to.colors) - 1; ++i) {
+	// All colors MUST be copied, even index 255, despite the fact that games
+	// cannot actually change index 255 (it is forced to white when generating
+	// the hardware palette in updateHardware). While this causes some
+	// additional unnecessary source palette invalidations, not doing it breaks
+	// some badly programmed rooms, like room 6400 in Phant1 (see Trac#9788)
+	for (int i = 0; i < ARRAYSIZE(to.colors); ++i) {
 		if (from.colors[i].used) {
 			to.colors[i] = from.colors[i];
 		}
