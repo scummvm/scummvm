@@ -71,6 +71,7 @@ public:
 	Common::Language getLanguage() const;
 	Graphics::PixelFormat *getScreenPixelFormat() const;
 	Graphics::PixelFormat *getOrigPixelFormat() const;
+	Common::RandomSource *getRandomSource() const { return _rnd; };
 
 	const char *getGameFile() const;
 

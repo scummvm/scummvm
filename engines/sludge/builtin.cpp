@@ -511,9 +511,8 @@ builtIn(pickOne) {
 	}
 
 	int i;
-#if 0
-	i = rand() % numParams;
-#endif
+
+	i = g_sludge->getRandomSource()->getRandomNumber(numParams - 1);
 
 	// Return value
 	while (numParams--) {
