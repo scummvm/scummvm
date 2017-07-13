@@ -221,7 +221,7 @@ public:
 		_objectState[8] = Object("Schrank", Object::defaultDescription, NULLOBJECT, OPEN | CLOSED, 1, 1, 0);
 		_objectState[9] = Object("Fach", Object::defaultDescription, NULLOBJECT, OPEN | CLOSED, 2, 2, 0);
 		_objectState[10] = Object("Steckdose", Object::defaultDescription, SOCKET, COMBINABLE, 4, 4, 0);
-		_objectState[11] = Object("Toilette", Object::defaultDescription, BATHROOM_DOOR, EXIT, 255, 255, 0, BATHROOM, 2);
+		_objectState[11] = Object("Toilette", Object::defaultDescription, BATHROOM_DOOR, EXIT, 255, 255, 0, BATHROOM, 22);
 	}
 };
 
@@ -317,7 +317,7 @@ public:
 		_objectState[13] = Object("Schrank",Object::defaultDescription,NULLOBJECT,OPEN | CLOSED,1,1,0);
 		_objectState[14] = Object("Fach",Object::defaultDescription,NULLOBJECT,OPEN | CLOSED,2,2,0);
 		_objectState[15] = Object("Steckdose",Object::defaultDescription,SOCKET,COMBINABLE,4,4,0);
-		_objectState[16] = Object("Toilette",Object::defaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,2);
+		_objectState[16] = Object("Toilette",Object::defaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -342,7 +342,7 @@ public:
 		_objectState[5] = Object("Schrank",Object::defaultDescription,NULLOBJECT,OPEN | CLOSED,1,1,0);
 		_objectState[6] = Object("Fach",Object::defaultDescription,NULLOBJECT,OPEN | CLOSED,2,2,0);
 		_objectState[7] = Object("Steckdose",Object::defaultDescription,SOCKET,COMBINABLE,4,4,0);
-		_objectState[8] = Object("Toilette",Object::defaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,2);
+		_objectState[8] = Object("Toilette",Object::defaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
 	}
 };
 
@@ -368,7 +368,7 @@ public:
 		_objectState[5] = Object("Schrank",Object::defaultDescription,NULLOBJECT,OPEN | CLOSED,1,1,0);
 		_objectState[6] = Object("Fach",Object::defaultDescription,NULLOBJECT,OPEN | CLOSED,2,2,0);
 		_objectState[7] = Object("Steckdose",Object::defaultDescription,SOCKET,COMBINABLE,4,4,0);
-		_objectState[8] = Object("Toilette",Object::defaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,2);
+		_objectState[8] = Object("Toilette",Object::defaultDescription,BATHROOM_DOOR,EXIT,255,255,0,BATHROOM,22);
 	}
 };
 
