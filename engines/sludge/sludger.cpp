@@ -48,8 +48,8 @@
 #include "sludge/graphics.h"
 #include "sludge/variable.h"
 #include "sludge/sludge.h"
-#include "sludge/CommonCode/specialsettings.h"
-#include "sludge/CommonCode/version.h"
+#include "sludge/specialsettings.h"
+#include "sludge/version.h"
 
 namespace Sludge {
 

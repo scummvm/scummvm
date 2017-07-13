@@ -46,7 +46,7 @@
 #include "sludge/graphics.h"
 #include "sludge/helpers.h"
 #include "sludge/sludge.h"
-#include "sludge/CommonCode/specialsettings.h"
+#include "sludge/specialsettings.h"
 
 namespace Sludge {
 

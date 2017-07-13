@@ -2614,7 +2614,7 @@ builtIn(doBackgroundEffect) {
 
 } // End of namespace Sludge
 
-#include "CommonCode/functionlist.h"
+#include "functionlist.h"
 
 namespace Sludge {
 

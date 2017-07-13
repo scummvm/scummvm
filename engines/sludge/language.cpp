@@ -27,7 +27,7 @@
 #include "sludge/moreio.h"
 #include "sludge/language.h"
 #include "sludge/sludge.h"
-#include "sludge/CommonCode/version.h"
+#include "sludge/version.h"
 
 namespace Sludge {
 

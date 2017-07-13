@@ -27,7 +27,7 @@
 #include "sludge/backdrop.h"
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
-#include "sludge/CommonCode/version.h"
+#include "sludge/version.h"
 
 namespace Sludge {
 
