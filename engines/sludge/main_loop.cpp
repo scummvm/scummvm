@@ -71,8 +71,8 @@ Graphics::Surface renderSurface;
 int dialogValue = 0;
 
 void setGameFilePath(char *f) {
-	char currentDir[1000];
 #if 0
+	char currentDir[1000];
 	if (!getcwd(currentDir, 998)) {
 		debugOut("Can't get current directory.\n");
 	}

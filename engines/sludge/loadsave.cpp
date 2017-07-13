@@ -556,7 +556,7 @@ bool loadGame(const Common::String &fname) {
 	fp->readByte();  // updateDisplay (part of movie playing)
 
 	bool fontLoaded = fp->readByte();
-	int fontNum;
+	int fontNum = 0;
 	Common::String charOrder = "";
 	if (fontLoaded) {
 		fontNum = fp->readUint16BE();
