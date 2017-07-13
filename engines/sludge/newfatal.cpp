@@ -68,7 +68,7 @@ void registerWindowForFatal() {
 
 int inFatal(const Common::String &str) {
 	killSoundStuff();
-	error(str.c_str());
+	error("%s", str.c_str());
 	return true;
 }
 
