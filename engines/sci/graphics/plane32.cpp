@@ -518,8 +518,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 				) {
 					const ScreenItem *drawnItem = drawListEntry->screenItem;
 
-					if (
-						(newItem->_priority > drawnItem->_priority || (newItem->_priority == drawnItem->_priority && newItem->_creationId > drawnItem->_creationId)) &&
+					if (newItem->hasPriorityAbove(*drawnItem) &&
 						drawListEntry->rect.intersects(newItem->_screenRect)
 					) {
 						mergeToDrawList(j, drawListEntry->rect.findIntersectingRect(newItem->_screenRect), drawList);
