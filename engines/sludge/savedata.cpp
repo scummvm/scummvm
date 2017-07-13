@@ -31,7 +31,7 @@
 
 namespace Sludge {
 
-const char UTF8_CHECKER[] = {'U', 'N', -17, -65, -67, 'L', 'O', -17, -65, -67, 'C', 'K', 'E', 'D', '\0'};
+const char UTF8_CHECKER[] = {'U', 'N', '\xef', '\xbf', '\xbd', 'L', 'O', '\xef', '\xbf', '\xbd', 'C', 'K', 'E', 'D', '\0'};
 uint16 saveEncoding = false;
 char encode1 = 0;
 char encode2 = 0;
