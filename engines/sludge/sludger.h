@@ -51,7 +51,7 @@ struct eventHandlers {
 
 struct lineOfCode {
 	sludgeCommand theCommand;
-	int32_t param;
+	int32 param;
 };
 
 struct loadedFunction {

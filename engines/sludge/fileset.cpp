@@ -187,7 +187,7 @@ void finishAccess() {
 	sliceBusy = false;
 }
 
-int32_t startIndex;
+int32 startIndex;
 
 void setFileIndices(Common::File *fp, int numLanguages, uint skipBefore) {
 	if (fp) {

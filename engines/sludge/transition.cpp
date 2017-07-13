@@ -148,7 +148,7 @@ uint32 randbuffer[KK][2];  // history buffer
 int p1, p2;
 
 void resetRandW() {
-	int32_t seed = 12345;
+	int32 seed = 12345;
 
 	for (int i = 0; i < KK; i++) {
 		for (int j = 0; j < 2; j++) {

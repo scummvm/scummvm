@@ -58,7 +58,7 @@ Common::String readStringEncoded(Common::File *fp) {
 }
 
 char *readTextPlain(Common::File *fp) {
-	int32_t startPos;
+	int32 startPos;
 
 	uint32 stringSize = 0;
 	bool keepGoing = true;

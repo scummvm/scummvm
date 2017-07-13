@@ -47,7 +47,7 @@ void HSIDecoder::destroy() {
 
 bool HSIDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
-	int32_t transCol = _reserve > 0 ? -1 : 63519;
+	int32 transCol = _reserve > 0 ? -1 : 63519;
 	int n;
 	uint16 width = stream.readUint16BE();
 	debug(kSludgeDebugGraphics, "picWidth : %i", width);

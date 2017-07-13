@@ -339,7 +339,7 @@ bool initSludge(const Common::String &filename) {
 		gameIcon = new byte [iconW * iconH * 4];
 		if (!gameIcon) return fatal("Can't reserve memory for game icon.");
 
-		int32_t transCol = 63519;
+		int32 transCol = 63519;
 		Uint8 *p = (Uint8 *) gameIcon;
 
 		if (fileIsPNG) {
@@ -450,7 +450,7 @@ bool initSludge(const Common::String &filename) {
 		gameLogo = new byte [logoW * logoH * 4];
 		if (!gameLogo) return fatal("Can't reserve memory for game logo.");
 
-		// int32_t transCol = 63519;
+		// int32 transCol = 63519;
 		Uint8 *p = (Uint8 *) gameLogo;
 
 		if (fileIsPNG) {
