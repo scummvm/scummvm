@@ -99,7 +99,7 @@ bool setZBuffer(int num) {
 	if (bigDataFile->readByte() != 'b')
 		return fatal("Not a Z-buffer file");
 
-	int width, height;
+	uint width, height;
 	switch (bigDataFile->readByte()) {
 		case 0:
 			width = 640;
@@ -140,8 +140,8 @@ bool setZBuffer(int num) {
 		zBuffer.sprites[i].create(picWidth, picHeight, *g_sludge->getScreenPixelFormat());
 	}
 
-	for (int y = 0; y < sceneHeight; y++) {
-		for (int x = 0; x < sceneWidth; x++) {
+	for (uint y = 0; y < sceneHeight; y++) {
+		for (uint x = 0; x < sceneWidth; x++) {
 			int n;
 			if (stillToGo == 0) {
 				n = bigDataFile->readByte();
