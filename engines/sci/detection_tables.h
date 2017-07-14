@@ -3075,6 +3075,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA },
 
+	// Phantasmagoria - French DOS (supplied by enclume in bug report Trac#9910)
+	// VERSION file reports "1.100.000"
+	{"phantasmagoria", "", {
+		{"resmap.001", 0, "4da82dd336d4b9cd8c16f3cc11f0c615", 11524},
+		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 69963685},
+		{"resmap.002", 0, "331d9cb4c2705da675d243fba22b7643", 12064},
+		{"ressci.002", 0, "3aae6559aa1df273bc542d5ac6330d75", 74556497},
+		{"resmap.003", 0, "48dcc70e117bfde15e004cc1b9533e5b", 12340},
+		{"ressci.003", 0, "3aae6559aa1df273bc542d5ac6330d75", 76612091},
+		{"resmap.004", 0, "fc117370efafd53a4c07aca99b2893c3", 12562},
+		{"ressci.004", 0, "3aae6559aa1df273bc542d5ac6330d75", 78757484},
+		{"resmap.005", 0, "d19ad6a7885273ffd1b920eced6e6871", 12616},
+		{"ressci.005", 0, "3aae6559aa1df273bc542d5ac6330d75", 81160893},
+		{"resmap.006", 0, "6db1956354e271681d41b489939686fb", 12538},
+		{"ressci.006", 0, "3aae6559aa1df273bc542d5ac6330d75", 81076474},
+		{"resmap.007", 0, "3d15c24fe60e8f7171480bfaa2d566bc", 7984},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA },
+
 	// Phantasmagoria - English DOS Demo
 	// Executable scanning reports "2.100.002"
 	{"phantasmagoria", "Demo", {
