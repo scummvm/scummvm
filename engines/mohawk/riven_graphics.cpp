@@ -51,7 +51,7 @@ public:
 
 	bool isTimeBased() const { return _timeBased; }
 
-	virtual void drawFrame(uint32 elapsed) = 0;
+	virtual bool drawFrame(uint32 elapsed) = 0;
 
 protected:
 	Common::Rect makeDirectionalInitalArea() const {
@@ -101,7 +101,7 @@ public:
 		_lastCopyArea = makeDirectionalInitalArea();
 	}
 
-	virtual void drawFrame(uint32 elapsed) override {
+	virtual bool drawFrame(uint32 elapsed) override {
 		Common::Rect copyArea;
 		switch (_type) {
 			case kRivenTransitionWipeLeft:
@@ -136,12 +136,14 @@ public:
 
 		if (copyArea.isEmpty()) {
 			// Nothing to draw
-			return;
+			return false;
 		}
 
 		_effectScreen->copyRectToSurface(*_mainScreen, copyArea.left, copyArea.top, copyArea);
 		_system->copyRectToScreen(_effectScreen->getBasePtr(copyArea.left, copyArea.top), _effectScreen->pitch,
 		                          copyArea.left, copyArea.top, copyArea.width(), copyArea.height());
+
+		return false;
 	}
 
 private:
@@ -151,14 +153,16 @@ private:
 class TransitionEffectPan : public TransitionEffect {
 public:
 	TransitionEffectPan(OSystem *system, Graphics::Surface *mainScreen, Graphics::Surface *effectScreen,
-	                    RivenTransition type, uint duration, const Common::Rect &rect) :
+	                    RivenTransition type, uint duration, const Common::Rect &rect, int16 offset) :
 			TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
 
 		_timeBased = true;
+		_offset = offset;
 		_initialArea = makeDirectionalInitalArea();
+		 complete = false;
 	}
 
-	virtual void drawFrame(uint32 elapsed) override {
+	virtual bool drawFrame(uint32 elapsed) override {
 		Common::Rect newArea;
 		switch (_type) {
 			case kRivenTransitionPanLeft:
@@ -191,7 +195,7 @@ public:
 
 		if (newArea.isEmpty()) {
 			// Nothing to draw
-			return;
+			return false;
 		}
 
 		Common::Rect oldArea = Common::Rect(
@@ -203,21 +207,45 @@ public:
 
 		int oldX = newArea.left != _rect.left ? _rect.left + newArea.width() : _rect.left;
 		int oldY = newArea.top != _rect.top ? _rect.top + newArea.height() : _rect.top;
-		_system->copyRectToScreen(_effectScreen->getBasePtr(oldX, oldY), _effectScreen->pitch,
-		                          oldArea.left, oldArea.top, oldArea.width(), oldArea.height());
 
 		int newX = newArea.right != _rect.right ? _rect.left + oldArea.width() : _rect.left;
 		int newY = newArea.bottom != _rect.bottom ? _rect.top + oldArea.height() : _rect.top;
+
+		if (_offset != -1) {
+			if (_type == kRivenTransitionPanDown && oldArea.height() - _offset > 0) {
+				newY -= _offset;
+			} else if (_type == kRivenTransitionPanUp && newArea.height() + _offset < _rect.height()) {
+				newY += _offset;
+			} else if (_type == kRivenTransitionPanRight && oldArea.width() - _offset > 0) {
+				newX -= _offset;
+			} else if (_type == kRivenTransitionPanLeft && newArea.width() + _offset < _rect.width()) {
+				newX += _offset;
+			} else {
+				newX = 0;
+				newY = 0;
+				newArea = _rect;
+				oldArea = Common::Rect();
+			}
+		}
+
+		_system->copyRectToScreen(_effectScreen->getBasePtr(oldX, oldY), _effectScreen->pitch,
+		                          oldArea.left, oldArea.top, oldArea.width(), oldArea.height());
+
 		_system->copyRectToScreen(_mainScreen->getBasePtr(newX, newY), _mainScreen->pitch,
 		                          newArea.left, newArea.top, newArea.width(), newArea.height());
 
 		if (newArea == _rect) {
 			_effectScreen->copyRectToSurface(*_mainScreen, _rect.left, _rect.top, _rect);
+			return true; // The transition is complete
+		} else {
+			return false;
 		}
 	}
 
 private:
 	Common::Rect _initialArea;
+	int16 _offset;
+	bool complete;
 };
 
 class TransitionEffectBlend : public TransitionEffect {
@@ -229,13 +257,14 @@ public:
 		_timeBased = false;
 	}
 
-	virtual void drawFrame(uint32 elapsed) override {
+	virtual bool drawFrame(uint32 elapsed) override {
 		assert(_effectScreen->format == _mainScreen->format);
 		assert(_effectScreen->format == _system->getScreenFormat());
 
 		if (elapsed == _duration) {
 			_effectScreen->copyRectToSurface(*_mainScreen, 0, 0, Common::Rect(_mainScreen->w, _mainScreen->h));
 			_system->copyRectToScreen(_effectScreen->getBasePtr(0, 0), _effectScreen->pitch, 0, 0, _effectScreen->w, _effectScreen->h);
+			return true; // The transition is complete
 		} else {
 			Graphics::Surface *screen = _system->lockScreen();
 
@@ -262,6 +291,7 @@ public:
 			}
 
 			_system->unlockScreen();
+			return false;
 		}
 	}
 };
@@ -291,6 +321,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	_creditsPos = 0;
 
 	_transitionMode = kRivenTransitionModeFastest;
+	_transitionOffset = -1;
 	_fliesEffect = nullptr;
 }
 
@@ -463,6 +494,13 @@ void RivenGraphics::setTransitionMode(RivenTransitionMode mode) {
 void RivenGraphics::scheduleTransition(RivenTransition id, const Common::Rect &rect) {
 	_scheduledTransition = id;
 	_transitionRect = rect;
+
+	RivenHotspot *hotspot = _vm->getCard()->getCurHotspot();
+	if (hotspot) {
+		_transitionOffset = hotspot->getTransitionOffset();
+	} else {
+		_transitionOffset = -1;
+	}
 }
 
 void RivenGraphics::runScheduledTransition() {
@@ -488,7 +526,7 @@ void RivenGraphics::runScheduledTransition() {
 		case kRivenTransitionPanUp:
 		case kRivenTransitionPanDown: {
 			effect = new TransitionEffectPan(_vm->_system, _mainScreen, _effectScreen,
-			                                 _scheduledTransition, _transitionDuration, _transitionRect);
+			                                 _scheduledTransition, _transitionDuration, _transitionRect, _transitionOffset);
 			break;
 		}
 		case kRivenTransitionBlend:
@@ -503,14 +541,17 @@ void RivenGraphics::runScheduledTransition() {
 	if (effect->isTimeBased()) {
 		uint32 startTime = _vm->_system->getMillis();
 		uint32 timeElapsed = 0;
-		while (timeElapsed < _transitionDuration && !_vm->shouldQuit()) {
-			effect->drawFrame(timeElapsed);
+		bool transitionComplete = false;
+		while (timeElapsed < _transitionDuration && !transitionComplete && !_vm->shouldQuit()) {
+			transitionComplete = effect->drawFrame(timeElapsed);
 
 			_vm->doFrame();
 			timeElapsed = _vm->_system->getMillis() - startTime;
 		}
 
-		effect->drawFrame(_transitionDuration);
+		if (!transitionComplete) {
+			effect->drawFrame(_transitionDuration);
+		}
 	} else {
 		for (uint frame = 1; frame <= _transitionFrames && !_vm->shouldQuit(); frame++) {
 			effect->drawFrame(frame);
@@ -521,6 +562,7 @@ void RivenGraphics::runScheduledTransition() {
 	delete effect;
 
 	_scheduledTransition = kRivenTransitionNone; // Clear scheduled transition
+	_transitionOffset = -1;
 }
 
 void RivenGraphics::clearMainScreen() {

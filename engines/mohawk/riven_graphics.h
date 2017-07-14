@@ -131,6 +131,7 @@ private:
 	RivenTransitionMode _transitionMode;
 	uint _transitionFrames;
 	uint _transitionDuration;
+	int16 _transitionOffset;
 
 	// Screen Related
 	Graphics::Surface *_mainScreen;

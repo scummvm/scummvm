@@ -626,7 +626,7 @@ void RivenHotspot::loadFromStream(Common::ReadStream *stream) {
 	_u0 = stream->readUint16BE();
 	_mouseCursor = stream->readUint16BE();
 	_index = stream->readUint16BE();
-	_u1 = stream->readSint16BE();
+	_transitionOffset = stream->readSint16BE();
 	_flags |= stream->readUint16BE();
 
 	// Read in the scripts now
@@ -693,6 +693,10 @@ int16 RivenHotspot::getNameId() const {
 	return _nameResource;
 }
 
+int16 RivenHotspot::getTransitionOffset() const {
+	return _transitionOffset;
+}
+
 void RivenHotspot::dump() const {
 	debug("index: %d", _index);
 	debug("blstId: %d", _blstID);
@@ -700,8 +704,8 @@ void RivenHotspot::dump() const {
 	debug("rect: (%d, %d, %d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
 	debug("flags: %d", _flags);
 	debug("mouseCursor: %d", _mouseCursor);
+	debug("transitionOffset: %d", _transitionOffset);
 	debug("u0: %d", _u0);
-	debug("u1: %d", _u1);
 	debugN("\n");
 
 	for (uint i = 0; i < _scripts.size(); i++) {
