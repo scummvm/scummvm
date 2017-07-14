@@ -570,7 +570,9 @@ void GfxPalette32::mergePalette(Palette &to, const Palette &from) {
 	// cannot actually change index 255 (it is forced to white when generating
 	// the hardware palette in updateHardware). While this causes some
 	// additional unnecessary source palette invalidations, not doing it breaks
-	// some badly programmed rooms, like room 6400 in Phant1 (see Trac#9788)
+	// some badly programmed rooms, like room 6400 in Phant1 (see Trac#9788).
+	// (Note, however, that that specific glitch is fully fixed by ignoring a
+	// bad palette in the CelObjView constructor)
 	for (int i = 0; i < ARRAYSIZE(to.colors); ++i) {
 		if (from.colors[i].used) {
 			to.colors[i] = from.colors[i];

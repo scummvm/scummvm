@@ -982,7 +982,19 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		error("Cel is less than 0 on loop 0");
 	}
 
-	_hunkPaletteOffset = data.getUint32SEAt(8);
+	// HACK: Phantasmagoria view 64001 contains a bad palette that overwrites
+	// parts of the palette used by the background picture in room 6400, causing
+	// the black shadows to become tan, and many of the other background colors
+	// to end up a little bit off. View 64001 renders fine using the existing
+	// palette created by the background image, so here we just ignore the
+	// embedded palette entirely.
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA &&
+		_info.type == kCelTypeView && _info.resourceId == 64001) {
+
+		_hunkPaletteOffset = 0;
+	} else {
+		_hunkPaletteOffset = data.getUint32SEAt(8);
+	}
 	_celHeaderOffset = loopHeader.getUint32SEAt(12) + (data[13] * _info.celNo);
 
 	const SciSpan<const byte> celHeader = data.subspan(_celHeaderOffset);
