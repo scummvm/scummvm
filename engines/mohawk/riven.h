@@ -65,7 +65,8 @@ enum {
 
 // Engine Debug Flags
 enum {
-	kRivenDebugScript   = (1 << 0)
+	kRivenDebugScript   = (1 << 0),
+	kRivenDebugPatches  = (1 << 1)
 };
 
 struct ZipMode {

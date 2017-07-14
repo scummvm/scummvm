@@ -72,6 +72,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_inventory = nullptr;
 
 	DebugMan.addDebugChannel(kRivenDebugScript, "Script", "Track Script Execution");
+	DebugMan.addDebugChannel(kRivenDebugPatches, "Patches", "Track Script Patching");
 
 	// NOTE: We can never really support CD swapping. All of the music files
 	// (*_Sounds.mhk) are stored on disc 1. They are copied to the hard drive

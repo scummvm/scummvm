@@ -87,7 +87,8 @@ enum RivenCommandType {
 	kRivenCommandActivateBLST        = 43,
 	kRivenCommandActivateFLST        = 44,
 	kRivenCommandZipMode             = 45,
-	kRivenCommandActivateMLST        = 46
+	kRivenCommandActivateMLST        = 46,
+	kRivenCommandTimer               = 1001
 };
 
 class MohawkEngine_Riven;
@@ -126,6 +127,9 @@ public:
 
 	/** Print script details to the standard output */
 	void dumpScript(byte tabs);
+
+	/** Apply patches to card script to fix bugs in the original game scripts */
+	void applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, int scriptType);
 
 	/** Append the commands of the other script to this script */
 	RivenScript &operator+=(const RivenScript &other);
@@ -249,6 +253,12 @@ public:
 	/** Execute the command */
 	virtual void execute() = 0;
 
+	/** Get the command's type */
+	virtual RivenCommandType getType() const = 0;
+
+	/** Apply card patches for the command's sub-scripts */
+	virtual void applyCardPatches(uint32 globalId, int scriptType) {}
+
 protected:
 	MohawkEngine_Riven *_vm;
 };
@@ -263,21 +273,24 @@ protected:
 class RivenSimpleCommand : public RivenCommand {
 public:
 	static RivenSimpleCommand *createFromStream(MohawkEngine_Riven *vm, RivenCommandType type, Common::ReadStream *stream);
+
+	typedef Common::Array<uint16> ArgumentArray;
+
+	RivenSimpleCommand(MohawkEngine_Riven *vm, RivenCommandType type, const ArgumentArray &arguments);
 	virtual ~RivenSimpleCommand();
 
 	// RivenCommand API
 	virtual void dump(byte tabs) override;
 	virtual void execute() override;
+	virtual RivenCommandType getType() const override;
 
 private:
-	typedef Common::Array<uint16> ArgumentArray;
 	typedef void (RivenSimpleCommand::*OpcodeProcRiven)(uint16 op, const ArgumentArray &args);
 	struct RivenOpcode {
 		OpcodeProcRiven proc;
 		const char *desc;
 	};
 
-	RivenSimpleCommand(MohawkEngine_Riven *vm, RivenCommandType type, const ArgumentArray &arguments);
 
 	void setupOpcodes();
 	Common::String describe() const;
@@ -342,6 +355,8 @@ public:
 	// RivenCommand API
 	virtual void dump(byte tabs) override;
 	virtual void execute() override;
+	virtual RivenCommandType getType() const override;
+	virtual void applyCardPatches(uint32 globalId, int scriptType) override;
 
 private:
 	RivenSwitchCommand(MohawkEngine_Riven *vm);
@@ -372,6 +387,7 @@ public:
 	// RivenCommand API
 	virtual void dump(byte tabs) override;
 	virtual void execute() override;
+	virtual RivenCommandType getType() const override;
 
 private:
 	uint16 _stackId;
@@ -392,6 +408,7 @@ public:
 	// RivenCommand API
 	virtual void dump(byte tabs) override;
 	virtual void execute() override;
+	virtual RivenCommandType getType() const override;
 
 private:
 	Common::SharedPtr<RivenStack::TimerProc> _timerProc;

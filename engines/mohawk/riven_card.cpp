@@ -63,6 +63,12 @@ void RivenCard::loadCardResource(uint16 id) {
 	_zipModePlace = inStream->readUint16BE();
 	_scripts = _vm->_scriptMan->readScripts(inStream);
 
+	// Apply script patches for this card
+	uint32 globalId = _vm->getStack()->getCardGlobalId(id);
+	for (uint i = 0; i < _scripts.size(); i++) {
+		_scripts[i].script->applyCardPatches(_vm, globalId, _scripts[i].type);
+	}
+
 	delete inStream;
 }
 
