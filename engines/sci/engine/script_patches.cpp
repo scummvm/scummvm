@@ -3514,9 +3514,40 @@ static const uint16 phant1PatchSavedVolume[] = {
 	PATCH_END
 };
 
+// Phantasmagoria performs an incomplete initialisation of a rat view when
+// exiting the alcove in the basement any time after chapter 3 when flag 26 is
+// not set. This causes the rat view to be rendered with the same origin and
+// priority as the background picture for the game plane, triggering last ditch
+// sorting of the screen items in the renderer. This happens to work OK most of
+// the time in SSCI because the last ditch sort uses memory handle indexes, and
+// the index of the rat seems to usually end up below the index for the
+// background pic, so the rat's screen item is submitted before the background,
+// ensuring that the background palette overrides the rat view's palette. In
+// ScummVM, last ditch sorting operates using the creation order of screen
+// items, so the rat ends up always sorting above the background, which causes
+// the background palette to get replaced by the rat palette, which corrupts the
+// background. This patch stops the game script from initialising the bad rat
+// view entirely.
+// Applies to at least: English CD, French CD
+static const uint16 phant1RatSignature[] = {
+	SIG_MAGICDWORD,
+	0x78,                         // push1
+	0x39, 0x1a,                   // pushi $1a
+	0x45, 0x03, SIG_UINT16(0x02), // callb 03, 0002
+	0x18,                         // not
+	0x31, 0x18,                   // bnt $18
+	SIG_END
+};
+
+static const uint16 phant1RatPatch[] = {
+	0x33, 0x20, // jmp [past rat condition + call]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,   901, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SignatureSavedVolume,      phant1PatchSavedVolume },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
