@@ -32,7 +32,8 @@ namespace Sludge {
 
 loadedSpriteBank *allLoadedBanks = NULL;
 extern spriteBank theFont;
-extern int loadedFontNum, fontTableSize;
+extern int loadedFontNum;
+extern uint fontTableSize;
 
 loadedSpriteBank *loadBankForAnim(int ID) {
 	loadedSpriteBank *returnMe = allLoadedBanks;

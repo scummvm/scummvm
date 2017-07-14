@@ -37,7 +37,7 @@ namespace Sludge {
 
 int zBufferToSet = -1;
 zBufferData zBuffer;
-extern int sceneWidth, sceneHeight;
+extern uint sceneWidth, sceneHeight;
 extern Graphics::Surface backdropSurface;
 extern Graphics::Surface renderSurface;
 

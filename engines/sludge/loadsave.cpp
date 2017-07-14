@@ -54,7 +54,7 @@ namespace Sludge {
 //----------------------------------------------------------------------
 
 extern loadedFunction *allRunningFunctions;         // In sludger.cpp
-extern char *typeName[];                            // In variable.cpp
+extern const char *typeName[];                      // In variable.cpp
 extern int numGlobals;                              // In sludger.cpp
 extern variable *globalVars;                        // In sludger.cpp
 extern flor *currentFloor;                          // In floor.cpp
@@ -62,7 +62,8 @@ extern zBufferData zBuffer;                         // In zbuffer.cpp
 extern speechStruct *speech;                        // In talk.cpp
 extern personaAnimation *mouseCursorAnim;           // In cursor.cpp
 extern int mouseCursorFrameNum;                     // "    "   "
-extern int loadedFontNum, fontHeight, fontTableSize;    // In fonttext.cpp
+extern int loadedFontNum, fontHeight;				// In fonttext.cpp
+extern uint fontTableSize;							// 
 extern int numFontColours;                          // "    "   "
 extern UTF8Converter fontOrder;                       // "    "   "
 extern FILETIME fileTime;                           // In sludger.cpp
