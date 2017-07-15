@@ -889,7 +889,6 @@ builtIn(pasteString) {
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
 		x = (winWidth - stringWidth(newText)) >> 1;
-	fixFont(pastePalette);
 	pasteStringToBackdrop(newText, x, y, pastePalette);
 	return BR_CONTINUE;
 }
@@ -2215,7 +2214,6 @@ builtIn(burnString) {
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
 		x = (winWidth - stringWidth(newText)) >> 1;
-	fixFont(pastePalette);
 	burnStringToBackdrop(newText, x, y, pastePalette);
 	return BR_CONTINUE;
 }

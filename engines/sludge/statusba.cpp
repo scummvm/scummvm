@@ -88,8 +88,6 @@ void positionStatus(int x, int y) {
 void drawStatusBar() {
 	int y = nowStatus->statusY, n = 0;
 	statusBar *stat = nowStatus->firstStatusBar;
-	fixFont(litVerbLinePalette);
-	fixFont(verbLinePalette);
 	while (stat) {
 		switch (nowStatus->alignStatus) {
 		case IN_THE_CENTRE:

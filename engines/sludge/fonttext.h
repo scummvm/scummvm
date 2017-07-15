@@ -28,7 +28,6 @@ namespace Sludge {
 
 bool loadFont(int filenum, const Common::String &charOrder, int);
 void pasteString(const Common::String &theText, int, int, spritePalette &);
-void fixFont(spritePalette &spal);
 void setFontColour(spritePalette &sP, byte r, byte g, byte b);
 int stringWidth(const Common::String &theText);
 int stringLength(const Common::String &theText);

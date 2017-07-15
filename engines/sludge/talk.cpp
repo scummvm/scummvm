@@ -203,7 +203,6 @@ int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool ani
 void viewSpeech() {
 	int viewY = speech->speechY;
 	speechLine *viewLine = speech->allSpeech;
-	fixFont(speech->talkCol);
 	while (viewLine) {
 		pasteString(viewLine->textLine, viewLine->x, viewY, speech->talkCol);
 		viewY -= fontHeight / cameraZoom;

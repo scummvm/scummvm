@@ -126,33 +126,6 @@ void burnStringToBackdrop(const Common::String &theText, int xOff, int y, sprite
 	}
 }
 
-void fixFont(spritePalette &spal) {
-#if 0
-	delete [] spal.tex_names;
-	delete [] spal.burnTex_names;
-	delete [] spal.tex_h;
-	delete [] spal.tex_w;
-
-	spal.numTextures = theFont.myPalette.numTextures;
-
-	spal.tex_names = new GLuint [spal.numTextures];
-	if (! checkNew(spal.tex_names)) return;
-	spal.burnTex_names = new GLuint [spal.numTextures];
-	if (! checkNew(spal.burnTex_names)) return;
-	spal.tex_w = new int [spal.numTextures];
-	if (! checkNew(spal.tex_w)) return;
-	spal.tex_h = new int [spal.numTextures];
-	if (! checkNew(spal.tex_h)) return;
-
-	for (int i = 0; i < theFont.myPalette.numTextures; i++) {
-		spal.tex_names[i] = theFont.myPalette.tex_names[i];
-		spal.burnTex_names[i] = theFont.myPalette.burnTex_names[i];
-		spal.tex_w[i] = theFont.myPalette.tex_w[i];
-		spal.tex_h[i] = theFont.myPalette.tex_h[i];
-	}
-#endif
-}
-
 void setFontColour(spritePalette &sP, byte r, byte g, byte b) {
 	sP.originalRed = r;
 	sP.originalGreen = g;
