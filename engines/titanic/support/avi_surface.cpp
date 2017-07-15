@@ -472,11 +472,20 @@ Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 }
 
 void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
-	bool isDifferent = _movieFrameSurface[0]->w != r.width() ||
-		_movieFrameSurface[0]->h != r.height();
+	bool isDifferent = false;
+	
+	if (_currentFrame != ((int)startFrame - 1) || startFrame == 0) {
+		// Start video playback at the desired starting frame
+		setFrame(startFrame);
+		isDifferent = _movieFrameSurface[0]->w != r.width() ||
+			_movieFrameSurface[0]->h != r.height();
 
-	startAtFrame(startFrame);
-	_currentFrame = startFrame;
+		startAtFrame(startFrame);
+		_currentFrame = startFrame;
+	} else {
+		// Already in position, so pick up where we left off
+		_decoder->start();
+	}
 
 	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
 		if (isNextFrame()) {

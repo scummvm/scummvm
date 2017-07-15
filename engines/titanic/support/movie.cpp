@@ -124,7 +124,6 @@ void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame)
 	CEventTarget eventTarget;
 	g_vm->_events->addTarget(&eventTarget);
 
-	_aviSurface.setFrame(startFrame);
 	_aviSurface.playCutscene(drawRect, startFrame, endFrame);
 
 	g_vm->_events->removeTarget();
