@@ -48,8 +48,9 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kSludgeDebugBuiltin, "Built-in", "Built-in debug level");
 	DebugMan.addDebugChannel(kSludgeDebugGraphics, "Graphics", "Graphics debug level");
 
-	// check init
-	debug("SludgeEngine::SludgeEngine");
+	// init graphics
+	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	_pixelFormat = new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
 	// Init Strings
 	launchMe = "";
@@ -85,10 +86,6 @@ SludgeEngine::~SludgeEngine() {
 Common::Error SludgeEngine::run() {
 	// set global variable
 	g_sludge = this;
-
-	// init graphics
-	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	_pixelFormat = new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
 	// create console
 	_console = new SludgeConsole(this);
