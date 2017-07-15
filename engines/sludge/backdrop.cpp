@@ -924,7 +924,6 @@ void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *stream) {
 }
 
 bool getRGBIntoStack(uint x, uint y, stackHandler *sH) {
-#if 0
 	if (x >= sceneWidth || y >= sceneHeight) {
 		return fatal("Co-ordinates are outside current scene!");
 	}
@@ -933,25 +932,18 @@ bool getRGBIntoStack(uint x, uint y, stackHandler *sH) {
 
 	newValue.varType = SVT_NULL;
 
-	saveTexture(backdropTextureName, backdropTexture);
-
-	GLubyte *target;
-	if (!NPOT_textures) {
-		target = backdropTexture + 4 * getNextPOT(sceneWidth) * y + x * 4;
-	} else {
-		target = backdropTexture + 4 * sceneWidth * y + x * 4;
-	}
-
-	setVariable(newValue, SVT_INT, target[2]);
-	if (!addVarToStackQuick(newValue, sH->first)) return false;
-	sH->last = sH->first;
+	byte *target = (byte *)renderSurface.getBasePtr(x, y);
 
 	setVariable(newValue, SVT_INT, target[1]);
 	if (!addVarToStackQuick(newValue, sH->first)) return false;
+	sH->last = sH->first;
 
-	setVariable(newValue, SVT_INT, target[0]);
+	setVariable(newValue, SVT_INT, target[2]);
 	if (!addVarToStackQuick(newValue, sH->first)) return false;
-#endif
+
+	setVariable(newValue, SVT_INT, target[3]);
+	if (!addVarToStackQuick(newValue, sH->first)) return false;
+
 	return true;
 }
 
