@@ -25,7 +25,6 @@
 #include "sludge/allfiles.h"
 #include "sludge/sound.h"
 #include "sludge/errors.h"
-#include "sludge/graphics.h"
 #include "sludge/sludge.h"
 #include "sludge/version.h"
 

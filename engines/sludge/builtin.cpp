@@ -48,7 +48,6 @@
 #include "sludge/freeze.h"
 #include "sludge/language.h"
 #include "sludge/thumbnail.h"
-#include "sludge/graphics.h"
 #include "sludge/sludge.h"
 #include "sludge/utf8.h"
 
@@ -492,7 +491,6 @@ builtIn(zoomCamera) {
 		cameraZoom = (float)winWidth / sceneWidth;
 	if ((float)winHeight / cameraZoom > sceneHeight)
 		cameraZoom = (float)winHeight / sceneHeight;
-	setPixelCoords(false);
 
 	input.mouseX = input.mouseX / cameraZoom;
 	input.mouseY = input.mouseY / cameraZoom;
@@ -965,7 +963,6 @@ builtIn(launch) {
 		if (g_sludge->launchMe.empty())
 			return BR_ERROR;
 	}
-	setGraphicsWindow(false);
 	setVariable(fun->reg, SVT_INT, 1);
 	launchResult = &fun->reg;
 

@@ -43,7 +43,6 @@
 #include "sludge/timing.h"
 #include "sludge/sound.h"
 #include "sludge/sludger.h"
-#include "sludge/graphics.h"
 #include "sludge/helpers.h"
 #include "sludge/sludge.h"
 #include "sludge/specialsettings.h"

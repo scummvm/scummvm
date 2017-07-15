@@ -22,7 +22,6 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
-#include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 
 #if 0

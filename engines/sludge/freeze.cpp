@@ -20,7 +20,6 @@
  *
  */
 #include "sludge/allfiles.h"
-#include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
@@ -87,12 +86,6 @@ bool freeze() {
 
 	// Grab a copy of the current scene
 	freezeGraphics();
-	int picWidth = sceneWidth;
-	int picHeight = sceneHeight;
-	if (!NPOT_textures) {
-		picWidth = getNextPOT(picWidth);
-		picHeight = getNextPOT(picHeight);
-	}
 	newFreezer->backdropSurface.copyFrom(backdropSurface);
 	newFreezer->sceneWidth = sceneWidth;
 	newFreezer->sceneHeight = sceneHeight;
@@ -175,7 +168,6 @@ void unfreeze(bool killImage) {
 	cameraZoom = frozenStuff->cameraZoom;
 	input.mouseX = (int)(input.mouseX / cameraZoom);
 	input.mouseY = (int)(input.mouseY / cameraZoom);
-	setPixelCoords(false);
 
 	killAllPeople();
 	allPeople = frozenStuff->allPeople;

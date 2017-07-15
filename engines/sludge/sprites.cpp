@@ -32,7 +32,6 @@
 #include "sludge/backdrop.h"
 #include "sludge/sludger.h"
 #include "sludge/zbuffer.h"
-#include "sludge/graphics.h"
 #include "sludge/imgloader.h"
 #include "sludge/sludge.h"
 

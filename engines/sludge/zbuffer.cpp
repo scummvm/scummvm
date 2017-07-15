@@ -29,7 +29,6 @@
 #include "sludge/fileset.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
-#include "sludge/graphics.h"
 #include "sludge/sludge.h"
 #include "sludge/sprites.h"
 

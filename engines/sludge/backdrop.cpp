@@ -35,7 +35,6 @@
 #include "sludge/statusba.h"
 #include "sludge/talk.h"
 #include "sludge/zbuffer.h"
-#include "sludge/graphics.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/variable.h"
@@ -69,6 +68,7 @@ Graphics::Surface snapshotSurface;
 float snapTexW = 1.0;
 float snapTexH = 1.0;
 
+uint winWidth, winHeight;
 int lightMapMode = LIGHTMAPMODE_PIXEL;
 parallaxLayer *parallaxStuff = NULL;
 int cameraPX = 0, cameraPY = 0;
@@ -164,7 +164,6 @@ bool reserveBackdrop() {
 	cameraZoom = 1.0;
 	input.mouseX = (int)((float)input.mouseX / cameraZoom);
 	input.mouseY = (int)((float)input.mouseY / cameraZoom);
-	setPixelCoords(false);
 #if 0
 	int picWidth = sceneWidth;
 	int picHeight = sceneHeight;

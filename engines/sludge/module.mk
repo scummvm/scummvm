@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	floor.o \
 	freeze.o \
 	fonttext.o \
-	graphics.o \
 	helpers.o \
 	hsi.o \
 	imgloader.o \

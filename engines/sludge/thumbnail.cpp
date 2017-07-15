@@ -25,7 +25,6 @@
 #include "sludge/moreio.h"
 #include "sludge/sludger.h"
 #include "sludge/backdrop.h"
-#include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/version.h"
 

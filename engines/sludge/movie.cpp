@@ -39,7 +39,6 @@
 
 #include "sludge/newfatal.h"
 #include "sludge/timing.h"
-#include "sludge/graphics.h"
 #include "sludge/movie.h"
 #include "sludge/sound.h"
 

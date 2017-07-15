@@ -45,7 +45,6 @@
 #include "sludge/fileset.h"
 #include "sludge/transition.h"
 #include "sludge/language.h"
-#include "sludge/graphics.h"
 #include "sludge/variable.h"
 #include "sludge/sludge.h"
 #include "sludge/specialsettings.h"
