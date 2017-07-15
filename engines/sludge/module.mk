@@ -17,7 +17,6 @@ MODULE_OBJS := \
 	language.o \
 	loadsave.o \
 	main_loop.o \
-	memwatch.o \
 	moreio.o \
 	movie.o \
 	newfatal.o \
