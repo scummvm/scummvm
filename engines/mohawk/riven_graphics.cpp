@@ -228,11 +228,15 @@ public:
 			}
 		}
 
-		_system->copyRectToScreen(_effectScreen->getBasePtr(oldX, oldY), _effectScreen->pitch,
-		                          oldArea.left, oldArea.top, oldArea.width(), oldArea.height());
+		if (!oldArea.isEmpty()) {
+			_system->copyRectToScreen(_effectScreen->getBasePtr(oldX, oldY), _effectScreen->pitch,
+			                          oldArea.left, oldArea.top, oldArea.width(), oldArea.height());
+		}
 
-		_system->copyRectToScreen(_mainScreen->getBasePtr(newX, newY), _mainScreen->pitch,
-		                          newArea.left, newArea.top, newArea.width(), newArea.height());
+		if (!newArea.isEmpty()) {
+			_system->copyRectToScreen(_mainScreen->getBasePtr(newX, newY), _mainScreen->pitch,
+			                          newArea.left, newArea.top, newArea.width(), newArea.height());
+		}
 
 		if (newArea == _rect) {
 			_effectScreen->copyRectToSurface(*_mainScreen, _rect.left, _rect.top, _rect);
