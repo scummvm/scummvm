@@ -193,6 +193,10 @@ void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		FVector &v1, FVector &v2, FVector &v3) {
 	if (_crosshairs.isEmpty())
+		// No crosshairs selection yet
+		return -1.0;
+	if (_crosshairs._entryIndex == _crosshairs._matchIndex)
+		// Trying to re-lock on a previously locked star
 		return -1.0;
 
 	const CBaseStarEntry *dataP = _markers.getDataPtr(_crosshairs._entryIndex);
