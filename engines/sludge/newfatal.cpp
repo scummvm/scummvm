@@ -53,14 +53,6 @@ bool hasFatal() {
 	return false;
 }
 
-void displayFatal() {
-	if (!g_sludge->fatalMessage.empty()) {
-#if 0
-		msgBox("SLUDGE v" TEXT_VERSION " fatal error!", fatalMessage);
-#endif
-	}
-}
-
 void registerWindowForFatal() {
 	g_sludge->fatalInfo = "There's an error with this SLUDGE game! If you're designing this game, please turn on verbose error messages in the project manager and recompile. If not, please contact the author saying where and how this problem occured.";
 }

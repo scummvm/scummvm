@@ -33,7 +33,6 @@ bool hasFatal();
 int fatal(const Common::String &str);
 int fatal(const Common::String &str1, const Common::String &str2);
 int checkNew(const void *mem);
-void displayFatal();
 void registerWindowForFatal();
 void setFatalInfo(const Common::String &userFunc, const Common::String &BIF);
 void setResourceForFatal(int n);
