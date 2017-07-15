@@ -96,9 +96,9 @@ bool CEndExplodeShip::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CEndExplodeShip::MovieFrameMsg(CMovieFrameMsg *msg) {
-	if (getMovieFrame() == 58)
+	if (msg->_frameNumber == 58)
 		playSound("a#31.wav", 70);
-	else if (getMovieFrame() == 551)
+	else if (msg->_frameNumber == 551)
 		playSound("a#14.wav");
 
 	return true;
