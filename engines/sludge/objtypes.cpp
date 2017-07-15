@@ -31,7 +31,6 @@
 namespace Sludge {
 
 objectType *allObjectTypes = NULL;
-extern char *outputDir;
 
 #define DEBUG_COMBINATIONS  0
 

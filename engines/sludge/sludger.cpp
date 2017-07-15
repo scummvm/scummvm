@@ -53,12 +53,9 @@
 namespace Sludge {
 
 extern personaAnimation *mouseCursorAnim;
-extern spritePalette pastePalette;
 extern int dialogValue;
-extern uint sceneWidth, sceneHeight;
 extern variable *launchResult;
 
-extern bool reallyWantToQuit;
 extern Graphics::Surface renderSurface;
 
 int numBIFNames = 0;
@@ -87,10 +84,8 @@ byte brightnessLevel = 255;
 eventHandlers mainHandlers;
 eventHandlers *currentEvents = &mainHandlers;
 
-extern HWND hMainWindow;
 extern screenRegion *overRegion;
 extern speechStruct *speech;
-extern statusStuff *nowStatus;
 extern loadedFunction *saverFunc;
 
 loadedFunction *allRunningFunctions = NULL;

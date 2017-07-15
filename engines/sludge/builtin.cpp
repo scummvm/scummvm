@@ -68,10 +68,8 @@ extern eventHandlers *currentEvents;
 extern variableStack *noStack;
 extern statusStuff *nowStatus;
 extern screenRegion *overRegion;
-extern HWND hMainWindow;
 extern uint sceneWidth, sceneHeight;
 extern int numBIFNames, numUserFunc;
-extern char builtInFunctionNames[][25];
 
 extern Common::String *allUserFunc;
 extern Common::String *allBIFNames;

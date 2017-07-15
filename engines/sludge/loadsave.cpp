@@ -64,12 +64,10 @@ extern personaAnimation *mouseCursorAnim;           // In cursor.cpp
 extern int mouseCursorFrameNum;                     // "    "   "
 extern int loadedFontNum, fontHeight;				// In fonttext.cpp
 extern uint fontTableSize;							// 
-extern int numFontColours;                          // "    "   "
 extern UTF8Converter fontOrder;                       // "    "   "
 extern FILETIME fileTime;                           // In sludger.cpp
 extern int speechMode;                              // "    "   "
 extern int lightMapNumber;                          // In backdrop.cpp
-extern uint sceneWidth, sceneHeight;        // "    "   "
 extern int cameraX, cameraY;                        // "    "   "
 extern float cameraZoom;
 extern byte brightnessLevel;               // "    "   "

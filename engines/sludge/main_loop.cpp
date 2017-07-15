@@ -49,8 +49,6 @@
 
 namespace Sludge {
 
-extern bool runningFullscreen;
-
 #ifndef MAX_PATH
 #define MAX_PATH        1024          // maximum size of a path name
 #endif
@@ -60,11 +58,9 @@ HWND hMainWindow = NULL;
 int realWinWidth = 640, realWinHeight = 480;
 extern float cameraZoom;
 
-extern int desiredfps;
 extern int specialSettings;
 extern inputType input;
 extern variableStack *noStack;
-extern Graphics::Surface backdropSurface;
 Graphics::Surface renderSurface;
 
 int dialogValue = 0;

@@ -38,7 +38,6 @@ int zBufferToSet = -1;
 zBufferData zBuffer;
 extern uint sceneWidth, sceneHeight;
 extern Graphics::Surface backdropSurface;
-extern Graphics::Surface renderSurface;
 
 void killZBuffer() {
 	if (zBuffer.sprites) {

@@ -50,12 +50,10 @@ extern variableStack *noStack;
 
 extern int ssgVersion;
 
-extern int cameraX, cameraY;
 screenRegion personRegion;
 extern screenRegion *lastRegion;
 extern flor *currentFloor;
 
-extern inputType input;
 onScreenPerson *allPeople = NULL;
 int16 scaleHorizon = 75;
 int16 scaleDivide = 150;
