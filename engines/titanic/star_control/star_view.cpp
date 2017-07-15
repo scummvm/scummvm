@@ -149,7 +149,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	FPose pose;
 	int matchedIndex = _starField ? _starField->getMatchedIndex() : -1;
 
-	switch (key) {
+	switch (tolower(key)) {
 	case Common::KEYCODE_TAB:
 		if (_starField) {
 			toggleMode();
