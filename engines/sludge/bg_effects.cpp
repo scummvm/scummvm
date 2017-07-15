@@ -31,11 +31,6 @@
 namespace Sludge {
 
 #if 0
-//extern uint16 **backDropImage;
-extern GLuint backdropTextureName;
-#endif
-
-#if 0
 // Raised
 static int s_matrixEffectDivide = 2;
 static int s_matrixEffectWidth = 3;

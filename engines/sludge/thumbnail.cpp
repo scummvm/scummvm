@@ -35,10 +35,6 @@ void unfreeze(bool);    // Because FREEZE.H needs a load of other includes
 
 int thumbWidth = 0, thumbHeight = 0;
 
-#if 0
-extern GLuint backdropTextureName;
-#endif
-
 bool saveThumbnail(Common::WriteStream *stream) {
 #if 0
 	GLuint thumbnailTextureName = 0;

@@ -19,21 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#if 0
-#include <SDL/SDL.h>
-#define VPX_CODEC_DISABLE_COMPAT 1
-#include "vpx/vpx_decoder.h"
-#include "vpx/vp8dx.h"
-#define interface (&vpx_codec_vp8_dx_algo)
-#include "vorbis/codec.h"
-#define OV_EXCLUDE_STATIC_CALLBACKS
-#include "vorbis/vorbisfile.h"
-
-#include "ogg/ogg.h"
-#include "libvorbis/vorbis_os.h"
-
-#include "AL/alure.h"
-#endif
 
 #include "sludge/specialsettings.h"
 

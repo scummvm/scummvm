@@ -77,17 +77,12 @@ extern Common::String *allUserFunc;
 extern Common::String *allBIFNames;
 extern inputType input;
 
-#if 0
-extern GLuint backdropTextureName;
-#endif
-
 extern float speechSpeed;
 extern byte brightnessLevel;
 extern byte fadeMode;
 extern uint16 saveEncoding;
 extern frozenStuffStruct *frozenStuff;
 extern uint currentBlankColour;
-extern uint languageID;
 extern byte currentBurnR, currentBurnG, currentBurnB;
 
 int paramNum[] = { -1, 0, 1, 1, -1, -1, 1, 3, 4, 1, 0, 0, 8, -1,    // SAY->MOVEMOUSE
@@ -1010,19 +1005,11 @@ builtIn(callEvent) {
 	return BR_CONTINUE;
 }
 
-#if 0
-SDL_Event quit_event;
-#endif
-
 bool reallyWantToQuit = false;
 
 builtIn(quitGame) {
 	UNUSEDALL
 	reallyWantToQuit = true;
-#if 0
-	quit_event.type = SDL_QUIT;
-	SDL_PushEvent(&quit_event);
-#endif
 	return BR_CONTINUE;
 }
 
@@ -2627,7 +2614,6 @@ builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
 		}
 
 		if (builtInFunctionArray[whichFunc].func) {
-			//fprintf (stderr, "Calling %i: %s\n", whichFunc, builtInFunctionNames[whichFunc]);
 			return builtInFunctionArray[whichFunc].func(numParams, fun);
 		}
 	}

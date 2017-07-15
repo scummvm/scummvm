@@ -109,8 +109,6 @@ void saveStack(variableStack *vs, Common::WriteStream *stream) {
 		search = search->next;
 	}
 
-	stackDebug((stackfp, "  stack contains %d elements\n", elements));
-
 	stream->writeUint16BE(elements);
 	search = vs;
 	for (a = 0; a < elements; a++) {
@@ -131,7 +129,6 @@ variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **las
 			return NULL;
 		loadVariable(&(nS->thisVar), stream);
 		if (last && a == elements - 1) {
-			stackDebug((stackfp, "Setting last to %p\n", nS));
 			*last = nS;
 		}
 		nS->next = NULL;
@@ -189,13 +186,9 @@ stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 	stackHandler *nsh;
 
 	if (stream->readByte()) {    // It's one we've loaded already...
-		stackDebug((stackfp, "loadStackRef (duplicate, get from library)\n"));
-
 		nsh = getStackFromLibrary(stream->readUint16BE());
 		nsh->timesUsed++;
 	} else {
-		stackDebug((stackfp, "loadStackRef (new one)\n"));
-
 		// Load the new stack
 
 		nsh = new stackHandler;
@@ -204,12 +197,6 @@ stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 		nsh->last = NULL;
 		nsh->first = loadStack(stream, &nsh->last);
 		nsh->timesUsed = 1;
-		stackDebug((stackfp, "  first = %p\n", nsh->first));
-		if (nsh->first)
-			stackDebug((stackfp, "  first->next = %p\n", nsh->first->next));
-		stackDebug((stackfp, "  last = %p\n", nsh->last));
-		if (nsh->last)
-			stackDebug((stackfp, "  last->next = %p\n", nsh->last->next));
 
 		// Add it to the library of loaded stacks
 

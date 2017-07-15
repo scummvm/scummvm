@@ -178,59 +178,6 @@ void drawZBuffer(int x, int y, bool upsidedown) {
 		return;
 
 	resetSpriteLayers(&zBuffer, x, y, upsidedown);
+}
 
-#if 0
-	glEnable (GL_DEPTH_TEST);
-
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		glDepthMask(GL_TRUE);
-
-		glUseProgram(shader.texture);
-
-		setPMVMatrix(shader.texture);
-
-		//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glBindTexture(GL_TEXTURE_2D, zBuffer.texName);
-
-		setPrimaryColor(1.0, 1.0, 1.0, 1.0);
-
-		for (i = 1; i < zBuffer.numPanels; i++) {
-			GLfloat z = 1.0 - (double) i * (1.0 / 128.0);
-
-			GLfloat vy1 = -y, vy2 = zBuffer.height - y;
-			if (upsidedown) {
-				vy1 += zBuffer.height;
-				vy2 -= zBuffer.height;
-			}
-
-			const GLfloat vertices[] = {
-				(GLfloat) - x, vy1, z,
-				(GLfloat)zBuffer.width - x, vy1, z,
-				(GLfloat) - x, vy2, z,
-				(GLfloat)zBuffer.width - x, vy2, z
-			};
-
-			const GLfloat texCoords[] = {
-				0.0f, 0.0f,
-				backdropTexW, 0.0f,
-				0.0f, backdropTexH,
-				backdropTexW, backdropTexH
-			};
-
-			glUniform1i(glGetUniformLocation(shader.texture, "zBuffer"), 1);
-			glUniform1f(glGetUniformLocation(shader.texture, "zBufferLayer"), i);
-
-			drawQuad(shader.texture, vertices, 1, texCoords);
-			glUniform1i(glGetUniformLocation(shader.texture, "zBuffer"), 0);
-		}
-
-		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-		glDepthMask(GL_FALSE);
-		glDisable(GL_BLEND);
-		glUseProgram(0);
-#endif
-	}
-
-	} // End of namespace Sludge
+} // End of namespace Sludge

@@ -24,10 +24,6 @@
 #include "sludge/backdrop.h"
 #include "sludge/newfatal.h"
 
-#if 0
-extern GLuint snapshotTextureName;
-#endif
-
 namespace Sludge {
 
 extern byte brightnessLevel;

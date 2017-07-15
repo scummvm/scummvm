@@ -69,42 +69,6 @@ Graphics::Surface renderSurface;
 
 int dialogValue = 0;
 
-void setGameFilePath(char *f) {
-#if 0
-	char currentDir[1000];
-	if (!getcwd(currentDir, 998)) {
-		debugOut("Can't get current directory.\n");
-	}
-
-	int got = -1, a;
-
-	for (a = 0; f[a]; a ++) {
-		if (f[a] == PATHSLASH) got = a;
-	}
-
-	if (got != -1) {
-		f[got] = 0;
-		if (chdir(f)) {
-			debugOut("Error: Failed changing to directory %s\n", f);
-		}
-		f[got] = PATHSLASH;
-	}
-
-	gamePath = new char[400];
-	if (!checkNew(gamePath)) return;
-
-	if (!getcwd(gamePath, 398)) {
-		debugOut("Can't get game directory.\n");
-	}
-
-	if (chdir(currentDir)) {
-		debugOut("Error: Failed changing to directory %s\n", currentDir);
-	}
-#endif
-}
-
-void saveHSI(Common::WriteStream *writer);
-
 extern bool reallyWantToQuit;
 
 int weAreDoneSoQuit;
@@ -165,39 +129,6 @@ void checkInput() {
 				break;
 
 			case Common::EVENT_KEYDOWN:
-#if 0
-				// A Windows key is pressed - let's leave fullscreen.
-				if (runningFullscreen) {
-					if (event.key.keysym.sym == SDLK_LSUPER || event.key.keysym.sym == SDLK_LSUPER) {
-						setGraphicsWindow(!runningFullscreen);
-					}
-				}
-				// Ignore Command keypresses - they're for the OS to handle.
-				if (event.key.keysym.mod & KMOD_META) {
-					// Command+F - let's switch to/from full screen
-					if ('f' == event.key.keysym.unicode) {
-						setGraphicsWindow(!runningFullscreen);
-					}
-					break;
-				} else if (event.key.keysym.mod & KMOD_ALT) {
-					// Alt + Enter also switches full screen mode
-					if (SDLK_RETURN == event.key.keysym.sym) {
-						setGraphicsWindow(!runningFullscreen);
-					}
-					if (SDLK_a == event.key.keysym.sym) {
-						gameSettings.antiAlias = !gameSettings.antiAlias;
-						break;
-					}
-					// Allow Alt+F4 to quit
-					if (SDLK_F4 == event.key.keysym.sym) {
-						SDL_Event event;
-						event.type = SDL_QUIT;
-						SDL_PushEvent(&event);
-					}
-
-					break;
-				}
-#endif
 				switch (event.kbd.keycode) {
 
 					case Common::KEYCODE_BACKSPACE:
@@ -213,19 +144,7 @@ void checkInput() {
 
 			case Common::EVENT_QUIT:
 				weAreDoneSoQuit = 1;
-#if 0
-				if (reallyWantToQuit) {
-					// The game file has requested that we quit
-					weAreDoneSoQuit = 1;
-				} else {
-					// The request is from elsewhere - ask for confirmation.
-					setGraphicsWindow(false);
-					//fprintf (stderr, "%s %s\n", gameName, getNumberedString(2));
-					if (msgBoxQuestion(gameName, getNumberedString(2))) {
-						weAreDoneSoQuit = 1;
-					}
-				}
-#endif
+				// TODO: if reallyWantToQuit, popup a message box to confirm
 				break;
 
 			default:
@@ -235,9 +154,6 @@ void checkInput() {
 }
 
 int main_loop(const char *filename)
-#if 0
-		try
-#endif
 		{
 	/* Dimensions of our window. */
 	winWidth = 640;
@@ -251,28 +167,6 @@ int main_loop(const char *filename)
 
 	// Init screen surface
 	renderSurface.create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
-#if 0
-	/* Initialize the SDL library */
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		msgBox("Startup Error: Couldn't initialize SDL.", SDL_GetError());
-		exit(1);
-	}
-#endif
-	if (gameIcon) {
-#if 0
-		if (SDL_Surface *programIcon = SDL_CreateRGBSurfaceFrom(gameIcon, iconW, iconH, 32, iconW * 4, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000)) {
-			SDL_WM_SetIcon(programIcon, NULL);
-			SDL_FreeSurface(programIcon);
-		}
-#endif
-		delete gameIcon;
-	}
-#if 0
-	// Needed to make menu shortcuts work (on Mac), i.e. Command+Q for quit
-	SDL_putenv((char *)"SDL_ENABLEAPPEVENTS=1");
-
-	setupOpenGLStuff();
-#endif
 
 	registerWindowForFatal();
 
@@ -292,19 +186,6 @@ int main_loop(const char *filename)
 
 	g_sludge->gameName = getNumberedString(1);
 
-#if 0
-	SDL_WM_SetCaption(gameName, gameName);
-
-	if ((specialSettings & (SPECIAL_MOUSE_1 | SPECIAL_MOUSE_2)) == SPECIAL_MOUSE_1) {
-		//  Hide the standard mouse cursor!
-		// This is done in a weird way because there's bugs with SDL_ShowCursor(SDL_DISABLE);
-		SDL_Cursor *cursor = NULL;
-		Uint8 data = 0;
-		SDL_FreeCursor(cursor);
-		cursor = SDL_CreateCursor(&data, &data, 1, 1, 0, 0);
-		SDL_SetCursor(cursor);
-	}
-#endif
 	if (!(specialSettings & SPECIAL_SILENT)) {
 		initSoundStuff(hMainWindow);
 	}
@@ -325,22 +206,8 @@ int main_loop(const char *filename)
 
 	killSoundStuff();
 
-#if 0
-	/* Clean up the SDL library */
-	SDL_Quit();
-#endif
-	displayFatal();
 	return (0);
 }
-#if 0
-catch (std::exception &ex) { //NOTE by reference, not value
-	std::cerr << "std::exception caught: " << ex.what() << std::endl;
-	return -1;
-} catch (...) {
-	std::cerr << "Unknown exception was never caught" << std::endl;
-	return -2;
-}
-#endif
 
 }
  // End of namespace Sludge

@@ -59,10 +59,6 @@ SpriteLayers spriteLayers;
 
 extern zBufferData zBuffer;
 
-#if 0
-extern GLuint backdropTextureName;
-#endif
-
 extern inputType input;
 extern int cameraX, cameraY;
 extern float cameraZoom;
@@ -304,103 +300,8 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &
 	x1 -= single.xhot;
 	y1 -= single.yhot;
 	Graphics::TransparentSurface tmp(single.surface, false);
-	tmp.blit(backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
-#if 0
-	float tx1 = (float)(single.tex_x) / fontPal.tex_w[single.texNum];
-	float ty1 = 0.0;
-	float tx2 = (float)(single.tex_x + single.width) / fontPal.tex_w[single.texNum];
-	float ty2 = (float)(single.height) / fontPal.tex_h[single.texNum];
-
-	float btx1;
-	float btx2;
-	float bty1;
-	float bty2;
-
-	int diffX = single.width;
-	int diffY = single.height;
-
-	x1 -= single.xhot;
-	y1 -= single.yhot;
-
-	if (! NPOT_textures) {
-		btx1 = backdropTexW * x1 / sceneWidth;
-		btx2 = backdropTexW * (x1 + single.width) / sceneWidth;
-		bty1 = backdropTexH * y1 / sceneHeight;
-		bty2 = backdropTexH * (y1 + single.height) / sceneHeight;
-	} else {
-		btx1 = (float) x1 / sceneWidth;
-		btx2 = (float)(x1 + single.width) / sceneWidth;
-		bty1 = (float) y1 / sceneHeight;
-		bty2 = (float)(y1 + single.height) / sceneHeight;
-	}
-
-	const GLfloat btexCoords[] = {
-		btx1, bty1,
-		btx2, bty1,
-		btx1, bty2,
-		btx2, bty2
-	};
-
-	if (x1 < 0) diffX += x1;
-	if (y1 < 0) diffY += y1;
-	if (x1 + diffX > sceneWidth) diffX = sceneWidth - x1;
-	if (y1 + diffY > sceneHeight) diffY = sceneHeight - y1;
-	if (diffX < 0) return;
-	if (diffY < 0) return;
-
-	setPixelCoords(true);
-
-	int xoffset = 0;
-	while (xoffset < diffX) {
-		int w = (diffX - xoffset < viewportWidth) ? diffX - xoffset : viewportWidth;
-
-		int yoffset = 0;
-		while (yoffset < diffY) {
-			int h = (diffY - yoffset < viewportHeight) ? diffY - yoffset : viewportHeight;
-
-			// Render the sprite to the backdrop
-			// (using mulitexturing, so the backdrop is seen where alpha < 1.0)
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-			glActiveTexture(GL_TEXTURE0);
-
-			glUseProgram(shader.paste);
-			GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
-			if (uniform >= 0) glUniform1i(uniform, 0);// No lighting
-
-			setPMVMatrix(shader.paste);
-
-			setPrimaryColor(fontPal.originalRed / 255.f, fontPal.originalGreen / 255.f, fontPal.originalBlue / 255.f, 1.0f);
-			glBindTexture(GL_TEXTURE_2D, fontPal.tex_names[single.texNum]);
-			//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-			const GLfloat vertices[] = {
-				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat)single.width - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat) - xoffset, (GLfloat)single.height - yoffset, 0.,
-				(GLfloat)single.width - xoffset, (GLfloat)single.height - yoffset, 0.
-			};
-
-			const GLfloat texCoords[] = {
-				tx1, ty1,
-				tx2, ty1,
-				tx1, ty2,
-				tx2, ty2
-			};
-
-			drawQuad(shader.paste, vertices, 3, texCoords, NULL, btexCoords);
-
-			// Copy Our ViewPort To The Texture
-			glUseProgram(0);
-
-			copyTexSubImage2D(GL_TEXTURE_2D, 0, (int)((x1 < 0) ? xoffset : x1 + xoffset), (int)((y1 < 0) ? yoffset : y1 + yoffset), (int)((x1 < 0) ? viewportOffsetX - x1 : viewportOffsetX), (int)((y1 < 0) ? viewportOffsetY - y1 : viewportOffsetY), w, h, backdropTextureName);
-
-			yoffset += viewportHeight;
-		}
-		xoffset += viewportWidth;
-	}
-	setPixelCoords(false);
-#endif
+	tmp.blit(backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
+			TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 }
 
 void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal) {
@@ -507,10 +408,6 @@ void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &f
 #endif
 }
 
-#if 0
-extern GLuint backdropTextureName;
-#endif
-
 void fontSprite(bool flip, int x, int y, sprite &single, const spritePalette &fontPal) {
 	float x1 = (float)x - (float)single.xhot / cameraZoom;
 	float y1 = (float)y - (float)single.yhot / cameraZoom;
@@ -524,60 +421,6 @@ void fontSprite(bool flip, int x, int y, sprite &single, const spritePalette &fo
 		tmp2.blit(renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 	}
-
-#if 0
-	float x2 = x1 + (float) single.surface.w / cameraZoom;
-	float y2 = y1 + (float) single.surface.h / cameraZoom;
-	float tx1 = (float) (single.tex_x - 0.5) / fontPal.tex_w[single.texNum];
-	float ty1 = 0.0;
-	float tx2 = (float) (single.tex_x + single.width + (flip ? 1.0 : 0.5))
-			/ fontPal.tex_w[single.texNum];
-	float ty2 = (float) (single.height + 2) / fontPal.tex_h[single.texNum];
-
-	GLfloat vertices[] = {
-		x1, y1, 0.0f,
-		x2, y1, 0.0f,
-		x1, y2, 0.0f,
-		x2, y2, 0.0f
-	};
-	if (flip) {
-		vertices[0] = x2;
-		vertices[3] = x1;
-		vertices[6] = x2;
-		vertices[9] = x1;
-	}
-
-	const GLfloat texCoords[] = {
-		tx1, ty1,
-		tx2, ty1,
-		tx1, ty2,
-		tx2, ty2
-	};
-
-	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); // GL_MODULATE instead of decal mixes the colours!
-	setPrimaryColor(fontPal.originalRed / 255.f, fontPal.originalGreen / 255.f, fontPal.originalBlue / 255.f, 1.0f);
-
-	glBindTexture(GL_TEXTURE_2D, fontPal.tex_names[single.texNum]);
-
-	glUseProgram(shader.smartScaler);
-	GLuint uniform = glGetUniformLocation(shader.smartScaler, "useLightTexture");
-	if (uniform >= 0) glUniform1i(uniform, 0);
-
-	setPMVMatrix(shader.smartScaler);
-
-	if (gameSettings.antiAlias == 1) {
-		glUniform1i(glGetUniformLocation(shader.smartScaler, "antialias"), 1);
-	} else {
-		glUniform1i(glGetUniformLocation(shader.smartScaler, "antialias"), 0);
-	}
-
-	glEnable(GL_BLEND);
-
-	drawQuad(shader.smartScaler, vertices, 1, texCoords);
-
-	glDisable(GL_BLEND);
-	glUseProgram(0);
-#endif
 }
 
 void fontSprite(int x, int y, sprite &single, const spritePalette &fontPal) {
@@ -601,10 +444,6 @@ void setDrawMode(onScreenPerson *thisPerson) {
 	setPrimaryColor(curLight[0] * (255 - thisPerson->colourmix) / 65025.f, curLight[1] * (255 - thisPerson->colourmix) / 65025.f, curLight[2] * (255 - thisPerson->colourmix) / 65025.f, 1.0f - thisPerson->transparency / 255.f);
 #endif
 }
-
-#if 0
-extern GLuint backdropTextureName;
-#endif
 
 bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, bool mirror) {
 	float x = thisPerson->x;

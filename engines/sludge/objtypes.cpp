@@ -82,28 +82,12 @@ objectType *loadObjectType(int i) {
 			newType->numCom = bigDataFile->readUint16BE();
 			newType->allCombis = (newType->numCom) ? new combination[newType->numCom] : NULL;
 
-#if DEBUG_COMBINATIONS
-			FILE *callEventLog = fopen("callEventLog.txt", "at");
-			if (callEventLog) {
-				fprintf(callEventLog, "Object type %d has %d combinations... ", i, newType -> numCom);
-			}
-#endif
 
 			for (a = 0; a < newType->numCom; a++) {
 				newType->allCombis[a].withObj = bigDataFile->readUint16BE();
 				newType->allCombis[a].funcNum = bigDataFile->readUint16BE();
-#if DEBUG_COMBINATIONS
-				if (callEventLog) {
-					fprintf(callEventLog, "%d(%d) ", newType -> allCombis[a].withObj, newType -> allCombis[a].funcNum);
-				}
-#endif
 			}
-#if DEBUG_COMBINATIONS
-			if (callEventLog) {
-				fprintf(callEventLog, "\n");
-				fclose(callEventLog);
-			}
-#endif
+
 			finishAccess();
 			newType->screenName = getNumberedString(nameNum);
 			newType->objectNum = i;
@@ -132,26 +116,12 @@ int getCombinationFunction(int withThis, int thisObject) {
 	int i, num = 0;
 	objectType *obj = findObjectType(thisObject);
 
-#if DEBUG_COMBINATIONS
-	FILE *callEventLog = fopen("callEventLog.txt", "at");
-	if (callEventLog) {
-		fprintf(callEventLog, "Combining %d and %d - ", thisObject, withThis);
-	}
-#endif
-
 	for (i = 0; i < obj->numCom; i++) {
 		if (obj->allCombis[i].withObj == withThis) {
 			num = obj->allCombis[i].funcNum;
 			break;
 		}
 	}
-
-#if DEBUG_COMBINATIONS
-	if (callEventLog) {
-		fprintf(callEventLog, "got function number %d\n", num);
-		fclose(callEventLog);
-	}
-#endif
 
 	return num;
 }

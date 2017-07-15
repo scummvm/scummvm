@@ -502,14 +502,6 @@ bool initSludge(const Common::String &filename) {
 
 	Common::String gameName = encodeFilename(gameNameOrig);
 
-#if 0
-	changeToUserDir();
-
-	mkdir(gameName, 0000777);
-
-	if (chdir(gameName)) return fatal("This game's preference folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", gameName);
-#endif
-
 	// Get language selected by user
 	gameSettings.languageID = g_sludge->getLanguageID();
 
@@ -521,11 +513,6 @@ bool initSludge(const Common::String &filename) {
 
 	if (!dataFol.empty()) {
 		Common::String dataFolder = encodeFilename(dataFol);
-#if 0
-		mkdir(dataFolder, 0000777);
-
-		if (chdir(dataFolder)) return fatal("This game's data folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", dataFolder);
-#endif
 	}
 
 	positionStatus(10, winHeight - 15);
@@ -534,23 +521,6 @@ bool initSludge(const Common::String &filename) {
 }
 
 extern int cameraX, cameraY;
-extern float cameraZoom;
-
-bool checkColourChange(bool reset) {
-#if 0
-	static GLuint oldPixel;
-	static GLuint pixel;
-	glReadPixels((GLint)(viewportOffsetX + input.mouseX * viewportWidth / ((float)winWidth / cameraZoom)),
-			(GLint)(viewportOffsetY + (((float)winHeight / cameraZoom) - input.mouseY)*viewportHeight / ((float)winHeight / cameraZoom)),
-			1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
-
-	if (reset || oldPixel != pixel) {
-		oldPixel = pixel;
-		return true;
-	}
-#endif
-	return false;
-}
 
 void displayBase() {
 	drawBackDrop();// Draw the room
@@ -1280,25 +1250,10 @@ int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 
 int lastFramesPerSecond = -1;
 int thisFramesPerSecond = -1;
-#if 0
-Uint32 lastSeconds = 0;
-#endif
 
 bool handleInput() {
 	static int l = 0;
-#if 0
-	static Uint32 theTime;
 
-	theTime = SDL_GetTicks() / 1000;
-	if (lastSeconds != theTime) {
-		lastSeconds = theTime;
-		lastFramesPerSecond = thisFramesPerSecond;
-		thisFramesPerSecond = 1;
-	} else {
-		thisFramesPerSecond ++;
-	}
-//	lastFramesPerSecond = theTime.wSecond;
-#endif
 	if (!g_sludge->launchMe.empty()) {
 		if (l) {
 			// Still paused because of spawned thingy...

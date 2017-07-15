@@ -48,15 +48,6 @@ extern Graphics::Surface renderSurface;
 bool freeze();
 void unfreeze(bool);    // Because FREEZE.H needs a load of other includes
 
-#if 0
-GLubyte *backdropTexture = NULL;
-GLuint backdropTextureName = 0;
-GLfloat backdropTexW = 1.0;
-GLfloat backdropTexH = 1.0;
-
-GLuint snapshotTextureName = 0;
-#endif
-
 bool backdropExists = false;
 extern int zBufferToSet;
 
@@ -121,10 +112,6 @@ bool restoreSnapshot(Common::SeekableReadStream *stream) {
 void killBackDrop() {
 	if (backdropSurface.getPixels())
 		backdropSurface.free();
-#if 0
-	deleteTextures(1, &backdropTextureName);
-	backdropTextureName = 0;
-#endif
 	backdropExists = false;
 }
 
@@ -133,27 +120,16 @@ void killLightMap() {
 		lightMap.free();
 	}
 	lightMapNumber = 0;
-#if 0
-	deleteTextures(1, &lightMap.name);
-	lightMap.name = 0;
-#endif
 }
 
 void killParallax() {
-
 	while (parallaxStuff) {
-
 		parallaxLayer *k = parallaxStuff;
 		parallaxStuff = k->next;
-#if 0
-		// Now kill the image
-		deleteTextures(1, &k->textureName);
-#endif
 		k->surface.free();
 		delete k;
 		k = NULL;
 	}
-
 }
 
 bool reserveBackdrop() {
@@ -164,36 +140,7 @@ bool reserveBackdrop() {
 	cameraZoom = 1.0;
 	input.mouseX = (int)((float)input.mouseX / cameraZoom);
 	input.mouseY = (int)((float)input.mouseY / cameraZoom);
-#if 0
-	int picWidth = sceneWidth;
-	int picHeight = sceneHeight;
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	if (backdropTexture) delete backdropTexture;
-	if (!NPOT_textures) {
-		picWidth = getNextPOT(sceneWidth);
-		picHeight = getNextPOT(sceneHeight);
-		backdropTexW = ((double)sceneWidth) / picWidth;
-		backdropTexH = ((double)sceneHeight) / picHeight;
-	}
-	backdropTexture = new GLubyte [picWidth * picHeight * 4];
-	if (!checkNew(backdropTexture)) return false;
-
-	if (!backdropTextureName) glGenTextures(1, &backdropTextureName);
-	glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	if (gameSettings.antiAlias < 0) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	} else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	}
-
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, backdropTexture, backdropTextureName);
-#endif
 	return true;
 }
 
@@ -269,45 +216,6 @@ void blankScreen(int x1, int y1, int x2, int y2) {
 		y2 = (int)sceneHeight;
 
 	backdropSurface.fillRect(Common::Rect(x1, y1, x2, y2), currentBlankColour);
-
-#if 0
-	setPixelCoords(true);
-
-	int xoffset = 0;
-	while (xoffset < picWidth) {
-		int w = (picWidth - xoffset < viewportWidth) ? picWidth - xoffset : viewportWidth;
-
-		int yoffset = 0;
-		while (yoffset < picHeight) {
-			int h = (picHeight - yoffset < viewportHeight) ? picHeight - yoffset : viewportHeight;
-
-			// Render the scene
-
-			const GLfloat vertices[] = {
-				-10.325f, -1.325f, 0.0f,
-				w + 1.325f, -1.325f, 0.0f,
-				-10.325f, h + 1.325f, 0.0f,
-				w + 1.325f, h + 1.325f, 0.0f
-			};
-
-			glUseProgram(shader.color);
-
-			setPMVMatrix(shader.color);
-			setPrimaryColor(redValue(currentBlankColour) / 255.0f, greenValue(currentBlankColour) / 255.0f, blueValue(currentBlankColour) / 255.0f, 1.0f);
-			drawQuad(shader.color, vertices, 0);
-
-			glUseProgram(0);
-
-			// Copy Our ViewPort To The Texture
-			copyTexSubImage2D(GL_TEXTURE_2D, 0, x1 + xoffset, y1 + yoffset, viewportOffsetX, viewportOffsetY, w, h, backdropTextureName);
-
-			yoffset += viewportHeight;
-		}
-		xoffset += viewportWidth;
-	}
-
-	setPixelCoords(false);
-#endif
 }
 
 // This function is very useful for scrolling credits, but very little else
@@ -411,82 +319,17 @@ bool loadLightMap(int v) {
 	if (!ImgLoader::loadImage(bigDataFile, &lightMap))
 		return false;
 
-#if 0
-	int newPicWidth = lightMap.w;
-	int newPicHeight = lightMap.h;
-
 	if (lightMapMode == LIGHTMAPMODE_HOTSPOT) {
 		if (lightMap.w != sceneWidth || lightMap.h != sceneHeight) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
 		}
 	}
 
-	if (!NPOT_textures) {
-		newPicWidth = getNextPOT(lightMap.w);
-		newPicHeight = getNextPOT(lightMap.h);
-		lightMap.texW = (double) lightMap.w / newPicWidth;
-		lightMap.texH = (double) lightMap.h / newPicHeight;
-	} else {
-		lightMap.texW = 1.0;
-		lightMap.texH = 1.0;
-	}
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-#endif
-#if 0
-	if (!lightMap.name) glGenTextures(1, &lightMap.name);
-	glBindTexture(GL_TEXTURE_2D, lightMap.name);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, newPicWidth, newPicHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, lightMap.data, lightMap.name);
-#endif
 	finishAccess();
 
 	setResourceForFatal(-1);
 
 	return true;
-}
-
-void reloadParallaxTextures() {
-#if 0
-	parallaxLayer *nP = parallaxStuff;
-	if (!nP) return;
-
-	while (nP) {
-		//fprintf (stderr, "Reloading parallax. (%d, %d) ", nP->width, nP->height);
-		nP->textureName = 0;
-
-		glGenTextures(1, &nP->textureName);
-		glBindTexture(GL_TEXTURE_2D, nP->textureName);
-		if (nP->wrapS)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		else
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		if (nP->wrapT)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		else
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		if (gameSettings.antiAlias < 0) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		} else {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		}
-
-		if (!NPOT_textures) {
-			texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getNextPOT(nP->width), getNextPOT(nP->height), 0, GL_RGBA, GL_UNSIGNED_BYTE, nP->texture, nP->textureName);
-		} else {
-			texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, nP->width, nP->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nP->texture, nP->textureName);
-		}
-
-		nP = nP->next;
-	}
-#endif
 }
 
 bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
@@ -550,129 +393,6 @@ bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 	return true;
 }
 
-extern int viewportOffsetX, viewportOffsetY;
-
-#if 0
-void makeGlArray(GLuint &tmpTex, const GLubyte *texture, int picWidth, int picHeight) {
-	glGenTextures(1, &tmpTex);
-	glBindTexture(GL_TEXTURE_2D, tmpTex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	if (gameSettings.antiAlias < 0) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	} else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	}
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture, tmpTex);
-
-}
-
-void renderToTexture(GLuint tmpTex, int x, int y, int picWidth, int picHeight, int realPicWidth, int realPicHeight) {
-	GLfloat texCoordW = 1.0;
-	GLfloat texCoordH = 1.0;
-	if (!NPOT_textures) {
-		picWidth = getNextPOT(picWidth);
-		picHeight = getNextPOT(picHeight);
-		texCoordW = ((double)realPicWidth) / picWidth;
-		texCoordH = ((double)realPicHeight) / picHeight;
-	}
-
-	float btx1;
-	float btx2;
-	float bty1;
-	float bty2;
-	if (!NPOT_textures) {
-		btx1 = backdropTexW * x / sceneWidth;
-		btx2 = backdropTexW * (x + realPicWidth) / sceneWidth;
-		bty1 = backdropTexH * y / sceneHeight;
-		bty2 = backdropTexH * (y + realPicHeight) / sceneHeight;
-	} else {
-		btx1 = (float) x / sceneWidth;
-		btx2 = (float)(x + realPicWidth) / sceneWidth;
-		bty1 = (float) y / sceneHeight;
-		bty2 = (float)(y + realPicHeight) / sceneHeight;
-	}
-
-	const GLfloat btexCoords[] = {
-		btx1, bty1,
-		btx2, bty1,
-		btx1, bty2,
-		btx2, bty2
-	};
-
-	setPixelCoords(true);
-
-	int xoffset = 0;
-	while (xoffset < realPicWidth) {
-		int w = (realPicWidth - xoffset < viewportWidth) ? realPicWidth - xoffset : viewportWidth;
-
-		int yoffset = 0;
-		while (yoffset < realPicHeight) {
-			int h = (realPicHeight - yoffset < viewportHeight) ? realPicHeight - yoffset : viewportHeight;
-
-			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
-
-			const GLfloat vertices[] = {
-				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat)realPicWidth - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat) - xoffset, (GLfloat) - yoffset + realPicHeight, 0.,
-				(GLfloat)realPicWidth - xoffset, (GLfloat) - yoffset + realPicHeight, 0.
-			};
-
-			const GLfloat texCoords[] = {
-				0.0f, 0.0f,
-				texCoordW, 0.0f,
-				0.0f, texCoordH,
-				texCoordW, texCoordH
-			};
-
-			if (backdropExists) {
-				// Render the sprite to the backdrop
-				// (using mulitexturing, so the old backdrop is seen where alpha < 1.0)
-				glActiveTexture(GL_TEXTURE2);
-				glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-				glActiveTexture(GL_TEXTURE0);
-
-				glUseProgram(shader.paste);
-				GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
-				if (uniform >= 0) glUniform1i(uniform, 0);// No lighting
-
-				setPMVMatrix(shader.paste);
-
-				setPrimaryColor(1.0, 1.0, 1.0, 1.0);
-				glBindTexture(GL_TEXTURE_2D, tmpTex);
-				//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-				drawQuad(shader.paste, vertices, 3, texCoords, NULL, btexCoords);
-
-				glUseProgram(0);
-
-			} else {
-				// It's all new - nothing special to be done.
-				glUseProgram(shader.texture);
-				setPMVMatrix(shader.texture);
-
-				glBindTexture(GL_TEXTURE_2D, tmpTex);
-
-				setPrimaryColor(1.0, 0.0, 0.0, 0.0);
-
-				drawQuad(shader.texture, vertices, 1, texCoords);
-
-				glUseProgram(0);
-			}
-
-			// Copy Our ViewPort To The Texture
-			copyTexSubImage2D(GL_TEXTURE_2D, 0, x + xoffset, y + yoffset, viewportOffsetX, viewportOffsetY, w, h, backdropTextureName);
-
-			yoffset += viewportHeight;
-		}
-		xoffset += viewportWidth;
-	}
-	setPixelCoords(false);
-}
-#endif
 bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	debug(kSludgeDebugGraphics, "Load HSI");
 	if (reserve) {
@@ -685,7 +405,8 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	uint realPicWidth = backdropSurface.w;
 	uint realPicHeight = backdropSurface.h;
 
-	if (reserve) { // resize backdrop
+	// resize backdrop
+	if (reserve) {
 		if (!resizeBackdrop(realPicWidth, realPicHeight))
 			return false;
 	}
@@ -698,14 +419,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 		debug(kSludgeDebugGraphics, "Illegal back drop size");
 		return false;
 	}
-#if 0
-	GLuint tmpTex;
-	makeGlArray(tmpTex, backdropTexture, picWidth, picHeight);
 
-	renderToTexture(tmpTex, x, y, picWidth, picHeight, realPicWidth, realPicHeight);
-
-	deleteTextures(1, &tmpTex);
-#endif
 	OrigBackdropSurface.copyFrom(backdropSurface);
 	backdropExists = true;
 
@@ -731,182 +445,9 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	Graphics::TransparentSurface tmp(mixSurface, false);
 	tmp.blit(backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255 >> 1, 255, 255));
 	mixSurface.free();
-;
-#if 0
-	float btx1, tx1;
-	float btx2, tx2;
-	float bty1, ty1;
-	float bty2, ty2;
 
-	if (!NPOT_textures) {
-		tx1 = 0.0;
-		ty1 = 0.0;
-		tx2 = ((double)picWidth) / getNextPOT(picWidth);
-		ty2 = ((double)picHeight) / getNextPOT(picHeight);
-		picWidth = getNextPOT(picWidth);
-		picHeight = getNextPOT(picHeight);
-		btx1 = backdropTexW * x / sceneWidth;
-		btx2 = backdropTexW * (x + realPicWidth) / sceneWidth;
-		bty1 = backdropTexH * y / sceneHeight;
-		bty2 = backdropTexH * (y + realPicHeight) / sceneHeight;
-	} else {
-		tx1 = 0.0;
-		ty1 = 0.0;
-		tx2 = 1.0;
-		ty2 = 1.0;
-		btx1 = (float) x / sceneWidth;
-		btx2 = (float)(x + picWidth) / sceneWidth;
-		bty1 = (float) y / sceneHeight;
-		bty2 = (float)(y + picHeight) / sceneHeight;
-	}
-
-	const GLfloat texCoords[] = {
-		tx1, ty1,
-		tx2, ty1,
-		tx1, ty2,
-		tx2, ty2
-	};
-
-	const GLfloat btexCoords[] = {
-		btx1, bty1,
-		btx2, bty1,
-		btx1, bty2,
-		btx2, bty2
-	};
-
-	GLuint tmpTex;
-	makeGlArray(tmpTex, backdropTexture, picWidth, picHeight);
-
-	setPixelCoords(true);
-
-	int xoffset = 0;
-	while (xoffset < realPicWidth) {
-		int w = (realPicWidth - xoffset < viewportWidth) ? realPicWidth - xoffset : viewportWidth;
-
-		int yoffset = 0;
-		while (yoffset < realPicHeight) {
-			int h = (realPicHeight - yoffset < viewportHeight) ? realPicHeight - yoffset : viewportHeight;
-
-			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
-
-			// Render the sprite to the backdrop
-			// (using mulitexturing, so the backdrop is seen where alpha < 1.0)
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-			glActiveTexture(GL_TEXTURE0);
-
-			glUseProgram(shader.paste);
-			GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
-			if (uniform >= 0) glUniform1i(uniform, 0);// No lighting
-
-			setPMVMatrix(shader.paste);
-
-			setPrimaryColor(1.0, 1.0, 1.0, 0.5);
-
-			glBindTexture(GL_TEXTURE_2D, tmpTex);
-			//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-			const GLfloat vertices[] = {
-				(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat)realPicWidth - xoffset, (GLfloat) - yoffset, 0.,
-				(GLfloat) - xoffset, (GLfloat) - yoffset + realPicHeight, 0.,
-				(GLfloat)realPicWidth - xoffset, (GLfloat) - yoffset + realPicHeight, 0.
-			};
-
-			drawQuad(shader.paste, vertices, 3, texCoords, NULL, btexCoords);
-
-			// Copy Our ViewPort To The Texture
-			glUseProgram(0);
-
-			copyTexSubImage2D(GL_TEXTURE_2D, 0, (int)((x < 0) ? xoffset : x + xoffset), (int)((y < 0) ? yoffset : y + yoffset), (int)((x < 0) ? viewportOffsetX - x : viewportOffsetX), (int)((y < 0) ? viewportOffsetY - y : viewportOffsetY), w, h, backdropTextureName);
-
-			yoffset += viewportHeight;
-		}
-
-		xoffset += viewportWidth;
-	}
-	deleteTextures(1, &tmpTex);
-	setPixelCoords(false);
-#endif
 	return true;
 }
-
-#if 0
-void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h) {
-	GLint tw, th;
-	glBindTexture(GL_TEXTURE_2D, texture);
-	getTextureDimensions(texture, &tw, &th);
-
-	GLushort *image = new GLushort[tw * th];
-	if (!checkNew(image))
-		return;
-	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-//	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image);
-	setPixelCoords(true);
-
-	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-	const GLfloat texCoords[] = { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f };
-
-	int xoffset = 0;
-	while (xoffset < tw) {
-		int w = (tw - xoffset < viewportWidth) ? tw - xoffset : viewportWidth;
-
-		int yoffset = 0;
-		while (yoffset < th) {
-			int h = (th - yoffset < viewportHeight) ? th - yoffset : viewportHeight;
-			glClear (GL_COLOR_BUFFER_BIT);   // Clear The Screen
-			const GLfloat vertices[] = { (GLfloat)-xoffset, (GLfloat)-yoffset, 0., (GLfloat)w - xoffset, (GLfloat)-yoffset, 0., (GLfloat)-xoffset, (GLfloat)-yoffset + h, 0., (GLfloat)w - xoffset,
-					(GLfloat)-yoffset + h, 0. };
-
-			glUseProgram(shader.texture);
-			setPMVMatrix(shader.texture);
-			drawQuad(shader.texture, vertices, 1, texCoords);
-			glUseProgram(0);
-
-			for (int i = 0; i < h; i++) {
-				glReadPixels(viewportOffsetX, viewportOffsetY + i, w, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, image + xoffset + (yoffset + i) * tw);
-			}
-			yoffset += viewportHeight;
-		}
-
-		xoffset += viewportWidth;
-	}
-	//glReadPixels(viewportOffsetX, viewportOffsetY, tw, th, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	setPixelCoords(false);
-
-	int x, y, lookAhead;
-	uint16 *fromHere, *lookPointer;
-
-	stream->writeUint16BE(w);
-	stream->writeUint16BE(h);
-
-	for (y = 0; y < h; y++) {
-		fromHere = image + (y * tw);
-		x = 0;
-		while (x < w) {
-			lookPointer = fromHere + 1;
-			for (lookAhead = x + 1; lookAhead < w; lookAhead++) {
-				if (lookAhead - x == 256)
-					break;
-				if (*fromHere != *lookPointer)
-					break;
-				lookPointer++;
-			}
-			if (lookAhead == x + 1) {
-				put2bytes((*fromHere) & 65503, stream);
-			} else {
-				stream->writeUint16BE(*fromHere | 32);
-				stream->writeByte(lookAhead - x - 1);
-			}
-			fromHere = lookPointer;
-			x = lookAhead;
-		}
-	}
-	delete[] image;
-	image = NULL;
-}
-#endif
 
 void saveHSI(Common::WriteStream *stream) {
 	Image::writePNG(*stream, backdropSurface);

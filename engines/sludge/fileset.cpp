@@ -38,56 +38,36 @@ Common::File *bigDataFile = NULL;
 uint32 startOfDataIndex, startOfTextIndex, startOfSubIndex, startOfObjectIndex;
 
 bool openSubSlice(int num) {
-//	FILE * dbug = fopen ("debuggy.txt", "at");
-
-//	fprintf (dbug, "\nTrying to open sub %i\n", num);
-
 	if (sliceBusy) {
 		fatal("Can't read from data file", "I'm already reading something");
 		return false;
 	}
-//	fprintf (dbug, "Going to position %li\n", startOfSubIndex + (num << 2));
 	bigDataFile->seek(startOfSubIndex + (num << 2), 0);
 	bigDataFile->seek(bigDataFile->readUint32LE(), 0);
-//	fprintf (dbug, "Told to skip forward to %li\n", ftell (bigDataFile));
-//	fclose (dbug);
 
 	return sliceBusy = true;
 }
 
 bool openObjectSlice(int num) {
-//	FILE * dbug = fopen ("debuggy.txt", "at");
-
-//	fprintf (dbug, "\nTrying to open object %i\n", num);
-
 	if (sliceBusy) {
 		fatal("Can't read from data file", "I'm already reading something");
 		return false;
 	}
 
-//	fprintf (dbug, "Going to position %li\n", startOfObjectIndex + (num << 2));
 	bigDataFile->seek(startOfObjectIndex + (num << 2), 0);
 	bigDataFile->seek(bigDataFile->readUint32LE(), 0);
-//	fprintf (dbug, "Told to skip forward to %li\n", ftell (bigDataFile));
-//	fclose (dbug);
 	return sliceBusy = true;
 }
 
 uint openFileFromNum(int num) {
-//	FILE * dbug = fopen ("debuggy.txt", "at");
-
 	if (sliceBusy) {
 		fatal("Can't read from data file", "I'm already reading something");
 		return 0;
 	}
 
-//	fprintf (dbug, "\nTrying to open file %i\n", num);
-//	fprintf (dbug, "Jumping to %li (for index) \n", startOfDataIndex + (num << 2));
 	bigDataFile->seek(startOfDataIndex + (num << 2), 0);
 	bigDataFile->seek(bigDataFile->readUint32LE(), 1);
-//	fprintf (dbug, "Jumping to %li (for data) \n", ftell (bigDataFile));
 	sliceBusy = true;
-//	fclose (dbug);
 
 	return bigDataFile->readUint32LE();
 }

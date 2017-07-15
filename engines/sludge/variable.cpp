@@ -194,12 +194,6 @@ bool copyStack(const variable &from, variable &to) {
 	return true;
 }
 
-/*void newStackVar (variable & thisVar) {
- unlinkVar (thisVar);
- thisVar.varType = VT_STACK;
- thisVar.varData.theStack = NULL;
- } */
-
 void addVariablesInSecond(variable &var1, variable &var2) {
 	if (var1.varType == SVT_INT && var2.varType == SVT_INT) {
 		var2.varData.intValue += var1.varData.intValue;
@@ -314,14 +308,6 @@ Common::String getTextFromAnyVar(const variable &from) {
 		case SVT_FILE: {
 			return resourceNameFromNum(from.varData.intValue);
 		}
-
-			/*      case SVT_ANIM:
-			 {
-			 char * buff = new char[20];
-			 if (! checkNew (buff)) return NULL;
-			 sprintf (buff, "%p", from.varData.animHandler);
-			 return buff;
-			 }*/
 
 		case SVT_OBJTYPE: {
 			objectType *thisType = findObjectType(from.varData.intValue);

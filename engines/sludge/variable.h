@@ -117,18 +117,6 @@ bool makeFastArrayFromStack(variable &to, const stackHandler *stacky);
 bool makeFastArraySize(variable &to, int size);
 variable *fastArrayGetByIndex(fastArrayHandler *vS, uint theIndex);
 
-#define DEBUG_STACKINESS    0
-
-#if DEBUG_STACKINESS
-#define stackDebug(params) {                            \
-		FILE * stackfp = fopen ("stackout.txt", "at");      \
-		fprintf params;                                     \
-		fclose (stackfp);                                   \
-	}
-#else
-#define stackDebug(a)  {}
-#endif
-
 } // End of namespace Sludge
 
 #endif
