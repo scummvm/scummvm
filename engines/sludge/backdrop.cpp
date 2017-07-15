@@ -62,6 +62,7 @@ bool backdropExists = false;
 extern int zBufferToSet;
 
 Graphics::Surface lightMap;
+Graphics::Surface OrigBackdropSurface;
 Graphics::Surface backdropSurface;
 Graphics::Surface snapshotSurface;
 
@@ -310,63 +311,28 @@ void blankScreen(int x1, int y1, int x2, int y2) {
 #endif
 }
 
+// This function is very useful for scrolling credits, but very little else
 void hardScroll(int distance) {
-	if (ABS(distance) >= (int)sceneHeight) {
-		blankScreen(0, 0, sceneWidth, sceneHeight);
-		return;
-	}
-
+	// scroll 0 distance, return
 	if (!distance)
 		return;
-#if 0
-	const GLfloat backdropTexCoords[] = {
-		0.0f, 0.0f,
-		backdropTexW, 0.0f,
-		0.0f, backdropTexH,
-		backdropTexW, backdropTexH
-	};
 
-	setPixelCoords(true);
+	// blank screen
+	blankScreen(0, 0, sceneWidth, sceneHeight);
 
-	uint xoffset = 0;
-	while (xoffset < sceneWidth) {
-		int w = (sceneWidth - xoffset < viewportWidth) ? sceneWidth - xoffset : viewportWidth;
-
-		uint yoffset = 0;
-		while (yoffset < sceneHeight) {
-			int h = (sceneHeight - yoffset < viewportHeight) ? sceneHeight - yoffset : viewportHeight;
-
-			glClear(GL_COLOR_BUFFER_BIT);   // Clear The Screen
-
-			// Render the backdrop
-			glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-			const GLfloat vertices[] = {
-				(GLfloat) - xoffset, (GLfloat) - distance - yoffset, 0.,
-				(GLfloat)sceneWidth - xoffset, (GLfloat) - distance - yoffset, 0.,
-				(GLfloat) - xoffset, (GLfloat)sceneHeight - distance - yoffset, 0.,
-				(GLfloat)sceneWidth - xoffset, (GLfloat)sceneHeight - distance - yoffset, 0.
-			};
-
-			glUseProgram(shader.texture);
-
-			setPMVMatrix(shader.texture);
-
-			drawQuad(shader.texture, vertices, 1, backdropTexCoords);
-
-			glUseProgram(0);
-
-			// Copy Our ViewPort To The Texture
-			copyTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, viewportOffsetX, viewportOffsetY, w, h, backdropTextureName);
-
-			yoffset += viewportHeight;
-		}
-		xoffset += viewportWidth;
+	// scroll more than backdrop height, screen stay blank
+	if (ABS(distance) >= (int)sceneHeight) {
+		return;
 	}
-	setPixelCoords(false);
-#endif
+
+	// copy part of the backdrop to it
+	if (distance > 0) {
+		backdropSurface.copyRectToSurface(OrigBackdropSurface, 0, 0,
+				Common::Rect(0, distance, backdropSurface.w, backdropSurface.h));
+	} else {
+		backdropSurface.copyRectToSurface(OrigBackdropSurface, 0, -distance,
+				Common::Rect(0, 0, backdropSurface.w, backdropSurface.h + distance));
+	}
 }
 
 void drawVerticalLine(uint x, uint y1, uint y2) {
@@ -741,6 +707,7 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 
 	deleteTextures(1, &tmpTex);
 #endif
+	OrigBackdropSurface.copyFrom(backdropSurface);
 	backdropExists = true;
 
 	return true;
