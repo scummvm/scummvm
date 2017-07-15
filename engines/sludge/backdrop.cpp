@@ -32,6 +32,8 @@
 #include "sludge/fileset.h"
 #include "sludge/backdrop.h"
 #include "sludge/moreio.h"
+#include "sludge/statusba.h"
+#include "sludge/talk.h"
 #include "sludge/zbuffer.h"
 #include "sludge/graphics.h"
 #include "sludge/sludge.h"
@@ -61,6 +63,7 @@ extern int zBufferToSet;
 
 Graphics::Surface lightMap;
 Graphics::Surface backdropSurface;
+Graphics::Surface snapshotSurface;
 
 float snapTexW = 1.0;
 float snapTexH = 1.0;
@@ -77,127 +80,40 @@ extern int cameraX, cameraY;
 extern float cameraZoom;
 
 void nosnapshot() {
-#if 0
-	deleteTextures(1, &snapshotTextureName);
-	snapshotTextureName = 0;
-#endif
+	if (snapshotSurface.getPixels())
+		snapshotSurface.free();
 }
 
 void saveSnapshot(Common::WriteStream *stream) {
-#if 0
-	if (snapshotTextureName) {
+	if (snapshotSurface.getPixels()) {
 		stream->writeByte(1);               // 1 for snapshot follows
-		saveCoreHSI(stream, snapshotTextureName, winWidth, winHeight);
+		Image::writePNG(*stream, snapshotSurface);
 	} else {
 		stream->writeByte(0);
 	}
-#endif
 }
 
 bool snapshot() {
-
 	nosnapshot();
 	if (!freeze())
 		return false;
-#if 0
-	setPixelCoords(true);
-	glGenTextures(1, &snapshotTextureName);
 
-	int w = winWidth;
-	int h = winHeight;
-	if (!NPOT_textures) {
-		w = getNextPOT(winWidth);
-		h = getNextPOT(winHeight);
-		snapTexW = ((double)winWidth) / w;
-		snapTexH = ((double)winHeight) / h;
-	}
-
-	glBindTexture(GL_TEXTURE_2D, snapshotTextureName);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0, snapshotTextureName);
-
-	// Render scene
-	glDepthMask(GL_TRUE);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// Clear The Screen
-	glDepthMask(GL_FALSE);
-
-	drawBackDrop();// Draw the room
-	drawZBuffer(cameraX, cameraY, false);
-
-	glEnable(GL_DEPTH_TEST);
-
-	drawPeople();// Then add any moving characters...
-
-	glDisable(GL_DEPTH_TEST);
-
-	viewSpeech();// ...and anything being said
+	// draw snapshot to backdrop
+	displayBase();
+	viewSpeech(); // ...and anything being said
 	drawStatusBar();
-				 // Copy Our ViewPort To The Texture
-	copyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, viewportOffsetX, viewportOffsetY, winWidth, winHeight, snapshotTextureName);
 
-	setPixelCoords(false);
-#endif
+	// copy backdrop to snapshot
+	snapshotSurface.copyFrom(backdropSurface);
+
 	unfreeze(false);
 	return true;
 }
 
 bool restoreSnapshot(Common::SeekableReadStream *stream) {
-	uint picWidth = stream->readUint16BE();
-	uint picHeight = stream->readUint16BE();
-
-	if ((picWidth != winWidth) || (picHeight != winHeight))
+	if (!(ImgLoader::loadImage(stream, &snapshotSurface))) {
 		return false;
-#if 0
-	uint t1, t2, n;
-	uint16 c;
-	GLubyte *target;
-	if (!NPOT_textures) {
-		picWidth = getNextPOT(picWidth);
-		picHeight = getNextPOT(picHeight);
-		snapTexW = ((double)winWidth) / picWidth;
-		snapTexH = ((double)winHeight) / picHeight;
 	}
-	GLubyte *snapshotTexture = new GLubyte [picHeight * picWidth * 4];
-	if (!snapshotTexture) return fatal("Out of memory while restoring snapshot.");
-
-	for (t2 = 0; t2 < winHeight; t2++) {
-		t1 = 0;
-		while (t1 < winWidth) {
-			c = (uint16)stream->readUint16BE();
-			if (c & 32) {
-				n = stream->readByte() + 1;
-				c -= 32;
-			} else {
-				n = 1;
-			}
-
-			while (n --) {
-				target = snapshotTexture + 4 * picWidth * t2 + t1 * 4;
-				target[0] = (GLubyte) redValue(c);
-				target[1] = (GLubyte) greenValue(c);
-				target[2] = (GLubyte) blueValue(c);
-				target[3] = (GLubyte) 255;
-				t1++;
-			}
-		}
-	}
-
-	if (!snapshotTextureName) glGenTextures(1, &snapshotTextureName);
-	glBindTexture(GL_TEXTURE_2D, snapshotTextureName);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, snapshotTexture, snapshotTextureName);
-
-	delete snapshotTexture;
-	snapshotTexture = NULL;
-#endif
 	return true;
 }
 

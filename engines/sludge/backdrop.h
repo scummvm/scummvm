@@ -58,9 +58,6 @@ void drawBackDrop();
 void blankScreen(int x1, int y1, int x2, int y2);
 void darkScreen();
 void saveHSI(Common::WriteStream *stream);
-#if 0
-void saveCoreHSI(Common::WriteStream *stream, GLuint texture, int w, int h);
-#endif
 bool loadHSI(Common::SeekableReadStream *stream, int, int, bool);
 bool mixHSI(Common::SeekableReadStream *stream, int x = 0, int y = 0);
 void drawHorizontalLine(uint, uint, uint);
