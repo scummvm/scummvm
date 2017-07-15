@@ -60,7 +60,7 @@ enum TextEntryMarkers {
 #define VOICE_OFFSET 20
 
 struct TextEntry {
-	uint16 speechId;
+	int16 speechId;
 	Common::String text;
 };
 
