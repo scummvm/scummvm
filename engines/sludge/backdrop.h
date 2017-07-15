@@ -38,6 +38,12 @@ enum {
 extern uint winWidth, winHeight, sceneWidth, sceneHeight;
 extern int lightMapMode;
 
+
+/**
+ * parallax layers can scroll at different speeds
+ * to the background image, giving the illusion of
+ * depth to a scene as it moves.
+ */
 struct parallaxLayer {
 	Graphics::Surface surface;
 	int speedX, speedY;
@@ -77,7 +83,6 @@ extern Graphics::Surface lightMap;
 void killParallax();
 bool loadParallax(uint16 v, uint16 fracX, uint16 fracY);
 void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *fp);
-void reloadParallaxTextures();
 
 void nosnapshot();
 bool snapshot();

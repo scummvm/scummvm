@@ -206,7 +206,6 @@ void unfreeze(bool killImage) {
 
 	killParallax();
 	parallaxStuff = frozenStuff->parallaxStuff;
-	reloadParallaxTextures();
 
 	deleteAnim(mouseCursorAnim);
 	mouseCursorAnim = frozenStuff->mouseCursorAnim;

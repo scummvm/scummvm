@@ -389,46 +389,26 @@ inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
 void drawBackDrop() {
 	if (!backdropExists)
 		return;
-	renderSurface.copyRectToSurface(backdropSurface, 0, 0, Common::Rect(0, 0, backdropSurface.w, backdropSurface.h));
-#if 0
-	setPrimaryColor(1.0, 1.0, 1.0, 1.0);
 
-	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glEnable(GL_BLEND);
+	// TODO: apply lightmap shader
 
-	glUseProgram(shader.smartScaler);
-	GLuint uniform = glGetUniformLocation(shader.smartScaler, "useLightTexture");
-	if (uniform >= 0) glUniform1i(uniform, 0);
-
-	setPMVMatrix(shader.smartScaler);
-
-	if (gameSettings.antiAlias == 1) {
-		glUniform1i(glGetUniformLocation(shader.smartScaler, "antialias"), 1);
-	} else {
-		glUniform1i(glGetUniformLocation(shader.smartScaler, "antialias"), 0);
-	}
-
+	// draw parallaxStuff
 	if (parallaxStuff) {
+		// TODO: simulate image repeating effect
+		warning("Drawing parallaxStuff");
+#if 0
 		parallaxLayer *ps = parallaxStuff;
 
+		// go to the parallax at bottom
 		while (ps->next) ps = ps->next;
 
+		// draw parallax one by one
 		while (ps) {
-			ps->cameraX = sortOutPCamera(cameraX, ps->fractionX, (int)(sceneWidth - (float)winWidth / cameraZoom), (int)(ps->width - (float)winWidth / cameraZoom));
-			ps->cameraY = sortOutPCamera(cameraY, ps->fractionY, (int)(sceneHeight - (float)winHeight / cameraZoom), (int)(ps->height - (float)winHeight / cameraZoom));
-			glBindTexture(GL_TEXTURE_2D, ps->textureName);
+			ps->cameraX = sortOutPCamera(cameraX, ps->fractionX, (int)(sceneWidth - (float)winWidth / cameraZoom), (int)(ps->surface.w - (float)winWidth / cameraZoom));
+			ps->cameraY = sortOutPCamera(cameraY, ps->fractionY, (int)(sceneHeight - (float)winHeight / cameraZoom), (int)(ps->surface.h - (float)winHeight / cameraZoom));
 
-			float w = (ps->wrapS) ? sceneWidth : ps->width;
-			float h = (ps->wrapT) ? sceneHeight : ps->height;
-			float texw;
-			float texh;
-			if (!NPOT_textures) {
-				texw = (ps->wrapS) ? (float) sceneWidth / ps->width : (float) ps->width / getNextPOT(ps->width);
-				texh = (ps->wrapT) ? (float) sceneHeight / ps->height : (float) ps->height / getNextPOT(ps->height);
-			} else {
-				texw = (ps->wrapS) ? (float) sceneWidth / ps->width : 1.0;
-				texh = (ps->wrapT) ? (float) sceneHeight / ps->height : 1.0;
-			}
+			uint w = (ps->wrapS) ? sceneWidth : ps->surface.w;
+			uint h = (ps->wrapT) ? sceneHeight : ps->surface.h;
 
 			const GLfloat vertices[] = {
 				(GLfloat) - ps->cameraX, (GLfloat) - ps->cameraY, 0.1f,
@@ -447,30 +427,12 @@ void drawBackDrop() {
 
 			ps = ps->prev;
 		}
+#endif
 	}
 
-	glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-
-	const GLfloat backdropTexCoords[] = {
-		0.0f, 0.0f,
-		backdropTexW, 0.0f,
-		0.0f, backdropTexH,
-		backdropTexW, backdropTexH
-	};
-
-	const GLfloat vertices[] = {
-		(GLfloat) - cameraX, (GLfloat) - cameraY, 0.,
-		(GLfloat)sceneWidth - (GLfloat)cameraX, (GLfloat) - cameraY, 0.,
-		(GLfloat) - cameraX, (GLfloat)sceneHeight - (GLfloat)cameraY, 0.,
-		(GLfloat)sceneWidth - (GLfloat)cameraX, (GLfloat)sceneHeight - (GLfloat)cameraY, 0.
-	};
-
-	drawQuad(shader.smartScaler, vertices, 1, backdropTexCoords);
-
-	glDisable(GL_BLEND);
-
-	glUseProgram(0);
-#endif
+	// draw backdrop
+	Graphics::TransparentSurface tmp(backdropSurface, false);
+	tmp.blit(renderSurface, 0, 0);
 }
 
 bool loadLightMap(int v) {
@@ -578,22 +540,14 @@ bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 	}
 	nP->prev = NULL;
 
-#if 0
-	int picWidth;
-	int picHeight;
-
 	if (!ImgLoader::loadImage(bigDataFile, &nP->surface, 0))
 		return false;
-
-	if (!NPOT_textures) {
-		picWidth = getNextPOT(picWidth);
-		picHeight = getNextPOT(picHeight);
-	}
 
 	nP->fileNum = v;
 	nP->fractionX = fracX;
 	nP->fractionY = fracY;
 
+	// 65535 is the value of AUTOFIT constant in Sludge
 	if (fracX == 65535) {
 		nP->wrapS = false;
 		if (nP->surface.w < winWidth) {
@@ -614,27 +568,18 @@ bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 		nP->wrapT = true;
 	}
 
-	glGenTextures(1, &nP->textureName);
-	glBindTexture(GL_TEXTURE_2D, nP->textureName);
+	// TODO: reinterpret this part
+#if 0
 	if (nP->wrapS)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	else
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	if (nP->wrapT)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	else
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	if (gameSettings.antiAlias < 0) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	} else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	}
-
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nP->texture, nP->textureName);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #endif
+
 	finishAccess();
 	setResourceForFatal(-1);
 	return true;
