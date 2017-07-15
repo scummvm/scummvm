@@ -260,9 +260,12 @@ bool CStarControl::isSolved() const {
 	return _starField.isSolved();
 }
 
+bool CStarControl::isSkipped() const {
+	return _starField.isSkipped();
+}
+
 void CStarControl::forceSolved() {
-	while (!_starField.isSolved())
-		_starField.incMatches();
+	_starField.skipPuzzle();
 }
 
 bool CStarControl::canSetStarDestination() const {

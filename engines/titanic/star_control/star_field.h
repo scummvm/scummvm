@@ -120,6 +120,16 @@ public:
 	bool isSolved() const;
 
 	/**
+	 * Return true if the starfield puzzle was skipped
+	 */
+	bool isSkipped() const;
+
+	/**
+	 * Skips the starfield puzzle
+	 */
+	void skipPuzzle();
+
+	/**
 	 * Returns the number of markers placed in the starfield
 	 */
 	int getMarkerCount() const {

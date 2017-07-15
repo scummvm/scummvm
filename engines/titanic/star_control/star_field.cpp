@@ -131,11 +131,20 @@ bool CStarField::isCloseToMarker() const {
 }
 
 void CStarField::setSolved() {
-	_isSolved = _crosshairs._matchIndex == 2;
+	_isSolved = _crosshairs._matchIndex >= 2;
 }
 
 bool CStarField::isSolved() const {
 	return _isSolved;
+}
+
+bool CStarField::isSkipped() const {
+	return _crosshairs.isSkipped();
+}
+
+void CStarField::skipPuzzle() {
+	_crosshairs._matchIndex = 3;
+	setSolved();
 }
 
 void CStarField::fn1(CErrorCode *errorCode) {

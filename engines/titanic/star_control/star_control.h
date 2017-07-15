@@ -78,6 +78,11 @@ public:
 	bool isSolved() const;
 
 	/**
+	 * Return true if the starfield puzzle was skipped
+	 */
+	bool isSkipped() const;
+
+	/**
 	 * Forces the starfield to be solved
 	 */
 	void forceSolved();
