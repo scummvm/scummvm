@@ -167,14 +167,14 @@ Common::File *openAndVerify(const Common::String &filename, char extra1, char ex
 	debug(kSludgeDebugDataLoad, "minVersion %i", minVersion);
 	fileVersion = majVersion * 256 + minVersion;
 
-	char txtVer[120];
+	Common::String txtVer = "";
 
 	if (fileVersion > WHOLE_VERSION) {
-		sprintf(txtVer, ERROR_VERSION_TOO_LOW_2, majVersion, minVersion);
+		txtVer = Common::String::format(ERROR_VERSION_TOO_LOW_2, majVersion, minVersion);
 		fatal(ERROR_VERSION_TOO_LOW_1, txtVer);
 		return NULL;
 	} else if (fileVersion < MINIM_VERSION) {
-		sprintf(txtVer, ERROR_VERSION_TOO_HIGH_2, majVersion, minVersion);
+		txtVer = Common::String::format(ERROR_VERSION_TOO_HIGH_2, majVersion, minVersion);
 		fatal(ERROR_VERSION_TOO_HIGH_1, txtVer);
 		return NULL;
 	}

@@ -2507,7 +2507,7 @@ builtIn(setThumbnailSize) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (thumbWidth < 0 || thumbHeight < 0 || thumbWidth > (int)winWidth || thumbHeight > (int)winHeight) {
-		Common::String buff = thumbWidth + " x " + thumbHeight;
+		Common::String buff = Common::String::format("%i x %i", thumbWidth, thumbWidth);
 		fatal("Invalid thumbnail size", buff);
 		return BR_ERROR;
 	}
@@ -2624,8 +2624,7 @@ builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
 	if (whichFunc < NUM_FUNCS) {
 		if (paramNum[whichFunc] != -1) {
 			if (paramNum[whichFunc] != numParams) {
-				char buff[100];
-				sprintf(buff, "Built in function must have %i parameter%s", paramNum[whichFunc], (paramNum[whichFunc] == 1) ? "" : "s");
+				Common::String buff = Common::String::format("Built in function must have %i parameter%s", paramNum[whichFunc], (paramNum[whichFunc] == 1) ? "" : "s");
 				Common::String msg = buff;
 				fatal(msg);
 				return BR_ERROR;

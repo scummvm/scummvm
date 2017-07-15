@@ -115,8 +115,7 @@ bool setZBuffer(int num) {
 			return fatal("Extended Z-buffer format not supported in this version of the SLUDGE engine");
 	}
 	if (width != sceneWidth || height != sceneHeight) {
-		char tmp[256];
-		sprintf(tmp, "Z-w: %d Z-h:%d w: %d, h:%d", width, height, sceneWidth, sceneHeight);
+		Common::String tmp = Common::String::format("Z-w: %d Z-h:%d w: %d, h:%d", width, height, sceneWidth, sceneHeight);
 		return fatal("Z-buffer width and height don't match scene width and height", tmp);
 	}
 

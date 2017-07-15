@@ -307,11 +307,8 @@ Common::String getTextFromAnyVar(const variable &from) {
 		}
 
 		case SVT_INT: {
-			char *buff = new char[10];
-			sprintf(buff, "%i", from.varData.intValue);
-			Common::String res = buff;
-			delete []buff;
-			return res;
+			Common::String buff = Common::String::format("%i", from.varData.intValue);
+			return buff;
 		}
 
 		case SVT_FILE: {
