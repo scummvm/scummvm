@@ -280,9 +280,10 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 				ObjMap &objects = scr->getObjectMap();
 				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
 					reg_t addr = it->_value.getPos();
-					Object *obj = scr->scriptObjInit(addr, false);
-
-					if (pass == 2) {
+					if (pass == 1) {
+						scr->scriptObjInit(addr, false);
+					} else {
+						Object *obj = scr->getObject(addr.getOffset());
 						// When a game disposes a script with kDisposeScript,
 						// the script is marked as deleted and its lockers are
 						// set to 0, which makes the GC stop using the script

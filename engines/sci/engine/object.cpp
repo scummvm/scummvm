@@ -39,6 +39,14 @@ void Object::init(const Script &owner, reg_t obj_pos, bool initVariables) {
 	_baseObj = data;
 	_pos = obj_pos;
 
+	// Calling Object::init more than once will screw up _baseVars/_baseMethod
+	// by duplicating data. This could be turned into a soft error by warning
+	// instead and clearing arrays, but there does not currently seem to be any
+	// reason for an object to be initialized multiple times
+	if (_baseVars.size() || _baseMethod.size()) {
+		error("Attempt to reinitialize already-initialized object %04x:%04x in script %u", PRINT_REG(obj_pos), owner.getScriptNumber());
+	}
+
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		const SciSpan<const byte> header = buf.subspan(obj_pos.getOffset() - kOffsetHeaderSize);
 		_variables.resize(header.getUint16LEAt(kOffsetHeaderSelectorCounter));
