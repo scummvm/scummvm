@@ -146,7 +146,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 
 	switch (id) {
 	case 3:
-		if (getValue(4))
+		if (getValue(8))
 			addResponse(getDialogueId(260655));
 		else if (getValue(12))
 			addResponse(getDialogueId(260622));
