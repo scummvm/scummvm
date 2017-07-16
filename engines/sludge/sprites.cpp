@@ -296,7 +296,9 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 	return true;
 }
 
+// pasteSpriteToBackDrop uses the colour specified by the setPasteColour (or setPasteColor)
 void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal) {
+	//TODO: shader: useLightTexture
 	x1 -= single.xhot;
 	y1 -= single.yhot;
 	Graphics::TransparentSurface tmp(single.surface, false);
@@ -304,108 +306,15 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &
 			TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 }
 
+// burnSpriteToBackDrop adds text in the colour specified by setBurnColour
+// using the differing brightness levels of the font to achieve an anti-aliasing effect.
 void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal) {
-#if 0
-	float tx1 = (float)(single.tex_x - 0.5) / fontPal.tex_w[single.texNum];
-	float ty1 = 0.0;
-	float tx2 = (float)(single.tex_x + single.width + 0.5) / fontPal.tex_w[single.texNum];
-	float ty2 = (float)(single.height + 2) / fontPal.tex_h[single.texNum];
-
-	const GLfloat spriteTexCoords[] = {
-		tx1, ty1,
-		tx2, ty1,
-		tx1, ty2,
-		tx2, ty2
-	};
-
+	//TODO: shader: useLightTexture
 	x1 -= single.xhot;
 	y1 -= single.yhot - 1;
-
-	float bx1 = (float)x1 * backdropTexW / sceneWidth;
-	float by1 = (float)y1 * backdropTexH / sceneHeight;
-	float bx2 = (float)(x1 + single.width - 1) * backdropTexW / sceneWidth;
-	float by2 = (float)(y1 + single.height - 1) * backdropTexH / sceneHeight;
-
-	const GLfloat backdropTexCoords[] = {
-		bx1, by1,
-		bx2, by1,
-		bx1, by2,
-		bx2, by2
-	};
-
-	const GLfloat backdropTexCoords2[] = {
-		0.0f, 0.0f,
-		backdropTexW, 0.0f,
-		0.0f, backdropTexH,
-		backdropTexW, backdropTexH
-	};
-
-	int diffX = single.width + 1;
-	int diffY = single.height + 2;
-
-	if (x1 < 0) diffX += x1;
-	if (y1 < 0) diffY += y1;
-	if (x1 + diffX > sceneWidth) diffX = sceneWidth - x1;
-	if (y1 + diffY > sceneHeight) diffY = sceneHeight - y1;
-	if (diffX < 0) return;
-	if (diffY < 0) return;
-
-	setPixelCoords(true);
-	setPrimaryColor(currentBurnR / 255.f, currentBurnG / 255.f, currentBurnB / 255.f, 1.0f);
-
-	GLfloat xoffset = 0.0f;
-	while (xoffset < diffX) {
-		int w = (diffX - xoffset < viewportWidth) ? diffX - xoffset : viewportWidth;
-
-		GLfloat yoffset = 0.0f;
-		while (yoffset < diffY) {
-			int h = (diffY - yoffset < viewportHeight) ? diffY - yoffset : viewportHeight;
-
-			const GLfloat backdropVertices[] = {
-				-x1 - xoffset, -y1 + yoffset, 0.0f,
-				sceneWidth - 1.0f - x1 - xoffset, -y1 + yoffset, 0.0f,
-				-x1 - xoffset, sceneHeight - 1.0f - y1 + yoffset, 0.0f,
-				sceneWidth - 1.0f - x1 - xoffset, sceneHeight - 1.0f - y1 + yoffset, 0.0f
-			};
-
-			const GLfloat spriteVertices[] = {
-				-xoffset, -yoffset, 0.0f,
-				single.width - 1 - xoffset, -yoffset, 0.0f,
-				-xoffset, single.height - 1 - yoffset, 0.0f,
-				single.width - 1 - xoffset, single.height - 1 - yoffset, 0.0f
-			};
-
-			glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-			glUseProgram(shader.texture);
-			setPMVMatrix(shader.texture);
-
-			drawQuad(shader.texture, backdropVertices, 1, backdropTexCoords2);
-
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-			glActiveTexture(GL_TEXTURE0);
-
-			glUseProgram(shader.paste);
-			GLint uniform = glGetUniformLocation(shader.paste, "useLightTexture");
-			if (uniform >= 0) glUniform1i(uniform, 0); // No lighting
-
-			setPMVMatrix(shader.paste);
-
-			glBindTexture(GL_TEXTURE_2D, fontPal.burnTex_names[single.texNum]);
-
-//FIXME: Test this some more. Also pasting the backdrop again is not strictly necessary but allows using the paste shader.
-			drawQuad(shader.paste, spriteVertices, 3, spriteTexCoords, NULL, backdropTexCoords);
-			glUseProgram(0);
-
-			// Copy Our ViewPort To The Texture
-			copyTexSubImage2D(GL_TEXTURE_2D, 0, (x1 < 0) ? xoffset : x1 + xoffset, (y1 < 0) ? yoffset : y1 + yoffset, viewportOffsetX, viewportOffsetY, w, h, backdropTextureName);
-
-			yoffset += viewportHeight;
-		}
-		xoffset += viewportWidth;
-	}
-	setPixelCoords(false);
-#endif
+	Graphics::TransparentSurface tmp(single.surface, false);
+	tmp.blit(backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
+			TS_RGB(currentBurnR, currentBurnG, currentBurnB));
 }
 
 void fontSprite(bool flip, int x, int y, sprite &single, const spritePalette &fontPal) {
