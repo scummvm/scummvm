@@ -189,7 +189,7 @@ bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 bool CLift::MovieEndMsg(CMovieEndMsg *msg) {
 	switch (msg->_endFrame) {
 	case 108:
-		setGlobalSoundVolume(VOL_MUTE, 1, 2);
+		setGlobalSoundVolume(VOL_MUTE, 1, 0);
 		setGlobalSoundVolume(VOL_QUIET, 1, 1);
 		break;
 
@@ -199,7 +199,7 @@ bool CLift::MovieEndMsg(CMovieEndMsg *msg) {
 		break;
 
 	case 407:
-		setGlobalSoundVolume(VOL_MUTE, 1, 0);
+		setGlobalSoundVolume(VOL_MUTE, 1, 2);
 		setGlobalSoundVolume(VOL_QUIET, 1, 1);
 		break;
 
