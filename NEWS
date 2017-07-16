@@ -15,6 +15,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  MADS:
    - Fixed a bug that caused a crash after starting Rex Nebular and the Cosmic Gender Bender.
 
+ Tinsel:
+   - Fixed some Discworld 2 text/voice not displaying & playing all the way through
+
  TsAGE:
    - Fixed recently introduced bug preventing animations in Return to Ringworld from playing.
 
