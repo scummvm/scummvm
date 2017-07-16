@@ -406,6 +406,15 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 	case SCI_EVENT_KEYBOARD:
 		keyPress = readSelectorValue(_segMan, eventObject, SELECTOR(message));
 		keyModifier = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
+
+		// ASCII control characters are put in the `message` field when
+		// Ctrl+<key> is pressed, but this kMenuSelect implementation matches
+		// on modifier + printable character, so we must convert the control
+		// characters to their lower-case latin printed equivalents
+		if ((keyModifier & SCI_KEYMOD_NON_STICKY) == SCI_KEYMOD_CTRL && keyPress > 0 && keyPress < 27) {
+			keyPress += 96;
+		}
+
 		// If tab got pressed, handle it here as if it was Ctrl-I - at least
 		// sci0 also did it that way
 		if (keyPress == SCI_KEY_TAB) {
