@@ -51,18 +51,23 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ 0, 0 }
 };
 
-static ADGameDescription s_fallbackDesc = {
-	"",
-	"",
-	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-	Common::UNK_LANG,
-	Common::kPlatformWindows,
-	ADGF_NO_FLAGS,
-	GUIO0()
-};
-static char s_fallbackFileNameBuffer[51];
-
 #include "sludge/detection_tables.h"
+
+static Sludge::SludgeGameDescription s_fallbackDesc =
+{
+	{
+		"",
+		"",
+		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+		Common::UNK_LANG,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	0
+};
+
+static char s_fallbackFileNameBuffer[51];
 
 class SludgeMetaEngine : public AdvancedMetaEngine {
 public:
@@ -93,12 +98,13 @@ public:
 
 const ADGameDescription *SludgeMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// reset fallback description
-	s_fallbackDesc.gameId = "sludge";
-	s_fallbackDesc.extra = "";
-	s_fallbackDesc.language = Common::EN_ANY;
-	s_fallbackDesc.flags = ADGF_UNSTABLE;
-	s_fallbackDesc.platform = Common::kPlatformUnknown;
-	s_fallbackDesc.guiOptions = GUIO0();
+	s_fallbackDesc.desc.gameId = "sludge";
+	s_fallbackDesc.desc.extra = "";
+	s_fallbackDesc.desc.language = Common::EN_ANY;
+	s_fallbackDesc.desc.flags = ADGF_UNSTABLE;
+	s_fallbackDesc.desc.platform = Common::kPlatformUnknown;
+	s_fallbackDesc.desc.guiOptions = GUIO0();
+	s_fallbackDesc.languageID = 0;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory())
@@ -136,9 +142,9 @@ const ADGameDescription *SludgeMetaEngine::fallbackDetect(const FileMap &allFile
 
 		strncpy(s_fallbackFileNameBuffer, fileName.c_str(), 50);
 		s_fallbackFileNameBuffer[50] = '\0';
-		s_fallbackDesc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
+		s_fallbackDesc.desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 
-		return &s_fallbackDesc;;
+		return (const ADGameDescription *)&s_fallbackDesc;;
 	}
 	return 0;
 }
