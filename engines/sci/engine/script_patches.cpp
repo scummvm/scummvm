@@ -5811,9 +5811,111 @@ static const uint16 torinSeraglioBoogleFlagPatch[] = {
 	PATCH_END
 };
 
+// At least some French PointSoft releases of Torin's Passage managed to get
+// released with script 20700 from the official Sierra TORINPAT patch and
+// *unpatched* heap 20700. Worse, the selector table is not the same as the one
+// in the US release, so it is not possible to just apply TORINPAT to the game
+// (it will just explode later when mismatched selectors are used). So, here we
+// are hot-patching all of the wrong offsets in the original heap to match the
+// patched script.
+// Applies to at least: French PointSoft CD release
+static const uint16 torinPointSoft20700HeapSignature[] = {
+	0xe1, 0x15, 0x23, 0x16, // end of patched 20700.SCR (so we don't
+							// accidentally patch the heap when it is correctly
+							// matched with an unpatched script)
+	SIG_ADDTOOFFSET(1),     // padding byte added by Script::load
+	SIG_ADDTOOFFSET(0x1d2), // first bad offset in the heap is at 0x1d2
+	SIG_MAGICDWORD,
+	SIG_UINT16(0xd8),
+	SIG_UINT16(0xd8),
+	SIG_ADDTOOFFSET(0x200 - 0x1d2 - 4), // second bad offset, etc.
+	SIG_UINT16(0xde),
+	SIG_UINT16(0xde),
+	SIG_ADDTOOFFSET(0x280 - 0x200 - 4),
+	SIG_UINT16(0xe0),
+	SIG_UINT16(0xe0),
+	SIG_ADDTOOFFSET(0x300 - 0x280 - 4),
+	SIG_UINT16(0xe2),
+	SIG_UINT16(0xe2),
+	SIG_ADDTOOFFSET(0x374 - 0x300 - 4),
+	SIG_UINT16(0xe4),
+	SIG_UINT16(0xe4),
+	SIG_ADDTOOFFSET(0x3ce - 0x374 - 4),
+	SIG_UINT16(0xee),
+	SIG_UINT16(0xee),
+	SIG_ADDTOOFFSET(0x44e - 0x3ce - 4),
+	SIG_UINT16(0xf0),
+	SIG_UINT16(0xf0),
+	SIG_ADDTOOFFSET(0x482 - 0x44e - 4),
+	SIG_UINT16(0xf6),
+	SIG_UINT16(0xf6),
+	SIG_ADDTOOFFSET(0x4b6 - 0x482 - 4),
+	SIG_UINT16(0xfc),
+	SIG_UINT16(0xfc),
+	SIG_ADDTOOFFSET(0x4ea - 0x4b6 - 4),
+	SIG_UINT16(0x106),
+	SIG_UINT16(0x106),
+	SIG_ADDTOOFFSET(0x51e - 0x4ea - 4),
+	SIG_UINT16(0x110),
+	SIG_UINT16(0x110),
+	SIG_ADDTOOFFSET(0x55c - 0x51e - 4),
+	SIG_UINT16(0x116),
+	SIG_UINT16(0x116),
+	SIG_ADDTOOFFSET(0x5a2 - 0x55c - 4),
+	SIG_UINT16(0x118),
+	SIG_UINT16(0x118),
+	SIG_END
+};
+
+static const uint16 torinPointSoft20700HeapPatch[] = {
+	PATCH_ADDTOOFFSET(4),      // end of patched 20700.SCR
+	PATCH_ADDTOOFFSET(1),      // padding byte
+	PATCH_ADDTOOFFSET(0x1d2),  // first bad offset
+	PATCH_UINT16(0xdc),
+	PATCH_UINT16(0xdc),
+	PATCH_ADDTOOFFSET(0x200 - 0x1d2 - 4), // second bad offset, etc.
+	PATCH_UINT16(0xe6),
+	PATCH_UINT16(0xe6),
+	PATCH_ADDTOOFFSET(0x280 - 0x200 - 4),
+	PATCH_UINT16(0xe8),
+	PATCH_UINT16(0xe8),
+	PATCH_ADDTOOFFSET(0x300 - 0x280 - 4),
+	PATCH_UINT16(0xea),
+	PATCH_UINT16(0xea),
+	PATCH_ADDTOOFFSET(0x374 - 0x300 - 4),
+	PATCH_UINT16(0xec),
+	PATCH_UINT16(0xec),
+	PATCH_ADDTOOFFSET(0x3ce - 0x374 - 4),
+	PATCH_UINT16(0xf6),
+	PATCH_UINT16(0xf6),
+	PATCH_ADDTOOFFSET(0x44e - 0x3ce - 4),
+	PATCH_UINT16(0xf8),
+	PATCH_UINT16(0xf8),
+	PATCH_ADDTOOFFSET(0x482 - 0x44e - 4),
+	PATCH_UINT16(0xfe),
+	PATCH_UINT16(0xfe),
+	PATCH_ADDTOOFFSET(0x4b6 - 0x482 - 4),
+	PATCH_UINT16(0x104),
+	PATCH_UINT16(0x104),
+	PATCH_ADDTOOFFSET(0x4ea - 0x4b6 - 4),
+	PATCH_UINT16(0x10e),
+	PATCH_UINT16(0x10e),
+	PATCH_ADDTOOFFSET(0x51e - 0x4ea - 4),
+	PATCH_UINT16(0x118),
+	PATCH_UINT16(0x118),
+	PATCH_ADDTOOFFSET(0x55c - 0x51e - 4),
+	PATCH_UINT16(0x11e),
+	PATCH_UINT16(0x11e),
+	PATCH_ADDTOOFFSET(0x5a2 - 0x55c - 4),
+	PATCH_UINT16(0x120),
+	PATCH_UINT16(0x120),
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
 	{  true, 20600, "fix wrong boogle bag flag on fast-forward",   1, torinSeraglioBoogleFlagSignature,  torinSeraglioBoogleFlagPatch },
+	{  true, 20700, "fix bad heap in PointSoft release",           1, torinPointSoft20700HeapSignature,  torinPointSoft20700HeapPatch },
 	{  true, 64000, "disable volume reset on startup 1/2",         1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
 	{  true, 64000, "disable volume reset on startup 2/2",         1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
 	{  true, 64866, "increase number of save games",               1, torinNumSavesSignature,            torinNumSavesPatch },
