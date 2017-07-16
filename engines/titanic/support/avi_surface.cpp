@@ -477,15 +477,15 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	if (_currentFrame != ((int)startFrame - 1) || startFrame == 0) {
 		// Start video playback at the desired starting frame
 		setFrame(startFrame);
-		isDifferent = _movieFrameSurface[0]->w != r.width() ||
-			_movieFrameSurface[0]->h != r.height();
-
 		startAtFrame(startFrame);
 		_currentFrame = startFrame;
 	} else {
 		// Already in position, so pick up where we left off
 		_decoder->start();
 	}
+
+	isDifferent = _movieFrameSurface[0]->w != r.width() ||
+		_movieFrameSurface[0]->h != r.height();
 
 	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
 		if (isNextFrame()) {
