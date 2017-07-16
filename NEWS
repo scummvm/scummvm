@@ -63,6 +63,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      party room with the large golden head inside the museum (room 350).
      This bug is also present, when using the original interpreter.
 
+ Tinsel:
+   - Fixed some Discworld 2 text/voice not displaying & playing all the way through
+
  TsAGE:
    - Fixed recently introduced bug preventing animations in Return to Ringworld from playing.
 
