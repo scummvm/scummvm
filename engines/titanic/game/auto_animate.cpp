@@ -32,7 +32,7 @@ END_MESSAGE_MAP()
 void CAutoAnimate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_enabled, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_redo, indent);
 	file->writeNumberLine(_repeat, indent);
 	CBackground::save(file, indent);
 }
@@ -40,7 +40,7 @@ void CAutoAnimate::save(SimpleFile *file, int indent) {
 void CAutoAnimate::load(SimpleFile *file) {
 	file->readNumber();
 	_enabled = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_redo = file->readNumber();
 	_repeat = file->readNumber();
 	CBackground::load(file);
 }
@@ -53,7 +53,7 @@ bool CAutoAnimate::EnterViewMsg(CEnterViewMsg *msg) {
 		else
 			playMovie(flags);
 
-		if (!_fieldE4)
+		if (!_redo)
 			_enabled = false;
 	}
 
