@@ -33,6 +33,10 @@
 
 namespace Titanic {
 
+enum VolumeMode {
+	VOL_NORMAL = -1, VOL_QUIET = -2, VOL_VERY_QUIET = -3, VOL_MUTE = -4
+};
+
 /**
  * Abstract interface class for a sound manager
  */
@@ -222,7 +226,7 @@ public:
 	/**
 	 * Gets the volume for a given mode? value
 	 */
-	uint getModeVolume(int mode);
+	uint getModeVolume(VolumeMode mode);
 };
 
 class QSoundManagerSound : public ListItem {

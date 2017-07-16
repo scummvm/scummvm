@@ -35,10 +35,10 @@ CSeasonalMusicPlayer::CSeasonalMusicPlayer() : CAutoMusicPlayerBase() {
 	_isSummer = true;
 	_isAutumn = false;
 	_isWinter = false;
-	_springMode = -4;
-	_summerMode = -2;
-	_autumnMode = -4;
-	_winterMode = -4;
+	_springMode = VOL_MUTE;
+	_summerMode = VOL_QUIET;
+	_autumnMode = VOL_MUTE;
+	_winterMode = VOL_MUTE;
 }
 
 void CSeasonalMusicPlayer::save(SimpleFile *file, int indent) {
@@ -61,10 +61,10 @@ void CSeasonalMusicPlayer::load(SimpleFile *file) {
 	_isSummer = file->readNumber();
 	_isAutumn = file->readNumber();
 	_isWinter = file->readNumber();
-	_springMode = file->readNumber();
-	_summerMode = file->readNumber();
-	_autumnMode = file->readNumber();
-	_winterMode = file->readNumber();
+	_springMode = (VolumeMode)file->readNumber();
+	_summerMode = (VolumeMode)file->readNumber();
+	_autumnMode = (VolumeMode)file->readNumber();
+	_winterMode = (VolumeMode)file->readNumber();
 
 	CAutoMusicPlayerBase::load(file);
 }
@@ -75,10 +75,10 @@ bool CSeasonalMusicPlayer::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 	_isAutumn = msg->_season == "autumn";
 	_isWinter = msg->_season == "winter";
 
-	_springMode = _isSpring ? -2 : -4;
-	_summerMode = _isSummer ? -2 : -4;
-	_autumnMode = _isAutumn ? -2 : -4;
-	_winterMode = _isWinter ? -2 : -4;
+	_springMode = _isSpring ? VOL_QUIET : VOL_MUTE;
+	_summerMode = _isSummer ? VOL_QUIET : VOL_MUTE;
+	_autumnMode = _isAutumn ? VOL_QUIET : VOL_MUTE;
+	_winterMode = _isWinter ? VOL_QUIET : VOL_MUTE;
 
 	CChangeMusicMsg changeMsg;
 	changeMsg._filename = msg->_season;
@@ -103,17 +103,17 @@ bool CSeasonalMusicPlayer::ChangeMusicMsg(CChangeMusicMsg *msg) {
 
 	if (!msg->_filename.empty()) {
 		if (_isSummer) {
-			setGlobalSoundVolume(-4, 2, 0);
-			setGlobalSoundVolume(-2, 2, 1);
+			setGlobalSoundVolume(VOL_MUTE, 2, 0);
+			setGlobalSoundVolume(VOL_QUIET, 2, 1);
 		} else if (_isAutumn) {
-			setGlobalSoundVolume(-4, 2, 1);
-			setGlobalSoundVolume(-2, 2, 2);
+			setGlobalSoundVolume(VOL_MUTE, 2, 1);
+			setGlobalSoundVolume(VOL_QUIET, 2, 2);
 		} else if (_isWinter) {
-			setGlobalSoundVolume(-4, 2, 2);
-			setGlobalSoundVolume(-2, 2, 3);
+			setGlobalSoundVolume(VOL_MUTE, 2, 2);
+			setGlobalSoundVolume(VOL_QUIET, 2, 3);
 		} else if (_isSpring) {
-			setGlobalSoundVolume(-4, 2, 3);
-			setGlobalSoundVolume(-2, 2, 0);
+			setGlobalSoundVolume(VOL_MUTE, 2, 3);
+			setGlobalSoundVolume(VOL_QUIET, 2, 0);
 		}
 	}
 

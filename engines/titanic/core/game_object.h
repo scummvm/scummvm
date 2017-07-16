@@ -27,6 +27,7 @@
 #include "common/stream.h"
 #include "titanic/core/named_item.h"
 #include "titanic/sound/proximity.h"
+#include "titanic/sound/sound_manager.h"
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
 #include "titanic/support/movie_range_info.h"
@@ -261,7 +262,7 @@ protected:
 	 * @param handleIndex	Slot 0 to 3 in the shared sound handle list to store the sound's handle
 	 * @param soundType		Specifies whether the sound is a sound effect or music
 	 */
-	void playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated,
+	void playGlobalSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
 		int handleIndex, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 
 	/**
@@ -277,7 +278,7 @@ protected:
 	 * @param seconds		Number of seconds to transition to new volume
 	 * @param handleIndex	Index of global sound to update. If -1, all global sounds are updated
 	 */
-	void setGlobalSoundVolume(int mode, uint seconds, int handleIndex);
+	void setGlobalSoundVolume(VolumeMode mode, uint seconds, int handleIndex);
 
 	/**
 	 * Stops sound channel 3 or 0
