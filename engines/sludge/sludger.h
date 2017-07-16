@@ -73,9 +73,6 @@ struct inputType {
 	int mouseX, mouseY, keyPressed;
 };
 
-extern byte *gameIcon;
-extern int iconW, iconH;
-
 bool initSludge(const Common::String &);
 void displayBase();
 void sludgeDisplay();

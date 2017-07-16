@@ -49,6 +49,7 @@
 #include "sludge/sludge.h"
 #include "sludge/specialsettings.h"
 #include "sludge/version.h"
+#include "sludge/imgloader.h"
 
 namespace Sludge {
 
@@ -66,12 +67,6 @@ int numResourceNames = 0;
 Common::String *allResourceNames = NULL;
 int selectedLanguage = 0;
 int languageNum = -1;
-
-byte *gameIcon = NULL;
-int iconW = 0, iconH = 0;
-
-byte *gameLogo = NULL;
-int logoW = 0, logoH = 0;
 
 int gameVersion;
 int specialSettings;
@@ -264,221 +259,21 @@ bool initSludge(const Common::String &filename) {
 		// There is an icon - read it!
 		debug(kSludgeDebugDataLoad, "There is an icon - read it!");
 
-#if 0
-		int n;
-		long file_pointer = ftell(fp);
+		// read game icon
+		Graphics::Surface gameIcon;
+		if (!ImgLoader::loadImage(fp, &gameIcon, false))
+			return false;
 
-		png_structp png_ptr;
-		png_infop info_ptr, end_info;
-
-		int fileIsPNG = true;
-
-		// Is this a PNG file?
-
-		char tmp[10];
-		bytes_read = fread(tmp, 1, 8, fp);
-		if (bytes_read != 8 && ferror(fp)) {
-			debugOut("Reading error in initSludge.\n");
-		}
-		if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
-			// No, it's old-school HSI
-			fileIsPNG = false;
-			fseek(fp, file_pointer, SEEK_SET);
-
-			iconW = fp->readUint16BE();
-			iconH = fp->readUint16BE();
-		} else {
-			// Read the PNG header
-
-			png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-			if (!png_ptr) {
-				return false;
-			}
-
-			info_ptr = png_create_info_struct(png_ptr);
-			if (!info_ptr) {
-				png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-				return false;
-			}
-
-			end_info = png_create_info_struct(png_ptr);
-			if (!end_info) {
-				png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-				return false;
-			}
-			png_init_io(png_ptr, fp);       // Tell libpng which file to read
-			png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
-
-			png_read_info(png_ptr, info_ptr);
-
-			png_uint_32 width, height;
-			int bit_depth, color_type, interlace_type, compression_type, filter_method;
-			png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-			iconW = width;
-			iconH = height;
-
-			if (bit_depth < 8) png_set_packing(png_ptr);
-			png_set_expand(png_ptr);
-			if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) png_set_gray_to_rgb(png_ptr);
-			if (bit_depth == 16) png_set_strip_16(png_ptr);
-
-			png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
-
-			png_read_update_info(png_ptr, info_ptr);
-			png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-		}
-
-		gameIcon = new byte [iconW * iconH * 4];
-		if (!gameIcon) return fatal("Can't reserve memory for game icon.");
-
-		int32 transCol = 63519;
-		Uint8 *p = (Uint8 *) gameIcon;
-
-		if (fileIsPNG) {
-			byte *row_pointers[iconH];
-			for (int i = 0; i < iconH; i++)
-			row_pointers[i] = p + 4 * i * iconW;
-
-			png_read_image(png_ptr, (png_byte **) row_pointers);
-			png_read_end(png_ptr, NULL);
-			png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-		} else {
-
-			for (int t2 = 0; t2 < iconH; t2 ++) {
-				int t1 = 0;
-				while (t1 < iconW) {
-					uint16 c = (uint16) fp->readUint16BE();
-					if (c & 32) {
-						n = fgetc(fp) + 1;
-						c -= 32;
-					} else {
-						n = 1;
-					}
-					while (n --) {
-						*p++ = (Uint8) redValue(c);
-						*p++ = (Uint8) greenValue(c);
-						*p++ = (Uint8) blueValue(c);
-						*p++ = (Uint8)(c == transCol) ? 0 : 255;
-
-						t1++;
-					}
-				}
-			}
-		}
-#endif
 	}
 
 	if (customIconLogo & 2) {
 		// There is an logo - read it!
 		debug(kSludgeDebugDataLoad, "There is an logo - read it!");
-#if 0
-		int n;
-		long file_pointer = ftell(fp);
 
-		png_structp png_ptr;
-		png_infop info_ptr, end_info;
-
-		int fileIsPNG = true;
-
-		// Is this a PNG file?
-
-		char tmp[10];
-		bytes_read = fread(tmp, 1, 8, fp);
-		if (bytes_read != 8 && ferror(fp)) {
-			debugOut("Reading error in initSludge.");
-		}
-		if (png_sig_cmp((png_byte *) tmp, 0, 8)) {
-			// No, it's old-school HSI
-			fileIsPNG = false;
-			fseek(fp, file_pointer, SEEK_SET);
-
-			logoW = fp->readUint16BE();
-			logoH = fp->readUint16BE();
-		} else {
-			// Read the PNG header
-
-			png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-			if (!png_ptr) {
-				return false;
-			}
-
-			info_ptr = png_create_info_struct(png_ptr);
-			if (!info_ptr) {
-				png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-				return false;
-			}
-
-			end_info = png_create_info_struct(png_ptr);
-			if (!end_info) {
-				png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-				return false;
-			}
-			png_init_io(png_ptr, fp);       // Tell libpng which file to read
-			png_set_sig_bytes(png_ptr, 8);// 8 bytes already read
-
-			png_read_info(png_ptr, info_ptr);
-
-			png_uint_32 width, height;
-			int bit_depth, color_type, interlace_type, compression_type, filter_method;
-			png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-			logoW = width;
-			logoH = height;
-
-			if (bit_depth < 8) png_set_packing(png_ptr);
-			png_set_expand(png_ptr);
-			if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) png_set_gray_to_rgb(png_ptr);
-			if (bit_depth == 16) png_set_strip_16(png_ptr);
-
-			png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
-
-			png_read_update_info(png_ptr, info_ptr);
-			png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, &compression_type, &filter_method);
-
-		}
-
-		if ((logoW != 310) || (logoH != 88)) return fatal("Game logo have wrong dimensions. (Should be 310x88)");
-
-		gameLogo = new byte [logoW * logoH * 4];
-		if (!gameLogo) return fatal("Can't reserve memory for game logo.");
-
-		// int32 transCol = 63519;
-		Uint8 *p = (Uint8 *) gameLogo;
-
-		if (fileIsPNG) {
-			byte *row_pointers[logoH];
-			for (int i = 0; i < logoH; i++)
-			row_pointers[i] = p + 4 * i * logoW;
-
-			png_read_image(png_ptr, (png_byte **) row_pointers);
-			png_read_end(png_ptr, NULL);
-			png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-		} else {
-
-			for (int t2 = 0; t2 < logoH; t2 ++) {
-				int t1 = 0;
-				while (t1 < logoW) {
-					uint16 c = (uint16) fp->readUint16BE();
-					if (c & 32) {
-						n = fgetc(fp) + 1;
-						c -= 32;
-					} else {
-						n = 1;
-					}
-					while (n --) {
-						*p++ = (Uint8) redValue(c);
-						*p++ = (Uint8) greenValue(c);
-						*p++ = (Uint8) blueValue(c);
-						*p++ = (Uint8) /*(c == transCol) ? 0 :*/255;
-
-						t1++;
-					}
-				}
-			}
-		}
-#endif
+		// read game logo
+		Graphics::Surface gameLogo;
+		if (!ImgLoader::loadImage(fp, &gameLogo))
+			return false;
 	}
 
 	numGlobals = fp->readUint16BE();
