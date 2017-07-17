@@ -38,7 +38,7 @@ END_MESSAGE_MAP()
 CGondolierMixer::CGondolierMixer() : CGondolierBase(),
 	_soundName1("c#0.wav"), _soundName2("c#1.wav"),
 	_soundHandle1(-1), _soundHandle2(-1), _fieldC4(0), _fieldC8(0),
-	_fieldE4(false) {
+	_soundActive(false) {
 }
 
 void CGondolierMixer::save(SimpleFile *file, int indent) {
@@ -49,7 +49,7 @@ void CGondolierMixer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_fieldC8, indent);
 	file->writeQuotedLine(_soundName1, indent);
 	file->writeQuotedLine(_soundName2, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_soundActive, indent);
 
 	CGondolierBase::save(file, indent);
 }
@@ -62,7 +62,7 @@ void CGondolierMixer::load(SimpleFile *file) {
 	_fieldC8 = file->readNumber();
 	_soundName1 = file->readString();
 	_soundName2 = file->readString();
-	_fieldE4 = file->readNumber();
+	_soundActive = file->readNumber();
 
 	CGondolierBase::load(file);
 }
@@ -90,13 +90,13 @@ bool CGondolierMixer::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 bool CGondolierMixer::TurnOn(CTurnOn *msg) {
 	if (!_puzzleSolved) {
 		if (_soundHandle1 == -1) {
-			_soundHandle1 = playSound(_soundName1, _volume1 * _v4 / 10, 0, true);
-			_fieldE4 = true;
+			_soundHandle1 = playSound(_soundName1, _volume1 * _slider1 / 10, 0, true);
+			_soundActive = true;
 		}
 
 		if (_soundHandle2 == -1) {
-			_soundHandle2 = playSound(_soundName1, _volume2 * _v7 / 10, 0, true);
-			_fieldE4 = true;
+			_soundHandle2 = playSound(_soundName1, _volume2 * _slider2 / 10, 0, true);
+			_soundActive = true;
 		}
 	}
 
@@ -109,7 +109,7 @@ bool CGondolierMixer::TurnOff(CTurnOff *msg) {
 			stopSound(_soundHandle1, 2);
 
 		_soundHandle1 = -1;
-		_fieldE4 = false;
+		_soundActive = false;
 	}
 
 	if (_soundHandle2 != -1) {
@@ -117,7 +117,7 @@ bool CGondolierMixer::TurnOff(CTurnOff *msg) {
 			stopSound(_soundHandle2, 2);
 
 		_soundHandle2 = -1;
-		_fieldE4 = false;
+		_soundActive = false;
 	}
 
 	return true;
@@ -128,9 +128,9 @@ bool CGondolierMixer::SetVolumeMsg(CSetVolumeMsg *msg) {
 		_volume1 = _volume2 = msg->_volume;
 
 		if (_soundHandle1 != -1 && isSoundActive(_soundHandle1))
-			setSoundVolume(_soundHandle1, msg->_volume * _v4 / 10, 2);
+			setSoundVolume(_soundHandle1, msg->_volume * _slider1 / 10, 2);
 		if (_soundHandle2 != -1 && isSoundActive(_soundHandle2))
-			setSoundVolume(_soundHandle2, msg->_volume * _v7 / 10, 2);
+			setSoundVolume(_soundHandle2, msg->_volume * _slider2 / 10, 2);
 	}
 
 	return true;
@@ -139,28 +139,28 @@ bool CGondolierMixer::SetVolumeMsg(CSetVolumeMsg *msg) {
 bool CGondolierMixer::SignalObject(CSignalObject *msg) {
 	if (!_puzzleSolved) {
 		if (msg->_strValue == "Fly") {
-			_v4 = CLIP(msg->_numValue, 0, 10);
+			_slider1 = CLIP(msg->_numValue, 0, 10);
 
 			if (!_leftSliderHooked) {
-				_v7 = 10 - _v4;
+				_slider2 = 10 - _slider1;
 				CStatusChangeMsg statusMsg;
-				statusMsg._newStatus = _v7;
+				statusMsg._newStatus = _slider2;
 				statusMsg.execute("GondolierRightLever");
 			}
 		}
 
 		if (msg->_strValue == "Tos") {
-			_v7 = CLIP(msg->_numValue, 0, 10);
+			_slider2 = CLIP(msg->_numValue, 0, 10);
 
 			if (!_rightSliderHooked) {
-				_v4 = 10 - _v7;
+				_slider1 = 10 - _slider2;
 				CStatusChangeMsg statusMsg;
-				statusMsg._newStatus = _v4;
+				statusMsg._newStatus = _slider1;
 				statusMsg.execute("GondolierLeftLever");
 			}
 		}
 
-		if (!_v4 && !_v7 && _rightSliderHooked && _leftSliderHooked) {
+		if (!_slider1 && !_slider2 && _rightSliderHooked && _leftSliderHooked) {
 			_puzzleSolved = true;
 			CStatusChangeMsg statusMsg;
 			statusMsg._newStatus = 1;
@@ -181,8 +181,8 @@ bool CGondolierMixer::SignalObject(CSignalObject *msg) {
 }
 
 bool CGondolierMixer::LoadSuccessMsg(CLoadSuccessMsg *msg) {
-	if (_fieldE4) {
-		_fieldE4 = 0;
+	if (_soundActive) {
+		_soundActive = 0;
 		_soundHandle1 = _soundHandle2 = -1;
 		CTurnOn onMsg;
 		onMsg.execute(this);
