@@ -604,12 +604,13 @@ void GuestAdditions::syncMessageTypeFromScummVMUsingDefaultStrategy() const {
 		_state->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, value);
 	}
 
-	if (g_sci->getGameId() == GID_GK1) {
-		if (value == kMessageTypeSubtitles) {
-			_state->variables[VAR_GLOBAL][kGlobalVarGK1NarratorMode] = NULL_REG;
-		} else if (value == kMessageTypeSpeech) {
-			_state->variables[VAR_GLOBAL][kGlobalVarGK1NarratorMode] = TRUE_REG;
-		}
+	if (g_sci->getGameId() == GID_GK1 && value == kMessageTypeSubtitles) {
+		// The narrator speech needs to be forced off if speech has been
+		// disabled in ScummVM, but otherwise the narrator toggle should just
+		// be allowed to persist to whatever the user chose previously, since
+		// it is controlled independently of other speech in the game and there
+		// is no equivalent option in the ScummVM GUI
+		_state->variables[VAR_GLOBAL][kGlobalVarGK1NarratorMode] = NULL_REG;
 	}
 }
 
