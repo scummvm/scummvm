@@ -105,6 +105,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
     , _gameRunning(true)
     , _screenWidth(320)
     , _screenHeight(200)
+    , _messageDisplayed(false)
 {
 //	const Common::FSNode gameDataDir(ConfMan.get("path"));
 //	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
@@ -437,8 +438,10 @@ void SupernovaEngine::renderMessage(const char *text, MessagePosition position) 
 }
 
 void SupernovaEngine::removeMessage() {
-	// TODO: restore surface
-	_messageDisplayed = false;
+	if (_messageDisplayed) {
+		restoreScreen();
+		_messageDisplayed = false;
+	}
 }
 
 void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
