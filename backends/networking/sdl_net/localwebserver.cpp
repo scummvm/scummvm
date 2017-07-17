@@ -42,6 +42,10 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
+#ifndef SIOCGIFCONF
+#include <sys/sockio.h>
+#endif
+
 #ifndef _SIZEOF_ADDR_IFREQ
 #define _SIZEOF_ADDR_IFREQ sizeof
 #endif
