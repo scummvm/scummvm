@@ -74,6 +74,72 @@ void Logic::initPlay() {
 	_lastObs = false;
 	enAll();
 	_pouch = true;
+
+	initOpcodes();
+}
+
+#define OPCODE(i, x)   _opcodes_opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+void Logic::initOpcodes() {
+	_opCodes[10] = &Logic::GPL1_10;
+	_opCodes[11] = &Logic::GPL1_11;
+	_opCodes[20] = &Logic::GPL1_20;
+	_opCodes[30] = &Logic::GPL1_30;
+	_opCodes[31] = &Logic::GPL1_31;
+	_opCodes[32] = &Logic::GPL1_32;
+	_opCodes[40] = &Logic::GPL1_40;
+	_opCodes[41] = &Logic::GPL1_41;
+	_opCodes[42] = &Logic::GPL1_42;
+	_opCodes[50] = &Logic::GPL1_50;
+	_opCodes[51] = &Logic::GPL1_51;
+	_opCodes[52] = &Logic::GPL1_52;
+	_opCodes[53] = &Logic::GPL1_53;
+	_opCodes[60] = &Logic::GPL1_60;
+	_opCodes[70] = &Logic::GPL1_70;
+	_opCodes[71] = &Logic::GPL1_71;
+	_opCodes[72] = &Logic::GPL1_72;
+	_opCodes[80] = &Logic::GPL1_80;
+	_opCodes[81] = &Logic::GPL1_81;
+	_opCodes[82] = &Logic::GPL1_82;
+	_opCodes[90] = &Logic::GPL1_90;
+	_opCodes[91] = &Logic::GPL1_91;
+	_opCodes[92] = &Logic::GPL1_92;
+	_opCodes[100] = &Logic::GPL1_100;
+	_opCodes[101] = &Logic::GPL1_101;
+	_opCodes[102] = &Logic::GPL1_102;
+	_opCodes[110] = &Logic::GPL1_110;
+	_opCodes[111] = &Logic::GPL1_111;
+	_opCodes[112] = &Logic::GPL1_112;
+	_opCodes[120] = &Logic::GPL1_120;
+	_opCodes[121] = &Logic::GPL1_121;
+	_opCodes[130] = &Logic::GPL1_130;
+	_opCodes[140] = &Logic::GPL1_140;
+	_opCodes[141] = &Logic::GPL1_141;
+	_opCodes[142] = &Logic::GPL1_142;
+	_opCodes[150] = &Logic::GPL1_150;
+	_opCodes[151] = &Logic::GPL1_151;
+	_opCodes[160] = &Logic::GPL1_160;
+	_opCodes[161] = &Logic::GPL1_161;
+	_opCodes[162] = &Logic::GPL1_162;
+	_opCodes[170] = &Logic::GPL1_170;
+	_opCodes[171] = &Logic::GPL1_171;
+	_opCodes[172] = &Logic::GPL1_172;
+	_opCodes[180] = &Logic::GPL1_180;
+	_opCodes[181] = &Logic::GPL1_181;
+	_opCodes[182] = &Logic::GPL1_182;
+	_opCodes[190] = &Logic::GPL1_190;
+	_opCodes[200] = &Logic::GPL1_200;
+	_opCodes[201] = &Logic::GPL1_201;
+	_opCodes[202] = &Logic::GPL1_202;
+	_opCodes[210] = &Logic::GPL1_210;
+	_opCodes[211] = &Logic::GPL1_211;
+	_opCodes[212] = &Logic::GPL1_212;
+	_opCodes[220] = &Logic::GPL1_220;
+	_opCodes[221] = &Logic::GPL1_221;
+	_opCodes[222] = &Logic::GPL1_222;
+	_opCodes[230] = &Logic::GPL1_230;
+	_opCodes[240] = &Logic::GPL1_240;
+	_opCodes[241] = &Logic::GPL1_241;
+	_opCodes[242] = &Logic::GPL1_242;
 }
 
 void Logic::enAll() {
