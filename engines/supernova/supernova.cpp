@@ -273,14 +273,16 @@ void SupernovaEngine::playSoundMod(int filenumber)
 	                   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
-void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool fullscreen) {
+void SupernovaEngine::renderImage(MSNImageDecoder &image, int section) {
+	_sectionIndex = section;
+
+	if (section > 128)
+		section -= 128;
 	if (section > image._numSections - 1)
 		return;
 
 	_currentImage = &image;
 	_imageIndex = image._filenumber;
-	_sectionIndex = section;
-
 	_system->getPaletteManager()->setPalette(image.getPalette(), 16, 239);
 	paletteBrightness();
 
@@ -291,7 +293,6 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool full
 	if (image._filenumber == 1 || image._filenumber == 2) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);
-
 		if (_screenWidth != 640) {
 			_screenWidth = 640;
 			_screenHeight = 480;
@@ -305,23 +306,21 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section, bool full
 		}
 	}
 
-	if (fullscreen) {
-		_system->copyRectToScreen(image._sectionSurfaces[section]->getPixels(),
-		                          image._pitch, 0, 0, _screenWidth, _screenHeight);
-	} else {
-		uint offset = image._section[section].y1 * image._pitch + image._section[section].x1;
-		_system->copyRectToScreen(static_cast<const byte *>(image._sectionSurfaces[section]->getPixels()) + offset,
-		                          image._pitch,
-		                          sectionRect.left, sectionRect.top,
-		                          sectionRect.width(), sectionRect.height());
-	}
+	uint offset = image._section[section].y1 * image._pitch + image._section[section].x1;
+	if (_sectionIndex > 128)
+		section = 0;
+
+	_system->copyRectToScreen(static_cast<const byte *>(image._sectionSurfaces[section]->getPixels()) + offset,
+	                          image._pitch,
+	                          sectionRect.left, sectionRect.top,
+	                          sectionRect.width(), sectionRect.height());
 }
 
-void SupernovaEngine::renderImage(int filenumber, int section, bool fullscreen) {
+void SupernovaEngine::renderImage(int filenumber, int section) {
 	if (filenumber > ARRAYSIZE(_images) - 1)
 		return;
 
-	renderImage(_images[filenumber], section, fullscreen);
+	renderImage(_images[filenumber], section);
 }
 
 void SupernovaEngine::saveScreen(int x, int y, int width, int height) {

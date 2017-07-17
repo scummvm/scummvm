@@ -85,6 +85,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_section[i].addressHigh = 0xff;
 		_section[i].addressLow = 0xffff;
 		_section[i].x2 = 0;
+		_section[i].next = 0;
 	}
 	for (int i = 0; i < _numSections; ++i) {
 		_section[i].x1 = stream.readUint16LE();
