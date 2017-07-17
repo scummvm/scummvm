@@ -33,3 +33,29 @@ This list shows them and their offsets.
     24020   - Door sound
     30030   - Door open
     31040   - Door close
+
+Engine
+----------
+MouseFields
+    [0;256[     - Viewport
+    [256;512[   - Command Row
+    [512;768[   - Inventory
+    [768;769]   - Inventory Arrows
+
+Dimensions
+    Viewport:           (0,0) (320, 150)
+    Command Row:        (0, 150) (320, 159)
+    Inventory:          (0, 161) (270, 200)
+    Inventory Arrows:   (271, 161) (279, 200)
+    Exit Maps:          (283, 163) (317, 197)
+
+
+Ingame Bugs
+------------
+In Cabin_R3 (starting room) you can take the discman from your locker without
+opening it first.
+
+
+Improvements
+-------------
+Incidate in inventory (?) what parts of your space suit you are wearing
