@@ -29,8 +29,13 @@
 namespace Graphics {
 
 struct SelectedText {
-	int startX = 0, startY = 0;
-	int endX = 0, endY = 0;
+	int startX, startY;
+	int endX, endY;
+
+	SelectedText() {
+		startX = startY = 0;
+		endX = endY = 0;
+	}
 
 	bool needsRender() {
 		return startX != endX || startY != endY;
