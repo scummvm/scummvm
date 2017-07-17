@@ -68,6 +68,55 @@ Object *Inventory::get(ObjectID id) const {
 	return NULL;
 }
 
+GuiElement::GuiElement()
+    : _text("")
+    , _isHighlighted(false)
+    , _isVisible(true)
+    , _bgColorNormal(kColorWhite25)
+    , _bgColorHighlighted(kColorWhite44)
+    , _bgColor(kColorWhite25)
+    , _textColorNormal(kColorGreen)
+    , _textColorHighlighted(kColorLightGreen)
+    , _textColor(kColorGreen)
+{}
+
+void GuiElement::setText(const char *text) {
+	strncpy(_text, text, sizeof(_text));
+}
+
+void GuiElement::setTextPosition(int x, int y) {
+	_textPosition.x = x;
+	_textPosition.y = y;
+}
+void GuiElement::setSize(int x1, int y1, int x2, int y2) {
+	this->left = x1;
+	this->top = y1;
+	this->right = x2;
+	this->bottom = y2;
+
+	_textPosition.x = x1 + 1;
+	_textPosition.y = y1 + 1;
+}
+
+void GuiElement::setColor(int bgColor, int textColor, int bgColorHighlighted, int textColorHightlighted) {
+	_bgColor = bgColor;
+	_textColor = textColor;
+	_bgColorNormal = bgColor;
+	_textColorNormal = textColor;
+	_bgColorHighlighted = bgColorHighlighted;
+	_textColorHighlighted = textColorHightlighted;
+}
+
+void GuiElement::setHighlight(bool isHighlighted) {
+	if (isHighlighted) {
+		_bgColor = _bgColorHighlighted;
+		_textColor = _textColorHighlighted;
+	} else {
+		_bgColor = _bgColorNormal;
+		_textColor = _textColorNormal;
+	}
+}
+
 
 static const char *timeToString(int t) {
 	// TODO: Does ScummVM emulate PIT timings for DOS?

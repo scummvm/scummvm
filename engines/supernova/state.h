@@ -73,6 +73,32 @@ private:
 	uint _numObjects;
 };
 
+class GuiElement : public Common::Rect {
+public:
+	GuiElement();
+
+	void setSize(int x1, int y1, int x2, int y2);
+	void setText(const char *text);
+	void setTextPosition(int x, int y);
+	void setColor(int bgColor, int textColor, int bgColorHighlighted, int textColorHightlighted);
+	void setHighlight(bool isHighlighted);
+
+//	virtual void onMouseOver() {}
+//	virtual void onMouseOut() {}
+//	virtual void onMouseClick() {}
+
+	Common::Point _textPosition;
+	char _text[128];
+	int _bgColor;
+	int _textColor;
+	int _bgColorNormal;
+	int _bgColorHighlighted;
+	int _textColorNormal;
+	int _textColorHighlighted;
+	bool _isHighlighted;
+	bool _isVisible;
+};
+
 class GameManager {
 public:
 	GameManager(SupernovaEngine *vm);
