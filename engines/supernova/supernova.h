@@ -117,8 +117,8 @@ public:
 	void playSound(AudioIndex sample);
 	void playSoundMod(int filenumber);
 	void stopSound();
-	void renderImage(MSNImageDecoder &image, int section, bool fullscreen = false);
-	void renderImage(int filenumber, int section, bool fullscreen = false);
+	void renderImage(MSNImageDecoder &image, int section);
+	void renderImage(int filenumber, int section);
 	void saveScreen(int x, int y, int width, int height);
 	void restoreScreen();
 	void renderRoom(Room &room);
