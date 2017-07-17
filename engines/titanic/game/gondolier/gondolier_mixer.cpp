@@ -95,7 +95,7 @@ bool CGondolierMixer::TurnOn(CTurnOn *msg) {
 		}
 
 		if (_soundHandle2 == -1) {
-			_soundHandle2 = playSound(_soundName1, _volume2 * _slider2 / 10, 0, true);
+			_soundHandle2 = playSound(_soundName2, _volume2 * _slider2 / 10, 0, true);
 			_soundActive = true;
 		}
 	}
