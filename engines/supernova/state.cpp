@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
 
@@ -192,33 +193,37 @@ GameManager::GameManager(SupernovaEngine *vm) {
 
 	_currentRoom = _rooms[INTRO];
 	_vm = vm;
-	_inputObject[0] = &_nullObjectInstance;
-	_inputObject[1] = &_nullObjectInstance;
+	Object::setObjectNull(_currentInputObject);
+	Object::setObjectNull(_inputObject[0]);
+	Object::setObjectNull(_inputObject[1]);
 	_inputVerb = ACTION_WALK;
-	_inputVerb2 = false;
+	_processInput = false;
+	_mouseField = -1;
 	_inventoryScroll = 0;
 
 	initGui();
 }
 
 void GameManager::initGui() {
-	// TODO: Initialize GUI dimensions to eliminate the use of magic numbers
-	//       especially in the input handling.
-	//       Wrapping it in state machine would probably make a lot of it easier
-	//       as the current state i.e. when selecting/combining objects would need
-	//       to be queried when deciding what to do (flush inputs / render / ... )
-
 	int x = 0;
-	for (int i = 0; i < ARRAYSIZE(_guiCommandDimensions); ++i) {
+	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
 		int width;
 		if (i < 9)
 			width = _vm->characterWidth(guiCommand_DE[i]) + 2;
 		else
 			width = 320 - x;
 
-		_guiCommandDimensions[i] = Common::Rect(x, 150, x + width, 159);
+		_guiCommandButton[i].setSize(x, 150, x + width, 159);
+		_guiCommandButton[i].setText(guiCommand_DE[i]);
+		_guiCommandButton[i].setColor(kColorWhite25, kColorDarkGreen, kColorWhite44, kColorGreen);
 		x += width + 2;
 	}
+
+	// Inventory + Inventory Arrows
+
+	// Minimap
+
+	// Status (?)
 }
 
 void GameManager::processInput(Common::KeyState &state) {
@@ -251,27 +256,49 @@ void GameManager::processInput(Common::KeyState &state) {
 	}
 }
 
+void GameManager::resetInputState() {
+	Object::setObjectNull(_inputObject[0]);
+	Object::setObjectNull(_inputObject[1]);
+	_inputVerb = ACTION_WALK;
+	_processInput = false;
+
+	processInput(Common::EVENT_MOUSEMOVE, _mouseX, _mouseY);
+}
+
 void GameManager::processInput(Common::EventType eventType, int x, int y) {
 	_mouseClickType = eventType;
 	_mouseX = x;
 	_mouseY = y;
-	_inputObject[0] = &_nullObjectInstance;
-	_inputObject[1] = &_nullObjectInstance;
-	_inputVerb = ACTION_WALK;
-	_inputVerb2 = false;
-	_mouseField = -1;
-	_objectNumber = 0;
 
 	if (_mouseClickType == Common::EVENT_LBUTTONUP) {
-		// STUB
+		_vm->removeMessage();
+		if (Object::isNullObject(_currentInputObject))
+			return;
+
+		if (_mouseField >= 256 && _mouseField < 512) {
+			resetInputState();
+			_inputVerb = static_cast<Action>(_mouseField - 256);
+			drawStatus();
+		}
+		if (_inputVerb == ACTION_GIVE || _inputVerb == ACTION_USE) {
+			if (Object::isNullObject(_inputObject[0]))
+				_inputObject[0] = _currentInputObject;
+			else
+				_inputObject[1] = _currentInputObject;
+		} else {
+			_inputObject[0] = _currentInputObject;
+			_processInput = true;
+		}
 
 	} else if (_mouseClickType == Common::EVENT_RBUTTONUP) {
+		_vm->removeMessage();
+		if (Object::isNullObject(_currentInputObject))
+			return;
+
 		ObjectType type;
 		if (((_mouseField >= 0) && (_mouseField < 256)) ||
-		        ((_mouseField >= 512) && (_mouseField < 768))) {
-			_inputObject[0] = _inputObject[_objectNumber];
-			_objectNumber = 0;
-			_inputVerb2 = false;
+		    ((_mouseField >= 512) && (_mouseField < 768))) {
+			_inputObject[0] = _currentInputObject;
 			type = _inputObject[0]->_type;
 			if (type & OPEN) {
 				if (type & OPENED)
@@ -285,21 +312,25 @@ void GameManager::processInput(Common::EventType eventType, int x, int y) {
 			} else {
 				_inputVerb = ACTION_LOOK;
 			}
+
+			_processInput = true;
 		}
+
 	} else if (_mouseClickType == Common::EVENT_MOUSEMOVE) {
-		int field;
-		int click;
-		field = -1;
+		int field = -1;
+		int click = -1;
+
 		/* command row? */
-		if ((y >= _guiCommandDimensions[0].top) && (y <= _guiCommandDimensions[0].bottom)) {
+		if ((y >= _guiCommandButton[0].top) && (y <= _guiCommandButton[0].bottom)) {
 			field = 9;
-			while (x < _guiCommandDimensions[field].left - 1)
+			while (x < _guiCommandButton[field].left - 1)
 				field--;
 			field += 256;
 		}
 		/* exit box? */
-		else if ((x >= 283) && (x <= 317) && (y >= 163) && (y <= 197))
+		else if ((x >= 283) && (x <= 317) && (y >= 163) && (y <= 197)) {
 			field = _exitList[(x - 283) / 7 + 5 * ((y - 163) / 7)];
+		}
 		/* inventory box */
 		else if ((y >= 161) && (x <= 270)) {
 			field = (x + 1) / 136 + ((y - 161) / 10) * 2;
@@ -310,16 +341,14 @@ void GameManager::processInput(Common::EventType eventType, int x, int y) {
 		}
 		/* inventory arrows */
 		else if ((y >= 161) && (x >= 271) && (x < 279)) {
-			if (y > 180) field = 769;
-			else field = 768;
+			if (y > 180)
+				field = 769;
+			else
+				field = 768;
 		}
-		/* message window */
-//		else if (_vm->_messageDisplayed && (x >= message_columns) && (x < message_columns + message_width) && (y >= message_rows) && (y < message_rows + message_height))
-		else if (_vm->_messageDisplayed)
-			field = -1;
 		/* normal item */
 		else {
-			for (int i = 0; (_currentRoom->getObject(i)->_name != NULL) && (field == -1); i++) {
+			for (int i = 0; (_currentRoom->getObject(i)->_name[0] != '\0') && (field == -1); i++) {
 				click = _currentRoom->getObject(i)->_click;
 				if (click != 255) {
 					MSNImageDecoder::ClickField *clickField = _vm->_currentImage->_clickField;
@@ -332,38 +361,55 @@ void GameManager::processInput(Common::EventType eventType, int x, int y) {
 					} while ((click != 0) && (field == -1));
 				}
 			}
-
-			if ((_objectNumber == 1) && (_currentRoom->getObject(field) == _inputObject[0]))
-				field = -1;
+//			if ((_objectNumber == 1) && (_currentRoom->getObject(field) == _currentInputObject))
+//				field = -1;
 		}
+
 		if (_mouseField != field) {
 			if (_mouseField >= 768) {
-				inventory_arrow(_mouseField - 768, 0);
+				inventory_arrow(_mouseField - 768, false);
 			} else if (_mouseField >= 512) {
-				inventory_object(_mouseField - 512, 0);
-				_inputObject[_objectNumber] = &_nullObjectInstance;
-				drawStatus();
+				inventory_object(_mouseField - 512, false);
+				Object::setObjectNull(_currentInputObject);
 			} else if (_mouseField >= 256) {
-				drawCommandBox(_mouseField - 256, 0);
+				_guiCommandButton[_mouseField - 256].setHighlight(false);
 			} else if (_mouseField !=  -1) {
-				_inputObject[_objectNumber] = &_nullObjectInstance;
-				drawStatus();
+				Object::setObjectNull(_currentInputObject);
 			}
+
 			_mouseField = field;
 			if (_mouseField >= 768) {
-				inventory_arrow(_mouseField - 768, 1);
+				inventory_arrow(_mouseField - 768, true);
 			} else if (_mouseField >= 512) {
-				inventory_object(_mouseField - 512, 1);
-				_inputObject[_objectNumber] = _inventory.get(_mouseField - 512 + _inventoryScroll);
-				drawStatus();
+				inventory_object(_mouseField - 512, true);
+				_currentInputObject = _inventory.get(_mouseField - 512 + _inventoryScroll);
 			} else if (_mouseField >= 256) {
-				drawCommandBox(_mouseField - 256, 1);
+				_guiCommandButton[_mouseField - 256].setHighlight(true);
 			} else if (_mouseField !=  -1) {
-				_inputObject[_objectNumber] = _currentRoom->getObject(_mouseField);
-				drawStatus();
+				_currentInputObject = _currentRoom->getObject(_mouseField);
 			}
 		}
+
+		drawStatus();
 	}
+}
+
+void GameManager::drawImage(int section) {
+	bool sectionVisible = true;
+
+	if (section > 128) {
+		sectionVisible = false;
+		section -= 128;
+	}
+
+	do {
+		_currentRoom->setSectionVisible(section, sectionVisible);
+		if (sectionVisible)
+			_vm->renderImage(_currentRoom->getFileNumber(), section);
+		else
+			_vm->renderImage(_currentRoom->getFileNumber(), section + 128);
+		section = _vm->_currentImage->_section[section].next;
+	} while (section != 0);
 }
 
 bool GameManager::isHelmetOff() {
@@ -416,24 +462,27 @@ void GameManager::takeObject(Object &obj) {
 	_inventory.add(obj);
 }
 
-void GameManager::inventory_object(int num, bool brightness) {
+void GameManager::inventory_object(int index, bool brightness) {
+	int x = 136 * (index % 2);
+	int y = 161 + 10 * (index / 2);
+	_vm->renderBox(x, y, 135, 9, (brightness) ? HGR_INV_HELL : HGR_INV);
+	if (index < _inventory.getSize())
+		_vm->renderText(_inventory.get(index + _inventoryScroll)->_name, x + 1, y + 1,
+		                (brightness) ? COL_INV_HELL : COL_INV);
 }
 
 void GameManager::drawCommandBox() {
-	for (int i = 0; i < 10; ++i)
-		drawCommandBox(i, 0);
-}
-
-void GameManager::drawCommandBox(int cmd, bool brightness) {
-	_vm->renderBox(_guiCommandDimensions[cmd].left,
-	               _guiCommandDimensions[cmd].top,
-	               _guiCommandDimensions[cmd].width(),
-	               _guiCommandDimensions[cmd].height(),
-	               (brightness) ? HGR_BEF_HELL:HGR_BEF);
-	_vm->renderText(guiCommand_DE[cmd],
-	                _guiCommandDimensions[cmd].left + 1,
-	                _guiCommandDimensions[cmd].top + 1,
-	                (brightness) ? COL_BEF_HELL:COL_BEF);
+	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
+		_vm->renderBox(_guiCommandButton[i].left,
+		               _guiCommandButton[i].top,
+		               _guiCommandButton[i].width(),
+		               _guiCommandButton[i].height(),
+		               _guiCommandButton[i]._bgColor);
+		_vm->renderText(_guiCommandButton[i]._text,
+		                _guiCommandButton[i]._textPosition.x,
+		                _guiCommandButton[i]._textPosition.y,
+		                _guiCommandButton[i]._textColor);
+	}
 }
 
 void GameManager::inventory_arrow(int num, bool brightness) {
@@ -441,14 +490,12 @@ void GameManager::inventory_arrow(int num, bool brightness) {
 }
 
 void GameManager::drawInventory() {
-	// TODO: implement scrolling and moveover effects
-	int brightness = 0;
 	for (int i = 0; i < 8; ++i) {
 		int x = 136 * (i % 2);
 		int y = 161 + 10 * (i / 2);
-		_vm->renderBox(x, y, 135, 9, (brightness) ? HGR_INV_HELL : HGR_INV);
+		_vm->renderBox(x, y, 135, 9, HGR_INV);
 		if (i < _inventory.getSize())
-			_vm->renderText(_inventory.get(i + _inventoryScroll)->_name, x + 1, y + 1, (brightness) ? COL_INV_HELL : COL_INV);
+			_vm->renderText(_inventory.get(i + _inventoryScroll)->_name, x + 1, y + 1, COL_INV);
 	}
 	_vm->renderBox(272, 161, 7, 19, HGR_INV);
 	_vm->renderBox(272, 181, 7, 19, HGR_INV);
@@ -517,8 +564,7 @@ void GameManager::shock() {
 void GameManager::showMenu() {
 	_vm->renderBox(0, 138, 320, 62, 0);
 	_vm->renderBox(0, 140, 320, 9, HGR_BEF_ANZ);
-	for (int i = 0; i < 10; i++)
-		drawCommandBox(i, 0);
+	drawCommandBox();
 	_vm->renderBox(281, 161, 39, 39, HGR_AUSG);
 	drawInventory();
 }
@@ -557,23 +603,23 @@ void GameManager::loadOverlayStart() {
 }
 
 void GameManager::drawStatus() {
-	_vm->renderBox(0, 140, 320, 9, HGR_BEF_ANZ);
 	int index = static_cast<int>(_inputVerb);
+	_vm->renderBox(0, 140, 320, 9, HGR_BEF_ANZ);
 	_vm->renderText(guiStatusCommand_DE[index], 1, 141, COL_BEF_ANZ);
 
-	if (_inputObject[0]->_id != NULLOBJECT) {
+	if (Object::isNullObject(_inputObject[0])) {
+		_vm->renderText(_currentInputObject->_name);
+	} else {
 		_vm->renderText(_inputObject[0]->_name);
-		if (_inputVerb2) {
-			if (_inputVerb == ACTION_GIVE) {
-				// to
-				_vm->renderText(" an ");
-			} else {
-				// with
-				_vm->renderText(" mit ");
-			}
-			if (_inputObject[1] != &_nullObjectInstance)
-				_vm->renderText(_inputObject[1]->_name);
+		if (_inputVerb == ACTION_GIVE) {
+			// to
+			_vm->renderText(" an ");
+		} else if (_inputVerb == ACTION_USE) {
+			// with
+			_vm->renderText(" mit ");
 		}
+
+		_vm->renderText(_currentInputObject->_name);
 	}
 }
 
@@ -658,7 +704,9 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage("Halt, hier ist ein interessanter Artikel.");
 		mouseWait(_timer1);
 		_vm->removeMessage();
-		_vm->renderImage(2,0);
+		// TODO: Implement a 'newspaper room' to eliminate handling
+		//       those cases seperately
+		_vm->renderImage(2, 0);
 		_vm->setColor63(40);
 		mouseInput2();
 		_vm->renderRoom(*_currentRoom);
@@ -865,127 +913,125 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 }
 
 void GameManager::executeRoom() {
-	// TODO: clean up. minimize.
-	_vm->renderRoom(*_currentRoom);
+	if (!_vm->_messageDisplayed)
+		_vm->renderRoom(*_currentRoom);
 	drawMapExits();
 	drawInventory();
 	drawStatus();
 	drawCommandBox();
+
 	animationOn();
 	roomBrightness();
 	if (_vm->_brightness == 0)
 		_vm->paletteFadeIn();
 	else
 		_vm->paletteBrightness();
-
 	if (!_currentRoom->hasSeen())
 		_currentRoom->onEntrance();
 
+	if (_vm->_messageDisplayed || !_processInput)
+		return;
+
 	bool validCommand = genericInteract(_inputVerb, *_inputObject[0], *_inputObject[1]);
-
-
-#if 0
-	if (!validCommand) {
+	if (!validCommand)
 		validCommand = _currentRoom->interact(_inputVerb, *_inputObject[0], *_inputObject[1]);
-		if (!validCommand) {
-			switch (_inputVerb) {
-			case ACTION_LOOK:
-				_vm->renderMessage(_inputObject[0]->_description);
-				break;
+	if (!validCommand) {
+		switch (_inputVerb) {
+		case ACTION_LOOK:
+			_vm->renderMessage(_inputObject[0]->_description);
+			break;
 
-			case ACTION_WALK:
-				if (_inputObject[0]->hasProperty(CARRIED)) {
-					// You already carry this.
-					_vm->renderMessage("Das trgst du doch bei dir.");
-				} else if (!_inputObject[0]->hasProperty(EXIT)) {
-					// You're already there.
-					_vm->renderMessage("Du bist doch schon da.");
-				} else if (_inputObject[0]->hasProperty(OPEN) && !_inputObject[0]->hasProperty(OPENED)) {
-					// This is closed
-					_vm->renderMessage("Das ist geschlossen.");
-				} else {
-					_currentRoom = _rooms[_inputObject[0]->_exitRoom];
-					return;
-				}
-				break;
-
-			case ACTION_TAKE:
-				if (_inputObject[0]->hasProperty(OPENED)) {
-					// You already have that
-					_vm->renderMessage("Das hast du doch schon.");
-				} else if (_inputObject[0]->hasProperty(UNNECESSARY)) {
-					// You do not need that.
-					_vm->renderMessage("Das brauchst du nicht.");
-				} else if (!_inputObject[0]->hasProperty(TAKE)) {
-					// You can't take that.
-					_vm->renderMessage("Das kannst du nicht nehmen.");
-				} else {
-					takeObject(*_inputObject[0]);
-				}
-				break;
-
-			case ACTION_OPEN:
-				if (!_inputObject[0]->hasProperty(OPEN)) {
-					// This can't be opened
-					_vm->renderMessage("Das lát sich nicht ffnen.");
-				} else if (_inputObject[0]->hasProperty(OPENED)) {
-					// This is already opened.
-					_vm->renderMessage("Das ist schon offen.");
-				} else if (_inputObject[0]->hasProperty(CLOSED)) {
-					// This is locked.
-					_vm->renderMessage("Das ist verschlossen.");
-				} else {
-					_vm->renderImage(_currentRoom->getFileNumber(), _inputObject[0]->_section);
-					_inputObject[0]->setProperty(OPENED);
-					byte i = _inputObject[0]->_click;
-					_inputObject[0]->_click  = _inputObject[0]->_click2;
-					_inputObject[0]->_click2 = i;
-					_vm->playSound(kAudioDoorOpen);
-				}
-				break;
-
-			case ACTION_CLOSE:
-				if (!_inputObject[0]->hasProperty(OPEN) ||
-				    (_inputObject[0]->hasProperty(CLOSED) &&
-				     _inputObject[0]->hasProperty(OPENED))) {
-					// This can't be closed.
-					_vm->renderMessage("Das lát sich nicht schlieáen.");
-				} else if (!_inputObject[0]->hasProperty(OPENED)) {
-					// This is already closed.
-					_vm->renderMessage("Das ist schon geschlossen.");
-				} else {
-					_vm->renderImage(_currentRoom->getFileNumber(), invertSection(_inputObject[0]->_section));
-					_inputObject[0]->disableProperty(OPENED);
-					byte i = _inputObject[0]->_click;
-					_inputObject[0]->_click  = _inputObject[0]->_click2;
-					_inputObject[0]->_click2 = i;
-					_vm->playSound(kAudioDoorClose);
-				}
-				break;
-
-			case ACTION_GIVE:
-				if (_inputObject[0]->hasProperty(CARRIED)) {
-					// Better keep it!
-					_vm->renderMessage("Behalt es lieber!");
-				}
-				break;
-
-			default:
-				// This is not possible.
-				_vm->renderMessage("Das geht nicht.");
+		case ACTION_WALK:
+			if (_inputObject[0]->hasProperty(CARRIED)) {
+				// You already carry this.
+				_vm->renderMessage("Das trgst du doch bei dir.");
+			} else if (!_inputObject[0]->hasProperty(EXIT)) {
+				// You're already there.
+				_vm->renderMessage("Du bist doch schon da.");
+			} else if (_inputObject[0]->hasProperty(OPEN) && !_inputObject[0]->hasProperty(OPENED)) {
+				// This is closed
+				_vm->renderMessage("Das ist geschlossen.");
+			} else {
+				changeRoom(_inputObject[0]->_exitRoom);
 			}
+			break;
 
-			if (_newOverlay) {
-				loadOverlayStart();
-				_newOverlay = false;
+		case ACTION_TAKE:
+			if (_inputObject[0]->hasProperty(OPENED)) {
+				// You already have that
+				_vm->renderMessage("Das hast du doch schon.");
+			} else if (_inputObject[0]->hasProperty(UNNECESSARY)) {
+				// You do not need that.
+				_vm->renderMessage("Das brauchst du nicht.");
+			} else if (!_inputObject[0]->hasProperty(TAKE)) {
+				// You can't take that.
+				_vm->renderMessage("Das kannst du nicht nehmen.");
+			} else {
+				takeObject(*_inputObject[0]);
 			}
-			if (_newRoom) {
-				_newRoom = false;
-				return;
+			break;
+
+		case ACTION_OPEN:
+			if (!_inputObject[0]->hasProperty(OPEN)) {
+				// This can't be opened
+				_vm->renderMessage("Das lát sich nicht ffnen.");
+			} else if (_inputObject[0]->hasProperty(OPENED)) {
+				// This is already opened.
+				_vm->renderMessage("Das ist schon offen.");
+			} else if (_inputObject[0]->hasProperty(CLOSED)) {
+				// This is locked.
+				_vm->renderMessage("Das ist verschlossen.");
+			} else {
+				drawImage(_inputObject[0]->_section);
+				_inputObject[0]->setProperty(OPENED);
+				byte i = _inputObject[0]->_click;
+				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click2 = i;
+				_vm->playSound(kAudioDoorOpen);
 			}
+			break;
+
+		case ACTION_CLOSE:
+			if (!_inputObject[0]->hasProperty(OPEN) ||
+			    (_inputObject[0]->hasProperty(CLOSED) &&
+			     _inputObject[0]->hasProperty(OPENED))) {
+				// This can't be closed.
+				_vm->renderMessage("Das lát sich nicht schlieáen.");
+			} else if (!_inputObject[0]->hasProperty(OPENED)) {
+				// This is already closed.
+				_vm->renderMessage("Das ist schon geschlossen.");
+			} else {
+				drawImage(invertSection(_inputObject[0]->_section));
+				_inputObject[0]->disableProperty(OPENED);
+				byte i = _inputObject[0]->_click;
+				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click2 = i;
+				_vm->playSound(kAudioDoorClose);
+			}
+			break;
+
+		case ACTION_GIVE:
+			if (_inputObject[0]->hasProperty(CARRIED)) {
+				// Better keep it!
+				_vm->renderMessage("Behalt es lieber!");
+			}
+			break;
+
+		default:
+			// This is not possible.
+			_vm->renderMessage("Das geht nicht.");
+		}
+
+		if (_newOverlay) {
+			loadOverlayStart();
+			_newOverlay = false;
+		}
+		if (_newRoom) {
+			_newRoom = false;
 		}
 	}
-#endif
+
+	resetInputState();
 }
 
 }
