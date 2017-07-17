@@ -67,6 +67,7 @@ const AudioInfo audioInfo[kAudioNumSamples] = {
 
 const char *const Object::defaultDescription = "Es ist nichts Besonderes daran.";
 const char *const Object::takeMessage = "Das mußt du erst nehmen.";
+const Object Object::nullObject = Object();
 
 ObjectType operator|(ObjectType a, ObjectType b) {
 	return static_cast<ObjectType>(+a | +b);

@@ -450,6 +450,7 @@ ObjectType &operator^=(ObjectType &a, ObjectType b);
 struct Object {
 	static const char *const defaultDescription;
 	static const char *const takeMessage;
+	static const Object nullObject;
 
 	Object()
 	    : _name("")
@@ -475,6 +476,12 @@ struct Object {
 	    , _direction(direction)
 	{}
 
+	static void setObjectNull(Object *&obj) {
+		obj = const_cast<Object *>(&nullObject);
+	}
+	static bool isNullObject(Object *obj) {
+		return obj == &nullObject;
+	}
 	void setProperty(ObjectType type) {
 		_type |= type;
 	}
