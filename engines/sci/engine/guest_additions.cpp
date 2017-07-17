@@ -851,7 +851,6 @@ void GuestAdditions::syncGK1StartupVolumeFromScummVM(const int index, const reg_
 		}
 
 		writeSelectorValue(_segMan, value, selector, volume);
-		writeSelectorValue(_segMan, value, selector, volume);
 	}
 }
 
