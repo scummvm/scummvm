@@ -30,8 +30,75 @@ namespace Kingdom {
 class KingdomGame;
 
 class Logic {
+
+typedef void (Kingdom::Logic::*Opcode)(void);
+
 private:
 	KingdomGame *_vm;
+
+	Common::HashMap<int, Opcode> _opCodes;
+	void initOpcodes();
+
+	void GPL1_10();
+	void GPL1_11();
+	void GPL1_20();
+	void GPL1_30();
+	void GPL1_31();
+	void GPL1_32();
+	void GPL1_40();
+	void GPL1_41();
+	void GPL1_42();
+	void GPL1_50();
+	void GPL1_51();
+	void GPL1_52();
+	void GPL1_53();
+	void GPL1_60();
+	void GPL1_70();
+	void GPL1_71();
+	void GPL1_72();
+	void GPL1_80();
+	void GPL1_81();
+	void GPL1_82();
+	void GPL1_90();
+	void GPL1_91();
+	void GPL1_92();
+	void GPL1_100();
+	void GPL1_101();
+	void GPL1_102();
+	void GPL1_110();
+	void GPL1_111();
+	void GPL1_112();
+	void GPL1_120();
+	void GPL1_121();
+	void GPL1_130();
+	void GPL1_140();
+	void GPL1_141();
+	void GPL1_142();
+	void GPL1_150();
+	void GPL1_151();
+	void GPL1_160();
+	void GPL1_161();
+	void GPL1_162();
+	void GPL1_170();
+	void GPL1_171();
+	void GPL1_172();
+	void GPL1_180();
+	void GPL1_181();
+	void GPL1_182();
+	void GPL1_190();
+	void GPL1_200();
+	void GPL1_201();
+	void GPL1_202();
+	void GPL1_210();
+	void GPL1_211();
+	void GPL1_212();
+	void GPL1_220();
+	void GPL1_221();
+	void GPL1_222();
+	void GPL1_230();
+	void GPL1_240();
+	void GPL1_241();
+	void GPL1_242();
 
 public:
 	int _statPlay;
