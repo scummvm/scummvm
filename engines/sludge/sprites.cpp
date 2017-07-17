@@ -305,6 +305,11 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &
 	Graphics::TransparentSurface tmp(single.surface, false);
 	tmp.blit(backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
 			TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+
+	// reset zBuffer with the new backdrop
+	if (zBuffer.numPanels) {
+		setZBuffer(zBuffer.originalNum);
+	}
 }
 
 // burnSpriteToBackDrop adds text in the colour specified by setBurnColour
@@ -316,6 +321,11 @@ void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &f
 	Graphics::TransparentSurface tmp(single.surface, false);
 	tmp.blit(backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
 			TS_RGB(currentBurnR, currentBurnG, currentBurnB));
+
+	// reset zBuffer with the new backdrop
+	if (zBuffer.numPanels) {
+		setZBuffer(zBuffer.originalNum);
+	}
 }
 
 void fontSprite(bool flip, int x, int y, sprite &single, const spritePalette &fontPal) {
