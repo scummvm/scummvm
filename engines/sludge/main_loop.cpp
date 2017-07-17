@@ -188,7 +188,7 @@ int main_loop(const char *filename)
 
 	startNewFunctionNum(0, 0, NULL, noStack);
 
-	Init_Timer();
+	g_sludge->_timer.init();
 
 	weAreDoneSoQuit = 0;
 	while (!weAreDoneSoQuit) {
@@ -197,7 +197,7 @@ int main_loop(const char *filename)
 		handleInput();
 		sludgeDisplay();
 		handleSoundLists();
-		Wait_Frame();
+		g_sludge->_timer.waitFrame();
 	}
 
 	killSoundStuff();

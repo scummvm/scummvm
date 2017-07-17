@@ -24,11 +24,20 @@
 
 namespace Sludge {
 
-void Init_Timer(void);
-void Init_Special_Timer(int t);
-void Get_Start_Time(void);
-void Get_End_Time(void);
-void Wait_Frame(void);
+class Timer {
+private:
+	int _desiredfps; // desired frames per second
+	uint32 _starttime, _endtime;
+	uint32 _desired_frame_time;
+
+public:
+	void setDesiredfps(int t) { _desiredfps = t; }
+	void init(void);
+	void initSpecial(int t);
+	void waitFrame(void);
+
+	Timer():_desiredfps(300), _starttime(0), _endtime(0), _desired_frame_time(0){}
+};
 
 } // End of namespace Sludge
 

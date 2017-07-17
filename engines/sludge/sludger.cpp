@@ -71,7 +71,6 @@ int languageNum = -1;
 int gameVersion;
 int specialSettings;
 FILETIME fileTime;
-extern int desiredfps;
 bool captureAllKeys = false;
 
 byte brightnessLevel = 255;
@@ -221,7 +220,7 @@ bool initSludge(const Common::String &filename) {
 	debug(kSludgeDebugDataLoad, "winHeight : %i", winHeight);
 	specialSettings = fp->readByte();
 	debug(kSludgeDebugDataLoad, "specialSettings : %i", specialSettings);
-	desiredfps = 1000 / fp->readByte();
+	g_sludge->_timer.setDesiredfps(1000 / fp->readByte());
 
 	readString(fp);  // Unused - was used for registration purposes.
 

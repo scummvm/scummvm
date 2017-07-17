@@ -29,6 +29,7 @@
 #include "gui/debugger.h"
 
 #include "sludge/console.h"
+#include "sludge/timing.h"
 
 namespace Sludge {
 
@@ -61,6 +62,9 @@ public:
 	Common::String bundleFolder;
 	Common::String fatalMessage;
 	Common::String fatalInfo;
+
+	// timer
+	Timer _timer;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();

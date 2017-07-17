@@ -25,36 +25,31 @@
 
 namespace Sludge {
 
-int desiredfps = 300;               //holds desired frames per second
-
-uint32 starttime, endtime;
-uint32 desired_frame_time;
-
-void Init_Timer(void) {
-	desired_frame_time = 1000 / desiredfps;
-	starttime = g_system->getMillis();
+void Timer::init(void) {
+	_desired_frame_time = 1000 / _desiredfps;
+	_starttime = g_system->getMillis();
 }
 
-void Init_Special_Timer(int t) {
-	desired_frame_time = 1000 / t;
-	starttime = g_system->getMillis();
+void Timer::initSpecial(int t) {
+	_desired_frame_time = 1000 / t;
+	_starttime = g_system->getMillis();
 }
 
-void Wait_Frame(void) {
+void Timer::waitFrame(void) {
 	static uint32 addNextTime = 0;
 	uint32 timetaken;
 
 	for (;;) {
-		endtime = g_system->getMillis();
-		timetaken = addNextTime + endtime - starttime;
-		if (timetaken >= desired_frame_time) break;
+		_endtime = g_system->getMillis();
+		timetaken = addNextTime + _endtime - _starttime;
+		if (timetaken >= _desired_frame_time) break;
 		g_system->delayMillis(1);
 	}
 
-	addNextTime = timetaken - desired_frame_time;
-	if (addNextTime > desired_frame_time) addNextTime = desired_frame_time;
+	addNextTime = timetaken - _desired_frame_time;
+	if (addNextTime > _desired_frame_time) addNextTime = _desired_frame_time;
 
-	starttime = endtime;
+	_starttime = _endtime;
 }
 
 } // End of namespace Sludge
