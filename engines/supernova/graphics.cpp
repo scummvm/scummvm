@@ -164,41 +164,23 @@ bool MSNImageDecoder::loadSections() {
 			}
 		} else {
 			uint image = section;
-			if (image < 128) {
-				do {
-					uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow;
-					if (offset == kInvalidAddress || _section[image].x2 == 0) {
-						return false;
-					}
-					int width = _section[image].x2 - _section[image].x1 + 1;
-					int height = _section[image].y2 - _section[image].y1 + 1;
-					uint32 destAddress = imageWidth * _section[image].y1 + _section[image].x1;
-					while (height) {
-						Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
-						offset += width;
-						destAddress += imageWidth;
-						--height;
-					}
+			do {
+				uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow;
+				if (offset == kInvalidAddress || _section[image].x2 == 0) {
+					return false;
+				}
+				int width = _section[image].x2 - _section[image].x1 + 1;
+				int height = _section[image].y2 - _section[image].y1 + 1;
+				uint32 destAddress = imageWidth * _section[image].y1 + _section[image].x1;
+				while (height) {
+					Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
+					offset += width;
+					destAddress += imageWidth;
+					--height;
+				}
 
-					image = _section[image].next;
-				} while (image != 0);
-			} else {
-				image -= 128;
-				do {
-					int width = _section[image].x2 - _section[image].x1 + 1;
-					int height = _section[image].y2 - _section[image].y1 + 1;
-					uint32 destAddress = imageWidth * _section[image].y1 + _section[image].x1;
-					uint32 offset = (_section[image].addressHigh << 16) + _section[image].addressLow + destAddress;
-					while (height) {
-						Common::copy(_encodedImage + offset, _encodedImage + offset + width, surfacePixels + destAddress);
-						offset += imageWidth;
-						destAddress += imageWidth;
-						--height;
-					}
-
-					image = _section[image].next;
-				} while (image != 0);
-			}
+				image = _section[image].next;
+			} while (image != 0);
 		}
 	}
 
