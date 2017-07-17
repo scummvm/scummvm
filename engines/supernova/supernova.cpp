@@ -153,6 +153,12 @@ Common::Error SupernovaEngine::run() {
 				    (_event.kbd.flags & Common::KBD_CTRL)) {
 					_console->attach();
 				}
+				if (_event.kbd.keycode == Common::KEYCODE_s) {
+					for (int i = 0; i < _currentImage->_numSections; ++i) {
+						gm.drawImage(i);
+						_system->updateScreen();
+					}
+				}
 
 				gm.processInput(_event.kbd);
 				break;
@@ -164,6 +170,7 @@ Common::Error SupernovaEngine::run() {
 			case Common::EVENT_MOUSEMOVE:
 				gm.processInput(_event.type, _event.mouse.x, _event.mouse.y);
 				break;
+
 			default:
 				break;
 			}
