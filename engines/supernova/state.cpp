@@ -40,7 +40,7 @@ void Inventory::add(Object &obj) {
 
 // TODO: Update Inventory surface for scrolling
 void Inventory::remove(Object &obj) {
-	for (uint i = 0; i < _numObjects; ++i) {
+	for (int i = 0; i < _numObjects; ++i) {
 		if (_inventory[i] == &obj) {
 			--_numObjects;
 			while (i < _numObjects) {
@@ -52,7 +52,7 @@ void Inventory::remove(Object &obj) {
 	}
 }
 
-Object *Inventory::get(uint index) const {
+Object *Inventory::get(int index) const {
 	if (index < _numObjects)
 		return _inventory[index];
 
@@ -60,7 +60,7 @@ Object *Inventory::get(uint index) const {
 }
 
 Object *Inventory::get(ObjectID id) const {
-	for (uint i = 0; i < _numObjects; ++i) {
+	for (int i = 0; i < _numObjects; ++i) {
 		if (_inventory[i]->_id == id)
 			return _inventory[i];
 	}

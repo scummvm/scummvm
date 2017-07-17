@@ -64,13 +64,13 @@ public:
 
 	void add(Object &obj);
 	void remove(Object &obj);
-	Object *get(uint index) const;
+	Object *get(int index) const;
 	Object *get(ObjectID id) const;
-	uint getSize() const { return _numObjects; }
+	int getSize() const { return _numObjects; }
 
 private:
 	Object *_inventory[kMaxCarry];
-	uint _numObjects;
+	int _numObjects;
 };
 
 class GuiElement : public Common::Rect {
