@@ -841,7 +841,7 @@ void GuestAdditions::syncGK1StartupVolumeFromScummVM(const int index, const reg_
 		}
 
 		case kSoundsSoundType: {
-			volume = (ConfMan.getInt("sound_volume") + 1) * MUSIC_VOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
+			volume = (ConfMan.getInt("sfx_volume") + 1) * MUSIC_VOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
 			selector = SELECTOR(soundVolume);
 			break;
 		}
