@@ -338,7 +338,7 @@ const byte initVGAPalette[768] = {
 enum ObjectType {
 	NULLTYPE    =      0,
 	TAKE        =      1,
-	OPEN        =      2,
+	OPENABLE    =      2,
 	OPENED      =      4,
 	CLOSED      =      8,
 	EXIT        =     16,

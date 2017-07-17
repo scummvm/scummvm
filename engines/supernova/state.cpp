@@ -300,7 +300,7 @@ void GameManager::processInput(Common::EventType eventType, int x, int y) {
 		    ((_mouseField >= 512) && (_mouseField < 768))) {
 			_inputObject[0] = _currentInputObject;
 			type = _inputObject[0]->_type;
-			if (type & OPEN) {
+			if (type & OPENABLE) {
 				if (type & OPENED)
 					_inputVerb = ACTION_CLOSE;
 				else
@@ -948,7 +948,7 @@ void GameManager::executeRoom() {
 			} else if (!_inputObject[0]->hasProperty(EXIT)) {
 				// You're already there.
 				_vm->renderMessage("Du bist doch schon da.");
-			} else if (_inputObject[0]->hasProperty(OPEN) && !_inputObject[0]->hasProperty(OPENED)) {
+			} else if (_inputObject[0]->hasProperty(OPENABLE) && !_inputObject[0]->hasProperty(OPENED)) {
 				// This is closed
 				_vm->renderMessage("Das ist geschlossen.");
 			} else {
@@ -972,7 +972,7 @@ void GameManager::executeRoom() {
 			break;
 
 		case ACTION_OPEN:
-			if (!_inputObject[0]->hasProperty(OPEN)) {
+			if (!_inputObject[0]->hasProperty(OPENABLE)) {
 				// This can't be opened
 				_vm->renderMessage("Das lát sich nicht ffnen.");
 			} else if (_inputObject[0]->hasProperty(OPENED)) {
@@ -992,7 +992,7 @@ void GameManager::executeRoom() {
 			break;
 
 		case ACTION_CLOSE:
-			if (!_inputObject[0]->hasProperty(OPEN) ||
+			if (!_inputObject[0]->hasProperty(OPENABLE) ||
 			    (_inputObject[0]->hasProperty(CLOSED) &&
 			     _inputObject[0]->hasProperty(OPENED))) {
 				// This can't be closed.
