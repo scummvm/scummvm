@@ -130,7 +130,7 @@ public:
 		_objectState[6] = Object("Luke", Object::defaultDescription, NULLOBJECT, OPEN | CLOSED | EXIT, 12, 12, 0, AIRLOCK, 2);
 		_objectState[7] = Object("Knopf", "Er geh�rt zu der gro�en Luke.", BUTTON, PRESS, 13, 13, 0, NULLROOM, 0);
 		_objectState[8] = Object("Leiter", Object::defaultDescription, NULLOBJECT, NULLTYPE, 14, 14, 0, NULLROOM, 0);
-		_objectState[9] = Object("Ausgang", Object::defaultDescription, NULLOBJECT, EXIT, 15, 15, 0, HALL, 2);
+		_objectState[9] = Object("Ausgang", Object::defaultDescription, NULLOBJECT, EXIT, 15, 15, 0, HALL, 22);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -150,7 +150,7 @@ public:
 		_objectState[2] = Object("Luke", "Sie f�hrt zu den Tiefschlafkammern.", NULLOBJECT, OPEN | CLOSED | EXIT, 1, 1, 2, SLEEP, 8);
 		_objectState[3] = Object("Schlitz", "Es ist ein Keycard-Leser.", SLEEP_SLOT, COMBINABLE, 2, 2, 0, NULLROOM, 0);
 		_objectState[4] = Object("Leiter", Object::defaultDescription, NULLOBJECT, NULLTYPE, 3, SLEEP, 0, NULLROOM, 0);
-		_objectState[5] = Object("Gang", Object::defaultDescription, NULLOBJECT, EXIT, 6, 6, 0, CORRIDOR, 1);
+		_objectState[5] = Object("Gang", Object::defaultDescription, NULLOBJECT, EXIT, 6, 6, 0, CORRIDOR, 19);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
