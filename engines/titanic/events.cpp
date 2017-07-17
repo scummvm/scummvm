@@ -34,65 +34,75 @@ Events::Events(TitanicEngine *vm): _vm(vm), _frameCounter(1),
 		_totalFrames(0), _priorFrameTime(0), _specialButtons(0) {
 }
 
+#define MOVE_CHECK if (moved) eventTarget()->mouseMove(_mousePos)
+
 void Events::pollEvents() {
 	checkForNextFrameCounter();
 
+	bool moved = false;
 	Common::Event event;
-	if (!g_system->getEventManager()->pollEvent(event))
-		return;
+	while (!_vm->shouldQuit() && g_system->getEventManager()->pollEvent(event)) {
+		if (event.type != Common::EVENT_MOUSEMOVE) {
+			MOVE_CHECK;
+		}
 
-	switch (event.type) {
-	case Common::EVENT_MOUSEMOVE:
-		_mousePos = event.mouse;
-		eventTarget()->mouseMove(_mousePos);
-		break;
-	case Common::EVENT_LBUTTONDOWN:
-		_specialButtons |= MK_LBUTTON;
-		_mousePos = event.mouse;
-		eventTarget()->leftButtonDown(_mousePos);
-		break;
-	case Common::EVENT_LBUTTONUP:
-		_specialButtons &= ~MK_LBUTTON;
-		_mousePos = event.mouse;
-		eventTarget()->leftButtonUp(_mousePos);
-		break;
-	case Common::EVENT_MBUTTONDOWN:
-		_specialButtons |= MK_MBUTTON;
-		_mousePos = event.mouse;
-		eventTarget()->middleButtonDown(_mousePos);
-		break;
-	case Common::EVENT_MBUTTONUP:
-		_specialButtons &= ~MK_MBUTTON;
-		_mousePos = event.mouse;
-		eventTarget()->middleButtonUp(_mousePos);
-		break;
-	case Common::EVENT_RBUTTONDOWN:
-		_specialButtons |= MK_RBUTTON;
-		_mousePos = event.mouse;
-		eventTarget()->rightButtonDown(_mousePos);
-		break;
-	case Common::EVENT_RBUTTONUP:
-		_specialButtons &= ~MK_RBUTTON;
-		_mousePos = event.mouse;
-		eventTarget()->rightButtonUp(_mousePos);
-		break;
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
-		_mousePos = event.mouse;
-		eventTarget()->mouseWheel(_mousePos, event.type == Common::EVENT_WHEELUP);
-		break;
-	case Common::EVENT_KEYDOWN:
-		handleKbdSpecial(event.kbd);
-		eventTarget()->keyDown(event.kbd);
-		break;
-	case Common::EVENT_KEYUP:
-		handleKbdSpecial(event.kbd);
-		eventTarget()->keyUp(event.kbd);
-		break;
-	default:
-		break;
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			_mousePos = event.mouse;
+			moved = true;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			_specialButtons |= MK_LBUTTON;
+			_mousePos = event.mouse;
+			eventTarget()->leftButtonDown(_mousePos);
+			return;
+		case Common::EVENT_LBUTTONUP:
+			_specialButtons &= ~MK_LBUTTON;
+			_mousePos = event.mouse;
+			eventTarget()->leftButtonUp(_mousePos);
+			return;
+		case Common::EVENT_MBUTTONDOWN:
+			_specialButtons |= MK_MBUTTON;
+			_mousePos = event.mouse;
+			eventTarget()->middleButtonDown(_mousePos);
+			return;
+		case Common::EVENT_MBUTTONUP:
+			_specialButtons &= ~MK_MBUTTON;
+			_mousePos = event.mouse;
+			eventTarget()->middleButtonUp(_mousePos);
+			return;
+		case Common::EVENT_RBUTTONDOWN:
+			_specialButtons |= MK_RBUTTON;
+			_mousePos = event.mouse;
+			eventTarget()->rightButtonDown(_mousePos);
+			return;
+		case Common::EVENT_RBUTTONUP:
+			_specialButtons &= ~MK_RBUTTON;
+			_mousePos = event.mouse;
+			eventTarget()->rightButtonUp(_mousePos);
+			return;
+		case Common::EVENT_WHEELUP:
+		case Common::EVENT_WHEELDOWN:
+			_mousePos = event.mouse;
+			eventTarget()->mouseWheel(_mousePos, event.type == Common::EVENT_WHEELUP);
+			return;
+		case Common::EVENT_KEYDOWN:
+			handleKbdSpecial(event.kbd);
+			eventTarget()->keyDown(event.kbd);
+			return;
+		case Common::EVENT_KEYUP:
+			handleKbdSpecial(event.kbd);
+			eventTarget()->keyUp(event.kbd);
+			return;
+		default:
+			break;
+		}
 	}
+
+	MOVE_CHECK;
 }
+
+#undef MOVE_CHECK
 
 void Events::pollEventsAndWait() {
 	pollEvents();
