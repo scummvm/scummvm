@@ -74,7 +74,6 @@ void Credits::runPersistentScripts() {
 		// Draw next image
 		_vm->drawCardBackground();
 		_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-		_vm->_system->updateScreen();
 
 		_startTime = _vm->_system->getMillis();
 	}

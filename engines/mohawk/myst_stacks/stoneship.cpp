@@ -481,7 +481,6 @@ void Stoneship::o_telescopeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv
 
     // Draw lighthouse
     telescopeLighthouseDraw();
-    _vm->_system->updateScreen();
 }
 
 void Stoneship::o_telescopeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -890,7 +889,6 @@ void Stoneship::batteryGauge_run() {
 		_vm->drawCardBackground();
 		_vm->drawResourceImages();
 		_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-		_vm->_system->updateScreen();
 	}
 }
 
@@ -920,7 +918,6 @@ void Stoneship::tunnel_run() {
 			// Draw tunnel black
 			if (_tunnelImagesCount) {
 				_vm->_gfx->copyImageToScreen(_tunnelImages[1], Common::Rect(544, 333));
-				_vm->_system->updateScreen();
 			}
 
 			_vm->_sound->replaceSoundMyst(_tunnelAlarmSound);
@@ -928,7 +925,6 @@ void Stoneship::tunnel_run() {
 			// Draw tunnel dark
 			if (_tunnelImagesCount) {
 				_vm->_gfx->copyImageToScreen(_tunnelImages[0], Common::Rect(544, 333));
-				_vm->_system->updateScreen();
 			}
 		}
 	}
@@ -969,7 +965,6 @@ void Stoneship::telescope_run() {
 		_telescopeLighthouseState = !_telescopeLighthouseState;
 
 		telescopeLighthouseDraw();
-		_vm->_system->updateScreen();
 	}
 }
 

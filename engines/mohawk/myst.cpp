@@ -251,6 +251,9 @@ void MohawkEngine_Myst::playMovieBlockingCentered(const Common::String &fileName
 }
 
 void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
+	if (!video)
+		return;
+
 	_interactive = false;
 
 	// Sanity check
@@ -333,7 +336,11 @@ Common::Error MohawkEngine_Myst::run() {
 void MohawkEngine_Myst::doFrame() {
 	// Update any background videos
 	_video->updateMovies();
-	_scriptParser->runPersistentScripts();
+	if (!_scriptParser->isScriptRunning() && _interactive) {
+		_interactive = false;
+		_scriptParser->runPersistentScripts();
+		_interactive = true;
+	}
 
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
@@ -422,37 +429,20 @@ void MohawkEngine_Myst::doFrame() {
 }
 
 bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
+	_interactive = false;
 	uint32 end = getTotalPlayTime() + duration;
 
-	while (getTotalPlayTime() < end && !shouldQuit()) {
+	do {
 		doFrame();
 
 		if (_escapePressed && skippable) {
 			_escapePressed = false;
 			return true; // Return true if skipped
 		}
-	}
+	} while (getTotalPlayTime() < end && !shouldQuit());
 
+	_interactive = true;
 	return false;
-}
-
-void MohawkEngine_Myst::pollAndDiscardEvents() {
-	// Poll the events to update the mouse cursor position
-	Common::Event event;
-	while (_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-					case Common::KEYCODE_SPACE:
-						pauseGame();
-						break;
-					default:
-						break;
-				}
-			default:
-				break;
-		}
-	}
 }
 
 void MohawkEngine_Myst::pauseEngineIntern(bool pause) {
@@ -481,8 +471,6 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
 	else
 		_gfx->clearScreenPalette();
-
-	_system->updateScreen();
 
 	_sound->stopSound();
 	_sound->stopBackgroundMyst();
@@ -680,7 +668,6 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 			_gfx->runTransition(transition, Common::Rect(544, 333), 10, 0);
 		} else {
 			_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-			_system->updateScreen();
 		}
 	}
 
@@ -694,8 +681,6 @@ void MohawkEngine_Myst::drawResourceRects() {
 		_resources[i]->getRect().debugPrint(0);
 		_resources[i]->drawBoundingRect();
 	}
-
-	_system->updateScreen();
 }
 
 void MohawkEngine_Myst::updateActiveResource() {

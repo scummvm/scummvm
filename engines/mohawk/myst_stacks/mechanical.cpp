@@ -381,7 +381,7 @@ void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint
 	// Release lever
 	for (int i = step; i >= 0; i--) {
 		lever->drawFrame(i);
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 
 	// Stop persistent script
@@ -449,7 +449,7 @@ void Mechanical::o_fortressRotationSpeedStop(uint16 op, uint16 var, uint16 argc,
 	// Release lever
 	for (int i = _fortressRotationSpeed; i >= 0; i--) {
 		lever->drawFrame(i);
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 
 	_fortressRotationSpeed = 0;
@@ -528,7 +528,7 @@ void Mechanical::o_fortressSimulationSpeedStop(uint16 op, uint16 var, uint16 arg
 	// Release lever
 	for (int i = _fortressSimulationSpeed; i >= 0; i--) {
 		lever->drawFrame(i);
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 
 	_fortressSimulationSpeed = 0;
@@ -607,7 +607,6 @@ void Mechanical::elevatorGoMiddle_run() {
 			// Draw button pressed
 			if (_elevatorInCabin) {
 				_vm->_gfx->copyImageSectionToScreen(6332, Common::Rect(0, 35, 51, 63), Common::Rect(10, 137, 61, 165));
-				_vm->_system->updateScreen();
 			}
 
 			// Blip
@@ -616,7 +615,6 @@ void Mechanical::elevatorGoMiddle_run() {
 			// Restore button
 			if (_elevatorInCabin) {
 				_vm->_gfx->copyBackBufferToScreen(Common::Rect(10, 137, 61, 165));
-				_vm->_system->updateScreen();
 			 }
 		} else {
 			_elevatorTooLate = true;
@@ -690,7 +688,7 @@ void Mechanical::o_elevatorWaitTimeout(uint16 op, uint16 var, uint16 argc, uint1
 	// Wait while the elevator times out
 	while (_elevatorGoingMiddle) {
 		runPersistentScripts();
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 }
 
@@ -914,16 +912,9 @@ void Mechanical::fortressSimulation_run() {
 		// Init sequence
 		_vm->_sound->replaceBackgroundMyst(_fortressSimulationStartSound1, 65535);
 		_vm->wait(5000, true);
-		_vm->_sound->replaceSoundMyst(_fortressSimulationStartSound2);
 
-		// Update movie while the sound is playing
 		VideoEntryPtr startup = _fortressSimulationStartup->playMovie();
-		while (_vm->_sound->isPlaying(_fortressSimulationStartSound2)) {
-			if (_vm->_video->updateMovies())
-				_vm->_system->updateScreen();
-
-			_vm->_system->delayMillis(10);
-		}
+		_vm->playSoundBlocking(_fortressSimulationStartSound2);
 		_vm->_sound->replaceBackgroundMyst(_fortressSimulationStartSound1, 65535);
 		_vm->waitUntilMovieEnds(startup);
 		_vm->_sound->stopBackgroundMyst();
@@ -934,7 +925,6 @@ void Mechanical::fortressSimulation_run() {
 		Common::Rect dst = Common::Rect(187, 3, 363, 179);
 		_vm->_gfx->copyImageSectionToBackBuffer(6046, src, dst);
 		_vm->_gfx->copyBackBufferToScreen(dst);
-		_vm->_system->updateScreen();
 
 		_fortressSimulationStartup->pauseMovie(true);
 		VideoEntryPtr holo = _fortressSimulationHolo->playMovie();

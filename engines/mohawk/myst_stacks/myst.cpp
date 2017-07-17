@@ -828,8 +828,6 @@ void Myst::o_libraryBookPageTurnLeft(uint16 op, uint16 var, uint16 argc, uint16 
 			_vm->_sound->replaceSoundMyst(_libraryBookSound1);
 		else
 			_vm->_sound->replaceSoundMyst(_libraryBookSound2);
-
-		_vm->_system->updateScreen();
 	}
 }
 
@@ -846,8 +844,6 @@ void Myst::o_libraryBookPageTurnRight(uint16 op, uint16 var, uint16 argc, uint16
 			_vm->_sound->replaceSoundMyst(_libraryBookSound1);
 		else
 			_vm->_sound->replaceSoundMyst(_libraryBookSound2);
-
-		_vm->_system->updateScreen();
 	}
 }
 
@@ -865,16 +861,14 @@ void Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint16 argc, uint16 *a
 		// Unset button
 		for (uint i = 4795; i >= 4779; i--) {
 			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
-			_vm->pollAndDiscardEvents();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 		}
 		_fireplaceLines[var - 17] &= ~bitmask;
 	} else {
 		// Set button
 		for (uint i = 4779; i <= 4795; i++) {
 			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
-			_vm->pollAndDiscardEvents();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 		}
 		_fireplaceLines[var - 17] |= bitmask;
 	}
@@ -1178,12 +1172,11 @@ void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 	Common::Rect src = Common::Rect(0, 0, 32, 75);
 	Common::Rect dest = Common::Rect(261, 257, 293, 332);
 	_vm->_gfx->copyImageSectionToScreen(4699, src, dest);
-	_vm->_system->updateScreen();
 
 	_vm->wait(200);
 
 	_vm->_gfx->copyBackBufferToScreen(dest);
-	_vm->_system->updateScreen();
+	_vm->doFrame();
 
 	_vm->_cursor->hideCursor();
 
@@ -2316,7 +2309,6 @@ void Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 
 	// Draw pressed piano key
 	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(1).wdib, src, dest);
-	_vm->_system->updateScreen();
 
 	// Play note
 	_rocketPianoSound = 0;
@@ -2386,7 +2378,6 @@ void Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	// Draw unpressed piano key
 	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(0).wdib, src, dest);
-	_vm->_system->updateScreen();
 
 	_vm->_sound->stopSound();
 	_vm->_sound->resumeBackgroundMyst();
@@ -2469,7 +2460,6 @@ void Myst::o_treePressureReleaseStart(uint16 op, uint16 var, uint16 argc, uint16
 	Common::Rect src = Common::Rect(0, 0, 49, 86);
 	Common::Rect dest = Common::Rect(78, 46, 127, 132);
 	_vm->_gfx->copyImageSectionToScreen(4631, src, dest);
-	_vm->_system->updateScreen();
 
 	_tempVar = _state.cabinValvePosition;
 
@@ -2485,7 +2475,6 @@ void Myst::o_treePressureReleaseStop(uint16 op, uint16 var, uint16 argc, uint16 
 
 	Common::Rect rect = Common::Rect(78, 46, 127, 132);
 	_vm->_gfx->copyBackBufferToScreen(rect);
-	_vm->_system->updateScreen();
 
 	_state.cabinValvePosition = _tempVar;
 	_treeMinPosition = 0;
@@ -2789,8 +2778,6 @@ void Myst::libraryCombinationBookTurnLeft() {
 			_vm->_sound->replaceSoundMyst(_libraryBookSound1);
 		else
 			_vm->_sound->replaceSoundMyst(_libraryBookSound2);
-
-		_vm->_system->updateScreen();
 	}
 }
 
@@ -2815,8 +2802,6 @@ void Myst::libraryCombinationBookTurnRight() {
 			_vm->_sound->replaceSoundMyst(_libraryBookSound1);
 		else
 			_vm->_sound->replaceSoundMyst(_libraryBookSound2);
-
-		_vm->_system->updateScreen();
 	}
 }
 
@@ -3166,7 +3151,6 @@ void Myst::towerRotationMap_run() {
 
 		// Draw to screen
 		_vm->_gfx->copyBackBufferToScreen(Common::Rect(106, 42, 459, 273));
-		_vm->_system->updateScreen();
 	}
 
 	uint32 time = _vm->_system->getMillis();
@@ -3305,7 +3289,6 @@ void Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::P
 	// Draw line
 	_vm->_gfx->drawLine(center, end, color);
 	_vm->_gfx->copyBackBufferToScreen(rect);
-	_vm->_system->updateScreen();
 }
 
 void Myst::towerRotationMapRotate() {

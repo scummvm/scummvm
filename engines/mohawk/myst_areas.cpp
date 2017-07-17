@@ -443,7 +443,6 @@ void MystAreaImageSwitch::drawConditionalDataToScreen(uint16 state, bool update)
 		// Draw to screen
 		if (update) {
 			_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
-			_vm->_system->updateScreen();
 		} else {
 			_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
 		}
@@ -777,7 +776,6 @@ MystVideoInfo::~MystVideoInfo() {
 void MystVideoInfo::drawFrame(uint16 frame) {
 	_currentFrame = _firstFrame + frame;
 	_vm->_gfx->copyImageToScreen(_currentFrame, _frameRect);
-	_vm->_system->updateScreen();
 }
 
 bool MystVideoInfo::pullLeverV() {
@@ -808,7 +806,7 @@ void MystVideoInfo::releaseLeverV() {
 	// Release lever
 	for (int i = step; i >= 0; i--) {
 		drawFrame(i);
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 }
 

@@ -190,7 +190,6 @@ public:
 	uint16 getMainCursor() { return _mainCursor; }
 	void checkCursorHints();
 	MystArea *forceUpdateClickedResource();
-	void pollAndDiscardEvents();
 	bool wait(uint32 duration, bool skippable = false);
 
 	/** Update the game state according to events and update the screen */

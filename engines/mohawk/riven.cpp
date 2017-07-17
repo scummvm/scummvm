@@ -164,7 +164,6 @@ Common::Error MohawkEngine_Riven::run() {
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
 	_cursor->showCursor();
-	_system->updateScreen();
 
 	// Let's begin, shall we?
 	if (getFeatures() & GF_DEMO) {
@@ -283,7 +282,6 @@ void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
 		_video->pauseVideos();
 	} else {
 		_video->resumeVideos();
-		_system->updateScreen();
 	}
 }
 

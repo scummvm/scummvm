@@ -158,9 +158,6 @@ void MystScriptParser::setupCommonOpcodes() {
 void MystScriptParser::runScript(MystScript script, MystArea *invokingResource) {
 	debugC(kDebugScript, "Script Size: %d", script->size());
 
-	// Scripted drawing takes more time to simulate older hardware
-	// This way opcodes can't overwrite what the previous ones drew too quickly
-	_vm->_gfx->enableDrawingTimeSimulation(true);
 	_scriptNestingLevel++;
 
 	for (uint16 i = 0; i < script->size(); i++) {
@@ -176,7 +173,6 @@ void MystScriptParser::runScript(MystScript script, MystArea *invokingResource) 
 	}
 
 	_scriptNestingLevel--;
-	_vm->_gfx->enableDrawingTimeSimulation(false);
 }
 
 void MystScriptParser::runOpcode(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -412,7 +408,6 @@ void MystScriptParser::o_redrawCard(uint16 op, uint16 var, uint16 argc, uint16 *
 	_vm->drawCardBackground();
 	_vm->drawResourceImages();
 	_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-	_vm->_system->updateScreen();
 }
 
 void MystScriptParser::o_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -671,7 +666,6 @@ void MystScriptParser::o_copyBackBufferToScreen(uint16 op, uint16 var, uint16 ar
 	debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
 
 	_vm->_gfx->copyBackBufferToScreen(rect);
-	_vm->_system->updateScreen();
 }
 
 void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -772,7 +766,6 @@ void MystScriptParser::o_copyImageToScreen(uint16 op, uint16 var, uint16 argc, u
 	debugC(kDebugScript, "\tdstRect.bottom: %d", dstRect.bottom);
 
 	_vm->_gfx->copyImageSectionToScreen(imageId, srcRect, dstRect);
-	_vm->_system->updateScreen();
 }
 
 void MystScriptParser::o_changeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -797,7 +790,7 @@ void MystScriptParser::o_drawImageChangeCard(uint16 op, uint16 var, uint16 argc,
 		debugC(kDebugScript, "\tcardId: %d", cardId);
 
 		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
-		_vm->_system->updateScreen();
+		_vm->wait(200);
 
 		_vm->changeToCard(cardId, transition);
 }
@@ -915,7 +908,7 @@ void MystScriptParser::o_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint1
 	debugC(kDebugScript, "Opcode %d: Wait for foreground sound to finish", op);
 
 	while (_vm->_sound->isPlaying())
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 }
 
 void MystScriptParser::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

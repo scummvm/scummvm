@@ -350,7 +350,7 @@ void Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uint16 var, uint16 a
 	debugC(kDebugScript, "\tcardId: %d", cardId);
 
 	_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
-	_vm->_system->updateScreen();
+	_vm->wait(200);
 
 	_vm->changeToCard(cardId, kTransitionPartToLeft);
 
@@ -368,8 +368,7 @@ void Channelwood::o_waterTankValveOpen(uint16 op, uint16 var, uint16 argc, uint1
 	for (uint i = 0; i < 2; i++)
 		for (uint16 imageId = 3601; imageId >= 3595; imageId--) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
-			_vm->pollAndDiscardEvents();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 		}
 
 	pipeChangeValve(true, 0x80);
@@ -448,14 +447,14 @@ void Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var, uint16 argc, ui
 
 void Channelwood::o_leverElev3StartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_vm->_gfx->copyImageToScreen(3970, Common::Rect(544, 333));
-	_vm->_system->updateScreen();
+	_vm->doFrame();
 	o_leverStartMove(op, var, argc, argv);
 }
 
 void Channelwood::o_leverElev3EndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	o_leverEndMove(op, var, argc, argv);
 	_vm->_gfx->copyImageToScreen(3265, Common::Rect(544, 333));
-	_vm->_system->updateScreen();
+	_vm->doFrame();
 	_vm->_sound->replaceSoundMyst(5265);
 }
 
@@ -700,8 +699,7 @@ void Channelwood::o_waterTankValveClose(uint16 op, uint16 var, uint16 argc, uint
 	for (uint i = 0; i < 2; i++)
 		for (uint16 imageId = 3595; imageId <= 3601; imageId++) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
-			_vm->pollAndDiscardEvents();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 		}
 
 	pipeChangeValve(false, 0x80);

@@ -194,7 +194,6 @@ bool MystConsole::Cmd_DrawImage(int argc, const char **argv) {
 		rect = Common::Rect((uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4]), (uint16)atoi(argv[5]));
 
 	_vm->_gfx->copyImageToScreen((uint16)atoi(argv[1]), rect);
-	_vm->_system->updateScreen();
 	return false;
 }
 
@@ -348,9 +347,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 			debug("Loading card %d", ids[j]);
 			_vm->changeToCard(ids[j], kTransitionCopy);
 
-			_vm->_video->updateMovies();
-			_vm->_scriptParser->runPersistentScripts();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 
 			int16 resIndex = _vm->_rnd->getRandomNumber(_vm->_resources.size()) - 1;
 			if (resIndex >= 0 && _vm->_resources[resIndex]->isEnabled()) {
@@ -358,9 +355,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 				_vm->_resources[resIndex]->handleMouseUp();
 			}
 
-			_vm->_video->updateMovies();
-			_vm->_scriptParser->runPersistentScripts();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 
 			if (_vm->getCurStack() != i) {
 				// Clicking may have linked us to another age
