@@ -118,11 +118,10 @@ public:
 	Inventory _inventory;
 	GameState _state;
 	int _status;
+	bool _processInput;
 	Action _inputVerb;
-	bool _inputVerb2;
-	Object _nullObjectInstance;
+	Object *_currentInputObject;
 	Object *_inputObject[2];
-	int _objectNumber;
 	bool _waitEvent;
 	bool _newRoom;
 	bool _newOverlay;
@@ -130,7 +129,7 @@ public:
 	int _timer2;
 	int _inventoryScroll;
 	int _exitList[25];
-	Common::Rect _guiCommandDimensions[10];
+	GuiElement _guiCommandButton[10];
 	// 0 PC Speaker | 1 SoundBlaster | 2 No Sound
 	int _soundDevice;
 
@@ -166,12 +165,13 @@ public:
 	int invertSection(int section);
 	void drawMapExits();
 	void drawStatus();
-	void drawCommandBox(int cmd, bool brightness);
 	void drawCommandBox();
 	void inventory_arrow(int num, bool brightness);
-	void inventory_object(int num, bool brightness);
+	void inventory_object(int index, bool brightness);
 	void drawInventory();
+	void drawImage(int section);
 	void changeRoom(RoomID id);
+	void resetInputState();
 };
 
 }
