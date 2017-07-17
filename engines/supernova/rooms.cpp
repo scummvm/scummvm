@@ -31,7 +31,7 @@ void StartingItems::onEntrance() {
 	for (int i = 0; i < 3; ++i)
 		_gm->_inventory.add(*getObject(i));
 
-	this->setRoomSeen(true);
+	setRoomSeen(true);
 	_gm->changeRoom(CABIN_R3);
 }
 
@@ -40,23 +40,23 @@ bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		if (_objectState[6].hasProperty(OPENED)) {
 			_vm->playSound(kAudioDoorSound);
 			_objectState[6].disableProperty(OPENED);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 8);
-			_shown[9] = false;
+			_gm->drawImage(8);
+			setSectionVisible(9, false);
 			_gm->wait2(2);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 7);
-			_shown[8] = false;
+			_gm->drawImage(7);
+			setSectionVisible(8, false);
 			_gm->wait2(2);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), _gm->invertSection(7));
+			_gm->drawImage(_gm->invertSection(7));
 		} else {
 			_vm->playSound(kAudioDoorSound);
 			_objectState[6].setProperty(OPENED);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 7);
+			_gm->drawImage(7);
 			_gm->wait2(2);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 8);
-			_shown[7] = false;
+			_gm->drawImage(8);
+			setSectionVisible(7, false);
 			_gm->wait2(2);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 9);
-			_shown[8] = false;
+			_gm->drawImage(9);
+			setSectionVisible(8, false);
 		}
 		return true;
 	}
@@ -69,22 +69,22 @@ bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1,obj2,KEYCARD2,SLEEP_SLOT)) {
 		if (_objectState[2].hasProperty(OPENED)) {
 			_objectState[2].disableProperty(OPENED);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 3);
-			_shown[4] = false;
+			_gm->drawImage(3);
+			setSectionVisible(4, false);
 			_gm->wait2(2);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 2);
-			_shown[3] = false;
+			_gm->drawImage(2);
+			setSectionVisible(3, false);
 			_gm->wait2(2);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), _gm->invertSection(2));
+			_gm->drawImage(_gm->invertSection(2));
 		} else {
 			_objectState[2].setProperty(OPENED);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 2);
+			_gm->drawImage(2);
 			_gm->wait2(2);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 3);
-			_shown[2] = false;
+			_gm->drawImage(3);
+			setSectionVisible(2, false);
 			_gm->wait2(2);
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), 4);
-			_shown[3] = false;
+			_gm->drawImage(4);
+			setSectionVisible(3, false);
 			_gm->great(1);
 		}
 	} else {
@@ -102,8 +102,8 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 	Room *r;
 
 	if (((verb == ACTION_LOOK) || (verb == ACTION_USE)) && (obj1._id == COMPUTER)) {
-		_shown[kMaxSection - 1] = true;
-		_shown[4] = false;
+		setSectionVisible(kMaxSection - 1, true);
+		setSectionVisible(4, false);
 		_vm->renderBox(0,0,320,200,kColorDarkBlue);
 		if (_gm->_state.time == 0) {
 			// Destination reached
@@ -115,7 +115,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			// Artificial coma interrupted
 			_vm->renderText("Tiefschlafprozess abgebrochen",60,115,kColorWhite99);
 			_gm->mouseInput2();
-		} else if (_shown[5]) {
+		} else if (isSectionVisible(5)) {
 			// Sleep duration in days
 			_vm->renderText("Schlafdauer in Tagen:",30,85,kColorWhite99);
 			_vm->renderText(Common::String::format("%d",_gm->_state.timeSleep).c_str(),
@@ -164,25 +164,25 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_state.timeSleep = l;
 			_vm->renderText("Bitte legen Sie sich in die angezeigte Schlafkammer.",30,105,kColorWhite99);
 			_gm->wait2(18);
-			_shown[5] = true;
+			setSectionVisible(5, true);
 		}
         escape:
 		_vm->renderRoom(*this);
 		_gm->showMenu();
 		_gm->drawMapExits();
 		_gm->palette();
-		_shown[kMaxSection - 1] = false;
+		setSectionVisible(kMaxSection - 1, false);
 	} else if (((verb == ACTION_WALK) || (verb == ACTION_USE)) &&
 	           ((obj1._id == CABINS) || (obj1._id == CABIN))) {
 		r = _gm->_rooms[AIRLOCK];
-		if (!(obj1._id == CABIN) || !(_shown[5])) {
+		if (!(obj1._id == CABIN) || !isSectionVisible(5)) {
 			_vm->renderMessage("Es würde wenig bringen,|sich in eine Schlafkammer zu legen,|die nicht eingeschaltet ist.");
 		} else if (r->getObject(5)->hasProperty(WORN)) {
 			_vm->renderMessage("Dazu mußt du erst den Raumanzug ausziehen.");
 		} else {
 			_vm->paletteFadeOut();
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), _gm->invertSection(5));
-			_vm->renderImage(_gm->_currentRoom->getFileNumber(), _gm->invertSection(4));
+			_gm->drawImage(_gm->invertSection(5));
+			_gm->drawImage(_gm->invertSection(4));
 			r = _gm->_rooms[GENERATOR];
 			if (r->isSectionVisible(9)) {
 				energy = &_gm->_state.landingModuleEnergy;
@@ -204,7 +204,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 				}
 			}
 			if (_gm->_state.timeSleep == _gm->_state.time) {
-				_vm->renderImage(_gm->_currentRoom->getFileNumber(), 3);  // landed
+				_gm->drawImage(3);
 				r = _gm->_rooms[COCKPIT];
 				r->setSectionVisible(23, true);
 				r = _gm->_rooms[CABIN_R2];
@@ -264,7 +264,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 void ShipSleepCabin::animation() {
 	static char color;
 
-	if (this->isSectionVisible(kMaxSection - 1)) {
+	if (isSectionVisible(kMaxSection - 1)) {
 		if (color) {
 			color = kColorBlack;
 			_gm->_timer2 = 5;
@@ -274,23 +274,23 @@ void ShipSleepCabin::animation() {
 		}
 		_vm->renderText("Achtung: Triebwerke funktionsunfähig",50,145,color);
 	} else {
-		if (this->isSectionVisible(21)) {
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(21));
+		if (isSectionVisible(21)) {
+			_gm->drawImage(_gm->invertSection(21));
 			_gm->_timer2 = 5;
 		} else {
-			_vm->renderImage(this->getFileNumber(), 21);
+			_gm->drawImage(21);
 			_gm->_timer2 = 10;
 		}
 	}
 	if (_gm->_state.powerOff) {
-		if (this->isSectionVisible(kMaxSection - 1)) {
+		if (isSectionVisible(kMaxSection - 1)) {
 			_vm->renderText("Energievorrat erschöpft",97,165,color);
 			_vm->renderText("Notstromversorgung aktiv",97,175,color);
 		} else {
-			if (this->isSectionVisible(21)) {
-				_vm->renderImage(this->getFileNumber(), 22);
+			if (isSectionVisible(21)) {
+				_gm->drawImage(22);
 			} else {
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(22));
+				_gm->drawImage(_gm->invertSection(22));
 			}
 		}
 	}
@@ -306,13 +306,14 @@ void ShipSleepCabin::onEntrance() {
 		_vm->renderMessage("Was steht dir jetzt wohl wirklich bevor?");
 		_gm->_state.dream = false;
 	}
+	setRoomSeen(true);
 }
 
 bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 	char c[2] = {0};
 
 	if ((verb == ACTION_LOOK) && (obj1._id == MONITOR)) {
-		this->setSectionVisible(kMaxSection - 1, true);
+		setSectionVisible(kMaxSection - 1, true);
 		_vm->renderBox(0, 0, 320, 200, kColorBlack);
 		_vm->renderText("Geschwindigkeit: ", 50, 50, kColorLightYellow);
 		if (_gm->_state.time)
@@ -332,7 +333,7 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderText(Common::String::format("%d", _gm->_state.time).c_str(), 50, 120, kColorLightYellow);
 		_vm->renderText(" Tage");
 		_gm->mouseInput2();
-		this->setSectionVisible(kMaxSection - 1, false);
+		setSectionVisible(kMaxSection - 1, false);
 		_vm->renderRoom(*this);
 		_gm->showMenu();
 		_gm->drawMapExits();
@@ -347,7 +348,7 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 void ShipCockpit::animation() {
 	static char color;
 
-	if (this->isSectionVisible(kMaxSection - 1)) {
+	if (isSectionVisible(kMaxSection - 1)) {
 		if (color) {
 			color = 0;
 			_gm->_timer2 = 5;
@@ -357,23 +358,23 @@ void ShipCockpit::animation() {
 		}
 		_vm->renderText("Achtung: Triebwerke funktionsunfhig", 50, 145, color);
 	} else {
-		if (this->isSectionVisible(21)) {
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(21));
+		if (isSectionVisible(21)) {
+			_gm->drawImage(_gm->invertSection(21));
 			_gm->_timer2 = 5;
 		} else {
-			_vm->renderImage(this->getFileNumber(), 21);
+			_gm->drawImage(21);
 			_gm->_timer2 = 10;
 		}
 	}
 	if (_gm->_state.powerOff) {
-		if (this->isSectionVisible(kMaxSection - 1)) {
+		if (isSectionVisible(kMaxSection - 1)) {
 			_vm->renderText("Energievorrat erschpft", 97, 165, color);
 			_vm->renderText("Notstromversorgung aktiv", 97, 175, color);
 		} else {
-			if (this->isSectionVisible(21))
-				_vm->renderImage(this->getFileNumber(), 22);
+			if (isSectionVisible(21))
+				_gm->drawImage(22);
 			else
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(22));
+				_gm->drawImage(_gm->invertSection(22));
 		}
 	}
 }
@@ -386,45 +387,45 @@ void ShipCockpit::onEntrance() {
 
 bool ShipCabinL2::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_KL1, KEYCARD2)) {
-		_gm->openLocker(this, this->getObject(4), this->getObject(0), 17);
-		if (this->getObject(5)->_click == 255)
-			_vm->renderImage(this->getFileNumber(), 20); // Remove Pistol
+		_gm->openLocker(this, getObject(4), getObject(0), 17);
+		if (getObject(5)->_click == 255)
+			_gm->drawImage(20); // Remove Pistol
 		_gm->great(2);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_KL2, KEYCARD2)) {
-		_gm->openLocker(this, this->getObject(6), this->getObject(1), 18);
+		_gm->openLocker(this, getObject(6), getObject(1), 18);
 		_gm->great(2);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_KL3, KEYCARD2)) {
-		_gm->openLocker(this, this->getObject(8), this->getObject(2), 19);
-		if (this->getObject(9)->_click == 255)
-			_vm->renderImage(this->getFileNumber(), 21);  // Remove cable spool
+		_gm->openLocker(this, getObject(8), getObject(2), 19);
+		if (getObject(9)->_click == 255)
+			_gm->drawImage(21); // Remove cable spool
 		_gm->great(2);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_KL4, KEYCARD2)) {
-		_gm->openLocker(this, this->getObject(10), this->getObject(3), 22);
-		if (this->getObject(11)->_click == 255)
-			_vm->renderImage(this->getFileNumber(), 23); // Remove book
+		_gm->openLocker(this, getObject(10), getObject(3), 22);
+		if (getObject(11)->_click == 255)
+			_gm->drawImage(23); // Remove book
 		_gm->great(2);
 	}
 
 	else if ((verb == ACTION_CLOSE) && (obj1._id == SHELF_L1)) {
-		_gm->closeLocker(this, this->getObject(4), this->getObject(0), 17);
-		this->setSectionVisible(20, false);
+		_gm->closeLocker(this, getObject(4), getObject(0), 17);
+		setSectionVisible(20, false);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == SHELF_L2))
-		_gm->closeLocker(this, this->getObject(6), this->getObject(1), 18);
+		_gm->closeLocker(this, getObject(6), getObject(1), 18);
 	else if ((verb == ACTION_CLOSE) && (obj1._id == SHELF_L3)) {
-		_gm->closeLocker(this, this->getObject(8), this->getObject(2), 19);
-		this->setSectionVisible(21, false);
+		_gm->closeLocker(this, getObject(8), getObject(2), 19);
+		setSectionVisible(21, false);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == SHELF_L4)) {
-		_gm->closeLocker(this, this->getObject(10), this->getObject(3), 22);
-		this->setSectionVisible(23, false);
+		_gm->closeLocker(this, getObject(10), getObject(3), 22);
+		setSectionVisible(23, false);
 	}
 
 	else if ((verb == ACTION_TAKE) && (obj1._id == SPOOL) &&
 	         !(obj1.hasProperty(CARRIED))) {
-		this->getObject(8)->_click = 42;  // empty shelf
+		getObject(8)->_click = 42;  // empty shelf
 		return false;
 	} else if ((verb == ACTION_TAKE) && (obj1._id == BOOK2) &&
 	           !(obj1.hasProperty(CARRIED))) {
-		this->getObject(10)->_click = 47;  // empty shelf
+		getObject(10)->_click = 47;  // empty shelf
 		return false;
 	} else
 		return false;
@@ -436,35 +437,35 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 	Room *r;
 
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, RECORD, TURNTABLE)) {
-		if (this->isSectionVisible(kMaxSection - 1) || this->isSectionVisible(15))
+		if (isSectionVisible(kMaxSection - 1) || isSectionVisible(15))
 			_vm->renderMessage("Du hast die Platte schon aufgelegt.");
 		else {
-			if (!this->getObject(4)->hasProperty(CARRIED))
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(8));
+			if (!getObject(4)->hasProperty(CARRIED))
+				_gm->drawImage(_gm->invertSection(8));
 			else
-				_gm->_inventory.remove(*this->getObject(4));
-			_vm->renderImage(this->getFileNumber(), 15);
-			this->getObject(4)->_click = 48;
+				_gm->_inventory.remove(*getObject(4));
+			_gm->drawImage(15);
+			getObject(4)->_click = 48;
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == TURNTABLE_BUTTON)) {
-		if (!this->isSectionVisible(15)) {
+		if (!isSectionVisible(15)) {
 			_vm->renderMessage("Es ist doch gar keine Platte aufgelegt.");
-		} else if (!this->isSectionVisible(10) &&
-		           !this->isSectionVisible(11) &&
-		            this->isSectionVisible(12)) {
+		} else if (!isSectionVisible(10) &&
+		           !isSectionVisible(11) &&
+		            isSectionVisible(12)) {
 			if (_gm->_soundDevice != 2) {
-				_vm->renderImage(this->getFileNumber(), 14);
-				this->setSectionVisible(15, false);
+				_gm->drawImage(14);
+				setSectionVisible(15, false);
 				for (int i = 3; i; i--) {
 					_vm->playSound(kAudioTurntable);
 					if (_gm->_soundDevice) {
 						do {
-							if (this->isSectionVisible(13)) {
-								_vm->renderImage(this->getFileNumber(), 14);
-								this->setSectionVisible(13, false);
+							if (isSectionVisible(13)) {
+								_gm->drawImage(14);
+								setSectionVisible(13, false);
 							} else {
-								_vm->renderImage(this->getFileNumber(), 13);
-								this->setSectionVisible(14, false);
+								_gm->drawImage(13);
+								setSectionVisible(14, false);
 							}
 							_gm->wait2(3);
 						} while (_gm->_status);
@@ -474,53 +475,53 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 				}
 			} else {
 				for (int i = 10; i; i--) {
-					_vm->renderImage(this->getFileNumber(), 14);
+					_gm->drawImage(14);
 					_gm->wait2(3);
-					_vm->renderImage(this->getFileNumber(), 13);
+					_gm->drawImage(13);
 					_gm->wait2(3);
 				}
 			}
-			_vm->renderImage(this->getFileNumber(), 15);
-			this->setSectionVisible(14, false);
-			this->setSectionVisible(13, false);
+			_gm->drawImage(15);
+			setSectionVisible(14, false);
+			setSectionVisible(13, false);
 			_vm->renderMessage("Die Platte scheint einen Sprung zu haben.");
 		}
 	} else if ((verb == ACTION_TAKE) && (obj1._id == RECORD) &&
 	           (obj1._click != 15)) {
-		_vm->renderImage(this->getFileNumber(), 9);
-		this->setSectionVisible(13, false);
-		this->setSectionVisible(14, false);
-		this->setSectionVisible(15, false);
+		_gm->drawImage(9);
+		setSectionVisible(13, false);
+		setSectionVisible(14, false);
+		setSectionVisible(15, false);
 		obj1._section = 0;
 		_gm->takeObject(obj1);
 	} else if ((verb == ACTION_PULL) && (obj1._id == PLUG)) {
-		_vm->renderImage(this->getFileNumber(), 10);
-		this->setSectionVisible(7, false);
+		_gm->drawImage(10);
+		setSectionVisible(7, false);
 		obj1._click = 21;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, PLUG, SOCKET)) {
-		_vm->renderImage(this->getFileNumber(), 7);
-		this->setSectionVisible(10, false);
-		this->getObject(10)->_click = 20;
+		_gm->drawImage(7);
+		setSectionVisible(10, false);
+		getObject(10)->_click = 20;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE2))
 		_vm->renderMessage("Schneid doch besser ein|lngeres Stck Kabel ab!");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE)) {
 		r = _gm->_rooms[AIRLOCK];
-		if (!this->isSectionVisible(10) && !r->getObject(5)->hasProperty(WORN)) {
-			_vm->renderImage(this->getFileNumber(), 25);
+		if (!isSectionVisible(10) && !r->getObject(5)->hasProperty(WORN)) {
+			_gm->drawImage(25);
 			_gm->shock();
 		}
-		_vm->renderImage(this->getFileNumber(), 11);
-		_vm->renderImage(this->getFileNumber(), 26);
-		this->setSectionVisible(12, false);
+		_gm->drawImage(11);
+		_gm->drawImage(26);
+		setSectionVisible(12, false);
 	} else if ((verb == ACTION_TAKE) &&
 	           ((obj1._id == WIRE) || (obj1._id == WIRE2) || (obj1._id == PLUG))) {
-		if (this->isSectionVisible(10) && this->isSectionVisible(11)) {
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(10));
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(11));
-			this->getObject(8)->_name = "Leitung mit Stecker";
-			_gm->takeObject(*this->getObject(8));
-			this->getObject(9)->_click = 255;
-			this->getObject(10)->_click = 255;
+		if (isSectionVisible(10) && isSectionVisible(11)) {
+			_gm->drawImage(_gm->invertSection(10));
+			_gm->drawImage(_gm->invertSection(11));
+			getObject(8)->_name = "Leitung mit Stecker";
+			_gm->takeObject(*getObject(8));
+			getObject(9)->_click = 255;
+			getObject(10)->_click = 255;
 		} else {
 			_vm->renderMessage("Das ist befestigt.");
 		}
@@ -533,48 +534,48 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 
 bool ShipCabinR3::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_K1, KEYCARD)) {
-		_gm->openLocker(this, this->getObject(6), this->getObject(2), 9);
+		_gm->openLocker(this, getObject(6), getObject(2), 9);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_K2, KEYCARD)) {
-		_gm->openLocker(this, this->getObject(8), this->getObject(3), 10);
-		if (this->getObject(9)->_click == 255)
-			_vm->renderImage(this->getFileNumber(), 12); // Remove rope
+		_gm->openLocker(this, getObject(8), getObject(3), 10);
+		if (getObject(9)->_click == 255)
+			_gm->drawImage(12); // Remove rope
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_K3, KEYCARD)) {
-		_gm->openLocker(this, this->getObject(10), this->getObject(4), 11);
-		if (this->getObject(17)->_click == 255)
-			_vm->renderImage(this->getFileNumber(), 16); // Remove Discman
+		_gm->openLocker(this, getObject(10), getObject(4), 11);
+		if (getObject(17)->_click == 255)
+			_gm->drawImage(16); // Remove Discman
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_K4, KEYCARD)) {
-		_gm->openLocker(this, this->getObject(15), this->getObject(5), 13);
-		if (this->getObject(16)->_click == 255)
-			_vm->renderImage(this->getFileNumber(), 14); // Remove book
+		_gm->openLocker(this, getObject(15), getObject(5), 13);
+		if (getObject(16)->_click == 255)
+			_gm->drawImage(14); // Remove Book
 	}
 
 	else if ((verb == ACTION_CLOSE) && (obj1._id == SHELF1))
-		_gm->closeLocker(this, this->getObject(6), this->getObject(2), 9);
+		_gm->closeLocker(this, getObject(6), getObject(2), 9);
 	else if ((verb == ACTION_CLOSE) && (obj1._id == SHELF2)) {
-		this->setSectionVisible(12, false);
-		_gm->closeLocker(this, this->getObject(8), this->getObject(3), 10);
+		setSectionVisible(12, false);
+		_gm->closeLocker(this, getObject(8), getObject(3), 10);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == SHELF3)) {
-		this->setSectionVisible(16, false);
-		_gm->closeLocker(this, this->getObject(10), this->getObject(4), 11);
+		setSectionVisible(16, false);
+		_gm->closeLocker(this, getObject(10), getObject(4), 11);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == SHELF4)) {
-		this->setSectionVisible(14, false);
-		this->setSectionVisible(14, false);
-		_gm->closeLocker(this, this->getObject(15), this->getObject(5), 13);
+		setSectionVisible(14, false);
+		setSectionVisible(14, false);
+		_gm->closeLocker(this, getObject(15), getObject(5), 13);
 	}
 
 	else if ((verb == ACTION_TAKE) && (obj1._id == DISCMAN) &&
 	         !_gm->_rooms[0]->getObject(3)->hasProperty(CARRIED)) {
-		this->getObject(10)->_click = 34; // Locker empty
+		getObject(10)->_click = 34; // Locker empty
 		obj1._click = 255;
 		_gm->takeObject(*_gm->_rooms[0]->getObject(3));
-		_vm->renderImage(this->getFileNumber(), 16);
+		_gm->drawImage(16);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == ROPE) &&
 	           obj1.hasProperty(CARRIED)) {
-		this->getObject(8)->_click = 31; // Shelf empty
+		getObject(8)->_click = 31; // Shelf empty
 		return false;
 	} else if ((verb == ACTION_TAKE) && (obj1._id == BOOK) &&
 	           !obj1.hasProperty(CARRIED)) {
-		this->getObject(15)->_click = 32; // Shelf empty
+		getObject(15)->_click = 32; // Shelf empty
 		return false;
 	} else
 		return false;
@@ -587,85 +588,85 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 	Room *r;
 
 	if ((verb == ACTION_PRESS) && (obj1._id == BUTTON1)) {
-		if (!this->getObject(1)->hasProperty(OPENED)) {
-			_vm->renderImage(this->getFileNumber(), 10);
+		if (!getObject(1)->hasProperty(OPENED)) {
+			_gm->drawImage(10);
 			_vm->playSound(kAudioDoorSound);
-			if (this->getObject(0)->hasProperty(OPENED)) {
-				this->getObject(0)->disableProperty(OPENED);
-				_vm->renderImage(this->getFileNumber(), 1);
+			if (getObject(0)->hasProperty(OPENED)) {
+				getObject(0)->disableProperty(OPENED);
+				_gm->drawImage(1);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), 2);
-				this->setSectionVisible(1, false);
+				_gm->drawImage(2);
+				setSectionVisible(1, false);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), 3);
-				this->setSectionVisible(2, false);
+				_gm->drawImage(3);
+				setSectionVisible(2, false);
 			} else {
-				this->getObject(0)->setProperty(OPENED);
-				_vm->renderImage(this->getFileNumber(), 2);
-				this->setSectionVisible(3, false);
+				getObject(0)->setProperty(OPENED);
+				_gm->drawImage(2);
+				setSectionVisible(3, false);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), 1);
-				this->setSectionVisible(2, false);
+				_gm->drawImage(1);
+				setSectionVisible(2, false);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), 1 + 128);
+				_gm->drawImage(_gm->invertSection(1));
 			}
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(10));
+			_gm->drawImage(_gm->invertSection(10));
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BUTTON2)) {
-		if (!this->getObject(0)->hasProperty(OPENED)) {
-			_vm->renderImage(this->getFileNumber(), 11);
-			if (this->getObject(1)->hasProperty(OPENED)) {
+		if (!getObject(0)->hasProperty(OPENED)) {
+			_gm->drawImage(11);
+			if (getObject(1)->hasProperty(OPENED)) {
 				_vm->playSound(kAudioDoorSound);
-				this->getObject(1)->disableProperty(OPENED);
-				_vm->renderImage(this->getFileNumber(), 4);
+				getObject(1)->disableProperty(OPENED);
+				_gm->drawImage(4);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), 5);
-				this->setSectionVisible(4, false);
+				_gm->drawImage(5);
+				setSectionVisible(4, false);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), 6);
-				this->setSectionVisible(5, false);
-				_vm->renderImage(this->getFileNumber(), 16);
-				this->setSectionVisible(17, false);
+				_gm->drawImage(6);
+				setSectionVisible(5, false);
+				_gm->drawImage(16);
+				setSectionVisible(17, false);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 15);
-				this->setSectionVisible(16, false);
+				_gm->drawImage(15);
+				setSectionVisible(16, false);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 14);
-				this->setSectionVisible(15, false);
+				_gm->drawImage(14);
+				setSectionVisible(15, false);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 13);
-				this->setSectionVisible(14, false);
+				_gm->drawImage(13);
+				setSectionVisible(14, false);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 12);
-				this->setSectionVisible(13, false);
+				_gm->drawImage(12);
+				setSectionVisible(13, false);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(12));
+				_gm->drawImage(_gm->invertSection(12));
 			} else {
-				this->getObject(1)->setProperty(OPENED);
-				_vm->renderImage(this->getFileNumber(), 12);
+				getObject(1)->setProperty(OPENED);
+				_gm->drawImage(12);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 13);
-				this->setSectionVisible(12, false);
+				_gm->drawImage(13);
+				setSectionVisible(12, false);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 14);
-				this->setSectionVisible(13, false);
+				_gm->drawImage(14);
+				setSectionVisible(13, false);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 15);
-				this->setSectionVisible(14, false);
+				_gm->drawImage(15);
+				setSectionVisible(14, false);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 16);
-				this->setSectionVisible(15, false);
+				_gm->drawImage(16);
+				setSectionVisible(15, false);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 17);
-				this->setSectionVisible(16, false);
+				_gm->drawImage(17);
+				setSectionVisible(16, false);
 				_vm->playSound(kAudioDoorSound);
-				_vm->renderImage(this->getFileNumber(), 5);
-				this->setSectionVisible(6, false);
+				_gm->drawImage(5);
+				setSectionVisible(6, false);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), 4);
-				this->setSectionVisible(5, false);
+				_gm->drawImage(4);
+				setSectionVisible(5, false);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(4));
+				_gm->drawImage(_gm->invertSection(4));
 				r = _gm->_rooms[AIRLOCK];
 				if (!r->getObject(4)->hasProperty(WORN) ||
 				    !r->getObject(5)->hasProperty(WORN) ||
@@ -673,10 +674,10 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 //					longjmp(dead, "Zu niedriger Luftdruck soll ungesund sein.");
 				}
 			}
-			_vm->renderImage(this->getFileNumber(), 11 + 128);
+			_gm->drawImage(_gm->invertSection(11));
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == MANOMETER)) {
-		if (this->getObject(1)->hasProperty(OPENED))
+		if (getObject(1)->hasProperty(OPENED))
 			_vm->renderMessage("Er zeigt Null an.");
 		else
 			_vm->renderMessage("Er zeigt Normaldruck an.");
@@ -687,10 +688,10 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void ShipAirlock::onEntrance() {
-	if (!this->hasSeen())
+	if (!hasSeen())
 		_vm->renderMessage("Komisch, es ist nur|noch ein Raumanzug da.");
 
-	this->setRoomSeen(true);
+	setRoomSeen(true);
 }
 
 bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
@@ -701,19 +702,19 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 	        (obj1._description != beschr2)) {
 		_vm->renderMessage(obj1._description);
 		obj1._description = beschr2;
-		_gm->takeObject(*this->getObject(2));
+		_gm->takeObject(*getObject(2));
 	} else if (((verb == ACTION_OPEN) || (verb == ACTION_CLOSE)) &&
 	           (obj1._id == OUTERHATCH_TOP)) {
 		_vm->renderMessage("Du muát erst hingehen.");
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == LANDINGMOD_HATCH) &&
-	           (this->isSectionVisible(4) || this->isSectionVisible(6)))
+	           (isSectionVisible(4) || isSectionVisible(6)))
 		_vm->renderMessage("Das Kabel ist im Weg.");
 	else if (((verb == ACTION_TAKE) && (obj1._id == HOLD_WIRE)) ||
 	         ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, LANDINGMOD_HATCH)))
 		_vm->renderMessage("Das Kabel ist schon ganz|richtig an dieser Stelle.");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, HOLD_WIRE)) {
-		this->getObject(0)->_name = "Leitung mit Lsterklemme";
-		_gm->_inventory.remove(*this->getObject(2));
+		getObject(0)->_name = "Leitung mit Lsterklemme";
+		_gm->_inventory.remove(*getObject(2));
 		_gm->_state.terminalStripConnected = true;
 		_gm->_state.terminalStripWire = true;
 		_vm->renderMessage("Ok.");
@@ -721,23 +722,23 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!_gm->_state.terminalStripConnected)
 			_vm->renderMessage("Womit denn?");
 		else {
-			_vm->renderImage(this->getFileNumber(), 5);
-			this->getObject(0)->_name = "langes Kabel mit Stecker";
-			this->getObject(0)->_click = 10;
+			_gm->drawImage(5);
+			getObject(0)->_name = "langes Kabel mit Stecker";
+			getObject(0)->_click = 10;
 			r = _gm->_rooms[CABIN_L2];
-			_gm->_inventory.remove(*this->getObject(9));
+			_gm->_inventory.remove(*getObject(9));
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, GENERATOR_TOP)) {
-		if (this->isSectionVisible(5)) {
+		if (isSectionVisible(5)) {
 			r = _gm->_rooms[GENERATOR];
 			r->getObject(0)->_click = 15;
 			r->getObject(1)->_click = 13;
 			r->setSectionVisible(6, false);
 			r->setSectionVisible(8, false);
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(5));
-			_vm->renderImage(this->getFileNumber(), 6);
-			this->setSectionVisible(4, false);
-			this->getObject(0)->_click = 11;
+			_gm->drawImage(_gm->invertSection(5));
+			_gm->drawImage(6);
+			setSectionVisible(4, false);
+			getObject(0)->_click = 11;
 		} else {
 			_vm->renderMessage("Die Leitung ist zu kurz.");
 		}
@@ -749,9 +750,9 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void ShipHold::onEntrance() {
-	if (!this->hasSeen())
+	if (!hasSeen())
 		_vm->renderMessage("Was ist denn das fr ein Chaos?|Und auáerdem fehlt das Notraumschiff!|Jetzt wird mir einiges klar.|Die anderen sind geflchtet,|und ich habe es verpennt.");
-	this->setRoomSeen(true);
+	setRoomSeen(true);
 	_gm->_rooms[COCKPIT]->setRoomSeen(true);
 }
 
@@ -762,18 +763,18 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, PEN, LANDINGMOD_BUTTON)) {
 		if (_gm->_state.landingModuleEnergy) {
 			r = _gm->_rooms[GENERATOR];
-			if (this->isSectionVisible(7)) {
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(9));
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(2));
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(8));
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(7));
-				_vm->renderImage(this->getFileNumber(), _gm->invertSection(10));
+			if (isSectionVisible(7)) {
+				_gm->drawImage(_gm->invertSection(9));
+				_gm->drawImage(_gm->invertSection(2));
+				_gm->drawImage(_gm->invertSection(8));
+				_gm->drawImage(_gm->invertSection(7));
+				_gm->drawImage(_gm->invertSection(10));
 				if (r->isSectionVisible(9))
 					_gm->_state.powerOff = true;
 				_gm->roomBrightness();
 				_vm->paletteBrightness();
 			} else {
-				_vm->renderImage(this->getFileNumber(), 7);
+				_gm->drawImage(7);
 				if (r->isSectionVisible(9))
 					_gm->_state.powerOff = false;
 //				load("MSN_DATA.025");
@@ -783,40 +784,40 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 				r->setSectionVisible(1, false);
 				r->setSectionVisible(2, false);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), 2);
+				_gm->drawImage(2);
 				_gm->wait2(3);
-				_vm->renderImage(this->getFileNumber(), 8);
+				_gm->drawImage(8);
 				_gm->wait2(2);
-				_vm->renderImage(this->getFileNumber(), 9);
+				_gm->drawImage(9);
 				_gm->wait2(1);
-				_vm->renderImage(this->getFileNumber(), 10);
+				_gm->drawImage(10);
 			}
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, LANDINGMOD_BUTTON))
 		_vm->renderMessage("Es ist nicht spitz genug.");
 	else if ((verb == ACTION_LOOK) && (obj1._id == LANDINGMOD_MONITOR) &&
-	         this->isSectionVisible(7))
+	         isSectionVisible(7))
 		_vm->renderMessage("Du wirst aus den Anzeigen nicht schlau.");
 	else if ((verb == ACTION_USE) && (obj1._id == KEYBOARD))
 		_vm->renderMessage("Laá lieber die Finger davon!");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, LANDINGMOD_SOCKET)) {
 		r = _gm->_rooms[CABIN_L3];
 		_gm->_inventory.remove(*r->getObject(8));
-		this->getObject(4)->_name = r->getObject(8)->_name;
-		_vm->renderImage(this->getFileNumber(), 4);
+		getObject(4)->_name = r->getObject(8)->_name;
+		_gm->drawImage(4);
 		if (_gm->_state.cableConnected) {
-			_vm->renderImage(this->getFileNumber(), 5);
-			this->getObject(4)->_click = 6;
+			_gm->drawImage(5);
+			getObject(4)->_click = 6;
 		} else {
-			this->getObject(4)->_click = 5;
+			getObject(4)->_click = 5;
 			if (_gm->_state.terminalStripWire)
-				_vm->renderImage(this->getFileNumber(), 11);
+				_gm->drawImage(11);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SPOOL, LANDINGMOD_SOCKET))
 		_vm->renderMessage("An dem Kabel ist doch gar kein Stecker.");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, TERMINALSTRIP)) {
-		_vm->renderImage(this->getFileNumber(), 11);
-		this->getObject(4)->_name = "Leitung mit Lsterklemme";
+		_gm->drawImage(11);
+		getObject(4)->_name = "Leitung mit Lsterklemme";
 		r = _gm->_rooms[HOLD];
 		_gm->_inventory.remove(*r->getObject(2));
 		_gm->_state.terminalStripConnected = true;
@@ -825,33 +826,33 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!_gm->_state.terminalStripConnected)
 			_vm->renderMessage("Womit denn?");
 		else {
-			_vm->renderImage(this->getFileNumber(), 5);
-			this->getObject(4)->_name = "langes Kabel mit Stecker";
-			this->getObject(4)->_click = 6;
+			_gm->drawImage(5);
+			getObject(4)->_name = "langes Kabel mit Stecker";
+			getObject(4)->_click = 6;
 			r = _gm->_rooms[CABIN_L2];
 			_gm->_inventory.remove(*r->getObject(9));
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, LANDINGMOD_HATCH)) {
-		if (this->getObject(5)->hasProperty(OPENED)) {
+		if (getObject(5)->hasProperty(OPENED)) {
 			r = _gm->_rooms[HOLD];
-			if (this->isSectionVisible(5)) {
+			if (isSectionVisible(5)) {
 				_gm->_rooms[HOLD]->setSectionVisible(5, false);
 				r->getObject(0)->_click = 10;
 
 			} else
 				r->getObject(0)->_click = 9;
 			_gm->_rooms[HOLD]->setSectionVisible(4, false);
-			r->getObject(0)->_name = this->getObject(4)->_name;
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(5));
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(4));
-			this->setSectionVisible(11, false);
-			_vm->renderImage(this->getFileNumber(), 6);
-			this->getObject(4)->_click = 7;
+			r->getObject(0)->_name = getObject(4)->_name;
+			_gm->drawImage(_gm->invertSection(4));
+			_gm->drawImage(_gm->invertSection(5));
+			setSectionVisible(11, false);
+			_gm->drawImage(6);
+			getObject(4)->_click = 7;
 		} else {
 			_vm->renderMessage("Du solltest die Luke vielleicht erst ffnen.");
 		}
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == LANDINGMOD_HATCH) &&
-	           this->isSectionVisible(6)) {
+	           isSectionVisible(6)) {
 		_vm->renderMessage("Das Kabel ist im Weg.");
 	} else if (((verb == ACTION_TAKE) || (verb == ACTION_PULL)) &&
 	         (obj1._id == LANDINGMOD_WIRE)) {
@@ -870,11 +871,11 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		if (obj1.hasProperty(OPENED))
 			return false;
 		_vm->playSound(kAudioDoorSound);
-		_vm->renderImage(this->getFileNumber(), 1);
-		if (this->isSectionVisible(7))
-			_vm->renderImage(this->getFileNumber(), 10);
-		if (this->isSectionVisible(13))
-			_vm->renderImage(this->getFileNumber(), 13);
+		_gm->drawImage(1);
+		if (isSectionVisible(7))
+			_gm->drawImage(10);
+		if (isSectionVisible(13))
+			_gm->drawImage(13);
 		_gm->_rooms[HOLD]->setSectionVisible(3, true);
 		obj1.setProperty(OPENED);
 		obj1._click = 2;
@@ -882,24 +883,24 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == OUTERHATCH)) {
 		if (!obj1.hasProperty(OPENED))
 			return false;
-		if (this->isSectionVisible(11) || this->isSectionVisible(12)) {
+		if (isSectionVisible(11) || isSectionVisible(12)) {
 			_vm->renderMessage("Das Seil ist im Weg.");
 		} else {
 			_vm->playSound(kAudioDoorSound);
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(1));
-			this->setSectionVisible(10, false);
-			if (this->isSectionVisible(13))
-				_vm->renderImage(this->getFileNumber(), 13);
+			_gm->drawImage(_gm->invertSection(1));
+			setSectionVisible(10, false);
+			if (isSectionVisible(13))
+				_gm->drawImage(13);
 			_gm->_rooms[HOLD]->setSectionVisible(3, false);
 			obj1.disableProperty(OPENED);
 			obj1._click = 1;
 			_vm->playSound(kAudioDoorClose);
 		}
 	} else if ((verb == ACTION_WALK) && (obj1._id == OUTERHATCH) &&
-	           this->isSectionVisible(7)) {
+	           isSectionVisible(7)) {
 		if (!obj1.hasProperty(OPENED))
 			_vm->renderMessage("Das ist geschlossen.");
-		else if (!this->isSectionVisible(11))
+		else if (!isSectionVisible(11))
 			_vm->renderMessage("Das geht nicht.|Die Luke ist mindestens|5 Meter ber dem Boden.");
 		else {
 			obj1._exitRoom = ROCKS;
@@ -912,68 +913,68 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage("Das Kabel ist schon ganz|richtig an dieser Stelle.");
 	else if ((verb == ACTION_PULL) && (obj1._id == SHORT_WIRE) &&
 	         (obj1._click != 11)) {
-		_vm->renderImage(this->getFileNumber(), 3);
-		_vm->renderImage(this->getFileNumber(), 4);
+		_gm->drawImage(3);
+		_gm->drawImage(4);
 		obj1._click = 11;
 		_gm->turnOff();
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SHORT_WIRE, CLIP) &&
-	           (this->getObject(11)->_click == 11) && !this->isSectionVisible(9)) {
-		_vm->renderImage(this->getFileNumber(), 2);
-		this->setSectionVisible(3, false);
-		this->setSectionVisible(4, false);
-		this->getObject(11)->_click = 10;
+	           (getObject(11)->_click == 11) && !isSectionVisible(9)) {
+		_gm->drawImage(2);
+		setSectionVisible(3, false);
+		setSectionVisible(4, false);
+		getObject(11)->_click = 10;
 		if (_gm->_state.shipEnergy)
 			_gm->turnOn();
 		else
-			_vm->renderImage(this->getFileNumber(), 4);
+			_gm->drawImage(4);
 	} else if ((verb == ACTION_OPEN) && (obj1._id == TRAP)) {
 		_vm->playSound(kAudioDoorSound);
-		_vm->renderImage(this->getFileNumber(), 2);
-		if (this->getObject(11)->_click == 11)
-			_vm->renderImage(this->getFileNumber(), 3);
+		_gm->drawImage(2);
+		if (getObject(11)->_click == 11)
+			_gm->drawImage(3);
 		if (_gm->_state.powerOff)
-			_vm->renderImage(this->getFileNumber(), 4);
+			_gm->drawImage(4);
 		obj1.setProperty(OPENED);
 		obj1._click = 6;
 
 		obj1._click2 = 5;
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == TRAP)) {
-		if (this->isSectionVisible(9))
+		if (isSectionVisible(9))
 			_vm->renderMessage("Das Kabel ist im Weg.");
 		else {
-			this->setSectionVisible(3, false);
+			setSectionVisible(3, false);
 			return false;
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, GENERATOR_WIRE, CLIP) &&
-	           this->isSectionVisible(3) && (this->getObject(0)->_click != 16)) {
-		_vm->renderImage(this->getFileNumber(), _gm->invertSection(8));
-		_vm->renderImage(this->getFileNumber(), 2);
-		this->setSectionVisible(4, false);
-		_vm->renderImage(this->getFileNumber(), 3);
-		_vm->renderImage(this->getFileNumber(), 9);
-		this->getObject(0)->_click = 16;
+	           isSectionVisible(3) && (getObject(0)->_click != 16)) {
+		_gm->drawImage(_gm->invertSection(8));
+		_gm->drawImage(2);
+		setSectionVisible(4, false);
+		_gm->drawImage(3);
+		_gm->drawImage(9);
+		getObject(0)->_click = 16;
 		r = _gm->_rooms[LANDINGMODULE];
 		if (_gm->_state.landingModuleEnergy && r->isSectionVisible(7))
 			_gm->turnOn();
 		else
-			_vm->renderImage(this->getFileNumber(), 4);
+		_gm->drawImage(4);
 		_gm->_rooms[HOLD]->setSectionVisible(7, true);
 		_gm->great(3);
 	} else if ((verb == ACTION_PULL) && (obj1._id == GENERATOR_WIRE) &&
 	           (obj1._click == 16)) {
-		_vm->renderImage(this->getFileNumber(), _gm->invertSection(9));
-		_vm->renderImage(this->getFileNumber(), 2);
-		_vm->renderImage(this->getFileNumber(), 3);
-		_vm->renderImage(this->getFileNumber(), 4);
-		_vm->renderImage(this->getFileNumber(), 8);
+		_gm->drawImage(_gm->invertSection(9));
+		_gm->drawImage(2);
+		_gm->drawImage(3);
+		_gm->drawImage(4);
+		_gm->drawImage(8);
 		obj1._click = 15;
 		_gm->turnOff();
 		_gm->_rooms[HOLD]->setSectionVisible(7, false);
 	} else if ((verb == ACTION_USE) &&
 	           (Object::combine(obj1, obj2, WIRE, CLIP) ||
 	            Object::combine(obj1, obj2, SPOOL, CLIP)) &&
-	           this->isSectionVisible(3)) {
+	           isSectionVisible(3)) {
 		_vm->renderMessage("Was ntzt dir der Anschluá|ohne eine Stromquelle?!");
 	} else if ((verb == ACTION_LOOK) && (obj1._id == VOLTMETER)) {
 		if (_gm->_state.powerOff)
@@ -981,31 +982,31 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		else
 			_vm->renderMessage("Es zeigt volle Spannung an.");
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LADDER, ROPE)) {
-		_vm->renderImage(this->getFileNumber(), 13);
+		_gm->drawImage(13);
 		r = _gm->_rooms[CABIN_R3];
 		_gm->_inventory.remove(*r->getObject(9));
-		this->getObject(3)->_click = 18;
+		getObject(3)->_click = 18;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, OUTERHATCH, GENERATOR_ROPE)) {
-		if (!this->isSectionVisible(1))
+		if (!isSectionVisible(1))
 			_vm->renderMessage("Du muát die Luke erst ffnen.");
 		else {
-			_vm->renderImage(this->getFileNumber(), _gm->invertSection(13));
-			_vm->renderImage(this->getFileNumber(), 1);
-			if (this->isSectionVisible(7)) {
-				_vm->renderImage(this->getFileNumber(), 10);
-				_vm->renderImage(this->getFileNumber(), 11);
+			_gm->drawImage(_gm->invertSection(13));
+			_gm->drawImage(1);
+			if (isSectionVisible(7)) {
+				_gm->drawImage(10);
+				_gm->drawImage(11);
 			} else {
-				_vm->renderImage(this->getFileNumber(), 12);
+				_gm->drawImage(12);
 			}
 			r = _gm->_rooms[OUTSIDE];
 			r->setSectionVisible(1, true);
 			r->getObject(1)->_click = 1;
-			this->getObject(3)->_click = 17;
+			getObject(3)->_click = 17;
 		}
 	} else if ((verb == ACTION_TAKE) && (obj1._id == GENERATOR_ROPE)) {
 		_vm->renderMessage("Das Seil ist hier schon ganz richtig.");
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, OUTERHATCH, GENERATOR_WIRE) &&
-	           this->isSectionVisible(1)) {
+	           isSectionVisible(1)) {
 		_vm->renderMessage("Das Kabel ist zu kurz.");
 	} else {
 		return false;
