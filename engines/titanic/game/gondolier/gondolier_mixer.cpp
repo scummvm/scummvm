@@ -104,9 +104,12 @@ bool CGondolierMixer::TurnOn(CTurnOn *msg) {
 }
 
 bool CGondolierMixer::TurnOff(CTurnOff *msg) {
+	// TODO: The stopSound calls should really be 2 seconds,
+	// but doing so stops the changeover of mixers working when
+	// going from the Arboretum room to FrozenArboretum.
 	if (_soundHandle1 != -1) {
 		if (isSoundActive(_soundHandle1))
-			stopSound(_soundHandle1, 2);
+			stopSound(_soundHandle1, 0);
 
 		_soundHandle1 = -1;
 		_soundActive = false;
@@ -114,7 +117,7 @@ bool CGondolierMixer::TurnOff(CTurnOff *msg) {
 
 	if (_soundHandle2 != -1) {
 		if (isSoundActive(_soundHandle2))
-			stopSound(_soundHandle2, 2);
+			stopSound(_soundHandle2, 0);
 
 		_soundHandle2 = -1;
 		_soundActive = false;
