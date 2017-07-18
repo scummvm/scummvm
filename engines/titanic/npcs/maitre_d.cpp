@@ -165,7 +165,7 @@ bool CMaitreD::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 		CAnimateMaitreDMsg animMsg;
 		if (_fightFlag)
 			animMsg._value = 0;
-		animMsg.execute(this);
+		animMsg.execute(this, nullptr, MSGFLAG_SCAN);
 	}
 
 	return true;
