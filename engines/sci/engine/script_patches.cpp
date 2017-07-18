@@ -262,6 +262,22 @@ static const uint16 sci2BenchmarkPatch[] = {
 	PATCH_END
 };
 
+// Torin/LSL7-specific version of sci2NumSavesSignature1/2
+// Applies to at least: English CD
+static const uint16 torinNumSavesSignature[] = {
+	SIG_MAGICDWORD,
+	0x36,       // push
+	0x35, 0x14, // ldi 20
+	0x20,       // ge?
+	SIG_END
+};
+
+static const uint16 torinNumSavesPatch[] = {
+	PATCH_ADDTOOFFSET(+1), // push
+	0x35, 0x63,            // ldi 99
+	PATCH_END
+};
+
 #endif
 
 // ===========================================================================
@@ -2565,6 +2581,61 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 #pragma mark -
 #pragma mark Leisure Suit Larry 7
 
+// The init code that runs when LSL7 starts up unconditionally resets the audio
+// volumes to defaults, but the game should always use the volume stored in
+// ScummVM. This patch is basically identical to the patch for Torin, except
+// that they left line numbers in the LSL7 scripts and changed the music volume.
+// Applies to at least: English CD
+static const uint16 larry7VolumeResetSignature1[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x41,               // ldi $41
+	0xa1, 0xe3,               // sag $e3 (music volume)
+	0x7e, SIG_ADDTOOFFSET(2), // line whatever
+	0x35, 0x3c,               // ldi $3c
+	0xa1, 0xe4,               // sag $e4 (sfx volume)
+	0x7e, SIG_ADDTOOFFSET(2), // line whatever
+	0x35, 0x64,               // ldi $64
+	0xa1, 0xe5,               // sag $e5 (speech volume)
+	SIG_END
+};
+
+static const uint16 larry7VolumeResetPatch1[] = {
+	0x33, 0x10, // jmp [past volume resets]
+	PATCH_END
+};
+
+// The init code that runs when LSL7 starts up unconditionally resets the
+// audio volumes to values stored in larry7.prf, but the game should always use
+// the volume stored in ScummVM. This patch is basically identical to the patch
+// for Torin, except that they left line numbers in the LSL7 scripts.
+// Applies to at least: English CD
+static const uint16 larry7VolumeResetSignature2[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x19d), // pushi readWord
+	0x76,                    // push0
+	SIG_ADDTOOFFSET(6),      // advance file stream
+	0xa1, 0xe3,              // sag $e3 (music volume)
+	SIG_ADDTOOFFSET(3),      // line whatever
+	SIG_ADDTOOFFSET(10),     // advance file stream
+	0xa1, 0xe4,              // sag $e4 (sfx volume)
+	SIG_ADDTOOFFSET(3),      // line whatever
+	SIG_ADDTOOFFSET(10),     // advance file stream
+	0xa1, 0xe5,              // sag $e5 (speech volume)
+	SIG_END
+};
+
+static const uint16 larry7VolumeResetPatch2[] = {
+	PATCH_ADDTOOFFSET(10), // advance file stream
+	0x18, 0x18,            // waste bytes
+	PATCH_ADDTOOFFSET(3),  // line whatever
+	PATCH_ADDTOOFFSET(10), // advance file stream
+	0x18, 0x18,            // waste bytes
+	PATCH_ADDTOOFFSET(3),  // line whatever
+	PATCH_ADDTOOFFSET(10), // advance file stream
+	0x18, 0x18,            // waste bytes
+	PATCH_END
+};
+
 // ===========================================================================
 // In room 540 of Leisure Suit Larry 7, Larry will use 4 items on a so called cheese maker.
 //  A short cutscene will then play.
@@ -2628,10 +2699,33 @@ static const uint16 larry7PatchMakeCheesePriority[] = {
 	PATCH_END
 };
 
+// LSL7 tries to reset the message type twice at startup, first with a default
+// value in script 0, then with a stored value from larry7.prf (if that file
+// exists) or the same default value (if it does not) in script 64000. Since
+// message type sync relies on the game only setting this value once at startup,
+// we must stop the second attempt or the value from ScummVM will be
+// overwritten.
+// Applies to at least: English CD
+static const uint16 larry7MessageTypeResetSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x02, // ldi 2
+	0xa1, 0x5a, // sag $5a
+	SIG_END
+};
+
+static const uint16 larry7MessageTypeResetPatch[] = {
+	0x33, 0x02, // jmp [past reset]
+	PATCH_END
+};
+
 //          script, description,                                signature                           patch
 static const SciScriptPatcherEntry larry7Signatures[] = {
+	{  true,     0, "disable message type reset on startup", 1, larry7MessageTypeResetSignature,    larry7MessageTypeResetPatch },
 	{  true,   540, "fix make cheese cutscene (cycler)",     1, larry7SignatureMakeCheese,          larry7PatchMakeCheese },
 	{  true,   540, "fix make cheese cutscene (priority)",   1, larry7SignatureMakeCheesePriority,  larry7PatchMakeCheesePriority },
+	{  true, 64000, "disable volume reset on startup 1/2",   1, larry7VolumeResetSignature1,        larry7VolumeResetPatch1 },
+	{  true, 64000, "disable volume reset on startup 2/2",   1, larry7VolumeResetSignature2,        larry7VolumeResetPatch2 },
+	{  true, 64866, "increase number of save games",         1, torinNumSavesSignature,             torinNumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -5652,8 +5746,9 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 #pragma mark Torins Passage
 
 // The init code that runs when Torin starts up unconditionally resets the
-// master music volume to defaults, but the game should always use the volume
-// stored in ScummVM.
+// audio volumes to defaults, but the game should always use the volume stored
+// in ScummVM. This patch is basically identical to the patch for LSL7, except
+// that they left line numbers in the LSL7 scripts and changed the music volume.
 // Applies to at least: English CD
 static const uint16 torinVolumeResetSignature1[] = {
 	SIG_MAGICDWORD,
@@ -5672,8 +5767,9 @@ static const uint16 torinVolumeResetPatch1[] = {
 };
 
 // The init code that runs when Torin starts up unconditionally resets the
-// master music volume to values stored in torin.prf, but the game should always
-// use the volume stored in ScummVM.
+// audio volumes to values stored in torin.prf, but the game should always use
+// the volume stored in ScummVM. This patch is basically identical to the patch
+// for LSL7, except that they left line numbers in the LSL7 scripts.
 // Applies to at least: English CD
 static const uint16 torinVolumeResetSignature2[] = {
 	SIG_MAGICDWORD,
@@ -5695,22 +5791,6 @@ static const uint16 torinVolumeResetPatch2[] = {
 	0x18, 0x18,            // waste bytes
 	PATCH_ADDTOOFFSET(10), // advance file stream
 	0x18, 0x18,            // waste bytes
-	PATCH_END
-};
-
-// Torin-specific version of sci2NumSavesSignature1/2
-// Applies to at least: English CD
-static const uint16 torinNumSavesSignature[] = {
-	SIG_MAGICDWORD,
-	0x36,       // push
-	0x35, 0x14, // ldi 20
-	0x20,       // ge?
-	SIG_END
-};
-
-static const uint16 torinNumSavesPatch[] = {
-	PATCH_ADDTOOFFSET(+1), // push
-	0x35, 0x63,            // ldi 99
 	PATCH_END
 };
 

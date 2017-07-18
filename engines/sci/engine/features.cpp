@@ -556,6 +556,7 @@ bool GameFeatures::supportsSpeechWithSubtitles() const {
 	case GID_GK1:
 	case GID_KQ7:
 	case GID_LSL6HIRES:
+	case GID_LSL7:
 	case GID_PQ4:
 	case GID_QFG4:
 	case GID_SQ6:
@@ -573,6 +574,7 @@ bool GameFeatures::audioVolumeSyncUsesGlobals() const {
 	case GID_GK1:
 	case GID_GK2:
 	case GID_LSL6HIRES:
+	case GID_LSL7:
 	case GID_PHANTASMAGORIA:
 	case GID_TORIN:
 		// TODO: SCI3
@@ -600,6 +602,7 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 		return g_sci->isCD() ? kMessageTypeSyncStrategyDefault : kMessageTypeSyncStrategyNone;
 
 	case GID_KQ7:
+	case GID_LSL7:
 	case GID_MOTHERGOOSEHIRES:
 	case GID_PHANTASMAGORIA:
 	case GID_SQ6:

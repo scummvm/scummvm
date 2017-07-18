@@ -141,9 +141,9 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 													objName == "dacVolDown" ||
 													objName == "dacVolUp")) {
 			return true;
-		} else if (gameId == GID_TORIN && (objName == "oMusicScroll" ||
-										   objName == "oSFXScroll" ||
-										   objName == "oAudioScroll")) {
+		} else if ((gameId == GID_LSL7 || gameId == GID_TORIN) && (objName == "oMusicScroll" ||
+																   objName == "oSFXScroll" ||
+																   objName == "oAudioScroll")) {
 			return true;
 #endif
 		}
@@ -227,7 +227,9 @@ void GuestAdditions::instantiateScriptHook(Script &script, const bool ignoreDela
 		return;
 	}
 
-	if (g_sci->getGameId() == GID_TORIN && script.getScriptNumber() == 64866) {
+	if ((g_sci->getGameId() == GID_LSL7 || g_sci->getGameId() == GID_TORIN) &&
+		script.getScriptNumber() == 64866) {
+
 		patchGameSaveRestoreTorin(script);
 	} else if (script.getScriptNumber() == 64990) {
 		// 64990 is the system script containing SRDialog. This script is used
@@ -381,9 +383,9 @@ void GuestAdditions::patchGameSaveRestoreSCI32(Script &script) const {
 }
 
 static const byte SRTorinPatch[] = {
-	0x38, 0x8d, 0x00,                     // pushi $8d (new)
+	0x38, 0xFF, 0xFF,                     // pushi new
 	0x76,                                 // push0
-	0x51, 0x0f,                           // class $f (Str)
+	0x51, 0x0f,                           // class Str
 	0x4a, 0x04, 0x00,                     // send 4
 	0xa3, 0x01,                           // sal 1
 	0x76,                                 // push0
@@ -396,6 +398,12 @@ void GuestAdditions::patchGameSaveRestoreTorin(Script &script) const {
 	const uint32 address = script.validateExportFunc(2, true);
 	byte *patchPtr = const_cast<byte *>(script.getBuf(address));
 	memcpy(patchPtr, SRTorinPatch, sizeof(SRTorinPatch));
+
+	const Selector newSelector = SELECTOR(new_);
+	assert(newSelector != -1);
+	patchPtr[1] = newSelector & 0xFF;
+	patchPtr[2] = (newSelector >> 8) & 0xFF;
+
 	if (g_sci->isBE()) {
 		SWAP(patchPtr[1], patchPtr[2]);
 		SWAP(patchPtr[8], patchPtr[9]);
@@ -403,7 +411,7 @@ void GuestAdditions::patchGameSaveRestoreTorin(Script &script) const {
 }
 
 reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) const {
-	if (g_sci->getGameId() == GID_TORIN) {
+	if (g_sci->getGameId() == GID_LSL7 || g_sci->getGameId() == GID_TORIN) {
 		return promptSaveRestoreTorin(s, argc, argv);
 	}
 
@@ -811,6 +819,7 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 		break;
 	}
 
+	case GID_LSL7:
 	case GID_TORIN: {
 		const int16 musicVolume  = (ConfMan.getInt("music_volume") + 1)  * 100 / Audio::Mixer::kMaxMixerVolume;
 		const int16 sfxVolume    = (ConfMan.getInt("sfx_volume") + 1)    * 100 / Audio::Mixer::kMaxMixerVolume;
@@ -960,6 +969,7 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 		}
 		break;
 
+	case GID_LSL7:
 	case GID_TORIN:
 		if (index == kGlobalVarTorinMusicVolume ||
 			index == kGlobalVarTorinSFXVolume ||
