@@ -557,8 +557,6 @@ void Audio32::freeChannel(const int16 channelIndex) {
 		channel.resource = nullptr;
 		delete channel.stream;
 		channel.stream = nullptr;
-		delete channel.resourceStream;
-		channel.resourceStream = nullptr;
 	}
 
 	delete channel.converter;
@@ -797,14 +795,14 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 		_monitoredChannelIndex = channelIndex;
 	}
 
-	Common::SeekableReadStream *dataStream = channel.resourceStream = resource->makeStream();
+	Common::SeekableReadStream *dataStream = resource->makeStream();
 
 	Audio::RewindableAudioStream *audioStream;
 
 	if (detectSolAudio(*dataStream)) {
-		audioStream = makeSOLStream(dataStream, DisposeAfterUse::NO);
+		audioStream = makeSOLStream(dataStream, DisposeAfterUse::YES);
 	} else if (detectWaveAudio(*dataStream)) {
-		audioStream = Audio::makeWAVStream(dataStream, DisposeAfterUse::NO);
+		audioStream = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
 	} else {
 		byte flags = Audio::FLAG_LITTLE_ENDIAN;
 		if (_globalBitDepth == 16) {
@@ -817,7 +815,7 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 			flags |= Audio::FLAG_STEREO;
 		}
 
-		audioStream = Audio::makeRawStream(dataStream, _globalSampleRate, flags, DisposeAfterUse::NO);
+		audioStream = Audio::makeRawStream(dataStream, _globalSampleRate, flags, DisposeAfterUse::YES);
 	}
 
 	channel.stream = new MutableLoopAudioStream(audioStream, loop);

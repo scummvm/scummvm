@@ -52,11 +52,6 @@ struct AudioChannel {
 	Resource *resource;
 
 	/**
-	 * Data stream containing the raw audio for the channel.
-	 */
-	Common::SeekableReadStream *resourceStream;
-
-	/**
 	 * The audio stream loaded into this channel. Can cast
 	 * to `SeekableAudioStream` for normal channels and
 	 * `RobotAudioStream` for robot channels.
