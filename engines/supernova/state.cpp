@@ -57,7 +57,7 @@ Object *Inventory::get(int index) const {
 	if (index < _numObjects)
 		return _inventory[index];
 
-	return NULL;
+	return const_cast<Object *>(&Object::nullObject);
 }
 
 Object *Inventory::get(ObjectID id) const {
@@ -66,7 +66,7 @@ Object *Inventory::get(ObjectID id) const {
 			return _inventory[i];
 	}
 
-	return NULL;
+	return const_cast<Object *>(&Object::nullObject);
 }
 
 GuiElement::GuiElement()
