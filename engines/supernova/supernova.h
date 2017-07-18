@@ -107,7 +107,7 @@ public:
 	int  _textColor;
 
 	int  getDOSTicks();
-	int  characterWidth(const char *text);
+	int  textWidth(const char *text);
 	void initData();
 	void initPalette();
 	void paletteFadeIn();

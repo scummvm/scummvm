@@ -209,7 +209,7 @@ void GameManager::initGui() {
 	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
 		int width;
 		if (i < 9)
-			width = _vm->characterWidth(guiCommand_DE[i]) + 2;
+			width = _vm->textWidth(guiCommand_DE[i]) + 2;
 		else
 			width = 320 - x;
 

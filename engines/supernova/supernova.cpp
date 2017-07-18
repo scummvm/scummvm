@@ -348,7 +348,7 @@ void SupernovaEngine::renderRoom(Room &room) {
 	}
 }
 
-int SupernovaEngine::characterWidth(const char *text) {
+int SupernovaEngine::textWidth(const char *text) {
 	int charWidth = 0;
 	while (*text != '\0') {
 		byte c = *text++;
@@ -391,7 +391,7 @@ void SupernovaEngine::renderMessage(const char *text, MessagePosition position) 
 		}
 	}
 	for (uint i = 0; i < numRows; ++i) {
-		int rowWidth = characterWidth(row[i]);
+		int rowWidth = textWidth(row[i]);
 		if (rowWidth > rowWidthMax)
 			rowWidthMax = rowWidth;
 	}
