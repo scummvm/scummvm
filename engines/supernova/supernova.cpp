@@ -359,11 +359,12 @@ int SupernovaEngine::textWidth(const char *text) {
 		}
 
 		for (uint i = 0; i < 5; ++i) {
-			++charWidth;
 			if (font[c - 32][i] == 0xff) {
 				break;
 			}
+			++charWidth;
 		}
+		++charWidth;
 	}
 
 	return charWidth;
@@ -464,7 +465,6 @@ void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
 
 		for (uint i = 0; i < 5; ++i) {
 			if (font[c - 32][i] == 0xff) {
-				++cursor;
 				break;
 			}
 
@@ -477,6 +477,7 @@ void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
 			}
 			cursor = ++ascentLine;
 		}
+		++cursor;
 	}
 	_system->unlockScreen();
 
