@@ -61,6 +61,8 @@ bool CMaitreDProdReceptor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CMaitreDProdReceptor::MouseMoveMsg(CMouseMoveMsg *msg) {
+	if (!getDraggingObject())
+		return true;
 	if (_fieldBC == 2 && static_cast<CGameObject *>(getParent())->hasActiveMovie())
 		return false;
 	else if (++_counter < 20)
