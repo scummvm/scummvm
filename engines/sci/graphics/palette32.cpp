@@ -391,9 +391,6 @@ static const uint8 gammaTables[GfxPalette32::numGammaTables][256] = {
 }
 
 GfxPalette32::~GfxPalette32() {
-#ifdef ENABLE_SCI3_GAMES
-	unloadClut();
-#endif
 	varyOff();
 	cycleAllOff();
 }

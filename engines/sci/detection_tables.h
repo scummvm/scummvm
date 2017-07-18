@@ -24,9 +24,6 @@ namespace Sci {
 
 #include "sci/sci.h"
 
-// SCI3 games have a different script format (in CSC files) and are currently unsupported
-#define ENABLE_SCI3_GAMES
-
 #define FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, lang) \
 	{"sci-fanmade", name, { \
 		{"resource.map", 0, resMapMd5, resMapSize}, \
@@ -2710,7 +2707,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE, GUIO_LSL7_DEMO },
 
-#ifdef ENABLE_SCI3_GAMES
 	// Larry 7 - English DOS CD (from spookypeanut)
 	// SCI interpreter version 3.000.000
 	{"lsl7", "", {
@@ -2754,8 +2750,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_LSL7_DEMO
 #undef GUIO_LSL7
 
-#endif
-
 // TODO: Correct GUIOs
 #define GUIO_LIGHTHOUSE_DEMO GUIO3(GUIO_NOSPEECH, \
                                    GUIO_NOASPECT, \
@@ -2773,7 +2767,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE, GUIO_LIGHTHOUSE_DEMO },
 
-#ifdef ENABLE_SCI3_GAMES
 	// Lighthouse - English Windows Demo
 	// Executable scanning reports "3.000.000", VERSION file reports "1.00"
 	{"lighthouse", "Demo", {
@@ -2824,8 +2817,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #undef GUIO_LIGHTHOUSE_DEMO
 #undef GUIO_LIGHTHOUSE
-
-#endif	// ENABLE_SCI3_GAMES
 
 #endif // ENABLE_SCI32
 
@@ -3133,8 +3124,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_PHANTASMAGORIA
 #undef GUIO_PHANTASMAGORIA_MAC
 
-#ifdef ENABLE_SCI3_GAMES
-
 // TODO: Correct GUIOs
 #define GUIO_PHANTASMAGORIA2 GUIO5(GUIO_NOASPECT, \
                                    GUIO_NOMIDI, \
@@ -3238,7 +3227,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		//{"ressfx.001", 0, "343a6ca9ddd614541b11b155de6368ac", 90268706},
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
-#endif	// ENABLE_SCI3_GAMES
 
 #endif // ENABLE_SCI32
 
@@ -4002,7 +3990,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO_RAMA_DEMO },
 
-#ifdef ENABLE_SCI3_GAMES
 	// RAMA - English Windows (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.100.000"
 	{"rama", "", {
@@ -4059,8 +4046,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #undef GUIO_RAMA_DEMO
 #undef GUIO_RAMA
-
-#endif	// ENABLE_SCI3_GAMES
 
 #define GUIO_SHIVERS_DEMO GUIO6(GUIO_NOSUBTITLES, \
                                 GUIO_NOMIDI, \
