@@ -884,7 +884,7 @@ static const char *const STRINGS_DE[186] = {
 	"Stelle gr\xF6""\xDF""eres horizontal tragbares Abstellfach bereit",
 	"Sukk-U-Bus Zustell-Kontrollsystem",
 	"Navigations-Kontroller",
-	"Lass Titania herausbekommen wo die Erde ist (\xFC""berspringe Puzzel)",
+	"Lass Titania herausbekommen wo die Erde ist (\xFC""berspringe Puzzle)",
 	"Rufe Aufzug",
 	"Rufe Pellerator",
 	"Gehe zum Grund des Brunnens",
