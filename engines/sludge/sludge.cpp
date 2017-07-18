@@ -61,6 +61,9 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 
 	fatalMessage = "";
 	fatalInfo = "Initialisation error! Something went wrong before we even got started!";
+
+	// Init managers
+	_languageMan = new LanguageManager();
 }
 
 SludgeEngine::~SludgeEngine() {
@@ -81,6 +84,10 @@ SludgeEngine::~SludgeEngine() {
 	_origFormat = nullptr;
 	delete _pixelFormat;
 	_pixelFormat = nullptr;
+
+	// Dispose managers
+	delete _languageMan;
+	_languageMan = nullptr;
 }
 
 Common::Error SludgeEngine::run() {

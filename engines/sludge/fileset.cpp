@@ -169,16 +169,13 @@ void finishAccess() {
 
 int32 startIndex;
 
-void setFileIndices(Common::File *fp, uint numLanguages, uint skipBefore) {
-	if (fp) {
-		// Keep hold of the file handle, and let things get at it
-		bigDataFile = fp;
-		startIndex = fp->pos();
-	} else {
-		// No file pointer - this means that we reuse the bigDataFile
-		fp = bigDataFile;
-		fp->seek(startIndex, SEEK_SET);
-	}
+void setBigDataFile(Common::File *fp) {
+	bigDataFile = fp;
+	startIndex = fp->pos();
+}
+
+void setFileIndices(uint numLanguages, uint skipBefore) {
+	bigDataFile->seek(startIndex, SEEK_SET);
 	sliceBusy = false;
 
 	if (skipBefore > numLanguages) {
@@ -189,29 +186,29 @@ void setFileIndices(Common::File *fp, uint numLanguages, uint skipBefore) {
 	// STRINGS
 	int skipAfter = numLanguages - skipBefore;
 	while (skipBefore) {
-		fp->seek(fp->readUint32LE(), SEEK_SET);
+		bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_SET);
 		skipBefore--;
 	}
-	startOfTextIndex = fp->pos() + 4;
+	startOfTextIndex = bigDataFile->pos() + 4;
 	debug(kSludgeDebugDataLoad, "startOfTextIndex: %i", startOfTextIndex);
 
-	fp->seek(fp->readUint32LE(), SEEK_SET);
+	bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_SET);
 
 	while (skipAfter) {
-		fp->seek(fp->readUint32LE(), SEEK_SET);
+		bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_SET);
 		skipAfter--;
 	}
 
-	startOfSubIndex = fp->pos() + 4;
-	fp->seek(fp->readUint32LE(), SEEK_CUR);
+	startOfSubIndex = bigDataFile->pos() + 4;
+	bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_CUR);
 	debug(kSludgeDebugDataLoad, "startOfSubIndex: %i", startOfSubIndex);
 
-	startOfObjectIndex = fp->pos() + 4;
-	fp->seek(fp->readUint32LE(), SEEK_CUR);
+	startOfObjectIndex = bigDataFile->pos() + 4;
+	bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_CUR);
 	debug(kSludgeDebugDataLoad, "startOfObjectIndex: %i", startOfObjectIndex);
 
 	// Remember that the data section starts here
-	startOfDataIndex = fp->pos();
+	startOfDataIndex = bigDataFile->pos();
 	debug(kSludgeDebugDataLoad, "startOfDataIndex: %i", startOfDataIndex);
 }
 

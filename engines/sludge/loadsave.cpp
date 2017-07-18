@@ -29,6 +29,7 @@
 #include "sludge/variable.h"
 #include "sludge/language.h"
 #include "sludge/moreio.h"
+#include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/people.h"
 #include "sludge/talk.h"
@@ -40,7 +41,6 @@
 #include "sludge/cursors.h"
 #include "sludge/statusba.h"
 #include "sludge/sound.h"
-#include "sludge/fileset.h"
 #include "sludge/loadsave.h"
 #include "sludge/bg_effects.h"
 #include "sludge/thumbnail.h"
@@ -80,7 +80,6 @@ extern byte currentBurnR, currentBurnG, currentBurnB;
 extern uint currentBlankColour;             // in backdrop.cpp
 extern parallaxLayer *parallaxStuff;                //      "
 extern int lightMapMode;                    //      "
-extern int languageNum;
 
 //----------------------------------------------------------------------
 // Globals (so we know what's saved already and what's a reference
@@ -464,7 +463,7 @@ bool saveGame(const Common::String &fname) {
 	saveParallaxRecursive(parallaxStuff, fp);
 	fp->writeByte(0);
 
-	fp->writeByte(languageNum); // Selected language
+	g_sludge->_languageMan->saveLanguageSetting(fp);
 
 	saveSnapshot(fp);
 
@@ -663,12 +662,7 @@ bool loadGame(const Common::String &fname) {
 				return false;
 		}
 
-		int selectedLanguage = fp->readByte();
-		if (selectedLanguage != languageNum) {
-			// Load the saved language!
-			languageNum = selectedLanguage;
-			setFileIndices(NULL, gameSettings.numLanguages, languageNum);
-		}
+		g_sludge->_languageMan->loadLanguageSetting(fp);
 	}
 
 	nosnapshot();

@@ -23,6 +23,7 @@
 #include "common/debug.h"
 
 #include "sludge/allfiles.h"
+#include "sludge/fileset.h"
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
 #include "sludge/language.h"
@@ -31,40 +32,80 @@
 
 namespace Sludge {
 
-uint *languageTable;
-Common::String *languageName;
-settingsStruct gameSettings;
+LanguageManager::~LanguageManager() {
+	if (_languageTable) {
+		delete []_languageTable;
+		_languageTable = NULL;
+	}
 
-void makeLanguageTable(Common::File *table) {
-	languageTable = new uint[gameSettings.numLanguages + 1];
-	if (!checkNew(languageTable))
+	if (_languageNames) {
+		delete []_languageNames;
+		_languageNames = NULL;
+	}
+}
+
+void LanguageManager::init(Common::File *fp) {
+	// get number of languages
+	_numLanguages =
+				(gameVersion >= VERSION(1, 3)) ? (fp->readByte()) : 0;
+	debug(kSludgeDebugDataLoad, "numLanguages : %c", _numLanguages);
+
+	// make language table
+	_languageTable = new uint[_numLanguages + 1];
+	if (!checkNew(_languageTable))
 		return;
 
-	languageName = new Common::String[gameSettings.numLanguages + 1];
-	if (!checkNew(languageName))
+	_languageNames = new Common::String[_numLanguages + 1];
+	if (!checkNew(_languageNames))
 		return;
 
-	for (uint i = 0; i <= gameSettings.numLanguages; i++) {
-		languageTable[i] = i ? table->readUint16BE() : 0;
-		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i, languageTable[i]);
-		languageName[i].clear();
+	for (uint i = 0; i <= _numLanguages; i++) {
+		_languageTable[i] = i ? fp->readUint16BE() : 0;
+		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i, _languageTable[i]);
+		_languageNames[i].clear();
 		if (gameVersion >= VERSION(2, 0)) {
-			if (gameSettings.numLanguages) {
-				languageName[i] = readString(table);
-				debug(kSludgeDebugDataLoad, "languageName %i: %s\n", i, languageName[i].c_str());
+			if (_numLanguages) {
+				_languageNames[i] = readString(fp);
+				debug(kSludgeDebugDataLoad, "languageName %i: %s\n", i, _languageNames[i].c_str());
 			}
 		}
 	}
 }
 
-int getLanguageForFileB() {
-	int indexNum = -1;
+void LanguageManager::setLanguageID(uint id) {
+	_languageID = id;
+	// get index of language
+	setLanguageIndex(getLanguageForFileB());
+}
 
-	for (uint i = 0; i <= gameSettings.numLanguages; i++) {
-		if (languageTable[i] == gameSettings.languageID)
+int LanguageManager::getLanguageForFileB() {
+	int indexNum = -1;
+	for (uint i = 0; i <= _numLanguages; i++) {
+		if (_languageTable[i] == _languageID)
 			indexNum = i;
 	}
 	return indexNum;
+}
+
+void LanguageManager::saveLanguageSetting(Common::WriteStream *writeStream) {
+	writeStream->writeByte(_numLanguages);
+}
+
+void LanguageManager::loadLanguageSetting(Common::SeekableReadStream *readStream) {
+	uint languageIdx = readStream->readByte();
+	setLanguageIndex(languageIdx);
+}
+
+void LanguageManager::setLanguageIndex(int idx) {
+	if (idx < 0)
+		fatal("Can't find the translation data specified!");
+
+	if (idx != _languageIdx) {
+		// Load the saved language!
+		_languageIdx = idx;
+		// Now set file indices properly to the chosen language.
+		setFileIndices(_numLanguages, _languageIdx);
+	}
 }
 
 } // End of namespace Sludge

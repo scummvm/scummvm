@@ -28,16 +28,31 @@
 
 namespace Sludge {
 
-struct settingsStruct {
-	uint languageID;
-	uint numLanguages;
+class LanguageManager {
+public:
+	LanguageManager() :
+		_languageID(0),
+		_languageIdx(-1),
+		_numLanguages(0),
+		_languageTable(0),
+		_languageNames(0) {}
+	~LanguageManager();
+
+	void init(Common::File *table);
+	void setLanguageID(uint id);
+	void saveLanguageSetting(Common::WriteStream *writeStream);
+	void loadLanguageSetting(Common::SeekableReadStream *readStream);
+
+private:
+	uint _languageID; // id of selected language
+	int _languageIdx; // index of selected language in table
+	uint _numLanguages; // number of existing languages in game
+	uint *_languageTable; // indexes of existing languages
+	Common::String *_languageNames; // language names
+
+	int getLanguageForFileB();
+	void setLanguageIndex(int idx);
 };
-
-extern settingsStruct gameSettings;
-
-int getLanguageForFileB();
-
-void makeLanguageTable(Common::File *table);
 
 } // End of namespace Sludge
 

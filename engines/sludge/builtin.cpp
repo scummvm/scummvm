@@ -2438,7 +2438,7 @@ builtIn(getCharacterScale) {
 
 builtIn(getLanguageID) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, gameSettings.languageID);
+	setVariable(fun->reg, SVT_INT, g_sludge->getLanguageID());
 	return BR_CONTINUE;
 }
 

@@ -65,7 +65,6 @@ Common::String *allUserFunc = NULL;
 int numResourceNames = 0;
 Common::String *allResourceNames = NULL;
 int selectedLanguage = 0;
-int languageNum = -1;
 
 int gameVersion;
 FILETIME fileTime;
@@ -230,10 +229,7 @@ bool initSludge(const Common::String &filename) {
 	Common::String dataFol = (gameVersion >= VERSION(1, 3)) ? readString(fp) : "";
 	debug(kSludgeDebugDataLoad, "dataFol : %s", dataFol.c_str());
 
-	gameSettings.numLanguages =
-			(gameVersion >= VERSION(1, 3)) ? (fp->readByte()) : 0;
-	debug(kSludgeDebugDataLoad, "numLanguages : %c", gameSettings.numLanguages);
-	makeLanguageTable(fp);
+	g_sludge->_languageMan->init(fp);
 
 	if (gameVersion >= VERSION(1, 6)) {
 		fp->readByte();
@@ -282,21 +278,9 @@ bool initSludge(const Common::String &filename) {
 	for (a = 0; a < numGlobals; a++)
 		initVarNew(globalVars[a]);
 
-	// Get the original (untranslated) name of the game and convert it to Unicode.
-	// We use this to find saved preferences and saved games.
-	setFileIndices(fp, gameSettings.numLanguages, 0);
-	Common::String gameNameOrig = getNumberedString(1);
-
-	Common::String gameName = encodeFilename(gameNameOrig);
-
 	// Get language selected by user
-	gameSettings.languageID = g_sludge->getLanguageID();
-
-	// Now set file indices properly to the chosen language.
-	languageNum = getLanguageForFileB();
-	if (languageNum < 0)
-		return fatal("Can't find the translation data specified!");
-	setFileIndices(NULL, gameSettings.numLanguages, languageNum);
+	setBigDataFile(fp);
+	g_sludge->_languageMan->setLanguageID(g_sludge->getLanguageID());
 
 	if (!dataFol.empty()) {
 		Common::String dataFolder = encodeFilename(dataFol);

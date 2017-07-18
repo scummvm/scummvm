@@ -28,7 +28,8 @@ namespace Sludge {
 
 extern Common::File *bigDataFile;
 
-void setFileIndices(Common::File *fp, uint, uint);
+void setBigDataFile(Common::File *readStream);
+void setFileIndices(uint, uint);
 
 uint openFileFromNum(int num);
 bool openSubSlice(int num);
