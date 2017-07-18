@@ -104,7 +104,7 @@ void LanguageManager::setLanguageIndex(int idx) {
 		// Load the saved language!
 		_languageIdx = idx;
 		// Now set file indices properly to the chosen language.
-		setFileIndices(_numLanguages, _languageIdx);
+		g_sludge->_resMan->setFileIndices(_numLanguages, _languageIdx);
 	}
 }
 

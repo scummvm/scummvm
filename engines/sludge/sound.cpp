@@ -381,20 +381,21 @@ int makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, bool loopy) {
 	}
 
 	setResourceForFatal(f);
-	uint32 length = openFileFromNum(f);
+	uint32 length = g_sludge->_resMan->openFileFromNum(f);
 	if (!length)
 		return -1;
 
-	uint curr_ptr = bigDataFile->pos();
-	Audio::RewindableAudioStream *stream = Audio::makeWAVStream(bigDataFile->readStream(length), DisposeAfterUse::NO);
+	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
+	uint curr_ptr = readStream->pos();
+	Audio::RewindableAudioStream *stream = Audio::makeWAVStream(readStream->readStream(length), DisposeAfterUse::NO);
 
 #ifdef USE_VORBIS
 	if (!stream) {
-		bigDataFile->seek(curr_ptr);
-		stream = Audio::makeVorbisStream(bigDataFile->readStream(length), DisposeAfterUse::NO);
+		readStream->seek(curr_ptr);
+		stream = Audio::makeVorbisStream(readStream->readStream(length), DisposeAfterUse::NO);
 	}
 #endif
-	finishAccess();
+	g_sludge->_resMan->finishAccess();
 
 	if (stream) {
 		audiostream = Audio::makeLoopingAudioStream(stream, loopy ? 0 : 1);

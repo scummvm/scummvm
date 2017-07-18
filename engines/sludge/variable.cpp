@@ -260,7 +260,7 @@ void makeTextVar(variable &thisVar, const Common::String &txt) {
 }
 
 bool loadStringToVar(variable &thisVar, int value) {
-	makeTextVar(thisVar, getNumberedString(value));
+	makeTextVar(thisVar, g_sludge->_resMan->getNumberedString(value));
 	return (bool)(thisVar.varData.theString != NULL);
 }
 

@@ -55,7 +55,6 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	// Init Strings
 	launchMe = "";
 	loadNow = "";
-	gameName = "";
 	gamePath = "";
 	bundleFolder = "";
 
@@ -63,6 +62,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	fatalInfo = "Initialisation error! Something went wrong before we even got started!";
 
 	// Init managers
+	_resMan = new ResourceManager();
 	_languageMan = new LanguageManager();
 }
 
@@ -88,6 +88,8 @@ SludgeEngine::~SludgeEngine() {
 	// Dispose managers
 	delete _languageMan;
 	_languageMan = nullptr;
+	delete _resMan;
+	_resMan = nullptr;
 }
 
 Common::Error SludgeEngine::run() {

@@ -25,14 +25,13 @@
 #include "sludge/variable.h"
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
+#include "sludge/sludge.h"
 #include "sludge/fileset.h"
 #include "sludge/version.h"
 
 namespace Sludge {
 
 objectType *allObjectTypes = NULL;
-
-#define DEBUG_COMBINATIONS  0
 
 bool initObjectTypes() {
 	return true;
@@ -55,40 +54,41 @@ objectType *loadObjectType(int i) {
 	objectType *newType = new objectType;
 
 	if (checkNew(newType)) {
-		if (openObjectSlice(i)) {
-			nameNum = bigDataFile->readUint16BE();
-			newType->r = (byte)bigDataFile->readByte();
-			newType->g = (byte)bigDataFile->readByte();
-			newType->b = (byte)bigDataFile->readByte();
-			newType->speechGap = bigDataFile->readByte();
-			newType->walkSpeed = bigDataFile->readByte();
-			newType->wrapSpeech = bigDataFile->readUint32LE();
-			newType->spinSpeed = bigDataFile->readUint16BE();
+		if (g_sludge->_resMan->openObjectSlice(i)) {
+			Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
+			nameNum = readStream->readUint16BE();
+			newType->r = (byte)readStream->readByte();
+			newType->g = (byte)readStream->readByte();
+			newType->b = (byte)readStream->readByte();
+			newType->speechGap = readStream->readByte();
+			newType->walkSpeed = readStream->readByte();
+			newType->wrapSpeech = readStream->readUint32LE();
+			newType->spinSpeed = readStream->readUint16BE();
 
 			if (gameVersion >= VERSION(1, 6)) {
 				// aaLoad
-				bigDataFile->readByte();
-				bigDataFile->readFloatLE();
-				bigDataFile->readFloatLE();
+				readStream->readByte();
+				readStream->readFloatLE();
+				readStream->readFloatLE();
 			}
 
 			if (gameVersion >= VERSION(1, 4)) {
-				newType->flags = bigDataFile->readUint16BE();
+				newType->flags = readStream->readUint16BE();
 			} else {
 				newType->flags = 0;
 			}
 
-			newType->numCom = bigDataFile->readUint16BE();
+			newType->numCom = readStream->readUint16BE();
 			newType->allCombis = (newType->numCom) ? new combination[newType->numCom] : NULL;
 
 
 			for (a = 0; a < newType->numCom; a++) {
-				newType->allCombis[a].withObj = bigDataFile->readUint16BE();
-				newType->allCombis[a].funcNum = bigDataFile->readUint16BE();
+				newType->allCombis[a].withObj = readStream->readUint16BE();
+				newType->allCombis[a].funcNum = readStream->readUint16BE();
 			}
 
-			finishAccess();
-			newType->screenName = getNumberedString(nameNum);
+			g_sludge->_resMan->finishAccess();
+			newType->screenName = g_sludge->_resMan->getNumberedString(nameNum);
 			newType->objectNum = i;
 			newType->next = allObjectTypes;
 			allObjectTypes = newType;

@@ -29,6 +29,7 @@
 #include "gui/debugger.h"
 
 #include "sludge/console.h"
+#include "sludge/fileset.h"
 #include "sludge/language.h"
 #include "sludge/timing.h"
 
@@ -67,6 +68,7 @@ public:
 	Timer _timer;
 
 	// managers
+	ResourceManager *_resMan;
 	LanguageManager *_languageMan;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);

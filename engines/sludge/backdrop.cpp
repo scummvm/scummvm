@@ -165,17 +165,17 @@ bool killResizeBackdrop(int x, int y) {
 void loadBackDrop(int fileNum, int x, int y) {
 	debug(kSludgeDebugGraphics, "Load back drop");
 	setResourceForFatal(fileNum);
-	if (!openFileFromNum(fileNum)) {
+	if (!g_sludge->_resMan->openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
 		return;
 	}
 
-	if (!loadHSI(bigDataFile, x, y, false)) {
+	if (!loadHSI(g_sludge->_resMan->getData(), x, y, false)) {
 		Common::String mess = Common::String::format("Can't paste overlay image outside scene dimensions\n\nX = %i\nY = %i\nWidth = %i\nHeight = %i", x, y, sceneWidth, sceneHeight);
 		fatal(mess);
 	}
 
-	finishAccess();
+	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 
 	// set zBuffer if it's not set
@@ -187,16 +187,16 @@ void loadBackDrop(int fileNum, int x, int y) {
 
 void mixBackDrop(int fileNum, int x, int y) {
 	setResourceForFatal(fileNum);
-	if (!openFileFromNum(fileNum)) {
+	if (!g_sludge->_resMan->openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
 		return;
 	}
 
-	if (!mixHSI(bigDataFile, x, y)) {
+	if (!mixHSI(g_sludge->_resMan->getData(), x, y)) {
 		fatal("Can't paste overlay image outside screen dimensions");
 	}
 
-	finishAccess();
+	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 }
 
@@ -310,13 +310,13 @@ void drawBackDrop() {
 
 bool loadLightMap(int v) {
 	setResourceForFatal(v);
-	if (!openFileFromNum(v))
+	if (!g_sludge->_resMan->openFileFromNum(v))
 		return fatal("Can't open light map.");
 
 	killLightMap();
 	lightMapNumber = v;
 
-	if (!ImgLoader::loadImage(bigDataFile, &lightMap))
+	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &lightMap))
 		return false;
 
 	if (lightMapMode == LIGHTMAPMODE_HOTSPOT) {
@@ -325,8 +325,7 @@ bool loadLightMap(int v) {
 		}
 	}
 
-	finishAccess();
-
+	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 
 	return true;
@@ -334,7 +333,7 @@ bool loadLightMap(int v) {
 
 bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 	setResourceForFatal(v);
-	if (!openFileFromNum(v))
+	if (!g_sludge->_resMan->openFileFromNum(v))
 		return fatal("Can't open parallax image");
 
 	parallaxLayer *nP = new parallaxLayer;
@@ -348,7 +347,7 @@ bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 	}
 	nP->prev = NULL;
 
-	if (!ImgLoader::loadImage(bigDataFile, &nP->surface, 0))
+	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &nP->surface, 0))
 		return false;
 
 	nP->fileNum = v;
@@ -388,7 +387,7 @@ bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #endif
 
-	finishAccess();
+	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 	return true;
 }

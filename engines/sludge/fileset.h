@@ -26,18 +26,39 @@
 
 namespace Sludge {
 
-extern Common::File *bigDataFile;
+class ResourceManager {
 
-void setBigDataFile(Common::File *readStream);
-void setFileIndices(uint, uint);
+public:
+	ResourceManager():
+		_sliceBusy(true),
+		_bigDataFile(0),
+		_startOfDataIndex(0),
+		_startOfTextIndex(0),
+		_startOfSubIndex(0),
+		_startOfObjectIndex(0),
+		_startIndex(0) {}
 
-uint openFileFromNum(int num);
-bool openSubSlice(int num);
-bool openObjectSlice(int num);
-Common::String getNumberedString(int value);
+	void setData(Common::File *readStream);
+	void setFileIndices(uint, uint);
+	Common::SeekableReadStream *getData() { return _bigDataFile; }
 
-bool startAccess();
-void finishAccess();
+	uint openFileFromNum(int num);
+	bool openSubSlice(int num);
+	bool openObjectSlice(int num);
+	Common::String getNumberedString(int value);
+
+	bool startAccess();
+	void finishAccess();
+
+private:
+	bool _sliceBusy;
+	Common::File *_bigDataFile;
+	uint32 _startOfDataIndex, _startOfTextIndex, _startOfSubIndex, _startOfObjectIndex;
+	int32 _startIndex;
+
+private:
+	Common::String convertString(const Common::String &s);
+};
 
 } // End of namespace Sludge
 

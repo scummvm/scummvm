@@ -279,7 +279,7 @@ bool initSludge(const Common::String &filename) {
 		initVarNew(globalVars[a]);
 
 	// Get language selected by user
-	setBigDataFile(fp);
+	g_sludge->_resMan->setData(fp);
 	g_sludge->_languageMan->setLanguageID(g_sludge->getLanguageID());
 
 	if (!dataFol.empty()) {
@@ -942,33 +942,32 @@ bool runSludge() {
 }
 
 bool loadFunctionCode(loadedFunction *newFunc) {
-
-	debug(kSludgeDebugDataLoad, "Current address: %i", bigDataFile->pos());
 	uint numLines, numLinesRead;
 
-	if (!openSubSlice(newFunc->originalNumber))
+	if (!g_sludge->_resMan->openSubSlice(newFunc->originalNumber))
 		return false;
 
 	debug(kSludgeDebugDataLoad, "Load function code");
 
-	newFunc->unfreezable = bigDataFile->readByte();
-	numLines = bigDataFile->readUint16BE();
+	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
+	newFunc->unfreezable = readStream->readByte();
+	numLines = readStream->readUint16BE();
 	debug(kSludgeDebugDataLoad, "numLines: %i", numLines);
-	newFunc->numArgs = bigDataFile->readUint16BE();
+	newFunc->numArgs = readStream->readUint16BE();
 	debug(kSludgeDebugDataLoad, "numArgs: %i", newFunc->numArgs);
-	newFunc->numLocals = bigDataFile->readUint16BE();
+	newFunc->numLocals = readStream->readUint16BE();
 	debug(kSludgeDebugDataLoad, "numLocals: %i", newFunc->numLocals);
 	newFunc->compiledLines = new lineOfCode[numLines];
 	if (!checkNew(newFunc->compiledLines))
 		return false;
 
 	for (numLinesRead = 0; numLinesRead < numLines; numLinesRead++) {
-		newFunc->compiledLines[numLinesRead].theCommand = (sludgeCommand) bigDataFile->readByte();
-		newFunc->compiledLines[numLinesRead].param = bigDataFile->readUint16BE();
+		newFunc->compiledLines[numLinesRead].theCommand = (sludgeCommand)readStream->readByte();
+		newFunc->compiledLines[numLinesRead].param = readStream->readUint16BE();
 		debug(kSludgeDebugDataLoad, "command line %i: %i", numLinesRead,
 				newFunc->compiledLines[numLinesRead].theCommand);
 	}
-	finishAccess();
+	g_sludge->_resMan->finishAccess();
 
 	// Now we need to reserve memory for the local variables
 	newFunc->localVars = new variable[newFunc->numLocals];

@@ -26,6 +26,7 @@
 #include "sludge/newfatal.h"
 #include "sludge/fileset.h"
 #include "sludge/moreio.h"
+#include "sludge/sludge.h"
 #include "sludge/floor.h"
 
 namespace Sludge {
@@ -130,13 +131,13 @@ bool setFloor(int fileNum) {
 
 	setResourceForFatal(fileNum);
 
-	if (!openFileFromNum(fileNum))
+	if (!g_sludge->_resMan->openFileFromNum(fileNum))
 		return false;
 
 	// Find out how many polygons there are and reserve memory
 
 	currentFloor->originalNum = fileNum;
-	currentFloor->numPolygons = bigDataFile->readByte();
+	currentFloor->numPolygons = g_sludge->_resMan->getData()->readByte();
 	currentFloor->polygon = new floorPolygon[currentFloor->numPolygons];
 	if (!checkNew(currentFloor->polygon))
 		return false;
@@ -147,7 +148,7 @@ bool setFloor(int fileNum) {
 
 		// Find out how many vertex IDs there are and reserve memory
 
-		currentFloor->polygon[i].numVertices = bigDataFile->readByte();
+		currentFloor->polygon[i].numVertices = g_sludge->_resMan->getData()->readByte();
 		currentFloor->polygon[i].vertexID = new int[currentFloor->polygon[i].numVertices];
 		if (!checkNew(currentFloor->polygon[i].vertexID))
 			return false;
@@ -155,24 +156,24 @@ bool setFloor(int fileNum) {
 		// Read in each vertex ID
 
 		for (j = 0; j < currentFloor->polygon[i].numVertices; j++) {
-			currentFloor->polygon[i].vertexID[j] = bigDataFile->readUint16BE();
+			currentFloor->polygon[i].vertexID[j] = g_sludge->_resMan->getData()->readUint16BE();
 		}
 	}
 
 	// Find out how many vertices there are and reserve memory
 
-	i = bigDataFile->readUint16BE();
+	i = g_sludge->_resMan->getData()->readUint16BE();
 	currentFloor->vertex = new Common::Point[i];
 	if (!checkNew(currentFloor->vertex))
 		return false;
 
 	for (j = 0; j < i; j++) {
 
-		currentFloor->vertex[j].x = bigDataFile->readUint16BE();
-		currentFloor->vertex[j].y = bigDataFile->readUint16BE();
+		currentFloor->vertex[j].x = g_sludge->_resMan->getData()->readUint16BE();
+		currentFloor->vertex[j].y = g_sludge->_resMan->getData()->readUint16BE();
 	}
 
-	finishAccess();
+	g_sludge->_resMan->finishAccess();
 
 	// Now build the movement martix
 

@@ -179,8 +179,6 @@ int main_loop(const char *filename)
 	initStatusBar();
 	resetRandW();
 
-	g_sludge->gameName = getNumberedString(1);
-
 	if (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) {
 		initSoundStuff(hMainWindow);
 	}

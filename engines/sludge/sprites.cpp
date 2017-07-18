@@ -123,18 +123,19 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 	byte *data;
 
 	setResourceForFatal(fileNum);
-	if (!openFileFromNum(fileNum))
+	if (!g_sludge->_resMan->openFileFromNum(fileNum))
 		return fatal("Can't open sprite bank / font");
 
 	loadhere.isFont = isFont;
 
-	total = bigDataFile->readUint16BE();
+	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
+	total = readStream->readUint16BE();
 	if (!total) {
-		spriteBankVersion = bigDataFile->readByte();
+		spriteBankVersion = readStream->readByte();
 		if (spriteBankVersion == 1) {
 			total = 0;
 		} else {
-			total = bigDataFile->readUint16BE();
+			total = readStream->readUint16BE();
 		}
 	}
 
@@ -153,7 +154,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	// version 1, 2, read how many now
 	if (spriteBankVersion && spriteBankVersion < 3) {
-		howmany = bigDataFile->readByte();
+		howmany = readStream->readByte();
 		startIndex = 1;
 	}
 
@@ -161,13 +162,13 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 	if (spriteBankVersion == 3) {
 		debug(kSludgeDebugGraphics, "png sprite");
 		for (int i = 0; i < total; i++) {
-			loadhere.sprites[i].xhot = bigDataFile->readSint16LE();
-			loadhere.sprites[i].yhot = bigDataFile->readSint16LE();
-			if (!ImgLoader::loadPNGImage(bigDataFile, &loadhere.sprites[i].surface, false)) {
+			loadhere.sprites[i].xhot = readStream->readSint16LE();
+			loadhere.sprites[i].yhot = readStream->readSint16LE();
+			if (!ImgLoader::loadPNGImage(readStream, &loadhere.sprites[i].surface, false)) {
 				return fatal("fail to read png sprite");
 			}
 		}
-		finishAccess();
+		g_sludge->_resMan->finishAccess();
 		setResourceForFatal(-1);
 		return true;
 	}
@@ -177,15 +178,15 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		uint picwidth, picheight;
 		// load sprite width, height, relative position
 		if (spriteBankVersion == 2) {
-			picwidth = bigDataFile->readUint16BE();
-			picheight = bigDataFile->readUint16BE();
-			loadhere.sprites[i].xhot = bigDataFile->readSint16LE();
-			loadhere.sprites[i].yhot = bigDataFile->readSint16LE();
+			picwidth = readStream->readUint16BE();
+			picheight = readStream->readUint16BE();
+			loadhere.sprites[i].xhot = readStream->readSint16LE();
+			loadhere.sprites[i].yhot = readStream->readSint16LE();
 		} else {
-			picwidth = (byte)bigDataFile->readByte();
-			picheight = (byte)bigDataFile->readByte();
-			loadhere.sprites[i].xhot = bigDataFile->readByte();
-			loadhere.sprites[i].yhot = bigDataFile->readByte();
+			picwidth = (byte)readStream->readByte();
+			picheight = (byte)readStream->readByte();
+			loadhere.sprites[i].xhot = readStream->readByte();
+			loadhere.sprites[i].yhot = readStream->readByte();
 		}
 
 		// init data
@@ -205,11 +206,11 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 			uint pip = 0;
 
 			while (pip < size) {
-				byte col = bigDataFile->readByte();
+				byte col = readStream->readByte();
 				int looper;
 				if (col > howmany) {
 					col -= howmany + 1;
-					looper = bigDataFile->readByte() + 1;
+					looper = readStream->readByte() + 1;
 				} else
 					looper = 1;
 
@@ -218,8 +219,8 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 				}
 			}
 		} else { // RAW DATA
-			uint bytes_read = bigDataFile->read(data, picwidth * picheight);
-			if (bytes_read != picwidth * picheight && bigDataFile->err()) {
+			uint bytes_read = readStream->read(data, picwidth * picheight);
+			if (bytes_read != picwidth * picheight && readStream->err()) {
 				warning("Reading error in loadSpriteBank.");
 			}
 		}
@@ -227,17 +228,17 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 
 	// read howmany for version 0
 	if (!spriteBankVersion) {
-		howmany = bigDataFile->readByte();
-		startIndex = bigDataFile->readByte();
+		howmany = readStream->readByte();
+		startIndex = readStream->readByte();
 	}
 
 	// Make palette for version 0, 1, 2
 	if (!reserveSpritePal(loadhere.myPalette, howmany + startIndex))
 		return false;
 	for (int i = 0; i < howmany; i++) {
-		loadhere.myPalette.r[i + startIndex] = (byte)bigDataFile->readByte();
-		loadhere.myPalette.g[i + startIndex] = (byte)bigDataFile->readByte();
-		loadhere.myPalette.b[i + startIndex] = (byte)bigDataFile->readByte();
+		loadhere.myPalette.r[i + startIndex] = (byte)readStream->readByte();
+		loadhere.myPalette.g[i + startIndex] = (byte)readStream->readByte();
+		loadhere.myPalette.b[i + startIndex] = (byte)readStream->readByte();
 		loadhere.myPalette.pal[i + startIndex] =
 				(uint16)g_sludge->getOrigPixelFormat()->RGBToColor(
 						loadhere.myPalette.r[i + startIndex],
@@ -290,7 +291,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 	delete[] spriteData;
 	spriteData = NULL;
 
-	finishAccess();
+	g_sludge->_resMan->finishAccess();
 
 	setResourceForFatal(-1);
 

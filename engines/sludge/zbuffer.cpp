@@ -88,25 +88,26 @@ bool setZBuffer(int num) {
 	setResourceForFatal(num);
 
 	zBuffer.originalNum = num;
-	if (!openFileFromNum(num))
+	if (!g_sludge->_resMan->openFileFromNum(num))
 		return false;
-	if (bigDataFile->readByte() != 'S')
+	Common::ReadStream *readStream = g_sludge->_resMan->getData();
+	if (readStream->readByte() != 'S')
 		return fatal("Not a Z-buffer file");
-	if (bigDataFile->readByte() != 'z')
+	if (readStream->readByte() != 'z')
 		return fatal("Not a Z-buffer file");
-	if (bigDataFile->readByte() != 'b')
+	if (readStream->readByte() != 'b')
 		return fatal("Not a Z-buffer file");
 
 	uint width, height;
-	switch (bigDataFile->readByte()) {
+	switch (readStream->readByte()) {
 		case 0:
 			width = 640;
 			height = 480;
 			break;
 
 		case 1:
-			width = bigDataFile->readUint16BE();
-			height = bigDataFile->readUint16BE();
+			width = readStream->readUint16BE();
+			height = readStream->readUint16BE();
 			break;
 
 		default:
@@ -117,9 +118,9 @@ bool setZBuffer(int num) {
 		return fatal("Z-buffer width and height don't match scene width and height", tmp);
 	}
 
-	zBuffer.numPanels = bigDataFile->readByte();
+	zBuffer.numPanels = readStream->readByte();
 	for (int y = 0; y < zBuffer.numPanels; y++) {
-		yPalette[y] = bigDataFile->readUint16BE();
+		yPalette[y] = readStream->readUint16BE();
 	}
 	sortZPal(yPalette, sorted, zBuffer.numPanels);
 	for (int y = 0; y < zBuffer.numPanels; y++) {
@@ -141,10 +142,10 @@ bool setZBuffer(int num) {
 		for (uint x = 0; x < sceneWidth; x++) {
 			int n;
 			if (stillToGo == 0) {
-				n = bigDataFile->readByte();
+				n = readStream->readByte();
 				stillToGo = n >> 4;
 				if (stillToGo == 15)
-					stillToGo = bigDataFile->readUint16BE() + 16l;
+					stillToGo = readStream->readUint16BE() + 16l;
 				else
 					stillToGo++;
 				n &= 15;
@@ -167,7 +168,7 @@ bool setZBuffer(int num) {
 			stillToGo--;
 		}
 	}
-	finishAccess();
+	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 	return true;
 }

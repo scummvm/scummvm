@@ -31,50 +31,44 @@
 
 namespace Sludge {
 
-bool sliceBusy = true;
-
-Common::File *bigDataFile = NULL;
-
-uint32 startOfDataIndex, startOfTextIndex, startOfSubIndex, startOfObjectIndex;
-
-bool openSubSlice(int num) {
-	if (sliceBusy) {
+bool ResourceManager::openSubSlice(int num) {
+	if (_sliceBusy) {
 		fatal("Can't read from data file", "I'm already reading something");
 		return false;
 	}
-	bigDataFile->seek(startOfSubIndex + (num << 2), 0);
-	bigDataFile->seek(bigDataFile->readUint32LE(), 0);
+	_bigDataFile->seek(_startOfSubIndex + (num << 2), 0);
+	_bigDataFile->seek(_bigDataFile->readUint32LE(), 0);
 
-	return sliceBusy = true;
+	return _sliceBusy = true;
 }
 
-bool openObjectSlice(int num) {
-	if (sliceBusy) {
+bool ResourceManager::openObjectSlice(int num) {
+	if (_sliceBusy) {
 		fatal("Can't read from data file", "I'm already reading something");
 		return false;
 	}
 
-	bigDataFile->seek(startOfObjectIndex + (num << 2), 0);
-	bigDataFile->seek(bigDataFile->readUint32LE(), 0);
-	return sliceBusy = true;
+	_bigDataFile->seek(_startOfObjectIndex + (num << 2), 0);
+	_bigDataFile->seek(_bigDataFile->readUint32LE(), 0);
+	return _sliceBusy = true;
 }
 
-uint openFileFromNum(int num) {
-	if (sliceBusy) {
+uint ResourceManager::openFileFromNum(int num) {
+	if (_sliceBusy) {
 		fatal("Can't read from data file", "I'm already reading something");
 		return 0;
 	}
 
-	bigDataFile->seek(startOfDataIndex + (num << 2), 0);
-	bigDataFile->seek(bigDataFile->readUint32LE(), 1);
-	sliceBusy = true;
+	_bigDataFile->seek(_startOfDataIndex + (num << 2), 0);
+	_bigDataFile->seek(_bigDataFile->readUint32LE(), 1);
+	_sliceBusy = true;
 
-	return bigDataFile->readUint32LE();
+	return _bigDataFile->readUint32LE();
 }
 
 // Converts a string from Windows CP-1252 to UTF-8.
 // This is needed for old games.
-Common::String convertString(const Common::String &s) {
+Common::String ResourceManager::convertString(const Common::String &s) {
 #if 0
 	static char *buf = NULL;
 
@@ -137,18 +131,17 @@ Common::String convertString(const Common::String &s) {
 	return s; //TODO: false value
 }
 
-Common::String getNumberedString(int value) {
-
-	if (sliceBusy) {
+Common::String ResourceManager::getNumberedString(int value) {
+	if (_sliceBusy) {
 		fatal("Can't read from data file", "I'm already reading something");
 		return NULL;
 	}
 
-	bigDataFile->seek((value << 2) + startOfTextIndex, 0);
-	value = bigDataFile->readUint32LE();
-	bigDataFile->seek(value, 0);
+	_bigDataFile->seek((value << 2) + _startOfTextIndex, 0);
+	value = _bigDataFile->readUint32LE();
+	_bigDataFile->seek(value, 0);
 
-	Common::String s = readString(bigDataFile);
+	Common::String s = readString(_bigDataFile);
 
 	if (gameVersion < VERSION(2, 2)) {
 		// This is an older game - We need to convert the string to UTF-8
@@ -158,25 +151,23 @@ Common::String getNumberedString(int value) {
 	return s;
 }
 
-bool startAccess() {
-	int wasBusy = sliceBusy;
-	sliceBusy = true;
+bool ResourceManager::startAccess() {
+	int wasBusy = _sliceBusy;
+	_sliceBusy = true;
 	return wasBusy;
 }
-void finishAccess() {
-	sliceBusy = false;
+void ResourceManager::finishAccess() {
+	_sliceBusy = false;
 }
 
-int32 startIndex;
-
-void setBigDataFile(Common::File *fp) {
-	bigDataFile = fp;
-	startIndex = fp->pos();
+void ResourceManager::setData(Common::File *fp) {
+	_bigDataFile = fp;
+	_startIndex = fp->pos();
 }
 
-void setFileIndices(uint numLanguages, uint skipBefore) {
-	bigDataFile->seek(startIndex, SEEK_SET);
-	sliceBusy = false;
+void ResourceManager::setFileIndices(uint numLanguages, uint skipBefore) {
+	_bigDataFile->seek(_startIndex, SEEK_SET);
+	_sliceBusy = false;
 
 	if (skipBefore > numLanguages) {
 		warning("Not a valid language ID! Using default instead.");
@@ -186,30 +177,30 @@ void setFileIndices(uint numLanguages, uint skipBefore) {
 	// STRINGS
 	int skipAfter = numLanguages - skipBefore;
 	while (skipBefore) {
-		bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_SET);
+		_bigDataFile->seek(_bigDataFile->readUint32LE(), SEEK_SET);
 		skipBefore--;
 	}
-	startOfTextIndex = bigDataFile->pos() + 4;
-	debug(kSludgeDebugDataLoad, "startOfTextIndex: %i", startOfTextIndex);
+	_startOfTextIndex = _bigDataFile->pos() + 4;
+	debug(kSludgeDebugDataLoad, "startOfTextIndex: %i", _startOfTextIndex);
 
-	bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_SET);
+	_bigDataFile->seek(_bigDataFile->readUint32LE(), SEEK_SET);
 
 	while (skipAfter) {
-		bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_SET);
+		_bigDataFile->seek(_bigDataFile->readUint32LE(), SEEK_SET);
 		skipAfter--;
 	}
 
-	startOfSubIndex = bigDataFile->pos() + 4;
-	bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_CUR);
-	debug(kSludgeDebugDataLoad, "startOfSubIndex: %i", startOfSubIndex);
+	_startOfSubIndex = _bigDataFile->pos() + 4;
+	_bigDataFile->seek(_bigDataFile->readUint32LE(), SEEK_CUR);
+	debug(kSludgeDebugDataLoad, "startOfSubIndex: %i", _startOfSubIndex);
 
-	startOfObjectIndex = bigDataFile->pos() + 4;
-	bigDataFile->seek(bigDataFile->readUint32LE(), SEEK_CUR);
-	debug(kSludgeDebugDataLoad, "startOfObjectIndex: %i", startOfObjectIndex);
+	_startOfObjectIndex = _bigDataFile->pos() + 4;
+	_bigDataFile->seek(_bigDataFile->readUint32LE(), SEEK_CUR);
+	debug(kSludgeDebugDataLoad, "startOfObjectIndex: %i", _startOfObjectIndex);
 
 	// Remember that the data section starts here
-	startOfDataIndex = bigDataFile->pos();
-	debug(kSludgeDebugDataLoad, "startOfDataIndex: %i", startOfDataIndex);
+	_startOfDataIndex = _bigDataFile->pos();
+	debug(kSludgeDebugDataLoad, "startOfDataIndex: %i", _startOfDataIndex);
 }
 
 } // End of namespace Sludge
