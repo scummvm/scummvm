@@ -20,16 +20,12 @@
  *
  */
 
-#include "sludge/specialsettings.h"
-
 #include "sludge/newfatal.h"
 #include "sludge/timing.h"
 #include "sludge/movie.h"
 #include "sludge/sound.h"
 
 namespace Sludge {
-
-extern int specialSettings;
 
 // in main.c
 int checkInput();

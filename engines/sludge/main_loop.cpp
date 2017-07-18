@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/keyboard.h"
@@ -45,7 +46,6 @@
 #include "sludge/sludger.h"
 #include "sludge/helpers.h"
 #include "sludge/sludge.h"
-#include "sludge/specialsettings.h"
 
 namespace Sludge {
 
@@ -58,7 +58,6 @@ HWND hMainWindow = NULL;
 int realWinWidth = 640, realWinHeight = 480;
 extern float cameraZoom;
 
-extern int specialSettings;
 extern inputType input;
 extern variableStack *noStack;
 Graphics::Surface renderSurface;
@@ -182,7 +181,7 @@ int main_loop(const char *filename)
 
 	g_sludge->gameName = getNumberedString(1);
 
-	if (!(specialSettings & SPECIAL_SILENT)) {
+	if (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) {
 		initSoundStuff(hMainWindow);
 	}
 

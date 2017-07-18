@@ -47,7 +47,6 @@
 #include "sludge/language.h"
 #include "sludge/variable.h"
 #include "sludge/sludge.h"
-#include "sludge/specialsettings.h"
 #include "sludge/version.h"
 #include "sludge/imgloader.h"
 
@@ -69,7 +68,6 @@ int selectedLanguage = 0;
 int languageNum = -1;
 
 int gameVersion;
-int specialSettings;
 FILETIME fileTime;
 bool captureAllKeys = false;
 
@@ -218,7 +216,7 @@ bool initSludge(const Common::String &filename) {
 	debug(kSludgeDebugDataLoad, "winWidth : %i", winWidth);
 	winHeight = fp->readUint16BE();
 	debug(kSludgeDebugDataLoad, "winHeight : %i", winHeight);
-	specialSettings = fp->readByte();
+	int specialSettings = fp->readByte();
 	debug(kSludgeDebugDataLoad, "specialSettings : %i", specialSettings);
 	g_sludge->_timer.setDesiredfps(1000 / fp->readByte());
 
