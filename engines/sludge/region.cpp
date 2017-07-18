@@ -26,6 +26,7 @@
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
 #include "sludge/region.h"
+#include "sludge/sludge.h"
 #include "sludge/sludger.h"
 
 namespace Sludge {
@@ -55,7 +56,7 @@ void removeScreenRegion(int objectNum) {
 		if ((*huntRegion)->thisType->objectNum == objectNum) {
 			killMe = *huntRegion;
 			*huntRegion = killMe->next;
-			removeObjectType(killMe->thisType);
+			g_sludge->_objMan->removeObjectType(killMe->thisType);
 			if (killMe == overRegion)
 				overRegion = NULL;
 			delete killMe;
@@ -83,7 +84,7 @@ void saveRegions(Common::WriteStream *stream) {
 		stream->writeUint16BE(thisRegion->sX);
 		stream->writeUint16BE(thisRegion->sY);
 		stream->writeUint16BE(thisRegion->di);
-		saveObjectRef(thisRegion->thisType, stream);
+		g_sludge->_objMan->saveObjectRef(thisRegion->thisType, stream);
 
 		thisRegion = thisRegion->next;
 	}
@@ -107,7 +108,7 @@ void loadRegions(Common::SeekableReadStream *stream) {
 		newRegion->sX = stream->readUint16BE();
 		newRegion->sY = stream->readUint16BE();
 		newRegion->di = stream->readUint16BE();
-		newRegion->thisType = loadObjectRef(stream);
+		newRegion->thisType = g_sludge->_objMan->loadObjectRef(stream);
 	}
 	*pointy = NULL;
 }
@@ -117,7 +118,7 @@ void killAllRegions() {
 	while (allScreenRegions) {
 		killRegion = allScreenRegions;
 		allScreenRegions = allScreenRegions->next;
-		removeObjectType(killRegion->thisType);
+		g_sludge->_objMan->removeObjectType(killRegion->thisType);
 		delete killRegion;
 	}
 	overRegion = NULL;
@@ -135,7 +136,7 @@ bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,
 	newRegion->y2 = y2;
 	newRegion->sX = sX;
 	newRegion->sY = sY;
-	newRegion->thisType = loadObjectType(objectNum);
+	newRegion->thisType = g_sludge->_objMan->loadObjectType(objectNum);
 	newRegion->next = allScreenRegions;
 	allScreenRegions = newRegion;
 	return (bool) (newRegion->thisType != NULL);

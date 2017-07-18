@@ -310,7 +310,7 @@ Common::String getTextFromAnyVar(const variable &from) {
 		}
 
 		case SVT_OBJTYPE: {
-			objectType *thisType = findObjectType(from.varData.intValue);
+			ObjectType *thisType = g_sludge->_objMan->findObjectType(from.varData.intValue);
 			if (thisType)
 				return thisType->screenName;
 			break;

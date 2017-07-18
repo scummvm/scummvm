@@ -31,6 +31,7 @@
 #include "sludge/console.h"
 #include "sludge/fileset.h"
 #include "sludge/language.h"
+#include "sludge/objtypes.h"
 #include "sludge/timing.h"
 
 namespace Sludge {
@@ -70,6 +71,7 @@ public:
 	// managers
 	ResourceManager *_resMan;
 	LanguageManager *_languageMan;
+	ObjectManager *_objMan;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();

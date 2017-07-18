@@ -29,6 +29,7 @@
 #include "sludge/sprbanks.h"
 #include "sludge/people.h"
 #include "sludge/talk.h"
+#include "sludge/sludge.h"
 #include "sludge/sound.h"
 #include "sludge/fonttext.h"
 #include "sludge/newfatal.h"
@@ -71,7 +72,7 @@ void killAllSpeech() {
 	}
 }
 
-inline void setObjFontColour(objectType *t) {
+inline void setObjFontColour(ObjectType *t) {
 	setFontColour(speech->talkCol, t->r, t->g, t->b);
 }
 
@@ -188,7 +189,7 @@ int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool ani
 					thisRegion->y1 - thisRegion->thisType->speechGap - cameraY,
 					thisRegion->thisType->wrapSpeech, sampleFile);
 		} else {
-			objectType *temp = findObjectType(objT);
+			ObjectType *temp = g_sludge->_objMan->findObjectType(objT);
 			setObjFontColour(temp);
 			i = wrapSpeechXY(theText, winWidth >> 1, 10, temp->wrapSpeech,
 					sampleFile);

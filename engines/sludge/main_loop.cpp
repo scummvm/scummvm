@@ -173,7 +173,7 @@ int main_loop(const char *filename)
 		return fatal("Couldn't initialise people stuff");
 	if (!initFloor())
 		return fatal("Couldn't initialise floor stuff");
-	if (!initObjectTypes())
+	if (!g_sludge->_objMan->initObjectTypes())
 		return fatal("Couldn't initialise object type stuff");
 	initSpeech();
 	initStatusBar();

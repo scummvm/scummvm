@@ -65,7 +65,7 @@ struct onScreenPerson {
 	int frameNum, frameTick, angle, wantAngle, angleOffset;
 	bool show;
 	int direction, directionWhenDoneWalking;
-	struct objectType *thisType;
+	struct ObjectType *thisType;
 	int extra, spinSpeed;
 	byte r, g, b, colourmix, transparency;
 };

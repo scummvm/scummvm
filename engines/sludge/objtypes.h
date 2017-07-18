@@ -24,28 +24,41 @@
 
 namespace Sludge {
 
-struct combination {
+class SludgeEngine;
+
+struct Combination {
 	int withObj, funcNum;
 };
 
-struct objectType {
+struct ObjectType {
 	Common::String screenName;
 	int objectNum;
-	objectType *next;
 	byte r, g, b;
 	int numCom;
 	int speechGap, walkSpeed, wrapSpeech, spinSpeed;
 	uint16 flags;
-	combination *allCombis;
+	Combination *allCombis;
 };
 
-bool initObjectTypes();
-objectType *findObjectType(int i);
-objectType *loadObjectType(int i);
-int getCombinationFunction(int a, int b);
-void removeObjectType(objectType *oT);
-void saveObjectRef(objectType *r, Common::WriteStream *stream);
-objectType *loadObjectRef(Common::SeekableReadStream *stream);
+typedef Common::List<ObjectType *> ObjectTypeList;
+
+class ObjectManager {
+public:
+	ObjectManager(SludgeEngine *vm) : _vm(vm) {}
+	~ObjectManager();
+
+	bool initObjectTypes();
+	ObjectType *findObjectType(int i);
+	ObjectType *loadObjectType(int i);
+	int getCombinationFunction(int a, int b);
+	void removeObjectType(ObjectType *oT);
+	void saveObjectRef(ObjectType *r, Common::WriteStream *stream);
+	ObjectType *loadObjectRef(Common::SeekableReadStream *stream);
+
+private:
+	ObjectTypeList _allObjectTypes;
+	SludgeEngine *_vm;
+};
 
 } // End of namespace Sludge
 

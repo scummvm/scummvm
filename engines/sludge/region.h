@@ -26,7 +26,7 @@ namespace Sludge {
 
 struct screenRegion {
 	int x1, y1, x2, y2, sX, sY, di;
-	objectType *thisType;
+	ObjectType *thisType;
 	screenRegion *next;
 };
 

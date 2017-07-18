@@ -64,6 +64,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	// Init managers
 	_resMan = new ResourceManager();
 	_languageMan = new LanguageManager();
+	_objMan = new ObjectManager(this);
 }
 
 SludgeEngine::~SludgeEngine() {
@@ -86,6 +87,8 @@ SludgeEngine::~SludgeEngine() {
 	_pixelFormat = nullptr;
 
 	// Dispose managers
+	delete _objMan;
+	_objMan = nullptr;
 	delete _languageMan;
 	_languageMan = nullptr;
 	delete _resMan;

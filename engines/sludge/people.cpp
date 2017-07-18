@@ -34,6 +34,7 @@
 #include "sludge/loadsave.h"
 #include "sludge/floor.h"
 #include "sludge/zbuffer.h"
+#include "sludge/sludge.h"
 #include "sludge/sound.h"
 #include "sludge/version.h"
 
@@ -811,7 +812,7 @@ bool addPerson(int x, int y, int objNum, persona *p) {
 		return false;
 
 	// EASY STUFF
-	newPerson->thisType = loadObjectType(objNum);
+	newPerson->thisType = g_sludge->_objMan->loadObjectType(objNum);
 	newPerson->scale = 1;
 	newPerson->extra = 0;
 	newPerson->continueAfterWalking = NULL;
@@ -909,7 +910,7 @@ void killAllPeople() {
 		allPeople->continueAfterWalking = NULL;
 		killPeople = allPeople;
 		allPeople = allPeople->next;
-		removeObjectType(killPeople->thisType);
+		g_sludge->_objMan->removeObjectType(killPeople->thisType);
 		delete killPeople;
 	}
 }
@@ -931,7 +932,7 @@ void killMostPeople() {
 			if (killPeople->continueAfterWalking)
 				abortFunction(killPeople->continueAfterWalking);
 			killPeople->continueAfterWalking = NULL;
-			removeObjectType(killPeople->thisType);
+			g_sludge->_objMan->removeObjectType(killPeople->thisType);
 			delete killPeople;
 		}
 	}
@@ -955,7 +956,7 @@ void removeOneCharacter(int i) {
 		}
 
 		*killPeople = p->next;
-		removeObjectType(p->thisType);
+		g_sludge->_objMan->removeObjectType(p->thisType);
 		delete p;
 	}
 }
@@ -1089,7 +1090,7 @@ bool savePeople(Common::WriteStream *stream) {
 		stream->writeByte(me->colourmix);
 		stream->writeByte(me->transparency);
 
-		saveObjectRef(me->thisType, stream);
+		g_sludge->_objMan->saveObjectRef(me->thisType, stream);
 
 		me = me->next;
 	}
@@ -1171,7 +1172,7 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 		} else {
 			setMyDrawMode(me, stream->readUint16BE());
 		}
-		me->thisType = loadObjectRef(stream);
+		me->thisType = g_sludge->_objMan->loadObjectRef(stream);
 
 		// Anti-aliasing settings
 		if (ssgVersion >= VERSION(1, 6)) {

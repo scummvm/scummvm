@@ -992,7 +992,7 @@ builtIn(callEvent) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	int fNum = getCombinationFunction(obj1, obj2);
+	int fNum = g_sludge->_objMan->getCombinationFunction(obj1, obj2);
 
 	// Return value
 	if (fNum) {
@@ -1366,7 +1366,7 @@ builtIn(rename) {
 	if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	objectType *o = findObjectType(objT);
+	ObjectType *o = g_sludge->_objMan->findObjectType(objT);
 	o->screenName.clear();
 	o->screenName = newText;
 	return BR_CONTINUE;
@@ -2124,7 +2124,7 @@ builtIn(fetchEvent) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	int fNum = getCombinationFunction(obj1, obj2);
+	int fNum = g_sludge->_objMan->getCombinationFunction(obj1, obj2);
 
 	// Return value
 	if (fNum) {
@@ -2503,7 +2503,7 @@ builtIn(hasFlag) {
 	if (!getValueType(objNum, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	objectType *objT = findObjectType(objNum);
+	ObjectType *objT = g_sludge->_objMan->findObjectType(objNum);
 	if (!objT)
 		return BR_ERROR;
 	setVariable(fun->reg, SVT_INT, objT->flags & (1 << flagIndex));

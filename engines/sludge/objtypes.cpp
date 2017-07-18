@@ -31,31 +31,37 @@
 
 namespace Sludge {
 
-objectType *allObjectTypes = NULL;
+ObjectManager::~ObjectManager() {
+	ObjectTypeList::iterator it;
+	for (it = _allObjectTypes.begin(); it != _allObjectTypes.end(); ++it) {
+		delete [](*it)->allCombis;
+		delete (*it);
+		(*it) = nullptr;
+	}
+}
 
-bool initObjectTypes() {
+bool ObjectManager::initObjectTypes() {
 	return true;
 }
 
-objectType *findObjectType(int i) {
-	objectType *huntType = allObjectTypes;
-
-	while (huntType) {
-		if (huntType->objectNum == i)
-			return huntType;
-		huntType = huntType->next;
+ObjectType *ObjectManager::findObjectType(int i) {
+	ObjectTypeList::iterator it;
+	for (it = _allObjectTypes.begin(); it != _allObjectTypes.end(); ++it) {
+		if ((*it)->objectNum == i) {
+			return (*it);
+		}
 	}
-
 	return loadObjectType(i);
 }
 
-objectType *loadObjectType(int i) {
+ObjectType *ObjectManager::loadObjectType(int i) {
 	int a, nameNum;
-	objectType *newType = new objectType;
+	ObjectType *newType = new ObjectType;
+	ResourceManager *rm = _vm->_resMan;
 
 	if (checkNew(newType)) {
-		if (g_sludge->_resMan->openObjectSlice(i)) {
-			Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
+		if (rm->openObjectSlice(i)) {
+			Common::SeekableReadStream *readStream = rm->getData();
 			nameNum = readStream->readUint16BE();
 			newType->r = (byte)readStream->readByte();
 			newType->g = (byte)readStream->readByte();
@@ -79,7 +85,7 @@ objectType *loadObjectType(int i) {
 			}
 
 			newType->numCom = readStream->readUint16BE();
-			newType->allCombis = (newType->numCom) ? new combination[newType->numCom] : NULL;
+			newType->allCombis = (newType->numCom) ? new Combination[newType->numCom] : nullptr;
 
 
 			for (a = 0; a < newType->numCom; a++) {
@@ -87,33 +93,32 @@ objectType *loadObjectType(int i) {
 				newType->allCombis[a].funcNum = readStream->readUint16BE();
 			}
 
-			g_sludge->_resMan->finishAccess();
-			newType->screenName = g_sludge->_resMan->getNumberedString(nameNum);
+			rm->finishAccess();
+			newType->screenName = rm->getNumberedString(nameNum);
 			newType->objectNum = i;
-			newType->next = allObjectTypes;
-			allObjectTypes = newType;
+			_allObjectTypes.push_back(newType);
 			return newType;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-objectType *loadObjectRef(Common::SeekableReadStream *stream) {
-	objectType *r = loadObjectType(stream->readUint16BE());
+ObjectType *ObjectManager::loadObjectRef(Common::SeekableReadStream *stream) {
+	ObjectType *r = loadObjectType(stream->readUint16BE());
 	r->screenName.clear();
 	r->screenName = readString(stream);
 	return r;
 }
 
-void saveObjectRef(objectType *r, Common::WriteStream *stream) {
+void ObjectManager::saveObjectRef(ObjectType *r, Common::WriteStream *stream) {
 	stream->writeUint16BE(r->objectNum);
 	writeString(r->screenName, stream);
 }
 
-int getCombinationFunction(int withThis, int thisObject) {
+int ObjectManager::getCombinationFunction(int withThis, int thisObject) {
 	int i, num = 0;
-	objectType *obj = findObjectType(thisObject);
+	ObjectType *obj = findObjectType(thisObject);
 
 	for (i = 0; i < obj->numCom; i++) {
 		if (obj->allCombis[i].withObj == withThis) {
@@ -125,20 +130,11 @@ int getCombinationFunction(int withThis, int thisObject) {
 	return num;
 }
 
-void removeObjectType(objectType *oT) {
-	objectType **huntRegion = &allObjectTypes;
-
-	while (*huntRegion) {
-		if ((*huntRegion) == oT) {
-			*huntRegion = oT->next;
-			delete []oT->allCombis;
-			delete oT;
-			return;
-		} else {
-			huntRegion = &((*huntRegion)->next);
-		}
-	}
-	fatal("Can't delete object type: bad pointer");
+void ObjectManager::removeObjectType(ObjectType *oT) {
+	_allObjectTypes.remove(oT);
+	delete []oT->allCombis;
+	delete oT;
+	oT = nullptr;
 }
 
 } // End of namespace Sludge
