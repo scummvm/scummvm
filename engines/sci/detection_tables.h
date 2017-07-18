@@ -2705,7 +2705,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "5cc6159688b2dc03790a67c90ccc67f9", 10195878},
 		{"resmap.000", 0, "6a2b2811eef82e87cde91cf1de845af8", 2695},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE, GUIO_LSL7_DEMO },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_TESTING, GUIO_LSL7_DEMO },
 
 	// Larry 7 - English DOS CD (from spookypeanut)
 	// SCI interpreter version 3.000.000
@@ -2713,7 +2713,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "eae93e1b1d1ccc58b4691c371281c95d", 8188},
 		{"ressci.000", 0, "89353723488219e25589165d73ed663e", 66965678},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LSL7 },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
 
 	// Larry 7 - German DOS (from Tobis87)
 	// SCI interpreter version 3.000.000
@@ -2721,7 +2721,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "c11e6bfcfc2f2d05da47e5a7df3e9b1a", 8188},
 		{"ressci.000", 0, "a8c6817bb94f332ff498a71c8b47f893", 66971724},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LSL7 },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
 
 	// Larry 7 - French DOS (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 3.000.000
@@ -2729,7 +2729,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "4407849fd52fe3efb0c30fba60cd5cd4", 8206},
 		{"ressci.000", 0, "dc37c3055fffbefb494ff22b145d377b", 66964472},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LSL7 },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
 
 	// Larry 7 - Italian DOS CD (from glorifindel)
 	// SCI interpreter version 3.000.000
@@ -2737,7 +2737,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "9852a97141f789413f29bf956052acdb", 8212},
 		{"ressci.000", 0, "440b9fed89590abb4e4386ed6f948ee2", 67140181},
 		AD_LISTEND},
-		Common::IT_ITA, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LSL7 },
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
 
 	// Larry 7 - Spanish DOS (from the Leisure Suit Larry Collection)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.0s"
@@ -2745,7 +2745,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "8f3d603e1acc834a5d598b30cdfc93f3", 8188},
 		{"ressci.000", 0, "32792f9bc1bf3633a88b382bb3f6e40d", 67071418},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LSL7 },
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
 
 #undef GUIO_LSL7_DEMO
 #undef GUIO_LSL7
