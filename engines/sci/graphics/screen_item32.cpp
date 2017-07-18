@@ -131,8 +131,11 @@ void ScreenItem::operator=(const ScreenItem &other) {
 	// to clear `_celObj` here; instead, it unconditionally set `_celInfo`,
 	// didn't clear `_celObj`, and did hacky stuff in `kIsOnMe` to avoid
 	// testing a mismatched `_celObj`. See `GfxFrameout::kernelIsOnMe` for
-	// more detail.
-	if (_celInfo != other._celInfo) {
+	// more detail. kCelTypeMem types are unconditionally invalidated because
+	// the properties of a CelObjMem can "change" when a game deletes a bitmap
+	// and then creates a new one that reuses the old bitmap's offset in
+	// BitmapTable (as happens in the LSL7 About screen when hovering names).
+	if (_celInfo.type == kCelTypeMem || _celInfo != other._celInfo) {
 		_celInfo = other._celInfo;
 		delete _celObj;
 		_celObj = nullptr;
