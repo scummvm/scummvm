@@ -66,7 +66,7 @@ void RivenCard::loadCardResource(uint16 id) {
 	// Apply script patches for this card
 	uint32 globalId = _vm->getStack()->getCardGlobalId(id);
 	for (uint i = 0; i < _scripts.size(); i++) {
-		_scripts[i].script->applyCardPatches(_vm, globalId, _scripts[i].type);
+		_scripts[i].script->applyCardPatches(_vm, globalId, _scripts[i].type, 0xFFFF);
 	}
 
 	delete inStream;
@@ -252,8 +252,10 @@ void RivenCard::loadHotspots(uint16 id) {
 	uint16 hotspotCount = inStream->readUint16BE();
 	_hotspots.resize(hotspotCount);
 
+	uint32 globalId = _vm->getStack()->getCardGlobalId(id);
 	for (uint16 i = 0; i < hotspotCount; i++) {
 		_hotspots[i] = new RivenHotspot(_vm, inStream);
+		_hotspots[i]->applyScriptPatches(globalId);
 	}
 
 	delete inStream;
@@ -640,6 +642,13 @@ RivenScriptPtr RivenHotspot::getScript(uint16 scriptType) const {
 		}
 
 	return RivenScriptPtr();
+}
+
+
+void RivenHotspot::applyScriptPatches(uint32 cardGlobalId) {
+	for (uint16 i = 0; i < _scripts.size(); i++) {
+		_scripts[i].script->applyCardPatches(_vm, cardGlobalId, _scripts[i].type, _blstID);
+	}
 }
 
 bool RivenHotspot::isEnabled() const {

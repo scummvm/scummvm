@@ -249,7 +249,7 @@ const char *RivenScript::getTypeName(uint16 type) {
 	return names[type];
 }
 
-void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, int scriptType) {
+void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, uint16 scriptType, uint16 hotspotId) {
 	bool shouldApplyPatches = false;
 
 	// On Prison Island when pressing the dome viewer switch to close the dome,
@@ -289,9 +289,31 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 		}
 	}
 
+	// On Jungle Island when entering the submarine from the dock beside the main walkway,
+	// the sound of the hatch closing does not play (Bug #9972).
+	// This happens only in the CD version of the game.
+	//
+	// Script before patch:
+	// transition(16);
+	// switchCard(534);
+	//
+	// Script after patch:
+	// transition(16);
+	// switchCard(534);
+	// playSound(112, 256, 0);
+	if (cardGlobalId == 0x2E900 && scriptType == kMouseDownScript && hotspotId == 3
+			&& !(vm->getFeatures() & GF_DVD)) {
+		shouldApplyPatches = true;
+		RivenSimpleCommand::ArgumentArray arguments;
+		arguments.push_back(112);
+		arguments.push_back(256);
+		arguments.push_back(0);
+		_commands.push_back(RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandPlaySound, arguments)));
+	}
+
 	if (shouldApplyPatches) {
 		for (uint i = 0; i < _commands.size(); i++) {
-			_commands[i]->applyCardPatches(cardGlobalId, scriptType);
+			_commands[i]->applyCardPatches(cardGlobalId, scriptType, hotspotId);
 		}
 	}
 }
@@ -823,9 +845,9 @@ RivenCommandType RivenSwitchCommand::getType() const {
 	return kRivenCommandSwitch;
 }
 
-void RivenSwitchCommand::applyCardPatches(uint32 globalId, int scriptType) {
+void RivenSwitchCommand::applyCardPatches(uint32 globalId, int scriptType, uint16 hotspotId) {
 	for (uint i = 0; i < _branches.size(); i++) {
-		_branches[i].script->applyCardPatches(_vm, globalId, scriptType);
+		_branches[i].script->applyCardPatches(_vm, globalId, scriptType, hotspotId);
 	}
 }
 

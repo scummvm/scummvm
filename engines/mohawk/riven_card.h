@@ -254,6 +254,9 @@ public:
 	/** Write all of the hotspot's data to standard output */
 	void dump() const;
 
+	/** Apply patches to hotspot's scripts to fix bugs in the original game scripts */
+	void applyScriptPatches(uint32 cardGlobalId);
+
 private:
 	enum {
 		kFlagZip = 1,

@@ -129,7 +129,7 @@ public:
 	void dumpScript(byte tabs);
 
 	/** Apply patches to card script to fix bugs in the original game scripts */
-	void applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, int scriptType);
+	void applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, uint16 scriptType, uint16 hotspotId);
 
 	/** Append the commands of the other script to this script */
 	RivenScript &operator+=(const RivenScript &other);
@@ -257,7 +257,7 @@ public:
 	virtual RivenCommandType getType() const = 0;
 
 	/** Apply card patches for the command's sub-scripts */
-	virtual void applyCardPatches(uint32 globalId, int scriptType) {}
+	virtual void applyCardPatches(uint32 globalId, int scriptType, uint16 hotspotId) {}
 
 protected:
 	MohawkEngine_Riven *_vm;
@@ -356,7 +356,7 @@ public:
 	virtual void dump(byte tabs) override;
 	virtual void execute() override;
 	virtual RivenCommandType getType() const override;
-	virtual void applyCardPatches(uint32 globalId, int scriptType) override;
+	virtual void applyCardPatches(uint32 globalId, int scriptType, uint16 hotspotId) override;
 
 private:
 	RivenSwitchCommand(MohawkEngine_Riven *vm);
