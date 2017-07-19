@@ -93,7 +93,7 @@ int LiftbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	checkItems(roomScript, sentence);
 	int currState = getState();
 	int sentMode = sentence->_category;
-	TTtreeResult treeResult;
+	TTtreeResult treeResult[32];
 
 	if (currState) {
 		setState(0);
@@ -134,7 +134,7 @@ int LiftbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 		case 9:
 			if (sentMode == 10 || g_vm->_trueTalkManager->_quotesTree.search(
-				sentence->_normalizedLine.c_str(), TREE_2, &treeResult, 0, 0) != -1)
+				sentence->_normalizedLine.c_str(), TREE_2, &treeResult[0], 0, 0) != -1)
 				return addDialogueAndState(getDialogueId(210970), 9);
 			break;
 

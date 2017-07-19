@@ -205,7 +205,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 	CTrueTalkManager::setFlags(33, getValue(33) - 1);
 	CTrueTalkManager::setFlags(34, getValue(34) - 1);
 
-	TTtreeResult treeResult;
+	TTtreeResult treeResult[32];
 	int val34 = getState();
 	setState(0);
 
@@ -303,7 +303,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			return applySentenceIds(getDialogueId(250526), 16);
 		} else {
 			if (g_vm->_trueTalkManager->_quotesTree.search(
-					sentence->_normalizedLine.c_str(), TREE_3, &treeResult, 0, nullptr) != -1) {
+					sentence->_normalizedLine.c_str(), TREE_3, &treeResult[0], 0, nullptr) != -1) {
 				uint newId = getDialogueId(250526);
 				return applySentenceIds(newId, 16);
 			}
@@ -358,7 +358,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		break;
 	case 26:
 		if (g_vm->_trueTalkManager->_quotesTree.search(
-				sentence->_normalizedLine.c_str(), TREE_3, &treeResult, 0, nullptr) != -1)
+				sentence->_normalizedLine.c_str(), TREE_3, &treeResult[0], 0, nullptr) != -1)
 			return applySentenceIds(getDialogueId(251899), 26);
 		break;
 

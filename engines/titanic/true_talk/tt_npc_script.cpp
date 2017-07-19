@@ -777,11 +777,11 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 
 bool TTnpcScript::defaultProcess(const TTroomScript *roomScript, const TTsentence *sentence) {
 	uint remainder;
-	TTtreeResult results[32];
+	TTtreeResult treeResult[32];
 	const TTstring &line = sentence->_normalizedLine;
 
 	uint tagId = g_vm->_trueTalkManager->_quotes.find(line.c_str());
-	int val = g_vm->_trueTalkManager->_quotesTree.search(line.c_str(), TREE_1, results, tagId, &remainder);
+	int val = g_vm->_trueTalkManager->_quotesTree.search(line.c_str(), TREE_1, &treeResult[0], tagId, &remainder);
 
 	if (val > 0) {
 		if (!handleQuote(roomScript, sentence, val, tagId, remainder))
