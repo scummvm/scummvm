@@ -89,7 +89,8 @@ const MSGMAP_ENTRY *CMessage::findMapEntry(const CTreeItem *treeItem, const Clas
 		for (const MSGMAP_ENTRY *entry = msgMap->lpEntries;
 				entry->_class != nullptr; ++entry) {
 			// Check if the class or any of it's ancesotrs is handled by this entry
-			for (const ClassDef *entryDef = entry->_class; entryDef; entryDef = entryDef->_parent) {
+			for (const ClassDef *entryDef = *entry->_class; entryDef;
+					entryDef = entryDef->_parent) {
 				if (entryDef == classDef)
 					return entry;
 			}
