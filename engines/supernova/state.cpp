@@ -219,6 +219,13 @@ void GameManager::initGui() {
 	}
 
 	// Inventory + Inventory Arrows
+	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
+		int x = 136 * (i % 2);
+		int y = 161 + 10 * (i / 2);
+
+		_guiInventory[i].setSize(x, y, x + 135, y + 9);
+		_guiInventory[i].setColor(kColorWhite25, kColorDarkRed, kColorWhite35, kColorRed);
+	}
 
 	// Minimap
 
@@ -368,19 +375,18 @@ void GameManager::processInput(Common::EventType eventType, int x, int y) {
 			if (_mouseField >= 768) {
 				inventory_arrow(_mouseField - 768, false);
 			} else if (_mouseField >= 512) {
-				inventory_object(_mouseField - 512, false);
-				Object::setObjectNull(_currentInputObject);
+				_guiInventory[_mouseField - 512].setHighlight(false);
 			} else if (_mouseField >= 256) {
 				_guiCommandButton[_mouseField - 256].setHighlight(false);
 			} else if (_mouseField !=  -1) {
-				Object::setObjectNull(_currentInputObject);
 			}
+			Object::setObjectNull(_currentInputObject);
 
 			_mouseField = field;
 			if (_mouseField >= 768) {
 				inventory_arrow(_mouseField - 768, true);
 			} else if (_mouseField >= 512) {
-				inventory_object(_mouseField - 512, true);
+				_guiInventory[_mouseField - 512].setHighlight(true);
 				_currentInputObject = _inventory.get(_mouseField - 512 + _inventoryScroll);
 			} else if (_mouseField >= 256) {
 				_guiCommandButton[_mouseField - 256].setHighlight(true);
@@ -461,15 +467,6 @@ void GameManager::takeObject(Object &obj) {
 	_inventory.add(obj);
 }
 
-void GameManager::inventory_object(int index, bool brightness) {
-	int x = 136 * (index % 2);
-	int y = 161 + 10 * (index / 2);
-	_vm->renderBox(x, y, 135, 9, (brightness) ? HGR_INV_HELL : HGR_INV);
-	if (index < _inventory.getSize())
-		_vm->renderText(_inventory.get(index + _inventoryScroll)->_name, x + 1, y + 1,
-		                (brightness) ? COL_INV_HELL : COL_INV);
-}
-
 void GameManager::drawCommandBox() {
 	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
 		_vm->renderBox(_guiCommandButton[i].left,
@@ -489,13 +486,18 @@ void GameManager::inventory_arrow(int num, bool brightness) {
 }
 
 void GameManager::drawInventory() {
-	for (int i = 0; i < 8; ++i) {
-		int x = 136 * (i % 2);
-		int y = 161 + 10 * (i / 2);
-		_vm->renderBox(x, y, 135, 9, HGR_INV);
-		if (i < _inventory.getSize())
-			_vm->renderText(_inventory.get(i + _inventoryScroll)->_name, x + 1, y + 1, COL_INV);
+	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
+		_vm->renderBox(_guiInventory[i].left,
+		               _guiInventory[i].top,
+		               _guiInventory[i].width(),
+		               _guiInventory[i].height(),
+		               _guiInventory[i]._bgColor);
+		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name,
+		                _guiInventory[i]._textPosition.x,
+		                _guiInventory[i]._textPosition.y,
+		                _guiInventory[i]._textColor);
 	}
+
 	_vm->renderBox(272, 161, 7, 19, HGR_INV);
 	_vm->renderBox(272, 181, 7, 19, HGR_INV);
 }
