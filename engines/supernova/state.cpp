@@ -278,24 +278,31 @@ void GameManager::processInput(Common::EventType eventType, int x, int y) {
 
 	if (_mouseClickType == Common::EVENT_LBUTTONUP) {
 		_vm->removeMessage();
-		if (Object::isNullObject(_currentInputObject))
-			return;
 
-		if (_mouseField >= 256 && _mouseField < 512) {
+		if (((_mouseField >= 0) && (_mouseField < 256)) ||
+		    ((_mouseField >= 512) && (_mouseField < 768))) {
+			if (_inputVerb == ACTION_GIVE || _inputVerb == ACTION_USE) {
+				// TODO: There are cases where here is no second object needed
+				//       for example, putting on the space suit
+				if (Object::isNullObject(_inputObject[0]))
+					_inputObject[0] = _currentInputObject;
+				else
+					_inputObject[1] = _currentInputObject;
+			} else {
+				_inputObject[0] = _currentInputObject;
+				if (!Object::isNullObject(_currentInputObject))
+					_processInput = true;
+			}
+		} else if (_mouseField >= 256 && _mouseField < 512) {
 			resetInputState();
 			_inputVerb = static_cast<Action>(_mouseField - 256);
 			drawStatus();
+		} else if (_mouseField == 768) {
+			if (_inventoryScroll >= 0)
+				--_inventoryScroll;
+		} else if (_mouseField == 769) {
+			++_inventoryScroll;
 		}
-		if (_inputVerb == ACTION_GIVE || _inputVerb == ACTION_USE) {
-			if (Object::isNullObject(_inputObject[0]))
-				_inputObject[0] = _currentInputObject;
-			else
-				_inputObject[1] = _currentInputObject;
-		} else {
-			_inputObject[0] = _currentInputObject;
-			_processInput = true;
-		}
-
 	} else if (_mouseClickType == Common::EVENT_RBUTTONUP) {
 		_vm->removeMessage();
 		if (Object::isNullObject(_currentInputObject))
