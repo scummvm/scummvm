@@ -1609,7 +1609,9 @@ bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
 int TTparser::filterConcepts(int conceptMode, int conceptIndex) {
 	int result = 0;
 
-	for (TTconcept *currP = _conceptP; currP && !result; currP = currP->_nextP) {
+	for (TTconcept *nextP, *currP = _conceptP; currP && !result; currP = nextP) {
+		nextP = currP->_nextP;
+
 		if (checkConcept2(currP, conceptMode)) {
 			TTconcept **ptrPP = _sentenceConcept->setConcept(conceptIndex, currP);
 			TTconcept *newConcept = new TTconcept(*currP);
