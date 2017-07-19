@@ -25,6 +25,7 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 
+#include "sludge/graphics.h"
 #include "sludge/sludge.h"
 #include "sludge/main_loop.h"
 
@@ -65,6 +66,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	_resMan = new ResourceManager();
 	_languageMan = new LanguageManager();
 	_objMan = new ObjectManager(this);
+	_gfxMan = new GraphicsManager();
 }
 
 SludgeEngine::~SludgeEngine() {
@@ -87,6 +89,8 @@ SludgeEngine::~SludgeEngine() {
 	_pixelFormat = nullptr;
 
 	// Dispose managers
+	delete _gfxMan;
+	_gfxMan = nullptr;
 	delete _objMan;
 	_objMan = nullptr;
 	delete _languageMan;

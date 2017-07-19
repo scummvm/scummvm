@@ -38,6 +38,7 @@ namespace Sludge {
 
 extern SludgeEngine *g_sludge;
 
+class GraphicsManager;
 class SludgeConsole;
 
 struct SludgeGameDescription;
@@ -72,6 +73,7 @@ public:
 	ResourceManager *_resMan;
 	LanguageManager *_languageMan;
 	ObjectManager *_objMan;
+	GraphicsManager *_gfxMan;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();

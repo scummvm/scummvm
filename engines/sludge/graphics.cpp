@@ -19,37 +19,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SLUDGE_FREEZE_H
-#define SLUDGE_FREEZE_H
 
-#include "graphics/surface.h"
+#include "sludge/backdrop.h"
+#include "sludge/graphics.h"
 
 namespace Sludge {
 
-struct frozenStuffStruct {
-	onScreenPerson *allPeople;
-	screenRegion *allScreenRegions;
-	Graphics::Surface backdropSurface;
-	Graphics::Surface lightMapSurface;
-	Graphics::Surface *zBufferSprites;
-	int zPanels;
-	Parallax *parallaxStuff;
-	int lightMapNumber, zBufferNumber;
-	speechStruct *speech;
-	statusStuff *frozenStatus;
-	eventHandlers *currentEvents;
-	personaAnimation *mouseCursorAnim;
-	int mouseCursorFrameNum;
-	int cameraX, cameraY, sceneWidth, sceneHeight;
-	float cameraZoom;
+GraphicsManager::GraphicsManager() {
+	_parallaxStuff = new Parallax;
+}
 
-	frozenStuffStruct *next;
-};
+GraphicsManager::~GraphicsManager() {
+	delete _parallaxStuff;
+	_parallaxStuff = nullptr;
+}
 
-bool freeze();
-void unfreeze(bool killImage = true);
-int howFrozen();
+bool GraphicsManager::loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
+	if (!_parallaxStuff)
+		_parallaxStuff = new Parallax;
+	return _parallaxStuff->add(v, fracX, fracY);
+}
+
+void GraphicsManager::killParallax() {
+	if (!_parallaxStuff)
+		return;
+	_parallaxStuff->kill();
+}
+
+void GraphicsManager::saveParallax(Common::WriteStream *fp) {
+	if (_parallaxStuff)
+		_parallaxStuff->save(fp);
+}
+
+void GraphicsManager::drawParallax() {
+	if (_parallaxStuff)
+		_parallaxStuff->draw();
+}
+
+
 
 } // End of namespace Sludge
-
-#endif

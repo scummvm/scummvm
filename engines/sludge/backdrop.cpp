@@ -30,6 +30,7 @@
 #include "sludge/allfiles.h"
 #include "sludge/newfatal.h"
 #include "sludge/fileset.h"
+#include "sludge/graphics.h"
 #include "sludge/backdrop.h"
 #include "sludge/moreio.h"
 #include "sludge/statusba.h"
@@ -61,7 +62,6 @@ float snapTexH = 1.0;
 
 uint winWidth, winHeight;
 int lightMapMode = LIGHTMAPMODE_PIXEL;
-parallaxLayer *parallaxStuff = NULL;
 int cameraPX = 0, cameraPY = 0;
 
 uint sceneWidth, sceneHeight;
@@ -70,6 +70,121 @@ uint currentBlankColour = TS_ARGB(255, 0, 0, 0);
 
 extern int cameraX, cameraY;
 extern float cameraZoom;
+
+Parallax::~Parallax() {
+	kill();
+}
+
+void Parallax::kill() {
+	ParallaxLayers::iterator it;
+	for (it = _parallaxLayers.begin(); it != _parallaxLayers.end(); ++it) {
+		(*it)->surface.free();
+		delete (*it);
+		(*it) = nullptr;
+	}
+	_parallaxLayers.clear();
+}
+
+bool Parallax::add(uint16 v, uint16 fracX, uint16 fracY) {
+	setResourceForFatal(v);
+	if (!g_sludge->_resMan->openFileFromNum(v))
+		return fatal("Can't open parallax image");
+
+	ParallaxLayer *nP = new ParallaxLayer;
+	if (!checkNew(nP))
+		return false;
+
+	_parallaxLayers.push_back(nP);
+
+	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &nP->surface, 0))
+		return false;
+
+	nP->fileNum = v;
+	nP->fractionX = fracX;
+	nP->fractionY = fracY;
+
+	// 65535 is the value of AUTOFIT constant in Sludge
+	if (fracX == 65535) {
+		nP->wrapS = false;
+		if (nP->surface.w < winWidth) {
+			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
+			return false;
+		}
+	} else {
+		nP->wrapS = true;
+	}
+
+	if (fracY == 65535) {
+		nP->wrapT = false;
+		if (nP->surface.h < winHeight) {
+			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
+			return false;
+		}
+	} else {
+		nP->wrapT = true;
+	}
+
+	// TODO: reinterpret this part
+#if 0
+	if (nP->wrapS)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	else
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	if (nP->wrapT)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	else
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#endif
+
+	g_sludge->_resMan->finishAccess();
+	setResourceForFatal(-1);
+	return true;
+}
+
+void Parallax::draw() {
+	// draw parallaxStuff
+	if (!_parallaxLayers.empty()) {
+		// TODO: simulate image repeating effect
+		warning("Drawing parallaxStuff");
+#if 0
+		// display parallax from bottom to top
+		ParallaxLayers::iterator it;
+		for (it = _parallax.begin(); it != _parallax.end(); ++it) {
+			(*it)->cameraX = sortOutPCamera(cameraX, (*it)->fractionX, (int)(sceneWidth - (float)winWidth / cameraZoom), (int)((*it)->surface.w - (float)winWidth / cameraZoom));
+			(*it)->cameraY = sortOutPCamera(cameraY, (*it)->fractionY, (int)(sceneHeight - (float)winHeight / cameraZoom), (int)((*it)->surface.h - (float)winHeight / cameraZoom));
+
+			uint w = ((*it)->wrapS) ? sceneWidth : (*it)->surface.w;
+			uint h = ((*it)->wrapT) ? sceneHeight : (*it)->surface.h;
+
+			const GLfloat vertices[] = {
+				(GLfloat) - (*it)->cameraX, (GLfloat) - (*it)->cameraY, 0.1f,
+				w - (*it)->cameraX, (GLfloat) - (*it)->cameraY, 0.1f,
+				(GLfloat) - (*it)->cameraX, h - (*it)->cameraY, 0.1f,
+				w - (*it)->cameraX, h - (*it)->cameraY, 0.1f
+			};
+
+			const GLfloat texCoords[] = {
+				0.0f, 0.0f,
+				texw, 0.0f,
+				0.0f, texh,
+				texw, texh
+			};
+			drawQuad(shader.smartScaler, vertices, 1, texCoords);
+
+		}
+#endif
+	}
+}
+
+void Parallax::save(Common::WriteStream *stream) {
+	ParallaxLayers::iterator it;
+	for (it = _parallaxLayers.begin(); it != _parallaxLayers.end(); ++it) {
+		stream->writeByte(1);
+		stream->writeUint16BE((*it)->fileNum);
+		stream->writeUint16BE((*it)->fractionX);
+		stream->writeUint16BE((*it)->fractionY);
+	}
+}
 
 void nosnapshot() {
 	if (snapshotSurface.getPixels())
@@ -122,16 +237,6 @@ void killLightMap() {
 	lightMapNumber = 0;
 }
 
-void killParallax() {
-	while (parallaxStuff) {
-		parallaxLayer *k = parallaxStuff;
-		parallaxStuff = k->next;
-		k->surface.free();
-		delete k;
-		k = NULL;
-	}
-}
-
 bool reserveBackdrop() {
 	cameraX = 0;
 	cameraY = 0;
@@ -147,7 +252,7 @@ bool reserveBackdrop() {
 void killAllBackDrop() {
 	killLightMap();
 	killBackDrop();
-	killParallax();
+	g_sludge->_gfxMan->killParallax();
 	killZBuffer();
 }
 
@@ -265,44 +370,6 @@ void drawBackDrop() {
 
 	// TODO: apply lightmap shader
 
-	// draw parallaxStuff
-	if (parallaxStuff) {
-		// TODO: simulate image repeating effect
-		warning("Drawing parallaxStuff");
-#if 0
-		parallaxLayer *ps = parallaxStuff;
-
-		// go to the parallax at bottom
-		while (ps->next) ps = ps->next;
-
-		// draw parallax one by one
-		while (ps) {
-			ps->cameraX = sortOutPCamera(cameraX, ps->fractionX, (int)(sceneWidth - (float)winWidth / cameraZoom), (int)(ps->surface.w - (float)winWidth / cameraZoom));
-			ps->cameraY = sortOutPCamera(cameraY, ps->fractionY, (int)(sceneHeight - (float)winHeight / cameraZoom), (int)(ps->surface.h - (float)winHeight / cameraZoom));
-
-			uint w = (ps->wrapS) ? sceneWidth : ps->surface.w;
-			uint h = (ps->wrapT) ? sceneHeight : ps->surface.h;
-
-			const GLfloat vertices[] = {
-				(GLfloat) - ps->cameraX, (GLfloat) - ps->cameraY, 0.1f,
-				w - ps->cameraX, (GLfloat) - ps->cameraY, 0.1f,
-				(GLfloat) - ps->cameraX, h - ps->cameraY, 0.1f,
-				w - ps->cameraX, h - ps->cameraY, 0.1f
-			};
-
-			const GLfloat texCoords[] = {
-				0.0f, 0.0f,
-				texw, 0.0f,
-				0.0f, texh,
-				texw, texh
-			};
-			drawQuad(shader.smartScaler, vertices, 1, texCoords);
-
-			ps = ps->prev;
-		}
-#endif
-	}
-
 	// draw backdrop
 	Graphics::TransparentSurface tmp(backdropSurface, false);
 	tmp.blit(renderSurface, 0, 0);
@@ -328,67 +395,6 @@ bool loadLightMap(int v) {
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 
-	return true;
-}
-
-bool loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
-	setResourceForFatal(v);
-	if (!g_sludge->_resMan->openFileFromNum(v))
-		return fatal("Can't open parallax image");
-
-	parallaxLayer *nP = new parallaxLayer;
-	if (!checkNew(nP))
-		return false;
-
-	nP->next = parallaxStuff;
-	parallaxStuff = nP;
-	if (nP->next) {
-		nP->next->prev = nP;
-	}
-	nP->prev = NULL;
-
-	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &nP->surface, 0))
-		return false;
-
-	nP->fileNum = v;
-	nP->fractionX = fracX;
-	nP->fractionY = fracY;
-
-	// 65535 is the value of AUTOFIT constant in Sludge
-	if (fracX == 65535) {
-		nP->wrapS = false;
-		if (nP->surface.w < winWidth) {
-			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
-			return false;
-		}
-	} else {
-		nP->wrapS = true;
-	}
-
-	if (fracY == 65535) {
-		nP->wrapT = false;
-		if (nP->surface.h < winHeight) {
-			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
-			return false;
-		}
-	} else {
-		nP->wrapT = true;
-	}
-
-	// TODO: reinterpret this part
-#if 0
-	if (nP->wrapS)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	else
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	if (nP->wrapT)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	else
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#endif
-
-	g_sludge->_resMan->finishAccess();
-	setResourceForFatal(-1);
 	return true;
 }
 
@@ -452,15 +458,6 @@ void saveHSI(Common::WriteStream *stream) {
 	Image::writePNG(*stream, backdropSurface);
 }
 
-void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *stream) {
-	if (me) {
-		saveParallaxRecursive(me->next, stream);
-		stream->writeByte(1);
-		stream->writeUint16BE(me->fileNum);
-		stream->writeUint16BE(me->fractionX);
-		stream->writeUint16BE(me->fractionY);
-	}
-}
 
 bool getRGBIntoStack(uint x, uint y, stackHandler *sH) {
 	if (x >= sceneWidth || y >= sceneHeight) {

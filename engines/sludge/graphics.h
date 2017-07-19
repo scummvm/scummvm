@@ -19,37 +19,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SLUDGE_FREEZE_H
-#define SLUDGE_FREEZE_H
 
-#include "graphics/surface.h"
+#ifndef SLUDGE_GRAPHICS_H
+#define SLUDGE_GRAPHICS_H
 
 namespace Sludge {
 
-struct frozenStuffStruct {
-	onScreenPerson *allPeople;
-	screenRegion *allScreenRegions;
-	Graphics::Surface backdropSurface;
-	Graphics::Surface lightMapSurface;
-	Graphics::Surface *zBufferSprites;
-	int zPanels;
-	Parallax *parallaxStuff;
-	int lightMapNumber, zBufferNumber;
-	speechStruct *speech;
-	statusStuff *frozenStatus;
-	eventHandlers *currentEvents;
-	personaAnimation *mouseCursorAnim;
-	int mouseCursorFrameNum;
-	int cameraX, cameraY, sceneWidth, sceneHeight;
-	float cameraZoom;
+class Parallax;
 
-	frozenStuffStruct *next;
+class GraphicsManager {
+public:
+	GraphicsManager();
+	virtual ~GraphicsManager();
+
+	// Parallax
+	Parallax *_parallaxStuff;
+	bool loadParallax(uint16 v, uint16 fracX, uint16 fracY);
+	void killParallax();
+	void saveParallax(Common::WriteStream *fp);
+	void drawParallax();
 };
-
-bool freeze();
-void unfreeze(bool killImage = true);
-int howFrozen();
 
 } // End of namespace Sludge
 
-#endif
+
+#endif // SLUDGE_GRAPHICS_H

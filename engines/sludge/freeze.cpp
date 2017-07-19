@@ -33,6 +33,7 @@
 #include "sludge/fonttext.h"
 #include "sludge/statusba.h"
 #include "sludge/freeze.h"
+#include "sludge/graphics.h"
 #include "sludge/zbuffer.h"
 
 namespace Sludge {
@@ -44,7 +45,6 @@ extern speechStruct *speech;
 extern inputType input;
 extern Graphics::Surface backdropSurface;
 extern Graphics::Surface renderSurface;
-extern parallaxLayer *parallaxStuff;
 extern int lightMapNumber, zBufferNumber;
 extern eventHandlers *currentEvents;
 extern personaAnimation *mouseCursorAnim;
@@ -96,8 +96,8 @@ bool freeze() {
 	newFreezer->lightMapSurface.copyFrom(lightMap);
 	newFreezer->lightMapNumber = lightMapNumber;
 
-	newFreezer->parallaxStuff = parallaxStuff;
-	parallaxStuff = NULL;
+	newFreezer->parallaxStuff = g_sludge->_gfxMan->_parallaxStuff;
+	g_sludge->_gfxMan->_parallaxStuff = NULL;
 	newFreezer->zBufferSprites = zBuffer.sprites;
 	newFreezer->zBufferNumber = zBuffer.originalNum;
 	newFreezer->zPanels = zBuffer.numPanels;
@@ -196,8 +196,8 @@ void unfreeze(bool killImage) {
 		setZBuffer(zBuffer.originalNum);
 	}
 
-	killParallax();
-	parallaxStuff = frozenStuff->parallaxStuff;
+	g_sludge->_gfxMan->killParallax();
+	g_sludge->_gfxMan->_parallaxStuff = frozenStuff->parallaxStuff;
 
 	deleteAnim(mouseCursorAnim);
 	mouseCursorAnim = frozenStuff->mouseCursorAnim;

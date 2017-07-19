@@ -46,6 +46,7 @@
 #include "sludge/thumbnail.h"
 #include "sludge/utf8.h"
 #include "sludge/version.h"
+#include "sludge/graphics.h"
 
 namespace Sludge {
 
@@ -78,7 +79,6 @@ extern bool allowAnyFilename;
 extern uint16 saveEncoding;                 // in savedata.cpp
 extern byte currentBurnR, currentBurnG, currentBurnB;
 extern uint currentBlankColour;             // in backdrop.cpp
-extern parallaxLayer *parallaxStuff;                //      "
 extern int lightMapMode;                    //      "
 
 //----------------------------------------------------------------------
@@ -460,7 +460,7 @@ bool saveGame(const Common::String &fname) {
 	fp->writeByte(currentBurnG);
 	fp->writeByte(currentBurnB);
 
-	saveParallaxRecursive(parallaxStuff, fp);
+	g_sludge->_gfxMan->saveParallax(fp);
 	fp->writeByte(0);
 
 	g_sludge->_languageMan->saveLanguageSetting(fp);
@@ -658,7 +658,7 @@ bool loadGame(const Common::String &fname) {
 			int fx = fp->readUint16BE();
 			int fy = fp->readUint16BE();
 
-			if (!loadParallax(im, fx, fy))
+			if (!g_sludge->_gfxMan->loadParallax(im, fx, fy))
 				return false;
 		}
 

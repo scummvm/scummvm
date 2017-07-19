@@ -23,6 +23,8 @@
 #ifndef SLUDGE_BACKDROP_H
 #define SLUDGE_BACKDROP_H
 
+#include "common/stream.h"
+
 #include "graphics/surface.h"
 
 #include "sludge/variable.h"
@@ -35,24 +37,33 @@ enum {
 	LIGHTMAPMODE_PIXEL,
 	LIGHTMAPMODE_NUM
 };
-
 extern uint winWidth, winHeight, sceneWidth, sceneHeight;
 extern int lightMapMode;
-
 
 /**
  * parallax layers can scroll at different speeds
  * to the background image, giving the illusion of
  * depth to a scene as it moves.
  */
-struct parallaxLayer {
-	Graphics::Surface surface;
-	int speedX, speedY;
-	bool wrapS, wrapT;
-	uint16 fileNum, fractionX, fractionY;
-	int cameraX, cameraY;
-	parallaxLayer *next;
-	parallaxLayer *prev;
+class Parallax {
+public:
+	struct ParallaxLayer {
+		Graphics::Surface surface;
+		int speedX, speedY;
+		bool wrapS, wrapT;
+		uint16 fileNum, fractionX, fractionY;
+		int cameraX, cameraY;
+	};
+	typedef Common::List<ParallaxLayer *> ParallaxLayers;
+
+	~Parallax();
+
+	void kill();
+	bool add(uint16 v, uint16 fracX, uint16 fracY);
+	void save(Common::WriteStream *fp);
+	void draw();
+private:
+	ParallaxLayers _parallaxLayers;
 };
 
 void killAllBackDrop();
@@ -73,17 +84,10 @@ void hardScroll(int distance);
 bool getRGBIntoStack(uint x, uint y, stackHandler *sH);
 
 // Also the light map stuff
-
 void killLightMap();
 bool loadLightMap(int v);
 
 extern Graphics::Surface lightMap;
-
-// And background parallax scrolling
-
-void killParallax();
-bool loadParallax(uint16 v, uint16 fracX, uint16 fracY);
-void saveParallaxRecursive(parallaxLayer *me, Common::WriteStream *fp);
 
 void nosnapshot();
 bool snapshot();

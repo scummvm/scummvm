@@ -50,6 +50,7 @@
 #include "sludge/thumbnail.h"
 #include "sludge/sludge.h"
 #include "sludge/utf8.h"
+#include "sludge/graphics.h"
 
 namespace Sludge {
 
@@ -2358,7 +2359,7 @@ builtIn(parallaxAdd) {
 			return BR_ERROR;
 		trimStack(fun->stack);
 
-		if (!loadParallax(v, wrapX, wrapY))
+		if (!g_sludge->_gfxMan->loadParallax(v, wrapX, wrapY))
 			return BR_ERROR;
 		setVariable(fun->reg, SVT_INT, 1);
 	}
@@ -2367,7 +2368,7 @@ builtIn(parallaxAdd) {
 
 builtIn(parallaxClear) {
 	UNUSEDALL
-	killParallax();
+	g_sludge->_gfxMan->killParallax();
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;
 }
