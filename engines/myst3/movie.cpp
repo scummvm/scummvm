@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/movie.h"
+#include "engines/myst3/ambient.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/sound.h"
 #include "engines/myst3/state.h"
@@ -449,6 +450,11 @@ void SimpleMovie::playStartupSound() {
 
 		_vm->_state->setMovieStartSoundId(0);
 	}
+}
+
+void SimpleMovie::refreshAmbientSounds() {
+	uint32 engineFrames = _bink.getFrameCount() * 2;
+	_vm->_ambient->playCurrentNode(100, engineFrames);
 }
 
 SimpleMovie::~SimpleMovie() {

@@ -158,6 +158,7 @@ public:
 	bool endOfVideo();
 
 	void playStartupSound();
+	void refreshAmbientSounds();
 
 	void setSynchronized(bool b) { _synchronized = b; }
 private:

@@ -1126,7 +1126,7 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 	_movies.push_back(movie);
 }
 
-void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
+void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe, bool refreshAmbientSounds) {
 	SimpleMovie movie = SimpleMovie(this, id);
 
 	if (!movie.isVideoLoaded()) {
@@ -1164,6 +1164,10 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 	}
 
 	movie.playStartupSound();
+
+	if (refreshAmbientSounds) {
+		movie.refreshAmbientSounds();
+	}
 
 	_drawables.push_back(&movie);
 
@@ -1564,7 +1568,7 @@ void Myst3Engine::playMovieGoToNode(uint16 movie, uint16 node) {
 
 	loadNode(node, room, age);
 
-	playSimpleMovie(movie, true);
+	playSimpleMovie(movie, true, true);
 
 	_state->setLocationNextNode(0);
 	_state->setLocationNextRoom(0);
@@ -1585,7 +1589,7 @@ void Myst3Engine::playMovieFullFrame(uint16 movie) {
 	}
 	_state->setCameraSkipAnimation(0);
 
-	playSimpleMovie(movie, true);
+	playSimpleMovie(movie, true, false);
 
 	if (_state->getViewType() == kCube) {
 		float endPitch, endHeading;

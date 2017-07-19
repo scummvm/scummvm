@@ -154,7 +154,7 @@ public:
 	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
 	void playMovieGoToNode(uint16 movie, uint16 node);
 	void playMovieFullFrame(uint16 movie);
-	void playSimpleMovie(uint16 id, bool fullframe = false);
+	void playSimpleMovie(uint16 id, bool fullframe = false, bool refreshAmbientSounds = false);
 	void removeMovie(uint16 id);
 	void setMovieLooping(uint16 id, bool loop);
 
