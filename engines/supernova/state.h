@@ -125,6 +125,7 @@ public:
 	int _inventoryScroll;
 	int _exitList[25];
 	GuiElement _guiCommandButton[10];
+	GuiElement _guiInventory[8];
 	// 0 PC Speaker | 1 SoundBlaster | 2 No Sound
 	int _soundDevice;
 
@@ -162,7 +163,6 @@ public:
 	void drawStatus();
 	void drawCommandBox();
 	void inventory_arrow(int num, bool brightness);
-	void inventory_object(int index, bool brightness);
 	void drawInventory();
 	void drawImage(int section);
 	void changeRoom(RoomID id);
