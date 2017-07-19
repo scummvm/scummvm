@@ -66,7 +66,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	_resMan = new ResourceManager();
 	_languageMan = new LanguageManager();
 	_objMan = new ObjectManager(this);
-	_gfxMan = new GraphicsManager();
+	_gfxMan = new GraphicsManager(this);
 }
 
 SludgeEngine::~SludgeEngine() {

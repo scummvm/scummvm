@@ -27,16 +27,13 @@
 
 namespace Sludge {
 
-struct onScreenPerson;
-struct zBufferData;
-
-struct sprite {
+struct Sprite {
 	int xhot, yhot;
 	Graphics::Surface surface;
 	Graphics::Surface burnSurface;
 };
 
-class spritePalette {
+class SpritePalette {
 public:
 	uint16 *pal;
 	byte *r;
@@ -44,11 +41,11 @@ public:
 	byte *b;
 	byte originalRed, originalGreen, originalBlue, total;
 
-	spritePalette() : pal(0), r(0), g(0), b(0), total(0) {
+	SpritePalette() : pal(0), r(0), g(0), b(0), total(0) {
 		originalRed = originalGreen = originalBlue = 255;
 	}
 
-	~spritePalette() {
+	~SpritePalette() {
 		delete[] pal;
 		delete[] r;
 		delete[] g;
@@ -56,31 +53,32 @@ public:
 	}
 };
 
-struct spriteBank {
+struct SpriteBank {
 	int total;
 	int type;
-	sprite *sprites;
-	spritePalette myPalette;
+	Sprite *sprites;
+	SpritePalette myPalette;
 	bool isFont;
 };
 
-void forgetSpriteBank(spriteBank &forgetme);
-bool loadSpriteBank(char *filename, spriteBank &loadhere);
-bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont);
+// Sprite display informations
+struct SpriteDisplay {
+	int x, y;
+	int width, height;
+	uint32 color;
+	Graphics::FLIP_FLAGS flip;
+	Graphics::Surface *surface;
 
-void fontSprite(int x1, int y1, sprite &single, const spritePalette &fontPal);
-void flipFontSprite(int x1, int y1, sprite &single, const spritePalette &fontPal);
+	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, uint32 c = TS_ARGB(255, 255, 255, 255)) :
+			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), color(c) {
+	}
+};
 
-bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, bool mirror);
-void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal);
-bool reserveSpritePal(spritePalette &sP, int n);
-void fixScaleSprite(int x1, int y1, sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, const int camX, const int camY, bool);
-void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal);
-
-void resetSpriteLayers(zBufferData *ptrZBuffer, int x, int y, bool upsidedown);
-void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width = -1, int height = -1, uint32 color = TS_ARGB(255, 255, 255, 255));
-void displaySpriteLayers();
-void killSpriteLayers();
+// All sprites are sorted into different "layers" (up to 16) according to their relative y position to z-buffer zones
+struct SpriteLayers {
+	int numLayers;
+	Common::List<SpriteDisplay> layer[16];
+};
 
 } // End of namespace Sludge
 

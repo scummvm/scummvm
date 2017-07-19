@@ -31,15 +31,6 @@
 
 namespace Sludge {
 
-enum {
-	LIGHTMAPMODE_NONE = -1,
-	LIGHTMAPMODE_HOTSPOT,
-	LIGHTMAPMODE_PIXEL,
-	LIGHTMAPMODE_NUM
-};
-extern uint winWidth, winHeight, sceneWidth, sceneHeight;
-extern int lightMapMode;
-
 /**
  * parallax layers can scroll at different speeds
  * to the background image, giving the illusion of
@@ -56,6 +47,7 @@ public:
 	};
 	typedef Common::List<ParallaxLayer *> ParallaxLayers;
 
+	Parallax();
 	~Parallax();
 
 	void kill();
@@ -64,35 +56,11 @@ public:
 	void draw();
 private:
 	ParallaxLayers _parallaxLayers;
+
+	inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
+		return (fX == 65535) ? (sceneMax ? ((cX * boxMax) / sceneMax) : 0) : ((cX * fX) / 100);
+	}
 };
-
-void killAllBackDrop();
-bool resizeBackdrop(int x, int y);
-bool killResizeBackdrop(int x, int y);
-void killBackDrop();
-void loadBackDrop(int fileNum, int x, int y);
-void mixBackDrop(int fileNum, int x, int y);
-void drawBackDrop();
-void blankScreen(int x1, int y1, int x2, int y2);
-void darkScreen();
-void saveHSI(Common::WriteStream *stream);
-bool loadHSI(Common::SeekableReadStream *stream, int, int, bool);
-bool mixHSI(Common::SeekableReadStream *stream, int x = 0, int y = 0);
-void drawHorizontalLine(uint, uint, uint);
-void drawVerticalLine(uint, uint, uint);
-void hardScroll(int distance);
-bool getRGBIntoStack(uint x, uint y, stackHandler *sH);
-
-// Also the light map stuff
-void killLightMap();
-bool loadLightMap(int v);
-
-extern Graphics::Surface lightMap;
-
-void nosnapshot();
-bool snapshot();
-void saveSnapshot(Common::WriteStream *stream);
-bool restoreSnapshot(Common::SeekableReadStream *stream);
 
 } // End of namespace Sludge
 

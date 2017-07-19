@@ -36,7 +36,7 @@ struct speechStruct {
 	onScreenPerson *currentTalker;
 	speechLine *allSpeech;
 	int speechY, lastFile, lookWhosTalking;
-	spritePalette talkCol;
+	SpritePalette talkCol;
 };
 
 int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool);

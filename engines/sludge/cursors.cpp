@@ -22,9 +22,11 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/cursors.h"
+#include "sludge/graphics.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
 #include "sludge/people.h"
+#include "sludge/sludge.h"
 #include "sludge/sludger.h"
 
 namespace Sludge {
@@ -59,8 +61,17 @@ void displayCursor() {
 		}
 
 		if (flipMe != 2) {
-			(flipMe ? flipFontSprite : fontSprite)(input.mouseX, input.mouseY, mouseCursorAnim->theSprites->bank.sprites[spriteNum],
-					mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
+			if (flipMe) {
+				g_sludge->_gfxMan->flipFontSprite(
+						input.mouseX, input.mouseY,
+						mouseCursorAnim->theSprites->bank.sprites[spriteNum],
+						mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
+			} else {
+				g_sludge->_gfxMan->fontSprite(
+						input.mouseX, input.mouseY,
+						mouseCursorAnim->theSprites->bank.sprites[spriteNum],
+						mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
+			}
 		}
 
 		if (++mouseCursorCountUp >= mouseCursorAnim->frames[mouseCursorFrameNum].howMany) {
@@ -73,7 +84,7 @@ void displayCursor() {
 
 void pasteCursor(int x, int y, personaAnimation *c) {
 	if (c->numFrames)
-		pasteSpriteToBackDrop(x, y, c->theSprites->bank.sprites[c->frames[0].frameNum], c->theSprites->bank.myPalette);
+		g_sludge->_gfxMan->pasteSpriteToBackDrop(x, y, c->theSprites->bank.sprites[c->frames[0].frameNum], c->theSprites->bank.myPalette);
 }
 
 } // End of namespace Sludge

@@ -22,6 +22,7 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
+#include "sludge/graphics.h"
 #include "sludge/sprites.h"
 #include "sludge/sludger.h"
 #include "sludge/objtypes.h"
@@ -37,8 +38,7 @@
 
 namespace Sludge {
 
-extern int fontHeight, cameraX, cameraY, speechMode;
-extern float cameraZoom;
+extern int fontHeight, speechMode;
 speechStruct *speech;
 float speechSpeed = 1;
 
@@ -77,6 +77,7 @@ inline void setObjFontColour(ObjectType *t) {
 }
 
 void addSpeechLine(const Common::String &theLine, int x, int &offset) {
+	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 	int halfWidth = (stringWidth(theLine) >> 1) / cameraZoom;
 	int xx1 = x - (halfWidth);
 	int xx2 = x + (halfWidth);
@@ -90,9 +91,9 @@ void addSpeechLine(const Common::String &theLine, int x, int &offset) {
 	speech->allSpeech = newLine;
 	if ((xx1 < 5) && (offset < (5 - xx1))) {
 		offset = 5 - xx1;
-	} else if ((xx2 >= ((float) winWidth / cameraZoom) - 5)
-			&& (offset > (((float) winWidth / cameraZoom) - 5 - xx2))) {
-		offset = ((float) winWidth / cameraZoom) - 5 - xx2;
+	} else if ((xx2 >= ((float) g_system->getWidth() / cameraZoom) - 5)
+			&& (offset > (((float) g_system->getWidth() / cameraZoom) - 5 - xx2))) {
+		offset = ((float) g_system->getWidth() / cameraZoom) - 5 - xx2;
 	}
 }
 
@@ -101,6 +102,9 @@ int isThereAnySpeechGoingOn() {
 }
 
 int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int sampleFile) {
+	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
+	int cameraY = g_sludge->_gfxMan->getCamY();
+
 	int a, offset = 0;
 
 	killAllSpeech();
@@ -143,10 +147,9 @@ int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int samp
 
 	if (y < 0)
 		speech->speechY -= y;
-	else if (speech->speechY
-			> cameraY + (float) (winHeight - fontHeight / 3) / cameraZoom)
+	else if (speech->speechY > cameraY + (float) (g_system->getHeight() - fontHeight / 3) / cameraZoom)
 		speech->speechY = cameraY
-				+ (float) (winHeight - fontHeight / 3) / cameraZoom;
+				+ (float) (g_system->getHeight() - fontHeight / 3) / cameraZoom;
 
 	if (offset) {
 		speechLine *viewLine = speech->allSpeech;
@@ -158,8 +161,9 @@ int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int samp
 	return speechTime;
 }
 
-int wrapSpeechPerson(const Common::String &theText, onScreenPerson &thePerson, int sampleFile,
-		bool animPerson) {
+int wrapSpeechPerson(const Common::String &theText, onScreenPerson &thePerson, int sampleFile, bool animPerson) {
+	int cameraX = g_sludge->_gfxMan->getCamX();
+	int cameraY = g_sludge->_gfxMan->getCamY();
 	int i = wrapSpeechXY(theText, thePerson.x - cameraX,
 			thePerson.y - cameraY
 					- (thePerson.scale * (thePerson.height - thePerson.floaty))
@@ -174,6 +178,8 @@ int wrapSpeechPerson(const Common::String &theText, onScreenPerson &thePerson, i
 
 int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool animPerson) {
 	int i;
+	int cameraX = g_sludge->_gfxMan->getCamX();
+	int cameraY = g_sludge->_gfxMan->getCamY();
 
 	speech->lookWhosTalking = objT;
 	onScreenPerson *thisPerson = findPerson(objT);
@@ -191,7 +197,7 @@ int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool ani
 		} else {
 			ObjectType *temp = g_sludge->_objMan->findObjectType(objT);
 			setObjFontColour(temp);
-			i = wrapSpeechXY(theText, winWidth >> 1, 10, temp->wrapSpeech,
+			i = wrapSpeechXY(theText, g_system->getWidth() >> 1, 10, temp->wrapSpeech,
 					sampleFile);
 		}
 	}
@@ -199,6 +205,7 @@ int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool ani
 }
 
 void viewSpeech() {
+	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 	int viewY = speech->speechY;
 	speechLine *viewLine = speech->allSpeech;
 	while (viewLine) {

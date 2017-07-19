@@ -26,13 +26,13 @@
 
 namespace Sludge {
 
-struct loadedSpriteBank {
+struct LoadedSpriteBank {
 	int ID, timesUsed;
-	spriteBank bank;
-	loadedSpriteBank *next;
+	SpriteBank bank;
+	LoadedSpriteBank *next;
 };
 
-loadedSpriteBank *loadBankForAnim(int ID);
+LoadedSpriteBank *loadBankForAnim(int ID);
 void reloadSpriteTextures();
 
 } // End of namespace Sludge

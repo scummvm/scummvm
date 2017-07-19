@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 
 #include "sludge/allfiles.h"
+#include "sludge/graphics.h"
 #include "sludge/sludge.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
@@ -30,13 +31,13 @@
 
 namespace Sludge {
 
-loadedSpriteBank *allLoadedBanks = NULL;
-extern spriteBank theFont;
+LoadedSpriteBank *allLoadedBanks = NULL;
+extern SpriteBank theFont;
 extern int loadedFontNum;
 extern uint fontTableSize;
 
-loadedSpriteBank *loadBankForAnim(int ID) {
-	loadedSpriteBank *returnMe = allLoadedBanks;
+LoadedSpriteBank *loadBankForAnim(int ID) {
+	LoadedSpriteBank *returnMe = allLoadedBanks;
 	while (returnMe) {
 		if (returnMe->ID == ID) {
 			//debugOut ("loadBankForAnim: Found existing sprite bank with ID %d\n", returnMe -> ID);
@@ -44,10 +45,10 @@ loadedSpriteBank *loadBankForAnim(int ID) {
 		}
 		returnMe = returnMe->next;
 	}
-	returnMe = new loadedSpriteBank;
+	returnMe = new LoadedSpriteBank;
 	if (checkNew(returnMe)) {
 		returnMe->ID = ID;
-		if (loadSpriteBank(ID, returnMe->bank, false)) {
+		if (g_sludge->_gfxMan->loadSpriteBank(ID, returnMe->bank, false)) {
 			returnMe->timesUsed = 0;
 			returnMe->next = allLoadedBanks;
 			allLoadedBanks = returnMe;
@@ -62,18 +63,18 @@ loadedSpriteBank *loadBankForAnim(int ID) {
 }
 
 void reloadSpriteTextures() {
-	loadedSpriteBank *spriteBank = allLoadedBanks;
+	LoadedSpriteBank *spriteBank = allLoadedBanks;
 	while (spriteBank) {
 		//fprintf (stderr, "Reloading bank %d: %s.\n", spriteBank->ID, resourceNameFromNum (spriteBank->ID));
 		delete spriteBank->bank.sprites;
 		spriteBank->bank.sprites = NULL;
-		loadSpriteBank(spriteBank->ID, spriteBank->bank, false);
+		g_sludge->_gfxMan->loadSpriteBank(spriteBank->ID, spriteBank->bank, false);
 		spriteBank = spriteBank->next;
 	}
 	if (fontTableSize) {
 		delete theFont.sprites;
 		theFont.sprites = NULL;
-		loadSpriteBank(loadedFontNum, theFont, true);
+		g_sludge->_gfxMan->loadSpriteBank(loadedFontNum, theFont, true);
 	}
 }
 

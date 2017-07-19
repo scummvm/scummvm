@@ -59,7 +59,6 @@ extern const char *typeName[];                      // In variable.cpp
 extern int numGlobals;                              // In sludger.cpp
 extern variable *globalVars;                        // In sludger.cpp
 extern flor *currentFloor;                          // In floor.cpp
-extern zBufferData zBuffer;                         // In zbuffer.cpp
 extern speechStruct *speech;                        // In talk.cpp
 extern personaAnimation *mouseCursorAnim;           // In cursor.cpp
 extern int mouseCursorFrameNum;                     // "    "   "
@@ -68,18 +67,12 @@ extern uint fontTableSize;							//
 extern UTF8Converter fontOrder;                       // "    "   "
 extern FILETIME fileTime;                           // In sludger.cpp
 extern int speechMode;                              // "    "   "
-extern int lightMapNumber;                          // In backdrop.cpp
-extern int cameraX, cameraY;                        // "    "   "
-extern float cameraZoom;
 extern byte brightnessLevel;               // "    "   "
 extern int16 fontSpace;                             // in textfont.cpp
 extern byte fadeMode;                      // In transition.cpp
 extern bool captureAllKeys;
 extern bool allowAnyFilename;
 extern uint16 saveEncoding;                 // in savedata.cpp
-extern byte currentBurnR, currentBurnG, currentBurnB;
-extern uint currentBlankColour;             // in backdrop.cpp
-extern int lightMapMode;                    //      "
 
 //----------------------------------------------------------------------
 // Globals (so we know what's saved already and what's a reference
@@ -386,12 +379,12 @@ bool saveGame(const Common::String &fname) {
 	fp->writeSint16LE(fontSpace);
 
 	// Save backdrop
-	fp->writeUint16BE(cameraX);
-	fp->writeUint16BE(cameraY);
-	fp->writeFloatLE(cameraZoom);
+	fp->writeUint16BE(g_sludge->_gfxMan->getCamX());
+	fp->writeUint16BE(g_sludge->_gfxMan->getCamY());
+	fp->writeFloatLE(g_sludge->_gfxMan->getCamZoom());
 
 	fp->writeByte(brightnessLevel);
-	saveHSI(fp);
+	g_sludge->_gfxMan->saveHSI(fp);
 
 	// Save event handlers
 	saveHandlers(fp);
@@ -430,21 +423,10 @@ bool saveGame(const Common::String &fname) {
 		fp->writeByte(0);
 	}
 
-	if (zBuffer.numPanels > 0) {
-		fp->writeByte(1);
-		fp->writeUint16BE(zBuffer.originalNum);
-	} else {
-		fp->writeByte(0);
-	}
+	g_sludge->_gfxMan->saveZBuffer(fp);
 
-	if (lightMap.getPixels()) {
-		fp->writeByte(1);
-		fp->writeUint16BE(lightMapNumber);
-	} else {
-		fp->writeByte(0);
-	}
+	g_sludge->_gfxMan->saveLightMap(fp);
 
-	fp->writeByte(lightMapMode);
 	fp->writeByte(speechMode);
 	fp->writeByte(fadeMode);
 	saveSpeech(speech, fp);
@@ -455,17 +437,14 @@ bool saveGame(const Common::String &fname) {
 
 	blur_saveSettings(fp);
 
-	fp->writeUint16BE(currentBlankColour);
-	fp->writeByte(currentBurnR);
-	fp->writeByte(currentBurnG);
-	fp->writeByte(currentBurnB);
+	g_sludge->_gfxMan->saveColors(fp);
 
 	g_sludge->_gfxMan->saveParallax(fp);
 	fp->writeByte(0);
 
 	g_sludge->_languageMan->saveLanguageSetting(fp);
 
-	saveSnapshot(fp);
+	g_sludge->_gfxMan->saveSnapshot(fp);
 
 	fp->flush();
 	fp->finalize();
@@ -578,7 +557,7 @@ bool loadGame(const Common::String &fname) {
 
 	brightnessLevel = fp->readByte();
 
-	loadHSI(fp, 0, 0, true);
+	g_sludge->_gfxMan->loadHSI(fp, 0, 0, true);
 	loadHandlers(fp);
 	loadRegions(fp);
 
@@ -613,18 +592,11 @@ bool loadGame(const Common::String &fname) {
 	} else
 		setFloorNull();
 
-	if (fp->readByte()) {
-		if (!setZBuffer(fp->readUint16BE()))
-			return false;
-	}
+	if (!g_sludge->_gfxMan->loadZBuffer(fp))
+		return false;
 
-	if (fp->readByte()) {
-		if (!loadLightMap(fp->readUint16BE()))
-			return false;
-	}
-
-	if (ssgVersion >= VERSION(1, 4)) {
-		lightMapMode = fp->readByte() % 3;
+	if (!g_sludge->_gfxMan->loadLightMap(ssgVersion, fp)) {
+		return false;
 	}
 
 	speechMode = fp->readByte();
@@ -647,10 +619,7 @@ bool loadGame(const Common::String &fname) {
 	}
 
 	if (ssgVersion >= VERSION(1, 3)) {
-		currentBlankColour = fp->readUint16BE();
-		currentBurnR = fp->readByte();
-		currentBurnG = fp->readByte();
-		currentBurnB = fp->readByte();
+		g_sludge->_gfxMan->loadColors(fp);
 
 		// Read parallax layers
 		while (fp->readByte()) {
@@ -665,19 +634,17 @@ bool loadGame(const Common::String &fname) {
 		g_sludge->_languageMan->loadLanguageSetting(fp);
 	}
 
-	nosnapshot();
+	g_sludge->_gfxMan->nosnapshot();
 	if (ssgVersion >= VERSION(1, 4)) {
 		if (fp->readByte()) {
-			if (!restoreSnapshot(fp))
+			if (!g_sludge->_gfxMan->restoreSnapshot(fp))
 				return false;
 		}
 	}
 
 	delete fp;
 
-	cameraX = camerX;
-	cameraY = camerY;
-	cameraZoom = camerZ;
+	g_sludge->_gfxMan->setCamera(camerX, camerY, camerZ);
 
 	clearStackLib();
 	return true;

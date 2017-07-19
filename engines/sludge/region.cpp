@@ -22,6 +22,7 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
+#include "sludge/graphics.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
@@ -34,16 +35,15 @@ namespace Sludge {
 screenRegion *allScreenRegions = NULL;
 screenRegion *overRegion = NULL;
 extern inputType input;
-extern int cameraX, cameraY;
 
 void showBoxes() {
 	screenRegion *huntRegion = allScreenRegions;
 
 	while (huntRegion) {
-		drawVerticalLine(huntRegion->x1, huntRegion->y1, huntRegion->y2);
-		drawVerticalLine(huntRegion->x2, huntRegion->y1, huntRegion->y2);
-		drawHorizontalLine(huntRegion->x1, huntRegion->y1, huntRegion->x2);
-		drawHorizontalLine(huntRegion->x1, huntRegion->y2, huntRegion->x2);
+		g_sludge->_gfxMan->drawVerticalLine(huntRegion->x1, huntRegion->y1, huntRegion->y2);
+		g_sludge->_gfxMan->drawVerticalLine(huntRegion->x2, huntRegion->y1, huntRegion->y2);
+		g_sludge->_gfxMan->drawHorizontalLine(huntRegion->x1, huntRegion->y1, huntRegion->x2);
+		g_sludge->_gfxMan->drawHorizontalLine(huntRegion->x1, huntRegion->y2, huntRegion->x2);
 		huntRegion = huntRegion->next;
 	}
 }
@@ -143,6 +143,8 @@ bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,
 }
 
 void getOverRegion() {
+	int cameraX = g_sludge->_gfxMan->getCamX();
+	int cameraY = g_sludge->_gfxMan->getCamY();
 	screenRegion *thisRegion = allScreenRegions;
 	while (thisRegion) {
 		if ((input.mouseX >= thisRegion->x1 - cameraX)

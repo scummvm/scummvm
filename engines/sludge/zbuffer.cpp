@@ -27,6 +27,7 @@
 #include "sludge/allfiles.h"
 #include "sludge/zbuffer.h"
 #include "sludge/fileset.h"
+#include "sludge/graphics.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
@@ -34,24 +35,19 @@
 
 namespace Sludge {
 
-int zBufferToSet = -1;
-zBufferData zBuffer;
-extern uint sceneWidth, sceneHeight;
-extern Graphics::Surface backdropSurface;
-
-void killZBuffer() {
-	if (zBuffer.sprites) {
-		for (int i = 0; i < zBuffer.numPanels; ++i) {
-			zBuffer.sprites[i].free();
+void GraphicsManager::killZBuffer() {
+	if (_zBuffer->sprites) {
+		for (int i = 0; i < _zBuffer->numPanels; ++i) {
+			_zBuffer->sprites[i].free();
 		}
-		delete []zBuffer.sprites;
-		zBuffer.sprites = nullptr;
+		delete []_zBuffer->sprites;
+		_zBuffer->sprites = nullptr;
 	}
-	zBuffer.numPanels = 0;
-	zBuffer.originalNum = 0;
+	_zBuffer->numPanels = 0;
+	_zBuffer->originalNum = 0;
 }
 
-void sortZPal(int *oldpal, int *newpal, int size) {
+void GraphicsManager::sortZPal(int *oldpal, int *newpal, int size) {
 	int i, tmp;
 
 	for (i = 0; i < size; i++) {
@@ -71,11 +67,11 @@ void sortZPal(int *oldpal, int *newpal, int size) {
 	}
 }
 
-bool setZBuffer(int num) {
+bool GraphicsManager::setZBuffer(int num) {
 	// if the backdrop has not been set yet
 	// set zbuffer later
-	if (!backdropSurface.getPixels()) {
-		zBufferToSet = num;
+	if (!_backdropSurface.getPixels()) {
+		_zBufferToSet = num;
 		return true;
 	}
 
@@ -87,7 +83,7 @@ bool setZBuffer(int num) {
 
 	setResourceForFatal(num);
 
-	zBuffer.originalNum = num;
+	_zBuffer->originalNum = num;
 	if (!g_sludge->_resMan->openFileFromNum(num))
 		return false;
 	Common::ReadStream *readStream = g_sludge->_resMan->getData();
@@ -113,33 +109,33 @@ bool setZBuffer(int num) {
 		default:
 			return fatal("Extended Z-buffer format not supported in this version of the SLUDGE engine");
 	}
-	if (width != sceneWidth || height != sceneHeight) {
-		Common::String tmp = Common::String::format("Z-w: %d Z-h:%d w: %d, h:%d", width, height, sceneWidth, sceneHeight);
+	if (width != _sceneWidth || height != _sceneHeight) {
+		Common::String tmp = Common::String::format("Z-w: %d Z-h:%d w: %d, h:%d", width, height, _sceneWidth, _sceneHeight);
 		return fatal("Z-buffer width and height don't match scene width and height", tmp);
 	}
 
-	zBuffer.numPanels = readStream->readByte();
-	for (int y = 0; y < zBuffer.numPanels; y++) {
+	_zBuffer->numPanels = readStream->readByte();
+	for (int y = 0; y < _zBuffer->numPanels; y++) {
 		yPalette[y] = readStream->readUint16BE();
 	}
-	sortZPal(yPalette, sorted, zBuffer.numPanels);
-	for (int y = 0; y < zBuffer.numPanels; y++) {
-		zBuffer.panel[y] = yPalette[sorted[y]];
+	sortZPal(yPalette, sorted, _zBuffer->numPanels);
+	for (int y = 0; y < _zBuffer->numPanels; y++) {
+		_zBuffer->panel[y] = yPalette[sorted[y]];
 		sortback[sorted[y]] = y;
 	}
 
-	int picWidth = sceneWidth;
-	int picHeight = sceneHeight;
+	int picWidth = _sceneWidth;
+	int picHeight = _sceneHeight;
 
-	zBuffer.sprites = nullptr;
-	zBuffer.sprites = new Graphics::Surface[zBuffer.numPanels];
+	_zBuffer->sprites = nullptr;
+	_zBuffer->sprites = new Graphics::Surface[_zBuffer->numPanels];
 
-	for (int i = 0; i < zBuffer.numPanels; ++i) {
-		zBuffer.sprites[i].create(picWidth, picHeight, *g_sludge->getScreenPixelFormat());
+	for (int i = 0; i < _zBuffer->numPanels; ++i) {
+		_zBuffer->sprites[i].create(picWidth, picHeight, *g_sludge->getScreenPixelFormat());
 	}
 
-	for (uint y = 0; y < sceneHeight; y++) {
-		for (uint x = 0; x < sceneWidth; x++) {
+	for (uint y = 0; y < _sceneHeight; y++) {
+		for (uint x = 0; x < _sceneWidth; x++) {
 			int n;
 			if (stillToGo == 0) {
 				n = readStream->readByte();
@@ -150,10 +146,10 @@ bool setZBuffer(int num) {
 					stillToGo++;
 				n &= 15;
 			}
-			for (int i = 0; i < zBuffer.numPanels; ++i) {
-				byte *target = (byte *)zBuffer.sprites[i].getBasePtr(x, y);
+			for (int i = 0; i < _zBuffer->numPanels; ++i) {
+				byte *target = (byte *)_zBuffer->sprites[i].getBasePtr(x, y);
 				if (n && (sortback[i] == n || i == 0)) {
-					byte *source = (byte *)backdropSurface.getBasePtr(x, y);
+					byte *source = (byte *)_backdropSurface.getBasePtr(x, y);
 					target[0] = source[0];
 					target[1] = source[1];
 					target[2] = source[2];
@@ -173,11 +169,28 @@ bool setZBuffer(int num) {
 	return true;
 }
 
-void drawZBuffer(int x, int y, bool upsidedown) {
-	if (!zBuffer.numPanels || !zBuffer.sprites)
+void GraphicsManager::drawZBuffer(int x, int y, bool upsidedown) {
+	if (!_zBuffer->numPanels || !_zBuffer->sprites)
 		return;
 
-	resetSpriteLayers(&zBuffer, x, y, upsidedown);
+	g_sludge->_gfxMan->resetSpriteLayers(_zBuffer, x, y, upsidedown);
+}
+
+void GraphicsManager::saveZBuffer(Common::WriteStream *stream) {
+	if (_zBuffer->numPanels > 0) {
+		stream->writeByte(1);
+		stream->writeUint16BE(_zBuffer->originalNum);
+	} else {
+		stream->writeByte(0);
+	}
+}
+
+bool GraphicsManager::loadZBuffer(Common::SeekableReadStream *stream) {
+	if (stream->readByte()) {
+		if (!setZBuffer(stream->readUint16BE()))
+			return false;
+	}
+	return true;
 }
 
 } // End of namespace Sludge

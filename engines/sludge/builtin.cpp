@@ -55,9 +55,7 @@
 namespace Sludge {
 
 int speechMode = 0;
-int cameraX, cameraY;
-float cameraZoom = 1.0;
-spritePalette pastePalette;
+SpritePalette pastePalette;
 
 variable *launchResult = NULL;
 
@@ -69,7 +67,6 @@ extern eventHandlers *currentEvents;
 extern variableStack *noStack;
 extern statusStuff *nowStatus;
 extern screenRegion *overRegion;
-extern uint sceneWidth, sceneHeight;
 extern int numBIFNames, numUserFunc;
 
 extern Common::String *allUserFunc;
@@ -80,8 +77,6 @@ extern float speechSpeed;
 extern byte brightnessLevel;
 extern byte fadeMode;
 extern uint16 saveEncoding;
-extern frozenStuffStruct *frozenStuff;
-extern uint currentBlankColour;
 extern byte currentBurnR, currentBurnG, currentBurnB;
 
 int paramNum[] = { -1, 0, 1, 1, -1, -1, 1, 3, 4, 1, 0, 0, 8, -1,    // SAY->MOVEMOUSE
@@ -186,7 +181,7 @@ builtIn(think) {
 
 builtIn(freeze) {
 	UNUSEDALL
-	freeze();
+	g_sludge->_gfxMan->freeze();
 	freezeSubs();
 	fun->freezerLevel = 0;
 	return BR_CONTINUE;
@@ -194,14 +189,14 @@ builtIn(freeze) {
 
 builtIn(unfreeze) {
 	UNUSEDALL
-	unfreeze();
+	g_sludge->_gfxMan->unfreeze();
 	unfreezeSubs();
 	return BR_CONTINUE;
 }
 
 builtIn(howFrozen) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, howFrozen());
+	setVariable(fun->reg, SVT_INT, g_sludge->_gfxMan->howFrozen());
 	return BR_CONTINUE;
 }
 
@@ -215,25 +210,25 @@ builtIn(setCursor) {
 
 builtIn(getMouseX) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, input.mouseX + cameraX);
+	setVariable(fun->reg, SVT_INT, input.mouseX + g_sludge->_gfxMan->getCamX());
 	return BR_CONTINUE;
 }
 
 builtIn(getMouseY) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, input.mouseY + cameraY);
+	setVariable(fun->reg, SVT_INT, input.mouseY + g_sludge->_gfxMan->getCamY());
 	return BR_CONTINUE;
 }
 
 builtIn(getMouseScreenX) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, input.mouseX * cameraZoom);
+	setVariable(fun->reg, SVT_INT, input.mouseX * g_sludge->_gfxMan->getCamZoom());
 	return BR_CONTINUE;
 }
 
 builtIn(getMouseScreenY) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, input.mouseY * cameraZoom);
+	setVariable(fun->reg, SVT_INT, input.mouseY * g_sludge->_gfxMan->getCamZoom());
 	return BR_CONTINUE;
 }
 
@@ -265,7 +260,7 @@ builtIn(getMatchingFiles) {
 builtIn(saveGame) {
 	UNUSEDALL
 
-	if (frozenStuff) {
+	if (g_sludge->_gfxMan->isFrozen()) {
 		fatal("Can't save game state while the engine is frozen");
 	}
 
@@ -326,7 +321,7 @@ builtIn(loadGame) {
 	g_sludge->loadNow.clear();
 	g_sludge->loadNow = encodeFilename(aaaaa);
 
-	if (frozenStuff) {
+	if (g_sludge->_gfxMan->isFrozen()) {
 		fatal("Can't load a saved game while the engine is frozen");
 	}
 	if (failSecurityCheck(g_sludge->loadNow))
@@ -348,7 +343,7 @@ builtIn(loadGame) {
 
 builtIn(blankScreen) {
 	UNUSEDALL
-	blankScreen(0, 0, sceneWidth, sceneHeight);
+	g_sludge->_gfxMan->blankAllScreen();
 	return BR_CONTINUE;
 }
 
@@ -367,13 +362,13 @@ builtIn(blankArea) {
 	if (!getValueType(x1, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	blankScreen(x1, y1, x2, y2);
+	g_sludge->_gfxMan->blankScreen(x1, y1, x2, y2);
 	return BR_CONTINUE;
 }
 
 builtIn(darkBackground) {
 	UNUSEDALL
-	darkScreen();
+	g_sludge->_gfxMan->darkScreen();
 	return BR_CONTINUE;
 }
 
@@ -389,7 +384,7 @@ builtIn(addOverlay) {
 	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	loadBackDrop(fileNumber, xPos, yPos);
+	g_sludge->_gfxMan->loadBackDrop(fileNumber, xPos, yPos);
 	return BR_CONTINUE;
 }
 
@@ -405,7 +400,7 @@ builtIn(mixOverlay) {
 	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	mixBackDrop(fileNumber, xPos, yPos);
+	g_sludge->_gfxMan->mixBackDrop(fileNumber, xPos, yPos);
 	return BR_CONTINUE;
 }
 
@@ -439,8 +434,8 @@ builtIn(setSceneDimensions) {
 	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (killResizeBackdrop(x, y)) {
-		blankScreen(0, 0, x, y);
+	if (g_sludge->_gfxMan->killResizeBackdrop(x, y)) {
+		g_sludge->_gfxMan->blankScreen(0, 0, x, y);
 		return BR_CONTINUE;
 	}
 	fatal("Out of memory creating new backdrop.");
@@ -449,6 +444,7 @@ builtIn(setSceneDimensions) {
 
 builtIn(aimCamera) {
 	UNUSEDALL
+	int cameraX, cameraY;
 	if (!getValueType(cameraY, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
@@ -456,17 +452,8 @@ builtIn(aimCamera) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	cameraX -= (float)(winWidth >> 1) / cameraZoom;
-	cameraY -= (float)(winHeight >> 1) / cameraZoom;
+	g_sludge->_gfxMan->aimCamera(cameraX, cameraY);
 
-	if (cameraX < 0)
-		cameraX = 0;
-	else if (cameraX > sceneWidth - (float)winWidth / cameraZoom)
-		cameraX = sceneWidth - (float)winWidth / cameraZoom;
-	if (cameraY < 0)
-		cameraY = 0;
-	else if (cameraY > sceneHeight - (float)winHeight / cameraZoom)
-		cameraY = sceneHeight - (float)winHeight / cameraZoom;
 	return BR_CONTINUE;
 }
 
@@ -477,17 +464,7 @@ builtIn(zoomCamera) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	input.mouseX = input.mouseX * cameraZoom;
-	input.mouseY = input.mouseY * cameraZoom;
-
-	cameraZoom = (float)z * 0.01;
-	if ((float)winWidth / cameraZoom > sceneWidth)
-		cameraZoom = (float)winWidth / sceneWidth;
-	if ((float)winHeight / cameraZoom > sceneHeight)
-		cameraZoom = (float)winHeight / sceneHeight;
-
-	input.mouseX = input.mouseX / cameraZoom;
-	input.mouseY = input.mouseY / cameraZoom;
+	g_sludge->_gfxMan->zoomCamera(z);
 
 	return BR_CONTINUE;
 }
@@ -819,7 +796,7 @@ builtIn(setBlankColour) {
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
 
-	currentBlankColour = g_sludge->getOrigPixelFormat()->RGBToColor(red & 255, green & 255, blue & 255);
+	g_sludge->_gfxMan->setBlankColor(red, green, blue);
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;
 }
@@ -831,9 +808,7 @@ builtIn(setBurnColour) {
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
 
-	currentBurnR = red;
-	currentBurnG = green;
-	currentBurnB = blue;
+	g_sludge->_gfxMan->setBurnColor(red, green, blue);
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;
 }
@@ -880,7 +855,7 @@ builtIn(pasteString) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
-		x = (winWidth - stringWidth(newText)) >> 1;
+		x = g_sludge->_gfxMan->getCenterX(stringWidth(newText));
 	pasteStringToBackdrop(newText, x, y, pastePalette);
 	return BR_CONTINUE;
 }
@@ -902,7 +877,7 @@ builtIn(anim) {
 	trimStack(fun->stack);
 
 	// Load the required sprite bank
-	loadedSpriteBank *sprBanky = loadBankForAnim(fileNumber);
+	LoadedSpriteBank *sprBanky = loadBankForAnim(fileNumber);
 	if (!sprBanky)
 		return BR_ERROR;    // File not found, fatal done already
 	setBankFile(ba, sprBanky);
@@ -1275,11 +1250,11 @@ builtIn(setZBuffer) {
 		int v;
 		getValueType(v, SVT_FILE, fun->stack->thisVar);
 		trimStack(fun->stack);
-		if (!setZBuffer(v))
+		if (!g_sludge->_gfxMan->setZBuffer(v))
 			return BR_ERROR;
 	} else {
 		trimStack(fun->stack);
-		killZBuffer();
+		g_sludge->_gfxMan->killZBuffer();
 	}
 	return BR_CONTINUE;
 }
@@ -1288,10 +1263,10 @@ builtIn(setLightMap) {
 	UNUSEDALL
 	switch (numParams) {
 		case 2:
-			if (!getValueType(lightMapMode, SVT_INT, fun->stack->thisVar))
+			if (!getValueType(g_sludge->_gfxMan->_lightMapMode, SVT_INT, fun->stack->thisVar))
 				return BR_ERROR;
 			trimStack(fun->stack);
-			lightMapMode %= LIGHTMAPMODE_NUM;
+			g_sludge->_gfxMan->_lightMapMode %= LIGHTMAPMODE_NUM;
 			// No break;
 
 		case 1:
@@ -1299,12 +1274,12 @@ builtIn(setLightMap) {
 				int v;
 				getValueType(v, SVT_FILE, fun->stack->thisVar);
 				trimStack(fun->stack);
-				if (!loadLightMap(v))
+				if (!g_sludge->_gfxMan->loadLightMap(v))
 					return BR_ERROR;
 				setVariable(fun->reg, SVT_INT, 1);
 			} else {
 				trimStack(fun->stack);
-				killLightMap();
+				g_sludge->_gfxMan->killLightMap();
 				setVariable(fun->reg, SVT_INT, 0);
 			}
 			break;
@@ -1610,7 +1585,7 @@ builtIn(pasteCharacter) {
 		}
 
 		int fNum = myAnim->frames[thisPerson->frameNum].frameNum;
-		fixScaleSprite(thisPerson->x, thisPerson->y, myAnim->theSprites->bank.sprites[ABS(fNum)], myAnim->theSprites->bank.myPalette, thisPerson, 0, 0, fNum < 0);
+		g_sludge->_gfxMan->fixScaleSprite(thisPerson->x, thisPerson->y, myAnim->theSprites->bank.sprites[ABS(fNum)], myAnim->theSprites->bank.myPalette, thisPerson, 0, 0, fNum < 0);
 		setVariable(fun->reg, SVT_INT, 1);
 	} else {
 		setVariable(fun->reg, SVT_INT, 0);
@@ -1973,7 +1948,7 @@ builtIn(hardScroll) {
 	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	hardScroll(v);
+	g_sludge->_gfxMan->hardScroll(v);
 	return BR_CONTINUE;
 }
 
@@ -2196,7 +2171,7 @@ builtIn(burnString) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
-		x = (winWidth - stringWidth(newText)) >> 1;
+		x = g_sludge->_gfxMan->getCenterX(stringWidth(newText));
 	burnStringToBackdrop(newText, x, y, pastePalette);
 	return BR_CONTINUE;
 }
@@ -2344,7 +2319,7 @@ builtIn(freeSound) {
 
 builtIn(parallaxAdd) {
 	UNUSEDALL
-	if (frozenStuff) {
+	if (g_sludge->_gfxMan->isFrozen()) {
 		fatal("Can't set background parallax image while frozen");
 		return BR_ERROR;
 	} else {
@@ -2391,7 +2366,7 @@ builtIn(getPixelColour) {
 	fun->reg.varData.theStack->first = NULL;
 	fun->reg.varData.theStack->last = NULL;
 	fun->reg.varData.theStack->timesUsed = 1;
-	if (!getRGBIntoStack(x, y, fun->reg.varData.theStack))
+	if (!g_sludge->_gfxMan->getRGBIntoStack(x, y, fun->reg.varData.theStack))
 		return BR_ERROR;
 
 	return BR_CONTINUE;
@@ -2487,7 +2462,7 @@ builtIn(setThumbnailSize) {
 	if (!getValueType(thumbWidth, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (thumbWidth < 0 || thumbHeight < 0 || thumbWidth > (int)winWidth || thumbHeight > (int)winHeight) {
+	if (!g_sludge->_gfxMan->checkSizeValide(thumbWidth, thumbHeight)) {
 		Common::String buff = Common::String::format("%i x %i", thumbWidth, thumbWidth);
 		fatal("Invalid thumbnail size", buff);
 		return BR_ERROR;
@@ -2513,12 +2488,12 @@ builtIn(hasFlag) {
 
 builtIn(snapshotGrab) {
 	UNUSEDALL
-	return snapshot() ? BR_CONTINUE : BR_ERROR;
+	return g_sludge->_gfxMan->snapshot() ? BR_CONTINUE : BR_ERROR;
 }
 
 builtIn(snapshotClear) {
 	UNUSEDALL
-	nosnapshot();
+	g_sludge->_gfxMan->nosnapshot();
 	return BR_CONTINUE;
 }
 

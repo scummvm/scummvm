@@ -26,19 +26,20 @@
 #include "sludge/backdrop.h"
 #include "sludge/sprites.h"
 #include "sludge/fonttext.h"
+#include "sludge/graphics.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
+#include "sludge/sludge.h"
 #include "sludge/statusba.h"
 
 namespace Sludge {
 
-spritePalette verbLinePalette;
-spritePalette litVerbLinePalette;
+SpritePalette verbLinePalette;
+SpritePalette litVerbLinePalette;
 
 statusStuff mainStatus;
 statusStuff *nowStatus = & mainStatus;
 extern int fontHeight;
-extern float cameraZoom;
 
 void setLitStatus(int i) {
 	nowStatus->litStatus = i;
@@ -86,16 +87,17 @@ void positionStatus(int x, int y) {
 }
 
 void drawStatusBar() {
+	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 	int y = nowStatus->statusY, n = 0;
 	statusBar *stat = nowStatus->firstStatusBar;
 	while (stat) {
 		switch (nowStatus->alignStatus) {
 		case IN_THE_CENTRE:
-			pasteString(stat->text, ((winWidth - stringWidth(stat->text)) >> 1) / cameraZoom, y / cameraZoom, (n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			pasteString(stat->text, ((g_system->getWidth() - stringWidth(stat->text)) >> 1) / cameraZoom, y / cameraZoom, (n++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 			break;
 
 		case 1001:
-			pasteString(stat->text, (winWidth - stringWidth(stat->text)) - nowStatus->statusX / cameraZoom, y / cameraZoom, (n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			pasteString(stat->text, (g_system->getWidth() - stringWidth(stat->text)) - nowStatus->statusX / cameraZoom, y / cameraZoom, (n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 			break;
 
 		default:
@@ -156,7 +158,7 @@ void initStatusBar() {
 	mainStatus.alignStatus = IN_THE_CENTRE;
 	mainStatus.litStatus = -1;
 	mainStatus.statusX = 10;
-	mainStatus.statusY = winHeight - 15;
+	mainStatus.statusY = g_system->getHeight() - 15;
 	statusBarColour(255, 255, 255);
 	statusBarLitColour(255, 255, 128);
 }

@@ -26,17 +26,13 @@
 
 namespace Sludge {
 
-struct zBufferData {
+struct ZBufferData {
 //	bool loaded;
 	int numPanels;
 	int panel[16];
 	int originalNum;
 	Graphics::Surface *sprites;
 };
-
-bool setZBuffer(int y);
-void killZBuffer();
-void drawZBuffer(int x, int y, bool upsidedown);
 
 } // End of namespace Sludges
 

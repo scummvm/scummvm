@@ -25,6 +25,7 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/fileset.h"
+#include "sludge/graphics.h"
 #include "sludge/people.h"
 #include "sludge/sprites.h"
 #include "sludge/moreio.h"
@@ -37,38 +38,8 @@
 
 namespace Sludge {
 
-// Sprite display informations
-struct SpriteDisplay {
-	int x, y;
-	int width, height;
-	uint32 color;
-	Graphics::FLIP_FLAGS flip;
-	Graphics::Surface *surface;
-
-	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, uint32 c = TS_ARGB(255, 255, 255, 255)) :
-			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), color(c) {
-	}
-};
-
-// All sprites are sorted into different "layers" (up to 16) according to their relative y position to z-buffer zones
-struct SpriteLayers {
-	int numLayers;
-	Common::List<SpriteDisplay> layer[16];
-};
-
-SpriteLayers spriteLayers;
-
-extern zBufferData zBuffer;
-
 extern inputType input;
-extern int cameraX, cameraY;
-extern float cameraZoom;
-extern Graphics::Surface renderSurface;
-extern Graphics::Surface backdropSurface;
-
-byte currentBurnR = 0, currentBurnG = 0, currentBurnB = 0;
-
-void forgetSpriteBank(spriteBank &forgetme) {
+void GraphicsManager::forgetSpriteBank(SpriteBank &forgetme) {
 	if (forgetme.myPalette.pal) {
 		delete[] forgetme.myPalette.pal;
 		forgetme.myPalette.pal = NULL;
@@ -92,7 +63,7 @@ void forgetSpriteBank(spriteBank &forgetme) {
 	// And add a function call for this function to the scripting language
 }
 
-bool reserveSpritePal(spritePalette &sP, int n) {
+bool GraphicsManager::reserveSpritePal(SpritePalette &sP, int n) {
 	if (sP.pal) {
 		delete[] sP.pal;
 		delete[] sP.r;
@@ -117,7 +88,7 @@ bool reserveSpritePal(spritePalette &sP, int n) {
 	return (bool)(sP.pal != NULL) && (sP.r != NULL) && (sP.g != NULL) && (sP.b != NULL);
 }
 
-bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
+bool GraphicsManager::loadSpriteBank(int fileNum, SpriteBank &loadhere, bool isFont) {
 
 	int total, spriteBankVersion = 0, howmany = 0, startIndex = 0;
 	byte *data;
@@ -145,7 +116,7 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 		return fatal("Unsupported sprite bank file format");
 
 	loadhere.total = total;
-	loadhere.sprites = new sprite[total];
+	loadhere.sprites = new Sprite[total];
 	if (!checkNew(loadhere.sprites))
 		return false;
 	byte **spriteData = new byte *[total];
@@ -299,62 +270,60 @@ bool loadSpriteBank(int fileNum, spriteBank &loadhere, bool isFont) {
 }
 
 // pasteSpriteToBackDrop uses the colour specified by the setPasteColour (or setPasteColor)
-void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal) {
+void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal) {
 	//TODO: shader: useLightTexture
 	x1 -= single.xhot;
 	y1 -= single.yhot;
 	Graphics::TransparentSurface tmp(single.surface, false);
-	tmp.blit(backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
+	tmp.blit(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
 			TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 	// reset zBuffer with the new backdrop
-	if (zBuffer.numPanels) {
-		setZBuffer(zBuffer.originalNum);
+	if (_zBuffer->numPanels) {
+		setZBuffer(_zBuffer->originalNum);
 	}
 }
 
 // burnSpriteToBackDrop adds text in the colour specified by setBurnColour
 // using the differing brightness levels of the font to achieve an anti-aliasing effect.
-void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal) {
+void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal) {
 	//TODO: shader: useLightTexture
 	x1 -= single.xhot;
 	y1 -= single.yhot - 1;
 	Graphics::TransparentSurface tmp(single.surface, false);
-	tmp.blit(backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
-			TS_RGB(currentBurnR, currentBurnG, currentBurnB));
+	tmp.blit(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
+			TS_RGB(_currentBurnR, _currentBurnG, _currentBurnB));
 
 	// reset zBuffer with the new backdrop
-	if (zBuffer.numPanels) {
-		setZBuffer(zBuffer.originalNum);
+	if (_zBuffer->numPanels) {
+		setZBuffer(_zBuffer->originalNum);
 	}
 }
 
-void fontSprite(bool flip, int x, int y, sprite &single, const spritePalette &fontPal) {
-	float x1 = (float)x - (float)single.xhot / cameraZoom;
-	float y1 = (float)y - (float)single.yhot / cameraZoom;
+void GraphicsManager::fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal) {
+	float x1 = (float)x - (float)single.xhot / _cameraZoom;
+	float y1 = (float)y - (float)single.yhot / _cameraZoom;
 
 	// Use Transparent surface to scale and blit
 	Graphics::TransparentSurface tmp(single.surface, false);
-	tmp.blit(renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+	tmp.blit(_renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 	if (single.burnSurface.getPixels() != nullptr) {
 		Graphics::TransparentSurface tmp2(single.burnSurface, false);
-		tmp2.blit(renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
+		tmp2.blit(_renderSurface, x1, y1, (flip ? Graphics::FLIP_H : Graphics::FLIP_NONE), 0, TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
 
 	}
 }
 
-void fontSprite(int x, int y, sprite &single, const spritePalette &fontPal) {
+void GraphicsManager::fontSprite(int x, int y, Sprite &single, const SpritePalette &fontPal) {
 	fontSprite(false, x, y, single, fontPal);
 }
 
-void flipFontSprite(int x, int y, sprite &single, const spritePalette &fontPal) {
+void GraphicsManager::flipFontSprite(int x, int y, Sprite &single, const SpritePalette &fontPal) {
 	fontSprite(true, x, y, single, fontPal);
 }
 
-byte curLight[3];
-
-uint32 getDrawColor(onScreenPerson *thisPerson) {
+uint32 GraphicsManager::getDrawColor(onScreenPerson *thisPerson) {
 //TODO: how to mix secondary color
 #if 0
 	if (thisPerson->colourmix) {
@@ -364,12 +333,12 @@ uint32 getDrawColor(onScreenPerson *thisPerson) {
 #endif
 
 	return TS_ARGB((uint8)(255 - thisPerson->transparency),
-			(uint8)(curLight[0] * (255 - thisPerson->colourmix) / 255.f),
-			(uint8)(curLight[1] * (255 - thisPerson->colourmix) / 255.f),
-			(uint8)(curLight[2] * (255 - thisPerson->colourmix) / 255.f));
+			(uint8)(_curLight[0] * (255 - thisPerson->colourmix) / 255.f),
+			(uint8)(_curLight[1] * (255 - thisPerson->colourmix) / 255.f),
+			(uint8)(_curLight[2] * (255 - thisPerson->colourmix) / 255.f));
 }
 
-bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, bool mirror) {
+bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, onScreenPerson *thisPerson, bool mirror) {
 	float x = thisPerson->x;
 	float y = thisPerson->y;
 
@@ -385,18 +354,18 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 	float x1, y1, x2, y2;
 
 	if (thisPerson->extra & EXTRA_FIXTOSCREEN) {
-		x = x / cameraZoom;
-		y = y / cameraZoom;
+		x = x / _cameraZoom;
+		y = y / _cameraZoom;
 		if (single.xhot < 0)
-			x1 = x - (int)((mirror ? (float)(single.surface.w - single.xhot) : (float)(single.xhot + 1)) * scale / cameraZoom);
+			x1 = x - (int)((mirror ? (float)(single.surface.w - single.xhot) : (float)(single.xhot + 1)) * scale / _cameraZoom);
 		else
-			x1 = x - (int)((mirror ? (float)(single.surface.w - (single.xhot + 1)) : (float)single.xhot) * scale / cameraZoom);
-		y1 = y - (int)((single.yhot - thisPerson->floaty) * scale / cameraZoom);
-		x2 = x1 + (int)(diffX / cameraZoom);
-		y2 = y1 + (int)(diffY / cameraZoom);
+			x1 = x - (int)((mirror ? (float)(single.surface.w - (single.xhot + 1)) : (float)single.xhot) * scale / _cameraZoom);
+		y1 = y - (int)((single.yhot - thisPerson->floaty) * scale / _cameraZoom);
+		x2 = x1 + (int)(diffX / _cameraZoom);
+		y2 = y1 + (int)(diffY / _cameraZoom);
 	} else {
-		x -= cameraX;
-		y -= cameraY;
+		x -= _cameraX;
+		y -= _cameraY;
 		if (single.xhot < 0)
 			x1 = x - (int)((mirror ? (float)(single.surface.w - single.xhot) : (float)(single.xhot + 1)) * scale);
 		else
@@ -407,32 +376,32 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 	}
 
 	// set light map color
-	if (light && lightMap.getPixels()) {
-		if (lightMapMode == LIGHTMAPMODE_HOTSPOT) {
-			int lx = x + cameraX;
-			int ly = y + cameraY;
-			if (lx < 0 || ly < 0 || lx >= (int)sceneWidth || ly >= (int)sceneHeight) {
-				curLight[0] = curLight[1] = curLight[2] = 255;
+	if (light && _lightMap.getPixels()) {
+		if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
+			int lx = x + _cameraX;
+			int ly = y + _cameraY;
+			if (lx < 0 || ly < 0 || lx >= (int)_sceneWidth || ly >= (int)_sceneHeight) {
+				_curLight[0] = _curLight[1] = _curLight[2] = 255;
 			} else {
-				byte *target = (byte *)lightMap.getBasePtr(lx, ly);
-				curLight[0] = target[3];
-				curLight[1] = target[2];
-				curLight[2] = target[1];
+				byte *target = (byte *)_lightMap.getBasePtr(lx, ly);
+				_curLight[0] = target[3];
+				_curLight[1] = target[2];
+				_curLight[2] = target[1];
 			}
-		} else if (lightMapMode == LIGHTMAPMODE_PIXEL) {
-			curLight[0] = curLight[1] = curLight[2] = 255;
+		} else if (_lightMapMode == LIGHTMAPMODE_PIXEL) {
+			_curLight[0] = _curLight[1] = _curLight[2] = 255;
 		}
 	} else {
-		curLight[0] = curLight[1] = curLight[2] = 255;
+		_curLight[0] = _curLight[1] = _curLight[2] = 255;
 	}
 
 	// Use Transparent surface to scale and blit
 	uint32 spriteColor = getDrawColor(thisPerson);
-	if (!zBuffer.numPanels) {
+	if (!_zBuffer->numPanels) {
 		Graphics::TransparentSurface tmp(single.surface, false);
-		tmp.blit(renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, spriteColor, diffX, diffY);
+		tmp.blit(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, spriteColor, diffX, diffY);
 	} else {
-		int d = ((!(thisPerson->extra & EXTRA_NOZB)) && zBuffer.numPanels) ? y + cameraY : sceneHeight + 1;
+		int d = ((!(thisPerson->extra & EXTRA_NOZB)) && _zBuffer->numPanels) ? y + _cameraY : _sceneHeight + 1;
 		addSpriteDepth(&single.surface, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY, spriteColor);
 	}
 
@@ -453,48 +422,48 @@ bool scaleSprite(sprite &single, const spritePalette &fontPal, onScreenPerson *t
 	return false;
 }
 
-void resetSpriteLayers(zBufferData *pz, int x, int y, bool upsidedown) {
-	if (spriteLayers.numLayers > 0)
+void GraphicsManager::resetSpriteLayers(ZBufferData *pz, int x, int y, bool upsidedown) {
+	if (_spriteLayers->numLayers > 0)
 		killSpriteLayers();
-	spriteLayers.numLayers = pz->numPanels;
-	for (int i = 0; i < spriteLayers.numLayers; ++i) {
+	_spriteLayers->numLayers = pz->numPanels;
+	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
 		SpriteDisplay node(x, y, (upsidedown ? Graphics::FLIP_V : Graphics::FLIP_NONE), &pz->sprites[i], pz->sprites[i].w, pz->sprites[i].h);
-		spriteLayers.layer[i].push_back(node);
+		_spriteLayers->layer[i].push_back(node);
 	}
 }
 
-void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width, int height, uint32 color) {
+void GraphicsManager::addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width, int height, uint32 color) {
 	int i;
-	for (i = 1; i < zBuffer.numPanels; ++i) {
-		if (zBuffer.panel[i] >= depth) {
+	for (i = 1; i < _zBuffer->numPanels; ++i) {
+		if (_zBuffer->panel[i] >= depth) {
 			break;
 		}
 	}
 	--i;
 	SpriteDisplay node(x, y, flip, ptr, width, height, color);
-	spriteLayers.layer[i].push_back(node);
+	_spriteLayers->layer[i].push_back(node);
 }
 
-void displaySpriteLayers() {
-	for (int i = 0; i < spriteLayers.numLayers; ++i) {
+void GraphicsManager::displaySpriteLayers() {
+	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
 		Common::List<SpriteDisplay>::iterator it;
-		for (it = spriteLayers.layer[i].begin(); it != spriteLayers.layer[i].end(); ++it) {
+		for (it = _spriteLayers->layer[i].begin(); it != _spriteLayers->layer[i].end(); ++it) {
 			Graphics::TransparentSurface tmp(*it->surface, false);
-			tmp.blit(renderSurface, it->x, it->y, it->flip, nullptr, it->color, it->width, it->height);
+			tmp.blit(_renderSurface, it->x, it->y, it->flip, nullptr, it->color, it->width, it->height);
 		}
 	}
 	killSpriteLayers();
 }
 
-void killSpriteLayers() {
-	for (int i = 0; i < spriteLayers.numLayers; ++i) {
-		spriteLayers.layer[i].clear();
+void GraphicsManager::killSpriteLayers() {
+	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
+		_spriteLayers->layer[i].clear();
 	}
-	spriteLayers.numLayers = 0;
+	_spriteLayers->numLayers = 0;
 }
 
 // Paste a scaled sprite onto the backdrop
-void fixScaleSprite(int x, int y, sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, int camX, int camY, bool mirror) {
+void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpritePalette &fontPal, onScreenPerson *thisPerson, int camX, int camY, bool mirror) {
 
 	float scale = thisPerson->scale;
 	bool useZB = !(thisPerson->extra & EXTRA_NOZB);
@@ -513,40 +482,40 @@ void fixScaleSprite(int x, int y, sprite &single, const spritePalette &fontPal, 
 	int y1 = y - (int)((single.yhot - thisPerson->floaty) * scale);
 
 	// set light map color
-	if (light && lightMap.getPixels()) {
-		if (lightMapMode == LIGHTMAPMODE_HOTSPOT) {
-			int lx = x + cameraX;
-			int ly = y + cameraY;
-			if (lx < 0 || ly < 0 || lx >= (int)sceneWidth || ly >= (int)sceneHeight) {
-				curLight[0] = curLight[1] = curLight[2] = 255;
+	if (light && _lightMap.getPixels()) {
+		if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
+			int lx = x + _cameraX;
+			int ly = y + _cameraY;
+			if (lx < 0 || ly < 0 || lx >= (int)_sceneWidth || ly >= (int)_sceneHeight) {
+				_curLight[0] = _curLight[1] = _curLight[2] = 255;
 			} else {
-				byte *target = (byte *)lightMap.getBasePtr(lx, ly);
-				curLight[0] = target[3];
-				curLight[1] = target[2];
-				curLight[2] = target[1];
+				byte *target = (byte *)_lightMap.getBasePtr(lx, ly);
+				_curLight[0] = target[3];
+				_curLight[1] = target[2];
+				_curLight[2] = target[1];
 			}
-		} else if (lightMapMode == LIGHTMAPMODE_PIXEL) {
-			curLight[0] = curLight[1] = curLight[2] = 255;
+		} else if (_lightMapMode == LIGHTMAPMODE_PIXEL) {
+			_curLight[0] = _curLight[1] = _curLight[2] = 255;
 		}
 	} else {
-		curLight[0] = curLight[1] = curLight[2] = 255;
+		_curLight[0] = _curLight[1] = _curLight[2] = 255;
 	}
 
 	// draw backdrop
 	drawBackDrop();
 
 	// draw zBuffer
-	if (zBuffer.numPanels) {
+	if (_zBuffer->numPanels) {
 		drawZBuffer((int)(x1 + camX), (int)(y1 + camY), false);
 	}
 
 	// draw sprite
 	uint32 spriteColor = getDrawColor(thisPerson);
-	if (!zBuffer.numPanels) {
+	if (!_zBuffer->numPanels) {
 		Graphics::TransparentSurface tmp(single.surface, false);
-		tmp.blit(renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, spriteColor, diffX, diffY);
+		tmp.blit(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, spriteColor, diffX, diffY);
 	} else {
-		int d = useZB ? y + cameraY : sceneHeight + 1;
+		int d = useZB ? y + _cameraY : _sceneHeight + 1;
 		addSpriteDepth(&single.surface, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY, spriteColor);
 	}
 
@@ -554,11 +523,11 @@ void fixScaleSprite(int x, int y, sprite &single, const spritePalette &fontPal, 
 	displaySpriteLayers();
 
 	// copy screen to backdrop
-	backdropSurface.copyFrom(renderSurface);
+	_backdropSurface.copyFrom(_renderSurface);
 
 	// reset zBuffer with the new backdrop
-	if (zBuffer.numPanels) {
-		setZBuffer(zBuffer.originalNum);
+	if (_zBuffer->numPanels) {
+		setZBuffer(_zBuffer->originalNum);
 	}
 }
 

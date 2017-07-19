@@ -23,13 +23,15 @@
 #include "sludge/allfiles.h"
 #include "sludge/sprites.h"
 #include "sludge/fonttext.h"
+#include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
+#include "sludge/sludge.h"
 #include "sludge/utf8.h"
 
 namespace Sludge {
 
-spriteBank theFont;
+SpriteBank theFont;
 int fontHeight = 0, numFontColours, loadedFontNum;
 UTF8Converter fontOrder;
 int16 fontSpace = -1;
@@ -38,8 +40,6 @@ uint32 *fontTable = NULL;
 uint fontTableSize = 0;
 
 #define fontInTable(x) ((x<fontTableSize) ? fontTable[(uint32) x] : 0)
-
-extern float cameraZoom;
 
 bool isInFont(const Common::String &theText) {
 	if (!fontTableSize)
@@ -80,23 +80,23 @@ int stringWidth(const Common::String &theText) {
 	return xOff;
 }
 
-void pasteString(const Common::String &theText, int xOff, int y, spritePalette &thePal) {
+void pasteString(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
 	if (!fontTableSize)
 		return;
 
-	xOff += (int)((float)(fontSpace >> 1) / cameraZoom);
+	xOff += (int)((float)(fontSpace >> 1) / g_sludge->_gfxMan->getCamZoom());
 
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
 
 	for (uint32 i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
-		sprite *mySprite = &theFont.sprites[fontInTable(c)];
-		fontSprite(xOff, y, *mySprite, thePal);
-		xOff += (int)((double)(mySprite->surface.w + fontSpace) / cameraZoom);
+		Sprite *mySprite = &theFont.sprites[fontInTable(c)];
+		g_sludge->_gfxMan->fontSprite(xOff, y, *mySprite, thePal);
+		xOff += (int)((double)(mySprite->surface.w + fontSpace) / g_sludge->_gfxMan->getCamZoom());
 	}
 }
 
-void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, spritePalette &thePal) {
+void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
 	if (!fontTableSize)
 		return;
 
@@ -105,13 +105,13 @@ void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, sprit
 	xOff += fontSpace >> 1;
 	for (uint32 i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
-		sprite *mySprite = &theFont.sprites[fontInTable(c)];
-		pasteSpriteToBackDrop(xOff, y, *mySprite, thePal);
+		Sprite *mySprite = &theFont.sprites[fontInTable(c)];
+		g_sludge->_gfxMan->pasteSpriteToBackDrop(xOff, y, *mySprite, thePal);
 		xOff += mySprite->surface.w + fontSpace;
 	}
 }
 
-void burnStringToBackdrop(const Common::String &theText, int xOff, int y, spritePalette &thePal) {
+void burnStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
 	if (!fontTableSize)
 		return;
 
@@ -120,13 +120,13 @@ void burnStringToBackdrop(const Common::String &theText, int xOff, int y, sprite
 	xOff += fontSpace >> 1;
 	for (uint i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
-		sprite *mySprite = &theFont.sprites[fontInTable(c)];
-		burnSpriteToBackDrop(xOff, y, *mySprite, thePal);
+		Sprite *mySprite = &theFont.sprites[fontInTable(c)];
+		g_sludge->_gfxMan->burnSpriteToBackDrop(xOff, y, *mySprite, thePal);
 		xOff += mySprite->surface.w + fontSpace;
 	}
 }
 
-void setFontColour(spritePalette &sP, byte r, byte g, byte b) {
+void setFontColour(SpritePalette &sP, byte r, byte g, byte b) {
 	sP.originalRed = r;
 	sP.originalGreen = g;
 	sP.originalBlue = b;
@@ -135,7 +135,7 @@ void setFontColour(spritePalette &sP, byte r, byte g, byte b) {
 bool loadFont(int filenum, const Common::String &charOrder, int h) {
 	fontOrder.setUTF8String(charOrder);
 
-	forgetSpriteBank(theFont);
+	g_sludge->_gfxMan->forgetSpriteBank(theFont);
 
 	loadedFontNum = filenum;
 
@@ -164,7 +164,7 @@ bool loadFont(int filenum, const Common::String &charOrder, int h) {
 		fontTable[c] = i;
 	}
 
-	if (!loadSpriteBank(filenum, theFont, true)) {
+	if (!g_sludge->_gfxMan->loadSpriteBank(filenum, theFont, true)) {
 		fatal("Can't load font");
 		return false;
 	}

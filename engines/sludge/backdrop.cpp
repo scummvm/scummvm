@@ -39,37 +39,16 @@
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/variable.h"
+#include "sludge/version.h"
 #include "sludge/imgloader.h"
 
 namespace Sludge {
 
 extern inputType input;
-extern Graphics::Surface renderSurface;
 
-bool freeze();
-void unfreeze(bool);    // Because FREEZE.H needs a load of other includes
-
-bool backdropExists = false;
-extern int zBufferToSet;
-
-Graphics::Surface lightMap;
-Graphics::Surface OrigBackdropSurface;
-Graphics::Surface backdropSurface;
-Graphics::Surface snapshotSurface;
-
-float snapTexW = 1.0;
-float snapTexH = 1.0;
-
-uint winWidth, winHeight;
-int lightMapMode = LIGHTMAPMODE_PIXEL;
-int cameraPX = 0, cameraPY = 0;
-
-uint sceneWidth, sceneHeight;
-int lightMapNumber;
-uint currentBlankColour = TS_ARGB(255, 0, 0, 0);
-
-extern int cameraX, cameraY;
-extern float cameraZoom;
+Parallax::Parallax() {
+	_parallaxLayers.clear();
+}
 
 Parallax::~Parallax() {
 	kill();
@@ -106,20 +85,20 @@ bool Parallax::add(uint16 v, uint16 fracX, uint16 fracY) {
 	// 65535 is the value of AUTOFIT constant in Sludge
 	if (fracX == 65535) {
 		nP->wrapS = false;
-		if (nP->surface.w < winWidth) {
-			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
-			return false;
-		}
+//		if (nP->surface.w < _winWidth) {
+//			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
+//			return false;
+//		}
 	} else {
 		nP->wrapS = true;
 	}
 
 	if (fracY == 65535) {
 		nP->wrapT = false;
-		if (nP->surface.h < winHeight) {
-			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
-			return false;
-		}
+//		if (nP->surface.h < _winHeight) {
+//			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
+//			return false;
+//		}
 	} else {
 		nP->wrapT = true;
 	}
@@ -186,21 +165,21 @@ void Parallax::save(Common::WriteStream *stream) {
 	}
 }
 
-void nosnapshot() {
-	if (snapshotSurface.getPixels())
-		snapshotSurface.free();
+void GraphicsManager::nosnapshot() {
+	if (_snapshotSurface.getPixels())
+		_snapshotSurface.free();
 }
 
-void saveSnapshot(Common::WriteStream *stream) {
-	if (snapshotSurface.getPixels()) {
+void GraphicsManager::saveSnapshot(Common::WriteStream *stream) {
+	if (_snapshotSurface.getPixels()) {
 		stream->writeByte(1);               // 1 for snapshot follows
-		Image::writePNG(*stream, snapshotSurface);
+		Image::writePNG(*stream, _snapshotSurface);
 	} else {
 		stream->writeByte(0);
 	}
 }
 
-bool snapshot() {
+bool GraphicsManager::snapshot() {
 	nosnapshot();
 	if (!freeze())
 		return false;
@@ -211,63 +190,63 @@ bool snapshot() {
 	drawStatusBar();
 
 	// copy backdrop to snapshot
-	snapshotSurface.copyFrom(backdropSurface);
+	_snapshotSurface.copyFrom(_backdropSurface);
 
 	unfreeze(false);
 	return true;
 }
 
-bool restoreSnapshot(Common::SeekableReadStream *stream) {
-	if (!(ImgLoader::loadImage(stream, &snapshotSurface))) {
+bool GraphicsManager::restoreSnapshot(Common::SeekableReadStream *stream) {
+	if (!(ImgLoader::loadImage(stream, &_snapshotSurface))) {
 		return false;
 	}
 	return true;
 }
 
-void killBackDrop() {
-	if (backdropSurface.getPixels())
-		backdropSurface.free();
-	backdropExists = false;
+void GraphicsManager::killBackDrop() {
+	if (_backdropSurface.getPixels())
+		_backdropSurface.free();
+	_backdropExists = false;
 }
 
-void killLightMap() {
-	if (lightMap.getPixels()) {
-		lightMap.free();
+void GraphicsManager::killLightMap() {
+	if (_lightMap.getPixels()) {
+		_lightMap.free();
 	}
-	lightMapNumber = 0;
+	_lightMapNumber = 0;
 }
 
-bool reserveBackdrop() {
-	cameraX = 0;
-	cameraY = 0;
-	input.mouseX = (int)((float)input.mouseX * cameraZoom);
-	input.mouseY = (int)((float)input.mouseY * cameraZoom);
-	cameraZoom = 1.0;
-	input.mouseX = (int)((float)input.mouseX / cameraZoom);
-	input.mouseY = (int)((float)input.mouseY / cameraZoom);
+bool GraphicsManager::reserveBackdrop() {
+	_cameraX = 0;
+	_cameraY = 0;
+	input.mouseX = (int)((float)input.mouseX * _cameraZoom);
+	input.mouseY = (int)((float)input.mouseY * _cameraZoom);
+	_cameraZoom = 1.0;
+	input.mouseX = (int)((float)input.mouseX / _cameraZoom);
+	input.mouseY = (int)((float)input.mouseY / _cameraZoom);
 
 	return true;
 }
 
-void killAllBackDrop() {
+void GraphicsManager::killAllBackDrop() {
 	killLightMap();
 	killBackDrop();
 	g_sludge->_gfxMan->killParallax();
 	killZBuffer();
 }
 
-bool resizeBackdrop(int x, int y) {
-	sceneWidth = x;
-	sceneHeight = y;
+bool GraphicsManager::resizeBackdrop(int x, int y) {
+	_sceneWidth = x;
+	_sceneHeight = y;
 	return reserveBackdrop();
 }
 
-bool killResizeBackdrop(int x, int y) {
+bool GraphicsManager::killResizeBackdrop(int x, int y) {
 	killAllBackDrop();
 	return resizeBackdrop(x, y);
 }
 
-void loadBackDrop(int fileNum, int x, int y) {
+void GraphicsManager::loadBackDrop(int fileNum, int x, int y) {
 	debug(kSludgeDebugGraphics, "Load back drop");
 	setResourceForFatal(fileNum);
 	if (!g_sludge->_resMan->openFileFromNum(fileNum)) {
@@ -276,7 +255,7 @@ void loadBackDrop(int fileNum, int x, int y) {
 	}
 
 	if (!loadHSI(g_sludge->_resMan->getData(), x, y, false)) {
-		Common::String mess = Common::String::format("Can't paste overlay image outside scene dimensions\n\nX = %i\nY = %i\nWidth = %i\nHeight = %i", x, y, sceneWidth, sceneHeight);
+		Common::String mess = Common::String::format("Can't paste overlay image outside scene dimensions\n\nX = %i\nY = %i\nWidth = %i\nHeight = %i", x, y, _sceneWidth, _sceneHeight);
 		fatal(mess);
 	}
 
@@ -284,13 +263,13 @@ void loadBackDrop(int fileNum, int x, int y) {
 	setResourceForFatal(-1);
 
 	// set zBuffer if it's not set
-	if (zBufferToSet >= 0) {
-		setZBuffer(zBufferToSet);
-		zBufferToSet = -1;
+	if (_zBufferToSet >= 0) {
+		setZBuffer(_zBufferToSet);
+		_zBufferToSet = -1;
 	}
 }
 
-void mixBackDrop(int fileNum, int x, int y) {
+void GraphicsManager::mixBackDrop(int fileNum, int x, int y) {
 	setResourceForFatal(fileNum);
 	if (!g_sludge->_resMan->openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
@@ -305,9 +284,9 @@ void mixBackDrop(int fileNum, int x, int y) {
 	setResourceForFatal(-1);
 }
 
-void blankScreen(int x1, int y1, int x2, int y2) {
+void GraphicsManager::blankScreen(int x1, int y1, int x2, int y2) {
 	// in case of no backdrop added at all
-	if (!backdropSurface.getPixels()) {
+	if (!_backdropSurface.getPixels()) {
 		return;
 	}
 
@@ -315,79 +294,83 @@ void blankScreen(int x1, int y1, int x2, int y2) {
 		y1 = 0;
 	if (x1 < 0)
 		x1 = 0;
-	if (x2 > (int)sceneWidth)
-		x2 = (int)sceneWidth;
-	if (y2 > (int)sceneHeight)
-		y2 = (int)sceneHeight;
+	if (x2 > (int)_sceneWidth)
+		x2 = (int)_sceneWidth;
+	if (y2 > (int)_sceneHeight)
+		y2 = (int)_sceneHeight;
 
-	backdropSurface.fillRect(Common::Rect(x1, y1, x2, y2), currentBlankColour);
+	_backdropSurface.fillRect(Common::Rect(x1, y1, x2, y2), _currentBlankColour);
+}
+
+void GraphicsManager::blankAllScreen() {
+	blankScreen(0, 0, _sceneWidth, _sceneHeight);
 }
 
 // This function is very useful for scrolling credits, but very little else
-void hardScroll(int distance) {
+void GraphicsManager::hardScroll(int distance) {
 	// scroll 0 distance, return
 	if (!distance)
 		return;
 
 	// blank screen
-	blankScreen(0, 0, sceneWidth, sceneHeight);
+	blankAllScreen();
 
 	// scroll more than backdrop height, screen stay blank
-	if (ABS(distance) >= (int)sceneHeight) {
+	if (ABS(distance) >= (int)_sceneHeight) {
 		return;
 	}
 
 	// copy part of the backdrop to it
 	if (distance > 0) {
-		backdropSurface.copyRectToSurface(OrigBackdropSurface, 0, 0,
-				Common::Rect(0, distance, backdropSurface.w, backdropSurface.h));
+		_backdropSurface.copyRectToSurface(_origBackdropSurface, 0, 0,
+				Common::Rect(0, distance, _backdropSurface.w, _backdropSurface.h));
 	} else {
-		backdropSurface.copyRectToSurface(OrigBackdropSurface, 0, -distance,
-				Common::Rect(0, 0, backdropSurface.w, backdropSurface.h + distance));
+		_backdropSurface.copyRectToSurface(_origBackdropSurface, 0, -distance,
+				Common::Rect(0, 0, _backdropSurface.w, _backdropSurface.h + distance));
 	}
 }
 
-void drawVerticalLine(uint x, uint y1, uint y2) {
-	backdropSurface.drawLine(x, y1, x, y2, backdropSurface.format.ARGBToColor(255, 0, 0, 0));
+void GraphicsManager::drawLine(uint x1, uint y1, uint x2, uint y2) {
+	_backdropSurface.drawLine(x1, y1, x2, y2, _backdropSurface.format.ARGBToColor(255, 0, 0, 0));
 }
 
-void drawHorizontalLine(uint x1, uint y, uint x2) {
-	backdropSurface.drawLine(x1, y, x2, y, backdropSurface.format.ARGBToColor(255, 0, 0, 0));
+void GraphicsManager::drawVerticalLine(uint x, uint y1, uint y2) {
+	drawLine(x, y1, x, y2);
 }
 
-void darkScreen() {
-	Graphics::TransparentSurface tmp(backdropSurface, false);
-	tmp.blit(backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(0, 255 >> 1, 0, 0));
+void GraphicsManager::drawHorizontalLine(uint x1, uint y, uint x2) {
+	drawLine(x1, y, x2, y);
 }
 
-inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
-	return (fX == 65535) ? (sceneMax ? ((cX * boxMax) / sceneMax) : 0) : ((cX * fX) / 100);
+void GraphicsManager::darkScreen() {
+	Graphics::TransparentSurface tmp(_backdropSurface, false);
+	tmp.blit(_backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(0, 255 >> 1, 0, 0));
 }
 
-void drawBackDrop() {
-	if (!backdropExists)
-		return;
-
+void GraphicsManager::drawBackDrop() {
 	// TODO: apply lightmap shader
+	drawParallax();
 
+	if (!_backdropExists)
+		return;
 	// draw backdrop
-	Graphics::TransparentSurface tmp(backdropSurface, false);
-	tmp.blit(renderSurface, 0, 0);
+	Graphics::TransparentSurface tmp(_backdropSurface, false);
+	tmp.blit(_renderSurface, 0, 0);
 }
 
-bool loadLightMap(int v) {
+bool GraphicsManager::loadLightMap(int v) {
 	setResourceForFatal(v);
 	if (!g_sludge->_resMan->openFileFromNum(v))
 		return fatal("Can't open light map.");
 
 	killLightMap();
-	lightMapNumber = v;
+	_lightMapNumber = v;
 
-	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &lightMap))
+	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &_lightMap))
 		return false;
 
-	if (lightMapMode == LIGHTMAPMODE_HOTSPOT) {
-		if (lightMap.w != sceneWidth || lightMap.h != sceneHeight) {
+	if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
+		if (_lightMap.w != _sceneWidth || _lightMap.h != _sceneHeight) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
 		}
 	}
@@ -398,17 +381,40 @@ bool loadLightMap(int v) {
 	return true;
 }
 
-bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
+void GraphicsManager::saveLightMap(Common::WriteStream *stream) {
+	if (_lightMap.getPixels()) {
+		stream->writeByte(1);
+		stream->writeUint16BE(_lightMapNumber);
+	} else {
+		stream->writeByte(0);
+	}
+	stream->writeByte(_lightMapMode);
+}
+
+bool GraphicsManager::loadLightMap(int ssgVersion, Common::SeekableReadStream *stream) {
+	if (stream->readByte()) {
+		if (!loadLightMap(stream->readUint16BE()))
+			return false;
+	}
+
+	if (ssgVersion >= VERSION(1, 4)) {
+		_lightMapMode = stream->readByte() % 3;
+	}
+
+	return true;
+}
+
+bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	debug(kSludgeDebugGraphics, "Load HSI");
 	if (reserve) {
 		killAllBackDrop(); // kill all
 	}
 
-	if (!ImgLoader::loadImage(stream, &backdropSurface, (int)reserve))
+	if (!ImgLoader::loadImage(stream, &_backdropSurface, (int)reserve))
 		return false;
 
-	uint realPicWidth = backdropSurface.w;
-	uint realPicHeight = backdropSurface.h;
+	uint realPicWidth = _backdropSurface.w;
+	uint realPicHeight = _backdropSurface.h;
 
 	// resize backdrop
 	if (reserve) {
@@ -417,21 +423,21 @@ bool loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	}
 
 	if (x == IN_THE_CENTRE)
-		x = (sceneWidth - realPicWidth) >> 1;
+		x = (_sceneWidth - realPicWidth) >> 1;
 	if (y == IN_THE_CENTRE)
-		y = (sceneHeight - realPicHeight) >> 1;
-	if (x < 0 || x + realPicWidth > sceneWidth || y < 0 || y + realPicHeight > sceneHeight) {
+		y = (_sceneHeight - realPicHeight) >> 1;
+	if (x < 0 || x + realPicWidth > _sceneWidth || y < 0 || y + realPicHeight > _sceneHeight) {
 		debug(kSludgeDebugGraphics, "Illegal back drop size");
 		return false;
 	}
 
-	OrigBackdropSurface.copyFrom(backdropSurface);
-	backdropExists = true;
+	_origBackdropSurface.copyFrom(_backdropSurface);
+	_backdropExists = true;
 
 	return true;
 }
 
-bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
+bool GraphicsManager::mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	debug(kSludgeDebugGraphics, "Load mixHSI");
 	Graphics::Surface mixSurface;
 	if (!ImgLoader::loadImage(stream, &mixSurface, 0))
@@ -441,26 +447,26 @@ bool mixHSI(Common::SeekableReadStream *stream, int x, int y) {
 	uint realPicHeight = mixSurface.h;
 
 	if (x == IN_THE_CENTRE)
-		x = (sceneWidth - realPicWidth) >> 1;
+		x = (_sceneWidth - realPicWidth) >> 1;
 	if (y == IN_THE_CENTRE)
-		y = (sceneHeight - realPicHeight) >> 1;
-	if (x < 0 || x + realPicWidth > sceneWidth || y < 0 || y + realPicHeight > sceneHeight)
+		y = (_sceneHeight - realPicHeight) >> 1;
+	if (x < 0 || x + realPicWidth > _sceneWidth || y < 0 || y + realPicHeight > _sceneHeight)
 		return false;
 
 	Graphics::TransparentSurface tmp(mixSurface, false);
-	tmp.blit(backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255 >> 1, 255, 255));
+	tmp.blit(_backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255 >> 1, 255, 255));
 	mixSurface.free();
 
 	return true;
 }
 
-void saveHSI(Common::WriteStream *stream) {
-	Image::writePNG(*stream, backdropSurface);
+void GraphicsManager::saveHSI(Common::WriteStream *stream) {
+	Image::writePNG(*stream, _backdropSurface);
 }
 
 
-bool getRGBIntoStack(uint x, uint y, stackHandler *sH) {
-	if (x >= sceneWidth || y >= sceneHeight) {
+bool GraphicsManager::getRGBIntoStack(uint x, uint y, stackHandler *sH) {
+	if (x >= _sceneWidth || y >= _sceneHeight) {
 		return fatal("Co-ordinates are outside current scene!");
 	}
 
@@ -468,7 +474,7 @@ bool getRGBIntoStack(uint x, uint y, stackHandler *sH) {
 
 	newValue.varType = SVT_NULL;
 
-	byte *target = (byte *)renderSurface.getBasePtr(x, y);
+	byte *target = (byte *)_renderSurface.getBasePtr(x, y);
 
 	setVariable(newValue, SVT_INT, target[1]);
 	if (!addVarToStackQuick(newValue, sH->first)) return false;

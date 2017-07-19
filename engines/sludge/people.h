@@ -41,7 +41,7 @@ struct animFrame {
 #define EXTRA_RECTANGULAR   64
 
 struct personaAnimation {
-	struct loadedSpriteBank *theSprites;
+	struct LoadedSpriteBank *theSprites;
 	animFrame *frames;
 	int numFrames;
 };
@@ -110,7 +110,7 @@ bool setCharacterWalkSpeed(int f, int objNum);
 void animatePerson(int obj, personaAnimation *);
 void animatePerson(int obj, persona *per);
 personaAnimation *createPersonaAnim(int num, struct variableStack *&stacky);
-inline void setBankFile(personaAnimation *newP, loadedSpriteBank *sB) {
+inline void setBankFile(personaAnimation *newP, LoadedSpriteBank *sB) {
 	newP->theSprites = sB;
 }
 bool setPersonExtra(int f, int newSetting);

@@ -26,7 +26,13 @@
 
 namespace Sludge {
 
-struct frozenStuffStruct {
+struct onScreenPerson;
+struct screenRegion;
+struct speechStruct;
+struct statusStuff;
+struct eventHandlers;
+
+struct FrozenStuffStruct {
 	onScreenPerson *allPeople;
 	screenRegion *allScreenRegions;
 	Graphics::Surface backdropSurface;
@@ -43,12 +49,8 @@ struct frozenStuffStruct {
 	int cameraX, cameraY, sceneWidth, sceneHeight;
 	float cameraZoom;
 
-	frozenStuffStruct *next;
+	FrozenStuffStruct *next;
 };
-
-bool freeze();
-void unfreeze(bool killImage = true);
-int howFrozen();
 
 } // End of namespace Sludge
 

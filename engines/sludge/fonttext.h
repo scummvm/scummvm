@@ -26,13 +26,15 @@
 
 namespace Sludge {
 
+struct SpritePalette;
+
 bool loadFont(int filenum, const Common::String &charOrder, int);
-void pasteString(const Common::String &theText, int, int, spritePalette &);
-void setFontColour(spritePalette &sP, byte r, byte g, byte b);
+void pasteString(const Common::String &theText, int, int, SpritePalette &);
+void setFontColour(SpritePalette &sP, byte r, byte g, byte b);
 int stringWidth(const Common::String &theText);
 int stringLength(const Common::String &theText);
-void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, spritePalette &thePal);
-void burnStringToBackdrop(const Common::String &theText, int xOff, int y, spritePalette &thePal);
+void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal);
+void burnStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal);
 bool isInFont(const Common::String &theText);
 
 } // End of namespace Sludge

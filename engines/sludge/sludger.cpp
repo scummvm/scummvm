@@ -23,40 +23,39 @@
 #include "common/debug.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/sludger.h"
 #include "sludge/backdrop.h"
-#include "sludge/cursors.h"
-#include "sludge/objtypes.h"
-#include "sludge/region.h"
-#include "sludge/sprites.h"
-#include "sludge/sprbanks.h"
-#include "sludge/people.h"
-#include "sludge/talk.h"
-#include "sludge/newfatal.h"
-#include "sludge/moreio.h"
-#include "sludge/statusba.h"
 #include "sludge/builtin.h"
+#include "sludge/cursors.h"
 #include "sludge/fonttext.h"
 #include "sludge/freeze.h"
 #include "sludge/floor.h"
-#include "sludge/zbuffer.h"
-#include "sludge/sound.h"
-#include "sludge/loadsave.h"
 #include "sludge/fileset.h"
-#include "sludge/transition.h"
-#include "sludge/language.h"
-#include "sludge/variable.h"
-#include "sludge/sludge.h"
-#include "sludge/version.h"
+#include "sludge/graphics.h"
 #include "sludge/imgloader.h"
+#include "sludge/loadsave.h"
+#include "sludge/language.h"
+#include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/objtypes.h"
+#include "sludge/people.h"
+#include "sludge/region.h"
+#include "sludge/statusba.h"
+#include "sludge/sprites.h"
+#include "sludge/sprbanks.h"
+#include "sludge/sound.h"
+#include "sludge/sludge.h"
+#include "sludge/sludger.h"
+#include "sludge/talk.h"
+#include "sludge/transition.h"
+#include "sludge/variable.h"
+#include "sludge/version.h"
+#include "sludge/zbuffer.h"
 
 namespace Sludge {
 
 extern personaAnimation *mouseCursorAnim;
 extern int dialogValue;
 extern variable *launchResult;
-
-extern Graphics::Surface renderSurface;
 
 int numBIFNames = 0;
 Common::String *allBIFNames;
@@ -211,10 +210,12 @@ bool initSludge(const Common::String &filename) {
 		}
 	}
 
-	winWidth = fp->readUint16BE();
+	int winWidth = fp->readUint16BE();
 	debug(kSludgeDebugDataLoad, "winWidth : %i", winWidth);
-	winHeight = fp->readUint16BE();
+	int winHeight = fp->readUint16BE();
 	debug(kSludgeDebugDataLoad, "winHeight : %i", winHeight);
+	g_sludge->_gfxMan->setWindowSize(winWidth, winHeight);
+
 	int specialSettings = fp->readByte();
 	debug(kSludgeDebugDataLoad, "specialSettings : %i", specialSettings);
 	g_sludge->_timer.setDesiredfps(1000 / fp->readByte());
@@ -291,13 +292,11 @@ bool initSludge(const Common::String &filename) {
 	return true;
 }
 
-extern int cameraX, cameraY;
-
 void displayBase() {
-	drawBackDrop();// Draw the room
-	drawZBuffer(cameraX, cameraY, false);
+	g_sludge->_gfxMan->drawBackDrop();// Draw the room
+	g_sludge->_gfxMan->drawZBuffer(g_sludge->_gfxMan->getCamX(), g_sludge->_gfxMan->getCamY(), false);
 	drawPeople();// Then add any moving characters...
-	displaySpriteLayers();
+	g_sludge->_gfxMan->displaySpriteLayers();
 }
 
 void sludgeDisplay() {
@@ -305,8 +304,7 @@ void sludgeDisplay() {
 	viewSpeech();// ...and anything being said
 	drawStatusBar();
 	displayCursor();
-	g_system->copyRectToScreen((byte *)renderSurface.getPixels(), renderSurface.pitch, 0, 0, renderSurface.w, renderSurface.h);
-	g_system->updateScreen();
+	g_sludge->_gfxMan->display();
 	if (brightnessLevel < 255) fixBrightness();// This is for transitionLevel special effects
 }
 

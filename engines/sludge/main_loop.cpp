@@ -25,27 +25,24 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 
-#include "engines/util.h"
-
 #include "graphics/surface.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/language.h"
-#include "sludge/sludger.h"
 #include "sludge/backdrop.h"
+#include "sludge/floor.h"
+#include "sludge/graphics.h"
+#include "sludge/helpers.h"
 #include "sludge/language.h"
 #include "sludge/newfatal.h"
-#include "sludge/people.h"
-#include "sludge/floor.h"
 #include "sludge/objtypes.h"
-#include "sludge/talk.h"
+#include "sludge/people.h"
 #include "sludge/statusba.h"
+#include "sludge/sound.h"
+#include "sludge/sludge.h"
+#include "sludge/sludger.h"
+#include "sludge/talk.h"
 #include "sludge/transition.h"
 #include "sludge/timing.h"
-#include "sludge/sound.h"
-#include "sludge/sludger.h"
-#include "sludge/helpers.h"
-#include "sludge/sludge.h"
 
 namespace Sludge {
 
@@ -56,19 +53,18 @@ namespace Sludge {
 HWND hMainWindow = NULL;
 
 int realWinWidth = 640, realWinHeight = 480;
-extern float cameraZoom;
 
 extern inputType input;
 extern variableStack *noStack;
-Graphics::Surface renderSurface;
 
 int dialogValue = 0;
-
-extern bool reallyWantToQuit;
 
 int weAreDoneSoQuit;
 
 void checkInput() {
+	int winWidth = g_system->getWidth();
+	int winHeight = g_system->getHeight();
+	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 #if 0
 	static bool fakeRightclick = false;
 #endif
@@ -148,27 +144,17 @@ void checkInput() {
 	}
 }
 
-int main_loop(const char *filename)
-		{
-	/* Dimensions of our window. */
-	winWidth = 640;
-	winHeight = 480;
+int main_loop(const char *filename) {
 
 	if (!initSludge(filename)) {
 		return 0;
 	}
 
-	initGraphics(winWidth, winHeight, true, g_sludge->getScreenPixelFormat());
-
-	// Init screen surface
-	renderSurface.create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
+	g_sludge->_gfxMan->init();
 
 	registerWindowForFatal();
 
-	if (!killResizeBackdrop(winWidth, winHeight))
-		return fatal("Couldn't allocate memory for backdrop");
-
-	blankScreen(0, 0, winWidth, winHeight);
+	g_sludge->_gfxMan->blankAllScreen();
 	if (!initPeople())
 		return fatal("Couldn't initialise people stuff");
 	if (!initFloor())

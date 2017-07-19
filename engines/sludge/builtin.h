@@ -25,6 +25,8 @@
 
 namespace Sludge {
 
+struct loadedFunction;
+
 enum builtReturn {
 	BR_KEEP_AND_PAUSE,
 	BR_ERROR,

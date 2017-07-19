@@ -43,72 +43,51 @@ extern screenRegion *allScreenRegions;
 extern screenRegion *overRegion;
 extern speechStruct *speech;
 extern inputType input;
-extern Graphics::Surface backdropSurface;
-extern Graphics::Surface renderSurface;
-extern int lightMapNumber, zBufferNumber;
 extern eventHandlers *currentEvents;
 extern personaAnimation *mouseCursorAnim;
 extern int mouseCursorFrameNum;
-extern int cameraX, cameraY;
-extern uint sceneWidth, sceneHeight;
-extern float cameraZoom;
-extern zBufferData zBuffer;
-extern bool backdropExists;
-frozenStuffStruct *frozenStuff = NULL;
-extern uint sceneWidth, sceneHeight;
-Graphics::Surface freezeSurface;
 
-void shufflePeople();
+void GraphicsManager::freezeGraphics() {
 
-void freezeGraphics() {
+	int w = _winWidth;
+	int h = _winHeight;
 
-	int w = winWidth;
-	int h = winHeight;
+	_freezeSurface.create(w, h, *g_sludge->getScreenPixelFormat());
 
-	freezeSurface.create(w, h, *g_sludge->getScreenPixelFormat());
-
-	// Temporarily disable AA
-#if 0
-	int antiAlias = gameSettings.antiAlias;
-	gameSettings.antiAlias = 0;
-#endif
 	displayBase();
-	freezeSurface.copyFrom(renderSurface);
-#if 0
-	gameSettings.antiAlias = antiAlias;
-#endif
+	_freezeSurface.copyFrom(_renderSurface);
 }
 
-bool freeze() {
-	frozenStuffStruct *newFreezer = new frozenStuffStruct;
+bool GraphicsManager::freeze() {
+	FrozenStuffStruct *newFreezer = new FrozenStuffStruct;
 	if (!checkNew(newFreezer))
 		return false;
 
 	// Grab a copy of the current scene
 	freezeGraphics();
-	newFreezer->backdropSurface.copyFrom(backdropSurface);
-	newFreezer->sceneWidth = sceneWidth;
-	newFreezer->sceneHeight = sceneHeight;
-	newFreezer->cameraX = cameraX;
-	newFreezer->cameraY = cameraY;
-	newFreezer->cameraZoom = cameraZoom;
+	newFreezer->backdropSurface.copyFrom(_backdropSurface);
+	newFreezer->sceneWidth = _sceneWidth;
+	newFreezer->sceneHeight = _sceneHeight;
+	newFreezer->cameraX = _cameraX;
+	newFreezer->cameraY = _cameraY;
+	newFreezer->cameraZoom = _cameraZoom;
 
-	newFreezer->lightMapSurface.copyFrom(lightMap);
-	newFreezer->lightMapNumber = lightMapNumber;
+	newFreezer->lightMapSurface.copyFrom(_lightMap);
+	newFreezer->lightMapNumber = _lightMapNumber;
 
-	newFreezer->parallaxStuff = g_sludge->_gfxMan->_parallaxStuff;
-	g_sludge->_gfxMan->_parallaxStuff = NULL;
-	newFreezer->zBufferSprites = zBuffer.sprites;
-	newFreezer->zBufferNumber = zBuffer.originalNum;
-	newFreezer->zPanels = zBuffer.numPanels;
-	zBuffer.sprites = NULL;
+	newFreezer->parallaxStuff = _parallaxStuff;
+	_parallaxStuff = NULL;
+	newFreezer->zBufferSprites = _zBuffer->sprites;
+	newFreezer->zBufferNumber = _zBuffer->originalNum;
+	newFreezer->zPanels = _zBuffer->numPanels;
+	_zBuffer->sprites = NULL;
 	// resizeBackdrop kills parallax stuff, light map, z-buffer...
-	if (!killResizeBackdrop(winWidth, winHeight))
+	if (!killResizeBackdrop(_winWidth, _winHeight))
 		return fatal("Can't create new temporary backdrop buffer");
 
 	// Copy the old scene to the new backdrop
-	backdropSurface.copyFrom(freezeSurface);
-	backdropExists = true;
+	_backdropSurface.copyFrom(_freezeSurface);
+	_backdropExists = true;
 
 	newFreezer->allPeople = allPeople;
 	allPeople = NULL;
@@ -136,15 +115,15 @@ bool freeze() {
 		return false;
 	memset(currentEvents, 0, sizeof(eventHandlers));
 
-	newFreezer->next = frozenStuff;
-	frozenStuff = newFreezer;
+	newFreezer->next = _frozenStuff;
+	_frozenStuff = newFreezer;
 
 	return true;
 }
 
-int howFrozen() {
+int GraphicsManager::howFrozen() {
 	int a = 0;
-	frozenStuffStruct *f = frozenStuff;
+	FrozenStuffStruct *f = _frozenStuff;
 	while (f) {
 		a++;
 		f = f->next;
@@ -152,66 +131,66 @@ int howFrozen() {
 	return a;
 }
 
-void unfreeze(bool killImage) {
-	frozenStuffStruct *killMe = frozenStuff;
+void GraphicsManager::unfreeze(bool killImage) {
+	FrozenStuffStruct *killMe = _frozenStuff;
 
-	if (!frozenStuff)
+	if (!_frozenStuff)
 		return;
 
-	sceneWidth = frozenStuff->sceneWidth;
-	sceneHeight = frozenStuff->sceneHeight;
+	_sceneWidth = _frozenStuff->sceneWidth;
+	_sceneHeight = _frozenStuff->sceneHeight;
 
-	cameraX = frozenStuff->cameraX;
-	cameraY = frozenStuff->cameraY;
-	input.mouseX = (int)(input.mouseX * cameraZoom);
-	input.mouseY = (int)(input.mouseY * cameraZoom);
-	cameraZoom = frozenStuff->cameraZoom;
-	input.mouseX = (int)(input.mouseX / cameraZoom);
-	input.mouseY = (int)(input.mouseY / cameraZoom);
+	_cameraX = _frozenStuff->cameraX;
+	_cameraY = _frozenStuff->cameraY;
+	input.mouseX = (int)(input.mouseX * _cameraZoom);
+	input.mouseY = (int)(input.mouseY * _cameraZoom);
+	_cameraZoom = _frozenStuff->cameraZoom;
+	input.mouseX = (int)(input.mouseX / _cameraZoom);
+	input.mouseY = (int)(input.mouseY / _cameraZoom);
 
 	killAllPeople();
-	allPeople = frozenStuff->allPeople;
+	allPeople = _frozenStuff->allPeople;
 
 	killAllRegions();
-	allScreenRegions = frozenStuff->allScreenRegions;
+	allScreenRegions = _frozenStuff->allScreenRegions;
 
 	killLightMap();
 
-	lightMap.copyFrom(frozenStuff->lightMapSurface);
-	lightMapNumber = frozenStuff->lightMapNumber;
-	if (lightMapNumber) {
-		loadLightMap(lightMapNumber);
+	_lightMap.copyFrom(_frozenStuff->lightMapSurface);
+	_lightMapNumber = _frozenStuff->lightMapNumber;
+	if (_lightMapNumber) {
+		loadLightMap(_lightMapNumber);
 	}
 
 	if (killImage)
 		killBackDrop();
-	backdropSurface.copyFrom(frozenStuff->backdropSurface);
-	backdropExists = true;
+	_backdropSurface.copyFrom(_frozenStuff->backdropSurface);
+	_backdropExists = true;
 
-	zBuffer.sprites = frozenStuff->zBufferSprites;
+	_zBuffer->sprites = _frozenStuff->zBufferSprites;
 	killZBuffer();
-	zBuffer.originalNum = frozenStuff->zBufferNumber;
-	zBuffer.numPanels = frozenStuff->zPanels;
-	if (zBuffer.numPanels) {
-		setZBuffer(zBuffer.originalNum);
+	_zBuffer->originalNum = _frozenStuff->zBufferNumber;
+	_zBuffer->numPanels = _frozenStuff->zPanels;
+	if (_zBuffer->numPanels) {
+		setZBuffer(_zBuffer->originalNum);
 	}
 
-	g_sludge->_gfxMan->killParallax();
-	g_sludge->_gfxMan->_parallaxStuff = frozenStuff->parallaxStuff;
+	killParallax();
+	_parallaxStuff = _frozenStuff->parallaxStuff;
 
 	deleteAnim(mouseCursorAnim);
-	mouseCursorAnim = frozenStuff->mouseCursorAnim;
-	mouseCursorFrameNum = frozenStuff->mouseCursorFrameNum;
+	mouseCursorAnim = _frozenStuff->mouseCursorAnim;
+	mouseCursorFrameNum = _frozenStuff->mouseCursorFrameNum;
 
-	restoreBarStuff(frozenStuff->frozenStatus);
+	restoreBarStuff(_frozenStuff->frozenStatus);
 
 	delete currentEvents;
-	currentEvents = frozenStuff->currentEvents;
+	currentEvents = _frozenStuff->currentEvents;
 	killAllSpeech();
 	delete speech;
 
-	speech = frozenStuff->speech;
-	frozenStuff = frozenStuff->next;
+	speech = _frozenStuff->speech;
+	_frozenStuff = _frozenStuff->next;
 
 	overRegion = NULL;
 

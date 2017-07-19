@@ -21,6 +21,7 @@
  */
 
 #include "sludge/allfiles.h"
+#include "sludge/graphics.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
 #include "sludge/sludger.h"
@@ -477,7 +478,7 @@ void drawPeople() {
 			}
 			if (m != 2) {
 				bool r = false;
-				r = scaleSprite(myAnim->theSprites->bank.sprites[fNum], myAnim->theSprites->bank.myPalette, thisPerson, m);
+				r = g_sludge->_gfxMan->scaleSprite(myAnim->theSprites->bank.sprites[fNum], myAnim->theSprites->bank.myPalette, thisPerson, m);
 				if (r) {
 					if (!thisPerson->thisType->screenName.empty()) {
 						if (personRegion.thisType != thisPerson->thisType)
