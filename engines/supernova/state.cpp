@@ -72,7 +72,6 @@ Object *Inventory::get(ObjectID id) const {
 GuiElement::GuiElement()
     : _text("")
     , _isHighlighted(false)
-    , _isVisible(true)
     , _bgColorNormal(kColorWhite25)
     , _bgColorHighlighted(kColorWhite44)
     , _bgColor(kColorWhite25)

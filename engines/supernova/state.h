@@ -83,10 +83,6 @@ public:
 	void setColor(int bgColor, int textColor, int bgColorHighlighted, int textColorHightlighted);
 	void setHighlight(bool isHighlighted);
 
-//	virtual void onMouseOver() {}
-//	virtual void onMouseOut() {}
-//	virtual void onMouseClick() {}
-
 	Common::Point _textPosition;
 	char _text[128];
 	int _bgColor;
@@ -96,7 +92,6 @@ public:
 	int _textColorNormal;
 	int _textColorHighlighted;
 	bool _isHighlighted;
-	bool _isVisible;
 };
 
 class GameManager {
