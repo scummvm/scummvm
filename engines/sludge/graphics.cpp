@@ -64,8 +64,8 @@ GraphicsManager::GraphicsManager(SludgeEngine *vm) {
 	_spriteLayers->numLayers = 0;
 
 	// ZBuffer
-	_zBufferToSet = -1;
 	_zBuffer = new ZBufferData;
+	_zBuffer->originalNum = -1;
 	_zBuffer->sprites = nullptr;
 
 	// Colors

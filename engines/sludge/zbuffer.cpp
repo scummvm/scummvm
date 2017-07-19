@@ -44,7 +44,7 @@ void GraphicsManager::killZBuffer() {
 		_zBuffer->sprites = nullptr;
 	}
 	_zBuffer->numPanels = 0;
-	_zBuffer->originalNum = 0;
+	_zBuffer->originalNum = -1;
 }
 
 void GraphicsManager::sortZPal(int *oldpal, int *newpal, int size) {
@@ -71,7 +71,7 @@ bool GraphicsManager::setZBuffer(int num) {
 	// if the backdrop has not been set yet
 	// set zbuffer later
 	if (!_backdropSurface.getPixels()) {
-		_zBufferToSet = num;
+		_zBuffer->originalNum = num;
 		return true;
 	}
 

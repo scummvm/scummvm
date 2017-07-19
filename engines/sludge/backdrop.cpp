@@ -236,6 +236,7 @@ void GraphicsManager::killAllBackDrop() {
 }
 
 bool GraphicsManager::resizeBackdrop(int x, int y) {
+	debug(kSludgeDebugGraphics, "Load HSI");
 	_sceneWidth = x;
 	_sceneHeight = y;
 	return reserveBackdrop();
@@ -247,7 +248,7 @@ bool GraphicsManager::killResizeBackdrop(int x, int y) {
 }
 
 void GraphicsManager::loadBackDrop(int fileNum, int x, int y) {
-	debug(kSludgeDebugGraphics, "Load back drop");
+	debug(kSludgeDebugGraphics, "Load back drop of num %i at position %i, %i", fileNum, x, y);
 	setResourceForFatal(fileNum);
 	if (!g_sludge->_resMan->openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
@@ -262,14 +263,14 @@ void GraphicsManager::loadBackDrop(int fileNum, int x, int y) {
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 
-	// set zBuffer if it's not set
-	if (_zBufferToSet >= 0) {
-		setZBuffer(_zBufferToSet);
-		_zBufferToSet = -1;
+	// reset zBuffer
+	if (_zBuffer->originalNum >= 0) {
+		setZBuffer(_zBuffer->originalNum);
 	}
 }
 
 void GraphicsManager::mixBackDrop(int fileNum, int x, int y) {
+	debug(kSludgeDebugGraphics, "Mix back drop of num %i at position %i, %i", fileNum, x, y);
 	setResourceForFatal(fileNum);
 	if (!g_sludge->_resMan->openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
@@ -285,9 +286,9 @@ void GraphicsManager::mixBackDrop(int fileNum, int x, int y) {
 }
 
 void GraphicsManager::blankScreen(int x1, int y1, int x2, int y2) {
-	// in case of no backdrop added at all
+	// in case of no backdrop added at all, create it
 	if (!_backdropSurface.getPixels()) {
-		return;
+		_backdropSurface.create(_winWidth, _winHeight, _renderSurface.format);
 	}
 
 	if (y1 < 0)
@@ -410,11 +411,13 @@ bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, 
 		killAllBackDrop(); // kill all
 	}
 
-	if (!ImgLoader::loadImage(stream, &_backdropSurface, (int)reserve))
+	Graphics::Surface tmp;
+
+	if (!ImgLoader::loadImage(stream, &tmp, (int)reserve))
 		return false;
 
-	uint realPicWidth = _backdropSurface.w;
-	uint realPicHeight = _backdropSurface.h;
+	uint realPicWidth = tmp.w;
+	uint realPicHeight = tmp.h;
 
 	// resize backdrop
 	if (reserve) {
@@ -430,6 +433,10 @@ bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, 
 		debug(kSludgeDebugGraphics, "Illegal back drop size");
 		return false;
 	}
+
+	// copy surface loaded to backdrop
+	_backdropSurface.copyRectToSurface(tmp.getPixels(), tmp.pitch, x, y, tmp.w, tmp.h);
+	tmp.free();
 
 	_origBackdropSurface.copyFrom(_backdropSurface);
 	_backdropExists = true;

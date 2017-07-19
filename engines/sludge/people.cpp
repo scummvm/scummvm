@@ -838,6 +838,7 @@ bool addPerson(int x, int y, int objNum, persona *p) {
 	newPerson->colourmix = 0;
 	newPerson->transparency = 0;
 	newPerson->myPersona = p;
+	newPerson->lastUsedAnim = 0;
 
 	setFrames(*newPerson, ANI_STAND);
 

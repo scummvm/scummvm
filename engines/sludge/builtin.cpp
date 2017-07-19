@@ -77,7 +77,6 @@ extern float speechSpeed;
 extern byte brightnessLevel;
 extern byte fadeMode;
 extern uint16 saveEncoding;
-extern byte currentBurnR, currentBurnG, currentBurnB;
 
 int paramNum[] = { -1, 0, 1, 1, -1, -1, 1, 3, 4, 1, 0, 0, 8, -1,    // SAY->MOVEMOUSE
                    -1, 0, 0, -1, -1, 1, 1, 1, 1, 4, 1, 1, 2, 1,// FOCUS->REMOVEREGION

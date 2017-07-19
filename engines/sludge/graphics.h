@@ -110,7 +110,7 @@ public:
 
 	// Screen
 	int getCenterX(int width) { return (_winWidth - width) >> 1; }
-	int checkSizeValide(int width, int height) { return ((width >= 0) && (height >= 0) && (width < (int)_winWidth) && (height > (int)_winHeight)); }
+	int checkSizeValide(int width, int height) { return ((width >= 0) && (height >= 0) && (width < (int)_winWidth) && (height < (int)_winHeight)); }
 
 	// Freeze
 	bool freeze();
@@ -194,7 +194,6 @@ private:
 	uint32 getDrawColor(onScreenPerson *thisPerson);
 
 	// ZBuffer
-	int _zBufferToSet;
 	ZBufferData *_zBuffer;
 	void sortZPal(int *oldpal, int *newpal, int size);
 
