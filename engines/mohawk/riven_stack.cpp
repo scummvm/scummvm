@@ -207,11 +207,11 @@ void RivenStack::runCredits(uint16 video, uint32 delay) {
 				nextCreditsFrameStart = _vm->getTotalPlayTime() + delay;
 			} else if (_vm->getTotalPlayTime() >= nextCreditsFrameStart) {
 				// the first two frames stay on for 4 seconds
-				// the rest of the scroll updates happen at 30Hz
+				// the rest of the scroll updates happen at 60Hz
 				if (_vm->_gfx->getCurCreditsImage() < 304)
 					nextCreditsFrameStart = _vm->getTotalPlayTime() + 4000;
 				else
-					nextCreditsFrameStart = _vm->getTotalPlayTime() + 1000 / 30;
+					nextCreditsFrameStart = _vm->getTotalPlayTime() + 1000 / 60;
 
 				_vm->_gfx->updateCredits();
 			}
