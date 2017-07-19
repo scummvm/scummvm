@@ -461,7 +461,7 @@ void GameManager::takeObject(Object &obj) {
 		return;
 
 	if (obj._section != 0)
-		_vm->renderImage(_currentRoom->getFileNumber(), obj._section);
+		drawImage(obj._section);
 	obj.setProperty(CARRIED);
 	obj._click = obj._click2 = 255;
 	_inventory.add(obj);
