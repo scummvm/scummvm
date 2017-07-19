@@ -188,6 +188,7 @@ void RivenStack::runEndGame(uint16 videoCode, uint32 delay) {
 	RivenVideo *video = _vm->_video->openSlot(videoCode);
 	video->enable();
 	video->play();
+	video->setLooping(false);
 	runCredits(videoCode, delay);
 }
 
