@@ -75,6 +75,19 @@ static const SludgeGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		{
+			"outoforder",
+			"",
+			AD_ENTRY1s("gamedata", "4d72dbad0ff170169cd7e4e7e389a90d", 21122647),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
