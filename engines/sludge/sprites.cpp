@@ -277,11 +277,6 @@ void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, cons
 	Graphics::TransparentSurface tmp(single.surface, false);
 	tmp.blit(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
 			TS_RGB(fontPal.originalRed, fontPal.originalGreen, fontPal.originalBlue));
-
-	// reset zBuffer with the new backdrop
-	if (_zBuffer->numPanels) {
-		setZBuffer(_zBuffer->originalNum);
-	}
 }
 
 // burnSpriteToBackDrop adds text in the colour specified by setBurnColour
@@ -293,11 +288,6 @@ void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const
 	Graphics::TransparentSurface tmp(single.surface, false);
 	tmp.blit(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
 			TS_RGB(_currentBurnR, _currentBurnG, _currentBurnB));
-
-	// reset zBuffer with the new backdrop
-	if (_zBuffer->numPanels) {
-		setZBuffer(_zBuffer->originalNum);
-	}
 }
 
 void GraphicsManager::fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal) {
@@ -525,11 +515,6 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 
 	// copy screen to backdrop
 	_backdropSurface.copyFrom(_renderSurface);
-
-	// reset zBuffer with the new backdrop
-	if (_zBuffer->numPanels) {
-		setZBuffer(_zBuffer->originalNum);
-	}
 }
 
 } // End of namespace Sludge
