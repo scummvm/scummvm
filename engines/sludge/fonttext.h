@@ -24,18 +24,49 @@
 
 #include "common/ustr.h"
 
+#include "sludge/sprites.h"
+#include "sludge/utf8.h"
+
 namespace Sludge {
 
+struct SpriteBank;
 struct SpritePalette;
 
-bool loadFont(int filenum, const Common::String &charOrder, int);
-void pasteString(const Common::String &theText, int, int, SpritePalette &);
+class TextManager {
+public:
+	TextManager();
+	virtual ~TextManager();
+
+	int stringWidth(const Common::String &theText);
+	int stringLength(const Common::String &theText);
+
+	bool loadFont(int filenum, const Common::String &charOrder, int);
+	void pasteString(const Common::String &theText, int, int, SpritePalette &);
+	void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal);
+	void burnStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal);
+	bool isInFont(const Common::String &theText);
+
+	void setFontSpace(int fontSpace) { _fontSpace = fontSpace; }
+	int getFontHeight() const { return _fontHeight; }
+
+	// load & save
+	void saveFont(Common::WriteStream *stream);
+	void loadFont(int ssgVersion, Common::SeekableReadStream *stream);
+
+private:
+	SpriteBank _theFont;
+	int _fontHeight, _numFontColours, _loadedFontNum;
+	UTF8Converter _fontOrder;
+	int16 _fontSpace;
+
+	uint32 *_fontTable;
+	uint _fontTableSize;
+
+	inline uint32 fontInTable(uint32 x) { return ((x < _fontTableSize) ? _fontTable[x] : 0); }
+
+};
+
 void setFontColour(SpritePalette &sP, byte r, byte g, byte b);
-int stringWidth(const Common::String &theText);
-int stringLength(const Common::String &theText);
-void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal);
-void burnStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal);
-bool isInFont(const Common::String &theText);
 
 } // End of namespace Sludge
 

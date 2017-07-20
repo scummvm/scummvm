@@ -39,7 +39,6 @@ SpritePalette litVerbLinePalette;
 
 StatusStuff  mainStatus;
 StatusStuff  *nowStatus = & mainStatus;
-extern int fontHeight;
 
 void setLitStatus(int i) {
 	nowStatus->litStatus = i;
@@ -93,18 +92,24 @@ void drawStatusBar() {
 	while (stat) {
 		switch (nowStatus->alignStatus) {
 		case IN_THE_CENTRE:
-			pasteString(stat->text, ((g_system->getWidth() - stringWidth(stat->text)) >> 1) / cameraZoom, y / cameraZoom, (n++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			g_sludge->_txtMan->pasteString(stat->text,
+					((g_system->getWidth() - g_sludge->_txtMan->stringWidth(stat->text)) >> 1) / cameraZoom, y / cameraZoom,
+					(n++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 			break;
 
 		case 1001:
-			pasteString(stat->text, (g_system->getWidth() - stringWidth(stat->text)) - nowStatus->statusX / cameraZoom, y / cameraZoom, (n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			g_sludge->_txtMan->pasteString(stat->text,
+					(g_system->getWidth() - g_sludge->_txtMan->stringWidth(stat->text)) - nowStatus->statusX / cameraZoom, y / cameraZoom,
+					(n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 			break;
 
 		default:
-			pasteString(stat->text, nowStatus->statusX / cameraZoom, y / cameraZoom, (n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			g_sludge->_txtMan->pasteString(stat->text,
+					nowStatus->statusX / cameraZoom, y / cameraZoom,
+					(n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
 		}
 		stat = stat->next;
-		y -= fontHeight;
+		y -= g_sludge->_txtMan->getFontHeight();
 	}
 }
 
@@ -122,7 +127,7 @@ void statusBarLitColour(byte r, byte g, byte b) {
 	nowStatus->statusLB = b;
 }
 
-StatusStuff  *copyStatusBarStuff(StatusStuff  *here) {
+StatusStuff *copyStatusBarStuff(StatusStuff  *here) {
 
 	// Things we want to keep
 	here->statusLR = nowStatus->statusLR;
@@ -145,7 +150,7 @@ StatusStuff  *copyStatusBarStuff(StatusStuff  *here) {
 	return old;
 }
 
-void restoreBarStuff(StatusStuff  *here) {
+void restoreBarStuff(StatusStuff *here) {
 	delete nowStatus;
 	setFontColour(verbLinePalette, here->statusR, here->statusG, here->statusB);
 	setFontColour(litVerbLinePalette, here->statusLR, here->statusLG, here->statusLB);

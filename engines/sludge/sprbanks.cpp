@@ -32,9 +32,6 @@
 namespace Sludge {
 
 LoadedSpriteBank *allLoadedBanks = NULL;
-extern SpriteBank theFont;
-extern int loadedFontNum;
-extern uint fontTableSize;
 
 LoadedSpriteBank *loadBankForAnim(int ID) {
 	LoadedSpriteBank *returnMe = allLoadedBanks;
@@ -60,22 +57,6 @@ LoadedSpriteBank *loadBankForAnim(int ID) {
 		}
 	} else
 		return NULL;
-}
-
-void reloadSpriteTextures() {
-	LoadedSpriteBank *spriteBank = allLoadedBanks;
-	while (spriteBank) {
-		//fprintf (stderr, "Reloading bank %d: %s.\n", spriteBank->ID, resourceNameFromNum (spriteBank->ID));
-		delete spriteBank->bank.sprites;
-		spriteBank->bank.sprites = NULL;
-		g_sludge->_gfxMan->loadSpriteBank(spriteBank->ID, spriteBank->bank, false);
-		spriteBank = spriteBank->next;
-	}
-	if (fontTableSize) {
-		delete theFont.sprites;
-		theFont.sprites = NULL;
-		g_sludge->_gfxMan->loadSpriteBank(loadedFontNum, theFont, true);
-	}
 }
 
 } // End of namespace Sludge

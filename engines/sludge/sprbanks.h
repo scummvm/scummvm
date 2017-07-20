@@ -33,7 +33,6 @@ struct LoadedSpriteBank {
 };
 
 LoadedSpriteBank *loadBankForAnim(int ID);
-void reloadSpriteTextures();
 
 } // End of namespace Sludge
 

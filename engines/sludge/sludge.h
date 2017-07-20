@@ -41,6 +41,7 @@ extern SludgeEngine *g_sludge;
 class EventManager;
 class GraphicsManager;
 class SoundManager;
+class TextManager;
 
 class SludgeConsole;
 
@@ -79,6 +80,7 @@ public:
 	GraphicsManager *_gfxMan;
 	EventManager *_evtMan;
 	SoundManager *_soundMan;
+	TextManager *_txtMan;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();

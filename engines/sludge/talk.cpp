@@ -38,7 +38,7 @@
 
 namespace Sludge {
 
-extern int fontHeight, speechMode;
+extern int speechMode;
 SpeechStruct *speech;
 float speechSpeed = 1;
 
@@ -78,7 +78,7 @@ inline void setObjFontColour(ObjectType *t) {
 
 void addSpeechLine(const Common::String &theLine, int x, int &offset) {
 	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
-	int halfWidth = (stringWidth(theLine) >> 1) / cameraZoom;
+	int halfWidth = (g_sludge->_txtMan->stringWidth(theLine) >> 1) / cameraZoom;
 	int xx1 = x - (halfWidth);
 	int xx2 = x + (halfWidth);
 	SpeechLine *newLine = new SpeechLine;
@@ -103,6 +103,7 @@ int isThereAnySpeechGoingOn() {
 
 int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int sampleFile) {
 	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
+	int fontHeight = g_sludge->_txtMan->getFontHeight();
 	int cameraY = g_sludge->_gfxMan->getCamY();
 
 	int a, offset = 0;
@@ -206,10 +207,11 @@ int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool ani
 
 void viewSpeech() {
 	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
+	int fontHeight = g_sludge->_txtMan->getFontHeight();
 	int viewY = speech->speechY;
 	SpeechLine *viewLine = speech->allSpeech;
 	while (viewLine) {
-		pasteString(viewLine->textLine, viewLine->x, viewY, speech->talkCol);
+		g_sludge->_txtMan->pasteString(viewLine->textLine, viewLine->x, viewY, speech->talkCol);
 		viewY -= fontHeight / cameraZoom;
 		viewLine = viewLine->next;
 	}

@@ -63,13 +63,9 @@ extern Floor *currentFloor;                          // In floor.cpp
 extern SpeechStruct *speech;                        // In talk.cpp
 extern PersonaAnimation  *mouseCursorAnim;           // In cursor.cpp
 extern int mouseCursorFrameNum;                     // "    "   "
-extern int loadedFontNum, fontHeight;				// In fonttext.cpp
-extern uint fontTableSize;							// 
-extern UTF8Converter fontOrder;                       // "    "   "
 extern FILETIME fileTime;                           // In sludger.cpp
 extern int speechMode;                              // "    "   "
 extern byte brightnessLevel;               // "    "   "
-extern int16 fontSpace;                             // in textfont.cpp
 extern byte fadeMode;                      // In transition.cpp
 extern bool captureAllKeys;
 extern bool allowAnyFilename;
@@ -370,14 +366,7 @@ bool saveGame(const Common::String &fname) {
 	fp->writeByte(allowAnyFilename);
 	fp->writeByte(captureAllKeys);
 	fp->writeByte(true);
-	fp->writeByte(fontTableSize > 0);
-
-	if (fontTableSize > 0) {
-		fp->writeUint16BE(loadedFontNum);
-		fp->writeUint16BE(fontHeight);
-		writeString(fontOrder.getUTF8String(), fp);
-	}
-	fp->writeSint16LE(fontSpace);
+	g_sludge->_txtMan->saveFont(fp);
 
 	// Save backdrop
 	fp->writeUint16BE(g_sludge->_gfxMan->getCamX());
@@ -520,29 +509,7 @@ bool loadGame(const Common::String &fname) {
 	captureAllKeys = fp->readByte();
 	fp->readByte();  // updateDisplay (part of movie playing)
 
-	bool fontLoaded = fp->readByte();
-	int fontNum = 0;
-	Common::String charOrder = "";
-	if (fontLoaded) {
-		fontNum = fp->readUint16BE();
-		fontHeight = fp->readUint16BE();
-
-		if (ssgVersion < VERSION(2, 2)) {
-			char *tmp = new char[257];
-			for (int a = 0; a < 256; a++) {
-				int x = fp->readByte();
-				tmp[x] = a;
-			}
-			tmp[256] = 0;
-			charOrder = tmp;
-			delete []tmp;
-		} else {
-			charOrder = readString(fp);
-		}
-	}
-	loadFont(fontNum, charOrder, fontHeight);
-
-	fontSpace = fp->readSint16LE();
+	g_sludge->_txtMan->loadFont(ssgVersion, fp);
 
 	killAllPeople();
 	killAllRegions();

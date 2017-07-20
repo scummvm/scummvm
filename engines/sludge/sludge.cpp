@@ -29,6 +29,7 @@
 #include "sludge/graphics.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
+#include "sludge/fonttext.h"
 #include "sludge/main_loop.h"
 
 namespace Sludge {
@@ -71,6 +72,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	_gfxMan = new GraphicsManager(this);
 	_evtMan = new EventManager(this);
 	_soundMan = new SoundManager();
+	_txtMan = new TextManager();
 }
 
 SludgeEngine::~SludgeEngine() {
@@ -93,6 +95,8 @@ SludgeEngine::~SludgeEngine() {
 	_pixelFormat = nullptr;
 
 	// Dispose managers
+	delete _txtMan;
+	_txtMan = nullptr;
 	delete _soundMan;
 	_soundMan = nullptr;
 	delete _evtMan;

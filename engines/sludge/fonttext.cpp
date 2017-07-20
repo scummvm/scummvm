@@ -27,22 +27,33 @@
 #include "sludge/newfatal.h"
 #include "sludge/moreio.h"
 #include "sludge/sludge.h"
-#include "sludge/utf8.h"
+#include "sludge/version.h"
 
 namespace Sludge {
 
-SpriteBank theFont;
-int fontHeight = 0, numFontColours, loadedFontNum;
-UTF8Converter fontOrder;
-int16 fontSpace = -1;
+TextManager::TextManager() {
+	_theFont.total = 0;
+	_theFont.sprites = nullptr;
 
-uint32 *fontTable = NULL;
-uint fontTableSize = 0;
+	_fontHeight = 0;
+	_numFontColours = 0;
+	_loadedFontNum = 0;
+	_fontSpace = -1;
 
-#define fontInTable(x) ((x<fontTableSize) ? fontTable[(uint32) x] : 0)
+	_fontTable = nullptr;
+	_fontTableSize = 0;
+}
 
-bool isInFont(const Common::String &theText) {
-	if (!fontTableSize)
+TextManager::~TextManager() {
+	if (_fontTable) {
+		delete []_fontTable;
+		_fontTable = nullptr;
+	}
+
+}
+
+bool TextManager::isInFont(const Common::String &theText) {
+	if (!_fontTableSize)
 		return 0;
 	if (theText.empty())
 		return 0;
@@ -56,73 +67,73 @@ bool isInFont(const Common::String &theText) {
 	uint32 c = str32[0];
 
 	// check if font order contains the utf8 char
-	return fontOrder.getU32String().contains(c);
+	return _fontOrder.getU32String().contains(c);
 }
 
-int stringLength(const Common::String &theText) {
+int TextManager::stringLength(const Common::String &theText) {
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
 	return str32.size();
 }
 
-int stringWidth(const Common::String &theText) {
+int TextManager::stringWidth(const Common::String &theText) {
 	int xOff = 0;
 
-	if (!fontTableSize)
+	if (!_fontTableSize)
 		return 0;
 
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
 
 	for (uint i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
-		xOff += theFont.sprites[fontInTable(c)].surface.w + fontSpace;
+		xOff += _theFont.sprites[fontInTable(c)].surface.w + _fontSpace;
 	}
 
 	return xOff;
 }
 
-void pasteString(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
-	if (!fontTableSize)
+void TextManager::pasteString(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
+	if (!_fontTableSize)
 		return;
 
-	xOff += (int)((float)(fontSpace >> 1) / g_sludge->_gfxMan->getCamZoom());
+	xOff += (int)((float)(_fontSpace >> 1) / g_sludge->_gfxMan->getCamZoom());
 
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
 
 	for (uint32 i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
-		Sprite *mySprite = &theFont.sprites[fontInTable(c)];
+		Sprite *mySprite = &_theFont.sprites[fontInTable(c)];
 		g_sludge->_gfxMan->fontSprite(xOff, y, *mySprite, thePal);
-		xOff += (int)((double)(mySprite->surface.w + fontSpace) / g_sludge->_gfxMan->getCamZoom());
+		xOff += (int)((double)(mySprite->surface.w + _fontSpace) / g_sludge->_gfxMan->getCamZoom());
 	}
 }
 
-void pasteStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
-	if (!fontTableSize)
+void TextManager::pasteStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
+	if (!_fontTableSize)
 		return;
 
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
 
-	xOff += fontSpace >> 1;
+	xOff += _fontSpace >> 1;
 	for (uint32 i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
-		Sprite *mySprite = &theFont.sprites[fontInTable(c)];
+		Sprite *mySprite = &_theFont.sprites[fontInTable(c)];
 		g_sludge->_gfxMan->pasteSpriteToBackDrop(xOff, y, *mySprite, thePal);
-		xOff += mySprite->surface.w + fontSpace;
+		xOff += mySprite->surface.w + _fontSpace;
 	}
 }
 
-void burnStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
-	if (!fontTableSize)
+void TextManager::burnStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
+	if (!_fontTableSize)
 		return;
 
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
 
-	xOff += fontSpace >> 1;
+	xOff += _fontSpace >> 1;
 	for (uint i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
-		Sprite *mySprite = &theFont.sprites[fontInTable(c)];
+		Sprite *mySprite = &_theFont.sprites[fontInTable(c)];
 		g_sludge->_gfxMan->burnSpriteToBackDrop(xOff, y, *mySprite, thePal);
-		xOff += mySprite->surface.w + fontSpace;
+		xOff += mySprite->surface.w + _fontSpace;
 	}
 }
 
@@ -132,46 +143,86 @@ void setFontColour(SpritePalette &sP, byte r, byte g, byte b) {
 	sP.originalBlue = b;
 }
 
-bool loadFont(int filenum, const Common::String &charOrder, int h) {
-	fontOrder.setUTF8String(charOrder);
+bool TextManager::loadFont(int filenum, const Common::String &charOrder, int h) {
+	_fontOrder.setUTF8String(charOrder);
 
-	g_sludge->_gfxMan->forgetSpriteBank(theFont);
+	g_sludge->_gfxMan->forgetSpriteBank(_theFont);
 
-	loadedFontNum = filenum;
+	_loadedFontNum = filenum;
 
 	// get max value among all utf8 chars
-	Common::U32String fontOrderString = fontOrder.getU32String();
-	fontTableSize = 0;
+	Common::U32String fontOrderString = _fontOrder.getU32String();
+	_fontTableSize = 0;
 	for (uint32 i = 0; i < fontOrderString.size(); ++i) {
 		uint32 c = fontOrderString[i];
-		if (c > fontTableSize)
-			fontTableSize = c;
+		if (c > _fontTableSize)
+			_fontTableSize = c;
 	}
-	fontTableSize++;
+	_fontTableSize++;
 
 	// create an index table from utf8 char to the index
-	delete[] fontTable;
-	fontTable = new uint32[fontTableSize];
-	if (!checkNew(fontTable))
+	if (_fontTable) {
+		delete []_fontTable;
+		_fontTable = nullptr;
+	}
+	_fontTable = new uint32[_fontTableSize];
+	if (!checkNew(_fontTable))
 		return false;
 
-	for (uint i = 0; i < fontTableSize; i++) {
-		fontTable[i] = 0;
+	for (uint i = 0; i < _fontTableSize; i++) {
+		_fontTable[i] = 0;
 	}
 
 	for (uint i = 0; i < fontOrderString.size(); ++i) {
 		uint32 c = fontOrderString[i];
-		fontTable[c] = i;
+		_fontTable[c] = i;
 	}
 
-	if (!g_sludge->_gfxMan->loadSpriteBank(filenum, theFont, true)) {
+	if (!g_sludge->_gfxMan->loadSpriteBank(filenum, _theFont, true)) {
 		fatal("Can't load font");
 		return false;
 	}
 
-	numFontColours = theFont.myPalette.total;
-	fontHeight = h;
+	_numFontColours = _theFont.myPalette.total;
+	_fontHeight = h;
 	return true;
+}
+
+// load & save
+void TextManager::saveFont(Common::WriteStream *stream) {
+	stream->writeByte(_fontTableSize > 0);
+	if (_fontTableSize > 0) {
+		stream->writeUint16BE(_loadedFontNum);
+		stream->writeUint16BE(_fontHeight);
+		writeString(_fontOrder.getUTF8String(), stream);
+	}
+	stream->writeSint16LE(_fontSpace);
+}
+
+void TextManager::loadFont(int ssgVersion, Common::SeekableReadStream *stream) {
+	bool fontLoaded = stream->readByte();
+	int fontNum = 0;
+	Common::String charOrder = "";
+	if (fontLoaded) {
+		fontNum = stream->readUint16BE();
+		_fontHeight = stream->readUint16BE();
+
+		if (ssgVersion < VERSION(2, 2)) {
+			char *tmp = new char[257];
+			for (int a = 0; a < 256; a++) {
+				int x = stream->readByte();
+				tmp[x] = a;
+			}
+			tmp[256] = 0;
+			charOrder = tmp;
+			delete []tmp;
+		} else {
+			charOrder = readString(stream);
+		}
+	}
+	loadFont(fontNum, charOrder, _fontHeight);
+
+	_fontSpace = stream->readSint16LE();
 }
 
 } // End of namespace Sludge

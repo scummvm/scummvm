@@ -63,7 +63,6 @@ Variable *launchResult = NULL;
 extern int lastFramesPerSecond, thumbWidth, thumbHeight;
 extern bool allowAnyFilename;
 extern bool captureAllKeys;
-extern int16 fontSpace;
 extern VariableStack *noStack;
 extern StatusStuff  *nowStatus;
 extern ScreenRegion *overRegion;
@@ -534,7 +533,7 @@ builtIn(stringLength) {
 	UNUSEDALL
 	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, stringLength(newText));
+	setVariable(fun->reg, SVT_INT, g_sludge->_txtMan->stringLength(newText));
 	return BR_CONTINUE;
 }
 
@@ -826,7 +825,7 @@ builtIn(setFont) {
 		return BR_ERROR;
 	//              newDebug ("  File:", fileNumber);
 	trimStack(fun->stack);
-	if (!loadFont(fileNumber, newText, newHeight))
+	if (!g_sludge->_txtMan->loadFont(fileNumber, newText, newHeight))
 		return BR_ERROR;
 	//              newDebug ("  Done!");
 	return BR_CONTINUE;
@@ -838,7 +837,7 @@ builtIn(inFont) {
 	trimStack(fun->stack);
 
 	// Return value
-	setVariable(fun->reg, SVT_INT, isInFont(newText));
+	setVariable(fun->reg, SVT_INT, g_sludge->_txtMan->isInFont(newText));
 	return BR_CONTINUE;
 }
 
@@ -854,8 +853,8 @@ builtIn(pasteString) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
-		x = g_sludge->_gfxMan->getCenterX(stringWidth(newText));
-	pasteStringToBackdrop(newText, x, y, pastePalette);
+		x = g_sludge->_gfxMan->getCenterX(g_sludge->_txtMan->stringWidth(newText));
+	g_sludge->_txtMan->pasteStringToBackdrop(newText, x, y, pastePalette);
 	return BR_CONTINUE;
 }
 
@@ -1937,7 +1936,7 @@ builtIn(stringWidth) {
 	trimStack(fun->stack);
 
 	// Return value
-	setVariable(fun->reg, SVT_INT, stringWidth(theText));
+	setVariable(fun->reg, SVT_INT, g_sludge->_txtMan->stringWidth(theText));
 	return BR_CONTINUE;
 }
 
@@ -1977,7 +1976,7 @@ builtIn(setFontSpacing) {
 	int fontSpaceI;
 	if (!getValueType(fontSpaceI, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
-	fontSpace = fontSpaceI;
+	g_sludge->_txtMan->setFontSpace(fontSpaceI);
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;
@@ -2170,8 +2169,8 @@ builtIn(burnString) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
-		x = g_sludge->_gfxMan->getCenterX(stringWidth(newText));
-	burnStringToBackdrop(newText, x, y, pastePalette);
+		x = g_sludge->_gfxMan->getCenterX(g_sludge->_txtMan->stringWidth(newText));
+	g_sludge->_txtMan->burnStringToBackdrop(newText, x, y, pastePalette);
 	return BR_CONTINUE;
 }
 
