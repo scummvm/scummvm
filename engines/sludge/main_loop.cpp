@@ -30,7 +30,6 @@
 #include "sludge/event.h"
 #include "sludge/floor.h"
 #include "sludge/graphics.h"
-#include "sludge/helpers.h"
 #include "sludge/language.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
