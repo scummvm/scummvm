@@ -25,7 +25,7 @@
 
 #include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/opengl/framebuffer.h"
-#include "backends/graphics/graphics.h"
+#include "backends/graphics/windowed.h"
 
 #include "common/frac.h"
 #include "common/mutex.h"
@@ -53,89 +53,76 @@ enum {
 	GFX_OPENGL = 0
 };
 
-class OpenGLGraphicsManager : virtual public GraphicsManager {
+class OpenGLGraphicsManager : virtual public WindowedGraphicsManager {
 public:
 	OpenGLGraphicsManager();
 	virtual ~OpenGLGraphicsManager();
 
 	// GraphicsManager API
-	virtual bool hasFeature(OSystem::Feature f);
-	virtual void setFeatureState(OSystem::Feature f, bool enable);
-	virtual bool getFeatureState(OSystem::Feature f);
+	virtual bool hasFeature(OSystem::Feature f) const override;
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
+	virtual bool getFeatureState(OSystem::Feature f) const override;
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool setGraphicsMode(int mode) override;
+	virtual int getGraphicsMode() const override;
 
-	virtual void resetGraphicsScale() {}
+	virtual void resetGraphicsScale() override {}
 
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
+	virtual Graphics::PixelFormat getScreenFormat() const override;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override = 0;
 #endif
 
-	virtual void beginGFXTransaction();
-	virtual OSystem::TransactionError endGFXTransaction();
+	virtual void beginGFXTransaction() override;
+	virtual OSystem::TransactionError endGFXTransaction() override;
 
-	virtual int getScreenChangeID() const;
+	virtual int getScreenChangeID() const override;
 
-	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
 
-	virtual int16 getWidth();
-	virtual int16 getHeight();
+	virtual int16 getWidth() const override;
+	virtual int16 getHeight() const override;
 
-	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
-	virtual void fillScreen(uint32 col);
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
+	virtual void fillScreen(uint32 col) override;
 
-	virtual void setShakePos(int shakeOffset);
+	virtual void setShakePos(int shakeOffset) override;
 
-	virtual void updateScreen();
+	virtual void updateScreen() override;
 
-	virtual Graphics::Surface *lockScreen();
-	virtual void unlockScreen();
+	virtual Graphics::Surface *lockScreen() override;
+	virtual void unlockScreen() override;
 
-	virtual void setFocusRectangle(const Common::Rect& rect);
-	virtual void clearFocusRectangle();
+	virtual void setFocusRectangle(const Common::Rect& rect) override;
+	virtual void clearFocusRectangle() override;
 
-	virtual int16 getOverlayWidth();
-	virtual int16 getOverlayHeight();
+	virtual int16 getOverlayWidth() const override;
+	virtual int16 getOverlayHeight() const override;
 
-	virtual void showOverlay();
-	virtual void hideOverlay();
+	virtual Graphics::PixelFormat getOverlayFormat() const override;
 
-	virtual Graphics::PixelFormat getOverlayFormat() const;
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
+	virtual void clearOverlay() override;
+	virtual void grabOverlay(void *buf, int pitch) const override;
 
-	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
-	virtual void clearOverlay();
-	virtual void grabOverlay(void *buf, int pitch);
+	virtual bool showMouse(bool visible) override;
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) override;
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
-	virtual bool showMouse(bool visible);
-	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format);
-	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-
-	virtual void displayMessageOnOSD(const char *msg);
-	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon);
+	virtual void displayMessageOnOSD(const char *msg) override;
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 
 	// PaletteManager interface
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual void setPalette(const byte *colors, uint start, uint num) override;
+	virtual void grabPalette(byte *colors, uint start, uint num) const override;
 
 protected:
 	/**
 	 * Whether an GLES or GLES2 context is active.
 	 */
 	bool isGLESContext() const { return g_context.type == kContextGLES || g_context.type == kContextGLES2; }
-
-	/**
-	 * Set up the actual screen size available for the OpenGL code to do any
-	 * drawing.
-	 *
-	 * @param width  The width of the screen.
-	 * @param height The height of the screen.
-	 */
-	void setActualScreenSize(uint width, uint height);
 
 	/**
 	 * Sets the OpenGL (ES) type the graphics manager shall work with.
@@ -166,33 +153,6 @@ protected:
 	 */
 	void notifyContextDestroy();
 
-	/**
-	 * Adjust the physical mouse coordinates according to the currently visible screen.
-	 */
-	void adjustMousePosition(int16 &x, int16 &y);
-
-	/**
-	 * Set up the mouse position for graphics output.
-	 *
-	 * @param x X coordinate in physical coordinates.
-	 * @param y Y coordinate in physical coordinates.
-	 */
-	void setMousePosition(int x, int y);
-
-	/**
-	 * Query the mouse position in physical coordinates.
-	 */
-	void getMousePosition(int16 &x, int16 &y) const { x = _cursorX; y = _cursorY; }
-
-	/**
-	 * Set up the mouse position for the (event) system.
-	 *
-	 * @param x X coordinate in physical coordinates.
-	 * @param y Y coordinate in physical coordinates.
-	 */
-	virtual void setInternalMousePosition(int x, int y) = 0;
-
-private:
 	/**
 	 * Create a surface with the specified pixel format.
 	 *
@@ -292,8 +252,7 @@ protected:
 	virtual void refreshScreen() = 0;
 
 	/**
-	 * Save a screenshot of the full display as BMP to the given file. This
-	 * uses Common::DumpFile for writing the screenshot.
+	 * Saves a screenshot of the entire window, excluding window decorations.
 	 *
 	 * @param filename The output filename.
 	 * @return true on success, false otherwise
@@ -334,7 +293,6 @@ protected:
 	 */
 	virtual void *getProcAddress(const char *name) const = 0;
 
-private:
 	/**
 	 * Try to determine the internal parameters for a given pixel format.
 	 *
@@ -342,49 +300,9 @@ private:
 	 */
 	bool getGLPixelFormat(const Graphics::PixelFormat &pixelFormat, GLenum &glIntFormat, GLenum &glFormat, GLenum &glType) const;
 
-	//
-	// Actual hardware screen
-	//
-
-	/**
-	 * The width of the physical output.
-	 */
-	uint _outputScreenWidth;
-
-	/**
-	 * The height of the physical output.
-	 */
-	uint _outputScreenHeight;
-
-	/**
-	 * @return The desired aspect of the game screen.
-	 */
-	frac_t getDesiredGameScreenAspect() const;
-
-	/**
-	 * Recalculates the area used to display the game screen.
-	 */
-	void recalculateDisplayArea();
-
-	/**
-	 * The X coordinate of the game screen.
-	 */
-	uint _displayX;
-
-	/**
-	 * The Y coordinate of the game screen.
-	 */
-	uint _displayY;
-
-	/**
-	 * The width of the game screen in physical coordinates.
-	 */
-	uint _displayWidth;
-
-	/**
-	 * The height of the game screen in physical coordinates.
-	 */
-	uint _displayHeight;
+	virtual bool gameNeedsAspectRatioCorrection() const override;
+	virtual void recalculateDisplayAreas() override;
+	virtual void handleResizeImpl(const int width, const int height) override;
 
 	/**
 	 * The default pixel format of the backend.
@@ -396,12 +314,8 @@ private:
 	 */
 	Graphics::PixelFormat _defaultFormatAlpha;
 
-	//
-	// Game screen
-	//
-
 	/**
-	 * The virtual game screen.
+	 * The rendering surface for the virtual game screen.
 	 */
 	Surface *_gameScreen;
 
@@ -420,14 +334,9 @@ private:
 	//
 
 	/**
-	 * The overlay screen.
+	 * The rendering surface for the overlay.
 	 */
 	Surface *_overlay;
-
-	/**
-	 * Whether the overlay is visible or not.
-	 */
-	bool _overlayVisible;
 
 	//
 	// Cursor
@@ -439,37 +348,17 @@ private:
 	void updateCursorPalette();
 
 	/**
-	 * The cursor image.
+	 * The rendering surface for the mouse cursor.
 	 */
 	Surface *_cursor;
 
 	/**
-	 * X coordinate of the cursor in physical coordinates.
-	 */
-	int _cursorX;
-
-	/**
-	 * Y coordinate of the cursor in physical coordinates.
-	 */
-	int _cursorY;
-
-	/**
-	 * X coordinate used for drawing the cursor.
-	 */
-	int _cursorDisplayX;
-
-	/**
-	 * Y coordinate used for drawing the cursor.
-	 */
-	int _cursorDisplayY;
-
-	/**
-	 * The X offset for the cursor hotspot in unscaled coordinates.
+	 * The X offset for the cursor hotspot in unscaled game coordinates.
 	 */
 	int _cursorHotspotX;
 
 	/**
-	 * The Y offset for the cursor hotspot in unscaled coordinates.
+	 * The Y offset for the cursor hotspot in unscaled game coordinates.
 	 */
 	int _cursorHotspotY;
 
@@ -480,22 +369,24 @@ private:
 	void recalculateCursorScaling();
 
 	/**
-	 * The X offset for the cursor hotspot in scaled coordinates.
+	 * The X offset for the cursor hotspot in scaled game display area
+	 * coordinates.
 	 */
 	int _cursorHotspotXScaled;
 
 	/**
-	 * The Y offset for the cursor hotspot in scaled coordinates.
+	 * The Y offset for the cursor hotspot in scaled game display area
+	 * coordinates.
 	 */
 	int _cursorHotspotYScaled;
 
 	/**
-	 * The width of the cursor scaled coordinates.
+	 * The width of the cursor in scaled game display area coordinates.
 	 */
 	uint _cursorWidthScaled;
 
 	/**
-	 * The height of the cursor scaled coordinates.
+	 * The height of the cursor in scaled game display area coordinates.
 	 */
 	uint _cursorHeightScaled;
 
@@ -524,15 +415,6 @@ private:
 	 */
 	byte _cursorPalette[3 * 256];
 
-	//
-	// Misc
-	//
-
-	/**
-	 * Whether the screen contents shall be forced to redrawn.
-	 */
-	bool _forceRedraw;
-
 #ifdef USE_OSD
 	//
 	// OSD
@@ -541,7 +423,7 @@ protected:
 	/**
 	 * Returns the font used for on screen display
 	 */
-	virtual const Graphics::Font *getFontOSD();
+	virtual const Graphics::Font *getFontOSD() const;
 
 private:
 	/**

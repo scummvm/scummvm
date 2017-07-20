@@ -23,7 +23,7 @@
 #ifndef BACKENDS_GRAPHICS_SDL_SDLGRAPHICS_H
 #define BACKENDS_GRAPHICS_SDL_SDLGRAPHICS_H
 
-#include "backends/graphics/graphics.h"
+#include "backends/graphics/windowed.h"
 #include "backends/platform/sdl/sdl-window.h"
 
 #include "common/rect.h"
@@ -32,13 +32,11 @@ class SdlEventSource;
 
 /**
  * Base class for a SDL based graphics manager.
- *
- * It features a few extra a few extra features required by SdlEventSource.
  */
-class SdlGraphicsManager : virtual public GraphicsManager {
+class SdlGraphicsManager : virtual public WindowedGraphicsManager {
 public:
 	SdlGraphicsManager(SdlEventSource *source, SdlWindow *window);
-	virtual ~SdlGraphicsManager();
+	virtual ~SdlGraphicsManager() {}
 
 	/**
 	 * Makes this graphics manager active. That means it should be ready to
@@ -74,23 +72,20 @@ public:
 	 * @param width Requested window width.
 	 * @param height Requested window height.
 	 */
-	virtual void notifyResize(const uint width, const uint height) {}
+	virtual void notifyResize(const int width, const int height) {}
 
 	/**
-	 * Transforms real screen coordinates into the current active screen
-	 * coordinates (may be either game screen or overlay).
+	 * Notifies the graphics manager about a mouse position change.
 	 *
-	 * @param point Mouse coordinates to transform.
-	 */
-	virtual void transformMouseCoordinates(Common::Point &point) = 0;
-
-	/**
-	 * Notifies the graphics manager about a position change according to the
-	 * real screen coordinates.
+	 * The passed point *must* be converted from window coordinates to virtual
+	 * coordinates in order for the event to be processed correctly by the game
+	 * engine. Just use `convertWindowToVirtual` for this unless you need to do
+	 * something special.
 	 *
-	 * @param mouse Mouse position.
+	 * @param mouse The mouse position in window coordinates, which must be
+	 * converted synchronously to virtual coordinates.
 	 */
-	virtual void notifyMousePos(Common::Point mouse) = 0;
+	virtual void notifyMousePosition(Common::Point &mouse);
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
@@ -108,17 +103,17 @@ public:
 	};
 
 	/**
-	 * Queries the current state of the graphic manager.
+	 * Gets the current state of the graphics manager.
 	 */
-	State getState();
+	State getState() const;
 
 	/**
-	 * Setup a basic state of the graphic manager.
+	 * Sets up a basic state of the graphics manager.
 	 */
 	bool setState(const State &state);
 
 	/**
-	 * Queries the SDL window.
+	 * @returns the SDL window.
 	 */
 	SdlWindow *getWindow() const { return _window; }
 
@@ -129,6 +124,34 @@ protected:
 
 	bool defaultGraphicsModeConfig() const;
 	int getGraphicsModeIdByName(const Common::String &name) const;
+
+	/**
+	 * Gets the dimensions of the window directly from SDL instead of from the
+	 * values stored by the graphics manager.
+	 */
+	void getWindowSizeFromSdl(int *width, int *height) const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		assert(_window);
+		SDL_GetWindowSize(_window->getSDLWindow(), width, height);
+#else
+		assert(_hwScreen);
+
+		if (width) {
+			*width = _hwScreen->w;
+		}
+
+		if (height) {
+			*height = _hwScreen->h;
+		}
+#endif
+	}
+
+	virtual void setSystemMousePosition(const int x, const int y) override {
+		assert(_window);
+		_window->warpMouseInWindow(x, y);
+	}
+
+	virtual void handleResizeImpl(const int width, const int height) override;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:
@@ -146,6 +169,7 @@ protected:
 	bool createOrUpdateWindow(const int width, const int height, const Uint32 flags);
 #endif
 
+	SDL_Surface *_hwScreen;
 	SdlEventSource *_eventSource;
 	SdlWindow *_window;
 };

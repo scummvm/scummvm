@@ -28,15 +28,11 @@
 #include "graphics/scaler/aspect.h"
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
-	: _eventSource(source), _window(window)
+	: _eventSource(source), _window(window), _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	, _allowWindowSizeReset(false), _hintedWidth(0), _hintedHeight(0), _lastFlags(0)
 #endif
-	  {
-}
-
-SdlGraphicsManager::~SdlGraphicsManager() {
-}
+{}
 
 void SdlGraphicsManager::activateManager() {
 	_eventSource->setGraphicsManager(this);
@@ -46,7 +42,7 @@ void SdlGraphicsManager::deactivateManager() {
 	_eventSource->setGraphicsManager(0);
 }
 
-SdlGraphicsManager::State SdlGraphicsManager::getState() {
+SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 	State state;
 
 	state.screenWidth   = getWidth();
@@ -150,6 +146,32 @@ void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
 	_hintedWidth = bestWidth;
 	_hintedHeight = bestHeight;
 #endif
+}
+
+void SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
+	int showCursor;
+	if (_activeArea.drawRect.contains(mouse)) {
+		showCursor = SDL_DISABLE;
+	} else {
+		mouse.x = CLIP<int>(mouse.x, _activeArea.drawRect.left, _activeArea.drawRect.right - 1);
+		mouse.y = CLIP<int>(mouse.y, _activeArea.drawRect.top, _activeArea.drawRect.bottom - 1);
+
+		if (_window->mouseIsGrabbed()) {
+			setSystemMousePosition(mouse.x, mouse.y);
+			showCursor = SDL_DISABLE;
+		} else {
+			showCursor = SDL_ENABLE;
+		}
+	}
+
+	SDL_ShowCursor(showCursor);
+	setMousePosition(mouse.x, mouse.y);
+	mouse = convertWindowToVirtual(mouse.x, mouse.y);
+}
+
+void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
+	_eventSource->resetKeyboardEmulation(width - 1, height - 1);
+	_forceRedraw = true;
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
