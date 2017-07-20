@@ -2792,10 +2792,7 @@ void SurfaceSdlGraphicsManager::recreateScreenTexture() {
 SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 	deinitializeRenderer();
 
-	uint32 createWindowFlags = 0;
-#ifdef USE_SDL_RESIZABLE_WINDOW
-	createWindowFlags |= SDL_WINDOW_RESIZABLE;
-#endif
+	uint32 createWindowFlags = SDL_WINDOW_RESIZABLE;
 	if ((flags & SDL_FULLSCREEN) != 0) {
 		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
