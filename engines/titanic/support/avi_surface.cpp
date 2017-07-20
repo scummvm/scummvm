@@ -168,7 +168,7 @@ void AVISurface::seekToFrame(uint frameNumber) {
 		--frameNumber;
 
 	if ((int)frameNumber != _currentFrame) {
-		if (frameNumber > 0) {
+		if (!isReversed() && frameNumber > 0) {
 			_decoder->seekToFrame(frameNumber - 1);
 			renderFrame();
 		}
