@@ -882,8 +882,8 @@ bool runSludge() {
 		if (!thisFunction->freezerLevel) {
 			if (thisFunction->timeLeft) {
 				if (thisFunction->timeLeft < 0) {
-					if (!stillPlayingSound(
-							findInSoundCache(speech->lastFile))) {
+					if (!g_sludge->_soundMan->stillPlayingSound(
+							g_sludge->_soundMan->findInSoundCache(speech->lastFile))) {
 						thisFunction->timeLeft = 0;
 					}
 				} else if (!--(thisFunction->timeLeft)) {

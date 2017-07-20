@@ -45,12 +45,6 @@
 
 namespace Sludge {
 
-#ifndef MAX_PATH
-#define MAX_PATH        1024          // maximum size of a path name
-#endif
-
-HWND hMainWindow = NULL;
-
 extern VariableStack *noStack;
 
 int dialogValue = 0;
@@ -77,7 +71,7 @@ int main_loop(const char *filename) {
 	resetRandW();
 
 	if (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) {
-		initSoundStuff(hMainWindow);
+		g_sludge->_soundMan->initSoundStuff();
 	}
 
 	startNewFunctionNum(0, 0, NULL, noStack);
@@ -91,11 +85,11 @@ int main_loop(const char *filename) {
 			runSludge();
 		}
 		sludgeDisplay();
-		handleSoundLists();
+		g_sludge->_soundMan->handleSoundLists();
 		g_sludge->_timer.waitFrame();
 	}
 
-	killSoundStuff();
+	g_sludge->_soundMan->killSoundStuff();
 
 	return (0);
 }

@@ -1063,7 +1063,7 @@ builtIn(startMusic) {
 	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!playMOD(fileNumber, musChan, fromTrack))
+	if (!g_sludge->_soundMan->playMOD(fileNumber, musChan, fromTrack))
 		return BR_CONTINUE;  //BR_ERROR;
 	return BR_CONTINUE;
 }
@@ -1074,7 +1074,7 @@ builtIn(stopMusic) {
 	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	stopMOD(v);
+	g_sludge->_soundMan->stopMOD(v);
 	return BR_CONTINUE;
 }
 
@@ -1087,7 +1087,7 @@ builtIn(setMusicVolume) {
 	if (!getValueType(musChan, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setMusicVolume(musChan, v);
+	g_sludge->_soundMan->setMusicVolume(musChan, v);
 	return BR_CONTINUE;
 }
 
@@ -1097,7 +1097,7 @@ builtIn(setDefaultMusicVolume) {
 	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setDefaultMusicVolume(v);
+	g_sludge->_soundMan->setDefaultMusicVolume(v);
 	return BR_CONTINUE;
 }
 
@@ -1107,7 +1107,7 @@ builtIn(playSound) {
 	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!startSound(fileNumber, false))
+	if (!g_sludge->_soundMan->startSound(fileNumber, false))
 		return BR_CONTINUE;    // Was BR_ERROR
 	return BR_CONTINUE;
 }
@@ -1123,7 +1123,7 @@ builtIn(loopSound) {
 		if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
 			return BR_ERROR;
 		trimStack(fun->stack);
-		if (!startSound(fileNumber, true))
+		if (!g_sludge->_soundMan->startSound(fileNumber, true))
 			return BR_CONTINUE;     // Was BR_ERROR
 		return BR_CONTINUE;
 	} else {
@@ -1165,7 +1165,7 @@ builtIn(loopSound) {
 			s->next = s;
 		}
 		old->vol = -1;
-		playSoundList(old);
+		g_sludge->_soundMan->playSoundList(old);
 		return BR_CONTINUE;
 	}
 }
@@ -1176,7 +1176,7 @@ builtIn(stopSound) {
 	if (!getValueType(v, SVT_FILE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	huntKillSound(v);
+	g_sludge->_soundMan->huntKillSound(v);
 	return BR_CONTINUE;
 }
 
@@ -1186,7 +1186,7 @@ builtIn(setDefaultSoundVolume) {
 	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setDefaultSoundVolume(v);
+	g_sludge->_soundMan->setDefaultSoundVolume(v);
 	return BR_CONTINUE;
 }
 
@@ -1199,7 +1199,7 @@ builtIn(setSoundVolume) {
 	if (!getValueType(musChan, SVT_FILE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setSoundVolume(musChan, v);
+	g_sludge->_soundMan->setSoundVolume(musChan, v);
 	return BR_CONTINUE;
 }
 
@@ -1215,7 +1215,7 @@ builtIn(setSoundLoopPoints) {
 	if (!getValueType(musChan, SVT_FILE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setSoundLoop(musChan, theStart, theEnd);
+	g_sludge->_soundMan->setSoundLoop(musChan, theStart, theEnd);
 	return BR_CONTINUE;
 }
 
@@ -2153,7 +2153,7 @@ builtIn(cacheSound) {
 	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (cacheSound(fileNumber) == -1)
+	if (g_sludge->_soundMan->cacheSound(fileNumber) == -1)
 		return BR_ERROR;
 	return BR_CONTINUE;
 }
@@ -2245,7 +2245,7 @@ builtIn(getSoundCache) {
 	fun->reg.varData.theStack->first = NULL;
 	fun->reg.varData.theStack->last = NULL;
 	fun->reg.varData.theStack->timesUsed = 1;
-	if (!getSoundCacheStack(fun->reg.varData.theStack))
+	if (!g_sludge->_soundMan->getSoundCacheStack(fun->reg.varData.theStack))
 		return BR_ERROR;
 	return BR_CONTINUE;
 }
@@ -2312,7 +2312,7 @@ builtIn(freeSound) {
 	if (!getValueType(v, SVT_FILE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	huntKillFreeSound(v);
+	g_sludge->_soundMan->huntKillFreeSound(v);
 	return BR_CONTINUE;
 }
 

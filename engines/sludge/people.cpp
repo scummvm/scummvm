@@ -457,7 +457,7 @@ void drawPeople() {
 				thisPerson->frameNum = 0;
 				thisPerson->frameTick = myAnim->frames[0].howMany;
 				if (myAnim->frames[thisPerson->frameNum].noise > 0) {
-					startSound(myAnim->frames[thisPerson->frameNum].noise, false);
+					g_sludge->_soundMan->startSound(myAnim->frames[thisPerson->frameNum].noise, false);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
 					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
@@ -495,7 +495,7 @@ void drawPeople() {
 			thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 			if (thisPerson->show && myAnim && myAnim->frames) {
 				if (myAnim->frames[thisPerson->frameNum].noise > 0) {
-					startSound(myAnim->frames[thisPerson->frameNum].noise, false);
+					g_sludge->_soundMan->startSound(myAnim->frames[thisPerson->frameNum].noise, false);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
 					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;

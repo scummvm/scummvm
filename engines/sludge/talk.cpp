@@ -54,7 +54,7 @@ void initSpeech() {
 
 void killAllSpeech() {
 	if (speech->lastFile != -1) {
-		huntKillSound(speech->lastFile);
+		g_sludge->_soundMan->huntKillSound(speech->lastFile);
 		speech->lastFile = -1;
 	}
 
@@ -114,7 +114,7 @@ int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int samp
 		speechTime = 1;
 	if (sampleFile != -1) {
 		if (speechMode >= 1) {
-			if (startSound(sampleFile, false)) {
+			if (g_sludge->_soundMan->startSound(sampleFile, false)) {
 				speechTime = -10;
 				speech->lastFile = sampleFile;
 				if (speechMode == 2) return -10;

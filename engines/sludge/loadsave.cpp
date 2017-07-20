@@ -432,7 +432,7 @@ bool saveGame(const Common::String &fname) {
 	fp->writeByte(fadeMode);
 	saveSpeech(speech, fp);
 	saveStatusBars(fp);
-	saveSounds(fp);
+	g_sludge->_soundMan->saveSounds(fp);
 
 	fp->writeUint16BE(saveEncoding);
 
@@ -604,7 +604,7 @@ bool loadGame(const Common::String &fname) {
 	fadeMode = fp->readByte();
 	loadSpeech(speech, fp);
 	loadStatusBars(fp);
-	loadSounds(fp);
+	g_sludge->_soundMan->loadSounds(fp);
 
 	saveEncoding = fp->readUint16BE();
 

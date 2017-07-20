@@ -23,9 +23,9 @@
 #ifndef SLUDGE_SOUND_H
 #define SLUDGE_SOUND_H
 
-#define HWND void *
-
 #include "common/file.h"
+
+#include "audio/mixer.h"
 
 #include "sludge/variable.h"
 
@@ -39,37 +39,80 @@ struct SoundList{
 	int cacheIndex;
 	int vol;
 };
-bool deleteSoundFromList(SoundList*&s);
-void playSoundList(SoundList*s);
-void handleSoundLists(); // to produce the same effects as end of stream call back functions
 
-// GENERAL...
-bool initSoundStuff(HWND);
-void killSoundStuff();
+class SoundManager {
+public:
+	SoundManager();
+	virtual ~SoundManager();
 
-// MUSIC...
-bool playMOD(int, int, int);
-void stopMOD(int);
-void setMusicVolume(int a, int v);
-void setDefaultMusicVolume(int v);
+	// Sound list
+	void playSoundList(SoundList*s);
+	void handleSoundLists(); // to produce the same effects as end of stream call back functions
 
-// SAMPLES...
-int cacheSound(int f);
-bool startSound(int, bool = false);
-void huntKillSound(int a);
-void huntKillFreeSound(int filenum);
-void setSoundVolume(int a, int v);
-void setDefaultSoundVolume(int v);
-void setSoundLoop(int a, int s, int e);
-bool stillPlayingSound(int ch);
-bool getSoundCacheStack(StackHandler *sH);
-int findInSoundCache(int a);
+	// GENERAL...
+	bool initSoundStuff();
+	void killSoundStuff();
 
-void debugSounds();
-void loadSounds(Common::SeekableReadStream *stream);
-void saveSounds(Common::WriteStream *stream);
+	// MUSIC...
+	bool playMOD(int, int, int);
+	void stopMOD(int);
+	void setMusicVolume(int a, int v);
+	void setDefaultMusicVolume(int v);
 
-uint getSoundSource(int index);
+	// SAMPLES...
+	int cacheSound(int f);
+	bool startSound(int, bool = false);
+	void huntKillSound(int a);
+	void huntKillFreeSound(int filenum);
+	void setSoundVolume(int a, int v);
+	void setDefaultSoundVolume(int v);
+	void setSoundLoop(int a, int s, int e);
+	bool stillPlayingSound(int ch);
+	bool getSoundCacheStack(StackHandler *sH);
+	int findInSoundCache(int a);
+
+	// Load & save
+	void loadSounds(Common::SeekableReadStream *stream);
+	void saveSounds(Common::WriteStream *stream);
+
+	uint getSoundSource(int index);
+
+private:
+	const static int MAX_SAMPLES;
+	const static int MAX_MODS;
+
+	struct SoundThing {
+		Audio::SoundHandle handle;
+		int fileLoaded, vol;    //Used for sounds only. (sound saving/loading)
+		bool looping;      		//Used for sounds only. (sound saving/loading)
+		bool inSoundList;
+	};
+	typedef Common::List<SoundList *> SoundListHandles;
+
+	// there's possibility that several sound list played at the same time
+	SoundListHandles _soundListHandles;
+
+	bool _soundOK;
+	bool _silenceIKillYou;
+	bool _isHandlingSoundList;
+
+	SoundThing *_soundCache;
+	#if 0
+	SoundThing *_modCache;
+	#endif
+
+	int _defVol;
+	int _defSoundVol;
+	float _modLoudness;
+
+	int _emptySoundSlot;
+
+	void freeSound(int a);
+	bool forceRemoveSound();
+	bool deleteSoundFromList(SoundList*&s);
+	int findEmptySoundSlot();
+	int makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, bool loopy);
+};
 
 } // End of namespace Sludge
 

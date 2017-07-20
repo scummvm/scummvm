@@ -26,7 +26,6 @@
 #include "common/memstream.h"
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/mods/protracker.h"
@@ -38,67 +37,73 @@
 #include "sludge/fileset.h"
 #include "sludge/sludge.h"
 
-#define MAX_SAMPLES 8
-#define MAX_MODS 3
-#define NUM_BUFS 3
-
 namespace Sludge {
 
-bool soundOK = false;
-bool SilenceIKillYou = false;
-bool isHandlingSoundList = false;
-// there's possibility that several sound list played at the same time
-typedef Common::List<SoundList*> SoundListHandles;
-SoundListHandles soundListHandles;
+const int SoundManager::MAX_SAMPLES = 8;
+const int SoundManager::MAX_MODS = 3;
 
-struct soundThing {
-	Audio::SoundHandle handle;
-	int fileLoaded, vol;    //Used for sounds only. (sound saving/loading)
-	bool looping;      		//Used for sounds only. (sound saving/loading)
-	bool inSoundList;
-};
+SoundManager::SoundManager() {
+	// there's possibility that several sound list played at the same time
+	_soundListHandles.clear();
 
-soundThing soundCache[MAX_SAMPLES];
-#if 0
-soundThing modCache[MAX_MODS];
-#endif
+	_soundOK = false;
+	_silenceIKillYou = false;
+	_isHandlingSoundList = false;
 
-int defVol = 128;
-int defSoundVol = 255;
-const float modLoudness = 0.95f;
+	_soundCache = nullptr;
+	_soundCache = new SoundThing[MAX_SAMPLES];
+	#if 0
+	_modCache = nullptr;
+	_modCache = new SoundThing[MAX_MODS];
+	#endif
 
-/*
- * Set up, tear down:
- */
+	_defVol = 128;
+	_defSoundVol = 255;
+	_modLoudness = 0.95f;
 
-bool initSoundStuff(HWND hwnd) {
+	_emptySoundSlot = 0;
+}
+
+SoundManager::~SoundManager() {
+	delete []_soundCache;
+	_soundCache = nullptr;
+
+	#if 0
+	delete []_modCache;
+	_modCache = nullptr;
+	#endif
+
+	killSoundStuff();
+}
+
+bool SoundManager::initSoundStuff() {
 	for (int a = 0; a < MAX_SAMPLES; a ++) {
-		soundCache[a].fileLoaded = -1;
-		soundCache[a].looping = false;
-		soundCache[a].inSoundList = false;
+		_soundCache[a].fileLoaded = -1;
+		_soundCache[a].looping = false;
+		_soundCache[a].inSoundList = false;
 	}
 #if 0
 	for (int a = 0; a < MAX_MODS; a ++) {
-		modCache[a].stream = NULL;
-		modCache[a].playing = false;
+		_modCache[a].stream = NULL;
+		_modCache[a].playing = false;
 	}
 #endif
-	return soundOK = true;
+	return _soundOK = true;
 }
 
-void killSoundStuff() {
-	if (!soundOK)
+void SoundManager::killSoundStuff() {
+	if (!_soundOK)
 		return;
 
-	SilenceIKillYou = true;
+	_silenceIKillYou = true;
 	for (int i = 0; i < MAX_SAMPLES; i ++) {
-		if (g_sludge->_mixer->isSoundHandleActive(soundCache[i].handle)) {
-			g_sludge->_mixer->stopHandle(soundCache[i].handle);
+		if (g_sludge->_mixer->isSoundHandleActive(_soundCache[i].handle)) {
+			g_sludge->_mixer->stopHandle(_soundCache[i].handle);
 		}
 	}
 #if 0
 	for (int i = 0; i < MAX_MODS; i ++) {
-		if (modCache[i].playing) {
+		if (_modCache[i].playing) {
 
 			if (! alureStopSource(modCache[i].playingOnSource, AL_TRUE)) {
 				debugOut("Failed to stop source: %s\n",
@@ -107,7 +112,7 @@ void killSoundStuff() {
 
 		}
 
-		if (modCache[i].stream != NULL) {
+		if (_modCache[i].stream != NULL) {
 
 			if (! alureDestroyStream(modCache[i].stream, 0, NULL)) {
 				debugOut("Failed to destroy stream: %s\n",
@@ -117,63 +122,59 @@ void killSoundStuff() {
 		}
 	}
 #endif
-	SilenceIKillYou = false;
+	_silenceIKillYou = false;
 }
 
 /*
  * Some setters:
  */
 
-void setMusicVolume(int a, int v) {
-	if (!soundOK)
+void SoundManager::setMusicVolume(int a, int v) {
+	if (!_soundOK)
 		return;
 #if 0
-	if (modCache[a].playing) {
-		alSourcef(modCache[a].playingOnSource, AL_GAIN, (float) modLoudness * v / 256);
+	if (_modCache[a].playing) {
+		alSourcef(modCache[a].playingOnSource, AL_GAIN, (float) _modLoudness * v / 256);
 	}
 #endif
 }
 
-void setDefaultMusicVolume(int v) {
-	defVol = v;
+void SoundManager::setDefaultMusicVolume(int v) {
+	_defVol = v;
 }
 
-void setSoundVolume(int a, int v) {
-	if (!soundOK)
+void SoundManager::setSoundVolume(int a, int v) {
+	if (!_soundOK)
 		return;
 	int ch = findInSoundCache(a);
 	if (ch != -1) {
-		if (g_sludge->_mixer->isSoundHandleActive(soundCache[ch].handle)) {
-			soundCache[ch].vol = v;
-			g_sludge->_mixer->setChannelVolume(soundCache[ch].handle, v);
+		if (g_sludge->_mixer->isSoundHandleActive(_soundCache[ch].handle)) {
+			_soundCache[ch].vol = v;
+			g_sludge->_mixer->setChannelVolume(_soundCache[ch].handle, v);
 		}
 	}
 }
 
-void setDefaultSoundVolume(int v) {
-	defSoundVol = v;
+void SoundManager::setDefaultSoundVolume(int v) {
+	_defSoundVol = v;
 }
 
-void setSoundLoop(int a, int s, int e) {
+void SoundManager::setSoundLoop(int a, int s, int e) {
 //#pragma unused (a,s,e)
 }
 
-/*
- * Stopping things:
- */
-
-int findInSoundCache(int a) {
+int SoundManager::findInSoundCache(int a) {
 	int i;
 	for (i = 0; i < MAX_SAMPLES; i++) {
-		if (soundCache[i].fileLoaded == a) {
+		if (_soundCache[i].fileLoaded == a) {
 			return i;
 		}
 	}
 	return -1;
 }
 
-void stopMOD(int i) {
-	if (!soundOK)
+void SoundManager::stopMOD(int i) {
+	if (!_soundOK)
 		return;
 #if 0
 	alGetError();
@@ -185,41 +186,41 @@ void stopMOD(int i) {
 #endif
 }
 
-void huntKillSound(int filenum) {
-	if (!soundOK)
+void SoundManager::huntKillSound(int filenum) {
+	if (!_soundOK)
 		return;
 
 	int gotSlot = findInSoundCache(filenum);
 	if (gotSlot == -1) return;
 
-	SilenceIKillYou = true;
+	_silenceIKillYou = true;
 
-	if (g_sludge->_mixer->isSoundHandleActive(soundCache[gotSlot].handle)) {
-		g_sludge->_mixer->stopHandle(soundCache[gotSlot].handle);
+	if (g_sludge->_mixer->isSoundHandleActive(_soundCache[gotSlot].handle)) {
+		g_sludge->_mixer->stopHandle(_soundCache[gotSlot].handle);
 	}
 
-	SilenceIKillYou = false;
+	_silenceIKillYou = false;
 }
 
-void freeSound(int a) {
-	if (!soundOK)
+void SoundManager::freeSound(int a) {
+	if (!_soundOK)
 		return;
 
-	SilenceIKillYou = true;
+	_silenceIKillYou = true;
 
-	if (g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) {
-		g_sludge->_mixer->stopHandle(soundCache[a].handle);
-		if (soundCache[a].inSoundList)
+	if (g_sludge->_mixer->isSoundHandleActive(_soundCache[a].handle)) {
+		g_sludge->_mixer->stopHandle(_soundCache[a].handle);
+		if (_soundCache[a].inSoundList)
 			handleSoundLists();
 	}
 
-	soundCache[a].fileLoaded = -1;
+	_soundCache[a].fileLoaded = -1;
 
-	SilenceIKillYou = false;
+	_silenceIKillYou = false;
 }
 
-void huntKillFreeSound(int filenum) {
-	if (!soundOK)
+void SoundManager::huntKillFreeSound(int filenum) {
+	if (!_soundOK)
 		return;
 	int gotSlot = findInSoundCache(filenum);
 	if (gotSlot == -1)
@@ -230,7 +231,7 @@ void huntKillFreeSound(int filenum) {
 /*
  * Loading and playing:
  */
-bool playMOD(int f, int a, int fromTrack) {
+bool SoundManager::playMOD(int f, int a, int fromTrack) {
 #if 0
 	// load sound
 	setResourceForFatal(f);
@@ -253,9 +254,8 @@ bool playMOD(int f, int a, int fromTrack) {
 	Audio::SoundHandle soundHandle;
 	g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundHandle,
 			stream, -1, Audio::Mixer::kMaxChannelVolume);
-#endif
-#if 0
-	if (!soundOK)
+
+	if (!_soundOK)
 		return true;
 	stopMOD(a);
 
@@ -271,11 +271,11 @@ bool playMOD(int f, int a, int fromTrack) {
 	memImage = (byte *) loadEntireFileToMemory(bigDataFile, length);
 	if (! memImage) return fatal(ERROR_MUSIC_MEMORY_LOW);
 
-	modCache[a].stream = alureCreateStreamFromMemory(memImage, length, 19200, 0, NULL);
+	_modCache[a].stream = alureCreateStreamFromMemory(memImage, length, 19200, 0, NULL);
 
 	delete memImage;
 
-	if (modCache[a].stream != NULL) {
+	if (_modCache[a].stream != NULL) {
 		setMusicVolume(a, defVol);
 
 		if (! alureSetStreamOrder(modCache[a].stream, fromTrack)) {
@@ -291,28 +291,28 @@ bool playMOD(int f, int a, int fromTrack) {
 				alureGetErrorString());
 
 		warning(ERROR_MUSIC_ODDNESS);
-		soundCache[a].stream = NULL;
-		soundCache[a].playing = false;
-		soundCache[a].playingOnSource = 0;
+		_soundCache[a].stream = NULL;
+		_soundCache[a].playing = false;
+		_soundCache[a].playingOnSource = 0;
 	}
 	setResourceForFatal(-1);
 #endif
 	return true;
 }
 
-bool stillPlayingSound(int ch) {
-	if (soundOK)
+bool SoundManager::stillPlayingSound(int ch) {
+	if (_soundOK)
 		if (ch != -1)
-			if (soundCache[ch].fileLoaded != -1)
-				if (g_sludge->_mixer->isSoundHandleActive(soundCache[ch].handle))
+			if (_soundCache[ch].fileLoaded != -1)
+				if (g_sludge->_mixer->isSoundHandleActive(_soundCache[ch].handle))
 					return true;
 
 	return false;
 }
 
-bool forceRemoveSound() {
+bool SoundManager::forceRemoveSound() {
 	for (int a = 0; a < MAX_SAMPLES; a++) {
-		if (soundCache[a].fileLoaded != -1 && !stillPlayingSound(a)) {
+		if (_soundCache[a].fileLoaded != -1 && !stillPlayingSound(a)) {
 //			soundWarning ("Deleting silent sound", a);
 			freeSound(a);
 			return 1;
@@ -320,7 +320,7 @@ bool forceRemoveSound() {
 	}
 
 	for (int a = 0; a < MAX_SAMPLES; a++) {
-		if (soundCache[a].fileLoaded != -1) {
+		if (_soundCache[a].fileLoaded != -1) {
 //			soundWarning ("Deleting playing sound", a);
 			freeSound(a);
 			return 1;
@@ -330,46 +330,44 @@ bool forceRemoveSound() {
 	return 0;
 }
 
-int emptySoundSlot = 0;
-
-int findEmptySoundSlot() {
+int SoundManager::findEmptySoundSlot() {
 	for (int t = 0; t < MAX_SAMPLES; t++) {
-		emptySoundSlot++;
-		emptySoundSlot %= MAX_SAMPLES;
-		if (!g_sludge->_mixer->isSoundHandleActive(soundCache[emptySoundSlot].handle) && !soundCache[emptySoundSlot].inSoundList)
-			return emptySoundSlot;
+		_emptySoundSlot++;
+		_emptySoundSlot %= MAX_SAMPLES;
+		if (!g_sludge->_mixer->isSoundHandleActive(_soundCache[_emptySoundSlot].handle) && !_soundCache[_emptySoundSlot].inSoundList)
+			return _emptySoundSlot;
 	}
 
 	// Argh! They're all playing! Let's trash the oldest that's not looping...
 
 	for (int t = 0; t < MAX_SAMPLES; t++) {
-		emptySoundSlot++;
-		emptySoundSlot %= MAX_SAMPLES;
-		if (!soundCache[emptySoundSlot].looping && !soundCache[emptySoundSlot].inSoundList)
-			return emptySoundSlot;
+		_emptySoundSlot++;
+		_emptySoundSlot %= MAX_SAMPLES;
+		if (!_soundCache[_emptySoundSlot].looping && !_soundCache[_emptySoundSlot].inSoundList)
+			return _emptySoundSlot;
 	}
 
 	// Holy crap, they're all looping! What's this twat playing at?
 
-	emptySoundSlot++;
-	emptySoundSlot %= MAX_SAMPLES;
-	return emptySoundSlot;
+	_emptySoundSlot++;
+	_emptySoundSlot %= MAX_SAMPLES;
+	return _emptySoundSlot;
 }
 
-int cacheSound(int f) {
+int SoundManager::cacheSound(int f) {
 	return 0; // don't load source in advance
 }
 
-int makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, bool loopy) {
-	if (!soundOK)
+int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, bool loopy) {
+	if (!_soundOK)
 		return -1;
 
 	int a = findInSoundCache(f);
 	if (a != -1) { // if this sound has been loaded before
 		// still playing
-		if (g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) {
-			g_sludge->_mixer->stopHandle(soundCache[a].handle); // stop it
-			if (soundCache[a].inSoundList) {
+		if (g_sludge->_mixer->isSoundHandleActive(_soundCache[a].handle)) {
+			g_sludge->_mixer->stopHandle(_soundCache[a].handle); // stop it
+			if (_soundCache[a].inSoundList) {
 				handleSoundLists();
 			}
 		}
@@ -399,21 +397,21 @@ int makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, bool loopy) {
 
 	if (stream) {
 		audiostream = Audio::makeLoopingAudioStream(stream, loopy ? 0 : 1);
-		soundCache[a].fileLoaded = f;
+		_soundCache[a].fileLoaded = f;
 		setResourceForFatal(-1);
 	} else {
 		audiostream = nullptr;
 		warning(ERROR_SOUND_ODDNESS);
-		soundCache[a].fileLoaded = -1;
-		soundCache[a].looping = false;
+		_soundCache[a].fileLoaded = -1;
+		_soundCache[a].looping = false;
 		return -1;
 	}
 
 	return a;
 }
 
-bool startSound(int f, bool loopy) {
-	if (soundOK) {
+bool SoundManager::startSound(int f, bool loopy) {
+	if (_soundOK) {
 		// Load sound
 		Audio::AudioStream *stream = nullptr;
 		int a = makeSoundAudioStream(f, stream, loopy);
@@ -423,49 +421,49 @@ bool startSound(int f, bool loopy) {
 		}
 
 		// play sound
-		soundCache[a].looping = loopy;
-		soundCache[a].vol = defSoundVol;
-		g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundCache[a].handle, stream, -1, soundCache[a].vol);
+		_soundCache[a].looping = loopy;
+		_soundCache[a].vol = _defSoundVol;
+		g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundCache[a].handle, stream, -1, _soundCache[a].vol);
 	}
 	return true;
 }
 
-void saveSounds(Common::WriteStream *stream) {
-	if (soundOK) {
+void SoundManager::saveSounds(Common::WriteStream *stream) {
+	if (_soundOK) {
 		for (int i = 0; i < MAX_SAMPLES; i++) {
-			if (soundCache[i].looping) {
+			if (_soundCache[i].looping) {
 				stream->writeByte(1);
-				stream->writeUint16BE(soundCache[i].fileLoaded);
-				stream->writeUint16BE(soundCache[i].vol);
+				stream->writeUint16BE(_soundCache[i].fileLoaded);
+				stream->writeUint16BE(_soundCache[i].vol);
 			}
 		}
 	}
 	stream->writeByte(0);
-	stream->writeUint16BE(defSoundVol);
-	stream->writeUint16BE(defVol);
+	stream->writeUint16BE(_defSoundVol);
+	stream->writeUint16BE(_defVol);
 }
 
-void loadSounds(Common::SeekableReadStream *stream) {
+void SoundManager::loadSounds(Common::SeekableReadStream *stream) {
 	for (int i = 0; i < MAX_SAMPLES; i++)
 		freeSound(i);
 
 	while (stream->readByte()) {
 		int fileLoaded = stream->readUint16BE();
-		defSoundVol = stream->readUint16BE();
+		_defSoundVol = stream->readUint16BE();
 		startSound(fileLoaded, 1);
 	}
 
-	defSoundVol = stream->readUint16BE();
-	defVol = stream->readUint16BE();
+	_defSoundVol = stream->readUint16BE();
+	_defVol = stream->readUint16BE();
 }
 
-bool getSoundCacheStack(StackHandler *sH) {
+bool SoundManager::getSoundCacheStack(StackHandler *sH) {
 	Variable newFileHandle;
 	newFileHandle.varType = SVT_NULL;
 
 	for (int a = 0; a < MAX_SAMPLES; a++) {
-		if (soundCache[a].fileLoaded != -1) {
-			setVariable(newFileHandle, SVT_FILE, soundCache[a].fileLoaded);
+		if (_soundCache[a].fileLoaded != -1) {
+			setVariable(newFileHandle, SVT_FILE, _soundCache[a].fileLoaded);
 			if (!addVarToStackQuick(newFileHandle, sH->first))
 				return false;
 			if (sH->last == NULL)
@@ -475,7 +473,7 @@ bool getSoundCacheStack(StackHandler *sH) {
 	return true;
 }
 
-bool deleteSoundFromList(SoundList*&s) {
+bool SoundManager::deleteSoundFromList(SoundList*&s) {
 	// Don't delete a playing sound.
 	if (s->cacheIndex)
 		return false;
@@ -500,33 +498,33 @@ bool deleteSoundFromList(SoundList*&s) {
 	return (s != NULL);
 }
 
-void handleSoundLists() {
-	if (isHandlingSoundList)
+void SoundManager::handleSoundLists() {
+	if (_isHandlingSoundList)
 		return;
-	isHandlingSoundList = true;
-	for (SoundListHandles::iterator it = soundListHandles.begin(); it != soundListHandles.end(); ++it) {
+	_isHandlingSoundList = true;
+	for (SoundListHandles::iterator it = _soundListHandles.begin(); it != _soundListHandles.end(); ++it) {
 		SoundList*s = (*it);
 		int a = s->cacheIndex;
 		bool remove = false;
-		if (!g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) { // reach the end of stream
+		if (!g_sludge->_mixer->isSoundHandleActive(_soundCache[a].handle)) { // reach the end of stream
 			s->cacheIndex = false;
-			soundCache[a].inSoundList = false;
-			if (SilenceIKillYou) {
+			_soundCache[a].inSoundList = false;
+			if (_silenceIKillYou) {
 				while (deleteSoundFromList(s))
 					;
 				remove = (s == NULL); // s not null if still playing
 			} else {
 				if (s->next) {
 					if (s->next == s) { // loop the same sound
-						int v = defSoundVol;
-						defSoundVol = soundCache[a].vol;
+						int v = _defSoundVol;
+						_defSoundVol = _soundCache[a].vol;
 						startSound(s->sound, true);
-						defSoundVol = v;
+						_defSoundVol = v;
 						while (deleteSoundFromList(s))
 							;
 						remove = (s == NULL); // s not null if still playing
 					} else { // repush the next sound list
-						s->next->vol = soundCache[a].vol;
+						s->next->vol = _soundCache[a].vol;
 						playSoundList(s->next);
 						remove = true; // remove this one
 					}
@@ -539,15 +537,15 @@ void handleSoundLists() {
 			}
 		}
 		if (remove) {
-			it = soundListHandles.reverse_erase(it);
+			it = _soundListHandles.reverse_erase(it);
 		}
 	}
-	isHandlingSoundList = false;
+	_isHandlingSoundList = false;
 }
 
 // loop a list of sound
-void playSoundList(SoundList*s) {
-	if (soundOK) {
+void SoundManager::playSoundList(SoundList*s) {
+	if (_soundOK) {
 		// Load sound
 		Audio::AudioStream *stream;
 		int a = makeSoundAudioStream(s->sound, stream, false);
@@ -557,17 +555,17 @@ void playSoundList(SoundList*s) {
 		}
 
 		// Play sound
-		soundCache[a].looping = false;
+		_soundCache[a].looping = false;
 		if (s->vol < 0)
-			soundCache[a].vol = defSoundVol;
+			_soundCache[a].vol = _defSoundVol;
 		else
-			soundCache[a].vol = s->vol;
+			_soundCache[a].vol = s->vol;
 		s-> cacheIndex = a;
-		g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundCache[a].handle, stream, -1, soundCache[a].vol);
-		soundCache[a].inSoundList = true;
+		g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundCache[a].handle, stream, -1, _soundCache[a].vol);
+		_soundCache[a].inSoundList = true;
 
 		// push sound list
-		soundListHandles.push_back(s);
+		_soundListHandles.push_back(s);
 
 	}
 }
@@ -642,7 +640,7 @@ int initMovieSound(int f, ALenum format, int audioChannels, ALuint samplerate,
 }
 #endif
 
-uint getSoundSource(int index) {
+uint SoundManager::getSoundSource(int index) {
 	return 0; /*soundCache[index].playingOnSource;*/ //TODO:false value
 }
 
