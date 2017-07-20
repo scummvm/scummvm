@@ -57,21 +57,21 @@ namespace Sludge {
 int speechMode = 0;
 SpritePalette pastePalette;
 
-variable *launchResult = NULL;
+Variable *launchResult = NULL;
 
 extern int lastFramesPerSecond, thumbWidth, thumbHeight;
 extern bool allowAnyFilename;
 extern bool captureAllKeys;
 extern int16 fontSpace;
-extern eventHandlers *currentEvents;
-extern variableStack *noStack;
-extern statusStuff *nowStatus;
-extern screenRegion *overRegion;
+extern EventHandlers *currentEvents;
+extern VariableStack *noStack;
+extern StatusStuff  *nowStatus;
+extern ScreenRegion *overRegion;
 extern int numBIFNames, numUserFunc;
 
 extern Common::String *allUserFunc;
 extern Common::String *allBIFNames;
-extern inputType input;
+extern InputType input;
 
 extern float speechSpeed;
 extern byte brightnessLevel;
@@ -125,17 +125,17 @@ bool failSecurityCheck(const Common::String &fn) {
 	return false;
 }
 
-loadedFunction *saverFunc;
+LoadedFunction *saverFunc;
 
-typedef builtReturn (*builtInSludgeFunc)(int numParams, loadedFunction *fun);
+typedef BuiltReturn (*builtInSludgeFunc)(int numParams, LoadedFunction *fun);
 struct builtInFunctionData {
 	builtInSludgeFunc func;
 };
 
-#define builtIn(a)          static builtReturn builtIn_ ## a (int numParams, loadedFunction *fun)
+#define builtIn(a)          static BuiltReturn builtIn_ ## a (int numParams, LoadedFunction *fun)
 #define UNUSEDALL           (void) (0 && sizeof(numParams) && sizeof (fun));
 
-static builtReturn sayCore(int numParams, loadedFunction *fun, bool sayIt) {
+static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 	int fileNum = -1;
 	Common::String newText;
 	int objT, p;
@@ -201,7 +201,7 @@ builtIn(howFrozen) {
 
 builtIn(setCursor) {
 	UNUSEDALL
-	personaAnimation *aa = getAnimationFromVar(fun->stack->thisVar);
+	PersonaAnimation  *aa = getAnimationFromVar(fun->stack->thisVar);
 	pickAnimCursor(aa);
 	trimStack(fun->stack);
 	return BR_CONTINUE;
@@ -245,7 +245,7 @@ builtIn(getMatchingFiles) {
 
 	// Return value
 	fun->reg.varType = SVT_STACK;
-	fun->reg.varData.theStack = new stackHandler;
+	fun->reg.varData.theStack = new StackHandler;
 	if (!checkNew(fun->reg.varData.theStack))
 		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
@@ -412,7 +412,7 @@ builtIn(pasteImage) {
 	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	personaAnimation *pp = getAnimationFromVar(fun->stack->thisVar);
+	PersonaAnimation  *pp = getAnimationFromVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	if (pp == NULL)
 		return BR_CONTINUE;
@@ -544,7 +544,7 @@ builtIn(newStack) {
 
 	// Return value
 	fun->reg.varType = SVT_STACK;
-	fun->reg.varData.theStack = new stackHandler;
+	fun->reg.varData.theStack = new StackHandler;
 	if (!checkNew(fun->reg.varData.theStack))
 		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
@@ -742,7 +742,7 @@ builtIn(random) {
 	return BR_CONTINUE;
 }
 
-static bool getRGBParams(int &red, int &green, int &blue, loadedFunction *fun) {
+static bool getRGBParams(int &red, int &green, int &blue, LoadedFunction *fun) {
 	if (!getValueType(blue, SVT_INT, fun->stack->thisVar))
 		return false;
 	trimStack(fun->stack);
@@ -867,7 +867,7 @@ builtIn(anim) {
 	}
 
 	// First store the frame numbers and take 'em off the stack
-	personaAnimation *ba = createPersonaAnim(numParams - 1, fun->stack);
+	PersonaAnimation  *ba = createPersonaAnim(numParams - 1, fun->stack);
 
 	// Only remaining paramter is the file number
 	int fileNumber;
@@ -889,7 +889,7 @@ builtIn(anim) {
 
 builtIn(costume) {
 	UNUSEDALL
-	persona *newPersona = new persona;
+	Persona *newPersona = new Persona;
 	if (!checkNew(newPersona))
 		return BR_ERROR;
 	newPersona->numDirections = numParams / 3;
@@ -898,7 +898,7 @@ builtIn(costume) {
 		return BR_ERROR;
 	}
 	int iii;
-	newPersona->animation = new personaAnimation *[numParams];
+	newPersona->animation = new PersonaAnimation  *[numParams];
 	if (!checkNew(newPersona->animation))
 		return BR_ERROR;
 	for (iii = numParams - 1; iii >= 0; iii--) {
@@ -1130,8 +1130,8 @@ builtIn(loopSound) {
 		// We have more than one sound to play!
 
 		int doLoop = 2;
-		soundList *s = NULL;
-		soundList *old = NULL;
+		SoundList*s = NULL;
+		SoundList*old = NULL;
 
 		// Should we loop?
 		if (fun->stack->thisVar.varType != SVT_FILE) {
@@ -1144,7 +1144,7 @@ builtIn(loopSound) {
 				fatal("Illegal parameter given built-in function loopSound().");
 				return BR_ERROR;
 			}
-			s = new soundList;
+			s = new SoundList;
 			if (!checkNew(s))
 				return BR_ERROR;
 
@@ -1354,11 +1354,11 @@ builtIn(getObjectX) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	onScreenPerson *pers = findPerson(objectNumber);
+	OnScreenPerson *pers = findPerson(objectNumber);
 	if (pers) {
 		setVariable(fun->reg, SVT_INT, pers->x);
 	} else {
-		screenRegion *la = getRegionForObject(objectNumber);
+		ScreenRegion *la = getRegionForObject(objectNumber);
 		if (la) {
 			setVariable(fun->reg, SVT_INT, la->sX);
 		} else {
@@ -1375,11 +1375,11 @@ builtIn(getObjectY) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	onScreenPerson *pers = findPerson(objectNumber);
+	OnScreenPerson *pers = findPerson(objectNumber);
 	if (pers) {
 		setVariable(fun->reg, SVT_INT, pers->y);
 	} else {
-		screenRegion *la = getRegionForObject(objectNumber);
+		ScreenRegion *la = getRegionForObject(objectNumber);
 		if (la) {
 			setVariable(fun->reg, SVT_INT, la->sY);
 		} else {
@@ -1446,7 +1446,7 @@ builtIn(removeAllScreenRegions) {
 
 builtIn(addCharacter) {
 	UNUSEDALL
-	persona *p;
+	Persona *p;
 	int x, y, objectNumber;
 
 	p = getCostumeFromVar(fun->stack->thisVar);
@@ -1573,9 +1573,9 @@ builtIn(pasteCharacter) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	onScreenPerson *thisPerson = findPerson(obj);
+	OnScreenPerson *thisPerson = findPerson(obj);
 	if (thisPerson) {
-		personaAnimation *myAnim;
+		PersonaAnimation  *myAnim;
 		myAnim = thisPerson->myAnim;
 		if (myAnim != thisPerson->lastUsedAnim) {
 			thisPerson->lastUsedAnim = myAnim;
@@ -1595,7 +1595,7 @@ builtIn(pasteCharacter) {
 builtIn(animate) {
 	UNUSEDALL
 	int obj;
-	personaAnimation *pp = getAnimationFromVar(fun->stack->thisVar);
+	PersonaAnimation  *pp = getAnimationFromVar(fun->stack->thisVar);
 	if (pp == NULL)
 		return BR_ERROR;
 	trimStack(fun->stack);
@@ -1610,7 +1610,7 @@ builtIn(animate) {
 builtIn(setCostume) {
 	UNUSEDALL
 	int obj;
-	persona *pp = getCostumeFromVar(fun->stack->thisVar);
+	Persona *pp = getCostumeFromVar(fun->stack->thisVar);
 	if (pp == NULL)
 		return BR_ERROR;
 	trimStack(fun->stack);
@@ -1683,7 +1683,7 @@ builtIn(removeCharacter) {
 	return BR_CONTINUE;
 }
 
-static builtReturn moveChr(int numParams, loadedFunction *fun, bool force, bool immediate) {
+static BuiltReturn moveChr(int numParams, LoadedFunction *fun, bool force, bool immediate) {
 	switch (numParams) {
 		case 3: {
 			int x, y, objectNumber;
@@ -1712,7 +1712,7 @@ static builtReturn moveChr(int numParams, loadedFunction *fun, bool force, bool 
 
 		case 2: {
 			int toObj, objectNumber;
-			screenRegion *reggie;
+			ScreenRegion*reggie;
 
 			if (!getValueType(toObj, SVT_OBJTYPE, fun->stack->thisVar))
 				return BR_ERROR;
@@ -1816,7 +1816,7 @@ builtIn(alignStatus) {
 	return BR_CONTINUE;
 }
 
-static bool getFuncNumForCallback(int numParams, loadedFunction *fun, int &functionNum) {
+static bool getFuncNumForCallback(int numParams, LoadedFunction *fun, int &functionNum) {
 	switch (numParams) {
 		case 0:
 			functionNum = 0;
@@ -2019,7 +2019,7 @@ builtIn(spinCharacter) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	onScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = findPerson(objectNumber);
 	if (thisPerson) {
 		thisPerson->wantAngle = number;
 		thisPerson->spinning = true;
@@ -2038,7 +2038,7 @@ builtIn(getCharacterDirection) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	onScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = findPerson(objectNumber);
 	if (thisPerson) {
 		setVariable(fun->reg, SVT_INT, thisPerson->direction);
 	} else {
@@ -2053,7 +2053,7 @@ builtIn(isCharacter) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	onScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = findPerson(objectNumber);
 	setVariable(fun->reg, SVT_INT, thisPerson != NULL);
 	return BR_CONTINUE;
 }
@@ -2064,7 +2064,7 @@ builtIn(normalCharacter) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	onScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = findPerson(objectNumber);
 	if (thisPerson) {
 		thisPerson->myAnim = thisPerson->myPersona->animation[thisPerson->direction];
 		setVariable(fun->reg, SVT_INT, 1);
@@ -2080,7 +2080,7 @@ builtIn(isMoving) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	onScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = findPerson(objectNumber);
 	if (thisPerson) {
 		setVariable(fun->reg, SVT_INT, thisPerson->walking);
 	} else {
@@ -2185,7 +2185,7 @@ builtIn(setCharacterSpinSpeed) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	onScreenPerson *thisPerson = findPerson(who);
+	OnScreenPerson *thisPerson = findPerson(who);
 
 	if (thisPerson) {
 		thisPerson->spinSpeed = speed;
@@ -2206,7 +2206,7 @@ builtIn(setCharacterAngleOffset) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	onScreenPerson *thisPerson = findPerson(who);
+	OnScreenPerson *thisPerson = findPerson(who);
 
 	if (thisPerson) {
 		thisPerson->angleOffset = angle;
@@ -2239,7 +2239,7 @@ builtIn(_rem_updateDisplay) {
 builtIn(getSoundCache) {
 	UNUSEDALL
 	fun->reg.varType = SVT_STACK;
-	fun->reg.varData.theStack = new stackHandler;
+	fun->reg.varData.theStack = new StackHandler;
 	if (!checkNew(fun->reg.varData.theStack))
 		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
@@ -2284,7 +2284,7 @@ builtIn(loadCustomData) {
 
 	unlinkVar(fun->reg);
 	fun->reg.varType = SVT_STACK;
-	fun->reg.varData.theStack = new stackHandler;
+	fun->reg.varData.theStack = new StackHandler;
 	if (!checkNew(fun->reg.varData.theStack))
 		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
@@ -2359,7 +2359,7 @@ builtIn(getPixelColour) {
 
 	unlinkVar(fun->reg);
 	fun->reg.varType = SVT_STACK;
-	fun->reg.varData.theStack = new stackHandler;
+	fun->reg.varData.theStack = new StackHandler;
 	if (!checkNew(fun->reg.varData.theStack))
 		return BR_ERROR;
 	fun->reg.varData.theStack->first = NULL;
@@ -2402,7 +2402,7 @@ builtIn(getCharacterScale) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	onScreenPerson *pers = findPerson(objectNumber);
+	OnScreenPerson *pers = findPerson(objectNumber);
 	if (pers) {
 		setVariable(fun->reg, SVT_INT, pers->scale * 100);
 	} else {
@@ -2570,7 +2570,7 @@ builtIn(doBackgroundEffect) {
 
 namespace Sludge {
 
-builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
+BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun) {
 	if (numBIFNames) {
 		setFatalInfo((fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function",
 				(whichFunc < numBIFNames) ? allBIFNames[whichFunc] : "Unknown built-in function");

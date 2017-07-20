@@ -54,8 +54,8 @@ HWND hMainWindow = NULL;
 
 int realWinWidth = 640, realWinHeight = 480;
 
-extern inputType input;
-extern variableStack *noStack;
+extern InputType input;
+extern VariableStack *noStack;
 
 int dialogValue = 0;
 

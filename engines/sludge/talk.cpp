@@ -39,11 +39,11 @@
 namespace Sludge {
 
 extern int fontHeight, speechMode;
-speechStruct *speech;
+SpeechStruct *speech;
 float speechSpeed = 1;
 
 void initSpeech() {
-	speech = new speechStruct;
+	speech = new SpeechStruct;
 	if (checkNew(speech)) {
 		speech->currentTalker = NULL;
 		speech->allSpeech = NULL;
@@ -63,7 +63,7 @@ void killAllSpeech() {
 		speech->currentTalker = NULL;
 	}
 
-	speechLine *killMe;
+	SpeechLine *killMe;
 
 	while (speech->allSpeech) {
 		killMe = speech->allSpeech;
@@ -81,7 +81,7 @@ void addSpeechLine(const Common::String &theLine, int x, int &offset) {
 	int halfWidth = (stringWidth(theLine) >> 1) / cameraZoom;
 	int xx1 = x - (halfWidth);
 	int xx2 = x + (halfWidth);
-	speechLine *newLine = new speechLine;
+	SpeechLine *newLine = new SpeechLine;
 	checkNew(newLine);
 
 	newLine->next = speech->allSpeech;
@@ -152,7 +152,7 @@ int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int samp
 				+ (float) (g_system->getHeight() - fontHeight / 3) / cameraZoom;
 
 	if (offset) {
-		speechLine *viewLine = speech->allSpeech;
+		SpeechLine *viewLine = speech->allSpeech;
 		while (viewLine) {
 			viewLine->x += offset;
 			viewLine = viewLine->next;
@@ -161,7 +161,7 @@ int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int samp
 	return speechTime;
 }
 
-int wrapSpeechPerson(const Common::String &theText, onScreenPerson &thePerson, int sampleFile, bool animPerson) {
+int wrapSpeechPerson(const Common::String &theText, OnScreenPerson &thePerson, int sampleFile, bool animPerson) {
 	int cameraX = g_sludge->_gfxMan->getCamX();
 	int cameraY = g_sludge->_gfxMan->getCamY();
 	int i = wrapSpeechXY(theText, thePerson.x - cameraX,
@@ -182,12 +182,12 @@ int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool ani
 	int cameraY = g_sludge->_gfxMan->getCamY();
 
 	speech->lookWhosTalking = objT;
-	onScreenPerson *thisPerson = findPerson(objT);
+	OnScreenPerson *thisPerson = findPerson(objT);
 	if (thisPerson) {
 		setObjFontColour(thisPerson->thisType);
 		i = wrapSpeechPerson(theText, *thisPerson, sampleFile, animPerson);
 	} else {
-		screenRegion *thisRegion = getRegionForObject(objT);
+		ScreenRegion *thisRegion = getRegionForObject(objT);
 		if (thisRegion) {
 			setObjFontColour(thisRegion->thisType);
 			i = wrapSpeechXY(theText,
@@ -207,7 +207,7 @@ int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool ani
 void viewSpeech() {
 	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 	int viewY = speech->speechY;
-	speechLine *viewLine = speech->allSpeech;
+	SpeechLine *viewLine = speech->allSpeech;
 	while (viewLine) {
 		pasteString(viewLine->textLine, viewLine->x, viewY, speech->talkCol);
 		viewY -= fontHeight / cameraZoom;
@@ -215,8 +215,8 @@ void viewSpeech() {
 	}
 }
 
-void saveSpeech(speechStruct *sS, Common::WriteStream *stream) {
-	speechLine *viewLine = sS->allSpeech;
+void saveSpeech(SpeechStruct *sS, Common::WriteStream *stream) {
+	SpeechLine *viewLine = sS->allSpeech;
 
 	stream->writeByte(sS->talkCol.originalRed);
 	stream->writeByte(sS->talkCol.originalGreen);
@@ -246,7 +246,7 @@ void saveSpeech(speechStruct *sS, Common::WriteStream *stream) {
 	stream->writeByte(0);
 }
 
-bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream) {
+bool loadSpeech(SpeechStruct *sS, Common::SeekableReadStream *stream) {
 	speech->currentTalker = NULL;
 	killAllSpeech();
 	byte r = stream->readByte();
@@ -269,11 +269,11 @@ bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream) {
 	}
 
 	// Read what's being said
-	speechLine **viewLine = &sS->allSpeech;
-	speechLine *newOne;
+	SpeechLine **viewLine = &sS->allSpeech;
+	SpeechLine *newOne;
 	speech->lastFile = -1;
 	while (stream->readByte()) {
-		newOne = new speechLine;
+		newOne = new SpeechLine;
 		if (! checkNew(newOne)) return false;
 		newOne->textLine = readString(stream);
 		newOne->x = stream->readUint16BE();

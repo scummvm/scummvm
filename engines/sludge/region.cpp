@@ -32,12 +32,12 @@
 
 namespace Sludge {
 
-screenRegion *allScreenRegions = NULL;
-screenRegion *overRegion = NULL;
-extern inputType input;
+ScreenRegion *allScreenRegions = NULL;
+ScreenRegion *overRegion = NULL;
+extern InputType input;
 
 void showBoxes() {
-	screenRegion *huntRegion = allScreenRegions;
+	ScreenRegion*huntRegion = allScreenRegions;
 
 	while (huntRegion) {
 		g_sludge->_gfxMan->drawVerticalLine(huntRegion->x1, huntRegion->y1, huntRegion->y2);
@@ -49,8 +49,8 @@ void showBoxes() {
 }
 
 void removeScreenRegion(int objectNum) {
-	screenRegion **huntRegion = &allScreenRegions;
-	screenRegion *killMe;
+	ScreenRegion **huntRegion = &allScreenRegions;
+	ScreenRegion *killMe;
 
 	while (*huntRegion) {
 		if ((*huntRegion)->thisType->objectNum == objectNum) {
@@ -69,7 +69,7 @@ void removeScreenRegion(int objectNum) {
 
 void saveRegions(Common::WriteStream *stream) {
 	int numRegions = 0;
-	screenRegion *thisRegion = allScreenRegions;
+	ScreenRegion *thisRegion = allScreenRegions;
 	while (thisRegion) {
 		thisRegion = thisRegion->next;
 		numRegions++;
@@ -93,11 +93,11 @@ void saveRegions(Common::WriteStream *stream) {
 void loadRegions(Common::SeekableReadStream *stream) {
 	int numRegions = stream->readUint16BE();
 
-	screenRegion *newRegion;
-	screenRegion **pointy = &allScreenRegions;
+	ScreenRegion *newRegion;
+	ScreenRegion **pointy = &allScreenRegions;
 
 	while (numRegions--) {
-		newRegion = new screenRegion;
+		newRegion = new ScreenRegion;
 		*pointy = newRegion;
 		pointy = &(newRegion->next);
 
@@ -114,7 +114,7 @@ void loadRegions(Common::SeekableReadStream *stream) {
 }
 
 void killAllRegions() {
-	screenRegion *killRegion;
+	ScreenRegion *killRegion;
 	while (allScreenRegions) {
 		killRegion = allScreenRegions;
 		allScreenRegions = allScreenRegions->next;
@@ -126,7 +126,7 @@ void killAllRegions() {
 
 bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,
 		int objectNum) {
-	screenRegion *newRegion = new screenRegion;
+	ScreenRegion *newRegion = new ScreenRegion;
 	if (!checkNew(newRegion))
 		return false;
 	newRegion->di = di;
@@ -145,7 +145,7 @@ bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,
 void getOverRegion() {
 	int cameraX = g_sludge->_gfxMan->getCamX();
 	int cameraY = g_sludge->_gfxMan->getCamY();
-	screenRegion *thisRegion = allScreenRegions;
+	ScreenRegion *thisRegion = allScreenRegions;
 	while (thisRegion) {
 		if ((input.mouseX >= thisRegion->x1 - cameraX)
 				&& (input.mouseY >= thisRegion->y1 - cameraY)
@@ -160,8 +160,8 @@ void getOverRegion() {
 	return;
 }
 
-screenRegion *getRegionForObject(int obj) {
-	screenRegion *thisRegion = allScreenRegions;
+ScreenRegion *getRegionForObject(int obj) {
+	ScreenRegion *thisRegion = allScreenRegions;
 
 	while (thisRegion) {
 		if (obj == thisRegion->thisType->objectNum) {

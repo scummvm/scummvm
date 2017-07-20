@@ -24,8 +24,8 @@
 
 namespace Sludge {
 
-bool fileToStack(const Common::String &filename, stackHandler *sH);
-bool stackToFile(const Common::String &filename, const variable &from);
+bool fileToStack(const Common::String &filename, StackHandler *sH);
+bool stackToFile(const Common::String &filename, const Variable &from);
 
 } // End of namespace Sludge
 

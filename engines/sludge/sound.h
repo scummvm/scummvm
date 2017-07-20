@@ -32,15 +32,15 @@
 namespace Sludge {
 
 // Sound list stuff
-struct soundList {
+struct SoundList{
 	int sound;
-	struct soundList *next;
-	struct soundList *prev;
+	struct SoundList*next;
+	struct SoundList*prev;
 	int cacheIndex;
 	int vol;
 };
-bool deleteSoundFromList(soundList *&s);
-void playSoundList(soundList *s);
+bool deleteSoundFromList(SoundList*&s);
+void playSoundList(SoundList*s);
 void handleSoundLists(); // to produce the same effects as end of stream call back functions
 
 // GENERAL...
@@ -62,7 +62,7 @@ void setSoundVolume(int a, int v);
 void setDefaultSoundVolume(int v);
 void setSoundLoop(int a, int s, int e);
 bool stillPlayingSound(int ch);
-bool getSoundCacheStack(stackHandler *sH);
+bool getSoundCacheStack(StackHandler *sH);
 int findInSoundCache(int a);
 
 void debugSounds();

@@ -41,7 +41,7 @@ int initMovieSound(int f, ALenum format, int audioChannels, ALuint samplerate,
 		ALuint(*callback)(void *userdata, ALubyte *data, ALuint bytes));
 #endif
 
-movieStates movieIsPlaying = nothing;
+MovieStates movieIsPlaying = nothing;
 
 int movieIsEnding = 0;
 

@@ -48,7 +48,7 @@ bool soundOK = false;
 bool SilenceIKillYou = false;
 bool isHandlingSoundList = false;
 // there's possibility that several sound list played at the same time
-typedef Common::List<soundList *> SoundListHandles;
+typedef Common::List<SoundList*> SoundListHandles;
 SoundListHandles soundListHandles;
 
 struct soundThing {
@@ -459,8 +459,8 @@ void loadSounds(Common::SeekableReadStream *stream) {
 	defVol = stream->readUint16BE();
 }
 
-bool getSoundCacheStack(stackHandler *sH) {
-	variable newFileHandle;
+bool getSoundCacheStack(StackHandler *sH) {
+	Variable newFileHandle;
 	newFileHandle.varType = SVT_NULL;
 
 	for (int a = 0; a < MAX_SAMPLES; a++) {
@@ -475,12 +475,12 @@ bool getSoundCacheStack(stackHandler *sH) {
 	return true;
 }
 
-bool deleteSoundFromList(soundList *&s) {
+bool deleteSoundFromList(SoundList*&s) {
 	// Don't delete a playing sound.
 	if (s->cacheIndex)
 		return false;
 
-	soundList *o = NULL;
+	SoundList*o = NULL;
 	if (!s->next) {
 		o = s->prev;
 		if (o)
@@ -505,7 +505,7 @@ void handleSoundLists() {
 		return;
 	isHandlingSoundList = true;
 	for (SoundListHandles::iterator it = soundListHandles.begin(); it != soundListHandles.end(); ++it) {
-		soundList *s = (*it);
+		SoundList*s = (*it);
 		int a = s->cacheIndex;
 		bool remove = false;
 		if (!g_sludge->_mixer->isSoundHandleActive(soundCache[a].handle)) { // reach the end of stream
@@ -546,7 +546,7 @@ void handleSoundLists() {
 }
 
 // loop a list of sound
-void playSoundList(soundList *s) {
+void playSoundList(SoundList*s) {
 	if (soundOK) {
 		// Load sound
 		Audio::AudioStream *stream;

@@ -26,15 +26,15 @@
 
 namespace Sludge {
 
-struct speechLine {
+struct SpeechLine {
 	Common::String textLine;
-	speechLine *next;
+	SpeechLine *next;
 	int x;
 };
 
-struct speechStruct {
-	onScreenPerson *currentTalker;
-	speechLine *allSpeech;
+struct SpeechStruct {
+	OnScreenPerson *currentTalker;
+	SpeechLine *allSpeech;
 	int speechY, lastFile, lookWhosTalking;
 	SpritePalette talkCol;
 };
@@ -44,8 +44,8 @@ void viewSpeech();
 void killAllSpeech();
 int isThereAnySpeechGoingOn();
 void initSpeech();
-void saveSpeech(speechStruct *sS, Common::WriteStream *stream);
-bool loadSpeech(speechStruct *sS, Common::SeekableReadStream *stream);
+void saveSpeech(SpeechStruct *sS, Common::WriteStream *stream);
+bool loadSpeech(SpeechStruct *sS, Common::SeekableReadStream *stream);
 
 } // End of namespace Sludge
 

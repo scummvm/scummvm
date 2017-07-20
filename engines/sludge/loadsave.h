@@ -27,15 +27,15 @@ namespace Sludge {
 bool saveGame(const Common::String &fname);
 bool loadGame(const Common::String &fname);
 
-bool saveVariable(variable *from, Common::WriteStream *stream);
-bool loadVariable(variable *to, Common::SeekableReadStream *stream);
+bool saveVariable(Variable *from, Common::WriteStream *stream);
+bool loadVariable(Variable *to, Common::SeekableReadStream *stream);
 
-variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **last);
-bool saveStackRef(stackHandler *vs, Common::WriteStream *stream);
-stackHandler *loadStackRef(Common::SeekableReadStream *stream);
+VariableStack *loadStack(Common::SeekableReadStream *stream, VariableStack **last);
+bool saveStackRef(StackHandler *vs, Common::WriteStream *stream);
+StackHandler *loadStackRef(Common::SeekableReadStream *stream);
 
-loadedFunction *loadFunction(Common::SeekableReadStream *stream);
-void saveFunction(loadedFunction *fun, Common::WriteStream *stream);
+LoadedFunction *loadFunction(Common::SeekableReadStream *stream);
+void saveFunction(LoadedFunction *fun, Common::WriteStream *stream);
 
 } // End of namespace Sludge
 

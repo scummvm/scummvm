@@ -37,7 +37,7 @@ const char *typeName[] = { "undefined", "number", "user function", "string",
 		"built-in function", "file", "stack", "object type", "animation",
 		"costume" };
 
-void unlinkVar(variable &thisVar) {
+void unlinkVar(Variable &thisVar) {
 	switch (thisVar.varType) {
 		case SVT_STRING:
 			delete []thisVar.varData.theString;
@@ -72,45 +72,45 @@ void unlinkVar(variable &thisVar) {
 	}
 }
 
-void setVariable(variable &thisVar, variableType vT, int value) {
+void setVariable(Variable &thisVar, VariableType vT, int value) {
 	unlinkVar(thisVar);
 	thisVar.varType = vT;
 	thisVar.varData.intValue = value;
 }
 
-void newAnimationVariable(variable &thisVar, personaAnimation *i) {
+void newAnimationVariable(Variable &thisVar, PersonaAnimation  *i) {
 	unlinkVar(thisVar);
 	thisVar.varType = SVT_ANIM;
 	thisVar.varData.animHandler = i;
 }
 
-personaAnimation *getAnimationFromVar(variable &thisVar) {
+PersonaAnimation  *getAnimationFromVar(Variable &thisVar) {
 	if (thisVar.varType == SVT_ANIM)
 		return copyAnim(thisVar.varData.animHandler);
 
 	if (thisVar.varType == SVT_INT && thisVar.varData.intValue == 0)
 		return makeNullAnim();
 
-	fatal("Expecting an animation variable; found variable of type", typeName[thisVar.varType]);
+	fatal("Expecting an animation variable; found Variable of type", typeName[thisVar.varType]);
 	return NULL;
 }
 
-void newCostumeVariable(variable &thisVar, persona *i) {
+void newCostumeVariable(Variable &thisVar, Persona *i) {
 	unlinkVar(thisVar);
 	thisVar.varType = SVT_COSTUME;
 	thisVar.varData.costumeHandler = i;
 }
 
-persona *getCostumeFromVar(variable &thisVar) {
-	persona *p = NULL;
+Persona *getCostumeFromVar(Variable &thisVar) {
+	Persona *p = NULL;
 
 	switch (thisVar.varType) {
 		case SVT_ANIM:
-			p = new persona;
+			p = new Persona;
 			if (!checkNew(p))
 				return NULL;
 			p->numDirections = 1;
-			p->animation = new personaAnimation *[3];
+			p->animation = new PersonaAnimation  *[3];
 			if (!checkNew(p->animation))
 				return NULL;
 
@@ -124,15 +124,15 @@ persona *getCostumeFromVar(variable &thisVar) {
 			break;
 
 		default:
-			fatal("Expecting an animation variable; found variable of type", typeName[thisVar.varType]);
+			fatal("Expecting an animation variable; found Variable of type", typeName[thisVar.varType]);
 	}
 
 	return p;
 }
 
-int stackSize(const stackHandler *me) {
+int stackSize(const StackHandler *me) {
 	int r = 0;
-	variableStack *a = me->first;
+	VariableStack *a = me->first;
 	while (a) {
 		r++;
 		a = a->next;
@@ -140,12 +140,12 @@ int stackSize(const stackHandler *me) {
 	return r;
 }
 
-bool getSavedGamesStack(stackHandler *sH, const Common::String &ext) {
+bool getSavedGamesStack(StackHandler *sH, const Common::String &ext) {
 #if 0
 	Common::String pattern = "*";
 	pattern += ext;
 
-	variable newName;
+	Variable newName;
 	newName.varType = SVT_NULL;
 
 	DIR *dir = opendir(".");
@@ -173,15 +173,15 @@ bool getSavedGamesStack(stackHandler *sH, const Common::String &ext) {
 	return true;
 }
 
-bool copyStack(const variable &from, variable &to) {
+bool copyStack(const Variable &from, Variable &to) {
 	to.varType = SVT_STACK;
-	to.varData.theStack = new stackHandler;
+	to.varData.theStack = new StackHandler;
 	if (!checkNew(to.varData.theStack))
 		return false;
 	to.varData.theStack->first = NULL;
 	to.varData.theStack->last = NULL;
 	to.varData.theStack->timesUsed = 1;
-	variableStack *a = from.varData.theStack->first;
+	VariableStack *a = from.varData.theStack->first;
 
 	while (a) {
 		addVarToStack(a->thisVar, to.varData.theStack->first);
@@ -194,7 +194,7 @@ bool copyStack(const variable &from, variable &to) {
 	return true;
 }
 
-void addVariablesInSecond(variable &var1, variable &var2) {
+void addVariablesInSecond(Variable &var1, Variable &var2) {
 	if (var1.varType == SVT_INT && var2.varType == SVT_INT) {
 		var2.varData.intValue += var1.varData.intValue;
 	} else {
@@ -207,7 +207,7 @@ void addVariablesInSecond(variable &var1, variable &var2) {
 	}
 }
 
-int compareVars(const variable &var1, const variable &var2) {
+int compareVars(const Variable &var1, const Variable &var2) {
 	int re = 0;
 	if (var1.varType == var2.varType) {
 		switch (var1.varType) {
@@ -238,7 +238,7 @@ int compareVars(const variable &var1, const variable &var2) {
 	return re;
 }
 
-void compareVariablesInSecond(const variable &var1, variable &var2) {
+void compareVariablesInSecond(const Variable &var1, Variable &var2) {
 	setVariable(var2, SVT_INT, compareVars(var1, var2));
 }
 
@@ -253,18 +253,18 @@ char *createCString(const Common::String &s) {
 	return res;
 }
 
-void makeTextVar(variable &thisVar, const Common::String &txt) {
+void makeTextVar(Variable &thisVar, const Common::String &txt) {
 	unlinkVar(thisVar);
 	thisVar.varType = SVT_STRING;
 	thisVar.varData.theString = createCString(txt);
 }
 
-bool loadStringToVar(variable &thisVar, int value) {
+bool loadStringToVar(Variable &thisVar, int value) {
 	makeTextVar(thisVar, g_sludge->_resMan->getNumberedString(value));
 	return (bool)(thisVar.varData.theString != NULL);
 }
 
-Common::String getTextFromAnyVar(const variable &from) {
+Common::String getTextFromAnyVar(const Variable &from) {
 	switch (from.varType) {
 		case SVT_STRING:
 			return from.varData.theString;
@@ -288,7 +288,7 @@ Common::String getTextFromAnyVar(const variable &from) {
 			Common::String builder2 = "";
 			Common::String grabText = "";
 
-			variableStack *stacky = from.varData.theStack->first;
+			VariableStack *stacky = from.varData.theStack->first;
 
 			while (stacky) {
 				builder2 = builder + " ";
@@ -323,7 +323,7 @@ Common::String getTextFromAnyVar(const variable &from) {
 	return typeName[from.varType];
 }
 
-bool getBoolean(const variable &from) {
+bool getBoolean(const Variable &from) {
 	switch (from.varType) {
 		case SVT_NULL:
 			return false;
@@ -346,7 +346,7 @@ bool getBoolean(const variable &from) {
 	return true;
 }
 
-bool copyMain(const variable &from, variable &to) {
+bool copyMain(const Variable &from, Variable &to) {
 	to.varType = from.varType;
 	switch (to.varType) {
 		case SVT_INT:
@@ -389,26 +389,26 @@ bool copyMain(const variable &from, variable &to) {
 	return false;
 }
 
-bool copyVariable(const variable &from, variable &to) {
+bool copyVariable(const Variable &from, Variable &to) {
 	unlinkVar(to);
 	return copyMain(from, to);
 }
 
-variable *fastArrayGetByIndex(fastArrayHandler *vS, uint theIndex) {
+Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex) {
 	if ((int)theIndex >= vS->size)
 		return NULL;
 	return &vS->fastVariables[theIndex];
 }
 
-bool makeFastArraySize(variable &to, int size) {
+bool makeFastArraySize(Variable &to, int size) {
 	if (size < 0)
 		return fatal("Can't create a fast array with a negative number of elements!");
 	unlinkVar(to);
 	to.varType = SVT_FASTARRAY;
-	to.varData.fastArray = new fastArrayHandler;
+	to.varData.fastArray = new FastArrayHandler;
 	if (!checkNew(to.varData.fastArray))
 		return false;
-	to.varData.fastArray->fastVariables = new variable[size];
+	to.varData.fastArray->fastVariables = new Variable[size];
 	if (!checkNew(to.varData.fastArray->fastVariables))
 		return false;
 	for (int i = 0; i < size; i++) {
@@ -419,14 +419,14 @@ bool makeFastArraySize(variable &to, int size) {
 	return true;
 }
 
-bool makeFastArrayFromStack(variable &to, const stackHandler *stacky) {
+bool makeFastArrayFromStack(Variable &to, const StackHandler *stacky) {
 	int size = stackSize(stacky);
 	if (!makeFastArraySize(to, size))
 		return false;
 
 	// Now let's fill up the new array
 
-	variableStack *allV = stacky->first;
+	VariableStack *allV = stacky->first;
 	size = 0;
 	while (allV) {
 		copyMain(allV->thisVar, to.varData.fastArray->fastVariables[size]);
@@ -437,15 +437,15 @@ bool makeFastArrayFromStack(variable &to, const stackHandler *stacky) {
 }
 
 /*
- bool moveVariable (variable & from, variable & to) {
+ bool moveVariable (Variable & from, Variable & to) {
  unlinkVar (to);
  memcpy (& to, & from, sizeof (variable));
  from.varType = SVT_NULL;
  }
  */
 
-bool addVarToStack(const variable &va, variableStack *&thisStack) {
-	variableStack *newStack = new variableStack;
+bool addVarToStack(const Variable &va, VariableStack *&thisStack) {
+	VariableStack *newStack = new VariableStack;
 	if (!checkNew(newStack))
 		return false;
 
@@ -457,14 +457,14 @@ bool addVarToStack(const variable &va, variableStack *&thisStack) {
 	return true;
 }
 
-bool addVarToStackQuick(variable &va, variableStack *&thisStack) {
-	variableStack *newStack = new variableStack;
+bool addVarToStackQuick(Variable &va, VariableStack *&thisStack) {
+	VariableStack *newStack = new VariableStack;
 	if (!checkNew(newStack))
 		return false;
 
 //	if (! copyMain (va, newStack -> thisVar)) return false;
 
-	memcpy(&(newStack->thisVar), &va, sizeof(variable));
+	memcpy(&(newStack->thisVar), &va, sizeof(Variable));
 	va.varType = SVT_NULL;
 
 	newStack->next = thisStack;
@@ -473,7 +473,7 @@ bool addVarToStackQuick(variable &va, variableStack *&thisStack) {
 	return true;
 }
 
-bool stackSetByIndex(variableStack *vS, uint theIndex, const variable &va) {
+bool stackSetByIndex(VariableStack *vS, uint theIndex, const Variable &va) {
 	while (theIndex--) {
 		vS = vS->next;
 		if (!vS)
@@ -482,7 +482,7 @@ bool stackSetByIndex(variableStack *vS, uint theIndex, const variable &va) {
 	return copyVariable(va, vS->thisVar);
 }
 
-variable *stackGetByIndex(variableStack *vS, uint theIndex) {
+Variable *stackGetByIndex(VariableStack *vS, uint theIndex) {
 	while (theIndex--) {
 		vS = vS->next;
 		if (!vS) {
@@ -492,9 +492,9 @@ variable *stackGetByIndex(variableStack *vS, uint theIndex) {
 	return &(vS->thisVar);
 }
 
-int deleteVarFromStack(const variable &va, variableStack *&thisStack, bool allOfEm) {
-	variableStack **huntVar = &thisStack;
-	variableStack *killMe;
+int deleteVarFromStack(const Variable &va, VariableStack *&thisStack, bool allOfEm) {
+	VariableStack **huntVar = &thisStack;
+	VariableStack *killMe;
 	int reply = 0;
 
 	while (*huntVar) {
@@ -515,7 +515,7 @@ int deleteVarFromStack(const variable &va, variableStack *&thisStack, bool allOf
 }
 
 // Would be a LOT better just to keep this up to date in the above function... ah well
-variableStack *stackFindLast(variableStack *hunt) {
+VariableStack *stackFindLast(VariableStack *hunt) {
 	if (hunt == NULL)
 		return NULL;
 
@@ -525,7 +525,7 @@ variableStack *stackFindLast(variableStack *hunt) {
 	return hunt;
 }
 
-bool getValueType(int &toHere, variableType vT, const variable &v) {
+bool getValueType(int &toHere, VariableType vT, const Variable &v) {
 	//if (! v) return false;
 	if (v.varType != vT) {
 		Common::String e1 = "Can only perform specified operation on a value which is of type ";
@@ -540,8 +540,8 @@ bool getValueType(int &toHere, variableType vT, const variable &v) {
 	return true;
 }
 
-void trimStack(variableStack *&stack) {
-	variableStack *killMe = stack;
+void trimStack(VariableStack *&stack) {
+	VariableStack *killMe = stack;
 	stack = stack->next;
 
 	//debug(kSludgeDebugStackMachine, "Variable %s was removed from stack", getTextFromAnyVar(killMe->thisVar));

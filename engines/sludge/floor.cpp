@@ -32,9 +32,9 @@
 
 namespace Sludge {
 
-flor *currentFloor = NULL;
+Floor *currentFloor = NULL;
 
-bool pointInFloorPolygon(floorPolygon &floorPoly, int x, int y) {
+bool pointInFloorPolygon(FloorPolygon &floorPoly, int x, int y) {
 	int i = 0, j, c = 0;
 	float xp_i, yp_i;
 	float xp_j, yp_j;
@@ -53,7 +53,7 @@ bool pointInFloorPolygon(floorPolygon &floorPoly, int x, int y) {
 	return c;
 }
 
-bool getMatchingCorners(floorPolygon &a, floorPolygon &b, int &cornerA, int &cornerB) {
+bool getMatchingCorners(FloorPolygon &a, FloorPolygon &b, int &cornerA, int &cornerB) {
 	int sharedVertices = 0;
 	int i, j;
 
@@ -73,7 +73,7 @@ bool getMatchingCorners(floorPolygon &a, floorPolygon &b, int &cornerA, int &cor
 	return false;
 }
 
-bool polysShareSide(floorPolygon &a, floorPolygon &b) {
+bool polysShareSide(FloorPolygon &a, FloorPolygon &b) {
 	int sharedVertices = 0;
 	int i, j;
 
@@ -97,7 +97,7 @@ void noFloor() {
 }
 
 bool initFloor() {
-	currentFloor = new flor;
+	currentFloor = new Floor;
 	if (!checkNew(currentFloor))
 		return false;
 	noFloor();
@@ -137,7 +137,7 @@ bool setFloor(int fileNum) {
 
 	currentFloor->originalNum = fileNum;
 	currentFloor->numPolygons = g_sludge->_resMan->getData()->readByte();
-	currentFloor->polygon = new floorPolygon[currentFloor->numPolygons];
+	currentFloor->polygon = new FloorPolygon[currentFloor->numPolygons];
 	if (!checkNew(currentFloor->polygon))
 		return false;
 

@@ -38,13 +38,13 @@
 
 namespace Sludge {
 
-extern onScreenPerson *allPeople;
-extern screenRegion *allScreenRegions;
-extern screenRegion *overRegion;
-extern speechStruct *speech;
-extern inputType input;
-extern eventHandlers *currentEvents;
-extern personaAnimation *mouseCursorAnim;
+extern OnScreenPerson *allPeople;
+extern ScreenRegion *allScreenRegions;
+extern ScreenRegion *overRegion;
+extern SpeechStruct *speech;
+extern InputType input;
+extern EventHandlers *currentEvents;
+extern PersonaAnimation  *mouseCursorAnim;
 extern int mouseCursorFrameNum;
 
 void GraphicsManager::freezeGraphics() {
@@ -92,7 +92,7 @@ bool GraphicsManager::freeze() {
 	newFreezer->allPeople = allPeople;
 	allPeople = NULL;
 
-	statusStuff *newStatusStuff = new statusStuff;
+	StatusStuff  *newStatusStuff = new StatusStuff ;
 	if (!checkNew(newStatusStuff))
 		return false;
 	newFreezer->frozenStatus = copyStatusBarStuff(newStatusStuff);
@@ -110,10 +110,10 @@ bool GraphicsManager::freeze() {
 	initSpeech();
 
 	newFreezer->currentEvents = currentEvents;
-	currentEvents = new eventHandlers;
+	currentEvents = new EventHandlers;
 	if (!checkNew(currentEvents))
 		return false;
-	memset(currentEvents, 0, sizeof(eventHandlers));
+	memset(currentEvents, 0, sizeof(EventHandlers));
 
 	newFreezer->next = _frozenStuff;
 	_frozenStuff = newFreezer;

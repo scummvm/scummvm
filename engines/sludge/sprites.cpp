@@ -38,7 +38,7 @@
 
 namespace Sludge {
 
-extern inputType input;
+extern InputType input;
 void GraphicsManager::forgetSpriteBank(SpriteBank &forgetme) {
 	if (forgetme.myPalette.pal) {
 		delete[] forgetme.myPalette.pal;
@@ -323,7 +323,7 @@ void GraphicsManager::flipFontSprite(int x, int y, Sprite &single, const SpriteP
 	fontSprite(true, x, y, single, fontPal);
 }
 
-uint32 GraphicsManager::getDrawColor(onScreenPerson *thisPerson) {
+uint32 GraphicsManager::getDrawColor(OnScreenPerson *thisPerson) {
 //TODO: how to mix secondary color
 #if 0
 	if (thisPerson->colourmix) {
@@ -338,7 +338,7 @@ uint32 GraphicsManager::getDrawColor(onScreenPerson *thisPerson) {
 			(uint8)(_curLight[2] * (255 - thisPerson->colourmix) / 255.f));
 }
 
-bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, onScreenPerson *thisPerson, bool mirror) {
+bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, bool mirror) {
 	float x = thisPerson->x;
 	float y = thisPerson->y;
 
@@ -463,7 +463,7 @@ void GraphicsManager::killSpriteLayers() {
 }
 
 // Paste a scaled sprite onto the backdrop
-void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpritePalette &fontPal, onScreenPerson *thisPerson, int camX, int camY, bool mirror) {
+void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, int camX, int camY, bool mirror) {
 
 	float scale = thisPerson->scale;
 	bool useZB = !(thisPerson->extra & EXTRA_NOZB);

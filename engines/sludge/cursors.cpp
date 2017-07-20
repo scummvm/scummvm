@@ -31,13 +31,13 @@
 
 namespace Sludge {
 
-personaAnimation *mouseCursorAnim;
+PersonaAnimation  *mouseCursorAnim;
 int mouseCursorFrameNum = 0;
 int mouseCursorCountUp = 0;
 
-extern inputType input;
+extern InputType input;
 
-void pickAnimCursor(personaAnimation *pp) {
+void pickAnimCursor(PersonaAnimation  *pp) {
 	deleteAnim(mouseCursorAnim);
 	mouseCursorAnim = pp;
 	mouseCursorFrameNum = 0;
@@ -82,7 +82,7 @@ void displayCursor() {
 	}
 }
 
-void pasteCursor(int x, int y, personaAnimation *c) {
+void pasteCursor(int x, int y, PersonaAnimation  *c) {
 	if (c->numFrames)
 		g_sludge->_gfxMan->pasteSpriteToBackDrop(x, y, c->theSprites->bank.sprites[c->frames[0].frameNum], c->theSprites->bank.myPalette);
 }

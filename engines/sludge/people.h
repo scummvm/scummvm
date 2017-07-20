@@ -26,7 +26,7 @@
 
 namespace Sludge {
 
-struct animFrame {
+struct AnimFrame {
 	int frameNum, howMany;
 	int noise;
 };
@@ -40,28 +40,28 @@ struct animFrame {
 #define EXTRA_NOREMOVE      32
 #define EXTRA_RECTANGULAR   64
 
-struct personaAnimation {
+struct PersonaAnimation {
 	struct LoadedSpriteBank *theSprites;
-	animFrame *frames;
+	AnimFrame  *frames;
 	int numFrames;
 };
 
-struct persona {
-	personaAnimation **animation;
+struct Persona {
+	PersonaAnimation  **animation;
 	int numDirections;
 };
 
-struct onScreenPerson {
+struct OnScreenPerson {
 	float x, y;
 	int height, floaty, walkSpeed;
 	float scale;
-	onScreenPerson *next;
+	OnScreenPerson *next;
 	int walkToX, walkToY, thisStepX, thisStepY, inPoly, walkToPoly;
 	bool walking, spinning;
-	struct loadedFunction *continueAfterWalking;
-	personaAnimation *myAnim;
-	personaAnimation *lastUsedAnim;
-	persona *myPersona;
+	struct LoadedFunction *continueAfterWalking;
+	PersonaAnimation  *myAnim;
+	PersonaAnimation  *lastUsedAnim;
+	Persona *myPersona;
 	int frameNum, frameTick, angle, wantAngle, angleOffset;
 	bool show;
 	int direction, directionWhenDoneWalking;
@@ -72,7 +72,7 @@ struct onScreenPerson {
 
 // Initialisation and creation
 bool initPeople();
-bool addPerson(int x, int y, int objNum, persona *p);
+bool addPerson(int x, int y, int objNum, Persona *p);
 
 // Draw to screen and to backdrop
 void drawPeople();
@@ -84,12 +84,12 @@ void killMostPeople();
 void removeOneCharacter(int i);
 
 // Things which affect or use all characters
-onScreenPerson *findPerson(int v);
+OnScreenPerson *findPerson(int v);
 void setScale(int16 h, int16 d);
 
 // Things which affect one character
-void makeTalker(onScreenPerson &me);
-void makeSilent(onScreenPerson &me);
+void makeTalker(OnScreenPerson &me);
+void makeSilent(OnScreenPerson &me);
 void setShown(bool h, int ob);
 void setDrawMode(int h, int ob);
 void setPersonTransparency(int ob, byte x);
@@ -97,8 +97,8 @@ void setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix);
 
 // Moving 'em
 void movePerson(int x, int y, int objNum);
-bool makeWalkingPerson(int x, int y, int objNum, struct loadedFunction *func, int di);
-bool forceWalkingPerson(int x, int y, int objNum, struct loadedFunction *func, int di);
+bool makeWalkingPerson(int x, int y, int objNum, struct LoadedFunction *func, int di);
+bool forceWalkingPerson(int x, int y, int objNum, struct LoadedFunction *func, int di);
 void jumpPerson(int x, int y, int objNum);
 void walkAllPeople();
 bool turnPersonToFace(int thisNum, int direc);
@@ -107,25 +107,25 @@ bool floatCharacter(int f, int objNum);
 bool setCharacterWalkSpeed(int f, int objNum);
 
 // Animating 'em
-void animatePerson(int obj, personaAnimation *);
-void animatePerson(int obj, persona *per);
-personaAnimation *createPersonaAnim(int num, struct variableStack *&stacky);
-inline void setBankFile(personaAnimation *newP, LoadedSpriteBank *sB) {
+void animatePerson(int obj, PersonaAnimation  *);
+void animatePerson(int obj, Persona *per);
+PersonaAnimation  *createPersonaAnim(int num, struct VariableStack *&stacky);
+inline void setBankFile(PersonaAnimation  *newP, LoadedSpriteBank *sB) {
 	newP->theSprites = sB;
 }
 bool setPersonExtra(int f, int newSetting);
-int timeForAnim(personaAnimation *fram);
-personaAnimation *copyAnim(personaAnimation *orig);
-personaAnimation *makeNullAnim();
-void deleteAnim(personaAnimation *orig);
+int timeForAnim(PersonaAnimation  *fram);
+PersonaAnimation  *copyAnim(PersonaAnimation  *orig);
+PersonaAnimation  *makeNullAnim();
+void deleteAnim(PersonaAnimation  *orig);
 
 // Loading and saving
-bool saveAnim(personaAnimation *p, Common::WriteStream *stream);
-bool loadAnim(personaAnimation *p, Common::SeekableReadStream *stream);
+bool saveAnim(PersonaAnimation  *p, Common::WriteStream *stream);
+bool loadAnim(PersonaAnimation  *p, Common::SeekableReadStream *stream);
 bool savePeople(Common::WriteStream *stream);
 bool loadPeople(Common::SeekableReadStream *stream);
-bool saveCostume(persona *cossy, Common::WriteStream *stream);
-bool loadCostume(persona *cossy, Common::SeekableReadStream *stream);
+bool saveCostume(Persona *cossy, Common::WriteStream *stream);
+bool loadCostume(Persona *cossy, Common::SeekableReadStream *stream);
 
 } // End of namespace Sludge
 

@@ -26,16 +26,16 @@
 
 namespace Sludge {
 
-struct floorPolygon {
+struct FloorPolygon {
 	int numVertices;
 	int *vertexID;
 };
 
-struct flor {
+struct Floor {
 	int originalNum;
 	Common::Point *vertex;
 	int numPolygons;
-	floorPolygon *polygon;
+	FloorPolygon *polygon;
 	int **matrix;
 };
 
@@ -44,7 +44,7 @@ void setFloorNull();
 bool setFloor(int fileNum);
 void drawFloor();
 int inFloor(int x, int y);
-bool getMatchingCorners(floorPolygon &, floorPolygon &, int &, int &);
+bool getMatchingCorners(FloorPolygon &, FloorPolygon &, int &, int &);
 bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2, int y2, int xP, int yP);
 
 } // End of namespace Sludge

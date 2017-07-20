@@ -32,9 +32,9 @@ class Parallax;
 class SludgeEngine;
 class SpritePalette;
 
-struct stackHandler;
+struct StackHandler;
 struct FrozenStuffStruct;
-struct onScreenPerson;
+struct OnScreenPerson;
 struct SpriteBank;
 struct Sprite;
 struct SpriteLayers;
@@ -81,7 +81,7 @@ public:
 	void drawHorizontalLine(uint, uint, uint);
 	void drawVerticalLine(uint, uint, uint);
 	void hardScroll(int distance);
-	bool getRGBIntoStack(uint x, uint y, stackHandler *sH);
+	bool getRGBIntoStack(uint x, uint y, StackHandler *sH);
 
 	// Lightmap
 	int _lightMapMode;
@@ -126,10 +126,10 @@ public:
 	void fontSprite(int x1, int y1, Sprite &single, const SpritePalette &fontPal);
 	void flipFontSprite(int x1, int y1, Sprite &single, const SpritePalette &fontPal);
 
-	bool scaleSprite(Sprite &single, const SpritePalette &fontPal, onScreenPerson *thisPerson, bool mirror);
+	bool scaleSprite(Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, bool mirror);
 	void pasteSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal);
 	bool reserveSpritePal(SpritePalette &sP, int n);
-	void fixScaleSprite(int x1, int y1, Sprite &single, const SpritePalette &fontPal, onScreenPerson *thisPerson, const int camX, const int camY, bool);
+	void fixScaleSprite(int x1, int y1, Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, const int camX, const int camY, bool);
 	void burnSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal);
 
 	void resetSpriteLayers(ZBufferData *ptrZBuffer, int x, int y, bool upsidedown);
@@ -191,7 +191,7 @@ private:
 	// Sprites
 	SpriteLayers *_spriteLayers;
 	void fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal);
-	uint32 getDrawColor(onScreenPerson *thisPerson);
+	uint32 getDrawColor(OnScreenPerson *thisPerson);
 
 	// ZBuffer
 	ZBufferData *_zBuffer;

@@ -25,9 +25,9 @@
 
 namespace Sludge {
 
-struct loadedFunction;
+struct LoadedFunction;
 
-enum builtReturn {
+enum BuiltReturn {
 	BR_KEEP_AND_PAUSE,
 	BR_ERROR,
 	BR_CONTINUE,
@@ -37,7 +37,7 @@ enum builtReturn {
 };
 
 bool failSecurityCheck(const Common::String &fn);
-builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun);
+BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun);
 
 } // End of namespace Sludge
 

@@ -24,15 +24,15 @@
 
 namespace Sludge {
 
-struct screenRegion {
+struct ScreenRegion {
 	int x1, y1, x2, y2, sX, sY, di;
 	ObjectType *thisType;
-	screenRegion *next;
+	ScreenRegion *next;
 };
 
 bool addScreenRegion(int x1, int y1, int x2, int y2, int, int, int, int objectNum);
 void getOverRegion();
-screenRegion *getRegionForObject(int obj);
+ScreenRegion *getRegionForObject(int obj);
 void removeScreenRegion(int objectNum);
 void loadRegions(Common::SeekableReadStream *stream);
 void saveRegions(Common::WriteStream *stream);

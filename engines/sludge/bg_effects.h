@@ -30,7 +30,7 @@ namespace Sludge {
 bool blurScreen();
 void blur_saveSettings(Common::WriteStream *stream);
 void blur_loadSettings(Common::SeekableReadStream *stream);
-bool blur_createSettings(int numParams, variableStack *&stack);
+bool blur_createSettings(int numParams, VariableStack *&stack);
 
 } // End of namespace Sludge
 

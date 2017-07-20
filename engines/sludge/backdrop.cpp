@@ -44,7 +44,7 @@
 
 namespace Sludge {
 
-extern inputType input;
+extern InputType input;
 
 Parallax::Parallax() {
 	_parallaxLayers.clear();
@@ -472,12 +472,12 @@ void GraphicsManager::saveHSI(Common::WriteStream *stream) {
 }
 
 
-bool GraphicsManager::getRGBIntoStack(uint x, uint y, stackHandler *sH) {
+bool GraphicsManager::getRGBIntoStack(uint x, uint y, StackHandler *sH) {
 	if (x >= _sceneWidth || y >= _sceneHeight) {
 		return fatal("Co-ordinates are outside current scene!");
 	}
 
-	variable newValue;
+	Variable newValue;
 
 	newValue.varType = SVT_NULL;
 

@@ -26,13 +26,13 @@
 
 namespace Sludge {
 
-struct statusBar {
+struct StatusBar {
 	Common::String text;
-	statusBar *next;
+	StatusBar *next;
 };
 
-struct statusStuff {
-	statusBar *firstStatusBar;
+struct StatusStuff {
+	StatusBar *firstStatusBar;
 	uint16 alignStatus;
 	int litStatus;
 	int statusX, statusY;
@@ -58,8 +58,8 @@ bool loadStatusBars(Common::SeekableReadStream *stream);
 void saveStatusBars(Common::WriteStream *stream);
 
 // For freezing
-void restoreBarStuff(statusStuff *here);
-statusStuff *copyStatusBarStuff(statusStuff *here);
+void restoreBarStuff(StatusStuff  *here);
+StatusStuff  *copyStatusBarStuff(StatusStuff  *here);
 
 } // End of namespace Sludge
 

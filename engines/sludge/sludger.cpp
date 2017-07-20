@@ -53,9 +53,9 @@
 
 namespace Sludge {
 
-extern personaAnimation *mouseCursorAnim;
+extern PersonaAnimation  *mouseCursorAnim;
 extern int dialogValue;
-extern variable *launchResult;
+extern Variable *launchResult;
 
 int numBIFNames = 0;
 Common::String *allBIFNames;
@@ -71,18 +71,18 @@ bool captureAllKeys = false;
 
 byte brightnessLevel = 255;
 
-eventHandlers mainHandlers;
-eventHandlers *currentEvents = &mainHandlers;
+EventHandlers mainHandlers;
+EventHandlers *currentEvents = &mainHandlers;
 
-extern screenRegion *overRegion;
-extern speechStruct *speech;
-extern loadedFunction *saverFunc;
+extern ScreenRegion *overRegion;
+extern SpeechStruct *speech;
+extern LoadedFunction *saverFunc;
 
-loadedFunction *allRunningFunctions = NULL;
-screenRegion *lastRegion = NULL;
-variableStack *noStack = NULL;
-inputType input;
-variable *globalVars;
+LoadedFunction *allRunningFunctions = NULL;
+ScreenRegion *lastRegion = NULL;
+VariableStack *noStack = NULL;
+InputType input;
+Variable *globalVars;
 int numGlobals;
 
 const char *sludgeText[] = { "?????", "RETURN", "BRANCH", "BR_ZERO",
@@ -273,7 +273,7 @@ bool initSludge(const Common::String &filename) {
 	numGlobals = fp->readUint16BE();
 	debug(kSludgeDebugDataLoad, "numGlobals : %i", numGlobals);
 
-	globalVars = new variable[numGlobals];
+	globalVars = new Variable[numGlobals];
 	if (!checkNew(globalVars))
 		return false;
 	for (a = 0; a < numGlobals; a++)
@@ -308,8 +308,8 @@ void sludgeDisplay() {
 	if (brightnessLevel < 255) fixBrightness();// This is for transitionLevel special effects
 }
 
-void pauseFunction(loadedFunction *fun) {
-	loadedFunction **huntAndDestroy = &allRunningFunctions;
+void pauseFunction(LoadedFunction *fun) {
+	LoadedFunction **huntAndDestroy = &allRunningFunctions;
 	while (*huntAndDestroy) {
 		if (fun == *huntAndDestroy) {
 			(*huntAndDestroy) = (*huntAndDestroy)->next;
@@ -320,13 +320,13 @@ void pauseFunction(loadedFunction *fun) {
 	}
 }
 
-void restartFunction(loadedFunction *fun) {
+void restartFunction(LoadedFunction *fun) {
 	fun->next = allRunningFunctions;
 	allRunningFunctions = fun;
 }
 
 void killSpeechTimers() {
-	loadedFunction *thisFunction = allRunningFunctions;
+	LoadedFunction *thisFunction = allRunningFunctions;
 
 	while (thisFunction) {
 		if (thisFunction->freezerLevel == 0 && thisFunction->isSpeech
@@ -341,7 +341,7 @@ void killSpeechTimers() {
 }
 
 void completeTimers() {
-	loadedFunction *thisFunction = allRunningFunctions;
+	LoadedFunction *thisFunction = allRunningFunctions;
 
 	while (thisFunction) {
 		if (thisFunction->freezerLevel == 0)
@@ -350,7 +350,7 @@ void completeTimers() {
 	}
 }
 
-void finishFunction(loadedFunction *fun) {
+void finishFunction(LoadedFunction *fun) {
 	int a;
 
 	pauseFunction(fun);
@@ -365,7 +365,7 @@ void finishFunction(loadedFunction *fun) {
 	fun = NULL;
 }
 
-void abortFunction(loadedFunction *fun) {
+void abortFunction(LoadedFunction *fun) {
 	int a;
 
 	pauseFunction(fun);
@@ -382,11 +382,11 @@ void abortFunction(loadedFunction *fun) {
 	fun = NULL;
 }
 
-int cancelAFunction(int funcNum, loadedFunction *myself, bool &killedMyself) {
+int cancelAFunction(int funcNum, LoadedFunction *myself, bool &killedMyself) {
 	int n = 0;
 	killedMyself = false;
 
-	loadedFunction *fun = allRunningFunctions;
+	LoadedFunction *fun = allRunningFunctions;
 	while (fun) {
 		if (fun->originalNumber == funcNum) {
 			fun->cancelMe = true;
@@ -400,7 +400,7 @@ int cancelAFunction(int funcNum, loadedFunction *myself, bool &killedMyself) {
 }
 
 void freezeSubs() {
-	loadedFunction *thisFunction = allRunningFunctions;
+	LoadedFunction *thisFunction = allRunningFunctions;
 
 	while (thisFunction) {
 		if (thisFunction->unfreezable) {
@@ -413,7 +413,7 @@ void freezeSubs() {
 }
 
 void unfreezeSubs() {
-	loadedFunction *thisFunction = allRunningFunctions;
+	LoadedFunction *thisFunction = allRunningFunctions;
 
 	while (thisFunction) {
 		if (thisFunction->freezerLevel)
@@ -422,7 +422,7 @@ void unfreezeSubs() {
 	}
 }
 
-bool continueFunction(loadedFunction *fun) {
+bool continueFunction(LoadedFunction *fun) {
 	bool keepLooping = true;
 	bool advanceNow;
 	uint param;
@@ -457,7 +457,7 @@ bool continueFunction(loadedFunction *fun) {
 		switch (com) {
 		case SLU_RETURN:
 			if (fun->calledBy) {
-				loadedFunction *returnTo = fun->calledBy;
+				LoadedFunction *returnTo = fun->calledBy;
 				if (fun->returnSomething)
 					copyVariable(fun->reg, returnTo->reg);
 				finishFunction(fun);
@@ -493,7 +493,7 @@ bool continueFunction(loadedFunction *fun) {
 			case SVT_BUILT: {
 				debug(kSludgeDebugStackMachine, "Built-in init value: %i",
 						fun->reg.varData.intValue);
-				builtReturn br = callBuiltIn(fun->reg.varData.intValue, param,
+				BuiltReturn br = callBuiltIn(fun->reg.varData.intValue, param,
 						fun);
 
 				switch (br) {
@@ -619,7 +619,7 @@ bool continueFunction(loadedFunction *fun) {
 					int ii;
 					if (!getValueType(ii, SVT_INT, fun->reg))
 						return false;
-					variable *grab =
+					Variable *grab =
 							(fun->stack->thisVar.varType == SVT_FASTARRAY) ?
 									fastArrayGetByIndex(
 											fun->stack->thisVar.varData.fastArray,
@@ -685,7 +685,7 @@ bool continueFunction(loadedFunction *fun) {
 				int ii;
 				if (!getValueType(ii, SVT_INT, fun->reg))
 					return false;
-				variable *v = fastArrayGetByIndex(
+				Variable *v = fastArrayGetByIndex(
 						fun->stack->thisVar.varData.fastArray, ii);
 				if (v == NULL)
 					return fatal("Not within bounds of fast array.");
@@ -897,8 +897,8 @@ bool continueFunction(loadedFunction *fun) {
 
 bool runSludge() {
 
-	loadedFunction *thisFunction = allRunningFunctions;
-	loadedFunction *nextFunction;
+	LoadedFunction *thisFunction = allRunningFunctions;
+	LoadedFunction *nextFunction;
 
 	while (thisFunction) {
 		nextFunction = thisFunction->next;
@@ -939,7 +939,7 @@ bool runSludge() {
 	return true;
 }
 
-bool loadFunctionCode(loadedFunction *newFunc) {
+bool loadFunctionCode(LoadedFunction *newFunc) {
 	uint numLines, numLinesRead;
 
 	if (!g_sludge->_resMan->openSubSlice(newFunc->originalNumber))
@@ -955,7 +955,7 @@ bool loadFunctionCode(loadedFunction *newFunc) {
 	debug(kSludgeDebugDataLoad, "numArgs: %i", newFunc->numArgs);
 	newFunc->numLocals = readStream->readUint16BE();
 	debug(kSludgeDebugDataLoad, "numLocals: %i", newFunc->numLocals);
-	newFunc->compiledLines = new lineOfCode[numLines];
+	newFunc->compiledLines = new LineOfCode[numLines];
 	if (!checkNew(newFunc->compiledLines))
 		return false;
 
@@ -968,7 +968,7 @@ bool loadFunctionCode(loadedFunction *newFunc) {
 	g_sludge->_resMan->finishAccess();
 
 	// Now we need to reserve memory for the local variables
-	newFunc->localVars = new variable[newFunc->numLocals];
+	newFunc->localVars = new Variable[newFunc->numLocals];
 	if (!checkNew(newFunc->localVars))
 		return false;
 	for (int a = 0; a < newFunc->numLocals; a++) {
@@ -979,8 +979,8 @@ bool loadFunctionCode(loadedFunction *newFunc) {
 }
 
 int startNewFunctionNum(uint funcNum, uint numParamsExpected,
-		loadedFunction *calledBy, variableStack *&vStack, bool returnSommet) {
-	loadedFunction *newFunc = new loadedFunction;
+		LoadedFunction *calledBy, VariableStack *&vStack, bool returnSommet) {
+	LoadedFunction *newFunc = new LoadedFunction;
 	checkNew(newFunc);
 	newFunc->originalNumber = funcNum;
 
@@ -989,7 +989,7 @@ int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 	if (newFunc->numArgs != (int) numParamsExpected)
 		return fatal("Wrong number of parameters!");
 	if (newFunc->numArgs > newFunc->numLocals)
-		return fatal("More arguments than local variable space!");
+		return fatal("More arguments than local Variable space!");
 
 	// Now, lets copy the parameters from the calling function's stack...
 
@@ -1050,7 +1050,7 @@ bool handleInput() {
 	input.justMoved = false;
 
 	if (lastRegion != overRegion && currentEvents->focusFunction) {
-		variableStack *tempStack = new variableStack;
+		VariableStack *tempStack = new VariableStack;
 		if (!checkNew(tempStack))
 			return false;
 
@@ -1195,7 +1195,7 @@ bool handleInput() {
 		}
 
 		if (!tempString.empty()) {
-			variableStack *tempStack = new variableStack;
+			VariableStack *tempStack = new VariableStack;
 			if (!checkNew(tempStack))
 				return false;
 			initVarNew(tempStack->thisVar);

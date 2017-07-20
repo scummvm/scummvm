@@ -54,13 +54,13 @@ namespace Sludge {
 // From elsewhere
 //----------------------------------------------------------------------
 
-extern loadedFunction *allRunningFunctions;         // In sludger.cpp
+extern LoadedFunction *allRunningFunctions;         // In sludger.cpp
 extern const char *typeName[];                      // In variable.cpp
 extern int numGlobals;                              // In sludger.cpp
-extern variable *globalVars;                        // In sludger.cpp
-extern flor *currentFloor;                          // In floor.cpp
-extern speechStruct *speech;                        // In talk.cpp
-extern personaAnimation *mouseCursorAnim;           // In cursor.cpp
+extern Variable *globalVars;                        // In sludger.cpp
+extern Floor *currentFloor;                          // In floor.cpp
+extern SpeechStruct *speech;                        // In talk.cpp
+extern PersonaAnimation  *mouseCursorAnim;           // In cursor.cpp
 extern int mouseCursorFrameNum;                     // "    "   "
 extern int loadedFontNum, fontHeight;				// In fonttext.cpp
 extern uint fontTableSize;							// 
@@ -79,7 +79,7 @@ extern uint16 saveEncoding;                 // in savedata.cpp
 //----------------------------------------------------------------------
 
 struct stackLibrary {
-	stackHandler *stack;
+	StackHandler *stack;
 	stackLibrary *next;
 };
 
@@ -89,11 +89,11 @@ stackLibrary *stackLib = NULL;
 //----------------------------------------------------------------------
 // For saving and loading stacks...
 //----------------------------------------------------------------------
-void saveStack(variableStack *vs, Common::WriteStream *stream) {
+void saveStack(VariableStack *vs, Common::WriteStream *stream) {
 	int elements = 0;
 	int a;
 
-	variableStack *search = vs;
+	VariableStack *search = vs;
 	while (search) {
 		elements++;
 		search = search->next;
@@ -107,14 +107,14 @@ void saveStack(variableStack *vs, Common::WriteStream *stream) {
 	}
 }
 
-variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **last) {
+VariableStack *loadStack(Common::SeekableReadStream *stream, VariableStack **last) {
 	int elements = stream->readUint16BE();
 	int a;
-	variableStack *first = NULL;
-	variableStack **changeMe = &first;
+	VariableStack *first = NULL;
+	VariableStack **changeMe = &first;
 
 	for (a = 0; a < elements; a++) {
-		variableStack *nS = new variableStack;
+		VariableStack *nS = new VariableStack;
 		if (!checkNew(nS))
 			return NULL;
 		loadVariable(&(nS->thisVar), stream);
@@ -129,7 +129,7 @@ variableStack *loadStack(Common::SeekableReadStream *stream, variableStack **las
 	return first;
 }
 
-bool saveStackRef(stackHandler *vs, Common::WriteStream *stream) {
+bool saveStackRef(StackHandler *vs, Common::WriteStream *stream) {
 	stackLibrary *s = stackLib;
 	int a = 0;
 	while (s) {
@@ -163,7 +163,7 @@ void clearStackLib() {
 	stackLibTotal = 0;
 }
 
-stackHandler *getStackFromLibrary(int n) {
+StackHandler *getStackFromLibrary(int n) {
 	n = stackLibTotal - n;
 	while (n) {
 		stackLib = stackLib->next;
@@ -172,8 +172,8 @@ stackHandler *getStackFromLibrary(int n) {
 	return stackLib->stack;
 }
 
-stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
-	stackHandler *nsh;
+StackHandler *loadStackRef(Common::SeekableReadStream *stream) {
+	StackHandler *nsh;
 
 	if (stream->readByte()) {    // It's one we've loaded already...
 		nsh = getStackFromLibrary(stream->readUint16BE());
@@ -181,7 +181,7 @@ stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 	} else {
 		// Load the new stack
 
-		nsh = new stackHandler;
+		nsh = new StackHandler;
 		if (!checkNew(nsh))
 			return NULL;
 		nsh->last = NULL;
@@ -204,7 +204,7 @@ stackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 //----------------------------------------------------------------------
 // For saving and loading variables...
 //----------------------------------------------------------------------
-bool saveVariable(variable *from, Common::WriteStream *stream) {
+bool saveVariable(Variable *from, Common::WriteStream *stream) {
 	stream->writeByte(from->varType);
 	switch (from->varType) {
 		case SVT_INT:
@@ -239,8 +239,8 @@ bool saveVariable(variable *from, Common::WriteStream *stream) {
 	return true;
 }
 
-bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
-	to->varType = (variableType)stream->readByte();
+bool loadVariable(Variable *to, Common::SeekableReadStream *stream) {
+	to->varType = (VariableType)stream->readByte();
 	switch (to->varType) {
 		case SVT_INT:
 		case SVT_FUNC:
@@ -259,14 +259,14 @@ bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
 			return true;
 
 		case SVT_COSTUME:
-			to->varData.costumeHandler = new persona;
+			to->varData.costumeHandler = new Persona;
 			if (!checkNew(to->varData.costumeHandler))
 				return false;
 			loadCostume(to->varData.costumeHandler, stream);
 			return true;
 
 		case SVT_ANIM:
-			to->varData.animHandler = new personaAnimation;
+			to->varData.animHandler = new PersonaAnimation ;
 			if (!checkNew(to->varData.animHandler))
 				return false;
 			loadAnim(to->varData.animHandler, stream);
@@ -281,7 +281,7 @@ bool loadVariable(variable *to, Common::SeekableReadStream *stream) {
 //----------------------------------------------------------------------
 // For saving and loading functions
 //----------------------------------------------------------------------
-void saveFunction(loadedFunction *fun, Common::WriteStream *stream) {
+void saveFunction(LoadedFunction *fun, Common::WriteStream *stream) {
 	int a;
 	stream->writeUint16BE(fun->originalNumber);
 	if (fun->calledBy) {
@@ -306,12 +306,12 @@ void saveFunction(loadedFunction *fun, Common::WriteStream *stream) {
 	}
 }
 
-loadedFunction *loadFunction(Common::SeekableReadStream *stream) {
+LoadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 	int a;
 
 	// Reserve memory...
 
-	loadedFunction *buildFunc = new loadedFunction;
+	LoadedFunction *buildFunc = new LoadedFunction;
 	if (!checkNew(buildFunc))
 		return NULL;
 
@@ -396,7 +396,7 @@ bool saveGame(const Common::String &fname) {
 	fp->writeUint16BE(mouseCursorFrameNum);
 
 	// Save functions
-	loadedFunction *thisFunction = allRunningFunctions;
+	LoadedFunction *thisFunction = allRunningFunctions;
 	int countFunctions = 0;
 	while (thisFunction) {
 		countFunctions++;
@@ -561,15 +561,15 @@ bool loadGame(const Common::String &fname) {
 	loadHandlers(fp);
 	loadRegions(fp);
 
-	mouseCursorAnim = new personaAnimation;
+	mouseCursorAnim = new PersonaAnimation ;
 	if (!checkNew(mouseCursorAnim))
 		return false;
 	if (!loadAnim(mouseCursorAnim, fp))
 		return false;
 	mouseCursorFrameNum = fp->readUint16BE();
 
-	loadedFunction *rFunc;
-	loadedFunction **buildList = &allRunningFunctions;
+	LoadedFunction *rFunc;
+	LoadedFunction **buildList = &allRunningFunctions;
 
 	int countFunctions = fp->readUint16BE();
 	while (countFunctions--) {

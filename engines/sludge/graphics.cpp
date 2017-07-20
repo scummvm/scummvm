@@ -33,7 +33,7 @@
 
 namespace Sludge {
 
-extern inputType input;
+extern InputType input;
 
 GraphicsManager::GraphicsManager(SludgeEngine *vm) {
 	_vm = vm;

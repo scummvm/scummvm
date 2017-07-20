@@ -24,10 +24,10 @@
 
 namespace Sludge {
 
-struct variable;
-struct variableStack;
+struct Variable;
+struct VariableStack;
 
-enum variableType {
+enum VariableType {
 	SVT_NULL,
 	SVT_INT,
 	SVT_FUNC,
@@ -42,35 +42,35 @@ enum variableType {
 	SVT_NUM_TYPES
 };
 
-struct fastArrayHandler {
-	struct variable *fastVariables;
+struct FastArrayHandler {
+	struct Variable *fastVariables;
 	int size;
 	int timesUsed;
 };
 
-struct stackHandler {
-	struct variableStack *first;
-	struct variableStack *last;
+struct StackHandler {
+	struct VariableStack *first;
+	struct VariableStack *last;
 	int timesUsed;
 };
 
-union variableData {
+union VariableData {
 	signed int intValue;
 	const char *theString;
-	stackHandler *theStack;
-	struct personaAnimation *animHandler;
-	struct persona *costumeHandler;
-	fastArrayHandler *fastArray;
+	StackHandler *theStack;
+	struct PersonaAnimation  *animHandler;
+	struct Persona *costumeHandler;
+	FastArrayHandler *fastArray;
 };
 
-struct variable {
-	variableType varType;
-	variableData varData;
+struct Variable {
+	VariableType varType;
+	VariableData varData;
 };
 
-struct variableStack {
-	variable thisVar;
-	variableStack *next;
+struct VariableStack {
+	Variable thisVar;
+	VariableStack *next;
 };
 
 // Initialisation
@@ -79,43 +79,43 @@ struct variableStack {
 
 // Setting variables
 
-void setVariable(variable &thisVar, variableType vT, int value);
-bool copyVariable(const variable &from, variable &to);
-bool loadStringToVar(variable &thisVar, int value);
-void newAnimationVariable(variable &thisVar, struct personaAnimation *i);
-void newCostumeVariable(variable &thisVar, struct persona *i);
-void makeTextVar(variable &thisVar, const Common::String &txt);
-void addVariablesInSecond(variable &var1, variable &var2);
-void compareVariablesInSecond(const variable &var1, variable &var2);
+void setVariable(Variable &thisVar, VariableType vT, int value);
+bool copyVariable(const Variable &from, Variable &to);
+bool loadStringToVar(Variable &thisVar, int value);
+void newAnimationVariable(Variable &thisVar, struct PersonaAnimation  *i);
+void newCostumeVariable(Variable &thisVar, struct Persona *i);
+void makeTextVar(Variable &thisVar, const Common::String &txt);
+void addVariablesInSecond(Variable &var1, Variable &var2);
+void compareVariablesInSecond(const Variable &var1, Variable &var2);
 char *createCString(const Common::String &s);
 
 // Misc.
 
-void unlinkVar(variable &thisVar);
+void unlinkVar(Variable &thisVar);
 Common::String getNumberedString(int value);
-Common::String getTextFromAnyVar(const variable &from);
-struct persona *getCostumeFromVar(variable &thisVar);
-struct personaAnimation *getAnimationFromVar(variable &thisVar);
-bool getBoolean(const variable &from);
-bool getValueType(int &toHere, variableType vT, const variable &v);
+Common::String getTextFromAnyVar(const Variable &from);
+struct Persona *getCostumeFromVar(Variable &thisVar);
+struct PersonaAnimation  *getAnimationFromVar(Variable &thisVar);
+bool getBoolean(const Variable &from);
+bool getValueType(int &toHere, VariableType vT, const Variable &v);
 
 // Stacky stuff
 
-bool addVarToStack(const variable &va, variableStack *&thisStack);
-bool addVarToStackQuick(variable &va, variableStack *&thisStack);
-void trimStack(variableStack *&stack);
-int deleteVarFromStack(const variable &va, variableStack *&thisStack,
+bool addVarToStack(const Variable &va, VariableStack *&thisStack);
+bool addVarToStackQuick(Variable &va, VariableStack *&thisStack);
+void trimStack(VariableStack *&stack);
+int deleteVarFromStack(const Variable &va, VariableStack *&thisStack,
 		bool allOfEm = false);
-variableStack *stackFindLast(variableStack *hunt);
-bool copyStack(const variable &from, variable &to);
-int stackSize(const stackHandler *me);
-bool stackSetByIndex(variableStack *, uint, const variable &);
-variable *stackGetByIndex(variableStack *, uint);
-bool getSavedGamesStack(stackHandler *sH, const Common::String &ext);
+VariableStack *stackFindLast(VariableStack *hunt);
+bool copyStack(const Variable &from, Variable &to);
+int stackSize(const StackHandler *me);
+bool stackSetByIndex(VariableStack *, uint, const Variable &);
+Variable *stackGetByIndex(VariableStack *, uint);
+bool getSavedGamesStack(StackHandler *sH, const Common::String &ext);
 
-bool makeFastArrayFromStack(variable &to, const stackHandler *stacky);
-bool makeFastArraySize(variable &to, int size);
-variable *fastArrayGetByIndex(fastArrayHandler *vS, uint theIndex);
+bool makeFastArrayFromStack(Variable &to, const StackHandler *stacky);
+bool makeFastArraySize(Variable &to, int size);
+Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex);
 
 } // End of namespace Sludge
 

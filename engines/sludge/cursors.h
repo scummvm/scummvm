@@ -25,9 +25,9 @@
 
 namespace Sludge {
 
-void pickAnimCursor(struct personaAnimation *pp);
+void pickAnimCursor(struct PersonaAnimation  *pp);
 void displayCursor();
-void pasteCursor(int x, int y, struct personaAnimation *c);
+void pasteCursor(int x, int y, struct PersonaAnimation  *c);
 
 } // End of namespace Sludge
 

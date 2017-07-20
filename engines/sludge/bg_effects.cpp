@@ -150,7 +150,7 @@ void blur_loadSettings(Common::SeekableReadStream *stream) {
 	}
 }
 
-bool blur_createSettings(int numParams, variableStack *&stack) {
+bool blur_createSettings(int numParams, VariableStack *&stack) {
 	bool createNullThing = true;
 	Common::String error = "";
 
@@ -160,7 +160,7 @@ bool blur_createSettings(int numParams, variableStack *&stack) {
 		int height = numParams - 2;
 		int width = 0;
 
-		variableStack *justToCheckSizes = stack;
+		VariableStack *justToCheckSizes = stack;
 		for (int a = 0; a < height; a++) {
 			if (justToCheckSizes->thisVar.varType != SVT_STACK) {
 				error = "Third and subsequent parameters in setBackgroundEffect should be arrays";
@@ -191,7 +191,7 @@ bool blur_createSettings(int numParams, variableStack *&stack) {
 
 			if (blur_allocateMemoryForEffect()) {
 				for (int y = height - 1; y >= 0; y--) {
-					variableStack *eachNumber = stack->thisVar.varData.theStack->first;
+					VariableStack *eachNumber = stack->thisVar.varData.theStack->first;
 					if (error.empty()) {
 						for (int x = 0; x < width; x++) {
 							int arraySlot = x + (y * width);

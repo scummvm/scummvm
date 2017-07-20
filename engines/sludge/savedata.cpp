@@ -94,9 +94,9 @@ char *readTextPlain(Common::File *fp) {
 	return reply;
 }
 
-bool fileToStack(const Common::String &filename, stackHandler *sH) {
+bool fileToStack(const Common::String &filename, StackHandler *sH) {
 
-	variable stringVar;
+	Variable stringVar;
 	stringVar.varType = SVT_NULL;
 	Common::String checker = saveEncoding ? "[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\n";
 
@@ -193,12 +193,12 @@ bool fileToStack(const Common::String &filename, stackHandler *sH) {
 	return true;
 }
 
-bool stackToFile(const Common::String &filename, const variable &from) {
+bool stackToFile(const Common::String &filename, const Variable &from) {
 #if 0
 	FILE *fp = fopen(filename, saveEncoding ? "wb" : "wt");
 	if (!fp) return fatal("Can't create file", filename);
 
-	variableStack *hereWeAre = from.varData.theStack -> first;
+	VariableStack *hereWeAre = from.varData.theStack -> first;
 
 	encode1 = (byte)saveEncoding & 255;
 	encode2 = (byte)(saveEncoding >> 8);

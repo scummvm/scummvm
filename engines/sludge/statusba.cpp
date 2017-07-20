@@ -37,8 +37,8 @@ namespace Sludge {
 SpritePalette verbLinePalette;
 SpritePalette litVerbLinePalette;
 
-statusStuff mainStatus;
-statusStuff *nowStatus = & mainStatus;
+StatusStuff  mainStatus;
+StatusStuff  *nowStatus = & mainStatus;
 extern int fontHeight;
 
 void setLitStatus(int i) {
@@ -47,15 +47,15 @@ void setLitStatus(int i) {
 
 void killLastStatus() {
 	if (nowStatus->firstStatusBar) {
-		statusBar *kill = nowStatus->firstStatusBar;
+		StatusBar *kill = nowStatus->firstStatusBar;
 		nowStatus->firstStatusBar = kill->next;
 		delete kill;
 	}
 }
 
 void clearStatusBar() {
-	statusBar *stat = nowStatus->firstStatusBar;
-	statusBar *kill;
+	StatusBar *stat = nowStatus->firstStatusBar;
+	StatusBar *kill;
 	nowStatus->litStatus = -1;
 	while (stat) {
 		kill = stat;
@@ -66,7 +66,7 @@ void clearStatusBar() {
 }
 
 void addStatusBar() {
-	statusBar *newStat = new statusBar;
+	StatusBar *newStat = new StatusBar;
 	if (checkNew(newStat)) {
 		newStat->next = nowStatus->firstStatusBar;
 		newStat->text.clear();
@@ -89,7 +89,7 @@ void positionStatus(int x, int y) {
 void drawStatusBar() {
 	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 	int y = nowStatus->statusY, n = 0;
-	statusBar *stat = nowStatus->firstStatusBar;
+	StatusBar *stat = nowStatus->firstStatusBar;
 	while (stat) {
 		switch (nowStatus->alignStatus) {
 		case IN_THE_CENTRE:
@@ -122,7 +122,7 @@ void statusBarLitColour(byte r, byte g, byte b) {
 	nowStatus->statusLB = b;
 }
 
-statusStuff *copyStatusBarStuff(statusStuff *here) {
+StatusStuff  *copyStatusBarStuff(StatusStuff  *here) {
 
 	// Things we want to keep
 	here->statusLR = nowStatus->statusLR;
@@ -139,13 +139,13 @@ statusStuff *copyStatusBarStuff(statusStuff *here) {
 	here->litStatus = -1;
 	here->firstStatusBar = NULL;
 
-	statusStuff *old = nowStatus;
+	StatusStuff  *old = nowStatus;
 	nowStatus = here;
 
 	return old;
 }
 
-void restoreBarStuff(statusStuff *here) {
+void restoreBarStuff(StatusStuff  *here) {
 	delete nowStatus;
 	setFontColour(verbLinePalette, here->statusR, here->statusG, here->statusB);
 	setFontColour(litVerbLinePalette, here->statusLR, here->statusLG, here->statusLB);
@@ -172,7 +172,7 @@ const Common::String statusBarText() {
 }
 
 void saveStatusBars(Common::WriteStream *stream) {
-	statusBar *viewLine = nowStatus->firstStatusBar;
+	StatusBar *viewLine = nowStatus->firstStatusBar;
 
 	stream->writeUint16BE(nowStatus->alignStatus);
 	stream->writeSint16LE(nowStatus->litStatus);
@@ -213,10 +213,10 @@ bool loadStatusBars(Common::SeekableReadStream *stream) {
 	setFontColour(verbLinePalette, nowStatus->statusR, nowStatus->statusG, nowStatus->statusB);
 	setFontColour(litVerbLinePalette, nowStatus->statusLR, nowStatus->statusLG, nowStatus->statusLB);
 	// Read what's being said
-	statusBar **viewLine = & (nowStatus->firstStatusBar);
-	statusBar *newOne;
+	StatusBar **viewLine = & (nowStatus->firstStatusBar);
+	StatusBar *newOne;
 	while (stream->readByte()) {
-		newOne = new statusBar;
+		newOne = new StatusBar;
 		if (! checkNew(newOne)) return false;
 		newOne->text = readString(stream);
 		newOne->next = NULL;

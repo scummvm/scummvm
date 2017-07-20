@@ -36,10 +36,10 @@ typedef struct _FILETIME {
 	uint32 dwHighDateTime;
 } FILETIME;
 
-struct variable;
-struct variableStack;
+struct Variable;
+struct VariableStack;
 
-struct eventHandlers {
+struct EventHandlers {
 	int leftMouseFunction;
 	int leftMouseUpFunction;
 	int rightMouseFunction;
@@ -49,26 +49,26 @@ struct eventHandlers {
 	int spaceFunction;
 };
 
-struct lineOfCode {
+struct LineOfCode {
 	sludgeCommand theCommand;
 	int32 param;
 };
 
-struct loadedFunction {
+struct LoadedFunction {
 	int originalNumber;
-	lineOfCode *compiledLines;
+	LineOfCode *compiledLines;
 	int numLocals, timeLeft, numArgs;
-	variable *localVars;
-	variableStack *stack;
-	variable reg;
+	Variable *localVars;
+	VariableStack *stack;
+	Variable reg;
 	uint runThisLine;
-	loadedFunction *calledBy;
-	loadedFunction *next;
+	LoadedFunction *calledBy;
+	LoadedFunction *next;
 	bool returnSomething, isSpeech, unfreezable, cancelMe;
 	byte freezerLevel;
 };
 
-struct inputType {
+struct InputType {
 	bool leftClick, rightClick, justMoved, leftRelease, rightRelease;
 	int mouseX, mouseY, keyPressed;
 };
@@ -76,22 +76,22 @@ struct inputType {
 bool initSludge(const Common::String &);
 void displayBase();
 void sludgeDisplay();
-int startNewFunctionNum(uint, uint, loadedFunction *, variableStack*&, bool = true);
+int startNewFunctionNum(uint, uint, LoadedFunction *, VariableStack*&, bool = true);
 bool handleInput();
-void restartFunction(loadedFunction *fun);
-bool loadFunctionCode(loadedFunction *newFunc);
+void restartFunction(LoadedFunction *fun);
+bool loadFunctionCode(LoadedFunction *newFunc);
 void loadHandlers(Common::SeekableReadStream *stream);
 void saveHandlers(Common::WriteStream *stream);
 
-void finishFunction(loadedFunction *fun);
-void abortFunction(loadedFunction *fun);
+void finishFunction(LoadedFunction *fun);
+void abortFunction(LoadedFunction *fun);
 Common::File *openAndVerify(const Common::String &filename, char extra1, char extra2, const char *er, int &fileVersion);
 
 void freezeSubs();
 void unfreezeSubs();
 void completeTimers();
 void killSpeechTimers();
-int cancelAFunction(int funcNum, loadedFunction *myself, bool &killedMyself);
+int cancelAFunction(int funcNum, LoadedFunction *myself, bool &killedMyself);
 
 } // End of namespace Sludge
 

@@ -26,25 +26,25 @@
 
 namespace Sludge {
 
-struct onScreenPerson;
-struct screenRegion;
-struct speechStruct;
-struct statusStuff;
-struct eventHandlers;
+struct OnScreenPerson;
+struct ScreenRegion;
+struct SpeechStruct;
+struct StatusStuff ;
+struct EventHandlers;
 
 struct FrozenStuffStruct {
-	onScreenPerson *allPeople;
-	screenRegion *allScreenRegions;
+	OnScreenPerson *allPeople;
+	ScreenRegion *allScreenRegions;
 	Graphics::Surface backdropSurface;
 	Graphics::Surface lightMapSurface;
 	Graphics::Surface *zBufferSprites;
 	int zPanels;
 	Parallax *parallaxStuff;
 	int lightMapNumber, zBufferNumber;
-	speechStruct *speech;
-	statusStuff *frozenStatus;
-	eventHandlers *currentEvents;
-	personaAnimation *mouseCursorAnim;
+	SpeechStruct *speech;
+	StatusStuff  *frozenStatus;
+	EventHandlers *currentEvents;
+	PersonaAnimation  *mouseCursorAnim;
 	int mouseCursorFrameNum;
 	int cameraX, cameraY, sceneWidth, sceneHeight;
 	float cameraZoom;
