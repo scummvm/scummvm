@@ -174,8 +174,7 @@ void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.y = y;
 
 	if (_graphicsManager) {
-		_graphicsManager->notifyMousePos(Common::Point(x, y));
-		_graphicsManager->transformMouseCoordinates(event.mouse);
+		_graphicsManager->notifyMousePosition(event.mouse);
 	}
 }
 

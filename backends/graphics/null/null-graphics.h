@@ -54,8 +54,8 @@ public:
 	void beginGFXTransaction() {}
 	OSystem::TransactionError endGFXTransaction() { return OSystem::kTransactionSuccess; }
 
-	int16 getHeight() { return 0; }
-	int16 getWidth() { return 0; }
+	int16 getHeight() const { return 0; }
+	int16 getWidth() const { return 0; }
 	void setPalette(const byte *colors, uint start, uint num) {}
 	void grabPalette(byte *colors, uint start, uint num) {}
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {}
