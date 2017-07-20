@@ -1437,8 +1437,7 @@ void Logic::GPL1_242() {
 void Logic::GPLogic1() {
 	if (_opCodes.contains(_statPlay)) {
 		Opcode op = _opCodes[_statPlay];
-// TODO: Find the correct syntax
-//		this->*op();
+		(this->*op)();
 	} else
 		warning("Unknown opcode: %d", _statPlay);
 }
