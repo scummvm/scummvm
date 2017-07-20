@@ -184,13 +184,13 @@ bool GraphicsManager::snapshot() {
 	if (!freeze())
 		return false;
 
-	// draw snapshot to backdrop
+	// draw snapshot to rendersurface
 	displayBase();
 	viewSpeech(); // ...and anything being said
 	drawStatusBar();
 
 	// copy backdrop to snapshot
-	_snapshotSurface.copyFrom(_backdropSurface);
+	_snapshotSurface.copyFrom(_renderSurface);
 
 	unfreeze(false);
 	return true;
