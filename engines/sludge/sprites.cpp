@@ -24,6 +24,7 @@
 #include "graphics/transparent_surface.h"
 
 #include "sludge/allfiles.h"
+#include "sludge/event.h"
 #include "sludge/fileset.h"
 #include "sludge/graphics.h"
 #include "sludge/people.h"
@@ -38,7 +39,6 @@
 
 namespace Sludge {
 
-extern InputType input;
 void GraphicsManager::forgetSpriteBank(SpriteBank &forgetme) {
 	if (forgetme.myPalette.pal) {
 		delete[] forgetme.myPalette.pal;
@@ -406,13 +406,14 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 	}
 
 	// Are we pointing at the sprite?
-	if (input.mouseX >= x1 && input.mouseX <= x2 && input.mouseY >= y1 && input.mouseY <= y2) {
+	if (_vm->_evtMan->mouseX() >= x1 && _vm->_evtMan->mouseX() <= x2
+			&& _vm->_evtMan->mouseY() >= y1 && _vm->_evtMan->mouseY() <= y2) {
 		if (thisPerson->extra & EXTRA_RECTANGULAR)
 			return true;
 
 		// check if point to non transparent part
-		int pixelx = (int)(single.surface.w * (input.mouseX - x1) / (x2 - x1));
-		int pixely = (int)(single.surface.h * (input.mouseY - y1) / (y2 - y1));
+		int pixelx = (int)(single.surface.w * (_vm->_evtMan->mouseX() - x1) / (x2 - x1));
+		int pixely = (int)(single.surface.h * (_vm->_evtMan->mouseY() - y1) / (y2 - y1));
 		uint32 *colorPtr = (uint32 *)single.surface.getBasePtr(pixelx, pixely);
 
 		uint8 a, r, g, b;

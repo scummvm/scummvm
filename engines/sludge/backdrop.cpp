@@ -28,23 +28,22 @@
 #include "graphics/palette.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/newfatal.h"
+#include "sludge/backdrop.h"
+#include "sludge/event.h"
 #include "sludge/fileset.h"
 #include "sludge/graphics.h"
-#include "sludge/backdrop.h"
+#include "sludge/imgloader.h"
 #include "sludge/moreio.h"
+#include "sludge/newfatal.h"
 #include "sludge/statusba.h"
-#include "sludge/talk.h"
 #include "sludge/zbuffer.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
+#include "sludge/talk.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
-#include "sludge/imgloader.h"
 
 namespace Sludge {
-
-extern InputType input;
 
 Parallax::Parallax() {
 	_parallaxLayers.clear();
@@ -219,11 +218,11 @@ void GraphicsManager::killLightMap() {
 bool GraphicsManager::reserveBackdrop() {
 	_cameraX = 0;
 	_cameraY = 0;
-	input.mouseX = (int)((float)input.mouseX * _cameraZoom);
-	input.mouseY = (int)((float)input.mouseY * _cameraZoom);
+	_vm->_evtMan->mouseX() = (int)((float)_vm->_evtMan->mouseX() * _cameraZoom);
+	_vm->_evtMan->mouseY() = (int)((float)_vm->_evtMan->mouseY() * _cameraZoom);
 	_cameraZoom = 1.0;
-	input.mouseX = (int)((float)input.mouseX / _cameraZoom);
-	input.mouseY = (int)((float)input.mouseY / _cameraZoom);
+	_vm->_evtMan->mouseX() = (int)((float)_vm->_evtMan->mouseX() / _cameraZoom);
+	_vm->_evtMan->mouseY() = (int)((float)_vm->_evtMan->mouseY() / _cameraZoom);
 
 	return true;
 }

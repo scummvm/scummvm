@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	console.o \
 	cursors.o \
 	detection.o \
+	event.o \
 	fileset.o \
 	floor.o \
 	freeze.o \

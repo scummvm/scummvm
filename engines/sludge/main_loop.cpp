@@ -22,13 +22,12 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/events.h"
-#include "common/keyboard.h"
 
 #include "graphics/surface.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
+#include "sludge/event.h"
 #include "sludge/floor.h"
 #include "sludge/graphics.h"
 #include "sludge/helpers.h"
@@ -52,97 +51,9 @@ namespace Sludge {
 
 HWND hMainWindow = NULL;
 
-int realWinWidth = 640, realWinHeight = 480;
-
-extern InputType input;
 extern VariableStack *noStack;
 
 int dialogValue = 0;
-
-int weAreDoneSoQuit;
-
-void checkInput() {
-	int winWidth = g_system->getWidth();
-	int winHeight = g_system->getHeight();
-	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
-#if 0
-	static bool fakeRightclick = false;
-#endif
-	Common::Event event;
-
-	/* Check for events */
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-#if 0
-			case SDL_VIDEORESIZE:
-				realWinWidth = event.resize.w;
-				realWinHeight = event.resize.h;
-				setGraphicsWindow(false, true, true);
-				break;
-#endif
-			case Common::EVENT_MOUSEMOVE:
-				input.justMoved = true;
-				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
-				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
-				break;
-
-			case Common::EVENT_LBUTTONDOWN:
-				input.leftClick = true;
-				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
-				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
-#if 0
-				if (SDL_GetModState() & KMOD_CTRL) {
-					input.rightClick = true;
-					fakeRightclick = true;
-				} else {
-					input.leftClick = true;
-					fakeRightclick = false;
-				}
-#endif
-				break;
-
-			case Common::EVENT_RBUTTONDOWN:
-				input.rightClick = true;
-				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
-				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
-				break;
-
-			case Common::EVENT_LBUTTONUP:
-				input.leftRelease = true;
-				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
-				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
-				break;
-
-			case Common::EVENT_RBUTTONUP:
-				input.rightRelease = true;
-				input.mouseX = event.mouse.x * ((float)winWidth / cameraZoom) / realWinWidth;
-				input.mouseY = event.mouse.y * ((float)winHeight / cameraZoom) / realWinHeight;
-				break;
-
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-
-					case Common::KEYCODE_BACKSPACE:
-						// fall through
-					case Common::KEYCODE_DELETE:
-						input.keyPressed = Common::KEYCODE_DELETE;
-						break;
-					default:
-						input.keyPressed = event.kbd.keycode;
-						break;
-				}
-				break;
-
-			case Common::EVENT_QUIT:
-				weAreDoneSoQuit = 1;
-				// TODO: if reallyWantToQuit, popup a message box to confirm
-				break;
-
-			default:
-				break;
-		}
-	}
-}
 
 int main_loop(const char *filename) {
 
@@ -173,11 +84,12 @@ int main_loop(const char *filename) {
 
 	g_sludge->_timer.init();
 
-	weAreDoneSoQuit = 0;
-	while (!weAreDoneSoQuit) {
-		checkInput();
+	while (!g_sludge->_evtMan->quit()) {
+		g_sludge->_evtMan->checkInput();
 		walkAllPeople();
-		handleInput();
+		if (g_sludge->_evtMan->handleInput()) {
+			runSludge();
+		}
 		sludgeDisplay();
 		handleSoundLists();
 		g_sludge->_timer.waitFrame();

@@ -23,6 +23,7 @@
 #include "engines/util.h"
 
 #include "sludge/backdrop.h"
+#include "sludge/event.h"
 #include "sludge/freeze.h"
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
@@ -32,8 +33,6 @@
 #include "sludge/zbuffer.h"
 
 namespace Sludge {
-
-extern InputType input;
 
 GraphicsManager::GraphicsManager(SludgeEngine *vm) {
 	_vm = vm;
@@ -172,8 +171,8 @@ void GraphicsManager::aimCamera(int cameraX, int cameraY) {
 }
 
 void GraphicsManager::zoomCamera(int z) {
-	input.mouseX = input.mouseX * _cameraZoom;
-	input.mouseY = input.mouseY * _cameraZoom;
+	_vm->_evtMan->mouseX() = _vm->_evtMan->mouseX() * _cameraZoom;
+	_vm->_evtMan->mouseY() = _vm->_evtMan->mouseY() * _cameraZoom;
 
 	_cameraZoom = (float)z * 0.01;
 	if ((float)_winWidth / _cameraZoom > _sceneWidth)
@@ -181,8 +180,8 @@ void GraphicsManager::zoomCamera(int z) {
 	if ((float)_winHeight / _cameraZoom > _sceneHeight)
 		_cameraZoom = (float)_winHeight / _sceneHeight;
 
-	input.mouseX = input.mouseX / _cameraZoom;
-	input.mouseY = input.mouseY / _cameraZoom;
+	_vm->_evtMan->mouseX() = _vm->_evtMan->mouseX() / _cameraZoom;
+	_vm->_evtMan->mouseY() = _vm->_evtMan->mouseY() / _cameraZoom;
 }
 
 void GraphicsManager::saveColors(Common::WriteStream *stream) {

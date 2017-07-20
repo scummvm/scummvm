@@ -39,16 +39,6 @@ typedef struct _FILETIME {
 struct Variable;
 struct VariableStack;
 
-struct EventHandlers {
-	int leftMouseFunction;
-	int leftMouseUpFunction;
-	int rightMouseFunction;
-	int rightMouseUpFunction;
-	int moveMouseFunction;
-	int focusFunction;
-	int spaceFunction;
-};
-
 struct LineOfCode {
 	sludgeCommand theCommand;
 	int32 param;
@@ -68,20 +58,14 @@ struct LoadedFunction {
 	byte freezerLevel;
 };
 
-struct InputType {
-	bool leftClick, rightClick, justMoved, leftRelease, rightRelease;
-	int mouseX, mouseY, keyPressed;
-};
-
 bool initSludge(const Common::String &);
+bool runSludge();
 void displayBase();
 void sludgeDisplay();
 int startNewFunctionNum(uint, uint, LoadedFunction *, VariableStack*&, bool = true);
 bool handleInput();
 void restartFunction(LoadedFunction *fun);
 bool loadFunctionCode(LoadedFunction *newFunc);
-void loadHandlers(Common::SeekableReadStream *stream);
-void saveHandlers(Common::WriteStream *stream);
 
 void finishFunction(LoadedFunction *fun);
 void abortFunction(LoadedFunction *fun);

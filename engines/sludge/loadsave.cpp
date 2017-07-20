@@ -24,6 +24,7 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/sprites.h"
+#include "sludge/event.h"
 #include "sludge/fonttext.h"
 #include "sludge/newfatal.h"
 #include "sludge/variable.h"
@@ -387,7 +388,7 @@ bool saveGame(const Common::String &fname) {
 	g_sludge->_gfxMan->saveHSI(fp);
 
 	// Save event handlers
-	saveHandlers(fp);
+	g_sludge->_evtMan->saveHandlers(fp);
 
 	// Save regions
 	saveRegions(fp);
@@ -558,7 +559,7 @@ bool loadGame(const Common::String &fname) {
 	brightnessLevel = fp->readByte();
 
 	g_sludge->_gfxMan->loadHSI(fp, 0, 0, true);
-	loadHandlers(fp);
+	g_sludge->_evtMan->loadHandlers(fp);
 	loadRegions(fp);
 
 	mouseCursorAnim = new PersonaAnimation ;

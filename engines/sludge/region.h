@@ -22,6 +22,8 @@
 #ifndef SLUDGE_REGION_H
 #define SLUDGE_REGION_H
 
+#include "sludge/objtypes.h"
+
 namespace Sludge {
 
 struct ScreenRegion {

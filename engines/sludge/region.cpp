@@ -22,6 +22,7 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
+#include "sludge/event.h"
 #include "sludge/graphics.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
@@ -34,7 +35,6 @@ namespace Sludge {
 
 ScreenRegion *allScreenRegions = NULL;
 ScreenRegion *overRegion = NULL;
-extern InputType input;
 
 void showBoxes() {
 	ScreenRegion*huntRegion = allScreenRegions;
@@ -147,10 +147,10 @@ void getOverRegion() {
 	int cameraY = g_sludge->_gfxMan->getCamY();
 	ScreenRegion *thisRegion = allScreenRegions;
 	while (thisRegion) {
-		if ((input.mouseX >= thisRegion->x1 - cameraX)
-				&& (input.mouseY >= thisRegion->y1 - cameraY)
-				&& (input.mouseX <= thisRegion->x2 - cameraX)
-				&& (input.mouseY <= thisRegion->y2 - cameraY)) {
+		if ((g_sludge->_evtMan->mouseX() >= thisRegion->x1 - cameraX)
+				&& (g_sludge->_evtMan->mouseY() >= thisRegion->y1 - cameraY)
+				&& (g_sludge->_evtMan->mouseX() <= thisRegion->x2 - cameraX)
+				&& (g_sludge->_evtMan->mouseY() <= thisRegion->y2 - cameraY)) {
 			overRegion = thisRegion;
 			return;
 		}

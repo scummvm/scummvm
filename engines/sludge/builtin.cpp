@@ -51,6 +51,7 @@
 #include "sludge/sludge.h"
 #include "sludge/utf8.h"
 #include "sludge/graphics.h"
+#include "sludge/event.h"
 
 namespace Sludge {
 
@@ -63,7 +64,6 @@ extern int lastFramesPerSecond, thumbWidth, thumbHeight;
 extern bool allowAnyFilename;
 extern bool captureAllKeys;
 extern int16 fontSpace;
-extern EventHandlers *currentEvents;
 extern VariableStack *noStack;
 extern StatusStuff  *nowStatus;
 extern ScreenRegion *overRegion;
@@ -71,7 +71,6 @@ extern int numBIFNames, numUserFunc;
 
 extern Common::String *allUserFunc;
 extern Common::String *allBIFNames;
-extern InputType input;
 
 extern float speechSpeed;
 extern byte brightnessLevel;
@@ -134,6 +133,7 @@ struct builtInFunctionData {
 
 #define builtIn(a)          static BuiltReturn builtIn_ ## a (int numParams, LoadedFunction *fun)
 #define UNUSEDALL           (void) (0 && sizeof(numParams) && sizeof (fun));
+
 
 static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 	int fileNum = -1;
@@ -209,25 +209,25 @@ builtIn(setCursor) {
 
 builtIn(getMouseX) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, input.mouseX + g_sludge->_gfxMan->getCamX());
+	setVariable(fun->reg, SVT_INT, g_sludge->_evtMan->mouseX() + g_sludge->_gfxMan->getCamX());
 	return BR_CONTINUE;
 }
 
 builtIn(getMouseY) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, input.mouseY + g_sludge->_gfxMan->getCamY());
+	setVariable(fun->reg, SVT_INT, g_sludge->_evtMan->mouseY() + g_sludge->_gfxMan->getCamY());
 	return BR_CONTINUE;
 }
 
 builtIn(getMouseScreenX) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, input.mouseX * g_sludge->_gfxMan->getCamZoom());
+	setVariable(fun->reg, SVT_INT, g_sludge->_evtMan->mouseX() * g_sludge->_gfxMan->getCamZoom());
 	return BR_CONTINUE;
 }
 
 builtIn(getMouseScreenY) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, input.mouseY * g_sludge->_gfxMan->getCamZoom());
+	setVariable(fun->reg, SVT_INT, g_sludge->_evtMan->mouseY() * g_sludge->_gfxMan->getCamZoom());
 	return BR_CONTINUE;
 }
 
@@ -1839,7 +1839,7 @@ builtIn(onLeftMouse) {
 	UNUSEDALL
 	int functionNum;
 	if (getFuncNumForCallback(numParams, fun, functionNum)) {
-		currentEvents->leftMouseFunction = functionNum;
+		g_sludge->_evtMan->setEventFunction(kLeftMouse, functionNum);
 		return BR_CONTINUE;
 	}
 	return BR_ERROR;
@@ -1849,7 +1849,7 @@ builtIn(onLeftMouseUp) {
 	UNUSEDALL
 	int functionNum;
 	if (getFuncNumForCallback(numParams, fun, functionNum)) {
-		currentEvents->leftMouseUpFunction = functionNum;
+		g_sludge->_evtMan->setEventFunction(kLeftMouseUp, functionNum);
 		return BR_CONTINUE;
 	}
 	return BR_ERROR;
@@ -1859,7 +1859,7 @@ builtIn(onRightMouse) {
 	UNUSEDALL
 	int functionNum;
 	if (getFuncNumForCallback(numParams, fun, functionNum)) {
-		currentEvents->rightMouseFunction = functionNum;
+		g_sludge->_evtMan->setEventFunction(kRightMouse, functionNum);
 		return BR_CONTINUE;
 	}
 	return BR_ERROR;
@@ -1869,7 +1869,7 @@ builtIn(onRightMouseUp) {
 	UNUSEDALL
 	int functionNum;
 	if (getFuncNumForCallback(numParams, fun, functionNum)) {
-		currentEvents->rightMouseUpFunction = functionNum;
+		g_sludge->_evtMan->setEventFunction(kRightMouseUp, functionNum);
 		return BR_CONTINUE;
 	}
 	return BR_ERROR;
@@ -1879,7 +1879,7 @@ builtIn(onFocusChange) {
 	UNUSEDALL
 	int functionNum;
 	if (getFuncNumForCallback(numParams, fun, functionNum)) {
-		currentEvents->focusFunction = functionNum;
+		g_sludge->_evtMan->setEventFunction(kFocus, functionNum);
 		return BR_CONTINUE;
 	}
 	return BR_ERROR;
@@ -1889,7 +1889,7 @@ builtIn(onMoveMouse) {
 	UNUSEDALL
 	int functionNum;
 	if (getFuncNumForCallback(numParams, fun, functionNum)) {
-		currentEvents->moveMouseFunction = functionNum;
+		g_sludge->_evtMan->setEventFunction(kMoveMouse, functionNum);
 		return BR_CONTINUE;
 	}
 	return BR_ERROR;
@@ -1899,7 +1899,7 @@ builtIn(onKeyboard) {
 	UNUSEDALL
 	int functionNum;
 	if (getFuncNumForCallback(numParams, fun, functionNum)) {
-		currentEvents->spaceFunction = functionNum;
+		g_sludge->_evtMan->setEventFunction(kSpace, functionNum);
 		return BR_CONTINUE;
 	}
 	return BR_ERROR;

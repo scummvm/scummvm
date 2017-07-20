@@ -22,10 +22,11 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/cursors.h"
+#include "sludge/event.h"
 #include "sludge/graphics.h"
+#include "sludge/people.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
-#include "sludge/people.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 
@@ -34,8 +35,6 @@ namespace Sludge {
 PersonaAnimation  *mouseCursorAnim;
 int mouseCursorFrameNum = 0;
 int mouseCursorCountUp = 0;
-
-extern InputType input;
 
 void pickAnimCursor(PersonaAnimation  *pp) {
 	deleteAnim(mouseCursorAnim);
@@ -63,12 +62,12 @@ void displayCursor() {
 		if (flipMe != 2) {
 			if (flipMe) {
 				g_sludge->_gfxMan->flipFontSprite(
-						input.mouseX, input.mouseY,
+						g_sludge->_evtMan->mouseX(), g_sludge->_evtMan->mouseY(),
 						mouseCursorAnim->theSprites->bank.sprites[spriteNum],
 						mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
 			} else {
 				g_sludge->_gfxMan->fontSprite(
-						input.mouseX, input.mouseY,
+						g_sludge->_evtMan->mouseX(), g_sludge->_evtMan->mouseY(),
 						mouseCursorAnim->theSprites->bank.sprites[spriteNum],
 						mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
 			}

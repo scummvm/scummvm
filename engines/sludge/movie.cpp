@@ -27,13 +27,6 @@
 
 namespace Sludge {
 
-// in main.c
-int checkInput();
-extern int weAreDoneSoQuit;
-
-// Sludger.cpp
-bool handleInput();
-
 // sound_openal.cpp
 void playMovieStream(int a);
 #if 0

@@ -71,18 +71,14 @@ bool captureAllKeys = false;
 
 byte brightnessLevel = 255;
 
-EventHandlers mainHandlers;
-EventHandlers *currentEvents = &mainHandlers;
-
-extern ScreenRegion *overRegion;
 extern SpeechStruct *speech;
 extern LoadedFunction *saverFunc;
 
 LoadedFunction *allRunningFunctions = NULL;
 ScreenRegion *lastRegion = NULL;
 VariableStack *noStack = NULL;
-InputType input;
 Variable *globalVars;
+
 int numGlobals;
 
 const char *sludgeText[] = { "?????", "RETURN", "BRANCH", "BR_ZERO",
@@ -93,26 +89,6 @@ const char *sludgeText[] = { "?????", "RETURN", "BRANCH", "BR_ZERO",
 		"LESSTHAN", "MORETHAN", "NEGATIVE", "U", "LESS_EQUAL", "MORE_EQUAL",
 		"INC_LOCAL", "DEC_LOCAL", "INC_GLOBAL", "DEC_GLOBAL", "INDEXSET",
 		"INDEXGET", "INC_INDEX", "DEC_INDEX", "QUICK_PUSH" };
-
-void loadHandlers(Common::SeekableReadStream *stream) {
-	currentEvents->leftMouseFunction = stream->readUint16BE();
-	currentEvents->leftMouseUpFunction = stream->readUint16BE();
-	currentEvents->rightMouseFunction = stream->readUint16BE();
-	currentEvents->rightMouseUpFunction = stream->readUint16BE();
-	currentEvents->moveMouseFunction = stream->readUint16BE();
-	currentEvents->focusFunction = stream->readUint16BE();
-	currentEvents->spaceFunction = stream->readUint16BE();
-}
-
-void saveHandlers(Common::WriteStream *stream) {
-	stream->writeUint16BE(currentEvents->leftMouseFunction);
-	stream->writeUint16BE(currentEvents->leftMouseUpFunction);
-	stream->writeUint16BE(currentEvents->rightMouseFunction);
-	stream->writeUint16BE(currentEvents->rightMouseUpFunction);
-	stream->writeUint16BE(currentEvents->moveMouseFunction);
-	stream->writeUint16BE(currentEvents->focusFunction);
-	stream->writeUint16BE(currentEvents->spaceFunction);
-}
 
 Common::File *openAndVerify(const Common::String &filename, char extra1, char extra2,
 		const char *er, int &fileVersion) {
@@ -1018,200 +994,5 @@ int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 
 int lastFramesPerSecond = -1;
 int thisFramesPerSecond = -1;
-
-bool handleInput() {
-	static int l = 0;
-
-	if (!g_sludge->launchMe.empty()) {
-		if (l) {
-			// Still paused because of spawned thingy...
-		} else {
-			l = 1;
-
-			setVariable(*launchResult, SVT_INT, 0/*launch(launchMe) > 31*/); //TODO:false value
-			g_sludge->launchMe.clear();
-			launchResult = NULL;
-		}
-		return true;
-	} else {
-		l = 0;
-	}
-
-	if (!overRegion)
-		getOverRegion();
-
-	if (input.justMoved) {
-		if (currentEvents->moveMouseFunction) {
-			if (!startNewFunctionNum(currentEvents->moveMouseFunction, 0, NULL,
-					noStack))
-				return false;
-		}
-	}
-	input.justMoved = false;
-
-	if (lastRegion != overRegion && currentEvents->focusFunction) {
-		VariableStack *tempStack = new VariableStack;
-		if (!checkNew(tempStack))
-			return false;
-
-		initVarNew(tempStack->thisVar);
-		if (overRegion) {
-			setVariable(tempStack->thisVar, SVT_OBJTYPE,
-					overRegion->thisType->objectNum);
-		} else {
-			setVariable(tempStack->thisVar, SVT_INT, 0);
-		}
-		tempStack->next = NULL;
-		if (!startNewFunctionNum(currentEvents->focusFunction, 1, NULL,
-				tempStack))
-			return false;
-	}
-	if (input.leftRelease && currentEvents->leftMouseUpFunction) {
-		if (!startNewFunctionNum(currentEvents->leftMouseUpFunction, 0, NULL,
-				noStack))
-			return false;
-	}
-	if (input.rightRelease && currentEvents->rightMouseUpFunction) {
-		if (!startNewFunctionNum(currentEvents->rightMouseUpFunction, 0, NULL,
-				noStack))
-			return false;
-	}
-	if (input.leftClick && currentEvents->leftMouseFunction)
-		if (!startNewFunctionNum(currentEvents->leftMouseFunction, 0, NULL,
-				noStack))
-			return false;
-	if (input.rightClick && currentEvents->rightMouseFunction) {
-		if (!startNewFunctionNum(currentEvents->rightMouseFunction, 0, NULL,
-				noStack))
-			return false;
-	}
-	if (input.keyPressed && currentEvents->spaceFunction) {
-		Common::String tempString = "";
-		switch (input.keyPressed) {
-		case 127:
-			tempString = "BACKSPACE";
-			break;
-		case 9:
-			tempString = "TAB";
-			break;
-		case 13:
-			tempString = "ENTER";
-			break;
-		case 27:
-			tempString = "ESCAPE";
-			break;
-			/*
-			 case 1112:  tempString = copyString ("ALT+F1");     break;
-			 case 1113:  tempString = copyString ("ALT+F2");     break;
-			 case 1114:  tempString = copyString ("ALT+F3");     break;
-			 case 1115:  tempString = copyString ("ALT+F4");     break;
-			 case 1116:  tempString = copyString ("ALT+F5");     break;
-			 case 1117:  tempString = copyString ("ALT+F6");     break;
-			 case 1118:  tempString = copyString ("ALT+F7");     break;
-			 case 1119:  tempString = copyString ("ALT+F8");     break;
-			 case 1120:  tempString = copyString ("ALT+F9");     break;
-			 case 1121:  tempString = copyString ("ALT+F10");    break;
-			 case 1122:  tempString = copyString ("ALT+F11");    break;
-			 case 1123:  tempString = copyString ("ALT+F12");    break;
-
-			 case 2019:  tempString = copyString ("PAUSE");      break;
-			 */
-		case 63276:
-			tempString = "PAGE UP";
-			break;
-		case 63277:
-			tempString = "PAGE DOWN";
-			break;
-		case 63275:
-			tempString = "END";
-			break;
-		case 63273:
-			tempString = "HOME";
-			break;
-		case 63234:
-			tempString = "LEFT";
-			break;
-		case 63232:
-			tempString = "UP";
-			break;
-		case 63235:
-			tempString = "RIGHT";
-			break;
-		case 63233:
-			tempString = "DOWN";
-			break;
-			/*
-			 case 2045:   tempString = copyString ("INSERT");     break;
-			 case 2046:   tempString = copyString ("DELETE");     break;
-			 */
-		case 63236:
-			tempString = "F1";
-			break;
-		case 63237:
-			tempString = "F2";
-			break;
-		case 63238:
-			tempString = "F3";
-			break;
-		case 63239:
-			tempString = "F4";
-			break;
-		case 63240:
-			tempString = "F5";
-			break;
-		case 63241:
-			tempString = "F6";
-			break;
-		case 63242:
-			tempString = "F7";
-			break;
-		case 63243:
-			tempString = "F8";
-			break;
-		case 63244:
-			tempString = "F9";
-			break;
-		case 63245:
-			tempString = "F10";
-			break;
-		case 63246:
-			tempString = "F11";
-			break;
-		case 63247:
-			tempString = "F12";
-			break;
-
-		default:
-			if (input.keyPressed >= 256) {
-				char tmp[7] = "ABCDEF";
-				sprintf(tmp, "%i", input.keyPressed);
-				tempString = tmp;
-				//}
-			} else {
-				char tmp[2] = " ";
-				tmp[0] = input.keyPressed;
-				tempString = tmp;
-			}
-		}
-
-		if (!tempString.empty()) {
-			VariableStack *tempStack = new VariableStack;
-			if (!checkNew(tempStack))
-				return false;
-			initVarNew(tempStack->thisVar);
-			makeTextVar(tempStack->thisVar, tempString);
-			tempStack->next = NULL;
-			if (!startNewFunctionNum(currentEvents->spaceFunction, 1, NULL, tempStack))
-				return false;
-		}
-	}
-	input.rightClick = false;
-	input.leftClick = false;
-	input.rightRelease = false;
-	input.leftRelease = false;
-	input.keyPressed = 0;
-	lastRegion = overRegion;
-	return runSludge();
-}
 
 } // End of namespace Sludge

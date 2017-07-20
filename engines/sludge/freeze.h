@@ -27,10 +27,13 @@
 namespace Sludge {
 
 struct OnScreenPerson;
+struct PersonaAnimation;
 struct ScreenRegion;
 struct SpeechStruct;
 struct StatusStuff ;
 struct EventHandlers;
+
+class Parallax;
 
 struct FrozenStuffStruct {
 	OnScreenPerson *allPeople;

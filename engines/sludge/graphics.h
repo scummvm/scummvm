@@ -23,6 +23,8 @@
 #ifndef SLUDGE_GRAPHICS_H
 #define SLUDGE_GRAPHICS_H
 
+#include "common/stream.h"
+
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"
 
