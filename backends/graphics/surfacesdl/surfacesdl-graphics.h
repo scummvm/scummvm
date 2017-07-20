@@ -39,15 +39,6 @@
 #define USE_SDL_DEBUG_FOCUSRECT
 #endif
 
-// We have (some) support for resizable windows when SDL2 is used. However
-// the overlay still uses the resolution setup with SDL_SetVideoMode. This
-// makes the GUI look subpar when the user resizes the window. In addition
-// we do not adapt the scale factor right now. Thus, we disable this code
-// path for now.
-#if SDL_VERSION_ATLEAST(2, 0, 0) && 0
-#define USE_SDL_RESIZABLE_WINDOW
-#endif
-
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
