@@ -81,7 +81,6 @@ private:
 
 	int _weAreDoneSoQuit;
 
-	EventHandlers _mainHandlers;
 	EventHandlers *_currentEvents;
 };
 

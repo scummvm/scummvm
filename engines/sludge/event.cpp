@@ -44,11 +44,13 @@ EventManager::EventManager(SludgeEngine *vm) {
 
 	_weAreDoneSoQuit = 0;
 
+	_input.leftClick = _input.rightClick = _input.justMoved = _input.leftRelease = _input.rightRelease = false;
+	_input.keyPressed = 0;
 
+	_currentEvents = new EventHandlers;
 	for (uint i = 0; i < EVENT_FUNC_NB; ++i) {
-		_mainHandlers.func[i] = 0;
+		_currentEvents->func[i] = 0;
 	}
-	_currentEvents = &_mainHandlers;
 }
 
 EventManager::~EventManager() {
