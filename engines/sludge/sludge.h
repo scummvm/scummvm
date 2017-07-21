@@ -38,6 +38,7 @@ namespace Sludge {
 
 extern SludgeEngine *g_sludge;
 
+class CursorManager;
 class EventManager;
 class GraphicsManager;
 class SoundManager;
@@ -81,6 +82,7 @@ public:
 	EventManager *_evtMan;
 	SoundManager *_soundMan;
 	TextManager *_txtMan;
+	CursorManager *_cursorMan;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();

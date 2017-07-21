@@ -25,6 +25,7 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 
+#include "sludge/cursors.h"
 #include "sludge/event.h"
 #include "sludge/graphics.h"
 #include "sludge/sludge.h"
@@ -73,6 +74,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	_evtMan = new EventManager(this);
 	_soundMan = new SoundManager();
 	_txtMan = new TextManager();
+	_cursorMan = new CursorManager(this);
 }
 
 SludgeEngine::~SludgeEngine() {
@@ -95,6 +97,8 @@ SludgeEngine::~SludgeEngine() {
 	_pixelFormat = nullptr;
 
 	// Dispose managers
+	delete _cursorMan;
+	_cursorMan = nullptr;
 	delete _txtMan;
 	_txtMan = nullptr;
 	delete _soundMan;

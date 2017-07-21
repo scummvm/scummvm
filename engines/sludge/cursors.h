@@ -25,9 +25,35 @@
 
 namespace Sludge {
 
-void pickAnimCursor(struct PersonaAnimation  *pp);
-void displayCursor();
-void pasteCursor(int x, int y, struct PersonaAnimation  *c);
+class SludgeEngine;
+
+struct FrozenStuffStruct;
+
+class CursorManager {
+public:
+	CursorManager(SludgeEngine *vm);
+	virtual ~CursorManager();
+
+	// cursor
+	void pickAnimCursor(struct PersonaAnimation  *pp);
+	void displayCursor();
+	void pasteCursor(int x, int y, struct PersonaAnimation  *c);
+
+	// freeze
+	void freeze(FrozenStuffStruct *frozenStuff);
+	void resotre(FrozenStuffStruct *frozenStuff);
+
+	// load & save
+	void saveCursor(Common::WriteStream *stream);
+	bool loadCursor(Common::SeekableReadStream *stream);
+
+private:
+	SludgeEngine *_vm;
+
+	PersonaAnimation  *_mouseCursorAnim;
+	int _mouseCursorFrameNum;
+	int _mouseCursorCountUp;
+};
 
 } // End of namespace Sludge
 

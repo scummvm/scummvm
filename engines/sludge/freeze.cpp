@@ -20,6 +20,7 @@
  *
  */
 #include "sludge/allfiles.h"
+#include "sludge/cursors.h"
 #include "sludge/backdrop.h"
 #include "sludge/event.h"
 #include "sludge/fonttext.h"
@@ -43,8 +44,6 @@ extern OnScreenPerson *allPeople;
 extern ScreenRegion *allScreenRegions;
 extern ScreenRegion *overRegion;
 extern SpeechStruct *speech;
-extern PersonaAnimation  *mouseCursorAnim;
-extern int mouseCursorFrameNum;
 
 void GraphicsManager::freezeGraphics() {
 
@@ -100,10 +99,7 @@ bool GraphicsManager::freeze() {
 	allScreenRegions = NULL;
 	overRegion = NULL;
 
-	newFreezer->mouseCursorAnim = mouseCursorAnim;
-	newFreezer->mouseCursorFrameNum = mouseCursorFrameNum;
-	mouseCursorAnim = makeNullAnim();
-	mouseCursorFrameNum = 0;
+	_vm->_cursorMan->freeze(newFreezer);
 
 	newFreezer->speech = speech;
 	initSpeech();
@@ -173,9 +169,7 @@ void GraphicsManager::unfreeze(bool killImage) {
 	killParallax();
 	_parallaxStuff = _frozenStuff->parallaxStuff;
 
-	deleteAnim(mouseCursorAnim);
-	mouseCursorAnim = _frozenStuff->mouseCursorAnim;
-	mouseCursorFrameNum = _frozenStuff->mouseCursorFrameNum;
+	_vm->_cursorMan->resotre(_frozenStuff);
 
 	restoreBarStuff(_frozenStuff->frozenStatus);
 

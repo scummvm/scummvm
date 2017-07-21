@@ -61,8 +61,6 @@ extern int numGlobals;                              // In sludger.cpp
 extern Variable *globalVars;                        // In sludger.cpp
 extern Floor *currentFloor;                          // In floor.cpp
 extern SpeechStruct *speech;                        // In talk.cpp
-extern PersonaAnimation  *mouseCursorAnim;           // In cursor.cpp
-extern int mouseCursorFrameNum;                     // "    "   "
 extern FILETIME fileTime;                           // In sludger.cpp
 extern int speechMode;                              // "    "   "
 extern byte brightnessLevel;               // "    "   "
@@ -382,8 +380,7 @@ bool saveGame(const Common::String &fname) {
 	// Save regions
 	saveRegions(fp);
 
-	saveAnim(mouseCursorAnim, fp);
-	fp->writeUint16BE(mouseCursorFrameNum);
+	g_sludge->_cursorMan->saveCursor(fp);
 
 	// Save functions
 	LoadedFunction *thisFunction = allRunningFunctions;
@@ -529,12 +526,9 @@ bool loadGame(const Common::String &fname) {
 	g_sludge->_evtMan->loadHandlers(fp);
 	loadRegions(fp);
 
-	mouseCursorAnim = new PersonaAnimation ;
-	if (!checkNew(mouseCursorAnim))
+	if (!g_sludge->_cursorMan->loadCursor(fp)) {
 		return false;
-	if (!loadAnim(mouseCursorAnim, fp))
-		return false;
-	mouseCursorFrameNum = fp->readUint16BE();
+	}
 
 	LoadedFunction *rFunc;
 	LoadedFunction **buildList = &allRunningFunctions;

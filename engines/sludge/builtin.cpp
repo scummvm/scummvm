@@ -201,7 +201,7 @@ builtIn(howFrozen) {
 builtIn(setCursor) {
 	UNUSEDALL
 	PersonaAnimation  *aa = getAnimationFromVar(fun->stack->thisVar);
-	pickAnimCursor(aa);
+	g_sludge->_cursorMan->pickAnimCursor(aa);
 	trimStack(fun->stack);
 	return BR_CONTINUE;
 }
@@ -416,7 +416,7 @@ builtIn(pasteImage) {
 	if (pp == NULL)
 		return BR_CONTINUE;
 
-	pasteCursor(x, y, pp);
+	g_sludge->_cursorMan->pasteCursor(x, y, pp);
 	return BR_CONTINUE;
 }
 

@@ -53,7 +53,6 @@
 
 namespace Sludge {
 
-extern PersonaAnimation  *mouseCursorAnim;
 extern int dialogValue;
 extern Variable *launchResult;
 
@@ -143,7 +142,6 @@ Common::File *openAndVerify(const Common::String &filename, char extra1, char ex
 
 bool initSludge(const Common::String &filename) {
 	int a = 0;
-	mouseCursorAnim = makeNullAnim();
 
 	Common::File *fp = openAndVerify(filename, 'G', 'E', ERROR_BAD_HEADER, gameVersion);
 	if (!fp)
@@ -279,7 +277,7 @@ void sludgeDisplay() {
 	displayBase();
 	viewSpeech();// ...and anything being said
 	drawStatusBar();
-	displayCursor();
+	g_sludge->_cursorMan->displayCursor();
 	g_sludge->_gfxMan->display();
 	if (brightnessLevel < 255) fixBrightness();// This is for transitionLevel special effects
 }

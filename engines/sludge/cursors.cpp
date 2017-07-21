@@ -23,7 +23,9 @@
 #include "sludge/allfiles.h"
 #include "sludge/cursors.h"
 #include "sludge/event.h"
+#include "sludge/freeze.h"
 #include "sludge/graphics.h"
+#include "sludge/newfatal.h"
 #include "sludge/people.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
@@ -32,58 +34,93 @@
 
 namespace Sludge {
 
-PersonaAnimation  *mouseCursorAnim;
-int mouseCursorFrameNum = 0;
-int mouseCursorCountUp = 0;
-
-void pickAnimCursor(PersonaAnimation  *pp) {
-	deleteAnim(mouseCursorAnim);
-	mouseCursorAnim = pp;
-	mouseCursorFrameNum = 0;
-	mouseCursorCountUp = 0;
+CursorManager::CursorManager(SludgeEngine *vm) {
+	_vm = vm;
+	_mouseCursorAnim = makeNullAnim();
+	_mouseCursorFrameNum = 0;
+	_mouseCursorCountUp = 0;
 }
 
-void displayCursor() {
-	if (mouseCursorAnim && mouseCursorAnim->numFrames) {
+CursorManager::~CursorManager() {
 
-		int spriteNum = mouseCursorAnim->frames[mouseCursorFrameNum].frameNum;
+}
+
+void CursorManager::pickAnimCursor(PersonaAnimation  *pp) {
+	deleteAnim(_mouseCursorAnim);
+	_mouseCursorAnim = pp;
+	_mouseCursorFrameNum = 0;
+	_mouseCursorCountUp = 0;
+}
+
+void CursorManager::displayCursor() {
+	if (_mouseCursorAnim && _mouseCursorAnim->numFrames) {
+
+		int spriteNum = _mouseCursorAnim->frames[_mouseCursorFrameNum].frameNum;
 		int flipMe = 0;
 
 		if (spriteNum < 0) {
 			spriteNum = -spriteNum;
 			flipMe = 1;
-			if (spriteNum >= mouseCursorAnim->theSprites->bank.total)
+			if (spriteNum >= _mouseCursorAnim->theSprites->bank.total)
 				spriteNum = 0;
 		} else {
-			if (spriteNum >= mouseCursorAnim->theSprites->bank.total)
+			if (spriteNum >= _mouseCursorAnim->theSprites->bank.total)
 				flipMe = 2;
 		}
 
 		if (flipMe != 2) {
 			if (flipMe) {
-				g_sludge->_gfxMan->flipFontSprite(
-						g_sludge->_evtMan->mouseX(), g_sludge->_evtMan->mouseY(),
-						mouseCursorAnim->theSprites->bank.sprites[spriteNum],
-						mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
+				_vm->_gfxMan->flipFontSprite(
+						_vm->_evtMan->mouseX(), _vm->_evtMan->mouseY(),
+						_mouseCursorAnim->theSprites->bank.sprites[spriteNum],
+						_mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
 			} else {
-				g_sludge->_gfxMan->fontSprite(
-						g_sludge->_evtMan->mouseX(), g_sludge->_evtMan->mouseY(),
-						mouseCursorAnim->theSprites->bank.sprites[spriteNum],
-						mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
+				_vm->_gfxMan->fontSprite(
+						_vm->_evtMan->mouseX(), _vm->_evtMan->mouseY(),
+						_mouseCursorAnim->theSprites->bank.sprites[spriteNum],
+						_mouseCursorAnim->theSprites->bank.myPalette /* ( spritePalette&) NULL*/);
 			}
 		}
 
-		if (++mouseCursorCountUp >= mouseCursorAnim->frames[mouseCursorFrameNum].howMany) {
-			mouseCursorCountUp = 0;
-			mouseCursorFrameNum++;
-			mouseCursorFrameNum %= mouseCursorAnim->numFrames;
+		if (++_mouseCursorCountUp >= _mouseCursorAnim->frames[_mouseCursorFrameNum].howMany) {
+			_mouseCursorCountUp = 0;
+			_mouseCursorFrameNum++;
+			_mouseCursorFrameNum %= _mouseCursorAnim->numFrames;
 		}
 	}
 }
 
-void pasteCursor(int x, int y, PersonaAnimation  *c) {
+void CursorManager::pasteCursor(int x, int y, PersonaAnimation  *c) {
 	if (c->numFrames)
-		g_sludge->_gfxMan->pasteSpriteToBackDrop(x, y, c->theSprites->bank.sprites[c->frames[0].frameNum], c->theSprites->bank.myPalette);
+		_vm->_gfxMan->pasteSpriteToBackDrop(x, y, c->theSprites->bank.sprites[c->frames[0].frameNum], c->theSprites->bank.myPalette);
+}
+
+void CursorManager::freeze(FrozenStuffStruct *frozenStuff) {
+	frozenStuff->mouseCursorAnim = _mouseCursorAnim;
+	frozenStuff->mouseCursorFrameNum = _mouseCursorFrameNum;
+	_mouseCursorAnim = makeNullAnim();
+	_mouseCursorFrameNum = 0;
+}
+
+void CursorManager::resotre(FrozenStuffStruct *frozenStuff) {
+	deleteAnim(_mouseCursorAnim);
+	_mouseCursorAnim = frozenStuff->mouseCursorAnim;
+	_mouseCursorFrameNum = frozenStuff->mouseCursorFrameNum;
+}
+
+void CursorManager::saveCursor(Common::WriteStream *stream) {
+	saveAnim(_mouseCursorAnim, stream);
+	stream->writeUint16BE(_mouseCursorFrameNum);
+}
+
+bool CursorManager::loadCursor(Common::SeekableReadStream *stream) {
+	_mouseCursorAnim = new PersonaAnimation;
+	if (!checkNew(_mouseCursorAnim))
+		return false;
+	if (!loadAnim(_mouseCursorAnim, stream))
+		return false;
+	_mouseCursorFrameNum = stream->readUint16BE();
+	return true;
 }
 
 } // End of namespace Sludge
