@@ -49,9 +49,12 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "verbcoin", "Verb Coin" },
 	{ "robinsrescue", "Robin's Rescue" },
 	{ "outoforder", "Out Of Order" },
-	{ "frasse", "Frasse and the Peas of Kejick"},
-	{ "interview", "The Interview"},
+	{ "frasse", "Frasse and the Peas of Kejick" },
+	{ "interview", "The Interview" },
 	{ "life", "Life Flashed By"},
+	{ "tgttpoacs", "The Game That Takes Place on a Cruise Ship" },
+	{ "mandy", "Mandy Christmas Adventure" },
+	{ "cubert", "Cubert Badbone, P.I." },
 	{ 0, 0 }
 };
 

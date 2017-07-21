@@ -127,6 +127,47 @@ static const SludgeGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// TODO: the games down here are windows-only and can't be successfully run by
+	// sludge engine nor scummvm, need to solve it
+	{
+		{
+			"tgttpoacs",
+			"",
+			AD_ENTRY1s("gamedata", "d5ec4d7d8440f7744335d25d25e1e943", 40368),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
+	{
+		{
+			"mandy",
+			"",
+			AD_ENTRY1s("gamedata", "bb51eea418d87071c98f4e050ccf6387", 589),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
+	{
+		{
+			"cubert",
+			"",
+			AD_ENTRY1s("gamedata", "0078eb54f63cc0a22e50f17d904fcfde", 26799),
+			Common::UNK_LANG,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
