@@ -28,6 +28,8 @@
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"
 
+#include "sludge/sprbanks.h"
+
 namespace Sludge {
 
 class Parallax;
@@ -36,6 +38,7 @@ class SpritePalette;
 
 struct StackHandler;
 struct FrozenStuffStruct;
+struct LoadedSpriteBank;
 struct OnScreenPerson;
 struct SpriteBank;
 struct Sprite;
@@ -139,6 +142,9 @@ public:
 	void displaySpriteLayers();
 	void killSpriteLayers();
 
+	// Sprite Bank
+	LoadedSpriteBank *loadBankForAnim(int ID);
+
 	// ZBuffer
 	bool setZBuffer(int y);
 	void killZBuffer();
@@ -194,6 +200,9 @@ private:
 	SpriteLayers *_spriteLayers;
 	void fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal);
 	uint32 getDrawColor(OnScreenPerson *thisPerson);
+
+	// Sprite banks
+	LoadedSpriteBanks _allLoadedBanks;
 
 	// ZBuffer
 	ZBufferData *_zBuffer;

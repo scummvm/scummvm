@@ -985,7 +985,7 @@ bool loadAnim(PersonaAnimation  *p, Common::SeekableReadStream *stream) {
 		p->frames = new AnimFrame [p->numFrames];
 		if (!checkNew(p->frames))
 			return false;
-		p->theSprites = loadBankForAnim(a);
+		p->theSprites = g_sludge->_gfxMan->loadBankForAnim(a);
 
 		for (a = 0; a < p->numFrames; a++) {
 			p->frames[a].frameNum = stream->readUint32LE();

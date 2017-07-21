@@ -30,6 +30,7 @@
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/sprites.h"
+#include "sludge/sprbanks.h"
 #include "sludge/zbuffer.h"
 
 namespace Sludge {
@@ -61,6 +62,9 @@ GraphicsManager::GraphicsManager(SludgeEngine *vm) {
 	// Sprites
 	_spriteLayers = new SpriteLayers;
 	_spriteLayers->numLayers = 0;
+
+	// Sprite Bank
+	_allLoadedBanks.clear();
 
 	// ZBuffer
 	_zBuffer = new ZBufferData;
@@ -97,6 +101,14 @@ GraphicsManager::~GraphicsManager() {
 	killSpriteLayers();
 	delete _spriteLayers;
 	_spriteLayers = nullptr;
+
+	// kill sprite banks
+	LoadedSpriteBanks::iterator it;
+	for (it = _allLoadedBanks.begin(); it != _allLoadedBanks.end(); ++it) {
+		delete (*it);
+		(*it) = nullptr;
+	}
+	_allLoadedBanks.clear();
 
 	// kill zbuffer
 	killZBuffer();

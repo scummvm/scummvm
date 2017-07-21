@@ -39,7 +39,9 @@
 
 namespace Sludge {
 
+// This function is only used to kill text font
 void GraphicsManager::forgetSpriteBank(SpriteBank &forgetme) {
+	// kill the sprite bank
 	if (forgetme.myPalette.pal) {
 		delete[] forgetme.myPalette.pal;
 		forgetme.myPalette.pal = NULL;
@@ -58,9 +60,6 @@ void GraphicsManager::forgetSpriteBank(SpriteBank &forgetme) {
 
 	delete []forgetme.sprites;
 	forgetme.sprites = NULL;
-
-	// TODO: also remove sprite bank from allLoadedBanks
-	// And add a function call for this function to the scripting language
 }
 
 bool GraphicsManager::reserveSpritePal(SpritePalette &sP, int n) {

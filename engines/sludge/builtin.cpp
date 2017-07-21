@@ -875,7 +875,7 @@ builtIn(anim) {
 	trimStack(fun->stack);
 
 	// Load the required sprite bank
-	LoadedSpriteBank *sprBanky = loadBankForAnim(fileNumber);
+	LoadedSpriteBank *sprBanky = g_sludge->_gfxMan->loadBankForAnim(fileNumber);
 	if (!sprBanky)
 		return BR_ERROR;    // File not found, fatal done already
 	setBankFile(ba, sprBanky);

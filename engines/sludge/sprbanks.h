@@ -29,10 +29,8 @@ namespace Sludge {
 struct LoadedSpriteBank {
 	int ID, timesUsed;
 	SpriteBank bank;
-	LoadedSpriteBank *next;
 };
-
-LoadedSpriteBank *loadBankForAnim(int ID);
+typedef Common::List<LoadedSpriteBank *> LoadedSpriteBanks;
 
 } // End of namespace Sludge
 

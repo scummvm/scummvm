@@ -31,32 +31,30 @@
 
 namespace Sludge {
 
-LoadedSpriteBank *allLoadedBanks = NULL;
-
-LoadedSpriteBank *loadBankForAnim(int ID) {
-	LoadedSpriteBank *returnMe = allLoadedBanks;
-	while (returnMe) {
-		if (returnMe->ID == ID) {
-			//debugOut ("loadBankForAnim: Found existing sprite bank with ID %d\n", returnMe -> ID);
-			return returnMe;
+LoadedSpriteBank *GraphicsManager::loadBankForAnim(int ID) {
+	// Check if already exist
+	LoadedSpriteBanks::iterator it;
+	for (it = _allLoadedBanks.begin(); it != _allLoadedBanks.end(); ++it) {
+		if ((*it)->ID == ID) {
+			return (*it);
 		}
-		returnMe = returnMe->next;
 	}
-	returnMe = new LoadedSpriteBank;
+
+	// Else create a new sprite bank
+	LoadedSpriteBank *returnMe = new LoadedSpriteBank;
 	if (checkNew(returnMe)) {
 		returnMe->ID = ID;
-		if (g_sludge->_gfxMan->loadSpriteBank(ID, returnMe->bank, false)) {
+		if (loadSpriteBank(ID, returnMe->bank, false)) {
 			returnMe->timesUsed = 0;
-			returnMe->next = allLoadedBanks;
-			allLoadedBanks = returnMe;
 			debug(kSludgeDebugDataLoad, "loadBankForAnim: New sprite bank created OK");
+			_allLoadedBanks.push_back(returnMe);
 			return returnMe;
 		} else {
 			debug(kSludgeDebugDataLoad, "loadBankForAnim: I guess I couldn't load the sprites...");
-			return NULL;
+			return nullptr;
 		}
 	} else
-		return NULL;
+		return nullptr;
 }
 
 } // End of namespace Sludge
