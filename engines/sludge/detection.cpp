@@ -50,6 +50,7 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "robinsrescue", "Robin's Rescue" },
 	{ "outoforder", "Out Of Order" },
 	{ "frasse", "Frasse and the Peas of Kejick"},
+	{ "interview", "The Interview"},
 	{ 0, 0 }
 };
 

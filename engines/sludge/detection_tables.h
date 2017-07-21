@@ -101,6 +101,19 @@ static const SludgeGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		{
+			"interview",
+			"",
+			AD_ENTRY1s("gamedata", "6ca8f6e44f30d09bd68e008be4c20e8d", 2570140),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
