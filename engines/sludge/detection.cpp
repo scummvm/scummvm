@@ -51,6 +51,7 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "outoforder", "Out Of Order" },
 	{ "frasse", "Frasse and the Peas of Kejick"},
 	{ "interview", "The Interview"},
+	{ "life", "Life Flashed By"},
 	{ 0, 0 }
 };
 

@@ -114,6 +114,19 @@ static const SludgeGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		{
+			"life",
+			"",
+			AD_ENTRY1s("LifeFlashesBy.slg", "a471759e071e5d2c0e8e6887607df778", 163794266),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
