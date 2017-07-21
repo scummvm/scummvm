@@ -280,6 +280,22 @@ bool Debugger::cmdMovie(int argc, const char **argv) {
 	}
 
 	CString filename(argv[1]);
+
+	if (filename == "reverse" || filename == "doubletake") {
+		// Tests reverse playback transparency frames
+		tester->loadMovie("y457.avi");
+		if (filename == "reverse") {
+			tester->playMovie(436, 0, MOVIE_STOP_PREVIOUS);
+		} else {
+			tester->playMovie(436, 432, MOVIE_STOP_PREVIOUS);
+			tester->playMovie(432, 436, 0);
+			tester->playMovie(436, 432, 0);
+			tester->playMovie(432, 436, 0);
+		}
+
+		return false;
+	}
+
 	if (!filename.hasSuffix(".avi"))
 		filename += ".avi";
 	tester->loadMovie(filename);
