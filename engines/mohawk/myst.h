@@ -43,6 +43,7 @@ class MystScriptParser;
 class MystConsole;
 class MystGameState;
 class MystOptionsDialog;
+class MystSound;
 class MystArea;
 class MystAreaImageSwitch;
 class MystAreaHover;
@@ -206,7 +207,7 @@ public:
 	bool _showResourceRects;
 
 	VideoManager *_video;
-	Sound *_sound;
+	MystSound *_sound;
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
 	MystScriptParser *_scriptParser;

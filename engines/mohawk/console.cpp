@@ -22,6 +22,7 @@
 
 #include "mohawk/console.h"
 #include "mohawk/livingbooks.h"
+#include "mohawk/resource.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
@@ -37,6 +38,7 @@
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/myst_sound.h"
 #endif
 
 #ifdef ENABLE_RIVEN

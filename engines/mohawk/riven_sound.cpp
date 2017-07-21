@@ -28,6 +28,7 @@
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
+#include "mohawk/resource.h"
 #include "mohawk/sound.h"
 
 namespace Mohawk {

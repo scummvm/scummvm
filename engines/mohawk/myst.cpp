@@ -31,11 +31,11 @@
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/myst_sound.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
 #include "mohawk/resource_cache.h"
-#include "mohawk/sound.h"
 #include "mohawk/video.h"
 
 // The stacks
@@ -290,7 +290,7 @@ Common::Error MohawkEngine_Myst::run() {
 
 	_gfx = new MystGraphics(this);
 	_video = new VideoManager(this);
-	_sound = new Sound(this);
+	_sound = new MystSound(this);
 	_console = new MystConsole(this);
 	_gameState = new MystGameState(this, _saveFileMan);
 	_optionsDialog = new MystOptionsDialog(this);

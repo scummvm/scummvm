@@ -20,18 +20,15 @@
  *
  */
 
-#ifndef MOHAWK_SOUND_H
-#define MOHAWK_SOUND_H
+#ifndef MOHAWK_MYST_SOUND_H
+#define MOHAWK_MYST_SOUND_H
 
-#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/stream.h"
 
 #include "audio/mixer.h"
 
-class MidiDriver;
-class MidiParser;
+#include "mohawk/sound.h"
 
 namespace Audio {
 class RewindableAudioStream;
@@ -39,95 +36,39 @@ class RewindableAudioStream;
 
 namespace Mohawk {
 
-#define MAX_CHANNELS 2         // Can there be more than 2?
+class MohawkEngine_Myst;
 
-enum SndHandleType {
-	kFreeHandle,
-	kUsedHandle
-};
-
-struct SndHandle {
-	Audio::SoundHandle handle;
-	SndHandleType type;
-	uint samplesPerSecond;
-	uint16 id;
-};
-
-struct ADPCMStatus { // Holds ADPCM status data, but is irrelevant for us.
-	uint32 size;
-	uint16 itemCount;
-	uint16 channels;
-
-	struct StatusItem {
-		uint32 sampleFrame;
-		struct {
-			int16 last;
-			uint16 stepIndex;
-		} channelStatus[MAX_CHANNELS];
-	} *statusItems;
-};
-
-struct CueListPoint {
-	uint32 sampleFrame;
-	Common::String name;
-};
-
-struct CueList {
-	uint32 size;
-	uint16 pointCount;
-	Common::Array<CueListPoint> points;
-};
-
-enum {
-	kCodecRaw = 0,
-	kCodecADPCM = 1,
-	kCodecMPEG2 = 2
-};
-
-struct DataChunk {
-	uint16 sampleRate;
-	uint32 sampleCount;
-	byte bitsPerSample;
-	byte channels;
-	uint16 encoding;
-	uint16 loopCount; // 0 == no looping, 0xFFFF == infinite loop
-	uint32 loopStart;
-	uint32 loopEnd;
-	Common::SeekableReadStream *audioData;
-};
-
-Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = nullptr);
-
-class MohawkEngine;
-
-class Sound {
+class MystSound {
 public:
-	Sound(MohawkEngine *vm);
-	~Sound();
+	MystSound(MohawkEngine_Myst *vm);
+	~MystSound();
 
 	// Generic sound functions
 	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
-	void playMidi(uint16 id);
-	void stopMidi();
 	void stopSound();
 	void stopSound(uint16 id);
 	bool isPlaying(uint16 id);
 	bool isPlaying();
 	uint getNumSamplesPlayed(uint16 id);
 
-private:
-	MohawkEngine *_vm;
-	MidiDriver *_midiDriver;
-	MidiParser *_midiParser;
-	byte *_midiData;
+	// Myst-specific sound functions
+	Audio::SoundHandle *replaceSoundMyst(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
+	void replaceBackgroundMyst(uint16 id, uint16 volume = 0xFFFF);
+	void pauseBackgroundMyst();
+	void resumeBackgroundMyst();
+	void stopBackgroundMyst();
+	void changeBackgroundVolumeMyst(uint16 vol);
 
-	static Audio::RewindableAudioStream *makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream);
-	void initMidi();
+private:
+	MohawkEngine_Myst *_vm;
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
 	Audio::RewindableAudioStream *makeAudioStream(uint16 id, CueList *cueList = NULL);
 	uint16 convertMystID(uint16 id);
+
+	// Myst-specific
+	SndHandle _mystBackgroundSound;
 };
 
 } // End of namespace Mohawk
