@@ -87,9 +87,7 @@ void Preview::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Preview::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Fade from black", op);
 
-	// FIXME: This glitches when enabled. The backbuffer is drawn to screen,
-	// and then the fading occurs, causing the background to appear for one frame.
-	// _vm->_gfx->fadeFromBlack();
+	_vm->_gfx->fadeFromBlack();
 }
 
 void Preview::o_stayHere(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -103,18 +101,18 @@ void Preview::o_stayHere(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Preview::o_speechStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Speech stop", op);
 
-	_vm->_sound->stopSound(3001);
+	_vm->_sound->stopSpeech();
 	_speechRunning = false;
 	_globals.currentAge = 2;
 }
 
 void Preview::speechUpdateCue() {
 	// This is a callback in the original, handling audio events.
-	if (!_vm->_sound->isPlaying(3001)) {
+	if (!_vm->_sound->isSpeechPlaying()) {
 		return;
 	}
 
-	uint samples = _vm->_sound->getNumSamplesPlayed(3001);
+	uint samples = _vm->_sound->getSpeechNumSamplesPlayed();
 	for (int16 i = 0; i < _cueList.pointCount; i++) {
 		if (_cueList.points[i].sampleFrame > samples)
 			return;
@@ -134,7 +132,7 @@ void Preview::speech_run() {
 	switch (_speechStep) {
 	case 0: // Start Voice Over... which controls book opening
 		_currentCue = 0;
-		_vm->_sound->playSound(3001, Audio::Mixer::kMaxChannelVolume, false, &_cueList);
+			_vm->_sound->playSpeech(3001, &_cueList);
 
 		_speechStep++;
 		break;

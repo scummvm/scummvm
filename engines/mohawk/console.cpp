@@ -81,7 +81,7 @@ bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 	_vm->changeToCard((uint16)atoi(argv[1]), kTransitionCopy);
 
 	return false;
@@ -169,7 +169,7 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 
 	// We need to stop any playing sound when we change the stack
 	// as the next card could continue playing it if it.
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 
 	uint16 card = 0;
 	if (argc == 3)
@@ -234,7 +234,7 @@ bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_sound->replaceSoundMyst((uint16)atoi(argv[1]));
+	_vm->_sound->playEffect((uint16) atoi(argv[1]));
 
 	return false;
 }
@@ -242,7 +242,7 @@ bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 bool MystConsole::Cmd_StopSound(int argc, const char **argv) {
 	debugPrintf("Stopping Sound\n");
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 
 	return true;
 }

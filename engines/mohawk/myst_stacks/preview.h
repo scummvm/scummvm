@@ -23,9 +23,11 @@
 #ifndef MYST_SCRIPTS_PREVIEW_H
 #define MYST_SCRIPTS_PREVIEW_H
 
+#include "mohawk/sound.h"
+#include "mohawk/myst_stacks/myst.h"
+
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "mohawk/myst_stacks/myst.h"
 
 namespace Mohawk {
 

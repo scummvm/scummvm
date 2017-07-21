@@ -24,6 +24,7 @@
 
 #include "mohawk/myst.h"
 #include "mohawk/resource.h"
+#include "mohawk/sound.h"
 
 #include "common/debug.h"
 
@@ -33,13 +34,15 @@
 namespace Mohawk {
 
 MystSound::MystSound(MohawkEngine_Myst *vm) :
-		_vm(vm) {
-	_mystBackgroundSound.type = kFreeHandle;
+		_vm(vm),
+		_effectId(0),
+		_speechSamplesPerSecond(0),
+		_backgroundId(0) {
 }
 
 MystSound::~MystSound() {
-	stopSound();
-	stopBackgroundMyst();
+	stopEffect();
+	stopBackground();
 }
 
 Audio::RewindableAudioStream *MystSound::makeAudioStream(uint16 id, CueList *cueList) {
@@ -49,111 +52,56 @@ Audio::RewindableAudioStream *MystSound::makeAudioStream(uint16 id, CueList *cue
 		return makeMohawkWaveStream(_vm->getResource(ID_MSND, id), cueList);
 }
 
-Audio::SoundHandle *MystSound::playSound(uint16 id, byte volume, bool loop, CueList *cueList) {
-	debug (0, "Playing sound %d", id);
-
-	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id, cueList);
-
-	if (rewindStream) {
-		SndHandle *handle = getHandle();
-		handle->type = kUsedHandle;
-		handle->id = id;
-		handle->samplesPerSecond = rewindStream->getRate();
-
-		// Set the stream to loop here if it's requested
-		Audio::AudioStream *audStream = rewindStream;
-		if (loop)
-			audStream = Audio::makeLoopingAudioStream(rewindStream, 0);
-
-		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle->handle, audStream, -1, volume);
-		return &handle->handle;
-	}
-
-	return nullptr;
-}
-
-Audio::SoundHandle *MystSound::replaceSoundMyst(uint16 id, byte volume, bool loop) {
+void MystSound::playEffect(uint16 id, bool loop) {
 	debug (0, "Replacing sound %d", id);
 
 	// The original engine also forces looping for those sounds
 	switch (id) {
-	case 2205:
-	case 2207:
-	case 5378:
-	case 7220:
-	case 9119: 	// Elevator engine sound in mechanical age is looping.
-	case 9120:
-	case 9327:
-		loop = true;
-		break;
+		case 2205:
+		case 2207:
+		case 5378:
+		case 7220:
+		case 9119: 	// Elevator engine sound in mechanical age is looping.
+		case 9120:
+		case 9327:
+			loop = true;
+			break;
+		default:
+			break;
 	}
 
-	stopSound();
-	return playSound(id, volume, loop);
-}
+	stopEffect();
 
-SndHandle *MystSound::getHandle() {
-	for (uint32 i = 0; i < _handles.size(); i++) {
-		if (_handles[i].type == kFreeHandle)
-			return &_handles[i];
-
-		if (!_vm->_mixer->isSoundHandleActive(_handles[i].handle)) {
-			_handles[i].type = kFreeHandle;
-			_handles[i].id = 0;
-			return &_handles[i];
-		}
+	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id);
+	if (!rewindStream) {
+		warning("Unable to open sound '%d'", id);
+		return;
 	}
 
-	// Let's add a new sound handle!
-	SndHandle handle;
-	handle.handle = Audio::SoundHandle();
-	handle.type = kFreeHandle;
-	handle.id = 0;
-	_handles.push_back(handle);
+	_effectId = id;
 
-	return &_handles[_handles.size() - 1];
+	// Set the stream to loop here if it's requested
+	Audio::AudioStream *audStream = rewindStream;
+	if (loop)
+		audStream = Audio::makeLoopingAudioStream(rewindStream, 0);
+
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectHandle, audStream);
 }
 
-void MystSound::stopSound() {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kUsedHandle) {
-			_vm->_mixer->stopHandle(_handles[i].handle);
-			_handles[i].type = kFreeHandle;
-			_handles[i].id = 0;
-		}
+void MystSound::stopEffect() {
+	_vm->_mixer->stopHandle(_effectHandle);
+	_effectId = 0;
+	_effectHandle = Audio::SoundHandle();
 }
 
-void MystSound::stopSound(uint16 id) {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kUsedHandle && _handles[i].id == id) {
-			_vm->_mixer->stopHandle(_handles[i].handle);
-			_handles[i].type = kFreeHandle;
-			_handles[i].id = 0;
-		}
+bool MystSound::isEffectPlaying() {
+	return _vm->_mixer->isSoundHandleActive(_effectHandle);
 }
 
-bool MystSound::isPlaying(uint16 id) {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kUsedHandle && _handles[i].id == id)
-			return _vm->_mixer->isSoundHandleActive(_handles[i].handle);
-
-	return false;
-}
-
-bool MystSound::isPlaying() {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kUsedHandle)
-			if (_vm->_mixer->isSoundHandleActive(_handles[i].handle))
-				return true;
-
-	return false;
-}
-
-uint MystSound::getNumSamplesPlayed(uint16 id) {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kUsedHandle && _handles[i].id == id) {
-			return (_vm->_mixer->getSoundElapsedTime(_handles[i].handle) * _handles[i].samplesPerSecond) / 1000;
-		}
+uint MystSound::getSpeechNumSamplesPlayed() {
+	if (isSpeechPlaying()) {
+		return (_vm->_mixer->getSoundElapsedTime(_speechHandle) * _speechSamplesPerSecond) / 1000;
+	}
 
 	return 0;
 }
@@ -173,10 +121,10 @@ uint16 MystSound::convertMystID(uint16 id) {
 	return id;
 }
 
-void MystSound::replaceBackgroundMyst(uint16 id, uint16 volume) {
+void MystSound::playBackground(uint16 id, uint16 volume) {
 	debug(0, "Replacing background sound with %d", id);
 
-	// TODO: The original engine does fading
+	stopEffect();
 
 	Common::String name = _vm->getResourceName(ID_MSND, convertMystID(id));
 
@@ -188,52 +136,69 @@ void MystSound::replaceBackgroundMyst(uint16 id, uint16 volume) {
 		prefix = name;
 
 	// Check if sound is already playing
-	if (_mystBackgroundSound.type == kUsedHandle && _vm->_mixer->isSoundHandleActive(_mystBackgroundSound.handle)
-			&& _vm->getResourceName(ID_MSND, convertMystID(_mystBackgroundSound.id)).hasPrefix(prefix)) {
+	if (_vm->_mixer->isSoundHandleActive(_backgroundHandle)
+			&& _vm->getResourceName(ID_MSND, convertMystID(_backgroundId)).hasPrefix(prefix)) {
 		// The sound is already playing, just change the volume
-		changeBackgroundVolumeMyst(volume);
+		changeBackgroundVolume(volume);
 		return;
 	}
 
 	// Stop old background sound
-	stopBackgroundMyst();
+	stopBackground();
 
 	// Play new sound
 	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id);
 
 	if (rewindStream) {
-		_mystBackgroundSound.type = kUsedHandle;
-		_mystBackgroundSound.id = id;
-		_mystBackgroundSound.samplesPerSecond = rewindStream->getRate();
+		_backgroundId = id;
 
 		// Set the stream to loop
 		Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(rewindStream, 0);
 
-		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mystBackgroundSound.handle, audStream, -1, volume >> 8);
+		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_backgroundHandle, audStream, -1, volume >> 8);
 	}
 }
 
-void MystSound::stopBackgroundMyst() {
-	if (_mystBackgroundSound.type == kUsedHandle) {
-		_vm->_mixer->stopHandle(_mystBackgroundSound.handle);
-		_mystBackgroundSound.type = kFreeHandle;
-		_mystBackgroundSound.id = 0;
+void MystSound::stopBackground() {
+	_vm->_mixer->stopHandle(_backgroundHandle);
+	_backgroundId = 0;
+	_backgroundHandle = Audio::SoundHandle();
+}
+
+void MystSound::pauseBackground() {
+	_vm->_mixer->pauseHandle(_backgroundHandle, true);
+}
+
+void MystSound::resumeBackground() {
+	stopEffect();
+	_vm->_mixer->pauseHandle(_backgroundHandle, false);
+}
+
+void MystSound::changeBackgroundVolume(uint16 volume) {
+	_vm->_mixer->setChannelVolume(_backgroundHandle, volume >> 8);
+}
+
+void MystSound::playSpeech(uint16 id, CueList *cueList) {
+	debug (0, "Playing speech %d", id);
+
+	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id, cueList);
+	if (!rewindStream) {
+		warning("Unable to open sound '%d'", id);
+		return;
 	}
+
+	_speechSamplesPerSecond = rewindStream->getRate();
+	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, rewindStream);
 }
 
-void MystSound::pauseBackgroundMyst() {
-	if (_mystBackgroundSound.type == kUsedHandle)
-		_vm->_mixer->pauseHandle(_mystBackgroundSound.handle, true);
+bool MystSound::isSpeechPlaying() {
+	return _vm->_mixer->isSoundHandleActive(_speechHandle);
 }
 
-void MystSound::resumeBackgroundMyst() {
-	if (_mystBackgroundSound.type == kUsedHandle)
-		_vm->_mixer->pauseHandle(_mystBackgroundSound.handle, false);
-}
-
-void MystSound::changeBackgroundVolumeMyst(uint16 vol) {
-	if (_mystBackgroundSound.type == kUsedHandle)
-		_vm->_mixer->setChannelVolume(_mystBackgroundSound.handle, vol >> 8);
+void MystSound::stopSpeech() {
+	_vm->_mixer->stopHandle(_speechHandle);
+	_speechHandle = Audio::SoundHandle();
+	_speechSamplesPerSecond = 0;
 }
 
 } // End of namespace Mohawk

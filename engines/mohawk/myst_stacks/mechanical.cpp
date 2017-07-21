@@ -283,7 +283,7 @@ void Mechanical::o_birdCrankStart(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	MystAreaDrag *crank = getInvokingResource<MystAreaDrag>();
 
 	uint16 crankSoundId = crank->getList2(0);
-	_vm->_sound->replaceSoundMyst(crankSoundId, Audio::Mixer::kMaxChannelVolume, true);
+	_vm->_sound->playEffect(crankSoundId, true);
 
 	_birdSingEndTime = 0;
 	_birdCrankStartTime = _vm->_system->getMillis();
@@ -301,7 +301,7 @@ void Mechanical::o_birdCrankStop(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	crankMovie->pauseMovie(true);
 
 	uint16 crankSoundId = crank->getList2(1);
-	_vm->_sound->replaceSoundMyst(crankSoundId);
+	_vm->_sound->playEffect(crankSoundId);
 
 	_birdSingEndTime = 2 * _vm->_system->getMillis() - _birdCrankStartTime;
 	_birdSinging = true;
@@ -343,7 +343,7 @@ void Mechanical::o_elevatorRotationStart(uint16 op, uint16 var, uint16 argc, uin
 	_elevatorRotationLeverMoving = true;
 	_elevatorRotationSpeed = 0;
 
-	_vm->_sound->stopBackgroundMyst();
+	_vm->_sound->stopBackground();
 
 	_vm->_cursor->setCursor(700);
 }
@@ -407,7 +407,7 @@ void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint
 		// Increment position
 		_state.elevatorRotation = (_state.elevatorRotation + 1) % 10;
 
-		_vm->_sound->replaceSoundMyst(_elevatorRotationSoundId);
+		_vm->_sound->playEffect(_elevatorRotationSoundId);
 		_vm->redrawArea(11);
 	}
 
@@ -626,17 +626,17 @@ void Mechanical::elevatorGoMiddle_run() {
 				_vm->_cursor->hideCursor();
 				_vm->playSoundBlocking(11120);
 				_vm->_gfx->copyImageToBackBuffer(6118, Common::Rect(544, 333));
-				_vm->_sound->replaceSoundMyst(12120);
+				_vm->_sound->playEffect(12120);
 				_vm->_gfx->runTransition(kTransitionSlideToLeft, Common::Rect(177, 0, 370, 333), 25, 0);
 				_vm->playSoundBlocking(13120);
-				_vm->_sound->replaceSoundMyst(8120);
+				_vm->_sound->playEffect(8120);
 				_vm->_gfx->copyImageToBackBuffer(6327, Common::Rect(544, 333));
 				_vm->wait(500);
-				_vm->_sound->replaceSoundMyst(9120);
+				_vm->_sound->playEffect(9120);
 				static uint16 moviePos[2] = { 3540, 5380 };
 				o_elevatorWindowMovie(121, 0, 2, moviePos);
 				_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-				_vm->_sound->replaceSoundMyst(10120);
+				_vm->_sound->playEffect(10120);
 				_vm->_cursor->showCursor();
 
 				_elevatorPosition = 1;
@@ -754,7 +754,7 @@ void Mechanical::birdSing_run() {
 	uint32 time = _vm->_system->getMillis();
 	if (_birdSingEndTime < time) {
 		_bird->pauseMovie(true);
-		_vm->_sound->stopSound();
+		_vm->_sound->stopEffect();
 		_birdSinging = false;
 	}
 }
@@ -784,7 +784,7 @@ void Mechanical::elevatorRotation_run() {
 
 		_state.elevatorRotation = (_state.elevatorRotation + 1) % 10;
 
-		_vm->_sound->replaceSoundMyst(_elevatorRotationSoundId);
+		_vm->_sound->playEffect(_elevatorRotationSoundId);
 		_vm->redrawArea(11);
 		_vm->wait(100);
 	}
@@ -910,15 +910,15 @@ void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uin
 void Mechanical::fortressSimulation_run() {
 	if (_fortressSimulationInit) {
 		// Init sequence
-		_vm->_sound->replaceBackgroundMyst(_fortressSimulationStartSound1, 65535);
+		_vm->_sound->playBackground(_fortressSimulationStartSound1, 65535);
 		_vm->wait(5000, true);
 
 		VideoEntryPtr startup = _fortressSimulationStartup->playMovie();
 		_vm->playSoundBlocking(_fortressSimulationStartSound2);
-		_vm->_sound->replaceBackgroundMyst(_fortressSimulationStartSound1, 65535);
+		_vm->_sound->playBackground(_fortressSimulationStartSound1, 65535);
 		_vm->waitUntilMovieEnds(startup);
-		_vm->_sound->stopBackgroundMyst();
-		_vm->_sound->replaceSoundMyst(_fortressSimulationStartSound2);
+		_vm->_sound->stopBackground();
+		_vm->_sound->playEffect(_fortressSimulationStartSound2);
 
 
 		Common::Rect src = Common::Rect(0, 0, 176, 176);

@@ -640,7 +640,7 @@ void MystAreaSlider::updatePosition(const Common::Point &mouse) {
 	}
 
 	if (positionChanged && _dragSound)
-		_vm->_sound->replaceSoundMyst(_dragSound);
+		_vm->_sound->playEffect(_dragSound);
 }
 
 MystAreaDrag::MystAreaDrag(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :

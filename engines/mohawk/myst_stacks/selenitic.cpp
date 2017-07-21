@@ -561,7 +561,7 @@ void Selenitic::mazeRunnerPlaySoundHelp() {
 		soundId =  2191;
 
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 
 	_mazeRunnerLight->drawConditionalDataToScreen(0);
 }
@@ -603,17 +603,17 @@ void Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 
 		}
 
 		_soundReceiverPosition = &_state.soundReceiverPositions[source];
-		_vm->_sound->stopBackgroundMyst();
-		_vm->_sound->replaceSoundMyst(2287);
+		_vm->_sound->stopBackground();
+		_vm->_sound->playEffect(2287);
 		soundReceiverDrawView();
 		uint16 soundId = soundReceiverCurrentSound(source, *_soundReceiverPosition);
-		_vm->_sound->replaceBackgroundMyst(soundId);
+		_vm->_sound->playBackground(soundId);
 		_vm->wait(1000);
 	}
 
 	_soundReceiverPosition = oldPosition;
 	_soundReceiverSigmaPressed = true;
-	_vm->_sound->stopBackgroundMyst();
+	_vm->_sound->stopBackground();
 
 	_soundReceiverSources[_state.soundReceiverCurrentSource]->drawConditionalDataToScreen(1);
 
@@ -652,7 +652,7 @@ void Selenitic::soundReceiverLeftRight(uint direction) {
 	else
 		_soundReceiverLeftButton->drawConditionalDataToScreen(1);
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 
 	_soundReceiverDirection = direction;
 	_soundReceiverSpeed = 1;
@@ -717,11 +717,11 @@ void Selenitic::o_soundReceiverSource(uint16 op, uint16 var, uint16 argc, uint16
 		_soundReceiverPosition = &_state.soundReceiverPositions[pressedButton];
 		_soundReceiverCurrentSource = _soundReceiverSources[pressedButton];
 
-		_vm->_sound->stopSound();
+		_vm->_sound->stopEffect();
 
 		uint16 soundId = argv[0];
-		_vm->_sound->stopBackgroundMyst();
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->stopBackground();
+		_vm->_sound->playEffect(soundId);
 
 		_soundReceiverCurrentSource->drawConditionalDataToScreen(1);
 
@@ -738,11 +738,11 @@ void Selenitic::o_mazeRunnerDoorButton(uint16 op, uint16 var, uint16 argc, uint1
 
 	if (_mazeRunnerPosition == 288) {
 		_vm->changeToCard(cardIdEntry, kNoTransition);
-		_vm->_sound->replaceSoundMyst(cardIdEntry);
+		_vm->_sound->playEffect(cardIdEntry);
 		animatedUpdate(argv[2], &argv[3], 10);
 	} else if (_mazeRunnerPosition == 289) {
 		_vm->changeToCard(cardIdExit, kNoTransition);
-		_vm->_sound->replaceSoundMyst(cardIdExit);
+		_vm->_sound->playEffect(cardIdExit);
 		animatedUpdate(argv[2], &argv[3], 10);
 	}
 }
@@ -803,7 +803,7 @@ void Selenitic::o_soundLockMove(uint16 op, uint16 var, uint16 argc, uint16 *argv
 	uint16 soundId = soundLockCurrentSound(slider->_pos.y, true);
 	if (_soundLockSoundId != soundId) {
 		_soundLockSoundId = soundId;
-		_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
+		_vm->_sound->playEffect(soundId, true);
 	}
 }
 
@@ -813,10 +813,10 @@ void Selenitic::o_soundLockStartMove(uint16 op, uint16 var, uint16 argc, uint16 
 	MystAreaSlider *slider = soundLockSliderFromVar(var);
 
 	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackgroundMyst();
+	_vm->_sound->pauseBackground();
 
 	_soundLockSoundId = soundLockCurrentSound(slider->_pos.y, true);
-	_vm->_sound->replaceSoundMyst(_soundLockSoundId, Audio::Mixer::kMaxChannelVolume, true);
+	_vm->_sound->playEffect(_soundLockSoundId, true);
 }
 
 void Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -861,21 +861,21 @@ void Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *a
 
 	uint16 soundId = slider->getList3(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->resumeBackground();
 }
 
 void Selenitic::soundLockCheckSolution(MystAreaSlider *slider, uint16 value, uint16 solution, bool &solved) {
 	slider->drawConditionalDataToScreen(2);
-	_vm->_sound->replaceSoundMyst(soundLockCurrentSound(value / 12, false));
+	_vm->_sound->playEffect(soundLockCurrentSound(value / 12, false));
 	_vm->wait(1500);
 
 	if (value / 12 != solution)
 		solved = false;
 
 	slider->drawConditionalDataToScreen(1);
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 }
 
 void Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -883,8 +883,8 @@ void Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 	bool solved = true;
 
-	_vm->_sound->pauseBackgroundMyst();
-	_vm->_sound->replaceSoundMyst(1147);
+	_vm->_sound->pauseBackground();
+	_vm->_sound->playEffect(1147);
 	_soundLockButton->drawConditionalDataToScreen(1);
 	_vm->_cursor->hideCursor();
 
@@ -894,8 +894,8 @@ void Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	soundLockCheckSolution(_soundLockSlider4, _state.soundLockSliderPositions[3], 6, solved);
 	soundLockCheckSolution(_soundLockSlider5, _state.soundLockSliderPositions[4], 7, solved);
 
-	_vm->_sound->replaceSoundMyst(1148);
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->playEffect(1148);
+	_vm->_sound->resumeBackground();
 
 	if (solved) {
 		_soundLockButton->drawConditionalDataToScreen(2);
@@ -906,7 +906,7 @@ void Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		_vm->changeToCard(cardIdClosed, kTransitionDissolve);
 
 		_vm->changeToCard(cardIdOpen, kNoTransition);
-		_vm->_sound->replaceSoundMyst(argv[2]);
+		_vm->_sound->playEffect(argv[2]);
 
 		animatedUpdate(argv[4], &argv[5], argv[3]);
 	} else {
@@ -982,7 +982,7 @@ void Selenitic::soundReceiverIncreaseSpeed() {
 
 void Selenitic::soundReceiverUpdateSound() {
 	uint16 soundId = soundReceiverCurrentSound(_state.soundReceiverCurrentSource, *_soundReceiverPosition);
-	_vm->_sound->replaceBackgroundMyst(soundId);
+	_vm->_sound->playBackground(soundId);
 }
 
 uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {

@@ -630,12 +630,12 @@ void MystScriptParser::o_playSound(uint16 op, uint16 var, uint16 argc, uint16 *a
 	debugC(kDebugScript, "Opcode %d: playSound", op);
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-	_vm->_sound->replaceSoundMyst(soundId);
+	_vm->_sound->playEffect(soundId);
 }
 
 void MystScriptParser::o_stopSoundBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: stopSoundBackground", op);
-	_vm->_sound->stopBackgroundMyst();
+	_vm->_sound->stopBackground();
 }
 
 void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -644,7 +644,7 @@ void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, uint16 argc, u
 	debugC(kDebugScript, "Opcode %d: playSoundBlocking", op);
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 	_vm->playSoundBlocking(soundId);
 }
 
@@ -729,13 +729,13 @@ void MystScriptParser::o_soundPlaySwitch(uint16 op, uint16 var, uint16 argc, uin
 		debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 		if (soundId)
-			_vm->_sound->replaceSoundMyst(soundId);
+			_vm->_sound->playEffect(soundId);
 	}
 }
 
 void MystScriptParser::o_soundResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: soundResumeBackground", op);
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->resumeBackground();
 }
 
 void MystScriptParser::o_copyImageToScreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -838,7 +838,7 @@ void MystScriptParser::o_changeStack(uint16 op, uint16 var, uint16 argc, uint16 
 	debugC(kDebugScript, "\tSource Stack Link Sound: %d", soundIdLinkSrc);
 	debugC(kDebugScript, "\tDestination Stack Link Sound: %d", soundIdLinkDst);
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 
 	if (_vm->getFeatures() & GF_DEMO) {
 		// No need to have a table for just this data...
@@ -865,7 +865,7 @@ void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 op, uint16 var, u
 	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 
 	_vm->changeToCard(cardId, kNoTransition);
 
@@ -884,7 +884,7 @@ void MystScriptParser::o_directionalUpdatePlaySound(uint16 op, uint16 var, uint1
 	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 
 	animatedUpdate(dataSize, &argv[3], delayBetweenSteps);
 }
@@ -907,7 +907,7 @@ void MystScriptParser::o_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint1
 	// Used when Button is pushed...
 	debugC(kDebugScript, "Opcode %d: Wait for foreground sound to finish", op);
 
-	while (_vm->_sound->isPlaying())
+	while (_vm->_sound->isEffectPlaying())
 		_vm->doFrame();
 }
 

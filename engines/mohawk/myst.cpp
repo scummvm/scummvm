@@ -275,11 +275,11 @@ void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
 	_interactive = true;
 }
 
-void MohawkEngine_Myst::playSoundBlocking(uint16 id, byte volume) {
+void MohawkEngine_Myst::playSoundBlocking(uint16 id) {
 	_interactive = false;
-	_sound->playSound(id, volume);
+	_sound->playEffect(id);
 
-	while (_sound->isPlaying() && !shouldQuit()) {
+	while (_sound->isEffectPlaying() && !shouldQuit()) {
 		doFrame();
 	}
 	_interactive = true;
@@ -472,8 +472,8 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	else
 		_gfx->clearScreenPalette();
 
-	_sound->stopSound();
-	_sound->stopBackgroundMyst();
+	_sound->stopEffect();
+	_sound->stopBackground();
 	_video->stopVideos();
 	if (linkSrcSound)
 		playSoundBlocking(linkSrcSound);
@@ -1220,7 +1220,7 @@ void MohawkEngine_Myst::dropPage() {
 	bool redPage = page - 7 < 6;
 
 	// Play drop page sound
-	_sound->replaceSoundMyst(800);
+	_sound->playEffect(800);
 
 	// Drop page
 	_gameState->_globals.heldPage = 0;
@@ -1317,13 +1317,13 @@ void MohawkEngine_Myst::applySoundBlock(const MystSoundBlock &block) {
 		debug(2, "Continuing with current sound");
 	else if (soundAction == kMystSoundActionChangeVolume) {
 		debug(2, "Continuing with current sound, changing volume");
-		_sound->changeBackgroundVolumeMyst(soundActionVolume);
+		_sound->changeBackgroundVolume(soundActionVolume);
 	} else if (soundAction == kMystSoundActionStop) {
 		debug(2, "Stopping sound");
-		_sound->stopBackgroundMyst();
+		_sound->stopBackground();
 	} else if (soundAction > 0) {
 		debug(2, "Playing new sound %d", soundAction);
-		_sound->replaceBackgroundMyst(soundAction, soundActionVolume);
+		_sound->playBackground(soundAction, soundActionVolume);
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}

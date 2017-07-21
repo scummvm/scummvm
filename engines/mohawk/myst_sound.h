@@ -28,14 +28,13 @@
 
 #include "audio/mixer.h"
 
-#include "mohawk/sound.h"
-
 namespace Audio {
 class RewindableAudioStream;
 }
 
 namespace Mohawk {
 
+struct CueList;
 class MohawkEngine_Myst;
 
 class MystSound {
@@ -43,32 +42,38 @@ public:
 	MystSound(MohawkEngine_Myst *vm);
 	~MystSound();
 
-	// Generic sound functions
-	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
-	void stopSound();
-	void stopSound(uint16 id);
-	bool isPlaying(uint16 id);
-	bool isPlaying();
-	uint getNumSamplesPlayed(uint16 id);
+	// Effect channel
+	void playEffect(uint16 id, bool loop = false);
+	void stopEffect();
+	bool isEffectPlaying();
 
-	// Myst-specific sound functions
-	Audio::SoundHandle *replaceSoundMyst(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
-	void replaceBackgroundMyst(uint16 id, uint16 volume = 0xFFFF);
-	void pauseBackgroundMyst();
-	void resumeBackgroundMyst();
-	void stopBackgroundMyst();
-	void changeBackgroundVolumeMyst(uint16 vol);
+	// Background channel
+	void playBackground(uint16 id, uint16 volume = 0xFFFF);
+	void pauseBackground();
+	void resumeBackground();
+	void stopBackground();
+	void changeBackgroundVolume(uint16 volume);
+
+	// Speech channel
+	void playSpeech(uint16 id, CueList *cueList = nullptr);
+	bool isSpeechPlaying();
+	uint getSpeechNumSamplesPlayed();
+	void stopSpeech();
 
 private:
 	MohawkEngine_Myst *_vm;
 
-	Common::Array<SndHandle> _handles;
-	SndHandle *getHandle();
-	Audio::RewindableAudioStream *makeAudioStream(uint16 id, CueList *cueList = NULL);
+	Audio::RewindableAudioStream *makeAudioStream(uint16 id, CueList *cueList = nullptr);
 	uint16 convertMystID(uint16 id);
 
-	// Myst-specific
-	SndHandle _mystBackgroundSound;
+	Audio::SoundHandle _effectHandle;
+	int _speechSamplesPerSecond;
+	uint16 _effectId;
+
+	Audio::SoundHandle _backgroundHandle;
+	uint16 _backgroundId;
+
+	Audio::SoundHandle _speechHandle;
 };
 
 } // End of namespace Mohawk

@@ -494,7 +494,7 @@ void Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 
 	if (_state.generatorDuration)
 		_state.generatorDuration -= _vm->_system->getMillis() - _state.generatorDepletionTime;
@@ -510,7 +510,7 @@ void Stoneship::o_generatorStart(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 	soundId = handle->getList2(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
+		_vm->_sound->playEffect(soundId, true);
 }
 
 void Stoneship::o_generatorStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -537,7 +537,7 @@ void Stoneship::o_generatorStop(uint16 op, uint16 var, uint16 argc, uint16 *argv
 
 	uint16 soundId = handle->getList3(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 }
 
 void Stoneship::chargeBattery_run() {
@@ -674,7 +674,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 
 	Common::String movie = _vm->wrapMovieFilename("ligspig", kStoneshipStack);
 
-	_vm->_sound->playSound(2132);
+	_vm->_sound->playEffect(2132);
 
 	if (_state.chestValveState) {
 		// Valve closing
@@ -695,7 +695,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 		valve->setBounds(Audio::Timestamp(0, 350, 600), Audio::Timestamp(0, 650, 600));
 		_vm->waitUntilMovieEnds(valve);
 
-		_vm->_sound->playSound(3132);
+		_vm->_sound->playEffect(3132);
 
 		for (uint i = 0; i < 25; i++) {
 			valve = _vm->_video->playMovie(movie);
@@ -707,7 +707,7 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 			_vm->waitUntilMovieEnds(valve);
 		}
 
-		_vm->_sound->resumeBackgroundMyst();
+		_vm->_sound->resumeBackground();
 	} else {
 		// Valve opening
 		VideoEntryPtr valve = _vm->_video->playMovie(movie);
@@ -745,7 +745,7 @@ void Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	lock->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 750, 600));
 	_vm->waitUntilMovieEnds(lock);
 
-	_vm->_sound->playSound(2143);
+	_vm->_sound->playEffect(2143);
 
 	lock = _vm->_video->playMovie(movie);
 	if (!lock)
@@ -756,7 +756,7 @@ void Stoneship::o_trapLockOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	_vm->waitUntilMovieEnds(lock);
 
 	if (_state.pumpState != 4)
-		_vm->_sound->playSound(4143);
+		_vm->_sound->playEffect(4143);
 }
 
 void Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -767,7 +767,7 @@ void Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	debugC(kDebugScript, "\tmovieId: %d", movieId);
 
 	_vm->_cursor->hideCursor();
-	_vm->_sound->pauseBackgroundMyst();
+	_vm->_sound->pauseBackground();
 
 	switch (movieId) {
 	case 0:
@@ -791,14 +791,14 @@ void Stoneship::o_sideDoorsMovies(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		break;
 	}
 
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->resumeBackground();
 	_vm->_cursor->showCursor();
 }
 
 void Stoneship::o_cloudOrbEnter(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Cloud orb enter", op);
 
-	_vm->_sound->replaceSoundMyst(_cloudOrbSound, Audio::Mixer::kMaxChannelVolume, true);
+	_vm->_sound->playEffect(_cloudOrbSound, true);
 	_cloudOrbMovie->playMovie();
 }
 
@@ -806,7 +806,7 @@ void Stoneship::o_cloudOrbLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv
 	debugC(kDebugScript, "Opcode %d: Cloud orb leave", op);
 
 	_cloudOrbMovie->pauseMovie(true);
-	_vm->_sound->replaceSoundMyst(_cloudOrbStopSound);
+	_vm->_sound->playEffect(_cloudOrbStopSound);
 	_vm->_gfx->runTransition(kTransitionTopToBottom, getInvokingResource<MystArea>()->getRect(), 4, 0);
 }
 
@@ -920,7 +920,7 @@ void Stoneship::tunnel_run() {
 				_vm->_gfx->copyImageToScreen(_tunnelImages[1], Common::Rect(544, 333));
 			}
 
-			_vm->_sound->replaceSoundMyst(_tunnelAlarmSound);
+			_vm->_sound->playEffect(_tunnelAlarmSound);
 
 			// Draw tunnel dark
 			if (_tunnelImagesCount) {

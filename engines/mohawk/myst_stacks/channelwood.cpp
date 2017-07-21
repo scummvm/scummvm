@@ -323,7 +323,7 @@ void Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 	uint16 soundId = argv[0];
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-	_vm->_sound->replaceSoundMyst(soundId);
+	_vm->_sound->playEffect(soundId);
 	VideoEntryPtr pipe = _vm->_video->playMovie(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack));
 	if (!pipe)
 		error("Failed to open 'pipebrid' movie");
@@ -337,7 +337,7 @@ void Channelwood::o_pipeExtend(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 		pipe->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 3040, 600));
 
 	_vm->waitUntilMovieEnds(pipe);
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->resumeBackground();
 }
 
 void Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -356,7 +356,7 @@ void Channelwood::o_drawImageChangeCardAndVolume(uint16 op, uint16 var, uint16 a
 
 	if (argc == 3) {
 		uint16 volume = argv[2];
-		_vm->_sound->changeBackgroundVolumeMyst(volume);
+		_vm->_sound->changeBackgroundVolume(volume);
 	}
 }
 
@@ -408,7 +408,7 @@ void Channelwood::o_leverMoveFail(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			_leverPulled = true;
 			uint16 soundId = lever->getList2(0);
 			if (soundId)
-				_vm->_sound->replaceSoundMyst(soundId);
+				_vm->_sound->playEffect(soundId);
 		}
 	} else {
 		_leverPulled = false;
@@ -426,13 +426,13 @@ void Channelwood::o_leverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 	uint16 soundId = lever->getList3(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 
 	_vm->checkCursorHints();
 }
 
 void Channelwood::o_leverEndMoveResumeBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->resumeBackground();
 	o_leverEndMove(op, var, argc, argv);
 }
 
@@ -442,7 +442,7 @@ void Channelwood::o_leverEndMoveWithSound(uint16 op, uint16 var, uint16 argc, ui
 	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = lever->getList3(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 }
 
 void Channelwood::o_leverElev3StartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -455,7 +455,7 @@ void Channelwood::o_leverElev3EndMove(uint16 op, uint16 var, uint16 argc, uint16
 	o_leverEndMove(op, var, argc, argv);
 	_vm->_gfx->copyImageToScreen(3265, Common::Rect(544, 333));
 	_vm->doFrame();
-	_vm->_sound->replaceSoundMyst(5265);
+	_vm->_sound->playEffect(5265);
 }
 
 void Channelwood::o_pumpLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -465,10 +465,10 @@ void Channelwood::o_pumpLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 	if (lever->pullLeverV()) {
 		uint16 soundId = lever->getList2(0);
-		_vm->_sound->replaceBackgroundMyst(soundId, 38400);
+		_vm->_sound->playBackground(soundId, 38400);
 	} else {
 		uint16 soundId = lever->getList2(1);
-		_vm->_sound->replaceBackgroundMyst(soundId, 36864);
+		_vm->_sound->playBackground(soundId, 36864);
 	}
 }
 
@@ -478,7 +478,7 @@ void Channelwood::o_pumpLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 
 	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = lever->getList3(0);
 	if (soundId)
-		_vm->_sound->replaceBackgroundMyst(soundId, 36864);
+		_vm->_sound->playBackground(soundId, 36864);
 }
 
 void Channelwood::o_stairsDoorToggle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -519,7 +519,7 @@ void Channelwood::o_valveHandleMoveStart1(uint16 op, uint16 var, uint16 argc, ui
 	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 	_vm->_cursor->setCursor(700);
 
 	o_valveHandleMove1(op, var, argc, argv);
@@ -539,7 +539,7 @@ void Channelwood::o_valveHandleMoveStop(uint16 op, uint16 var, uint16 argc, uint
 	// Play release sound
 	uint16 soundId = handle->getList3(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 
 	// Redraw valve
 	_vm->redrawArea(_valveVar);
@@ -570,7 +570,7 @@ void Channelwood::o_valveHandleMoveStart2(uint16 op, uint16 var, uint16 argc, ui
 	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 	_vm->_cursor->setCursor(700);
 
 	o_valveHandleMove2(op, var, argc, argv);
@@ -598,7 +598,7 @@ void Channelwood::o_valveHandleMoveStart3(uint16 op, uint16 var, uint16 argc, ui
 	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	uint16 soundId = handle->getList1(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 	_vm->_cursor->setCursor(700);
 
 	o_valveHandleMove3(op, var, argc, argv);
@@ -661,7 +661,7 @@ void Channelwood::o_drawerOpen(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 void Channelwood::o_hologramTemple(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Temple hologram", op);
 
-	_vm->_sound->pauseBackgroundMyst();
+	_vm->_sound->pauseBackground();
 
 	// Used on Card 3333 (Temple Hologram)
 	switch (_state.holoprojectorSelection) {
@@ -682,7 +682,7 @@ void Channelwood::o_hologramTemple(uint16 op, uint16 var, uint16 argc, uint16 *a
 		break;
 	}
 
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->resumeBackground();
 }
 
 void Channelwood::o_executeMouseUp(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -745,9 +745,9 @@ void Channelwood::o_elevatorMovies(uint16 op, uint16 var, uint16 argc, uint16 *a
 		error("Unknown elevator state %d in o_elevatorMovies", elevator);
 	}
 
-	_vm->_sound->pauseBackgroundMyst();
+	_vm->_sound->pauseBackground();
 	_vm->playMovieBlocking(movie, x, y);
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->resumeBackground();
 }
 
 void Channelwood::o_soundReplace(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -755,8 +755,8 @@ void Channelwood::o_soundReplace(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 	uint16 soundId = argv[0];
 
-	if (!_vm->_sound->isPlaying()) {
-		_vm->_sound->replaceSoundMyst(soundId);
+	if (!_vm->_sound->isEffectPlaying()) {
+		_vm->_sound->playEffect(soundId);
 	}
 }
 
