@@ -334,6 +334,8 @@ bool MystConsole::Cmd_Resources(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
+	_vm->pauseEngine(false);
+
 	// Go through all the ages, all the views and click random stuff
 	for (uint i = 0; i < ARRAYSIZE(mystStackNames); i++) {
 		if (i == 2 || i == 5 || i == 9 || i == 10) continue;
@@ -364,6 +366,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 		}
 	}
 
+	_vm->pauseEngine(true);
 	return true;
 }
 
