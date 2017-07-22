@@ -394,13 +394,14 @@ void GfxCursor32::deviceMoved(Common::Point &position) {
 		restricted = true;
 	}
 
-	_position = position;
-
 	if (restricted) {
 		g_system->warpMouse(position.x, position.y);
 	}
 
-	move();
+	if (_position != position) {
+		_position = position;
+		move();
+	}
 }
 
 void GfxCursor32::move() {
