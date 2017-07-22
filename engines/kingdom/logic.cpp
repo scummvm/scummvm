@@ -140,6 +140,69 @@ void Logic::initOpcodes() {
 	_opCodes[240] = &Logic::GPL1_240;
 	_opCodes[241] = &Logic::GPL1_241;
 	_opCodes[242] = &Logic::GPL1_242;
+
+	_opCodes[250] = &Logic::GPL2_250;
+	_opCodes[251] = &Logic::GPL2_251;
+	_opCodes[252] = &Logic::GPL2_252;
+	_opCodes[260] = &Logic::GPL2_260;
+	_opCodes[261] = &Logic::GPL2_261;
+	_opCodes[270] = &Logic::GPL2_270;
+	_opCodes[271] = &Logic::GPL2_271;
+	_opCodes[272] = &Logic::GPL2_272;
+	_opCodes[280] = &Logic::GPL2_280;
+	_opCodes[290] = &Logic::GPL2_290;
+	_opCodes[291] = &Logic::GPL2_291;
+	_opCodes[292] = &Logic::GPL2_292;
+	_opCodes[300] = &Logic::GPL2_300;
+	_opCodes[301] = &Logic::GPL2_301;
+	_opCodes[302] = &Logic::GPL2_302;
+	_opCodes[310] = &Logic::GPL2_310;
+	_opCodes[311] = &Logic::GPL2_311;
+	_opCodes[312] = &Logic::GPL2_312;
+	_opCodes[320] = &Logic::GPL2_320;
+	_opCodes[321] = &Logic::GPL2_321;
+	_opCodes[322] = &Logic::GPL2_322;
+	_opCodes[330] = &Logic::GPL2_330;
+	_opCodes[331] = &Logic::GPL2_331;
+	_opCodes[332] = &Logic::GPL2_332;
+	_opCodes[340] = &Logic::GPL2_340;
+	_opCodes[341] = &Logic::GPL2_341;
+	_opCodes[342] = &Logic::GPL2_342;
+	_opCodes[350] = &Logic::GPL2_350;
+	_opCodes[351] = &Logic::GPL2_351;
+	_opCodes[360] = &Logic::GPL2_360;
+	_opCodes[361] = &Logic::GPL2_361;
+	_opCodes[362] = &Logic::GPL2_362;
+	_opCodes[370] = &Logic::GPL2_370;
+	_opCodes[371] = &Logic::GPL2_371;
+	_opCodes[372] = &Logic::GPL2_372;
+	_opCodes[380] = &Logic::GPL2_380;
+	_opCodes[381] = &Logic::GPL2_381;
+	_opCodes[382] = &Logic::GPL2_382;
+	_opCodes[390] = &Logic::GPL2_390;
+	_opCodes[400] = &Logic::GPL2_400;
+	_opCodes[401] = &Logic::GPL2_401;
+	_opCodes[402] = &Logic::GPL2_402;
+	_opCodes[410] = &Logic::GPL2_410;
+	_opCodes[411] = &Logic::GPL2_411;
+	_opCodes[420] = &Logic::GPL2_420;
+	_opCodes[421] = &Logic::GPL2_421;
+	_opCodes[422] = &Logic::GPL2_422;
+	_opCodes[430] = &Logic::GPL2_430;
+	_opCodes[431] = &Logic::GPL2_431;
+	_opCodes[440] = &Logic::GPL2_440;
+	_opCodes[441] = &Logic::GPL2_441;
+	_opCodes[442] = &Logic::GPL2_442;
+	_opCodes[450] = &Logic::GPL2_450;
+	_opCodes[451] = &Logic::GPL2_451;
+	_opCodes[460] = &Logic::GPL2_460;
+	_opCodes[461] = &Logic::GPL2_461;
+	_opCodes[462] = &Logic::GPL2_462;
+	_opCodes[480] = &Logic::GPL2_480;
+	_opCodes[481] = &Logic::GPL2_481;
+	_opCodes[482] = &Logic::GPL2_482;
+	_opCodes[490] = &Logic::GPL2_490;
+	_opCodes[491] = &Logic::GPL2_491;
 }
 
 void Logic::enAll() {
@@ -413,6 +476,14 @@ void Logic::switchAS() {
 	_pouch = _oldPouch;
 	_help = _oldHelp;
 	_vm->_iconsClosed = _vm->_oldIconsClosed;
+}
+
+void Logic::executeOpcode() {
+	if (_opCodes.contains(_statPlay)) {
+		Opcode op = _opCodes[_statPlay];
+		(this->*op)();
+	} else
+		warning("Unknown opcode: %d", _statPlay);
 }
 
 void Logic::synchronize(Common::Serializer &s) {

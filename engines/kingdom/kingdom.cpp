@@ -178,9 +178,9 @@ Common::Error KingdomGame::run() {
 		_logic->gameHelp();
 		if (_gameMode == 0) {
 			if (_logic->_statPlay < 250)
-				_logic->GPLogic1();
+				_logic->executeOpcode();
 			if (_logic->_statPlay > 249 && _logic->_statPlay < 500)
-				_logic->GPLogic2();
+				_logic->executeOpcode();
 			if (_logic->_statPlay > 499 && _logic->_statPlay < 900) {
 				if (!isDemo())
 					_logic->GPLogic3();
