@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-18 06:57+0200\n"
+"POT-Creation-Date: 2017-07-22 20:42+0200\n"
 "PO-Revision-Date: 2017-06-23 17:44+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -681,7 +681,7 @@ msgid "Search:"
 msgstr "Пошук:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:435
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:433
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -691,7 +691,7 @@ msgstr "Загрузіць гульню:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:435 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:433 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
