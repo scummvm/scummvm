@@ -121,11 +121,13 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 	// keeps events queued from before the start of playback from accidentally
 	// activating a video stop flag
 	_eventMan->flushEvents();
+
 	_decoder->start();
 
 	EventFlags stopFlag = kEventFlagNone;
 	for (;;) {
 		g_sci->sleep(MIN(_decoder->getTimeToNextFrame(), maxSleepMs));
+
 		const Graphics::Surface *nextFrame = nullptr;
 		// If a decoder needs more than one update per loop, this means we are
 		// running behind and should skip rendering these frames (but must still
@@ -143,10 +145,19 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 			renderFrame(*nextFrame);
 		}
 
+		// Event checks must only happen *after* the decoder is updated (1) and
+		// frame rendered (2), otherwise (1) interval yields will get stuck
+		// forever on the current frame, and (2) other events will end up
+		// dropping the new frame entirely
 		stopFlag = checkForEvent(flags);
 		if (stopFlag != kEventFlagNone) {
 			break;
 		}
+
+		// Only call to update the screen after the event check, otherwise
+		// whatever the game scripts try to change when the player yields to
+		// them will not make it into the hardware buffer until the next tick
+		g_sci->_gfxFrameout->updateScreen();
 	}
 
 	return stopFlag;
