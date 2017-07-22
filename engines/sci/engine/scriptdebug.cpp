@@ -81,7 +81,7 @@ void DebugState::updateActiveBreakpointTypes() {
 }
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, bool printBytecode) {
+reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	reg_t retval;
@@ -200,8 +200,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 					debugN(opsize ? "\t%02x" : "\t%04x", param_value);
 				}
 			} else if (opcode == op_super) {
-				Object *obj;
-				if (objAddr != NULL_REG && (obj = s->_segMan->getObject(objAddr)) != nullptr) {
+				if (obj != nullptr) {
 					debugN("\t%s", s->_segMan->getObjectName(obj->getSuperClassSelector()));
 					debugN(opsize ? "[%02x]" : "[%04x]", param_value);
 				} else {
@@ -210,16 +209,28 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 
 				debugN(",");
 #ifdef ENABLE_SCI32
-			} else if (getSciVersion() == SCI_VERSION_3 && (
+			} else if (
 				opcode == op_pToa || opcode == op_aTop ||
 				opcode == op_pTos || opcode == op_sTop ||
 				opcode == op_ipToa || opcode == op_dpToa ||
-				opcode == op_ipTos || opcode == op_dpTos)) {
+				opcode == op_ipTos || opcode == op_dpTos) {
 
-				const char *selectorName = "<invalid>";
+				const char *selectorName;
 
-				if (param_value < kernel->getSelectorNamesSize()) {
-					selectorName = kernel->getSelectorName(param_value).c_str();
+				if (getSciVersion() == SCI_VERSION_3) {
+					if (param_value < kernel->getSelectorNamesSize()) {
+						selectorName = kernel->getSelectorName(param_value).c_str();
+					} else {
+						selectorName = "<invalid>";
+					}
+				} else {
+					if (obj != nullptr) {
+						const Object *const super = obj->getClass(s->_segMan);
+						assert(super);
+						selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+					} else {
+						selectorName = "<unavailable>";
+					}
 				}
 
 				debugN("\t%s[%x]", selectorName, param_value);
@@ -290,7 +301,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 	if (pos == s->xs->addr.pc) { // Extra information if debugging the current opcode
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
-			const Object *obj = s->_segMan->getObject(s->xs->objp);
+			obj = s->_segMan->getObject(s->xs->objp);
 			if (!obj) {
 				warning("Attempted to reference on non-object at %04x:%04x", PRINT_REG(s->xs->objp));
 			} else {
@@ -479,7 +490,7 @@ void SciEngine::scriptDebug() {
 	}
 
 	debugN("Step #%d\n", s->scriptStepCounter);
-	disassemble(s, s->xs->addr.pc, s->xs->objp, false, true);
+	disassemble(s, s->xs->addr.pc, s->_segMan->getObject(s->xs->objp), false, true);
 
 	if (_debugState.runningStep) {
 		_debugState.runningStep--;
