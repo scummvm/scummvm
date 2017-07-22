@@ -44,6 +44,7 @@ Selenitic::Selenitic(MohawkEngine_Myst *vm) :
 
 	_soundReceiverDirection = 0;
 	_soundReceiverStartTime = 0;
+	_soundReceiverNearBlinkCounter = 0;
 }
 
 Selenitic::~Selenitic() {
@@ -990,13 +991,26 @@ uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
 		if (position == solution) {
 			soundId = soundIdGood;
 		} else if (position > solution && position <= solution + 50) {
-			_soundReceiverLeftButton->drawConditionalDataToScreen(2);
-			_soundReceiverLeftButton->drawConditionalDataToScreen(0);
+			_soundReceiverNearBlinkCounter++;
+			if (_soundReceiverNearBlinkCounter % 2) {
+				_soundReceiverLeftButton->drawConditionalDataToScreen(2);
+			} else {
+				_soundReceiverLeftButton->drawConditionalDataToScreen(0);
+			}
 			soundId = soundIdNear;
 		} else if (position < solution && position >= solution - 50) {
-			_soundReceiverRightButton->drawConditionalDataToScreen(2);
-			_soundReceiverRightButton->drawConditionalDataToScreen(0);
+			_soundReceiverNearBlinkCounter++;
+			if (_soundReceiverNearBlinkCounter % 2) {
+				_soundReceiverRightButton->drawConditionalDataToScreen(2);
+			} else {
+				_soundReceiverRightButton->drawConditionalDataToScreen(0);
+			}
 			soundId = soundIdNear;
+		} else if (_soundReceiverNearBlinkCounter > 0) {
+			// Make sure the buttons don't stay highlighted when leaving the 'near' area
+			_soundReceiverRightButton->drawConditionalDataToScreen(0);
+			_soundReceiverLeftButton->drawConditionalDataToScreen(0);
+			_soundReceiverNearBlinkCounter = 0;
 		}
 	}
 
@@ -1053,6 +1067,7 @@ void Selenitic::o_soundReceiver_init(uint16 var, const ArgumentsArray &args) {
 	soundReceiverSetSubimageRect();
 
 	_soundReceiverSigmaPressed = false;
+	_soundReceiverNearBlinkCounter = 0;
 }
 
 void Selenitic::o_soundLock_init(uint16 var, const ArgumentsArray &args) {

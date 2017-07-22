@@ -86,6 +86,7 @@ private:
 	uint16 _soundReceiverDirection; // 120
 	uint16 _soundReceiverSpeed; // 122
 	uint32 _soundReceiverStartTime; //124
+	uint _soundReceiverNearBlinkCounter;
 	MystAreaImageSwitch *_soundReceiverViewer; // 128
 	MystAreaImageSwitch *_soundReceiverRightButton; // 132
 	MystAreaImageSwitch *_soundReceiverLeftButton; // 136
