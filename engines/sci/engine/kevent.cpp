@@ -206,6 +206,14 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 
+#ifdef ENABLE_SCI32
+	case SCI_EVENT_HOT_RECTANGLE:
+		writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
+		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.hotRectangleIndex);
+		s->r_acc = TRUE_REG;
+		break;
+#endif
+
 	default:
 		// Return a null event
 		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_NONE);

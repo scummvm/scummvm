@@ -63,7 +63,7 @@ struct SciEvent {
 #define SCI_EVENT_DIRECTION       (1 << 6)
 #define SCI_EVENT_SAID            (1 << 7)
 #ifdef ENABLE_SCI32
-#define SCI_EVENT_HOT_RECTANGLE   (1 << 8)
+#define SCI_EVENT_HOT_RECTANGLE   (1 << 10)
 #endif
 /*Fake values for other events*/
 #define SCI_EVENT_QUIT            (1 << 11)
