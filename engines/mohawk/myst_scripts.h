@@ -144,17 +144,20 @@ protected:
 	MohawkEngine_Myst *_vm;
 	MystGameState::Globals &_globals;
 
-	typedef void (MystScriptParser::*OpcodeProcMyst)(uint16 var, const ArgumentsArray &args);
+	typedef Common::Functor2<uint16, const ArgumentsArray &, void> OpcodeProcMyst;
 
-	struct MystOpcode {
-		MystOpcode(uint16 o, OpcodeProcMyst p, const char *d) : op(o), proc(p), desc(d) {}
+#define REGISTER_OPCODE(op, cls, method) \
+		registerOpcode( \
+			op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method) \
+		)
 
-		uint16 op;
-		OpcodeProcMyst proc;
-		const char *desc;
-	};
+#define OVERRIDE_OPCODE(op, cls, method) \
+		overrideOpcode( \
+			op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method) \
+		)
 
-	Common::Array<MystOpcode *> _opcodes;
+	void registerOpcode(uint16 op, const char *name, OpcodeProcMyst *command);
+	void overrideOpcode(uint16 op, const char *name, OpcodeProcMyst *command);
 
 	uint16 _savedCardId;
 	uint16 _savedMapCardId;
@@ -171,6 +174,16 @@ protected:
 	T *getInvokingResource() const;
 
 private:
+	struct MystOpcode {
+		MystOpcode(uint16 o, OpcodeProcMyst *p, const char *d) : op(o), proc(p), desc(d) {}
+
+		uint16 op;
+		Common::SharedPtr<OpcodeProcMyst> proc;
+		const char *desc;
+	};
+
+	Common::Array<MystOpcode> _opcodes;
+
 	MystArea *_invokingResource;
 	int32 _scriptNestingLevel;
 

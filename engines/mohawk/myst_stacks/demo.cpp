@@ -39,28 +39,15 @@ Demo::Demo(MohawkEngine_Myst *vm) : Intro(vm) {
 Demo::~Demo() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Demo::x, #x))
-
-#define OVERRIDE_OPCODE(opcode, x) \
-	for (uint32 i = 0; i < _opcodes.size(); i++) \
-		if (_opcodes[i]->op == opcode) { \
-			_opcodes[i]->proc = (OpcodeProcMyst) &Demo::x; \
-			_opcodes[i]->desc = #x; \
-			break; \
-		}
-
 void Demo::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OVERRIDE_OPCODE(100, o_stopIntro);
-	OPCODE(101, o_fadeFromBlack);
-	OPCODE(102, o_fadeToBlack);
+	OVERRIDE_OPCODE(100, Demo, o_stopIntro);
+	REGISTER_OPCODE(101, Demo, o_fadeFromBlack);
+	REGISTER_OPCODE(102, Demo, o_fadeToBlack);
 
 	// "Init" Opcodes
-	OVERRIDE_OPCODE(201, o_returnToMenu_init);
+	OVERRIDE_OPCODE(201, Demo, o_returnToMenu_init);
 }
-
-#undef OPCODE
-#undef OVERRIDE_OPCODE
 
 void Demo::disablePersistentScripts() {
 	Intro::disablePersistentScripts();

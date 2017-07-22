@@ -44,50 +44,46 @@ Channelwood::Channelwood(MohawkEngine_Myst *vm) :
 Channelwood::~Channelwood() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Channelwood::x, #x))
-
 void Channelwood::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_bridgeToggle);
-	OPCODE(101, o_pipeExtend);
-	OPCODE(102, o_drawImageChangeCardAndVolume);
-	OPCODE(104, o_waterTankValveOpen);
-	OPCODE(105, o_leverStartMove);
-	OPCODE(106, o_leverEndMove);
-	OPCODE(107, o_leverMoveFail);
-	OPCODE(108, o_leverMove);
-	OPCODE(109, o_stairsDoorToggle);
-	OPCODE(110, o_valveHandleMove1);
-	OPCODE(111, o_valveHandleMoveStart1);
-	OPCODE(112, o_valveHandleMoveStop);
-	OPCODE(113, o_valveHandleMove2);
-	OPCODE(114, o_valveHandleMoveStart2);
-	OPCODE(115, o_valveHandleMove3);
-	OPCODE(116, o_valveHandleMoveStart3);
-	OPCODE(117, o_hologramMonitor);
-	OPCODE(118, o_drawerOpen);
-	OPCODE(119, o_hologramTemple);
-	OPCODE(120, o_leverElev3StartMove);
-	OPCODE(121, o_leverElev3EndMove);
-	OPCODE(122, o_waterTankValveClose);
-	OPCODE(123, o_executeMouseUp);
-	OPCODE(124, o_leverEndMoveWithSound);
-	OPCODE(125, o_pumpLeverMove);
-	OPCODE(126, o_pumpLeverEndMove);
-	OPCODE(127, o_elevatorMovies);
-	OPCODE(128, o_leverEndMoveResumeBackground);
-	OPCODE(129, o_soundReplace);
+	REGISTER_OPCODE(100, Channelwood, o_bridgeToggle);
+	REGISTER_OPCODE(101, Channelwood, o_pipeExtend);
+	REGISTER_OPCODE(102, Channelwood, o_drawImageChangeCardAndVolume);
+	REGISTER_OPCODE(104, Channelwood, o_waterTankValveOpen);
+	REGISTER_OPCODE(105, Channelwood, o_leverStartMove);
+	REGISTER_OPCODE(106, Channelwood, o_leverEndMove);
+	REGISTER_OPCODE(107, Channelwood, o_leverMoveFail);
+	REGISTER_OPCODE(108, Channelwood, o_leverMove);
+	REGISTER_OPCODE(109, Channelwood, o_stairsDoorToggle);
+	REGISTER_OPCODE(110, Channelwood, o_valveHandleMove1);
+	REGISTER_OPCODE(111, Channelwood, o_valveHandleMoveStart1);
+	REGISTER_OPCODE(112, Channelwood, o_valveHandleMoveStop);
+	REGISTER_OPCODE(113, Channelwood, o_valveHandleMove2);
+	REGISTER_OPCODE(114, Channelwood, o_valveHandleMoveStart2);
+	REGISTER_OPCODE(115, Channelwood, o_valveHandleMove3);
+	REGISTER_OPCODE(116, Channelwood, o_valveHandleMoveStart3);
+	REGISTER_OPCODE(117, Channelwood, o_hologramMonitor);
+	REGISTER_OPCODE(118, Channelwood, o_drawerOpen);
+	REGISTER_OPCODE(119, Channelwood, o_hologramTemple);
+	REGISTER_OPCODE(120, Channelwood, o_leverElev3StartMove);
+	REGISTER_OPCODE(121, Channelwood, o_leverElev3EndMove);
+	REGISTER_OPCODE(122, Channelwood, o_waterTankValveClose);
+	REGISTER_OPCODE(123, Channelwood, o_executeMouseUp);
+	REGISTER_OPCODE(124, Channelwood, o_leverEndMoveWithSound);
+	REGISTER_OPCODE(125, Channelwood, o_pumpLeverMove);
+	REGISTER_OPCODE(126, Channelwood, o_pumpLeverEndMove);
+	REGISTER_OPCODE(127, Channelwood, o_elevatorMovies);
+	REGISTER_OPCODE(128, Channelwood, o_leverEndMoveResumeBackground);
+	REGISTER_OPCODE(129, Channelwood, o_soundReplace);
 
 	// "Init" Opcodes
-	OPCODE(201, o_lever_init);
-	OPCODE(202, o_pipeValve_init);
-	OPCODE(203, o_drawer_init);
+	REGISTER_OPCODE(201, Channelwood, o_lever_init);
+	REGISTER_OPCODE(202, Channelwood, o_pipeValve_init);
+	REGISTER_OPCODE(203, Channelwood, o_drawer_init);
 
 	// "Exit" Opcodes
-	OPCODE(300, NOP);
+	REGISTER_OPCODE(300, Channelwood, NOP);
 }
-
-#undef OPCODE
 
 void Channelwood::disablePersistentScripts() {
 

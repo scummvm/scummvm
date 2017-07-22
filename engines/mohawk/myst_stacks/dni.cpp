@@ -42,21 +42,17 @@ Dni::Dni(MohawkEngine_Myst *vm) :
 Dni::~Dni() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Dni::x, #x))
-
 void Dni::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, NOP);
-	OPCODE(101, o_handPage);
+	REGISTER_OPCODE(100, Dni, NOP);
+	REGISTER_OPCODE(101, Dni, o_handPage);
 
 	// "Init" Opcodes
-	OPCODE(200, o_atrus_init);
+	REGISTER_OPCODE(200, Dni, o_atrus_init);
 
 	// "Exit" Opcodes
-	OPCODE(300, NOP);
+	REGISTER_OPCODE(300, Dni, NOP);
 }
-
-#undef OPCODE
 
 void Dni::disablePersistentScripts() {
 	_atrusRunning = false;

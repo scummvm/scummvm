@@ -49,40 +49,36 @@ Selenitic::Selenitic(MohawkEngine_Myst *vm) :
 Selenitic::~Selenitic() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Selenitic::x, #x))
-
 void Selenitic::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_mazeRunnerMove);
-	OPCODE(101, o_mazeRunnerSoundRepeat);
-	OPCODE(102, o_soundReceiverSigma);
-	OPCODE(103, o_soundReceiverRight);
-	OPCODE(104, o_soundReceiverLeft);
-	OPCODE(105, o_soundReceiverSource);
-	OPCODE(106, o_soundReceiverSource);
-	OPCODE(107, o_soundReceiverSource);
-	OPCODE(108, o_soundReceiverSource);
-	OPCODE(109, o_soundReceiverSource);
-	OPCODE(110, o_mazeRunnerDoorButton);
-	OPCODE(111, o_soundReceiverUpdateSound);
-	OPCODE(112, o_soundLockMove);
-	OPCODE(113, o_soundLockStartMove);
-	OPCODE(114, o_soundLockEndMove);
-	OPCODE(115, o_soundLockButton);
-	OPCODE(116, NOP);
-	OPCODE(117, o_soundReceiverEndMove);
+	REGISTER_OPCODE(100, Selenitic, o_mazeRunnerMove);
+	REGISTER_OPCODE(101, Selenitic, o_mazeRunnerSoundRepeat);
+	REGISTER_OPCODE(102, Selenitic, o_soundReceiverSigma);
+	REGISTER_OPCODE(103, Selenitic, o_soundReceiverRight);
+	REGISTER_OPCODE(104, Selenitic, o_soundReceiverLeft);
+	REGISTER_OPCODE(105, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(106, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(107, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(108, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(109, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(110, Selenitic, o_mazeRunnerDoorButton);
+	REGISTER_OPCODE(111, Selenitic, o_soundReceiverUpdateSound);
+	REGISTER_OPCODE(112, Selenitic, o_soundLockMove);
+	REGISTER_OPCODE(113, Selenitic, o_soundLockStartMove);
+	REGISTER_OPCODE(114, Selenitic, o_soundLockEndMove);
+	REGISTER_OPCODE(115, Selenitic, o_soundLockButton);
+	REGISTER_OPCODE(116, Selenitic, NOP);
+	REGISTER_OPCODE(117, Selenitic, o_soundReceiverEndMove);
 
 	// "Init" Opcodes
-	OPCODE(200, o_mazeRunnerCompass_init);
-	OPCODE(201, o_mazeRunnerWindow_init);
-	OPCODE(202, o_mazeRunnerLight_init);
-	OPCODE(203, o_soundReceiver_init);
-	OPCODE(204, o_soundLock_init);
-	OPCODE(205, o_mazeRunnerRight_init);
-	OPCODE(206, o_mazeRunnerLeft_init);
+	REGISTER_OPCODE(200, Selenitic, o_mazeRunnerCompass_init);
+	REGISTER_OPCODE(201, Selenitic, o_mazeRunnerWindow_init);
+	REGISTER_OPCODE(202, Selenitic, o_mazeRunnerLight_init);
+	REGISTER_OPCODE(203, Selenitic, o_soundReceiver_init);
+	REGISTER_OPCODE(204, Selenitic, o_soundLock_init);
+	REGISTER_OPCODE(205, Selenitic, o_mazeRunnerRight_init);
+	REGISTER_OPCODE(206, Selenitic, o_mazeRunnerLeft_init);
 }
-
-#undef OPCODE
 
 void Selenitic::disablePersistentScripts() {
 	_soundReceiverRunning = false;

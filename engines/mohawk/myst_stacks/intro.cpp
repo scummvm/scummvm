@@ -38,21 +38,17 @@ Intro::Intro(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 Intro::~Intro() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Intro::x, #x))
-
 void Intro::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_useLinkBook);
+	REGISTER_OPCODE(100, Intro, o_useLinkBook);
 
 	// "Init" Opcodes
-	OPCODE(200, o_playIntroMovies);
-	OPCODE(201, o_mystLinkBook_init);
+	REGISTER_OPCODE(200, Intro, o_playIntroMovies);
+	REGISTER_OPCODE(201, Intro, o_mystLinkBook_init);
 
 	// "Exit" Opcodes
-	OPCODE(300, NOP);
+	REGISTER_OPCODE(300, Intro, NOP);
 }
-
-#undef OPCODE
 
 void Intro::disablePersistentScripts() {
 	_introMoviesRunning = false;

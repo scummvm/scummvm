@@ -42,17 +42,13 @@ Credits::Credits(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 Credits::~Credits() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Credits::x, #x))
-
 void Credits::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_quit);
+	REGISTER_OPCODE(100, Credits, o_quit);
 
 	// "Init" Opcodes
-	OPCODE(200, o_runCredits);
+	REGISTER_OPCODE(200, Credits, o_runCredits);
 }
-
-#undef OPCODE
 
 void Credits::disablePersistentScripts() {
 	_creditsRunning = false;

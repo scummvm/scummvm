@@ -66,53 +66,49 @@ Stoneship::Stoneship(MohawkEngine_Myst *vm) :
 Stoneship::~Stoneship() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Stoneship::x, #x))
-
 void Stoneship::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_pumpTurnOff);
-	OPCODE(101, o_brotherDoorOpen);
-	OPCODE(102, o_cabinBookMovie);
-	OPCODE(103, o_drawerOpenSirius);
-	OPCODE(104, o_drawerClose);
-	OPCODE(105, o_telescopeStart);
-	OPCODE(106, o_telescopeMove);
-	OPCODE(107, o_telescopeStop);
-	OPCODE(108, o_generatorStart);
-	OPCODE(109, NOP);
-	OPCODE(110, o_generatorStop);
-	OPCODE(111, o_drawerOpenAchenar);
-	OPCODE(112, o_hologramPlayback);
-	OPCODE(113, o_hologramSelectionStart);
-	OPCODE(114, o_hologramSelectionMove);
-	OPCODE(115, o_hologramSelectionStop);
-	OPCODE(116, o_compassButton);
-	OPCODE(117, o_chestValveVideos);
-	OPCODE(118, o_chestDropKey);
-	OPCODE(119, o_trapLockOpen);
-	OPCODE(120, o_sideDoorsMovies);
-	OPCODE(121, o_cloudOrbEnter);
-	OPCODE(122, o_cloudOrbLeave);
-	OPCODE(125, o_drawerCloseOpened);
+	REGISTER_OPCODE(100, Stoneship, o_pumpTurnOff);
+	REGISTER_OPCODE(101, Stoneship, o_brotherDoorOpen);
+	REGISTER_OPCODE(102, Stoneship, o_cabinBookMovie);
+	REGISTER_OPCODE(103, Stoneship, o_drawerOpenSirius);
+	REGISTER_OPCODE(104, Stoneship, o_drawerClose);
+	REGISTER_OPCODE(105, Stoneship, o_telescopeStart);
+	REGISTER_OPCODE(106, Stoneship, o_telescopeMove);
+	REGISTER_OPCODE(107, Stoneship, o_telescopeStop);
+	REGISTER_OPCODE(108, Stoneship, o_generatorStart);
+	REGISTER_OPCODE(109, Stoneship, NOP);
+	REGISTER_OPCODE(110, Stoneship, o_generatorStop);
+	REGISTER_OPCODE(111, Stoneship, o_drawerOpenAchenar);
+	REGISTER_OPCODE(112, Stoneship, o_hologramPlayback);
+	REGISTER_OPCODE(113, Stoneship, o_hologramSelectionStart);
+	REGISTER_OPCODE(114, Stoneship, o_hologramSelectionMove);
+	REGISTER_OPCODE(115, Stoneship, o_hologramSelectionStop);
+	REGISTER_OPCODE(116, Stoneship, o_compassButton);
+	REGISTER_OPCODE(117, Stoneship, o_chestValveVideos);
+	REGISTER_OPCODE(118, Stoneship, o_chestDropKey);
+	REGISTER_OPCODE(119, Stoneship, o_trapLockOpen);
+	REGISTER_OPCODE(120, Stoneship, o_sideDoorsMovies);
+	REGISTER_OPCODE(121, Stoneship, o_cloudOrbEnter);
+	REGISTER_OPCODE(122, Stoneship, o_cloudOrbLeave);
+	REGISTER_OPCODE(125, Stoneship, o_drawerCloseOpened);
 
 	// "Init" Opcodes
-	OPCODE(200, o_hologramDisplay_init);
-	OPCODE(201, o_hologramSelection_init);
-	OPCODE(202, o_battery_init);
-	OPCODE(203, o_tunnelEnter_init);
-	OPCODE(204, o_batteryGauge_init);
-	OPCODE(205, o_tunnel_init);
-	OPCODE(206, o_tunnelLeave_init);
-	OPCODE(207, o_chest_init);
-	OPCODE(208, o_telescope_init);
-	OPCODE(209, o_achenarDrawers_init);
-	OPCODE(210, o_cloudOrb_init);
+	REGISTER_OPCODE(200, Stoneship, o_hologramDisplay_init);
+	REGISTER_OPCODE(201, Stoneship, o_hologramSelection_init);
+	REGISTER_OPCODE(202, Stoneship, o_battery_init);
+	REGISTER_OPCODE(203, Stoneship, o_tunnelEnter_init);
+	REGISTER_OPCODE(204, Stoneship, o_batteryGauge_init);
+	REGISTER_OPCODE(205, Stoneship, o_tunnel_init);
+	REGISTER_OPCODE(206, Stoneship, o_tunnelLeave_init);
+	REGISTER_OPCODE(207, Stoneship, o_chest_init);
+	REGISTER_OPCODE(208, Stoneship, o_telescope_init);
+	REGISTER_OPCODE(209, Stoneship, o_achenarDrawers_init);
+	REGISTER_OPCODE(210, Stoneship, o_cloudOrb_init);
 
 	// "Exit" Opcodes
-	OPCODE(300, NOP);
+	REGISTER_OPCODE(300, Stoneship, NOP);
 }
-
-#undef OPCODE
 
 void Stoneship::disablePersistentScripts() {
 	_batteryCharging = false;

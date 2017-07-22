@@ -42,31 +42,18 @@ Preview::Preview(MohawkEngine_Myst *vm) : Myst(vm) {
 Preview::~Preview() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Preview::x, #x))
-
-#define OVERRIDE_OPCODE(opcode, x) \
-	for (uint32 i = 0; i < _opcodes.size(); i++) \
-		if (_opcodes[i]->op == opcode) { \
-			_opcodes[i]->proc = (OpcodeProcMyst) &Preview::x; \
-			_opcodes[i]->desc = #x; \
-			break; \
-		}
-
 void Preview::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OVERRIDE_OPCODE(196, o_fadeToBlack);
-	OVERRIDE_OPCODE(197, o_fadeFromBlack);
-	OVERRIDE_OPCODE(198, o_stayHere);
-	OVERRIDE_OPCODE(199, o_speechStop);
+	OVERRIDE_OPCODE(196, Preview, o_fadeToBlack);
+	OVERRIDE_OPCODE(197, Preview, o_fadeFromBlack);
+	OVERRIDE_OPCODE(198, Preview, o_stayHere);
+	OVERRIDE_OPCODE(199, Preview, o_speechStop);
 
 	// "Init" Opcodes
-	OVERRIDE_OPCODE(209, o_libraryBookcaseTransformDemo_init);
-	OPCODE(298, o_speech_init);
-	OPCODE(299, o_library_init);
+	OVERRIDE_OPCODE(209, Preview, o_libraryBookcaseTransformDemo_init);
+	REGISTER_OPCODE(298, Preview, o_speech_init);
+	REGISTER_OPCODE(299, Preview, o_library_init);
 }
-
-#undef OPCODE
-#undef OVERRIDE_OPCODE
 
 void Preview::disablePersistentScripts() {
 	Myst::disablePersistentScripts();

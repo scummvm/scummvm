@@ -41,17 +41,13 @@ Slides::Slides(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 Slides::~Slides() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Slides::x, #x))
-
 void Slides::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_returnToMenu);
+	REGISTER_OPCODE(100, Slides, o_returnToMenu);
 
 	// "Init" Opcodes
-	OPCODE(200, o_setCardSwap);
+	REGISTER_OPCODE(200, Slides, o_setCardSwap);
 }
-
-#undef OPCODE
 
 void Slides::disablePersistentScripts() {
 	_cardSwapEnabled = false;

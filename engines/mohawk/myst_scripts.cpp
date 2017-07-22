@@ -84,71 +84,81 @@ MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) :
 }
 
 MystScriptParser::~MystScriptParser() {
-	for (uint32 i = 0; i < _opcodes.size(); i++)
-		delete _opcodes[i];
 }
-
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, &MystScriptParser::x, #x))
 
 void MystScriptParser::setupCommonOpcodes() {
 	// These opcodes are common to each stack
 
 	// "Standard" Opcodes
-	OPCODE(0, o_toggleVar);
-	OPCODE(1, o_setVar);
-	OPCODE(2, o_changeCardSwitch4);
-	OPCODE(3, o_takePage);
-	OPCODE(4, o_redrawCard);
+	REGISTER_OPCODE(0, MystScriptParser, o_toggleVar);
+	REGISTER_OPCODE(1, MystScriptParser, o_setVar);
+	REGISTER_OPCODE(2, MystScriptParser, o_changeCardSwitch4);
+	REGISTER_OPCODE(3, MystScriptParser, o_takePage);
+	REGISTER_OPCODE(4, MystScriptParser, o_redrawCard);
 	// Opcode 5 Not Present
-	OPCODE(6, o_goToDestForward);
-	OPCODE(7, o_goToDestRight);
-	OPCODE(8, o_goToDestLeft);
-	OPCODE(9, o_triggerMovie);
-	OPCODE(10, o_toggleVarNoRedraw);
+	REGISTER_OPCODE(6, MystScriptParser, o_goToDestForward);
+	REGISTER_OPCODE(7, MystScriptParser, o_goToDestRight);
+	REGISTER_OPCODE(8, MystScriptParser, o_goToDestLeft);
+	REGISTER_OPCODE(9, MystScriptParser, o_triggerMovie);
+	REGISTER_OPCODE(10, MystScriptParser, o_toggleVarNoRedraw);
 	// Opcode 11 Not Present
-	OPCODE(12, o_changeCardSwitchLtR);
-	OPCODE(13, o_changeCardSwitchRtL);
-	OPCODE(14, o_drawAreaState);
-	OPCODE(15, o_redrawAreaForVar);
-	OPCODE(16, o_changeCardDirectional);
-	OPCODE(17, o_changeCardPush);
-	OPCODE(18, o_changeCardPop);
-	OPCODE(19, o_enableAreas);
-	OPCODE(20, o_disableAreas);
-	OPCODE(21, o_directionalUpdate);
-	OPCODE(22, o_goToDestUp);
-	OPCODE(23, o_toggleAreasActivation);
-	OPCODE(24, o_playSound);
+	REGISTER_OPCODE(12, MystScriptParser, o_changeCardSwitchLtR);
+	REGISTER_OPCODE(13, MystScriptParser, o_changeCardSwitchRtL);
+	REGISTER_OPCODE(14, MystScriptParser, o_drawAreaState);
+	REGISTER_OPCODE(15, MystScriptParser, o_redrawAreaForVar);
+	REGISTER_OPCODE(16, MystScriptParser, o_changeCardDirectional);
+	REGISTER_OPCODE(17, MystScriptParser, o_changeCardPush);
+	REGISTER_OPCODE(18, MystScriptParser, o_changeCardPop);
+	REGISTER_OPCODE(19, MystScriptParser, o_enableAreas);
+	REGISTER_OPCODE(20, MystScriptParser, o_disableAreas);
+	REGISTER_OPCODE(21, MystScriptParser, o_directionalUpdate);
+	REGISTER_OPCODE(22, MystScriptParser, o_goToDestUp);
+	REGISTER_OPCODE(23, MystScriptParser, o_toggleAreasActivation);
+	REGISTER_OPCODE(24, MystScriptParser, o_playSound);
 	// Opcode 25 is unused; original calls replaceSoundMyst
-	OPCODE(26, o_stopSoundBackground);
-	OPCODE(27, o_playSoundBlocking);
-	OPCODE(28, o_copyBackBufferToScreen);
-	OPCODE(29, o_copyImageToBackBuffer);
-	OPCODE(30, o_changeBackgroundSound);
-	OPCODE(31, o_soundPlaySwitch);
-	OPCODE(32, o_soundResumeBackground);
-	OPCODE(33, o_copyImageToScreen);
-	OPCODE(34, o_changeCard);
-	OPCODE(35, o_drawImageChangeCard);
-	OPCODE(36, o_changeMainCursor);
-	OPCODE(37, o_hideCursor);
-	OPCODE(38, o_showCursor);
-	OPCODE(39, o_delay);
-	OPCODE(40, o_changeStack);
-	OPCODE(41, o_changeCardPlaySoundDirectional);
-	OPCODE(42, o_directionalUpdatePlaySound);
-	OPCODE(43, o_saveMainCursor);
-	OPCODE(44, o_restoreMainCursor);
+	REGISTER_OPCODE(26, MystScriptParser, o_stopSoundBackground);
+	REGISTER_OPCODE(27, MystScriptParser, o_playSoundBlocking);
+	REGISTER_OPCODE(28, MystScriptParser, o_copyBackBufferToScreen);
+	REGISTER_OPCODE(29, MystScriptParser, o_copyImageToBackBuffer);
+	REGISTER_OPCODE(30, MystScriptParser, o_changeBackgroundSound);
+	REGISTER_OPCODE(31, MystScriptParser, o_soundPlaySwitch);
+	REGISTER_OPCODE(32, MystScriptParser, o_soundResumeBackground);
+	REGISTER_OPCODE(33, MystScriptParser, o_copyImageToScreen);
+	REGISTER_OPCODE(34, MystScriptParser, o_changeCard);
+	REGISTER_OPCODE(35, MystScriptParser, o_drawImageChangeCard);
+	REGISTER_OPCODE(36, MystScriptParser, o_changeMainCursor);
+	REGISTER_OPCODE(37, MystScriptParser, o_hideCursor);
+	REGISTER_OPCODE(38, MystScriptParser, o_showCursor);
+	REGISTER_OPCODE(39, MystScriptParser, o_delay);
+	REGISTER_OPCODE(40, MystScriptParser, o_changeStack);
+	REGISTER_OPCODE(41, MystScriptParser, o_changeCardPlaySoundDirectional);
+	REGISTER_OPCODE(42, MystScriptParser, o_directionalUpdatePlaySound);
+	REGISTER_OPCODE(43, MystScriptParser, o_saveMainCursor);
+	REGISTER_OPCODE(44, MystScriptParser, o_restoreMainCursor);
 	// Opcode 45 Not Present
-	OPCODE(46, o_soundWaitStop);
-	OPCODE(48, o_goToDest);
-	OPCODE(51, o_exitMap);
+	REGISTER_OPCODE(46, MystScriptParser, o_soundWaitStop);
+	REGISTER_OPCODE(48, MystScriptParser, o_goToDest);
+	REGISTER_OPCODE(51, MystScriptParser, o_exitMap);
 	// Opcodes 47 to 99 Not Present
 
-	OPCODE(0xFFFF, NOP);
+	REGISTER_OPCODE(0xFFFF, MystScriptParser, NOP);
 }
 
-#undef OPCODE
+void MystScriptParser::registerOpcode(uint16 op, const char *name, OpcodeProcMyst *command) {
+	_opcodes.push_back(MystOpcode(op, command, name));
+}
+
+void MystScriptParser::overrideOpcode(uint16 op, const char *name, MystScriptParser::OpcodeProcMyst *command) {
+	for (uint i = 0; i < _opcodes.size(); i++) {
+		if (_opcodes[i].op == op) {
+			_opcodes[i].desc = name;
+			_opcodes[i].proc = Common::SharedPtr<OpcodeProcMyst>(command);
+			return;
+		}
+	}
+
+	warning("Unable to find opcode %d to override with '%s'", op, name);
+}
 
 void MystScriptParser::runScript(MystScript script, MystArea *invokingResource) {
 	_scriptNestingLevel++;
@@ -172,12 +182,12 @@ void MystScriptParser::runOpcode(uint16 op, uint16 var, const ArgumentsArray &ar
 
 	bool ranOpcode = false;
 	for (uint16 i = 0; i < _opcodes.size(); i++)
-		if (_opcodes[i]->op == op) {
+		if (_opcodes[i].op == op) {
 			if (DebugMan.isDebugChannelEnabled(kDebugScript)) {
-				debugC(kDebugScript, "Running command: %s", describeCommand(*_opcodes[i], var, args).c_str());
+				debugC(kDebugScript, "Running command: %s", describeCommand(_opcodes[i], var, args).c_str());
 			}
 
-			(this->*(_opcodes[i]->proc)) (var, args);
+			(*_opcodes[i].proc)(var, args);
 			ranOpcode = true;
 			break;
 		}
@@ -194,8 +204,8 @@ bool MystScriptParser::isScriptRunning() const {
 
 const Common::String MystScriptParser::getOpcodeDesc(uint16 op) {
 	for (uint16 i = 0; i < _opcodes.size(); i++)
-		if (_opcodes[i]->op == op)
-			return _opcodes[i]->desc;
+		if (_opcodes[i].op == op)
+			return _opcodes[i].desc;
 
 	return Common::String::format("%d", op);
 }
