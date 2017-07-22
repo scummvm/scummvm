@@ -68,17 +68,13 @@ void Slides::runPersistentScripts() {
 	}
 }
 
-void Slides::o_returnToMenu(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Return to menu", op);
-
+void Slides::o_returnToMenu(uint16 var, const ArgumentsArray &args) {
 	// Go to the information screens of the menu
 	_vm->changeToStack(kDemoStack, 2002, 0, 0);
 }
 
-void Slides::o_setCardSwap(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Slides::o_setCardSwap(uint16 var, const ArgumentsArray &args) {
 	_nextCardID = args[0];
-
-	debugC(kDebugScript, "Opcode %d: Set next card %d", op, _nextCardID);
 
 	_nextCardTime = _vm->_system->getMillis() + 5000;
 	_cardSwapEnabled = true;

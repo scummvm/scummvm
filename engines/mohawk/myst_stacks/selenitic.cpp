@@ -285,7 +285,7 @@ bool Selenitic::setVarValue(uint16 var, uint16 value) {
 	return refresh;
 }
 
-void Selenitic::o_mazeRunnerMove(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Selenitic::o_mazeRunnerMove(uint16 var, const ArgumentsArray &args) {
 	uint16 oldPosition = _mazeRunnerPosition;
 	uint16 move = var;
 
@@ -566,16 +566,11 @@ void Selenitic::mazeRunnerPlaySoundHelp() {
 	_mazeRunnerLight->drawConditionalDataToScreen(0);
 }
 
-void Selenitic::o_mazeRunnerSoundRepeat(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Selenitic::o_mazeRunnerSoundRepeat(uint16 var, const ArgumentsArray &args) {
 	mazeRunnerPlaySoundHelp();
 }
 
-/**
- * Sound receiver sigma button
- */
-void Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver sigma button", op);
-
+void Selenitic::o_soundReceiverSigma(uint16 var, const ArgumentsArray &args) {
 	_vm->_cursor->hideCursor();
 
 	_soundReceiverCurrentSource->drawConditionalDataToScreen(0);
@@ -622,26 +617,15 @@ void Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, const ArgumentsArray
 	_vm->_cursor->showCursor();
 }
 
-/**
- * Sound receiver right button
- */
-void Selenitic::o_soundReceiverRight(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver right", op);
-
+void Selenitic::o_soundReceiverRight(uint16 var, const ArgumentsArray &args) {
 	soundReceiverLeftRight(1);
 }
 
-/**
- * Sound receiver left button
- */
-void Selenitic::o_soundReceiverLeft(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver left", op);
-
+void Selenitic::o_soundReceiverLeft(uint16 var, const ArgumentsArray &args) {
 	soundReceiverLeftRight(2);
 }
 
 void Selenitic::soundReceiverLeftRight(uint direction) {
-
 	if (_soundReceiverSigmaPressed) {
 		_soundReceiverSigmaButton->drawConditionalDataToScreen(0);
 		_soundReceiverSigmaPressed = false;
@@ -694,12 +678,7 @@ void Selenitic::soundReceiverDrawAngle() {
 	_vm->redrawResource(_soundReceiverAngle4);
 }
 
-/**
- * Sound receiver source selection buttons
- */
-void Selenitic::o_soundReceiverSource(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver source", op);
-
+void Selenitic::o_soundReceiverSource(uint16 var, const ArgumentsArray &args) {
 	if (_soundReceiverSigmaPressed) {
 		_soundReceiverSigmaButton->drawConditionalDataToScreen(0);
 		_soundReceiverSigmaPressed = false;
@@ -731,7 +710,7 @@ void Selenitic::o_soundReceiverSource(uint16 op, uint16 var, const ArgumentsArra
 	_vm->_cursor->showCursor();
 }
 
-void Selenitic::o_mazeRunnerDoorButton(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Selenitic::o_mazeRunnerDoorButton(uint16 var, const ArgumentsArray &args) {
 	// Used for Selenitic Maze Runner Exit Logic
 	uint16 cardIdExit = args[0];
 	uint16 cardIdEntry = args[1];
@@ -748,9 +727,7 @@ void Selenitic::o_mazeRunnerDoorButton(uint16 op, uint16 var, const ArgumentsArr
 	}
 }
 
-void Selenitic::o_soundReceiverUpdateSound(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver update sound", op);
-
+void Selenitic::o_soundReceiverUpdateSound(uint16 var, const ArgumentsArray &args) {
 	soundReceiverUpdateSound();
 }
 
@@ -796,9 +773,7 @@ MystAreaSlider *Selenitic::soundLockSliderFromVar(uint16 var) {
 	return nullptr;
 }
 
-void Selenitic::o_soundLockMove(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound lock move", op);
-
+void Selenitic::o_soundLockMove(uint16 var, const ArgumentsArray &args) {
 	MystAreaSlider *slider = soundLockSliderFromVar(var);
 
 	uint16 soundId = soundLockCurrentSound(slider->_pos.y, true);
@@ -808,9 +783,7 @@ void Selenitic::o_soundLockMove(uint16 op, uint16 var, const ArgumentsArray &arg
 	}
 }
 
-void Selenitic::o_soundLockStartMove(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound lock start move", op);
-
+void Selenitic::o_soundLockStartMove(uint16 var, const ArgumentsArray &args) {
 	MystAreaSlider *slider = soundLockSliderFromVar(var);
 
 	_vm->_cursor->setCursor(700);
@@ -820,9 +793,7 @@ void Selenitic::o_soundLockStartMove(uint16 op, uint16 var, const ArgumentsArray
 	_vm->_sound->playEffect(_soundLockSoundId, true);
 }
 
-void Selenitic::o_soundLockEndMove(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound lock end move", op);
-
+void Selenitic::o_soundLockEndMove(uint16 var, const ArgumentsArray &args) {
 	MystAreaSlider *slider = soundLockSliderFromVar(var);
 	uint16 *value = &_state.soundLockSliderPositions[0];
 
@@ -879,9 +850,7 @@ void Selenitic::soundLockCheckSolution(MystAreaSlider *slider, uint16 value, uin
 	_vm->_sound->stopEffect();
 }
 
-void Selenitic::o_soundLockButton(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound lock button", op);
-
+void Selenitic::o_soundLockButton(uint16 var, const ArgumentsArray &args) {
 	bool solved = true;
 
 	_vm->_sound->pauseBackground();
@@ -920,9 +889,7 @@ void Selenitic::o_soundLockButton(uint16 op, uint16 var, const ArgumentsArray &a
 	_vm->_cursor->showCursor();
 }
 
-void Selenitic::o_soundReceiverEndMove(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver end move", op);
-
+void Selenitic::o_soundReceiverEndMove(uint16 var, const ArgumentsArray &args) {
 	uint16 oldDirection = _soundReceiverDirection;
 
 	if (_soundReceiverDirection) {
@@ -937,15 +904,15 @@ void Selenitic::o_soundReceiverEndMove(uint16 op, uint16 var, const ArgumentsArr
 	}
 }
 
-void Selenitic::o_mazeRunnerCompass_init(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Selenitic::o_mazeRunnerCompass_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerCompass = getInvokingResource<MystAreaImageSwitch>();
 }
 
-void Selenitic::o_mazeRunnerWindow_init(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Selenitic::o_mazeRunnerWindow_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerWindow = getInvokingResource<MystAreaImageSwitch>();
 }
 
-void Selenitic::o_mazeRunnerLight_init(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Selenitic::o_mazeRunnerLight_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerLight = getInvokingResource<MystAreaImageSwitch>();
 }
 
@@ -1065,9 +1032,7 @@ void Selenitic::soundReceiverSolution(uint16 source, uint16 &solution, bool &ena
 	}
 }
 
-void Selenitic::o_soundReceiver_init(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver init", op);
-
+void Selenitic::o_soundReceiver_init(uint16 var, const ArgumentsArray &args) {
 	// Used for Card 1245 (Sound Receiver)
 	_soundReceiverRunning = true;
 
@@ -1094,9 +1059,7 @@ void Selenitic::o_soundReceiver_init(uint16 op, uint16 var, const ArgumentsArray
 	_soundReceiverSigmaPressed = false;
 }
 
-void Selenitic::o_soundLock_init(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Sound lock init", op);
-
+void Selenitic::o_soundLock_init(uint16 var, const ArgumentsArray &args) {
 	for (uint i = 0; i < _vm->_resources.size(); i++) {
 		if (_vm->_resources[i]->type == kMystAreaSlider) {
 			switch (_vm->_resources[i]->getImageSwitchVar()) {
@@ -1129,11 +1092,11 @@ void Selenitic::o_soundLock_init(uint16 op, uint16 var, const ArgumentsArray &ar
 	_soundLockSoundId = 0;
 }
 
-void Selenitic::o_mazeRunnerRight_init(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Selenitic::o_mazeRunnerRight_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerRightButton = getInvokingResource<MystAreaImageSwitch>();
 }
 
-void Selenitic::o_mazeRunnerLeft_init(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Selenitic::o_mazeRunnerLeft_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerLeftButton = getInvokingResource<MystAreaImageSwitch>();
 }
 

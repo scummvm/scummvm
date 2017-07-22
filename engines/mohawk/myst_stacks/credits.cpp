@@ -90,7 +90,7 @@ uint16 Credits::getVar(uint16 var) {
 	}
 }
 
-void Credits::o_runCredits(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Credits::o_runCredits(uint16 var, const ArgumentsArray &args) {
 	// Activate the credits
 	_creditsRunning = true;
 	_curImage = 0;

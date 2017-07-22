@@ -28,6 +28,7 @@
 #include "mohawk/myst_sound.h"
 #include "mohawk/video.h"
 
+#include "common/debug-channels.h"
 #include "common/system.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
@@ -100,8 +101,8 @@ void MystScriptParser::setupCommonOpcodes() {
 	OPCODE(4, o_redrawCard);
 	// Opcode 5 Not Present
 	OPCODE(6, o_goToDestForward);
-	OPCODE(7, o_goToDestLeft);
-	OPCODE(8, o_goToDestRight);
+	OPCODE(7, o_goToDestRight);
+	OPCODE(8, o_goToDestLeft);
 	OPCODE(9, o_triggerMovie);
 	OPCODE(10, o_toggleVarNoRedraw);
 	// Opcode 11 Not Present
@@ -150,13 +151,10 @@ void MystScriptParser::setupCommonOpcodes() {
 #undef OPCODE
 
 void MystScriptParser::runScript(MystScript script, MystArea *invokingResource) {
-	debugC(kDebugScript, "Script Size: %d", script->size());
-
 	_scriptNestingLevel++;
 
 	for (uint16 i = 0; i < script->size(); i++) {
 		MystScriptEntry &entry = (*script)[i];
-		debugC(kDebugScript, "\tOpcode %d: %d", i, entry.opcode);
 
 		if (entry.type == kMystScriptNormal)
 			_invokingResource = invokingResource;
@@ -175,7 +173,11 @@ void MystScriptParser::runOpcode(uint16 op, uint16 var, const ArgumentsArray &ar
 	bool ranOpcode = false;
 	for (uint16 i = 0; i < _opcodes.size(); i++)
 		if (_opcodes[i]->op == op) {
-			(this->*(_opcodes[i]->proc)) (op, var, args);
+			if (DebugMan.isDebugChannelEnabled(kDebugScript)) {
+				debugC(kDebugScript, "Running command: %s", describeCommand(*_opcodes[i], var, args).c_str());
+			}
+
+			(this->*(_opcodes[i]->proc)) (var, args);
 			ranOpcode = true;
 			break;
 		}
@@ -196,6 +198,22 @@ const Common::String MystScriptParser::getOpcodeDesc(uint16 op) {
 			return _opcodes[i]->desc;
 
 	return Common::String::format("%d", op);
+}
+
+Common::String MystScriptParser::describeCommand(const MystOpcode &command, uint16 var, const ArgumentsArray &args) {
+	Common::String desc = Common::String::format("%s(", command.desc);
+
+	if (var != 0) {
+		desc += Common::String::format("var = %d%s", var, args.size() != 0 ? ", " : "");
+	}
+
+	for (uint16 j = 0; j < args.size(); j++) {
+		desc += Common::String::format("%d", args[j]);
+		if (j != args.size() - 1)
+			desc += ", ";
+	}
+	desc += ")";
+	return desc;
 }
 
 MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, MystScriptType type) {
@@ -280,43 +298,21 @@ void MystScriptParser::animatedUpdate(const ArgumentsArray &args, uint16 delay) 
 	}
 }
 
-void MystScriptParser::unknown(uint16 op, uint16 var, const ArgumentsArray &args) {
-	warning("Unimplemented opcode 0x%02x (%d)", op, op);
-	warning("\tUses var %d", var);
-	warning("\tArg count = %d", args.size());
-
-	if (!args.empty()) {
-		Common::String str;
-		str += Common::String::format("%d", args[0]);
-
-		for (uint16 i = 1; i < args.size(); i++)
-			str += Common::String::format(", %d", args[i]);
-
-		warning("\tArgs: %s\n", str.c_str());
-	}
+void MystScriptParser::NOP(uint16 var, const ArgumentsArray &args) {
 }
 
-void MystScriptParser::NOP(uint16 op, uint16 var, const ArgumentsArray &args) {
-}
-
-void MystScriptParser::o_toggleVar(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Toggle var %d", op, var);
-
+void MystScriptParser::o_toggleVar(uint16 var, const ArgumentsArray &args) {
 	toggleVar(var);
 	_vm->redrawArea(var);
 }
 
-void MystScriptParser::o_setVar(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Set var %d: %d", op, var, args[0]);
-
+void MystScriptParser::o_setVar(uint16 var, const ArgumentsArray &args) {
 	if (setVarValue(var, args[0]))
 		_vm->redrawArea(var);
 }
 
-void MystScriptParser::o_changeCardSwitch4(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_changeCardSwitch4(uint16 var, const ArgumentsArray &args) {
 	uint16 value = getVar(var);
-
-	debugC(kDebugScript, "Opcode %d: changeCardSwitch var %d: %d", op, var, value);
 
 	if (value)
 		_vm->changeToCard(args[value -1 ], kTransitionDissolve);
@@ -326,10 +322,8 @@ void MystScriptParser::o_changeCardSwitch4(uint16 op, uint16 var, const Argument
 		warning("Missing invokingResource in altDest call");
 }
 
-void MystScriptParser::o_changeCardSwitchLtR(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_changeCardSwitchLtR(uint16 var, const ArgumentsArray &args) {
 	uint16 value = getVar(var);
-
-	debugC(kDebugScript, "Opcode %d: changeCardSwitch var %d: %d", op, var, value);
 
 	if (value)
 		_vm->changeToCard(args[value -1 ], kTransitionLeftToRight);
@@ -339,10 +333,8 @@ void MystScriptParser::o_changeCardSwitchLtR(uint16 op, uint16 var, const Argume
 		warning("Missing invokingResource in altDest call");
 }
 
-void MystScriptParser::o_changeCardSwitchRtL(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_changeCardSwitchRtL(uint16 var, const ArgumentsArray &args) {
 	uint16 value = getVar(var);
-
-	debugC(kDebugScript, "Opcode %d: changeCardSwitch var %d: %d", op, var, value);
 
 	if (value)
 		_vm->changeToCard(args[value -1 ], kTransitionRightToLeft);
@@ -352,7 +344,7 @@ void MystScriptParser::o_changeCardSwitchRtL(uint16 op, uint16 var, const Argume
 		warning("Missing invokingResource in altDest call");
 }
 
-void MystScriptParser::o_takePage(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_takePage(uint16 var, const ArgumentsArray &args) {
 	// In most game releases, the first opcode argument is the new mouse cursor.
 	// However, in the original v1.0 English release this opcode takes no argument.
 	uint16 cursorId; // = args[0];
@@ -375,8 +367,6 @@ void MystScriptParser::o_takePage(uint16 op, uint16 var, const ArgumentsArray &a
 
 	uint16 oldPage = _globals.heldPage;
 
-	debugC(kDebugScript, "Opcode %d: takePage Var %d CursorId %d", op, var, cursorId);
-
 	// Take / drop page
 	toggleVar(var);
 
@@ -394,61 +384,48 @@ void MystScriptParser::o_takePage(uint16 op, uint16 var, const ArgumentsArray &a
 	}
 }
 
-void MystScriptParser::o_redrawCard(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Redraw card", op);
-
+void MystScriptParser::o_redrawCard(uint16 var, const ArgumentsArray &args) {
 	_vm->drawCardBackground();
 	_vm->drawResourceImages();
 	_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 }
 
-void MystScriptParser::o_goToDest(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
-
+void MystScriptParser::o_goToDest(uint16 var, const ArgumentsArray &args) {
 	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionCopy);
 	else
-		warning("Opcode %d: Missing invokingResource", op);
+		warning("Opcode o_goToDest: Missing invokingResource");
 }
 
-void MystScriptParser::o_goToDestForward(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
-
+void MystScriptParser::o_goToDestForward(uint16 var, const ArgumentsArray &args) {
 	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionDissolve);
 	else
-		warning("Opcode %d: Missing invokingResource", op);
+		warning("Opcode o_goToDestForward: Missing invokingResource");
 }
 
-void MystScriptParser::o_goToDestLeft(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
-
+void MystScriptParser::o_goToDestRight(uint16 var, const ArgumentsArray &args) {
 	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionPartToRight);
 	else
-		warning("Opcode %d: Missing invokingResource", op);
+		warning("Opcode o_goToDestRight: Missing invokingResource");
 }
 
-void MystScriptParser::o_goToDestRight(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
-
+void MystScriptParser::o_goToDestLeft(uint16 var, const ArgumentsArray &args) {
 	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionPartToLeft);
 	else
-		warning("Opcode %d: Missing invokingResource", op);
+		warning("Opcode o_goToDestLeft: Missing invokingResource");
 }
 
-void MystScriptParser::o_goToDestUp(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
-
+void MystScriptParser::o_goToDestUp(uint16 var, const ArgumentsArray &args) {
 	if (_invokingResource != nullptr)
 		_vm->changeToCard(_invokingResource->getDest(), kTransitionTopToBottom);
 	else
-		warning("Opcode %d: Missing invokingResource", op);
+		warning("Opcode o_goToDestUp: Missing invokingResource");
 }
 
-void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Trigger Type 6 Resource Movie..", op);
+void MystScriptParser::o_triggerMovie(uint16 var, const ArgumentsArray &args) {
 	// The original has code to pause the background music before playing the movie,
 	// if the movie has a sound track, as well as code to resume it afterwards. But since
 	// the movie has not yet been loaded at this point, it is impossible to know
@@ -458,45 +435,30 @@ void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, const ArgumentsArra
 	if (args.size() == 1)
 		direction = args[0];
 
-	debugC(kDebugScript, "\tDirection: %d", direction);
-
 	// Trigger resource 6 movie overriding play direction
 	MystAreaVideo *resource = getInvokingResource<MystAreaVideo>();
 	resource->setDirection(direction);
 	resource->playMovie();
 }
 
-void MystScriptParser::o_toggleVarNoRedraw(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: toggleVarNoRedraw", op);
-
+void MystScriptParser::o_toggleVarNoRedraw(uint16 var, const ArgumentsArray &args) {
 	toggleVar(var);
 }
 
-void MystScriptParser::o_drawAreaState(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: drawAreaState, state: %d", op, args[0]);
-	debugC(kDebugScript, "\tVar: %d", var);
-
+void MystScriptParser::o_drawAreaState(uint16 var, const ArgumentsArray &args) {
 	MystAreaImageSwitch *parent = static_cast<MystAreaImageSwitch *>(getInvokingResource<MystArea>()->_parent);
 	parent->drawConditionalDataToScreen(args[0]);
 }
 
-void MystScriptParser::o_redrawAreaForVar(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: redraw area", op);
-	debugC(kDebugScript, "\tvar: %d", var);
-
+void MystScriptParser::o_redrawAreaForVar(uint16 var, const ArgumentsArray &args) {
 	_vm->redrawArea(var);
 }
 
-void MystScriptParser::o_changeCardDirectional(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_changeCardDirectional(uint16 var, const ArgumentsArray &args) {
 
 	// Used by Channelwood Card 3262 (In Elevator)
-	debugC(kDebugScript, "Opcode %d: Change Card with optional directional update", op);
-
 	uint16 cardId = args[0];
 	uint16 directionalUpdateDataSize = args[1];
-
-	debugC(kDebugScript, "\tcardId: %d", cardId);
-	debugC(kDebugScript, "\tdirectonal update data size: %d", directionalUpdateDataSize);
 
 	_vm->changeToCard(cardId, kNoTransition);
 
@@ -507,24 +469,16 @@ void MystScriptParser::o_changeCardDirectional(uint16 op, uint16 var, const Argu
 // but with the current cardId stored.
 // Opcode 18 then "pops" this stored CardId and returns to that card.
 
-void MystScriptParser::o_changeCardPush(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Jump to Card Id, Storing Current Card Id", op);
-
+void MystScriptParser::o_changeCardPush(uint16 var, const ArgumentsArray &args) {
 	_savedCardId = _vm->getCurCard();
 
 	uint16 cardId = args[0];
 	TransitionType transition = static_cast<TransitionType>(args[1]);
 
-	debugC(kDebugScript, "\tCurrent CardId: %d", _savedCardId);
-	debugC(kDebugScript, "\tJump to CardId: %d", cardId);
-
 	_vm->changeToCard(cardId, transition);
 }
 
-void MystScriptParser::o_changeCardPop(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Return To Stored Card Id", op);
-	debugC(kDebugScript, "\tCardId: %d", _savedCardId);
-
+void MystScriptParser::o_changeCardPop(uint16 var, const ArgumentsArray &args) {
 	if (_savedCardId == 0) {
 		warning("No pushed card to go back to");
 		return;
@@ -535,14 +489,10 @@ void MystScriptParser::o_changeCardPop(uint16 op, uint16 var, const ArgumentsArr
 	_vm->changeToCard(_savedCardId, transition);
 }
 
-void MystScriptParser::o_enableAreas(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Enable Hotspots", op);
-
+void MystScriptParser::o_enableAreas(uint16 var, const ArgumentsArray &args) {
 	uint16 count = args[0];
 
 	for (uint16 i = 0; i < count; i++) {
-		debugC(kDebugScript, "Enable hotspot index %d", args[i + 1]);
-
 		MystArea *resource = nullptr;
 		if (args[i + 1] == 0xFFFF)
 			resource = _invokingResource;
@@ -556,14 +506,10 @@ void MystScriptParser::o_enableAreas(uint16 op, uint16 var, const ArgumentsArray
 	}
 }
 
-void MystScriptParser::o_disableAreas(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Disable Hotspots", op);
-
+void MystScriptParser::o_disableAreas(uint16 var, const ArgumentsArray &args) {
 	uint16 count = args[0];
 
 	for (uint16 i = 0; i < count; i++) {
-		debugC(kDebugScript, "Disable hotspot index %d", args[i + 1]);
-
 		MystArea *resource = nullptr;
 		if (args[i + 1] == 0xFFFF)
 			resource = _invokingResource;
@@ -577,20 +523,14 @@ void MystScriptParser::o_disableAreas(uint16 op, uint16 var, const ArgumentsArra
 	}
 }
 
-void MystScriptParser::o_directionalUpdate(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Transition / Directional update", op);
-
+void MystScriptParser::o_directionalUpdate(uint16 var, const ArgumentsArray &args) {
 	animatedUpdate(args, 0);
 }
 
-void MystScriptParser::o_toggleAreasActivation(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Toggle areas activation", op);
-
+void MystScriptParser::o_toggleAreasActivation(uint16 var, const ArgumentsArray &args) {
 	uint16 count = args[0];
 
 	for (uint16 i = 0; i < count; i++) {
-		debugC(kDebugScript, "Enable/Disable hotspot index %d", args[i + 1]);
-
 		MystArea *resource = nullptr;
 		if (args[i + 1] == 0xFFFF)
 			resource = _invokingResource;
@@ -604,33 +544,24 @@ void MystScriptParser::o_toggleAreasActivation(uint16 op, uint16 var, const Argu
 	}
 }
 
-void MystScriptParser::o_playSound(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_playSound(uint16 var, const ArgumentsArray &args) {
 	uint16 soundId = args[0];
-
-	debugC(kDebugScript, "Opcode %d: playSound", op);
-	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 	_vm->_sound->playEffect(soundId);
 }
 
-void MystScriptParser::o_stopSoundBackground(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: stopSoundBackground", op);
+void MystScriptParser::o_stopSoundBackground(uint16 var, const ArgumentsArray &args) {
 	_vm->_sound->stopBackground();
 }
 
-void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_playSoundBlocking(uint16 var, const ArgumentsArray &args) {
 	uint16 soundId = args[0];
-
-	debugC(kDebugScript, "Opcode %d: playSoundBlocking", op);
-	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 	_vm->_sound->stopEffect();
 	_vm->playSoundBlocking(soundId);
 }
 
-void MystScriptParser::o_copyBackBufferToScreen(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Copy back buffer to screen", op);
-
+void MystScriptParser::o_copyBackBufferToScreen(uint16 var, const ArgumentsArray &args) {
 	Common::Rect rect;
 	if (args[0] == 0xFFFF) {
 		// Used in Stoneship Card 2111 (Compass Rose)
@@ -648,7 +579,7 @@ void MystScriptParser::o_copyBackBufferToScreen(uint16 op, uint16 var, const Arg
 	_vm->_gfx->copyBackBufferToScreen(rect);
 }
 
-void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_copyImageToBackBuffer(uint16 var, const ArgumentsArray &args) {
 	uint16 imageId = args[0];
 
 	// WORKAROUND wrong image id in mechanical staircase
@@ -668,8 +599,6 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, const Argu
 	dstRect.right = dstRect.left + srcRect.width();
 	dstRect.bottom = dstRect.top + srcRect.height();
 
-	debugC(kDebugScript, "Opcode %d: Copy image to back buffer", op);
-	debugC(kDebugScript, "\timageId: %d", imageId);
 	debugC(kDebugScript, "\tsrcRect.left: %d", srcRect.left);
 	debugC(kDebugScript, "\tsrcRect.top: %d", srcRect.top);
 	debugC(kDebugScript, "\tsrcRect.right: %d", srcRect.right);
@@ -682,11 +611,9 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, const Argu
 	_vm->_gfx->copyImageSectionToBackBuffer(imageId, srcRect, dstRect);
 }
 
-void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_changeBackgroundSound(uint16 var, const ArgumentsArray &args) {
 	// Used on Stoneship Card 2080
 	// Used on Channelwood Card 3225 with argc = 8 i.e. Conditional Sound List
-	debugC(kDebugScript, "Opcode %d: Process Sound Block", op);
-
 	Common::MemoryWriteStreamDynamic writeStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	for (uint i = 0; i < args.size(); i++) {
 		writeStream.writeUint16LE(args[i]);
@@ -698,27 +625,21 @@ void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, const Argu
 	_vm->applySoundBlock(soundBlock);
 }
 
-void MystScriptParser::o_soundPlaySwitch(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Switch Choice of Play Sound", op);
-
+void MystScriptParser::o_soundPlaySwitch(uint16 var, const ArgumentsArray &args) {
 	uint16 value = getVar(var);
 
 	if (value < args.size()) {
 		uint16 soundId = args[value];
-		debugC(kDebugScript, "\tvar: %d", var);
-		debugC(kDebugScript, "\tsoundId: %d", soundId);
-
 		if (soundId)
 			_vm->_sound->playEffect(soundId);
 	}
 }
 
-void MystScriptParser::o_soundResumeBackground(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: soundResumeBackground", op);
+void MystScriptParser::o_soundResumeBackground(uint16 var, const ArgumentsArray &args) {
 	_vm->_sound->resumeBackground();
 }
 
-void MystScriptParser::o_copyImageToScreen(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_copyImageToScreen(uint16 var, const ArgumentsArray &args) {
 	uint16 imageId = args[0];
 
 	Common::Rect srcRect = Common::Rect(args[1], args[2], args[3], args[4]);
@@ -734,8 +655,6 @@ void MystScriptParser::o_copyImageToScreen(uint16 op, uint16 var, const Argument
 	dstRect.right = dstRect.left + srcRect.width();
 	dstRect.bottom = dstRect.top + srcRect.height();
 
-	debugC(kDebugScript, "Opcode %d: Copy image to screen", op);
-	debugC(kDebugScript, "\timageId: %d", imageId);
 	debugC(kDebugScript, "\tsrcRect.left: %d", srcRect.left);
 	debugC(kDebugScript, "\tsrcRect.top: %d", srcRect.top);
 	debugC(kDebugScript, "\tsrcRect.right: %d", srcRect.right);
@@ -748,26 +667,17 @@ void MystScriptParser::o_copyImageToScreen(uint16 op, uint16 var, const Argument
 	_vm->_gfx->copyImageSectionToScreen(imageId, srcRect, dstRect);
 }
 
-void MystScriptParser::o_changeCard(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Change Card", op);
-
+void MystScriptParser::o_changeCard(uint16 var, const ArgumentsArray &args) {
 	uint16 cardId = args[0];
 	TransitionType transition = static_cast<TransitionType>(args[1]);
-
-	debugC(kDebugScript, "\tTarget Card: %d", cardId);
 
 	_vm->changeToCard(cardId, transition);
 }
 
-void MystScriptParser::o_drawImageChangeCard(uint16 op, uint16 var, const ArgumentsArray &args) {
-		debugC(kDebugScript, "Opcode %d: Draw Full Screen Image, Delay then Change Card", op);
-
+void MystScriptParser::o_drawImageChangeCard(uint16 var, const ArgumentsArray &args) {
 		uint16 imageId = args[0];
 		uint16 cardId = args[1];
 		TransitionType transition = static_cast<TransitionType>(args[2]);
-
-		debugC(kDebugScript, "\timageId: %d", imageId);
-		debugC(kDebugScript, "\tcardId: %d", cardId);
 
 		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
 		_vm->wait(200);
@@ -775,46 +685,33 @@ void MystScriptParser::o_drawImageChangeCard(uint16 op, uint16 var, const Argume
 		_vm->changeToCard(cardId, transition);
 }
 
-void MystScriptParser::o_changeMainCursor(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Change main cursor", op);
-
+void MystScriptParser::o_changeMainCursor(uint16 var, const ArgumentsArray &args) {
 	uint16 cursorId = args[0];
-
-	debugC(kDebugScript, "Cursor: %d", cursorId);
 
 	_vm->setMainCursor(cursorId);
 	_vm->_cursor->setCursor(cursorId);
 }
 
-void MystScriptParser::o_hideCursor(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Hide Cursor", op);
+void MystScriptParser::o_hideCursor(uint16 var, const ArgumentsArray &args) {
 	_vm->_cursor->hideCursor();
 }
 
-void MystScriptParser::o_showCursor(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Show Cursor", op);
+void MystScriptParser::o_showCursor(uint16 var, const ArgumentsArray &args) {
 	_vm->_cursor->showCursor();
 }
 
-void MystScriptParser::o_delay(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_delay(uint16 var, const ArgumentsArray &args) {
 	// Used on Mechanical Card 6327 (Elevator)
-	debugC(kDebugScript, "Opcode %d: Delay", op);
-
 	uint16 time = args[0];
-
-	debugC(kDebugScript, "\tTime: %d", time);
 
 	_vm->wait(time);
 }
 
-void MystScriptParser::o_changeStack(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: changeStack", op);
-
+void MystScriptParser::o_changeStack(uint16 var, const ArgumentsArray &args) {
 	uint16 targetStack = args[0];
 	uint16 soundIdLinkSrc = args[1];
 	uint16 soundIdLinkDst = args[2];
 
-	debugC(kDebugScript, "\tTarget Stack: %d", targetStack);
 	debugC(kDebugScript, "\tSource Stack Link Sound: %d", soundIdLinkSrc);
 	debugC(kDebugScript, "\tDestination Stack Link Sound: %d", soundIdLinkDst);
 
@@ -831,9 +728,7 @@ void MystScriptParser::o_changeStack(uint16 op, uint16 var, const ArgumentsArray
 	}
 }
 
-void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Play Sound, Change Card and Directional Update Screen Region", op);
-
+void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 var, const ArgumentsArray &args) {
 	uint16 cardId = args[0];
 	uint16 soundId = args[1];
 	uint16 delayBetweenSteps = args[2];
@@ -852,9 +747,7 @@ void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 op, uint16 var, c
 	animatedUpdate(ArgumentsArray(args.begin() + 4, dataSize), delayBetweenSteps);
 }
 
-void MystScriptParser::o_directionalUpdatePlaySound(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Play Sound and Directional Update Screen Region", op);
-
+void MystScriptParser::o_directionalUpdatePlaySound(uint16 var, const ArgumentsArray &args) {
 	uint16 soundId = args[0];
 	uint16 delayBetweenSteps = args[1];
 	uint16 dataSize = args[2];
@@ -869,29 +762,23 @@ void MystScriptParser::o_directionalUpdatePlaySound(uint16 op, uint16 var, const
 	animatedUpdate(ArgumentsArray(args.begin() + 3, dataSize), delayBetweenSteps);
 }
 
-void MystScriptParser::o_saveMainCursor(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Save main cursor", op);
-
+void MystScriptParser::o_saveMainCursor(uint16 var, const ArgumentsArray &args) {
 	_savedCursorId = _vm->getMainCursor();
 }
 
-void MystScriptParser::o_restoreMainCursor(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Restore main cursor", op);
-
+void MystScriptParser::o_restoreMainCursor(uint16 var, const ArgumentsArray &args) {
 	_vm->setMainCursor(_savedCursorId);
 }
 
-void MystScriptParser::o_soundWaitStop(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_soundWaitStop(uint16 var, const ArgumentsArray &args) {
 	// Used on Selenitic Card 1191 (Maze Runner)
 	// Used on Mechanical Card 6267 (Code Lock)
 	// Used when Button is pushed...
-	debugC(kDebugScript, "Opcode %d: Wait for foreground sound to finish", op);
-
 	while (_vm->_sound->isEffectPlaying())
 		_vm->doFrame();
 }
 
-void MystScriptParser::o_quit(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_quit(uint16 var, const ArgumentsArray &args) {
 	_vm->quitGame();
 }
 
@@ -902,7 +789,7 @@ void MystScriptParser::showMap() {
 	}
 }
 
-void MystScriptParser::o_exitMap(uint16 op, uint16 var, const ArgumentsArray &args) {
+void MystScriptParser::o_exitMap(uint16 var, const ArgumentsArray &args) {
 	_vm->changeToCard(_savedMapCardId, kTransitionCopy);
 }
 

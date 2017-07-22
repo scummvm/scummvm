@@ -76,22 +76,18 @@ void Demo::runPersistentScripts() {
 	}
 }
 
-void Demo::o_stopIntro(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Unk", op);
+void Demo::o_stopIntro(uint16 var, const ArgumentsArray &args) {
 	// The original also seems to stop the movies. Not needed with this engine.
 	_vm->_gfx->fadeToBlack();
 }
 
-void Demo::o_fadeFromBlack(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Fade from black", op);
-
+void Demo::o_fadeFromBlack(uint16 var, const ArgumentsArray &args) {
 	// FIXME: This glitches when enabled. The backbuffer is drawn to screen,
 	// and then the fading occurs, causing the background to appear for one frame.
 	// _vm->_gfx->fadeFromBlack();
 }
 
-void Demo::o_fadeToBlack(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Fade to black", op);
+void Demo::o_fadeToBlack(uint16 var, const ArgumentsArray &args) {
 	_vm->_gfx->fadeToBlack();
 }
 
@@ -122,9 +118,7 @@ void Demo::returnToMenu_run() {
 	}
 }
 
-void Demo::o_returnToMenu_init(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Return to menu init", op);
-
+void Demo::o_returnToMenu_init(uint16 var, const ArgumentsArray &args) {
 	// Used on Card 2001, 2002 and 2003
 	_returnToMenuNextTime = _vm->_system->getMillis() + 5000;
 	_returnToMenuRunning = true;

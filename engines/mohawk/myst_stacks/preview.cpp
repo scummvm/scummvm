@@ -79,28 +79,22 @@ void Preview::runPersistentScripts() {
 		speech_run();
 }
 
-void Preview::o_fadeToBlack(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Fade to black", op);
+void Preview::o_fadeToBlack(uint16 var, const ArgumentsArray &args) {
 	_vm->_gfx->fadeToBlack();
 }
 
-void Preview::o_fadeFromBlack(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Fade from black", op);
+void Preview::o_fadeFromBlack(uint16 var, const ArgumentsArray &args) {
 
 	_vm->_gfx->fadeFromBlack();
 }
 
-void Preview::o_stayHere(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Stay here dialog", op);
-
+void Preview::o_stayHere(uint16 var, const ArgumentsArray &args) {
 	// Nuh-uh! No leaving the library in the demo!
 	GUI::MessageDialog dialog("You can't leave the library in the demo.");
 	dialog.runModal();
 }
 
-void Preview::o_speechStop(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Speech stop", op);
-
+void Preview::o_speechStop(uint16 var, const ArgumentsArray &args) {
 	_vm->_sound->stopSpeech();
 	_speechRunning = false;
 	_globals.currentAge = 2;
@@ -225,22 +219,18 @@ void Preview::speech_run() {
 	}
 }
 
-void Preview::o_speech_init(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Speech init", op);
-
+void Preview::o_speech_init(uint16 var, const ArgumentsArray &args) {
 	// Used for Card 3000 (Closed Myst Book)
 	_speechStep = 0;
 	_speechRunning = true;
 }
 
-void Preview::o_library_init(uint16 op, uint16 var, const ArgumentsArray &args) {
-	debugC(kDebugScript, "Opcode %d: Library init", op);
-
+void Preview::o_library_init(uint16 var, const ArgumentsArray &args) {
 	// Used for Card 3002 (Myst Island Overview)
 	_library = getInvokingResource<MystAreaImageSwitch>();
 }
 
-void Preview::o_libraryBookcaseTransformDemo_init(uint16 op, uint16 var, const ArgumentsArray &args) {
+void Preview::o_libraryBookcaseTransformDemo_init(uint16 var, const ArgumentsArray &args) {
 	if (_libraryBookcaseChanged) {
 		MystAreaActionSwitch *resource = getInvokingResource<MystAreaActionSwitch>();
 		_libraryBookcaseMovie = static_cast<MystAreaVideo *>(resource->getSubResource(getVar(303)));

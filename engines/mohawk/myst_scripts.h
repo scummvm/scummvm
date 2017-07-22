@@ -33,7 +33,7 @@ namespace Mohawk {
 
 typedef Common::Array<uint16> ArgumentsArray;
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, const ArgumentsArray &args)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class MohawkEngine_Myst;
 class MystArea;
@@ -88,8 +88,6 @@ public:
 
 	void animatedUpdate(const ArgumentsArray &args, uint16 delay);
 
-	DECLARE_OPCODE(unknown);
-
 	// Common opcodes
 	DECLARE_OPCODE(o_toggleVar);
 	DECLARE_OPCODE(o_setVar);
@@ -100,8 +98,8 @@ public:
 	DECLARE_OPCODE(o_redrawCard);
 	DECLARE_OPCODE(o_goToDest);
 	DECLARE_OPCODE(o_goToDestForward);
-	DECLARE_OPCODE(o_goToDestLeft);
 	DECLARE_OPCODE(o_goToDestRight);
+	DECLARE_OPCODE(o_goToDestLeft);
 	DECLARE_OPCODE(o_goToDestUp);
 	DECLARE_OPCODE(o_triggerMovie);
 	DECLARE_OPCODE(o_toggleVarNoRedraw);
@@ -146,7 +144,7 @@ protected:
 	MohawkEngine_Myst *_vm;
 	MystGameState::Globals &_globals;
 
-	typedef void (MystScriptParser::*OpcodeProcMyst)(uint16 op, uint16 var, const ArgumentsArray &args);
+	typedef void (MystScriptParser::*OpcodeProcMyst)(uint16 var, const ArgumentsArray &args);
 
 	struct MystOpcode {
 		MystOpcode(uint16 o, OpcodeProcMyst p, const char *d) : op(o), proc(p), desc(d) {}
@@ -175,6 +173,8 @@ protected:
 private:
 	MystArea *_invokingResource;
 	int32 _scriptNestingLevel;
+
+	Common::String describeCommand(const MystOpcode &command, uint16 var, const ArgumentsArray &args);
 };
 
 template<class T>
