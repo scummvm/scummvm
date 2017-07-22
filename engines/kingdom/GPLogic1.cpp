@@ -1434,14 +1434,6 @@ void Logic::GPL1_242() {
 	_vm->processMapInput(24);
 }
 
-void Logic::GPLogic1() {
-	if (_opCodes.contains(_statPlay)) {
-		Opcode op = _opCodes[_statPlay];
-		(this->*op)();
-	} else
-		warning("Unknown opcode: %d", _statPlay);
-}
-
 void Logic::GPLogic1_SubSP10() {
 	_vm->playSound(0);
 	_vm->playSound(18);
