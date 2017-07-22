@@ -56,18 +56,6 @@ namespace Graphics { struct Surface; }
 
 namespace Sci {
 
-static void flushEvents(EventManager *eventMan) {
-	// Flushing all the keyboard and mouse events out of the event manager
-	// keeps events queued from before the start of playback from accidentally
-	// activating a video stop flag
-	for (;;) {
-		const SciEvent event = eventMan->getSciEvent(SCI_EVENT_ANY & ~SCI_EVENT_QUIT);
-		if (event.type == SCI_EVENT_NONE) {
-			break;
-		}
-	}
-}
-
 bool VideoPlayer::open(const Common::String &fileName) {
 	if (!_decoder->loadFile(fileName)) {
 		warning("Failed to load %s", fileName.c_str());
@@ -129,7 +117,10 @@ bool VideoPlayer::endHQVideo() {
 }
 
 VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, const uint32 maxSleepMs) {
-	flushEvents(_eventMan);
+	// Flushing all the keyboard and mouse events out of the event manager
+	// keeps events queued from before the start of playback from accidentally
+	// activating a video stop flag
+	_eventMan->flushEvents();
 	_decoder->start();
 
 	EventFlags stopFlag = kEventFlagNone;

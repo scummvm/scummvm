@@ -138,6 +138,7 @@ public:
 
 	void updateScreen();
 	SciEvent getSciEvent(uint32 mask);
+	void flushEvents();
 
 private:
 	SciEvent getScummVMEvent();

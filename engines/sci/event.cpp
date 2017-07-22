@@ -408,6 +408,13 @@ SciEvent EventManager::getSciEvent(uint32 mask) {
 	return event;
 }
 
+void EventManager::flushEvents() {
+	Common::EventManager *em = g_system->getEventManager();
+	Common::Event event;
+	while (em->pollEvent(event));
+	_events.clear();
+}
+
 #ifdef ENABLE_SCI32
 void EventManager::setHotRectanglesActive(const bool active) {
 	_hotRectanglesActive = active;
