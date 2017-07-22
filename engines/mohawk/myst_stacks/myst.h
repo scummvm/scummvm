@@ -189,6 +189,7 @@ protected:
 	DECLARE_OPCODE(o_treeEntry_exit);
 	DECLARE_OPCODE(o_boiler_exit);
 	DECLARE_OPCODE(o_generatorControlRoom_exit);
+	DECLARE_OPCODE(o_rocketSliders_exit);
 
 
 	MystGameState::Myst &_state;

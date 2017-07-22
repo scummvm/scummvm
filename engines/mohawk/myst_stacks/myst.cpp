@@ -203,7 +203,7 @@ void Myst::setupOpcodes() {
 	REGISTER_OPCODE(305, Myst, o_treeEntry_exit);
 	REGISTER_OPCODE(306, Myst, o_boiler_exit);
 	REGISTER_OPCODE(307, Myst, o_generatorControlRoom_exit);
-	REGISTER_OPCODE(308, Myst, NOP);
+	REGISTER_OPCODE(308, Myst, o_rocketSliders_exit);
 	REGISTER_OPCODE(309, Myst, NOP);
 	REGISTER_OPCODE(312, Myst, NOP);
 }
@@ -2201,7 +2201,7 @@ void Myst::rocketCheckSolution() {
 
 	_vm->_sound->stopEffect();
 
-	if (solved) {
+	if (solved && !_rocketLinkBook) {
 		// Reset lever position
 		MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 		lever->drawFrame(0);
@@ -2341,8 +2341,8 @@ void Myst::o_rocketLeverMove(uint16 var, const ArgumentsArray &args) {
 
 	// Make the lever follow the mouse
 	int16 maxStep = lever->getStepsV() - 1;
-    Common::Rect rect = lever->getRect();
-    int16 step = ((mouse.y - rect.top) * lever->getStepsV()) / rect.height();
+	Common::Rect rect = lever->getRect();
+	int16 step = ((mouse.y - rect.top) * lever->getStepsV()) / rect.height();
 	step = CLIP<uint16>(step, 0, maxStep);
 
 	lever->drawFrame(step);
@@ -3557,6 +3557,7 @@ void Myst::boilerGaugeInit() {
 }
 
 void Myst::o_rocketSliders_init(uint16 var, const ArgumentsArray &args) {
+	_rocketLinkBook.reset();
 	_rocketSlider1 = _vm->getViewResource<MystAreaSlider>(args[0]);
 	_rocketSlider2 = _vm->getViewResource<MystAreaSlider>(args[1]);
 	_rocketSlider3 = _vm->getViewResource<MystAreaSlider>(args[2]);
@@ -3684,6 +3685,15 @@ void Myst::o_boiler_exit(uint16 var, const ArgumentsArray &args) {
 
 void Myst::o_generatorControlRoom_exit(uint16 var, const ArgumentsArray &args) {
 	_generatorVoltage = _state.generatorVoltage;
+}
+
+void Myst::o_rocketSliders_exit(uint16 var, const ArgumentsArray &args) {
+	_rocketLinkBook.reset();
+	_rocketSlider1 = nullptr;
+	_rocketSlider2 = nullptr;
+	_rocketSlider3 = nullptr;
+	_rocketSlider4 = nullptr;
+	_rocketSlider5 = nullptr;
 }
 
 } // End of namespace MystStacks
