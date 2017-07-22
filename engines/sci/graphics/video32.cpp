@@ -706,7 +706,7 @@ VMDPlayer::EventFlags VMDPlayer::checkForEvent(const EventFlags flags) {
 	}
 
 	EventFlags stopFlag = VideoPlayer::checkForEvent(flags);
-	if (stopFlag) {
+	if (stopFlag != kEventFlagNone) {
 		return stopFlag;
 	}
 
