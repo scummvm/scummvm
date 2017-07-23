@@ -550,8 +550,14 @@ void GameManager::errorTemp() {
 	// STUB
 }
 
-void GameManager::wait2(int delay) {
-	// STUB
+void GameManager::wait2(int ticks) {
+	// 1 tick = 1/18.2s
+	uint end = g_system->getMillis() + (55 * ticks);
+	while (g_system->getMillis() < end) {
+		_vm->updateEvents();
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	}
 }
 
 void GameManager::screenShake() {
