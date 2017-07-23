@@ -338,10 +338,12 @@ void GfxCursor32::setPosition(const Common::Point &position) {
 	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
 	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
 
-	_position.x = (position.x * Ratio(screenWidth, scriptWidth)).toInt();
-	_position.y = (position.y * Ratio(screenHeight, scriptHeight)).toInt();
+	Common::Point newPosition;
+	newPosition.x = (position.x * Ratio(screenWidth, scriptWidth)).toInt();
+	newPosition.y = (position.y * Ratio(screenHeight, scriptHeight)).toInt();
 
-	g_system->warpMouse(_position.x, _position.y);
+	g_system->warpMouse(newPosition.x, newPosition.y);
+	deviceMoved(newPosition);
 }
 
 void GfxCursor32::gonnaPaint(Common::Rect paintRect) {
