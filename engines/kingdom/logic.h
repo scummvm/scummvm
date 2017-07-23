@@ -38,6 +38,8 @@ private:
 
 	Common::HashMap<int, Opcode> _opCodes;
 	void initOpcodes();
+	void initOpcodesDemo();
+	void initOpcodesFull();
 
 	void GPL1_10();
 	void GPL1_11();

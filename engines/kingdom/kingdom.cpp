@@ -177,18 +177,15 @@ Common::Error KingdomGame::run() {
 		_loopFlag = false;
 		_logic->gameHelp();
 		if (_gameMode == 0) {
+			// Same behavior than in the original. Switching from a
+			// group to a higher one skips refreshScreen and (eventually)
+			// getUserInput
 			if (_logic->_statPlay < 250)
 				_logic->executeOpcode();
 			if (_logic->_statPlay > 249 && _logic->_statPlay < 500)
 				_logic->executeOpcode();
-			if (_logic->_statPlay > 499 && _logic->_statPlay < 900) {
-				// TODO: only initialize useful opcodes
-				if (!isDemo())
-					_logic->executeOpcode();
-				else
-					warning("Unexpected GPL3 opcode found in demo: %d", _logic->_statPlay);
-			}
-
+			if (_logic->_statPlay > 499 && _logic->_statPlay < 900)
+				_logic->executeOpcode();
 			if (_logic->_statPlay > 899)
 				_logic->executeOpcode();
 		}

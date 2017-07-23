@@ -78,7 +78,6 @@ void Logic::initPlay() {
 	initOpcodes();
 }
 
-#define OPCODE(i, x)   _opcodes_opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 void Logic::initOpcodes() {
 	_opCodes[10] = &Logic::GPL1_10;
 	_opCodes[11] = &Logic::GPL1_11;
@@ -204,6 +203,25 @@ void Logic::initOpcodes() {
 	_opCodes[490] = &Logic::GPL2_490;
 	_opCodes[491] = &Logic::GPL2_491;
 
+	_opCodes[900] = &Logic::GPL4_900;
+	_opCodes[901] = &Logic::GPL4_901;
+	_opCodes[991] = &Logic::GPL4_991;
+	_opCodes[992] = &Logic::GPL4_992;
+	_opCodes[993] = &Logic::GPL4_993;
+	_opCodes[994] = &Logic::GPL4_994;
+
+	if (_vm->isDemo())
+		initOpcodesDemo();
+	else
+		initOpcodesFull();
+	
+}
+
+void Logic::initOpcodesDemo() {
+
+}
+
+void Logic::initOpcodesFull() {
 	_opCodes[500] = &Logic::GPL3_500;
 	_opCodes[501] = &Logic::GPL3_501;
 	_opCodes[502] = &Logic::GPL3_502;
@@ -270,13 +288,6 @@ void Logic::initOpcodes() {
 	_opCodes[781] = &Logic::GPL3_781;
 	_opCodes[790] = &Logic::GPL3_790;
 	_opCodes[791] = &Logic::GPL3_791;
-
-	_opCodes[900] = &Logic::GPL4_900;
-	_opCodes[901] = &Logic::GPL4_901;
-	_opCodes[991] = &Logic::GPL4_991;
-	_opCodes[992] = &Logic::GPL4_992;
-	_opCodes[993] = &Logic::GPL4_993;
-	_opCodes[994] = &Logic::GPL4_994;
 }
 
 void Logic::enAll() {
