@@ -188,7 +188,7 @@ public:
 		_objectState[0] = Object("Instrumente", "Hmm, sieht ziemlich kompliziert aus.", INSTRUMENTS, NULLTYPE, 2, 2, 0, NULLROOM, 0);
 		_objectState[1] = Object("Monitor", Object::defaultDescription, MONITOR, NULLTYPE, 0, 0, 0, NULLROOM, 0);
 		_objectState[2] = Object("Monitor", "Dieser Monitor sagt dir nichts.", NULLOBJECT, TAKE, 1, 0, 0, NULLROOM, 0);
-		_objectState[3] = Object("Ausgang", Object::defaultDescription, NULLOBJECT, EXIT, 255, 255, 0, HALL, 2);
+		_objectState[3] = Object("Ausgang", Object::defaultDescription, NULLOBJECT, EXIT, 255, 255, 0, HALL, 22);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
