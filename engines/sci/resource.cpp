@@ -1877,12 +1877,6 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				// if we use the first entries in the resource file, half of the
 				// game will be English and umlauts will also be missing :P
 				if (resource->_source->getSourceType() == kSourceVolume) {
-					// Maps are read during the scanning process (below), so
-					// need to be treated as unallocated in order for the new
-					// data from this volume to be picked up and used
-					if (resId.getType() == kResourceTypeMap) {
-						resource->_status = kResStatusNoMalloc;
-					}
 					updateResource(resId, source, fileOffset, 0, map->getLocationName());
 				}
 			}

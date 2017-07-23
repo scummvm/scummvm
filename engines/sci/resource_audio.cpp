@@ -297,10 +297,26 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 
 	uint32 offset = 0;
 	const ResourceId mapResId(kResourceTypeMap, map->_mapNumber);
-	Resource *mapRes = findResource(mapResId, false);
+	Resource *mapRes = _resMap.getVal(mapResId, nullptr);
 
 	if (!mapRes) {
 		warning("Failed to open %s", mapResId.toString().c_str());
+		return SCI_ERROR_RESMAP_NOT_FOUND;
+	}
+
+	// Here, we allocate audio maps ourselves instead of using findResource to
+	// do this for us. This is in order to prevent the map resources from
+	// getting into the LRU cache. These resources must be read and then
+	// deallocated in games with multi-disc audio in order to read the audio
+	// maps from every CD, and LRU eviction freaks out if an unallocated
+	// resource ends up in the LRU list. It is also not necessary for these
+	// resources to be cached in the LRU at all, since they are only used upon
+	// game startup to populate _resMap.
+	assert(mapRes->_status == kResStatusNoMalloc);
+	loadResource(mapRes);
+
+	if (!mapRes->data()) {
+		warning("Failed to read data for %s", mapResId.toString().c_str());
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
@@ -483,6 +499,8 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			addResource(id, src, offset + syncSize, 0, map->getLocationName());
 		}
 	}
+
+	mapRes->unalloc();
 
 	return 0;
 }
