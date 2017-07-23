@@ -930,6 +930,7 @@ int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(200349));
 			applyFlag = true;
 		}
+		break;
 
 	case 15:
 		if (sentence->_category == 6) {

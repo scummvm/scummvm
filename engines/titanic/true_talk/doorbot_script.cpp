@@ -775,6 +775,7 @@ int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 	case 5:
 		if (getValue(1) == 3)
 			return 1;
+		break;
 	case 6:
 		if (getRoom54(132))
 			return 1;

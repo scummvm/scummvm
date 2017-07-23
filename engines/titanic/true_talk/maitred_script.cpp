@@ -954,6 +954,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(260251));
 			applyFlag = true;
 		}
+		break;
 
 	case 25:
 		if ((sentence->localWord("open") && sentence->localWord("it"))

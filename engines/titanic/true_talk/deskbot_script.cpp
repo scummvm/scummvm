@@ -1116,6 +1116,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			applyFlag = true;
 			stateFlag = false;
 		}
+		break;
 
 	case 78:
 		// "Do you have a reservation?"

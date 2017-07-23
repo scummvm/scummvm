@@ -1027,6 +1027,7 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 		case 1:
 			if (getValue(4) != 3)
 				id = 250738;
+			break;
 		case 2:
 			if (getValue(4) != 0)
 				id = 250738;
