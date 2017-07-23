@@ -305,6 +305,9 @@ public:
 	 */
 	void updateScreen(const int delta = 0);
 
+	/**
+	 * Resets the pixel format of the hardware surface to the given format.
+	 */
 	void setPixelFormat(const Graphics::PixelFormat &format) const {
 		initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight, _isHiRes, &format);
 	}
