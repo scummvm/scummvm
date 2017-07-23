@@ -859,6 +859,11 @@ void SciEngine::sleep(uint32 msecs) {
 		// let backend process events and update the screen
 		_eventMan->getSciEvent(kSciEventPeek);
 
+		// There is no point in waiting any more if we are just waiting to quit
+		if (g_engine->shouldQuit()) {
+			return;
+		}
+
 #ifdef ENABLE_SCI32
 		// If a game is in a wait loop, kFrameOut is not called, but mouse
 		// movement is still occurring and the screen needs to be updated to
