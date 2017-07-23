@@ -270,6 +270,13 @@ void Logic::initOpcodes() {
 	_opCodes[781] = &Logic::GPL3_781;
 	_opCodes[790] = &Logic::GPL3_790;
 	_opCodes[791] = &Logic::GPL3_791;
+
+	_opCodes[900] = &Logic::GPL4_900;
+	_opCodes[901] = &Logic::GPL4_901;
+	_opCodes[991] = &Logic::GPL4_991;
+	_opCodes[992] = &Logic::GPL4_992;
+	_opCodes[993] = &Logic::GPL4_993;
+	_opCodes[994] = &Logic::GPL4_994;
 }
 
 void Logic::enAll() {
