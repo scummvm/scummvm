@@ -890,6 +890,13 @@ void VMDPlayer::initComposited() {
 	// here, but none of the game scripts seem to use this functionality.
 
 	g_sci->_gfxFrameout->addScreenItem(*_screenItem);
+
+	// Composited VMDs periodically yield to game scripts which will often call
+	// kFrameOut to make changes to other parts of the screen. Since VMDPlayer
+	// is responsible for throttling output during these times, GfxFrameout
+	// needs to stop throttling kFrameOut calls or else we will drop frames when
+	// kFrameOut sleeps right through the next frame
+	g_sci->_gfxFrameout->_throttleKernelFrameOut = false;
 }
 
 void VMDPlayer::renderComposited() const {
@@ -915,6 +922,8 @@ void VMDPlayer::closeComposited() {
 		// This call *actually* deletes the plane/screen item
 		g_sci->_gfxFrameout->frameOut(true);
 	}
+
+	g_sci->_gfxFrameout->_throttleKernelFrameOut = true;
 }
 
 #pragma mark -

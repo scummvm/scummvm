@@ -69,6 +69,7 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	_throttleState(0),
 	_remapOccurred(false),
 	_overdrawThreshold(0),
+	_throttleKernelFrameOut(true),
 	_palMorphIsOn(false),
 	_lastScreenUpdateTick(0) {
 
@@ -1136,7 +1137,9 @@ void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 		frameOut(shouldShowBits);
 	}
 
-	throttle();
+	if (_throttleKernelFrameOut) {
+		throttle();
+	}
 }
 
 void GfxFrameout::throttle() {

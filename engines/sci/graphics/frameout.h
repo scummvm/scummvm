@@ -310,6 +310,11 @@ public:
 	}
 
 	/**
+	 * Whether or not to throttle kFrameOut calls.
+	 */
+	bool _throttleKernelFrameOut;
+
+	/**
 	 * Whether palMorphFrameOut should be used instead of
 	 * frameOut for rendering. Used by kMorphOn to
 	 * explicitly enable palMorphFrameOut for one frame.
