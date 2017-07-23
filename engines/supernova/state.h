@@ -141,7 +141,7 @@ public:
 	void mouseInput2();
 	void mouseInput3();
 	void mouseWait(int delay);
-	void wait2(int delay);
+	void wait2(int ticks);
 	void turnOff();
 	void turnOn();
 	void screenShake();
