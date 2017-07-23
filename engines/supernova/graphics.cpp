@@ -98,6 +98,9 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	_numClickFields = stream.readByte();
+	for (int i = 0; i < kMaxClickFields; ++i) {
+		_clickField[i].next = 0;
+	}
 	for (int i = 0; i < _numClickFields; ++i) {
 		_clickField[i].x1 = stream.readUint16LE();
 		_clickField[i].x2 = stream.readUint16LE();
