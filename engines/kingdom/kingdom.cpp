@@ -190,7 +190,7 @@ Common::Error KingdomGame::run() {
 			}
 
 			if (_logic->_statPlay > 899)
-				_logic->GPLogic4();
+				_logic->executeOpcode();
 		}
 
 		if (!_loopFlag)

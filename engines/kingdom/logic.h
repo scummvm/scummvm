@@ -230,6 +230,13 @@ private:
 	void GPL3_790();
 	void GPL3_791();
 
+	void GPL4_900();
+	void GPL4_901();
+	void GPL4_991();
+	void GPL4_992();
+	void GPL4_993();
+	void GPL4_994();
+
 public:
 	int _statPlay;
 	int _oldStatPlay;
@@ -267,7 +274,6 @@ public:
 	void GPLogic1_SubSP10();
 	void GPLogic1_SubSP121();
 	void GPLogic2_SubSP361();
-	void GPLogic4_SP901();
 	bool chkDesertObstacles();
 	void increaseHealth();
 	void endCredits();
@@ -277,8 +283,6 @@ public:
 	explicit Logic(Kingdom::KingdomGame *vm);
 	virtual ~Logic(void) {}
 
-	void GPLogic3();
-	void GPLogic4();
 	void gameHelp();
 	void inventoryDel(int item);
 	void inventoryAdd(int item);
