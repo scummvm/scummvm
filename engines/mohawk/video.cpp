@@ -24,8 +24,6 @@
 #include "mohawk/resource.h"
 #include "mohawk/video.h"
 
-#include "mohawk/myst.h"
-
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/events.h"
