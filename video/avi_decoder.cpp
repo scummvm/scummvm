@@ -734,7 +734,7 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 		seekTransparencyFrame(frame);
 
 	// Set the video track's frame
-	videoTrack->setCurFrame((int)frame - 1);
+	videoTrack->setCurFrame(videoTrack->isReversed() ? frame : frame - 1);
 
 	// Set the video track's search offset to the right spot
 	_videoTracks[0].chunkSearchOffset = _indexEntries[frameIndex].offset;
