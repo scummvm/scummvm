@@ -158,7 +158,8 @@ void CMainGameWindow::draw() {
 			_project->loadGame(_pendingLoadSlot);
 			_pendingLoadSlot = -1;
 
-			// Deliberate fall-through to draw loaded game
+			// Intentional fall-through
+			// to draw loaded game
 
 		case GSMODE_INTERACTIVE:
 		case GSMODE_CUTSCENE:

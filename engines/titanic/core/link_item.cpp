@@ -96,11 +96,11 @@ void CLinkItem::load(SimpleFile *file) {
 	switch (val) {
 	case 2:
 		_cursorId = (CursorId)file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 1:
 		_linkMode = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 0:
 		_roomNumber = file->readNumber();

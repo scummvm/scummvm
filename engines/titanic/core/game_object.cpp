@@ -141,27 +141,27 @@ void CGameObject::load(SimpleFile *file) {
 	case 7:
 		_movieRangeInfoList.load(file);
 		_frameNumber = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 6:
 		_cursorId = (CursorId)file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 5:
 		_movieClips.load(file);
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 4:
 		_handleMouseFlag = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 3:
 		_nonvisual = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 2:
 		_resource = file->readString();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 1:
 		_bounds = file->readBounds();

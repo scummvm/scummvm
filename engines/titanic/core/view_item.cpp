@@ -67,7 +67,7 @@ void CViewItem::load(SimpleFile *file) {
 	switch (val) {
 	case 1:
 		_resourceKey.load(file);
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	default:
 		file->readBuffer();

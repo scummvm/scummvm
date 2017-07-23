@@ -389,7 +389,7 @@ ScriptChangedResult BellbotScript::scriptChanged(const TTroomScript *roomScript,
 
 		_responseFlag = false;
 		CTrueTalkManager::_v9 = 0;
-		// Deliberate fall-through
+		// Intentional fall-through
 	default:
 		if (roomScript->_scriptId == 115 && id == 103) {
 			switch (getValue(4)) {

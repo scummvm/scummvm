@@ -315,7 +315,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		} else if (flag2) {
 			return applySentenceIds(51423);
 		}
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 16:
 		if (val2C == 7 || val2C == 10)
