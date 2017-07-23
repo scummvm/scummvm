@@ -96,6 +96,7 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 SupernovaEngine::SupernovaEngine(OSystem *syst)
     : Engine(syst)
     , _console(NULL)
+    , _gm(NULL)
     , _currentImage(_images)
     , _brightness(255)
     , _menuBrightness(255)
@@ -121,6 +122,7 @@ SupernovaEngine::~SupernovaEngine() {
 
 	delete _rnd;
 	delete _console;
+	delete _gm;
 	for (int i = 0; i < kAudioNumSamples; ++i) {
 		delete[] _soundSamples[i]._buffer;
 	}
@@ -130,8 +132,8 @@ SupernovaEngine::~SupernovaEngine() {
 
 Common::Error SupernovaEngine::run() {
 	initGraphics(_screenWidth, _screenHeight);
-	GameManager gm(this);
-	_console = new Console(this, &gm);
+	_gm = new GameManager(this);
+	_console = new Console(this, _gm);
 
 	initData();
 	initPalette();
@@ -141,43 +143,8 @@ Common::Error SupernovaEngine::run() {
 	CursorMan.showMouse(true);
 
 	while (_gameRunning) {
-		while (g_system->getEventManager()->pollEvent(_event)) {
-			switch (_event.type) {
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
-				_gameRunning = false;
-				break;
-
-			case Common::EVENT_KEYDOWN:
-				if (_event.kbd.keycode == Common::KEYCODE_d &&
-				    (_event.kbd.flags & Common::KBD_CTRL)) {
-					_console->attach();
-				}
-				if (_event.kbd.keycode == Common::KEYCODE_s) {
-					for (int i = 0; i < _currentImage->_numSections; ++i) {
-						gm.drawImage(i);
-						_system->updateScreen();
-					}
-				}
-
-				gm.processInput(_event.kbd);
-				break;
-
-			case Common::EVENT_LBUTTONUP:
-				// fallthrough
-			case Common::EVENT_RBUTTONUP:
-				// fallthrough
-			case Common::EVENT_MOUSEMOVE:
-				gm.processInput(_event.type, _event.mouse.x, _event.mouse.y);
-				break;
-
-			default:
-				break;
-			}
-
-		}
-
-		gm.executeRoom();
+		updateEvents();
+		_gm->executeRoom();
 		_console->onFrame();
 		_system->updateScreen();
 		_system->delayMillis(_delay);
@@ -200,6 +167,40 @@ int SupernovaEngine::getDOSTicks() {
 }
 
 void SupernovaEngine::updateEvents() {
+	while (g_system->getEventManager()->pollEvent(_event)) {
+		switch (_event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			_gameRunning = false;
+			break;
+
+		case Common::EVENT_KEYDOWN:
+			if (_event.kbd.keycode == Common::KEYCODE_d &&
+			    (_event.kbd.flags & Common::KBD_CTRL)) {
+				_console->attach();
+			}
+			if (_event.kbd.keycode == Common::KEYCODE_s) {
+				for (int i = 0; i < _currentImage->_numSections; ++i) {
+					_gm->drawImage(i);
+					_system->updateScreen();
+				}
+			}
+
+			_gm->processInput(_event.kbd);
+			break;
+
+		case Common::EVENT_LBUTTONUP:
+			// fallthrough
+		case Common::EVENT_RBUTTONUP:
+			// fallthrough
+		case Common::EVENT_MOUSEMOVE:
+			_gm->processInput(_event.type, _event.mouse.x, _event.mouse.y);
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 void SupernovaEngine::initData() {
