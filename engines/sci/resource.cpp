@@ -1423,6 +1423,30 @@ ResVersion ResourceManager::detectVolVersion() {
 	return kResVersionUnknown;
 }
 
+bool ResourceManager::isBlacklistedPatch(const ResourceId &resId) const {
+	switch (g_sci->getGameId()) {
+	case GID_SHIVERS:
+		// The SFX resource map patch in the Shivers interactive demo has
+		// broken offsets for some sounds; ignore it so that the correct map
+		// from RESSCI.000 will be used instead.
+		return g_sci->isDemo() &&
+			resId.getType() == kResourceTypeMap &&
+			resId.getNumber() == 65535;
+	case GID_PHANTASMAGORIA:
+		// The GOG release of Phantasmagoria 1 merges all resources into a
+		// single-disc bundle, but they also include the 65535.MAP & 37.MAP
+		// patch files from original game's CD 1, which (of course) do not
+		// contain the entries for audio from later CDs. So, just ignore these
+		// map patches since the correct maps will be found in the RESSCI.000
+		// file. This also helps eliminate user error when copying files from
+		// the original CDs.
+		return resId.getType() == kResourceTypeMap &&
+			(resId.getNumber() == 65535 || resId.getNumber() == 37);
+	default:
+		return false;
+	}
+}
+
 // version-agnostic patch application
 void ResourceManager::processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple) {
 	Common::SeekableReadStream *fileStream = 0;
@@ -1430,12 +1454,8 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	ResourceId resId = ResourceId(resourceType, resourceNr, tuple);
 	ResourceType checkForType = resourceType;
 
-	// HACK: The SFX resource map patch in the Shivers interactive demo has
-	// broken offsets for some sounds; ignore it so that the correct map from
-	// RESSCI.000 will be used instead
-	if (g_sci->getGameId() == GID_SHIVERS && g_sci->isDemo() &&
-		resourceType == kResourceTypeMap && resourceNr == 65535) {
-
+	if (isBlacklistedPatch(resId)) {
+		debug("Skipping blacklisted patch file %s", source->getLocationName().c_str());
 		delete source;
 		return;
 	}

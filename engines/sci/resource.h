@@ -575,6 +575,13 @@ protected:
 	 */
 	void readResourcePatches();
 	void readResourcePatchesBase36();
+
+	/**
+	 * Determines whether or not a patch file matching the given resource ID
+	 * should be ignored when processing patches.
+	 */
+	bool isBlacklistedPatch(const ResourceId &resId) const;
+
 	void processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple = 0);
 
 	/**
