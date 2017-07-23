@@ -776,6 +776,7 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	// probably rewriting a bunch of the resource manager.
 	Resource *resource = _resMan->findResource(resourceId, true);
 	if (resource == nullptr) {
+		warning("[Audio32::play]: %s could not be found", resourceId.toString().c_str());
 		return 0;
 	}
 
