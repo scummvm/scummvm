@@ -168,7 +168,7 @@ public:
 		_objectState[0] = Object("Luke", "Dies ist eine der Tiefschlafkammern.", CABINS, NULLTYPE, 0, 0, 0, NULLROOM, 0);
 		_objectState[1] = Object("Luke", "Dies ist eine der Tiefschlafkammern.", CABIN, NULLTYPE, 1, 1, 0, NULLROOM, 0);
 		_objectState[2] = Object("Computer", Object::defaultDescription, COMPUTER, NULLTYPE, 2, 2, 0, NULLROOM, 0);
-		_objectState[3] = Object("Ausgang", Object::defaultDescription, NULLOBJECT, EXIT, 255, 255, 0, HALL, 2);
+		_objectState[3] = Object("Ausgang", Object::defaultDescription, NULLOBJECT, EXIT, 255, 255, 0, HALL, 22);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
