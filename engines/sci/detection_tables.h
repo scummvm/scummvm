@@ -2943,21 +2943,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                                     GUIO_LINKSPEECHTOSFX, \
                                     GUIO_NOLAUNCHLOAD)
 
-	// Mixed-Up Mother Goose Deluxe - English Windows/DOS CD (supplied by markcoolio in bug report #2723810)
+	// Mixed-Up Mother Goose Deluxe - EN/ES Windows CD (supplied by markcoolio in bug report #2723810)
 	// Executable scanning reports "2.100.002"
 	{"mothergoosehires", "", {
 		{"resource.map", 0, "5159a1578c4306bfe070a3e4d8c2e1d3", 4741},
 		{"resource.000", 0, "1926925c95d82f0999590e93b02887c5", 15150768},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_MOTHERGOOSEHIRES },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_MOTHERGOOSEHIRES },
 
-	// Mixed-Up Mother Goose Deluxe - Multilingual Windows CD (English/French/German/Spanish)
+	// Mixed-Up Mother Goose Deluxe - Multilingual Windows CD (EN/FR/DE/ES)
 	// Executable scanning reports "2.100.002"
 	{"mothergoosehires", "", {
 		{"resmap.000", 0, "ef611af561898dcfea87846919ebf3eb", 4969},
 		{"ressci.000", 0, "227685bc59d90821978d330713e44a7a", 17205800},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_MOTHERGOOSEHIRES },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_MOTHERGOOSEHIRES },
 
 #undef GUIO_MOTHERGOOSEHIRES
 
