@@ -1015,4 +1015,193 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
+// Arsano
+void ArsanoRocks::onEntrance() {
+
+}
+
+bool ArsanoRocks::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void ArsanoMeetup::onEntrance() {
+
+}
+
+void ArsanoMeetup::animation() {
+
+}
+
+bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void ArsanoEntrance::animation() {
+
+}
+
+bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void ArsanoRemaining::animation() {
+
+}
+
+void ArsanoRoger::onEntrance() {
+
+}
+
+void ArsanoRoger::animation() {
+
+}
+
+bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void ArsanoGlider::onEntrance() {
+
+}
+
+void ArsanoGlider::animation() {
+
+}
+
+void ArsanoMeetup2::onEntrance() {
+
+}
+
+bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void AxacussCell::onEntrance() {
+
+}
+
+void AxacussCell::animation() {
+
+}
+
+bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void AxacussCorridor1::onEntrance() {
+
+}
+
+void AxacussCorridor2::onEntrance() {
+
+}
+
+void AxacussCorridor3::onEntrance() {
+
+}
+
+void AxacussCorridor4::onEntrance() {
+
+}
+
+void AxacussCorridor4::animation() {
+
+}
+
+bool AxacussCorridor4::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void AxacussCorridor5::onEntrance() {
+
+}
+
+bool AxacussCorridor5::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void AxacussCorridor6::onEntrance() {
+
+}
+
+bool AxacussCorridor6::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void AxacussCorridor7::onEntrance() {
+
+}
+
+void AxacussCorridor8::onEntrance() {
+
+}
+
+bool AxacussCorridor8::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void AxacussCorridor9::onEntrance() {
+
+}
+
+bool AxacussCorridor9::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void AxacussBcorridor::onEntrance() {
+
+}
+
+bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool AxacussIntersection::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool AxacussOffice2::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool AxacussOffice4::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+void AxacussOffice5::onEntrance() {
+
+}
+
+bool AxacussOffice5::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
+bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
 }

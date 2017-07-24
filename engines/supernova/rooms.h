@@ -562,9 +562,861 @@ public:
 };
 
 // Arsano
+class ArsanoRocks : public Room {
+public:
+	ArsanoRocks(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 12;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Seil",Object::defaultDescription,NULLOBJECT,UNNECESSARY | EXIT,0,0,0,GENERATOR,12);
+		_objectState[1] = Object("Stein",Object::defaultDescription,STONE,NULLTYPE,1,1,0);
+		_objectState[2] = Object("Stein",Object::defaultDescription,NULLOBJECT,NULLTYPE,2,2,0);
+		_objectState[3] = Object("Loch","Es scheint eine Höhle zu sein.",NULLOBJECT,NULLTYPE,255,255,0,CAVE,1);
+	}
+
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class ArsanoPassthrough : public Room {
+public:
+	ArsanoPassthrough(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 12;
+		_shown[0] = false;
+
+		_objectState[0] = Object("Ausgang","Hier bist du gerade hergekommen.",NULLOBJECT,EXIT,255,255,0,ROCKS,22);
+		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,MEETUP,2);
+	}
+};
+class ArsanoMeetup : public Room {
+public:
+	ArsanoMeetup(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 37;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Höhle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
+		_objectState[1] = Object("Schild","Diese Schrift kannst du nicht lesen.",MEETUP_SIGN,NULLTYPE,0,0,0);
+		_objectState[2] = Object("Eingang",Object::defaultDescription,DOOR,EXIT,1,1,0,ENTRANCE,7);
+		_objectState[3] = Object("Stern",Object::defaultDescription,STAR,NULLTYPE,2,2,0);
+		_objectState[4] = Object("Raumschiff",Object::defaultDescription,SPACESHIPS,COMBINABLE,3,3,0);
+		_objectState[5] = Object("Raumschiff",Object::defaultDescription,SPACESHIP,COMBINABLE,4,4,0);
+	}
+
+	virtual void onEntrance();
+	virtual void animation();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class ArsanoEntrance : public Room {
+public:
+	ArsanoEntrance(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 10;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Portier","Du siehst doch selbst, wie er aussieht.",PORTER,TALK,0,0,0);
+		_objectState[1] = Object("Tür",Object::defaultDescription,NULLOBJECT,EXIT | OPENABLE | CLOSED,1,1,0,NULLROOM,5);
+		_objectState[2] = Object("Schild","Diese Schrift kannst du nicht lesen.",KITCHEN_SIGN,NULLTYPE,2,2,0);
+		_objectState[3] = Object("Kaugummi",Object::defaultDescription,SCHNUCK,TAKE,255,255,10+128);
+		_objectState[4] = Object("Gummibärchen",Object::defaultDescription,SCHNUCK,TAKE,255,255,11+128);
+		_objectState[5] = Object("Schokokugel",Object::defaultDescription,SCHNUCK,TAKE,255,255,12+128);
+		_objectState[6] = Object("Überraschungsei",Object::defaultDescription,EGG,TAKE,255,255,13+128);
+		_objectState[7] = Object("Lakritz",Object::defaultDescription,SCHNUCK,TAKE,255,255,14+128);
+		_objectState[8] = Object("Tablette","Die Plastikhülle zeigt einen|Mund mit einer Sprechblase. Was|darin steht, kannst du nicht lesen.",PILL,TAKE,255,255,0);
+		_objectState[9] = Object("Schlitz",Object::defaultDescription,CAR_SLOT,COMBINABLE,6,6,0);
+		_objectState[10] = Object("Automat","Sieht aus wie ein Kaugummiautomat.",NULLOBJECT,NULLTYPE,5,5,0);
+		_objectState[11] = Object("Toilette","Die Toiletten sind denen|auf der Erde sehr ähnlich.",ARS_BATHROOM,NULLTYPE,255,255,0);
+		_objectState[12] = Object("Knopf",Object::defaultDescription,BATHROOM_BUTTON,PRESS,3,3,0);
+		_objectState[13] = Object("Schild","Diese Schrift kannst du nicht lesen.",BATHROOM_SIGN,NULLTYPE,4,4,0);
+		_objectState[14] = Object("Treppe",Object::defaultDescription,STAIRCASE,EXIT,8,8,0,REST,3);
+		_objectState[15] = Object("Ausgang",Object::defaultDescription,MEETUP_EXIT,EXIT,255,255,0,MEETUP,22);
+		_objectState[16] = Object("Münzen","Es sind seltsame|Köpfe darauf abgebildet.",COINS,TAKE|COMBINABLE,255,255,0);
+		_objectState[17] = Object("Tablettenhülle","Darauf steht:\"Wenn Sie diese|Schrift jetzt lesen können,|hat die Tablette gewirkt.\"",PILL_HULL,TAKE,255,255,0);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+	virtual void animation();
+};
+class ArsanoRemaining : public Room {
+public:
+	ArsanoRemaining(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 28;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Treppe",Object::defaultDescription,NULLOBJECT,EXIT,0,0,0,ENTRANCE,17);
+		_objectState[1] = Object("Stuhl",Object::defaultDescription,NULLOBJECT,EXIT,1,1,0,ROGER,2);
+		_objectState[2] = Object("Schuhe","Wie ist der denn mit|Schuhen hier reingekommen?",NULLOBJECT,NULLTYPE,2,2,0);
+	}
+
+	virtual void animation();
+};
+class ArsanoRoger : public Room {
+public:
+	ArsanoRoger(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 29;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,REST,19);
+		_objectState[1] = Object("Froschgesicht",Object::defaultDescription,ROGER_W,TALK,0,0,0);
+		_objectState[2] = Object("Gekritzel","\"Mr Spock was here\"",NULLOBJECT,NULLTYPE,3,3,0);
+		_objectState[3] = Object("Brieftasche",Object::defaultDescription,WALLET,TAKE,1,1,4);
+		_objectState[4] = Object("Speisekarte","\"Heute empfehlen wir:|Fonua Opra mit Ulk.\"",NULLOBJECT,UNNECESSARY,2,2,0);
+		_objectState[5] = Object("Tasse","Sie enthält eine grünliche Flüssigkeit.",CUP,UNNECESSARY,4,4,0);
+		_objectState[6] = Object("Schachspiel",Object::defaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
+		_objectState[7] = Object("10-Buckazoid-Schein","Nicht gerade sehr viel Geld.",NULLOBJECT,TAKE|COMBINABLE,255,255,0);
+		_objectState[8] = Object("Keycard von Roger",Object::defaultDescription,KEYCARD_R,TAKE|COMBINABLE,255,255,0);
+	}
+
+	virtual void animation();
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class ArsanoGlider : public Room {
+public:
+	ArsanoGlider(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 19;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,MEETUP,15);
+		_objectState[1] = Object("Knopf",Object::defaultDescription,GLIDER_BUTTON1,PRESS,0,0,0);
+		_objectState[2] = Object("Knopf",Object::defaultDescription,GLIDER_BUTTON2,PRESS,1,1,0);
+		_objectState[3] = Object("Knopf",Object::defaultDescription,GLIDER_BUTTON3,PRESS,2,2,0);
+		_objectState[4] = Object("Knopf",Object::defaultDescription,GLIDER_BUTTON4,PRESS,3,3,0);
+		_objectState[5] = Object("Keycard von Roger",Object::defaultDescription,GLIDER_KEYCARD,TAKE|COMBINABLE,255,255,0);
+		_objectState[6] = Object("Schlitz",Object::defaultDescription,GLIDER_SLOT,COMBINABLE,4,4,0);
+		_objectState[7] = Object("Fach",Object::defaultDescription,NULLOBJECT,OPENABLE,5,6,6);
+		_objectState[8] = Object("Tastatur",Object::defaultDescription,GLIDER_BUTTONS,NULLTYPE,7,7,0);
+		_objectState[9] = Object("Anzeige","Hmm, seltsame Anzeigen.",GLIDER_DISPLAY,NULLTYPE,8,8,0);
+		_objectState[10] = Object("Instrumente","Hmm, seltsame Anzeigen.",GLIDER_INSTRUMENTS,NULLTYPE,9,9,0);
+	}
+
+	virtual void animation();
+	virtual void onEntrance();
+};
+class ArsanoMeetup2 : public Room {
+public:
+	ArsanoMeetup2(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 38;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Roger W.",Object::defaultDescription,ROGER_W,TALK,255,255,0);
+		_objectState[1] = Object("Raumschiff",Object::defaultDescription,SPACESHIP,COMBINABLE,255,255,0);
+		_objectState[2] = Object("Höhle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
+	}
+
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class ArsanoMeetup3 : public Room {
+public:
+	ArsanoMeetup3(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 39;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Ufo","Der Eingang scheint offen zu sein.",UFO,EXIT,0,0,0,NULLROOM,3);
+		_objectState[1] = Object("Stern",Object::defaultDescription,STAR,NULLTYPE,1,1,0);
+		_objectState[2] = Object("Höhle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
 
 // Axacuss
+class AxacussCell : public Room {
+public:
+	AxacussCell(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
 
+		_fileNumber = 43;
+		_shown[0] = true;
+		_shown[1] = true;
+		_shown[2] = false;
+		_shown[3] = false;
+		_shown[4] = false;
+		_shown[5] = false;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = false;
+		_shown[17] = false;
+		_shown[18] = false;
+		_shown[19] = false;
+		_shown[20] = false;
+		_shown[21] = false;
+		_shown[22] = false;
+		_shown[23] = false;
+		_shown[24] = false;
+		_shown[25] = false;
+		_shown[26] = false;
+		_shown[27] = false;
+		_shown[28] = false;
+		_shown[29] = false;
+		_shown[30] = false;
+		_shown[31] = true;
+
+		_objectState[0] = Object("Knopf",Object::defaultDescription,CELL_BUTTON,PRESS,1,1,0);
+		_objectState[1] = Object("Tür",Object::defaultDescription,CELL_DOOR,EXIT|OPENABLE|CLOSED,0,0,31+128,CORRIDOR4,1);
+		_objectState[2] = Object("Tablett","Es ist irgendein Fraß und|etwas zu Trinken darauf.",TRAY,UNNECESSARY,255,255,0);
+		_objectState[3] = Object("Stange","Es scheint eine Lampe zu sein.",NULLOBJECT,COMBINABLE,3,3,0);
+		_objectState[4] = Object("Augen","Es ist nur ein Bild.",NULLOBJECT,NULLTYPE,4,4,0);
+		_objectState[5] = Object("Leitung",Object::defaultDescription,CELL_WIRE,COMBINABLE|TAKE,6,6,0);
+		_objectState[6] = Object("Steckdose","Sieht etwas anders aus als auf der Erde.",SOCKET,COMBINABLE,5,5,0);
+		_objectState[7] = Object("Metallblock","Er ist ziemlich schwer.",MAGNET,TAKE|COMBINABLE,255,255,30);
+		_objectState[8] = Object("Roboter","Den hast du erledigt.",NULLOBJECT,NULLTYPE,255,255,0);
+		_objectState[9] = Object("Tisch","Ein kleiner Metalltisch.",CELL_TABLE,COMBINABLE,2,2,0);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+	virtual void animation();
+	virtual void onEntrance();
+};
+class AxacussCorridor1 : public Room {
+public:
+	AxacussCorridor1(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 16;
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = false;
+		_shown[3] = true;
+		_shown[4] = true;
+		_shown[5] = true;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = true;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = false;
+		_shown[17] = false;
+		_shown[18] = false;
+		_shown[19] = false;
+		_shown[20] = false;
+		_shown[21] = true;
+		_shown[22] = false;
+		_shown[23] = true;
+		_shown[24] = false;
+		_shown[25] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,GUARD3,2);
+		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR2,22);
+	}
+
+	virtual void onEntrance();
+};
+class AxacussCorridor2 : public Room {
+public:
+	AxacussCorridor2(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 16;
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = true;
+		_shown[3] = true;
+		_shown[4] = true;
+		_shown[5] = true;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = false;
+		_shown[17] = true;
+		_shown[18] = false;
+		_shown[19] = false;
+		_shown[20] = false;
+		_shown[21] = true;
+		_shown[22] = false;
+		_shown[23] = false;
+		_shown[24] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR1,2);
+		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR3,22);
+		_objectState[2] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,1,1,0,CORRIDOR4,14);
+	}
+
+	virtual void onEntrance();
+};
+class AxacussCorridor3 : public Room {
+	AxacussCorridor3(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 16;
+
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = false;
+		_shown[3] = true;
+		_shown[4] = false;
+		_shown[5] = true;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = false;
+		_shown[17] = false;
+		_shown[18] = false;
+		_shown[19] = true;
+		_shown[20] = false;
+		_shown[21] = false;
+		_shown[22] = false;
+		_shown[23] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR2,2);
+	}
+
+	virtual void onEntrance();
+};
+class AxacussCorridor4 : public Room {
+	AxacussCorridor4(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 16;
+		_shown[0] = true;
+		_shown[1] = true;
+		_shown[2] = true;
+		_shown[3] = false;
+		_shown[4] = false;
+		_shown[5] = false;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = true;
+		_shown[9] = true;
+		_shown[10] = false;
+		_shown[11] = true;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = true;
+		_shown[16] = false;
+		_shown[17] = false;
+		_shown[18] = true;
+		_shown[19] = false;
+		_shown[20] = true;
+		_shown[21] = false;
+		_shown[22] = false;
+		_shown[23] = false;
+		_shown[24] = false;
+		_shown[25] = false;
+		_shown[26] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,0,0,0,CORRIDOR2,10);
+		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,1,1,0,GUARD,14);
+		_objectState[2] = Object("Zellentür","Hier warst du eingesperrt.",DOOR,EXIT|OPENABLE|OPENED|CLOSED,7,7,0,CELL,16);
+		_objectState[3] = Object("Laptop",Object::defaultDescription,NEWSPAPER,TAKE,6,6,8);
+		_objectState[4] = Object("Armbanduhr",Object::defaultDescription,WATCH,TAKE|COMBINABLE,255,255,8);
+		_objectState[5] = Object("Tisch",Object::defaultDescription,TABLE,COMBINABLE,5,5,0);
+	}
+
+	virtual void onEntrance();
+	virtual void animation();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussCorridor5 : public Room {
+	AxacussCorridor5(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 16;
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = false;
+		_shown[3] = true;
+		_shown[4] = true;
+		_shown[5] = true;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = true;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = false;
+		_shown[17] = false;
+		_shown[18] = false;
+		_shown[19] = false;
+		_shown[20] = false;
+		_shown[21] = false;
+		_shown[22] = true;
+		_shown[23] = true;
+		_shown[24] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,DOOR,EXIT,2,2,0,NULLROOM,2);
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR6,22);
+	}
+
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussCorridor6 : public Room {
+	AxacussCorridor6(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 16;
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = false;
+		_shown[3] = true;
+		_shown[4] = true;
+		_shown[5] = true;
+		_shown[6] = true;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = false;
+		_shown[17] = false;
+		_shown[18] = false;
+		_shown[19] = false;
+		_shown[20] = false;
+		_shown[21] = false;
+		_shown[22] = true;
+		_shown[23] = false;
+		_shown[24] = true;
+		_shown[25] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR5,2);
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,22);
+		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,OPENABLE|CLOSED,255,255,0,CORRIDOR8,13);
+	}
+
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussCorridor7 : public Room {
+	AxacussCorridor7(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 16;
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = false;
+		_shown[3] = true;
+		_shown[4] = true;
+		_shown[5] = true;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = true;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = false;
+		_shown[17] = false;
+		_shown[18] = false;
+		_shown[19] = false;
+		_shown[20] = false;
+		_shown[21] = true;
+		_shown[22] = false;
+		_shown[23] = false;
+		_shown[24] = true;
+		_shown[25] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR6,2);
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,GUARD,22);
+	}
+
+	virtual void onEntrance();
+};
+class AxacussCorridor8 : public Room {
+	AxacussCorridor8(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 16;
+		_shown[0] = true;
+		_shown[1] = true;
+		_shown[2] = false;
+		_shown[3] = false;
+		_shown[4] = true;
+		_shown[5] = false;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = true;
+		_shown[16] = false;
+		_shown[17] = false;
+		_shown[18] = false;
+		_shown[19] = false;
+		_shown[20] = true;
+		_shown[21] = false;
+		_shown[22] = true;
+		_shown[23] = false;
+		_shown[24] = false;
+		_shown[25] = false;
+		_shown[26] = false;
+		_shown[27] = false;
+		_shown[28] = true;
+
+		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,0,0,0,CORRIDOR6,10);
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,BCORRIDOR,22);
+	}
+
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussCorridor9 : public Room {
+	AxacussCorridor9(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 16;
+		_shown[0] = true;
+		_shown[1] = true;
+		_shown[2] = false;
+		_shown[3] = true;
+		_shown[4] = false;
+		_shown[5] = false;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = true;
+		_shown[15] = false;
+		_shown[16] = false;
+		_shown[17] = false;
+		_shown[18] = false;
+		_shown[19] = true;
+		_shown[20] = false;
+		_shown[21] = false;
+		_shown[22] = false;
+		_shown[23] = true;
+		_shown[24] = false;
+		_shown[25] = false;
+		_shown[26] = false;
+		_shown[27] = false;
+		_shown[28] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,BCORRIDOR,2);
+		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,0,0,0,GUARD,10);
+	}
+
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussBcorridor : public Room {
+	AxacussBcorridor(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 6;
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = false;
+		_shown[3] = true;
+
+		_objectState[0] = Object("Säule",Object::defaultDescription,PILLAR1,NULLTYPE,4,4,0);
+		_objectState[1] = Object("Säule",Object::defaultDescription,PILLAR2,NULLTYPE,5,5,0);
+		_objectState[2] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,6,6,0,CORRIDOR8,2);
+		_objectState[3] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,7,7,0,CORRIDOR9,22);
+		_objectState[4] = Object("Tür","Auf einem Schild an der Tür steht \"Dr. Alab Hansi\".",DOOR1,EXIT|OPENABLE|CLOSED|OCCUPIED,0,0,1,OFFICE_L1,6);
+		_objectState[5] = Object("Tür","Auf einem Schild an der Tür steht \"Saval Lun\".",DOOR2,EXIT|OPENABLE|CLOSED|OCCUPIED,1,1,2,OFFICE_L2,16);
+		_objectState[6] = Object("Tür","Auf einem Schild an der Tür steht \"Prof. Dr. Ugnul Tschabb\".",DOOR3,EXIT|OPENABLE|OPENED,2,2,3,OFFICE_R1,8);
+		_objectState[7] = Object("Tür","Auf einem Schild an der Tür steht \"Alga Hurz Li\".",DOOR4,EXIT|OPENABLE|CLOSED|OCCUPIED,3,3,4,OFFICE_R2,18);
+	}
+
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussIntersection : public Room {
+	AxacussIntersection(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 40;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR4,21);
+		_objectState[1] = Object("Gang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,5);
+		_objectState[2] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,1,1,6,CORRIDOR9,3);
+		// Originally GUARD was ObjectID..
+		_objectState[3] = Object("Axacussaner","Du müßtest ihn irgendwie ablenken.",INSTRUMENTS,TALK,0,0,0);
+		_objectState[4] = Object("Bild","Komisches Bild.",NULLOBJECT,NULLTYPE,2,2,0);
+		_objectState[5] = Object("Karte","Darauf steht: \"Generalkarte\".",MASTERKEYCARD,TAKE|COMBINABLE,255,255,1);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussExit : public Room {
+	AxacussExit(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 42;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR1,22);
+		_objectState[1] = Object("Tür",Object::defaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,0,0,0,NULLROOM,20);
+		_objectState[2] = Object("Tür",Object::defaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,15);
+		_objectState[3] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,2,2,11,OFFICE_L,0);
+		_objectState[4] = Object("Lampe",Object::defaultDescription,LAMP,COMBINABLE,3,3,0);
+		// Originally GUARD was ObjectID..
+		_objectState[5] = Object("Axacussaner",Object::defaultDescription,INSTRUMENTS,TALK,5,5,0);
+		_objectState[6] = Object("Bild","Seltsam!",NULLOBJECT,NULLTYPE,4,4,0);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussOffice1 : public Room {
+	AxacussOffice1(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 7;
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = true;
+		_shown[3] = false;
+		_shown[4] = false;
+		_shown[5] = false;
+		_shown[6] = false;
+		_shown[7] = true;
+		_shown[8] = false;
+		_shown[9] = true;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = true;
+
+		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
+		_objectState[1] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
+		_objectState[2] = Object("Geld","Es sind 500 Xa.",TICKETS,TAKE,255,255,0);
+		_objectState[3] = Object("Schließfach","Es hat ein elektronisches Zahlenschloß.",LOCKER,OPENABLE|CLOSED,5,5,0);
+		_objectState[4] = Object("Brief",Object::defaultDescription,LETTER,UNNECESSARY,3,3,0);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussOffice2 : public Room {
+	AxacussOffice2(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 7;
+		_shown[0] = true;
+		_shown[1] = true;
+		_shown[2] = false;
+		_shown[3] = false;
+		_shown[4] = false;
+		_shown[5] = false;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = true;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = true;
+
+		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
+		_objectState[0] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
+		_objectState[0] = Object("Würfel","Sonderbar!",NULLOBJECT,NULLTYPE,0,0,0);
+		_objectState[0] = Object("Bild","Affenstark!",NULLOBJECT,NULLTYPE,1,1,0);
+		_objectState[0] = Object("Komisches Ding","Wundersam!",NULLOBJECT,UNNECESSARY,2,2,0);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussOffice3 : public Room {
+	AxacussOffice3(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 8;
+		_shown[0] = true;
+		_shown[1] = true;
+		_shown[2] = false;
+		_shown[3] = true;
+
+		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
+		_objectState[1] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
+		_objectState[2] = Object("Bild","Es ist ein Axacussanerkopf auf dem Bild.",NULLOBJECT,UNNECESSARY,1,1,0);
+		_objectState[3] = Object("Bild","Es ist ein Axacussanerkopf auf dem Bild.",PAINTING,UNNECESSARY,2,2,0);
+		_objectState[4] = Object("Pflanze",Object::defaultDescription,NULLOBJECT,UNNECESSARY,3,3,0);
+		_objectState[5] = Object("",Object::defaultDescription,MONEY,TAKE|COMBINABLE,255,255,0);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussOffice4 : public Room {
+	AxacussOffice4(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 8;
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = true;
+		_shown[3] = true;
+
+		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
+		_objectState[1] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
+		_objectState[2] = Object("Figur","Stark!",NULLOBJECT,UNNECESSARY,6,6,0);
+		_objectState[3] = Object("Pflanze","Sie ist den Pflanzen auf der Erde sehr ähnlich.",NULLOBJECT,UNNECESSARY,5,5,0);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussOffice5 : public Room {
+	AxacussOffice5(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 7;
+		_shown[0] = true;
+		_shown[1] = false;
+		_shown[2] = false;
+		_shown[3] = true;
+		_shown[4] = false;
+		_shown[5] = true;
+		_shown[6] = false;
+		_shown[7] = false;
+		_shown[8] = false;
+		_shown[9] = false;
+		_shown[10] = false;
+		_shown[11] = false;
+		_shown[12] = false;
+		_shown[13] = false;
+		_shown[14] = false;
+		_shown[15] = false;
+		_shown[16] = false;
+		_shown[17] = true;
+
+		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,17,GUARD3,9);
+		_objectState[1] = Object("Computer","Er funktioniert nicht.",COMPUTER,COMBINABLE,4,4,0);
+		_objectState[2] = Object("Graffiti","Seltsamer Büroschmuck!",NULLOBJECT,NULLTYPE,7,7,0);
+		_objectState[3] = Object("Geld","Es sind 350 Xa.",TICKETS,TAKE,8,8,0);
+	}
+
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussElevator : public Room {
+	AxacussElevator(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 3;
+		_shown[0] = true;
+
+		_objectState[0] = Object("Knopf",Object::defaultDescription,BUTTON1,PRESS,0,0,0);
+		_objectState[1] = Object("Knopf",Object::defaultDescription,BUTTON2,PRESS,1,1,0);
+		_objectState[2] = Object("Ausgang",Object::defaultDescription,DOOR,EXIT,255,255,0,NULLROOM,22);
+		_objectState[3] = Object("Dschungel","Lauter Bäume.",JUNGLE,NULLTYPE,255,255,0,STATION,2);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussStation : public Room {
+	AxacussStation(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 5;
+		_shown[0] = true;
+		_objectState[0] = Object("Schild",Object::defaultDescription,STATION_SIGN,NULLTYPE,0,0,0);
+		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,7);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+class AxacussSign : public Room {
+	AxacussSign(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = 32;
+		_shown[0] = true;
+		_shown[1] = true;
+
+		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,STATION,22);
+		_objectState[1] = Object("Schlitz",Object::defaultDescription,SLOT,COMBINABLE,0,0,0);
+	}
+
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
 
 }
 #endif // ROOMS_H
