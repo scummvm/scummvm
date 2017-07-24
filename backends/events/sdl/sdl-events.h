@@ -51,6 +51,11 @@ public:
 	 */
 	virtual void resetKeyboardEmulation(int16 x_max, int16 y_max);
 
+	/**
+	 * Flush the SDL event queue
+	 */
+	virtual void clearEvents();
+
 protected:
 	/** @name Keyboard mouse emulation
 	 * Disabled by fingolfin 2004-12-18.
