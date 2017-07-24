@@ -367,7 +367,16 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			// Create a virtual file containing the save game description
 			// and avatar ID, as the game scripts expect.
 			int saveNo;
-			sscanf(name.c_str(), "%d.DTA", &saveNo);
+
+			// The 4-language release uses a slightly different filename
+			// structure that includes the letter of the language at the start
+			// of the filename
+			const int skip = name.firstChar() < '0' || name.firstChar() > '9';
+
+			if (sscanf(name.c_str() + skip, "%i.DTA", &saveNo) != 1) {
+				warning("Could not parse game filename %s", name.c_str());
+			}
+
 			saveNo += kSaveIdShift;
 
 			SavegameDesc save;
