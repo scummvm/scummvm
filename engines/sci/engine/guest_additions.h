@@ -348,6 +348,7 @@ private:
 	void syncGK1UI() const;
 	void syncGK2UI() const;
 	void syncLSL6HiresUI(const int16 musicVolume) const;
+	void syncMGDXUI(const int16 musicVolume) const;
 	void syncPhant1UI(const int16 oldMusicVolume, const int16 musicVolume, reg_t &musicGlobal, const int16 oldDacVolume, const int16 dacVolume, reg_t &dacGlobal) const;
 	void syncPQ4UI(const int16 musicVolume) const;
 	void syncPQSWATUI() const;

@@ -175,6 +175,7 @@ struct SelectorCache {
 	Selector setSize; // for PQ4 volume sync
 	Selector displayValue; // for PQ:SWAT volume sync
 	Selector new_; // for Torin/LSL7 save/load patching
+	Selector mainCel; // for MGDX volume sync
 #endif
 };
 

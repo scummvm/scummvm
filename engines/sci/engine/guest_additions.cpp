@@ -1023,6 +1023,10 @@ void GuestAdditions::syncInGameUI(const int16 musicVolume, const int16 sfxVolume
 	}
 
 	switch (g_sci->getGameId()) {
+	case GID_MOTHERGOOSEHIRES:
+		syncMGDXUI(musicVolume);
+		break;
+
 	case GID_PQ4:
 		syncPQ4UI(musicVolume);
 		break;
@@ -1121,6 +1125,23 @@ void GuestAdditions::syncPhant1UI(const int16 oldMusicVolume, const int16 musicV
 		while (count--) {
 			dacGlobal.incOffset(stepSize);
 			invokeSelector(thermo, SELECTOR(doit));
+		}
+	}
+}
+
+void GuestAdditions::syncMGDXUI(const int16 musicVolume) const {
+	const reg_t sliderId = _segMan->findObjectByName("icon1");
+	if (!sliderId.isNull()) {
+		const int16 celNo = 7 - (musicVolume * 8 / (MUSIC_MASTERVOLUME_MAX + 1));
+		writeSelectorValue(_segMan, sliderId, SELECTOR(mainCel), celNo);
+		writeSelectorValue(_segMan, sliderId, SELECTOR(cel), celNo);
+
+		// There does not seem to be any good way to learn whether the
+		// volume slider is visible (and thus eligible for
+		// kUpdateScreenItem)
+		const reg_t planeId = readSelector(_segMan, sliderId, SELECTOR(plane));
+		if (g_sci->_gfxFrameout->getPlanes().findByObject(planeId) != nullptr) {
+			g_sci->_gfxFrameout->kernelUpdateScreenItem(sliderId);
 		}
 	}
 }
