@@ -269,6 +269,152 @@ public:
 	}
 };
 
+
+
+/**
+ * A cut-down version of MemoryReadStream specifically for use with BitStream.
+ * It removes the virtual call overhead for reading bytes from a memory buffer,
+ * and allows directly inlining this access.
+ *
+ * The code duplication with MemoryReadStream is not ideal.
+ * It might be possible to avoid this by making this a final subclass of
+ * MemoryReadStream, but that is a C++11 feature.
+ */
+class BitStreamMemoryStream {
+private:
+	const byte * const _ptrOrig;
+	const byte *_ptr;
+	const uint32 _size;
+	uint32 _pos;
+	DisposeAfterUse::Flag _disposeMemory;
+	bool _eos;
+
+public:
+	BitStreamMemoryStream(const byte *dataPtr, uint32 dataSize, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) :
+		_ptrOrig(dataPtr),
+		_ptr(dataPtr),
+		_size(dataSize),
+		_pos(0),
+		_disposeMemory(disposeMemory),
+		_eos(false) {}
+
+	~BitStreamMemoryStream() {
+		if (_disposeMemory)
+			free(const_cast<byte *>(_ptrOrig));
+	}
+
+	bool eos() const {
+		return _eos;
+	}
+
+	bool err() const {
+		return false;
+	}
+
+	int32 pos() const {
+		return _pos;
+	}
+
+	int32 size() const {
+		return _size;
+	}
+
+	bool seek(uint32 offset) {
+		assert(offset <= _size);
+
+		_eos = false;
+		_pos = offset;
+		_ptr = _ptrOrig + _pos;
+		return true;
+	}
+
+	byte readByte() {
+		if (_pos >= _size) {
+			_eos = true;
+			return 0;
+		}
+
+		_pos++;
+		return *_ptr++;
+	}
+
+	uint16 readUint16LE() {
+		if (_pos + 2 > _size) {
+			_eos = true;
+			if (_pos < _size) {
+				_pos++;
+				return *_ptr++;
+			} else {
+				return 0;
+			}
+		}
+
+		uint16 val = READ_LE_UINT16(_ptr);
+
+		_pos += 2;
+		_ptr += 2;
+
+		return val;
+	}
+
+	uint16 readUint16BE() {
+		if (_pos + 2 > _size) {
+			_eos = true;
+			if (_pos < _size) {
+				_pos++;
+				return (*_ptr++) << 8;
+			} else {
+				return 0;
+			}
+		}
+
+		uint16 val = READ_LE_UINT16(_ptr);
+
+		_pos += 2;
+		_ptr += 2;
+
+		return val;
+	}
+
+	uint32 readUint32LE() {
+		if (_pos + 4 > _size) {
+			uint32 val = readByte();
+			val |= (uint32)readByte() << 8;
+			val |= (uint32)readByte() << 16;
+			val |= (uint32)readByte() << 24;
+
+			return val;
+		}
+
+		uint32 val = READ_LE_UINT32(_ptr);
+
+		_pos += 4;
+		_ptr += 4;
+
+		return val;
+	}
+
+	uint32 readUint32BE() {
+		if (_pos + 4 > _size) {
+			uint32 val = (uint32)readByte() << 24;
+			val |= (uint32)readByte() << 16;
+			val |= (uint32)readByte() << 8;
+			val |= (uint32)readByte();
+
+			return val;
+		}
+
+		uint32 val = READ_BE_UINT32(_ptr);
+
+		_pos += 4;
+		_ptr += 4;
+
+		return val;
+	}
+
+};
+
+
 // typedefs for various memory layouts.
 
 /** 8-bit data, MSB to LSB. */
@@ -293,6 +439,32 @@ typedef BitStreamImpl<SeekableReadStream, 32, true , false> BitStream32LELSB;
 typedef BitStreamImpl<SeekableReadStream, 32, false, true > BitStream32BEMSB;
 /** 32-bit big-endian data, LSB to MSB. */
 typedef BitStreamImpl<SeekableReadStream, 32, false, false> BitStream32BELSB;
+
+
+
+/** 8-bit data, MSB to LSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 8, false, true > BitStreamMemory8MSB;
+/** 8-bit data, LSB to MSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 8, false, false> BitStreamMemory8LSB;
+
+/** 16-bit little-endian data, MSB to LSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 16, true , true > BitStreamMemory16LEMSB;
+/** 16-bit little-endian data, LSB to MSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 16, true , false> BitStreamMemory16LELSB;
+/** 16-bit big-endian data, MSB to LSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 16, false, true > BitStreamMemory16BEMSB;
+/** 16-bit big-endian data, LSB to MSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 16, false, false> BitStreamMemory16BELSB;
+
+/** 32-bit little-endian data, MSB to LSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 32, true , true > BitStreamMemory32LEMSB;
+/** 32-bit little-endian data, LSB to MSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 32, true , false> BitStreamMemory32LELSB;
+/** 32-bit big-endian data, MSB to LSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 32, false, true > BitStreamMemory32BEMSB;
+/** 32-bit big-endian data, LSB to MSB. */
+typedef BitStreamImpl<BitStreamMemoryStream, 32, false, false> BitStreamMemory32BELSB;
+
 
 } // End of namespace Common
 
