@@ -29,6 +29,7 @@
 #include "common/textconsole.h"
 #include "common/stream.h"
 #include "common/types.h"
+#include "common/util.h"
 
 namespace Common {
 
@@ -115,14 +116,10 @@ public:
 			delete _stream;
 	}
 
-	/** Read a bit from the bit stream. */
-	uint32 getBit() {
-		// Check if we need the next value
-		if (_inValue == 0)
-			readValue();
-
+private:
+	uint32 getBit_internal() {
 		// Get the current bit
-		int b = 0;
+		uint32 b = 0;
 		if (isMSB2LSB)
 			b = ((_value & 0x80000000) == 0) ? 0 : 1;
 		else
@@ -133,6 +130,18 @@ public:
 			_value <<= 1;
 		else
 			_value >>= 1;
+
+		return b;
+	}
+
+public:
+	/** Read a bit from the bit stream. */
+	uint32 getBit() {
+		// Check if we need the next value
+		if (_inValue == 0)
+			readValue();
+
+		uint32 b = getBit_internal();
 
 		// Increase the position within the current value
 		_inValue = (_inValue + 1) % valueBits;
@@ -161,15 +170,41 @@ public:
 		// Read the number of bits
 		uint32 v = 0;
 
-		if (isMSB2LSB) {
-			while (n-- > 0)
-				v = (v << 1) | getBit();
-		} else {
-			for (uint32 i = 0; i < n; i++)
-				v = (v >> 1) | (((uint32) getBit()) << 31);
+		uint8 nOrig = n;
+		if (_inValue) {
+			int count = MIN((int)n, valueBits - _inValue);
+			for (int i = 0; i < count; ++i) {
+				if (isMSB2LSB) {
+					v = (v << 1) | getBit_internal();
+				} else {
+					v = (v >> 1) | (getBit_internal() << 31);
+				}
+			}
 
-			v >>= (32 - n);
+			n -= count;
 		}
+
+		while (n > 0) {
+			// NB: readValue doesn't care that _inValue is incorrect here
+			readValue();
+
+			int count = MIN((int)n, valueBits);
+			for (int i = 0; i < count; ++i) {
+				if (isMSB2LSB) {
+					v = (v << 1) | getBit_internal();
+				} else {
+					v = (v >> 1) | (getBit_internal() << 31);
+				}
+			}
+
+			n -= count;
+		}
+
+		_inValue = (_inValue + nOrig) % valueBits;
+		_pos += nOrig;
+
+		if (!isMSB2LSB)
+			v >>= (32 - nOrig);
 
 		return v;
 	}
