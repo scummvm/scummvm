@@ -154,6 +154,11 @@ public:
 	 * By default we allow mapping for every event source.
 	 */
 	virtual bool allowMapping() const { return true; }
+
+	/**
+	 * Clear any pending events that have been queued up in the event source backend
+	 */
+	virtual void clearEvents() { }
 };
 
 /**
@@ -280,6 +285,12 @@ public:
 	 * This dispatches *all* events the sources offer.
 	 */
 	void dispatch();
+
+	/**
+	 * Tells the event sources to forget their queued
+	 * events.
+	 */
+	void clearEvents();
 
 	/**
 	 * Registers an event mapper with the dispatcher.
