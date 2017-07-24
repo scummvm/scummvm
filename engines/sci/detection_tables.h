@@ -2949,7 +2949,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "5159a1578c4306bfe070a3e4d8c2e1d3", 4741},
 		{"resource.000", 0, "1926925c95d82f0999590e93b02887c5", 15150768},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_MOTHERGOOSEHIRES },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_MOTHERGOOSEHIRES },
 
 	// Mixed-Up Mother Goose Deluxe - Multilingual Windows CD (EN/FR/DE/ES)
 	// Executable scanning reports "2.100.002"
@@ -2957,7 +2957,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "ef611af561898dcfea87846919ebf3eb", 4969},
 		{"ressci.000", 0, "227685bc59d90821978d330713e44a7a", 17205800},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_MOTHERGOOSEHIRES },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_MOTHERGOOSEHIRES },
 
 #undef GUIO_MOTHERGOOSEHIRES
 
