@@ -50,7 +50,8 @@ private:
 
 	uint32 _value;   ///< Current value.
 	uint8  _inValue; ///< Position within the current value.
-	uint32 _size;
+	uint32 _size;    ///< Total bitstream size (in bits)
+	uint32 _pos;     ///< Current bitstream position (in bits)
 
 	/** Read a data value. */
 	inline uint32 readData() {
@@ -76,7 +77,7 @@ private:
 
 	/** Read the next data value. */
 	inline void readValue() {
-		if ((_size - pos()) < valueBits)
+		if (_size - _pos < valueBits)
 			error("BitStreamImpl::readValue(): End of bit stream reached");
 
 		_value = readData();
@@ -91,7 +92,7 @@ private:
 public:
 	/** Create a bit stream using this input data stream and optionally delete it on destruction. */
 	BitStreamImpl(STREAM *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO) :
-		_stream(stream), _disposeAfterUse(disposeAfterUse), _value(0), _inValue(0) {
+		_stream(stream), _disposeAfterUse(disposeAfterUse), _value(0), _inValue(0), _pos(0) {
 
 		if ((valueBits != 8) && (valueBits != 16) && (valueBits != 32))
 			error("BitStreamImpl: Invalid memory layout %d, %d, %d", valueBits, isLE, isMSB2LSB);
@@ -101,7 +102,7 @@ public:
 
 	/** Create a bit stream using this input data stream. */
 	BitStreamImpl(STREAM &stream) :
-		_stream(&stream), _disposeAfterUse(DisposeAfterUse::NO), _value(0), _inValue(0) {
+		_stream(&stream), _disposeAfterUse(DisposeAfterUse::NO), _value(0), _inValue(0), _pos(0) {
 
 		if ((valueBits != 8) && (valueBits != 16) && (valueBits != 32))
 			error("BitStreamImpl: Invalid memory layout %d, %d, %d", valueBits, isLE, isMSB2LSB);
@@ -135,6 +136,7 @@ public:
 
 		// Increase the position within the current value
 		_inValue = (_inValue + 1) % valueBits;
+		_pos++;
 
 		return b;
 	}
@@ -176,11 +178,13 @@ public:
 	uint32 peekBit() {
 		uint32 value   = _value;
 		uint8  inValue = _inValue;
-		uint32 curPos  = _stream->pos();
+		uint32 curStreamPos  = _stream->pos();
+		uint32 curPos = _pos;
 
 		uint32 v = getBit();
 
-		_stream->seek(curPos);
+		_pos     = curPos;
+		_stream->seek(curStreamPos);
 		_inValue = inValue;
 		_value   = value;
 
@@ -195,11 +199,13 @@ public:
 	uint32 peekBits(uint8 n) {
 		uint32 value   = _value;
 		uint8  inValue = _inValue;
-		uint32 curPos  = _stream->pos();
+		uint32 curStreamPos  = _stream->pos();
+		uint32 curPos = _pos;
 
 		uint32 v = getBits(n);
 
-		_stream->seek(curPos);
+		_pos     = curPos;
+		_stream->seek(curStreamPos);
 		_inValue = inValue;
 		_value   = value;
 
@@ -233,6 +239,7 @@ public:
 
 		_value   = 0;
 		_inValue = 0;
+		_pos     = 0;
 	}
 
 	/** Skip the specified amount of bits. */
@@ -249,11 +256,7 @@ public:
 
 	/** Return the stream position in bits. */
 	uint32 pos() const {
-		if (_stream->pos() == 0)
-			return 0;
-
-		uint32 p = (_inValue == 0) ? _stream->pos() : ((_stream->pos() - 1) & ~((uint32) ((valueBits >> 3) - 1)));
-		return p * 8 + _inValue;
+		return _pos;
 	}
 
 	/** Return the stream size in bits. */
@@ -262,7 +265,7 @@ public:
 	}
 
 	bool eos() const {
-		return _stream->eos() || (pos() >= _size);
+		return _stream->eos() || (_pos >= _size);
 	}
 };
 
