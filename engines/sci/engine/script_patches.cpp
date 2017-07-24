@@ -116,6 +116,7 @@ static const char *const selectorNameTable[] = {
 	"get",          // Torin
 	"set",          // Torin
 	"clear",        // Torin
+	"masterVolume", // SCI2 master volume reset
 #endif
 	NULL
 };
@@ -158,7 +159,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_test,
 	SELECTOR_get,
 	SELECTOR_set,
-	SELECTOR_clear
+	SELECTOR_clear,
+	SELECTOR_masterVolume
 #endif
 };
 
@@ -259,6 +261,24 @@ static const uint16 sci2BenchmarkPatch[] = {
 	0x76,                         // push0
 	0x43, 0x03, SIG_UINT16(0x04), // callk DisposeScript[3], 4
 	0x48,                         // ret
+	PATCH_END
+};
+
+// The init code that runs in many SCI32 games unconditionally resets the music
+// volume, but the game should always use the volume stored in ScummVM.
+// Applies to at least: LSL6hires, MGDX, PQ:SWAT, QFG4
+static const uint16 sci2VolumeResetSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume
+	0x78,                               // push1
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi [default volume]
+	0x81, 0x01,                         // lag 1
+	0x4a, SIG_UINT16(0x06),             // send 6
+	SIG_END
+};
+
+static const uint16 sci2VolumeResetPatch[] = {
+	0x32, PATCH_UINT16(8), // jmp 8 [past volume reset]
 	PATCH_END
 };
 
@@ -2552,24 +2572,20 @@ static const uint16 larry6HiresPatchSetScale[] = {
 // Applies to at least: English CD
 static const uint16 larry6HiresSignatureVolumeReset[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x221), // pushi $221 (masterVolume)
-	0x78,                    // push1
-	0x39, 0x0c,              // push $0c
-	0x81, 0x01,              // lag $01
-	0x4a, SIG_UINT16(0x06),  // send $6
-	0x35, 0x0b,              // ldi $0b
-	0xa1, 0xc2,              // sag $c2
+	0x35, 0x0b,                         // ldi $0b
+	0xa1, 0xc2,                         // sag $c2
 	SIG_END
 };
 
 static const uint16 larry6HiresPatchVolumeReset[] = {
-	0x32, PATCH_UINT16(12),  // jmp 12 [past volume changes]
+	0x32, PATCH_UINT16(1),  // jmp 1 [past volume change]
 	PATCH_END
 };
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
-	{  true,    71, "disable volume reset on startup",             1, larry6HiresSignatureVolumeReset,  larry6HiresPatchVolumeReset },
+	{  true,    71, "disable volume reset on startup (1/2)",       1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
+	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresSignatureVolumeReset,  larry6HiresPatchVolumeReset },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSignatureSetScale,     larry6HiresPatchSetScale },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
@@ -3568,6 +3584,8 @@ static const uint16 mothergooseHiresPatchHorse[] = {
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
+	{  true,     0, "disable volume reset on startup (1/2)",       2, sci2VolumeResetSignature,         sci2VolumeResetPatch },
+	{  true,    90, "disable volume reset on startup (2/2)",       1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
 	{  true,   108, "bad logo rendering",                          1, mothergooseHiresSignatureLogo,    mothergooseHiresPatchLogo },
 	{  true,   318, "bad horse z-index",                           1, mothergooseHiresSignatureHorse,   mothergooseHiresPatchHorse },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -3959,10 +3977,10 @@ static const SciScriptPatcherEntry pq4Signatures[] = {
 // Applies to at least: English CD
 static const uint16 pqSwatSignatureVolumeReset1[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x21a), // pushi $21a (masterVolume)
-	0x78,                    // push1
-	0x39, 0x7f,              // push $7f
-	0x54, SIG_UINT16(0x06),  // self 6
+	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume
+	0x78,                               // push1
+	0x39, 0x7f,                         // push $7f
+	0x54, SIG_UINT16(0x06),             // self 6
 	SIG_END
 };
 
@@ -3971,26 +3989,10 @@ static const uint16 pqSwatPatchVolumeReset1[] = {
 	PATCH_END
 };
 
-// pqInitCode::doit
-static const uint16 pqSwatSignatureVolumeReset2[] = {
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x21a), // pushi $21a (masterVolume)
-	0x78,                    // push1
-	0x39, 0x0f,              // pushi $f
-	0x81, 0x01,              // lag 1
-	0x4a, SIG_UINT16(0x06),  // send 6
-	SIG_END
-};
-
-static const uint16 pqSwatPatchVolumeReset2[] = {
-	0x32, PATCH_UINT16(8), // jmp 8 [past volume reset]
-	PATCH_END
-};
-
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry pqSwatSignatures[] = {
-	{  true,     0, "disable volume reset on startup",             1, pqSwatSignatureVolumeReset1,       pqSwatPatchVolumeReset1 },
-	{  true,     1, "disable volume reset on startup",             1, pqSwatSignatureVolumeReset2,       pqSwatPatchVolumeReset2 },
+	{  true,     0, "disable volume reset on startup (1/2)",       1, pqSwatSignatureVolumeReset1,       pqSwatPatchVolumeReset1 },
+	{  true,     1, "disable volume reset on startup (2/2)",       1, sci2VolumeResetSignature,          sci2VolumeResetPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -4966,37 +4968,6 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 #pragma mark -
 #pragma mark Quest for Glory 4
 
-// The init code that runs when QFG4 starts up unconditionally resets the
-// master music volume to 15, but the game should always use the volume stored
-// in ScummVM.
-// Applies to at least: English floppy
-static const uint16 qfg4SignatureVolumeReset[] = {
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x215), // pushi $215 (masterVolume)
-	0x78,                    // push1
-	0x39, 0x0f,              // pushi $f
-	0x81, 0x01,              // lag 1 (Glory object)
-	0x4a, SIG_UINT16(0x06),  // send 6
-	SIG_END
-};
-
-// Same as above, but with a different masterVolume selector.
-// Applies to at least: English CD
-static const uint16 qfg4CDSignatureVolumeReset[] = {
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x217), // pushi $217 (masterVolume)
-	0x78,                    // push1
-	0x39, 0x0f,              // pushi $f
-	0x81, 0x01,              // lag 1 (Glory object)
-	0x4a, SIG_UINT16(0x06),  // send 6
-	SIG_END
-};
-
-static const uint16 qfg4PatchVolumeReset[] = {
-	0x32, PATCH_UINT16(8),  // jmp 8 [past volume changes]
-	PATCH_END
-};
-
 // The trap init code incorrectly creates an int array for string data.
 // Applies to at least: English CD
 static const uint16 qfg4SignatureTrapArrayType[] = {
@@ -5040,8 +5011,7 @@ static const uint16 qfg4BenchmarkPatch[] = {
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
-	{  true,     1, "disable volume reset on startup (floppy)",    1, qfg4SignatureVolumeReset,         qfg4PatchVolumeReset },
-	{  true,     1, "disable volume reset on startup (CD)",        1, qfg4CDSignatureVolumeReset,       qfg4PatchVolumeReset },
+	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,           qfg4BenchmarkPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4SignatureTrapArrayType,       qfg4PatchTrapArrayType },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
