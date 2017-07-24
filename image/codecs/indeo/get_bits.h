@@ -31,15 +31,14 @@ namespace Indeo {
 /**
  * Intel Indeo Bitstream reader
  */
-class GetBits : public Common::BitStream8LSB {
+class GetBits : public Common::BitStreamMemory8LSB {
 public:
 	/**
 	* Constructor
 	* @param stream				Source stream to reader from
 	* @param disposeAfterUse	Whether to destroy stream in destructor
 	*/
-	GetBits(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse
-		= DisposeAfterUse::YES) : Common::BitStream8LSB(stream, disposeAfterUse) {}
+	GetBits(const uint8 *ptr, uint32 size) : Common::BitStreamMemory8LSB(new Common::BitStreamMemoryStream(ptr, size), DisposeAfterUse::YES) {}
 
 	/**
 	 * The number of bits left

@@ -67,7 +67,7 @@ bool Indeo5Decoder::isIndeo5(Common::SeekableReadStream &stream) {
 	stream.seek(-16, SEEK_CUR);
 
 	// Validate the first 5-bit word has the correct identifier
-	Indeo::GetBits gb(new Common::MemoryReadStream(buffer, 16 * 8));
+	Indeo::GetBits gb(buffer, 16 * 8);
 	bool isIndeo5 = gb.getBits(5) == 0x1F;
 
 	return isIndeo5;
@@ -85,7 +85,7 @@ const Graphics::Surface *Indeo5Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameSize = stream.size();
 
 	// Set up the GetBits instance for reading the data
-	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize));
+	_ctx._gb = new GetBits(_ctx._frameData, _ctx._frameSize);
 
 	// Decode the frame
 	int err = decodeIndeoFrame();

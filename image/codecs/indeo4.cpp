@@ -56,7 +56,7 @@ bool Indeo4Decoder::isIndeo4(Common::SeekableReadStream &stream) {
 	stream.seek(-16, SEEK_CUR);
 
 	// Validate the first 18-bit word has the correct identifier
-	Indeo::GetBits gb(new Common::MemoryReadStream(buffer, 16 * 8), DisposeAfterUse::YES);
+	Indeo::GetBits gb(buffer, 16 * 8);
 	bool isIndeo4 = gb.getBits(18) == 0x3FFF8;
 
 	return isIndeo4;
@@ -74,7 +74,7 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameSize = stream.size();
 
 	// Set up the GetBits instance for reading the data
-	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize));
+	_ctx._gb = new GetBits(_ctx._frameData, _ctx._frameSize);
 
 	// Decode the frame
 	int err = decodeIndeoFrame();
