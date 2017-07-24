@@ -4971,12 +4971,12 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 // The trap init code incorrectly creates an int array for string data.
 // Applies to at least: English CD
 static const uint16 qfg4SignatureTrapArrayType[] = {
-	0x38, SIG_UINT16(0x92), // pushi $92 (new)
-	0x78,                   // push1
-	0x38, SIG_UINT16(0x80), // pushi $80 (128)
+	0x38, SIG_SELECTOR16(new), // pushi new
+	0x78,                      // push1
+	0x38, SIG_UINT16(0x80),    // pushi $80 (128)
 	SIG_MAGICDWORD,
-	0x51, 0x0b,             // class $b (IntArray)
-	0x4a, SIG_UINT16(0x06), // send 6
+	0x51, 0x0b,                // class $b (IntArray)
+	0x4a, SIG_UINT16(0x06),    // send 6
 	SIG_END
 };
 
