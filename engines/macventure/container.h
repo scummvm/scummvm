@@ -35,7 +35,6 @@
 
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/bitstream.h"
 
 namespace MacVenture {
 

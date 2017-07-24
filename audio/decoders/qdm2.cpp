@@ -213,9 +213,9 @@ private:
 	void fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_array tone_level_idx_temp,
 	                              sb_int8_array coding_method, int nb_channels,
 	                              int c, int superblocktype_2_3, int cm_table_select);
-	void synthfilt_build_sb_samples(Common::BitStream *gb, int length, int sb_min, int sb_max);
-	void init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStream *gb, int length);
-	void init_tone_level_dequantization(Common::BitStream *gb, int length);
+	void synthfilt_build_sb_samples(Common::BitStream32LELSB *gb, int length, int sb_min, int sb_max);
+	void init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStream32LELSB *gb, int length);
+	void init_tone_level_dequantization(Common::BitStream32LELSB *gb, int length);
 	void process_subpacket_9(QDM2SubPNode *node);
 	void process_subpacket_10(QDM2SubPNode *node, int length);
 	void process_subpacket_11(QDM2SubPNode *node, int length);
@@ -224,7 +224,7 @@ private:
 	void qdm2_decode_super_block(void);
 	void qdm2_fft_init_coefficient(int sub_packet, int offset, int duration,
 	                               int channel, int exp, int phase);
-	void qdm2_fft_decode_tones(int duration, Common::BitStream *gb, int b);
+	void qdm2_fft_decode_tones(int duration, Common::BitStream32LELSB *gb, int b);
 	void qdm2_decode_fft_packets(void);
 	void qdm2_fft_generate_tone(FFTTone *tone);
 	void qdm2_fft_tone_synthesizer(uint8 sub_packet);
@@ -677,7 +677,7 @@ void ff_mpa_synth_filter(int16 *synth_buf_ptr, int *synth_buf_offset,
  *                  read the longest vlc code
  *                  = (max_vlc_length + bits - 1) / bits
  */
-static int getVlc2(Common::BitStream *s, int16 (*table)[2], int bits, int maxDepth) {
+static int getVlc2(Common::BitStream32LELSB *s, int16 (*table)[2], int bits, int maxDepth) {
 	int index = s->peekBits(bits);
 	int code = table[index][0];
 	int n = table[index][1];
@@ -1227,7 +1227,7 @@ QDM2Stream::~QDM2Stream() {
 	delete[] _compressedData;
 }
 
-static int qdm2_get_vlc(Common::BitStream *gb, VLC *vlc, int flag, int depth) {
+static int qdm2_get_vlc(Common::BitStream32LELSB *gb, VLC *vlc, int flag, int depth) {
 	int value = getVlc2(gb, vlc->table, vlc->bits, depth);
 
 	// stage-2, 3 bits exponent escape sequence
@@ -1246,7 +1246,7 @@ static int qdm2_get_vlc(Common::BitStream *gb, VLC *vlc, int flag, int depth) {
 	return value;
 }
 
-static int qdm2_get_se_vlc(VLC *vlc, Common::BitStream *gb, int depth)
+static int qdm2_get_se_vlc(VLC *vlc, Common::BitStream32LELSB *gb, int depth)
 {
 	int value = qdm2_get_vlc(gb, vlc, 0, depth);
 
@@ -1612,7 +1612,7 @@ void QDM2Stream::fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_
  * @param sb_min    lower subband processed (sb_min included)
  * @param sb_max    higher subband processed (sb_max excluded)
  */
-void QDM2Stream::synthfilt_build_sb_samples(Common::BitStream *gb, int length, int sb_min, int sb_max) {
+void QDM2Stream::synthfilt_build_sb_samples(Common::BitStream32LELSB *gb, int length, int sb_min, int sb_max) {
 	int sb, j, k, n, ch, run, channels;
 	int joined_stereo, zero_encoding, chs;
 	int type34_first;
@@ -1792,7 +1792,7 @@ void QDM2Stream::synthfilt_build_sb_samples(Common::BitStream *gb, int length, i
  * @param gb        bitreader context
  * @param length    packet length in bits
  */
-void QDM2Stream::init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStream *gb, int length) {
+void QDM2Stream::init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStream32LELSB *gb, int length) {
 	int i, k, run, level, diff;
 
 	if ((length - gb->pos()) < 16)
@@ -1826,7 +1826,7 @@ void QDM2Stream::init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::Bit
  * @param gb        bitreader context
  * @param length    packet length in bits
  */
-void QDM2Stream::init_tone_level_dequantization(Common::BitStream *gb, int length) {
+void QDM2Stream::init_tone_level_dequantization(Common::BitStream32LELSB *gb, int length) {
 	int sb, j, k, n, ch;
 
 	for (ch = 0; ch < _channels; ch++) {
@@ -2021,7 +2021,7 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 	average_quantized_coeffs(); // average elements in quantized_coeffs[max_ch][10][8]
 
 	Common::MemoryReadStream *d = new Common::MemoryReadStream(_compressedData, _packetSize*8);
-	Common::BitStream *gb = new Common::BitStream32LELSB(d);
+	Common::BitStream32LELSB *gb = new Common::BitStream32LELSB(d);
 	//qdm2_decode_sub_packet_header
 	header.type = gb->getBits(8);
 
@@ -2188,7 +2188,7 @@ void QDM2Stream::qdm2_fft_init_coefficient(int sub_packet, int offset, int durat
 	_fftCoefsIndex++;
 }
 
-void QDM2Stream::qdm2_fft_decode_tones(int duration, Common::BitStream *gb, int b) {
+void QDM2Stream::qdm2_fft_decode_tones(int duration, Common::BitStream32LELSB *gb, int b) {
 	int channel, stereo, phase, exp;
 	int local_int_4,  local_int_8,  stereo_phase,  local_int_10;
 	int local_int_14, stereo_exp, local_int_20, local_int_28;

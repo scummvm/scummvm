@@ -33,6 +33,7 @@
 
 #include "macventure/macventure.h"
 #include "macventure/container.h"
+#include "common/bitstream.h"
 
 namespace MacVenture {
 
@@ -76,13 +77,13 @@ public:
 private:
 	void decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes);
 
-	void decodePPIC0(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	void decodePPIC1(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	void decodePPIC2(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	void decodePPIC3(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC0(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC1(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC2(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC3(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 
-	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	byte walkHuff(const PPICHuff &huff, Common::BitStream &stream);
+	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	byte walkHuff(const PPICHuff &huff, Common::BitStream32BEMSB &stream);
 
 	void blitDirect(Graphics::ManagedSurface *target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 	void blitBIC(Graphics::ManagedSurface *target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);

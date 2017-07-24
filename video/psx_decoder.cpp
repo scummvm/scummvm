@@ -499,7 +499,7 @@ void PSXStreamDecoder::PSXVideoTrack::decodeFrame(Common::SeekableReadStream *fr
 	_nextFrameStartTime = _nextFrameStartTime.addFrames(sectorCount);
 }
 
-void PSXStreamDecoder::PSXVideoTrack::decodeMacroBlock(Common::BitStream *bits, int mbX, int mbY, uint16 scale, uint16 version) {
+void PSXStreamDecoder::PSXVideoTrack::decodeMacroBlock(Common::BitStream16LEMSB *bits, int mbX, int mbY, uint16 scale, uint16 version) {
 	int pitchY = _macroBlocksW * 16;
 	int pitchC = _macroBlocksW * 8;
 
@@ -546,7 +546,7 @@ void PSXStreamDecoder::PSXVideoTrack::dequantizeBlock(int *coefficients, float *
 	}
 }
 
-int PSXStreamDecoder::PSXVideoTrack::readDC(Common::BitStream *bits, uint16 version, PlaneType plane) {
+int PSXStreamDecoder::PSXVideoTrack::readDC(Common::BitStream16LEMSB *bits, uint16 version, PlaneType plane) {
 	// Version 2 just has its coefficient as 10-bits
 	if (version == 2)
 		return readSignedCoefficient(bits);
@@ -576,7 +576,7 @@ int PSXStreamDecoder::PSXVideoTrack::readDC(Common::BitStream *bits, uint16 vers
 	if (count > 63) \
 		error("PSXStreamDecoder::readAC(): Too many coefficients")
 
-void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStream *bits, int *block) {
+void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStream16LEMSB *bits, int *block) {
 	// Clear the block first
 	for (int i = 0; i < 63; i++)
 		block[i] = 0;
@@ -611,7 +611,7 @@ void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStream *bits, int *block
 	}
 }
 
-int PSXStreamDecoder::PSXVideoTrack::readSignedCoefficient(Common::BitStream *bits) {
+int PSXStreamDecoder::PSXVideoTrack::readSignedCoefficient(Common::BitStream16LEMSB *bits) {
 	uint val = bits->getBits(10);
 
 	// extend the sign
@@ -672,7 +672,7 @@ void PSXStreamDecoder::PSXVideoTrack::idct(float *dequantData, float *result) {
 	}
 }
 
-void PSXStreamDecoder::PSXVideoTrack::decodeBlock(Common::BitStream *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane) {
+void PSXStreamDecoder::PSXVideoTrack::decodeBlock(Common::BitStream16LEMSB *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane) {
 	// Version 2 just has signed 10 bits for DC
 	// Version 3 has them huffman coded
 	int coefficients[8 * 8];
