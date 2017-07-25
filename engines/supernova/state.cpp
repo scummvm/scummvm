@@ -1066,6 +1066,11 @@ void GameManager::handleInput() {
 }
 
 void GameManager::executeRoom() {
+	if (_processInput && !_vm->_messageDisplayed && _guiEnabled) {
+		handleInput();
+		resetInputState();
+	}
+
 	if (_guiEnabled) {
 		if (!_vm->_messageDisplayed) {
 			g_system->fillScreen(kColorBlack);
@@ -1083,14 +1088,6 @@ void GameManager::executeRoom() {
 		_vm->paletteBrightness();
 	if (!_currentRoom->hasSeen())
 		_currentRoom->onEntrance();
-
-	if (!_guiEnabled || !_processInput || _vm->_messageDisplayed) {
-
-	} else {
-		handleInput();
-		resetInputState();
-	}
-
 }
 
 }
