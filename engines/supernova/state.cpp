@@ -158,37 +158,37 @@ GameManager::GameManager(SupernovaEngine *vm) {
 	_rooms[CABIN_L3] = new ShipCabinL3(vm, this);
 	_rooms[BATHROOM] = new ShipCabinBathroom(vm, this);
 
-//	_rooms[ROCKS]
-//	_rooms[CAVE]
-//	_rooms[MEETUP]
-//	_rooms[ENTRANCE]
-//	_rooms[REST]
-//	_rooms[ROGER]
-//	_rooms[GLIDER]
-//	_rooms[MEETUP2]
-//	_rooms[MEETUP3]
+	_rooms[ROCKS] = new ArsanoRocks(vm, this);
+	_rooms[CAVE] = new ArsanoCave(vm, this);
+	_rooms[MEETUP] = new ArsanoMeetup(vm, this);
+	_rooms[ENTRANCE] = new ArsanoEntrance(vm, this);
+	_rooms[REST] = new ArsanoRemaining(vm, this);
+	_rooms[ROGER] = new ArsanoRoger(vm, this);
+	_rooms[GLIDER] = new ArsanoGlider(vm, this);
+	_rooms[MEETUP2] = new ArsanoMeetup2(vm, this);
+	_rooms[MEETUP3] = new ArsanoMeetup3(vm, this);
 
-//	_rooms[CELL]
-//	_rooms[CORRIDOR1]
-//	_rooms[CORRIDOR2]
-//	_rooms[CORRIDOR3]
-//	_rooms[CORRIDOR4]
-//	_rooms[CORRIDOR5]
-//	_rooms[CORRIDOR6]
-//	_rooms[CORRIDOR7]
-//	_rooms[CORRIDOR8]
-//	_rooms[CORRIDOR9]
-//	_rooms[BCORRIDOR]
-//	_rooms[GUARD]
-//	_rooms[GUARD3]
-//	_rooms[OFFICE_L1]
-//	_rooms[OFFICE_L2]
-//	_rooms[OFFICE_R1]
-//	_rooms[OFFICE_R2]
-//	_rooms[OFFICE_L]
-//	_rooms[ELEVATOR]
-//	_rooms[STATION]
-//	_rooms[SIGN]
+	_rooms[CELL] = new AxacussCell(vm, this);
+	_rooms[CORRIDOR1] = new AxacussCorridor1(vm, this);
+	_rooms[CORRIDOR2] = new AxacussCorridor2(vm, this);
+	_rooms[CORRIDOR3] = new AxacussCorridor3(vm, this);
+	_rooms[CORRIDOR4] = new AxacussCorridor3(vm, this);
+	_rooms[CORRIDOR5] = new AxacussCorridor4(vm, this);
+	_rooms[CORRIDOR6] = new AxacussCorridor5(vm, this);
+	_rooms[CORRIDOR7] = new AxacussCorridor6(vm, this);
+	_rooms[CORRIDOR8] = new AxacussCorridor7(vm, this);
+	_rooms[CORRIDOR9] = new AxacussCorridor8(vm, this);
+	_rooms[BCORRIDOR] = new AxacussBcorridor(vm, this);
+	_rooms[GUARD] = new AxacussIntersection(vm, this);
+	_rooms[GUARD3] = new AxacussExit(vm, this);
+	_rooms[OFFICE_L1] = new AxacussOffice1(vm, this);
+	_rooms[OFFICE_L2] = new AxacussOffice2(vm, this);
+	_rooms[OFFICE_R1] = new AxacussOffice3(vm, this);
+	_rooms[OFFICE_R2] = new AxacussOffice4(vm, this);
+	_rooms[OFFICE_L] = new AxacussOffice5(vm, this);
+	_rooms[ELEVATOR] = new AxacussElevator(vm, this);
+	_rooms[STATION] = new AxacussStation(vm, this);
+	_rooms[SIGN] = new AxacussSign(vm, this);
 
 	_currentRoom = _rooms[INTRO];
 	_vm = vm;
