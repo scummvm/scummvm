@@ -234,25 +234,25 @@ GameManager::GameManager(SupernovaEngine *vm) {
 }
 
 void GameManager::initGui() {
-	int x = 0;
+	int commandButtonX = 0;
 	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
 		int width;
 		if (i < 9)
 			width = _vm->textWidth(guiCommand_DE[i]) + 2;
 		else
-			width = 320 - x;
+			width = 320 - commandButtonX;
 
-		_guiCommandButton[i].setSize(x, 150, x + width, 159);
+		_guiCommandButton[i].setSize(commandButtonX, 150, commandButtonX + width, 159);
 		_guiCommandButton[i].setText(guiCommand_DE[i]);
 		_guiCommandButton[i].setColor(kColorWhite25, kColorDarkGreen, kColorWhite44, kColorGreen);
-		x += width + 2;
+		commandButtonX += width + 2;
 	}
 
 	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
-		int x = 136 * (i % 2);
-		int y = 161 + 10 * (i / 2);
+		int inventoryX = 136 * (i % 2);
+		int inventoryY = 161 + 10 * (i / 2);
 
-		_guiInventory[i].setSize(x, y, x + 135, y + 9);
+		_guiInventory[i].setSize(inventoryX, inventoryY, inventoryX + 135, inventoryY + 9);
 		_guiInventory[i].setColor(kColorWhite25, kColorDarkRed, kColorWhite35, kColorRed);
 	}
 }
