@@ -310,34 +310,38 @@ void ShipSleepCabin::onEntrance() {
 }
 
 bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
+	// TODO: distance and remaining time not accurate
 	char c[2] = {0};
 
 	if ((verb == ACTION_LOOK) && (obj1._id == MONITOR)) {
-		setSectionVisible(kMaxSection - 1, true);
-		_vm->renderBox(0, 0, 320, 200, kColorBlack);
-		_vm->renderText("Geschwindigkeit: ", 50, 50, kColorLightYellow);
-		if (_gm->_state.time)
-			_vm->renderText("8000 hpm");
-		else
-			_vm->renderText("0 hpm");
-		_vm->renderText("Ziel: Arsano 3", 50, 70, kColorLightYellow);
-		_vm->renderText("Entfernung: ", 50, 90, kColorLightYellow);
-		_vm->renderText(Common::String::format("%d", _gm->_state.time / 400).c_str());
-		_vm->renderText(",");
-		c[0] = (_gm->_state.time / 40) % 10 + '0';
-		_vm->renderText(c);
-		c[0] = (_gm->_state.time / 4) % 10 + '0';
-		_vm->renderText(c);
-		_vm->renderText(" Lichtjahre");
-		_vm->renderText("Dauer der Reise bei momentaner Geschwindigkeit:", 50, 110, 14);
-		_vm->renderText(Common::String::format("%d", _gm->_state.time).c_str(), 50, 120, kColorLightYellow);
-		_vm->renderText(" Tage");
-		_gm->mouseInput2();
-		setSectionVisible(kMaxSection - 1, false);
-		_vm->renderRoom(*this);
-		_gm->showMenu();
-		_gm->drawMapExits();
-		_vm->paletteBrightness();
+		_gm->_guiEnabled = false;
+		    _vm->renderBox(0, 0, 320, 200, kColorBlack);
+			_vm->renderText("Geschwindigkeit: ", 50, 50, kColorLightYellow);
+			if (_gm->_state.time)
+				_vm->renderText("8000 hpm");
+			else
+				_vm->renderText("0 hpm");
+			_vm->renderText("Ziel: Arsano 3", 50, 70, kColorLightYellow);
+			_vm->renderText("Entfernung: ", 50, 90, kColorLightYellow);
+			_vm->renderText(Common::String::format("%d", _gm->_state.timeStarting / 7200000).c_str());
+			_vm->renderText(",");
+			c[0] = (_gm->_state.timeStarting / 720000) % 10 + '0';
+			_vm->renderText(c);
+			c[0] = (_gm->_state.timeStarting / 72000) % 10 + '0';
+			_vm->renderText(c);
+			_vm->renderText(" Lichtjahre");
+			_vm->renderText("Dauer der Reise bei momentaner Geschwindigkeit:", 50, 110, kColorLightYellow);
+			_vm->renderText(Common::String::format("%d", _gm->_state.timeStarting / 18000).c_str(), 50, 120, kColorLightYellow);
+			_vm->renderText(" Tage");
+
+		while (!_gm->_guiEnabled) {
+			_vm->updateEvents();
+			if (_gm->_key || _gm->_mouseClicked) {
+				_gm->_guiEnabled = true;
+			}
+			g_system->updateScreen();
+			g_system->delayMillis(_vm->_delay);
+		}
 	} else if ((verb == ACTION_USE) && (obj1._id == INSTRUMENTS))
 		_vm->renderMessage("Vergiá nicht, du bist nur der|Schiffskoch und hast keine Ahnung,|wie man ein Raumschiff fliegt.");
 	else
