@@ -357,7 +357,8 @@ uint LiftbotScript::getDialsBitset() const {
 
 
 int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	static const int ARRAY13[] = {
+	// Responses for each floor when asked "what floor are we on"
+	static const int FLOOR_RESPONSE_IDS[] = {
 		210724, 210735, 210746, 210757, 210758, 210759, 210760,
 		210761, 210762, 210725, 210726, 210727, 210728, 210729,
 		210730, 210731, 210732, 210733, 210734, 210736, 210737,
@@ -365,7 +366,8 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		210745, 210747, 210748, 210749, 210750, 210751, 210752,
 		210753, 210754, 210755, 210756
 	};
-	static const int ARRAY14[] = {
+	// Responses for each lift when asked "which lift am I in"
+	static const int LIFT_RESPONSE_IDS[] = {
 		0, 210849, 210850, 210851, 210852, 210838, 210839, 210840, 210841, 0
 	};
 
@@ -425,15 +427,17 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 			return 1;
 		break;
 	case 13:
-		selectResponse(ARRAY13[getCurrentFloor()]);
+		// What floor am I on
+		selectResponse(FLOOR_RESPONSE_IDS[getCurrentFloor() - 1]);
 		applyResponse();
 		return 2;
 	case 14:
+		// Which lift am I in
 		stateVal = getState6();
 		if (sentence->contains("elevator") ||
 			(!sentence->contains("lift") && getRandomNumber(100) > 60))
 			stateVal += 4;
-		selectResponse(ARRAY14[stateVal]);
+		selectResponse(LIFT_RESPONSE_IDS[stateVal]);
 		applyResponse();
 		return 2;
 	case 15:
