@@ -359,7 +359,7 @@ uint LiftbotScript::getDialsBitset() const {
 int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	// Responses for each floor when asked "what floor are we on"
 	static const int FLOOR_RESPONSE_IDS[] = {
-		210724, 210735, 210746, 210757, 210758, 210759, 210760,
+		0, 210724, 210735, 210746, 210757, 210758, 210759, 210760,
 		210761, 210762, 210725, 210726, 210727, 210728, 210729,
 		210730, 210731, 210732, 210733, 210734, 210736, 210737,
 		210738, 210739, 210740, 210741, 210742, 210743, 210744,
@@ -428,7 +428,7 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		break;
 	case 13:
 		// What floor am I on
-		selectResponse(FLOOR_RESPONSE_IDS[getCurrentFloor() - 1]);
+		selectResponse(FLOOR_RESPONSE_IDS[getCurrentFloor()]);
 		applyResponse();
 		return 2;
 	case 14:

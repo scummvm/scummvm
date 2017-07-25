@@ -1274,7 +1274,7 @@ bool CGameObject::clipExistsByEnd(const CString &name, int endFrame) const {
 void CGameObject::petClear() const {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
-		petControl->resetActiveNPC();
+		petControl->resetRemoteTarget();
 }
 
 CDontSaveFileItem *CGameObject::getDontSave() const {
