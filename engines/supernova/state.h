@@ -123,7 +123,7 @@ public:
 	bool _newRoom;
 	bool _newOverlay;
 	int _timer1;
-	int _timer2;
+	int _animationTimer;
 	int _inventoryScroll;
 	int _exitList[25];
 	GuiElement _guiCommandButton[10];
@@ -169,6 +169,7 @@ public:
 	void drawImage(int section);
 	void changeRoom(RoomID id);
 	void resetInputState();
+	void setAnimationTimer(int ticks);
 };
 
 }

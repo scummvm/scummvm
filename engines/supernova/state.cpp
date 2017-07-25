@@ -560,6 +560,10 @@ void GameManager::wait2(int ticks) {
 	}
 }
 
+void GameManager::setAnimationTimer(int ticks) {
+	_animationTimer = g_system->getMillis() + (55 * ticks);
+}
+
 void GameManager::screenShake() {
 	// STUB
 }
