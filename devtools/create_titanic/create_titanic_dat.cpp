@@ -874,7 +874,7 @@ static const char *const STRINGS_DE[186] = {
 	"Setze florale Verbesserung ein",
 	"Stelle vollkommend-liegendes Entspannungsger\xE4""t bereit",
 	"Stelle Wohlf\xFC""hl-Arbeitsplatz bereit",
-	"Stelle kleineres horizontal bewegliches Abstellfach bereit"
+	"Stelle kleineres horizontal bewegliches Abstellfach bereit",
 	"Stelle gr\xF6""\xDF""eres halbliegendes Entspannungsger\xE4""t bereit",
 	"Pumpe vollkommend-liegendes Entspannungsger\xE4""t auf",
 	"Stelle pers\xF6""nliche Instandsetzungsstation bereit",
