@@ -76,6 +76,7 @@ static const PlainGameDescriptor adlGames[] = {
 	{ "hires0", "Hi-Res Adventure #0: Mission Asteroid" },
 	{ "hires1", "Hi-Res Adventure #1: Mystery House" },
 	{ "hires2", "Hi-Res Adventure #2: Wizard and the Princess" },
+	{ "hires3", "Hi-Res Adventure #3: Cranston Manor" },
 	{ "hires4", "Hi-Res Adventure #4: Ulysses and the Golden Fleece" },
 	{ "hires5", "Hi-Res Adventure #5: Time Zone" },
 	{ "hires6", "Hi-Res Adventure #6: The Dark Crystal" },
@@ -140,6 +141,20 @@ static const AdlGameDescription gameDescriptions[] = {
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES0
+	},
+	{ // Hi-Res Adventure #3: Cranston Manor - Apple II
+		{
+			"hires3", 0,
+			{
+				{ "CRANSTON.D13", 0, "474d92b845337ec189867fac035304c7", 116480 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+		},
+		GAME_TYPE_HIRES3
 	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Load 'N' Go
 		{
@@ -357,6 +372,7 @@ void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
 Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes0Engine_create(OSystem *syst, const AdlGameDescription *gd);
+Engine *HiRes3Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes5Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes6Engine_create(OSystem *syst, const AdlGameDescription *gd);
@@ -376,6 +392,9 @@ bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 		break;
 	case GAME_TYPE_HIRES0:
 		*engine = HiRes0Engine_create(syst, adlGd);
+		break;
+	case GAME_TYPE_HIRES3:
+		*engine = HiRes3Engine_create(syst, adlGd);
 		break;
 	case GAME_TYPE_HIRES4:
 		*engine = HiRes4Engine_create(syst, adlGd);
