@@ -99,7 +99,7 @@ public:
 	GameManager(SupernovaEngine *vm);
 
 	void processInput(Common::KeyState &state);
-	void processInput(Common::EventType eventType, int x, int y);
+	void processInput();
 	void executeRoom();
 
 	SupernovaEngine *_vm;
@@ -116,6 +116,7 @@ public:
 	int _status;
 	bool _processInput;
 	bool _guiEnabled;
+	bool _animationEnabled;
 	Action _inputVerb;
 	Object *_currentInputObject;
 	Object *_inputObject[2];
@@ -169,6 +170,8 @@ public:
 	void drawImage(int section);
 	void changeRoom(RoomID id);
 	void resetInputState();
+	void handleInput();
+	void handleTime();
 	void setAnimationTimer(int ticks);
 };
 

@@ -167,6 +167,11 @@ int SupernovaEngine::getDOSTicks() {
 }
 
 void SupernovaEngine::updateEvents() {
+	_gm->handleTime();
+	if (_gm->_animationEnabled && _gm->_animationTimer == 0)
+		_gm->_currentRoom->animation();
+
+	_gm->_mouseClicked = false;
 	while (g_system->getEventManager()->pollEvent(_event)) {
 		switch (_event.type) {
 		case Common::EVENT_QUIT:
@@ -193,8 +198,13 @@ void SupernovaEngine::updateEvents() {
 			// fallthrough
 		case Common::EVENT_RBUTTONUP:
 			// fallthrough
+			_gm->_mouseClicked = true;
 		case Common::EVENT_MOUSEMOVE:
-			_gm->processInput(_event.type, _event.mouse.x, _event.mouse.y);
+			_gm->_mouseClickType = _event.type;
+			_gm->_mouseX = _event.mouse.x;
+			_gm->_mouseY = _event.mouse.y;
+			if (_gm->_guiEnabled)
+				_gm->processInput();
 			break;
 
 		default:

@@ -118,11 +118,9 @@ void GuiElement::setHighlight(bool isHighlighted) {
 }
 
 
-static const char *timeToString(int t) {
-	// TODO: Does ScummVM emulate PIT timings for DOS?
-
-	static char s[9];
-	strcpy(s," 0:00:00");
+static Common::String timeToString(int t) {
+	char s[9] = " 0:00:00";
+	t /= 1000;
 	s[7] = t % 10 + '0';
 	t /= 10;
 	s[6] = t %  6 + '0';
@@ -134,9 +132,9 @@ static const char *timeToString(int t) {
 	s[1] = t % 10 + '0';
 	t /= 10;
 	if (t)
-		s[0] = t+48;
+		s[0] = t + '0';
 
-	return(s);
+	return Common::String(s);
 }
 
 GameManager::GameManager(SupernovaEngine *vm) {
@@ -197,8 +195,40 @@ GameManager::GameManager(SupernovaEngine *vm) {
 	Object::setObjectNull(_inputObject[1]);
 	_inputVerb = ACTION_WALK;
 	_processInput = false;
+	_guiEnabled = true;
+	_animationEnabled = true;
 	_mouseField = -1;
 	_inventoryScroll = 0;
+	_timer1 = 0;
+	_animationTimer = 0;
+
+	_state.time = 14200;
+	_state.timeSleep = 0;
+	_state.timeStarting = 50400000;
+	_state.timeAlarm = 25200000;
+	_state.timeAlarmSystem = _state.timeAlarm + _state.timeStarting;
+	_state.eventTime = 0xffffffff;
+	_state.shipEnergy = 2135;
+	_state.landingModuleEnergy = 923;
+	_state.greatF = 0;
+	_state.timeRobot = 0;
+	_state.money = 0;
+	_state.coins = 0;
+	_state.shoes = 0;
+	_state.nameSeen = 0;
+	_state.destination = 255;
+	_state.benOverlay = 0;
+	_state.language = 0;
+	_state.corridorSearch = false;
+	_state.alarmOn = false;
+	_state.terminalStripConnected = false;
+	_state.terminalStripWire = false;
+	_state.cableConnected = false;
+	_state.powerOff = false;
+	_state.cockpitSeen = false;
+	_state.airlockSeen = false;
+	_state.holdSeen = false;
+	_state.dream = false;
 
 	initGui();
 }
@@ -218,7 +248,6 @@ void GameManager::initGui() {
 		x += width + 2;
 	}
 
-	// Inventory + Inventory Arrows
 	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
 		int x = 136 * (i % 2);
 		int y = 161 + 10 * (i / 2);
@@ -226,11 +255,8 @@ void GameManager::initGui() {
 		_guiInventory[i].setSize(x, y, x + 135, y + 9);
 		_guiInventory[i].setColor(kColorWhite25, kColorDarkRed, kColorWhite35, kColorRed);
 	}
-
-	// Minimap
-
-	// Status (?)
 }
+
 
 void GameManager::processInput(Common::KeyState &state) {
 	switch (state.keycode) {
@@ -267,27 +293,28 @@ void GameManager::resetInputState() {
 	Object::setObjectNull(_inputObject[1]);
 	_inputVerb = ACTION_WALK;
 	_processInput = false;
+	_mouseClicked = false;
+	_key = 0;
+	_mouseClickType = Common::EVENT_MOUSEMOVE;
 
-	processInput(Common::EVENT_MOUSEMOVE, _mouseX, _mouseY);
+	processInput();
 }
 
-void GameManager::processInput(Common::EventType eventType, int x, int y) {
-	_mouseClickType = eventType;
-	_mouseX = x;
-	_mouseY = y;
-
+void GameManager::processInput() {
 	if (_mouseClickType == Common::EVENT_LBUTTONUP) {
 		_vm->removeMessage();
 
 		if (((_mouseField >= 0) && (_mouseField < 256)) ||
 		    ((_mouseField >= 512) && (_mouseField < 768))) {
 			if (_inputVerb == ACTION_GIVE || _inputVerb == ACTION_USE) {
-				// TODO: There are cases where here is no second object needed
-				//       for example, putting on the space suit
-				if (Object::isNullObject(_inputObject[0]))
+				if (Object::isNullObject(_inputObject[0])) {
 					_inputObject[0] = _currentInputObject;
-				else
+					if (!_inputObject[0]->hasProperty(COMBINABLE))
+						_processInput = true;
+				} else {
 					_inputObject[1] = _currentInputObject;
+					_processInput = true;
+				}
 			} else {
 				_inputObject[0] = _currentInputObject;
 				if (!Object::isNullObject(_currentInputObject))
@@ -296,12 +323,11 @@ void GameManager::processInput(Common::EventType eventType, int x, int y) {
 		} else if (_mouseField >= 256 && _mouseField < 512) {
 			resetInputState();
 			_inputVerb = static_cast<Action>(_mouseField - 256);
-			drawStatus();
 		} else if (_mouseField == 768) {
-			if (_inventoryScroll >= 0)
-				--_inventoryScroll;
+			if (_inventoryScroll >= 2)
+				_inventoryScroll -= 2;
 		} else if (_mouseField == 769) {
-			++_inventoryScroll;
+			_inventoryScroll += 2;
 		}
 	} else if (_mouseClickType == Common::EVENT_RBUTTONUP) {
 		_vm->removeMessage();
@@ -334,40 +360,40 @@ void GameManager::processInput(Common::EventType eventType, int x, int y) {
 		int click = -1;
 
 		/* command row? */
-		if ((y >= _guiCommandButton[0].top) && (y <= _guiCommandButton[0].bottom)) {
+		if ((_mouseY >= _guiCommandButton[0].top) && (_mouseY <= _guiCommandButton[0].bottom)) {
 			field = 9;
-			while (x < _guiCommandButton[field].left - 1)
+			while (_mouseX < _guiCommandButton[field].left - 1)
 				field--;
 			field += 256;
 		}
 		/* exit box? */
-		else if ((x >= 283) && (x <= 317) && (y >= 163) && (y <= 197)) {
-			field = _exitList[(x - 283) / 7 + 5 * ((y - 163) / 7)];
+		else if ((_mouseX >= 283) && (_mouseX <= 317) && (_mouseY >= 163) && (_mouseY <= 197)) {
+			field = _exitList[(_mouseX - 283) / 7 + 5 * ((_mouseY - 163) / 7)];
 		}
 		/* inventory box */
-		else if ((y >= 161) && (x <= 270)) {
-			field = (x + 1) / 136 + ((y - 161) / 10) * 2;
+		else if ((_mouseY >= 161) && (_mouseX <= 270)) {
+			field = (_mouseX + 1) / 136 + ((_mouseY - 161) / 10) * 2;
 			if (field + _inventoryScroll < _inventory.getSize())
 				field += 512;
 			else
 				field = -1;
 		}
 		/* inventory arrows */
-		else if ((y >= 161) && (x >= 271) && (x < 279)) {
-			if (y > 180)
+		else if ((_mouseY >= 161) && (_mouseX >= 271) && (_mouseX < 279)) {
+			if (_mouseY > 180)
 				field = 769;
 			else
 				field = 768;
 		}
 		/* normal item */
 		else {
-			for (int i = 0; (_currentRoom->getObject(i)->_name[0] != '\0') && (field == -1); i++) {
+			for (int i = 0; (_currentRoom->getObject(i)->_name[0] != '\0') && (field == -1) && i < kMaxObject; i++) {
 				click = _currentRoom->getObject(i)->_click;
 				if (click != 255) {
 					MSNImageDecoder::ClickField *clickField = _vm->_currentImage->_clickField;
 					do {
-						if ((x >= clickField[click].x1) && (x <= clickField[click].x2) &&
-						    (y >= clickField[click].y1) && (y <= clickField[click].y2))
+						if ((_mouseX >= clickField[click].x1) && (_mouseX <= clickField[click].x2) &&
+						    (_mouseY >= clickField[click].y1) && (_mouseY <= clickField[click].y2))
 							field = i;
 
 						click = clickField[click].next;
@@ -402,7 +428,7 @@ void GameManager::processInput(Common::EventType eventType, int x, int y) {
 			}
 		}
 
-		drawStatus();
+//		drawStatus();
 	}
 }
 
@@ -515,6 +541,7 @@ void GameManager::mouseInput() {
 
 void GameManager::mouseInput2() {
 	// STUB
+	// If animation off and timer expired, skip room animation
 }
 
 void GameManager::mouseInput3() {
@@ -564,6 +591,12 @@ void GameManager::setAnimationTimer(int ticks) {
 	_animationTimer = g_system->getMillis() + (55 * ticks);
 }
 
+void GameManager::handleTime() {
+	_state.time = g_system->getMillis();
+	if (_animationTimer <= _state.time)
+		_animationTimer = 0;
+}
+
 void GameManager::screenShake() {
 	// STUB
 }
@@ -605,11 +638,11 @@ void GameManager::drawMapExits() {
 }
 
 void GameManager::animationOff() {
-	// STUB
+	_animationEnabled = false;
 }
 
 void GameManager::animationOn() {
-	// STUB
+	_animationEnabled = true;
 }
 
 void GameManager::edit(char *text, int x, int y, int length) {
@@ -622,8 +655,8 @@ void GameManager::loadOverlayStart() {
 
 void GameManager::drawStatus() {
 	int index = static_cast<int>(_inputVerb);
-	_vm->renderBox(0, 140, 320, 9, HGR_BEF_ANZ);
-	_vm->renderText(guiStatusCommand_DE[index], 1, 141, COL_BEF_ANZ);
+	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
+	_vm->renderText(guiStatusCommand_DE[index], 1, 141, kColorDarkGreen);
 
 	if (Object::isNullObject(_inputObject[0])) {
 		_vm->renderText(_currentInputObject->_name);
@@ -642,7 +675,7 @@ void GameManager::drawStatus() {
 }
 
 void GameManager::openLocker(const Room *room, Object *obj, Object *lock, int section) {
-	_vm->renderImage(room->getFileNumber(), section);
+	drawImage(section);
 	obj->setProperty(OPENED);
 	lock->_click = 255;
 	int i = obj->_click;
@@ -651,7 +684,16 @@ void GameManager::openLocker(const Room *room, Object *obj, Object *lock, int se
 }
 
 void GameManager::closeLocker(const Room *room, Object *obj, Object *lock, int section) {
-	// STUB
+	if (!obj->hasProperty(OPENED)) {
+		_vm->renderMessage("Das ist schon geschlossen.");
+	} else {
+		drawImage(invertSection(section));
+		obj->disableProperty(OPENED);
+		lock->_click = lock->_click2;
+		int i = obj->_click;
+		obj->_click = obj->_click2;
+		obj->_click2 = i;
+	}
 }
 
 int GameManager::invertSection(int section) {
@@ -741,8 +783,8 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		    "Es ist eine Uhr mit extra|lautem Wecker. "
 		    "Sie hat einen|Knopf zum Verstellen der Alarmzeit.|"
 		    "Uhrzeit: %s   Alarmzeit: %s",
-		    timeToString(_vm->getDOSTicks() - _state.timeStarting),
-		    timeToString(_state.timeAlarm)).c_str());
+		    timeToString(_state.time + _state.timeStarting).c_str(),
+		    timeToString(_state.timeAlarm).c_str()).c_str());
 	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
 		char *min;
 		int hours, minutes;
@@ -930,26 +972,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-void GameManager::executeRoom() {
-	if (!_vm->_messageDisplayed)
-		_vm->renderRoom(*_currentRoom);
-	drawMapExits();
-	drawInventory();
-	drawStatus();
-	drawCommandBox();
-
-	animationOn();
-	roomBrightness();
-	if (_vm->_brightness == 0)
-		_vm->paletteFadeIn();
-	else
-		_vm->paletteBrightness();
-	if (!_currentRoom->hasSeen())
-		_currentRoom->onEntrance();
-
-	if (_vm->_messageDisplayed || !_processInput)
-		return;
-
+void GameManager::handleInput() {
 	bool validCommand = genericInteract(_inputVerb, *_inputObject[0], *_inputObject[1]);
 	if (!validCommand)
 		validCommand = _currentRoom->interact(_inputVerb, *_inputObject[0], *_inputObject[1]);
@@ -1039,17 +1062,35 @@ void GameManager::executeRoom() {
 			// This is not possible.
 			_vm->renderMessage("Das geht nicht.");
 		}
+	}
+}
 
-		if (_newOverlay) {
-			loadOverlayStart();
-			_newOverlay = false;
+void GameManager::executeRoom() {
+	if (_guiEnabled) {
+		if (!_vm->_messageDisplayed) {
+			g_system->fillScreen(kColorBlack);
+			_vm->renderRoom(*_currentRoom);
 		}
-		if (_newRoom) {
-			_newRoom = false;
-		}
+		drawMapExits();
+		drawInventory();
+		drawStatus();
+		drawCommandBox();
+	}
+	roomBrightness();
+	if (_vm->_brightness == 0)
+		_vm->paletteFadeIn();
+	else
+		_vm->paletteBrightness();
+	if (!_currentRoom->hasSeen())
+		_currentRoom->onEntrance();
+
+	if (!_guiEnabled || !_processInput || _vm->_messageDisplayed) {
+
+	} else {
+		handleInput();
+		resetInputState();
 	}
 
-	resetInputState();
 }
 
 }
