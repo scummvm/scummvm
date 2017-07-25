@@ -105,6 +105,7 @@ public:
 	SupernovaEngine *_vm;
 	uint16 _key;
 	Common::EventType _mouseClickType;
+	bool _mouseClicked;
 	int _mouseX;
 	int _mouseY;
 	int _mouseField;
@@ -114,6 +115,7 @@ public:
 	GameState _state;
 	int _status;
 	bool _processInput;
+	bool _guiEnabled;
 	Action _inputVerb;
 	Object *_currentInputObject;
 	Object *_inputObject[2];
