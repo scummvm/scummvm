@@ -245,6 +245,14 @@ void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
 }
 
 void AdlEngine_v2::loadRoom(byte roomNr) {
+	if (Common::find(_brokenRooms.begin(), _brokenRooms.end(), roomNr) != _brokenRooms.end()) {
+		debug("Warning: attempt to load non-existent room %d", roomNr);
+		_roomData.description.clear();
+		_roomData.pictures.clear();
+		_roomData.commands.clear();
+		return;
+	}
+
 	Room &room = getRoom(roomNr);
 	StreamPtr stream(room.data->createReadStream());
 
