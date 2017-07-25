@@ -99,12 +99,13 @@ public:
 	GameManager(SupernovaEngine *vm);
 
 	void processInput(Common::KeyState &state);
-	void processInput(Common::EventType eventType, int x, int y);
+	void processInput();
 	void executeRoom();
 
 	SupernovaEngine *_vm;
 	uint16 _key;
 	Common::EventType _mouseClickType;
+	bool _mouseClicked;
 	int _mouseX;
 	int _mouseY;
 	int _mouseField;
@@ -114,6 +115,8 @@ public:
 	GameState _state;
 	int _status;
 	bool _processInput;
+	bool _guiEnabled;
+	bool _animationEnabled;
 	Action _inputVerb;
 	Object *_currentInputObject;
 	Object *_inputObject[2];
@@ -121,7 +124,7 @@ public:
 	bool _newRoom;
 	bool _newOverlay;
 	int _timer1;
-	int _timer2;
+	int _animationTimer;
 	int _inventoryScroll;
 	int _exitList[25];
 	GuiElement _guiCommandButton[10];
@@ -167,6 +170,9 @@ public:
 	void drawImage(int section);
 	void changeRoom(RoomID id);
 	void resetInputState();
+	void handleInput();
+	void handleTime();
+	void setAnimationTimer(int ticks);
 };
 
 }
