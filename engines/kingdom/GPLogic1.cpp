@@ -388,15 +388,17 @@ void Logic::GPL1_70() {
 }
 
 void Logic::GPL1_71() {
+	int nodeIdx = (_vm->isDemo()) ? 5 : 7;
+
 	switch(_vm->_userInput) {
 	case 0x42F:
-		if (_nodes[7] == 9) {
+		if (_nodes[nodeIdx] == 9) {
 			_vm->displayIcon(137);
 		} else {
 			_vm->playMovie(12);
 			_vm->playSound(30);
 			inventoryAdd(7);
-			_nodes[7] = 9;
+			_nodes[nodeIdx] = 9;
 			_currMap = 10;
 		}
 		_vm->_userInput = 0;
@@ -689,21 +691,10 @@ void Logic::GPL1_120() {
 }
 
 void Logic::GPL1_121() {
+	int nodeIdx = (_vm->isDemo()) ? 10 : 12;
 	switch (_vm->_userInput) {
-	case 0x445:
-		_statPlay = 150;
-		_vm->_loopFlag = true;
-		_eye = true;
-		_vm->_userInput = 0;
-		break;
-	case 0x446:
-		_statPlay = 80;
-		_vm->_loopFlag = true;
-		_eye = true;
-		_vm->_userInput = 0;
-		break;
 	case 0x437:
-		if (_nodes[12] == 9) {
+		if (_nodes[nodeIdx] == 9) {
 			_vm->displayIcon(145);
 			_vm->_userInput = 0;
 		} else
@@ -717,6 +708,18 @@ void Logic::GPL1_121() {
 			_vm->playMovie(_vm->_pMovie);
 			_vm->playSound(3);
 		}
+		break;
+	case 0x445:
+		_statPlay = 150;
+		_vm->_loopFlag = true;
+		_eye = true;
+		_vm->_userInput = 0;
+		break;
+	case 0x446:
+		_statPlay = 80;
+		_vm->_loopFlag = true;
+		_eye = true;
+		_vm->_userInput = 0;
 		break;
 	default:
 		if (_vm->_userInput)
@@ -1459,14 +1462,38 @@ void Logic::GPLogic1_SubSP121() {
 		_vm->checkMainScreen();
 		_vm->readMouse();
 	}
-	
-	_vm->playSound(23);
-	inventoryAdd(15);
-	_currMap = 10;
-	_vm->fShowPic(150);
-	_nodes[12] = 9;
-	_vm->playSound(3);
-	_currMap = 15;
+
+	if (!_vm->isDemo()) {
+		_vm->playSound(23);
+		inventoryAdd(15);
+		_currMap = 10;
+		_vm->fShowPic(150);
+		_nodes[12] = 9;
+		_vm->playSound(3);
+		_currMap = 15;
+	} else {
+		inventoryAdd(15);
+		_currMap = 10;
+		_vm->fShowPic(150);
+		_nodes[10] = 9;
+		_vm->playSound(3);
+		_vm->_bTimer = 95;
+		while (_vm->_bTimer != 0 && _vm->_mouseButton == 0) {
+			_vm->checkTimers();
+			_vm->refreshSound();
+			_vm->checkMainScreen();
+		}
+		_vm->readMouse();
+		while (_vm->_mouseButton == 0) {
+			_vm->refreshSound();
+			_vm->checkMainScreen();
+			_vm->readMouse();
+		}
+
+		_vm->fadeToBlack2();
+		_vm->_quit = true;
+		//_QuitFlag = 1;
+	}
 }
 
 } // NameSpace
