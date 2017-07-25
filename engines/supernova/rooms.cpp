@@ -1200,6 +1200,10 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 
 }
 
+bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
+
+}
+
 bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 
 }
