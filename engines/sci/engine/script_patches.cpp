@@ -117,6 +117,7 @@ static const char *const selectorNameTable[] = {
 	"set",          // Torin
 	"clear",        // Torin
 	"masterVolume", // SCI2 master volume reset
+	"data",         // Phant2
 #endif
 	NULL
 };
@@ -160,7 +161,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_get,
 	SELECTOR_set,
 	SELECTOR_clear,
-	SELECTOR_masterVolume
+	SELECTOR_masterVolume,
+	SELECTOR_data
 #endif
 };
 
@@ -3733,9 +3735,56 @@ static const uint16 phant2CompSlideDoorsPatch[] = {
 	PATCH_END
 };
 
+// When reading the VERSION file, Phant2 sends a Str object instead of a
+// reference to a string (kernel signature violation), and flips the file handle
+// and size arguments, so the version file data never actually makes it into the
+// game.
+// Applies to at least: Phant2 US English CD
+static const uint16 phant2GetVersionSignature[] = {
+	0x36,                         // push
+	0x35, 0xff,                   // ldi $ff
+	0x1c,                         // ne?
+	0x31, 0x0e,                   // bnt $e
+	0x39, 0x04,                   // pushi 4
+	0x39, 0x05,                   // pushi 5
+	SIG_MAGICDWORD,
+	0x89, 0x1b,                   // lsg $1b
+	0x8d, 0x05,                   // lst 5
+	0x39, 0x09,                   // pushi 9
+	0x43, 0x5d, SIG_UINT16(0x08), // callk FileIO, 8
+	0x7a,                         // push2
+	0x78,                         // push1
+	0x8d, 0x05,                   // lst 5
+	0x43, 0x5d, SIG_UINT16(0x04), // callk FileIO, 4
+	0x35, 0x01,                   // ldi 1
+	0xa1, 0xd8,                   // sag $d8
+	SIG_END
+};
+
+static const uint16 phant2GetVersionPatch[] = {
+	0x39, 0x04,                     // pushi 4
+	0x39, 0x05,                     // pushi 5
+	0x81, 0x1b,                     // lag $1b
+	0x39, PATCH_SELECTOR8(data),    // pushi data
+	0x76,                           // push0
+	0x4a, PATCH_UINT16(4),          // send 4
+	0x36,                           // push
+	0x39, 0x09,                     // pushi 9
+	0x8d, 0x05,                     // lst 5
+	0x43, 0x5d, PATCH_UINT16(0x08), // callk FileIO, 8
+	0x7a,                           // push2
+	0x78,                           // push1
+	0x8d, 0x05,                     // lst 5
+	0x43, 0x5d, PATCH_UINT16(0x04), // callk FileIO, 4
+	0x78,                           // push1
+	0xa9, 0xd8,                     // ssg $d8
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
+	{  true,     0, "bad arguments to get game version",           1, phant2GetVersionSignature,     phant2GetVersionPatch },
 	{  true, 63016, "non-responsive mouse during music fades",     1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
 	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
