@@ -37,6 +37,7 @@
 #include <AppKit/NSButton.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSURL.h>
+#include <Foundation/NSAutoreleasePool.h>
 
 @interface ShowHiddenFilesController : NSObject {
 	NSOpenPanel* _panel;
@@ -126,6 +127,7 @@ int BrowserDialog::runModal() {
 	// Temporarily show the real mouse
 	CGDisplayShowCursor(kCGDirectMainDisplay);
 
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSWindow *keyWindow = [[NSApplication sharedApplication] keyWindow];
 
 	NSOpenPanel *panel = [NSOpenPanel openPanel];
@@ -174,6 +176,7 @@ int BrowserDialog::runModal() {
 	[showHiddenFilesButton release];
 	[showHiddenFilesController release];
 
+	[pool release];
 	[keyWindow makeKeyAndOrderFront:nil];
 
 	// While the native macOS file browser is open, any input events (e.g. keypresses) are
