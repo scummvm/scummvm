@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/algorithm.h"
 #include "common/translation.h"
+#include "common/events.h"
 
 #include <AppKit/NSNibDeclarations.h>
 #include <AppKit/NSOpenPanel.h>
@@ -176,6 +177,15 @@ int BrowserDialog::runModal() {
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
 		g_system->endGFXTransaction();
 	}
+
+	// While the native macOS file browser is open, any input events (e.g. keypresses) are
+	// still received by the NSApplication. With SDL backend for example this results in the
+	// events being queued and processed after we return, thus dispatching events that were
+	// intended for the native file browser. For example: pressing Esc to cancel the native
+	// macOS file browser would cause the application to quit in addition to closing the
+	// file browser.
+	// Clear the event sources' event queue.
+	g_system->getEventManager()->getEventDispatcher()->clearEvents();
 
 	return choiceMade;
 }

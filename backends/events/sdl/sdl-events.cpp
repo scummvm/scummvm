@@ -992,6 +992,10 @@ void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.joy_y = 0;
 }
 
+void SdlEventSource::clearEvents() {
+	SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT);
+}
+
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
 	if (_graphicsManager) {
 		_graphicsManager->notifyResize(w, h);
