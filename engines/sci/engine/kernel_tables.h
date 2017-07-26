@@ -393,8 +393,8 @@ static const SciKernelMapSubEntry kBitmap_subops[] = {
 	{ SIG_SINCE_SCI21MID, 12, MAP_CALL(BitmapGetInfo),             "r(i)(i)",              NULL },
 	{ SIG_SINCE_SCI21LATE,13, MAP_CALL(BitmapScale),               "r...ii",               NULL },
 	{ SIG_SCI3,           14, MAP_CALL(BitmapCreateFromUnknown),   "......",               NULL },
-	{ SIG_SCI3,           15, MAP_EMPTY(Bitmap),                   "(.*)",                 NULL },
-	{ SIG_SCI3,           16, MAP_EMPTY(Bitmap),                   "(.*)",                 NULL },
+	{ SIG_SCI3,           15, MAP_DUMMY(Bitmap),                   "(.*)",                 NULL },
+	{ SIG_SCI3,           16, MAP_DUMMY(Bitmap),                   "(.*)",                 NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
