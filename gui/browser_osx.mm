@@ -27,9 +27,9 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/events.h"
 #include "common/algorithm.h"
 #include "common/translation.h"
-#include "common/events.h"
 
 #include <AppKit/NSNibDeclarations.h>
 #include <AppKit/NSOpenPanel.h>
@@ -39,36 +39,81 @@
 #include <Foundation/NSURL.h>
 #include <Foundation/NSAutoreleasePool.h>
 
-@interface ShowHiddenFilesController : NSObject {
-	NSOpenPanel* _panel;
-}
 
+@interface BrowserDialogPresenter : NSObject {
+@public
+	NSURL *_url;
+@private
+	NSOpenPanel *_panel;
+}
 - (id) init;
 - (void) dealloc;
-- (void) setOpenPanel : (NSOpenPanel*) panel;
+- (void) showOpenPanel: (NSOpenPanel*) panel;
 - (IBAction) showHiddenFiles : (id) sender;
-
 @end
 
-@implementation ShowHiddenFilesController
+@implementation BrowserDialogPresenter
 
 - (id) init {
 	self = [super init];
+	_url = 0;
 	_panel = 0;
-
 	return self;
 }
 
 - (void) dealloc {
-	[_panel release];
+	[_url release];
 	[super dealloc];
 }
 
-- (void) setOpenPanel : (NSOpenPanel*) panel {
+- (void) showOpenPanel: (NSOpenPanel*) panel {
 	_panel = panel;
-	[_panel retain];
-}
 
+	NSButton *showHiddenFilesButton = 0;
+	if ([panel respondsToSelector:@selector(setShowsHiddenFiles:)]) {
+		showHiddenFilesButton = [[NSButton alloc] init];
+		[showHiddenFilesButton setButtonType:NSSwitchButton];
+
+#ifdef USE_TRANSLATION
+		CFStringRef encStr = CFStringCreateWithCString(NULL, TransMan.getCurrentCharset().c_str(), kCFStringEncodingASCII);
+		CFStringEncoding stringEncoding = CFStringConvertIANACharSetNameToEncoding(encStr);
+		CFRelease(encStr);
+#else
+		CFStringEncoding stringEncoding = kCFStringEncodingASCII;
+#endif
+		CFStringRef hiddenFilesString = CFStringCreateWithCString(0, _("Show hidden files"), stringEncoding);
+		[showHiddenFilesButton setTitle:(NSString*)hiddenFilesString];
+		CFRelease(hiddenFilesString);
+
+		[showHiddenFilesButton sizeToFit];
+		if (ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain)) {
+			[showHiddenFilesButton setState:NSOnState];
+			[panel setShowsHiddenFiles: YES];
+		} else {
+			[showHiddenFilesButton setState:NSOffState];
+			[panel setShowsHiddenFiles: NO];
+		}
+		[panel setAccessoryView:showHiddenFilesButton];
+
+		[showHiddenFilesButton setTarget:self];
+		[showHiddenFilesButton setAction:@selector(showHiddenFiles:)];
+	}
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= 1090
+	if ([panel runModal] == NSOKButton) {
+#else
+	if ([panel runModal] == NSModalResponseOK) {
+#endif
+		NSURL *url = [panel URL];
+		if ([url isFileURL]) {
+			_url = url;
+			[_url retain];
+		}
+	}
+
+	[showHiddenFilesButton release];
+	_panel = 0;
+}
 
 - (IBAction) showHiddenFiles : (id) sender {
 	if ([sender state] == NSOnState) {
@@ -104,13 +149,11 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 
 	// Convert button text to NSString
 	_chooseRef = CFStringCreateWithCString(0, _("Choose"), stringEncoding);
-	_hiddenFilesRef = CFStringCreateWithCString(0, _("Show hidden files"), stringEncoding);
 }
 
 BrowserDialog::~BrowserDialog() {
 	CFRelease(_titleRef);
 	CFRelease(_chooseRef);
-	CFRelease(_hiddenFilesRef);
 }
 
 int BrowserDialog::runModal() {
@@ -130,6 +173,7 @@ int BrowserDialog::runModal() {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSWindow *keyWindow = [[NSApplication sharedApplication] keyWindow];
 
+
 	NSOpenPanel *panel = [NSOpenPanel openPanel];
 	[panel setCanChooseFiles:!_isDirBrowser];
 	[panel setCanChooseDirectories:_isDirBrowser];
@@ -138,43 +182,14 @@ int BrowserDialog::runModal() {
 	[panel setTitle:(NSString *)_titleRef];
 	[panel setPrompt:(NSString *)_chooseRef];
 
-	NSButton *showHiddenFilesButton = 0;
-	ShowHiddenFilesController *showHiddenFilesController = 0;
-	if ([panel respondsToSelector:@selector(setShowsHiddenFiles:)]) {
-		showHiddenFilesButton = [[NSButton alloc] init];
-		[showHiddenFilesButton setButtonType:NSSwitchButton];
-		[showHiddenFilesButton setTitle:(NSString *)_hiddenFilesRef];
-		[showHiddenFilesButton sizeToFit];
-		if (ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain)) {
-			[showHiddenFilesButton setState:NSOnState];
-			[panel setShowsHiddenFiles: YES];
-		} else {
-			[showHiddenFilesButton setState:NSOffState];
-			[panel setShowsHiddenFiles: NO];
-		}
-		[panel setAccessoryView:showHiddenFilesButton];
-
-		showHiddenFilesController = [[ShowHiddenFilesController alloc] init];
-		[showHiddenFilesController setOpenPanel:panel];
-		[showHiddenFilesButton setTarget:showHiddenFilesController];
-		[showHiddenFilesButton setAction:@selector(showHiddenFiles:)];
+	BrowserDialogPresenter* presenter = [[BrowserDialogPresenter alloc] init];
+	[presenter performSelectorOnMainThread:@selector(showOpenPanel:) withObject:panel waitUntilDone:YES];
+	if (presenter->_url) {
+		Common::String filename = [[presenter->_url path] UTF8String];
+		_choice = Common::FSNode(filename);
+		choiceMade = true;
 	}
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= 1090
-	if ([panel runModal] == NSOKButton) {
-#else
-	if ([panel runModal] == NSModalResponseOK) {
-#endif
-		NSURL *url = [panel URL];
-		if ([url isFileURL]) {
-			const char *filename = [[url path] UTF8String];
-			_choice = Common::FSNode(filename);
-			choiceMade = true;
-		}
-	}
-
-	[showHiddenFilesButton release];
-	[showHiddenFilesController release];
+	[presenter release];
 
 	[pool release];
 	[keyWindow makeKeyAndOrderFront:nil];
@@ -184,7 +199,7 @@ int BrowserDialog::runModal() {
 	// events beeing queued and processed after we return, thus dispatching events that were
 	// intended for the native file browser. For example: pressing Esc to cancel the native
 	// macOS file browser would cause the application to quit in addition to closing the
-	// file browser. To avoid this happening clear all pending vents.
+	// file browser. To avoid this happening clear all pending events.
 	g_system->getEventManager()->getEventDispatcher()->clearEvents();
 
 	// If we were in fullscreen mode, switch back
