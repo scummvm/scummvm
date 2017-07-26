@@ -199,6 +199,11 @@ List of fixed bugs in GF scripts:
 	If the user hits the override key while manny is talking about the note, the override is never disabled, so
 	we add the disable call.
 
+	Fix #356 "GRIM: Velasco's reminiscences are cut off" - dlg_velasco.lua.patchr
+	The function 're.fake_conversation' (re.lua) might possibly call out 'velasco:shut_up()' during Velasco's
+	final line, causing it to get cut off.  Adding an additional 'wait_for_message()' in the dialog script removes
+	that possibility.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
