@@ -672,7 +672,7 @@ void tableLoadErrorDialog(const char *filename) {
 }
 
 void EMISound::initMusicTable() {
-	if (g_grim->getGameFlags() == ADGF_DEMO) {
+	if (g_grim->getGameFlags() & ADGF_DEMO) {
 		_musicTable = initMusicTableDemo("Music/FullMonkeyMap.imt");
 		_musicPrefix = "Music/";
 	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {

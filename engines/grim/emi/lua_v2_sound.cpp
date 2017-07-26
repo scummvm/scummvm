@@ -234,7 +234,7 @@ void Lua_V2::ImFlushStack() {
 
 static Common::String addSoundSuffix(const char *fname) {
 	Common::String filename = fname;
-	if (g_grim->getGameFlags() != ADGF_DEMO) {
+	if (!(g_grim->getGameFlags() & ADGF_DEMO)) {
 		if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
 			filename += ".scx";
 		} else {
