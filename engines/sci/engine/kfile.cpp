@@ -426,7 +426,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				byte *out = buffer;
 				for (uint i = 0; i < numSaves; ++i) {
 					WRITE_UINT16(out, saves[i].id - kSaveIdShift);
-					Common::strlcpy((char *)out + sizeof(int16), saves[i].name, SCI_MAX_SAVENAME_LENGTH);
+					strncpy((char *)out + sizeof(int16), saves[i].name, SCI_MAX_SAVENAME_LENGTH);
 					out += recordSize;
 				}
 				WRITE_UINT16(out, 0xFFFF);
@@ -1372,7 +1372,9 @@ reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv) {
 	for (uint i = 0; i < saves.size(); ++i) {
 		const SavegameDesc &save = saves[i];
 		char *target = &descriptions.charAt(SCI_MAX_SAVENAME_LENGTH * i);
-		Common::strlcpy(target, save.name, SCI_MAX_SAVENAME_LENGTH);
+		// At least Phant2 requires use of strncpy, since it creates save game
+		// names of exactly SCI_MAX_SAVENAME_LENGTH
+		strncpy(target, save.name, SCI_MAX_SAVENAME_LENGTH);
 		saveIds.setFromInt16(i, save.id - kSaveIdShift);
 	}
 
