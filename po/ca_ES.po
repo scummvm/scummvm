@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-25 02:37+0200\n"
+"POT-Creation-Date: 2017-07-27 00:47+0200\n"
 "PO-Revision-Date: 2017-02-20 14:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -33,7 +33,7 @@ msgstr "Característiques compilades:"
 msgid "Available engines:"
 msgstr "Motors disponibles:"
 
-#: gui/browser.cpp:68 gui/browser_osx.mm:104
+#: gui/browser.cpp:68 gui/browser_osx.mm:84
 msgid "Show hidden files"
 msgstr "Mostra els fitxers ocults"
 
@@ -72,7 +72,7 @@ msgstr "Amunt"
 msgid "Cancel"
 msgstr "Cancel·la"
 
-#: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
+#: gui/browser.cpp:76 gui/browser_osx.mm:151 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:65 gui/remotebrowser.cpp:60
 #: gui/themebrowser.cpp:56
 msgid "Choose"

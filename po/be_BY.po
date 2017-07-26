@@ -7,17 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-25 02:37+0200\n"
+"POT-Creation-Date: 2017-07-27 00:47+0200\n"
 "PO-Revision-Date: 2017-07-26 18:23+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
-"Language-Team: Belarusian "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/be/>\n"
+"Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/be/>\n"
 "Language: be_BY\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Belarusian\n"
 
@@ -34,7 +34,7 @@ msgstr "Уключаныя ў білд опцыі:"
 msgid "Available engines:"
 msgstr "Даступныя рухавічкі:"
 
-#: gui/browser.cpp:68 gui/browser_osx.mm:104
+#: gui/browser.cpp:68 gui/browser_osx.mm:84
 msgid "Show hidden files"
 msgstr "Паказваць схаваныя файлы"
 
@@ -73,7 +73,7 @@ msgstr "Уверх"
 msgid "Cancel"
 msgstr "Адмена"
 
-#: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
+#: gui/browser.cpp:76 gui/browser_osx.mm:151 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:65 gui/remotebrowser.cpp:60
 #: gui/themebrowser.cpp:56
 msgid "Choose"

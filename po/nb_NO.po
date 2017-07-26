@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-25 02:37+0200\n"
+"POT-Creation-Date: 2017-07-27 00:47+0200\n"
 "PO-Revision-Date: 2016-12-26 17:36+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -34,7 +34,7 @@ msgstr "Funksjoner innkompilert:"
 msgid "Available engines:"
 msgstr "Tilgjengelige motorer:"
 
-#: gui/browser.cpp:68 gui/browser_osx.mm:104
+#: gui/browser.cpp:68 gui/browser_osx.mm:84
 msgid "Show hidden files"
 msgstr "Vis skjulte filer"
 
@@ -73,7 +73,7 @@ msgstr "Oppover"
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
+#: gui/browser.cpp:76 gui/browser_osx.mm:151 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:65 gui/remotebrowser.cpp:60
 #: gui/themebrowser.cpp:56
 msgid "Choose"

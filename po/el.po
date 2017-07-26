@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-25 02:37+0200\n"
+"POT-Creation-Date: 2017-07-27 00:47+0200\n"
 "PO-Revision-Date: 2017-04-28 11:12+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -32,7 +32,7 @@ msgstr "Χαρακτηριστικά που περιλαμβάνονται:"
 msgid "Available engines:"
 msgstr "Διαθέσιμες μηχανές:"
 
-#: gui/browser.cpp:68 gui/browser_osx.mm:104
+#: gui/browser.cpp:68 gui/browser_osx.mm:84
 msgid "Show hidden files"
 msgstr "Εμφάνιση κρυφών αρχείων"
 
@@ -71,7 +71,7 @@ msgstr "Μετάβαση πάνω"
 msgid "Cancel"
 msgstr "Ακύρωση"
 
-#: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
+#: gui/browser.cpp:76 gui/browser_osx.mm:151 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:65 gui/remotebrowser.cpp:60
 #: gui/themebrowser.cpp:56
 msgid "Choose"

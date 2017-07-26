@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-25 02:37+0200\n"
+"POT-Creation-Date: 2017-07-27 00:47+0200\n"
 "PO-Revision-Date: 2017-06-20 15:35+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -34,7 +34,7 @@ msgstr "Включённые в билд опции:"
 msgid "Available engines:"
 msgstr "Доступные движки:"
 
-#: gui/browser.cpp:68 gui/browser_osx.mm:104
+#: gui/browser.cpp:68 gui/browser_osx.mm:84
 msgid "Show hidden files"
 msgstr "Показать скрытые файлы"
 
@@ -73,7 +73,7 @@ msgstr "Вверх"
 msgid "Cancel"
 msgstr "Отмена"
 
-#: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
+#: gui/browser.cpp:76 gui/browser_osx.mm:151 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:65 gui/remotebrowser.cpp:60
 #: gui/themebrowser.cpp:56
 msgid "Choose"
