@@ -33,6 +33,7 @@
 
 #include <AppKit/NSNibDeclarations.h>
 #include <AppKit/NSOpenPanel.h>
+#include <AppKit/NSApplication.h>
 #include <AppKit/NSButton.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSURL.h>
@@ -125,6 +126,8 @@ int BrowserDialog::runModal() {
 	// Temporarily show the real mouse
 	CGDisplayShowCursor(kCGDirectMainDisplay);
 
+	NSWindow *keyWindow = [[NSApplication sharedApplication] keyWindow];
+
 	NSOpenPanel *panel = [NSOpenPanel openPanel];
 	[panel setCanChooseFiles:!_isDirBrowser];
 	[panel setCanChooseDirectories:_isDirBrowser];
@@ -170,6 +173,8 @@ int BrowserDialog::runModal() {
 
 	[showHiddenFilesButton release];
 	[showHiddenFilesController release];
+
+	[keyWindow makeKeyAndOrderFront:nil];
 
 	// While the native macOS file browser is open, any input events (e.g. keypresses) are
 	// still received by the NSApplication. With SDL backend for example this results in the
