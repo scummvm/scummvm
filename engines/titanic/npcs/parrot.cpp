@@ -598,16 +598,16 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		int &action = triggerMsg._action;
 		switch (triesMsg._condiment) {
 		case 1:
-			action = 280056 + (triesMsg._isHot ? 234 : 0);
+			action = triesMsg._isHot ? 280034 : 280056;
 			break;
 		case 2:
-			action = 280055 + (triesMsg._isHot ? 234 : 0);
+			action = triesMsg._isHot ? 280033 : 280055;
 			break;
 		case 3:
-			action = 280054 + (triesMsg._isHot ? 234 : 0);
+			action = triesMsg._isHot ? 280032 : 280054;
 			break;
 		default:
-			action = 280053 + (triesMsg._isHot ? 213 : 0);
+			action = triesMsg._isHot ? 280266 : 280053;
 			break;
 		}
 
