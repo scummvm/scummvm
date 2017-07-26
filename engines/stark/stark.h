@@ -37,10 +37,6 @@ class Driver;
 class FrameLimiter;
 }
 
-enum StarkGameFeatures {
-	GF_DVD =  (1 << 1)
-};
-
 class ArchiveLoader;
 class Console;
 class DialogPlayer;
