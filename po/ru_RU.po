@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-27 00:47+0200\n"
+"POT-Creation-Date: 2017-07-27 05:43+0200\n"
 "PO-Revision-Date: 2017-06-20 15:35+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -3652,7 +3652,7 @@ msgstr ""
 "игры могут работать неправильно. Пожалуйста, обратитесь к консоли за "
 "дальнейшей информации, а также проверьте, что файлы игры корректны."
 
-#: engines/sci/sci.cpp:394
+#: engines/sci/sci.cpp:400
 msgid ""
 "A known buggy game script has been detected, which could prevent you from "
 "progressing later on in the game, during the sequence with the Green Man's "
@@ -3660,7 +3660,7 @@ msgid ""
 "possible problems."
 msgstr ""
 
-#: engines/sci/sci.cpp:403
+#: engines/sci/sci.cpp:409
 #, fuzzy
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
@@ -3675,7 +3675,7 @@ msgstr ""
 "будут верно отображаться и соответствовать речи персонажей. Это проблема "
 "игровых файлов, а не ScummVM."
 
-#: engines/sci/sci.cpp:427
+#: engines/sci/sci.cpp:433
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -3688,7 +3688,7 @@ msgid ""
 "game will sound badly distorted."
 msgstr ""
 
-#: engines/sci/sci.cpp:446
+#: engines/sci/sci.cpp:452
 #, fuzzy
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
