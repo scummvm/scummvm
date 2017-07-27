@@ -76,8 +76,6 @@ void EventDispatcher::clearEvents() {
 	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
 		while (i->source->pollEvent(event)) {}
 	}
-
-	List<Event> delayedEvents = _mapper->getDelayedEvents();
 }
 
 
