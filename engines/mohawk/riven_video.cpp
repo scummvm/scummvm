@@ -62,6 +62,7 @@ void RivenVideo::load(uint16 id) {
 
 	_id = id;
 	_video = new Video::QuickTimeDecoder();
+	_video->setSoundType(Audio::Mixer::kSFXSoundType);
 	_video->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
 	_video->loadStream(_vm->getResource(ID_TMOV, id));
 }
