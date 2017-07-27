@@ -99,13 +99,11 @@ void Logic::GPL1_20() {
 }
 
 void Logic::GPL1_30() {
-	int nodeIdx = (_vm->isDemo()) ? 1 : 3;
-
 	_nodeNum = 3;
 	_vm->_userInput = 0;
-	if (_nodes[nodeIdx] == 0) {
+	if (_nodes[3] == 0) {
 		_vm->playMovie(177);
-		_nodes[nodeIdx] = 9;
+		_nodes[3] = 9;
 		if (!_vm->_wizard) {
 			_statPlay = 50;
 			_vm->_loopFlag = true;
@@ -113,7 +111,7 @@ void Logic::GPL1_30() {
 		}
 	}
 	_vm->drawLocation();
-	if (_nodes[nodeIdx + 1] != 0 && _nodes[nodeIdx + 3] != 1)
+	if (_nodes[4] != 0 && _nodes[6] != 1)
 		_vm->_sound = true;
 	else
 		_vm->_sound = false;
@@ -164,14 +162,13 @@ void Logic::GPL1_40() {
 }
 
 void Logic::GPL1_41() {
-	int nodeIdx = (_vm->isDemo()) ? 2 : 4;
 	switch(_vm->_userInput) {
 	case 0x429:
 		_vm->playMovie(178);
 		_vm->playMovie(63);
 		inventoryDel(1);
 		_currMap = 10;
-		_nodes[nodeIdx] = 9;
+		_nodes[4] = 9;
 		_statPlay = 41;
 		_vm->_tsIconOnly = true;
 		break;
@@ -391,17 +388,15 @@ void Logic::GPL1_70() {
 }
 
 void Logic::GPL1_71() {
-	int nodeIdx = (_vm->isDemo()) ? 5 : 7;
-
 	switch(_vm->_userInput) {
 	case 0x42F:
-		if (_nodes[nodeIdx] == 9) {
+		if (_nodes[7] == 9) {
 			_vm->displayIcon(137);
 		} else {
 			_vm->playMovie(12);
 			_vm->playSound(30);
 			inventoryAdd(7);
-			_nodes[nodeIdx] = 9;
+			_nodes[7] = 9;
 			_currMap = 10;
 		}
 		_vm->_userInput = 0;
@@ -694,10 +689,9 @@ void Logic::GPL1_120() {
 }
 
 void Logic::GPL1_121() {
-	int nodeIdx = (_vm->isDemo()) ? 10 : 12;
 	switch (_vm->_userInput) {
 	case 0x437:
-		if (_nodes[nodeIdx] == 9) {
+		if (_nodes[12] == 9) {
 			_vm->displayIcon(145);
 			_vm->_userInput = 0;
 		} else
