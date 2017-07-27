@@ -3781,10 +3781,35 @@ static const uint16 phant2GetVersionPatch[] = {
 	PATCH_END
 };
 
+// The game uses a spin loop when displaying the success animation of the ratboy
+// puzzle, which causes the mouse to appear unresponsive. Replace the spin loop
+// with a call to ScummVM kWait.
+// Applies to at least: US English
+static const uint16 phant2RatboySignature[] = {
+	0x8d, 0x01,                   // lst 1
+	0x35, 0x1e,                   // ldi $1e
+	0x22,                         // lt?
+	SIG_MAGICDWORD,
+	0x31, 0x17,                   // bnt $17 [0c3d]
+	0x76,                         // push0
+	0x43, 0x79, SIG_UINT16(0x00), // callk GetTime, 0
+	SIG_END
+};
+
+static const uint16 phant2RatboyPatch[] = {
+	0x78,                                     // push1
+	0x35, 0x1e,                               // ldi $1e
+	0x36,                                     // push
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, $2
+	0x33, 0x14,                               // jmp [to next outer loop]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
 	{  true,     0, "bad arguments to get game version",           1, phant2GetVersionSignature,     phant2GetVersionPatch },
+	{  true,  4081, "non-responsive mouse after ratboy puzzle",    1, phant2RatboySignature,         phant2RatboyPatch },
 	{  true, 63016, "non-responsive mouse during music fades",     1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
 	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
