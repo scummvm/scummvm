@@ -177,14 +177,13 @@ Gui::Gui(WageEngine *engine) {
 	//TODO: Make the font we use here work
 	// (currently MacFontRun::getFont gets called with the fonts being uninitialized,
 	// so it initializes them by itself with default params, and not those here)
-	const Graphics::Font *font = _wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 8));
+	const Graphics::MacFont *font = new Graphics::MacFont(Graphics::kMacFontChicago, 8);
 
 	uint maxWidth = _screen.w;
 
-	_consoleWindow = new Graphics::MacTextWindow(&_wm, const_cast<Graphics::Font *>(font), kColorBlack, kColorWhite,
-		 maxWidth, Graphics::kTextAlignLeft);
+	_consoleWindow = new Graphics::MacTextWindow(&_wm, font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft);
 #else
-   _consoleWindow = _wm.addWindow(true, true, true);
+	_consoleWindow = _wm.addWindow(true, true, true);
 #endif // USE_MACTEXTWINDOW
 
 	_consoleWindow->setCallback(consoleWindowCallback, this);
