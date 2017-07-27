@@ -368,13 +368,14 @@ void KingdomGame::loadAResource(int reznum) {
 	if(!_rezSize[reznum]) {
 		Common::File *file = new Common::File();
 		if(!file->open(path))
-			error("Failed to open %s", path.c_str());
-
-		_rezSize[reznum] = file->size();
-		file->seek(0, SEEK_SET);
-		_rezPointers[reznum] = file->readStream(_rezSize[reznum]);
-		file->close();
-		delete file;
+			warning("Failed to open %s", path.c_str());
+		else {
+			_rezSize[reznum] = file->size();
+			file->seek(0, SEEK_SET);
+			_rezPointers[reznum] = file->readStream(_rezSize[reznum]);
+			file->close();
+			delete file;
+		}
 	}
 }
 
@@ -390,7 +391,7 @@ void KingdomGame::showPic(int reznum) {
 
 	loadAResource(reznum);
 	Image::IFFDecoder decoder;
-	if (!decoder.loadStream(*_rezPointers[reznum]))
+	if (!_rezPointers[reznum] || !decoder.loadStream(*_rezPointers[reznum]))
 		return;
 
 	const byte *palette = decoder.getPalette();
@@ -488,6 +489,11 @@ void KingdomGame::playMovie(int movieNum) {
 	
 	MVE_ReleaseMem();
 	*/
+
+	// This is hidden somewhere in RunMovieCtl callback...
+	// To be removed when MVE_RunMovie is implemented
+	showPic(300 + _pMovie);
+	//
 
 	if (!_fullScreen) {
 		_treeRightSta = 1;
