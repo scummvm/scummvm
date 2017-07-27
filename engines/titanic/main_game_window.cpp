@@ -158,6 +158,9 @@ void CMainGameWindow::draw() {
 			_project->loadGame(_pendingLoadSlot);
 			_pendingLoadSlot = -1;
 
+			_gameManager->markAllDirty();
+			scrManager->setSurfaceBounds(SURFACE_PRIMARY, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+
 			// Intentional fall-through
 			// to draw loaded game
 
