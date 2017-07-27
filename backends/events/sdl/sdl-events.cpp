@@ -589,7 +589,18 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 				_graphicsManager->notifyVideoExpose();
 			return false;
 
-		case SDL_WINDOWEVENT_RESIZED:
+		// SDL2 documentation indicate that SDL_WINDOWEVENT_SIZE_CHANGED is sent either as a result
+		// of the size being changed by an external event (for example the user resizing the window
+		// or going fullscreen) or a call to the SDL API (for example SDL_SetWindowSize). On the
+		// other hand SDL_WINDOWEVENT_RESIZED is only sent for resize resulting from an external event,
+		// and is always preceded by a SDL_WINDOWEVENT_SIZE_CHANGED event.
+		// We need to handle the programmatic resize as well so that the graphics manager always know
+		// the current size. See comments in SdlWindow::createOrUpdateWindow for details of one case
+		// where we need to call SDL_SetWindowSize and we need the resulting event to be processed.
+		// However if the documentation is correct we can ignore SDL_WINDOWEVENT_RESIZED since when we
+		// get one we should always get a SDL_WINDOWEVENT_SIZE_CHANGED as well.
+		case SDL_WINDOWEVENT_SIZE_CHANGED:
+		//case SDL_WINDOWEVENT_RESIZED:
 			return handleResizeEvent(event, ev.window.data1, ev.window.data2);
 
 		default:

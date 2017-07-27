@@ -253,6 +253,14 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 		return false;
 	}
 
+	// In some cases at this point there may be a pending SDL resize event with the old size.
+	// This happens for example if we destroyed the window, or when switching between windowed
+	// and fullscreen modes. If we changed the window size here, this pending event will have the
+	// old (and incorrect) size. To avoid any issue we call SDL_SetWindowSize() to generate another
+	// resize event (SDL_WINDOWEVENT_SIZE_CHANGED) so that the last resize event we receive has
+	// the correct size. This fixes for exmample bug #9971: SDL2: Fullscreen to RTL launcher resolution
+	SDL_SetWindowSize(_window, width, height);
+
 	_lastFlags = flags;
 
 	return true;
