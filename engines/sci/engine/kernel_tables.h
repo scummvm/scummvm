@@ -1014,6 +1014,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },
 
 	// SCI3 Kernel Functions
+	{ MAP_EMPTY(Minimize),          SIG_SCI3, SIGFOR_ALL,     "(.*)",                 NULL,            NULL },
 	{ MAP_CALL(PlayDuck),           SIG_SCI3, SIGFOR_ALL,     "(.*)",                 kPlayDuck_subops,NULL },
 	{ MAP_CALL(WebConnect),         SIG_SCI3, SIGFOR_ALL,     "(r)",                  NULL,            NULL },
 	{ MAP_CALL(WinExec),            SIG_SCI3, SIGFOR_ALL,     "r",                    NULL,            NULL },
