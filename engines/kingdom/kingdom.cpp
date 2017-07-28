@@ -93,19 +93,19 @@ void KingdomGame::initVariables() {
 	for (int i = 0; i < 7; i++)
 		_iconPic[i] = 0;
 
-	_iconRedraw = 0;
+	_iconRedraw = false;
 	_healthTmr = 0;
-	_palStepFlag = 0;
-	_skylarTimerFlag = 0;
+	_palStepFlag = false;
+	_skylarTimerFlag = false;
 	_skylarTimer = 0;
-	_cTimerFlag = 0;
+	_cTimerFlag = false;
 	_cTimer = 0;
-	_bTimerFlag = 0;
+	_bTimerFlag = false;
 	_bTimer = 0;
-	_aTimerFlag = 0;
+	_aTimerFlag = false;
 	_aTimer = 0;
 	_zoom = 0;
-	_wizard = 0; 
+	_wizard = false; 
 	_userInput = 0;
 //	_track = 0;
 //	_statMap = 0;
