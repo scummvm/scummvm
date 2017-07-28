@@ -166,7 +166,7 @@ public:
 	/**
 	 * Play the animated movie for an object
 	 */
-	void playMovie(CGameObject *movie, int flag);
+	void playMovie(CGameObject *movie, bool repeat = true);
 };
 
 } // End of namespace Titanic

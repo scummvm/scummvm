@@ -36,7 +36,7 @@ const uint ITEM_MODES[40] = {
 };
 
 void CPetInventoryGlyph::enter() {
-	startBackgroundMovie();
+	startRepeatedMovie();
 }
 
 void CPetInventoryGlyph::leave() {
@@ -59,7 +59,7 @@ void CPetInventoryGlyph::drawAt(CScreenManager *screenManager, const Point &pt, 
 		_image = nullptr;
 		if (_background && isHighlighted_) {
 			_background->setPosition(pt);
-			startBackgroundMovie();
+			startRepeatedMovie();
 		}
 	}
 
@@ -302,19 +302,19 @@ int CPetInventoryGlyph::getItemIndex(CGameObject *item, bool isLoading) {
 	return movieFrame;
 }
 
-void CPetInventoryGlyph::startBackgroundMovie() {
+void CPetInventoryGlyph::startRepeatedMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(_background, MOVIE_REPEAT);
+			section->playMovie(_background, true);
 	}
 }
 
-void CPetInventoryGlyph::startForegroundMovie() {
+void CPetInventoryGlyph::startSingularMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(_image, MOVIE_REPEAT);
+			section->playMovie(_image, false);
 	}
 }
 
@@ -322,17 +322,19 @@ void CPetInventoryGlyph::stopMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(nullptr, MOVIE_REPEAT);
+			section->playMovie(nullptr);
 	}
 }
 
 void CPetInventoryGlyph::reposition(const Point &pt) {
 	if (_image) {
+		// Special transformation of item to piece of Titania
 		_image->setPosition(pt);
-		startForegroundMovie();
+		startSingularMovie();
 	} else if (_background) {
+		// Standard repeating animation
 		_background->setPosition(pt);
-		startBackgroundMovie();
+		startRepeatedMovie();
 	}
 }
 

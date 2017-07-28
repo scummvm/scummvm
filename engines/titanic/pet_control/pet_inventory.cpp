@@ -244,13 +244,13 @@ CGameObject *CPetInventory::getImage(int index) {
 	return nullptr;
 }
 
-void CPetInventory::playMovie(CGameObject *movie, int flag) {
+void CPetInventory::playMovie(CGameObject *movie, bool repeat) {
 	if (_movie)
 		_movie->stopMovie();
 	_movie = movie;
 
 	if (_movie) {
-		if (flag)
+		if (repeat)
 			_movie->playMovie(0, 14, MOVIE_REPEAT);
 		else
 			_movie->playMovie(0);

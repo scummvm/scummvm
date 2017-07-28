@@ -44,14 +44,15 @@ private:
 	int getItemIndex(CGameObject *item, bool isLoading);
 
 	/**
-	 * Start any movie for the background
+	 * Start a repeated animation for the item
 	 */
-	void startBackgroundMovie();
+	void startRepeatedMovie();
 
 	/**
-	 * Start any movie for the foreground item
+	 * Start a singular (non-repeating) animation for the item,
+	 * such as an item's transformation into a piece of Titania 
 	 */
-	void startForegroundMovie();
+	void startSingularMovie();
 
 	/**
 	 * Stop any previously started foreground or background movie
