@@ -233,6 +233,8 @@ void GuestAdditions::instantiateScriptHook(Script &script, const bool ignoreDela
 		script.getScriptNumber() == 64866) {
 
 		patchGameSaveRestoreTorin(script);
+	} else if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && script.getScriptNumber() == 64978) {
+		patchGameSaveRestorePhant2(script);
 	} else if (script.getScriptNumber() == 64990) {
 		// 64990 is the system script containing SRDialog. This script is used
 		// by the main Game object, but it is not loaded immediately, so we wait
@@ -412,7 +414,31 @@ void GuestAdditions::patchGameSaveRestoreTorin(Script &script) const {
 	}
 }
 
+void GuestAdditions::patchGameSaveRestorePhant2(Script &script) const {
+	const ObjMap &objects = script.getObjectMap();
+	for (ObjMap::const_iterator it = objects.begin(); it != objects.end(); ++it) {
+		const Object &obj = it->_value;
+
+		if (strncmp(_segMan->derefString(obj.getNameSelector()), "srGetGame", 9) != 0) {
+			continue;
+		}
+
+		int methodIndex = obj.funcSelectorPosition(SELECTOR(init));
+		if (methodIndex == -1) {
+			continue;
+		}
+
+		byte *scriptData = const_cast<byte *>(script.getBuf(obj.getFunction(methodIndex).getOffset()));
+		memcpy(scriptData, SRDialogPatch, sizeof(SRDialogPatch));
+		break;
+	}
+}
+
 reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) const {
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+		return promptSaveRestorePhant2(s, argc, argv);
+	}
+
 	if (g_sci->getGameId() == GID_LSL7 || g_sci->getGameId() == GID_TORIN) {
 		return promptSaveRestoreTorin(s, argc, argv);
 	}
@@ -444,6 +470,29 @@ reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *ar
 	}
 
 	return make_reg(0, saveNo != -1);
+}
+
+reg_t GuestAdditions::promptSaveRestorePhant2(EngineState *s, int argc, reg_t *argv) const {
+	assert(argc == 2);
+	const bool isSave = argv[1].toSint16() == 0;
+	const int saveNo = runSaveRestore(isSave, argv[0], s->_delayedRestoreGameId);
+
+	// Clear the highlighted state of the button so if the same control panel is
+	// opened again it does not appear to be opened to the save/load panels
+	reg_t button;
+	if (isSave) {
+		button = _segMan->findObjectByName("saveButton");
+	} else {
+		button = _segMan->findObjectByName("loadButton");
+	}
+	writeSelectorValue(_segMan, button, SELECTOR(cel), 0);
+
+	// This causes the control panel to quit its internal event loop and hide
+	// itself
+	const reg_t controlPanel = s->variables[VAR_GLOBAL][kGlobalVarPhant2ControlPanel];
+	writeSelector(_segMan, controlPanel, SELECTOR(scratch), TRUE_REG);
+
+	return make_reg(0, saveNo);
 }
 
 int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, const int forcedSaveNo) const {

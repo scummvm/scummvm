@@ -179,6 +179,8 @@ struct SelectorCache {
 	Selector move; // for Phant2 volume sync
 	Selector eachElementDo; // for Phant2 volume sync
 	Selector physicalBar; // for Phant2 volume sync
+	Selector init; // for Phant2 save/load patching
+	Selector scratch; // for Phant2 save/load patching
 #endif
 };
 

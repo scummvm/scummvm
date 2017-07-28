@@ -188,6 +188,11 @@ private:
 	void patchGameSaveRestoreTorin(Script &script) const;
 
 	/**
+	 * Patches the ScummVM save/load dialogue into Phant2.
+	 */
+	void patchGameSaveRestorePhant2(Script &script) const;
+
+	/**
 	 * Prompts for a save game and returns it to game scripts using default
 	 * SRDialog game class semantics.
 	 */
@@ -198,6 +203,12 @@ private:
 	 * custom NewGame class semantics.
 	 */
 	reg_t promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const;
+
+	/**
+	 * Prompts for a save game and returns it to game scripts using Phant2's
+	 * custom ControlPanel class semantics.
+	 */
+	reg_t promptSaveRestorePhant2(EngineState *s, int argc, reg_t *argv) const;
 
 	/**
 	 * Prompts the user to save or load a game.

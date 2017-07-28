@@ -222,6 +222,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(move);
 	FIND_SELECTOR(eachElementDo);
 	FIND_SELECTOR(physicalBar);
+	FIND_SELECTOR(init);
+	FIND_SELECTOR(scratch);
 #endif
 }
 
