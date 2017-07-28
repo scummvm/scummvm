@@ -3124,11 +3124,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_PHANTASMAGORIA
 #undef GUIO_PHANTASMAGORIA_MAC
 
-// TODO: Correct GUIOs
-#define GUIO_PHANTASMAGORIA2 GUIO5(GUIO_NOASPECT, \
+#define GUIO_PHANTASMAGORIA2 GUIO8(GUIO_NOSUBTITLES, \
+                                   GUIO_LINKMUSICTOSFX, \
+                                   GUIO_LINKSPEECHTOSFX, \
                                    GUIO_NOMIDI, \
-                                   GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                                   GUIO_NOASPECT, \
                                    GAMEOPTION_ORIGINAL_SAVELOAD, \
+                                   GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                                    GAMEOPTION_HQ_VIDEO)
 
 	// Some versions of Phantasmagoria 2 were heavily censored.
