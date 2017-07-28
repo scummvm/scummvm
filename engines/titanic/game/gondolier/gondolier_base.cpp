@@ -61,10 +61,10 @@ void CGondolierBase::load(SimpleFile *file) {
 	_puzzleSolved = file->readNumber();
 	_volume1 = file->readNumber();
 	_slider1 = file->readNumber();
-	_rightSliderHooked = file->readNumber();
+	_leftSliderHooked = file->readNumber();
 	_volume2 = file->readNumber();
 	_slider2 = file->readNumber();
-	_leftSliderHooked = file->readNumber();
+	_rightSliderHooked = file->readNumber();
 	_priorLeftSliderHooked = file->readNumber();
 	_priorRightSliderHooked = file->readNumber();
 

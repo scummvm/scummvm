@@ -144,7 +144,7 @@ bool CGondolierMixer::SignalObject(CSignalObject *msg) {
 		if (msg->_strValue == "Fly") {
 			_slider1 = CLIP(msg->_numValue, 0, 10);
 
-			if (!_leftSliderHooked) {
+			if (!_rightSliderHooked) {
 				_slider2 = 10 - _slider1;
 				CStatusChangeMsg statusMsg;
 				statusMsg._newStatus = _slider2;
@@ -155,7 +155,7 @@ bool CGondolierMixer::SignalObject(CSignalObject *msg) {
 		if (msg->_strValue == "Tos") {
 			_slider2 = CLIP(msg->_numValue, 0, 10);
 
-			if (!_rightSliderHooked) {
+			if (!_leftSliderHooked) {
 				_slider1 = 10 - _slider2;
 				CStatusChangeMsg statusMsg;
 				statusMsg._newStatus = _slider1;
@@ -163,7 +163,7 @@ bool CGondolierMixer::SignalObject(CSignalObject *msg) {
 			}
 		}
 
-		if (!_slider1 && !_slider2 && _rightSliderHooked && _leftSliderHooked) {
+		if (!_slider1 && !_slider2 && _leftSliderHooked && _rightSliderHooked) {
 			_puzzleSolved = true;
 			CStatusChangeMsg statusMsg;
 			statusMsg._newStatus = 1;
