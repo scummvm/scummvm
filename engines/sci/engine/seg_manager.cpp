@@ -284,12 +284,11 @@ const char *SegManager::getObjectName(reg_t pos) {
 	return name;
 }
 
-reg_t SegManager::findObjectByName(const Common::String &name, int index) {
+Common::Array<reg_t> SegManager::findObjectsByName(const Common::String &name) {
 	Common::Array<reg_t> result;
-	uint i;
 
 	// Now all values are available; iterate over all objects.
-	for (i = 0; i < _heap.size(); i++) {
+	for (uint i = 0; i < _heap.size(); i++) {
 		const SegmentObj *mobj = _heap[i];
 
 		if (!mobj)
@@ -320,12 +319,18 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 		}
 	}
 
+	return result;
+}
+
+reg_t SegManager::findObjectByName(const Common::String &name, int index) {
+	Common::Array<reg_t> result = findObjectsByName(name);
+
 	if (result.empty())
 		return NULL_REG;
 
 	if (result.size() > 1 && index < 0) {
 		debug("findObjectByName(%s): multiple matches:", name.c_str());
-		for (i = 0; i < result.size(); i++)
+		for (uint i = 0; i < result.size(); i++)
 			debug("  %3x: [%04x:%04x]", i, PRINT_REG(result[i]));
 		return NULL_REG; // Ambiguous
 	}
