@@ -186,9 +186,9 @@ public:
 	Graphics::MacWindow *_sceneWindow;
 
 #ifdef USE_MACTEXTWINDOW
-   Graphics::MacTextWindow *_consoleWindow;
+	Graphics::MacTextWindow *_consoleWindow;
 #else
-   Graphics::MacWindow *_consoleWindow;
+	Graphics::MacWindow *_consoleWindow;
 #endif
 
 private:

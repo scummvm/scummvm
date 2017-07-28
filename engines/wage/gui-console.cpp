@@ -224,7 +224,7 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 
 #ifndef USE_MACTEXTWINDOW
 
-   for (int line = firstLine; line < lastLine; line++) {
+	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
 		int color = kColorBlack;
 
@@ -348,7 +348,7 @@ void Gui::drawInput() {
 	appendText(_engine->_inputText.c_str());
 	_inputTextLineNum = _out.size() - 1;
 
-   #ifndef USE_MACTEXTWINDOW
+#ifndef USE_MACTEXTWINDOW
 	const Graphics::Font *font = getConsoleFont();
 
 	if (_engine->_inputText.contains('\n')) {
