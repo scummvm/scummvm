@@ -99,7 +99,6 @@ void Logic::initOpcodes() {
 	_opCodes[80] = &Logic::GPL1_80;
 	_opCodes[81] = &Logic::GPL1_81;
 	_opCodes[82] = &Logic::GPL1_82;
-	_opCodes[90] = &Logic::GPL1_90;
 	_opCodes[91] = &Logic::GPL1_91;
 	_opCodes[92] = &Logic::GPL1_92;
 	_opCodes[100] = &Logic::GPL1_100;
@@ -218,10 +217,12 @@ void Logic::initOpcodes() {
 }
 
 void Logic::initOpcodesDemo() {
-
+	_opCodes[90] = &Logic::GPL1_90_demo;
 }
 
 void Logic::initOpcodesFull() {
+	_opCodes[90] = &Logic::GPL1_90;
+
 	_opCodes[500] = &Logic::GPL3_500;
 	_opCodes[501] = &Logic::GPL3_501;
 	_opCodes[502] = &Logic::GPL3_502;
