@@ -219,6 +219,9 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(displayValue);
 	FIND_SELECTOR2(new_, "new");
 	FIND_SELECTOR(mainCel);
+	FIND_SELECTOR(move);
+	FIND_SELECTOR(eachElementDo);
+	FIND_SELECTOR(physicalBar);
 #endif
 }
 

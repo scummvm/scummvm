@@ -321,6 +321,7 @@ private:
 
 	void syncGK2VolumeFromScummVM(const int16 musicVolume) const;
 	void syncLSL6HiresVolumeFromScummVM(const int16 musicVolume) const;
+	void syncPhant2VolumeFromScummVM(const int16 masterVolume) const;
 	void syncTorinVolumeFromScummVM(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const;
 
 	/**
@@ -350,6 +351,7 @@ private:
 	void syncLSL6HiresUI(const int16 musicVolume) const;
 	void syncMGDXUI(const int16 musicVolume) const;
 	void syncPhant1UI(const int16 oldMusicVolume, const int16 musicVolume, reg_t &musicGlobal, const int16 oldDacVolume, const int16 dacVolume, reg_t &dacGlobal) const;
+	void syncPhant2UI(const int16 masterVolume) const;
 	void syncPQ4UI(const int16 musicVolume) const;
 	void syncPQSWATUI() const;
 	void syncQFG4UI(const int16 musicVolume) const;

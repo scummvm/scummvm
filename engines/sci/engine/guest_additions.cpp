@@ -141,6 +141,8 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 													objName == "dacVolDown" ||
 													objName == "dacVolUp")) {
 			return true;
+		} else if (gameId == GID_PHANTASMAGORIA2 && objName == "foo2") {
+			return true;
 		} else if ((gameId == GID_LSL7 || gameId == GID_TORIN) && (objName == "oMusicScroll" ||
 																   objName == "oSFXScroll" ||
 																   objName == "oAudioScroll")) {
@@ -819,6 +821,13 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 		break;
 	}
 
+	case GID_PHANTASMAGORIA2: {
+		const int16 masterVolume = (ConfMan.getInt("sfx_volume") + 1) * Audio32::kMaxVolume / Audio::Mixer::kMaxMixerVolume;
+		syncPhant2VolumeFromScummVM(masterVolume);
+		syncPhant2UI(masterVolume);
+		break;
+	}
+
 	case GID_LSL7:
 	case GID_TORIN: {
 		const int16 musicVolume  = (ConfMan.getInt("music_volume") + 1)  * 100 / Audio::Mixer::kMaxMixerVolume;
@@ -917,6 +926,16 @@ void GuestAdditions::syncLSL6HiresVolumeFromScummVM(const int16 musicVolume) con
 	g_sci->_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : (musicVolume * MUSIC_MASTERVOLUME_MAX / kLSL6HiresUIVolumeMax));
 }
 
+void GuestAdditions::syncPhant2VolumeFromScummVM(const int16 musicVolume) const {
+	_state->variables[VAR_GLOBAL][kGlobalVarPhant2MasterVolume] = make_reg(0, musicVolume);
+
+	const reg_t soundsId = _state->variables[VAR_GLOBAL][kGlobalVarSounds];
+	if (!soundsId.isNull()) {
+		reg_t params[] = { make_reg(0, SELECTOR(setVol)), make_reg(0, musicVolume) };
+		invokeSelector(soundsId, SELECTOR(eachElementDo), 2, params);
+	}
+}
+
 void GuestAdditions::syncTorinVolumeFromScummVM(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const {
 	_state->variables[VAR_GLOBAL][kGlobalVarTorinMusicVolume]  = make_reg(0, musicVolume);
 	_state->variables[VAR_GLOBAL][kGlobalVarTorinSFXVolume]    = make_reg(0, sfxVolume);
@@ -966,6 +985,13 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 			const int16 dacVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / Audio32::kMaxVolume;
 			ConfMan.setInt("sfx_volume", dacVolume);
 			ConfMan.setInt("speech_volume", dacVolume);
+		}
+		break;
+
+	case GID_PHANTASMAGORIA2:
+		if (index == kGlobalVarPhant2MasterVolume) {
+			const int16 masterVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / Audio32::kMaxVolume;
+			ConfMan.setInt("sfx_volume", masterVolume);
 		}
 		break;
 
@@ -1125,6 +1151,25 @@ void GuestAdditions::syncPhant1UI(const int16 oldMusicVolume, const int16 musicV
 		while (count--) {
 			dacGlobal.incOffset(stepSize);
 			invokeSelector(thermo, SELECTOR(doit));
+		}
+	}
+}
+
+void GuestAdditions::syncPhant2UI(const int16 musicVolume) const {
+	const reg_t musicVolumeScript = _segMan->findObjectByName("foo2");
+	Common::Array<reg_t> scrollBars = _segMan->findObjectsByName("P2ScrollBar");
+	for (uint i = 0; i < scrollBars.size(); ++i) {
+		if (readSelector(_segMan, scrollBars[i], SELECTOR(client)) == musicVolumeScript) {
+			// P2ScrollBar objects may exist without actually being on-screen;
+			// the easiest way to tell seems to be to look to see if it has
+			// non-null pointers to subviews. (The game will correctly set the
+			// position of the scrollbar when it first becomes visible, so this
+			// is fine.)
+			if (!readSelector(_segMan, scrollBars[i], SELECTOR(physicalBar)).isNull()) {
+				reg_t params[] = { make_reg(0, musicVolume), make_reg(0, 1) };
+				invokeSelector(scrollBars[i], SELECTOR(move), 2, params);
+				break;
+			}
 		}
 	}
 }

@@ -176,6 +176,9 @@ struct SelectorCache {
 	Selector displayValue; // for PQ:SWAT volume sync
 	Selector new_; // for Torin/LSL7 save/load patching
 	Selector mainCel; // for MGDX volume sync
+	Selector move; // for Phant2 volume sync
+	Selector eachElementDo; // for Phant2 volume sync
+	Selector physicalBar; // for Phant2 volume sync
 #endif
 };
 
