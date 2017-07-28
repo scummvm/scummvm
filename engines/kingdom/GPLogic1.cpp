@@ -558,6 +558,31 @@ void Logic::GPL1_90() {
 	}
 }
 
+void Logic::GPL1_90_demo() {
+	if (_nodeNum == 18 && _nodes[17] == 0) {
+		_statPlay = 170;
+		_vm->_loopFlag = true;
+		_nextNode = 90;
+	} else {
+		_nodeNum = 9;
+		_vm->drawLocation();
+		_vm->_userInput = 0;
+		if (_nodes[9] == 0) {
+			_vm->_sound = false;
+			_nodes[9] = 9;
+		} else
+			_vm->_sound = true;
+
+		_vm->_frameStop = 90;
+		_vm->playMovie(19);
+		_vm->playSound(15);
+		_vm->showPic(109);
+
+		_currMap = 10;
+		_statPlay = 91;
+	}
+}
+
 void Logic::GPL1_91() {
 	switch(_vm->_userInput) {
 	case 0x43A:
