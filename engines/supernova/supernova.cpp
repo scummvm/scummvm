@@ -143,11 +143,14 @@ Common::Error SupernovaEngine::run() {
 	CursorMan.showMouse(true);
 
 	while (_gameRunning) {
+		uint32 start = _system->getMillis();
 		updateEvents();
 		_gm->executeRoom();
 		_console->onFrame();
 		_system->updateScreen();
-		_system->delayMillis(_delay);
+		int end = _delay - (_system->getMillis() - start);
+		if (end > 0)
+			_system->delayMillis(end);
 	}
 
 	//deinit timer/sound/..
