@@ -183,7 +183,7 @@ private:
 	void patchGameSaveRestoreSCI32(Script &script) const;
 
 	/**
-	 * Patches the ScummVM save/load dialogue into Torin.
+	 * Patches the ScummVM save/load dialogue into Torin/LSL7.
 	 */
 	void patchGameSaveRestoreTorin(Script &script) const;
 
@@ -194,7 +194,7 @@ private:
 	reg_t promptSaveRestoreDefault(EngineState *s, int argc, reg_t *argv) const;
 
 	/**
-	 * Prompts for a save game and returns it to game scripts using Torin's
+	 * Prompts for a save game and returns it to game scripts using Torin/LSL7's
 	 * custom NewGame class semantics.
 	 */
 	reg_t promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const;
