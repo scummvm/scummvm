@@ -239,8 +239,6 @@ private:
 	void GPL4_993();
 	void GPL4_994();
 
-	void GPL1_90_demo();
-
 public:
 	int _statPlay;
 	int _oldStatPlay;
