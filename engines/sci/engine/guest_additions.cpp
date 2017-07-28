@@ -954,7 +954,7 @@ void GuestAdditions::syncTorinVolumeFromScummVM(const int16 musicVolume, const i
 			const reg_t &soundObj = sound->value;
 
 			if (_segMan->isHeapObject(soundObj) && lookupSelector(_segMan, soundObj, selector, nullptr, nullptr) != kSelectorNone) {
-				invokeSelector(sound->value, SELECTOR(reSyncVol));
+				invokeSelector(sound->value, selector);
 			}
 			soundId = sound->succ;
 		}
