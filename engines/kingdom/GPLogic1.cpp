@@ -1307,6 +1307,7 @@ void Logic::GPL1_221() {
 			inventoryDel(2);
 			inventoryAdd(4);
 			_vm->_tsIconOnly = true;
+			_nodes[22] = 9;
 		}
 		_vm->_userInput = 0;
 		_currMap = 10;
