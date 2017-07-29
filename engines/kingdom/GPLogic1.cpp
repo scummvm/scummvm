@@ -1112,6 +1112,7 @@ void Logic::GPL1_200() {
 		_vm->playMovie(40);
 		_tideCntl = true;
 		_vm->drawPic(178);
+		_nodes[20] = 0;
 	}
 	_vm->playSound(42);
 	_currMap = 10;
