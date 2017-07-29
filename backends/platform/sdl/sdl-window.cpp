@@ -253,6 +253,13 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 		return false;
 	}
 
+#if defined(MACOSX)
+	// macOS windows with the flag SDL_WINDOW_FULLSCREEN_DESKTOP exiting their fullscreen space
+	// ignore the size set by SDL_SetWindowSize while they were in fullscreen mode.
+	// Instead, they revert back to their previous windowed mode size.
+	// This is a bug in SDL2: https://bugzilla.libsdl.org/show_bug.cgi?id=3719.
+	// TODO: Remove the call to SDL_SetWindowSize below once the SDL bug is fixed.
+
 	// In some cases at this point there may be a pending SDL resize event with the old size.
 	// This happens for example if we destroyed the window, or when switching between windowed
 	// and fullscreen modes. If we changed the window size here, this pending event will have the
@@ -260,6 +267,7 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	// resize event (SDL_WINDOWEVENT_SIZE_CHANGED) so that the last resize event we receive has
 	// the correct size. This fixes for exmample bug #9971: SDL2: Fullscreen to RTL launcher resolution
 	SDL_SetWindowSize(_window, width, height);
+#endif
 
 	_lastFlags = flags;
 
