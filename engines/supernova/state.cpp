@@ -540,8 +540,15 @@ void GameManager::mouseInput() {
 }
 
 void GameManager::mouseInput2() {
-	// STUB
-	// If animation off and timer expired, skip room animation
+	while (true) {
+		_vm->updateEvents();
+		// TODO: handle key input (e.g. alt+x, F-keys?)
+		if (_mouseClicked || _key) {
+			break;
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	}
 }
 
 void GameManager::mouseInput3() {
