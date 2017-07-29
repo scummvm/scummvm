@@ -1150,8 +1150,8 @@ void Logic::GPL1_210() {
 		_nodes[21] = 9;
 
 	if (_nodes[21] == 9) {
-		_nodes[21] = 9;
-		_vm->playMovie(209);
+		_nodes[21] = 9; // useless
+		_vm->playMovie(_vm->isDemo() ? 49 : 209);
 		_vm->playSound(38);
 		_currMap = 81;
 	} else {
