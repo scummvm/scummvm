@@ -950,11 +950,21 @@ void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, reg_t curV
 	const Object *var_container = obj;
 	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
 		var_container = segMan->getObject(obj->getSuperClassSelector());
-	if ((index >> 1) >= var_container->getVarCount()) {
-		// TODO: error, warning, debug?
-		return;
+
+	uint16 varSelector;
+	if (getSciVersion() == SCI_VERSION_3) {
+		varSelector = index;
+	} else {
+		index >>= 1;
+
+		if (index >= var_container->getVarCount()) {
+			// TODO: error, warning, debug?
+			return;
+		}
+
+		varSelector = var_container->getVarSelector(index);
 	}
-	uint16 varSelector = var_container->getVarSelector(index >> 1);
+
 	if (g_sci->checkSelectorBreakpoint(breakpointType, objp, varSelector)) {
 		// checkSelectorBreakpoint has already triggered the breakpoint.
 		// We just output the relevant data here.
