@@ -1150,7 +1150,8 @@ void Logic::GPL1_210() {
 		_nodes[21] = 9;
 
 	if (_nodes[21] == 9) {
-		_nodes[21] = 9; // useless
+		// Present in the original but useless
+		// _nodes[21] = 9;
 		_vm->playMovie(_vm->isDemo() ? 49 : 209);
 		_vm->playSound(38);
 		_currMap = 81;
@@ -1402,14 +1403,12 @@ void Logic::GPL1_241() {
 			_vm->playSound(30);
 			_vm->restoreAS();
 			inventoryAdd(5);
-			_vm->_userInput = 0;
 		}
 		break;
 	case 0x43A:
 		_statPlay = 242;
 		_vm->_zoom = 2;
 		_vm->processMap(24, _vm->_zoom);
-		_vm->_userInput = 0;
 		break;
 	case 0x43E:
 		_vm->_sound = _vm->_lastSound;
