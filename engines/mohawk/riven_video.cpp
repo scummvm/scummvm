@@ -236,7 +236,7 @@ void RivenVideo::playBlocking(int32 endTime) {
 	}
 
 	bool continuePlaying = true;
-	while (!endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
+	while (!endOfVideo() && !_vm->hasGameEnded() && continuePlaying) {
 		// Draw a frame
 		_vm->doFrame();
 

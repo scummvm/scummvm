@@ -117,6 +117,8 @@ private:
 	RivenCard *_card;
 	RivenStack *_stack;
 
+	bool _gameEnded;
+
 	// Variables
 	void initVars();
 
@@ -144,6 +146,16 @@ public:
 	bool _activatedSLST;
 	void runLoadDialog();
 	void delay(uint32 ms);
+
+	/**
+	 * Has the game ended, or has the user requested to quit?
+	 */
+	bool hasGameEnded() const;
+
+	/**
+	 * End the game gracefully
+	 */
+	void setGameEnded();
 };
 
 } // End of namespace Mohawk

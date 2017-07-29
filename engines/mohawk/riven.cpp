@@ -58,6 +58,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_showHotspots = false;
 	_activatedPLST = false;
 	_activatedSLST = false;
+	_gameEnded = false;
 	_extrasFile = nullptr;
 	_stack = nullptr;
 	_gfx = nullptr;
@@ -186,7 +187,7 @@ Common::Error MohawkEngine_Riven::run() {
 	}
 
 
-	while (!shouldQuit())
+	while (!hasGameEnded())
 		doFrame();
 
 	return Common::kNoError;
@@ -424,7 +425,7 @@ Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, ui
 void MohawkEngine_Riven::delay(uint32 ms) {
 	uint32 startTime = _system->getMillis();
 
-	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
+	while (_system->getMillis() < startTime + ms && !hasGameEnded()) {
 		doFrame();
 	}
 }
@@ -495,6 +496,14 @@ bool MohawkEngine_Riven::canLoadGameStateCurrently() {
 
 bool MohawkEngine_Riven::canSaveGameStateCurrently() {
 	return canLoadGameStateCurrently();
+}
+
+bool MohawkEngine_Riven::hasGameEnded() const {
+	return _gameEnded || shouldQuit();
+}
+
+void MohawkEngine_Riven::setGameEnded() {
+	_gameEnded = true;
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

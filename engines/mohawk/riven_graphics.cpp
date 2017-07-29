@@ -546,7 +546,7 @@ void RivenGraphics::runScheduledTransition() {
 		uint32 startTime = _vm->_system->getMillis();
 		uint32 timeElapsed = 0;
 		bool transitionComplete = false;
-		while (timeElapsed < _transitionDuration && !transitionComplete && !_vm->shouldQuit()) {
+		while (timeElapsed < _transitionDuration && !transitionComplete && !_vm->hasGameEnded()) {
 			transitionComplete = effect->drawFrame(timeElapsed);
 
 			_vm->doFrame();
@@ -557,7 +557,7 @@ void RivenGraphics::runScheduledTransition() {
 			effect->drawFrame(_transitionDuration);
 		}
 	} else {
-		for (uint frame = 1; frame <= _transitionFrames && !_vm->shouldQuit(); frame++) {
+		for (uint frame = 1; frame <= _transitionFrames && !_vm->hasGameEnded(); frame++) {
 			effect->drawFrame(frame);
 
 			_vm->doFrame();

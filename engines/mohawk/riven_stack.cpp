@@ -200,7 +200,7 @@ void RivenStack::runCredits(uint16 video, uint32 delay) {
 
 	RivenVideo *videoPtr = _vm->_video->getSlot(video);
 
-	while (!_vm->shouldQuit() && _vm->_gfx->getCurCreditsImage() <= 320) {
+	while (!_vm->hasGameEnded() && _vm->_gfx->getCurCreditsImage() <= 320) {
 		if (videoPtr->getCurFrame() >= (int32)videoPtr->getFrameCount() - 1) {
 			if (nextCreditsFrameStart == 0) {
 				// Set us up to start after delay ms
@@ -220,11 +220,7 @@ void RivenStack::runCredits(uint16 video, uint32 delay) {
 		_vm->doFrame();
 	}
 
-	if (_vm->shouldQuit()) {
-		return; // Allow return to launcher
-	}
-
-	_vm->quitGame();
+	_vm->setGameEnded();
 }
 
 void RivenStack::installCardTimer() {
@@ -348,7 +344,7 @@ void RivenStack::removeTimer() {
 
 bool RivenStack::pageTurn(RivenTransition transition) {
 	// Wait until the previous page turn sound completes
-	while (_vm->_sound->isEffectPlaying() && !_vm->shouldQuit()) {
+	while (_vm->_sound->isEffectPlaying() && !_vm->hasGameEnded()) {
 		if (!mouseIsDown()) {
 			return false;
 		}
