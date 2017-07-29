@@ -32,7 +32,8 @@ void Logic::GPL2_250() {
 	_vm->drawLocation();
 	dsAll();
 	if (_nodes[24] != 0 || highNode) {
-		_eye = true;
+		if (!_vm->isDemo())
+			_eye = true;
 		_vm->playMovie(72);
 		_vm->_aTimerFlag = false;
 		_vm->_aTimer = 114;
@@ -43,7 +44,8 @@ void Logic::GPL2_250() {
 	} else {
 		_vm->_frameStop = 67;
 		_vm->playMovie(72);
-		dsAll();
+		if (!_vm->isDemo())
+			dsAll();
 		_vm->playMovie(73);
 		dsAll();
 		_statPlay = 991;
