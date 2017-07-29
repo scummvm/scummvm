@@ -41,7 +41,7 @@ private:
 	CGameObject *_itemGlyphs[46];
 	CGameObject *_movie;
 	bool _isLoading;
-	int _field298;
+	int _titaniaBitFlags;
 private:
 	/**
 	 * Handles initial setup
@@ -161,7 +161,12 @@ public:
 	 */
 	void highlightItem(CGameObject *item);
 
-	CGameObject *getImage(int index);
+	/**
+	 * Gets the object, if any, containing the initial animation played for
+	 * an inventory item. For example, the animation when items transform
+	 * into pieces of Titania
+	 */
+	CGameObject *getFirstAnimation(int index);
 
 	/**
 	 * Play the animated movie for an object

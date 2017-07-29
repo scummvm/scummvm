@@ -28,7 +28,7 @@
 namespace Titanic {
 
 CPetInventory::CPetInventory() : CPetSection(),
-		_movie(nullptr), _isLoading(false), _field298(0) {
+		_movie(nullptr), _isLoading(false), _titaniaBitFlags(0) {
 	for (int idx = 0; idx < TOTAL_ITEMS; ++idx) {
 		_itemBackgrounds[idx] = _itemGlyphs[idx] = nullptr;
 	}
@@ -113,7 +113,7 @@ bool CPetInventory::isValid(CPetControl *petControl) {
 }
 
 void CPetInventory::load(SimpleFile *file, int param) {
-	_field298 = file->readNumber();
+	_titaniaBitFlags = file->readNumber();
 }
 
 void CPetInventory::postLoad() {
@@ -124,7 +124,7 @@ void CPetInventory::postLoad() {
 }
 
 void CPetInventory::save(SimpleFile *file, int indent) {
-	file->writeNumberLine(_field298, indent);
+	file->writeNumberLine(_titaniaBitFlags, indent);
 }
 
 void CPetInventory::enter(PetArea oldArea) {
@@ -209,7 +209,7 @@ int CPetInventory::getItemIndex(CGameObject *item) const {
 	return index;
 }
 
-CGameObject *CPetInventory::getImage(int index) {
+CGameObject *CPetInventory::getFirstAnimation(int index) {
 	if (index >= 0 && index < 46) {
 		int bits = 0;
 		switch (index) {
@@ -235,8 +235,10 @@ CGameObject *CPetInventory::getImage(int index) {
 			break;
 		}
 
-		if (!(bits & _field298)) {
-			_field298 = bits | _field298;
+		// Only return/show the transformation for Titania's parts the
+		// first time they're added to the inventory
+		if (!(bits & _titaniaBitFlags)) {
+			_titaniaBitFlags = bits | _titaniaBitFlags;
 			return _itemGlyphs[index];
 		}
 	}
