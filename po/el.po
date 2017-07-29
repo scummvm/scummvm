@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-27 05:43+0200\n"
+"POT-Creation-Date: 2017-07-29 18:24+0200\n"
 "PO-Revision-Date: 2017-04-28 11:12+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -689,7 +689,7 @@ msgid "Search:"
 msgstr "Αναζήτηση:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:433
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:434
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -699,7 +699,7 @@ msgstr "Φόρτωση παιχνιδιού:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:433 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:434 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -3392,7 +3392,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr ""
 "Το παιχνίδι βρίσκεται σε παύση. Πατήστε οποιοδήποτε κουμπί για να συνεχίσετε."
 
-#: engines/mohawk/riven.cpp:143
+#: engines/mohawk/riven.cpp:144
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
@@ -3400,7 +3400,7 @@ msgstr ""
 "Λείπει το εκτελέσιμο του Riven. Το εκτελέσιμο για Windows είναι 'riven.exe' "
 "ή 'rivendemo.exe'. "
 
-#: engines/mohawk/riven.cpp:144
+#: engines/mohawk/riven.cpp:145
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
@@ -3408,7 +3408,7 @@ msgstr ""
 "Η χρήση του αρχείου εγκατάστασης 'arcriven.z' λειτουργεί επίσης. Επιπλέον, "
 "μπορείτε να χρησιμοποιήσετε το εκτελέσιμο του Mac 'Riven'."
 
-#: engines/mohawk/riven.cpp:155
+#: engines/mohawk/riven.cpp:156
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
