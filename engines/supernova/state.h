@@ -40,12 +40,12 @@ struct GameState {
 	uint16 greatF;
 	int16  timeRobot;
 	int16  money;
-	char   coins;
-	char   shoes;
-	char   nameSeen;
-	char   destination;
-	char   benOverlay;
-	char   language;
+	byte   coins;
+	byte   shoes;
+	byte   nameSeen;
+	byte   destination;
+	byte   benOverlay;
+	byte   language;
 	bool   corridorSearch;
 	bool   alarmOn;
 	bool   terminalStripConnected;
