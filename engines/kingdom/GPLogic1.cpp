@@ -831,14 +831,16 @@ void Logic::GPL1_161() {
 		_eye = true;
 		_pouch = true;
 		_currMap = 85;
-				}
-				break;
+		}
+		break;
 	case 0x199: {
 		_vm->fadeToBlack1();
 		_vm->drawRect(4, 17, 228, 161, 0);
 		_replay = true;
+		// Not present in the demo, but it's a bug
 		int oldPMovie = _vm->_pMovie;
 		_vm->playMovie(207);
+		// Ditto
 		_vm->_pMovie = oldPMovie;
 		_vm->_asMode = false;
 		_vm->restoreAS();
@@ -846,8 +848,8 @@ void Logic::GPL1_161() {
 		_eye = true;
 		_pouch = true;
 		_currMap = 85;
-				}
-				break;
+		}
+		break;
 	case 0x19A:
 		_vm->fShowPic(110);
 		_vm->_bTimer = 190;
@@ -1026,7 +1028,7 @@ void Logic::GPL1_181() {
 	case 0x429:
 		if (!_nodes[18]) {
 			inventoryDel(1);
-			_nodes[18] = true;
+			_nodes[18] = 1;
 		}
 		_vm->playMovie(35);
 		_vm->_userInput = 0;
