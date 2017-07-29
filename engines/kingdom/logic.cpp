@@ -143,6 +143,26 @@ void Logic::initOpcodes() {
 	_opCodes[250] = &Logic::GPL2_250;
 	_opCodes[251] = &Logic::GPL2_251;
 	_opCodes[252] = &Logic::GPL2_252;
+
+	_opCodes[900] = &Logic::GPL4_900;
+	_opCodes[901] = &Logic::GPL4_901;
+	_opCodes[991] = &Logic::GPL4_991;
+	_opCodes[992] = &Logic::GPL4_992;
+	_opCodes[993] = &Logic::GPL4_993;
+	_opCodes[994] = &Logic::GPL4_994;
+
+	if (_vm->isDemo())
+		initOpcodesDemo();
+	else
+		initOpcodesFull();
+	
+}
+
+void Logic::initOpcodesDemo() {
+
+}
+
+void Logic::initOpcodesFull() {
 	_opCodes[260] = &Logic::GPL2_260;
 	_opCodes[261] = &Logic::GPL2_261;
 	_opCodes[270] = &Logic::GPL2_270;
@@ -203,25 +223,6 @@ void Logic::initOpcodes() {
 	_opCodes[490] = &Logic::GPL2_490;
 	_opCodes[491] = &Logic::GPL2_491;
 
-	_opCodes[900] = &Logic::GPL4_900;
-	_opCodes[901] = &Logic::GPL4_901;
-	_opCodes[991] = &Logic::GPL4_991;
-	_opCodes[992] = &Logic::GPL4_992;
-	_opCodes[993] = &Logic::GPL4_993;
-	_opCodes[994] = &Logic::GPL4_994;
-
-	if (_vm->isDemo())
-		initOpcodesDemo();
-	else
-		initOpcodesFull();
-	
-}
-
-void Logic::initOpcodesDemo() {
-
-}
-
-void Logic::initOpcodesFull() {
 	_opCodes[500] = &Logic::GPL3_500;
 	_opCodes[501] = &Logic::GPL3_501;
 	_opCodes[502] = &Logic::GPL3_502;
