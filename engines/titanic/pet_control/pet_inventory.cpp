@@ -30,7 +30,7 @@ namespace Titanic {
 CPetInventory::CPetInventory() : CPetSection(),
 		_movie(nullptr), _isLoading(false), _titaniaBitFlags(0) {
 	for (int idx = 0; idx < TOTAL_ITEMS; ++idx) {
-		_itemBackgrounds[idx] = _itemGlyphs[idx] = nullptr;
+		_itemBackgrounds[idx] = nullptr;
 	}
 }
 
@@ -153,10 +153,6 @@ bool CPetInventory::setPetControl(CPetControl *petControl) {
 			CString name = "3Pet" + g_vm->_itemNames[idx];
 			_itemBackgrounds[idx] = petControl->getHiddenObject(name);
 		}
-
-		if (!g_vm->_itemObjects[idx].empty()) {
-			_itemGlyphs[idx] = petControl->getHiddenObject(g_vm->_itemObjects[idx]);
-		}
 	}
 
 	tempRect = Rect(0, 0, 580, 15);
@@ -209,37 +205,48 @@ int CPetInventory::getItemIndex(CGameObject *item) const {
 	return index;
 }
 
-CGameObject *CPetInventory::getFirstAnimation(int index) {
+CGameObject *CPetInventory::getTransformAnimation(int index) {
 	if (index >= 0 && index < 46) {
+		// Certain items are pieces of Titania, and they only have the
+		// one-time initial transformation into Titania pieces
+		CString name;
 		int bits = 0;
+
 		switch (index) {
 		case 20:
+			name = "PetEarMorph";
 			bits = 4;
 			break;
 		case 21:
+			name = "PetEarMorph1";
 			bits = 8;
 			break;
 		case 22:
+			name = "PetEyeMorph";
 			bits = 1;
 			break;
 		case 23:
+			name = "PetEyeMorph";
 			bits = 2;
 			break;
 		case 36:
+			name = "PetMouthMorph";
 			bits = 32;
 			break;
 		case 39:
+			name = "PetNoseMorph";
 			bits = 16;
 			break;
 		default:
 			break;
 		}
 
-		// Only return/show the transformation for Titania's parts the
-		// first time they're added to the inventory
-		if (!(bits & _titaniaBitFlags)) {
+		if (!(bits & _titaniaBitFlags) && !name.empty()) {
+			CGameObject *obj = getPetControl()->getHiddenObject(name);
+			assert(obj);
+
 			_titaniaBitFlags = bits | _titaniaBitFlags;
-			return _itemGlyphs[index];
+			return obj;
 		}
 	}
 

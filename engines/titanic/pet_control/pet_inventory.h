@@ -162,11 +162,10 @@ public:
 	void highlightItem(CGameObject *item);
 
 	/**
-	 * Gets the object, if any, containing the initial animation played for
-	 * an inventory item. For example, the animation when items transform
-	 * into pieces of Titania
+	 * Gets the object, if any, containing the transformation animation played 
+	 * when pieces of Titania are added to the inventory for the first time.
 	 */
-	CGameObject *getFirstAnimation(int index);
+	CGameObject *getTransformAnimation(int index);
 
 	/**
 	 * Play the animated movie for an object

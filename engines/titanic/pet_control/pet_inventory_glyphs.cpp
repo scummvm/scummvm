@@ -207,7 +207,7 @@ void CPetInventoryGlyph::setItem(CGameObject *item, bool isLoading) {
 	if (_owner && item) {
 		int idx = populateItem(item, isLoading);
 		_repeated = static_cast<CPetInventoryGlyphs *>(_owner)->getBackground(idx);
-		_singular = static_cast<CPetInventory *>(getPetSection())->getFirstAnimation(idx);
+		_singular = static_cast<CPetInventory *>(getPetSection())->getTransformAnimation(idx);
 	}
 }
 

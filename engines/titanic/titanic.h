@@ -121,7 +121,6 @@ public:
 	CExeResources _exeResources;
 	StringArray _itemNames;
 	StringArray _itemDescriptions;
-	CString _itemObjects[TOTAL_ITEMS];
 	StringArray _itemIds;
 	StringArray _roomNames;
 	Strings _strings;
