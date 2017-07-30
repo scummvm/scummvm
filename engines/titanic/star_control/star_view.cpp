@@ -334,6 +334,9 @@ void CStarView::fn9() {
 }
 
 void CStarView::toggleMode() {
+	if (!_photoSurface)
+		return;
+
 	_showingPhoto = !_showingPhoto;
 	if (_starField)
 		_starField->setMode(_showingPhoto ? MODE_PHOTO : MODE_STARFIELD);
