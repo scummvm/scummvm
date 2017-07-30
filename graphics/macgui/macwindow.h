@@ -228,7 +228,7 @@ public:
 	 * @param g See BaseMacWindow.
 	 * @param forceRedraw If true, the borders are guarranteed to redraw.
 	 */
-	bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
 
 	/**
 	 * Mutator to change the active state of the window.
@@ -285,10 +285,7 @@ public:
 	 */
 	void setCloseable(bool closeable);
 
-	WindowClick isInBorder(int x, int y);
-
 private:
-	void drawBorder();
 	void prepareBorderSurface(ManagedSurface *g);
 	void drawSimpleBorder(ManagedSurface *g);
 	void drawBorderFromSurface(ManagedSurface *g);
@@ -302,10 +299,17 @@ private:
 	bool isInResizeButton(int x, int y);
 	WindowClick isInScroll(int x, int y);
 
-private:
+protected:
+	void drawBorder();
+	WindowClick isInBorder(int x, int y);
+
+protected:
 	ManagedSurface _borderSurface;
 	ManagedSurface _composeSurface;
 
+	bool _borderIsDirty;
+
+private:
 	MacWindowBorder _macBorder;
 
 	int _pattern;
@@ -314,7 +318,6 @@ private:
 	bool _scrollable;
 	bool _resizable;
 	bool _active;
-	bool _borderIsDirty;
 
 	bool _closeable;
 

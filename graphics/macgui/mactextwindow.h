@@ -28,6 +28,10 @@
 
 namespace Graphics {
 
+enum {
+	kCursorHeight = 12
+};
+
 struct SelectedText {
 	int startX, startY;
 	int endX, endY;
@@ -49,6 +53,13 @@ public:
 
 	virtual bool processEvent(Common::Event &event);
 
+	/**
+	 * Similar to that described in BaseMacWindow.
+	 * @param g See BaseMacWindow.
+	 * @param forceRedraw If true, the borders are guarranteed to redraw.
+	 */
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
+
 	void setTextWindowFont(const MacFont *macFont);
 	const MacFont *getTextWindowFont();
 
@@ -59,8 +70,20 @@ public:
 
 	void setSelection(int selStartX, int selStartY, int selEndX, int selEndY);
 
+	void undrawCursor();
+
 private:
 	void drawInput();
+
+public:
+	int _cursorX, _cursorY;
+	bool _cursorState;
+
+	bool _cursorDirty;
+	Common::Rect _cursorRect;
+	bool _cursorOff;
+
+	int _scrollPos;
 
 private:
 	MacText *_mactext;
@@ -72,6 +95,7 @@ private:
 	int _maxWidth;
 	Common::String _inputText;
 	uint _inputTextHeight;
+
 };
 
 } // End of namespace Graphics
