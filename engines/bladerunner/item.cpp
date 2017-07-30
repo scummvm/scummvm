@@ -86,7 +86,7 @@ bool Item::tick(Common::Rect *screenRect, bool special) {
 
 	Vector3 position(_position.x, -_position.z, _position.y);
 	int animationId = _animationId + (special ? 1 : 0);
-	_vm->_sliceRenderer->drawInWorld(animationId, 0, position, M_PI - _angle, 1.0f, _vm->_surface2, _vm->_zbuffer->getData());
+	_vm->_sliceRenderer->drawInWorld(animationId, 0, position, M_PI - _angle, 1.0f, _vm->_surfaceGame, _vm->_zbuffer->getData());
 	_vm->_sliceRenderer->getScreenRectangle(&_screenRectangle, animationId, 0, position, M_PI - _angle, 1.0f);
 
 	if (!_screenRectangle.isEmpty()) {

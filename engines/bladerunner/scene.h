@@ -89,7 +89,7 @@ public:
 
 	bool open(int setId, int sceneId, bool isLoadingGame);
 	bool close(bool isLoadingGame);
-	int  advanceFrame(Graphics::Surface &surface);
+	int  advanceFrame();
 	void setActorStart(Vector3 position, int facing);
 
 	void loopSetDefault(int a);

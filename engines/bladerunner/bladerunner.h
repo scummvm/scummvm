@@ -125,8 +125,10 @@ public:
 
 	int in_script_counter;
 
-	Graphics::Surface  _surface1;
-	Graphics::Surface  _surface2;
+	Graphics::Surface  _surfaceGame;
+	Graphics::Surface  _surfaceInterface;
+	Graphics::Surface  _surface4;
+
 	ZBuffer           *_zbuffer;
 
 	Common::RandomSource _rnd;

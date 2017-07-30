@@ -75,7 +75,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (_vqaPlayer != nullptr)
 		delete _vqaPlayer;
 
-	_vqaPlayer = new VQAPlayer(_vm);
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceInterface);
 
 	Common::String sceneName = _vm->_gameInfo->getSceneName(sceneId);
 	if (!_vm->_sceneScript->Open(sceneName))
@@ -105,7 +105,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		_defaultLoopSet = true;
 		_specialLoopAtEnd = false;
 	}
-	_vm->_scene->advanceFrame(_vm->_surface1);
+	_vm->_scene->advanceFrame();
 
 	_vm->_playerActor->setAtXYZ(_actorStartPosition, _actorStartFacing);
 	_vm->_playerActor->setSetId(setId);
@@ -168,10 +168,10 @@ bool Scene::close(bool isLoadingGame) {
 	return result;
 }
 
-int Scene::advanceFrame(Graphics::Surface &surface) {
+int Scene::advanceFrame() {
 	int frame = _vqaPlayer->update();
 	if (frame >= 0) {
-		surface.copyFrom(*_vqaPlayer->getSurface());
+		_vm->_surfaceGame.copyRectToSurface(_vm->_surfaceInterface.getPixels(), _vm->_surfaceInterface.pitch, 0, 0, 640, 480);
 		_vqaPlayer->updateZBuffer(_vm->_zbuffer);
 		_vqaPlayer->updateView(_vm->_view);
 		_vqaPlayer->updateLights(_vm->_lights);

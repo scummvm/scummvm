@@ -99,7 +99,7 @@ int VQAPlayer::update() {
 				_callbackLoopEnded(_callbackData, 0, _loop);
 			}
 		}
-		_surface = nullptr;
+
 		return -1;
 	}
 
@@ -114,7 +114,7 @@ int VQAPlayer::update() {
 	if (now >= _frameNextTime) {
 		int frame = _frameNext;
 		_decoder.readFrame(_frameNext, 0x2);
-		_surface = _decoder.decodeVideoFrame();
+		_decoder.decodeVideoFrame();
 
 		if (_hasAudio) {
 			if (!_audioStarted) {
@@ -142,12 +142,7 @@ int VQAPlayer::update() {
 		return frame;
 	}
 
-	_surface = nullptr;
 	return -1;
-}
-
-const Graphics::Surface *VQAPlayer::getSurface() const {
-	return _surface;
 }
 
 void VQAPlayer::updateZBuffer(ZBuffer *zbuffer) {

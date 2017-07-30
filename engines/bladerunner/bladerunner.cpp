@@ -110,9 +110,6 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	// delete _audioPlayer;
 	// delete _ambientSounds;
 
-	// _surface1.free();
-	// _surface2.free();
-
 	delete _zbuffer;
 
 	delete _itemPickup;
@@ -154,7 +151,9 @@ Common::Error BladeRunnerEngine::run() {
 bool BladeRunnerEngine::startup(bool hasSavegames) {
 	bool r;
 
-	_surface1.create(640, 480, createRGB555());
+	_surfaceGame.create(640, 480, createRGB555());
+	_surfaceInterface.create(640, 480, createRGB555());
+	_surface4.create(640, 480, createRGB555());
 
 	r = openArchive("STARTUP.MIX");
 	if (!r)
@@ -506,8 +505,9 @@ void BladeRunnerEngine::shutdown() {
 	_gameInfo = nullptr;
 
 	// TODO: Delete graphics surfaces here
-	_surface1.free();
-	_surface2.free();
+	_surface4.free();
+	_surfaceInterface.free();
+	_surfaceGame.free();
 
 	if (isArchiveOpen("STARTUP.MIX"))
 		closeArchive("STARTUP.MIX");
@@ -522,9 +522,9 @@ bool BladeRunnerEngine::loadSplash() {
 	if (!img.open("SPLASH.IMG"))
 		return false;
 
-	img.copyToSurface(&_surface1);
+	img.copyToSurface(&_surfaceGame);
 
-	_system->copyRectToScreen(_surface1.getPixels(), _surface1.pitch, 0, 0, _surface1.w, _surface1.h);
+	_system->copyRectToScreen(_surfaceGame.getPixels(), _surfaceGame.pitch, 0, 0, _surfaceGame.w, _surfaceGame.h);
 	_system->updateScreen();
 
 	return true;
@@ -598,13 +598,13 @@ void BladeRunnerEngine::gameTick() {
 		_ambientSounds->tick();
 
 		bool backgroundChanged = false;
-		int frame = _scene->advanceFrame(_surface1);
+		int frame = _scene->advanceFrame();
 		if (frame >= 0) {
 			_sceneScript->SceneFrameAdvanced(frame);
 			backgroundChanged = true;
 		}
 		(void)backgroundChanged;
-		_surface2.copyFrom(_surface1);
+		_surfaceGame.copyRectToSurface(_surfaceInterface.getPixels(), _surfaceInterface.pitch, 0, 0, 640, 480);
 		// TODO: remove zbuffer draw
 		//_surface2.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
 
@@ -638,7 +638,7 @@ void BladeRunnerEngine::gameTick() {
 
 			Common::Point p = _eventMan->getMousePos();
 			_mouse->tick(p.x, p.y);
-			_mouse->draw(_surface2, p.x, p.y);
+			_mouse->draw(_surfaceGame, p.x, p.y);
 
 			// TODO: Process AUD
 			// TODO: Footstep sound
@@ -762,7 +762,7 @@ void BladeRunnerEngine::gameTick() {
 			}
 #endif
 
-			_system->copyRectToScreen((const byte *)_surface2.getBasePtr(0, 0), _surface2.pitch, 0, 0, 640, 480);
+			_system->copyRectToScreen(_surfaceGame.getPixels(), _surfaceGame.pitch, 0, 0, 640, 480);
 			_system->updateScreen();
 			_system->delayMillis(10);
 		}
