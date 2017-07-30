@@ -93,6 +93,7 @@ public:
 			// 0 pixels between the lines by default
 	~MacText();
 
+	int getInterLinear() { return _interLinear; }
 	void setInterLinear(int interLinear);
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
@@ -103,6 +104,7 @@ public:
 	void replaceLastLine(Common::String str);
 	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }
+	int getTextHeight() { return _textMaxHeight; }
 
 	void render();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
