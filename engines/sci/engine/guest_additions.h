@@ -198,6 +198,17 @@ private:
 	 * custom NewGame class semantics.
 	 */
 	reg_t promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const;
+
+	/**
+	 * Prompts the user to save or load a game.
+	 *
+	 * @param isSave If true, the prompt is for saving.
+	 * @param outDescription Will be filled with the save game description.
+	 * Optional for loads, required for saves.
+	 * @param forcedSaveNo During delayed restore, force the returned save game
+	 * number to this value.
+	 */
+	int runSaveRestore(const bool isSave, const reg_t outDescription, const int forcedSaveNo = -1) const;
 #endif
 
 #pragma mark -

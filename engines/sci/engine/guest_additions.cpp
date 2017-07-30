@@ -421,70 +421,65 @@ reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) co
 }
 
 reg_t GuestAdditions::promptSaveRestoreDefault(EngineState *s, int argc, reg_t *argv) const {
-	const bool isSave = (argc > 0);
-	int saveNo;
-
-	if (isSave) {
-		GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
-		saveNo = dialog.runModalWithCurrentTarget();
-		if (saveNo != -1) {
-			reg_t descriptionId;
-			if (_segMan->isObject(argv[0])) {
-				descriptionId = readSelector(_segMan, argv[0], SELECTOR(data));
-			} else {
-				descriptionId = argv[0];
-			}
-			SciArray &description = *_segMan->lookupArray(descriptionId);
-			Common::String descriptionString = dialog.getResultString();
-			if (descriptionString.empty())
-				descriptionString = dialog.createDefaultSaveDescription(saveNo - 1);
-			description.fromString(descriptionString);
-		}
-	} else {
-		if (s->_delayedRestoreGameId != -1) {
-			saveNo = s->_delayedRestoreGameId;
-		} else {
-			GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
-			saveNo = dialog.runModalWithCurrentTarget();
-		}
-	}
-
-	if (saveNo > 0) {
-		// The autosave slot in ScummVM takes up slot 0, but in SCI the first
-		// non-autosave save game number needs to be 0, so reduce the save
-		// number here to match what would come from the normal SCI save/restore
-		// dialog. There is additional special code for handling the autosave
-		// game inside of kRestoreGame32.
-		--saveNo;
-	}
-
-	return make_reg(0, saveNo);
+	return make_reg(0, runSaveRestore(argc > 0, argc > 0 ? argv[0] : NULL_REG, s->_delayedRestoreGameId));
 }
 
 reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const {
 	const bool isSave = (argc > 0 && (bool)argv[0].toSint16());
-	int saveNo;
 
+	reg_t descriptionId = NULL_REG;
 	if (isSave) {
-		GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
+		_segMan->allocateArray(kArrayTypeString, 0, &descriptionId);
+	}
+
+	const int saveNo = runSaveRestore(isSave, descriptionId, s->_delayedRestoreGameId);
+
+	if (saveNo != -1) {
+		assert(s->variablesMax[VAR_LOCAL] > 2);
+		writeSelector(_segMan, s->variables[VAR_LOCAL][1], SELECTOR(data), descriptionId);
+		s->variables[VAR_LOCAL][2] = make_reg(0, saveNo);
+		s->variables[VAR_LOCAL][3] = make_reg(0, isSave ? 1 : 0);
+	} else if (isSave) {
+		_segMan->freeArray(descriptionId);
+	}
+
+	return make_reg(0, saveNo != -1);
+}
+
+int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, const int forcedSaveNo) const {
+	int saveNo;
+	Common::String descriptionString;
+
+	if (!isSave && forcedSaveNo != -1) {
+		saveNo = forcedSaveNo;
+	} else {
+		const char *title;
+		const char *action;
+		if (isSave) {
+			title = _("Save game:");
+			action = _("Save");
+		} else {
+			title = _("Restore game:");
+			action = _("Restore");
+		}
+
+		GUI::SaveLoadChooser dialog(title, action, isSave);
 		saveNo = dialog.runModalWithCurrentTarget();
 		if (saveNo != -1) {
-			reg_t descriptionId = s->variables[VAR_LOCAL][1];
-			reg_t dataId;
-			SciArray &description = *_segMan->allocateArray(kArrayTypeString, 0, &dataId);
-			Common::String descriptionString = dialog.getResultString();
-			if (descriptionString.empty())
+			descriptionString = dialog.getResultString();
+			if (descriptionString.empty()) {
 				descriptionString = dialog.createDefaultSaveDescription(saveNo - 1);
-			description.fromString(descriptionString);
-			writeSelector(_segMan, descriptionId, SELECTOR(data), dataId);
+			}
 		}
-	} else {
-		if (s->_delayedRestoreGameId != -1) {
-			saveNo = s->_delayedRestoreGameId;
-		} else {
-			GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
-			saveNo = dialog.runModalWithCurrentTarget();
+	}
+
+	assert(!isSave || !outDescription.isNull());
+	if (!outDescription.isNull()) {
+		if (_segMan->isObject(outDescription)) {
+			outDescription = readSelector(_segMan, outDescription, SELECTOR(data));
 		}
+		SciArray &description = *_segMan->lookupArray(outDescription);
+		description.fromString(descriptionString);
 	}
 
 	if (saveNo > 0) {
@@ -496,13 +491,7 @@ reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *ar
 		--saveNo;
 	}
 
-	if (saveNo != -1) {
-		assert(s->variablesMax[VAR_LOCAL] > 2);
-		s->variables[VAR_LOCAL][2] = make_reg(0, saveNo);
-		s->variables[VAR_LOCAL][3] = make_reg(0, isSave ? 1 : 0);
-	}
-
-	return make_reg(0, saveNo != -1);
+	return saveNo;
 }
 
 #endif
