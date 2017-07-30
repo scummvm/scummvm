@@ -284,9 +284,51 @@ static const uint16 sci2VolumeResetPatch[] = {
 	PATCH_END
 };
 
+// At least Gabriel Knight 1 and Police Quest 4 floppy have a broken Str::strip inside script 64918.
+// The code never passes over the actual string to kStringTrim, so that would not work and also trigger
+// a signature mismatch.
+// Localized version of Police Quest 4 were also affected.
+// Gabriel Knight although affected doesn't seem to ever call the code, so there is no reason to patch it.
+// Police Quest 4 CD got this fixed.
+static const uint16 sci2BrokenStrStripSignature[] = {
+	SIG_MAGICDWORD,
+	0x85, 0x06,                         // lat temp[6]
+	0x31, 0x10,                         // bnt [jump to code that passes 2 parameters]
+	0x38, SIG_UINT16(0x00c2),           // pushi 00c2 (callKernel)
+	0x38, SIG_UINT16(3),                // pushi 03
+	0x39, 0x0e,                         // pushi 0e
+	0x8d, 0x0b,                         // lst temp[0b]
+	0x36,                               // push
+	0x54, SIG_UINT16(0x000a),           // self 0a
+	0x33, 0x0b,                         // jmp to [ret]
+	// 2 parameter code
+	0x38, SIG_UINT16(0x00c2),           // pushi 00c2
+	0x7a,                               // push2
+	0x39, 0x0e,                         // pushi 0e
+	0x8d, 0x0b,                         // lst temp[0b]
+	0x54, SIG_UINT16(0x0008),           // self 08
+	SIG_END
+};
+
+static const uint16 sci2BrokenStrStripPatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x85, 0x06,                         // lat temp[6] (once more]
+	PATCH_ADDTOOFFSET(+3),              // jump over pushi callKernel
+	0x39, 0x04,                         // pushi 04
+	0x39, 0x0e,                         // pushi 0e
+	// Attention: data is 0x14 in PQ4 CD, in floppy it's 0x12
+	0x67, 0x12,                         // pTos data (pass actual data)
+	0x8d, 0x0b,                         // lst temp[0b]
+	0x36,                               // push
+	0x54, PATCH_UINT16(0x000c),         // self 0c
+	0x48,                               // ret
+	PATCH_END
+};
+
+
 // Torin/LSL7-specific version of sci2NumSavesSignature1/2
 // Applies to at least: English CD
-static const uint16 torinNumSavesSignature[] = {
+static const uint16 torinLarry7NumSavesSignature[] = {
 	SIG_MAGICDWORD,
 	0x36,       // push
 	0x35, 0x14, // ldi 20
@@ -294,7 +336,7 @@ static const uint16 torinNumSavesSignature[] = {
 	SIG_END
 };
 
-static const uint16 torinNumSavesPatch[] = {
+static const uint16 torinLarry7NumSavesPatch[] = {
 	PATCH_ADDTOOFFSET(+1), // push
 	0x35, 0x63,            // ldi 99
 	PATCH_END
@@ -2743,7 +2785,7 @@ static const SciScriptPatcherEntry larry7Signatures[] = {
 	{  true,   540, "fix make cheese cutscene (priority)",   1, larry7SignatureMakeCheesePriority,  larry7PatchMakeCheesePriority },
 	{  true, 64000, "disable volume reset on startup 1/2",   1, larry7VolumeResetSignature1,        larry7VolumeResetPatch1 },
 	{  true, 64000, "disable volume reset on startup 2/2",   1, larry7VolumeResetSignature2,        larry7VolumeResetPatch2 },
-	{  true, 64866, "increase number of save games",         1, torinNumSavesSignature,             torinNumSavesPatch },
+	{  true, 64866, "increase number of save games",         1, torinLarry7NumSavesSignature,       torinLarry7NumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -4035,6 +4077,7 @@ static const SciScriptPatcherEntry pq3Signatures[] = {
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
+	{  true, 64918, "Str::strip fix for floppy version",           1, sci2BrokenStrStripSignature,      sci2BrokenStrStripPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
@@ -6042,7 +6085,7 @@ static const SciScriptPatcherEntry torinSignatures[] = {
 	{  true, 20700, "fix bad heap in PointSoft release",           1, torinPointSoft20700HeapSignature,  torinPointSoft20700HeapPatch },
 	{  true, 64000, "disable volume reset on startup 1/2",         1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
 	{  true, 64000, "disable volume reset on startup 2/2",         1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
-	{  true, 64866, "increase number of save games",               1, torinNumSavesSignature,            torinNumSavesPatch },
+	{  true, 64866, "increase number of save games",               1, torinLarry7NumSavesSignature,      torinLarry7NumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
