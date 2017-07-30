@@ -367,6 +367,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_PQ4,           240, 64964, -1,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // when encountering Sherry and the reporter outside the morgue at the end of day 3
 	{ GID_PQ4,          2010,  2010, -1,         "enemyShip1", "cantBeHere",                      NULL,     7, { WORKAROUND_FAKE,   0 } }, // when crashing into a UFO in the asteroids minigame in the Shortstop Bar
 	{ GID_PQ4,          2010,  2010, -1,         "enemyShip2", "cantBeHere",                      NULL,     7, { WORKAROUND_FAKE,   0 } }, // when crashing into a UFO in the asteroids minigame in the Shortstop Bar
+	{ GID_PQ4,            -1, 64950, -1,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // floppy: when walking within room 395 (city hall, day 3)
 	{ GID_PQSWAT,         -1, 64950,  0,                 NULL, "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // Using any menus in-game
 	{ GID_PQSWAT,         -1,    73,  0,   "theLashInterface", "transmit",                        NULL,     0, { WORKAROUND_FAKE,   0 } }, // Clicking the transmit button in LASH
 	{ GID_PQSWAT,       2990,  2990,  0,    "talkToSchienbly", "changeState",                     NULL,     1, { WORKAROUND_FAKE,   0 } }, // When the video of Schienbly talking for the first time ends
