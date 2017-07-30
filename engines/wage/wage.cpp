@@ -134,6 +134,8 @@ Common::Error WageEngine::run() {
 		_gui->regenWeaponsMenu();
 	}
 
+	_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
+
 	Common::String input("look");
 	processTurn(&input, NULL);
 	_temporarilyHidden = false;
@@ -440,6 +442,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 	if (playerScene != _lastScene) {
 		_temporarilyHidden = true;
 		_gui->clearOutput();
+		_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
 		regen();
 		Common::String input("look");
 		processTurnInternal(&input, NULL);
