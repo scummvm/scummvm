@@ -1591,16 +1591,31 @@ void KingdomGame::cursorTypeExit() {
 }
 
 int KingdomGame::checkMouseMapAS() {
-	for (int i = 0; i < 16; i++) {
-		if (_cursorX >= _mouseMapAS[_logic->_currMap][i]._minX && _cursorX < _mouseMapAS[_logic->_currMap][i]._maxX
-			&& _cursorY >= _mouseMapAS[_logic->_currMap][i]._minY && _cursorY < _mouseMapAS[_logic->_currMap][i]._maxY)
-			return _mouseMapAS[_logic->_currMap][i]._mouseValue;
-	}
-	if (_logic->_currMap == 11) {
+	if (isDemo()) {
 		for (int i = 0; i < 16; i++) {
-			if (_cursorX >= _mouseMapAS[12][i]._minX && _cursorX < _mouseMapAS[12][i]._maxX
-				&& _cursorY >= _mouseMapAS[12][i]._minY && _cursorY < _mouseMapAS[12][i]._maxY)
-				return _mouseMapAS[12][i]._mouseValue;
+			if (_cursorX >= _mouseMapASDemo[_logic->_currMap][i]._minX && _cursorX < _mouseMapASDemo[_logic->_currMap][i]._maxX
+				&& _cursorY >= _mouseMapASDemo[_logic->_currMap][i]._minY && _cursorY < _mouseMapASDemo[_logic->_currMap][i]._maxY)
+				return _mouseMapASDemo[_logic->_currMap][i]._mouseValue;
+		}
+		if (_logic->_currMap == 11) {
+			for (int i = 0; i < 16; i++) {
+				if (_cursorX >= _mouseMapASDemo[12][i]._minX && _cursorX < _mouseMapASDemo[12][i]._maxX
+					&& _cursorY >= _mouseMapASDemo[12][i]._minY && _cursorY < _mouseMapASDemo[12][i]._maxY)
+					return _mouseMapASDemo[12][i]._mouseValue;
+			}
+		}
+	} else {
+		for (int i = 0; i < 16; i++) {
+			if (_cursorX >= _mouseMapASFull[_logic->_currMap][i]._minX && _cursorX < _mouseMapASFull[_logic->_currMap][i]._maxX
+				&& _cursorY >= _mouseMapASFull[_logic->_currMap][i]._minY && _cursorY < _mouseMapASFull[_logic->_currMap][i]._maxY)
+				return _mouseMapASFull[_logic->_currMap][i]._mouseValue;
+		}
+		if (_logic->_currMap == 11) {
+			for (int i = 0; i < 16; i++) {
+				if (_cursorX >= _mouseMapASFull[12][i]._minX && _cursorX < _mouseMapASFull[12][i]._maxX
+					&& _cursorY >= _mouseMapASFull[12][i]._minY && _cursorY < _mouseMapASFull[12][i]._maxY)
+					return _mouseMapASFull[12][i]._mouseValue;
+			}
 		}
 	}
 	return -1;
