@@ -101,6 +101,7 @@ public:
 	void appendTextDefault(Common::String str);
 	void clearText();
 	void replaceLastLine(Common::String str);
+	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }
 
 	void render();

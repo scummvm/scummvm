@@ -410,4 +410,14 @@ void MacText::replaceLastLine(Common::String str) {
 	render(oldLen, _textLines.size());
 }
 
+void MacText::removeLastLine() {
+	if (!_textLines.size())
+		return;
+
+	int h = getLineHeight(_textLines.size() - 1) + _interLinear;
+
+	_textLines.pop_back();
+	_textMaxHeight -= h;
+}
+
 } // End of namespace Graphics
