@@ -95,7 +95,7 @@ void Dni::o_handPage(uint16 var, const ArgumentsArray &args) {
 	// Used in Card 5014 (Atrus)
 
 	// Find Atrus movie
-	VideoEntryPtr atrus = _vm->_video->findVideo(_video);
+	VideoEntryPtr atrus = _vm->findVideo(_video, kDniStack);
 
 	// Good ending and Atrus asked to give page
 	if (_globals.ending == 1 && atrus && atrus->getTime() > (uint)Audio::Timestamp(0, 6801, 600).msecs()) {
@@ -115,11 +115,8 @@ void Dni::o_handPage(uint16 var, const ArgumentsArray &args) {
 
 void Dni::atrusLeft_run() {
 	if (_vm->_system->getMillis() > _atrusLeftTime + 63333) {
-		_video = _vm->wrapMovieFilename("atrus2", kDniStack);
-		VideoEntryPtr atrus = _vm->_video->playMovie(_video);
-		if (!atrus)
-			error("Failed to open '%s'", _video.c_str());
-
+		_video = "atrus2";
+		VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
 		atrus->moveTo(215, 77);
 		atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 98000, 600));
 
@@ -138,10 +135,7 @@ void Dni::atrusLeft_run() {
 
 void Dni::loopVideo_run() {
 	if (!_vm->_video->isVideoPlaying()) {
-		VideoEntryPtr atrus = _vm->_video->playMovie(_video);
-		if (!atrus)
-			error("Failed to open '%s'", _video.c_str());
-
+		VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
 		atrus->moveTo(215, 77);
 		atrus->setBounds(Audio::Timestamp(0, _loopStart, 600), Audio::Timestamp(0, _loopEnd, 600));
 		atrus->setLooping(true);
@@ -157,22 +151,16 @@ void Dni::atrus_run() {
 	} else if (_globals.ending == 1) {
 		// Atrus asking for page
 		if (!_vm->_video->isVideoPlaying()) {
-			_video = _vm->wrapMovieFilename("atr1page", kDniStack);
-			VideoEntryPtr atrus = _vm->_video->playMovie(_video);
-			if (!atrus)
-				error("Failed to open '%s'", _video.c_str());
-
+			_video = "atr1page";
+			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
 			atrus->moveTo(215, 77);
 			atrus->setLooping(true);
 			atrus->setBounds(Audio::Timestamp(0, 7388, 600), Audio::Timestamp(0, 14700, 600));
 		}
 	} else if (_globals.ending != 3 && _globals.ending != 4) {
 		if (_globals.heldPage == 13) {
-			_video = _vm->wrapMovieFilename("atr1page", kDniStack);
-			VideoEntryPtr atrus = _vm->_video->playMovie(_video);
-			if (!atrus)
-				error("Failed to open '%s'", _video.c_str());
-
+			_video = "atr1page";
+			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
 			atrus->moveTo(215, 77);
 			atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 14700, 600));
 
@@ -184,11 +172,8 @@ void Dni::atrus_run() {
 			_globals.ending = 1;
 
 		} else {
-			_video = _vm->wrapMovieFilename("atr1nopg", kDniStack);
-			VideoEntryPtr atrus = _vm->_video->playMovie(_video);
-			if (!atrus)
-				error("Failed to open '%s'", _video.c_str());
-
+			_video = "atr1nopg";
+			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
 			atrus->moveTo(215, 77);
 			atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 46175, 600));
 
@@ -200,10 +185,7 @@ void Dni::atrus_run() {
 			_globals.ending = 3;
 		}
 	} else if (!_vm->_video->isVideoPlaying()) {
-		VideoEntryPtr atrus = _vm->_video->playMovie(_vm->wrapMovieFilename("atrwrite", kDniStack));
-		if (!atrus)
-			error("Failed to open atrwrite movie");
-
+		VideoEntryPtr atrus = _vm->playMovie("atrwrite", kDniStack);
 		atrus->moveTo(215, 77);
 		atrus->setLooping(true);
 	}

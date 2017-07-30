@@ -63,7 +63,7 @@ enum {
 };
 
 // Myst Stacks
-enum {
+enum MystStack {
 	kChannelwoodStack = 0,	// Channelwood Age
 	kCreditsStack,			// Credits
 	kDemoStack,				// Demo Main Menu
@@ -181,8 +181,6 @@ public:
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id) override;
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
 
-	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
-
 	void changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
 	void changeToCard(uint16 card, TransitionType transition);
 	uint16 getCurCard() { return _curCard; }
@@ -228,8 +226,10 @@ public:
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState() { return _cache.enabled; }
 
-	void playMovieBlocking(const Common::String &filename, uint16 x, uint16 y);
-	void playMovieBlockingCentered(const Common::String &filename);
+	VideoEntryPtr playMovie(const Common::String &name, MystStack stack);
+	VideoEntryPtr findVideo(const Common::String &name, MystStack stack);
+	void playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y);
+	void playFlybyMovie(const Common::String &name);
 	void waitUntilMovieEnds(const VideoEntryPtr &video);
 
 	void playSoundBlocking(uint16 id);
@@ -269,6 +269,9 @@ private:
 	void loadResources();
 	void drawResourceRects();
 	void checkCurrentResource();
+	void updateActiveResource();
+
+	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
 
 	/** Area of type kMystAreaHover being hovered by the mouse, if any */
 	MystAreaHover *_hoverResource;
@@ -291,8 +294,6 @@ private:
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
 
 	void pauseEngineIntern(bool) override;
-
-	void updateActiveResource();
 };
 
 template<class T>

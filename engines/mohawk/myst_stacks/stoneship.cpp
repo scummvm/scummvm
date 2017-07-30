@@ -417,12 +417,10 @@ void Stoneship::o_cabinBookMovie(uint16 var, const ArgumentsArray &args) {
 	uint16 startTime = args[0];
 	uint16 endTime = args[1];
 
-	VideoEntryPtr book = _vm->_video->playMovie(_vm->wrapMovieFilename("bkroom", kStoneshipStack));
-	if (!book)
-		error("Failed to open bkroom movie");
-
+	VideoEntryPtr book = _vm->playMovie("bkroom", kStoneshipStack);
 	book->moveTo(159, 99);
 	book->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
+
 	_vm->waitUntilMovieEnds(book);
 }
 
@@ -642,36 +640,27 @@ void Stoneship::o_compassButton(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::o_chestValveVideos(uint16 var, const ArgumentsArray &args) {
-	Common::String movie = _vm->wrapMovieFilename("ligspig", kStoneshipStack);
-
 	_vm->_sound->playEffect(2132);
 
 	if (_state.chestValveState) {
 		// Valve closing
-		VideoEntryPtr valve = _vm->_video->playMovie(movie);
-		if (!valve)
-			error("Failed to open '%s'", movie.c_str());
-
+		VideoEntryPtr valve = _vm->playMovie("ligspig", kStoneshipStack);
 		valve->moveTo(97, 267);
 		valve->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 350, 600));
+
 		_vm->waitUntilMovieEnds(valve);
 	} else if (_state.chestWaterState) {
 		// Valve opening, spilling water
-		VideoEntryPtr valve = _vm->_video->playMovie(movie);
-		if (!valve)
-			error("Failed to open '%s'", movie.c_str());
-
+		VideoEntryPtr valve = _vm->playMovie("ligspig", kStoneshipStack);
 		valve->moveTo(97, 267);
 		valve->setBounds(Audio::Timestamp(0, 350, 600), Audio::Timestamp(0, 650, 600));
+
 		_vm->waitUntilMovieEnds(valve);
 
 		_vm->_sound->playEffect(3132);
 
 		for (uint i = 0; i < 25; i++) {
-			valve = _vm->_video->playMovie(movie);
-			if (!valve)
-				error("Failed to open '%s'", movie.c_str());
-
+			valve = _vm->playMovie("ligspig", kStoneshipStack);
 			valve->moveTo(97, 267);
 			valve->setBounds(Audio::Timestamp(0, 650, 600), Audio::Timestamp(0, 750, 600));
 			_vm->waitUntilMovieEnds(valve);
@@ -680,13 +669,11 @@ void Stoneship::o_chestValveVideos(uint16 var, const ArgumentsArray &args) {
 		_vm->_sound->resumeBackground();
 	} else {
 		// Valve opening
-		VideoEntryPtr valve = _vm->_video->playMovie(movie);
-		if (!valve)
-			error("Failed to open '%s'", movie.c_str());
-
+		VideoEntryPtr valve = _vm->playMovie("ligspig", kStoneshipStack);
 		valve->moveTo(97, 267);
 		valve->seek(Audio::Timestamp(0, 350, 600));
 		valve->setRate(-1);
+
 		_vm->waitUntilMovieEnds(valve);
 	}
 }
@@ -701,22 +688,14 @@ void Stoneship::o_chestDropKey(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::o_trapLockOpen(uint16 var, const ArgumentsArray &args) {
-	Common::String movie = _vm->wrapMovieFilename("openloc", kStoneshipStack);
-
-	VideoEntryPtr lock = _vm->_video->playMovie(movie);
-	if (!lock)
-		error("Failed to open '%s'", movie.c_str());
-
+	VideoEntryPtr lock = _vm->playMovie("openloc", kStoneshipStack);
 	lock->moveTo(187, 71);
 	lock->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 750, 600));
 	_vm->waitUntilMovieEnds(lock);
 
 	_vm->_sound->playEffect(2143);
 
-	lock = _vm->_video->playMovie(movie);
-	if (!lock)
-		error("Failed to open '%s'", movie.c_str());
-
+	lock = _vm->playMovie("openloc", kStoneshipStack);
 	lock->moveTo(187, 71);
 	lock->setBounds(Audio::Timestamp(0, 750, 600), Audio::Timestamp(0, 10000, 600));
 	_vm->waitUntilMovieEnds(lock);
@@ -735,19 +714,19 @@ void Stoneship::o_sideDoorsMovies(uint16 var, const ArgumentsArray &args) {
 	switch (movieId) {
 	case 0:
 		// Card 2251
-		_vm->playMovieBlocking(_vm->wrapMovieFilename("tunaup", kStoneshipStack), 149, 161);
+		_vm->playMovieBlocking("tunaup", kStoneshipStack, 149, 161);
 		break;
 	case 1:
 		// Card 2247
-		_vm->playMovieBlocking(_vm->wrapMovieFilename("tunadown", kStoneshipStack), 218, 150);
+		_vm->playMovieBlocking("tunadown", kStoneshipStack, 218, 150);
 		break;
 	case 2:
 		// Card 2289
-		_vm->playMovieBlocking(_vm->wrapMovieFilename("tuncup", kStoneshipStack), 259, 161);
+		_vm->playMovieBlocking("tuncup", kStoneshipStack, 259, 161);
 		break;
 	case 3:
 		// Card 2285
-		_vm->playMovieBlocking(_vm->wrapMovieFilename("tuncdown", kStoneshipStack), 166, 150);
+		_vm->playMovieBlocking("tuncdown", kStoneshipStack, 166, 150);
 		break;
 	default:
 		warning("Opcode 120 MovieId Out Of Range");

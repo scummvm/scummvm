@@ -305,10 +305,7 @@ void Mechanical::o_snakeBoxTrigger(uint16 var, const ArgumentsArray &args) {
 }
 
 void Mechanical::o_fortressStaircaseMovie(uint16 var, const ArgumentsArray &args) {
-	VideoEntryPtr staircase = _vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack));
-	if (!staircase)
-		error("Failed to open hhstairs movie");
-
+	VideoEntryPtr staircase = _vm->playMovie("hhstairs", kMechanicalStack);
 	staircase->moveTo(174, 222);
 
 	if (_state.staircaseState) {
@@ -532,12 +529,10 @@ void Mechanical::o_elevatorWindowMovie(uint16 var, const ArgumentsArray &args) {
 	uint16 startTime = args[0];
 	uint16 endTime = args[1];
 
-	VideoEntryPtr window = _vm->_video->playMovie(_vm->wrapMovieFilename("ewindow", kMechanicalStack));
-	if (!window)
-		error("Failed to open ewindow movie");
-
+	VideoEntryPtr window = _vm->playMovie("ewindow", kMechanicalStack);
 	window->moveTo(253, 0);
 	window->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
+
 	_vm->waitUntilMovieEnds(window);
 }
 
@@ -603,12 +598,10 @@ void Mechanical::o_elevatorTopMovie(uint16 var, const ArgumentsArray &args) {
 	uint16 startTime = args[0];
 	uint16 endTime = args[1];
 
-	VideoEntryPtr window = _vm->_video->playMovie(_vm->wrapMovieFilename("hcelev", kMechanicalStack));
-	if (!window)
-		error("Failed to open hcelev movie");
-
+	VideoEntryPtr window = _vm->playMovie("hcelev", kMechanicalStack);
 	window->moveTo(206, 38);
 	window->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, endTime, 600));
+
 	_vm->waitUntilMovieEnds(window);
 }
 
@@ -625,7 +618,7 @@ void Mechanical::o_fortressRotationSetPosition(uint16 var, const ArgumentsArray 
 }
 
 void Mechanical::o_mystStaircaseMovie(uint16 var, const ArgumentsArray &args) {
-	_vm->playMovieBlocking(_vm->wrapMovieFilename("sstairs", kMechanicalStack), 199, 108);
+	_vm->playMovieBlocking("sstairs", kMechanicalStack, 199, 108);
 }
 
 void Mechanical::o_elevatorWaitTimeout(uint16 var, const ArgumentsArray &args) {

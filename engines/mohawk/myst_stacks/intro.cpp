@@ -94,10 +94,7 @@ void Intro::introMovies_run() {
 	switch (_introStep) {
 	case 0:
 		_introStep = 1;
-		video = _vm->_video->playMovie(_vm->wrapMovieFilename("broder", kIntroStack));
-		if (!video)
-			error("Failed to open broder movie");
-
+		video = _vm->playMovie("broder", kIntroStack);
 		video->center();
 		break;
 	case 1:
@@ -106,10 +103,7 @@ void Intro::introMovies_run() {
 		break;
 	case 2:
 		_introStep = 3;
-		video = _vm->_video->playMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
-		if (!video)
-			error("Failed to open cyanlogo movie");
-
+		video = _vm->playMovie("cyanlogo", kIntroStack);
 		video->center();
 		break;
 	case 3:
@@ -120,10 +114,7 @@ void Intro::introMovies_run() {
 		_introStep = 5;
 
 		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
-			video = _vm->_video->playMovie(_vm->wrapMovieFilename("intro", kIntroStack));
-			if (!video)
-				error("Failed to open intro movie");
-
+			video = _vm->playMovie("intro", kIntroStack);
 			video->center();
 		}
 		break;

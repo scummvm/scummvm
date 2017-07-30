@@ -162,7 +162,7 @@ const Common::String MystAreaAction::describe() {
 }
 
 // In Myst/Making of Myst, the paths are hardcoded ala Windows style without extension. Convert them.
-Common::String MystAreaVideo::convertMystVideoName(Common::String name) {
+Common::String MystAreaVideo::convertMystVideoName(const Common::String &name) {
 	Common::String temp;
 
 	for (uint32 i = 1; i < name.size(); i++) {
@@ -217,7 +217,7 @@ VideoEntryPtr MystAreaVideo::playMovie() {
 
 	// If the video is not running, play it
 	if (!handle) {
-		handle = _vm->_video->playMovie(_videoFile);
+		handle = _vm->_video->playMovie(_videoFile, Audio::Mixer::kSFXSoundType);
 		if (!handle)
 			error("Failed to open '%s'", _videoFile.c_str());
 
@@ -256,7 +256,7 @@ VideoEntryPtr MystAreaVideo::getVideo() {
 	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 	if (!handle) {
 		// If the video has not been loaded yet, do it but don't start playing it
-		handle = _vm->_video->playMovie(_videoFile);
+		handle = _vm->_video->playMovie(_videoFile, Audio::Mixer::kSFXSoundType);
 		if (!handle)
 			error("Failed to open '%s'", _videoFile.c_str());
 		handle->stop();

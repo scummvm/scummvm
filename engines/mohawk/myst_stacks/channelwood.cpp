@@ -296,10 +296,7 @@ bool Channelwood::pipeChangeValve(bool open, uint16 mask) {
 }
 
 void Channelwood::o_bridgeToggle(uint16 var, const ArgumentsArray &args) {
-	VideoEntryPtr bridge = _vm->_video->playMovie(_vm->wrapMovieFilename("bridge", kChannelwoodStack));
-	if (!bridge)
-		error("Failed to open 'bridge' movie");
-
+	VideoEntryPtr bridge = _vm->playMovie("bridge", kChannelwoodStack);
 	bridge->moveTo(292, 203);
 
 	// Toggle bridge state
@@ -316,10 +313,7 @@ void Channelwood::o_pipeExtend(uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
 	_vm->_sound->playEffect(soundId);
-	VideoEntryPtr pipe = _vm->_video->playMovie(_vm->wrapMovieFilename("pipebrid", kChannelwoodStack));
-	if (!pipe)
-		error("Failed to open 'pipebrid' movie");
-
+	VideoEntryPtr pipe = _vm->playMovie("pipebrid", kChannelwoodStack);
 	pipe->moveTo(267, 170);
 
 	// Toggle pipe state
@@ -581,27 +575,19 @@ void Channelwood::o_hologramMonitor(uint16 var, const ArgumentsArray &args) {
 
 		switch (button) {
 		case 0:
-			video = _vm->_video->playMovie(_vm->wrapMovieFilename("monalgh", kChannelwoodStack));
-			if (!video)
-				error("Failed to open monalgh movie");
+			video = _vm->playMovie("monalgh", kChannelwoodStack);
 			video->moveTo(227, 70);
 			break;
 		case 1:
-			video = _vm->_video->playMovie(_vm->wrapMovieFilename("monamth", kChannelwoodStack));
-			if (!video)
-				error("Failed to open monamth movie");
+			video = _vm->playMovie("monamth", kChannelwoodStack);
 			video->moveTo(227, 70);
 			break;
 		case 2:
-			video = _vm->_video->playMovie(_vm->wrapMovieFilename("monasirs", kChannelwoodStack));
-			if (!video)
-				error("Failed to open monasirs movie");
+			video = _vm->playMovie("monasirs", kChannelwoodStack);
 			video->moveTo(227, 70);
 			break;
 		case 3:
-			video = _vm->_video->playMovie(_vm->wrapMovieFilename("monsmsg", kChannelwoodStack));
-			if (!video)
-				error("Failed to open monsmsg movie");
+			video = _vm->playMovie("monsmsg", kChannelwoodStack);
 			video->moveTo(226, 68);
 			break;
 		default:
@@ -623,16 +609,16 @@ void Channelwood::o_hologramTemple(uint16 var, const ArgumentsArray &args) {
 	// Used on Card 3333 (Temple Hologram)
 	switch (_state.holoprojectorSelection) {
 	case 0:
-		_vm->playMovieBlocking(_vm->wrapMovieFilename("holoalgh", kChannelwoodStack), 139, 64);
+		_vm->playMovieBlocking("holoalgh", kChannelwoodStack, 139, 64);
 		break;
 	case 1:
-		_vm->playMovieBlocking(_vm->wrapMovieFilename("holoamth", kChannelwoodStack), 127, 73);
+		_vm->playMovieBlocking("holoamth", kChannelwoodStack, 127, 73);
 		break;
 	case 2:
-		_vm->playMovieBlocking(_vm->wrapMovieFilename("holoasir", kChannelwoodStack), 139, 64);
+		_vm->playMovieBlocking("holoasir", kChannelwoodStack, 139, 64);
 		break;
 	case 3:
-		_vm->playMovieBlocking(_vm->wrapMovieFilename("holosmsg", kChannelwoodStack), 127, 45);
+		_vm->playMovieBlocking("holosmsg", kChannelwoodStack, 127, 45);
 		break;
 	default:
 		warning("Opcode o_hologramTemple Control Variable Out of Range");
@@ -673,32 +659,32 @@ void Channelwood::o_elevatorMovies(uint16 var, const ArgumentsArray &args) {
 		x = 214;
 		y = 106;
 		if (direction == 1)
-			movie = _vm->wrapMovieFilename("welev1up", kChannelwoodStack);
+			movie = "welev1up";
 		else
-			movie = _vm->wrapMovieFilename("welev1dn", kChannelwoodStack);
+			movie = "welev1dn";
 		break;
 	case 2:
 		x = 215;
 		y = 117;
 		if (direction == 1)
-			movie = _vm->wrapMovieFilename("welev2up", kChannelwoodStack);
+			movie = "welev2up";
 		else
-			movie = _vm->wrapMovieFilename("welev2dn", kChannelwoodStack);
+			movie = "welev2dn";
 		break;
 	case 3:
 		x = 213;
 		y = 98;
 		if (direction == 1)
-			movie = _vm->wrapMovieFilename("welev3up", kChannelwoodStack);
+			movie = "welev3up";
 		else
-			movie = _vm->wrapMovieFilename("welev3dn", kChannelwoodStack);
+			movie = "welev3dn";
 		break;
 	default:
 		error("Unknown elevator state %d in o_elevatorMovies", elevator);
 	}
 
 	_vm->_sound->pauseBackground();
-	_vm->playMovieBlocking(movie, x, y);
+	_vm->playMovieBlocking(movie, kChannelwoodStack, x, y);
 	_vm->_sound->resumeBackground();
 }
 

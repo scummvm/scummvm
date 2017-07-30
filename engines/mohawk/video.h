@@ -23,6 +23,7 @@
 #ifndef MOHAWK_VIDEO_H
 #define MOHAWK_VIDEO_H
 
+#include "audio/mixer.h"
 #include "audio/timestamp.h"
 #include "common/array.h"
 #include "common/list.h"
@@ -240,7 +241,7 @@ public:
 	virtual ~VideoManager();
 
 	// Generic movie functions
-	VideoEntryPtr playMovie(const Common::String &filename);
+	VideoEntryPtr playMovie(const Common::String &filename, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	VideoEntryPtr playMovie(uint16 id);
 	bool updateMovies();
 	void pauseVideos();
@@ -263,7 +264,7 @@ protected:
 
 	// Utility functions for managing entries
 	VideoEntryPtr open(uint16 id);
-	VideoEntryPtr open(const Common::String &fileName);
+	VideoEntryPtr open(const Common::String &fileName, Audio::Mixer::SoundType soundType);
 
 	VideoList::iterator findEntry(VideoEntryPtr ptr);
 

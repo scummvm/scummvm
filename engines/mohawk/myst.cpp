@@ -225,11 +225,27 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieN
 	return Common::String("qtw/") + prefix + movieName + ".mov";
 }
 
+VideoEntryPtr MohawkEngine_Myst::playMovie(const Common::String &name, MystStack stack) {
+	Common::String filename = wrapMovieFilename(name, stack);
+	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
 
-void MohawkEngine_Myst::playMovieBlocking(const Common::String &fileName, uint16 x, uint16 y) {
-	VideoEntryPtr video = _video->playMovie(fileName);
 	if (!video) {
-		error("Failed to open the '%s' movie", fileName.c_str());
+		error("Failed to open the '%s' movie", filename.c_str());
+	}
+
+	return video;
+}
+
+VideoEntryPtr MohawkEngine_Myst::findVideo(const Common::String &name, MystStack stack) {
+	Common::String filename = wrapMovieFilename(name, stack);
+	return _video->findVideo(filename);
+}
+
+void MohawkEngine_Myst::playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y) {
+	Common::String filename = wrapMovieFilename(name, stack);
+	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
+	if (!video) {
+		error("Failed to open the '%s' movie", filename.c_str());
 	}
 
 	video->moveTo(x, y);
@@ -237,10 +253,11 @@ void MohawkEngine_Myst::playMovieBlocking(const Common::String &fileName, uint16
 	waitUntilMovieEnds(video);
 }
 
-void MohawkEngine_Myst::playMovieBlockingCentered(const Common::String &fileName) {
-	VideoEntryPtr video = _video->playMovie(fileName);
+void MohawkEngine_Myst::playFlybyMovie(const Common::String &name) {
+	Common::String filename = wrapMovieFilename(name, kMasterpieceOnly);
+	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
 	if (!video) {
-		error("Failed to open the '%s' movie", fileName.c_str());
+		error("Failed to open the '%s' movie", filename.c_str());
 	}
 
 	// Clear screen
@@ -579,7 +596,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		}
 
 		if (flyby) {
-			playMovieBlockingCentered(wrapMovieFilename(flyby, kMasterpieceOnly));
+			playFlybyMovie(flyby);
 		}
 	}
 

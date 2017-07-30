@@ -248,36 +248,26 @@ bool MystConsole::Cmd_StopSound(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
-	if (argc < 2) {
-		debugPrintf("Usage: playMovie <name> [<stack>] [<left> <top>]\n");
+	if (argc < 3) {
+		debugPrintf("Usage: playMovie <name> <stack> [<left> <top>]\n");
 		debugPrintf("NOTE: The movie will play *once* in the background.\n");
 		return true;
 	}
 
-	Common::String fileName;
-	if (argc == 3 || argc > 4) {
-		int8 stackNum = 0;
-		for (byte i = 1; i <= ARRAYSIZE(mystStackNames); i++)
-			if (!scumm_stricmp(argv[2], mystStackNames[i - 1])) {
-				stackNum = i;
-				break;
-			}
-
-		if (!stackNum) {
-			debugPrintf("\'%s\' is not a stack name!\n", argv[2]);
-			return true;
+	Common::String fileName = argv[1];
+	int8 stackNum = -1;
+	for (byte i = 0; i < ARRAYSIZE(mystStackNames); i++)
+		if (!scumm_stricmp(argv[2], mystStackNames[i])) {
+			stackNum = i;
+			break;
 		}
 
-		fileName = _vm->wrapMovieFilename(argv[1], stackNum - 1);
-	} else {
-		fileName = argv[1];
-	}
-
-	VideoEntryPtr video = _vm->_video->playMovie(fileName);
-	if (!video) {
-		debugPrintf("Failed to open movie '%s'\n", fileName.c_str());
+	if (stackNum < 0) {
+		debugPrintf("\'%s\' is not a stack name!\n", argv[2]);
 		return true;
 	}
+
+	VideoEntryPtr video = _vm->playMovie(fileName, static_cast<MystStack>(stackNum));
 
 	if (argc == 4) {
 		video->setX(atoi(argv[2]));

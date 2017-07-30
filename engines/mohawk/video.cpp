@@ -164,8 +164,8 @@ void VideoManager::stopVideos() {
 	_videos.clear();
 }
 
-VideoEntryPtr VideoManager::playMovie(const Common::String &fileName) {
-	VideoEntryPtr ptr = open(fileName);
+VideoEntryPtr VideoManager::playMovie(const Common::String &fileName, Audio::Mixer::SoundType soundType) {
+	VideoEntryPtr ptr = open(fileName, soundType);
 	if (!ptr)
 		return VideoEntryPtr();
 
@@ -313,7 +313,7 @@ VideoEntryPtr VideoManager::open(uint16 id) {
 	return entry;
 }
 
-VideoEntryPtr VideoManager::open(const Common::String &fileName) {
+VideoEntryPtr VideoManager::open(const Common::String &fileName, Audio::Mixer::SoundType soundType) {
 	// If this video is already playing, return that entry
 	VideoEntryPtr oldVideo = findVideo(fileName);
 	if (oldVideo)
@@ -325,6 +325,7 @@ VideoEntryPtr VideoManager::open(const Common::String &fileName) {
 		return VideoEntryPtr();
 
 	Video::VideoDecoder *video = new Video::QuickTimeDecoder();
+	video->setSoundType(soundType);
 	if (!video->loadStream(stream)) {
 		// FIXME: Better error handling
 		delete video;

@@ -365,123 +365,123 @@ void Selenitic::mazeRunnerBacktrack(uint16 &oldPosition) {
 }
 
 void Selenitic::mazeRunnerPlayVideo(uint16 video, uint16 pos) {
-	Common::String file;
+	Common::String videoName;
 
 	switch (video) {
 	case 1:
-		file = _vm->wrapMovieFilename("forwa1", kSeleniticStack);
+		videoName = "forwa1";
 		break;
 	case 2:
-		file = _vm->wrapMovieFilename("forwe0", kSeleniticStack);
+		videoName = "forwe0";
 		break;
 	case 3:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwf1", kSeleniticStack);
+			videoName = "forwf1";
 		else
-			file = _vm->wrapMovieFilename("forwf0", kSeleniticStack);
+			videoName = "forwf0";
 		break;
 	case 4:
-		file = _vm->wrapMovieFilename("left00", kSeleniticStack);
+		videoName = "left00";
 		break;
 	case 5:
-		file = _vm->wrapMovieFilename("left01", kSeleniticStack);
+		videoName = "left01";
 		break;
 	case 6:
-		file = _vm->wrapMovieFilename("left10", kSeleniticStack);
+		videoName = "left10";
 		break;
 	case 7:
-		file = _vm->wrapMovieFilename("left11", kSeleniticStack);
+		videoName = "left11";
 		break;
 	case 8:
-		file = _vm->wrapMovieFilename("right00", kSeleniticStack);
+		videoName = "right00";
 		break;
 	case 9:
-		file = _vm->wrapMovieFilename("right01", kSeleniticStack);
+		videoName = "right01";
 		break;
 	case 10:
-		file = _vm->wrapMovieFilename("right10", kSeleniticStack);
+		videoName = "right10";
 		break;
 	case 11:
-		file = _vm->wrapMovieFilename("right11", kSeleniticStack);
+		videoName = "right11";
 		break;
 	case 12:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwo1", kSeleniticStack);
+			videoName = "forwo1";
 		else
-			file = _vm->wrapMovieFilename("forwo0", kSeleniticStack);
+			videoName = "forwo0";
 		break;
 	case 13:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwp1", kSeleniticStack);
+			videoName = "forwp1";
 		else
-			file = _vm->wrapMovieFilename("forwp0", kSeleniticStack);
+			videoName = "forwp0";
 		break;
 	case 14:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forws1", kSeleniticStack);
+			videoName = "forws1";
 		else
-			file = _vm->wrapMovieFilename("forws0", kSeleniticStack);
+			videoName = "forws0";
 		break;
 	case 15:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwr1", kSeleniticStack);
+			videoName = "forwr1";
 		else
-			file = _vm->wrapMovieFilename("forwr0", kSeleniticStack);
+			videoName = "forwr0";
 		break;
 	case 16:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwl1", kSeleniticStack);
+			videoName = "forwl1";
 		else
-			file = _vm->wrapMovieFilename("forwl0", kSeleniticStack);
+			videoName = "forwl0";
 		break;
 	case 17:
-		file = _vm->wrapMovieFilename("backa1", kSeleniticStack);
+		videoName = "backa1";
 		break;
 	case 18:
-		file = _vm->wrapMovieFilename("backe1", kSeleniticStack);
+		videoName = "backe1";
 		break;
 	case 19:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backf1", kSeleniticStack);
+			videoName = "backf1";
 		else
-			file = _vm->wrapMovieFilename("backf0", kSeleniticStack);
+			videoName = "backf0";
 		break;
 	case 20:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backo1", kSeleniticStack);
+			videoName = "backo1";
 		else
-			file = _vm->wrapMovieFilename("backo0", kSeleniticStack);
+			videoName = "backo0";
 		break;
 	case 21:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backp1", kSeleniticStack);
+			videoName = "backp1";
 		else
-			file = _vm->wrapMovieFilename("backp0", kSeleniticStack);
+			videoName = "backp0";
 		break;
 	case 22:
 		if (mazeRunnerForwardAllowed(pos)) {
-			file = _vm->wrapMovieFilename("backs1", kSeleniticStack);
+			videoName = "backs1";
 		} else {
-			file = _vm->wrapMovieFilename("backs0", kSeleniticStack);
+			videoName = "backs0";
 		}
 		break;
 	case 23:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backr1", kSeleniticStack);
+			videoName = "backr1";
 		else
-			file = _vm->wrapMovieFilename("backr0", kSeleniticStack);
+			videoName = "backr0";
 		break;
 	case 24:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backl1", kSeleniticStack);
+			videoName = "backl1";
 		else
-			file = _vm->wrapMovieFilename("backl0", kSeleniticStack);
+			videoName = "backl0";
 		break;
 	}
 
-	if (!file.empty()) {
+	if (!videoName.empty()) {
 		const Common::Rect &dest = _mazeRunnerWindow->getRect();
-		_vm->playMovieBlocking(file, dest.left, dest.top);
+		_vm->playMovieBlocking(videoName, kSeleniticStack, dest.left, dest.top);
 	}
 }
 
