@@ -327,7 +327,8 @@ void MacText::recalcDims() {
 }
 
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
-	if (_textLines.empty()) return;
+	if (_textLines.empty())
+		return;
 
 	render();
 
