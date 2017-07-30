@@ -49,7 +49,7 @@
 #define WAGE_GUI_H
 
 // Whether to use the new MacTextWindow class for rendering the console
-// #define USE_MACTEXTWINDOW
+#define USE_MACTEXTWINDOW
 
 #include "common/str-array.h"
 #include "graphics/font.h"

@@ -181,7 +181,7 @@ Gui::Gui(WageEngine *engine) {
 
 	uint maxWidth = _screen.w;
 
-	_consoleWindow = new Graphics::MacTextWindow(&_wm, font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft);
+	_consoleWindow = _wm.addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft);
 #else
 	_consoleWindow = _wm.addWindow(true, true, true);
 #endif // USE_MACTEXTWINDOW
