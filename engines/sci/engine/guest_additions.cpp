@@ -261,11 +261,24 @@ bool GuestAdditions::kGetEventHook() const {
 }
 
 bool GuestAdditions::kWaitHook() const {
-	if (_state->_delayedRestoreGameId != -1) {
+	if (_state->_delayedRestoreGameId != -1 &&
+		// kWait cannot be used in Phant2 for delayed restore because it is
+		// called during the fade-in of music in the intro room, before graphics
+		// are fully initialized, which causes "Click to continue" text to be
+		// brokenly drawn over the game and then crashes the engine on the next
+		// room transition
+		g_sci->getGameId() != GID_PHANTASMAGORIA2) {
+
 		return g_sci->_guestAdditions->restoreFromLauncher();
 	}
 	return false;
 }
+
+#ifdef ENABLE_SCI32
+bool GuestAdditions::kPlayDuckPlayHook() const {
+	return _state->_delayedRestoreGameId != -1;
+}
+#endif
 
 #pragma mark -
 #pragma mark Integrated save & restore
@@ -575,7 +588,19 @@ bool GuestAdditions::restoreFromLauncher() const {
 
 		_restoring = true;
 
-		if (g_sci->getGameId() == GID_SHIVERS) {
+		// Any events queued up before the game restore can cause accidental
+		// input into the game if they are not flushed (this is particularly
+		// noticeable in Phant2, where the game will display "Click to continue"
+		// for one frame if the user clicked during startup)
+		g_sci->getEventManager()->flushEvents();
+
+		if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+			// Phantasmagoria 2 moves the function that actually restores
+			// a game, and uses a property of the main game object when picking
+			// the save game to restore
+			writeSelectorValue(_segMan, g_sci->getGameObject(), SELECTOR(num), _state->_delayedRestoreGameId - kSaveIdShift);
+			invokeSelector(g_sci->getGameObject(), SELECTOR(reallyRestore));
+		} else if (g_sci->getGameId() == GID_SHIVERS) {
 			// Shivers accepts the save game number as a parameter to
 			// `SHIVERS::restore`
 			reg_t args[] = { make_reg(0, _state->_delayedRestoreGameId - kSaveIdShift) };

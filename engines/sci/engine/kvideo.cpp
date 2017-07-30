@@ -42,6 +42,7 @@
 #include "video/qt_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
+#include "sci/engine/guest_additions.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/video32.h"
 #include "sci/video/robot_decoder.h"
@@ -484,6 +485,9 @@ reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayDuckPlay(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->_guestAdditions->kPlayDuckPlayHook()) {
+		return NULL_REG;
+	}
 	kPlayDuckOpen(s, argc, argv);
 	g_sci->_video32->getDuckPlayer().play(-1);
 	g_sci->_video32->getDuckPlayer().close();

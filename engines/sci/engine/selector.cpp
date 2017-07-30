@@ -224,6 +224,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(physicalBar);
 	FIND_SELECTOR(init);
 	FIND_SELECTOR(scratch);
+	FIND_SELECTOR(num);
+	FIND_SELECTOR(reallyRestore);
 #endif
 }
 

@@ -146,6 +146,13 @@ public:
 	 */
 	bool kWaitHook() const;
 
+#ifdef ENABLE_SCI32
+	/**
+	 * Guest additions hook for kPlayDuck(Play).
+	 */
+	bool kPlayDuckPlayHook() const;
+#endif
+
 #pragma mark -
 #pragma mark Integrated save & restore
 

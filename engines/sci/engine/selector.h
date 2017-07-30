@@ -181,6 +181,8 @@ struct SelectorCache {
 	Selector physicalBar; // for Phant2 volume sync
 	Selector init; // for Phant2 save/load patching
 	Selector scratch; // for Phant2 save/load patching
+	Selector num; // for Phant2 restore from launcher
+	Selector reallyRestore; // for Phant2 restore from launcher
 #endif
 };
 
