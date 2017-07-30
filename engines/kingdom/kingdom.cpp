@@ -1460,6 +1460,7 @@ void KingdomGame::cursorType() {
 	if (_logic->_currMap != 1 && _logic->_statPlay >= 30) {
 		int var2 = _logic->_statPlay == 901 ? 16 : 0;
 		int var6 = _logic->_statPlay == 901 ? 35 : 16;
+		HotSpot *mouseMapMS = isDemo() ? _mouseMapMSDemo : _mouseMapMSFull;
 		for (int i = 0; i < var6 + 1; i++) {
 			if (i == var6) {
 				int tmpVal = checkMouseMapAS();
@@ -1468,8 +1469,8 @@ void KingdomGame::cursorType() {
 					return;
 				} else
 					_mouseValue = tmpVal;
-			} else if (_cursorX >= _mouseMapMS[var2 + i]._minX && _cursorX < _mouseMapMS[var2 + i]._maxX && _cursorY >= _mouseMapMS[var2 + i]._minY && _cursorY < _mouseMapMS[var2 + i]._maxY) {
-				_mouseValue = _mouseMapMS[var2 + i]._mouseValue;
+			} else if (_cursorX >= mouseMapMS[var2 + i]._minX && _cursorX < mouseMapMS[var2 + i]._maxX && _cursorY >= mouseMapMS[var2 + i]._minY && _cursorY < mouseMapMS[var2 + i]._maxY) {
+				_mouseValue = mouseMapMS[var2 + i]._mouseValue;
 				break;
 			}
 		}
