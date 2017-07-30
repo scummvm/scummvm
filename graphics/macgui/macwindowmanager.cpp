@@ -31,6 +31,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/mactextwindow.h"
 #include "graphics/macgui/macmenu.h"
 
 namespace Graphics {
@@ -183,6 +184,18 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
 	return w;
 }
 
+MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) {
+	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment);
+
+	_windows.push_back(w);
+	_windowStack.push_back(w);
+
+	setActive(getNextId());
+
+	return w;
+}
+
+
 void MacWindowManager::addWindowInitialized(MacWindow *macwindow) {
 	_windows.push_back(macwindow);
 	_windowStack.push_back(macwindow);
@@ -300,7 +313,7 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		return true;
 
 	if (event.type != Common::EVENT_MOUSEMOVE && event.type != Common::EVENT_LBUTTONDOWN &&
-			event.type != Common::EVENT_LBUTTONUP)
+			event.type != Common::EVENT_LBUTTONUP && event.type != Common::EVENT_KEYDOWN)
 		return false;
 
 	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
@@ -320,8 +333,8 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		it--;
 		BaseMacWindow *w = *it;
 
-
-		if (w->hasAllFocus() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
+		if (w->hasAllFocus() || (w->isEditable() && event.type == Common::EVENT_KEYDOWN) ||
+				w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
 				setActive(w->getId());
 

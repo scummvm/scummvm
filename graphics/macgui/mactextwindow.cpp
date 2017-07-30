@@ -27,14 +27,18 @@
 
 namespace Graphics {
 
-MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor,
-	int bgcolor, int maxWidth, TextAlign textAlignment) :
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) :
 		MacWindow(wm->getNextId(), true, true, true, wm) {
 
 	wm->addWindowInitialized(this);
 
 	_font = font;
 	_mactext = new MacText("", _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
+
+	_fontRef = wm->_fontMan->getFont(*font);
+
+	_inputTextHeight = 0;
+	_maxWidth = maxWidth;
 }
 
 void MacTextWindow::drawText(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
@@ -65,6 +69,52 @@ MacTextWindow::~MacTextWindow() {
 
 const MacFont *MacTextWindow::getTextWindowFont() {
 	return _font;
+}
+
+bool MacTextWindow::processEvent(Common::Event &event) {
+	WindowClick click = isInBorder(event.mouse.x, event.mouse.y);
+
+	if (event.type == Common::EVENT_KEYDOWN) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_BACKSPACE:
+			if (!_inputText.empty()) {
+				_inputText.deleteLastChar();
+				drawInput();
+			}
+			break;
+
+		case Common::KEYCODE_RETURN:
+			return false; // Pass it to the higher level for processing
+
+		default:
+			if (event.kbd.ascii == '~')
+				return false;
+
+			if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
+				_inputText += (char)event.kbd.ascii;
+				drawInput();
+			}
+
+			break;
+		}
+	}
+
+	return false;
+}
+
+void MacTextWindow::drawInput() {
+	// First, we kill previous input text
+	for (uint i = 0; i < _inputTextHeight; i++)
+		_mactext->removeLastLine();
+
+	Common::Array<Common::String> text;
+
+	// Now recalc new text height
+	_fontRef->wordWrapText(_inputText, _maxWidth, text);
+	_inputTextHeight = text.size();
+
+	// And add new input line to the text
+	appendText(_inputText, _font);
 }
 
 } // End of namespace Graphics

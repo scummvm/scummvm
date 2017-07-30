@@ -44,9 +44,10 @@ struct SelectedText {
 
 class MacTextWindow : public MacWindow {
 public:
-	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor,
-		int bgcolor, int maxWidth, TextAlign textAlignment);
-	~MacTextWindow();
+	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment);
+	virtual ~MacTextWindow();
+
+	virtual bool processEvent(Common::Event &event);
 
 	const MacFont *getTextWindowFont();
 
@@ -58,10 +59,18 @@ public:
 	void setSelection(int selStartX, int selStartY, int selEndX, int selEndY);
 
 private:
+	void drawInput();
+
+private:
 	MacText *_mactext;
 	const MacFont *_font;
+	const Font *_fontRef;
 
 	SelectedText _selectedText;
+
+	int _maxWidth;
+	Common::String _inputText;
+	uint _inputTextHeight;
 };
 
 } // End of namespace Graphics
