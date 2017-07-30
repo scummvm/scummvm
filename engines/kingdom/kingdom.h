@@ -83,7 +83,8 @@ namespace Kingdom {
 	extern int _hgaSeq[4][2];
 	extern HotSpot _mouseMapMSFull[51];
 	extern HotSpot _mouseMapMSDemo[51];
-	extern HotSpot _mouseMapAS[128][16];
+	extern HotSpot _mouseMapASFull[128][16];
+	extern HotSpot _mouseMapASDemo[128][16];
 
 	struct KingdomSavegameHeader {
 		uint32 _signature;
