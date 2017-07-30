@@ -236,7 +236,9 @@ private:
 	void GPL4_901();
 	void GPL4_991();
 	void GPL4_992();
+	void GPL4_992_demo();
 	void GPL4_993();
+	void GPL4_993_demo();
 	void GPL4_994();
 
 public:
