@@ -28,9 +28,7 @@
 namespace Graphics {
 
 MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) :
-		MacWindow(wm->getNextId(), true, true, true, wm) {
-
-	wm->addWindowInitialized(this);
+		MacWindow(wm->getLastId(), true, true, true, wm) {
 
 	_font = font;
 	_mactext = new MacText("", _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);

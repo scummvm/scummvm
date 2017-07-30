@@ -176,8 +176,7 @@ MacWindowManager::~MacWindowManager() {
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
 	MacWindow *w = new MacWindow(_lastId, scrollable, resizable, editable, this);
 
-	_windows.push_back(w);
-	_windowStack.push_back(w);
+	addWindowInitialized(w);
 
 	setActive(getNextId());
 
@@ -187,8 +186,7 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
 MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) {
 	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment);
 
-	_windows.push_back(w);
-	_windowStack.push_back(w);
+	addWindowInitialized(w);
 
 	setActive(getNextId());
 
@@ -199,10 +197,6 @@ MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor,
 void MacWindowManager::addWindowInitialized(MacWindow *macwindow) {
 	_windows.push_back(macwindow);
 	_windowStack.push_back(macwindow);
-}
-
-int MacWindowManager::getNextId() {
-	return _lastId++;
 }
 
 MacMenu *MacWindowManager::addMenu() {

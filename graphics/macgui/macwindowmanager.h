@@ -116,10 +116,15 @@ public:
 	 */
 	void addWindowInitialized(MacWindow *macwindow);
 	/**
+	 * Returns the last allocated id
+	 * @return last allocated window id
+	 */
+	int getLastId() { return _lastId; }
+	/**
 	 * Returns the next available id and the increments the internal counter.
 	 * @return next (new) window id that can be used
 	 */
-	int getNextId();
+	int getNextId() { return _lastId++; }
 	/**
 	 * Add the menu to the desktop.
 	 * Note that the returned menu is empty, and therefore must be filled
