@@ -262,7 +262,7 @@ public:
 	/**
 	 * See BaseMacWindow.
 	 */
-	bool processEvent(Common::Event &event);
+	virtual bool processEvent(Common::Event &event);
 	bool hasAllFocus() { return _beingDragged || _beingResized; }
 
 	/**
@@ -285,6 +285,8 @@ public:
 	 */
 	void setCloseable(bool closeable);
 
+	WindowClick isInBorder(int x, int y);
+
 private:
 	void drawBorder();
 	void prepareBorderSurface(ManagedSurface *g);
@@ -295,7 +297,6 @@ private:
 	void fillRect(ManagedSurface *g, int x, int y, int w, int h, int color);
 	const Font *getTitleFont();
 	void updateInnerDims();
-	WindowClick isInBorder(int x, int y);
 
 	bool isInCloseButton(int x, int y);
 	bool isInResizeButton(int x, int y);
