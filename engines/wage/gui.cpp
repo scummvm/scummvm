@@ -148,7 +148,9 @@ Gui::Gui(WageEngine *engine) {
 
 	_inputTextLineNum = 0;
 
+#ifndef USE_MACTEXTWINDOW
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
+#endif
 
 	_menu = _wm.addMenu();
 
@@ -194,7 +196,10 @@ Gui::Gui(WageEngine *engine) {
 Gui::~Gui() {
 	_screen.free();
 	_console.free();
+
+#ifndef USE_MACTEXTWINDOW
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
+#endif
 }
 
 void Gui::undrawCursor() {
