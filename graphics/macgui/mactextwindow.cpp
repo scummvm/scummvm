@@ -111,7 +111,7 @@ void MacTextWindow::drawInput() {
 
 	// Now recalc new text height
 	_fontRef->wordWrapText(_inputText, _maxWidth, text);
-	_inputTextHeight = text.size();
+	_inputTextHeight = MAX(1u, text.size()); // We always have line to clean
 
 	// And add new input line to the text
 	appendText(_inputText, _font);
