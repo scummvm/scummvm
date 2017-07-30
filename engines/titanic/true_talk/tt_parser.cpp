@@ -1403,7 +1403,7 @@ int TTparser::checkForAction() {
 			// Chain of words, so we need to find the last word of the chain,
 			// and set the last-but-one's _nextP to nullptr to detach the last one
 			TTword *prior = nullptr;
-			for (word = word->_nextP; word->_nextP; word = word->_nextP) {
+			for (; word->_nextP; word = word->_nextP) {
 				prior = word;
 			}
 
