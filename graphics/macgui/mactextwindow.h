@@ -49,6 +49,7 @@ public:
 
 	virtual bool processEvent(Common::Event &event);
 
+	void setTextWindowFont(const MacFont *macFont);
 	const MacFont *getTextWindowFont();
 
 	void drawText(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);

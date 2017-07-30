@@ -65,6 +65,12 @@ void MacTextWindow::setSelection(int selStartX, int selStartY, int selEndX, int 
 MacTextWindow::~MacTextWindow() {
 }
 
+void MacTextWindow::setTextWindowFont(const MacFont *font) {
+	_font = font;
+
+	_fontRef = _wm->_fontMan->getFont(*font);
+}
+
 const MacFont *MacTextWindow::getTextWindowFont() {
 	return _font;
 }
