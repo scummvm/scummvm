@@ -72,14 +72,16 @@ void Events::pollEvents() {
 			eventTarget()->middleButtonUp(_mousePos);
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_specialButtons |= MK_RBUTTON;
+			_specialButtons |= MK_LBUTTON;
+			_specialButtons |= MK_SHIFT;
 			_mousePos = event.mouse;
-			eventTarget()->rightButtonDown(_mousePos);
+			eventTarget()->leftButtonDown(_mousePos);
 			return;
 		case Common::EVENT_RBUTTONUP:
-			_specialButtons &= ~MK_RBUTTON;
+			_specialButtons &= ~MK_LBUTTON;
+			_specialButtons &= ~MK_SHIFT;
 			_mousePos = event.mouse;
-			eventTarget()->rightButtonUp(_mousePos);
+			eventTarget()->leftButtonUp(_mousePos);
 			return;
 		case Common::EVENT_WHEELUP:
 		case Common::EVENT_WHEELDOWN:
