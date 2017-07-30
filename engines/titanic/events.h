@@ -63,15 +63,13 @@ public:
 	virtual void middleButtonDown(const Point &mousePos) {}
 	virtual void middleButtonUp(const Point &mousePos) {}
 	virtual void middleButtonDoubleClick(const Point &mousePos) {}
-	virtual void rightButtonDown(const Point &mousePos) {}
-	virtual void rightButtonUp(const Point &mousePos) {}
 	virtual void mouseWheel(const Point &mousePos, bool wheelUp) {}
 	virtual void keyDown(Common::KeyState keyState) {}
 	virtual void keyUp(Common::KeyState keyState) {}
 };
 
 /**
- * An eent target used for waiting for a mouse or keypress
+ * An event target used for waiting for a mouse or keypress
  */
 class CPressTarget : public CEventTarget {
 public:
@@ -81,7 +79,6 @@ public:
 	virtual ~CPressTarget() {}
 	virtual void leftButtonDown(const Point &mousePos) { _pressed = true; }
 	virtual void middleButtonDown(const Point &mousePos) { _pressed = true; }
-	virtual void rightButtonDown(const Point &mousePos) { _pressed = true; }
 	virtual void keyDown(Common::KeyState keyState) { _pressed = true; }
 };
 

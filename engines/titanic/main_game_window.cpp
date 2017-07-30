@@ -32,7 +32,7 @@
 namespace Titanic {
 
 CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm),
-		_priorLeftDownTime(0), _priorMiddleDownTime(0), _priorRightDownTime(0) {
+		_priorLeftDownTime(0), _priorMiddleDownTime(0) {
 	_gameView = nullptr;
 	_gameManager = nullptr;
 	_project = nullptr;
@@ -320,39 +320,12 @@ void CMainGameWindow::middleButtonDoubleClick(const Point &mousePos) {
 	HANDLE_MESSAGE(middleButtonDoubleClick)
 }
 
-void CMainGameWindow::rightButtonDown(const Point &mousePos) {
-	if (!isMouseControlEnabled())
-		return;
-
-	if ((_vm->_events->getTicksCount() - _priorRightDownTime) < DOUBLE_CLICK_TIME) {
-		_priorRightDownTime = 0;
-		rightButtonDoubleClick(mousePos);
-	} else {
-		_priorRightDownTime = _vm->_events->getTicksCount();
-		HANDLE_MESSAGE(rightButtonDown)
-	}
-}
-
-void CMainGameWindow::rightButtonUp(const Point &mousePos) {
-	if (!isMouseControlEnabled())
-		return;
-
-	HANDLE_MESSAGE(rightButtonUp)
-}
-
 void CMainGameWindow::mouseWheel(const Point &mousePos, bool wheelUp) {
 	if (!isMouseControlEnabled())
 		return;
 
 	_gameManager->_inputTranslator.mouseWheel(wheelUp, mousePos);
 	mouseChanged();
-}
-
-void CMainGameWindow::rightButtonDoubleClick(const Point &mousePos) {
-	if (!isMouseControlEnabled())
-		return;
-
-	HANDLE_MESSAGE(rightButtonDoubleClick)
 }
 
 void CMainGameWindow::keyDown(Common::KeyState keyState) {

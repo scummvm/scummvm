@@ -176,14 +176,30 @@ void CContinueSaveDialog::mouseMove(const Point &mousePos) {
 }
 
 void CContinueSaveDialog::leftButtonDown(const Point &mousePos) {
-	_mouseDown = true;
-	mouseMove(mousePos);
+	Rect eye1(188, 190, 192, 195), eye2(209, 192, 213, 197);
+
+	if (g_vm->_events->isSpecialPressed(MK_SHIFT) &&		
+			(eye1.contains(mousePos) || eye2.contains(mousePos))) {
+		// Show the Easter Egg "Evil Twin"
+		_evilTwinShown = true;
+		render();
+	} else {
+		// Standard mouse handling
+		_mouseDown = true;
+		mouseMove(mousePos);
+	}
 }
 
 void CContinueSaveDialog::leftButtonUp(const Point &mousePos) {
 	Rect restoreRect(RESTORE_X, RESTORE_Y, RESTORE_X + _restoreU.w, RESTORE_Y + _restoreU.h);
 	Rect startRect(START_X, START_Y, START_X + _startU.w, START_Y + _startU.h);
 	_mouseDown = false;
+
+	if (_evilTwinShown) {
+		_evilTwinShown = false;
+		render();
+		return;
+	}
 
 	if (restoreRect.contains(mousePos)) {
 		// Flag to exit dialog and load highlighted slot. If no slot was
@@ -202,22 +218,6 @@ void CContinueSaveDialog::leftButtonUp(const Point &mousePos) {
 				break;
 			}
 		}
-	}
-}
-
-void CContinueSaveDialog::rightButtonDown(const Point &mousePos) {
-	Rect eye1(188, 190, 192, 195), eye2(209, 192, 213, 197);
-
-	if (eye1.contains(mousePos) || eye2.contains(mousePos)) {
-		_evilTwinShown = true;
-		render();
-	}
-}
-
-void CContinueSaveDialog::rightButtonUp(const Point &mousePos) {
-	if (_evilTwinShown) {
-		_evilTwinShown = false;
-		render();
 	}
 }
 

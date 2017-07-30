@@ -41,7 +41,6 @@ private:
 	int _pendingLoadSlot;
 	uint32 _priorLeftDownTime;
 	uint32 _priorMiddleDownTime;
-	uint32 _priorRightDownTime;
 private:
 	/**
 	 * Returns true if a savegame was selected to be loaded
@@ -78,7 +77,6 @@ private:
 
 	void leftButtonDoubleClick(const Point &mousePos);
 	void middleButtonDoubleClick(const Point &mousePos);
-	void rightButtonDoubleClick(const Point &mousePos);
 
 	/**
 	 * Returns true if the player can control the mouse
@@ -105,8 +103,6 @@ public:
 	virtual void leftButtonUp(const Point &mousePos);
 	virtual void middleButtonDown(const Point &mousePos);
 	virtual void middleButtonUp(const Point &mousePos);
-	virtual void rightButtonDown(const Point &mousePos);
-	virtual void rightButtonUp(const Point &mousePos);
 	virtual void mouseWheel(const Point &mousePos, bool wheelUp);
 	virtual void keyDown(Common::KeyState keyState);
 

@@ -80,23 +80,8 @@ void CInputTranslator::middleButtonDoubleClick(int special, const Point &pt) {
 	_inputHandler->handleMessage(msg);
 }
 
-void CInputTranslator::rightButtonDown(int special, const Point &pt) {
-	CMouseButtonDownMsg msg(pt, MB_RIGHT);
-	_inputHandler->handleMessage(msg);
-}
-
-void CInputTranslator::rightButtonUp(int special, const Point &pt) {
-	CMouseButtonUpMsg msg(pt, MB_RIGHT);
-	_inputHandler->handleMessage(msg);
-}
-
 void CInputTranslator::mouseWheel(bool wheelUp, const Point &pt) {
 	CMouseWheelMsg msg(pt, wheelUp);
-	_inputHandler->handleMessage(msg);
-}
-
-void CInputTranslator::rightButtonDoubleClick(int special, const Point &pt) {
-	CMouseDoubleClickMsg msg(pt, MB_RIGHT);
 	_inputHandler->handleMessage(msg);
 }
 
