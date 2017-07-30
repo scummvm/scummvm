@@ -129,9 +129,14 @@ void Logic::GPL4_991() {
 		}
 
 		_vm->_loopFlag = true;
-		if (_nodes[29] == 1) {
+		if (!_vm->isDemo() && _nodes[29] == 1) {
 			_nodes[29] = 0;
 			_nodes[49] = 0;
+		}
+
+		if (_vm->isDemo() && _nodes[28] == 1) {
+			_nodes[28] = 0;
+			_nodes[48] = 0;
 		}
 
 		_vm->_itemInhibit = false;
@@ -202,6 +207,54 @@ void Logic::GPL4_992() {
 	}
 }
 
+void Logic::GPL4_992_demo() {
+	_currMap = 10;
+	_vm->_userInput = 0;
+	_vm->playSound(0);
+	if (_health == 10 || _health == 6 || _health == 2)
+		_health -= 2;
+	else
+		_health -= 4;
+
+	if (_health == 0) {
+		_vm->playMovie(194);
+		_vm->_noIFScreen = true;
+		_vm->fShowPic(107);
+		_currMap = 3;
+		dsAll();
+		_pouch = false;
+		_vm->playSound(1);
+		memset(_inventory, -1, 19);
+		_statPlay = 994;
+	} else {
+		_vm->_bTimer = 36;
+		while(_vm->_bTimer != 0) {
+			_vm->checkTimers();
+			_vm->refreshSound();
+		}
+
+		_vm->_loopFlag = true;
+		if (_nodes[28] == 1) {
+			_nodes[28] = 0;
+			_nodes[48] = 0;
+		}
+
+		_vm->_itemInhibit = false;
+		_tideCntl = false;
+		_vm->drawPic(179);
+		_vm->_skylarTimer = 0;
+		_vm->_skylarTimerFlag = false;
+		enAll();
+		_nodeNum = 27;
+		_vm->drawLocation();
+		_resurrect = true;
+		_vm->playSound(0);
+		_vm->playMovie(195);
+		inventoryDel(12);
+		_statPlay = 270;
+	}
+}
+
 void Logic::GPL4_993() {
 	_currMap = 10;
 	_vm->_userInput = 0;
@@ -229,12 +282,23 @@ void Logic::GPL4_993() {
 		}
 
 		_vm->_loopFlag = true;
-		if (_nodes[29] == 1) {
-			_nodes[29] = 0;
-			_nodes[49] = 0;
+		if (!_vm->isDemo()) {
+			if (_nodes[29] == 1) {
+				_nodes[29] = 0;
+				_nodes[49] = 0;
+			}
+
+			if (_nodes[68] == 1)
+				_nodes[68] = 0;
+		} else {
+			if (_nodes[28] == 1) {
+				_nodes[28] = 0;
+				_nodes[48] = 0;
+			}
+
+			if (_nodes[67] == 1)
+				_nodes[67] = 0;
 		}
-		if (_nodes[68] == 1)
-			_nodes[68] = 0;
 
 		_vm->_itemInhibit = false;
 		_tideCntl = false;
@@ -243,6 +307,57 @@ void Logic::GPL4_993() {
 		_vm->_skylarTimerFlag = false;
 		enAll();
 		_vm->_mapEx = true;
+		_nodeNum = 52;
+		_vm->drawLocation();
+		_resurrect = true;
+		_vm->playSound(0);
+		_vm->playMovie(196);
+		inventoryDel(12);
+		_statPlay = 520;
+	}
+}
+
+void Logic::GPL4_993_demo() {
+	_currMap = 10;
+	_vm->_userInput = 0;
+	_vm->playSound(0);
+	if (_health == 10 || _health == 6 || _health == 2)
+		_health -= 2;
+	else
+		_health -= 4;
+
+	if (_health == 0) {
+		_vm->playMovie(194);
+		_vm->_noIFScreen = true;
+		_vm->fShowPic(107);
+		_currMap = 3;
+		dsAll();
+		_pouch = false;
+		_vm->playSound(1);
+		memset(_inventory, -1, 19);
+		_statPlay = 994;
+	} else {
+		_vm->_bTimer = 36;
+		while (_vm->_bTimer != 0) {
+			_vm->checkTimers();
+			_vm->refreshSound();
+		}
+
+		_vm->_loopFlag = true;
+		if (_nodes[28] == 1) {
+			_nodes[28] = 0;
+			_nodes[48] = 0;
+		}
+
+		if (_nodes[67] == 1)
+			_nodes[67] = 0;
+
+		_vm->_itemInhibit = false;
+		_tideCntl = false;
+		_vm->drawPic(179);
+		_vm->_skylarTimer = 0;
+		_vm->_skylarTimerFlag = false;
+		enAll();
 		_nodeNum = 52;
 		_vm->drawLocation();
 		_resurrect = true;
