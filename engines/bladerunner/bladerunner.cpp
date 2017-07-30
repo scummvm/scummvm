@@ -49,6 +49,7 @@
 #include "bladerunner/shape.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/spinner.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vqa_decoder.h"
 #include "bladerunner/waypoints.h"
@@ -286,6 +287,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// TODO: KIA
 
 	// TODO: Spinner Interface
+	_spinner = new Spinner(this);
 
 	// TODO: Elevators
 
@@ -534,6 +536,10 @@ bool BladeRunnerEngine::init2() {
 	return true;
 }
 
+Common::Point BladeRunnerEngine::getMousePos() {
+	return _eventMan->getMousePos();
+}
+
 void BladeRunnerEngine::gameLoop() {
 	_gameIsRunning = true;
 	do {
@@ -581,7 +587,13 @@ void BladeRunnerEngine::gameTick() {
 
 		// TODO: Autosave
 		// TODO: Kia
-		// TODO: Spinner
+
+		if (_spinner->isOpen()) {
+			_spinner->tick();
+			_ambientSounds->tick();
+			return;
+		}
+
 		// TODO: Esper
 		// TODO: VK
 		// TODO: Elevators
@@ -636,7 +648,7 @@ void BladeRunnerEngine::gameTick() {
 
 			// TODO: Draw dialogue menu
 
-			Common::Point p = _eventMan->getMousePos();
+			Common::Point p = getMousePos();
 			_mouse->tick(p.x, p.y);
 			_mouse->draw(_surfaceGame, p.x, p.y);
 
@@ -797,16 +809,31 @@ void BladeRunnerEngine::handleEvents() {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
-			handleMouseClick(event.mouse.x, event.mouse.y);
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP: {
+			bool buttonLeft = event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP;
+			bool buttonDown = event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN;
+
+			handleMouseAction(event.mouse.x, event.mouse.y, buttonLeft, buttonDown);
+		}
 		default:
 			;
 		}
 	}
 }
 
-void BladeRunnerEngine::handleMouseClick(int x, int y) {
+void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool buttonDown) {
 	if (!playerHasControl() || _mouse->isDisabled())
 		return;
+
+	if (_spinner->isOpen()) {
+		if (buttonDown) {
+			_spinner->handleMouseDown(x, y);
+		} else {
+			_spinner->handleMouseUp(x, y);
+		}
+		return;
+	}
 
 	Vector3 mousePosition = _mouse->getXYZ(x, y);
 

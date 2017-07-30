@@ -167,8 +167,10 @@ MODULE_OBJS = \
 	shape.o \
 	slice_animations.o \
 	slice_renderer.o \
+	spinner.o \
 	suspects_database.o \
 	text_resource.o \
+	ui_image_picker.o \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o \

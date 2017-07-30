@@ -33,6 +33,7 @@
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/scene.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/spinner.h"
 
 #include "common/str.h"
 
@@ -306,8 +307,7 @@ void Scene::loopEnded(int frame, int loopId) {
 			_playerWalkedIn = true;
 		}
 		if (_specialLoopMode == 3) {
-			//TODO:
-			//spinner::open(Spinner);
+			_vm->_spinner->setIsOpen();
 		}
 		_specialLoopMode = -1;
 		_specialLoop = -1;

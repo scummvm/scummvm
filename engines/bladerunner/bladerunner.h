@@ -69,6 +69,7 @@ class Settings;
 class Shape;
 class SliceAnimations;
 class SliceRenderer;
+class Spinner;
 class TextResource;
 class View;
 class Waypoints;
@@ -105,6 +106,7 @@ public:
 	Settings         *_settings;
 	SliceAnimations  *_sliceAnimations;
 	SliceRenderer    *_sliceRenderer;
+	Spinner          *_spinner;
 	SuspectsDatabase *_suspectsDatabase;
 	View             *_view;
 	Waypoints        *_waypoints;
@@ -164,11 +166,13 @@ public:
 	bool loadSplash();
 	bool init2();
 
+	Common::Point getMousePos();
+
 	void gameLoop();
 	void gameTick();
 	void actorsUpdate();
 	void handleEvents();
-	void handleMouseClick(int x, int y);
+	void handleMouseAction(int x, int y, bool buttonLeft, bool buttonDown);
 	void handleMouseClickExit(int x, int y, int exitIndex);
 	void handleMouseClickRegion(int x, int y, int regionIndex);
 	void handleMouseClickItem(int x, int y, int itemId);

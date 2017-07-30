@@ -43,6 +43,7 @@
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/spinner.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/waypoints.h"
@@ -1071,21 +1072,14 @@ bool ScriptBase::SDB_Add_Other_Clue(int suspectId, int clueId) {
 }
 
 void ScriptBase::Spinner_Set_Selectable_Destination_Flag(int a1, int a2) {
-	//TODO
-	warning("Spinner_Set_Selectable_Destination_Flag(%d, %d)", a1, a2);
+	_vm->_spinner->setSelectableDestinationFlag(a1, a2);
 }
 
 // ScriptBase::Spinner_Query_Selectable_Destination_Flag
 
 int ScriptBase::Spinner_Interface_Choose_Dest(int a1, int a2) {
-	//TODO
-	warning("Spinner_Interface_Choose_Dest(%d, %d)", a1, a2);
-	return -1;
+	return _vm->_spinner->interfaceChooseDest(a1, a2);
 }
-
-// ScriptBase::Spinner_Set_Selectable_Destination_Flag
-// ScriptBase::Spinner_Query_Selectable_Destination_Flag
-// ScriptBase::Spinner_Interface_Choose_Dest
 
 void ScriptBase::ESPER_Flag_To_Activate() {
 	//TODO
