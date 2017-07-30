@@ -76,7 +76,7 @@ bool CEndExplodeShip::TimerMsg(CTimerMsg *msg) {
 		actMsg.execute("EndGameCredits");
 	}
 
-	if (msg->_action == "Room") {
+	if (msg->_action == "Boom") {
 		playMovie(550, 583, MOVIE_NOTIFY_OBJECT);
 		movieEvent(551);
 	}
@@ -85,7 +85,7 @@ bool CEndExplodeShip::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CEndExplodeShip::MovieEndMsg(CMovieEndMsg *msg) {
-	if (getMovieFrame() == 550) {
+	if (msg->_endFrame == 550) {
 		playSound("z#399.wav");
 		startAnimTimer("Boom", 4200, 0);
 	} else {
