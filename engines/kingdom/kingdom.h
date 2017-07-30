@@ -81,7 +81,8 @@ namespace Kingdom {
 	extern int _cursorTable[96];
 	extern int _teaSeq[6][2];
 	extern int _hgaSeq[4][2];
-	extern HotSpot _mouseMapMS[51];
+	extern HotSpot _mouseMapMSFull[51];
+	extern HotSpot _mouseMapMSDemo[51];
 	extern HotSpot _mouseMapAS[128][16];
 
 	struct KingdomSavegameHeader {
