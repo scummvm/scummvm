@@ -30,24 +30,6 @@ namespace Common {
 class SeekableReadStream;
 }
 
-#if defined(_WIN32_WCE) && (_WIN32_WCE <= 300)
-
-#include "common/endian.h"
-
-FORCEINLINE int16 READ_BE_INT16(const void *ptr) {
-	uint16 result;
-	char dummy[2];
-	result = READ_BE_UINT16(ptr);
-	strcpy(dummy, "x"); // Hello, I'm a drunk optimizer. Thanks for helping me.
-	return result;
-}
-
-#else
-
-#define READ_BE_INT16 READ_BE_UINT16
-
-#endif
-
 /**
  * This is the namespace of the Queen engine.
  *
