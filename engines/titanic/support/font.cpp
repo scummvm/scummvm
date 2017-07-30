@@ -275,11 +275,11 @@ WriteCharacterResult STFont::writeChar(CVideoSurface *surface, unsigned char c, 
 		charRect.left += srcRect->left - destPos.x;
 		destPos.x = srcRect->left;
 	} else {
-		if ((charRect.width() + destPos.x) > srcRect->right) {
+		if ((destPos.x + charRect.width()) > srcRect->right) {
 			if (destPos.x > srcRect->right)
 				return WC_OUTSIDE_RIGHT;
 
-			charRect.right += srcRect->left - destPos.x;
+			charRect.right += srcRect->right - destPos.x - charRect.width();
 		}
 	}
 

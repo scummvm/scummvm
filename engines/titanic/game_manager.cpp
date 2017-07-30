@@ -185,10 +185,6 @@ void CGameManager::update() {
 		if (_project) {
 			CPetControl *pet = _project->getPetControl();
 
-			// FIXME: Distortion of text in Conversation tab when dragging items
-			if (_dragItem)
-				pet->makeDirty();
-
 			if (pet)
 				_bounds.combine(pet->getBounds());
 		}
