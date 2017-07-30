@@ -1194,10 +1194,22 @@ bool printObject(reg_t pos) {
 		con->debugPrintf("\n");
 	}
 	con->debugPrintf("  -- methods:\n");
-	for (i = 0; i < obj->getMethodCount(); i++) {
-		reg_t fptr = obj->getFunction(i);
-		con->debugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), g_sci->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), PRINT_REG(fptr));
-	}
+	Common::Array<Selector> foundMethods;
+	const Object *protoObj = obj;
+	do {
+		for (i = 0; i < protoObj->getMethodCount(); i++) {
+			const Selector selector = protoObj->getFuncSelector(i);
+			if (Common::find(foundMethods.begin(), foundMethods.end(), selector) == foundMethods.end()) {
+				reg_t fptr = protoObj->getFunction(i);
+				con->debugPrintf("    [%03x] ", selector);
+				if (protoObj != obj) {
+					con->debugPrintf("%s::", s->_segMan->getObjectName(protoObj->getPos()));
+				}
+				con->debugPrintf("%s = %04x:%04x\n", g_sci->getKernel()->getSelectorName(selector).c_str(), PRINT_REG(fptr));
+				foundMethods.push_back(selector);
+			}
+		}
+	} while ((protoObj = s->_segMan->getObject(protoObj->getSuperClassSelector())));
 
 	Script *scr = s->_segMan->getScriptIfLoaded(pos.getSegment());
 	if (scr)
