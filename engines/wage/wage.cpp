@@ -178,6 +178,7 @@ void WageEngine::processEvents() {
 
 			case Common::KEYCODE_RETURN:
 				_inputText = _gui->_consoleWindow->getInput();
+				_inputText += '\n';
 
 				_gui->appendText(_inputText.c_str());
 
