@@ -29,6 +29,14 @@
 
 namespace Graphics {
 
+enum {
+	kConWOverlap = 20,
+	kConHOverlap = 20,
+	kConWPadding = 3,
+	kConHPadding = 4,
+	kConOverscan = 3
+};
+
 static void cursorTimerHandler(void *refCon);
 
 MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) :
@@ -117,7 +125,7 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	_composeSurface.blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));
 
 	if (_cursorState)
-		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + 20, _cursorY + 20));
+		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap, _cursorY + kConHOverlap));
 
 	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
 
