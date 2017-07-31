@@ -3847,6 +3847,22 @@ static const uint16 phant2RatboyPatch[] = {
 	PATCH_END
 };
 
+// Phant2-specific version of sci2NumSavesSignature1/2
+// Applies to at least: English CD
+static const uint16 phant2NumSavesSignature[] = {
+	SIG_MAGICDWORD,
+	0x8d, 0x01, // lst 1
+	0x35, 0x14, // ldi 20
+	0x1a,       // eq?
+	SIG_END
+};
+
+static const uint16 phant2NumSavesPatch[] = {
+	PATCH_ADDTOOFFSET(+2), // lst 1
+	0x35, 0x63,            // ldi 99
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
@@ -3854,6 +3870,7 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,  4081, "non-responsive mouse after ratboy puzzle",    1, phant2RatboySignature,         phant2RatboyPatch },
 	{  true, 63016, "non-responsive mouse during music fades",     1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
 	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
+	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature,       phant2NumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
