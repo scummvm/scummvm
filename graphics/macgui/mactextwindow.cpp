@@ -186,6 +186,8 @@ void MacTextWindow::drawInput() {
 	_cursorX = _inputText.empty() ? 0 : _fontRef->getStringWidth(text[_inputTextHeight - 1]);
 
 	updateCursorPos();
+
+	_contentIsDirty = true;
 }
 
 void MacTextWindow::clearInput() {
@@ -211,6 +213,8 @@ void MacTextWindow::updateCursorPos() {
 		_cursorY = _mactext->getTextHeight() - kCursorHeight * 2;
 	else
 		_cursorY = _mactext->getTextHeight() - kCursorHeight;
+
+	_cursorDirty = true;
 }
 
 void MacTextWindow::undrawCursor() {
