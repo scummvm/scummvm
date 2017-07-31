@@ -203,11 +203,13 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 	const Graphics::Font *font = getConsoleFont();
 
 	_consoleLineHeight = font->getFontHeight();
-	int textW = r.width() - kConWPadding * 2;
-	int textH = r.height() - kConHPadding * 2;
 
 	if (textReflow)
 		reflowText();
+
+#ifndef USE_MACTEXTWINDOW
+	int textW = r.width() - kConWPadding * 2;
+	int textH = r.height() - kConHPadding * 2;
 
 	const int firstLine = _scrollPos / _consoleLineHeight;
 	const int lastLine = MIN((_scrollPos + textH) / _consoleLineHeight + 1, _lines.size());
@@ -218,8 +220,6 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 
 	if (fullRedraw)
 		_consoleNumLines = (r.height() - 2 * kConWPadding) / _consoleLineHeight - 2;
-
-#ifndef USE_MACTEXTWINDOW
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
@@ -302,8 +302,6 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 		y1 += _consoleLineHeight;
 	}
 
-#endif
-
 	// Now we need to clip it to the screen
 	int xcon = r.left - kConOverscan;
 	int ycon = r.top - kConOverscan;
@@ -326,11 +324,8 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 	if (rr.bottom > _screen.h - 1)
 		rr.bottom = _screen.h - 1;
 
-#ifdef USE_MACTEXTWINDOW
-	_consoleWindow->drawText(&_console, 0, 0, boundsR.width(), boundsR.height(), boundsR.left + 7, boundsR.top + 7);
-#endif // USE_MACTEXTWINDOW
-
 	g->copyRectToSurface(_console, xcon, ycon, boundsR);
+#endif
 }
 
 void Gui::drawInput() {
