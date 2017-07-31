@@ -179,7 +179,7 @@ void MacTextWindow::drawInput() {
 	// And add new input line to the text
 	appendText(_inputText, _font);
 
-	_cursorX = _fontRef->getStringWidth(text[_inputTextHeight - 1]);
+	_cursorX = _inputText.empty() ? 0 : _fontRef->getStringWidth(text[_inputTextHeight - 1]);
 
 	updateCursorPos();
 }
