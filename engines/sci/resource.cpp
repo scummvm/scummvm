@@ -678,7 +678,7 @@ int ResourceManager::addAppropriateSources() {
 		// SCI2.1 resource patches
 		if (Common::File::exists("resmap.pat") && Common::File::exists("ressci.pat")) {
 			// We add this resource with a map which surely won't exist
-			addSource(new VolumeResourceSource("ressci.pat", addExternalMap("resmap.pat", 100), 100));
+			addSource(new VolumeResourceSource("ressci.pat", addExternalMap("resmap.pat", kResPatVolumeNumber), kResPatVolumeNumber));
 		}
 	}
 #else
@@ -732,7 +732,7 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 #ifdef ENABLE_SCI32
 		// SCI2.1 resource patches
 		if (filename.contains("resmap.pat"))
-			sci21PatchMap = addExternalMap(file, 100);
+			sci21PatchMap = addExternalMap(file, kResPatVolumeNumber);
 
 		if (filename.contains("ressci.pat"))
 			sci21PatchRes = file;
@@ -744,7 +744,7 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 
 #ifdef ENABLE_SCI32
 	if (sci21PatchMap && sci21PatchRes)
-		addSource(new VolumeResourceSource(sci21PatchRes->getName(), sci21PatchMap, 100, sci21PatchRes));
+		addSource(new VolumeResourceSource(sci21PatchRes->getName(), sci21PatchMap, kResPatVolumeNumber, sci21PatchRes));
 #endif
 
 	// Now find all the resource.0?? files
@@ -1913,7 +1913,13 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				addSource(audioMap);
 
 				Common::String volumeName;
-				if (resId.getNumber() == 65535) {
+				if (mapVolumeNr == kResPatVolumeNumber) {
+					if (resId.getNumber() == 65535) {
+						volumeName = "RESSCI.PAT";
+					} else {
+						volumeName = "RESAUD.001";
+					}
+				} else if (resId.getNumber() == 65535) {
 					volumeName = Common::String::format("RESSFX.%03d", mapVolumeNr);
 				} else {
 					volumeName = Common::String::format("RESAUD.%03d", mapVolumeNr);

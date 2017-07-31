@@ -43,6 +43,11 @@ class SeekableReadStream;
 namespace Sci {
 
 enum {
+#ifdef ENABLE_SCI32
+	// Hack to treat RESMAP.PAT/RESSCI.PAT as the highest volume
+	kResPatVolumeNumber = 100,
+#endif
+
 	kResourceHeaderSize = 2, ///< patch type + header size
 
 	/** The maximum allowed size for a compressed or decompressed resource */
