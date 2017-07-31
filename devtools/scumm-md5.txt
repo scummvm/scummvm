@@ -890,6 +890,11 @@ spyfox	SPY Fox 1: Dry Cereal
 	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan (GB or US?)
 	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 101	-	-	sanguinehearts (GB or US?)
 	15878e3bee2e1e759184abee98589eaa	-1	en	iOS	HE 100	-	-	clone2727 (GB or US?)
+	e441af0b65983c1a4b3a52f9c7b15484	49742	us	Wii	HE 100	-	-	Ben Castricum
+	1b3a7f67d688f44d0e54da839923d3a3	49742	nl	Wii	HE 100	-	-	Ben Castricum
+	2f7583da072d027057983c43bb3fa53f	49742	gb	Wii	HE 100	-	-	Ben Castricum
+	afd74ce452df9cca6ebc023276b4772a	49742	de	Wii	HE 100	-	-	Ben Castricum
+	6f4d64ce1b44470536cae2eb6fe8aefd	49742	fr	Wii	HE 100	-	-	Ben Castricum
 
 	53e94115b55dd51d4b8ff0871aa1df1e	20103	us	All	-	Demo	-	khalek, sev
 	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	us	All	-	Demo	-	sev
