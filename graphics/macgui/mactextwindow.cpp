@@ -156,6 +156,8 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 			if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
 				_inputText += (char)event.kbd.ascii;
 				drawInput();
+
+				return true;
 			}
 
 			break;
