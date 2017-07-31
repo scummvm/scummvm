@@ -71,12 +71,6 @@ void MacTextWindow::drawText(ManagedSurface *g, int x, int y, int w, int h, int 
 	_mactext->draw(g, x, y, w, h, xoff, yoff);
 }
 
-void MacTextWindow::appendText(Common::String str, int id, int size, int slant) {
-	_mactext->appendText(str, id, size, slant);
-
-	updateCursorPos();
-}
-
 void MacTextWindow::appendText(Common::String str, const MacFont *macFont) {
 	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant());
 
