@@ -108,11 +108,8 @@ void Gui::appendText(const char *s) {
 	_out.push_back(tmp);
 	flowText(tmp);
 
-#ifdef USE_MACTEXTWINDOW
-	// Append _lines content to MacTextWindow after it has
-	// been processed by flowText above
-	for (uint line = 0; line < _lines.size(); ++line)
-		_consoleWindow->appendText(_lines[line], getConsoleMacFont());
+#ifdef USE_MACTEXTWINDOW1
+	_consoleWindow->appendText(s, getConsoleMacFont());
 #endif // USE_MACTEXTWINDOW
 }
 
