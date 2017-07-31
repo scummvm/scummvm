@@ -81,7 +81,7 @@ bool CIdleSummoner::TimerMsg(CTimerMsg *msg) {
 
 		int region = talkGetDialRegion("BellBot", 1);
 		uint delay = region == 1 ? 15000 : 120000;
-		uint enterTicks = MIN(getNodeEnterTicks(), _ticks);
+		uint enterTicks = MAX(getNodeEnterTicks(), _ticks);
 
 		CString name;
 		uint ticks = getTicksCount() - enterTicks;
