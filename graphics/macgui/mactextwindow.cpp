@@ -138,6 +138,8 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	WindowClick click = isInBorder(event.mouse.x, event.mouse.y);
 
 	if (event.type == Common::EVENT_KEYDOWN) {
+		_wm->setActive(getId());
+
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
 			if (!_inputText.empty()) {
