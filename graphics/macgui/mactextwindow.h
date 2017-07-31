@@ -72,6 +72,9 @@ public:
 
 	void undrawCursor();
 
+	const Common::String getInput() { return _inputText; }
+	void clearInput();
+
 private:
 	void drawInput();
 	void updateCursorPos();

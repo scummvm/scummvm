@@ -184,6 +184,13 @@ void MacTextWindow::drawInput() {
 	updateCursorPos();
 }
 
+void MacTextWindow::clearInput() {
+	undrawCursor();
+
+	_cursorX = 0;
+	_inputText.clear();
+}
+
 //////////////////
 // Cursor stuff
 static void cursorTimerHandler(void *refCon) {
