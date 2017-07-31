@@ -39,7 +39,7 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 
 	_fontRef = wm->_fontMan->getFont(*font);
 
-	_inputTextHeight = 0;
+	_inputTextHeight = 1;
 	_maxWidth = maxWidth;
 
 	_scrollPos = 0;
@@ -48,6 +48,8 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	_cursorY = 0;
 	_cursorState = false;
 	_cursorOff = false;
+
+	_cursorDirty = true;
 
 	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
 
@@ -63,14 +65,20 @@ void MacTextWindow::drawText(ManagedSurface *g, int x, int y, int w, int h, int 
 
 void MacTextWindow::appendText(Common::String str, int id, int size, int slant) {
 	_mactext->appendText(str, id, size, slant);
+
+	updateCursorPos();
 }
 
 void MacTextWindow::appendText(Common::String str, const MacFont *macFont) {
 	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant());
+
+	updateCursorPos();
 }
 
 void MacTextWindow::clearText() {
 	_mactext->clearText();
+
+	updateCursorPos();
 }
 
 void MacTextWindow::setSelection(int selStartX, int selStartY, int selEndX, int selEndY) {
@@ -165,10 +173,7 @@ void MacTextWindow::drawInput() {
 
 	_cursorX = _fontRef->getStringWidth(text[_inputTextHeight - 1]);
 
-	if (_scrollPos)
-		_cursorY = _mactext->getTextHeight() - kCursorHeight * 2;
-	else
-		_cursorY = _mactext->getTextHeight() - kCursorHeight;
+	updateCursorPos();
 }
 
 //////////////////
@@ -180,6 +185,13 @@ static void cursorTimerHandler(void *refCon) {
 		w->_cursorState = !w->_cursorState;
 
 	w->_cursorDirty = true;
+}
+
+void MacTextWindow::updateCursorPos() {
+	if (_scrollPos)
+		_cursorY = _mactext->getTextHeight() - kCursorHeight * 2;
+	else
+		_cursorY = _mactext->getTextHeight() - kCursorHeight;
 }
 
 void MacTextWindow::undrawCursor() {

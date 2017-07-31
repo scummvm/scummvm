@@ -74,6 +74,7 @@ public:
 
 private:
 	void drawInput();
+	void updateCursorPos();
 
 public:
 	int _cursorX, _cursorY;
