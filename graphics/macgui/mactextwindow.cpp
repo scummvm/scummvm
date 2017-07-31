@@ -110,13 +110,16 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!_borderIsDirty && !_contentIsDirty && !_cursorDirty && !forceRedraw)
 		return false;
 
-	if (_borderIsDirty || forceRedraw)
+	if (_borderIsDirty || forceRedraw) {
 		drawBorder();
+
+		_composeSurface.clear(kColorWhite);
+	}
 
 	_contentIsDirty = false;
 
 	// Compose
-	_composeSurface.blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));
+	_mactext->draw(&_composeSurface, 0, 0, _surface.w - 2, _surface.h - 2, kConWOverlap - 2, kConWOverlap - 2);
 
 	if (_cursorState)
 		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap, _cursorY + kConHOverlap));
@@ -206,7 +209,7 @@ void MacTextWindow::updateCursorPos() {
 	if (_scrollPos)
 		_cursorY = _mactext->getTextHeight() - kCursorHeight * 2;
 	else
-		_cursorY = _mactext->getTextHeight() - kCursorHeight;
+		_cursorY = _mactext->getTextHeight() - kCursorHeight - 2;
 
 	_cursorDirty = true;
 }
