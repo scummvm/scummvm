@@ -49,6 +49,11 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	_cursorState = false;
 	_cursorOff = false;
 
+	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
+
+	_cursorSurface = new ManagedSurface(1, kCursorHeight);
+	_cursorSurface->fillRect(*_cursorRect, kColorBlack);
+
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
 }
 
@@ -76,6 +81,8 @@ void MacTextWindow::setSelection(int selStartX, int selStartY, int selEndX, int 
 }
 
 MacTextWindow::~MacTextWindow() {
+	delete _cursorSurface;
+
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 }
 
@@ -100,6 +107,10 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 
 	// Compose
 	_composeSurface.blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));
+
+	if (_cursorState)
+		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY));
+
 	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
 
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
@@ -158,7 +169,6 @@ void MacTextWindow::drawInput() {
 		_cursorY = _mactext->getTextHeight() - kCursorHeight * 2;
 	else
 		_cursorY = _mactext->getTextHeight() - kCursorHeight;
-
 }
 
 //////////////////
@@ -166,39 +176,15 @@ void MacTextWindow::drawInput() {
 static void cursorTimerHandler(void *refCon) {
 	MacTextWindow *w = (MacTextWindow *)refCon;
 
-	int x = w->_cursorX;
-	int y = w->_cursorY;
-
-	if (x == 0 && y == 0)
-		return;
-
-	x += w->getInnerDimensions().left;
-	y += w->getInnerDimensions().top;
-	int h = kCursorHeight;
-
-	if (y + h > w->getInnerDimensions().bottom) {
-		h = w->getInnerDimensions().bottom - y;
-	}
-
-	if (h > 0)
-		w->getSurface()->vLine(x, y, y + h, w->_cursorState ? kColorBlack : kColorWhite);
-
 	if (!w->_cursorOff)
 		w->_cursorState = !w->_cursorState;
-
-	w->_cursorRect.left = x;
-	w->_cursorRect.right = MIN<uint16>(x + 1, w->getInnerDimensions().right);
-	w->_cursorRect.top = MIN<uint16>(y - 1, w->getInnerDimensions().top);
-	w->_cursorRect.bottom = MIN<uint16>(y + h, w->getInnerDimensions().bottom);
 
 	w->_cursorDirty = true;
 }
 
 void MacTextWindow::undrawCursor() {
-	_cursorOff = true;
 	_cursorState = false;
-	cursorTimerHandler(this);
-	_cursorOff = false;
+	_cursorDirty = true;
 }
 
 

@@ -80,7 +80,7 @@ public:
 	bool _cursorState;
 
 	bool _cursorDirty;
-	Common::Rect _cursorRect;
+	Common::Rect *_cursorRect;
 	bool _cursorOff;
 
 	int _scrollPos;
@@ -89,6 +89,8 @@ private:
 	MacText *_mactext;
 	const MacFont *_font;
 	const Font *_fontRef;
+
+	ManagedSurface *_cursorSurface;
 
 	SelectedText _selectedText;
 
