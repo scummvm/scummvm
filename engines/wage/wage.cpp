@@ -177,6 +177,12 @@ void WageEngine::processEvents() {
 				break;
 
 			case Common::KEYCODE_RETURN:
+				_inputText = _gui->_consoleWindow->getInput();
+
+				_gui->appendText(_inputText.c_str());
+
+				_gui->_consoleWindow->clearInput();
+
 				if (_inputText.empty())
 					break;
 

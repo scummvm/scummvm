@@ -330,9 +330,7 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 		rr.bottom = _screen.h - 1;
 
 #ifdef USE_MACTEXTWINDOW
-	_consoleWindow->drawText(&_console, 0, 0,
-		boundsR.width(), boundsR.height(),
-		boundsR.left + 7, boundsR.top + 7);
+	_consoleWindow->drawText(&_console, 0, 0, boundsR.width(), boundsR.height(), boundsR.left + 7, boundsR.top + 7);
 #endif // USE_MACTEXTWINDOW
 
 	g->copyRectToSurface(_console, xcon, ycon, boundsR);
