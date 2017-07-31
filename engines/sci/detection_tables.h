@@ -3155,7 +3155,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "8bd5ceeedcbe16dfe55d1b90dcd4be84", 1942},
 		{"ressci.005", 0, "05f9fe2bee749659acb3cd2c90252fc5", 67905112},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - English DOS (GOG version) (supplied by littleboy in patch #1360)
 	// Note: Fully uncensored, basically the US release, but ressci.* merged into ressci.000
@@ -3166,7 +3166,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
 		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - German DOS/Windows (supplied by AReim1982)
 	// Note: Fully uncensored, but one scene is missing probably because of a mastering error (Curtis + Therese meeting near water cooler)
@@ -3188,7 +3188,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "2fc48a4a5a73b726994f189da51a8b2a", 1954},
 		{"ressci.005", 0, "e94005890d22dd3b7f605a2a7c025803", 68232146},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - French DOS/Windows (supplied by bgK)
 	// Windows executable scanning reports "3.000.000" - "Nov 09 1996 16:03:00"
@@ -3206,7 +3206,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "7811a1801660090725ceef799b62fc72", 1954},
 		{"ressci.005", 0, "b6f090a2c8fc955d17b8a47085b2f890", 68231525},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - Japanese Windows (supplied by m_kiewitz)
 	// Features English voices w/ Japanese subtitles. Background images were also localized to Japanese.
@@ -3228,7 +3228,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		//{"resaud.002", 0, "3b4c5f92e5143fd3539b227e48ac2929", 8414502},
 		//{"ressfx.001", 0, "343a6ca9ddd614541b11b155de6368ac", 90268706},
 		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
+		Common::JA_JPN, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 #endif // ENABLE_SCI32
 
