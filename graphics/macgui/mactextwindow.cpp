@@ -160,7 +160,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		}
 	}
 
-	return false;
+	return MacWindow::processEvent(event);
 }
 
 void MacTextWindow::drawInput() {
