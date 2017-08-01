@@ -393,8 +393,9 @@ protected:
 
 	/**
 	 * Play a cutscene
+	 * @returns		True if the cutscene was not interrupted
 	 */
-	void playCutscene(uint startFrame, uint endFrame);
+	bool playCutscene(uint startFrame, uint endFrame);
 
 	/**
 	 * Play a clip randomly from a passed list of names

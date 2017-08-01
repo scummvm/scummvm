@@ -471,7 +471,7 @@ Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 	}
 }
 
-void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
+bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	bool isDifferent = false;
 	
 	if (_currentFrame != ((int)startFrame - 1) || startFrame == 0) {
@@ -487,6 +487,7 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	isDifferent = _movieFrameSurface[0]->w != r.width() ||
 		_movieFrameSurface[0]->h != r.height();
 
+	bool isFinished = true;
 	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
 		if (isNextFrame()) {
 			renderFrame();
@@ -507,11 +508,14 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		}
 
 		// Brief wait, and check at the same time for clicks to abort the clip
-		if (g_vm->_events->waitForPress(10))
+		if (g_vm->_events->waitForPress(10)) {
+			isFinished = false;
 			break;
+		}
 	}
 
 	stop();
+	return isFinished;
 }
 
 uint AVISurface::getBitDepth() const {

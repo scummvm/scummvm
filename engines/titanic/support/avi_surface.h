@@ -215,8 +215,9 @@ public:
 
 	/**
 	 * Plays an interruptable cutscene
+	 * @returns		True if the cutscene was not interrupted
 	 */
-	void playCutscene(const Rect &r, uint startFrame, uint endFrame);
+	bool playCutscene(const Rect &r, uint startFrame, uint endFrame);
 
 	/**
 	 * Returns the pixel depth of the movie in bits

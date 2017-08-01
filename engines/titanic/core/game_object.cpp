@@ -686,18 +686,21 @@ void CGameObject::playRandomClip(const char *const *names, uint flags) {
 	playClip(name, flags);
 }
 
-void CGameObject::playCutscene(uint startFrame, uint endFrame) {
+bool CGameObject::playCutscene(uint startFrame, uint endFrame) {
 	if (!_surface) {
 		if (!_resource.empty())
 			loadResource(_resource);
 		_resource.clear();
 	}
 
+	bool result = true;
 	if (_surface && _surface->loadIfReady() && _surface->_movie) {
 		disableMouse();
-		_surface->_movie->playCutscene(_bounds, startFrame, endFrame);
+		result = _surface->_movie->playCutscene(_bounds, startFrame, endFrame);
 		enableMouse();
 	}
+
+	return result;
 }
 
 void CGameObject::savePosition() {
