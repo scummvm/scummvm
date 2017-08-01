@@ -71,6 +71,8 @@ struct MacFontRun {
 	}
 
 	const Font *getFont();
+
+	const Common::String toString();
 };
 
 struct MacTextLine {

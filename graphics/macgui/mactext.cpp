@@ -37,6 +37,15 @@ const Font *MacFontRun::getFont() {
 	return font;
 }
 
+const Common::String MacFontRun::toString() {
+	return Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c%c",
+			(fontId >> 8) & 0xff, fontId & 0xff,
+			textSlant & 0xff, unk3f & 0xff,
+			(fontSize >> 8) & 0xff, fontSize & 0xff,
+			(palinfo1 >> 8) & 0xff, palinfo1 & 0xff,
+			(palinfo2 >> 8) & 0xff, palinfo2 & 0xff,
+			(palinfo3 >> 8) & 0xff, palinfo3 & 0xff);
+}
 
 MacText::~MacText(){
 	delete _macFont;
@@ -370,6 +379,9 @@ void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int f
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, 0, fontSize, 0, 0, 0);
 
+	_str += fontRun.toString();
+	_str += str;
+
 	resizeAndFormatLines(newLines, &fontRun);
 
 	splitString(str);
@@ -381,6 +393,9 @@ void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int f
 void MacText::appendTextDefault(Common::String str) {
 	uint oldLen = _textLines.size();
 	uint newLines = 1 + getNewlinesInString(str);
+
+	_str += _defaultFormatting.toString();
+	_str += str;
 
 	resizeAndFormatLines(newLines, &_defaultFormatting);
 
