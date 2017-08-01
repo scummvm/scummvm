@@ -83,8 +83,6 @@ void GfxTransitions32::addShowRect(const Common::Rect &rect) {
 
 void GfxTransitions32::sendShowRects() {
 	g_sci->_gfxFrameout->showBits();
-	g_sci->getSciDebugger()->onFrame();
-	clearShowRects();
 	throttle();
 }
 
@@ -126,7 +124,6 @@ void GfxTransitions32::processShowStyles() {
 
 		if (doFrameOut) {
 			g_sci->_gfxFrameout->frameOut(true);
-			g_sci->getSciDebugger()->onFrame();
 			throttle();
 		}
 	} while(continueProcessing && doFrameOut);
@@ -323,6 +320,9 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 			case kShowStyleWipeRight:
 				configure21EarlyHorizontalWipe(*entry, priority);
 				break;
+			case kShowStyleHShutterOut:
+				configure21EarlyHorizontalShutter(*entry, priority);
+				break;
 			case kShowStyleIrisOut:
 			case kShowStyleIrisIn:
 				configure21EarlyIris(*entry, priority);
@@ -385,6 +385,7 @@ ShowStyleList::iterator GfxTransitions32::deleteShowStyle(const ShowStyleList::i
 	case kShowStyleWipeRight:
 	case kShowStyleIrisOut:
 	case kShowStyleIrisIn:
+	case kShowStyleHShutterOut:
 		if (getSciVersion() <= SCI_VERSION_2_1_EARLY) {
 			for (uint i = 0; i < showStyle->screenItems.size(); ++i) {
 				ScreenItem *screenItem = showStyle->screenItems[i];
@@ -434,6 +435,47 @@ void GfxTransitions32::configure21EarlyHorizontalWipe(PlaneShowStyle &showStyle,
 
 	if (showStyle.fadeUp) {
 		for (int i = 0; i < divisions; ++i) {
+			g_sci->_gfxFrameout->addScreenItem(*showStyle.screenItems[i]);
+		}
+	}
+}
+
+void GfxTransitions32::configure21EarlyHorizontalShutter(PlaneShowStyle &showStyle, const int16 priority) {
+	showStyle.numEdges = 2;
+	const int numScreenItems = showStyle.numEdges * showStyle.divisions;
+	showStyle.screenItems.reserve(numScreenItems);
+
+	CelInfo32 celInfo;
+	celInfo.type = kCelTypeColor;
+	celInfo.color = showStyle.color;
+
+	const int width = showStyle.width;
+	const int divisions = showStyle.divisions;
+
+	for (int i = 0; i < divisions; ++i) {
+		Common::Rect rect;
+
+		// Left
+		rect.top = 0;
+		rect.right = (width + 1) * (i + 1) / (2 * divisions);
+		rect.bottom = showStyle.height;
+		const int16 leftLeft = rect.left;
+
+		showStyle.screenItems.push_back(new ScreenItem(showStyle.plane, celInfo, rect));
+		showStyle.screenItems.back()->_priority = priority;
+		showStyle.screenItems.back()->_fixedPriority = true;
+
+		// Right
+		rect.left = width - rect.right;
+		rect.right = width - leftLeft;
+
+		showStyle.screenItems.push_back(new ScreenItem(showStyle.plane, celInfo, rect));
+		showStyle.screenItems.back()->_priority = priority;
+		showStyle.screenItems.back()->_fixedPriority = true;
+	}
+
+	if (showStyle.fadeUp) {
+		for (int i = 0; i < numScreenItems; ++i) {
 			g_sci->_gfxFrameout->addScreenItem(*showStyle.screenItems[i]);
 		}
 	}
@@ -535,7 +577,6 @@ bool GfxTransitions32::processShowStyle(PlaneShowStyle &showStyle, uint32 now) {
 	default:
 	case kShowStyleNone:
 		return processNone(showStyle);
-	case kShowStyleHShutterOut:
 	case kShowStyleHShutterIn:
 	case kShowStyleVShutterOut:
 	case kShowStyleVShutterIn:
@@ -544,6 +585,12 @@ bool GfxTransitions32::processShowStyle(PlaneShowStyle &showStyle, uint32 now) {
 	case kShowStyleDissolveNoMorph:
 	case kShowStyleMorph:
 		return processMorph(showStyle);
+	case kShowStyleHShutterOut:
+		if (getSciVersion() > SCI_VERSION_2_1_EARLY) {
+			return processMorph(showStyle);
+		} else {
+			return processHShutterOut(showStyle);
+		}
 	case kShowStyleWipeLeft:
 		if (getSciVersion() > SCI_VERSION_2_1_EARLY) {
 			return processMorph(showStyle);
@@ -592,8 +639,12 @@ bool GfxTransitions32::processNone(PlaneShowStyle &showStyle) {
 	return true;
 }
 
-void GfxTransitions32::processHShutterOut(PlaneShowStyle &showStyle) {
-	error("HShutterOut is not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
+bool GfxTransitions32::processHShutterOut(PlaneShowStyle &showStyle) {
+	if (getSciVersion() > SCI_VERSION_2_1_EARLY) {
+		error("HShutterOut is not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
+	}
+
+	return processWipe(-1, showStyle);
 }
 
 void GfxTransitions32::processHShutterIn(const PlaneShowStyle &showStyle) {

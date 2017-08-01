@@ -1024,9 +1024,12 @@ void CSaveableObject::initClassList() {
 	_classDefs = new ClassDefList();
 	_classList = new ClassListMap();
 
+	CSaveableObject::_type = new TypeTemplate<CSaveableObject>("CSaveableObject", nullptr);
+	_classDefs->push_back(CSaveableObject::_type);
+	(*_classList)["CSaveableObject"] = FunctionCSaveableObject;
+
 	// Setup the type definitions for each class. Note that these have to be
 	// in order of hierarchy from ancestor class to descendent
-	ADDFN(CSaveableObject, CSaveableObject);
 	ADDFN(CMessage, CSaveableObject);
 	ADDFN(CMessageTarget, CSaveableObject);
 	ADDFN(CResourceKey, CSaveableObject);

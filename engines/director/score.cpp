@@ -72,8 +72,6 @@ Score::Score(DirectorEngine *vm) {
 	if (_vm->getVersion() <= 3) {
 		_lingo->executeScript(kMovieScript, 0);
 	}
-
-	_lingo->processEvent(kEventPrepareMovie, kMovieScript, 0);
 	_movieScriptCount = 0;
 	_labels = NULL;
 	_font = NULL;
@@ -1176,26 +1174,19 @@ void Score::update() {
 	_surface->clear();
 	_surface->copyFrom(*_trailSurface);
 
-	_frames[_currentFrame]->executeImmediateScripts();
+	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
 	// Enter and exit from previous frame (Director 4)
-	_lingo->processEvent(kEventEnterFrame, kFrameScript, _frames[_currentFrame]->_actionId);
-	_lingo->processEvent(kEventNone, kFrameScript, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventEnterFrame);
+	_lingo->processEvent(kEventNone);
 	// TODO Director 6 - another order
 
-	// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
 	if (_vm->getVersion() >= 6) {
-		for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
-			if (_frames[_currentFrame]->_sprites[i]->_enabled) {
-				// TODO: Check if this is also possibly a kSpriteScript?
-				_lingo->processEvent(kEventBeginSprite, kCastScript, _frames[_currentFrame]->_sprites[i]->_scriptId);
-			}
-		}
+		_lingo->processEvent(kEventBeginSprite);
+		// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
+		_lingo->processEvent(kEventPrepareFrame);
+		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
-
-	// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
-	if (_vm->getVersion() >= 6)
-		_lingo->processEvent(kEventPrepareFrame, kFrameScript, _currentFrame);
 
 	Common::SortedArray<Label *>::iterator i;
 	if (_labels != NULL) {
@@ -1248,7 +1239,7 @@ void Score::update() {
 		}
 	}
 
-	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventExitFrame);
 
 	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
 }

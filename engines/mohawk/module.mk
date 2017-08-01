@@ -34,6 +34,7 @@ MODULE_OBJS += \
 	myst_areas.o \
 	myst_graphics.o \
 	myst_scripts.o \
+	myst_sound.o \
 	myst_state.o \
 	resource_cache.o \
 	myst_stacks/channelwood.o \

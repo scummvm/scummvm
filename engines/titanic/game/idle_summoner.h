@@ -40,8 +40,8 @@ public:
 	int _fieldC8;
 	int _fieldCC;
 	int _fieldD0;
-	int _fieldD4;
-	int _fieldD8;
+	int _timerId;
+	uint _oldNodesCtr;
 	uint _ticks;
 public:
 	CIdleSummoner();

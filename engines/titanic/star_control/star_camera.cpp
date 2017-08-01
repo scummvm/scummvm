@@ -23,7 +23,7 @@
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/unmarked_camera_mover.h"
 #include "titanic/star_control/marked_camera_mover.h"
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/titanic.h"
 
@@ -278,21 +278,21 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	} else if (_matrixRow == 1) {
 		// 2 markers locked in
 		FVector tempV2;
-		DMatrix m1, m2, sub;
+		DAffine m1, m2, sub;
 		DVector mrow1, mrow2, mrow3;
 		DVector tempV1, diffV, multV, multV2, tempV3, tempV4, tempV5, tempV6, tempV7;
 		DVector tempV8, tempV9, tempV10, tempV11, tempV12;
 		DVector tempV13, tempV14, tempV15, tempV16;
 
-		DMatrix subX(0, _matrix._row1);
-		DMatrix subY(Y_AXIS, angles._y);
+		DAffine subX(0, _matrix._row1);
+		DAffine subY(Y_AXIS, angles._y);
 
 		tempV1 = _matrix._row2 - _matrix._row1;
 		diffV = tempV1;
 		m1 = diffV.fn5();
-		m1 = m1.fn4(subX);
-		subX = m1.fn1();
-		subX = subX.fn4(subY);
+		m1 = m1.compose(subX);
+		subX = m1.inverseTransform();
+		subX = subX.compose(subY);
 
 		FMatrix m3 = _viewport.getOrientation();
 		tempV2 = _viewport._position;
@@ -345,7 +345,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	}
 }
 
-bool CStarCamera::addMatrixRow(const FVector v) {
+bool CStarCamera::adDAffineRow(const FVector v) {
 	if (_matrixRow >= 2)
 		return false;
 
@@ -457,18 +457,18 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	if (_matrixRow != 0)
 		return;
 
-	DMatrix m2(X_AXIS, _matrix._row1);
+	DAffine m2(X_AXIS, _matrix._row1);
 	DVector tempV1 = v - _matrix._row1;
-	DMatrix m1 = tempV1.fn5();
-	m1 = m1.fn4(m2);
-	m2 = m1.fn1();
+	DAffine m1 = tempV1.fn5();
+	m1 = m1.compose(m2);
+	m2 = m1.inverseTransform();
 	
 	DVector tempV2 = _viewport._position;
-	DMatrix m4;
-	m4._row1 = viewport->_position;
-	m4._row2 = DVector(0.0, 0.0, 0.0);
-	m4._row3 = DVector(0.0, 0.0, 0.0);
-	m4._row4 = DVector(0.0, 0.0, 0.0);
+	DAffine m4;
+	m4._col1 = viewport->_position;
+	m4._col2 = DVector(0.0, 0.0, 0.0);
+	m4._col3 = DVector(0.0, 0.0, 0.0);
+	m4._col4 = DVector(0.0, 0.0, 0.0);
 
 	FMatrix m5 = viewport->getOrientation();
 	double yVal1 = m5._row1._y * 1000000.0;
@@ -476,39 +476,39 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	double xVal1 = m5._row2._x * 1000000.0;
 	double yVal2 = m5._row2._y * 1000000.0;
 	double zVal2 = m5._row2._z * 1000000.0;
-	double zVal3 = zVal1 + m4._row1._z;
-	double yVal3 = yVal1 + m4._row1._y;
-	double xVal2 = m5._row1._x * 1000000.0 + m4._row1._x;
-	double zVal4 = zVal2 + m4._row1._z;
-	double yVal4 = yVal2 + m4._row1._y;
-	double xVal3 = xVal1 + m4._row1._x;
+	double zVal3 = zVal1 + m4._col1._z;
+	double yVal3 = yVal1 + m4._col1._y;
+	double xVal2 = m5._row1._x * 1000000.0 + m4._col1._x;
+	double zVal4 = zVal2 + m4._col1._z;
+	double yVal4 = yVal2 + m4._col1._y;
+	double xVal3 = xVal1 + m4._col1._x;
 
 	DVector tempV4(xVal2, yVal3, zVal3);
 	DVector tempV3(xVal3, yVal4, zVal4);
-	m4._row3 = tempV4;
+	m4._col3 = tempV4;
 
 	FVector tempV5;
 	tempV5._x = m5._row3._x * 1000000.0;
 	tempV5._y = m5._row3._y * 1000000.0;
-	m4._row2 = tempV3;
+	m4._col2 = tempV3;
 
-	tempV3._x = tempV5._x + m4._row1._x;
-	tempV3._y = tempV5._y + m4._row1._y;
-	tempV3._z = m5._row3._z * 1000000.0 + m4._row1._z;
-	m4._row4 = tempV3;
+	tempV3._x = tempV5._x + m4._col1._x;
+	tempV3._y = tempV5._y + m4._col1._y;
+	tempV3._z = m5._row3._z * 1000000.0 + m4._col1._z;
+	m4._col4 = tempV3;
 
 	tempV2 = tempV2.fn1(m2);
-	m4._row1 = m4._row1.fn1(m2);
-	m4._row3 = m4._row3.fn1(m2);
-	m4._row2 = m4._row2.fn1(m2);
-	m4._row4 = m4._row4.fn1(m2);
+	m4._col1 = m4._col1.fn1(m2);
+	m4._col3 = m4._col3.fn1(m2);
+	m4._col2 = m4._col2.fn1(m2);
+	m4._col4 = m4._col4.fn1(m2);
 
 	// Find the angle that gives the minimum distance
 	DVector tempPos;
 	double minDistance = 1.0e20;
 	int minDegree = 0;
 	for (int degree = 0; degree < 360; ++degree) {
-		tempPos = m4._row1;
+		tempPos = m4._col1;
 		tempPos.fn2((double)degree);
 		double distance = tempV2.getDistance(tempPos);
 
@@ -518,25 +518,25 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 		}
 	}
 
-	m4._row1.fn2((double)minDegree);
-	m4._row2.fn2((double)minDegree);
-	m4._row3.fn2((double)minDegree);
-	m4._row4.fn2((double)minDegree);
-	m4._row1 = m4._row1.fn1(m1);
-	m4._row2 = m4._row2.fn1(m1);
-	m4._row3 = m4._row3.fn1(m1);
-	m4._row4 = m4._row4.fn1(m1);
+	m4._col1.fn2((double)minDegree);
+	m4._col2.fn2((double)minDegree);
+	m4._col3.fn2((double)minDegree);
+	m4._col4.fn2((double)minDegree);
+	m4._col1 = m4._col1.fn1(m1);
+	m4._col2 = m4._col2.fn1(m1);
+	m4._col3 = m4._col3.fn1(m1);
+	m4._col4 = m4._col4.fn1(m1);
 
-	m4._row3 -= m4._row1;
-	m4._row2 -= m4._row1;
-	m4._row4 -= m4._row1;
+	m4._col3 -= m4._col1;
+	m4._col2 -= m4._col1;
+	m4._col4 -= m4._col1;
 
-	m4._row3.normalize();
-	m4._row2.normalize();
-	m4._row4.normalize();
-	m5.set(m4._row3, m4._row2, m4._row4);
+	m4._col3.normalize();
+	m4._col2.normalize();
+	m4._col4.normalize();
+	m5.set(m4._col3, m4._col2, m4._col4);
 
-	FVector newPos = m4._row1;
+	FVector newPos = m4._col1;
 	FMatrix m6 = _viewport.getOrientation();
 	_mover->proc8(_viewport._position, newPos, m6, m5);
 

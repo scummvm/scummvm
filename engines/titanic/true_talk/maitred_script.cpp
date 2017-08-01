@@ -146,7 +146,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 
 	switch (id) {
 	case 3:
-		if (getValue(4))
+		if (getValue(8))
 			addResponse(getDialogueId(260655));
 		else if (getValue(12))
 			addResponse(getDialogueId(260622));
@@ -954,6 +954,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(260251));
 			applyFlag = true;
 		}
+		break;
 
 	case 25:
 		if ((sentence->localWord("open") && sentence->localWord("it"))

@@ -150,7 +150,7 @@ void DomeSpit::dragDomeSlider(uint16 startHotspot) {
 	// We've clicked down, so show the closed hand cursor
 	_vm->_cursor->setCursor(kRivenClosedHandCursor);
 
-	while (mouseIsDown() && !_vm->shouldQuit()) {
+	while (mouseIsDown() && !_vm->hasGameEnded()) {
 		int16 hoveredHotspot = getSliderSlotAtPos(startHotspot, getMousePosition());
 		if (hoveredHotspot >= 0) {
 			if (hoveredHotspot > draggedSliderSlot && draggedSliderSlot < 24 && !isSliderAtSlot(draggedSliderSlot + 1)) {

@@ -116,6 +116,8 @@ static const char *const selectorNameTable[] = {
 	"get",          // Torin
 	"set",          // Torin
 	"clear",        // Torin
+	"masterVolume", // SCI2 master volume reset
+	"data",         // Phant2
 #endif
 	NULL
 };
@@ -158,7 +160,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_test,
 	SELECTOR_get,
 	SELECTOR_set,
-	SELECTOR_clear
+	SELECTOR_clear,
+	SELECTOR_masterVolume,
+	SELECTOR_data
 #endif
 };
 
@@ -259,6 +263,82 @@ static const uint16 sci2BenchmarkPatch[] = {
 	0x76,                         // push0
 	0x43, 0x03, SIG_UINT16(0x04), // callk DisposeScript[3], 4
 	0x48,                         // ret
+	PATCH_END
+};
+
+// The init code that runs in many SCI32 games unconditionally resets the music
+// volume, but the game should always use the volume stored in ScummVM.
+// Applies to at least: LSL6hires, MGDX, PQ:SWAT, QFG4
+static const uint16 sci2VolumeResetSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume
+	0x78,                               // push1
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi [default volume]
+	0x81, 0x01,                         // lag 1
+	0x4a, SIG_UINT16(0x06),             // send 6
+	SIG_END
+};
+
+static const uint16 sci2VolumeResetPatch[] = {
+	0x32, PATCH_UINT16(8), // jmp 8 [past volume reset]
+	PATCH_END
+};
+
+// At least Gabriel Knight 1 and Police Quest 4 floppy have a broken Str::strip inside script 64918.
+// The code never passes over the actual string to kStringTrim, so that would not work and also trigger
+// a signature mismatch.
+// Localized version of Police Quest 4 were also affected.
+// Gabriel Knight although affected doesn't seem to ever call the code, so there is no reason to patch it.
+// Police Quest 4 CD got this fixed.
+static const uint16 sci2BrokenStrStripSignature[] = {
+	SIG_MAGICDWORD,
+	0x85, 0x06,                         // lat temp[6]
+	0x31, 0x10,                         // bnt [jump to code that passes 2 parameters]
+	0x38, SIG_UINT16(0x00c2),           // pushi 00c2 (callKernel)
+	0x38, SIG_UINT16(3),                // pushi 03
+	0x39, 0x0e,                         // pushi 0e
+	0x8d, 0x0b,                         // lst temp[0b]
+	0x36,                               // push
+	0x54, SIG_UINT16(0x000a),           // self 0a
+	0x33, 0x0b,                         // jmp to [ret]
+	// 2 parameter code
+	0x38, SIG_UINT16(0x00c2),           // pushi 00c2
+	0x7a,                               // push2
+	0x39, 0x0e,                         // pushi 0e
+	0x8d, 0x0b,                         // lst temp[0b]
+	0x54, SIG_UINT16(0x0008),           // self 08
+	SIG_END
+};
+
+static const uint16 sci2BrokenStrStripPatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x85, 0x06,                         // lat temp[6] (once more]
+	PATCH_ADDTOOFFSET(+3),              // jump over pushi callKernel
+	0x39, 0x04,                         // pushi 04
+	0x39, 0x0e,                         // pushi 0e
+	// Attention: data is 0x14 in PQ4 CD, in floppy it's 0x12
+	0x67, 0x12,                         // pTos data (pass actual data)
+	0x8d, 0x0b,                         // lst temp[0b]
+	0x36,                               // push
+	0x54, PATCH_UINT16(0x000c),         // self 0c
+	0x48,                               // ret
+	PATCH_END
+};
+
+
+// Torin/LSL7-specific version of sci2NumSavesSignature1/2
+// Applies to at least: English CD
+static const uint16 torinLarry7NumSavesSignature[] = {
+	SIG_MAGICDWORD,
+	0x36,       // push
+	0x35, 0x14, // ldi 20
+	0x20,       // ge?
+	SIG_END
+};
+
+static const uint16 torinLarry7NumSavesPatch[] = {
+	PATCH_ADDTOOFFSET(+1), // push
+	0x35, 0x63,            // ldi 99
 	PATCH_END
 };
 
@@ -2536,24 +2616,20 @@ static const uint16 larry6HiresPatchSetScale[] = {
 // Applies to at least: English CD
 static const uint16 larry6HiresSignatureVolumeReset[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x221), // pushi $221 (masterVolume)
-	0x78,                    // push1
-	0x39, 0x0c,              // push $0c
-	0x81, 0x01,              // lag $01
-	0x4a, SIG_UINT16(0x06),  // send $6
-	0x35, 0x0b,              // ldi $0b
-	0xa1, 0xc2,              // sag $c2
+	0x35, 0x0b,                         // ldi $0b
+	0xa1, 0xc2,                         // sag $c2
 	SIG_END
 };
 
 static const uint16 larry6HiresPatchVolumeReset[] = {
-	0x32, PATCH_UINT16(12),  // jmp 12 [past volume changes]
+	0x32, PATCH_UINT16(1),  // jmp 1 [past volume change]
 	PATCH_END
 };
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
-	{  true,    71, "disable volume reset on startup",             1, larry6HiresSignatureVolumeReset,  larry6HiresPatchVolumeReset },
+	{  true,    71, "disable volume reset on startup (1/2)",       1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
+	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresSignatureVolumeReset,  larry6HiresPatchVolumeReset },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSignatureSetScale,     larry6HiresPatchSetScale },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
@@ -2564,6 +2640,61 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 
 #pragma mark -
 #pragma mark Leisure Suit Larry 7
+
+// The init code that runs when LSL7 starts up unconditionally resets the audio
+// volumes to defaults, but the game should always use the volume stored in
+// ScummVM. This patch is basically identical to the patch for Torin, except
+// that they left line numbers in the LSL7 scripts and changed the music volume.
+// Applies to at least: English CD
+static const uint16 larry7VolumeResetSignature1[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x41,               // ldi $41
+	0xa1, 0xe3,               // sag $e3 (music volume)
+	0x7e, SIG_ADDTOOFFSET(2), // line whatever
+	0x35, 0x3c,               // ldi $3c
+	0xa1, 0xe4,               // sag $e4 (sfx volume)
+	0x7e, SIG_ADDTOOFFSET(2), // line whatever
+	0x35, 0x64,               // ldi $64
+	0xa1, 0xe5,               // sag $e5 (speech volume)
+	SIG_END
+};
+
+static const uint16 larry7VolumeResetPatch1[] = {
+	0x33, 0x10, // jmp [past volume resets]
+	PATCH_END
+};
+
+// The init code that runs when LSL7 starts up unconditionally resets the
+// audio volumes to values stored in larry7.prf, but the game should always use
+// the volume stored in ScummVM. This patch is basically identical to the patch
+// for Torin, except that they left line numbers in the LSL7 scripts.
+// Applies to at least: English CD
+static const uint16 larry7VolumeResetSignature2[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x19d), // pushi readWord
+	0x76,                    // push0
+	SIG_ADDTOOFFSET(6),      // advance file stream
+	0xa1, 0xe3,              // sag $e3 (music volume)
+	SIG_ADDTOOFFSET(3),      // line whatever
+	SIG_ADDTOOFFSET(10),     // advance file stream
+	0xa1, 0xe4,              // sag $e4 (sfx volume)
+	SIG_ADDTOOFFSET(3),      // line whatever
+	SIG_ADDTOOFFSET(10),     // advance file stream
+	0xa1, 0xe5,              // sag $e5 (speech volume)
+	SIG_END
+};
+
+static const uint16 larry7VolumeResetPatch2[] = {
+	PATCH_ADDTOOFFSET(10), // advance file stream
+	0x18, 0x18,            // waste bytes
+	PATCH_ADDTOOFFSET(3),  // line whatever
+	PATCH_ADDTOOFFSET(10), // advance file stream
+	0x18, 0x18,            // waste bytes
+	PATCH_ADDTOOFFSET(3),  // line whatever
+	PATCH_ADDTOOFFSET(10), // advance file stream
+	0x18, 0x18,            // waste bytes
+	PATCH_END
+};
 
 // ===========================================================================
 // In room 540 of Leisure Suit Larry 7, Larry will use 4 items on a so called cheese maker.
@@ -2628,10 +2759,33 @@ static const uint16 larry7PatchMakeCheesePriority[] = {
 	PATCH_END
 };
 
+// LSL7 tries to reset the message type twice at startup, first with a default
+// value in script 0, then with a stored value from larry7.prf (if that file
+// exists) or the same default value (if it does not) in script 64000. Since
+// message type sync relies on the game only setting this value once at startup,
+// we must stop the second attempt or the value from ScummVM will be
+// overwritten.
+// Applies to at least: English CD
+static const uint16 larry7MessageTypeResetSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x02, // ldi 2
+	0xa1, 0x5a, // sag $5a
+	SIG_END
+};
+
+static const uint16 larry7MessageTypeResetPatch[] = {
+	0x33, 0x02, // jmp [past reset]
+	PATCH_END
+};
+
 //          script, description,                                signature                           patch
 static const SciScriptPatcherEntry larry7Signatures[] = {
+	{  true,     0, "disable message type reset on startup", 1, larry7MessageTypeResetSignature,    larry7MessageTypeResetPatch },
 	{  true,   540, "fix make cheese cutscene (cycler)",     1, larry7SignatureMakeCheese,          larry7PatchMakeCheese },
 	{  true,   540, "fix make cheese cutscene (priority)",   1, larry7SignatureMakeCheesePriority,  larry7PatchMakeCheesePriority },
+	{  true, 64000, "disable volume reset on startup 1/2",   1, larry7VolumeResetSignature1,        larry7VolumeResetPatch1 },
+	{  true, 64000, "disable volume reset on startup 2/2",   1, larry7VolumeResetSignature2,        larry7VolumeResetPatch2 },
+	{  true, 64866, "increase number of save games",         1, torinLarry7NumSavesSignature,       torinLarry7NumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -3474,6 +3628,8 @@ static const uint16 mothergooseHiresPatchHorse[] = {
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
+	{  true,     0, "disable volume reset on startup (1/2)",       2, sci2VolumeResetSignature,         sci2VolumeResetPatch },
+	{  true,    90, "disable volume reset on startup (2/2)",       1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
 	{  true,   108, "bad logo rendering",                          1, mothergooseHiresSignatureLogo,    mothergooseHiresPatchLogo },
 	{  true,   318, "bad horse z-index",                           1, mothergooseHiresSignatureHorse,   mothergooseHiresPatchHorse },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -3514,9 +3670,40 @@ static const uint16 phant1PatchSavedVolume[] = {
 	PATCH_END
 };
 
+// Phantasmagoria performs an incomplete initialisation of a rat view when
+// exiting the alcove in the basement any time after chapter 3 when flag 26 is
+// not set. This causes the rat view to be rendered with the same origin and
+// priority as the background picture for the game plane, triggering last ditch
+// sorting of the screen items in the renderer. This happens to work OK most of
+// the time in SSCI because the last ditch sort uses memory handle indexes, and
+// the index of the rat seems to usually end up below the index for the
+// background pic, so the rat's screen item is submitted before the background,
+// ensuring that the background palette overrides the rat view's palette. In
+// ScummVM, last ditch sorting operates using the creation order of screen
+// items, so the rat ends up always sorting above the background, which causes
+// the background palette to get replaced by the rat palette, which corrupts the
+// background. This patch stops the game script from initialising the bad rat
+// view entirely.
+// Applies to at least: English CD, French CD
+static const uint16 phant1RatSignature[] = {
+	SIG_MAGICDWORD,
+	0x78,                         // push1
+	0x39, 0x1a,                   // pushi $1a
+	0x45, 0x03, SIG_UINT16(0x02), // callb 03, 0002
+	0x18,                         // not
+	0x31, 0x18,                   // bnt $18
+	SIG_END
+};
+
+static const uint16 phant1RatPatch[] = {
+	0x33, 0x20, // jmp [past rat condition + call]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,   901, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SignatureSavedVolume,      phant1PatchSavedVolume },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -3590,11 +3777,100 @@ static const uint16 phant2CompSlideDoorsPatch[] = {
 	PATCH_END
 };
 
+// When reading the VERSION file, Phant2 sends a Str object instead of a
+// reference to a string (kernel signature violation), and flips the file handle
+// and size arguments, so the version file data never actually makes it into the
+// game.
+// Applies to at least: Phant2 US English CD
+static const uint16 phant2GetVersionSignature[] = {
+	0x36,                         // push
+	0x35, 0xff,                   // ldi $ff
+	0x1c,                         // ne?
+	0x31, 0x0e,                   // bnt $e
+	0x39, 0x04,                   // pushi 4
+	0x39, 0x05,                   // pushi 5
+	SIG_MAGICDWORD,
+	0x89, 0x1b,                   // lsg $1b
+	0x8d, 0x05,                   // lst 5
+	0x39, 0x09,                   // pushi 9
+	0x43, 0x5d, SIG_UINT16(0x08), // callk FileIO, 8
+	0x7a,                         // push2
+	0x78,                         // push1
+	0x8d, 0x05,                   // lst 5
+	0x43, 0x5d, SIG_UINT16(0x04), // callk FileIO, 4
+	0x35, 0x01,                   // ldi 1
+	0xa1, 0xd8,                   // sag $d8
+	SIG_END
+};
+
+static const uint16 phant2GetVersionPatch[] = {
+	0x39, 0x04,                     // pushi 4
+	0x39, 0x05,                     // pushi 5
+	0x81, 0x1b,                     // lag $1b
+	0x39, PATCH_SELECTOR8(data),    // pushi data
+	0x76,                           // push0
+	0x4a, PATCH_UINT16(4),          // send 4
+	0x36,                           // push
+	0x39, 0x09,                     // pushi 9
+	0x8d, 0x05,                     // lst 5
+	0x43, 0x5d, PATCH_UINT16(0x08), // callk FileIO, 8
+	0x7a,                           // push2
+	0x78,                           // push1
+	0x8d, 0x05,                     // lst 5
+	0x43, 0x5d, PATCH_UINT16(0x04), // callk FileIO, 4
+	0x78,                           // push1
+	0xa9, 0xd8,                     // ssg $d8
+	PATCH_END
+};
+
+// The game uses a spin loop when displaying the success animation of the ratboy
+// puzzle, which causes the mouse to appear unresponsive. Replace the spin loop
+// with a call to ScummVM kWait.
+// Applies to at least: US English
+static const uint16 phant2RatboySignature[] = {
+	0x8d, 0x01,                   // lst 1
+	0x35, 0x1e,                   // ldi $1e
+	0x22,                         // lt?
+	SIG_MAGICDWORD,
+	0x31, 0x17,                   // bnt $17 [0c3d]
+	0x76,                         // push0
+	0x43, 0x79, SIG_UINT16(0x00), // callk GetTime, 0
+	SIG_END
+};
+
+static const uint16 phant2RatboyPatch[] = {
+	0x78,                                     // push1
+	0x35, 0x1e,                               // ldi $1e
+	0x36,                                     // push
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, $2
+	0x33, 0x14,                               // jmp [to next outer loop]
+	PATCH_END
+};
+
+// Phant2-specific version of sci2NumSavesSignature1/2
+// Applies to at least: English CD
+static const uint16 phant2NumSavesSignature[] = {
+	SIG_MAGICDWORD,
+	0x8d, 0x01, // lst 1
+	0x35, 0x14, // ldi 20
+	0x1a,       // eq?
+	SIG_END
+};
+
+static const uint16 phant2NumSavesPatch[] = {
+	PATCH_ADDTOOFFSET(+2), // lst 1
+	0x35, 0x63,            // ldi 99
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
+	{  true,     0, "bad arguments to get game version",           1, phant2GetVersionSignature,     phant2GetVersionPatch },
+	{  true,  4081, "non-responsive mouse after ratboy puzzle",    1, phant2RatboySignature,         phant2RatboyPatch },
 	{  true, 63016, "non-responsive mouse during music fades",     1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
 	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
+	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature,       phant2NumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -3818,6 +4094,7 @@ static const SciScriptPatcherEntry pq3Signatures[] = {
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
+	{  true, 64918, "Str::strip fix for floppy version",           1, sci2BrokenStrStripSignature,      sci2BrokenStrStripPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
@@ -3834,10 +4111,10 @@ static const SciScriptPatcherEntry pq4Signatures[] = {
 // Applies to at least: English CD
 static const uint16 pqSwatSignatureVolumeReset1[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x21a), // pushi $21a (masterVolume)
-	0x78,                    // push1
-	0x39, 0x7f,              // push $7f
-	0x54, SIG_UINT16(0x06),  // self 6
+	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume
+	0x78,                               // push1
+	0x39, 0x7f,                         // push $7f
+	0x54, SIG_UINT16(0x06),             // self 6
 	SIG_END
 };
 
@@ -3846,26 +4123,10 @@ static const uint16 pqSwatPatchVolumeReset1[] = {
 	PATCH_END
 };
 
-// pqInitCode::doit
-static const uint16 pqSwatSignatureVolumeReset2[] = {
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x21a), // pushi $21a (masterVolume)
-	0x78,                    // push1
-	0x39, 0x0f,              // pushi $f
-	0x81, 0x01,              // lag 1
-	0x4a, SIG_UINT16(0x06),  // send 6
-	SIG_END
-};
-
-static const uint16 pqSwatPatchVolumeReset2[] = {
-	0x32, PATCH_UINT16(8), // jmp 8 [past volume reset]
-	PATCH_END
-};
-
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry pqSwatSignatures[] = {
-	{  true,     0, "disable volume reset on startup",             1, pqSwatSignatureVolumeReset1,       pqSwatPatchVolumeReset1 },
-	{  true,     1, "disable volume reset on startup",             1, pqSwatSignatureVolumeReset2,       pqSwatPatchVolumeReset2 },
+	{  true,     0, "disable volume reset on startup (1/2)",       1, pqSwatSignatureVolumeReset1,       pqSwatPatchVolumeReset1 },
+	{  true,     1, "disable volume reset on startup (2/2)",       1, sci2VolumeResetSignature,          sci2VolumeResetPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -4841,46 +5102,15 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 #pragma mark -
 #pragma mark Quest for Glory 4
 
-// The init code that runs when QFG4 starts up unconditionally resets the
-// master music volume to 15, but the game should always use the volume stored
-// in ScummVM.
-// Applies to at least: English floppy
-static const uint16 qfg4SignatureVolumeReset[] = {
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x215), // pushi $215 (masterVolume)
-	0x78,                    // push1
-	0x39, 0x0f,              // pushi $f
-	0x81, 0x01,              // lag 1 (Glory object)
-	0x4a, SIG_UINT16(0x06),  // send 6
-	SIG_END
-};
-
-// Same as above, but with a different masterVolume selector.
-// Applies to at least: English CD
-static const uint16 qfg4CDSignatureVolumeReset[] = {
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x217), // pushi $217 (masterVolume)
-	0x78,                    // push1
-	0x39, 0x0f,              // pushi $f
-	0x81, 0x01,              // lag 1 (Glory object)
-	0x4a, SIG_UINT16(0x06),  // send 6
-	SIG_END
-};
-
-static const uint16 qfg4PatchVolumeReset[] = {
-	0x32, PATCH_UINT16(8),  // jmp 8 [past volume changes]
-	PATCH_END
-};
-
 // The trap init code incorrectly creates an int array for string data.
 // Applies to at least: English CD
 static const uint16 qfg4SignatureTrapArrayType[] = {
-	0x38, SIG_UINT16(0x92), // pushi $92 (new)
-	0x78,                   // push1
-	0x38, SIG_UINT16(0x80), // pushi $80 (128)
+	0x38, SIG_SELECTOR16(new), // pushi new
+	0x78,                      // push1
+	0x38, SIG_UINT16(0x80),    // pushi $80 (128)
 	SIG_MAGICDWORD,
-	0x51, 0x0b,             // class $b (IntArray)
-	0x4a, SIG_UINT16(0x06), // send 6
+	0x51, 0x0b,                // class $b (IntArray)
+	0x4a, SIG_UINT16(0x06),    // send 6
 	SIG_END
 };
 
@@ -4915,8 +5145,7 @@ static const uint16 qfg4BenchmarkPatch[] = {
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
-	{  true,     1, "disable volume reset on startup (floppy)",    1, qfg4SignatureVolumeReset,         qfg4PatchVolumeReset },
-	{  true,     1, "disable volume reset on startup (CD)",        1, qfg4CDSignatureVolumeReset,       qfg4PatchVolumeReset },
+	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,           qfg4BenchmarkPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4SignatureTrapArrayType,       qfg4PatchTrapArrayType },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
@@ -5621,8 +5850,9 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 #pragma mark Torins Passage
 
 // The init code that runs when Torin starts up unconditionally resets the
-// master music volume to defaults, but the game should always use the volume
-// stored in ScummVM.
+// audio volumes to defaults, but the game should always use the volume stored
+// in ScummVM. This patch is basically identical to the patch for LSL7, except
+// that they left line numbers in the LSL7 scripts and changed the music volume.
 // Applies to at least: English CD
 static const uint16 torinVolumeResetSignature1[] = {
 	SIG_MAGICDWORD,
@@ -5641,8 +5871,9 @@ static const uint16 torinVolumeResetPatch1[] = {
 };
 
 // The init code that runs when Torin starts up unconditionally resets the
-// master music volume to values stored in torin.prf, but the game should always
-// use the volume stored in ScummVM.
+// audio volumes to values stored in torin.prf, but the game should always use
+// the volume stored in ScummVM. This patch is basically identical to the patch
+// for LSL7, except that they left line numbers in the LSL7 scripts.
 // Applies to at least: English CD
 static const uint16 torinVolumeResetSignature2[] = {
 	SIG_MAGICDWORD,
@@ -5664,22 +5895,6 @@ static const uint16 torinVolumeResetPatch2[] = {
 	0x18, 0x18,            // waste bytes
 	PATCH_ADDTOOFFSET(10), // advance file stream
 	0x18, 0x18,            // waste bytes
-	PATCH_END
-};
-
-// Torin-specific version of sci2NumSavesSignature1/2
-// Applies to at least: English CD
-static const uint16 torinNumSavesSignature[] = {
-	SIG_MAGICDWORD,
-	0x36,       // push
-	0x35, 0x14, // ldi 20
-	0x20,       // ge?
-	SIG_END
-};
-
-static const uint16 torinNumSavesPatch[] = {
-	PATCH_ADDTOOFFSET(+1), // push
-	0x35, 0x63,            // ldi 99
 	PATCH_END
 };
 
@@ -5780,12 +5995,114 @@ static const uint16 torinSeraglioBoogleFlagPatch[] = {
 	PATCH_END
 };
 
+// At least some French PointSoft releases of Torin's Passage managed to get
+// released with script 20700 from the official Sierra TORINPAT patch and
+// *unpatched* heap 20700. Worse, the selector table is not the same as the one
+// in the US release, so it is not possible to just apply TORINPAT to the game
+// (it will just explode later when mismatched selectors are used). So, here we
+// are hot-patching all of the wrong offsets in the original heap to match the
+// patched script.
+// Applies to at least: French PointSoft CD release
+static const uint16 torinPointSoft20700HeapSignature[] = {
+	0xe1, 0x15, 0x23, 0x16, // end of patched 20700.SCR (so we don't
+							// accidentally patch the heap when it is correctly
+							// matched with an unpatched script)
+	SIG_ADDTOOFFSET(1),     // padding byte added by Script::load
+	SIG_ADDTOOFFSET(0x1d2), // first bad offset in the heap is at 0x1d2
+	SIG_MAGICDWORD,
+	SIG_UINT16(0xd8),
+	SIG_UINT16(0xd8),
+	SIG_ADDTOOFFSET(0x200 - 0x1d2 - 4), // second bad offset, etc.
+	SIG_UINT16(0xde),
+	SIG_UINT16(0xde),
+	SIG_ADDTOOFFSET(0x280 - 0x200 - 4),
+	SIG_UINT16(0xe0),
+	SIG_UINT16(0xe0),
+	SIG_ADDTOOFFSET(0x300 - 0x280 - 4),
+	SIG_UINT16(0xe2),
+	SIG_UINT16(0xe2),
+	SIG_ADDTOOFFSET(0x374 - 0x300 - 4),
+	SIG_UINT16(0xe4),
+	SIG_UINT16(0xe4),
+	SIG_ADDTOOFFSET(0x3ce - 0x374 - 4),
+	SIG_UINT16(0xee),
+	SIG_UINT16(0xee),
+	SIG_ADDTOOFFSET(0x44e - 0x3ce - 4),
+	SIG_UINT16(0xf0),
+	SIG_UINT16(0xf0),
+	SIG_ADDTOOFFSET(0x482 - 0x44e - 4),
+	SIG_UINT16(0xf6),
+	SIG_UINT16(0xf6),
+	SIG_ADDTOOFFSET(0x4b6 - 0x482 - 4),
+	SIG_UINT16(0xfc),
+	SIG_UINT16(0xfc),
+	SIG_ADDTOOFFSET(0x4ea - 0x4b6 - 4),
+	SIG_UINT16(0x106),
+	SIG_UINT16(0x106),
+	SIG_ADDTOOFFSET(0x51e - 0x4ea - 4),
+	SIG_UINT16(0x110),
+	SIG_UINT16(0x110),
+	SIG_ADDTOOFFSET(0x55c - 0x51e - 4),
+	SIG_UINT16(0x116),
+	SIG_UINT16(0x116),
+	SIG_ADDTOOFFSET(0x5a2 - 0x55c - 4),
+	SIG_UINT16(0x118),
+	SIG_UINT16(0x118),
+	SIG_END
+};
+
+static const uint16 torinPointSoft20700HeapPatch[] = {
+	PATCH_ADDTOOFFSET(4),      // end of patched 20700.SCR
+	PATCH_ADDTOOFFSET(1),      // padding byte
+	PATCH_ADDTOOFFSET(0x1d2),  // first bad offset
+	PATCH_UINT16(0xdc),
+	PATCH_UINT16(0xdc),
+	PATCH_ADDTOOFFSET(0x200 - 0x1d2 - 4), // second bad offset, etc.
+	PATCH_UINT16(0xe6),
+	PATCH_UINT16(0xe6),
+	PATCH_ADDTOOFFSET(0x280 - 0x200 - 4),
+	PATCH_UINT16(0xe8),
+	PATCH_UINT16(0xe8),
+	PATCH_ADDTOOFFSET(0x300 - 0x280 - 4),
+	PATCH_UINT16(0xea),
+	PATCH_UINT16(0xea),
+	PATCH_ADDTOOFFSET(0x374 - 0x300 - 4),
+	PATCH_UINT16(0xec),
+	PATCH_UINT16(0xec),
+	PATCH_ADDTOOFFSET(0x3ce - 0x374 - 4),
+	PATCH_UINT16(0xf6),
+	PATCH_UINT16(0xf6),
+	PATCH_ADDTOOFFSET(0x44e - 0x3ce - 4),
+	PATCH_UINT16(0xf8),
+	PATCH_UINT16(0xf8),
+	PATCH_ADDTOOFFSET(0x482 - 0x44e - 4),
+	PATCH_UINT16(0xfe),
+	PATCH_UINT16(0xfe),
+	PATCH_ADDTOOFFSET(0x4b6 - 0x482 - 4),
+	PATCH_UINT16(0x104),
+	PATCH_UINT16(0x104),
+	PATCH_ADDTOOFFSET(0x4ea - 0x4b6 - 4),
+	PATCH_UINT16(0x10e),
+	PATCH_UINT16(0x10e),
+	PATCH_ADDTOOFFSET(0x51e - 0x4ea - 4),
+	PATCH_UINT16(0x118),
+	PATCH_UINT16(0x118),
+	PATCH_ADDTOOFFSET(0x55c - 0x51e - 4),
+	PATCH_UINT16(0x11e),
+	PATCH_UINT16(0x11e),
+	PATCH_ADDTOOFFSET(0x5a2 - 0x55c - 4),
+	PATCH_UINT16(0x120),
+	PATCH_UINT16(0x120),
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
 	{  true, 20600, "fix wrong boogle bag flag on fast-forward",   1, torinSeraglioBoogleFlagSignature,  torinSeraglioBoogleFlagPatch },
+	{  true, 20700, "fix bad heap in PointSoft release",           1, torinPointSoft20700HeapSignature,  torinPointSoft20700HeapPatch },
 	{  true, 64000, "disable volume reset on startup 1/2",         1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
 	{  true, 64000, "disable volume reset on startup 2/2",         1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
-	{  true, 64866, "increase number of save games",               1, torinNumSavesSignature,            torinNumSavesPatch },
+	{  true, 64866, "increase number of save games",               1, torinLarry7NumSavesSignature,      torinLarry7NumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

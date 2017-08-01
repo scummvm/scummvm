@@ -93,6 +93,7 @@ MODULE_OBJS = \
 	script/scene/hf04.o \
 	script/scene/hf05.o \
 	script/scene/hf06.o \
+	script/scene/hf07.o \
 	script/scene/kp01.o \
 	script/scene/kp02.o \
 	script/scene/kp03.o \
@@ -166,8 +167,10 @@ MODULE_OBJS = \
 	shape.o \
 	slice_animations.o \
 	slice_renderer.o \
+	spinner.o \
 	suspects_database.o \
 	text_resource.o \
+	ui_image_picker.o \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o \

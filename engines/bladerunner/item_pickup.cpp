@@ -104,6 +104,6 @@ void ItemPickup::draw() {
 		return;
 	}
 
-	_vm->_sliceRenderer->drawOnScreen(_animationId, _animationFrame, _screenX, _screenY, _facing, _scale, _vm->_surface2, _vm->_zbuffer->getData());
+	_vm->_sliceRenderer->drawOnScreen(_animationId, _animationFrame, _screenX, _screenY, _facing, _scale, _vm->_surfaceGame, _vm->_zbuffer->getData());
 }
 } // End of namespace BladeRunner

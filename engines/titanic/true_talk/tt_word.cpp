@@ -217,8 +217,9 @@ TTstringStatus TTword::getChainStatus() const {
 }
 
 TTword *TTword::copyWords() {
+	// Replicate the word and all following words it's linked to
 	TTword *result = copy();
-	for (TTword *word = result; word; word = word->_nextP)
+	for (TTword *word = result; word->_nextP; word = word->_nextP)
 		word->_nextP = word->_nextP->copy();
 
 	return result;

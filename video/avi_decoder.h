@@ -62,8 +62,8 @@ namespace Video {
  */
 class AVIDecoder : public VideoDecoder {
 public:
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	AVIDecoder();
+	AVIDecoder(const Common::Rational &frameRateOverride);
 	virtual ~AVIDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -263,7 +263,6 @@ protected:
 
 		virtual void createAudioStream();
 		virtual void queueSound(Common::SeekableReadStream *stream);
-		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 		void skipAudio(const Audio::Timestamp &time, const Audio::Timestamp &frameTime);
 		virtual void resetStream();
 		uint32 getCurChunk() const { return _curChunk; }
@@ -288,7 +287,6 @@ protected:
 
 		AVIStreamHeader _audsHeader;
 		PCMWaveFormat _wvInfo;
-		Audio::Mixer::SoundType _soundType;
 		Audio::AudioStream *_audioStream;
 		Audio::PacketizedAudioStream *_packetStream;
 		uint32 _curChunk;
@@ -317,7 +315,6 @@ protected:
 	bool _foundMovieList;
 	uint32 _movieListStart, _movieListEnd;
 
-	Audio::Mixer::SoundType _soundType;
 	Common::Rational _frameRateOverride;
 
 	int _videoTrackCounter, _audioTrackCounter;

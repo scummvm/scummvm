@@ -247,7 +247,7 @@ void PSXStreamDecoder::readNextPacket() {
 			// We only handle one audio channel so far
 			if (track == 1) {
 				if (!_audioTrack) {
-					_audioTrack = new PSXAudioTrack(sector);
+					_audioTrack = new PSXAudioTrack(sector, getSoundType());
 					addTrack(_audioTrack);
 				}
 
@@ -308,7 +308,8 @@ static const int s_xaTable[5][2] = {
    { 122, -60 }
 };
 
-PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector) {
+PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
 	assert(sector);
 	_endOfTrack = false;
 

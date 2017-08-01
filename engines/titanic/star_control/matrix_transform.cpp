@@ -54,47 +54,47 @@ CMatrixTransform CMatrixTransform::resize(double factor) const {
 	return dest;
 }
 
-void CMatrixTransform::fn4(const DMatrix &m) {
-	double total = m._row1._x + m._row3._z + m._row2._y + 1.0;
+void CMatrixTransform::fn4(const DAffine &m) {
+	double total = m._col1._x + m._col3._z + m._col2._y + 1.0;
 
 	if (total <= 0.00001) {
-		total = m._row3._z;
+		total = m._col3._z;
 
-		if (m._row1._x <= m._row3._z) {
-			if (m._row2._y > total)
-				total = m._row2._y;
-		} else if (m._row1._x > total) {
-			total = m._row1._x;
+		if (m._col1._x <= m._col3._z) {
+			if (m._col2._y > total)
+				total = m._col2._y;
+		} else if (m._col1._x > total) {
+			total = m._col1._x;
 		}
 
-		if (total == m._row1._x) {
-			double val1 = sqrt(m._row1._x - -1.0 - m._row2._y - m._row3._z);
+		if (total == m._col1._x) {
+			double val1 = sqrt(m._col1._x - -1.0 - m._col2._y - m._col3._z);
 			double val2 = 0.5 / val1;
 			_vector._x = val1 * 0.5;
-			_field0 = (m._row2._z - m._row3._y) * val2;
-			_vector._y = (m._row2._x + m._row1._y) * val2;
-			_vector._z = (m._row3._x + m._row1._z) * val2;
-		} else if (total == m._row2._y) {
-			double val1 = sqrt(m._row2._y - -1.0 - m._row3._z - m._row1._x);
+			_field0 = (m._col2._z - m._col3._y) * val2;
+			_vector._y = (m._col2._x + m._col1._y) * val2;
+			_vector._z = (m._col3._x + m._col1._z) * val2;
+		} else if (total == m._col2._y) {
+			double val1 = sqrt(m._col2._y - -1.0 - m._col3._z - m._col1._x);
 			double val2 = 0.5 / val1;
 			_vector._y = val1 * 0.5;
-			_field0 = (m._row3._x - m._row1._z) * val2;
-			_vector._z = (m._row3._y + m._row2._z) * val2;
-			_vector._x = (m._row2._x + m._row1._y) * val2;
-		} else if (total == m._row3._z) {
-			double val1 = sqrt(m._row3._z - -1.0 - m._row1._x - m._row2._y);
+			_field0 = (m._col3._x - m._col1._z) * val2;
+			_vector._z = (m._col3._y + m._col2._z) * val2;
+			_vector._x = (m._col2._x + m._col1._y) * val2;
+		} else if (total == m._col3._z) {
+			double val1 = sqrt(m._col3._z - -1.0 - m._col1._x - m._col2._y);
 			double val2 = 0.5 / val1;
 			_vector._z = val1 * 0.5;
-			_field0 = (m._row1._y - m._row2._x) * val2;
-			_vector._x = (m._row3._x + m._row1._z) * val2;
-			_vector._y = (m._row3._y + m._row2._z) * val2;
+			_field0 = (m._col1._y - m._col2._x) * val2;
+			_vector._x = (m._col3._x + m._col1._z) * val2;
+			_vector._y = (m._col3._y + m._col2._z) * val2;
 		}
 	} else {
 		double val1 = 0.5 / sqrt(total);
 		_field0 = sqrt(total) * 0.5;
-		_vector._x = (m._row2._z - m._row3._y) * val1;
-		_vector._y = (m._row3._x - m._row1._z) * val1;
-		_vector._z = (m._row1._y - m._row2._x) * val1;
+		_vector._x = (m._col2._z - m._col3._y) * val1;
+		_vector._y = (m._col3._x - m._col1._z) * val1;
+		_vector._z = (m._col1._y - m._col2._x) * val1;
 	}
 }
 

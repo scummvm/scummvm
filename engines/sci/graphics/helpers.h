@@ -187,6 +187,48 @@ inline void mulru(Common::Rect &rect, const Common::Rational &ratioX, const Comm
 	rect.bottom = mulru(rect.bottom - 1, ratioY, extra) + 1;
 }
 
+/**
+ * Determines the parts of `r` that aren't overlapped by `other`.
+ * Returns -1 if `r` and `other` have no intersection.
+ * Returns number of returned parts (in `outRects`) otherwise.
+ * (In particular, this returns 0 if `r` is contained in `other`.)
+ */
+inline int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]) {
+	if (!r.intersects(other)) {
+		return -1;
+	}
+
+	int splitCount = 0;
+	if (r.top < other.top) {
+		Common::Rect &t = outRects[splitCount++];
+		t = r;
+		t.bottom = other.top;
+		r.top = other.top;
+	}
+
+	if (r.bottom > other.bottom) {
+		Common::Rect &t = outRects[splitCount++];
+		t = r;
+		t.top = other.bottom;
+		r.bottom = other.bottom;
+	}
+
+	if (r.left < other.left) {
+		Common::Rect &t = outRects[splitCount++];
+		t = r;
+		t.right = other.left;
+		r.left = other.left;
+	}
+
+	if (r.right > other.right) {
+		Common::Rect &t = outRects[splitCount++];
+		t = r;
+		t.left = other.right;
+	}
+
+	return splitCount;
+}
+
 struct Buffer : public Graphics::Surface {
 	uint16 screenWidth;
 	uint16 screenHeight;

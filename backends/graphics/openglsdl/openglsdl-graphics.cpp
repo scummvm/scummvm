@@ -463,10 +463,6 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		// Remember our choice.
 		ConfMan.setInt("last_fullscreen_mode_width", _desiredFullscreenWidth, Common::ConfigManager::kApplicationDomain);
 		ConfMan.setInt("last_fullscreen_mode_height", _desiredFullscreenHeight, Common::ConfigManager::kApplicationDomain);
-
-		// Use our choice.
-		width  = _desiredFullscreenWidth;
-		height = _desiredFullscreenHeight;
 	}
 
 	// This is pretty confusing since RGBA8888 talks about the memory
@@ -489,13 +485,23 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		_glContext = nullptr;
 	}
 
-	_window->destroyWindow();
-
-	uint32 flags = SDL_WINDOW_OPENGL;
+	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 	if (_wantsFullScreen) {
+		// On Linux/X11, when toggling to fullscreen, the window manager saves
+		// the window size to be able to restore it when going back to windowed mode.
+		// If the user configured ScummVM to start in fullscreen mode, we first
+		// create a window and then toggle it to fullscreen to give the window manager
+		// a chance to save the window size. That way if the user switches back
+		// to windowed mode, the window manager has a window size to apply instead
+		// of leaving the window at the fullscreen resolution size.
+		if (!_window->getSDLWindow()) {
+			_window->createOrUpdateWindow(width, height, flags);
+		}
+
+		width  = _desiredFullscreenWidth;
+		height = _desiredFullscreenHeight;
+
 		flags |= SDL_WINDOW_FULLSCREEN;
-	} else {
-		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
 	// Request a OpenGL (ES) context we can use.
@@ -503,11 +509,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
 
-	if (!_window->createWindow(width, height, flags)) {
+	if (!_window->createOrUpdateWindow(width, height, flags)) {
 		// We treat fullscreen requests as a "hint" for now. This means in
 		// case it is not available we simply ignore it.
 		if (_wantsFullScreen) {
-			_window->createWindow(width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+			_window->createOrUpdateWindow(width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 		}
 
 		if (!_window->getSDLWindow()) {
@@ -541,6 +547,8 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 	uint32 flags = SDL_OPENGL;
 	if (_wantsFullScreen) {
+		width  = _desiredFullscreenWidth;
+		height = _desiredFullscreenHeight;
 		flags |= SDL_FULLSCREEN;
 	} else {
 		flags |= SDL_RESIZABLE;

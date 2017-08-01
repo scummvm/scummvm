@@ -545,14 +545,6 @@ void Frame::playTransition(Score *score) {
 	}
 }
 
-void Frame::executeImmediateScripts() {
-	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
-		if (_vm->getCurrentScore()->_immediateActions.contains(_sprites[i]->_scriptId)) {
-			g_lingo->processEvent(kEventMouseUp, kFrameScript, _sprites[i]->_scriptId);
-		}
-	}
-}
-
 void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
 		if (_sprites[i]->_enabled) {

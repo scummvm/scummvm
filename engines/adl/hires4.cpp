@@ -54,7 +54,7 @@ class HiRes4Engine : public AdlEngine_v3 {
 public:
 	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) :
 			AdlEngine_v3(syst, gd),
-			_boot(nullptr) { }
+			_boot(nullptr) { _brokenRooms.push_back(121); }
 	~HiRes4Engine();
 
 private:
@@ -62,7 +62,6 @@ private:
 	void runIntro();
 	void init();
 	void initGameState();
-	void loadRoom(byte roomNr);
 
 	void putSpace(uint x, uint y) const;
 	void drawChar(byte c, Common::SeekableReadStream &shapeTable, Common::Point &pos) const;
@@ -539,26 +538,12 @@ void HiRes4Engine::initGameState() {
 	loadItems(*stream);
 }
 
-void HiRes4Engine::loadRoom(byte roomNr) {
-	if (roomNr == 121) {
-		// Room 121 is missing. This causes problems when we're dumping
-		// scripts with the debugger, so we intercept this room load here.
-		debug("Warning: attempt to load non-existent room 121");
-		_roomData.description.clear();
-		_roomData.pictures.clear();
-		_roomData.commands.clear();
-		return;
-	}
-
-	AdlEngine_v3::loadRoom(roomNr);
-}
-
 class HiRes4Engine_Atari : public AdlEngine_v3 {
 public:
 	HiRes4Engine_Atari(OSystem *syst, const AdlGameDescription *gd) :
 			AdlEngine_v3(syst, gd),
 			_boot(nullptr),
-			_curDisk(0) { }
+			_curDisk(0) { _brokenRooms.push_back(121); }
 	~HiRes4Engine_Atari();
 
 private:
@@ -647,15 +632,6 @@ void HiRes4Engine_Atari::loadRoom(byte roomNr) {
 	} else if (_curDisk != 1) {
 		insertDisk(1);
 		rebindDisk();
-	}
-
-	if (roomNr == 121) {
-		// Room 121 is missing, see Apple II version
-		debug("Warning: attempt to load non-existent room 121");
-		_roomData.description.clear();
-		_roomData.pictures.clear();
-		_roomData.commands.clear();
-		return;
 	}
 
 	AdlEngine_v3::loadRoom(roomNr);

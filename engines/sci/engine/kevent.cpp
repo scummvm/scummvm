@@ -72,7 +72,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
 		writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
 		g_debug_simulated_key = 0;
-		return make_reg(0, 1);
+		return TRUE_REG;
 	}
 
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
@@ -101,7 +101,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// one of these ugly loops and should be updating the screen &
 		// throttling the VM.
 		if (++s->_eventCounter > 2) {
-			g_system->updateScreen();
+			g_sci->_gfxFrameout->updateScreen();
 			s->speedThrottler(10); // 10ms is an arbitrary value
 			s->_throttleTrigger = true;
 		}
@@ -183,11 +183,10 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	case SCI_EVENT_KEYBOARD:
 		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD); // Keyboard event
-		s->r_acc = make_reg(0, 1);
-
 		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.character);
 		// We only care about the translated character
 		writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
+		s->r_acc = TRUE_REG;
 		break;
 
 	case SCI_EVENT_MOUSE_RELEASE:
@@ -202,9 +201,17 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 			writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
 			writeSelectorValue(segMan, obj, SELECTOR(message), 0);
 			writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
-			s->r_acc = make_reg(0, 1);
+			s->r_acc = TRUE_REG;
 		}
 		break;
+
+#ifdef ENABLE_SCI32
+	case SCI_EVENT_HOT_RECTANGLE:
+		writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
+		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.hotRectangleIndex);
+		s->r_acc = TRUE_REG;
+		break;
+#endif
 
 	default:
 		// Return a null event

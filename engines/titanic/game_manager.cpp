@@ -173,30 +173,32 @@ void CGameManager::update() {
 
 	CViewItem *view = getView();
 	if (view) {
-		// Expand the game manager's bounds to encompass all the view's items
+		// Expand the game manager's bounds to encompass any modified
+		// areas of any of the view's items
 		for (CTreeItem *item = view; item; item = item->scan(view)) {
 			Rect r = item->getBounds();
 			if (!r.isEmpty())
-				_bounds.extend(r);
+				_bounds.combine(r);
 		}
 
-		// Also include the PET control in the bounds
+		// Also include any modified area of the PET control
 		if (_project) {
 			CPetControl *pet = _project->getPetControl();
+
 			if (pet)
-				_bounds.extend(pet->getBounds());
+				_bounds.combine(pet->getBounds());
 		}
 
 		// And the text cursor
 		CScreenManager *screenManager = CScreenManager::_screenManagerPtr;
 		CTextCursor *textCursor = screenManager->_textCursor;
 		if (textCursor && textCursor->_active)
-			_bounds.extend(textCursor->getCursorBounds());
+			_bounds.combine(textCursor->getCursorBounds());
 
-		// Set the surface bounds
-		screenManager->setSurfaceBounds(SURFACE_BACKBUFFER, _bounds);
+		// Set the screen's modified area bounds
+		screenManager->setSurfaceBounds(SURFACE_PRIMARY, _bounds);
 
-		// Handle redrawing the view
+		// Handle redrawing the view if there is any changed area
 		if (!_bounds.isEmpty()) {
 			_gameView->draw(_bounds);
 			_bounds = Rect();

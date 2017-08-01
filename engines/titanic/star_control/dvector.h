@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-class DMatrix;
+class DAffine;
 
 /**
  * Double based vector class.
@@ -48,11 +48,11 @@ public:
 	 */
 	double getDistance(const DVector &src);
 
-	DVector fn1(const DMatrix &m);
+	DVector fn1(const DAffine &m);
 	void fn2(double angle);
 	DVector fn3() const;
-	DMatrix fn4(const DVector &v);
-	DMatrix fn5() const;
+	DAffine fn4(const DVector &v);
+	DAffine fn5() const;
 
 	/**
 	 * Returns true if the passed vector equals this one

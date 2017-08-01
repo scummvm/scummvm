@@ -49,6 +49,7 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
@@ -147,7 +148,9 @@ Gui::Gui(WageEngine *engine) {
 
 	_inputTextLineNum = 0;
 
+#ifndef USE_MACTEXTWINDOW
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
+#endif
 
 	_menu = _wm.addMenu();
 
@@ -172,17 +175,31 @@ Gui::Gui(WageEngine *engine) {
 	_sceneWindow = _wm.addWindow(false, false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
 
+#ifdef USE_MACTEXTWINDOW
+	//TODO: Make the font we use here work
+	// (currently MacFontRun::getFont gets called with the fonts being uninitialized,
+	// so it initializes them by itself with default params, and not those here)
+	const Graphics::MacFont *font = new Graphics::MacFont(Graphics::kMacFontChicago, 8);
+
+	uint maxWidth = _screen.w;
+
+	_consoleWindow = _wm.addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft);
+#else
 	_consoleWindow = _wm.addWindow(true, true, true);
+#endif // USE_MACTEXTWINDOW
+
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 
 	loadBorders();
-
 }
 
 Gui::~Gui() {
 	_screen.free();
 	_console.free();
+
+#ifndef USE_MACTEXTWINDOW
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
+#endif
 }
 
 void Gui::undrawCursor() {
@@ -209,7 +226,6 @@ void Gui::draw() {
 
 		_sceneWindow->setDimensions(*_scene->_designBounds);
 		_sceneWindow->setTitle(_scene->_name);
-		_consoleWindow->setDimensions(*_scene->_textBounds);
 
 		_wm.setFullRefresh(true);
 	}

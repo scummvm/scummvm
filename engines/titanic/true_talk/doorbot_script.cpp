@@ -259,9 +259,9 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			break;
 
 		case 16: {
-			TTtreeResult treeResult;
+			TTtreeResult treeResult[32];
 			if (g_vm->_trueTalkManager->_quotesTree.search(sentence->_normalizedLine.c_str(),
-					TREE_3, &treeResult, 0, nullptr) != -1)
+					TREE_3, &treeResult[0], 0, nullptr) != -1)
 				return setResponse(getDialogueId(221380), 0);
 			break;
 		}
@@ -775,6 +775,7 @@ int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 	case 5:
 		if (getValue(1) == 3)
 			return 1;
+		break;
 	case 6:
 		if (getRoom54(132))
 			return 1;

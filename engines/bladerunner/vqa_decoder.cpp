@@ -115,7 +115,9 @@ const char *strTag(uint32 tag) {
 	return s;
 }
 
-VQADecoder::VQADecoder() : _s(nullptr),
+VQADecoder::VQADecoder(Graphics::Surface *surface) :
+	  _s(nullptr),
+	  _surface(surface),
 	  _frameInfo(nullptr),
 	  _videoTrack(nullptr),
 	  _audioTrack(nullptr),
@@ -173,7 +175,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 		}
 	} while (chd.id != kFINF);
 
-	_videoTrack = new VQAVideoTrack(this);
+	_videoTrack = new VQAVideoTrack(this, _surface);
 	_audioTrack = new VQAAudioTrack(this);
 
 #if 0
@@ -188,8 +190,8 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 	return true;
 }
 
-const Graphics::Surface *VQADecoder::decodeVideoFrame() {
-	return _videoTrack->decodeVideoFrame();
+void VQADecoder::decodeVideoFrame() {
+	_videoTrack->decodeVideoFrame();
 }
 
 void VQADecoder::decodeZBuffer(ZBuffer *zbuffer) {
@@ -533,10 +535,10 @@ bool VQADecoder::readMFCI(Common::SeekableReadStream *s, uint32 size) {
 	return true;
 }
 
-VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
+VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder, Graphics::Surface *surface) {
 	VQADecoder::Header *header = &vqaDecoder->_header;
 
-	_surface = nullptr;
+	_surface = surface;
 	_hasNewFrame = false;
 
 	_numFrames = header->numFrames;
@@ -565,9 +567,6 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 
 	_zbufChunk = new uint8[roundup(_maxZBUFChunkSize)];
 
-	_surface = new Graphics::Surface();
-	_surface->create(_width, _height, createRGB555());
-
 	_viewData = nullptr;
 	_lightsData = nullptr;
 }
@@ -577,10 +576,6 @@ VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
 	delete[] _cbfz;
 	delete[] _zbufChunk;
 	delete[] _vpointer;
-
-	if (_surface)
-		_surface->free();
-	delete _surface;
 
 	if (_viewData)
 		delete[] _viewData;
@@ -596,10 +591,6 @@ uint16 VQADecoder::VQAVideoTrack::getHeight() const {
 	return _height;
 }
 
-Graphics::PixelFormat VQADecoder::VQAVideoTrack::getPixelFormat() const {
-	return _surface->format;
-}
-
 int VQADecoder::VQAVideoTrack::getCurFrame() const {
 	return _curFrame;
 }
@@ -612,13 +603,12 @@ Common::Rational VQADecoder::VQAVideoTrack::getFrameRate() const {
 	return _frameRate;
 }
 
-const Graphics::Surface *VQADecoder::VQAVideoTrack::decodeVideoFrame() {
+void VQADecoder::VQAVideoTrack::decodeVideoFrame() {
 	if (_hasNewFrame) {
 		decodeFrame((uint16*)_surface->getPixels());
 		_curFrame++;
 		_hasNewFrame = false;
 	}
-	return _surface;
 }
 
 bool VQADecoder::VQAVideoTrack::readVQFL(Common::SeekableReadStream *s, uint32 size) {

@@ -127,6 +127,8 @@ void IVIHuffDesc::huffDescCopy(const IVIHuffDesc *src) {
 /*------------------------------------------------------------------------*/
 
 IVIHuffTab::IVIHuffTab() : _tab(nullptr) {
+	_custDesc._numRows = 0;
+	Common::fill(&_custDesc._xBits[0], &_custDesc._xBits[16], 0);
 }
 
 int IVIHuffTab::decodeHuffDesc(IVI45DecContext *ctx, int descCoded, int whichTab) {

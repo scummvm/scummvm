@@ -380,7 +380,7 @@ public:
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
-	void changeAudioDirectory(const Common::String &path);
+	void changeAudioDirectory(Common::String path);
 	bool isGMTrackIncluded();
 	bool isSci11Mac() const { return _volVersion == kResVersionSci11Mac; }
 	ViewType getViewType() const { return _viewType; }
@@ -465,7 +465,8 @@ protected:
 	int _maxMemoryLRU;
 
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
-	Common::List<ResourceSource *> _sources;
+	typedef Common::List<ResourceSource *> SourcesList;
+	SourcesList _sources;
 	int _memoryLocked;	///< Amount of resource bytes in locked memory
 	int _memoryLRU;		///< Amount of resource bytes under LRU control
 	Common::List<Resource *> _LRU; ///< Last Resource Used list
@@ -575,6 +576,13 @@ protected:
 	 */
 	void readResourcePatches();
 	void readResourcePatchesBase36();
+
+	/**
+	 * Determines whether or not a patch file matching the given resource ID
+	 * should be ignored when processing patches.
+	 */
+	bool isBlacklistedPatch(const ResourceId &resId) const;
+
 	void processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple = 0);
 
 	/**

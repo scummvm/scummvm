@@ -63,7 +63,7 @@ struct SciEvent {
 #define SCI_EVENT_DIRECTION       (1 << 6)
 #define SCI_EVENT_SAID            (1 << 7)
 #ifdef ENABLE_SCI32
-#define SCI_EVENT_HOT_RECTANGLE   (1 << 8)
+#define SCI_EVENT_HOT_RECTANGLE   (1 << 10)
 #endif
 /*Fake values for other events*/
 #define SCI_EVENT_QUIT            (1 << 11)
@@ -127,6 +127,7 @@ struct SciEvent {
 #define SCI_KEYMOD_CAPSLOCK  (1 << 6)
 #define SCI_KEYMOD_INSERT    (1 << 7)
 
+#define SCI_KEYMOD_NON_STICKY      (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT | SCI_KEYMOD_CTRL | SCI_KEYMOD_ALT)
 #define SCI_KEYMOD_NO_FOOLOCK      (~(SCI_KEYMOD_SCRLOCK | SCI_KEYMOD_NUMLOCK | SCI_KEYMOD_CAPSLOCK | SCI_KEYMOD_INSERT))
 #define SCI_KEYMOD_ALL             0xFF
 
@@ -137,6 +138,7 @@ public:
 
 	void updateScreen();
 	SciEvent getSciEvent(uint32 mask);
+	void flushEvents();
 
 private:
 	SciEvent getScummVMEvent();

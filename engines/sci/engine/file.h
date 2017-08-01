@@ -35,7 +35,7 @@ enum kFileOpenMode {
 };
 
 enum {
-	SCI_MAX_SAVENAME_LENGTH = 36, ///< Maximum length of a savegame name (including terminator character).
+	SCI_MAX_SAVENAME_LENGTH = 36, ///< Maximum length of a savegame name (including optional terminator character).
 	MAX_SAVEGAME_NR = 20 ///< Maximum number of savegames
 };
 

@@ -37,6 +37,16 @@ class HunkPalette {
 public:
 	HunkPalette(const SciSpan<const byte> &rawPalette);
 
+	static void write(SciSpan<byte> &out, const Palette &palette);
+
+	static uint32 calculateHunkPaletteSize(const uint16 numIndexes = 256, const bool sharedUsed = true) {
+		const int numPalettes = 1;
+		return kHunkPaletteHeaderSize +
+			/* slack bytes between hunk header & palette offset table */ 2 +
+			/* palette offset table */ 2 * numPalettes +
+			/* palette data */ (kEntryHeaderSize + numIndexes * (/* RGB */ 3 + !sharedUsed)) * numPalettes;
+	}
+
 	/**
 	 * Gets the version of the palette. Used to avoid resubmitting a HunkPalette
 	 * which has already been submitted for the next frame.
@@ -56,6 +66,12 @@ public:
 private:
 	enum {
 		/**
+		 * The offset into the HunkPalette header of the number of palettes in
+		 * the HunkPalette.
+		 */
+		kNumPaletteEntriesOffset = 10,
+
+		/**
 		 * The size of the HunkPalette header.
 		 */
 		kHunkPaletteHeaderSize = 13,
@@ -63,7 +79,32 @@ private:
 		/**
 		 * The size of a palette entry header.
 		 */
-		kEntryHeaderSize = 22,
+		kEntryHeaderSize = 22
+	};
+
+	enum {
+		/**
+		 * The offset of the start color within the palette entry header.
+		 */
+		kEntryStartColorOffset = 10,
+
+		/**
+		 * The offset of the color count within the palette entry header.
+		 */
+		kEntryNumColorsOffset = 14,
+
+		/**
+		 * The offset of the shared used palette index flag within the palette
+		 * entry header.
+		 */
+		kEntryUsedOffset = 16,
+
+		/**
+		 * The offset of the flag within the palette entry header that says
+		 * whether or not the corresponding palette data includes used flags for
+		 * each palette index individually.
+		 */
+		kEntrySharedUsedOffset = 17,
 
 		/**
 		 * The offset of the hunk palette version within the palette entry
@@ -206,6 +247,14 @@ public:
 	 */
 	inline const Palette &getCurrentPalette() const { return _currentPalette; };
 
+#ifdef USE_RGB_COLOR
+	/**
+	 * Gets the raw hardware palette in RGB format. This should be used instead
+	 * of `::PaletteManager::grabPalette` when the OSystem screen is >8bpp.
+	 */
+	inline const uint8 *getHardwarePalette() const { return _hardwarePalette; };
+#endif
+
 	/**
 	 * Loads a palette into GfxPalette32 with the given resource ID.
 	 */
@@ -256,6 +305,15 @@ private:
 	 * Whether or not the hardware palette needs updating.
 	 */
 	bool _needsUpdate;
+
+#ifdef USE_RGB_COLOR
+	/**
+	 * A local copy of the hardware palette. Used when the backend is in a true
+	 * color mode and a change to the game's internal framebuffer occurs that
+	 * needs to be reconverted from 8bpp to the backend's bit depth.
+	 */
+	uint8 _hardwarePalette[256 * 3];
+#endif
 
 	/**
 	 * The currently displayed palette.

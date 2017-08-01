@@ -39,28 +39,15 @@ Demo::Demo(MohawkEngine_Myst *vm) : Intro(vm) {
 Demo::~Demo() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Demo::x, #x))
-
-#define OVERRIDE_OPCODE(opcode, x) \
-	for (uint32 i = 0; i < _opcodes.size(); i++) \
-		if (_opcodes[i]->op == opcode) { \
-			_opcodes[i]->proc = (OpcodeProcMyst) &Demo::x; \
-			_opcodes[i]->desc = #x; \
-			break; \
-		}
-
 void Demo::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OVERRIDE_OPCODE(100, o_stopIntro);
-	OPCODE(101, o_fadeFromBlack);
-	OPCODE(102, o_fadeToBlack);
+	OVERRIDE_OPCODE(100, Demo, o_stopIntro);
+	REGISTER_OPCODE(101, Demo, o_fadeFromBlack);
+	REGISTER_OPCODE(102, Demo, o_fadeToBlack);
 
 	// "Init" Opcodes
-	OVERRIDE_OPCODE(201, o_returnToMenu_init);
+	OVERRIDE_OPCODE(201, Demo, o_returnToMenu_init);
 }
-
-#undef OPCODE
-#undef OVERRIDE_OPCODE
 
 void Demo::disablePersistentScripts() {
 	Intro::disablePersistentScripts();
@@ -76,22 +63,18 @@ void Demo::runPersistentScripts() {
 	}
 }
 
-void Demo::o_stopIntro(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Unk", op);
+void Demo::o_stopIntro(uint16 var, const ArgumentsArray &args) {
 	// The original also seems to stop the movies. Not needed with this engine.
 	_vm->_gfx->fadeToBlack();
 }
 
-void Demo::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Fade from black", op);
-
+void Demo::o_fadeFromBlack(uint16 var, const ArgumentsArray &args) {
 	// FIXME: This glitches when enabled. The backbuffer is drawn to screen,
 	// and then the fading occurs, causing the background to appear for one frame.
 	// _vm->_gfx->fadeFromBlack();
 }
 
-void Demo::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Fade to black", op);
+void Demo::o_fadeToBlack(uint16 var, const ArgumentsArray &args) {
 	_vm->_gfx->fadeToBlack();
 }
 
@@ -122,9 +105,7 @@ void Demo::returnToMenu_run() {
 	}
 }
 
-void Demo::o_returnToMenu_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Return to menu init", op);
-
+void Demo::o_returnToMenu_init(uint16 var, const ArgumentsArray &args) {
 	// Used on Card 2001, 2002 and 2003
 	_returnToMenuNextTime = _vm->_system->getMillis() + 5000;
 	_returnToMenuRunning = true;

@@ -61,11 +61,13 @@ bool CCredits::TimerMsg(CTimerMsg *msg) {
 	loadSound("a#16.wav");
 	loadSound("a#24.wav");
 
-	playCutscene(0, 18);
-	playGlobalSound("a#16.wav", -1, false, false, 0);
-	playCutscene(19, 642);
-	playSound("a#24.wav");
-	playCutscene(643, 750);
+	if (playCutscene(0, 18)) {
+		playGlobalSound("a#16.wav", VOL_NORMAL, false, false, 0);
+		if (playCutscene(19, 642)) {
+			playSound("a#24.wav");
+			playCutscene(643, 750);
+		}
+	}
 
 	COpeningCreditsMsg creditsMsg;
 	creditsMsg.execute("Service Elevator Entity");

@@ -162,7 +162,7 @@ public:
 	 * @remarks		This can't be a pass-by-reference, since adding
 	 * the vector for the star destroys the calling star vector
 	 */
-	virtual bool addMatrixRow(const FVector v);
+	virtual bool adDAffineRow(const FVector v);
 
 	virtual bool removeMatrixRow();
 	virtual void proc36(double *v1, double *v2, double *v3, double *v4);

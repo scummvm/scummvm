@@ -378,7 +378,7 @@ bool CArboretumGate::EnterViewMsg(CEnterViewMsg *msg) {
 			break;
 
 		case SEASON_WINTER:
-			_initialFrame = _gotSpeechCentre ? _startFrameWinterOff1 : _startFrameWinterOff2;
+			_initialFrame = _gotSpeechCentre ? _startFrameWinterOff2 : _startFrameWinterOff1;
 			break;
 
 		case SEASON_SPRING:

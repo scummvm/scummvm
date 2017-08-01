@@ -92,9 +92,10 @@ bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			roomFlags);
 
 		if (mailObject) {
+			startTalking(this, 230004);
 			_mailP = mailObject;
 			if (_receiveStartFrame >= 0)
-				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_WAIT_FOR_FINISH);
+				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		} else {
 			petDisplayMessage(2, NOTHING_TO_DELIVER);
 		}

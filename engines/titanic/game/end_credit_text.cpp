@@ -43,7 +43,7 @@ void CEndCreditText::load(SimpleFile *file) {
 }
 
 bool CEndCreditText::ActMsg(CActMsg *msg) {
-	playGlobalSound("z#41.wav", -1, false, false, 0);
+	playGlobalSound("z#41.wav", VOL_NORMAL, false, false, 0);
 	createCredits();
 	_flag = true;
 	return true;
@@ -63,7 +63,7 @@ bool CEndCreditText::FrameMsg(CFrameMsg *msg) {
 }
 
 bool CEndCreditText::TimerMsg(CTimerMsg *msg) {
-	setGlobalSoundVolume(-4, 2, -1);
+	setGlobalSoundVolume(VOL_MUTE, 2, -1);
 	sleep(1000);
 	quitGame();
 	return true;

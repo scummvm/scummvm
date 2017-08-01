@@ -38,21 +38,17 @@ Intro::Intro(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 Intro::~Intro() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Intro::x, #x))
-
 void Intro::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_useLinkBook);
+	REGISTER_OPCODE(100, Intro, o_useLinkBook);
 
 	// "Init" Opcodes
-	OPCODE(200, o_playIntroMovies);
-	OPCODE(201, o_mystLinkBook_init);
+	REGISTER_OPCODE(200, Intro, o_playIntroMovies);
+	REGISTER_OPCODE(201, Intro, o_mystLinkBook_init);
 
 	// "Exit" Opcodes
-	OPCODE(300, NOP);
+	REGISTER_OPCODE(300, Intro, NOP);
 }
-
-#undef OPCODE
 
 void Intro::disablePersistentScripts() {
 	_introMoviesRunning = false;
@@ -79,14 +75,11 @@ uint16 Intro::getVar(uint16 var) {
 	}
 }
 
-void Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Intro::o_useLinkBook(uint16 var, const ArgumentsArray &args) {
 	// Hard coded SoundId valid only for Intro Stack.
 	// Other stacks use Opcode 40, which takes SoundId values as arguments.
 	const uint16 soundIdLinkSrc = 5;
 	const uint16 soundIdLinkDst[] = { 2282, 3029, 6396, 7122, 3137, 0, 9038, 5134, 0, 4739, 4741 };
-
-	debugC(kDebugScript, "Opcode %d: o_useLinkBook", op);
-	debugC(kDebugScript, "\tvar: %d", var);
 
 	// Change to dest stack
 	_vm->changeToStack(_stackMap[_globals.currentAge], _startCard[_globals.currentAge], soundIdLinkSrc, soundIdLinkDst[_globals.currentAge]);
@@ -96,16 +89,13 @@ void Intro::introMovies_run() {
 	// Play Intro Movies
 	// This is all quite messy...
 
-	VideoHandle handle;
+	VideoEntryPtr video;
 
 	switch (_introStep) {
 	case 0:
 		_introStep = 1;
-		handle = _vm->_video->playMovie(_vm->wrapMovieFilename("broder", kIntroStack));
-		if (!handle)
-			error("Failed to open broder movie");
-
-		handle->center();
+		video = _vm->playMovie("broder", kIntroStack);
+		video->center();
 		break;
 	case 1:
 		if (!_vm->_video->isVideoPlaying())
@@ -113,11 +103,8 @@ void Intro::introMovies_run() {
 		break;
 	case 2:
 		_introStep = 3;
-		handle = _vm->_video->playMovie(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
-		if (!handle)
-			error("Failed to open cyanlogo movie");
-
-		handle->center();
+		video = _vm->playMovie("cyanlogo", kIntroStack);
+		video->center();
 		break;
 	case 3:
 		if (!_vm->_video->isVideoPlaying())
@@ -127,11 +114,8 @@ void Intro::introMovies_run() {
 		_introStep = 5;
 
 		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
-			handle = _vm->_video->playMovie(_vm->wrapMovieFilename("intro", kIntroStack));
-			if (!handle)
-				error("Failed to open intro movie");
-
-			handle->center();
+			video = _vm->playMovie("intro", kIntroStack);
+			video->center();
 		}
 		break;
 	case 5:
@@ -146,7 +130,7 @@ void Intro::introMovies_run() {
 	}
 }
 
-void Intro::o_playIntroMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Intro::o_playIntroMovies(uint16 var, const ArgumentsArray &args) {
 	_introMoviesRunning = true;
 	_introStep = 0;
 }
@@ -155,7 +139,7 @@ void Intro::mystLinkBook_run() {
 	if (_startTime == 1) {
 		_startTime = 0;
 
-		if (!_vm->skippableWait(5000)) {
+		if (!_vm->wait(5000, true)) {
 			_linkBookMovie->playMovie();
 			_vm->_gfx->copyImageToBackBuffer(4, Common::Rect(544, 333));
 			_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
@@ -165,9 +149,7 @@ void Intro::mystLinkBook_run() {
 	}
 }
 
-void Intro::o_mystLinkBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Myst link book init", op);
-
+void Intro::o_mystLinkBook_init(uint16 var, const ArgumentsArray &args) {
 	_linkBookMovie = getInvokingResource<MystAreaVideo>();
 	_startTime = 1;
 	_linkBookRunning = true;

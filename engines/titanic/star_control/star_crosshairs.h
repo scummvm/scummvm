@@ -120,7 +120,12 @@ public:
 	/**
 	 * Returns true if the starfield is solved
 	 */
-	bool isSolved() const { return _matchIndex == 2; }
+	bool isSolved() const { return _matchIndex >= 2; }
+
+	/**
+	 * Return true if the starfield puzzle was skipped
+	 */
+	bool isSkipped() const { return _matchIndex == 3; }
 };
 
 } // End of namespace Titanic

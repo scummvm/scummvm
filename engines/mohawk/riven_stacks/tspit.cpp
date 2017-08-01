@@ -369,7 +369,7 @@ void TSpit::xtakeit(const ArgumentArray &args) {
 	_vm->getCard()->drawPicture(1);
 
 	// Loop until the player lets go (or quits)
-	while (mouseIsDown() && !_vm->shouldQuit()) {
+	while (mouseIsDown() && !_vm->hasGameEnded()) {
 		_vm->doFrame();
 	}
 

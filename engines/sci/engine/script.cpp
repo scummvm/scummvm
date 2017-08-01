@@ -649,9 +649,6 @@ const Object *Script::getObject(uint32 offset) const {
 }
 
 Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
-	if (getSciVersion() < SCI_VERSION_1_1 && fullObjectInit)
-		obj_pos.incOffset(8);	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
-
 	if (obj_pos.getOffset() >= _buf->size())
 		error("Attempt to initialize object beyond end of script %d (%u >= %u)", _nr, obj_pos.getOffset(), _buf->size());
 
@@ -1088,11 +1085,13 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 			case SCI_OBJ_OBJECT:
 			case SCI_OBJ_CLASS:
 				{
-					reg_t addr = make_reg(segmentId, seeker - *_buf + 4);
-					Object *obj = scriptObjInit(addr);
-					obj->initSpecies(segMan, addr);
-
-					if (pass == 2) {
+					reg_t addr = make_reg(segmentId, seeker - *_buf + 4 - SCRIPT_OBJECT_MAGIC_OFFSET);
+					Object *obj;
+					if (pass == 1) {
+						obj = scriptObjInit(addr);
+						obj->initSpecies(segMan, addr);
+					} else {
+						obj = getObject(addr.getOffset());
 						if (!obj->initBaseObject(segMan, addr)) {
 							if ((_nr == 202 || _nr == 764) && g_sci->getGameId() == GID_KQ5) {
 								// WORKAROUND: Script 202 of KQ5 French and German

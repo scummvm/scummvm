@@ -63,11 +63,16 @@
 
 namespace Wage {
 
-const Graphics::Font *Gui::getConsoleFont() {
+const Graphics::MacFont *Gui::getConsoleMacFont() {
 	Scene *scene = _engine->_world->_player->_currentScene;
 
-	return _wm._fontMan->getFont(*scene->getFont());
+	return scene->getFont();
 }
+
+const Graphics::Font *Gui::getConsoleFont() {
+	return _wm._fontMan->getFont(*getConsoleMacFont());
+}
+
 
 void Gui::clearOutput() {
 	_out.clear();
@@ -88,7 +93,6 @@ void Gui::appendText(const char *s) {
 	// Okay, we got new lines, need to split it
 	// and push substrings individually
 	Common::String tmp;
-
 	for (uint i = 0; i < str.size(); i++) {
 		if (str[i] == '\n') {
 			_out.push_back(tmp);
@@ -100,8 +104,13 @@ void Gui::appendText(const char *s) {
 		tmp += str[i];
 	}
 
+	// Process last/leftover line
 	_out.push_back(tmp);
 	flowText(tmp);
+
+#ifdef USE_MACTEXTWINDOW1
+	_consoleWindow->appendText(s, getConsoleMacFont());
+#endif // USE_MACTEXTWINDOW
 }
 
 enum {
@@ -114,9 +123,16 @@ enum {
 
 void Gui::flowText(Common::String &str) {
 	Common::StringArray wrappedLines;
-	int textW = _consoleWindow->getInnerDimensions().width() - kConWPadding * 2;
-	const Graphics::Font *font = getConsoleFont();
+	int16 conTextWidth = _consoleWindow->getInnerDimensions().width() - kConWPadding * 2;
 
+	if (conTextWidth <= 0) {
+		warning("Gui::flowText: Console text width is non-positive. Text will not be visible.");
+		return;
+	}
+
+	int textW = conTextWidth;
+
+	const Graphics::Font *font = getConsoleFont();
 	font->wordWrapText(str, textW, wrappedLines);
 
 	if (wrappedLines.empty()) // Sometimes we have empty lines
@@ -142,6 +158,21 @@ void Gui::flowText(Common::String &str) {
 		draw();
 }
 
+void Gui::reflowText() {
+	_lines.clear();
+
+	for (uint i = 0; i < _out.size(); i++)
+		flowText(_out[i]);
+
+#ifdef USE_MACTEXTWINDOW
+	// Append _lines content to MacTextWindow after it has
+	// been processed by flowText above
+	_consoleWindow->clearText();
+	for (uint line = 0; line < _lines.size(); ++line)
+		_consoleWindow->appendText(_lines[line], getConsoleMacFont());
+#endif // USE_MACTEXTWINDOW
+}
+
 void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 	bool fullRedraw = _consoleFullRedraw;
 	bool textReflow = false;
@@ -161,21 +192,24 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 		fullRedraw = true;
 	}
 
-	if (fullRedraw)
-		_console.clear(kColorWhite);
+#ifdef USE_MACTEXTWINDOW
+	// TODO: Call this at an appropriate place (only when the selection can change)
+	_consoleWindow->setSelection(_selectionStartX, _selectionStartY, _selectionEndX, _selectionEndY);
+#endif // USE_MACTEXTWINDOW
 
+	if (fullRedraw) {
+		_console.clear(kColorWhite);
+	}
 	const Graphics::Font *font = getConsoleFont();
 
 	_consoleLineHeight = font->getFontHeight();
+
+	if (textReflow)
+		reflowText();
+
+#ifndef USE_MACTEXTWINDOW
 	int textW = r.width() - kConWPadding * 2;
 	int textH = r.height() - kConHPadding * 2;
-
-	if (textReflow) {
-		_lines.clear();
-
-		for (uint i = 0; i < _out.size(); i++)
-			flowText(_out[i]);
-	}
 
 	const int firstLine = _scrollPos / _consoleLineHeight;
 	const int lastLine = MIN((_scrollPos + textH) / _consoleLineHeight + 1, _lines.size());
@@ -191,6 +225,7 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 		const char *str = _lines[line].c_str();
 		int color = kColorBlack;
 
+		// Draw selexted text box except first and last line
 		if ((line > _selectionStartY && line < _selectionEndY) ||
 			(line > _selectionEndY && line < _selectionStartY)) {
 			color = kColorWhite;
@@ -199,7 +234,9 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 			Design::drawFilledRect(&_console, trect, kColorBlack, _wm.getPatterns(), kPatternSolid);
 		}
 
+		// Draw selexted text box on first and last line
 		if (line == _selectionStartY || line == _selectionEndY) {
+			// Draw selected text if multiple lines are selected
 			if (_selectionStartY != _selectionEndY) {
 				int color1 = kColorBlack;
 				int color2 = kColorWhite;
@@ -223,11 +260,15 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 				else
 					trect.left = rectW;
 
+				// Draw background rectangle on selected text
 				Design::drawFilledRect(&_console, trect, kColorBlack, _wm.getPatterns(), kPatternSolid);
 
+				// Draw left of the selected character (either start or end char)
 				font->drawString(&_console, beg, x1, y1, textW, color1);
+				// Draw right of the selected character (either star or end char)
 				font->drawString(&_console, end, x1 + rectW - kConWPadding - kConWOverlap, y1, textW, color2);
-			} else {
+
+			} else {  // Draw selected text if only 1 line is selected
 				int startPos = _selectionStartX;
 				int endPos = _selectionEndX;
 
@@ -242,15 +283,20 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 				int rectW2 = rectW1 + font->getStringWidth(mid);
 				Common::Rect trect(rectW1, y1, rectW2, y1 + _consoleLineHeight);
 
+				// Draw background rectangle on selected text
 				Design::drawFilledRect(&_console, trect, kColorBlack, _wm.getPatterns(), kPatternSolid);
 
+				// Draw text left of the first selected character
 				font->drawString(&_console, beg, x1, y1, textW, kColorBlack);
+				// Draw selected text
 				font->drawString(&_console, mid, x1 + rectW1 - kConWPadding - kConWOverlap, y1, textW, kColorWhite);
+				// Draw text right of the last selected character
 				font->drawString(&_console, end, x1 + rectW2 - kConWPadding - kConWOverlap, y1, textW, kColorBlack);
 			}
-		} else {
-			if (*str)
+		} else {	// Neither first nor last line
+			if (*str) {
 				font->drawString(&_console, _lines[line], x1, y1, textW, color);
+			}
 		}
 
 		y1 += _consoleLineHeight;
@@ -279,12 +325,12 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 		rr.bottom = _screen.h - 1;
 
 	g->copyRectToSurface(_console, xcon, ycon, boundsR);
+#endif
 }
 
 void Gui::drawInput() {
 	if (!_screen.getPixels())
 		return;
-
 	_wm.setActive(_consoleWindow->getId());
 
 	_out.pop_back();
@@ -292,6 +338,7 @@ void Gui::drawInput() {
 	appendText(_engine->_inputText.c_str());
 	_inputTextLineNum = _out.size() - 1;
 
+#ifndef USE_MACTEXTWINDOW
 	const Graphics::Font *font = getConsoleFont();
 
 	if (_engine->_inputText.contains('\n')) {
@@ -324,6 +371,8 @@ void Gui::drawInput() {
 	}
 
 	_cursorX = font->getStringWidth(_out[_inputTextLineNum]) + kConHPadding;
+
+#endif // USE_MACTEXTWINDOW
 }
 
 void Gui::actionCopy() {

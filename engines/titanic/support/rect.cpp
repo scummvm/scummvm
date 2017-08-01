@@ -25,10 +25,11 @@
 namespace Titanic {
 
 void Rect::combine(const Rect &r) {
-	if (isEmpty() || r.isEmpty())
-		return;
-
-	Common::Rect::extend(r);
+	if (isEmpty()) {
+		*this = r;
+	} else if (!r.isEmpty()) {
+		Common::Rect::extend(r);
+	}
 }
 
 void Rect::constrain(const Rect &r) {

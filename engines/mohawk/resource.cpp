@@ -291,13 +291,23 @@ bool MohawkArchive::openStream(Common::SeekableReadStream *stream) {
 
 			// WORKAROUND: tMOV resources pretty much ignore the size part of the file table,
 			// as the original just passed the full Mohawk file to QuickTime and the offset.
+			// We set the resource size to the number of bytes till the beginning of the next
+			// resource in the archive.
 			// We need to do this because of the way Mohawk is set up (this is much more "proper"
 			// than passing _stream at the right offset). We may want to do that in the future, though.
 			if (tag == ID_TMOV) {
-				if (index == fileTable.size())
-					res.size = stream->size() - fileTable[index - 1].offset;
-				else
-					res.size = fileTable[index].offset - fileTable[index - 1].offset;
+				uint16 nextFileIndex = index;
+				res.size = 0;
+				while (res.size == 0) {
+					if (nextFileIndex == fileTable.size())
+						res.size = stream->size() - fileTable[index - 1].offset;
+					else
+						res.size = fileTable[nextFileIndex].offset - fileTable[index - 1].offset;
+
+					// Loop because two entries in the file table may point to the same data
+					// in the archive.
+					nextFileIndex++;
+				}
 			} else
 				res.size = fileTable[index - 1].size;
 

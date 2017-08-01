@@ -44,14 +44,14 @@ class ZBuffer;
 
 class VQADecoder {
 public:
-	VQADecoder();
+	VQADecoder(Graphics::Surface *surface);
 	~VQADecoder();
 
 	bool loadStream(Common::SeekableReadStream *s);
 
 	void readFrame(int frame, int skipFlags);
 
-	const Graphics::Surface    *decodeVideoFrame();
+	void                        decodeVideoFrame();
 	void                        decodeZBuffer(ZBuffer *zbuffer);
 	Audio::SeekableAudioStream *decodeAudioFrame();
 	void                        decodeView(View *view);
@@ -126,6 +126,7 @@ private:
 	class VQAAudioTrack;
 
 	Common::SeekableReadStream *_s;
+	Graphics::Surface *_surface;
 
 	Header   _header;
 	LoopInfo _loopInfo;
@@ -153,15 +154,14 @@ private:
 
 	class VQAVideoTrack {
 	public:
-		VQAVideoTrack(VQADecoder *vqaDecoder);
+		VQAVideoTrack(VQADecoder *vqaDecoder, Graphics::Surface *surface);
 		~VQAVideoTrack();
 
 		uint16 getWidth() const;
 		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const;
 		int getFrameCount() const;
-		const Graphics::Surface *decodeVideoFrame();
+		void decodeVideoFrame();
 		void decodeZBuffer(ZBuffer *zbuffer);
 		void decodeView(View *view);
 		void decodeLights(Lights *lights);

@@ -244,8 +244,18 @@ public:
 	/** Get the hotspot's enable list id */
 	uint16 getBlstId() const;
 
+	/**
+	 * Get the offset used to control overlap during transitions
+	 *
+	 * -1 means no overlap.
+	 */
+	int16 getTransitionOffset() const;
+
 	/** Write all of the hotspot's data to standard output */
 	void dump() const;
+
+	/** Apply patches to hotspot's scripts to fix bugs in the original game scripts */
+	void applyScriptPatches(uint32 cardGlobalId);
 
 private:
 	enum {
@@ -263,7 +273,7 @@ private:
 	uint16 _u0;
 	uint16 _mouseCursor;
 	uint16 _index;
-	int16 _u1;
+	int16 _transitionOffset;
 	uint16 _flags;
 	RivenScriptList _scripts;
 };

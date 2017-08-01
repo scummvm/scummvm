@@ -48,7 +48,7 @@ bool CEndCredits::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		_flag = false;
 	} else {
 		loadSound("z#41.wav");
-		playGlobalSound("z#41.wav", -1, false, false, 0);
+		playGlobalSound("z#41.wav", VOL_NORMAL, false, false, 0);
 		_flag = true;
 	}
 

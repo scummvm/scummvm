@@ -167,6 +167,10 @@ enum GlobalVar {
 	kGlobalVarTorinMusicVolume     = 227, // 0 to 100
 	kGlobalVarTorinSFXVolume       = 228, // 0 to 100
 	kGlobalVarTorinSpeechVolume    = 229, // 0 to 100
+	// Phant2 labels its volume slider as "music volume" but it is actually
+	// a master volume that affects both music *and* sound effects
+	kGlobalVarPhant2MasterVolume   = 236, // 0 to 127
+	kGlobalVarPhant2ControlPanel   = 250,
 	kGlobalVarShivers1Score        = 349
 };
 

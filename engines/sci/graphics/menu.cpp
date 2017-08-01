@@ -406,12 +406,15 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 	case SCI_EVENT_KEYBOARD:
 		keyPress = readSelectorValue(_segMan, eventObject, SELECTOR(message));
 		keyModifier = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
-		// If tab got pressed, handle it here as if it was Ctrl-I - at least
-		// sci0 also did it that way
-		if (keyPress == SCI_KEY_TAB) {
-			keyModifier = SCI_KEYMOD_CTRL;
-			keyPress = 'i';
+
+		// ASCII control characters are put in the `message` field when
+		// Ctrl+<key> is pressed, but this kMenuSelect implementation matches
+		// on modifier + printable character, so we must convert the control
+		// characters to their lower-case latin printed equivalents
+		if ((keyModifier & SCI_KEYMOD_NON_STICKY) == SCI_KEYMOD_CTRL && keyPress > 0 && keyPress < 27) {
+			keyPress += 96;
 		}
+
 		switch (keyPress) {
 		case 0:
 			break;
@@ -424,12 +427,25 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		default:
 			while (itemIterator != itemEnd) {
 				itemEntry = *itemIterator;
-				// Sierra actually did not check the modifier, they only checked the ascii code
-				// Which is why for example pressing Ctrl-I and Shift-Ctrl-I both brought up the inventory in QfG1
-				// We still check the modifier, but we need to isolate the lower byte, because of a keyboard
-				// driver bug (see engine/kevent.cpp / kGetEvent)
+
+				// Tab and Ctrl+I share the same ASCII character, but this
+				// method also checks the modifier (whereas SSCI looked only at
+				// the character), so a Tab keypress must be converted here
+				// to Ctrl+I or the modifier check will fail and the Tab key
+				// won't do anything. (This is also why Ctrl+I and Ctrl+Shift+I
+				// would both bring up the inventory in SSCI QFG1EGA)
+				if (keyPress == SCI_KEY_TAB) {
+					keyModifier = SCI_KEYMOD_CTRL;
+					keyPress = 'i';
+				}
+
+				// We need to isolate the lower byte when checking modifiers
+				// because of a keyboard driver bug (see engine/kevent.cpp /
+				// kGetEvent)
+				keyModifier &= 0xFF;
+
 				if (itemEntry->keyPress == keyPress &&
-					itemEntry->keyModifier == (keyModifier & 0xFF) &&
+					itemEntry->keyModifier == keyModifier &&
 					itemEntry->enabled)
 					break;
 				itemIterator++;

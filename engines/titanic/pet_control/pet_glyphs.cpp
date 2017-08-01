@@ -159,7 +159,7 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 			CPetGlyph *glyph = getGlyph(itemIndex);
 
 			if (glyph)
-				glyph->drawAt(screenManager, pt, index == _highlightIndex);
+				glyph->drawAt(screenManager, pt, itemIndex == _highlightIndex);
 		}
 	}
 

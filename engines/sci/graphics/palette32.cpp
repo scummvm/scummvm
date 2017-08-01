@@ -44,7 +44,7 @@ HunkPalette::HunkPalette(const SciSpan<const byte> &rawPalette) :
 	// set to 14, but the *actual* size of the header structure used in SSCI is
 	// 13, which is reflected by `kHunkPaletteHeaderSize`.
 	// _headerSize(rawPalette[0]),
-	_numPalettes(rawPalette.getUint8At(10)),
+	_numPalettes(rawPalette.getUint8At(kNumPaletteEntriesOffset)),
 	_data() {
 	assert(_numPalettes == 0 || _numPalettes == 1);
 	if (_numPalettes) {
@@ -53,8 +53,31 @@ HunkPalette::HunkPalette(const SciSpan<const byte> &rawPalette) :
 	}
 }
 
+void HunkPalette::write(SciSpan<byte> &out, const Palette &palette) {
+	const uint8 numPalettes = 1;
+	const uint16 paletteOffset = kHunkPaletteHeaderSize + 2 * numPalettes;
+
+	out[kNumPaletteEntriesOffset] = numPalettes;
+	out[kHunkPaletteHeaderSize + 2] = paletteOffset;
+
+	SciSpan<byte> entry = out.subspan(paletteOffset);
+	entry[kEntryStartColorOffset] = 0;
+	entry.setUint16SEAt(kEntryNumColorsOffset, ARRAYSIZE(palette.colors));
+	entry[kEntryUsedOffset] = 1;
+	entry[kEntrySharedUsedOffset] = 0;
+	entry.setUint32SEAt(kEntryVersionOffset, 1);
+
+	SciSpan<byte> paletteData = entry.subspan(kEntryHeaderSize);
+	for (uint i = 0; i < ARRAYSIZE(palette.colors); ++i) {
+		*paletteData++ = palette.colors[i].used;
+		*paletteData++ = palette.colors[i].r;
+		*paletteData++ = palette.colors[i].g;
+		*paletteData++ = palette.colors[i].b;
+	}
+}
+
 void HunkPalette::setVersion(const uint32 version) const {
-	if (_numPalettes != _data.getUint8At(10)) {
+	if (_numPalettes != _data.getUint8At(kNumPaletteEntriesOffset)) {
 		error("Invalid HunkPalette");
 	}
 
@@ -74,10 +97,10 @@ const HunkPalette::EntryHeader HunkPalette::getEntryHeader() const {
 	const SciSpan<const byte> data(getPalPointer());
 
 	EntryHeader header;
-	header.startColor = data.getUint8At(10);
-	header.numColors = data.getUint16SEAt(14);
-	header.used = data.getUint8At(16);
-	header.sharedUsed = data.getUint8At(17);
+	header.startColor = data.getUint8At(kEntryStartColorOffset);
+	header.numColors = data.getUint16SEAt(kEntryNumColorsOffset);
+	header.used = data.getUint8At(kEntryUsedOffset);
+	header.sharedUsed = data.getUint8At(kEntrySharedUsedOffset);
 	header.version = data.getUint32SEAt(kEntryVersionOffset);
 
 	return header;
@@ -333,6 +356,9 @@ static const uint8 gammaTables[GfxPalette32::numGammaTables][256] = {
 	// Palette versioning
 	_version(1),
 	_needsUpdate(false),
+#ifdef USE_RGB_COLOR
+	_hardwarePalette(),
+#endif
 	_currentPalette(),
 	_sourcePalette(),
 	_nextPalette(),
@@ -365,9 +391,6 @@ static const uint8 gammaTables[GfxPalette32::numGammaTables][256] = {
 }
 
 GfxPalette32::~GfxPalette32() {
-#ifdef ENABLE_SCI3_GAMES
-	unloadClut();
-#endif
 	varyOff();
 	cycleAllOff();
 }
@@ -415,12 +438,19 @@ int16 GfxPalette32::matchColor(const uint8 r, const uint8 g, const uint8 b) {
 }
 
 void GfxPalette32::submit(const Palette &palette) {
-	const Palette oldSourcePalette(_sourcePalette);
-	mergePalette(_sourcePalette, palette);
+	// If `_needsUpdate` is already set, there is no need to test whether
+	// this palette submission causes a change to `_sourcePalette` since it is
+	// going to be updated already anyway
+	if (_needsUpdate) {
+		mergePalette(_sourcePalette, palette);
+	} else {
+		const Palette oldSourcePalette(_sourcePalette);
+		mergePalette(_sourcePalette, palette);
 
-	if (!_needsUpdate && _sourcePalette != oldSourcePalette) {
-		++_version;
-		_needsUpdate = true;
+		if (_sourcePalette != oldSourcePalette) {
+			++_version;
+			_needsUpdate = true;
+		}
 	}
 }
 
@@ -429,15 +459,7 @@ void GfxPalette32::submit(const HunkPalette &hunkPalette) {
 		return;
 	}
 
-	const Palette oldSourcePalette(_sourcePalette);
-	const Palette palette = hunkPalette.toPalette();
-	mergePalette(_sourcePalette, palette);
-
-	if (!_needsUpdate && oldSourcePalette != _sourcePalette) {
-		++_version;
-		_needsUpdate = true;
-	}
-
+	submit(hunkPalette.toPalette());
 	hunkPalette.setVersion(_version);
 }
 
@@ -460,9 +482,29 @@ void GfxPalette32::updateHardware() {
 		return;
 	}
 
-	byte bpal[3 * 256];
+#ifdef USE_RGB_COLOR
+	uint8 *bpal = _hardwarePalette;
+#else
+	uint8 bpal[256 * 3];
+#endif
 
-	for (int i = 0; i < ARRAYSIZE(_currentPalette.colors) - 1; ++i) {
+	// HACK: There are resources in a couple of Windows-only games that seem to
+	// include bogus palette entries above 236. SSCI does a lot of extra work
+	// when running in Windows to shift palettes and rewrite view & pic pixel
+	// data on-the-fly to account for the way Windows palettes work, which
+	// seems to end up masking the fact that there is some bad palette data.
+	// Since only one demo and one game seem to have this problem, we instead
+	// "fix" the problem here by ignoring attempts to send high palette entries
+	// to the backend. This makes those high pixels render black, which seems to
+	// match what would happen in the original interpreter, and saves us from
+	// having to clutter up the engine with a bunch of palette shifting garbage.
+	int maxIndex = ARRAYSIZE(_currentPalette.colors) - 2;
+	if (g_sci->getGameId() == GID_HOYLE5 ||
+		(g_sci->getGameId() == GID_GK2 && g_sci->isDemo())) {
+		maxIndex = 235;
+	}
+
+	for (int i = 0; i <= maxIndex; ++i) {
 		_currentPalette.colors[i] = _nextPalette.colors[i];
 
 		// All color entries MUST be copied, not just "used" entries, otherwise
@@ -482,6 +524,12 @@ void GfxPalette32::updateHardware() {
 		}
 	}
 
+#ifndef USE_RGB_COLOR
+	// When creating a raw palette on the stack, any skipped area of the palette
+	// needs to be blacked out or else it will contain garbage memory
+	memset(bpal + (maxIndex + 1) * 3, 0, (255 - maxIndex - 1) * 3);
+#endif
+
 	if (g_sci->getPlatform() != Common::kPlatformMacintosh) {
 		// The last color must always be white
 		bpal[255 * 3    ] = 255;
@@ -493,7 +541,13 @@ void GfxPalette32::updateHardware() {
 		bpal[255 * 3 + 2] = 0;
 	}
 
-	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
+	// If the system is in a high color mode, which can happen during video
+	// playback, attempting to send the palette to OSystem is illegal and will
+	// result in a crash
+	if (g_system->getScreenFormat().bytesPerPixel == 1) {
+		g_system->getPaletteManager()->setPalette(bpal, 0, 256);
+	}
+
 	_gammaChanged = false;
 }
 
@@ -509,11 +563,14 @@ Palette GfxPalette32::getPaletteFromResource(const GuiResourceId resourceId) con
 }
 
 void GfxPalette32::mergePalette(Palette &to, const Palette &from) {
-	// The last color is always white in SCI, so it is not copied. (Some
-	// palettes, particularly in KQ7, try to set the last color, which causes
-	// unnecessary palette updates since the last color is forced by SSCI to a
-	// specific value)
-	for (int i = 0; i < ARRAYSIZE(to.colors) - 1; ++i) {
+	// All colors MUST be copied, even index 255, despite the fact that games
+	// cannot actually change index 255 (it is forced to white when generating
+	// the hardware palette in updateHardware). While this causes some
+	// additional unnecessary source palette invalidations, not doing it breaks
+	// some badly programmed rooms, like room 6400 in Phant1 (see Trac#9788).
+	// (Note, however, that that specific glitch is fully fixed by ignoring a
+	// bad palette in the CelObjView constructor)
+	for (int i = 0; i < ARRAYSIZE(to.colors); ++i) {
 		if (from.colors[i].used) {
 			to.colors[i] = from.colors[i];
 		}

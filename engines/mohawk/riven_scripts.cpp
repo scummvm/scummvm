@@ -47,7 +47,7 @@ RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) :
 		_stoppingAllScripts(false) {
 
 	_storedMovieOpcode.time = 0;
-	_storedMovieOpcode.id = 0;
+	_storedMovieOpcode.slot = 0;
 }
 
 RivenScriptManager::~RivenScriptManager() {
@@ -101,7 +101,7 @@ void RivenScriptManager::stopAllScripts() {
 void RivenScriptManager::setStoredMovieOpcode(const StoredMovieOpcode &op) {
 	clearStoredMovieOpcode();
 	_storedMovieOpcode.script = op.script;
-	_storedMovieOpcode.id = op.id;
+	_storedMovieOpcode.slot = op.slot;
 	_storedMovieOpcode.time = op.time;
 }
 
@@ -115,7 +115,7 @@ void RivenScriptManager::runStoredMovieOpcode() {
 void RivenScriptManager::clearStoredMovieOpcode() {
 	_storedMovieOpcode.script = RivenScriptPtr();
 	_storedMovieOpcode.time = 0;
-	_storedMovieOpcode.id = 0;
+	_storedMovieOpcode.slot = 0;
 }
 
 void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
@@ -247,6 +247,75 @@ const char *RivenScript::getTypeName(uint16 type) {
 
 	assert(type < ARRAYSIZE(names));
 	return names[type];
+}
+
+void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, uint16 scriptType, uint16 hotspotId) {
+	bool shouldApplyPatches = false;
+
+	// On Prison Island when pressing the dome viewer switch to close the dome,
+	// the game schedules an ambient sound change using kRivenCommandStoreMovieOpcode
+	// but does not play the associated video in a blocking way. The stored opcode
+	// is not immediately used, stays in memory and may be triggered by some
+	// other action. (Bug #9958)
+	// We replace kRivenCommandStoreMovieOpcode by kRivenCommandActivateSLST
+	// to make the ambient sound change happen immediately.
+	//
+	// Script before patch:
+	// playMovieBlocking(3); // Dome closing
+	// playMovie(4);         // Dome spinning up
+	// activatePLST(2);      // Dome closed
+	// playMovieBlocking(4); // Dome spinning up
+	// storeMovieOpcode(1, 0, 0, 40, 2); // Schedule ambient sound change to "dome spinning"
+	//                                      after movie 1 finishes blocking playback
+	// playMovie(1);         // Dome spinning
+	//
+	// Script after patch:
+	// playMovieBlocking(3); // Dome closing
+	// playMovie(4);         // Dome spinning up
+	// activatePLST(2);      // Dome closed
+	// playMovieBlocking(4); // Dome spinning up
+	// activateSLST(2);      // Ambient sound change to "dome spinning"
+	// playMovie(1);         // Dome spinning
+	if (cardGlobalId == 0x1AC1 && scriptType == kCardEnterScript) {
+		shouldApplyPatches = true;
+		for (uint i = 0; i < _commands.size(); i++) {
+			if (_commands[i]->getType() == kRivenCommandStoreMovieOpcode) {
+				RivenSimpleCommand::ArgumentArray arguments;
+				arguments.push_back(2);
+				_commands[i] = RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandActivateSLST, arguments));
+				debugC(kRivenDebugPatches, "Applied immediate ambient sound patch to card %x", cardGlobalId);
+				break;
+			}
+		}
+	}
+
+	// On Jungle Island when entering the submarine from the dock beside the main walkway,
+	// the sound of the hatch closing does not play (Bug #9972).
+	// This happens only in the CD version of the game.
+	//
+	// Script before patch:
+	// transition(16);
+	// switchCard(534);
+	//
+	// Script after patch:
+	// transition(16);
+	// switchCard(534);
+	// playSound(112, 256, 0);
+	if (cardGlobalId == 0x2E900 && scriptType == kMouseDownScript && hotspotId == 3
+			&& !(vm->getFeatures() & GF_DVD)) {
+		shouldApplyPatches = true;
+		RivenSimpleCommand::ArgumentArray arguments;
+		arguments.push_back(112);
+		arguments.push_back(256);
+		arguments.push_back(0);
+		_commands.push_back(RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandPlaySound, arguments)));
+	}
+
+	if (shouldApplyPatches) {
+		for (uint i = 0; i < _commands.size(); i++) {
+			_commands[i]->applyCardPatches(cardGlobalId, scriptType, hotspotId);
+		}
+	}
 }
 
 RivenScriptPtr &operator+=(RivenScriptPtr &lhs, const RivenScriptPtr &rhs) {
@@ -573,7 +642,7 @@ void RivenSimpleCommand::storeMovieOpcode(uint16 op, const ArgumentArray &args) 
 	RivenScriptManager::StoredMovieOpcode storedOp;
 	storedOp.script = _vm->_scriptMan->createScriptFromData(1, args[3], 1, args[4]);
 	storedOp.time = delayTime;
-	storedOp.id = args[0];
+	storedOp.slot = args[0];
 
 	// Store the opcode for later
 	_vm->_scriptMan->setStoredMovieOpcode(storedOp);
@@ -691,6 +760,10 @@ void RivenSimpleCommand::execute() {
 	(this->*(_opcodes[_type].proc)) (_type, _arguments);
 }
 
+RivenCommandType RivenSimpleCommand::getType() const {
+	return _type;
+}
+
 RivenSwitchCommand::RivenSwitchCommand(MohawkEngine_Riven *vm) :
 		RivenCommand(vm),
 		_variableId(0) {
@@ -768,6 +841,16 @@ void RivenSwitchCommand::execute() {
 	}
 }
 
+RivenCommandType RivenSwitchCommand::getType() const {
+	return kRivenCommandSwitch;
+}
+
+void RivenSwitchCommand::applyCardPatches(uint32 globalId, int scriptType, uint16 hotspotId) {
+	for (uint i = 0; i < _branches.size(); i++) {
+		_branches[i].script->applyCardPatches(_vm, globalId, scriptType, hotspotId);
+	}
+}
+
 RivenStackChangeCommand::RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId, bool byStackId) :
 		RivenCommand(vm),
 		_stackId(stackId),
@@ -813,6 +896,10 @@ void RivenStackChangeCommand::dump(byte tabs) {
 	debugN("changeStack(%d, %d);\n", _stackId, _cardId);
 }
 
+RivenCommandType RivenStackChangeCommand::getType() const {
+	return kRivenCommandChangeStack;
+}
+
 RivenTimerCommand::RivenTimerCommand(MohawkEngine_Riven *vm, const Common::SharedPtr<RivenStack::TimerProc> &timerProc) :
 	RivenCommand(vm),
 	_timerProc(timerProc) {
@@ -826,6 +913,10 @@ void RivenTimerCommand::execute() {
 void RivenTimerCommand::dump(byte tabs) {
 	printTabs(tabs);
 	debugN("doTimer();\n");
+}
+
+RivenCommandType RivenTimerCommand::getType() const {
+	return kRivenCommandTimer;
 }
 
 } // End of namespace Mohawk

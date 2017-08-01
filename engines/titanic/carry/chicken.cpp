@@ -160,19 +160,18 @@ bool CChicken::VisibleMsg(CVisibleMsg *msg) {
 }
 
 bool CChicken::TimerMsg(CTimerMsg *msg) {
+	// Check whether chicken has been mailed
 	CGameObject *obj = getMailManFirstObject();
 	while (obj && obj->getName() != "Chicken")
 		obj = getMailManNextObject(obj);
 
-	bool flag = false;
-	if (obj) {
-		flag = _temperature;
-	} else if (_temperature > 0) {
+	// If chicken is not mailed, and still hot, cool it down a bit
+	if (!obj && _temperature > 0)
 		--_temperature;
-		flag = _temperature;
-	}
 
-	if (flag) {
+	// If chicken is cooled, refresh the inventory, just in case
+	// the user had the hot chicken selected
+	if (!_temperature) {
 		petInvChange();
 		stopTimer(_timerId);
 	}
@@ -188,14 +187,14 @@ bool CChicken::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 
 bool CChicken::ParrotTriesChickenMsg(CParrotTriesChickenMsg *msg) {
 	if (_temperature > 0)
-		msg->_value1 = 1;
+		msg->_isHot = true;
 
 	if (_condiment == "Tomato") {
-		msg->_value2 = 1;
+		msg->_condiment = 1;
 	} else if (_condiment == "Mustard") {
-		msg->_value2 = 2;
+		msg->_condiment = 2;
 	} else if (_condiment == "Bird") {
-		msg->_value2 = 3;
+		msg->_condiment = 3;
 	}
 
 	return true;

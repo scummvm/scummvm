@@ -93,7 +93,7 @@ CWaveFile::~CWaveFile() {
 	if (_disposeAudioBuffer == DisposeAfterUse::YES && _audioBuffer)
 		delete _audioBuffer;
 
-	delete[] _waveData;
+	free(_waveData);
 }
 
 uint CWaveFile::getDurationTicks() const {
@@ -117,7 +117,7 @@ bool CWaveFile::loadSound(const CString &name) {
 
 	Common::SeekableReadStream *stream = file.readStream();
 	uint wavSize = stream->size();
-	byte *data = new byte[wavSize];
+	byte *data = (byte *)malloc(wavSize);
 	stream->read(data, wavSize);
 
 	load(data, wavSize);

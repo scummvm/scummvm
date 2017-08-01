@@ -46,6 +46,7 @@
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/helpers.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/plane32.h"
@@ -68,7 +69,9 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	_throttleState(0),
 	_remapOccurred(false),
 	_overdrawThreshold(0),
-	_palMorphIsOn(false) {
+	_throttleKernelFrameOut(true),
+	_palMorphIsOn(false),
+	_lastScreenUpdateTick(0) {
 
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
 		_currentBuffer = Buffer(630, 450, nullptr);
@@ -389,13 +392,7 @@ void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pi
 #pragma mark Rendering
 
 void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseRect) {
-	// In SSCI, mouse events were received via hardware interrupt, so the mouse
-	// cursor would always get updated whenever the user moved the mouse. Since
-	// we must poll for mouse events instead, poll here so that the mouse gets
-	// updated with its current position at render time. If we do not do this,
-	// the mouse gets "stuck" during loops that do not make calls to kGetEvent,
-	// like transitions.
-	g_sci->getEventManager()->getSciEvent(SCI_EVENT_PEEK);
+	updateMousePositionForRendering();
 
 	RobotDecoder &robotPlayer = g_sci->_video32->getRobotPlayer();
 	const bool robotIsActive = robotPlayer.getStatus() != RobotDecoder::kRobotStatusUninitialized;
@@ -451,6 +448,8 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 }
 
 void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *showStyle) {
+	updateMousePositionForRendering();
+
 	Palette sourcePalette(_palette->getNextPalette());
 	alterVmap(sourcePalette, sourcePalette, -1, styleRanges);
 
@@ -551,47 +550,20 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 	showBits();
 }
 
-/**
- * Determines the parts of `r` that aren't overlapped by `other`.
- * Returns -1 if `r` and `other` have no intersection.
- * Returns number of returned parts (in `outRects`) otherwise.
- * (In particular, this returns 0 if `r` is contained in `other`.)
- */
-int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]) {
-	if (!r.intersects(other)) {
-		return -1;
-	}
-
-	int splitCount = 0;
-	if (r.top < other.top) {
-		Common::Rect &t = outRects[splitCount++];
-		t = r;
-		t.bottom = other.top;
-		r.top = other.top;
-	}
-
-	if (r.bottom > other.bottom) {
-		Common::Rect &t = outRects[splitCount++];
-		t = r;
-		t.top = other.bottom;
-		r.bottom = other.bottom;
-	}
-
-	if (r.left < other.left) {
-		Common::Rect &t = outRects[splitCount++];
-		t = r;
-		t.right = other.left;
-		r.left = other.left;
-	}
-
-	if (r.right > other.right) {
-		Common::Rect &t = outRects[splitCount++];
-		t = r;
-		t.left = other.right;
-	}
-
-	return splitCount;
+void GfxFrameout::directFrameOut(const Common::Rect &showRect) {
+	updateMousePositionForRendering();
+	_showList.add(showRect);
+	showBits();
 }
+
+#ifdef USE_RGB_COLOR
+void GfxFrameout::resetHardware() {
+	updateMousePositionForRendering();
+	_showList.add(Common::Rect(getCurrentBuffer().screenWidth, getCurrentBuffer().screenHeight));
+	g_system->getPaletteManager()->setPalette(_palette->getHardwarePalette(), 0, 256);
+	showBits();
+}
+#endif
 
 /**
  * Determines the parts of `middleRect` that aren't overlapped
@@ -1008,7 +980,7 @@ void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showLi
 
 void GfxFrameout::showBits() {
 	if (!_showList.size()) {
-		g_system->updateScreen();
+		updateScreen();
 		return;
 	}
 
@@ -1044,13 +1016,27 @@ void GfxFrameout::showBits() {
 			continue;
 		}
 
-		g_system->copyRectToScreen(sourceBuffer, _currentBuffer.screenWidth, rounded.left, rounded.top, rounded.width(), rounded.height());
+#ifdef USE_RGB_COLOR
+		if (g_system->getScreenFormat() != _currentBuffer.format) {
+			// This happens (at least) when playing a video in Shivers with
+			// HQ video on & subtitles on
+			Graphics::Surface *screenSurface = _currentBuffer.getSubArea(rounded).convertTo(g_system->getScreenFormat(), _palette->getHardwarePalette());
+			assert(screenSurface);
+			g_system->copyRectToScreen(screenSurface->getPixels(), screenSurface->pitch, rounded.left, rounded.top, screenSurface->w, screenSurface->h);
+			screenSurface->free();
+			delete screenSurface;
+		} else {
+#else
+		{
+#endif
+			g_system->copyRectToScreen(sourceBuffer, _currentBuffer.screenWidth, rounded.left, rounded.top, rounded.width(), rounded.height());
+		}
 	}
 
 	_cursor->donePainting();
 
 	_showList.clear();
-	g_system->updateScreen();
+	updateScreen();
 }
 
 void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, const int8 style, const int8 *const styleRanges) {
@@ -1123,6 +1109,20 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 	}
 }
 
+void GfxFrameout::updateScreen(const int delta) {
+	// using OSystem::getMillis instead of Sci::getTickCount because these
+	// values need to be monotonically increasing for the duration of the
+	// GfxFrameout object or else the screen will stop updating
+	const uint32 now = g_system->getMillis() * 60 / 1000;
+	if (now <= _lastScreenUpdateTick + delta) {
+		return;
+	}
+
+	_lastScreenUpdateTick = now;
+	g_system->updateScreen();
+	g_sci->getSciDebugger()->onFrame();
+}
+
 void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 	if (_transitions->hasShowStyles()) {
 		_transitions->processShowStyles();
@@ -1137,7 +1137,9 @@ void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 		frameOut(shouldShowBits);
 	}
 
-	throttle();
+	if (_throttleKernelFrameOut) {
+		throttle();
+	}
 }
 
 void GfxFrameout::throttle() {
@@ -1166,14 +1168,14 @@ void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
 			g_system->setShakePos(_isHiRes ? 8 : 4);
 		}
 
-		g_system->updateScreen();
+		updateScreen();
 		g_sci->getEngineState()->wait(3);
 
 		if (direction & kShakeVertical) {
 			g_system->setShakePos(0);
 		}
 
-		g_system->updateScreen();
+		updateScreen();
 		g_sci->getEngineState()->wait(3);
 	}
 }
@@ -1254,33 +1256,78 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 	return true;
 }
 
-bool GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
+bool GfxFrameout::getNowSeenRect(const reg_t screenItemObject, Common::Rect &result) const {
 	const reg_t planeObject = readSelector(_segMan, screenItemObject, SELECTOR(plane));
-
-	Plane *plane = _planes.findByObject(planeObject);
+	const Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
-		error("kSetNowSeen: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(screenItemObject));
+		error("getNowSeenRect: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(screenItemObject));
 	}
 
-	ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
+	const ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
 	if (screenItem == nullptr) {
+		// NOTE: MGDX is assumed to use the older getNowSeenRect since it was
+		// released before SQ6, but this has not been verified since it cannot
+		// be disassembled at the moment (Phar Lap Windows-only release)
+		// (See also kSetNowSeen32)
+		if (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
+			g_sci->getGameId() == GID_SQ6 ||
+			g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+
+			error("getNowSeenRect: Unable to find screen item %04x:%04x", PRINT_REG(screenItemObject));
+		}
+
+		warning("getNowSeenRect: Unable to find screen item %04x:%04x", PRINT_REG(screenItemObject));
 		return false;
 	}
 
-	Common::Rect result = screenItem->getNowSeenRect(*plane);
+	result = screenItem->getNowSeenRect(*plane);
+
+	return true;
+}
+
+bool GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
+	Common::Rect nsrect;
+
+	bool found = getNowSeenRect(screenItemObject, nsrect);
+
+	if (!found)
+		return false;
 
 	if (g_sci->_features->usesAlternateSelectors()) {
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(left), result.left);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(top), result.top);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(right), result.right - 1);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(bottom), result.bottom - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(left), nsrect.left);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(top), nsrect.top);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(right), nsrect.right - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(bottom), nsrect.bottom - 1);
 	} else {
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsLeft), result.left);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
-		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsLeft), nsrect.left);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), nsrect.top);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), nsrect.right - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), nsrect.bottom - 1);
 	}
 	return true;
+}
+
+int16 GfxFrameout::kernelObjectIntersect(const reg_t object1, const reg_t object2) const {
+	Common::Rect nsrect1, nsrect2;
+
+	bool found1 = getNowSeenRect(object1, nsrect1);
+	bool found2 = getNowSeenRect(object2, nsrect2);
+
+	// If both objects were not found, SSCI would probably return an
+	// intersection area of 1 since SSCI's invalid/uninitialized rect has an
+	// area of 1. We (mostly) ignore that corner case here.
+	if (!found1 && !found2)
+		warning("Both objects not found in kObjectIntersect");
+
+	// If one object was not found, SSCI would use its invalid/uninitialized
+	// rect for it, which is at coordinates 0x89ABCDEF. This can't intersect
+	// valid rects, so we return 0.
+	if (!found1 || !found2)
+		return 0;
+
+	const Common::Rect intersection = nsrect1.findIntersectingRect(nsrect2);
+
+	return intersection.width() * intersection.height();
 }
 
 void GfxFrameout::remapMarkRedraw() {

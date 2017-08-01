@@ -170,12 +170,30 @@ void HiRes2Engine::runIntro() {
 	_disk->setSectorLimit(13);
 }
 
+class HiRes3Engine : public HiResBaseEngine {
+public:
+	HiRes3Engine(OSystem *syst, const AdlGameDescription *gd);
+};
+
+HiRes3Engine::HiRes3Engine(OSystem *syst, const AdlGameDescription *gd) :
+		HiResBaseEngine(syst, gd, 138, 255, 36) {
+
+	const byte brokenRooms[] = { 18, 24, 54, 98, 102, 108 };
+
+	for (int i = 0; i < ARRAYSIZE(brokenRooms); ++i)
+		_brokenRooms.push_back(brokenRooms[i]);
+}
+
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd) {
 	return new HiRes2Engine(syst, gd);
 }
 
 Engine *HiRes0Engine_create(OSystem *syst, const AdlGameDescription *gd) {
 	return new HiResBaseEngine(syst, gd, 43, 142, 2);
+}
+
+Engine *HiRes3Engine_create(OSystem *syst, const AdlGameDescription *gd) {
+	return new HiRes3Engine(syst, gd);
 }
 
 } // End of namespace Adl

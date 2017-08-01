@@ -37,6 +37,15 @@ const Font *MacFontRun::getFont() {
 	return font;
 }
 
+const Common::String MacFontRun::toString() {
+	return Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c",
+			(fontId >> 8) & 0xff, fontId & 0xff,
+			textSlant & 0xff,
+			(fontSize >> 8) & 0xff, fontSize & 0xff,
+			(palinfo1 >> 8) & 0xff, palinfo1 & 0xff,
+			(palinfo2 >> 8) & 0xff, palinfo2 & 0xff,
+			(palinfo3 >> 8) & 0xff, palinfo3 & 0xff);
+}
 
 MacText::~MacText(){
 	delete _macFont;
@@ -110,17 +119,16 @@ void MacText::splitString(Common::String &str) {
 
 				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
 				byte textSlant = *s++;
-				byte unk3f = *s++;
 				uint16 fontSize = *s++; fontSize = (fontSize << 8) | *s++;
 				uint16 palinfo1 = *s++; palinfo1 = (palinfo1 << 8) | *s++;
 				uint16 palinfo2 = *s++; palinfo2 = (palinfo2 << 8) | *s++;
 				uint16 palinfo3 = *s++; palinfo3 = (palinfo3 << 8) | *s++;
 
-				debug(8, "******** splitString: fontId: %d, textSlant: %d, unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x",
-						fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
+				debug(8, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				previousFormatting = _currentFormatting;
-				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
+				_currentFormatting.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				if (curLine == 0 && curChunk == 0 && tmp.empty())
 					previousFormatting = _currentFormatting;
@@ -307,8 +315,8 @@ int MacText::getLineHeight(int line) {
 	return _textLines[line].height;
 }
 
-void MacText::setInterLinear(int interLinear) { 
-	_interLinear = interLinear; 
+void MacText::setInterLinear(int interLinear) {
+	_interLinear = interLinear;
 	recalcDims();
 }
 
@@ -327,26 +335,80 @@ void MacText::recalcDims() {
 }
 
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
+	if (_textLines.empty())
+		return;
+
 	render();
 
 	if (x + w < _surface->w || y + h < _surface->h) {
 		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
 	}
 
-	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x),     MIN<int>(_surface->h, y),
-									    MIN<int>(_surface->w, x + w), MIN<int>(_surface->w, y + w)),
+	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y),
+									    MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + w)),
 										Common::Point(xoff, yoff));
 }
 
-void MacText::appendText(Common::String str) {
-	int oldLen = _textLines.size();
+// Count newline characters in String
+uint getNewlinesInString(const Common::String &str) {
+	Common::String::const_iterator p = str.begin();
+	uint newLines = 0;
+	while (*p) {
+		if (*p == '\n')
+			newLines++;
+		p++;
+	}
+	return newLines;
+}
 
-	// TODO: Recalc length
+// Appends numNewLines new lines in _textLines, formatted with the MacFontRun specified
+void MacText::resizeAndFormatLines(uint numNewLines, MacFontRun *fontRun) {
+	uint oldLen = _textLines.size();
+
+	// Resize _textLines appropriately
+	for (uint curLine = 0; curLine < numNewLines; ++curLine) {
+		_textLines.resize(oldLen + numNewLines);
+		_textLines[oldLen + curLine].chunks.push_back(*fontRun);
+	}
+}
+
+void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular) {
+	uint oldLen = _textLines.size();
+	uint newLines = 1 + getNewlinesInString(str);
+
+	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
+
+	_str += fontRun.toString();
+	_str += str;
+
+	resizeAndFormatLines(newLines, &fontRun);
 
 	splitString(str);
 	recalcDims();
 
-	render(oldLen + 1, _textLines.size());
+	render(oldLen, _textLines.size());
+}
+
+void MacText::appendTextDefault(Common::String str) {
+	uint oldLen = _textLines.size();
+	uint newLines = 1 + getNewlinesInString(str);
+
+	_str += _defaultFormatting.toString();
+	_str += str;
+
+	resizeAndFormatLines(newLines, &_defaultFormatting);
+
+	splitString(str);
+	recalcDims();
+
+	render(oldLen, _textLines.size());
+}
+
+void MacText::clearText() {
+	_textLines.clear();
+	_str.clear();
+
+	recalcDims();
 }
 
 void MacText::replaceLastLine(Common::String str) {
@@ -361,6 +423,16 @@ void MacText::replaceLastLine(Common::String str) {
 	recalcDims();
 
 	render(oldLen, _textLines.size());
+}
+
+void MacText::removeLastLine() {
+	if (!_textLines.size())
+		return;
+
+	int h = getLineHeight(_textLines.size() - 1) + _interLinear;
+
+	_textLines.pop_back();
+	_textMaxHeight -= h;
 }
 
 } // End of namespace Graphics

@@ -74,6 +74,7 @@
 #define GUIO_GAMEOPTIONS7    "\056"
 #define GUIO_GAMEOPTIONS8    "\057"
 #define GUIO_GAMEOPTIONS9    "\060"
+#define GUIO_GAMEOPTIONS10   "\061"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)

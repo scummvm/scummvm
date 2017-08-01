@@ -146,6 +146,13 @@ public:
 	 */
 	bool kWaitHook() const;
 
+#ifdef ENABLE_SCI32
+	/**
+	 * Guest additions hook for kPlayDuck(Play).
+	 */
+	bool kPlayDuckPlayHook() const;
+#endif
+
 #pragma mark -
 #pragma mark Integrated save & restore
 
@@ -183,9 +190,14 @@ private:
 	void patchGameSaveRestoreSCI32(Script &script) const;
 
 	/**
-	 * Patches the ScummVM save/load dialogue into Torin.
+	 * Patches the ScummVM save/load dialogue into Torin/LSL7.
 	 */
 	void patchGameSaveRestoreTorin(Script &script) const;
+
+	/**
+	 * Patches the ScummVM save/load dialogue into Phant2.
+	 */
+	void patchGameSaveRestorePhant2(Script &script) const;
 
 	/**
 	 * Prompts for a save game and returns it to game scripts using default
@@ -194,10 +206,27 @@ private:
 	reg_t promptSaveRestoreDefault(EngineState *s, int argc, reg_t *argv) const;
 
 	/**
-	 * Prompts for a save game and returns it to game scripts using Torin's
+	 * Prompts for a save game and returns it to game scripts using Torin/LSL7's
 	 * custom NewGame class semantics.
 	 */
 	reg_t promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const;
+
+	/**
+	 * Prompts for a save game and returns it to game scripts using Phant2's
+	 * custom ControlPanel class semantics.
+	 */
+	reg_t promptSaveRestorePhant2(EngineState *s, int argc, reg_t *argv) const;
+
+	/**
+	 * Prompts the user to save or load a game.
+	 *
+	 * @param isSave If true, the prompt is for saving.
+	 * @param outDescription Will be filled with the save game description.
+	 * Optional for loads, required for saves.
+	 * @param forcedSaveNo During delayed restore, force the returned save game
+	 * number to this value.
+	 */
+	int runSaveRestore(const bool isSave, const reg_t outDescription, const int forcedSaveNo = -1) const;
 #endif
 
 #pragma mark -
@@ -321,6 +350,7 @@ private:
 
 	void syncGK2VolumeFromScummVM(const int16 musicVolume) const;
 	void syncLSL6HiresVolumeFromScummVM(const int16 musicVolume) const;
+	void syncPhant2VolumeFromScummVM(const int16 masterVolume) const;
 	void syncTorinVolumeFromScummVM(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const;
 
 	/**
@@ -348,7 +378,9 @@ private:
 	void syncGK1UI() const;
 	void syncGK2UI() const;
 	void syncLSL6HiresUI(const int16 musicVolume) const;
+	void syncMGDXUI(const int16 musicVolume) const;
 	void syncPhant1UI(const int16 oldMusicVolume, const int16 musicVolume, reg_t &musicGlobal, const int16 oldDacVolume, const int16 dacVolume, reg_t &dacGlobal) const;
+	void syncPhant2UI(const int16 masterVolume) const;
 	void syncPQ4UI(const int16 musicVolume) const;
 	void syncPQSWATUI() const;
 	void syncQFG4UI(const int16 musicVolume) const;

@@ -41,7 +41,7 @@ private:
 	CGameObject *_itemGlyphs[46];
 	CGameObject *_movie;
 	bool _isLoading;
-	int _field298;
+	int _titaniaBitFlags;
 private:
 	/**
 	 * Handles initial setup
@@ -161,12 +161,16 @@ public:
 	 */
 	void highlightItem(CGameObject *item);
 
-	CGameObject *getImage(int index);
+	/**
+	 * Gets the object, if any, containing the transformation animation played 
+	 * when pieces of Titania are added to the inventory for the first time.
+	 */
+	CGameObject *getTransformAnimation(int index);
 
 	/**
 	 * Play the animated movie for an object
 	 */
-	void playMovie(CGameObject *movie, int flag);
+	void playMovie(CGameObject *movie, bool repeat = true);
 };
 
 } // End of namespace Titanic

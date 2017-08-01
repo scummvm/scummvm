@@ -65,7 +65,8 @@ enum {
 
 // Engine Debug Flags
 enum {
-	kRivenDebugScript   = (1 << 0)
+	kRivenDebugScript   = (1 << 0),
+	kRivenDebugPatches  = (1 << 1)
 };
 
 struct ZipMode {
@@ -99,6 +100,7 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
+	void loadGameStateAndDisplayError(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool hasFeature(EngineFeature f) const;
 
@@ -115,6 +117,8 @@ private:
 	RivenCard *_card;
 	RivenStack *_stack;
 
+	bool _gameEnded;
+
 	// Variables
 	void initVars();
 
@@ -123,7 +127,7 @@ public:
 	// Stack/card/script funtions
 	RivenStack *constructStackById(uint16 id);
 	void changeToCard(uint16 dest);
-	void changeToStack(uint16);
+	void changeToStack(uint16 stackId);
 	RivenCard *getCard() const { return _card; }
 	RivenStack *getStack() const { return _stack; }
 
@@ -142,6 +146,16 @@ public:
 	bool _activatedSLST;
 	void runLoadDialog();
 	void delay(uint32 ms);
+
+	/**
+	 * Has the game ended, or has the user requested to quit?
+	 */
+	bool hasGameEnded() const;
+
+	/**
+	 * End the game gracefully
+	 */
+	void setGameEnded();
 };
 
 } // End of namespace Mohawk

@@ -35,10 +35,10 @@ namespace ZVision {
 
 Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo) {
 	if (wvInfo.tag != kWaveFormatZorkPCM)
-		return new AVIAudioTrack(sHeader, wvInfo, _soundType);
+		return new AVIAudioTrack(sHeader, wvInfo, getSoundType());
 
 	assert(wvInfo.size == 8);
-	return new ZorkAVIAudioTrack(sHeader, wvInfo, _soundType);
+	return new ZorkAVIAudioTrack(sHeader, wvInfo, getSoundType());
 }
 
 ZorkAVIDecoder::ZorkAVIAudioTrack::ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :

@@ -107,7 +107,7 @@ void RivenInventory::checkClick(const Common::Point &mousePos) {
 				_vm->changeToCard(12);
 			} else if (_vm->getStack()->getId() == kStackAspit && _vm->getCard()->getId() == 12) {
 				// From the "quit" screen, just quit
-				_vm->quitGame();
+				_vm->setGameEnded();
 			} else {
 				// Otherwise, return to the main menu
 				if (_vm->getStack()->getId() != kStackAspit)

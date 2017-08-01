@@ -28,9 +28,14 @@
 
 #include "icons/scummvm.xpm"
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+static const uint32 fullscreenMask = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN;
+#endif
+
 SdlWindow::SdlWindow()
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	: _window(nullptr), _inputGrabState(false), _windowCaption("ScummVM")
+	: _window(nullptr), _inputGrabState(false), _windowCaption("ScummVM"),
+	_lastFlags(0), _lastX(SDL_WINDOWPOS_UNDEFINED), _lastY(SDL_WINDOWPOS_UNDEFINED)
 #endif
 	{
 }
@@ -199,25 +204,83 @@ SDL_Surface *copySDLSurface(SDL_Surface *src) {
 	return res;
 }
 
-bool SdlWindow::createWindow(int width, int height, uint32 flags) {
-	destroyWindow();
-
+bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	if (_inputGrabState) {
 		flags |= SDL_WINDOW_INPUT_GRABBED;
 	}
 
-	_window = SDL_CreateWindow(_windowCaption.c_str(), SDL_WINDOWPOS_UNDEFINED,
-	                           SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+	// SDL_WINDOW_RESIZABLE can also be updated without recreating the window
+	// starting with SDL 2.0.5, but it is not treated as updateable here
+	// because:
+	// 1. It is currently only changed in conjunction with the SDL_WINDOW_OPENGL
+	//    flag, so the window will always be recreated anyway when changing
+	//    resizability; and
+	// 2. Users (particularly on Windows) will sometimes swap older SDL DLLs
+	//    to avoid bugs, which would be impossible if the feature was enabled
+	//    at compile time using SDL_VERSION_ATLEAST.
+	const uint32 updateableFlagsMask = fullscreenMask | SDL_WINDOW_INPUT_GRABBED;
+
+	const uint32 oldNonUpdateableFlags = _lastFlags & ~updateableFlagsMask;
+	const uint32 newNonUpdateableFlags = flags & ~updateableFlagsMask;
+
+	if (!_window || oldNonUpdateableFlags != newNonUpdateableFlags) {
+		destroyWindow();
+		_window = SDL_CreateWindow(_windowCaption.c_str(), _lastX,
+								   _lastY, width, height, flags);
+		if (_window) {
+			setupIcon();
+		}
+	} else {
+		const uint32 fullscreenFlags = flags & fullscreenMask;
+
+		if (fullscreenFlags) {
+			SDL_DisplayMode fullscreenMode;
+			fullscreenMode.w = width;
+			fullscreenMode.h = height;
+			fullscreenMode.driverdata = nullptr;
+			fullscreenMode.format = 0;
+			fullscreenMode.refresh_rate = 0;
+			SDL_SetWindowDisplayMode(_window, &fullscreenMode);
+		} else {
+			SDL_SetWindowSize(_window, width, height);
+		}
+
+		SDL_SetWindowFullscreen(_window, fullscreenFlags);
+		SDL_SetWindowGrab(_window, (flags & SDL_WINDOW_INPUT_GRABBED) ? SDL_TRUE : SDL_FALSE);
+	}
+
 	if (!_window) {
 		return false;
 	}
-	setupIcon();
+
+#if defined(MACOSX)
+	// macOS windows with the flag SDL_WINDOW_FULLSCREEN_DESKTOP exiting their fullscreen space
+	// ignore the size set by SDL_SetWindowSize while they were in fullscreen mode.
+	// Instead, they revert back to their previous windowed mode size.
+	// This is a bug in SDL2: https://bugzilla.libsdl.org/show_bug.cgi?id=3719.
+	// TODO: Remove the call to SDL_SetWindowSize below once the SDL bug is fixed.
+
+	// In some cases at this point there may be a pending SDL resize event with the old size.
+	// This happens for example if we destroyed the window, or when switching between windowed
+	// and fullscreen modes. If we changed the window size here, this pending event will have the
+	// old (and incorrect) size. To avoid any issue we call SDL_SetWindowSize() to generate another
+	// resize event (SDL_WINDOWEVENT_SIZE_CHANGED) so that the last resize event we receive has
+	// the correct size. This fixes for exmample bug #9971: SDL2: Fullscreen to RTL launcher resolution
+	SDL_SetWindowSize(_window, width, height);
+#endif
+
+	_lastFlags = flags;
 
 	return true;
 }
 
 void SdlWindow::destroyWindow() {
-	SDL_DestroyWindow(_window);
-	_window = nullptr;
+	if (_window) {
+		if (!(_lastFlags & fullscreenMask)) {
+			SDL_GetWindowPosition(_window, &_lastX, &_lastY);
+		}
+		SDL_DestroyWindow(_window);
+		_window = nullptr;
+	}
 }
 #endif

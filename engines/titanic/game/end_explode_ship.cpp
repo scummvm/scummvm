@@ -55,7 +55,7 @@ bool CEndExplodeShip::ActMsg(CActMsg *msg) {
 	} else if (msg->_action == "TakeOff") {
 		loadSound("a#31.wav");
 		loadSound("a#14.wav");
-		playGlobalSound("a#13.wav", -1, true, true, 0);
+		playGlobalSound("a#13.wav", VOL_NORMAL, true, true, 0);
 		addTimer(1, 10212, 0);
 	}
 
@@ -71,12 +71,12 @@ bool CEndExplodeShip::TimerMsg(CTimerMsg *msg) {
 	}
 
 	if (msg->_actionVal == 3) {
-		setGlobalSoundVolume(-4, 2, -1);
+		setGlobalSoundVolume(VOL_MUTE, 2, -1);
 		CActMsg actMsg(_isExploding ? "ExplodeCredits" : "Credits");
 		actMsg.execute("EndGameCredits");
 	}
 
-	if (msg->_action == "Room") {
+	if (msg->_action == "Boom") {
 		playMovie(550, 583, MOVIE_NOTIFY_OBJECT);
 		movieEvent(551);
 	}
@@ -85,7 +85,7 @@ bool CEndExplodeShip::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CEndExplodeShip::MovieEndMsg(CMovieEndMsg *msg) {
-	if (getMovieFrame() == 550) {
+	if (msg->_endFrame == 550) {
 		playSound("z#399.wav");
 		startAnimTimer("Boom", 4200, 0);
 	} else {
@@ -96,9 +96,9 @@ bool CEndExplodeShip::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CEndExplodeShip::MovieFrameMsg(CMovieFrameMsg *msg) {
-	if (getMovieFrame() == 58)
+	if (msg->_frameNumber == 58)
 		playSound("a#31.wav", 70);
-	else if (getMovieFrame() == 551)
+	else if (msg->_frameNumber == 551)
 		playSound("a#14.wav");
 
 	return true;

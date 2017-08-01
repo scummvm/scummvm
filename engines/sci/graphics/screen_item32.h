@@ -275,6 +275,8 @@ public:
 				// these insertion IDs instead. They are more stable and cause
 				// objects with identical priority and z-index to be rendered in
 				// the order that they were created.
+				//
+				// This also applies to ScreenItem::hasPriorityAbove.
 				return _creationId < other._creationId;
 			}
 		}
@@ -297,6 +299,20 @@ public:
 				// explanation
 				return _creationId > other._creationId;
 			}
+		}
+
+		return false;
+	}
+
+	inline bool hasPriorityAbove(const ScreenItem &other) const {
+		if (_priority > other._priority) {
+			return true;
+		}
+
+		if (_priority == other._priority) {
+			// This is different than SSCI; see ScreenItem::operator< for an
+			// explanation
+			return _creationId > other._creationId;
 		}
 
 		return false;

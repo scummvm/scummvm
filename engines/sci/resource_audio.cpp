@@ -297,10 +297,26 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 
 	uint32 offset = 0;
 	const ResourceId mapResId(kResourceTypeMap, map->_mapNumber);
-	Resource *mapRes = findResource(mapResId, false);
+	Resource *mapRes = _resMap.getVal(mapResId, nullptr);
 
 	if (!mapRes) {
 		warning("Failed to open %s", mapResId.toString().c_str());
+		return SCI_ERROR_RESMAP_NOT_FOUND;
+	}
+
+	// Here, we allocate audio maps ourselves instead of using findResource to
+	// do this for us. This is in order to prevent the map resources from
+	// getting into the LRU cache. These resources must be read and then
+	// deallocated in games with multi-disc audio in order to read the audio
+	// maps from every CD, and LRU eviction freaks out if an unallocated
+	// resource ends up in the LRU list. It is also not necessary for these
+	// resources to be cached in the LRU at all, since they are only used upon
+	// game startup to populate _resMap.
+	assert(mapRes->_status == kResStatusNoMalloc);
+	loadResource(mapRes);
+
+	if (!mapRes->data()) {
+		warning("Failed to read data for %s", mapResId.toString().c_str());
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
@@ -483,6 +499,8 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			addResource(id, src, offset + syncSize, 0, map->getLocationName());
 		}
 	}
+
+	mapRes->unalloc();
 
 	return 0;
 }
@@ -973,62 +991,93 @@ bool ResourceManager::addAudioSources() {
 	return true;
 }
 
-void ResourceManager::changeAudioDirectory(const Common::String &path) {
-	// Resources must be cleared before ResourceSources because the destructor
-	// of a Resource accesses its own ResourceSource
-	ResourceMap::iterator resIt = _resMap.begin();
-	while (resIt != _resMap.end()) {
-		Resource *resource = resIt->_value;
-		ResourceType type = resource->getType();
-		if (type == kResourceTypeMap ||
-			type == kResourceTypeAudio36 ||
-			type == kResourceTypeSync36) {
+void ResourceManager::changeAudioDirectory(Common::String path) {
+	if (!path.empty()) {
+		path += "/";
+	}
 
-			if (type == kResourceTypeMap && resource->getNumber() == 65535) {
-				++resIt;
+	const Common::String resAudPath = path + "RESOURCE.AUD";
+
+	if (!SearchMan.hasFile(resAudPath)) {
+		error("Could not find %s", resAudPath.c_str());
+	}
+
+	// When a IntMapResourceSource is scanned, it will not update existing
+	// resources. There is also no guarantee that there are exactly the same
+	// number of audio36/sync36/map resources in each audio directory.
+	// Therefore, all of these resources must be deleted before scanning.
+	for (ResourceMap::iterator it = _resMap.begin(); it != _resMap.end(); ++it) {
+		const ResourceType type = it->_key.getType();
+
+		if (type == kResourceTypeMap || type == kResourceTypeAudio36 || type == kResourceTypeSync36) {
+			if (type == kResourceTypeMap && it->_key.getNumber() == 65535) {
 				continue;
 			}
 
-			if (resource->_status == kResStatusLocked) {
-				resource->_lockers = 1;
-				unlockResource(resource);
+			Resource *resource = it->_value;
+			if (resource) {
+				// If one of these resources ends up being locked here, it
+				// probably means Audio32 is using it and we need to stop
+				// playback of audio before switching directories
+				assert(!resource->isLocked());
+
+				if (resource->_status == kResStatusEnqueued) {
+					removeFromLRU(resource);
+				}
+
+				// A PatchResourceSource is not added to _sources and is
+				// automatically deleted when the corresponding Resource is
+				// deleted
+				delete resource;
 			}
-			if (resource->_status == kResStatusEnqueued) {
-				removeFromLRU(resource);
-			}
-			delete resource;
-			_resMap.erase(resIt);
-		}
 
-		++resIt;
-	}
-
-	Common::List<ResourceSource *>::iterator sourceIt = _sources.begin();
-	while (sourceIt != _sources.end()) {
-		ResourceSource *source = *sourceIt;
-		ResSourceType sourceType = source->getSourceType();
-		if ((sourceType == kSourceIntMap && source->_volumeNumber != 65535) ||
-			(sourceType == kSourceAudioVolume && source->getLocationName() != "RESOURCE.SFX")) {
-
-			sourceIt = _sources.erase(sourceIt);
-			delete source;
-		} else {
-			++sourceIt;
+			_resMap.erase(it);
 		}
 	}
 
-	const Common::String audioResourceName = (path.empty() ? "" : path + "/") + "RESOURCE.AUD";
-
-	Common::List<ResourceId> resources = listResources(kResourceTypeMap);
-	Common::List<ResourceId>::iterator it;
-	for (it = resources.begin(); it != resources.end(); ++it) {
-		// Don't readd 65535.map or resource.sfx
-		if (it->getNumber() == 65535)
+	for (SourcesList::iterator it = _sources.begin(); it != _sources.end(); ) {
+		IntMapResourceSource *mapSource = dynamic_cast<IntMapResourceSource *>(*it);
+		if (mapSource && mapSource->_mapNumber != 65535) {
+			delete *it;
+			it = _sources.erase(it);
 			continue;
+		}
 
-		const Resource *mapResource = _resMap.getVal(*it);
-		ResourceSource *src = addSource(new IntMapResourceSource(mapResource->getResourceLocation(), 0, it->getNumber()));
-		addSource(new AudioVolumeResourceSource(this, audioResourceName, src, 0));
+		AudioVolumeResourceSource *volSource = dynamic_cast<AudioVolumeResourceSource *>(*it);
+		if (volSource && volSource->getLocationName().contains("RESOURCE.AUD")) {
+			delete volSource;
+			it = _sources.erase(it);
+			continue;
+		}
+
+		++it;
+	}
+
+	// # is used as the first pattern character to avoid matching non-audio maps
+	// like RESOURCE.MAP
+	Common::ArchiveMemberList mapFiles;
+	SearchMan.listMatchingMembers(mapFiles, path + "#*.MAP");
+
+	for (Common::ArchiveMemberList::const_iterator it = mapFiles.begin(); it != mapFiles.end(); ++it) {
+		const Common::ArchiveMemberPtr &file = *it;
+		assert(file);
+
+		const Common::String fileName = file->getName();
+		const int mapNo = atoi(fileName.c_str());
+
+		// Sound effects are the same across all audio directories, so ignore
+		// any new SFX map
+		if (mapNo == 65535) {
+			continue;
+		}
+
+		ResourceSource *newSource = new PatchResourceSource(path + fileName);
+		processPatch(newSource, kResourceTypeMap, mapNo);
+		Resource *mapResource = _resMap.getVal(ResourceId(kResourceTypeMap, mapNo));
+		assert(mapResource);
+
+		ResourceSource *audioMap = addSource(new IntMapResourceSource(mapResource->getResourceLocation(), 0, mapNo));
+		addSource(new AudioVolumeResourceSource(this, resAudPath, audioMap, 0));
 	}
 
 	scanNewSources();

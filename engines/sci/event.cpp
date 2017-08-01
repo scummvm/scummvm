@@ -335,13 +335,13 @@ SciEvent EventManager::getScummVMEvent() {
 	// Scancodify if appropriate
 	if (scummVMKeyFlags & Common::KBD_ALT)
 		input.character = altify(input.character);
-	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (scummVMKeyFlags & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
-		input.character += 96; // 0x01 -> 'a'
-#ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2 && (scummVMKeyFlags & Common::KBD_CTRL) && input.character == 'c') {
-		input.character = SCI_KEY_ETX;
+
+	// In SSCI, Ctrl+<key> generates ASCII control characters, but the backends
+	// usually give us a latin character + Ctrl flag, so convert this combo back
+	// into what is expected by game scripts
+	if ((scummVMKeyFlags & Common::KBD_NON_STICKY) == Common::KBD_CTRL && input.character >= 'a' && input.character <= 'z') {
+		input.character -= 96;
 	}
-#endif
 
 	// If no actual key was pressed (e.g. if only a modifier key was pressed),
 	// ignore the event
@@ -406,6 +406,13 @@ SciEvent EventManager::getSciEvent(uint32 mask) {
 	}
 
 	return event;
+}
+
+void EventManager::flushEvents() {
+	Common::EventManager *em = g_system->getEventManager();
+	Common::Event event;
+	while (em->pollEvent(event));
+	_events.clear();
 }
 
 #ifdef ENABLE_SCI32

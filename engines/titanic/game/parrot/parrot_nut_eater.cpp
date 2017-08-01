@@ -81,12 +81,14 @@ bool CParrotNutEater::NutPuzzleMsg(CNutPuzzleMsg *msg) {
 }
 
 bool CParrotNutEater::MovieFrameMsg(CMovieFrameMsg *msg) {
+	CProximity prox(Audio::Mixer::kSpeechSoundType);
+
 	switch (msg->_frameNumber) {
 	case 68:
-		playSound("z#214.wav");
+		playSound("z#214.wav", prox);
 		break;
 	case 132:
-		playSound("z#216.wav");
+		playSound("z#216.wav", prox);
 		break;
 	default:
 		break;

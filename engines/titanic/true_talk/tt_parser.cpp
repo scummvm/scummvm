@@ -1403,7 +1403,7 @@ int TTparser::checkForAction() {
 			// Chain of words, so we need to find the last word of the chain,
 			// and set the last-but-one's _nextP to nullptr to detach the last one
 			TTword *prior = nullptr;
-			for (word = word->_nextP; word->_nextP; word = word->_nextP) {
+			for (; word->_nextP; word = word->_nextP) {
 				prior = word;
 			}
 
@@ -1609,7 +1609,9 @@ bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
 int TTparser::filterConcepts(int conceptMode, int conceptIndex) {
 	int result = 0;
 
-	for (TTconcept *currP = _conceptP; currP && !result; currP = currP->_nextP) {
+	for (TTconcept *nextP, *currP = _conceptP; currP && !result; currP = nextP) {
+		nextP = currP->_nextP;
+
 		if (checkConcept2(currP, conceptMode)) {
 			TTconcept **ptrPP = _sentenceConcept->setConcept(conceptIndex, currP);
 			TTconcept *newConcept = new TTconcept(*currP);

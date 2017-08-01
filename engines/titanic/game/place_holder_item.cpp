@@ -52,35 +52,35 @@ void CPlaceHolderItem::load(SimpleFile *file) {
 	switch (file->readNumber()) {
 	case 7:
 		_field7C = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 6:
 		file->readString();
 		_clips.load(file);
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 5:
 		_field68 = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 4:
 		_field64 = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 3:
 		_field60 = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 2:
 		_list.load(file);
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 1:
 		_string2 = file->readString();
 		_field4C = file->readNumber();
 		_pos1 = file->readPoint();
 		_pos2 = file->readPoint();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 0:
 		_string1 = file->readString();

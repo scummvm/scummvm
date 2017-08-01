@@ -116,7 +116,7 @@ void OSMovie::play(uint startFrame, uint endFrame, uint initialFrame, uint flags
 		movieStarted();
 }
 
-void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) {
+bool OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) {
 	if (!_movieSurface)
 		_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340, 32);
 
@@ -124,10 +124,10 @@ void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame)
 	CEventTarget eventTarget;
 	g_vm->_events->addTarget(&eventTarget);
 
-	_aviSurface.setFrame(startFrame);
-	_aviSurface.playCutscene(drawRect, startFrame, endFrame);
+	bool result = _aviSurface.playCutscene(drawRect, startFrame, endFrame);
 
 	g_vm->_events->removeTarget();
+	return result;
 }
 
 void OSMovie::pause() {

@@ -23,7 +23,7 @@
 #include "titanic/support/screen_manager.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/star_control/star_control.h"
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fpose.h"
 #include "titanic/star_control/star_camera.h"
@@ -44,12 +44,12 @@ END_MESSAGE_MAP()
 CStarControl::CStarControl() : _enabled(false), _petControl(nullptr),
 		_starRect(20, 10, 620, 350) {
 	CStarCamera::init();
-	DMatrix::init();
+	DAffine::init();
 }
 
 CStarControl::~CStarControl() {
 	CStarCamera::deinit();
-	DMatrix::deinit();
+	DAffine::deinit();
 }
 
 void CStarControl::save(SimpleFile *file, int indent) {
@@ -260,9 +260,12 @@ bool CStarControl::isSolved() const {
 	return _starField.isSolved();
 }
 
+bool CStarControl::isSkipped() const {
+	return _starField.isSkipped();
+}
+
 void CStarControl::forceSolved() {
-	while (!_starField.isSolved())
-		_starField.incMatches();
+	_starField.skipPuzzle();
 }
 
 bool CStarControl::canSetStarDestination() const {

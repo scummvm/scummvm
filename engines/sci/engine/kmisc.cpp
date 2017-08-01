@@ -422,6 +422,9 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	} else if (setting == "jumpto") {
 		// Hoyle 5 startup.
 		s->_segMan->strcpy(data, "");
+	} else if (setting == "deflang") {
+		// MGDX 4-language startup.
+		s->_segMan->strcpy(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}

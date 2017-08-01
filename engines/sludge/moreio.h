@@ -19,51 +19,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef SLUDGE_MOREIO_H
+#define SLUDGE_MOREIO_H
 
-#ifndef TITANIC_DMATRIX_H
-#define TITANIC_DMATRIX_H
+namespace Sludge {
 
-#include "titanic/star_control/dvector.h"
-#include "titanic/star_control/fvector.h"
+// Read & Write
+Common::String readString(Common::SeekableReadStream *stream);
+void writeString(Common::String s, Common::WriteStream *stream);
 
-namespace Titanic {
+Common::String encodeFilename(const Common::String &nameIn);
+Common::String decodeFilename(const Common::String &nameIn);
 
-class FMatrix;
-class CMatrixTransform;
+} // End of namespace Sludge
 
-/**
- * Double based matrix class.
- * @remarks		TODO: See if it can be merged with FMatrix
- */
-class DMatrix {
-private:
-	static DMatrix *_static;
-public:
-	DVector _row1;
-	DVector _row2;
-	DVector _row3;
-	DVector _row4;
-public:
-	static void init();
-	static void deinit();
-public:
-	DMatrix();
-	DMatrix(int mode, const DVector &src);
-	DMatrix(Axis axis, double amount);
-	DMatrix(const FMatrix &src);
-
-	/**
-	 * Sets up a matrix for rotating on a given axis by a given amount
-	 */
-	void setRotationMatrix(Axis axis, double amount);
-
-	DMatrix fn1() const;
-
-	void loadTransform(const CMatrixTransform &src);
-
-	DMatrix fn4(const DMatrix &m);
-};
-
-} // End of namespace Titanic
-
-#endif /* TITANIC_DMATRIX_H */
+#endif

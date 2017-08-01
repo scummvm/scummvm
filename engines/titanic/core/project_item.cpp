@@ -102,7 +102,7 @@ void CProjectItem::load(SimpleFile *file) {
 	case 1:
 		file->readBuffer();
 		_nextRoomNumber = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 0:
 		// Load the list of files
@@ -116,16 +116,16 @@ void CProjectItem::load(SimpleFile *file) {
 	case 6:
 		file->readBuffer();
 		_nextObjectNumber = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 5:
 		file->readBuffer();
 		_nextMessageNumber = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 4:
 		file->readBuffer();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 2:
 	case 3:

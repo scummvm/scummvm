@@ -22,6 +22,7 @@
 
 #include "mohawk/console.h"
 #include "mohawk/livingbooks.h"
+#include "mohawk/resource.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
@@ -37,6 +38,7 @@
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/myst_sound.h"
 #endif
 
 #ifdef ENABLE_RIVEN
@@ -79,7 +81,7 @@ bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 	_vm->changeToCard((uint16)atoi(argv[1]), kTransitionCopy);
 
 	return false;
@@ -167,7 +169,7 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 
 	// We need to stop any playing sound when we change the stack
 	// as the next card could continue playing it if it.
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 
 	uint16 card = 0;
 	if (argc == 3)
@@ -194,7 +196,6 @@ bool MystConsole::Cmd_DrawImage(int argc, const char **argv) {
 		rect = Common::Rect((uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4]), (uint16)atoi(argv[5]));
 
 	_vm->_gfx->copyImageToScreen((uint16)atoi(argv[1]), rect);
-	_vm->_system->updateScreen();
 	return false;
 }
 
@@ -233,7 +234,7 @@ bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_sound->replaceSoundMyst((uint16)atoi(argv[1]));
+	_vm->_sound->playEffect((uint16) atoi(argv[1]));
 
 	return false;
 }
@@ -241,51 +242,41 @@ bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 bool MystConsole::Cmd_StopSound(int argc, const char **argv) {
 	debugPrintf("Stopping Sound\n");
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 
 	return true;
 }
 
 bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
-	if (argc < 2) {
-		debugPrintf("Usage: playMovie <name> [<stack>] [<left> <top>]\n");
+	if (argc < 3) {
+		debugPrintf("Usage: playMovie <name> <stack> [<left> <top>]\n");
 		debugPrintf("NOTE: The movie will play *once* in the background.\n");
 		return true;
 	}
 
-	Common::String fileName;
-	if (argc == 3 || argc > 4) {
-		int8 stackNum = 0;
-		for (byte i = 1; i <= ARRAYSIZE(mystStackNames); i++)
-			if (!scumm_stricmp(argv[2], mystStackNames[i - 1])) {
-				stackNum = i;
-				break;
-			}
-
-		if (!stackNum) {
-			debugPrintf("\'%s\' is not a stack name!\n", argv[2]);
-			return true;
+	Common::String fileName = argv[1];
+	int8 stackNum = -1;
+	for (byte i = 0; i < ARRAYSIZE(mystStackNames); i++)
+		if (!scumm_stricmp(argv[2], mystStackNames[i])) {
+			stackNum = i;
+			break;
 		}
 
-		fileName = _vm->wrapMovieFilename(argv[1], stackNum - 1);
-	} else {
-		fileName = argv[1];
-	}
-
-	VideoHandle handle = _vm->_video->playMovie(fileName);
-	if (!handle) {
-		debugPrintf("Failed to open movie '%s'\n", fileName.c_str());
+	if (stackNum < 0) {
+		debugPrintf("\'%s\' is not a stack name!\n", argv[2]);
 		return true;
 	}
 
+	VideoEntryPtr video = _vm->playMovie(fileName, static_cast<MystStack>(stackNum));
+
 	if (argc == 4) {
-		handle->setX(atoi(argv[2]));
-		handle->setY(atoi(argv[3]));
+		video->setX(atoi(argv[2]));
+		video->setY(atoi(argv[3]));
 	} else if (argc > 4) {
-		handle->setX(atoi(argv[3]));
-		handle->setY(atoi(argv[4]));
+		video->setX(atoi(argv[3]));
+		video->setY(atoi(argv[4]));
 	} else {
-		handle->center();
+		video->center();
 	}
 
 	return false;
@@ -335,6 +326,8 @@ bool MystConsole::Cmd_Resources(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
+	_vm->pauseEngine(false);
+
 	// Go through all the ages, all the views and click random stuff
 	for (uint i = 0; i < ARRAYSIZE(mystStackNames); i++) {
 		if (i == 2 || i == 5 || i == 9 || i == 10) continue;
@@ -348,9 +341,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 			debug("Loading card %d", ids[j]);
 			_vm->changeToCard(ids[j], kTransitionCopy);
 
-			_vm->_video->updateMovies();
-			_vm->_scriptParser->runPersistentScripts();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 
 			int16 resIndex = _vm->_rnd->getRandomNumber(_vm->_resources.size()) - 1;
 			if (resIndex >= 0 && _vm->_resources[resIndex]->isEnabled()) {
@@ -358,9 +349,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 				_vm->_resources[resIndex]->handleMouseUp();
 			}
 
-			_vm->_video->updateMovies();
-			_vm->_scriptParser->runPersistentScripts();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 
 			if (_vm->getCurStack() != i) {
 				// Clicking may have linked us to another age
@@ -369,6 +358,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 		}
 	}
 
+	_vm->pauseEngine(true);
 	return true;
 }
 

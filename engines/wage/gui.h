@@ -48,11 +48,20 @@
 #ifndef WAGE_GUI_H
 #define WAGE_GUI_H
 
+// Whether to use the new MacTextWindow class for rendering the console
+#define USE_MACTEXTWINDOW
+
 #include "common/str-array.h"
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
 #include "graphics/macgui/macwindowmanager.h"
+#ifdef USE_MACTEXTWINDOW
+#include "graphics/macgui/mactextwindow.h"
+#else
 #include "graphics/macgui/macwindow.h"
+#endif
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/macwindowborder.h"
 
@@ -64,7 +73,6 @@
 #include "image/bmp.h"
 
 #include "graphics/palette.h"
-
 
 namespace Wage {
 
@@ -122,6 +130,7 @@ public:
 
 	void draw();
 	void appendText(const char *str);
+	void reflowText();
 	void clearOutput();
 	bool processEvent(Common::Event &event);
 
@@ -149,6 +158,7 @@ private:
 	void undrawCursor();
 	void renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r);
 	void flowText(Common::String &str);
+	const Graphics::MacFont *getConsoleMacFont();
 	const Graphics::Font *getConsoleFont();
 	const Graphics::Font *getTitleFont();
 	void startMarking(int x, int y);
@@ -174,7 +184,12 @@ public:
 
 	Graphics::MacWindowManager _wm;
 	Graphics::MacWindow *_sceneWindow;
+
+#ifdef USE_MACTEXTWINDOW
+	Graphics::MacTextWindow *_consoleWindow;
+#else
 	Graphics::MacWindow *_consoleWindow;
+#endif
 
 private:
 

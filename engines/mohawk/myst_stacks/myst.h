@@ -33,7 +33,7 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Myst : public MystScriptParser {
 public:
@@ -96,8 +96,10 @@ protected:
 	DECLARE_OPCODE(o_cabinSafeHandleMove);
 	DECLARE_OPCODE(o_cabinSafeHandleEndMove);
 	DECLARE_OPCODE(o_treePressureReleaseStart);
-	DECLARE_OPCODE(o_observatoryMonthChangeStart);
-	DECLARE_OPCODE(o_observatoryDayChangeStart);
+	DECLARE_OPCODE(o_observatoryMonthChangeStartIncrease);
+	DECLARE_OPCODE(o_observatoryMonthChangeStartDecrease);
+	DECLARE_OPCODE(o_observatoryDayChangeStartIncrease);
+	DECLARE_OPCODE(o_observatoryDayChangeStartDecrease);
 	DECLARE_OPCODE(o_observatoryGoButton);
 	DECLARE_OPCODE(o_observatoryMonthSliderMove);
 	DECLARE_OPCODE(o_observatoryDaySliderMove);
@@ -143,7 +145,8 @@ protected:
 	DECLARE_OPCODE(o_clockWheelEndTurn);
 	DECLARE_OPCODE(o_clockHourWheelStartTurn);
 	DECLARE_OPCODE(o_clockLeverStartMove);
-	DECLARE_OPCODE(o_clockLeverMove);
+	DECLARE_OPCODE(o_clockLeverMoveLeft);
+	DECLARE_OPCODE(o_clockLeverMoveRight);
 	DECLARE_OPCODE(o_clockLeverEndMove);
 	DECLARE_OPCODE(o_clockResetLeverStartMove);
 	DECLARE_OPCODE(o_clockResetLeverMove);
@@ -151,9 +154,11 @@ protected:
 
 	DECLARE_OPCODE(o_libraryCombinationBookStartRight);
 	DECLARE_OPCODE(o_libraryCombinationBookStartLeft);
-	DECLARE_OPCODE(o_observatoryTimeChangeStart);
+	DECLARE_OPCODE(o_observatoryTimeChangeStartIncrease);
+	DECLARE_OPCODE(o_observatoryTimeChangeStartDecrease);
 	DECLARE_OPCODE(o_observatoryChangeSettingStop);
-	DECLARE_OPCODE(o_observatoryYearChangeStart);
+	DECLARE_OPCODE(o_observatoryYearChangeStartIncrease);
+	DECLARE_OPCODE(o_observatoryYearChangeStartDecrease);
 	DECLARE_OPCODE(o_dockVaultForceClose);
 	DECLARE_OPCODE(o_imagerEraseStop);
 
@@ -184,6 +189,7 @@ protected:
 	DECLARE_OPCODE(o_treeEntry_exit);
 	DECLARE_OPCODE(o_boiler_exit);
 	DECLARE_OPCODE(o_generatorControlRoom_exit);
+	DECLARE_OPCODE(o_rocketSliders_exit);
 
 
 	MystGameState::Myst &_state;
@@ -191,6 +197,7 @@ protected:
 	bool _generatorControlRoomRunning;
 	uint16 _generatorVoltage; // 58
 
+	uint16 _rocketPianoSound; // 292
 	MystAreaSlider *_rocketSlider1; // 248
 	MystAreaSlider *_rocketSlider2; // 252
 	MystAreaSlider *_rocketSlider3; // 256
@@ -198,7 +205,7 @@ protected:
 	MystAreaSlider *_rocketSlider5; // 264
 	uint16 _rocketSliderSound; // 294
 	uint16 _rocketLeverPosition; // 296
-	VideoHandle _rocketLinkBook;
+	VideoEntryPtr _rocketLinkBook; // 268
 
 	bool _libraryCombinationBookPagesTurning;
 	int16 _libraryBookPage; // 86
@@ -234,8 +241,8 @@ protected:
 
 	uint16 _clockTurningWheel;
 
-	VideoHandle _clockGearsVideos[3]; // 148 to 156
-	VideoHandle _clockWeightVideo; // 160
+	VideoEntryPtr _clockGearsVideos[3]; // 148 to 156
+	VideoEntryPtr _clockWeightVideo; // 160
 	uint16 _clockGearsPositions[3]; // 164 to 168
 	uint16 _clockWeightPosition; // 172
 	bool _clockMiddleGearMovedAlone; // 176
@@ -260,10 +267,10 @@ protected:
 	uint16 _cabinMatchState; // 60
 	uint32 _matchGoOutTime; // 144
 
-	VideoHandle _cabinFireMovie; // 240
+	VideoEntryPtr _cabinFireMovie; // 240
 
 	bool _cabinGaugeMovieEnabled;
-	VideoHandle _cabinGaugeMovie; // 244
+	VideoEntryPtr _cabinGaugeMovie; // 244
 
 	bool _boilerPressureIncreasing;
 	bool _boilerPressureDecreasing;
@@ -310,6 +317,7 @@ protected:
 	void clockWheelStartTurn(uint16 wheel);
 	void clockWheelTurn(uint16 var);
 
+	void clockLeverMove(bool leftLever);
 	void clockGearForwardOneStep(uint16 gear);
 	void clockWeightDownOneStep();
 	void clockGearsCheckSolution();
@@ -335,6 +343,10 @@ protected:
 	bool observatoryIsDDMMYYYY2400();
 	void observatorySetTargetToSetting();
 	void observatoryUpdateVisualizer(uint16 x, uint16 y);
+	void observatoryMonthChangeStart(bool increase);
+	void observatoryDayChangeStart(bool increase);
+	void observatoryYearChangeStart(bool increase);
+	void observatoryTimeChangeStart(bool increase);
 	void observatoryIncrementMonth(int16 increment);
 	void observatoryIncrementDay(int16 increment);
 	void observatoryIncrementYear(int16 increment);

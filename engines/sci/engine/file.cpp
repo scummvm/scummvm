@@ -371,7 +371,9 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc *desc) {
 	if (meta.name.lastChar() == '\n')
 		meta.name.deleteLastChar();
 
-	Common::strlcpy(desc->name, meta.name.c_str(), SCI_MAX_SAVENAME_LENGTH);
+	// At least Phant2 requires use of strncpy, since it creates save game
+	// names of exactly SCI_MAX_SAVENAME_LENGTH
+	strncpy(desc->name, meta.name.c_str(), SCI_MAX_SAVENAME_LENGTH);
 
 	return desc;
 }

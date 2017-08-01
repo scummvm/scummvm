@@ -348,6 +348,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL6HIRES,      -1,    85,  0,          "washcloth", "doVerb",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // when interacting with the wet washcloth in the inventory - Trac#9811
 	{ GID_LSL6HIRES,      -1, 64950,  1,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // at least when entering swimming pool area
 	{ GID_LSL6HIRES,      -1, 64964,  0,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // during the game
+	{ GID_LSL7,           -1, 64029,  0,          "oMessager", "nextMsg",                         NULL,     4, { WORKAROUND_FAKE,   0 } }, // when running the game with subtitles only
 	{ GID_LSL7,           -1, 64017,  0,             "oFlags", "clear",                           NULL,     0, { WORKAROUND_FAKE,   0 } }, // demo version, when it starts, and whenever the player chooses to go to the "Strip Liar's Dice" mini game
 	{ GID_LSL7,           -1, 64017,  0,        "oActorFlags", "clear",                           NULL,     0, { WORKAROUND_FAKE,   0 } }, // after an NPC walks off the left side of the screen at the Clothing Optional Pool
 	{ GID_LSL7,           -1, 64892,  0,      "oEventHandler", "killAllEventHogs",                NULL,     1, { WORKAROUND_FAKE,   0 } }, // when looking at the swordfish in the kitchen
@@ -359,10 +360,15 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_MOTHERGOOSEHIRES,-1,64950, -1,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",                          NULL,     3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #5154
 	{ GID_PEPPER,        150,   928,  0,           "Narrator", "startText",                       NULL,     0, { WORKAROUND_FAKE,   0 } }, // happens during the non-interactive demo of Pepper
+	{ GID_PHANTASMAGORIA, -1, 64921, -1,              "Print", "addEdit",                         NULL,     1, { WORKAROUND_FAKE,   0 } }, // When trying to use the game debugger's flag setting command
+	{ GID_PHANTASMAGORIA2,-1, 64926, -1,              "Thumb", "action",                          NULL,     1, { WORKAROUND_FAKE,   0 } }, // When dragging one of the volume sliders and releasing the mouse button over the +/- buttons
 	{ GID_PQ4,            -1,    25,  0,         "iconToggle", "select",                          NULL,     1, { WORKAROUND_FAKE,   0 } }, // when toggling the icon bar to auto-hide or not
 	{ GID_PQ4,           170,   170, -1,        "hideAndSeek", "handleEvent",                     NULL,     1, { WORKAROUND_FAKE,   0 } }, // when clicking to move right while still moving left during the Emo shootout - bug #9847
 	{ GID_PQ4,           275, 64964, -1,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // when Sherry walks out of the morgue on day 3
 	{ GID_PQ4,           240, 64964, -1,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // when encountering Sherry and the reporter outside the morgue at the end of day 3
+	{ GID_PQ4,          2010,  2010, -1,         "enemyShip1", "cantBeHere",                      NULL,     7, { WORKAROUND_FAKE,   0 } }, // when crashing into a UFO in the asteroids minigame in the Shortstop Bar
+	{ GID_PQ4,          2010,  2010, -1,         "enemyShip2", "cantBeHere",                      NULL,     7, { WORKAROUND_FAKE,   0 } }, // when crashing into a UFO in the asteroids minigame in the Shortstop Bar
+	{ GID_PQ4,            -1, 64950, -1,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // floppy: when walking within room 395 (city hall, day 3)
 	{ GID_PQSWAT,         -1, 64950,  0,                 NULL, "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // Using any menus in-game
 	{ GID_PQSWAT,         -1,    73,  0,   "theLashInterface", "transmit",                        NULL,     0, { WORKAROUND_FAKE,   0 } }, // Clicking the transmit button in LASH
 	{ GID_PQSWAT,       2990,  2990,  0,    "talkToSchienbly", "changeState",                     NULL,     1, { WORKAROUND_FAKE,   0 } }, // When the video of Schienbly talking for the first time ends
@@ -418,8 +424,9 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ6,            -1, 64964,  0,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // during the game
 	{ GID_SQ6,           210,   210,  0,       "buttonSecret", "doVerb",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // after winning the first round of stooge fighter 3
 	{ GID_SQ6,            -1, 64994, -1,               "Game", "restore",                         NULL,     1, { WORKAROUND_FAKE,   0 } }, // When trying to load an invalid save game from the launcher
+	{ GID_SQ6,            -1, 64921, -1,              "Print", "addEdit",                         NULL,     1, { WORKAROUND_FAKE,   0 } }, // When trying to use the game debugger's flag setting command
 	{ GID_TORIN,          -1, 64017,  0,             "oFlags", "clear",                           NULL,     0, { WORKAROUND_FAKE,   0 } }, // entering Torin's home in the French version
-	{ GID_TORIN,       10000, 64029,  0,          "oMessager", "nextMsg",                         NULL,     3, { WORKAROUND_FAKE,   0 } }, // start of chapter one
+	{ GID_TORIN,          -1, 64029,  0,          "oMessager", "nextMsg",                         NULL,     3, { WORKAROUND_FAKE,   0 } }, // start of chapter one, or when running with subtitles only
 	{ GID_TORIN,          -1, 64892,  0,      "oEventHandler", "killAllEventHogs",                NULL,     1, { WORKAROUND_FAKE,   0 } }, // when pressing the hint button when the game is about to transition to a new room (race condition) - Trac#9810
 	{ GID_TORIN,       20100, 64964,  0,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // going down the cliff at the first screen of chapter 2 (washing area)
 	{ GID_TORIN,       61100, 64888,  0,              "Torin", "autorestore",                     NULL,    11, { WORKAROUND_FAKE,   0 } }, // after attempting to restore a save game saved with the wrong game version

@@ -1116,6 +1116,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			applyFlag = true;
 			stateFlag = false;
 		}
+		break;
 
 	case 78:
 		// "Do you have a reservation?"
@@ -1452,9 +1453,9 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 }
 
 int DeskbotScript::searchQuotes(const TTroomScript *roomScript, const TTsentence *sentence) {
-	TTtreeResult treeResult;
+	TTtreeResult treeResult[32];
 	return g_vm->_trueTalkManager->_quotesTree.search(sentence->_normalizedLine.c_str(),
-		TREE_2, &treeResult, 0, 0) != -1;
+		TREE_2, &treeResult[0], 0, 0) != -1;
 }
 
 int DeskbotScript::checkCommonWords(const TTsentence *sentence) {

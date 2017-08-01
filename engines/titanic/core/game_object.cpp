@@ -141,27 +141,27 @@ void CGameObject::load(SimpleFile *file) {
 	case 7:
 		_movieRangeInfoList.load(file);
 		_frameNumber = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 6:
 		_cursorId = (CursorId)file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 5:
 		_movieClips.load(file);
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 4:
 		_handleMouseFlag = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 3:
 		_nonvisual = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 2:
 		_resource = file->readString();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 1:
 		_bounds = file->readBounds();
@@ -441,7 +441,7 @@ bool CGameObject::isSoundActive(int handle) const {
 	return false;
 }
 
-void CGameObject::playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated,
+void CGameObject::playGlobalSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
 		int handleIndex, Audio::Mixer::SoundType soundType) {
 	if (handleIndex < 0 || handleIndex > 3)
 		return;
@@ -526,7 +526,7 @@ void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
 	}
 }
 
-void CGameObject::setGlobalSoundVolume(int mode, uint seconds, int handleIndex) {
+void CGameObject::setGlobalSoundVolume(VolumeMode mode, uint seconds, int handleIndex) {
 	CGameManager *gameManager = getGameManager();
 	if (!gameManager)
 		return;
@@ -686,18 +686,21 @@ void CGameObject::playRandomClip(const char *const *names, uint flags) {
 	playClip(name, flags);
 }
 
-void CGameObject::playCutscene(uint startFrame, uint endFrame) {
+bool CGameObject::playCutscene(uint startFrame, uint endFrame) {
 	if (!_surface) {
 		if (!_resource.empty())
 			loadResource(_resource);
 		_resource.clear();
 	}
 
+	bool result = true;
 	if (_surface && _surface->loadIfReady() && _surface->_movie) {
 		disableMouse();
-		_surface->_movie->playCutscene(_bounds, startFrame, endFrame);
+		result = _surface->_movie->playCutscene(_bounds, startFrame, endFrame);
 		enableMouse();
 	}
+
+	return result;
 }
 
 void CGameObject::savePosition() {
@@ -1274,7 +1277,7 @@ bool CGameObject::clipExistsByEnd(const CString &name, int endFrame) const {
 void CGameObject::petClear() const {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
-		petControl->resetActiveNPC();
+		petControl->resetRemoteTarget();
 }
 
 CDontSaveFileItem *CGameObject::getDontSave() const {

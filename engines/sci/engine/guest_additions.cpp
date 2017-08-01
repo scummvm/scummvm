@@ -141,9 +141,11 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 													objName == "dacVolDown" ||
 													objName == "dacVolUp")) {
 			return true;
-		} else if (gameId == GID_TORIN && (objName == "oMusicScroll" ||
-										   objName == "oSFXScroll" ||
-										   objName == "oAudioScroll")) {
+		} else if (gameId == GID_PHANTASMAGORIA2 && objName == "foo2") {
+			return true;
+		} else if ((gameId == GID_LSL7 || gameId == GID_TORIN) && (objName == "oMusicScroll" ||
+																   objName == "oSFXScroll" ||
+																   objName == "oAudioScroll")) {
 			return true;
 #endif
 		}
@@ -227,8 +229,12 @@ void GuestAdditions::instantiateScriptHook(Script &script, const bool ignoreDela
 		return;
 	}
 
-	if (g_sci->getGameId() == GID_TORIN && script.getScriptNumber() == 64866) {
+	if ((g_sci->getGameId() == GID_LSL7 || g_sci->getGameId() == GID_TORIN) &&
+		script.getScriptNumber() == 64866) {
+
 		patchGameSaveRestoreTorin(script);
+	} else if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && script.getScriptNumber() == 64978) {
+		patchGameSaveRestorePhant2(script);
 	} else if (script.getScriptNumber() == 64990) {
 		// 64990 is the system script containing SRDialog. This script is used
 		// by the main Game object, but it is not loaded immediately, so we wait
@@ -255,11 +261,24 @@ bool GuestAdditions::kGetEventHook() const {
 }
 
 bool GuestAdditions::kWaitHook() const {
-	if (_state->_delayedRestoreGameId != -1) {
+	if (_state->_delayedRestoreGameId != -1 &&
+		// kWait cannot be used in Phant2 for delayed restore because it is
+		// called during the fade-in of music in the intro room, before graphics
+		// are fully initialized, which causes "Click to continue" text to be
+		// brokenly drawn over the game and then crashes the engine on the next
+		// room transition
+		g_sci->getGameId() != GID_PHANTASMAGORIA2) {
+
 		return g_sci->_guestAdditions->restoreFromLauncher();
 	}
 	return false;
 }
+
+#ifdef ENABLE_SCI32
+bool GuestAdditions::kPlayDuckPlayHook() const {
+	return _state->_delayedRestoreGameId != -1;
+}
+#endif
 
 #pragma mark -
 #pragma mark Integrated save & restore
@@ -381,9 +400,9 @@ void GuestAdditions::patchGameSaveRestoreSCI32(Script &script) const {
 }
 
 static const byte SRTorinPatch[] = {
-	0x38, 0x8d, 0x00,                     // pushi $8d (new)
+	0x38, 0xFF, 0xFF,                     // pushi new
 	0x76,                                 // push0
-	0x51, 0x0f,                           // class $f (Str)
+	0x51, 0x0f,                           // class Str
 	0x4a, 0x04, 0x00,                     // send 4
 	0xa3, 0x01,                           // sal 1
 	0x76,                                 // push0
@@ -396,14 +415,44 @@ void GuestAdditions::patchGameSaveRestoreTorin(Script &script) const {
 	const uint32 address = script.validateExportFunc(2, true);
 	byte *patchPtr = const_cast<byte *>(script.getBuf(address));
 	memcpy(patchPtr, SRTorinPatch, sizeof(SRTorinPatch));
+
+	const Selector newSelector = SELECTOR(new_);
+	assert(newSelector != -1);
+	patchPtr[1] = newSelector & 0xFF;
+	patchPtr[2] = (newSelector >> 8) & 0xFF;
+
 	if (g_sci->isBE()) {
 		SWAP(patchPtr[1], patchPtr[2]);
 		SWAP(patchPtr[8], patchPtr[9]);
 	}
 }
 
+void GuestAdditions::patchGameSaveRestorePhant2(Script &script) const {
+	const ObjMap &objects = script.getObjectMap();
+	for (ObjMap::const_iterator it = objects.begin(); it != objects.end(); ++it) {
+		const Object &obj = it->_value;
+
+		if (strncmp(_segMan->derefString(obj.getNameSelector()), "srGetGame", 9) != 0) {
+			continue;
+		}
+
+		int methodIndex = obj.funcSelectorPosition(SELECTOR(init));
+		if (methodIndex == -1) {
+			continue;
+		}
+
+		byte *scriptData = const_cast<byte *>(script.getBuf(obj.getFunction(methodIndex).getOffset()));
+		memcpy(scriptData, SRDialogPatch, sizeof(SRDialogPatch));
+		break;
+	}
+}
+
 reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) const {
-	if (g_sci->getGameId() == GID_TORIN) {
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+		return promptSaveRestorePhant2(s, argc, argv);
+	}
+
+	if (g_sci->getGameId() == GID_LSL7 || g_sci->getGameId() == GID_TORIN) {
 		return promptSaveRestoreTorin(s, argc, argv);
 	}
 
@@ -411,70 +460,88 @@ reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) co
 }
 
 reg_t GuestAdditions::promptSaveRestoreDefault(EngineState *s, int argc, reg_t *argv) const {
-	const bool isSave = (argc > 0);
-	int saveNo;
-
-	if (isSave) {
-		GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
-		saveNo = dialog.runModalWithCurrentTarget();
-		if (saveNo != -1) {
-			reg_t descriptionId;
-			if (_segMan->isObject(argv[0])) {
-				descriptionId = readSelector(_segMan, argv[0], SELECTOR(data));
-			} else {
-				descriptionId = argv[0];
-			}
-			SciArray &description = *_segMan->lookupArray(descriptionId);
-			Common::String descriptionString = dialog.getResultString();
-			if (descriptionString.empty())
-				descriptionString = dialog.createDefaultSaveDescription(saveNo - 1);
-			description.fromString(descriptionString);
-		}
-	} else {
-		if (s->_delayedRestoreGameId != -1) {
-			saveNo = s->_delayedRestoreGameId;
-		} else {
-			GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
-			saveNo = dialog.runModalWithCurrentTarget();
-		}
-	}
-
-	if (saveNo > 0) {
-		// The autosave slot in ScummVM takes up slot 0, but in SCI the first
-		// non-autosave save game number needs to be 0, so reduce the save
-		// number here to match what would come from the normal SCI save/restore
-		// dialog. There is additional special code for handling the autosave
-		// game inside of kRestoreGame32.
-		--saveNo;
-	}
-
-	return make_reg(0, saveNo);
+	return make_reg(0, runSaveRestore(argc > 0, argc > 0 ? argv[0] : NULL_REG, s->_delayedRestoreGameId));
 }
 
 reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const {
 	const bool isSave = (argc > 0 && (bool)argv[0].toSint16());
-	int saveNo;
 
+	reg_t descriptionId = NULL_REG;
 	if (isSave) {
-		GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
+		_segMan->allocateArray(kArrayTypeString, 0, &descriptionId);
+	}
+
+	const int saveNo = runSaveRestore(isSave, descriptionId, s->_delayedRestoreGameId);
+
+	if (saveNo != -1) {
+		assert(s->variablesMax[VAR_LOCAL] > 2);
+		writeSelector(_segMan, s->variables[VAR_LOCAL][1], SELECTOR(data), descriptionId);
+		s->variables[VAR_LOCAL][2] = make_reg(0, saveNo);
+		s->variables[VAR_LOCAL][3] = make_reg(0, isSave ? 1 : 0);
+	} else if (isSave) {
+		_segMan->freeArray(descriptionId);
+	}
+
+	return make_reg(0, saveNo != -1);
+}
+
+reg_t GuestAdditions::promptSaveRestorePhant2(EngineState *s, int argc, reg_t *argv) const {
+	assert(argc == 2);
+	const bool isSave = argv[1].toSint16() == 0;
+	const int saveNo = runSaveRestore(isSave, argv[0], s->_delayedRestoreGameId);
+
+	// Clear the highlighted state of the button so if the same control panel is
+	// opened again it does not appear to be opened to the save/load panels
+	reg_t button;
+	if (isSave) {
+		button = _segMan->findObjectByName("saveButton");
+	} else {
+		button = _segMan->findObjectByName("loadButton");
+	}
+	writeSelectorValue(_segMan, button, SELECTOR(cel), 0);
+
+	// This causes the control panel to quit its internal event loop and hide
+	// itself
+	const reg_t controlPanel = s->variables[VAR_GLOBAL][kGlobalVarPhant2ControlPanel];
+	writeSelector(_segMan, controlPanel, SELECTOR(scratch), TRUE_REG);
+
+	return make_reg(0, saveNo);
+}
+
+int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, const int forcedSaveNo) const {
+	int saveNo;
+	Common::String descriptionString;
+
+	if (!isSave && forcedSaveNo != -1) {
+		saveNo = forcedSaveNo;
+	} else {
+		const char *title;
+		const char *action;
+		if (isSave) {
+			title = _("Save game:");
+			action = _("Save");
+		} else {
+			title = _("Restore game:");
+			action = _("Restore");
+		}
+
+		GUI::SaveLoadChooser dialog(title, action, isSave);
 		saveNo = dialog.runModalWithCurrentTarget();
 		if (saveNo != -1) {
-			reg_t descriptionId = s->variables[VAR_LOCAL][1];
-			reg_t dataId;
-			SciArray &description = *_segMan->allocateArray(kArrayTypeString, 0, &dataId);
-			Common::String descriptionString = dialog.getResultString();
-			if (descriptionString.empty())
+			descriptionString = dialog.getResultString();
+			if (descriptionString.empty()) {
 				descriptionString = dialog.createDefaultSaveDescription(saveNo - 1);
-			description.fromString(descriptionString);
-			writeSelector(_segMan, descriptionId, SELECTOR(data), dataId);
+			}
 		}
-	} else {
-		if (s->_delayedRestoreGameId != -1) {
-			saveNo = s->_delayedRestoreGameId;
-		} else {
-			GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
-			saveNo = dialog.runModalWithCurrentTarget();
+	}
+
+	assert(!isSave || !outDescription.isNull());
+	if (!outDescription.isNull()) {
+		if (_segMan->isObject(outDescription)) {
+			outDescription = readSelector(_segMan, outDescription, SELECTOR(data));
 		}
+		SciArray &description = *_segMan->lookupArray(outDescription);
+		description.fromString(descriptionString);
 	}
 
 	if (saveNo > 0) {
@@ -486,13 +553,7 @@ reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *ar
 		--saveNo;
 	}
 
-	if (saveNo != -1) {
-		assert(s->variablesMax[VAR_LOCAL] > 2);
-		s->variables[VAR_LOCAL][2] = make_reg(0, saveNo);
-		s->variables[VAR_LOCAL][3] = make_reg(0, isSave ? 1 : 0);
-	}
-
-	return make_reg(0, saveNo != -1);
+	return saveNo;
 }
 
 #endif
@@ -527,7 +588,19 @@ bool GuestAdditions::restoreFromLauncher() const {
 
 		_restoring = true;
 
-		if (g_sci->getGameId() == GID_SHIVERS) {
+		// Any events queued up before the game restore can cause accidental
+		// input into the game if they are not flushed (this is particularly
+		// noticeable in Phant2, where the game will display "Click to continue"
+		// for one frame if the user clicked during startup)
+		g_sci->getEventManager()->flushEvents();
+
+		if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+			// Phantasmagoria 2 moves the function that actually restores
+			// a game, and uses a property of the main game object when picking
+			// the save game to restore
+			writeSelectorValue(_segMan, g_sci->getGameObject(), SELECTOR(num), _state->_delayedRestoreGameId - kSaveIdShift);
+			invokeSelector(g_sci->getGameObject(), SELECTOR(reallyRestore));
+		} else if (g_sci->getGameId() == GID_SHIVERS) {
 			// Shivers accepts the save game number as a parameter to
 			// `SHIVERS::restore`
 			reg_t args[] = { make_reg(0, _state->_delayedRestoreGameId - kSaveIdShift) };
@@ -604,12 +677,13 @@ void GuestAdditions::syncMessageTypeFromScummVMUsingDefaultStrategy() const {
 		_state->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, value);
 	}
 
-	if (g_sci->getGameId() == GID_GK1) {
-		if (value == kMessageTypeSubtitles) {
-			_state->variables[VAR_GLOBAL][kGlobalVarGK1NarratorMode] = NULL_REG;
-		} else if (value == kMessageTypeSpeech) {
-			_state->variables[VAR_GLOBAL][kGlobalVarGK1NarratorMode] = TRUE_REG;
-		}
+	if (g_sci->getGameId() == GID_GK1 && value == kMessageTypeSubtitles) {
+		// The narrator speech needs to be forced off if speech has been
+		// disabled in ScummVM, but otherwise the narrator toggle should just
+		// be allowed to persist to whatever the user chose previously, since
+		// it is controlled independently of other speech in the game and there
+		// is no equivalent option in the ScummVM GUI
+		_state->variables[VAR_GLOBAL][kGlobalVarGK1NarratorMode] = NULL_REG;
 	}
 }
 
@@ -810,6 +884,14 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 		break;
 	}
 
+	case GID_PHANTASMAGORIA2: {
+		const int16 masterVolume = (ConfMan.getInt("sfx_volume") + 1) * Audio32::kMaxVolume / Audio::Mixer::kMaxMixerVolume;
+		syncPhant2VolumeFromScummVM(masterVolume);
+		syncPhant2UI(masterVolume);
+		break;
+	}
+
+	case GID_LSL7:
 	case GID_TORIN: {
 		const int16 musicVolume  = (ConfMan.getInt("music_volume") + 1)  * 100 / Audio::Mixer::kMaxMixerVolume;
 		const int16 sfxVolume    = (ConfMan.getInt("sfx_volume") + 1)    * 100 / Audio::Mixer::kMaxMixerVolume;
@@ -840,7 +922,7 @@ void GuestAdditions::syncGK1StartupVolumeFromScummVM(const int index, const reg_
 		}
 
 		case kSoundsSoundType: {
-			volume = (ConfMan.getInt("sound_volume") + 1) * MUSIC_VOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
+			volume = (ConfMan.getInt("sfx_volume") + 1) * MUSIC_VOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
 			selector = SELECTOR(soundVolume);
 			break;
 		}
@@ -849,7 +931,6 @@ void GuestAdditions::syncGK1StartupVolumeFromScummVM(const int index, const reg_
 			error("Unknown sound type");
 		}
 
-		writeSelectorValue(_segMan, value, selector, volume);
 		writeSelectorValue(_segMan, value, selector, volume);
 	}
 }
@@ -908,6 +989,16 @@ void GuestAdditions::syncLSL6HiresVolumeFromScummVM(const int16 musicVolume) con
 	g_sci->_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : (musicVolume * MUSIC_MASTERVOLUME_MAX / kLSL6HiresUIVolumeMax));
 }
 
+void GuestAdditions::syncPhant2VolumeFromScummVM(const int16 musicVolume) const {
+	_state->variables[VAR_GLOBAL][kGlobalVarPhant2MasterVolume] = make_reg(0, musicVolume);
+
+	const reg_t soundsId = _state->variables[VAR_GLOBAL][kGlobalVarSounds];
+	if (!soundsId.isNull()) {
+		reg_t params[] = { make_reg(0, SELECTOR(setVol)), make_reg(0, musicVolume) };
+		invokeSelector(soundsId, SELECTOR(eachElementDo), 2, params);
+	}
+}
+
 void GuestAdditions::syncTorinVolumeFromScummVM(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const {
 	_state->variables[VAR_GLOBAL][kGlobalVarTorinMusicVolume]  = make_reg(0, musicVolume);
 	_state->variables[VAR_GLOBAL][kGlobalVarTorinSFXVolume]    = make_reg(0, sfxVolume);
@@ -926,7 +1017,7 @@ void GuestAdditions::syncTorinVolumeFromScummVM(const int16 musicVolume, const i
 			const reg_t &soundObj = sound->value;
 
 			if (_segMan->isHeapObject(soundObj) && lookupSelector(_segMan, soundObj, selector, nullptr, nullptr) != kSelectorNone) {
-				invokeSelector(sound->value, SELECTOR(reSyncVol));
+				invokeSelector(sound->value, selector);
 			}
 			soundId = sound->succ;
 		}
@@ -960,6 +1051,14 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 		}
 		break;
 
+	case GID_PHANTASMAGORIA2:
+		if (index == kGlobalVarPhant2MasterVolume) {
+			const int16 masterVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / Audio32::kMaxVolume;
+			ConfMan.setInt("sfx_volume", masterVolume);
+		}
+		break;
+
+	case GID_LSL7:
 	case GID_TORIN:
 		if (index == kGlobalVarTorinMusicVolume ||
 			index == kGlobalVarTorinSFXVolume ||
@@ -1013,6 +1112,10 @@ void GuestAdditions::syncInGameUI(const int16 musicVolume, const int16 sfxVolume
 	}
 
 	switch (g_sci->getGameId()) {
+	case GID_MOTHERGOOSEHIRES:
+		syncMGDXUI(musicVolume);
+		break;
+
 	case GID_PQ4:
 		syncPQ4UI(musicVolume);
 		break;
@@ -1111,6 +1214,42 @@ void GuestAdditions::syncPhant1UI(const int16 oldMusicVolume, const int16 musicV
 		while (count--) {
 			dacGlobal.incOffset(stepSize);
 			invokeSelector(thermo, SELECTOR(doit));
+		}
+	}
+}
+
+void GuestAdditions::syncPhant2UI(const int16 musicVolume) const {
+	const reg_t musicVolumeScript = _segMan->findObjectByName("foo2");
+	Common::Array<reg_t> scrollBars = _segMan->findObjectsByName("P2ScrollBar");
+	for (uint i = 0; i < scrollBars.size(); ++i) {
+		if (readSelector(_segMan, scrollBars[i], SELECTOR(client)) == musicVolumeScript) {
+			// P2ScrollBar objects may exist without actually being on-screen;
+			// the easiest way to tell seems to be to look to see if it has
+			// non-null pointers to subviews. (The game will correctly set the
+			// position of the scrollbar when it first becomes visible, so this
+			// is fine.)
+			if (!readSelector(_segMan, scrollBars[i], SELECTOR(physicalBar)).isNull()) {
+				reg_t params[] = { make_reg(0, musicVolume), make_reg(0, 1) };
+				invokeSelector(scrollBars[i], SELECTOR(move), 2, params);
+				break;
+			}
+		}
+	}
+}
+
+void GuestAdditions::syncMGDXUI(const int16 musicVolume) const {
+	const reg_t sliderId = _segMan->findObjectByName("icon1");
+	if (!sliderId.isNull()) {
+		const int16 celNo = 7 - (musicVolume * 8 / (MUSIC_MASTERVOLUME_MAX + 1));
+		writeSelectorValue(_segMan, sliderId, SELECTOR(mainCel), celNo);
+		writeSelectorValue(_segMan, sliderId, SELECTOR(cel), celNo);
+
+		// There does not seem to be any good way to learn whether the
+		// volume slider is visible (and thus eligible for
+		// kUpdateScreenItem)
+		const reg_t planeId = readSelector(_segMan, sliderId, SELECTOR(plane));
+		if (g_sci->_gfxFrameout->getPlanes().findByObject(planeId) != nullptr) {
+			g_sci->_gfxFrameout->kernelUpdateScreenItem(sliderId);
 		}
 	}
 }

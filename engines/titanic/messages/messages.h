@@ -219,7 +219,7 @@ public:
 enum MissiveOMatAction {
 	MESSAGE_NONE = 1, MESSAGE_SHOW = 2, NEXT_MESSAGE = 3, PRIOR_MESSAGE = 4,
 	MESSAGE_5 = 5, MESSAGE_DOWN = 6, MESSAGE_UP = 7, REDRAW_MESSAGE = 8,
-	MESSAGE_9 = 9
+	MESSAGE_STARTUP = 9
 };
 
 MESSAGE1(CActMsg, CString, action, "");
@@ -301,7 +301,7 @@ MESSAGE1(COnSummonBotMsg, int, value, 0);
 MESSAGE0(COpeningCreditsMsg);
 MESSAGE1(CPanningAwayFromParrotMsg, CMovePlayerTo *, target, nullptr);
 MESSAGE2(CParrotSpeakMsg, CString, target, "", CString, action, "");
-MESSAGE2(CParrotTriesChickenMsg, int, value1, 0, int, value2, 0);
+MESSAGE2(CParrotTriesChickenMsg, bool, isHot, false, int, condiment, 0);
 MESSAGE1(CPhonographPlayMsg, int, value, 0);
 MESSAGE0(CPhonographReadyToPlayMsg);
 MESSAGE1(CPhonographRecordMsg, bool, canRecord, false);

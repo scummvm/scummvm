@@ -50,6 +50,7 @@ int SuccUBusScript::chooseResponse(const TTroomScript *roomScript, const TTsente
 	case MKTAG('S', 'L', 'O', 'W'):
 	case MKTAG('T', 'H', 'R', 'T'):
 		dialogueId = 70021;
+		break;
 
 	case MKTAG('S', 'U', 'C', '1'):
 		dialogueId = getDialogueId(230009);

@@ -56,6 +56,7 @@ namespace Sci {
 // HIGH_RESOLUTION_GRAPHICS availability is checked for in SciEngine::run()
 #define GAMEOPTION_HIGH_RESOLUTION_GRAPHICS GUIO_GAMEOPTIONS8
 #define GAMEOPTION_ENABLE_BLACK_LINED_VIDEO GUIO_GAMEOPTIONS9
+#define GAMEOPTION_HQ_VIDEO                 GUIO_GAMEOPTIONS10
 
 struct EngineState;
 class Vocabulary;

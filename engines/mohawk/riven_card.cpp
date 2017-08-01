@@ -63,6 +63,12 @@ void RivenCard::loadCardResource(uint16 id) {
 	_zipModePlace = inStream->readUint16BE();
 	_scripts = _vm->_scriptMan->readScripts(inStream);
 
+	// Apply script patches for this card
+	uint32 globalId = _vm->getStack()->getCardGlobalId(id);
+	for (uint i = 0; i < _scripts.size(); i++) {
+		_scripts[i].script->applyCardPatches(_vm, globalId, _scripts[i].type, 0xFFFF);
+	}
+
 	delete inStream;
 }
 
@@ -246,8 +252,10 @@ void RivenCard::loadHotspots(uint16 id) {
 	uint16 hotspotCount = inStream->readUint16BE();
 	_hotspots.resize(hotspotCount);
 
+	uint32 globalId = _vm->getStack()->getCardGlobalId(id);
 	for (uint16 i = 0; i < hotspotCount; i++) {
 		_hotspots[i] = new RivenHotspot(_vm, inStream);
+		_hotspots[i]->applyScriptPatches(globalId);
 	}
 
 	delete inStream;
@@ -620,7 +628,7 @@ void RivenHotspot::loadFromStream(Common::ReadStream *stream) {
 	_u0 = stream->readUint16BE();
 	_mouseCursor = stream->readUint16BE();
 	_index = stream->readUint16BE();
-	_u1 = stream->readSint16BE();
+	_transitionOffset = stream->readSint16BE();
 	_flags |= stream->readUint16BE();
 
 	// Read in the scripts now
@@ -634,6 +642,13 @@ RivenScriptPtr RivenHotspot::getScript(uint16 scriptType) const {
 		}
 
 	return RivenScriptPtr();
+}
+
+
+void RivenHotspot::applyScriptPatches(uint32 cardGlobalId) {
+	for (uint16 i = 0; i < _scripts.size(); i++) {
+		_scripts[i].script->applyCardPatches(_vm, cardGlobalId, _scripts[i].type, _blstID);
+	}
 }
 
 bool RivenHotspot::isEnabled() const {
@@ -687,6 +702,10 @@ int16 RivenHotspot::getNameId() const {
 	return _nameResource;
 }
 
+int16 RivenHotspot::getTransitionOffset() const {
+	return _transitionOffset;
+}
+
 void RivenHotspot::dump() const {
 	debug("index: %d", _index);
 	debug("blstId: %d", _blstID);
@@ -694,8 +713,8 @@ void RivenHotspot::dump() const {
 	debug("rect: (%d, %d, %d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
 	debug("flags: %d", _flags);
 	debug("mouseCursor: %d", _mouseCursor);
+	debug("transitionOffset: %d", _transitionOffset);
 	debug("u0: %d", _u0);
-	debug("u1: %d", _u1);
 	debugN("\n");
 
 	for (uint i = 0; i < _scripts.size(); i++) {

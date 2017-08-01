@@ -389,7 +389,7 @@ ScriptChangedResult BellbotScript::scriptChanged(const TTroomScript *roomScript,
 
 		_responseFlag = false;
 		CTrueTalkManager::_v9 = 0;
-		// Deliberate fall-through
+		// Intentional fall-through
 	default:
 		if (roomScript->_scriptId == 115 && id == 103) {
 			switch (getValue(4)) {
@@ -930,6 +930,7 @@ int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(200349));
 			applyFlag = true;
 		}
+		break;
 
 	case 15:
 		if (sentence->_category == 6) {

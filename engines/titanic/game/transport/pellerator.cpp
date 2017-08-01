@@ -62,7 +62,7 @@ void CPellerator::load(SimpleFile *file) {
 
 bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(true);
-	playGlobalSound("z#74.wav", -2, true, true, 0);
+	playGlobalSound("z#74.wav", VOL_QUIET, true, true, 0);
 	int classNum = getPassengerClass();
 	int newDest = msg->_newStatus;
 

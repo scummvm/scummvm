@@ -149,7 +149,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	FPose pose;
 	int matchedIndex = _starField ? _starField->getMatchedIndex() : -1;
 
-	switch (key) {
+	switch (tolower(key)) {
 	case Common::KEYCODE_TAB:
 		if (_starField) {
 			toggleMode();
@@ -221,6 +221,15 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	case Common::KEYCODE_QUOTE:
 		if (matchedIndex == -1) {
 			pose.setRotationMatrix(X_AXIS, -1.0);
+			_camera.proc22(pose);
+			_camera.updatePosition(errorCode);
+			return true;
+		}
+		break;
+
+	case Common::KEYCODE_SLASH:
+		if (matchedIndex == -1) {
+			pose.setRotationMatrix(X_AXIS, 1.0);
 			_camera.proc22(pose);
 			_camera.updatePosition(errorCode);
 			return true;
@@ -334,6 +343,9 @@ void CStarView::fn9() {
 }
 
 void CStarView::toggleMode() {
+	if (!_photoSurface)
+		return;
+
 	_showingPhoto = !_showingPhoto;
 	if (_starField)
 		_starField->setMode(_showingPhoto ? MODE_PHOTO : MODE_STARFIELD);

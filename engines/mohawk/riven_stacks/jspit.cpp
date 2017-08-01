@@ -108,7 +108,7 @@ void JSpit::xcheckicons(const ArgumentArray &args) {
 		_vm->_sound->playSound(46);
 
 		// Wait until the stones have finished rising
-		while (_vm->_sound->isEffectPlaying() && !_vm->shouldQuit()) {
+		while (_vm->_sound->isEffectPlaying() && !_vm->hasGameEnded()) {
 			_vm->doFrame();
 		}
 	}
@@ -358,7 +358,7 @@ int JSpit::jspitElevatorLoop() {
 
 	_vm->_cursor->setCursor(kRivenClosedHandCursor);
 
-	while (mouseIsDown() && !_vm->shouldQuit()) {
+	while (mouseIsDown() && !_vm->hasGameEnded()) {
 		_vm->doFrame();
 
 		Common::Point pos = getMousePosition();
@@ -388,7 +388,7 @@ void JSpit::xhandlecontrolup(const ArgumentArray &args) {
 
 		// TODO: Maybe queue a sound using the stored movie opcode instead
 		bool playedSound = false;
-		while (!secondVideo->endOfVideo() && !_vm->shouldQuit()) {
+		while (!secondVideo->endOfVideo() && !_vm->hasGameEnded()) {
 			_vm->doFrame();
 
 			if (!playedSound && secondVideo->getTime() > 3333) {
@@ -549,7 +549,7 @@ void JSpit::sunnersPlayVideo(RivenVideo *video, uint32 destCardGlobalId, bool su
 	video->enable();
 	video->play();
 
-	while (!video->endOfVideo() && !_vm->shouldQuit()) {
+	while (!video->endOfVideo() && !_vm->hasGameEnded()) {
 		_vm->doFrame();
 
 		if (mouseIsDown()) {

@@ -50,8 +50,9 @@ void OSpit::xorollcredittime(const ArgumentArray &args) {
 	// be messy to modify the way that currently works. If we use the trap book on Tay,
 	// we should be using the Tay end game sequences.
 	if (_vm->_vars["returnstackid"] == kStackRspit) {
-		_vm->changeToStack(kStackRspit);
-		_vm->changeToCard(2);
+		RivenScriptPtr script = _vm->_scriptMan->createScriptWithCommand(
+				new RivenStackChangeCommand(_vm, kStackRspit, 0x3338, true));
+		_vm->_scriptMan->runScript(script, false);
 		return;
 	}
 
@@ -88,17 +89,17 @@ void OSpit::xbookclick(const ArgumentArray &args) {
 	debug(0, "\tHotspot    = %d -> %s", args[3], hotspotName.c_str());
 
 	// Just let the video play while we wait until Gehn opens the trap book for us
-	while (video->getTime() < startTime && !_vm->shouldQuit()) {
+	while (video->getTime() < startTime && !_vm->hasGameEnded()) {
 		_vm->doFrame();
 	}
 
 	// Break out if we're quitting
-	if (_vm->shouldQuit())
+	if (_vm->hasGameEnded())
 		return;
 
 	// OK, Gehn has opened the trap book and has asked us to go in. Let's watch
 	// and see what the player will do...
-	while (video->getTime() < endTime && !_vm->shouldQuit()) {
+	while (video->getTime() < endTime && !_vm->hasGameEnded()) {
 		if (hotspotRect.contains(getMousePosition()))
 			_vm->_cursor->setCursor(kRivenOpenHandCursor);
 		else
@@ -134,7 +135,7 @@ void OSpit::xbookclick(const ArgumentArray &args) {
 	}
 
 	// Break out if we're quitting
-	if (_vm->shouldQuit())
+	if (_vm->hasGameEnded())
 		return;
 
 	// If there was no click and this is the third time Gehn asks us to
@@ -217,7 +218,7 @@ void OSpit::xogehnbooknextpage(const ArgumentArray &args) {
 
 	// Keep turning pages while the mouse is pressed
 	bool firstPageTurn = true;
-	while ((mouseIsDown() || firstPageTurn) && !_vm->shouldQuit()) {
+	while ((mouseIsDown() || firstPageTurn) && !_vm->hasGameEnded()) {
 		// Check for the last page
 		if (page == 13)
 			return;
@@ -242,7 +243,7 @@ void OSpit::xgwatch(const ArgumentArray &args) {
 	uint32 prisonCombo = _vm->_vars["pcorrectorder"];
 
 	byte curSound = 0;
-	while (curSound < 5 && !_vm->shouldQuit()) {
+	while (curSound < 5 && !_vm->hasGameEnded()) {
 		// Play a sound every half second
 		_vm->_sound->playSound(getComboDigit(prisonCombo, curSound) + 13);
 		_vm->delay(500);

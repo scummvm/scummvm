@@ -27,6 +27,7 @@
 #include "common/translation.h"
 #include "common/system.h"
 #include "gui/saveload.h"
+#include "gui/message.h"
 
 #include "mohawk/cursors.h"
 #include "mohawk/installer_archive.h"
@@ -57,6 +58,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_showHotspots = false;
 	_activatedPLST = false;
 	_activatedSLST = false;
+	_gameEnded = false;
 	_extrasFile = nullptr;
 	_stack = nullptr;
 	_gfx = nullptr;
@@ -71,6 +73,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_inventory = nullptr;
 
 	DebugMan.addDebugChannel(kRivenDebugScript, "Script", "Track Script Execution");
+	DebugMan.addDebugChannel(kRivenDebugPatches, "Patches", "Track Script Patching");
 
 	// NOTE: We can never really support CD swapping. All of the music files
 	// (*_Sounds.mhk) are stored on disc 1. They are copied to the hard drive
@@ -162,7 +165,6 @@ Common::Error MohawkEngine_Riven::run() {
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
 	_cursor->showCursor();
-	_system->updateScreen();
 
 	// Let's begin, shall we?
 	if (getFeatures() & GF_DEMO) {
@@ -173,10 +175,10 @@ Common::Error MohawkEngine_Riven::run() {
 		// Load game from launcher/command line if requested
 		int gameToLoad = ConfMan.getInt("save_slot");
 
-		// Attempt to load the game. On failure, just send us to the main menu.
-		if (_saveLoad->loadGame(gameToLoad).getCode() != Common::kNoError) {
-			changeToStack(kStackAspit);
-			changeToCard(1);
+		// Attempt to load the game.
+		Common::Error loadError = _saveLoad->loadGame(gameToLoad);
+		if (loadError.getCode() != Common::kNoError) {
+			return loadError;
 		}
 	} else {
 		// Otherwise, start us off at aspit's card 1 (the main menu)
@@ -185,7 +187,7 @@ Common::Error MohawkEngine_Riven::run() {
 	}
 
 
-	while (!shouldQuit())
+	while (!hasGameEnded())
 		doFrame();
 
 	return Common::kNoError;
@@ -227,7 +229,7 @@ void MohawkEngine_Riven::doFrame() {
 			case Common::KEYCODE_F5:
 				runDialog(*_optionsDialog);
 				if (_optionsDialog->getLoadSlot() >= 0)
-					loadGameState(_optionsDialog->getLoadSlot());
+					loadGameStateAndDisplayError(_optionsDialog->getLoadSlot());
 				_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 				_card->initializeZipMode();
 				break;
@@ -281,24 +283,29 @@ void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
 		_video->pauseVideos();
 	} else {
 		_video->resumeVideos();
-		_system->updateScreen();
 	}
 }
 
 // Stack/Card-Related Functions
 
-void MohawkEngine_Riven::changeToStack(uint16 n) {
+void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	// The endings are in reverse order because of the way the 1.02 patch works.
 	// The only "Data3" file is j_Data3.mhk from that patch. Patch files have higher
 	// priorities over the regular files and are therefore loaded and checked first.
 	static const char *endings[] = { "_Data3.mhk", "_Data2.mhk", "_Data1.mhk", "_Data.mhk", "_Sounds.mhk" };
 
 	// Don't change stack to the current stack (if the files are loaded)
-	if (_stack && _stack->getId() == n && !_mhk.empty())
+	if (_stack && _stack->getId() == stackId && !_mhk.empty())
 		return;
 
-	// Stop any videos playing
+	// Free resources that may rely on the current stack data being loaded
+	if (_card) {
+		_card->leave();
+		delete _card;
+		_card = nullptr;
+	}
 	_video->removeVideos();
+	_sound->stopAllSLST();
 
 	// Clear the graphics cache; images aren't used across stack boundaries
 	_gfx->clearCache();
@@ -309,7 +316,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	_mhk.clear();
 
 	// Get the prefix character for the destination stack
-	char prefix = RivenStacks::getName(n)[0];
+	char prefix = RivenStacks::getName(stackId)[0];
 
 	// Load any file that fits the patterns
 	for (int i = 0; i < ARRAYSIZE(endings); i++) {
@@ -324,13 +331,10 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 
 	// Make sure we have loaded files
 	if (_mhk.empty())
-		error("Could not load stack %s", RivenStacks::getName(n));
-
-	// Stop any currently playing sounds
-	_sound->stopAllSLST();
+		error("Could not load stack %s", RivenStacks::getName(stackId));
 
 	delete _stack;
-	_stack = constructStackById(n);
+	_stack = constructStackById(stackId);
 }
 
 RivenStack *MohawkEngine_Riven::constructStackById(uint16 id) {
@@ -421,7 +425,7 @@ Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, ui
 void MohawkEngine_Riven::delay(uint32 ms) {
 	uint32 startTime = _system->getMillis();
 
-	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
+	while (_system->getMillis() < startTime + ms && !hasGameEnded()) {
 		doFrame();
 	}
 }
@@ -430,12 +434,24 @@ void MohawkEngine_Riven::runLoadDialog() {
 	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
 
 	int slot = slc.runModalWithCurrentTarget();
-	if (slot >= 0)
-		loadGameState(slot);
+	if (slot >= 0) {
+		loadGameStateAndDisplayError(slot);
+	}
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 	return _saveLoad->loadGame(slot);
+}
+
+void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
+	assert(slot >= 0);
+
+	Common::Error loadError = loadGameState(slot);
+
+	if (loadError.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(loadError.getDesc());
+		dialog.runModal();
+	}
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
@@ -480,6 +496,14 @@ bool MohawkEngine_Riven::canLoadGameStateCurrently() {
 
 bool MohawkEngine_Riven::canSaveGameStateCurrently() {
 	return canLoadGameStateCurrently();
+}
+
+bool MohawkEngine_Riven::hasGameEnded() const {
+	return _gameEnded || shouldQuit();
+}
+
+void MohawkEngine_Riven::setGameEnded() {
+	_gameEnded = true;
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

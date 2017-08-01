@@ -608,4 +608,36 @@ inline uint32 READ_BE_UINT24(const void *ptr) {
 #define READ_UINT24(a) READ_BE_UINT24(a)
 #endif
 
+inline int16 READ_LE_INT16(const void *ptr) {
+	return static_cast<int16>(READ_LE_UINT16(ptr));
+}
+
+inline void WRITE_LE_INT16(void *ptr, int16 value) {
+	WRITE_LE_UINT16(ptr, static_cast<uint16>(value));
+}
+
+inline int16 READ_BE_INT16(const void *ptr) {
+	return static_cast<int16>(READ_BE_UINT16(ptr));
+}
+
+inline void WRITE_BE_INT16(void *ptr, int16 value) {
+	WRITE_BE_UINT16(ptr, static_cast<uint16>(value));
+}
+
+inline int32 READ_LE_INT32(const void *ptr) {
+	return static_cast<int32>(READ_LE_UINT32(ptr));
+}
+
+inline void WRITE_LE_INT32(void *ptr, int32 value) {
+	WRITE_LE_UINT32(ptr, static_cast<uint32>(value));
+}
+
+inline int32 READ_BE_INT32(const void *ptr) {
+	return static_cast<int32>(READ_BE_UINT32(ptr));
+}
+
+inline void WRITE_BE_INT32(void *ptr, int32 value) {
+	WRITE_BE_UINT32(ptr, static_cast<uint32>(value));
+}
+
 #endif

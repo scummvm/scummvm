@@ -502,7 +502,7 @@ Common::String genFileName(int superId, int sceneId, const char *ext) {
 
 // Translates cp-1251..utf-8
 byte *transCyrillic(const Common::String &str) {
-	byte *s = (byte *)str.c_str();
+	const byte *s = (const byte *)str.c_str();
 	static byte tmp[1024];
 
 #ifndef WIN32
@@ -527,7 +527,7 @@ byte *transCyrillic(const Common::String &str) {
 
 	int i = 0;
 
-	for (byte *p = s; *p; p++) {
+	for (const byte *p = s; *p; p++) {
 #ifdef WIN32
 		// translate from cp1251 to cp866
 		byte c = *p;

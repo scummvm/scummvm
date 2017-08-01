@@ -133,6 +133,9 @@ Common::Error WageEngine::run() {
 		_gui->regenCommandsMenu();
 		_gui->regenWeaponsMenu();
 	}
+
+	_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
+
 	Common::String input("look");
 	processTurn(&input, NULL);
 	_temporarilyHidden = false;
@@ -174,6 +177,13 @@ void WageEngine::processEvents() {
 				break;
 
 			case Common::KEYCODE_RETURN:
+				_inputText = _gui->_consoleWindow->getInput();
+				_inputText += '\n';
+
+				_gui->appendText(_inputText.c_str());
+
+				_gui->_consoleWindow->clearInput();
+
 				if (_inputText.empty())
 					break;
 
@@ -312,6 +322,10 @@ void WageEngine::performInitialSetup() {
 	if (!playerPlaced) {
 		_world->move(_world->_player, _world->getRandomScene());
 	}
+
+	// Set the console window's dimensions early here because
+	// flowText() that needs them gets called before they're set
+	_gui->_consoleWindow->setDimensions(*_world->_player->_currentScene->_textBounds);
 }
 
 void WageEngine::wearObjs(Chr* chr) {
@@ -435,6 +449,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 	if (playerScene != _lastScene) {
 		_temporarilyHidden = true;
 		_gui->clearOutput();
+		_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
 		regen();
 		Common::String input("look");
 		processTurnInternal(&input, NULL);

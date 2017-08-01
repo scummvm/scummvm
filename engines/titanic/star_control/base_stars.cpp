@@ -560,7 +560,7 @@ int CBaseStars::baseFn2(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 /*------------------------------------------------------------------------*/
 
 void CStarVector::apply() {
-	_owner->addMatrixRow(_vector);
+	_owner->adDAffineRow(_vector);
 }
 
 } // End of namespace Titanic

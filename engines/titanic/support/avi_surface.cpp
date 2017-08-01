@@ -52,7 +52,7 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	_priorFrame = -1;
 
 	// Create a decoder
-	_decoder = new AVIDecoder(Audio::Mixer::kPlainSoundType);
+	_decoder = new AVIDecoder();
 	if (!_decoder->loadFile(_movieName))
 		error("Could not open video - %s", key.getString().c_str());
 
@@ -168,7 +168,7 @@ void AVISurface::seekToFrame(uint frameNumber) {
 		--frameNumber;
 
 	if ((int)frameNumber != _currentFrame) {
-		if (frameNumber > 0) {
+		if (!isReversed() && frameNumber > 0) {
 			_decoder->seekToFrame(frameNumber - 1);
 			renderFrame();
 		}
@@ -321,7 +321,7 @@ void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedS
 				src.format.colorToARGB(*pSrc, a, r, g, b);
 				assert(a == 0 || a == 0xff);
 
-				*pDest = (a == 0) ? transPixel : dest.format.RGBToColor(r, g, b);
+				*pDest = (a == 0 && _streamCount == 1) ? transPixel : dest.format.RGBToColor(r, g, b);
 			}
 		}
 	}
@@ -412,7 +412,7 @@ bool AVISurface::renderFrame() {
 			s->free();
 			delete s;
 		} else {
-			_videoSurface->getRawSurface()->transBlitFrom(frameSurface, _videoSurface->getTransparencyColor());
+			_videoSurface->getRawSurface()->blitFrom(frameSurface);
 		}
 
 		_videoSurface->unlock();
@@ -471,13 +471,24 @@ Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 	}
 }
 
-void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
+bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
+	if (g_vm->shouldQuit())
+		return false;
+	
+	if (_currentFrame != ((int)startFrame - 1) || startFrame == 0) {
+		// Start video playback at the desired starting frame
+		setFrame(startFrame);
+		startAtFrame(startFrame);
+		_currentFrame = startFrame;
+	} else {
+		// Already in position, so pick up where we left off
+		_decoder->start();
+	}
+
 	bool isDifferent = _movieFrameSurface[0]->w != r.width() ||
 		_movieFrameSurface[0]->h != r.height();
 
-	startAtFrame(startFrame);
-	_currentFrame = startFrame;
-
+	bool isFinished = true;
 	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
 		if (isNextFrame()) {
 			renderFrame();
@@ -498,11 +509,14 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		}
 
 		// Brief wait, and check at the same time for clicks to abort the clip
-		if (g_vm->_events->waitForPress(10))
+		if (g_vm->_events->waitForPress(10)) {
+			isFinished = false;
 			break;
+		}
 	}
 
 	stop();
+	return isFinished && !g_vm->shouldQuit();
 }
 
 uint AVISurface::getBitDepth() const {

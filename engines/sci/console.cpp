@@ -423,7 +423,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" sfx01_track - Dumps a track of a SCI01 song\n");
 	debugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
 	debugPrintf(" map_instrument - Dynamically maps an MT-32 instrument to a GM instrument\n");
-	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2.1+)\n");
+	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2+)\n");
 	debugPrintf("\n");
 	debugPrintf("Script:\n");
 	debugPrintf(" addresses - Provides information on how to pass addresses\n");
@@ -3402,7 +3402,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 				farthestTarget = jumpTarget;
 		}
 		// TODO: Use a true 32-bit reg_t for the position (addr)
-		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), objAddr, printBWTag, printBytecode);
+		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), obj, printBWTag, printBytecode);
 		if (addr.isNull() && prevAddr < farthestTarget)
 			addr = prevAddr + 1; // skip past the ret
 	} while (addr.getOffset() > 0);
@@ -3451,7 +3451,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 
 	do {
 		// TODO: Use a true 32-bit reg_t for the position (vpc)
-		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), NULL_REG, printBWTag, printBytes);
+		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), nullptr, printBWTag, printBytes);
 	} while ((vpc.getOffset() > 0) && (vpc.getOffset() + 6 < size) && (--opCount));
 
 	return true;

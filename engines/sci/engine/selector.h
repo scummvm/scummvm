@@ -174,6 +174,15 @@ struct SelectorCache {
 	Selector setPos; // for Torin volume sync
 	Selector setSize; // for PQ4 volume sync
 	Selector displayValue; // for PQ:SWAT volume sync
+	Selector new_; // for Torin/LSL7 save/load patching
+	Selector mainCel; // for MGDX volume sync
+	Selector move; // for Phant2 volume sync
+	Selector eachElementDo; // for Phant2 volume sync
+	Selector physicalBar; // for Phant2 volume sync
+	Selector init; // for Phant2 save/load patching
+	Selector scratch; // for Phant2 save/load patching
+	Selector num; // for Phant2 restore from launcher
+	Selector reallyRestore; // for Phant2 restore from launcher
 #endif
 };
 

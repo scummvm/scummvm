@@ -49,13 +49,12 @@ void CFan::load(SimpleFile *file) {
 bool CFan::EnterViewMsg(CEnterViewMsg *msg) {
 	switch (_state) {
 	case 0:
-	case 1:
 		loadFrame(0);
 		break;
-	case 2:
+	case 1:
 		playMovie(24, 34, MOVIE_REPEAT);
 		break;
-	case 3:
+	case 2:
 		playMovie(63, 65, MOVIE_REPEAT);
 		break;
 	}

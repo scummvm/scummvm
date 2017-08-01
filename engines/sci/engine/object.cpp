@@ -39,6 +39,14 @@ void Object::init(const Script &owner, reg_t obj_pos, bool initVariables) {
 	_baseObj = data;
 	_pos = obj_pos;
 
+	// Calling Object::init more than once will screw up _baseVars/_baseMethod
+	// by duplicating data. This could be turned into a soft error by warning
+	// instead and clearing arrays, but there does not currently seem to be any
+	// reason for an object to be initialized multiple times
+	if (_baseVars.size() || _baseMethod.size()) {
+		error("Attempt to reinitialize already-initialized object %04x:%04x in script %u", PRINT_REG(obj_pos), owner.getScriptNumber());
+	}
+
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		const SciSpan<const byte> header = buf.subspan(obj_pos.getOffset() - kOffsetHeaderSize);
 		_variables.resize(header.getUint16LEAt(kOffsetHeaderSelectorCounter));
@@ -54,9 +62,29 @@ void Object::init(const Script &owner, reg_t obj_pos, bool initVariables) {
 			}
 		}
 
-		_methodCount = data.getUint16LEAt(header.getUint16LEAt(kOffsetHeaderFunctionArea) - 2);
-		for (uint i = 0; i < _methodCount * sizeof(uint16) + 2; ++i) {
-			_baseMethod.push_back(data.getUint16SEAt(header.getUint16LEAt(kOffsetHeaderFunctionArea) + i * sizeof(uint16)));
+		// method block structure:
+		// uint16 count;
+		// uint16 selectorNos[count];
+		// uint16 zero;
+		// uint16 codeOffsets[count];
+
+		const uint16 methodBlockOffset = header.getUint16LEAt(kOffsetHeaderFunctionArea) - 2;
+		_methodCount = data.getUint16LEAt(methodBlockOffset);
+		const uint32 methodBlockSize = _methodCount * 2 * sizeof(uint16) + /* zero-terminator after selector list */ sizeof(uint16);
+
+		SciSpan<const uint16> methodEntries = data.subspan<const uint16>(methodBlockOffset + /* count */ sizeof(uint16), methodBlockSize);
+
+		// If this happens, then there is either a corrupt script or this code
+		// misunderstands the structure of the SCI0/1 method block
+		if (methodEntries.getUint16SEAt(_methodCount) != 0) {
+			warning("Object %04x:%04x in script %u has a value (0x%04x) in its zero-terminator field", PRINT_REG(obj_pos), owner.getScriptNumber(), methodEntries.getUint16SEAt(_methodCount));
+		}
+
+		_baseMethod.reserve(_methodCount * 2);
+		for (uint i = 0; i < _methodCount; ++i) {
+			_baseMethod.push_back(methodEntries.getUint16SEAt(0));
+			_baseMethod.push_back(methodEntries.getUint16SEAt(_methodCount + /* zero-terminator */ 1));
+			++methodEntries;
 		}
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		_variables.resize(data.getUint16SEAt(2));
@@ -72,9 +100,27 @@ void Object::init(const Script &owner, reg_t obj_pos, bool initVariables) {
 			}
 		}
 
-		_methodCount = buf.getUint16SEAt(data.getUint16SEAt(6));
-		for (uint i = 0; i < _methodCount * sizeof(uint16) + 3; ++i) {
-			_baseMethod.push_back(buf.getUint16SEAt(data.getUint16SEAt(6) + i * sizeof(uint16)));
+		// method block structure:
+		// uint16 count;
+		// struct {
+		//   uint16 selectorNo;
+		//   uint16 codeOffset;
+		// } entries[count];
+
+		const uint16 methodBlockOffset = data.getUint16SEAt(6);
+		_methodCount = buf.getUint16SEAt(methodBlockOffset);
+
+		// Each entry in _baseMethod is actually two values; the first field is
+		// a selector number, and the second field is an offset to the method's
+		// code in the script
+		const uint32 methodBlockSize = _methodCount * 2 * sizeof(uint16);
+		_baseMethod.reserve(_methodCount * 2);
+
+		SciSpan<const uint16> methodEntries = buf.subspan<const uint16>(methodBlockOffset + /* count */ sizeof(uint16), methodBlockSize);
+		for (uint i = 0; i < _methodCount; ++i) {
+			_baseMethod.push_back(methodEntries.getUint16SEAt(0));
+			_baseMethod.push_back(methodEntries.getUint16SEAt(1));
+			methodEntries += 2;
 		}
 #ifdef ENABLE_SCI32
 	} else if (getSciVersion() == SCI_VERSION_3) {

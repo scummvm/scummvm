@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "titanic/sound/qmixer.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -88,10 +89,12 @@ void QMixer::qsWaveMixSetVolume(int iChannel, uint flags, uint volume) {
 	assert(volume <= 32767);
 	byte newVolume = (volume >= 32700) ? 255 : volume * 255 / 32767;
 
-	channel._volumeStart = newVolume;
-	channel._volumeEnd = volume * 255 / 100; // Convert from 0-100 (percent) to 0-255
+	channel._volumeStart = channel._volume;
+	channel._volumeEnd = newVolume;
 	channel._volumeChangeStart = g_system->getMillis();
 	channel._volumeChangeEnd = channel._volumeChangeStart + channel._panRate;
+	debugC(DEBUG_DETAILED, kDebugCore, "qsWaveMixSetPanRate vol=%d to %d, start=%u, end=%u",
+		channel._volumeStart, channel._volumeEnd, channel._volumeChangeStart, channel._volumeChangeEnd);
 }
 
 void QMixer::qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR &position) {
@@ -189,6 +192,9 @@ void QMixer::qsWaveMixPump() {
 					((int)channel._volumeEnd - (int)channel._volumeStart) *
 					(int)(currentTicks - channel._volumeChangeStart) / (int)channel._panRate;
 			}
+
+			debugC(DEBUG_DETAILED, kDebugCore, "qsWaveMixPump time=%u vol=%d",
+				currentTicks, channel._volume);
 
 			if (channel._volume != oldVolume && !channel._sounds.empty()
 					&& channel._sounds.front()._started) {

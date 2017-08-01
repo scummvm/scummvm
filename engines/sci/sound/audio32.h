@@ -52,11 +52,6 @@ struct AudioChannel {
 	Resource *resource;
 
 	/**
-	 * Data stream containing the raw audio for the channel.
-	 */
-	Common::SeekableReadStream *resourceStream;
-
-	/**
 	 * The audio stream loaded into this channel. Can cast
 	 * to `SeekableAudioStream` for normal channels and
 	 * `RobotAudioStream` for robot channels.
@@ -83,12 +78,6 @@ struct AudioChannel {
 	 * The tick when the channel was paused.
 	 */
 	uint32 pausedAtTick;
-
-	/**
-	 * Whether or not the audio in this channel should loop
-	 * infinitely.
-	 */
-	bool loop;
 
 	/**
 	 * The time, in ticks, that the channel fade began.
@@ -205,7 +194,7 @@ private:
 	 * Mixes audio from the given source stream into the
 	 * target buffer using the given rate converter.
 	 */
-	int writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume, const bool loop);
+	int writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume);
 
 #pragma mark -
 #pragma mark Channel management

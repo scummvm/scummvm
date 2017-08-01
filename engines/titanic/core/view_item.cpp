@@ -27,6 +27,7 @@
 #include "titanic/core/view_item.h"
 #include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -67,7 +68,7 @@ void CViewItem::load(SimpleFile *file) {
 	switch (val) {
 	case 1:
 		_resourceKey.load(file);
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	default:
 		file->readBuffer();
@@ -163,6 +164,11 @@ void CViewItem::enterView(CViewItem *newView) {
 					petControl->enterRoom(newRoom);
 			}
 		}
+
+		// WORKAROUND: Do a dummy mouse movement, to allow for the correct cursor 
+		// to be set for the current position in the new view
+		CMouseMoveMsg moveMsg(g_vm->_events->getMousePos(), 0);
+		newView->MouseMoveMsg(&moveMsg);
 	}
 }
 

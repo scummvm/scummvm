@@ -49,6 +49,7 @@
 #include "bladerunner/shape.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/spinner.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vqa_decoder.h"
 #include "bladerunner/waypoints.h"
@@ -110,9 +111,6 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	// delete _audioPlayer;
 	// delete _ambientSounds;
 
-	// _surface1.free();
-	// _surface2.free();
-
 	delete _zbuffer;
 
 	delete _itemPickup;
@@ -154,7 +152,9 @@ Common::Error BladeRunnerEngine::run() {
 bool BladeRunnerEngine::startup(bool hasSavegames) {
 	bool r;
 
-	_surface1.create(640, 480, createRGB555());
+	_surfaceGame.create(640, 480, createRGB555());
+	_surfaceInterface.create(640, 480, createRGB555());
+	_surface4.create(640, 480, createRGB555());
 
 	r = openArchive("STARTUP.MIX");
 	if (!r)
@@ -287,6 +287,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// TODO: KIA
 
 	// TODO: Spinner Interface
+	_spinner = new Spinner(this);
 
 	// TODO: Elevators
 
@@ -506,8 +507,9 @@ void BladeRunnerEngine::shutdown() {
 	_gameInfo = nullptr;
 
 	// TODO: Delete graphics surfaces here
-	_surface1.free();
-	_surface2.free();
+	_surface4.free();
+	_surfaceInterface.free();
+	_surfaceGame.free();
 
 	if (isArchiveOpen("STARTUP.MIX"))
 		closeArchive("STARTUP.MIX");
@@ -522,9 +524,9 @@ bool BladeRunnerEngine::loadSplash() {
 	if (!img.open("SPLASH.IMG"))
 		return false;
 
-	img.copyToSurface(&_surface1);
+	img.copyToSurface(&_surfaceGame);
 
-	_system->copyRectToScreen(_surface1.getPixels(), _surface1.pitch, 0, 0, _surface1.w, _surface1.h);
+	_system->copyRectToScreen(_surfaceGame.getPixels(), _surfaceGame.pitch, 0, 0, _surfaceGame.w, _surfaceGame.h);
 	_system->updateScreen();
 
 	return true;
@@ -532,6 +534,10 @@ bool BladeRunnerEngine::loadSplash() {
 
 bool BladeRunnerEngine::init2() {
 	return true;
+}
+
+Common::Point BladeRunnerEngine::getMousePos() {
+	return _eventMan->getMousePos();
 }
 
 void BladeRunnerEngine::gameLoop() {
@@ -581,7 +587,13 @@ void BladeRunnerEngine::gameTick() {
 
 		// TODO: Autosave
 		// TODO: Kia
-		// TODO: Spinner
+
+		if (_spinner->isOpen()) {
+			_spinner->tick();
+			_ambientSounds->tick();
+			return;
+		}
+
 		// TODO: Esper
 		// TODO: VK
 		// TODO: Elevators
@@ -598,13 +610,13 @@ void BladeRunnerEngine::gameTick() {
 		_ambientSounds->tick();
 
 		bool backgroundChanged = false;
-		int frame = _scene->advanceFrame(_surface1);
+		int frame = _scene->advanceFrame();
 		if (frame >= 0) {
 			_sceneScript->SceneFrameAdvanced(frame);
 			backgroundChanged = true;
 		}
 		(void)backgroundChanged;
-		_surface2.copyFrom(_surface1);
+		_surfaceGame.copyRectToSurface(_surfaceInterface.getPixels(), _surfaceInterface.pitch, 0, 0, 640, 480);
 		// TODO: remove zbuffer draw
 		//_surface2.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
 
@@ -636,9 +648,9 @@ void BladeRunnerEngine::gameTick() {
 
 			// TODO: Draw dialogue menu
 
-			Common::Point p = _eventMan->getMousePos();
+			Common::Point p = getMousePos();
 			_mouse->tick(p.x, p.y);
-			_mouse->draw(_surface2, p.x, p.y);
+			_mouse->draw(_surfaceGame, p.x, p.y);
 
 			// TODO: Process AUD
 			// TODO: Footstep sound
@@ -762,7 +774,7 @@ void BladeRunnerEngine::gameTick() {
 			}
 #endif
 
-			_system->copyRectToScreen((const byte *)_surface2.getBasePtr(0, 0), _surface2.pitch, 0, 0, 640, 480);
+			_system->copyRectToScreen(_surfaceGame.getPixels(), _surfaceGame.pitch, 0, 0, 640, 480);
 			_system->updateScreen();
 			_system->delayMillis(10);
 		}
@@ -797,16 +809,31 @@ void BladeRunnerEngine::handleEvents() {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
-			handleMouseClick(event.mouse.x, event.mouse.y);
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP: {
+			bool buttonLeft = event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP;
+			bool buttonDown = event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN;
+
+			handleMouseAction(event.mouse.x, event.mouse.y, buttonLeft, buttonDown);
+		}
 		default:
 			;
 		}
 	}
 }
 
-void BladeRunnerEngine::handleMouseClick(int x, int y) {
+void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool buttonDown) {
 	if (!playerHasControl() || _mouse->isDisabled())
 		return;
+
+	if (_spinner->isOpen()) {
+		if (buttonDown) {
+			_spinner->handleMouseDown(x, y);
+		} else {
+			_spinner->handleMouseUp(x, y);
+		}
+		return;
+	}
 
 	Vector3 mousePosition = _mouse->getXYZ(x, y);
 

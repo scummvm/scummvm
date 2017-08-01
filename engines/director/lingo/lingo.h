@@ -193,15 +193,17 @@ private:
 	// lingo-events.cpp
 private:
 	void initEventHandlerTypes();
+	void primaryEventHandler(LEvent event);
 	void processInputEvent(LEvent event);
 	void processFrameEvent(LEvent event);
 	void processGenericEvent(LEvent event);
-
+	void runMovieScript(LEvent event);
+	void processSpriteEvent(LEvent event);
+	void processEvent(LEvent event, ScriptType st, int entityId);
 public:
 	ScriptType event2script(LEvent ev);
 	Symbol *getHandler(Common::String &name);
 
-	void processEvent(LEvent event, ScriptType st, int entityId);
 	void processEvent(LEvent event);
 
 public:
@@ -576,6 +578,11 @@ private:
 	DirectorEngine *_vm;
 
 	int _floatPrecision;
+
+	bool dontPassEvent;
+
+public:
+	void executeImmediateScripts(Frame *frame);
 };
 
 extern Lingo *g_lingo;

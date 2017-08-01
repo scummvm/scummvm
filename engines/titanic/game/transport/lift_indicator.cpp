@@ -73,6 +73,7 @@ bool CLiftindicator::EnterViewMsg(CEnterViewMsg *msg) {
 	if ((pet->petGetRoomsWellEntry() & 1) == (_liftNum & 1)) {
 		petSetRemoteTarget();
 		petSetArea(PET_REMOTE);
+		petHighlightGlyph(0);
 
 		petDisplayMessage(OUTSIDE_ELEVATOR_NUM, petGetRoomsWellEntry());
 

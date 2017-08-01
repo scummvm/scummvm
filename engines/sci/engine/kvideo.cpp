@@ -42,6 +42,7 @@
 #include "video/qt_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
+#include "sci/engine/guest_additions.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/video32.h"
 #include "sci/video/robot_decoder.h"
@@ -332,11 +333,12 @@ reg_t kShowMovieWinInit(EngineState *s, int argc, reg_t *argv) {
 		--argc;
 	}
 
-	const int16 x = argv[0].toSint16();
-	const int16 y = argv[1].toSint16();
-	const int16 width = argc > 3 ? argv[2].toSint16() : 0;
-	const int16 height = argc > 3 ? argv[3].toSint16() : 0;
-	return make_reg(0, g_sci->_video32->getAVIPlayer().init1x(x, y, width, height));
+	// argv[0] is a broken x-coordinate
+	// argv[1] is a broken y-coordinate
+	// argv[2] is an optional broken width
+	// argv[3] is an optional broken height
+	const bool pixelDouble = argc > 3 && argv[2].toSint16() && argv[3].toSint16();
+	return make_reg(0, g_sci->_video32->getAVIPlayer().init(pixelDouble));
 }
 
 reg_t kShowMovieWinPlay(EngineState *s, int argc, reg_t *argv) {
@@ -386,9 +388,9 @@ reg_t kShowMovieWinPlayUntilEvent(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kShowMovieWinInitDouble(EngineState *s, int argc, reg_t *argv) {
 	// argv[0] is a broken movie ID
-	const int16 x = argv[1].toSint16();
-	const int16 y = argv[2].toSint16();
-	return make_reg(0, g_sci->_video32->getAVIPlayer().init2x(x, y));
+	// argv[1] is a broken x-coordinate
+	// argv[2] is a broken y-coordinate
+	return make_reg(0, g_sci->_video32->getAVIPlayer().init(true));
 }
 
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
@@ -483,6 +485,9 @@ reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayDuckPlay(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->_guestAdditions->kPlayDuckPlayHook()) {
+		return NULL_REG;
+	}
 	kPlayDuckOpen(s, argc, argv);
 	g_sci->_video32->getDuckPlayer().play(-1);
 	g_sci->_video32->getDuckPlayer().close();

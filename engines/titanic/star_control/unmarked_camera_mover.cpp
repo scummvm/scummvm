@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/unmarked_camera_mover.h"
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/dvector.h"
 #include "titanic/titanic.h"
 #include "common/textconsole.h"
@@ -47,8 +47,8 @@ void CUnmarkedCameraMover::proc10(const FVector &v1, const FVector &v2, const FV
 
 	DVector vector1 = v1;
 	DVector vector2 = v2;
-	DMatrix matrix1 = vector2.fn4(vector1);
-	DMatrix matrix2 = matrix1.fn4(m);
+	DAffine matrix1 = vector2.fn4(vector1);
+	DAffine matrix2 = matrix1.compose(m);
 
 	_autoMover.proc3(m, matrix2);
 	incLockCount();

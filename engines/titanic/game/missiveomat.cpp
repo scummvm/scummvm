@@ -75,7 +75,7 @@ void CMissiveOMat::load(SimpleFile *file) {
 }
 
 bool CMissiveOMat::EnterViewMsg(CEnterViewMsg *msg) {
-	CMissiveOMatActionMsg actionMsg(MESSAGE_9);
+	CMissiveOMatActionMsg actionMsg(MESSAGE_STARTUP);
 	actionMsg.execute(this);
 	return true;
 }
@@ -161,7 +161,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			if (validFlag) {
 				// Credentials were valid, so log in
 				_mode = MMODE_LOGGED_IN;
-				loadFrame(4);
+				setVisible(false);
 				editMsg._mode = EDIT_CLEAR;
 				editMsg.execute(loginControl);
 
@@ -212,6 +212,7 @@ bool CMissiveOMat::TimerMsg(CTimerMsg *msg) {
 		// Reset back to asking for a login username
 		_mode = MMODE_USERNAME;
 		loadFrame(1);
+		setVisible(true);
 
 		CTreeItem *loginControl = findRoom()->findByName("MissiveOMat Login Control");
 		CEditControlMsg editMsg;
@@ -228,6 +229,9 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 
 	switch (msg->_action) {
 	case MESSAGE_SHOW: {
+		if (_account == NO_ACCOUNT)
+			break;
+
 		CRoomItem *room = findRoom();
 		CTreeItem *btnOk = room->findByName("MissiveOMat OK Button");
 		CTreeItem *btnNext = room->findByName("MissiveOMat Next Button");
@@ -275,7 +279,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 
 	case MESSAGE_5: {
 		CMissiveOMatActionMsg actionMsg;
-		actionMsg._action = MESSAGE_9;
+		actionMsg._action = MESSAGE_STARTUP;
 		actionMsg.execute(this);
 		break;
 	}
@@ -301,7 +305,8 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		}
 		break;
 
-	case MESSAGE_9: {
+	case MESSAGE_STARTUP: {
+		setVisible(true);
 		loadFrame(1);
 		_mode = MMODE_USERNAME;
 		_account = NO_ACCOUNT;

@@ -282,6 +282,12 @@ public:
 	void dispatch();
 
 	/**
+	 * Clear all events currently in the event queue.
+	 * The cleared events are not dispatched and are simply discarded.
+	 */
+	void clearEvents();
+
+	/**
 	 * Registers an event mapper with the dispatcher.
 	 *
 	 * The ownership of the "mapper" variable will pass

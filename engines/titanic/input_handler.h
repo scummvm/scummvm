@@ -77,6 +77,11 @@ public:
 	 * Handles a genereated mouse message
 	 */
 	void handleMessage(CMessage &msg, bool respectLock = true);
+
+	/**
+	 * Returns true if input is locked
+	 */
+	bool isLocked() const { return _lockCount > 0; }
 };
 
 } // End of namespace Titanic

@@ -126,7 +126,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	// === SCI3 games =========================================================
 	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
 	{"lighthouse",      "Lighthouse: The Dark Being"},
-	{"phantasmagoria2", "Phantasmagoria II: A Puzzle of Flesh"},
+	{"phantasmagoria2", "Phantasmagoria 2: A Puzzle of Flesh"},
 	//{"shivers2",        "Shivers II: Harvest of Souls"},	// Not SCI
 	{"rama",            "RAMA"},
 	{0, 0}
@@ -423,6 +423,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
+
+#ifdef USE_RGB_COLOR
+	{
+		GAMEOPTION_HQ_VIDEO,
+		{
+			_s("Use high-quality video scaling"),
+			_s("Use linear interpolation when upscaling videos, where possible"),
+			"enable_hq_video",
+			true
+		}
+	},
+#endif
 
 	{
 		GAMEOPTION_PREFER_DIGITAL_SFX,

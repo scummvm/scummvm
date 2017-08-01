@@ -24,7 +24,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
-#include "mohawk/sound.h"
+#include "mohawk/myst_sound.h"
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/preview.h"
 
@@ -42,31 +42,18 @@ Preview::Preview(MohawkEngine_Myst *vm) : Myst(vm) {
 Preview::~Preview() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Preview::x, #x))
-
-#define OVERRIDE_OPCODE(opcode, x) \
-	for (uint32 i = 0; i < _opcodes.size(); i++) \
-		if (_opcodes[i]->op == opcode) { \
-			_opcodes[i]->proc = (OpcodeProcMyst) &Preview::x; \
-			_opcodes[i]->desc = #x; \
-			break; \
-		}
-
 void Preview::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OVERRIDE_OPCODE(196, o_fadeToBlack);
-	OVERRIDE_OPCODE(197, o_fadeFromBlack);
-	OVERRIDE_OPCODE(198, o_stayHere);
-	OVERRIDE_OPCODE(199, o_speechStop);
+	OVERRIDE_OPCODE(196, Preview, o_fadeToBlack);
+	OVERRIDE_OPCODE(197, Preview, o_fadeFromBlack);
+	OVERRIDE_OPCODE(198, Preview, o_stayHere);
+	OVERRIDE_OPCODE(199, Preview, o_speechStop);
 
 	// "Init" Opcodes
-	OVERRIDE_OPCODE(209, o_libraryBookcaseTransformDemo_init);
-	OPCODE(298, o_speech_init);
-	OPCODE(299, o_library_init);
+	OVERRIDE_OPCODE(209, Preview, o_libraryBookcaseTransformDemo_init);
+	REGISTER_OPCODE(298, Preview, o_speech_init);
+	REGISTER_OPCODE(299, Preview, o_library_init);
 }
-
-#undef OPCODE
-#undef OVERRIDE_OPCODE
 
 void Preview::disablePersistentScripts() {
 	Myst::disablePersistentScripts();
@@ -79,42 +66,34 @@ void Preview::runPersistentScripts() {
 		speech_run();
 }
 
-void Preview::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Fade to black", op);
+void Preview::o_fadeToBlack(uint16 var, const ArgumentsArray &args) {
 	_vm->_gfx->fadeToBlack();
 }
 
-void Preview::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Fade from black", op);
+void Preview::o_fadeFromBlack(uint16 var, const ArgumentsArray &args) {
 
-	// FIXME: This glitches when enabled. The backbuffer is drawn to screen,
-	// and then the fading occurs, causing the background to appear for one frame.
-	// _vm->_gfx->fadeFromBlack();
+	_vm->_gfx->fadeFromBlack();
 }
 
-void Preview::o_stayHere(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Stay here dialog", op);
-
+void Preview::o_stayHere(uint16 var, const ArgumentsArray &args) {
 	// Nuh-uh! No leaving the library in the demo!
 	GUI::MessageDialog dialog("You can't leave the library in the demo.");
 	dialog.runModal();
 }
 
-void Preview::o_speechStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Speech stop", op);
-
-	_vm->_sound->stopSound(3001);
+void Preview::o_speechStop(uint16 var, const ArgumentsArray &args) {
+	_vm->_sound->stopSpeech();
 	_speechRunning = false;
 	_globals.currentAge = 2;
 }
 
 void Preview::speechUpdateCue() {
 	// This is a callback in the original, handling audio events.
-	if (!_vm->_sound->isPlaying(3001)) {
+	if (!_vm->_sound->isSpeechPlaying()) {
 		return;
 	}
 
-	uint samples = _vm->_sound->getNumSamplesPlayed(3001);
+	uint samples = _vm->_sound->getSpeechNumSamplesPlayed();
 	for (int16 i = 0; i < _cueList.pointCount; i++) {
 		if (_cueList.points[i].sampleFrame > samples)
 			return;
@@ -134,7 +113,7 @@ void Preview::speech_run() {
 	switch (_speechStep) {
 	case 0: // Start Voice Over... which controls book opening
 		_currentCue = 0;
-		_vm->_sound->playSound(3001, Audio::Mixer::kMaxChannelVolume, false, &_cueList);
+			_vm->_sound->playSpeech(3001, &_cueList);
 
 		_speechStep++;
 		break;
@@ -227,26 +206,22 @@ void Preview::speech_run() {
 	}
 }
 
-void Preview::o_speech_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Speech init", op);
-
+void Preview::o_speech_init(uint16 var, const ArgumentsArray &args) {
 	// Used for Card 3000 (Closed Myst Book)
 	_speechStep = 0;
 	_speechRunning = true;
 }
 
-void Preview::o_library_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Library init", op);
-
+void Preview::o_library_init(uint16 var, const ArgumentsArray &args) {
 	// Used for Card 3002 (Myst Island Overview)
 	_library = getInvokingResource<MystAreaImageSwitch>();
 }
 
-void Preview::o_libraryBookcaseTransformDemo_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::o_libraryBookcaseTransformDemo_init(uint16 var, const ArgumentsArray &args) {
 	if (_libraryBookcaseChanged) {
 		MystAreaActionSwitch *resource = getInvokingResource<MystAreaActionSwitch>();
 		_libraryBookcaseMovie = static_cast<MystAreaVideo *>(resource->getSubResource(getVar(303)));
-		_libraryBookcaseSoundId = argv[0];
+		_libraryBookcaseSoundId = args[0];
 		_libraryBookcaseMoving = true;
 	}
 }

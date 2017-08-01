@@ -177,8 +177,13 @@ void TitanicEngine::setRoomNames() {
 
 bool TitanicEngine::canLoadGameStateCurrently() {
 	CGameManager *gameManager = _window->_gameManager;
+	CScreenManager *screenMan = CScreenManager::_screenManagerPtr;
+
 	if (!_window->_inputAllowed || !gameManager->_gameState._petActive)
 		return false;
+	if (screenMan && screenMan->_inputHandler->isLocked())
+		return false;
+
 	CProjectItem *project = gameManager->_project;
 	if (project) {
 		CPetControl *pet = project->getPetControl();

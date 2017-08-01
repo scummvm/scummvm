@@ -151,20 +151,28 @@ void GfxCursor32::setRestrictedArea(const Common::Rect &rect) {
 
 	mulru(_restrictedArea, Ratio(screenWidth, scriptWidth), Ratio(screenHeight, scriptHeight), 0);
 
+	bool restricted = false;
+
 	if (_position.x < rect.left) {
 		_position.x = rect.left;
+		restricted = true;
 	}
 	if (_position.x >= rect.right) {
 		_position.x = rect.right - 1;
+		restricted = true;
 	}
 	if (_position.y < rect.top) {
 		_position.y = rect.top;
+		restricted = true;
 	}
 	if (_position.y >= rect.bottom) {
 		_position.y = rect.bottom - 1;
+		restricted = true;
 	}
 
-	g_system->warpMouse(_position.x, _position.y);
+	if (restricted) {
+		g_system->warpMouse(_position.x, _position.y);
+	}
 }
 
 void GfxCursor32::clearRestrictedArea() {
@@ -330,10 +338,12 @@ void GfxCursor32::setPosition(const Common::Point &position) {
 	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
 	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
 
-	_position.x = (position.x * Ratio(screenWidth, scriptWidth)).toInt();
-	_position.y = (position.y * Ratio(screenHeight, scriptHeight)).toInt();
+	Common::Point newPosition;
+	newPosition.x = (position.x * Ratio(screenWidth, scriptWidth)).toInt();
+	newPosition.y = (position.y * Ratio(screenHeight, scriptHeight)).toInt();
 
-	g_system->warpMouse(_position.x, _position.y);
+	g_system->warpMouse(newPosition.x, newPosition.y);
+	deviceMoved(newPosition);
 }
 
 void GfxCursor32::gonnaPaint(Common::Rect paintRect) {
@@ -367,23 +377,33 @@ void GfxCursor32::donePainting() {
 }
 
 void GfxCursor32::deviceMoved(Common::Point &position) {
+	bool restricted = false;
+
 	if (position.x < _restrictedArea.left) {
 		position.x = _restrictedArea.left;
+		restricted = true;
 	}
 	if (position.x >= _restrictedArea.right) {
 		position.x = _restrictedArea.right - 1;
+		restricted = true;
 	}
 	if (position.y < _restrictedArea.top) {
 		position.y = _restrictedArea.top;
+		restricted = true;
 	}
 	if (position.y >= _restrictedArea.bottom) {
 		position.y = _restrictedArea.bottom - 1;
+		restricted = true;
 	}
 
-	_position = position;
+	if (restricted) {
+		g_system->warpMouse(position.x, position.y);
+	}
 
-	g_system->warpMouse(position.x, position.y);
-	move();
+	if (_position != position) {
+		_position = position;
+		move();
+	}
 }
 
 void GfxCursor32::move() {

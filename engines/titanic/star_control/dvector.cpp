@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/dvector.h"
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/daffine.h"
 #include "common/algorithm.h"
 
 namespace Titanic {
@@ -40,11 +40,11 @@ double DVector::getDistance(const DVector &src) {
 	return sqrt((src._x - _x) * (src._x - _x) + (src._y - _y) * (src._y - _y) + (src._z - _z) * (src._z - _z));
 }
 
-DVector DVector::fn1(const DMatrix &m) {
+DVector DVector::fn1(const DAffine &m) {
 	DVector dest;
-	dest._x = m._row3._x * _z + m._row2._x * _y + m._row1._x * _x + m._row4._x;
-	dest._y = m._row2._y * _y + m._row3._y * _z + m._row1._y * _x + m._row4._y;
-	dest._z = m._row3._z * _z + m._row2._z * _y + m._row1._z * _x + m._row4._z;
+	dest._x = m._col3._x * _z + m._col2._x * _y + m._col1._x * _x + m._col4._x;
+	dest._y = m._col2._y * _y + m._col3._y * _z + m._col1._y * _x + m._col4._y;
+	dest._z = m._col3._z * _z + m._col2._z * _y + m._col1._z * _x + m._col4._z;
 	return dest;
 }
 
@@ -80,31 +80,31 @@ DVector DVector::fn3() const {
 	return dest;
 }
 
-DMatrix DVector::fn4(const DVector &v) {
+DAffine DVector::fn4(const DVector &v) {
 	const double FACTOR = 180.0 / M_PI;
-	DMatrix matrix1, matrix2, matrix3, matrix4;
+	DAffine matrix1, matrix2, matrix3, matrix4;
 
 	DVector vector1 = fn3();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
 	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
-	matrix3 = matrix1.fn4(matrix2);
-	matrix4 = matrix3.fn1();
+	matrix3 = matrix1.compose(matrix2);
+	matrix4 = matrix3.inverseTransform();
 
 	vector1 = v.fn3();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
 	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
-	matrix3 = matrix1.fn4(matrix2);
+	matrix3 = matrix1.compose(matrix2);
 
-	return matrix4.fn4(matrix3);
+	return matrix4.compose(matrix3);
 }
 
-DMatrix DVector::fn5() const {
+DAffine DVector::fn5() const {
 	const double FACTOR = 180.0 / M_PI;
 	DVector v1 = fn3();
-	DMatrix m1, m2;
+	DAffine m1, m2;
 	m1.setRotationMatrix(X_AXIS, v1._y * FACTOR);
 	m2.setRotationMatrix(Y_AXIS, -(v1._z * FACTOR));
-	return m1.fn4(m2);
+	return m1.compose(m2);
 }
 
 } // End of namespace Titanic

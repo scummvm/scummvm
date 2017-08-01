@@ -545,11 +545,16 @@ bool CNavigationControllerGlyph::MouseButtonUpMsg(const Point &pt) {
 	if (!_gfxElement->MouseButtonUpMsg(pt))
 		return false;
 
+	CPetControl *pet = getPetControl();
+	CStarControl *starControl = pet->getStarControl();
 	_flag = !_flag;
-	CTreeItem *target = getPetControl()->_remoteTarget;
-	if (target) {
-		CPETHelmetOnOffMsg msg;
-		msg.execute(target);
+
+	if (!starControl->isSkipped()) {
+		CTreeItem *target = pet->_remoteTarget;
+		if (target) {
+			CPETHelmetOnOffMsg msg;
+			msg.execute(target);
+		}
 	}
 
 	return true;

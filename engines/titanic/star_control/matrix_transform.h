@@ -23,7 +23,7 @@
 #ifndef TITANIC_MATRIX_TRANSFORM_H
 #define TITANIC_MATRIX_TRANSFORM_H
 
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/daffine.h"
 
 namespace Titanic {
 
@@ -48,7 +48,7 @@ public:
 	void copyFrom(const CMatrixTransform &src);
 
 	double fn1() const;
-	void fn4(const DMatrix &m);
+	void fn4(const DAffine &m);
 	CMatrixTransform fn5(double percent, const CMatrixTransform &src);
 };
 

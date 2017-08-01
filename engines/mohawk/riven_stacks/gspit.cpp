@@ -486,7 +486,7 @@ void GSpit::xglview_prisonoff(const ArgumentArray &args) {
 	removeTimer();
 
 	// Play the 'turn off' movie after stopping any videos still playing
-	_vm->_video->closeVideos();
+	_vm->_video->disableAllMovies();
 	RivenVideo *video = _vm->_video->openSlot(5);
 	video->playBlocking();
 

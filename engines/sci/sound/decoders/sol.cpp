@@ -254,20 +254,20 @@ Audio::SeekableAudioStream *makeSOLStream(Common::SeekableReadStream *stream, Di
 
 	if (flags & kCompressed) {
 		if (flags & kStereo && flags & k16Bit) {
-			return new SOLStream<true, true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+			return new SOLStream<true, true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 		} else if (flags & kStereo) {
 			if (getSciVersion() < SCI_VERSION_2_1_EARLY) {
 				error("SCI2 and earlier did not support stereo SOL audio");
 			}
 
-			return new SOLStream<true, false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+			return new SOLStream<true, false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 		} else if (flags & k16Bit) {
-			return new SOLStream<false, true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+			return new SOLStream<false, true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 		} else {
 			if (getSciVersion() < SCI_VERSION_2_1_EARLY) {
-				return new SOLStream<false, false, true>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+				return new SOLStream<false, false, true>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 			} else {
-				return new SOLStream<false, false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+				return new SOLStream<false, false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 			}
 		}
 	}

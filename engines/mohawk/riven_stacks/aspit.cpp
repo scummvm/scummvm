@@ -131,7 +131,7 @@ void ASpit::xaatrusbooknextpage(const ArgumentArray &args) {
 
 	// Keep turning pages while the mouse is pressed
 	bool firstPageTurn = true;
-	while ((mouseIsDown() || firstPageTurn) && !_vm->shouldQuit()) {
+	while ((mouseIsDown() || firstPageTurn) && !_vm->hasGameEnded()) {
 		// Check for the last page
 		if (((_vm->getFeatures() & GF_DEMO) && page == 6) || page == 10)
 			return;
@@ -236,7 +236,7 @@ void ASpit::xacathbooknextpage(const ArgumentArray &args) {
 
 	// Keep turning pages while the mouse is pressed
 	bool firstPageTurn = true;
-	while ((mouseIsDown() || firstPageTurn) && !_vm->shouldQuit()) {
+	while ((mouseIsDown() || firstPageTurn) && !_vm->hasGameEnded()) {
 		// Check for the last page
 		if (page == 49)
 			return;
@@ -346,7 +346,7 @@ void ASpit::xaenablemenuintro(const ArgumentArray &args) {
 
 void ASpit::xademoquit(const ArgumentArray &args) {
 	// Exactly as it says on the tin. In the demo, this function quits.
-	_vm->quitGame();
+	_vm->setGameEnded();
 }
 
 void ASpit::xaexittomain(const ArgumentArray &args) {

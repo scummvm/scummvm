@@ -33,7 +33,7 @@ END_MESSAGE_MAP()
 
 CIdleSummoner::CIdleSummoner() : CGameObject(), _fieldBC(360000),
 		_fieldC0(60000), _fieldC4(360000), _fieldC8(60000),
-		_fieldCC(0), _fieldD0(0), _fieldD4(0), _fieldD8(0), _ticks(0) {
+		_fieldCC(0), _fieldD0(0), _timerId(0), _oldNodesCtr(0), _ticks(0) {
 }
 
 void CIdleSummoner::save(SimpleFile *file, int indent) {
@@ -44,8 +44,8 @@ void CIdleSummoner::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_fieldC8, indent);
 	file->writeNumberLine(_fieldCC, indent);
 	file->writeNumberLine(_fieldD0, indent);
-	file->writeNumberLine(_fieldD4, indent);
-	file->writeNumberLine(_fieldD8, indent);
+	file->writeNumberLine(_timerId, indent);
+	file->writeNumberLine(_oldNodesCtr, indent);
 	file->writeNumberLine(_ticks, indent);
 
 	CGameObject::save(file, indent);
@@ -59,8 +59,8 @@ void CIdleSummoner::load(SimpleFile *file) {
 	_fieldC8 = file->readNumber();
 	_fieldCC = file->readNumber();
 	_fieldD0 = file->readNumber();
-	_fieldD4 = file->readNumber();
-	_fieldD8 = file->readNumber();
+	_timerId = file->readNumber();
+	_oldNodesCtr = file->readNumber();
 	_ticks = file->readNumber();
 
 	CGameObject::load(file);
@@ -75,13 +75,23 @@ bool CIdleSummoner::EnterViewMsg(CEnterViewMsg *msg) {
 bool CIdleSummoner::TimerMsg(CTimerMsg *msg) {
 	uint nodesCtr = getNodeChangedCtr();
 	if (msg->_actionVal == 1 && !petDoorOrBellbotPresent()
-			&& nodesCtr > 0 && _fieldD8) {
+			&& nodesCtr > 0 && nodesCtr != _oldNodesCtr) {
+
+		// They can only appear in the Top of the Well and the Embarkation Lobby
 		if (!compareRoomNameTo("TopOfWell") && !compareRoomNameTo("EmbLobby"))
 			return true;
 
+		// WORKAROUND: To benefit the players, don't allow the bots to turn up
+		// when at the Embarkation SuccUBus, in front of the Deskbot's desk,
+		// or when in the Gondola, since it just looks weird
+		CString fullName = getFullViewName();
+		if (fullName == "EmbLobby.Node 2.W" || fullName == "EmbLobby.Node 4.E" ||
+				fullName == "TopOfWell.Node 29.N")
+			return true;
+
 		int region = talkGetDialRegion("BellBot", 1);
-		uint delay = region == 1 ? 15000 : 12000;
-		uint enterTicks = MIN(getNodeEnterTicks(), _ticks);
+		uint delay = region == 1 ? 15000 : 120000;
+		uint enterTicks = MAX(getNodeEnterTicks(), _ticks);
 
 		CString name;
 		uint ticks = getTicksCount() - enterTicks;
@@ -91,13 +101,14 @@ bool CIdleSummoner::TimerMsg(CTimerMsg *msg) {
 			} else {
 				name = "DoorBot";
 			}
-			_fieldD8 = nodesCtr;
+			_oldNodesCtr = nodesCtr;
 
-			if (getRoom()) {
+			CRoomItem *room = getRoom();
+			if (room) {
 				CSummonBotQueryMsg queryMsg(name);
-				if (queryMsg.execute(this)) {
+				if (queryMsg.execute(room)) {
 					CSummonBotMsg summonMsg(name, 1);
-					summonMsg.execute(this);
+					summonMsg.execute(room);
 				}
 			}
 		}
@@ -108,12 +119,12 @@ bool CIdleSummoner::TimerMsg(CTimerMsg *msg) {
 
 bool CIdleSummoner::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Enable") {
-		if (!_fieldD4)
-			_fieldD4 = addTimer(15000, 15000);
+		if (!_timerId)
+			_timerId = addTimer(1, 15000, 15000);
 	} else if (msg->_action == "Disable") {
-		if (_fieldD4 > 0) {
-			stopAnimTimer(_fieldD4);
-			_fieldD4 = 0;
+		if (_timerId > 0) {
+			stopAnimTimer(_timerId);
+			_timerId = 0;
 		}
 	} else if (msg->_action == "DoorbotDismissed" || msg->_action == "BellbotDismissed") {
 		_ticks = getTicksCount();

@@ -102,18 +102,12 @@ reg_t kSetNowSeen32(EngineState *s, int argc, reg_t *argv) {
 	// NOTE: MGDX is assumed to use the older kSetNowSeen since it was
 	// released before SQ6, but this has not been verified since it cannot be
 	// disassembled at the moment (Phar Lap Windows-only release)
+	// (See also getNowSeenRect)
 	if (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
 		g_sci->getGameId() == GID_SQ6 ||
 		g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
 
-		if (!found) {
-			error("kSetNowSeen: Unable to find screen item %04x:%04x", PRINT_REG(argv[0]));
-		}
 		return s->r_acc;
-	}
-
-	if (!found) {
-		warning("kSetNowSeen: Unable to find screen item %04x:%04x", PRINT_REG(argv[0]));
 	}
 
 	return make_reg(0, found);
@@ -245,9 +239,8 @@ reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv) {
-	Common::Rect objRect1 = g_sci->_gfxCompare->getNSRect(argv[0]);
-	Common::Rect objRect2 = g_sci->_gfxCompare->getNSRect(argv[1]);
-	return make_reg(0, objRect1.intersects(objRect2));
+	int16 area = g_sci->_gfxFrameout->kernelObjectIntersect(argv[0], argv[1]);
+	return make_reg(0, area);
 }
 
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {

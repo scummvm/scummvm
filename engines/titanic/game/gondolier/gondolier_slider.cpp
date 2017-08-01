@@ -79,14 +79,14 @@ void CGondolierSlider::load(SimpleFile *file) {
 bool CGondolierSlider::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (!_chestOpen)
 		return false;
-	if (_sliderNum ? _rightSliderHooked : _leftSliderHooked)
+	if (_sliderNum ? _leftSliderHooked : _rightSliderHooked)
 		return false;
 
 	return _thumbRect.contains(msg->_mousePos);
 }
 
 bool CGondolierSlider::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
-	if (!(_sliderNum ? _rightSliderHooked : _leftSliderHooked)) {
+	if (!(_sliderNum ? _leftSliderHooked : _rightSliderHooked)) {
 		int minVal = 0x7FFFFFFF;
 		int foundIndex = -1;
 		int yp = (_defaultThumbRect.top + _defaultThumbRect.bottom) / 2
@@ -120,7 +120,7 @@ bool CGondolierSlider::EnterViewMsg(CEnterViewMsg *msg) {
 bool CGondolierSlider::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (!_chestOpen)
 		return false;
-	if (_sliderNum ? _rightSliderHooked : _leftSliderHooked)
+	if (_sliderNum ? _leftSliderHooked : _rightSliderHooked)
 		return false;
 
 	_dragging = checkStartDragging(msg);
@@ -143,7 +143,7 @@ bool CGondolierSlider::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 }
 
 bool CGondolierSlider::IsHookedOnMsg(CIsHookedOnMsg *msg) {
-	if (_sliderNum ? _rightSliderHooked : _leftSliderHooked)
+	if (_sliderNum ? _leftSliderHooked : _rightSliderHooked)
 		return false;
 
 	if (!_thumbRect.intersects(msg->_rect)) {
@@ -152,9 +152,9 @@ bool CGondolierSlider::IsHookedOnMsg(CIsHookedOnMsg *msg) {
 	} else {
 		_armName = msg->_armName;
 		if (_sliderNum) {
-			_rightSliderHooked = _priorLeftSliderHooked = true;
+			_leftSliderHooked = _priorLeftSliderHooked = true;
 		} else {
-			_leftSliderHooked = _priorRightSliderHooked = true;
+			_rightSliderHooked = _priorRightSliderHooked = true;
 		}
 
 		msg->_isHooked = true;
@@ -164,7 +164,7 @@ bool CGondolierSlider::IsHookedOnMsg(CIsHookedOnMsg *msg) {
 }
 
 bool CGondolierSlider::FrameMsg(CFrameMsg *msg) {
-	if (_sliderNum ? _rightSliderHooked : _leftSliderHooked) {
+	if (_sliderNum ? _leftSliderHooked : _rightSliderHooked) {
 		if (_sliderIndex < 10) {
 			++_sliderIndex;
 			CSignalObject signalMsg;
@@ -182,6 +182,7 @@ bool CGondolierSlider::FrameMsg(CFrameMsg *msg) {
 		}
 	} else if (_sliderNum ? _priorRightSliderHooked : _priorLeftSliderHooked) {
 		if (!_dragging && !_puzzleSolved && _sliderIndex > 0) {
+			--_sliderIndex;
 			CSignalObject signalMsg;
 			signalMsg.execute(this);
 		}
@@ -208,11 +209,11 @@ bool CGondolierSlider::SignalObject(CSignalObject *msg) {
 bool CGondolierSlider::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Unhook") {
 		if (_sliderNum) {
-			_rightSliderHooked = _priorLeftSliderHooked = false;
-			_priorRightSliderHooked = _leftSliderHooked;
+			_leftSliderHooked = _priorLeftSliderHooked = false;
+			_priorRightSliderHooked = _rightSliderHooked;
 		} else {
-			_leftSliderHooked = _priorRightSliderHooked = false;
-			_priorLeftSliderHooked = _rightSliderHooked;
+			_rightSliderHooked = _priorRightSliderHooked = false;
+			_priorLeftSliderHooked = _leftSliderHooked;
 		}
 	}
 

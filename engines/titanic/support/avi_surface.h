@@ -43,10 +43,9 @@ enum MovieFlag {
 
 class AVIDecoder : public Video::AVIDecoder {
 public:
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
-		Video::AVIDecoder(soundType) {}
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
-		Video::AVIDecoder(frameRateOverride, soundType) {}
+	AVIDecoder() {}
+	AVIDecoder(const Common::Rational &frameRateOverride) :
+		Video::AVIDecoder(frameRateOverride) {}
 
 	/**
 	 * Returns the number of video tracks the decoder has
@@ -216,8 +215,9 @@ public:
 
 	/**
 	 * Plays an interruptable cutscene
+	 * @returns		True if the cutscene was not interrupted
 	 */
-	void playCutscene(const Rect &r, uint startFrame, uint endFrame);
+	bool playCutscene(const Rect &r, uint startFrame, uint endFrame);
 
 	/**
 	 * Returns the pixel depth of the movie in bits

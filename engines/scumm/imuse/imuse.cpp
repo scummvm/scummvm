@@ -675,6 +675,44 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	if (_game_id == GID_SAMNMAX && sound == 82 && getSoundStatus_internal(81, false))
 		ImClearTrigger(81, 1);
 
+	// Workaround for monkey2 bug #1410 / Scabb Island
+	//
+	// Tunes involved:
+	// 100 - Captain Dread's map
+	// 101 - Woodtick
+	// 107 - Map of Scabb Island
+	//
+	// If you go from Woodtick to the map of Scabb Island tune 107 is added as
+	// trigger on 101 and 101 moves to an outro and stop (triggering start
+	// of 107). Then at Captain Dread tune 107 is stopped and 100 is started.
+	//
+	// If you go quickly enough, the trigger occurs not at the Scabb Island
+	// map but at Captain Dread causing tune 107 not to be stopped.
+	// So we prevent starting 107 if 100 is already running.
+	if (_game_id == GID_MONKEY2 && (sound == 107) && (getSoundStatus_internal(100, true) == 1))
+		return false;
+
+	// In some cases 107 is running and doesn't get killed at Dread's map
+	if (_game_id == GID_MONKEY2 && (sound == 100) && (getSoundStatus_internal(107, true) == 1))
+		IMuseInternal::stopSound_internal(107);
+
+	// Workaround for monkey2 bug #1410 / Booty Island
+	//
+	// Tunes involved
+	// 100 - Captain Dread's map
+	// 113 - Guard Kiosk / Mardi Grass 
+	// 115 - Map of Booty Island / Ville de la Booty
+	// 118 - Ville de la Booty
+	//
+	// When you enter the Guard Kiosk tune 113 is added as trigger on song
+	// 115. Then if you leave, 113 is stopped and 115 is started again.
+	// If you leave quickly enough, the trigger occurs on the map and tune
+	// 113 will not stop.
+	// We kill 113 on entry of one of the other locations (Captain Dread
+	// or Ville de la Booty) because tune 115 is not always started.
+	if (_game_id == GID_MONKEY2 && (sound == 100 || sound == 115 || sound == 118) && (getSoundStatus_internal(113, true) == 1))
+		IMuseInternal::stopSound_internal(113);
+
 	player->clear();
 	player->setOffsetNote(offset);
 	return player->startSound(sound, driver);

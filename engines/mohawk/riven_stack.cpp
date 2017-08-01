@@ -186,7 +186,9 @@ void RivenStack::runDemoBoundaryDialog() {
 void RivenStack::runEndGame(uint16 videoCode, uint32 delay) {
 	_vm->_sound->stopAllSLST();
 	RivenVideo *video = _vm->_video->openSlot(videoCode);
+	video->enable();
 	video->play();
+	video->setLooping(false);
 	runCredits(videoCode, delay);
 }
 
@@ -198,38 +200,27 @@ void RivenStack::runCredits(uint16 video, uint32 delay) {
 
 	RivenVideo *videoPtr = _vm->_video->getSlot(video);
 
-	while (!_vm->shouldQuit() && _vm->_gfx->getCurCreditsImage() <= 320) {
+	while (!_vm->hasGameEnded() && _vm->_gfx->getCurCreditsImage() <= 320) {
 		if (videoPtr->getCurFrame() >= (int32)videoPtr->getFrameCount() - 1) {
 			if (nextCreditsFrameStart == 0) {
 				// Set us up to start after delay ms
-				nextCreditsFrameStart = _vm->_system->getMillis() + delay;
-			} else if (_vm->_system->getMillis() >= nextCreditsFrameStart) {
+				nextCreditsFrameStart = _vm->getTotalPlayTime() + delay;
+			} else if (_vm->getTotalPlayTime() >= nextCreditsFrameStart) {
 				// the first two frames stay on for 4 seconds
-				// the rest of the scroll updates happen at 30Hz
+				// the rest of the scroll updates happen at 60Hz
 				if (_vm->_gfx->getCurCreditsImage() < 304)
-					nextCreditsFrameStart = _vm->_system->getMillis() + 4000;
+					nextCreditsFrameStart = _vm->getTotalPlayTime() + 4000;
 				else
-					nextCreditsFrameStart = _vm->_system->getMillis() + 1000 / 30;
+					nextCreditsFrameStart = _vm->getTotalPlayTime() + 1000 / 60;
 
 				_vm->_gfx->updateCredits();
 			}
-		} else {
-			_vm->_video->updateMovies();
-			_vm->_system->updateScreen();
 		}
 
-		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event))
-			;
-
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 
-	if (_vm->shouldQuit()) {
-		return; // Allow return to launcher
-	}
-
-	_vm->quitGame();
+	_vm->setGameEnded();
 }
 
 void RivenStack::installCardTimer() {
@@ -353,7 +344,7 @@ void RivenStack::removeTimer() {
 
 bool RivenStack::pageTurn(RivenTransition transition) {
 	// Wait until the previous page turn sound completes
-	while (_vm->_sound->isEffectPlaying() && !_vm->shouldQuit()) {
+	while (_vm->_sound->isEffectPlaying() && !_vm->hasGameEnded()) {
 		if (!mouseIsDown()) {
 			return false;
 		}
