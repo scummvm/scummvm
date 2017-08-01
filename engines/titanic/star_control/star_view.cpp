@@ -227,6 +227,15 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		}
 		break;
 
+	case Common::KEYCODE_SLASH:
+		if (matchedIndex == -1) {
+			pose.setRotationMatrix(X_AXIS, 1.0);
+			_camera.proc22(pose);
+			_camera.updatePosition(errorCode);
+			return true;
+		}
+		break;
+
 	default:
 		break;
 	}
