@@ -38,9 +38,9 @@ const Font *MacFontRun::getFont() {
 }
 
 const Common::String MacFontRun::toString() {
-	return Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c%c",
+	return Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c",
 			(fontId >> 8) & 0xff, fontId & 0xff,
-			textSlant & 0xff, unk3f & 0xff,
+			textSlant & 0xff,
 			(fontSize >> 8) & 0xff, fontSize & 0xff,
 			(palinfo1 >> 8) & 0xff, palinfo1 & 0xff,
 			(palinfo2 >> 8) & 0xff, palinfo2 & 0xff,
@@ -119,17 +119,16 @@ void MacText::splitString(Common::String &str) {
 
 				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
 				byte textSlant = *s++;
-				byte unk3f = *s++;
 				uint16 fontSize = *s++; fontSize = (fontSize << 8) | *s++;
 				uint16 palinfo1 = *s++; palinfo1 = (palinfo1 << 8) | *s++;
 				uint16 palinfo2 = *s++; palinfo2 = (palinfo2 << 8) | *s++;
 				uint16 palinfo3 = *s++; palinfo3 = (palinfo3 << 8) | *s++;
 
-				debug(8, "******** splitString: fontId: %d, textSlant: %d, unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x",
-						fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
+				debug(8, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				previousFormatting = _currentFormatting;
-				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
+				_currentFormatting.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				if (curLine == 0 && curChunk == 0 && tmp.empty())
 					previousFormatting = _currentFormatting;
@@ -377,7 +376,7 @@ void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int f
 	uint oldLen = _textLines.size();
 	uint newLines = 1 + getNewlinesInString(str);
 
-	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, 0, fontSize, 0, 0, 0);
+	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
 
 	_str += fontRun.toString();
 	_str += str;

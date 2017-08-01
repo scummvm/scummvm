@@ -36,7 +36,6 @@ struct MacFontRun {
 
 	uint16 fontId;
 	byte textSlant;
-	byte unk3f;
 	uint16 fontSize;
 	uint16 palinfo1;
 	uint16 palinfo2;
@@ -47,22 +46,21 @@ struct MacFontRun {
 
 	MacFontRun() {
 		wm = nullptr;
-		fontId = textSlant = unk3f = fontSize = 0;
+		fontId = textSlant = fontSize = 0;
 		palinfo1 = palinfo2  = palinfo3 = 0;
 		font = nullptr;
 	}
 
-	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, byte unk3f_, uint16 fontSize_,
+	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
-		setValues(wm_, fontId_, textSlant_, unk3f_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		setValues(wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
 	}
 
-	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, byte unk3f_, uint16 fontSize_,
+	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		wm        = wm_;
 		fontId    = fontId_;
 		textSlant = textSlant_;
-		unk3f     = unk3f_;
 		fontSize  = fontSize_;
 		palinfo1  = palinfo1_;
 		palinfo2  = palinfo2_;
