@@ -144,6 +144,11 @@ void GraphicsManager::display() {
 	g_system->updateScreen();
 }
 
+void GraphicsManager::clear() {
+	_renderSurface.fillRect(Common::Rect(0, 0, _backdropSurface.w, _backdropSurface.h),
+			_renderSurface.format.RGBToColor(0, 0, 0));
+}
+
 bool GraphicsManager::loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 	if (!_parallaxStuff)
 		_parallaxStuff = new Parallax;

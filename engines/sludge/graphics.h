@@ -61,6 +61,7 @@ public:
 	void setWindowSize(uint winWidth, uint winHeight) { _winWidth = winWidth; _winHeight = winHeight; }
 	bool init();
 	void display();
+	void clear();
 
 	// Parallax
 	bool loadParallax(uint16 v, uint16 fracX, uint16 fracY);
