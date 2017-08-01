@@ -58,10 +58,10 @@ bool CRestrictedAutoMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
 
 	CString roomName = msg->_oldRoom->getName();
 	if (_oldRoomName.compareToIgnoreCase(roomName)) {
+		return CAutoMusicPlayer::EnterRoomMsg(msg);
+	} else {
 		_isRepeated = true;
 		return false;
-	} else {
-		return CAutoMusicPlayer::EnterRoomMsg(msg);
 	}
 }
 

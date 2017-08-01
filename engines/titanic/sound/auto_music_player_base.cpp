@@ -70,7 +70,8 @@ bool CAutoMusicPlayerBase::TimerMsg(CTimerMsg *msg) {
 
 bool CAutoMusicPlayerBase::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 	if (_isRepeated)
-		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0);
+		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0,
+			Audio::Mixer::kMusicSoundType);
 
 	return true;
 }
@@ -86,13 +87,15 @@ bool CAutoMusicPlayerBase::ChangeMusicMsg(CChangeMusicMsg *msg) {
 
 		if (_isRepeated) {
 			stopGlobalSound(_transition, -1);
-			playGlobalSound(_filename, _volumeMode, _initialMute, true, 0);
+			playGlobalSound(_filename, _volumeMode, _initialMute, true, 0,
+				Audio::Mixer::kMusicSoundType);
 		}
 	}
 
 	if (!_isRepeated && msg->_flags == 2) {
 		_isRepeated = true;
-		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0);
+		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0,
+			Audio::Mixer::kMusicSoundType);
 	}
 
 	return true;
