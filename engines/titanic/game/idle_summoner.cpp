@@ -82,9 +82,11 @@ bool CIdleSummoner::TimerMsg(CTimerMsg *msg) {
 			return true;
 
 		// WORKAROUND: To benefit the players, don't allow the bots to turn up
-		// when at the Embarkation SuccUBus or in front of the Deskbot's desk
+		// when at the Embarkation SuccUBus, in front of the Deskbot's desk,
+		// or when in the Gondola, since it just looks weird
 		CString fullName = getFullViewName();
-		if (fullName == "EmbLobby.Node 2.W" || fullName == "EmbLobby.Node 4.E")
+		if (fullName == "EmbLobby.Node 2.W" || fullName == "EmbLobby.Node 4.E" ||
+				fullName == "TopOfWell.Node 29.N")
 			return true;
 
 		int region = talkGetDialRegion("BellBot", 1);
