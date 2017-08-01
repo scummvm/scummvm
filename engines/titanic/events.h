@@ -79,7 +79,10 @@ public:
 	virtual ~CPressTarget() {}
 	virtual void leftButtonDown(const Point &mousePos) { _pressed = true; }
 	virtual void middleButtonDown(const Point &mousePos) { _pressed = true; }
-	virtual void keyDown(Common::KeyState keyState) { _pressed = true; }
+	virtual void keyDown(Common::KeyState keyState) {
+		if (keyState.ascii)
+			_pressed = true;
+	}
 };
 
 class Events {
