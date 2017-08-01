@@ -472,7 +472,8 @@ Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 }
 
 bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
-	bool isDifferent = false;
+	if (g_vm->shouldQuit())
+		return false;
 	
 	if (_currentFrame != ((int)startFrame - 1) || startFrame == 0) {
 		// Start video playback at the desired starting frame
@@ -484,7 +485,7 @@ bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		_decoder->start();
 	}
 
-	isDifferent = _movieFrameSurface[0]->w != r.width() ||
+	bool isDifferent = _movieFrameSurface[0]->w != r.width() ||
 		_movieFrameSurface[0]->h != r.height();
 
 	bool isFinished = true;
@@ -515,7 +516,7 @@ bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	}
 
 	stop();
-	return isFinished;
+	return isFinished && !g_vm->shouldQuit();
 }
 
 uint AVISurface::getBitDepth() const {
