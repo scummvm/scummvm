@@ -526,7 +526,6 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	}
 
 	_inputText.clear();
-	_gui->appendText("");
 }
 
 
