@@ -172,7 +172,7 @@ void MacText::splitString(Common::String &str) {
 
 			if (text.size()) {
 				for (uint i = 0; i < text.size(); i++) {
-					_textLines[curLine].chunks[curChunk].text = text[i];
+					_textLines[curLine].chunks[curChunk].text += text[i];
 
 					if ((text.size() > 1 || !nextChunk) && !(i == text.size() - 1 && nextChunk)) {
 						curLine++;
