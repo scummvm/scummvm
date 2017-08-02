@@ -74,11 +74,15 @@ void MacTextWindow::drawText(ManagedSurface *g, int x, int y, int w, int h, int 
 void MacTextWindow::appendText(Common::String str, const MacFont *macFont) {
 	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant());
 
+	_contentIsDirty = true;
+
 	updateCursorPos();
 }
 
 void MacTextWindow::clearText() {
 	_mactext->clearText();
+
+	_contentIsDirty = true;
 
 	updateCursorPos();
 }
