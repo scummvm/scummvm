@@ -439,6 +439,8 @@ void MacText::removeLastLine() {
 
 	int h = getLineHeight(_textLines.size() - 1) + _interLinear;
 
+	_surface->fillRect(Common::Rect(0, _textMaxHeight - h, _surface->w, _textMaxHeight), _bgcolor);
+
 	_textLines.pop_back();
 	_textMaxHeight -= h;
 }
