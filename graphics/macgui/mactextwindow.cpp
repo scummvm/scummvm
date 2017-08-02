@@ -191,7 +191,7 @@ void MacTextWindow::drawInput() {
 	_inputTextHeight = MAX(1u, text.size()); // We always have line to clean
 
 	// And add new input line to the text
-	appendText(_inputText, _font);
+	appendText(Common::String("\n" + _inputText), _font);
 
 	_cursorX = _inputText.empty() ? 0 : _fontRef->getStringWidth(text[_inputTextHeight - 1]);
 
