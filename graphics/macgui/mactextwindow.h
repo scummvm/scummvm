@@ -100,6 +100,7 @@ private:
 	int _maxWidth;
 	Common::String _inputText;
 	uint _inputTextHeight;
+	bool _inputIsDirty;
 
 };
 

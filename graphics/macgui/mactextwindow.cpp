@@ -47,8 +47,10 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 
 	_fontRef = wm->_fontMan->getFont(*font);
 
-	_inputTextHeight = 1;
+	_inputTextHeight = 0;
 	_maxWidth = maxWidth;
+
+	_inputIsDirty = true;
 
 	_scrollPos = 0;
 
@@ -113,13 +115,18 @@ const MacFont *MacTextWindow::getTextWindowFont() {
 }
 
 bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
-	if (!_borderIsDirty && !_contentIsDirty && !_cursorDirty && !forceRedraw)
+	if (!_borderIsDirty && !_contentIsDirty && !_cursorDirty && !_inputIsDirty && !forceRedraw)
 		return false;
 
 	if (_borderIsDirty || forceRedraw) {
 		drawBorder();
 
 		_composeSurface.clear(kColorWhite);
+	}
+
+	if (_inputIsDirty || forceRedraw) {
+		drawInput();
+		_inputIsDirty = false;
 	}
 
 	_contentIsDirty = false;
@@ -147,7 +154,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		case Common::KEYCODE_BACKSPACE:
 			if (!_inputText.empty()) {
 				_inputText.deleteLastChar();
-				drawInput();
+				_inputIsDirty = true;
 			}
 			break;
 
@@ -160,7 +167,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 			if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
 				_inputText += (char)event.kbd.ascii;
-				drawInput();
+				_inputIsDirty = true;
 
 				return true;
 			}
