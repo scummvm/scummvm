@@ -100,6 +100,8 @@ void MacTextWindow::setTextWindowFont(const MacFont *font) {
 	_font = font;
 
 	_fontRef = _wm->_fontMan->getFont(*font);
+
+	_mactext->setDefaultFormatting(font->getId(), font->getSlant(), font->getSize(), 0, 0, 0);
 }
 
 const MacFont *MacTextWindow::getTextWindowFont() {
