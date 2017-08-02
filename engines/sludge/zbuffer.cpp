@@ -77,7 +77,7 @@ bool GraphicsManager::setZBuffer(int num) {
 
 	debug (kSludgeDebugGraphics, "Setting zBuffer");
 	uint32 stillToGo = 0;
-	int yPalette[16], sorted[16], sortback[16];
+	int yPalette[16], sorted[16];
 
 	killZBuffer();
 
@@ -123,7 +123,6 @@ bool GraphicsManager::setZBuffer(int num) {
 	for (int y = 0; y < _zBuffer->numPanels; y++) {
 		_zBuffer->panel[y] = yPalette[sorted[y]];
 		debugC(2, kSludgeDebugZBuffer, "Y-value : %i", _zBuffer->panel[y]);
-		sortback[sorted[y]] = y;
 	}
 
 	int picWidth = _sceneWidth;
@@ -150,7 +149,7 @@ bool GraphicsManager::setZBuffer(int num) {
 			}
 			for (int i = 0; i < _zBuffer->numPanels; ++i) {
 				byte *target = (byte *)_zBuffer->sprites[i].getBasePtr(x, y);
-				if (n && (sortback[i] == n || i == 0)) {
+				if (n && (sorted[i] == n || i == 0)) {
 					byte *source = (byte *)_backdropSurface.getBasePtr(x, y);
 					target[0] = source[0];
 					target[1] = source[1];
