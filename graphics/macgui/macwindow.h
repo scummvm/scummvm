@@ -308,6 +308,7 @@ protected:
 	ManagedSurface _composeSurface;
 
 	bool _borderIsDirty;
+	Common::Rect _innerDims;
 
 private:
 	MacWindowBorder _macBorder;
@@ -328,8 +329,6 @@ private:
 
 	WindowClick _highlightedPart;
 	float _scrollPos, _scrollSize;
-
-	Common::Rect _innerDims;
 
 	Common::String _title;
 };

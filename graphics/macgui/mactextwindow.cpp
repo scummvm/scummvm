@@ -72,10 +72,10 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 void MacTextWindow::resize(int w, int h) {
 	undrawInput();
 
-	_maxWidth = w - kBorderWidth * 2;
-	_mactext->setMaxWidth(_maxWidth);
-
 	MacWindow::resize(w, h);
+
+	_maxWidth = _innerDims.width();
+	_mactext->setMaxWidth(_maxWidth);
 }
 
 void MacTextWindow::appendText(Common::String str, const MacFont *macFont, bool skipAdd) {
