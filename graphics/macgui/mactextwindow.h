@@ -63,7 +63,6 @@ public:
 	void setTextWindowFont(const MacFont *macFont);
 	const MacFont *getTextWindowFont();
 
-	void drawText(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	void appendText(Common::String str, const MacFont *macFont);
 	void clearText();
 

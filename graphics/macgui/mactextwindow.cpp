@@ -69,10 +69,6 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
 }
 
-void MacTextWindow::drawText(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
-	_mactext->draw(g, x, y, w, h, xoff, yoff);
-}
-
 void MacTextWindow::appendText(Common::String str, const MacFont *macFont) {
 	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant());
 
