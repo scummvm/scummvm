@@ -380,30 +380,34 @@ void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int f
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
 
+	_currentFormatting = fontRun;
+
 	_str += fontRun.toString();
 	_str += str;
 
-	resizeAndFormatLines(newLines, &fontRun);
+	//resizeAndFormatLines(newLines, &fontRun);
 
 	splitString(str);
 	recalcDims();
 
-	render(oldLen, _textLines.size());
+	render(oldLen - 1, _textLines.size());
 }
 
 void MacText::appendTextDefault(Common::String str) {
 	uint oldLen = _textLines.size();
 	uint newLines = 1 + getNewlinesInString(str);
 
+	_currentFormatting = _defaultFormatting;
+
 	_str += _defaultFormatting.toString();
 	_str += str;
 
-	resizeAndFormatLines(newLines, &_defaultFormatting);
+	//resizeAndFormatLines(newLines, &_defaultFormatting);
 
 	splitString(str);
 	recalcDims();
 
-	render(oldLen, _textLines.size());
+	render(oldLen - 1, _textLines.size());
 }
 
 void MacText::clearText() {
