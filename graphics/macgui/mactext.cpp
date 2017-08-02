@@ -262,6 +262,8 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			debug(5, "line %d[%d]/%d at %d,%d (%s)", i, j, xOffset, _textLines[i].chunks[j].fontId, _textLines[i].y, _textLines[i].chunks[j].text.c_str());
+
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
 
