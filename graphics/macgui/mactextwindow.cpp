@@ -70,6 +70,8 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 }
 
 void MacTextWindow::resize(int w, int h) {
+	undrawInput();
+
 	_maxWidth = w - kBorderWidth * 2;
 	_mactext->setMaxWidth(_maxWidth);
 
@@ -182,10 +184,15 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	return MacWindow::processEvent(event);
 }
 
-void MacTextWindow::drawInput() {
-	// First, we kill previous input text
-	for (uint i = 1; i < _inputTextHeight; i++)
+void MacTextWindow::undrawInput() {
+	for (uint i = 0; i < _inputTextHeight; i++)
 		_mactext->removeLastLine();
+
+	_inputTextHeight = 0;
+}
+
+void MacTextWindow::drawInput() {
+	undrawInput();
 
 	Common::Array<Common::String> text;
 

@@ -76,6 +76,7 @@ public:
 	void clearInput();
 
 private:
+	void undrawInput();
 	void drawInput();
 	void updateCursorPos();
 
