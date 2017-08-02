@@ -69,6 +69,13 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
 }
 
+void MacTextWindow::resize(int w, int h) {
+	_maxWidth = w - kBorderWidth * 2;
+	_mactext->setMaxWidth(_maxWidth);
+
+	MacWindow::resize(w, h);
+}
+
 void MacTextWindow::appendText(Common::String str, const MacFont *macFont) {
 	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant());
 

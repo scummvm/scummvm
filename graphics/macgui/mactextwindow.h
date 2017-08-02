@@ -51,6 +51,8 @@ public:
 	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment);
 	virtual ~MacTextWindow();
 
+	virtual void resize(int w, int h);
+
 	virtual bool processEvent(Common::Event &event);
 
 	/**

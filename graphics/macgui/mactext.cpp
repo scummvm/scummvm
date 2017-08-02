@@ -82,6 +82,10 @@ MacText::MacText(Common::String s, MacWindowManager *wm, const MacFont *macFont,
 	_fullRefresh = true;
 }
 
+void MacText::setMaxWidth(int maxWidth) {
+	_maxWidth = maxWidth;
+}
+
 void MacText::splitString(Common::String &str) {
 	const char *s = str.c_str();
 

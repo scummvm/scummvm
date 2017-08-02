@@ -198,7 +198,7 @@ public:
 	 * @param w New width of the window.
 	 * @param h New height of the window.
 	 */
-	void resize(int w, int h);
+	virtual void resize(int w, int h);
 
 	/**
 	 * Change the dimensions of the window ([0, 0, 0, 0] by default).
