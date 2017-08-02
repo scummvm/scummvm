@@ -169,13 +169,6 @@ void WageEngine::processEvents() {
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
-			case Common::KEYCODE_BACKSPACE:
-				if (!_inputText.empty()) {
-					_inputText.deleteLastChar();
-					_gui->drawInput();
-				}
-				break;
-
 			case Common::KEYCODE_RETURN:
 				_inputText = _gui->_consoleWindow->getInput();
 				_inputText += '\n';
@@ -195,11 +188,6 @@ void WageEngine::processEvents() {
 				if (event.kbd.ascii == '~') {
 					_debugger->attach();
 					break;
-				}
-
-				if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
-					_inputText += (char)event.kbd.ascii;
-					_gui->drawInput();
 				}
 
 				break;
