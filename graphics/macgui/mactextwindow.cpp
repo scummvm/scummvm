@@ -164,6 +164,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 			break;
 
 		case Common::KEYCODE_RETURN:
+			undrawInput();
 			return false; // Pass it to the higher level for processing
 
 		default:
