@@ -378,15 +378,17 @@ uint getNewlinesInString(const Common::String &str) {
 	return newLines;
 }
 
-void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular) {
+void MacText::appendText(Common::String str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
 
 	_currentFormatting = fontRun;
 
-	_str += fontRun.toString();
-	_str += str;
+	if (!skipAdd) {
+		_str += fontRun.toString();
+		_str += str;
+	}
 
 	splitString(str);
 	recalcDims();
@@ -394,13 +396,15 @@ void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int f
 	render(oldLen - 1, _textLines.size());
 }
 
-void MacText::appendTextDefault(Common::String str) {
+void MacText::appendTextDefault(Common::String str, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	_currentFormatting = _defaultFormatting;
 
-	_str += _defaultFormatting.toString();
-	_str += str;
+	if (!skipAdd) {
+		_str += _defaultFormatting.toString();
+		_str += str;
+	}
 
 	splitString(str);
 	recalcDims();

@@ -78,8 +78,8 @@ void MacTextWindow::resize(int w, int h) {
 	MacWindow::resize(w, h);
 }
 
-void MacTextWindow::appendText(Common::String str, const MacFont *macFont) {
-	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant());
+void MacTextWindow::appendText(Common::String str, const MacFont *macFont, bool skipAdd) {
+	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), skipAdd);
 
 	_contentIsDirty = true;
 
@@ -188,6 +188,9 @@ void MacTextWindow::undrawInput() {
 	for (uint i = 0; i < _inputTextHeight; i++)
 		_mactext->removeLastLine();
 
+	if (_inputTextHeight)
+		appendText("\n", _font, true);
+
 	_inputTextHeight = 0;
 }
 
@@ -201,7 +204,7 @@ void MacTextWindow::drawInput() {
 	_inputTextHeight = MAX(1u, text.size()); // We always have line to clean
 
 	// And add new input line to the text
-	appendText(_inputText, _font);
+	appendText(_inputText, _font, true);
 
 	_cursorX = _inputText.empty() ? 0 : _fontRef->getStringWidth(text[_inputTextHeight - 1]);
 

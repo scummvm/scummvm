@@ -65,7 +65,7 @@ public:
 	void setTextWindowFont(const MacFont *macFont);
 	const MacFont *getTextWindowFont();
 
-	void appendText(Common::String str, const MacFont *macFont);
+	void appendText(Common::String str, const MacFont *macFont, bool skipAdd = false);
 	void clearText();
 
 	void setSelection(int selStartX, int selStartY, int selEndX, int selEndY);

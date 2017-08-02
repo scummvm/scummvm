@@ -102,8 +102,8 @@ public:
 			}
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
-	void appendText(Common::String str, int fontId, int fontSize, int fontSlant);
-	void appendTextDefault(Common::String str);
+	void appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
+	void appendTextDefault(Common::String str, bool skipAdd = false);
 	void clearText();
 	void replaceLastLine(Common::String str);
 	void removeLastLine();
