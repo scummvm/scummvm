@@ -59,8 +59,8 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 		_palinfo2 = textStream.readUint16();
 		_palinfo3 = textStream.readUint16();
 
-		debugC(3, kDebugText, "Stxt init: formattingCount: %u, formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d",
-			   formattingCount, formatStartOffset, height, ascent, _fontId, _textSlant);
+		debugC(3, kDebugText, "Stxt init: formattingCount: %u, formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d padding: 0x%02x",
+			   formattingCount, formatStartOffset, height, ascent, _fontId, _textSlant, padding);
 
 		debugC(3, kDebugText, "        fontSize: %d, p0: %x p1: %x p2: %x", _fontSize, _palinfo1, _palinfo2, _palinfo3);
 
