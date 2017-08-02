@@ -347,7 +347,7 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 	}
 
 	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y),
-									    MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + w)),
+									    MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)),
 										Common::Point(xoff, yoff));
 }
 
