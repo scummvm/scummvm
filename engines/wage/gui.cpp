@@ -231,7 +231,9 @@ void Gui::draw() {
 	}
 
 	drawScene();
+#ifndef USE_MACTEXTWINDOW
 	drawConsole();
+#endif
 
 	_wm.draw();
 

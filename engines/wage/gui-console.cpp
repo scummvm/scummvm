@@ -81,6 +81,9 @@ void Gui::clearOutput() {
 }
 
 void Gui::appendText(const char *s) {
+#ifdef USE_MACTEXTWINDOW
+	_consoleWindow->appendText(s, getConsoleMacFont());
+#else
 	Common::String str(s);
 	_consoleDirty = true;
 
@@ -107,9 +110,6 @@ void Gui::appendText(const char *s) {
 	// Process last/leftover line
 	_out.push_back(tmp);
 	flowText(tmp);
-
-#ifdef USE_MACTEXTWINDOW1
-	_consoleWindow->appendText(s, getConsoleMacFont());
 #endif // USE_MACTEXTWINDOW
 }
 
@@ -164,7 +164,7 @@ void Gui::reflowText() {
 	for (uint i = 0; i < _out.size(); i++)
 		flowText(_out[i]);
 
-#ifdef USE_MACTEXTWINDOW
+#ifdef USE_MACTEXTWINDOW1
 	// Append _lines content to MacTextWindow after it has
 	// been processed by flowText above
 	_consoleWindow->clearText();
