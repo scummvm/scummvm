@@ -163,7 +163,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 				_inputText.deleteLastChar();
 				_inputIsDirty = true;
 			}
-			break;
+			return true;
 
 		case Common::KEYCODE_RETURN:
 			undrawInput();
