@@ -181,7 +181,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 void MacTextWindow::drawInput() {
 	// First, we kill previous input text
-	for (uint i = 0; i < _inputTextHeight; i++)
+	for (uint i = 1; i < _inputTextHeight; i++)
 		_mactext->removeLastLine();
 
 	Common::Array<Common::String> text;
@@ -191,7 +191,7 @@ void MacTextWindow::drawInput() {
 	_inputTextHeight = MAX(1u, text.size()); // We always have line to clean
 
 	// And add new input line to the text
-	appendText(Common::String("\n" + _inputText), _font);
+	appendText(_inputText, _font);
 
 	_cursorX = _inputText.empty() ? 0 : _fontRef->getStringWidth(text[_inputTextHeight - 1]);
 
