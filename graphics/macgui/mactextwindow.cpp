@@ -132,7 +132,7 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 }
 
 bool MacTextWindow::processEvent(Common::Event &event) {
-	WindowClick click = isInBorder(event.mouse.x, event.mouse.y);
+	/*WindowClick click =*/ isInBorder(event.mouse.x, event.mouse.y);
 
 	if (event.type == Common::EVENT_KEYDOWN) {
 		_wm->setActive(getId());
