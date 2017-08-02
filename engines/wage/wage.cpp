@@ -219,7 +219,11 @@ void WageEngine::setMenu(Common::String menu) {
 }
 
 void WageEngine::appendText(const char *str) {
-	_gui->appendText(str);
+	Common::String s(str);
+
+	s += '\n';
+
+	_gui->appendText(s.c_str());
 
 	_inputText.clear();
 }
