@@ -101,7 +101,6 @@ public:
 			}
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
-	void resizeAndFormatLines(uint numNewLines, MacFontRun * fontRun);
 	void appendText(Common::String str, int fontId, int fontSize, int fontSlant);
 	void appendTextDefault(Common::String str);
 	void clearText();

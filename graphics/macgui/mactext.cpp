@@ -364,17 +364,6 @@ uint getNewlinesInString(const Common::String &str) {
 	return newLines;
 }
 
-// Appends numNewLines new lines in _textLines, formatted with the MacFontRun specified
-void MacText::resizeAndFormatLines(uint numNewLines, MacFontRun *fontRun) {
-	uint oldLen = _textLines.size();
-
-	// Resize _textLines appropriately
-	for (uint curLine = 0; curLine < numNewLines; ++curLine) {
-		_textLines.resize(oldLen + numNewLines);
-		_textLines[oldLen + curLine].chunks.push_back(*fontRun);
-	}
-}
-
 void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular) {
 	uint oldLen = _textLines.size();
 	uint newLines = 1 + getNewlinesInString(str);
@@ -385,8 +374,6 @@ void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int f
 
 	_str += fontRun.toString();
 	_str += str;
-
-	//resizeAndFormatLines(newLines, &fontRun);
 
 	splitString(str);
 	recalcDims();
@@ -402,8 +389,6 @@ void MacText::appendTextDefault(Common::String str) {
 
 	_str += _defaultFormatting.toString();
 	_str += str;
-
-	//resizeAndFormatLines(newLines, &_defaultFormatting);
 
 	splitString(str);
 	recalcDims();
