@@ -366,7 +366,6 @@ uint getNewlinesInString(const Common::String &str) {
 
 void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular) {
 	uint oldLen = _textLines.size();
-	uint newLines = 1 + getNewlinesInString(str);
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
 
@@ -383,7 +382,6 @@ void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int f
 
 void MacText::appendTextDefault(Common::String str) {
 	uint oldLen = _textLines.size();
-	uint newLines = 1 + getNewlinesInString(str);
 
 	_currentFormatting = _defaultFormatting;
 
