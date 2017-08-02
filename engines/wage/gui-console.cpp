@@ -329,6 +329,8 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 }
 
 void Gui::drawInput() {
+#ifndef USE_MACTEXTWINDOW
+
 	if (!_screen.getPixels())
 		return;
 	_wm.setActive(_consoleWindow->getId());
@@ -338,7 +340,6 @@ void Gui::drawInput() {
 	appendText(_engine->_inputText.c_str());
 	_inputTextLineNum = _out.size() - 1;
 
-#ifndef USE_MACTEXTWINDOW
 	const Graphics::Font *font = getConsoleFont();
 
 	if (_engine->_inputText.contains('\n')) {
@@ -371,7 +372,8 @@ void Gui::drawInput() {
 	}
 
 	_cursorX = font->getStringWidth(_out[_inputTextLineNum]) + kConHPadding;
-
+#else
+	warning("Gui::drawInput()");
 #endif // USE_MACTEXTWINDOW
 }
 
