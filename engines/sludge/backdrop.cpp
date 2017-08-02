@@ -300,6 +300,11 @@ void GraphicsManager::blankScreen(int x1, int y1, int x2, int y2) {
 		y2 = (int)_sceneHeight;
 
 	_backdropSurface.fillRect(Common::Rect(x1, y1, x2, y2), _currentBlankColour);
+
+	// reset zBuffer
+	if (_zBuffer->originalNum >= 0) {
+		setZBuffer(_zBuffer->originalNum);
+	}
 }
 
 void GraphicsManager::blankAllScreen() {
@@ -345,6 +350,11 @@ void GraphicsManager::drawHorizontalLine(uint x1, uint y, uint x2) {
 void GraphicsManager::darkScreen() {
 	Graphics::TransparentSurface tmp(_backdropSurface, false);
 	tmp.blit(_backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(0, 255 >> 1, 0, 0));
+
+	// reset zBuffer
+	if (_zBuffer->originalNum >= 0) {
+		setZBuffer(_zBuffer->originalNum);
+	}
 }
 
 void GraphicsManager::drawBackDrop() {
