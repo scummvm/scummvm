@@ -74,7 +74,8 @@ MacText::MacText(Common::String s, MacWindowManager *wm, const MacFont *macFont,
 
 	_currentFormatting = _defaultFormatting;
 
-	splitString(_str);
+	if (!_str.empty())
+		splitString(_str);
 
 	recalcDims();
 
