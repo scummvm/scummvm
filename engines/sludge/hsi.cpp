@@ -50,9 +50,9 @@ bool HSIDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int32 transCol = _reserve > 0 ? -1 : 63519;
 	int n;
 	uint16 width = stream.readUint16BE();
-	debug(kSludgeDebugGraphics, "picWidth : %i", width);
+	debugC(2, kSludgeDebugGraphics, "picWidth : %i", width);
 	uint16 height = stream.readUint16BE();
-	debug(kSludgeDebugGraphics, "picHeight : %i", height);
+	debugC(2, kSludgeDebugGraphics, "picHeight : %i", height);
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, *g_sludge->getScreenPixelFormat());

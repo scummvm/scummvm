@@ -453,7 +453,7 @@ bool addVarToStack(const Variable &va, VariableStack *&thisStack) {
 		return false;
 	newStack->next = thisStack;
 	thisStack = newStack;
-	//debug(kSludgeDebugStackMachine, "Variable %s was added to stack", getTextFromAnyVar(va));
+	//debugC(2, kSludgeDebugStackMachine, "Variable %s was added to stack", getTextFromAnyVar(va));
 	return true;
 }
 
@@ -469,7 +469,7 @@ bool addVarToStackQuick(Variable &va, VariableStack *&thisStack) {
 
 	newStack->next = thisStack;
 	thisStack = newStack;
-	//debug(kSludgeDebugStackMachine, "Variable %s was added to stack quick", getTextFromAnyVar(va));
+	//debugC(2, kSludgeDebugStackMachine, "Variable %s was added to stack quick", getTextFromAnyVar(va));
 	return true;
 }
 
@@ -544,7 +544,7 @@ void trimStack(VariableStack *&stack) {
 	VariableStack *killMe = stack;
 	stack = stack->next;
 
-	//debug(kSludgeDebugStackMachine, "Variable %s was removed from stack", getTextFromAnyVar(killMe->thisVar));
+	//debugC(2, kSludgeDebugStackMachine, "Variable %s was removed from stack", getTextFromAnyVar(killMe->thisVar));
 
 	// When calling this, we've ALWAYS checked that stack != NULL
 	unlinkVar(killMe->thisVar);

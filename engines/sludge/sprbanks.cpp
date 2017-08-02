@@ -46,11 +46,11 @@ LoadedSpriteBank *GraphicsManager::loadBankForAnim(int ID) {
 		returnMe->ID = ID;
 		if (loadSpriteBank(ID, returnMe->bank, false)) {
 			returnMe->timesUsed = 0;
-			debug(kSludgeDebugDataLoad, "loadBankForAnim: New sprite bank created OK");
+			debugC(2, kSludgeDebugDataLoad, "loadBankForAnim: New sprite bank created OK");
 			_allLoadedBanks.push_back(returnMe);
 			return returnMe;
 		} else {
-			debug(kSludgeDebugDataLoad, "loadBankForAnim: I guess I couldn't load the sprites...");
+			debugC(2, kSludgeDebugDataLoad, "loadBankForAnim: I guess I couldn't load the sprites...");
 			return nullptr;
 		}
 	} else

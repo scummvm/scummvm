@@ -73,7 +73,7 @@ int checkNew(const void *mem) {
 
 void setFatalInfo(const Common::String &userFunc, const Common::String &BIF) {
 	g_sludge->fatalInfo = "Currently in this sub: " + userFunc + "\nCalling: " + BIF;
-	debug(kSludgeDebugFatal, "%s", g_sludge->fatalInfo.c_str());
+	debugC(0, kSludgeDebugFatal, "%s", g_sludge->fatalInfo.c_str());
 }
 
 void setResourceForFatal(int n) {

@@ -115,12 +115,14 @@ bool GraphicsManager::setZBuffer(int num) {
 	}
 
 	_zBuffer->numPanels = readStream->readByte();
+	debugC(2, kSludgeDebugZBuffer, "Loading zBuffer : %i panels", _zBuffer->numPanels);
 	for (int y = 0; y < _zBuffer->numPanels; y++) {
 		yPalette[y] = readStream->readUint16BE();
 	}
 	sortZPal(yPalette, sorted, _zBuffer->numPanels);
 	for (int y = 0; y < _zBuffer->numPanels; y++) {
 		_zBuffer->panel[y] = yPalette[sorted[y]];
+		debugC(2, kSludgeDebugZBuffer, "Y-value : %i", _zBuffer->panel[y]);
 		sortback[sorted[y]] = y;
 	}
 

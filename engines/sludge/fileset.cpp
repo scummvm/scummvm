@@ -181,7 +181,7 @@ void ResourceManager::setFileIndices(uint numLanguages, uint skipBefore) {
 		skipBefore--;
 	}
 	_startOfTextIndex = _bigDataFile->pos() + 4;
-	debug(kSludgeDebugDataLoad, "startOfTextIndex: %i", _startOfTextIndex);
+	debugC(2, kSludgeDebugDataLoad, "startOfTextIndex: %i", _startOfTextIndex);
 
 	_bigDataFile->seek(_bigDataFile->readUint32LE(), SEEK_SET);
 
@@ -192,15 +192,15 @@ void ResourceManager::setFileIndices(uint numLanguages, uint skipBefore) {
 
 	_startOfSubIndex = _bigDataFile->pos() + 4;
 	_bigDataFile->seek(_bigDataFile->readUint32LE(), SEEK_CUR);
-	debug(kSludgeDebugDataLoad, "startOfSubIndex: %i", _startOfSubIndex);
+	debugC(2, kSludgeDebugDataLoad, "startOfSubIndex: %i", _startOfSubIndex);
 
 	_startOfObjectIndex = _bigDataFile->pos() + 4;
 	_bigDataFile->seek(_bigDataFile->readUint32LE(), SEEK_CUR);
-	debug(kSludgeDebugDataLoad, "startOfObjectIndex: %i", _startOfObjectIndex);
+	debugC(2, kSludgeDebugDataLoad, "startOfObjectIndex: %i", _startOfObjectIndex);
 
 	// Remember that the data section starts here
 	_startOfDataIndex = _bigDataFile->pos();
-	debug(kSludgeDebugDataLoad, "startOfDataIndex: %i", _startOfDataIndex);
+	debugC(2, kSludgeDebugDataLoad, "startOfDataIndex: %i", _startOfDataIndex);
 }
 
 } // End of namespace Sludge

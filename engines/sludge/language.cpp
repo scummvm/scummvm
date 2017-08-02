@@ -48,7 +48,7 @@ void LanguageManager::init(Common::File *fp) {
 	// get number of languages
 	_numLanguages =
 				(gameVersion >= VERSION(1, 3)) ? (fp->readByte()) : 0;
-	debug(kSludgeDebugDataLoad, "numLanguages : %c", _numLanguages);
+	debugC(2, kSludgeDebugDataLoad, "numLanguages : %c", _numLanguages);
 
 	// make language table
 	_languageTable = new uint[_numLanguages + 1];
@@ -61,12 +61,12 @@ void LanguageManager::init(Common::File *fp) {
 
 	for (uint i = 0; i <= _numLanguages; i++) {
 		_languageTable[i] = i ? fp->readUint16BE() : 0;
-		debug(kSludgeDebugDataLoad, "languageTable %i: %i", i, _languageTable[i]);
+		debugC(2, kSludgeDebugDataLoad, "languageTable %i: %i", i, _languageTable[i]);
 		_languageNames[i].clear();
 		if (gameVersion >= VERSION(2, 0)) {
 			if (_numLanguages) {
 				_languageNames[i] = readString(fp);
-				debug(kSludgeDebugDataLoad, "languageName %i: %s\n", i, _languageNames[i].c_str());
+				debugC(2, kSludgeDebugDataLoad, "languageName %i: %s\n", i, _languageNames[i].c_str());
 			}
 		}
 	}

@@ -130,7 +130,7 @@ bool GraphicsManager::loadSpriteBank(int fileNum, SpriteBank &loadhere, bool isF
 
 	// version 3, sprite is png
 	if (spriteBankVersion == 3) {
-		debug(kSludgeDebugGraphics, "png sprite");
+		debugC(2, kSludgeDebugGraphics, "png sprite");
 		for (int i = 0; i < total; i++) {
 			loadhere.sprites[i].xhot = readStream->readSint16LE();
 			loadhere.sprites[i].yhot = readStream->readSint16LE();
@@ -416,9 +416,11 @@ void GraphicsManager::resetSpriteLayers(ZBufferData *pz, int x, int y, bool upsi
 	if (_spriteLayers->numLayers > 0)
 		killSpriteLayers();
 	_spriteLayers->numLayers = pz->numPanels;
+	debugC(3, kSludgeDebugZBuffer, "%i zBuffer layers", _spriteLayers->numLayers);
 	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
 		SpriteDisplay node(x, y, (upsidedown ? Graphics::FLIP_V : Graphics::FLIP_NONE), &pz->sprites[i], pz->sprites[i].w, pz->sprites[i].h);
 		_spriteLayers->layer[i].push_back(node);
+		debugC(3, kSludgeDebugZBuffer, "Layer %i is of depth %i", i, pz->panel[i]);
 	}
 }
 
@@ -430,12 +432,14 @@ void GraphicsManager::addSpriteDepth(Graphics::Surface *ptr, int depth, int x, i
 		}
 	}
 	--i;
+	debugC(3, kSludgeDebugZBuffer, "Add sprite of Y-value : %i in layer %i", depth, i);
 	SpriteDisplay node(x, y, flip, ptr, width, height, color);
 	_spriteLayers->layer[i].push_back(node);
 }
 
 void GraphicsManager::displaySpriteLayers() {
 	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
+		debugC(3, kSludgeDebugGraphics, "Display layer %i with %i sprites", i, _spriteLayers->layer[i].size());
 		Common::List<SpriteDisplay>::iterator it;
 		for (it = _spriteLayers->layer[i].begin(); it != _spriteLayers->layer[i].end(); ++it) {
 			Graphics::TransparentSurface tmp(*it->surface, false);

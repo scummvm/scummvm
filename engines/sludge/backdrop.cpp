@@ -235,7 +235,7 @@ void GraphicsManager::killAllBackDrop() {
 }
 
 bool GraphicsManager::resizeBackdrop(int x, int y) {
-	debug(kSludgeDebugGraphics, "Load HSI");
+	debugC(1, kSludgeDebugGraphics, "Load HSI");
 	_sceneWidth = x;
 	_sceneHeight = y;
 	return reserveBackdrop();
@@ -247,7 +247,7 @@ bool GraphicsManager::killResizeBackdrop(int x, int y) {
 }
 
 void GraphicsManager::loadBackDrop(int fileNum, int x, int y) {
-	debug(kSludgeDebugGraphics, "Load back drop of num %i at position %i, %i", fileNum, x, y);
+	debugC(1, kSludgeDebugGraphics, "Load back drop of num %i at position %i, %i", fileNum, x, y);
 	setResourceForFatal(fileNum);
 	if (!g_sludge->_resMan->openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
@@ -269,7 +269,7 @@ void GraphicsManager::loadBackDrop(int fileNum, int x, int y) {
 }
 
 void GraphicsManager::mixBackDrop(int fileNum, int x, int y) {
-	debug(kSludgeDebugGraphics, "Mix back drop of num %i at position %i, %i", fileNum, x, y);
+	debugC(1, kSludgeDebugGraphics, "Mix back drop of num %i at position %i, %i", fileNum, x, y);
 	setResourceForFatal(fileNum);
 	if (!g_sludge->_resMan->openFileFromNum(fileNum)) {
 		fatal("Can't load overlay image");
@@ -415,7 +415,7 @@ bool GraphicsManager::loadLightMap(int ssgVersion, Common::SeekableReadStream *s
 }
 
 bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
-	debug(kSludgeDebugGraphics, "Load HSI");
+	debugC(1, kSludgeDebugGraphics, "Load HSI");
 	if (reserve) {
 		killAllBackDrop(); // kill all
 	}
@@ -439,7 +439,7 @@ bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, 
 	if (y == IN_THE_CENTRE)
 		y = (_sceneHeight - realPicHeight) >> 1;
 	if (x < 0 || x + realPicWidth > _sceneWidth || y < 0 || y + realPicHeight > _sceneHeight) {
-		debug(kSludgeDebugGraphics, "Illegal back drop size");
+		debugC(0, kSludgeDebugGraphics, "Illegal back drop size");
 		return false;
 	}
 
@@ -454,7 +454,7 @@ bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, 
 }
 
 bool GraphicsManager::mixHSI(Common::SeekableReadStream *stream, int x, int y) {
-	debug(kSludgeDebugGraphics, "Load mixHSI");
+	debugC(1, kSludgeDebugGraphics, "Load mixHSI");
 	Graphics::Surface mixSurface;
 	if (!ImgLoader::loadImage(stream, &mixSurface, 0))
 		return false;
