@@ -138,9 +138,10 @@ bool CFanNoises::StatusChangeMsg(CStatusChangeMsg *msg) {
 			}
 
 			switch (oldState) {
-			case 1:
+			case 0:
 			case 2:
-				_soundHandle = playSound("b#60.wav", _soundPercent, _soundBalance);
+				_soundHandle = playSound("b#60.wav", _soundPercent, _soundBalance, true);
+				_startFlag = true;
 				break;
 			default:
 				break;
@@ -157,6 +158,7 @@ bool CFanNoises::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 			if (oldState == 1) {
 				_soundHandle = playSound("b#58.wav", _soundPercent, _soundBalance, true);
+				_startFlag = true;
 			}
 			break;
 

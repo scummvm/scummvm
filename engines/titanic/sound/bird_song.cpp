@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CBirdSong, CAutoSoundPlayer)
+BEGIN_MESSAGE_MAP(CBirdSong, CRoomAutoSoundPlayer)
 	ON_MESSAGE(TurnOn)
 	ON_MESSAGE(SignalObject)
 END_MESSAGE_MAP()

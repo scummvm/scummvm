@@ -33,13 +33,13 @@ BEGIN_MESSAGE_MAP(CAutoSoundPlayer, CGameObject)
 END_MESSAGE_MAP()
 
 CAutoSoundPlayer::CAutoSoundPlayer() : CGameObject(),
-	_fieldBC(0), _volume(70), _balance(0), _repeated(false), _soundHandle(-1),
-	_stopSeconds(0), _startSeconds(-1), _active(false), _fieldE8(0) {
+	_unused(0), _volume(70), _balance(0), _repeated(false), _soundHandle(-1),
+	_stopSeconds(0), _startSeconds(-1), _active(false), _isVectorSound(false) {
 }
 
 void CAutoSoundPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_unused, indent);
 	file->writeQuotedLine(_filename, indent);
 	file->writeNumberLine(_volume, indent);
 	file->writeNumberLine(_balance, indent);
@@ -48,14 +48,14 @@ void CAutoSoundPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_stopSeconds, indent);
 	file->writeNumberLine(_startSeconds, indent);
 	file->writeNumberLine(_active, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_isVectorSound, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CAutoSoundPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
+	_unused = file->readNumber();
 	_filename = file->readString();
 	_volume = file->readNumber();
 	_balance = file->readNumber();
@@ -64,7 +64,7 @@ void CAutoSoundPlayer::load(SimpleFile *file) {
 	_stopSeconds = file->readNumber();
 	_startSeconds = file->readNumber();
 	_active = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_isVectorSound = file->readNumber();
 
 	CGameObject::load(file);
 }
@@ -74,7 +74,7 @@ bool CAutoSoundPlayer::TurnOn(CTurnOn *msg) {
 		CProximity prox;
 		prox._balance = _balance;
 		prox._repeated = _repeated;
-		if (_fieldE8)
+		if (_isVectorSound)
 			prox._positioningMode = POSMODE_VECTOR;
 		prox._channelVolume = (_startSeconds == -1) ? _volume : 0;
 
