@@ -34,7 +34,8 @@ enum {
 	kConHOverlap = 20,
 	kConWPadding = 3,
 	kConHPadding = 4,
-	kConOverscan = 3
+	kConOverscan = 3,
+	kConScrollStep = 12
 };
 
 static void cursorTimerHandler(void *refCon);
@@ -182,6 +183,44 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 			break;
 		}
+	}
+
+	if (click == kBorderScrollUp || click == kBorderScrollDown) {
+		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			int consoleHeight = _innerDims.height();
+			int textFullSize = _mactext->getTextHeight();
+			float scrollPos = (float)_scrollPos / textFullSize;
+			float scrollSize = (float)consoleHeight / textFullSize;
+
+			setScroll(scrollPos, scrollSize);
+
+			return true;
+		} else if (event.type == Common::EVENT_LBUTTONUP) {
+			int oldScrollPos = _scrollPos;
+
+			switch (click) {
+			case kBorderScrollUp:
+				_scrollPos = MAX<int>(0, _scrollPos - kConScrollStep);
+				undrawCursor();
+				_cursorY -= (_scrollPos - oldScrollPos);
+				_contentIsDirty = true;
+				_borderIsDirty = true;
+				break;
+			case kBorderScrollDown:
+				_scrollPos = MIN<int>(_mactext->getTextHeight() - kConScrollStep, _scrollPos + kConScrollStep);
+				undrawCursor();
+				_cursorY -= (_scrollPos - oldScrollPos);
+				_contentIsDirty = true;
+				_borderIsDirty = true;
+				break;
+			default:
+				return false;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	return MacWindow::processEvent(event);
