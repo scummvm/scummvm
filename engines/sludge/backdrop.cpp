@@ -444,7 +444,8 @@ bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, 
 	}
 
 	// copy surface loaded to backdrop
-	_backdropSurface.copyRectToSurface(tmp.getPixels(), tmp.pitch, x, y, tmp.w, tmp.h);
+	Graphics::TransparentSurface tmp_trans(tmp, false);
+	tmp_trans.blit(_backdropSurface, x, y);
 	tmp.free();
 
 	_origBackdropSurface.copyFrom(_backdropSurface);
