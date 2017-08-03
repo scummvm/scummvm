@@ -35,7 +35,9 @@ enum {
 	kConWPadding = 3,
 	kConHPadding = 4,
 	kConOverscan = 3,
-	kConScrollStep = 12
+	kConScrollStep = 12,
+
+	kCursorHeight = 12
 };
 
 static void cursorTimerHandler(void *refCon);
