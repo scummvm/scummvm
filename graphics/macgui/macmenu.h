@@ -59,6 +59,7 @@ public:
 	bool processEvent(Common::Event &event);
 
 	void enableCommand(int menunum, int action, bool state);
+	void enableCommand(const char *menuitem, const char *menuaction, bool state);
 	void disableAllMenus();
 
 	void setActive(bool active) { _menuActivated = active; }

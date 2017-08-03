@@ -591,6 +591,25 @@ void MacMenu::enableCommand(int menunum, int action, bool state) {
 	_contentIsDirty = true;
 }
 
+void MacMenu::enableCommand(const char *menuitem, const char *menuaction, bool state) {
+	int menunum = 0;
+
+	while (menunum < _items.size())
+		if (_items[menunum]->name.equalsIgnoreCase(menuitem))
+			break;
+		else
+			menunum++;
+
+	if (menunum == _items.size())
+		return;
+
+	for (uint i = 0; i < _items[menunum]->subitems.size(); i++)
+		if (_items[menunum]->subitems[i]->text.equalsIgnoreCase(menuaction))
+			_items[menunum]->subitems[i]->enabled = state;
+
+	_contentIsDirty = true;
+}
+
 void MacMenu::disableAllMenus() {
 	for (uint i = 1; i < _items.size(); i++) // Leave About menu on
 		for (uint j = 0; j < _items[i]->subitems.size(); j++)

@@ -107,7 +107,7 @@ public:
 	 * @return Pointer to the newly created window.
 	 */
 	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
-	MacTextWindow *addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment);
+	MacTextWindow *addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu);
 
 	/**
 	 * Adds a window that has already been initialized to the registry.

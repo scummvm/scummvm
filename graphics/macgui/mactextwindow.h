@@ -48,7 +48,7 @@ struct SelectedText {
 
 class MacTextWindow : public MacWindow {
 public:
-	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment);
+	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu);
 	virtual ~MacTextWindow();
 
 	virtual void resize(int w, int h);
@@ -102,6 +102,7 @@ private:
 	uint _inputTextHeight;
 	bool _inputIsDirty;
 
+	MacMenu *_menu;
 };
 
 } // End of namespace Graphics

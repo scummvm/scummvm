@@ -26,6 +26,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactextwindow.h"
+#include "graphics/macgui/macmenu.h"
 
 namespace Graphics {
 
@@ -42,10 +43,11 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) :
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu) :
 		MacWindow(wm->getLastId(), true, true, true, wm) {
 
 	_font = font;
+	_menu = menu;
 	_mactext = new MacText("", _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
 
 	_fontRef = wm->_fontMan->getFont(*font);
@@ -294,17 +296,17 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 						(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
 					_selectedText.startY = _selectedText.endY = -1;
 					_contentIsDirty = true;
-					//_menu->enableCommand(kMenuEdit, kMenuActionCopy, false);
+					_menu->enableCommand("Edit", "Copy", false);
 				} else {
-					//_menu->enableCommand(kMenuEdit, kMenuActionCopy, true);
+					_menu->enableCommand("Edit", "Copy", true);
 
 					bool cutAllowed = false;
 
 					if (_selectedText.startY == _selectedText.endY && _selectedText.startY == _mactext->getLineCount() - 1)
 						cutAllowed = true;
 
-					//_menu->enableCommand(kMenuEdit, kMenuActionCut, cutAllowed);
-					//_menu->enableCommand(kMenuEdit, kMenuActionClear, cutAllowed);
+					_menu->enableCommand("Edit", "Cut", cutAllowed);
+					_menu->enableCommand("Edit", "Clear", cutAllowed);
 				}
 			}
 
