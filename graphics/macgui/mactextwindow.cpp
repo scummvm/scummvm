@@ -155,16 +155,22 @@ void MacTextWindow::drawSelection() {
 	if (_selectedText.endY == -1)
 		return;
 
-	int start = MIN(_selectedText.startY, _selectedText.endY);
-	start -= _scrollPos;
+	SelectedText s = _selectedText;
+
+	if (s.startY > s.endY) {
+		SWAP(s.startX, s.endX);
+		SWAP(s.startY, s.endY);
+		SWAP(s.startRow, s.endRow);
+		SWAP(s.startCol, s.endCol);
+	}
+
+	int start = s.startY - _scrollPos;
 	start = MAX(0, start);
 
 	if (start > getInnerDimensions().height())
 		return;
 
-	int end = MAX(_selectedText.startY, _selectedText.endY);
-
-	end -= _scrollPos;
+	int end = s.endY - _scrollPos;
 
 	if (end < 0)
 		return;
