@@ -109,6 +109,7 @@ public:
 	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }
 	int getTextHeight() { return _textMaxHeight; }
+	int getLineHeight(int line);
 
 	void render();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
@@ -121,7 +122,6 @@ private:
 	void recalcDims();
 	void reallocSurface();
 	int getLineWidth(int line, bool enforce = false);
-	int getLineHeight(int line);
 
 private:
 	MacWindowManager *_wm;

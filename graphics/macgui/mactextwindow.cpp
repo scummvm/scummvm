@@ -164,6 +164,9 @@ void MacTextWindow::drawSelection() {
 		SWAP(s.startCol, s.endCol);
 	}
 
+	int lastLineHeight = _mactext->getLineHeight(s.endRow);
+	s.endY += lastLineHeight;
+
 	int start = s.startY - _scrollPos;
 	start = MAX(0, start);
 
@@ -177,10 +180,29 @@ void MacTextWindow::drawSelection() {
 
 	end = MIN((int)getInnerDimensions().height(), end);
 
-	for (int y = start; y < end; y++) {
-		byte *ptr = (byte *)_composeSurface.getBasePtr(kConWOverlap - 2, kConWOverlap - 2 + y);
+	int numLines = 0;
+	int x1, x2;
 
-		for (int x = 0; x < getInnerDimensions().width(); x++, ptr++)
+	for (int y = start; y < end; y++) {
+		if (!numLines) {
+			x1 = 0;
+			x2 = getInnerDimensions().width();
+
+			if (y + _scrollPos == s.startY && s.startX > 0) {
+				numLines = _mactext->getLineHeight(s.startRow);
+				x1 = s.startX;
+			}
+			if (y + _scrollPos == s.endY - lastLineHeight) {
+				numLines = _mactext->getLineHeight(s.endRow);
+				x2 = s.endX;
+			}
+		} else {
+			numLines--;
+		}
+
+		byte *ptr = (byte *)_composeSurface.getBasePtr(x1 + kConWOverlap - 2, y + kConWOverlap - 2);
+
+		for (int x = x1; x < x2; x++, ptr++)
 			if (*ptr == kColorBlack)
 				*ptr = kColorWhite;
 			else
