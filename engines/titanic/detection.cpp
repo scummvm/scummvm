@@ -33,8 +33,6 @@
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
-#define MAX_SAVES 99
-
 namespace Titanic {
 
 struct TitanicGameDescription {
