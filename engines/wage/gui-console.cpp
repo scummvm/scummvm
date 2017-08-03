@@ -380,16 +380,15 @@ void Gui::actionCopy() {
 
 void Gui::actionPaste() {
 	_undobuffer = _engine->_inputText;
-	_engine->_inputText += _clipboard;
-	drawInput();
-	_engine->_inputText = _out.back();	// Set last part of the multiline text
+
+	_consoleWindow->appendInput(_clipboard);
 
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
 }
 
 void Gui::actionUndo() {
-	_engine->_inputText = _undobuffer;
-	drawInput();
+	_consoleWindow->clearInput();
+	_consoleWindow->appendInput(_clipboard);
 
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }
