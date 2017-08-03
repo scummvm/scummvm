@@ -77,7 +77,7 @@ void MacTextWindow::resize(int w, int h) {
 
 	MacWindow::resize(w, h);
 
-	_maxWidth = _innerDims.width();
+	_maxWidth = getInnerDimensions().width();
 	_mactext->setMaxWidth(_maxWidth);
 }
 
@@ -86,7 +86,7 @@ void MacTextWindow::appendText(Common::String str, const MacFont *macFont, bool 
 
 	_contentIsDirty = true;
 
-	_scrollPos = MAX(0, _mactext->getTextHeight() - _innerDims.height());
+	_scrollPos = MAX(0, _mactext->getTextHeight() - getInnerDimensions().height());
 
 	updateCursorPos();
 }
@@ -189,7 +189,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			int consoleHeight = _innerDims.height();
+			int consoleHeight = getInnerDimensions().height();
 			int textFullSize = _mactext->getTextHeight();
 			float scrollPos = (float)_scrollPos / textFullSize;
 			float scrollSize = (float)consoleHeight / textFullSize;

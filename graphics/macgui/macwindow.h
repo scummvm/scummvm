@@ -308,7 +308,6 @@ protected:
 	ManagedSurface _composeSurface;
 
 	bool _borderIsDirty;
-	Common::Rect _innerDims;
 
 private:
 	MacWindowBorder _macBorder;
@@ -323,6 +322,7 @@ private:
 	bool _closeable;
 
 	int _borderWidth;
+	Common::Rect _innerDims;
 
 	bool _beingDragged, _beingResized;
 	int _draggedX, _draggedY;
