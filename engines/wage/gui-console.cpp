@@ -373,37 +373,7 @@ void Gui::drawInput() {
 }
 
 void Gui::actionCopy() {
-	if (_selectionStartX == -1)
-		return;
-
-	int startX = _selectionStartX;
-	int startY = _selectionStartY;
-	int endX = _selectionEndX;
-	int endY = _selectionEndY;
-
-	if (startY > endY) {
-		SWAP(startX, endX);
-		SWAP(endX, endY);
-	}
-
-	_clipboard.clear();
-
-	for (int i = startY; i <= endY; i++) {
-		if (startY == endY) {
-			_clipboard = Common::String(&_lines[i].c_str()[startX], &_lines[i].c_str()[endX]);
-			break;
-		}
-
-		if (i == startY) {
-			_clipboard += &_lines[i].c_str()[startX];
-			_clipboard += '\n';
-		} else if (i == endY) {
-			_clipboard += Common::String(_lines[i].c_str(), &_lines[i].c_str()[endX]);
-		} else {
-			_clipboard += _lines[i];
-			_clipboard += '\n';
-		}
-	}
+	_clipboard = _consoleWindow->getSelection();
 
 	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 }
