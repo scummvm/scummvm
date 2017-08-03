@@ -143,7 +143,7 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (_cursorState)
 		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap, _cursorY + kConHOverlap));
 
-	if (_inTextSelection)
+	if (_selectedText.endY != -1)
 		drawSelection();
 
 	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
