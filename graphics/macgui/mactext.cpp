@@ -454,6 +454,9 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	while (*row < _textLines.size() - 1 && _textLines[*row].y < y)
 		(*row)++;
 
+	if (*row)
+		(*row)--;
+
 	*sy = _textLines[*row].y;
 
 	*col = 0;
