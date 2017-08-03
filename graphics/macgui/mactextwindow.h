@@ -31,10 +31,14 @@ namespace Graphics {
 struct SelectedText {
 	int startX, startY;
 	int endX, endY;
+	int startRow, startCol;
+	int endRow, endCol;
 
 	SelectedText() {
 		startX = startY = 0;
 		endX = endY = 0;
+		startRow = startCol = 0;
+		endRow = endCol = 0;
 	}
 
 	bool needsRender() {

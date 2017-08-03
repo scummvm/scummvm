@@ -266,7 +266,7 @@ void MacTextWindow::startMarking(int x, int y) {
 
 	y += _scrollPos;
 
-	_mactext->getRowCol(x, y, &_selectedText.startX, &_selectedText.startY);
+	_mactext->getRowCol(x, y, &_selectedText.endX, &_selectedText.endY, &_selectedText.endRow, &_selectedText.endCol);
 
 	_selectedText.endY = -1;
 
@@ -279,7 +279,7 @@ void MacTextWindow::updateTextSelection(int x, int y) {
 
 	y += _scrollPos;
 
-	_mactext->getRowCol(x, y, &_selectedText.endX, &_selectedText.endY);
+	_mactext->getRowCol(x, y, &_selectedText.endX, &_selectedText.endY, &_selectedText.endRow, &_selectedText.endCol);
 
 	_contentIsDirty = true;
 }
