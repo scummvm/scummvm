@@ -71,6 +71,9 @@ private:
 	void drawInput();
 	void updateCursorPos();
 
+	void startMarking(int x, int y);
+	void updateTextSelection(int x, int y);
+
 public:
 	int _cursorX, _cursorY;
 	bool _cursorState;
@@ -88,6 +91,7 @@ private:
 
 	ManagedSurface *_cursorSurface;
 
+	bool _inTextSelection;
 	SelectedText _selectedText;
 
 	int _maxWidth;

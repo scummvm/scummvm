@@ -54,6 +54,7 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	_maxWidth = maxWidth;
 
 	_inputIsDirty = true;
+	_inTextSelection = false;
 
 	_scrollPos = 0;
 
@@ -225,7 +226,69 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		return false;
 	}
 
+	if (click == kBorderInner) {
+		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			startMarking(event.mouse.x, event.mouse.y);
+
+			return true;
+		} else if (event.type == Common::EVENT_LBUTTONUP) {
+			if (_inTextSelection) {
+				_inTextSelection = false;
+
+				if (_selectedText.endY == -1 ||
+						(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
+					_selectedText.startY = _selectedText.endY = -1;
+					_contentIsDirty = true;
+					//_menu->enableCommand(kMenuEdit, kMenuActionCopy, false);
+				} else {
+					//_menu->enableCommand(kMenuEdit, kMenuActionCopy, true);
+
+					bool cutAllowed = false;
+
+					if (_selectedText.startY == _selectedText.endY && _selectedText.startY == _mactext->getLineCount() - 1)
+						cutAllowed = true;
+
+					//_menu->enableCommand(kMenuEdit, kMenuActionCut, cutAllowed);
+					//_menu->enableCommand(kMenuEdit, kMenuActionClear, cutAllowed);
+				}
+			}
+
+			return true;
+		} else if (event.type == Common::EVENT_MOUSEMOVE) {
+			if (_inTextSelection) {
+				updateTextSelection(event.mouse.x, event.mouse.y);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	return MacWindow::processEvent(event);
+}
+
+void MacTextWindow::startMarking(int x, int y) {
+	x -= getInnerDimensions().left;
+	y -= getInnerDimensions().top;
+
+	y += _scrollPos;
+
+	_mactext->getRowCol(x, y, &_selectedText.startX, &_selectedText.startY);
+
+	_selectedText.endY = -1;
+
+	_inTextSelection = true;
+}
+
+void MacTextWindow::updateTextSelection(int x, int y) {
+	x -= getInnerDimensions().left;
+	y -= getInnerDimensions().top;
+
+	y += _scrollPos;
+
+	_mactext->getRowCol(x, y, &_selectedText.endX, &_selectedText.endY);
+
+	_contentIsDirty = true;
 }
 
 void MacTextWindow::undrawInput() {

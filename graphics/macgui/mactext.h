@@ -113,6 +113,8 @@ public:
 	void render();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
 
+	void getRowCol(int x, int y, int *col, int *row);
+
 private:
 	void splitString(Common::String &s);
 	void render(int from, int to);

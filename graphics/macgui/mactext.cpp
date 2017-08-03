@@ -445,4 +445,8 @@ void MacText::removeLastLine() {
 	_textMaxHeight -= h;
 }
 
+void MacText::getRowCol(int x, int y, int *col, int *row) {
+	warning("getRowCol(%d, %d, ...)", x, y);
+}
+
 } // End of namespace Graphics
