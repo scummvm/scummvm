@@ -186,7 +186,7 @@ void MacTextWindow::drawSelection() {
 	for (int y = start; y < end; y++) {
 		if (!numLines) {
 			x1 = 0;
-			x2 = getInnerDimensions().width();
+			x2 = getInnerDimensions().width() - 1;
 
 			if (y + _scrollPos == s.startY && s.startX > 0) {
 				numLines = _mactext->getLineHeight(s.startRow);
