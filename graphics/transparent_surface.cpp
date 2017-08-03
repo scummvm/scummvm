@@ -400,19 +400,31 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	// Handle off-screen clipping
 	if (posY < 0) {
 		img->h = MAX(0, (int)img->h - -posY);
-		img->setPixels((byte *)img->getBasePtr(0, -posY));
+		if (!(flipping & FLIP_V))
+			img->setPixels((byte *)img->getBasePtr(0, -posY));
 		posY = 0;
 	}
 
 	if (posX < 0) {
 		img->w = MAX(0, (int)img->w - -posX);
-		img->setPixels((byte *)img->getBasePtr(-posX, 0));
+		if (!(flipping & FLIP_H))
+			img->setPixels((byte *)img->getBasePtr(-posX, 0));
 		posX = 0;
 	}
 
-	img->w = CLIP((int)img->w, 0, (int)MAX((int)target.w - posX, 0));
-	img->h = CLIP((int)img->h, 0, (int)MAX((int)target.h - posY, 0));
+	if (img->w > target.w - posX) {
+		if (flipping & FLIP_H)
+			img->setPixels((byte *)img->getBasePtr(img->w - target.w + posX, 0));
+		img->w = CLIP((int)img->w, 0, (int)MAX((int)target.w - posX, 0));
+	}
 
+	if (img->h > target.h - posY) {
+		if (flipping & FLIP_V)
+			img->setPixels((byte *)img->getBasePtr(0, img->h - target.h + posY));
+		img->h = CLIP((int)img->h, 0, (int)MAX((int)target.h - posY, 0));
+	}
+
+	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
 		int xp = 0, yp = 0;
 
@@ -533,19 +545,31 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 	// Handle off-screen clipping
 	if (posY < clippingArea.top) {
 		img->h = MAX(0, (int)img->h - (clippingArea.top - posY));
-		img->setPixels((byte *)img->getBasePtr(0, clippingArea.top - posY));
+		if (!(flipping & FLIP_V))
+			img->setPixels((byte *)img->getBasePtr(0, clippingArea.top - posY));
 		posY = clippingArea.top;
 	}
 
 	if (posX < clippingArea.left) {
 		img->w = MAX(0, (int)img->w - (clippingArea.left - posX));
-		img->setPixels((byte *)img->getBasePtr(clippingArea.left - posX, 0));
+		if (!(flipping & FLIP_H))
+			img->setPixels((byte *)img->getBasePtr(clippingArea.left - posX, 0));
 		posX = clippingArea.left;
 	}
 
-	img->w = CLIP((int)img->w, 0, (int)MAX((int)clippingArea.right - posX, 0));
-	img->h = CLIP((int)img->h, 0, (int)MAX((int)clippingArea.bottom - posY, 0));
+	if (img->w > clippingArea.right - posX) {
+		if (flipping & FLIP_H)
+			img->setPixels((byte *)img->getBasePtr(img->w - clippingArea.right + posX, 0));
+		img->w = CLIP((int)img->w, 0, (int)MAX((int)clippingArea.right - posX, 0));
+	}
 
+	if (img->h > clippingArea.bottom - posY) {
+		if (flipping & FLIP_V)
+			img->setPixels((byte *)img->getBasePtr(0, img->h - clippingArea.bottom + posY));
+		img->h = CLIP((int)img->h, 0, (int)MAX((int)clippingArea.bottom - posY, 0));
+	}
+
+	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
 		int xp = 0, yp = 0;
 
