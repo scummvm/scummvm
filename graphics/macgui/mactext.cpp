@@ -362,7 +362,7 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 	}
 
 	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y),
-									    MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)),
+										MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)),
 										Common::Point(xoff, yoff));
 }
 
@@ -446,7 +446,43 @@ void MacText::removeLastLine() {
 }
 
 void MacText::getRowCol(int x, int y, int *col, int *row) {
-	warning("getRowCol(%d, %d, ...)", x, y);
+	CLIP(y, 0, _textMaxHeight);
+
+	// FIXME: We should use bsearch() here
+	*row = 0;
+
+	while (*row < _textLines.size() - 1 && _textLines[*row].y < y)
+		(*row)++;
+
+	*col = 0;
+
+	int width = 0, pwidth = 0;
+	int mcol = 0, pmcol = 0;
+	uint chunk;
+	for (chunk = 0; chunk < _textLines[*row].chunks.size() - 1; chunk++) {
+		pwidth = width;
+		pmcol = mcol;
+		if (!_textLines[*row].chunks[chunk].text.empty()) {
+			width += _textLines[*row].chunks[chunk].getFont()->getStringWidth(_textLines[*row].chunks[chunk].text);
+			mcol += _textLines[*row].chunks[chunk].text.size();
+		}
+
+		if (width > x)
+			break;
+	}
+
+	Common::String str = _textLines[*row].chunks[chunk].text;
+
+	*col = mcol;
+
+	for (int i = str.size(); i >= 0; i--) {
+		if (_textLines[*row].chunks[chunk].getFont()->getStringWidth(str) + pwidth < x) {
+			*col = mcol + i;
+			break;
+		}
+
+		str.deleteLastChar();
+	}
 }
 
 } // End of namespace Graphics
