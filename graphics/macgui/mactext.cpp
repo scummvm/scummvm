@@ -500,12 +500,12 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 
 	for (int i = startRow; i <= endRow; i++) {
 		if (i == startRow && i == endRow) {
-			for (uint chunk = 0; chunk < _textLines[i].chunks.size() - 1; chunk++) {
+			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
 				if (startCol <= 0) {
 					if (formatted)
 						res += _textLines[i].chunks[chunk].toString();
 
-					if (endCol <= _textLines[i].chunks[chunk].text.size())
+					if (endCol >= _textLines[i].chunks[chunk].text.size())
 						res += _textLines[i].chunks[chunk].text;
 					else
 						res += Common::String(_textLines[i].chunks[chunk].text.c_str(), endCol);
@@ -513,7 +513,7 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 					if (formatted)
 						res += _textLines[i].chunks[chunk].toString();
 
-					res += Common::String(_textLines[i].chunks[chunk].text.c_str() + startCol);
+					res += Common::String(_textLines[i].chunks[chunk].text.c_str() + startCol, endCol - startCol);
 				}
 
 				startCol -= _textLines[i].chunks[chunk].text.size();
@@ -523,7 +523,7 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 					break;
 			}
 		} else if (i == startRow && startCol != 0) {
-			for (uint chunk = 0; chunk < _textLines[i].chunks.size() - 1; chunk++) {
+			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
 				if (startCol <= 0) {
 					if (formatted)
 						res += _textLines[i].chunks[chunk].toString();
@@ -539,11 +539,11 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 				startCol -= _textLines[i].chunks[chunk].text.size();
 			}
 		} else if (i == endRow) {
-			for (uint chunk = 0; chunk < _textLines[i].chunks.size() - 1; chunk++) {
+			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
 				if (formatted)
 					res += _textLines[i].chunks[chunk].toString();
 
-				if (endCol <= _textLines[i].chunks[chunk].text.size())
+				if (endCol >= _textLines[i].chunks[chunk].text.size())
 					res += _textLines[i].chunks[chunk].text;
 				else
 					res += Common::String(_textLines[i].chunks[chunk].text.c_str(), endCol);
@@ -554,7 +554,7 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 					break;
 			}
 		} else {
-			for (uint chunk = 0; chunk < _textLines[i].chunks.size() - 1; chunk++) {
+			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
 				if (formatted)
 					res += _textLines[i].chunks[chunk].toString();
 
