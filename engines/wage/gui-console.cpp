@@ -192,11 +192,6 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 		fullRedraw = true;
 	}
 
-#ifdef USE_MACTEXTWINDOW
-	// TODO: Call this at an appropriate place (only when the selection can change)
-	_consoleWindow->setSelection(_selectionStartX, _selectionStartY, _selectionEndX, _selectionEndY);
-#endif // USE_MACTEXTWINDOW
-
 	if (fullRedraw) {
 		_console.clear(kColorWhite);
 	}
