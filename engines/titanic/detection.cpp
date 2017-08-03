@@ -118,7 +118,7 @@ SaveStateList TitanicMetaEngine::listSaves(const char *target) const {
 		const char *ext = strrchr(file->c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
 
-		if (slot >= 0 && slot < MAX_SAVES) {
+		if (slot >= 0 && slot <= MAX_SAVES) {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
