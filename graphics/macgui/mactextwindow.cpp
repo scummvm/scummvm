@@ -166,8 +166,8 @@ void MacTextWindow::drawSelection() {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	int lastLineHeight = _mactext->getLineHeight(s.endRow);
-	s.endY += lastLineHeight;
+	int lastLineStart = s.endY;
+	s.endY += _mactext->getLineHeight(s.endRow);
 
 	int start = s.startY - _scrollPos;
 	start = MAX(0, start);
@@ -194,7 +194,7 @@ void MacTextWindow::drawSelection() {
 				numLines = _mactext->getLineHeight(s.startRow);
 				x1 = s.startX;
 			}
-			if (y + _scrollPos == s.endY - lastLineHeight) {
+			if (y + _scrollPos == lastLineStart) {
 				numLines = _mactext->getLineHeight(s.endRow);
 				x2 = s.endX;
 			}
