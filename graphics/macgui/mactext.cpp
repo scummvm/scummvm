@@ -492,4 +492,80 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	}
 }
 
+Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted) {
+	Common::String res;
+
+	CLIP(startRow, 0, (int)_textLines.size() - 1);
+	CLIP(endRow, 0, (int)_textLines.size() - 1);
+
+	for (int i = startRow; i <= endRow; i++) {
+		if (i == startRow && i == endRow) {
+			for (uint chunk = 0; chunk < _textLines[i].chunks.size() - 1; chunk++) {
+				if (startCol <= 0) {
+					if (formatted)
+						res += _textLines[i].chunks[chunk].toString();
+
+					if (endCol <= _textLines[i].chunks[chunk].text.size())
+						res += _textLines[i].chunks[chunk].text;
+					else
+						res += Common::String(_textLines[i].chunks[chunk].text.c_str(), endCol);
+				} else if (_textLines[i].chunks[chunk].text.size() > startCol) {
+					if (formatted)
+						res += _textLines[i].chunks[chunk].toString();
+
+					res += Common::String(_textLines[i].chunks[chunk].text.c_str() + startCol);
+				}
+
+				startCol -= _textLines[i].chunks[chunk].text.size();
+				endCol -= _textLines[i].chunks[chunk].text.size();
+
+				if (endCol <= 0)
+					break;
+			}
+		} else if (i == startRow && startCol != 0) {
+			for (uint chunk = 0; chunk < _textLines[i].chunks.size() - 1; chunk++) {
+				if (startCol <= 0) {
+					if (formatted)
+						res += _textLines[i].chunks[chunk].toString();
+
+					res += _textLines[i].chunks[chunk].text;
+				} else if (_textLines[i].chunks[chunk].text.size() > startCol) {
+					if (formatted)
+						res += _textLines[i].chunks[chunk].toString();
+
+					res += Common::String(_textLines[i].chunks[chunk].text.c_str() + startCol);
+				}
+
+				startCol -= _textLines[i].chunks[chunk].text.size();
+			}
+		} else if (i == endRow) {
+			for (uint chunk = 0; chunk < _textLines[i].chunks.size() - 1; chunk++) {
+				if (formatted)
+					res += _textLines[i].chunks[chunk].toString();
+
+				if (endCol <= _textLines[i].chunks[chunk].text.size())
+					res += _textLines[i].chunks[chunk].text;
+				else
+					res += Common::String(_textLines[i].chunks[chunk].text.c_str(), endCol);
+
+				endCol -= _textLines[i].chunks[chunk].text.size();
+
+				if (endCol <= 0)
+					break;
+			}
+		} else {
+			for (uint chunk = 0; chunk < _textLines[i].chunks.size() - 1; chunk++) {
+				if (formatted)
+					res += _textLines[i].chunks[chunk].toString();
+
+				res += _textLines[i].chunks[chunk].text;
+			}
+
+			res += '\n';
+		}
+	}
+
+	return res;
+}
+
 } // End of namespace Graphics

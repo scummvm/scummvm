@@ -212,6 +212,20 @@ void MacTextWindow::drawSelection() {
 	}
 }
 
+Common::String MacTextWindow::getSelection(bool formatted) {
+	if (_selectedText.endY == -1)
+		return Common::String("");
+
+	SelectedText s = _selectedText;
+
+	if (s.startY > s.endY) {
+		SWAP(s.startRow, s.endRow);
+		SWAP(s.startCol, s.endCol);
+	}
+
+	return _mactext->getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted);
+}
+
 bool MacTextWindow::processEvent(Common::Event &event) {
 	/*WindowClick click =*/ isInBorder(event.mouse.x, event.mouse.y);
 

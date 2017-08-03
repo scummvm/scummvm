@@ -68,6 +68,8 @@ public:
 	const Common::String getInput() { return _inputText; }
 	void clearInput();
 
+	Common::String getSelection(bool formatted = false);
+
 private:
 	void undrawInput();
 	void drawInput();
