@@ -152,6 +152,9 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 }
 
 void MacTextWindow::drawSelection() {
+	if (_selectedText.endY == -1)
+		return;
+
 	int start = MIN(_selectedText.startY, _selectedText.endY);
 	start -= _scrollPos;
 	start = MAX(0, start);
