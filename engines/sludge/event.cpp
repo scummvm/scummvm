@@ -43,6 +43,7 @@ EventManager::EventManager(SludgeEngine *vm) {
 	_vm = vm;
 
 	_weAreDoneSoQuit = 0;
+	_reallyWantToQuit = false;
 
 	_input.leftClick = _input.rightClick = _input.justMoved = _input.leftRelease = _input.rightRelease = false;
 	_input.keyPressed = 0;
@@ -129,7 +130,7 @@ void EventManager::checkInput() {
 
 			case Common::EVENT_QUIT:
 				_weAreDoneSoQuit = 1;
-				// TODO: if reallyWantToQuit, popup a message box to confirm
+				// TODO: if _reallyWantToQuit, popup a message box to confirm
 				break;
 
 			default:

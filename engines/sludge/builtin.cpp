@@ -977,11 +977,9 @@ builtIn(callEvent) {
 	return BR_CONTINUE;
 }
 
-bool reallyWantToQuit = false;
-
 builtIn(quitGame) {
 	UNUSEDALL
-	reallyWantToQuit = true;
+	g_sludge->_evtMan->quitGame();
 	return BR_CONTINUE;
 }
 

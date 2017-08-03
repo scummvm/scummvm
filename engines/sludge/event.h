@@ -73,6 +73,7 @@ public:
 	void restore(FrozenStuffStruct *frozenStuff);
 
 	// Quit
+	void quitGame() { _weAreDoneSoQuit = true; /* _reallyWantToQuit = true; */ }
 	bool quit() { return _weAreDoneSoQuit; }
 
 private:
@@ -80,6 +81,7 @@ private:
 	InputType _input;
 
 	int _weAreDoneSoQuit;
+	bool _reallyWantToQuit;
 
 	EventHandlers *_currentEvents;
 };
