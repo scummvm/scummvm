@@ -71,6 +71,7 @@ public:
 private:
 	void undrawInput();
 	void drawInput();
+	void drawSelection();
 	void updateCursorPos();
 
 	void startMarking(int x, int y);

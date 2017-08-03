@@ -141,11 +141,42 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (_cursorState)
 		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap, _cursorY + kConHOverlap));
 
+	if (_inTextSelection)
+		drawSelection();
+
 	_composeSurface.transBlitFrom(_borderSurface, kColorGreen);
 
 	g->transBlitFrom(_composeSurface, _composeSurface.getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
 	return true;
+}
+
+void MacTextWindow::drawSelection() {
+	int start = MIN(_selectedText.startY, _selectedText.endY);
+	start -= _scrollPos;
+	start = MAX(0, start);
+
+	if (start > getInnerDimensions().height())
+		return;
+
+	int end = MAX(_selectedText.startY, _selectedText.endY);
+
+	end -= _scrollPos;
+
+	if (end < 0)
+		return;
+
+	end = MIN((int)getInnerDimensions().height(), end);
+
+	for (int y = start; y < end; y++) {
+		byte *ptr = (byte *)_composeSurface.getBasePtr(kConWOverlap - 2, kConWOverlap - 2 + y);
+
+		for (int x = 0; x < getInnerDimensions().width(); x++, ptr++)
+			if (*ptr == kColorBlack)
+				*ptr = kColorWhite;
+			else
+				*ptr = kColorBlack;
+	}
 }
 
 bool MacTextWindow::processEvent(Common::Event &event) {
@@ -266,7 +297,7 @@ void MacTextWindow::startMarking(int x, int y) {
 
 	y += _scrollPos;
 
-	_mactext->getRowCol(x, y, &_selectedText.endX, &_selectedText.endY, &_selectedText.endRow, &_selectedText.endCol);
+	_mactext->getRowCol(x, y, &_selectedText.startX, &_selectedText.startY, &_selectedText.startRow, &_selectedText.startCol);
 
 	_selectedText.endY = -1;
 
