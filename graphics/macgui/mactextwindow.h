@@ -67,6 +67,7 @@ public:
 
 	const Common::String getInput() { return _inputText; }
 	void clearInput();
+	void appendInput(Common::String str);
 
 	Common::String getSelection(bool formatted = false);
 

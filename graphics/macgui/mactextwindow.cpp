@@ -398,6 +398,12 @@ void MacTextWindow::clearInput() {
 	_inputText.clear();
 }
 
+void MacTextWindow::appendInput(Common::String str) {
+	_inputText += str;
+
+	drawInput();
+}
+
 //////////////////
 // Cursor stuff
 static void cursorTimerHandler(void *refCon) {
