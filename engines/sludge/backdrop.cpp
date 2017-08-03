@@ -224,6 +224,8 @@ bool GraphicsManager::reserveBackdrop() {
 	_vm->_evtMan->mouseX() = (int)((float)_vm->_evtMan->mouseX() / _cameraZoom);
 	_vm->_evtMan->mouseY() = (int)((float)_vm->_evtMan->mouseY() / _cameraZoom);
 
+	_backdropSurface.create(_sceneWidth, _sceneHeight, *_vm->getScreenPixelFormat());
+
 	return true;
 }
 
