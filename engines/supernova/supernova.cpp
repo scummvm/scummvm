@@ -175,6 +175,7 @@ void SupernovaEngine::updateEvents() {
 		_gm->_currentRoom->animation();
 
 	_gm->_mouseClicked = false;
+	_gm->_keyPressed = false;
 	while (g_system->getEventManager()->pollEvent(_event)) {
 		switch (_event.type) {
 		case Common::EVENT_QUIT:
@@ -183,6 +184,7 @@ void SupernovaEngine::updateEvents() {
 			break;
 
 		case Common::EVENT_KEYDOWN:
+			_gm->_keyPressed = true;
 			if (_event.kbd.keycode == Common::KEYCODE_d &&
 			    (_event.kbd.flags & Common::KBD_CTRL)) {
 				_console->attach();

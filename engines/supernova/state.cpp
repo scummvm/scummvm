@@ -295,6 +295,7 @@ void GameManager::resetInputState() {
 	_processInput = false;
 	_mouseClicked = false;
 	_key = 0;
+	_keyPressed = false;
 	_mouseClickType = Common::EVENT_MOUSEMOVE;
 
 	processInput();
@@ -543,7 +544,7 @@ void GameManager::mouseInput2() {
 	while (true) {
 		_vm->updateEvents();
 		// TODO: handle key input (e.g. alt+x, F-keys?)
-		if (_mouseClicked || _key) {
+		if (_mouseClicked || _keyPressed) {
 			break;
 		}
 		g_system->updateScreen();
