@@ -70,6 +70,8 @@ public:
 	void appendInput(Common::String str);
 
 	Common::String getSelection(bool formatted = false);
+	void clearSelection();
+	const SelectedText *getSelectedText() { return &_selectedText; }
 
 private:
 	void undrawInput();

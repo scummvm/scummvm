@@ -226,6 +226,10 @@ Common::String MacTextWindow::getSelection(bool formatted) {
 	return _mactext->getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted);
 }
 
+void MacTextWindow::clearSelection() {
+	_selectedText.endY = _selectedText.startY = -1;
+}
+
 bool MacTextWindow::processEvent(Common::Event &event) {
 	WindowClick click = isInBorder(event.mouse.x, event.mouse.y);
 
