@@ -117,7 +117,7 @@ int CMainGameWindow::selectSavegame() {
 	bool hasSavegames = false;
 
 	// Loop through save slots to find any existing save slots
-	for (int idx = 0; idx < MAX_SAVES; ++idx) {
+	for (int idx = 0; idx <= MAX_SAVES; ++idx) {
 		CString saveName = g_vm->getSavegameName(idx);
 		if (!saveName.empty()) {
 			dialog.addSavegame(idx, saveName);

@@ -35,7 +35,6 @@
 namespace Titanic {
 
 #define CURRENT_SAVEGAME_VERSION 1
-#define MAX_SAVEGAME_SLOTS 99
 #define MINIMUM_SAVEGAME_VERSION 1
 
 static const char *const SAVEGAME_STR = "TNIC";
@@ -464,7 +463,7 @@ SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
 		const char *ext = strrchr(file->c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
 
-		if (slot >= 0 && slot < MAX_SAVEGAME_SLOTS) {
+		if (slot >= 0 && slot <= MAX_SAVES) {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
