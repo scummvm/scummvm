@@ -540,6 +540,8 @@ public:
 
 	virtual CelObjView *duplicate() const override;
 	virtual const SciSpan<const byte> getResPointer() const override;
+
+	Common::Point getLinkPosition(const int16 linkId) const;
 };
 
 #pragma mark -

@@ -449,6 +449,23 @@ reg_t kCelInfoGetPixel(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, view.readPixel(argv[3].toSint16(), argv[4].toSint16(), view._mirrorX));
 }
 
+// Used by Lighthouse, room 800, script 16, when in the weapon-building puzzle
+reg_t kCelLink(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kCelLinkGetX(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view.getLinkPosition(argv[3].toSint16()).x);
+}
+
+reg_t kCelLinkGetY(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view.getLinkPosition(argv[3].toSint16()).y);
+}
+
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, getSciVersion());

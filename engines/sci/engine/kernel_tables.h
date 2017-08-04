@@ -575,6 +575,16 @@ static const SciKernelMapSubEntry kCelInfo_subops[] = {
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kCelLink_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_DUMMY(CelLink0),                 "",                     NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_DUMMY(CelLink1),                 "",                     NULL },
+	{ SIG_SINCE_SCI21MID,  2, MAP_CALL(CelLinkGetX),               "iiii",                 NULL },
+	{ SIG_SINCE_SCI21MID,  3, MAP_CALL(CelLinkGetY),               "iiii",                 NULL },
+	{ SIG_SINCE_SCI21MID,  4, MAP_DUMMY(CelLink4),                 "",                     NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kScrollWindow_subops[] = {
 	{ SIG_SCI32,           0, MAP_CALL(ScrollWindowCreate),        "oi",                   NULL },
 	{ SIG_SCI32,           1, MAP_CALL(ScrollWindowAdd),           "iriii(i)",             kScrollWindowAdd_workarounds },
@@ -988,7 +998,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(FindClass),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(CelRect),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(BaseLineSpan),      SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-	{ MAP_DUMMY(CelLink),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_CALL(CelLink),            SIG_SINCE_SCI21MID, SIGFOR_ALL, "(.*)",           kCelLink_subops, NULL },
 	{ MAP_DUMMY(AddPolygon),        SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(DeletePolygon),     SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(UpdatePolygon),     SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },

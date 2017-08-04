@@ -1081,6 +1081,38 @@ const SciSpan<const byte> CelObjView::getResPointer() const {
 	return *resource;
 }
 
+Common::Point CelObjView::getLinkPosition(const int16 linkId) const {
+	const SciSpan<const byte> resource = getResPointer();
+
+	if (resource[18] < 0x84) {
+		error("%s unsupported version %u for Links", _info.toString().c_str(), resource[18]);
+	}
+
+	const SciSpan<const byte> celHeader = resource.subspan(_celHeaderOffset);
+	const int16 numLinks = celHeader.getInt16SEAt(40);
+
+	if (numLinks) {
+		const int recordSize = 6;
+		SciSpan<const byte> linkTable = resource.subspan(celHeader.getInt32SEAt(36), recordSize * numLinks);
+		for (int16 i = 0; i < numLinks; ++i) {
+			if (linkTable[4] == linkId) {
+				Common::Point point;
+				point.x = linkTable.getInt16SEAt(0);
+				if (_mirrorX) {
+					// NOTE: SSCI had an off-by-one error here (missing -1)
+					point.x = _width - point.x - 1;
+				}
+				point.y = linkTable.getInt16SEAt(2);
+				return point;
+			}
+
+			linkTable += recordSize;
+		}
+	}
+
+	return Common::Point(-1, -1);
+}
+
 #pragma mark -
 #pragma mark CelObjPic
 

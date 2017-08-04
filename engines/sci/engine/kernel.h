@@ -636,6 +636,9 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfoGetOriginX(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfoGetOriginY(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfoGetPixel(EngineState *s, int argc, reg_t *argv);
+reg_t kCelLink(EngineState *s, int argc, reg_t *argv);
+reg_t kCelLinkGetX(EngineState *s, int argc, reg_t *argv);
+reg_t kCelLinkGetY(EngineState *s, int argc, reg_t *argv);
 
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
