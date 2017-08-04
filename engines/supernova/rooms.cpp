@@ -102,34 +102,35 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 	Room *r;
 
 	if (((verb == ACTION_LOOK) || (verb == ACTION_USE)) && (obj1._id == COMPUTER)) {
-		setSectionVisible(kMaxSection - 1, true);
+		_gm->_guiEnabled = false;
 		setSectionVisible(4, false);
-		_vm->renderBox(0,0,320,200,kColorDarkBlue);
+		g_system->fillScreen(kColorDarkBlue);
 		if (_gm->_state.time == 0) {
 			// Destination reached
 			_vm->renderText("Flugziel erreicht", 60, 95, kColorWhite99);
-			_gm->mouseInput2();
+			_gm->getInput();
 		} else if (_gm->_state.powerOff) {
 			// Energy depleted
-			_vm->renderText("Energie erschöpft",60,95,kColorWhite99);
+			_vm->renderText("Energie erschöpft", 60, 95, kColorWhite99);
 			// Artificial coma interrupted
-			_vm->renderText("Tiefschlafprozess abgebrochen",60,115,kColorWhite99);
-			_gm->mouseInput2();
+			_vm->renderText("Tiefschlafprozess abgebrochen", 60, 115, kColorWhite99);
+			_gm->getInput();
 		} else if (isSectionVisible(5)) {
 			// Sleep duration in days
-			_vm->renderText("Schlafdauer in Tagen:",30,85,kColorWhite99);
+			_vm->renderText("Schlafdauer in Tagen:", 30, 85, kColorWhite99);
 			_vm->renderText(Common::String::format("%d",_gm->_state.timeSleep).c_str(),
-			                150,85,kColorWhite99);
+			                150, 85, kColorWhite99);
 			_vm->renderText("Bitte legen Sie sich in die angezeigte Schlafkammer.",
-			                30,105,kColorWhite99);
-			_gm->mouseInput2();
+			                30, 105, kColorWhite99);
+			_gm->getInput();
 		} else {
-			_vm->renderText("Bitte Passwort eingeben:",100,85,kColorWhite99);
+			_vm->renderText("Bitte Passwort eingeben:", 100, 85, kColorWhite99);
 			input[0] = 0;
 			do {
-				_gm->edit(input,100,105,30);
-			} while ((_gm->_key != Common::ASCII_RETURN) && (_gm->_key != Common::ASCII_ESCAPE));
-			if (_gm->_key == Common::ASCII_ESCAPE) {
+				_gm->edit(input, 100, 105, 30);
+			} while ((_gm->_key.keycode != Common::KEYCODE_RETURN) &&
+			         (_gm->_key.keycode != Common::KEYCODE_ESCAPE));
+			if (_gm->_key.keycode == Common::KEYCODE_ESCAPE) {
 				goto escape;
 			}
 			for (int i = 0; i < 30; ++i) {
@@ -138,20 +139,21 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 				}
 			}
 			if (strcmp(input,codeword_DE) != 0) {
-				_vm->renderText("Falsches Passwort",100,125,kColorLightRed);
+				_vm->renderText("Falsches Passwort", 100, 125, kColorLightRed);
 				_gm->wait2(18);
 				goto escape;
 			}
 			_gm->great(6);
-			_vm->renderBox(0,0,320,200,kColorDarkBlue);
-			_vm->renderText("Schlafdauer in Tagen:",30,85,kColorWhite99);
+			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
+			_vm->renderText("Schlafdauer in Tagen:", 30, 85, kColorWhite99);
 			do {
-				_vm->renderBox(150,85,150,8,kColorDarkBlue);
+				_vm->renderBox(150, 85, 150, 8, kColorDarkBlue);
 				input[0] = 0;
 				do {
-					_gm->edit(input,150,85,10);
-				} while ((_gm->_key != Common::ASCII_RETURN) && (_gm->_key != Common::ASCII_ESCAPE));
-				if (_gm->_key == Common::ASCII_ESCAPE) {
+					_gm->edit(input, 150, 85, 10);
+				} while ((_gm->_key.keycode != Common::KEYCODE_RETURN) &&
+				         (_gm->_key.keycode != Common::KEYCODE_ESCAPE));
+				if (_gm->_key.keycode == Common::KEYCODE_ESCAPE) {
 					goto escape;
 				}
 				l = atol(input);
@@ -171,7 +173,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->showMenu();
 		_gm->drawMapExits();
 		_gm->palette();
-		setSectionVisible(kMaxSection - 1, false);
+		_gm->_guiEnabled = true;
 	} else if (((verb == ACTION_WALK) || (verb == ACTION_USE)) &&
 	           ((obj1._id == CABINS) || (obj1._id == CABIN))) {
 		r = _gm->_rooms[AIRLOCK];
