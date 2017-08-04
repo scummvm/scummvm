@@ -5,9 +5,9 @@ There may be several sound effects in one file.
 This list shows them and their offsets.
 
 46:
-        0   - Voice "Halt!"
-     2510   -
-     4020   -
+       0   - Voice "Halt!"
+    2510   -
+    4020   -
 
 47:
         0   - Voice "Mission Supernova"
@@ -48,6 +48,9 @@ Dimensions
     Inventory:          (0, 161) (270, 200)
     Inventory Arrows:   (271, 161) (279, 200)
     Exit Maps:          (283, 163) (317, 197)
+
+
+timer2 == animation timer
 
 
 Text
