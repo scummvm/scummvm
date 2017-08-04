@@ -45,8 +45,7 @@ private:
 	int _rate;
 	byte _flags;
 	uint16 _wavType;
-	Audio::SeekableAudioStream *_audioStream;
-	Audio::SoundHandle _soundHandle;
+	Audio::SeekableAudioStream *_pendingAudioStream;
 private:
 	/**
 	 * Handles setup of fields shared by the constructors
@@ -61,7 +60,7 @@ private:
 	/**
 	 * Returns a ScummVM Audio Stream for playback purposes
 	 */
-	Audio::SeekableAudioStream *audioStream();
+	Audio::SeekableAudioStream *createAudioStream();
 public:
 	Audio::Mixer::SoundType _soundType;
 
@@ -110,18 +109,13 @@ public:
 	 * Returns true if the wave file has data loaded
 	 */
 	bool isLoaded() const {
-		return _audioStream != nullptr || _waveData != nullptr;
+		return _waveData != nullptr;
 	}
 
 	/**
 	 * Return the frequency of the loaded wave file
 	 */
-	uint getFrequency();
-
-	/**
-	 * Resets the music stream
-	 */
-	void reset();
+	uint getFrequency() const { return _rate; }
 
 	/**
 	 * Lock sound data for access

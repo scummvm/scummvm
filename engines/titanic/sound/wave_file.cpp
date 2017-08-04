@@ -64,13 +64,13 @@ bool AudioBufferStream::endOfData() const {
 
 /*------------------------------------------------------------------------*/
 
-CWaveFile::CWaveFile(Audio::Mixer *mixer) : _mixer(mixer), _audioStream(nullptr),
+CWaveFile::CWaveFile(Audio::Mixer *mixer) : _mixer(mixer), _pendingAudioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
 		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
 
-CWaveFile::CWaveFile(QSoundManager *owner) : _audioStream(nullptr),
+CWaveFile::CWaveFile(QSoundManager *owner) : _pendingAudioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
 		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
@@ -85,10 +85,8 @@ void CWaveFile::setup() {
 }
 
 CWaveFile::~CWaveFile() {
-	if (_audioStream) {
-		//_soundManager->soundFreed(_soundHandle);
-		delete _audioStream;
-	}
+	// Delete any pending audio stream if it wasn't used
+	delete _pendingAudioStream;
 
 	if (_disposeAudioBuffer == DisposeAfterUse::YES && _audioBuffer)
 		delete _audioBuffer;
@@ -97,7 +95,7 @@ CWaveFile::~CWaveFile() {
 }
 
 uint CWaveFile::getDurationTicks() const {
-	if (!_audioStream)
+	if (!_rate)
 		return 0;
 
 	// FIXME: The original uses acmStreamSize to calculate
@@ -105,12 +103,10 @@ uint CWaveFile::getDurationTicks() const {
 	// method works, for now I'm using a simple ratio of a
 	// sample output to input value
 	double newSize = (double)_dataSize * (1475712.0 / 199836.0);
-	return (uint)(newSize * 1000.0 / _audioStream->getRate());
+	return (uint)(newSize * 1000.0 / _rate);
 }
 
 bool CWaveFile::loadSound(const CString &name) {
-	assert(!_audioStream);
-
 	StdCWadFile file;
 	if (!file.open(name))
 		return false;
@@ -139,8 +135,6 @@ bool CWaveFile::loadSpeech(CDialogueFile *dialogueFile, int speechIndex) {
 }
 
 bool CWaveFile::loadMusic(const CString &name) {
-	assert(!_audioStream);
-
 	StdCWadFile file;
 	if (!file.open(name))
 		return false;
@@ -161,7 +155,7 @@ bool CWaveFile::loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAft
 	_disposeAudioBuffer = disposeAfterUse;
 	_loadMode = LOADMODE_AUDIO_BUFFER;
 
-	_audioStream = new AudioBufferStream(_audioBuffer);
+	_pendingAudioStream = new AudioBufferStream(_audioBuffer);
 	return true;
 }
 
@@ -176,22 +170,23 @@ void CWaveFile::load(byte *data, uint dataSize) {
 	_headerSize = wavStream.pos();
 }
 
-Audio::SeekableAudioStream *CWaveFile::audioStream() {
-	if (!_audioStream) {
-		// No stream yet, so create one and give it control of the raw wave data
-		assert(_waveData);
-		_audioStream = Audio::makeWAVStream(
+Audio::SeekableAudioStream *CWaveFile::createAudioStream() {
+	Audio::SeekableAudioStream *stream;
+
+	if (_pendingAudioStream) {
+		stream = _pendingAudioStream;
+		_pendingAudioStream = nullptr;
+	} else {
+		// Create a new ScummVM audio stream for the wave file data
+		stream = Audio::makeWAVStream(
 			new Common::MemoryReadStream(_waveData, _waveSize, DisposeAfterUse::NO),
 			DisposeAfterUse::YES);
 	}
 
-	return _audioStream;
+	_rate = stream->getRate();
+	return stream;
 }
 
-
-uint CWaveFile::getFrequency() {
-	return audioStream()->getRate();
-}
 
 const int16 *CWaveFile::lock() {
 	enum { kWaveFormatPCM = 1 };
@@ -216,16 +211,12 @@ void CWaveFile::unlock(const int16 *ptr) {
 }
 
 Audio::SoundHandle CWaveFile::play(byte volume) {
-	// If there's a previous instance of the sound being played,
-	// stop in and free the old audio stream
-	if (_mixer->isSoundHandleActive(_soundHandle))
-		_mixer->stopHandle(_soundHandle);
+	Audio::SeekableAudioStream *stream = createAudioStream();
+	Audio::SoundHandle handle;
 
-	Audio::SeekableAudioStream *stream = audioStream();
-	stream->rewind();
-	_mixer->playStream(_soundType, &_soundHandle, stream, -1,
+	_mixer->playStream(_soundType, &handle, stream, -1,
 		volume, 0, DisposeAfterUse::NO);
-	return _soundHandle;
+	return handle;
 }
 
 } // End of namespace Titanic
