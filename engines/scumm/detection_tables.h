@@ -60,7 +60,7 @@ static const char *const directoryGlobs[] = {
 
 /**
  * This table contains all game IDs supported by the SCUMM engine, and maps
- * them to the full humand readable game name.
+ * them to the full human readable game name.
  */
 static const PlainGameDescriptor gameDescriptions[] = {
 	{ "atlantis", "Indiana Jones and the Fate of Atlantis" },
