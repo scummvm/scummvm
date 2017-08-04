@@ -64,6 +64,7 @@ public:
 
 	void add(Object &obj);
 	void remove(Object &obj);
+	void clear();
 	Object *get(int index) const;
 	Object *get(ObjectID id) const;
 	int getSize() const { return _numObjects; }
