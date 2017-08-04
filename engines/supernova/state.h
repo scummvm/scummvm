@@ -103,7 +103,7 @@ public:
 	void executeRoom();
 
 	SupernovaEngine *_vm;
-	uint16 _key;
+	Common::KeyState _key;
 	Common::EventType _mouseClickType;
 	bool _mouseClicked;
 	bool _keyPressed;
@@ -141,8 +141,9 @@ public:
 	void great(uint number);
 	bool airless();
 	void shock();
-	void mouseInput();
-	void mouseInput2();
+	Common::EventType getMouseInput();
+	uint16 getKeyInput(bool blockForAlNum = false);
+	void getInput();
 	void mouseInput3();
 	void mouseWait(int delay);
 	void wait2(int ticks);
