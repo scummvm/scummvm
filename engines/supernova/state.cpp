@@ -713,9 +713,8 @@ void GameManager::palette() {
 }
 
 void GameManager::shock() {
-	// STUB
 	_vm->playSound(kAudioShock);
-	// die
+	death("Du h\204ttest besser vorher|den Stecker rausgezogen.");
 }
 
 void GameManager::showMenu() {
@@ -1130,8 +1129,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		} else {
 			if (obj1.hasProperty(WORN)) {
 				if (airless()) {
-					//TODO: Death screen
-//					longjmp(dead, "Den Helm httest du|besser angelassen!");
+					death("Den Helm h\204ttest du|besser angelassen!");
 				}
 				obj1.disableProperty(WORN);
 				_vm->renderMessage("Du ziehst den Helm ab.");
@@ -1158,8 +1156,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		} else {
 			if (obj1.hasProperty(WORN)) {
 				if (airless()) {
-					//TODO: Death screen
-//					longjmp(dead, "Den Versorungsteil httest du|besser nicht abgenommen!");
+					death("Den Versorgungsteil h\204ttest du|besser nicht abgenommen!");
 				}
 				obj1.disableProperty(WORN);
 				_vm->renderMessage("Du nimmst den Versorgungsteil ab.");
