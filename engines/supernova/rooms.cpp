@@ -265,37 +265,32 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 
 void ShipSleepCabin::animation() {
 	static char color;
-
-	if (!_gm->_guiEnabled) {
-		if (color) {
-			color = kColorBlack;
-			_gm->setAnimationTimer(5);
-		} else {
-			color = kColorLightYellow;
-			_gm->setAnimationTimer(10);
-		}
-		_vm->renderText("Achtung: Triebwerke funktionsunfähig",50,145,color);
-	} else {
-		if (isSectionVisible(21)) {
-			_gm->drawImage(_gm->invertSection(21));
-			_gm->setAnimationTimer(5);
-		} else {
-			_gm->drawImage(21);
-			_gm->setAnimationTimer(10);
-		}
-	}
-	if (_gm->_state.powerOff) {
-		if (!_gm->_guiEnabled) {
-			_vm->renderText("Energievorrat erschöpft",97,165,color);
-			_vm->renderText("Notstromversorgung aktiv",97,175,color);
-		} else {
-			if (isSectionVisible(21)) {
-				_gm->drawImage(22);
+	if (_gm->_state.powerOff && _gm->_state.time) {
+		if (_gm->_guiEnabled) {
+			if (isSectionVisible(1)) {
+				_gm->drawImage(2);
+				setSectionVisible(1, false);
 			} else {
-				_gm->drawImage(_gm->invertSection(22));
+				_gm->drawImage(1);
+				setSectionVisible(2, false);
 			}
+		} else {
+			if (color == kColorLightRed) {
+				color = kColorDarkBlue;
+			} else {
+				color = kColorLightRed;
+			}
+
+			_vm->renderText("Achtung", 60, 75, color);
 		}
+	} else if (isSectionVisible(5) && _gm->_guiEnabled) {
+		if (isSectionVisible(4))
+			_gm->drawImage(_gm->invertSection(4));
+		else
+			_gm->drawImage(4);
 	}
+
+	_gm->setAnimationTimer(6);
 }
 void ShipSleepCabin::onEntrance() {
 	if (_gm->_state.dream && (_gm->_rooms[CAVE]->getObject(1)->_exitRoom == MEETUP3)) {
