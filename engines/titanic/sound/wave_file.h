@@ -37,6 +37,7 @@ class QSoundManager;
 
 class CWaveFile {
 private:
+	Audio::Mixer *_mixer;
 	byte *_waveData;
 	int _waveSize;
 	int _dataSize;
@@ -45,6 +46,7 @@ private:
 	byte _flags;
 	uint16 _wavType;
 	Audio::SeekableAudioStream *_audioStream;
+	Audio::SoundHandle _soundHandle;
 private:
 	/**
 	 * Handles setup of fields shared by the constructors
@@ -55,6 +57,11 @@ private:
 	 * Gets passed the raw data for the wave file
 	 */
 	void load(byte *data, uint dataSize);
+
+	/**
+	 * Returns a ScummVM Audio Stream for playback purposes
+	 */
+	Audio::SeekableAudioStream *audioStream();
 public:
 	Audio::Mixer::SoundType _soundType;
 
@@ -63,7 +70,7 @@ public:
 	DisposeAfterUse::Flag _disposeAudioBuffer;
 	int _channel;
 public:
-	CWaveFile();
+	CWaveFile(Audio::Mixer *mixer);
 	CWaveFile(QSoundManager *owner);
 	~CWaveFile();
 
@@ -78,11 +85,6 @@ public:
 	 * Return the size of the wave file
 	 */
 	uint size() const { return _dataSize; }
-
-	/**
-	 * Returns a ScummVM Audio Stream for playback purposes
-	 */
-	Audio::SeekableAudioStream *audioStream();
 
 	/**
 	 * Tries to load the specified wave file sound
@@ -130,6 +132,11 @@ public:
 	 * Unlock sound data after a prior call to lock
 	 */
 	void unlock(const int16 *ptr);
+
+	/**
+	 * Plays the wave file
+	 */
+	Audio::SoundHandle play(byte volume);
 };
 
 } // End of namespace Titanic

@@ -64,7 +64,7 @@ bool AudioBufferStream::endOfData() const {
 
 /*------------------------------------------------------------------------*/
 
-CWaveFile::CWaveFile() : _audioStream(nullptr),
+CWaveFile::CWaveFile(Audio::Mixer *mixer) : _mixer(mixer), _audioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
 		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
@@ -181,9 +181,8 @@ Audio::SeekableAudioStream *CWaveFile::audioStream() {
 		// No stream yet, so create one and give it control of the raw wave data
 		assert(_waveData);
 		_audioStream = Audio::makeWAVStream(
-			new Common::MemoryReadStream(_waveData, _waveSize, DisposeAfterUse::YES),
+			new Common::MemoryReadStream(_waveData, _waveSize, DisposeAfterUse::NO),
 			DisposeAfterUse::YES);
-		_waveData = nullptr;
 	}
 
 	return _audioStream;
@@ -192,10 +191,6 @@ Audio::SeekableAudioStream *CWaveFile::audioStream() {
 
 uint CWaveFile::getFrequency() {
 	return audioStream()->getRate();
-}
-
-void CWaveFile::reset() {
-	audioStream()->rewind();
 }
 
 const int16 *CWaveFile::lock() {
@@ -220,4 +215,17 @@ void CWaveFile::unlock(const int16 *ptr) {
 	// No implementation needed in ScummVM
 }
 
-} // End of namespace Titanic z
+Audio::SoundHandle CWaveFile::play(byte volume) {
+	// If there's a previous instance of the sound being played,
+	// stop in and free the old audio stream
+	if (_mixer->isSoundHandleActive(_soundHandle))
+		_mixer->stopHandle(_soundHandle);
+
+	Audio::SeekableAudioStream *stream = audioStream();
+	stream->rewind();
+	_mixer->playStream(_soundType, &_soundHandle, stream, -1,
+		volume, 0, DisposeAfterUse::NO);
+	return _soundHandle;
+}
+
+} // End of namespace Titanic

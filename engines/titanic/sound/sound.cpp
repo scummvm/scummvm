@@ -129,7 +129,6 @@ CWaveFile *CSound::loadSound(const CString &name) {
 			// Found it, so move it to the front of the list and return
 			_sounds.remove(soundItem);
 			_sounds.push_front(soundItem);
-			soundItem->_waveFile->reset();
 			return soundItem->_waveFile;
 		}
 	}

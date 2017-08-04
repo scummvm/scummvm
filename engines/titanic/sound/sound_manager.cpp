@@ -120,7 +120,7 @@ QSoundManager::~QSoundManager() {
 }
 
 CWaveFile *QSoundManager::loadSound(const CString &name) {
-	CWaveFile *waveFile = new CWaveFile();
+	CWaveFile *waveFile = new CWaveFile(_mixer);
 
 	// Try to load the specified sound
 	if (!waveFile->loadSound(name)) {
@@ -132,7 +132,7 @@ CWaveFile *QSoundManager::loadSound(const CString &name) {
 }
 
 CWaveFile *QSoundManager::loadSpeech(CDialogueFile *dialogueFile, int speechId) {
-	CWaveFile *waveFile = new CWaveFile();
+	CWaveFile *waveFile = new CWaveFile(_mixer);
 
 	// Try to load the specified sound
 	if (!waveFile->loadSpeech(dialogueFile, speechId)) {
@@ -144,7 +144,7 @@ CWaveFile *QSoundManager::loadSpeech(CDialogueFile *dialogueFile, int speechId) 
 }
 
 CWaveFile *QSoundManager::loadMusic(const CString &name) {
-	CWaveFile *waveFile = new CWaveFile();
+	CWaveFile *waveFile = new CWaveFile(_mixer);
 
 	// Try to load the specified sound
 	if (!waveFile->loadMusic(name)) {
@@ -156,7 +156,7 @@ CWaveFile *QSoundManager::loadMusic(const CString &name) {
 }
 
 CWaveFile *QSoundManager::loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAfterUse) {
-	CWaveFile *waveFile = new CWaveFile();
+	CWaveFile *waveFile = new CWaveFile(_mixer);
 
 	// Try to load the specified audio buffer
 	if (!waveFile->loadMusic(buffer, disposeAfterUse)) {
