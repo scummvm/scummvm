@@ -48,18 +48,11 @@
 #ifndef WAGE_GUI_H
 #define WAGE_GUI_H
 
-// Whether to use the new MacTextWindow class for rendering the console
-#define USE_MACTEXTWINDOW
-
 #include "common/str-array.h"
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
 #include "graphics/macgui/macwindowmanager.h"
-#ifdef USE_MACTEXTWINDOW
 #include "graphics/macgui/mactextwindow.h"
-#else
-#include "graphics/macgui/macwindow.h"
-#endif
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macmenu.h"
@@ -130,11 +123,8 @@ public:
 
 	void draw();
 	void appendText(const char *str);
-	void reflowText();
-	void clearOutput();
 	bool processEvent(Common::Event &event);
 
-	void drawInput();
 	void setSceneDirty() { _sceneDirty = true; }
 	void regenCommandsMenu();
 	void regenWeaponsMenu();
@@ -149,72 +139,37 @@ public:
 	void enableNewGameMenus();
 
 	bool processSceneEvents(WindowClick click, Common::Event &event);
-	bool processConsoleEvents(WindowClick click, Common::Event &event);
 	void executeMenuCommand(int action, Common::String &text);
+
+	void clearOutput();
 
 private:
 	void drawScene();
-	void drawConsole();
-	void undrawCursor();
-	void renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r);
-	void flowText(Common::String &str);
 	const Graphics::MacFont *getConsoleMacFont();
 	const Graphics::Font *getConsoleFont();
 	const Graphics::Font *getTitleFont();
-	void startMarking(int x, int y);
-	int calcTextX(int x, int textLine);
-	int calcTextY(int y);
-	void updateTextSelection(int x, int y);
 
 	void loadBorders();
 	void loadBorder(Graphics::MacWindow *target, Common::String filename, bool active);
 
 public:
 	Graphics::ManagedSurface _screen;
-	int _cursorX, _cursorY;
-	bool _cursorState;
 
 	WageEngine *_engine;
-
-	bool _cursorDirty;
-	Common::Rect _cursorRect;
-	bool _cursorOff;
 
 	Scene *_scene;
 
 	Graphics::MacWindowManager _wm;
 	Graphics::MacWindow *_sceneWindow;
-
-#ifdef USE_MACTEXTWINDOW
 	Graphics::MacTextWindow *_consoleWindow;
-#else
-	Graphics::MacWindow *_consoleWindow;
-#endif
 
 private:
-
 	Graphics::ManagedSurface _console;
 	Graphics::MacMenu *_menu;
 	bool _sceneDirty;
-	bool _consoleDirty;
-
-	Common::StringArray _out;
-	Common::StringArray _lines;
-	uint _scrollPos;
-	int _consoleLineHeight;
-	uint _consoleNumLines;
-	bool _consoleFullRedraw;
-
-	bool _inTextSelection;
-	int _selectionStartX;
-	int _selectionStartY;
-	int _selectionEndX;
-	int _selectionEndY;
 
 	Common::String _clipboard;
 	Common::String _undobuffer;
-
-	int _inputTextLineNum;
 
 	int _commandsMenuId;
 	int _weaponsMenuId;

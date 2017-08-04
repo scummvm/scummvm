@@ -83,42 +83,7 @@ static const Graphics::MacMenuData menuSubItems[] = {
 	{ 0, NULL,			0, 0, false }
 };
 
-static void cursorTimerHandler(void *refCon) {
-	Gui *gui = (Gui *)refCon;
-
-	int x = gui->_cursorX;
-	int y = gui->_cursorY;
-
-	if (x == 0 && y == 0)
-		return;
-
-	if (!gui->_screen.getPixels())
-		return;
-
-	x += gui->_consoleWindow->getInnerDimensions().left;
-	y += gui->_consoleWindow->getInnerDimensions().top;
-	int h = kCursorHeight;
-
-	if (y + h > gui->_consoleWindow->getInnerDimensions().bottom) {
-		h = gui->_consoleWindow->getInnerDimensions().bottom - y;
-	}
-
-	if (h > 0)
-		gui->_screen.vLine(x, y, y + h, gui->_cursorState ? kColorBlack : kColorWhite);
-
-	if (!gui->_cursorOff)
-		gui->_cursorState = !gui->_cursorState;
-
-	gui->_cursorRect.left = x;
-	gui->_cursorRect.right = MIN<uint16>(x + 1, gui->_screen.w);
-	gui->_cursorRect.top = MIN<uint16>(y - 1, gui->_consoleWindow->getInnerDimensions().top);
-	gui->_cursorRect.bottom = MIN<uint16>(MIN<uint16>(y + h, gui->_screen.h), gui->_consoleWindow->getInnerDimensions().bottom);
-
-	gui->_cursorDirty = true;
-}
-
 static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *gui);
-static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *gui);
 static void menuCommandsCallback(int action, Common::String &text, void *data);
 
 
@@ -126,31 +91,9 @@ Gui::Gui(WageEngine *engine) {
 	_engine = engine;
 	_scene = NULL;
 	_sceneDirty = true;
-	_consoleDirty = true;
-	_cursorDirty = false;
-	_consoleFullRedraw = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
 	_wm.setScreen(&_screen);
-
-	_scrollPos = 0;
-	_consoleLineHeight = 8; // Dummy value which makes sense
-	_consoleNumLines = 24; // Dummy value
-
-	_cursorX = 0;
-	_cursorY = 0;
-	_cursorState = false;
-	_cursorOff = false;
-
-	_inTextSelection = false;
-	_selectionStartX = _selectionStartY = -1;
-	_selectionEndX = _selectionEndY = -1;
-
-	_inputTextLineNum = 0;
-
-#ifndef USE_MACTEXTWINDOW
-	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "wageCursor");
-#endif
 
 	_menu = _wm.addMenu();
 
@@ -175,7 +118,6 @@ Gui::Gui(WageEngine *engine) {
 	_sceneWindow = _wm.addWindow(false, false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
 
-#ifdef USE_MACTEXTWINDOW
 	//TODO: Make the font we use here work
 	// (currently MacFontRun::getFont gets called with the fonts being uninitialized,
 	// so it initializes them by itself with default params, and not those here)
@@ -184,11 +126,6 @@ Gui::Gui(WageEngine *engine) {
 	uint maxWidth = _screen.w;
 
 	_consoleWindow = _wm.addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft, _menu);
-#else
-	_consoleWindow = _wm.addWindow(true, true, true);
-#endif // USE_MACTEXTWINDOW
-
-	_consoleWindow->setCallback(consoleWindowCallback, this);
 
 	loadBorders();
 }
@@ -196,17 +133,6 @@ Gui::Gui(WageEngine *engine) {
 Gui::~Gui() {
 	_screen.free();
 	_console.free();
-
-#ifndef USE_MACTEXTWINDOW
-	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
-#endif
-}
-
-void Gui::undrawCursor() {
-	_cursorOff = true;
-	_cursorState = false;
-	cursorTimerHandler(this);
-	_cursorOff = false;
 }
 
 void Gui::draw() {
@@ -231,33 +157,10 @@ void Gui::draw() {
 	}
 
 	drawScene();
-#ifndef USE_MACTEXTWINDOW
-	drawConsole();
-#endif
 
 	_wm.draw();
 
-	if (_cursorDirty && _cursorRect.left < _screen.w && _cursorRect.bottom < _screen.h) {
-		int x = _cursorRect.left, y = _cursorRect.top, w = _cursorRect.width(), h = _cursorRect.height();
-		if (x < 0) {
-			w += x;
-			x = 0;
-		}
-		if (y < 0) {
-			h += y;
-			y = 0;
-		}
-		if (x + w > _screen.w) w = _screen.w - x;
-		if (y + h > _screen.h) h = _screen.h - y;
-		if (w != 0 && h != 0)
-			g_system->copyRectToScreen(_screen.getBasePtr(x, y), _screen.pitch, x, y, w, h);
-
-		_cursorDirty = false;
-	}
-
 	_sceneDirty = false;
-	_consoleDirty = false;
-	_consoleFullRedraw = false;
 }
 
 void Gui::drawScene() {
@@ -268,9 +171,7 @@ void Gui::drawScene() {
 	_sceneWindow->setDirty(true);
 
 	_sceneDirty = true;
-	_consoleDirty = true;
 	_menu->setDirty(true);
-	_consoleFullRedraw = true;
 }
 
 static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g) {
@@ -291,22 +192,6 @@ bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
 	}
 
 	return false;
-}
-
-// Render console
-void Gui::drawConsole() {
-	if (!_consoleDirty && !_consoleFullRedraw && !_sceneDirty)
-		return;
-
-	renderConsole(_consoleWindow->getSurface(), Common::Rect(kBorderWidth - 2, kBorderWidth - 2,
-				_consoleWindow->getDimensions().width(), _consoleWindow->getDimensions().height()));
-	_consoleWindow->setDirty(true);
-}
-
-static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *g) {
-	Gui *gui = (Gui *)g;
-
-	return gui->processConsoleEvents(click, event);
 }
 
 ////////////////
@@ -425,6 +310,119 @@ void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool 
 
 		delete stream;
 	}
+}
+
+//////////////////
+// Console stuff
+//////////////////
+const Graphics::MacFont *Gui::getConsoleMacFont() {
+	Scene *scene = _engine->_world->_player->_currentScene;
+
+	return scene->getFont();
+}
+
+const Graphics::Font *Gui::getConsoleFont() {
+	return _wm._fontMan->getFont(*getConsoleMacFont());
+}
+
+void Gui::appendText(const char *s) {
+	_consoleWindow->appendText(s, getConsoleMacFont());
+}
+
+void Gui::clearOutput() {
+	//_consoleWindow->clearAllContent();
+}
+
+void Gui::actionCopy() {
+	_clipboard = _consoleWindow->getSelection();
+
+	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
+}
+
+void Gui::actionPaste() {
+	_undobuffer = _engine->_inputText;
+
+	_consoleWindow->appendInput(_clipboard);
+
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+}
+
+void Gui::actionUndo() {
+	_consoleWindow->clearInput();
+	_consoleWindow->appendInput(_clipboard);
+
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
+}
+
+void Gui::actionClear() {
+	const Graphics::SelectedText *s = _consoleWindow->getSelectedText();
+
+	if (s->endY == -1)
+		return;
+
+	int startPos = s->startCol;
+	int endPos = s->endCol;
+
+	if (startPos > endPos)
+		SWAP(startPos, endPos);
+
+	Common::String input = _consoleWindow->getInput();
+
+	Common::String beg(input.c_str(), &input.c_str()[startPos]);
+	Common::String end(&input.c_str()[endPos]);
+
+	_undobuffer = input;
+
+	_consoleWindow->clearInput();
+	_consoleWindow->appendInput(beg + end);
+
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+
+	_consoleWindow->clearSelection();
+}
+
+void Gui::actionCut() {
+	const Graphics::SelectedText *s = _consoleWindow->getSelectedText();
+
+	if (s->endY == -1)
+		return;
+
+	int startPos = s->startCol;
+	int endPos = s->endCol;
+
+	if (startPos > endPos)
+		SWAP(startPos, endPos);
+
+	Common::String input = _consoleWindow->getInput();
+
+	Common::String beg(input.c_str(), &input.c_str()[startPos]);
+	Common::String mid(&input.c_str()[startPos], &input.c_str()[endPos]);
+	Common::String end(&input.c_str()[endPos]);
+
+	_undobuffer = input;
+
+	_consoleWindow->clearInput();
+	_consoleWindow->appendInput(beg + end);
+	_clipboard = mid;
+
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
+	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
+
+	_consoleWindow->clearSelection();
+}
+
+void Gui::disableUndo() {
+	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
+}
+
+void Gui::disableAllMenus() {
+	_menu->disableAllMenus();
+}
+
+void Gui::enableNewGameMenus() {
+	_menu->enableCommand(kMenuFile, kMenuActionNew, true);
+	_menu->enableCommand(kMenuFile, kMenuActionOpen, true);
+	_menu->enableCommand(kMenuFile, kMenuActionQuit, true);
 }
 
 } // End of namespace Wage
