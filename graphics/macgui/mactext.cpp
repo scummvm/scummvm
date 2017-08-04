@@ -486,7 +486,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	for (int i = str.size(); i >= 0; i--) {
 		int strw = _textLines[*row].chunks[chunk].getFont()->getStringWidth(str);
 		if (strw + pwidth < x) {
-			*col = mcol + i;
+			*col = pmcol + i;
 			*sx = strw + pwidth;
 			break;
 		}
