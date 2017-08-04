@@ -142,58 +142,72 @@ static Common::String timeToString(int t) {
 }
 
 GameManager::GameManager(SupernovaEngine *vm) {
-	_rooms[INTRO] = new StartingItems(vm, this);
-	_rooms[CORRIDOR] = new ShipCorridor(vm, this);
-	_rooms[HALL] = new ShipHall(vm, this);
-	_rooms[SLEEP] = new ShipSleepCabin(vm, this);
-	_rooms[COCKPIT] = new ShipCockpit(vm, this);
-	_rooms[AIRLOCK] = new ShipAirlock(vm, this);
-	_rooms[HOLD] = new ShipHold(vm, this);
-	_rooms[LANDINGMODULE] = new ShipLandingModule(vm, this);
-	_rooms[GENERATOR] = new ShipGenerator(vm, this);
-	_rooms[OUTSIDE] = new ShipOuterSpace(vm, this);
-	_rooms[CABIN_R1] = new ShipCabinR1(vm, this);
-	_rooms[CABIN_R2] = new ShipCabinR2(vm, this);
-	_rooms[CABIN_R3] = new ShipCabinR3(vm, this);
-	_rooms[CABIN_L1] = new ShipCabinL1(vm, this);
-	_rooms[CABIN_L2] = new ShipCabinL2(vm, this);
-	_rooms[CABIN_L3] = new ShipCabinL3(vm, this);
-	_rooms[BATHROOM] = new ShipCabinBathroom(vm, this);
-
-	_rooms[ROCKS] = new ArsanoRocks(vm, this);
-	_rooms[CAVE] = new ArsanoCave(vm, this);
-	_rooms[MEETUP] = new ArsanoMeetup(vm, this);
-	_rooms[ENTRANCE] = new ArsanoEntrance(vm, this);
-	_rooms[REST] = new ArsanoRemaining(vm, this);
-	_rooms[ROGER] = new ArsanoRoger(vm, this);
-	_rooms[GLIDER] = new ArsanoGlider(vm, this);
-	_rooms[MEETUP2] = new ArsanoMeetup2(vm, this);
-	_rooms[MEETUP3] = new ArsanoMeetup3(vm, this);
-
-	_rooms[CELL] = new AxacussCell(vm, this);
-	_rooms[CORRIDOR1] = new AxacussCorridor1(vm, this);
-	_rooms[CORRIDOR2] = new AxacussCorridor2(vm, this);
-	_rooms[CORRIDOR3] = new AxacussCorridor3(vm, this);
-	_rooms[CORRIDOR4] = new AxacussCorridor3(vm, this);
-	_rooms[CORRIDOR5] = new AxacussCorridor4(vm, this);
-	_rooms[CORRIDOR6] = new AxacussCorridor5(vm, this);
-	_rooms[CORRIDOR7] = new AxacussCorridor6(vm, this);
-	_rooms[CORRIDOR8] = new AxacussCorridor7(vm, this);
-	_rooms[CORRIDOR9] = new AxacussCorridor8(vm, this);
-	_rooms[BCORRIDOR] = new AxacussBcorridor(vm, this);
-	_rooms[GUARD] = new AxacussIntersection(vm, this);
-	_rooms[GUARD3] = new AxacussExit(vm, this);
-	_rooms[OFFICE_L1] = new AxacussOffice1(vm, this);
-	_rooms[OFFICE_L2] = new AxacussOffice2(vm, this);
-	_rooms[OFFICE_R1] = new AxacussOffice3(vm, this);
-	_rooms[OFFICE_R2] = new AxacussOffice4(vm, this);
-	_rooms[OFFICE_L] = new AxacussOffice5(vm, this);
-	_rooms[ELEVATOR] = new AxacussElevator(vm, this);
-	_rooms[STATION] = new AxacussStation(vm, this);
-	_rooms[SIGN] = new AxacussSign(vm, this);
-
-	_currentRoom = _rooms[INTRO];
 	_vm = vm;
+
+	initRooms();
+	_currentRoom = _rooms[SLEEP];
+	initState();
+	initGui();
+}
+
+GameManager::~GameManager() {
+	destroyRooms();
+}
+
+void GameManager::destroyRooms() {
+	delete _rooms[INTRO];
+	delete _rooms[CORRIDOR];
+	delete _rooms[HALL];
+	delete _rooms[SLEEP];
+	delete _rooms[COCKPIT];
+	delete _rooms[AIRLOCK];
+	delete _rooms[HOLD];
+	delete _rooms[LANDINGMODULE];
+	delete _rooms[GENERATOR];
+	delete _rooms[OUTSIDE];
+	delete _rooms[CABIN_R1];
+	delete _rooms[CABIN_R2];
+	delete _rooms[CABIN_R3];
+	delete _rooms[CABIN_L1];
+	delete _rooms[CABIN_L2];
+	delete _rooms[CABIN_L3];
+	delete _rooms[BATHROOM];
+
+	delete _rooms[ROCKS];
+	delete _rooms[CAVE];
+	delete _rooms[MEETUP];
+	delete _rooms[ENTRANCE];
+	delete _rooms[REST];
+	delete _rooms[ROGER];
+	delete _rooms[GLIDER];
+	delete _rooms[MEETUP2];
+	delete _rooms[MEETUP3];
+
+	delete _rooms[CELL];
+	delete _rooms[CORRIDOR1];
+	delete _rooms[CORRIDOR2];
+	delete _rooms[CORRIDOR3];
+	delete _rooms[CORRIDOR4];
+	delete _rooms[CORRIDOR5];
+	delete _rooms[CORRIDOR6];
+	delete _rooms[CORRIDOR7];
+	delete _rooms[CORRIDOR8];
+	delete _rooms[CORRIDOR9];
+	delete _rooms[BCORRIDOR];
+	delete _rooms[GUARD];
+	delete _rooms[GUARD3];
+	delete _rooms[OFFICE_L1];
+	delete _rooms[OFFICE_L2];
+	delete _rooms[OFFICE_R1];
+	delete _rooms[OFFICE_R2];
+	delete _rooms[OFFICE_L];
+	delete _rooms[ELEVATOR];
+	delete _rooms[STATION];
+	delete _rooms[SIGN];
+}
+
+
+void GameManager::initState() {
 	Object::setObjectNull(_currentInputObject);
 	Object::setObjectNull(_inputObject[0]);
 	Object::setObjectNull(_inputObject[1]);
@@ -233,8 +247,58 @@ GameManager::GameManager(SupernovaEngine *vm) {
 	_state.airlockSeen = false;
 	_state.holdSeen = false;
 	_state.dream = false;
+}
 
-	initGui();
+void GameManager::initRooms() {
+	_rooms[INTRO] = new StartingItems(_vm, this);
+	_rooms[CORRIDOR] = new ShipCorridor(_vm, this);
+	_rooms[HALL] = new ShipHall(_vm, this);
+	_rooms[SLEEP] = new ShipSleepCabin(_vm, this);
+	_rooms[COCKPIT] = new ShipCockpit(_vm, this);
+	_rooms[AIRLOCK] = new ShipAirlock(_vm, this);
+	_rooms[HOLD] = new ShipHold(_vm, this);
+	_rooms[LANDINGMODULE] = new ShipLandingModule(_vm, this);
+	_rooms[GENERATOR] = new ShipGenerator(_vm, this);
+	_rooms[OUTSIDE] = new ShipOuterSpace(_vm, this);
+	_rooms[CABIN_R1] = new ShipCabinR1(_vm, this);
+	_rooms[CABIN_R2] = new ShipCabinR2(_vm, this);
+	_rooms[CABIN_R3] = new ShipCabinR3(_vm, this);
+	_rooms[CABIN_L1] = new ShipCabinL1(_vm, this);
+	_rooms[CABIN_L2] = new ShipCabinL2(_vm, this);
+	_rooms[CABIN_L3] = new ShipCabinL3(_vm, this);
+	_rooms[BATHROOM] = new ShipCabinBathroom(_vm, this);
+
+	_rooms[ROCKS] = new ArsanoRocks(_vm, this);
+	_rooms[CAVE] = new ArsanoCave(_vm, this);
+	_rooms[MEETUP] = new ArsanoMeetup(_vm, this);
+	_rooms[ENTRANCE] = new ArsanoEntrance(_vm, this);
+	_rooms[REST] = new ArsanoRemaining(_vm, this);
+	_rooms[ROGER] = new ArsanoRoger(_vm, this);
+	_rooms[GLIDER] = new ArsanoGlider(_vm, this);
+	_rooms[MEETUP2] = new ArsanoMeetup2(_vm, this);
+	_rooms[MEETUP3] = new ArsanoMeetup3(_vm, this);
+
+	_rooms[CELL] = new AxacussCell(_vm, this);
+	_rooms[CORRIDOR1] = new AxacussCorridor1(_vm, this);
+	_rooms[CORRIDOR2] = new AxacussCorridor2(_vm, this);
+	_rooms[CORRIDOR3] = new AxacussCorridor3(_vm, this);
+	_rooms[CORRIDOR4] = new AxacussCorridor3(_vm, this);
+	_rooms[CORRIDOR5] = new AxacussCorridor4(_vm, this);
+	_rooms[CORRIDOR6] = new AxacussCorridor5(_vm, this);
+	_rooms[CORRIDOR7] = new AxacussCorridor6(_vm, this);
+	_rooms[CORRIDOR8] = new AxacussCorridor7(_vm, this);
+	_rooms[CORRIDOR9] = new AxacussCorridor8(_vm, this);
+	_rooms[BCORRIDOR] = new AxacussBcorridor(_vm, this);
+	_rooms[GUARD] = new AxacussIntersection(_vm, this);
+	_rooms[GUARD3] = new AxacussExit(_vm, this);
+	_rooms[OFFICE_L1] = new AxacussOffice1(_vm, this);
+	_rooms[OFFICE_L2] = new AxacussOffice2(_vm, this);
+	_rooms[OFFICE_R1] = new AxacussOffice3(_vm, this);
+	_rooms[OFFICE_R2] = new AxacussOffice4(_vm, this);
+	_rooms[OFFICE_L] = new AxacussOffice5(_vm, this);
+	_rooms[ELEVATOR] = new AxacussElevator(_vm, this);
+	_rooms[STATION] = new AxacussStation(_vm, this);
+	_rooms[SIGN] = new AxacussSign(_vm, this);
 }
 
 void GameManager::initGui() {

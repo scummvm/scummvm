@@ -98,6 +98,7 @@ public:
 class GameManager {
 public:
 	GameManager(SupernovaEngine *vm);
+	~GameManager();
 
 	void processInput(Common::KeyState &state);
 	void processInput();
@@ -136,6 +137,9 @@ public:
 
 	void takeObject(Object &obj);
 
+	void initState();
+	void initRooms();
+	void destroyRooms();
 	void initGui();
 	bool genericInteract(Action verb, Object &obj1, Object &obj2);
 	bool isHelmetOff();
