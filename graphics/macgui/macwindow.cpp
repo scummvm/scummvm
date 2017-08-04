@@ -494,7 +494,10 @@ bool MacWindow::processEvent(Common::Event &event) {
 		return false;
 	}
 
-	return (*_callback)(click, event, _dataPtr);
+	if (_callback)
+		return (*_callback)(click, event, _dataPtr);
+	else
+		return false;
 }
 
 } // End of namespace Wage
