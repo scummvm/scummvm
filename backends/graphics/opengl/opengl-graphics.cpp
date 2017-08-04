@@ -60,7 +60,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       _cursorX(0), _cursorY(0), _cursorDisplayX(0),_cursorDisplayY(0), _cursorHotspotX(0), _cursorHotspotY(0),
       _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
       _cursorKeyColor(0), _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false),
-      _forceRedraw(false), _scissorOverride(3)
+      _forceRedraw(false)
 #ifdef USE_OSD
       , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
       _osdIconSurface(nullptr)
@@ -381,10 +381,8 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 
 #ifdef USE_OSD
-	{
-		if (_osdMessageChangeRequest) {
-			osdMessageUpdateSurface();
-		}
+	if (_osdMessageChangeRequest) {
+		osdMessageUpdateSurface();
 	}
 
 	if (_osdIconSurface) {
@@ -413,18 +411,13 @@ void OpenGLGraphicsManager::updateScreen() {
 	_overlay->updateGLTexture();
 
 	// Clear the screen buffer.
-	if (_scissorOverride && !_overlayVisible) {
-		// In certain cases we need to assure that the whole screen area is
-		// cleared. For example, when switching from overlay visible to
-		// invisible, we need to assure that all contents are cleared to
-		// properly remove all overlay contents.
-		_backBuffer.enableScissorTest(false);
-		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
-		_backBuffer.enableScissorTest(true);
+	GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 
-		--_scissorOverride;
-	} else {
-		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+	if (!_overlayVisible) {
+		// The scissor test is enabled to:
+		// - Clip the cursor to the game screen
+		// - Clip the game screen when the shake offset is non-zero
+		_backBuffer.enableScissorTest(true);
 	}
 
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_displayHeight / _gameScreen->getHeight();
@@ -447,6 +440,10 @@ void OpenGLGraphicsManager::updateScreen() {
 		                         _cursorDisplayX - _cursorHotspotXScaled,
 		                         _cursorDisplayY - _cursorHotspotYScaled + cursorOffset,
 		                         _cursorWidthScaled, _cursorHeightScaled);
+	}
+
+	if (!_overlayVisible) {
+		_backBuffer.enableScissorTest(false);
 	}
 
 #ifdef USE_OSD
@@ -530,9 +527,6 @@ void OpenGLGraphicsManager::showOverlay() {
 	_overlayVisible = true;
 	_forceRedraw = true;
 
-	// Allow drawing inside full screen area.
-	_backBuffer.enableScissorTest(false);
-
 	// Update cursor position.
 	setMousePosition(_cursorX, _cursorY);
 }
@@ -540,10 +534,6 @@ void OpenGLGraphicsManager::showOverlay() {
 void OpenGLGraphicsManager::hideOverlay() {
 	_overlayVisible = false;
 	_forceRedraw = true;
-
-	// Limit drawing to screen area.
-	_backBuffer.enableScissorTest(true);
-	_scissorOverride = 3;
 
 	// Update cursor position.
 	setMousePosition(_cursorX, _cursorY);
@@ -961,14 +951,8 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	// Setup alpha blend (for overlay and cursor).
 	_backBuffer.enableBlend(true);
-	// Setup scissor state accordingly.
-	_backBuffer.enableScissorTest(!_overlayVisible);
 
 	g_context.getActivePipeline()->setFramebuffer(&_backBuffer);
-
-	// Clear the whole screen for the first three frames to assure any
-	// leftovers are cleared.
-	_scissorOverride = 3;
 
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot
@@ -1246,14 +1230,12 @@ void OpenGLGraphicsManager::recalculateDisplayArea() {
 	_displayY = (_outputScreenHeight - _displayHeight) / 2;
 
 	// Setup drawing limitation for game graphics.
-	// This invovles some trickery because OpenGL's viewport coordinate system
+	// This involves some trickery because OpenGL's viewport coordinate system
 	// is upside down compared to ours.
 	_backBuffer.setScissorBox(_displayX,
 	                          _outputScreenHeight - _displayHeight - _displayY,
 	                          _displayWidth,
 	                          _displayHeight);
-	// Clear the whole screen for the first three frames to remove leftovers.
-	_scissorOverride = 3;
 
 	// Update the cursor position to adjust for new display area.
 	setMousePosition(_cursorX, _cursorY);

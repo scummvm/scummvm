@@ -533,11 +533,6 @@ private:
 	 */
 	bool _forceRedraw;
 
-	/**
-	 * Number of frames glClear shall ignore scissor testing.
-	 */
-	uint _scissorOverride;
-
 #ifdef USE_OSD
 	//
 	// OSD
