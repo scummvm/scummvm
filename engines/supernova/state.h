@@ -147,7 +147,7 @@ public:
 	bool airless();
 	void shock();
 	Common::EventType getMouseInput();
-	uint16 getKeyInput(bool blockForAlNum = false);
+	uint16 getKeyInput(bool blockForPrintChar = false);
 	void getInput();
 	void mouseInput3();
 	void mouseWait(int delay);
