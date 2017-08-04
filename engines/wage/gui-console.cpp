@@ -394,46 +394,60 @@ void Gui::actionUndo() {
 }
 
 void Gui::actionClear() {
-	int startPos = _selectionStartX;
-	int endPos = _selectionEndX;
+	const Graphics::SelectedText *s = _consoleWindow->getSelectedText();
+
+	if (s->endY == -1)
+		return;
+
+	int startPos = s->startCol;
+	int endPos = s->endCol;
 
 	if (startPos > endPos)
 		SWAP(startPos, endPos);
 
-	Common::String beg(_lines[_selectionStartY].c_str(), &_lines[_selectionStartY].c_str()[startPos]);
-	Common::String end(&_lines[_selectionStartY].c_str()[endPos]);
+	Common::String input = _consoleWindow->getInput();
 
-	_undobuffer = _engine->_inputText;
-	_engine->_inputText = beg + end;
-	drawInput();
+	Common::String beg(input.c_str(), &input.c_str()[startPos]);
+	Common::String end(&input.c_str()[endPos]);
+
+	_undobuffer = input;
+
+	_consoleWindow->clearInput();
+	_consoleWindow->appendInput(beg + end);
 
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
 
-	_selectionStartY = -1;
-	_selectionEndY = -1;
+	_consoleWindow->clearSelection();
 }
 
 void Gui::actionCut() {
-	int startPos = _selectionStartX;
-	int endPos = _selectionEndX;
+	const Graphics::SelectedText *s = _consoleWindow->getSelectedText();
+
+	if (s->endY == -1)
+		return;
+
+	int startPos = s->startCol;
+	int endPos = s->endCol;
 
 	if (startPos > endPos)
 		SWAP(startPos, endPos);
 
-	Common::String beg(_lines[_selectionStartY].c_str(), &_lines[_selectionStartY].c_str()[startPos]);
-	Common::String mid(&_lines[_selectionStartY].c_str()[startPos], &_lines[_selectionStartY].c_str()[endPos]);
-	Common::String end(&_lines[_selectionStartY].c_str()[endPos]);
+	Common::String input = _consoleWindow->getInput();
 
-	_undobuffer = _engine->_inputText;
-	_engine->_inputText = beg + end;
+	Common::String beg(input.c_str(), &input.c_str()[startPos]);
+	Common::String mid(&input.c_str()[startPos], &input.c_str()[endPos]);
+	Common::String end(&input.c_str()[endPos]);
+
+	_undobuffer = input;
+
+	_consoleWindow->clearInput();
+	_consoleWindow->appendInput(beg + end);
 	_clipboard = mid;
-	drawInput();
 
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
 	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 
-	_selectionStartY = -1;
-	_selectionEndY = -1;
+	_consoleWindow->clearSelection();
 }
 
 void Gui::disableUndo() {
