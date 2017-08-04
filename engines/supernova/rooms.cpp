@@ -666,7 +666,8 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 				if (!r->getObject(4)->hasProperty(WORN) ||
 				    !r->getObject(5)->hasProperty(WORN) ||
 				    !r->getObject(6)->hasProperty(WORN)) {
-//					longjmp(dead, "Zu niedriger Luftdruck soll ungesund sein.");
+					_gm->death("Zu niedriger Luftdruck soll ungesund sein.");
+					return true;
 				}
 			}
 			_gm->drawImage(_gm->invertSection(11));
