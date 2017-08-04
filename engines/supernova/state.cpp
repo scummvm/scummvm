@@ -1001,7 +1001,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		    "Sie hat einen|Knopf zum Verstellen der Alarmzeit.|"
 		    "Uhrzeit: %s   Alarmzeit: %s",
 		    timeToString(_state.time + _state.timeStarting).c_str(),
-		    timeToString(_state.timeAlarm)).c_str());
+		    timeToString(_state.timeAlarm).c_str()).c_str());
 	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
 		char *min;
 		int hours, minutes;
