@@ -421,7 +421,7 @@ void SupernovaEngine::renderMessage(const char *text, MessagePosition position) 
 	switch (position) {
 	case kMessageNormal:
 		x = 160 - rowWidthMax / 2;
-		textColor = COL_MELD;
+		textColor = kColorWhite99;
 		break;
 	case kMessageTop:
 		x = 160 - rowWidthMax / 2;
@@ -454,7 +454,7 @@ void SupernovaEngine::renderMessage(const char *text, MessagePosition position) 
 	int message_width = rowWidthMax + 6;
 	int message_height = numRows * 9 + 5;
 	saveScreen(message_columns, message_rows, message_width, message_height);
-	renderBox(message_columns, message_rows, message_width, message_height, HGR_MELD);
+	renderBox(message_columns, message_rows, message_width, message_height, kColorWhite35);
 	for (uint i = 0; i < numRows; ++i) {
 		renderText(row[i], x, y, textColor);
 		y += 9;

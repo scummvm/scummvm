@@ -403,11 +403,10 @@ void GameManager::processInput() {
 		if (Object::isNullObject(_currentInputObject))
 			return;
 
-		ObjectType type;
 		if (((_mouseField >= 0) && (_mouseField < 256)) ||
 		    ((_mouseField >= 512) && (_mouseField < 768))) {
 			_inputObject[0] = _currentInputObject;
-			type = _inputObject[0]->_type;
+			ObjectType type = _inputObject[0]->_type;
 			if (type & OPENABLE) {
 				if (type & OPENED)
 					_inputVerb = ACTION_CLOSE;
@@ -496,8 +495,6 @@ void GameManager::processInput() {
 				_currentInputObject = _currentRoom->getObject(_mouseField);
 			}
 		}
-
-//		drawStatus();
 	}
 }
 
@@ -862,10 +859,8 @@ void GameManager::drawStatus() {
 	} else {
 		_vm->renderText(_inputObject[0]->_name);
 		if (_inputVerb == ACTION_GIVE) {
-			// to
 			_vm->renderText(" an ");
 		} else if (_inputVerb == ACTION_USE) {
-			// with
 			_vm->renderText(" mit ");
 		}
 
