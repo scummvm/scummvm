@@ -397,8 +397,6 @@ void RobotDecoder::initPlayback() {
 }
 
 void RobotDecoder::initAudio() {
-	_syncFrame = true;
-
 	_audioRecordInterval = RobotAudioStream::kRobotSampleRate / _frameRate;
 
 	_expectedAudioBlockSize = _audioBlockSize - kAudioBlockHeaderSize;
@@ -539,6 +537,7 @@ void RobotDecoder::open(const GuiResourceId robotId, const reg_t plane, const in
 
 	initPlayback();
 
+	_syncFrame = true;
 	_audioBlockSize = _stream->readUint16();
 	_primerZeroCompressFlag = _stream->readSint16();
 	_stream->seek(2, SEEK_CUR); // unused
