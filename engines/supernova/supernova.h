@@ -109,6 +109,7 @@ public:
 
 	int  getDOSTicks();
 	int  textWidth(const char *text);
+	int  textWidth(const uint16 key);
 	void initData();
 	void initPalette();
 	void paletteFadeIn();
@@ -126,7 +127,9 @@ public:
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
 	void removeMessage();
 	void renderText(const char *text, int x, int y, byte color);
+	void renderText(const uint16 character, int x, int y, byte color);
 	void renderText(const char *text);
+	void renderText(const uint16 character);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void setColor63(byte value);
 	void command_print();
