@@ -455,7 +455,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 		(*row)--;
 
 	if (y > _textMaxHeight)
-		x = getLineWidth(*row);
+		x = _surface->w;
 
 	*sy = _textLines[*row].y;
 
