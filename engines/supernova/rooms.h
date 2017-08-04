@@ -1001,7 +1001,7 @@ public:
 		_shown[24] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,DOOR,EXIT,2,2,0,NULLROOM,2);
-		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR6,22);
+		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR6,22);
 	}
 
 	virtual void onEntrance();
@@ -1042,8 +1042,8 @@ public:
 		_shown[25] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR5,2);
-		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,22);
-		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,OPENABLE|CLOSED,255,255,0,CORRIDOR8,13);
+		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,22);
+		_objectState[2] = Object("Tür",Object::defaultDescription,DOOR,OPENABLE|CLOSED,255,255,0,CORRIDOR8,13);
 	}
 
 	virtual void onEntrance();
@@ -1084,7 +1084,7 @@ public:
 		_shown[25] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR6,2);
-		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,GUARD,22);
+		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,GUARD,22);
 	}
 
 	virtual void onEntrance();
@@ -1127,7 +1127,7 @@ public:
 		_shown[28] = true;
 
 		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,0,0,0,CORRIDOR6,10);
-		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,BCORRIDOR,22);
+		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,BCORRIDOR,22);
 	}
 
 	virtual void onEntrance();
@@ -1171,7 +1171,7 @@ public:
 		_shown[28] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,BCORRIDOR,2);
-		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,0,0,0,GUARD,10);
+		_objectState[1] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,0,0,0,GUARD,10);
 	}
 
 	virtual void onEntrance();
@@ -1303,10 +1303,10 @@ public:
 		_shown[16] = true;
 
 		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
-		_objectState[0] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
-		_objectState[0] = Object("Würfel","Sonderbar!",NULLOBJECT,NULLTYPE,0,0,0);
-		_objectState[0] = Object("Bild","Affenstark!",NULLOBJECT,NULLTYPE,1,1,0);
-		_objectState[0] = Object("Komisches Ding","Wundersam!",NULLOBJECT,UNNECESSARY,2,2,0);
+		_objectState[1] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
+		_objectState[2] = Object("Würfel","Sonderbar!",NULLOBJECT,NULLTYPE,0,0,0);
+		_objectState[3] = Object("Bild","Affenstark!",NULLOBJECT,NULLTYPE,1,1,0);
+		_objectState[4] = Object("Komisches Ding","Wundersam!",NULLOBJECT,UNNECESSARY,2,2,0);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
