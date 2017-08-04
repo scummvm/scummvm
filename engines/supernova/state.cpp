@@ -53,6 +53,10 @@ void Inventory::remove(Object &obj) {
 	}
 }
 
+void Inventory::clear() {
+	_numObjects = 0;
+}
+
 Object *Inventory::get(int index) const {
 	if (index < _numObjects)
 		return _inventory[index];
