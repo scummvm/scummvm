@@ -432,7 +432,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 	Room *r;
 
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, RECORD, TURNTABLE)) {
-		if (isSectionVisible(kMaxSection - 1) || isSectionVisible(15))
+		if (!_gm->_guiEnabled || isSectionVisible(15))
 			_vm->renderMessage("Du hast die Platte schon aufgelegt.");
 		else {
 			if (!getObject(4)->hasProperty(CARRIED))
