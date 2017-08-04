@@ -202,8 +202,8 @@ bool AIScriptLeon::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorMcCoy, 565, 18);
 			Actor_Face_Actor(kActorMcCoy, kActorLeon, true);
 			Actor_Says(kActorLeon, 140, 12);
-			Actor_Says_With_Pause(kActorMcCoy, 570, 0.0, 17);
-			Actor_Says_With_Pause(kActorMcCoy, 575, 1.2, 13);
+			Actor_Says_With_Pause(kActorMcCoy, 570, 0.0f, 17);
+			Actor_Says_With_Pause(kActorMcCoy, 575, 1.2f, 13);
 			Actor_Says(kActorLeon, 150, 3);
 			Actor_Says(kActorMcCoy, 580, 3);
 			Actor_Says(kActorLeon, 160, 13);
