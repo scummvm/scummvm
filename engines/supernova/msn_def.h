@@ -124,7 +124,7 @@ const int kColorCursorTransparent = kColorWhite25;
 #define HGR_NAME     kColorDarkBlue
 #define COL_NAME     kColorLightRed
 
-#define HGR_EDIT     kcolorDarkBlue
+#define HGR_EDIT     kColorDarkBlue
 #define COL_EDIT     kColorWhite99
 
 
