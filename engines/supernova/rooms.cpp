@@ -746,7 +746,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 
 void ShipHold::onEntrance() {
 	if (!hasSeen())
-		_vm->renderMessage("Was ist denn das fr ein Chaos?|Und auáerdem fehlt das Notraumschiff!|Jetzt wird mir einiges klar.|Die anderen sind geflchtet,|und ich habe es verpennt.");
+		_vm->renderMessage("Was ist denn das f\201r ein Chaos?|Und au\341erdem fehlt das Notraumschiff!|Jetzt wird mir einiges klar.|Die anderen sind gefl\201chtet,|und ich habe es verpennt.");
 	setRoomSeen(true);
 	_gm->_rooms[COCKPIT]->setRoomSeen(true);
 }
@@ -794,7 +794,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 	         isSectionVisible(7))
 		_vm->renderMessage("Du wirst aus den Anzeigen nicht schlau.");
 	else if ((verb == ACTION_USE) && (obj1._id == KEYBOARD))
-		_vm->renderMessage("Laá lieber die Finger davon!");
+		_vm->renderMessage("La\341 lieber die Finger davon!");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, LANDINGMOD_SOCKET)) {
 		r = _gm->_rooms[CABIN_L3];
 		_gm->_inventory.remove(*r->getObject(8));
@@ -812,7 +812,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage("An dem Kabel ist doch gar kein Stecker.");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, TERMINALSTRIP)) {
 		_gm->drawImage(11);
-		getObject(4)->_name = "Leitung mit Lsterklemme";
+		getObject(4)->_name = "Leitung mit L\201sterklemme";
 		r = _gm->_rooms[HOLD];
 		_gm->_inventory.remove(*r->getObject(2));
 		_gm->_state.terminalStripConnected = true;
@@ -844,7 +844,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawImage(6);
 			getObject(4)->_click = 7;
 		} else {
-			_vm->renderMessage("Du solltest die Luke vielleicht erst ffnen.");
+			_vm->renderMessage("Du solltest die Luke vielleicht erst \224ffnen.");
 		}
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == LANDINGMOD_HATCH) &&
 	           isSectionVisible(6)) {
@@ -970,7 +970,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 	           (Object::combine(obj1, obj2, WIRE, CLIP) ||
 	            Object::combine(obj1, obj2, SPOOL, CLIP)) &&
 	           isSectionVisible(3)) {
-		_vm->renderMessage("Was ntzt dir der Anschluá|ohne eine Stromquelle?!");
+		_vm->renderMessage("Was n\201tzt dir der Anschlu\341|ohne eine Stromquelle?!");
 	} else if ((verb == ACTION_LOOK) && (obj1._id == VOLTMETER)) {
 		if (_gm->_state.powerOff)
 			_vm->renderMessage("Die Spannung ist auf Null abgesunken.");
@@ -983,7 +983,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		getObject(3)->_click = 18;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, OUTERHATCH, GENERATOR_ROPE)) {
 		if (!isSectionVisible(1))
-			_vm->renderMessage("Du muát die Luke erst ffnen.");
+			_vm->renderMessage("Du mu\341t die Luke erst \224ffnen.");
 		else {
 			_gm->drawImage(_gm->invertSection(13));
 			_gm->drawImage(1);
