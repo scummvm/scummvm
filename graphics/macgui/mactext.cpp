@@ -451,11 +451,13 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	// FIXME: We should use bsearch() here
 	*row = 0;
 
-	while (*row < _textLines.size() - 1 && _textLines[*row].y < y)
+	while (*row < _textLines.size() && _textLines[*row].y < y)
 		(*row)++;
 
-	if (*row)
+	if (*row == _textLines.size()) {
 		(*row)--;
+		x = getLineWidth(*row);
+	}
 
 	*sy = _textLines[*row].y;
 
@@ -464,7 +466,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	int width = 0, pwidth = 0;
 	int mcol = 0, pmcol = 0;
 	uint chunk;
-	for (chunk = 0; chunk < _textLines[*row].chunks.size() - 1; chunk++) {
+	for (chunk = 0; chunk < _textLines[*row].chunks.size(); chunk++) {
 		pwidth = width;
 		pmcol = mcol;
 		if (!_textLines[*row].chunks[chunk].text.empty()) {
@@ -475,6 +477,9 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 		if (width > x)
 			break;
 	}
+
+	if (chunk == _textLines[*row].chunks.size())
+		chunk--;
 
 	Common::String str = _textLines[*row].chunks[chunk].text;
 
