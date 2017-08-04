@@ -754,8 +754,98 @@ void GameManager::animationOn() {
 	_animationEnabled = true;
 }
 
-void GameManager::edit(char *text, int x, int y, int length) {
-	// STUB
+void GameManager::edit(char *text, int x, int y, uint length) {
+	// TODO: DOES NOT WORK!!!
+#define GET_STRING_CHAR(str, index) (index < str.size() ? str[index] : 0)
+
+	bool isEditing = true;
+	Common::String input(text);
+	int cursorPos = x + _vm->textWidth(text);
+	char cursorChar = 0;
+	uint cursorIndex = input.size();
+	int cursorCharWidth = 0;
+
+	while (isEditing) {
+		cursorChar = GET_STRING_CHAR(input, cursorIndex);
+
+		_vm->_textCursorX = x;
+		_vm->_textCursorY = y;
+		_vm->_textColor = COL_EDIT;
+		for (uint i = 0; i < input.size(); ++i) {
+			// Draw char highlight depending on cursor position
+			if (i == cursorIndex && cursorChar) {
+				cursorCharWidth = _vm->textWidth(cursorChar);
+				_vm->renderBox(cursorPos, y - 1, cursorCharWidth, 9, COL_EDIT);
+//				_vm->renderBox(cursorPos + cursorCharWidth, y - 1, _vm->textWidth(cursor + 1) + 6, 9, HGR_EDIT);
+				_vm->renderText(cursorChar, cursorPos, y, HGR_EDIT);
+				_vm->_textColor = COL_EDIT;
+			} else {
+				_vm->renderText(input[i]);
+			}
+		}
+		if (cursorIndex == input.size()) {
+			_vm->renderBox(cursorPos, y - 1, 1, 9, COL_EDIT);
+			_vm->renderBox(cursorPos + 1, y - 1, 6, 9, HGR_EDIT);
+		}
+
+		getKeyInput(true);
+		switch (_key.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_ESCAPE:
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_DOWN:
+			cursorChar = GET_STRING_CHAR(input, cursorIndex);
+			if (cursorChar) {
+				cursorCharWidth = _vm->textWidth(cursorChar);
+			} else {
+				cursorCharWidth = 1;
+			}
+			_vm->renderBox(cursorPos, y - 1, cursorCharWidth, 9, HGR_EDIT);
+			_vm->renderText(cursorPos, y, cursorChar, COL_EDIT);
+		return;
+		case Common::KEYCODE_LEFT:
+			if (cursorIndex != 0) {
+				--cursorIndex;
+				cursorChar = GET_STRING_CHAR(input, cursorIndex);
+				cursorPos -= _vm->textWidth(cursorChar);
+			}
+		break;
+		case Common::KEYCODE_RIGHT:
+			if (cursorIndex != input.size()) {
+				cursorChar = GET_STRING_CHAR(input, cursorIndex);
+				cursorCharWidth = _vm->textWidth(cursorChar);
+				_vm->renderBox(cursorPos, y - 1, cursorCharWidth, 9, HGR_EDIT);
+				_vm->renderText(cursorChar, cursorPos, y, COL_EDIT);
+				++cursorIndex;
+				cursorPos += cursorCharWidth;
+			}
+		break;
+		case Common::KEYCODE_DELETE:
+			if (cursorIndex != input.size()) {
+				input.deleteChar(cursorIndex);
+			}
+		break;
+		case Common::KEYCODE_BACKSPACE:
+			if (cursorIndex != 0) {
+				--cursorIndex;
+				input.deleteChar(cursorIndex);
+			}
+		break;
+		default:
+			if (Common::isPrint(_key.ascii) && input.size() < length) {
+				int charWidth = _vm->textWidth(_key.ascii);
+				input.insertChar(_key.ascii, cursorIndex);
+				++cursorIndex;
+				cursorPos += charWidth;
+			}
+		break;
+		}
+	}
+
+	_vm->renderBox(x, y - 1, 320 - x, 10, HGR_EDIT);
+	Common::copy(input.begin(), input.end(), text);
+
+#undef GET_STRING_CHAR
 }
 
 void GameManager::loadOverlayStart() {
