@@ -805,6 +805,29 @@ void GameManager::closeLocker(const Room *room, Object *obj, Object *lock, int s
 	}
 }
 
+void GameManager::death(const char *message) {
+	_vm->paletteFadeOut();
+	_guiEnabled = false;
+	_vm->renderImage(11, 0);
+	_vm->renderMessage(message);
+	_vm->playSound(kAudioDeath);
+	_vm->paletteFadeIn();
+	getInput();
+	_vm->paletteFadeOut();
+	_vm->removeMessage();
+
+	// TODO: Load screen
+	destroyRooms();
+	initRooms();
+	initState();
+	initGui();
+	_inventory.clear();
+	changeRoom(INTRO);
+	_vm->paletteFadeIn();
+
+	_guiEnabled = true;
+}
+
 int GameManager::invertSection(int section) {
 	if (section < 128)
 		section += 128;

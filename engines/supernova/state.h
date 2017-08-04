@@ -180,6 +180,7 @@ public:
 	void handleInput();
 	void handleTime();
 	void setAnimationTimer(int ticks);
+	void death(const char *message);
 };
 
 }
