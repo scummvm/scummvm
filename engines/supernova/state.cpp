@@ -259,6 +259,8 @@ void GameManager::initGui() {
 
 
 void GameManager::processInput(Common::KeyState &state) {
+	_key = state;
+
 	switch (state.keycode) {
 	case Common::KEYCODE_F1:
 		// help
@@ -279,12 +281,10 @@ void GameManager::processInput(Common::KeyState &state) {
 		if (state.flags & Common::KBD_ALT) {
 			// quit game
 			_vm->_gameRunning = false;
-		} else {
-			_key = state.ascii;
 		}
 		break;
 	default:
-		_key = state.ascii;
+		break;
 	}
 }
 
@@ -294,8 +294,8 @@ void GameManager::resetInputState() {
 	_inputVerb = ACTION_WALK;
 	_processInput = false;
 	_mouseClicked = false;
-	_key = 0;
 	_keyPressed = false;
+	_key.reset();
 	_mouseClickType = Common::EVENT_MOUSEMOVE;
 
 	processInput();
@@ -536,11 +536,44 @@ void GameManager::drawInventory() {
 	_vm->renderBox(272, 181, 7, 19, HGR_INV);
 }
 
-void GameManager::mouseInput() {
-	// STUB
+uint16 GameManager::getKeyInput(bool blockForPrintChar) {
+	while (true) {
+		_vm->updateEvents();
+		// TODO: Check for valid ascii
+		if (_keyPressed) {
+			if (blockForPrintChar) {
+				if (Common::isPrint(_key.keycode) ||
+				    _key.keycode == Common::KEYCODE_BACKSPACE ||
+				    _key.keycode == Common::KEYCODE_DELETE ||
+				    _key.keycode == Common::KEYCODE_RETURN ||
+				    _key.keycode == Common::KEYCODE_SPACE ||
+				    _key.keycode == Common::KEYCODE_ESCAPE) {
+					if (_key.flags & Common::KBD_SHIFT)
+						return toupper(_key.ascii);
+					else
+						return tolower(_key.ascii);
+				}
+			} else {
+				return _key.ascii;
+			}
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	}
 }
 
-void GameManager::mouseInput2() {
+Common::EventType GameManager::getMouseInput() {
+	while (true) {
+		_vm->updateEvents();
+		if (_mouseClicked) {
+			return _mouseClickType;
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	}
+}
+
+void GameManager::getInput() {
 	while (true) {
 		_vm->updateEvents();
 		// TODO: handle key input (e.g. alt+x, F-keys?)
@@ -552,10 +585,10 @@ void GameManager::mouseInput2() {
 	}
 }
 
+// TODO: Unify mouseInput3 and mouseWait with getMouseInput
 void GameManager::mouseInput3() {
 	// STUB
 }
-
 void GameManager::mouseWait(int delay) {
 	// STUB
 }
@@ -629,7 +662,7 @@ void GameManager::showMenu() {
 }
 
 void GameManager::drawMapExits() {
-	// TODO: Preload _exitList on room entry instead on every call
+// TODO: Preload _exitList on room entry instead on every call
 	_vm->renderBox(281, 161, 39, 39, HGR_AUSG);
 
 	for (int i = 0; i < 25; i++)
@@ -776,7 +809,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		//       those cases seperately
 		_vm->renderImage(2, 0);
 		_vm->setColor63(40);
-		mouseInput2();
+		getInput();
 		_vm->renderRoom(*_currentRoom);
 		roomBrightness();
 		palette();
@@ -806,7 +839,8 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderBox(91, 99, 138, 9, kColorDarkBlue);
 			do {
 				edit(t, 91, 100, 5);
-			} while ((_key != Common::ASCII_RETURN) && (_key != Common::ASCII_ESCAPE));
+			} while ((_key.keycode != Common::KEYCODE_RETURN) &&
+			         (_key.keycode != Common::KEYCODE_ESCAPE));
 			f = false;
 			if (t[0] == ':') {
 				t[0] = 0;
@@ -829,9 +863,9 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			minutes = atoi(min);
 			if ((hours > 23) || (minutes > 59)) f = true;
 			animationOn();
-		} while (f && (_key != Common::ASCII_ESCAPE));
+		} while (f && (_key.keycode != Common::KEYCODE_ESCAPE));
 		_vm->restoreScreen();
-		if (_key != Common::ASCII_ESCAPE) {
+		if (_key.keycode != Common::KEYCODE_ESCAPE) {
 			_state.timeAlarm = (hours * 60 + minutes) * 1092.3888 + 8;
 			_state.timeAlarmSystem = _state.timeAlarm + _state.timeStarting;
 			_state.alarmOn = (_state.timeAlarmSystem > _vm->getDOSTicks());
