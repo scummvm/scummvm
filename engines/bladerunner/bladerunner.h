@@ -194,11 +194,15 @@ public:
 	void playerGainsControl();
 
 	void ISez(const char *str);
+
+	void blitToScreen(const Graphics::Surface &src);
 };
 
 static inline const Graphics::PixelFormat createRGB555() {
 	return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 }
+
+void blit(const Graphics::Surface &src, Graphics::Surface &dst);
 
 } // End of namespace BladeRunner
 

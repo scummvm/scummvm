@@ -247,7 +247,7 @@ void Spinner::tick() {
 	assert(frame >= -1);
 
 	// vqaPlayer renders to _surfaceInterface
-	_vm->_surfaceGame.copyRectToSurface(_vm->_surfaceInterface, 0, 0, Common::Rect(640, 480));
+	blit(_vm->_surfaceInterface, _vm->_surfaceGame);
 
 	_imagePicker->draw(_vm->_surfaceInterface);
 
@@ -260,8 +260,7 @@ void Spinner::tick() {
 	}
 	_vm->_mouse->draw(_vm->_surfaceGame, p.x, p.y);
 
-	_vm->_system->copyRectToScreen(_vm->_surfaceGame.getPixels(), _vm->_surfaceGame.pitch, 0, 0, 640, 480);
-	_vm->_system->updateScreen();
+	_vm->blitToScreen(_vm->_surfaceGame);
 	_vm->_system->delayMillis(10);
 }
 

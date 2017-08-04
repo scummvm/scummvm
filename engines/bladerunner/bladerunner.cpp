@@ -526,8 +526,7 @@ bool BladeRunnerEngine::loadSplash() {
 
 	img.copyToSurface(&_surfaceGame);
 
-	_system->copyRectToScreen(_surfaceGame.getPixels(), _surfaceGame.pitch, 0, 0, _surfaceGame.w, _surfaceGame.h);
-	_system->updateScreen();
+	blitToScreen(_surfaceGame);
 
 	return true;
 }
@@ -616,9 +615,9 @@ void BladeRunnerEngine::gameTick() {
 			backgroundChanged = true;
 		}
 		(void)backgroundChanged;
-		_surfaceGame.copyRectToSurface(_surfaceInterface.getPixels(), _surfaceInterface.pitch, 0, 0, 640, 480);
+		blit(_surfaceInterface, _surfaceGame);
 		// TODO: remove zbuffer draw
-		//_surface2.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
+		// _surfaceGame.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
 
 		// TODO: Render overlays
 
@@ -774,8 +773,7 @@ void BladeRunnerEngine::gameTick() {
 			}
 #endif
 
-			_system->copyRectToScreen(_surfaceGame.getPixels(), _surfaceGame.pitch, 0, 0, 640, 480);
-			_system->updateScreen();
+			blitToScreen(_surfaceGame);
 			_system->delayMillis(10);
 		}
 	}
@@ -1017,6 +1015,15 @@ void BladeRunnerEngine::playerGainsControl() {
 
 void BladeRunnerEngine::ISez(const char *str) {
 	debug("\t%s", str);
+}
+
+void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) {
+	_system->copyRectToScreen(src.getPixels(), src.pitch, 0, 0, src.w, src.h);
+	_system->updateScreen();
+}
+
+void blit(const Graphics::Surface &src, Graphics::Surface &dst) {
+	dst.copyRectToSurface(src.getPixels(), src.pitch, 0, 0, src.w, src.h);
 }
 
 } // End of namespace BladeRunner

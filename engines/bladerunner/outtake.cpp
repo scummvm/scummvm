@@ -59,8 +59,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 			break;
 
 		if (frame >= 0) {
-			_vm->_system->copyRectToScreen(_vm->_surfaceGame.getPixels(), _vm->_surfaceGame.pitch, 0, 0, 640, 480);
-			_vm->_system->updateScreen();
+			_vm->blitToScreen(_vm->_surfaceGame);
 		}
 
 		_vm->_system->delayMillis(10);

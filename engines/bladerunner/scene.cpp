@@ -172,7 +172,7 @@ bool Scene::close(bool isLoadingGame) {
 int Scene::advanceFrame() {
 	int frame = _vqaPlayer->update();
 	if (frame >= 0) {
-		_vm->_surfaceGame.copyRectToSurface(_vm->_surfaceInterface.getPixels(), _vm->_surfaceInterface.pitch, 0, 0, 640, 480);
+		blit(_vm->_surfaceInterface, _vm->_surfaceGame);
 		_vqaPlayer->updateZBuffer(_vm->_zbuffer);
 		_vqaPlayer->updateView(_vm->_view);
 		_vqaPlayer->updateLights(_vm->_lights);
