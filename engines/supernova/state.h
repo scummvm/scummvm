@@ -106,6 +106,7 @@ public:
 	uint16 _key;
 	Common::EventType _mouseClickType;
 	bool _mouseClicked;
+	bool _keyPressed;
 	int _mouseX;
 	int _mouseY;
 	int _mouseField;
