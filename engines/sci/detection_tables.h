@@ -2793,7 +2793,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "543124606352bfa5e07696ddf2a669be", 64},
 		{"resource.000", 0, "5d7714416b612463d750fb9c5690c859", 28952},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE, GUIO_LIGHTHOUSE_DEMO },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_TESTING, GUIO_LIGHTHOUSE_DEMO },
 
 	// Lighthouse - English Windows Demo
 	// Executable scanning reports "3.000.000", VERSION file reports "1.00"
@@ -2801,7 +2801,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "3bdee7a16926975a4729f75cf6b80a92", 1525},
 		{"ressci.000", 0, "3c585827fa4a82f4c04a56a0bc52ccee", 11494351},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_TESTING, GUIO_LIGHTHOUSE_DEMO },
 
 	// Lighthouse - English DOS (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
