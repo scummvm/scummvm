@@ -162,6 +162,11 @@ protected:
 	void renderLQToSurface(Graphics::Surface &out, const Graphics::Surface &nextFrame, const bool doublePixels, const bool blackLines) const;
 
 	/**
+	 * Sets the draw rect, clipping it to the screen's dimensions if necessary.
+	 */
+	void setDrawRect(const int16 x, const int16 y, const int16 width, const int16 height);
+
+	/**
 	 * The rectangle where the video will be drawn, in screen coordinates.
 	 */
 	Common::Rect _drawRect;

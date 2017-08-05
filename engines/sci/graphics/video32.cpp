@@ -252,7 +252,7 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 		freeConvertedFrame = true;
 	}
 
-	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, _drawRect.left, _drawRect.top, convertedFrame->w, convertedFrame->h);
+	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, _drawRect.left, _drawRect.top, _drawRect.width(), _drawRect.height());
 	g_sci->_gfxFrameout->updateScreen();
 
 	if (freeConvertedFrame) {
@@ -282,6 +282,14 @@ void VideoPlayer::renderLQToSurface(Graphics::Surface &out, const Graphics::Surf
 		}
 	} else {
 		out.copyRectToSurface(nextFrame.getPixels(), nextFrame.pitch, 0, 0, nextFrame.w, nextFrame.h);
+	}
+}
+
+void VideoPlayer::setDrawRect(const int16 x, const int16 y, const int16 width, const int16 height) {
+	_drawRect = Common::Rect(x, y, x + width, y + height);
+	if (_drawRect.right > g_system->getWidth() || _drawRect.bottom > g_system->getHeight()) {
+		warning("Draw rect (%d, %d, %d, %d) is out of bounds of the screen; clipping it", PRINT_RECT(_drawRect));
+		_drawRect.clip(g_system->getWidth(), g_system->getHeight());
 	}
 }
 
@@ -566,10 +574,9 @@ void VMDPlayer::init(int16 x, const int16 y, const PlayFlags flags, const int16 
 #endif
 	_stretchVertical = flags & kPlayFlagStretchVertical;
 
-	_drawRect = Common::Rect(x,
-							 y,
-							 x + (_decoder->getWidth() << _doublePixels),
-							 y + (_decoder->getHeight() << (_doublePixels || _stretchVertical)));
+	setDrawRect(x, y,
+				(_decoder->getWidth() << _doublePixels),
+				(_decoder->getHeight() << (_doublePixels || _stretchVertical)));
 }
 
 VMDPlayer::IOStatus VMDPlayer::close() {
@@ -1010,9 +1017,9 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 
 	// SSCI seems to incorrectly calculate the draw rect by scaling the origin
 	// in addition to the width/height for the BR point
-	_drawRect = Common::Rect(x, y,
-							 x + (_decoder->getWidth() << _doublePixels),
-							 y + (_decoder->getHeight() << _doublePixels));
+	setDrawRect(x, y,
+				(_decoder->getWidth() << _doublePixels),
+				(_decoder->getHeight() << _doublePixels));
 
 	g_sci->_gfxCursor32->hide();
 
