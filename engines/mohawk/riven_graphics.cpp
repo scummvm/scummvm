@@ -198,12 +198,15 @@ public:
 			return false;
 		}
 
-		Common::Rect oldArea = Common::Rect(
-				newArea.right != _rect.right ? _rect.left + newArea.width() : _rect.left,
-				newArea.bottom != _rect.bottom ? _rect.top + newArea.height() : _rect.top,
-				newArea.left != _rect.left ? _rect.right - newArea.width() : _rect.right,
-				newArea.top != _rect.top ? _rect.bottom - newArea.height() : _rect.bottom
-		);
+		Common::Rect oldArea;
+		if (newArea != _rect) {
+			oldArea = Common::Rect(
+					newArea.right != _rect.right ? _rect.left + newArea.width() : _rect.left,
+					newArea.bottom != _rect.bottom ? _rect.top + newArea.height() : _rect.top,
+					newArea.left != _rect.left ? _rect.right - newArea.width() : _rect.right,
+					newArea.top != _rect.top ? _rect.bottom - newArea.height() : _rect.bottom
+			);
+		}
 
 		int oldX = newArea.left != _rect.left ? _rect.left + newArea.width() : _rect.left;
 		int oldY = newArea.top != _rect.top ? _rect.top + newArea.height() : _rect.top;
