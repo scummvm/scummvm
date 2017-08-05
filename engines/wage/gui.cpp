@@ -330,8 +330,7 @@ void Gui::appendText(const char *s) {
 }
 
 void Gui::clearOutput() {
-	//_consoleWindow->clearAllContent();
-	warning("STUB: Gui::clearOutput()");
+	_consoleWindow->clearText();
 }
 
 void Gui::actionCopy() {
