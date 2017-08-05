@@ -2256,9 +2256,9 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 			const uint32 audioSize = READ_LE_UINT32(ptr + 9);
 			const uint32 calculatedTotalSize = audioSize + headerSize + kResourceHeaderSize;
 			if (calculatedTotalSize != _size) {
-				error("Unexpected audio file size: the size of %s in %s is %d, but the volume says it should be %d", _id.toString().c_str(), _source->getLocationName().c_str(), calculatedTotalSize, _size);
+				warning("Unexpected audio file size: the size of %s in %s is %d, but the volume says it should be %d", _id.toString().c_str(), _source->getLocationName().c_str(), calculatedTotalSize, _size);
 			}
-			_size = headerSize + audioSize;
+			_size = MIN(_size - kResourceHeaderSize, headerSize + audioSize);
 		}
 	}
 
