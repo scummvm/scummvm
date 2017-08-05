@@ -734,15 +734,11 @@ void MohawkEngine_Myst::checkCurrentResource() {
 			_clickedResource->handleMouseUp();
 		}
 		_clickedResource = nullptr;
-	}
-
-	if (_mouseMoved && _clickedResource) {
+	} else if (_mouseMoved && _clickedResource) {
 		if (_clickedResource->isEnabled()) {
 			_clickedResource->handleMouseDrag();
 		}
-	}
-
-	if (_mouseClicked && !_clickedResource) {
+	} else if (_mouseClicked && !_clickedResource) {
 		if (_activeResource && _activeResource->isEnabled()) {
 			_clickedResource = _activeResource;
 			_clickedResource->handleMouseDown();
