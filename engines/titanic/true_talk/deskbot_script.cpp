@@ -1288,6 +1288,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		} else if (sentence->contains("president") || sentence->contains("presidential")
 			|| sentence->contains("the 3")) {
 			addResponse(getDialogueId(241689));
+			addResponse(getDialogueId(241739));
 		} else {
 			if (getRandomNumber(100) < 80 && sentence2C(sentence))
 				addResponse(getDialogueId(241707));
