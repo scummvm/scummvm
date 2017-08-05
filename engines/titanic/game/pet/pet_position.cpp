@@ -197,9 +197,6 @@ bool CPETPosition::LeaveViewMsg(CLeaveViewMsg *msg) {
 		} else if (oldView == "1stClassLobby.Node 10.S") {
 			switch (elevatorNum) {
 			case 1:
-				pet->setRoomsFloorNum(1);
-				pet->setRoomsElevatorNum(1);
-				break;
 			case 2:
 				pet->setRoomsElevatorNum(1);
 				break;
