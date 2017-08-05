@@ -374,7 +374,7 @@ bool CViewItem::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 		if (!link)
 			continue;
 		
-		CursorId c = link->_cursorId;
+		CursorId c = getLinkCursor(link);
 		if ((move == LEFT && c == CURSOR_MOVE_LEFT) ||
 			(move == RIGHT && c == CURSOR_MOVE_RIGHT) ||
 			(move == FORWARDS && (c == CURSOR_MOVE_FORWARD ||
@@ -388,6 +388,28 @@ bool CViewItem::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 	}
 
 	return false;
+}
+
+CursorId CViewItem::getLinkCursor(CLinkItem *link) {
+	Common::Point pt(link->_bounds.left, link->_bounds.top);
+	Common::Array<CGameObject *> gameObjects;
+
+	// Scan for a restricted object covering the link
+	for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
+		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
+		if (gameObject) {
+			if (gameObject->checkPoint(pt, false, true))
+				gameObjects.push_back(gameObject);
+		}
+	}
+
+	for (int idx = (int)gameObjects.size() - 1; idx >= 0; --idx) {
+		if (gameObjects[idx]->_cursorId == CURSOR_INVALID)
+			return CURSOR_INVALID;
+	}
+
+	// No obscuring objects, so we're free to return the link's cursor
+	return link->_cursorId;
 }
 
 } // End of namespace Titanic
