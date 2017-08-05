@@ -132,7 +132,7 @@ void CLinkItem::load(SimpleFile *file) {
 			_cursorId = CURSOR_MOVE_FORWARD;
 			break;
 		default:
-			_cursorId = CURSOR_MOVE_FORWARD2;
+			_cursorId = CURSOR_MOVE_THROUGH;
 			break;
 		}
 	}
