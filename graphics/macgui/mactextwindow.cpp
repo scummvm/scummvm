@@ -98,6 +98,7 @@ void MacTextWindow::clearText() {
 	_mactext->clearText();
 
 	_contentIsDirty = true;
+	_borderIsDirty = true;
 
 	updateCursorPos();
 }

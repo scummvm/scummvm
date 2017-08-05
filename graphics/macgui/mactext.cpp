@@ -417,6 +417,8 @@ void MacText::clearText() {
 	_str.clear();
 
 	recalcDims();
+
+	render();
 }
 
 void MacText::replaceLastLine(Common::String str) {
