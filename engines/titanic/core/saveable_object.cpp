@@ -483,6 +483,7 @@ DEFFN(ListItem);
 DEFFN(CMailMan);
 DEFFN(CMessageTarget);
 DEFFN(CMovieClip);
+DEFFN(CMovieRangeInfo);
 DEFFN(CMultiDropTarget);
 DEFFN(CNamedItem);
 DEFFN(CNodeItem);
@@ -1052,6 +1053,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CFileListItem, ListItem);
 	ADDFN(CMailMan, CGameObject);
 	ADDFN(CMovieClip, ListItem);
+	ADDFN(CMovieRangeInfo, ListItem);
 	ADDFN(CMultiDropTarget, CDropTarget);
 	ADDFN(CStartAction, CBackground);
 	ADDFN(CEditControl, CGameObject);
