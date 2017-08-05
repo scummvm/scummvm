@@ -2687,14 +2687,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #undef GUIO_LSL6HIRES
 
-// TODO: Correct GUIOs
-#define GUIO_LSL7_DEMO GUIO4(GUIO_NOASPECT, \
+#define GUIO_LSL7_DEMO GUIO3(GUIO_NOASPECT, \
                              GUIO_NOMIDI, \
-                             GUIO_NOLAUNCHLOAD, \
-                             GAMEOPTION_ORIGINAL_SAVELOAD)
-#define GUIO_LSL7      GUIO5(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
-                             GUIO_NOASPECT, \
+                             GUIO_NOLAUNCHLOAD)
+#define GUIO_LSL7      GUIO5(GUIO_NOASPECT, \
                              GUIO_NOMIDI, \
+                             GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                              GAMEOPTION_ORIGINAL_SAVELOAD, \
                              GAMEOPTION_HQ_VIDEO)
 
