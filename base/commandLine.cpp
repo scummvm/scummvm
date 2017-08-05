@@ -884,12 +884,11 @@ static Common::String detectGames(Common::String path, Common::String recursiveO
 		}
 		return Common::String();
 	}
-
-	// Print all the candidate found
-	printf("ID                   Description\n");
-	printf("-------------------- ---------------------------------------------------------\n");
+	// TODO this is not especially pretty
+	printf("ID             Description                                                Full Path\n");
+	printf("-------------- ---------------------------------------------------------- ---------------------------------------------------------\n");
 	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
-		printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
+		printf("%-14s %-58s %s\n", v->gameid().c_str(), v->description().c_str(), (*v)["path"].c_str());
 	}
 
 	return candidates[0].gameid();
