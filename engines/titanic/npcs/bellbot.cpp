@@ -24,6 +24,7 @@
 #include "titanic/carry/carry.h"
 #include "titanic/core/room_item.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -89,6 +90,7 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 		_npcFlags &= ~NPCFLAG_MOVE_LOOP;
 	}
 
+	getGameManager()->_gameState.setMode(GSMODE_CUTSCENE);
 	playClip("Walk On", MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	movieEvent();
 	_npcFlags |= NPCFLAG_MOVING;
@@ -111,6 +113,7 @@ bool CBellBot::MovieEndMsg(CMovieEndMsg *msg) {
 	if (!(_npcFlags & NPCFLAG_MOVING)) {
 		CTrueTalkNPC::MovieEndMsg(msg);
 	} else if (clipExistsByEnd("Walk On", msg->_endFrame)) {
+		getGameManager()->_gameState.setMode(GSMODE_INTERACTIVE);
 		setPosition(Point(80, 10));
 		loadFrame(543);
 		_npcFlags |= NPCFLAG_START_IDLING;
