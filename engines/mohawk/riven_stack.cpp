@@ -40,6 +40,7 @@ RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 		_vm(vm),
 		_id(id),
 		_mouseIsDown(false),
+		_shouldRefreshMouseCursor(false),
 		_keyPressed(Common::KEYCODE_INVALID) {
 	removeTimer();
 
@@ -275,6 +276,10 @@ void RivenStack::mouseForceUp() {
 	_mouseIsDown = false;
 }
 
+void RivenStack::queueMouseCursorRefresh() {
+	_shouldRefreshMouseCursor = true;
+}
+
 void RivenStack::onFrame() {
 	if (!_vm->getCard() || _vm->_scriptMan->hasQueuedScripts()) {
 		return;
@@ -283,6 +288,11 @@ void RivenStack::onFrame() {
 	checkTimer();
 
 	_vm->_gfx->updateEffects();
+
+	if (_shouldRefreshMouseCursor) {
+		_vm->getCard()->onMouseMove(getMousePosition());
+		_shouldRefreshMouseCursor = false;
+	}
 
 	RivenScriptPtr script(new RivenScript());
 	if (_mouseIsDown) {

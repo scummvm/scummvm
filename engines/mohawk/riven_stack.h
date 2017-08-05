@@ -129,6 +129,13 @@ public:
 	/** Handle a mouse move event */
 	void onMouseMove(const Common::Point &mouse);
 
+	/**
+	 * The mouse cursor needs to be refreshed on the next interactive frame
+	 *
+	 * Even if the mouse didn't move.
+	 */
+	void queueMouseCursorRefresh();
+
 	/** Frame update handler */
 	void onFrame();
 
@@ -208,6 +215,7 @@ private:
 	bool _mouseIsDown;
 	Common::Point _mousePosition;
 	Common::Point _mouseDragStartPosition;
+	bool _shouldRefreshMouseCursor;
 
 	// Timer
 	Common::SharedPtr<TimerProc> _timerProc;

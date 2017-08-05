@@ -412,7 +412,7 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 	_card->enter(true);
 
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
-	_stack->onMouseMove(_stack->getMousePosition());
+	_stack->queueMouseCursorRefresh();
 
 	// Finally, install any hardcoded timer
 	_stack->installCardTimer();
