@@ -478,7 +478,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		0,
 		0,
 	},
 
@@ -496,12 +496,12 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		0,
 		0,
 	},
 
 	// Riven: The Sequel to Myst
-	// Version 1.1 (DVD), Russan, Fargus
+	// Version 1.1 (DVD), Russian, Fargus
 	{
 		{
 			"riven",
