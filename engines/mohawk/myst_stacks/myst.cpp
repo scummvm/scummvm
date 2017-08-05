@@ -844,16 +844,19 @@ void Myst::o_fireplaceToggleButton(uint16 var, const ArgumentsArray &args) {
 	uint16 bitmask = args[0];
 	uint16 line = _fireplaceLines[var - 17];
 
+	// The animations are too slow when playing each animation image at 60fps.
+	// Only play every second image.
+
 	if (line & bitmask) {
 		// Unset button
-		for (uint i = 4795; i >= 4779; i--) {
+		for (uint i = 4795; i >= 4779; i -= 2) {
 			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
 			_vm->doFrame();
 		}
 		_fireplaceLines[var - 17] &= ~bitmask;
 	} else {
 		// Set button
-		for (uint i = 4779; i <= 4795; i++) {
+		for (uint i = 4779; i <= 4795; i += 2) {
 			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
 			_vm->doFrame();
 		}
