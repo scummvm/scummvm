@@ -2803,6 +2803,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_TESTING, GUIO_LIGHTHOUSE_DEMO },
 
+	// Lighthouse - English Windows Glider Demo
+	// Executable scanning reports "3.000.000"
+	{"lighthouse", "Glider Demo", {
+		{"resmap.000", 0, "fca5bec5f778fc3f86d3176dc4ae6e54", 346},
+		{"ressci.000", 0, "896e81b6d70940c3b0696ef51cee51bc", 3300500},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_TESTING, GUIO_LIGHTHOUSE_DEMO },
+
 	// Lighthouse - English DOS (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
 	{"lighthouse", "", {
