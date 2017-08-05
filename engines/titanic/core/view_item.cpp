@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP(CViewItem, CNamedItem)
 	ON_MESSAGE(MouseButtonUpMsg)
 	ON_MESSAGE(MouseDoubleClickMsg)
 	ON_MESSAGE(MouseMoveMsg)
+	ON_MESSAGE(VirtualKeyCharMsg)
 END_MESSAGE_MAP()
 
 CViewItem::CViewItem() : CNamedItem() {
@@ -335,6 +336,58 @@ CString CViewItem::getNodeViewName() const {
 	CNodeItem *node = findNode();
 
 	return CString::format("%s.%s", node->getName().c_str(), getName().c_str());
+}
+
+bool CViewItem::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
+	enum Movement { LEFT, RIGHT, FORWARDS, BACKWARDS };
+	Movement move;
+
+	switch (msg->_keyState.keycode) {
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
+		// Left arrow
+		move = LEFT;
+		break;
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
+		// Right arrow
+		move = RIGHT;
+		break;
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
+		// Up arrow
+		move = FORWARDS;
+		break;
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
+		// Down arrow
+		move = BACKWARDS;
+		break;
+	default:
+		return false;
+	}
+
+	// Iterate through the links to find an appropriate link
+	for (CTreeItem *treeItem = getFirstChild(); treeItem;
+			treeItem = treeItem->scan(this)) {
+		CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
+		if (!link)
+			continue;
+		
+		CursorId c = link->_cursorId;
+		if ((move == LEFT && c == CURSOR_MOVE_LEFT) ||
+			(move == RIGHT && c == CURSOR_MOVE_RIGHT) ||
+			(move == FORWARDS && (c == CURSOR_MOVE_FORWARD ||
+				c == CURSOR_MOVE_THROUGH || c == CURSOR_DOWN)) ||
+			(move == BACKWARDS && c == CURSOR_BACKWARDS)) {
+			// Found a matching link
+			CGameManager *gm = getGameManager();
+			gm->_gameState.triggerLink(link);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // End of namespace Titanic

@@ -36,6 +36,12 @@ private:
 	 * Converts the special buttons bitset into a buttons bitset
 	 */
 	int getButtons(int special) const;
+
+	/**
+	 * Returns true if a key down contains a special non-ascii key
+	 * that should still be passed onto the game
+	 */
+	bool isSpecialKey(Common::KeyCode key);
 public:
 	CInputHandler *_inputHandler;
 public:

@@ -86,12 +86,12 @@ void CInputTranslator::mouseWheel(bool wheelUp, const Point &pt) {
 }
 
 void CInputTranslator::keyDown(const Common::KeyState &keyState) {
-	if (keyState.keycode >= Common::KEYCODE_F1 && keyState.keycode <= Common::KEYCODE_F5) {
+	if (isSpecialKey(keyState.keycode)) {
 		CVirtualKeyCharMsg msg(keyState);
 		_inputHandler->handleMessage(msg);
 	}
 
-	if (keyState.ascii <= 127) {
+	if (keyState.ascii > 0 && keyState.ascii <= 127) {
 		CKeyCharMsg msg(keyState.ascii);
 		_inputHandler->handleMessage(msg);
 	}
@@ -99,6 +99,20 @@ void CInputTranslator::keyDown(const Common::KeyState &keyState) {
 
 bool CInputTranslator::isMousePressed() const {
 	return g_vm->_events->getSpecialButtons() & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON);
+}
+
+bool CInputTranslator::isSpecialKey(Common::KeyCode key) {
+	if ((key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F8) ||
+		(key >= Common::KEYCODE_KP1 && key <= Common::KEYCODE_KP9))
+		return true;
+
+	if (key == Common::KEYCODE_PAGEUP || key == Common::KEYCODE_PAGEDOWN ||
+		key == Common::KEYCODE_HOME || key == Common::KEYCODE_END ||
+		key == Common::KEYCODE_LEFT || key == Common::KEYCODE_RIGHT ||
+		key == Common::KEYCODE_UP || key == Common::KEYCODE_DOWN)
+		return true;
+
+	return false;
 }
 
 } // End of namespace Titanic

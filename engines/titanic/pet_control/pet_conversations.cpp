@@ -461,37 +461,30 @@ TTnpcScript *CPetConversations::getNPCScript(const CString &name) const {
 
 bool CPetConversations::handleKey(const Common::KeyState &keyState) {
 	switch (keyState.keycode) {
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
-		scrollUp();
-		break;
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
-		scrollDown();
-		break;
 	case Common::KEYCODE_PAGEUP:
 	case Common::KEYCODE_KP9:
 		scrollUpPage();
-		break;
+		return true;
 	case Common::KEYCODE_PAGEDOWN:
 	case Common::KEYCODE_KP3:
 		scrollDownPage();
-		break;
+		return true;
 	case Common::KEYCODE_HOME:
 	case Common::KEYCODE_KP7:
 		scrollToTop();
-		break;
+		return true;
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP1:
 		scrollToBottom();
-		break;
+		return true;
 	default:
-		if (keyState.ascii > 0 && keyState.ascii) {
+		if (keyState.ascii > 0 && keyState.ascii <= 127) {
 			if (_textInput.handleKey(keyState.ascii))
 				// Text line finished, so process line
 				textLineEntered(_textInput.getText());
+			return true;
 		}
-		return true;
+		break;
 	}
 
 	return false;
