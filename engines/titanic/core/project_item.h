@@ -42,6 +42,13 @@ struct TitanicSavegameHeader {
 	int _year, _month, _day;
 	int _hour, _minute;
 	int _totalFrames;
+
+	TitanicSavegameHeader() { clear(); }
+
+	/**
+	 * Clear the header
+	 */
+	void clear();
 };
 
 

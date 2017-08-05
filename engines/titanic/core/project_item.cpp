@@ -42,6 +42,19 @@ static const char *const SAVEGAME_STR = "TNIC";
 
 EMPTY_MESSAGE_MAP(CProjectItem, CFileItem);
 
+/*------------------------------------------------------------------------*/
+
+void TitanicSavegameHeader::clear() {
+	_version = 0;
+	_saveName = "";
+	_thumbnail = nullptr;
+	_year = _month = _day = 0;
+	_hour = _minute = 0;
+	_totalFrames = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
 void CFileListItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(0, indent);
 	file->writeQuotedLine(_name, indent);

@@ -167,10 +167,13 @@ SaveStateDescriptor TitanicMetaEngine::querySaveMetaInfos(const char *target, in
 
 		// Create the return descriptor
 		SaveStateDescriptor desc(slot, header._saveName);
-		desc.setThumbnail(header._thumbnail);
-		desc.setSaveDate(header._year, header._month, header._day);
-		desc.setSaveTime(header._hour, header._minute);
-		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
+
+		if (header._version) {
+			desc.setThumbnail(header._thumbnail);
+			desc.setSaveDate(header._year, header._month, header._day);
+			desc.setSaveTime(header._hour, header._minute);
+			desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
+		}
 
 		return desc;
 	}
