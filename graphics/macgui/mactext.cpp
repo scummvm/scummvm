@@ -446,7 +446,7 @@ void MacText::removeLastLine() {
 }
 
 void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
-	CLIP(y, 0, _textMaxHeight);
+	y = CLIP(y, 0, _textMaxHeight);
 
 	// FIXME: We should use bsearch() here
 	*row = _textLines.size() - 1;
@@ -498,8 +498,8 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted) {
 	Common::String res;
 
-	CLIP(startRow, 0, (int)_textLines.size() - 1);
-	CLIP(endRow, 0, (int)_textLines.size() - 1);
+	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
+	endRow = CLIP(endRow, 0, (int)_textLines.size() - 1);
 
 	for (int i = startRow; i <= endRow; i++) {
 		if (i == startRow && i == endRow) {
