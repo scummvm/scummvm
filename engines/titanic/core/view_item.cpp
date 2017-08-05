@@ -391,10 +391,15 @@ bool CViewItem::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 }
 
 CursorId CViewItem::getLinkCursor(CLinkItem *link) {
-	Common::Point pt(link->_bounds.left, link->_bounds.top);
-	Common::Array<CGameObject *> gameObjects;
+	// Pick the center of the link's region as a check point
+	Common::Point pt((link->_bounds.left + link->_bounds.right) / 2,
+		(link->_bounds.top + link->_bounds.bottom) / 2);
+	if (link->_bounds.isEmpty())
+		// Bridge doorway link has an empty bounds, so workaround it
+		pt = Common::Point(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
 	// Scan for a restricted object covering the link
+	Common::Array<CGameObject *> gameObjects;
 	for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
 		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
 		if (gameObject) {
