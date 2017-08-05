@@ -335,6 +335,7 @@ bool CBilgeSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 
 	petContainerRemove(item);
 	pet->phonographAction("");
+	item->setVisible(false);
 	playSound("z#23.wav");
 
 	CChicken *chicken = dynamic_cast<CChicken *>(item);
