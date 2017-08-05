@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-31 02:35+0200\n"
+"POT-Creation-Date: 2017-08-05 14:55+0200\n"
 "PO-Revision-Date: 2017-07-07 13:29+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3358,7 +3358,7 @@ msgstr ""
 "Sinulta puuttuu \"extras.mhk\". \"archriven.z\" asennustiedoston käyttö "
 "toimii myös."
 
-#: engines/mohawk/riven_stack.cpp:181
+#: engines/mohawk/riven_stack.cpp:182
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."

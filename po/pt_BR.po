@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-31 02:35+0200\n"
+"POT-Creation-Date: 2017-08-05 14:55+0200\n"
 "PO-Revision-Date: 2017-03-03 22:26+0000\n"
 "Last-Translator: rafaelmessias <rmmartins@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3411,7 +3411,7 @@ msgid ""
 "works."
 msgstr ""
 
-#: engines/mohawk/riven_stack.cpp:181
+#: engines/mohawk/riven_stack.cpp:182
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."

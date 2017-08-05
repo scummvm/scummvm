@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-31 02:35+0200\n"
+"POT-Creation-Date: 2017-08-05 14:55+0200\n"
 "PO-Revision-Date: 2017-07-26 18:23+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -3370,7 +3370,7 @@ msgid ""
 msgstr ""
 "Не хапае файла 'extras.mhk'. Замест яго можна карыстацца файлам 'arcriven.z'."
 
-#: engines/mohawk/riven_stack.cpp:181
+#: engines/mohawk/riven_stack.cpp:182
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."

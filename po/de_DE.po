@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-07-31 02:35+0200\n"
+"POT-Creation-Date: 2017-08-05 14:55+0200\n"
 "PO-Revision-Date: 2017-07-13 07:14+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -3401,7 +3401,7 @@ msgstr ""
 "Die Datei 'extras.mhk' fehlt. Sie können auch die Installationsdatei "
 "'arcriven.z verwenden."
 
-#: engines/mohawk/riven_stack.cpp:181
+#: engines/mohawk/riven_stack.cpp:182
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
