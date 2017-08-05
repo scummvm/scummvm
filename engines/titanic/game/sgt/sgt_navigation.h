@@ -28,7 +28,7 @@
 namespace Titanic {
 
 struct CSGTNavigationStatics {
-	int _changeViewNum;
+	int _miniLiftFloor;
 	CString _destView;
 	CString _destRoom;
 };
