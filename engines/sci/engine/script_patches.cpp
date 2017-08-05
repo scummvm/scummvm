@@ -2286,6 +2286,33 @@ static const SciScriptPatcherEntry kq7Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#pragma mark -
+#pragma mark Lighthouse
+
+// When going to room 5 (the sierra logo & menu room) from room 380 (the credits
+// room), the game tries to clear flags from 0 (global 116 bit 0) to 1423
+// (global 204 bit 15), but global 201 is not a flag global (it holds a
+// reference to theInvisCursor). This patch stops clearing after 1359 (global
+// 200 bit 15). Hopefully that is good enough to not break the game.
+// Applies to at least: English 1.0 & 2.0
+static const uint16 lighthouseFlagResetSignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x58f), // ldi 1423
+	0x24,                    // le?
+	SIG_END
+};
+
+static const uint16 lighthouseFlagResetPatch[] = {
+	0x34, PATCH_UINT16(0x54f), // ldi 1359
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry lighthouseSignatures[] = {
+	{  true,     5, "fix bad globals clear after credits",         1, lighthouseFlagResetSignature,     lighthouseFlagResetPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
 #endif
 
 // ===========================================================================
@@ -6741,6 +6768,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 	case GID_LAURABOW2:
 		signatureTable = laurabow2Signatures;
 		break;
+#ifdef ENABLE_SCI32
+	case GID_LIGHTHOUSE:
+		signatureTable = lighthouseSignatures;
+		break;
+#endif
 	case GID_LONGBOW:
 		signatureTable = longbowSignatures;
 		break;
