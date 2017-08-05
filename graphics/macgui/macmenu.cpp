@@ -592,7 +592,7 @@ void MacMenu::enableCommand(int menunum, int action, bool state) {
 }
 
 void MacMenu::enableCommand(const char *menuitem, const char *menuaction, bool state) {
-	int menunum = 0;
+	uint menunum = 0;
 
 	while (menunum < _items.size())
 		if (_items[menunum]->name.equalsIgnoreCase(menuitem))
