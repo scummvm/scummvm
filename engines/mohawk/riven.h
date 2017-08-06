@@ -107,7 +107,11 @@ public:
 	void doFrame();
 
 private:
+	// Datafiles
 	MohawkArchive *_extrasFile; // We need a separate handle for the extra data
+	const char **listExpectedDatafiles() const;
+	bool checkDatafiles();
+
 	RivenConsole *_console;
 	RivenSaveLoad *_saveLoad;
 	RivenOptionsDialog *_optionsDialog;
