@@ -142,7 +142,7 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	_mactext->draw(&_composeSurface, 0, _scrollPos, _surface.w - 2, _scrollPos + _surface.h - 2, kConWOverlap - 2, kConWOverlap - 2);
 
 	if (_cursorState)
-		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap, _cursorY + kConHOverlap));
+		_composeSurface.blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap - 2, _cursorY + kConHOverlap - 2));
 
 	if (_selectedText.endY != -1)
 		drawSelection();
@@ -421,10 +421,7 @@ static void cursorTimerHandler(void *refCon) {
 }
 
 void MacTextWindow::updateCursorPos() {
-	if (_scrollPos)
-		_cursorY = _mactext->getTextHeight() - kCursorHeight * 2;
-	else
-		_cursorY = _mactext->getTextHeight() - kCursorHeight - 2;
+	_cursorY = _mactext->getTextHeight() - _scrollPos - kCursorHeight;
 
 	_cursorDirty = true;
 }
