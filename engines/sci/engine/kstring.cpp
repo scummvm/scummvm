@@ -374,6 +374,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			case 'x':
 			case 'u':
 				unsignedVar = true;
+				/* fall through */
 			case 'd': { /* Copy decimal */
 				/* int templen; -- unused atm */
 				const char *format_string = "%d";
