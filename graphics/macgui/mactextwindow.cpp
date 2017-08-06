@@ -195,7 +195,7 @@ void MacTextWindow::drawSelection() {
 				numLines = _mactext->getLineHeight(s.startRow);
 				x1 = s.startX;
 			}
-			if (y + _scrollPos == lastLineStart + 1) {
+			if (y + _scrollPos > lastLineStart) {
 				numLines = _mactext->getLineHeight(s.endRow);
 				x2 = s.endX;
 			}
@@ -363,6 +363,10 @@ void MacTextWindow::updateTextSelection(int x, int y) {
 	y += _scrollPos;
 
 	_mactext->getRowCol(x, y, &_selectedText.endX, &_selectedText.endY, &_selectedText.endRow, &_selectedText.endCol);
+
+	debug(3, "s: %d,%d (%d, %d) e: %d,%d (%d, %d)", _selectedText.startX, _selectedText.startY,
+			_selectedText.startRow, _selectedText.startCol, _selectedText.endX,
+			_selectedText.endY, _selectedText.endRow, _selectedText.endCol);
 
 	_contentIsDirty = true;
 }
