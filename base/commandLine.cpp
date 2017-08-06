@@ -870,7 +870,8 @@ static GameList recListGames(Common::FSNode dir, bool recursive) {
 
 /** Display all games in the given directory, return ID of first detected game */
 static Common::String detectGames(Common::String path, Common::String recursiveOptStr) {
-	if (path.empty())
+	bool noPath = path.empty();
+	if (noPath)
 		path = ".";
 	bool recursive = (recursiveOptStr == "true");
 	//Current directory
@@ -879,6 +880,9 @@ static Common::String detectGames(Common::String path, Common::String recursiveO
 
 	if (candidates.empty()) {
 		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().c_str());
+		if (noPath) {
+			printf("WARNING: Consider using --path=<path> *before* --add or --detect to specify a directory\n");
+		}
 		if (!recursive) {
 			printf("WARNING: Consider using --recursive *before* --add or --detect to search inside subdirectories\n");
 		}
