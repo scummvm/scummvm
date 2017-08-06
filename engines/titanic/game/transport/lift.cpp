@@ -22,6 +22,7 @@
 
 #include "titanic/game/transport/lift.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/moves/multi_move.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -289,6 +290,17 @@ bool CLift::ActMsg(CActMsg *msg) {
 		actMsg1.execute("RPanInLiftW");
 		CActMsg actMsg2("Lift.Node 2.S");
 		actMsg2.execute("LPanInLiftW");
+
+		// WORKAROUND: In the original, when Lift 4's head is removed, the other
+		// view directions use Node 2. These "removed" views have links, but their
+		// movement cursors weren't correctly set. This fixes them
+		CNamedItem *node2 = findRoom()->findByName("Node 2");
+		static_cast<CMultiMove *>(node2->findByName("LMultiLiftPan"))->_cursorId = CURSOR_MOVE_LEFT;
+		static_cast<CLinkItem *>(node2->findByName("_PANR,2,N,E"))->_cursorId = CURSOR_MOVE_RIGHT;
+		static_cast<CLinkItem *>(node2->findByName("_PANL,2,E,N"))->_cursorId = CURSOR_MOVE_LEFT;
+		static_cast<CLinkItem *>(node2->findByName("_PANR,2,E,S"))->_cursorId = CURSOR_MOVE_RIGHT;
+		static_cast<CLinkItem *>(node2->findByName("_PANL,2,S,E"))->_cursorId = CURSOR_MOVE_LEFT;
+		static_cast<CMultiMove *>(node2->findByName("RMultiLiftPan"))->_cursorId = CURSOR_MOVE_RIGHT;
 	} else if (msg->_action == "AddWrongHead") {
 		_hasHead = true;
 		_hasCorrectHead = false;
