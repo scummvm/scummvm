@@ -736,6 +736,11 @@ bool CGameObject::hasActiveMovie() const {
 int CGameObject::getMovieFrame() const {
 	if (_surface && _surface->_movie)
 		return _surface->_movie->getFrame();
+	else if (_frameNumber > 0)
+		// WORKAROUND: If an object has a pending frame to be set to,
+		// but the movie hasn't yet been loaded, return that frame
+		return _frameNumber;
+
 	return _initialFrame;
 }
 
