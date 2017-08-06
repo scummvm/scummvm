@@ -339,52 +339,43 @@ CString CViewItem::getNodeViewName() const {
 }
 
 bool CViewItem::MovementMsg(CMovementMsg *msg) {
-	Movement move = msg->_movement;
-	
+	Point pt;
+
 	// Iterate through the links to find an appropriate link
 	for (CTreeItem *treeItem = getFirstChild(); treeItem;
 			treeItem = treeItem->scan(this)) {
 		CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
-		if (!link)
+		CGameObject *gameObj = dynamic_cast<CGameObject *>(treeItem);
+
+		if (link) {
+			// Skip links that aren't for the desired direction
+			if (link->getMovement() != msg->_movement)
+				continue;
+
+			pt = Point((link->_bounds.left + link->_bounds.right) / 2,
+				(link->_bounds.top + link->_bounds.bottom) / 2);
+		} else if (gameObj) {
+			if (!gameObj->_visible || gameObj->getMovement() != msg->_movement)
+				continue;
+
+			if (!gameObj->findPoint(pt))
+				continue;
+		} else {
+			// Not a link or object, so ignore
 			continue;
-		
-		Movement m = link->getMovement();
-		if (move == m) {
-			// Found a matching link
-			CGameManager *gm = getGameManager();
-			gm->_gameState.triggerLink(link);
-			return true;
 		}
+
+		// We've found a point on the object or link that has a
+		// cursor for the given direction. So simulate a mouse
+		// press and release on the desired point
+		CMouseButtonDownMsg downMsg(pt, MB_LEFT);
+		CMouseButtonUpMsg upMsg(pt, MB_LEFT);
+		MouseButtonDownMsg(&downMsg);
+		MouseButtonUpMsg(&upMsg);
+		return true;
 	}
 
 	return false;
-}
-
-CursorId CViewItem::getLinkCursor(CLinkItem *link) {
-	// Pick the center of the link's region as a check point
-	Common::Point pt((link->_bounds.left + link->_bounds.right) / 2,
-		(link->_bounds.top + link->_bounds.bottom) / 2);
-	if (link->_bounds.isEmpty())
-		// Bridge doorway link has an empty bounds, so workaround it
-		pt = Common::Point(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-
-	// Scan for a restricted object covering the link
-	Common::Array<CGameObject *> gameObjects;
-	for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
-		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
-		if (gameObject) {
-			if (gameObject->checkPoint(pt, false, true))
-				gameObjects.push_back(gameObject);
-		}
-	}
-
-	for (int idx = (int)gameObjects.size() - 1; idx >= 0; --idx) {
-		if (gameObjects[idx]->_cursorId == CURSOR_INVALID)
-			return CURSOR_INVALID;
-	}
-
-	// No obscuring objects, so we're free to return the link's cursor
-	return link->_cursorId;
 }
 
 } // End of namespace Titanic

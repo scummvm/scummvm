@@ -54,12 +54,6 @@ private:
 	 * Handles mouse button up messages
 	 */
 	void handleButtonUpMsg(CMouseButtonUpMsg *msg);
-
-	/**
-	 * Gets the cursor for a link, taking into account any
-	 * "restricted" surface that may be covering it
-	 */
-	CursorId getLinkCursor(CLinkItem *link);
 protected:
 	int _field24;
 	CResourceKey _resourceKey;

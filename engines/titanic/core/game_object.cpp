@@ -289,6 +289,27 @@ bool CGameObject::checkPoint(const Point &pt, bool ignoreSurface, bool visibleOn
 	return pixel != transColor;
 }
 
+bool CGameObject::findPoint(Point &pt) {
+	// Start by checking a centroid point in the bounds
+	if (!_bounds.isEmpty()) {
+		pt = Point((_bounds.left + _bounds.right) / 2,
+			(_bounds.top + _bounds.bottom) / 2);
+		if (checkPoint(pt, false, true))
+			return true;
+	}
+
+	// Scan through all the area of the bounds to find a valid point
+	for (pt.y = _bounds.top; pt.y < _bounds.bottom; ++pt.y) {
+		for (pt.x = _bounds.left; pt.x < _bounds.right; ++pt.x) {
+			if (checkPoint(pt, false, true))
+				return true;
+		}
+	}
+
+	pt = Point(0, 0);
+	return false;
+}
+
 bool CGameObject::clipRect(const Rect &rect1, Rect &rect2) const {
 	if (!rect2.intersects(rect1))
 		return false;

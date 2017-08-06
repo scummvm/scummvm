@@ -609,6 +609,13 @@ public:
 	bool checkPoint(const Point &pt, bool ignoreSurface = false, bool visibleOnly = false);
 
 	/**
+	 * Returns a point that falls within the object
+	 * @param pt	Return point
+	 * @returns		True if a point was found
+	 */
+	bool findPoint(Point &pt);
+
+	/**
 	 * Set the position of the object
 	 */
 	void setPosition(const Point &newPos);
