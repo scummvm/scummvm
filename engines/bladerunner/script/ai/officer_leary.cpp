@@ -434,7 +434,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 420, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
-			//no break
+			// fall through
 		case 10:
 			AI_Movement_Track_Append(kActorOfficerLeary, 310, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 307, 0);

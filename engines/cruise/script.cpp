@@ -57,7 +57,7 @@ int32 opcodeType0() {
 
 	case 5:
 		index = saveOpcodeVar;
-		// No break on purpose
+		// fall through
 	case 1: {
 		uint8 *address = 0;
 		int type = getByteFromScript();
@@ -137,7 +137,7 @@ int32 opcodeType1()	{
 
 	case 5:
 		offset = saveOpcodeVar;
-		//no break on purpose
+		// fall through
 	case 1: {
 		int var_A = 0;
 
@@ -227,7 +227,7 @@ int32 opcodeType2() {
 	switch (currentScriptOpcodeType) {
 	case 5:
 		index = saveOpcodeVar;
-		// No break on purpose
+		// fall through
 	case 1: {
 		uint8* adresse = NULL;
 		int type = getByteFromScript();

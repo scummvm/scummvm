@@ -105,7 +105,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			case kDMSensorWallOrnClickWithSpecObjRemovedRotateSensors:
 				if (sensorCountToProcessPerCell[cellIdx]) /* If the sensor is not the last one of its type on the cell */
 					continue;
-				// No break on purpose
+				// fall through
 			case kDMSensorWallOrnClickWithSpecObj:
 			case kDMSensorWallOrnClickWithSpecObjRemoved:
 				doNotTriggerSensor = ((sensorData == _vm->_objectMan->getObjectType(leaderHandObject)) == currentSensor->getAttrRevertEffectA());

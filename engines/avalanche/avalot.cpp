@@ -161,10 +161,11 @@ void AvalancheEngine::handleKeyDown(Common::Event &event) {
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP5:
 		if (_alive && _avvyIsAwake) {
-			_animation->handleMoveKey(event); // Fallthroughs are intended.
+			_animation->handleMoveKey(event);
 			drawDirection();
 			return;
 		}
+		// fall through
 	case Common::KEYCODE_BACKSPACE:
 		_parser->handleBackspace();
 		break;

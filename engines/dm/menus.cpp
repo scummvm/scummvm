@@ -1154,7 +1154,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionConfuse:
 		decrementCharges(curChampion);
-		// No break on purpose
+		// fall through
 	case kDMActionWarCry:
 	case kDMActionCalm:
 	case kDMActionBrandish:

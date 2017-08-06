@@ -729,7 +729,7 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 			switch (curIconIndex) {
 			case kDMIconIndiceContainerChestClosed:
 				inventory.closeChest();
-			// No break on purpose
+				// fall through
 			case kDMIconIndiceScrollOpen:
 			case kDMIconIndiceScrollClosed:
 				setFlag(curChampion->_attributes, kDMAttributePanel);
