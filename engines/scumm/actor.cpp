@@ -2467,6 +2467,7 @@ void Actor::animateActor(int anim) {
 			setDirection(dir);
 			break;
 		}
+		// fall through
 	default:
 		if (_vm->_game.version <= 2)
 			startAnimActor(anim / 4);
