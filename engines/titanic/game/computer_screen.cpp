@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP(CComputerScreen, CGameObject)
 	ON_MESSAGE(MovieEndMsg)
 	ON_MESSAGE(EnterViewMsg)
 	ON_MESSAGE(TimerMsg)
+	ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
 CComputerScreen::CComputerScreen() : CGameObject() {
@@ -68,7 +69,20 @@ bool CComputerScreen::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CComputerScreen::EnterViewMsg(CEnterViewMsg *msg) {
 	loadFrame(26);
+
+	// WORKAROUND: The original game leaves in a debug link that
+	// allows skipping of Doorbot arrival sequence. Disable it
+	static_cast<CLinkItem *>(getParent()->findByName("_TRACK,3,e-cu,4,E"))->_bounds.clear();
+
 	return true;
+}
+
+bool CComputerScreen::MovementMsg(CMovementMsg *msg) {
+	if (msg->_movement != MOVE_BACKWARDS)
+		return true;
+
+	msg->_posToUse = Common::Point(320, 50);
+	return false;
 }
 
 bool CComputerScreen::TimerMsg(CTimerMsg *msg) {

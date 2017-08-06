@@ -27,6 +27,7 @@ namespace Titanic {
 BEGIN_MESSAGE_MAP(CMovePlayerInParrotRoom, CMovePlayerTo)
 	ON_MESSAGE(ActMsg)
 	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
 CMovePlayerInParrotRoom::CMovePlayerInParrotRoom() : CMovePlayerTo() {
@@ -58,13 +59,10 @@ bool CMovePlayerInParrotRoom::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	return true;
 }
 
-bool CMovePlayerInParrotRoom::findPoint(Point &pt) {
-	if (_destination == "ParrotLobby.Node 1.E") {
-		pt = Point(600, 180);
-		return true;
-	} else {
-		return CMovePlayerTo::findPoint(pt);
-	}
+bool CMovePlayerInParrotRoom::MovementMsg(CMovementMsg *msg) {
+	if (msg->_movement == TURN_RIGHT)
+		msg->_posToUse = Point(600, 180);
+	return false;
 }
 
 } // End of namespace Titanic

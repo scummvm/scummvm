@@ -340,6 +340,7 @@ CString CViewItem::getNodeViewName() const {
 
 bool CViewItem::MovementMsg(CMovementMsg *msg) {
 	Point pt;
+	bool foundPt = false;
 
 	// First allow any child objects to handle it
 	for (CTreeItem *treeItem = getFirstChild(); treeItem;
@@ -348,31 +349,41 @@ bool CViewItem::MovementMsg(CMovementMsg *msg) {
 			return true;
 	}
 
-	// Iterate through the view's contents to find a link or item
-	// with the appropriate movement action
-	for (CTreeItem *treeItem = getFirstChild(); treeItem;
-			treeItem = treeItem->scan(this)) {
-		CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
-		CGameObject *gameObj = dynamic_cast<CGameObject *>(treeItem);
+	if (msg->_posToUse.x != 0 || msg->_posToUse.y != 0) {
+		pt = msg->_posToUse;
+		foundPt = true;
+	} else {
+		// Iterate through the view's contents to find a link or item
+		// with the appropriate movement action
+		for (CTreeItem *treeItem = getFirstChild(); treeItem;
+				treeItem = treeItem->scan(this)) {
+			CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
+			CGameObject *gameObj = dynamic_cast<CGameObject *>(treeItem);
 
-		if (link) {
-			// Skip links that aren't for the desired direction
-			if (link->getMovement() != msg->_movement)
-				continue;
+			if (link) {
+				// Skip links that aren't for the desired direction
+				if (link->getMovement() != msg->_movement)
+					continue;
 
-			pt = Point((link->_bounds.left + link->_bounds.right) / 2,
-				(link->_bounds.top + link->_bounds.bottom) / 2);
-		} else if (gameObj) {
-			if (!gameObj->_visible || gameObj->getMovement() != msg->_movement)
-				continue;
+				pt = Point((link->_bounds.left + link->_bounds.right) / 2,
+					(link->_bounds.top + link->_bounds.bottom) / 2);
+			} else if (gameObj) {
+				if (!gameObj->_visible || gameObj->getMovement() != msg->_movement)
+					continue;
 
-			if (!gameObj->findPoint(pt))
+				if (!gameObj->findPoint(pt))
+					continue;
+			} else {
+				// Not a link or object, so ignore
 				continue;
-		} else {
-			// Not a link or object, so ignore
-			continue;
+			}
+
+			foundPt = true;
+			break;
 		}
+	}
 
+	if (foundPt) {
 		// We've found a point on the object or link that has a
 		// cursor for the given direction. So simulate a mouse
 		// press and release on the desired point

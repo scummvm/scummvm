@@ -230,6 +230,7 @@ enum Movement {
 class CMovementMsg : public CMessage {
 public:
 	Movement _movement;
+	Point _posToUse;
 public:
 	CLASSDEF;
 	CMovementMsg() : _movement(MOVE_NONE) {}
