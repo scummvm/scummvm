@@ -30,7 +30,7 @@
 namespace Sludge {
 
 struct SpriteBank;
-struct SpritePalette;
+class SpritePalette;
 
 class TextManager {
 public:
