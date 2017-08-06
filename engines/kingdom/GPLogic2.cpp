@@ -155,20 +155,20 @@ void Logic::GPL2_261() {
 void Logic::GPL2_270() {
 	_nodeNum = 27;
 	_vm->drawLocation();
-	if (_nodes[28] == 1)
-		_nodes[28] = 9;
-	if (_nodes[28] == 9 || _nodes[29] != 0) {
+	if (_nodes[27] == 1)
+		_nodes[27] = 9;
+	if (_nodes[27] == 9 || _nodes[28] != 0) {
 		if (_vm->_wizard)
 			_vm->_sound = true;
 	} else {
 		_vm->_sound = false;
-		_nodes[28] = 1;
+		_nodes[27] = 1;
 	}
 	_vm->playMovie(80);
 	_vm->playSound(18);
 	_currMap = 10;
 	_statPlay = 271;
-	_nodes[28] = 1;
+	_nodes[27] = 1;
 	_vm->_userInput = 0;
 }
 
@@ -203,7 +203,7 @@ void Logic::GPL2_280() {
 	_vm->_fstFwd = false;
 	_vm->playMovie(81);
 	_currMap = 10;
-	_nodes[29] = _nodes[39] = 1;
+	_nodes[28] = _nodes[38] = 1;
 	_statPlay = _robberyNode * 10;
 	enAll();
 	_vm->_loopFlag = true;
@@ -213,7 +213,7 @@ void Logic::GPL2_290() {
 	_oldNode = _nodeNum;
 	if (!_vm->_wizard) {
 		_nodes[26] = 9;
-		_nodes[30] = 8;
+		_nodes[29] = 8;
 	}
 	if (_nodes[26] == 0) {
 		_statPlay = 260;
@@ -227,24 +227,24 @@ void Logic::GPL2_290() {
 			_vm->drawLocation();
 			_nodes[26]++;
 			_vm->_userInput = 0;
-			switch (_nodes[30]) {
+			switch (_nodes[29]) {
 			case 0:
 				_vm->_sound = false;
 				_vm->playMovie(82);
 				_currMap = 89;
-				_nodes[30] = 1;
+				_nodes[29] = 1;
 				break;
 			case 1:
 				_vm->_sound = true;
 				_vm->playMovie(82);
 				_currMap = 89;
-				_nodes[30] = 0;
+				_nodes[29] = 0;
 				break;
 			case 8:
 				_vm->_sound = false;
 				_vm->playMovie(85);
 				_currMap = 10;
-				_nodes[30] = 9;
+				_nodes[29] = 9;
 				_vm->_tsIconOnly = true;
 				break;
 			default:
@@ -268,12 +268,12 @@ void Logic::GPL2_291() {
 		_vm->playMovie(83);
 		_vm->playSound(30);
 		inventoryAdd(10);
-		_nodes[30] = 8;
+		_nodes[29] = 8;
 		_vm->_userInput = 0;
 		_currMap = 10;
 		break;
 	case 0x432:
-		if (_nodes[30] >= 8)
+		if (_nodes[29] >= 8)
 			_vm->displayIcon(140);
 		else {
 			dsAll();
@@ -351,7 +351,7 @@ void Logic::GPL2_310() {
 		_vm->playSound(18);
 		_currMap = 90;
 		_statPlay = 311;
-		_nodes[32] = 1;
+		_nodes[31] = 1;
 		_vm->_aTimer = 0;
 		_vm->_userInput = 0;
 	}
@@ -393,12 +393,12 @@ void Logic::GPL2_320() {
 	_vm->drawLocation();
 	_vm->_userInput = 0;
 	increaseHealth();
-	if (_nodes[33] != 9 && _vm->_wizard) {
+	if (_nodes[32] != 9 && _vm->_wizard) {
 		_vm->_sound = false;
-		_nodes[33] = 9;
+		_nodes[32] = 9;
 	} else {
 		_vm->_sound = true;
-		_nodes[33] = 1;
+		_nodes[32] = 1;
 	}
 	_vm->playMovie(87);
 	_vm->playSound(18);
@@ -435,7 +435,7 @@ void Logic::GPL2_330() {
 	if (!chkDesertObstacles()) {
 		_vm->drawLocation();
 		_vm->_userInput = 0;
-		if (_nodes[32] == 0)
+		if (_nodes[31] == 0)
 			_vm->_sound = false;
 		else
 			_vm->_sound = true;
@@ -470,7 +470,7 @@ void Logic::GPL2_332() {
 }
 
 void Logic::GPL2_340() {
-	if (_nodes[36] == 0) {
+	if (_nodes[35] == 0) {
 		_statPlay = 350;
 		_vm->_loopFlag = true;
 		_nextNode = 34;
@@ -480,7 +480,7 @@ void Logic::GPL2_340() {
 		if (!chkDesertObstacles()) {
 			_vm->drawLocation();
 			_vm->_userInput = 0;
-			if (_nodes[35] == 9 || _nodes[41] == 0 || !_vm->_wizard) {
+			if (_nodes[34] == 9 || _nodes[40] == 0 || !_vm->_wizard) {
 				_vm->playMovie(91);
 				_currMap = 92;
 			} else {
@@ -488,7 +488,7 @@ void Logic::GPL2_340() {
 				_vm->showPic(389);
 				_currMap = 91;
 			}
-			if (_nodes[35] == 9)
+			if (_nodes[34] == 9)
 				_vm->_tsIconOnly = true;
 			_vm->playSound(26);
 			_statPlay = 341;
@@ -499,12 +499,12 @@ void Logic::GPL2_340() {
 void Logic::GPL2_341() {
 	switch(_vm->_userInput) {
 	case 0x431:
-		if (_nodes[35] == 9)
+		if (_nodes[34] == 9)
 			_vm->displayIcon(139);
 		else {
 			_vm->playMovie(90);
 			inventoryAdd(9);
-			_nodes[35] = 9;
+			_nodes[34] = 9;
 			_currMap = 93;
 		}
 		break;
@@ -545,8 +545,8 @@ void Logic::GPL2_342() {
 
 void Logic::GPL2_350() {
 	if (!_vm->_wizard)
-		_nodes[36] = 1;
-	if (_nodes[36] == 1) {
+		_nodes[35] = 1;
+	if (_nodes[35] == 1) {
 		_statPlay = _nextNode * 10;
 		_vm->_loopFlag = true;
 	} else {
@@ -583,7 +583,7 @@ void Logic::GPL2_351() {
 		enAll();
 		_vm->playMovie(179);
 		inventoryDel(2);
-		_nodes[36] = 1;
+		_nodes[35] = 1;
 		_vm->_userInput = 0;
 		_statPlay = _nextNode * 10;
 		_lastObs = true;
@@ -600,7 +600,7 @@ void Logic::GPL2_351() {
 void Logic::GPL2_360() {
 	_nodeNum = 36;
 	_vm->drawLocation();
-	if (_nodes[37] == 0)
+	if (_nodes[36] == 0)
 		_vm->_sound = false;
 	else
 		_vm->_sound = true;
@@ -628,10 +628,10 @@ void Logic::GPL2_361() {
 		_vm->playMovie(97);
 		inventoryDel(0);
 		_vm->playSound(5);
-		_nodes[37] = 1;
+		_nodes[36] = 1;
 		_vm->_userInput = 0;
 		_currMap = 10;
-		if (_nodes[43] == 0) {
+		if (_nodes[42] == 0) {
 			_statPlay = 420;
 			_oldNode = _nodeNum;
 			_nodeNum = 42;
@@ -646,7 +646,7 @@ void Logic::GPL2_361() {
 		_vm->playMovie(98);
 		inventoryDel(2);
 		_vm->playSound(5);
-		_nodes[37] = 1;
+		_nodes[36] = 1;
 		_vm->_userInput = 0;
 		_currMap = 10;
 		_vm->_tsIconOnly = true;
@@ -657,7 +657,7 @@ void Logic::GPL2_361() {
 		_vm->playMovie(100);
 		inventoryDel(6);
 		_vm->playSound(5);
-		_nodes[37] = 1;
+		_nodes[36] = 1;
 		_vm->_userInput = 0;
 		_currMap = 10;
 		_vm->_tsIconOnly = true;
@@ -667,7 +667,7 @@ void Logic::GPL2_361() {
 		enAll();
 		_vm->playMovie(96);
 		_vm->playSound(5);
-		_nodes[37] = 9;
+		_nodes[36] = 9;
 		_vm->_userInput = 0;
 		_currMap = 10;
 		_statPlay = 420;
@@ -707,7 +707,7 @@ void Logic::GPL2_370() {
 	_nodeNum = 37;
 	_vm->drawLocation();
 	_vm->_userInput = 0;
-	_nodes[38] = 0;
+	_nodes[37] = 0;
 	_vm->playMovie(102);
 	_vm->playSound(20);
 	_currMap = 109;
@@ -751,7 +751,7 @@ void Logic::GPL2_380() {
 		_vm->playMovie(159);
 		_currMap = 10;
 		_vm->playSound(7);
-		_nodes[39] = 1;
+		_nodes[38] = 1;
 		_statPlay = 381;
 	}
 }
@@ -761,7 +761,7 @@ void Logic::GPL2_381() {
 	case 0x428:
 	case 0x429:
 	case 0x42A:
-		if (_vm->_wizard && _nodes[39] != 9) {
+		if (_vm->_wizard && _nodes[38] != 9) {
 			inventoryDel(_vm->_userInput - 0x428);
 			_vm->saveAS();
 			_vm->playMovie(178);
@@ -770,7 +770,7 @@ void Logic::GPL2_381() {
 		_vm->_userInput = 0;
 		break;
 	case 0x430:
-		if (_vm->_wizard && _nodes[39] != 9) {
+		if (_vm->_wizard && _nodes[38] != 9) {
 			dsAll();
 			_vm->playMovie(162);
 			_statPlay = 992;
@@ -778,27 +778,27 @@ void Logic::GPL2_381() {
 		}
 		break;
 	case 0x433:
-		if (_vm->_wizard && _nodes[39] != 9) {
+		if (_vm->_wizard && _nodes[38] != 9) {
 			_vm->playMovie(161);
 			inventoryDel(11);
-			_nodes[51] = 0;
+			_nodes[50] = 0;
 			_vm->_userInput = 0;
 		}
 		_vm->_userInput = 0;
 		break;
 	case 0x435:
-		if (_vm->_wizard && _nodes[39] != 9) {
+		if (_vm->_wizard && _nodes[38] != 9) {
 			_vm->playMovie(160);
 			inventoryDel(13);
-			_nodes[39] = 9;
-			_nodes[59] = 0;
+			_nodes[38] = 9;
+			_nodes[58] = 0;
 			_vm->_userInput = 0;
 			_vm->_tsIconOnly = true;
 			_currMap = 108;
 		}
 		break;
 	case 0x437:
-		if (_vm->_wizard && _nodes[39] != 9) {
+		if (_vm->_wizard && _nodes[38] != 9) {
 			_vm->playMovie(163);
 			inventoryDel(15);
 			_nodes[12] = 0;
@@ -828,7 +828,7 @@ void Logic::GPL2_381() {
 }
 
 void Logic::GPL2_382() {
-	if (_vm->_wizard && (_nodes[39] != 9) && (_vm->_userInput == 0x413))
+	if (_vm->_wizard && (_nodes[38] != 9) && (_vm->_userInput == 0x413))
 		_vm->_userInput = 0;
 
 	_vm->processMapInput(38);
@@ -848,12 +848,12 @@ void Logic::GPL2_390() {
 void Logic::GPL2_400() {
 	_nodeNum = 40;
 	if (!_vm->_wizard)
-		_nodes[41] = 2;
-	if (_nodes[41]) {
-		if (_nodes[41] == 1)
-			_nodes[41] = 2;
+		_nodes[40] = 2;
+	if (_nodes[40]) {
+		if (_nodes[40] == 1)
+			_nodes[40] = 2;
 		else {
-			_nodes[41] = 1;
+			_nodes[40] = 1;
 			_vm->_sound = true;
 		}
 	} else {
@@ -879,7 +879,7 @@ void Logic::GPL2_401() {
 	case 0x428:
 	case 0x429:
 	case 0x42A:
-		if (!_nodes[41]) {
+		if (!_nodes[40]) {
 			inventoryDel(_vm->_userInput - 0x428);
 			_vm->_aTimer = 0;
 			_vm->playMovie(178);
@@ -889,7 +889,7 @@ void Logic::GPL2_401() {
 		}
 		break;
 	case 0x42C:
-		if (!_nodes[41]) {
+		if (!_nodes[40]) {
 			_vm->_aTimer = 0;
 			dsAll();
 			_vm->playMovie(108);
@@ -899,17 +899,17 @@ void Logic::GPL2_401() {
 		}
 		break;
 	case 0x42E:
-		if (!_nodes[41]) {
+		if (!_nodes[40]) {
 			_vm->_aTimer = 0;
 			_vm->playMovie(109);
 			inventoryDel(6);
-			_nodes[43] = 0;
+			_nodes[42] = 0;
 			_vm->_userInput = 0;
 			_vm->_aTimer = 136;
 		}
 		break;
 	case 0x437:
-		if (!_nodes[41]) {
+		if (!_nodes[40]) {
 			_vm->_aTimer = 0;
 			_help = true;
 			_replay = true;
@@ -917,7 +917,7 @@ void Logic::GPL2_401() {
 			_vm->_fstFwd = true;
 			_vm->playMovie(107);
 			_vm->playSound(26);
-			_nodes[41] = 1;
+			_nodes[40] = 1;
 			_vm->_userInput = 0;
 			_currMap = 96;
 			_vm->_tsIconOnly = true;
@@ -951,7 +951,7 @@ void Logic::GPL2_410() {
 	_nodeNum = 41;
 	_vm->drawLocation();
 	_vm->_userInput = 0;
-	if (_nodes[41])
+	if (_nodes[40])
 		_vm->_sound = true;
 
 	_eye = false;
@@ -999,7 +999,7 @@ void Logic::GPL2_411() {
 }
 
 void Logic::GPL2_420() {
-	if (_nodes[37] == 9 || _nodes[29] == 1 || !_vm->_wizard) {
+	if (_nodes[36] == 9 || _nodes[28] == 1 || !_vm->_wizard) {
 		_oldNode = _nodeNum;
 		_nodeNum = 42;
 		if (!chkDesertObstacles()) {
@@ -1024,17 +1024,17 @@ void Logic::GPL2_421() {
 		_vm->_userInput = 0;
 		break;
 	case 0x42E:
-		if (_nodes[43])
+		if (_nodes[42])
 			_vm->displayIcon(136);
 		else {
-			if (_nodes[35] == 9) {
+			if (_nodes[34] == 9) {
 				_vm->_sound = false;
 			} else {
 				_vm->_sound = true;
 			}
 			_vm->playMovie(113);
 			inventoryAdd(6);
-			_nodes[43] = 9;
+			_nodes[42] = 9;
 			_currMap = 10;
 		}
 		_vm->_tsIconOnly = true;
@@ -1065,7 +1065,7 @@ void Logic::GPL2_430() {
 	_vm->drawLocation();
 	_eye = false;
 	_vm->_userInput = 0;
-	if (_nodes[44] == 9) {
+	if (_nodes[43] == 9) {
 		_vm->_tsIconOnly = true;
 		_vm->playMovie(118);
 		_currMap = 80;
@@ -1081,7 +1081,7 @@ void Logic::GPL2_430() {
 		_vm->playSound(25);
 		inventoryDel(12);
 		inventoryAdd(16);
-		_nodes[44] = 9;
+		_nodes[43] = 9;
 		_currMap = 79;
 		_vm->_tsIconOnly = true;
 	}
@@ -1095,7 +1095,7 @@ void Logic::GPL2_431() {
 	case 0x40A:
 		_vm->playMovie(10);
 		_statPlay = 200;
-		if (_nodes[44] != 9)
+		if (_nodes[43] != 9)
 			_nodes[20] = 1;
 		_currMap = 10;
 		_vm->_loopFlag = true;
@@ -1121,7 +1121,7 @@ void Logic::GPL2_431() {
 	case 0x428:
 	case 0x429:
 	case 0x42A:
-		if (_nodes[44] != 9) {
+		if (_nodes[43] != 9) {
 			inventoryDel(_vm->_userInput - 0x428);
 			_vm->saveAS();
 			_vm->playMovie(178);
@@ -1129,7 +1129,7 @@ void Logic::GPL2_431() {
 		}
 		break;
 	case 0x438:
-		if (_nodes[44] == 9) {
+		if (_nodes[43] == 9) {
 			_vm->displayIcon(146);
 		} else {
 			dsAll();
@@ -1152,7 +1152,7 @@ void Logic::GPL2_440() {
 	_nodeNum = 44;
 	_vm->drawLocation();
 	_vm->_userInput = 0;
-	if (_inventory[12] > 0 || _nodes[44] == 9)
+	if (_inventory[12] > 0 || _nodes[43] == 9)
 		_vm->_sound = true;
 
 	_vm->playMovie(119);
@@ -1192,7 +1192,7 @@ void Logic::GPL2_442() {
 void Logic::GPL2_450() {
 	_nodeNum = 45;
 	_vm->_userInput = 0;
-	if (!_nodes[41]) {
+	if (!_nodes[40]) {
 		dsAll();
 		_vm->playMovie(120);
 		_statPlay = 992;
@@ -1234,10 +1234,10 @@ void Logic::GPL2_460() {
 	_nodeNum = 46;
 	_vm->drawLocation();
 	_vm->_userInput = 0;
-	if (_nodes[47] && _vm->_wizard)
-		_nodes[47] = 1;
+	if (_nodes[46] && _vm->_wizard)
+		_nodes[46] = 1;
 	else {
-		_nodes[47] = 0;
+		_nodes[46] = 0;
 		_vm->_sound = true;
 	}
 	_vm->playMovie(121);
@@ -1282,7 +1282,7 @@ void Logic::GPL2_480() {
 	_vm->playMovie(114);
 	_currMap = 10;
 	_statPlay = 481;
-	_nodes[49] = 1;
+	_nodes[48] = 1;
 }
 
 void Logic::GPL2_481() {
@@ -1343,8 +1343,8 @@ void Logic::GPL2_491() {
 		_vm->_aTimer = 0;
 		enAll();
 		_vm->playMovie(181);
-		_nodes[29] = 9;
-		_nodes[49] = 0;
+		_nodes[28] = 9;
+		_nodes[48] = 0;
 		_statPlay = _nextNode * 10;
 		_vm->_loopFlag = true;
 		break;
@@ -1359,17 +1359,17 @@ void Logic::GPLogic2_SubSP361() {
 	enAll();
 	_vm->_userInput = 0;
 	_vm->playSound(19);
-	if (_nodes[29] == 1) {
+	if (_nodes[28] == 1) {
 		_statPlay = 480;
 		_vm->_loopFlag = true;
 		_currMap = 10;
 	} else {
 		if (_inventory[6] == 1 || !_vm->_wizard) {
-			if (_nodes[43] != 1 || _vm->_wizard)
-				_nodes[43] = 1;
+			if (_nodes[42] != 1 || _vm->_wizard)
+				_nodes[42] = 1;
 			else {
 				_vm->_sound = true;
-				_nodes[43] = 2;
+				_nodes[42] = 2;
 			}
 			_vm->playMovie(122);
 			_currMap = 10;

@@ -340,8 +340,8 @@ bool Logic::chkDesertObstacles() {
 		return false;
 	}
 
-	if (_nodes[29] || _vm->_rnd->getRandomNumber(6) == 0) {
-		if (!_nodes[49] || _robberyNode != _nodeNum) {
+	if (_nodes[28] || _vm->_rnd->getRandomNumber(6) == 0) {
+		if (!_nodes[48] || _robberyNode != _nodeNum) {
 			if (_lastObstacle != _nodeNum) {
 				if (_vm->_rnd->getRandomNumber(5) == 0) {
 					_statPlay = 250;
@@ -462,7 +462,7 @@ void Logic::gameHelp() {
 			_vm->drawRect(4, 17, 228, 161, 0);
 			_vm->drawInventory();
 
-			if (_nodes[68] == 1 || _nodes[29] == 1 || _vm->_itemInhibit)
+			if (_nodes[67] == 1 || _nodes[28] == 1 || _vm->_itemInhibit)
 				_currMap = 10;
 			else
 				_currMap = 11;
@@ -547,7 +547,7 @@ void Logic::gameHelp() {
 
 	if (_vm->_userInput == 0x260) {
 		_vm->drawInventory();
-		if (_nodes[68] == 1 || _nodes[29] == 1)
+		if (_nodes[67] == 1 || _nodes[28] == 1)
 			_currMap = 10;
 		else
 			_currMap = 11;
