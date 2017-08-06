@@ -510,8 +510,8 @@ void Logic::gameHelp() {
 		_vm->drawHelpScreen();
 		_vm->_iconRedraw = true;
 		_vm->playSound(1);
-				}
-				break;
+		}
+		break;
 	case 0x244:
 		//TODO: Set _quitFlag to 2
 		_vm->_quit = true;
