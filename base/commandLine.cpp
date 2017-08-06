@@ -852,16 +852,18 @@ static bool addGameToConf(const GameDescriptor &gd) {
 	return true;
 }
 
-static GameList recListGames(Common::FSNode dir, bool recursive) {
+static GameList recListGames(Common::FSNode dir, Common::String gameId, bool recursive) {
 	GameList list = getGameList(dir);
 
 	if (recursive) {
 		Common::FSList files;
 		dir.getChildren(files, Common::FSNode::kListDirectoriesOnly);
 		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
-			GameList rec = recListGames(*file, recursive);
-			for (GameList::const_iterator game = rec.begin(); game != rec.end(); ++game)
-				list.push_back(*game);
+			GameList rec = recListGames(*file, gameId, recursive);
+			for (GameList::const_iterator game = rec.begin(); game != rec.end(); ++game) {
+				if (gameId.empty() || game->gameid().c_str() == gameId)
+					list.push_back(*game);
+			}
 		}
 	}
 
@@ -869,14 +871,14 @@ static GameList recListGames(Common::FSNode dir, bool recursive) {
 }
 
 /** Display all games in the given directory, return ID of first detected game */
-static Common::String detectGames(Common::String path, Common::String recursiveOptStr) {
+static Common::String detectGames(Common::String path, Common::String gameId, Common::String recursiveOptStr) {
 	bool noPath = path.empty();
 	if (noPath)
 		path = ".";
 	bool recursive = (recursiveOptStr == "true");
 	//Current directory
 	Common::FSNode dir(path);
-	GameList candidates = recListGames(dir, recursive);
+	GameList candidates = recListGames(dir, gameId, recursive);
 
 	if (candidates.empty()) {
 		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().c_str());
@@ -1177,14 +1179,14 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			// From an UX point of view, however, it might get confusing.
 			// Consider removing this if consensus says otherwise.
 		} else {
-			command = detectGames(settings["path"], settings["recursive"]);
+			command = detectGames(settings["path"], settings["game"], settings["recursive"]);
 			if (command.empty()) {
 				err = Common::kNoGameDataFoundError;
 				return true;
 			}
 		}
 	} else if (command == "detect") {
-		detectGames(settings["path"], settings["recursive"]);
+		detectGames(settings["path"], settings["game"], settings["recursive"]);
 		return true;
 	} else if (command == "add") {
 		addGames(settings["path"], settings["game"], settings["recursive"]);
