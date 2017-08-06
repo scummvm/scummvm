@@ -35,13 +35,15 @@ class CInputHandler {
 private:
 	/**
 	 * Process and dispatch a passed message
+	 * @returns		True if message was handled
 	 */
-	void processMessage(CMessage *msg);
+	bool processMessage(CMessage *msg);
 
 	/**
 	 * Dispatches a message to the project
+	 * @returns		True if message was handled
 	 */
-	void dispatchMessage(CMessage *msg);
+	bool dispatchMessage(CMessage *msg);
 
 	/**
 	 * Called when a drag operation has ended
@@ -76,7 +78,7 @@ public:
 	/**
 	 * Handles a genereated mouse message
 	 */
-	void handleMessage(CMessage &msg, bool respectLock = true);
+	bool handleMessage(CMessage &msg, bool respectLock = true);
 
 	/**
 	 * Returns true if input is locked

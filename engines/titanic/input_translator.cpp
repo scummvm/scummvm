@@ -86,13 +86,15 @@ void CInputTranslator::mouseWheel(bool wheelUp, const Point &pt) {
 }
 
 void CInputTranslator::keyDown(const Common::KeyState &keyState) {
-	if (isSpecialKey(keyState.keycode)) {
-		CVirtualKeyCharMsg msg(keyState);
-		_inputHandler->handleMessage(msg);
-	}
-
 	if (keyState.ascii > 0 && keyState.ascii <= 127) {
 		CKeyCharMsg msg(keyState.ascii);
+		if (_inputHandler->handleMessage(msg))
+			return;
+	}
+
+	if (isSpecialKey(keyState.keycode)) {
+		CVirtualKeyCharMsg msg(keyState);
+		msg._keyState.ascii = 0;
 		_inputHandler->handleMessage(msg);
 	}
 }

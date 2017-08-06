@@ -63,20 +63,22 @@ void CInputHandler::decLockCount() {
 	}
 }
 
-void CInputHandler::handleMessage(CMessage &msg, bool respectLock) {
+bool CInputHandler::handleMessage(CMessage &msg, bool respectLock) {
 	if (!respectLock || _lockCount <= 0) {
 		if (_gameManager->_gameState._mode == GSMODE_INTERACTIVE) {
-			processMessage(&msg);
+			return processMessage(&msg);
 		} else if (!msg.isMouseMsg()) {
 			g_vm->_filesManager->loadDrive();
 		}
 	}
+
+	return false;
 }
 
-void CInputHandler::processMessage(CMessage *msg) {
+bool CInputHandler::processMessage(CMessage *msg) {
 	const CMouseMsg *mouseMsg = dynamic_cast<const CMouseMsg *>(msg);
 	_abortMessage = false;
-	dispatchMessage(msg);
+	bool handled = dispatchMessage(msg);
 
 	if (_abortMessage) {
 		_abortMessage = false;
@@ -140,14 +142,18 @@ void CInputHandler::processMessage(CMessage *msg) {
 			}
 		}
 	}
+
+	return handled;
 }
 
-void CInputHandler::dispatchMessage(CMessage *msg) {
+bool CInputHandler::dispatchMessage(CMessage *msg) {
 	CPetControl *pet = _gameManager->_project->getPetControl();
 	if (!pet || !msg->execute(pet, nullptr, MSGFLAG_BREAK_IF_HANDLED)) {
 		CViewItem *view = _gameManager->getView();
-		msg->execute(view);
+		return msg->execute(view);
 	}
+
+	return true;
 }
 
 CGameObject *CInputHandler::dragEnd(const Point &pt, CTreeItem *dragItem) {
