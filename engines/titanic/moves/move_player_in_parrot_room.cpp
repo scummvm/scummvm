@@ -58,4 +58,13 @@ bool CMovePlayerInParrotRoom::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	return true;
 }
 
+bool CMovePlayerInParrotRoom::findPoint(Point &pt) {
+	if (_destination == "ParrotLobby.Node 1.E") {
+		pt = Point(600, 180);
+		return true;
+	} else {
+		return CMovePlayerTo::findPoint(pt);
+	}
+}
+
 } // End of namespace Titanic

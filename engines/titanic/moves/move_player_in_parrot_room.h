@@ -44,6 +44,14 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Returns a point that falls within the object. Used for simulating
+	 * mouse clicks for movement when arrow keys are pressed
+	 * @param pt	Return point
+	 * @returns		True if a point was found
+	 */
+	virtual bool findPoint(Point &pt);
 };
 
 } // End of namespace Titanic
