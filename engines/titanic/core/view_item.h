@@ -36,7 +36,7 @@ class CViewItem : public CNamedItem {
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool MouseMoveMsg(CMouseMoveMsg *msg);
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
-	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	bool MovementMsg(CMovementMsg *msg);
 private:
 	CTreeItem *_buttonUpTargets[4];
 private:

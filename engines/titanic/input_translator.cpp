@@ -92,6 +92,12 @@ void CInputTranslator::keyDown(const Common::KeyState &keyState) {
 			return;
 	}
 
+	if (CMovementMsg::getMovement(keyState.keycode) != MOVE_NONE) {
+		CMovementMsg msg(keyState.keycode);
+		if (_inputHandler->handleMessage(msg))
+			return;
+	}
+
 	if (isSpecialKey(keyState.keycode)) {
 		CVirtualKeyCharMsg msg(keyState);
 		msg._keyState.ascii = 0;

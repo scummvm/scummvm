@@ -1151,6 +1151,10 @@ CTextCursor *CGameObject::getTextCursor() const {
 	return CScreenManager::_screenManagerPtr->_textCursor;
 }
 
+Movement CGameObject::getMovement() const {
+	return CLinkItem::getMovementFromCursor(_cursorId);
+}
+
 void CGameObject::scrollTextUp() {
 	if (_text)
 		_text->scrollUp(CScreenManager::_screenManagerPtr);

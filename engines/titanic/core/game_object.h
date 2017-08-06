@@ -781,6 +781,11 @@ public:
 	 */
 	CTextCursor *getTextCursor() const;
 
+	/**
+	 * Get the movement, if any, the cursor represents
+	 */
+	Movement getMovement() const;
+
 	/*--- CGameManager Methods ---*/
 
 	/**

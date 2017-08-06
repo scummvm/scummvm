@@ -222,6 +222,32 @@ enum MissiveOMatAction {
 	MESSAGE_STARTUP = 9
 };
 
+enum Movement {
+	MOVE_NONE = 0, MOVE_FORWARDS, MOVE_BACKWARDS, TURN_LEFT, TURN_RIGHT
+};
+
+
+class CMovementMsg : public CMessage {
+public:
+	Movement _movement;
+public:
+	CLASSDEF;
+	CMovementMsg() : _movement(MOVE_NONE) {}
+	CMovementMsg(Movement move) : _movement(move) {}
+	CMovementMsg(Common::KeyCode key) :
+		_movement(getMovement(key)) {}
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return supports(item, _type);
+	}
+
+	/**
+	 * Returns the movement associated with a given key, if any
+	 */
+	static Movement getMovement(Common::KeyCode keycode);
+};
+
+
 MESSAGE1(CActMsg, CString, action, "");
 MESSAGE1(CActivationmsg, CString, value, "");
 MESSAGE1(CAddHeadPieceMsg, CString, value, "NULL");

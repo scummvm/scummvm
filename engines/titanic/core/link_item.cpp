@@ -29,6 +29,20 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CLinkItem, CNamedItem);
 
+Movement CLinkItem::getMovementFromCursor(CursorId cursorId) {
+	if (cursorId == CURSOR_MOVE_LEFT)
+		return TURN_LEFT;
+	else if (cursorId == CURSOR_MOVE_RIGHT)
+		return TURN_RIGHT;
+	else if (cursorId == CURSOR_MOVE_FORWARD || cursorId == CURSOR_MOVE_THROUGH ||
+		cursorId == CURSOR_DOWN)
+		return MOVE_FORWARDS;
+	else if (cursorId == CURSOR_BACKWARDS)
+		return MOVE_BACKWARDS;
+	else
+		return MOVE_NONE;
+}
+
 CLinkItem::CLinkItem() : CNamedItem() {
 	_roomNumber = -1;
 	_nodeNumber = -1;
@@ -171,6 +185,13 @@ CRoomItem *CLinkItem::getDestRoom() const {
 
 CMovieClip *CLinkItem::getClip() const {
 	return findRoom()->findClip(getName());
+}
+
+Movement CLinkItem::getMovement() const {
+	if (_bounds.isEmpty())
+		return MOVE_NONE;
+
+	return getMovementFromCursor(_cursorId);
 }
 
 } // End of namespace Titanic
