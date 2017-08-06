@@ -241,14 +241,14 @@ void RivenVideo::playBlocking(int32 endTime) {
 		_vm->doFrame();
 
 		// Handle skipping
-		if (playTillEnd && _vm->getStack()->keyGetPressed() == Common::KEYCODE_ESCAPE) {
+		if (playTillEnd && _vm->getStack()->keyGetAction() == kKeyActionSkip) {
 			continuePlaying = false;
 
 			// Seek to the last frame
 			_video->seek(_video->getDuration().addMsecs(-1));
 
 			_vm->getStack()->mouseForceUp();
-			_vm->getStack()->keyForceUp();
+			_vm->getStack()->keyResetAction();
 		}
 	}
 

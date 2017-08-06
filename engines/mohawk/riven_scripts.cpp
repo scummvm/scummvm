@@ -309,6 +309,7 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 		arguments.push_back(256);
 		arguments.push_back(0);
 		_commands.push_back(RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandPlaySound, arguments)));
+		debugC(kRivenDebugPatches, "Applied missing closing sound patch to card %x", cardGlobalId);
 	}
 
 	if (shouldApplyPatches) {

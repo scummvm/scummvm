@@ -218,7 +218,7 @@ void MohawkEngine_Riven::doFrame() {
 			_inventory->checkClick(_eventMan->getMousePos());
 			break;
 		case Common::EVENT_KEYUP:
-			_stack->keyForceUp();
+			_stack->keyResetAction();
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
@@ -255,7 +255,7 @@ void MohawkEngine_Riven::doFrame() {
 				}
 				break;
 			default:
-				_stack->onKeyPressed(event.kbd.keycode);
+				_stack->onKeyPressed(event.kbd);
 				break;
 			}
 			break;

@@ -99,7 +99,10 @@ public:
 	RivenHotspot *getHotspotContainingPoint(const Common::Point &point) const;
 
 	/** Get the hotspot with the specified name */
-	RivenHotspot *getHotspotByName(const Common::String &name) const;
+	RivenHotspot *getHotspotByName(const Common::String &name, bool optional = false) const;
+
+	/** Find an enabled hotspot with a name matching one of the arguments */
+	RivenHotspot *findEnabledHotspotByName(uint n, ...) const;
 
 	/** Get the hotspot with the specified BLST id */
 	RivenHotspot *getHotspotByBlstId(const uint16 blstId) const;
@@ -125,6 +128,9 @@ public:
 	/** Handle a mouse move event */
 	RivenScriptPtr onMouseMove(const Common::Point &mouse);
 
+	/** Handle a keyboard action */
+	RivenScriptPtr onKeyAction(RivenKeyAction keyAction);
+
 	/** General frame update handler */
 	RivenScriptPtr onFrame();
 
@@ -145,6 +151,7 @@ private:
 	void loadCardMovieList(uint16 id);
 	void loadCardHotspotEnableList(uint16 id);
 	void loadCardWaterEffectList(uint16 id);
+	void applyPatches(uint16 id);
 	void setCurrentCardVariable();
 
 	RivenScriptPtr getScript(uint16 scriptType) const;
@@ -254,8 +261,11 @@ public:
 	/** Write all of the hotspot's data to standard output */
 	void dump() const;
 
-	/** Apply patches to hotspot's scripts to fix bugs in the original game scripts */
+	/** Apply patches to the hotspot's scripts to fix bugs in the original game scripts */
 	void applyScriptPatches(uint32 cardGlobalId);
+
+	/** Apply patches to the hotspot's properties to fix bugs in the original game scripts */
+	void applyPropertiesPatches(uint32 cardGlobalId);
 
 private:
 	enum {
