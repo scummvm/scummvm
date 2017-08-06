@@ -311,7 +311,7 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 					BF_GLOBALS._driveToScene = 300;
 					_newSceneNumber = 300;
 				}
-				// Deliberate fall through to default
+				// fall through
 			default:
 				BF_GLOBALS._mapLocationId = _locationId;
 				BF_GLOBALS._player.disableControl();

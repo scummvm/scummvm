@@ -1207,6 +1207,7 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 			break;
 		}
 		// already displayed first, do a random
+		// fall through
 	case 1:
 		i = objDesc->lastSeenNumber;
 		while (i == objDesc->lastSeenNumber) {

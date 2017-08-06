@@ -225,7 +225,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 			if ((*(const byte *)(textPtr + 1)) == 0xA) {
 				curCharCount++; textPtr++;
 			}
-			// it's meant to pass through here
+			// fall through
 		case 0xA:
 		case 0x9781: // this one is used by SQ4/japanese as line break as well (was added for SCI1/PC98)
 			curCharCount++; textPtr++;
@@ -233,7 +233,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 				// skip another byte in case char is double-byte (PC-98)
 				curCharCount++; textPtr++;
 			}
-			// and it's also meant to pass through here
+			// fall through
 		case 0:
 			SetFont(previousFontId);
 			_ports->penColor(previousPenColor);

@@ -587,10 +587,10 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 
 	switch (operation) {
 	case kPlatformUnknown:
-		// For Mac versions, kPlatform(0) with other args has more functionality
+		// For Mac versions, kPlatform(0) with other args has more functionality. Otherwise, fall through.
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && argc > 1)
 			return kMacPlatform(s, argc - 1, argv + 1);
-		// Otherwise, fall through
+		// fall through
 	case kPlatformGetPlatform:
 		if (isWindows)
 			return make_reg(0, kSciPlatformWindows);

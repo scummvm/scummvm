@@ -781,7 +781,7 @@ IMPLEMENT_FUNCTION(25, Verges, policeSearch)
 				}
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 2:
 			if (getEvent(kEventKronosConversation)) {
@@ -1832,7 +1832,7 @@ IMPLEMENT_FUNCTION(41, Verges, askPassengersToStayInCompartments)
 
 		case 1:
 			getEntities()->drawSequenceLeft(kEntityVerges, "620E");
-			// Fallback to next case
+			// fall through
 
 		case 2:
 			if (getSoundQueue()->isBuffered(kEntityVerges)) {

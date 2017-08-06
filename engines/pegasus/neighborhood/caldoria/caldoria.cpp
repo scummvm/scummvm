@@ -1151,7 +1151,7 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 		case k4DEnvironOpenToINN:
 			GameState.setCaldoriaSeenINN(true);
 			GameState.setScoringSawINN(true);
-			// Fall through to k4DEnvironOpen...
+			// fall through
 		case k4DEnvironOpen:
 			_privateFlags.setFlag(kCaldoriaPrivate4DSystemOpenFlag, true);
 			setCurrentActivation(kActivate4DOpen);

@@ -1483,8 +1483,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 		_malcolmFrame = 0;
 		_malcolmFlag = 2;
 		_malcolmTimer2 = 0;
-
-		// Fall through to the next case
+		// fall through
 
 	case 2:
 		if (_system->getMillis() >= _malcolmTimer2) {

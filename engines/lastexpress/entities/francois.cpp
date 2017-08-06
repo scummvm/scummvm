@@ -220,7 +220,7 @@ IMPLEMENT_FUNCTION(9, Francois, exitCompartment)
 
 		case 1:
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
-			// Fallback to next case
+			// fall through
 
 		case 2:
 			getData()->location = kLocationOutsideCompartment;
@@ -256,7 +256,7 @@ IMPLEMENT_FUNCTION(10, Francois, enterCompartment)
 		case 1:
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
 			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction102484312);
-			// Fallback to next case
+			// fall through
 
 		case 2:
 			getData()->location = kLocationInsideCompartment;
@@ -423,7 +423,7 @@ label_callback:
 
 		case 2:
 			getSavePoints()->push(kEntityFrancois, kEntityCoudert, kAction168253822);
-			// Fallback to next case
+			// fall through
 
 		case 3:
 			params->param2 = kCarRedSleeping;
@@ -684,7 +684,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, chaseBeetle, ObjectIndex, EntityPosition)
 
 		case 8:
 			getEntities()->exitCompartment(kEntityFrancois, (ObjectIndex)parameters->param1);
-			// Fallback to next case
+			// fall through
 
 		case 9:
 			setCallback(10);

@@ -358,7 +358,7 @@ IMPLEMENT_FUNCTION_II(19, August, function19, bool, bool)
 				strcpy((char *)&parameters->seq1, "666");
 				break;
 			}
-			// Fallback to next action
+			// fall through
 
 		case kChapter4:
 		case kChapter5:
@@ -443,7 +443,7 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 				strcpy((char *)&parameters->seq1, "666");
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case kChapter4:
 		case kChapter5:
@@ -581,7 +581,7 @@ label_continue:
 			setup_savegame(kSavegameTypeEvent, kEventMeetAugustHisCompartment);
 			break;
 		}
-		// Fallback to next case
+		// fall through
 
 	case kActionKnock:
 		getObjects()->update(kObjectCompartment3, kEntityAugust, kObjectLocation1, kCursorNormal, kCursorNormal);

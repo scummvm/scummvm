@@ -666,14 +666,14 @@ void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 					switch (mode1) {
 					case 8:
 						mode1 = 0;
-						// Deliberate fall-through
+						// fall through
 					case 21:
 					case 66:
 						if (param2) {
 							switch (mode2) {
 							case 82:
 								mode1 = 0;
-								// Deliberate fall-through
+								// fall through
 							case 21:
 							case 34:
 							case 35:
@@ -711,7 +711,7 @@ void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 						switch (mode2) {
 						case 82:
 							mode1 = 0;
-							// Deliberate fall-through
+							// fall through
 						case 21:
 						case 34:
 						case 35:

@@ -766,7 +766,8 @@ void Plane::setType() {
 			_type = kPlaneTypeTransparentPicture;
 			break;
 		}
-		// fall through for games without transparent picture planes
+		// The game doesn't have transparent picture planes
+		// fall through
 	default:
 		if (!g_sci->_features->hasTransparentPicturePlanes() || _type != kPlaneTypeTransparentPicture) {
 			_type = kPlaneTypePicture;

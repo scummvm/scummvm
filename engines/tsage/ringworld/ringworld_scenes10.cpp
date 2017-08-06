@@ -103,7 +103,7 @@ void Scene9100::signal() {
 		break;
 	case 9105:
 		_hotspotCleanedClothes.remove();
-	// No break on purpose
+		// fall through
 	case 9103:
 	case 9104:
 	case 9107:
@@ -336,7 +336,7 @@ void Scene9200::signal() {
 		break;
 	case 9210:
 		_hotspot1.remove();
-	// No break on purpose
+		// fall through
 	case 9201:
 	case 9202:
 	case 9203:
@@ -480,7 +480,7 @@ void Scene9300::signal() {
 	switch (_sceneMode++) {
 	case 9301:
 		g_globals->setFlag(84);
-		// No break on purpose
+		// fall through
 	case 9303:
 		g_globals->_soundHandler.play(295);
 		g_globals->_sceneManager.changeScene(9350);
@@ -938,7 +938,7 @@ void Scene9450::signal() {
 		break;
 	case 1006:
 		g_globals->setFlag(87);
-		// No break on purpose
+		// fall through
 	default:
 		g_globals->_player.enableControl();
 		break;
@@ -1240,7 +1240,7 @@ void Scene9700::signal() {
 	switch (_sceneMode ++) {
 	case 9703:
 		g_globals->setFlag(88);
-		// No break on purpose
+		// fall through
 	case 9701:
 	case 9702:
 		_gfxButton1.setText(EXIT_MSG);
@@ -1700,7 +1700,7 @@ void Scene9900::strAction2::signal() {
 		_txtArray2[0]._position.y = 400;
 		_txtArray2[1]._position.y = 500;
 		_var3 = 0;
-		// No break on purpose
+		// fall through
 	case 1: {
 		Common::String msg = g_resourceManager->getMessage(8030, _lineNum++);
 		if (msg.compareTo("LASTCREDIT")) {

@@ -2122,7 +2122,7 @@ void Scene570::signal() {
 		_object3.setVisage(572);
 		_object3.setStrip(4);
 		_object3.setFrame(1);
-		// Deliberate fall-through
+		// fall through
 	case 5702:
 	case 5703:
 		_object3.fixPriority(1);

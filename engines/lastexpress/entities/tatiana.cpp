@@ -568,7 +568,7 @@ IMPLEMENT_FUNCTION(21, Tatiana, returnToCompartment)
 			getSavePoints()->push(kEntityTatiana, kEntityAlexei, kAction135854208);
 			getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
 			getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
-			// Fallback to next case
+			// fall through
 
 		case 3:
 			if (getSoundQueue()->isBuffered(kEntityTatiana)) {
@@ -2264,7 +2264,7 @@ IMPLEMENT_FUNCTION(55, Tatiana, function55)
 
 	case kActionDefault:
 		getEntities()->clearSequences(kEntityTatiana);
-		// fall back to next action
+		// fall through
 
 	case kActionDrawScene:
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 72))

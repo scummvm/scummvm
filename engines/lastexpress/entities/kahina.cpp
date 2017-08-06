@@ -285,7 +285,7 @@ IMPLEMENT_FUNCTION(12, Kahina, awaitingCath)
 
 	case kActionKnock:
 		getSound()->playSound(kEntityPlayer, "LIB012");
-		// Fallback to next action
+		// fall through
 
 	case kActionOpenDoor:
 		if (!getEvent(kEventKronosGoingToInvitation)) {
@@ -419,7 +419,7 @@ IMPLEMENT_FUNCTION(15, Kahina, searchTrain)
 				setup_updateEntity(kCarRedSleeping, kPosition_9460);
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 4:
 			if (getEntities()->isInsideCompartment(kEntityPlayer, kCarGreenSleeping, kPosition_8200)
@@ -905,7 +905,7 @@ label_callback_2:
 
 		case 10:
 			params->param1 = 0;
-			// Fallback to next case
+			// fall through
 
 		case 11:
 		case 12:

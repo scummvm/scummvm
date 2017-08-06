@@ -476,7 +476,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 				case BR_PAUSE:
 					pauseFunction(fun);
-					// No break!
+					// fall through
 
 				case BR_KEEP_AND_PAUSE:
 					keepLooping = false;

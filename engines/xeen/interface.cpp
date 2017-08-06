@@ -957,7 +957,7 @@ bool Interface::checkMoveDirection(int key) {
 			if (_vm->_files->_isDarkCc)
 				goto check;
 
-			// Deliberate FAll-through
+			// fall through
 		case 0:
 		case 2:
 		case 4:

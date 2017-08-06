@@ -820,7 +820,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	case 27:
 	case 28:
 		subId -= 3;
-		// Deliberate fall-through
+		// fall through
 
 	case 21:
 	case 22:

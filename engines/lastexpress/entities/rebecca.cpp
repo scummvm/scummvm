@@ -897,7 +897,7 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 				setup_playSound("REB1199A");
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 3:
 			if (getCallback() == 3)
@@ -908,7 +908,7 @@ IMPLEMENT_FUNCTION(24, Rebecca, function24)
 				setup_playSound("REB1199B");
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 4:
 			setCallback(5);

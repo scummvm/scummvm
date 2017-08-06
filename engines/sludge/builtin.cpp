@@ -145,7 +145,7 @@ static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 			if (!getValueType(fileNum, SVT_FILE, fun->stack->thisVar))
 				return BR_ERROR;
 			trimStack(fun->stack);
-			// No break; here
+			// fall through
 
 		case 2:
 			newText = getTextFromAnyVar(fun->stack->thisVar);
@@ -1263,7 +1263,7 @@ builtIn(setLightMap) {
 				return BR_ERROR;
 			trimStack(fun->stack);
 			g_sludge->_gfxMan->_lightMapMode %= LIGHTMAPMODE_NUM;
-			// No break;
+			// fall through
 
 		case 1:
 			if (fun->stack->thisVar.varType == SVT_FILE) {

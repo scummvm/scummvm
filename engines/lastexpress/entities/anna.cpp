@@ -385,7 +385,7 @@ IMPLEMENT_FUNCTION(12, Anna, practiceMusic)
 				setup_playSound("MAX1120");
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 4:
 			--params->param1;
@@ -452,7 +452,7 @@ IMPLEMENT_FUNCTION_IS(15, Anna, compartmentLogic, TimeValue)
 			setup_playSound("LIB013");
 			break;
 		}
-		// Fallback to next action
+		// fall through
 
 	case kActionKnock:
 		if (params->param5) {
@@ -510,7 +510,7 @@ IMPLEMENT_FUNCTION_IS(15, Anna, compartmentLogic, TimeValue)
 				setup_playSound("MAX1120");
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 2:
 			getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
@@ -1467,7 +1467,7 @@ label_callback_1:
 				setup_playSound("MAX1120");
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 4:
 			getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
@@ -1857,7 +1857,7 @@ IMPLEMENT_FUNCTION(41, Anna, goBackToSleep)
 				setup_playSound("MAX1120");
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 3:
 			getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
@@ -2431,7 +2431,7 @@ IMPLEMENT_FUNCTION(53, Anna, dressing)
 			setup_playSound("LIB013");
 			break;
 		}
-		// Fallback to next case
+		// fall through
 
 	case kActionKnock:
 		getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorNormal, kCursorNormal);
@@ -2495,7 +2495,7 @@ IMPLEMENT_FUNCTION(53, Anna, dressing)
 				setup_playSound("MAX1120");
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 2:
 			getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
@@ -2579,7 +2579,7 @@ IMPLEMENT_FUNCTION(54, Anna, giveMaxToConductor2)
 			setup_playSound("LIB013");
 			break;
 		}
-		// Fallback to next case
+		// fall through
 
 	case kActionKnock:
 		getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorNormal, kCursorNormal);
@@ -2636,7 +2636,7 @@ IMPLEMENT_FUNCTION(54, Anna, giveMaxToConductor2)
 				setup_playSound("MAX1120");
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 2:
 			getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);

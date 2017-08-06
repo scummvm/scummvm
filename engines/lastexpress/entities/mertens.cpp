@@ -1659,7 +1659,7 @@ label_callback11:
 
 					case 3:
 						getAction()->playAnimation(isNight() ? kEventMertensPushCallNight : kEventMertensPushCall);
-						// fallback to default case
+						// fall through
 
 					default:
 						getSound()->playSound(kEntityPlayer, "LIB015");
@@ -1717,7 +1717,7 @@ label_callback11:
 
 					case 3:
 						getAction()->playAnimation(isNight() ? kEventMertensPushCallNight : kEventMertensPushCall);
-						// fallback to default case
+						// fall through
 
 					default:
 						getSound()->playSound(kEntityPlayer, "LIB015");
@@ -1800,7 +1800,7 @@ label_callback11:
 
 				case 3:
 					getAction()->playAnimation(isNight() ? kEventMertensPushCallNight : kEventMertensPushCall);
-					// fallback to default case
+					// fall through
 
 				default:
 					getSound()->playSound(kEntityPlayer, "LIB015");
@@ -2332,7 +2332,7 @@ IMPLEMENT_FUNCTION(32, Mertens, function32)
 				setup_function11(900);
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 3:
 			setCallback(4);
@@ -2402,7 +2402,7 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 				setup_function16(true);
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 5:
 			if (ENTITY_PARAM(1, 7)) {
@@ -2410,7 +2410,7 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 				setup_function16(false);
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 6:
 			if (ENTITY_PARAM(1, 5)) {
@@ -2418,7 +2418,7 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 				setup_function15(true);
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 7:
 			if (ENTITY_PARAM(1, 4)) {
@@ -2426,7 +2426,7 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 				setup_function15(false);
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 8:
 			if (ENTITY_PARAM(1, 2)) {
@@ -2434,7 +2434,7 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 				setup_function35();
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 9:
 			if (ENTITY_PARAM(0, 6)) {
@@ -2442,7 +2442,7 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 				setup_function36();
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 10:
 			if (ENTITY_PARAM(1, 3)) {
@@ -2450,7 +2450,7 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 				setup_function40();
 				break;
 			}
-			// Fallback to next case
+			// fall through
 
 		case 11:
 			if (ENTITY_PARAM(1, 1)) {
@@ -4059,7 +4059,7 @@ IMPLEMENT_FUNCTION(53, Mertens, function53)
 			getEntities()->clearSequences(kEntityMertens);
 			getData()->location = kLocationInsideCompartment;
 			getData()->entityPosition = kPosition_5790;
-			// Fallback to next case
+			// fall through
 
 		case 3:
 			getObjects()->update(kObjectCompartment4, kEntityMertens, kObjectLocation1, kCursorHandKnock, kCursorHand);

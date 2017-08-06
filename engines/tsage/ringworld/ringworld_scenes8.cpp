@@ -1669,7 +1669,7 @@ void Scene7700::Action3::signal() {
 		scene->_sceneHotspot9.remove();
 		scene->_object19.remove();
 		setDelay(60);
-		// No break on purpose!
+		// fall through
 	case 2:
 		scene->_soundHandler.play(260);
 		scene->_object8.setVisage(7703);
@@ -1690,7 +1690,7 @@ void Scene7700::Action4::signal() {
 	switch (_actionIndex++) {
 	case 2:
 		scene->_object13.remove();
-		// No break on purpose!
+		// fall through
 	case 0:
 		setDelay(3);
 		break;

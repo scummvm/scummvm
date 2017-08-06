@@ -280,14 +280,18 @@ ConversionResult ConvertUTF16toUTF8(
 		case 4:
 			*--target = (UTF8)((ch | byteMark) & byteMask);
 			ch >>= 6;
+			// fall through
 		case 3:
 			*--target = (UTF8)((ch | byteMark) & byteMask);
 			ch >>= 6;
+			// fall through
 		case 2:
 			*--target = (UTF8)((ch | byteMark) & byteMask);
 			ch >>= 6;
+			// fall through
 		case 1:
 			*--target = (UTF8)(ch | firstByteMark[bytesToWrite]);
+			// fall through
 		}
 		target += bytesToWrite;
 	}
@@ -318,8 +322,10 @@ static bool isLegalUTF8(const UTF8 *source, int length) {
 		/* Everything else falls through when "true"... */
 	case 4:
 		if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+		// fall through
 	case 3:
 		if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+		// fall through
 	case 2:
 		if ((a = (*--srcptr)) > 0xBF) return false;
 
@@ -340,6 +346,7 @@ static bool isLegalUTF8(const UTF8 *source, int length) {
 		default:
 			if (a < 0x80) return false;
 		}
+		// fall through
 
 	case 1:
 		if (*source >= 0x80 && *source < 0xC2) return false;
@@ -389,18 +396,23 @@ ConversionResult ConvertUTF8toUTF16(
 		case 5:
 			ch += *source++;
 			ch <<= 6; /* remember, illegal UTF-8 */
+			// fall through
 		case 4:
 			ch += *source++;
 			ch <<= 6; /* remember, illegal UTF-8 */
+			// fall through
 		case 3:
 			ch += *source++;
 			ch <<= 6;
+			// fall through
 		case 2:
 			ch += *source++;
 			ch <<= 6;
+			// fall through
 		case 1:
 			ch += *source++;
 			ch <<= 6;
+			// fall through
 		case 0:
 			ch += *source++;
 		}
@@ -500,12 +512,15 @@ ConversionResult ConvertUTF32toUTF8(
 		case 4:
 			*--target = (UTF8)((ch | byteMark) & byteMask);
 			ch >>= 6;
+			// fall through
 		case 3:
 			*--target = (UTF8)((ch | byteMark) & byteMask);
 			ch >>= 6;
+			// fall through
 		case 2:
 			*--target = (UTF8)((ch | byteMark) & byteMask);
 			ch >>= 6;
+			// fall through
 		case 1:
 			*--target = (UTF8)(ch | firstByteMark[bytesToWrite]);
 		}
@@ -543,18 +558,23 @@ ConversionResult ConvertUTF8toUTF32(
 		case 5:
 			ch += *source++;
 			ch <<= 6;
+			// fall through
 		case 4:
 			ch += *source++;
 			ch <<= 6;
+			// fall through
 		case 3:
 			ch += *source++;
 			ch <<= 6;
+			// fall through
 		case 2:
 			ch += *source++;
 			ch <<= 6;
+			// fall through
 		case 1:
 			ch += *source++;
 			ch <<= 6;
+			// fall through
 		case 0:
 			ch += *source++;
 		}

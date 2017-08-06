@@ -54,7 +54,7 @@ void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
 			warning("TODO: sub_26D8F");
 			break;
 		}
-		// Deliberate fall-through
+		// fall through
 	case WT_NONFREEZED_WAIT:
 		do {
 			events.updateGameCounter();

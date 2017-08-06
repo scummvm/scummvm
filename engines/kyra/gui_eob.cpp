@@ -1286,7 +1286,7 @@ void EoBCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 	case 10:
 		if (_flags.gameID == GI_EOB1)
 			vl += _clericSpellOffset;
-		// drop through
+		// fall through
 	case 9:
 		// Mage/Cleric Scroll
 		if (!_currentControlMode)

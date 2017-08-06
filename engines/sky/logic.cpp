@@ -1313,10 +1313,13 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 					switch (a) {
 					case 3:
 						c = pop();
+						// fall through
 					case 2:
 						b = pop();
+						// fall through
 					case 1:
 						a = pop();
+						// fall through
 					}
 
 					uint16 mcode = *scriptData++ / 4; // get mcode number

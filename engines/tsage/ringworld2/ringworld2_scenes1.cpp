@@ -1401,7 +1401,7 @@ void Scene1500::signal() {
 	case 0:
 		R2_GLOBALS.setFlag(25);
 		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
-	// No break on purpose
+		// fall through
 	case 1:
 		if (_starship._yDiff < 50) {
 			_starship.setPosition(Common::Point(289, 239), _starship._yDiff + 1);
@@ -1424,12 +1424,12 @@ void Scene1500::signal() {
 		break;
 	case 13:
 		R2_GLOBALS._player._characterIndex = R2_MIRANDA;
-	// No break on purpose
+		// fall through
 	case 4:
 		R2_GLOBALS._sceneManager.changeScene(300);
 		break;
 	case 10:
-	// No break on purpose
+		// fall through
 	case 20:
 		setAction(&_sequenceManager, this, 1, &R2_GLOBALS._player, NULL);
 		break;
@@ -2225,11 +2225,11 @@ void Scene1550::postInit(SceneObjectList *OwnerList) {
 	switch (R2_GLOBALS._sceneManager._previousScene) {
 	case 1530:
 		R2_GLOBALS._stripModifier = 0;
-	// No break on purpose
+		// fall through
 	case 300:
-	// No break on purpose
+		// fall through
 	case 1500:
-	// No break on purpose
+		// fall through
 	case 3150:
 		R2_GLOBALS._sound1.play(105);
 		break;
@@ -7309,7 +7309,7 @@ void Scene1900::signal() {
 		break;
 	case 1904:
 		R2_GLOBALS._scene1925CurrLevel = -3;
-	// No break on purpose
+		// fall through
 	case 1905:
 		R2_GLOBALS._player.disableControl(CURSOR_WALK);
 		R2_GLOBALS._sceneManager.changeScene(1925);
@@ -7323,7 +7323,7 @@ void Scene1900::signal() {
 		break;
 	case 1906:
 		R2_GLOBALS._scene1925CurrLevel = -3;
-	// No break on purpose
+		// fall through
 	default:
 		R2_GLOBALS._player.enableControl();
 		break;
@@ -7517,7 +7517,7 @@ void Scene1925::changeLevel(bool upFlag) {
 		break;
 	case 512:
 		R2_GLOBALS._scene1925CurrLevel = 508;
-	// No break on purpose
+		// fall through
 	default:
 		loadScene(_levelResNum[(R2_GLOBALS._scene1925CurrLevel % 4)]);
 		R2_GLOBALS._sceneItems.remove(&_button);
@@ -7561,10 +7561,10 @@ void Scene1925::postInit(SceneObjectList *OwnerList) {
 	case 3:
 		_door.setDetails(1925, 0, 1, 2, 1, (SceneItem *) NULL);
 		_button.setDetails(Rect(133, 68, 140, 77), 1925, 3, -1, 5, 1, NULL);
-	// No break on purpose
+		// fall through
 	case -3:
 		_westExit.setDetails(Rect(83, 38, 128, 101), EXITCURSOR_W, 1925);
-	// No break on purpose
+		// fall through
 	default:
 		_exitUp.setDetails(Rect(128, 0, 186, 10), EXITCURSOR_N, 1925);
 		_exitDown.setDetails(Rect(128, 160, 190, 167), EXITCURSOR_S, 1925);
@@ -7647,7 +7647,7 @@ void Scene1925::signal() {
 			_newSceneMode = 0;
 			setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
 		}
-	// No break on purpose
+		// fall through
 	default:
 		R2_GLOBALS._player.enableControl(CURSOR_USE);
 		break;
@@ -7708,7 +7708,7 @@ bool Scene1945::Ice::startAction(CursorType action, Event &event) {
 			else
 				scene->_ice.setDetails(1945, 3, -1, 5, 3, (SceneItem *) NULL);
 		}
-	// No break on purpose
+		// fall through
 	default:
 		return SceneHotspot::startAction(action, event);
 		break;
@@ -7951,7 +7951,7 @@ void Scene1945::signal() {
 		R2_GLOBALS.clearFlag(42);
 		R2_GLOBALS.setFlag(43);
 		_nextSceneMode1 = 1940;
-	// No break on purpose
+		// fall through
 	case 1949:
 		_sceneMode = _nextSceneMode1;
 		if (_nextSceneMode2 == 1943) {

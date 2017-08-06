@@ -566,7 +566,7 @@ void Gendarmes::handleAction(const SavePoint &savepoint, bool shouldPlaySound, S
 				break;
 			}
 		}
-		// Fallback to next action
+		// fall through
 
 	case kActionDrawScene:
 		if (!ENTITY_PARAM(0, 1) && getEntities()->hasValidFrame(kEntityGendarmes)) {

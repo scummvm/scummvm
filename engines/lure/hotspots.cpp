@@ -3469,7 +3469,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 		if (room.isDialogShowing())
 			return;
 
-		// Fall through to TALK_START
+		// fall through
 
 	case TALK_START:
 		// Handle initial setup of talking options
@@ -4045,7 +4045,7 @@ void HotspotTickHandlers::rackSerfAnimHandler(Hotspot &h) {
 		h.setActionCtr(4);
 		h.setLayer(2);
 
-		// Deliberate fall-through
+		// fall through
 	case 4:
 		if (HotspotScript::execute(&h)) {
 			h.setLayer(255);
