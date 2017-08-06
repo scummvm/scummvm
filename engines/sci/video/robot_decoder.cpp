@@ -579,16 +579,6 @@ void RobotDecoder::close() {
 
 	debugC(kDebugLevelVideo, "Closing robot");
 
-	_robotId = -1;
-	_planeId = NULL_REG;
-	_status = kRobotStatusUninitialized;
-	_videoSizes.clear();
-	_recordPositions.clear();
-	_celDecompressionBuffer.clear();
-	_doVersion5Scratch.clear();
-	delete _stream;
-	_stream = nullptr;
-
 	for (CelHandleList::size_type i = 0; i < _celHandles.size(); ++i) {
 		if (_celHandles[i].status == CelHandleInfo::kFrameLifetime) {
 			_segMan->freeBitmap(_celHandles[i].bitmapId);
@@ -601,7 +591,7 @@ void RobotDecoder::close() {
 	}
 	_fixedCels.clear();
 
-	if (g_sci->_gfxFrameout->getPlanes().findByObject(_plane->_object) != nullptr) {
+	if (g_sci->_gfxFrameout->getPlanes().findByObject(_planeId) != nullptr) {
 		for (RobotScreenItemList::size_type i = 0; i < _screenItemList.size(); ++i) {
 			if (_screenItemList[i] != nullptr) {
 				g_sci->_gfxFrameout->deleteScreenItem(*_screenItemList[i]);
@@ -613,6 +603,17 @@ void RobotDecoder::close() {
 	if (_hasAudio) {
 		_audioList.reset();
 	}
+
+	_robotId = -1;
+	_planeId = NULL_REG;
+	_plane = nullptr;
+	_status = kRobotStatusUninitialized;
+	_videoSizes.clear();
+	_recordPositions.clear();
+	_celDecompressionBuffer.clear();
+	_doVersion5Scratch.clear();
+	delete _stream;
+	_stream = nullptr;
 }
 
 void RobotDecoder::pause() {
@@ -717,7 +718,7 @@ void RobotDecoder::showFrame(const uint16 frameNo, const uint16 newX, const uint
 				CelInfo32 celInfo;
 				celInfo.type = kCelTypeMem;
 				celInfo.bitmap = _celHandles[i].bitmapId;
-				ScreenItem *screenItem = new ScreenItem(_plane->_object, celInfo);
+				ScreenItem *screenItem = new ScreenItem(_planeId, celInfo);
 				_screenItemList[i] = screenItem;
 				screenItem->_position = Common::Point(_screenItemX[i], _screenItemY[i]);
 				if (_priority == -1) {
@@ -1167,6 +1168,7 @@ bool RobotDecoder::readPartialAudioRecordAndSubmit(const int startFrame, const i
 #pragma mark RobotDecoder - Rendering
 
 uint16 RobotDecoder::getFrameSize(Common::Rect &outRect) const {
+	assert(_plane != nullptr);
 	outRect.clip(0, 0);
 	for (RobotScreenItemList::size_type i = 0; i < _screenItemList.size(); ++i) {
 		ScreenItem &screenItem = *_screenItemList[i];
@@ -1396,7 +1398,7 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 		if (_screenItemList[i] == nullptr) {
 			CelInfo32 celInfo;
 			celInfo.bitmap = _celHandles[i].bitmapId;
-			ScreenItem *screenItem = new ScreenItem(_plane->_object, celInfo, position, _scaleInfo);
+			ScreenItem *screenItem = new ScreenItem(_planeId, celInfo, position, _scaleInfo);
 			_screenItemList[i] = screenItem;
 			// TODO: Version 6 robot?
 			// screenItem->_field_30 = scaleXRemainder;
