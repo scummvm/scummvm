@@ -385,9 +385,10 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	if (!pet)
 		return true;
 
-	uint destRoomFlags = pet->getRoomFlags();
-	CGameObject *mailObject = findMail(destRoomFlags);
+	uint srcRoomFlags = pet->getRoomFlags();
+	CGameObject *mailObject = findMail(srcRoomFlags);
 	if (!mailObject) {
+		// Nothing to send
 		switch (getRandomNumber(2)) {
 		case 0:
 			startTalking(this, 70111, findView());
@@ -422,7 +423,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		if (_isFeathers) {
 			// The feather has special handling to be rejected by the SuccUBus
 			_sendLost = false;
-			sendMail(destRoomFlags, roomFlags);
+			sendMail(srcRoomFlags, roomFlags);
 			pet->phonographAction("");
 
 			if (_okStartFrame >= 0) {
