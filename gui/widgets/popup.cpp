@@ -234,6 +234,7 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_KP1:
 		if (state.flags & Common::KBD_NUM)
 			break;
+		// fall through
 	case Common::KEYCODE_END:
 		setSelection(_popUpBoss->_entries.size()-1);
 		break;
@@ -241,6 +242,7 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_KP2:
 		if (state.flags & Common::KBD_NUM)
 			break;
+		// fall through
 	case Common::KEYCODE_DOWN:
 		moveDown();
 		break;
@@ -248,6 +250,7 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_KP7:
 		if (state.flags & Common::KBD_NUM)
 			break;
+		// fall through
 	case Common::KEYCODE_HOME:
 		setSelection(0);
 		break;
@@ -255,6 +258,7 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_KP8:
 		if (state.flags & Common::KBD_NUM)
 			break;
+		// fall through
 	case Common::KEYCODE_UP:
 		moveUp();
 		break;

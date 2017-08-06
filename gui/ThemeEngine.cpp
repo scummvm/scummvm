@@ -630,6 +630,7 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 			_bytesPerPixel = sizeof(uint16);
 			break;
 		}
+		// fall through
 	default:
 		error("Invalid graphics mode");
 	}
