@@ -129,9 +129,9 @@ void Logic::GPL4_991() {
 		}
 
 		_vm->_loopFlag = true;
-		if (!_vm->isDemo() && _nodes[29] == 1) {
-			_nodes[29] = 0;
-			_nodes[49] = 0;
+		if (!_vm->isDemo() && _nodes[28] == 1) {
+			_nodes[28] = 0;
+			_nodes[48] = 0;
 		}
 
 		if (_vm->isDemo() && _nodes[28] == 1) {
@@ -185,9 +185,9 @@ void Logic::GPL4_992() {
 		}
 
 		_vm->_loopFlag = true;
-		if (_nodes[29] == 1) {
-			_nodes[29] = 0;
-			_nodes[49] = 0;
+		if (_nodes[28] == 1) {
+			_nodes[28] = 0;
+			_nodes[48] = 0;
 		}
 
 		_vm->_itemInhibit = false;
@@ -283,13 +283,13 @@ void Logic::GPL4_993() {
 
 		_vm->_loopFlag = true;
 		if (!_vm->isDemo()) {
-			if (_nodes[29] == 1) {
-				_nodes[29] = 0;
-				_nodes[49] = 0;
+			if (_nodes[28] == 1) {
+				_nodes[28] = 0;
+				_nodes[48] = 0;
 			}
 
-			if (_nodes[68] == 1)
-				_nodes[68] = 0;
+			if (_nodes[67] == 1)
+				_nodes[67] = 0;
 		} else {
 			if (_nodes[28] == 1) {
 				_nodes[28] = 0;
