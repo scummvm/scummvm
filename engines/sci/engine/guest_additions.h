@@ -148,9 +148,9 @@ public:
 
 #ifdef ENABLE_SCI32
 	/**
-	 * Guest additions hook for kPlayDuck(Play).
+	 * Guest additions hook for kPlayDuck(Play) and kPlayVMD(PlayUntilEvent).
 	 */
-	bool kPlayDuckPlayHook() const;
+	bool kPlayDuckPlayVMDHook() const;
 #endif
 
 #pragma mark -

@@ -444,6 +444,10 @@ reg_t kPlayVMDGetStatus(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->_guestAdditions->kPlayDuckPlayVMDHook()) {
+		return make_reg(0, VMDPlayer::kEventFlagEnd);
+	}
+
 	const VMDPlayer::EventFlags flags = (VMDPlayer::EventFlags)argv[0].toUint16();
 	const int16 lastFrameNo = argc > 1 ? argv[1].toSint16() : -1;
 	const int16 yieldInterval = argc > 2 ? argv[2].toSint16() : -1;
@@ -485,7 +489,7 @@ reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayDuckPlay(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->_guestAdditions->kPlayDuckPlayHook()) {
+	if (g_sci->_guestAdditions->kPlayDuckPlayVMDHook()) {
 		return NULL_REG;
 	}
 	kPlayDuckOpen(s, argc, argv);

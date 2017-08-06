@@ -254,28 +254,47 @@ void GuestAdditions::segManSaveLoadScriptHook(Script &script) const {
 #endif
 
 bool GuestAdditions::kGetEventHook() const {
-	if (_state->_delayedRestoreGameId != -1) {
-		return g_sci->_guestAdditions->restoreFromLauncher();
+	if (_state->_delayedRestoreGameId == -1) {
+		return false;
 	}
-	return false;
+
+	// Loading a save game while Lighthouse is still initializing itself will
+	// cause loading to fail if the save game contains a saved Robot state,
+	// because the Robot will try to restore itself into a game plane which does
+	// not exist yet
+	if (g_sci->getGameId() == GID_LIGHTHOUSE) {
+		Common::List<ExecStack>::const_iterator it;
+		for (it = _state->_executionStack.begin(); it != _state->_executionStack.end(); ++it) {
+			const ExecStack &call = *it;
+			const reg_t gameObject = g_sci->getGameObject();
+			if (call.sendp == gameObject && call.debugSelector == SELECTOR(init)) {
+				return false;
+			}
+		}
+	}
+
+	return g_sci->_guestAdditions->restoreFromLauncher();
 }
 
 bool GuestAdditions::kWaitHook() const {
-	if (_state->_delayedRestoreGameId != -1 &&
-		// kWait cannot be used in Phant2 for delayed restore because it is
-		// called during the fade-in of music in the intro room, before graphics
-		// are fully initialized, which causes "Click to continue" text to be
-		// brokenly drawn over the game and then crashes the engine on the next
-		// room transition
-		g_sci->getGameId() != GID_PHANTASMAGORIA2) {
-
-		return g_sci->_guestAdditions->restoreFromLauncher();
+	if (_state->_delayedRestoreGameId == -1) {
+		return false;
 	}
-	return false;
+
+	// kWait cannot be used in Phant2 for delayed restore because it is
+	// called during the fade-in of music in the intro room, before graphics
+	// are fully initialized, which causes "Click to continue" text to be
+	// brokenly drawn over the game and then crashes the engine on the next
+	// room transition
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+		return false;
+	}
+
+	return g_sci->_guestAdditions->restoreFromLauncher();
 }
 
 #ifdef ENABLE_SCI32
-bool GuestAdditions::kPlayDuckPlayHook() const {
+bool GuestAdditions::kPlayDuckPlayVMDHook() const {
 	return _state->_delayedRestoreGameId != -1;
 }
 #endif
