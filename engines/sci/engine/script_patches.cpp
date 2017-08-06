@@ -4092,6 +4092,52 @@ static const SciScriptPatcherEntry pq3Signatures[] = {
 #pragma mark -
 #pragma mark Police Quest 4
 
+// In Police Quest 4 inside the Bitty Kitty show (room 315), the player has to first talk with a young woman, show her the police badge, then
+// show her the red shoe. She will tell the player that may "Barbie" knows more.
+// After leaving and entering later (not detailed here), Barbie will be available.
+// Now the player needs to show her the police badge as well and then it goes a bit weird.
+//
+// The player can show her the red shoe immediately, which will work dialog-wise, but points won't be awarded and the corresponding flag will also not get set.
+// Internally the game checks if some regular talking dialog (for Barbie) has been accessed before awarding the points and setting the flags.
+// When the player does not recognize this, the player may get stuck and it will look as if a game breaking glitch has happened.
+//
+// Showing the red shoe to the young woman AND showing it to Barbie is all done using the same script.
+// It works via shoeShoe::changeState.
+//
+// The code in there of state 0 checks first who is currently inside the room using stripper::noun.
+// Afterwards for the young woman it checks local 3 if it's zero or not zero.
+// Local 3 is set, when the player has shown the police badge to the person, that is currently inside the room.
+//
+// For Barbie strangely global 9Ah is checked instead, which then causes those issues.
+//
+// We change the Barbie code to also check local 3, which seems to work out.
+// We can't simply remove the check, otherwise the flag will get set even when the player
+// hasn't shown the badge, which will cause Barbie to not answer the question and the player
+// won't be able to show her the shoe a second time.
+//
+// This of course also happened, when using the original interpreter.
+//
+// Applies to at least: English floppy, German floppy, English CD
+// Responsible method: showShoe::changeState(0) - script 315
+// Fixes bug: #9849
+static const uint16 pq4BittyKittyShowBarieRedShoeSignature[] = {
+	// stripper::noun check is for checking, if police badge was shown
+	SIG_MAGICDWORD,
+	0x89, 0x9a,                         // lsg global[9Ah]
+	0x35, 0x02,                         // ldi 02
+	0x1e,                               // gt?
+	0x30, SIG_UINT16(0x0028),           // bnt [skip 2 points code]
+	0x39, 0x61,                         // pushi 61h (flag)
+	SIG_END
+};
+
+static const uint16 pq4BittyKittyShowBarbieRedShoePatch[] = {
+	0x83, 0x03,                         // lal local[3]
+	0x30, PATCH_UINT16(0x002b),         // bnt [skip 2 points code]
+	0x33, 1,                            // jmp 1 (waste some bytes)
+	PATCH_END
+};
+
 // In Police Quest 4 scripts for room 390 (city hall) use ticks instead of seconds.
 // Ticks are not behaving the same as seconds. Ticks will also go down within game menus including inventory.
 // When getting attacked, the player has almost no time to draw the gun - and even when the player has the gun
@@ -4182,6 +4228,7 @@ static const uint16 pq4FloppyCityHallCuffEnemyTimerPatch[] = {
 
 //          script, description,                                          signature                                           patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
+	{  true,   315, "show barbie the red shoe points fix",             1, pq4BittyKittyShowBarieRedShoeSignature,             pq4BittyKittyShowBarbieRedShoePatch },
 	{  true,   390, "floppy: city hall: draw gun timer",               1, pq4FloppyCityHallDrawGunTimerSignature,             pq4FloppyCityHallDrawGunTimerPatch },
 	{  true,   390, "floppy: city hall: tell enemy drop weapon timer", 1, pq4FloppyCityHallTellEnemyDropWeaponTimerSignature, pq4FloppyCityHallTellEnemyDropWeaponTimerPatch },
 	{  true,   390, "floppy: city hall: tell enemy turn around timer", 1, pq4FloppyCityHallTellEnemyTurnAroundTimerSignature, pq4FloppyCityHallTellEnemyTurnAroundTimerPatch },
