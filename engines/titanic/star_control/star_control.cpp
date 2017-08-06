@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(CStarControl, CGameObject)
 	ON_MESSAGE(MouseButtonDownMsg)
 	ON_MESSAGE(KeyCharMsg)
 	ON_MESSAGE(FrameMsg)
+	ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
 CStarControl::CStarControl() : _enabled(false), _petControl(nullptr),
@@ -274,6 +275,13 @@ bool CStarControl::canSetStarDestination() const {
 
 void CStarControl::starDestinationSet() {
 	_view.starDestinationSet();
+}
+
+bool CStarControl::MovementMsg(CMovementMsg *msg) {
+	// The star control view has an unused turn right link hidden
+	// under the star view. For cleanliness, explicitly consume any
+	// movements in the star view so the link is never used
+	return true;
 }
 
 } // End of namespace Titanic

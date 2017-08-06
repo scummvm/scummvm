@@ -341,7 +341,15 @@ CString CViewItem::getNodeViewName() const {
 bool CViewItem::MovementMsg(CMovementMsg *msg) {
 	Point pt;
 
-	// Iterate through the links to find an appropriate link
+	// First allow any child objects to handle it
+	for (CTreeItem *treeItem = getFirstChild(); treeItem;
+		treeItem = treeItem->scan(this)) {
+		if (msg->execute(treeItem, nullptr, 0))
+			return true;
+	}
+
+	// Iterate through the view's contents to find a link or item
+	// with the appropriate movement action
 	for (CTreeItem *treeItem = getFirstChild(); treeItem;
 			treeItem = treeItem->scan(this)) {
 		CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);

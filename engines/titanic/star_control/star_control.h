@@ -36,6 +36,7 @@ class CStarControl : public CGameObject {
 	bool MouseMoveMsg(CMouseMoveMsg *msg);
 	bool KeyCharMsg(CKeyCharMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
+	bool MovementMsg(CMovementMsg *msg);
 private:
 	bool _enabled;
 	CStarField _starField;
