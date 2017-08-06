@@ -245,8 +245,8 @@ void LocalWebserver::handleClient(uint32 i) {
 			break;
 
 		// if no handler, answer with default BAD REQUEST
-		// fallthrough
 	}
+	// fall through
 
 	case BAD_REQUEST:
 		setClientGetHandler(_client[i], "<html><head><title>ScummVM - Bad Request</title></head><body>BAD REQUEST</body></html>", 400);

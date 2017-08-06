@@ -478,8 +478,8 @@ const TValue *luaH_get (Table *t, const TValue *key) {
       lua_number2int(k, n);
       if (luai_numeq(cast_num(k), nvalue(key))) /* index is int? */
         return luaH_getnum(t, k);  /* use specialized version */
-      /* else go through */
     }
+    /* fall through */
     default: {
       Node *n = mainposition(t, key);
       do {  /* check whether `key' is somewhere in the chain */

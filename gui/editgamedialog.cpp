@@ -539,7 +539,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			_domain = newDomain;
 		}
 	}
-	// FALL THROUGH to default case
+	// fall through
 	default:
 		OptionsDialog::handleCommand(sender, cmd, data);
 	}
