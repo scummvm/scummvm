@@ -597,7 +597,7 @@ void KingdomGame::drawRect(uint minX, uint minY, uint maxX, uint maxY, int color
 
 void KingdomGame::drawInventory() {
 	fShowPic(108);
-	if (_logic->_nodes[29] == 1 || _logic->_nodes[68] == 1 || _itemInhibit)
+	if (_logic->_nodes[28] == 1 || _logic->_nodes[67] == 1 || _itemInhibit)
 		return;
 
 	if (_logic->_inventory[0] > 0)
@@ -1088,7 +1088,7 @@ void KingdomGame::setATimer() {
 	_aTimerFlag = true;
 	_aTimer = 0;
 	int wrkNodeNum = _logic->_nodeNum;
-	if (_logic->_nodes[29] == 1 || _logic->_nodes[68] == 1)
+	if (_logic->_nodes[28] == 1 || _logic->_nodes[67] == 1)
 		return;
 
 	if (_tsIconOnly)
@@ -1175,7 +1175,7 @@ void KingdomGame::checkMainScreen() {
 			wrkNodeNum = 81;
 		int idx = _iconActTable[wrkNodeNum][i];
 
-		if (_logic->_inventory[idx] >= 1 && _logic->_nodes[29] != 1 && _logic->_nodes[68] != 1 && !_itemInhibit && !_iconsClosed) {
+		if (_logic->_inventory[idx] >= 1 && _logic->_nodes[28] != 1 && _logic->_nodes[67] != 1 && !_itemInhibit && !_iconsClosed) {
 			if (_iconPic[i] != 12 + idx) {
 				if (_iconPic[i] == 89 + i)
 					_iconPic[i] = 96 + i;
@@ -1518,11 +1518,11 @@ void KingdomGame::cursorType() {
 			_mouseValue = 0;
 		break;
 	case 0x40D:
-		if (_logic->_nodes[29] == 1)
+		if (_logic->_nodes[28] == 1)
 			_mouseValue = 0;
 		break;
 	case 0x41F:
-		if (_logic->_nodes[32] == 0)
+		if (_logic->_nodes[31] == 0)
 			_mouseValue = 0;
 		break;
 	case 0x422:
@@ -1565,7 +1565,7 @@ void KingdomGame::cursorType() {
 			if (_logic->_nodeNum == 56 && _logic->_inventory[8] < 1 && _wizard)
 				var2 = 80;
 			int indx = _iconActTable[var2][var6];
-			if (_logic->_inventory[indx] != 0 && _logic->_nodes[29] != 1 && _logic->_nodes[68] != 1 && !_iconsClosed && !_itemInhibit) {
+			if (_logic->_inventory[indx] != 0 && _logic->_nodes[28] != 1 && _logic->_nodes[67] != 1 && !_iconsClosed && !_itemInhibit) {
 				_mouseValue = indx + 0x428;
 				_iconSelect = var6;
 				break;
