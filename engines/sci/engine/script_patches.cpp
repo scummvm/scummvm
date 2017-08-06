@@ -4092,13 +4092,105 @@ static const SciScriptPatcherEntry pq3Signatures[] = {
 #pragma mark -
 #pragma mark Police Quest 4
 
-//          script, description,                                      signature                         patch
+// In Police Quest 4 scripts for room 390 (city hall) use ticks instead of seconds.
+// Ticks are not behaving the same as seconds. Ticks will also go down within game menus including inventory.
+// When getting attacked, the player has almost no time to draw the gun - and even when the player has the gun
+// equipped in advance, afterwards the attacker needs to get cuffed. Which means selecting the cuffs inside
+// the inventory.
+// It's not obvious that this sequence doesn't stop time while inside game menus, which is why the player
+// may think it's a bug when the player is literally instantly attacked and killed after returning from inventory.
+//
+// Another action-sequence right before that uses ::seconds (woman, who attacks ego with a knife).
+//
+// That's why we change all occurrences of ::ticks to ::seconds and also adjust the values accordingly.
+//
+// This is not a perfect solution. The game system will decrease ::seconds by 1 after entering+exiting the game menu,
+// that's why I raised some of the timers for 1 or 2 seconds. A better solution would be to make it so game system
+// won't decrease ticks/seconds after returning from the game menu. That could of course break things, but should be investigated.
+//
+// Applies to at least: English Floppy, German floppy
+// Responsible method: metzAttack::changeState(2) - 120 ticks (player needs to draw gun)
+//                     stickScr::changeState(0) - 180 ticks (player needs to tell enemy to drop gun)
+//                     dropStick::changeState(5) - 120 ticks (player needs to tell enemy to turn around)
+//                     turnMetz::changeState(5) - 600/420 ticks (player needs to cuff Metz)
+//                     all in script 390
+//
+// The code for the CD version was changed quite a bit, the selector for ticks also changed from 0x10 (so opcode-wise it's 0x20) to 0x11 (opcode-wise 0x22),
+// so additional signatures/patches will need to be added for CD version.
+//
+// metzAttack::changeState(2)
+static const uint16 pq4FloppyCityHallDrawGunTimerSignature[] = {
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x0008),           // send 08
+	0x32,                               // jmp [ret]
+	SIG_ADDTOOFFSET(+8),                // skip over some code
+	0x35, 0x78,                         // pushi 0078h (120)
+	0x65, 0x20,                         // aTop ticks
+	SIG_END
+};
+static const uint16 pq4FloppyCityHallDrawGunTimerPatch[] = {
+	PATCH_ADDTOOFFSET(12),
+	0x35, 0x05,                         // pushi 4
+	0x65, 0x1c,                         // aTop seconds - raise time from 2 seconds to 4 seconds
+	PATCH_END
+};
+// stickScr::changeState(0)
+static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerSignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(180),              // pushi 00B4h (180)
+	0x65, 0x20,                         // aTop ticks
+	0x32, SIG_UINT16(0x005e),           // jmp to ret
+	SIG_END
+};
+static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerPatch[] = {
+	0x34, PATCH_UINT16(5),              // pushi 5
+	0x65, 0x1c,                         // aTop seconds - raise time from 3 seconds to 5 seconds
+	PATCH_END
+};
+// dropStick::changeState(5)
+static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerSignature[] = {
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x35, 0x78,                         // pushi 0078h (120)
+	0x65, 0x20,                         // aTop ticks
+	SIG_END
+};
+static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x35, 0x03,                         // pushi 3
+	0x65, 0x1c,                         // aTop seconds - raise time from 2 seconds to 3 seconds
+	PATCH_END
+};
+// turnMetz::changeState(5)
+static const uint16 pq4FloppyCityHallCuffEnemyTimerSignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(600),              // pushi 258h (600)
+	0x65, 0x20,                         // aTop ticks
+	SIG_ADDTOOFFSET(+3),
+	0x34, SIG_UINT16(420),              // pushi 1A4h (420)
+	0x65, 0x20,                         // aTop ticks
+	SIG_END
+};
+static const uint16 pq4FloppyCityHallCuffEnemyTimerPatch[] = {
+	0x34, PATCH_UINT16(10),             // pushi 10
+	0x65, 0x1c,                         // aTop seconds - time is 10 seconds
+	PATCH_ADDTOOFFSET(+3),
+	0x34, SIG_UINT16(7),                // pushi 7
+	0x65, 0x1c,                         // aTop seconds - time is 7 seconds
+	PATCH_END
+};
+
+//          script, description,                                          signature                                           patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
-	{  true, 64918, "Str::strip fix for floppy version",           1, sci2BrokenStrStripSignature,      sci2BrokenStrStripPatch },
-	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
-	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	{  true,   390, "floppy: city hall: draw gun timer",               1, pq4FloppyCityHallDrawGunTimerSignature,             pq4FloppyCityHallDrawGunTimerPatch },
+	{  true,   390, "floppy: city hall: tell enemy drop weapon timer", 1, pq4FloppyCityHallTellEnemyDropWeaponTimerSignature, pq4FloppyCityHallTellEnemyDropWeaponTimerPatch },
+	{  true,   390, "floppy: city hall: tell enemy turn around timer", 1, pq4FloppyCityHallTellEnemyTurnAroundTimerSignature, pq4FloppyCityHallTellEnemyTurnAroundTimerPatch },
+	{  true,   390, "floppy: city hall: cuff enemy timer",             1, pq4FloppyCityHallCuffEnemyTimerSignature,           pq4FloppyCityHallCuffEnemyTimerPatch },
+	{  true, 64918, "Str::strip fix for floppy version",               1, sci2BrokenStrStripSignature,                        sci2BrokenStrStripPatch },
+	{  true, 64908, "disable video benchmarking",                      1, sci2BenchmarkSignature,                             sci2BenchmarkPatch },
+	{  true, 64990, "increase number of save games",                   1, sci2NumSavesSignature1,                             sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",                   1, sci2NumSavesSignature2,                             sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",                 1, sci2ChangeDirSignature,                             sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
