@@ -73,7 +73,8 @@ bool CBilgeSuccUBus::FrameMsg(CFrameMsg *msg) {
 bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 	CPetControl *pet = getPetControl();
 
-	if (_style) {
+	if (_motherBlocked) {
+		// Mother hasn't yet been unblocked, so don't receive anything
 		if (_receiveStartFrame >= 0)
 			playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_WAIT_FOR_FINISH);
 		if (_afterReceiveStartFrame >= 0)
@@ -130,7 +131,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	_isFeathers = mailObject->getName() == "Feathers";
 	_sendAction = SA_SENT;
 
-	if (_style) {
+	if (_motherBlocked) {
 		if (_isFeathers) {
 			startTalking(this, 230022);
 			_sendAction = SA_FEATHERS;
@@ -189,7 +190,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			playSound("z#30.wav");
 	} else {
 		if (msg->_endFrame == _onEndFrame && pet) {
-			if (_style) {
+			if (_motherBlocked) {
 				startTalking(this, getRandomNumber(1) ? 230062 : 230063);
 			} else if (!findMail(pet->getRoomFlags())) {
 				switch (getRandomNumber(4)) {
@@ -254,7 +255,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 		} else if (msg->_endFrame == _sneezing2EndFrame) {
 			changeView("BilgeRoomWith.Node 1.N", "");
-			_style = false;
+			_motherBlocked = false;
 			resetMail();
 
 			if (_mailP) {

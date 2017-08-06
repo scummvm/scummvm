@@ -50,7 +50,7 @@ class CSuccUBus : public CTrueTalkNPC {
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 protected:
 	static bool _isOn;
-	static bool _style;
+	static bool _motherBlocked;
 	static bool _enabled;
 protected:
 	int _initialStartFrame;

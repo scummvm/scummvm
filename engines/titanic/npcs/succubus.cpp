@@ -47,7 +47,7 @@ BEGIN_MESSAGE_MAP(CSuccUBus, CTrueTalkNPC)
 END_MESSAGE_MAP()
 
 bool CSuccUBus::_isOn;
-bool CSuccUBus::_style;
+bool CSuccUBus::_motherBlocked;
 bool CSuccUBus::_enabled;
 
 CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
@@ -118,7 +118,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_okEndFrame, indent);
 	file->writeNumberLine(_flagsComparison, indent);
 
-	file->writeNumberLine(_style, indent);
+	file->writeNumberLine(_motherBlocked, indent);
 	file->writeNumberLine(_afterReceiveStartFrame, indent);
 	file->writeNumberLine(_afterReceiveEndFrame, indent);
 	file->writeNumberLine(_trayOutStartFrame, indent);
@@ -181,7 +181,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_okEndFrame = file->readNumber();
 	_flagsComparison = (RoomFlagsComparison)file->readNumber();
 
-	_style = file->readNumber();
+	_motherBlocked = file->readNumber();
 	_afterReceiveStartFrame = file->readNumber();
 	_afterReceiveEndFrame = file->readNumber();
 	_trayOutStartFrame = file->readNumber();
@@ -571,7 +571,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			stopSound(_soundHandle);
 			_soundHandle = -1;
 
-			switch (getRandomNumber(_style ? 7 : 5, &_priorRandomVal2)) {
+			switch (getRandomNumber(_motherBlocked ? 7 : 5, &_priorRandomVal2)) {
 			case 2:
 				startTalking(this, 230001, findView());
 				break;
