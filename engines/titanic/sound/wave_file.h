@@ -33,8 +33,6 @@ namespace Titanic {
 
 enum LoadMode { LOADMODE_AUDIO_BUFFER = 1, LOADMODE_SCUMMVM = 2 };
 
-class QSoundManager;
-
 class CWaveFile {
 private:
 	Audio::Mixer *_mixer;
@@ -70,7 +68,6 @@ public:
 	int _channel;
 public:
 	CWaveFile(Audio::Mixer *mixer);
-	CWaveFile(QSoundManager *owner);
 	~CWaveFile();
 
 	/**

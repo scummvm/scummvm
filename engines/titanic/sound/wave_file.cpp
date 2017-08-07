@@ -70,12 +70,6 @@ CWaveFile::CWaveFile(Audio::Mixer *mixer) : _mixer(mixer), _pendingAudioStream(n
 	setup();
 }
 
-CWaveFile::CWaveFile(QSoundManager *owner) : _pendingAudioStream(nullptr),
-		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
-		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
-	setup();
-}
-
 void CWaveFile::setup() {
 	_loadMode = LOADMODE_SCUMMVM;
 	_dataSize = 0;
