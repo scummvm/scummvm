@@ -683,41 +683,56 @@ void RivenCard::playMovie(uint16 index, bool queue) {
 }
 
 RivenScriptPtr RivenCard::onKeyAction(RivenKeyAction keyAction) {
-	RivenHotspot *directionHotspot = nullptr;
+	static const char *forwardNames[] = {
+			"forward", "forward1", "forward2", "forward3",
+			"opendoor", "openhatch", "opentrap", "opengate", "opengrate",
+			"open", "door", "drop", "go", "enterprison", "exit",
+			"forwardleft", "forwardright", nullptr
+	};
+
+	static const char *forwardLeftNames [] = { "forwardleft",              nullptr };
+	static const char *forwardRightNames[] = { "forwardright",             nullptr };
+	static const char *leftNames        [] = { "left",  "afl", "prevpage", nullptr };
+	static const char *rightNames       [] = { "right", "afr", "nextpage", nullptr };
+	static const char *backNames        [] = { "back",                     nullptr };
+	static const char *upNames          [] = { "up",                       nullptr };
+	static const char *downNames        [] = { "down",                     nullptr };
+
+	static const char **hotspotNames;
 	switch (keyAction) {
 		case kKeyActionMoveForward:
-			directionHotspot = findEnabledHotspotByName(17,
-			                        "forward", "forward1", "forward2", "forward3",
-			                        "opendoor", "openhatch", "opentrap", "opengate", "opengrate",
-			                        "open", "door", "drop", "go", "enterprison", "exit",
-			                        "forwardleft", "forwardright"
-			);
+			hotspotNames = forwardNames;
 			break;
 		case kKeyActionMoveForwardLeft:
-			directionHotspot = findEnabledHotspotByName(1, "forwardleft");
+			hotspotNames = forwardLeftNames;
 			break;
 		case kKeyActionMoveForwardRight:
-			directionHotspot = findEnabledHotspotByName(1, "forwardright");
+			hotspotNames = forwardRightNames;
 			break;
 		case kKeyActionMoveLeft:
-			directionHotspot = findEnabledHotspotByName(3, "left", "afl", "prevpage");
+			hotspotNames = leftNames;
 			break;
 		case kKeyActionMoveRight:
-			directionHotspot = findEnabledHotspotByName(3, "right", "afr", "nextpage");
+			hotspotNames = rightNames;
 			break;
 		case kKeyActionMoveBack:
-			directionHotspot = findEnabledHotspotByName(1, "back");
+			hotspotNames = backNames;
 			break;
 		case kKeyActionLookUp:
-			directionHotspot = findEnabledHotspotByName(1, "up");
+			hotspotNames = upNames;
 			break;
 		case kKeyActionLookDown:
-			directionHotspot = findEnabledHotspotByName(1, "down");
+			hotspotNames = downNames;
 			break;
 		default:
 			break;
 	}
 
+	if (!hotspotNames) {
+		return RivenScriptPtr(new RivenScript());
+	}
+
+	RivenHotspot *directionHotspot = findEnabledHotspotByName(hotspotNames);
 	if (!directionHotspot) {
 		return RivenScriptPtr(new RivenScript());
 	}
@@ -735,19 +750,13 @@ RivenScriptPtr RivenCard::onKeyAction(RivenKeyAction keyAction) {
 	return clickScript;
 }
 
-RivenHotspot *RivenCard::findEnabledHotspotByName(uint n, ...) const {
-	va_list ap;
-	va_start(ap, n);
-
-	for (uint i = 0; i < n; i++) {
-		const char *name = va_arg(ap, const char *);
-		RivenHotspot *hotspot = getHotspotByName(name, true);
+RivenHotspot *RivenCard::findEnabledHotspotByName(const char **names) const {
+	for (uint i = 0; names[i] != nullptr; i++) {
+		RivenHotspot *hotspot = getHotspotByName(names[i], true);
 		if (hotspot && hotspot->isEnabled()) {
 			return hotspot;
 		}
 	}
-
-	va_end(ap);
 
 	return nullptr;
 }
