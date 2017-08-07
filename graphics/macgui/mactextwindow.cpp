@@ -76,6 +76,9 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 }
 
 void MacTextWindow::resize(int w, int h) {
+	if (_surface.w == w && _surface.h == h)
+		return;
+
 	undrawInput();
 
 	MacWindow::resize(w, h);
