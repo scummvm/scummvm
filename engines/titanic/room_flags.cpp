@@ -76,7 +76,7 @@ const SuccUBusFlagsEntry SUCCUBUS_ROOMS[SUCCUBUS_ROOMS_SIZE] = {
 };
 
 int CRoomFlags::getConditionally() const {
-	if (getRoomArea() != 5 || getRoomCategory() != 5)
+	if (getRoomArea() != 5 || getRoomCategory())
 		return _data;
 	else
 		return 5;
