@@ -828,9 +828,15 @@ void RivenHotspot::applyPropertiesPatches(uint32 cardGlobalId) {
 	// change the name of the hotspot to look at the bottom of the door to
 	// "down" instead of "forwardleft". That way the keyboard navigation
 	// does not spoil that you can go below the door.
+	// Also make sure the forward keyboard action plays the try to open
+	// door animation.
 	if (cardGlobalId == 0x87ac && _blstID == 10) {
 		_nameResource = _vm->getStack()->getIdFromName(kHotspotNames, "down");
 		debugC(kRivenDebugPatches, "Applied change hotspot name to 'down' patch to card %x", cardGlobalId);
+	}
+	if (cardGlobalId == 0x87ac && _blstID == 12) {
+		_nameResource = _vm->getStack()->getIdFromName(kHotspotNames, "opendoor");
+		debugC(kRivenDebugPatches, "Applied change hotspot name to 'opendoor' patch to card %x", cardGlobalId);
 	}
 }
 
