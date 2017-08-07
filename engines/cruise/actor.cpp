@@ -853,6 +853,7 @@ void processAnimation() {
 						}
 					}
 				}
+				// fall through
 
 				case ANIM_PHASE_MOVE:
 				{
@@ -893,6 +894,7 @@ void processAnimation() {
 						break;
 					}
 				}
+				// fall through
 
 				case ANIM_PHASE_END:
 				{
