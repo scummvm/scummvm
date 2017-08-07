@@ -187,7 +187,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_SEMICOLON:
 		if (matchedIndex == -1) {
-			_camera.increaseSpeed();
+			_camera.increaseForwardSpeed();
 			errorCode->set();
 			return true;
 		}
@@ -195,7 +195,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_PERIOD:
 		if (matchedIndex == -1) {
-			_camera.decreaseSpeed();
+			_camera.increaseBackwardSpeed();
 			errorCode->set();
 			return true;
 		}

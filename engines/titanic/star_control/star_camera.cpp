@@ -146,12 +146,12 @@ void CStarCamera::updatePosition(CErrorCode *errorCode) {
 	}
 }
 
-void CStarCamera::increaseSpeed() {
-	_mover->increaseSpeed();
+void CStarCamera::increaseForwardSpeed() {
+	_mover->increaseForwardSpeed();
 }
 
-void CStarCamera::decreaseSpeed() {
-	_mover->decreaseSpeed();
+void CStarCamera::increaseBackwardSpeed() {
+	_mover->increaseBackwardSpeed();
 }
 
 void CStarCamera::fullSpeed() {
