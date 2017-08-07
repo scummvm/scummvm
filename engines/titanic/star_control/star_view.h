@@ -50,7 +50,11 @@ private:
 	bool _field218;
 	bool _showingPhoto;
 private:
-	bool fn1();
+	/**
+	 * Updates the camera, allowing for movement
+	 */
+	bool updateCamera();
+
 	void fn18(CStarCamera *camera);
 	void fn19(int v);
 

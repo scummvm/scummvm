@@ -97,7 +97,7 @@ void CStarView::draw(CScreenManager *screenManager) {
 			if (_homePhotoMask)
 				_homePhotoMask->draw(screenManager, Point(20, 187));
 		} else {
-			fn1();
+			updateCamera();
 
 			// Render the display
 			_videoSurface->clear();
@@ -255,7 +255,7 @@ void CStarView::resetPosition() {
 	_camera.setPosition(FVector(0.0, 0.0, 0.0));
 }
 
-bool CStarView::fn1() {
+bool CStarView::updateCamera() {
 	if (_videoSurface) {
 		CErrorCode errorCode;
 		_camera.updatePosition(&errorCode);
