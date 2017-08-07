@@ -1980,6 +1980,7 @@ void Scene125::Action3::signal() {
 		scene->_object1.changeZoom(2);
 		scene->_object1.show();
 		setDelay(1);
+		break;
 	case 13:
 		BF_GLOBALS._sound1.play(6);
 		scene->_object1.changeZoom(4);
