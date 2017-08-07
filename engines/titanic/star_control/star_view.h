@@ -50,11 +50,6 @@ private:
 	bool _field218;
 	bool _showingPhoto;
 private:
-	/**
-	 * Updates the camera, allowing for movement
-	 */
-	bool updateCamera();
-
 	void fn18(CStarCamera *camera);
 	void fn19(int v);
 
@@ -97,6 +92,11 @@ public:
 	 * Allows the item to draw itself
 	 */
 	void draw(CScreenManager *screenManager);
+
+	/**
+	 * Updates the camera, allowing for movement
+	 */
+	bool updateCamera();
 
 	/**
 	 * Handles mouse down messages

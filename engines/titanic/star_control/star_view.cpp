@@ -256,6 +256,9 @@ void CStarView::resetPosition() {
 }
 
 bool CStarView::updateCamera() {
+	if (_fader.isActive() || _showingPhoto)
+		return false;
+
 	if (_videoSurface) {
 		CErrorCode errorCode;
 		_camera.updatePosition(&errorCode);

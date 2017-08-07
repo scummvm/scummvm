@@ -97,6 +97,11 @@ public:
 	 * Called when a star destination is set
 	 */
 	void starDestinationSet();
+
+	/**
+	 * Updates the camerea for the star view
+	 */
+	void updateCamera() { _view.updateCamera(); }
 };
 
 } // End of namespace Titanic
