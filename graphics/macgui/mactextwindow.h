@@ -35,10 +35,10 @@ struct SelectedText {
 	int endRow, endCol;
 
 	SelectedText() {
-		startX = startY = 0;
-		endX = endY = 0;
-		startRow = startCol = 0;
-		endRow = endCol = 0;
+		startX = startY = -1;
+		endX = endY = -1;
+		startRow = startCol = -1;
+		endRow = endCol = -1;
 	}
 
 	bool needsRender() {
