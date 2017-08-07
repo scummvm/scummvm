@@ -344,7 +344,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 }
 
 void MacTextWindow::startMarking(int x, int y) {
-	x -= getInnerDimensions().left;
+	x -= getInnerDimensions().left - 2;
 	y -= getInnerDimensions().top;
 
 	y += _scrollPos;
@@ -357,7 +357,7 @@ void MacTextWindow::startMarking(int x, int y) {
 }
 
 void MacTextWindow::updateTextSelection(int x, int y) {
-	x -= getInnerDimensions().left;
+	x -= getInnerDimensions().left - 2;
 	y -= getInnerDimensions().top;
 
 	y += _scrollPos;
