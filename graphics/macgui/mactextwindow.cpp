@@ -160,7 +160,7 @@ void MacTextWindow::drawSelection() {
 
 	SelectedText s = _selectedText;
 
-	if (s.startY > s.endY) {
+	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
 		SWAP(s.startX, s.endX);
 		SWAP(s.startY, s.endY);
 		SWAP(s.startRow, s.endRow);
@@ -219,7 +219,7 @@ Common::String MacTextWindow::getSelection(bool formatted) {
 
 	SelectedText s = _selectedText;
 
-	if (s.startY > s.endY) {
+	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
 		SWAP(s.startRow, s.endRow);
 		SWAP(s.startCol, s.endCol);
 	}
