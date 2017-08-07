@@ -61,6 +61,8 @@ void VoyeurEngine::playStamp() {
 		switch (_voy->_playStampMode) {
 		case 5:
 			buttonId = _mainThread->doInterface();
+			if (shouldQuit())
+				return;
 
 			if (buttonId == -2) {
 				switch (_mainThread->doApt()) {
@@ -646,6 +648,9 @@ void VoyeurEngine::reviewTape() {
 				foundIndex = 0;
 
 		} while (!shouldQuit() && (!_eventsManager->_mouseClicked || foundIndex == -1));
+
+		if (shouldQuit())
+			return;
 
 		newY = _eventsManager->getMousePos().y;
 		_voy->_fadingType = 0;
