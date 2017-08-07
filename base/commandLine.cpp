@@ -54,8 +54,7 @@ static const char USAGE_STRING[] =
 	"%s: %s\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
 	"\n"
-	"Try '%s --help' for more options.\n"
-;
+	"Try '%s --help' for more options.\n";
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID) || defined(__DS__) || defined(__3DS__)
@@ -167,8 +166,7 @@ static const char HELP_STRING[] =
 #endif
 	"\n"
 	"The meaning of boolean long options can be inverted by prefixing them with\n"
-	"\"no-\", e.g. \"--no-aspect-ratio\".\n"
-;
+	"\"no-\", e.g. \"--no-aspect-ratio\".\n";
 #endif
 
 static const char *s_appName = "scummvm";
@@ -190,7 +188,6 @@ static void usage(const char *s, ...) {
 }
 
 #endif // DISABLE_COMMAND_LINE
-
 
 void registerDefaults() {
 
@@ -233,7 +230,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("boot_param", 0);
 	ConfMan.registerDefault("dump_scripts", false);
 	ConfMan.registerDefault("save_slot", -1);
-	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
+	ConfMan.registerDefault("autosave_period", 5 * 60); // By default, trigger autosave every 5 minutes
 
 #if defined(ENABLE_SCUMM) || defined(ENABLE_SWORD2)
 	ConfMan.registerDefault("object_labels", true);
@@ -300,7 +297,8 @@ void registerDefaults() {
 
 // Use this for options which have an *optional* value
 #define DO_OPTION_OPT(shortCmd, longCmd, defaultVal) \
-	if (isLongCmd ? (!strcmp(s+2, longCmd) || !memcmp(s+2, longCmd"=", sizeof(longCmd"=") - 1)) : (tolower(s[1]) == shortCmd)) { \
+	if (isLongCmd ? (!strcmp(s + 2, longCmd) || !memcmp(s + 2, longCmd "=", sizeof(longCmd "=") - 1)) \
+				  : (tolower(s[1]) == shortCmd)) { \
 		s += 2; \
 		if (isLongCmd) { \
 			s += sizeof(longCmd) - 1; \
@@ -308,14 +306,20 @@ void registerDefaults() {
 				s++; \
 		} \
 		const char *option = s; \
-		if (*s == '\0' && !isLongCmd) { option = s2; i++; } \
-		if (!option || *option == '\0') option = defaultVal; \
-		if (option) settings[longCmd] = option;
+		if (*s == '\0' && !isLongCmd) { \
+			option = s2; \
+			i++; \
+		} \
+		if (!option || *option == '\0') \
+			option = defaultVal; \
+		if (option) \
+			settings[longCmd] = option;
 
 // Use this for options which have a required (string) value
 #define DO_OPTION(shortCmd, longCmd) \
 	DO_OPTION_OPT(shortCmd, longCmd, 0) \
-	if (!option) usage("Option '%s' requires an argument", argv[isLongCmd ? i : i-1]);
+	if (!option) \
+		usage("Option '%s' requires an argument", argv[isLongCmd ? i : i - 1]);
 
 // Use this for options which have a required integer value
 // (we don't check ERANGE because WinCE doesn't support errno, so we're stuck just rejecting LONG_MAX/LONG_MIN..)
@@ -329,24 +333,26 @@ void registerDefaults() {
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
-	if (isLongCmd ? (!strcmp(s+2, longCmd) || !strcmp(s+2, "no-" longCmd)) : (tolower(s[1]) == shortCmd)) { \
+	if (isLongCmd ? (!strcmp(s + 2, longCmd) || !strcmp(s + 2, "no-" longCmd)) : (tolower(s[1]) == shortCmd)) { \
 		bool boolValue = (Common::isLower(s[1]) != 0); \
 		s += 2; \
 		if (isLongCmd) { \
 			boolValue = !strcmp(s, longCmd); \
 			s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-" longCmd) - 1); \
 		} \
-		if (*s != '\0') goto unknownOption; \
+		if (*s != '\0') \
+			goto unknownOption; \
 		const char *option = boolValue ? "true" : "false"; \
 		settings[longCmd] = option;
 
 // Use this for options which never have a value, i.e. for 'commands', like "--help".
 #define DO_COMMAND(shortCmd, longCmd) \
-	if (isLongCmd ? (!strcmp(s+2, longCmd)) : (tolower(s[1]) == shortCmd)) { \
+	if (isLongCmd ? (!strcmp(s + 2, longCmd)) : (tolower(s[1]) == shortCmd)) { \
 		s += 2; \
 		if (isLongCmd) \
 			s += sizeof(longCmd) - 1; \
-		if (*s != '\0') goto unknownOption; \
+		if (*s != '\0') \
+			goto unknownOption; \
 		return longCmd;
 
 
@@ -358,15 +364,13 @@ void registerDefaults() {
 
 // End an option handler
 #define END_OPTION \
-		continue; \
+	continue; \
 	}
 
 // End an option handler
-#define END_COMMAND \
-	}
+#define END_COMMAND }
 
-
-Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv) {
+Common::String parseCommandLine(Common::StringMap &settings, int argc, const char *const *argv) {
 	const char *s, *s2;
 
 	if (!argv)
@@ -375,7 +379,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 	// argv[0] contains the name of the executable.
 	if (argv[0]) {
 		s = strrchr(argv[0], '/');
-		s_appName = s ? (s+1) : argv[0];
+		s_appName = s ? (s + 1) : argv[0];
 	}
 
 	// We store all command line settings into a string map.
@@ -383,7 +387,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 	// Iterate over all command line arguments and parse them into our string map.
 	for (int i = 1; i < argc; ++i) {
 		s = argv[i];
-		s2 = (i < argc-1) ? argv[i+1] : 0;
+		s2 = (i < argc - 1) ? argv[i + 1] : 0;
 
 		if (s[0] != '-') {
 			// The argument doesn't start with a dash, so it's not an option.
@@ -395,11 +399,11 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			// We defer checking whether this is a valid target to a later point.
 			return s;
 		} else {
+#ifdef MACOSX
 			// On MacOS X prior to 10.9 the OS is sometimes adding a -psn_X_XXXXXX argument (where X are digits)
 			// to pass the process serial number. We need to ignore it to avoid an error.
 			// When using XCode it also adds -NSDocumentRevisionsDebugMode YES argument if XCode option
 			// "Allow debugging when using document Versions Browser" is on (which is the default).
-#ifdef MACOSX
 			if (strncmp(s, "-psn_", 5) == 0)
 				continue;
 			if (strcmp(s, "-NSDocumentRevisionsDebugMode") == 0) {
@@ -738,7 +742,7 @@ static Common::Error listSaves(const char *target) {
 		gameid = domain->getVal("gameid");
 	if (gameid.empty())
 		gameid = target;
-	gameid.toLowercase();	// Normalize it to lower case
+	gameid.toLowercase(); // Normalize it to lower case
 
 	// Find the plugin that will handle the specified gameid
 	const EnginePlugin *plugin = 0;
@@ -746,13 +750,13 @@ static Common::Error listSaves(const char *target) {
 
 	if (!plugin) {
 		return Common::Error(Common::kEnginePluginNotFound,
-						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
+							 Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	}
 
 	if (!(*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
 		// TODO: Include more info about the target (desc, engine name, ...) ???
 		return Common::Error(Common::kEnginePluginNotSupportSaves,
-						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
+			Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	} else {
 		// Query the plugin for a list of saved games
 		SaveStateList saveList = (*plugin)->listSaves(target);
@@ -810,7 +814,7 @@ static void listAudioDevices() {
 static GameList getGameList(Common::FSNode dir) {
 	Common::FSList files;
 
-	//Collect all files from directory
+	// Collect all files from directory
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
 		printf("Path %s does not exist or is not a directory.\n", dir.getPath().c_str());
 		return GameList();
@@ -876,7 +880,7 @@ static Common::String detectGames(Common::String path, Common::String gameId, Co
 	if (noPath)
 		path = ".";
 	bool recursive = (recursiveOptStr == "true");
-	//Current directory
+	// Current directory
 	Common::FSNode dir(path);
 	GameList candidates = recListGames(dir, gameId, recursive);
 
@@ -931,7 +935,7 @@ static bool addGames(Common::String path, Common::String game, Common::String re
 	if (path.empty())
 		path = ".";
 	bool recursive = (recursiveOptStr == "true");
-	//Current directory
+	// Current directory
 	Common::FSNode dir(path);
 	int added = recAddGames(dir, game, recursive);
 	printf("Added %d games\n", added);
@@ -956,8 +960,7 @@ static void runDetectorTest() {
 		Common::String name(iter->_key);
 		Common::String gameid(iter->_value.getVal("gameid"));
 		Common::String path(iter->_value.getVal("path"));
-		printf("Looking at target '%s', gameid '%s', path '%s' ...\n",
-				name.c_str(), gameid.c_str(), path.c_str());
+		printf("Looking at target '%s', gameid '%s', path '%s' ...\n", name.c_str(), gameid.c_str(), path.c_str());
 		if (path.empty()) {
 			printf(" ... no path specified, skipping\n");
 			continue;
@@ -999,16 +1002,14 @@ static void runDetectorTest() {
 		}
 
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
-			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
-				   x->gameid().c_str(),
-				   x->description().c_str(),
-				   Common::getLanguageCode(x->language()),
-				   Common::getPlatformCode(x->platform()));
+			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n", x->gameid().c_str(),
+				x->description().c_str(), Common::getLanguageCode(x->language()),
+				Common::getPlatformCode(x->platform()));
 		}
 	}
 	int total = domains.size();
-	printf("Detector test run: %d fail, %d success, %d skipped, out of %d\n",
-			failure, success, total - failure - success, total);
+	printf("Detector test run: %d fail, %d success, %d skipped, out of %d\n", failure, success,
+		total - failure - success, total);
 }
 #endif
 
@@ -1029,8 +1030,7 @@ void upgradeTargets() {
 		Common::String name(iter->_key);
 		Common::String gameid(dom.getVal("gameid"));
 		Common::String path(dom.getVal("path"));
-		printf("Looking at target '%s', gameid '%s' ...\n",
-				name.c_str(), gameid.c_str());
+		printf("Looking at target '%s', gameid '%s' ...\n", name.c_str(), gameid.c_str());
 		if (path.empty()) {
 			printf(" ... no path specified, skipping\n");
 			continue;
@@ -1038,7 +1038,7 @@ void upgradeTargets() {
 		if (gameid.empty()) {
 			gameid = name;
 		}
-		gameid.toLowercase();	// TODO: Is this paranoia? Maybe we should just assume all lowercase, always?
+		gameid.toLowercase(); // TODO: Is this paranoia? Maybe we should just assume all lowercase, always?
 
 		Common::FSNode dir(path);
 		Common::FSList files;
@@ -1109,11 +1109,11 @@ void upgradeTargets() {
 			dom["platform"] = (*g)["platform"];
 		}
 
+#if 0
 		// TODO: We could also update the description. But not everybody will want that.
 		// Esp. because for some games (e.g. the combined Zak/Loom FM-TOWNS demo etc.)
 		// ScummVM still generates an incorrect description string. So, the description
 		// should only be updated if the user explicitly requests this.
-#if 0
 		if (desc != g->description()) {
 			printf("  -> update desc from '%s' to\n                      '%s' ?\n", desc.c_str(), g->description().c_str());
 			dom["description"] = (*g)["description"];
@@ -1128,14 +1128,11 @@ void upgradeTargets() {
 
 #else // DISABLE_COMMAND_LINE
 
-
-Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv) {
+Common::String parseCommandLine(Common::StringMap &settings, int argc, const char *const *argv) {
 	return Common::String();
 }
 
-
 #endif // DISABLE_COMMAND_LINE
-
 
 bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err) {
 	err = Common::kNoError;
@@ -1207,7 +1204,6 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 
 #endif // DISABLE_COMMAND_LINE
 
-
 	// If a target was specified, check whether there is either a game
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
@@ -1237,7 +1233,6 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 #endif // DISABLE_COMMAND_LINE
 		}
 	}
-
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
