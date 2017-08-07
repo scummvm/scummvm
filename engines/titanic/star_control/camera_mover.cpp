@@ -69,20 +69,17 @@ void CCameraMover::copyTo(CNavigationInfo *dest) {
 	dest->_unusedZ = _unusedZ;
 }
 
-void CCameraMover::increaseSpeed() {
+void CCameraMover::increaseForwardSpeed() {
 	if (!isLocked() && _speed < _maxSpeed) {
 		_speedChangeCtr += _speedChangeInc;
 		_speed += ABS(_speedChangeCtr);
 	}
 }
 
-void CCameraMover::decreaseSpeed() {
-	if (!isLocked()) {
+void CCameraMover::increaseBackwardSpeed() {
+	if (!isLocked() && _speed > -_maxSpeed) {
 		_speedChangeCtr -= _speedChangeInc;
 		_speed -= ABS(_speedChangeCtr);
-
-		if (_speedChangeCtr < 0.0)
-			_speedChangeCtr = 0.0;
 	}
 }
 
