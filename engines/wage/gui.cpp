@@ -152,6 +152,7 @@ void Gui::draw() {
 
 		_sceneWindow->setDimensions(*_scene->_designBounds);
 		_sceneWindow->setTitle(_scene->_name);
+		_consoleWindow->setDimensions(*_scene->_textBounds);
 
 		_wm.setFullRefresh(true);
 	}
