@@ -31,7 +31,12 @@
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fvector.h"
 
+
+
 namespace Titanic {
+
+const double Camera_Mover_Speed_Max = 1000000.0;
+const double Camera_Mover_Speed_Inc = 50.0;
 
 class CStarControl;
 class CStarField;

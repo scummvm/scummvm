@@ -34,7 +34,7 @@ CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullp
 		_starField(nullptr), _videoSurface(nullptr), _hasReference(0),
 		_photoSurface(nullptr), _homePhotoMask(nullptr),
 		_field218(false), _showingPhoto(false) {
-	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
+	CNavigationInfo data = { 0, 0, Titanic::Camera_Mover_Speed_Max, 0, Titanic::Camera_Mover_Speed_Inc, 1.0, 1.0, 1.0 };
 
 	_camera.proc3(&data);
 }
@@ -187,7 +187,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_SEMICOLON:
 		if (matchedIndex == -1) {
-			_camera.increaseSpeed();
+			_camera.increaseForwardSpeed();
 			errorCode->set();
 			return true;
 		}
@@ -195,7 +195,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_PERIOD:
 		if (matchedIndex == -1) {
-			_camera.decreaseSpeed();
+			_camera.increaseBackwardSpeed();
 			errorCode->set();
 			return true;
 		}

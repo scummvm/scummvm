@@ -102,14 +102,14 @@ public:
 	virtual void updatePosition(CErrorCode *errorCode);
 
 	/**
-	 * Increases movement speed
+	 * Increases movement speed in forward direction
 	 */
-	virtual void increaseSpeed();
+	virtual void increaseForwardSpeed();
 
 	/**
-	 * Decreases movement speed
+	 * Decreases movement speed in backward direction
 	 */
-	virtual void decreaseSpeed();
+	virtual void increaseBackwardSpeed();
 
 	/**
 	 * Increase to full speed
