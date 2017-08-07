@@ -116,7 +116,7 @@ public:
 
 	void getRowCol(int x, int y, int *sx, int *sy, int *row, int *col);
 
-	Common::String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false);
+	Common::String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 private:
 	void splitString(Common::String &s);

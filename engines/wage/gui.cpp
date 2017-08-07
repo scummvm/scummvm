@@ -391,7 +391,7 @@ void Gui::actionCut() {
 	int startPos = s->startCol;
 	int endPos = s->endCol;
 
-	if (startPos > endPos)
+	if (s->startRow > s->endRow || (s->startRow == s->endRow && startPos > endPos))
 		SWAP(startPos, endPos);
 
 	Common::String input = _consoleWindow->getInput();

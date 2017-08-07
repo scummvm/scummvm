@@ -498,7 +498,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	}
 }
 
-Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted) {
+Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
 	Common::String res;
 
 	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
@@ -567,7 +567,8 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 				res += _textLines[i].chunks[chunk].text;
 			}
 
-			res += '\n';
+			if (newlines)
+				res += '\n';
 		}
 	}
 

@@ -216,7 +216,7 @@ void MacTextWindow::drawSelection() {
 	}
 }
 
-Common::String MacTextWindow::getSelection(bool formatted) {
+Common::String MacTextWindow::getSelection(bool formatted, bool newlines) {
 	if (_selectedText.endY == -1)
 		return Common::String("");
 
@@ -227,7 +227,7 @@ Common::String MacTextWindow::getSelection(bool formatted) {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	return _mactext->getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted);
+	return _mactext->getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted, newlines);
 }
 
 void MacTextWindow::clearSelection() {
@@ -324,7 +324,8 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 					bool cutAllowed = false;
 
-					if (_selectedText.startRow == _selectedText.endRow && _selectedText.startRow == _mactext->getLineCount() - 1)
+					if (_selectedText.startRow >= _mactext->getLineCount() - _inputTextHeight &&
+							_selectedText.endRow  >= _mactext->getLineCount() - _inputTextHeight)
 						cutAllowed = true;
 
 					_menu->enableCommand("Edit", "Cut", cutAllowed);

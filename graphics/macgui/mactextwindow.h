@@ -69,7 +69,7 @@ public:
 	void clearInput();
 	void appendInput(Common::String str);
 
-	Common::String getSelection(bool formatted = false);
+	Common::String getSelection(bool formatted = false, bool newlines = true);
 	void clearSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 
