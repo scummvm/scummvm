@@ -7,10 +7,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-08-06 13:13+0200\n"
-"PO-Revision-Date: 2017-04-23 03:06+0000\n"
+"PO-Revision-Date: 2017-08-07 06:37+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
-"Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/hu/>\n"
+"Language-Team: Hungarian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
 "Language: hu_HU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -1355,6 +1355,8 @@ msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"A különbözõ beállítások visszaállítva."
 
 #: gui/options.cpp:1971
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -3300,28 +3302,24 @@ msgid "~W~ater Effect Enabled"
 msgstr "Vízeffektus engedélyezve"
 
 #: engines/mohawk/dialogs.cpp:272
-#, fuzzy
 msgid "Transitions:"
-msgstr "~Á~tmenetek engedélyezve"
+msgstr "Átmenetek:"
 
 #: engines/mohawk/dialogs.cpp:274
-#, fuzzy
 msgid "Disabled"
-msgstr "GFX letiltva"
+msgstr "Letiltva"
 
 #: engines/mohawk/dialogs.cpp:275
-#, fuzzy
 msgid "Fastest"
-msgstr "Beilleszt"
+msgstr "Leggyorsabb"
 
 #: engines/mohawk/dialogs.cpp:276
-#, fuzzy
 msgid "Normal"
-msgstr "OpenGL Normál"
+msgstr "Normál"
 
 #: engines/mohawk/dialogs.cpp:277
 msgid "Best"
-msgstr ""
+msgstr "Legjobb"
 
 #: engines/mohawk/mohawk.cpp:58
 msgid "The game is paused. Press any key to continue."
@@ -3352,7 +3350,7 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:409
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "A következõ szükséges Riven adatfájlok hiányoznak:\n"
 
 #: engines/mohawk/riven_stack.cpp:182
 msgid ""
@@ -3521,12 +3519,12 @@ msgstr "Fekete vonalat rajzol a videó fölé, hogy növelje a kép élességét"
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Magas minõségû videó használata"
 
 #: engines/sci/detection.cpp:432
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Lineáris szûrés használata a grafika átméretezésénél"
+msgstr ""
+"Ha lehetséges, használja a lineáris interpolációt a videók feljavításakor"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
@@ -3586,26 +3584,33 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"A ScummVM-ben a karakterek automatikusan megjelennek. Az eredeti "
+"karakterfájlokat a ScummVM mentett játékkönyvtárába kell másolni, és hozzá "
+"kell adni egy elõtagot attól függõen, hogy melyik játékot mentette el: 'qfg1-"
+"' Quest for Glory 1 'qfg2-' Quest for Glory 2. Például: 'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:344
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
+"A játék súgófájljának megnyitásához külsõ megjelenítõt kell használnia: %s"
 
 #: engines/sci/engine/savegame.cpp:1305
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "A mentett játék formátuma elavult, nem lehet betölteni"
 
 #: engines/sci/engine/savegame.cpp:1307
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "A mentés verziója %d, a maximálisan támogatott %0d"
 
 #: engines/sci/engine/savegame.cpp:1318
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"Ez a mentett játék a játék másik verziójával jött létre, és nem lehet "
+"betölteni"
 
 #: engines/sci/resource.cpp:813
 msgid ""
@@ -3613,6 +3618,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Hiányzó vagy sérült játék készleteket észlelek. Bizonyos játékfunkciók nem "
+"mûködnek megfelelõen. Kérem, ellenõrizze a konzolt további információkért, "
+"és ellenõrizze, hogy a játékfájljai érvényesek-e."
 
 #: engines/sci/sci.cpp:400
 msgid ""
@@ -3621,6 +3629,10 @@ msgid ""
 "riddles. Please, apply the latest patch for this game by Sierra to avoid "
 "possible problems."
 msgstr ""
+"Ismert hibás játékszkriptet észleltek, ami megakadályozhatja, hogy a "
+"késõbbiekben a játékban, a Zöld Ember rejtelmeiben tovább haladjon. Kérem, "
+"alkalmazza a Sierra legújabb javítócsomagját, hogy elkerülje a lehetséges "
+"problémákat."
 
 #: engines/sci/sci.cpp:409
 msgid ""
@@ -3630,6 +3642,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"A feliratok engedélyezve vannak, de a King's Quest 7 feliratozása "
+"befejezetlen és letiltották a játék kiadott verziójában. A ScummVM lehetõvé "
+"teszi a feliratok újbóli engedélyezését, de mivel eltávolításra kerültek az "
+"eredeti játéktól, nem minden esetben látszik megfelelõen, vagy tükrözi a "
+"tényleges beszédet. Ez nem ScummVM hiba - ez probléma a játékban található."
 
 #: engines/sci/sci.cpp:433
 msgid ""
@@ -3643,6 +3660,15 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"A General MIDI hangeszközt választotta. A Sierra a General MIDI-t a \""
+"General MIDI Utility\"-n keresztül támogatta a General MIDI számára. Kérjük, "
+"alkalmazza ezt a javítást, hogy élvezhesse a MIDI zenét a játékkal. Ha "
+"beszerezte, a ScummVM extrák mappába az összes mellékelt * .PAT fájlt "
+"csomagolja ki, a ScummVM automatikusan hozzáadja a megfelelõ javítást. "
+"Alternatív megoldásként követheti a javításban szereplõ READ.ME fájlban "
+"található utasításokat, és átnevezheti a hozzárendelt * .PAT fájlt a 4.PAT "
+"fájlba és helyezze a játék mappába. A javítás nélkül a General MIDI zene "
+"ennél a játéknál torzul."
 
 #: engines/sci/sci.cpp:452
 msgid ""
@@ -3652,6 +3678,11 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"A játék egy rajongók által készített script patch-el készült. Az ilyen "
+"javítások problémákat okozhatnak, mivel nagymértékben módosítják a "
+"játékszkripteket. A javítások által okozott problémák nem fordulnak elõ a "
+"ScummVM-ben, ezért javasoljuk, távolítsa el ezt a javítást a játék "
+"mappájából, hogy elkerülje a váratlan és / vagy késõbbi hibákat."
 
 #: engines/scumm/detection.cpp:1120
 msgid ""
@@ -4233,7 +4264,7 @@ msgstr "* Harc billentyûzetrõl mindíg aktív,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr "  a játékon belüli üzenet ellenére, ez"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
