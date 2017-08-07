@@ -448,6 +448,10 @@ void MacText::removeLastLine() {
 }
 
 void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
+	if (y > _textMaxHeight) {
+		x = _surface->w;
+	}
+
 	y = CLIP(y, 0, _textMaxHeight);
 
 	// FIXME: We should use bsearch() here
@@ -455,9 +459,6 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	while (*row && _textLines[*row].y > y)
 		(*row)--;
-
-	if (y > _textMaxHeight)
-		x = _surface->w;
 
 	*sy = _textLines[*row].y;
 
