@@ -4226,6 +4226,23 @@ static const uint16 pq4FloppyCityHallCuffEnemyTimerPatch[] = {
 	PATCH_END
 };
 
+// Right at the end in room 755, the last action sequence is also using ticks instead of seconds.
+// For details, read the description of city hall action sequence issues right above this.
+//
+// Applies to at least: English Floppy, German floppy, English CD
+// Responsible method: comeInLast::changeState(11) - 300 ticks (player needs to use item) - in script 755
+static const uint16 pq4LastActionHeroTimerSignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(300),              // pushi 012Ch (300)
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop ticks (20h for floppy, 22h for CD)
+	SIG_END
+};
+static const uint16 pq4LastActionHeroTimerPatch[] = {
+	0x34, PATCH_UINT16(5),                    // pushi 5
+	0x65, PATCH_GETORIGINALBYTEADJUST(4, -4), // aTop seconds - 5 seconds
+	PATCH_END
+};
+
 //          script, description,                                          signature                                           patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
 	{  true,   315, "show barbie the red shoe points fix",             1, pq4BittyKittyShowBarieRedShoeSignature,             pq4BittyKittyShowBarbieRedShoePatch },
@@ -4233,6 +4250,7 @@ static const SciScriptPatcherEntry pq4Signatures[] = {
 	{  true,   390, "floppy: city hall: tell enemy drop weapon timer", 1, pq4FloppyCityHallTellEnemyDropWeaponTimerSignature, pq4FloppyCityHallTellEnemyDropWeaponTimerPatch },
 	{  true,   390, "floppy: city hall: tell enemy turn around timer", 1, pq4FloppyCityHallTellEnemyTurnAroundTimerSignature, pq4FloppyCityHallTellEnemyTurnAroundTimerPatch },
 	{  true,   390, "floppy: city hall: cuff enemy timer",             1, pq4FloppyCityHallCuffEnemyTimerSignature,           pq4FloppyCityHallCuffEnemyTimerPatch },
+	{  true,   755, "last action sequence timer",                      1, pq4LastActionHeroTimerSignature,                    pq4LastActionHeroTimerPatch },
 	{  true, 64918, "Str::strip fix for floppy version",               1, sci2BrokenStrStripSignature,                        sci2BrokenStrStripPatch },
 	{  true, 64908, "disable video benchmarking",                      1, sci2BenchmarkSignature,                             sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games",                   1, sci2NumSavesSignature1,                             sci2NumSavesPatch1 },
