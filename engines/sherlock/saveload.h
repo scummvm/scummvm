@@ -55,19 +55,7 @@ struct SherlockSavegameHeader {
 
 class SherlockEngine;
 
-
-/**
- * Derived serializer class with extra synchronization types
- */
-class Serializer : public Common::Serializer {
-public:
-	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
-
-	/**
-	 * New method to allow setting the version
-	 */
-	void setSaveVersion(byte version) { _version = version; }
-};
+typedef Common::Serializer Serializer;
 
 class SaveManager {
 protected:
