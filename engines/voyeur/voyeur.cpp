@@ -793,6 +793,7 @@ void VoyeurEngine::loadGame(int slot) {
 		header._thumbnail->free();
 	delete header._thumbnail;
 
+	serializer.setVersion(header._version);
 	synchronize(serializer);
 
 	delete saveFile;
@@ -821,6 +822,7 @@ Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) 
 	Common::Serializer serializer(NULL, saveFile);
 
 	// Synchronise the data
+	serializer.setVersion(VOYEUR_SAVEGAME_VERSION);
 	synchronize(serializer);
 
 	saveFile->finalize();

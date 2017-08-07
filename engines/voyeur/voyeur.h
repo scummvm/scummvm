@@ -296,7 +296,7 @@ public:
 	void showEndingNews();
 };
 
-#define VOYEUR_SAVEGAME_VERSION 1
+#define VOYEUR_SAVEGAME_VERSION 2
 
 /**
  * Header for Voyeur savegame files

@@ -113,7 +113,7 @@ public:
 	bool _abortInterface;
 	bool _isAM;
 	bool _phoneCallsReceived[5];
-	bool _roomHotspotsEnabled[20];
+	bool _roomHotspotsEnabled[32];
 	bool _victimMurdered;
 
 	int _aptLoadMode;

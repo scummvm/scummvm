@@ -43,7 +43,7 @@ SVoy::SVoy(VoyeurEngine *vm):_vm(vm) {
 	_abortInterface = false;
 	_isAM = false;
 	Common::fill(&_phoneCallsReceived[0], &_phoneCallsReceived[5], false);
-	Common::fill(&_roomHotspotsEnabled[0], &_roomHotspotsEnabled[20], false);
+	Common::fill(&_roomHotspotsEnabled[0], &_roomHotspotsEnabled[32], false);
 	_victimMurdered = false;
 
 	_audioVisualStartTime = 0;
@@ -118,7 +118,8 @@ void SVoy::synchronize(Common::Serializer &s) {
 	_audioHotspotTimes.synchronize(s);
 	_evidenceHotspotTimes.synchronize(s);
 
-	for (int idx = 0; idx < 20; ++idx) {
+	int count = s.getVersion() == 1 ? 20 : 32;
+	for (int idx = 0; idx < count; ++idx) {
 		s.syncAsByte(_roomHotspotsEnabled[idx]);
 	}
 
