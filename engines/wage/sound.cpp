@@ -45,23 +45,27 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 #include "common/stream.h"
 
 #include "wage/wage.h"
 #include "wage/sound.h"
+#include "wage/world.h"
 
 namespace Wage {
 
 static const int8 deltas[] = { 0,-49,-36,-25,-16,-9,-4,-1,0,1,4,9,16,25,36,49 };
 
 Sound::Sound(Common::String name, Common::SeekableReadStream *data) : _name(name) {
-	int size = data->size() - 20;
-	_data = (byte *)calloc(2 * size, 1);
+	_size = data->size() - 20;
+	_data = (byte *)calloc(2 * _size, 1);
 
 	data->skip(20); // Skip header
 
 	byte value = 0x80;
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < _size; i++) {
 		byte d = data->readByte();
 		value += deltas[d & 0xf];
 		_data[i * 2] = value;
@@ -75,7 +79,18 @@ Sound::~Sound() {
 }
 
 void WageEngine::playSound(Common::String soundName) {
-	warning("STUB: WageEngine::playSound(%s)", soundName.c_str());
+	soundName.toLowercase();
+
+	if (!_world->_sounds.contains(soundName)) {
+		warning("Sound '%s' does not exist", soundName.c_str());
+		return;
+	}
+
+	Sound *s = _world->_sounds[soundName];
+
+	Audio::AudioStream *stream = Audio::makeRawStream(s->_data, s->_size, 11000, Audio::FLAG_UNSIGNED);
+
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &s->_handle, stream);
 }
 
 void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
