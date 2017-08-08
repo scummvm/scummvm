@@ -283,32 +283,26 @@ builtIn(fileExists) {
 	trimStack(fun->stack);
 	Common::String aaaaa = encodeFilename(g_sludge->loadNow);
 	g_sludge->loadNow.clear();
+
 	if (failSecurityCheck(aaaaa))
 		return BR_ERROR;
-#if 0
-	FILE *fp = fopen(aaaaa, "rb");
-	if (!fp) {
-		char currentDir[1000];
-		if (!getcwd(currentDir, 998)) {
-			debugOut("Can't get current directory.\n");
-		}
 
-		if (chdir(gamePath)) {
-			debugOut("Error: Failed changing to directory %s\n", gamePath);
-		}
-		fp = fopen(aaaaa, "rb");
-		if (chdir(currentDir)) {
-			debugOut("Error: Failed changing to directory %s\n", currentDir);
+	bool exist = false;
+
+	Common::File fd;
+	if (fd.open(aaaaa)) {
+		exist = true;
+		fd.close();
+	} else {
+		Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(aaaaa);
+		if (fp) {
+			exist = true;
+			delete fp;
 		}
 	}
-#endif
+
 	// Return value
-	setVariable(fun->reg, SVT_INT, 0/*(fp != NULL)*/);      //TODO:false value
-#if 0
-			if (fp) fclose(fp);
-			delete[] aaaaa;
-			loadNow = NULL;
-#endif
+	setVariable(fun->reg, SVT_INT, exist);
 	return BR_CONTINUE;
 }
 
