@@ -390,7 +390,7 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 		Graphics::TransparentSurface tmp(single.surface, false);
 		tmp.blit(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, spriteColor, diffX, diffY);
 	} else {
-		int d = ((!(thisPerson->extra & EXTRA_NOZB)) && _zBuffer->numPanels) ? y + _cameraY : _sceneHeight + 1;
+		int d = ((!(thisPerson->extra & EXTRA_NOZB)) && _zBuffer->numPanels) ? y + _cameraY : 0;
 		addSpriteDepth(&single.surface, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY, spriteColor);
 	}
 
