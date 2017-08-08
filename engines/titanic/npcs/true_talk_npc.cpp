@@ -156,7 +156,7 @@ bool CTrueTalkNPC::MovieEndMsg(CMovieEndMsg *msg) {
 
 	int diff = getTicksCount() - _startTicks;
 	int ticks = MAX((int)_speechDuration - diff, 0);
-	CNPCPlayTalkingAnimationMsg msg1(ticks, ticks > 1000 ? 2 : 1, 0);
+	CNPCPlayTalkingAnimationMsg msg1(ticks, ticks > 1000 ? 1 : 2, 0);
 	msg1.execute(this);
 
 	if (msg1._names) {
