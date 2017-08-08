@@ -3117,9 +3117,9 @@ void Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::P
 
 	Common::Rect src;
 	src.left = rect.left;
-	src.top = 333 - rect.bottom;
+	src.top = 332 - rect.bottom;
 	src.right = rect.right;
-	src.bottom = 333 - rect.top;
+	src.bottom = 332 - rect.top;
 
 	// Redraw background
 	_vm->_gfx->copyImageSectionToBackBuffer(_vm->getCardBackgroundId(), src, rect);
