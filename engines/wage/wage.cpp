@@ -238,7 +238,7 @@ bool WageEngine::saveDialog() {
 	buttons.push_back(new DialogButton("Yes", 112, 67, 68, 28));
 	buttons.push_back(new DialogButton("Cancel", 205, 67, 68, 28));
 
-	Dialog save(_gui, 291, "Save changes before closing?", &buttons, 1);
+	Dialog save(_gui, 291, _world->_saveBeforeCloseMessage->c_str(), &buttons, 1);
 
 	int button = save.run();
 

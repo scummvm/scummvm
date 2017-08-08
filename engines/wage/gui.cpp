@@ -250,6 +250,7 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 	case kMenuActionClose:
 	case kMenuActionRevert:
 	case kMenuActionQuit:
+		warning("STUB: executeMenuCommand: action: %d", action);
 		break;
 
 	case kMenuActionOpen:

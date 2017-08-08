@@ -174,21 +174,29 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		message->trim();
 		debug(2, "_gameOverMessage: %s", message->c_str());
 		_gameOverMessage = message;
+	} else {
+		_gameOverMessage = new Common::String("Game Over!");
 	}
 	if ((message = loadStringFromDITL(resMan, 2480, 3)) != NULL) {
 		message->trim();
 		debug(2, "_saveBeforeQuitMessage: %s", message->c_str());
 		_saveBeforeQuitMessage = message;
+	} else {
+		_saveBeforeQuitMessage = new Common::String("Save changes before quiting?");
 	}
 	if ((message = loadStringFromDITL(resMan, 2490, 3)) != NULL) {
 		message->trim();
 		debug(2, "_saveBeforeCloseMessage: %s", message->c_str());
 		_saveBeforeCloseMessage = message;
+	} else {
+		_saveBeforeCloseMessage = new Common::String("Save changes before closing?");
 	}
 	if ((message = loadStringFromDITL(resMan, 2940, 2)) != NULL) {
 		message->trim();
 		debug(2, "_revertMessage: %s", message->c_str());
 		_revertMessage = message;
+	} else {
+		_revertMessage = new Common::String("Revert to the last saved version?");
 	}
 
 	// Load scenes
