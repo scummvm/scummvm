@@ -569,4 +569,60 @@ Graphics::Surface *CProjectItem::createThumbnail() {
 	return thumb;
 }
 
+CViewItem *CProjectItem::parseView(const CString &viewString) {
+	int firstIndex = viewString.indexOf('.');
+	int lastIndex = viewString.lastIndexOf('.');
+	CString roomName, nodeName, viewName;
+
+	if (firstIndex == -1) {
+		roomName = viewString;
+	}
+	else {
+		roomName = viewString.left(firstIndex);
+
+		if (lastIndex > firstIndex) {
+			nodeName = viewString.mid(firstIndex + 1, lastIndex - firstIndex - 1);
+			viewName = viewString.mid(lastIndex + 1);
+		}
+		else {
+			nodeName = viewString.mid(firstIndex + 1);
+		}
+	}
+
+	CGameManager *gameManager = getGameManager();
+	if (!gameManager)
+		return nullptr;
+
+	CRoomItem *room = gameManager->getRoom();
+	CProjectItem *project = room->getRoot();
+
+	// Ensure we have the specified room
+	if (project) {
+		if (room->getName().compareToIgnoreCase(roomName)) {
+			// Scan for the correct room
+			for (room = project->findFirstRoom();
+			room && room->getName().compareToIgnoreCase(roomName);
+				room = project->findNextRoom(room));
+		}
+	}
+	if (!room)
+		return nullptr;
+
+	// Find the designated node within the room
+	CNodeItem *node = dynamic_cast<CNodeItem *>(room->findChildInstanceOf(CNodeItem::_type));
+	while (node && node->getName().compareToIgnoreCase(nodeName))
+		node = dynamic_cast<CNodeItem *>(room->findNextInstanceOf(CNodeItem::_type, node));
+	if (!node)
+		return nullptr;
+
+	CViewItem *view = dynamic_cast<CViewItem *>(node->findChildInstanceOf(CViewItem::_type));
+	while (view && view->getName().compareToIgnoreCase(viewName))
+		view = dynamic_cast<CViewItem *>(node->findNextInstanceOf(CViewItem::_type, view));
+	if (!view)
+		return nullptr;
+
+	// Find the view, so return it
+	return view;
+}
+
 } // End of namespace Titanic

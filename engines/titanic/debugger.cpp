@@ -37,6 +37,7 @@ Debugger::Debugger(TitanicEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("item",			WRAP_METHOD(Debugger, cmdItem));
 	registerCmd("movie",		WRAP_METHOD(Debugger, cmdMovie));
 	registerCmd("sound",		WRAP_METHOD(Debugger, cmdSound));
+	registerCmd("cheat",        WRAP_METHOD(Debugger, cmdCheat));
 }
 
 int Debugger::strToInt(const char *s) {
@@ -328,6 +329,15 @@ bool Debugger::cmdSound(int argc, const char **argv) {
 		debugPrintf("sound <name>\n");
 		return true;
 	}
+}
+
+bool Debugger::cmdCheat(int argc, const char **argv) {
+	CGameManager *gameManager = g_vm->_window->_gameManager;
+	CProjectItem *project = g_vm->_window->_project;
+
+	CViewItem *newView = project->parseView("Cheat Room.Node 1.Cheat Rooms View");
+	gameManager->_gameState.changeView(newView, nullptr);
+	return false;
 }
 
 } // End of namespace Titanic

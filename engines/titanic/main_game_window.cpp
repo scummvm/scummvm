@@ -333,10 +333,15 @@ void CMainGameWindow::keyDown(Common::KeyState keyState) {
 		// Attach to the debugger
 		_vm->_debugger->attach();
 		_vm->_debugger->onFrame();
-	}
 
-	if (_inputAllowed)
+	} else if (keyState.keycode == Common::KEYCODE_c && (keyState.flags & Common::KBD_CTRL)) {
+		// Cheat action
+		CViewItem *newView = _project->parseView("Cheat Room.Node 1.Cheat Rooms View");
+		_gameManager->_gameState.changeView(newView, nullptr);
+
+	} else if (_inputAllowed) {
 		_gameManager->_inputTranslator.keyDown(keyState);
+	}
 }
 
 bool CMainGameWindow::isMouseControlEnabled() const {

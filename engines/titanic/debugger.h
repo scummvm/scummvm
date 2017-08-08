@@ -99,6 +99,11 @@ private:
 	 * Play a sound
 	 */
 	bool cmdSound(int argc, const char **argv);
+
+	/**
+	 * Change to the cheat room
+	 */
+	bool cmdCheat(int argc, const char **argv);
 protected:
 	TitanicEngine *_vm;
 public:

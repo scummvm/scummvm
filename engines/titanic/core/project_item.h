@@ -235,6 +235,13 @@ public:
 	 * Finds a view
 	 */
 	CViewItem *findView(int roomNumber, int nodeNumber, int viewNumber);
+
+	/**
+	 * Parses a view into it's components of room, node, and view,
+	 * and locates the designated view
+	 */
+	CViewItem *parseView(const CString &viewString);
+
 };
 
 } // End of namespace Titanic
