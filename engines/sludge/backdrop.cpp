@@ -377,16 +377,26 @@ bool GraphicsManager::loadLightMap(int v) {
 
 	killLightMap();
 	_lightMapNumber = v;
+	_lightMap.create(_sceneWidth, _sceneWidth, *_vm->getScreenPixelFormat());
 
-	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &_lightMap))
+	Graphics::TransparentSurface tmp;
+
+	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &tmp))
 		return false;
 
-	if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
-		if (_lightMap.w != _sceneWidth || _lightMap.h != _sceneHeight) {
+	if (tmp.w != _sceneWidth || tmp.h != _sceneHeight) {
+		if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
+		} else if (_lightMapMode == LIGHTMAPMODE_PIXEL) {
+			tmp.blit(_lightMap, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255, 255, 255), _sceneWidth, _sceneHeight);
+		} else {
+			_lightMap.copyFrom(tmp);
 		}
+	} else {
+		_lightMap.copyFrom(tmp);
 	}
 
+	tmp.free();
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 

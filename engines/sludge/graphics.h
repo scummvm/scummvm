@@ -133,13 +133,14 @@ public:
 	void flipFontSprite(int x1, int y1, Sprite &single, const SpritePalette &fontPal);
 
 	bool scaleSprite(Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, bool mirror);
+	void fixScaleSprite(int x1, int y1, Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, const int camX, const int camY, bool);
+
 	void pasteSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal);
 	bool reserveSpritePal(SpritePalette &sP, int n);
-	void fixScaleSprite(int x1, int y1, Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, const int camX, const int camY, bool);
 	void burnSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal);
 
 	void resetSpriteLayers(ZBufferData *ptrZBuffer, int x, int y, bool upsidedown);
-	void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width = -1, int height = -1, uint32 color = TS_ARGB(255, 255, 255, 255));
+	void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width = -1, int height = -1, uint32 color = TS_ARGB(255, 255, 255, 255), bool disposeAfterUse = false);
 	void displaySpriteLayers();
 	void killSpriteLayers();
 
@@ -206,6 +207,7 @@ private:
 	SpriteLayers *_spriteLayers;
 	void fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal);
 	uint32 getDrawColor(OnScreenPerson *thisPerson);
+	void applyLightMapToSprite(Sprite &single, OnScreenPerson *thisPerson);
 
 	// Sprite banks
 	LoadedSpriteBanks _allLoadedBanks;

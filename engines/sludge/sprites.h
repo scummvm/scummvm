@@ -65,19 +65,21 @@ struct SpriteBank {
 struct SpriteDisplay {
 	int x, y;
 	int width, height;
+	bool freeAfterUse;
 	uint32 color;
 	Graphics::FLIP_FLAGS flip;
 	Graphics::Surface *surface;
 
-	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, uint32 c = TS_ARGB(255, 255, 255, 255)) :
-			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), color(c) {
+	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, uint32 c = TS_ARGB(255, 255, 255, 255), bool free = false) :
+			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), color(c), freeAfterUse(free) {
 	}
 };
 
 // All sprites are sorted into different "layers" (up to 16) according to their relative y position to z-buffer zones
+typedef Common::List<SpriteDisplay *> SpriteLayer;
 struct SpriteLayers {
 	int numLayers;
-	Common::List<SpriteDisplay> layer[16];
+	SpriteLayer layer[16];
 };
 
 } // End of namespace Sludge
