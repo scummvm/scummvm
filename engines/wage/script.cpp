@@ -219,7 +219,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 			_handled = _engine->handleOfferCommand(&input.c_str()[6]);
 		} else if (input.contains("look")) {
 			_handled = _engine->handleLookCommand();
-		} else if (input.contains("inventory")) {
+		} else if (input.contains("inven")) {
 			_handled = _engine->handleInventoryCommand();
 		} else if (input.contains("status")) {
 			_handled = _engine->handleStatusCommand();
