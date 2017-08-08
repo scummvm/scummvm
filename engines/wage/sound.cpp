@@ -51,6 +51,7 @@
 #include "common/stream.h"
 
 #include "wage/wage.h"
+#include "wage/entities.h"
 #include "wage/sound.h"
 #include "wage/world.h"
 
@@ -82,7 +83,7 @@ void WageEngine::playSound(Common::String soundName) {
 	soundName.toLowercase();
 
 	if (!_world->_sounds.contains(soundName)) {
-		warning("Sound '%s' does not exist", soundName.c_str());
+		warning("playSound: Sound '%s' does not exist", soundName.c_str());
 		return;
 	}
 
@@ -95,6 +96,41 @@ void WageEngine::playSound(Common::String soundName) {
 
 void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
 	//warning("STUB: WageEngine::updateSoundTimerForScene()");
+	if (_world->_player->_currentScene != scene)
+			return;
+
+	if (scene->_soundFrequency > 0 && !scene->_soundName.empty()) {
+		Common::String soundName(scene->_soundName);
+
+		soundName.toLowercase();
+
+		if (!_world->_sounds.contains(soundName)) {
+			warning("updateSoundTimerForScene: Sound '%s' does not exist", soundName.c_str());
+			return;
+		}
+
+		warning("STUB: updateSoundTimerForScene: sound: '%s', %s", soundName.c_str(),
+				scene->_soundType == Scene::PERIODIC ? "PERIODIC" : "RANDOM");
+
+#if 0
+		soundTimer = new Timer();
+		switch (scene.getSoundType()) {
+		case Scene.PERIODIC:
+			if (firstTime)
+				soundTimer.schedule(new PlaySoundTask(scene, sound), 0);
+			int delay = 60000 / scene.getSoundFrequency();
+			soundTimer.schedule(new PlaySoundTask(scene, sound), delay);
+			soundTimer.schedule(new UpdateSoundTimerTask(scene), delay + 1);
+			break;
+		case Scene.RANDOM:
+			for (int i = 0; i < scene.getSoundFrequency(); i++)
+				soundTimer.schedule(new PlaySoundTask(scene, sound), (int)(Math.random() * 60000));
+			soundTimer.schedule(new UpdateSoundTimerTask(scene), 60000);
+			break;
+		}
+#endif
+	}
+
 }
 
 
