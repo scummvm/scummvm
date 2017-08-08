@@ -44,7 +44,6 @@
 #include "sludge/sound.h"
 #include "sludge/loadsave.h"
 #include "sludge/bg_effects.h"
-#include "sludge/thumbnail.h"
 #include "sludge/utf8.h"
 #include "sludge/version.h"
 #include "sludge/graphics.h"
@@ -354,7 +353,7 @@ bool saveGame(const Common::String &fname) {
 	fp->writeByte(MAJOR_VERSION);
 	fp->writeByte(MINOR_VERSION);
 
-	if (!saveThumbnail(fp))
+	if (!g_sludge->_gfxMan->saveThumbnail(fp))
 		return false;
 
 	fp->write(&fileTime, sizeof(FILETIME));
@@ -481,11 +480,10 @@ bool loadGame(const Common::String &fname) {
 
 	int majVersion = fp->readByte();
 	int minVersion = fp->readByte();
-	ssgVersion = majVersion * 256 + minVersion;
-
+	ssgVersion = VERSION(majVersion, minVersion);
 
 	if (ssgVersion >= VERSION(1, 4)) {
-		if (!skipThumbnail(fp))
+		if (!g_sludge->_gfxMan->skipThumbnail(fp))
 			return fatal(ERROR_GAME_LOAD_CORRUPT, fname);
 	}
 

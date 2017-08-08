@@ -163,6 +163,11 @@ public:
 	void saveColors(Common::WriteStream *stream);
 	void loadColors(Common::SeekableReadStream *stream);
 
+	// Thumb nail
+	bool saveThumbnail(Common::WriteStream *stream);
+	bool skipThumbnail(Common::SeekableReadStream *stream);
+	void showThumbnail(const Common::String &filename, int x, int y);
+
 private:
 	SludgeEngine *_vm;
 

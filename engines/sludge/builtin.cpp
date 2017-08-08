@@ -47,7 +47,6 @@
 #include "sludge/savedata.h"
 #include "sludge/freeze.h"
 #include "sludge/language.h"
-#include "sludge/thumbnail.h"
 #include "sludge/sludge.h"
 #include "sludge/utf8.h"
 #include "sludge/graphics.h"
@@ -2440,7 +2439,7 @@ builtIn(showThumbnail) {
 	Common::String aaaaa = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
 	Common::String file = encodeFilename(aaaaa);
-	showThumbnail(file, x, y);
+	g_sludge->_gfxMan->showThumbnail(file, x, y);
 	return BR_CONTINUE;
 }
 

@@ -20,8 +20,13 @@
  *
  */
 
+#include "common/savefile.h"
+#include "image/png.h"
+
 #include "sludge/allfiles.h"
 #include "sludge/errors.h"
+#include "sludge/graphics.h"
+#include "sludge/imgloader.h"
 #include "sludge/moreio.h"
 #include "sludge/sludger.h"
 #include "sludge/backdrop.h"
@@ -30,157 +35,68 @@
 
 namespace Sludge {
 
-bool freeze();
-void unfreeze(bool);    // Because FREEZE.H needs a load of other includes
-
 int thumbWidth = 0, thumbHeight = 0;
 
-bool saveThumbnail(Common::WriteStream *stream) {
-#if 0
-	GLuint thumbnailTextureName = 0;
+bool GraphicsManager::saveThumbnail(Common::WriteStream *stream) {
 
-	fp->writeUint32LE(thumbWidth);
-	fp->writeUint32LE(thumbHeight);
+	stream->writeUint32LE(thumbWidth);
+	stream->writeUint32LE(thumbHeight);
 
 	if (thumbWidth && thumbHeight) {
-		if (! freeze()) return false;
+		if (!freeze())
+			return false;
 
-		setPixelCoords(true);
-#if 0
-		glUseProgram(shader.texture);
+		if(!Image::writePNG(*stream, _renderSurface))
+			return false;
 
-		setPMVMatrix(shader.texture);
-
-		glGenTextures(1, &thumbnailTextureName);
-		glBindTexture(GL_TEXTURE_2D, thumbnailTextureName);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-		texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, thumbWidth, thumbHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0, thumbnailTextureName);
-
-		// Render the backdrop (scaled)
-		//glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		glBindTexture(GL_TEXTURE_2D, backdropTextureName);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		const GLfloat vertices[] = {
-			0., 0., 0.,
-			thumbWidth - 1.f, 0., 0.,
-			0., thumbHeight - 1.f, 0.,
-			thumbWidth - 1.f, thumbHeight - 1.f, 0.
-		};
-
-		const GLfloat texCoords[] = {
-			0.0f, 0.0f,
-			backdropTexW, 0.0f,
-			0.0f, backdropTexH,
-			backdropTexW, backdropTexH
-		};
-
-		drawQuad(shader.texture, vertices, 1, texCoords);
-
-		if (gameSettings.antiAlias < 0) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		} else {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		}
-
-		deleteTextures(1, &thumbnailTextureName);
-		thumbnailTextureName = 0;
-
-		// Save Our ViewPort
-		GLushort *image = new GLushort [thumbWidth * thumbHeight];
-		GLuint *tmp = new GLuint [thumbWidth * thumbHeight];
-		if (! checkNew(image)) return false;
-		glReadPixels(viewportOffsetX, viewportOffsetY, thumbWidth, thumbHeight, GL_RGBA, GL_UNSIGNED_BYTE, tmp);
-		for (int y = 0; y < thumbHeight; y++) {
-			for (int x = 0; x < thumbWidth; x++) {
-				const GLuint a = tmp[y * thumbWidth + x];
-				image[y * thumbWidth + x] = ((a & 0x00f80000) >> (16 + 3)) | ((a & 0x0000fc00) >> (8 + 2 - 5)) | ((a & 0x000000f8) << (11 - 3));
-			}
-		}
-		delete[] tmp;
-
-		glUseProgram(0);
-#endif
-		setPixelCoords(false);
-
-		for (int y = 0; y < thumbHeight; y++) {
-			for (int x = 0; x < thumbWidth; x++) {
-				put2bytes((*(image + y * thumbWidth + x)), fp);
-			}
-		}
-		delete[] image;
-		image = NULL;
 		unfreeze(true);
 	}
-	fputc('!', fp);
-#endif
+	stream->writeByte('!');
 	return true;
 }
 
-void showThumbnail(const Common::String &filename, int atX, int atY) {
-#if 0
-	GLubyte *thumbnailTexture = NULL;
-	GLuint thumbnailTextureName = 0;
+void GraphicsManager::showThumbnail(const Common::String &filename, int atX, int atY) {
+	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(filename);
 
-	GLfloat texCoordW = 1.0;
-	GLfloat texCoordH = 1.0;
+	if (fp == nullptr)
+		return;
 
-	int ssgVersion;
-	FILE *fp = openAndVerify(filename, 'S', 'A', ERROR_GAME_LOAD_NO, ssgVersion);
+	bool headerBad = false;
+	if (fp->readByte() != 'S')
+		headerBad = true;
+	if (fp->readByte() != 'L')
+		headerBad = true;
+	if (fp->readByte() != 'U')
+		headerBad = true;
+	if (fp->readByte() != 'D')
+		headerBad = true;
+	if (fp->readByte() != 'S')
+		headerBad = true;
+	if (fp->readByte() != 'A')
+		headerBad = true;
+	if (headerBad) {
+		fatal(ERROR_GAME_LOAD_NO, filename);
+		return;
+	}
+	char c = fp->readByte();
+	while ((c = fp->readByte()))
+		;
+
+	int majVersion = fp->readByte();
+	int minVersion = fp->readByte();
+	int ssgVersion = VERSION(majVersion, minVersion);
+
 	if (ssgVersion >= VERSION(1, 4)) {
-		if (fp == NULL) return;
 		int fileWidth = fp->readUint32LE();
 		int fileHeight = fp->readUint32LE();
 
-		int picWidth = fileWidth;
-		int picHeight = fileHeight;
-		if (! NPOT_textures) {
-			picWidth = getNextPOT(picWidth);
-			picHeight = getNextPOT(picHeight);
-			texCoordW = ((double)fileWidth) / picWidth;
-			texCoordH = ((double)fileHeight) / picHeight;
+		Graphics::TransparentSurface thumbnail;
+		if (!ImgLoader::loadPNGImage(fp, &thumbnail))
+			return;
 
-		}
+		delete fp;
+		fp = nullptr;
 
-		thumbnailTexture = new GLubyte [picHeight * picWidth * 4];
-		if (thumbnailTexture == NULL) return;
-
-		int t1, t2;
-		uint16 c;
-		GLubyte *target;
-		for (t2 = 0; t2 < fileHeight; t2++) {
-			t1 = 0;
-			while (t1 < fileWidth) {
-				c = (uint16) fp->readUint16BE();
-				target = thumbnailTexture + 4 * picWidth * t2 + t1 * 4;
-				target[0] = (GLubyte) redValue(c);
-				target[1] = (GLubyte) greenValue(c);
-				target[2] = (GLubyte) blueValue(c);
-				target[3] = (GLubyte) 255;
-				t1++;
-			}
-		}
-
-		fclose(fp);
-
-		glGenTextures(1, &thumbnailTextureName);
-		glBindTexture(GL_TEXTURE_2D, thumbnailTextureName);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-		texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, thumbnailTexture, thumbnailTextureName);
-
-		delete thumbnailTexture;
-		thumbnailTexture = NULL;
 
 		if (atX < 0) {
 			fileWidth += atX;
@@ -190,64 +106,31 @@ void showThumbnail(const Common::String &filename, int atX, int atY) {
 			fileHeight += atY;
 			atY = 0;
 		}
-		if (fileWidth + atX > sceneWidth) fileWidth = sceneWidth - atX;
-		if (fileHeight + atY > sceneHeight) fileHeight = sceneHeight - atY;
+		if (fileWidth + atX > (int)_sceneWidth)
+			fileWidth = _sceneWidth - atX;
+		if (fileHeight + atY > (int)_sceneHeight)
+			fileHeight = _sceneHeight - atY;
 
-		setPixelCoords(true);
-
-		glUseProgram(shader.texture);
-		setPMVMatrix(shader.texture);
-
-		int xoffset = 0;
-		while (xoffset < fileWidth) {
-			int w = (fileWidth - xoffset < viewportWidth) ? fileWidth - xoffset : viewportWidth;
-
-			int yoffset = 0;
-			while (yoffset < fileHeight) {
-				int h = (fileHeight - yoffset < viewportHeight) ? fileHeight - yoffset : viewportHeight;
-				glBindTexture(GL_TEXTURE_2D, thumbnailTextureName);
-				const GLfloat vertices[] = {
-					(GLfloat)fileWidth - 1.f - xoffset, (GLfloat) - yoffset, 0.,
-					(GLfloat) - xoffset, (GLfloat) - yoffset, 0.,
-					(GLfloat)fileWidth - 1.f - xoffset, (GLfloat)fileHeight - 1.f - yoffset, 0.,
-					(GLfloat) - xoffset, (GLfloat)fileHeight - 1.f - yoffset, 0.
-				};
-
-				const GLfloat texCoords[] = {
-					texCoordW, 0.0f,
-					0.0f, 0.0f,
-					texCoordW, texCoordH,
-					0.0f, texCoordH
-				};
-
-				drawQuad(shader.texture, vertices, 1, texCoords);
-				glDisable(GL_BLEND);
-				// Copy Our ViewPort To The Texture
-				copyTexSubImage2D(GL_TEXTURE_2D, 0, atX + xoffset, atY + yoffset, viewportOffsetX, viewportOffsetY, w, h, backdropTextureName);
-
-				yoffset += viewportHeight;
-			}
-			xoffset += viewportWidth;
-		}
-		glUseProgram(0);
-
-		setPixelCoords(false);
-		deleteTextures(1, &thumbnailTextureName);
-
-		thumbnailTextureName = 0;
+		thumbnail.blit(_backdropSurface, atX, atY, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255, 255, 255), fileWidth, fileHeight);
+		thumbnail.free();
 	}
-#endif
 }
 
-bool skipThumbnail(Common::SeekableReadStream *stream) {
-#if 0
+bool GraphicsManager::skipThumbnail(Common::SeekableReadStream *stream) {
 	thumbWidth = stream->readUint32LE();
 	thumbHeight = stream->readUint32LE();
-	uint32 skippy = thumbWidth;
-	skippy *= thumbHeight << 1;
-	stream->seek(skippy, 1);
+
+	// Load image
+	Graphics::Surface tmp;
+	if (thumbWidth & thumbHeight) {
+		if (!ImgLoader::loadPNGImage(stream, &tmp))
+			return false;
+		else
+			tmp.free();
+	}
+
+	// Check flag
 	return (stream->readByte() == '!');
-#endif
 	return true;
 }
 
