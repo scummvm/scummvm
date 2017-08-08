@@ -412,7 +412,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 	while (keepLooping) {
 		advanceNow = true;
-		debugC(2, kSludgeDebugStackMachine, "Executing command line %i : ", fun->runThisLine);
+		debugC(1, kSludgeDebugStackMachine, "Executing command line %i : ", fun->runThisLine);
 		param = fun->compiledLines[fun->runThisLine].param;
 		com = fun->compiledLines[fun->runThisLine].theCommand;
 //		fprintf (stderr, "com: %d param: %d (%s)\n", com, param,
@@ -464,7 +464,7 @@ bool continueFunction(LoadedFunction *fun) {
 				break;
 
 			case SVT_BUILT: {
-				debugC(2, kSludgeDebugStackMachine, "Built-in init value: %i",
+				debugC(1, kSludgeDebugStackMachine, "Built-in init value: %i",
 						fun->reg.varData.intValue);
 				BuiltReturn br = callBuiltIn(fun->reg.varData.intValue, param,
 						fun);

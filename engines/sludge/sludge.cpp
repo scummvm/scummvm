@@ -54,8 +54,8 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kSludgeDebugGraphics, "Graphics", "Graphics debug level");
 	DebugMan.addDebugChannel(kSludgeDebugZBuffer, "ZBuffer", "ZBuffer debug level");
 
-	DebugMan.enableDebugChannel("Graphics");
-	DebugMan.enableDebugChannel("ZBuffer");
+	DebugMan.enableDebugChannel("Built-in");
+	DebugMan.enableDebugChannel("Stack Machine");
 
 	// init graphics
 	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
