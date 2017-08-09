@@ -79,7 +79,7 @@ bool OSystem_RISCOS::openUrl(const Common::String &url) {
 }
 
 Common::String OSystem_RISCOS::getDefaultConfigFileName() {
-	return "/<Choices$Write>/ScummVM/scummvm.ini";
+	return "/<Choices$Write>/ScummVM/scummvmrc";
 }
 
 Common::WriteStream *OSystem_RISCOS::createLogFile() {
@@ -93,7 +93,7 @@ Common::WriteStream *OSystem_RISCOS::createLogFile() {
 		return 0;
 	}
 
-	logFile += "/scummvm.log";
+	logFile += "/scummvm";
 
 	Common::FSNode file(logFile);
 	Common::WriteStream *stream = file.createWriteStream();
