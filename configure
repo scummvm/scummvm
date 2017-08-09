@@ -2711,7 +2711,7 @@ case $_host_os in
 		_sdlpath=$GCCSDK_INSTALL_ENV/bin
 		_freetypepath=$GCCSDK_INSTALL_ENV/bin
 		_libcurlpath=$GCCSDK_INSTALL_ENV/bin
-		append_var CXXFLAGS "-march=armv4"
+		append_var CXXFLAGS "-march=armv3m"
 		append_var CXXFLAGS "-mtune=xscale"
 		append_var LDFLAGS "-static"
 		_optimization_level=-O3
