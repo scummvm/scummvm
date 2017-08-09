@@ -203,12 +203,12 @@ monkey	The Secret of Monkey Island
 	e98b982ceaf9d253d730bde8903233d6	-1	de	DOS	EGA	EGA	4 disk	Joachim Eberhard
 	477dbafbd66a53c98416dc01aef019ad	-1	it	DOS	EGA	EGA	4 disk	Andrea Petrucci
 
-	6c2bff0e327f2962e809c2e1a82d7309	-1	en	Amiga	VGA	VGA	-	dhweg
-	3433be9866ca4261b2d5d25374e3f243	-1	fr	Amiga	VGA	VGA	-	Gerald Vincent
-	0a212fa35fa8421f31c1f3961272caf0	-1	de	Amiga	VGA	VGA	V1.1	Andreas Bylund
-	319a4dde52c7960b5aae8a1ec348d918	-1	de	Amiga	VGA	VGA	V1.2r	ghoostkilla
-	fb66aa42de21675116346213f176a366	-1	it	Amiga	VGA	VGA	-	Andrea Petrucci
-	870d1e3c86bc50846d808d14a36b4e08	-1	es	Amiga	VGA	VGA	-	Andreas Bylund
+	6c2bff0e327f2962e809c2e1a82d7309	-1	en	Amiga	VGA	-	-	dhweg
+	3433be9866ca4261b2d5d25374e3f243	-1	fr	Amiga	VGA	-	-	Gerald Vincent
+	0a212fa35fa8421f31c1f3961272caf0	-1	de	Amiga	VGA	-	V1.1	Andreas Bylund
+	319a4dde52c7960b5aae8a1ec348d918	-1	de	Amiga	VGA	-	V1.2r	ghoostkilla
+	fb66aa42de21675116346213f176a366	-1	it	Amiga	VGA	-	-	Andrea Petrucci
+	870d1e3c86bc50846d808d14a36b4e08	-1	es	Amiga	VGA	-	-	Andreas Bylund
 
 	c7890e038806df2bb5c0c8c6f1986ea2	-1	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
 	15e03ffbfeddb9c2aebc13dcb2a4a8f4	8357	en	DOS	VGA	VGA	4 disk
@@ -236,7 +236,7 @@ monkey	The Secret of Monkey Island
 
 	71523b539491527d9860f4407faf0411	7607	en	DOS	Demo	EGA Demo	-	Fingolfin
 	771bc18ec6f93837b839c992b211904b	-1	de	DOS	Demo	EGA Demo	-	khalek
-	54a936ad06161ff7bfefcb96200f7bff	7617	en	Amiga	VGA	VGA Demo	-	khalek
+	54a936ad06161ff7bfefcb96200f7bff	7617	en	Amiga	VGA	Demo	-	khalek
 	c0c9de81fb965e6cbe77f6e5631ca705	9135	en	DOS	SE Talkie	Unofficial SE Talkie v1.02	rootfather
 
 pass	Passport to Adventure
