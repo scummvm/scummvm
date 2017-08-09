@@ -42,4 +42,22 @@ void Rect::constrain(const Rect &r) {
 	}
 }
 
+Point Rect::getPoint(Quadrant quadrant) {
+	if (isEmpty())
+		return Point(left, top);
+
+	switch (quadrant) {
+	case Q_LEFT:
+		return Point(MIN(left + 10, (int)right), (top + bottom) / 2);
+	case Q_RIGHT:
+		return Point(MAX(right - 10, (int)left), (top + bottom) / 2);
+	case Q_TOP:
+		return Point((left + right) / 2, MIN(top + 10, (int)bottom));
+	case Q_BOTTOM:
+		return Point((left + right) / 2, MAX(bottom - 10, (int)top));
+	default:
+		return Point((left + right) / 2, (top + bottom) / 2);
+	}
+}
+
 } // End of namespace Titanic

@@ -341,6 +341,7 @@ CString CViewItem::getNodeViewName() const {
 bool CViewItem::MovementMsg(CMovementMsg *msg) {
 	Point pt;
 	bool foundPt = false;
+	int quadrant;
 
 	// First allow any child objects to handle it
 	for (CTreeItem *treeItem = getFirstChild(); treeItem;
@@ -365,13 +366,23 @@ bool CViewItem::MovementMsg(CMovementMsg *msg) {
 				if (link->getMovement() != msg->_movement)
 					continue;
 
-				pt = Point((link->_bounds.left + link->_bounds.right) / 2,
-					(link->_bounds.top + link->_bounds.bottom) / 2);
+				for (quadrant = Q_CENTER; quadrant <= Q_BOTTOM; ++quadrant) {
+					if (link->findPoint((Quadrant)quadrant, pt))
+						if (link == getItemAtPoint(pt))
+							break;
+				}
+				if (quadrant > Q_BOTTOM)
+					continue;
 			} else if (gameObj) {
 				if (!gameObj->_visible || gameObj->getMovement() != msg->_movement)
 					continue;
 
-				if (!gameObj->findPoint(pt))
+				for (quadrant = Q_CENTER; quadrant <= Q_BOTTOM; ++quadrant) {
+					if (gameObj->findPoint((Quadrant)quadrant, pt))
+						if (gameObj == getItemAtPoint(pt))
+							break;
+				}
+				if (quadrant > Q_BOTTOM)
 					continue;
 			} else {
 				// Not a link or object, so ignore
@@ -395,6 +406,32 @@ bool CViewItem::MovementMsg(CMovementMsg *msg) {
 	}
 
 	return false;
+}
+
+CTreeItem *CViewItem::getItemAtPoint(const Point &pt) {
+	CTreeItem *result = nullptr;
+
+	// First scan for objects
+	for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
+		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
+
+		if (gameObject && gameObject->checkPoint(pt, false, true))
+			result = treeItem;
+	}
+
+	if (result == nullptr) {
+		// Scan for links coverign that position
+		for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
+			CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
+
+			if (link && link->_bounds.contains(pt)) {
+				result = treeItem;
+				break;
+			}
+		}
+	}
+
+	return result;
 }
 
 } // End of namespace Titanic

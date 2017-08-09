@@ -54,6 +54,12 @@ private:
 	 * Handles mouse button up messages
 	 */
 	void handleButtonUpMsg(CMouseButtonUpMsg *msg);
+
+	/**
+	 * Returns the item in the view at a given point that will
+	 * receive any mouse click
+	 */
+	CTreeItem *getItemAtPoint(const Point &pt);
 protected:
 	int _field24;
 	CResourceKey _resourceKey;

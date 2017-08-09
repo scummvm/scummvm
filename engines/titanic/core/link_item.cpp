@@ -35,7 +35,8 @@ Movement CLinkItem::getMovementFromCursor(CursorId cursorId) {
 	else if (cursorId == CURSOR_MOVE_RIGHT)
 		return TURN_RIGHT;
 	else if (cursorId == CURSOR_MOVE_FORWARD || cursorId == CURSOR_MOVE_THROUGH ||
-		cursorId == CURSOR_DOWN)
+			cursorId == CURSOR_DOWN || cursorId == CURSOR_LOOK_UP ||
+			cursorId == CURSOR_LOOK_DOWN || cursorId == CURSOR_MAGNIFIER)
 		return MOVE_FORWARDS;
 	else if (cursorId == CURSOR_BACKWARDS)
 		return MOVE_BACKWARDS;
@@ -192,6 +193,14 @@ Movement CLinkItem::getMovement() const {
 		return MOVE_NONE;
 
 	return getMovementFromCursor(_cursorId);
+}
+
+bool CLinkItem::findPoint(Quadrant quadrant, Point &pt) {
+	if (_bounds.isEmpty())
+		return false;
+
+	pt = _bounds.getPoint(quadrant);
+	return true;
 }
 
 } // End of namespace Titanic

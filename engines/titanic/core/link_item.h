@@ -101,6 +101,15 @@ public:
 	 * Get the movement, if any, the cursor represents
 	 */
 	Movement getMovement() const;
+
+	/**
+	 * Returns a point that falls within the link. Used for simulating
+	 * mouse clicks for movement when arrow keys are pressed
+	 * @param quadrant	Quadrant (edge) to return point for
+	 * @param pt		Return point
+	 * @returns			True if a point was found
+	 */
+	bool findPoint(Quadrant quadrant, Point &pt);
 };
 
 } // End of namespace Titanic

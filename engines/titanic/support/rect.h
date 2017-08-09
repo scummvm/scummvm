@@ -27,6 +27,10 @@
 
 namespace Titanic {
 
+enum Quadrant {
+	Q_CENTER = 0, Q_LEFT, Q_RIGHT, Q_TOP, Q_BOTTOM
+};
+
 typedef Common::Point Point;
 
 class Rect : public Common::Rect {
@@ -54,6 +58,11 @@ public:
 	 * Constrains/clips to the intersection area of the given rect
 	 */
 	void constrain(const Rect &r);
+
+	/**
+	 * Returns a center point for a given edge or center of the rect
+	 */
+	Point getPoint(Quadrant quadrant);
 };
 
 } // End of namespace Titanic
