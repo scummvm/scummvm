@@ -133,6 +133,7 @@ public:
 	bool execute(World *world, int loopCount, Common::String *inputText, Designed *inputClick, WageEngine *engine);
 
 private:
+	Common::String preprocessInputText(Common::String inputText);
 	Operand *readOperand();
 	Operand *readStringOperand();
 	const char *readOperator();

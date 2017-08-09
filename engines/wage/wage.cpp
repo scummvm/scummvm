@@ -169,21 +169,21 @@ void WageEngine::processEvents() {
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
-			case Common::KEYCODE_RETURN:
-				_inputText = _gui->_consoleWindow->getInput();
-				_inputText += '\n';
+			case Common::KEYCODE_RETURN: {
+					_inputText = _gui->_consoleWindow->getInput();
+					Common::String inp = _inputText + '\n';
 
-				_gui->appendText(_inputText.c_str());
+					_gui->appendText(inp.c_str());
 
-				_gui->_consoleWindow->clearInput();
+					_gui->_consoleWindow->clearInput();
 
-				if (_inputText.empty())
+					if (_inputText.empty())
+						break;
+
+					processTurn(&_inputText, NULL);
+					_gui->disableUndo();
 					break;
-
-				processTurn(&_inputText, NULL);
-				_gui->disableUndo();
-				break;
-
+				}
 			default:
 				if (event.kbd.ascii == '~') {
 					_debugger->attach();
@@ -473,14 +473,6 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 		input = *textInput;
 
 	input.toLowercase();
-	if (input.equals("e"))
-		input = "east";
-	else if (input.equals("w"))
-		input = "west";
-	else if (input.equals("n"))
-		input = "north";
-	else if (input.equals("s"))
-		input = "south";
 
 	processTurnInternal(&input, clickInput);
 	Scene *playerScene = _world->_player->_currentScene;
