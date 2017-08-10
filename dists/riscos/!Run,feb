@@ -9,5 +9,5 @@ RMEnsure DigitalRenderer 0.56 Error ScummVM requires DigitalRenderer 0.56 or lat
 Set ScummVM$stdout ><Choices$Write>.ScummVM.stdout 2><Choices$Write>.ScummVM.stderr
 If "<Wimp$State>"="commands" Then Unset ScummVM$stdout Else CDir <Choices$Write>.ScummVM
 
-WimpSlot -min 8192K
+|WimpSlot
 Do Run <ScummVM$Dir>.scummvm %*0 <ScummVM$stdout>
