@@ -66,7 +66,7 @@ Sound::Sound(Common::String name, Common::SeekableReadStream *data) : _name(name
 	data->skip(20); // Skip header
 
 	byte value = 0x80;
-	for (int i = 0; i < _size; i++) {
+	for (uint i = 0; i < _size; i++) {
 		byte d = data->readByte();
 		value += deltas[d & 0xf];
 		_data[i * 2] = value;
