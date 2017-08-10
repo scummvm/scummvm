@@ -653,6 +653,7 @@ struct Comparator {
 	{ '<', OBJ, SCENE, kCompLtObjScene },
 	{ '<', CHR, CHR, kCompEqChrChr }, // Same logic as =
 	{ '<', SCENE, SCENE, kCompEqSceneScene },
+	{ '<', CHR, SCENE, kCompGtChrScene }, // Same logic as >
 
 	{ '>', NUMBER, NUMBER, kCompGtNumNum },
 	{ '>', TEXT_INPUT, STRING, kCompLtTextInputString }, // Same logic as <
