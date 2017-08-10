@@ -461,7 +461,7 @@ Script::Operand *Script::readStringOperand() {
 			*str += c;
 		else
 			break;
-		if (c < '0' || c > '9')
+		if ((c < '0' || c > '9') && !(c == '-' && str->empty()))
 			allDigits = false;
 	}
 	_data->seek(-1, SEEK_CUR);
