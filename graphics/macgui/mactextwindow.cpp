@@ -324,8 +324,8 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 					bool cutAllowed = false;
 
-					if (_selectedText.startRow >= _mactext->getLineCount() - _inputTextHeight &&
-							_selectedText.endRow  >= _mactext->getLineCount() - _inputTextHeight)
+					if (_selectedText.startRow >= (int)(_mactext->getLineCount() - _inputTextHeight) &&
+							_selectedText.endRow  >= (int)(_mactext->getLineCount() - _inputTextHeight))
 						cutAllowed = true;
 
 					_menu->enableCommand("Edit", "Cut", cutAllowed);
