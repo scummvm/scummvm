@@ -279,6 +279,12 @@ void BSpit::checkYtramCatch(bool playSound) {
 
 	uint32 &ytramTime = _vm->_vars["bytramtime"];
 
+	// The trap has been moved back up.
+	// You can't catch those sneaky Ytrams that way.
+	if (ytramTime == 0) {
+		return;
+	}
+
 	// If the trap still has not gone off, reinstall our timer
 	// This is in case you set the trap, walked away, and returned
 	if (_vm->getTotalPlayTime() < ytramTime) {
