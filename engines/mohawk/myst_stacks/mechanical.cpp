@@ -615,6 +615,9 @@ void Mechanical::o_fortressRotationSetPosition(uint16 var, const ArgumentsArray 
 	}
 
 	_fortressPosition = (moviePosition + 900) / 1800 % 4;
+
+	// Stop the gears video so that it does not play while the elevator is going up
+	_fortressRotationGears->getVideo()->stop();
 }
 
 void Mechanical::o_mystStaircaseMovie(uint16 var, const ArgumentsArray &args) {
