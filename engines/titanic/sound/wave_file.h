@@ -106,7 +106,7 @@ public:
 	 * Returns true if the wave file has data loaded
 	 */
 	bool isLoaded() const {
-		return _waveData != nullptr;
+		return _waveData != nullptr || _pendingAudioStream != nullptr;
 	}
 
 	/**
