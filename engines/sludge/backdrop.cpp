@@ -400,6 +400,17 @@ bool GraphicsManager::loadLightMap(int v) {
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 
+	// Debug code to output light map image
+#if 0
+	Common::DumpFile *outFile = new Common::DumpFile();
+	Common::String outName = Common::String::format("lightmap_%i.png", v);
+	outFile->open(outName);
+	Image::writePNG(*outFile, _lightMap);
+	outFile->finalize();
+	outFile->close();
+	delete outFile;
+#endif
+
 	return true;
 }
 
