@@ -44,6 +44,33 @@
 
 namespace Adl {
 
+class ScriptEnv_6502 : public ScriptEnv {
+public:
+	ScriptEnv_6502(const Command &cmd, byte room, byte verb, byte noun) :
+			ScriptEnv(cmd, room, verb, noun),
+			_remCond(cmd.numCond),
+			_remAct(cmd.numAct) { }
+
+private:
+	kOpType getOpType() const {
+		if (_remCond > 0)
+			return kOpTypeCond;
+		if (_remAct > 0)
+			return kOpTypeAct;
+		return kOpTypeDone;
+	}
+
+	void next(uint numArgs) {
+		_ip += numArgs + 1;
+		if (_remCond > 0)
+			--_remCond;
+		else if (_remAct > 0)
+			--_remAct;
+	}
+
+	byte _remCond, _remAct;
+};
+
 AdlEngine::~AdlEngine() {
 	delete _display;
 	delete _graphics;
@@ -404,8 +431,8 @@ bool AdlEngine::isInputValid(const Commands &commands, byte verb, byte noun, boo
 
 	is_any = false;
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
-		ScriptEnv env(*cmd, _state.room, verb, noun);
-		if (matchCommand(env)) {
+		Common::ScopedPtr<ScriptEnv> env(createScriptEnv(*cmd, _state.room, verb, noun));
+		if (matchCommand(*env)) {
 			if (cmd->verb == IDI_ANY || cmd->noun == IDI_ANY)
 				is_any = true;
 			return true;
@@ -961,15 +988,15 @@ bool AdlEngine::canSaveGameStateCurrently() {
 	// "SAVE GAME". This prevents saving via the GMM in situations where
 	// it wouldn't otherwise be possible to do so.
 	for (cmd = _roomData.commands.begin(); cmd != _roomData.commands.end(); ++cmd) {
-		ScriptEnv env(*cmd, _state.room, _saveVerb, _saveNoun);
-		if (matchCommand(env))
-			return env.op() == IDO_ACT_SAVE;
+		Common::ScopedPtr<ScriptEnv> env(createScriptEnv(*cmd, _state.room, _saveVerb, _saveNoun));
+		if (matchCommand(*env))
+			return env->op() == IDO_ACT_SAVE;
 	}
 
 	for (cmd = _roomCommands.begin(); cmd != _roomCommands.end(); ++cmd) {
-		ScriptEnv env(*cmd, _state.room, _saveVerb, _saveNoun);
-		if (matchCommand(env))
-			return env.op() == IDO_ACT_SAVE;
+		Common::ScopedPtr<ScriptEnv> env(createScriptEnv(*cmd, _state.room, _saveVerb, _saveNoun));
+		if (matchCommand(*env))
+			return env->op() == IDO_ACT_SAVE;
 	}
 
 	return false;
@@ -1346,7 +1373,7 @@ bool AdlEngine::matchCommand(ScriptEnv &env) const {
 		(void)op_debug("\t&& SAID(%s, %s)", verbStr(env.getCommand().verb).c_str(), nounStr(env.getCommand().noun).c_str());
 	}
 
-	for (uint i = 0; i < env.getCondCount(); ++i) {
+	while (env.getOpType() == ScriptEnv::kOpTypeCond) {
 		byte op = env.op();
 
 		if (op >= _condOpcodes.size() || !_condOpcodes[op] || !_condOpcodes[op]->isValid())
@@ -1360,7 +1387,7 @@ bool AdlEngine::matchCommand(ScriptEnv &env) const {
 			return false;
 		}
 
-		env.skip(numArgs + 1);
+		env.next(numArgs);
 	}
 
 	return true;
@@ -1370,7 +1397,7 @@ void AdlEngine::doActions(ScriptEnv &env) {
 	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
 		(void)op_debug("THEN");
 
-	for (uint i = 0; i < env.getActCount(); ++i) {
+	while (env.getOpType() == ScriptEnv::kOpTypeAct) {
 		byte op = env.op();
 
 		if (op >= _actOpcodes.size() || !_actOpcodes[op] || !_actOpcodes[op]->isValid())
@@ -1384,7 +1411,7 @@ void AdlEngine::doActions(ScriptEnv &env) {
 			return;
 		}
 
-		env.skip(numArgs + 1);
+		env.next(numArgs);
 	}
 
 	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
@@ -1395,9 +1422,9 @@ bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
-		ScriptEnv env(*cmd, _state.room, verb, noun);
-		if (matchCommand(env)) {
-			doActions(env);
+		Common::ScopedPtr<ScriptEnv> env(createScriptEnv(*cmd, _state.room, verb, noun));
+		if (matchCommand(*env)) {
+			doActions(*env);
 			return true;
 		}
 
@@ -1414,9 +1441,9 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
-		ScriptEnv env(*cmd, _state.room, verb, noun);
-		if (matchCommand(env)) {
-			doActions(env);
+		Common::ScopedPtr<ScriptEnv> env(createScriptEnv(*cmd, _state.room, verb, noun));
+		if (matchCommand(*env)) {
+			doActions(*env);
 			// The original long jumps on restart, so we need to abort here
 			if (_isRestarting)
 				return;
@@ -1427,6 +1454,10 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 			return;
 		}
 	}
+}
+
+ScriptEnv *AdlEngine::createScriptEnv(const Command &cmd, byte room, byte verb, byte noun) {
+	return new ScriptEnv_6502(cmd, room, verb, noun);
 }
 
 Common::String AdlEngine::toAscii(const Common::String &str) {
