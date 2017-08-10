@@ -1240,6 +1240,7 @@ void MohawkEngine_Myst::dropPage() {
 
 	// Redraw page area
 	if (whitePage && _gameState->_globals.currentAge == 2) {
+		_scriptParser->toggleVar(41);
 		redrawArea(41);
 	} else if (bluePage) {
 		if (page == 6) {
