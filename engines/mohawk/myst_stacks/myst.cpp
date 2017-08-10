@@ -843,6 +843,7 @@ void Myst::o_fireplaceToggleButton(uint16 var, const ArgumentsArray &args) {
 	// Used on Myst Card 4162 (Fireplace Grid)
 	uint16 bitmask = args[0];
 	uint16 line = _fireplaceLines[var - 17];
+	Common::Rect buttonRect = getInvokingResource<MystArea>()->getRect();
 
 	// The animations are too slow when playing each animation image at 60fps.
 	// Only play every second image.
@@ -850,14 +851,15 @@ void Myst::o_fireplaceToggleButton(uint16 var, const ArgumentsArray &args) {
 	if (line & bitmask) {
 		// Unset button
 		for (uint i = 4795; i >= 4779; i -= 2) {
-			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
+			_vm->_gfx->copyImageToScreen(i, buttonRect);
 			_vm->doFrame();
 		}
+		_vm->_gfx->copyBackBufferToScreen(buttonRect);
 		_fireplaceLines[var - 17] &= ~bitmask;
 	} else {
 		// Set button
 		for (uint i = 4779; i <= 4795; i += 2) {
-			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
+			_vm->_gfx->copyImageToScreen(i, buttonRect);
 			_vm->doFrame();
 		}
 		_fireplaceLines[var - 17] |= bitmask;
