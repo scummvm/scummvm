@@ -73,6 +73,7 @@ Object *Inventory::get(ObjectID id) const {
 	return const_cast<Object *>(&Object::nullObject);
 }
 
+
 GuiElement::GuiElement()
     : _text("")
     , _isHighlighted(false)
@@ -228,7 +229,7 @@ void GameManager::initState() {
 	_state.eventTime = 0xffffffff;
 	_state.shipEnergy = 2135;
 	_state.landingModuleEnergy = 923;
-	_state.greatF = 0;
+	_state.greatFlag = 0;
 	_state.timeRobot = 0;
 	_state.money = 0;
 	_state.coins = 0;
@@ -516,22 +517,141 @@ void GameManager::drawImage(int section) {
 	} while (section != 0);
 }
 
-bool GameManager::isHelmetOff() {
-	Object *helmet = _inventory.get(HELMET);
-	if (helmet && helmet->hasProperty(WORN)) {
-		_vm->renderMessage("Irgendwie ist ein Raumhelm|beim Essen unpraktisch.");
-		return false;
+void GameManager::corridorOnEntrance() {
+	if (_state.corridorSearch)
+		busted(0);
+}
+
+void busted(int i) {
+	// STUB
+}
+
+void GameManager::telomat(int number) {
+	// STUB
+}
+
+void GameManager::startSearch() {
+	if ((_currentRoom >= _rooms[CORRIDOR1]) && (_currentRoom <= _rooms[BCORRIDOR]))
+		busted(0);
+
+	_state.corridorSearch = true;
+}
+
+void GameManager::search(int time) {
+	_state.eventTime = _vm->getDOSTicks() + time;
+//	*event = &search_start;
+}
+
+void GameManager::guardNoticed() {
+	// STUB
+}
+
+void GameManager::busted(int i) {
+	if (i > 0)
+		drawImage(i);
+	if (i == 0) {
+		if ((_currentRoom >= _rooms[OFFICE_L1]) && (_currentRoom <= _rooms[OFFICE_R2])) {
+			if (_currentRoom < _rooms[OFFICE_R1])
+				i = 10;
+			else
+				i = 5;
+			if (!_currentRoom->getObject(0)->hasProperty(OPENED)) {
+				drawImage(i - 1);
+				_vm->playSound(kAudioDoorOpen);
+				wait2(2);
+			}
+			drawImage(i);
+			wait2(3);
+			drawImage(i + 3);
+			_vm->playSound(kAudioVoiceHalt);
+			drawImage(i);
+			wait2(5);
+			if (_currentRoom == _rooms[OFFICE_L2])
+				i = 13;
+			drawImage(i + 1);
+			wait2(3);
+			drawImage(i + 2);
+			shot(0, 0);
+		} else if (_currentRoom == _rooms[BCORRIDOR]) {
+			drawImage(21);
+		} else {
+			if (_currentRoom->isSectionVisible(4))
+				drawImage(32); // below
+			else if (_currentRoom->isSectionVisible(2))
+				drawImage(30); // right
+			else if (_currentRoom->isSectionVisible(1))
+				drawImage(31); // left
+			else
+				drawImage(33); // above
+		}
+	}
+	_vm->playSound(kAudioVoiceHalt);
+	wait2(3);
+	shot(0, 0);
+}
+
+void GameManager::guardReturned() {
+	if (_currentRoom == _rooms[GUARD])
+		busted(-1);
+	else if ((_currentRoom == _rooms[CORRIDOR9]) && (_currentRoom->isSectionVisible(27)))
+		busted(0);
+
+	_rooms[GUARD]->setSectionVisible(1, false);
+	_rooms[GUARD]->getObject(3)->_click = 0;
+	_rooms[GUARD]->setSectionVisible(6, false);
+	_rooms[GUARD]->getObject(2)->disableProperty(OPENED);
+	_rooms[GUARD]->setSectionVisible(7, false);
+	_rooms[GUARD]->getObject(5)->_click = 255;
+	_rooms[CORRIDOR9]->setSectionVisible(27, false);
+	_rooms[CORRIDOR9]->setSectionVisible(28, true);
+	_rooms[CORRIDOR9]->getObject(1)->disableProperty(OPENED);
+}
+
+void GameManager::taxi() {
+	if (_currentRoom == _rooms[SIGN]) {
+		changeRoom(STATION);
 	}
 
-	return true;
+	drawImage(1);
+	drawImage(2);
+	_vm->playSound(kAudioRocks);
+	screenShake();
+	drawImage(9);
+	_currentRoom->getObject(1)->setProperty(OPENED);
+	drawImage(1);
+	_currentRoom->setSectionVisible(2, false);
+	drawImage(3);
+	for (int i = 4; i <= 8; i++) {
+		wait2(2);
+		drawImage(invertSection(i - 1));
+		drawImage(i);
+	}
+	_rooms[SIGN]->setSectionVisible(2, false);
+	_rooms[SIGN]->setSectionVisible(3, true);
+}
+
+void GameManager::outro() {
+	_state.benOverlay = 3;
+//	load_overlay();
+//	title = 2;
+	_vm->playSoundMod(49);
+//	title = 0;
+	_state.benOverlay = 0;
+	_vm->paletteFadeOut();
+	_vm->renderImage(55, 0);
+	_vm->paletteFadeIn();
+	getInput();
+	_vm->paletteFadeOut();
+	// TODO: render info file
+//	longjmp(termination,1);
 }
 
 void GameManager::great(uint number) {
-	if (number && (_state.greatF & (1 << number)))
+	if (number && (_state.greatFlag & (1 << number)))
 		return;
 
 	_vm->playSound(kAudioUndef7);
-	_state.greatF |= 1 << number;
+	_state.greatFlag |= 1 << number;
 }
 
 bool GameManager::airless() {
@@ -541,6 +661,31 @@ bool GameManager::airless() {
 	((_currentRoom == _rooms[AIRLOCK]) && (_currentRoom->getObject(1)->hasProperty(OPENED))) ||
 	(_currentRoom  >= _rooms[MEETUP2])
 	);
+}
+
+void GameManager::shipStart() {
+	// STUB
+}
+
+void GameManager::removeSentence(int sentence, int number) {
+	// STUB
+}
+
+void GameManager::addSentence(int sentence, int number) {
+	// STUB
+}
+
+void GameManager::say(const char *text) {
+	// STUB
+}
+
+void GameManager::reply(const char *text, int aus1, int aus2) {
+	// STUB
+}
+
+int GameManager::dialog(int num, byte *rowLength[], const char **text[6], int number) {
+	// STUB
+	return 0;
 }
 
 void GameManager::turnOff() {
@@ -612,7 +757,11 @@ uint16 GameManager::getKeyInput(bool blockForPrintChar) {
 				    _key.keycode == Common::KEYCODE_DELETE ||
 				    _key.keycode == Common::KEYCODE_RETURN ||
 				    _key.keycode == Common::KEYCODE_SPACE ||
-				    _key.keycode == Common::KEYCODE_ESCAPE) {
+				    _key.keycode == Common::KEYCODE_ESCAPE ||
+				    _key.keycode == Common::KEYCODE_UP ||
+				    _key.keycode == Common::KEYCODE_DOWN ||
+				    _key.keycode == Common::KEYCODE_LEFT ||
+				    _key.keycode == Common::KEYCODE_RIGHT) {
 					if (_key.flags & Common::KBD_SHIFT)
 						return toupper(_key.ascii);
 					else
@@ -663,7 +812,10 @@ void GameManager::roomBrightness() {
 }
 
 void GameManager::loadTime() {
-	// STUB
+	_state.timeStarting += _state.time;
+	if (_state.eventTime != 1)
+		_state.eventTime += _state.time;
+	_state.timeAlarmSystem = _state.timeAlarm + _state.timeStarting;
 }
 
 void GameManager::saveTime() {
@@ -848,6 +1000,42 @@ void GameManager::loadOverlayStart() {
 	// STUB
 }
 
+void GameManager::shot(int a, int b) {
+	if (a)
+		drawImage(a);
+	_vm->playSound(kAudioGunShot);
+	wait2(2);
+	if (b)
+		drawImage(b);
+	wait2(2);
+	if (a)
+		drawImage(a);
+	_vm->playSound(kAudioGunShot);
+	wait2(2);
+	if (b)
+		drawImage(b);
+
+	death("Der Axacussaner hat dich erwischt.");
+}
+
+void GameManager::takeMoney(int amount) {
+	_state.money += amount;
+	if (amount > 0)
+		great(0);
+	// TODO: kmaxobject - 1?
+//	_rooms[OFFICE_R1]->getObject(5)->_name = _rooms[OFFICE_R1]->getObject(kMaxObject - 1);
+//	raumz[OFFICE_R1]->object[5].name = &(raumz[OFFICE_R1]->object[MAX_OBJECT-1]);
+//	strcpy(raumz[OFFICE_R1]->object[5].name,ltoa((long)_state.money));
+//	strcat(raumz[OFFICE_R1]->object[5].name," Xa");
+
+	if (_state.money) {
+		if (!_rooms[OFFICE_R1]->getObject(5)->hasProperty(CARRIED))
+			takeObject(*_rooms[OFFICE_R1]->getObject(5));
+	} else {
+		_inventory.remove(*_rooms[OFFICE_R1]->getObject(5));
+	}
+}
+
 void GameManager::drawStatus() {
 	int index = static_cast<int>(_inputVerb);
 	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
@@ -907,6 +1095,7 @@ void GameManager::death(const char *message) {
 	initGui();
 	_inventory.clear();
 	changeRoom(INTRO);
+	_vm->renderRoom(*_currentRoom);
 	_vm->paletteFadeIn();
 
 	_guiEnabled = true;
@@ -921,6 +1110,15 @@ int GameManager::invertSection(int section) {
 	return section;
 }
 
+bool GameManager::isHelmetOff() {
+	Object *helmet = _inventory.get(HELMET);
+	if (helmet && helmet->hasProperty(WORN)) {
+		_vm->renderMessage("Irgendwie ist ein Raumhelm|beim Essen unpraktisch.");
+		return false;
+	}
+
+	return true;
+}
 
 bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 	Room *r;

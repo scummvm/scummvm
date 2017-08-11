@@ -37,7 +37,7 @@ struct GameState {
 	int32  eventTime;
 	int32  shipEnergy;
 	int32  landingModuleEnergy;
-	uint16 greatF;
+	uint16 greatFlag;
 	int16  timeRobot;
 	int16  money;
 	byte   coins;
@@ -181,6 +181,26 @@ public:
 	void handleTime();
 	void setAnimationTimer(int ticks);
 	void death(const char *message);
+	int  dialog(int num, byte *rowLength[6], const char **text[6], int number);
+	void sentence(int number, bool brightness);
+	void removeSentence(int sentence, int number);
+	void addSentence(int sentence, int number);
+	void say(const char *text);
+	void reply(const char *text, int aus1, int aus2);
+	void shipStart();
+	void inventorySeize();
+	void shot(int a, int b);
+	void takeMoney(int amount);
+	void search(int time);
+	void startSearch();
+	void guardNoticed();
+	void guardReturned();
+	void busted(int i);
+	void corridorOnEntrance();
+	void event(int time);
+	void telomat(int number);
+	void taxi();
+	void outro();
 };
 
 }
