@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-08-06 13:13+0200\n"
+"POT-Creation-Date: 2017-08-11 19:06+0200\n"
 "PO-Revision-Date: 2017-08-06 19:02+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
+"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -679,7 +679,7 @@ msgid "Search:"
 msgstr "Etsi:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:510
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:511
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -689,7 +689,7 @@ msgstr "Lataa peli:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:510 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:511 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -3358,7 +3358,7 @@ msgstr ""
 "Sinulta puuttuu \"extras.mhk\". \"archriven.z\" asennustiedoston käyttö "
 "toimii myös."
 
-#: engines/mohawk/riven.cpp:409
+#: engines/mohawk/riven.cpp:410
 msgid "You are missing the following required Riven data files:\n"
 msgstr "Sinulta puuttuu seuraavat vaaditut Rivenin datatiedostot:\n"
 

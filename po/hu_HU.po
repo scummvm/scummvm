@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-08-06 13:13+0200\n"
+"POT-Creation-Date: 2017-08-11 19:06+0200\n"
 "PO-Revision-Date: 2017-08-07 06:37+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
-"Language-Team: Hungarian "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
+"Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/hu/>\n"
 "Language: hu_HU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -679,7 +679,7 @@ msgid "Search:"
 msgstr "Keresés:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:510
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:511
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -689,7 +689,7 @@ msgstr "Játék betöltése:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:510 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:511 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -3348,7 +3348,7 @@ msgid ""
 msgstr ""
 "Hiányzik az 'extras.mhk'. A telepítõ 'arcriven.z' fájlja is használható még."
 
-#: engines/mohawk/riven.cpp:409
+#: engines/mohawk/riven.cpp:410
 msgid "You are missing the following required Riven data files:\n"
 msgstr "A következõ szükséges Riven adatfájlok hiányoznak:\n"
 
@@ -3586,8 +3586,9 @@ msgid ""
 msgstr ""
 "A ScummVM-ben a karakterek automatikusan megjelennek. Az eredeti "
 "karakterfájlokat a ScummVM mentett játékkönyvtárába kell másolni, és hozzá "
-"kell adni egy elõtagot attól függõen, hogy melyik játékot mentette el: 'qfg1-"
-"' Quest for Glory 1 'qfg2-' Quest for Glory 2. Például: 'qfg2-thief.sav'."
+"kell adni egy elõtagot attól függõen, hogy melyik játékot mentette el: "
+"'qfg1-' Quest for Glory 1 'qfg2-' Quest for Glory 2. Például: 'qfg2-thief."
+"sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:344
 #, c-format
@@ -3660,10 +3661,10 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
-"A General MIDI hangeszközt választotta. A Sierra a General MIDI-t a \""
-"General MIDI Utility\"-n keresztül támogatta a General MIDI számára. Kérjük, "
-"alkalmazza ezt a javítást, hogy élvezhesse a MIDI zenét a játékkal. Ha "
-"beszerezte, a ScummVM extrák mappába az összes mellékelt * .PAT fájlt "
+"A General MIDI hangeszközt választotta. A Sierra a General MIDI-t a "
+"\"General MIDI Utility\"-n keresztül támogatta a General MIDI számára. "
+"Kérjük, alkalmazza ezt a javítást, hogy élvezhesse a MIDI zenét a játékkal. "
+"Ha beszerezte, a ScummVM extrák mappába az összes mellékelt * .PAT fájlt "
 "csomagolja ki, a ScummVM automatikusan hozzáadja a megfelelõ javítást. "
 "Alternatív megoldásként követheti a javításban szereplõ READ.ME fájlban "
 "található utasításokat, és átnevezheti a hozzárendelt * .PAT fájlt a 4.PAT "
