@@ -356,9 +356,6 @@ List<Event> Keymapper::remap(const Event &ev) {
 
 	switch (ev.type) {
 	case EVENT_KEYDOWN:
-		// eat the event by returning an event invalid
-		mappedEvent.type = EVENT_INVALID;
-		list.push_back(mappedEvent);
 		break;
 	case EVENT_KEYUP:
 		hwInput = findHardwareInput(ev.kbd);
