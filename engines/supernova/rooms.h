@@ -634,7 +634,7 @@ public:
 		_objectState[8] = Object("Tablette","Die Plastikhülle zeigt einen|Mund mit einer Sprechblase. Was|darin steht, kannst du nicht lesen.",PILL,TAKE,255,255,0);
 		_objectState[9] = Object("Schlitz",Object::defaultDescription,CAR_SLOT,COMBINABLE,6,6,0);
 		_objectState[10] = Object("Automat","Sieht aus wie ein Kaugummiautomat.",NULLOBJECT,NULLTYPE,5,5,0);
-		_objectState[11] = Object("Toilette","Die Toiletten sind denen|auf der Erde sehr ähnlich.",ARS_BATHROOM,NULLTYPE,255,255,0);
+		_objectState[11] = Object("Toilette","Die Toiletten sind denen|auf der Erde sehr ähnlich.",ARSANO_BATHROOM,NULLTYPE,255,255,0);
 		_objectState[12] = Object("Knopf",Object::defaultDescription,BATHROOM_BUTTON,PRESS,3,3,0);
 		_objectState[13] = Object("Schild","Diese Schrift kannst du nicht lesen.",BATHROOM_SIGN,NULLTYPE,4,4,0);
 		_objectState[14] = Object("Treppe",Object::defaultDescription,STAIRCASE,EXIT,8,8,0,REST,3);
