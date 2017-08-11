@@ -423,6 +423,10 @@ enum ObjectID {
 	TICKETS
 };
 
+
+static const char *const broken_DE = "Hmm, er scheint kaputt zu sein.";
+static const char *const broken_EN = "Hmm, it seems to be broken.";
+
 static const char *const guiCommand_DE[] = {
     "Gehe",
     "Schau",
@@ -436,9 +440,9 @@ static const char *const guiCommand_DE[] = {
     "Gib"
 };
 
-static const char *guiStatusCommand_DE[10] =
+static const char *const guiStatusCommand_DE[10] =
 {"Gehe zu ","Schau ","Nimm ","\231ffne ","Schlie\341e ","Dr\201cke ","Ziehe ","Benutze ","Rede mit ","Gib "};
-static const char *guiStatusCommand_EN[10] =
+static const char *const guiStatusCommand_EN[10] =
 {"Go to ", "Look at ", "Take ", "Open ", "Close ", "Press ", "Pull ", "Use ", "Talk to ", "Give "};
 
 ObjectType operator|(ObjectType a, ObjectType b);
