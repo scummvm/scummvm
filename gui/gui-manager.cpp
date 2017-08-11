@@ -31,6 +31,7 @@
 #include "gui/EventRecorder.h"
 
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/action.h"
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
