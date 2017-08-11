@@ -776,6 +776,7 @@ void Insane::actor02Reaction(int32 buttons) {
 						_actor[0].act[2].state = 106;
 						break;
 					}
+				break;
 			default:
 				smlayer_setActorFacing(0, 2, 20, 180);
 				_actor[0].act[2].state = 16;
