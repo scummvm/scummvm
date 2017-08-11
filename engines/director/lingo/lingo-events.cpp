@@ -280,6 +280,8 @@ void Lingo::processEvent(LEvent event) {
 			break;
 		case kEventBeginSprite:
 			processSpriteEvent(event);
+			break;
+
 		default:
 			warning("processEvent: Unhandled event %s", _eventHandlerTypes[event]);
 	}
