@@ -1770,6 +1770,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 			}
 			inputPos--;
 			redraw = true;
+			// fall through
 		case Common::KEYCODE_DELETE:
 			if (inputPos <= inputLength) {
 				if (inputPos != 1) {
