@@ -177,7 +177,6 @@ public:
 
 private:
 	Common::List<Common::Event> mapEvent(const Common::Event &ev, Common::EventSource *source) override;
-	bool notifyPoll();
 	bool pollEvent(Common::Event &ev) override;
 	bool _initialized;
 	volatile uint32 _fakeTimer;

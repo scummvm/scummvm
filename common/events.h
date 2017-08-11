@@ -277,11 +277,8 @@ public:
 
 	/**
 	 * Notifies the observer of pollEvent() query.
-	 *
-	 * @return  true if the event should not be passed to other observers,
-	 *          false otherwise.
 	 */
-	virtual bool notifyPoll() { return false; }
+	virtual void notifyPoll() { }
 };
 
 /**
