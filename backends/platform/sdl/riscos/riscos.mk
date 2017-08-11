@@ -6,7 +6,7 @@ riscosdist: scummvm$(EXEEXT)
 	cp ${srcdir}/dists/riscos/!Run,feb !ScummVM/!Run,feb
 	cp ${srcdir}/dists/riscos/!Sprites,ff9 !ScummVM/!Sprites,ff9
 	cp ${srcdir}/dists/riscos/!Sprites11,ff9 !ScummVM/!Sprites11,ff9
-	sed -i -e 's/|WimpSlot/WimpSlot -min $(shell du -k !ScummVM/scummvm,ff8 | cut -f1)K/g' !ScummVM/!Run,feb
+	sed -i -e "s/|WimpSlot/WimpSlot -min `du -k !ScummVM/scummvm,ff8 | cut -f1`K/g" !ScummVM/!Run,feb
 	mkdir -p !ScummVM/data
 	cp $(DIST_FILES_THEMES) !ScummVM/data/
 ifdef DIST_FILES_NETWORKING
