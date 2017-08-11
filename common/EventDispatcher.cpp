@@ -148,9 +148,8 @@ void EventDispatcher::dispatchEvent(const Event &event) {
 
 void EventDispatcher::dispatchPoll() {
 	for (List<ObserverEntry>::iterator i = _observers.begin(); i != _observers.end(); ++i) {
-		if (i->poll == true)
-			if (i->observer->notifyPoll())
-				break;
+		if (i->poll)
+			i->observer->notifyPoll();
 	}
 }
 
