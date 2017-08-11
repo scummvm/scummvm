@@ -62,6 +62,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
+void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 
 TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
 
@@ -326,6 +327,72 @@ void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, 
 	}
 }
 
+/**
+ * Optimized version of doBlit to be used with multiply blended blitting
+ */
+void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
+	byte *in;
+	byte *out;
+
+	if (color == 0xffffffff) {
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				if (in[kAIndex] != 0) {
+					out[kRIndex] = MIN((in[kRIndex] * in[kAIndex] >> 8) * out[kRIndex] >> 8, 255);
+					out[kGIndex] = MIN((in[kGIndex] * in[kAIndex] >> 8) * out[kGIndex] >> 8, 255);
+					out[kBIndex] = MIN((in[kBIndex] * in[kAIndex] >> 8) * out[kBIndex] >> 8, 255);
+				}
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	} else {
+		byte ca = (color >> kAModShift) & 0xFF;
+		byte cr = (color >> kRModShift) & 0xFF;
+		byte cg = (color >> kGModShift) & 0xFF;
+		byte cb = (color >> kBModShift) & 0xFF;
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				uint32 ina = in[kAIndex] * ca >> 8;
+
+				if (cb != 255) {
+					out[kBIndex] = MIN<uint>(out[kBIndex] * ((in[kBIndex] * cb * ina) >> 16) >> 8, 255u);
+				} else {
+					out[kBIndex] = MIN<uint>(out[kBIndex] * (in[kBIndex] * ina >> 8) >> 8, 255u);
+				}
+
+				if (cg != 255) {
+					out[kGIndex] = MIN<uint>(out[kGIndex] * ((in[kGIndex] * cg * ina) >> 16) >> 8, 255u);
+				} else {
+					out[kGIndex] = MIN<uint>(out[kGIndex] * (in[kGIndex] * ina >> 8) >> 8, 255u);
+				}
+
+				if (cr != 255) {
+					out[kRIndex] = MIN<uint>(out[kRIndex] * ((in[kRIndex] * cr * ina) >> 16) >> 8, 255u);
+				} else {
+					out[kRIndex] = MIN<uint>(out[kRIndex] * (in[kRIndex] * ina >> 8) >> 8, 255u);
+				}
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	}
+
+}
+
 Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
 
 	Common::Rect retSize;
@@ -452,6 +519,8 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else if (blendMode == BLEND_MULTIPLY) {
+				doBlitMultiplyBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
@@ -597,6 +666,8 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else if (blendMode == BLEND_MULTIPLY) {
+				doBlitMultiplyBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
