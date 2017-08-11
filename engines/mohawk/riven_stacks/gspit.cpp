@@ -95,12 +95,17 @@ void GSpit::xgrotatepins(const ArgumentArray &args) {
 		return;
 
 	uint32 &pinPos = _vm->_vars["gpinpos"];
-	uint32 startTime = (pinPos - 1) * 1200;
 
-	if (pinPos == 4)
+	static const uint32 pinPosTimes[] = {
+			8416, 0, 1216, 2416, 3616, 4846, 6016, 7216
+	};
+
+	uint32 startTime = pinPosTimes[pinPos];
+	pinPos++;
+	uint32 endTime = pinPosTimes[pinPos];
+
+	if (pinPos > 4)
 		pinPos = 1;
-	else
-		pinPos++;
 
 	// Play the rotating sound
 	_vm->_sound->playSound(12);
@@ -109,7 +114,7 @@ void GSpit::xgrotatepins(const ArgumentArray &args) {
 	RivenVideo *video = _vm->_video->openSlot(_vm->_vars["gupmoov"]);
 	video->enable();
 	video->seek(startTime);
-	video->playBlocking(startTime + 1215);
+	video->playBlocking(endTime);
 	video->disable();
 }
 
