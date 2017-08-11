@@ -483,6 +483,10 @@ struct Object {
 	static bool isNullObject(Object *obj) {
 		return obj == &nullObject;
 	}
+	void resetProperty(ObjectType type = NULLTYPE) {
+		_type = type;
+	}
+
 	void setProperty(ObjectType type) {
 		_type |= type;
 	}
