@@ -24,6 +24,8 @@
 
 #ifdef ENABLE_KEYMAPPER
 
+#include "backends/keymapper/action.h"
+
 #include "common/system.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/popup.h"
@@ -248,8 +250,7 @@ void RemapDialog::clearMapping(uint i) {
 
 	debug(3, "clear the mapping %u", i);
 	Action *activeRemapAction = _currentActions[_topAction + i].action;
-	activeRemapAction->mapInput(0);
-	activeRemapAction->getParent()->saveMappings();
+	_keymapper->clearMapping(activeRemapAction);
 	_changes = true;
 
 	// force refresh
@@ -351,8 +352,9 @@ void RemapDialog::loadKeymap() {
 
 			_currentActions.push_back(info);
 
-			if (act->getMappedInput())
-				freeInputs.remove(act->getMappedInput());
+			const HardwareInput *mappedInput = top.keymap->getActionMapping(act);
+			if (mappedInput)
+				freeInputs.remove(mappedInput);
 		}
 
 		// loop through remaining finding mappings for unmapped keys
@@ -364,12 +366,7 @@ void RemapDialog::loadKeymap() {
 				const HardwareInput *input = *inputIt;
 				while (inputIt != freeInputs.end()) {
 
-					Action *act = 0;
-					if (input->type == kHardwareInputTypeKeyboard)
-						act = mr.keymap->getMappedAction(input->key);
-					else if (input->type == kHardwareInputTypeGeneric)
-						act = mr.keymap->getMappedAction(input->inputCode);
-
+					Action *act = mr.keymap->getMappedAction(input);
 					if (act) {
 						ActionInfo info = {act, true, act->description + " (" + mr.keymap->getName() + ")"};
 						_currentActions.push_back(info);
@@ -432,8 +429,9 @@ void RemapDialog::refreshKeymap() {
 			widg.actionText->setLabel(info.description);
 			widg.actionText->setEnabled(!info.inherited);
 
-			const HardwareInput *mappedInput = info.action->getMappedInput();
+			Keymap *keymap = info.action->getParent();
 
+			const HardwareInput *mappedInput = keymap->getActionMapping(info.action);
 			if (mappedInput)
 				widg.keyButton->setLabel(mappedInput->description);
 			else

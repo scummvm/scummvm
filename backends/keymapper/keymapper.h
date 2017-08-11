@@ -39,6 +39,17 @@ namespace Common {
 const char *const kGuiKeymapName = "gui";
 const char *const kGlobalKeymapName = "global";
 
+/**
+ * Hash function for KeyState
+ */
+template<> struct Hash<KeyState>
+		: public UnaryFunction<KeyState, uint> {
+
+	uint operator()(const KeyState &val) const {
+		return (uint)val.keycode | ((uint)val.flags << 24);
+	}
+};
+
 class Keymapper : public Common::DefaultEventMapper {
 public:
 
@@ -199,6 +210,8 @@ public:
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
 	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
+
+	void clearMapping(Action *action);
 
 private:
 

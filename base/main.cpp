@@ -68,6 +68,8 @@
 #endif
 
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/action.h"
+
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"

@@ -24,6 +24,8 @@
 
 #ifdef ENABLE_KEYMAPPER
 
+#include "backends/keymapper/action.h"
+
 #include "common/config-manager.h"
 #include "common/system.h"
 
@@ -107,11 +109,6 @@ void Keymapper::initKeymap(Domain &domain, Keymap *map) {
 
 	map->setConfigDomain(domain.getConfigDomain());
 	map->loadMappings(_hardwareInputs);
-
-	if (map->isComplete(_hardwareInputs) == false) {
-		map->saveMappings();
-		ConfMan.flushToDisk();
-	}
 
 	domain.addKeymap(map);
 }
@@ -227,11 +224,14 @@ List<Event> Keymapper::mapKey(const KeyState& key, bool keyDown) {
 	Action *action = 0;
 
 	if (keyDown) {
+		// FIXME: Performance
+		const HardwareInput *hwInput = _hardwareInputs->findHardwareInput(key);
+
 		// Search for key in active keymap stack
 		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
 			MapRecord mr = _activeMaps[i];
 			debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
-			action = mr.keymap->getMappedAction(key);
+			action = mr.keymap->getMappedAction(hwInput);
 
 			if (action || !mr.transparent)
 				break;
@@ -259,13 +259,16 @@ List<Event> Keymapper::mapNonKey(const HardwareInputCode code) {
 	if (!_enabled || _activeMaps.empty())
 		return List<Event>();
 
+	// FIXME: Performance
+	const HardwareInput *hwInput = _hardwareInputs->findHardwareInput(code);
+
 	Action *action = 0;
 
 	// Search for nonkey in active keymap stack
 	for (int i = _activeMaps.size() - 1; i >= 0; --i) {
 		MapRecord mr = _activeMaps[i];
 		debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
-		action = mr.keymap->getMappedAction(code);
+		action = mr.keymap->getMappedAction(hwInput);
 
 		if (action || !mr.transparent)
 			break;
@@ -375,14 +378,22 @@ List<Event> Keymapper::remap(const Event &ev) {
 		break;
 	}
 	if (hwInput) {
-		_actionToRemap->mapInput(hwInput);
-		_actionToRemap->getParent()->saveMappings();
+		Keymap *keymap = _actionToRemap->getParent();
+		keymap->registerMapping(_actionToRemap, hwInput);
+		keymap->saveMappings();
+
 		_remapping = false;
 		_actionToRemap = 0;
 		mappedEvent.type = EVENT_GUI_REMAP_COMPLETE_ACTION;
 		list.push_back(mappedEvent);
 	}
 	return list;
+}
+
+void Keymapper::clearMapping(Action *action) {
+	Keymap *keymap = action->getParent();
+	keymap->unregisterMapping(action);
+	keymap->saveMappings();
 }
 
 } // End of namespace Common

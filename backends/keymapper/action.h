@@ -55,8 +55,6 @@ struct Action {
 	List<Event> events;
 
 private:
-	/** Hardware input that is mapped to this Action */
-	const HardwareInput *_hwInput;
 	Keymap *_boss;
 
 public:
@@ -96,9 +94,6 @@ public:
 	Keymap *getParent() {
 		return _boss;
 	}
-
-	void mapInput(const HardwareInput *input);
-	const HardwareInput *getMappedInput() const;
 
 };
 
