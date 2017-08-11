@@ -36,6 +36,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 
 namespace Kyra {
@@ -492,7 +493,7 @@ void LoLEngine::initKeymap() {
 
 	for (const Common::KeyActionEntry *entry = keyActionEntries; entry->id; ++entry) {
 		Common::Action *const act = new Common::Action(engineKeyMap, entry->id, entry->description);
-		act->addKeyEvent(entry->ks);
+		act->setKeyEvent(entry->ks);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);

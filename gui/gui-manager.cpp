@@ -122,10 +122,10 @@ void GuiManager::initKeymap() {
 	Keymap *guiMap = new Keymap(kGuiKeymapName);
 
 	act = new Action(guiMap, "CLOS", _("Close"));
-	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 
 	act = new Action(guiMap, "CLIK", _("Mouse click"));
-	act->addLeftClickEvent();
+	act->setLeftClickEvent();
 
 #ifdef ENABLE_VKEYBD
 	act = new Action(guiMap, "VIRT", _("Display keyboard"));
@@ -133,10 +133,10 @@ void GuiManager::initKeymap() {
 #endif
 
 	act = new Action(guiMap, "REMP", _("Remap keys"));
-	act->addEvent(EVENT_KEYMAPPER_REMAP);
+	act->setEvent(EVENT_KEYMAPPER_REMAP);
 
 	act = new Action(guiMap, "FULS", _("Toggle fullscreen"));
-	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
 
 	mapper->addGlobalKeymap(guiMap);
 }

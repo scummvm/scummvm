@@ -230,7 +230,6 @@ private:
 
 	void pushKeymap(Keymap *newMap, bool transparent, bool global);
 
-	Action *getAction(const KeyState& key);
 	List<Event> executeAction(const Action *act, IncomingEventType incomingType = kIncomingNonKey);
 	EventType convertDownToUp(EventType eventType);
 	List<Event> remap(const Event &ev);

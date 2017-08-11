@@ -280,47 +280,39 @@ List<Event> Keymapper::mapNonKey(const HardwareInputCode code) {
 	return executeAction(action);
 }
 
-Action *Keymapper::getAction(const KeyState& key) {
-	Action *action = 0;
-
-	return action;
-}
-
 List<Event> Keymapper::executeAction(const Action *action, IncomingEventType incomingType) {
 	List<Event> mappedEvents;
-	List<Event>::const_iterator it;
-	Event evt;
-	for (it = action->events.begin(); it != action->events.end(); ++it) {
-		evt = Event(*it);
-		EventType convertedType = convertDownToUp(evt.type);
 
-		// hardware keys need to send up instead when they are up
-		if (incomingType == kIncomingKeyUp) {
-			if (convertedType == EVENT_INVALID)
-				continue; // don't send any non-down-converted events on up they were already sent on down
-			evt.type = convertedType;
-		}
+	Event evt = Event(action->event);
+	EventType convertedType = convertDownToUp(evt.type);
 
-		evt.mouse = _eventMan->getMousePos();
-
-		// Check if the event is coming from a non-key hardware event
-		// that is mapped to a key event
-		if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID)
-			// WORKAROUND: Delay the down events coming from non-key hardware events
-			// with a zero delay. This is to prevent DOWN1 DOWN2 UP1 UP2.
-			addDelayedEvent(0, evt);
-		else
-			mappedEvents.push_back(evt);
-
-		// non-keys need to send up as well
-		if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID) {
-			// WORKAROUND: Delay the up events coming from non-key hardware events
-			// This is for engines that run scripts that check on key being down
-			evt.type = convertedType;
-			const uint32 delay = (convertedType == EVENT_KEYUP ? kDelayKeyboardEventMillis : kDelayMouseEventMillis);
-			addDelayedEvent(delay, evt);
-		}
+	// hardware keys need to send up instead when they are up
+	if (incomingType == kIncomingKeyUp) {
+		if (convertedType == EVENT_INVALID)
+			return List<Event>(); // don't send any non-down-converted events on up they were already sent on down
+		evt.type = convertedType;
 	}
+
+	evt.mouse = _eventMan->getMousePos();
+
+	// Check if the event is coming from a non-key hardware event
+	// that is mapped to a key event
+	if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID)
+		// WORKAROUND: Delay the down events coming from non-key hardware events
+		// with a zero delay. This is to prevent DOWN1 DOWN2 UP1 UP2.
+		addDelayedEvent(0, evt);
+	else
+		mappedEvents.push_back(evt);
+
+	// non-keys need to send up as well
+	if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID) {
+		// WORKAROUND: Delay the up events coming from non-key hardware events
+		// This is for engines that run scripts that check on key being down
+		evt.type = convertedType;
+		const uint32 delay = (convertedType == EVENT_KEYUP ? kDelayKeyboardEventMillis : kDelayMouseEventMillis);
+		addDelayedEvent(delay, evt);
+	}
+
 	return mappedEvents;
 }
 

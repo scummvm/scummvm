@@ -33,6 +33,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/random.h"
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "base/plugins.h"
 #include "base/version.h"
@@ -2517,7 +2518,7 @@ void PegasusEngine::initKeymap() {
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
 		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
-		act->addKeyEvent(keyActionEntries[i].ks);
+		act->setKeyEvent(keyActionEntries[i].ks);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
