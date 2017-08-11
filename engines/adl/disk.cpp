@@ -305,6 +305,11 @@ bool DiskImage::open(const Common::String &filename) {
 		_sectorsPerTrack = 18;
 		_bytesPerSector = 128;
 		_stream = f;
+	} else if (lcName.hasSuffix(".img")) {
+		_tracks = 40;
+		_sectorsPerTrack = 8;
+		_bytesPerSector = 512;
+		_stream = f;
 	}
 
 	int expectedSize = _tracks * _sectorsPerTrack * _bytesPerSector;
