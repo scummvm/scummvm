@@ -1760,6 +1760,7 @@ void ScummEngine_v5::o5_roomOps() {
 					return;
 				case 18: // clear kMainVirtScreen layer 2 buffer
 					_textSurface.fillRect(Common::Rect(0, _virtscr[kMainVirtScreen].topline * _textSurfaceMultiplier, _textSurface.pitch, (_virtscr[kMainVirtScreen].topline + _virtscr[kMainVirtScreen].h) * _textSurfaceMultiplier), 0);
+					return;
 				case 19: // enable palette operations (palManipulate(), cyclePalette() etc.)
 					_townsPaletteFlags |= 1;
 					return;
