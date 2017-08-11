@@ -470,10 +470,10 @@ void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte 
 		Paula::setAudioFilter(data > 0x40 || (data == 0x40 && _playerCtx.filterOn));
 		break;
 	case 0x65:	// RPN MSB
-		channel.regParamNumber = (data << 8) || (channel.regParamNumber & 0xFF);
+		channel.regParamNumber = (data << 8) | (channel.regParamNumber & 0xFF);
 		break;
 	case 0x64:	// RPN LSB
-		channel.regParamNumber = (channel.regParamNumber & 0xFF00) || data;
+		channel.regParamNumber = (channel.regParamNumber & 0xFF00) | data;
 		break;
 	case 0x79:	// Reset All Controllers
 		resetChannel(channel, ((&channel - _channelCtx) & 1) != 0);
