@@ -204,6 +204,7 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 			case Common::EVENT_LBUTTONUP:
 				if (type == kSelYesNo || type == kSelAnyKey)
 					return 1;
+				break;
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && console) {
 					console->attach();
