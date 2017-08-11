@@ -390,8 +390,9 @@ bool MohawkEngine_Riven::checkDatafiles() {
 	const char **datafiles = listExpectedDatafiles();
 	for (int i = 0; datafiles[i] != nullptr; i++) {
 		if (!SearchMan.hasFile(datafiles[i])) {
-			if (strcmp(datafiles[i], "j_Data3.mhk") == 0) {
-				// j_Data3.mhk comes from the 1.02 patch. It is not required to play.
+			if (strcmp(datafiles[i], "j_Data3.mhk") == 0
+					|| strcmp(datafiles[i], "b_Data1.mhk") == 0) {
+				// j_Data3.mhk and b_Data1.mhk come from the 1.02 patch. They are not required to play.
 				continue;
 			}
 
