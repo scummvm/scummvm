@@ -29,11 +29,9 @@
 namespace Common {
 
 Action::Action(Keymap *boss, const char *i,	String des)
-	: _boss(boss), description(des) {
+	: _boss(boss), description(des), id(i) {
 	assert(i);
 	assert(_boss);
-
-	Common::strlcpy(id, i, ACTION_ID_SIZE);
 
 	_boss->addAction(this);
 }
