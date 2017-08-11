@@ -53,7 +53,7 @@ enum AudioIndex {
 	kAudioGreat,                // 44|0
 	kAudioCrash,                // 45|0
 	kAudioVoiceHalt,            // 46|0
-	kAudioUndef1,               // 46|2510
+	kAudioGunShot,               // 46|2510
 	kAudioUndef2,               // 46|4020
 	kAudioVoiceSupernova,       // 47|0
 	kAudioVoiceYeah,            // 47|24010
@@ -63,6 +63,7 @@ enum AudioIndex {
 	kAudioTurntable,            // 48|13530
 	kAudioUndef5,               // 50|0
 	kAudioUndef6,               // 50|12786
+	kAudioRocks,                // 51|0
 	kAudioDeath,                // 53|0
 	kAudioAlarm,                // 54|0
 	kAudioUndef7,               // 54|8010
@@ -405,7 +406,7 @@ enum ObjectID {
 	STONE,
 	SPACESHIPS,SPACESHIP,STAR,DOOR,MEETUP_SIGN,
 	PORTER,BATHROOM_BUTTON,BATHROOM_SIGN,KITCHEN_SIGN,CAR_SLOT,
-	ARS_BATHROOM,COINS,SCHNUCK,EGG,PILL,PILL_HULL,STAIRCASE,
+	ARSANO_BATHROOM,COINS,SCHNUCK,EGG,PILL,PILL_HULL,STAIRCASE,
 	MEETUP_EXIT,
 	ROGER_W,WALLET,KEYCARD_R,CUP,
 	GLIDER_BUTTON1,GLIDER_BUTTON2,GLIDER_BUTTON3,GLIDER_BUTTON4,GLIDER_SLOT,GLIDER_BUTTONS,
