@@ -47,7 +47,7 @@ public:
 	 * @param actionId String representing Action id (Action.id)
 	 * @return String representing the HardwareInput id (HardwareInput.id)
 	 */
-	String getDefaultBinding(String keymapId, String actionId) { return getVal(keymapId + "_" + actionId); }
+	String getDefaultBinding(String keymapId, String actionId) const { return getVal(keymapId + "_" + actionId); }
 };
 
 } //namespace Common

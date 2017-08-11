@@ -29,27 +29,13 @@
 namespace Common {
 
 Action::Action(Keymap *boss, const char *i,	String des)
-	: _boss(boss), description(des), _hwInput(0) {
+	: _boss(boss), description(des) {
 	assert(i);
 	assert(_boss);
 
 	Common::strlcpy(id, i, ACTION_ID_SIZE);
 
 	_boss->addAction(this);
-}
-
-void Action::mapInput(const HardwareInput *input) {
-	if (_hwInput)
-		_boss->unregisterMapping(this);
-
-	_hwInput = input;
-
-	if (_hwInput)
-		_boss->registerMapping(this, _hwInput);
-}
-
-const HardwareInput *Action::getMappedInput() const {
-	return _hwInput;
 }
 
 } // End of namespace Common

@@ -30,23 +30,14 @@
 #include "common/config-manager.h"
 #include "common/func.h"
 #include "common/hashmap.h"
-#include "common/keyboard.h"
+#include "common/hash-ptr.h"
 #include "common/list.h"
-#include "backends/keymapper/action.h"
-#include "backends/keymapper/hardware-input.h"
 
 namespace Common {
 
-/**
- * Hash function for KeyState
- */
-template<> struct Hash<KeyState>
-	: public UnaryFunction<KeyState, uint> {
-
-	uint operator()(const KeyState &val) const {
-		return (uint)val.keycode | ((uint)val.flags << 24);
-	}
-};
+class Action;
+class HardwareInput;
+class HardwareInputSet;
 
 class Keymap {
 public:
@@ -56,30 +47,36 @@ public:
 
 public:
 	/**
-	 * Retrieves the Action with the given id
-	 * @param id id of Action to retrieve
-	 * @return Pointer to the Action or 0 if not found
+	* Registers a HardwareInput to the given Action
+	* @param action Action in this Keymap
+	* @param key pointer to HardwareInput to map
+	* @see Action::mapKey
+	*/
+	void registerMapping(Action *action, const HardwareInput *input);
+
+	/**
+	* Unregisters a HardwareInput from the given Action (if one is mapped)
+	* @param action Action in this Keymap
+	* @see Action::mapKey
+	*/
+	void unregisterMapping(Action *action);
+
+	/**
+	 * Find the hardware input an action is mapped to, if any
 	 */
-	Action *getAction(const char *id);
+	const HardwareInput *getActionMapping(Action *action) const;
+
+	/**
+	 * Find the Action that a hardware input is mapped to
+	 * @param hardwareInput	the input that is mapped to the required Action
+	 * @return		a pointer to the Action or 0 if no
+	 */
+	Action *getMappedAction(const HardwareInput *hardwareInput) const;
 
 	/**
 	 * Get the list of all the Actions contained in this Keymap
 	 */
 	List<Action *>& getActions() { return _actions; }
-
-	/**
-	 * Find the Action that a key is mapped to
-	 * @param key	the key that is mapped to the required Action
-	 * @return		a pointer to the Action or 0 if no
-	 */
-	Action *getMappedAction(const KeyState& ks) const;
-
-	/**
-	 * Find the Action that a generic input is mapped to
-	 * @param code	the input code that is mapped to the required Action
-	 * @return			a pointer to the Action or 0 if no
-	 */
-	Action *getMappedAction(const HardwareInputCode code) const;
 
 	void setConfigDomain(ConfigManager::Domain *dom);
 
@@ -96,12 +93,6 @@ public:
 	 */
 	void saveMappings();
 
-	/**
-	 * Returns true if all UserAction's in Keymap are mapped, or,
-	 * all HardwareInputs from the given set have been used up.
-	 */
-	bool isComplete(const HardwareInputSet *hwInputs);
-
 	const String& getName() { return _name; }
 
 private:
@@ -114,28 +105,14 @@ private:
 	 */
 	void addAction(Action *action);
 
-	/**
-	* Registers a HardwareInput to the given Action
-	* @param action Action in this Keymap
-	* @param key pointer to HardwareInput to map
-	* @see Action::mapKey
-	*/
-	void registerMapping(Action *action, const HardwareInput *input);
-
-	/**
-	* Unregisters a HardwareInput from the given Action (if one is mapped)
-	* @param action Action in this Keymap
-	* @see Action::mapKey
-	*/
-	void unregisterMapping(Action *action);
-
-	Action *findAction(const char *id);
 	const Action *findAction(const char *id) const;
 
+	typedef List<Action *> ActionList;
+	typedef HashMap<const HardwareInput *, Action *> HardwareActionMap;
+
 	String _name;
-	List<Action *> _actions;
-	HashMap<KeyState, Action *> _keymap;
-	HashMap<HardwareInputCode, Action *> _nonkeymap;
+	ActionList _actions;
+	HardwareActionMap _hwActionMap;
 	ConfigManager::Domain *_configDomain;
 
 };
