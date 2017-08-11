@@ -27,7 +27,6 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "backends/keymapper/keymapper.h"
 #include "gui/dialog.h"
 
 namespace GUI {
@@ -38,6 +37,10 @@ class StaticTextWidget;
 }
 
 namespace Common {
+
+class Action;
+class Keymap;
+class Keymapper;
 
 class RemapDialog : public GUI::Dialog {
 public:
@@ -79,7 +82,6 @@ protected:
 
 	GUI::StaticTextWidget *_kmPopUpDesc;
 	GUI::PopUpWidget *_kmPopUp;
-	//GUI::ContainerWidget *_container;
 	GUI::ScrollBarWidget *_scrollBar;
 
 	uint _rowCount;
