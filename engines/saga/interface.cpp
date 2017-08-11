@@ -1169,6 +1169,7 @@ void Interface::processStatusTextInput(Common::KeyState keystate) {
 		}
 		_statusTextInputPos--;
 		_statusTextInputString[_statusTextInputPos] = 0;
+		break;
 	default:
 		if (_statusTextInputPos >= STATUS_TEXT_INPUT_MAX - 1) { // -1 because of the null termination
 			break;
@@ -1202,6 +1203,7 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 			break;
 		}
 		_textInputPos--;
+		// fall through
 	case Common::KEYCODE_DELETE:
 		if (_textInputPos <= _textInputStringLength) {
 			if (_textInputPos != 1) {
