@@ -123,7 +123,6 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 		}
 
 		_npcFlags &= ~NPCFLAG_MOVING;
-		flag = true;
 	}
 
 	if (_npcFlags & NPCFLAG_MOVE_LOOP) {
