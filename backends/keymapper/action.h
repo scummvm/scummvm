@@ -37,8 +37,6 @@ namespace Common {
 struct HardwareInput;
 class Keymap;
 
-#define ACTION_ID_SIZE (5)
-
 struct KeyActionEntry {
 	const KeyState ks;
 	const char *id;
@@ -47,7 +45,7 @@ struct KeyActionEntry {
 
 struct Action {
 	/** unique id used for saving/loading to config */
-	char id[ACTION_ID_SIZE];
+	const char *id;
 	/** Human readable description */
 	String description;
 

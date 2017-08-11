@@ -74,7 +74,7 @@ const HardwareInput *Keymap::getActionMapping(Action *action) const {
 
 const Action *Keymap::findAction(const char *id) const {
 	for (ActionList::const_iterator it = _actions.begin(); it != _actions.end(); ++it) {
-		if (strncmp((*it)->id, id, ACTION_ID_SIZE) == 0)
+		if (strcmp((*it)->id, id) == 0)
 			return *it;
 	}
 
@@ -131,13 +131,7 @@ void Keymap::saveMappings() {
 		const Action *action = it->_value;
 		const HardwareInput *input = it->_key;
 
-		uint actIdLen = strlen(action->id);
-
-		actIdLen = (actIdLen > ACTION_ID_SIZE) ? ACTION_ID_SIZE : actIdLen;
-
-		String actId(action->id, action->id + actIdLen);
-
-		_configDomain->setVal(prefix + actId, input->id);
+		_configDomain->setVal(prefix + action->id, input->id);
 	}
 }
 
