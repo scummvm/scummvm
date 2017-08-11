@@ -2634,6 +2634,8 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				return true;
 		}
 
+		break;
+
 	case Common::EVENT_KEYUP:
 		return isScalerHotkey(event);
 
