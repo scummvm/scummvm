@@ -179,6 +179,16 @@ RivenScriptPtr RivenScriptManager::createScriptFromData(uint16 commandCount, ...
 	return readScript(&readStream);
 }
 
+RivenScriptPtr RivenScriptManager::readScriptFromData(uint16 *data, uint16 size) {
+	// Script data is expected to be in big endian
+	for (uint i = 0; i < size; i++) {
+		data[i] = TO_BE_16(data[i]);
+	}
+
+	Common::MemoryReadStream patchStream((const byte *)(data), size * sizeof(uint16));
+	return _vm->_scriptMan->readScript(&patchStream);
+}
+
 RivenScriptPtr RivenScriptManager::createScriptWithCommand(RivenCommand *command) {
 	assert(command);
 
@@ -310,6 +320,29 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 		arguments.push_back(0);
 		_commands.push_back(RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandPlaySound, arguments)));
 		debugC(kRivenDebugPatches, "Applied missing closing sound patch to card %x", cardGlobalId);
+	}
+
+	// Second part of the patch to fix the invalid card change when entering Gehn's office
+	// The first part is in the card patches.
+	if (cardGlobalId == 0x2E76 && scriptType == kCardUpdateScript && !(vm->getFeatures() & GF_DVD)) {
+		shouldApplyPatches = true;
+
+		for (uint i = 0; i < _commands.size(); i++) {
+			int transitionIndex = -1;
+			if (_commands[i]->getType() == kRivenCommandTransition) {
+				transitionIndex = i;
+			}
+			if (transitionIndex >= 0) {
+				_commands.remove_at(transitionIndex + 1);
+				_commands.remove_at(transitionIndex);
+
+				RivenSimpleCommand::ArgumentArray arguments;
+				arguments.push_back(6);
+				_commands.push_back(RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandActivatePLST, arguments)));
+			}
+		}
+
+		debugC(kRivenDebugPatches, "Applied invalid card change during screen update (2/2) to card %x", cardGlobalId);
 	}
 
 	if (shouldApplyPatches) {

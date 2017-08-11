@@ -130,19 +130,118 @@ void RivenCard::applyPatches(uint16 id) {
 				forwardEnabled.index
 		};
 
-		// Script data is expected to be in big endian
-		for (uint i = 0; i < ARRAYSIZE(patchData); i++) {
-			patchData[i] = TO_BE_16(patchData[i]);
-		}
-
-		Common::MemoryReadStream patchStream((const byte *)(patchData), ARRAYSIZE(patchData) * sizeof(uint16));
-		RivenScriptPtr patchScript = _vm->_scriptMan->readScript(&patchStream);
+		RivenScriptPtr patchScript = _vm->_scriptMan->readScriptFromData(patchData, ARRAYSIZE(patchData));
 
 		// Append the patch to the existing script
 		RivenScriptPtr loadScript = getScript(kCardLoadScript);
 		loadScript += patchScript;
 
 		debugC(kRivenDebugPatches, "Applied fix always enabled forward hotspot in card %x", globalId);
+	}
+
+	// In Gehn's office, after having encountered him once before and coming back
+	// with the trap book, the draw update script of card 1 tries to switch to
+	// card 2 while still loading card 1. Switching cards is not allowed during
+	// draw update scripts, resulting in an use after free crash.
+	//
+	// Here we backport the fix that has been made in the DVD version to the CD version.
+	//
+	// Script before patch:
+	// == Script 1 ==
+	// type: CardUpdate
+	// switch (agehn) {
+	// case 1:
+	//   switch (atrapbook) {
+	//     case 1:
+	//       obutton = 1;
+	//       transition(16);
+	//       switchCard(2);
+	//       break;
+	//   }
+	// break;
+	// case 2:
+	//   activatePLST(5);
+	//   break;
+	// case 3:
+	//   activatePLST(5);
+	//   break;
+	// }
+	//
+	//
+	// Script after patch:
+	// == Script 1 ==
+	// type: CardUpdate
+	// switch (agehn) {
+	// case 1:
+	//   switch (atrapbook) {
+	//     case 1:
+	//       obutton = 1;
+	//       activatePLST(6);
+	//       break;
+	//   }
+	// break;
+	// case 2:
+	//   activatePLST(5);
+	//   break;
+	// case 3:
+	//   activatePLST(5);
+	//   break;
+	// }
+	//
+	// == Script 2 ==
+	// type: CardEnter
+	// switch (agehn) {
+	// case 1:
+	//   switch (atrapbook) {
+	//     case 1:
+	//       transition(16);
+	//       switchCard(2);
+	//       break;
+	//     }
+	//   break;
+	// }
+	if (globalId == 0x2E76 && !(_vm->getFeatures() & GF_DVD)) {
+		uint16 aGehnVariable = _vm->getStack()->getIdFromName(kVariableNames, "agehn");
+		uint16 aTrapBookVariable = _vm->getStack()->getIdFromName(kVariableNames, "atrapbook");
+		uint16 patchData[] = {
+				1, // Command count in script
+				kRivenCommandSwitch,
+				2, // Unused
+				aGehnVariable,
+				1, // Branches count
+
+				1, // agehn == 1 branch
+				1, // Command count in sub-script
+				kRivenCommandSwitch,
+				2, // Unused
+				aTrapBookVariable,
+				1, // Branches count
+
+				1, // atrapbook == 1 branch
+				2, // Command count in sub-script
+				kRivenCommandTransition,
+				1, // Argument count
+				kRivenTransitionBlend,
+				kRivenCommandChangeCard,
+				1, // Argument count
+				2  // Card id
+		};
+
+		// Add the new script to the list
+		RivenTypedScript patchScript;
+		patchScript.type = kCardEnterScript;
+		patchScript.script = _vm->_scriptMan->readScriptFromData(patchData, ARRAYSIZE(patchData));
+		_scripts.push_back(patchScript);
+
+		// Add a black picture to the card's list to be able to use it in the second part of the patch
+		Picture blackPicture;
+		blackPicture.index = 6;
+		blackPicture.id = 117;
+		blackPicture.rect = Common::Rect(608, 392);
+		_pictureList.push_back(blackPicture);
+
+		debugC(kRivenDebugPatches, "Applied invalid card change during screen update (1/2) to card %x", globalId);
+		// The second part of this patch is in the script patches
 	}
 
 	// Apply script patches
@@ -698,7 +797,7 @@ RivenScriptPtr RivenCard::onKeyAction(RivenKeyAction keyAction) {
 	static const char *upNames          [] = { "up",                       nullptr };
 	static const char *downNames        [] = { "down",                     nullptr };
 
-	static const char **hotspotNames;
+	const char **hotspotNames = nullptr;
 	switch (keyAction) {
 		case kKeyActionMoveForward:
 			hotspotNames = forwardNames;

@@ -170,6 +170,14 @@ public:
 	/** Read a single script from a stream */
 	RivenScriptPtr readScript(Common::ReadStream *stream);
 
+	/**
+	 * Read a script from an array of uint16
+	 * @param data Script data array. Will be modified.
+	 * @param size Number of uint16 in data
+	 * @return
+	 */
+	RivenScriptPtr readScriptFromData(uint16 *data, uint16 size);
+
 	/** Create a script from the caller provided arguments containing raw data */
 	RivenScriptPtr createScriptFromData(uint16 commandCount, ...);
 
