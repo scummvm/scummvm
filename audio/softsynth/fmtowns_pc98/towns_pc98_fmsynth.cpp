@@ -935,7 +935,7 @@ void TownsPC98_FmSynth::reset() {
 	for (int i = 0; i < _numChan; i++) {
 		for (int ii = 0; ii < 4; ii++)
 			_chanInternal[i].opr[ii]->reset();
-		memset(_chanInternal[i].feedbuf, 0, 3);
+		memset(_chanInternal[i].feedbuf, 0, 3 * sizeof(int32));
 		_chanInternal[i].algorithm = 0;
 		_chanInternal[i].frqTemp = 0;
 		_chanInternal[i].enableLeft = _chanInternal[i].enableRight = true;
