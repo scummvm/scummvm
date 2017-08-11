@@ -25,6 +25,7 @@
 #ifdef ENABLE_KEYMAPPER
 
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
 
 #include "common/system.h"
 #include "gui/gui-manager.h"
