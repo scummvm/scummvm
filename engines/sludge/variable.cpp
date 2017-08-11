@@ -21,6 +21,7 @@
  */
 
 #include "common/debug.h"
+#include "common/savefile.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/variable.h"
@@ -141,35 +142,28 @@ int stackSize(const StackHandler *me) {
 }
 
 bool getSavedGamesStack(StackHandler *sH, const Common::String &ext) {
-#if 0
+
+	// Make pattern
+	uint len = ext.size();
 	Common::String pattern = "*";
 	pattern += ext;
 
+	// Get all saved files
+	Common::StringArray sa = g_system->getSavefileManager()->listSavefiles(pattern);
+
+	// Save file names to stacks
 	Variable newName;
 	newName.varType = SVT_NULL;
-
-	DIR *dir = opendir(".");
-	if (!dir)
-		return false;
-
-	struct dirent *d = readdir(dir);
-	while (d != NULL) {
-		if (!strcmp(d->d_name + strlen(d->d_name) - strlen(ext), ext)) {
-			d->d_name[strlen(d->d_name) - strlen(ext)] = 0;
-			char *decoded = decodeFilename(d->d_name);
-			makeTextVar(newName, decoded);
-			delete[] decoded;
-			if (!addVarToStack(newName, sH->first))
-				return false;
-			if (sH->last == NULL)
-				sH->last = sH->first;
-		}
-
-		d = readdir(dir);
+	Common::StringArray::iterator it;
+	for (it = sa.begin(); it != sa.end(); ++it) {
+		(*it).erase((*it).size() - len, len);
+		makeTextVar(newName, (*it));
+		if (!addVarToStack(newName, sH->first))
+			return false;
+		if (sH->last == NULL)
+			sH->last = sH->first;
 	}
 
-	closedir(dir);
-#endif
 	return true;
 }
 
