@@ -26,6 +26,7 @@
 #include "common/keyboard.h"
 #include "common/translation.h"
 #include "common/system.h"
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "graphics/scaler.h"
 #include "gui/saveload.h"
@@ -903,22 +904,22 @@ void MohawkEngine_Riven::initKeymap() {
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
 		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
-		act->addKeyEvent(keyActionEntries[i].ks);
+		act->setKeyEvent(keyActionEntries[i].ks);
 	}
 
 	if (getFeatures() & GF_DEMO) {
 		for (uint i = 0; i < ARRAYSIZE(keyActionEntriesDemo); i++) {
 			Common::Action* const act = new Common::Action(engineKeyMap, keyActionEntriesDemo[i].id, keyActionEntriesDemo[i].description);
-			act->addKeyEvent(keyActionEntriesDemo[i].ks);
+			act->setKeyEvent(keyActionEntriesDemo[i].ks);
 		}
 	}
 
 	if (getFeatures() & GF_25TH) {
 		Common::Action* const act = new Common::Action(engineKeyMap, "SMNU", _("Skip / Open main menu"));
-		act->addKeyEvent(Common::KEYCODE_ESCAPE);
+		act->setKeyEvent(Common::KEYCODE_ESCAPE);
 	} else {
 		Common::Action* const act = new Common::Action(engineKeyMap, "SKIP", _("Skip"));
-		act->addKeyEvent(Common::KEYCODE_ESCAPE);
+		act->setKeyEvent(Common::KEYCODE_ESCAPE);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);

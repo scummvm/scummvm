@@ -29,7 +29,6 @@
 
 #include "common/events.h"
 #include "common/func.h"
-#include "common/list.h"
 #include "common/str.h"
 
 namespace Common {
@@ -49,8 +48,8 @@ struct Action {
 	/** Human readable description */
 	String description;
 
-	/** Events to be sent when mapped key is pressed */
-	List<Event> events;
+	/** Event to be sent when mapped key is pressed */
+	Event event;
 
 private:
 	Keymap *_boss;
@@ -58,35 +57,31 @@ private:
 public:
 	Action(Keymap *boss, const char *id, String des = "");
 
-	void addEvent(const Event &evt) {
-		events.push_back(evt);
+	void setEvent(const Event &evt) {
+		event = evt;
 	}
 
-	void addEvent(const EventType evtType) {
-		Event evt;
-
-		evt.type = evtType;
-		events.push_back(evt);
+	void setEvent(const EventType evtType) {
+		event = Event();
+		event.type = evtType;
 	}
 
-	void addKeyEvent(const KeyState &ks) {
-		Event evt;
-
-		evt.type = EVENT_KEYDOWN;
-		evt.kbd = ks;
-		addEvent(evt);
+	void setKeyEvent(const KeyState &ks) {
+		event = Event();
+		event.type = EVENT_KEYDOWN;
+		event.kbd = ks;
 	}
 
-	void addLeftClickEvent() {
-		addEvent(EVENT_LBUTTONDOWN);
+	void setLeftClickEvent() {
+		setEvent(EVENT_LBUTTONDOWN);
 	}
 
-	void addMiddleClickEvent() {
-		addEvent(EVENT_MBUTTONDOWN);
+	void setMiddleClickEvent() {
+		setEvent(EVENT_MBUTTONDOWN);
 	}
 
-	void addRightClickEvent() {
-		addEvent(EVENT_RBUTTONDOWN);
+	void setRightClickEvent() {
+		setEvent(EVENT_RBUTTONDOWN);
 	}
 
 	Keymap *getParent() {
