@@ -188,7 +188,6 @@ public:
 	void say(const char *text);
 	void reply(const char *text, int aus1, int aus2);
 	void shipStart();
-	void inventorySeize();
 	void shot(int a, int b);
 	void takeMoney(int amount);
 	void search(int time);
