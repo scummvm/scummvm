@@ -35,6 +35,7 @@
 
 #include "gui/error.h"
 
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 
 namespace Kyra {
@@ -374,12 +375,12 @@ void EoBCoreEngine::initKeymap() {
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); ++i) {
 		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
-		act->addKeyEvent(keyActionEntries[i].ks);
+		act->setKeyEvent(keyActionEntries[i].ks);
 	}
 
 	if (_flags.gameID == GI_EOB2) {
 		Common::Action *const act = new Common::Action(engineKeyMap, "SL6", _("Spell Level 6"));
-		act->addKeyEvent(Common::KeyState(Common::KEYCODE_6));
+		act->setKeyEvent(Common::KeyState(Common::KEYCODE_6));
 	}
 
 	mapper->addGameKeymap(engineKeyMap);

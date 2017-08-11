@@ -363,36 +363,36 @@ static void setupKeymapper(OSystem &system) {
 	Keymap *primaryGlobalKeymap = new Keymap(kGlobalKeymapName);
 	Action *act;
 	act = new Action(primaryGlobalKeymap, "MENU", _("Menu"));
-	act->addEvent(EVENT_MAINMENU);
+	act->setEvent(EVENT_MAINMENU);
 
 	act = new Action(primaryGlobalKeymap, "SKCT", _("Skip"));
-	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 
 	act = new Action(primaryGlobalKeymap, "PAUS", _("Pause"));
-	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
+	act->setKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
 
 	act = new Action(primaryGlobalKeymap, "SKLI", _("Skip line"));
-	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
+	act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
 
 #ifdef ENABLE_VKEYBD
 	act = new Action(primaryGlobalKeymap, "VIRT", _("Display keyboard"));
-	act->addEvent(EVENT_VIRTUAL_KEYBOARD);
+	act->setEvent(EVENT_VIRTUAL_KEYBOARD);
 #endif
 
 	act = new Action(primaryGlobalKeymap, "REMP", _("Remap keys"));
-	act->addEvent(EVENT_KEYMAPPER_REMAP);
+	act->setEvent(EVENT_KEYMAPPER_REMAP);
 
 	act = new Action(primaryGlobalKeymap, "FULS", _("Toggle fullscreen"));
-	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
 
 	act = new Action(primaryGlobalKeymap, "LCLK", _("Left Click"));
-	act->addLeftClickEvent();
+	act->setLeftClickEvent();
 
 	act = new Action(primaryGlobalKeymap, "MCLK", _("Middle Click"));
-	act->addMiddleClickEvent();
+	act->setMiddleClickEvent();
 
 	act = new Action(primaryGlobalKeymap, "RCLK", _("Right Click"));
-	act->addRightClickEvent();
+	act->setRightClickEvent();
 
 	mapper->addGlobalKeymap(primaryGlobalKeymap);
 	mapper->pushKeymap(kGlobalKeymapName, true);
