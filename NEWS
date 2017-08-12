@@ -33,8 +33,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Added a command-line option to automatically scan for supported games in
      the current or a specified directory.
-   - Many options in GUI could be applied without closing the dialog.
-   - On-the-fly language switching was implemented.
+   - Added possibility to apply changes in the options dialog without closing
+     the dialog.
+   - Added support for on-the-fly GUI language switching.
    - Updated Munt MT-32 emulation code to version 2.0.3.
    - Improved handling of joysticks.
 
