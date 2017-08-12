@@ -65,6 +65,8 @@ SoundManager::SoundManager() {
 }
 
 SoundManager::~SoundManager() {
+	killSoundStuff();
+
 	delete []_soundCache;
 	_soundCache = nullptr;
 
@@ -72,8 +74,6 @@ SoundManager::~SoundManager() {
 	delete []_modCache;
 	_modCache = nullptr;
 	#endif
-
-	killSoundStuff();
 }
 
 bool SoundManager::initSoundStuff() {
