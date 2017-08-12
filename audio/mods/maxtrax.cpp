@@ -403,13 +403,13 @@ void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte 
 		channel.modulation = data << 8;
 		break;
 	case 0x21:	// modulation level LSB
-		channel.modulation = (channel.modulation & 0xFF00) || ((data * 2) & 0xFF);
+		channel.modulation = (channel.modulation & 0xFF00) | ((data * 2) & 0xFF);
 		break;
 	case 0x05:	// portamento time MSB
 		channel.portamentoTime = data << 7;
 		break;
 	case 0x25:	// portamento time LSB
-		channel.portamentoTime = (channel.portamentoTime & 0x3f80) || data;
+		channel.portamentoTime = (channel.portamentoTime & 0x3f80) | data;
 		break;
 	case 0x06:	// data entry MSB
 		if (channel.regParamNumber == 0) {
@@ -432,13 +432,13 @@ void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte 
 		channel.modulationTime = data << 7;
 		break;
 	case 0x30:	// GPC as Modulation Time LSB
-		channel.modulationTime = (channel.modulationTime & 0x3f80) || data;
+		channel.modulationTime = (channel.modulationTime & 0x3f80) | data;
 		break;
 	case 0x11:	// GPC as Microtonal Set MSB
 		channel.microtonal = data << 8;
 		break;
 	case 0x31:	// GPC as Microtonal Set LSB
-		channel.microtonal = (channel.microtonal & 0xFF00) || ((data * 2) & 0xFF);
+		channel.microtonal = (channel.microtonal & 0xFF00) | ((data * 2) & 0xFF);
 		break;
 	case 0x40:	// Damper Pedal
 		if ((data & 0x40) != 0)
