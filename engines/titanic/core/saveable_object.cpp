@@ -1623,8 +1623,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CGondolierSong, CRoomAutoSoundPlayer);
 	ADDFN(CSeasonNoises, CViewAutoSoundPlayer);
 	ADDFN(CSeasonalMusicPlayer, CAutoMusicPlayerBase);
-	ADDFN(CAutoMusicPlayer, CAutoMusicPlayerBase);
-	ADDFN(CAutoMusicPlayerBase, CAutoMusicPlayer);
 	ADDFN(CTitaniaSpeech, CGameObject);
 	ADDFN(CStarControl, CGameObject);
 	ADDFN(CTimeEventInfo, ListItem);
