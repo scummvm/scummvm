@@ -1904,7 +1904,10 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->reply("Gut, dann versetzen wir Sie jetzt in Tiefschlaf.", 1, 1 + 128);
 		_gm->reply("Gute Nacht!", 1, 1 + 128);
 		_vm->paletteFadeOut();
-		_gm->inventorySeize();
+		_gm->_inventory.clear();
+		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(1));  // Knife
+		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(2));  // Watch
+		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(3));  // Discman
 		_gm->changeRoom(CELL);
 		_gm->_newRoom = true;
 		_gm->_state.benOverlay = 2;
