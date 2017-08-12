@@ -140,7 +140,7 @@ public:
 	void burnSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal);
 
 	void resetSpriteLayers(ZBufferData *ptrZBuffer, int x, int y, bool upsidedown);
-	void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width = -1, int height = -1, uint32 color = TS_ARGB(255, 255, 255, 255), bool disposeAfterUse = false);
+	void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width = -1, int height = -1, bool disposeAfterUse = false);
 	void displaySpriteLayers();
 	void killSpriteLayers();
 
@@ -183,7 +183,6 @@ private:
 	// LightMap
 	int _lightMapNumber;
 	Graphics::Surface _lightMap;
-	byte _curLight[3];
 
 	// Parallax
 	Parallax *_parallaxStuff;
@@ -206,8 +205,7 @@ private:
 	// Sprites
 	SpriteLayers *_spriteLayers;
 	void fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal);
-	uint32 getDrawColor(OnScreenPerson *thisPerson);
-	void applyLightMapToSprite(Sprite &single, OnScreenPerson *thisPerson);
+	uint32 getDrawColor(OnScreenPerson *thisPerson, byte *curLight);
 
 	// Sprite banks
 	LoadedSpriteBanks _allLoadedBanks;
