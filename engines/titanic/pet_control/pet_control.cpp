@@ -82,15 +82,15 @@ void CPetControl::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
-void CPetControl::setup() {
-	_conversations.setup(this);
-	_rooms.setup(this);
-	_remote.setup(this);
-	_inventory.setup(this);
-	_starfield.setup(this);
-	_realLife.setup(this);
-	_translation.setup(this);
-	_frame.setup(this);
+void CPetControl::reset() {
+	_conversations.reset();
+	_rooms.reset();
+	_remote.reset();
+	_inventory.reset();
+	_starfield.reset();
+	_realLife.reset();
+	_translation.reset();
+	_frame.reset();
 }
 
 bool CPetControl::isValid() {

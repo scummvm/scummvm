@@ -148,9 +148,9 @@ public:
 	virtual Rect getBounds() const;
 
 	/**
-	 * Setups the sections within the PET
+	 * Resets the PET, including all the sections within it
 	 */
-	void setup();
+	void reset();
 
 	/**
 	 * Called after loading a game has finished

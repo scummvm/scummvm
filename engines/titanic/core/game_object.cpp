@@ -1354,7 +1354,7 @@ void CGameObject::setPassengerClass(PassengerClass newClass) {
 		// Setup the PET again, so the new class's PET background can take effect
 		CPetControl *petControl = getPetControl();
 		if (petControl)
-			petControl->setup();
+			petControl->reset();
 	}
 }
 
