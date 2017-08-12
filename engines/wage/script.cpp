@@ -160,7 +160,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 
 	if (inputText) {
 		input = preprocessInputText(*_inputText);
-		warning("Input was: '%s' is '%s'", _inputText->c_str(), input.c_str());
+		debug(2, "Input was: '%s' is '%s'", _inputText->c_str(), input.c_str());
 		_inputText = new Common::String(input);
 	}
 
