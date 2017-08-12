@@ -58,7 +58,10 @@ private:
 	bool _atrusRunning;
 	bool _notSeenAtrus; // 56
 	uint32 _atrusLeftTime; // 60
+
 	Common::String _video; // 64
+	Common::Point _videoPos;
+
 	bool _waitForLoop;
 	uint32 _loopStart; // 72
 	uint32 _loopEnd; // 76

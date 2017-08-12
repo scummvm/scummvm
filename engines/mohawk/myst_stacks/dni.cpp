@@ -116,8 +116,9 @@ void Dni::o_handPage(uint16 var, const ArgumentsArray &args) {
 void Dni::atrusLeft_run() {
 	if (_vm->_system->getMillis() > _atrusLeftTime + 63333) {
 		_video = "atrus2";
+		_videoPos = Common::Point(215, 77);
 		VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
-		atrus->moveTo(215, 77);
+		atrus->moveTo(_videoPos.x, _videoPos.y);
 		atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 98000, 600));
 
 		_waitForLoop = true;
@@ -136,7 +137,7 @@ void Dni::atrusLeft_run() {
 void Dni::loopVideo_run() {
 	if (!_vm->_video->isVideoPlaying()) {
 		VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
-		atrus->moveTo(215, 77);
+		atrus->moveTo(_videoPos.x, _videoPos.y);
 		atrus->setBounds(Audio::Timestamp(0, _loopStart, 600), Audio::Timestamp(0, _loopEnd, 600));
 		atrus->setLooping(true);
 
@@ -152,16 +153,18 @@ void Dni::atrus_run() {
 		// Atrus asking for page
 		if (!_vm->_video->isVideoPlaying()) {
 			_video = "atr1page";
+			_videoPos = Common::Point(215, 76);
 			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
-			atrus->moveTo(215, 77);
+			atrus->moveTo(_videoPos.x, _videoPos.y);
 			atrus->setLooping(true);
 			atrus->setBounds(Audio::Timestamp(0, 7388, 600), Audio::Timestamp(0, 14700, 600));
 		}
 	} else if (_globals.ending != 3 && _globals.ending != 4) {
 		if (_globals.heldPage == 13) {
 			_video = "atr1page";
+			_videoPos = Common::Point(215, 76);
 			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
-			atrus->moveTo(215, 77);
+			atrus->moveTo(_videoPos.x, _videoPos.y);
 			atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 14700, 600));
 
 			_waitForLoop = true;
@@ -173,8 +176,9 @@ void Dni::atrus_run() {
 
 		} else {
 			_video = "atr1nopg";
+			_videoPos = Common::Point(215, 77);
 			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
-			atrus->moveTo(215, 77);
+			atrus->moveTo(_videoPos.x, _videoPos.y);
 			atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 46175, 600));
 
 			_waitForLoop = true;
