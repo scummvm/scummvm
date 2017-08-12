@@ -4,6 +4,13 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.10.0 (YYYY-MM-DD)
  New Games:
    - Added support for Full Pipe.
+   - Added support for Hi-Res Adventure #3: Cranston Manor.
+   - Added support for Hi-Res Adventure #4: Ulysses and the Golden Fleece.
+   - Added support for Hi-Res Adventure #5: Time Zone.
+   - Added support for Hi-Res Adventure #6: The Dark Crystal.
+   - Added support for Riven.
+   - Added support for Starship Titanic.
+
 
  New Games (Sierra SCI2 - SCI2.1):
    - Added support for Gabriel Knight.
@@ -11,7 +18,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for King's Quest VII.
    - Added support for King's Questions.
    - Added support for Leisure Suit Larry 6 (hires).
+   - Added support for Leisure Suit Larry 7.
+   - Added support for Mixed-Up Mother Goose Deluxe.
    - Added support for Phantasmagoria.
+   - Added support for Phantasmagoria 2.
    - Added support for Police Quest 4.
    - Added support for Shivers.
    - Added support for Space Quest 6.
