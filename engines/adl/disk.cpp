@@ -30,6 +30,59 @@
 
 namespace Adl {
 
+void DataBlock_PC::read(Common::SeekableReadStream &stream, byte *const dataPtr, const uint32 size) const {
+	uint32 ofs = 0;
+
+	while (ofs < size) {
+		const uint bps = _disk->getBytesPerSector();
+		uint bytesToRead = bps - ((_offset + stream.pos()) % bps);
+
+		if (bytesToRead == bps) {
+			stream.readByte(); // Skip volume byte
+			--bytesToRead;
+		}
+
+		if (bytesToRead > size - ofs)
+			bytesToRead = size - ofs;
+
+		if (stream.read(dataPtr + ofs, bytesToRead) < bytesToRead)
+			error("Failed to read data block");
+
+		ofs += bytesToRead;
+	}
+}
+
+Common::SeekableReadStream *DataBlock_PC::createReadStream() const {
+	const uint bps = _disk->getBytesPerSector();
+	uint sectors = 0;
+
+	// Every data sector starts with a volume byte that we need to skip,
+	// so we need to take that into account during our computations here
+	if (_offset == bps - 1)
+		sectors = 1;
+
+	StreamPtr diskStream(_disk->createReadStream(_track, _sector, _offset, sectors));
+
+	byte sizeBuf[2];
+	read(*diskStream, sizeBuf, 2);
+
+	uint16 blockSize = READ_LE_UINT16(sizeBuf);
+	sectors = 0;
+
+	const uint16 remSize = _disk->getBytesPerSector() - MAX<uint>(_offset, 1);
+
+	if (blockSize + 2 > remSize)
+		sectors = (blockSize + 2 - remSize - 1) / (_disk->getBytesPerSector() - 1) + 1;
+
+	diskStream.reset(_disk->createReadStream(_track, _sector, _offset, sectors));
+	read(*diskStream, sizeBuf, 2);
+
+	byte *buf = static_cast<byte *>(malloc(blockSize));
+	read(*diskStream, buf, blockSize);
+
+	return new Common::MemoryReadStream(buf, blockSize, DisposeAfterUse::YES);
+}
+
 const uint trackLen = 256 * 26;
 
 static bool detectDOS33_NIB(Common::SeekableReadStream &f) {
@@ -309,6 +362,7 @@ bool DiskImage::open(const Common::String &filename) {
 		_tracks = 40;
 		_sectorsPerTrack = 8;
 		_bytesPerSector = 512;
+		_firstSector = 1;
 		_stream = f;
 	}
 
@@ -335,8 +389,10 @@ Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector,
 	if (sectorLimit == 0)
 		sectorLimit = _sectorsPerTrack;
 
-	if (sector >= sectorLimit)
-		error("Sector %i is out of bounds for %i-sector reading", sector, sectorLimit);
+	if (sector < _firstSector || sector >= sectorLimit + _firstSector)
+		error("Sector %u is out of bounds for %u-sector %u-based reading", sector, sectorLimit, _firstSector);
+
+	sector -= _firstSector;
 
 	while (dataOffset < bytesToRead) {
 		uint bytesRemInTrack = (sectorLimit - 1 - sector) * _bytesPerSector + _bytesPerSector - offset;
