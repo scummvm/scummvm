@@ -386,14 +386,14 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 			_curLight[0] = _curLight[1] = _curLight[2] = 255;
 			ptr = blitted = new Graphics::Surface();
 			blitted->copyFrom(single.surface);
-//			Graphics::TransparentSurface tmp(_lightMap, false);
-//			Common::Rect rect_none(x1, y1, x1 + diffX, y1 + diffY);
-//			Common::Rect rect_h(_sceneWidth - x1 - diffX, y1, _sceneWidth - x1, y1 + diffY);
-//			tmp.blit(*blitted, 0, 0,
-//					(mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE),
-//					(mirror ? &rect_h : &rect_none),
-//					TS_ARGB(255, 255, 255, 255),
-//					blitted->w, blitted->h, Graphics::BLEND_MULTIPLY);
+			Graphics::TransparentSurface tmp(_lightMap, false);
+			Common::Rect rect_none(x1, y1, x1 + diffX, y1 + diffY);
+			Common::Rect rect_h(_sceneWidth - x1 - diffX, y1, _sceneWidth - x1, y1 + diffY);
+			tmp.blit(*blitted, 0, 0,
+					(mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE),
+					(mirror ? &rect_h : &rect_none),
+					TS_ARGB(255, 255, 255, 255),
+					blitted->w, blitted->h, Graphics::BLEND_MULTIPLY);
 		}
 	} else {
 		_curLight[0] = _curLight[1] = _curLight[2] = 255;
@@ -526,14 +526,14 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 			_curLight[0] = _curLight[1] = _curLight[2] = 255;
 			ptr = blitted = new Graphics::Surface();
 			blitted->copyFrom(single.surface);
-//			Graphics::TransparentSurface tmp(_lightMap, false);
-//			Common::Rect rect_none(x1, y1, x1 + diffX, y1 + diffY);
-//			Common::Rect rect_h(_sceneWidth - x1 - diffX, y1, _sceneWidth - x1, y1 + diffY);
-//			tmp.blit(*blitted, 0, 0,
-//					(mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE),
-//					(mirror ? &rect_h : &rect_none),
-//					TS_ARGB(255, 255, 255, 255),
-//					blitted->w, blitted->h, Graphics::BLEND_MULTIPLY);
+			Graphics::TransparentSurface tmp(_lightMap, false);
+			Common::Rect rect_none(x1, y1, x1 + diffX, y1 + diffY);
+			Common::Rect rect_h(_sceneWidth - x1 - diffX, y1, _sceneWidth - x1, y1 + diffY);
+			tmp.blit(*blitted, 0, 0,
+					(mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE),
+					(mirror ? &rect_h : &rect_none),
+					TS_ARGB(255, 255, 255, 255),
+					blitted->w, blitted->h, Graphics::BLEND_MULTIPLY);
 		}
 	} else {
 		_curLight[0] = _curLight[1] = _curLight[2] = 255;
