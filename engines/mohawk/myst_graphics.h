@@ -82,6 +82,8 @@ private:
 
 	void remapSurfaceToSystemPalette(MohawkSurface *mhkSurface);
 	byte getColorIndex(const byte *palette, byte red, byte green, byte blue);
+
+	void applyImagePatches(uint16 id, const MohawkSurface *mhkSurface) const;
 };
 
 } // End of namespace Mohawk
