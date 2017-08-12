@@ -929,25 +929,26 @@ DOS version in the DOS directory of the CD.
 ----------------------------------
 Basic Movements:
 Left Click: Move action
-Shift + Left Click: Edit room glyph chevrons and Quick movement transitions
-Right Click: Edit room glyph chevrons and Quick transitions
+Shift + Left Click: Edit room glyph chevrons and quick movement transitions
+Right Click: Edit room glyph chevrons and quick transitions
 Mouse Wheel: Scroll through items (inventory, etc) and conversation log
 Arrow Keys: Movement. Down arrow/back is only available if the
-given view explicitly has a backwards movement available.
+    given view explicitly has a backwards movement available.
 
 Controls for the Starfield Puzzle at the end of the game:
 Tab: Toggle between starmap and skyscape
-Mouse Click: skyscape star selection
+Mouse Click: skyscape star selection and
+             starmap star fast travel
 Mouse Movement: starmap orientation
-Z: starmap turn left
-X: starmap turn right
-' starmap turn up
-/ starmap turn down
-; starmap move forward
-. starmap move backward
-SPACE starmap stop movement
-L starmap lock coordinate
-D starmap unlock coordinate
+SPACE: starmap stop movement
+"Z": starmap turn left
+"X": starmap turn right
+"'": starmap turn up
+"/": starmap turn down
+";": starmap move forward
+".": starmap move backward
+"L": starmap lock coordinate
+"D": starmap unlock coordinate
 
 For the purposes of solving the puzzle, only mouse clicks, L and Tab
 are really needed, though the action glyph in the PET can be used
@@ -1901,21 +1902,24 @@ versions.
     - Rename the saved game to 'elvira2-pc.xxx' (DOS version) or
       'elvira2.xxx' (Other versions)
 
-  Waxworks
-    - Add 8 bytes (saved game name) to the start of the saved game file
-    - Rename the saved game to 'waxworks-pc.xxx' (DOS version) or
-      'waxworks.xxx' (Other versions)
-
   Simon the Sorcerer 1
     - Rename the saved game to 'simon1.xxx'
 
   Simon the Sorcerer 2
     - Rename the saved game to 'simon2.xxx'
 
+  Starship Titanic
+    - Rename the saved game to 'titanic.xxx'
+
   The Feeble Files
     - Rename the saved game to 'feeble.xxx'
 
-Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
+  Waxworks
+    - Add 8 bytes (saved game name) to the start of the saved game file
+    - Rename the saved game to 'waxworks-pc.xxx' (DOS version) or
+      'waxworks.xxx' (Other versions)
+
+Where 'xxx' is exact the saved game slot (i.e., 001) under ScummVM
 
 
 6.3) Viewing/Loading saved games from the command line:
