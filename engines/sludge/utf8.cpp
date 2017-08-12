@@ -75,11 +75,13 @@ Common::U32String UTF8Converter::convertUtf8ToUtf32(const Common::String &str) {
 
 /* utf32 index => original byte offset */
 int UTF8Converter::getOriginOffset(int origIdx) {
-	int offs = 0;
-
-	while (origIdx > 0 && _str[offs]) {
+	uint offs = 0;
+	while (origIdx > 0 && offs < _str.size()) {
 		// increment if it's not the start of a utf8 sequence
-		(void)(isutf(_str[++offs]) || isutf(_str[++offs]) || isutf(_str[++offs]) || ++offs);
+		(void)(	(++offs < _str.size() && isutf(_str[offs])) ||
+				(++offs < _str.size() && isutf(_str[offs])) ||
+				(++offs < _str.size() && isutf(_str[offs])) ||
+				++offs);
 		origIdx--;
 	}
 	return offs;
