@@ -90,7 +90,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 	drawObjects(floorBits & 15, destPt, screenManager);
 	destPt.y += 10;
 	drawObjects(roomBits >> 3, destPt, screenManager);
-	destPt.y += 7;
+	destPt.y += 10;
 	drawObjects(((roomBits & 7) << 1) + (roomFlags.getBit0() ? 1 : 0),
 		destPt, screenManager);
 
