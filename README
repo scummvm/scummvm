@@ -1902,6 +1902,14 @@ versions.
     - Rename the saved game to 'elvira2-pc.xxx' (DOS version) or
       'elvira2.xxx' (Other versions)
 
+  Myst
+    - Rename the saved game to 'myst-xxx.mys'
+    - Saves from the masterpiece edition and the regular edition are interchangeable
+
+  Riven
+    - Rename the saved game to 'riven-xxx.rvn'
+    - Saves from the CD and DVD edition are not interchangeable
+
   Simon the Sorcerer 1
     - Rename the saved game to 'simon1.xxx'
 
