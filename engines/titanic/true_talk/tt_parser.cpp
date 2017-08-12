@@ -399,7 +399,7 @@ int TTparser::replaceNumbers(TTstring &line, int startIndex) {
 		return index;
 
 	bool flag1 = false, flag2 = false, flag3 = false;
-	int total = 0, factor = 0;
+	int total = 0, factor = 0, endIndex = index;
 
 	do {
 		if (!(numEntry->_flags & NF_1)) {
@@ -421,8 +421,11 @@ int TTparser::replaceNumbers(TTstring &line, int startIndex) {
 				factor += numEntry->_value;
 			}
 		}
-	} while (replaceNumbers2(line, &index));
 
+		endIndex = index;
+	} while ((numEntry = replaceNumbers2(line, &index)) != nullptr);
+
+	index = endIndex;
 	if (!flag2)
 		return index;
 
@@ -440,7 +443,7 @@ int TTparser::replaceNumbers(TTstring &line, int startIndex) {
 	line = CString::format("%s%s%s",
 		CString(line.c_str(), line.c_str() + startIndex).c_str(),
 		numStr.c_str(),
-		(index == -1) ? "" : line.c_str() + index
+		(index == -1) ? "" : line.c_str() + index - 1
 	);
 
 	index = startIndex + numStr.size();
