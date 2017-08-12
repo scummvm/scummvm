@@ -128,7 +128,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 			_modeButtons[idx].setBounds(r);
 			_modeButtons[idx].translate(4, g_vm->isGerman() ? YLIST_DE[idx] : YLIST_EN[idx]);
 		}
-		_modeButtons[PET_CONVERSATION].setMode(MODE_SELECTED);
+		setArea(PET_CONVERSATION);
 
 		const int XLIST_EN[] = { 73, 54, 85, 109, 38, 71 };
 		for (uint idx = 0; idx < _petAreas.size(); ++idx) {
@@ -143,7 +143,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 
 void CPetFrame::setArea(PetArea newArea) {
 	resetArea();
-	if ((uint)newArea < (_petAreas.size() - 1))
+	if ((uint)newArea < _petAreas.size())
 		_modeButtons[_petAreas[newArea]].setMode(MODE_SELECTED);
 }
 
