@@ -333,6 +333,7 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 	float y = thisPerson->y;
 
 	float scale = thisPerson->scale;
+	bool useZB = !(thisPerson->extra & EXTRA_NOZB);
 	bool light = !(thisPerson->extra & EXTRA_NOLITE);
 
 	if (scale <= 0.05)
@@ -365,7 +366,7 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 		y2 = y1 + diffY;
 	}
 
-	Graphics::Surface *ptr = nullptr;;
+	Graphics::Surface *ptr = nullptr;
 	Graphics::Surface *blitted = &single.surface;
 
 	// set light map color
@@ -409,7 +410,7 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 			ptr = nullptr;
 		}
 	} else {
-		int d = ((!(thisPerson->extra & EXTRA_NOZB)) && _zBuffer->numPanels) ? y + _cameraY : 0;
+		int d = useZB ? y + _cameraY : (y + _cameraY > _sceneHeight * 0.6 ? _sceneHeight + 1 : 0);
 		addSpriteDepth(blitted, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY, spriteColor, ptr);
 	}
 
@@ -505,7 +506,7 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 		x1 = x - (int)((mirror ? (float)(single.surface.w - (single.xhot + 1)) : (float)single.xhot) * scale);
 	int y1 = y - (int)((single.yhot - thisPerson->floaty) * scale);
 
-	Graphics::Surface *ptr = nullptr;;
+	Graphics::Surface *ptr = nullptr;
 	Graphics::Surface *blitted = &single.surface;
 
 	// set light map color
@@ -557,7 +558,7 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 			ptr = nullptr;
 		}
 	} else {
-		int d = useZB ? y + _cameraY : _sceneHeight + 1;
+		int d = useZB ? y + _cameraY : (y + _cameraY > _sceneHeight * 0.6 ? _sceneHeight + 1 : 0);
 		addSpriteDepth(&single.surface, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY, spriteColor, ptr);
 	}
 
