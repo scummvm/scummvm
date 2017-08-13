@@ -60,11 +60,6 @@ protected:
 		GUI::ButtonWidget *keyButton;
 		GUI::ButtonWidget *clearButton;
 	};
-	struct ActionInfo {
-		Action *action;
-		bool inherited;
-		String description;
-	};
 
 	void loadKeymap();
 	void refreshKeymap();
@@ -73,13 +68,13 @@ protected:
 	void stopRemapping();
 
 	Keymapper *_keymapper;
-	Keymap** _keymapTable;
+	Common::Array<Keymap *> _keymapTable;
 
 	InputWatcher *_remapInputWatcher;
 	Action *_remapAction;
 	uint32 _remapTimeout;
 
-	Array<ActionInfo> _currentActions;
+	Array<Action *> _currentActions;
 	int _topAction;
 
 	GUI::StaticTextWidget *_kmPopUpDesc;

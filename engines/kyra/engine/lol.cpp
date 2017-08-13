@@ -473,7 +473,7 @@ void LoLEngine::initKeymap() {
 	if (mapper->getKeymap(kKeymapName) != 0)
 		return;
 
-	Common::Keymap *const engineKeyMap = new Common::Keymap(kKeymapName);
+	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
 		{Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "AT1", _("Attack 1")},

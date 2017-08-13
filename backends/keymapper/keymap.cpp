@@ -33,7 +33,11 @@
 
 namespace Common {
 
-Keymap::Keymap(const Keymap& km) : _actions(km._actions), _hwActionMap(), _configDomain(0) {
+Keymap::Keymap(KeymapType type, const String &name) :
+		_type(type),
+		_name(name),
+		_configDomain(nullptr) {
+
 }
 
 Keymap::~Keymap() {
