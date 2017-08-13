@@ -21,7 +21,6 @@
  */
 
 #include "common/rect.h"
-#include "common/events.h"
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
