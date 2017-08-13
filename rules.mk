@@ -20,14 +20,11 @@ ifdef TOOL_EXECUTABLE
 # TODO: Refactor this, so that even our master executable can use this rule?
 ################################################
 TOOL-$(MODULE) := $(MODULE)/$(TOOL_EXECUTABLE)$(EXEEXT)
-TOOL_CFLAGS-$(MODULE) := $(TOOL_CFLAGS)
-TOOL_LIBS-$(MODULE) := $(TOOL_LIBS)
-
-$(TOOL-$(MODULE)): TOOL_LIBS = $(TOOL_LIBS-$(MODULE))
-$(TOOL-$(MODULE)): TOOL_CFLAGS = $(TOOL_CFLAGS-$(MODULE))
+TOOL_LIBS-$(TOOL-$(MODULE)) := $(TOOL_LIBS)
+TOOL_CFLAGS-$(TOOL-$(MODULE)) := $(TOOL_CFLAGS)
 
 $(TOOL-$(MODULE)): $(MODULE_OBJS-$(MODULE)) $(TOOL_DEPS)
-	$(QUIET_CXX)$(CXX) $(LDFLAGS) $(TOOL_CFLAGS) $+ $(TOOL_LIBS) -o $@
+	$(QUIET_CXX)$(CXX) $(LDFLAGS) $(TOOL_CFLAGS-$@) $+ $(TOOL_LIBS-$@) -o $@
 
 # Reset TOOL_* vars
 TOOL_EXECUTABLE:=
