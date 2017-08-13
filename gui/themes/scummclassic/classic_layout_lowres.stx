@@ -1689,9 +1689,11 @@
 					width = '300'
 					height = '120'
 			/>
-			<widget name = 'Close'
-					type = 'Button'
-			/>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8' align = 'center'>
+				<widget name = 'Close'
+						type = 'Button'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
