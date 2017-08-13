@@ -383,6 +383,7 @@ Other Games:
      Nippon Safes Inc.                           [nippon]
      Rex Nebular and the Cosmic Gender Bender    [nebular]
      Ringworld: Revenge Of The Patriarch         [ringworld]
+     Riven: The Sequel to Myst                   [riven]
      Return to Ringworld                         [ringworld2]
      Sfinx                                       [sfinx]
      Soltys                                      [soltys]
@@ -914,6 +915,7 @@ is simpler and more straightforward than moving around using the menu.
 Left Click: Move/action
 Space: Pause the game
 Esc: Skip cutscene
+F5: Menu
 
 
 3.16) Nippon Safes Inc. Amiga notes:
@@ -929,8 +931,12 @@ disk image 3 to disk2, disk image 4 to disk3 and disk image 5 to disk4.
 ----- -------------------------------
 Left Click: Move/action
 Arrow Keys: Movement
+Page Up: Look up
+Page Down: Look down
 Space: Pause the game
 Esc: Skip cutscene
+F5: Menu
+
 
 3.18) Simon the Sorcerer games notes:
 ----- -------------------------------
