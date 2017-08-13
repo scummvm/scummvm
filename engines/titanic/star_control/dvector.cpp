@@ -101,7 +101,7 @@ DAffine DVector::getFrameTransform(const DVector &v) {
 	return matrix4.compose(matrix3);
 }
 
-DAffine DVector::fn5() const {
+DAffine DVector::RotXY() const {
 	DVector v1 = getAnglesAsVect();
 	DAffine m1, m2;
 	m1.setRotationMatrix(X_AXIS, v1._y * Rad2Deg);

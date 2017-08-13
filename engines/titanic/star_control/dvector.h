@@ -73,7 +73,12 @@ public:
 	 * a vector rotation based on input vector v
 	 */
 	DAffine getFrameTransform(const DVector &v);
-	DAffine fn5() const;
+
+	/**
+         * Returns a affine matrix that does a x then a y axis frame rotation
+	 * based on the orientation of this vector
+	 */
+	DAffine RotXY() const;
 
 	/**
 	 * Returns true if the passed vector equals this one

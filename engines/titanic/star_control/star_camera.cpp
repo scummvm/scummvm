@@ -289,7 +289,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 
 		tempV1 = _matrix._row2 - _matrix._row1;
 		diffV = tempV1;
-		m1 = diffV.fn5();
+		m1 = diffV.RotXY();
 		m1 = m1.compose(subX);
 		subX = m1.inverseTransform();
 		subX = subX.compose(subY);
@@ -459,7 +459,7 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 
 	DAffine m2(X_AXIS, _matrix._row1);
 	DVector tempV1 = v - _matrix._row1;
-	DAffine m1 = tempV1.fn5();
+	DAffine m1 = tempV1.RotXY();
 	m1 = m1.compose(m2);
 	m2 = m1.inverseTransform();
 	
