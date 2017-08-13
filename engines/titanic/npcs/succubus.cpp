@@ -78,7 +78,7 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_endFrame1 = 40;
 	_rect1 = Rect(82, 284, 148, 339);
 	_field184 = 15;
-	_field188 = 0;
+	_mailPresent = false;
 	_rect2 = Rect(0, 0, 240, 340);
 	_sendLost = false;
 	_soundHandle = -1;
@@ -133,7 +133,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_rect1.right, indent);
 	file->writeNumberLine(_rect1.bottom, indent);
 	file->writeNumberLine(_field184, indent);
-	file->writeNumberLine(_field188, indent);
+	file->writeNumberLine(_mailPresent, indent);
 	file->writeNumberLine(_rect2.left, indent);
 	file->writeNumberLine(_rect2.top, indent);
 	file->writeNumberLine(_rect2.right, indent);
@@ -197,7 +197,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_rect1.right = file->readNumber();
 	_rect1.bottom = file->readNumber();
 	_field184 = file->readNumber();
-	_field188 = file->readNumber();
+	_mailPresent = file->readNumber();
 	_rect2.left = file->readNumber();
 	_rect2.top = file->readNumber();
 	_rect2.right = file->readNumber();
@@ -230,7 +230,7 @@ bool CSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		Rect tempRect = _rect1;
 		tempRect.translate(_bounds.left, _bounds.top);
 
-		if (!_isOn || (_field188 && tempRect.contains(msg->_mousePos))) {
+		if (!_isOn || (_mailPresent && tempRect.contains(msg->_mousePos))) {
 			CTurnOn onMsg;
 			onMsg.execute(this);
 			_isOn = true;
@@ -288,7 +288,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 
 		if (!chickenFlag) {
 			// Not chicken, or chicken with condiments
-			_field188 = 1;
+			_mailPresent = true;
 			item->addMail(roomFlags);
 			petSetArea(PET_REMOTE);
 			petHighlightGlyph(16);
@@ -416,7 +416,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		_isFeathers = mailObject->getName() == "Feathers";
 		_isChicken = mailObject->getName() == "Chicken";
 		_sendAction = SA_SENT;
-		_field188 = 0;
+		_mailPresent = false;
 		_inProgress = true;
 		incTransitions();
 
@@ -571,7 +571,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			}
 		}
 
-		if (!_field188 && !flag) {
+		if (!_mailPresent && !flag) {
 			stopSound(_soundHandle);
 			_soundHandle = -1;
 
@@ -630,7 +630,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			_mailP->setMailDest(petRoomFlags);
 		}
 
-		_field188 = 1;
+		_mailPresent = true;
 		_mailP = nullptr;
 		if (_inProgress) {
 			_inProgress = false;
@@ -768,7 +768,7 @@ bool CSuccUBus::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	Rect tempRect = _rect1;
 	tempRect.translate(_bounds.left, _bounds.top);
 
-	if (_inProgress || !_isOn || !_field188 || !tempRect.contains(msg->_mousePos)
+	if (_inProgress || !_isOn || !_mailPresent || !tempRect.contains(msg->_mousePos)
 			|| !pet)
 		return true;
 
@@ -797,7 +797,7 @@ bool CSuccUBus::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		msg->_dragItem = mailObject;
 
 	loadFrame(_field184);
-	_field188 = 0;
+	_mailPresent = false;
 	CSUBTransition transMsg;
 	transMsg.execute(this);
 

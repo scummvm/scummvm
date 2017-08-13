@@ -80,7 +80,7 @@ protected:
 	int _endFrame1;
 	Rect _rect1;
 	int _field184;
-	int _field188;
+	bool _mailPresent;
 	Rect _rect2;
 	bool _sendLost;
 	int _soundHandle;
