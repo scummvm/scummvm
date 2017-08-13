@@ -180,24 +180,6 @@ public:
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
 	/**
-	 * @brief Activate remapping mode
-	 * While this mode is active, any mappable event will be bound to the action
-	 * provided.
-	 * @param actionToRemap Action that is the target of the remap
-	 */
-	void startRemappingMode(Action *actionToRemap);
-
-	/**
-	 * @brief Force-stop the remapping mode
-	 */
-	void stopRemappingMode() { _remapping = false; }
-
-	/**
-	 * Query whether the keymapper is currently in the remapping mode
-	 */
-	bool isRemapping() const { return _remapping; }
-
-	/**
 	 * Return a HardwareInput pointer for the given key state
 	 */
 	const HardwareInput *findHardwareInput(const KeyState& key);
@@ -211,6 +193,14 @@ public:
 	Domain& getGameDomain() { return _gameDomain; }
 	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
 
+	/**
+	 * Register the binding of a hardware input to an action
+	 */
+	void registerMapping(Action *action, const HardwareInput *input);
+
+	/**
+	 * Unbind hardware inputs from an action
+	 */
 	void clearMapping(Action *action);
 
 private:
@@ -232,14 +222,11 @@ private:
 
 	List<Event> executeAction(const Action *act, IncomingEventType incomingType = kIncomingNonKey);
 	EventType convertDownToUp(EventType eventType);
-	List<Event> remap(const Event &ev);
 
 	EventManager *_eventMan;
 
 	bool _enabled;
-	bool _remapping;
 
-	Action *_actionToRemap;
 	Stack<MapRecord> _activeMaps;
 	HashMap<KeyState, Action *> _keysDown;
 

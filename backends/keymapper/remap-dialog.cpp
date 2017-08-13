@@ -26,6 +26,7 @@
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/input-watcher.h"
 
 #include "common/system.h"
 #include "gui/gui-manager.h"
@@ -43,10 +44,13 @@ enum {
 };
 
 RemapDialog::RemapDialog()
-	: Dialog("KeyMapper"), _keymapTable(0), _topAction(0), _remapTimeout(0), _topKeymapIsGui(false) {
+	: Dialog("KeyMapper"), _keymapTable(0), _topAction(0), _remapTimeout(0), _topKeymapIsGui(false), _remapAction(nullptr) {
 
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
+
+	EventDispatcher *eventDispatcher = g_system->getEventManager()->getEventDispatcher();
+	_remapInputWatcher = new InputWatcher(eventDispatcher, _keymapper);
 
 	_kmPopUpDesc = new GUI::StaticTextWidget(this, "KeyMapper.PopupDesc", _("Keymap:"));
 	_kmPopUp = new GUI::PopUpWidget(this, "KeyMapper.Popup");
@@ -61,6 +65,7 @@ RemapDialog::RemapDialog()
 
 RemapDialog::~RemapDialog() {
 	free(_keymapTable);
+	delete _remapInputWatcher;
 }
 
 void RemapDialog::open() {
@@ -254,8 +259,7 @@ void RemapDialog::clearMapping(uint i) {
 	_keymapper->clearMapping(activeRemapAction);
 	_changes = true;
 
-	// force refresh
-	stopRemapping(true);
+	stopRemapping();
 	refreshKeymap();
 }
 
@@ -263,63 +267,47 @@ void RemapDialog::startRemapping(uint i) {
 	if (_topAction + i >= _currentActions.size())
 		return;
 
-	if (_keymapper->isRemapping()) {
+	if (_remapInputWatcher->isWatching()) {
 		// Handle a second click on the button as a stop to remapping
-		stopRemapping(true);
+		stopRemapping();
 		return;
 	}
 
+	_remapAction = _currentActions[_topAction + i].action;
 	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
-	Action *activeRemapAction = _currentActions[_topAction + i].action;
+	_remapInputWatcher->startWatching();
+
 	_keymapWidgets[i].keyButton->setLabel("...");
 	_keymapWidgets[i].keyButton->markAsDirty();
-	_keymapper->startRemappingMode(activeRemapAction);
-
 }
 
-void RemapDialog::stopRemapping(bool force) {
+void RemapDialog::stopRemapping() {
 	_topAction = -1;
+	_remapAction = nullptr;
 
 	refreshKeymap();
 
-	if (force)
-		_keymapper->stopRemappingMode();
-}
-
-void RemapDialog::handleKeyDown(Common::KeyState state) {
-	if (_keymapper->isRemapping())
-		return;
-
-	GUI::Dialog::handleKeyDown(state);
-}
-
-void RemapDialog::handleKeyUp(Common::KeyState state) {
-	if (_keymapper->isRemapping())
-		return;
-
-	GUI::Dialog::handleKeyUp(state);
-}
-
-void RemapDialog::handleOtherEvent(Event ev) {
-	if (ev.type == EVENT_GUI_REMAP_COMPLETE_ACTION) {
-		// _keymapper is telling us that something changed
-		_changes = true;
-		stopRemapping();
-	} else {
-		GUI::Dialog::handleOtherEvent(ev);
-	}
+	_remapInputWatcher->stopWatching();
 }
 
 void RemapDialog::handleMouseDown(int x, int y, int button, int clickCount) {
-	if (_keymapper->isRemapping())
+	if (_remapInputWatcher->isWatching())
 		stopRemapping();
 	else
 		Dialog::handleMouseDown(x, y, button, clickCount);
 }
 
 void RemapDialog::handleTickle() {
-	if (_keymapper->isRemapping() && g_system->getMillis() > _remapTimeout)
-		stopRemapping(true);
+	const HardwareInput *hardwareInput = _remapInputWatcher->checkForCapturedInput();
+	if (hardwareInput) {
+		_keymapper->registerMapping(_remapAction, hardwareInput);
+
+		_changes = true;
+		stopRemapping();
+	}
+
+	if (_remapInputWatcher->isWatching() && g_system->getMillis() > _remapTimeout)
+		stopRemapping();
 	Dialog::handleTickle();
 }
 

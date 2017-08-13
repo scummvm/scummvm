@@ -51,7 +51,7 @@ public:
 
 	void handleKeyDown(Common::KeyState state) override;
 	void handleKeyUp(Common::KeyState state) override;
-	void handleOtherEvent(Common::Event evt) override;
+	void handleOtherEvent(const Common::Event &evt) override;
 	bool doGameDetection(const Common::String &path);
 protected:
 	EditTextWidget  *_searchWidget;
