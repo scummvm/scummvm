@@ -509,7 +509,7 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	int minDegree = 0;
 	for (int degree = 0; degree < 360; ++degree) {
 		tempPos = m4._col1;
-		tempPos.fn2((double)degree);
+		tempPos.RotVectAxisY((double)degree);
 		double distance = tempV2.getDistance(tempPos);
 
 		if (distance < minDistance) {
@@ -518,10 +518,10 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 		}
 	}
 
-	m4._col1.fn2((double)minDegree);
-	m4._col2.fn2((double)minDegree);
-	m4._col3.fn2((double)minDegree);
-	m4._col4.fn2((double)minDegree);
+	m4._col1.RotVectAxisY((double)minDegree);
+	m4._col2.RotVectAxisY((double)minDegree);
+	m4._col3.RotVectAxisY((double)minDegree);
+	m4._col4.RotVectAxisY((double)minDegree);
 	m4._col1 = m4._col1.DAffMatrixProdVec(m1);
 	m4._col2 = m4._col2.DAffMatrixProdVec(m1);
 	m4._col3 = m4._col3.DAffMatrixProdVec(m1);

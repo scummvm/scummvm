@@ -60,10 +60,10 @@ DVector DVector::DAffMatrixProdVec(const DAffine &m) {
 	return dest;
 }
 
-void DVector::fn2(double angle) {
+void DVector::RotVectAxisY(double angle_deg) {
 	const double FACTOR = 2 * M_PI / 360.0;
-	double sinVal = sin(angle * FACTOR);
-	double cosVal = cos(angle * FACTOR);
+	double sinVal = sin(angle_deg * FACTOR);
+	double cosVal = cos(angle_deg * FACTOR);
 	double x = cosVal * _x - sinVal * _z;
 	double z = cosVal * _z + sinVal * _x;
 

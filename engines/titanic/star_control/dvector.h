@@ -55,7 +55,11 @@ public:
 	 */
 	DVector DAffMatrixProdVec(const DAffine &m);
 
-	void fn2(double angle);
+	/**
+	 * Rotate this vector about the Y axis
+	 */
+	void RotVectAxisY(double angle_deg);
+
 	DVector fn3() const;
 	DAffine fn4(const DVector &v);
 	DAffine fn5() const;
