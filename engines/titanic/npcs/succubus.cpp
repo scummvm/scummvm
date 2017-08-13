@@ -226,32 +226,39 @@ void CSuccUBus::load(SimpleFile *file) {
 }
 
 bool CSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_inProgress) {
-		Rect tempRect = _rect1;
-		tempRect.translate(_bounds.left, _bounds.top);
+	if (_inProgress)
+		return true;
 
-		if (!_isOn || (_mailPresent && tempRect.contains(msg->_mousePos))) {
-			CTurnOn onMsg;
-			onMsg.execute(this);
-			_isOn = true;
-		} else if (getRandomNumber(256) < 130) {
-			_isOn = false;
-			CTurnOff offMsg;
-			offMsg.execute(this);
-		} else {
-			switch (getRandomNumber(2, &_priorRandomVal1)) {
-			case 0:
-				startTalking(this, 230055, findView());
-				break;
-			case 1:
-				startTalking(this, 230067, findView());
-				break;
-			case 2:
-				startTalking(this, 230045, findView());
-				break;
-			default:
-				break;
-			}
+	Rect tempRect = _rect1;
+	tempRect.translate(_bounds.left, _bounds.top);
+
+	if (!_isOn) {
+		CTurnOn onMsg;
+		onMsg.execute(this);
+		_isOn = true;
+		return true;
+	}
+
+	if (_mailPresent && tempRect.contains(msg->_mousePos))
+		return true;
+
+	if (getRandomNumber(256) < 130) {
+		_isOn = false;
+		CTurnOff offMsg;
+		offMsg.execute(this);
+	} else {
+		switch (getRandomNumber(2, &_priorRandomVal1)) {
+		case 0:
+			startTalking(this, 230055, findView());
+			break;
+		case 1:
+			startTalking(this, 230067, findView());
+			break;
+		case 2:
+			startTalking(this, 230045, findView());
+			break;
+		default:
+			break;
 		}
 	}
 
