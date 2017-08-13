@@ -182,105 +182,57 @@ void Keymapper::popKeymap(const char *name) {
 }
 
 List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
+	if (!_enabled || _activeMaps.empty()) {
+		return DefaultEventMapper::mapEvent(ev, source);
+	}
 	if (source && !source->allowMapping()) {
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
-	List<Event> mappedEvents;
 
-	if (ev.type == Common::EVENT_KEYDOWN)
-		mappedEvents = mapKeyDown(ev.kbd);
-	else if (ev.type == Common::EVENT_KEYUP)
-		mappedEvents = mapKeyUp(ev.kbd);
-	else if (ev.type == Common::EVENT_CUSTOM_BACKEND_HARDWARE)
-		mappedEvents = mapNonKey(ev.customType);
-
-	if (!mappedEvents.empty())
-		return mappedEvents;
-	else
+	const HardwareInput *hwInput = findHardwareInput(ev);
+	if (!hwInput) {
 		return DefaultEventMapper::mapEvent(ev, source);
-}
-
-List<Event> Keymapper::mapKeyDown(const KeyState& key) {
-	return mapKey(key, true);
-}
-
-List<Event> Keymapper::mapKeyUp(const KeyState& key) {
-	return mapKey(key, false);
-}
-
-List<Event> Keymapper::mapKey(const KeyState& key, bool keyDown) {
-	if (!_enabled || _activeMaps.empty())
-		return List<Event>();
-
-	Action *action = 0;
-
-	if (keyDown) {
-		// FIXME: Performance
-		const HardwareInput *hwInput = _hardwareInputs->findHardwareInput(key);
-
-		// Search for key in active keymap stack
-		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
-			MapRecord mr = _activeMaps[i];
-			debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
-			action = mr.keymap->getMappedAction(hwInput);
-
-			if (action || !mr.transparent)
-				break;
-		}
-
-		if (action)
-			_keysDown[key] = action;
-	} else {
-		HashMap<KeyState, Action *>::iterator it = _keysDown.find(key);
-
-		if (it != _keysDown.end()) {
-			action = it->_value;
-			_keysDown.erase(key);
-		}
 	}
 
-	if (!action)
-		return List<Event>();
-
-	return executeAction(action, keyDown ? kIncomingKeyDown : kIncomingKeyUp);
-}
-
-
-List<Event> Keymapper::mapNonKey(const HardwareInputCode code) {
-	if (!_enabled || _activeMaps.empty())
-		return List<Event>();
-
-	// FIXME: Performance
-	const HardwareInput *hwInput = _hardwareInputs->findHardwareInput(code);
-
-	Action *action = 0;
-
-	// Search for nonkey in active keymap stack
+	List<Event> mappedEvents;
 	for (int i = _activeMaps.size() - 1; i >= 0; --i) {
 		MapRecord mr = _activeMaps[i];
 		debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
-		action = mr.keymap->getMappedAction(hwInput);
 
-		if (action || !mr.transparent)
+		Action *action = mr.keymap->getMappedAction(hwInput);
+		if (action) {
+			IncomingEventType incomingEventType = convertToIncomingEventType(ev);
+			mappedEvents.push_back(executeAction(action, incomingEventType));
+			break;
+		}
+
+		if (!mr.transparent)
 			break;
 	}
 
-	if (!action)
-		return List<Event>();
+	if (mappedEvents.empty()) {
+		return DefaultEventMapper::mapEvent(ev, source);
+	}
 
-	return executeAction(action);
+	return mappedEvents;
 }
 
-List<Event> Keymapper::executeAction(const Action *action, IncomingEventType incomingType) {
-	List<Event> mappedEvents;
+Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
+	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
+		return kIncomingNonKey;
+	} else if (ev.type == EVENT_KEYDOWN) {
+		return kIncomingKeyDown;
+	} else {
+		return kIncomingKeyUp;
+	}
+}
 
+Event Keymapper::executeAction(const Action *action, IncomingEventType incomingType) {
 	Event evt = Event(action->event);
 	EventType convertedType = convertDownToUp(evt.type);
 
 	// hardware keys need to send up instead when they are up
 	if (incomingType == kIncomingKeyUp) {
-		if (convertedType == EVENT_INVALID)
-			return List<Event>(); // don't send any non-down-converted events on up they were already sent on down
 		evt.type = convertedType;
 	}
 
@@ -288,15 +240,12 @@ List<Event> Keymapper::executeAction(const Action *action, IncomingEventType inc
 
 	// Check if the event is coming from a non-key hardware event
 	// that is mapped to a key event
-	if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID)
+	if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID) {
 		// WORKAROUND: Delay the down events coming from non-key hardware events
 		// with a zero delay. This is to prevent DOWN1 DOWN2 UP1 UP2.
 		addDelayedEvent(0, evt);
-	else
-		mappedEvents.push_back(evt);
 
-	// non-keys need to send up as well
-	if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID) {
+		// non-keys need to send up as well
 		// WORKAROUND: Delay the up events coming from non-key hardware events
 		// This is for engines that run scripts that check on key being down
 		evt.type = convertedType;
@@ -304,7 +253,7 @@ List<Event> Keymapper::executeAction(const Action *action, IncomingEventType inc
 		addDelayedEvent(delay, evt);
 	}
 
-	return mappedEvents;
+	return evt;
 }
 
 EventType Keymapper::convertDownToUp(EventType type) {
@@ -328,12 +277,17 @@ EventType Keymapper::convertDownToUp(EventType type) {
 	return result;
 }
 
-const HardwareInput *Keymapper::findHardwareInput(const KeyState& key) {
-	return (_hardwareInputs) ? _hardwareInputs->findHardwareInput(key) : 0;
-}
-
-const HardwareInput *Keymapper::findHardwareInput(const HardwareInputCode code) {
-	return (_hardwareInputs) ? _hardwareInputs->findHardwareInput(code) : 0;
+const HardwareInput *Keymapper::findHardwareInput(const Event &event) {
+	// FIXME: Performance
+	switch (event.type) {
+		case EVENT_KEYDOWN:
+		case EVENT_KEYUP:
+			return _hardwareInputs->findHardwareInput(event.kbd);
+		case EVENT_CUSTOM_BACKEND_HARDWARE:
+			return _hardwareInputs->findHardwareInput(event.customType);
+		default:
+			return nullptr;
+	}
 }
 
 void Keymapper::registerMapping(Action *action, const HardwareInput *input) {
