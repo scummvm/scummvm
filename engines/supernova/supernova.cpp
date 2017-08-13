@@ -359,8 +359,13 @@ void SupernovaEngine::restoreScreen() {
 void SupernovaEngine::renderRoom(Room &room) {
 	if (room.getFileNumber() != -1) {
 		for (int i = 0; i < _currentImage->_numSections; ++i) {
-			if (room.isSectionVisible(i))
-				renderImage(room.getFileNumber(), i);
+			int section = i;
+			if (room.isSectionVisible(section)) {
+				do {
+					renderImage(room.getFileNumber(), section);
+					section = _currentImage->_section[section].next;
+				} while (section != 0);
+			}
 		}
 	}
 }
