@@ -67,7 +67,12 @@ public:
          * 3. z component output of v is the 4-quadrant angle that z makes with x (Y axis rotation)
 	 */
 	DVector getAnglesAsVect() const;
-	DAffine fn4(const DVector &v);
+
+	/**
+         * Returns a matrix that contains the frame rotation based on this vector and 
+	 * a vector rotation based on input vector v
+	 */
+	DAffine getFrameTransform(const DVector &v);
 	DAffine fn5() const;
 
 	/**

@@ -84,7 +84,7 @@ DVector DVector::getAnglesAsVect() const {
 	return dest;
 }
 
-DAffine DVector::fn4(const DVector &v) {
+DAffine DVector::getFrameTransform(const DVector &v) {
 	DAffine matrix1, matrix2, matrix3, matrix4;
 
 	DVector vector1 = getAnglesAsVect();
