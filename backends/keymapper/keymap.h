@@ -80,7 +80,7 @@ public:
 	/**
 	 * Get the list of all the Actions contained in this Keymap
 	 */
-	List<Action *>& getActions() { return _actions; }
+	List<Action *> &getActions() { return _actions; }
 
 	void setConfigDomain(ConfigManager::Domain *dom);
 
@@ -97,9 +97,14 @@ public:
 	 */
 	void saveMappings();
 
-	const String& getName() { return _name; }
-
+	const String &getName() { return _name; }
 	KeymapType getType() const { return _type; }
+
+	/**
+	 * Defines if the keymap is considered when mapping events
+	 */
+	bool isEnabled() const { return _enabled; }
+	void setEnabled(bool enabled) { _enabled = enabled; }
 
 private:
 	friend struct Action;
@@ -118,6 +123,9 @@ private:
 
 	KeymapType _type;
 	String _name;
+
+	bool _enabled;
+
 	ActionList _actions;
 	HardwareActionMap _hwActionMap;
 	ConfigManager::Domain *_configDomain;

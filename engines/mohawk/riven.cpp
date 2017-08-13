@@ -923,7 +923,6 @@ void MohawkEngine_Riven::initKeymap() {
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
-	mapper->pushKeymap(kKeymapName, true);
 #endif
 }
 

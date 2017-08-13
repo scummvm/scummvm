@@ -25,8 +25,8 @@
 #ifdef ENABLE_KEYMAPPER
 
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/hardware-input.h"
 
-#include "common/config-manager.h"
 #include "common/system.h"
 
 namespace Common {
@@ -35,8 +35,11 @@ namespace Common {
 static const uint32 kDelayKeyboardEventMillis = 250;
 static const uint32 kDelayMouseEventMillis = 50;
 
-Keymapper::Keymapper(EventManager *evtMgr)
-	: _eventMan(evtMgr), _enabled(true), _hardwareInputs(0) {
+Keymapper::Keymapper(EventManager *evtMgr) :
+		_eventMan(evtMgr),
+		_enabled(true),
+		_enabledKeymapType(Keymap::kKeymapTypeGlobal),
+		_hardwareInputs(nullptr) {
 }
 
 Keymapper::~Keymapper() {
@@ -61,6 +64,9 @@ void Keymapper::addGlobalKeymap(Keymap *keymap) {
 
 	ConfigManager::Domain *keymapperDomain = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 	initKeymap(keymap, keymapperDomain);
+
+	// Global keymaps have the lowest priority, they need to be first in the array
+	_keymaps.insert_at(0, keymap);
 }
 
 void Keymapper::addGameKeymap(Keymap *keymap) {
@@ -72,9 +78,8 @@ void Keymapper::addGameKeymap(Keymap *keymap) {
 		error("Call to Keymapper::addGameKeymap when no game loaded");
 	}
 
-	cleanupGameKeymaps();
-
 	initKeymap(keymap, gameDomain);
+	_keymaps.push_back(keymap);
 }
 
 void Keymapper::initKeymap(Keymap *keymap, ConfigManager::Domain *domain) {
@@ -85,8 +90,6 @@ void Keymapper::initKeymap(Keymap *keymap, ConfigManager::Domain *domain) {
 
 	keymap->setConfigDomain(domain);
 	keymap->loadMappings(_hardwareInputs);
-
-	_keymaps.push_back(keymap);
 }
 
 void Keymapper::cleanupGameKeymaps() {
@@ -100,17 +103,6 @@ void Keymapper::cleanupGameKeymaps() {
 			it++;
 		}
 	}
-
-	// Now restore the stack of active maps. Re-add all global keymaps, drop
-	// the game specific (=deleted) ones.
-	Stack<MapRecord> newStack;
-
-	for (Stack<MapRecord>::size_type i = 0; i < _activeMaps.size(); i++) {
-		if (_activeMaps[i].keymap->getType() == Keymap::kKeymapTypeGlobal)
-			newStack.push(_activeMaps[i]);
-	}
-
-	_activeMaps = newStack;
 }
 
 Keymap *Keymapper::getKeymap(const String &name) {
@@ -123,43 +115,12 @@ Keymap *Keymapper::getKeymap(const String &name) {
 	return nullptr;
 }
 
-bool Keymapper::pushKeymap(const String &name, bool transparent) {
-	assert(!name.empty());
-	Keymap *newMap = getKeymap(name);
-
-	if (!newMap) {
-		warning("Keymap '%s' not registered", name.c_str());
-		return false;
-	}
-
-	pushKeymap(newMap, transparent);
-
-	return true;
-}
-
-void Keymapper::pushKeymap(Keymap *newMap, bool transparent) {
-	MapRecord mr = {newMap, transparent};
-
-	_activeMaps.push(mr);
-}
-
-void Keymapper::popKeymap(const char *name) {
-	if (!_activeMaps.empty()) {
-		if (name) {
-			String topKeymapName = _activeMaps.top().keymap->getName();
-			if (topKeymapName.equals(name))
-				_activeMaps.pop();
-			else
-				warning("An attempt to pop wrong keymap was blocked (expected %s but was %s)", name, topKeymapName.c_str());
-		} else {
-			_activeMaps.pop();
-		}
-	}
-
+void Keymapper::setEnabledKeymapType(Keymap::KeymapType type) {
+	_enabledKeymapType = type;
 }
 
 List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
-	if (!_enabled || _activeMaps.empty()) {
+	if (!_enabled) {
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
 	if (source && !source->allowMapping()) {
@@ -172,19 +133,24 @@ List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
 	}
 
 	List<Event> mappedEvents;
-	for (int i = _activeMaps.size() - 1; i >= 0; --i) {
-		MapRecord mr = _activeMaps[i];
-		debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
+	for (int i = _keymaps.size() - 1; i >= 0; --i) {
+		if (!_keymaps[i]->isEnabled()) {
+			continue;
+		}
 
-		Action *action = mr.keymap->getMappedAction(hwInput);
+		Keymap::KeymapType keymapType = _keymaps[i]->getType();
+		if (keymapType != _enabledKeymapType && keymapType != Keymap::kKeymapTypeGlobal) {
+			continue; // Ignore GUI keymaps while in game and vice versa
+		}
+
+		debug(5, "Keymapper::mapKey keymap: %s", _keymaps[i]->getName().c_str());
+
+		Action *action = _keymaps[i]->getMappedAction(hwInput);
 		if (action) {
 			IncomingEventType incomingEventType = convertToIncomingEventType(ev);
 			mappedEvents.push_back(executeAction(action, incomingEventType));
 			break;
 		}
-
-		if (!mr.transparent)
-			break;
 	}
 
 	if (mappedEvents.empty()) {

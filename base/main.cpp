@@ -67,8 +67,9 @@
 #include "graphics/fonts/ttf.h"
 #endif
 
-#include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
@@ -395,14 +396,12 @@ static void setupKeymapper(OSystem &system) {
 	act->setRightClickEvent();
 
 	mapper->addGlobalKeymap(primaryGlobalKeymap);
-	mapper->pushKeymap(kGlobalKeymapName, true);
 
 	// Get the platform-specific global keymap (if it exists)
 	Keymap *platformGlobalKeymap = system.getGlobalKeymap();
 	if (platformGlobalKeymap) {
 		String platformGlobalKeymapName = platformGlobalKeymap->getName();
 		mapper->addGlobalKeymap(platformGlobalKeymap);
-		mapper->pushKeymap(platformGlobalKeymapName, true);
 	}
 #endif
 

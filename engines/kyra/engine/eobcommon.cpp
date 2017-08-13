@@ -572,10 +572,6 @@ Common::Error EoBCoreEngine::init() {
 	// Prevent autosave on game startup
 	_lastAutosave = _system->getMillis();
 
-#ifdef ENABLE_KEYMAPPER
-	_eventMan->getKeymapper()->pushKeymap(kKeymapName, true);
-#endif
-
 	return Common::kNoError;
 }
 
