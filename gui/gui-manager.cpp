@@ -119,7 +119,7 @@ void GuiManager::initKeymap() {
 		return;
 
 	Action *act;
-	Keymap *guiMap = new Keymap(kGuiKeymapName);
+	Keymap *guiMap = new Keymap(Keymap::kKeymapTypeGui, kGuiKeymapName);
 
 	act = new Action(guiMap, "CLOS", _("Close"));
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));

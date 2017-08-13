@@ -35,36 +35,8 @@ namespace Common {
 static const uint32 kDelayKeyboardEventMillis = 250;
 static const uint32 kDelayMouseEventMillis = 50;
 
-void Keymapper::Domain::addKeymap(Keymap *map) {
-	iterator it = find(map->getName());
-
-	if (it != end())
-		delete it->_value;
-
-	setVal(map->getName(), map);
-}
-
-void Keymapper::Domain::deleteAllKeyMaps() {
-	for (iterator it = begin(); it != end(); ++it)
-		delete it->_value;
-
-	clear();
-}
-
-Keymap *Keymapper::Domain::getKeymap(const String& name) {
-	iterator it = find(name);
-
-	if (it != end())
-		return it->_value;
-	else
-		return 0;
-}
-
 Keymapper::Keymapper(EventManager *evtMgr)
 	: _eventMan(evtMgr), _enabled(true), _hardwareInputs(0) {
-	ConfigManager::Domain *confDom = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
-
-	_globalDomain.setConfigDomain(confDom);
 }
 
 Keymapper::~Keymapper() {
@@ -84,84 +56,89 @@ void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
 }
 
 void Keymapper::addGlobalKeymap(Keymap *keymap) {
-	initKeymap(_globalDomain, keymap);
+	assert(keymap->getType() == Keymap::kKeymapTypeGlobal
+	       || keymap->getType() == Keymap::kKeymapTypeGui);
+
+	ConfigManager::Domain *keymapperDomain = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
+	initKeymap(keymap, keymapperDomain);
 }
 
 void Keymapper::addGameKeymap(Keymap *keymap) {
-	if (ConfMan.getActiveDomain() == 0)
-		error("Call to Keymapper::addGameKeymap when no game loaded");
+	assert(keymap->getType() == Keymap::kKeymapTypeGame);
 
-	// Detect whether the active game changed since last call.
-	// If so, flush the game key configuration.
-	if (_gameDomain.getConfigDomain() != ConfMan.getActiveDomain()) {
-		cleanupGameKeymaps();
-		_gameDomain.setConfigDomain(ConfMan.getActiveDomain());
+	ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
+
+	if (!gameDomain) {
+		error("Call to Keymapper::addGameKeymap when no game loaded");
 	}
 
-	initKeymap(_gameDomain, keymap);
+	cleanupGameKeymaps();
+
+	initKeymap(keymap, gameDomain);
 }
 
-void Keymapper::initKeymap(Domain &domain, Keymap *map) {
+void Keymapper::initKeymap(Keymap *keymap, ConfigManager::Domain *domain) {
 	if (!_hardwareInputs) {
-		warning("No hardware inputs were registered yet (%s)", map->getName().c_str());
+		warning("No hardware inputs were registered yet (%s)", keymap->getName().c_str());
 		return;
 	}
 
-	map->setConfigDomain(domain.getConfigDomain());
-	map->loadMappings(_hardwareInputs);
+	keymap->setConfigDomain(domain);
+	keymap->loadMappings(_hardwareInputs);
 
-	domain.addKeymap(map);
+	_keymaps.push_back(keymap);
 }
 
 void Keymapper::cleanupGameKeymaps() {
 	// Flush all game specific keymaps
-	_gameDomain.deleteAllKeyMaps();
+	KeymapArray::iterator it = _keymaps.begin();
+	while (it != _keymaps.end()) {
+		if ((*it)->getType() == Keymap::kKeymapTypeGame) {
+			delete *it;
+			it = _keymaps.erase(it);
+		} else {
+			it++;
+		}
+	}
 
 	// Now restore the stack of active maps. Re-add all global keymaps, drop
 	// the game specific (=deleted) ones.
 	Stack<MapRecord> newStack;
 
 	for (Stack<MapRecord>::size_type i = 0; i < _activeMaps.size(); i++) {
-		if (_activeMaps[i].global)
+		if (_activeMaps[i].keymap->getType() == Keymap::kKeymapTypeGlobal)
 			newStack.push(_activeMaps[i]);
 	}
 
 	_activeMaps = newStack;
 }
 
-Keymap *Keymapper::getKeymap(const String& name, bool *globalReturn) {
-	Keymap *keymap = _gameDomain.getKeymap(name);
-	bool global = false;
-
-	if (!keymap) {
-		keymap = _globalDomain.getKeymap(name);
-		global = true;
+Keymap *Keymapper::getKeymap(const String &name) {
+	for (KeymapArray::const_iterator it = _keymaps.begin(); it != _keymaps.end(); it++) {
+		if ((*it)->getName() == name) {
+			return *it;
+		}
 	}
 
-	if (globalReturn)
-		*globalReturn = global;
-
-	return keymap;
+	return nullptr;
 }
 
-bool Keymapper::pushKeymap(const String& name, bool transparent) {
-	bool global;
-
+bool Keymapper::pushKeymap(const String &name, bool transparent) {
 	assert(!name.empty());
-	Keymap *newMap = getKeymap(name, &global);
+	Keymap *newMap = getKeymap(name);
 
 	if (!newMap) {
 		warning("Keymap '%s' not registered", name.c_str());
 		return false;
 	}
 
-	pushKeymap(newMap, transparent, global);
+	pushKeymap(newMap, transparent);
 
 	return true;
 }
 
-void Keymapper::pushKeymap(Keymap *newMap, bool transparent, bool global) {
-	MapRecord mr = {newMap, transparent, global};
+void Keymapper::pushKeymap(Keymap *newMap, bool transparent) {
+	MapRecord mr = {newMap, transparent};
 
 	_activeMaps.push(mr);
 }
