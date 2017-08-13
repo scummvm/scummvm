@@ -43,7 +43,7 @@ double DVector::getDistance(const DVector &src) {
 	return sqrt((src._x - _x) * (src._x - _x) + (src._y - _y) * (src._y - _y) + (src._z - _z) * (src._z - _z));
 }
 
-DVector DVector::DAffMatrixProdVec(const DAffine &m) {
+DVector DVector::dAffMatrixProdVec(const DAffine &m) {
 	DVector dest;
 	dest._x = m._col1._x * _x +
                   m._col2._x * _y +
@@ -63,9 +63,9 @@ DVector DVector::DAffMatrixProdVec(const DAffine &m) {
 	return dest;
 }
 
-void DVector::RotVectAxisY(double angle_deg) {
-	double sinVal = sin(angle_deg * Deg2Rad);
-	double cosVal = cos(angle_deg * Deg2Rad);
+void DVector::rotVectAxisY(double angleDeg) {
+	double sinVal = sin(angleDeg * Deg2Rad);
+	double cosVal = cos(angleDeg * Deg2Rad);
 	double x = cosVal * _x - sinVal * _z;
 	double z = cosVal * _z + sinVal * _x;
 
@@ -101,7 +101,7 @@ DAffine DVector::getFrameTransform(const DVector &v) {
 	return matrix4.compose(matrix3);
 }
 
-DAffine DVector::RotXY() const {
+DAffine DVector::rotXY() const {
 	DVector v1 = getAnglesAsVect();
 	DAffine m1, m2;
 	m1.setRotationMatrix(X_AXIS, v1._y * Rad2Deg);
