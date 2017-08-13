@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/zlib.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
@@ -29,7 +30,7 @@
 namespace Titanic {
 
 CFilesManager::CFilesManager(TitanicEngine *vm) : _vm(vm), _gameManager(nullptr),
-		_assetsPath("Assets"), _drive(-1) {
+		_assetsPath("Assets"), _drive(-1), _version(0) {
 }
 
 CFilesManager::~CFilesManager() {
@@ -43,19 +44,21 @@ bool CFilesManager::loadResourceIndex() {
 	}
 
 	uint headerId = _datFile.readUint32BE();
-	uint version = _datFile.readUint16LE();
-	if (headerId != MKTAG('S', 'V', 'T', 'N') || version < 1) {
+	_version = _datFile.readUint16LE();
+	if (headerId != MKTAG('S', 'V', 'T', 'N') || _version < 1) {
 		g_vm->GUIError("titanic.dat has invalid contents");
 		return false;
 	}
 
 	// Read in entries
-	uint offset, size;
+	uint offset, size, flags;
 	char c;
 	Common::String resourceName;
 	for (;;) {
 		offset = _datFile.readUint32LE();
 		size = _datFile.readUint32LE();
+		flags = (_version == 1) ? 0 : _datFile.readUint16LE();
+
 		if (offset == 0 && size == 0)
 			break;
 
@@ -63,7 +66,7 @@ bool CFilesManager::loadResourceIndex() {
 		while ((c = _datFile.readByte()) != '\0')
 			resName += c;
 
-		_resources[resName] = ResourceEntry(offset, size);
+		_resources[resName] = ResourceEntry(offset, size, flags);
 	}
 
 	return true;
@@ -136,8 +139,13 @@ Common::SeekableReadStream *CFilesManager::getResource(const CString &str) {
 
 	_datFile.seek(resEntry._offset);
 
-	return (resEntry._size > 0) ? _datFile.readStream(resEntry._size) :
+	Common::SeekableReadStream *stream = (resEntry._size > 0) ?
+		_datFile.readStream(resEntry._size) :
 		new Common::MemoryReadStream(nullptr, 0);
+	if (resEntry._flags & FLAG_COMPRESSED)
+		stream = Common::wrapCompressedReadStream(stream);
+
+	return stream;
 }
 
 } // End of namespace Titanic
