@@ -105,6 +105,7 @@ ifdef ENABLE_KEYMAPPER
 MODULE_OBJS += \
 	keymapper/action.o \
 	keymapper/hardware-input.o \
+	keymapper/input-watcher.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
 	keymapper/remap-dialog.o

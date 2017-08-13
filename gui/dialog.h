@@ -102,9 +102,9 @@ protected:
 	virtual void handleKeyDown(Common::KeyState state);
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseMoved(int x, int y, int button);
-	virtual void handleMouseLeft(int button) {};
+	virtual void handleMouseLeft(int button) {}
+	virtual void handleOtherEvent(const Common::Event &evt) {}
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
-	virtual void handleOtherEvent(Common::Event evt);
 
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 	Widget *findWidget(const char *name);

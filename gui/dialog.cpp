@@ -364,8 +364,6 @@ void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-void Dialog::handleOtherEvent(Common::Event evt) { }
-
 /*
  * Determine the widget at location (x,y) if any. Assumes the coordinates are
  * in the local coordinate system, i.e. relative to the top left of the dialog.
