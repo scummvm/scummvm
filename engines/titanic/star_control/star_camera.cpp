@@ -321,15 +321,15 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV7._x = m3._row3._x * 1000000.0 + tempV3._x;
 
 		mrow3 = tempV8 = tempV7;
-		tempV3 = tempV3.fn1(subX);
-		mrow1 = mrow1.fn1(subX);
-		mrow2 = mrow2.fn1(subX);
-		mrow3 = mrow3.fn1(subX);
+		tempV3 = tempV3.DAffMatrixProdVec(subX);
+		mrow1 = mrow1.DAffMatrixProdVec(subX);
+		mrow2 = mrow2.DAffMatrixProdVec(subX);
+		mrow3 = mrow3.DAffMatrixProdVec(subX);
 
-		tempV3 = tempV3.fn1(m1);
-		mrow1 = mrow1.fn1(m1);
-		mrow2 = mrow2.fn1(m1);
-		mrow3 = mrow3.fn1(m1);
+		tempV3 = tempV3.DAffMatrixProdVec(m1);
+		mrow1 = mrow1.DAffMatrixProdVec(m1);
+		mrow2 = mrow2.DAffMatrixProdVec(m1);
+		mrow3 = mrow3.DAffMatrixProdVec(m1);
 
 		mrow1 -= tempV3;
 		mrow2 -= tempV3;
@@ -497,11 +497,11 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	tempV3._z = m5._row3._z * 1000000.0 + m4._col1._z;
 	m4._col4 = tempV3;
 
-	tempV2 = tempV2.fn1(m2);
-	m4._col1 = m4._col1.fn1(m2);
-	m4._col3 = m4._col3.fn1(m2);
-	m4._col2 = m4._col2.fn1(m2);
-	m4._col4 = m4._col4.fn1(m2);
+	tempV2 = tempV2.DAffMatrixProdVec(m2);
+	m4._col1 = m4._col1.DAffMatrixProdVec(m2);
+	m4._col3 = m4._col3.DAffMatrixProdVec(m2);
+	m4._col2 = m4._col2.DAffMatrixProdVec(m2);
+	m4._col4 = m4._col4.DAffMatrixProdVec(m2);
 
 	// Find the angle that gives the minimum distance
 	DVector tempPos;
@@ -522,10 +522,10 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._col2.fn2((double)minDegree);
 	m4._col3.fn2((double)minDegree);
 	m4._col4.fn2((double)minDegree);
-	m4._col1 = m4._col1.fn1(m1);
-	m4._col2 = m4._col2.fn1(m1);
-	m4._col3 = m4._col3.fn1(m1);
-	m4._col4 = m4._col4.fn1(m1);
+	m4._col1 = m4._col1.DAffMatrixProdVec(m1);
+	m4._col2 = m4._col2.DAffMatrixProdVec(m1);
+	m4._col3 = m4._col3.DAffMatrixProdVec(m1);
+	m4._col4 = m4._col4.DAffMatrixProdVec(m1);
 
 	m4._col3 -= m4._col1;
 	m4._col2 -= m4._col1;

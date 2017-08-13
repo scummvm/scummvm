@@ -48,7 +48,13 @@ public:
 	 */
 	double getDistance(const DVector &src);
 
-	DVector fn1(const DAffine &m);
+	/**
+	 * Returns the matrix product with this vector and 
+         * also does a z translations
+	 * Doesn't change this vector
+	 */
+	DVector DAffMatrixProdVec(const DAffine &m);
+
 	void fn2(double angle);
 	DVector fn3() const;
 	DAffine fn4(const DVector &v);
