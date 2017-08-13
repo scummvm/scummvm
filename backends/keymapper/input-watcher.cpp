@@ -64,13 +64,8 @@ bool InputWatcher::notifyEvent(const Event &event) {
 		case EVENT_KEYDOWN:
 			return true;
 		case EVENT_KEYUP:
-			_hwInput = _keymapper->findHardwareInput(event.kbd);
-			if (_hwInput) {
-				stopWatching();
-			}
-			return true;
 		case EVENT_CUSTOM_BACKEND_HARDWARE:
-			_hwInput = _keymapper->findHardwareInput(event.customType);
+			_hwInput = _keymapper->findHardwareInput(event);
 			if (_hwInput) {
 				stopWatching();
 			}
