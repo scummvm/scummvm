@@ -32,7 +32,7 @@
 namespace GUI {
 class ButtonWidget;
 class PopUpWidget;
-class ScrollBarWidget;
+class ScrollContainerWidget;
 class StaticTextWidget;
 }
 
@@ -49,20 +49,25 @@ public:
 	virtual ~RemapDialog();
 	virtual void open();
 	virtual void close();
-	virtual void reflowLayout();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleTickle();
 
 protected:
-	struct ActionWidgets {
+	struct ActionRow {
+		Common::Action *action;
+
 		GUI::StaticTextWidget *actionText;
 		GUI::ButtonWidget *keyButton;
 		GUI::ButtonWidget *clearButton;
+
+		ActionRow() : action(nullptr), actionText(nullptr), keyButton(nullptr), clearButton(nullptr) { }
 	};
 
 	void loadKeymap();
 	void refreshKeymap();
+	void clearKeymap();
+	void reflowActionWidgets();
 	void clearMapping(uint i);
 	void startRemapping(uint i);
 	void stopRemapping();
@@ -74,22 +79,15 @@ protected:
 	Action *_remapAction;
 	uint32 _remapTimeout;
 
-	Array<Action *> _currentActions;
-	int _topAction;
-
 	GUI::StaticTextWidget *_kmPopUpDesc;
 	GUI::PopUpWidget *_kmPopUp;
-	GUI::ScrollBarWidget *_scrollBar;
+	GUI::ScrollContainerWidget *_scrollContainer;
 
-	uint _rowCount;
-
-	Array<ActionWidgets> _keymapWidgets;
 	static const uint32 kRemapTimeoutDelay = 3000;
 
 	bool _changes;
 
-	bool _topKeymapIsGui;
-
+	Array<ActionRow> _actions;
 };
 
 } // End of namespace Common

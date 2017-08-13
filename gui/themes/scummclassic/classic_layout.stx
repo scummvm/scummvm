@@ -1705,8 +1705,8 @@
 	</dialog>
 
 	<dialog name = 'KeyMapper' overlays = 'screen_center' shading = 'dim'>
-		<layout type = 'vertical' padding = '8, 8, 32, 8' spacing = '10' align = 'center'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '10' align = 'center'>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8' spacing = '10' align = 'center'>
 				<widget name = 'PopupDesc'
 						type = 'OptionsLabel'
 				/>
@@ -1720,9 +1720,11 @@
 					width = '600'
 					height = '280'
 			/>
-			<widget name = 'Close'
-					type = 'Button'
-			/>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8' align = 'center'>
+				<widget name = 'Close'
+						type = 'Button'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
