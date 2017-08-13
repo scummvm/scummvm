@@ -882,7 +882,7 @@ void MohawkEngine_Riven::initKeymap() {
 	if (mapper->getKeymap(kKeymapName) != 0)
 		return;
 
-	Common::Keymap *const engineKeyMap = new Common::Keymap(kKeymapName);
+	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
 		{ Common::KEYCODE_UP, "UP", _("Move Forward") },

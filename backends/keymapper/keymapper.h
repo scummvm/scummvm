@@ -56,33 +56,6 @@ public:
 	struct MapRecord {
 		Keymap* keymap;
 		bool transparent;
-		bool global;
-	};
-
-	/* Nested class that represents a set of keymaps */
-	class Domain : public HashMap<String, Keymap*,
-				IgnoreCase_Hash, IgnoreCase_EqualTo>  {
-	public:
-		Domain() : _configDomain(0) {}
-		~Domain() {
-			deleteAllKeyMaps();
-		}
-
-		void setConfigDomain(ConfigManager::Domain *confDom) {
-			_configDomain = confDom;
-		}
-		ConfigManager::Domain *getConfigDomain() {
-			return _configDomain;
-		}
-
-		void addKeymap(Keymap *map);
-
-		void deleteAllKeyMaps();
-
-		Keymap *getKeymap(const String& name);
-
-	private:
-		ConfigManager::Domain *_configDomain;
 	};
 
 	Keymapper(EventManager *eventMan);
@@ -129,9 +102,10 @@ public:
 	 * Obtain a keymap of the given name from the keymapper.
 	 * Game keymaps have priority over global keymaps
 	 * @param name		name of the keymap to return
-	 * @param global	set to true if returned keymap is global, false if game
 	 */
-	Keymap *getKeymap(const String& name, bool *global = 0);
+	Keymap *getKeymap(const String &name);
+
+	const Array<Keymap *> &getKeymaps() const { return _keymaps; }
 
 	/**
 	 * Push a new keymap to the top of the active stack, activating
@@ -161,8 +135,6 @@ public:
 	 */
 	const HardwareInput *findHardwareInput(const Event &event);
 
-	Domain& getGlobalDomain() { return _globalDomain; }
-	Domain& getGameDomain() { return _gameDomain; }
 	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
 
 	/**
@@ -183,14 +155,11 @@ private:
 		kIncomingNonKey
 	};
 
-	void initKeymap(Domain &domain, Keymap *keymap);
-
-	Domain _globalDomain;
-	Domain _gameDomain;
+	void initKeymap(Keymap *keymap, ConfigManager::Domain *domain);
 
 	HardwareInputSet *_hardwareInputs;
 
-	void pushKeymap(Keymap *newMap, bool transparent, bool global);
+	void pushKeymap(Keymap *newMap, bool transparent);
 
 	Event executeAction(const Action *act, IncomingEventType incomingType);
 	EventType convertDownToUp(EventType eventType);
@@ -199,6 +168,9 @@ private:
 	EventManager *_eventMan;
 
 	bool _enabled;
+
+	typedef Array<Keymap *> KeymapArray;
+	KeymapArray _keymaps;
 
 	Stack<MapRecord> _activeMaps;
 

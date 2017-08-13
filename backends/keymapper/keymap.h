@@ -41,11 +41,15 @@ class HardwareInputSet;
 
 class Keymap {
 public:
-	Keymap(const String& name) : _name(name) {}
-	Keymap(const Keymap& km);
+	enum KeymapType {
+		kKeymapTypeGlobal,
+		kKeymapTypeGui,
+		kKeymapTypeGame
+	};
+
+	Keymap(KeymapType type, const String &name);
 	~Keymap();
 
-public:
 	/**
 	* Registers a HardwareInput to the given Action
 	* @param action Action in this Keymap
@@ -95,6 +99,8 @@ public:
 
 	const String& getName() { return _name; }
 
+	KeymapType getType() const { return _type; }
+
 private:
 	friend struct Action;
 
@@ -110,6 +116,7 @@ private:
 	typedef List<Action *> ActionList;
 	typedef HashMap<const HardwareInput *, Action *> HardwareActionMap;
 
+	KeymapType _type;
 	String _name;
 	ActionList _actions;
 	HardwareActionMap _hwActionMap;

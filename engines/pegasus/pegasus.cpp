@@ -2498,7 +2498,7 @@ void PegasusEngine::initKeymap() {
 	if (mapper->getKeymap(kKeymapName) != 0)
 		return;
 
-	Common::Keymap *const engineKeyMap = new Common::Keymap(kKeymapName);
+	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
 
 	// Since the game has multiple built-in keys for each of these anyway,
 	// this just attempts to remap one of them.

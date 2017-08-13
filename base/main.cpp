@@ -360,7 +360,7 @@ static void setupKeymapper(OSystem &system) {
 	mapper->registerHardwareInputSet(inputSet);
 
 	// Now create the global keymap
-	Keymap *primaryGlobalKeymap = new Keymap(kGlobalKeymapName);
+	Keymap *primaryGlobalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName);
 	Action *act;
 	act = new Action(primaryGlobalKeymap, "MENU", _("Menu"));
 	act->setEvent(EVENT_MAINMENU);

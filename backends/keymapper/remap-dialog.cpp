@@ -44,7 +44,7 @@ enum {
 };
 
 RemapDialog::RemapDialog()
-	: Dialog("KeyMapper"), _keymapTable(0), _topAction(0), _remapTimeout(0), _topKeymapIsGui(false), _remapAction(nullptr) {
+	: Dialog("KeyMapper"), _topAction(0), _remapTimeout(0), _topKeymapIsGui(false), _remapAction(nullptr) {
 
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
@@ -64,81 +64,17 @@ RemapDialog::RemapDialog()
 }
 
 RemapDialog::~RemapDialog() {
-	free(_keymapTable);
 	delete _remapInputWatcher;
 }
 
 void RemapDialog::open() {
-	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
+	_keymapTable = _keymapper->getKeymaps();
 
-	if (activeKeymaps.size() > 0) {
-		if (activeKeymaps.top().keymap->getName() == Common::kGuiKeymapName)
-			_topKeymapIsGui = true;
-		// Add the entry for the "effective" special view. See RemapDialog::loadKeymap()
-		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Effective)"));
-	}
+	debug(3, "RemapDialog::open keymaps: %d", _keymapTable.size());
 
-	Keymapper::Domain *_globalKeymaps = &_keymapper->getGlobalDomain();
-	Keymapper::Domain *_gameKeymaps = 0;
-
-	int keymapCount = 0;
-
-	if (_globalKeymaps->empty())
-		_globalKeymaps = 0;
-	else
-		keymapCount += _globalKeymaps->size();
-
-	if (ConfMan.getActiveDomain() != 0) {
-		_gameKeymaps = &_keymapper->getGameDomain();
-
-		if (_gameKeymaps->empty())
-			_gameKeymaps = 0;
-		else
-			keymapCount += _gameKeymaps->size();
-	}
-
-	if (activeKeymaps.size() > 1) {
-		keymapCount += activeKeymaps.size() - 1;
-	}
-
-	debug(3, "RemapDialog::open keymaps: %d", keymapCount);
-
-	_keymapTable = (Keymap **)malloc(sizeof(Keymap *) * keymapCount);
-
-	Keymapper::Domain::iterator it;
-	uint32 idx = 0;
-
-	if (activeKeymaps.size() > 1) {
-		int topIndex = activeKeymaps.size() - 1;
-		bool active = activeKeymaps[topIndex].transparent;
-		for (int i = topIndex - 1; i >= 0; --i) {
-			Keymapper::MapRecord mr = activeKeymaps[i];
-			// Add an entry for each keymap in the stack after the top keymap. Mark it Active if it is
-			// reachable or Blocked if an opaque keymap is on top of it thus blocking access to it.
-			_kmPopUp->appendEntry(mr.keymap->getName() + (active ? _(" (Active)") : _(" (Blocked)")), idx);
-			_keymapTable[idx++] = mr.keymap;
-			active &= mr.transparent;
-		}
-	}
-
-	_kmPopUp->appendEntry("");
-
-	// Now add entries for all known keymaps. Note that there will be duplicates with the stack entries.
-
-	if (_globalKeymaps) {
-		for (it = _globalKeymaps->begin(); it != _globalKeymaps->end(); ++it) {
-			// "global" means its keybindings apply to all games; saved in a global conf domain
-			_kmPopUp->appendEntry(it->_value->getName() + _(" (Global)"), idx);
-			_keymapTable[idx++] = it->_value;
-		}
-	}
-
-	if (_gameKeymaps) {
-		for (it = _gameKeymaps->begin(); it != _gameKeymaps->end(); ++it) {
-			// "game" means its keybindings are saved per-target
-			_kmPopUp->appendEntry(it->_value->getName() + _(" (Game)"), idx);
-			_keymapTable[idx++] = it->_value;
-		}
+	// Show the keymaps by order of priority (game keymaps first)
+	for (int i = _keymapTable.size() - 1; i >= 0; i--) {
+		_kmPopUp->appendEntry(_keymapTable[i]->getName(), i);
 	}
 
 	_changes = false;
@@ -151,9 +87,6 @@ void RemapDialog::open() {
 
 void RemapDialog::close() {
 	_kmPopUp->clearEntries();
-
-	free(_keymapTable);
-	_keymapTable = 0;
 
 	if (_changes)
 		ConfMan.flushToDisk();
@@ -255,7 +188,7 @@ void RemapDialog::clearMapping(uint i) {
 		return;
 
 	debug(3, "clear the mapping %u", i);
-	Action *activeRemapAction = _currentActions[_topAction + i].action;
+	Action *activeRemapAction = _currentActions[_topAction + i];
 	_keymapper->clearMapping(activeRemapAction);
 	_changes = true;
 
@@ -273,7 +206,7 @@ void RemapDialog::startRemapping(uint i) {
 		return;
 	}
 
-	_remapAction = _currentActions[_topAction + i].action;
+	_remapAction = _currentActions[_topAction + i];
 	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
 	_remapInputWatcher->startWatching();
 
@@ -313,64 +246,8 @@ void RemapDialog::handleTickle() {
 
 void RemapDialog::loadKeymap() {
 	_currentActions.clear();
-	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
 
-	debug(3, "RemapDialog::loadKeymap active keymaps: %u", activeKeymaps.size());
-
-	if (!activeKeymaps.empty() && _kmPopUp->getSelected() == 0) {
-		// This is the "effective" view which shows all effective actions:
-		// - all of the topmost keymap action
-		// - all mapped actions that are reachable
-
-		List<const HardwareInput *> freeInputs(_keymapper->getHardwareInputs());
-
-		int topIndex = activeKeymaps.size() - 1;
-
-		// This is a WORKAROUND for changing the popup list selected item and changing it back
-		// to the top entry. Upon changing it back, the top keymap is always "gui".
-		if (!_topKeymapIsGui && activeKeymaps[topIndex].keymap->getName() == kGuiKeymapName)
-			--topIndex;
-
-		// add most active keymap's keys
-		Keymapper::MapRecord top = activeKeymaps[topIndex];
-		List<Action *>::iterator actIt;
-		debug(3, "RemapDialog::loadKeymap top keymap: %s", top.keymap->getName().c_str());
-		for (actIt = top.keymap->getActions().begin(); actIt != top.keymap->getActions().end(); ++actIt) {
-			Action *act = *actIt;
-			ActionInfo info = {act, false, act->description};
-
-			_currentActions.push_back(info);
-
-			const HardwareInput *mappedInput = top.keymap->getActionMapping(act);
-			if (mappedInput)
-				freeInputs.remove(mappedInput);
-		}
-
-		// loop through remaining finding mappings for unmapped keys
-		if (top.transparent && topIndex >= 0) {
-			for (int i = topIndex - 1; i >= 0; --i) {
-				Keymapper::MapRecord mr = activeKeymaps[i];
-				debug(3, "RemapDialog::loadKeymap keymap: %s", mr.keymap->getName().c_str());
-				List<const HardwareInput *>::iterator inputIt = freeInputs.begin();
-				const HardwareInput *input = *inputIt;
-				while (inputIt != freeInputs.end()) {
-
-					Action *act = mr.keymap->getMappedAction(input);
-					if (act) {
-						ActionInfo info = {act, true, act->description + " (" + mr.keymap->getName() + ")"};
-						_currentActions.push_back(info);
-						freeInputs.erase(inputIt);
-					} else {
-						++inputIt;
-					}
-				}
-
-				if (mr.transparent == false || freeInputs.empty())
-					break;
-			}
-		}
-
-	} else if (_kmPopUp->getSelected() != -1) {
+	if (_kmPopUp->getSelected() != -1) {
 		// This is the regular view of a keymap that isn't the topmost one.
 		// It shows all of that keymap's actions
 
@@ -379,9 +256,7 @@ void RemapDialog::loadKeymap() {
 		List<Action *>::iterator it;
 
 		for (it = km->getActions().begin(); it != km->getActions().end(); ++it) {
-			ActionInfo info = {*it, false, (*it)->description};
-
-			_currentActions.push_back(info);
+			_currentActions.push_back(*it);
 		}
 	}
 
@@ -409,18 +284,17 @@ void RemapDialog::refreshKeymap() {
 	uint actionI = _topAction;
 
 	for (uint widgetI = 0; widgetI < _keymapWidgets.size(); widgetI++) {
-		ActionWidgets& widg = _keymapWidgets[widgetI];
+		ActionWidgets &widg = _keymapWidgets[widgetI];
 
 		if (actionI < _currentActions.size()) {
 			debug(8, "RemapDialog::refreshKeymap actionI=%u", actionI);
-			ActionInfo&    info = _currentActions[actionI];
+			Action *action = _currentActions[actionI];
 
-			widg.actionText->setLabel(info.description);
-			widg.actionText->setEnabled(!info.inherited);
+			widg.actionText->setLabel(action->description);
 
-			Keymap *keymap = info.action->getParent();
+			Keymap *keymap = action->getParent();
 
-			const HardwareInput *mappedInput = keymap->getActionMapping(info.action);
+			const HardwareInput *mappedInput = keymap->getActionMapping(action);
 			if (mappedInput)
 				widg.keyButton->setLabel(mappedInput->description);
 			else
@@ -436,11 +310,9 @@ void RemapDialog::refreshKeymap() {
 			widg.keyButton->setVisible(false);
 			widg.clearButton->setVisible(false);
 		}
-		//widg.actionText->markAsDirty();
-		//widg.keyButton->markAsDirty();
 	}
-	// need to redraw entire Dialog so that invisible
-	// widgets disappear
+
+	// need to redraw entire Dialog so that invisible widgets disappear
 	g_gui.scheduleTopDialogRedraw();
 }
 
