@@ -61,7 +61,7 @@ Keymap *Keymapper::Domain::getKeymap(const String& name) {
 }
 
 Keymapper::Keymapper(EventManager *evtMgr)
-	: _eventMan(evtMgr), _enabled(true), _remapping(false), _hardwareInputs(0), _actionToRemap(0) {
+	: _eventMan(evtMgr), _enabled(true), _hardwareInputs(0) {
 	ConfigManager::Domain *confDom = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 
 	_globalDomain.setConfigDomain(confDom);
@@ -187,9 +187,7 @@ List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
 	}
 	List<Event> mappedEvents;
 
-	if (_remapping)
-		mappedEvents = remap(ev);
-	else if (ev.type == Common::EVENT_KEYDOWN)
+	if (ev.type == Common::EVENT_KEYDOWN)
 		mappedEvents = mapKeyDown(ev.kbd);
 	else if (ev.type == Common::EVENT_KEYUP)
 		mappedEvents = mapKeyUp(ev.kbd);
@@ -200,13 +198,6 @@ List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
 		return mappedEvents;
 	else
 		return DefaultEventMapper::mapEvent(ev, source);
-}
-
-void Keymapper::startRemappingMode(Action *actionToRemap) {
-	assert(!_remapping);
-
-	_remapping = true;
-	_actionToRemap = actionToRemap;
 }
 
 List<Event> Keymapper::mapKeyDown(const KeyState& key) {
@@ -345,38 +336,10 @@ const HardwareInput *Keymapper::findHardwareInput(const HardwareInputCode code) 
 	return (_hardwareInputs) ? _hardwareInputs->findHardwareInput(code) : 0;
 }
 
-List<Event> Keymapper::remap(const Event &ev) {
-	assert(_remapping);
-	assert(_actionToRemap);
-
-	List<Event> list;
-
-	const HardwareInput *hwInput = 0;
-	Event mappedEvent;
-
-	switch (ev.type) {
-	case EVENT_KEYDOWN:
-		break;
-	case EVENT_KEYUP:
-		hwInput = findHardwareInput(ev.kbd);
-		break;
-	case EVENT_CUSTOM_BACKEND_HARDWARE:
-		hwInput = findHardwareInput(ev.customType);
-		break;
-	default:
-		break;
-	}
-	if (hwInput) {
-		Keymap *keymap = _actionToRemap->getParent();
-		keymap->registerMapping(_actionToRemap, hwInput);
-		keymap->saveMappings();
-
-		_remapping = false;
-		_actionToRemap = 0;
-		mappedEvent.type = EVENT_GUI_REMAP_COMPLETE_ACTION;
-		list.push_back(mappedEvent);
-	}
-	return list;
+void Keymapper::registerMapping(Action *action, const HardwareInput *input) {
+	Keymap *keymap = action->getParent();
+	keymap->registerMapping(action, input);
+	keymap->saveMappings();
 }
 
 void Keymapper::clearMapping(Action *action) {

@@ -41,6 +41,7 @@ namespace Common {
 class Action;
 class Keymap;
 class Keymapper;
+class InputWatcher;
 
 class RemapDialog : public GUI::Dialog {
 public:
@@ -50,11 +51,8 @@ public:
 	virtual void close();
 	virtual void reflowLayout();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleKeyDown(Common::KeyState state);
-	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleTickle();
-	virtual void handleOtherEvent(Common::Event ev);
 
 protected:
 	struct ActionWidgets {
@@ -72,10 +70,14 @@ protected:
 	void refreshKeymap();
 	void clearMapping(uint i);
 	void startRemapping(uint i);
-	void stopRemapping(bool force = false);
+	void stopRemapping();
 
 	Keymapper *_keymapper;
 	Keymap** _keymapTable;
+
+	InputWatcher *_remapInputWatcher;
+	Action *_remapAction;
+	uint32 _remapTimeout;
 
 	Array<ActionInfo> _currentActions;
 	int _topAction;
@@ -87,7 +89,6 @@ protected:
 	uint _rowCount;
 
 	Array<ActionWidgets> _keymapWidgets;
-	uint32 _remapTimeout;
 	static const uint32 kRemapTimeoutDelay = 3000;
 
 	bool _changes;

@@ -510,7 +510,7 @@ void LauncherDialog::handleKeyUp(Common::KeyState state) {
 	updateButtons();
 }
 
-void LauncherDialog::handleOtherEvent(Common::Event evt) {
+void LauncherDialog::handleOtherEvent(const Common::Event &evt) {
 	Dialog::handleOtherEvent(evt);
 	if (evt.type == Common::EVENT_DROP_FILE) {
 		doGameDetection(evt.path);
