@@ -493,8 +493,10 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size) {
 	}
 
 	readIFFChunkHeader(_s, &chd);
-	if (chd.id != kLNID)
+	if (chd.id != kLNID) {
+		free(loopNameOffsets);
 		return false;
+	}
 
 	char *names = (char*)malloc(roundup(chd.size));
 	s->read(names, roundup(chd.size));
