@@ -46,9 +46,9 @@ BEGIN_MESSAGE_MAP(CSuccUBus, CTrueTalkNPC)
 	ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
-bool CSuccUBus::_isOn;
-bool CSuccUBus::_motherBlocked;
-bool CSuccUBus::_enabled;
+bool CSuccUBus::_isOn;				// SuccUBus turned on
+bool CSuccUBus::_motherBlocked;		// Bilge SuccUBus is blocked
+bool CSuccUBus::_fuseboxOn;			// SuccUBus dial in fusebox is on
 
 CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_initialStartFrame = -1;
@@ -154,7 +154,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_pumpingEndFrame, indent);
 	file->writeNumberLine(_destRoomFlags, indent);
 
-	file->writeNumberLine(_enabled, indent);
+	file->writeNumberLine(_fuseboxOn, indent);
 	file->writeNumberLine(_inProgress, indent);
 	file->writeNumberLine(_field104, indent);
 
@@ -218,7 +218,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_pumpingEndFrame = file->readNumber();
 	_destRoomFlags = file->readNumber();
 
-	_enabled = file->readNumber();
+	_fuseboxOn = file->readNumber();
 	_inProgress = file->readNumber();
 	_field104 = file->readNumber();
 
@@ -488,8 +488,12 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			break;
 		}
 	} else {
+		// When the SuccUBus dial in Titania's fusebox is on, then
+		// any mail can be received by the SuccUBus in the bomb room.
+		// Otherwise, only get mail sent to this specific SuccUBus
 		CGameObject *mailObject = findMailByFlags(
-			_enabled && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison, petRoomFlags);
+			_fuseboxOn && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison, petRoomFlags);
+
 		if (!mailObject) {
 			// No mail for this SuccUBus
 			if (getRandomNumber(1) == 0) {
@@ -539,7 +543,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		bool flag = false;
 
 		if (pet && !mailExists(petRoomFlags)) {
-			CGameObject *mailObject = _enabled && compareRoomNameTo("Titania") ?
+			CGameObject *mailObject = _fuseboxOn && compareRoomNameTo("Titania") ?
 				findMailByFlags(RFC_TITANIA, petRoomFlags) :
 				findMailByFlags(_flagsComparison, petRoomFlags);
 
@@ -750,9 +754,11 @@ bool CSuccUBus::SetChevRoomBits(CSetChevRoomBits *msg) {
 
 bool CSuccUBus::ActMsg(CActMsg *msg) {
 	if (msg->_action == "EnableObject")
-		_enabled = true;
+		// SuccUBus dial in fusebox was turned on
+		_fuseboxOn = true;
 	else if (msg->_action == "DisableObject")
-		_enabled = false;
+		// SuccUBus dial in fusebox was turned off
+		_fuseboxOn = false;
 
 	return true;
 }

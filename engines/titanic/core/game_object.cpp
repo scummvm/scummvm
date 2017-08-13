@@ -954,7 +954,7 @@ CGameObject *CGameObject::findMailByFlags(RoomFlagsComparison compareType, uint 
 
 	for (CGameObject *obj = mailMan->getFirstObject(); obj;
 			obj = mailMan->getNextObject(obj)) {
-		if (compareRoomFlags(compareType, roomFlags, obj->_roomFlags))
+		if (compareRoomFlags(compareType, obj->_roomFlags, roomFlags))
 			return obj;
 	}
 

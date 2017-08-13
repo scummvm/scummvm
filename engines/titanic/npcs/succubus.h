@@ -51,7 +51,7 @@ class CSuccUBus : public CTrueTalkNPC {
 protected:
 	static bool _isOn;
 	static bool _motherBlocked;
-	static bool _enabled;
+	static bool _fuseboxOn;
 protected:
 	int _initialStartFrame;
 	int _initialEndFrame;

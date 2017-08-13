@@ -89,7 +89,7 @@ bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 	} else {
 		uint roomFlags = pet->getRoomFlags();
 		CGameObject *mailObject = findMailByFlags(
-			_enabled && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison,
+			_fuseboxOn && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison,
 			roomFlags);
 
 		if (mailObject) {
