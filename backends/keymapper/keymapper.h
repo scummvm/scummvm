@@ -152,42 +152,14 @@ public:
 	void popKeymap(const char *name = 0);
 
 	/**
-	 * @brief Map a key press event.
-	 * If the active keymap contains a Action mapped to the given key, then
-	 * the Action's events are pushed into the EventManager's event queue.
-	 * @param key		key that was pressed
-	 * @param keyDown	true for key down, false for key up
-	 * @return			mapped events
-	 */
-	List<Event> mapKey(const KeyState& key, bool keyDown);
-	List<Event> mapNonKey(const HardwareInputCode code);
-
-	/**
-	 * @brief Map a key down event.
-	 * @see mapKey
-	 */
-	List<Event> mapKeyDown(const KeyState& key);
-
-	/**
-	 * @brief Map a key up event.
-	 * @see mapKey
-	 */
-	List<Event> mapKeyUp(const KeyState& key);
-
-	/**
 	 * Enable/disable the keymapper
 	 */
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
 	/**
-	 * Return a HardwareInput pointer for the given key state
+	 * Return a HardwareInput pointer for the given event
 	 */
-	const HardwareInput *findHardwareInput(const KeyState& key);
-
-	/**
-	 * Return a HardwareInput pointer for the given input code
-	 */
-	const HardwareInput *findHardwareInput(const HardwareInputCode code);
+	const HardwareInput *findHardwareInput(const Event &event);
 
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
@@ -220,15 +192,15 @@ private:
 
 	void pushKeymap(Keymap *newMap, bool transparent, bool global);
 
-	List<Event> executeAction(const Action *act, IncomingEventType incomingType = kIncomingNonKey);
+	Event executeAction(const Action *act, IncomingEventType incomingType);
 	EventType convertDownToUp(EventType eventType);
+	IncomingEventType convertToIncomingEventType(const Event &ev) const;
 
 	EventManager *_eventMan;
 
 	bool _enabled;
 
 	Stack<MapRecord> _activeMaps;
-	HashMap<KeyState, Action *> _keysDown;
 
 };
 
