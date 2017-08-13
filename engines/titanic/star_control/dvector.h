@@ -48,11 +48,37 @@ public:
 	 */
 	double getDistance(const DVector &src);
 
-	DVector fn1(const DAffine &m);
-	void fn2(double angle);
-	DVector fn3() const;
-	DAffine fn4(const DVector &v);
-	DAffine fn5() const;
+	/**
+	 * Returns the matrix product with this vector and 
+         * also does a z translations
+	 * Doesn't change this vector
+	 */
+	DVector DAffMatrixProdVec(const DAffine &m);
+
+	/**
+	 * Rotate this vector about the Y axis
+	 */
+	void RotVectAxisY(double angle_deg);
+
+	/**
+         * Returns a vector, v, that represents a magnitude, and two angles in radians
+	 * 1. Scale this vector to be unit magnitude and store scale in x component of v
+         * 2. X rotation angle from +y axis of this vector is put in y component of v
+         * 3. z component output of v is the 4-quadrant angle that z makes with x (Y axis rotation)
+	 */
+	DVector getAnglesAsVect() const;
+
+	/**
+         * Returns a matrix that contains the frame rotation based on this vector and 
+	 * a vector rotation based on input vector v
+	 */
+	DAffine getFrameTransform(const DVector &v);
+
+	/**
+         * Returns a affine matrix that does a x then a y axis frame rotation
+	 * based on the orientation of this vector
+	 */
+	DAffine RotXY() const;
 
 	/**
 	 * Returns true if the passed vector equals this one
