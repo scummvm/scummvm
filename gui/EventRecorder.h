@@ -36,7 +36,6 @@
 #include "common/mutex.h"
 #include "common/array.h"
 #include "common/memstream.h"
-#include "backends/keymapper/keymapper.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
