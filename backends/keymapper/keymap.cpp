@@ -36,7 +36,8 @@ namespace Common {
 Keymap::Keymap(KeymapType type, const String &name) :
 		_type(type),
 		_name(name),
-		_configDomain(nullptr) {
+		_configDomain(nullptr),
+		_enabled(true) {
 
 }
 

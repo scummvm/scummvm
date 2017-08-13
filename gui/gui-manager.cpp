@@ -30,8 +30,9 @@
 #include "common/translation.h"
 #include "gui/EventRecorder.h"
 
-#include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
@@ -141,13 +142,11 @@ void GuiManager::initKeymap() {
 	mapper->addGlobalKeymap(guiMap);
 }
 
-void GuiManager::pushKeymap() {
-	_system->getEventManager()->getKeymapper()->pushKeymap(Common::kGuiKeymapName);
+void GuiManager::enableKeymap(bool enabled) {
+	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
+	keymapper->setEnabledKeymapType(enabled ? Common::Keymap::kKeymapTypeGui : Common::Keymap::kKeymapTypeGame);
 }
 
-void GuiManager::popKeymap() {
-	_system->getEventManager()->getKeymapper()->popKeymap(Common::kGuiKeymapName);
-}
 #endif
 
 bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, bool forced) {
@@ -429,7 +428,7 @@ void GuiManager::runLoop() {
 void GuiManager::saveState() {
 #ifdef ENABLE_KEYMAPPER
 	initKeymap();
-	pushKeymap();
+	enableKeymap(true);
 #endif
 	// Backup old cursor
 	_lastClick.x = _lastClick.y = 0;
@@ -441,7 +440,7 @@ void GuiManager::saveState() {
 
 void GuiManager::restoreState() {
 #ifdef ENABLE_KEYMAPPER
-	popKeymap();
+	enableKeymap(false);
 #endif
 	if (_useStdCursor) {
 		CursorMan.popCursor();

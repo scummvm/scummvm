@@ -2522,7 +2522,6 @@ void PegasusEngine::initKeymap() {
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
-	mapper->pushKeymap(kKeymapName, true);
 #endif
 }
 
