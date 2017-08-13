@@ -1,4 +1,6 @@
 
+ifdef USE_ZLIB
+
 MODULE := devtools/create_titanic
 
 MODULE_OBJS := \
@@ -19,5 +21,10 @@ MODULE_OBJS := \
 # Set the name of the executable
 TOOL_EXECUTABLE := create_titanic
 
+TOOL_CFLAGS := $(ZLIB_CFLAGS)
+TOOL_LIBS := $(ZLIB_LIBS)
+
 # Include common rules
 include $(srcdir)/rules.mk
+
+endif

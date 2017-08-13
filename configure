@@ -4132,7 +4132,8 @@ EOF
 	cc_check $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
 fi
 if test "$_zlib" = yes ; then
-	append_var LIBS "$ZLIB_LIBS -lz"
+	append_var ZLIB_LIBS "-lz"
+	append_var LIBS "$ZLIB_LIBS"
 	append_var INCLUDES "$ZLIB_CFLAGS"
 fi
 define_in_config_if_yes "$_zlib" 'USE_ZLIB'
@@ -5193,6 +5194,8 @@ EXEPRE := $HOSTEXEPRE
 EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
+ZLIB_LIBS := $ZLIB_LIBS
+ZLIB_CFLAGS := $ZLIB_CFLAGS
 
 prefix = $prefix
 exec_prefix = $exec_prefix
