@@ -29,10 +29,6 @@
 #undef main
 #endif // main
 
-#ifndef USE_ZLIB
-#error "Project should have USE_ZLIB defined"
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
