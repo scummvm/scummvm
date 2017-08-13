@@ -80,6 +80,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Haunted House", "Haunted House 1.5", "5db2f95c7abaa9d060b94271a5bc57f8", 177500),
 	// Cropped graphics on first scene, cannot pass to in-game
 	FANGAME("Intro to Gothic", "6f732eaad6e3b85795f8ee6c6a40d837", 208067),
+	FANGAMEN("James Bond 007", "007", "885c2b6b79c81bd230732431e04a8231", 50663),
 	// Lots of unhandled comparisons
 	FANGAME("Jamie the Demon Slayer", "fa0ca9618c18425b6d9bf913f762d91b", 232789),
 	FANGAMEN("Journey", "The Journey 1.6.2 US", "e66f37472e1414a088eb5d5acc4df794", 820572),
