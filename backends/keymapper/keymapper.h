@@ -27,36 +27,23 @@
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "common/events.h"
-#include "common/list.h"
-#include "common/hashmap.h"
-#include "common/stack.h"
-#include "backends/keymapper/hardware-input.h"
 #include "backends/keymapper/keymap.h"
+
+#include "common/array.h"
+#include "common/config-manager.h"
+#include "common/events.h"
 
 namespace Common {
 
 const char *const kGuiKeymapName = "gui";
 const char *const kGlobalKeymapName = "global";
 
-/**
- * Hash function for KeyState
- */
-template<> struct Hash<KeyState>
-		: public UnaryFunction<KeyState, uint> {
-
-	uint operator()(const KeyState &val) const {
-		return (uint)val.keycode | ((uint)val.flags << 24);
-	}
-};
+class Action;
+class HardwareInput;
+class HardwareInputSet;
 
 class Keymapper : public Common::DefaultEventMapper {
 public:
-
-	struct MapRecord {
-		Keymap* keymap;
-		bool transparent;
-	};
 
 	Keymapper(EventManager *eventMan);
 	~Keymapper();
@@ -69,14 +56,6 @@ public:
 	 * @note should only be called once (during backend initialisation)
 	 */
 	void registerHardwareInputSet(HardwareInputSet *inputs);
-
-	/**
-	 * Get a list of all registered HardwareInputs
-	 */
-	const List<const HardwareInput *> &getHardwareInputs() const {
-		assert(_hardwareInputs);
-		return _hardwareInputs->getHardwareInputs();
-	}
 
 	/**
 	 * Add a keymap to the global domain.
@@ -105,25 +84,17 @@ public:
 	 */
 	Keymap *getKeymap(const String &name);
 
+	/**
+	 * Obtain a list of all the keymaps registered with the keymapper
+	 */
 	const Array<Keymap *> &getKeymaps() const { return _keymaps; }
 
 	/**
-	 * Push a new keymap to the top of the active stack, activating
-	 * it for use.
-	 * @param name			name of the keymap to push
-	 * @param transparent	if true keymapper will iterate down the
-	 *						stack if it cannot find a key in the new map
-	 * @return				true if successful
+	 * Set which kind of keymap is currently used to map events
+	 *
+	 * Keymaps with the global type are always enabled
 	 */
-	bool pushKeymap(const String& name, bool transparent = false);
-
-	/**
-	 * Pop the top keymap off the active stack.
-	 * @param name	(optional) name of keymap expected to be popped
-	 * 				if provided, will not pop unless name is the same
-	 * 				as the top keymap
-	 */
-	void popKeymap(const char *name = 0);
+	void setEnabledKeymapType(Keymap::KeymapType type);
 
 	/**
 	 * Enable/disable the keymapper
@@ -134,8 +105,6 @@ public:
 	 * Return a HardwareInput pointer for the given event
 	 */
 	const HardwareInput *findHardwareInput(const Event &event);
-
-	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
 
 	/**
 	 * Register the binding of a hardware input to an action
@@ -159,8 +128,6 @@ private:
 
 	HardwareInputSet *_hardwareInputs;
 
-	void pushKeymap(Keymap *newMap, bool transparent);
-
 	Event executeAction(const Action *act, IncomingEventType incomingType);
 	EventType convertDownToUp(EventType eventType);
 	IncomingEventType convertToIncomingEventType(const Event &ev) const;
@@ -168,11 +135,10 @@ private:
 	EventManager *_eventMan;
 
 	bool _enabled;
+	Keymap::KeymapType _enabledKeymapType;
 
 	typedef Array<Keymap *> KeymapArray;
 	KeymapArray _keymaps;
-
-	Stack<MapRecord> _activeMaps;
 
 };
 

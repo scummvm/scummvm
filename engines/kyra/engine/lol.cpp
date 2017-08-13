@@ -458,10 +458,6 @@ Common::Error LoLEngine::init() {
 	_spellProcs.push_back(new SpellProc(this, 0));
 	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castGuardian));
 
-#ifdef ENABLE_KEYMAPPER
-	_eventMan->getKeymapper()->pushKeymap(kKeymapName, true);
-#endif
-
 	return Common::kNoError;
 }
 

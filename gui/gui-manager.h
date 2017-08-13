@@ -157,8 +157,7 @@ protected:
 	Common::List<GuiObjectTrashItem> _guiObjectTrash;
 
 	void initKeymap();
-	void pushKeymap();
-	void popKeymap();
+	void enableKeymap(bool enabled);
 
 	void saveState();
 	void restoreState();
@@ -167,8 +166,6 @@ protected:
 	void closeTopDialog();
 
 	void redraw();
-
-	void loop();
 
 	void setupCursor();
 	void animateCursor();
