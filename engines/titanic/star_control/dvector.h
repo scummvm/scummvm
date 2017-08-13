@@ -60,7 +60,13 @@ public:
 	 */
 	void RotVectAxisY(double angle_deg);
 
-	DVector fn3() const;
+	/**
+         * Returns a vector, v, that represents a magnitude, and two angles in radians
+	 * 1. Scale this vector to be unit magnitude and store scale in x component of v
+         * 2. X rotation angle from +y axis of this vector is put in y component of v
+         * 3. z component output of v is the 4-quadrant angle that z makes with x (Y axis rotation)
+	 */
+	DVector getAnglesAsVect() const;
 	DAffine fn4(const DVector &v);
 	DAffine fn5() const;
 
