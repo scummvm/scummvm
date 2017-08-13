@@ -29,11 +29,17 @@
 #undef main
 #endif // main
 
+#ifndef USE_ZLIB
+#error "Project should have USE_ZLIB defined"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "common/language.h"
+#include "common/memstream.h"
 #include "common/rect.h"
+#include "zlib.h"
 #include "winexe_pe.h"
 #include "file.h"
 #include "script_preresponses.h"
@@ -54,8 +60,8 @@
  * ASCIIZ  - name of the resource
  */
 
-#define VERSION_NUMBER 1
-#define HEADER_SIZE 0x1200
+#define VERSION_NUMBER 2
+#define HEADER_SIZE 0x1380
 
 Common::File inputFile, outputFile;
 Common::PEResources resEng, resGer;
@@ -1022,14 +1028,24 @@ void NORETURN_PRE error(const char *s, ...) {
 	exit(1);
 }
 
-void writeEntryHeader(const char *name, uint offset, uint size) {
+void writeEntryHeader(const char *name, uint offset, uint size, uint flags) {
 	assert(headerOffset < HEADER_SIZE);
 	outputFile.seek(headerOffset);
 	outputFile.writeLong(offset);
 	outputFile.writeLong(size);
+	outputFile.writeWord(flags);
 	outputFile.writeString(name);
 
-	headerOffset += 8 + strlen(name) + 1;
+	headerOffset += 10 + strlen(name) + 1;
+}
+
+void writeEntryHeader(const char *name, uint offset, uint size) {
+	writeEntryHeader(name, offset, size, 0);
+}
+
+void writeEntryHeader(const char *name, uint offset, uint size, bool isCompressed) {
+	uint flags = isCompressed ? 1 : 0;
+	writeEntryHeader(name, offset, size, flags);
 }
 
 void writeFinalEntryHeader() {
@@ -1037,6 +1053,10 @@ void writeFinalEntryHeader() {
 	outputFile.seek(headerOffset);
 	outputFile.writeLong(0);
 	outputFile.writeLong(0);
+}
+
+void writeCompressedRes(Common::File *src) {
+
 }
 
 void writeStringArray(const char *name, uint offset, int count) {
@@ -1130,18 +1150,36 @@ void writeResource(const char *sectionStr, const char *resId, bool isEnglish = t
 void writeBitmap(const char *name, Common::File *file) {
 	outputFile.seek(dataOffset);
 
+	// Set up a memory stream for the compressed data, and wrap
+	// it with a zlib compressor
+	Common::MemoryWriteStreamDynamic *compressedData =
+		new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	Common::WriteStream *zlib = Common::wrapCompressedWriteStream(compressedData);
+
 	// Write out the necessary bitmap header so that the ScummVM
 	// BMP decoder can properly handle decoding the bitmaps
-	outputFile.write("BM", 2);
-	outputFile.writeLong(file->size() + 14);	// Filesize
-	outputFile.writeLong(0);					// res1 & res2
-	outputFile.writeLong(0x436);				// image offset
+	zlib->write("BM", 2);
+	zlib->writeUint32LE(file->size() + 14);	// Filesize
+	zlib->writeUint32LE(0);					// res1 & res2
+	zlib->writeUint32LE(0x436);				// image offset
 
-	outputFile.write(*file, file->size());
+	// Transfer the bitmap data
+	int srcSize = file->size();
+	byte *data = new byte[srcSize];
+	file->read(data, srcSize);
+	zlib->write(data, srcSize);
 
-	writeEntryHeader(name, dataOffset, file->size() + 14);
-	dataOffset += file->size() + 14;
-	delete file;
+	delete[] data;
+	zlib->finalize();
+
+	// Write out the compressed data
+	outputFile.write(compressedData->getData(), compressedData->size());
+
+	writeEntryHeader(name, dataOffset, compressedData->size() + 14, true);
+	dataOffset += compressedData->size() + 14;
+
+	// Free the zlib write stream
+	delete zlib;
 }
 
 void writeBitmap(const char *sectionStr, const char *resId, bool isEnglish = true) {

@@ -13,7 +13,8 @@ MODULE_OBJS := \
 	str.o \
 	tag_maps.o \
 	winexe.o \
-	winexe_pe.o
+	winexe_pe.o \
+	zlib.o
 
 # Set the name of the executable
 TOOL_EXECUTABLE := create_titanic
