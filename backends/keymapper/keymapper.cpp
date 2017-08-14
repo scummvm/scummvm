@@ -135,6 +135,8 @@ List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
 		return DefaultEventMapper::mapEvent(ev, source);
 	}
 
+	IncomingEventType incomingEventType = convertToIncomingEventType(ev);
+
 	List<Event> mappedEvents;
 	for (int i = _keymaps.size() - 1; i >= 0; --i) {
 		if (!_keymaps[i]->isEnabled()) {
@@ -148,10 +150,13 @@ List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
 
 		debug(5, "Keymapper::mapKey keymap: %s", _keymaps[i]->getName().c_str());
 
-		Action *action = _keymaps[i]->getMappedAction(hwInput);
-		if (action) {
-			IncomingEventType incomingEventType = convertToIncomingEventType(ev);
-			mappedEvents.push_back(executeAction(action, incomingEventType));
+		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(hwInput);
+		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
+			mappedEvents.push_back(executeAction(*it, incomingEventType));
+		}
+		if (!actions.empty()) {
+			// If we found actions matching this input in a keymap, no need to look at the other keymaps.
+			// An input resulting in actions from system and game keymaps would lead to unexpected user experience.
 			break;
 		}
 	}

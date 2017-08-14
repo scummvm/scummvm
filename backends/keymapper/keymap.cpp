@@ -25,6 +25,7 @@
 #ifdef ENABLE_KEYMAPPER
 
 #include "common/system.h"
+#include "common/tokenizer.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/hardware-input.h"
@@ -54,27 +55,43 @@ void Keymap::addAction(Action *action) {
 }
 
 void Keymap::registerMapping(Action *action, const HardwareInput *hwInput) {
-	unregisterMapping(action);
+	ActionArray &actionArray = _hwActionMap.getVal(hwInput);
 
-	_hwActionMap[hwInput] = action;
+	// Don't allow an input to map to the same action multiple times
+	ActionArray::const_iterator found = find(actionArray.begin(), actionArray.end(), action);
+	if (found == actionArray.end()) {
+		actionArray.push_back(action);
+	}
 }
 
 void Keymap::unregisterMapping(Action *action) {
-	for (HardwareActionMap::iterator it = _hwActionMap.begin(); it != _hwActionMap.end(); it++) {
-		if (it->_value == action) {
-			_hwActionMap.erase(it);
+	// Remove the action from all the input mappings
+	for (HardwareActionMap::iterator itInput = _hwActionMap.begin(); itInput != _hwActionMap.end(); itInput++) {
+		for (ActionArray::iterator itAction = itInput->_value.begin(); itAction != itInput->_value.end(); itAction++) {
+			if (*itAction == action) {
+				itInput->_value.erase(itAction);
+				break;
+			}
+		}
+		if (itInput->_value.empty()) {
+			_hwActionMap.erase(itInput);
 		}
 	}
 }
 
-const HardwareInput *Keymap::getActionMapping(Action *action) const {
-	for (HardwareActionMap::const_iterator it = _hwActionMap.begin(); it != _hwActionMap.end(); it++) {
-		if (it->_value == action) {
-			return it->_key;
+Array<const HardwareInput *> Keymap::getActionMapping(Action *action) const {
+	Array<const HardwareInput *> inputs;
+
+	for (HardwareActionMap::iterator itInput = _hwActionMap.begin(); itInput != _hwActionMap.end(); itInput++) {
+		for (ActionArray::iterator itAction = itInput->_value.begin(); itAction != itInput->_value.end(); itAction++) {
+			if (*itAction == action) {
+				inputs.push_back(itInput->_key);
+				break;
+			}
 		}
 	}
 
-	return nullptr;
+	return inputs;
 }
 
 const Action *Keymap::findAction(const char *id) const {
@@ -86,7 +103,7 @@ const Action *Keymap::findAction(const char *id) const {
 	return nullptr;
 }
 
-Action *Keymap::getMappedAction(const HardwareInput *hardwareInput) const {
+const Keymap::ActionArray &Keymap::getMappedActions(const HardwareInput *hardwareInput) const {
 	return _hwActionMap[hardwareInput];
 }
 
@@ -95,34 +112,35 @@ void Keymap::setConfigDomain(ConfigManager::Domain *dom) {
 }
 
 void Keymap::loadMappings(const HardwareInputSet *hwKeys) {
-	if (!_configDomain)
-		return;
+	assert(_configDomain);
 
-	if (_actions.empty())
+	if (_actions.empty()) {
 		return;
+	}
 
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
+	_hwActionMap.clear();
 	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); ++it) {
 		Action* ua = *it;
 		String actionId(ua->id);
 		String confKey = prefix + actionId;
 
-		String hwInputId = _configDomain->getVal(confKey);
+		// The configuration value is a list of space separated hardware input ids
+		StringTokenizer hwInputIds = _configDomain->getVal(confKey);
 
-		// there's no mapping
-		if (hwInputId.empty())
-			continue;
+		String hwInputId;
+		while ((hwInputId = hwInputIds.nextToken()) != "") {
+			const HardwareInput *hwInput = hwKeys->findHardwareInput(hwInputId.c_str());
 
-		const HardwareInput *hwInput = hwKeys->findHardwareInput(hwInputId.c_str());
+			if (!hwInput) {
+				warning("HardwareInput with ID '%s' not known", hwInputId.c_str());
+				continue;
+			}
 
-		if (!hwInput) {
-			warning("HardwareInput with ID '%s' not known", hwInputId.c_str());
-			continue;
+			// map the key
+			registerMapping(ua, hwInput);
 		}
-
-		// map the key
-		_hwActionMap[hwInput] = ua;
 	}
 }
 
@@ -132,11 +150,21 @@ void Keymap::saveMappings() {
 
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
-	for (HardwareActionMap::const_iterator it = _hwActionMap.begin(); it != _hwActionMap.end(); it++) {
-		const Action *action = it->_value;
-		const HardwareInput *input = it->_key;
+	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); it++) {
+		Action *action = *it;
+		Array<const HardwareInput *> mappedInputs = getActionMapping(action);
 
-		_configDomain->setVal(prefix + action->id, input->id);
+		// The configuration value is a list of space separated hardware input ids
+		String confValue;
+		for (uint j = 0; j < mappedInputs.size(); j++) {
+			if (!confValue.empty()) {
+				confValue += " ";
+			}
+
+			confValue += mappedInputs[j]->id;
+		}
+
+		_configDomain->setVal(prefix + action->id, confValue);
 	}
 }
 

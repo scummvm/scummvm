@@ -241,9 +241,19 @@ void RemapDialog::refreshKeymap() {
 
 		Keymap *keymap = row.action->getParent();
 
-		const HardwareInput *mappedInput = keymap->getActionMapping(row.action);
-		if (mappedInput)
-			row.keyButton->setLabel(mappedInput->description);
+		Array<const HardwareInput *> mappedInputs = keymap->getActionMapping(row.action);
+
+		String keysLabel;
+		for (uint j = 0; j < mappedInputs.size(); j++) {
+			if (!keysLabel.empty()) {
+				keysLabel += ", ";
+			}
+
+			keysLabel += mappedInputs[j]->description;
+		}
+
+		if (!keysLabel.empty())
+			row.keyButton->setLabel(keysLabel);
 		else
 			row.keyButton->setLabel("-");
 	}
