@@ -244,10 +244,10 @@ bool CPetSound::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (!_draggingSlider)
 		return false;
 
-	_draggingSlider->MouseDragEndMsg(msg->_mousePos);
+	bool result = _draggingSlider->MouseDragEndMsg(msg->_mousePos);
 	getOwner()->endDragging();
 
-	return false;
+	return result;
 }
 
 bool CPetSound::MouseButtonUpMsg(const Point &pt) {
