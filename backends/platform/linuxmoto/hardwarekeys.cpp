@@ -24,8 +24,6 @@
 #include "backends/keymapper/keymapper.h"
 #include "common/keyboard.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 using namespace Common;
 
 struct Key {
@@ -109,4 +107,3 @@ static const Mod modifiers[] = {
 Common::HardwareInputSet *OSystem_LINUXMOTO::getHardwareInputSet() {
 	return OSystem_SDL::getHardwareInputSet();
 }
-#endif

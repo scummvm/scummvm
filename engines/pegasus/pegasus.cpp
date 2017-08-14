@@ -2490,7 +2490,6 @@ uint PegasusEngine::getNeighborhoodCD(const NeighborhoodID neighborhood) const {
 }
 
 Common::Keymap *PegasusEngine::initKeymap() {
-#ifdef ENABLE_KEYMAPPER
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "pegasus");
 
 	// Since the game has multiple built-in keys for each of these anyway,
@@ -2517,9 +2516,6 @@ Common::Keymap *PegasusEngine::initKeymap() {
 	}
 
 	return engineKeyMap;
-#else
-	return nullptr;
-#endif
 }
 
 } // End of namespace Pegasus

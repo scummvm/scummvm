@@ -186,9 +186,8 @@ _no_pragma_pack=no
 _bink=yes
 _cloud=auto
 _pandoc=no
-# Default vkeybd/keymapper/eventrec options
+# Default vkeybd/eventrec options
 _vkeybd=no
-_keymapper=no
 _eventrec=auto
 # GUI translation options
 _translation=yes
@@ -1045,7 +1044,6 @@ Optional Features:
   --disable-cloud          don't build cloud support
   --disable-system-dialogs don't build support for system dialogs
   --enable-vkeybd          build virtual keyboard support
-  --enable-keymapper       build key mapper support
   --enable-eventrecorder   enable event recording functionality
   --disable-eventrecorder  disable event recording functionality
   --enable-updates         build support for updates
@@ -1277,8 +1275,6 @@ for ac_option in $@; do
 	--disable-translation)       _translation=no         ;;
 	--enable-vkeybd)             _vkeybd=yes             ;;
 	--disable-vkeybd)            _vkeybd=no              ;;
-	--enable-keymapper)          _keymapper=yes          ;;
-	--disable-keymapper)         _keymapper=no           ;;
 	--enable-eventrecorder)      _eventrec=yes           ;;
 	--disable-eventrecorder)     _eventrec=no            ;;
 	--enable-text-console)       _text_console=yes       ;;
@@ -3119,7 +3115,6 @@ if test -n "$_host"; then
 			_libcurl=no
 			_vkeybd=yes
 			_build_hq_scalers=no
-			_keymapper=no
 			# Force disable vorbis on dingux, it has terrible performance compared to tremor
 			_vorbis=no
 			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
@@ -3222,7 +3217,6 @@ if test -n "$_host"; then
 			_build_scalers=yes
 			_optimization_level=-O3
 			_vkeybd=yes
-			_keymapper=yes
 			_vorbis=no
 			_sdlconfig=sdl-config
 			_port_mk="backends/platform/dingux/dingux.mk"
@@ -3284,7 +3278,6 @@ if test -n "$_host"; then
 
 			_backend="maemo"
 			_vkeybd=yes
-			_keymapper=yes
 			_build_hq_scalers=no
 			_mt32emu=no
 			_alsa=no
@@ -3342,7 +3335,6 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_savegame_timestamp=no
 			_translation=no
-			_keymapper=no
 			_text_console=no
 			_vkeybd=yes
 			_dynamic_modules=no
@@ -3497,7 +3489,6 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_seq_midi=no
 			_vkeybd=no
-			_keymapper=yes
 			add_line_to_config_mk "HOST_COMPILER = `uname`"
 			;;
 		wii)
@@ -5420,21 +5411,10 @@ if test "$_pandocext" = "default"; then
 fi
 
 #
-# Enable vkeybd / keymapper / event recorder
+# Enable vkeybd / event recorder
 #
 define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
-define_in_config_if_yes $_keymapper 'ENABLE_KEYMAPPER'
 define_in_config_if_yes $_eventrec 'ENABLE_EVENTRECORDER'
-
-#
-# Check if the keymapper and the event recorder are enabled simultaneously
-#
-if test "$_keymapper" = yes ; then
-	if test "$_eventrec" = yes ; then
-		echo "ERROR: The keymapper and the event recorder cannot be enabled simultaneously currently, please disable one of the two"
-		exit 1
-	fi
-fi
 
 # Check whether to build translation support
 #
@@ -5675,10 +5655,6 @@ fi
 
 if test "$_vkeybd" = yes ; then
 	echo_n ", virtual keyboard"
-fi
-
-if test "$_keymapper" = yes ; then
-	echo_n ", keymapper"
 fi
 
 if test "$_eventrec" = yes ; then

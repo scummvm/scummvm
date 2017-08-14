@@ -22,8 +22,6 @@
 
 #include "backends/keymapper/hardware-input.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "backends/keymapper/keymapper.h"
 
 namespace Common {
@@ -303,6 +301,3 @@ void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[], const Modif
 }
 
 } //namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
-

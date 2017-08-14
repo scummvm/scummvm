@@ -200,7 +200,6 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// The Keymap tab
 	//
-#ifdef ENABLE_KEYMAPPER
 	Common::Keymap *keymap = nullptr;
 	if (plugin) {
 		keymap = plugin->get<MetaEngine>().initKeymap(domain.c_str());
@@ -217,7 +216,6 @@ EditGameDialog::EditGameDialog(const String &domain)
 		tab->addTab(_("Keymaps"), "GameOptions_KeyMapper");
 		addKeyMapperControls(tab, "GameOptions_KeyMapper.", keymaps);
 	}
-#endif
 
 	//
 	// 4) The audio tab

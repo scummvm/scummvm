@@ -20,8 +20,6 @@
  *
  */
 
-#ifdef ENABLE_KEYMAPPER
-
 #ifndef KEYMAPPER_DEFAULTS_H
 #define KEYMAPPER_DEFAULTS_H
 
@@ -53,4 +51,3 @@ public:
 } //namespace Common
 
 #endif // #ifndef KEYMAPPER_DEFAULTS_H
-#endif // #ifdef ENABLE_KEYMAPPER

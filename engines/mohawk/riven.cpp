@@ -875,7 +875,6 @@ void MohawkEngine_Riven::runOptionsDialog() {
 }
 
 Common::Keymap *MohawkEngine_Riven::initKeymap(const char *target) {
-#ifdef ENABLE_KEYMAPPER
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "riven");
 
 	const Common::KeyActionEntry keyActionEntries[] = {
@@ -925,9 +924,6 @@ Common::Keymap *MohawkEngine_Riven::initKeymap(const char *target) {
 	}
 
 	return engineKeyMap;
-#else
-	return nullptr;
-#endif
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

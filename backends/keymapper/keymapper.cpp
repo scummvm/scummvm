@@ -22,8 +22,6 @@
 
 #include "backends/keymapper/keymapper.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/hardware-input.h"
 
@@ -257,5 +255,3 @@ const HardwareInput *Keymapper::findHardwareInput(const Event &event) {
 }
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER

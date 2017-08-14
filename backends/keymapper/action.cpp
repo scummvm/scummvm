@@ -22,8 +22,6 @@
 
 #include "backends/keymapper/action.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "backends/keymapper/keymap.h"
 
 namespace Common {
@@ -43,5 +41,3 @@ void Action::addDefaultInputMapping(const String &hwId) {
 }
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER

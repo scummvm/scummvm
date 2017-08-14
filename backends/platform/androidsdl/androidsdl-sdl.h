@@ -36,11 +36,6 @@ public:
 	void switchToDirectMouseMode();
 	void switchToRelativeMouseMode();
 	void showOnScreenControl(bool enable);
-
-#ifdef ENABLE_KEYMAPPER
-	// FIXME: This just calls parent methods, is it needed?
-	virtual Common::HardwareInputSet *getHardwareInputSet();
-#endif
 };
 
 #endif

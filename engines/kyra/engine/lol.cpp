@@ -462,7 +462,6 @@ Common::Error LoLEngine::init() {
 }
 
 Common::Keymap *LoLEngine::initKeymap() {
-#ifdef ENABLE_KEYMAPPER
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
@@ -489,9 +488,6 @@ Common::Keymap *LoLEngine::initKeymap() {
 	}
 
 	return engineKeyMap;
-#else
-	return nullptr;
-#endif
 }
 
 void LoLEngine::pauseEngineIntern(bool pause) {

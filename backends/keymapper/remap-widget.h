@@ -24,9 +24,6 @@
 #define REMAP_WIDGET_H
 
 #include "common/scummsys.h"
-
-#ifdef ENABLE_KEYMAPPER
-
 #include "common/hash-ptr.h"
 
 #include "gui/widget.h"
@@ -100,7 +97,5 @@ protected:
 };
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
 
 #endif // #ifndef REMAP_WIDGET_H

@@ -74,13 +74,10 @@ enum EventType {
 	 **/
 	EVENT_PREDICTIVE_DIALOG = 12,
 
-#ifdef ENABLE_KEYMAPPER
-	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
-	// this, please talk to tsoliman and/or LordHoto.
 	EVENT_CUSTOM_BACKEND_ACTION_START = 18,
 	EVENT_CUSTOM_BACKEND_ACTION_END = 19,
 	EVENT_CUSTOM_BACKEND_HARDWARE = 21,
-#endif
+
 #ifdef ENABLE_VKEYBD
 	EVENT_VIRTUAL_KEYBOARD = 20,
 #endif
@@ -169,11 +166,7 @@ struct Event {
 	 */
 	Point mouse;
 
-#ifdef ENABLE_KEYMAPPER
-	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
-	// this, please talk to tsoliman and/or LordHoto.
 	CustomEventType customType;
-#endif
 
 	/* The path of the file or directory dragged to the ScummVM window */
 	Common::String path;
@@ -184,10 +177,7 @@ struct Event {
 	 */
 	JoystickState joystick;
 
-	Event() : type(EVENT_INVALID), kbdRepeat(false) {
-#ifdef ENABLE_KEYMAPPER
-		customType = 0;
-#endif
+	Event() : type(EVENT_INVALID), kbdRepeat(false), customType(0) {
 	}
 };
 
@@ -502,10 +492,9 @@ public:
 
 	// TODO: Consider removing OSystem::getScreenChangeID and
 	// replacing it by a generic getScreenChangeID method here
-#ifdef ENABLE_KEYMAPPER
+
 	virtual Keymapper *getKeymapper() = 0;
 	virtual Keymap *getGlobalKeymap() = 0;
-#endif
 
 	enum {
 		/**

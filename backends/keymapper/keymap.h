@@ -25,8 +25,6 @@
 
 #include "common/scummsys.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "common/config-manager.h"
 #include "common/func.h"
 #include "common/hashmap.h"
@@ -151,7 +149,5 @@ private:
 
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
 
 #endif // #ifndef COMMON_KEYMAP_H

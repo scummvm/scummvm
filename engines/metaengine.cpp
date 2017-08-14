@@ -48,7 +48,6 @@ const char *MetaEngine::getSavegamePattern(const char *target) const {
 }
 
 Common::Keymap *MetaEngine::initKeymap(const char *target) const {
-#ifdef ENABLE_KEYMAPPER
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "engine-default");
 
 	// Since the game has multiple built-in keys for each of these anyway,
@@ -67,9 +66,6 @@ Common::Keymap *MetaEngine::initKeymap(const char *target) const {
 	}
 
 	return engineKeyMap;
-#else
-	return nullptr;
-#endif
 }
 
 void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc) {

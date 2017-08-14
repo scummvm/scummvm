@@ -8,6 +8,12 @@ MODULE_OBJS := \
 	events/default/default-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
+	keymapper/action.o \
+	keymapper/hardware-input.o \
+	keymapper/input-watcher.o \
+	keymapper/keymap.o \
+	keymapper/keymapper.o \
+	keymapper/remap-widget.o \
 	log/log.o \
 	midi/alsa.o \
 	midi/dmedia.o \
@@ -99,16 +105,6 @@ MODULE_OBJS += \
 	plugins/elf/ppc-loader.o \
 	plugins/elf/shorts-segment-manager.o \
 	plugins/elf/version.o
-endif
-
-ifdef ENABLE_KEYMAPPER
-MODULE_OBJS += \
-	keymapper/action.o \
-	keymapper/hardware-input.o \
-	keymapper/input-watcher.o \
-	keymapper/keymap.o \
-	keymapper/keymapper.o \
-	keymapper/remap-widget.o
 endif
 
 ifdef ENABLE_VKEYBD

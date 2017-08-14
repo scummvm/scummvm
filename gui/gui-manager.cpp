@@ -109,8 +109,6 @@ GuiManager::~GuiManager() {
 	delete _theme;
 }
 
-#ifdef ENABLE_KEYMAPPER
-
 Common::Keymap *GuiManager::getKeymap() const {
 	using namespace Common;
 
@@ -143,8 +141,6 @@ void GuiManager::enableKeymap(bool enabled) {
 	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
 	keymapper->setEnabledKeymapType(enabled ? Common::Keymap::kKeymapTypeGui : Common::Keymap::kKeymapTypeGame);
 }
-
-#endif
 
 bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, bool forced) {
 	// If we are asked to reload the currently active theme, just do nothing
@@ -423,10 +419,9 @@ void GuiManager::runLoop() {
 #pragma mark -
 
 void GuiManager::saveState() {
-#ifdef ENABLE_KEYMAPPER
 	initKeymap();
 	enableKeymap(true);
-#endif
+
 	// Backup old cursor
 	_lastClick.x = _lastClick.y = 0;
 	_lastClick.time = 0;
@@ -436,9 +431,8 @@ void GuiManager::saveState() {
 }
 
 void GuiManager::restoreState() {
-#ifdef ENABLE_KEYMAPPER
 	enableKeymap(false);
-#endif
+
 	if (_useStdCursor) {
 		CursorMan.popCursor();
 		CursorMan.popCursorPalette();

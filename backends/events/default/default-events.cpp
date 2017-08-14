@@ -57,14 +57,10 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 #ifdef ENABLE_VKEYBD
 	_vk = nullptr;
 #endif
-#ifdef ENABLE_KEYMAPPER
 	_keymapper = new Common::Keymapper(this);
 	// EventDispatcher will automatically free the keymapper
 	_dispatcher.registerMapper(_keymapper);
 	_remap = false;
-#else
-	_dispatcher.registerMapper(new Common::DefaultEventMapper());
-#endif
 }
 
 DefaultEventManager::~DefaultEventManager() {
@@ -304,8 +300,6 @@ void DefaultEventManager::purgeMouseEvents() {
 	_eventQueue = filteredQueue;
 }
 
-#ifdef ENABLE_KEYMAPPER
-
 Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	using namespace Common;
 
@@ -344,7 +338,5 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 
 	return globalKeymap;
 }
-
-#endif
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)
