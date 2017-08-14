@@ -75,13 +75,11 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev) {
 	if (mappedEvent.type == EVENT_INVALID)
 		mappedEvent = ev;
 
-#ifdef ENABLE_KEYMAPPER
 	// TODO: this check is not needed post-split
 	if (mappedEvent.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
 		warning("EVENT_CUSTOM_BACKEND_HARDWARE was not mapped");
 		return List<Event>();
 	}
-#endif
 
 	events.push_back(mappedEvent);
 	return events;

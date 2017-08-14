@@ -22,8 +22,6 @@
 
 #include "backends/keymapper/keymap.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "common/system.h"
 #include "common/tokenizer.h"
 
@@ -247,5 +245,3 @@ bool Keymap::areMappingsIdentical(const Array<const HardwareInput *> &inputs, co
 }
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER

@@ -267,12 +267,10 @@ void OptionsDialog::build() {
 		}
 	}
 
-#ifdef ENABLE_KEYMAPPER
 	// Keymapper options
 	if (_keymapperWidget) {
 		_keymapperWidget->build();
 	}
-#endif
 
 	// Graphic options
 	if (_fullscreenCheckbox) {
@@ -630,7 +628,6 @@ void OptionsDialog::apply() {
 		}
 	}
 
-#ifdef ENABLE_KEYMAPPER
 	if (_keymapperWidget) {
 		bool changes = _keymapperWidget->save();
 		if (changes) {
@@ -638,7 +635,6 @@ void OptionsDialog::apply() {
 			keymapper->reloadAllMappings();
 		}
 	}
-#endif
 
 	// Control options
 	if (_enableControlSettings) {
@@ -886,11 +882,9 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 void OptionsDialog::handleTickle() {
 	Dialog::handleTickle();
 
-#ifdef ENABLE_KEYMAPPER
 	if (_keymapperWidget) {
 		_keymapperWidget->handleTickle();
 	}
-#endif
 }
 
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
@@ -1063,11 +1057,9 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 	_enableControlSettings = true;
 }
 
-#ifdef ENABLE_KEYMAPPER
 void OptionsDialog::addKeyMapperControls(GuiObject *boss, const Common::String &prefix, const Common::KeymapArray &keymaps) {
 	_keymapperWidget = new Common::RemapWidget(boss, prefix + "Container", keymaps);
 }
-#endif
 
 void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
 	// Shader selector
@@ -1617,7 +1609,6 @@ void GlobalOptionsDialog::build() {
 	//
 	// The Keymap tab
 	//
-#ifdef ENABLE_KEYMAPPER
 	Common::KeymapArray keymaps;
 
 	Common::Keymap *primaryGlobalKeymap = g_system->getEventManager()->getGlobalKeymap();
@@ -1646,7 +1637,6 @@ void GlobalOptionsDialog::build() {
 		tab->addTab(_("Keymaps"), "GlobalOptions_KeyMapper");
 		addKeyMapperControls(tab, "GlobalOptions_KeyMapper.", keymaps);
 	}
-#endif
 
 	//
 	// 2) The audio tab

@@ -22,8 +22,6 @@
 
 #include "backends/keymapper/input-watcher.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 
@@ -84,5 +82,3 @@ const HardwareInput *InputWatcher::checkForCapturedInput() {
 }
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER

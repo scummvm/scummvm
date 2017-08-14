@@ -27,9 +27,7 @@
 #include "common/queue.h"
 
 namespace Common {
-#ifdef ENABLE_KEYMAPPER
 class Keymapper;
-#endif
 #ifdef ENABLE_VKEYBD
 class VirtualKeyboard;
 #endif
@@ -41,10 +39,8 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	Common::VirtualKeyboard *_vk;
 #endif
 
-#ifdef ENABLE_KEYMAPPER
 	Common::Keymapper *_keymapper;
 	bool _remap;
-#endif
 
 	Common::ArtificialEventSource _artificialEventSource;
 
@@ -91,12 +87,8 @@ public:
 	virtual void resetQuit() override { _shouldQuit = false; }
 #endif
 
-#ifdef ENABLE_KEYMAPPER
-	 // IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
-	 // this, please talk to tsoliman and/or LordHoto.
 	Common::Keymapper *getKeymapper() override { return _keymapper; }
 	Common::Keymap *getGlobalKeymap() override;
-#endif
 
 	/**
 	 * Controls whether repeated key down events are generated while a key is pressed

@@ -22,8 +22,6 @@
 
 #include "backends/keymapper/remap-widget.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/keymapper/input-watcher.h"
@@ -307,5 +305,3 @@ GUI::Widget *RemapWidget::findWidget(int x, int y) {
 }
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER

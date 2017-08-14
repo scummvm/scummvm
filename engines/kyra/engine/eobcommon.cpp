@@ -344,7 +344,6 @@ EoBCoreEngine::~EoBCoreEngine() {
 }
 
 Common::Keymap *EoBCoreEngine::initKeymap(const Common::String &gameId) {
-#ifdef ENABLE_KEYMAPPER
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
@@ -382,9 +381,6 @@ Common::Keymap *EoBCoreEngine::initKeymap(const Common::String &gameId) {
 	}
 
 	return engineKeyMap;
-#else
-	return nullptr;
-#endif
 }
 
 Common::Error EoBCoreEngine::init() {

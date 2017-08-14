@@ -25,8 +25,6 @@
 
 #include "common/scummsys.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "common/events.h"
 
 namespace Common {
@@ -63,7 +61,5 @@ private:
 };
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
 
 #endif // #ifndef COMMON_INPUT_WATCHER_H

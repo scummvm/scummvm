@@ -25,9 +25,6 @@
 
 #include "common/scummsys.h"
 
-#ifdef ENABLE_KEYMAPPER
-
-#include "common/array.h"
 #include "common/hashmap.h"
 #include "common/keyboard.h"
 #include "common/str.h"
@@ -159,7 +156,5 @@ private:
 };
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
 
 #endif // #ifndef COMMON_HARDWARE_KEY_H

@@ -281,14 +281,12 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	}
 #endif // USE_TRANSLATION
 
-#ifdef ENABLE_KEYMAPPER
 	// Initialize any game-specific keymaps
 	Common::Keymap *gameKeymap = metaEngine.initKeymap(target.c_str());
 	Common::Keymapper *keymapper = system.getEventManager()->getKeymapper();
 	if (gameKeymap) {
 		keymapper->addGameKeymap(gameKeymap);
 	}
-#endif
 
 	// Inform backend that the engine is about to be run
 	system.engineInit();
@@ -300,9 +298,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	system.engineDone();
 
 	// Clean up any game-specific keymaps
-#ifdef ENABLE_KEYMAPPER
 	keymapper->cleanupGameKeymaps();
-#endif
 
 	// Free up memory
 	delete engine;
@@ -359,7 +355,6 @@ static void setupGraphics(OSystem &system) {
 }
 
 static void setupKeymapper(OSystem &system) {
-#ifdef ENABLE_KEYMAPPER
 	using namespace Common;
 
 	Keymapper *mapper = system.getEventManager()->getKeymapper();
@@ -382,8 +377,6 @@ static void setupKeymapper(OSystem &system) {
 		String platformGlobalKeymapName = platformGlobalKeymap->getName();
 		mapper->addGlobalKeymap(platformGlobalKeymap);
 	}
-#endif
-
 }
 
 extern "C" int scummvm_main(int argc, const char * const argv[]) {

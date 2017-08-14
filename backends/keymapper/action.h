@@ -25,8 +25,6 @@
 
 #include "common/scummsys.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "common/array.h"
 #include "common/events.h"
 #include "common/str.h"
@@ -100,7 +98,5 @@ public:
 };
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
 
 #endif // #ifndef COMMON_ACTION_H

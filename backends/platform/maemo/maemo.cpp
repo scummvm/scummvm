@@ -45,12 +45,9 @@ OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 
 OSystem_SDL_Maemo::~OSystem_SDL_Maemo() {
 	delete _eventObserver;
-#ifdef ENABLE_KEYMAPPER
 	delete _keymapperDefaultBindings;
-#endif
 }
 
-#ifdef ENABLE_KEYMAPPER
 static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymapperDefaultBindings, Model _model) {
 	_keymapperDefaultBindings->setDefaultBinding("gui", "REMP", "HOME");
 	_keymapperDefaultBindings->setDefaultBinding("global", "REMP", "HOME");
@@ -78,7 +75,6 @@ static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymap
 	_keymapperDefaultBindings->setDefaultBinding("maemo", "RCLK", "ZOOMPLUS");
 	_keymapperDefaultBindings->setDefaultBinding("maemo", "CLKM", "ZOOMMINUS");
 }
-#endif
 
 void OSystem_SDL_Maemo::init() {
 	// Use an iconless window for Maemo
@@ -103,16 +99,12 @@ void OSystem_SDL_Maemo::initBackend() {
 	if (_eventObserver == 0)
 		_eventObserver = new MaemoSdlEventObserver((MaemoSdlEventSource *)_eventSource);
 
-#ifdef ENABLE_KEYMAPPER
 	if (_keymapperDefaultBindings == 0)
 		_keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
-#endif
 
 	_model = detectModel();
 
-#ifdef ENABLE_KEYMAPPER
 	registerDefaultKeyBindings(_keymapperDefaultBindings, _model);
-#endif
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -180,7 +172,6 @@ const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 	return *model;
 }
 
-#ifdef ENABLE_KEYMAPPER
 static const Common::KeyTableEntry maemoKeys[] = {
 	// Function keys
 	{"MENU", Common::KEYCODE_F11, "Menu"},
@@ -223,7 +214,6 @@ Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 
 	return globalMap;
 }
-#endif
 
 void OSystem_SDL_Maemo::initObserver() {
 	assert(_eventManager);

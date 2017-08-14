@@ -41,9 +41,7 @@ DECLARE_SINGLETON(ConfigManager);
 char const *const ConfigManager::kApplicationDomain = "scummvm";
 char const *const ConfigManager::kTransientDomain = "__TRANSIENT";
 
-#ifdef ENABLE_KEYMAPPER
 char const *const ConfigManager::kKeymapperDomain = "keymapper";
-#endif
 
 #ifdef USE_CLOUD
 char const *const ConfigManager::kCloudDomain = "cloud";
@@ -68,9 +66,7 @@ void ConfigManager::copyFrom(ConfigManager &source) {
 	_miscDomains = source._miscDomains;
 	_appDomain = source._appDomain;
 	_defaultsDomain = source._defaultsDomain;
-#ifdef ENABLE_KEYMAPPER
 	_keymapperDomain = source._keymapperDomain;
-#endif
 #ifdef USE_CLOUD
 	_cloudDomain = source._cloudDomain;
 #endif
@@ -124,10 +120,8 @@ void ConfigManager::addDomain(const String &domainName, const ConfigManager::Dom
 		return;
 	if (domainName == kApplicationDomain) {
 		_appDomain = domain;
-#ifdef ENABLE_KEYMAPPER
 	} else if (domainName == kKeymapperDomain) {
 		_keymapperDomain = domain;
-#endif
 #ifdef USE_CLOUD
 	} else if (domainName == kCloudDomain) {
 		_cloudDomain = domain;
@@ -168,9 +162,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 	_transientDomain.clear();
 	_domainSaveOrder.clear();
 
-#ifdef ENABLE_KEYMAPPER
 	_keymapperDomain.clear();
-#endif
 #ifdef USE_CLOUD
 	_cloudDomain.clear();
 #endif
@@ -282,10 +274,8 @@ void ConfigManager::flushToDisk() {
 	// Write the application domain
 	writeDomain(*stream, kApplicationDomain, _appDomain);
 
-#ifdef ENABLE_KEYMAPPER
 	// Write the keymapper domain
 	writeDomain(*stream, kKeymapperDomain, _keymapperDomain);
-#endif
 #ifdef USE_CLOUD
 	// Write the cloud domain
 	writeDomain(*stream, kCloudDomain, _cloudDomain);
@@ -373,10 +363,8 @@ const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) con
 		return &_transientDomain;
 	if (domName == kApplicationDomain)
 		return &_appDomain;
-#ifdef ENABLE_KEYMAPPER
 	if (domName == kKeymapperDomain)
 		return &_keymapperDomain;
-#endif
 #ifdef USE_CLOUD
 	if (domName == kCloudDomain)
 		return &_cloudDomain;
@@ -397,10 +385,8 @@ ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 		return &_transientDomain;
 	if (domName == kApplicationDomain)
 		return &_appDomain;
-#ifdef ENABLE_KEYMAPPER
 	if (domName == kKeymapperDomain)
 		return &_keymapperDomain;
-#endif
 #ifdef USE_CLOUD
 	if (domName == kCloudDomain)
 		return &_cloudDomain;

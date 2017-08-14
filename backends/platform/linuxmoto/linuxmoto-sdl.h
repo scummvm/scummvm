@@ -28,11 +28,6 @@
 class OSystem_LINUXMOTO : public OSystem_POSIX {
 public:
 	virtual void initBackend();
-
-#ifdef ENABLE_KEYMAPPER
-	// FIXME: This just calls parent methods, is it needed?
-	virtual Common::HardwareInputSet *getHardwareInputSet();
-#endif
 };
 
 #endif

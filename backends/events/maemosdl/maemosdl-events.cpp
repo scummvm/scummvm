@@ -61,7 +61,6 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	// SDLK_F7 -> zoom +
 	// SDLK_F8 -> zoom -
 
-#ifdef ENABLE_KEYMAPPER
 	if (ev.type == SDL_KEYDOWN || ev.type == SDL_KEYUP) {
 		const KeymapEntry *entry;
 		for (entry = keymapEntries; entry->sym != SDLK_LAST; ++entry) {
@@ -74,83 +73,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			}
 		}
 	}
-#else
-	switch (ev.type) {
-		case SDL_KEYDOWN:{
-			if (ev.key.keysym.sym == SDLK_F4
-			    || (model.modelType == kModelTypeN900
-			        && ev.key.keysym.sym == SDLK_m
-			        && (ev.key.keysym.mod & KMOD_CTRL)
-			        && (ev.key.keysym.mod & KMOD_SHIFT))) {
-				event.type = Common::EVENT_MAINMENU;
-				debug(9, "remapping to main menu");
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F6) {
-				if (!model.hasHwKeyboard) {
-#ifdef ENABLE_VKEYBD
-					event.type = Common::EVENT_VIRTUAL_KEYBOARD;
-					debug(9, "remapping to virtual keyboard trigger");
-					return true;
-#endif
-				} else {
-					// handled in keyup
-				}
-			} else if (ev.key.keysym.sym == SDLK_F7) {
-				event.type = Common::EVENT_RBUTTONDOWN;
-				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-				 debug(9, "remapping to right click down");
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F8) {
-				if (ev.key.keysym.mod & KMOD_CTRL) {
-#ifdef ENABLE_VKEYBD
-					event.type = Common::EVENT_VIRTUAL_KEYBOARD;
-					debug(9, "remapping to virtual keyboard trigger");
-					return true;
-#endif
-				} else {
-					// handled in keyup
-					return true;
-				}
-			}
-			break;
-		}
-		case SDL_KEYUP: {
-			if (ev.key.keysym.sym == SDLK_F4
-			    || (model.modelType == kModelTypeN900
-			        && ev.key.keysym.sym == SDLK_m
-			        && (ev.key.keysym.mod & KMOD_CTRL)
-			        && (ev.key.keysym.mod & KMOD_SHIFT))) {
-				event.type = Common::EVENT_MAINMENU;
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F6) {
-				if (!model.hasHwKeyboard) {
-					// handled in keydown
-				} else {
-					bool currentState = ((OSystem_SDL *)g_system)->getGraphicsManager()->getFeatureState(OSystem::kFeatureFullscreenMode);
-					g_system->beginGFXTransaction();
-					((OSystem_SDL *)g_system)->getGraphicsManager()->setFeatureState(OSystem::kFeatureFullscreenMode, !currentState);
-					g_system->endGFXTransaction();
-					debug(9, "remapping to full screen toggle");
-					return true;
-				}
-			} else if (ev.key.keysym.sym == SDLK_F7) {
-				event.type = Common::EVENT_RBUTTONUP;
-				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-					debug(9, "remapping to right click up");
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F8) {
-				if (ev.key.keysym.mod & KMOD_CTRL) {
-					// handled in key down
-				} else {
-					toggleClickMode();
-					debug(9, "remapping to click toggle");
-					return true;
-				}
-			}
-			break;
-		}
-	}
-#endif
+
 	// Invoke parent implementation of this method
 	return SdlEventSource::remapKey(ev, event);
 }
@@ -189,7 +112,6 @@ MaemoSdlEventObserver::MaemoSdlEventObserver(MaemoSdlEventSource *eventSource) {
 }
 
 bool MaemoSdlEventObserver::notifyEvent(const Common::Event &event) {
-#ifdef ENABLE_KEYMAPPER
 	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START)
 		return false;
 	if (event.customType == kEventClickMode) {
@@ -197,7 +119,6 @@ bool MaemoSdlEventObserver::notifyEvent(const Common::Event &event) {
 		_eventSource->toggleClickMode();
 		return true;
 	}
-#endif
 	return false;
 }
 
