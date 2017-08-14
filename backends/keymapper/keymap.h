@@ -47,6 +47,8 @@ public:
 		kKeymapTypeGame
 	};
 
+	typedef Array<Action *> ActionArray;
+
 	Keymap(KeymapType type, const String &name);
 	~Keymap();
 
@@ -80,7 +82,7 @@ public:
 	/**
 	 * Get the list of all the Actions contained in this Keymap
 	 */
-	List<Action *> &getActions() { return _actions; }
+	const ActionArray &getActions() const { return _actions; }
 
 	void setConfigDomain(ConfigManager::Domain *dom);
 
@@ -97,7 +99,7 @@ public:
 	 */
 	void saveMappings();
 
-	const String &getName() { return _name; }
+	const String &getName() const { return _name; }
 	KeymapType getType() const { return _type; }
 
 	/**
@@ -118,7 +120,6 @@ private:
 
 	const Action *findAction(const char *id) const;
 
-	typedef List<Action *> ActionList;
 	typedef HashMap<const HardwareInput *, Action *> HardwareActionMap;
 
 	KeymapType _type;
@@ -126,7 +127,7 @@ private:
 
 	bool _enabled;
 
-	ActionList _actions;
+	ActionArray _actions;
 	HardwareActionMap _hwActionMap;
 	ConfigManager::Domain *_configDomain;
 

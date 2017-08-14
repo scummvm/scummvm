@@ -42,7 +42,7 @@ Keymap::Keymap(KeymapType type, const String &name) :
 }
 
 Keymap::~Keymap() {
-	for (ActionList::iterator it = _actions.begin(); it != _actions.end(); ++it)
+	for (ActionArray::iterator it = _actions.begin(); it != _actions.end(); ++it)
 		delete *it;
 }
 
@@ -78,7 +78,7 @@ const HardwareInput *Keymap::getActionMapping(Action *action) const {
 }
 
 const Action *Keymap::findAction(const char *id) const {
-	for (ActionList::const_iterator it = _actions.begin(); it != _actions.end(); ++it) {
+	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); ++it) {
 		if (strcmp((*it)->id, id) == 0)
 			return *it;
 	}
@@ -103,7 +103,7 @@ void Keymap::loadMappings(const HardwareInputSet *hwKeys) {
 
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
-	for (ActionList::iterator it = _actions.begin(); it != _actions.end(); ++it) {
+	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); ++it) {
 		Action* ua = *it;
 		String actionId(ua->id);
 		String confKey = prefix + actionId;
@@ -132,7 +132,7 @@ void Keymap::saveMappings() {
 
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
-	for (HardwareActionMap::iterator it = _hwActionMap.begin(); it != _hwActionMap.end(); it++) {
+	for (HardwareActionMap::const_iterator it = _hwActionMap.begin(); it != _hwActionMap.end(); it++) {
 		const Action *action = it->_value;
 		const HardwareInput *input = it->_key;
 
