@@ -216,7 +216,7 @@ void RemapDialog::loadKeymap() {
 	assert(_kmPopUp->getSelected() != -1);
 
 	Keymap *km = _keymapTable[_kmPopUp->getSelectedTag()];
-	for (List<Action *>::iterator it = km->getActions().begin(); it != km->getActions().end(); ++it) {
+	for (Keymap::ActionArray::const_iterator it = km->getActions().begin(); it != km->getActions().end(); ++it) {
 		ActionRow row;
 		row.action = *it;
 
