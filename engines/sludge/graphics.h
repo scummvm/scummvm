@@ -205,7 +205,9 @@ private:
 	// Sprites
 	SpriteLayers *_spriteLayers;
 	void fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal);
-	uint32 getDrawColor(OnScreenPerson *thisPerson, byte *curLight);
+	Graphics::Surface *duplicateSurface(Graphics::Surface *surface);
+	void blendColor(Graphics::Surface * surface, uint32 color, Graphics::TSpriteBlendMode mode);
+	Graphics::Surface *applyLightmapToSprite(Graphics::Surface *&blitted, OnScreenPerson *thisPerson, bool mirror, int x, int y, int x1, int y1, int diffX, int diffY);
 
 	// Sprite banks
 	LoadedSpriteBanks _allLoadedBanks;
