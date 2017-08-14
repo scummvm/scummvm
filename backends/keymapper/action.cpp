@@ -36,6 +36,14 @@ Action::Action(Keymap *boss, const char *i,	String des)
 	_boss->addAction(this);
 }
 
+void Action::addDefaultInputMapping(const String &hwId) {
+	// Don't allow an input to map to the same action multiple times
+	Array<String>::const_iterator found = find(_defaultInputMapping.begin(), _defaultInputMapping.end(), hwId);
+	if (found == _defaultInputMapping.end()) {
+		_defaultInputMapping.push_back(hwId);
+	}
+}
+
 } // End of namespace Common
 
 #endif // #ifdef ENABLE_KEYMAPPER

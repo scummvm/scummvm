@@ -42,6 +42,7 @@ namespace Common {
 enum {
 	kRemapCmd  = 'REMP',
 	kClearCmd  = 'CLER',
+	kResetCmd  = 'RSET',
 	kCloseCmd  = 'CLOS',
 	kReflowCmd = 'REFL'
 };
@@ -92,8 +93,14 @@ void RemapDialog::open() {
 void RemapDialog::close() {
 	_kmPopUp->clearEntries();
 
-	if (_changes)
+	if (_changes) {
+		const Array<Keymap *> &keymaps = _keymapper->getKeymaps();
+		for (uint i = 0; i < keymaps.size(); i++) {
+			keymaps[i]->saveMappings();
+		}
+
 		ConfMan.flushToDisk();
+	}
 
 	Dialog::close();
 }
@@ -111,13 +118,20 @@ void RemapDialog::reflowActionWidgets() {
 	uint clearButtonYOff = (buttonHeight - clearButtonHeight) / 2;
 
 	for (uint i = 0; i < _actions.size(); i++) {
-		uint x = spacing;
+		ActionRow &row = _actions[i];
 		uint y = spacing + (i) * (buttonHeight + spacing);
 
-		ActionRow &row = _actions[i];
+		uint x = spacing;
 		row.keyButton->resize(x, y, keyButtonWidth, buttonHeight);
-		row.clearButton->resize(x + keyButtonWidth + spacing, y + clearButtonYOff, clearButtonWidth, clearButtonHeight);
-		row.actionText->resize(x + keyButtonWidth + spacing + clearButtonWidth + spacing, y + textYOff, labelWidth, kLineHeight);
+
+		x += keyButtonWidth + spacing;
+		row.clearButton->resize(x, y + clearButtonYOff, clearButtonWidth, clearButtonHeight);
+
+		x += clearButtonWidth + spacing;
+		row.resetButton->resize(x, y + clearButtonYOff, clearButtonWidth, clearButtonHeight);
+
+		x += clearButtonWidth + spacing;
+		row.actionText->resize(x, y + textYOff, labelWidth, kLineHeight);
 	}
 }
 
@@ -128,6 +142,8 @@ void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
 		startRemapping(cmd - kRemapCmd);
 	} else if (cmd >= kClearCmd && cmd < kClearCmd + _actions.size()) {
 		clearMapping(cmd - kClearCmd);
+	} else if (cmd >= kResetCmd && cmd < kResetCmd + _actions.size()) {
+		resetMapping(cmd - kResetCmd);
 	} else if (cmd == kCloseCmd) {
 		close();
 	} else if (cmd == kReflowCmd) {
@@ -145,8 +161,22 @@ void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
 
 void RemapDialog::clearMapping(uint i) {
 	debug(3, "clear the mapping %u", i);
-	Action *activeRemapAction = _actions[i].action;
-	_keymapper->clearMapping(activeRemapAction);
+	Action *action = _actions[i].action;
+	Keymap *keymap = action->getParent();
+	keymap->unregisterMapping(action);
+
+	_changes = true;
+
+	stopRemapping();
+	refreshKeymap();
+}
+
+void RemapDialog::resetMapping(uint i) {
+	debug(3, "Reset the mapping %u", i);
+	Action *action = _actions[i].action;
+	Keymap *keymap = action->getParent();
+	keymap->resetMapping(action);
+
 	_changes = true;
 
 	stopRemapping();
@@ -186,7 +216,8 @@ void RemapDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 void RemapDialog::handleTickle() {
 	const HardwareInput *hardwareInput = _remapInputWatcher->checkForCapturedInput();
 	if (hardwareInput) {
-		_keymapper->registerMapping(_remapAction, hardwareInput);
+		Keymap *keymap = _remapAction->getParent();
+		keymap->registerMapping(_remapAction, hardwareInput);
 
 		_changes = true;
 		stopRemapping();
@@ -202,10 +233,12 @@ void RemapDialog::clearKeymap() {
 		if (_actions[i].keyButton)   _scrollContainer->removeWidget(_actions[i].keyButton);
 		if (_actions[i].actionText)  _scrollContainer->removeWidget(_actions[i].actionText);
 		if (_actions[i].clearButton) _scrollContainer->removeWidget(_actions[i].clearButton);
+		if (_actions[i].resetButton) _scrollContainer->removeWidget(_actions[i].resetButton);
 
 		delete _actions[i].keyButton;
 		delete _actions[i].actionText;
 		delete _actions[i].clearButton;
+		delete _actions[i].resetButton;
 	}
 
 	_actions.clear();
@@ -235,6 +268,7 @@ void RemapDialog::refreshKeymap() {
 			row.actionText = new GUI::StaticTextWidget(_scrollContainer, 0, 0, 0, 0, "", Graphics::kTextAlignLeft);
 			row.keyButton = new GUI::ButtonWidget(_scrollContainer, 0, 0, 0, 0, "", 0, kRemapCmd + i);
 			row.clearButton = addClearButton(_scrollContainer, "", kClearCmd + i, 0, 0, clearButtonWidth, clearButtonHeight);
+			row.resetButton = new GUI::ButtonWidget(_scrollContainer, 0, 0, 0, 0, "", 0, kResetCmd + i);
 		}
 
 		row.actionText->setLabel(row.action->description);
@@ -252,10 +286,16 @@ void RemapDialog::refreshKeymap() {
 			keysLabel += mappedInputs[j]->description;
 		}
 
-		if (!keysLabel.empty())
+		if (!keysLabel.empty()) {
 			row.keyButton->setLabel(keysLabel);
-		else
+			row.keyButton->setTooltip(keysLabel);
+		} else {
 			row.keyButton->setLabel("-");
+		}
+
+		// I18N: Button to reset key mapping to defaults
+		row.resetButton->setLabel(_("R"));
+		row.resetButton->setTooltip(_("Reset to defaults"));
 	}
 }
 

@@ -92,7 +92,8 @@ void Keymapper::initKeymap(Keymap *keymap, ConfigManager::Domain *domain) {
 	}
 
 	keymap->setConfigDomain(domain);
-	keymap->loadMappings(_hardwareInputs);
+	keymap->setHardwareInputs(_hardwareInputs);
+	keymap->loadMappings();
 }
 
 void Keymapper::cleanupGameKeymaps() {
@@ -239,18 +240,6 @@ const HardwareInput *Keymapper::findHardwareInput(const Event &event) {
 		default:
 			return nullptr;
 	}
-}
-
-void Keymapper::registerMapping(Action *action, const HardwareInput *input) {
-	Keymap *keymap = action->getParent();
-	keymap->registerMapping(action, input);
-	keymap->saveMappings();
-}
-
-void Keymapper::clearMapping(Action *action) {
-	Keymap *keymap = action->getParent();
-	keymap->unregisterMapping(action);
-	keymap->saveMappings();
 }
 
 } // End of namespace Common
