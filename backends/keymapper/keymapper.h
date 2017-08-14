@@ -37,13 +37,14 @@ const char *const kGuiKeymapName = "gui";
 const char *const kGlobalKeymapName = "global";
 
 class Action;
+class DelayedEventSource;
 struct HardwareInput;
 class HardwareInputSet;
 class KeymapperDefaultBindings;
 
 typedef Array<Keymap *> KeymapArray;
 
-class Keymapper : public Common::DefaultEventMapper {
+class Keymapper : public Common::EventMapper {
 public:
 
 	Keymapper(EventManager *eventMan);
@@ -125,6 +126,10 @@ public:
 	void initKeymap(Keymap *keymap, ConfigManager::Domain *domain);
 
 private:
+	EventManager *_eventMan;
+	HardwareInputSet *_hardwareInputs;
+	const KeymapperDefaultBindings *_backendDefaultBindings;
+	DelayedEventSource *_delayedEventSource;
 
 	enum IncomingEventType {
 		kIncomingEventStart,
@@ -132,20 +137,38 @@ private:
 		kIncomingEventInstant
 	};
 
-	HardwareInputSet *_hardwareInputs;
-	const KeymapperDefaultBindings *_backendDefaultBindings;
-
-	Event executeAction(const Action *act, IncomingEventType incomingType);
-	EventType convertStartToEnd(EventType eventType);
-	IncomingEventType convertToIncomingEventType(const Event &ev) const;
-
-	EventManager *_eventMan;
-
 	bool _enabled;
 	Keymap::KeymapType _enabledKeymapType;
 
 	KeymapArray _keymaps;
 
+	Event executeAction(const Action *act, IncomingEventType incomingType);
+	EventType convertStartToEnd(EventType eventType);
+	IncomingEventType convertToIncomingEventType(const Event &ev) const;
+
+	void hardcodedEventMapping(Event ev);
+};
+
+class DelayedEventSource : public EventSource {
+public:
+	// EventSource API
+	bool pollEvent(Event &event) override;
+	bool allowMapping() const override;
+
+	/**
+	 * Schedule an event to be produced after the specified delay
+	 */
+	void scheduleEvent(const Event &ev, uint32 delayMillis);
+
+private:
+	struct DelayedEventsEntry {
+		const uint32 timerOffset;
+		const Event event;
+		DelayedEventsEntry(const uint32 offset, const Event ev) : timerOffset(offset), event(ev) { }
+	};
+
+	Queue<DelayedEventsEntry> _delayedEvents;
+	uint32 _delayedEffectiveTime;
 };
 
 } // End of namespace Common

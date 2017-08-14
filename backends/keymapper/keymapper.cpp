@@ -33,12 +33,14 @@ namespace Common {
 static const uint32 kDelayKeyboardEventMillis = 250;
 static const uint32 kDelayMouseEventMillis = 50;
 
-Keymapper::Keymapper(EventManager *evtMgr) :
-		_eventMan(evtMgr),
+Keymapper::Keymapper(EventManager *eventMan) :
+		_eventMan(eventMan),
 		_enabled(true),
 		_enabledKeymapType(Keymap::kKeymapTypeGlobal),
 		_hardwareInputs(nullptr),
-		_backendDefaultBindings(nullptr) {
+		_backendDefaultBindings(nullptr),
+		_delayedEventSource(new DelayedEventSource()) {
+	_eventMan->getEventDispatcher()->registerSource(_delayedEventSource, true);
 }
 
 Keymapper::~Keymapper() {
@@ -138,12 +140,18 @@ void Keymapper::setEnabledKeymapType(Keymap::KeymapType type) {
 
 List<Event> Keymapper::mapEvent(const Event &ev) {
 	if (!_enabled) {
-		return DefaultEventMapper::mapEvent(ev);
+		List<Event> originalEvent;
+		originalEvent.push_back(ev);
+		return originalEvent;
 	}
+
+	hardcodedEventMapping(ev);
 
 	const HardwareInput *hwInput = findHardwareInput(ev);
 	if (!hwInput) {
-		return DefaultEventMapper::mapEvent(ev);
+		List<Event> originalEvent;
+		originalEvent.push_back(ev);
+		return originalEvent;
 	}
 
 	IncomingEventType incomingEventType = convertToIncomingEventType(ev);
@@ -173,7 +181,8 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 	}
 
 	if (mappedEvents.empty()) {
-		return DefaultEventMapper::mapEvent(ev);
+		// if it didn't get mapped, just pass it through
+		mappedEvents.push_back(ev);
 	}
 
 	return mappedEvents;
@@ -205,14 +214,14 @@ Event Keymapper::executeAction(const Action *action, IncomingEventType incomingT
 	if (incomingType == kIncomingEventInstant && convertedType != EVENT_INVALID) {
 		// WORKAROUND: Delay the down events coming from non-key hardware events
 		// with a zero delay. This is to prevent DOWN1 DOWN2 UP1 UP2.
-		addDelayedEvent(0, evt);
+		_delayedEventSource->scheduleEvent(evt, 0);
 
 		// non-keys need to send up as well
 		// WORKAROUND: Delay the up events coming from non-key hardware events
 		// This is for engines that run scripts that check on key being down
 		evt.type = convertedType;
 		const uint32 delay = (convertedType == EVENT_KEYUP ? kDelayKeyboardEventMillis : kDelayMouseEventMillis);
-		addDelayedEvent(delay, evt);
+		_delayedEventSource->scheduleEvent(evt, delay);
 	}
 
 	return evt;
@@ -252,6 +261,71 @@ const HardwareInput *Keymapper::findHardwareInput(const Event &event) {
 		default:
 			return nullptr;
 	}
+}
+
+void Keymapper::hardcodedEventMapping(Event ev) {
+	// TODO: Either add support for long presses to the keymapper
+	// or move this elsewhere as an event observer + source
+#ifdef ENABLE_VKEYBD
+	// Trigger virtual keyboard on long press of more than 1 second
+	// of middle mouse button.
+	const uint32 vkeybdTime = 1000;
+
+	static uint32 vkeybdThen = 0;
+
+	if (ev.type == EVENT_MBUTTONDOWN) {
+		vkeybdThen = g_system->getMillis();
+	}
+
+	if (ev.type == EVENT_MBUTTONUP) {
+		if ((g_system->getMillis() - vkeybdThen) >= vkeybdTime) {
+			Event vkeybdEvent;
+			vkeybdEvent.type = EVENT_VIRTUAL_KEYBOARD;
+
+			// Avoid blocking event from engine.
+			_delayedEventSource->scheduleEvent(vkeybdEvent, 100);
+		}
+	}
+#endif
+
+	if (ev.type == EVENT_JOYBUTTON_DOWN) {
+		if (ev.joystick.button == JOYSTICK_BUTTON_START || ev.joystick.button == JOYSTICK_BUTTON_GUIDE) {
+			ev.type = EVENT_MAINMENU;
+		}
+	}
+}
+
+void DelayedEventSource::scheduleEvent(const Event &ev, uint32 delayMillis) {
+	if (_delayedEvents.empty()) {
+		_delayedEffectiveTime = g_system->getMillis() + delayMillis;
+		delayMillis = 0;
+	}
+	DelayedEventsEntry entry = DelayedEventsEntry(delayMillis, ev);
+	_delayedEvents.push(entry);
+}
+
+bool DelayedEventSource::pollEvent(Event &event) {
+	if (_delayedEvents.empty()) {
+		return false;
+	}
+
+	uint32 now = g_system->getMillis();
+
+	if (now >= _delayedEffectiveTime) {
+		event = _delayedEvents.pop().event;
+
+		if (!_delayedEvents.empty()) {
+			_delayedEffectiveTime += _delayedEvents.front().timerOffset;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool DelayedEventSource::allowMapping() const {
+	return false; // Events from this source have already been mapped, and should not be mapped again
 }
 
 } // End of namespace Common

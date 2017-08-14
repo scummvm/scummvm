@@ -8,7 +8,6 @@ MODULE_OBJS := \
 	debug.o \
 	error.o \
 	EventDispatcher.o \
-	EventMapper.o \
 	file.o \
 	fs.o \
 	gui_options.o \
