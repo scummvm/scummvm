@@ -243,6 +243,8 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 			var = rawVariables[i];
 	}
 
+	_vm->_gfx->setTransitionMode((RivenTransitionMode) _vm->_vars["transitionmode"]);
+
 	_vm->changeToStack(_vm->_vars["CurrentStackID"]);
 	_vm->changeToCard(_vm->_vars["CurrentCardID"]);
 
