@@ -51,11 +51,11 @@ bool CPetSound::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	_parrotVolume.setThumbSize(Point(25, 15));
 	_parrotVolume.translate(Point(415, 376));
 
-	_parrotVolume.setOrientation(ORIENTATION_HORIZONTAL);
-	_parrotVolume.setBounds(Rect(17, 60, 147, 75));
-	_parrotVolume.setSlidingBounds(Rect(35, 65, 127, 71));
-	_parrotVolume.setThumbSize(Point(25, 15));
-	_parrotVolume.translate(Point(415, 376));
+	_speechVolume.setOrientation(ORIENTATION_HORIZONTAL);
+	_speechVolume.setBounds(Rect(17, 60, 147, 75));
+	_speechVolume.setSlidingBounds(Rect(35, 65, 127, 71));
+	_speechVolume.setThumbSize(Point(25, 15));
+	_speechVolume.translate(Point(415, 376));
 
 	_element.setBounds(Rect(0, 0, 165, 77));
 	_element.translate(Point(415, 376));
@@ -93,10 +93,10 @@ bool CPetSound::reset() {
 	if (pet) {
 		setName("PetSound", pet);
 		_element.reset("PetVolChannels", pet, MODE_UNSELECTED);
-		_musicVolume.reset("PetVolSlug");
-		_masterVolume.reset("PetVolSlug");
-		_parrotVolume.reset("PetVolSlug");
-		_speechVolume.reset("PetVolSlug");
+		_musicVolume.setupThumb2("PetVolSlug", pet);
+		_masterVolume.setupThumb2("PetVolSlug", pet);
+		_parrotVolume.setupThumb2("PetVolSlug", pet);
+		_speechVolume.setupThumb2("PetVolSlug", pet);
 
 		CPetSection *section = getPetSection();
 		uint col = section->getColor(0);

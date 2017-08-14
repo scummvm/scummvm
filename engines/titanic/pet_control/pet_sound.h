@@ -35,10 +35,10 @@ class CPetRealLife;
 class CPetSound : public CPetGlyph {
 private:
 	CPetGfxElement _element;
-	CPetSlider _masterVolume;
-	CPetSlider _musicVolume;
-	CPetSlider _parrotVolume;
-	CPetSlider _speechVolume;
+	CPetSoundSlider _masterVolume;
+	CPetSoundSlider _musicVolume;
+	CPetSoundSlider _parrotVolume;
+	CPetSoundSlider _speechVolume;
 	CTextControl _textMasterVolume;
 	CTextControl _textMusicVolume;
 	CTextControl _textParrotVolume;
