@@ -99,6 +99,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Mike's House", "3d23c2b88cefd958bcbc4d4c711003d8", 87357),
 	FANGAME("Minitorian", "15fbb2bd75d83155ed21edbc5dc9558f", 586464),
 	FANGAME("M'Lord's Warrior", "0bebb2c62529c89590f6c5be6e1e9838", 465639), // Original file name is "M'Lord's Warrior †"
+	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.25", "5030e22210720d8f8169f5b242183214", 645318),
 	// Unhandled comparison case
 	FANGAME("Mountain of Mayhem", "4088fc534042081b7ab7b49675ab4a6e", 750003), // Original file name "Mountain of Mayhem †"
 	// No way to pass through the first screen
