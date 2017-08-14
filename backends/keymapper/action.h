@@ -27,6 +27,7 @@
 
 #ifdef ENABLE_KEYMAPPER
 
+#include "common/array.h"
 #include "common/events.h"
 #include "common/func.h"
 #include "common/str.h"
@@ -53,6 +54,8 @@ struct Action {
 
 private:
 	Keymap *_boss;
+
+	Array<String> _defaultInputMapping;
 
 public:
 	Action(Keymap *boss, const char *id, String des = "");
@@ -82,6 +85,21 @@ public:
 
 	void setRightClickEvent() {
 		setEvent(EVENT_RBUTTONDOWN);
+	}
+
+	/**
+	 * Add a default input mapping for the action
+	 *
+	 * Unknown hardware inputs will be silently ignored.
+	 * Having keyboard bindings by default will not cause trouble
+	 * on devices without a keyboard.
+	 *
+	 * @param hwId Hardware input identifier as registered with the keymapper
+	 */
+	void addDefaultInputMapping(const String &hwId);
+
+	const Array<String> &getDefaultInputMapping() const {
+		return _defaultInputMapping;
 	}
 
 	Keymap *getParent() {

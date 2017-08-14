@@ -51,6 +51,8 @@ public:
 
 	Keymap(KeymapType type, const String &name);
 	~Keymap();
+	void setConfigDomain(ConfigManager::Domain *configDomain);
+	void setHardwareInputs(HardwareInputSet *hardwareInputSet);
 
 	/**
 	* Registers a HardwareInput to the given Action
@@ -66,6 +68,12 @@ public:
 	* @see Action::mapKey
 	*/
 	void unregisterMapping(Action *action);
+
+	/**
+	 * Reset an action's mapping to its defaults
+	 * @param action
+	 */
+	void resetMapping(Action *action);
 
 	/**
 	 * Find the hardware input an action is mapped to, if any
@@ -84,13 +92,11 @@ public:
 	 */
 	const ActionArray &getActions() const { return _actions; }
 
-	void setConfigDomain(ConfigManager::Domain *dom);
-
 	/**
 	 * Load this keymap's mappings from the config manager.
 	 * @param hwInputs	the set to retrieve hardware input pointers from
 	 */
-	void loadMappings(const HardwareInputSet *hwInputs);
+	void loadMappings();
 
 	/**
 	 * Save this keymap's mappings to the config manager
@@ -120,6 +126,9 @@ private:
 
 	const Action *findAction(const char *id) const;
 
+	void registerMappings(Action *action, const Array<String> &hwInputIds);
+	bool areMappingsIdentical(const Array<const HardwareInput *> &inputs, const Array <String> &mapping);
+
 	typedef HashMap<const HardwareInput *, ActionArray> HardwareActionMap;
 
 	KeymapType _type;
@@ -129,7 +138,9 @@ private:
 
 	ActionArray _actions;
 	HardwareActionMap _hwActionMap;
+
 	ConfigManager::Domain *_configDomain;
+	HardwareInputSet *_hardwareInputSet;
 
 };
 

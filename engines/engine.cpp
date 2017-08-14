@@ -46,6 +46,7 @@
 #include "common/translation.h"
 #include "common/singleton.h"
 
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "base/version.h"
 
@@ -612,6 +613,34 @@ void Engine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+}
+
+void Engine::initKeymap() {
+#ifdef ENABLE_KEYMAPPER
+	static const char *const kKeymapName = "engine-default";
+	Common::Keymapper *const mapper = _eventMan->getKeymapper();
+
+	// Do not try to recreate same keymap over again
+	if (mapper->getKeymap(kKeymapName))
+		return;
+
+	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
+
+	// Since the game has multiple built-in keys for each of these anyway,
+	// this just attempts to remap one of them.
+	const Common::KeyActionEntry keyActionEntries[] = {
+		{ Common::KeyState(Common::KEYCODE_SPACE, ' ', 0),                   "PAUS",  _("Pause")     },
+		{ Common::KeyState(Common::KEYCODE_ESCAPE, Common::ASCII_ESCAPE, 0), "SKCT", _("Skip")      },
+		{ Common::KeyState(Common::KEYCODE_PERIOD, '.', 0),                  "SKLI", _("Skip line") }
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
+		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
+		act->setKeyEvent(keyActionEntries[i].ks);
+	}
+
+	mapper->addGameKeymap(engineKeyMap);
+#endif
 }
 
 void Engine::deinitKeymap() {
