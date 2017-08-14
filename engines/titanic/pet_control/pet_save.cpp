@@ -65,7 +65,7 @@ void CPetSave::highlightCurrent(const Point &pt) {
 }
 
 void CPetSave::getTooltip(CTextControl *text) {
-	text->setText("Save the game.");
+	text->setText(SAVE_THE_GAME);
 }
 
 void CPetSave::highlightSave(int index) {

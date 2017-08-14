@@ -52,7 +52,7 @@ bool CPetLoad::MouseButtonUpMsg(const Point &pt) {
 }
 
 void CPetLoad::getTooltip(CTextControl *text) {
-	text->setText("Load the game.");
+	text->setText(LOAD_THE_GAME);
 }
 
 void CPetLoad::execute() {

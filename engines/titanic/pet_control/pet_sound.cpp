@@ -65,25 +65,25 @@ bool CPetSound::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	_textMasterVolume.setBounds(rect);
 	_textMasterVolume.resize(3);
 	_textMasterVolume.setHasBorder(false);
-	_textMasterVolume.setText("Master volume");
+	_textMasterVolume.setText(MASTER_VOLUME);
 
 	rect.translate(0, 20);
 	_textMusicVolume.setBounds(rect);
 	_textMusicVolume.resize(3);
 	_textMusicVolume.setHasBorder(false);
-	_textMusicVolume.setText("Music volume");
+	_textMusicVolume.setText(MUSIC_VOLUME);
 
 	rect.translate(0, 20);
 	_textParrotVolume.setBounds(rect);
 	_textParrotVolume.resize(3);
 	_textParrotVolume.setHasBorder(false);
-	_textParrotVolume.setText("Parrot volume");
+	_textParrotVolume.setText(PARROT_VOLUME);
 
 	rect.translate(0, 20);
 	_textSpeechVolume.setBounds(rect);
 	_textSpeechVolume.resize(3);
 	_textSpeechVolume.setHasBorder(false);
-	_textSpeechVolume.setText("Speech volume");
+	_textSpeechVolume.setText(SPEECH_VOLUME);
 
 	return true;
 }
@@ -276,7 +276,7 @@ bool CPetSound::MouseButtonUpMsg(const Point &pt) {
 }
 
 void CPetSound::getTooltip(CTextControl *text) {
-	text->setText("Change the volume settings.");
+	text->setText(CHANGE_VOLUME_SETTINGS);
 }
 
 } // End of namespace Titanic

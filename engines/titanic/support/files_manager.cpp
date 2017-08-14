@@ -45,8 +45,13 @@ bool CFilesManager::loadResourceIndex() {
 
 	uint headerId = _datFile.readUint32BE();
 	_version = _datFile.readUint16LE();
-	if (headerId != MKTAG('S', 'V', 'T', 'N') || _version < 1) {
+	if (headerId != MKTAG('S', 'V', 'T', 'N')) {
 		g_vm->GUIError("titanic.dat has invalid contents");
+		return false;
+	}
+
+	if (_version < 2) {
+		g_vm->GUIError("titanic.dat is out of date");
 		return false;
 	}
 
