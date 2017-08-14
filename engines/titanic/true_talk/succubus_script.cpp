@@ -161,7 +161,7 @@ int SuccUBusScript::process(const TTroomScript *roomScript, const TTsentence *se
 
 	if (processEntries(&_entries, _entryCount, roomScript, sentence) != 2) {
 		uint tagId = g_vm->_trueTalkManager->_quotes.find(sentence->_normalizedLine.c_str());
-		if (tagId && chooseResponse(roomScript, sentence, tagId) != 2) {
+		if (!tagId || chooseResponse(roomScript, sentence, tagId) != 2) {
 			addResponse(getDialogueId(230030));
 			applyResponse();
 		}
