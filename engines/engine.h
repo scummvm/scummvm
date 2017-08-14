@@ -208,7 +208,7 @@ public:
 	/*
 	 * Initialize any engine-specific keymaps.
 	 */
-	virtual void initKeymap() {}
+	virtual void initKeymap();
 
 	/*
 	 * Cleanup any engine-specific keymaps.

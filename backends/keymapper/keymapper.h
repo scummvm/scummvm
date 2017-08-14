@@ -111,16 +111,6 @@ public:
 	 */
 	const HardwareInput *findHardwareInput(const Event &event);
 
-	/**
-	 * Register the binding of a hardware input to an action
-	 */
-	void registerMapping(Action *action, const HardwareInput *input);
-
-	/**
-	 * Unbind hardware inputs from an action
-	 */
-	void clearMapping(Action *action);
-
 private:
 
 	enum IncomingEventType {

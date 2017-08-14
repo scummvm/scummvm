@@ -60,8 +60,9 @@ protected:
 		GUI::StaticTextWidget *actionText;
 		GUI::ButtonWidget *keyButton;
 		GUI::ButtonWidget *clearButton;
+		GUI::ButtonWidget *resetButton;
 
-		ActionRow() : action(nullptr), actionText(nullptr), keyButton(nullptr), clearButton(nullptr) { }
+		ActionRow() : action(nullptr), actionText(nullptr), keyButton(nullptr), clearButton(nullptr), resetButton(nullptr) { }
 	};
 
 	void loadKeymap();
@@ -69,6 +70,7 @@ protected:
 	void clearKeymap();
 	void reflowActionWidgets();
 	void clearMapping(uint i);
+	void resetMapping(uint i);
 	void startRemapping(uint i);
 	void stopRemapping();
 
