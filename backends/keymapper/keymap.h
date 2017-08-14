@@ -70,14 +70,14 @@ public:
 	/**
 	 * Find the hardware input an action is mapped to, if any
 	 */
-	const HardwareInput *getActionMapping(Action *action) const;
+	Array<const HardwareInput *> getActionMapping(Action *action) const;
 
 	/**
-	 * Find the Action that a hardware input is mapped to
+	 * Find the Actions that a hardware input is mapped to
 	 * @param hardwareInput	the input that is mapped to the required Action
-	 * @return		a pointer to the Action or 0 if no
+	 * @return		an array containing pointers to the actions
 	 */
-	Action *getMappedAction(const HardwareInput *hardwareInput) const;
+	const ActionArray &getMappedActions(const HardwareInput *hardwareInput) const;
 
 	/**
 	 * Get the list of all the Actions contained in this Keymap
@@ -120,7 +120,7 @@ private:
 
 	const Action *findAction(const char *id) const;
 
-	typedef HashMap<const HardwareInput *, Action *> HardwareActionMap;
+	typedef HashMap<const HardwareInput *, ActionArray> HardwareActionMap;
 
 	KeymapType _type;
 	String _name;
