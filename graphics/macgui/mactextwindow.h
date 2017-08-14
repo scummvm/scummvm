@@ -71,9 +71,12 @@ public:
 
 	Common::String getSelection(bool formatted = false, bool newlines = true);
 	void clearSelection();
+	Common::String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 
 private:
+	bool isCutAllowed();
+
 	void undrawInput();
 	void drawInput();
 	void drawSelection();

@@ -234,6 +234,39 @@ void MacTextWindow::clearSelection() {
 	_selectedText.endY = _selectedText.startY = -1;
 }
 
+bool MacTextWindow::isCutAllowed() {
+	if (_selectedText.startRow >= (int)(_mactext->getLineCount() - _inputTextHeight) &&
+			_selectedText.endRow  >= (int)(_mactext->getLineCount() - _inputTextHeight))
+		return true;
+
+	return false;
+}
+
+Common::String MacTextWindow::cutSelection() {
+	if (!isCutAllowed())
+		return Common::String("");
+
+	SelectedText s = _selectedText;
+
+	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
+		SWAP(s.startRow, s.endRow);
+		SWAP(s.startCol, s.endCol);
+	}
+
+	Common::String selection = _mactext->getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, false, false);
+
+	const char *selStart = strstr(_inputText.c_str(), selection.c_str());
+
+	if (!selStart)
+		warning("Cannot find substring '%s' in '%s'", selection.c_str(), _inputText.c_str());
+
+	int selPos = selStart - _inputText.c_str();
+
+	_inputText = Common::String(_inputText.c_str(), selPos) + Common::String(_inputText.c_str() + selPos + selection.size());
+
+	return selection;
+}
+
 bool MacTextWindow::processEvent(Common::Event &event) {
 	WindowClick click = isInBorder(event.mouse.x, event.mouse.y);
 
@@ -322,11 +355,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 				} else {
 					_menu->enableCommand("Edit", "Copy", true);
 
-					bool cutAllowed = false;
-
-					if (_selectedText.startRow >= (int)(_mactext->getLineCount() - _inputTextHeight) &&
-							_selectedText.endRow  >= (int)(_mactext->getLineCount() - _inputTextHeight))
-						cutAllowed = true;
+					bool cutAllowed = isCutAllowed();
 
 					_menu->enableCommand("Edit", "Cut", cutAllowed);
 					_menu->enableCommand("Edit", "Clear", cutAllowed);
