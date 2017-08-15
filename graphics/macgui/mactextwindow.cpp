@@ -257,8 +257,11 @@ Common::String MacTextWindow::cutSelection() {
 
 	const char *selStart = strstr(_inputText.c_str(), selection.c_str());
 
-	if (!selStart)
+	if (!selStart) {
 		warning("Cannot find substring '%s' in '%s'", selection.c_str(), _inputText.c_str());
+
+		return Common::String("");
+	}
 
 	int selPos = selStart - _inputText.c_str();
 
