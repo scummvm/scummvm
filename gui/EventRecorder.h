@@ -64,7 +64,7 @@ class WriteStream;
  *
  * TODO: Add more documentation.
  */
-class EventRecorder : private Common::EventSource, public Common::Singleton<EventRecorder>, private Common::DefaultEventMapper {
+class EventRecorder : private Common::EventSource, public Common::Singleton<EventRecorder>, private Common::EventObserver {
 	friend class Common::Singleton<SingletonBaseType>;
 	EventRecorder();
 	~EventRecorder() override;
@@ -175,8 +175,8 @@ public:
 	void switchFastMode();
 
 private:
-	Common::List<Common::Event> mapEvent(const Common::Event &ev, Common::EventSource *source) override;
 	bool pollEvent(Common::Event &ev) override;
+	bool notifyEvent(const Common::Event &event) override;
 	bool _initialized;
 	volatile uint32 _fakeTimer;
 	bool _savedState;
