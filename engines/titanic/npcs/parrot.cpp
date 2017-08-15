@@ -119,10 +119,7 @@ void CParrot::load(SimpleFile *file) {
 }
 
 bool CParrot::ActMsg(CActMsg *msg) {
-	if (msg->_action == "PistaccioEaten") {
-		CActMsg actMsg("NutsEaten");
-		actMsg.execute("Ear2");
-	} else if (msg->_action == "Chicken") {
+	if (msg->_action == "Chicken") {
 		// Nothing to do
 	} else if (msg->_action == "CarryParrotLeftView") {
 		if (!_takeOff) {
