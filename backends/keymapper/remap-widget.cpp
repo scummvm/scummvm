@@ -195,6 +195,7 @@ void RemapWidget::startRemapping(uint i) {
 	_remapInputWatcher->startWatching();
 
 	_actions[i].keyButton->setLabel("...");
+	_actions[i].keyButton->setTooltip("");
 	_actions[i].keyButton->markAsDirty();
 }
 
@@ -275,6 +276,7 @@ void RemapWidget::refreshKeymap() {
 			row.keyButton->setTooltip(keysLabel);
 		} else {
 			row.keyButton->setLabel("-");
+			row.keyButton->setTooltip("");
 		}
 
 		// I18N: Button to reset key mapping to defaults

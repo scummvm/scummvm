@@ -315,38 +315,26 @@ void SdlGraphicsManager::saveScreenshot() {
 }
 
 bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
-	switch ((int)event.type) {
-	case Common::EVENT_KEYDOWN:
-		// Alt-Return and Alt-Enter toggle full screen mode
-		if (event.kbd.hasFlags(Common::KBD_ALT) &&
-			(event.kbd.keycode == Common::KEYCODE_RETURN ||
-			 event.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
-			toggleFullScreen();
-			return true;
-		}
-
-		// Alt-S: Create a screenshot
-		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
-			saveScreenshot();
-			return true;
-		}
-
-		break;
-
-	case Common::EVENT_KEYUP:
-		if (event.kbd.hasFlags(Common::KBD_ALT)) {
-			return    event.kbd.keycode == Common::KEYCODE_RETURN
-			       || event.kbd.keycode == Common::KEYCODE_KP_ENTER
-			       || event.kbd.keycode == Common::KEYCODE_s;
-		}
-
-		break;
-
-	default:
-		break;
+	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
+		return false;
 	}
 
-	return false;
+	switch ((CustomEventAction) event.customType) {
+	case kActionToggleMouseCapture:
+		getWindow()->toggleMouseGrab();
+		return true;
+
+	case kActionToggleFullscreen:
+		toggleFullScreen();
+		return true;
+
+	case kActionSaveScreenshot:
+		saveScreenshot();
+		return true;
+
+	default:
+		return false;
+	}
 }
 
 void SdlGraphicsManager::toggleFullScreen() {
@@ -373,92 +361,79 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	if (hasFeature(OSystem::kFeatureFullscreenMode)) {
 		act = new Action("FULS", _("Toggle fullscreen"));
 		act->addDefaultInputMapping("A+RETURN");
-		act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+		act->setCustomBackendActionEvent(kActionToggleFullscreen);
 		keymap->addAction(act);
 	}
 
 	act = new Action("CAPT", _("Toggle mouse capture"));
 	act->addDefaultInputMapping("C+m");
-	act->setKeyEvent(KeyState(KEYCODE_m, 'm', KBD_CTRL));
+	act->setCustomBackendActionEvent(kActionToggleMouseCapture);
 	keymap->addAction(act);
 
 	act = new Action("SCRS", _("Save screenshot"));
 	act->addDefaultInputMapping("A+s");
-	act->setKeyEvent(KeyState(KEYCODE_s, 's', KBD_ALT));
+	act->setCustomBackendActionEvent(kActionSaveScreenshot);
 	keymap->addAction(act);
 
 	if (hasFeature(OSystem::kFeatureAspectRatioCorrection)) {
 		act = new Action("ASPT", _("Toggle aspect ratio correction"));
 		act->addDefaultInputMapping("C+A+a");
-		act->setKeyEvent(KeyState(KEYCODE_a, 'a', KBD_CTRL | KBD_ALT));
+		act->setCustomBackendActionEvent(kActionToggleAspectRatioCorrection);
 		keymap->addAction(act);
 	}
 
 	if (hasFeature(OSystem::kFeatureFilteringMode)) {
 		act = new Action("FILT", _("Toggle linear filtered scaling"));
 		act->addDefaultInputMapping("C+A+f");
-		act->setKeyEvent(KeyState(KEYCODE_f, 'f', KBD_CTRL | KBD_ALT));
+		act->setCustomBackendActionEvent(kActionToggleFilteredScaling);
 		keymap->addAction(act);
 	}
 
 	if (hasFeature(OSystem::kFeatureStretchMode)) {
 		act = new Action("STCH", _("Cycle through stretch modes"));
 		act->addDefaultInputMapping("C+A+s");
-		act->setKeyEvent(KeyState(KEYCODE_s, 's', KBD_CTRL | KBD_ALT));
+		act->setCustomBackendActionEvent(kActionCycleStretchMode);
 		keymap->addAction(act);
 	}
 
 	act = new Action("SCL+", _("Increase the scale factor"));
 	act->addDefaultInputMapping("C+A+PLUS");
 	act->addDefaultInputMapping("C+A+KP_PLUS");
-	act->setKeyEvent(KeyState(KEYCODE_PLUS, '+', KBD_CTRL | KBD_ALT));
+	act->setCustomBackendActionEvent(kActionIncreaseScaleFactor);
 	keymap->addAction(act);
 
 	act = new Action("SCL-", _("Decrease the scale factor"));
 	act->addDefaultInputMapping("C+A+MINUS");
 	act->addDefaultInputMapping("C+A+KP_MINUS");
-	act->setKeyEvent(KeyState(KEYCODE_MINUS, '-', KBD_CTRL | KBD_ALT));
+	act->setCustomBackendActionEvent(kActionDecreaseScaleFactor);
 	keymap->addAction(act);
 
-	act = new Action("FLT1", _("Switch to nearest neighbour scaling"));
-	act->addDefaultInputMapping("C+A+1");
-	act->setKeyEvent(KeyState(KEYCODE_1, '1', KBD_CTRL | KBD_ALT));
-	keymap->addAction(act);
+#ifdef USE_SCALERS
+	struct ActionEntry {
+		const char *id;
+		const char *description;
+	};
+	static const ActionEntry filters[] = {
+			{ "FLT1", _s("Switch to nearest neighbour scaling") },
+			{ "FLT2", _s("Switch to AdvMame 2x/3x scaling")     },
+#ifdef USE_HQ_SCALERS
+			{ "FLT3", _s("Switch to HQ 2x/3x scaling")          },
+#endif
+			{ "FLT4", _s("Switch to 2xSai scaling")             },
+			{ "FLT5", _s("Switch to Super2xSai scaling")        },
+			{ "FLT6", _s("Switch to SuperEagle scaling")        },
+			{ "FLT7", _s("Switch to TV 2x scaling")             },
+			{ "FLT8", _s("Switch to DotMatrix scaling")         }
+	};
 
-	act = new Action("FLT2", _("Switch to AdvMame 2x/3x scaling"));
-	act->addDefaultInputMapping("C+A+2");
-	act->setKeyEvent(KeyState(KEYCODE_2, '2', KBD_CTRL | KBD_ALT));
-	keymap->addAction(act);
-
-	act = new Action("FLT3", _("Switch to HQ 2x/3x scaling"));
-	act->addDefaultInputMapping("C+A+3");
-	act->setKeyEvent(KeyState(KEYCODE_3, '3', KBD_CTRL | KBD_ALT));
-	keymap->addAction(act);
-
-	act = new Action("FLT4", _("Switch to 2xSai scaling"));
-	act->addDefaultInputMapping("C+A+4");
-	act->setKeyEvent(KeyState(KEYCODE_4, '4', KBD_CTRL | KBD_ALT));
-	keymap->addAction(act);
-
-	act = new Action("FLT5", _("Switch to Super2xSai scaling"));
-	act->addDefaultInputMapping("C+A+5");
-	act->setKeyEvent(KeyState(KEYCODE_5, '5', KBD_CTRL | KBD_ALT));
-	keymap->addAction(act);
-
-	act = new Action("FLT6", _("Switch to SuperEagle scaling"));
-	act->addDefaultInputMapping("C+A+6");
-	act->setKeyEvent(KeyState(KEYCODE_6, '6', KBD_CTRL | KBD_ALT));
-	keymap->addAction(act);
-
-	act = new Action("FLT7", _("Switch to Tv2x scaling"));
-	act->addDefaultInputMapping("C+A+7");
-	act->setKeyEvent(KeyState(KEYCODE_7, '7', KBD_CTRL | KBD_ALT));
-	keymap->addAction(act);
-
-	act = new Action("FLT8", _("Switch to DotMatrix scaling"));
-	act->addDefaultInputMapping("C+A+8");
-	act->setKeyEvent(KeyState(KEYCODE_8, '8', KBD_CTRL | KBD_ALT));
-	keymap->addAction(act);
+	for (uint i = 0; i < ARRAYSIZE(filters); i++) {
+		act = new Action(filters[i].id, filters[i].description);
+		act->addDefaultInputMapping(String::format("C+A+%d", i + 1));
+		act->addDefaultInputMapping(String::format("C+A+KP%d", i + 1));
+		act->setCustomBackendActionEvent(kActionSetScaleFilter1 + i);
+		keymap->addAction(act);
+	}
+#endif
 
 	return keymap;
 }

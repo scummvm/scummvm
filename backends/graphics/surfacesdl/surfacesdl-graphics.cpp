@@ -2517,116 +2517,24 @@ void SurfaceSdlGraphicsManager::handleResizeImpl(const int width, const int heig
 	recalculateDisplayAreas();
 }
 
-bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
-	// Ctrl-Alt-a toggles aspect ratio correction
-	if (key == 'a') {
-		beginGFXTransaction();
-			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
-		endGFXTransaction();
-#ifdef USE_OSD
-		Common::String message;
-		if (_videoMode.aspectRatioCorrection)
-			message = Common::String::format("%s\n%d x %d -> %d x %d",
-				_("Enabled aspect ratio correction"),
-				_videoMode.screenWidth, _videoMode.screenHeight,
-				_hwScreen->w, _hwScreen->h
-				);
-		else
-			message = Common::String::format("%s\n%d x %d -> %d x %d",
-				_("Disabled aspect ratio correction"),
-				_videoMode.screenWidth, _videoMode.screenHeight,
-				_hwScreen->w, _hwScreen->h
-				);
-		displayMessageOnOSD(message.c_str());
-#endif
-		internUpdateScreen();
-		return true;
-	}
+void SurfaceSdlGraphicsManager::handleScalerHotkeys(int scalefactor, int scalerType) {
+	assert(scalerType >= 0 && scalerType < ARRAYSIZE(s_gfxModeSwitchTable));
 
-	// Ctrl-Alt-f toggles filtering
-	if (key == 'f') {
-		beginGFXTransaction();
-		setFeatureState(OSystem::kFeatureFilteringMode, !_videoMode.filtering);
-		endGFXTransaction();
-#ifdef USE_OSD
-		if (getFeatureState(OSystem::kFeatureFilteringMode)) {
-			displayMessageOnOSD(_("Filtering enabled"));
-		} else {
-			displayMessageOnOSD(_("Filtering disabled"));
-		}
-#endif
-		_forceRedraw = true;
-		internUpdateScreen();
-		return true;
+	int factor = CLIP(scalefactor - 1, 0, 4);
+
+	while (s_gfxModeSwitchTable[scalerType][factor] < 0) {
+		assert(factor > 0);
+		factor--;
 	}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	// Ctrl+Alt+s cycles through scaling mode (0 to 3)
-	if (key == 's') {
-		int index = 0;
-		const OSystem::GraphicsMode *sm = s_supportedStretchModes;
-		while (sm->name) {
-			if (sm->id == _videoMode.stretchMode)
-				break;
-			sm++;
-			index++;
-		}
-		index++;
-		if (!s_supportedStretchModes[index].name)
-			index = 0;
-
-		beginGFXTransaction();
-		setStretchMode(s_supportedStretchModes[index].id);
-		endGFXTransaction();
-
-#ifdef USE_OSD
-		Common::String message = Common::String::format("%s: %s",
-			_("Stretch mode"),
-			_(s_supportedStretchModes[index].description)
-			);
-		displayMessageOnOSD(message.c_str());
-#endif
-		_forceRedraw = true;
-		internUpdateScreen();
-		return true;
-	}
+	bool sizeChanged = _videoMode.scaleFactor != factor;
 #endif
 
-	int newMode = -1;
-	int factor = _videoMode.scaleFactor - 1;
-	SDLKey sdlKey = (SDLKey)key;
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	bool sizeChanged = false;
-#endif
-
-	// Increase/decrease the scale factor
-	if (sdlKey == SDLK_EQUALS || sdlKey == SDLK_PLUS || sdlKey == SDLK_MINUS ||
-		sdlKey == SDLK_KP_PLUS || sdlKey == SDLK_KP_MINUS) {
-		factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
-		if (0 <= factor && factor <= 3) {
-			newMode = s_gfxModeSwitchTable[_scalerType][factor];
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-			sizeChanged = true;
-#endif
-		}
-	}
-
-	const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_9);
-	const bool isKeypadNumber = (SDLK_KP1 <= sdlKey && sdlKey <= SDLK_KP9);
-	if (isNormalNumber || isKeypadNumber) {
-		_scalerType = sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1);
-		if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
-			return false;
-
-		while (s_gfxModeSwitchTable[_scalerType][factor] < 0) {
-			assert(factor > 0);
-			factor--;
-		}
-		newMode = s_gfxModeSwitchTable[_scalerType][factor];
-	}
-
+	int newMode = s_gfxModeSwitchTable[scalerType][factor];
 	if (newMode >= 0) {
+		_scalerType = scalerType;
+
 		beginGFXTransaction();
 			setGraphicsMode(newMode);
 		endGFXTransaction();
@@ -2660,58 +2568,109 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 #endif
 
 		internUpdateScreen();
-
-		return true;
-	} else {
-		return false;
 	}
-}
-
-bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
-	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-		const bool isNormalNumber = (Common::KEYCODE_1 <= event.kbd.keycode && event.kbd.keycode <= Common::KEYCODE_9);
-		const bool isKeypadNumber = (Common::KEYCODE_KP1 <= event.kbd.keycode && event.kbd.keycode <= Common::KEYCODE_KP9);
-		const bool isScaleKey = (event.kbd.keycode == Common::KEYCODE_EQUALS || event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS ||
-			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS);
-
-		if (isNormalNumber || isKeypadNumber) {
-			int keyValue = event.kbd.keycode - (isNormalNumber ? Common::KEYCODE_1 : Common::KEYCODE_KP1);
-			if (keyValue >= ARRAYSIZE(s_gfxModeSwitchTable))
-				return false;
-		}
-		if (event.kbd.keycode == 'f')
-			return true;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		if (event.kbd.keycode == 's')
-			return true;
-#endif
-		return (isScaleKey || event.kbd.keycode == 'a');
-	}
-	return false;
 }
 
 bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
-	switch ((int)event.type) {
-	case Common::EVENT_KEYDOWN:
-		// Ctrl-Alt-<key> will change the GFX mode
-		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT)) {
-			if (handleScalerHotkeys(event.kbd.keycode))
-				return true;
-		}
-
-		break;
-
-	case Common::EVENT_KEYUP:
-		if (isScalerHotkey(event))
-			return true;
-
-		break;
-
-	default:
-		break;
+	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
+		return SdlGraphicsManager::notifyEvent(event);
 	}
 
-	return SdlGraphicsManager::notifyEvent(event);
+	switch ((CustomEventAction) event.customType) {
+	case kActionToggleAspectRatioCorrection: {
+		beginGFXTransaction();
+			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
+		endGFXTransaction();
+#ifdef USE_OSD
+		Common::String message;
+		if (_videoMode.aspectRatioCorrection)
+			message = Common::String::format("%s\n%d x %d -> %d x %d",
+			                                 _("Enabled aspect ratio correction"),
+			                                 _videoMode.screenWidth, _videoMode.screenHeight,
+			                                 _hwScreen->w, _hwScreen->h
+			);
+		else
+			message = Common::String::format("%s\n%d x %d -> %d x %d",
+			                                 _("Disabled aspect ratio correction"),
+			                                 _videoMode.screenWidth, _videoMode.screenHeight,
+			                                 _hwScreen->w, _hwScreen->h
+			);
+		displayMessageOnOSD(message.c_str());
+#endif
+		internUpdateScreen();
+		return true;
+	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case kActionToggleFilteredScaling:
+		beginGFXTransaction();
+			setFeatureState(OSystem::kFeatureFilteringMode, !_videoMode.filtering);
+		endGFXTransaction();
+#ifdef USE_OSD
+		if (getFeatureState(OSystem::kFeatureFilteringMode)) {
+			displayMessageOnOSD(_("Filtering enabled"));
+		} else {
+			displayMessageOnOSD(_("Filtering disabled"));
+		}
+#endif
+		_forceRedraw = true;
+		internUpdateScreen();
+		return true;
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case kActionCycleStretchMode: {
+		int index = 0;
+		const OSystem::GraphicsMode *sm = s_supportedStretchModes;
+		while (sm->name) {
+			if (sm->id == _videoMode.stretchMode)
+				break;
+			sm++;
+			index++;
+		}
+		index++;
+		if (!s_supportedStretchModes[index].name)
+			index = 0;
+
+		beginGFXTransaction();
+			setStretchMode(s_supportedStretchModes[index].id);
+		endGFXTransaction();
+
+#ifdef USE_OSD
+		Common::String message = Common::String::format("%s: %s",
+		                                                _("Stretch mode"),
+		                                                _(s_supportedStretchModes[index].description)
+		);
+		displayMessageOnOSD(message.c_str());
+#endif
+		_forceRedraw = true;
+		internUpdateScreen();
+		return true;
+#endif
+	}
+
+	case kActionIncreaseScaleFactor:
+		handleScalerHotkeys(_videoMode.scaleFactor + 1, _scalerType);
+		return true;
+
+	case kActionDecreaseScaleFactor:
+		handleScalerHotkeys(_videoMode.scaleFactor - 1, _scalerType);
+		return true;
+
+	case kActionSetScaleFilter1:
+	case kActionSetScaleFilter2:
+	case kActionSetScaleFilter3:
+	case kActionSetScaleFilter4:
+	case kActionSetScaleFilter5:
+	case kActionSetScaleFilter6:
+	case kActionSetScaleFilter7:
+	case kActionSetScaleFilter8:
+		handleScalerHotkeys(_videoMode.scaleFactor, event.customType - kActionSetScaleFilter1);
+		return true;
+
+	default:
+		return SdlGraphicsManager::notifyEvent(event);
+	}
 }
 
 void SurfaceSdlGraphicsManager::notifyVideoExpose() {

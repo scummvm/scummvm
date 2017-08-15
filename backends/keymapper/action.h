@@ -62,6 +62,12 @@ public:
 		event.type = evtType;
 	}
 
+	void setCustomBackendActionEvent(const CustomEventType evtType) {
+		event = Event();
+		event.type = EVENT_CUSTOM_BACKEND_ACTION_START;
+		event.customType = evtType;
+	}
+
 	void setKeyEvent(const KeyState &ks) {
 		event = Event();
 		event.type = EVENT_KEYDOWN;
