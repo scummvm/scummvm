@@ -357,60 +357,30 @@ void Gui::actionUndo() {
 }
 
 void Gui::actionClear() {
-	const Graphics::SelectedText *s = _consoleWindow->getSelectedText();
-
-	if (s->endY == -1)
+	if (_consoleWindow->getSelectedText()->endY == -1)
 		return;
-
-	int startPos = s->startCol;
-	int endPos = s->endCol;
-
-	if (startPos > endPos)
-		SWAP(startPos, endPos);
 
 	Common::String input = _consoleWindow->getInput();
 
-	Common::String beg(input.c_str(), &input.c_str()[startPos]);
-	Common::String end(&input.c_str()[endPos]);
+	_consoleWindow->cutSelection();
 
 	_undobuffer = input;
 
-	_consoleWindow->clearInput();
-	_consoleWindow->appendInput(beg + end);
-
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
-
-	_consoleWindow->clearSelection();
 }
 
 void Gui::actionCut() {
-	const Graphics::SelectedText *s = _consoleWindow->getSelectedText();
-
-	if (s->endY == -1)
+	if (_consoleWindow->getSelectedText()->endY == -1)
 		return;
-
-	int startPos = s->startCol;
-	int endPos = s->endCol;
-
-	if (s->startRow > s->endRow || (s->startRow == s->endRow && startPos > endPos))
-		SWAP(startPos, endPos);
 
 	Common::String input = _consoleWindow->getInput();
 
-	Common::String beg(input.c_str(), &input.c_str()[startPos]);
-	Common::String mid(&input.c_str()[startPos], &input.c_str()[endPos]);
-	Common::String end(&input.c_str()[endPos]);
+	_clipboard = _consoleWindow->cutSelection();
 
 	_undobuffer = input;
 
-	_consoleWindow->clearInput();
-	_consoleWindow->appendInput(beg + end);
-	_clipboard = mid;
-
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
 	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
-
-	_consoleWindow->clearSelection();
 }
 
 void Gui::disableUndo() {
