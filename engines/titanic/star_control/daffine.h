@@ -51,18 +51,30 @@ public:
 public:
 	DAffine();
 	DAffine(int mode, const DVector &src);
-	DAffine(Axis axis, double amount);
+	DAffine(Axis axis, double angleDeg);
 	DAffine(const FMatrix &src);
 
 	/**
-	 * Sets up a matrix for rotating on a given axis by a given amount
+	 * Sets up an affine matrix for rotating on a given axis by an amount in degrees
 	 */
-	void setRotationMatrix(Axis axis, double amount);
+	void setRotationMatrix(Axis axis, double angleDeg);
 
+	/**
+	 * Return the Inverse of this Daffine
+	 */
 	DAffine inverseTransform() const;
 
+	/**
+	 * Change this Daffine to have its first three columns be the src matrix
+         * and the 4rth column to be (three) zeros
+	 */
 	void loadTransform(const CMatrixTransform &src);
 
+	/**
+	 * Do the affine product between this Daffine on the left
+         * and the m Daffine matrix on the right. This is product is NOT the same
+         * as multiplying two matrices of dimensions 4x4.
+	 */
 	DAffine compose(const DAffine &m);
 };
 

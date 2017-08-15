@@ -29,7 +29,7 @@ namespace Titanic {
 DAffine *DAffine::_static;
 
 DAffine::DAffine() :
-	_col1(0.0, 0.0, 0.0), _col2(0.0, 0.0, 0.0), _col3(0.0, 0.0, 0.0) {
+	_col1(0.0, 0.0, 0.0), _col2(0.0, 0.0, 0.0), _col3(0.0, 0.0, 0.0), _col4(0.0, 0.0, 0.0) {
 }
 
 DAffine::DAffine(int mode, const DVector &src) {
@@ -55,8 +55,8 @@ DAffine::DAffine(int mode, const DVector &src) {
 	}
 }
 
-DAffine::DAffine(Axis axis, double amount) {
-	setRotationMatrix(axis, amount);
+DAffine::DAffine(Axis axis, double angleDeg) {
+	setRotationMatrix(axis, angleDeg);
 }
 
 DAffine::DAffine(const FMatrix &src) {
@@ -74,10 +74,9 @@ void DAffine::deinit() {
 	_static = nullptr;
 }
 
-void DAffine::setRotationMatrix(Axis axis, double amount) {
-	const double FACTOR = 0.0174532925199433;
-	double sinVal = sin(amount * FACTOR);
-	double cosVal = cos(amount * FACTOR);
+void DAffine::setRotationMatrix(Axis axis, double angleDeg) {
+	double sinVal = sin(angleDeg * Deg2Rad);
+	double cosVal = cos(angleDeg * Deg2Rad);
 
 	switch (axis) {
 	case X_AXIS:

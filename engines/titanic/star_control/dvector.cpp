@@ -26,9 +26,6 @@
 
 namespace Titanic {
 
-const double Rad2Deg = 180.0 / M_PI;
-const double Deg2Rad = 1.0 / Rad2Deg;
-
 double DVector::normalize() {
 	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
 	assert(hyp);
