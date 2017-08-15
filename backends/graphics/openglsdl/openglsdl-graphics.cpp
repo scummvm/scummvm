@@ -526,180 +526,164 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 }
 
 bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
-	switch (event.type) {
-	case Common::EVENT_KEYUP:
-		if (isHotkey(event))
-			return true;
+	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
+		return SdlGraphicsManager::notifyEvent(event);
+	}
 
-		break;
+	switch ((CustomEventAction) event.customType) {
+	case kActionIncreaseScaleFactor:
+	case kActionDecreaseScaleFactor: {
+		const int direction = event.customType == kActionIncreaseScaleFactor ? +1 : -1;
 
-	case Common::EVENT_KEYDOWN:
-		if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
-			if (   event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
-			    || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS) {
-				// Ctrl+Alt+Plus/Minus Increase/decrease the size
-				const int direction = (event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_KP_PLUS) ? +1 : -1;
+		if (getFeatureState(OSystem::kFeatureFullscreenMode)) {
+			// In case we are in fullscreen we will choose the previous
+			// or next mode.
 
-				if (getFeatureState(OSystem::kFeatureFullscreenMode)) {
-					// In case we are in fullscreen we will choose the previous
-					// or next mode.
-
-					// In case no modes are available we do nothing.
-					if (_fullscreenVideoModes.empty()) {
-						return true;
-					}
-
-					// Look for the current mode.
-					VideoModeArray::const_iterator i = Common::find(_fullscreenVideoModes.begin(),
-					                                                _fullscreenVideoModes.end(),
-					                                                VideoMode(_desiredFullscreenWidth, _desiredFullscreenHeight));
-					if (i == _fullscreenVideoModes.end()) {
-						return true;
-					}
-
-					// Cycle through the modes in the specified direction.
-					if (direction > 0) {
-						++i;
-						if (i == _fullscreenVideoModes.end()) {
-							i = _fullscreenVideoModes.begin();
-						}
-					} else {
-						if (i == _fullscreenVideoModes.begin()) {
-							i = _fullscreenVideoModes.end();
-						}
-						--i;
-					}
-
-					_desiredFullscreenWidth  = i->width;
-					_desiredFullscreenHeight = i->height;
-
-					// Try to setup the mode.
-					if (!setupMode(_lastRequestedWidth, _lastRequestedHeight)) {
-						warning("OpenGLSdlGraphicsManager::notifyEvent: Fullscreen resize failed ('%s')", SDL_GetError());
-						g_system->quit();
-					}
-				} else {
-					// Calculate the next scaling setting. We approximate the
-					// current scale setting in case the user resized the
-					// window. Then we apply the direction change.
-					int windowWidth = 0, windowHeight = 0;
-					getWindowSizeFromSdl(&windowWidth, &windowHeight);
-					_graphicsScale = MAX<int>(windowWidth / _lastRequestedWidth, windowHeight / _lastRequestedHeight);
-					_graphicsScale = MAX<int>(_graphicsScale + direction, 1);
-
-					// Since we overwrite a user resize here we reset its
-					// flag here. This makes enabling AR smoother because it
-					// will change the window size like in surface SDL.
-					_gotResize = false;
-
-					// Try to setup the mode.
-					if (!setupMode(_lastRequestedWidth * _graphicsScale, _lastRequestedHeight * _graphicsScale)) {
-						warning("OpenGLSdlGraphicsManager::notifyEvent: Window resize failed ('%s')", SDL_GetError());
-						g_system->quit();
-					}
-				}
-
-#ifdef USE_OSD
-				int windowWidth = 0, windowHeight = 0;
-				getWindowSizeFromSdl(&windowWidth, &windowHeight);
-				const Common::String osdMsg = Common::String::format(_("Resolution: %dx%d"), windowWidth, windowHeight);
-				displayMessageOnOSD(osdMsg.c_str());
-#endif
-
-				return true;
-			} else if (event.kbd.keycode == Common::KEYCODE_a) {
-				// In case the user changed the window size manually we will
-				// not change the window size again here.
-				_ignoreLoadVideoMode = _gotResize;
-
-				// Ctrl+Alt+a toggles the aspect ratio correction state.
-				beginGFXTransaction();
-					setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
-				endGFXTransaction();
-
-				// Make sure we do not ignore the next resize. This
-				// effectively checks whether loadVideoMode has been called.
-				assert(!_ignoreLoadVideoMode);
-
-#ifdef USE_OSD
-				if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
-					displayMessageOnOSD(_("Enabled aspect ratio correction"));
-				else
-					displayMessageOnOSD(_("Disabled aspect ratio correction"));
-#endif
-
-				return true;
-			} else if (event.kbd.keycode == Common::KEYCODE_f) {
-				// Never ever try to resize the window when we simply want to enable or disable filtering.
-				// This assures that the window size does not change.
-				_ignoreLoadVideoMode = true;
-
-				// Ctrl+Alt+f toggles filtering on/off
-				beginGFXTransaction();
-					setFeatureState(OSystem::kFeatureFilteringMode, !getFeatureState(OSystem::kFeatureFilteringMode));
-				endGFXTransaction();
-
-				// Make sure we do not ignore the next resize. This
-				// effectively checks whether loadVideoMode has been called.
-				assert(!_ignoreLoadVideoMode);
-
-#ifdef USE_OSD
-				if (getFeatureState(OSystem::kFeatureFilteringMode)) {
-					displayMessageOnOSD(_("Filtering enabled"));
-				} else {
-					displayMessageOnOSD(_("Filtering disabled"));
-				}
-#endif
-
-				return true;
-			} else if (event.kbd.keycode == Common::KEYCODE_s) {
-				// Never try to resize the window when changing the scaling mode.
-				_ignoreLoadVideoMode = true;
-
-				// Ctrl+Alt+s cycles through stretch mode
-				int index = 0;
-				const OSystem::GraphicsMode *stretchModes = getSupportedStretchModes();
-				const OSystem::GraphicsMode *sm = stretchModes;
-				while (sm->name) {
-					if (sm->id == getStretchMode())
-						break;
-					sm++;
-					index++;
-				}
-				index++;
-				if (!stretchModes[index].name)
-					index = 0;
-				beginGFXTransaction();
-				setStretchMode(stretchModes[index].id);
-				endGFXTransaction();
-
-#ifdef USE_OSD
-				Common::String message = Common::String::format("%s: %s",
-					_("Stretch mode"),
-					_(stretchModes[index].description)
-					);
-				displayMessageOnOSD(message.c_str());
-#endif
+			// In case no modes are available we do nothing.
+			if (_fullscreenVideoModes.empty()) {
 				return true;
 			}
+
+			// Look for the current mode.
+			VideoModeArray::const_iterator i = Common::find(_fullscreenVideoModes.begin(),
+			                                                _fullscreenVideoModes.end(),
+			                                                VideoMode(_desiredFullscreenWidth, _desiredFullscreenHeight));
+			if (i == _fullscreenVideoModes.end()) {
+				return true;
+			}
+
+			// Cycle through the modes in the specified direction.
+			if (direction > 0) {
+				++i;
+				if (i == _fullscreenVideoModes.end()) {
+					i = _fullscreenVideoModes.begin();
+				}
+			} else {
+				if (i == _fullscreenVideoModes.begin()) {
+					i = _fullscreenVideoModes.end();
+				}
+				--i;
+			}
+
+			_desiredFullscreenWidth  = i->width;
+			_desiredFullscreenHeight = i->height;
+
+			// Try to setup the mode.
+			if (!setupMode(_lastRequestedWidth, _lastRequestedHeight)) {
+				warning("OpenGLSdlGraphicsManager::notifyEvent: Fullscreen resize failed ('%s')", SDL_GetError());
+				g_system->quit();
+			}
+		} else {
+			// Calculate the next scaling setting. We approximate the
+			// current scale setting in case the user resized the
+			// window. Then we apply the direction change.
+			int windowWidth = 0, windowHeight = 0;
+			getWindowSizeFromSdl(&windowWidth, &windowHeight);
+			_graphicsScale = MAX<int>(windowWidth / _lastRequestedWidth, windowHeight / _lastRequestedHeight);
+			_graphicsScale = MAX<int>(_graphicsScale + direction, 1);
+
+			// Since we overwrite a user resize here we reset its
+			// flag here. This makes enabling AR smoother because it
+			// will change the window size like in surface SDL.
+			_gotResize = false;
+
+			// Try to setup the mode.
+			if (!setupMode(_lastRequestedWidth * _graphicsScale, _lastRequestedHeight * _graphicsScale)) {
+				warning("OpenGLSdlGraphicsManager::notifyEvent: Window resize failed ('%s')", SDL_GetError());
+				g_system->quit();
+			}
 		}
-		// Fall through
+
+#ifdef USE_OSD
+		int windowWidth = 0, windowHeight = 0;
+		getWindowSizeFromSdl(&windowWidth, &windowHeight);
+		const Common::String osdMsg = Common::String::format(_("Resolution: %dx%d"), windowWidth, windowHeight);
+		displayMessageOnOSD(osdMsg.c_str());
+#endif
+
+		return true;
+	}
+
+	case kActionToggleAspectRatioCorrection:
+		// In case the user changed the window size manually we will
+		// not change the window size again here.
+		_ignoreLoadVideoMode = _gotResize;
+
+		// Toggles the aspect ratio correction state.
+		beginGFXTransaction();
+			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
+		endGFXTransaction();
+
+		// Make sure we do not ignore the next resize. This
+		// effectively checks whether loadVideoMode has been called.
+		assert(!_ignoreLoadVideoMode);
+
+#ifdef USE_OSD
+		if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
+			displayMessageOnOSD(_("Enabled aspect ratio correction"));
+		else
+			displayMessageOnOSD(_("Disabled aspect ratio correction"));
+#endif
+
+		return true;
+
+	case kActionToggleFilteredScaling:
+		// Never ever try to resize the window when we simply want to enable or disable filtering.
+		// This assures that the window size does not change.
+		_ignoreLoadVideoMode = true;
+
+		// Ctrl+Alt+f toggles filtering on/off
+		beginGFXTransaction();
+			setFeatureState(OSystem::kFeatureFilteringMode, !getFeatureState(OSystem::kFeatureFilteringMode));
+		endGFXTransaction();
+
+		// Make sure we do not ignore the next resize. This
+		// effectively checks whether loadVideoMode has been called.
+		assert(!_ignoreLoadVideoMode);
+
+#ifdef USE_OSD
+		if (getFeatureState(OSystem::kFeatureFilteringMode)) {
+			displayMessageOnOSD(_("Filtering enabled"));
+		} else {
+			displayMessageOnOSD(_("Filtering disabled"));
+		}
+#endif
+
+		return true;
+
+	case kActionCycleStretchMode: {
+		// Never try to resize the window when changing the scaling mode.
+		_ignoreLoadVideoMode = true;
+
+		// Ctrl+Alt+s cycles through stretch mode
+		int index = 0;
+		const OSystem::GraphicsMode *stretchModes = getSupportedStretchModes();
+		const OSystem::GraphicsMode *sm = stretchModes;
+		while (sm->name) {
+			if (sm->id == getStretchMode())
+				break;
+			sm++;
+			index++;
+		}
+		index++;
+		if (!stretchModes[index].name)
+			index = 0;
+		beginGFXTransaction();
+		setStretchMode(stretchModes[index].id);
+		endGFXTransaction();
+
+#ifdef USE_OSD
+		Common::String message = Common::String::format("%s: %s",
+			_("Stretch mode"),
+			_(stretchModes[index].description)
+			);
+		displayMessageOnOSD(message.c_str());
+#endif
+
+		return true;
+	}
 
 	default:
-		break;
+		return SdlGraphicsManager::notifyEvent(event);
 	}
-
-	return SdlGraphicsManager::notifyEvent(event);
-}
-
-bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) const {
-	if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
-		return    event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
-		       || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS
-		       || event.kbd.keycode == Common::KEYCODE_a
-		       || event.kbd.keycode == Common::KEYCODE_f
-		       || event.kbd.keycode == Common::KEYCODE_s;
-	}
-
-	return false;
 }

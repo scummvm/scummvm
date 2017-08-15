@@ -430,8 +430,7 @@ protected:
 
 private:
 	void setFullscreenMode(bool enable);
-	bool handleScalerHotkeys(Common::KeyCode key);
-	bool isScalerHotkey(const Common::Event &event);
+	void handleScalerHotkeys(int scalefactor, int scalerType);
 
 	/**
 	 * Converts the given point from the overlay's coordinate space to the

@@ -114,8 +114,6 @@ private:
 
 	uint _desiredFullscreenWidth;
 	uint _desiredFullscreenHeight;
-
-	bool isHotkey(const Common::Event &event) const;
 };
 
 #endif
