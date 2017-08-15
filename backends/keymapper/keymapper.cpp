@@ -44,6 +44,9 @@ Keymapper::Keymapper(EventManager *evtMgr) :
 
 Keymapper::~Keymapper() {
 	delete _hardwareInputs;
+	for (KeymapArray::iterator it = _keymaps.begin(); it != _keymaps.end(); it++) {
+		delete *it;
+	}
 }
 
 void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {

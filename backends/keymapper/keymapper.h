@@ -61,11 +61,16 @@ public:
 	 * Add a keymap to the global domain.
 	 * If a saved key setup exists for it in the ini file it will be used.
 	 * Else, the key setup will be automatically mapped.
+	 *
+	 * Transfers ownership of the keymap to the Keymapper
 	 */
 	void addGlobalKeymap(Keymap *keymap);
 
 	/**
 	 * Add a keymap to the game domain.
+	 *
+	 * Transfers ownership of the keymap to the Keymapper
+	 *
 	 * @see addGlobalKeyMap
 	 * @note initGame() should be called before any game keymaps are added.
 	 */
