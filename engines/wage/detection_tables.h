@@ -36,6 +36,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("3rd Floor", "140883954b7cd89b0ffabde6ee0073d4", 281423), // alt version
 	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "8bbec64ffe9deee4ff48d27f01176814", 1420723),
 	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "57de8f1f79a24fa1a296aa10242c3648", 1843104),
+	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "18f1f5d1081b9a5676ccfb0c3b857059", 145023), // Original file name "The Ashland Revolution Demo†"
+	FANGAME("The Axe-orcist", "9718b72e86a9727bbd68e12fa992b268", 308764),
 	// Crash on third screen
 	FANGAME("Brownie's Dream", "379f2c810efc18bad932049d331df1b6", 440704),
 	FANGAMEN("Brownie's Time Travels", "Brownie's Time Travels v1.2", "d95999aff4e283bd21db686cfb2cb9b9", 471589),
@@ -78,6 +80,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Find the Heart", "73935d313b666763e50d2cdc6b3b7908", 105871), // Standalone
 	FANGAMEN("Fortune Teller", "Fortune Teller 1.1", "3c09329fc3c92a70e5c8874cc763f5cb", 73931),
 	FANGAMEN("Haunted House", "Haunted House 1.5", "5e34e9fa13f4c90876f10a40ea1d1c79", 177500),
+	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "c9b3c75814fc6b14feae044157bef252", 231969),
+	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "4658ece81a6f211a828e747125482f48", 231969), // alt version
 	// Cropped graphics on first scene, cannot pass to in-game
 	FANGAME("Intro to Gothic", "606eec666f0b2d767e4423747e740434", 208067),
 	FANGAMEN("James Bond 007", "007", "2449924f2cb43454489a4ef91c0ee702", 50663),
@@ -112,14 +116,16 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Pencils", "Pencils.99", "09dbcdbefe20536c2db1b1a4fb4e5ed3", 408551),
 	// Polygons with byte 1
 	FANGAME("Periapt", "7e26a7827c694232624321a5a6844511", 406006),
-	FANGAME("Psychotic!", "d6229615b71b189f6ef71399a0856cd2", 247693),
+	// Invalid rect in scene "Access Tube 1"
+	FANGAMEN("The Phoenix v1.2", "The Phoenix", "fee9f1de7ad9096d084461d6066192b1", 431640),
+	FANGAME("The Phoenix", "bd6dabf7a19d2ab7902498a8513f8c71", 431643),
+	FANGAME("Psychotic!", "d6229615b71b189f6ef71399a0856cd2", 367309),
 	FANGAME("Puzzle Piece Search", "6c21c1e0c6afef9300941abd7782dd16", 247693), // From Joshua's Worlds 1.0
 	FANGAME("The Puzzle Piece Search", "8fa1d80dd3f1ed69f45d15d774968995", 247338), // From Joshua's Worlds
 	FANGAME("The Puzzle Piece Search", "fb839ac4f22427f44e99bcc5afd57a0b", 247324), // Stnadalone
 	// Empty(?)  first scene
 	FANGAME("Pyramid of No Return", "4bf4c39b140f5aadb5f8c9a50153d18e", 385145),
 	// Cropped graphics at the first scene
-	FANGAME("Psychotic!", "d6229615b71b189f6ef71399a0856cd2", 367309),
 	FANGAME("P-W Adventure", "a8e9f97ee02f01de588a4dbabe55ca3f", 219216),
 	FANGAMEN("Pyramid of Ert", "Pyramid of Ert V1.2", "358b03ea9c978fbfd2ce2833daea00f8", 315783),
 	FANGAME("Queen Quest", "7ca009dad76827ce008c3c7fa01cab0a", 57026),
@@ -142,6 +148,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "ac00a26f04f83b47c278cc1d226f48df", 333665), // Original file name "SpearOfDestiny†"
 	FANGAME("Star Trek", "3067332e6f0bb0314579f9bf102e1b56", 53320),
 	FANGAME("Strange Disappearance", "9d6e41b61c0fc90400e5da2fcb653a4a", 772282),
+	FANGAME("The Sultan's Palace", "fde31cbcc77b66969b4cfcd43075341e", 456855),
 	// Code 0x03 in text
 	FANGAME("Swamp Witch", "bd8c8394be31f7845d55785b7ccfbbde", 739781), // Original file name "Swamp Witch†"
 	FANGAME("Sweetspace Now!", "574dc7dd25543f7a516d6524f0c5ab33", 123813), // Comes with Jumble
@@ -150,14 +157,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Terrorist", "4398f711bc2a456e6d730641308593f0", 524469), // Original file name "Terrorist†"
 	FANGAME("Time Bomb", "e96f3e2efd1e3db6ad0be22180f5473c", 64564),
 	FANGAME("Time Bomb", "976180f9be0d1029aaba7774fec9767c", 64578), // Alt version
-	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "18f1f5d1081b9a5676ccfb0c3b857059", 145023), // Original file name "The Ashland Revolution Demo†"
-	FANGAME("The Axe-orcist", "9718b72e86a9727bbd68e12fa992b268", 308764),
-	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "c9b3c75814fc6b14feae044157bef252", 231969),
-	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "4658ece81a6f211a828e747125482f48", 231969), // alt version
-	// Invalid rect in scene "Access Tube 1"
-	FANGAMEN("The Phoenix v1.2", "The Phoenix", "fee9f1de7ad9096d084461d6066192b1", 431640),
-	FANGAME("The Phoenix", "bd6dabf7a19d2ab7902498a8513f8c71", 431643),
-	FANGAME("The Sultan's Palace", "fde31cbcc77b66969b4cfcd43075341e", 456855),
 	// Admission for on 3rd screen is messed up
 	FANGAME("The Tower", "4cd8755ccb5bbeaf2e5f7848a8daa033", 556539),
 	// Polygons with ignored byte 1 and 2 on second scene
