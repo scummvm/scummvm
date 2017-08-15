@@ -85,8 +85,19 @@ public:
 	 */
 	void set(const FVector &v);
 
-	void fn2(const FMatrix &m);
-	void fn3(const FMatrix &m);
+        /**
+         * Changes this matrix, A, to be C, where C=Am.
+         * Matrix m multiplies this matrix (A) on its Right.
+         * Matrix m is said to premultiply A (previous this matrix).
+         */
+	void matRProd(const FMatrix &m);
+
+        /**
+         * Changes this matrix, A, to be C, where C=mA.
+         * Matrix m multiplies this matrix (A) on its Left.
+         * m is said to postmultiply A (previous this matrix).
+         */
+	void matLProd(const FMatrix &m);
 
 	/**
 	 * Returns true if the passed matrix equals this one

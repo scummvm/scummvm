@@ -104,7 +104,7 @@ void FMatrix::set(const FVector &v) {
 	_row2.normalize();
 }
 
-void FMatrix::fn2(const FMatrix &m) {
+void FMatrix::matRProd(const FMatrix &m) {
 	float x1 = _row1._y * m._row2._x + _row1._z * m._row3._x + _row1._x * m._row1._x;
 	float y1 = _row1._x * m._row1._y + m._row2._y * _row1._y + m._row3._y * _row1._z;
 	float z1 = _row1._x * m._row1._z + _row1._y * m._row2._z + _row1._z * m._row3._z;
@@ -120,7 +120,7 @@ void FMatrix::fn2(const FMatrix &m) {
 	_row3 = FVector(x3, y3, z3);
 }
 
-void FMatrix::fn3(const FMatrix &m) {
+void FMatrix::matLProd(const FMatrix &m) {
 	float x1 = _row2._x * m._row1._y + m._row1._z * _row3._x + _row1._x * m._row1._x;
 	float y1 = m._row1._x * _row1._y + _row3._y * m._row1._z + _row2._y * m._row1._y;
 	float z1 = m._row1._x * _row1._z + m._row1._y * _row2._z + m._row1._z * _row3._z;
