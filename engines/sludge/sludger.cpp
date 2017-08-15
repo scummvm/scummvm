@@ -178,6 +178,7 @@ bool initSludge(const Common::String &filename) {
 			for (int fn = 0; fn < numResourceNames; fn++) {
 				allResourceNames[fn].clear();
 				allResourceNames[fn] = readString(fp);
+				debugC(2, kSludgeDebugDataLoad, "Resource %i: %s", fn, allResourceNames[fn].c_str());
 			}
 		}
 	}
@@ -918,16 +919,16 @@ bool loadFunctionCode(LoadedFunction *newFunc) {
 	if (!g_sludge->_resMan->openSubSlice(newFunc->originalNumber))
 		return false;
 
-	debugC(2, kSludgeDebugDataLoad, "Load function code");
+	debugC(3, kSludgeDebugDataLoad, "Load function code");
 
 	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
 	newFunc->unfreezable = readStream->readByte();
 	numLines = readStream->readUint16BE();
-	debugC(2, kSludgeDebugDataLoad, "numLines: %i", numLines);
+	debugC(3, kSludgeDebugDataLoad, "numLines: %i", numLines);
 	newFunc->numArgs = readStream->readUint16BE();
-	debugC(2, kSludgeDebugDataLoad, "numArgs: %i", newFunc->numArgs);
+	debugC(3, kSludgeDebugDataLoad, "numArgs: %i", newFunc->numArgs);
 	newFunc->numLocals = readStream->readUint16BE();
-	debugC(2, kSludgeDebugDataLoad, "numLocals: %i", newFunc->numLocals);
+	debugC(3, kSludgeDebugDataLoad, "numLocals: %i", newFunc->numLocals);
 	newFunc->compiledLines = new LineOfCode[numLines];
 	if (!checkNew(newFunc->compiledLines))
 		return false;
@@ -935,7 +936,7 @@ bool loadFunctionCode(LoadedFunction *newFunc) {
 	for (numLinesRead = 0; numLinesRead < numLines; numLinesRead++) {
 		newFunc->compiledLines[numLinesRead].theCommand = (sludgeCommand)readStream->readByte();
 		newFunc->compiledLines[numLinesRead].param = readStream->readUint16BE();
-		debugC(2, kSludgeDebugDataLoad, "command line %i: %i", numLinesRead,
+		debugC(3, kSludgeDebugDataLoad, "command line %i: %i", numLinesRead,
 				newFunc->compiledLines[numLinesRead].theCommand);
 	}
 	g_sludge->_resMan->finishAccess();
