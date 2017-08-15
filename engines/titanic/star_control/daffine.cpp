@@ -65,7 +65,7 @@ DAffine::DAffine(const FMatrix &src) {
 	_col3 = src._row3;
 }
 
-//TODO: What is _static_ for?
+//TODO: What is _static for?
 void DAffine::init() {
 	_static = nullptr;
 }
@@ -90,6 +90,7 @@ void DAffine::clear() {
 	_col4._z = 0.0;
 }
 
+// Source: https://en.wikipedia.org/wiki/Rotation_matrix
 void DAffine::setRotationMatrix(Axis axis, double angleDeg) {
         clear();
 
@@ -107,9 +108,9 @@ void DAffine::setRotationMatrix(Axis axis, double angleDeg) {
 
 	case Y_AXIS:
 		_col1._x = cosVal;
-		_col1._z = sinVal;
+		_col1._z = -sinVal;
 		_col2._y = 1.0;
-		_col3._x = -sinVal;
+		_col3._x = sinVal;
 		_col3._z = cosVal;
 		break;
 

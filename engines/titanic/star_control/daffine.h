@@ -50,6 +50,7 @@ public:
 	static void deinit();
 public:
 	DAffine();
+        //TODO: consider making mode an enum since that is more helpful when it is used in code
 	DAffine(int mode, const DVector &src);
 	DAffine(Axis axis, double angleDeg);
 	DAffine(const FMatrix &src);
@@ -69,18 +70,18 @@ public:
 	 */
 	DAffine inverseTransform() const;
 
-	/**
-	 * Change this Daffine to have its first three columns be some mapping from src matrix
-         * and the 4rth column to be (three) zeros. The mapping is not as simple as replacing
-         * matching row/colmn indices
-	 */
+       /**
+        * Change this Daffine to have its first three columns be some mapping from src matrix
+        * and the 4rth column to be (three) zeros. The mapping is not as simple as replacing
+        * matching row/colmn indices
+        */
 	void loadTransform(const CMatrixTransform &src);
 
-	/**
-	 * Do the affine product between this Daffine on the left
-         * and the m Daffine matrix on the right. This is product is NOT the same
-         * as multiplying two matrices of dimensions 4x4.
-	 */
+       /**
+        * Do the affine product between this Daffine on the right
+        * and the m Daffine matrix on the left. This product is NOT the same
+        * as multiplying two matrices of dimensions 3x4.
+        */
 	DAffine compose(const DAffine &m);
 };
 
