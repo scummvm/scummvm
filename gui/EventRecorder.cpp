@@ -232,7 +232,7 @@ void EventRecorder::togglePause() {
 }
 
 void EventRecorder::RegisterEventSource() {
-	g_system->getEventManager()->getEventDispatcher()->registerMapper(this, false);
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, Common::EventManager::kEventRecorderPriority, false);
 }
 
 uint32 EventRecorder::getRandomSeed(const Common::String &name) {
@@ -433,9 +433,9 @@ void EventRecorder::updateSubsystems() {
 	_recordMode = oldRecordMode;
 }
 
-Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Common::EventSource *source) {
+bool EventRecorder::notifyEvent(const Common::Event &ev) {
 	if ((!_initialized) && (_recordMode != kRecorderPlaybackPause)) {
-		return DefaultEventMapper::mapEvent(ev, source);
+		return false;
 	}
 
 	checkForKeyCode(ev);
@@ -444,23 +444,21 @@ Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Com
 	evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
 	switch (_recordMode) {
 	case kRecorderPlayback:
-		if (ev.kbdRepeat != true) {
-			return Common::List<Common::Event>();
+		if (!ev.kbdRepeat) {
+			return true;
 		}
-		return Common::DefaultEventMapper::mapEvent(ev, source);
-		break;
+		return false;
 	case kRecorderRecord:
 		g_gui.processEvent(evt, _controlPanel);
 		if (((evt.type == Common::EVENT_LBUTTONDOWN) || (evt.type == Common::EVENT_LBUTTONUP) || (evt.type == Common::EVENT_MOUSEMOVE)) && _controlPanel->isMouseOver()) {
-			return Common::List<Common::Event>();
+			return true;
 		} else {
 			Common::RecorderEvent e(ev);
 			e.recordedtype = Common::kRecorderEventTypeNormal;
 			e.time = _fakeTimer;
 			_playbackFile->writeEvent(e);
-			return DefaultEventMapper::mapEvent(ev, source);
+			return false;
 		}
-		break;
 	case kRecorderPlaybackPause: {
 		Common::Event dialogEvent;
 		if (_controlPanel->isEditDlgVisible()) {
@@ -470,16 +468,13 @@ Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Com
 		}
 		g_gui.processEvent(dialogEvent, _controlPanel->getActiveDlg());
 		if (((dialogEvent.type == Common::EVENT_LBUTTONDOWN) || (dialogEvent.type == Common::EVENT_LBUTTONUP) || (dialogEvent.type == Common::EVENT_MOUSEMOVE)) && _controlPanel->isMouseOver()) {
-			return Common::List<Common::Event>();
+			return true;
 		}
-		return Common::DefaultEventMapper::mapEvent(dialogEvent, source);
+		return false;
 	}
-		break;
 	default:
-		return Common::DefaultEventMapper::mapEvent(ev, source);
+		return false;
 	}
-
-	return Common::DefaultEventMapper::mapEvent(ev, source);
 }
 
 void EventRecorder::setGameMd5(const ADGameDescription *gameDesc) {
