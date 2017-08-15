@@ -55,6 +55,11 @@ public:
 	DAffine(const FMatrix &src);
 
 	/**
+	 * Sets all elements to zero
+	 */
+	void clear();
+
+	/**
 	 * Sets up an affine matrix for rotating on a given axis by an amount in degrees
 	 */
 	void setRotationMatrix(Axis axis, double angleDeg);
@@ -65,8 +70,9 @@ public:
 	DAffine inverseTransform() const;
 
 	/**
-	 * Change this Daffine to have its first three columns be the src matrix
-         * and the 4rth column to be (three) zeros
+	 * Change this Daffine to have its first three columns be some mapping from src matrix
+         * and the 4rth column to be (three) zeros. The mapping is not as simple as replacing
+         * matching row/colmn indices
 	 */
 	void loadTransform(const CMatrixTransform &src);
 
