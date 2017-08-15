@@ -29,6 +29,10 @@
 #include "common/events.h"
 #include "common/rect.h"
 
+namespace Common {
+class Keymapper;
+}
+
 class SdlEventSource;
 
 #ifndef __SYMBIAN32__
@@ -133,6 +137,8 @@ public:
 	SdlWindow *getWindow() const { return _window; }
 
 	virtual void initSizeHint(const Graphics::ModeList &modes) override;
+
+	Common::Keymap *getKeymap();
 
 protected:
 	virtual int getGraphicsModeScale(int mode) const = 0;

@@ -753,14 +753,6 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
 
-	// Ctrl-m toggles mouse capture
-	if (event.kbd.hasFlags(Common::KBD_CTRL) && sdlKeycode == 'm') {
-		if (_graphicsManager) {
-			_graphicsManager->getWindow()->toggleMouseGrab();
-		}
-		return false;
-	}
-
 	if (remapKey(ev, event))
 		return true;
 
@@ -782,23 +774,10 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	SDLKey sdlKeycode = obtainKeycode(ev.key.keysym);
 	SDLMod mod = SDL_GetModState();
 
-	// Check if this is an event handled by handleKeyDown(), and stop if it is
-
-	// Check if the Ctrl key is down, so that we can trap cases where the
-	// user has the Ctrl key down, and has just released a special key
-	if (mod & KMOD_CTRL) {
-		if (sdlKeycode == 'm')	// Ctrl-m toggles mouse capture
-			return false;
-	}
-
-	// If we reached here, this isn't an event handled by handleKeyDown(), thus
-	// continue normally
-
 	event.type = Common::EVENT_KEYUP;
 	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
 	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, 0);
 
-	// Ctrl-Alt-<key> will change the GFX mode
 	SDLModToOSystemKeyFlags(mod, event);
 
 	// Set the scroll lock sticky flag

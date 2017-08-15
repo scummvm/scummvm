@@ -63,6 +63,7 @@ public:
 	virtual void engineDone();
 	virtual void quit();
 	virtual void fatalError();
+	Common::KeymapArray getGlobalKeymaps() override;
 
 	// Logging
 	virtual void logMessage(LogMessageType::Type type, const char *message);
