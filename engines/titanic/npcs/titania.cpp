@@ -129,7 +129,7 @@ bool CTitania::TakeHeadPieceMsg(CTakeHeadPieceMsg *msg) {
 		_eye2 = false;
 	} else if (msg->_value == "Ear1") {
 		_ear1 = false;
-	} else if (msg->_value == "Ear2") {
+	} else if (msg->_value == "Ear 2") {
 		_ear2 = false;
 	} else if (msg->_value == "Mouth") {
 		_mouth = false;

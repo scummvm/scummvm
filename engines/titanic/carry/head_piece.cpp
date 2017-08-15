@@ -64,6 +64,11 @@ bool CHeadPiece::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 		_field13C = true;
 	}
 
+	// WORKAROUND: This fixes a bug in the original where if head pieces
+	// were removed from Titania after adding, she would still reactivate
+	CTakeHeadPieceMsg takeMsg(getName());
+	takeMsg.execute("TitaniaControl");
+
 	return true;
 }
 
