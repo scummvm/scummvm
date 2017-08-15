@@ -47,6 +47,7 @@ public:
 	FVector _row3;
 public:
 	FMatrix();
+	FMatrix(const FVector &, const FVector &, const FVector &);
 	FMatrix(const DAffine &src);
 	FMatrix(const FMatrix &src);
 
@@ -73,6 +74,11 @@ public:
 	/**
 	 * Sets the data for the matrix
 	 */
+	void set(const FMatrix &m);
+
+	/**
+	 * Sets the data for the matrix
+	 */
 	void set(const FVector &row1, const FVector &row2, const FVector &row3);
 
 	/**
@@ -86,16 +92,19 @@ public:
 	void set(const FVector &v);
 
         /**
-         * Changes this matrix, A, to be C, where C=Am.
-         * Matrix m multiplies this matrix (A) on its Right.
-         * Matrix m is said to premultiply A (previous this matrix).
+         * Puts the matrix product between a and m in C, C = am
+         */
+	void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C);
+
+        /**
+         * Changes this matrix, A, to be C, where C=Am. Matrix m multiplies this matrix (A) on its Right.
+         * m is said to premultiply A (the previous this matrix).
          */
 	void matRProd(const FMatrix &m);
 
         /**
-         * Changes this matrix, A, to be C, where C=mA.
-         * Matrix m multiplies this matrix (A) on its Left.
-         * m is said to postmultiply A (previous this matrix).
+         * Changes this matrix, A, to be C, where C=mA. Matrix m multiplies this matrix (A) on its Left.
+         * m is said to postmultiply A (the previous this matrix).
          */
 	void matLProd(const FMatrix &m);
 
