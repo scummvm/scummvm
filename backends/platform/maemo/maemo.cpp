@@ -198,7 +198,7 @@ Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
 
 Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 	using namespace Common;
-	Keymap *globalMap = new Keymap("maemo");
+	Keymap *globalMap = new Keymap(Keymap::kKeymapTypeGlobal, "maemo");
 
 	Action *act;
 
@@ -206,16 +206,16 @@ Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 	Event evt = Event();
 	evt.type = EVENT_CUSTOM_BACKEND_ACTION;
 	evt.customType = Maemo::kEventClickMode;
-	act->addEvent(evt);
+	act->setEvent(evt);
 
 	act = new Action(globalMap, "LCLK", _("Left Click"));
-	act->addLeftClickEvent();
+	act->setLeftClickEvent();
 
 	act = new Action(globalMap, "MCLK", _("Middle Click"));
-	act->addMiddleClickEvent();
+	act->setMiddleClickEvent();
 
 	act = new Action(globalMap, "RCLK", _("Right Click"));
-	act->addRightClickEvent();
+	act->setRightClickEvent();
 
 	return globalMap;
 }
