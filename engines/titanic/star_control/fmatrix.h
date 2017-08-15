@@ -92,11 +92,6 @@ public:
 	void set(const FVector &v);
 
         /**
-         * Puts the matrix product between a and m in C, C = am
-         */
-	void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C);
-
-        /**
          * Changes this matrix, A, to be C, where C=Am. Matrix m multiplies this matrix (A) on its Right.
          * m is said to premultiply A (the previous this matrix).
          */
@@ -131,6 +126,13 @@ public:
 		return *rows[idx];
 	}
 };
+
+/**
+* Puts the matrix product between a and m in C, C = am
+* Called by MatLProd and MatLProd
+* Caller must preallocate output matrix
+*/
+void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C);
 
 } // End of namespace Titanic
 

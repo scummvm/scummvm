@@ -25,6 +25,21 @@
 
 namespace Titanic {
 
+//Non-member functions
+void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C) {
+        C._row1._x = a._row1._y * m._row2._x + a._row1._z * m._row3._x + a._row1._x * m._row1._x;
+        C._row1._y = a._row1._x * m._row1._y + m._row2._y * a._row1._y + m._row3._y * a._row1._z;
+        C._row1._z = a._row1._x * m._row1._z + a._row1._y * m._row2._z + a._row1._z * m._row3._z;
+        C._row2._x = m._row1._x * a._row2._x + m._row3._x * a._row2._z + m._row2._x * a._row2._y;
+        C._row2._y = m._row3._y * a._row2._z + m._row1._y * a._row2._x + m._row2._y * a._row2._y;
+        C._row2._z = a._row2._z * m._row3._z + a._row2._x * m._row1._z + a._row2._y * m._row2._z;
+        C._row3._x = m._row1._x * a._row3._x + a._row3._z * m._row3._x + a._row3._y * m._row2._x;
+        C._row3._y = a._row3._y * m._row2._y + a._row3._z * m._row3._y + a._row3._x * m._row1._y;
+        C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
+}
+
+//member functions
+
 FMatrix::FMatrix() :
 	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
 }
@@ -115,18 +130,6 @@ void FMatrix::set(const FVector &v) {
 
 	_row2 = _row3.crossProduct(_row1);
 	_row2.normalize();
-}
-
-void FMatrix::matProd(const FMatrix &a, const FMatrix &m, FMatrix &C) {
-	C._row1._x = a._row1._y * m._row2._x + a._row1._z * m._row3._x + a._row1._x * m._row1._x;
-        C._row1._y = a._row1._x * m._row1._y + m._row2._y * a._row1._y + m._row3._y * a._row1._z;
-        C._row1._z = a._row1._x * m._row1._z + a._row1._y * m._row2._z + a._row1._z * m._row3._z;
-        C._row2._x = m._row1._x * a._row2._x + m._row3._x * a._row2._z + m._row2._x * a._row2._y;
-        C._row2._y = m._row3._y * a._row2._z + m._row1._y * a._row2._x + m._row2._y * a._row2._y;
-        C._row2._z = a._row2._z * m._row3._z + a._row2._x * m._row1._z + a._row2._y * m._row2._z;
-        C._row3._x = m._row1._x * a._row3._x + a._row3._z * m._row3._x + a._row3._y * m._row2._x;
-        C._row3._y = a._row3._y * m._row2._y + a._row3._z * m._row3._y + a._row3._x * m._row1._y;
-        C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
 }
 
 void FMatrix::matRProd(const FMatrix &m) {
