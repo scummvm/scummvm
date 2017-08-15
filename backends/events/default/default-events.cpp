@@ -319,11 +319,6 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	globalKeymap->addAction(act);
 #endif
 
-	act = new Action("FULS", _("Toggle fullscreen"));
-	act->addDefaultInputMapping("A+RETURN");
-	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
-	globalKeymap->addAction(act);
-
 	act = new Action("MUTE", _("Toggle mute"));
 	act->addDefaultInputMapping("C+u");
 	act->setEvent(EVENT_MUTE);

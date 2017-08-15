@@ -24,9 +24,12 @@
 #include "backends/platform/sdl/sdl-sys.h"
 #include "backends/platform/sdl/sdl.h"
 #include "backends/events/sdl/sdl-events.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "graphics/scaler/aspect.h"
 #ifdef USE_OSD
 #include "common/translation.h"
@@ -359,4 +362,103 @@ void SdlGraphicsManager::toggleFullScreen() {
 	else
 		displayMessageOnOSD(_("Windowed mode"));
 #endif
+}
+
+Common::Keymap *SdlGraphicsManager::getKeymap() {
+	using namespace Common;
+
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGlobal, "sdl-graphics");
+	Action *act;
+
+	if (hasFeature(OSystem::kFeatureFullscreenMode)) {
+		act = new Action("FULS", _("Toggle fullscreen"));
+		act->addDefaultInputMapping("A+RETURN");
+		act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+		keymap->addAction(act);
+	}
+
+	act = new Action("CAPT", _("Toggle mouse capture"));
+	act->addDefaultInputMapping("C+m");
+	act->setKeyEvent(KeyState(KEYCODE_m, 'm', KBD_CTRL));
+	keymap->addAction(act);
+
+	act = new Action("SCRS", _("Save screenshot"));
+	act->addDefaultInputMapping("A+s");
+	act->setKeyEvent(KeyState(KEYCODE_s, 's', KBD_ALT));
+	keymap->addAction(act);
+
+	if (hasFeature(OSystem::kFeatureAspectRatioCorrection)) {
+		act = new Action("ASPT", _("Toggle aspect ratio correction"));
+		act->addDefaultInputMapping("C+A+a");
+		act->setKeyEvent(KeyState(KEYCODE_a, 'a', KBD_CTRL | KBD_ALT));
+		keymap->addAction(act);
+	}
+
+	if (hasFeature(OSystem::kFeatureFilteringMode)) {
+		act = new Action("FILT", _("Toggle linear filtered scaling"));
+		act->addDefaultInputMapping("C+A+f");
+		act->setKeyEvent(KeyState(KEYCODE_f, 'f', KBD_CTRL | KBD_ALT));
+		keymap->addAction(act);
+	}
+
+	if (hasFeature(OSystem::kFeatureStretchMode)) {
+		act = new Action("STCH", _("Cycle through stretch modes"));
+		act->addDefaultInputMapping("C+A+s");
+		act->setKeyEvent(KeyState(KEYCODE_s, 's', KBD_CTRL | KBD_ALT));
+		keymap->addAction(act);
+	}
+
+	act = new Action("SCL+", _("Increase the scale factor"));
+	act->addDefaultInputMapping("C+A+PLUS");
+	act->addDefaultInputMapping("C+A+KP_PLUS");
+	act->setKeyEvent(KeyState(KEYCODE_PLUS, '+', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	act = new Action("SCL-", _("Decrease the scale factor"));
+	act->addDefaultInputMapping("C+A+MINUS");
+	act->addDefaultInputMapping("C+A+KP_MINUS");
+	act->setKeyEvent(KeyState(KEYCODE_MINUS, '-', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	act = new Action("FLT1", _("Switch to nearest neighbour scaling"));
+	act->addDefaultInputMapping("C+A+1");
+	act->setKeyEvent(KeyState(KEYCODE_1, '1', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	act = new Action("FLT2", _("Switch to AdvMame 2x/3x scaling"));
+	act->addDefaultInputMapping("C+A+2");
+	act->setKeyEvent(KeyState(KEYCODE_2, '2', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	act = new Action("FLT3", _("Switch to HQ 2x/3x scaling"));
+	act->addDefaultInputMapping("C+A+3");
+	act->setKeyEvent(KeyState(KEYCODE_3, '3', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	act = new Action("FLT4", _("Switch to 2xSai scaling"));
+	act->addDefaultInputMapping("C+A+4");
+	act->setKeyEvent(KeyState(KEYCODE_4, '4', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	act = new Action("FLT5", _("Switch to Super2xSai scaling"));
+	act->addDefaultInputMapping("C+A+5");
+	act->setKeyEvent(KeyState(KEYCODE_5, '5', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	act = new Action("FLT6", _("Switch to SuperEagle scaling"));
+	act->addDefaultInputMapping("C+A+6");
+	act->setKeyEvent(KeyState(KEYCODE_6, '6', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	act = new Action("FLT7", _("Switch to Tv2x scaling"));
+	act->addDefaultInputMapping("C+A+7");
+	act->setKeyEvent(KeyState(KEYCODE_7, '7', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	act = new Action("FLT8", _("Switch to DotMatrix scaling"));
+	act->addDefaultInputMapping("C+A+8");
+	act->setKeyEvent(KeyState(KEYCODE_8, '8', KBD_CTRL | KBD_ALT));
+	keymap->addAction(act);
+
+	return keymap;
 }

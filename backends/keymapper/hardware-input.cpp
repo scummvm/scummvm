@@ -205,6 +205,7 @@ static const KeyTableEntry defaultKeys[] = {
 	{0, KEYCODE_INVALID, 0}
 };
 
+// TODO: Add META and NUM_LOCK
 static const ModifierTableEntry defaultModifiers[] = {
 	{ 0, "", "" },
 	{ KBD_CTRL, "C+", "Ctrl+" },
