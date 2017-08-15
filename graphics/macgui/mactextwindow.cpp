@@ -264,8 +264,11 @@ Common::String MacTextWindow::cutSelection() {
 	}
 
 	int selPos = selStart - _inputText.c_str();
+	Common::String newInput = Common::String(_inputText.c_str(), selPos) + Common::String(_inputText.c_str() + selPos + selection.size());
 
-	_inputText = Common::String(_inputText.c_str(), selPos) + Common::String(_inputText.c_str() + selPos + selection.size());
+	clearSelection();
+	clearInput();
+	appendInput(newInput);
 
 	return selection;
 }
