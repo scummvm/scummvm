@@ -544,6 +544,10 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 
 				startCol -= _textLines[i].chunks[chunk].text.size();
 			}
+			if (newlines)
+				res += '\n';
+			else
+				res += ' ';
 		} else if (i == endRow) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
 				if (formatted)
@@ -569,6 +573,8 @@ Common::String MacText::getTextChunk(int startRow, int startCol, int endRow, int
 
 			if (newlines)
 				res += '\n';
+			else
+				res += ' ';
 		}
 	}
 
