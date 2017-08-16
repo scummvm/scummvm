@@ -25,20 +25,21 @@
 
 namespace Titanic {
 
-//Non-member functions
+// Non-member functions
+
 void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C) {
-        C._row1._x = a._row1._y * m._row2._x + a._row1._z * m._row3._x + a._row1._x * m._row1._x;
-        C._row1._y = a._row1._x * m._row1._y + m._row2._y * a._row1._y + m._row3._y * a._row1._z;
-        C._row1._z = a._row1._x * m._row1._z + a._row1._y * m._row2._z + a._row1._z * m._row3._z;
-        C._row2._x = m._row1._x * a._row2._x + m._row3._x * a._row2._z + m._row2._x * a._row2._y;
-        C._row2._y = m._row3._y * a._row2._z + m._row1._y * a._row2._x + m._row2._y * a._row2._y;
-        C._row2._z = a._row2._z * m._row3._z + a._row2._x * m._row1._z + a._row2._y * m._row2._z;
-        C._row3._x = m._row1._x * a._row3._x + a._row3._z * m._row3._x + a._row3._y * m._row2._x;
-        C._row3._y = a._row3._y * m._row2._y + a._row3._z * m._row3._y + a._row3._x * m._row1._y;
-        C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
+	C._row1._x = a._row1._y * m._row2._x + a._row1._z * m._row3._x + a._row1._x * m._row1._x;
+	C._row1._y = a._row1._x * m._row1._y + m._row2._y * a._row1._y + m._row3._y * a._row1._z;
+	C._row1._z = a._row1._x * m._row1._z + a._row1._y * m._row2._z + a._row1._z * m._row3._z;
+	C._row2._x = m._row1._x * a._row2._x + m._row3._x * a._row2._z + m._row2._x * a._row2._y;
+	C._row2._y = m._row3._y * a._row2._z + m._row1._y * a._row2._x + m._row2._y * a._row2._y;
+	C._row2._z = a._row2._z * m._row3._z + a._row2._x * m._row1._z + a._row2._y * m._row2._z;
+	C._row3._x = m._row1._x * a._row3._x + a._row3._z * m._row3._x + a._row3._y * m._row2._x;
+	C._row3._y = a._row3._y * m._row2._y + a._row3._z * m._row3._y + a._row3._x * m._row1._y;
+	C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
 }
 
-//member functions
+// member functions
 
 FMatrix::FMatrix() :
 	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
@@ -108,7 +109,6 @@ void FMatrix::set(const FMatrix &m) {
 	_row3 = m._row3;
 }
 
-
 void FMatrix::set(const FVector &row1, const FVector &row2, const FVector &row3) {
 	_row1 = row1;
 	_row2 = row2;
@@ -133,17 +133,17 @@ void FMatrix::set(const FVector &v) {
 }
 
 void FMatrix::matRProd(const FMatrix &m) {
-        FMatrix C = FMatrix();
-        FMatrix A = FMatrix(_row1,_row2,_row3);
-        matProd(A,m,C);
-        this->set(C);
+	FMatrix C = FMatrix();
+	FMatrix A = FMatrix(_row1, _row2, _row3);
+	matProd(A, m, C);
+	this->set(C);
 }
 
 void FMatrix::matLProd(const FMatrix &m) {
-        FMatrix C = FMatrix();
-        FMatrix A = FMatrix(_row1,_row2,_row3);
-        matProd(m,A,C);
-        this->set(C);
+	FMatrix C = FMatrix();
+	FMatrix A = FMatrix(_row1, _row2, _row3);
+	matProd(m, A, C);
+	this->set(C);
 }
 
 } // End of namespace Titanic
