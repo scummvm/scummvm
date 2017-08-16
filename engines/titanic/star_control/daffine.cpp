@@ -26,8 +26,6 @@
 
 namespace Titanic {
 
-DAffine *DAffine::_static;
-
 DAffine::DAffine() :
 	_col1(0.0, 0.0, 0.0), _col2(0.0, 0.0, 0.0), _col3(0.0, 0.0, 0.0), _col4(0.0, 0.0, 0.0) {
 }
@@ -63,16 +61,6 @@ DAffine::DAffine(const FMatrix &src) {
 	_col1 = src._row1;
 	_col2 = src._row2;
 	_col3 = src._row3;
-}
-
-//TODO: What is _static for?
-void DAffine::init() {
-	_static = nullptr;
-}
-
-void DAffine::deinit() {
-	delete _static;
-	_static = nullptr;
 }
 
 void DAffine::clear() {

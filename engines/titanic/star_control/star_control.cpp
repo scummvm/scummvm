@@ -45,12 +45,10 @@ END_MESSAGE_MAP()
 CStarControl::CStarControl() : _enabled(false), _petControl(nullptr),
 		_starRect(20, 10, 620, 350) {
 	CStarCamera::init();
-	DAffine::init();
 }
 
 CStarControl::~CStarControl() {
 	CStarCamera::deinit();
-	DAffine::deinit();
 }
 
 void CStarControl::save(SimpleFile *file, int indent) {
