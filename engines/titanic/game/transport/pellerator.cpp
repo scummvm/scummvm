@@ -155,7 +155,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 				case 5:
 					playMovie(315, 323, 0);
 					for (int idx = 0; idx < 7; ++idx)
-						playMovie(229, 304, 0);
+						playMovie(299, 304, 0);
 					for (int idx = 0; idx < 12; ++idx)
 						playMovie(245, 255, 0);
 					for (int idx = 0; idx < 3; ++idx)
