@@ -230,14 +230,14 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	if (_matrixRow == -1) {
 		// No locked markers
 		FPose subX(X_AXIS, angles._y);
-		FPose subY(Y_AXIS, angles._x);
+		FPose subY(Y_AXIS, -angles._x); // needs to be negative or looking left will cause the view to go right
 		FPose sub(subX, subY);
 		proc22(sub);
 	} else if (_matrixRow == 0) {
 		// 1 marker is locked in
 		FVector row1 = _matrix._row1;
 		FPose poseX(X_AXIS, angles._y);
-		FPose poseY(Y_AXIS, angles._x);
+		FPose poseY(Y_AXIS, -angles._x); // needs to be negative or looking left will cause the view to go right
 		FPose pose(poseX, poseY);
 
 		FMatrix m1 = _viewport.getOrientation();

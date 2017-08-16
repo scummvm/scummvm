@@ -29,6 +29,7 @@ namespace Titanic {
 
 /*
  * This class combines a position and orientation in 3D space
+ * TODO: consider merging with DAffine
  */
 class FPose : public FMatrix {
 public:
@@ -59,6 +60,9 @@ public:
 	 */
 	void copyFrom(const FMatrix &src);
 
+        /**
+         * Probably the inverse of the this 3x4
+         */
 	FPose fn4() const;
 };
 

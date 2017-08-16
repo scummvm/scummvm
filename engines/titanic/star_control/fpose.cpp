@@ -83,6 +83,7 @@ void FPose::identity() {
 	_vector.clear();
 }
 
+// Source: https://en.wikipedia.org/wiki/Rotation_matrix
 void FPose::setRotationMatrix(Axis axis, float amount) {
 	const float ROTATION = 2 * M_PI / 360.0;
 	float sinVal = sin(amount * ROTATION);
@@ -104,11 +105,11 @@ void FPose::setRotationMatrix(Axis axis, float amount) {
 	case Y_AXIS:
 		_row1._x = cosVal;
 		_row1._y = 0.0;
-		_row1._z = sinVal;
+		_row1._z = -sinVal;
 		_row2._x = 0.0;
 		_row2._y = 1.0;
 		_row2._z = 0.0;
-		_row3._x = -sinVal;
+		_row3._x = sinVal;
 		_row3._y = 0.0;
 		_row3._z = cosVal;
 		break;
@@ -145,6 +146,7 @@ void FPose::copyFrom(const FMatrix &src) {
 	_row3 = src._row3;
 }
 
+// This looks like DAffine DAffine::inverseTransform()
 FPose FPose::fn4() const {
 	float v2, v3, v6, v7, v8, v9, v10, v11;
 	float v12, v13, v14, v15, v16, v17, v18;
