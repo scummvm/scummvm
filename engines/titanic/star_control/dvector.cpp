@@ -26,9 +26,6 @@
 
 namespace Titanic {
 
-const double Rad2Deg = 180.0 / M_PI;
-const double Deg2Rad = 1.0 / Rad2Deg;
-
 double DVector::normalize() {
 	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
 	assert(hyp);
@@ -89,13 +86,13 @@ DAffine DVector::getFrameTransform(const DVector &v) {
 
 	DVector vector1 = getAnglesAsVect();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * Rad2Deg);
-	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * Rad2Deg));
+	matrix2.setRotationMatrix(Y_AXIS, vector1._z * Rad2Deg);
 	matrix3 = matrix1.compose(matrix2);
 	matrix4 = matrix3.inverseTransform();
 
 	vector1 = v.getAnglesAsVect();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * Rad2Deg);
-	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * Rad2Deg));
+	matrix2.setRotationMatrix(Y_AXIS, vector1._z * Rad2Deg);
 	matrix3 = matrix1.compose(matrix2);
 
 	return matrix4.compose(matrix3);
@@ -105,7 +102,7 @@ DAffine DVector::rotXY() const {
 	DVector v1 = getAnglesAsVect();
 	DAffine m1, m2;
 	m1.setRotationMatrix(X_AXIS, v1._y * Rad2Deg);
-	m2.setRotationMatrix(Y_AXIS, -(v1._z * Rad2Deg));
+	m2.setRotationMatrix(Y_AXIS, v1._z * Rad2Deg);
 	return m1.compose(m2);
 }
 

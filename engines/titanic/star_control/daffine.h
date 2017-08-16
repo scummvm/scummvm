@@ -50,19 +50,38 @@ public:
 	static void deinit();
 public:
 	DAffine();
+        //TODO: consider making mode an enum since that is more helpful when it is used in code
 	DAffine(int mode, const DVector &src);
-	DAffine(Axis axis, double amount);
+	DAffine(Axis axis, double angleDeg);
 	DAffine(const FMatrix &src);
 
 	/**
-	 * Sets up a matrix for rotating on a given axis by a given amount
+	 * Sets all elements to zero
 	 */
-	void setRotationMatrix(Axis axis, double amount);
+	void clear();
 
+	/**
+	 * Sets up an affine matrix for rotating on a given axis by an amount in degrees
+	 */
+	void setRotationMatrix(Axis axis, double angleDeg);
+
+	/**
+	 * Return the Inverse of this Daffine
+	 */
 	DAffine inverseTransform() const;
 
+       /**
+        * Change this Daffine to have its first three columns be some mapping from src matrix
+        * and the 4rth column to be (three) zeros. The mapping is not as simple as replacing
+        * matching row/colmn indices
+        */
 	void loadTransform(const CMatrixTransform &src);
 
+       /**
+        * Do the affine product between this Daffine on the right
+        * and the m Daffine matrix on the left. This product is NOT the same
+        * as multiplying two matrices of dimensions 3x4.
+        */
 	DAffine compose(const DAffine &m);
 };
 

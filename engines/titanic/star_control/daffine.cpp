@@ -29,7 +29,7 @@ namespace Titanic {
 DAffine *DAffine::_static;
 
 DAffine::DAffine() :
-	_col1(0.0, 0.0, 0.0), _col2(0.0, 0.0, 0.0), _col3(0.0, 0.0, 0.0) {
+	_col1(0.0, 0.0, 0.0), _col2(0.0, 0.0, 0.0), _col3(0.0, 0.0, 0.0), _col4(0.0, 0.0, 0.0) {
 }
 
 DAffine::DAffine(int mode, const DVector &src) {
@@ -55,8 +55,8 @@ DAffine::DAffine(int mode, const DVector &src) {
 	}
 }
 
-DAffine::DAffine(Axis axis, double amount) {
-	setRotationMatrix(axis, amount);
+DAffine::DAffine(Axis axis, double angleDeg) {
+	setRotationMatrix(axis, angleDeg);
 }
 
 DAffine::DAffine(const FMatrix &src) {
@@ -65,6 +65,7 @@ DAffine::DAffine(const FMatrix &src) {
 	_col3 = src._row3;
 }
 
+//TODO: What is _static for?
 void DAffine::init() {
 	_static = nullptr;
 }
@@ -74,10 +75,27 @@ void DAffine::deinit() {
 	_static = nullptr;
 }
 
-void DAffine::setRotationMatrix(Axis axis, double amount) {
-	const double FACTOR = 0.0174532925199433;
-	double sinVal = sin(amount * FACTOR);
-	double cosVal = cos(amount * FACTOR);
+void DAffine::clear() {
+	_col1._x = 0.0;
+	_col1._y = 0.0;
+	_col1._z = 0.0;
+	_col2._x = 0.0;
+	_col2._y = 0.0;
+	_col2._z = 0.0;
+	_col3._x = 0.0;
+	_col3._y = 0.0;
+	_col3._z = 0.0;
+	_col4._x = 0.0;
+	_col4._y = 0.0;
+	_col4._z = 0.0;
+}
+
+// Source: https://en.wikipedia.org/wiki/Rotation_matrix
+void DAffine::setRotationMatrix(Axis axis, double angleDeg) {
+        clear();
+
+	double sinVal = sin(angleDeg * Deg2Rad);
+	double cosVal = cos(angleDeg * Deg2Rad);
 
 	switch (axis) {
 	case X_AXIS:
@@ -90,9 +108,9 @@ void DAffine::setRotationMatrix(Axis axis, double amount) {
 
 	case Y_AXIS:
 		_col1._x = cosVal;
-		_col1._z = sinVal;
+		_col1._z = -sinVal;
 		_col2._y = 1.0;
-		_col3._x = -sinVal;
+		_col3._x = sinVal;
 		_col3._z = cosVal;
 		break;
 
@@ -109,6 +127,7 @@ void DAffine::setRotationMatrix(Axis axis, double amount) {
 	}
 }
 
+//TODO: Check math and provide source
 DAffine DAffine::inverseTransform() const {
 	double val1 = _col1._x * _col3._z * _col2._y;
 	double val2 = 0.0;
@@ -174,6 +193,7 @@ DAffine DAffine::inverseTransform() const {
 	return m;
 }
 
+//TODO: Check math and provide source
 void DAffine::loadTransform(const CMatrixTransform &src) {
 	double total = src.fn1();
 	double factor = (total <= 0.0) ? 0.0 : 2.0 / total;
@@ -201,6 +221,7 @@ void DAffine::loadTransform(const CMatrixTransform &src) {
 	_col4._z = 0;
 }
 
+//TODO: Check math and provide source
 DAffine DAffine::compose(const DAffine &m) {
 	DAffine dm;
 	dm._col1._x = m._col3._x * _col1._z + m._col2._x * _col1._y
