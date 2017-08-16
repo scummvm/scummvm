@@ -156,7 +156,7 @@ void CViewport::fn12() {
 	FPose s2(s1, m3);
 
 	m1.copyFrom(s2);
-	_orientation.fn2(m1);
+	_orientation.matRProd(m1);
 	_flag = false;
 }
 
@@ -181,7 +181,7 @@ void CViewport::reposition(double factor) {
 }
 
 void CViewport::fn15(const FMatrix &matrix) {
-	_orientation.fn3(matrix);
+	_orientation.matLProd(matrix);
 	_flag = false;
 }
 
