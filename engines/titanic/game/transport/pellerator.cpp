@@ -229,7 +229,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 				}
 			}
 		} else {
-			for (--_destination; _destination > newDest; --_destination) {
+			for (--_destination; _destination >= newDest; --_destination) {
 				switch (_destination) {
 				case 0:
 				case 1:
