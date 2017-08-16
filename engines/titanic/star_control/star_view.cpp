@@ -176,9 +176,8 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	}
 
 	case Common::KEYCODE_z:
-	case Common::KEYCODE_c:
 		if (matchedIndex == -1) {
-			pose.setRotationMatrix(key == Common::KEYCODE_z ? Y_AXIS : X_AXIS, 1.0);
+			pose.setRotationMatrix(Y_AXIS, -1.0);
 			_camera.proc22(pose);
 			_camera.updatePosition(errorCode);
 			return true;
@@ -211,7 +210,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_x:
 		if (matchedIndex == -1) {
-			pose.setRotationMatrix(Y_AXIS, -1.0);
+			pose.setRotationMatrix(Y_AXIS, 1.0);
 			_camera.proc22(pose);
 			_camera.updatePosition(errorCode);
 			return true;
@@ -220,7 +219,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_QUOTE:
 		if (matchedIndex == -1) {
-			pose.setRotationMatrix(X_AXIS, -1.0);
+			pose.setRotationMatrix(X_AXIS, 1.0);
 			_camera.proc22(pose);
 			_camera.updatePosition(errorCode);
 			return true;
@@ -229,7 +228,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_SLASH:
 		if (matchedIndex == -1) {
-			pose.setRotationMatrix(X_AXIS, 1.0);
+			pose.setRotationMatrix(X_AXIS, -1.0);
 			_camera.proc22(pose);
 			_camera.updatePosition(errorCode);
 			return true;
