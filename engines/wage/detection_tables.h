@@ -79,6 +79,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Find the Heart", "08de3248b8c691d9a08af984bdcfa872", 105885), // From Joshua's Worlds. Alt version
 	FANGAME("Find the Heart", "73935d313b666763e50d2cdc6b3b7908", 105871), // Standalone
 	FANGAMEN("Fortune Teller", "Fortune Teller 1.1", "3c09329fc3c92a70e5c8874cc763f5cb", 73931),
+	FANGAMEN("Fred Rogers - Terrorist", "Terrorist", "4398f711bc2a456e6d730641308593f0", 524469), // Original file name "Terrorist†"
+	FANGAME("Fred Rogers - Terrorist", "8597a77619847efbce3f1f8b2ceb3258", 524455), // Original file name "Terrorist†"
 	FANGAMEN("Haunted House", "Haunted House 1.5", "5e34e9fa13f4c90876f10a40ea1d1c79", 177500),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "c9b3c75814fc6b14feae044157bef252", 231969),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "4658ece81a6f211a828e747125482f48", 231969), // alt version
@@ -154,7 +156,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Sweetspace Now!", "574dc7dd25543f7a516d6524f0c5ab33", 123813), // Comes with Jumble
 	// Wrong scrolling in the first console text
 	FANGAMEN("Sword of Siegfried", "Sword of Siegfried 1.0", "2ae8f21cfb228ce58ee47b767bdd8820", 234763),
-	FANGAME("Terrorist", "4398f711bc2a456e6d730641308593f0", 524469), // Original file name "Terrorist†"
 	FANGAME("Time Bomb", "e96f3e2efd1e3db6ad0be22180f5473c", 64564),
 	FANGAME("Time Bomb", "976180f9be0d1029aaba7774fec9767c", 64578), // Alt version
 	// Admission for on 3rd screen is messed up
