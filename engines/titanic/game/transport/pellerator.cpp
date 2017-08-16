@@ -297,8 +297,11 @@ bool CPellerator::EnterRoomMsg(CEnterRoomMsg *msg) {
 	int oldVal = _destination;
 
 	if (name.empty()) {
-		_destination = 4;
-		oldVal = 4;
+		// WORKAROUND: Called when loading a savegame, the original reset the
+		// destination to '4' resulting in potentially longer travel times.
+		// Since the destination is saved as part of savegames anyway, I'm
+		// changing this to leave it unchanged
+		oldVal = _destination;
 	} else if (name == "PromenadeDeck") {
 		_destination = 0;
 	} else if (name == "MusicRoomLobby") {
