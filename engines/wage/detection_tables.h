@@ -97,6 +97,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Little Pythagoras", "Little Pythagoras 1.1.1", "66a5d2ac1a0df2ee84cbee583c1f1dfe", 628821),
 	FANGAME("Lost Crystal", "945a1cf1ead6dd298305935b5ccb21d2", 771072),
 	FANGAMEN("Lost In Kookyville", "Lost In Kookyville 1.2.4", "89ecb4cef5cc4036e54f8bc45ce7520e", 721569),
+	FANGAME("Lost Princess", "29d9889b566286506ded7d8bec7b75ce", 166758),
+	FANGAME("Mac Spudd!", "eaba9195dd27c2a26b809a730417122b", 782115),
 	FANGAME("Magic Rings", "263e2c90af61f0798bf41f6a1e3f6345", 109044),
 	// No way to click on the house
 	FANGAME("Messy House", "32ca71f2ff37997407cead590c2dd306", 177120),
