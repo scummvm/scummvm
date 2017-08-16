@@ -105,6 +105,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Midnight Snack", "70ba8a5a1f0304669c9987360bba236f", 67952),
 	FANGAME("Midnight Snack", "24973af10822979e23866d88a7d2e15c", 67966), // Alt version
 	FANGAME("Mike's House", "591b5a4d52ecf9a7d87256e83b78b0fd", 87357),
+	FANGAME("Mike's House", "e4c0b836a21799db3995a921a447c28e", 87343), // Alt version
 	FANGAME("Minitorian", "c728dfccdca12571e275a4113b3db343", 586464),
 	FANGAME("M'Lord's Warrior", "e0a0622ce2023984e3118141a9688ec5", 465639), // Original file name is "M'Lord's Warrior †"
 	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.25", "4730d0c47d13401d73353e980f91a304", 645318),
@@ -120,6 +121,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Pencils", "Pencils.99", "09dbcdbefe20536c2db1b1a4fb4e5ed3", 408551),
 	// Polygons with byte 1
 	FANGAME("Periapt", "7e26a7827c694232624321a5a6844511", 406006),
+	FANGAME("Periapt", "bc36e40de279d5f0844577fe702d9f64", 406006), // alt version
 	// Invalid rect in scene "Access Tube 1"
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "fee9f1de7ad9096d084461d6066192b1", 431640),
 	FANGAME("The Phoenix", "bd6dabf7a19d2ab7902498a8513f8c71", 431643),
