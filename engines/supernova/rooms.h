@@ -169,11 +169,19 @@ public:
 		_objectState[1] = Object("Luke", "Dies ist eine der Tiefschlafkammern.", CABIN, NULLTYPE, 1, 1, 0, NULLROOM, 0);
 		_objectState[2] = Object("Computer", Object::defaultDescription, COMPUTER, NULLTYPE, 2, 2, 0, NULLROOM, 0);
 		_objectState[3] = Object("Ausgang", Object::defaultDescription, NULLOBJECT, EXIT, 255, 255, 0, HALL, 22);
+
+		_codeword_DE = "ZWEIUNDVIERZIG";
+		_codeword_EN = "FORTYTWO";
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void animation();
 	virtual void onEntrance();
+
+private:
+	Common::String _input;
+	Common::String _codeword_DE;
+	Common::String _codeword_EN;
 };
 
 class ShipCockpit : public Room {
@@ -615,8 +623,8 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	byte sign;
-	byte beacon;
+	byte _sign;
+	byte _beacon;
 };
 class ArsanoEntrance : public Room {
 public:
@@ -646,32 +654,32 @@ public:
 		_objectState[16] = Object("Münzen","Es sind seltsame|Köpfe darauf abgebildet.",COINS,TAKE|COMBINABLE,255,255,0);
 		_objectState[17] = Object("Tablettenhülle","Darauf steht:\"Wenn Sie diese|Schrift jetzt lesen können,|hat die Tablette gewirkt.\"",PILL_HULL,TAKE,255,255,0);
 
-		dialog1[0] = "Wieso das denn nicht?";
-		dialog1[1] = "Wo bin ich hier?";
-		dialog1[2] = "Wo soll ich die Schuhe ablegen?";
-		dialog1[3] = "Schwachsinn! Ich gehe jetzt nach oben!";
-		dialog1[4] = "|";
+		_dialog1[0] = "Wieso das denn nicht?";
+		_dialog1[1] = "Wo bin ich hier?";
+		_dialog1[2] = "Wo soll ich die Schuhe ablegen?";
+		_dialog1[3] = "Schwachsinn! Ich gehe jetzt nach oben!";
+		_dialog1[4] = "|";
 
-		dialog2[0] = "Wo bin ich hier?";
-		dialog2[1] = "Schnes Wetter heute, nicht wahr?";
-		dialog2[2] = "Wrden Sie mich bitte durchlassen.";
-		dialog2[3] = "Hey Alter, laá mich durch!";
-		dialog2[4] = "|";
+		_dialog2[0] = "Wo bin ich hier?";
+		_dialog2[1] = "Schnes Wetter heute, nicht wahr?";
+		_dialog2[2] = "Wrden Sie mich bitte durchlassen.";
+		_dialog2[3] = "Hey Alter, laá mich durch!";
+		_dialog2[4] = "|";
 
-		dialog3[0] = "Was haben Sie gesagt?";
-		dialog3[1] = "Sprechen Sie bitte etwas deutlicher!";
+		_dialog3[0] = "Was haben Sie gesagt?";
+		_dialog3[1] = "Sprechen Sie bitte etwas deutlicher!";
 
-		eyewitness = 5;
+		_eyewitness = 5;
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void animation();
 
 private:
-	Common::String dialog1[5];
-	Common::String dialog2[5];
-	Common::String dialog3[5];
-	byte eyewitness;
+	Common::String _dialog1[5];
+	Common::String _dialog2[5];
+	Common::String _dialog3[5];
+	byte _eyewitness;
 };
 class ArsanoRemaining : public Room {
 public:
@@ -686,14 +694,14 @@ public:
 		_objectState[1] = Object("Stuhl",Object::defaultDescription,NULLOBJECT,EXIT,1,1,0,ROGER,2);
 		_objectState[2] = Object("Schuhe","Wie ist der denn mit|Schuhen hier reingekommen?",NULLOBJECT,NULLTYPE,2,2,0);
 
-		chewing = true;
+		_chewing = true;
 	}
 
 	virtual void animation();
 
 private:
-	bool chewing;
-	int i;
+	bool _chewing;
+	int _i;
 };
 class ArsanoRoger : public Room {
 public:
@@ -714,12 +722,12 @@ public:
 		_objectState[7] = Object("10-Buckazoid-Schein","Nicht gerade sehr viel Geld.",NULLOBJECT,TAKE|COMBINABLE,255,255,0);
 		_objectState[8] = Object("Keycard von Roger",Object::defaultDescription,KEYCARD_R,TAKE|COMBINABLE,255,255,0);
 
-		dialog1[0] = "Knnten Sie mir ein Gericht empfehlen?";
-		dialog1[1] = "Wie lange dauert es denn noch bis zur Supernova?";
-		dialog1[2] = "Sie kommen mir irgendwie bekannt vor.";
-		dialog1[3] = "|";
+		_dialog1[0] = "Knnten Sie mir ein Gericht empfehlen?";
+		_dialog1[1] = "Wie lange dauert es denn noch bis zur Supernova?";
+		_dialog1[2] = "Sie kommen mir irgendwie bekannt vor.";
+		_dialog1[3] = "|";
 
-		eyewitness = 5;
+		_eyewitness = 5;
 	}
 
 	virtual void animation();
@@ -727,9 +735,9 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	Common::String dialog1[4];
-	byte eyewitness;
-	byte hands;
+	Common::String _dialog1[4];
+	byte _eyewitness;
+	byte _hands;
 };
 class ArsanoGlider : public Room {
 public:
@@ -757,7 +765,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	byte sinus;
+	byte _sinus;
 };
 class ArsanoMeetup2 : public Room {
 public:
@@ -772,29 +780,29 @@ public:
 		_objectState[1] = Object("Raumschiff",Object::defaultDescription,SPACESHIP,COMBINABLE,255,255,0);
 		_objectState[2] = Object("Höhle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
 
-		dialog1[0] = "Ach, Ihnen gehrt die. Ich habe sie eben im Sand gefunden.";
-		dialog1[1] = "Nein, tut mir leid.";
-		dialog2[0] = "Nein, danke. Ich bleibe lieber hier.";
-		dialog2[1] = "Ja, das wre gut.";
-		dialog3[0] = "Zur Erde.";
-		dialog3[1] = "Zum Prsident der Galaxis.";
-		dialog3[2] = "Nach Xenon.";
-		dialog3[3] = "Mir egal, setzen Sie mich irgendwo ab!";
-		dialog4[0] = "Ich habe gerade Ihre Brieftasche gefunden!";
-		dialog4[1] = "Sie lag da drben hinter einem Felsen.";
-		dialog4[2] = "Ich wollte nur wissen, ob Sie die Brieftasche wiederhaben.";
+		_dialog1[0] = "Ach, Ihnen gehrt die. Ich habe sie eben im Sand gefunden.";
+		_dialog1[1] = "Nein, tut mir leid.";
+		_dialog2[0] = "Nein, danke. Ich bleibe lieber hier.";
+		_dialog2[1] = "Ja, das wre gut.";
+		_dialog3[0] = "Zur Erde.";
+		_dialog3[1] = "Zum Prsident der Galaxis.";
+		_dialog3[2] = "Nach Xenon.";
+		_dialog3[3] = "Mir egal, setzen Sie mich irgendwo ab!";
+		_dialog4[0] = "Ich habe gerade Ihre Brieftasche gefunden!";
+		_dialog4[1] = "Sie lag da drben hinter einem Felsen.";
+		_dialog4[2] = "Ich wollte nur wissen, ob Sie die Brieftasche wiederhaben.";
 	}
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	Common::String dialog1[2];
-	Common::String dialog2[2];
-	Common::String dialog3[4];
-	Common::String dialog4[3];
-	bool found;
-	bool flug;
+	Common::String _dialog1[2];
+	Common::String _dialog2[2];
+	Common::String _dialog3[4];
+	Common::String _dialog4[3];
+	bool _found;
+	bool _flug;
 };
 class ArsanoMeetup3 : public Room {
 public:
@@ -809,19 +817,19 @@ public:
 		_objectState[1] = Object("Stern",Object::defaultDescription,STAR,NULLTYPE,1,1,0);
 		_objectState[2] = Object("Höhle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
 
-		dialog2[0] = "Wo bin ich hier?";
-		dialog2[1] = "Was wollen Sie von mir?";
-		dialog2[2] = "Hilfe!!";
-		dialog2[3] = "Warum sprechen Sie meine Sprache?";
-		dialog3[0] = "Ja, ich bin einverstanden.";
-		dialog3[1] = "Nein, lieber bleibe ich hier, als mit Ihnen zu fliegen.";
+		_dialog2[0] = "Wo bin ich hier?";
+		_dialog2[1] = "Was wollen Sie von mir?";
+		_dialog2[2] = "Hilfe!!";
+		_dialog2[3] = "Warum sprechen Sie meine Sprache?";
+		_dialog3[0] = "Ja, ich bin einverstanden.";
+		_dialog3[1] = "Nein, lieber bleibe ich hier, als mit Ihnen zu fliegen.";
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	Common::String dialog2[4];
-	Common::String dialog3[2];
+	Common::String _dialog2[4];
+	Common::String _dialog3[2];
 };
 
 // Axacuss
@@ -1291,14 +1299,14 @@ public:
 		_objectState[6] = Object("Tür","Auf einem Schild an der Tür steht \"Prof. Dr. Ugnul Tschabb\".",DOOR3,EXIT|OPENABLE|OPENED,2,2,3,OFFICE_R1,8);
 		_objectState[7] = Object("Tür","Auf einem Schild an der Tür steht \"Alga Hurz Li\".",DOOR4,EXIT|OPENABLE|CLOSED|OCCUPIED,3,3,4,OFFICE_R2,18);
 
-		dontEnter = "Diese Tr wrde ich lieber|nicht ffnen. Nach dem Schild zu|urteilen, ist jemand in dem Raum.";
+		_dontEnter = "Diese Tr wrde ich lieber|nicht ffnen. Nach dem Schild zu|urteilen, ist jemand in dem Raum.";
 	}
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	Common::String dontEnter;
+	Common::String _dontEnter;
 };
 class AxacussIntersection : public Room {
 public:

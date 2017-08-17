@@ -1048,16 +1048,16 @@ void ArsanoMeetup::onEntrance() {
 }
 
 void ArsanoMeetup::animation() {
-	_gm->drawImage(_gm->invertSection(1) + beacon);
-	beacon = (beacon + 1) % 5;
-	_gm->drawImage(beacon + 1);
-	_gm->drawImage(beacon + 8);
-	if (isSectionVisible(sign + 13))
-		_gm->drawImage(_gm->invertSection(13) + sign);
+	_gm->drawImage(_gm->invertSection(1) + _beacon);
+	_beacon = (_beacon + 1) % 5;
+	_gm->drawImage(_beacon + 1);
+	_gm->drawImage(_beacon + 8);
+	if (isSectionVisible(_sign + 13))
+		_gm->drawImage(_gm->invertSection(13) + _sign);
 	else
-		_gm->drawImage(13 + sign);
+		_gm->drawImage(13 + _sign);
 
-	sign = (sign + 1) % 14;
+	_sign = (_sign + 1) % 14;
 	_gm->setAnimationTimer(3);
 }
 
@@ -1131,10 +1131,10 @@ void ArsanoEntrance::animation() {
 	if (isSectionVisible(2)) {
 		_gm->drawImage(_gm->invertSection(2));
 	} else {
-		if (eyewitness) {
-			--eyewitness;
+		if (_eyewitness) {
+			--_eyewitness;
 		} else {
-			eyewitness = 20;
+			_eyewitness = 20;
 			_gm->drawImage(2);
 		}
 	}
@@ -1157,7 +1157,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 			if (_gm->_state.language) {
 				do {
 					if (_gm->_state.shoes == 1) {
-						dialog2[2] = "Wo soll ich die Schuhe ablegen?";
+						_dialog2[2] = "Wo soll ich die Schuhe ablegen?";
 						_gm->addSentence(2, 2);
 					} else if (_gm->_state.shoes > 1) {
 						_gm->removeSentence(2, 2);
@@ -1337,7 +1337,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void ArsanoRemaining::animation() {
-	switch (i) {
+	switch (_i) {
 	case  0:
 		_gm->drawImage(1);
 		_gm->drawImage(_gm->invertSection(4));
@@ -1442,7 +1442,7 @@ void ArsanoRemaining::animation() {
 		break;
 	case 23:
 		_gm->drawImage(10);
-		chewing = false;
+		_chewing = false;
 		_gm->drawImage(_gm->invertSection(5));
 		break;
 	case 24:
@@ -1471,7 +1471,7 @@ void ArsanoRemaining::animation() {
 		break;
 	case 30:
 		_gm->drawImage(_gm->invertSection(10));
-		chewing = true;
+		_chewing = true;
 		break;
 	case 31:
 		_gm->drawImage(22); // Card Player 3
@@ -1486,8 +1486,8 @@ void ArsanoRemaining::animation() {
 		_gm->drawImage(4);
 	}
 
-	i = (i + 1) % 35;
-	if (chewing) {
+	_i = (_i + 1) % 35;
+	if (_chewing) {
 		if (isSectionVisible(9))
 			_gm->drawImage(_gm->invertSection(9));
 		else
@@ -1512,10 +1512,10 @@ void ArsanoRoger::animation() {
 		setSectionVisible(10, false);
 		setSectionVisible(12, false);
 	} else {
-		if (eyewitness) {
-			--eyewitness;
+		if (_eyewitness) {
+			--_eyewitness;
 		} else {
-			eyewitness = 20;
+			_eyewitness = 20;
 			if (isSectionVisible(3))
 				_gm->drawImage(10);
 			else
@@ -1523,9 +1523,9 @@ void ArsanoRoger::animation() {
 		}
 	}
 	if (isSectionVisible(3)) {
-		setSectionVisible(5 + hands, false);
-		hands = (hands + 1) % 5;
-		_gm->drawImage(5 + hands);
+		setSectionVisible(5 + _hands, false);
+		_hands = (_hands + 1) % 5;
+		_gm->drawImage(5 + _hands);
 	}
 	_gm->setAnimationTimer(4);
 }
@@ -1626,11 +1626,11 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 
 void ArsanoGlider::animation() {
 	if (isSectionVisible(8)) {
-		setSectionVisible(24 + sinus, false);
-		sinus = (sinus + 1) % 14;
-		_gm->drawImage(24 + sinus);
-	} else if (isSectionVisible(24 + sinus))
-		_gm->drawImage(_gm->invertSection(24 + sinus));
+		setSectionVisible(24 + _sinus, false);
+		_sinus = (_sinus + 1) % 14;
+		_gm->drawImage(24 + _sinus);
+	} else if (isSectionVisible(24 + _sinus))
+		_gm->drawImage(_gm->invertSection(24 + _sinus));
 
 	_gm->setAnimationTimer(2);
 }
@@ -1747,7 +1747,8 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(8));
 			_gm->reply("Oh! Vielen Dank.", 1, 1 + 128);
 			_gm->reply("Wo ist denn Ihr Raumschiff?|Soll ich Sie ein Stck mitnehmen?", 1, 1 + 128);
-			if (flight = _gm->dialog(2, nullptr, nullptr, 0)) { // row2, dialog2
+			flight = _gm->dialog(2, nullptr, nullptr, 0); // row2, dialog2
+			if (flight) {
 				_gm->reply("Wo wollen Sie denn hin?", 1, 1 + 128);
 				_gm->dialog(4, nullptr, nullptr, 0); // row3, dialog3
 				_gm->reply("Ok, steigen Sie ein!", 1, 1 + 128);
@@ -2336,11 +2337,11 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if (((verb == ACTION_WALK) || ((verb == ACTION_OPEN) && !obj1.hasProperty(OPENED))) &&
 	           (obj1._id >= DOOR1) && (obj1._id <= DOOR4) &&
 	           obj1.hasProperty(OCCUPIED)) {
-		_vm->renderMessage(dontEnter.c_str());
+		_vm->renderMessage(_dontEnter.c_str());
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR1) &&
 	           !getObject(4)->hasProperty(OPENED)) {
 		if (getObject(4)->hasProperty(OCCUPIED))
-			_vm->renderMessage(dontEnter.c_str());
+			_vm->renderMessage(_dontEnter.c_str());
 		else {
 			_gm->drawImage(1);
 			_vm->playSound(kAudioDoorOpen);
@@ -2351,7 +2352,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR2) &&
 	           !getObject(5)->hasProperty(OPENED)) {
 		if (getObject(5)->hasProperty(OCCUPIED)) {
-			_vm->renderMessage(dontEnter.c_str());
+			_vm->renderMessage(_dontEnter.c_str());
 		} else {
 			_gm->drawImage(2);
 			_vm->playSound(kAudioDoorOpen);
@@ -2362,7 +2363,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR3) &&
 	           !getObject(6)->hasProperty(OPENED)) {
 		if (getObject(6)->hasProperty(OCCUPIED)) {
-			_vm->renderMessage(dontEnter.c_str());
+			_vm->renderMessage(_dontEnter.c_str());
 		} else {
 			_gm->drawImage(3);
 			_vm->playSound(kAudioDoorOpen);
@@ -2373,7 +2374,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR4) &&
 	           !getObject(7)->hasProperty(OPENED)) {
 		if (getObject(7)->hasProperty(OCCUPIED)) {
-			_vm->renderMessage(dontEnter.c_str());
+			_vm->renderMessage(_dontEnter.c_str());
 		} else {
 			_gm->drawImage(4);
 			_vm->playSound(kAudioDoorOpen);
