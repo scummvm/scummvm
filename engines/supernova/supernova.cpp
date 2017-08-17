@@ -190,11 +190,10 @@ void SupernovaEngine::updateEvents() {
 			    (_event.kbd.flags & Common::KBD_CTRL)) {
 				_console->attach();
 			}
-			if (_event.kbd.keycode == Common::KEYCODE_s) {
-				for (int i = 0; i < _currentImage->_numSections; ++i) {
-					_gm->drawImage(i);
-					_system->updateScreen();
-				}
+			if (_event.kbd.keycode == Common::KEYCODE_x &&
+			    (_event.kbd.flags & Common::KBD_CTRL)) {
+				// TODO: Draw exit box
+				_gameRunning = false;
 			}
 
 			_gm->processInput(_event.kbd);
