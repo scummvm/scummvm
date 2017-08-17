@@ -81,6 +81,7 @@ bool CBrokenPelleratorFroz::LeaveViewMsg(CLeaveViewMsg *msg) {
 bool CBrokenPelleratorFroz::ActMsg(CActMsg *msg) {
 	if (msg->_action == "PlayerGetsHose") {
 		_gottenHose = true;
+		loadFrame(29);
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 0;
 		statusMsg.execute("FPickUpHose");
