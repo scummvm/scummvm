@@ -912,7 +912,7 @@ bool CGameObject::compareViewNameTo(const CString &name) const {
 	return !getViewFullName().compareToIgnoreCase(name);
 }
 
-int CGameObject::compareRoomNameTo(const CString &name) {
+bool CGameObject::compareRoomNameTo(const CString &name) {
 	CRoomItem *room = getGameManager()->getRoom();
 	return !room->getName().compareToIgnoreCase(name);
 }

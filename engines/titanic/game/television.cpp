@@ -236,23 +236,31 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (_channelNum == 3 && compareRoomNameTo("SGTState") && getPassengerClass() == THIRD_CLASS) {
-		// You may be a winner
-		CProximity prox1, prox2;
-		prox1._soundType = prox2._soundType = Audio::Mixer::kSpeechSoundType;
-		playSound("z#47.wav", prox1);
-		_soundHandle = playSound("b#20.wav", prox2);
-		CMagazine *magazine = dynamic_cast<CMagazine *>(getRoot()->findByName("Magazine"));
+		// WORKAROUND: The original allowed the magazine to be "won" multiple times. We
+		// now search for magazine within the room (which is it's initial, hidden location).
+		// That way, when it's 'Won', it's no longer present and can't be won again
+		CMagazine *magazine = dynamic_cast<CMagazine *>(findRoom()->findByName("Magazine"));
 
 		if (magazine) {
+			// You may be a winner
+			CProximity prox1, prox2;
+			prox1._soundType = prox2._soundType = Audio::Mixer::kSpeechSoundType;
+			playSound("z#47.wav", prox1);
+			_soundHandle = playSound("b#20.wav", prox2);
+
+			// Get the room flags for the SGT floor we're on
 			CPetControl *pet = getPetControl();
 			uint roomFlags = pet->getRoomFlags();
 
-			debugC(kDebugScripts, "Assigned room - %d", roomFlags);
+			// Send the magazine to the SuccUBus
+			debugC(DEBUG_INTERMEDIATE, kDebugScripts, "Assigned room - %d", roomFlags);
 			magazine->addMail(roomFlags);
 			magazine->sendMail(roomFlags, roomFlags);
-		}
 
-		loadFrame(561);
+			loadFrame(561);
+		} else {
+			petDisplayMessage(NOTHING_ON_CHANNEL);
+		}
 	} else if (_channelNum == 2) {
 		loadFrame(_seasonFrame);
 	} else if (_channelNum == 4 && _channel4Glyph) {
