@@ -126,6 +126,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "fee9f1de7ad9096d084461d6066192b1", 431640),
 	FANGAME("The Phoenix", "bd6dabf7a19d2ab7902498a8513f8c71", 431643),
 	FANGAME("Psychotic!", "d6229615b71b189f6ef71399a0856cd2", 367309),
+	FANGAME("Psychotic!", "c7608f67592563b44f2f48fe5fec63ce", 367323), // alt version
+	FANGAME("Psychotic!", "51aa5f2744ceb5666c9556bccee797d6", 367429), // another alt version
 	FANGAME("Puzzle Piece Search", "6c21c1e0c6afef9300941abd7782dd16", 247693), // From Joshua's Worlds 1.0
 	FANGAME("The Puzzle Piece Search", "8fa1d80dd3f1ed69f45d15d774968995", 247338), // From Joshua's Worlds
 	FANGAME("The Puzzle Piece Search", "fb839ac4f22427f44e99bcc5afd57a0b", 247324), // Stnadalone
@@ -152,11 +154,13 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Space Adventure", "SpaceAdventure", "3908c75d639989a28993c59931fbe1ec", 155356),
 	FANGAMEN("Space Adventure", "SpaceAdventure", "e38d524cb778ed0beb77ee9299f0ed45", 155356), // alt version
 	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "ac00a26f04f83b47c278cc1d226f48df", 333665), // Original file name "SpearOfDestiny†"
+	FANGAME("Spear of Destiny", "ea90bddd0925742351340cf88dd1c7a6", 620606), // alt version, normal file name
 	FANGAME("Star Trek", "3067332e6f0bb0314579f9bf102e1b56", 53320),
 	FANGAME("Strange Disappearance", "9d6e41b61c0fc90400e5da2fcb653a4a", 772282),
 	FANGAME("The Sultan's Palace", "fde31cbcc77b66969b4cfcd43075341e", 456855),
 	// Code 0x03 in text
 	FANGAME("Swamp Witch", "bd8c8394be31f7845d55785b7ccfbbde", 739781), // Original file name "Swamp Witch†"
+	FANGAME("Swamp Witch", "07463c8b3b908b0c493a41b949ac1ff5", 740131), // alt version, normal file name
 	FANGAME("Sweetspace Now!", "574dc7dd25543f7a516d6524f0c5ab33", 123813), // Comes with Jumble
 	// Wrong scrolling in the first console text
 	FANGAMEN("Sword of Siegfried", "Sword of Siegfried 1.0", "2ae8f21cfb228ce58ee47b767bdd8820", 234763),
@@ -177,6 +181,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Wizard's Warehouse 2", "WizWarehouse 2.0", "e67ac67548236a73897a85cd12b30492", 230870),
 	FANGAME("ZikTuria", "a91559e6f04a67dcb9023a98a0faed77", 52972),
 	FANGAME("Zoony", "3f7418ea8672ea558521c178188cfce5", 154990), // original filename "Zoony™"
+	FANGAME("Zoony", "55d3d42b5dca9630eb28ad464f343c67", 154990), // original filename "Zoony™", alt version
 
 	AD_TABLE_END_MARKER
 };
