@@ -248,7 +248,7 @@ void CViewport::reset() {
 
 	_rawPose.copyFrom(_orientation);
 	_rawPose._vector = _position;
-	_currentPose = _rawPose.fn4();
+	_currentPose = _rawPose.inverseTransform();
 
 	_center = FPoint((double)_width * 0.5, (double)_height * 0.5);
 	_centerVector._x = MIN(_center._x, _center._y);
