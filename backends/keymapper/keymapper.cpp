@@ -239,7 +239,6 @@ EventType Keymapper::convertDownToUp(EventType type) {
 }
 
 const HardwareInput *Keymapper::findHardwareInput(const Event &event) {
-	// FIXME: Performance
 	switch (event.type) {
 		case EVENT_KEYDOWN:
 		case EVENT_KEYUP:

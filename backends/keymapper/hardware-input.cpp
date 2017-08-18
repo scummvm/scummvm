@@ -226,57 +226,51 @@ HardwareInputSet::HardwareInputSet(bool useDefault, const KeyTableEntry *keys, c
 }
 
 HardwareInputSet::~HardwareInputSet() {
-	Array<const HardwareInput *>::const_iterator it;
-
-	for (it = _inputs.begin(); it != _inputs.end(); ++it)
-		delete *it;
+	for (KeyInputMap::iterator it = _keyInput.begin(); it != _keyInput.end(); ++it)
+		delete it->_value;
+	for (CustomInputMap::iterator it = _customInput.begin(); it != _customInput.end(); ++it)
+		delete it->_value;
 }
 
-void HardwareInputSet::addHardwareInput(const HardwareInput *input) {
-	assert(input);
-
-	debug(8, "Adding hardware input [%s][%s]", input->id.c_str(), input->description.c_str());
-
-	removeHardwareInput(input);
-
-	_inputs.push_back(input);
-}
-
-const HardwareInput *HardwareInputSet::findHardwareInput(String id) const {
-	Array<const HardwareInput *>::const_iterator it;
-
-	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
-		if ((*it)->id == id)
-			return (*it);
+const HardwareInput *HardwareInputSet::findHardwareInput(const String &id) const {
+	for (KeyInputMap::const_iterator it = _keyInput.begin(); it != _keyInput.end(); ++it) {
+		if ((*it)._value->id == id)
+			return (*it)._value;
 	}
-	return 0;
+	for (CustomInputMap::const_iterator it = _customInput.begin(); it != _customInput.end(); ++it) {
+		if ((*it)._value->id == id)
+			return (*it)._value;
+	}
+
+	return nullptr;
 }
 
 const HardwareInput *HardwareInputSet::findHardwareInput(const HardwareInputCode code) const {
-	Array<const HardwareInput *>::const_iterator it;
-
-	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
-		const HardwareInput *entry = *it;
-		if (entry->type == kHardwareInputTypeGeneric && entry->inputCode == code)
-			return entry;
-	}
-	return 0;
+	return _customInput[code];
 }
 
 const HardwareInput *HardwareInputSet::findHardwareInput(const KeyState &keystate) const {
-	Array<const HardwareInput *>::const_iterator it;
-
-	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
-		const HardwareInput *entry = *it;
-		if (entry->type == kHardwareInputTypeKeyboard && entry->key == keystate)
-			return entry;
-	}
-	return 0;
+	return _keyInput[keystate];
 }
 
 void HardwareInputSet::addHardwareInputs(const HardwareInputTableEntry inputs[]) {
-	for (const HardwareInputTableEntry *entry = inputs; entry->hwId; ++entry)
-		addHardwareInput(new HardwareInput(entry->hwId, entry->code, entry->desc));
+	for (const HardwareInputTableEntry *entry = inputs; entry->hwId; ++entry) {
+		const HardwareInput *existingInput = findHardwareInput(entry->code);
+		if (existingInput) {
+			warning("Ignoring hardware input %s (code %d) because an input with the same code is already defined",
+			        entry->desc, entry->code);
+			continue;
+		}
+
+		existingInput = findHardwareInput(entry->hwId);
+		if (existingInput) {
+			warning("Ignoring hardware input %s (id %s) because an input with the same id is already defined",
+			        entry->desc, entry->hwId);
+			continue;
+		}
+
+		_customInput[entry->code] = new HardwareInput(entry->hwId, entry->code, entry->desc);
+	}
 }
 
 void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
@@ -285,35 +279,25 @@ void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[], const Modif
 
 	for (mod = modifiers; mod->id; mod++) {
 		for (key = keys; key->hwId; key++) {
-			String fullKeyId = String::format("%s%s", mod->id, key->hwId);
+			String keyId = String::format("%s%s", mod->id, key->hwId);
+			KeyState keystate = KeyState(key->keycode, 0, mod->flag);
+
+			const HardwareInput *existingInput = findHardwareInput(keystate);
+			if (existingInput) {
+				warning("Ignoring hardware input %s%s (id %s) because an input with the same keystate is already defined",
+				        keys->desc, mod->desc, keyId.c_str());
+				continue;
+			}
+
+			existingInput = findHardwareInput(keyId);
+			if (existingInput) {
+				warning("Ignoring hardware input %s%s (id %s) because an input with the same id is already defined",
+				        keys->desc, mod->desc, keyId.c_str());
+				continue;
+			}
+
 			String fullKeyDesc = String::format("%s%s", mod->desc, key->desc);
-
-			addHardwareInput(new HardwareInput(fullKeyId, KeyState(key->keycode, 0, mod->flag), fullKeyDesc));
-		}
-	}
-}
-
-void HardwareInputSet::removeHardwareInput(const HardwareInput *input) {
-	if (!input)
-		return;
-
-	Array<const HardwareInput *>::iterator it;
-
-	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
-		const HardwareInput *entry = (*it);
-		bool match = false;
-		if (entry->id == input->id)
-			match = true;
-		else if (input->type == entry->type) {
-			if (input->type == kHardwareInputTypeGeneric && input->inputCode == entry->inputCode)
-				match = true;
-			else if (input->type == kHardwareInputTypeKeyboard && input->key == entry->key)
-				match = true;
-		}
-		if (match) {
-			debug(7, "Removing hardware input [%s] (%s) because it matches [%s] (%s)", entry->id.c_str(), entry->description.c_str(), input->id.c_str(), input->description.c_str());
-			delete entry;
-			_inputs.erase(it);
+			_keyInput[keystate] = new HardwareInput(keyId, keystate, fullKeyDesc);
 		}
 	}
 }
