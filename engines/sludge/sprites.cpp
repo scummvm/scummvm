@@ -271,6 +271,13 @@ bool GraphicsManager::loadSpriteBank(int fileNum, SpriteBank &loadhere, bool isF
 
 // pasteSpriteToBackDrop uses the colour specified by the setPasteColour (or setPasteColor)
 void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal) {
+	// kill zBuffer
+	if (_zBuffer->originalNum >= 0 && _zBuffer->sprites) {
+		int num = _zBuffer->originalNum;
+		killZBuffer();
+		_zBuffer->originalNum = num;
+	}
+
 	//TODO: shader: useLightTexture
 	x1 -= single.xhot;
 	y1 -= single.yhot;
@@ -282,6 +289,13 @@ void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, cons
 // burnSpriteToBackDrop adds text in the colour specified by setBurnColour
 // using the differing brightness levels of the font to achieve an anti-aliasing effect.
 void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal) {
+	// kill zBuffer
+	if (_zBuffer->originalNum >= 0 && _zBuffer->sprites) {
+		int num = _zBuffer->originalNum;
+		killZBuffer();
+		_zBuffer->originalNum = num;
+	}
+
 	//TODO: shader: useLightTexture
 	x1 -= single.xhot;
 	y1 -= single.yhot - 1;
