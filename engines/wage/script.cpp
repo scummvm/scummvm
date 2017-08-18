@@ -1161,12 +1161,19 @@ void Script::convertToText() {
 			break;
 
 		if (c < 0x80) {
-			if (c < 0x20)
-				error("convertToText: Unknown code 0x%02x at %d", c, _data->pos());
+			if (c < 0x20) {
+				warning("convertToText: Unknown code 0x%02x at %d", c, _data->pos());
+				c = ' ';
+			}
 
 			do {
 				scr->line += c;
 				c = _data->readByte();
+
+				if (c < 0x20) {
+					warning("convertToText: Unknown code 0x%02x at %d", c, _data->pos());
+					c = ' ';
+				}
 			} while (c < 0x80);
 
 			_data->seek(-1, SEEK_CUR);

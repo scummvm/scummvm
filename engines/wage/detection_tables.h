@@ -158,7 +158,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Star Trek", "3067332e6f0bb0314579f9bf102e1b56", 53320),
 	FANGAME("Strange Disappearance", "9d6e41b61c0fc90400e5da2fcb653a4a", 772282),
 	FANGAME("The Sultan's Palace", "fde31cbcc77b66969b4cfcd43075341e", 456855),
-	// Code 0x03 in text
 	FANGAME("Swamp Witch", "bd8c8394be31f7845d55785b7ccfbbde", 739781), // Original file name "Swamp Witch†"
 	FANGAME("Swamp Witch", "07463c8b3b908b0c493a41b949ac1ff5", 740131), // alt version, normal file name
 	FANGAME("Sweetspace Now!", "574dc7dd25543f7a516d6524f0c5ab33", 123813), // Comes with Jumble
