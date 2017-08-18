@@ -749,7 +749,6 @@ void GameManager::drawInventory() {
 uint16 GameManager::getKeyInput(bool blockForPrintChar) {
 	while (true) {
 		_vm->updateEvents();
-		// TODO: Check for valid ascii
 		if (_keyPressed) {
 			if (blockForPrintChar) {
 				if (Common::isPrint(_key.keycode) ||
@@ -790,7 +789,6 @@ Common::EventType GameManager::getMouseInput() {
 void GameManager::getInput() {
 	while (true) {
 		_vm->updateEvents();
-		// TODO: handle key input (e.g. alt+x, F-keys?)
 		if (_mouseClicked || _keyPressed) {
 			break;
 		}
@@ -1151,8 +1149,6 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage("Halt, hier ist ein interessanter Artikel.");
 		mouseWait(_timer1);
 		_vm->removeMessage();
-		// TODO: Implement a 'newspaper room' to eliminate handling
-		//       those cases seperately
 		_vm->renderImage(2, 0);
 		_vm->setColor63(40);
 		getInput();
