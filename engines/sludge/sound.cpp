@@ -93,40 +93,16 @@ void SoundManager::killSoundStuff() {
 	if (!_soundOK)
 		return;
 
-	_silenceIKillYou = true;
-	for (int i = 0; i < MAX_SAMPLES; i ++) {
-		if (g_sludge->_mixer->isSoundHandleActive(_soundCache[i].handle)) {
-			g_sludge->_mixer->stopHandle(_soundCache[i].handle);
-		}
-	}
-#if 0
-	for (int i = 0; i < MAX_MODS; i ++) {
-		if (_modCache[i].playing) {
+	for (int i = 0; i < MAX_SAMPLES; ++i)
+		freeSound(i);
 
-			if (! alureStopSource(modCache[i].playingOnSource, AL_TRUE)) {
-				debugOut("Failed to stop source: %s\n",
-						alureGetErrorString());
-			}
-
-		}
-
-		if (_modCache[i].stream != NULL) {
-
-			if (! alureDestroyStream(modCache[i].stream, 0, NULL)) {
-				debugOut("Failed to destroy stream: %s\n",
-						alureGetErrorString());
-			}
-
-		}
-	}
-#endif
-	_silenceIKillYou = false;
+	for (int i = 0; i < MAX_MODS; ++i)
+		stopMOD(i);
 }
 
 /*
  * Some setters:
  */
-
 void SoundManager::setMusicVolume(int a, int v) {
 	if (!_soundOK)
 		return;
@@ -186,15 +162,10 @@ void SoundManager::huntKillSound(int filenum) {
 		return;
 
 	int gotSlot = findInSoundCache(filenum);
-	if (gotSlot == -1) return;
+	if (gotSlot == -1)
+		return;
 
-	_silenceIKillYou = true;
-
-	if (g_sludge->_mixer->isSoundHandleActive(_soundCache[gotSlot].handle)) {
-		g_sludge->_mixer->stopHandle(_soundCache[gotSlot].handle);
-	}
-
-	_silenceIKillYou = false;
+	freeSound(gotSlot);
 }
 
 void SoundManager::freeSound(int a) {
@@ -209,6 +180,8 @@ void SoundManager::freeSound(int a) {
 			handleSoundLists();
 	}
 
+	_soundCache[a].inSoundList = false;
+	_soundCache[a].looping = false;
 	_soundCache[a].fileLoaded = -1;
 
 	_silenceIKillYou = false;
@@ -322,20 +295,12 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 		return -1;
 
 	int a = findInSoundCache(f);
-	if (a != -1) { // if this sound has been loaded before
-		// still playing
-		if (g_sludge->_mixer->isSoundHandleActive(_soundCache[a].handle)) {
-			g_sludge->_mixer->stopHandle(_soundCache[a].handle); // stop it
-			if (_soundCache[a].inSoundList) {
-				handleSoundLists();
-			}
-		}
-	} else {
+	if (a == -1) {
 		if (f == -2)
 			return -1;
 		a = findEmptySoundSlot();
-		freeSound(a);
 	}
+	freeSound(a);
 
 	setResourceForFatal(f);
 	uint32 length = g_sludge->_resMan->openFileFromNum(f);
@@ -357,6 +322,7 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 	if (stream) {
 		audiostream = Audio::makeLoopingAudioStream(stream, loopy ? 0 : 1);
 		_soundCache[a].fileLoaded = f;
+		_soundCache[a].looping = loopy;
 		setResourceForFatal(-1);
 	} else {
 		audiostream = nullptr;
