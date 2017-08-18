@@ -183,13 +183,13 @@ const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 #ifdef ENABLE_KEYMAPPER
 static const Common::KeyTableEntry maemoKeys[] = {
 	// Function keys
-	{"MENU", Common::KEYCODE_F11, 0, "Menu", false},
-	{"HOME", Common::KEYCODE_F12, 0, "Home", false},
-	{"FULLSCREEN", Common::KEYCODE_F13, 0, "FullScreen", false},
-	{"ZOOMPLUS", Common::KEYCODE_F14, 0, "Zoom+", false},
-	{"ZOOMMINUS", Common::KEYCODE_F15, 0, "Zoom-", false},
+	{"MENU", Common::KEYCODE_F11, "Menu"},
+	{"HOME", Common::KEYCODE_F12, "Home"},
+	{"FULLSCREEN", Common::KEYCODE_F13, "FullScreen"},
+	{"ZOOMPLUS", Common::KEYCODE_F14, "Zoom+"},
+	{"ZOOMMINUS", Common::KEYCODE_F15, "Zoom-"},
 
-	{0, Common::KEYCODE_INVALID, 0, 0, false}
+	{0, Common::KEYCODE_INVALID, 0}
 };
 
 Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
