@@ -52,10 +52,9 @@ SoundManager::SoundManager() {
 
 	_soundCache = nullptr;
 	_soundCache = new SoundThing[MAX_SAMPLES];
-	#if 0
+
 	_modCache = nullptr;
 	_modCache = new SoundThing[MAX_MODS];
-	#endif
 
 	_defVol = 128;
 	_defSoundVol = 255;
@@ -70,10 +69,8 @@ SoundManager::~SoundManager() {
 	delete []_soundCache;
 	_soundCache = nullptr;
 
-	#if 0
 	delete []_modCache;
 	_modCache = nullptr;
-	#endif
 }
 
 bool SoundManager::initSoundStuff() {
@@ -82,12 +79,13 @@ bool SoundManager::initSoundStuff() {
 		_soundCache[a].looping = false;
 		_soundCache[a].inSoundList = false;
 	}
-#if 0
+
 	for (int a = 0; a < MAX_MODS; a ++) {
-		_modCache[a].stream = NULL;
-		_modCache[a].playing = false;
+		_soundCache[a].fileLoaded = -1;
+		_soundCache[a].looping = false;
+		_soundCache[a].inSoundList = false;
 	}
-#endif
+
 	return _soundOK = true;
 }
 
@@ -132,11 +130,11 @@ void SoundManager::killSoundStuff() {
 void SoundManager::setMusicVolume(int a, int v) {
 	if (!_soundOK)
 		return;
-#if 0
-	if (_modCache[a].playing) {
-		alSourcef(modCache[a].playingOnSource, AL_GAIN, (float) _modLoudness * v / 256);
+
+	if (g_sludge->_mixer->isSoundHandleActive(_modCache[a].handle)) {
+		_modCache[a].vol = v;
+		g_sludge->_mixer->setChannelVolume(_modCache[a].handle, _modLoudness * v / 256);
 	}
-#endif
 }
 
 void SoundManager::setDefaultMusicVolume(int v) {
@@ -176,14 +174,11 @@ int SoundManager::findInSoundCache(int a) {
 void SoundManager::stopMOD(int i) {
 	if (!_soundOK)
 		return;
-#if 0
-	alGetError();
-	if (modCache[i].playing) {
-		if (! alureStopSource(modCache[i].playingOnSource, AL_TRUE)) {
-			debugOut("Failed to stop source: %s\n", alureGetErrorString());
-		}
+
+	if (g_sludge->_mixer->isSoundHandleActive(_modCache[i].handle)) {
+		g_sludge->_mixer->stopHandle(_modCache[i].handle);
 	}
-#endif
+	_modCache[i].fileLoaded = -1;
 }
 
 void SoundManager::huntKillSound(int filenum) {
@@ -233,69 +228,33 @@ void SoundManager::huntKillFreeSound(int filenum) {
  */
 bool SoundManager::playMOD(int f, int a, int fromTrack) {
 #if 0
-	// load sound
-	setResourceForFatal(f);
-	uint32 length = openFileFromNum(f);
-	if (length == 0) {
-		finishAccess();
-		setResourceForFatal(-1);
-		return false;
-	}
-
-	Common::SeekableReadStream *memImage = bigDataFile->readStream(length);
-	if (memImage->size() != length || bigDataFile->err())
-		debug("Sound reading failed");
-	Audio::AudioStream *stream = Audio::makeProtrackerStream(memImage);
-	//TODO: replace by xm file decoders
-	if (!stream)
-		return false;
-
-	// play sound
-	Audio::SoundHandle soundHandle;
-	g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundHandle,
-			stream, -1, Audio::Mixer::kMaxChannelVolume);
-
 	if (!_soundOK)
 		return true;
 	stopMOD(a);
 
+	// load sound
 	setResourceForFatal(f);
-	uint32 length = openFileFromNum(f);
+	uint length = g_sludge->_resMan->openFileFromNum(f);
 	if (length == 0) {
-		finishAccess();
+		g_sludge->_resMan->finishAccess();
 		setResourceForFatal(-1);
 		return false;
 	}
 
-	byte *memImage;
-	memImage = (byte *) loadEntireFileToMemory(bigDataFile, length);
-	if (! memImage) return fatal(ERROR_MUSIC_MEMORY_LOW);
+	// make audio stream
+	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
+	Common::SeekableReadStream *memImage = readStream->readStream(length);
+	if (memImage->size() != (int)length || readStream->err())
+		debug("Sound reading failed");
+	Audio::AudioStream *stream = Audio::makeProtrackerStream(memImage);
 
-	_modCache[a].stream = alureCreateStreamFromMemory(memImage, length, 19200, 0, NULL);
+	if (!stream)
+		return false;
 
-	delete memImage;
+	// play sound
+	g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_modCache[a].handle,
+			stream, -1, Audio::Mixer::kMaxChannelVolume);
 
-	if (_modCache[a].stream != NULL) {
-		setMusicVolume(a, defVol);
-
-		if (! alureSetStreamOrder(modCache[a].stream, fromTrack)) {
-			debugOut("Failed to set stream order: %s\n",
-					alureGetErrorString());
-		}
-
-		playStream(a, true, true);
-
-	} else {
-
-		debugOut("Failed to create stream from MOD: %s\n",
-				alureGetErrorString());
-
-		warning(ERROR_MUSIC_ODDNESS);
-		_soundCache[a].stream = NULL;
-		_soundCache[a].playing = false;
-		_soundCache[a].playingOnSource = 0;
-	}
-	setResourceForFatal(-1);
 #endif
 	return true;
 }
