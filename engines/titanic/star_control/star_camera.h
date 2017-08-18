@@ -33,6 +33,8 @@
 
 namespace Titanic {
 
+enum StarLockState { ZERO_LOCKED=0, ONE_LOCKED=1, TWO_LOCKED=2, THREE_LOCKED=3 };
+
 /**
  * Implements a reference point from which the starmap can be viewed
  */
@@ -41,7 +43,7 @@ private:
 	static FMatrix *_priorOrientation;
 	static FMatrix *_newOrientation;
 private:
-	int _matrixRow;
+	StarLockState _star_lock_state;
 	FMatrix _matrix;
 	CCameraMover *_mover;
 	CViewport _viewport;
@@ -107,7 +109,7 @@ public:
 	virtual void increaseForwardSpeed();
 
 	/**
-	 * Decreases movement speed in backward direction
+	 * Increases movement speed in backward direction
 	 */
 	virtual void increaseBackwardSpeed();
 
@@ -155,7 +157,10 @@ public:
 	 */
 	virtual void setViewportAngle(const FPoint &angles);
 
-	virtual int getMatrixRow() const { return _matrixRow; }
+	/**
+	 * How many stars are currently locked onto
+	 */
+	virtual StarLockState getStarLockState() const { return _star_lock_state; }
 
 	/**
 	 * Adds the row for a locked in marker

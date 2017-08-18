@@ -33,12 +33,12 @@ FMatrix *CStarCamera::_priorOrientation;
 FMatrix *CStarCamera::_newOrientation;
 
 CStarCamera::CStarCamera(const CNavigationInfo *data) :
-		_matrixRow(-1), _mover(nullptr), _isMoved(false) {
+		_star_lock_state(ZERO_LOCKED), _mover(nullptr), _isMoved(false) {
 	setupHandler(data);
 }
 
 CStarCamera::CStarCamera(CViewport *src) :
-		_matrixRow(-1), _mover(nullptr), _isMoved(false), _viewport(src) {
+		_star_lock_state(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _viewport(src) {
 }
 
 void CStarCamera::init() {
@@ -226,15 +226,16 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 
 	if (isLocked())
 		return;
-
-	if (_matrixRow == -1) {
-		// No locked markers
+       switch(_star_lock_state) {
+	case ZERO_LOCKED: {
 		FPose subX(X_AXIS, angles._y);
 		FPose subY(Y_AXIS, -angles._x); // needs to be negative or looking left will cause the view to go right
 		FPose sub(subX, subY);
 		proc22(sub);
-	} else if (_matrixRow == 0) {
-		// 1 marker is locked in
+       }
+              break;
+
+       case ONE_LOCKED: {
 		FVector row1 = _matrix._row1;
 		FPose poseX(X_AXIS, angles._y);
 		FPose poseY(Y_AXIS, -angles._x); // needs to be negative or looking left will cause the view to go right
@@ -275,8 +276,10 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		m1.set(tempV4, tempV5, tempV6);
 		_viewport.setOrientation(m1);
 		_viewport.setPosition(tempV1);
-	} else if (_matrixRow == 1) {
-		// 2 markers locked in
+       }
+              break;
+
+       case TWO_LOCKED: {
 		FVector tempV2;
 		DAffine m1, m2, sub;
 		DVector mrow1, mrow2, mrow3;
@@ -342,32 +345,38 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		m3.set(mrow1, mrow2, mrow3);
 		_viewport.setOrientation(m3);
 		_viewport.setPosition(tempV16);
-	}
+       }
+              break;
+
+       //TODO: should three stars locked do anything in this function? Error?
+       case THREE_LOCKED:
+              break;
+       }
 }
 
 bool CStarCamera::adDAffineRow(const FVector v) {
-	if (_matrixRow >= 2)
+	if (_star_lock_state == THREE_LOCKED)
 		return false;
 
 	CNavigationInfo data;
 	_mover->copyTo(&data);
 	deleteHandler();
-
-	FVector &row = _matrix[++_matrixRow];
+	FVector &row = _matrix[(int)_star_lock_state];
+       _star_lock_state = StarLockState( (int)_star_lock_state + 1);
 	row = v;
 	setupHandler(&data);
 	return true;
 }
 
 bool CStarCamera::removeMatrixRow() {
-	if (_matrixRow == -1)
+	if (_star_lock_state == ZERO_LOCKED)
 		return false;
 
 	CNavigationInfo data;
 	_mover->copyTo(&data);
 	deleteHandler();
 
-	--_matrixRow;
+	_star_lock_state = StarLockState( (int)_star_lock_state - 1);
 	setupHandler(&data);
 	return true;
 }
@@ -387,14 +396,14 @@ void CStarCamera::save(SimpleFile *file, int indent) {
 bool CStarCamera::setupHandler(const CNavigationInfo *src) {
 	CCameraMover *mover = nullptr;
 
-	switch (_matrixRow) {
-	case -1:
+	switch (_star_lock_state) {
+	case ZERO_LOCKED:
 		mover = new CUnmarkedCameraMover(src);
 		break;
 
-	case 0:
-	case 1:
-	case 2:
+	case ONE_LOCKED:
+	case TWO_LOCKED:
+	case THREE_LOCKED:
 		mover = new CMarkedCameraMover(src);
 		break;
 
@@ -419,7 +428,7 @@ void CStarCamera::deleteHandler() {
 }
 
 void CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
-	if (_matrixRow != -1)
+	if (_star_lock_state != ZERO_LOCKED)
 		return;
 
 	FVector tempV;
@@ -454,7 +463,7 @@ void CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
 }
 
 void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
-	if (_matrixRow != 0)
+	if (_star_lock_state != ONE_LOCKED)
 		return;
 
 	DAffine m2(X_AXIS, _matrix._row1);
@@ -545,7 +554,7 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 }
 
 void CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
-	if (_matrixRow != 1)
+	if (_star_lock_state != TWO_LOCKED)
 		return;
 
 	FMatrix newOr = viewport->getOrientation();
