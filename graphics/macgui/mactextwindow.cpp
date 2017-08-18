@@ -306,6 +306,9 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		}
 	}
 
+	if (hasAllFocus())
+		return MacWindow::processEvent(event);	// Pass it to upstream
+
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			int consoleHeight = getInnerDimensions().height();
