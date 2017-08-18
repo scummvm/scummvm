@@ -23,15 +23,17 @@
 #ifndef TITANIC_STAR_CAMERA_H
 #define TITANIC_STAR_CAMERA_H
 
-#include "titanic/support/simple_file.h"
 #include "titanic/star_control/fmatrix.h"
-#include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/viewport.h"
-#include "titanic/star_control/camera_mover.h"
-#include "titanic/star_control/error_code.h"
 
 namespace Titanic {
+
+class CCameraMover;
+class CErrorCode;
+class CNavigationInfo;
+class FPoint;
+class SimpleFile;
 
 enum StarLockState { ZERO_LOCKED=0, ONE_LOCKED=1, TWO_LOCKED=2, THREE_LOCKED=3 };
 
@@ -62,7 +64,7 @@ private:
 	/**
 	 * Return whether the handler is locked
 	 */
-	bool isLocked() { return _mover->isLocked(); }
+	bool isLocked();
 public:
 	static void init();
 	static void deinit();

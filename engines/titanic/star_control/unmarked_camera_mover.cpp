@@ -21,10 +21,11 @@
  */
 
 #include "titanic/star_control/unmarked_camera_mover.h"
-#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/dvector.h"
-#include "titanic/titanic.h"
+#include "titanic/star_control/daffine.h"
+#include "titanic/star_control/error_code.h"
 #include "common/textconsole.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 

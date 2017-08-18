@@ -21,10 +21,14 @@
  */
 
 #include "titanic/star_control/star_camera.h"
-#include "titanic/star_control/unmarked_camera_mover.h"
-#include "titanic/star_control/marked_camera_mover.h"
+#include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fmatrix.h"
+#include "titanic/star_control/fpoint.h"
+#include "titanic/star_control/marked_camera_mover.h"
+#include "titanic/star_control/unmarked_camera_mover.h"
+#include "titanic/star_control/error_code.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -51,6 +55,10 @@ void CStarCamera::deinit() {
 	delete _newOrientation;
 	_priorOrientation = nullptr;
 	_newOrientation = nullptr;
+}
+
+bool CStarCamera::isLocked() { 
+       return _mover->isLocked(); 
 }
 
 CStarCamera::~CStarCamera() {

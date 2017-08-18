@@ -21,7 +21,10 @@
  */
 
 #include "titanic/star_control/camera_auto_mover.h"
+#include "titanic/star_control/fmatrix.h"
+#include "titanic/star_control/error_code.h"
 #include "common/textconsole.h"
+
 
 namespace Titanic {
 

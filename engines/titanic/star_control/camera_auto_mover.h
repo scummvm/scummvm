@@ -23,12 +23,14 @@
 #ifndef TITANIC_CAMERA_AUTO_MOVER_H
 #define TITANIC_CAMERA_AUTO_MOVER_H
 
-#include "titanic/star_control/error_code.h"
-#include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/orientation_changer.h"
+#include "common/array.h"
 
 namespace Titanic {
+
+class CErrorCode;
+class FMatrix;
 
 /**
  * Base class for automatic movement of the starview camera

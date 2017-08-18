@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/marked_camera_mover.h"
+#include "common/array.h"
 #include "common/textconsole.h"
 
 namespace Titanic {

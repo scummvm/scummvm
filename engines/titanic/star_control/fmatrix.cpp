@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/daffine.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
@@ -39,7 +40,7 @@ void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C) {
 	C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
 }
 
-// member functions
+// Member functions
 
 FMatrix::FMatrix() :
 	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
