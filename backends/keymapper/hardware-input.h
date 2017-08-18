@@ -28,6 +28,7 @@
 #ifdef ENABLE_KEYMAPPER
 
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/keyboard.h"
 #include "common/str.h"
 #include "common/textconsole.h"
@@ -101,6 +102,17 @@ struct ModifierTableEntry {
 };
 
 /**
+ * Hash function for KeyState
+ */
+template<> struct Hash<KeyState>
+		: public UnaryFunction<KeyState, uint> {
+
+	uint operator()(const KeyState &val) const {
+		return (uint)val.keycode | ((uint)val.flags << 24);
+	}
+};
+
+/**
  * Simple class to encapsulate a device's set of HardwareInputs.
  * Each device should instantiate this and call addHardwareInput a number of times
  * in its constructor to define the device's available keys.
@@ -118,17 +130,11 @@ public:
 
 	virtual ~HardwareInputSet();
 
-	void addHardwareInput(const HardwareInput *input);
-
-	const HardwareInput *findHardwareInput(String id) const;
+	const HardwareInput *findHardwareInput(const String &id) const;
 
 	const HardwareInput *findHardwareInput(const HardwareInputCode code) const;
 
 	const HardwareInput *findHardwareInput(const KeyState &keystate) const;
-
-	const Array<const HardwareInput *> &getHardwareInputs() const { return _inputs; }
-
-	uint size() const { return _inputs.size(); }
 
 	/**
 	 * Add hardware inputs to the set out of a table.
@@ -143,11 +149,13 @@ public:
 	 */
 	void addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]);
 
-	void removeHardwareInput(const HardwareInput *input);
-
 private:
 
-	Array<const HardwareInput *> _inputs;
+	typedef HashMap<KeyState, const HardwareInput *> KeyInputMap;
+	typedef HashMap<HardwareInputCode, const HardwareInput *> CustomInputMap;
+
+	KeyInputMap _keyInput;
+	CustomInputMap _customInput;
 };
 
 } // End of namespace Common
