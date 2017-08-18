@@ -29,193 +29,193 @@
 namespace Common {
 
 static const KeyTableEntry defaultKeys[] = {
-	{"BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", false},
-	{"TAB", KEYCODE_TAB, ASCII_TAB, "Tab", false},
-	{"CLEAR", KEYCODE_CLEAR, 0, "Clear", false},
-	{"RETURN", KEYCODE_RETURN, ASCII_RETURN, "Return", false},
-	{"PAUSE", KEYCODE_PAUSE, 0, "Pause", false},
-	{"ESCAPE", KEYCODE_ESCAPE, ASCII_ESCAPE, "Esc", false},
-	{"SPACE", KEYCODE_SPACE, ASCII_SPACE, "Space", false},
-	{"EXCLAIM", KEYCODE_EXCLAIM, '!', "!", false},
-	{"QUOTEDBL", KEYCODE_QUOTEDBL, '"', "\"", false},
-	{"HASH", KEYCODE_HASH, '#', "#", false},
-	{"DOLLAR", KEYCODE_DOLLAR, '$', "$", false},
-	{"PERCENT", KEYCODE_PERCENT, '%', "%", false},
-	{"AMPERSAND", KEYCODE_AMPERSAND, '&', "&", false},
-	{"QUOTE", KEYCODE_QUOTE, '\'', "'", false},
-	{"LEFTPAREN", KEYCODE_LEFTPAREN, '(', "(", false},
-	{"RIGHTPAREN", KEYCODE_RIGHTPAREN, ')', ")", false},
-	{"ASTERISK", KEYCODE_ASTERISK, '*', "*", false},
-	{"PLUS", KEYCODE_PLUS, '+', "+", false},
-	{"COMMA", KEYCODE_COMMA, ',', ",", false},
-	{"MINUS", KEYCODE_MINUS, '-', "-", false},
-	{"PERIOD", KEYCODE_PERIOD, '.', ".", false},
-	{"SLASH", KEYCODE_SLASH, '/', "/", false},
-	{"0", KEYCODE_0, '0', "0", false},
-	{"1", KEYCODE_1, '1', "1", false},
-	{"2", KEYCODE_2, '2', "2", false},
-	{"3", KEYCODE_3, '3', "3", false},
-	{"4", KEYCODE_4, '4', "4", false},
-	{"5", KEYCODE_5, '5', "5", false},
-	{"6", KEYCODE_6, '6', "6", false},
-	{"7", KEYCODE_7, '7', "7", false},
-	{"8", KEYCODE_8, '8', "8", false},
-	{"9", KEYCODE_9, '9', "9", false},
-	{"COLON", KEYCODE_COLON, ':', ":", false},
-	{"SEMICOLON", KEYCODE_SEMICOLON, ';', ";", false},
-	{"LESS", KEYCODE_LESS, '<', "<", false},
-	{"EQUALS", KEYCODE_EQUALS, '=', "=", false},
-	{"GREATER", KEYCODE_GREATER, '>', ">", false},
-	{"QUESTION", KEYCODE_QUESTION, '?', "?", false},
-	{"AT", KEYCODE_AT, '@', "@", false},
+	{"BACKSPACE", KEYCODE_BACKSPACE, "Backspace"},
+	{"TAB", KEYCODE_TAB, "Tab"},
+	{"CLEAR", KEYCODE_CLEAR, "Clear"},
+	{"RETURN", KEYCODE_RETURN, "Return"},
+	{"PAUSE", KEYCODE_PAUSE, "Pause"},
+	{"ESCAPE", KEYCODE_ESCAPE, "Esc"},
+	{"SPACE", KEYCODE_SPACE, "Space"},
+	{"EXCLAIM", KEYCODE_EXCLAIM, "!"},
+	{"QUOTEDBL", KEYCODE_QUOTEDBL, "\""},
+	{"HASH", KEYCODE_HASH, "#"},
+	{"DOLLAR", KEYCODE_DOLLAR, "$"},
+	{"PERCENT", KEYCODE_PERCENT, "%"},
+	{"AMPERSAND", KEYCODE_AMPERSAND, "&"},
+	{"QUOTE", KEYCODE_QUOTE, "'"},
+	{"LEFTPAREN", KEYCODE_LEFTPAREN, "("},
+	{"RIGHTPAREN", KEYCODE_RIGHTPAREN, ")"},
+	{"ASTERISK", KEYCODE_ASTERISK, "*"},
+	{"PLUS", KEYCODE_PLUS, "+"},
+	{"COMMA", KEYCODE_COMMA, ","},
+	{"MINUS", KEYCODE_MINUS, "-"},
+	{"PERIOD", KEYCODE_PERIOD, "."},
+	{"SLASH", KEYCODE_SLASH, "/"},
+	{"0", KEYCODE_0, "0"},
+	{"1", KEYCODE_1, "1"},
+	{"2", KEYCODE_2, "2"},
+	{"3", KEYCODE_3, "3"},
+	{"4", KEYCODE_4, "4"},
+	{"5", KEYCODE_5, "5"},
+	{"6", KEYCODE_6, "6"},
+	{"7", KEYCODE_7, "7"},
+	{"8", KEYCODE_8, "8"},
+	{"9", KEYCODE_9, "9"},
+	{"COLON", KEYCODE_COLON, ":"},
+	{"SEMICOLON", KEYCODE_SEMICOLON, ";"},
+	{"LESS", KEYCODE_LESS, "<"},
+	{"EQUALS", KEYCODE_EQUALS, "="},
+	{"GREATER", KEYCODE_GREATER, ">"},
+	{"QUESTION", KEYCODE_QUESTION, "?"},
+	{"AT", KEYCODE_AT, "@"},
 
-	{"LEFTBRACKET", KEYCODE_LEFTBRACKET, '[', "[", false},
-	{"BACKSLASH", KEYCODE_BACKSLASH, '\\', "\\", false},
-	{"RIGHTBRACKET", KEYCODE_RIGHTBRACKET, ']', "]", false},
-	{"CARET", KEYCODE_CARET, '^', "^", false},
-	{"UNDERSCORE", KEYCODE_UNDERSCORE, '_', "_", false},
-	{"BACKQUOTE", KEYCODE_BACKQUOTE, '`', "`", false},
-	{"a", KEYCODE_a, 'a', "a", true},
-	{"b", KEYCODE_b, 'b', "b", true},
-	{"c", KEYCODE_c, 'c', "c", true},
-	{"d", KEYCODE_d, 'd', "d", true},
-	{"e", KEYCODE_e, 'e', "e", true},
-	{"f", KEYCODE_f, 'f', "f", true},
-	{"g", KEYCODE_g, 'g', "g", true},
-	{"h", KEYCODE_h, 'h', "h", true},
-	{"i", KEYCODE_i, 'i', "i", true},
-	{"j", KEYCODE_j, 'j', "j", true},
-	{"k", KEYCODE_k, 'k', "k", true},
-	{"l", KEYCODE_l, 'l', "l", true},
-	{"m", KEYCODE_m, 'm', "m", true},
-	{"n", KEYCODE_n, 'n', "n", true},
-	{"o", KEYCODE_o, 'o', "o", true},
-	{"p", KEYCODE_p, 'p', "p", true},
-	{"q", KEYCODE_q, 'q', "q", true},
-	{"r", KEYCODE_r, 'r', "r", true},
-	{"s", KEYCODE_s, 's', "s", true},
-	{"t", KEYCODE_t, 't', "t", true},
-	{"u", KEYCODE_u, 'u', "u", true},
-	{"v", KEYCODE_v, 'v', "v", true},
-	{"w", KEYCODE_w, 'w', "w", true},
-	{"x", KEYCODE_x, 'x', "x", true},
-	{"y", KEYCODE_y, 'y', "y", true},
-	{"z", KEYCODE_z, 'z', "z", true},
-	{"DELETE", KEYCODE_DELETE, 0, "Del", false},
+	{"LEFTBRACKET", KEYCODE_LEFTBRACKET, "["},
+	{"BACKSLASH", KEYCODE_BACKSLASH, "\\"},
+	{"RIGHTBRACKET", KEYCODE_RIGHTBRACKET, "]"},
+	{"CARET", KEYCODE_CARET, "^"},
+	{"UNDERSCORE", KEYCODE_UNDERSCORE, "_"},
+	{"BACKQUOTE", KEYCODE_BACKQUOTE, "`"},
+	{"a", KEYCODE_a, "a"},
+	{"b", KEYCODE_b, "b"},
+	{"c", KEYCODE_c, "c"},
+	{"d", KEYCODE_d, "d"},
+	{"e", KEYCODE_e, "e"},
+	{"f", KEYCODE_f, "f"},
+	{"g", KEYCODE_g, "g"},
+	{"h", KEYCODE_h, "h"},
+	{"i", KEYCODE_i, "i"},
+	{"j", KEYCODE_j, "j"},
+	{"k", KEYCODE_k, "k"},
+	{"l", KEYCODE_l, "l"},
+	{"m", KEYCODE_m, "m"},
+	{"n", KEYCODE_n, "n"},
+	{"o", KEYCODE_o, "o"},
+	{"p", KEYCODE_p, "p"},
+	{"q", KEYCODE_q, "q"},
+	{"r", KEYCODE_r, "r"},
+	{"s", KEYCODE_s, "s"},
+	{"t", KEYCODE_t, "t"},
+	{"u", KEYCODE_u, "u"},
+	{"v", KEYCODE_v, "v"},
+	{"w", KEYCODE_w, "w"},
+	{"x", KEYCODE_x, "x"},
+	{"y", KEYCODE_y, "y"},
+	{"z", KEYCODE_z, "z"},
+	{"DELETE", KEYCODE_DELETE, "Del"},
 
 	// Numeric keypad
-	{"KP0", KEYCODE_KP0, 0, "KP0", false},
-	{"KP1", KEYCODE_KP1, 0, "KP1", false},
-	{"KP2", KEYCODE_KP2, 0, "KP2", false},
-	{"KP3", KEYCODE_KP3, 0, "KP3", false},
-	{"KP4", KEYCODE_KP4, 0, "KP4", false},
-	{"KP5", KEYCODE_KP5, 0, "KP5", false},
-	{"KP6", KEYCODE_KP6, 0, "KP6", false},
-	{"KP7", KEYCODE_KP7, 0, "KP7", false},
-	{"KP8", KEYCODE_KP8, 0, "KP8", false},
-	{"KP9", KEYCODE_KP9, 0, "KP9", false},
-	{"KP_PERIOD", KEYCODE_KP_PERIOD, 0, "KP.", false},
-	{"KP_DIVIDE", KEYCODE_KP_DIVIDE, 0, "KP/", false},
-	{"KP_MULTIPLY", KEYCODE_KP_MULTIPLY, 0, "KP*", false},
-	{"KP_MINUS", KEYCODE_KP_MINUS, 0, "KP-", false},
-	{"KP_PLUS", KEYCODE_KP_PLUS, 0, "KP+", false},
-	{"KP_ENTER", KEYCODE_KP_ENTER, 0, "KP Enter", false},
-	{"KP_EQUALS", KEYCODE_KP_EQUALS, 0, "KP=", false},
+	{"KP0", KEYCODE_KP0, "KP0"},
+	{"KP1", KEYCODE_KP1, "KP1"},
+	{"KP2", KEYCODE_KP2, "KP2"},
+	{"KP3", KEYCODE_KP3, "KP3"},
+	{"KP4", KEYCODE_KP4, "KP4"},
+	{"KP5", KEYCODE_KP5, "KP5"},
+	{"KP6", KEYCODE_KP6, "KP6"},
+	{"KP7", KEYCODE_KP7, "KP7"},
+	{"KP8", KEYCODE_KP8, "KP8"},
+	{"KP9", KEYCODE_KP9, "KP9"},
+	{"KP_PERIOD", KEYCODE_KP_PERIOD, "KP."},
+	{"KP_DIVIDE", KEYCODE_KP_DIVIDE, "KP/"},
+	{"KP_MULTIPLY", KEYCODE_KP_MULTIPLY, "KP*"},
+	{"KP_MINUS", KEYCODE_KP_MINUS, "KP-"},
+	{"KP_PLUS", KEYCODE_KP_PLUS, "KP+"},
+	{"KP_ENTER", KEYCODE_KP_ENTER, "KP Enter"},
+	{"KP_EQUALS", KEYCODE_KP_EQUALS, "KP="},
 
 	// Arrows + Home/End pad
-	{"UP", KEYCODE_UP, 0, "Up", false},
-	{"DOWN", KEYCODE_DOWN, 0, "Down", false},
-	{"RIGHT", KEYCODE_RIGHT, 0, "Right", false},
-	{"LEFT", KEYCODE_LEFT, 0, "Left", false},
-	{"INSERT", KEYCODE_INSERT, 0, "Insert", false},
-	{"HOME", KEYCODE_HOME, 0, "Home", false},
-	{"END", KEYCODE_END, 0, "End", false},
-	{"PAGEUP", KEYCODE_PAGEUP, 0, "PgUp", false},
-	{"PAGEDOWN", KEYCODE_PAGEDOWN, 0, "PgDn", false},
+	{"UP", KEYCODE_UP, "Up"},
+	{"DOWN", KEYCODE_DOWN, "Down"},
+	{"RIGHT", KEYCODE_RIGHT, "Right"},
+	{"LEFT", KEYCODE_LEFT, "Left"},
+	{"INSERT", KEYCODE_INSERT, "Insert"},
+	{"HOME", KEYCODE_HOME, "Home"},
+	{"END", KEYCODE_END, "End"},
+	{"PAGEUP", KEYCODE_PAGEUP, "PgUp"},
+	{"PAGEDOWN", KEYCODE_PAGEDOWN, "PgDn"},
 
 	// Function keys
-	{"F1", KEYCODE_F1, ASCII_F1, "F1", false},
-	{"F2", KEYCODE_F2, ASCII_F2, "F2", false},
-	{"F3", KEYCODE_F3, ASCII_F3, "F3", false},
-	{"F4", KEYCODE_F4, ASCII_F4, "F4", false},
-	{"F5", KEYCODE_F5, ASCII_F5, "F5", false},
-	{"F6", KEYCODE_F6, ASCII_F6, "F6", false},
-	{"F7", KEYCODE_F7, ASCII_F7, "F7", false},
-	{"F8", KEYCODE_F8, ASCII_F8, "F8", false},
-	{"F9", KEYCODE_F9, ASCII_F9, "F9", false},
-	{"F10", KEYCODE_F10, ASCII_F10, "F10", false},
-	{"F11", KEYCODE_F11, ASCII_F11, "F11", false},
-	{"F12", KEYCODE_F12, ASCII_F12, "F12", false},
-	{"F13", KEYCODE_F13, 0, "F13", false},
-	{"F14", KEYCODE_F14, 0, "F14", false},
-	{"F15", KEYCODE_F15, 0, "F15", false},
-	{"F16", KEYCODE_F16, 0, "F16", false},
-	{"F17", KEYCODE_F17, 0, "F17", false},
-	{"F18", KEYCODE_F18, 0, "F18", false},
+	{"F1", KEYCODE_F1, "F1"},
+	{"F2", KEYCODE_F2, "F2"},
+	{"F3", KEYCODE_F3, "F3"},
+	{"F4", KEYCODE_F4, "F4"},
+	{"F5", KEYCODE_F5, "F5"},
+	{"F6", KEYCODE_F6, "F6"},
+	{"F7", KEYCODE_F7, "F7"},
+	{"F8", KEYCODE_F8, "F8"},
+	{"F9", KEYCODE_F9, "F9"},
+	{"F10", KEYCODE_F10, "F10"},
+	{"F11", KEYCODE_F11, "F11"},
+	{"F12", KEYCODE_F12, "F12"},
+	{"F13", KEYCODE_F13, "F13"},
+	{"F14", KEYCODE_F14, "F14"},
+	{"F15", KEYCODE_F15, "F15"},
+	{"F16", KEYCODE_F16, "F16"},
+	{"F17", KEYCODE_F17, "F17"},
+	{"F18", KEYCODE_F18, "F18"},
 
 	// Miscellaneous function keys
-	{"HELP", KEYCODE_HELP, 0, "Help", false},
-	{"PRINT", KEYCODE_PRINT, 0, "Print", false},
-	{"SYSREQ", KEYCODE_SYSREQ, 0, "SysRq", false},
-	{"BREAK", KEYCODE_BREAK, 0, "Break", false},
-	{"MENU", KEYCODE_MENU, 0, "Menu", false},
+	{"HELP", KEYCODE_HELP, "Help"},
+	{"PRINT", KEYCODE_PRINT, "Print"},
+	{"SYSREQ", KEYCODE_SYSREQ, "SysRq"},
+	{"BREAK", KEYCODE_BREAK, "Break"},
+	{"MENU", KEYCODE_MENU, "Menu"},
 		// Power Macintosh power key
-	{"POWER", KEYCODE_POWER, 0, "Power", false},
+	{"POWER", KEYCODE_POWER, "Power"},
 		// Some european keyboards
-	{"EURO", KEYCODE_EURO, 0, "Euro", false},
+	{"EURO", KEYCODE_EURO, "Euro"},
 		// Atari keyboard has Undo
-	{"UNDO", KEYCODE_UNDO, 0, "Undo", false},
-	{"SLEEP", KEYCODE_SLEEP, 0, "Sleep", false},
-	{"MUTE", KEYCODE_MUTE, 0, "Mute", false},
-	{"EJECT", KEYCODE_EJECT, 0, "Eject", false},
-	{"VOLUMEUP", KEYCODE_VOLUMEUP, 0, "Volume Up", false},
-	{"VOLUMEDOWN", KEYCODE_VOLUMEDOWN, 0, "Volume Down", false},
-	{"LEFTSOFT", KEYCODE_LEFTSOFT, 0, "Left Soft", false},
-	{"RIGHTSOFT", KEYCODE_RIGHTSOFT, 0, "Right Soft", false},
-	{"CALL", KEYCODE_CALL, 0, "Call", false},
-	{"HANGUP", KEYCODE_HANGUP, 0, "Hang up", false},
-	{"CAMERA", KEYCODE_CAMERA, 0, "Camera", false},
-	{"WWW", KEYCODE_WWW, 0, "WWW", false},
-	{"MAIL", KEYCODE_MAIL, 0, "Mail", false},
-	{"CALCULATOR", KEYCODE_CALCULATOR, 0, "Calculator", false},
-	{"CUT", KEYCODE_CUT, 0, "Cut", false},
-	{"COPY", KEYCODE_COPY, 0, "Copy", false},
-	{"PASTE", KEYCODE_PASTE, 0, "Paste", false},
-	{"SELECT", KEYCODE_SELECT, 0, "Select", false},
-	{"CANCEL", KEYCODE_CANCEL, 0, "Cancel", false},
+	{"UNDO", KEYCODE_UNDO, "Undo"},
+	{"SLEEP", KEYCODE_SLEEP, "Sleep"},
+	{"MUTE", KEYCODE_MUTE, "Mute"},
+	{"EJECT", KEYCODE_EJECT, "Eject"},
+	{"VOLUMEUP", KEYCODE_VOLUMEUP, "Volume Up"},
+	{"VOLUMEDOWN", KEYCODE_VOLUMEDOWN, "Volume Down"},
+	{"LEFTSOFT", KEYCODE_LEFTSOFT, "Left Soft"},
+	{"RIGHTSOFT", KEYCODE_RIGHTSOFT, "Right Soft"},
+	{"CALL", KEYCODE_CALL, "Call"},
+	{"HANGUP", KEYCODE_HANGUP, "Hang up"},
+	{"CAMERA", KEYCODE_CAMERA, "Camera"},
+	{"WWW", KEYCODE_WWW, "WWW"},
+	{"MAIL", KEYCODE_MAIL, "Mail"},
+	{"CALCULATOR", KEYCODE_CALCULATOR, "Calculator"},
+	{"CUT", KEYCODE_CUT, "Cut"},
+	{"COPY", KEYCODE_COPY, "Copy"},
+	{"PASTE", KEYCODE_PASTE, "Paste"},
+	{"SELECT", KEYCODE_SELECT, "Select"},
+	{"CANCEL", KEYCODE_CANCEL, "Cancel"},
 
 	// Action keys
-	{"AC_SEARCH", KEYCODE_AC_SEARCH, 0, "AC Search", false},
-	{"AC_HOME", KEYCODE_AC_HOME, 0, "AC Home", false},
-	{"AC_BACK", KEYCODE_AC_BACK, 0, "AC Back", false},
-	{"AC_FORWARD", KEYCODE_AC_FORWARD, 0, "AC Forward", false},
-	{"AC_STOP", KEYCODE_AC_STOP, 0, "AC Stop", false},
-	{"AC_REFRESH", KEYCODE_AC_REFRESH, 0, "AC Refresh", false},
-	{"AC_BOOKMARKS", KEYCODE_AC_BOOKMARKS, 0, "AC Bookmarks", false},
+	{"AC_SEARCH", KEYCODE_AC_SEARCH, "AC Search"},
+	{"AC_HOME", KEYCODE_AC_HOME, "AC Home"},
+	{"AC_BACK", KEYCODE_AC_BACK, "AC Back"},
+	{"AC_FORWARD", KEYCODE_AC_FORWARD, "AC Forward"},
+	{"AC_STOP", KEYCODE_AC_STOP, "AC Stop"},
+	{"AC_REFRESH", KEYCODE_AC_REFRESH, "AC Refresh"},
+	{"AC_BOOKMARKS", KEYCODE_AC_BOOKMARKS, "AC Bookmarks"},
 
 	// Audio keys
-	{"AUDIONEXT", KEYCODE_AUDIONEXT, 0, "Audio Next", false},
-	{"AUDIOPREV", KEYCODE_AUDIOPREV, 0, "Audio Previous", false},
-	{"AUDIOSTOP", KEYCODE_AUDIOSTOP, 0, "Audio Stop", false},
-	{"AUDIOPLAY", KEYCODE_AUDIOPLAY, 0, "Audio Play", false},
-	{"AUDIOPAUSE", KEYCODE_AUDIOPAUSE, 0, "Audio Pause", false},
-	{"AUDIOPLAYPAUSE", KEYCODE_AUDIOPLAYPAUSE, 0, "Audio Play/Pause", false},
-	{"AUDIOMUTE", KEYCODE_AUDIOMUTE, 0, "Audio Mute", false},
-	{"AUDIOREWIND", KEYCODE_AUDIOREWIND, 0, "Audio Rewind", false},
-	{"AUDIOFASTFORWARD", KEYCODE_AUDIOFASTFORWARD, 0, "Audio Fast-Forward", false},
+	{"AUDIONEXT", KEYCODE_AUDIONEXT, "Audio Next"},
+	{"AUDIOPREV", KEYCODE_AUDIOPREV, "Audio Previous"},
+	{"AUDIOSTOP", KEYCODE_AUDIOSTOP, "Audio Stop"},
+	{"AUDIOPLAY", KEYCODE_AUDIOPLAY, "Audio Play"},
+	{"AUDIOPAUSE", KEYCODE_AUDIOPAUSE, "Audio Pause"},
+	{"AUDIOPLAYPAUSE", KEYCODE_AUDIOPLAYPAUSE, "Audio Play/Pause"},
+	{"AUDIOMUTE", KEYCODE_AUDIOMUTE, "Audio Mute"},
+	{"AUDIOREWIND", KEYCODE_AUDIOREWIND, "Audio Rewind"},
+	{"AUDIOFASTFORWARD", KEYCODE_AUDIOFASTFORWARD, "Audio Fast-Forward"},
 
-	{0, KEYCODE_INVALID, 0, 0, false}
+	{0, KEYCODE_INVALID, 0}
 };
 
 static const ModifierTableEntry defaultModifiers[] = {
-	{ 0, "", "", false },
-	{ KBD_CTRL, "C+", "Ctrl+", false },
-	{ KBD_ALT, "A+", "Alt+", false },
-	{ KBD_SHIFT, "", "", true },
-	{ KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+", false },
-	{ KBD_SHIFT | KBD_CTRL, "S+C+", "Shift+Ctrl+", true },
-	{ KBD_SHIFT | KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+", true },
-	{ 0, 0, 0, false }
+	{ 0, "", "" },
+	{ KBD_CTRL, "C+", "Ctrl+" },
+	{ KBD_ALT, "A+", "Alt+" },
+	{ KBD_SHIFT, "S+", "Shift+" },
+	{ KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+" },
+	{ KBD_SHIFT | KBD_CTRL, "S+C+", "Shift+Ctrl+" },
+	{ KBD_SHIFT | KBD_CTRL | KBD_ALT, "S+C+A+", "Shift+Ctrl+Alt+" },
+	{ 0, 0, 0 }
 };
 
 HardwareInputSet::HardwareInputSet(bool useDefault, const KeyTableEntry *keys, const ModifierTableEntry *modifiers) {
@@ -226,7 +226,7 @@ HardwareInputSet::HardwareInputSet(bool useDefault, const KeyTableEntry *keys, c
 }
 
 HardwareInputSet::~HardwareInputSet() {
-	List<const HardwareInput *>::const_iterator it;
+	Array<const HardwareInput *>::const_iterator it;
 
 	for (it = _inputs.begin(); it != _inputs.end(); ++it)
 		delete *it;
@@ -243,7 +243,7 @@ void HardwareInputSet::addHardwareInput(const HardwareInput *input) {
 }
 
 const HardwareInput *HardwareInputSet::findHardwareInput(String id) const {
-	List<const HardwareInput *>::const_iterator it;
+	Array<const HardwareInput *>::const_iterator it;
 
 	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
 		if ((*it)->id == id)
@@ -253,7 +253,7 @@ const HardwareInput *HardwareInputSet::findHardwareInput(String id) const {
 }
 
 const HardwareInput *HardwareInputSet::findHardwareInput(const HardwareInputCode code) const {
-	List<const HardwareInput *>::const_iterator it;
+	Array<const HardwareInput *>::const_iterator it;
 
 	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
 		const HardwareInput *entry = *it;
@@ -263,8 +263,8 @@ const HardwareInput *HardwareInputSet::findHardwareInput(const HardwareInputCode
 	return 0;
 }
 
-const HardwareInput *HardwareInputSet::findHardwareInput(const KeyState& keystate) const {
-	List<const HardwareInput *>::const_iterator it;
+const HardwareInput *HardwareInputSet::findHardwareInput(const KeyState &keystate) const {
+	Array<const HardwareInput *>::const_iterator it;
 
 	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
 		const HardwareInput *entry = *it;
@@ -282,27 +282,13 @@ void HardwareInputSet::addHardwareInputs(const HardwareInputTableEntry inputs[])
 void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
 	const KeyTableEntry *key;
 	const ModifierTableEntry *mod;
-	char fullKeyId[50];
-	char fullKeyDesc[100];
-	uint16 ascii;
 
 	for (mod = modifiers; mod->id; mod++) {
 		for (key = keys; key->hwId; key++) {
-			ascii = key->ascii;
+			String fullKeyId = String::format("%s%s", mod->id, key->hwId);
+			String fullKeyDesc = String::format("%s%s", mod->desc, key->desc);
 
-			if (mod->shiftable && key->shiftable) {
-				snprintf(fullKeyId, 50, "%s%c", mod->id, toupper(key->hwId[0]));
-				snprintf(fullKeyDesc, 100, "%s%c", mod->desc, toupper(key->desc[0]));
-				ascii = toupper(key->ascii);
-			} else if (mod->shiftable) {
-				snprintf(fullKeyId, 50, "S+%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "Shift+%s%s", mod->desc, key->desc);
-			} else {
-				snprintf(fullKeyId, 50, "%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
-			}
-
-			addHardwareInput(new HardwareInput(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc));
+			addHardwareInput(new HardwareInput(fullKeyId, KeyState(key->keycode, 0, mod->flag), fullKeyDesc));
 		}
 	}
 }
@@ -311,7 +297,7 @@ void HardwareInputSet::removeHardwareInput(const HardwareInput *input) {
 	if (!input)
 		return;
 
-	List<const HardwareInput *>::iterator it;
+	Array<const HardwareInput *>::iterator it;
 
 	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
 		const HardwareInput *entry = (*it);

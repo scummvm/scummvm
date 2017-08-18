@@ -27,8 +27,8 @@
 
 #ifdef ENABLE_KEYMAPPER
 
+#include "common/array.h"
 #include "common/keyboard.h"
-#include "common/list.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 
@@ -69,10 +69,10 @@ struct HardwareInput {
 	 */
 	KeyState key;
 
-	HardwareInput(String i, HardwareInputCode ic = 0, String desc = "")
+	HardwareInput(const String &i, HardwareInputCode ic = 0, const String &desc = "")
 		: id(i), inputCode(ic), description(desc), type(kHardwareInputTypeGeneric) { }
 
-	HardwareInput(String i, KeyState ky, String desc = "")
+	HardwareInput(const String &i, KeyState ky, const String &desc = "")
 		: id(i), key(ky), description(desc), type(kHardwareInputTypeKeyboard) { }
 };
 
@@ -88,9 +88,7 @@ struct HardwareInputTableEntry {
 struct KeyTableEntry {
 	const char *hwId;
 	KeyCode keycode;
-	uint16 ascii;
 	const char *desc;
-	bool shiftable;
 };
 
 /**
@@ -100,7 +98,6 @@ struct ModifierTableEntry {
 	byte flag;
 	const char *id;
 	const char *desc;
-	bool shiftable;
 };
 
 /**
@@ -127,9 +124,9 @@ public:
 
 	const HardwareInput *findHardwareInput(const HardwareInputCode code) const;
 
-	const HardwareInput *findHardwareInput(const KeyState& keystate) const;
+	const HardwareInput *findHardwareInput(const KeyState &keystate) const;
 
-	const List<const HardwareInput *> &getHardwareInputs() const { return _inputs; }
+	const Array<const HardwareInput *> &getHardwareInputs() const { return _inputs; }
 
 	uint size() const { return _inputs.size(); }
 
@@ -150,7 +147,7 @@ public:
 
 private:
 
-	List<const HardwareInput *> _inputs;
+	Array<const HardwareInput *> _inputs;
 };
 
 } // End of namespace Common
