@@ -167,7 +167,7 @@ public:
 	void loadOverlayStart();
 	void openLocker(const Room *room, Object *obj, Object *lock, int section);
 	void closeLocker(const Room *room, Object *obj, Object *lock, int section);
-	void edit(char *text, int x, int y, uint length);
+	void edit(Common::String &input, int x, int y, uint length);
 	int invertSection(int section);
 	void drawMapExits();
 	void drawStatus();

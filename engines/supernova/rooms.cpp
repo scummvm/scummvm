@@ -95,11 +95,9 @@ bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
-	char input[31];
-	static char codeword_DE[] = "ZWEIUNDVIERZIG";
-	static char codeword_EN[] = "FORTYTWO";
-	int32 l,*energy;
-	Room *r;
+	int32 *energy;
+	Room *room;
+	Common::String input;
 
 	if (((verb == ACTION_LOOK) || (verb == ACTION_USE)) && (obj1._id == COMPUTER)) {
 		_gm->_guiEnabled = false;
@@ -125,68 +123,60 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->getInput();
 		} else {
 			_vm->renderText("Bitte Passwort eingeben:", 100, 85, kColorWhite99);
-			input[0] = 0;
-			do {
-				_gm->edit(input, 100, 105, 30);
-			} while ((_gm->_key.keycode != Common::KEYCODE_RETURN) &&
-			         (_gm->_key.keycode != Common::KEYCODE_ESCAPE));
-			if (_gm->_key.keycode == Common::KEYCODE_ESCAPE) {
-				goto escape;
-			}
-			for (int i = 0; i < 30; ++i) {
-				if ((input[i] >= 'a') && (input[i] <= 'z')) {
-					input[i] -= 'a' - 'A';
+			_gm->edit(input, 100, 105, 30);
+
+			input.toUppercase();
+			if (_gm->_key.keycode != Common::KEYCODE_ESCAPE) {
+				if (input == _codeword_DE) {
+					_gm->great(6);
+					g_system->fillScreen(kColorDarkBlue);
+					_vm->renderText("Schlafdauer in Tagen:", 30, 85, kColorWhite99);
+					uint daysSleep = 0;
+					do {
+						input.clear();
+						_vm->renderBox(150, 85, 150, 8, kColorDarkBlue);
+						_gm->edit(input, 150, 85, 10);
+
+						if (_gm->_key.keycode == Common::KEYCODE_ESCAPE) {
+							break;
+						} else {
+							daysSleep = input.asUint64();
+							for (uint i = 0; i < input.size(); i++) {
+								if (!Common::isDigit(input[i])) {
+									daysSleep = 0;
+									break;
+								}
+							}
+						}
+						if (daysSleep != 0) {
+							_gm->_state.timeSleep = daysSleep;
+							_vm->renderText("Bitte legen Sie sich in die angezeigte Schlafkammer.", 30, 105, kColorWhite99);
+							_gm->wait2(18);
+							setSectionVisible(5, true);
+						}
+					} while (daysSleep == 0);
+				} else {
+					_vm->renderText("Falsches Passwort", 100, 125, kColorLightRed);
+					_gm->wait2(18);
 				}
 			}
-			if (strcmp(input,codeword_DE) != 0) {
-				_vm->renderText("Falsches Passwort", 100, 125, kColorLightRed);
-				_gm->wait2(18);
-				goto escape;
-			}
-			_gm->great(6);
-			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
-			_vm->renderText("Schlafdauer in Tagen:", 30, 85, kColorWhite99);
-			do {
-				_vm->renderBox(150, 85, 150, 8, kColorDarkBlue);
-				input[0] = 0;
-				do {
-					_gm->edit(input, 150, 85, 10);
-				} while ((_gm->_key.keycode != Common::KEYCODE_RETURN) &&
-				         (_gm->_key.keycode != Common::KEYCODE_ESCAPE));
-				if (_gm->_key.keycode == Common::KEYCODE_ESCAPE) {
-					goto escape;
-				}
-				l = atol(input);
-				for (uint i = 0; i < strlen(input); i++) {
-					if ((input[i] < '0') || (input[i] > '9')) {
-						l = 0;
-					}
-				}
-			} while (l == 0);
-			_gm->_state.timeSleep = l;
-			_vm->renderText("Bitte legen Sie sich in die angezeigte Schlafkammer.",30,105,kColorWhite99);
-			_gm->wait2(18);
-			setSectionVisible(5, true);
 		}
-        escape:
-		_vm->renderRoom(*this);
-		_gm->showMenu();
-		_gm->drawMapExits();
-		_gm->palette();
+
 		_gm->_guiEnabled = true;
+		input.clear();
 	} else if (((verb == ACTION_WALK) || (verb == ACTION_USE)) &&
 	           ((obj1._id == CABINS) || (obj1._id == CABIN))) {
-		r = _gm->_rooms[AIRLOCK];
+		room = _gm->_rooms[AIRLOCK];
 		if (!(obj1._id == CABIN) || !isSectionVisible(5)) {
 			_vm->renderMessage("Es würde wenig bringen,|sich in eine Schlafkammer zu legen,|die nicht eingeschaltet ist.");
-		} else if (r->getObject(5)->hasProperty(WORN)) {
+		} else if (room->getObject(5)->hasProperty(WORN)) {
 			_vm->renderMessage("Dazu mußt du erst den Raumanzug ausziehen.");
 		} else {
 			_vm->paletteFadeOut();
 			_gm->drawImage(_gm->invertSection(5));
 			_gm->drawImage(_gm->invertSection(4));
-			r = _gm->_rooms[GENERATOR];
-			if (r->isSectionVisible(9)) {
+			room = _gm->_rooms[GENERATOR];
+			if (room->isSectionVisible(9)) {
 				energy = &_gm->_state.landingModuleEnergy;
 			} else {
 				energy = &_gm->_state.shipEnergy;
@@ -196,38 +186,38 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 			if (_gm->_state.timeSleep >= *energy) {
 				_gm->_state.timeSleep = *energy;
-				if (r->isSectionVisible(9)) {
-					r = _gm->_rooms[LANDINGMODULE]; // Monitors off
-					r->setSectionVisible(2, false);
-					r->setSectionVisible(7, false);
-					r->setSectionVisible(8, false);
-					r->setSectionVisible(9, false);
-					r->setSectionVisible(10, false);
+				if (room->isSectionVisible(9)) {
+					room = _gm->_rooms[LANDINGMODULE]; // Monitors off
+					room->setSectionVisible(2, false);
+					room->setSectionVisible(7, false);
+					room->setSectionVisible(8, false);
+					room->setSectionVisible(9, false);
+					room->setSectionVisible(10, false);
 				}
 			}
 			if (_gm->_state.timeSleep == _gm->_state.time) {
 				_gm->drawImage(3);
-				r = _gm->_rooms[COCKPIT];
-				r->setSectionVisible(23, true);
-				r = _gm->_rooms[CABIN_R2];
-				r->setSectionVisible(5, false);
-				r->setSectionVisible(6, true);
-				r->getObject(2)->_click = 10;
-				r = _gm->_rooms[HOLD];
-				r->setSectionVisible(0, false);
-				r->setSectionVisible(1, true);
-				r->getObject(1)->_click = 255;
-				r->getObject(3)->_click = 255;
-				r = _gm->_rooms[GENERATOR];
-				r->setSectionVisible(6, false);
-				r->setSectionVisible(7, true);
-				r->getObject(1)->_click = 14;
-				if (r->isSectionVisible(1)) {
-					r->setSectionVisible(10, true);
+				room = _gm->_rooms[COCKPIT];
+				room->setSectionVisible(23, true);
+				room = _gm->_rooms[CABIN_R2];
+				room->setSectionVisible(5, false);
+				room->setSectionVisible(6, true);
+				room->getObject(2)->_click = 10;
+				room = _gm->_rooms[HOLD];
+				room->setSectionVisible(0, false);
+				room->setSectionVisible(1, true);
+				room->getObject(1)->_click = 255;
+				room->getObject(3)->_click = 255;
+				room = _gm->_rooms[GENERATOR];
+				room->setSectionVisible(6, false);
+				room->setSectionVisible(7, true);
+				room->getObject(1)->_click = 14;
+				if (room->isSectionVisible(1)) {
+					room->setSectionVisible(10, true);
 				}
-				if (r->isSectionVisible(12)) {
-					r->setSectionVisible(12, false);
-					r->setSectionVisible(11, true);
+				if (room->isSectionVisible(12)) {
+					room->setSectionVisible(12, false);
+					room->setSectionVisible(11, true);
 				}
 			}
 			_gm->_state.time -= _gm->_state.timeSleep;
@@ -237,8 +227,8 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_state.alarmOn = (_gm->_state.timeAlarmSystem > _vm->getDOSTicks());
 			if (!*energy) {
 				_gm->turnOff();
-				r = _gm->_rooms[GENERATOR];
-				r->setSectionVisible(4, r->isSectionVisible(2));
+				room = _gm->_rooms[GENERATOR];
+				room->setSectionVisible(4, room->isSectionVisible(2));
 			}
 			if (_gm->_state.time == 0) {
 				_gm->saveTime();
@@ -2407,8 +2397,7 @@ bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
-	// TODO: use String for manipulation instead of raw char string?
-	char input[11];
+	Common::String input;
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        obj1.hasProperty(OPENED)) {
 		_gm->drawImage(_gm->invertSection(9));
@@ -2433,15 +2422,14 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 	           !obj1.hasProperty(OPENED)) {
 		_vm->renderMessage("Welche Zahlenkombination willst|du eingeben?");
 		_vm->renderBox(160, 70, 70, 10, kColorDarkBlue);
-		input[0] = 0;
 		do
 			_gm->edit(input, 161, 71, 10);
 		while ((_gm->_key.keycode != Common::KEYCODE_ESCAPE) &&
 		       (_gm->_key.keycode != Common::KEYCODE_RETURN));
 		_vm->removeMessage();
 		if (_gm->_key.keycode != Common::KEYCODE_ESCAPE) {
-			if (strcmp(input, "89814") != 0) {
-				if (strcmp(input, "41898") == 0)
+			if (!input.equals("89814")) {
+				if (input.equals("41898"))
 					_vm->renderMessage("Hmm, das haut nicht ganz hin,|aber irgendwie muá die Zahl|mit dem Code zusammenhngen.");
 				else
 					_vm->renderMessage("Das war die falsche Kombination.");

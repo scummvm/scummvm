@@ -179,7 +179,6 @@ public:
 	virtual void onEntrance();
 
 private:
-	Common::String _input;
 	Common::String _codeword_DE;
 	Common::String _codeword_EN;
 };
