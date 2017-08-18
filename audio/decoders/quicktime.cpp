@@ -299,7 +299,7 @@ int QuickTimeAudioDecoder::QuickTimeAudioTrack::readBuffer(int16 *buffer, const 
 }
 
 bool QuickTimeAudioDecoder::QuickTimeAudioTrack::allDataRead() const {
-	return _curEdit == _parentTrack->editCount;
+	return _curEdit == _parentTrack->editList.size();
 }
 
 bool QuickTimeAudioDecoder::QuickTimeAudioTrack::endOfData() const {
@@ -314,7 +314,7 @@ bool QuickTimeAudioDecoder::QuickTimeAudioTrack::seek(const Timestamp &where) {
 
 	if (where >= getLength()) {
 		// We're done
-		_curEdit = _parentTrack->editCount;
+		_curEdit = _parentTrack->editList.size();
 		return true;
 	}
 
@@ -324,8 +324,7 @@ bool QuickTimeAudioDecoder::QuickTimeAudioTrack::seek(const Timestamp &where) {
 	// Now queue up some audio and skip whatever we need to skip
 	Timestamp samplesToSkip = where.convertToFramerate(getRate()) - getCurrentTrackTime();
 	queueAudio();
-	if (_parentTrack->editList[_curEdit].mediaTime != -1)
-		skipSamples(samplesToSkip, _queue);
+	skipSamples(samplesToSkip, _queue);
 
 	return true;
 }
@@ -427,7 +426,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::findEdit(const Timestamp &posit
 	// as the position is >= to the edit's start time, it is considered to be in that
 	// edit. seek() already figured out if we reached the last edit, so we don't need
 	// to handle that case here.
-	for (_curEdit = 0; _curEdit < _parentTrack->editCount - 1; _curEdit++) {
+	for (_curEdit = 0; _curEdit < _parentTrack->editList.size() - 1; _curEdit++) {
 		Timestamp nextEditTime(0, _parentTrack->editList[_curEdit + 1].timeOffset, _decoder->_timeScale);
 		if (position < nextEditTime)
 			break;

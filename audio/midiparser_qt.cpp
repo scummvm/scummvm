@@ -423,7 +423,7 @@ void MidiParser_QT::initFromContainerTracks() {
 		if (tracks[i]->codecType == CODEC_TYPE_MIDI) {
 			assert(tracks[i]->sampleDescs.size() == 1);
 
-			if (tracks[i]->editCount != 1)
+			if (tracks[i]->editList.size() != 1)
 				warning("Unhandled QuickTime MIDI edit lists, things may go awry");
 
 			MIDITrackInfo trackInfo;
