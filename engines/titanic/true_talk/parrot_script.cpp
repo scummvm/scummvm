@@ -52,7 +52,7 @@ int ParrotScript::chooseResponse(const TTroomScript *roomScript, const TTsentenc
 }
 
 int ParrotScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
-	if (processEntries(roomScript, sentence) == 2) {
+	if (processEntries(roomScript, sentence) != 2) {
 		int tagId = g_vm->_trueTalkManager->_quotes.find(sentence->_normalizedLine);
 		if (!tagId || chooseResponse(roomScript, sentence, tagId) != 2) {
 			addResponse(getDialogueId(sentence->checkCategory() ? 280248 : 280235));
