@@ -29,6 +29,7 @@ namespace Titanic {
 
 /*
  * This class combines a position and orientation in 3D space
+ * TODO: Merge with DAffine
  */
 class FPose : public FMatrix {
 public:
@@ -59,7 +60,10 @@ public:
 	 */
 	void copyFrom(const FMatrix &src);
 
-	FPose fn4() const;
+        /**
+         * The inverse of rotation and the position vector
+         */
+	FPose inverseTransform() const;
 };
 
 } // End of namespace Titanic

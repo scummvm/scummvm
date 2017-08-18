@@ -115,69 +115,29 @@ void DAffine::setRotationMatrix(Axis axis, double angleDeg) {
 	}
 }
 
-//TODO: Check math and provide source
+//TODO: Check column 4 math
 DAffine DAffine::inverseTransform() const {
-	double val1 = _col1._x * _col3._z * _col2._y;
-	double val2 = 0.0;
-	double val3 = val1;
+        DAffine m;
+       //Inverse of rotation matrix is the transpose
+	m._col1._x = _col1._x;
+	m._col2._x = _col1._y;
+	m._col3._x = _col1._z;
+	m._col1._y = _col2._x;
+	m._col2._y = _col2._y;
+	m._col3._y = _col2._z;
+	m._col1._z = _col3._x;
+	m._col2._z = _col3._y;
+	m._col3._z = _col3._z;
 
-	if (val1 < 0.0) {
-		val2 = val3;
-		val1 = 0.0;
-	}
-
-	double val4 = _col3._x * _col1._y * _col2._z;
-	if (val4 < 0.0)
-		val2 = val2 + val4;
-	else
-		val1 = val1 + val4;
-
-	double val5 = _col3._y * _col1._z * _col2._x;
-	if (val5 < 0.0)
-		val2 = val2 + val5;
-	else
-		val1 = val1 + val5;
-
-	if (-(_col3._x * _col2._y * _col1._z) < 0.0)
-		val2 = val2 - _col3._x * _col2._y * _col1._z;
-	else
-		val1 = val1 - _col3._x * _col2._y * _col1._z;
-	if (-(_col1._y * _col3._z * _col2._x) < 0.0)
-		val2 = val2 - _col1._y * _col3._z * _col2._x;
-	else
-		val1 = val1 - _col1._y * _col3._z * _col2._x;
-
-	val3 = _col3._y * _col2._z;
-	double val6 = -(_col1._x * val3);
-	if (val6 < 0.0)
-		val2 = val2 + val6;
-	else
-		val1 = val1 + val6;
-
-	double val7 = val2 + val1;
-	assert(!(val7 == 0.0 || fabs(val7 / (val1 - val2)) < 1.0e-10));
-
-	double val8 = _col3._z * _col2._y;
-	double val9 = 1.0 / val7;
-
-	DAffine m;
-	m._col1._x = (val8 - val3) * val9;
-	m._col2._x = -((_col3._z * _col2._x - _col3._x * _col2._z) * val9);
-	m._col3._x = (_col3._y * _col2._x - _col3._x * _col2._y) * val9;
-	m._col1._y = -((_col1._y * _col3._z - _col3._y * _col1._z) * val9);
-	m._col2._y = (_col1._x * _col3._z - _col3._x * _col1._z) * val9;
-	m._col3._y = -((_col1._x * _col3._y - _col3._x * _col1._y) * val9);
-	m._col1._z = (_col1._y * _col2._z - _col2._y * _col1._z) * val9;
-	m._col2._z = -((_col1._x * _col2._z - _col1._z * _col2._x) * val9);
-	m._col3._z = (_col1._x * _col2._y - _col1._y * _col2._x) * val9;
-
-	m._col4._x = -(m._col1._x * _col4._x + _col4._y * m._col2._x
-		+ _col4._z * m._col3._x);
-	m._col4._y = -(_col4._z * m._col3._y + _col4._y * m._col2._y
-		+ _col4._x * m._col1._y);
-	m._col4._z = -(_col4._z * m._col3._z + _col4._x * m._col1._z
-		+ _col4._y * m._col2._z);
-
+	m._col4._x = -(_col4._x * m._col1._x
+                    + _col4._y * m._col2._x
+		     + _col4._z * m._col3._x);
+	m._col4._y = -(_col4._x * m._col1._y
+                    + _col4._y * m._col2._y
+                    + _col4._z * m._col3._y);
+	m._col4._z = -(_col4._x * m._col1._z
+                    + _col4._y * m._col2._z
+                    + _col4._z * m._col3._z);
 	return m;
 }
 
