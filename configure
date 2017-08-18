@@ -164,6 +164,7 @@ _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
 _global_constructors=no
+_no_undefined_var_template=no
 _bink=yes
 _cloud=auto
 # Default vkeybd/keymapper/eventrec options
@@ -2023,12 +2024,29 @@ echocheck "whether -Wglobal-constructors work"
 cat > $TMPC << EOF
 int main() { return 0; }
 EOF
-cc_check -Wglobal-constructors && _global_constructors=yes
+cc_check -Wglobal-constructors -Werror && _global_constructors=yes
 
 if test "$_global_constructors" = yes; then
 	append_var CXXFLAGS "-Wglobal-constructors"
 fi
 echo $_global_constructors
+
+# If the compiler supports the -Wundefined-var-template flag, silence that warning.
+# We get this warning a lot with regard to the Singleton class as we explicitly
+# instantiate each specialisation. An alternate way to deal with it would be to
+# change the way we instantiate the singleton classes as done in PR #967.
+# Note: we check the -Wundefined-var-template as gcc does not error out on unknown
+# -Wno-xxx flags.
+echocheck "whether -Wno-undefined-var-template work"
+cat > $TMPC << EOF
+int main() { return 0; }
+EOF
+cc_check -Wundefined-var-template -Werror && _no_undefined_var_template=yes
+
+if test "$_no_undefined_var_template" = yes; then
+	append_var CXXFLAGS "-Wno-undefined-var-template"
+fi
+echo $_no_undefined_var_template
 
 echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
 if `which $_host_alias-strings >/dev/null 2>&1`; then
