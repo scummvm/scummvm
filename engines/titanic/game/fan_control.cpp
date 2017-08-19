@@ -107,7 +107,7 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 			case 2:
 				// Fan Speed button
 				if (_fanOn) {
-					_state = (_state + 1) % 4;
+					_state = (_state + 1) % 3;
 					switch (_state) {
 					case 0:
 						playMovie(18, 24, 0);
