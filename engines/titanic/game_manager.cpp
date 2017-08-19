@@ -81,8 +81,8 @@ void CGameManager::preLoad() {
 	_timers.destroyContents();
 	_soundMaker = nullptr;
 
-	_trueTalkManager.preLoad();
 	_sound.preLoad();
+	_trueTalkManager.preLoad();
 }
 
 void CGameManager::postLoad(CProjectItem *project) {
