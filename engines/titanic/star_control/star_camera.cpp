@@ -362,7 +362,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
        }
 }
 
-bool CStarCamera::adDAffineRow(const FVector v) {
+bool CStarCamera::addLockedStar(const FVector v) {
 	if (_star_lock_state == THREE_LOCKED)
 		return false;
 
@@ -376,7 +376,7 @@ bool CStarCamera::adDAffineRow(const FVector v) {
 	return true;
 }
 
-bool CStarCamera::removeMatrixRow() {
+bool CStarCamera::removeLockedStar() {
 	if (_star_lock_state == ZERO_LOCKED)
 		return false;
 

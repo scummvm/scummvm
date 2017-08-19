@@ -430,7 +430,7 @@ void CStarView::lockStar() {
 
 void CStarView::unlockStar() {
 	if (_starField && !_showingPhoto) {
-		_camera.removeMatrixRow();
+		_camera.removeLockedStar();
 		_starField->fn8(_photoSurface);
 	}
 }

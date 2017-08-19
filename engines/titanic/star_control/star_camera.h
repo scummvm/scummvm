@@ -165,13 +165,18 @@ public:
 	virtual StarLockState getStarLockState() const { return _star_lock_state; }
 
 	/**
-	 * Adds the row for a locked in marker
+	 * Adds the row for a locked in marker/star
 	 * @remarks		This can't be a pass-by-reference, since adding
 	 * the vector for the star destroys the calling star vector
 	 */
-	virtual bool adDAffineRow(const FVector v);
+	virtual bool addLockedStar(const FVector v);
 
-	virtual bool removeMatrixRow();
+	/**
+	 * Removes the most recent locked in marker/star
+	 * @remarks		This can't be a pass-by-reference, since adding
+	 * the vector for the star destroys the calling star vector
+	 */
+	virtual bool removeLockedStar();
 	virtual void proc36(double *v1, double *v2, double *v3, double *v4);
 
 	/**
