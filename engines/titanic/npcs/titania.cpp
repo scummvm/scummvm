@@ -149,9 +149,10 @@ bool CTitania::ActMsg(CActMsg *msg) {
 		playSound("z#47.wav", 100);
 		changeView("Titania.Node 7.S", "");
 
+		// Re-enable control, and reset bomb's volume back to normal 60%
 		petShow();
 		enableMouse();
-		CSetFrameMsg frameMsg;
+		CSetFrameMsg frameMsg(60);
 		frameMsg.execute("Bomb");
 
 	} else if (msg->_action == "CheckHead") {
@@ -203,11 +204,14 @@ bool CTitania::EnterViewMsg(CEnterViewMsg *msg) {
 		disableMouse();
 		petHide();
 
+		// The Bomb uses the CSetFrameMsg as a hack for setting the volume.
+		// In case it's currently active, set it to a quieter 25% so that
+		// it won't obscure Titania's speech.
 		CSetFrameMsg frameMsg;
 		frameMsg._frameNumber = 25;
 		frameMsg.execute("Bomb");
-		playCutscene(0, 52);
 
+		playCutscene(0, 52);
 		setVisible(false);
 		CActMsg actMsg("TitaniaSpeech");
 		actMsg.execute("TitaniaSpeech");
