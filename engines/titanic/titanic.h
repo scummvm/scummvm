@@ -191,6 +191,16 @@ public:
 	 * Displays an error message in a GUI dialog
 	 */
 	void GUIError(const char *msg, ...) GCC_PRINTF(2, 3);
+
+	/**
+	 * Shows the ScummVM GMM save dialog
+	 */
+	void showScummVMSaveDialog();
+
+	/**
+	 * Shows the ScummVM GMM load dialog
+	 */
+	void showScummVMRestoreDialog();
 };
 
 extern TitanicEngine *g_vm;

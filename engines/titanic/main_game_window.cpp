@@ -341,6 +341,12 @@ void CMainGameWindow::keyDown(Common::KeyState keyState) {
 			_gameManager->_gameState.changeView(newView, nullptr);
 		}
 
+	} else if (keyState.keycode == Common::KEYCODE_F5) {
+		// Show the GMM save dialog
+		g_vm->showScummVMSaveDialog();
+	} else if (keyState.keycode == Common::KEYCODE_F7) {
+		// Show the GMM load dialog
+		g_vm->showScummVMRestoreDialog();
 	} else if (_inputAllowed) {
 		_gameManager->_inputTranslator.keyDown(keyState);
 	}

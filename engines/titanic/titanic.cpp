@@ -25,9 +25,11 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
+#include "gui/saveload.h"
 #include "titanic/titanic.h"
 #include "titanic/debugger.h"
 #include "titanic/carry/hose.h"
@@ -249,6 +251,43 @@ void TitanicEngine::GUIError(const char *msg, ...) {
 	va_end(va);
 
 	GUIErrorMessage(buffer);
+}
+
+
+void TitanicEngine::showScummVMSaveDialog() {
+	if (!canSaveGameStateCurrently())
+		return;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+	int slot = dialog->runModalWithCurrentTarget();
+	if (slot >= 0) {
+		Common::String desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			// create our own description for the saved game, the user didn't enter it
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+
+		// Save the game
+		saveGameState(slot, desc);
+	}
+
+	delete dialog;
+}
+
+void TitanicEngine::showScummVMRestoreDialog() {
+	if (!canLoadGameStateCurrently())
+		return;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+
+	int slot = dialog->runModalWithCurrentTarget();
+	if (slot >= 0) {
+		loadGameState(slot);
+	}
+
+	delete dialog;
 }
 
 } // End of namespace Titanic
