@@ -288,7 +288,7 @@ void QSoundManager::setVolume(int handle, uint volume, uint seconds) {
 			_channelsVolume[slot._channel] = volume;
 			updateVolume(slot._channel, seconds * 1000);
 
-			if (volume) {
+			if (!volume) {
 				uint ticks = g_vm->_events->getTicksCount() + seconds * 1000;
 				if (!slot._ticks || ticks >= slot._ticks)
 					slot._ticks = ticks;
