@@ -181,23 +181,30 @@ bool TitanicEngine::canLoadGameStateCurrently() {
 	CGameManager *gameManager = _window->_gameManager;
 	CScreenManager *screenMan = CScreenManager::_screenManagerPtr;
 
-	if (!_window->_inputAllowed || !gameManager->_gameState._petActive)
+	if (!_window->_inputAllowed)
 		return false;
 	if (screenMan && screenMan->_inputHandler->isLocked())
 		return false;
 
 	CProjectItem *project = gameManager->_project;
 	if (project) {
-		CPetControl *pet = project->getPetControl();
-		if (pet && !pet->isAreaUnlocked())
-			return false;
+		if (gameManager->_gameState._petActive) {
+			CPetControl *pet = project->getPetControl();
+			if (pet && !pet->isAreaUnlocked())
+				return false;
+		}
+	} else {
+		return false;
 	}
 
 	return true;
 }
 
 bool TitanicEngine::canSaveGameStateCurrently() {
-	return canLoadGameStateCurrently();
+	CGameManager *gameManager = _window->_gameManager;
+
+	return gameManager->_gameState._petActive &&
+		canLoadGameStateCurrently();
 }
 
 Common::Error TitanicEngine::loadGameState(int slot) {
