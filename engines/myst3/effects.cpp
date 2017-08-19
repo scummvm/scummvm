@@ -264,6 +264,9 @@ void WaterEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surf
 }
 
 void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics::Surface *mask, bool bottomFace, int32 waterEffectAmpl) {
+	int32 waterEffectAttenuation = _vm->_state->getWaterEffectAttenuation();
+	int32 waterEffectAmplOffset = _vm->_state->getWaterEffectAmplOffset();
+
 	int8 *hDisplacement = nullptr;
 	int8 *vDisplacement = nullptr;
 
@@ -279,7 +282,7 @@ void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics
 
 	for (uint y = 0; y < dst->h; y++) {
 		if (!bottomFace) {
-			uint32 strength = (320 * (9 - y / 64)) / _vm->_state->getWaterEffectAttenuation();
+			uint32 strength = (320 * (9 - y / 64)) / waterEffectAttenuation;
 			if (strength > 4)
 				strength = 4;
 			hDisplacement = _horizontalDisplacements[strength];
@@ -293,7 +296,7 @@ void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics
 				int8 yOffset = vDisplacement[y];
 
 				if (maskValue < 8) {
-					maskValue -= _vm->_state->getWaterEffectAmplOffset();
+					maskValue -= waterEffectAmplOffset;
 					if (maskValue < 0) {
 						maskValue = 0;
 					}
