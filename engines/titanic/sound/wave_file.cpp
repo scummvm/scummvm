@@ -204,9 +204,14 @@ void CWaveFile::unlock(const int16 *ptr) {
 	// No implementation needed in ScummVM
 }
 
-Audio::SoundHandle CWaveFile::play(byte volume) {
-	Audio::SeekableAudioStream *stream = createAudioStream();
+Audio::SoundHandle CWaveFile::play(int numLoops, byte volume) {
+	Audio::SeekableAudioStream *audioStream = createAudioStream();
 	Audio::SoundHandle handle;
+
+	Audio::AudioStream *stream = audioStream;
+	if (numLoops != 0)
+		stream = new Audio::LoopingAudioStream(audioStream,
+			(numLoops == -1) ? 0 : numLoops);
 
 	_mixer->playStream(_soundType, &handle, stream, -1,
 		volume, 0, DisposeAfterUse::NO);

@@ -126,8 +126,12 @@ public:
 
 	/**
 	 * Plays the wave file
+	 * @param numLoops		Number of times to loop. 0 for none,
+	 *		-1 for infinite, and >0 for specified number of times
+	 * @param volume		Volume to play at
+	 * @returns				Audio handle for started sound
 	 */
-	Audio::SoundHandle play(byte volume);
+	Audio::SoundHandle play(int numLoops, byte volume);
 };
 
 } // End of namespace Titanic
