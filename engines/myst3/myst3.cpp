@@ -1579,6 +1579,8 @@ void Myst3Engine::playMovieGoToNode(uint16 movie, uint16 node) {
 		getMovieLookAt(movie, false, endPitch, endHeading);
 		_state->lookAt(endPitch, endHeading);
 	}
+
+	setupTransition();
 }
 
 void Myst3Engine::playMovieFullFrame(uint16 movie) {
