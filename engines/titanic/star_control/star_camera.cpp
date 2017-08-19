@@ -563,21 +563,24 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._col2 -= m4._col1;
 	m4._col4 -= m4._col1;
 
+       FMatrix m6 = _viewport.getOrientation();
+
        double unused_scale=0.0;
        if (!m4._col2.normalize(unused_scale) ||
            !m4._col3.normalize(unused_scale) ||
            !m4._col4.normalize(unused_scale) ) {  // Do the normalizations, put the scale amount in unused_scale,
-                                                  // but if any of the normalizations are unsuccessful,
-                                                  // crash
+                                                  // but if any of the normalizations are unsuccessful, crash
               assert(unused_scale);
        }
        
 	m5.set(m4._col3, m4._col2, m4._col4);
 
 	FVector newPos = m4._col1;
-	FMatrix m6 = _viewport.getOrientation();
-	_mover->proc8(_viewport._position, newPos, m6, m5);
-
+	
+       if (_viewport._position != newPos) {
+              // Only change view if positions are different
+	       _mover->proc8(_viewport._position, newPos, m6, m5);
+       }
 	CStarVector *sv = new CStarVector(this, v);
 	_mover->setVector(sv);
 }
@@ -591,7 +594,11 @@ void CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
 	FVector newPos = viewport->_position;
 	FVector oldPos = _viewport._position;
 
-	_mover->proc8(oldPos, newPos, oldOr, newOr);
+       if (oldPos != newPos) {
+              // Only change view if positions are different
+	       _mover->proc8(oldPos, newPos, oldOr, newOr);
+       }
+
 	CStarVector *sv = new CStarVector(this, v);
 	_mover->setVector(sv);
 }
