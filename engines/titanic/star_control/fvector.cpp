@@ -48,20 +48,25 @@ FVector FVector::crossProduct(const FVector &src) const {
 	);
 }
 
-float FVector::normalize() {
-	float hyp = sqrt(_x * _x + _y * _y + _z * _z);
-	assert(hyp);
+bool FVector::normalize(float & hyp) {
+	hyp = sqrt(_x * _x + _y * _y + _z * _z);
+	if (hyp==0) {
+              return false;
+       }
 
 	_x *= 1.0 / hyp;
 	_y *= 1.0 / hyp;
 	_z *= 1.0 / hyp;
-	return hyp;
+	return true;
 }
 
 FVector FVector::addAndNormalize(const FVector &v) const {
 	FVector tempV(_x + v._x, _y + v._y, _z + v._z);
-	tempV.normalize();
-
+       float unused_scale=0.0;
+       if (!tempV.normalize(unused_scale)) {  // Do the normalization, put the scale amount in unused_scale,
+                                              // but if it is unsuccessful, crash
+              assert(unused_scale);
+       }
 	return tempV;
 }
 

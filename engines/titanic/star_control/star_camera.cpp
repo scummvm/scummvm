@@ -276,9 +276,14 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV4 -= tempV1;
 		tempV5 -= tempV1;
 		tempV6 -= tempV1;
-		tempV4.normalize();
-		tempV5.normalize();
-		tempV6.normalize();
+
+              float unused_scale=0.0;
+              if (!tempV4.normalize(unused_scale) ||
+                  !tempV5.normalize(unused_scale) ||
+                  !tempV6.normalize(unused_scale)) {  // Do the normalization, put the scale amount in unused_scale,
+                                                      // but if it is unsuccessful, crash
+                     assert(unused_scale);
+              }
 
 		tempV1 += row1;
 		m1.set(tempV4, tempV5, tempV6);
@@ -345,9 +350,15 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		mrow1 -= tempV3;
 		mrow2 -= tempV3;
 		mrow3 -= tempV3;
-		mrow1.normalize();
-		mrow2.normalize();
-		mrow3.normalize();
+
+              double unused_scale=0.0;
+              if (!mrow1.normalize(unused_scale) ||
+                  !mrow2.normalize(unused_scale) ||
+                  !mrow3.normalize(unused_scale)) {  // Do the normalization, put the scale amount in unused_scale,
+                                                     // but if it is unsuccessful, crash
+                     assert(unused_scale);
+              }
+
 		tempV16 = tempV3;
 
 		m3.set(mrow1, mrow2, mrow3);
@@ -459,8 +470,12 @@ void CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
 	tempV._x = val9 - _viewport._valArray[2];
 	tempV._y = val8;
 
-	v3.normalize();
-	tempV.normalize();
+       float unused_scale=0.0;
+       if (!v3.normalize(unused_scale) ||
+        !tempV.normalize(unused_scale)) {  // Do the normalization, put the scale amount in unused_scale,
+                                           // but if it is unsuccessful, crash
+              assert(unused_scale);
+       }
 
 	FMatrix matrix = _viewport.getOrientation();
 	const FVector &pos = _viewport._position;
@@ -548,9 +563,15 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._col2 -= m4._col1;
 	m4._col4 -= m4._col1;
 
-	m4._col3.normalize();
-	m4._col2.normalize();
-	m4._col4.normalize();
+       double unused_scale=0.0;
+       if (!m4._col2.normalize(unused_scale) ||
+           !m4._col3.normalize(unused_scale) ||
+           !m4._col4.normalize(unused_scale) ) {  // Do the normalizations, put the scale amount in unused_scale,
+                                                  // but if any of the normalizations are unsuccessful,
+                                                  // crash
+              assert(unused_scale);
+       }
+       
 	m5.set(m4._col3, m4._col2, m4._col4);
 
 	FVector newPos = m4._col1;
