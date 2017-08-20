@@ -23,13 +23,13 @@
 #ifndef TITANIC_FMATRIX_H
 #define TITANIC_FMATRIX_H
 
-#include "titanic/support/simple_file.h"
 #include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
 class DAffine;
 class DVector;
+class SimpleFile;
 
 /**
  * Floating point matrix class.

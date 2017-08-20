@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/daffine.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
@@ -39,7 +40,7 @@ void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C) {
 	C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
 }
 
-// member functions
+// Member functions
 
 FMatrix::FMatrix() :
 	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
@@ -126,10 +127,18 @@ void FMatrix::set(const FVector &v) {
 	_row2 = _row3.fn1();
 
 	_row1 = _row3.crossProduct(_row2);
-	_row1.normalize();
+
+       float unused_scale=0.0;
+       if (!_row1.normalize(unused_scale)) {  // Do the normalization, put the scale amount in unused_scale,
+                                              // but if it is unsuccessful, crash
+              assert(unused_scale);
+       }
 
 	_row2 = _row3.crossProduct(_row1);
-	_row2.normalize();
+       if (!_row2.normalize(unused_scale)) {  // Do the normalization, put the scale amount in unused_scale,
+                                              // but if it is unsuccessful, crash
+              assert(unused_scale);
+       }
 }
 
 void FMatrix::matRProd(const FMatrix &m) {

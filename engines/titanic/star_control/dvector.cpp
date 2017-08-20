@@ -26,14 +26,16 @@
 
 namespace Titanic {
 
-double DVector::normalize() {
-	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
-	assert(hyp);
+bool DVector::normalize(double & hyp) {
+	hyp = sqrt(_x * _x + _y * _y + _z * _z);
+	if (hyp==0) {
+              return false;
+       }
 
 	_x *= 1.0 / hyp;
 	_y *= 1.0 / hyp;
 	_z *= 1.0 / hyp;
-	return hyp;
+	return true;
 }
 
 double DVector::getDistance(const DVector &src) {
@@ -73,7 +75,11 @@ void DVector::rotVectAxisY(double angleDeg) {
 DVector DVector::getAnglesAsVect() const {
 	DVector vector = *this;
 	DVector dest;
-	dest._x = vector.normalize(); // scale that makes this vector have magnitude=1, also does the scaling
+
+       if (!vector.normalize(dest._x)) {  // Makes this vector have magnitude=1, put the scale amount in dest._x,
+                                          // but if it is unsuccessful, crash
+              assert(dest._x);
+       }
 	dest._y = acos(vector._y);    // radian distance/angle that this vector's y component is from the +y axis,
                                       // result is restricted to [0,pi]
 	dest._z = atan2(vector._x,vector._z); // result is restricted to [-pi,pi]

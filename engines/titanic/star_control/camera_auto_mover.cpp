@@ -21,7 +21,10 @@
  */
 
 #include "titanic/star_control/camera_auto_mover.h"
+#include "titanic/star_control/fmatrix.h"
+#include "titanic/star_control/error_code.h"
 #include "common/textconsole.h"
+
 
 namespace Titanic {
 
@@ -46,8 +49,12 @@ void CCameraAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
 	_srcPos = oldPos;
 	_destPos = newPos;
 	_posDelta = _destPos - _srcPos;
-	_distance = _posDelta.normalize();
-
+       float temp = 0.0;
+	if (!_posDelta.normalize(temp)) { // Do the normalization, put the scale amount in temp,
+                                         // but if it is unsuccessful, crash
+              assert(temp);
+       }
+       _distance = temp;
 	_active = false;
 	_field34 = false;
 	_transitionPercent = 1.0;
@@ -70,8 +77,12 @@ void CCameraAutoMover::setPath(const FVector &srcV, const FVector &destV, const 
 	_srcPos = srcV;
 	_destPos = destV;
 	_posDelta = _destPos - _srcPos;
-	_distance = _posDelta.normalize();
-
+       float temp = 0.0;
+	if (!_posDelta.normalize(temp)) { // Do the normalization, put the scale amount in temp,
+                                         // but if it is unsuccessful, crash
+              assert(temp);
+       }
+       _distance = temp;
 	_active = false;
 	_field34 = false;
 	_field40 = -1;

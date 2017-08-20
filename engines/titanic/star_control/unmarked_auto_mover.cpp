@@ -21,6 +21,8 @@
  */
 
 #include "titanic/star_control/unmarked_auto_mover.h"
+#include "titanic/star_control/error_code.h"
+#include "common/array.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
@@ -96,7 +98,12 @@ int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orie
 
 	v2 = orientation._row3;
 	v3 = _destPos - pos;
-	v3.normalize();
+
+       float unused_scale=0.0;
+       if (!v3.normalize(unused_scale)) {  // Do the normalization, put the scale amount in unused_scale,
+                                           // but if it is unsuccessful, crash
+              assert(unused_scale);
+       }
 
 	double val = orientation._row3._x * v3._x + orientation._row3._y * v3._y + orientation._row3._z * v3._z;
 	bool flag = false;
