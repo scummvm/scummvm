@@ -174,8 +174,9 @@ bool CTitania::ActMsg(CActMsg *msg) {
 			workingMsg3._value = _speechCentre ? "Working" : "Random";
 		}
 
-		if (_centralCore && _eye1 && _eye2 && _ear1 && _ear2 && _nose && _mouth
-				&& _speechCentre && _olfactoryCentre && _auditoryCentre) {
+		if (_centralCore && _eye1 && _eye2 && _ear1 && _ear2 && _nose
+				&& _mouth && _visionCentre && _speechCentre
+				&& _olfactoryCentre && _auditoryCentre) {
 			CProximity prox(Audio::Mixer::kSpeechSoundType);
 			playSound("z#47.wav", prox);
 

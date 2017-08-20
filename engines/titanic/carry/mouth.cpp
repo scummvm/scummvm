@@ -74,6 +74,11 @@ bool CMouth::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 		_field13C = true;
 	}
 
+	// WORKAROUND: If Mouth is removed from Titania after inserting,
+	// message the Titania control so it can be flagged as removed
+	CTakeHeadPieceMsg headpieceMsg(getName());
+	headpieceMsg.execute("TitaniaControl");
+
 	return true;
 }
 
