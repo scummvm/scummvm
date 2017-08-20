@@ -700,7 +700,6 @@ bool CParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 }
 
 bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
-	warning("PAN");
 	if (_state != PARROT_IN_CAGE) {
 		CActMsg actMsg("PanAwayFromParrot");
 		actMsg.execute(msg->_target);

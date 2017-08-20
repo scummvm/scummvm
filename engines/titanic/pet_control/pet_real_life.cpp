@@ -71,8 +71,7 @@ bool CPetRealLife::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 }
 
 bool CPetRealLife::KeyCharMsg(CKeyCharMsg *msg) {
-	_glyphs.KeyCharMsg(msg->_key);
-	return true;
+	return _glyphs.KeyCharMsg(msg->_key);
 }
 
 bool CPetRealLife::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {

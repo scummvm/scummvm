@@ -478,7 +478,8 @@ bool CPetConversations::handleKey(const Common::KeyState &keyState) {
 		scrollToBottom();
 		return true;
 	default:
-		if (keyState.ascii > 0 && keyState.ascii <= 127) {
+		if (keyState.ascii >= 0 && keyState.ascii <= 127 &&
+				keyState.ascii != Common::KEYCODE_TAB) {
 			if (_textInput.handleKey(keyState.ascii))
 				// Text line finished, so process line
 				textLineEntered(_textInput.getText());

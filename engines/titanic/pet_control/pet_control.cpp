@@ -331,7 +331,20 @@ bool CPetControl::KeyCharMsg(CKeyCharMsg *msg) {
 		return false;
 
 	makeDirty();
-	return _sections[_currentArea]->KeyCharMsg(msg);
+	bool result = _sections[_currentArea]->KeyCharMsg(msg);
+
+	if (!result) {
+		switch (msg->_key) {
+		case Common::KEYCODE_TAB:
+			setArea(PET_INVENTORY);
+			result = true;
+			break;
+		default:
+			break;
+		}
+	}
+
+	return result;
 }
 
 bool CPetControl::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
@@ -344,11 +357,11 @@ bool CPetControl::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 		switch (msg->_keyState.keycode) {
 		case Common::KEYCODE_F1:
 			result = true;
-			setArea(PET_INVENTORY);
+			setArea(PET_CONVERSATION);
 			break;
 		case Common::KEYCODE_F2:
+			setArea(PET_INVENTORY);
 			result = true;
-			setArea(PET_CONVERSATION);
 			break;
 		case Common::KEYCODE_F3:
 			result = true;
