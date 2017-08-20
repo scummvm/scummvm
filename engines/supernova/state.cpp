@@ -697,7 +697,21 @@ void GameManager::turnOff() {
 
 }
 void GameManager::turnOn() {
-	// STUB
+	char name[13];
+	Room *room;
+	if (!_state.powerOff)
+		return;
+	_state.powerOff = false;
+	strcpy(name,"MSN_DATA.");
+	strcat(name,current_room->object->name);
+	load(name);
+	palette();
+	_vm->paletteBrightness();
+	room = _rooms[SLEEP];
+	room->setSectionVisible(1, false);
+	room->setSectionVisible(2, false);
+	room = _rooms[COCKPIT];
+	room->setSectionVisible(22, false);
 }
 
 void GameManager::takeObject(Object &obj) {
