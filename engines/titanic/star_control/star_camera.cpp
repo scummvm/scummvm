@@ -582,10 +582,7 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 
 	FVector newPos = m4._col1;
 	
-	if (_viewport._position != newPos) {
-		// Only change view if positions are different
-		_mover->proc8(_viewport._position, newPos, m6, m5);
-	}
+	_mover->proc8(_viewport._position, newPos, m6, m5);
 
 	CStarVector *sv = new CStarVector(this, v);
 	_mover->setVector(sv);
@@ -600,10 +597,7 @@ void CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
 	FVector newPos = viewport->_position;
 	FVector oldPos = _viewport._position;
 
-	if (oldPos != newPos) {
-		// Only change view if positions are different
-		_mover->proc8(oldPos, newPos, oldOr, newOr);
-	}
+	_mover->proc8(oldPos, newPos, oldOr, newOr);
 
 	CStarVector *sv = new CStarVector(this, v);
 	_mover->setVector(sv);

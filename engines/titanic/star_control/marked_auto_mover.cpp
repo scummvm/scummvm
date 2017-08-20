@@ -32,24 +32,22 @@ void CMarkedAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
 	CCameraAutoMover::proc2(oldPos, newPos, oldOrientation, newOrientation);
 
 	double distance = _distance;
-	if (distance > 0.0) {
+	_active = true;
+	_field34 = true;
+	proc6(120, 4, distance);
+
+
+	_orientationChanger.load(oldOrientation, newOrientation);
+	_transitionPercent = 0.0;
+
+	if (_field4C == 0) {
+		_transitionPercentInc = 0.1;
 		_active = true;
-		_field34 = true;
-		proc6(120, 4, distance);
+	} else {
+		_transitionPercentInc = 1.0 / _field4C;
+		_active = true;
 	}
 
-	if (newPos != oldPos) {
-		_orientationChanger.load(oldOrientation, newOrientation);
-		_transitionPercent = 0.0;
-
-		if (_field4C == 0) {
-			_transitionPercentInc = 0.1;
-			_active = true;
-		} else {
-			_transitionPercentInc = 1.0 / _field4C;
-			_active = true;
-		}
-	}
 }
 
 int CMarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {

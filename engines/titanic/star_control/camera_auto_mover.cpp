@@ -50,10 +50,8 @@ void CCameraAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
 	_destPos = newPos;
 	_posDelta = _destPos - _srcPos;
        float temp = 0.0;
-	if (!_posDelta.normalize(temp)) { // Do the normalization, put the scale amount in temp,
-                                         // but if it is unsuccessful, crash
-              assert(temp);
-       }
+	bool unused_status = _posDelta.normalize(temp); // Do the normalization, put the scale amount in temp
+
        _distance = temp;
 	_active = false;
 	_field34 = false;
