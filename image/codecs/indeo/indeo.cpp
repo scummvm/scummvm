@@ -491,6 +491,8 @@ IndeoDecoderBase::~IndeoDecoderBase() {
 	IVIPlaneDesc::freeBuffers(_ctx._planes);
 	if (_ctx._mbVlc._custTab._table)
 		_ctx._mbVlc._custTab.freeVlc();
+	if (_ctx._transVlc._custTab._table)
+		_ctx._transVlc._custTab.freeVlc();
 
 	delete _ctx._pFrame;
 }
@@ -575,11 +577,23 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 	outputPlane(&_ctx._planes[2], frame->_data[1], frame->_linesize[1]);
 	outputPlane(&_ctx._planes[1], frame->_data[2], frame->_linesize[2]);
 
+	// Merge the planes into the final surface
+	Graphics::Surface s = _surface->getSubArea(Common::Rect(0, 0, _surface->w, _surface->h));
+	YUVToRGBMan.convert410(&s, Graphics::YUVToRGBManager::kScaleITU,
+		frame->_data[0], frame->_data[1], frame->_data[2], frame->_width, frame->_height,
+		frame->_width, frame->_width);
+
+	if (_ctx._hasTransp)
+		decodeTransparency();
+
 	// If the bidirectional mode is enabled, next I and the following P
 	// frame will be sent together. Unfortunately the approach below seems
 	// to be the only way to handle the B-frames mode.
 	// That's exactly the same Intel decoders do.
 	if (_ctx._isIndeo4 && _ctx._frameType == IVI4_FRAMETYPE_INTRA) {
+		// TODO: It appears from the reference decoder that this should be
+		// aligning GetBits to a 32-bit boundary before reading again?
+
 		int left;
 
 		// skip version string
@@ -595,18 +609,8 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 		}
 	}
 
-	// Merge the planes into the final surface
-	Graphics::Surface s = _surface->getSubArea(Common::Rect(0, 0, _surface->w, _surface->h));
-	YUVToRGBMan.convert410(&s, Graphics::YUVToRGBManager::kScaleITU,
-		frame->_data[0], frame->_data[1], frame->_data[2], frame->_width, frame->_height,
-		frame->_width, frame->_width);
-
 	// Free the now un-needed frame data
 	frame->freeFrame();
-
-	// If there's any transparency data, decode it
-	if (_ctx._hasTransp)
-		decodeTransparency();
 
 	return 0;
 }

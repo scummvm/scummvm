@@ -398,6 +398,7 @@ public:
 
 	IVIHuffTab		_mbVlc;			///< current macroblock table descriptor
 	IVIHuffTab		_blkVlc;		///< current block table descriptor
+	IVIHuffTab		_transVlc;		///< current transparency table descriptor
 
 	uint8			_rvmapSel;
 	bool			_inImf;
@@ -566,7 +567,7 @@ protected:
 	/**
 	 * Decodes optional transparency data within Indeo frames
 	 */
-	virtual void decodeTransparency() {}
+	virtual int decodeTransparency() { return -1; }
 
 	/**
 	 * Decodes the Indeo frame from the bit reader already
