@@ -77,11 +77,11 @@ void VisualSmacker::update() {
 
 		// Convert the surface to RGBA
 		Graphics::Surface *convertedSurface = new Graphics::Surface();
-		convertedSurface->create(_surface->w, _surface->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+		convertedSurface->create(_surface->w, _surface->h, Gfx::Driver::getRGBAPixelFormat());
 
 		for (int y = 0; y < _surface->h; y++) {
 			const byte *srcRow = (const byte *)_surface->getBasePtr(0, y);
-			uint32 *dstRow = (uint32 *)convertedSurface->getBasePtr(0, y);
+			byte *dstRow = (byte *)convertedSurface->getBasePtr(0, y);
 
 			for (int x = 0; x < _surface->w; x++) {
 				byte index = *srcRow++;
@@ -91,9 +91,15 @@ void VisualSmacker::update() {
 				byte b = palette[index * 3 + 2];
 
 				if (r != 0 || g != 255 || b != 255) {
-					*dstRow++ = convertedSurface->format.RGBToColor(r, g, b);
+					*dstRow++ = r;
+					*dstRow++ = g;
+					*dstRow++ = b;
+					*dstRow++ = 0xFF;
 				} else {
 					// Cyan is the transparent color
+					*dstRow++ = 0;
+					*dstRow++ = 0;
+					*dstRow++ = 0;
 					*dstRow++ = 0;
 				}
 			}

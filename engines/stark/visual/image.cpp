@@ -22,9 +22,6 @@
 
 #include "engines/stark/visual/image.h"
 
-#include "common/stream.h"
-
-#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
 #include "engines/stark/debug.h"
@@ -83,8 +80,8 @@ bool VisualImageXMG::isPointSolid(const Common::Point &point) const {
 	}
 
 	// Maybe implement this method in some other way to avoid having to keep the surface in memory
-	const uint32 *ptr = (const uint32 *) _surface->getBasePtr(point.x, point.y);
-	return ((*ptr) & 0xFF000000) == 0xFF000000;
+	const byte *ptr = (const byte *) _surface->getBasePtr(point.x, point.y);
+	return *(ptr + 3) == 0xFF;
 }
 
 int VisualImageXMG::getWidth() const {

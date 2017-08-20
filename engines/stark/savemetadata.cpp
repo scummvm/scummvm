@@ -22,6 +22,7 @@
 
 #include "engines/stark/savemetadata.h"
 
+#include "engines/stark/gfx/driver.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/userinterface.h"
 
@@ -116,7 +117,6 @@ void SaveMetadata::writeGameScreenThumbnail(Common::WriteStream *stream) {
 	assert(gameWindowThumbnail);
 	assert(gameWindowThumbnail->pitch * gameWindowThumbnail->h == UserInterface::kThumbnailSize);
 
-	// TODO: Check endian safety
 	stream->write((const byte *)gameWindowThumbnail->getPixels(), UserInterface::kThumbnailSize);
 }
 
@@ -126,7 +126,7 @@ void SaveMetadata::skipGameScreenThumbnail(Common::SeekableReadStream *stream) {
 
 Graphics::Surface *SaveMetadata::readGameScreenThumbnail(Common::SeekableReadStream *stream) {
 	Graphics::Surface *thumb = new Graphics::Surface();
-	thumb->create(UserInterface::kThumbnailWidth, UserInterface::kThumbnailHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	thumb->create(UserInterface::kThumbnailWidth, UserInterface::kThumbnailHeight, Gfx::Driver::getRGBAPixelFormat());
 
 	stream->read(thumb->getPixels(), UserInterface::kThumbnailSize);
 

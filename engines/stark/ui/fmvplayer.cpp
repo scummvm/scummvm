@@ -42,7 +42,7 @@ FMVPlayer::FMVPlayer(Gfx::Driver *gfx, Cursor *cursor) :
 	_decoder = new Video::BinkDecoder();
 	_texture = _gfx->createTexture();
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
-	_decoder->setDefaultHighColorFormat(_gfx->getScreenFormat());
+	_decoder->setDefaultHighColorFormat(_gfx->getRGBAPixelFormat());
 }
 
 FMVPlayer::~FMVPlayer() {

@@ -38,7 +38,6 @@ Graphics::Surface *XMGDecoder::decode(Common::ReadStream *stream) {
 	return dec.decodeImage(stream);
 }
 
-// TODO: fix color handling in BE machines?
 Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	_stream = stream;
 
@@ -70,7 +69,7 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 
 	// Create the destination surface
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	surface->create(_width, _height, Gfx::Driver::getRGBAPixelFormat());
 
 	_currX = 0, _currY = 0;
 	while (!stream->eos()) {
@@ -132,18 +131,18 @@ void XMGDecoder::drawBlock(const Block &block, Graphics::Surface *surface) {
 	bool drawTwoColumns = _currX + 1 < _width;
 	bool drawTwoLines = _currY + 1 < _height;
 
-	pixels[0] = block.a1;
+	pixels[0] = TO_LE_32(block.a1);
 
 	if (drawTwoColumns) {
-		pixels[1] = block.a2;
+		pixels[1] = TO_LE_32(block.a2);
 	}
 
 	if (drawTwoLines) {
-		pixels[_width + 0] = block.b1;
+		pixels[_width + 0] = TO_LE_32(block.b1);
 	}
 
 	if (drawTwoColumns && drawTwoLines) {
-		pixels[_width + 1] = block.b2;
+		pixels[_width + 1] = TO_LE_32(block.b2);
 	}
 
 	_currX += drawTwoColumns ? 2 : 1;

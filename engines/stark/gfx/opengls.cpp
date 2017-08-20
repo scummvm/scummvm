@@ -203,21 +203,10 @@ OpenGL::Shader *OpenGLSDriver::createFadeShaderInstance() {
 
 Graphics::Surface *OpenGLSDriver::getViewportScreenshot() const {
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(_viewport.width(), _viewport.height(), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-
-#if defined(USE_GLES2)
-	GLenum format = GL_UNSIGNED_BYTE;
-#else
-	GLenum format = GL_UNSIGNED_INT_8_8_8_8_REV;
-#endif
+	s->create(_viewport.width(), _viewport.height(), getRGBAPixelFormat());
 
 	glReadPixels(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height(),
-	             GL_RGBA, format, s->getPixels());
-
-#if defined(USE_GLES2) && defined(SCUMM_BIG_ENDIAN)
-	// OpenGL ES does not support the GL_UNSIGNED_INT_8_8_8_8_REV texture format, we need to byteswap the surface
-	OpenGLTexture::byteswapSurface(s); //TODO: Implement
-#endif
+	             GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
 
 	flipVertical(s);
 

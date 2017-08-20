@@ -109,7 +109,16 @@ public:
 	/** Scale a height value from original resolution to current resolution */
 	uint scaleHeightOriginalToCurrent(uint height) const;
 
-	virtual Graphics::PixelFormat getScreenFormat();
+	/**
+	 * Textures are expected to be in the RGBA byte order
+	 *
+	 * That is to say bitmaps sent to OpenGL need to have the following layout:
+	 * R G B A R G B A, ...
+	 *
+	 * This method can be used to retrieve what that means in terms
+	 * of pixel format according to the current platform's endianness.
+	 */
+	static const Graphics::PixelFormat getRGBAPixelFormat();
 
 	/** Grab a screenshot of the currently active viewport as defined by setViewport */
 	virtual Graphics::Surface *getViewportScreenshot() const = 0;

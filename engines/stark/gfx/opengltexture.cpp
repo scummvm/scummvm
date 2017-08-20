@@ -22,6 +22,8 @@
 
 #include "engines/stark/gfx/opengltexture.h"
 
+#include "engines/stark/gfx/driver.h"
+
 #include "graphics/surface.h"
 #include "graphics/opengl/system_headers.h"
 
@@ -57,24 +59,18 @@ void OpenGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, 
 		_height = surface->h;
 	}
 
-#if defined(USE_GLES2)
-	// OpenGL ES does not support the GL_UNSIGNED_INT_8_8_8_8_REV texture format
-	// FIXME: Big endian support
-	GLuint sourceFormat = GL_UNSIGNED_BYTE;
-#else
-	GLuint sourceFormat = GL_UNSIGNED_INT_8_8_8_8_REV;
-#endif
-
 	if (surface->format.bytesPerPixel != 4) {
 		// Convert the surface to texture format
-		Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), palette);
+		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
 
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, sourceFormat, convertedSurface->getPixels());
+		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, convertedSurface->getPixels());
 
 		convertedSurface->free();
 		delete convertedSurface;
 	} else {
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, sourceFormat, surface->getPixels());
+		assert(surface->format == Driver::getRGBAPixelFormat());
+
+		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 	}
 }
 
