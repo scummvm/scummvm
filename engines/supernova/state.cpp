@@ -697,7 +697,16 @@ void GameManager::turnOff() {
 
 }
 void GameManager::turnOn() {
-	// STUB
+	if (!_state.powerOff)
+		return;
+
+	_state.powerOff = false;
+	_vm->paletteBrightness();
+	Room *room = _rooms[SLEEP];
+	room->setSectionVisible(1, false);
+	room->setSectionVisible(2, false);
+	room = _rooms[COCKPIT];
+	room->setSectionVisible(22, false);
 }
 
 void GameManager::takeObject(Object &obj) {
