@@ -104,7 +104,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 }
 
 bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
-	int movieFrame = getMovieFrame();
+	int movieFrame = msg->_endFrame;
 	
 	if (movieFrame == 16) {
 		// Dispensed a chicken
@@ -113,12 +113,7 @@ bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
 		CActMsg actMsg("Dispense Chicken");
 		actMsg.execute("Chicken");
 
-		if (_dispenseMode == DISPENSE_HOT) {
-			// A properly hot chicken is dispensed, no further ones will be
-			// until the current one is used up, and the fuse in Titania's
-			// fusebox is removed and replaced
-			_dispenseMode = DISPENSE_NONE;
-		} else {
+		if (_dispenseMode != DISPENSE_HOT) {
 			// WORKAROUND: If the fuse for the dispensor is removed in Titania's fusebox,
 			// make the dispensed chicken already cold
 			CChicken::_temperature = 0;
