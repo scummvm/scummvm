@@ -267,7 +267,10 @@ void TitanicEngine::showScummVMSaveDialog() {
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
+	pauseEngine(true);
 	int slot = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+
 	if (slot >= 0) {
 		Common::String desc = dialog->getResultString();
 
@@ -289,7 +292,10 @@ void TitanicEngine::showScummVMRestoreDialog() {
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 
+	pauseEngine(true);
 	int slot = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+
 	if (slot >= 0) {
 		loadGameState(slot);
 	}
