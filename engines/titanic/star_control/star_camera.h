@@ -45,7 +45,7 @@ private:
 	static FMatrix *_priorOrientation;
 	static FMatrix *_newOrientation;
 private:
-	StarLockState _star_lock_state;
+	StarLockState _starLockState;
 	FMatrix _matrix;
 	CCameraMover *_mover;
 	CViewport _viewport;
@@ -162,7 +162,7 @@ public:
 	/**
 	 * How many stars are currently locked onto
 	 */
-	virtual StarLockState getStarLockState() const { return _star_lock_state; }
+	virtual StarLockState getStarLockState() const { return _starLockState; }
 
 	/**
 	 * Adds the row for a locked in marker/star
