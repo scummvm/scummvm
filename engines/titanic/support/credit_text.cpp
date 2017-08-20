@@ -96,7 +96,7 @@ void CCreditText::setup() {
 	_screenManagerP->setFontNumber(oldFontNumber);
 	_groupIt = _groups.begin();
 	_lineIt = (*_groupIt)->_lines.begin();
-	_yOffset = _objectP->getBounds().height() + _fontHeight * 2;
+	_yOffset = _objectP->_bounds.height() + _fontHeight * 2;
 }
 
 CString CCreditText::readLine(Common::SeekableReadStream *stream) {
