@@ -69,6 +69,11 @@ private:
 	bool _triedEatChicken;
 	int _eatOffsetX;
 	CMovePlayerTo *_panTarget;
+private:
+	/**
+	 * Called for the Parrot to start or finish eating
+	 */
+	void setEatingChicken(bool eating);
 public:
 	CLASSDEF;
 	CParrot();

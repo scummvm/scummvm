@@ -122,12 +122,8 @@ bool CParrot::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Chicken") {
 		// Nothing to do
 	} else if (msg->_action == "CarryParrotLeftView") {
-		if (!_takeOff) {
-			_eatingChicken = false;
-			CStatusChangeMsg statusMsg;
-			statusMsg._newStatus = 1;
-			statusMsg.execute("PerchCoreHolder");
-		}
+		if (!_takeOff)
+			setEatingChicken(false);
 	} else if (msg->_action == "StartChickenDrag") {
 		if (_state == PARROT_IN_CAGE) {
 			stopMovie();
@@ -258,11 +254,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 			playClip("Eat Chicken 2", MOVIE_NOTIFY_OBJECT);
 
 			if (chicken) {
-				_eatingChicken = true;
-
-				CStatusChangeMsg statusMsg;
-				statusMsg._newStatus = 0;
-				statusMsg.execute("PerchCoreHolder");
+				setEatingChicken(true);
 
 				CTrueTalkTriggerActionMsg actionMsg;
 				actionMsg._action = 280266;
@@ -280,11 +272,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (clipExistsByEnd("Eat Chicken 2", msg->_endFrame)) {
 		// Parrot has finished eating Chicken
-		_eatingChicken = false;
-
-		CStatusChangeMsg statusMsg;
-		statusMsg._newStatus = 1;
-		statusMsg.execute("PerchCoreHolder");
+		setEatingChicken(false);
 
 		if (_takeOff) {
 			// Perch has been taken, so take off
@@ -587,6 +575,10 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		_npcFlags |= NPCFLAG_MOVING | NPCFLAG_MOVE_START;
 
 		if (_newXc >= xp) {
+			// WORKAROUND: Original did not properly reset the eating chicken
+			// flag when the player turns away from the cage
+			setEatingChicken(false);
+
 			setPosition(Point(_bounds.left + 30, _bounds.top));
 			_npcFlags |= NPCFLAG_MOVE_RIGHT;
 			playClip("Walk Right Intro", MOVIE_NOTIFY_OBJECT);
@@ -708,6 +700,7 @@ bool CParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 }
 
 bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
+	warning("PAN");
 	if (_state != PARROT_IN_CAGE) {
 		CActMsg actMsg("PanAwayFromParrot");
 		actMsg.execute(msg->_target);
@@ -744,5 +737,11 @@ bool CParrot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
 	return CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
 }
 
+void CParrot::setEatingChicken(bool eating) {
+	_eatingChicken = eating;
+	CStatusChangeMsg statusMsg;
+	statusMsg._newStatus = eating ? 0 : 1;
+	statusMsg.execute("PerchCoreHolder");
+}
 
 } // End of namespace Titanic
