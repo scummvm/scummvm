@@ -1074,7 +1074,7 @@ void GameManager::death(const char *message) {
 	initGui();
 	_inventory.clear();
 	changeRoom(INTRO);
-	_vm->renderRoom(*_currentRoom);
+	g_system->fillScreen(kColorBlack);
 	_vm->paletteFadeIn();
 
 	_guiEnabled = true;
