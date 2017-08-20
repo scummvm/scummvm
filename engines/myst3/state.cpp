@@ -22,6 +22,7 @@
 
 #include "engines/myst3/state.h"
 #include "engines/myst3/database.h"
+#include "engines/myst3/gfx.h"
 
 #include "common/debug-channels.h"
 #include "common/savefile.h"
@@ -473,18 +474,35 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	s.syncAsByte(saveMinute, 149);
 	s.syncString(saveDescription, 149);
 
+#ifdef SCUMM_BIG_ENDIAN
+	Graphics::PixelFormat saveFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 0, 8, 16);
+#else
+	Graphics::PixelFormat saveFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+#endif
+
 	if (s.isLoading()) {
 		thumbnail = Common::SharedPtr<Graphics::Surface>(new Graphics::Surface(), Graphics::SharedPtrSurfaceDeleter());
-		thumbnail->create(kThumbnailWidth, kThumbnailHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-	}
-	assert(thumbnail && thumbnail->w == kThumbnailWidth && thumbnail->h == kThumbnailHeight);
+		thumbnail->create(kThumbnailWidth, kThumbnailHeight, saveFormat);
 
-	s.syncBytes((byte *)thumbnail->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
+		s.syncBytes((byte *)thumbnail->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
+
+		thumbnail->convertToInPlace(Texture::getRGBAPixelFormat());
+	} else {
+		assert(thumbnail->format == Texture::getRGBAPixelFormat());
+		assert(thumbnail && thumbnail->w == kThumbnailWidth && thumbnail->h == kThumbnailHeight);
+
+		Graphics::Surface *converted = thumbnail->convertTo(saveFormat);
+
+		s.syncBytes((byte *)converted->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
+
+		converted->free();
+		delete converted;
+	}
 }
 
 void GameState::StateData::resizeThumbnail(Graphics::Surface *small) const {
 	Graphics::Surface *big = thumbnail.get();
-	assert(big->format.bytesPerPixel == 4 && small->format.bytesPerPixel == 4);
+	assert(small->format == big->format && big->format.bytesPerPixel == 4);
 
 	uint32 *dst = (uint32 *)small->getPixels();
 	for (uint i = 0; i < small->h; i++) {

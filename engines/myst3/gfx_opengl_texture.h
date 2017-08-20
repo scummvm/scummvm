@@ -39,8 +39,6 @@ public:
 	void update(const Graphics::Surface *surface) override;
 	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
 
-	static void byteswapSurface(Graphics::Surface *surface);
-
 	GLuint id;
 	GLuint internalFormat;
 	GLuint sourceFormat;

@@ -1312,14 +1312,19 @@ Graphics::Surface *Myst3Engine::loadTexture(uint16 id) {
 	data->readUint32LE(); // unk 2
 	data->readUint32LE(); // unk 3
 
+#ifdef SCUMM_BIG_ENDIAN
+	Graphics::PixelFormat onDiskFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 24, 16, 8);
+#else
+	Graphics::PixelFormat onDiskFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+#endif
+
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0));
+	s->create(width, height, onDiskFormat);
 
 	data->read(s->getPixels(), height * s->pitch);
 	delete data;
 
-	// ARGB => RGBA
-	s->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	s->convertToInPlace(Texture::getRGBAPixelFormat());
 
 	return s;
 }
@@ -1333,7 +1338,31 @@ Graphics::Surface *Myst3Engine::decodeJpeg(const DirectorySubEntry *jpegDesc) {
 	delete jpegStream;
 
 	const Graphics::Surface *bitmap = jpeg.getSurface();
-	return bitmap->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	assert(bitmap->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
+
+	// Convert the surface to RGBA if needed.
+	// RGBA being the order of the bytes in memory, not in a 32 bits word.
+	Graphics::PixelFormat rgbaFormat = Texture::getRGBAPixelFormat();
+	Graphics::Surface *rgbaSurface = new Graphics::Surface();
+
+	if (rgbaFormat == bitmap->format) {
+		rgbaSurface->copyFrom(*bitmap);
+	} else {
+		assert(rgbaFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+		rgbaSurface->create(bitmap->w, bitmap->h, rgbaFormat);
+
+		// Use SWAP_BYTES_32 as an optimization. This path is hot.
+		for (uint y = 0; y < bitmap->h; y++) {
+			const uint32 *srcRow = (const uint32 *) bitmap->getBasePtr(0, y);
+			uint32 *dstRow = (uint32 *) rgbaSurface->getBasePtr(0, y);
+			for (uint x = 0; x < bitmap->w; x++) {
+				*dstRow++ = SWAP_BYTES_32(*srcRow++);
+			}
+		}
+	}
+
+	return rgbaSurface;
 }
 
 int16 Myst3Engine::openDialog(uint16 id) {

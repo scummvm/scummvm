@@ -76,7 +76,7 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	loadPosition(binkDesc->getVideoData());
 
 	Common::MemoryReadStream *binkStream = binkDesc->getData();
-	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	_bink.loadStream(binkStream);
 
 	if (binkDesc->getType() == DirectorySubEntry::kMultitrackMovie
@@ -500,40 +500,36 @@ void ProjectorMovie::update() {
 
 	// For each pixel in the target image
 	for (uint i = 0; i < _frame->h; i++) {
-		uint32 *dst = (uint32 *)_frame->getBasePtr(0, i);
+		byte *dst = (byte *)_frame->getBasePtr(0, i);
 		for (uint j = 0; j < _frame->w; j++) {
-			uint8 a, depth;
+			uint8 depth;
 			uint16 r = 0, g = 0, b = 0;
 			uint32 srcX = (uint32)(backgroundX + j * delta);
 			uint32 srcY = (uint32)(backgroundY + i * delta);
-			uint32 *src = (uint32 *)_background->getBasePtr(srcX, srcY);
-
-			// Keep the alpha channel from the previous frame
-			a = *dst >> 24;
+			byte *src = (byte *)_background->getBasePtr(srcX, srcY);
 
 			// Get the depth from the background
-			depth = *src >> 24;
+			depth = *(src + 3);
 
 			// Compute the blur level from the focus point and the depth of the current point
 			uint8 blurLevel = abs(focus - depth) + 1;
 			
 			// No need to compute the effect for transparent pixels
+			byte a = *(dst + 3);
 			if (a != 0) {
 				// The blur effect is done by mixing the color components from the pixel at (srcX, srcY)
 				// and other pixels on the same row / column
 				uint cnt = 0;
 				for (uint k = 0; k < kBlurIterations; k++) {
-					uint8 blurR, blurG, blurB;
 					uint32 blurX = srcX + ((uint32) (blurLevel * _blurTableX[k] * delta) >> 12); // >> 12 = / 256 / 16
 					uint32 blurY = srcY + ((uint32) (blurLevel * _blurTableY[k] * delta) >> 12);
 
 					if (blurX < 1024 && blurY < 1024) {
-						uint32 *blur = (uint32 *)_background->getBasePtr(blurX, blurY);
+						byte *blur = (byte *)_background->getBasePtr(blurX, blurY);
 
-						Graphics::colorToRGB< Graphics::ColorMasks<8888> >(*blur, blurR, blurG, blurB);
-						r += blurR;
-						g += blurG;
-						b += blurB;
+						r += *blur++;
+						g += *blur++;
+						b += *blur;
 						cnt++;
 					}
 				}
@@ -544,8 +540,11 @@ void ProjectorMovie::update() {
 				b /= cnt;
 			}
 
-			// Draw the new frame
-			*dst++ = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(a, r, g, b);
+			// Draw the new pixel
+			*dst++ = r;
+			*dst++ = g;
+			*dst++ = b;
+			dst++; // Keep the alpha channel from the previous frame
 		}
 	}
 

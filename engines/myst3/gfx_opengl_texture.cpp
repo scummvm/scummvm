@@ -57,13 +57,10 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	}
 
 	if (format.bytesPerPixel == 4) {
-		internalFormat = GL_RGBA;
+		assert(surface->format == getRGBAPixelFormat());
 
-#if defined(USE_GLES2)
+		internalFormat = GL_RGBA;
 		sourceFormat = GL_UNSIGNED_BYTE;
-#else
-		sourceFormat = GL_UNSIGNED_INT_8_8_8_8_REV;
-#endif
 	} else if (format.bytesPerPixel == 2) {
 		internalFormat = GL_RGB;
 		sourceFormat = GL_UNSIGNED_SHORT_5_6_5;
@@ -94,6 +91,8 @@ void OpenGLTexture::update(const Graphics::Surface *surface) {
 }
 
 void OpenGLTexture::updateTexture(const Graphics::Surface* surface, const Common::Rect& rect) {
+	assert(surface->format == format);
+
 	glBindTexture(GL_TEXTURE_2D, id);
 
 	if (OpenGLContext.unpackSubImageSupported) {
@@ -109,34 +108,7 @@ void OpenGLTexture::updateTexture(const Graphics::Surface* surface, const Common
 }
 
 void OpenGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
-#if defined(USE_GLES2) && defined(SCUMM_BIG_ENDIAN)
-	// OpenGL ES does not support the GL_UNSIGNED_INT_8_8_8_8_REV texture format
-	// we need to byteswap before hand
-	Graphics::Surface swappedSurface;
-	swappedSurface.copyFrom(*surface);
-	byteswapSurface(&swappedSurface);
-	updateTexture(&swappedSurface, rect);
-	swappedSurface.free();
-#else
 	updateTexture(surface, rect);
-#endif
-
-}
-
-void OpenGLTexture::byteswapSurface(Graphics::Surface *surface) {
-	for (int y = 0; y < surface->h; y++) {
-		for (int x = 0; x < surface->w; x++) {
-			if (surface->format.bytesPerPixel == 4) {
-				uint32 *pixel = (uint32 *) (surface->getBasePtr(x, y));
-				*pixel = SWAP_BYTES_32(*pixel);
-			} else if (surface->format.bytesPerPixel == 2) {
-				uint16 *pixel = (uint16 *) (surface->getBasePtr(x, y));
-				*pixel = SWAP_BYTES_16(*pixel);
-			} else {
-				error("Unexpected bytes per pixedl %d", surface->format.bytesPerPixel);
-			}
-		}
-	}
 }
 
 } // End of namespace Myst3

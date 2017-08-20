@@ -370,7 +370,7 @@ bool MovieSubtitles::loadSubtitles(int32 id) {
 
 	// Load the movie
 	Common::MemoryReadStream *movieStream = movie->getData();
-	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	_bink.loadStream(movieStream);
 	_bink.start();
 

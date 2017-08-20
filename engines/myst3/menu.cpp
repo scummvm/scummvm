@@ -58,7 +58,7 @@ Dialog::Dialog(Myst3Engine *vm, uint id):
 
 	// Load the movie
 	Common::MemoryReadStream *movieStream = movieDesc->getData();
-	_bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	_bink.loadStream(movieStream);
 	_bink.start();
 
@@ -404,11 +404,10 @@ Common::String Menu::getAgeLabel(GameState *gameState) {
 }
 
 Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
-	assert(big->format.bytesPerPixel == 4);
+	assert(big->format == Texture::getRGBAPixelFormat());
 
 	Graphics::Surface *small = new Graphics::Surface();
-	small->create(GameState::kThumbnailWidth, GameState::kThumbnailHeight,
-			Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	small->create(GameState::kThumbnailWidth, GameState::kThumbnailHeight, Texture::getRGBAPixelFormat());
 
 	// The portion of the screenshot to keep
 	Common::Rect frame = _vm->_scene->getPosition();
@@ -425,9 +424,6 @@ Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
 			*dst++ = *src;
 		}
 	}
-
-	// The thumbnail is stored on disk in BGRA
-	small->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
 
 	return small;
 }
@@ -868,7 +864,7 @@ void AlbumMenu::loadSaves() {
 		if (_albumSpotItems.contains(i)) {
 			// Read and resize the thumbnail
 			Graphics::Surface *miniThumb = new Graphics::Surface();
-			miniThumb->create(kAlbumThumbnailWidth, kAlbumThumbnailHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+			miniThumb->create(kAlbumThumbnailWidth, kAlbumThumbnailHeight, Texture::getRGBAPixelFormat());
 			data.resizeThumbnail(miniThumb);
 
 			SpotItemFace *spotItem = _albumSpotItems.getVal(i);

@@ -1146,7 +1146,7 @@ void Puzzles::journalSaavedro(int16 move) {
 
 			// Copy the left half of the node to a new surface
 			Graphics::Surface *leftBitmap = new Graphics::Surface();
-			leftBitmap->create(bitmap->w / 2, bitmap->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+			leftBitmap->create(bitmap->w / 2, bitmap->h, Texture::getRGBAPixelFormat());
 
 			for (uint i = 0; i < bitmap->h; i++) {
 				memcpy(leftBitmap->getBasePtr(0, i),
@@ -1520,7 +1520,7 @@ void Puzzles::projectorLoadBitmap(uint16 bitmap) {
 
 	// This surface is freed by the destructor of the movie that uses it
 	_vm->_projectorBackground = new Graphics::Surface();
-	_vm->_projectorBackground->create(1024, 1024, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_vm->_projectorBackground->create(1024, 1024, Texture::getRGBAPixelFormat());
 
 	const DirectorySubEntry *movieDesc = _vm->getFileDescription("", bitmap, 0, DirectorySubEntry::kStillMovie);
 
@@ -1530,7 +1530,7 @@ void Puzzles::projectorLoadBitmap(uint16 bitmap) {
 	// Rebuild the complete background image from the frames of the bink movie
 	Common::MemoryReadStream *movieStream = movieDesc->getData();
 	Video::BinkDecoder bink;
-	bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	bink.loadStream(movieStream);
 	bink.start();
 
@@ -1557,7 +1557,7 @@ void Puzzles::projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y) {
 	// Rebuild the complete background image from the frames of the bink movie
 	Common::MemoryReadStream *movieStream = movieDesc->getData();
 	Video::BinkDecoder bink;
-	bink.setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	bink.loadStream(movieStream);
 	bink.start();
 

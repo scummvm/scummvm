@@ -99,6 +99,8 @@ public:
 
 	virtual void update(const Graphics::Surface *surface) = 0;
 	virtual void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) = 0;
+
+	static const Graphics::PixelFormat getRGBAPixelFormat();
 protected:
 	Texture() {}
 	virtual ~Texture() {}

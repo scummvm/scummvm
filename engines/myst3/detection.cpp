@@ -23,6 +23,7 @@
 #include "engines/advancedDetector.h"
 
 #include "engines/myst3/database.h"
+#include "engines/myst3/gfx.h"
 #include "engines/myst3/state.h"
 
 #include "common/config-manager.h"
@@ -265,7 +266,7 @@ public:
 
 		// Read and resize the thumbnail
 		Graphics::Surface *guiThumb = new Graphics::Surface();
-		guiThumb->create(kThumbnailWidth, kThumbnailHeight1, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+		guiThumb->create(kThumbnailWidth, kThumbnailHeight1, Texture::getRGBAPixelFormat());
 		data.resizeThumbnail(guiThumb);
 
 		// Set metadata

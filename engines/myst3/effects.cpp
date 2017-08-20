@@ -320,7 +320,11 @@ void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics
 				uint32 srcValue1 = *(uint32 *) src->getBasePtr(x + xOffset, y + yOffset);
 				uint32 srcValue2 = *(uint32 *) src->getBasePtr(x, y);
 
+#ifdef SCUMM_BIG_ENDIAN
+				*dstPtr = 0x000000FF | ((0x7F7F7F00 & (srcValue1 >> 1)) + (0x7F7F7F00 & (srcValue2 >> 1)));
+#else
 				*dstPtr = 0xFF000000 | ((0x007F7F7F & (srcValue1 >> 1)) + (0x007F7F7F & (srcValue2 >> 1)));
+#endif
 			}
 
 			maskPtr++;
@@ -535,7 +539,11 @@ void MagnetEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphic
 				uint32 srcValue1 = *(uint32 *) src->getBasePtr(x, y + displacement);
 				uint32 srcValue2 = *(uint32 *) src->getBasePtr(x, y);
 
+#ifdef SCUMM_BIG_ENDIAN
+				*dstPtr = 0x000000FF | ((0x7F7F7F00 & (srcValue1 >> 1)) + (0x7F7F7F00 & (srcValue2 >> 1)));
+#else
 				*dstPtr = 0xFF000000 | ((0x007F7F7F & (srcValue1 >> 1)) + (0x007F7F7F & (srcValue2 >> 1)));
+#endif
 			}
 
 			maskPtr++;

@@ -289,7 +289,7 @@ void TinyGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 
 Graphics::Surface *TinyGLRenderer::getScreenshot() {
 	Graphics::Surface *s = new Graphics::Surface();
-	s->create(kOriginalWidth, kOriginalHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	s->create(kOriginalWidth, kOriginalHeight, Texture::getRGBAPixelFormat());
 	Graphics::PixelBuffer buf(s->format, (byte *)s->getPixels());
 	_fb->copyToBuffer(buf);
 	return s;

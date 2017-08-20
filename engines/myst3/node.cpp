@@ -346,7 +346,7 @@ void SpotItemFace::initBlack(uint16 width, uint16 height) {
 	}
 
 	_bitmap = new Graphics::Surface();
-	_bitmap->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_bitmap->create(width, height, Texture::getRGBAPixelFormat());
 
 	initNotDrawn(width, height);
 
@@ -362,12 +362,10 @@ void SpotItemFace::loadData(const DirectorySubEntry *jpegDesc) {
 
 void SpotItemFace::updateData(const Graphics::Surface *surface) {
 	assert(_bitmap && surface);
+	assert(surface->format == Texture::getRGBAPixelFormat());
 
 	_bitmap->free();
 	_bitmap->copyFrom(*surface);
-
-	// Ensure the pixel format is correct
-	_bitmap->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	_drawn = false;
 }
@@ -381,7 +379,7 @@ void SpotItemFace::clear() {
 void SpotItemFace::initNotDrawn(uint16 width, uint16 height) {
 	// Copy not drawn SpotItem image from face
 	_notDrawnBitmap = new Graphics::Surface();
-	_notDrawnBitmap->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	_notDrawnBitmap->create(width, height, Texture::getRGBAPixelFormat());
 
 	for (uint i = 0; i < height; i++) {
 		memcpy(_notDrawnBitmap->getBasePtr(0, i),
