@@ -221,10 +221,10 @@ void GameManager::initState() {
 	_timer1 = 0;
 	_animationTimer = 0;
 
-	_state.time = 14200;
+	_state.time = 2840 * kMsecPerTick;
 	_state.timeSleep = 0;
-	_state.timeStarting = 50400000;
-	_state.timeAlarm = 25200000;
+	_state.timeStarting = 50400000; // 2 pm -- Originally: systime() - 917650
+	_state.timeAlarm = 25200000;    // 7 am
 	_state.timeAlarmSystem = _state.timeAlarm + _state.timeStarting;
 	_state.eventTime = 0xffffffff;
 	_state.shipEnergy = 2135;
