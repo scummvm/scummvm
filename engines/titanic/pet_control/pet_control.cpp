@@ -336,8 +336,10 @@ bool CPetControl::KeyCharMsg(CKeyCharMsg *msg) {
 	if (!result) {
 		switch (msg->_key) {
 		case Common::KEYCODE_TAB:
-			setArea(PET_INVENTORY);
-			result = true;
+			if (isAreaUnlocked()) {
+				setArea(PET_INVENTORY);
+				result = true;
+			}
 			break;
 		default:
 			break;
