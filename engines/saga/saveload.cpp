@@ -381,6 +381,12 @@ void SagaEngine::load(const char *fileName) {
 	_music->setVolume(volume);
 
 	_interface->draw();
+
+	// Abort any scene entry protagonist animations and auto-cue speeches.
+	// Fixes bug #10009.
+	_actor->abortAllSpeeches();
+	_actor->_protagonist->_location = _actor->_protagonist->_finalTarget;
+	_actor->actorEndWalk(ID_PROTAG, true);
 }
 
 } // End of namespace Saga
