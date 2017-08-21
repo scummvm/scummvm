@@ -127,15 +127,26 @@ static const SludgeGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// TODO: the games down here are windows-only and can't be successfully run by
-	// sludge engine nor scummvm, need to solve it
+//	{
+//		{
+//			"tgttpoacs",
+//			"",
+//			AD_ENTRY1s("gamedata", "d5ec4d7d8440f7744335d25d25e1e943", 40368),
+//			Common::EN_ANY,
+//			Common::kPlatformWindows,
+//			ADGF_NO_FLAGS,
+//			GUIO0()
+//		},
+//		0
+//	},
+
 	{
 		{
 			"tgttpoacs",
 			"",
-			AD_ENTRY1s("gamedata", "d5ec4d7d8440f7744335d25d25e1e943", 40368),
+			AD_ENTRY1s("tgttpoacs.dat", "e61d3d050793689d55487d3ad01b6693", 23817174),
 			Common::EN_ANY,
-			Common::kPlatformUnknown,
+			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -146,9 +157,74 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"",
-			AD_ENTRY1s("gamedata", "bb51eea418d87071c98f4e050ccf6387", 589),
+			AD_ENTRY1s("data", "705f6ca5f5da0c40c1f547231dd5139f", 7141292),
+			Common::CZ_CZE,
+			Common::kPlatformLinux,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
+	{
+		{
+			"mandy",
+			"",
+			AD_ENTRY1s("data", "705f6ca5f5da0c40c1f547231dd5139f", 7141292),
 			Common::EN_ANY,
-			Common::kPlatformUnknown,
+			Common::kPlatformLinux,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		1
+	},
+
+	{
+		{
+			"mandy",
+			"",
+			AD_ENTRY1s("data", "705f6ca5f5da0c40c1f547231dd5139f", 7141292),
+			Common::IT_ITA,
+			Common::kPlatformLinux,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		2
+	},
+
+	{
+		{
+			"mandy",
+			"",
+			AD_ENTRY1s("data", "705f6ca5f5da0c40c1f547231dd5139f", 7141292),
+			Common::PL_POL,
+			Common::kPlatformLinux,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		3
+	},
+
+//	{
+//		{
+//			"cubert",
+//			"",
+//			AD_ENTRY1s("gamedata", "0078eb54f63cc0a22e50f17d904fcfde", 26799),
+//			Common::UNK_LANG,
+//			Common::kPlatformWindows,
+//			ADGF_NO_FLAGS,
+//			GUIO0()
+//		},
+//		0
+//	},
+
+	{
+		{
+			"cubert",
+			"",
+			AD_ENTRY1s("cubert.dat", "e70050692a0ab96e8753109793157ccd", 19677815),
+			Common::EN_ANY,
+			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -159,13 +235,39 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"cubert",
 			"",
-			AD_ENTRY1s("gamedata", "0078eb54f63cc0a22e50f17d904fcfde", 26799),
-			Common::UNK_LANG,
-			Common::kPlatformUnknown,
+			AD_ENTRY1s("cubert.dat", "e70050692a0ab96e8753109793157ccd", 19677815),
+			Common::IT_ITA,
+			Common::kPlatformLinux,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		0
+		1
+	},
+
+	{
+		{
+			"cubert",
+			"",
+			AD_ENTRY1s("cubert.dat", "e70050692a0ab96e8753109793157ccd", 19677815),
+			Common::SE_SWE,
+			Common::kPlatformLinux,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		2
+	},
+
+	{
+		{
+			"cubert",
+			"",
+			AD_ENTRY1s("cubert.dat", "e70050692a0ab96e8753109793157ccd", 19677815),
+			Common::DE_DEU,
+			Common::kPlatformLinux,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		3
 	},
 
 	{ AD_TABLE_END_MARKER, 0 }
