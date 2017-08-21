@@ -42,7 +42,7 @@ void CUnmarkedAutoMover::setPath(const FVector &srcV, const FVector &destV, cons
 	if (_distance > 8000.0) {
 		_active = true;
 		_field34 = 1;
-		proc6(120, 4, _distance - 8000.0);
+		calcSpeeds(120, 4, _distance - 8000.0);
 	}
 
 	FVector row3 = orientation._row3;

@@ -34,7 +34,7 @@ void CMarkedAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
 	double distance = _distance;
 	_active = true;
 	_field34 = true;
-	proc6(120, 4, distance);
+	calcSpeeds(120, 4, distance);
 
 
 	_orientationChanger.load(oldOrientation, newOrientation);
