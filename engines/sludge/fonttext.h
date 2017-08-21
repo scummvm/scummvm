@@ -22,6 +22,7 @@
 #ifndef SLUDGE_FONTTEXT_H
 #define SLUDGE_FONTTEXT_H
 
+#include "common/hashmap.h"
 #include "common/ustr.h"
 
 #include "sludge/sprites.h"
@@ -59,10 +60,9 @@ private:
 	UTF8Converter _fontOrder;
 	int16 _fontSpace;
 
-	uint32 *_fontTable;
-	uint _fontTableSize;
+	Common::HashMap<uint32, uint32> _fontTable;
 
-	inline uint32 fontInTable(uint32 x) { return ((x < _fontTableSize) ? _fontTable[x] : 0); }
+	inline uint32 fontInTable(uint32 x) { return _fontTable[x]; }
 
 };
 

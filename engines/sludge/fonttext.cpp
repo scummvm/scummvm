@@ -40,20 +40,15 @@ TextManager::TextManager() {
 	_loadedFontNum = 0;
 	_fontSpace = -1;
 
-	_fontTable = nullptr;
-	_fontTableSize = 0;
+	_fontTable.clear();
 }
 
 TextManager::~TextManager() {
-	if (_fontTable) {
-		delete []_fontTable;
-		_fontTable = nullptr;
-	}
-
+	g_sludge->_gfxMan->forgetSpriteBank(_theFont);
 }
 
 bool TextManager::isInFont(const Common::String &theText) {
-	if (!_fontTableSize)
+	if (_fontTable.empty())
 		return 0;
 	if (theText.empty())
 		return 0;
@@ -78,7 +73,7 @@ int TextManager::stringLength(const Common::String &theText) {
 int TextManager::stringWidth(const Common::String &theText) {
 	int xOff = 0;
 
-	if (!_fontTableSize)
+	if (_fontTable.empty())
 		return 0;
 
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
@@ -92,7 +87,7 @@ int TextManager::stringWidth(const Common::String &theText) {
 }
 
 void TextManager::pasteString(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
-	if (!_fontTableSize)
+	if (_fontTable.empty())
 		return;
 
 	xOff += (int)((float)(_fontSpace >> 1) / g_sludge->_gfxMan->getCamZoom());
@@ -108,7 +103,7 @@ void TextManager::pasteString(const Common::String &theText, int xOff, int y, Sp
 }
 
 void TextManager::pasteStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
-	if (!_fontTableSize)
+	if (_fontTable.empty())
 		return;
 
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
@@ -123,7 +118,7 @@ void TextManager::pasteStringToBackdrop(const Common::String &theText, int xOff,
 }
 
 void TextManager::burnStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
-	if (!_fontTableSize)
+	if (_fontTable.empty())
 		return;
 
 	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
@@ -152,25 +147,10 @@ bool TextManager::loadFont(int filenum, const Common::String &charOrder, int h) 
 
 	// get max value among all utf8 chars
 	Common::U32String fontOrderString = _fontOrder.getU32String();
-	_fontTableSize = 0;
-	for (uint32 i = 0; i < fontOrderString.size(); ++i) {
-		uint32 c = fontOrderString[i];
-		if (c > _fontTableSize)
-			_fontTableSize = c;
-	}
-	_fontTableSize++;
 
 	// create an index table from utf8 char to the index
-	if (_fontTable) {
-		delete []_fontTable;
-		_fontTable = nullptr;
-	}
-	_fontTable = new uint32[_fontTableSize];
-	if (!checkNew(_fontTable))
-		return false;
-
-	for (uint i = 0; i < _fontTableSize; i++) {
-		_fontTable[i] = 0;
+	if (!_fontTable.empty()) {
+		_fontTable.clear();
 	}
 
 	for (uint i = 0; i < fontOrderString.size(); ++i) {
@@ -190,8 +170,8 @@ bool TextManager::loadFont(int filenum, const Common::String &charOrder, int h) 
 
 // load & save
 void TextManager::saveFont(Common::WriteStream *stream) {
-	stream->writeByte(_fontTableSize > 0);
-	if (_fontTableSize > 0) {
+	stream->writeByte(!_fontTable.empty());
+	if (!_fontTable.empty() > 0) {
 		stream->writeUint16BE(_loadedFontNum);
 		stream->writeUint16BE(_fontHeight);
 		writeString(_fontOrder.getUTF8String(), stream);
