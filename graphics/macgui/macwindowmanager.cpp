@@ -304,7 +304,7 @@ void MacWindowManager::draw() {
 }
 
 bool MacWindowManager::processEvent(Common::Event &event) {
-	// Menu gets events first fir shortcuts and menu bar
+	// Menu gets events first for shortcuts and menu bar
 	if (_menu && _menu->processEvent(event))
 		return true;
 
