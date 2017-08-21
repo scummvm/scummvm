@@ -56,11 +56,6 @@ enum {
 	kFontStyleExtended = 64
 };
 
-enum {
-	kMenuActionCommand
-};
-
-
 struct MacMenuSubItem {
 	Common::String text;
 	int action;
@@ -216,7 +211,7 @@ void MacMenu::clearSubMenu(int id) {
 	menu->subitems.clear();
 }
 
-void MacMenu::createSubMenuFromString(int id, const char *str) {
+void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 	clearSubMenu(id);
 
 	MacMenuItem *menu = _items[id];
@@ -278,7 +273,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str) {
 					}
 			}
 
-			menu->subitems.push_back(new MacMenuSubItem(item.c_str(), kMenuActionCommand, style, shortcut, enabled));
+			menu->subitems.push_back(new MacMenuSubItem(item.c_str(), commandId, style, shortcut, enabled));
 		}
 
 		item.clear();

@@ -199,7 +199,7 @@ bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
 // Menu stuff
 ////////////////
 void Gui::regenCommandsMenu() {
-	_menu->createSubMenuFromString(_commandsMenuId, _engine->_world->_commandsMenu.c_str());
+	_menu->createSubMenuFromString(_commandsMenuId, _engine->_world->_commandsMenu.c_str(), kMenuActionCommand);
 }
 
 void Gui::regenWeaponsMenu() {

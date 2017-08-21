@@ -52,7 +52,7 @@ public:
 
 	int addMenuItem(const char *name);
 	void addMenuSubItem(int id, const char *text, int action, int style = 0, char shortcut = 0, bool enabled = true);
-	void createSubMenuFromString(int id, const char *string);
+	void createSubMenuFromString(int id, const char *string, int commandId);
 	void clearSubMenu(int id);
 
 	bool draw(ManagedSurface *g, bool forceRedraw = false);
