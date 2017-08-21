@@ -517,6 +517,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 
 	c7c492a107ec520d7a7943037d0ca54a	-1	nl	Windows	HE 71	Demo	-	DarthBo
 	084ed0fa98a6d1e9368d67fe9cfbd417	-1	en	Windows	HE 71	Demo	-	khalek
+	e3f1f2b6ca7b55076782872cb8ff0985	9779	en	Windows	HE 71	Demo	-	Ben Castricum
 	c8aac5e3e701874e2fa4117896f9e1b1	-1	en	Mac	HE 73	Demo	-	khalek, sev
 	0855496dde35356b1a9691e22ba84cdc	-1	en	Windows	HE 73	Demo	-	khalek
 	566165a7338fa11029e7c14d94fa70d0	9800	en	Windows	HE 73	Demo	-	khalek
@@ -617,6 +618,7 @@ FreddisFunShop	Freddi Fish's One-Stop Fun Shop
 
 catalog	Humongous Interactive Catalog
 	11e6e244078ff09b0f3832e35420e0a7	-1	en	Windows	-	Demo	-	khalek, sev
+	c13fdcdd2ecaa346f80d1c61782208be	28539	en	Windows	-	Demo	-	Ben Castricum
 	037385a953789190298494d92b89b3d0	-1	en	Windows	HE 72	Demo	-	khalek, sev
 	f7635a0e2ab82c9a0f9ace5f232a488f	-1	en	Windows	HE 72	Demo	-	Kirben
 	a56e8d9d4281c53c3f63c9bd22a59e21	10978342	en	All	HE CUP	Preview	George Kormendi
@@ -645,6 +647,7 @@ farm	Let's Explore the Farm with Buzzy
 
 	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	-	Demo	-	Joachim Eberhard
 	6c375c2236d99f56e6c2cf540e74e474	34333	nl	Windows	-	Demo	-	Kirben
+	03173f0df12062d84721062666155efa	34312	en	Windows	HE 71	Demo	-	Ben Castricum
 	bf8b52fdd9a69c67f34e8e9fec72661c	-1	en	Windows	HE 71	Demo	-	khalek, sev
 	0557df19f046a84c2fdc63507c6616cb	-1	nl	Windows	HE 72	Demo	-	adutchguy
 	8d479e36f35e80257dfc102cf4b8a912	34333	en	Windows	HE 72	Demo	-	khalek, sev
