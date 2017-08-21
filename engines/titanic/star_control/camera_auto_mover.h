@@ -31,6 +31,7 @@ namespace Titanic {
 
 class CErrorCode;
 class FMatrix;
+const int nMoverTransitions = 32; // The number of vector transitions when doing a mover change is fixed
 
 /**
  * Base class for automatic movement of the starview camera
@@ -49,7 +50,7 @@ protected:
 	int _field44;
 	int _field48;
 	int _field4C;
-	double _speeds[32];
+	double _speeds[nMoverTransitions];
 	int _field54;
 	double _transitionPercent;
 	double _transitionPercentInc;

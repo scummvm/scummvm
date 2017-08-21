@@ -74,7 +74,7 @@ int CMarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orient
 		errorCode.set();
 		return 1;
 	} else if (_field48 >= 0) {
-		double speedVal = _speeds[31 - _field48];
+		double speedVal = _speeds[nMoverTransitions - 1 - _field48];
 		pos += _posDelta * speedVal;
 		getVectorOnPath(pos);
 
