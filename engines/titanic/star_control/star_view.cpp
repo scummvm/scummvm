@@ -397,6 +397,7 @@ void CStarView::lockStar() {
 		CSurfaceArea surfaceArea(_videoSurface);
 		FVector v1, v2, v3;
 		double val = _starField->fn5(&surfaceArea, &_camera, v1, v2, v3);
+		bool lockSuccess = false;
 
 		if (val > -1.0) {
 			v1 -= surfaceArea._centroid;
@@ -405,19 +406,22 @@ void CStarView::lockStar() {
 			switch (_starField->getMatchedIndex()) {
 			case -1:
 				// First star match
-				_camera.lockMarker1(v1, v2, v3);
+				lockSuccess = _camera.lockMarker1(v1, v2, v3);
+				assert(lockSuccess); // lockMarker1 should always succeed
 				_starField->incMatches();
 				break;
 
 			case 0:
 				// Second star match
-				_camera.lockMarker2(&_photoViewport, v2);
-				_starField->incMatches();
+				lockSuccess = _camera.lockMarker2(&_photoViewport, v2);
+				if (lockSuccess) // lockMarker2 may have issues
+					_starField->incMatches();
 				break;
 
 			case 1:
 				// Third star match
-				_camera.lockMarker3(&_photoViewport, v2);
+				lockSuccess = _camera.lockMarker3(&_photoViewport, v2);
+				assert(lockSuccess); // lockMarker3 should always succeed
 				_starField->incMatches();
 				break;
 

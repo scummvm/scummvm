@@ -450,9 +450,9 @@ void CStarCamera::deleteHandler() {
 	}
 }
 
-void CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
+bool CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
 	if (_starLockState != ZERO_LOCKED)
-		return;
+		return true;
 
 	FVector tempV;
 	double val1, val2, val3, val4, val5;
@@ -487,11 +487,12 @@ void CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
 
 	CStarVector *sv = new CStarVector(this, v2);
 	_mover->setVector(sv);
+	return	true;
 }
 
-void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
+bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	if (_starLockState != ONE_LOCKED)
-		return;
+		return true;
 
 	DAffine m2(X_AXIS, _matrix._row1);
 	DVector tempV1 = v - _matrix._row1;
@@ -567,7 +568,7 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._col2 -= m4._col1;
 	m4._col4 -= m4._col1;
 
-	FMatrix m6 = _viewport.getOrientation();
+
 
 	double unusedScale=0.0;
 	if (!m4._col2.normalize(unusedScale) ||
@@ -581,16 +582,28 @@ void CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m5.set(m4._col3, m4._col2, m4._col4);
 
 	FVector newPos = m4._col1;
-	
-	_mover->proc8(_viewport._position, newPos, m6, m5);
+	FMatrix m6 = _viewport.getOrientation();
 
-	CStarVector *sv = new CStarVector(this, v);
-	_mover->setVector(sv);
+	if (minDistance > 1.0e8) {
+		// The transition will do poorly in this case.
+		//removeLockedStar(); // undo locking 2nd star
+		_mover->proc8(_viewport._position, _viewport._position, m6, m6);
+		//CStarVector *sv = new CStarVector(this, v);
+		//_mover->setVector(sv);
+		return	false;
+	}	
+	else {
+		_mover->proc8(_viewport._position, newPos, m6, m5);
+		CStarVector *sv = new CStarVector(this, v);
+		_mover->setVector(sv);
+		
+	}
+	return	true;
 }
 
-void CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
+bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
 	if (_starLockState != TWO_LOCKED)
-		return;
+		return true;
 
 	FMatrix newOr = viewport->getOrientation();
 	FMatrix oldOr = _viewport.getOrientation();
@@ -601,6 +614,7 @@ void CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
 
 	CStarVector *sv = new CStarVector(this, v);
 	_mover->setVector(sv);
+	return true;
 }
 
 } // End of namespace Titanic

@@ -207,17 +207,17 @@ public:
 	/**
 	 * Lock in the first matched star marker
 	 */
-	void lockMarker1(FVector v1, FVector v2, FVector v3);
+	bool lockMarker1(FVector v1, FVector v2, FVector v3);
 	
 	/**
 	 * Lock in the second matched star marker
 	 */
-	void lockMarker2(CViewport *viewport, const FVector &v);
+	bool lockMarker2(CViewport *viewport, const FVector &v);
 
 	/**
 	 * Lock in the third and final matched star marker
 	 */
-	void lockMarker3(CViewport *viewport, const FVector &v);
+	bool lockMarker3(CViewport *viewport, const FVector &v);
 };
 
 } // End of namespace Titanic
