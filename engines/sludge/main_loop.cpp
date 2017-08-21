@@ -57,8 +57,6 @@ int main_loop(Common::String filename) {
 
 	g_sludge->_gfxMan->init();
 
-	registerWindowForFatal();
-
 	g_sludge->_gfxMan->blankAllScreen();
 	if (!initPeople())
 		return fatal("Couldn't initialise people stuff");

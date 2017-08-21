@@ -430,14 +430,6 @@ bool makeFastArrayFromStack(Variable &to, const StackHandler *stacky) {
 	return true;
 }
 
-/*
- bool moveVariable (Variable & from, Variable & to) {
- unlinkVar (to);
- memcpy (& to, & from, sizeof (variable));
- from.varType = SVT_NULL;
- }
- */
-
 bool addVarToStack(const Variable &va, VariableStack *&thisStack) {
 	VariableStack *newStack = new VariableStack;
 	if (!checkNew(newStack))

@@ -46,7 +46,6 @@ Common::String readString(Common::SeekableReadStream *stream) {
 	for (int a = 0; a < len; a++) {
 		res += (char)(stream->readByte() - 1);
 	}
-	debugC(3, kSludgeDebugDataLoad, "Read string of length %i: %s", len, res.c_str());
 	return res;
 }
 
