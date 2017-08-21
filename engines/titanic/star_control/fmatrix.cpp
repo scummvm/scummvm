@@ -124,7 +124,7 @@ void FMatrix::set(const DVector &row1, const DVector &row2, const DVector &row3)
 
 void FMatrix::set(const FVector &v) {
 	_row3 = v;
-	_row2 = _row3.fn1();
+	_row2 = _row3.swapComponents();
 
 	_row1 = _row3.crossProduct(_row2);
 

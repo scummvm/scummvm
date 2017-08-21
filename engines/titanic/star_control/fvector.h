@@ -51,7 +51,12 @@ public:
 		_x = _y = _z = 0.0;
 	}
 
-	FVector fn1() const;
+	/**
+	 * Returns a vector with all components of this vector circularlly rotated up 1.
+	 * this x being _y, this y being _z, and this z being _x. A sign change may also
+	 * be done on x/_y based on some conditions.
+	 */
+	FVector swapComponents() const;
 
 	/**
 	 * Calculates the cross-product between this matrix and a passed one
@@ -80,7 +85,11 @@ public:
 	 */
 	float getDistance(const FVector &src) const;
 
-	FVector fn5(const FPose &pose) const;
+	/**
+	 * Returns a vector that is this vector on the left as a row vector
+	 * times the 3x4 affine matrix on the right.
+	 */
+	FVector MatProdRowVect(const FPose &pose) const;
 
 	/**
 	 * Returns true if the passed vector equals this one

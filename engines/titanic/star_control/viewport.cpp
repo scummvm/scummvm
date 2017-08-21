@@ -107,7 +107,7 @@ void CViewport::setPosition(const FVector &v) {
 }
 
 void CViewport::setPosition(const FPose &pose) {
-	_position = _position.fn5(pose);
+	_position = _position.MatProdRowVect(pose);
 	_flag = false;
 }
 
@@ -215,7 +215,7 @@ FVector CViewport::fn16(int index, const FVector &src) {
 FVector CViewport::fn17(int index, const FVector &src) {
 	FVector dest;
 	FPose pose = getPose();
-	FVector tv = src.fn5(pose);
+	FVector tv = src.MatProdRowVect(pose);
 
 	dest._x = (_valArray[index] + tv._x)
 		* _centerVector._x / (_centerVector._y * tv._z);
@@ -227,7 +227,7 @@ FVector CViewport::fn17(int index, const FVector &src) {
 FVector CViewport::fn18(int index, const FVector &src) {
 	FVector dest;
 	FPose pose = getRawPose();
-	FVector tv = src.fn5(pose);
+	FVector tv = src.MatProdRowVect(pose);
 
 	dest._x = (_valArray[index] + tv._x)
 		* _centerVector._x / (_centerVector._y * tv._z);

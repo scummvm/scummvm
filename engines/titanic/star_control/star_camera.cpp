@@ -269,10 +269,10 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV5 -= row1;
 		tempV6 -= row1;
 
-		tempV1 = tempV1.fn5(pose);
-		tempV4 = tempV4.fn5(pose);
-		tempV5 = tempV5.fn5(pose);
-		tempV6 = tempV6.fn5(pose);
+		tempV1 = tempV1.MatProdRowVect(pose);
+		tempV4 = tempV4.MatProdRowVect(pose);
+		tempV5 = tempV5.MatProdRowVect(pose);
+		tempV6 = tempV6.MatProdRowVect(pose);
 
 		tempV4 -= tempV1;
 		tempV5 -= tempV1;
