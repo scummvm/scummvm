@@ -34,6 +34,7 @@
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
+#include "sludge/region.h"
 #include "sludge/statusba.h"
 #include "sludge/sound.h"
 #include "sludge/sludge.h"
@@ -48,7 +49,7 @@ extern VariableStack *noStack;
 
 int dialogValue = 0;
 
-int main_loop(const char *filename) {
+int main_loop(Common::String filename) {
 
 	if (!initSludge(filename)) {
 		return 0;
@@ -75,6 +76,7 @@ int main_loop(const char *filename) {
 
 	startNewFunctionNum(0, 0, NULL, noStack);
 
+	g_sludge->_evtMan->startGame();
 	g_sludge->_timer.init();
 
 	while (!g_sludge->_evtMan->quit()) {
@@ -88,7 +90,16 @@ int main_loop(const char *filename) {
 		g_sludge->_timer.waitFrame();
 	}
 
+	killAllFunctions();
+	killAllRegions();
 	g_sludge->_soundMan->killSoundStuff();
+
+	// Load next game
+	if (!g_sludge->launchNext.empty()) {
+		Common::String name = g_sludge->launchNext;
+		g_sludge->launchNext.clear();
+		main_loop(name);
+	}
 
 	return (0);
 }

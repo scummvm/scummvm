@@ -54,7 +54,6 @@
 namespace Sludge {
 
 extern int dialogValue;
-extern Variable *launchResult;
 
 int numBIFNames = 0;
 Common::String *allBIFNames;
@@ -74,7 +73,6 @@ extern SpeechStruct *speech;
 extern LoadedFunction *saverFunc;
 
 LoadedFunction *allRunningFunctions = NULL;
-ScreenRegion *lastRegion = NULL;
 VariableStack *noStack = NULL;
 Variable *globalVars;
 
@@ -911,6 +909,15 @@ bool runSludge() {
 	}
 
 	return true;
+}
+
+void killAllFunctions() {
+	LoadedFunction *ptr = allRunningFunctions;
+	while (ptr) {
+		LoadedFunction *kill = ptr;
+		ptr = ptr->next;
+		abortFunction(kill);
+	}
 }
 
 bool loadFunctionCode(LoadedFunction *newFunc) {

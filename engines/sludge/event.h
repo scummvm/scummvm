@@ -73,6 +73,7 @@ public:
 	void restore(FrozenStuffStruct *frozenStuff);
 
 	// Quit
+	void startGame() { _weAreDoneSoQuit = false; }
 	void quitGame() { _weAreDoneSoQuit = true; /* _reallyWantToQuit = true; */ }
 	bool quit() { return _weAreDoneSoQuit; }
 

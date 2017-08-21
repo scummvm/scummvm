@@ -33,8 +33,9 @@
 
 namespace Sludge {
 
-ScreenRegion *allScreenRegions = NULL;
-ScreenRegion *overRegion = NULL;
+ScreenRegion *allScreenRegions = nullptr;
+ScreenRegion *overRegion = nullptr;
+ScreenRegion *lastRegion = nullptr;
 
 void showBoxes() {
 	ScreenRegion*huntRegion = allScreenRegions;
@@ -121,7 +122,8 @@ void killAllRegions() {
 		g_sludge->_objMan->removeObjectType(killRegion->thisType);
 		delete killRegion;
 	}
-	overRegion = NULL;
+	overRegion = nullptr;
+	lastRegion = nullptr;
 }
 
 bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,

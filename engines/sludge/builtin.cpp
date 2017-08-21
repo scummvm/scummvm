@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/savefile.h"
 
 #include "sludge/allfiles.h"
@@ -2412,11 +2413,29 @@ builtIn(_rem_launchWith) {
 	UNUSEDALL
 
 	trimStack(fun->stack);
+
+	// To support some windows only games
+	Common::String filename = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
+
+	if (filename.hasSuffix(".exe")) {
+		const Common::FSNode gameDataDir(ConfMan.get("path"));
+		Common::FSList files;
+		gameDataDir.getChildren(files, Common::FSNode::kListFilesOnly);
+
+		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
+			Common::String fileName = file->getName();
+			fileName.toLowercase();
+			if (fileName.hasSuffix(".dat") || fileName == "data") {
+				g_sludge->launchNext = file->getName();
+				return BR_CONTINUE;
+			}
+		}
+	}
+
+	g_sludge->launchNext.clear();
 	setVariable(fun->reg, SVT_INT, false);
-
 	return BR_CONTINUE;
-
 }
 
 builtIn(getFramesPerSecond) {
@@ -2577,8 +2596,9 @@ BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun) {
 		}
 
 		if (builtInFunctionArray[whichFunc].func) {
-			debugC(1, kSludgeDebugBuiltin, "Run built-in function : %s",
-					(whichFunc < numBIFNames) ? allBIFNames[whichFunc].c_str() : "Unknown");
+			debugC(3, kSludgeDebugBuiltin,
+					"Run built-in function %i : %s",
+					whichFunc, (whichFunc < numBIFNames) ? allBIFNames[whichFunc].c_str() : "Unknown");
 			return builtInFunctionArray[whichFunc].func(numParams, fun);
 		}
 	}

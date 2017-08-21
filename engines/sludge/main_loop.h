@@ -24,7 +24,7 @@
 
 namespace Sludge {
 
-int main_loop(const char *filename);
+int main_loop(Common::String filename);
 
 } // End of namespace Sludge
 

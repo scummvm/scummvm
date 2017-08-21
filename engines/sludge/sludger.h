@@ -66,6 +66,7 @@ int startNewFunctionNum(uint, uint, LoadedFunction *, VariableStack*&, bool = tr
 bool handleInput();
 void restartFunction(LoadedFunction *fun);
 bool loadFunctionCode(LoadedFunction *newFunc);
+void killAllFunctions();
 
 void finishFunction(LoadedFunction *fun);
 void abortFunction(LoadedFunction *fun);

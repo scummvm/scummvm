@@ -67,6 +67,7 @@ protected:
 public:
 	// global String variables
 	Common::String launchMe;
+	Common::String launchNext;
 	Common::String loadNow;
 	Common::String gamePath;
 	Common::String bundleFolder;
