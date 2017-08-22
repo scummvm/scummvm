@@ -2676,7 +2676,7 @@ bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
-	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT, MONEY) &&
+	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, STATION_SLOT, MONEY) &&
 	    isSectionVisible(1)) {
 		_gm->takeMoney(-180);
 		_gm->drawImage(2);
