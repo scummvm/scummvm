@@ -77,6 +77,8 @@ public:
 private:
 	bool isCutAllowed();
 
+	void scroll(int delta);
+
 	void undrawInput();
 	void drawInput();
 	void drawSelection();

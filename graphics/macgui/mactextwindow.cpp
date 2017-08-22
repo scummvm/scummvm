@@ -313,6 +313,16 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	if (hasAllFocus())
 		return MacWindow::processEvent(event);	// Pass it to upstream
 
+	if (event.type == Common::EVENT_WHEELUP) {
+		scroll(-2);
+		return true;
+	}
+
+	if (event.type == Common::EVENT_WHEELDOWN) {
+		scroll(2);
+		return true;
+	}
+
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			int consoleHeight = getInnerDimensions().height();
@@ -324,22 +334,12 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 			return true;
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
-			int oldScrollPos = _scrollPos;
-
 			switch (click) {
 			case kBorderScrollUp:
-				_scrollPos = MAX<int>(0, _scrollPos - kConScrollStep);
-				undrawCursor();
-				_cursorY -= (_scrollPos - oldScrollPos);
-				_contentIsDirty = true;
-				_borderIsDirty = true;
+				scroll(-1);
 				break;
 			case kBorderScrollDown:
-				_scrollPos = MIN<int>(_mactext->getTextHeight() - kConScrollStep, _scrollPos + kConScrollStep);
-				undrawCursor();
-				_cursorY -= (_scrollPos - oldScrollPos);
-				_contentIsDirty = true;
-				_borderIsDirty = true;
+				scroll(1);
 				break;
 			default:
 				return false;
@@ -387,6 +387,17 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	}
 
 	return MacWindow::processEvent(event);
+}
+
+void MacTextWindow::scroll(int delta) {
+	int oldScrollPos = _scrollPos;
+
+	_scrollPos += delta * kConScrollStep;
+	_scrollPos = CLIP<int>(_scrollPos, 0, _mactext->getTextHeight() - kConScrollStep);
+	undrawCursor();
+	_cursorY -= (_scrollPos - oldScrollPos);
+	_contentIsDirty = true;
+	_borderIsDirty = true;
 }
 
 void MacTextWindow::startMarking(int x, int y) {
