@@ -523,6 +523,8 @@ struct Object {
 	byte _direction;
 };
 
+#define ticksToMsec(x) (x * kMsecPerTick)
+
 }
 
 #endif // MSN_DEF_H
