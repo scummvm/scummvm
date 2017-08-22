@@ -114,9 +114,9 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	Common::MacResIDArray::const_iterator iter;
 
 	// Dumping interpreter code
-#if 1
+#if 0
 	res = resMan->getResource(MKTAG('C','O','D','E'), 1);
-	warning("code size: %d", res->size());
+	warning("Dumping interpreter code size: %d", res->size());
 	byte *buf = (byte *)malloc(res->size());
 	res->read(buf, res->size());
 	Common::DumpFile out;
