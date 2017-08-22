@@ -44,20 +44,20 @@ private:
 	uint getStateDialogueId(uint oldId, uint newId);
 
 	/**
-	 * Sets flags 12 and resets some ranges
+	 * Starts the MaitreD fighting, if he isn't already
 	 */
-	void setFlags12();
+	void startFighting();
+
+	/**
+	 * Stops the MaitreD fighting
+	 */
+	void stopFighting(bool flag);
 
 	/**
 	 * Sets flags 10 to different values based on the passed
 	 * dialogue Id
 	 */
 	void setFlags10(uint newId, uint index);
-
-	/**
-	 * Trigers 12
-	 */
-	void trigger12(bool flag);
 
 	/**
 	 * Does preprocessing for the sentence

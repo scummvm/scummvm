@@ -78,7 +78,7 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	setState(0);
 
 	if (getValue(12) == 0) {
-		trigger12(false);
+		stopFighting(false);
 		_answerCtr = 0;
 
 		if (sentence->contains("restaurant at the end of the universe")
@@ -113,13 +113,13 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			|| sentence->contains("i give up") || sentence->contains("i give in")
 			|| sentence->contains("i surrender") || sentence->contains("i submit")) {
 		_answerCtr = 0;
-		trigger12(false);
+		stopFighting(false);
 		addResponse(getDialogueId(260063));
 	} else if (sentence->localWord("not") && sentence->localWord("fight") &&
 			(sentence->localWord("feel") || sentence->localWord("want")
 			|| sentence->localWord("do") || sentence->localWord("will"))) {
 		_answerCtr = 0;
-		trigger12(false);
+		stopFighting(false);
 		addResponse(getDialogueId(260678));
 	} else if (sentence->contains("touche") || sentence->contains("toushe")) {
 		addResponse(getDialogueId(260098));
@@ -165,7 +165,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 	case 110:
 		addResponse(getDialogueId(260118));
 		applyResponse();
-		trigger12(true);
+		stopFighting(true);
 		CTrueTalkManager::setFlags(8, 1);
 		CTrueTalkManager::setFlags(9, 1);
 		break;
@@ -207,7 +207,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 	case 117:
 		CTrueTalkManager::setFlags(8, 0);
 		CTrueTalkManager::setFlags(9, 0);
-		setFlags12();
+		startFighting();
 		break;
 
 	case 132:
@@ -291,7 +291,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 			break;
 
 		case 13:
-			setFlags12();
+			startFighting();
 			addResponse(getDialogueId(260131));
 			applyResponse();
 			break;
@@ -533,7 +533,7 @@ int MaitreDScript::updateState(uint oldId, uint newId, int index) {
 
 	if (newId == 260076 || newId == 260181 || newId == 261010) {
 		CTrueTalkManager::setFlags(14, 1);
-		trigger12(true);
+		stopFighting(true);
 		setFlags10(newId, index);
 		return newId;
 	}
@@ -547,7 +547,7 @@ int MaitreDScript::updateState(uint oldId, uint newId, int index) {
 
 		for (uint idx = 0; FLAG_IDS[idx]; ++idx) {
 			if (FLAG_IDS[idx] == newId) {
-				setFlags12();
+				startFighting();
 				break;
 			}
 		}
@@ -634,12 +634,11 @@ uint MaitreDScript::getStateDialogueId(uint oldId, uint newId) {
 	}
 }
 
-
-void MaitreDScript::setFlags12() {
-	int val = getValue(12);
+void MaitreDScript::startFighting() {
+	bool isFighting = getValue(12);
 	CTrueTalkManager::setFlags(12, 1);
 
-	if (!val) {
+	if (!isFighting) {
 		CTrueTalkManager::triggerAction(8, 0);
 		resetRange(260121);
 		resetRange(260122);
@@ -647,6 +646,16 @@ void MaitreDScript::setFlags12() {
 		resetRange(260124);
 		resetRange(260125);
 		resetRange(260126);
+	}
+}
+
+void MaitreDScript::stopFighting(bool flag) {
+	bool isFighting = getValue(12);
+	CTrueTalkManager::setFlags(12, 0);
+
+	if (isFighting) {
+		// Surrender
+		CTrueTalkManager::triggerAction(flag ? 10 : 9, 0);
 	}
 }
 
@@ -661,15 +670,6 @@ void MaitreDScript::setFlags10(uint newId, uint index) {
 	}
 
 	CTrueTalkManager::setFlags(10, val);
-}
-
-void MaitreDScript::trigger12(bool flag) {
-	int val = getValue(12);
-	CTrueTalkManager::setFlags(12, 0);
-
-	if (val) {
-		CTrueTalkManager::triggerAction(flag ? 10 : 9, 0);
-	}
 }
 
 int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *sentence) {
@@ -739,18 +739,18 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 8:
 		if (sentence->_category == 11 || sentence->_category == 13) {
-			trigger12(false);
+			stopFighting(false);
 			addResponse(getDialogueId(260094));
 			CTrueTalkManager::setFlags(11, 1);
 		} else {
-			setFlags12();
+			startFighting();
 			addResponse(getDialogueId(260131));
 		}
 		applyFlag = true;
 		break;
 
 	case 9:
-		setFlags12();
+		startFighting();
 		break;
 
 	case 11:
@@ -835,7 +835,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			applyFlag = true;
 			stateFlag = false;
 		} else {
-			setFlags12();
+			startFighting();
 			addResponse(getDialogueId(260221));
 			applyFlag = true;
 			stateFlag = false;
@@ -1026,7 +1026,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 29:
 		if (sentence->_category == 11) {
-			setFlags12();
+			startFighting();
 			addResponse(getDialogueId(260131));
 		} else {
 			addResponse(getDialogueId(260966));
