@@ -279,6 +279,10 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	if (event.type == Common::EVENT_KEYDOWN) {
 		_wm->setActive(getId());
 
+		if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
+			return false;
+		}
+
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
 			if (!_inputText.empty()) {
