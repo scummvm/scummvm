@@ -50,10 +50,7 @@ void CCameraAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
 	_destPos = newPos;
 	_posDelta = _destPos - _srcPos;
        float temp = 0.0;
-	if (!_posDelta.normalize(temp)) { // Do the normalization, put the scale amount in temp,
-                                         // but if it is unsuccessful, crash
-              assert(temp);
-       }
+	_posDelta.normalize(temp); // Do the normalization, put the scale amount in temp
        _distance = temp;
 	_active = false;
 	_field34 = false;
@@ -92,24 +89,25 @@ void CCameraAutoMover::setPath(const FVector &srcV, const FVector &destV, const 
 	_transitionPercent = 1.0;
 }
 
-void CCameraAutoMover::proc6(int val1, int val2, float val) {
+void CCameraAutoMover::calcSpeeds(int val1, int val2, float distance) {
+	// Usually val1 and val2 are small where as distance can be large
 	_field44 = val1;
-	_field4C = val1 + 62;
-	_field38 = val / (double)(val1 + val2 * 2);
-	_field40 = 31;
-	_field48 = 31;
+	_field4C = val1 + 2 * nMoverTransitions; // For _nMoverTransitions = 32 this second value was 64, 
+				 		     // should it always be x2 _nMoverTransitions?
+	_field38 = distance / (double)(val1 + val2 * 2);
+	_field40 = nMoverTransitions-1;
+	_field48 = nMoverTransitions-1;
 	_field3C = (double)val2 * _field38;
 	
 	// Calculate the speeds for a graduated movement between stars
-	double base = 0.0, total = 0.0;
-	_speeds.resize(32);
-	for (int idx = 31; idx >= 0; --idx) {
-		_speeds[idx] = pow(base, 4.0);
+	double base = 0.0, total = 0.0, power = 4.0, baseInc = 0.03125;
+	for (int idx = nMoverTransitions - 1; idx >= 0; --idx) {
+		_speeds[idx] = pow(base, power);
 		total += _speeds[idx];
-		base += 0.03125;
+		base += baseInc;
 	}
 	
-	for (int idx = 0; idx < 32; ++idx) {
+	for (int idx = 0; idx < nMoverTransitions; ++idx) {
 		_speeds[idx] = _speeds[idx] * _field3C / total;
 	}
 }

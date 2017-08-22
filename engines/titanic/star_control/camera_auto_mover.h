@@ -31,6 +31,7 @@ namespace Titanic {
 
 class CErrorCode;
 class FMatrix;
+const int nMoverTransitions = 32; // The number of vector transitions when doing a mover change is fixed
 
 /**
  * Base class for automatic movement of the starview camera
@@ -49,7 +50,7 @@ protected:
 	int _field44;
 	int _field48;
 	int _field4C;
-	Common::Array<double> _speeds;
+	double _speeds[nMoverTransitions];
 	int _field54;
 	double _transitionPercent;
 	double _transitionPercentInc;
@@ -63,7 +64,11 @@ public:
 	virtual void proc3(const FMatrix &srcOrient, const FMatrix &destOrient);
 	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
 	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) { return 2; }
-	virtual void proc6(int val1, int val2, float val);
+	/**
+	 * Given a distance to cover, determines a bunch of speeds for a gradual transition
+	 * from one position to another (the mover). The speeds go from fast to slow
+	 */
+	virtual void calcSpeeds(int val1, int val2, float distance);
 
 	bool isActive() const { return _active; }
 };
