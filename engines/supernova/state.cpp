@@ -221,33 +221,35 @@ void GameManager::initState() {
 	_timer1 = 0;
 	_animationTimer = 0;
 
-	_state.time = 2840 * kMsecPerTick;
-	_state.timeSleep = 0;
-	_state.timeStarting = 50400000; // 2 pm -- Originally: systime() - 917650
-	_state.timeAlarm = 25200000;    // 7 am
-	_state.timeAlarmSystem = _state.timeAlarm + _state.timeStarting;
-	_state.eventTime = 0xffffffff;
-	_state.shipEnergy = 2135;
-	_state.landingModuleEnergy = 923;
-	_state.greatFlag = 0;
-	_state.timeRobot = 0;
-	_state.money = 0;
-	_state.coins = 0;
-	_state.shoes = 0;
-	_state.nameSeen = 0;
-	_state.destination = 255;
-	_state.benOverlay = 0;
-	_state.language = 0;
-	_state.corridorSearch = false;
-	_state.alarmOn = false;
-	_state.terminalStripConnected = false;
-	_state.terminalStripWire = false;
-	_state.cableConnected = false;
-	_state.powerOff = false;
-	_state.cockpitSeen = false;
-	_state.airlockSeen = false;
-	_state.holdSeen = false;
-	_state.dream = false;
+	_state._time = ticksToMsec(2840);
+	_state._timeSleep = 0;
+	// NOTE: systime() calls int 1A, means it gets number of ticks since midnight.
+	//       So, it doesn't matter if we overflow by substraction?
+	_state._timeStarting = _vm->_system->getMillis() - ticksToMsec(917650); // 2 pm
+	_state._timeAlarm = ticksToMsec(458808);    // 7 am
+	_state._timeAlarmSystem = _state._timeAlarm + _state._timeStarting;
+	_state._eventTime = 0xffffffff;
+	_state._shipEnergy = 2135;
+	_state._landingModuleEnergy = 923;
+	_state._greatFlag = 0;
+	_state._timeRobot = 0;
+	_state._money = 0;
+	_state._coins = 0;
+	_state._shoes = 0;
+	_state._nameSeen = 0;
+	_state._destination = 255;
+	_state._benOverlay = 0;
+	_state._language = 0;
+	_state._corridorSearch = false;
+	_state._alarmOn = false;
+	_state._terminalStripConnected = false;
+	_state._terminalStripWire = false;
+	_state._cableConnected = false;
+	_state._powerOff = false;
+	_state._cockpitSeen = false;
+	_state._airlockSeen = false;
+	_state._holdSeen = false;
+	_state._dream = false;
 }
 
 void GameManager::initRooms() {
@@ -518,7 +520,7 @@ void GameManager::drawImage(int section) {
 }
 
 void GameManager::corridorOnEntrance() {
-	if (_state.corridorSearch)
+	if (_state._corridorSearch)
 		busted(0);
 }
 
@@ -534,11 +536,11 @@ void GameManager::startSearch() {
 	if ((_currentRoom >= _rooms[CORRIDOR1]) && (_currentRoom <= _rooms[BCORRIDOR]))
 		busted(0);
 
-	_state.corridorSearch = true;
+	_state._corridorSearch = true;
 }
 
 void GameManager::search(int time) {
-	_state.eventTime = _vm->getDOSTicks() + time;
+	_state._eventTime = _vm->_system->getMillis() + time;
 //	*event = &search_start;
 }
 
@@ -631,12 +633,12 @@ void GameManager::taxi() {
 }
 
 void GameManager::outro() {
-	_state.benOverlay = 3;
+	_state._benOverlay = 3;
 //	load_overlay();
 //	title = 2;
 	_vm->playSoundMod(49);
 //	title = 0;
-	_state.benOverlay = 0;
+	_state._benOverlay = 0;
 	_vm->paletteFadeOut();
 	_vm->renderImage(55, 0);
 	_vm->paletteFadeIn();
@@ -647,11 +649,11 @@ void GameManager::outro() {
 }
 
 void GameManager::great(uint number) {
-	if (number && (_state.greatFlag & (1 << number)))
+	if (number && (_state._greatFlag & (1 << number)))
 		return;
 
 	_vm->playSound(kAudioUndef7);
-	_state.greatFlag |= 1 << number;
+	_state._greatFlag |= 1 << number;
 }
 
 bool GameManager::airless() {
@@ -689,18 +691,18 @@ int GameManager::dialog(int num, byte *rowLength[], const char **text[6], int nu
 }
 
 void GameManager::turnOff() {
-	if (_state.powerOff)
+	if (_state._powerOff)
 		return;
 
-	_state.powerOff = true;
+	_state._powerOff = true;
 	roomBrightness();
 
 }
 void GameManager::turnOn() {
-	if (!_state.powerOff)
+	if (!_state._powerOff)
 		return;
 
-	_state.powerOff = false;
+	_state._powerOff = false;
 	_vm->paletteBrightness();
 	Room *room = _rooms[SLEEP];
 	room->setSectionVisible(1, false);
@@ -814,15 +816,82 @@ void GameManager::mouseWait(int delay) {
 	// STUB
 }
 
+static void dimColor(SupernovaEngine *vm, int color) {
+	color -= 16;
+	color *= 3;
+	// TODO: alters palette image data permanently (get system palette instead?)
+	vm->_currentImage->_palette[color + 0] = vm->_currentImage->_palette[color + 0] * 3 / 5;
+	vm->_currentImage->_palette[color + 1] = vm->_currentImage->_palette[color + 1] * 3 / 5;
+	vm->_currentImage->_palette[color + 2] = vm->_currentImage->_palette[color + 2] * 3 / 5;
+}
+
 void GameManager::roomBrightness() {
-	// STUB
+	const byte specialColors[2][18] = {
+	    {0x42, 0x49, 0x55, 0x68, 0x50, 0x5d, 0x3c, 1},
+	    {0x85, 0x91, 0x99, 0x92, 0x9b, 0x96, 0x9a, 0xa6,
+	     0xb0, 0xb4, 0xb5, 0xc2, 0xd1, 0xbe, 0xb6, 0xa8,
+	     0x6b, 1}
+	};
+	char sf;
+	int i;
+	if ((_currentRoom == _rooms[HOLD]) && (_state._benOverlay == 1)) {
+		if (_state._powerOff) {
+			for (int f = 16; f < 255; f++) {
+				i = 0;
+				do {
+					sf = specialColors[0][i] - 1;
+					i++;
+				} while (sf && (sf != f));
+				if (!sf)
+					dimColor(_vm, f);
+			}
+		}
+		if (!(_state._landingModuleEnergy && _rooms[LANDINGMODULE]->isSectionVisible(7))) {
+			i = 0;
+			while (sf = specialColors[0][i] - 1) {
+				dimColor(_vm, sf);
+				i++;
+			};
+		}
+	} else if ((_currentRoom == _rooms[LANDINGMODULE]) && (_state._benOverlay == 1)) {
+		if (!(_state._landingModuleEnergy && _rooms[LANDINGMODULE]->isSectionVisible(7))) {
+			for (int f = 16; f < 255; f++) {
+				i=0;
+				do {
+					sf = specialColors[1][i] - 1;
+					i++;
+				} while (sf && (sf != f));
+				if (!sf)
+					dimColor(_vm, f);
+			}
+		}
+		if (_state._powerOff) {
+			i=0;
+			while (sf = specialColors[1][i] - 1) {
+				dimColor(_vm, sf);
+				i++;
+			};
+		}
+	} else if ((_currentRoom == _rooms[CAVE]) && (_state._benOverlay == 1)) {
+		_vm->_brightness = 0;
+	} else if ((_currentRoom != _rooms[OUTSIDE]) &&
+	           (_currentRoom <  _rooms[ROCKS]) && (_state._benOverlay == 1)) {
+		if (_state._powerOff)
+			for (int f = 16; f < 255; f++)
+				dimColor(_vm, f);
+	} else if ((_currentRoom == _rooms[GUARD3]) && (_state._benOverlay == 2)) {
+		if (_state._powerOff)
+			_vm->_brightness = 0;
+	}
+
+	_vm->paletteBrightness();
 }
 
 void GameManager::loadTime() {
-	_state.timeStarting += _state.time;
-	if (_state.eventTime != 1)
-		_state.eventTime += _state.time;
-	_state.timeAlarmSystem = _state.timeAlarm + _state.timeStarting;
+	_state._timeStarting += _state._time;
+	if (_state._eventTime != 1)
+		_state._eventTime += _state._time;
+	_state._timeAlarmSystem = _state._timeAlarm + _state._timeStarting;
 }
 
 void GameManager::saveTime() {
@@ -843,8 +912,7 @@ void GameManager::errorTemp() {
 }
 
 void GameManager::wait2(int ticks) {
-	// 1 tick = 1/18.2s
-	uint end = g_system->getMillis() + (55 * ticks);
+	uint end = g_system->getMillis() + ticksToMsec(ticks);
 	while (g_system->getMillis() < end) {
 		_vm->updateEvents();
 		g_system->updateScreen();
@@ -853,12 +921,12 @@ void GameManager::wait2(int ticks) {
 }
 
 void GameManager::setAnimationTimer(int ticks) {
-	_animationTimer = g_system->getMillis() + (55 * ticks);
+	_animationTimer = g_system->getMillis() + ticksToMsec(ticks);
 }
 
 void GameManager::handleTime() {
-	_state.time = g_system->getMillis();
-	if (_animationTimer <= _state.time)
+	_state._time = g_system->getMillis();
+	if (_animationTimer <= _state._time)
 		_animationTimer = 0;
 }
 
@@ -998,7 +1066,7 @@ void GameManager::shot(int a, int b) {
 }
 
 void GameManager::takeMoney(int amount) {
-	_state.money += amount;
+	_state._money += amount;
 	if (amount > 0)
 		great(0);
 	// TODO: kmaxobject - 1?
@@ -1007,7 +1075,7 @@ void GameManager::takeMoney(int amount) {
 //	strcpy(raumz[OFFICE_R1]->object[5].name,ltoa((long)_state.money));
 //	strcat(raumz[OFFICE_R1]->object[5].name," Xa");
 
-	if (_state.money) {
+	if (_state._money) {
 		if (!_rooms[OFFICE_R1]->getObject(5)->hasProperty(CARRIED))
 			takeObject(*_rooms[OFFICE_R1]->getObject(5));
 	} else {
@@ -1134,13 +1202,13 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage("Du iát die Tablette und merkst,|daá sich irgendetwas verndert hat.");
 			great(0);
 			_inventory.remove(obj1);
-			_state.language = 2;
+			_state._language = 2;
 			takeObject(*_rooms[ENTRANCE]->getObject(17));
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == PILL_HULL) &&
-	           (_state.language == 2)) {
+	           (_state._language == 2)) {
 		_vm->renderMessage("Komisch! Auf einmal kannst du die Schrift lesen!|Darauf steht:\"Wenn Sie diese Schrift jetzt|lesen knnen, hat die Tablette gewirkt.\"");
-		_state.language = 1;
+		_state._language = 1;
 	} else if ((verb == ACTION_OPEN) && (obj1._id == WALLET)) {
 		if (!_rooms[ROGER]->getObject(3)->hasProperty(CARRIED)) {
 			_vm->renderMessage("Das muát du erst nehmen.");
@@ -1175,8 +1243,8 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		    "Es ist eine Uhr mit extra|lautem Wecker. "
 		    "Sie hat einen|Knopf zum Verstellen der Alarmzeit.|"
 		    "Uhrzeit: %s   Alarmzeit: %s",
-		    timeToString(_state.time + _state.timeStarting).c_str(),
-		    timeToString(_state.timeAlarm).c_str()).c_str());
+		    timeToString(_state._time + _state._timeStarting).c_str(),
+		    timeToString(_state._timeAlarm).c_str()).c_str());
 	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
 		char *min;
 		int hours, minutes;
@@ -1185,6 +1253,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->saveScreen(88, 87, 144, 24);
 		_vm->renderBox(88, 87, 144, 24, kColorWhite35);
 		_vm->renderText("Neue Alarmzeit (hh:mm) :", 91, 90, kColorWhite99);
+		// TODO: Adjust for msec time instead of ticks
 		do {
 			_vm->renderBox(91, 99, 138, 9, kColorDarkBlue);
 			do {
@@ -1206,19 +1275,22 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			}
 
 			for (uint i = 0; i < strlen(t); i++)
-				if ((t[i] < '0') || (t[i] > '9')) f = true;
+				if ((t[i] < '0') || (t[i] > '9'))
+					f = true;
 			for (uint i = 0; i < strlen(min); i++)
-				if ((min[i] < '0') || (min[i] > '9')) f = true;
+				if ((min[i] < '0') || (min[i] > '9'))
+					f = true;
 			hours = atoi(t);
 			minutes = atoi(min);
-			if ((hours > 23) || (minutes > 59)) f = true;
+			if ((hours > 23) || (minutes > 59))
+				f = true;
 			animationOn();
 		} while (f && (_key.keycode != Common::KEYCODE_ESCAPE));
 		_vm->restoreScreen();
 		if (_key.keycode != Common::KEYCODE_ESCAPE) {
-			_state.timeAlarm = (hours * 60 + minutes) * 1092.3888 + 8;
-			_state.timeAlarmSystem = _state.timeAlarm + _state.timeStarting;
-			_state.alarmOn = (_state.timeAlarmSystem > _vm->getDOSTicks());
+			_state._timeAlarm = (hours * 60 + minutes) * 60 + 8;
+			_state._timeAlarmSystem = _state._timeAlarm + _state._timeStarting;
+			_state._alarmOn = (_state._timeAlarmSystem > _vm->_system->getMillis());
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, WIRE)) {
 		r = _rooms[CABIN_L3];
@@ -1231,8 +1303,8 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			r->getObject(8)->_name = "Leitung mit Lsterklemme";
 			r = _rooms[HOLD];
 			_inventory.remove(*r->getObject(2));
-			_state.terminalStripConnected = true;
-			_state.terminalStripWire = true;
+			_state._terminalStripConnected = true;
+			_state._terminalStripWire = true;
 			_vm->renderMessage("Ok.");
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, SPOOL)) {
@@ -1241,11 +1313,11 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		r->getObject(9)->_name = "Kabelrolle mit Lsterklemme";
 		r = _rooms[HOLD];
 		_inventory.remove(*r->getObject(2));
-		_state.terminalStripConnected = true;
+		_state._terminalStripConnected = true;
 		_vm->renderMessage("Ok.");
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, SPOOL)) {
 		r = _rooms[CABIN_L3];
-		if (!_state.terminalStripConnected) {
+		if (!_state._terminalStripConnected) {
 			if (r->isSectionVisible(26))
 				_vm->renderMessage("Womit denn?");
 			else
@@ -1260,7 +1332,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				r->getObject(8)->_name = "langes Kabel mit Stecker";
 				r = _rooms[CABIN_L2];
 				_inventory.remove(*r->getObject(9));
-				_state.cableConnected = true;
+				_state._cableConnected = true;
 				_vm->renderMessage("Ok.");
 			}
 		}
