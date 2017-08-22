@@ -160,16 +160,6 @@ Common::Error SupernovaEngine::run() {
 	return Common::kNoError;
 }
 
-// Emulates DOS int 1A/00
-int SupernovaEngine::getDOSTicks() {
-	TimeDate systemTime;
-	_system->getTimeAndDate(systemTime);
-
-	return static_cast<int>((systemTime.tm_hour * 24 +
-	                         systemTime.tm_min  * 60 +
-	                         systemTime.tm_sec) * 18.2065);
-}
-
 void SupernovaEngine::updateEvents() {
 	_gm->handleTime();
 	if (_gm->_animationEnabled && _gm->_animationTimer == 0)

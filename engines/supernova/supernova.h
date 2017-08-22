@@ -107,7 +107,6 @@ public:
 	int  _textCursorY;
 	int  _textColor;
 
-	int  getDOSTicks();
 	int  textWidth(const char *text);
 	int  textWidth(const uint16 key);
 	void initData();
