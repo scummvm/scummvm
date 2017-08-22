@@ -512,6 +512,7 @@ struct Object {
 			return false;
 	}
 
+	// TODO: convert name and description to String
 	const char *_name;
 	const char *_description;
 	ObjectID _id;

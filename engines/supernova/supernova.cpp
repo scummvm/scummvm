@@ -267,6 +267,8 @@ void SupernovaEngine::playSound(AudioIndex sample) {
 	            11931, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 	stopSound();
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audioStream);
+
+	// TODO: Stall till sound was played
 }
 
 void SupernovaEngine::stopSound() {
@@ -544,9 +546,6 @@ void SupernovaEngine::paletteBrightness() {
 }
 
 void SupernovaEngine::paletteFadeOut() {
-	// TODO: scene 0 (newspaper article in intro, mode 0x11)
-	//       needs to be handled differently
-
 	while (_brightness > 20) {
 		_menuBrightness = _brightness;
 		paletteBrightness();
