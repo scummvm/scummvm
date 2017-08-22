@@ -587,7 +587,7 @@ protected:
 	bool Dialogue_Menu_Clear_List();
 	bool Dialogue_Menu_Add_To_List(int answer);
 	bool Dialogue_Menu_Add_DONE_To_List(int answer);
-	// Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected
+	bool Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected(int answer);
 	bool DM_Add_To_List(int answer, int a2, int a3, int a4);
 	bool DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int a2, int a3, int a4);
 	void Dialogue_Menu_Remove_From_List(int answer);

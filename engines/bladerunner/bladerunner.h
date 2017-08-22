@@ -54,6 +54,7 @@ class AudioSpeech;
 class Chapters;
 class CrimesDatabase;
 class Combat;
+class DialogueMenu;
 class Font;
 class GameFlags;
 class GameInfo;
@@ -92,6 +93,7 @@ public:
 	Chapters         *_chapters;
 	CrimesDatabase   *_crimesDatabase;
 	Combat           *_combat;
+	DialogueMenu     *_dialogueMenu;
 	GameFlags        *_gameFlags;
 	GameInfo         *_gameInfo;
 	ItemPickup       *_itemPickup;

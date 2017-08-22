@@ -146,6 +146,11 @@ void Mouse::setCursor(int cursor) {
 	}
 }
 
+void Mouse::getXY(int *x, int *y) {
+	*x = _x;
+	*y = _y;
+}
+
 void Mouse::disable() {
 	++_disabledCounter;
 }

@@ -30,6 +30,7 @@
 #include "bladerunner/chapters.h"
 #include "bladerunner/combat.h"
 #include "bladerunner/crimes_database.h"
+#include "bladerunner/dialogue_menu.h"
 #include "bladerunner/font.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
@@ -280,7 +281,9 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!_textOptions->open("OPTIONS"))
 		return false;
 
-	// TODO: Dialogue Menu (DLGMENU.TRE)
+	_dialogueMenu = new DialogueMenu(this);
+	if (!_dialogueMenu->loadText("DLGMENU"))
+		return false;
 
 	_suspectsDatabase = new SuspectsDatabase(this, _gameInfo->getSuspectsDatabaseSize());
 
@@ -602,8 +605,12 @@ void BladeRunnerEngine::gameTick() {
 		if (_scene->didPlayerWalkIn()) {
 			_sceneScript->PlayerWalkedIn();
 		}
-		// TODO: Gun range announcements
+		bool inDialogueMenu = _dialogueMenu->isVisible();
+		if (!inDialogueMenu) {
+			// TODO: actors combat-tick
+		}
 
+		// TODO: Gun range announcements
 		_zbuffer->clean();
 
 		_ambientSounds->tick();
@@ -621,8 +628,9 @@ void BladeRunnerEngine::gameTick() {
 
 		// TODO: Render overlays
 
-		//if (!dialogueMenu)
+		if (!inDialogueMenu) {
 			actorsUpdate();
+		}
 
 		if (_settings->getNewScene() == -1 || _sceneScript->IsInsideScript() || _aiScripts->IsInsideScript()) {
 			_sliceRenderer->setView(*_view);
@@ -645,9 +653,13 @@ void BladeRunnerEngine::gameTick() {
 			_itemPickup->tick();
 			_itemPickup->draw();
 
-			// TODO: Draw dialogue menu
-
 			Common::Point p = getMousePos();
+
+			if (_dialogueMenu->isVisible()) {
+				_dialogueMenu->tick(p.x, p.y);
+				_dialogueMenu->draw();
+			}
+
 			_mouse->tick(p.x, p.y);
 			_mouse->draw(_surfaceGame, p.x, p.y);
 
@@ -829,6 +841,13 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 			_spinner->handleMouseDown(x, y);
 		} else {
 			_spinner->handleMouseUp(x, y);
+		}
+		return;
+	}
+
+	if (_dialogueMenu->waitingForInput()) {
+		if (buttonLeft && !buttonDown) {
+			_dialogueMenu->mouseUp();
 		}
 		return;
 	}

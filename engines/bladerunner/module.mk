@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	decompress_lcw.o \
 	decompress_lzo.o \
 	detection.o \
+	dialogue_menu.o \
 	fog.o \
 	font.o \
 	gameflags.o \
