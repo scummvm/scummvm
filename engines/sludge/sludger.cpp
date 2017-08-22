@@ -20,12 +20,14 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/builtin.h"
 #include "sludge/cursors.h"
+#include "sludge/event.h"
 #include "sludge/fonttext.h"
 #include "sludge/freeze.h"
 #include "sludge/floor.h"
@@ -76,7 +78,17 @@ LoadedFunction *allRunningFunctions = NULL;
 VariableStack *noStack = NULL;
 Variable *globalVars;
 
-int numGlobals;
+int numGlobals = 0;
+
+extern SpritePalette pastePalette;
+extern int speechMode;
+extern float speechSpeed;
+extern Variable *launchResult;
+extern int lastFramesPerSecond, thumbWidth, thumbHeight;
+
+extern bool allowAnyFilename;
+extern byte fadeMode;
+extern uint16 saveEncoding;
 
 const char *sludgeText[] = { "?????", "RETURN", "BRANCH", "BR_ZERO",
 		"SET_GLOBAL", "SET_LOCAL", "LOAD_GLOBAL", "LOAD_LOCAL", "PLUS", "MINUS",
@@ -136,9 +148,69 @@ Common::File *openAndVerify(const Common::String &filename, char extra1, char ex
 	return fp;
 }
 
-bool initSludge(const Common::String &filename) {
-	int a = 0;
+void initSludge() {
+	g_sludge->_languageMan->init();
+	g_sludge->_gfxMan->init();
+	g_sludge->_resMan->init();
+	initPeople();
+	initFloor();
+	g_sludge->_objMan->init();
+	initSpeech();
+	initStatusBar();
+	resetRandW();
+	g_sludge->_evtMan->init();
+	g_sludge->_txtMan->init();
+	g_sludge->_cursorMan->init();
 
+	g_sludge->_soundMan->init();
+	if (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) {
+		g_sludge->_soundMan->initSoundStuff();
+	}
+
+	// global variables
+	numGlobals = 0;
+	speechMode = 0;
+	launchResult = nullptr;
+
+	lastFramesPerSecond = -1;
+	thumbWidth = thumbHeight = 0;
+	allowAnyFilename = true;
+	captureAllKeys = false;
+	noStack = nullptr;
+	numBIFNames = numUserFunc = 0;
+	allUserFunc = allBIFNames = nullptr;
+	speechSpeed = 1;
+	brightnessLevel = 255;
+	fadeMode = 2;
+	saveEncoding = false;
+}
+
+void killSludge() {
+	killAllFunctions();
+	killAllPeople();
+	killAllRegions();
+	setFloorNull();
+	killAllSpeech();
+	g_sludge->_languageMan->kill();
+	g_sludge->_gfxMan->kill();
+	g_sludge->_resMan->kill();
+	g_sludge->_objMan->kill();
+	g_sludge->_soundMan->killSoundStuff();
+	g_sludge->_evtMan->kill();
+	g_sludge->_txtMan->kill();
+	g_sludge->_cursorMan->kill();
+
+	// global variables
+	pastePalette.reset();
+	numBIFNames = numUserFunc = 0;
+	delete []allUserFunc;
+	delete []allBIFNames;
+}
+
+bool initSludge(const Common::String &filename) {
+	initSludge();
+
+	int a = 0;
 	Common::File *fp = openAndVerify(filename, 'G', 'E', ERROR_BAD_HEADER, gameVersion);
 	if (!fp)
 		return false;
@@ -201,7 +273,7 @@ bool initSludge(const Common::String &filename) {
 	Common::String dataFol = (gameVersion >= VERSION(1, 3)) ? readString(fp) : "";
 	debugC(2, kSludgeDebugDataLoad, "dataFol : %s", dataFol.c_str());
 
-	g_sludge->_languageMan->init(fp);
+	g_sludge->_languageMan->createTable(fp);
 
 	if (gameVersion >= VERSION(1, 6)) {
 		fp->readByte();
@@ -901,12 +973,8 @@ bool runSludge() {
 }
 
 void killAllFunctions() {
-	LoadedFunction *ptr = allRunningFunctions;
-	while (ptr) {
-		LoadedFunction *kill = ptr;
-		ptr = ptr->next;
-		abortFunction(kill);
-	}
+	while (allRunningFunctions)
+		finishFunction(allRunningFunctions);
 }
 
 bool loadFunctionCode(LoadedFunction *newFunc) {

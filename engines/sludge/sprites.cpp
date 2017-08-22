@@ -54,13 +54,15 @@ void GraphicsManager::forgetSpriteBank(SpriteBank &forgetme) {
 		forgetme.myPalette.b = NULL;
 	}
 
-	for (int i = 0; i < forgetme.total; ++i) {
-		forgetme.sprites[i].surface.free();
-		forgetme.sprites[i].burnSurface.free();
-	}
+	if (forgetme.sprites) {
+		for (int i = 0; i < forgetme.total; ++i) {
+			forgetme.sprites[i].surface.free();
+			forgetme.sprites[i].burnSurface.free();
+		}
 
-	delete []forgetme.sprites;
-	forgetme.sprites = NULL;
+		delete []forgetme.sprites;
+		forgetme.sprites = NULL;
+	}
 }
 
 bool GraphicsManager::reserveSpritePal(SpritePalette &sP, int n) {

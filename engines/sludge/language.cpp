@@ -32,19 +32,35 @@
 
 namespace Sludge {
 
+LanguageManager::LanguageManager() {
+	init();
+}
+
 LanguageManager::~LanguageManager() {
+	kill();
+}
+
+void LanguageManager::init() {
+	_languageID = 0;
+	_languageIdx = -1;
+	_numLanguages = 0;
+	_languageTable = nullptr;
+	_languageNames = nullptr;
+}
+
+void LanguageManager::kill() {
 	if (_languageTable) {
 		delete []_languageTable;
-		_languageTable = NULL;
+		_languageTable = nullptr;
 	}
 
 	if (_languageNames) {
 		delete []_languageNames;
-		_languageNames = NULL;
+		_languageNames = nullptr;
 	}
 }
 
-void LanguageManager::init(Common::File *fp) {
+void LanguageManager::createTable(Common::File *fp) {
 	// get number of languages
 	_numLanguages =
 				(gameVersion >= VERSION(1, 3)) ? (fp->readByte()) : 0;

@@ -36,13 +36,22 @@ namespace Sludge {
 
 CursorManager::CursorManager(SludgeEngine *vm) {
 	_vm = vm;
+	init();
+}
+
+CursorManager::~CursorManager() {
+	kill();
+}
+
+void CursorManager::init() {
 	_mouseCursorAnim = makeNullAnim();
 	_mouseCursorFrameNum = 0;
 	_mouseCursorCountUp = 0;
 }
 
-CursorManager::~CursorManager() {
-
+void CursorManager::kill() {
+	deleteAnim(_mouseCursorAnim);
+	_mouseCursorAnim = nullptr;
 }
 
 void CursorManager::pickAnimCursor(PersonaAnimation  *pp) {

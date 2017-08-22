@@ -56,6 +56,9 @@ public:
 	EventManager(SludgeEngine *vm);
 	virtual ~EventManager();
 
+	void init();
+	void kill();
+
 	// Input
 	void checkInput();
 	bool handleInput();

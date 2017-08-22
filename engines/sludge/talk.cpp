@@ -53,6 +53,9 @@ void initSpeech() {
 }
 
 void killAllSpeech() {
+	if (!speech)
+		return;
+
 	if (speech->lastFile != -1) {
 		g_sludge->_soundMan->huntKillSound(speech->lastFile);
 		speech->lastFile = -1;

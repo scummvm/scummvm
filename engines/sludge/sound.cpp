@@ -43,24 +43,13 @@ const int SoundManager::MAX_SAMPLES = 8;
 const int SoundManager::MAX_MODS = 3;
 
 SoundManager::SoundManager() {
-	// there's possibility that several sound list played at the same time
-	_soundListHandles.clear();
-
-	_soundOK = false;
-	_silenceIKillYou = false;
-	_isHandlingSoundList = false;
-
 	_soundCache = nullptr;
 	_soundCache = new SoundThing[MAX_SAMPLES];
 
 	_modCache = nullptr;
 	_modCache = new SoundThing[MAX_MODS];
 
-	_defVol = 128;
-	_defSoundVol = 255;
-	_modLoudness = 0.95f;
-
-	_emptySoundSlot = 0;
+	init();
 }
 
 SoundManager::~SoundManager() {
@@ -73,14 +62,29 @@ SoundManager::~SoundManager() {
 	_modCache = nullptr;
 }
 
+void SoundManager::init() {
+	// there's possibility that several sound list played at the same time
+	_soundListHandles.clear();
+
+	_soundOK = false;
+	_silenceIKillYou = false;
+	_isHandlingSoundList = false;
+
+	_defVol = 128;
+	_defSoundVol = 255;
+	_modLoudness = 0.95f;
+
+	_emptySoundSlot = 0;
+}
+
 bool SoundManager::initSoundStuff() {
-	for (int a = 0; a < MAX_SAMPLES; a ++) {
+	for (int a = 0; a < MAX_SAMPLES; ++a) {
 		_soundCache[a].fileLoaded = -1;
 		_soundCache[a].looping = false;
 		_soundCache[a].inSoundList = false;
 	}
 
-	for (int a = 0; a < MAX_MODS; a ++) {
+	for (int a = 0; a < MAX_MODS; ++a) {
 		_soundCache[a].fileLoaded = -1;
 		_soundCache[a].looping = false;
 		_soundCache[a].inSoundList = false;

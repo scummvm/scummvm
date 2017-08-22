@@ -34,6 +34,9 @@ public:
 	CursorManager(SludgeEngine *vm);
 	virtual ~CursorManager();
 
+	void init();
+	void kill();
+
 	// cursor
 	void pickAnimCursor(struct PersonaAnimation  *pp);
 	void displayCursor();

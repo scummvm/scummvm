@@ -32,16 +32,22 @@
 namespace Sludge {
 
 ObjectManager::~ObjectManager() {
+	kill();
+}
+
+bool ObjectManager::init() {
+	_allObjectTypes.clear();
+	return true;
+}
+
+void ObjectManager::kill() {
 	ObjectTypeList::iterator it;
 	for (it = _allObjectTypes.begin(); it != _allObjectTypes.end(); ++it) {
 		delete [](*it)->allCombis;
 		delete (*it);
 		(*it) = nullptr;
 	}
-}
-
-bool ObjectManager::initObjectTypes() {
-	return true;
+	_allObjectTypes.clear();
 }
 
 ObjectType *ObjectManager::findObjectType(int i) {

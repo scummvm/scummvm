@@ -50,6 +50,7 @@ public:
 	void handleSoundLists(); // to produce the same effects as end of stream call back functions
 
 	// GENERAL...
+	void init();
 	bool initSoundStuff();
 	void killSoundStuff();
 

@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/debug.h"
 
 #include "graphics/surface.h"
@@ -55,22 +54,7 @@ int main_loop(Common::String filename) {
 		return 0;
 	}
 
-	g_sludge->_gfxMan->init();
-
-	g_sludge->_gfxMan->blankAllScreen();
-	if (!initPeople())
-		return fatal("Couldn't initialise people stuff");
-	if (!initFloor())
-		return fatal("Couldn't initialise floor stuff");
-	if (!g_sludge->_objMan->initObjectTypes())
-		return fatal("Couldn't initialise object type stuff");
-	initSpeech();
-	initStatusBar();
-	resetRandW();
-
-	if (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) {
-		g_sludge->_soundMan->initSoundStuff();
-	}
+	g_sludge->_gfxMan->initGfx();
 
 	startNewFunctionNum(0, 0, NULL, noStack);
 
@@ -88,9 +72,7 @@ int main_loop(Common::String filename) {
 		g_sludge->_timer.waitFrame();
 	}
 
-	killAllFunctions();
-	killAllRegions();
-	g_sludge->_soundMan->killSoundStuff();
+	killSludge();
 
 	// Load next game
 	if (!g_sludge->launchNext.empty()) {

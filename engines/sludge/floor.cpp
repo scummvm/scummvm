@@ -105,16 +105,18 @@ bool initFloor() {
 }
 
 void killFloor() {
-	for (int i = 0; i < currentFloor->numPolygons; i++) {
-		delete []currentFloor->polygon[i].vertexID;
-		delete []currentFloor->matrix[i];
+	if (currentFloor) {
+		for (int i = 0; i < currentFloor->numPolygons; i++) {
+			delete []currentFloor->polygon[i].vertexID;
+			delete []currentFloor->matrix[i];
+		}
+		delete []currentFloor->polygon;
+		currentFloor->polygon = NULL;
+		delete []currentFloor->vertex;
+		currentFloor->vertex = NULL;
+		delete []currentFloor->matrix;
+		currentFloor->matrix = NULL;
 	}
-	delete []currentFloor->polygon;
-	currentFloor->polygon = NULL;
-	delete []currentFloor->vertex;
-	currentFloor->vertex = NULL;
-	delete []currentFloor->matrix;
-	currentFloor->matrix = NULL;
 }
 
 void setFloorNull() {

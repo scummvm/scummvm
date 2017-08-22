@@ -30,15 +30,13 @@ namespace Sludge {
 
 class LanguageManager {
 public:
-	LanguageManager() :
-		_languageID(0),
-		_languageIdx(-1),
-		_numLanguages(0),
-		_languageTable(0),
-		_languageNames(0) {}
+	LanguageManager();
 	~LanguageManager();
 
-	void init(Common::File *table);
+	void init();
+	void kill();
+
+	void createTable(Common::File *table);
 	void setLanguageID(uint id);
 	void saveLanguageSetting(Common::WriteStream *writeStream);
 	void loadLanguageSetting(Common::SeekableReadStream *readStream);

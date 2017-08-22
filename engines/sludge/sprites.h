@@ -41,15 +41,32 @@ public:
 	byte *b;
 	byte originalRed, originalGreen, originalBlue, total;
 
-	SpritePalette() : pal(0), r(0), g(0), b(0), total(0) {
+	SpritePalette() { init(); }
+
+	~SpritePalette() { kill(); }
+
+	void reset() {
+		kill();
+		init();
+	}
+
+private:
+	void init() {
+		pal = nullptr;
+		r = g = b = nullptr;
+		total = 0;
 		originalRed = originalGreen = originalBlue = 255;
 	}
 
-	~SpritePalette() {
-		delete[] pal;
-		delete[] r;
-		delete[] g;
-		delete[] b;
+	void kill() {
+		if (pal)
+			delete[] pal;
+		if (r)
+			delete[] r;
+		if (g)
+			delete[] g;
+		if (b)
+			delete[] b;
 	}
 };
 

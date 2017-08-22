@@ -41,21 +41,31 @@ extern ScreenRegion *lastRegion;
 
 EventManager::EventManager(SludgeEngine *vm) {
 	_vm = vm;
+	_currentEvents = new EventHandlers;
+	init();
+}
 
+EventManager::~EventManager() {
+	kill();
+	if (_currentEvents) {
+		delete _currentEvents;
+		_currentEvents = nullptr;
+	}
+}
+
+void EventManager::init() {
 	_weAreDoneSoQuit = 0;
 	_reallyWantToQuit = false;
 
 	_input.leftClick = _input.rightClick = _input.justMoved = _input.leftRelease = _input.rightRelease = false;
 	_input.keyPressed = 0;
 
-	_currentEvents = new EventHandlers;
 	for (uint i = 0; i < EVENT_FUNC_NB; ++i) {
 		_currentEvents->func[i] = 0;
 	}
 }
 
-EventManager::~EventManager() {
-
+void EventManager::kill() {
 }
 
 void EventManager::checkInput() {

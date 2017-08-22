@@ -44,10 +44,12 @@ typedef Common::List<ObjectType *> ObjectTypeList;
 
 class ObjectManager {
 public:
-	ObjectManager(SludgeEngine *vm) : _vm(vm) {}
+	ObjectManager(SludgeEngine *vm) : _vm(vm) { init(); }
 	~ObjectManager();
 
-	bool initObjectTypes();
+	bool init();
+	void kill();
+
 	ObjectType *findObjectType(int i);
 	ObjectType *loadObjectType(int i);
 	int getCombinationFunction(int a, int b);

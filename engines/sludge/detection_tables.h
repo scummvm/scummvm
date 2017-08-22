@@ -127,18 +127,18 @@ static const SludgeGameDescription gameDescriptions[] = {
 		0
 	},
 
-//	{
-//		{
-//			"tgttpoacs",
-//			"",
-//			AD_ENTRY1s("gamedata", "d5ec4d7d8440f7744335d25d25e1e943", 40368),
-//			Common::EN_ANY,
-//			Common::kPlatformWindows,
-//			ADGF_NO_FLAGS,
-//			GUIO0()
-//		},
-//		0
-//	},
+	{
+		{
+			"tgttpoacs",
+			"",
+			AD_ENTRY1s("gamedata", "d5ec4d7d8440f7744335d25d25e1e943", 40368),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
 
 	{
 		{
@@ -205,18 +205,18 @@ static const SludgeGameDescription gameDescriptions[] = {
 		3
 	},
 
-//	{
-//		{
-//			"cubert",
-//			"",
-//			AD_ENTRY1s("gamedata", "0078eb54f63cc0a22e50f17d904fcfde", 26799),
-//			Common::UNK_LANG,
-//			Common::kPlatformWindows,
-//			ADGF_NO_FLAGS,
-//			GUIO0()
-//		},
-//		0
-//	},
+	{
+		{
+			"cubert",
+			"",
+			AD_ENTRY1s("gamedata", "0078eb54f63cc0a22e50f17d904fcfde", 26799),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
 
 	{
 		{

@@ -37,7 +37,14 @@ namespace Sludge {
 
 GraphicsManager::GraphicsManager(SludgeEngine *vm) {
 	_vm = vm;
+	init();
+}
 
+GraphicsManager::~GraphicsManager() {
+	kill();
+}
+
+void GraphicsManager::init() {
 	// Init screen surface
 	_winWidth = _sceneWidth = 640;
 	_winHeight = _sceneHeight = 480;
@@ -78,11 +85,13 @@ GraphicsManager::GraphicsManager(SludgeEngine *vm) {
 	_currentBurnB = 0;
 }
 
-GraphicsManager::~GraphicsManager() {
+void GraphicsManager::kill() {
 	// kill parallax
-	killParallax();
-	delete _parallaxStuff;
-	_parallaxStuff = nullptr;
+	if (_parallaxStuff) {
+		_parallaxStuff->kill();
+		delete _parallaxStuff;
+		_parallaxStuff = nullptr;
+	}
 
 	// kill frozen stuff
 	FrozenStuffStruct *killMe = _frozenStuff;
@@ -98,9 +107,11 @@ GraphicsManager::~GraphicsManager() {
 	}
 
 	// kill sprite layers
-	killSpriteLayers();
-	delete _spriteLayers;
-	_spriteLayers = nullptr;
+	if (_spriteLayers) {
+		killSpriteLayers();
+		delete _spriteLayers;
+		_spriteLayers = nullptr;
+	}
 
 	// kill sprite banks
 	LoadedSpriteBanks::iterator it;
@@ -111,9 +122,11 @@ GraphicsManager::~GraphicsManager() {
 	_allLoadedBanks.clear();
 
 	// kill zbuffer
-	killZBuffer();
-	delete _zBuffer;
-	_zBuffer = nullptr;
+	if (_zBuffer) {
+		killZBuffer();
+		delete _zBuffer;
+		_zBuffer = nullptr;
+	}
 
 	// kill surfaces
 	if (_renderSurface.getPixels())
@@ -129,12 +142,14 @@ GraphicsManager::~GraphicsManager() {
 		_origBackdropSurface.free();
 }
 
-bool GraphicsManager::init() {
+bool GraphicsManager::initGfx() {
 	initGraphics(_winWidth, _winHeight, true, _vm->getScreenPixelFormat());
 	_renderSurface.create(_winWidth, _winHeight, *_vm->getScreenPixelFormat());
 
 	if (!killResizeBackdrop(_winWidth, _winHeight))
 		return fatal("Couldn't allocate memory for backdrop");
+
+	blankAllScreen();
 
 	return true;
 }

@@ -57,9 +57,12 @@ public:
 	GraphicsManager(SludgeEngine *vm);
 	virtual ~GraphicsManager();
 
+	void init();
+	void kill();
+
 	// graphics
 	void setWindowSize(uint winWidth, uint winHeight) { _winWidth = winWidth; _winHeight = winHeight; }
-	bool init();
+	bool initGfx();
 	void display();
 	void clear();
 
@@ -125,7 +128,7 @@ public:
 	bool isFrozen() { return (_frozenStuff != nullptr); }
 
 	// Sprites
-	void forgetSpriteBank(SpriteBank &forgetme);
+	static void forgetSpriteBank(SpriteBank &forgetme);
 	bool loadSpriteBank(char *filename, SpriteBank &loadhere);
 	bool loadSpriteBank(int fileNum, SpriteBank &loadhere, bool isFont);
 

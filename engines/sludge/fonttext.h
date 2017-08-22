@@ -38,6 +38,9 @@ public:
 	TextManager();
 	virtual ~TextManager();
 
+	void init();
+	void kill();
+
 	int stringWidth(const Common::String &theText);
 	int stringLength(const Common::String &theText);
 

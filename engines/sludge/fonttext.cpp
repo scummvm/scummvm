@@ -32,6 +32,14 @@
 namespace Sludge {
 
 TextManager::TextManager() {
+	init();
+}
+
+TextManager::~TextManager() {
+	kill();
+}
+
+void TextManager::init() {
 	_theFont.total = 0;
 	_theFont.sprites = nullptr;
 
@@ -43,8 +51,8 @@ TextManager::TextManager() {
 	_fontTable.clear();
 }
 
-TextManager::~TextManager() {
-	g_sludge->_gfxMan->forgetSpriteBank(_theFont);
+void TextManager::kill() {
+	GraphicsManager::forgetSpriteBank(_theFont);
 }
 
 bool TextManager::isInFont(const Common::String &theText) {

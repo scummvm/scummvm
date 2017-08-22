@@ -60,6 +60,10 @@ struct LoadedFunction {
 
 bool initSludge(const Common::String &);
 bool runSludge();
+
+void initSludge();
+void killSludge();
+
 void displayBase();
 void sludgeDisplay();
 int startNewFunctionNum(uint, uint, LoadedFunction *, VariableStack*&, bool = true);

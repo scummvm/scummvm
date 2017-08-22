@@ -31,6 +31,30 @@
 
 namespace Sludge {
 
+ResourceManager::ResourceManager() {
+	init();
+}
+
+ResourceManager::~ResourceManager() {
+	kill();
+}
+
+void ResourceManager::init() {
+	_sliceBusy = true;
+	_bigDataFile = nullptr;
+	_startOfDataIndex = 0;
+	_startOfTextIndex = 0;
+	_startOfSubIndex = 0;
+	_startOfObjectIndex = 0;
+	_startIndex = 0;
+}
+void ResourceManager::kill() {
+	if (_bigDataFile) {
+		delete _bigDataFile;
+		_bigDataFile = nullptr;
+	}
+}
+
 bool ResourceManager::openSubSlice(int num) {
 	if (_sliceBusy) {
 		fatal("Can't read from data file", "I'm already reading something");
