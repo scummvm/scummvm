@@ -308,10 +308,6 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 	if (_menu && _menu->processEvent(event))
 		return true;
 
-	if (event.type != Common::EVENT_MOUSEMOVE && event.type != Common::EVENT_LBUTTONDOWN &&
-			event.type != Common::EVENT_LBUTTONUP && event.type != Common::EVENT_KEYDOWN)
-		return false;
-
 	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
 			((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
 		if (_cursorIsArrow) {
