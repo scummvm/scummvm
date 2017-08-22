@@ -104,7 +104,7 @@ DECLARE_SCRIPT(McCoy)
 	float off_45A100;
 	float flt_462710;
 	float flt_462714;
-	
+
 	void sub_4053E0();
 	void sub_4054F0();
 	void sub_405660();
@@ -170,6 +170,7 @@ public:
 	void Update(int actor);
 	void TimerExpired(int actor, int timer);
 	void CompletedMovementTrack(int actor);
+	void ReceivedClue(int actor, int clueId, int fromActorId);
 	void EnteredScene(int actor, int setId);
 	void OtherAgentEnteredThisScene(int actor, int otherActorId);
 	void OtherAgentExitedThisScene(int actor, int otherActorId);

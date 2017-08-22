@@ -91,6 +91,15 @@ void AIScripts::CompletedMovementTrack(int actor) {
 	}
 }
 
+void AIScripts::ReceivedClue(int actor, int clueId, int fromActorId) {
+	assert(actor < _actorsCount);
+	_inScriptCounter++;
+	if (_AIScripts[actor]) {
+		_AIScripts[actor]->ReceivedClue(clueId, fromActorId);
+	}
+	_inScriptCounter--;
+}
+
 void AIScripts::EnteredScene(int actor, int setId) {
 	assert(actor < _actorsCount);
 	_inScriptCounter++;
