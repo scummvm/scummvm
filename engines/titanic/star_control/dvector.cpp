@@ -29,8 +29,8 @@ namespace Titanic {
 bool DVector::normalize(double & hyp) {
 	hyp = sqrt(_x * _x + _y * _y + _z * _z);
 	if (hyp==0) {
-              return false;
-       }
+		return false;
+	}
 
 	_x *= 1.0 / hyp;
 	_y *= 1.0 / hyp;
@@ -44,20 +44,17 @@ double DVector::getDistance(const DVector &src) {
 
 DVector DVector::dAffMatrixProdVec(const DAffine &m) {
 	DVector dest;
-	dest._x = m._col1._x * _x +
-                  m._col2._x * _y +
-                  m._col3._x * _z +
-                  m._col4._x;
+	dest._x = m._col1._x * _x
+		+ m._col2._x * _y + m._col3._x * _z
+		+ m._col4._x;
 
-	dest._y = m._col1._y * _x +
-                  m._col2._y * _y +
-                  m._col3._y * _z +
-                  m._col4._y;
+	dest._y = m._col1._y * _x
+		+ m._col2._y * _y + m._col3._y * _z
+		+ m._col4._y;
 
-	dest._z = m._col1._z * _x +
-                  m._col2._z * _y +
-                  m._col3._z * _z +
-                  m._col4._z;
+	dest._z = m._col1._z * _x
+		+ m._col2._z * _y + m._col3._z * _z
+		+ m._col4._z;
 
 	return dest;
 }
@@ -76,12 +73,14 @@ DVector DVector::getAnglesAsVect() const {
 	DVector vector = *this;
 	DVector dest;
 
-       if (!vector.normalize(dest._x)) {  // Makes this vector have magnitude=1, put the scale amount in dest._x,
-                                          // but if it is unsuccessful, crash
-              assert(dest._x);
-       }
-	dest._y = acos(vector._y);    // radian distance/angle that this vector's y component is from the +y axis,
-                                      // result is restricted to [0,pi]
+	if (!vector.normalize(dest._x)) {
+		// Makes this vector have magnitude=1, put the scale amount in dest._x,
+		// but if it is unsuccessful, crash
+		assert(dest._x);
+	}
+
+	dest._y = acos(vector._y);	// radian distance/angle that this vector's y component is from the +y axis,
+								// result is restricted to [0,pi]
 	dest._z = atan2(vector._x,vector._z); // result is restricted to [-pi,pi]
 
 	return dest;

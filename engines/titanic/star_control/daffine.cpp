@@ -80,7 +80,7 @@ void DAffine::clear() {
 
 // Source: https://en.wikipedia.org/wiki/Rotation_matrix
 void DAffine::setRotationMatrix(Axis axis, double angleDeg) {
-        clear();
+	clear();
 
 	double sinVal = sin(angleDeg * Deg2Rad);
 	double cosVal = cos(angleDeg * Deg2Rad);
@@ -117,8 +117,9 @@ void DAffine::setRotationMatrix(Axis axis, double angleDeg) {
 
 //TODO: Check column 4 math
 DAffine DAffine::inverseTransform() const {
-        DAffine m;
-       //Inverse of rotation matrix is the transpose
+	DAffine m;
+
+	// Inverse of rotation matrix is the transpose
 	m._col1._x = _col1._x;
 	m._col2._x = _col1._y;
 	m._col3._x = _col1._z;
@@ -130,14 +131,14 @@ DAffine DAffine::inverseTransform() const {
 	m._col3._z = _col3._z;
 
 	m._col4._x = -(_col4._x * m._col1._x
-                    + _col4._y * m._col2._x
-		     + _col4._z * m._col3._x);
+		+ _col4._y * m._col2._x
+		+ _col4._z * m._col3._x);
 	m._col4._y = -(_col4._x * m._col1._y
-                    + _col4._y * m._col2._y
-                    + _col4._z * m._col3._y);
+		+ _col4._y * m._col2._y
+		+ _col4._z * m._col3._y);
 	m._col4._z = -(_col4._x * m._col1._z
-                    + _col4._y * m._col2._z
-                    + _col4._z * m._col3._z);
+		+ _col4._y * m._col2._z
+		+ _col4._z * m._col3._z);
 	return m;
 }
 

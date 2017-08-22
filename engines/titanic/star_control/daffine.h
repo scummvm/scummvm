@@ -47,7 +47,7 @@ public:
 	DVector _col4;
 public:
 	DAffine();
-        //TODO: consider making mode an enum since that is more helpful when it is used in code
+	// TODO: consider making mode an enum since that is more helpful when it is used in code
 	DAffine(int mode, const DVector &src);
 	DAffine(Axis axis, double angleDeg);
 	DAffine(const FMatrix &src);

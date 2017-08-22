@@ -60,9 +60,9 @@ public:
 	 */
 	void copyFrom(const FMatrix &src);
 
-        /**
-         * The inverse of rotation and the position vector
-         */
+	/**
+	 * The inverse of rotation and the position vector
+	 */
 	FPose inverseTransform() const;
 };
 

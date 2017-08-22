@@ -128,17 +128,19 @@ void FMatrix::set(const FVector &v) {
 
 	_row1 = _row3.crossProduct(_row2);
 
-       float unused_scale=0.0;
-       if (!_row1.normalize(unused_scale)) {  // Do the normalization, put the scale amount in unused_scale,
-                                              // but if it is unsuccessful, crash
-              assert(unused_scale);
-       }
+	float unused_scale=0.0;
+	if (!_row1.normalize(unused_scale)) {
+		// Do the normalization, put the scale amount in unused_scale,
+		// but if it is unsuccessful, crash
+		assert(unused_scale);
+	}
 
 	_row2 = _row3.crossProduct(_row1);
-       if (!_row2.normalize(unused_scale)) {  // Do the normalization, put the scale amount in unused_scale,
-                                              // but if it is unsuccessful, crash
-              assert(unused_scale);
-       }
+	if (!_row2.normalize(unused_scale)) {
+		// Do the normalization, put the scale amount in unused_scale,
+		// but if it is unsuccessful, crash
+		assert(unused_scale);
+	}
 }
 
 void FMatrix::matRProd(const FMatrix &m) {

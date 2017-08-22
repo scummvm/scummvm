@@ -49,9 +49,10 @@ void CCameraAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
 	_srcPos = oldPos;
 	_destPos = newPos;
 	_posDelta = _destPos - _srcPos;
-       float temp = 0.0;
+
+	float temp = 0.0;
 	_posDelta.normalize(temp); // Do the normalization, put the scale amount in temp
-       _distance = temp;
+	_distance = temp;
 	_active = false;
 	_field34 = false;
 	_transitionPercent = 1.0;
@@ -74,12 +75,15 @@ void CCameraAutoMover::setPath(const FVector &srcV, const FVector &destV, const 
 	_srcPos = srcV;
 	_destPos = destV;
 	_posDelta = _destPos - _srcPos;
-       float temp = 0.0;
-	if (!_posDelta.normalize(temp)) { // Do the normalization, put the scale amount in temp,
-                                         // but if it is unsuccessful, crash
-              assert(temp);
-       }
-       _distance = temp;
+
+	float temp = 0.0;
+	if (!_posDelta.normalize(temp)) {
+		// Do the normalization, put the scale amount in temp,
+		// but if it is unsuccessful, crash
+		assert(temp);
+	}
+
+	_distance = temp;
 	_active = false;
 	_field34 = false;
 	_field40 = -1;
@@ -93,7 +97,7 @@ void CCameraAutoMover::calcSpeeds(int val1, int val2, float distance) {
 	// Usually val1 and val2 are small where as distance can be large
 	_field44 = val1;
 	_field4C = val1 + 2 * nMoverTransitions; // For _nMoverTransitions = 32 this second value was 64, 
-				 		     // should it always be x2 _nMoverTransitions?
+				// should it always be x2 _nMoverTransitions?
 	_field38 = distance / (double)(val1 + val2 * 2);
 	_field40 = nMoverTransitions-1;
 	_field48 = nMoverTransitions-1;

@@ -160,14 +160,14 @@ FPose FPose::inverseTransform() const {
 	result._row3._z = _row3._z;
 
 	result._vector._x = -(_vector._x * result._row1._x
-		            + _vector._y * result._row2._x
-		            + _vector._z * result._row3._x);
+		+ _vector._y * result._row2._x
+		+ _vector._z * result._row3._x);
 	result._vector._y = -(_vector._x * result._row1._y
-                           + _vector._y * result._row2._y
-                           + _vector._z * result._row3._y);
+		+ _vector._y * result._row2._y
+		+ _vector._z * result._row3._y);
 	result._vector._z = -(_vector._x * result._row1._z
-                           + _vector._y * result._row2._z
-                           + _vector._z * result._row3._z);
+		+ _vector._y * result._row2._z
+		+ _vector._z * result._row3._z);
 
 	return result;
 }
