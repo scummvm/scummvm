@@ -103,11 +103,11 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_guiEnabled = false;
 		setSectionVisible(4, false);
 		g_system->fillScreen(kColorDarkBlue);
-		if (_gm->_state.time == 0) {
+		if (_gm->_state._time == 0) {
 			// Destination reached
 			_vm->renderText("Flugziel erreicht", 60, 95, kColorWhite99);
 			_gm->getInput();
-		} else if (_gm->_state.powerOff) {
+		} else if (_gm->_state._powerOff) {
 			// Energy depleted
 			_vm->renderText("Energie erschöpft", 60, 95, kColorWhite99);
 			// Artificial coma interrupted
@@ -116,7 +116,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 		} else if (isSectionVisible(5)) {
 			// Sleep duration in days
 			_vm->renderText("Schlafdauer in Tagen:", 30, 85, kColorWhite99);
-			_vm->renderText(Common::String::format("%d",_gm->_state.timeSleep).c_str(),
+			_vm->renderText(Common::String::format("%d",_gm->_state._timeSleep).c_str(),
 			                150, 85, kColorWhite99);
 			_vm->renderText("Bitte legen Sie sich in die angezeigte Schlafkammer.",
 			                30, 105, kColorWhite99);
@@ -149,7 +149,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 							}
 						}
 						if (daysSleep != 0) {
-							_gm->_state.timeSleep = daysSleep;
+							_gm->_state._timeSleep = daysSleep;
 							_vm->renderText("Bitte legen Sie sich in die angezeigte Schlafkammer.", 30, 105, kColorWhite99);
 							_gm->wait2(18);
 							setSectionVisible(5, true);
@@ -177,15 +177,15 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawImage(_gm->invertSection(4));
 			room = _gm->_rooms[GENERATOR];
 			if (room->isSectionVisible(9)) {
-				energy = &_gm->_state.landingModuleEnergy;
+				energy = &_gm->_state._landingModuleEnergy;
 			} else {
-				energy = &_gm->_state.shipEnergy;
+				energy = &_gm->_state._shipEnergy;
 			}
-			if (_gm->_state.timeSleep > _gm->_state.time) {
-				_gm->_state.timeSleep = _gm->_state.time;
+			if (_gm->_state._timeSleep > _gm->_state._time) {
+				_gm->_state._timeSleep = _gm->_state._time;
 			}
-			if (_gm->_state.timeSleep >= *energy) {
-				_gm->_state.timeSleep = *energy;
+			if (_gm->_state._timeSleep >= *energy) {
+				_gm->_state._timeSleep = *energy;
 				if (room->isSectionVisible(9)) {
 					room = _gm->_rooms[LANDINGMODULE]; // Monitors off
 					room->setSectionVisible(2, false);
@@ -195,7 +195,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 					room->setSectionVisible(10, false);
 				}
 			}
-			if (_gm->_state.timeSleep == _gm->_state.time) {
+			if (_gm->_state._timeSleep == _gm->_state._time) {
 				_gm->drawImage(3);
 				room = _gm->_rooms[COCKPIT];
 				room->setSectionVisible(23, true);
@@ -220,26 +220,26 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 					room->setSectionVisible(11, true);
 				}
 			}
-			_gm->_state.time -= _gm->_state.timeSleep;
-			*energy -= _gm->_state.timeSleep;
-			_gm->_state.timeStarting = _vm->getDOSTicks() - 786520;  // 12pm
-			_gm->_state.timeAlarmSystem = _gm->_state.timeAlarm + _gm->_state.timeStarting;
-			_gm->_state.alarmOn = (_gm->_state.timeAlarmSystem > _vm->getDOSTicks());
+			_gm->_state._time -= _gm->_state._timeSleep;
+			*energy -= _gm->_state._timeSleep;
+			_gm->_state._timeStarting = _vm->_system->getMillis() - ticksToMsec(786520); // 12pm
+			_gm->_state._timeAlarmSystem = _gm->_state._timeAlarm + _gm->_state._timeStarting;
+			_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _vm->_system->getMillis());
 			if (!*energy) {
 				_gm->turnOff();
 				room = _gm->_rooms[GENERATOR];
 				room->setSectionVisible(4, room->isSectionVisible(2));
 			}
-			if (_gm->_state.time == 0) {
+			if (_gm->_state._time == 0) {
 				_gm->saveTime();
 				if (!_gm->saveGame(-2))
 					_gm->errorTemp();
-				_gm->_state.dream = true;
+				_gm->_state._dream = true;
 				_gm->loadTime();
 			}
 			_gm->wait2(18);
 			_vm->paletteFadeIn();
-			if (_gm->_state.time == 0) {
+			if (_gm->_state._time == 0) {
 				_vm->playSound(kAudioCrash);
 				_gm->screenShake();
 				_gm->wait2(18);
@@ -255,7 +255,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 
 void ShipSleepCabin::animation() {
 	static char color;
-	if (_gm->_state.powerOff && _gm->_state.time) {
+	if (_gm->_state._powerOff && _gm->_state._time) {
 		if (_gm->_guiEnabled) {
 			if (isSectionVisible(1)) {
 				_gm->drawImage(2);
@@ -283,7 +283,7 @@ void ShipSleepCabin::animation() {
 	_gm->setAnimationTimer(6);
 }
 void ShipSleepCabin::onEntrance() {
-	if (_gm->_state.dream && (_gm->_rooms[CAVE]->getObject(1)->_exitRoom == MEETUP3)) {
+	if (_gm->_state._dream && (_gm->_rooms[CAVE]->getObject(1)->_exitRoom == MEETUP3)) {
 		_vm->renderMessage("Du wachst mit brummendem Schädel auf|und merkst, daß du nur geträumt hast.");
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
@@ -291,7 +291,7 @@ void ShipSleepCabin::onEntrance() {
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->renderMessage("Was steht dir jetzt wohl wirklich bevor?");
-		_gm->_state.dream = false;
+		_gm->_state._dream = false;
 	}
 	setRoomSeen(true);
 }
@@ -304,21 +304,22 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_guiEnabled = false;
 		_vm->renderBox(0, 0, 320, 200, kColorBlack);
 		_vm->renderText("Geschwindigkeit: ", 50, 50, kColorLightYellow);
-		if (_gm->_state.time)
+		if (_gm->_state._time)
 			_vm->renderText("8000 hpm");
 		else
 			_vm->renderText("0 hpm");
 		_vm->renderText("Ziel: Arsano 3", 50, 70, kColorLightYellow);
 		_vm->renderText("Entfernung: ", 50, 90, kColorLightYellow);
-		_vm->renderText(Common::String::format("%d", _gm->_state.timeStarting / 7200000).c_str());
+		_vm->renderText(Common::String::format("%d", _gm->_state._time / ticksToMsec(400)).c_str());
 		_vm->renderText(",");
-		c[0] = (_gm->_state.timeStarting / 720000) % 10 + '0';
+		c[0] = (_gm->_state._time / ticksToMsec(40)) % 10 + '0';
 		_vm->renderText(c);
-		c[0] = (_gm->_state.timeStarting / 72000) % 10 + '0';
+		c[0] = (_gm->_state._time / ticksToMsec(4)) % 10 + '0';
 		_vm->renderText(c);
 		_vm->renderText(" Lichtjahre");
 		_vm->renderText("Dauer der Reise bei momentaner Geschwindigkeit:", 50, 110, kColorLightYellow);
-		_vm->renderText(Common::String::format("%d", _gm->_state.timeStarting / 18000).c_str(), 50, 120, kColorLightYellow);
+		_vm->renderText(Common::String::format("%d", _gm->_state._time).c_str(),
+		                50, 120, kColorLightYellow);
 		_vm->renderText(" Tage");
 
 		_gm->getInput();
@@ -351,7 +352,7 @@ void ShipCockpit::animation() {
 			_gm->setAnimationTimer(10);
 		}
 	}
-	if (_gm->_state.powerOff) {
+	if (_gm->_state._powerOff) {
 		if (!_gm->_guiEnabled) {
 			_vm->renderText("Energievorrat erschpft", 97, 165, color);
 			_vm->renderText("Notstromversorgung aktiv", 97, 175, color);
@@ -701,11 +702,11 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, HOLD_WIRE)) {
 		getObject(0)->_name = "Leitung mit Lsterklemme";
 		_gm->_inventory.remove(*getObject(2));
-		_gm->_state.terminalStripConnected = true;
-		_gm->_state.terminalStripWire = true;
+		_gm->_state._terminalStripConnected = true;
+		_gm->_state._terminalStripWire = true;
 		_vm->renderMessage("Ok.");
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, SPOOL)) {
-		if (!_gm->_state.terminalStripConnected)
+		if (!_gm->_state._terminalStripConnected)
 			_vm->renderMessage("Womit denn?");
 		else {
 			_gm->drawImage(5);
@@ -747,7 +748,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == LANDINGMOD_BUTTON))
 		_vm->renderMessage(obj1._description);
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, PEN, LANDINGMOD_BUTTON)) {
-		if (_gm->_state.landingModuleEnergy) {
+		if (_gm->_state._landingModuleEnergy) {
 			r = _gm->_rooms[GENERATOR];
 			if (isSectionVisible(7)) {
 				_gm->drawImage(_gm->invertSection(9));
@@ -756,13 +757,13 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->drawImage(_gm->invertSection(7));
 				_gm->drawImage(_gm->invertSection(10));
 				if (r->isSectionVisible(9))
-					_gm->_state.powerOff = true;
+					_gm->_state._powerOff = true;
 				_gm->roomBrightness();
 				_vm->paletteBrightness();
 			} else {
 				_gm->drawImage(7);
 				if (r->isSectionVisible(9))
-					_gm->_state.powerOff = false;
+					_gm->_state._powerOff = false;
 //				load("MSN_DATA.025");
 				_gm->roomBrightness();
 				_vm->paletteBrightness();
@@ -791,12 +792,12 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_inventory.remove(*r->getObject(8));
 		getObject(4)->_name = r->getObject(8)->_name;
 		_gm->drawImage(4);
-		if (_gm->_state.cableConnected) {
+		if (_gm->_state._cableConnected) {
 			_gm->drawImage(5);
 			getObject(4)->_click = 6;
 		} else {
 			getObject(4)->_click = 5;
-			if (_gm->_state.terminalStripWire)
+			if (_gm->_state._terminalStripWire)
 				_gm->drawImage(11);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SPOOL, LANDINGMOD_SOCKET))
@@ -806,10 +807,10 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		getObject(4)->_name = "Leitung mit L\201sterklemme";
 		r = _gm->_rooms[HOLD];
 		_gm->_inventory.remove(*r->getObject(2));
-		_gm->_state.terminalStripConnected = true;
-		_gm->_state.terminalStripWire = true;
+		_gm->_state._terminalStripConnected = true;
+		_gm->_state._terminalStripWire = true;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, SPOOL)) {
-		if (!_gm->_state.terminalStripConnected)
+		if (!_gm->_state._terminalStripConnected)
 			_vm->renderMessage("Womit denn?");
 		else {
 			_gm->drawImage(5);
@@ -909,7 +910,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(3, false);
 		setSectionVisible(4, false);
 		getObject(11)->_click = 10;
-		if (_gm->_state.shipEnergy)
+		if (_gm->_state._shipEnergy)
 			_gm->turnOn();
 		else
 			_gm->drawImage(4);
@@ -918,7 +919,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawImage(2);
 		if (getObject(11)->_click == 11)
 			_gm->drawImage(3);
-		if (_gm->_state.powerOff)
+		if (_gm->_state._powerOff)
 			_gm->drawImage(4);
 		obj1.setProperty(OPENED);
 		obj1._click = 6;
@@ -941,7 +942,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawImage(9);
 		getObject(0)->_click = 16;
 		r = _gm->_rooms[LANDINGMODULE];
-		if (_gm->_state.landingModuleEnergy && r->isSectionVisible(7))
+		if (_gm->_state._landingModuleEnergy && r->isSectionVisible(7))
 			_gm->turnOn();
 		else
 		_gm->drawImage(4);
@@ -963,7 +964,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 	           isSectionVisible(3)) {
 		_vm->renderMessage("Was n\201tzt dir der Anschlu\341|ohne eine Stromquelle?!");
 	} else if ((verb == ACTION_LOOK) && (obj1._id == VOLTMETER)) {
-		if (_gm->_state.powerOff)
+		if (_gm->_state._powerOff)
 			_vm->renderMessage("Die Spannung ist auf Null abgesunken.");
 		else
 			_vm->renderMessage("Es zeigt volle Spannung an.");
@@ -1031,9 +1032,9 @@ void ArsanoMeetup::onEntrance() {
 		_gm->wait2(3);
 		_gm->drawImage(_gm->invertSection(6));
 	}
-	if (!(_gm->_state.greatFlag & 0x8000)) {
+	if (!(_gm->_state._greatFlag & 0x8000)) {
 		_vm->playSound(kAudioGreat);
-		_gm->_state.greatFlag |= 0x8000;
+		_gm->_state._greatFlag |= 0x8000;
 	}
 }
 
@@ -1079,15 +1080,15 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->wait2(3);
 
 		return false;
-	} else if ((verb == ACTION_LOOK) && (obj1._id == MEETUP_SIGN) && _gm->_state.language) {
-		if (_gm->_state.language == 2)
+	} else if ((verb == ACTION_LOOK) && (obj1._id == MEETUP_SIGN) && _gm->_state._language) {
+		if (_gm->_state._language == 2)
 			_vm->renderMessage("Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Treffpunkt Galactica\".");
 
 		obj1._description = "Darauf steht:|\"Treffpunkt Galactica\".";
-		if (_gm->_state.language == 1)
+		if (_gm->_state._language == 1)
 			return false;
 
-		_gm->_state.language = 1;
+		_gm->_state._language = 1;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KEYCARD_R, SPACESHIP)) {
 		getObject(5)->setProperty(OPENED);
 		_gm->changeRoom(GLIDER);
@@ -1144,12 +1145,12 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		if (_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) {
 			_vm->renderMessage("Durch deinen Helm kannst|du nicht sprechen.");
 		} else {
-			if (_gm->_state.language) {
+			if (_gm->_state._language) {
 				do {
-					if (_gm->_state.shoes == 1) {
+					if (_gm->_state._shoes == 1) {
 						_dialog2[2] = "Wo soll ich die Schuhe ablegen?";
 						_gm->addSentence(2, 2);
-					} else if (_gm->_state.shoes > 1) {
+					} else if (_gm->_state._shoes > 1) {
 						_gm->removeSentence(2, 2);
 					}
 					switch (e = _gm->dialog(5, nullptr, nullptr, 2)) { // row2, dialog2
@@ -1164,12 +1165,12 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						_gm->addSentence(1, 2);
 						break;
 					case 2:
-						if (_gm->_state.shoes == 1) {
+						if (_gm->_state._shoes == 1) {
 							_gm->reply("In der Toilette gibt es|Schlieáfcher fr Schuhe.", 1, _gm->invertSection(1));
-							_gm->_state.shoes = 2;
+							_gm->_state._shoes = 2;
 						} else {
 							_gm->reply("Wenn Sie das Lokal betreten|wollen, mssen Sie erst|ihre Schuhe ausziehen.", 1, _gm->invertSection(1));
-							_gm->_state.shoes = 1;
+							_gm->_state._shoes = 1;
 						}
 						break;
 					case 3:
@@ -1181,14 +1182,14 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->reply("Hhius otgfh Dgfdrkjlh Fokj gf.", 1, _gm->invertSection(1));
 			}
 		}
-	} else if ((verb == ACTION_WALK) && (obj1._id == STAIRCASE) && (_gm->_state.shoes != 3)) {
+	} else if ((verb == ACTION_WALK) && (obj1._id == STAIRCASE) && (_gm->_state._shoes != 3)) {
 		_gm->drawImage(3);
 		_gm->wait2(2);
 		_gm->drawImage(4);
 		setSectionVisible(3, false);
 		if (_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN))
 			_gm->reply("|", 1, _gm->invertSection(1));
-		else if (_gm->_state.language)
+		else if (_gm->_state._language)
 			_gm->reply("Halt!", 1, _gm->invertSection(1));
 		else
 			_gm->reply("Uhwdejkt!", 1, _gm->invertSection(1));
@@ -1197,8 +1198,8 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->wait2(2);
 		_gm->drawImage(_gm->invertSection(3));
 		if (!_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) {
-			if (_gm->_state.language) {
-				if (_gm->_state.shoes)
+			if (_gm->_state._language) {
+				if (_gm->_state._shoes)
 					_gm->reply("Sie mssen erst ihre Schuhe ausziehen, Sie Trottel!", 1, _gm->invertSection(1));
 				else
 					_gm->reply("Was fllt ihnen ein!|Sie knnen doch ein Lokal|nicht mit Schuhen betreten!", 1, _gm->invertSection(1));
@@ -1216,7 +1217,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						break;
 					case 2:
 						_gm->reply("In der Toilette gibt es|Schlieáfcher fr Schuhe.", 1, 1 + 128);
-						_gm->_state.shoes = 2;
+						_gm->_state._shoes = 2;
 						break;
 					case 3:
 						_gm->drawImage(3);
@@ -1254,15 +1255,15 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(8, false);
 		getObject(11)->_click = 9;
 	} else if ((verb == ACTION_WALK) && (obj1._id == ARSANO_BATHROOM)) {
-		if (_gm->_state.coins) {
-			if (_gm->_state.shoes == 2) {
+		if (_gm->_state._coins) {
+			if (_gm->_state._shoes == 2) {
 				_vm->renderMessage("Du ziehst deine Schuhe|aus und legst sie in|eins der Schlieáfcher.");
-				_gm->_state.shoes = 3;
+				_gm->_state._shoes = 3;
 				_gm->removeSentence(2, 2);
 				_gm->removeSentence(3, 2);
-			} else if (_gm->_state.shoes == 3) {
+			} else if (_gm->_state._shoes == 3) {
 				_vm->renderMessage("Du ziehst deine Schuhe wieder an.");
-				_gm->_state.shoes = 2;
+				_gm->_state._shoes = 2;
 			} else
 				_vm->renderMessage("Du durchsuchst die Klos nach|anderen brauchbaren Sachen,|findest aber nichts.");
 		} else {
@@ -1274,39 +1275,39 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->removeMessage();
 				_vm->renderMessage("In einem der Schlieáfcher,|die sich auch im Raum befinden,|findest du einige Mnzen.");
 				_gm->takeObject(*getObject(16));
-				_gm->_state.coins = 5;
+				_gm->_state._coins = 5;
 			}
 		}
 		_shown[kMaxSection - 5] = true;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COINS, CAR_SLOT)) {
-		if ((_gm->_state.coins < 5) && (getObject(7 - _gm->_state.coins)->_click == 7))
+		if ((_gm->_state._coins < 5) && (getObject(7 - _gm->_state._coins)->_click == 7))
 			_vm->renderMessage("Mach doch zuerst das Fach leer!");
 		else {
-			_gm->drawImage(15 - _gm->_state.coins);
-			getObject(8 - _gm->_state.coins)->_click = 7;
-			--_gm->_state.coins;
-			if (_gm->_state.coins == 1) {
+			_gm->drawImage(15 - _gm->_state._coins);
+			getObject(8 - _gm->_state._coins)->_click = 7;
+			--_gm->_state._coins;
+			if (_gm->_state._coins == 1) {
 				getObject(16)->_name = "M\201nze";
 			}
-			if (_gm->_state.coins == 0) {
+			if (_gm->_state._coins == 0) {
 				_gm->_inventory.remove(*getObject(16));
-				_gm->_state.coins = 255;
+				_gm->_state._coins = 255;
 			}
 		}
-	} else if ((verb == ACTION_LOOK) && (obj1._id == KITCHEN_SIGN) && _gm->_state.language) {
-		if (_gm->_state.language == 2)
+	} else if ((verb == ACTION_LOOK) && (obj1._id == KITCHEN_SIGN) && _gm->_state._language) {
+		if (_gm->_state._language == 2)
 			_vm->renderMessage("Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Zutritt nur fr Personal\".");
 		obj1._description = "Darauf steht:|\"Zutritt nur fr Personal\".";
-		if (_gm->_state.language == 1)
+		if (_gm->_state._language == 1)
 			return false;
-		_gm->_state.language = 1;
-	} else if ((verb == ACTION_LOOK) && (obj1._id == BATHROOM_SIGN) && _gm->_state.language) {
-		if (_gm->_state.language == 2)
+		_gm->_state._language = 1;
+	} else if ((verb == ACTION_LOOK) && (obj1._id == BATHROOM_SIGN) && _gm->_state._language) {
+		if (_gm->_state._language == 2)
 			_vm->renderMessage("Komisch! Auf einmal kannst|du das Schild lesen!|Darauf steht:\"Toilette\".");
 		obj1._description = "Darauf steht:|\"Toilette\".";
-		if (_gm->_state.language == 1)
+		if (_gm->_state._language == 1)
 			return false;
-		_gm->_state.language = 1;
+		_gm->_state._language = 1;
 	} else if ((verb == ACTION_WALK) && (obj1._id == MEETUP_EXIT)) {
 		if (!((_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) &&
 		      (_gm->_rooms[AIRLOCK]->getObject(5)->hasProperty(WORN)) &&
@@ -1590,12 +1591,12 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
 		_vm->paletteBrightness();
-		_gm->_state.timeStarting -= 125000; /* 2 Stunden */
-		_gm->_state.timeAlarmSystem -= 125000;
-		_gm->_state.eventTime = _vm->getDOSTicks() + 4000;
+		_gm->_state._timeStarting -= 7200000; // 2 hours
+		_gm->_state._timeAlarmSystem -= 7200000;
+		_gm->_state._eventTime = _vm->_system->getMillis() + 220000;
 		// TODO: implement event calling
 //		_gm->_state.event = &supernova;
-		_gm->_state.alarmOn = (_gm->_state.timeAlarmSystem > _vm->getDOSTicks());
+		_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _vm->_system->getMillis());
 		setSectionVisible(11, false);
 		setSectionVisible(1, false);
 		_vm->renderRoom(*this);
@@ -1790,13 +1791,13 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->removeMessage();
 				_vm->paletteFadeOut();
 				g_system->fillScreen(kColorBlack);
-				_gm->_state.dream = false;
+				_gm->_state._dream = false;
 				// TODO:
 //				if (!load_game(-2)) error_temp();
 				_gm->loadTime();
 				_gm->_newRoom = true;
 				_gm->_rooms[CAVE]->getObject(1)->_exitRoom = MEETUP3;
-				_gm->_state.dream = true;
+				_gm->_state._dream = true;
 			}
 		} else {
 			_gm->changeRoom(MEETUP2);
@@ -1901,9 +1902,9 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(3));  // Discman
 		_gm->changeRoom(CELL);
 		_gm->_newRoom = true;
-		_gm->_state.benOverlay = 2;
+		_gm->_state._benOverlay = 2;
 		_gm->_newOverlay = true;
-		_gm->_state.dream = true;
+		_gm->_state._dream = true;
 	} else
 		return false;
 
@@ -1911,76 +1912,76 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void AxacussCell::onEntrance() {
-	if (_gm->_state.dream) {
+	if (_gm->_state._dream) {
 		_vm->renderMessage("Du wachst auf und findest dich in|einem geschlossenen Raum wieder.");
-		_gm->_state.timeStarting = _gm->_state.time - 500000;
-		_gm->_state.timeAlarmSystem = _gm->_state.timeAlarm + _gm->_state.timeStarting;
-		_gm->_state.alarmOn = (_gm->_state.timeAlarmSystem > _gm->_state.time);
-		_gm->_state.powerOff = false;
-		_gm->_state.dream = false;
+		_gm->_state._timeStarting = _gm->_state._time - 500000;
+		_gm->_state._timeAlarmSystem = _gm->_state._timeAlarm + _gm->_state._timeStarting;
+		_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _gm->_state._time);
+		_gm->_state._powerOff = false;
+		_gm->_state._dream = false;
 	}
 }
 
 void AxacussCell::animation() {
-	++_gm->_state.timeRobot;
+	++_gm->_state._timeRobot;
 
-	if (_gm->_state.timeRobot == 299) {
+	if (_gm->_state._timeRobot == 299) {
 		_gm->drawImage(_gm->invertSection(31));
 		_gm->drawImage(28);
 		getObject(0)->_click = 255;
 		getObject(1)->setProperty(EXIT | OPENABLE | OPENED | CLOSED);
-	} else if ((_gm->_state.timeRobot >= 301) && (_gm->_state.timeRobot <= 320)) {
-		_gm->drawImage(_gm->invertSection(329 - _gm->_state.timeRobot));
-		_gm->drawImage(328 - _gm->_state.timeRobot);
-	} else if (_gm->_state.timeRobot == 321) {
+	} else if ((_gm->_state._timeRobot >= 301) && (_gm->_state._timeRobot <= 320)) {
+		_gm->drawImage(_gm->invertSection(329 - _gm->_state._timeRobot));
+		_gm->drawImage(328 - _gm->_state._timeRobot);
+	} else if (_gm->_state._timeRobot == 321) {
 		_gm->drawImage(31);
 		setSectionVisible(8, false);
 		getObject(0)->_click = 1;
 		getObject(1)->setProperty(EXIT | OPENABLE | CLOSED);
 	}
 
-	if (_gm->_state.timeRobot == 599) {
+	if (_gm->_state._timeRobot == 599) {
 		_gm->drawImage(_gm->invertSection(31));
 		_gm->drawImage(8);
 		getObject(0)->_click = 255;
 		getObject(1)->setProperty(EXIT | OPENABLE | OPENED | CLOSED);
-	} else if ((_gm->_state.timeRobot >= 601) && (_gm->_state.timeRobot <= 620)) {
-		_gm->drawImage(_gm->_state.timeRobot - 593 + 128);
-		_gm->drawImage(_gm->_state.timeRobot - 592);
-	} else if (_gm->_state.timeRobot == 621) {
+	} else if ((_gm->_state._timeRobot >= 601) && (_gm->_state._timeRobot <= 620)) {
+		_gm->drawImage(_gm->_state._timeRobot - 593 + 128);
+		_gm->drawImage(_gm->_state._timeRobot - 592);
+	} else if (_gm->_state._timeRobot == 621) {
 		_gm->drawImage(31);
 		setSectionVisible(28, false);
 		getObject(0)->_click = 1;
 		getObject(1)->setProperty(EXIT | OPENABLE | CLOSED);
-	} else if (_gm->_state.timeRobot == 700) {
-		_gm->_state.timeRobot = 0;
-	} else if (_gm->_state.timeRobot == 10002) {
+	} else if (_gm->_state._timeRobot == 700) {
+		_gm->_state._timeRobot = 0;
+	} else if (_gm->_state._timeRobot == 10002) {
 		_gm->drawImage(18 + 128);
 		_gm->drawImage(29);
 		_gm->drawImage(7);
 		getObject(2)->_click = 13;
-	} else if (_gm->_state.timeRobot == 10003) {
+	} else if (_gm->_state._timeRobot == 10003) {
 		setSectionVisible(29, false);
 		_gm->drawImage(30);
 		getObject(8)->_click = 12;
 		getObject(7)->_click = 14;
 		_vm->playSound(kAudioUndef4);
-	} else if (_gm->_state.timeRobot == 10010) {
-		--_gm->_state.timeRobot;
+	} else if (_gm->_state._timeRobot == 10010) {
+		--_gm->_state._timeRobot;
 	}
 
-	if (_gm->_state.timeRobot == 312) {
+	if (_gm->_state._timeRobot == 312) {
 		_gm->drawImage(7);
 		getObject(2)->_click = 13;
-	} else if (_gm->_state.timeRobot == 610) {
+	} else if (_gm->_state._timeRobot == 610) {
 		setSectionVisible(7, false);
 		getObject(2)->_click = 255;
 	}
 
 	if ((isSectionVisible(6)) &&
-	    ((_gm->_state.timeRobot == 310) || (_gm->_state.timeRobot == 610))) {
+	    ((_gm->_state._timeRobot == 310) || (_gm->_state._timeRobot == 610))) {
 		_vm->playSound(kAudioUndef3);
-		_gm->_state.timeRobot = 10000;
+		_gm->_state._timeRobot = 10000;
 	}
 
 	_gm->setAnimationTimer(3);
@@ -2169,12 +2170,12 @@ bestechen:
 				if (_gm->dialog(2, nullptr, nullptr, 0) == 0) { // rows, dialog2
 					_gm->reply("Nein!", 1, 1 + 128);
 					setSectionVisible(kMaxSection - 2, false);
-					if (_gm->_state.money == 0) {
+					if (_gm->_state._money == 0) {
 						_gm->removeSentence(2, 2);
 						_gm->removeSentence(3, 2);
 					} else {
-						_dialog3[2] += Common::String::format("%d Xa.", _gm->_state.money - 200);
-						_dialog3[3] += Common::String::format("%d Xa.", _gm->_state.money);
+						_dialog3[2] += Common::String::format("%d Xa.", _gm->_state._money - 200);
+						_dialog3[3] += Common::String::format("%d Xa.", _gm->_state._money);
 					}
 					switch (_gm->dialog(4, nullptr, nullptr, 2)) { // rows, dialog3
 					case 1:
@@ -2188,13 +2189,13 @@ bestechen:
 						_gm->shot(3, _gm->invertSection(3));
 						break;
 					case 3:
-						if (_gm->_state.money >= 900) {
-							sum = _gm->_state.money;
+						if (_gm->_state._money >= 900) {
+							sum = _gm->_state._money;
 							goto genug;
 						}
 					case 2:
-						if (_gm->_state.money > 1100) {
-							sum = _gm->_state.money - 200;
+						if (_gm->_state._money > 1100) {
+							sum = _gm->_state._money - 200;
 							goto genug;
 						}
 						_gm->reply("Das máte schon ein biáchen mehr sein.", 1, 1 + 128);
@@ -2316,12 +2317,12 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawImage(_gm->invertSection(obj1._id - DOOR1 + 1));
 		_vm->playSound(kAudioDoorClose);
 		if (obj1.hasProperty(OCCUPIED)) {
-			_gm->_state.destination = 255;
+			_gm->_state._destination = 255;
 			obj1.setProperty(EXIT | OPENABLE | CLOSED | CAUGHT);
 			if (!_gm->_rooms[OFFICE_L1 + obj1._id - DOOR1]->isSectionVisible(4))
 				_gm->search(180);
 			else
-				_gm->_state.eventTime = 0xffffffff;
+				_gm->_state._eventTime = 0xffffffff;
 		} else
 			obj1.setProperty(EXIT | OPENABLE | CLOSED);
 	} else if (((verb == ACTION_WALK) || ((verb == ACTION_OPEN) && !obj1.hasProperty(OPENED))) &&
@@ -2374,7 +2375,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) &&
 	           (obj1._id >= DOOR1) && (obj1._id <= DOOR4)) {
-		_gm->_state.nameSeen |= 1 << (obj1._id - DOOR1);
+		_gm->_state._nameSeen |= 1 << (obj1._id - DOOR1);
 		return false;
 	} else if ((verb == ACTION_WALK) &&
 	           ((obj1._id == PILLAR1) || (obj1._id == PILLAR2))) {
@@ -2601,9 +2602,9 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 			getObject(3)->resetProperty(EXIT);
 			getObject(3)->_click = 2;
 			_gm->drawImage(_gm->invertSection(1));
-			if (!(_gm->_state.greatFlag & 0x4000)) {
+			if (!(_gm->_state._greatFlag & 0x4000)) {
 				_vm->playSound(kAudioGreat);
-				_gm->_state.greatFlag |= 0x4000;
+				_gm->_state._greatFlag |= 0x4000;
 			}
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BUTTON2)) {
@@ -2680,7 +2681,7 @@ bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->takeMoney(-180);
 		_gm->drawImage(2);
 		setSectionVisible(1, false);
-		_gm->_state.eventTime = _vm->getDOSTicks() + 600;
+		_gm->_state._eventTime = _vm->_system->getMillis() + ticksToMsec(600);
 //		*event = &taxi;
 		return true;
 	}
