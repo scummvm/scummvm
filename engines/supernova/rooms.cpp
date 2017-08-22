@@ -2423,10 +2423,8 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 	           !obj1.hasProperty(OPENED)) {
 		_vm->renderMessage("Welche Zahlenkombination willst|du eingeben?");
 		_vm->renderBox(160, 70, 70, 10, kColorDarkBlue);
-		do
-			_gm->edit(input, 161, 71, 10);
-		while ((_gm->_key.keycode != Common::KEYCODE_ESCAPE) &&
-		       (_gm->_key.keycode != Common::KEYCODE_RETURN));
+		_gm->edit(input, 161, 71, 10);
+
 		_vm->removeMessage();
 		if (_gm->_key.keycode != Common::KEYCODE_ESCAPE) {
 			if (!input.equals("89814")) {

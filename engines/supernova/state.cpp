@@ -1256,10 +1256,8 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		// TODO: Adjust for msec time instead of ticks
 		do {
 			_vm->renderBox(91, 99, 138, 9, kColorDarkBlue);
-			do {
-				edit(input, 91, 100, 5);
-			} while ((_key.keycode != Common::KEYCODE_RETURN) &&
-			         (_key.keycode != Common::KEYCODE_ESCAPE));
+			edit(input, 91, 100, 5);
+
 			f = false;
 			if (t[0] == ':') {
 				t[0] = 0;
