@@ -1535,7 +1535,7 @@ public:
 		_shown[1] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,STATION,22);
-		_objectState[1] = Object("Schlitz",Object::defaultDescription,SLOT,COMBINABLE,0,0,0);
+		_objectState[1] = Object("Schlitz",Object::defaultDescription,STATION_SLOT,COMBINABLE,0,0,0);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
