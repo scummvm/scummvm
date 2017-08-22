@@ -1191,15 +1191,15 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_OPEN) && (obj1._id == EGG)) {
 		takeObject(obj1);
 		if (obj1.hasProperty(OPENED)) {
-			_vm->renderMessage("Du hast es doch schon geffnet.");
+			_vm->renderMessage("Du hast es doch schon ge\224ffnet.");
 		} else {
 			takeObject(*_rooms[ENTRANCE]->getObject(8));
-			_vm->renderMessage("In dem Ei ist eine Tablette|in einer Plastikhlle.");
+			_vm->renderMessage("In dem Ei ist eine Tablette|in einer Plastikh\201lle.");
 			obj1.setProperty(OPENED);
 		}
 	} else if ((verb == ACTION_USE) && (obj1._id == PILL)) {
 		if (isHelmetOff()) {
-			_vm->renderMessage("Du iát die Tablette und merkst,|daá sich irgendetwas verndert hat.");
+			_vm->renderMessage("Du iát die Tablette und merkst,|da\341 sich irgendetwas ver\216ndert hat.");
 			great(0);
 			_inventory.remove(obj1);
 			_state._language = 2;
@@ -1207,11 +1207,11 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == PILL_HULL) &&
 	           (_state._language == 2)) {
-		_vm->renderMessage("Komisch! Auf einmal kannst du die Schrift lesen!|Darauf steht:\"Wenn Sie diese Schrift jetzt|lesen knnen, hat die Tablette gewirkt.\"");
+		_vm->renderMessage("Komisch! Auf einmal kannst du die Schrift lesen!|Darauf steht:\"Wenn Sie diese Schrift jetzt|lesen k\224nnen, hat die Tablette gewirkt.\"");
 		_state._language = 1;
 	} else if ((verb == ACTION_OPEN) && (obj1._id == WALLET)) {
 		if (!_rooms[ROGER]->getObject(3)->hasProperty(CARRIED)) {
-			_vm->renderMessage("Das muát du erst nehmen.");
+			_vm->renderMessage("Das mu\341t du erst nehmen.");
 		} else if (_rooms[ROGER]->getObject(7)->hasProperty(CARRIED)) {
 			_vm->renderMessage("Sie ist leer.");
 		} else {
@@ -1300,7 +1300,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			else
 				return false;
 		} else {
-			r->getObject(8)->_name = "Leitung mit Lsterklemme";
+			r->getObject(8)->_name = "Leitung mit L\201sterklemme";
 			r = _rooms[HOLD];
 			_inventory.remove(*r->getObject(2));
 			_state._terminalStripConnected = true;
@@ -1310,7 +1310,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, SPOOL)) {
 		r = _rooms[CABIN_L2];
 		takeObject(*r->getObject(9));
-		r->getObject(9)->_name = "Kabelrolle mit Lsterklemme";
+		r->getObject(9)->_name = "Kabelrolle mit L\201sterklemme";
 		r = _rooms[HOLD];
 		_inventory.remove(*r->getObject(2));
 		_state._terminalStripConnected = true;
@@ -1350,9 +1350,9 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			if (obj1.hasProperty(WORN)) {
 				r = _rooms[AIRLOCK];
 				if (r->getObject(4)->hasProperty(WORN)) {
-					_vm->renderMessage("Du muát erst den Helm abnehmen.");
+					_vm->renderMessage("Du mu\341t erst den Helm abnehmen.");
 				} else if (r->getObject(6)->hasProperty(WORN)) {
-					_vm->renderMessage("Du muát erst den Versorgungsteil abnehmen.");
+					_vm->renderMessage("Du mu\341t erst den Versorgungsteil abnehmen.");
 				} else {
 					obj1.disableProperty(WORN);
 					_vm->renderMessage("Du ziehst den Raumanzug aus.");
@@ -1386,7 +1386,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 					obj1.setProperty(WORN);
 					_vm->renderMessage("Du ziehst den Helm auf.");
 				} else {
-					_vm->renderMessage("Du muát erst den Anzug anziehen.");
+					_vm->renderMessage("Du mu\341t erst den Anzug anziehen.");
 				}
 			}
 		}
@@ -1413,7 +1413,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 					obj1.setProperty(WORN);
 					_vm->renderMessage("Du ziehst den Versorgungsteil an.");
 				} else {
-					_vm->renderMessage("Du muát erst den Anzug anziehen.");
+					_vm->renderMessage("Du mu\341t erst den Anzug anziehen.");
 				}
 			}
 		}
@@ -1421,7 +1421,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 //		*bathroom = current_room;
 		return false;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, SOCKET))
-		_vm->renderMessage("Die Leitung ist hier unntz.");
+		_vm->renderMessage("Die Leitung ist hier unn\201tz.");
 	else if ((verb == ACTION_LOOK) && (obj1._id == BOOK2)) {
 		_vm->renderMessage("Stark, das ist ja die Fortsetzung zum \"Anhalter\":|\"Das Restaurant am Ende des Universums\".");
 		mouseWait(_timer1);
@@ -1447,7 +1447,7 @@ void GameManager::handleInput() {
 		case ACTION_WALK:
 			if (_inputObject[0]->hasProperty(CARRIED)) {
 				// You already carry this.
-				_vm->renderMessage("Das trgst du doch bei dir.");
+				_vm->renderMessage("Das tr\204gst du doch bei dir.");
 			} else if (!_inputObject[0]->hasProperty(EXIT)) {
 				// You're already there.
 				_vm->renderMessage("Du bist doch schon da.");
@@ -1477,7 +1477,7 @@ void GameManager::handleInput() {
 		case ACTION_OPEN:
 			if (!_inputObject[0]->hasProperty(OPENABLE)) {
 				// This can't be opened
-				_vm->renderMessage("Das lát sich nicht ffnen.");
+				_vm->renderMessage("Das l\204\341t sich nicht \224ffnen.");
 			} else if (_inputObject[0]->hasProperty(OPENED)) {
 				// This is already opened.
 				_vm->renderMessage("Das ist schon offen.");
@@ -1499,7 +1499,7 @@ void GameManager::handleInput() {
 			    (_inputObject[0]->hasProperty(CLOSED) &&
 			     _inputObject[0]->hasProperty(OPENED))) {
 				// This can't be closed.
-				_vm->renderMessage("Das lát sich nicht schlieáen.");
+				_vm->renderMessage("Das l\204\341t sich nicht schlie\341en.");
 			} else if (!_inputObject[0]->hasProperty(OPENED)) {
 				// This is already closed.
 				_vm->renderMessage("Das ist schon geschlossen.");
