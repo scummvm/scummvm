@@ -94,7 +94,7 @@ public:
 		    Object("Keycard", "Die Keycard fuer deine Schraenke.", KEYCARD,
 		           TAKE | CARRIED | COMBINABLE, 255, 255, 0, NULLROOM, 0);
 		_objectState[1] =
-		    Object("Taschenmesser", "Es ist nicht mehr das sch�rfste.", KNIFE,
+		    Object("Taschenmesser", "Es ist nicht mehr das sch\204rfste.", KNIFE,
 		           TAKE | CARRIED | COMBINABLE, 255, 255, 0, NULLROOM, 0);
 		_objectState[2] =
 		    Object("Armbanduhr", Object::defaultDescription, WATCH,
@@ -128,7 +128,7 @@ public:
 		_objectState[4] = Object("Luke", Object::defaultDescription, NULLOBJECT, OPENABLE | EXIT, 4, 10, 5, CABIN_R2, 14);
 		_objectState[5] = Object("Luke", Object::defaultDescription, NULLOBJECT, OPENABLE | EXIT | OPENED, 9, 3, 4, CABIN_R3, 9);
 		_objectState[6] = Object("Luke", Object::defaultDescription, NULLOBJECT, OPENABLE | CLOSED | EXIT, 12, 12, 0, AIRLOCK, 2);
-		_objectState[7] = Object("Knopf", "Er geh�rt zu der gro�en Luke.", BUTTON, PRESS, 13, 13, 0, NULLROOM, 0);
+		_objectState[7] = Object("Knopf", "Er geh\224rt zu der gro�en Luke.", BUTTON, PRESS, 13, 13, 0, NULLROOM, 0);
 		_objectState[8] = Object("Leiter", Object::defaultDescription, NULLOBJECT, NULLTYPE, 14, 14, 0, NULLROOM, 0);
 		_objectState[9] = Object("Ausgang", Object::defaultDescription, NULLOBJECT, EXIT, 15, 15, 0, HALL, 22);
 	}
@@ -145,9 +145,9 @@ public:
 		_fileNumber = 15;
 		_shown[0] = true;
 
-		_objectState[0] = Object("Luke", "Sie f�hrt ins Cockpit.", NULLOBJECT, OPENABLE | EXIT, 4, 5, 1, COCKPIT, 10);
-		_objectState[1] = Object("Luke", "Sie f�hrt zur K�che.", KITCHEN_HATCH, OPENABLE | EXIT, 0, 0, 0, NULLROOM, 1);
-		_objectState[2] = Object("Luke", "Sie f�hrt zu den Tiefschlafkammern.", NULLOBJECT, OPENABLE | CLOSED | EXIT, 1, 1, 2, SLEEP, 8);
+		_objectState[0] = Object("Luke", "Sie f\204hrt ins Cockpit.", NULLOBJECT, OPENABLE | EXIT, 4, 5, 1, COCKPIT, 10);
+		_objectState[1] = Object("Luke", "Sie f\204hrt zur K\201che.", KITCHEN_HATCH, OPENABLE | EXIT, 0, 0, 0, NULLROOM, 1);
+		_objectState[2] = Object("Luke", "Sie f\204hrt zu den Tiefschlafkammern.", NULLOBJECT, OPENABLE | CLOSED | EXIT, 1, 1, 2, SLEEP, 8);
 		_objectState[3] = Object("Schlitz", "Es ist ein Keycard-Leser.", SLEEP_SLOT, COMBINABLE, 2, 2, 0, NULLROOM, 0);
 		_objectState[4] = Object("Leiter", Object::defaultDescription, NULLOBJECT, NULLTYPE, 3, SLEEP, 0, NULLROOM, 0);
 		_objectState[5] = Object("Gang", Object::defaultDescription, NULLOBJECT, EXIT, 6, 6, 0, CORRIDOR, 19);
@@ -264,13 +264,13 @@ public:
 		_objectState[4] = Object("Schrank",Object::defaultDescription,SHELF_L1,OPENABLE | CLOSED,25,26,17);
 		_objectState[5] = Object("Pistole","Es ist keine Munition drin.",PISTOL,TAKE,39,39,20);
 		_objectState[6] = Object("Fach",Object::defaultDescription,SHELF_L2,OPENABLE | CLOSED,27,28,18);
-		_objectState[7] = Object("B�cher","Lauter wissenschaftliche B�cher.",NULLOBJECT,UNNECESSARY,40,40,0);
+		_objectState[7] = Object("B\201cher","Lauter wissenschaftliche B\201cher.",NULLOBJECT,UNNECESSARY,40,40,0);
 		_objectState[8] = Object("Fach",Object::defaultDescription,SHELF_L3,OPENABLE | CLOSED,29,30,19);
 		_objectState[9] = Object("Kabelrolle","Da sind mindestens zwanzig Meter drauf.", SPOOL,TAKE | COMBINABLE,41,41,21);
 		_objectState[10] = Object("Fach",Object::defaultDescription,SHELF_L4,OPENABLE | CLOSED,43,44,22);
 		_objectState[11] = Object("Buch",Object::defaultDescription,BOOK2,TAKE,46,46,23);
-		_objectState[12] = Object("Unterw�sche","Ich habe keine Lust, in|der Unterw�sche des|Commanders rumzuw�hlen.",NULLOBJECT,UNNECESSARY,34,34,0);
-		_objectState[13] = Object("Unterw�sche","Ich habe keine Lust, in|der Unterw�sche des|Commanders rumzuw�hlen.",NULLOBJECT,UNNECESSARY,35,35,0);
+		_objectState[12] = Object("Unterw\204sche","Ich habe keine Lust, in|der Unterw\204sche des|Commanders rumzuw\201hlen.",NULLOBJECT,UNNECESSARY,34,34,0);
+		_objectState[13] = Object("Unterw\204sche","Ich habe keine Lust, in|der Unterw\204sche des|Commanders rumzuw\201hlen.",NULLOBJECT,UNNECESSARY,35,35,0);
 		_objectState[14] = Object("Kleider",Object::defaultDescription,NULLOBJECT,UNNECESSARY,36,36,0);
 		_objectState[15] = Object("Krimskram","Es ist nichts brauchbares dabei.",NULLOBJECT,UNNECESSARY,37,37,0);
 		_objectState[16] = Object("Krimskram","Es ist nichts brauchbares dabei.",NULLOBJECT,UNNECESSARY,38,38,0);
@@ -313,7 +313,7 @@ public:
 		_objectState[2] = Object("Box",Object::defaultDescription,NULLOBJECT,NULLTYPE,13,13,0);
 		_objectState[3] = Object("Magnete","Damit werden Sachen auf|dem Tisch festgehalten.",NULLOBJECT,UNNECESSARY,14,14,0);
 		_objectState[4] = Object("Schallplatte","Die Platte ist von \"Big Boss\".",RECORD,TAKE | COMBINABLE,15,15,8 | 128);
-		_objectState[5] = Object("Schallplattenst�nder","Du hast jetzt keine Zeit, in|der Plattensammlung rumzust�bern.",NULLOBJECT,UNNECESSARY,16,16,0);
+		_objectState[5] = Object("Schallplattenst\204nder","Du hast jetzt keine Zeit, in|der Plattensammlung rumzust\224bern.",NULLOBJECT,UNNECESSARY,16,16,0);
 		_objectState[6] = Object("Knopf",Object::defaultDescription,TURNTABLE_BUTTON,PRESS,22,22,0);
 		_objectState[7] = Object("Plattenspieler","Sieht aus, als k�me|er aus dem Museum.",TURNTABLE,UNNECESSARY | COMBINABLE,17,17,0);
 		_objectState[8] = Object("Leitung",Object::defaultDescription,WIRE,COMBINABLE,18,18,0);
@@ -342,7 +342,7 @@ public:
 		_shown[2] = true;
 
 		_objectState[0] = Object("Bild","Manche Leute haben schon|einen komischen Geschmack.",NULLOBJECT,UNNECESSARY,5,5,0);
-		_objectState[1] = Object("Zeichenger�te","Auf dem Zettel sind lauter|unverst�ndliche Skizzen und Berechnungen.|(Jedenfalls f�r dich unverst�ndlich.)",NULLOBJECT,UNNECESSARY,6,6,0);
+		_objectState[1] = Object("Zeichenger\204te","Auf dem Zettel sind lauter|unverst\204ndliche Skizzen und Berechnungen.|(Jedenfalls f\201r dich unverst\204ndlich.)",NULLOBJECT,UNNECESSARY,6,6,0);
 		_objectState[2] = Object("Magnete","Damit werden Sachen auf|dem Tisch festgehalten.",NULLOBJECT,UNNECESSARY,7,7,0);
 		_objectState[3] = Object("Luke",Object::defaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR,5);
 		_objectState[4] = Object("Schlitz","Es ist ein Keycard-Leser.",NULLOBJECT,COMBINABLE,0,0,0);
@@ -367,8 +367,8 @@ public:
 		_shown[4] = true;
 		_shown[5] = true;
 
-		_objectState[0] = Object("Schachspiel","Es macht wohl Spa�, an|der Decke Schach zu spielen.",NULLOBJECT,UNNECESSARY,11,11,0);
-		_objectState[1] = Object("Tennisschl�ger","Fliegt Boris Becker auch mit?",NULLOBJECT,UNNECESSARY,8,8,0);
+		_objectState[0] = Object("Schachspiel","Es macht wohl Spa\341, an|der Decke Schach zu spielen.",NULLOBJECT,UNNECESSARY,11,11,0);
+		_objectState[1] = Object("Tennisschl\204ger","Fliegt Boris Becker auch mit?",NULLOBJECT,UNNECESSARY,8,8,0);
 		_objectState[2] = Object("Tennisball","Toll!",NULLOBJECT,UNNECESSARY,9,9,0);
 		_objectState[3] = Object("Luke",Object::defaultDescription,NULLOBJECT,OPENABLE | OPENED | EXIT,3,3,15 | 128,CORRIDOR,5);
 		_objectState[4] = Object("Schlitz","Es ist ein Keycard-Leser.",NULLOBJECT,COMBINABLE,0,0,0);
@@ -409,16 +409,16 @@ public:
 		_objectState[3] = Object("Schlitz","Es ist ein Keycard-Leser.",SLOT_K2,COMBINABLE,28,28,0);
 		_objectState[4] = Object("Schlitz","Es ist ein Keycard-Leser.",SLOT_K3,COMBINABLE,29,29,0);
 		_objectState[5] = Object("Schlitz","Es ist ein Keycard-Leser.",SLOT_K4,COMBINABLE,30,30,0);
-		_objectState[6] = Object("Fach","Das ist eins deiner drei F�cher.",SHELF1,OPENABLE | CLOSED,14,18,9);
+		_objectState[6] = Object("Fach","Das ist eins deiner drei F\204cher.",SHELF1,OPENABLE | CLOSED,14,18,9);
 		_objectState[7] = Object("Alben","Deine Briefmarkensammlung.",NULLOBJECT,UNNECESSARY,14,14,0);
-		_objectState[8] = Object("Fach","Das ist eins deiner drei F�cher.",SHELF2,OPENABLE | CLOSED,15,19,10);
-		_objectState[9] = Object("Seil","Es ist ungef�hr 10 m lang und 4 cm dick.",ROPE,TAKE | COMBINABLE,15,15,12);
+		_objectState[8] = Object("Fach","Das ist eins deiner drei F\204cher.",SHELF2,OPENABLE | CLOSED,15,19,10);
+		_objectState[9] = Object("Seil","Es ist ungef\204hr 10 m lang und 4 cm dick.",ROPE,TAKE | COMBINABLE,15,15,12);
 		_objectState[10] = Object("Schrank","Das ist dein Schrank.",SHELF3,OPENABLE | CLOSED,16,17,11);
 		_objectState[11] = Object("Krimskram","Es ist nichts brauchbares dabei.",NULLOBJECT,UNNECESSARY,20,20,0);
 		_objectState[12] = Object("Kleider","Es sind Standard-Weltraum-Klamotten.",NULLOBJECT,UNNECESSARY,21,21,0);
 		_objectState[13] = Object("Unterw�sche",Object::defaultDescription,NULLOBJECT,UNNECESSARY,22,22,0);
-		_objectState[14] = Object("Str�mpfe",Object::defaultDescription,NULLOBJECT,UNNECESSARY,23,23,0);
-		_objectState[15] = Object("Fach","Das ist eins deiner drei F�cher.",SHELF4,OPENABLE | CLOSED,24,25,13);
+		_objectState[14] = Object("Str\201mpfe",Object::defaultDescription,NULLOBJECT,UNNECESSARY,23,23,0);
+		_objectState[15] = Object("Fach","Das ist eins deiner drei F\204cher.",SHELF4,OPENABLE | CLOSED,24,25,13);
 		_objectState[16] = Object("Buch","Es ist|\"Per Anhalter durch die Galaxis\"|von Douglas Adams.",BOOK,TAKE,26,26,14);
 		_objectState[17] = Object("Discman","Es ist eine \"Mad Monkeys\"-CD darin.",DISCMAN,TAKE | COMBINABLE,33,33,16);
 		_objectState[18] = Object("Luke",Object::defaultDescription,NULLOBJECT,OPENABLE | EXIT,3,3,15 | 128,CORRIDOR,5);
@@ -485,16 +485,16 @@ public:
 		_shown[0] = true;
 
 		_objectState[0] = Object("",Object::defaultDescription,HOLD_WIRE,COMBINABLE,255,255,0);
-		_objectState[1] = Object("Schrott","Da ist eine L�sterklemme dran, die|noch ganz brauchbar aussieht.|Ich nehme sie mit.",SCRAP_LK,NULLTYPE,4,4,0);
-		_objectState[2] = Object("L�sterklemme",Object::defaultDescription,TERMINALSTRIP,COMBINABLE,255,255,0);
-		_objectState[3] = Object("Schrott","Junge, Junge! Die Explosion hat ein|ganz sch�nes Durcheinander angerichtet.",NULLOBJECT,NULLTYPE,5,5,0);
+		_objectState[1] = Object("Schrott","Da ist eine L\201sterklemme dran, die|noch ganz brauchbar aussieht.|Ich nehme sie mit.",SCRAP_LK,NULLTYPE,4,4,0);
+		_objectState[2] = Object("L\201sterklemme",Object::defaultDescription,TERMINALSTRIP,COMBINABLE,255,255,0);
+		_objectState[3] = Object("Schrott","Junge, Junge! Die Explosion hat ein|ganz sch\224nes Durcheinander angerichtet.",NULLOBJECT,NULLTYPE,5,5,0);
 		_objectState[4] = Object("Reaktor","Das war einmal der Reaktor.",NULLOBJECT,NULLTYPE,6,6,0);
-		_objectState[5] = Object("D�se",Object::defaultDescription,NULLOBJECT,NULLTYPE,7,7,0);
-		_objectState[6] = Object("blauer K�rbis","Keine Ahnung, was das ist.",NULLOBJECT,NULLTYPE,8,8,0);
+		_objectState[5] = Object("D\201se",Object::defaultDescription,NULLOBJECT,NULLTYPE,7,7,0);
+		_objectState[6] = Object("blauer K\201rbis","Keine Ahnung, was das ist.",NULLOBJECT,NULLTYPE,8,8,0);
 		_objectState[7] = Object("Luke",Object::defaultDescription,LANDINGMOD_OUTERHATCH,EXIT | OPENABLE,1,2,2,LANDINGMODULE,6);
-		_objectState[8] = Object("Landef�hre","Sie war eigentlich f�r Bodenuntersuchungen|auf Arsano 3 gedacht.",NULLOBJECT,NULLTYPE,0,0,0);
+		_objectState[8] = Object("Landef\204hre","Sie war eigentlich f\201r Bodenuntersuchungen|auf Arsano 3 gedacht.",NULLOBJECT,NULLTYPE,0,0,0);
 		_objectState[9] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,AIRLOCK,22);
-		_objectState[10] = Object("Luke","Sie f�hrt nach drau�en.",OUTERHATCH_TOP,EXIT | OPENABLE | OPENED,3,3,0,GENERATOR,8);
+		_objectState[10] = Object("Luke","Sie f\201hrt nach drau\341en.",OUTERHATCH_TOP,EXIT | OPENABLE | OPENED,3,3,0,GENERATOR,8);
 		_objectState[11] = Object("Generator","Er versorgt das Raumschiff mit Strom.",GENERATOR_TOP,EXIT,12,12,0,GENERATOR,8);
 	}
 
@@ -512,7 +512,7 @@ public:
 		_shown[0] = true;
 
 		_objectState[0] = Object("Steckdose",Object::defaultDescription,LANDINGMOD_SOCKET,COMBINABLE,1,1,0);
-		_objectState[1] = Object("Knopf","Es ist ein Sicherheitsknopf.|Er kann nur mit einem spitzen|Gegenstand gedr�ckt werden.",LANDINGMOD_BUTTON,PRESS | COMBINABLE,2,2,0);
+		_objectState[1] = Object("Knopf","Es ist ein Sicherheitsknopf.|Er kann nur mit einem spitzen|Gegenstand gedr\201ckt werden.",LANDINGMOD_BUTTON,PRESS | COMBINABLE,2,2,0);
 		_objectState[2] = Object("Monitor",Object::defaultDescription,LANDINGMOD_MONITOR,NULLTYPE,3,3,0);
 		_objectState[3] = Object("Tastatur",Object::defaultDescription,KEYBOARD,NULLTYPE,4,4,0);
 		_objectState[4] = Object("",Object::defaultDescription,LANDINGMOD_WIRE,COMBINABLE,255,255,0);
@@ -538,16 +538,16 @@ public:
 
 		_objectState[0] = Object("langes Kabel mit Stecker",Object::defaultDescription,GENERATOR_WIRE,COMBINABLE,255,255,0);
 		_objectState[1] = Object("leere Kabelrolle",Object::defaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
-		_objectState[2] = Object("Keycard","Hey, das ist die Keycard des Commanders!|Er mu� sie bei dem �berst�rzten|Aufbruch verloren haben.",KEYCARD2,COMBINABLE | TAKE,12,12,5 | 128);
+		_objectState[2] = Object("Keycard","Hey, das ist die Keycard des Commanders!|Er mu\341 sie bei dem \201berst\201rzten|Aufbruch verloren haben.",KEYCARD2,COMBINABLE | TAKE,12,12,5 | 128);
 		_objectState[3] = Object("Seil",Object::defaultDescription,GENERATOR_ROPE,COMBINABLE,255,255,0);
-		_objectState[4] = Object("Luke","Sie f�hrt nach drau�en.",OUTERHATCH,EXIT | OPENABLE,1,2,1,OUTSIDE,22);
+		_objectState[4] = Object("Luke","Sie f\201hrt nach drau\341en.",OUTERHATCH,EXIT | OPENABLE,1,2,1,OUTSIDE,22);
 		_objectState[5] = Object("Luke",Object::defaultDescription,NULLOBJECT,OPENABLE | CLOSED,3,3,0);
 		_objectState[6] = Object("Schlitz","Es ist ein Keycard-Leser.",NULLOBJECT,COMBINABLE,4,4,0);
 		_objectState[7] = Object("Klappe",Object::defaultDescription,TRAP,OPENABLE,5,6,2);
 		_objectState[8] = Object("Leitung",Object::defaultDescription,NULLOBJECT,NULLTYPE,7,7,0);
-		_objectState[9] = Object("Spannungmessger�t",Object::defaultDescription,VOLTMETER,NULLTYPE,9,9,0,NULLROOM,0);
+		_objectState[9] = Object("Spannungmessger\204t",Object::defaultDescription,VOLTMETER,NULLTYPE,9,9,0,NULLROOM,0);
 		_objectState[10] = Object("Klemme",Object::defaultDescription,CLIP,COMBINABLE,8,8,0);
-		_objectState[11] = Object("Leitung","Sie f�hrt vom Generator zum Spannungmessger�t.",SHORT_WIRE,COMBINABLE,10,10,0);
+		_objectState[11] = Object("Leitung","Sie f\201hrt vom Generator zum Spannungmessger\204t.",SHORT_WIRE,COMBINABLE,10,10,0);
 		_objectState[12] = Object("Leiter",Object::defaultDescription,LADDER,EXIT,0,0,0,HOLD,1);
 	}
 
@@ -581,7 +581,7 @@ public:
 		_objectState[0] = Object("Seil",Object::defaultDescription,NULLOBJECT,UNNECESSARY | EXIT,0,0,0,GENERATOR,12);
 		_objectState[1] = Object("Stein",Object::defaultDescription,STONE,NULLTYPE,1,1,0);
 		_objectState[2] = Object("Stein",Object::defaultDescription,NULLOBJECT,NULLTYPE,2,2,0);
-		_objectState[3] = Object("Loch","Es scheint eine Höhle zu sein.",NULLOBJECT,NULLTYPE,255,255,0,CAVE,1);
+		_objectState[3] = Object("Loch","Es scheint eine H\224hle zu sein.",NULLOBJECT,NULLTYPE,255,255,0,CAVE,1);
 	}
 
 	virtual void onEntrance();
@@ -609,7 +609,7 @@ public:
 		_fileNumber = 37;
 		_shown[0] = true;
 
-		_objectState[0] = Object("Höhle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
+		_objectState[0] = Object("H\224hle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
 		_objectState[1] = Object("Schild","Diese Schrift kannst du nicht lesen.",MEETUP_SIGN,NULLTYPE,0,0,0);
 		_objectState[2] = Object("Eingang",Object::defaultDescription,DOOR,EXIT,1,1,0,ENTRANCE,7);
 		_objectState[3] = Object("Stern",Object::defaultDescription,STAR,NULLTYPE,2,2,0);
@@ -635,23 +635,23 @@ public:
 		_shown[0] = true;
 
 		_objectState[0] = Object("Portier","Du siehst doch selbst, wie er aussieht.",PORTER,TALK,0,0,0);
-		_objectState[1] = Object("Tür",Object::defaultDescription,NULLOBJECT,EXIT | OPENABLE | CLOSED,1,1,0,NULLROOM,5);
+		_objectState[1] = Object("T\201r",Object::defaultDescription,NULLOBJECT,EXIT | OPENABLE | CLOSED,1,1,0,NULLROOM,5);
 		_objectState[2] = Object("Schild","Diese Schrift kannst du nicht lesen.",KITCHEN_SIGN,NULLTYPE,2,2,0);
 		_objectState[3] = Object("Kaugummi",Object::defaultDescription,SCHNUCK,TAKE,255,255,10+128);
-		_objectState[4] = Object("Gummibärchen",Object::defaultDescription,SCHNUCK,TAKE,255,255,11+128);
+		_objectState[4] = Object("Gummib\204rchen",Object::defaultDescription,SCHNUCK,TAKE,255,255,11+128);
 		_objectState[5] = Object("Schokokugel",Object::defaultDescription,SCHNUCK,TAKE,255,255,12+128);
-		_objectState[6] = Object("Überraschungsei",Object::defaultDescription,EGG,TAKE,255,255,13+128);
+		_objectState[6] = Object("\232berraschungsei",Object::defaultDescription,EGG,TAKE,255,255,13+128);
 		_objectState[7] = Object("Lakritz",Object::defaultDescription,SCHNUCK,TAKE,255,255,14+128);
-		_objectState[8] = Object("Tablette","Die Plastikhülle zeigt einen|Mund mit einer Sprechblase. Was|darin steht, kannst du nicht lesen.",PILL,TAKE,255,255,0);
+		_objectState[8] = Object("Tablette","Die Plastikh\201lle zeigt einen|Mund mit einer Sprechblase. Was|darin steht, kannst du nicht lesen.",PILL,TAKE,255,255,0);
 		_objectState[9] = Object("Schlitz",Object::defaultDescription,CAR_SLOT,COMBINABLE,6,6,0);
 		_objectState[10] = Object("Automat","Sieht aus wie ein Kaugummiautomat.",NULLOBJECT,NULLTYPE,5,5,0);
-		_objectState[11] = Object("Toilette","Die Toiletten sind denen|auf der Erde sehr ähnlich.",ARSANO_BATHROOM,NULLTYPE,255,255,0);
+		_objectState[11] = Object("Toilette","Die Toiletten sind denen|auf der Erde sehr \204hnlich.",ARSANO_BATHROOM,NULLTYPE,255,255,0);
 		_objectState[12] = Object("Knopf",Object::defaultDescription,BATHROOM_BUTTON,PRESS,3,3,0);
 		_objectState[13] = Object("Schild","Diese Schrift kannst du nicht lesen.",BATHROOM_SIGN,NULLTYPE,4,4,0);
 		_objectState[14] = Object("Treppe",Object::defaultDescription,STAIRCASE,EXIT,8,8,0,REST,3);
 		_objectState[15] = Object("Ausgang",Object::defaultDescription,MEETUP_EXIT,EXIT,255,255,0,MEETUP,22);
-		_objectState[16] = Object("Münzen","Es sind seltsame|Köpfe darauf abgebildet.",COINS,TAKE|COMBINABLE,255,255,0);
-		_objectState[17] = Object("Tablettenhülle","Darauf steht:\"Wenn Sie diese|Schrift jetzt lesen können,|hat die Tablette gewirkt.\"",PILL_HULL,TAKE,255,255,0);
+		_objectState[16] = Object("M\201nzen","Es sind seltsame|K\224pfe darauf abgebildet.",COINS,TAKE|COMBINABLE,255,255,0);
+		_objectState[17] = Object("Tablettenh\201lle","Darauf steht:\"Wenn Sie diese|Schrift jetzt lesen k\224nnen,|hat die Tablette gewirkt.\"",PILL_HULL,TAKE,255,255,0);
 
 		_dialog1[0] = "Wieso das denn nicht?";
 		_dialog1[1] = "Wo bin ich hier?";
@@ -660,9 +660,9 @@ public:
 		_dialog1[4] = "|";
 
 		_dialog2[0] = "Wo bin ich hier?";
-		_dialog2[1] = "Schnes Wetter heute, nicht wahr?";
-		_dialog2[2] = "Wrden Sie mich bitte durchlassen.";
-		_dialog2[3] = "Hey Alter, laá mich durch!";
+		_dialog2[1] = "Sch\224nes Wetter heute, nicht wahr?";
+		_dialog2[2] = "W\201rden Sie mich bitte durchlassen.";
+		_dialog2[3] = "Hey Alter, la\341 mich durch!";
 		_dialog2[4] = "|";
 
 		_dialog3[0] = "Was haben Sie gesagt?";
@@ -716,12 +716,12 @@ public:
 		_objectState[2] = Object("Gekritzel","\"Mr Spock was here\"",NULLOBJECT,NULLTYPE,3,3,0);
 		_objectState[3] = Object("Brieftasche",Object::defaultDescription,WALLET,TAKE,1,1,4);
 		_objectState[4] = Object("Speisekarte","\"Heute empfehlen wir:|Fonua Opra mit Ulk.\"",NULLOBJECT,UNNECESSARY,2,2,0);
-		_objectState[5] = Object("Tasse","Sie enthält eine grünliche Flüssigkeit.",CUP,UNNECESSARY,4,4,0);
+		_objectState[5] = Object("Tasse","Sie enth\204lt eine gr\201nliche Fl\201ssigkeit.",CUP,UNNECESSARY,4,4,0);
 		_objectState[6] = Object("Schachspiel",Object::defaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
 		_objectState[7] = Object("10-Buckazoid-Schein","Nicht gerade sehr viel Geld.",NULLOBJECT,TAKE|COMBINABLE,255,255,0);
 		_objectState[8] = Object("Keycard von Roger",Object::defaultDescription,KEYCARD_R,TAKE|COMBINABLE,255,255,0);
 
-		_dialog1[0] = "Knnten Sie mir ein Gericht empfehlen?";
+		_dialog1[0] = "K\224nnten Sie mir ein Gericht empfehlen?";
 		_dialog1[1] = "Wie lange dauert es denn noch bis zur Supernova?";
 		_dialog1[2] = "Sie kommen mir irgendwie bekannt vor.";
 		_dialog1[3] = "|";
@@ -779,16 +779,16 @@ public:
 		_objectState[1] = Object("Raumschiff",Object::defaultDescription,SPACESHIP,COMBINABLE,255,255,0);
 		_objectState[2] = Object("Höhle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
 
-		_dialog1[0] = "Ach, Ihnen gehrt die. Ich habe sie eben im Sand gefunden.";
+		_dialog1[0] = "Ach, Ihnen geh\224rt die. Ich habe sie eben im Sand gefunden.";
 		_dialog1[1] = "Nein, tut mir leid.";
 		_dialog2[0] = "Nein, danke. Ich bleibe lieber hier.";
-		_dialog2[1] = "Ja, das wre gut.";
+		_dialog2[1] = "Ja, das w\204re gut.";
 		_dialog3[0] = "Zur Erde.";
-		_dialog3[1] = "Zum Prsident der Galaxis.";
+		_dialog3[1] = "Zum Pr\204sident der Galaxis.";
 		_dialog3[2] = "Nach Xenon.";
 		_dialog3[3] = "Mir egal, setzen Sie mich irgendwo ab!";
 		_dialog4[0] = "Ich habe gerade Ihre Brieftasche gefunden!";
-		_dialog4[1] = "Sie lag da drben hinter einem Felsen.";
+		_dialog4[1] = "Sie lag da dr\201ben hinter einem Felsen.";
 		_dialog4[2] = "Ich wollte nur wissen, ob Sie die Brieftasche wiederhaben.";
 	}
 
@@ -814,7 +814,7 @@ public:
 
 		_objectState[0] = Object("Ufo","Der Eingang scheint offen zu sein.",UFO,EXIT,0,0,0,NULLROOM,3);
 		_objectState[1] = Object("Stern",Object::defaultDescription,STAR,NULLTYPE,1,1,0);
-		_objectState[2] = Object("Höhle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
+		_objectState[2] = Object("H\224hle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
 
 		_dialog2[0] = "Wo bin ich hier?";
 		_dialog2[1] = "Was wollen Sie von mir?";
@@ -873,8 +873,8 @@ public:
 		_shown[31] = true;
 
 		_objectState[0] = Object("Knopf",Object::defaultDescription,CELL_BUTTON,PRESS,1,1,0);
-		_objectState[1] = Object("Tür",Object::defaultDescription,CELL_DOOR,EXIT|OPENABLE|CLOSED,0,0,31+128,CORRIDOR4,1);
-		_objectState[2] = Object("Tablett","Es ist irgendein Fraß und|etwas zu Trinken darauf.",TRAY,UNNECESSARY,255,255,0);
+		_objectState[1] = Object("T\201r",Object::defaultDescription,CELL_DOOR,EXIT|OPENABLE|CLOSED,0,0,31+128,CORRIDOR4,1);
+		_objectState[2] = Object("Tablett","Es ist irgendein Fra\341 und|etwas zu Trinken darauf.",TRAY,UNNECESSARY,255,255,0);
 		_objectState[3] = Object("Stange","Es scheint eine Lampe zu sein.",NULLOBJECT,COMBINABLE,3,3,0);
 		_objectState[4] = Object("Augen","Es ist nur ein Bild.",NULLOBJECT,NULLTYPE,4,4,0);
 		_objectState[5] = Object("Leitung",Object::defaultDescription,CELL_WIRE,COMBINABLE|TAKE,6,6,0);
@@ -1043,7 +1043,7 @@ public:
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,0,0,0,CORRIDOR2,10);
 		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,1,1,0,GUARD,14);
-		_objectState[2] = Object("Zellentür","Hier warst du eingesperrt.",DOOR,EXIT|OPENABLE|OPENED|CLOSED,7,7,0,CELL,16);
+		_objectState[2] = Object("Zellent\201r","Hier warst du eingesperrt.",DOOR,EXIT|OPENABLE|OPENED|CLOSED,7,7,0,CELL,16);
 		_objectState[3] = Object("Laptop",Object::defaultDescription,NEWSPAPER,TAKE,6,6,8);
 		_objectState[4] = Object("Armbanduhr",Object::defaultDescription,WATCH,TAKE|COMBINABLE,255,255,8);
 		_objectState[5] = Object("Tisch",Object::defaultDescription,TABLE,COMBINABLE,5,5,0);
@@ -1089,9 +1089,9 @@ public:
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,DOOR,EXIT,2,2,0,NULLROOM,2);
 		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR6,22);
 
-		_dialog1[0] = "h ... nein, mein Name ist Mller.";
+		_dialog1[0] = "\216h ... nein, mein Name ist M\201ller.";
 		_dialog1[1] = "Oh, ich habe mich im Gang vertan.";
-		_dialog2[0] = "Wrden Sie mich bitte zum Fahrstuhl lassen?";
+		_dialog2[0] = "W\201rden Sie mich bitte zum Fahrstuhl lassen?";
 		_dialog2[1] = "Ich gehe wieder.";
 		_dialog3[0] = "Dann gehe ich eben wieder.";
 		_dialog3[1] = "Ach, halten Sie's Maul, ich gehe trotzdem!";
@@ -1143,7 +1143,7 @@ public:
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR5,2);
 		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,22);
-		_objectState[2] = Object("Tür",Object::defaultDescription,DOOR,OPENABLE|CLOSED,255,255,0,CORRIDOR8,13);
+		_objectState[2] = Object("T\201r",Object::defaultDescription,DOOR,OPENABLE|CLOSED,255,255,0,CORRIDOR8,13);
 	}
 
 	virtual void onEntrance();
@@ -1226,7 +1226,7 @@ public:
 		_shown[27] = false;
 		_shown[28] = true;
 
-		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,0,0,0,CORRIDOR6,10);
+		_objectState[0] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE,0,0,0,CORRIDOR6,10);
 		_objectState[1] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,BCORRIDOR,22);
 	}
 
@@ -1271,7 +1271,7 @@ public:
 		_shown[28] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,2,2,0,BCORRIDOR,2);
-		_objectState[1] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,0,0,0,GUARD,10);
+		_objectState[1] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE,0,0,0,GUARD,10);
 	}
 
 	virtual void onEntrance();
@@ -1289,16 +1289,16 @@ public:
 		_shown[2] = false;
 		_shown[3] = true;
 
-		_objectState[0] = Object("Säule",Object::defaultDescription,PILLAR1,NULLTYPE,4,4,0);
-		_objectState[1] = Object("Säule",Object::defaultDescription,PILLAR2,NULLTYPE,5,5,0);
+		_objectState[0] = Object("S\204ule",Object::defaultDescription,PILLAR1,NULLTYPE,4,4,0);
+		_objectState[1] = Object("S\204ule",Object::defaultDescription,PILLAR2,NULLTYPE,5,5,0);
 		_objectState[2] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,6,6,0,CORRIDOR8,2);
 		_objectState[3] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,7,7,0,CORRIDOR9,22);
-		_objectState[4] = Object("Tür","Auf einem Schild an der Tür steht \"Dr. Alab Hansi\".",DOOR1,EXIT|OPENABLE|CLOSED|OCCUPIED,0,0,1,OFFICE_L1,6);
-		_objectState[5] = Object("Tür","Auf einem Schild an der Tür steht \"Saval Lun\".",DOOR2,EXIT|OPENABLE|CLOSED|OCCUPIED,1,1,2,OFFICE_L2,16);
-		_objectState[6] = Object("Tür","Auf einem Schild an der Tür steht \"Prof. Dr. Ugnul Tschabb\".",DOOR3,EXIT|OPENABLE|OPENED,2,2,3,OFFICE_R1,8);
-		_objectState[7] = Object("Tür","Auf einem Schild an der Tür steht \"Alga Hurz Li\".",DOOR4,EXIT|OPENABLE|CLOSED|OCCUPIED,3,3,4,OFFICE_R2,18);
+		_objectState[4] = Object("T\201r","Auf einem Schild an der T\201r steht \"Dr. Alab Hansi\".",DOOR1,EXIT|OPENABLE|CLOSED|OCCUPIED,0,0,1,OFFICE_L1,6);
+		_objectState[5] = Object("T\201r","Auf einem Schild an der T\201r steht \"Saval Lun\".",DOOR2,EXIT|OPENABLE|CLOSED|OCCUPIED,1,1,2,OFFICE_L2,16);
+		_objectState[6] = Object("T\201r","Auf einem Schild an der T\201r steht \"Prof. Dr. Ugnul Tschabb\".",DOOR3,EXIT|OPENABLE|OPENED,2,2,3,OFFICE_R1,8);
+		_objectState[7] = Object("T\201r","Auf einem Schild an der T\201r steht \"Alga Hurz Li\".",DOOR4,EXIT|OPENABLE|CLOSED|OCCUPIED,3,3,4,OFFICE_R2,18);
 
-		_dontEnter = "Diese Tr wrde ich lieber|nicht ffnen. Nach dem Schild zu|urteilen, ist jemand in dem Raum.";
+		_dontEnter = "Diese T\201r w\201rde ich lieber|nicht \224ffnen. Nach dem Schild zu|urteilen, ist jemand in dem Raum.";
 	}
 
 	virtual void onEntrance();
@@ -1318,9 +1318,9 @@ public:
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR4,21);
 		_objectState[1] = Object("Gang",Object::defaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,5);
-		_objectState[2] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,1,1,6,CORRIDOR9,3);
+		_objectState[2] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE,1,1,6,CORRIDOR9,3);
 		// Originally GUARD was ObjectID..
-		_objectState[3] = Object("Axacussaner","Du müßtest ihn irgendwie ablenken.",INSTRUMENTS,TALK,0,0,0);
+		_objectState[3] = Object("Axacussaner","Du m\201\341test ihn irgendwie ablenken.",INSTRUMENTS,TALK,0,0,0);
 		_objectState[4] = Object("Bild","Komisches Bild.",NULLOBJECT,NULLTYPE,2,2,0);
 		_objectState[5] = Object("Karte","Darauf steht: \"Generalkarte\".",MASTERKEYCARD,TAKE|COMBINABLE,255,255,1);
 	}
@@ -1337,9 +1337,9 @@ public:
 		_shown[0] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR1,22);
-		_objectState[1] = Object("Tür",Object::defaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,0,0,0,NULLROOM,20);
-		_objectState[2] = Object("Tür",Object::defaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,15);
-		_objectState[3] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE,2,2,11,OFFICE_L,0);
+		_objectState[1] = Object("T\201r",Object::defaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,0,0,0,NULLROOM,20);
+		_objectState[2] = Object("T\201r",Object::defaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,15);
+		_objectState[3] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE,2,2,11,OFFICE_L,0);
 		_objectState[4] = Object("Lampe",Object::defaultDescription,LAMP,COMBINABLE,3,3,0);
 		// Originally GUARD was ObjectID..
 		_objectState[5] = Object("Axacussaner",Object::defaultDescription,INSTRUMENTS,TALK,5,5,0);
@@ -1373,10 +1373,10 @@ public:
 		_shown[15] = false;
 		_shown[16] = true;
 
-		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
+		_objectState[0] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
 		_objectState[1] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
 		_objectState[2] = Object("Geld","Es sind 500 Xa.",TICKETS,TAKE,255,255,0);
-		_objectState[3] = Object("Schließfach","Es hat ein elektronisches Zahlenschloß.",LOCKER,OPENABLE|CLOSED,5,5,0);
+		_objectState[3] = Object("Schließfach","Es hat ein elektronisches Zahlenschlo\341.",LOCKER,OPENABLE|CLOSED,5,5,0);
 		_objectState[4] = Object("Brief",Object::defaultDescription,LETTER,UNNECESSARY,3,3,0);
 	}
 
@@ -1407,9 +1407,9 @@ public:
 		_shown[15] = false;
 		_shown[16] = true;
 
-		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
+		_objectState[0] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
 		_objectState[1] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
-		_objectState[2] = Object("Würfel","Sonderbar!",NULLOBJECT,NULLTYPE,0,0,0);
+		_objectState[2] = Object("W\201rfel","Sonderbar!",NULLOBJECT,NULLTYPE,0,0,0);
 		_objectState[3] = Object("Bild","Affenstark!",NULLOBJECT,NULLTYPE,1,1,0);
 		_objectState[4] = Object("Komisches Ding","Wundersam!",NULLOBJECT,UNNECESSARY,2,2,0);
 	}
@@ -1428,7 +1428,7 @@ public:
 		_shown[2] = false;
 		_shown[3] = true;
 
-		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
+		_objectState[0] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
 		_objectState[1] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
 		_objectState[2] = Object("Bild","Es ist ein Axacussanerkopf auf dem Bild.",NULLOBJECT,UNNECESSARY,1,1,0);
 		_objectState[3] = Object("Bild","Es ist ein Axacussanerkopf auf dem Bild.",PAINTING,UNNECESSARY,2,2,0);
@@ -1450,7 +1450,7 @@ public:
 		_shown[2] = true;
 		_shown[3] = true;
 
-		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
+		_objectState[0] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
 		_objectState[1] = Object("Computer",Object::defaultDescription,COMPUTER,COMBINABLE,4,4,0);
 		_objectState[2] = Object("Figur","Stark!",NULLOBJECT,UNNECESSARY,6,6,0);
 		_objectState[3] = Object("Pflanze","Sie ist den Pflanzen auf der Erde sehr ähnlich.",NULLOBJECT,UNNECESSARY,5,5,0);
@@ -1484,9 +1484,9 @@ public:
 		_shown[16] = false;
 		_shown[17] = true;
 
-		_objectState[0] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,17,GUARD3,9);
+		_objectState[0] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,17,GUARD3,9);
 		_objectState[1] = Object("Computer","Er funktioniert nicht.",COMPUTER,COMBINABLE,4,4,0);
-		_objectState[2] = Object("Graffiti","Seltsamer Büroschmuck!",NULLOBJECT,NULLTYPE,7,7,0);
+		_objectState[2] = Object("Graffiti","Seltsamer B\201roschmuck!",NULLOBJECT,NULLTYPE,7,7,0);
 		_objectState[3] = Object("Geld","Es sind 350 Xa.",TICKETS,TAKE,8,8,0);
 	}
 
@@ -1505,7 +1505,7 @@ public:
 		_objectState[0] = Object("Knopf",Object::defaultDescription,BUTTON1,PRESS,0,0,0);
 		_objectState[1] = Object("Knopf",Object::defaultDescription,BUTTON2,PRESS,1,1,0);
 		_objectState[2] = Object("Ausgang",Object::defaultDescription,DOOR,EXIT,255,255,0,NULLROOM,22);
-		_objectState[3] = Object("Dschungel","Lauter Bäume.",JUNGLE,NULLTYPE,255,255,0,STATION,2);
+		_objectState[3] = Object("Dschungel","Lauter B\204ume.",JUNGLE,NULLTYPE,255,255,0,STATION,2);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -1519,7 +1519,7 @@ public:
 		_fileNumber = 5;
 		_shown[0] = true;
 		_objectState[0] = Object("Schild",Object::defaultDescription,STATION_SIGN,NULLTYPE,0,0,0);
-		_objectState[1] = Object("Tür",Object::defaultDescription,DOOR,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,7);
+		_objectState[1] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,7);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);

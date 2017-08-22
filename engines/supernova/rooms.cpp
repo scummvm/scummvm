@@ -65,7 +65,7 @@ bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 
 bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_OPEN) && (obj1._id == KITCHEN_HATCH)) {
-		_vm->renderMessage("In der Küche warst du schon|oft genug, im Moment hast|du keinen Appetit.");
+		_vm->renderMessage("In der K\201che warst du schon|oft genug, im Moment hast|du keinen Appetit.");
 	} else if ((verb == ACTION_USE) && Object::combine(obj1,obj2,KEYCARD2,SLEEP_SLOT)) {
 		if (_objectState[2].hasProperty(OPENED)) {
 			_objectState[2].disableProperty(OPENED);
@@ -109,7 +109,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->getInput();
 		} else if (_gm->_state._powerOff) {
 			// Energy depleted
-			_vm->renderText("Energie erschöpft", 60, 95, kColorWhite99);
+			_vm->renderText("Energie ersch\224pft", 60, 95, kColorWhite99);
 			// Artificial coma interrupted
 			_vm->renderText("Tiefschlafprozess abgebrochen", 60, 115, kColorWhite99);
 			_gm->getInput();
@@ -168,9 +168,9 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 	           ((obj1._id == CABINS) || (obj1._id == CABIN))) {
 		room = _gm->_rooms[AIRLOCK];
 		if (!(obj1._id == CABIN) || !isSectionVisible(5)) {
-			_vm->renderMessage("Es würde wenig bringen,|sich in eine Schlafkammer zu legen,|die nicht eingeschaltet ist.");
+			_vm->renderMessage("Es w\201rde wenig bringen,|sich in eine Schlafkammer zu legen,|die nicht eingeschaltet ist.");
 		} else if (room->getObject(5)->hasProperty(WORN)) {
-			_vm->renderMessage("Dazu mußt du erst den Raumanzug ausziehen.");
+			_vm->renderMessage("Dazu mu\341t du erst den Raumanzug ausziehen.");
 		} else {
 			_vm->paletteFadeOut();
 			_gm->drawImage(_gm->invertSection(5));
@@ -284,10 +284,10 @@ void ShipSleepCabin::animation() {
 }
 void ShipSleepCabin::onEntrance() {
 	if (_gm->_state._dream && (_gm->_rooms[CAVE]->getObject(1)->_exitRoom == MEETUP3)) {
-		_vm->renderMessage("Du wachst mit brummendem Schädel auf|und merkst, daß du nur geträumt hast.");
+		_vm->renderMessage("Du wachst mit brummendem Sch\204del auf|und merkst, daß du nur getr\204umt hast.");
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
-		_vm->renderMessage("Beim Aufprall des Raumschiffs|mußt du mit dem Kopf aufgeschlagen|und bewußtlos geworden sein.");
+		_vm->renderMessage("Beim Aufprall des Raumschiffs|mu\341t du mit dem Kopf aufgeschlagen|und bewu\341tlos geworden sein.");
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->renderMessage("Was steht dir jetzt wohl wirklich bevor?");
@@ -325,7 +325,7 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->getInput();
 		_gm->_guiEnabled = true;
 	} else if ((verb == ACTION_USE) && (obj1._id == INSTRUMENTS))
-		_vm->renderMessage("Vergiá nicht, du bist nur der|Schiffskoch und hast keine Ahnung,|wie man ein Raumschiff fliegt.");
+		_vm->renderMessage("Vergi\341 nicht, du bist nur der|Schiffskoch und hast keine Ahnung,|wie man ein Raumschiff fliegt.");
 	else
 		return false;
 
@@ -342,7 +342,7 @@ void ShipCockpit::animation() {
 			color = kColorLightYellow;
 			_gm->setAnimationTimer(10);
 		}
-		_vm->renderText("Achtung: Triebwerke funktionsunfhig", 50, 145, color);
+		_vm->renderText("Achtung: Triebwerke funktionsunf\204hig", 50, 145, color);
 	} else {
 		if (isSectionVisible(21)) {
 			_gm->drawImage(_gm->invertSection(21));
@@ -354,7 +354,7 @@ void ShipCockpit::animation() {
 	}
 	if (_gm->_state._powerOff) {
 		if (!_gm->_guiEnabled) {
-			_vm->renderText("Energievorrat erschpft", 97, 165, color);
+			_vm->renderText("Energievorrat ersch\224pft", 97, 165, color);
 			_vm->renderText("Notstromversorgung aktiv", 97, 175, color);
 		} else {
 			if (isSectionVisible(21))
@@ -367,7 +367,7 @@ void ShipCockpit::animation() {
 
 void ShipCockpit::onEntrance() {
 	if (!hasSeen())
-		_vm->renderMessage("Was?! Keiner im Cockpit!|Die sind wohl verrckt!");
+		_vm->renderMessage("Was?! Keiner im Cockpit!|Die sind wohl verr\201ckt!");
 	setRoomSeen(true);
 }
 
@@ -489,7 +489,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(10, false);
 		getObject(10)->_click = 20;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE2))
-		_vm->renderMessage("Schneid doch besser ein|lngeres Stck Kabel ab!");
+		_vm->renderMessage("Schneid doch besser ein|l\204ngeres St\201ck Kabel ab!");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE)) {
 		r = _gm->_rooms[AIRLOCK];
 		if (!isSectionVisible(10) && !r->getObject(5)->hasProperty(WORN)) {
@@ -682,7 +682,7 @@ void ShipAirlock::onEntrance() {
 }
 
 bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
-	static char beschr2[] = "Ein Stck Schrott.";
+	static char beschr2[] = "Ein St\201ck Schrott.";
 	Room *r;
 
 	if ((verb == ACTION_LOOK) && (obj1._id == SCRAP_LK) &&
@@ -692,7 +692,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->takeObject(*getObject(2));
 	} else if (((verb == ACTION_OPEN) || (verb == ACTION_CLOSE)) &&
 	           (obj1._id == OUTERHATCH_TOP)) {
-		_vm->renderMessage("Du muát erst hingehen.");
+		_vm->renderMessage("Du mu\341t erst hingehen.");
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == LANDINGMOD_HATCH) &&
 	           (isSectionVisible(4) || isSectionVisible(6)))
 		_vm->renderMessage("Das Kabel ist im Weg.");
@@ -700,7 +700,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 	         ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, LANDINGMOD_HATCH)))
 		_vm->renderMessage("Das Kabel ist schon ganz|richtig an dieser Stelle.");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, HOLD_WIRE)) {
-		getObject(0)->_name = "Leitung mit Lsterklemme";
+		getObject(0)->_name = "Leitung mit L\201sterklemme";
 		_gm->_inventory.remove(*getObject(2));
 		_gm->_state._terminalStripConnected = true;
 		_gm->_state._terminalStripWire = true;
@@ -888,7 +888,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!obj1.hasProperty(OPENED))
 			_vm->renderMessage("Das ist geschlossen.");
 		else if (!isSectionVisible(11))
-			_vm->renderMessage("Das geht nicht.|Die Luke ist mindestens|5 Meter ber dem Boden.");
+			_vm->renderMessage("Das geht nicht.|Die Luke ist mindestens|5 Meter \201ber dem Boden.");
 		else {
 			obj1._exitRoom = ROCKS;
 			return false;
@@ -1166,15 +1166,15 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						break;
 					case 2:
 						if (_gm->_state._shoes == 1) {
-							_gm->reply("In der Toilette gibt es|Schlieáfcher fr Schuhe.", 1, _gm->invertSection(1));
+							_gm->reply("In der Toilette gibt es|Schlie\341f\204cher f\201r Schuhe.", 1, _gm->invertSection(1));
 							_gm->_state._shoes = 2;
 						} else {
-							_gm->reply("Wenn Sie das Lokal betreten|wollen, mssen Sie erst|ihre Schuhe ausziehen.", 1, _gm->invertSection(1));
+							_gm->reply("Wenn Sie das Lokal betreten|wollen, m\201ssen Sie erst|ihre Schuhe ausziehen.", 1, _gm->invertSection(1));
 							_gm->_state._shoes = 1;
 						}
 						break;
 					case 3:
-						_gm->reply("Wollen Sie, daá ich Sie rauáschmeiáe?", 1, _gm->invertSection(1));
+						_gm->reply("Wollen Sie, da\341 ich Sie rau\341schmei\341e?", 1, _gm->invertSection(1));
 					}
 				} while (e != 4);
 			} else {
@@ -1200,9 +1200,9 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) {
 			if (_gm->_state._language) {
 				if (_gm->_state._shoes)
-					_gm->reply("Sie mssen erst ihre Schuhe ausziehen, Sie Trottel!", 1, _gm->invertSection(1));
+					_gm->reply("Sie m\201ssen erst ihre Schuhe ausziehen, Sie Trottel!", 1, _gm->invertSection(1));
 				else
-					_gm->reply("Was fllt ihnen ein!|Sie knnen doch ein Lokal|nicht mit Schuhen betreten!", 1, _gm->invertSection(1));
+					_gm->reply("Was f\204llt ihnen ein!|Sie k\224nnen doch ein Lokal|nicht mit Schuhen betreten!", 1, _gm->invertSection(1));
 				e = 0;
 				while ((e < 3) && (_shown[kMaxSection - 1] != 15)) {
 					switch (e = _gm->dialog(5, nullptr, nullptr, 1)) { // row1, dialog1
@@ -1216,7 +1216,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						_gm->removeSentence(0, 2);
 						break;
 					case 2:
-						_gm->reply("In der Toilette gibt es|Schlieáfcher fr Schuhe.", 1, 1 + 128);
+						_gm->reply("In der Toilette gibt es|Schlie\341f\204cher f\201r Schuhe.", 1, 1 + 128);
 						_gm->_state._shoes = 2;
 						break;
 					case 3:
@@ -1224,7 +1224,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						_gm->wait2(2);
 						_gm->drawImage(4);
 						setSectionVisible(3, false);
-						_gm->reply("Das wrde ich an ihrer|Stelle nicht versuchen!", 1, 1 + 128);
+						_gm->reply("Das w\201rde ich an ihrer|Stelle nicht versuchen!", 1, 1 + 128);
 						_gm->drawImage(3);
 						setSectionVisible(4, false);
 						_gm->wait2(2);
@@ -1257,7 +1257,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_WALK) && (obj1._id == ARSANO_BATHROOM)) {
 		if (_gm->_state._coins) {
 			if (_gm->_state._shoes == 2) {
-				_vm->renderMessage("Du ziehst deine Schuhe|aus und legst sie in|eins der Schlieáfcher.");
+				_vm->renderMessage("Du ziehst deine Schuhe|aus und legst sie in|eins der Schlie\341f\204cher.");
 				_gm->_state._shoes = 3;
 				_gm->removeSentence(2, 2);
 				_gm->removeSentence(3, 2);
@@ -1273,7 +1273,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderMessage("Du gehst seit sieben Jahren das|erste Mal wieder aufs Klo!");
 				_gm->mouseWait(_gm->_timer1);
 				_vm->removeMessage();
-				_vm->renderMessage("In einem der Schlieáfcher,|die sich auch im Raum befinden,|findest du einige Mnzen.");
+				_vm->renderMessage("In einem der Schlie\341f\204cher,|die sich auch im Raum befinden,|findest du einige M\201nzen.");
 				_gm->takeObject(*getObject(16));
 				_gm->_state._coins = 5;
 			}
@@ -1296,8 +1296,8 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KITCHEN_SIGN) && _gm->_state._language) {
 		if (_gm->_state._language == 2)
-			_vm->renderMessage("Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Zutritt nur fr Personal\".");
-		obj1._description = "Darauf steht:|\"Zutritt nur fr Personal\".";
+			_vm->renderMessage("Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Zutritt nur f\201r Personal\".");
+		obj1._description = "Darauf steht:|\"Zutritt nur f\201r Personal\".";
 		if (_gm->_state._language == 1)
 			return false;
 		_gm->_state._language = 1;
@@ -1321,7 +1321,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 		return false;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, PORTER))
-		_vm->renderMessage("Nicht so gewaltttig!");
+		_vm->renderMessage("Nicht so gewaltt\204tig!");
 	else
 		return false;
 	return true;
@@ -1529,7 +1529,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->great(0);
 			return false;
 		}
-		_gm->reply("Hey, Witzkeks, laá die Brieftasche da liegen!", 2, 2 + 128);
+		_gm->reply("Hey, Witzkeks, la\341 die Brieftasche da liegen!", 2, 2 + 128);
 	} else if ((verb == ACTION_USE) && (obj1._id == CUP)) {
 		_vm->renderMessage("Das ist nicht deine.");
 	} else if ((verb == ACTION_TALK) && (obj1._id == ROGER_W)) {
@@ -1543,33 +1543,33 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 				break;
 			case 1:
 				_gm->reply("Noch mindestens zwei Stunden.", 2, 2 + 128);
-				_gm->reply("Haben Sie keine Idee, womit wir uns|bis dahin die Zeit vertreiben knnen?", 2, 2 + 128);
-				_gm->say("Hmm ... im Moment fllt mir nichts ein, aber vielleicht|hat der Spieler des Adventures ja eine Idee.");
+				_gm->reply("Haben Sie keine Idee, womit wir uns|bis dahin die Zeit vertreiben k\224nnen?", 2, 2 + 128);
+				_gm->say("Hmm ... im Moment f\201llt mir nichts ein, aber vielleicht|hat der Spieler des Adventures ja eine Idee.");
 				break;
 			case 2:
-				_gm->reply("Nein, Sie mssen sich irren.|Ich kenne Sie jedenfalls nicht.", 2, 2 + 128);
+				_gm->reply("Nein, Sie m\201ssen sich irren.|Ich kenne Sie jedenfalls nicht.", 2, 2 + 128);
 				_gm->say("Aber ihre Kleidung habe ich irgendwo schon mal gesehen.");
 				_gm->reply("Ja? Komisch.", 2, 2 + 128);
-				_gm->say("Jetzt weiá ich's. Sie sind Roger W. !");
+				_gm->say("Jetzt wei\341 ich's. Sie sind Roger W. !");
 				_gm->reply("Pssst, nicht so laut, sonst will|gleich jeder ein Autogramm von mir.", 2, 2 + 128);
 				_gm->reply("Ich habe extra eine Maske auf, damit|ich nicht von jedem angelabert werde.", 2, 2 + 128);
-				_gm->say("h ... ach so.");
-				_gm->say("Wann kommt denn das nchste SQ-Abenteuer raus?");
-				_gm->reply("SQ 127 máte in einem Monat erscheinen.", 2, 2 + 128);
+				_gm->say("\216h ... ach so.");
+				_gm->say("Wann kommt denn das n\204chste SQ-Abenteuer raus?");
+				_gm->reply("SQ 127 m\201\341te in einem Monat erscheinen.", 2, 2 + 128);
 				_gm->say("Was, Teil 127 ??");
 				_gm->say("Bei uns ist gerade Teil 8 erschienen.");
 				_gm->reply("Hmm ... von welchem Planeten sind Sie denn?", 2, 2 + 128);
 				_gm->say("Von der Erde.");
-				_gm->reply("Erde? Nie gehrt.", 2, 2 + 128);
-				_gm->reply("Wahrscheinlich irgendein Kaff, wo Neuerungen|erst hundert Jahre spter hingelangen.", 2, 2 + 128);
-				_gm->say("h ... kann sein.");
-				_gm->reply("Aber eins mssen Sie mir erklren!", 2, 2 + 128);
-				_gm->reply("Wieso sehen Sie mir so verdammt hnlich, wenn|Sie nicht von Xenon stammen, wie ich?", 2, 2 + 128);
-				_gm->say("Keine Ahnung. Bis jetzt dachte ich immer, Sie wren ein|von Programmierern auf der Erde erfundenes Computersprite.");
+				_gm->reply("Erde? Nie geh\224rt.", 2, 2 + 128);
+				_gm->reply("Wahrscheinlich irgendein Kaff, wo Neuerungen|erst hundert Jahre sp\204ter hingelangen.", 2, 2 + 128);
+				_gm->say("\216h ... kann sein.");
+				_gm->reply("Aber eins m\201ssen Sie mir erkl\204ren!", 2, 2 + 128);
+				_gm->reply("Wieso sehen Sie mir so verdammt \204hnlich, wenn|Sie nicht von Xenon stammen, wie ich?", 2, 2 + 128);
+				_gm->say("Keine Ahnung. Bis jetzt dachte ich immer, Sie w\201ren ein|von Programmierern auf der Erde erfundenes Computersprite.");
 				_gm->reply("Was? Lachhaft!", 2, 2 + 128);
-				_gm->reply("Wie erklren Sie sich dann,|daá ich ihnen gegenbersitze?", 2, 2 + 128);
+				_gm->reply("Wie erkl\204ren Sie sich dann,|da\341 ich ihnen gegen\201bersitze?", 2, 2 + 128);
 				_gm->say("Ja, das ist in der Tat seltsam.");
-				_gm->reply("Halt, jetzt weiá ich es. Sie sind von der Konkurrenz,|von \"Georgefilm Games\" und wollen mich verunsichern.", 2, 2 + 128);
+				_gm->reply("Halt, jetzt wei\341 ich es. Sie sind von der Konkurrenz,|von \"Georgefilm Games\" und wollen mich verunsichern.", 2, 2 + 128);
 				_gm->say("Nein, ich bin nur ein Ahnungsloser Koch von der Erde.");
 				_gm->reply("Na gut, ich glaube Ihnen. Lassen wir jetzt|dieses Thema, langsam wird es mir zu bunt!", 2, 2 + 128);
 			}
@@ -1580,13 +1580,13 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->great(0);
 		_gm->say("Eine Partie Schach! Das ist eine gute Idee.");
 		_gm->reply("Schach? Was ist das denn?", 2, 2 + 128);
-		_gm->say("Schach ist ein interessantes Spiel.|Ich werde es Ihnen erklren.");
+		_gm->say("Schach ist ein interessantes Spiel.|Ich werde es Ihnen erkl\204ren.");
 		_vm->paletteFadeOut();
 		_gm->_inventory.remove(*_gm->_rooms[CABIN_R3]->getObject(0)); // Chess board
 		g_system->fillScreen(kColorBlack);
 		_vm->_menuBrightness = 255;
 		_vm->paletteBrightness();
-		_vm->renderMessage("Knapp zwei Stunden spter ...");
+		_vm->renderMessage("Knapp zwei Stunden sp\204ter ...");
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
@@ -1605,7 +1605,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		getObject(5)->_click = 6;
 		getObject(6)->_click = 7;
 		_vm->paletteFadeIn();
-		_vm->renderMessage("Roger W. steht kurz vor dem Schachmatt|und grbelt nach einem Ausweg.");
+		_vm->renderMessage("Roger W. steht kurz vor dem Schachmatt|und gr\201belt nach einem Ausweg.");
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
 	} else {
@@ -1727,7 +1727,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			if (!(found))
 				_gm->reply("Nein.", 1, 1 + 128);
 		} else {
-			_gm->reply("Haben Sie zufllig meine Brieftasche gesehen?|Ich muá Sie irgendwo verloren haben.", 1, 1 + 128);
+			_gm->reply("Haben Sie zuf\204llig meine Brieftasche gesehen?|Ich mu\341 Sie irgendwo verloren haben.", 1, 1 + 128);
 			_gm->reply("Ohne die Brieftasche kann ich nicht|starten, weil meine Keycard darin ist.", 1, 1 + 128);
 			found = !_gm->dialog(2, nullptr, nullptr, 0); // row1, dialog1
 			_gm->_rooms[MEETUP2]->setSectionVisible(kMaxSection - 2, true);
@@ -1737,7 +1737,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(7));
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(8));
 			_gm->reply("Oh! Vielen Dank.", 1, 1 + 128);
-			_gm->reply("Wo ist denn Ihr Raumschiff?|Soll ich Sie ein Stck mitnehmen?", 1, 1 + 128);
+			_gm->reply("Wo ist denn Ihr Raumschiff?|Soll ich Sie ein St\201ck mitnehmen?", 1, 1 + 128);
 			flight = _gm->dialog(2, nullptr, nullptr, 0); // row2, dialog2
 			if (flight) {
 				_gm->reply("Wo wollen Sie denn hin?", 1, 1 + 128);
@@ -1803,7 +1803,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->changeRoom(MEETUP2);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KEYCARD_R, SPACESHIP))
-		_vm->renderMessage("Das wrde ich jetzt nicht tun, schlieálich|steht Roger W. neben seinem Schiff.");
+		_vm->renderMessage("Das w\201rde ich jetzt nicht tun, schlie\341lich|steht Roger W. neben seinem Schiff.");
 	else
 		return false;
 
@@ -1858,24 +1858,24 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply("Wir kommen vom Planeten Axacuss und|sind aus dem gleichen Grund hier wie Sie,|nmlich zur Erforschung der Supernova.", 1, 1 + 128);
 				break;
 			case 1:
-				_gm->reply("Sie knnen beruhigt sein, wir wollen Ihnen nur helfen.", 2, 2 + 128);
+				_gm->reply("Sie k\224nnen beruhigt sein, wir wollen Ihnen nur helfen.", 2, 2 + 128);
 				_gm->say("Und wieso hat der Typ im Raumanzug|eben auf mich geschossen?");
 				_gm->reply("Das war eine Schreckreaktion.", 2, 2 + 128);
-				_gm->reply("Schlieálich ist es fr uns das erste Mal,|daá wir auf eine fremde Intelligenz treffen.", 2, 2 + 128);
-				_gm->reply("Wie wir festgestellt haben, ist|Ihr Raumschiff vllig zerstrt.", 2, 2 + 128);
-				_gm->reply("Wahrscheinlich knnen Sie nicht|mehr auf ihren Heimatplaneten zurck.", 2, 2 + 128);
+				_gm->reply("Schlie\341lich ist es f\201r uns das erste Mal,|da\341 wir auf eine fremde Intelligenz treffen.", 2, 2 + 128);
+				_gm->reply("Wie wir festgestellt haben, ist|Ihr Raumschiff v\224llig zerst\224rt.", 2, 2 + 128);
+				_gm->reply("Wahrscheinlich k\224nnen Sie nicht|mehr auf ihren Heimatplaneten zur\201ck.", 2, 2 + 128);
 				_gm->reply("Wir bieten Ihnen an, Sie|mit nach Axacuss zu nehmen.", 2, 2 + 128);
 				if (_gm->dialog(2, nullptr, nullptr, 0)) { // row3, dialog3
 					_gm->reply("Sind Sie sich da wirklich sicher?", 2, 2 + 128);
-					_gm->say("Wenn ich es mir genau berlege,|fliege ich doch lieber mit.");
+					_gm->say("Wenn ich es mir genau \201berlege,|fliege ich doch lieber mit.");
 				}
-				_gm->reply("Gut, wir nehmen Sie unter der|Bedingung mit, daá wir Sie jetzt|sofort in Tiefschlaf versetzen drfen.", 2, 2 + 128);
+				_gm->reply("Gut, wir nehmen Sie unter der|Bedingung mit, da\341 wir Sie jetzt|sofort in Tiefschlaf versetzen d\201rfen.", 2, 2 + 128);
 				_gm->reply("Diese Art des Reisens ist Ihnen|ja scheinbar nicht unbekannt.", 2, 2 + 128);
 				_gm->reply("Sie werden in vier Jahren nach der|Landung der \"Dexxa\" wieder aufgeweckt.", 2, 2 + 128);
 				_gm->reply("Sind Sie damit einverstanden?", 2, 2 + 128);
 				if (_gm->dialog(2, nullptr, nullptr, 0)) { // row3, dialog3
 					_gm->reply("Sind Sie sich da wirklich sicher?", 2, 2 + 128);
-					_gm->say("Wenn ich es mir genau berlege,|fliege ich doch lieber mit.");
+					_gm->say("Wenn ich es mir genau \201berlege,|fliege ich doch lieber mit.");
 				}
 				_gm->reply("Gut, haben Sie noch irgendwelche Fragen?", 2, 2 + 128);
 				break;
@@ -1887,8 +1887,8 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply("Wir sprechen nicht ihre Sprache,|sondern Sie sprechen unsere.", 1, 1 + 128);
 				_gm->reply("Nach einer Gehirnanalyse konnten|wir Ihr Gehirn an unsere Sprache anpassen.", 1, 1 + 128);
 				_gm->say("Was? Sie haben in mein Gehirn eingegriffen?");
-				_gm->reply("Keine Angst, wir haben sonst nichts verndert.", 1, 1 + 128);
-				_gm->reply("Ohne diesen Eingriff wren|Sie verloren gewesen.", 1, 1 + 128);
+				_gm->reply("Keine Angst, wir haben sonst nichts ver\204ndert.", 1, 1 + 128);
+				_gm->reply("Ohne diesen Eingriff w\204ren|Sie verloren gewesen.", 1, 1 + 128);
 			}
 			_gm->removeSentence(2, 2);
 		} while (_shown[kMaxSection - 2] != 15);
@@ -1989,7 +1989,7 @@ void AxacussCell::animation() {
 
 bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == CELL_BUTTON))
-		_vm->renderMessage("Du drckst den Knopf,|aber nichts passiert.");
+		_vm->renderMessage("Du dr\201ckst den Knopf,|aber nichts passiert.");
 	else if ((verb == ACTION_PULL) && (obj1._id == CELL_WIRE) &&
 	         !isSectionVisible(2) &&
 	         !isSectionVisible(3) &&
@@ -2076,7 +2076,7 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioGunShot);
 		_gm->death("Bei deinem Fluchtversuch hat|dich der Roboter erschossen.");
 	} else if ((verb == ACTION_USE) && (obj1._id == TRAY))
-		_vm->renderMessage("Du iát etwas, aber|es schmeckt scheuálich.");
+		_vm->renderMessage("Du i\341t etwas, aber|es schmeckt scheu\341lich.");
 	else if ((verb == ACTION_TAKE) && (obj1._id == MAGNET)) {
 		if (isSectionVisible(6))
 			_gm->shock();
@@ -2198,7 +2198,7 @@ bestechen:
 							sum = _gm->_state._money - 200;
 							goto genug;
 						}
-						_gm->reply("Das máte schon ein biáchen mehr sein.", 1, 1 + 128);
+						_gm->reply("Das m\201\341te schon ein bi\341chen mehr sein.", 1, 1 + 128);
 					}
 				}
 			}
@@ -2207,7 +2207,7 @@ bestechen:
 		return true;
 
 genug:
-		_gm->reply("Ok, dann machen Sie daá Sie wegkommen!", 1, 1 + 128);
+		_gm->reply("Ok, dann machen Sie da\341 Sie wegkommen!", 1, 1 + 128);
 		_gm->great(0);
 		_gm->changeRoom(ELEVATOR);
 		_gm->_newRoom = true;
@@ -2379,7 +2379,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 	} else if ((verb == ACTION_WALK) &&
 	           ((obj1._id == PILLAR1) || (obj1._id == PILLAR2))) {
-		_vm->renderMessage("Du stellst dich hinter die Sule.");
+		_vm->renderMessage("Du stellst dich hinter die S\204ule.");
 		_gm->_guiEnabled = true;
 	} else
 		return false;
@@ -2431,7 +2431,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 		if (_gm->_key.keycode != Common::KEYCODE_ESCAPE) {
 			if (!input.equals("89814")) {
 				if (input.equals("41898"))
-					_vm->renderMessage("Hmm, das haut nicht ganz hin,|aber irgendwie muá die Zahl|mit dem Code zusammenhngen.");
+					_vm->renderMessage("Hmm, das haut nicht ganz hin,|aber irgendwie mu\341 die Zahl|mit dem Code zusammenh\204ngen.");
 				else
 					_vm->renderMessage("Das war die falsche Kombination.");
 			} else {
@@ -2467,9 +2467,9 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderText("Sehr geehrter Dr. Hansi,", 10, 60, 4);
 		_vm->renderText("Ich muá Ihren Roboterexperten ein Lob aussprechen. Die", 10, 75, 4);
 		_vm->renderText("Imitation von Horst Hummel ist perfekt gelungen, wie ich", 10, 86, 4);
-		_vm->renderText("heute bei der bertragung des Interviews feststellen", 10, 97, 4);
+		_vm->renderText("heute bei der \232bertragung des Interviews feststellen", 10, 97, 4);
 		_vm->renderText("konnte. Dem Aufschwung Ihrer Firma durch die Werbe-", 10, 108, 4);
-		_vm->renderText("kampagne mit dem falschen Horst Hummel drfte ja jetzt", 10, 119, 4);
+		_vm->renderText("kampagne mit dem falschen Horst Hummel d\201rfte ja jetzt", 10, 119, 4);
 		_vm->renderText("nichts mehr im Wege stehen.", 10, 130, 4);
 		_vm->renderText("PS: Herzlichen zum Geburtstag!", 10, 147, 4);
 		_vm->renderText("Hochachtungsvoll", 200, 170, 4);
@@ -2627,7 +2627,7 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		g_system->fillScreen(kColorBlack);
 		_vm->_menuBrightness = 255;
 		_vm->paletteBrightness();
-		_vm->renderMessage("Nachdem du zwei Stunden im|Dschungel herumgeirrt bist,|findest du ein Gebude.");
+		_vm->renderMessage("Nachdem du zwei Stunden im|Dschungel herumgeirrt bist,|findest du ein Geb\204ude.");
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
