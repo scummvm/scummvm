@@ -24,12 +24,14 @@
 #define TITANIC_STAR_VIEW_H
 
 #include "titanic/star_control/star_camera.h"
-#include "titanic/star_control/viewport.h"
 #include "titanic/star_control/surface_fader.h"
+#include "titanic/star_control/viewport.h"
+#include "titanic/support/rect.h"
 
 namespace Titanic {
 
 class CErrorCode;
+class CGameObject;
 class CStarControl;
 class CStarField;
 class CVideoSurface;

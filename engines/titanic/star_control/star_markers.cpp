@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
 

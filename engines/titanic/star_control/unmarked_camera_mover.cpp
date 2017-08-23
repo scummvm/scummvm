@@ -22,11 +22,12 @@
 
 #include "titanic/star_control/unmarked_camera_mover.h"
 #include "titanic/debugger.h"
+#include "titanic/star_control/base_stars.h" // includes class CStarVector
 #include "titanic/star_control/dvector.h"
 #include "titanic/star_control/daffine.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/titanic.h"
-#include "common/textconsole.h"
+// Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 

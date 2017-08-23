@@ -23,19 +23,19 @@
 #ifndef TITANIC_STAR_CROSSHAIRS_H
 #define TITANIC_STAR_CROSSHAIRS_H
 
+#include "titanic/star_control/base_stars.h"
+#include "titanic/star_control/fpoint.h"
+#include "titanic/star_control/surface_area.h"
+#include "titanic/support/video_surface.h"
 #include "common/array.h"
 #include "common/rect.h"
-#include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/surface_area.h"
-#include "titanic/star_control/fpoint.h"
-#include "titanic/support/simple_file.h"
-#include "titanic/support/video_surface.h"
 
 namespace Titanic {
 
 class CStarField;
 class CStarMarkers;
 class CStarCamera;
+class SimpleFile;
 
 class CStarCrosshairs {
 private:

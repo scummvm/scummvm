@@ -23,9 +23,11 @@
 #ifndef TITANIC_MATRIX_TRANSFORM_H
 #define TITANIC_MATRIX_TRANSFORM_H
 
-#include "titanic/star_control/daffine.h"
+#include "titanic/star_control/dvector.h"
 
 namespace Titanic {
+
+class Daffine;
 
 class CMatrixTransform {
 private:

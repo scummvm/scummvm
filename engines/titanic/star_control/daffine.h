@@ -24,7 +24,7 @@
 #define TITANIC_DAFFINE_H
 
 #include "titanic/star_control/dvector.h"
-#include "titanic/star_control/fvector.h"
+#include "titanic/star_control/fvector.h" // definition of Axis enum
 
 namespace Titanic {
 

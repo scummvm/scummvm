@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "titanic/star_control/frange.h"
+#include "common/algorithm.h"
 
 namespace Titanic {
 

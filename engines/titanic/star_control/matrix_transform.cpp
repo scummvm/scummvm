@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/matrix_transform.h"
+#include "titanic/star_control/daffine.h"
 #include "common/textconsole.h"
 
 namespace Titanic {

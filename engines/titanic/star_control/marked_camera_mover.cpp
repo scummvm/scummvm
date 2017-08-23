@@ -21,8 +21,9 @@
  */
 
 #include "titanic/star_control/marked_camera_mover.h"
-#include "common/array.h"
-#include "common/textconsole.h"
+#include "titanic/star_control/base_stars.h" // includes class CStarVector
+#include "titanic/star_control/error_code.h"
+// Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 
