@@ -1248,47 +1248,62 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		    timeToString(_state._time + _state._timeStarting).c_str(),
 		    timeToString(_state._timeAlarm).c_str()).c_str());
 	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
-		char *min;
-		int hours, minutes;
-		bool f;
+		bool validInput = true;
+		int hours = 0;
+		int minutes = 0;
+
 		animationOff();
 		_vm->saveScreen(88, 87, 144, 24);
 		_vm->renderBox(88, 87, 144, 24, kColorWhite35);
 		_vm->renderText("Neue Alarmzeit (hh:mm) :", 91, 90, kColorWhite99);
 		// TODO: Adjust for msec time instead of ticks
 		do {
+			validInput = true;
+			input.clear();
 			_vm->renderBox(91, 99, 138, 9, kColorDarkBlue);
 			edit(input, 91, 100, 5);
 
-			f = false;
-			if (t[0] == ':') {
-				t[0] = 0;
-				min = &(t[1]);
-			} else if (t[1] == ':') {
-				t[1] = 0;
-				min = &(t[2]);
-			} else if (t[2] == ':') {
-				t[2] = 0;
-				min = &(t[3]);
-			} else {
-				f = true;
+			int seperator = -1;
+			for (int i = 0; i < input.size(); ++i) {
+				if (input[i] == ':') {
+					seperator = i;
+					break;
+				}
+			}
+			if ((seperator == -1) || (seperator > 2)) {
+				validInput = false;
+				continue;
 			}
 
-			for (uint i = 0; i < strlen(t); i++)
-				if ((t[i] < '0') || (t[i] > '9'))
-					f = true;
-			for (uint i = 0; i < strlen(min); i++)
-				if ((min[i] < '0') || (min[i] > '9'))
-					f = true;
-			hours = atoi(t);
-			minutes = atoi(min);
+			int decimalPlace = 1;
+			for (int i = 0; i < seperator; ++i) {
+				if (Common::isDigit(input[i])) {
+					hours = hours * decimalPlace + (input[i] - '0');
+					decimalPlace *= 10;
+				} else {
+					validInput = false;
+					break;
+				}
+			}
+			decimalPlace = 1;
+			for (int i = seperator + 1; i < input.size(); ++i) {
+				if (Common::isDigit(input[i])) {
+					minutes = minutes * decimalPlace + (input[i] - '0');
+					decimalPlace *= 10;
+				} else {
+					validInput = false;
+					break;
+				}
+			}
 			if ((hours > 23) || (minutes > 59))
-				f = true;
+				validInput = false;
+
 			animationOn();
-		} while (f && (_key.keycode != Common::KEYCODE_ESCAPE));
+		} while (!validInput && (_key.keycode != Common::KEYCODE_ESCAPE));
+
 		_vm->restoreScreen();
 		if (_key.keycode != Common::KEYCODE_ESCAPE) {
-			_state._timeAlarm = (hours * 60 + minutes) * 60 + 8;
+			_state._timeAlarm = (hours * 60 + minutes) * 60 * 1000;
 			_state._timeAlarmSystem = _state._timeAlarm + _state._timeStarting;
 			_state._alarmOn = (_state._timeAlarmSystem > _vm->_system->getMillis());
 		}
