@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "common/debug.h"
+#include "common/ustr.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/moreio.h"
@@ -90,69 +91,100 @@ uint ResourceManager::openFileFromNum(int num) {
 	return _bigDataFile->readUint32LE();
 }
 
-// Converts a string from Windows CP-1252 to UTF-8.
+uint32 ResourceManager::_cp1250ToUTF32[128] = {
+  /* 0x80 */
+  0x20ac, 0xfffd, 0x201a, 0xfffd, 0x201e, 0x2026, 0x2020, 0x2021,
+  0xfffd, 0x2030, 0x0160, 0x2039, 0x015a, 0x0164, 0x017d, 0x0179,
+  /* 0x90 */
+  0xfffd, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014,
+  0xfffd, 0x2122, 0x0161, 0x203a, 0x015b, 0x0165, 0x017e, 0x017a,
+  /* 0xa0 */
+  0x00a0, 0x02c7, 0x02d8, 0x0141, 0x00a4, 0x0104, 0x00a6, 0x00a7,
+  0x00a8, 0x00a9, 0x015e, 0x00ab, 0x00ac, 0x00ad, 0x00ae, 0x017b,
+  /* 0xb0 */
+  0x00b0, 0x00b1, 0x02db, 0x0142, 0x00b4, 0x00b5, 0x00b6, 0x00b7,
+  0x00b8, 0x0105, 0x015f, 0x00bb, 0x013d, 0x02dd, 0x013e, 0x017c,
+  /* 0xc0 */
+  0x0154, 0x00c1, 0x00c2, 0x0102, 0x00c4, 0x0139, 0x0106, 0x00c7,
+  0x010c, 0x00c9, 0x0118, 0x00cb, 0x011a, 0x00cd, 0x00ce, 0x010e,
+  /* 0xd0 */
+  0x0110, 0x0143, 0x0147, 0x00d3, 0x00d4, 0x0150, 0x00d6, 0x00d7,
+  0x0158, 0x016e, 0x00da, 0x0170, 0x00dc, 0x00dd, 0x0162, 0x00df,
+  /* 0xe0 */
+  0x0155, 0x00e1, 0x00e2, 0x0103, 0x00e4, 0x013a, 0x0107, 0x00e7,
+  0x010d, 0x00e9, 0x0119, 0x00eb, 0x011b, 0x00ed, 0x00ee, 0x010f,
+  /* 0xf0 */
+  0x0111, 0x0144, 0x0148, 0x00f3, 0x00f4, 0x0151, 0x00f6, 0x00f7,
+  0x0159, 0x016f, 0x00fa, 0x0171, 0x00fc, 0x00fd, 0x0163, 0x02d9,
+};
+
+// Converts a string from ISO8859-2 or CP1250 to UTF8.
 // This is needed for old games.
 Common::String ResourceManager::convertString(const Common::String &s) {
-#if 0
-	static char *buf = NULL;
+	Common::String res;
+	Common::U32String tmp;
 
-	if (! buf) {
-		buf = new char [65536];
-		if (! checkNew(buf)) return NULL;
-	}
-
-	char **tmp1 = (char **) &s;
-	char **tmp2 = (char **) &buf;
-	char *sOrig = s;
-	char *bufOrig = buf;
-#if defined __unix__ && !(defined __APPLE__)
-	iconv_t convert = iconv_open("UTF-8", "ISO8859-2");
-#else
-	iconv_t convert = iconv_open("UTF-8", "CP1250");
-#endif
-
-	if (convert == (iconv_t) - 1) {
-		switch (errno) {
-			case EINVAL:
-			fprintf(stderr, "Error: Encoding not supported by iconv.\n");
-			break;
-			default:
-			fprintf(stderr, "Error: Could not open iconv conversion descriptor.\n");
+	// Convert CP1250 to UTF32
+	for (uint i = 0; i < s.size(); ++i) {
+		const byte c = s[i];
+		if (c < 0x80) {
+			tmp += c;
+		} else {
+			uint32 utf32 = _cp1250ToUTF32[c - 0x80];
+			if (utf32) {
+				tmp += utf32;
+			} else {
+				// It's an invalid CP1250 character...
+				return s;
+			}
 		}
 	}
 
-	uint len1 = strlen(s) + 1;
-	uint len2 = 65535;
-	uint iconv_value =
-#ifdef _WIN32
-	iconv(convert, (const char **) tmp1, &len1, tmp2, &len2);
-#else
-	iconv(convert, (char **) tmp1, &len1, tmp2, &len2);
-#endif
-
-	if (iconv_value == (uint) - 1) {
-		switch (errno) {
-			/* See "man 3 iconv" for an explanation. */
-			case EILSEQ:
-			fprintf(stderr, "Invalid multibyte sequence.\n");
-			break;
-			case EINVAL:
-			fprintf(stderr, "Incomplete multibyte sequence.\n");
-			break;
-			case E2BIG:
-			fprintf(stderr, "No more room.\n");
-			break;
-			default:
-			fprintf(stderr, "Error: %s.\n", strerror(errno));
+	// Convert UTF32 to UTF8
+	for (uint i = 0; i < tmp.size(); ++i) {
+		uint32 wc = tmp[i];
+		int count;
+		if (wc < 0x80)
+			count = 1;
+		else if (wc < 0x800)
+			count = 2;
+		else if (wc < 0x10000) {
+			if (wc < 0xd800 || wc >= 0xe000) {
+				count = 3;
+			} else {
+				// It's an invalid UTF32 character...
+				return s;
+			}
+		} else if (wc < 0x110000) {
+			count = 4;
+		} else {
+			// It's an invalid UTF32 character...
+			return s;
 		}
-		fatal("Conversion to Unicode failed. This can be fixed by recompiling the game in a current version of the SLUDGE Development Kit, but this error should never happen. Congratulations, you've found a bug in the SLUDGE engine! Please let us know about it.");
+		Common::String r = "";
+		switch (count) {
+			case 4:
+				r = (char)(0x80 | (wc & 0x3f)) + r;
+				wc = wc >> 6;
+				wc |= 0x10000;
+				// falls through
+			case 3:
+				r = (char)(0x80 | (wc & 0x3f)) + r;
+				wc = wc >> 6;
+				wc |= 0x800;
+				// falls through
+			case 2:
+				r = (char)(0x80 | (wc & 0x3f)) + r;
+				wc = wc >> 6;
+				wc |= 0xc0;
+				// falls through
+			case 1:
+				r = wc + r;
+		}
+		res += r;
 	}
-	iconv_close(convert);
 
-	delete [] sOrig;
-	return copyString(buf = bufOrig);
-#endif
-	return s; //TODO: false value
+	return res;
 }
 
 Common::String ResourceManager::getNumberedString(int value) {

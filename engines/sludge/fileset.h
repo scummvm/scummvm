@@ -54,6 +54,7 @@ private:
 	int32 _startIndex;
 
 private:
+	static uint32 _cp1250ToUTF32[128];
 	Common::String convertString(const Common::String &s);
 };
 
