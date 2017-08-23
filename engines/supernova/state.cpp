@@ -123,21 +123,21 @@ void GuiElement::setHighlight(bool isHighlighted) {
 }
 
 
-static Common::String timeToString(int t) {
+static Common::String timeToString(int msec) {
 	char s[9] = " 0:00:00";
-	t /= 1000;
-	s[7] = t % 10 + '0';
-	t /= 10;
-	s[6] = t %  6 + '0';
-	t /=  6;
-	s[4] = t % 10 + '0';
-	t /= 10;
-	s[3] = t %  6 + '0';
-	t /=  6;
-	s[1] = t % 10 + '0';
-	t /= 10;
-	if (t)
-		s[0] = t + '0';
+	msec /= 1000;
+	s[7] = msec % 10 + '0';
+	msec /= 10;
+	s[6] = msec %  6 + '0';
+	msec /=  6;
+	s[4] = msec % 10 + '0';
+	msec /= 10;
+	s[3] = msec %  6 + '0';
+	msec /=  6;
+	s[1] = msec % 10 + '0';
+	msec /= 10;
+	if (msec)
+		s[0] = msec + '0';
 
 	return Common::String(s);
 }
