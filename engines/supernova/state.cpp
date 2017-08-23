@@ -980,12 +980,14 @@ void GameManager::animationOn() {
 void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	bool isEditing = true;
 	uint cursorIndex = input.size();
+	int overdrawWidth = ((length + 1) * kFontWidth > kScreenWidth - x) ?
+	                    kScreenWidth - x : (length + 1) * kFontWidth;
 
 	while (isEditing) {
 		_vm->_textCursorX = x;
 		_vm->_textCursorY = y;
 		_vm->_textColor = COL_EDIT;
-		_vm->renderBox(x, y - 1, 320 - x, 10, HGR_EDIT);
+		_vm->renderBox(x, y - 1, overdrawWidth, 9, HGR_EDIT);
 		for (uint i = 0; i < input.size(); ++i) {
 			// Draw char highlight depending on cursor position
 			if (i == cursorIndex) {

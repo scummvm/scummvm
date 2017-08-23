@@ -27,6 +27,8 @@ namespace Supernova {
 
 const int kScreenWidth  = 320;
 const int kScreenHeight = 200;
+const int kFontWidth = 5;
+const int kFontHeight = 8;
 const int kTextSpeed[] = {19, 14, 10, 7, 4};
 const int kMsecPerTick = 55;
 
