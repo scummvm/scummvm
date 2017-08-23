@@ -185,6 +185,8 @@ bool TitanicEngine::canLoadGameStateCurrently() {
 		return false;
 	if (screenMan && screenMan->_inputHandler->isLocked())
 		return false;
+	if (!gameManager->isntTransitioning())
+		return false;
 
 	CProjectItem *project = gameManager->_project;
 	if (project) {
