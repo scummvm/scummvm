@@ -225,8 +225,8 @@ void GameManager::initState() {
 	_state._timeSleep = 0;
 	// NOTE: systime() calls int 1A, means it gets number of ticks since midnight.
 	//       So, it doesn't matter if we overflow by substraction?
-	_state._timeStarting = _vm->_system->getMillis() - ticksToMsec(917650); // 2 pm
-	_state._timeAlarm = ticksToMsec(458808);    // 7 am
+	_state._timeStarting = ticksToMsec(916364); // 2 pm
+	_state._timeAlarm = ticksToMsec(458182);    // 7 am
 	_state._timeAlarmSystem = _state._timeAlarm + _state._timeStarting;
 	_state._eventTime = 0xffffffff;
 	_state._shipEnergy = 2135;
