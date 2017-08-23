@@ -58,6 +58,10 @@ CPetControl::CPetControl() : CGameObject(),
 }
 
 void CPetControl::save(SimpleFile *file, int indent) {
+	// Ensure a remote target name is set if there is one
+	if (_remoteTargetName.empty() && _remoteTarget)
+		_remoteTargetName = _remoteTarget->getName();
+
 	file->writeNumberLine(0, indent);
 	file->writeNumberLine(_currentArea, indent);
 	file->writeQuotedLine(_activeNPCName, indent);
