@@ -420,6 +420,7 @@ public:
 	int				_bufInvalid[4];
 
 	bool			_isIndeo4;
+	uint32			_transKeyColor;
 
 	AVFrame *		_pFrame;
 	bool			_gotPFrame;

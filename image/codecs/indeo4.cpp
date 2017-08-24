@@ -26,6 +26,7 @@
  * written, produced, and directed by Alan Smithee
  */
 
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/rect.h"
@@ -111,6 +112,12 @@ int Indeo4Decoder::decodePictureHeader() {
 		_ctx._hasBFrames = true;
 
 	_ctx._hasTransp = _ctx._gb->getBit();
+	if (_ctx._hasTransp && _surface.format.aBits() == 0) {
+		// Surface is 4 bytes per pixel, but only RGB. So promote the
+		// surface to full RGBA, and convert all the existing pixels
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		_surface.convertToInPlace(_pixelFormat);
+	}
 
 	// unknown bit: Mac decoder ignores this bit, XANIM returns error
 	if (_ctx._gb->getBit()) {
@@ -605,8 +612,6 @@ int Indeo4Decoder::decodeRLETransparency(VLC_TYPE (*table)[2]) {
 	bool runIsOpaque = _ctx._gb->getBit();
 	bool nextRunIsOpaque = !runIsOpaque;
 
-	const uint32 opacityMask = 0xFF << _pixelFormat.aShift;
-
 	uint32 *pixel = (uint32 *)_surface.getPixels();
 	const int surfacePixelPitch = _surface.pitch / _surface.format.bytesPerPixel;
 	const int surfacePadding = surfacePixelPitch - _surface.w;
@@ -655,14 +660,12 @@ int Indeo4Decoder::decodeRLETransparency(VLC_TYPE (*table)[2]) {
 		}
 
 		while (value > 0) {
-			if (runIsOpaque) {
-				*pixel = *pixel | opacityMask;
-			} else {
-				*pixel = *pixel & ~opacityMask;
+			const int length = MIN<int>(value, endOfVisibleRow - pixel);
+			if (!runIsOpaque) {
+				Common::fill(pixel, pixel + length, _ctx._transKeyColor);
 			}
-
-			--value;
-			++pixel;
+			value -= length;
+			pixel += length;
 
 			if (pixel == endOfVisibleRow) {
 				pixel += surfacePadding;
@@ -715,11 +718,9 @@ int Indeo4Decoder::decodeTransparency() {
 
 	if (_ctx._gb->getBit()) { /* @350 */
 		/* @358 */
-		int unknown = (_ctx._gb->getBits(8) << 16) | (_ctx._gb->getBits(8) << 8) | (_ctx._gb->getBits(8));
-		debug(4, "Indeo4: Unknown is %08x", unknown);
+		_ctx._transKeyColor = _surface.format.ARGBToColor(0, _ctx._gb->getBits(8), _ctx._gb->getBits(8), _ctx._gb->getBits(8));
+		debug(4, "Indeo4: Key color is %08x", _ctx._transKeyColor);
 		/* @477 */
-		// This unknown value gets written out to IVIPicture.field_f8 and does
-		// not seem to have any obvious effect on the transparency rendering
 	}
 
 	if (_ctx._gb->getBit() == 0) { /* @4D9 */
@@ -767,13 +768,6 @@ int Indeo4Decoder::decodeTransparency() {
 	assert(!_ctx._isScalable);
 	assert(!_ctx._usesTiling);
 
-	if (_surface->format.aBits() == 0) {
-		// Surface is 4 bytes per pixel, but only RGB. So promote the
-		// surface to full RGBA, and convert all the existing pixels
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		_surface->convertToInPlace(_pixelFormat);
-	}
-
 	assert(_surface.format.bytesPerPixel == 4);
 	assert((_surface.pitch % 4) == 0);
 
@@ -788,7 +782,7 @@ int Indeo4Decoder::decodeTransparency() {
 			// It should only be necessary to draw transparency here since the
 			// data from the YUV planes gets drawn to the output surface on each
 			// frame, which resets the surface pixels to be fully opaque
-			_surface.fillRect(Common::Rect(_surface.w, _surface.h), 0);
+			_surface.fillRect(Common::Rect(_surface.w, _surface.h), _ctx._transKeyColor);
 		}
 
 		// No alignment here

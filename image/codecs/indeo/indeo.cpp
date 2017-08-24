@@ -444,7 +444,8 @@ IVI45DecContext::IVI45DecContext() : _gb(nullptr), _frameNum(0), _frameType(0),
 		_bRefBuf(0), _rvmapSel(0), _inImf(false), _inQ(false), _picGlobQuant(0),
 		_unknown1(0), _gopHdrSize(0), _gopFlags(0), _lockWord(0), _hasBFrames(false),
 		_hasTransp(false), _usesTiling(false), _usesHaar(false), _usesFullpel(false),
-		_gopInvalid(false), _isIndeo4(false), _pFrame(nullptr), _gotPFrame(false) {
+		_gopInvalid(false), _isIndeo4(false), _transKeyColor(0), _pFrame(nullptr),
+		_gotPFrame(false) {
 	Common::fill(&_bufInvalid[0], &_bufInvalid[4], 0);
 	Common::copy(&_ff_ivi_rvmap_tabs[0], &_ff_ivi_rvmap_tabs[9], &_rvmapTabs[0]);
 
