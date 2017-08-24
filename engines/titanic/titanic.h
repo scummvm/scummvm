@@ -178,7 +178,7 @@ public:
 	/**
 	 * Returns a uniform random floating point number in the interval [0.0, 65535.0]
 	 */
-	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.000015259022; }
+	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.00001525855623540901; } // fffffffe=4294967294 and 0.00001525855623540901 ~= 1/65537.0 
 
 	/**
 	 * Support method that generates a savegame name
