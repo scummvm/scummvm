@@ -47,6 +47,11 @@ Elevator::~Elevator() {
 	reset();
 }
 
+void elevator_mouseInCallback(int, void*);
+void elevator_mouseOutCallback(int, void*);
+void elevator_mouseDownCallback(int, void*);
+void elevator_mouseUpCallback(int, void*);
+
 int Elevator::activate(int elevatorId) {
 	const char *vqaName;
 
