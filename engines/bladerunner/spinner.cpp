@@ -249,7 +249,7 @@ void Spinner::tick() {
 	// vqaPlayer renders to _surfaceInterface
 	blit(_vm->_surfaceInterface, _vm->_surfaceGame);
 
-	_imagePicker->draw(_vm->_surfaceInterface);
+	_imagePicker->draw(_vm->_surfaceGame);
 
 	Common::Point p = _vm->getMousePos();
 	_imagePicker->handleMouseAction(p.x, p.y, false, false, false);

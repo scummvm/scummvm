@@ -31,6 +31,7 @@
 #include "bladerunner/combat.h"
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/dialogue_menu.h"
+#include "bladerunner/elevator.h"
 #include "bladerunner/font.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
@@ -292,7 +293,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// TODO: Spinner Interface
 	_spinner = new Spinner(this);
 
-	// TODO: Elevators
+	_elevator = new Elevator(this);
 
 	// TODO: Scores
 
@@ -598,7 +599,13 @@ void BladeRunnerEngine::gameTick() {
 
 		// TODO: Esper
 		// TODO: VK
-		// TODO: Elevators
+
+		if (_elevator->isOpen()) {
+			_elevator->tick();
+			_ambientSounds->tick();
+			return;
+		}
+
 		// TODO: Scores
 
 		_adq->tick();
@@ -841,6 +848,15 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 			_spinner->handleMouseDown(x, y);
 		} else {
 			_spinner->handleMouseUp(x, y);
+		}
+		return;
+	}
+
+	if (_elevator->isOpen()) {
+		if (buttonDown) {
+			_elevator->handleMouseDown(x, y);
+		} else {
+			_elevator->handleMouseUp(x, y);
 		}
 		return;
 	}

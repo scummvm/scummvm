@@ -55,6 +55,7 @@ class Chapters;
 class CrimesDatabase;
 class Combat;
 class DialogueMenu;
+class Elevator;
 class Font;
 class GameFlags;
 class GameInfo;
@@ -94,6 +95,7 @@ public:
 	CrimesDatabase   *_crimesDatabase;
 	Combat           *_combat;
 	DialogueMenu     *_dialogueMenu;
+	Elevator         *_elevator;
 	GameFlags        *_gameFlags;
 	GameInfo         *_gameInfo;
 	ItemPickup       *_itemPickup;

@@ -57,6 +57,7 @@ bool VQAPlayer::open(const Common::String &name) {
 	if (_loopInitial >= 0) {
 		setLoop(_loopInitial, _repeatsCountInitial, kLoopSetModeImmediate, nullptr, nullptr);
 	} else {
+		_frameNext = 0;
 		setBeginAndEndFrame(0, _frameEnd, 0, kLoopSetModeJustStart, nullptr, nullptr);
 	}
 

@@ -91,16 +91,6 @@ bool SceneScriptPS05::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptPS05::ClickedOnItem(int itemId, bool a2) {
-	if (Game_Flag_Query(23)) {
-		Actor_Set_At_XYZ(kActorMcCoy, 718.72f, 0.37f, -461.26f, 600);
-	} else if (Game_Flag_Query(22)) {
-		sub_401B34();
-		sub_401C30();
-	}
-	Game_Flag_Reset(22);
-	Game_Flag_Reset(23);
-	Game_Flag_Reset(21);
-	Game_Flag_Reset(204);
 	return false;
 }
 
@@ -152,6 +142,16 @@ void SceneScriptPS05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS05::PlayerWalkedIn() {
+	if (Game_Flag_Query(23)) {
+		Actor_Set_At_XYZ(kActorMcCoy, 718.72f, 0.37f, -461.26f, 600);
+	} else if (Game_Flag_Query(22)) {
+		sub_401B34();
+		sub_401C30();
+	}
+	Game_Flag_Reset(22);
+	Game_Flag_Reset(23);
+	Game_Flag_Reset(21);
+	Game_Flag_Reset(204);
 }
 
 void SceneScriptPS05::PlayerWalkedOut() {

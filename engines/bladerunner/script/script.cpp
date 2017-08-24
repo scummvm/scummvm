@@ -33,6 +33,7 @@
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/combat.h"
 #include "bladerunner/dialogue_menu.h"
+#include "bladerunner/elevator.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/items.h"
@@ -1087,10 +1088,8 @@ bool ScriptBase::Voight_Kampff_Activate(int a1, int a2){
 	return false;
 }
 
-int ScriptBase::Elevator_Activate(int elevator) {
-	//TODO
-	warning("Elevator_Activate(%d)", elevator);
-	return 0;
+int ScriptBase::Elevator_Activate(int elevatorId) {
+	return _vm->_elevator->activate(elevatorId);
 }
 
 void ScriptBase::View_Score_Board() {

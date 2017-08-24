@@ -630,7 +630,7 @@ protected:
 	int Spinner_Interface_Choose_Dest(int a1, int a2);
 	void ESPER_Flag_To_Activate();
 	bool Voight_Kampff_Activate(int a1, int a2);
-	int Elevator_Activate(int elevator);
+	int Elevator_Activate(int elevatorId);
 	void View_Score_Board();
 	// Query_Score
 	void Set_Score(int a0, int a1);
