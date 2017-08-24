@@ -21,11 +21,14 @@
  */
 
 #include "titanic/input_handler.h"
+#include "titanic/events.h"
 #include "titanic/game_manager.h"
-#include "titanic/titanic.h"
+#include "titanic/core/project_item.h"
 #include "titanic/messages/mouse_messages.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/support/screen_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 

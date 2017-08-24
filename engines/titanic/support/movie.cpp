@@ -21,9 +21,13 @@
  */
 
 #include "titanic/support/movie.h"
-#include "titanic/support/avi_surface.h"
-#include "titanic/sound/sound_manager.h"
+#include "titanic/core/game_object.h"
+#include "titanic/events.h"
 #include "titanic/messages/messages.h"
+#include "titanic/support/avi_surface.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/video_surface.h"
+#include "titanic/sound/sound_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

@@ -21,10 +21,12 @@
  */
 
 #include "titanic/messages/messages.h"
-#include "titanic/messages/mouse_messages.h"
 #include "titanic/core/game_object.h"
 #include "titanic/core/message_target.h"
+#include "titanic/core/project_item.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/main_game_window.h"
+#include "titanic/messages/mouse_messages.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
 

@@ -23,8 +23,8 @@
 #include "titanic/npcs/bellbot.h"
 #include "titanic/carry/carry.h"
 #include "titanic/core/room_item.h"
+#include "titanic/game_manager.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 

@@ -21,9 +21,10 @@
  */
 
 #include "titanic/pet_control/pet_remote_glyphs.h"
-#include "titanic/pet_control/pet_remote.h"
-#include "titanic/pet_control/pet_control.h"
+#include "titanic/game_manager.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/pet_control/pet_remote.h"
 #include "titanic/star_control/star_control.h"
 #include "titanic/support/strings.h"
 #include "titanic/titanic.h"

@@ -22,7 +22,7 @@
 
 #include "titanic/npcs/doorbot.h"
 #include "titanic/core/room_item.h"
-#include "titanic/titanic.h"
+#include "titanic/debugger.h"
 
 namespace Titanic {
 

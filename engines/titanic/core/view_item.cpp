@@ -20,13 +20,14 @@
  *
  */
 
-#include "titanic/game_manager.h"
-#include "titanic/support/screen_manager.h"
+#include "titanic/core/view_item.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/room_item.h"
-#include "titanic/core/view_item.h"
+#include "titanic/events.h"
+#include "titanic/game_manager.h"
 #include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

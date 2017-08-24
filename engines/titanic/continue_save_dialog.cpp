@@ -21,7 +21,11 @@
  */
 
 #include "titanic/continue_save_dialog.h"
+#include "titanic/support/movie_manager.h"
 #include "titanic/titanic.h"
+#include "common/error.h"
+#include "common/str-array.h"
+#include "graphics/screen.h"
 
 namespace Titanic {
 

@@ -23,13 +23,15 @@
 #ifndef TITANIC_INPUT_HANDLER_H
 #define TITANIC_INPUT_HANDLER_H
 
-#include "titanic/support/rect.h"
-#include "titanic/input_translator.h"
-#include "titanic/core/tree_item.h"
+#include "titanic/support/rect.h" // Point
 
 namespace Titanic {
 
+class CGameObject;
 class CGameManager;
+class CInputTranslator;
+class CMessage;
+class CTreeItem;
 
 class CInputHandler {
 private:

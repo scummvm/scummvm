@@ -21,6 +21,7 @@
  */
 
 #include "titanic/sound/music_song.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 #include "common/util.h"
 

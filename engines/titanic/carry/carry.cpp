@@ -21,6 +21,7 @@
  */
 
 #include "titanic/carry/carry.h"
+#include "titanic/debugger.h"
 #include "titanic/messages/messages.h"
 #include "titanic/npcs/character.h"
 #include "titanic/npcs/succubus.h"

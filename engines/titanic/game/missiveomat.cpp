@@ -22,6 +22,7 @@
 
 #include "titanic/game/missiveomat.h"
 #include "titanic/core/room_item.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

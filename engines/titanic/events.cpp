@@ -20,14 +20,17 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "engines/util.h"
 #include "titanic/events.h"
-#include "titanic/titanic.h"
+#include "titanic/debugger.h"
+#include "titanic/game_manager.h"
 #include "titanic/main_game_window.h"
 #include "titanic/star_control/star_control.h"
+#include "titanic/titanic.h"
+#include "common/events.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "engines/util.h"
+#include "graphics/screen.h"
 
 namespace Titanic {
 

@@ -20,10 +20,10 @@
  *
  */
 
-#include "titanic/titanic.h"
 #include "titanic/core/project_item.h"
+#include "titanic/events.h"
 #include "titanic/support/simple_file.h"
-
+#include "titanic/titanic.h"
 #include "base/plugins.h"
 #include "common/savefile.h"
 #include "common/str-array.h"

@@ -20,11 +20,13 @@
  *
  */
 
+#include "titanic/support/direct_draw.h"
+#include "titanic/debugger.h"
+#include "titanic/titanic.h"
 #include "common/debug.h"
 #include "engines/util.h"
 #include "graphics/pixelformat.h"
-#include "titanic/support/direct_draw.h"
-#include "titanic/titanic.h"
+#include "graphics/screen.h"
 
 namespace Titanic {
 

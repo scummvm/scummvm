@@ -20,9 +20,9 @@
  *
  */
 
-#include "common/system.h"
 #include "titanic/sound/qmixer.h"
-#include "titanic/titanic.h"
+#include "titanic/debugger.h"
+#include "common/system.h"
 
 namespace Titanic {
 

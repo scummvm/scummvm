@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/file.h"
 #include "titanic/true_talk/tt_vocab.h"
-#include "titanic/true_talk/tt_adj.h"
+#include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_action.h"
 #include "titanic/true_talk/tt_adj.h"
 #include "titanic/true_talk/tt_major_word.h"
 #include "titanic/true_talk/tt_picture.h"
 #include "titanic/true_talk/tt_pronoun.h"
 #include "titanic/titanic.h"
+#include "common/file.h"
 
 namespace Titanic {
 
