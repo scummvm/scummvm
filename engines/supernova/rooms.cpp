@@ -687,7 +687,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 
 	if ((verb == ACTION_LOOK) && (obj1._id == SCRAP_LK) &&
 	        (obj1._description != beschr2)) {
-		_vm->renderMessage(obj1._description);
+		_vm->renderMessage(obj1._description.c_str());
 		obj1._description = beschr2;
 		_gm->takeObject(*getObject(2));
 	} else if (((verb == ACTION_OPEN) || (verb == ACTION_CLOSE)) &&
@@ -746,7 +746,7 @@ void ShipHold::onEntrance() {
 bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 	Room *r;
 	if ((verb == ACTION_PRESS) && (obj1._id == LANDINGMOD_BUTTON))
-		_vm->renderMessage(obj1._description);
+		_vm->renderMessage(obj1._description.c_str());
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, PEN, LANDINGMOD_BUTTON)) {
 		if (_gm->_state._landingModuleEnergy) {
 			r = _gm->_rooms[GENERATOR];
