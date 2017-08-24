@@ -150,11 +150,11 @@ bool CDropTarget::EnterViewMsg(CEnterViewMsg *msg) {
 			_cursorId = _dragCursorId;
 		} else if (_clipName.empty()) {
 			loadFrame(_dropFrame);
+			_cursorId = _dropCursorId;
 		} else {
 			playClip(_clipName, _clipFlags);
+			_cursorId = _dropCursorId;
 		}
-
-		_cursorId = _dropCursorId;
 	}
 
 	return true;
