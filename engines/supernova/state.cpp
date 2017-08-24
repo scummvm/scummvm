@@ -980,8 +980,9 @@ void GameManager::animationOn() {
 void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	bool isEditing = true;
 	uint cursorIndex = input.size();
-	int overdrawWidth = ((length + 1) * kFontWidth > kScreenWidth - x) ?
-	                    kScreenWidth - x : (length + 1) * kFontWidth;
+	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
+	int overdrawWidth = ((length + 1) * (kFontWidth + 2) > kScreenWidth - x) ?
+	                    kScreenWidth - x : (length + 1) * (kFontWidth + 2);
 
 	while (isEditing) {
 		_vm->_textCursorX = x;
