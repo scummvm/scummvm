@@ -578,8 +578,7 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 	outputPlane(&_ctx._planes[1], frame->_data[2], frame->_linesize[2]);
 
 	// Merge the planes into the final surface
-	Graphics::Surface s = _surface->getSubArea(Common::Rect(0, 0, _surface->w, _surface->h));
-	YUVToRGBMan.convert410(&s, Graphics::YUVToRGBManager::kScaleITU,
+	YUVToRGBMan.convert410(_surface, Graphics::YUVToRGBManager::kScaleITU,
 		frame->_data[0], frame->_data[1], frame->_data[2], frame->_width, frame->_height,
 		frame->_width, frame->_width);
 
