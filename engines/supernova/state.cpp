@@ -458,7 +458,7 @@ void GameManager::processInput() {
 		}
 		/* normal item */
 		else {
-			for (int i = 0; (_currentRoom->getObject(i)->_name[0] != '\0') && (field == -1) && i < kMaxObject; i++) {
+			for (int i = 0; (_currentRoom->getObject(i)->_name.c_str()[0] != '\0') && (field == -1) && i < kMaxObject; i++) {
 				click = _currentRoom->getObject(i)->_click;
 				if (click != 255) {
 					MSNImageDecoder::ClickField *clickField = _vm->_currentImage->_clickField;
@@ -747,7 +747,7 @@ void GameManager::drawInventory() {
 		               _guiInventory[i].width(),
 		               _guiInventory[i].height(),
 		               _guiInventory[i]._bgColor);
-		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name,
+		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name.c_str(),
 		                _guiInventory[i]._textPosition.x,
 		                _guiInventory[i]._textPosition.y,
 		                _guiInventory[i]._textColor);
@@ -1091,16 +1091,16 @@ void GameManager::drawStatus() {
 	_vm->renderText(guiStatusCommand_DE[index], 1, 141, kColorDarkGreen);
 
 	if (Object::isNullObject(_inputObject[0])) {
-		_vm->renderText(_currentInputObject->_name);
+		_vm->renderText(_currentInputObject->_name.c_str());
 	} else {
-		_vm->renderText(_inputObject[0]->_name);
+		_vm->renderText(_inputObject[0]->_name.c_str());
 		if (_inputVerb == ACTION_GIVE) {
 			_vm->renderText(" an ");
 		} else if (_inputVerb == ACTION_USE) {
 			_vm->renderText(" mit ");
 		}
 
-		_vm->renderText(_currentInputObject->_name);
+		_vm->renderText(_currentInputObject->_name.c_str());
 	}
 }
 
@@ -1238,7 +1238,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		drawMapExits();
 		_vm->renderMessage("Hmm, irgendwie komme|ich mir verarscht vor.");
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KEYCARD2)) {
-		_vm->renderMessage(obj1._description);
+		_vm->renderMessage(obj1._description.c_str());
 		obj1._description = "Es ist die Keycard des Commanders.";
 	} else if ((verb == ACTION_LOOK) && (obj1._id == WATCH)) {
 		_vm->renderMessage(Common::String::format(
@@ -1456,7 +1456,7 @@ void GameManager::handleInput() {
 	if (!validCommand) {
 		switch (_inputVerb) {
 		case ACTION_LOOK:
-			_vm->renderMessage(_inputObject[0]->_description);
+			_vm->renderMessage(_inputObject[0]->_description.c_str());
 			break;
 
 		case ACTION_WALK:
