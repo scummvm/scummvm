@@ -252,10 +252,24 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res);
 		chr->_resourceId = *iter;
 		addChr(chr);
-		// TODO: What if there's more than one player character?
-		if (chr->_playerCharacter)
+
+		if (chr->_playerCharacter) {
+			if (_player)
+				warning("loadWorld: Player is redefined");
+
 			_player = chr;
+		}
 	}
+
+	if (!_player) {
+		warning("loadWorld: Player is not defined");
+
+		if (_chrs.empty()) {
+			error("loadWorld: and I have no characters");
+		}
+		_player = _chrs[0];
+	}
+
 
 	// Load Sounds
 	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));

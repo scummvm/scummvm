@@ -209,6 +209,10 @@ void Gui::regenWeaponsMenu() {
 	_menu->clearSubMenu(_weaponsMenuId);
 
 	Chr *player = _engine->_world->_player;
+	if (!player) {
+		warning("regenWeaponsMenu: player is not defined");
+		return;
+	}
 	ObjArray *weapons = player->getWeapons(true);
 
 	bool empty = true;
