@@ -103,7 +103,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_guiEnabled = false;
 		setSectionVisible(4, false);
 		g_system->fillScreen(kColorDarkBlue);
-		if (_gm->_state._time == 0) {
+		if (_gm->_state._arrivalDaysLeft == 0) {
 			// Destination reached
 			_vm->renderText("Flugziel erreicht", 60, 95, kColorWhite99);
 			_gm->getInput();
@@ -177,12 +177,12 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawImage(_gm->invertSection(4));
 			room = _gm->_rooms[GENERATOR];
 			if (room->isSectionVisible(9)) {
-				energy = &_gm->_state._landingModuleEnergy;
+				energy = &_gm->_state._landingModuleEnergyDaysLeft;
 			} else {
-				energy = &_gm->_state._shipEnergy;
+				energy = &_gm->_state._shipEnergyDaysLeft;
 			}
-			if (_gm->_state._timeSleep > _gm->_state._time) {
-				_gm->_state._timeSleep = _gm->_state._time;
+			if (_gm->_state._timeSleep > _gm->_state._arrivalDaysLeft) {
+				_gm->_state._timeSleep = _gm->_state._arrivalDaysLeft;
 			}
 			if (_gm->_state._timeSleep >= *energy) {
 				_gm->_state._timeSleep = *energy;
@@ -195,7 +195,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 					room->setSectionVisible(10, false);
 				}
 			}
-			if (_gm->_state._timeSleep == _gm->_state._time) {
+			if (_gm->_state._timeSleep == _gm->_state._arrivalDaysLeft) {
 				_gm->drawImage(3);
 				room = _gm->_rooms[COCKPIT];
 				room->setSectionVisible(23, true);
@@ -220,17 +220,17 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 					room->setSectionVisible(11, true);
 				}
 			}
-			_gm->_state._time -= _gm->_state._timeSleep;
+			_gm->_state._arrivalDaysLeft -= _gm->_state._timeSleep;
 			*energy -= _gm->_state._timeSleep;
-			_gm->_state._timeStarting = _vm->_system->getMillis() - ticksToMsec(786520); // 12pm
+			_gm->_state._timeStarting = _gm->_state._time - ticksToMsec(786520); // 12pm
 			_gm->_state._timeAlarmSystem = _gm->_state._timeAlarm + _gm->_state._timeStarting;
-			_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _vm->_system->getMillis());
+			_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _gm->_state._time);
 			if (!*energy) {
 				_gm->turnOff();
 				room = _gm->_rooms[GENERATOR];
 				room->setSectionVisible(4, room->isSectionVisible(2));
 			}
-			if (_gm->_state._time == 0) {
+			if (_gm->_state._arrivalDaysLeft == 0) {
 				_gm->saveTime();
 				if (!_gm->saveGame(-2))
 					_gm->errorTemp();
@@ -239,7 +239,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 			_gm->wait2(18);
 			_vm->paletteFadeIn();
-			if (_gm->_state._time == 0) {
+			if (_gm->_state._arrivalDaysLeft == 0) {
 				_vm->playSound(kAudioCrash);
 				_gm->screenShake();
 				_gm->wait2(18);
@@ -255,7 +255,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 
 void ShipSleepCabin::animation() {
 	static char color;
-	if (_gm->_state._powerOff && _gm->_state._time) {
+	if (_gm->_state._powerOff && _gm->_state._arrivalDaysLeft) {
 		if (_gm->_guiEnabled) {
 			if (isSectionVisible(1)) {
 				_gm->drawImage(2);
@@ -304,21 +304,21 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_guiEnabled = false;
 		_vm->renderBox(0, 0, 320, 200, kColorBlack);
 		_vm->renderText("Geschwindigkeit: ", 50, 50, kColorLightYellow);
-		if (_gm->_state._time)
+		if (_gm->_state._arrivalDaysLeft)
 			_vm->renderText("8000 hpm");
 		else
 			_vm->renderText("0 hpm");
 		_vm->renderText("Ziel: Arsano 3", 50, 70, kColorLightYellow);
 		_vm->renderText("Entfernung: ", 50, 90, kColorLightYellow);
-		_vm->renderText(Common::String::format("%d", _gm->_state._time / ticksToMsec(400)).c_str());
+		_vm->renderText(Common::String::format("%d", _gm->_state._arrivalDaysLeft / ticksToMsec(400)).c_str());
 		_vm->renderText(",");
-		c[0] = (_gm->_state._time / ticksToMsec(40)) % 10 + '0';
+		c[0] = (_gm->_state._arrivalDaysLeft / ticksToMsec(40)) % 10 + '0';
 		_vm->renderText(c);
-		c[0] = (_gm->_state._time / ticksToMsec(4)) % 10 + '0';
+		c[0] = (_gm->_state._arrivalDaysLeft / ticksToMsec(4)) % 10 + '0';
 		_vm->renderText(c);
 		_vm->renderText(" Lichtjahre");
 		_vm->renderText("Dauer der Reise bei momentaner Geschwindigkeit:", 50, 110, kColorLightYellow);
-		_vm->renderText(Common::String::format("%d", _gm->_state._time).c_str(),
+		_vm->renderText(Common::String::format("%d", _gm->_state._arrivalDaysLeft).c_str(),
 		                50, 120, kColorLightYellow);
 		_vm->renderText(" Tage");
 
@@ -748,7 +748,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == LANDINGMOD_BUTTON))
 		_vm->renderMessage(obj1._description.c_str());
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, PEN, LANDINGMOD_BUTTON)) {
-		if (_gm->_state._landingModuleEnergy) {
+		if (_gm->_state._landingModuleEnergyDaysLeft) {
 			r = _gm->_rooms[GENERATOR];
 			if (isSectionVisible(7)) {
 				_gm->drawImage(_gm->invertSection(9));
@@ -907,7 +907,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(3, false);
 		setSectionVisible(4, false);
 		getObject(11)->_click = 10;
-		if (_gm->_state._shipEnergy)
+		if (_gm->_state._shipEnergyDaysLeft)
 			_gm->turnOn();
 		else
 			_gm->drawImage(4);
@@ -939,7 +939,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawImage(9);
 		getObject(0)->_click = 16;
 		r = _gm->_rooms[LANDINGMODULE];
-		if (_gm->_state._landingModuleEnergy && r->isSectionVisible(7))
+		if (_gm->_state._landingModuleEnergyDaysLeft && r->isSectionVisible(7))
 			_gm->turnOn();
 		else
 		_gm->drawImage(4);
@@ -1588,12 +1588,12 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
 		_vm->paletteBrightness();
-		_gm->_state._timeStarting -= 7200000; // 2 hours
-		_gm->_state._timeAlarmSystem -= 7200000;
-		_gm->_state._eventTime = _vm->_system->getMillis() + 220000;
+		_gm->_state._timeStarting -= ticksToMsec(125000); // 2 hours
+		_gm->_state._timeAlarmSystem -= ticksToMsec(125000);
+		_gm->_state._eventTime = _gm->_state._time + ticksToMsec(4000);
 		// TODO: implement event calling
 //		_gm->_state.event = &supernova;
-		_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _vm->_system->getMillis());
+		_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _gm->_state._time);
 		setSectionVisible(11, false);
 		setSectionVisible(1, false);
 		_vm->renderRoom(*this);
@@ -1911,9 +1911,9 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 void AxacussCell::onEntrance() {
 	if (_gm->_state._dream) {
 		_vm->renderMessage("Du wachst auf und findest dich in|einem geschlossenen Raum wieder.");
-		_gm->_state._timeStarting = _gm->_state._time - 500000;
+		_gm->_state._timeStarting = _gm->_state._arrivalDaysLeft - ticksToMsec(500000);
 		_gm->_state._timeAlarmSystem = _gm->_state._timeAlarm + _gm->_state._timeStarting;
-		_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _gm->_state._time);
+		_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _gm->_state._arrivalDaysLeft);
 		_gm->_state._powerOff = false;
 		_gm->_state._dream = false;
 	}
@@ -2676,7 +2676,7 @@ bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->takeMoney(-180);
 		_gm->drawImage(2);
 		setSectionVisible(1, false);
-		_gm->_state._eventTime = _vm->_system->getMillis() + ticksToMsec(600);
+		_gm->_state._eventTime = _gm->_state._time + ticksToMsec(600);
 //		*event = &taxi;
 		return true;
 	}

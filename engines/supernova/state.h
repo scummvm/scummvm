@@ -35,8 +35,9 @@ struct GameState {
 	int32  _timeAlarm;
 	int32  _timeAlarmSystem;
 	int32  _eventTime;
-	int32  _shipEnergy;
-	int32  _landingModuleEnergy;
+	int32  _arrivalDaysLeft;
+	int32  _shipEnergyDaysLeft;
+	int32  _landingModuleEnergyDaysLeft;
 	uint16 _greatFlag;
 	int16  _timeRobot;
 	int16  _money;

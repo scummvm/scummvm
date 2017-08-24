@@ -221,16 +221,15 @@ void GameManager::initState() {
 	_timer1 = 0;
 	_animationTimer = 0;
 
-	_state._time = ticksToMsec(2840);
+	_state._time = 0;
 	_state._timeSleep = 0;
-	// NOTE: systime() calls int 1A, means it gets number of ticks since midnight.
-	//       So, it doesn't matter if we overflow by substraction?
 	_state._timeStarting = ticksToMsec(916364); // 2 pm
 	_state._timeAlarm = ticksToMsec(458182);    // 7 am
 	_state._timeAlarmSystem = _state._timeAlarm + _state._timeStarting;
 	_state._eventTime = 0xffffffff;
-	_state._shipEnergy = 2135;
-	_state._landingModuleEnergy = 923;
+	_state._arrivalDaysLeft = 2840;
+	_state._shipEnergyDaysLeft = 2135;
+	_state._landingModuleEnergyDaysLeft = 923;
 	_state._greatFlag = 0;
 	_state._timeRobot = 0;
 	_state._money = 0;
@@ -540,7 +539,7 @@ void GameManager::startSearch() {
 }
 
 void GameManager::search(int time) {
-	_state._eventTime = _vm->_system->getMillis() + time;
+	_state._eventTime = _state._time + time;
 //	*event = &search_start;
 }
 
@@ -846,7 +845,7 @@ void GameManager::roomBrightness() {
 					dimColor(_vm, f);
 			}
 		}
-		if (!(_state._landingModuleEnergy && _rooms[LANDINGMODULE]->isSectionVisible(7))) {
+		if (!(_state._landingModuleEnergyDaysLeft && _rooms[LANDINGMODULE]->isSectionVisible(7))) {
 			i = 0;
 			while (sf = specialColors[0][i] - 1) {
 				dimColor(_vm, sf);
@@ -854,7 +853,7 @@ void GameManager::roomBrightness() {
 			};
 		}
 	} else if ((_currentRoom == _rooms[LANDINGMODULE]) && (_state._benOverlay == 1)) {
-		if (!(_state._landingModuleEnergy && _rooms[LANDINGMODULE]->isSectionVisible(7))) {
+		if (!(_state._landingModuleEnergyDaysLeft && _rooms[LANDINGMODULE]->isSectionVisible(7))) {
 			for (int f = 16; f < 255; f++) {
 				i=0;
 				do {
