@@ -519,7 +519,7 @@ private:
 protected:
 	IVI45DecContext _ctx;
 	Graphics::PixelFormat _pixelFormat;
-	Graphics::Surface *_surface;
+	Graphics::Surface _surface;
 
 	/**
 	 *  Scan patterns shared between indeo4 and indeo5

@@ -88,7 +88,7 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameData = nullptr;
 	_ctx._frameSize = 0;
 
-	return (err < 0) ? nullptr : _surface;
+	return (err < 0) ? nullptr : &_surface;
 }
 
 int Indeo4Decoder::decodePictureHeader() {
@@ -607,16 +607,16 @@ int Indeo4Decoder::decodeRLETransparency(VLC_TYPE (*table)[2]) {
 
 	const uint32 opacityMask = 0xFF << _pixelFormat.aShift;
 
-	uint32 *pixel = (uint32 *)_surface->getPixels();
-	const int surfacePixelPitch = _surface->pitch / _surface->format.bytesPerPixel;
-	const int surfacePadding = surfacePixelPitch - _surface->w;
-	const uint32 *endOfVisibleRow = pixel + _surface->w;
-	const uint32 *endOfVisibleArea = pixel + surfacePixelPitch * _surface->h - surfacePadding;
+	uint32 *pixel = (uint32 *)_surface.getPixels();
+	const int surfacePixelPitch = _surface.pitch / _surface.format.bytesPerPixel;
+	const int surfacePadding = surfacePixelPitch - _surface.w;
+	const uint32 *endOfVisibleRow = pixel + _surface.w;
+	const uint32 *endOfVisibleArea = pixel + surfacePixelPitch * _surface.h - surfacePadding;
 
-	const int codecAlignedWidth = (_surface->w + 31) & ~31;
-	const int codecPaddingSize = codecAlignedWidth - _surface->w;
+	const int codecAlignedWidth = (_surface.w + 31) & ~31;
+	const int codecPaddingSize = codecAlignedWidth - _surface.w;
 
-	int numPixelsToRead = codecAlignedWidth * _surface->h;
+	int numPixelsToRead = codecAlignedWidth * _surface.h;
 	int numPixelsToSkip = 0;
 	while (numPixelsToRead > 0) {
 		int value = _ctx._gb->getVLC2<1>(table, IVI_VLC_BITS);
@@ -774,8 +774,8 @@ int Indeo4Decoder::decodeTransparency() {
 		_surface->convertToInPlace(_pixelFormat);
 	}
 
-	assert(_surface->format.bytesPerPixel == 4);
-	assert((_surface->pitch % 4) == 0);
+	assert(_surface.format.bytesPerPixel == 4);
+	assert((_surface.pitch % 4) == 0);
 
 	const uint32 startByte = _ctx._gb->pos() / 8;
 
@@ -788,7 +788,7 @@ int Indeo4Decoder::decodeTransparency() {
 			// It should only be necessary to draw transparency here since the
 			// data from the YUV planes gets drawn to the output surface on each
 			// frame, which resets the surface pixels to be fully opaque
-			_surface->fillRect(Common::Rect(_surface->w, _surface->h), 0);
+			_surface.fillRect(Common::Rect(_surface.w, _surface.h), 0);
 		}
 
 		// No alignment here
