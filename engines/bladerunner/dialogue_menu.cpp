@@ -23,13 +23,14 @@
 #include "bladerunner/dialogue_menu.h"
 
 #include "bladerunner/bladerunner.h"
-
 #include "bladerunner/font.h"
 #include "bladerunner/mouse.h"
+#include "bladerunner/settings.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/text_resource.h"
 
 #include "common/debug.h"
+#include "common/rect.h"
 #include "common/util.h"
 
 #define LINE_HEIGHT  9
@@ -87,7 +88,7 @@ bool DialogueMenu::showAt(int x, int y) {
 }
 
 bool DialogueMenu::hide() {
-	_waitingForInput = 0;
+	_waitingForInput = false;
 	if (!_isVisible) {
 		return false;
 	}
@@ -102,24 +103,27 @@ bool DialogueMenu::clearList() {
 	return true;
 }
 
-bool DialogueMenu::addToList(int answer, int a3, int a4, int a5, int a6) {
-	if (_listSize >= 10)
+bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int priorityNormal, int prioritySurly) {
+	if (_listSize >= 10) {
 		return false;
-	if (getAnswerIndex(answer) != -1)
+	}
+	if (getAnswerIndex(answer) != -1) {
 		return false;
+	}
 
 	const char *text = _textResource->getText(answer);
-	if (!text || strlen(text) >= 50)
+	if (!text || strlen(text) >= 50) {
 		return false;
+	}
 
 	int index = _listSize++;
-	strcpy(_items[index].text, text);
+	_items[index].text = text;
 	_items[index].answerValue = answer;
-	_items[index].field_36 = 0;
-	_items[index].field_46 = a3;
-	_items[index].field_3A = a4;
-	_items[index].field_3E = a5;
-	_items[index].field_42 = a6;
+	_items[index].colorIntensity = 0;
+	_items[index].isDone = done;
+	_items[index].priorityPolite = priorityPolite;
+	_items[index].priorityNormal = priorityNormal;
+	_items[index].prioritySurly = prioritySurly;
 
 	// CHECK(madmoose): BLADE.EXE calls this needlessly
 	// calculatePosition();
@@ -127,7 +131,7 @@ bool DialogueMenu::addToList(int answer, int a3, int a4, int a5, int a6) {
 	return true;
 }
 
-bool DialogueMenu::addToListNeverRepeatOnceSelected(int answer, int a3, int a4, int a5) {
+bool DialogueMenu::addToListNeverRepeatOnceSelected(int answer, int priorityPolite, int priorityNormal, int prioritySurly) {
 	for (int i = 0; i != _neverRepeatListSize; ++i) {
 		if (answer == _neverRepeatValues[i] && _neverRepeatWasSelected[i]) {
 			return true;
@@ -137,7 +141,7 @@ bool DialogueMenu::addToListNeverRepeatOnceSelected(int answer, int a3, int a4, 
 	_neverRepeatValues[_neverRepeatListSize] = answer;
 	_neverRepeatWasSelected[_neverRepeatListSize] = false;
 	++_neverRepeatListSize;
-	return addToList(answer, 0, a3, a4, a5);
+	return addToList(answer, false, priorityPolite, priorityNormal, prioritySurly);
 }
 
 int DialogueMenu::queryInput() {
@@ -149,20 +153,22 @@ int DialogueMenu::queryInput() {
 		_selectedItemIndex = 0;
 		answer = _items[0].answerValue;
 	} else if (_listSize == 2) {
-		if (_items[0].field_46) {
+		if (_items[0].isDone) {
 			_selectedItemIndex = 1;
 			answer = _items[0].answerValue;
-		} else if (_items[0].field_46) {
+		} else if (_items[0].isDone) {
 			_selectedItemIndex = 0;
 			answer = _items[1].answerValue;
 		}
 	}
 
 	if (answer == -1) {
-		int agenda = 4; //_vm->_settings.getPlayerAgenda();
-		if (agenda == 4) {
+		int agenda = _vm->_settings->getPlayerAgenda();
+		agenda = kPlayerAgendaUserChoice;
+		if (agenda == kPlayerAgendaUserChoice) {
 			_waitingForInput = true;
 			do {
+				// TODO: game resuming
 				// if (!_vm->_gameRunning)
 				// 	break;
 
@@ -176,14 +182,13 @@ int DialogueMenu::queryInput() {
 
 				_vm->gameTick();
 			} while (_waitingForInput);
-
-		} else if (agenda == 3) {
+		} else if (agenda == kPlayerAgendaErratic) {
 			int tries = 0;
 			bool searching = true;
 			int i;
 			do {
 				i = _vm->_rnd.getRandomNumber(_listSize - 1);
-				if (!_items[i].field_46) {
+				if (!_items[i].isDone) {
 					searching = false;
 				} else if (++tries > 1000) {
 					searching = false;
@@ -192,7 +197,21 @@ int DialogueMenu::queryInput() {
 			} while (searching);
 			_selectedItemIndex = i;
 		} else {
-			error("unimplemented...");
+			int priority = -1;
+			for (int i = 0; i < _listSize; i++) {
+				int priorityCompare = -1;
+				if (agenda == kPlayerAgendaPolite) {
+					priorityCompare = _items[i].priorityPolite;
+				} else if (agenda == kPlayerAgendaNormal) {
+					priorityCompare = _items[i].priorityNormal;
+				} else if (agenda == kPlayerAgendaSurly) {
+					priorityCompare = _items[i].prioritySurly;
+				}
+				if (priority < priorityCompare) {
+					priority = priorityCompare;
+					_selectedItemIndex = i;
+				}
+			}
 		}
 	}
 
@@ -205,7 +224,7 @@ int DialogueMenu::queryInput() {
 	}
 
 	if (_selectedItemIndex >= 0) {
-		debug("DM Query Input: %d %s", answer, _items[_selectedItemIndex].text);
+		debug("DM Query Input: %d %s", answer, _items[_selectedItemIndex].text.c_str());
 	}
 
 	return answer;
@@ -234,18 +253,38 @@ void DialogueMenu::tick(int x, int y) {
 	_selectedItemIndex = line;
 }
 
-void DialogueMenu::draw() {
-	if (!_isVisible || _listSize == 0)
+void DialogueMenu::draw(Graphics::Surface &s) {
+	if (!_isVisible || _listSize == 0) {
 		return;
+	}
+
+	int fadeInItemIndex = _fadeInItemIndex;
+	if (fadeInItemIndex < listSize()) {
+		++_fadeInItemIndex;
+	}
 
 	for (int i = 0; i != _listSize; ++i) {
+		int targetColorIntensity = 0;
 		if (i == _selectedItemIndex) {
-			_items[i].field_36 = 31;
+			targetColorIntensity = 31;
 		} else {
-			_items[i].field_36 = 16;
+			targetColorIntensity = 16;
+		}
+		if (i > fadeInItemIndex) {
+			targetColorIntensity = 0;
 		}
 
-		// TODO(madmoose): There's more logic here
+		if (_items[i].colorIntensity < targetColorIntensity) {
+			_items[i].colorIntensity += 4;
+			if(_items[i].colorIntensity > targetColorIntensity) {
+				_items[i].colorIntensity = targetColorIntensity;
+			}
+		} else if (_items[i].colorIntensity > targetColorIntensity) {
+			_items[i].colorIntensity -= 2;
+			if (_items[i].colorIntensity < targetColorIntensity) {
+				_items[i].colorIntensity = targetColorIntensity;
+			}
+		}
 	}
 
 	const int x1 = _screenX;
@@ -253,21 +292,28 @@ void DialogueMenu::draw() {
 	const int x2 = _screenX + BORDER_SIZE + _maxItemWidth;
 	const int y2 = _screenY + BORDER_SIZE + _listSize * LINE_HEIGHT;
 
-	Graphics::Surface &s = _vm->_surfaceGame;
-
 	darkenRect(s, x1 + 8, y1 + 8, x2 + 2, y2 + 2);
+
+	int x = x1 + BORDER_SIZE;
+	int y = y1 + BORDER_SIZE;
+
+	Common::Point mouse = _vm->getMousePos();
+	if (mouse.x >= x && mouse.x < x2) {
+		s.vLine(mouse.x, y1 + 8, y2 + 2, 0x2108);
+	}
+	if (mouse.y >= y && mouse.y < y2) {
+		s.hLine(x1 + 8, mouse.y, x2 + 2, 0x2108);
+	}
 
 	_shapes[0].draw(s, x1, y1);
 	_shapes[3].draw(s, x2, y1);
 	_shapes[2].draw(s, x1, y2);
 	_shapes[5].draw(s, x2, y2);
 
-	int x = x1 + BORDER_SIZE;
-	int y = y1 + BORDER_SIZE;
 	for (int i = 0; i != _listSize; ++i) {
 		_shapes[1].draw(s, x1, y);
 		_shapes[4].draw(s, x2, y);
-		uint16 color = ((_items[i].field_36 >> 1) << 10) | ((_items[i].field_36 >> 1) << 6) | _items[i].field_36;
+		uint16 color = ((_items[i].colorIntensity >> 1) << 10) | ((_items[i].colorIntensity >> 1) << 6) | _items[i].colorIntensity;
 		_vm->_mainFont->drawColor(_items[i].text, s, x, y, color);
 		y += LINE_HEIGHT;
 	}
@@ -307,6 +353,7 @@ void DialogueMenu::calculatePosition(int unusedX, int unusedY) {
 	_screenX = CLIP(_screenX, 0, 640 - w);
 	_screenY = CLIP(_screenY, 0, 480 - h);
 
+	_fadeInItemIndex = 0;
 	debug("calculatePosition: %d %d %d %d %d", _screenX, _screenY, _centerX, _centerY, _maxItemWidth);
 }
 
@@ -324,13 +371,13 @@ void DialogueMenu::clear() {
 	_selectedItemIndex = 0;
 	_listSize = 0;
 	for (int i = 0; i != 10; ++i) {
-		_items[0].text[0] = '\0';
-		_items[0].answerValue = -1;
-		_items[0].field_36 = 0;
-		_items[0].field_42 = -1;
-		_items[0].field_3A = -1;
-		_items[0].field_3E = -1;
-		_items[0].field_46 = 0;
+		_items[i].text.clear();
+		_items[i].answerValue = -1;
+		_items[i].isDone = 0;
+		_items[i].priorityPolite = -1;
+		_items[i].priorityNormal = -1;
+		_items[i].prioritySurly = -1;
+		_items[i].colorIntensity = 0;
 	}
 	_neverRepeatListSize = 0;
 	for (int i = 0; i != 100; ++i) {

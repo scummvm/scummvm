@@ -136,6 +136,10 @@ int Font::getTextWidth(const Common::String &text) {
 	return totalWidth - _spacing1;
 }
 
+int Font::getTextHeight(const Common::String &text) {
+	return _maxHeight;
+}
+
 void Font::reset() {
 	_maxWidth = 0;
 	_maxHeight = 0;

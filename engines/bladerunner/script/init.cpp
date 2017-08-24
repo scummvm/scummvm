@@ -2642,16 +2642,16 @@ void ScriptInit::Init_CDB() {
 }
 
 void ScriptInit::Init_Spinner() {
-	Spinner_Set_Selectable_Destination_Flag(0, 1);
-	Spinner_Set_Selectable_Destination_Flag(1, 1);
-	Spinner_Set_Selectable_Destination_Flag(2, 1);
-	Spinner_Set_Selectable_Destination_Flag(3, 0);
-	Spinner_Set_Selectable_Destination_Flag(4, 0);
-	Spinner_Set_Selectable_Destination_Flag(5, 0);
-	Spinner_Set_Selectable_Destination_Flag(6, 0);
-	Spinner_Set_Selectable_Destination_Flag(7, 0);
-	Spinner_Set_Selectable_Destination_Flag(8, 0);
-	Spinner_Set_Selectable_Destination_Flag(9, 0);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationPoliceStation, true);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationMcCoysApartment, true);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationRuncitersAnimals, true);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationChinatown, false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationTyrellBuilding, false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow, false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationBradburyBuilding, false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationNightclubRow, false);
+	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationHysteriaHall, false);
 }
 
 void ScriptInit::Init_Actor_Friendliness() {

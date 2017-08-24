@@ -24,6 +24,7 @@
 #define BLADERUNNER_SPINNER_H
 
 #include "common/array.h"
+#include "common/rect.h"
 
 namespace BladeRunner {
 
@@ -32,19 +33,16 @@ class Shape;
 class VQAPlayer;
 class UIImagePicker;
 
-#define SPINNER_DESTINATIONS 10
-
 struct SpinnerDestination {
-	int id;
-	int left;
-	int top;
-	int right;
-	int bottom;
+	int          id;
+	Common::Rect rect;
 };
 
 class Spinner {
+	static const int kSpinnerDestinations = 10;
+
 	BladeRunnerEngine     *_vm;
-	bool                   _isDestinationSelectable[SPINNER_DESTINATIONS];
+	bool                   _isDestinationSelectable[kSpinnerDestinations];
 	bool                   _isOpen;
 	VQAPlayer             *_vqaPlayer;
 	SpinnerDestination    *_destinations;
@@ -59,9 +57,9 @@ public:
 	void setSelectableDestinationFlag(int destination, bool selectable);
 	bool querySelectableDestinationFlag(int destination) const;
 
-	int interfaceChooseDest(int vqaLoopId, int loopFlag);
+	int chooseDestination(int vqaLoopId, bool immediately);
 
-	void setIsOpen();
+	void open();
 	bool isOpen() const;
 
 	int handleMouseUp(int x, int y);

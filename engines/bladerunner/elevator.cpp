@@ -29,10 +29,12 @@
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/shape.h"
+#include "bladerunner/script/script.h"
 #include "bladerunner/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
 
 #include "common/rect.h"
+#include "common/str.h"
 #include "common/system.h"
 
 namespace BladeRunner {
@@ -73,7 +75,7 @@ int Elevator::activate(int elevatorId) {
 		return 0;
 	}
 
-	_vqaPlayer->setLoop(1, -1, 0, nullptr, nullptr);
+	_vqaPlayer->setLoop(1, -1, kLoopSetModeJustStart, nullptr, nullptr);
 	_vm->_mouse->setCursor(0);
 
 	for (int i = 0; i != 16; ++i) {
@@ -86,21 +88,21 @@ int Elevator::activate(int elevatorId) {
 	if (elevatorId == 1) {
 		_imagePicker->defineImage(
 			0,
-			220, 298, 308, 392,
+			Common::Rect(220, 298, 308, 392),
 			nullptr,
 			_shapes[11],
 			_shapes[14],
 			nullptr);
 		_imagePicker->defineImage(
 			1,
-			259, 259, 302, 292,
+			Common::Rect(259, 259, 302, 292),
 			nullptr,
 			_shapes[10],
 			_shapes[13],
 			nullptr);
 		_imagePicker->defineImage(
 			2,
-			227, 398, 301, 434,
+			Common::Rect(227, 398, 301, 434),
 			nullptr,
 			_shapes[12],
 			_shapes[15],
@@ -108,7 +110,7 @@ int Elevator::activate(int elevatorId) {
 	} else {
 		_imagePicker->defineImage(
 			4,
-			395, 131, 448, 164,
+			Common::Rect(395, 131, 448, 164),
 			nullptr,
 			_shapes[0],
 			_shapes[5],
@@ -116,7 +118,7 @@ int Elevator::activate(int elevatorId) {
 		);
 		_imagePicker->defineImage(
 			3,
-			395, 165, 448, 198,
+			Common::Rect(395, 165, 448, 198),
 			nullptr,
 			_shapes[1],
 			_shapes[6],
@@ -124,7 +126,7 @@ int Elevator::activate(int elevatorId) {
 		);
 		_imagePicker->defineImage(
 			5,
-			395, 199, 448, 232,
+			Common::Rect(395, 199, 448, 232),
 			nullptr,
 			_shapes[2],
 			_shapes[7],
@@ -132,7 +134,7 @@ int Elevator::activate(int elevatorId) {
 		);
 		_imagePicker->defineImage(
 			6,
-			395, 233, 448, 264,
+			Common::Rect(395, 233, 448, 264),
 			nullptr,
 			_shapes[3],
 			_shapes[8],
@@ -140,7 +142,7 @@ int Elevator::activate(int elevatorId) {
 		);
 		_imagePicker->defineImage(
 			7,
-			395, 265, 448, 295,
+			Common::Rect(395, 265, 448, 295),
 			nullptr,
 			_shapes[4],
 			_shapes[9],
@@ -148,7 +150,7 @@ int Elevator::activate(int elevatorId) {
 		);
 	}
 
-	_imagePicker->setCallbacks(
+	_imagePicker->activate(
 		elevator_mouseInCallback,
 		elevator_mouseOutCallback,
 		elevator_mouseDownCallback,
@@ -165,11 +167,14 @@ int Elevator::activate(int elevatorId) {
 		_vm->gameTick();
 	} while (_buttonClicked == -1);
 
+	_imagePicker->deactivate();
+
 	_vqaPlayer->close();
 	delete _vqaPlayer;
 
-	for (int i = 0; i != (int)_shapes.size(); ++i)
+	for (int i = 0; i != (int)_shapes.size(); ++i) {
 		delete _shapes[i];
+	}
 	_shapes.clear();
 
 	_vm->closeArchive("MODE.MIX");
@@ -191,18 +196,19 @@ bool Elevator::isOpen() const {
 }
 
 int Elevator::handleMouseUp(int x, int y) {
-	_imagePicker->handleMouseAction(x, y, false, true, 0);
+	_imagePicker->handleMouseAction(x, y, false, true, false);
 	return false;
 }
 
 int Elevator::handleMouseDown(int x, int y) {
-	_imagePicker->handleMouseAction(x, y, true, false, 0);
+	_imagePicker->handleMouseAction(x, y, true, false, false);
 	return false;
 }
 
 void Elevator::tick() {
-	if (!_vm->_gameIsRunning)
+	if (!_vm->_gameIsRunning) {
 		return;
+	}
 
 	int frame = _vqaPlayer->update();
 	assert(frame >= -1);
@@ -234,8 +240,8 @@ void Elevator::buttonClick(int buttonId) {
 
 void Elevator::reset() {
 	_isOpen = false;
-	_vqaPlayer = 0;
-	_imagePicker = 0;
+	_vqaPlayer = nullptr;
+	_imagePicker = nullptr;
 	_actorId = -1;
 	_sentenceId = -1;
 	_timeSpeakDescription = 0;
@@ -243,33 +249,33 @@ void Elevator::reset() {
 
 void Elevator::buttonFocus(int buttonId) {
 	switch (buttonId) {
-		case 7:
-			setupDescription(39, 140);
-			break;
-		case 6:
-			setupDescription(39, 130);
-			break;
-		case 5:
-			setupDescription(39, 120);
-			break;
-		case 4:
-			setupDescription(39, 100);
-			break;
-		case 3:
-			setupDescription(39, 110);
-			break;
-		case 2:
-			setupDescription(39, 130);
-			break;
-		case 1:
-			setupDescription(39, 100);
-			break;
-		case 0:
-			setupDescription(39, 150);
-			break;
-		default:
-			resetDescription();
-			break;
+	case 7:
+		setupDescription(kActorAnsweringMachine, 140);
+		break;
+	case 6:
+		setupDescription(kActorAnsweringMachine, 130);
+		break;
+	case 5:
+		setupDescription(kActorAnsweringMachine, 120);
+		break;
+	case 4:
+		setupDescription(kActorAnsweringMachine, 100);
+		break;
+	case 3:
+		setupDescription(kActorAnsweringMachine, 110);
+		break;
+	case 2:
+		setupDescription(kActorAnsweringMachine, 130);
+		break;
+	case 1:
+		setupDescription(kActorAnsweringMachine, 100);
+		break;
+	case 0:
+		setupDescription(kActorAnsweringMachine, 150);
+		break;
+	default:
+		resetDescription();
+		break;
 	}
 }
 
@@ -289,8 +295,9 @@ void Elevator::resetDescription() {
 
 void Elevator::tickDescription() {
 	int now = _vm->getTotalPlayTime();
-	if (_actorId <= 0 || now < _timeSpeakDescription)
+	if (_actorId <= 0 || now < _timeSpeakDescription) {
 		return;
+	}
 
 	_vm->_actors[_actorId]->speechPlay(_sentenceId, false);
 	_actorId = -1;

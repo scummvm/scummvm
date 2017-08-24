@@ -23,6 +23,10 @@
 #ifndef BLADERUNNER_UI_IMAGE_PICKER_H
 #define BLADERUNNER_UI_IMAGE_PICKER_H
 
+#include "common/array.h"
+#include "common/rect.h"
+#include "common/str.h"
+
 namespace Graphics {
 struct Surface;
 }
@@ -31,9 +35,17 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 class Shape;
-struct UIImagePickerImage;
 
 typedef void UIImagePickerCallback(int, void*);
+
+struct UIImagePickerImage {
+	int             active;
+	Common::Rect    rect;
+	Shape          *shapeUp;
+	Shape          *shapeHovered;
+	Shape          *shapeDown;
+	Common::String  tooltip;
+};
 
 class UIImagePicker {
 	BladeRunnerEngine *_vm;
@@ -42,9 +54,9 @@ class UIImagePicker {
 	int _imageCount;
 	int _hoveredImageIndex;
 	int _pressedImageIndex;
-	int _hoverStartTimestamp;
+	uint32 _hoverStartTimestamp;
 	int _isButtonDown;
-	UIImagePickerImage *_images;
+	Common::Array<UIImagePickerImage> _images;
 
 	UIImagePickerCallback *_mouseInCallback;
 	UIImagePickerCallback *_mouseOutCallback;
@@ -57,7 +69,7 @@ public:
 	~UIImagePicker();
 
 	void resetImages();
-	bool defineImage(int i, int left, int top, int right, int bottom, Shape *shapeUp, Shape *shapeHovered, Shape *shapeDown, const char *tooltip);
+	bool defineImage(int i, Common::Rect rect, Shape *shapeUp, Shape *shapeHovered, Shape *shapeDown, const char *tooltip);
 
 	bool setImageTop(int i, int top);
 	bool setImageLeft(int i, int left);
@@ -68,16 +80,16 @@ public:
 
 	bool resetActiveImage(int i);
 
-	void setCallbacks(UIImagePickerCallback *mouseInCallback,
-	                  UIImagePickerCallback *mouseOutCallback,
-	                  UIImagePickerCallback *mouseDownCallback,
-	                  UIImagePickerCallback *mouseUpCallback,
-	                  void *callbackData);
+	void activate(UIImagePickerCallback *mouseInCallback,
+	              UIImagePickerCallback *mouseOutCallback,
+	              UIImagePickerCallback *mouseDownCallback,
+	              UIImagePickerCallback *mouseUpCallback,
+	              void *callbackData);
 
-	void resetCallbacks();
+	void deactivate();
 
-	void drawTooltip();
 	void draw(Graphics::Surface &surface);
+	void drawTooltip(Graphics::Surface &surface, int x, int y);
 
 	void handleMouseAction(int x, int y, bool down, bool up, bool ignore = false);
 

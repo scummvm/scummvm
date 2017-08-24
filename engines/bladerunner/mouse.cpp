@@ -23,9 +23,11 @@
 #include "bladerunner/mouse.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/regions.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/shape.h"
+#include "bladerunner/view.h"
 #include "bladerunner/zbuffer.h"
 
 #include "graphics/surface.h"

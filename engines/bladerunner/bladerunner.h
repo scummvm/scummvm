@@ -32,7 +32,10 @@
 #include "engines/engine.h"
 
 #include "graphics/surface.h"
-#include "suspects_database.h"
+
+namespace Common {
+struct Event;
+}
 
 namespace BladeRunner {
 
@@ -49,6 +52,7 @@ class Actor;
 class ADQ;
 class AIScripts;
 class AmbientSounds;
+class AudioMixer;
 class AudioPlayer;
 class AudioSpeech;
 class Chapters;
@@ -72,6 +76,7 @@ class Shape;
 class SliceAnimations;
 class SliceRenderer;
 class Spinner;
+class SuspectsDatabase;
 class TextResource;
 class View;
 class Waypoints;
@@ -89,6 +94,7 @@ public:
 	ADQ              *_adq;
 	AIScripts        *_aiScripts;
 	AmbientSounds    *_ambientSounds;
+	AudioMixer       *_audioMixer;
 	AudioPlayer      *_audioPlayer;
 	AudioSpeech      *_audioSpeech;
 	Chapters         *_chapters;
@@ -176,6 +182,8 @@ public:
 	void gameTick();
 	void actorsUpdate();
 	void handleEvents();
+	void handleKeyUp(Common::Event &event);
+	void handleKeyDown(Common::Event &event);
 	void handleMouseAction(int x, int y, bool buttonLeft, bool buttonDown);
 	void handleMouseClickExit(int x, int y, int exitIndex);
 	void handleMouseClickRegion(int x, int y, int regionIndex);

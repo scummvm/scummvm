@@ -32,7 +32,6 @@ struct Color {
 	float g;
 	float b;
 
-
 	Color() {
 	}
 

@@ -26,7 +26,7 @@
 #include "bladerunner/shape.h"
 
 #include "common/array.h"
-
+#include "common/str.h"
 #include "graphics/surface.h"
 
 namespace BladeRunner {
@@ -35,13 +35,13 @@ class BladeRunnerEngine;
 class TextResource;
 
 struct DialogueItem {
-	char text[50];
+	Common::String text;
 	int  answerValue;
-	int  field_36;
-	int  field_3A;
-	int  field_3E;
-	int  field_42;
-	int  field_46;
+	int  colorIntensity;
+	int  priorityPolite;
+	int  priorityNormal;
+	int  prioritySurly;
+	int  isDone;
 };
 
 class DialogueMenu {
@@ -67,6 +67,8 @@ class DialogueMenu {
 	int                   _maxItemWidth;
 	DialogueItem          _items[10];
 
+	int                   _fadeInItemIndex;
+
 public:
 	DialogueMenu(BladeRunnerEngine *vm);
 	~DialogueMenu();
@@ -74,23 +76,26 @@ public:
 	bool loadText(const char *name);
 
 	bool show();
-	bool showAt(int x, int y);
 	bool hide();
+	bool addToList(int answer, bool done, int priorityPolite, int priorityNormal, int prioritySurly);
+	bool addToListNeverRepeatOnceSelected(int answer, int priorityPolite, int priorityNormal, int prioritySurly);
 	bool clearList();
-	bool addToList(int answer, int a3, int a4, int a5, int a6);
-	bool addToListNeverRepeatOnceSelected(int answer, int a3, int a4, int a5);
 	int  queryInput();
 	int  listSize();
 	bool isVisible();
 	bool isOpen();
 	void tick(int x, int y);
-	void draw();
+	void draw(Graphics::Surface &s);
+
+	void mouseUp();
+	bool waitingForInput();
+
+private:
+	bool showAt(int x, int y);
 	int  getAnswerIndex(int answer);
 	const char *getText(int id);
 	void calculatePosition(int unusedX = 0, int unusedY = 0);
 
-	void mouseUp();
-	bool waitingForInput();
 
 	void clear();
 	void reset();

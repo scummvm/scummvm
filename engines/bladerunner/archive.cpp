@@ -145,7 +145,7 @@ Common::SeekableReadStream *MIXArchive::createReadStreamForMember(const Common::
 	uint32 i = indexForId(id);
 
 	if (i == _entry_count)
-		return NULL;
+		return nullptr;
 
 	uint32 start = _entries[i].offset + 6 + 12 * _entry_count;
 	uint32 end   = _entries[i].length + start;
