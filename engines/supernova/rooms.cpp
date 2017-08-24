@@ -893,9 +893,6 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			obj1._exitRoom = ROCKS;
 			return false;
 		}
-	} else if ((verb == ACTION_TAKE) && (obj1._id == KEYCARD2)) {
-		obj1._name = "Keycard des Commanders";
-		return false;
 	} else if ((verb == ACTION_TAKE) && (obj1._id == GENERATOR_WIRE))
 		_vm->renderMessage("Das Kabel ist schon ganz|richtig an dieser Stelle.");
 	else if ((verb == ACTION_PULL) && (obj1._id == SHORT_WIRE) &&
