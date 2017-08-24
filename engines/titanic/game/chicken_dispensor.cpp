@@ -113,11 +113,13 @@ bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
 		CActMsg actMsg("Dispense Chicken");
 		actMsg.execute("Chicken");
 
+		#ifdef FIX_DISPENSOR_TEMPATURE
 		if (_dispenseMode != DISPENSE_HOT) {
 			// WORKAROUND: If the fuse for the dispensor is removed in Titania's fusebox,
 			// make the dispensed chicken already cold
 			CChicken::_temperature = 0;
 		}
+		#endif
 	} else if (_dispensed) {
 		// Chicken dispensed whilst dispensor is "disabled", which basically
 		// spits the chicken out at high speed directly into the SuccUBus

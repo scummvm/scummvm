@@ -74,6 +74,12 @@ enum TitanicDebugChannels {
 
 #define SOUND(enName, deName) (g_vm->isGerman() ? deName : enName)
 
+// If enabled, fixes an original bug where dispensed chickens weren't
+// meant to be hot unless the Yellow fuse was left in the Fusebox.
+// This is being left disabled for now, since most walkthroughs for
+// the game redundantly suggest removing the fuse, which is wrong
+//#define FIX_DISPENSOR_TEMPATURE
+
 struct TitanicGameDescription;
 class TitanicEngine;
 
