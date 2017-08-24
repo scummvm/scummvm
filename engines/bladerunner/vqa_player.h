@@ -48,7 +48,6 @@ class ZBuffer;
 class VQAPlayer {
 	BladeRunnerEngine           *_vm;
 	Common::SeekableReadStream  *_s;
-	const Graphics::Surface     *_surface;
 	VQADecoder                   _decoder;
 	const uint16                *_zBuffer;
 	Audio::QueuingAudioStream   *_audioStream;
@@ -78,7 +77,6 @@ public:
 	VQAPlayer(BladeRunnerEngine *vm, Graphics::Surface *surface)
 		: _vm(vm),
 		  _s(nullptr),
-		  _surface(surface),
 		  _decoder(surface),
 		  _zBuffer(nullptr),
 		  _audioStream(nullptr),

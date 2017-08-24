@@ -32,7 +32,7 @@ enum PlayerAgenda {
 	kPlayerAgendaNormal = 1,
 	kPlayerAgendaSurly = 2,
 	kPlayerAgendaErratic = 3,
-	kPlayerAgendaUserChoice = 4,
+	kPlayerAgendaUserChoice = 4
 };
 
 class Settings {
