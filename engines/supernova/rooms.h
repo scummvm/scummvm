@@ -538,7 +538,7 @@ public:
 
 		_objectState[0] = Object("langes Kabel mit Stecker",Object::defaultDescription,GENERATOR_WIRE,COMBINABLE,255,255,0);
 		_objectState[1] = Object("leere Kabelrolle",Object::defaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
-		_objectState[2] = Object("Keycard","Hey, das ist die Keycard des Commanders!|Er mu\341 sie bei dem \201berst\201rzten|Aufbruch verloren haben.",KEYCARD2,COMBINABLE | TAKE,12,12,5 | 128);
+		_objectState[2] = Object("Keycard des Commanders","Hey, das ist die Keycard des Commanders!|Er mu\341 sie bei dem \201berst\201rzten|Aufbruch verloren haben.",KEYCARD2,COMBINABLE | TAKE,12,12,5 | 128);
 		_objectState[3] = Object("Seil",Object::defaultDescription,GENERATOR_ROPE,COMBINABLE,255,255,0);
 		_objectState[4] = Object("Luke","Sie f\201hrt nach drau\341en.",OUTERHATCH,EXIT | OPENABLE,1,2,1,OUTSIDE,22);
 		_objectState[5] = Object("Luke",Object::defaultDescription,NULLOBJECT,OPENABLE | CLOSED,3,3,0);
