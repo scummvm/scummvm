@@ -278,10 +278,17 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 		actionClear();
 		break;
 
-	case kMenuActionCommand:
-		_engine->processTurn(&text, NULL);
-		break;
+	case kMenuActionCommand: {
+			_engine->_inputText = text;
+			Common::String inp = text + '\n';
 
+			appendText(inp.c_str());
+
+			_consoleWindow->clearInput();
+
+			_engine->processTurn(&text, NULL);
+			break;
+		}
 	default:
 		warning("Unknown action: %d", action);
 
