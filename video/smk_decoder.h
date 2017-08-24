@@ -23,6 +23,7 @@
 #ifndef VIDEO_SMK_PLAYER_H
 #define VIDEO_SMK_PLAYER_H
 
+#include "common/bitstream.h"
 #include "common/rational.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
@@ -34,7 +35,6 @@ class QueuingAudioStream;
 }
 
 namespace Common {
-class BitStream;
 class SeekableReadStream;
 }
 
@@ -91,9 +91,9 @@ protected:
 		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
-		void readTrees(Common::BitStream &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
+		void readTrees(Common::BitStreamMemory8LSB &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
 		void increaseCurFrame() { _curFrame++; }
-		void decodeFrame(Common::BitStream &bs);
+		void decodeFrame(Common::BitStreamMemory8LSB &bs);
 		void unpackPalette(Common::SeekableReadStream *stream);
 
 	protected:

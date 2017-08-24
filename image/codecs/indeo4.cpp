@@ -56,7 +56,7 @@ bool Indeo4Decoder::isIndeo4(Common::SeekableReadStream &stream) {
 	stream.seek(-16, SEEK_CUR);
 
 	// Validate the first 18-bit word has the correct identifier
-	Indeo::GetBits gb(new Common::MemoryReadStream(buffer, 16 * 8), DisposeAfterUse::YES);
+	Indeo::GetBits gb(buffer, 16 * 8);
 	bool isIndeo4 = gb.getBits(18) == 0x3FFF8;
 
 	return isIndeo4;
@@ -74,7 +74,7 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameSize = stream.size();
 
 	// Set up the GetBits instance for reading the data
-	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize));
+	_ctx._gb = new GetBits(_ctx._frameData, _ctx._frameSize);
 
 	// Decode the frame
 	int err = decodeIndeoFrame();
@@ -484,8 +484,8 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 
 				mb->_qDelta = 0;
 				if (!band->_plane && !band->_bandNum && _ctx._inQ) {
-					mb->_qDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table,
-						IVI_VLC_BITS, 1);
+					mb->_qDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table,
+						IVI_VLC_BITS);
 					mb->_qDelta = IVI_TOSIGNED(mb->_qDelta);
 				}
 
@@ -522,8 +522,8 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 					if (refMb) mb->_qDelta = refMb->_qDelta;
 				} else if (mb->_cbp || (!band->_plane && !band->_bandNum &&
 					_ctx._inQ)) {
-					mb->_qDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table,
-						IVI_VLC_BITS, 1);
+					mb->_qDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table,
+						IVI_VLC_BITS);
 					mb->_qDelta = IVI_TOSIGNED(mb->_qDelta);
 				}
 
@@ -543,22 +543,22 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 						}
 					} else {
 						// decode motion vector deltas
-						mvDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table,
-							IVI_VLC_BITS, 1);
+						mvDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table,
+							IVI_VLC_BITS);
 						mvY += IVI_TOSIGNED(mvDelta);
-						mvDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table,
-							IVI_VLC_BITS, 1);
+						mvDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table,
+							IVI_VLC_BITS);
 						mvX += IVI_TOSIGNED(mvDelta);
 						mb->_mvX = mvX;
 						mb->_mvY = mvY;
 						if (mb->_type == 3) {
-							mvDelta = _ctx._gb->getVLC2(
+							mvDelta = _ctx._gb->getVLC2<1>(
 								_ctx._mbVlc._tab->_table,
-								IVI_VLC_BITS, 1);
+								IVI_VLC_BITS);
 							mvY += IVI_TOSIGNED(mvDelta);
-							mvDelta = _ctx._gb->getVLC2(
+							mvDelta = _ctx._gb->getVLC2<1>(
 								_ctx._mbVlc._tab->_table,
-								IVI_VLC_BITS, 1);
+								IVI_VLC_BITS);
 							mvX += IVI_TOSIGNED(mvDelta);
 							mb->_bMvX = -mvX;
 							mb->_bMvY = -mvY;

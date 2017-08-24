@@ -23,6 +23,7 @@
 #ifndef VIDEO_PSX_DECODER_H
 #define VIDEO_PSX_DECODER_H
 
+#include "common/bitstream.h"
 #include "common/endian.h"
 #include "common/rational.h"
 #include "common/rect.h"
@@ -35,9 +36,7 @@ class QueuingAudioStream;
 }
 
 namespace Common {
-class BitStream;
 class Huffman;
-class SeekableReadStream;
 }
 
 namespace Graphics {
@@ -91,7 +90,7 @@ private:
 		const Graphics::Surface *decodeNextFrame();
 
 		void setEndOfTrack() { _endOfTrack = true; }
-		void decodeFrame(Common::SeekableReadStream *frame, uint sectorCount);
+		void decodeFrame(Common::BitStreamMemoryStream *frame, uint sectorCount);
 
 	private:
 		Graphics::Surface *_surface;
@@ -108,19 +107,19 @@ private:
 
 		uint16 _macroBlocksW, _macroBlocksH;
 		byte *_yBuffer, *_cbBuffer, *_crBuffer;
-		void decodeMacroBlock(Common::BitStream *bits, int mbX, int mbY, uint16 scale, uint16 version);
-		void decodeBlock(Common::BitStream *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane);
+		void decodeMacroBlock(Common::BitStreamMemory16LEMSB *bits, int mbX, int mbY, uint16 scale, uint16 version);
+		void decodeBlock(Common::BitStreamMemory16LEMSB *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane);
 
-		void readAC(Common::BitStream *bits, int *block);
+		void readAC(Common::BitStreamMemory16LEMSB *bits, int *block);
 		Common::Huffman *_acHuffman;
 
-		int readDC(Common::BitStream *bits, uint16 version, PlaneType plane);
+		int readDC(Common::BitStreamMemory16LEMSB *bits, uint16 version, PlaneType plane);
 		Common::Huffman *_dcHuffmanLuma, *_dcHuffmanChroma;
 		int _lastDC[3];
 
 		void dequantizeBlock(int *coefficients, float *block, uint16 scale);
 		void idct(float *dequantData, float *result);
-		int readSignedCoefficient(Common::BitStream *bits);
+		int readSignedCoefficient(Common::BitStreamMemory16LEMSB *bits);
 	};
 
 	class PSXAudioTrack : public AudioTrack {
