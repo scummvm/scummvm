@@ -123,7 +123,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Polygons with byte 1
 	FANGAME("Periapt", "7e26a7827c694232624321a5a6844511", 406006),
 	FANGAME("Periapt", "bc36e40de279d5f0844577fe702d9f64", 406006), // alt version
-	// Invalid rect in scene "Access Tube 1"
+	// Cannot push buttons
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "fee9f1de7ad9096d084461d6066192b1", 431640),
 	FANGAME("The Phoenix", "bd6dabf7a19d2ab7902498a8513f8c71", 431643),
 	FANGAME("Psychotic!", "d6229615b71b189f6ef71399a0856cd2", 367309),
