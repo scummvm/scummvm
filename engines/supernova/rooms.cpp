@@ -95,7 +95,6 @@ bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
-	int32 *energy;
 	Room *room;
 	Common::String input;
 
@@ -176,16 +175,17 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawImage(_gm->invertSection(5));
 			_gm->drawImage(_gm->invertSection(4));
 			room = _gm->_rooms[GENERATOR];
+			int32 *energyDaysLeft;
 			if (room->isSectionVisible(9)) {
-				energy = &_gm->_state._landingModuleEnergyDaysLeft;
+				energyDaysLeft = &_gm->_state._landingModuleEnergyDaysLeft;
 			} else {
-				energy = &_gm->_state._shipEnergyDaysLeft;
+				energyDaysLeft = &_gm->_state._shipEnergyDaysLeft;
 			}
 			if (_gm->_state._timeSleep > _gm->_state._arrivalDaysLeft) {
 				_gm->_state._timeSleep = _gm->_state._arrivalDaysLeft;
 			}
-			if (_gm->_state._timeSleep >= *energy) {
-				_gm->_state._timeSleep = *energy;
+			if (_gm->_state._timeSleep >= *energyDaysLeft) {
+				_gm->_state._timeSleep = *energyDaysLeft;
 				if (room->isSectionVisible(9)) {
 					room = _gm->_rooms[LANDINGMODULE]; // Monitors off
 					room->setSectionVisible(2, false);
@@ -221,11 +221,11 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 				}
 			}
 			_gm->_state._arrivalDaysLeft -= _gm->_state._timeSleep;
-			*energy -= _gm->_state._timeSleep;
+			*energyDaysLeft -= _gm->_state._timeSleep;
 			_gm->_state._timeStarting = _gm->_state._time - ticksToMsec(786520); // 12pm
 			_gm->_state._timeAlarmSystem = _gm->_state._timeAlarm + _gm->_state._timeStarting;
 			_gm->_state._alarmOn = (_gm->_state._timeAlarmSystem > _gm->_state._time);
-			if (!*energy) {
+			if (*energyDaysLeft == 0) {
 				_gm->turnOff();
 				room = _gm->_rooms[GENERATOR];
 				room->setSectionVisible(4, room->isSectionVisible(2));
