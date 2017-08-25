@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
 
@@ -690,24 +691,19 @@ int GameManager::dialog(int num, byte *rowLength[], const char **text[6], int nu
 }
 
 void GameManager::turnOff() {
-	if (_state._powerOff)
-		return;
-
 	_state._powerOff = true;
-	roomBrightness();
-
 }
+
 void GameManager::turnOn() {
 	if (!_state._powerOff)
 		return;
 
 	_state._powerOff = false;
-	_vm->paletteBrightness();
-	Room *room = _rooms[SLEEP];
-	room->setSectionVisible(1, false);
-	room->setSectionVisible(2, false);
-	room = _rooms[COCKPIT];
-	room->setSectionVisible(22, false);
+	_vm->_brightness = 255;
+//	_vm->paletteBrightness();
+	_rooms[SLEEP]->setSectionVisible(1, false);
+	_rooms[SLEEP]->setSectionVisible(2, false);
+	_rooms[COCKPIT]->setSectionVisible(22, false);
 }
 
 void GameManager::takeObject(Object &obj) {
@@ -815,70 +811,13 @@ void GameManager::mouseWait(int delay) {
 	// STUB
 }
 
-static void dimColor(SupernovaEngine *vm, int color) {
-	color -= 16;
-	color *= 3;
-	// TODO: alters palette image data permanently (get system palette instead?)
-	vm->_currentImage->_palette[color + 0] = vm->_currentImage->_palette[color + 0] * 3 / 5;
-	vm->_currentImage->_palette[color + 1] = vm->_currentImage->_palette[color + 1] * 3 / 5;
-	vm->_currentImage->_palette[color + 2] = vm->_currentImage->_palette[color + 2] * 3 / 5;
-}
-
 void GameManager::roomBrightness() {
-	const byte specialColors[2][18] = {
-	    {0x42, 0x49, 0x55, 0x68, 0x50, 0x5d, 0x3c, 1},
-	    {0x85, 0x91, 0x99, 0x92, 0x9b, 0x96, 0x9a, 0xa6,
-	     0xb0, 0xb4, 0xb5, 0xc2, 0xd1, 0xbe, 0xb6, 0xa8,
-	     0x6b, 1}
-	};
-	char sf;
-	int i;
-	if ((_currentRoom == _rooms[HOLD]) && (_state._benOverlay == 1)) {
-		if (_state._powerOff) {
-			for (int f = 16; f < 255; f++) {
-				i = 0;
-				do {
-					sf = specialColors[0][i] - 1;
-					i++;
-				} while (sf && (sf != f));
-				if (!sf)
-					dimColor(_vm, f);
-			}
-		}
-		if (!(_state._landingModuleEnergyDaysLeft && _rooms[LANDINGMODULE]->isSectionVisible(7))) {
-			i = 0;
-			while (sf = specialColors[0][i] - 1) {
-				dimColor(_vm, sf);
-				i++;
-			};
-		}
-	} else if ((_currentRoom == _rooms[LANDINGMODULE]) && (_state._benOverlay == 1)) {
-		if (!(_state._landingModuleEnergyDaysLeft && _rooms[LANDINGMODULE]->isSectionVisible(7))) {
-			for (int f = 16; f < 255; f++) {
-				i=0;
-				do {
-					sf = specialColors[1][i] - 1;
-					i++;
-				} while (sf && (sf != f));
-				if (!sf)
-					dimColor(_vm, f);
-			}
-		}
-		if (_state._powerOff) {
-			i=0;
-			while (sf = specialColors[1][i] - 1) {
-				dimColor(_vm, sf);
-				i++;
-			};
-		}
-	} else if ((_currentRoom == _rooms[CAVE]) && (_state._benOverlay == 1)) {
-		_vm->_brightness = 0;
-	} else if ((_currentRoom != _rooms[OUTSIDE]) &&
-	           (_currentRoom <  _rooms[ROCKS]) && (_state._benOverlay == 1)) {
+	if ((_currentRoom != _rooms[OUTSIDE]) && (_currentRoom < _rooms[ROCKS]) ) {
 		if (_state._powerOff)
-			for (int f = 16; f < 255; f++)
-				dimColor(_vm, f);
-	} else if ((_currentRoom == _rooms[GUARD3]) && (_state._benOverlay == 2)) {
+			_vm->_brightness = 153;
+	} else if ((_currentRoom == _rooms[CAVE])) {
+		_vm->_brightness = 0;
+	} else if ((_currentRoom == _rooms[GUARD3])) {
 		if (_state._powerOff)
 			_vm->_brightness = 0;
 	}
@@ -1559,10 +1498,6 @@ void GameManager::executeRoom() {
 		drawCommandBox();
 	}
 	roomBrightness();
-	if (_vm->_brightness == 0)
-		_vm->paletteFadeIn();
-	else
-		_vm->paletteBrightness();
 	if (!_currentRoom->hasSeen())
 		_currentRoom->onEntrance();
 }
