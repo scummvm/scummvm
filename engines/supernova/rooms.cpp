@@ -254,7 +254,6 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void ShipSleepCabin::animation() {
-	static char color;
 	if (_gm->_state._powerOff && _gm->_state._arrivalDaysLeft) {
 		if (_gm->_guiEnabled) {
 			if (isSectionVisible(1)) {
@@ -265,13 +264,13 @@ void ShipSleepCabin::animation() {
 				setSectionVisible(2, false);
 			}
 		} else {
-			if (color == kColorLightRed) {
-				color = kColorDarkBlue;
+			if (_color == kColorLightRed) {
+				_color = kColorDarkBlue;
 			} else {
-				color = kColorLightRed;
+				_color = kColorLightRed;
 			}
 
-			_vm->renderText("Achtung", 60, 75, color);
+			_vm->renderText("Achtung", 60, 75, _color);
 		}
 	} else if (isSectionVisible(5) && _gm->_guiEnabled) {
 		if (isSectionVisible(4))
@@ -332,17 +331,15 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 void ShipCockpit::animation() {
-	static byte color;
-
 	if (!_gm->_guiEnabled) {
-		if (color) {
-			color = kColorBlack;
+		if (_color) {
+			_color = kColorBlack;
 			_gm->setAnimationTimer(5);
 		} else {
-			color = kColorLightYellow;
+			_color = kColorLightYellow;
 			_gm->setAnimationTimer(10);
 		}
-		_vm->renderText("Achtung: Triebwerke funktionsunf\204hig", 50, 145, color);
+		_vm->renderText("Achtung: Triebwerke funktionsunf\204hig", 50, 145, _color);
 	} else {
 		if (isSectionVisible(21)) {
 			_gm->drawImage(_gm->invertSection(21));
@@ -354,8 +351,8 @@ void ShipCockpit::animation() {
 	}
 	if (_gm->_state._powerOff) {
 		if (!_gm->_guiEnabled) {
-			_vm->renderText("Energievorrat ersch\224pft", 97, 165, color);
-			_vm->renderText("Notstromversorgung aktiv", 97, 175, color);
+			_vm->renderText("Energievorrat ersch\224pft", 97, 165, _color);
+			_vm->renderText("Notstromversorgung aktiv", 97, 175, _color);
 		} else {
 			if (isSectionVisible(21))
 				_gm->drawImage(22);
@@ -682,13 +679,11 @@ void ShipAirlock::onEntrance() {
 }
 
 bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
-	static char beschr2[] = "Ein St\201ck Schrott.";
-	Room *r;
+	Room *room;
 
-	if ((verb == ACTION_LOOK) && (obj1._id == SCRAP_LK) &&
-	        (obj1._description != beschr2)) {
+	if ((verb == ACTION_LOOK) && (obj1._id == SCRAP_LK) && (obj1._description != _descriptionScrap)) {
 		_vm->renderMessage(obj1._description.c_str());
-		obj1._description = beschr2;
+		obj1._description = _descriptionScrap;
 		_gm->takeObject(*getObject(2));
 	} else if (((verb == ACTION_OPEN) || (verb == ACTION_CLOSE)) &&
 	           (obj1._id == OUTERHATCH_TOP)) {
@@ -712,16 +707,16 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawImage(5);
 			getObject(0)->_name = "langes Kabel mit Stecker";
 			getObject(0)->_click = 10;
-			r = _gm->_rooms[CABIN_L2];
+			room = _gm->_rooms[CABIN_L2];
 			_gm->_inventory.remove(*getObject(9));
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, GENERATOR_TOP)) {
 		if (isSectionVisible(5)) {
-			r = _gm->_rooms[GENERATOR];
-			r->getObject(0)->_click = 15;
-			r->getObject(1)->_click = 13;
-			r->setSectionVisible(6, false);
-			r->setSectionVisible(8, false);
+			room = _gm->_rooms[GENERATOR];
+			room->getObject(0)->_click = 15;
+			room->getObject(1)->_click = 13;
+			room->setSectionVisible(6, false);
+			room->setSectionVisible(8, false);
 			_gm->drawImage(_gm->invertSection(5));
 			_gm->drawImage(6);
 			setSectionVisible(4, false);
