@@ -310,11 +310,11 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderText("0 hpm");
 		_vm->renderText("Ziel: Arsano 3", 50, 70, kColorLightYellow);
 		_vm->renderText("Entfernung: ", 50, 90, kColorLightYellow);
-		_vm->renderText(Common::String::format("%d", _gm->_state._arrivalDaysLeft / ticksToMsec(400)).c_str());
+		_vm->renderText(Common::String::format("%d", _gm->_state._arrivalDaysLeft / 400).c_str());
 		_vm->renderText(",");
-		c[0] = (_gm->_state._arrivalDaysLeft / ticksToMsec(40)) % 10 + '0';
+		c[0] = (_gm->_state._arrivalDaysLeft / 40) % 10 + '0';
 		_vm->renderText(c);
-		c[0] = (_gm->_state._arrivalDaysLeft / ticksToMsec(4)) % 10 + '0';
+		c[0] = (_gm->_state._arrivalDaysLeft / 4) % 10 + '0';
 		_vm->renderText(c);
 		_vm->renderText(" Lichtjahre");
 		_vm->renderText("Dauer der Reise bei momentaner Geschwindigkeit:", 50, 110, kColorLightYellow);
