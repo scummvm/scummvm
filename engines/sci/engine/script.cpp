@@ -912,7 +912,7 @@ SciSpan<const byte> Script::findBlockSCI0(ScriptObjectTypes type, bool findLastB
 		assert(blockSize > 0);
 
 		if (blockType == type) {
-			foundBlock = buf.subspan(0, blockSize, Common::String::format("%s, %s block", _buf->name().c_str(), sciObjectTypeNames[type]));;
+			foundBlock = buf.subspan(0, blockSize, Common::String::format("%s, %s block", _buf->name().c_str(), sciObjectTypeNames[type]));
 
 			if (!findLastBlock) {
 				break;
