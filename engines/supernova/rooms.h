@@ -181,6 +181,7 @@ public:
 private:
 	Common::String _codeword_DE;
 	Common::String _codeword_EN;
+	byte _color;
 };
 
 class ShipCockpit : public Room {
@@ -201,6 +202,9 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void animation();
 	virtual void onEntrance();
+
+private:
+	byte _color;
 };
 
 class ShipCabinL1: public Room {
@@ -496,10 +500,15 @@ public:
 		_objectState[9] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,AIRLOCK,22);
 		_objectState[10] = Object("Luke","Sie f\201hrt nach drau\341en.",OUTERHATCH_TOP,EXIT | OPENABLE | OPENED,3,3,0,GENERATOR,8);
 		_objectState[11] = Object("Generator","Er versorgt das Raumschiff mit Strom.",GENERATOR_TOP,EXIT,12,12,0,GENERATOR,8);
+
+		_descriptionScrap = "Ein St\201ck Schrott.";
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 	virtual void onEntrance();
+
+private:
+	Common::String _descriptionScrap;
 };
 
 class ShipLandingModule : public Room {
