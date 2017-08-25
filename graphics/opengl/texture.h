@@ -42,6 +42,9 @@ public:
 	uint getTexWidth() const { return _texWidth; }
 	uint getTexHeight() const { return _texHeight; }
 
+	static const Graphics::PixelFormat getRGBAPixelFormat();
+	static const Graphics::PixelFormat get565PixelFormat();
+
 protected:
 	bool _managedTexture;
 	GLuint _texture;

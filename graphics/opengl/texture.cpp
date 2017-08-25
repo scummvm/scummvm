@@ -42,7 +42,7 @@ static T nextHigher2(T k) {
 	return k + 1;
 }
 
-static const Graphics::PixelFormat getRGBAPixelFormat() {
+const Graphics::PixelFormat Texture::getRGBAPixelFormat() {
 #ifdef SCUMM_BIG_ENDIAN
 	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #else
@@ -50,7 +50,7 @@ static const Graphics::PixelFormat getRGBAPixelFormat() {
 #endif
 }
 
-static const Graphics::PixelFormat get565PixelFormat() {
+const Graphics::PixelFormat Texture::get565PixelFormat() {
 	return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 }
 

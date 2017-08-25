@@ -155,11 +155,7 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 	initializeOpenGLContext();
 	_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
 
-#ifdef SCUMM_BIG_ENDIAN
-	_overlayFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#else
-	_overlayFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
+	_overlayFormat = OpenGL::Texture::getRGBAPixelFormat();
 	_overlayScreen = new OpenGL::TiledSurface(effectiveWidth, effectiveHeight, _overlayFormat);
 
 	_overlayWidth = effectiveWidth;
