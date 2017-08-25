@@ -99,6 +99,10 @@ bool CPetConversations::reset() {
 		_log.setColor(getColor(2));
 	}
 
+	// WORKAROUND: After loading, mark log as changed so the
+	// current NPC portrait to display gets recalculated
+	_logChanged = true;
+
 	return true;
 }
 
