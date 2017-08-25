@@ -38,7 +38,6 @@ static const ADGameDescription gameDescriptions[] = {
 	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "57de8f1f79a24fa1a296aa10242c3648", 1843104),
 	FANGAMEND("The Ashland Revolution", "The Ashland Revolution Demo", "18f1f5d1081b9a5676ccfb0c3b857059", 145023), // Original file name "The Ashland Revolution Demo†"
 	FANGAME("The Axe-orcist", "9718b72e86a9727bbd68e12fa992b268", 308764),
-	// Crash on third screen
 	FANGAME("Brownie's Dream", "379f2c810efc18bad932049d331df1b6", 440704),
 	FANGAMEN("Brownie's Time Travels", "Brownie's Time Travels v1.2", "d95999aff4e283bd21db686cfb2cb9b9", 471589),
 	FANGAME("Bug Hunt", "b55b23a5f38d28407bd6c178a64ab629", 195699),
@@ -46,7 +45,6 @@ static const ADGameDescription gameDescriptions[] = {
 	BIGGAME("cantitoe", "", "Camp Cantitoe", "4a44860fdfe5b9e98bcf8433801cd925", 616985),
 	FANGAME("Canal District", "061a09e9258145f6a585e869a0319004", 641470),
 	FANGAME("Carbon Copy", "322410318c60045928a10f6b4c0b0a87", 519445),
-	// Invalid rect in scene "FINALE"
 	FANGAME("Castle of Ert", "069daab46729291a615e9ee3528008ff", 198955),
 	FANGAMEN("Castle of Ert", "Castle of Ert.1", "ecadcdd9bdee68aeb32507932857db30", 198983), // alt version
 	FANGAMEND("Death Mall", "Death Mall Demo", "8284351df1c7b678279139ed486ab127", 254874),
