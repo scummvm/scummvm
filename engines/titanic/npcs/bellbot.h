@@ -30,6 +30,7 @@ namespace Titanic {
 class CBellBot : public CTrueTalkNPC {
 	DECLARE_MESSAGE_MAP;
 	bool OnSummonBotMsg(COnSummonBotMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool Use(CUse *msg);

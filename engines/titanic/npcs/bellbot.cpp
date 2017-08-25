@@ -30,6 +30,7 @@ namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBellBot, CTrueTalkNPC)
 	ON_MESSAGE(OnSummonBotMsg)
+	ON_MESSAGE(EnterViewMsg)
 	ON_MESSAGE(LeaveViewMsg)
 	ON_MESSAGE(MovieEndMsg)
 	ON_MESSAGE(Use)
@@ -94,6 +95,16 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 	playClip("Walk On", MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	movieEvent();
 	_npcFlags |= NPCFLAG_MOVING;
+
+	return true;
+}
+
+bool CBellBot::EnterViewMsg(CEnterViewMsg *msg) {
+	// WORKAROUND: Calling bot in front of doors and then going through them
+	// can leave it in the view. Detect this and properly remove him when
+	// the player returns to that view
+	if (msg->_newView == getParent() && getPetControl()->canSummonBot("BellBot"))
+		petMoveToHiddenRoom();
 
 	return true;
 }
