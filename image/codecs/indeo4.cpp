@@ -761,11 +761,12 @@ int Indeo4Decoder::decodeTransparency() {
 		}
 	}
 
-	// FIXME: The transparency plane can be split, though it is not clear if
-	// this is in scalability mode, local decoding mode, or both. This adds
-	// complexity to the implementation, so avoid supporting unless it turns out
-	// to actually be necessary for correct decoding of game videos.
-	assert(!_ctx._isScalable);
+	// FIXME: The transparency plane can be split, apparently for local decoding
+	// mode (y459.avi in Titanic has the scalable flag and its transparency
+	// plane seems to be decoded successfully, so the split transparency plane
+	// does not seem to be related to scaling mode). This adds complexity to the
+	// implementation, so avoid supporting unless it turns out to actually be
+	// necessary for correct decoding of game videos.
 	assert(!_ctx._usesTiling);
 
 	assert(_surface.format.bytesPerPixel == 4);
