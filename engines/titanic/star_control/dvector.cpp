@@ -22,7 +22,6 @@
 
 #include "titanic/star_control/dvector.h"
 #include "titanic/star_control/daffine.h"
-#include "common/algorithm.h"
 
 namespace Titanic {
 

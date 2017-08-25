@@ -21,6 +21,7 @@
  */
 
 #include "titanic/gfx/text_control.h"
+#include "titanic/support/strings.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

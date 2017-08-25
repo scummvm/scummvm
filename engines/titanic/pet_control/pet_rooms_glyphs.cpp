@@ -21,10 +21,12 @@
  */
 
 #include "titanic/pet_control/pet_rooms_glyphs.h"
+#include "titanic/events.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/support/screen_manager.h"
 #include "titanic/room_flags.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

@@ -22,8 +22,7 @@
 
 #include "titanic/star_control/marked_auto_mover.h"
 #include "titanic/star_control/error_code.h"
-#include "common/array.h"
-#include "common/textconsole.h"
+// Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 

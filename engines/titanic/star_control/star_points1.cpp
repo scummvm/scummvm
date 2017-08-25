@@ -22,6 +22,8 @@
 
 #include "titanic/star_control/star_points1.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/surface_area.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

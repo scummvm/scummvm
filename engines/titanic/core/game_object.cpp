@@ -24,13 +24,16 @@
 #include "titanic/core/mail_man.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/core/room_item.h"
+#include "titanic/core/project_item.h"
+#include "titanic/debugger.h"
+#include "titanic/events.h"
+#include "titanic/game_manager.h"
 #include "titanic/npcs/true_talk_npc.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/star_control/star_control.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/video_surface.h"
-#include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

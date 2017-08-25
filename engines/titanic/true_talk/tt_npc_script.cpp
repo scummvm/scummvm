@@ -20,15 +20,17 @@
  *
  */
 
-#include "common/algorithm.h"
-#include "common/textconsole.h"
+#include "titanic/true_talk/tt_npc_script.h"
+#include "titanic/core/project_item.h"
+#include "titanic/game_manager.h"
 #include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/true_talk/tt_npc_script.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/true_talk_manager.h"
-#include "titanic/game_manager.h"
 #include "titanic/titanic.h"
+#include "common/algorithm.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 

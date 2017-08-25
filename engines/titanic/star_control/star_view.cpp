@@ -22,14 +22,15 @@
 
 #include "titanic/star_control/star_view.h"
 #include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/star_control.h"
 #include "titanic/star_control/star_field.h"
-#include "titanic/star_control/error_code.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/core/game_object.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 

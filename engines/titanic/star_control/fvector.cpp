@@ -23,8 +23,8 @@
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/dvector.h"
 #include "titanic/star_control/fpose.h"
-#include "common/algorithm.h"
-#include "common/textconsole.h"
+//#include "common/algorithm.h"
+//#include "common/textconsole.h"
 
 namespace Titanic {
 

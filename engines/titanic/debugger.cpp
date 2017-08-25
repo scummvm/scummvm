@@ -21,11 +21,17 @@
  */
 
 #include "titanic/debugger.h"
-#include "titanic/titanic.h"
+#include "titanic/core/node_item.h"
+#include "titanic/core/room_item.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/core/view_item.h"
+#include "titanic/game_manager.h"
 #include "titanic/game/movie_tester.h"
+#include "titanic/main_game_window.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/support/movie.h"
+#include "titanic/titanic.h"
+#include "common/str-array.h"
 
 namespace Titanic {
 

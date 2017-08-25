@@ -23,16 +23,21 @@
 #ifndef TITANIC_MAIN_GAME_WINDOW_H
 #define TITANIC_MAIN_GAME_WINDOW_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/support/image.h"
 #include "titanic/core/project_item.h"
 #include "titanic/events.h"
+#include "common/array.h"
+#include "common/scummsys.h"
+
+namespace Common {
+class Point;
+}
 
 namespace Titanic {
 
+class CGameManager;
+class CGameView;
+class CScreenManager;
+class Image;
 class TitanicEngine;
 
 class CMainGameWindow : public CEventTarget {

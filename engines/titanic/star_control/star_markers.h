@@ -24,6 +24,7 @@
 #define TITANIC_STAR_MARKERS_H
 
 #include "titanic/star_control/base_stars.h"
+
 namespace Titanic {
 
 class CStarMarkers : public CBaseStars {

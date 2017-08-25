@@ -22,7 +22,9 @@
 
 #include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_ref.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 

@@ -20,9 +20,10 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/tt_script_base.h"
+#include "titanic/true_talk/script_handler.h"
 #include "titanic/titanic.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 

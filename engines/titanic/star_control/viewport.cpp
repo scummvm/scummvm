@@ -21,6 +21,8 @@
  */
 
 #include "titanic/star_control/viewport.h"
+#include "titanic/debugger.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

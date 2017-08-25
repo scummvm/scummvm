@@ -23,12 +23,13 @@
 #ifndef TITANIC_STAR_CONTROL_H
 #define TITANIC_STAR_CONTROL_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/core/game_object.h" // class SimpleFile
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_view.h"
-#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+class CPetControl;
 
 class CStarControl : public CGameObject {
 	DECLARE_MESSAGE_MAP;

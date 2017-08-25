@@ -20,13 +20,15 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/pixelformat.h"
-#include "video/avi_decoder.h"
 #include "titanic/support/avi_surface.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/video_surface.h"
+#include "titanic/events.h"
 #include "titanic/titanic.h"
+#include "common/system.h"
+#include "graphics/pixelformat.h"
+#include "graphics/screen.h"
+#include "video/avi_decoder.h"
 
 namespace Titanic {
 

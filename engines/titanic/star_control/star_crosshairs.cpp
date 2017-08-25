@@ -25,6 +25,7 @@
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_ref.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/true_talk/title_engine.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

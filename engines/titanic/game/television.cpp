@@ -21,11 +21,11 @@
  */
 
 #include "titanic/game/television.h"
-#include "titanic/game/get_lift_eye2.h"
-#include "titanic/core/project_item.h"
 #include "titanic/carry/magazine.h"
+#include "titanic/core/project_item.h"
+#include "titanic/debugger.h"
+#include "titanic/game/get_lift_eye2.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 

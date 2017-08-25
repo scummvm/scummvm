@@ -22,6 +22,7 @@
 
 #include "titanic/sound/music_room_handler.h"
 #include "titanic/sound/sound_manager.h"
+#include "titanic/events.h"
 #include "titanic/core/project_item.h"
 #include "titanic/titanic.h"
 

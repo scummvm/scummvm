@@ -21,6 +21,7 @@
  */
 
 #include "titanic/messages/bilge_dispensor_event.h"
+#include "titanic/events.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

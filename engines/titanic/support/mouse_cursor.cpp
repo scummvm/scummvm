@@ -20,11 +20,16 @@
  *
  */
 
-#include "graphics/cursorman.h"
 #include "titanic/support/mouse_cursor.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/support/transparency_surface.h"
 #include "titanic/support/video_surface.h"
+#include "titanic/events.h"
+#include "titanic/input_handler.h"
+#include "titanic/messages/mouse_messages.h"
 #include "titanic/titanic.h"
+#include "graphics/cursorman.h"
+#include "graphics/screen.h"
 
 namespace Titanic {
 

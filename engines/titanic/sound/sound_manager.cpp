@@ -21,6 +21,7 @@
  */
 
 #include "titanic/sound/sound_manager.h"
+#include "titanic/events.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

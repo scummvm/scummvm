@@ -23,15 +23,26 @@
 #ifndef TITANIC_DEBUGGER_H
 #define TITANIC_DEBUGGER_H
 
-#include "common/scummsys.h"
 #include "gui/debugger.h"
-#include "titanic/core/room_item.h"
-#include "titanic/core/node_item.h"
-#include "titanic/core/view_item.h"
+#include "common/scummsys.h"
 
 namespace Titanic {
 
+#define DEBUG_BASIC 1
+#define DEBUG_INTERMEDIATE 2
+#define DEBUG_DETAILED 3
+
+class CNodeItem;
+class CRoomItem;
+class CViewItem;
 class TitanicEngine;
+
+enum TitanicDebugChannels {
+	kDebugCore      = 1 << 0,
+	kDebugScripts	= 1 << 1,
+	kDebugGraphics	= 1 << 2,
+	kDebugStarfield = 1 << 3
+};
 
 class Debugger : public GUI::Debugger {
 private:

@@ -21,6 +21,10 @@
  */
 
 #include "titanic/support/credit_text.h"
+#include "titanic/core/game_object.h"
+#include "titanic/events.h"
+#include "titanic/support/files_manager.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

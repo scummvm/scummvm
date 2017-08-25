@@ -21,6 +21,7 @@
  */
 
 #include "titanic/npcs/barbot.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

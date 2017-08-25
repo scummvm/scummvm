@@ -21,9 +21,9 @@
  */
 
 #include "titanic/game/transport/lift.h"
-#include "titanic/pet_control/pet_control.h"
+#include "titanic/debugger.h"
 #include "titanic/moves/multi_move.h"
-#include "titanic/titanic.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 

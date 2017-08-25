@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/star_camera.h"
+#include "titanic/debugger.h"
 #include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fmatrix.h"

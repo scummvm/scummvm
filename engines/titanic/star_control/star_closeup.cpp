@@ -21,7 +21,9 @@
  */
 
 #include "titanic/star_control/star_closeup.h"
+#include "titanic/star_control/error_code.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/surface_area.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

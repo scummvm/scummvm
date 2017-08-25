@@ -22,8 +22,8 @@
 
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/core/tree_item.h"
-#include "titanic/npcs/true_talk_npc.h"
 #include "titanic/game_manager.h"
+#include "titanic/npcs/true_talk_npc.h"
 #include "titanic/titanic.h"
 
 #define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))

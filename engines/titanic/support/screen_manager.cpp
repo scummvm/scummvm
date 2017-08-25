@@ -23,6 +23,7 @@
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/video_surface.h"
 #include "titanic/titanic.h"
+#include "graphics/screen.h"
 
 namespace Titanic {
 

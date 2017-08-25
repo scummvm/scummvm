@@ -22,9 +22,9 @@
 
 #include "titanic/npcs/true_talk_npc.h"
 #include "titanic/core/view_item.h"
-#include "titanic/pet_control/pet_control.h"
+#include "titanic/debugger.h"
 #include "titanic/game_manager.h"
-#include "titanic/titanic.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 

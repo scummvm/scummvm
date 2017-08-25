@@ -22,6 +22,7 @@
 
 #include "titanic/npcs/callbot.h"
 #include "titanic/core/room_item.h"
+#include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

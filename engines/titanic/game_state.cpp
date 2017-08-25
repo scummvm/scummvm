@@ -21,9 +21,11 @@
  */
 
 #include "titanic/game_state.h"
-#include "titanic/titanic.h"
+#include "titanic/game_view.h"
+#include "titanic/events.h"
 #include "titanic/game_manager.h"
 #include "titanic/support/screen_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 

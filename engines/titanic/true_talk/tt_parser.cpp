@@ -21,7 +21,9 @@
  */
 
 #include "titanic/true_talk/tt_parser.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/true_talk/script_handler.h"
+#include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/true_talk/tt_action.h"
 #include "titanic/true_talk/tt_concept.h"
 #include "titanic/true_talk/tt_picture.h"
