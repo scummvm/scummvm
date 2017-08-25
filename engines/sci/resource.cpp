@@ -1434,14 +1434,13 @@ bool ResourceManager::isBlacklistedPatch(const ResourceId &resId) const {
 			resId.getNumber() == 65535;
 	case GID_PHANTASMAGORIA:
 		// The GOG release of Phantasmagoria 1 merges all resources into a
-		// single-disc bundle, but they also include the 65535.MAP & 37.MAP
-		// patch files from original game's CD 1, which (of course) do not
-		// contain the entries for audio from later CDs. So, just ignore these
-		// map patches since the correct maps will be found in the RESSCI.000
-		// file. This also helps eliminate user error when copying files from
-		// the original CDs.
-		return resId.getType() == kResourceTypeMap &&
-			(resId.getNumber() == 65535 || resId.getNumber() == 37);
+		// single-disc bundle, but they also include the 65535.MAP from the
+		// original game's CD 1, which does not contain the entries for sound
+		// effects from later CDs. So, just ignore this map patch since the
+		// correct maps will be found in the RESSCI.000 file. This also helps
+		// eliminate user error when copying files from the original CDs, since
+		// each CD had a different 65535.MAP patch file.
+		return resId.getType() == kResourceTypeMap && resId.getNumber() == 65535;
 	default:
 		return false;
 	}
