@@ -111,7 +111,7 @@ bool CRestaurantCylinderHolder::MovieEndMsg(CMovieEndMsg *msg) {
 	} else {
 		_isOpen = true;
 		_dropEnabled = false;
-		_cursorId = findByName("Phonograph Cylinder") ? _dropCursorId : _dragCursorId;
+		_cursorId = findByName("Phonograph Cylinder", true) ? _dropCursorId : _dragCursorId;
 	}
 
 	CCylinderHolderReadyMsg holderMsg;
