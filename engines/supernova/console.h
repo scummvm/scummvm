@@ -44,6 +44,7 @@ public:
 	bool cmdMusic(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
 	bool cmdInventory(int argc, const char **argv);
+	bool cmdGiveAll(int argc, const char **argv);
 private:
 	SupernovaEngine *_vm;
 	GameManager *_gm;

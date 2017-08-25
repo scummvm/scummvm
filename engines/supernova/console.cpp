@@ -23,6 +23,7 @@
 #include "gui/debugger.h"
 
 #include "supernova/supernova.h"
+#include "supernova/state.h"
 #include "supernova/console.h"
 
 namespace Supernova {
@@ -34,6 +35,7 @@ Console::Console(SupernovaEngine *vm, GameManager *gm)
 	registerCmd("music", WRAP_METHOD(Console, cmdMusic));
 	registerCmd("list", WRAP_METHOD(Console, cmdList));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
+	registerCmd("giveall", WRAP_METHOD(Console, cmdGiveAll));
 
 	_vm = vm;
 	_gm = gm;
@@ -88,6 +90,20 @@ bool Console::cmdInventory(int argc, const char **argv) {
 	// TODO
 
 	return true;
+}
+
+bool Console::cmdGiveAll(int argc, const char **argv) {
+	_gm->takeObject(*_gm->_rooms[INTRO]->getObject(0));
+	_gm->takeObject(*_gm->_rooms[INTRO]->getObject(1));
+	_gm->takeObject(*_gm->_rooms[INTRO]->getObject(2));
+	_gm->takeObject(*_gm->_rooms[GENERATOR]->getObject(2)); // Commander Keycard
+	_gm->takeObject(*_gm->_rooms[GENERATOR]->getObject(0)); // Power Cord with Plug
+	_gm->takeObject(*_gm->_rooms[CABIN_L1]->getObject(5));  // Pen
+	_gm->takeObject(*_gm->_rooms[CABIN_R3]->getObject(0));  // Chess Board
+	_gm->takeObject(*_gm->_rooms[CABIN_R3]->getObject(9));  // Rope
+	_gm->takeObject(*_gm->_rooms[AIRLOCK]->getObject(4));   // Helmet
+	_gm->takeObject(*_gm->_rooms[AIRLOCK]->getObject(5));   // Space Suit
+	_gm->takeObject(*_gm->_rooms[AIRLOCK]->getObject(6));   // Supply
 }
 
 }
