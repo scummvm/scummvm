@@ -115,6 +115,11 @@ private:
 	 * Change to the cheat room
 	 */
 	bool cmdCheat(int argc, const char **argv);
+
+	/**
+	 * Set the movie frame for a given object
+	 */
+	bool cmdFrame(int argc, const char **argv);
 protected:
 	TitanicEngine *_vm;
 public:

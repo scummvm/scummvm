@@ -44,6 +44,7 @@ Debugger::Debugger(TitanicEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("movie",		WRAP_METHOD(Debugger, cmdMovie));
 	registerCmd("sound",		WRAP_METHOD(Debugger, cmdSound));
 	registerCmd("cheat",        WRAP_METHOD(Debugger, cmdCheat));
+	registerCmd("frame",        WRAP_METHOD(Debugger, cmdFrame));
 }
 
 int Debugger::strToInt(const char *s) {
@@ -344,6 +345,24 @@ bool Debugger::cmdCheat(int argc, const char **argv) {
 	CViewItem *newView = project->parseView("Cheat Room.Node 1.Cheat Rooms View");
 	gameManager->_gameState.changeView(newView, nullptr);
 	return false;
+}
+
+bool Debugger::cmdFrame(int argc, const char **argv) {
+	if (argc == 3) {
+		CGameObject *obj = dynamic_cast<CGameObject *>(
+			g_vm->_window->_project->findByName(argv[1]));
+		
+		if (obj) {
+			obj->loadFrame(strToInt(argv[2]));
+			return false;
+		} else {
+			debugPrintf("Object not found\n");
+			return true;
+		}
+	} else {
+		debugPrintf("frame <object> <frame number>");
+		return true;
+	}
 }
 
 } // End of namespace Titanic
