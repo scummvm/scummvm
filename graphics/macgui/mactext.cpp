@@ -244,6 +244,7 @@ void MacText::reallocSurface() {
 	if (_surface->w < _textMaxWidth || _surface->h < _textMaxHeight) {
 		// realloc surface and copy old content
 		ManagedSurface *n = new ManagedSurface(_textMaxWidth, _textMaxHeight);
+		n->clear(_bgcolor);
 		n->blitFrom(*_surface, Common::Point(0, 0));
 
 		delete _surface;
