@@ -31,7 +31,7 @@ namespace Titanic {
 
 class CCameraMover;
 class CErrorCode;
-class CNavigationInfo;
+struct CNavigationInfo;
 class FPoint;
 class SimpleFile;
 
