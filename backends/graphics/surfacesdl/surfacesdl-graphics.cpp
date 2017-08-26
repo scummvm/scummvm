@@ -390,7 +390,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		createWindowFlags |= SDL_WINDOW_FULLSCREEN;
 	}
 
-	if (!_window->createWindow(width, height, createWindowFlags)) {
+	if (!_window->createOrUpdateWindow(width, height, createWindowFlags)) {
 		return nullptr;
 	}
 

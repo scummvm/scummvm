@@ -254,7 +254,7 @@ bool OpenGLSdlGraphicsManager::createScreen(uint effectiveWidth, uint effectiveH
 		if (_fullscreen)
 			sdlflags |= SDL_WINDOW_FULLSCREEN;
 
-		if (_window->createWindow(effectiveWidth, effectiveHeight, sdlflags)) {
+		if (_window->createOrUpdateWindow(effectiveWidth, effectiveHeight, sdlflags)) {
 			_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 			if (_glContext) {
 				break;
