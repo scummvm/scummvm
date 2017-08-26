@@ -332,6 +332,19 @@ public:
 		kFeatureVSync,
 
 		/**
+		 * When a backend supports this feature, it guarantees the graphics
+		 * context is not destroyed when switching to and from fullscreen.
+		 *
+		 * For OpenGL that means the context is kept with all of its content:
+		 * texture, programs...
+		 *
+		 * For TinyGL that means the backbuffer surface is kept.
+		 *
+		 * ResidualVM specific
+		 */
+		kFeatureFullscreenToggleKeepsContext,
+
+		/**
 		 * The presence of this feature indicates whether the displayLogFile()
 		 * call is supported.
 		 *
