@@ -420,7 +420,7 @@ public:
 		_objectState[10] = Object("Schrank","Das ist dein Schrank.",SHELF3,OPENABLE | CLOSED,16,17,11);
 		_objectState[11] = Object("Krimskram","Es ist nichts brauchbares dabei.",NULLOBJECT,UNNECESSARY,20,20,0);
 		_objectState[12] = Object("Kleider","Es sind Standard-Weltraum-Klamotten.",NULLOBJECT,UNNECESSARY,21,21,0);
-		_objectState[13] = Object("Unterw�sche",Object::defaultDescription,NULLOBJECT,UNNECESSARY,22,22,0);
+		_objectState[13] = Object("Unterw\204sche",Object::defaultDescription,NULLOBJECT,UNNECESSARY,22,22,0);
 		_objectState[14] = Object("Str\201mpfe",Object::defaultDescription,NULLOBJECT,UNNECESSARY,23,23,0);
 		_objectState[15] = Object("Fach","Das ist eins deiner drei F\204cher.",SHELF4,OPENABLE | CLOSED,24,25,13);
 		_objectState[16] = Object("Buch","Es ist|\"Per Anhalter durch die Galaxis\"|von Douglas Adams.",BOOK,TAKE,26,26,14);
