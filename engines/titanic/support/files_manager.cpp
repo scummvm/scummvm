@@ -50,7 +50,7 @@ bool CFilesManager::loadResourceIndex() {
 		return false;
 	}
 
-	if (_version < 2) {
+	if (_version != 3) {
 		g_vm->GUIError("titanic.dat is out of date");
 		return false;
 	}

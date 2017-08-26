@@ -774,7 +774,7 @@ static const char *const STRINGS_EN[151] = {
 	"Speech volume"
 };
 
-static const char *const STRINGS_DE[196] = {
+static const char *const STRINGS_DE[197] = {
 	"",
 	"Sie befinden sich vor dem Pellerator.",
 	"Wir bedauern, da ein Bot den Weg versperrt, ist Ihnen der "
@@ -858,7 +858,6 @@ static const char *const STRINGS_DE[196] = {
 	"Leider ist es nicht m\xF6""glich den T\xFC""r-Bot von diesem Ort aus herbeizurufen.",
 	"Leider ist es nicht m\xF6""glich den Klingel-Bot von diesem Ort aus herbeizurufen.",
 	"Es ist niemand hier mit dem du sprechen k\xF6""nntest",
-	"Spricht mit ",
 	"Im Gespr\xE4""ch mit ",
 	"der T\xFC""r-Bot",
 	"der Empfangs-Bot",
@@ -901,7 +900,7 @@ static const char *const STRINGS_DE[196] = {
 	"Rufe Pellerator",
 	"Gehe zum Grund des Brunnens",
 	"Gehe zur Oberfl\xE4""che des Brunnens",
-	"Gehe zu deiner Kabine"
+	"Gehe zu deiner Kabine",
 	"Gehe zur Bar",
 	"Gehe zum Promenadendeck",
 	"Gehe zum Baumgarten",
@@ -910,11 +909,11 @@ static const char *const STRINGS_DE[196] = {
 	"Die Papagei-Lobby",
 	"Das Zimmer des Erschaffers",
 	"Die Br\xFC""cke",
-	"Der Kielraum"
+	"Der Kielraum",
 	"Das Skulpturenzimmer",
 	"Der Baumgarten",
 	"Der Grund des Brunnens",
-	"Das Promenadendeck"
+	"Das Promenadendeck",
 	"Das First-Class-Restaurant",
 	"Titanias Zimmer",
 	"Die Bar",
@@ -942,7 +941,7 @@ static const char *const STRINGS_DE[196] = {
 	"Speichern Sie das Spiel.",
 	"Leer",
 	"Beenden Sie das Spiel.",
-	"Sind Sie sicher, dass Sie aufh\xF6""ren wollen?",
+	"Sind Sie sicher, da\xDF"" Sie das Spiel verlassen m\XF6""chten?",
 	"\xC4""ndern der Lautst\xE4""rkeeinstellungen",
 	"Grundlautst\xE4""rke",
 	"Musiklautst\xE4""rke",
@@ -1571,7 +1570,7 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
 	writeStringArray("TEXT/STRINGS", STRINGS_EN, 151);
-	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 196);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 197);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };
