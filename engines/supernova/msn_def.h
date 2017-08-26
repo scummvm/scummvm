@@ -382,7 +382,8 @@ enum RoomID {
 };
 
 enum ObjectID {
-	NULLOBJECT,
+	INVALIDOBJECT = -1,
+	NULLOBJECT = 0,
 	KEYCARD,KNIFE,WATCH,
 	SOCKET,
 	BUTTON,HATCH1,
@@ -463,7 +464,7 @@ struct Object {
 	Object()
 	    : _name("")
 	    , _description(Object::defaultDescription)
-	    , _id(NULLOBJECT)
+	    , _id(INVALIDOBJECT)
 	    , _type(NULLTYPE)
 	    , _click(0)
 	    , _click2(0)
