@@ -20,39 +20,49 @@
  *
  */
 
-#ifndef BLADERUNNER_VIEW_H
-#define BLADERUNNER_VIEW_H
+#ifndef BLADERUNNER_AESC_H
+#define BLADERUNNER_AESC_H
 
-#include "matrix.h"
+#include "bladerunner/color.h"
+
+#include "common/array.h"
 
 namespace Common {
 class ReadStream;
 }
 
 namespace BladeRunner {
+class BladeRunnerEngine;
 
-class View {
+class AESC {
 public:
-	float     _fovX;
-	Matrix4x3 _frameViewMatrix;
-	Matrix4x3 _sliceViewMatrix;
-	uint32    _frame;
+	struct Entry
+	{
+		Color256 palette[16];
+		uint16   x;
+		uint16   y;
+		uint16   width;
+		uint16   height;
+		uint16   z;
+		uint8   *data;
+	};
 
-	Vector3   _cameraPosition;
+	BladeRunnerEngine *_vm;
 
-	float     _viewportHalfWidth;
-	float     _viewportHalfHeight;
-	float     _viewportDistance;
+	Common::Array<Entry>  _entries;
+	uint8                *_data;
+	int                   _dataSize;
 
-	bool readVqa(Common::ReadStream *stream);
-	Vector3 calculateScreenPosition(Vector3 worldPosition);
+public:
+	AESC(BladeRunnerEngine *vm, int size);
+	~AESC();
 
-private:
-	void setFovX(float fovX);
-	void calculateSliceViewMatrix();
-	void calculateCameraPosition();
+	void readVqa(Common::SeekableReadStream *stream);
+	void getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z);
+
+	//TODO
+	//bool isAffectingArea(int x, int y, int width, int height, int unk);
 };
-
 } // End of namespace BladeRunner
 
 #endif

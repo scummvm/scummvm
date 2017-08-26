@@ -210,6 +210,7 @@ int Scene::advanceFrame() {
 		blit(_vm->_surfaceInterface, _vm->_surfaceGame);
 		_vqaPlayer->updateZBuffer(_vm->_zbuffer);
 		_vqaPlayer->updateView(_vm->_view);
+		_vqaPlayer->updateAESC(_vm->_aesc);
 		_vqaPlayer->updateLights(_vm->_lights);
 	}
 	if (_specialLoopMode && _specialLoopMode != kSceneLoopMode2 && _specialLoopMode != kSceneLoopModeSpinner) {

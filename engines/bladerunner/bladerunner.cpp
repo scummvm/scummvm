@@ -24,6 +24,7 @@
 
 #include "bladerunner/actor.h"
 #include "bladerunner/adq.h"
+#include "bladerunner/aesc.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_mixer.h"
 #include "bladerunner/audio_player.h"
@@ -69,7 +70,6 @@
 
 #include "graphics/pixelformat.h"
 
-
 namespace BladeRunner {
 
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
@@ -79,10 +79,13 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_gameIsRunning = true;
 	_playerLosesControlCounter = 0;
 
+	//TODO(peterkohaut): move these to init
+
 	_crimesDatabase = nullptr;
 	_sceneScript = new SceneScript(this);
 	_settings = new Settings(this);
 	_lights = new Lights(this);
+	_aesc = new AESC(this, 0x8000);
 	_combat = new Combat(this);
 	_adq = new ADQ(this);
 	_obstacles = new Obstacles(this);
@@ -122,6 +125,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	delete _obstacles;
 	delete _adq;
 	delete _combat;
+	delete _aesc;
 	delete _lights;
 	delete _settings;
 	delete _sceneScript;
@@ -325,14 +329,17 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// TODO: Support cdframes
 
 	r = _sliceAnimations->openHDFrames();
-	if (!r)
+	if (!r) {
 		return false;
+	}
 
 	r = _sliceAnimations->openCoreAnim();
-	if (!r)
+	if (!r) {
 		return false;
+	}
 
 	_sliceRenderer = new SliceRenderer(this);
+	_sliceRenderer->setAESC(_aesc);
 
 	_crimesDatabase = new CrimesDatabase(this, "CLUES", _gameInfo->getClueCount());
 
@@ -703,14 +710,14 @@ void BladeRunnerEngine::gameTick() {
 					switch (sceneObject->_sceneObjectType) {
 					case SceneObjectTypeActor:
 						color = 0b111110000000000;
-						drawBBox(a, b, _view, &_surface2, color);
-						_mainFont->drawColor(_textActorNames->getText(sceneObject->_sceneObjectId - SCENE_OBJECTS_ACTORS_OFFSET), _surface2, pos.x, pos.y, color);
+						drawBBox(a, b, _view, &_surfaceGame, color);
+						_mainFont->drawColor(_textActorNames->getText(sceneObject->_sceneObjectId - SCENE_OBJECTS_ACTORS_OFFSET), _surfaceGame, pos.x, pos.y, color);
 						break;
 					case SceneObjectTypeItem:
 						char itemText[40];
-						drawBBox(a, b, _view, &_surface2, color);
+						drawBBox(a, b, _view, &_surfaceGame, color);
 						sprintf(itemText, "item %i", sceneObject->_sceneObjectId - SCENE_OBJECTS_ITEMS_OFFSET);
-						_mainFont->drawColor(itemText, _surface2, pos.x, pos.y, color);
+						_mainFont->drawColor(itemText, _surfaceGame, pos.x, pos.y, color);
 						break;
 					case SceneObjectTypeObject:
 						color = 0b011110111101111;
@@ -719,11 +726,11 @@ void BladeRunnerEngine::gameTick() {
 						if (sceneObject->_isClickable) {
 							color = 0b000001111100000;
 						}
-						drawBBox(a, b, _view, &_surface2, color);
-						_mainFont->drawColor(_scene->objectGetName(sceneObject->_sceneObjectId - SCENE_OBJECTS_OBJECTS_OFFSET), _surface2, pos.x, pos.y, color);
+						drawBBox(a, b, _view, &_surfaceGame, color);
+						_mainFont->drawColor(_scene->objectGetName(sceneObject->_sceneObjectId - SCENE_OBJECTS_OBJECTS_OFFSET), _surfaceGame, pos.x, pos.y, color);
 						break;
 					}
-			_surface2.frameRect(sceneObject->_screenRectangle, color);
+					_surfaceGame.frameRect(sceneObject->_screenRectangle, color);
 				}
 			}
 
@@ -731,15 +738,14 @@ void BladeRunnerEngine::gameTick() {
 			for (int i = 0; i < 10; i++) {
 				Region *region = &_scene->_regions->_regions[i];
 				if (!region->_present) continue;
-				_surface2.frameRect(region->_rectangle, 0b000000000011111);
+				_surfaceGame.frameRect(region->_rectangle, 0b000000000011111);
 			}
 
 			for (int i = 0; i < 10; i++) {
 				Region *region = &_scene->_exits->_regions[i];
 				if (!region->_present) continue;
-				_surface2.frameRect(region->_rectangle, 0b111111111111111);
+				_surfaceGame.frameRect(region->_rectangle, 0b111111111111111);
 			}
-
 
 			//draw walkboxes
 			for (int i = 0; i < _scene->_set->_walkboxCount; i++) {
@@ -748,9 +754,9 @@ void BladeRunnerEngine::gameTick() {
 				for (int j = 0; j < walkbox->_vertexCount; j++) {
 					Vector3 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
 					Vector3 end = _view->calculateScreenPosition(walkbox->_vertices[(j + 1) % walkbox->_vertexCount]);
-					_surface2.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
+					_surfaceGame.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
 					Vector3 pos = _view->calculateScreenPosition(0.5 * (start + end));
-					_mainFont->drawColor(walkbox->_name, _surface2, pos.x, pos.y, 0b111111111100000);
+					_mainFont->drawColor(walkbox->_name, _surfaceGame, pos.x, pos.y, 0b111111111100000);
 				}
 			}
 
@@ -776,12 +782,12 @@ void BladeRunnerEngine::gameTick() {
 				int colorB = (light->_color.b * 31.0f);
 				int color = (colorR << 10) + (colorG << 5) + colorB;
 
-				drawBBox(posOrigin - size, posOrigin + size, _view, &_surface2, color);
+				drawBBox(posOrigin - size, posOrigin + size, _view, &_surfaceGame, color);
 
 				Vector3 posOriginT = _view->calculateScreenPosition(posOrigin);
 				Vector3 posTargetT = _view->calculateScreenPosition(posTarget);
-				_surface2.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
-				_mainFont->drawColor(light->_name, _surface2, posOriginT.x, posOriginT.y, color);
+				_surfaceGame.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
+				_mainFont->drawColor(light->_name, _surfaceGame, posOriginT.x, posOriginT.y, color);
 			}
 
 			//draw waypoints
@@ -792,11 +798,34 @@ void BladeRunnerEngine::gameTick() {
 				Vector3 pos = waypoint->_position;
 				Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
 				int color = 0b111111111111111;
-				drawBBox(pos - size, pos + size, _view, &_surface2, color);
+				drawBBox(pos - size, pos + size, _view, &_surfaceGame, color);
 				Vector3 spos = _view->calculateScreenPosition(pos);
 				char waypointText[40];
 				sprintf(waypointText, "waypoint %i", i);
-				_mainFont->drawColor(waypointText, _surface2, spos.x, spos.y, color);
+				_mainFont->drawColor(waypointText, _surfaceGame, spos.x, spos.y, color);
+			}
+#endif
+#if 0
+			//draw aesc
+			for (uint i = 0; i < _aesc->_entries.size(); i++) {
+				AESC::Entry &entry = _aesc->_entries[i];
+				int j = 0;
+				for (int y = 0; y < entry.height; y++) {
+					for (int x = 0; x < entry.width; x++) {
+						Common::Rect r((entry.x + x) * 2, (entry.y + y) * 2, (entry.x + x) * 2 + 2, (entry.y + y) * 2 + 2);
+
+						int ec = entry.data[j++];
+						Color256 color = entry.palette[ec];
+						int bladeToScummVmConstant = 256 / 16;
+
+						Graphics::PixelFormat _pixelFormat = createRGB555();
+						int color555 = _pixelFormat.RGBToColor(
+							CLIP(color.r * bladeToScummVmConstant, 0, 255),
+							CLIP(color.g * bladeToScummVmConstant, 0, 255),
+							CLIP(color.b * bladeToScummVmConstant, 0, 255));
+						_surfaceGame.fillRect(r, color555);
+					}
+				}
 			}
 #endif
 

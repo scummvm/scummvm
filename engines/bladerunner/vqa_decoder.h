@@ -35,6 +35,7 @@
 #include "graphics/surface.h"
 
 #include "video/video_decoder.h"
+#include "aesc.h"
 
 namespace BladeRunner {
 
@@ -55,6 +56,7 @@ public:
 	void                        decodeZBuffer(ZBuffer *zbuffer);
 	Audio::SeekableAudioStream *decodeAudioFrame();
 	void                        decodeView(View *view);
+	void                        decodeAESC(AESC *aesc);
 	void                        decodeLights(Lights *lights);
 
 	uint16 numFrames() const { return _header.numFrames; }
@@ -159,11 +161,14 @@ private:
 
 		uint16 getWidth() const;
 		uint16 getHeight() const;
+
 		int getCurFrame() const;
 		int getFrameCount() const;
+
 		void decodeVideoFrame();
 		void decodeZBuffer(ZBuffer *zbuffer);
 		void decodeView(View *view);
+		void decodeAESC(AESC *aesc);
 		void decodeLights(Lights *lights);
 
 		bool readVQFR(Common::SeekableReadStream *s, uint32 size);
@@ -208,9 +213,11 @@ private:
 		int      _curFrame;
 
 		uint8   *_viewData;
-		uint32	_viewDataSize;
+		uint32   _viewDataSize;
 		uint8   *_lightsData;
-		uint32	_lightsDataSize;
+		uint32	 _lightsDataSize;
+		uint8   *_aescData;
+		uint32	 _aescDataSize;
 
 		void VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
 		bool decodeFrame(uint16 *frame);

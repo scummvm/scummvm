@@ -27,7 +27,7 @@
 
 namespace BladeRunner {
 
-bool View::read(Common::ReadStream *stream) {
+bool View::readVqa(Common::ReadStream *stream) {
 	_frame = stream->readUint32LE();
 
 	float d[12];

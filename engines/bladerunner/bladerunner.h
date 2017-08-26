@@ -50,6 +50,7 @@ enum AnimationModes {
 
 class Actor;
 class ADQ;
+class AESC;
 class AIScripts;
 class AmbientSounds;
 class AudioMixer;
@@ -92,6 +93,7 @@ public:
 	int       _playerLosesControlCounter;
 
 	ADQ              *_adq;
+	AESC             *_aesc;
 	AIScripts        *_aiScripts;
 	AmbientSounds    *_ambientSounds;
 	AudioMixer       *_audioMixer;

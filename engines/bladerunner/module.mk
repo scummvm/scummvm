@@ -2,6 +2,7 @@ MODULE := engines/bladerunner
 
 MODULE_OBJS = \
 	adq.o \
+	aesc.o \
 	actor.o \
 	actor_clues.o \
 	actor_combat.o \
