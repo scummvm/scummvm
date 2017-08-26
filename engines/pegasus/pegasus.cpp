@@ -939,8 +939,9 @@ void PegasusEngine::doGameMenuCommand(const GameMenuCommand command) {
 			} else {
 				_gfx->doFadeOutSync();
 				useMenu(0);
-				_gfx->clearScreen();
+				_gfx->enableErase();
 				_gfx->updateDisplay();
+				_gfx->disableErase();
 
 				Video::VideoDecoder *video = new Video::QuickTimeDecoder();
 				if (!video->loadFile(_introDirectory + "/Closing.movie"))
@@ -1655,10 +1656,12 @@ void PegasusEngine::startNewGame() {
 	GameState.resetGameState();
 	GameState.setWalkthroughMode(isWalkthrough);
 
-	// TODO: Enable erase
 	_gfx->doFadeOutSync();
 	useMenu(0);
+
+	_gfx->enableErase();
 	_gfx->updateDisplay();
+	_gfx->disableErase();
 	_gfx->enableUpdates();
 
 	createInterface();
