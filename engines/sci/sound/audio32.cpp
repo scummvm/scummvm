@@ -181,10 +181,18 @@ Audio32::Audio32(ResourceManager *resMan) :
 	}
 
 	_useModifiedAttenuation = g_sci->_features->usesModifiedAudioAttenuation();
-	// The mixer stream type is given as `kSFXSoundType` so that audio from
-	// Audio32 will be mixed at the same standard volume as the video players
-	// (which must use `kSFXSoundType` as well).
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
+	// In games where scripts premultiply master audio volumes into the volumes
+	// of the individual audio channels sent to the mixer, Audio32 needs to use
+	// the kPlainSoundType so that the master SFX volume is not applied twice.
+	// Otherwise, we simply pass along master volume changes to the ScummVM
+	// mixer for the kSFXSoundType and allow it to control master volume.
+	// (The volume of the kSFXSoundType in the mixer still needs to be updated
+	// for games that control master volumes themselves so that videos will play
+	// at the same volume as the rest of the game.)
+	const Audio::Mixer::SoundType soundType = g_sci->_features->gameScriptsControlMasterVolume() ? Audio::Mixer::kPlainSoundType : Audio::Mixer::kSFXSoundType;
+
+	_mixer->playStream(soundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Audio32::~Audio32() {

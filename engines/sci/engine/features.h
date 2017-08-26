@@ -110,6 +110,17 @@ public:
 		}
 	}
 
+	inline bool gameScriptsControlMasterVolume() const {
+		switch (g_sci->getGameId()) {
+		case GID_LSL7:
+		case GID_PHANTASMAGORIA2:
+		case GID_TORIN:
+			return true;
+		default:
+			return false;
+		}
+	}
+
 	inline bool hasSci3Audio() const {
 		return getSciVersion() == SCI_VERSION_3 || g_sci->getGameId() == GID_GK2;
 	}
