@@ -78,6 +78,11 @@ void CMaitreD::load(SimpleFile *file) {
 	_timerId = file->readNumber();
 
 	CTrueTalkNPC::load(file);
+
+	// WORKAROUND: The back view of the MaitreD from close to the table is dodgy
+	// in the original. And unneeded anyway, since he's also part of the background
+	if (_name == "MaitreLoop03")
+		_visible = false;
 }
 
 bool CMaitreD::RestaurantMusicChanged(CRestaurantMusicChanged *msg) {
