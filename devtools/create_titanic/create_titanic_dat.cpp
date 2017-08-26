@@ -56,7 +56,7 @@
  * ASCIIZ  - name of the resource
  */
 
-#define VERSION_NUMBER 2
+#define VERSION_NUMBER 3
 #define HEADER_SIZE 0x1380
 
 Common::File inputFile, outputFile;
@@ -939,15 +939,15 @@ static const char *const STRINGS_DE[196] = {
 	"Eine hei\xDF""e",
 	"Eine kalte",
 	"Laden Sie das Spiel.",
-	"Rette das Spiel.",
+	"Speichern Sie das Spiel.",
 	"Leer",
 	"Beenden Sie das Spiel.",
-	"Sind Sie sicher, dass Sie aufhören wollen?",
-	"Ändern der Lautstärkeeinstellungen",
-	"Master Volumen",
-	"Musiklautstärke",
-	"Papageienvolumen",
-	"Sprechband",
+	"Sind Sie sicher, dass Sie aufh\xF6""ren wollen?",
+	"\xC4""ndern der Lautst\xE4""rkeeinstellungen",
+	"Grundlautst\xE4""rke",
+	"Musiklautst\xE4""rke",
+	"Papageienlautst\xE4""rke",
+	"Sprachlautst\xE4""rke",
 
 	"Sommer",
 	"Herbst",
