@@ -47,41 +47,86 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	closeOverlay();
+
+	if (_subScreen) {
+		SDL_FreeSurface(_subScreen);
+		_subScreen = nullptr;
+	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	deinitializeRenderer();
+#endif
 }
 
 bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
+#endif
 		(f == OSystem::kFeatureFullscreenMode);
+}
+
+void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	switch (f) {
+		case OSystem::kFeatureFullscreenMode:
+			if (_fullscreen != enable) {
+				_fullscreen = enable;
+				createOrUpdateScreen();
+			}
+			break;
+		default:
+			ResVmSdlGraphicsManager::setFeatureState(f, enable);
+			break;
+	}
 }
 
 void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
 	assert(!accel3d);
-	closeOverlay();
 
+	if (_subScreen) {
+		SDL_FreeSurface(_subScreen);
+		_subScreen = nullptr;
+	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	deinitializeRenderer();
+#endif
+
+	_engineRequestedWidth = gameWidth;
+	_engineRequestedHeight = gameHeight;
 	_fullscreen = fullscreen;
 	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
 
-	bool engineSupportsArbitraryResolutions = g_engine && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
+	createOrUpdateScreen();
 
-	// Select how the game screen is going to be drawn
-	GameRenderTarget gameRenderTarget = selectGameRenderTarget(_fullscreen, false, engineSupportsArbitraryResolutions,
-	                                                           false, _lockAspectRatio);
+	SDL_PixelFormat *f = _screen->format;
+	_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, gameWidth, gameHeight, f->BitsPerPixel, f->Rmask, f->Gmask, f->Bmask, f->Amask);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetSurfaceBlendMode(_subScreen, SDL_BLENDMODE_NONE);
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
+}
+
+void SurfaceSdlGraphicsManager::createOrUpdateScreen() {
+	closeOverlay();
 
 	// Choose the effective window size or fullscreen mode
 	uint effectiveWidth;
 	uint effectiveHeight;
-	if (_fullscreen && canUsePreferredResolution(gameRenderTarget, engineSupportsArbitraryResolutions)) {
+	if (_fullscreen && _lockAspectRatio) {
 		Common::Rect fullscreenResolution = getPreferredFullscreenResolution();
 		effectiveWidth = fullscreenResolution.width();
 		effectiveHeight = fullscreenResolution.height();
 	} else {
-		effectiveWidth = gameWidth;
-		effectiveHeight = gameHeight;
+		effectiveWidth = _engineRequestedWidth;
+		effectiveHeight = _engineRequestedHeight;
 	}
 
-	// Compute the rectangle where to draw the game inside the effective screen
-	_gameRect = computeGameRect(gameRenderTarget, gameWidth, gameHeight, effectiveWidth, effectiveHeight);
-
+	// The game is centered inside the effective screen
+	_gameRect = Math::Rect2d(
+			Math::Vector2d((effectiveWidth - _engineRequestedWidth) / 2, (effectiveHeight - _engineRequestedHeight) / 2),
+			Math::Vector2d((effectiveWidth + _engineRequestedWidth) / 2, (effectiveHeight + _engineRequestedHeight) / 2)
+	);
 
 	uint32 sdlflags = SDL_SWSURFACE;
 	if (_fullscreen)
@@ -114,22 +159,10 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 	_screenFormat = _overlayFormat;
 
 	_screenChangeCount++;
-
-	if (gameRenderTarget == kSubScreen) {
-		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, gameWidth, gameHeight, f->BitsPerPixel, f->Rmask, f->Gmask, f->Bmask, f->Amask);
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		SDL_SetSurfaceBlendMode(_subScreen, SDL_BLENDMODE_NONE);
-#endif // SDL_VERSION_ATLEAST(2, 0, 0)
-	}
 }
 
 Graphics::PixelBuffer SurfaceSdlGraphicsManager::getScreenPixelBuffer() {
-	if (_subScreen) {
-		return Graphics::PixelBuffer(_screenFormat, (byte *)_subScreen->pixels);
-	}
-
-	return Graphics::PixelBuffer(_screenFormat, (byte *)_screen->pixels);
+	return Graphics::PixelBuffer(_screenFormat, (byte *)_subScreen->pixels);
 }
 
 void SurfaceSdlGraphicsManager::drawSideTextures() {
@@ -161,14 +194,13 @@ void SurfaceSdlGraphicsManager::drawOverlay() {
 }
 
 void SurfaceSdlGraphicsManager::updateScreen() {
-	if (_subScreen) {
-		SDL_Rect dstrect;
-		dstrect.x = _gameRect.getTopLeft().getX();
-		dstrect.y = _gameRect.getTopLeft().getY();
-		dstrect.w = _gameRect.getWidth();
-		dstrect.h = _gameRect.getHeight();
-		SDL_BlitSurface(_subScreen, NULL, _screen, &dstrect);
-	}
+	SDL_Rect dstrect;
+	dstrect.x = _gameRect.getTopLeft().getX();
+	dstrect.y = _gameRect.getTopLeft().getY();
+	dstrect.w = _gameRect.getWidth();
+	dstrect.h = _gameRect.getHeight();
+	SDL_BlitSurface(_subScreen, NULL, _screen, &dstrect);
+
 	if (_overlayVisible) {
 		drawOverlay();
 	}
@@ -187,18 +219,12 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 
 int16 SurfaceSdlGraphicsManager::getHeight() {
 	// ResidualVM specific
-	if (_subScreen)
-		return _subScreen->h;
-	else
-		return _overlayHeight;
+	return _subScreen->h;
 }
 
 int16 SurfaceSdlGraphicsManager::getWidth() {
 	// ResidualVM specific
-	if (_subScreen)
-		return _subScreen->w;
-	else
-		return _overlayWidth;
+	return _subScreen->w;
 }
 
 #pragma mark -
@@ -320,38 +346,28 @@ void SurfaceSdlGraphicsManager::closeOverlay() {
 		SDL_FreeSurface(_overlayscreen);
 		_overlayscreen = nullptr;
 	}
-	if (_subScreen) {
-		SDL_FreeSurface(_subScreen);
-		_subScreen = nullptr;
-	}
 	if (_screen) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		SDL_FreeSurface(_screen);
 #endif
 		_screen = nullptr;
 	}
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	deinitializeRenderer();
-#endif
 }
 
 void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	//ResidualVM specific
-	if (_subScreen) {
-		// Scale from game coordinates to screen coordinates
-		x = (x * _gameRect.getWidth()) / _subScreen->w;
-		y = (y * _gameRect.getHeight()) / _subScreen->h;
+	// Scale from game coordinates to screen coordinates
+	x = (x * _gameRect.getWidth()) / _subScreen->w;
+	y = (y * _gameRect.getHeight()) / _subScreen->h;
 
-		x += _gameRect.getTopLeft().getX();
-		y += _gameRect.getTopLeft().getY();
-	}
+	x += _gameRect.getTopLeft().getX();
+	y += _gameRect.getTopLeft().getY();
 
 	_window->warpMouseInWindow(x, y);
 }
 
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
-	if (_overlayVisible || !_subScreen)
+	if (_overlayVisible)
 		return;
 
 	// Scale from screen coordinates to game coordinates
@@ -387,6 +403,17 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	createWindowFlags |= SDL_WINDOW_RESIZABLE;
 #endif
 	if ((flags & SDL_FULLSCREEN) != 0) {
+		// On Linux/X11, when toggling to fullscreen, the window manager saves
+		// the window size to be able to restore it when going back to windowed mode.
+		// If the user configured ResidualVM to start in fullscreen mode, we first
+		// create a window and then toggle it to fullscreen to give the window manager
+		// a chance to save the window size. That way if the user switches back
+		// to windowed mode, the window manager has a window size to apply instead
+		// of leaving the window at the fullscreen resolution size.
+		if (!_window->getSDLWindow()) {
+			_window->createOrUpdateWindow(width, height, createWindowFlags);
+		}
+
 		createWindowFlags |= SDL_WINDOW_FULLSCREEN;
 	}
 

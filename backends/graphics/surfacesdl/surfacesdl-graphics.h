@@ -37,6 +37,7 @@ public:
 
 	// GraphicsManager API - Features
 	virtual bool hasFeature(OSystem::Feature f) override;
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 
 	// GraphicsManager API - Graphics mode
 	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) override;
@@ -76,6 +77,7 @@ protected:
 
 	SDL_Surface *_screen;
 	SDL_Surface *_subScreen;
+	void createOrUpdateScreen();
 
 	SDL_Surface *_overlayscreen;
 	bool _overlayDirty;
