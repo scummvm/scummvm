@@ -113,6 +113,7 @@ public:
 
 	virtual void init() = 0;
 	virtual void clear() = 0;
+	void toggleFullscreen();
 
 	/**
 	 *  Swap the buffers, making the drawn screen visible
@@ -172,6 +173,8 @@ public:
 	static const int kBottomBorderHeight = 90;
 	static const int kFrameHeight = 360;
 
+	void computeScreenViewport();
+
 protected:
 	OSystem *_system;
 	Texture *_font;
@@ -188,7 +191,6 @@ protected:
 	Math::AABB _cubeFacesAABB[6];
 
 	Common::Rect getFontCharacterRect(uint8 character);
-	void computeScreenViewport();
 
 	Math::Matrix4 makeProjectionMatrix(float fov) const;
 };

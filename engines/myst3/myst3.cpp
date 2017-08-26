@@ -473,8 +473,12 @@ void Myst3Engine::processInput(bool lookOnly) {
 				break;
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
-				_inputEnterPressed = true;
-				shouldInteractWithHoveredElement = true;
+				if (event.kbd.hasFlags(Common::KBD_ALT)) {
+					_gfx->toggleFullscreen();
+				} else {
+					_inputEnterPressed = true;
+					shouldInteractWithHoveredElement = true;
+				}
 				break;
 			case Common::KEYCODE_SPACE:
 				_inputSpacePressed = true;
@@ -517,6 +521,10 @@ void Myst3Engine::processInput(bool lookOnly) {
 			default:
 				break;
 			}
+		} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
+			_gfx->computeScreenViewport();
+			_cursor->updatePosition(_eventMan->getMousePos());
+			_inventory->reflow();
 		}
 	}
 

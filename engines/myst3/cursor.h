@@ -51,7 +51,7 @@ public:
 	 * @return
 	 */
 	Common::Point getPosition(bool scaled = true);
-	void updatePosition(Common::Point &mouse);
+	void updatePosition(const Common::Point &mouse);
 
 	void getDirection(float &pitch, float &heading);
 

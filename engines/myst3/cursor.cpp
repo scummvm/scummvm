@@ -170,9 +170,11 @@ void Cursor::lockPosition(bool lock) {
 	}
 }
 
-void Cursor::updatePosition(Common::Point &mouse) {
+void Cursor::updatePosition(const Common::Point &mouse) {
 	if (!_lockedAtCenter) {
 		_position = mouse;
+	} else {
+		_position = _vm->_scene->getCenter();
 	}
 }
 

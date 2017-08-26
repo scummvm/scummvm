@@ -219,6 +219,16 @@ Renderer *createRenderer(OSystem *system) {
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());
 }
 
+void Renderer::toggleFullscreen() {
+	if (!_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext)) {
+		warning("Unable to toggle the fullscreen state because the current backend would destroy the graphics context");
+		return;
+	}
+
+	bool oldFullscreen = _system->getFeatureState(OSystem::kFeatureFullscreenMode);
+	_system->setFeatureState(OSystem::kFeatureFullscreenMode, !oldFullscreen);
+}
+
 void Renderer::renderDrawable(Drawable *drawable, Window *window) {
 	if (drawable->isConstrainedToWindow()) {
 		selectTargetWindow(window, drawable->is3D(), drawable->isScaled());

@@ -60,6 +60,8 @@ public:
 	/** Change the cursor when it is hovering an item */
 	void updateCursor();
 
+	void reflow();
+
 	uint16 hoveredItem();
 	void useItem(uint16 var);
 
@@ -91,7 +93,6 @@ private:
 	void initializeTexture();
 
 	bool hasItem(uint16 var);
-	void reflow();
 
 	void openBook(uint16 age, uint16 room, uint16 node);
 	void closeAllBooks();
