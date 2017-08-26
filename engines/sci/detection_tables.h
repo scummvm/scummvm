@@ -843,9 +843,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                             GUIO_NOLAUNCHLOAD, \
                             GUIO_NOASPECT, \
                             GAMEOPTION_HQ_VIDEO)
-#define GUIO_GK2      GUIO8(GUIO_NOSUBTITLES, \
-                            GUIO_NOSFX, \
-                            GUIO_NOSPEECHVOLUME, \
+#define GUIO_GK2      GUIO7(GUIO_NOSUBTITLES, \
+                            GUIO_LINKSPEECHTOSFX, \
                             GUIO_NOMIDI, \
                             GUIO_NOASPECT, \
                             GAMEOPTION_ORIGINAL_SAVELOAD, \
