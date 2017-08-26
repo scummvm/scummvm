@@ -511,6 +511,16 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				continue;
 			}
 
+			// Map 800 and 4176 contain content that was cut from the game. The
+			// French version of the game includes map files from the US
+			// release, but the audio resources are French so the maps don't
+			// match. Since the content was never used, just ignore these maps
+			// everywhere
+			if (g_sci->getGameId() == GID_PHANTASMAGORIA2 &&
+				(map->_mapNumber == 800 || map->_mapNumber == 4176)) {
+				continue;
+			}
+
 			addResource(id, src, offset + syncSize, 0, map->getLocationName());
 		}
 	}
