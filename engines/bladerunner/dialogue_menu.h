@@ -27,6 +27,7 @@
 
 #include "common/array.h"
 #include "common/str.h"
+
 #include "graphics/surface.h"
 
 namespace BladeRunner {

@@ -394,11 +394,17 @@ void DialogueMenu::reset() {
 }
 
 void DialogueMenu::darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int y2) {
-	for (int y = y1; y != y2; ++y) {
-		for (int x = x1; x != x2; ++x) {
-			// TODO(madmoose)
-			uint16 *p = (uint16*)s.getBasePtr(x, y);
-			*p = 0;
+	x1 = MAX(x1, 0);
+	y1 = MAX(y1, 0);
+	x2 = MIN(x2, 640);
+	y2 = MIN(y2, 480);
+
+	if (x1 < x2 && y1 < y2) {
+		for (int y = y1; y != y2; ++y) {
+			for (int x = x1; x != x2; ++x) {
+				uint16 *p = (uint16*)s.getBasePtr(x, y);
+				*p = (*p & 0x739C) >> 1; // 0 11100 11100 11100
+			}
 		}
 	}
 }
