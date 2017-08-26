@@ -93,12 +93,7 @@ public:
 	* @return true if supports shaders, false otherwise
 	*/
 	virtual bool supportsShaders() = 0;
-	/**
-	 * Query whether the current context is fullscreen.
-	 *
-	 * @return true if fullscreen, false otherwise
-	 */
-	virtual bool isFullscreen() { return _isFullscreen; }
+
 	virtual uint getScreenWidth() { return _screenWidth; }
 	virtual uint getScreenHeight() { return _screenHeight; }
 
@@ -285,7 +280,6 @@ protected:
 	static const int _gameWidth = 640;
 	float _scaleW, _scaleH;
 	int _screenWidth, _screenHeight;
-	bool _isFullscreen;
 	Shadow *_currentShadowArray;
 	unsigned char _shadowColorR;
 	unsigned char _shadowColorG;

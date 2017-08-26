@@ -197,7 +197,7 @@ protected:
 	void cameraPostChangeHandle(int num);
 	void buildActiveActorsList();
 	void savegameCallback();
-	GfxBase *createRenderer(int screenW, int screenH);
+	GfxBase *createRenderer(int screenW, int screenH, bool fullscreen);
 	void playAspyrLogo();
 	virtual LuaBase *createLua();
 	virtual void updateNormalMode();

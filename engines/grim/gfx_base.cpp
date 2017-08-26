@@ -48,7 +48,7 @@ namespace Grim {
 GfxBase::GfxBase() :
 		_renderBitmaps(true), _renderZBitmaps(true), _shadowModeActive(false),
 		_currentPos(0, 0, 0), _dimLevel(0.0f),
-		_screenWidth(0), _screenHeight(0), _isFullscreen(false),
+		_screenWidth(0), _screenHeight(0),
 		_scaleW(1.0f), _scaleH(1.0f), _currentShadowArray(nullptr),
 		_shadowColorR(255), _shadowColorG(255), _shadowColorB(255) {
 			for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {

@@ -232,12 +232,11 @@ LuaBase *GrimEngine::createLua() {
 	return new Lua_V1();
 }
 
-GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
+GfxBase *GrimEngine::createRenderer(int screenW, int screenH, bool fullscreen) {
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
-	bool fullscreen = ConfMan.getBool("fullscreen");
 	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 	_system->setupScreen(screenW, screenH, fullscreen, !_softRenderer);
 
@@ -346,7 +345,8 @@ Common::Error GrimEngine::run() {
 	}
 	g_sound = new SoundPlayer();
 
-	g_driver = createRenderer(640, 480);
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	g_driver = createRenderer(640, 480, fullscreen);
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// Play EMI Mac Aspyr logo
@@ -772,15 +772,24 @@ void GrimEngine::mainLoop() {
 			savegameSave();
 		}
 
+		// If the backend can keep the OpenGL context when switching to fullscreen,
+		// just toggle the fullscreen feature (SDL2 path).
+		if (_changeFullscreenState &&
+				_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext)) {
+			bool fullscreen = _system->getFeatureState(OSystem::kFeatureFullscreenMode);
+			_system->setFeatureState(OSystem::kFeatureFullscreenMode, !fullscreen);
+			_changeFullscreenState = false;
+		}
+
+		// If the backend destroys the OpenGL context or the user switched to a different
+		// renderer, the GFX driver needs to be recreated (SDL1 path).
 		if (_changeHardwareState || _changeFullscreenState) {
 			_changeHardwareState = false;
 
-			bool fullscreen = g_driver->isFullscreen();
+			bool fullscreen = _system->getFeatureState(OSystem::kFeatureFullscreenMode);
 			if (_changeFullscreenState) {
 				fullscreen = !fullscreen;
 			}
-			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, fullscreen);
-			ConfMan.setBool("fullscreen", fullscreen);
 
 			uint screenWidth = g_driver->getScreenWidth();
 			uint screenHeight = g_driver->getScreenHeight();
@@ -792,7 +801,7 @@ void GrimEngine::mainLoop() {
 			clearPools();
 
 			delete g_driver;
-			g_driver = createRenderer(screenWidth, screenHeight);
+			g_driver = createRenderer(screenWidth, screenHeight, fullscreen);
 			savegameRestore();
 
 			if (mode == DrawMode) {

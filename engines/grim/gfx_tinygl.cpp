@@ -86,8 +86,6 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_scaleW = _screenWidth / (float)_gameWidth;
 	_scaleH = _screenHeight / (float)_gameHeight;
 
-	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
-
 	g_system->showMouse(!fullscreen);
 
 	g_system->setWindowCaption("ResidualVM: Software 3D Renderer");
