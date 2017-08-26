@@ -49,6 +49,12 @@ public:
 
 	virtual void init() = 0;
 
+	/**
+	 * Toggle between windowed mode and fullscreen when spported by the backend.
+	 */
+	void toggleFullscreen() const;
+
+	void computeScreenViewport();
 	virtual void setScreenViewport(bool noScaling) = 0; // deprecated
 
 	virtual void setViewport(Common::Rect rect, bool noScaling) = 0;
@@ -135,7 +141,6 @@ public:
 	static const int32 kGameViewportWidth = 640;
 
 protected:
-	void computeScreenViewport();
 	static void flipVertical(Graphics::Surface *s);
 
 	Common::Rect _screenViewport;

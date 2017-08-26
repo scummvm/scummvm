@@ -56,6 +56,16 @@ const Graphics::PixelFormat Driver::getRGBAPixelFormat() {
 #endif
 }
 
+void Driver::toggleFullscreen() const {
+	if (!g_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext)) {
+		warning("Unable to toggle the fullscreen state because the current backend would destroy the graphics context");
+		return;
+	}
+
+	bool oldFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !oldFullscreen);
+}
+
 void Driver::computeScreenViewport() {
 	int32 screenWidth = g_system->getWidth();
 	int32 screenHeight = g_system->getHeight();

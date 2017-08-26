@@ -122,6 +122,9 @@ public:
 	/** Was a player interaction with the world denied during this non interactive period? */
 	bool wasInteractionDenied() const;
 
+	/** The screen resolution just changed, rebuild resolution dependent data */
+	void onScreenChanged();
+
 	/** Grab a screenshot of the game screen and store it in the class context as a thumbnail */
 	void saveGameScreenThumbnail();
 

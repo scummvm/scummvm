@@ -280,5 +280,9 @@ const Graphics::Surface *UserInterface::getGameWindowThumbnail() const {
 	return _gameWindowThumbnail;
 }
 
+void UserInterface::onScreenChanged() {
+	_dialogPanel->onScreenChanged();
+}
+
 } // End of namespace Stark
 

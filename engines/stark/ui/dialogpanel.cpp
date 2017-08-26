@@ -202,7 +202,7 @@ void DialogPanel::reset() {
 	delete _subtitleVisual;
 	_subtitleVisual = nullptr;
 
-	_options.clear();
+	clearOptions();
 
 	StarkDialogPlayer->reset();
 }
@@ -219,6 +219,13 @@ int DialogPanel::getHoveredOption(const Common::Point &pos) {
 
 void DialogPanel::scrollOptions(int increment) {
 	_firstVisibleOption = CLIP<int32>(_firstVisibleOption + increment, 0, _options.size() - 3);
+}
+
+void DialogPanel::onScreenChanged() {
+	if (_currentSpeech) {
+		updateSubtitleVisual();
+	}
+	updateDialogOptions();
 }
 
 } // End of namespace Stark

@@ -49,6 +49,9 @@ public:
 	/** Abort the currently playing dialog */
 	void reset();
 
+	/** The screen resolution changed, rebuild the text textures accordingly */
+	void onScreenChanged();
+
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;

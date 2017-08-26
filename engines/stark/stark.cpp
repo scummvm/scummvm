@@ -227,6 +227,10 @@ void StarkEngine::processEvents() {
 				if (!skipped) {
 					_global->setFastForward();
 				}
+			} else if ((e.kbd.keycode == Common::KEYCODE_RETURN
+					|| e.kbd.keycode == Common::KEYCODE_KP_ENTER)
+					&& e.kbd.hasFlags(Common::KBD_ALT)) {
+				_gfx->toggleFullscreen();
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
@@ -241,6 +245,10 @@ void StarkEngine::processEvents() {
 			_lastClickTime = _system->getMillis();
 		} else if (e.type == Common::EVENT_RBUTTONDOWN) {
 			_userInterface->handleRightClick();
+		} else if (e.type == Common::EVENT_SCREEN_CHANGED) {
+			_gfx->computeScreenViewport();
+			_fontProvider->initFonts();
+			_userInterface->onScreenChanged();
 		}
 	}
 }
