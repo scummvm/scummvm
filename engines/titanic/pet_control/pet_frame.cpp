@@ -143,8 +143,11 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 
 void CPetFrame::setArea(PetArea newArea) {
 	resetArea();
-	if ((uint)newArea < _petAreas.size())
-		_modeButtons[_petAreas[newArea]].setMode(MODE_SELECTED);
+
+	for (uint idx = 0; idx < _modeButtons.size(); ++idx) {
+		if (_petAreas[idx] == newArea)
+			_modeButtons[idx].setMode(MODE_SELECTED);
+	}
 }
 
 void CPetFrame::resetArea() {
