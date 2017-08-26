@@ -40,7 +40,9 @@ ResVmSdlGraphicsManager::ResVmSdlGraphicsManager(SdlEventSource *source, SdlWind
 		_overlayWidth(0),
 		_overlayHeight(0),
 		_screenChangeCount(0),
-		_capabilities(capabilities) {
+		_capabilities(capabilities),
+		_engineRequestedWidth(0),
+		_engineRequestedHeight(0)  {
 	ConfMan.registerDefault("fullscreen_res", "desktop");
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("vsync", true);
@@ -157,9 +159,6 @@ void ResVmSdlGraphicsManager::resetGraphicsScale() {
 
 void ResVmSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-		case OSystem::kFeatureFullscreenMode:
-			_fullscreen = enable;
-			break;
 		case OSystem::kFeatureAspectRatioCorrection:
 			_lockAspectRatio = enable;
 			break;

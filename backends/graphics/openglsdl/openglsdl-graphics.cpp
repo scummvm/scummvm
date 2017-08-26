@@ -63,6 +63,9 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
 		(f == OSystem::kFeatureOpenGL) ||
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
+#endif
 		(f == OSystem::kFeatureVSync) ||
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
 		(f == OSystem::kFeatureOverlaySupportsAlpha && _overlayFormat.aBits() > 3);
@@ -77,46 +80,35 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
+void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	switch (f) {
+		case OSystem::kFeatureFullscreenMode:
+			if (_fullscreen != enable) {
+				_fullscreen = enable;
+				createOrUpdateScreen();
+			}
+			break;
+		default:
+			ResVmSdlGraphicsManager::setFeatureState(f, enable);
+			break;
+	}
+}
+
 void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
 	assert(accel3d);
 	closeOverlay();
 
+	_engineRequestedWidth = gameWidth;
+	_engineRequestedHeight = gameHeight;
 	_antialiasing = ConfMan.getInt("antialiasing");
 	_fullscreen = fullscreen;
 	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
 	_vsync = ConfMan.getBool("vsync");
 
-	bool engineSupportsArbitraryResolutions = g_engine && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
-
-	// Select how the game screen is going to be drawn
-	GameRenderTarget gameRenderTarget = selectGameRenderTarget(_fullscreen, true, engineSupportsArbitraryResolutions,
-	                                                           _capabilities.openGLFrameBuffer, _lockAspectRatio);
-
-	// Choose the effective window size or fullscreen mode
-	uint effectiveWidth;
-	uint effectiveHeight;
-	if (_fullscreen && canUsePreferredResolution(gameRenderTarget, engineSupportsArbitraryResolutions)) {
-		Common::Rect fullscreenResolution = getPreferredFullscreenResolution();
-		effectiveWidth = fullscreenResolution.width();
-		effectiveHeight = fullscreenResolution.height();
-	} else {
-		effectiveWidth = gameWidth;
-		effectiveHeight = gameHeight;
-	}
-
-	// Compute the rectangle where to draw the game inside the effective screen
-	_gameRect = computeGameRect(gameRenderTarget, gameWidth, gameHeight, effectiveWidth, effectiveHeight);
-
-	if (!createScreen(effectiveWidth, effectiveHeight, gameRenderTarget)) {
-		warning("Error: %s", SDL_GetError());
-		g_system->quit();
-	}
+	createOrUpdateScreen();
 
 	int glflag;
 	const GLubyte *str;
-
-	// apply atribute again for sure based on SDL docs
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	str = glGetString(GL_VENDOR);
 	debug("INFO: OpenGL Vendor: %s", str);
@@ -138,18 +130,49 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 	debug("INFO: OpenGL Double Buffer: %d", glflag);
 	SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &glflag);
 	debug("INFO: OpenGL Stencil buffer bits: %d", glflag);
-
 #ifdef USE_GLEW
 	debug("INFO: GLEW Version: %s", glewGetString(GLEW_VERSION));
+#endif
+#ifdef USE_OPENGL_SHADERS
+	debug("INFO: GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+#endif
+}
+
+void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
+	closeOverlay();
+
+	bool engineSupportsArbitraryResolutions = g_engine && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
+
+	// Select how the game screen is going to be drawn
+	GameRenderTarget gameRenderTarget = selectGameRenderTarget(_fullscreen, true, engineSupportsArbitraryResolutions,
+	                                                           _capabilities.openGLFrameBuffer, _lockAspectRatio);
+
+	// Choose the effective window size or fullscreen mode
+	uint effectiveWidth;
+	uint effectiveHeight;
+	if (_fullscreen && canUsePreferredResolution(gameRenderTarget, engineSupportsArbitraryResolutions)) {
+		Common::Rect fullscreenResolution = getPreferredFullscreenResolution();
+		effectiveWidth = fullscreenResolution.width();
+		effectiveHeight = fullscreenResolution.height();
+	} else {
+		effectiveWidth = _engineRequestedWidth;
+		effectiveHeight = _engineRequestedHeight;
+	}
+
+	// Compute the rectangle where to draw the game inside the effective screen
+	_gameRect = computeGameRect(gameRenderTarget, _engineRequestedWidth, _engineRequestedHeight, effectiveWidth, effectiveHeight);
+
+	if (!createOrUpdateGLContext(effectiveWidth, effectiveHeight, gameRenderTarget)) {
+		warning("Error: %s", SDL_GetError());
+		g_system->quit();
+	}
+
+#ifdef USE_GLEW
 	GLenum err = glewInit();
 	if (err != GLEW_OK) {
 		warning("Error: %s", glewGetErrorString(err));
 		g_system->quit();
 	}
-#endif
-
-#ifdef USE_OPENGL_SHADERS
-	debug("INFO: GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 #endif
 
 	initializeOpenGLContext();
@@ -167,7 +190,7 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 #if !defined(AMIGAOS)
 	if (gameRenderTarget == kFramebuffer) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		_frameBuffer = createFramebuffer(gameWidth, gameHeight);
+		_frameBuffer = createFramebuffer(_engineRequestedWidth, _engineRequestedHeight);
 		_frameBuffer->attach();
 	}
 #endif
@@ -205,8 +228,8 @@ OpenGLSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesP
 
 }
 
-bool OpenGLSdlGraphicsManager::createScreen(uint effectiveWidth, uint effectiveHeight,
-                                            GameRenderTarget gameRenderTarget) {
+bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint effectiveWidth, uint effectiveHeight,
+                                                       GameRenderTarget gameRenderTarget) {
 	// Build a list of OpenGL pixel formats usable by ResidualVM
 	Common::Array<OpenGLPixelFormat> pixelFormats;
 	if (_antialiasing > 0 && gameRenderTarget == kScreen) {
@@ -251,12 +274,31 @@ bool OpenGLSdlGraphicsManager::createScreen(uint effectiveWidth, uint effectiveH
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		uint32 sdlflags = SDL_WINDOW_OPENGL;
-		if (_fullscreen)
+		if (_fullscreen) {
+			// On Linux/X11, when toggling to fullscreen, the window manager saves
+			// the window size to be able to restore it when going back to windowed mode.
+			// If the user configured ResidualVM to start in fullscreen mode, we first
+			// create a window and then toggle it to fullscreen to give the window manager
+			// a chance to save the window size. That way if the user switches back
+			// to windowed mode, the window manager has a window size to apply instead
+			// of leaving the window at the fullscreen resolution size.
+			if (!_window->getSDLWindow()) {
+				_window->createOrUpdateWindow(effectiveWidth, effectiveHeight, sdlflags);
+			}
+
 			sdlflags |= SDL_WINDOW_FULLSCREEN;
+		}
 
 		if (_window->createOrUpdateWindow(effectiveWidth, effectiveHeight, sdlflags)) {
-			_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
+			// Get the current GL context from SDL in case the previous one
+			// was destroyed because the window was recreated.
+			_glContext = SDL_GL_GetCurrentContext();
+			if (!_glContext) {
+				_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
+			}
+
 			if (_glContext) {
+				assert(SDL_GL_GetCurrentWindow() == _window->getSDLWindow());
 				break;
 			}
 		}
@@ -520,8 +562,6 @@ void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 void OpenGLSdlGraphicsManager::deinitializeRenderer() {
 	SDL_GL_DeleteContext(_glContext);
 	_glContext = nullptr;
-
-	_window->destroyWindow();
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 

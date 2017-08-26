@@ -45,6 +45,7 @@ public:
 	// GraphicsManager API - Features
 	virtual bool hasFeature(OSystem::Feature f) override;
 	virtual bool getFeatureState(OSystem::Feature f) override;
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 
 	// GraphicsManager API - Graphics mode
 	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) override;
@@ -99,7 +100,9 @@ protected:
 	 * When unable to create a context with anti-aliasing this tries without.
 	 * When unable to create a context with the desired pixel depth this tries lower values.
 	 */
-	bool createScreen(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
+	bool createOrUpdateGLContext(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
+
+	void createOrUpdateScreen();
 
 	int _antialiasing;
 	bool _vsync;

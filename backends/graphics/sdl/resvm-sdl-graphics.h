@@ -127,6 +127,7 @@ protected:
 
 	bool _fullscreen;
 	bool _lockAspectRatio;
+	uint _engineRequestedWidth, _engineRequestedHeight;
 
 	int _screenChangeCount;
 
