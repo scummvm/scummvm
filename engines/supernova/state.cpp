@@ -749,8 +749,8 @@ void GameManager::drawInventory() {
 		                _guiInventory[i]._textColor);
 	}
 
-	_vm->renderBox(272, 161, 7, 19, HGR_INV);
-	_vm->renderBox(272, 181, 7, 19, HGR_INV);
+	_vm->renderBox(272, 161, 7, 19, kColorWhite25);
+	_vm->renderBox(272, 181, 7, 19, kColorWhite25);
 }
 
 uint16 GameManager::getKeyInput(bool blockForPrintChar) {
@@ -885,15 +885,15 @@ void GameManager::shock() {
 
 void GameManager::showMenu() {
 	_vm->renderBox(0, 138, 320, 62, 0);
-	_vm->renderBox(0, 140, 320, 9, HGR_BEF_ANZ);
+	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
 	drawCommandBox();
-	_vm->renderBox(281, 161, 39, 39, HGR_AUSG);
+	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
 	drawInventory();
 }
 
 void GameManager::drawMapExits() {
 // TODO: Preload _exitList on room entry instead on every call
-	_vm->renderBox(281, 161, 39, 39, HGR_AUSG);
+	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
 
 	for (int i = 0; i < 25; i++)
 		_exitList[i] = -1;
@@ -903,7 +903,7 @@ void GameManager::drawMapExits() {
 			_exitList[r] = i;
 			int x = 284 + 7 * (r % 5);
 			int y = 164 + 7 * (r / 5);
-			_vm->renderBox(x, y, 5, 5, COL_AUSG);
+			_vm->renderBox(x, y, 5, 5, kColorDarkRed);
 		}
 	}
 }
@@ -926,22 +926,22 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	while (isEditing) {
 		_vm->_textCursorX = x;
 		_vm->_textCursorY = y;
-		_vm->_textColor = COL_EDIT;
-		_vm->renderBox(x, y - 1, overdrawWidth, 9, HGR_EDIT);
+		_vm->_textColor = kColorWhite99;
+		_vm->renderBox(x, y - 1, overdrawWidth, 9, kColorDarkBlue);
 		for (uint i = 0; i < input.size(); ++i) {
 			// Draw char highlight depending on cursor position
 			if (i == cursorIndex) {
-				_vm->renderBox(_vm->_textCursorX, y - 1, _vm->textWidth(input[i]), 9, COL_EDIT);
-				_vm->_textColor = HGR_EDIT;
+				_vm->renderBox(_vm->_textCursorX, y - 1, _vm->textWidth(input[i]), 9, kColorWhite99);
+				_vm->_textColor = kColorDarkBlue;
 				_vm->renderText(input[i]);
-				_vm->_textColor = COL_EDIT;
+				_vm->_textColor = kColorWhite99;
 			} else {
 				_vm->renderText(input[i]);
 			}
 		}
 		if (cursorIndex == input.size()) {
-			_vm->renderBox(_vm->_textCursorX + 1, y - 1, 6, 9, HGR_EDIT);
-			_vm->renderBox(_vm->_textCursorX    , y - 1, 1, 9, COL_EDIT);
+			_vm->renderBox(_vm->_textCursorX + 1, y - 1, 6, 9, kColorDarkBlue);
+			_vm->renderBox(_vm->_textCursorX    , y - 1, 1, 9, kColorWhite99);
 		}
 
 		getKeyInput(true);

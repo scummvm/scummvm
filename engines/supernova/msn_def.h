@@ -82,7 +82,6 @@ struct AudioInfo {
 	int _offsetEnd;
 };
 
-// Colors
 const int kColorBlack       =  0;
 const int kColorWhite25     =  1;
 const int kColorWhite35     =  2;
@@ -100,37 +99,6 @@ const int kColorLightGreen  = 13;
 const int kColorLightYellow = 14;
 const int kColorLightRed    = 15;
 const int kColorCursorTransparent = kColorWhite25;
-
-#define HGR_BEF      kColorWhite25
-#define COL_BEF      kColorDarkGreen
-#define HGR_BEF_HELL kColorWhite44
-#define COL_BEF_HELL kColorGreen
-
-#define HGR_INV      kColorWhite25
-#define COL_INV      kColorDarkRed
-#define HGR_INV_HELL kColorWhite35
-#define COL_INV_HELL kColorRed
-
-#define HGR_BEF_ANZ  kColorWhite25
-#define COL_BEF_ANZ  kColorDarkGreen
-
-#define HGR_AUSG     kColorWhite25
-#define COL_AUSG     kColorDarkRed
-
-#define HGR_MELD     kColorWhite35
-#define COL_MELD     kColorWhite99
-
-#define COL_LWIN     kColorDarkRed
-#define HGR_LADEN    kColorBlue
-#define COL_LADEN    kColorWhite99
-#define HGR_LADEN2   kColorDarkBlue
-#define COL_LADEN2   kColorWhite63
-#define HGR_NAME     kColorDarkBlue
-#define COL_NAME     kColorLightRed
-
-#define HGR_EDIT     kColorDarkBlue
-#define COL_EDIT     kColorWhite99
-
 
 const byte mouseNormal[64] = {
     0xff,0x3f,0xff,0x1f,0xff,0x0f,0xff,0x07,
