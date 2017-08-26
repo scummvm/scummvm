@@ -482,13 +482,17 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			// and points to garbage in the RESOURCE.AUD. The affected audio36
 			// assets seem to be able to load successfully from one of the later
 			// CDs, so just ignore the map on this disc
-			if (g_sci->getGameId() == GID_PQSWAT && map->_volumeNumber == 1 && map->_mapNumber == 405) {
+			if (g_sci->getGameId() == GID_PQSWAT &&
+				g_sci->getLanguage() == Common::EN_ANY &&
+				map->_volumeNumber == 1 &&
+				map->_mapNumber == 405) {
 				continue;
 			}
 
-			// At least version 1.00 of GK2 has multiple invalid audio36 map
-			// entries on CD 6
+			// At least version 1.00 of the US release of GK2 has multiple
+			// invalid audio36 map entries on CD 6
 			if (g_sci->getGameId() == GID_GK2 &&
+				g_sci->getLanguage() == Common::EN_ANY &&
 				map->_volumeNumber == 6 &&
 				offset + syncSize >= srcSize) {
 
