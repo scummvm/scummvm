@@ -500,6 +500,17 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				continue;
 			}
 
+			// Map 2020 on CD 1 of the German release of GK2 is invalid. This
+			// content does not appear to ever be used by the game (it does not
+			// even exist in the US release), and there is a correct copy of it
+			// on CD 6, so just ignore the bad copy on CD 1
+			if (g_sci->getGameId() == GID_GK2 &&
+				g_sci->getLanguage() == Common::DE_DEU &&
+				map->_volumeNumber == 1 &&
+				map->_mapNumber == 2020) {
+				continue;
+			}
+
 			addResource(id, src, offset + syncSize, 0, map->getLocationName());
 		}
 	}
