@@ -29,7 +29,7 @@
 #include "common/scummsys.h"
 
 namespace Common {
-class Point;
+struct Point;
 }
 
 namespace Titanic {
