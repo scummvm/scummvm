@@ -104,7 +104,6 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
     , _imageIndex(0)
     , _sectionIndex(0)
     , _delay(33)
-    , _gameRunning(true)
     , _screenWidth(320)
     , _screenHeight(200)
     , _messageDisplayed(false)
@@ -143,7 +142,7 @@ Common::Error SupernovaEngine::run() {
 	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
 	CursorMan.showMouse(true);
 
-	while (_gameRunning) {
+	while (!shouldQuit()) {
 		uint32 start = _system->getMillis();
 		updateEvents();
 		_gm->executeRoom();
@@ -169,11 +168,6 @@ void SupernovaEngine::updateEvents() {
 	_gm->_keyPressed = false;
 	while (g_system->getEventManager()->pollEvent(_event)) {
 		switch (_event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
-			_gameRunning = false;
-			break;
-
 		case Common::EVENT_KEYDOWN:
 			_gm->_keyPressed = true;
 			if (_event.kbd.keycode == Common::KEYCODE_d &&
@@ -183,7 +177,6 @@ void SupernovaEngine::updateEvents() {
 			if (_event.kbd.keycode == Common::KEYCODE_x &&
 			    (_event.kbd.flags & Common::KBD_CTRL)) {
 				// TODO: Draw exit box
-				_gameRunning = false;
 			}
 
 			_gm->processInput(_event.kbd);
@@ -205,6 +198,15 @@ void SupernovaEngine::updateEvents() {
 		default:
 			break;
 		}
+	}
+}
+
+bool SupernovaEngine::hasFeature(EngineFeature f) const {
+	switch (f) {
+	case kSupportsRTL:
+		return true;
+	default:
+		return false;
 	}
 }
 

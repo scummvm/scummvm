@@ -93,7 +93,6 @@ public:
 	} _soundSamples[kAudioNumSamples];
 	Common::MemoryReadStream *_soundMusic[2];
 	Common::Event _event;
-	bool _gameRunning;
 	int _screenWidth;
 	int _screenHeight;
 
