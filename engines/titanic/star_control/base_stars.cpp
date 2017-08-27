@@ -128,8 +128,8 @@ void CBaseStars::resetEntry(CBaseStarEntry &entry) {
 
 void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	if (!_data.empty()) {
-		switch (camera->proc27()) {
-		case 0:
+		switch (camera->getStarColor()) {
+		case WHITE: // draw white, green, and red stars (mostly white)
 			switch (surfaceArea->_bpp) {
 			case 1:
 				draw1(surfaceArea, camera, closeup);
@@ -142,7 +142,7 @@ void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClose
 			}
 			break;
 
-		case 2:
+		case PINK: // draw pink stars
 			switch (surfaceArea->_bpp) {
 			case 1:
 				draw3(surfaceArea, camera, closeup);
@@ -163,7 +163,7 @@ void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClose
 
 void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
-	camera->proc36(&_value1, &_value2, &_value3, &_value4);
+	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
@@ -248,7 +248,7 @@ void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 
 void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
-	camera->proc36(&_value1, &_value2, &_value3, &_value4);
+	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
@@ -334,7 +334,7 @@ void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 
 void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
-	camera->proc36(&_value1, &_value2, &_value3, &_value4);
+	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
@@ -441,7 +441,7 @@ void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 
 void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
-	camera->proc36(&_value1, &_value2, &_value3, &_value4);
+	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);

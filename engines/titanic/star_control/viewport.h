@@ -30,30 +30,38 @@ class SimpleFile;
 
 namespace Titanic {
 
+enum StarColor {WHITE=0,PINK=2};	// The color of the stars when drawn (CBaseStars::draw)
+									// For starview it should be white
+									// For skyview it should be pink
+
 /**
  * Implements the viewport functionality for viewing the star field in
- * a given position and orientation
+ * a given position and orientation.
+ * CStarCamera is a big user of this class
  */
 class CViewport {
 private:
 	double _fieldC;
-	double _field18;
-	double _field1C;
+	double _centerYAngleDegrees;
+	double _centerZAngleDegrees;
 	int _width;
 	int _height;
 	FMatrix _orientation;
 	FPose _currentPose;
 	FPose _rawPose;
 	FPoint _center;
-	bool _flag;
+	bool _poseUpToDate;
 private:
 	void reset();
 public:
 	FVector _position;
 	double _field10;
 	double _field14;
-	int _field24;
-	double _valArray[5];
+	StarColor _starColor; // Used in CBaseStars::draw
+	double _valArray[2]; // has value 0.0 or 30.0
+	double _isZero;
+	double _pixel1OffSetX; // Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or 28000.0
+	double _pixel2OffSetX; // Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or -28000.0
 	FVector _centerVector;
 public:
 	CViewport();
@@ -94,16 +102,34 @@ public:
 	 */
 	void setOrientation(const FVector &v);
 
-	void fn12();
-	void fn13(StarMode mode, double val);
+	void randomizeOrientation();
+	/**
+	 * The view has changed between starview and skyview
+	 * Change the enum that tracks the color of the stars
+	 * Also change the X coordinate pixel offset used for star drawing
+	 */	
+	void changeStarColorPixel(StarMode mode, double pixelOffSet);
 	void reposition(double factor);
-	void fn15(const FMatrix &matrix);
+
+	/**
+	 * Applys a rotation matrix to the current
+	 * orientation
+	 */	
+	void changeOrientation(const FMatrix &matrix);
 	FPose getPose();
 	FPose getRawPose();
-	FVector fn16(int index, const FVector &src);
-	FVector fn17(int index, const FVector &src);
-	FVector fn18(int index, const FVector &src);
-	void fn19(double *v1, double *v2, double *v3, double *v4);
+	FVector getRelativePosNoCentering(int index, const FVector &src);
+	FVector getRelativePosCentering(int index, const FVector &src);
+	FVector getRelativePosCentering2(int index, const FVector &src);
+
+	/**
+	 * All arguments are return values
+	 * First is the x center coordinate relative to y
+	 * Second is the x center coordinate relative to z
+	 * Third is the first x center pixel offset
+	 * Fourth is the second x center pixel offset
+	 */
+	void getRelativeXCenterPixels(double *v1, double *v2, double *v3, double *v4);
 
 	/**
 	 * Returns the viewport's orientation
@@ -113,8 +139,18 @@ public:
 	void setC(double v);
 	void set10(double v);
 	void set14(double v);
-	void set18(double v);
-	void set1C(double v);
+	/**
+	 * Sets the center vector y angle
+	 * The actual center y value doesn't
+	 * change untill reset is called 
+	 */		
+	void setCenterYAngle(double angleDegrees);
+	/**
+	 * Sets the center vector z angle
+	 * The actual center z value doesn't
+	 * change untill reset is called 
+	 */	
+	void setCenterZAngle(double angleDegrees);
 };
 
 } // End of namespace Titanic

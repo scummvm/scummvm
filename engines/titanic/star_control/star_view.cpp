@@ -182,7 +182,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	case Common::KEYCODE_z:
 		if (matchedIndex == -1) {
 			pose.setRotationMatrix(Y_AXIS, -1.0);
-			_camera.proc22(pose);
+			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
 			return true;
 		}
@@ -215,7 +215,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	case Common::KEYCODE_x:
 		if (matchedIndex == -1) {
 			pose.setRotationMatrix(Y_AXIS, 1.0);
-			_camera.proc22(pose);
+			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
 			return true;
 		}
@@ -224,7 +224,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	case Common::KEYCODE_QUOTE:
 		if (matchedIndex == -1) {
 			pose.setRotationMatrix(X_AXIS, 1.0);
-			_camera.proc22(pose);
+			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
 			return true;
 		}
@@ -233,7 +233,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	case Common::KEYCODE_SLASH:
 		if (matchedIndex == -1) {
 			pose.setRotationMatrix(X_AXIS, -1.0);
-			_camera.proc22(pose);
+			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
 			return true;
 		}
@@ -386,8 +386,8 @@ void CStarView::setHasReference() {
 	_photoViewport.setPosition(pos);
 	_photoViewport.setOrientation(orientation);
 	_field218 = false;
-	_photoViewport.fn13(MODE_PHOTO, 0.0);
-	_photoViewport.fn13(MODE_STARFIELD, 0.0);
+	_photoViewport.changeStarColorPixel(MODE_PHOTO, 0.0);
+	_photoViewport.changeStarColorPixel(MODE_STARFIELD, 0.0);
 	_hasReference = true;
 	reset();
 	_field218 = true;
