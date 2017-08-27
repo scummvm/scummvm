@@ -246,7 +246,6 @@ void CViewport::fn19(double *v1, double *v2, double *v3, double *v4) {
 }
 
 void CViewport::reset() {
-	const double FACTOR = 2 * M_PI / 360.0;
 
 	_rawPose.copyFrom(_orientation);
 	_rawPose._vector = _position;
@@ -254,8 +253,8 @@ void CViewport::reset() {
 
 	_center = FPoint((double)_width * 0.5, (double)_height * 0.5);
 	_centerVector._x = MIN(_center._x, _center._y);
-	_centerVector._y = tan(_field18 * FACTOR);
-	_centerVector._z = tan(_field1C * FACTOR);
+	_centerVector._y = tan(_field18 * Deg2Rad);
+	_centerVector._z = tan(_field1C * Deg2Rad);
 	_flag = true;
 }
 
