@@ -93,7 +93,6 @@ public:
 	} _soundSamples[kAudioNumSamples];
 	Common::MemoryReadStream *_soundMusic[2];
 	Common::Event _event;
-	bool _gameRunning;
 	int _screenWidth;
 	int _screenHeight;
 
@@ -134,6 +133,8 @@ public:
 	void command_print();
 
 	Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
+
+	virtual bool hasFeature(EngineFeature f) const;
 };
 
 }
