@@ -57,6 +57,9 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSourc
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 	closeOverlay();
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	deinitializeRenderer();
+#endif
 }
 
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -97,6 +100,12 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
 	assert(accel3d);
 	closeOverlay();
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// Clear the GL context when going from / to the launcher
+	SDL_GL_DeleteContext(_glContext);
+	_glContext = nullptr;
+#endif
 
 	_engineRequestedWidth = gameWidth;
 	_engineRequestedHeight = gameHeight;
@@ -522,10 +531,6 @@ void OpenGLSdlGraphicsManager::closeOverlay() {
 	_frameBuffer = nullptr;
 
 	OpenGL::Context::destroy();
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	deinitializeRenderer();
-#endif
 }
 
 void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {

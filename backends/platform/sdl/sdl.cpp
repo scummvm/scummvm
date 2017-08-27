@@ -54,6 +54,7 @@
 //#include "graphics/cursorman.h" // ResidualVM
 #include "graphics/opengl/context.h" // ResidualVM specific
 #endif
+#include "graphics/renderer.h" // ResidualVM specific
 
 #include <time.h>	// for getTimeAndDate()
 
@@ -405,7 +406,13 @@ void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool 
 }
 
 void OSystem_SDL::launcherInitSize(uint w, uint h) {
-	setupScreen(w, h, false, false);
+	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+
+	bool fullscreen = ConfMan.getBool("fullscreen");
+
+	setupScreen(w, h, fullscreen, matchingRendererType != Graphics::kRendererTypeTinyGL);
 }
 // End of ResidualVM specific code
 

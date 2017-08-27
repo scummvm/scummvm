@@ -414,7 +414,7 @@ void GUIErrorMessage(const Common::String &msg) {
 	g_system->beginGFXTransaction();
 		initCommonGFX(false);
 		g_system->initSize(320, 200);
-		g_system->launcherInitSize(640, 400);//ResidualVM specific
+		g_system->launcherInitSize(640, 480);//ResidualVM specific
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		GUI::MessageDialog dialog(msg);
 		dialog.runModal();

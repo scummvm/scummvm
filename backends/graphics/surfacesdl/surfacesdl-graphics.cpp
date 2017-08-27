@@ -389,8 +389,6 @@ void SurfaceSdlGraphicsManager::deinitializeRenderer() {
 
 	SDL_DestroyRenderer(_renderer);
 	_renderer = nullptr;
-
-	_window->destroyWindow();
 }
 
 SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {

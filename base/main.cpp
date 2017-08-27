@@ -289,7 +289,7 @@ static void setupGraphics(OSystem &system) {
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
 		system.initSize(320, 200);
-		system.launcherInitSize(640, 400); //ResidualVM specific
+		system.launcherInitSize(640, 480); //ResidualVM specific
 
 		if (ConfMan.hasKey("aspect_ratio"))
 			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
