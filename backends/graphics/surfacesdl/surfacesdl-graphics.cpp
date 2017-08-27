@@ -464,10 +464,63 @@ Common::List<Graphics::PixelFormat> SurfaceSdlGraphicsManager::getSupportedForma
 	return _supportedFormats;
 }
 
-void SurfaceSdlGraphicsManager::detectSupportedFormats() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+static void maskToBitCount(uint32 mask, uint8 &numBits, uint8 &shift) {
+	numBits = 0;
+	shift = 32;
+	for (int i = 0; i < 32; ++i) {
+		if (mask & 1) {
+			if (i < shift) {
+				shift = i;
+			}
+			++numBits;
+		}
 
-	// Clear old list
+		mask >>= 1;
+	}
+}
+#endif
+
+void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 	_supportedFormats.clear();
+
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	{
+		SDL_Window *window = _window->getSDLWindow();
+		if (window == nullptr) {
+			error("Could not find ScummVM window for retrieving default display mode");
+		}
+
+		const int displayIndex = SDL_GetWindowDisplayIndex(window);
+		if (displayIndex < 0) {
+			error("Could not find ScummVM window display index");
+		}
+
+		SDL_DisplayMode defaultMode;
+		if (SDL_GetDesktopDisplayMode(displayIndex, &defaultMode) != 0) {
+			error("Could not get default system display mode");
+		}
+
+		int bpp;
+		uint32 rMask, gMask, bMask, aMask;
+		if (SDL_PixelFormatEnumToMasks(defaultMode.format, &bpp, &rMask, &gMask, &bMask, &aMask) != SDL_TRUE) {
+			error("Could not convert system pixel format %s to masks", SDL_GetPixelFormatName(defaultMode.format));
+		}
+
+		const uint8 bytesPerPixel = SDL_BYTESPERPIXEL(defaultMode.format);
+		uint8 rBits, rShift, gBits, gShift, bBits, bShift, aBits, aShift;
+		maskToBitCount(rMask, rBits, rShift);
+		maskToBitCount(gMask, gBits, gShift);
+		maskToBitCount(bMask, bBits, bShift);
+		maskToBitCount(aMask, aBits, aShift);
+
+		format = Graphics::PixelFormat(bytesPerPixel, rBits, gBits, bBits, aBits, rShift, gShift, bShift, aShift);
+
+		_supportedFormats.push_back(format);
+	}
+#endif
 
 	// Some tables with standard formats that we always list
 	// as "supported". If frontend code tries to use one of
@@ -507,10 +560,9 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)
 	};
 
-	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	if (_hwscreen) {
 		// Get our currently set hardware format
-		format = Graphics::PixelFormat(_hwscreen->format->BytesPerPixel,
+		Graphics::PixelFormat hwFormat(_hwscreen->format->BytesPerPixel,
 			8 - _hwscreen->format->Rloss, 8 - _hwscreen->format->Gloss,
 			8 - _hwscreen->format->Bloss, 8 - _hwscreen->format->Aloss,
 			_hwscreen->format->Rshift, _hwscreen->format->Gshift,
@@ -518,10 +570,13 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 
 		// Workaround to SDL not providing an accurate Aloss value on Mac OS X.
 		if (_hwscreen->format->Amask == 0)
-			format.aLoss = 8;
+			hwFormat.aLoss = 8;
 
-		// Push it first, as the prefered format.
-		_supportedFormats.push_back(format);
+		_supportedFormats.push_back(hwFormat);
+
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+		format = hwFormat;
+#endif
 	}
 
 	// TODO: prioritize matching alpha masks
