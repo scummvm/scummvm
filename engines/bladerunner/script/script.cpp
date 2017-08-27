@@ -38,6 +38,7 @@
 #include "bladerunner/items.h"
 #include "bladerunner/item_pickup.h"
 #include "bladerunner/movement_track.h"
+#include "bladerunner/overlays.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/set.h"
 #include "bladerunner/settings.h"
@@ -818,13 +819,11 @@ bool ScriptBase::Music_Is_Playing() {
 }
 
 void ScriptBase::Overlay_Play(const char *overlay, int a2, int a3, int a4, int a5) {
-	//TODO
-	warning("Overlay_Play(%s, %d, %d, %d, %d)", overlay, a2, a3, a4, a5);
+	_vm->_overlays->play(overlay, a2, a3, a4, a5);
 }
 
 void ScriptBase::Overlay_Remove(const char *overlay) {
-	//TODO
-	warning("Overlay_Remove(%s)", overlay);
+	_vm->_overlays->remove(overlay);
 }
 
 void ScriptBase::Scene_Loop_Set_Default(int loopId) {

@@ -44,6 +44,7 @@
 #include "bladerunner/mouse.h"
 #include "bladerunner/outtake.h"
 #include "bladerunner/obstacles.h"
+#include "bladerunner/overlays.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
@@ -239,7 +240,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!openArchive("SPCHSFX.TLK"))
 		return false;
 
-	// TODO: Video overlays
+	_overlays = new Overlays(this);
+	_overlays->init();
 
 	_zbuffer = new ZBuffer();
 	_zbuffer->init(640, 480);
@@ -437,7 +439,8 @@ void BladeRunnerEngine::shutdown() {
 
 	delete _ambientSounds;
 
-	// TODO: Delete overlays
+	delete _overlays;
+	_overlays = nullptr;
 
 	delete _audioSpeech;
 
@@ -646,10 +649,11 @@ void BladeRunnerEngine::gameTick() {
 		}
 		(void)backgroundChanged;
 		blit(_surfaceInterface, _surfaceGame);
+
 		// TODO: remove zbuffer draw
 		// _surfaceGame.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
 
-		// TODO: Render overlays
+		_overlays->tick();
 
 		if (!inDialogueMenu) {
 			actorsUpdate();

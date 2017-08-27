@@ -52,6 +52,7 @@ class VQAPlayer {
 	const uint16                *_zBuffer;
 	Audio::QueuingAudioStream   *_audioStream;
 
+	int _frame;
 	int _frameNext;
 	int _frameBegin;
 	int _frameEnd;
@@ -102,7 +103,7 @@ public:
 	bool open(const Common::String &name);
 	void close();
 
-	int  update();
+	int  update(bool forceDraw = false);
 	void updateZBuffer(ZBuffer *zbuffer);
 	void updateView(View *view);
 	void updateAESC(AESC *aesc);

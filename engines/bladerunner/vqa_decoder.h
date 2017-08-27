@@ -43,6 +43,15 @@ class Lights;
 class View;
 class ZBuffer;
 
+enum VQADecoderSkipFlags {
+	kVQAReadCodebook           = 1,
+	kVQAReadVectorPointerTable = 2,
+	kVQAReadCustom             = 4,
+	kVQAReadVideo              = kVQAReadCodebook|kVQAReadVectorPointerTable|kVQAReadCustom,
+	kVQAReadAudio              = 8,
+	kVQAReadAll                = kVQAReadVideo|kVQAReadAudio
+};
+
 class VQADecoder {
 public:
 	VQADecoder(Graphics::Surface *surface);
@@ -50,9 +59,9 @@ public:
 
 	bool loadStream(Common::SeekableReadStream *s);
 
-	void readFrame(int frame, int skipFlags);
+	void readFrame(int frame, uint readFlags = kVQAReadAll);
 
-	void                        decodeVideoFrame();
+	void                        decodeVideoFrame(int frame, bool forceDraw = false);
 	void                        decodeZBuffer(ZBuffer *zbuffer);
 	Audio::SeekableAudioStream *decodeAudioFrame();
 	void                        decodeView(View *view);
@@ -120,8 +129,10 @@ private:
 		}
 	};
 
-	struct ClipInfo {
-		uint16 clipCount;
+	struct CodebookInfo {
+		uint16  frame;
+		uint32  size;
+		uint8  *data;
 	};
 
 	class VQAVideoTrack;
@@ -131,8 +142,11 @@ private:
 	Graphics::Surface *_surface;
 
 	Header   _header;
+	int      _readingFrame;
+	int      _decodingFrame;
 	LoopInfo _loopInfo;
-	ClipInfo _clipInfo;
+
+	Common::Array<CodebookInfo> _codebooks;
 
 	uint32  *_frameInfo;
 
@@ -143,7 +157,7 @@ private:
 	VQAVideoTrack *_videoTrack;
 	VQAAudioTrack *_audioTrack;
 
-	void readPacket(int skipFlags);
+	void readPacket(uint readFlags);
 
 	bool readVQHD(Common::SeekableReadStream *s, uint32 size);
 	bool readMSCI(Common::SeekableReadStream *s, uint32 size);
@@ -154,6 +168,8 @@ private:
 	bool readLNIN(Common::SeekableReadStream *s, uint32 size);
 	bool readCLIP(Common::SeekableReadStream *s, uint32 size);
 
+	VQADecoder::CodebookInfo &VQADecoder::codebookInfoForFrame(int frame);
+
 	class VQAVideoTrack {
 	public:
 		VQAVideoTrack(VQADecoder *vqaDecoder, Graphics::Surface *surface);
@@ -162,18 +178,17 @@ private:
 		uint16 getWidth() const;
 		uint16 getHeight() const;
 
-		int getCurFrame() const;
 		int getFrameCount() const;
 
-		void decodeVideoFrame();
+		void decodeVideoFrame(bool forceDraw);
 		void decodeZBuffer(ZBuffer *zbuffer);
 		void decodeView(View *view);
 		void decodeAESC(AESC *aesc);
 		void decodeLights(Lights *lights);
 
-		bool readVQFR(Common::SeekableReadStream *s, uint32 size);
+		bool readVQFR(Common::SeekableReadStream *s, uint32 size, uint readFlags);
 		bool readVPTR(Common::SeekableReadStream *s, uint32 size);
-		bool readVQFL(Common::SeekableReadStream *s, uint32 size);
+		bool readVQFL(Common::SeekableReadStream *s, uint32 size, uint readFlags);
 		bool readCBFZ(Common::SeekableReadStream *s, uint32 size);
 		bool readZBUF(Common::SeekableReadStream *s, uint32 size);
 		bool readVIEW(Common::SeekableReadStream *s, uint32 size);
@@ -186,6 +201,7 @@ private:
 		bool useAudioSync() const { return false; }
 
 	private:
+		VQADecoder        *_vqaDecoder;
 		Graphics::Surface *_surface;
 		bool _hasNewFrame;
 
@@ -200,7 +216,6 @@ private:
 		uint32  _maxCBFZSize;
 		uint32  _maxZBUFChunkSize;
 
-		uint32   _codebookSize;
 		uint8   *_codebook;
 		uint8   *_cbfz;
 		bool     _zbufChunkComplete;
@@ -215,9 +230,9 @@ private:
 		uint8   *_viewData;
 		uint32   _viewDataSize;
 		uint8   *_lightsData;
-		uint32	 _lightsDataSize;
+		uint32   _lightsDataSize;
 		uint8   *_aescData;
-		uint32	 _aescDataSize;
+		uint32   _aescDataSize;
 
 		void VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
 		bool decodeFrame(uint16 *frame);

@@ -39,6 +39,7 @@ MODULE_OBJS = \
 	movement_track.o \
 	obstacles.o \
 	outtake.o \
+	overlays.o \
 	regions.o \
 	scene.o \
 	scene_objects.o \

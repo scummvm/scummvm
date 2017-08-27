@@ -69,6 +69,7 @@ class Items;
 class Lights;
 class Mouse;
 class Obstacles;
+class Overlays;
 class Scene;
 class SceneObjects;
 class SceneScript;
@@ -112,6 +113,7 @@ public:
 	Font             *_mainFont;
 	Mouse            *_mouse;
 	Obstacles        *_obstacles;
+	Overlays         *_overlays;
 	Scene            *_scene;
 	SceneObjects     *_sceneObjects;
 	SceneScript      *_sceneScript;
