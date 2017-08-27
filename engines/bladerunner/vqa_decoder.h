@@ -168,7 +168,7 @@ private:
 	bool readLNIN(Common::SeekableReadStream *s, uint32 size);
 	bool readCLIP(Common::SeekableReadStream *s, uint32 size);
 
-	VQADecoder::CodebookInfo &VQADecoder::codebookInfoForFrame(int frame);
+	CodebookInfo &VQADecoder::codebookInfoForFrame(int frame);
 
 	class VQAVideoTrack {
 	public:

@@ -28,7 +28,7 @@
 
 namespace Graphics {
 	struct Surface;
-};
+}
 
 namespace BladeRunner {
 

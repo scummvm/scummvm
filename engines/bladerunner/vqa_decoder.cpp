@@ -839,7 +839,7 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(uint16 *frame, unsigned int dstBl
 }
 
 bool VQADecoder::VQAVideoTrack::decodeFrame(uint16 *frame) {
-	VQADecoder::CodebookInfo &codebookInfo = _vqaDecoder->codebookInfoForFrame(_vqaDecoder->_decodingFrame);
+	CodebookInfo &codebookInfo = _vqaDecoder->codebookInfoForFrame(_vqaDecoder->_decodingFrame);
 
 	if (!codebookInfo.data) {
 		_vqaDecoder->readFrame(codebookInfo.frame, kVQAReadCodebook);
