@@ -38,6 +38,8 @@ public:
 
 	void select();
 
+	void takeSharedArea() override;
+
 	void setUpPegasusChip();
 
 	// Called to set up the Pegasus chip when the Pegasus chip is the current chip but does not
