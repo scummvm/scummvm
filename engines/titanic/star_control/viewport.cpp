@@ -95,6 +95,7 @@ void CViewport::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_field18, indent);
 	file->writeFloatLine(_field1C, indent);
 	file->writeNumberLine(_width | (_height << 16), indent);
+	file->writeNumberLine(_field24, indent);
 
 	for (int idx = 0; idx < 5; ++idx)
 		file->writeFloatLine(_valArray[idx], indent);
