@@ -70,6 +70,8 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 	}
+	virtual bool serialize(Common::WriteStream *out);
+	virtual bool deserialize(Common::ReadStream *in);
 
 protected:
 	int _fileNumber;

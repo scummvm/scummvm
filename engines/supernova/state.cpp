@@ -22,10 +22,103 @@
 
 #include "common/system.h"
 #include "graphics/palette.h"
+#include "gui/message.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
 
 namespace Supernova {
+
+bool GameManager::serialize(Common::WriteStream *out) {
+	if (out->err())
+		return false;
+
+	// GameState
+	out->writeSint32LE(_state._time);
+	out->writeSint32LE(_state._timeSleep);
+	out->writeSint32LE(_state._timeAlarm);
+	out->writeSint32LE(_state._eventTime);
+	out->writeSint32LE(_state._arrivalDaysLeft);
+	out->writeSint32LE(_state._shipEnergyDaysLeft);
+	out->writeSint32LE(_state._landingModuleEnergyDaysLeft);
+	out->writeUint16LE(_state._greatFlag);
+	out->writeSint16LE(_state._timeRobot);
+	out->writeSint16LE(_state._money);
+	out->writeByte(_state._coins);
+	out->writeByte(_state._shoes);
+	out->writeByte(_state._destination);
+	out->writeByte(_state._language);
+	out->writeByte(_state._corridorSearch);
+	out->writeByte(_state._alarmOn);
+	out->writeByte(_state._terminalStripConnected);
+	out->writeByte(_state._terminalStripWire);
+	out->writeByte(_state._cableConnected);
+	out->writeByte(_state._powerOff);
+	out->writeByte(_state._dream);
+
+	// Inventory
+	out->writeSByte(_inventory.getSize());
+	out->writeSByte(_inventoryScroll);
+	for (int i = 0; i < _inventory.getSize(); ++i) {
+		Object *objectStateBegin = _rooms[_inventory.get(i)->_roomId]->getObject(0);
+		byte objectIndex = _inventory.get(i) - objectStateBegin;
+		out->writeByte(_inventory.get(i)->_roomId);
+		out->writeByte(objectIndex);
+	}
+
+	// Rooms
+	for (int i = 0; i < kRoomsNum; ++i) {
+		_rooms[i]->serialize(out);
+	}
+
+	return !out->err();
+}
+
+
+bool GameManager::deserialize(Common::ReadStream *in) {
+	if (in->err()) {
+		return false;
+	}
+
+	// GameState
+	_state._time = in->readSint32LE();
+	_state._timeSleep = in->readSint32LE();
+	_state._timeAlarm = in->readSint32LE();
+	_state._eventTime = in->readSint32LE();
+	_state._arrivalDaysLeft = in->readSint32LE();
+	_state._shipEnergyDaysLeft = in->readSint32LE();
+	_state._landingModuleEnergyDaysLeft = in->readSint32LE();
+	_state._greatFlag = in->readUint16LE();
+	_state._timeRobot = in->readSint16LE();
+	_state._money = in->readSint16LE();
+	_state._coins = in->readByte();
+	_state._shoes = in->readByte();
+	_state._destination = in->readByte();
+	_state._language = in->readByte();
+	_state._corridorSearch = in->readByte();
+	_state._alarmOn = in->readByte();
+	_state._terminalStripConnected = in->readByte();
+	_state._terminalStripWire = in->readByte();
+	_state._cableConnected = in->readByte();
+	_state._powerOff = in->readByte();
+	_state._dream = in->readByte();
+
+	// Inventory
+	int inventorySize = in->readSByte();
+	_inventoryScroll = in->readSByte();
+	_inventory.clear();
+	for (int i = 0; i < inventorySize; ++i) {
+		RoomID objectRoom = static_cast<RoomID>(in->readByte());
+		int objectIndex = in->readByte();
+		_inventory.add(*_rooms[objectRoom]->getObject(objectIndex));
+	}
+
+	// Rooms
+	for (int i = 0; i < kRoomsNum; ++i) {
+		_rooms[i]->deserialize(in);
+	}
+
+	return !in->err();
+}
 
 Inventory::Inventory()
     : _numObjects(0)

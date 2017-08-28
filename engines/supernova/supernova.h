@@ -95,6 +95,8 @@ public:
 	Common::Event _event;
 	int _screenWidth;
 	int _screenHeight;
+	bool _allowLoadGame;
+	bool _allowSaveGame;
 
 	byte _imageIndex;
 	byte _sectionIndex;
@@ -133,9 +135,15 @@ public:
 	void renderBox(int x, int y, int width, int height, byte color);
 	void setColor63(byte value);
 	void command_print();
+	bool loadGame(int slot);
+	bool saveGame(int slot, const Common::String &description);
 
 	Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canSaveGameStateCurrently();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
 };

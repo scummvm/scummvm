@@ -101,6 +101,8 @@ public:
 	void processInput(Common::KeyState &state);
 	void processInput();
 	void executeRoom();
+	bool serialize(Common::WriteStream *out);
+	bool deserialize(Common::ReadStream *in);
 
 	SupernovaEngine *_vm;
 	Common::KeyState _key;
