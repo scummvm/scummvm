@@ -267,7 +267,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		if (_chrs.empty()) {
 			error("loadWorld: and I have no characters");
 		}
-		_player = _chrs[0];
+		_player = _orderedChrs[0];
 	}
 
 
