@@ -433,6 +433,7 @@ struct Object {
 	    : _name("")
 	    , _description(Object::defaultDescription)
 	    , _id(INVALIDOBJECT)
+	    , _roomId(NULLROOM)
 	    , _type(NULLTYPE)
 	    , _click(0)
 	    , _click2(0)
@@ -440,11 +441,12 @@ struct Object {
 	    , _exitRoom(NULLROOM)
 	    , _direction(0)
 	{}
-	Object(const char *name, const char *description, ObjectID id, ObjectType type,
+	Object(byte roomId, const char *name, const char *description, ObjectID id, ObjectType type,
 	       byte click, byte click2, byte section = 0, RoomID exitRoom = NULLROOM, byte direction = 0)
 	    : _name(name)
 	    , _description(description)
 	    , _id(id)
+	    , _roomId(roomId)
 	    , _type(type)
 	    , _click(click)
 	    , _click2(click2)
@@ -483,6 +485,7 @@ struct Object {
 			return false;
 	}
 
+	byte _roomId;
 	Common::String _name;
 	Common::String _description;
 	ObjectID _id;
