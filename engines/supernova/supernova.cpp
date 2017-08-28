@@ -186,6 +186,9 @@ void SupernovaEngine::updateEvents() {
 			// fallthrough
 		case Common::EVENT_RBUTTONUP:
 			// fallthrough
+			if (_mixer->isSoundHandleActive(_soundHandle) &&
+			    (_gm->_currentRoom != _gm->_rooms[INTRO]))
+				return;
 			_gm->_mouseClicked = true;
 		case Common::EVENT_MOUSEMOVE:
 			_gm->_mouseClickType = _event.type;
@@ -269,8 +272,6 @@ void SupernovaEngine::playSound(AudioIndex sample) {
 	            11931, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 	stopSound();
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audioStream);
-
-	// TODO: Stall till sound was played
 }
 
 void SupernovaEngine::stopSound() {
