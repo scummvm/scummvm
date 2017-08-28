@@ -236,7 +236,6 @@ void GameManager::initState() {
 	_state._money = 0;
 	_state._coins = 0;
 	_state._shoes = 0;
-	_state._nameSeen = 0;
 	_state._destination = 255;
 	_state._benOverlay = 0;
 	_state._language = 0;
@@ -246,14 +245,11 @@ void GameManager::initState() {
 	_state._terminalStripWire = false;
 	_state._cableConnected = false;
 	_state._powerOff = false;
-	_state._cockpitSeen = false;
-	_state._airlockSeen = false;
-	_state._holdSeen = false;
 	_state._dream = false;
 }
 
 void GameManager::initRooms() {
-	_rooms[INTRO] = new StartingItems(_vm, this);
+	_rooms[INTRO] = new Intro(_vm, this);
 	_rooms[CORRIDOR] = new ShipCorridor(_vm, this);
 	_rooms[HALL] = new ShipHall(_vm, this);
 	_rooms[SLEEP] = new ShipSleepCabin(_vm, this);
@@ -534,7 +530,7 @@ void GameManager::telomat(int number) {
 }
 
 void GameManager::startSearch() {
-	if ((_currentRoom >= _rooms[CORRIDOR1]) && (_currentRoom <= _rooms[BCORRIDOR]))
+	if ((_currentRoom->getId() >= CORRIDOR1) && (_currentRoom->getId() <= BCORRIDOR))
 		busted(0);
 
 	_state._corridorSearch = true;
@@ -553,8 +549,8 @@ void GameManager::busted(int i) {
 	if (i > 0)
 		drawImage(i);
 	if (i == 0) {
-		if ((_currentRoom >= _rooms[OFFICE_L1]) && (_currentRoom <= _rooms[OFFICE_R2])) {
-			if (_currentRoom < _rooms[OFFICE_R1])
+		if ((_currentRoom->getId() >= OFFICE_L1) && (_currentRoom->getId() <= OFFICE_R2)) {
+			if (_currentRoom->getId() < OFFICE_R1)
 				i = 10;
 			else
 				i = 5;
@@ -569,13 +565,13 @@ void GameManager::busted(int i) {
 			_vm->playSound(kAudioVoiceHalt);
 			drawImage(i);
 			wait2(5);
-			if (_currentRoom == _rooms[OFFICE_L2])
+			if (_currentRoom->getId() == OFFICE_L2)
 				i = 13;
 			drawImage(i + 1);
 			wait2(3);
 			drawImage(i + 2);
 			shot(0, 0);
-		} else if (_currentRoom == _rooms[BCORRIDOR]) {
+		} else if (_currentRoom->getId() == BCORRIDOR) {
 			drawImage(21);
 		} else {
 			if (_currentRoom->isSectionVisible(4))
@@ -594,9 +590,9 @@ void GameManager::busted(int i) {
 }
 
 void GameManager::guardReturned() {
-	if (_currentRoom == _rooms[GUARD])
+	if (_currentRoom->getId() == GUARD)
 		busted(-1);
-	else if ((_currentRoom == _rooms[CORRIDOR9]) && (_currentRoom->isSectionVisible(27)))
+	else if ((_currentRoom->getId() == CORRIDOR9) && (_currentRoom->isSectionVisible(27)))
 		busted(0);
 
 	_rooms[GUARD]->setSectionVisible(1, false);
@@ -611,7 +607,7 @@ void GameManager::guardReturned() {
 }
 
 void GameManager::taxi() {
-	if (_currentRoom == _rooms[SIGN]) {
+	if (_currentRoom->getId() == SIGN) {
 		changeRoom(STATION);
 	}
 
@@ -658,12 +654,16 @@ void GameManager::great(uint number) {
 }
 
 bool GameManager::airless() {
-	return (
-	((_currentRoom >  _rooms[AIRLOCK]) && (_currentRoom < _rooms[CABIN_R1])) ||
-	((_currentRoom >  _rooms[BATHROOM])&& (_currentRoom < _rooms[ENTRANCE])) ||
-	((_currentRoom == _rooms[AIRLOCK]) && (_currentRoom->getObject(1)->hasProperty(OPENED))) ||
-	(_currentRoom  >= _rooms[MEETUP2])
-	);
+	return (_currentRoom->getId() == HOLD ||
+	        _currentRoom->getId() == LANDINGMODULE ||
+	        _currentRoom->getId() == GENERATOR ||
+	        _currentRoom->getId() == OUTSIDE ||
+	        _currentRoom->getId() == ROCKS ||
+	        _currentRoom->getId() == CAVE ||
+	        _currentRoom->getId() == MEETUP ||
+	        _currentRoom->getId() == MEETUP2 ||
+	        _currentRoom->getId() == MEETUP3 ||
+	        (_currentRoom->getId() == AIRLOCK && _rooms[AIRLOCK]->getObject(1)->hasProperty(OPENED)));
 }
 
 void GameManager::shipStart() {
@@ -813,12 +813,12 @@ void GameManager::mouseWait(int delay) {
 }
 
 void GameManager::roomBrightness() {
-	if ((_currentRoom != _rooms[OUTSIDE]) && (_currentRoom < _rooms[ROCKS]) ) {
+	if ((_currentRoom->getId() != OUTSIDE) && (_currentRoom->getId() < ROCKS) ) {
 		if (_state._powerOff)
 			_vm->_brightness = 153;
-	} else if ((_currentRoom == _rooms[CAVE])) {
+	} else if ((_currentRoom->getId() == CAVE)) {
 		_vm->_brightness = 0;
-	} else if ((_currentRoom == _rooms[GUARD3])) {
+	} else if ((_currentRoom->getId() == GUARD3)) {
 		if (_state._powerOff)
 			_vm->_brightness = 0;
 	}
@@ -1083,7 +1083,7 @@ void GameManager::death(const char *message) {
 	initState();
 	initGui();
 	_inventory.clear();
-	changeRoom(INTRO);
+	changeRoom(CABIN_R3);
 	g_system->fillScreen(kColorBlack);
 	_vm->paletteFadeIn();
 
@@ -1293,7 +1293,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_USE) && (obj1._id == SUIT)) {
 		takeObject(obj1);
-		if ((_currentRoom >= _rooms[ENTRANCE]) && (_currentRoom <= _rooms[ROGER])) {
+		if ((_currentRoom->getId() >= ENTRANCE) && (_currentRoom->getId() <= ROGER)) {
 			if (obj1.hasProperty(WORN)) {
 				_vm->renderMessage("Die Luft hier ist atembar,|du ziehst den Anzug aus.");
 				_rooms[AIRLOCK]->getObject(4)->disableProperty(WORN);
@@ -1319,7 +1319,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_USE) && (obj1._id == HELMET)) {
 		takeObject(obj1);
-		if ((_currentRoom >= _rooms[ENTRANCE]) && (_currentRoom <= _rooms[ROGER])) {
+		if ((_currentRoom->getId() >= ENTRANCE) && (_currentRoom->getId() <= ROGER)) {
 			if (obj1.hasProperty(WORN)) {
 				_vm->renderMessage("Die Luft hier ist atembar,|du ziehst den Anzug aus.");
 				_rooms[AIRLOCK]->getObject(4)->disableProperty(WORN);
@@ -1347,7 +1347,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_USE) && (obj1._id == LIFESUPPORT)) {
 		takeObject(obj1);
-		if ((_currentRoom >= _rooms[ENTRANCE]) && (_currentRoom <= _rooms[ROGER])) {
+		if ((_currentRoom->getId() >= ENTRANCE) && (_currentRoom->getId() <= ROGER)) {
 			if (obj1.hasProperty(WORN)) {
 				_vm->renderMessage("Die Luft hier ist atembar,|du ziehst den Anzug aus.");
 				_rooms[AIRLOCK]->getObject(4)->disableProperty(WORN);

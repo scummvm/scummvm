@@ -50,6 +50,9 @@ public:
 	int getFileNumber() const {
 		return _fileNumber;
 	}
+	RoomID getId() const {
+		return _id;
+	}
 
 	void setSectionVisible(uint section, bool visible) {
 		_shown[section] = visible;
@@ -72,6 +75,7 @@ protected:
 	int _fileNumber;
 	bool _shown[kMaxSection];
 	Object _objectState[kMaxObject];
+	RoomID _id;
 	SupernovaEngine *_vm;
 	GameManager *_gm;
 
@@ -80,14 +84,14 @@ private:
 };
 
 // Room 0
-class StartingItems : public Room {
+class Intro : public Room {
 public:
-	StartingItems(SupernovaEngine *vm, GameManager *gm) {
+	Intro(SupernovaEngine *vm, GameManager *gm) {
 		_vm = vm;
 		_gm = gm;
 
 		_fileNumber = -1;
-
+		_id = INTRO;
 		_shown[0] = false;
 
 		_objectState[0] =
@@ -105,6 +109,7 @@ public:
 	}
 
 	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 };
 
 // Spaceship
@@ -115,6 +120,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 17;
+		_id = CORRIDOR;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -143,6 +149,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 15;
+		_id = HALL;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Luke", "Sie f\204hrt ins Cockpit.", NULLOBJECT, OPENABLE | EXIT, 4, 5, 1, COCKPIT, 10);
@@ -163,6 +170,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 33;
+		_id = SLEEP;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Luke", "Dies ist eine der Tiefschlafkammern.", CABINS, NULLTYPE, 0, 0, 0, NULLROOM, 0);
@@ -191,6 +199,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 9;
+		_id = COCKPIT;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Instrumente", "Hmm, sieht ziemlich kompliziert aus.", INSTRUMENTS, NULLTYPE, 2, 2, 0, NULLROOM, 0);
@@ -214,6 +223,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 21;
+		_id = CABIN_L1;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = true;
@@ -243,6 +253,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 21;
+		_id = CABIN_L2;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -298,6 +309,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 21;
+		_id = CABIN_L3;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -341,6 +353,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 22;
+		_id = CABIN_R1;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = true;
@@ -364,6 +377,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 22;
+		_id = CABIN_R2;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -390,6 +404,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 22;
+		_id = CABIN_R3;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -434,6 +449,7 @@ public:
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+	virtual void onEntrance();
 };
 
 class ShipCabinBathroom : public Room  {
@@ -443,6 +459,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 23;
+		_id = BATHROOM;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Klo","Ein Klo mit Saugmechanismus.",TOILET,NULLTYPE,0,0,0);
@@ -458,6 +475,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 34;
+		_id = AIRLOCK;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -486,6 +504,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 24;
+		_id = HOLD;
 		_shown[0] = true;
 
 		_objectState[0] = Object("",Object::defaultDescription,HOLD_WIRE,COMBINABLE,255,255,0);
@@ -518,6 +537,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 25;
+		_id = LANDINGMODULE;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Steckdose",Object::defaultDescription,LANDINGMOD_SOCKET,COMBINABLE,1,1,0);
@@ -538,6 +558,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 18;
+		_id = GENERATOR;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -570,6 +591,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 4;
+		_id = OUTSIDE;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Luke",Object::defaultDescription,NULLOBJECT,EXIT,0,0,0,GENERATOR,3);
@@ -603,6 +625,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 12;
+		_id = CAVE;
 		_shown[0] = false;
 
 		_objectState[0] = Object("Ausgang","Hier bist du gerade hergekommen.",NULLOBJECT,EXIT,255,255,0,ROCKS,22);
@@ -616,6 +639,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 37;
+		_id = MEETUP;
 		_shown[0] = true;
 
 		_objectState[0] = Object("H\224hle",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
@@ -641,6 +665,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 10;
+		_id = ENTRANCE;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Portier","Du siehst doch selbst, wie er aussieht.",PORTER,TALK,0,0,0);
@@ -696,6 +721,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 28;
+		_id = REST;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Treppe",Object::defaultDescription,NULLOBJECT,EXIT,0,0,0,ENTRANCE,17);
@@ -718,6 +744,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 29;
+		_id = ROGER;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,REST,19);
@@ -754,6 +781,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 19;
+		_id = GLIDER;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,MEETUP,15);
@@ -782,6 +810,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 38;
+		_id = MEETUP2;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Roger W.",Object::defaultDescription,ROGER_W,TALK,255,255,0);
@@ -819,6 +848,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 39;
+		_id = MEETUP3;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Ufo","Der Eingang scheint offen zu sein.",UFO,EXIT,0,0,0,NULLROOM,3);
@@ -848,6 +878,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 43;
+		_id = CELL;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = false;
@@ -904,6 +935,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 16;
+		_id = CORRIDOR1;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -944,6 +976,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 16;
+		_id = CORRIDOR2;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = true;
@@ -984,7 +1017,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 16;
-
+		_id = CORRIDOR3;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -1022,6 +1055,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 16;
+		_id = CORRIDOR4;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = true;
@@ -1069,6 +1103,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 16;
+		_id = CORRIDOR5;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -1123,6 +1158,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 16;
+		_id = CORRIDOR6;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -1165,6 +1201,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 16;
+		_id = CORRIDOR7;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -1205,6 +1242,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 16;
+		_id = CORRIDOR8;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = false;
@@ -1249,6 +1287,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 16;
+		_id = CORRIDOR9;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = false;
@@ -1293,6 +1332,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 6;
+		_id = BCORRIDOR;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -1315,6 +1355,7 @@ public:
 
 private:
 	Common::String _dontEnter;
+	byte _nameSeen;
 };
 class AxacussIntersection : public Room {
 public:
@@ -1323,6 +1364,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 40;
+		_id = GUARD;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR4,21);
@@ -1343,6 +1385,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 42;
+		_id = GUARD3;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Ausgang",Object::defaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR1,22);
@@ -1364,6 +1407,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 7;
+		_id = OFFICE_L1;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = true;
@@ -1398,6 +1442,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 7;
+		_id = OFFICE_L2;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = false;
@@ -1432,6 +1477,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 8;
+		_id = OFFICE_R1;
 		_shown[0] = true;
 		_shown[1] = true;
 		_shown[2] = false;
@@ -1454,6 +1500,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 8;
+		_id = OFFICE_R2;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = true;
@@ -1474,6 +1521,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 7;
+		_id = OFFICE_L;
 		_shown[0] = true;
 		_shown[1] = false;
 		_shown[2] = false;
@@ -1509,6 +1557,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 3;
+		_id = ELEVATOR;
 		_shown[0] = true;
 
 		_objectState[0] = Object("Knopf",Object::defaultDescription,BUTTON1,PRESS,0,0,0);
@@ -1526,6 +1575,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 5;
+		_id = STATION;
 		_shown[0] = true;
 		_objectState[0] = Object("Schild",Object::defaultDescription,STATION_SIGN,NULLTYPE,0,0,0);
 		_objectState[1] = Object("T\201r",Object::defaultDescription,DOOR,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,7);
@@ -1540,6 +1590,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 32;
+		_id = SIGN;
 		_shown[0] = true;
 		_shown[1] = true;
 
