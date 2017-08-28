@@ -27,12 +27,11 @@
 
 namespace Supernova {
 
-void StartingItems::onEntrance() {
-	for (int i = 0; i < 3; ++i)
-		_gm->_inventory.add(*getObject(i));
+void Intro::onEntrance() {
+}
 
-	setRoomSeen(true);
-	_gm->changeRoom(CABIN_R3);
+bool Intro::interact(Action verb, Object &obj1, Object &obj2) {
+
 }
 
 bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
@@ -564,6 +563,13 @@ bool ShipCabinR3::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 
 	return true;
+}
+
+void ShipCabinR3::onEntrance() {
+	for (int i = 0; i < 3; ++i)
+		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(i));
+
+	setRoomSeen(true);
 }
 
 
@@ -2367,7 +2373,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) &&
 	           (obj1._id >= DOOR1) && (obj1._id <= DOOR4)) {
-		_gm->_state._nameSeen |= 1 << (obj1._id - DOOR1);
+		_nameSeen |= 1 << (obj1._id - DOOR1);
 		return false;
 	} else if ((verb == ACTION_WALK) &&
 	           ((obj1._id == PILLAR1) || (obj1._id == PILLAR2))) {

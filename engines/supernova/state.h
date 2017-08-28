@@ -53,9 +53,6 @@ struct GameState {
 	bool   _terminalStripWire;
 	bool   _cableConnected;
 	bool   _powerOff;
-	bool   _cockpitSeen;
-	bool   _airlockSeen;
-	bool   _holdSeen;
 	bool   _dream;
 };
 
