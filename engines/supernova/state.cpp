@@ -312,14 +312,13 @@ void GameManager::initState() {
 	_animationEnabled = true;
 	_mouseField = -1;
 	_inventoryScroll = 0;
+	_oldTime = 0;
 	_timer1 = 0;
 	_animationTimer = 0;
 
-	_state._time = 0;
+	_state._time = ticksToMsec(916364); // 2 pm
 	_state._timeSleep = 0;
-	_state._timeStarting = ticksToMsec(916364); // 2 pm
 	_state._timeAlarm = ticksToMsec(458182);    // 7 am
-	_state._timeAlarmSystem = _state._timeAlarm + _state._timeStarting;
 	_state._eventTime = 0xffffffff;
 	_state._arrivalDaysLeft = 2840;
 	_state._shipEnergyDaysLeft = 2135;
@@ -330,7 +329,6 @@ void GameManager::initState() {
 	_state._coins = 0;
 	_state._shoes = 0;
 	_state._destination = 255;
-	_state._benOverlay = 0;
 	_state._language = 0;
 	_state._corridorSearch = false;
 	_state._alarmOn = false;
@@ -723,19 +721,16 @@ void GameManager::taxi() {
 }
 
 void GameManager::outro() {
-	_state._benOverlay = 3;
-//	load_overlay();
 //	title = 2;
 	_vm->playSoundMod(49);
 //	title = 0;
-	_state._benOverlay = 0;
 	_vm->paletteFadeOut();
 	_vm->renderImage(55, 0);
 	_vm->paletteFadeIn();
 	getInput();
 	_vm->paletteFadeOut();
 	// TODO: render info file
-//	longjmp(termination,1);
+	// Exit
 }
 
 void GameManager::great(uint number) {
@@ -920,10 +915,7 @@ void GameManager::roomBrightness() {
 }
 
 void GameManager::loadTime() {
-	_state._timeStarting += _state._time;
-	if (_state._eventTime != 1)
-		_state._eventTime += _state._time;
-	_state._timeAlarmSystem = _state._timeAlarm + _state._timeStarting;
+	// STUB
 }
 
 void GameManager::saveTime() {
@@ -944,8 +936,8 @@ void GameManager::errorTemp() {
 }
 
 void GameManager::wait2(int ticks) {
-	uint end = g_system->getMillis() + ticksToMsec(ticks);
-	while (g_system->getMillis() < end) {
+	int32 end = _state._time + ticksToMsec(ticks);
+	while (_state._time < end) {
 		_vm->updateEvents();
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
@@ -953,22 +945,24 @@ void GameManager::wait2(int ticks) {
 }
 
 void GameManager::setAnimationTimer(int ticks) {
-	_animationTimer = g_system->getMillis() + ticksToMsec(ticks);
+	_animationTimer = ticksToMsec(ticks);
 }
 
 void GameManager::handleTime() {
-	_state._time = g_system->getMillis();
-	if (_animationTimer <= _state._time)
+	int32 delta = g_system->getMillis() - _oldTime;
+	_state._time += delta;
+	if (_state._time > 86400000)
+		_state._time -= 86400000; // 24h wrap around
+	if (_animationTimer > delta)
+		_animationTimer -= delta;
+	else
 		_animationTimer = 0;
+
+	_oldTime = g_system->getMillis();
 }
 
 void GameManager::screenShake() {
 	// STUB
-}
-
-void GameManager::palette() {
-	// STUB
-	// Adjust palette to brightness parameters and make it current
 }
 
 void GameManager::shock() {
@@ -1266,9 +1260,6 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		getInput();
 		_vm->renderRoom(*_currentRoom);
 		roomBrightness();
-		palette();
-		showMenu();
-		drawMapExits();
 		_vm->renderMessage("Hmm, irgendwie komme|ich mir verarscht vor.");
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KEYCARD2)) {
 		_vm->renderMessage(obj1._description.c_str());
@@ -1278,7 +1269,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		    "Es ist eine Uhr mit extra|lautem Wecker. "
 		    "Sie hat einen|Knopf zum Verstellen der Alarmzeit.|"
 		    "Uhrzeit: %s   Alarmzeit: %s",
-		    timeToString(_state._time + _state._timeStarting).c_str(),
+		    timeToString(_state._time).c_str(),
 		    timeToString(_state._timeAlarm).c_str()).c_str());
 	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
 		bool validInput = true;
@@ -1289,7 +1280,6 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->saveScreen(88, 87, 144, 24);
 		_vm->renderBox(88, 87, 144, 24, kColorWhite35);
 		_vm->renderText("Neue Alarmzeit (hh:mm) :", 91, 90, kColorWhite99);
-		// TODO: Adjust for msec time instead of ticks
 		do {
 			validInput = true;
 			input.clear();
@@ -1337,8 +1327,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->restoreScreen();
 		if (_key.keycode != Common::KEYCODE_ESCAPE) {
 			_state._timeAlarm = (hours * 60 + minutes) * 60 * 1000;
-			_state._timeAlarmSystem = _state._timeAlarm + _state._timeStarting;
-			_state._alarmOn = (_state._timeAlarmSystem > _vm->_system->getMillis());
+			_state._alarmOn = (_state._timeAlarm > _state._time);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, WIRE)) {
 		r = _rooms[CABIN_L3];

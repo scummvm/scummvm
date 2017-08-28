@@ -31,9 +31,7 @@ namespace Supernova {
 struct GameState {
 	int32  _time;
 	int32  _timeSleep;
-	int32  _timeStarting;
 	int32  _timeAlarm;
-	int32  _timeAlarmSystem;
 	int32  _eventTime;
 	int32  _arrivalDaysLeft;
 	int32  _shipEnergyDaysLeft;
@@ -43,9 +41,7 @@ struct GameState {
 	int16  _money;
 	byte   _coins;
 	byte   _shoes;
-	byte   _nameSeen;
 	byte   _destination;
-	byte   _benOverlay;
 	byte   _language;
 	bool   _corridorSearch;
 	bool   _alarmOn;
