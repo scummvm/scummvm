@@ -1263,9 +1263,6 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		getInput();
 		_vm->renderRoom(*_currentRoom);
 		roomBrightness();
-		palette();
-		showMenu();
-		drawMapExits();
 		_vm->renderMessage("Hmm, irgendwie komme|ich mir verarscht vor.");
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KEYCARD2)) {
 		_vm->renderMessage(obj1._description.c_str());
