@@ -124,8 +124,9 @@ public:
 	bool _waitEvent;
 	bool _newRoom;
 	bool _newOverlay;
-	int _timer1;
-	int _animationTimer;
+	int32 _oldTime;
+	int32 _timer1;
+	int32 _animationTimer;
 	int _inventoryScroll;
 	int _exitList[25];
 	GuiElement _guiCommandButton[10];

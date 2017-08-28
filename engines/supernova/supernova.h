@@ -100,12 +100,14 @@ public:
 	byte _sectionIndex;
 	byte _menuBrightness;
 	byte _brightness;
+	uint _timePaused;
 	uint _delay;
 	bool _messageDisplayed;
 	int  _textCursorX;
 	int  _textCursorY;
 	int  _textColor;
 
+	void pauseTimer(bool pause);
 	int  textWidth(const char *text);
 	int  textWidth(const uint16 key);
 	void initData();
@@ -135,6 +137,7 @@ public:
 	Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual void pauseEngineIntern(bool pause);
 };
 
 }
