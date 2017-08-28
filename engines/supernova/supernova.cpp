@@ -20,13 +20,17 @@
  *
  */
 
+#include "audio/mods/protracker.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/endian.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/memstream.h"
+#include "common/savefile.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "engines/util.h"
@@ -34,9 +38,8 @@
 #include "graphics/surface.h"
 #include "graphics/screen.h"
 #include "graphics/palette.h"
-#include "audio/mods/protracker.h"
-#include "common/memstream.h"
-#include "common/endian.h"
+#include "graphics/thumbnail.h"
+#include "gui/saveload.h"
 
 #include "supernova/supernova.h"
 #include "supernova/state.h"
@@ -210,6 +213,20 @@ bool SupernovaEngine::hasFeature(EngineFeature f) const {
 		return true;
 	default:
 		return false;
+	}
+}
+
+void SupernovaEngine::pauseEngineIntern(bool pause) {
+	_mixer->pauseAll(pause);
+	pauseTimer(pause);
+}
+
+void SupernovaEngine::pauseTimer(bool pause) {
+	if (pause) {
+		_timePaused = _gm->_state._time;
+	} else {
+		_gm->_state._time = _timePaused;
+		_gm->_oldTime = _system->getMillis();
 	}
 }
 
