@@ -78,19 +78,64 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
+	virtual int getMaximumSaveSlot() const {
+		return 10;
+	}
 };
 
 bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
-	// STUB
-	return false;
+	switch (f) {
+	case kSupportsLoadingDuringStartup:
+		// fallthrough
+	case kSupportsListSaves:
+		// fallthrough
+	case kSupportsDeleteSave:
+		return true;
+	default:
+		return false;
+	}
 }
 
 bool SupernovaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
 		*engine = new Supernova::SupernovaEngine(syst);
 	}
-	
+
 	return desc != NULL;
+}
+
+SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
+	Common::StringArray filenames;
+	Common::String pattern("msn_save.##");
+
+	filenames = g_system->getSavefileManager()->listSavefiles(pattern);
+
+	char saveFileDesc[128];
+	SaveStateList saveFileList;
+	for (Common::StringArray::const_iterator file = filenames.begin();
+	     file != filenames.end(); ++file) {
+		int saveSlot = atoi(file->c_str() + file->size() - 2);
+		if (saveSlot >= 0 && saveSlot <= getMaximumSaveSlot()) {
+			Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(*file);
+			if (savefile) {
+				savefile->skip(2);
+				savefile->read(saveFileDesc, sizeof(saveFileDesc));
+				saveFileList.push_back(SaveStateDescriptor(saveSlot, saveFileDesc));
+
+				delete savefile;
+			}
+		}
+	}
+
+	Common::sort(saveFileList.begin(), saveFileList.end(), SaveStateDescriptorSlotComparator());
+	return saveFileList;
+}
+
+void SupernovaMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String filename = Common::String::format("msn_save.%02d", slot);
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SUPERNOVA)
