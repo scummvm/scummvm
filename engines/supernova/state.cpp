@@ -438,7 +438,12 @@ void GameManager::processInput(Common::KeyState &state) {
 	case Common::KEYCODE_x:
 		if (state.flags & Common::KBD_ALT) {
 			// quit game
-			_vm->quitGame();
+			GUI::MessageDialog *dialog = new GUI::MessageDialog("Quit Game?", "Quit", "Cancel");
+			if (dialog->runModal() == GUI::kMessageOK)
+				_vm->quitGame();
+			delete dialog;
+
+			// TODO: Add original quit game message prompt
 		}
 		break;
 	default:
