@@ -22,41 +22,43 @@
 
 #include "base/plugins.h"
 #include "common/file.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "engines/advancedDetector.h"
 
 #include "supernova/supernova.h"
 
 static const PlainGameDescriptor supernovaGames[] = {
-	{"msn1", "Mission Supernova 1"},
-	{"msn2", "Mission Supernova 2"},
-	{NULL, NULL}
+    {"msn1", "Mission Supernova 1"},
+    {"msn2", "Mission Supernova 2"},
+    {NULL, NULL}
 };
 
 namespace Supernova {
 static const ADGameDescription gameDescriptions[] = {
-	// Mission Supernova 1
-	{
-		"msn1",
-		NULL,
-		AD_ENTRY1s("msn.exe", "d11264516c529c7fc2ca81d8ba062d9e", 65536),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
+    // Mission Supernova 1
+    {
+        "msn1",
+        NULL,
+        AD_ENTRY1s("msn.exe", "d11264516c529c7fc2ca81d8ba062d9e", 65536),
+        Common::DE_DEU,
+        Common::kPlatformDOS,
+        ADGF_UNSTABLE,
+        GUIO1(GUIO_NONE)
+    },
 
-	// Mission Supernova 2
-	{
-		"msn2",
-		NULL,
-		AD_ENTRY1s("ms2.exe", "e1b725393c3665f30efa96e2f46d589e", 82944),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
+    // Mission Supernova 2
+    {
+        "msn2",
+        NULL,
+        AD_ENTRY1s("ms2.exe", "e1b725393c3665f30efa96e2f46d589e", 82944),
+        Common::DE_DEU,
+        Common::kPlatformDOS,
+        ADGF_UNSTABLE,
+        GUIO1(GUIO_NONE)
+    },
 
-	AD_TABLE_END_MARKER
+    AD_TABLE_END_MARKER
 };
 }
 
