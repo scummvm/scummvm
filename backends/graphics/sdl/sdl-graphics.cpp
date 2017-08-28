@@ -21,13 +21,16 @@
  */
 
 #include "backends/graphics/sdl/sdl-graphics.h"
-
 #include "backends/platform/sdl/sdl-sys.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "common/textconsole.h"
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
-	: _eventSource(source), _window(window) {
+	: _eventSource(source), _window(window)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	, _allowWindowSizeReset(false), _lastFlags(0)
+#endif
+	  {
 }
 
 SdlGraphicsManager::~SdlGraphicsManager() {
@@ -73,3 +76,26 @@ bool SdlGraphicsManager::setState(const State &state) {
 	}
 }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+bool SdlGraphicsManager::createOrUpdateWindow(const int width, const int height, const Uint32 flags) {
+	if (!_window) {
+		return false;
+	}
+
+	// We only update the actual window when flags change (which usually means
+	// fullscreen mode is entered/exited) or when updates are forced so that we
+	// do not reset the window size whenever a game makes a call to change the
+	// size or pixel format of the internal game surface (since a user may have
+	// resized the game window)
+	if (!_window->getSDLWindow() || _lastFlags != flags || _allowWindowSizeReset) {
+		if (!_window->createOrUpdateWindow(width, height, flags)) {
+			return false;
+		}
+
+		_lastFlags = flags;
+		_allowWindowSizeReset = false;
+	}
+
+	return true;
+}
+#endif

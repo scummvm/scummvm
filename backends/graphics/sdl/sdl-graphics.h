@@ -123,6 +123,17 @@ public:
 	SdlWindow *getWindow() const { return _window; }
 
 protected:
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+public:
+	void unlockWindowSize() { _allowWindowSizeReset = true; }
+
+protected:
+	Uint32 _lastFlags;
+	bool _allowWindowSizeReset;
+
+	bool createOrUpdateWindow(const int width, const int height, const Uint32 flags);
+#endif
+
 	SdlEventSource *_eventSource;
 	SdlWindow *_window;
 };
