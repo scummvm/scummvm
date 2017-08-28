@@ -110,6 +110,8 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
     , _screenWidth(320)
     , _screenHeight(200)
     , _messageDisplayed(false)
+    , _allowLoadGame(true)
+    , _allowSaveGame(false)
 {
 //	const Common::FSNode gameDataDir(ConfMan.get("path"));
 //	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
@@ -210,6 +212,10 @@ void SupernovaEngine::updateEvents() {
 bool SupernovaEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsRTL:
+		return true;
+	case kSupportsLoadingDuringRuntime:
+		return true;
+	case kSupportsSavingDuringRuntime:
 		return true;
 	default:
 		return false;
@@ -785,6 +791,79 @@ Common::MemoryReadStream *SupernovaEngine::convertToMod(const char *filename, in
 		buffer.write(buf, nb);
 
 	return new Common::MemoryReadStream(buffer.getData(), buffer.size());
+}
+
+bool SupernovaEngine::canLoadGameStateCurrently() {
+	return _allowLoadGame;
+}
+
+Common::Error SupernovaEngine::loadGameState(int slot) {
+	return (loadGame(slot) ? Common::kNoError : Common::kWritingFailed);
+}
+
+bool SupernovaEngine::canSaveGameStateCurrently() {
+	return _allowSaveGame;
+}
+
+Common::Error SupernovaEngine::saveGameState(int slot, const Common::String &desc) {
+	return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
+}
+
+bool SupernovaEngine::loadGame(int slot) {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Load game:", "Load:", false);
+	int loadGameSlot = dialog->runModalWithCurrentTarget();
+	delete dialog;
+
+	if (loadGameSlot < 0 || loadGameSlot > 10)
+		return false;
+
+	Common::String filename = Common::String::format("msn_save.%02d", loadGameSlot);
+//	Common::InSaveFile *savefile = _saveFileMan->openForLoading(filename);
+	Common::InSaveFile *savefile = _saveFileMan->openRawFile(filename);
+	if (!savefile)
+		return false;
+
+	int descriptionSize = savefile->readSint16LE();
+	savefile->skip(descriptionSize);
+	savefile->skip(6);
+//	Graphics::skipThumbnail(*savefile);
+	_gm->deserialize(savefile);
+
+	delete savefile;
+
+	return true;
+}
+
+bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+	int saveGameSlot = dialog->runModalWithCurrentTarget();
+	Common::String saveGameDescription = dialog->getResultString();
+	delete dialog;
+
+	if (saveGameSlot < 0 || saveGameSlot > 10)
+		return false;
+
+	Common::String filename = Common::String::format("msn_save.%02d", saveGameSlot);
+	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename, false);
+	if (!savefile)
+		return false;
+
+	TimeDate currentDate;
+	_system->getTimeAndDate(currentDate);
+	uint32 saveDate = (currentDate.tm_mday & 0xFF) << 24 | ((currentDate.tm_mon + 1) & 0xFF) << 16 | ((currentDate.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = (currentDate.tm_hour & 0xFF) << 8 | ((currentDate.tm_min) & 0xFF);
+
+	savefile->writeSint16LE(saveGameDescription.size() + 1);
+	savefile->write(saveGameDescription.c_str(), saveGameDescription.size() + 1);
+	savefile->writeUint32LE(saveDate);
+	savefile->writeUint16LE(saveTime);
+//	Graphics::saveThumbnail(*savefile);
+	_gm->serialize(savefile);
+
+	savefile->finalize();
+	delete savefile;
+
+	return true;
 }
 
 
