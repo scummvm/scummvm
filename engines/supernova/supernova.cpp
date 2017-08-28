@@ -158,7 +158,6 @@ Common::Error SupernovaEngine::run() {
 			_system->delayMillis(end);
 	}
 
-	//deinit timer/sound/..
 	stopSound();
 
 	return Common::kNoError;

@@ -564,8 +564,6 @@ void GameManager::processInput() {
 					} while ((click != 0) && (field == -1));
 				}
 			}
-//			if ((_objectNumber == 1) && (_currentRoom->getObject(field) == _currentInputObject))
-//				field = -1;
 		}
 
 		if (_mouseField != field) {
