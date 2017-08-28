@@ -784,9 +784,14 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 	}
 #endif
 
-	// Avoid redundant res changes
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+	// Avoid redundant res changes, only in SDL1. In SDL2, redundancies may not
+	// actually be redundant if ScummVM is switching between game engines and
+	// the screen dimensions are being reinitialized, since window resizing is
+	// supposed to reset when this happens
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
 		return;
+#endif
 
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
@@ -2797,7 +2802,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 
-	if (!_window->createOrUpdateWindow(width, height, createWindowFlags)) {
+	if (!createOrUpdateWindow(width, height, createWindowFlags)) {
 		return nullptr;
 	}
 
