@@ -417,7 +417,8 @@ void MacText::clearText() {
 	_textLines.clear();
 	_str.clear();
 
-	_surface->clear(_bgcolor);
+	if (_surface)
+		_surface->clear(_bgcolor);
 
 	recalcDims();
 }
