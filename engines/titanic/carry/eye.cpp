@@ -22,9 +22,11 @@
 
 #include "titanic/carry/eye.h"
 #include "titanic/game/head_slot.h"
-#include "titanic/pet_control/pet_control.h"
-#include "titanic/game/transport/lift.h"
+#include "titanic/game/light.h"
 #include "titanic/game/television.h"
+#include "titanic/game/transport/lift.h"
+#include "titanic/pet_control/pet_control.h"
+
 
 namespace Titanic {
 
@@ -109,7 +111,8 @@ bool CEye::ActMsg(CActMsg *msg) {
 		playSound("z#47.wav");
 
 		CActMsg actMsg("Eye Removed");
-		actMsg.execute("1stClassState");
+		actMsg.execute("1stClassState", CLight::_type,
+			MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
 	} else {
 		_eyeFlag = false;
 
