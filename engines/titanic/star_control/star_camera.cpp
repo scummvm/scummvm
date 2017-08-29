@@ -498,7 +498,7 @@ bool CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
 
 	FMatrix matrix = _viewport.getOrientation();
 	const FVector &pos = _viewport._position;
-	_mover->proc10(v3, tempV, pos, matrix);
+	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function
 
 	CStarVector *sv = new CStarVector(this, v2);
 	_mover->setVector(sv);
@@ -602,13 +602,13 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	if (minDistance > 1.0e8) {
 		// The transition will do poorly in this case.
 		//removeLockedStar(); // undo locking 2nd star
-		_mover->proc8(_viewport._position, _viewport._position, m6, m6);
+		_mover->transitionBetweenPosOrients(_viewport._position, _viewport._position, m6, m6);
 		//CStarVector *sv = new CStarVector(this, v);
 		//_mover->setVector(sv);
 		return	false;
 	}	
 	else {
-		_mover->proc8(_viewport._position, newPos, m6, m5);
+		_mover->transitionBetweenPosOrients(_viewport._position, newPos, m6, m5);
 		CStarVector *sv = new CStarVector(this, v);
 		_mover->setVector(sv);
 		
@@ -625,7 +625,7 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
 	FVector newPos = viewport->_position;
 	FVector oldPos = _viewport._position;
 
-	_mover->proc8(oldPos, newPos, oldOr, newOr);
+	_mover->transitionBetweenPosOrients(oldPos, newPos, oldOr, newOr);
 
 	CStarVector *sv = new CStarVector(this, v);
 	_mover->setVector(sv);

@@ -28,6 +28,9 @@
 
 namespace Titanic {
 
+class FMatrix;
+class FVector;
+
 class CMarkedCameraMover : public CCameraMover {
 private:
 	CMarkedAutoMover _autoMover;
@@ -35,7 +38,11 @@ public:
 	CMarkedCameraMover(const CNavigationInfo *src);
 	virtual ~CMarkedCameraMover() {}
 
-	virtual void proc8(const FVector &oldPos, const FVector &newPos,
+	/**
+	 * Move the mover from an old position and orientation to a new
+	 * position and orientation
+	 */
+	virtual void transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
 		const FMatrix &oldOrientation, const FMatrix &newOrientation);
 
 	/**

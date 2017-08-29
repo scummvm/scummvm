@@ -26,6 +26,7 @@
 #include "titanic/star_control/dvector.h"
 #include "titanic/star_control/daffine.h"
 #include "titanic/star_control/error_code.h"
+#include "titanic/star_control/fmatrix.h" // includes class FVector
 #include "titanic/titanic.h"
 // Not currently being used: #include "common/textconsole.h"
 
@@ -44,10 +45,11 @@ void CUnmarkedCameraMover::moveTo(const FVector &srcV, const FVector &destV, con
 	_autoMover.setPath(srcV, destV, orientation);
 }
 
-void CUnmarkedCameraMover::proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {
+// TODO: v3 is unused
+void CUnmarkedCameraMover::transitionBetweenOrientations(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {
 	if (isLocked())
 		decLockCount();
-	//TODO: v3 is unused
+	
 	DVector vector1 = v1;
 	DVector vector2 = v2;
 	DAffine matrix1 = vector2.getFrameTransform(vector1);

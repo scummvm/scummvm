@@ -23,6 +23,7 @@
 #include "titanic/star_control/marked_camera_mover.h"
 #include "titanic/star_control/base_stars.h" // includes class CStarVector
 #include "titanic/star_control/error_code.h"
+#include "titanic/star_control/fmatrix.h" // includes class FVector
 // Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
@@ -31,7 +32,8 @@ CMarkedCameraMover::CMarkedCameraMover(const CNavigationInfo *src) :
 		CCameraMover(src) {
 }
 
-void CMarkedCameraMover::proc8(const FVector &oldPos, const FVector &newPos,
+
+void CMarkedCameraMover::transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
 		const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	if (isLocked())
 		decLockCount();

@@ -23,10 +23,6 @@
 #ifndef TITANIC_CAMERA_MOVER_H
 #define TITANIC_CAMERA_MOVER_H
 
-//#include "titanic/support/simple_file.h"
-//#include "titanic/star_control/error_code.h"
-//#include "titanic/star_control/fmatrix.h" // class FVector
-
 namespace Titanic {
 
 class CErrorCode;
@@ -58,6 +54,19 @@ public:
 	virtual void copyTo(CNavigationInfo *dest);
 
 	/**
+	 * delete _starVector
+	 */
+	virtual void clear();
+	/**
+	 * Set default values for CNavigationInfo
+	 */
+	virtual void reset();
+
+	/**
+	 * Sets this CStarVector
+	 */
+	virtual void setVector(CStarVector *sv);
+	/**
 	 * Increases movement speed in forward direction
 	 */
 	virtual void increaseForwardSpeed();
@@ -77,7 +86,11 @@ public:
 	 */
 	virtual void stop();
 
-	virtual void proc8(const FVector &oldPos, const FVector &newPos,
+	/**
+	 * Move the mover from an old position and orientation to a new
+	 * position and orientation
+	 */
+	virtual void transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
 		const FMatrix &oldOrientation, const FMatrix &newOrientation) {}
 
 	/**
@@ -85,19 +98,16 @@ public:
 	 */
 	virtual void moveTo(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {}
 
-	virtual void proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {}
+	/**
+	 * First two vectors are used to form a new orientation that gets transitioned to from the old
+	 * orientation m.
+	 */
+	virtual void transitionBetweenOrientations(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {}
 
 	/**
 	 * Update the passed position and orientation matrix
 	 */
-	virtual void updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
-
-	virtual void setVector(CStarVector *sv);
-
-	/**
-	 * Clear the class
-	 */
-	virtual void clear();
+	virtual void updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {}
 
 	/**
 	 * Load the class
