@@ -55,17 +55,17 @@ void CUnmarkedCameraMover::transitionBetweenOrientations(const FVector &v1, cons
 	DAffine matrix1 = vector2.getFrameTransform(vector1);
 	DAffine matrix2 = matrix1.compose(m);
 
-	_autoMover.proc3(m, matrix2);
+	_autoMover.setOrientations(m, matrix2);
 	incLockCount();
 }
 
 void CUnmarkedCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (_autoMover.isActive()) {
 		decLockCount();
-		int val = _autoMover.proc5(errorCode, pos, orientation);
-		if (val == 1)
+		MoverState moverState = _autoMover.move(errorCode, pos, orientation);
+		if (moverState == MOVING)
 			incLockCount();
-		if (val == 2) {
+		if (moverState == DONE_MOVING) {
 			stop();
 			if (_starVector)
 				_starVector->apply();

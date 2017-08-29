@@ -26,9 +26,9 @@
 
 namespace Titanic {
 
-void CMarkedAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
+void CMarkedAutoMover::setPath2(const FVector &oldPos, const FVector &newPos,
 	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
-	CCameraAutoMover::proc2(oldPos, newPos, oldOrientation, newOrientation);
+	CCameraAutoMover::setPath2(oldPos, newPos, oldOrientation, newOrientation);
 
 	double distance = _distance;
 	_active = true;
@@ -49,9 +49,9 @@ void CMarkedAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
 
 }
 
-int CMarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
+MoverState CMarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (!_active)
-		return 0;
+		return NOT_ACTIVE;
 
 	_transitionPercent += _transitionPercentInc;
 	orientation = _orientationChanger.getOrientation(_transitionPercent);
@@ -64,14 +64,14 @@ int CMarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orient
 
 		--_field40;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	} else if (_field44 > 0) {
 		pos += _posDelta * _field38;
 		getVectorOnPath(pos);
 
 		--_field44;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	} else if (_field48 >= 0) {
 		double speedVal = _speeds[nMoverTransitions - 1 - _field48];
 		pos += _posDelta * speedVal;
@@ -79,10 +79,10 @@ int CMarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orient
 
 		--_field48;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	} else {
 		_active = false;
-		return 2;
+		return DONE_MOVING;
 	}
 }
 

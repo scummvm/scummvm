@@ -38,17 +38,17 @@ void CMarkedCameraMover::transitionBetweenPosOrients(const FVector &oldPos, cons
 	if (isLocked())
 		decLockCount();
 
-	_autoMover.proc2(oldPos, newPos, oldOrientation, newOrientation);
+	_autoMover.setPath2(oldPos, newPos, oldOrientation, newOrientation);
 	incLockCount();
 }
 
 void CMarkedCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (_autoMover.isActive()) {
 		decLockCount();
-		int val = _autoMover.proc5(errorCode, pos, orientation);
-		if (val == 1)
+		MoverState moveState = _autoMover.move(errorCode, pos, orientation);
+		if (moveState == MOVING)
 			incLockCount();
-		if (val == 2) {
+		if (moveState == DONE_MOVING) {
 			stop();
 			if (_starVector)
 				_starVector->apply();
