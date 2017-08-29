@@ -34,6 +34,9 @@
 
 namespace Titanic {
 
+const double rowScale1 = 100000.0;
+const double rowScale2 = 1000000.0;
+
 FMatrix *CStarCamera::_priorOrientation;
 FMatrix *CStarCamera::_newOrientation;
 
@@ -260,19 +263,19 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	}
 
 	case ONE_LOCKED: {
-		FVector row1 = _matrix._row1;
+		FVector row1 = _lockedStarsPos._row1;
 		FPose poseX(X_AXIS, angles._y);
 		FPose poseY(Y_AXIS, -angles._x); // needs to be negative or looking left will cause the view to go right
 		FPose pose(poseX, poseY);
 
 		FMatrix m1 = _viewport.getOrientation();
 		FVector tempV1 = _viewport._position;
-		FVector tempV2 = m1._row1 * 100000;
+		FVector tempV2 = m1._row1 * rowScale1;
 		FVector tempV3 = tempV2 + tempV1;
 		FVector tempV4 = tempV3;
 
-		tempV2 = m1._row2 * 100000;
-		FVector tempV5 = m1._row3 * 100000;
+		tempV2 = m1._row2 * rowScale1;
+		FVector tempV5 = m1._row3 * rowScale1;
 		FVector tempV6 = tempV2 + tempV1;
 
 		FVector tempV7 = tempV5 + tempV1;
@@ -317,10 +320,10 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		DVector tempV8, tempV9, tempV10, tempV11, tempV12;
 		DVector tempV13, tempV14, tempV15, tempV16;
 
-		DAffine subX(0, _matrix._row1);
+		DAffine subX(0, _lockedStarsPos._row1);
 		DAffine subY(Y_AXIS, angles._y);
 
-		tempV1 = _matrix._row2 - _matrix._row1;
+		tempV1 = _lockedStarsPos._row2 - _lockedStarsPos._row1;
 		diffV = tempV1;
 		m1 = diffV.rotXY();
 		m1 = m1.compose(subX);
@@ -329,13 +332,13 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 
 		FMatrix m3 = _viewport.getOrientation();
 		tempV2 = _viewport._position;
-		multV._x = m3._row1._x * 1000000.0;
-		multV._y = m3._row1._y * 1000000.0;
-		multV._z = m3._row1._z * 1000000.0;
+		multV._x = m3._row1._x * rowScale2;
+		multV._y = m3._row1._y * rowScale2;
+		multV._z = m3._row1._z * rowScale2;
 		tempV3._x = tempV2._x;
 		tempV3._y = tempV2._y;
 		tempV3._z = tempV2._z;
-		multV2._z = m3._row2._z * 1000000.0;
+		multV2._z = m3._row2._z * rowScale2;
 
 		tempV1._x = multV._x + tempV3._x;
 		tempV1._y = multV._y + tempV3._y;
@@ -343,15 +346,15 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		mrow3._z = 0.0;
 		mrow3._y = 0.0;
 		mrow3._x = 0.0;
-		multV2._x = m3._row2._x * 1000000.0;
-		multV2._y = m3._row2._y * 1000000.0;
+		multV2._x = m3._row2._x * rowScale2;
+		multV2._y = m3._row2._y * rowScale2;
 		mrow1 = tempV1;
 		multV = multV2 + tempV3;
 		mrow2 = multV;
 
-		tempV7._z = m3._row3._z * 1000000.0 + tempV3._z;
-		tempV7._y = m3._row3._y * 1000000.0 + tempV3._y;
-		tempV7._x = m3._row3._x * 1000000.0 + tempV3._x;
+		tempV7._z = m3._row3._z * rowScale2 + tempV3._z;
+		tempV7._y = m3._row3._y * rowScale2 + tempV3._y;
+		tempV7._x = m3._row3._x * rowScale2 + tempV3._x;
 
 		mrow3 = tempV8 = tempV7;
 		tempV3 = tempV3.dAffMatrixProdVec(subX);
@@ -399,7 +402,7 @@ bool CStarCamera::addLockedStar(const FVector v) {
 	_mover->copyTo(&data);
 	deleteHandler();
 
-	FVector &row = _matrix[(int)_starLockState];
+	FVector &row = _lockedStarsPos[(int)_starLockState];
 	_starLockState = StarLockState((int)_starLockState + 1);
 	row = v;
 	setupHandler(&data);
@@ -465,7 +468,7 @@ void CStarCamera::deleteHandler() {
 	}
 }
 
-bool CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
+bool CStarCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3) {
 	if (_starLockState != ZERO_LOCKED)
 		return true;
 
@@ -500,17 +503,17 @@ bool CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
 	const FVector &pos = _viewport._position;
 	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function
 
-	CStarVector *sv = new CStarVector(this, v2);
+	CStarVector *sv = new CStarVector(this, firstStarPosition);
 	_mover->setVector(sv);
 	return	true;
 }
 
-bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
+bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosition) {
 	if (_starLockState != ONE_LOCKED)
 		return true;
-
-	DAffine m2(X_AXIS, _matrix._row1);
-	DVector tempV1 = v - _matrix._row1;
+	FVector firstStarPosition = _lockedStarsPos._row1;
+	DAffine m2(X_AXIS, firstStarPosition); // Identity matrix and col4 as the 1st stars position
+	DVector tempV1 = secondStarPosition - firstStarPosition;
 	DAffine m1 = tempV1.rotXY();
 	m1 = m1.compose(m2);
 	m2 = m1.inverseTransform();
@@ -523,14 +526,14 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._col4 = DVector(0.0, 0.0, 0.0);
 
 	FMatrix m5 = viewport->getOrientation();
-	double yVal1 = m5._row1._y * 1000000.0;
-	double zVal1 = m5._row1._z * 1000000.0;
-	double xVal1 = m5._row2._x * 1000000.0;
-	double yVal2 = m5._row2._y * 1000000.0;
-	double zVal2 = m5._row2._z * 1000000.0;
+	double yVal1 = m5._row1._y * rowScale2;
+	double zVal1 = m5._row1._z * rowScale2;
+	double xVal1 = m5._row2._x * rowScale2;
+	double yVal2 = m5._row2._y * rowScale2;
+	double zVal2 = m5._row2._z * rowScale2;
 	double zVal3 = zVal1 + m4._col1._z;
 	double yVal3 = yVal1 + m4._col1._y;
-	double xVal2 = m5._row1._x * 1000000.0 + m4._col1._x;
+	double xVal2 = m5._row1._x * rowScale2 + m4._col1._x;
 	double zVal4 = zVal2 + m4._col1._z;
 	double yVal4 = yVal2 + m4._col1._y;
 	double xVal3 = xVal1 + m4._col1._x;
@@ -540,13 +543,13 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 	m4._col3 = tempV4;
 
 	FVector tempV5;
-	tempV5._x = m5._row3._x * 1000000.0;
-	tempV5._y = m5._row3._y * 1000000.0;
+	tempV5._x = m5._row3._x * rowScale2;
+	tempV5._y = m5._row3._y * rowScale2;
 	m4._col2 = tempV3;
 
 	tempV3._x = tempV5._x + m4._col1._x;
 	tempV3._y = tempV5._y + m4._col1._y;
-	tempV3._z = m5._row3._z * 1000000.0 + m4._col1._z;
+	tempV3._z = m5._row3._z * rowScale2 + m4._col1._z;
 	m4._col4 = tempV3;
 
 	tempV2 = tempV2.dAffMatrixProdVec(m2);
@@ -601,22 +604,18 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &v) {
 
 	if (minDistance > 1.0e8) {
 		// The transition will do poorly in this case.
-		//removeLockedStar(); // undo locking 2nd star
 		_mover->transitionBetweenPosOrients(_viewport._position, _viewport._position, m6, m6);
-		//CStarVector *sv = new CStarVector(this, v);
-		//_mover->setVector(sv);
 		return	false;
 	}	
 	else {
 		_mover->transitionBetweenPosOrients(_viewport._position, newPos, m6, m5);
-		CStarVector *sv = new CStarVector(this, v);
+		CStarVector *sv = new CStarVector(this, secondStarPosition);
 		_mover->setVector(sv);
-		
 	}
 	return	true;
 }
 
-bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
+bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosition) {
 	if (_starLockState != TWO_LOCKED)
 		return true;
 
@@ -627,7 +626,7 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &v) {
 
 	_mover->transitionBetweenPosOrients(oldPos, newPos, oldOr, newOr);
 
-	CStarVector *sv = new CStarVector(this, v);
+	CStarVector *sv = new CStarVector(this, thirdStarPosition);
 	_mover->setVector(sv);
 	return true;
 }

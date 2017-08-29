@@ -46,7 +46,7 @@ private:
 	static FMatrix *_newOrientation;
 private:
 	StarLockState _starLockState;
-	FMatrix _matrix;
+	FMatrix _lockedStarsPos; // Each row represents the location of a locked star
 	CCameraMover *_mover;
 	CViewport _viewport;
 	bool _isMoved;
