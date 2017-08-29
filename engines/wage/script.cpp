@@ -50,6 +50,8 @@
 #include "wage/script.h"
 #include "wage/world.h"
 
+#include "common/config-manager.h"
+#include "common/file.h"
 #include "common/stream.h"
 
 namespace Wage {
@@ -74,7 +76,7 @@ Common::String Script::Operand::toString() {
 	}
 }
 
-Script::Script(Common::SeekableReadStream *data) : _data(data) {
+Script::Script(Common::SeekableReadStream *data, int num) : _data(data) {
 	_engine = NULL;
 	_world = NULL;
 
@@ -85,6 +87,29 @@ Script::Script(Common::SeekableReadStream *data) : _data(data) {
 	_handled = false;
 
 	convertToText();
+
+	if (ConfMan.getBool("dump_scripts")) {
+		Common::DumpFile out;
+		Common::String name;
+
+		if (num == -1)
+			name = Common::String::format("./dumps/%s-global.txt", ConfMan.get("gameid").c_str());
+		else
+			name = Common::String::format("./dumps/%s-%d.txt", ConfMan.get("gameid").c_str(), num);
+
+		if (!out.open(name)) {
+			warning("Can not open dump file %s", name.c_str());
+			return;
+		}
+
+		for (uint i = 0; i < _scriptText.size(); i++) {
+			out.write(_scriptText[i]->line.c_str(), strlen(_scriptText[i]->line.c_str()));
+			out.writeByte('\n');
+		}
+
+		out.flush();
+		out.close();
+	}
 }
 
 Script::~Script() {

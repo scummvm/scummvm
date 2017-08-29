@@ -52,7 +52,7 @@ namespace Wage {
 
 class Script {
 public:
-	Script(Common::SeekableReadStream *data);
+	Script(Common::SeekableReadStream *data, int num);
 	~Script();
 
 private:

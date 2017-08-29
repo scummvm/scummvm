@@ -132,7 +132,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	// Load global script
 	res = resMan->getResource(MKTAG('G','C','O','D'), resArray[0]);
-	_globalScript = new Script(res);
+	_globalScript = new Script(res, -1);
 
 	// TODO: read creator
 
@@ -209,7 +209,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 		res = resMan->getResource(MKTAG('A','C','O','D'), *iter);
 		if (res != NULL)
-			scene->_script = new Script(res);
+			scene->_script = new Script(res, *iter);
 
 		res = resMan->getResource(MKTAG('A','T','X','T'), *iter);
 		if (res != NULL) {
