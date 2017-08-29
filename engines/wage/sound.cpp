@@ -49,6 +49,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "common/stream.h"
+#include "common/system.h"
 
 #include "wage/wage.h"
 #include "wage/entities.h"
@@ -93,6 +94,24 @@ void WageEngine::playSound(Common::String soundName) {
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &s->_handle, stream,
 		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+
+	while (_mixer->isSoundHandleActive(s->_handle) && !_shouldQuit) {
+		Common::Event event;
+
+		_eventMan->pollEvent(event);
+
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			if (saveDialog())
+				_shouldQuit = true;
+			break;
+		default:
+			break;
+		}
+
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
 }
 
 void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
