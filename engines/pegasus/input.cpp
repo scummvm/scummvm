@@ -223,10 +223,18 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 }
 
 void InputDeviceManager::pumpEvents() {
+	PegasusEngine *vm = ((PegasusEngine *)g_engine);
+
+	bool saveAllowed = vm->swapSaveAllowed(false);
+	bool openAllowed = vm->swapLoadAllowed(false);
+
 	// Just poll for events. notifyEvent() will pick up on them.
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event))
 		;
+
+	vm->swapSaveAllowed(saveAllowed);
+	vm->swapLoadAllowed(openAllowed);
 }
 
 int operator==(const Input &arg1, const Input &arg2) {
