@@ -52,7 +52,7 @@ namespace Wage {
 
 class Script {
 public:
-	Script(Common::SeekableReadStream *data, int num);
+	Script(Common::SeekableReadStream *data, int num, WageEngine *engine);
 	~Script();
 
 private:
@@ -130,7 +130,7 @@ private:
 public:
 	void print();
 	void printLine(int offset);
-	bool execute(World *world, int loopCount, Common::String *inputText, Designed *inputClick, WageEngine *engine);
+	bool execute(World *world, int loopCount, Common::String *inputText, Designed *inputClick);
 
 private:
 	Common::String preprocessInputText(Common::String inputText);

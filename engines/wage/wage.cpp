@@ -431,7 +431,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 
 	bool monsterWasNull = (_monster == NULL);
 	Script *script = playerScene->_script != NULL ? playerScene->_script : _world->_globalScript;
-	bool handled = script->execute(_world, _loopCount++, textInput, clickInput, this);
+	bool handled = script->execute(_world, _loopCount++, textInput, clickInput);
 
 	playerScene = _world->_player->_currentScene;
 

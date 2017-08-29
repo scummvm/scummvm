@@ -76,8 +76,7 @@ Common::String Script::Operand::toString() {
 	}
 }
 
-Script::Script(Common::SeekableReadStream *data, int num) : _data(data) {
-	_engine = NULL;
+Script::Script(Common::SeekableReadStream *data, int num, WageEngine *engine) : _data(data), _engine(engine) {
 	_world = NULL;
 
 	_loopCount = 0;
@@ -93,9 +92,9 @@ Script::Script(Common::SeekableReadStream *data, int num) : _data(data) {
 		Common::String name;
 
 		if (num == -1)
-			name = Common::String::format("./dumps/%s-global.txt", ConfMan.get("gameid").c_str());
+			name = Common::String::format("./dumps/%s-global.txt", _engine->getTargetName());
 		else
-			name = Common::String::format("./dumps/%s-%d.txt", ConfMan.get("gameid").c_str(), num);
+			name = Common::String::format("./dumps/%s-%d.txt", _engine->getTargetName(), num);
 
 		if (!out.open(name)) {
 			warning("Can not open dump file %s", name.c_str());
@@ -174,12 +173,11 @@ Common::String Script::preprocessInputText(Common::String inputText) {
 	return inputText;
 }
 
-bool Script::execute(World *world, int loopCount, Common::String *inputText, Designed *inputClick, WageEngine *engine) {
+bool Script::execute(World *world, int loopCount, Common::String *inputText, Designed *inputClick) {
 	_world = world;
 	_loopCount = loopCount;
 	_inputText = inputText;
 	_inputClick = inputClick;
-	_engine = engine;
 	_handled = false;
 	Common::String input;
 
@@ -257,7 +255,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 
 	if (_world->_globalScript != this) {
 		debug(1, "Executing global script...");
-		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, &input, _inputClick, _engine);
+		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, &input, _inputClick);
 		if (globalHandled)
 			_handled = true;
 	} else if (!input.empty()) {

@@ -127,6 +127,8 @@ public:
 	void processTurn(Common::String *textInput, Designed *clickInput);
 	void regen();
 
+	const char *getTargetName() { return _targetName.c_str(); }
+
 private:
 	bool loadWorld(Common::MacResManager *resMan);
 	void performInitialSetup();
