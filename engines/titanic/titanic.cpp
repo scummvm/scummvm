@@ -191,7 +191,7 @@ bool TitanicEngine::canLoadGameStateCurrently() {
 		return false;
 	if (screenMan && screenMan->_inputHandler->isLocked())
 		return false;
-	if (!gameManager->isntTransitioning())
+	if (!gameManager || !gameManager->isntTransitioning())
 		return false;
 
 	CProjectItem *project = gameManager->_project;
@@ -210,6 +210,8 @@ bool TitanicEngine::canLoadGameStateCurrently() {
 
 bool TitanicEngine::canSaveGameStateCurrently() {
 	CGameManager *gameManager = _window->_gameManager;
+	if (!gameManager)
+		return false;
 
 	return gameManager->_gameState._petActive &&
 		canLoadGameStateCurrently();
