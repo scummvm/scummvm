@@ -49,6 +49,7 @@
 #define WAGE_WAGE_H
 
 #include "engines/engine.h"
+#include "audio/mixer.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/rect.h"
@@ -234,6 +235,8 @@ private:
 	Common::MacResManager *_resManager;
 
 	bool _shouldQuit;
+
+	Audio::SoundHandle _soundHandle;
 };
 
 // Example console class

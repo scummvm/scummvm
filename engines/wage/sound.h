@@ -48,8 +48,6 @@
 #ifndef WAGE_SOUND_H
 #define WAGE_SOUND_H
 
-#include "audio/mixer.h"
-
 namespace Wage {
 
 class Sound {
@@ -60,8 +58,6 @@ public:
 	Common::String _name;
 	uint _size;
 	byte *_data;
-
-	Audio::SoundHandle _handle;
 };
 
 } // End of namespace Wage
