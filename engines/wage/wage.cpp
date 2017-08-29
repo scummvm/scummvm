@@ -123,6 +123,8 @@ Common::Error WageEngine::run() {
 	if (!_world->loadWorld(_resManager))
 		return Common::kNoGameDataFoundError;
 
+	_shouldQuit = false;
+
 	_gui = new Gui(this);
 
 	_temporarilyHidden = true;
@@ -139,8 +141,6 @@ Common::Error WageEngine::run() {
 	Common::String input("look");
 	processTurn(&input, NULL);
 	_temporarilyHidden = false;
-
-	_shouldQuit = false;
 
 	while (!_shouldQuit) {
 		_debugger->onFrame();
@@ -445,6 +445,10 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		regen();
 		Common::String input("look");
 		processTurnInternal(&input, NULL);
+
+		if (_shouldQuit)
+			return;
+
 		redrawScene();
 		_temporarilyHidden = false;
 	} else if (_loopCount == 1) {

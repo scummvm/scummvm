@@ -165,7 +165,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 	}
 
 	_data->seek(12);
-	while (_data->pos() < _data->size()) {
+	while (_data->pos() < _data->size() && !_engine->_shouldQuit) {
 		printLine(_data->pos());
 
 		byte command = _data->readByte();

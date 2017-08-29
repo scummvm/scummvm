@@ -192,6 +192,8 @@ public:
 	bool _isGameOver;
 	bool _commandWasQuick;
 
+	bool _shouldQuit;
+
 	Common::String _inputText;
 
 	void playSound(Common::String soundName);
@@ -233,8 +235,6 @@ private:
 	const ADGameDescription *_gameDescription;
 
 	Common::MacResManager *_resManager;
-
-	bool _shouldQuit;
 
 	Audio::SoundHandle _soundHandle;
 };
