@@ -21,6 +21,8 @@
  */
 
 #include "common/system.h"
+#include "graphics/palette.h"
+#include "graphics/cursorman.h"
 
 #include "supernova/supernova.h"
 #include "supernova/state.h"
@@ -94,10 +96,292 @@ bool Room::deserialize(Common::ReadStream *in) {
 }
 
 void Intro::onEntrance() {
+	_gm->_guiEnabled = false;
+	titleScreen();
+	cutscene();
+	leaveCutscene();
 }
 
-bool Intro::interact(Action verb, Object &obj1, Object &obj2) {
+void Intro::titleScreen() {
+	// Newspaper
+	CursorMan.showMouse(false);
+	_vm->_brightness = 0;
+	_vm->paletteBrightness();
+	_vm->renderImage(1, 0);
+	_vm->paletteFadeIn();
+	_gm->getInput();
+	_vm->paletteFadeOut();
 
+	// Title Screen
+	_vm->renderImage(31, 0);
+	_vm->paletteFadeIn();
+	_gm->wait2(1);
+	_vm->playSound(kAudioVoiceSupernova);
+	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		_gm->wait2(1);
+	titleFadeIn();
+	_vm->renderText("V2.02", 295, 190, kColorWhite44);
+	_vm->renderText("Teil 1:", 64, 120, kColorLightBlue);
+	_vm->renderText("Das Schicksal", 44, 132, kColorWhite99);
+	_vm->renderText("des Horst Hummel", 35, 142, kColorWhite99);
+	_gm->wait2(1);
+	CursorMan.showMouse(true);
+	_vm->playSoundMod(kMusicIntro);
+	_gm->getKeyInput();
+	_gm->_key.reset();
+	// TODO: render animated text
+	_vm->playSound(kAudioVoiceYeah);
+	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle));
+	_vm->paletteFadeOut();
+}
+
+void Intro::titleFadeIn() {
+	byte titlePaletteColor[] = {0xfe, 0xeb};
+	byte titleNewColor[2][3] = {{255,255,255}, {199, 21, 21}};
+	byte newColors[2][3];
+
+	for (int brightness = 1; brightness <= 40; ++brightness) {
+		for (int colorIndex = 0; colorIndex < 2; ++colorIndex) {
+			for (int i = 0; i < 3; ++i) {
+				newColors[colorIndex][i] = (titleNewColor[colorIndex][i] * brightness) / 40;
+			}
+		}
+
+		_vm->_system->getPaletteManager()->setPalette(newColors[0], titlePaletteColor[0], 1);
+		_vm->_system->getPaletteManager()->setPalette(newColors[1], titlePaletteColor[1], 1);
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(_vm->_delay);
+	}
+}
+
+void Intro::animate(int filenumber, int section1, int section2, int duration) {
+	while (duration) {
+		_vm->renderImage(filenumber, section1);
+		_gm->wait2(2);
+		_vm->renderImage(filenumber, section2);
+		_gm->wait2(2);
+		--duration;
+	}
+}
+
+void Intro::animate(int filenumber, int section1, int section2, int duration,
+                    MessagePosition position, const char *text) {
+	_vm->renderMessage(text, position);
+	int delay = (Common::strnlen(text, 512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
+	while (delay) {
+		if (section1)
+			_vm->renderImage(filenumber, section1);
+		_gm->wait2(2);
+		if (section2)
+			_vm->renderImage(filenumber, section2);
+		_gm->wait2(2);
+		--delay;
+	}
+	_vm->removeMessage();
+}
+
+void Intro::animate(int filenumber, int section1, int section2, int section3, int section4,
+                    int duration, MessagePosition position, const char *text) {
+	_vm->renderMessage(text, position);
+	if (duration == 0)
+		duration = (Common::strnlen(text, 512) + 20) * _vm->_textSpeed / 40;
+
+	while(duration) {
+		_vm->renderImage(filenumber, section1);
+		_vm->renderImage(filenumber, section3);
+		_gm->wait2(2);
+		_vm->renderImage(filenumber, section2);
+		_vm->renderImage(filenumber, section4);
+		_gm->wait2(2);
+		duration--;
+	}
+	_vm->removeMessage();
+}
+
+void Intro::cutscene() {
+#define exitOnEscape(X) do { \
+	_gm->wait2(X); \
+	if (_gm->keyPressed(Common::KEYCODE_ESCAPE, true)) \
+	    return; \
+} while (0);
+
+	_vm->_system->fillScreen(kColorBlack);
+	_vm->_menuBrightness = 255;
+	_vm->paletteBrightness();
+	animate(31, 0, 0, 0, kMessageNormal, "Zwei Tage nach dem Start|im Cockpit der \"Supernova\" ...");
+	_vm->_menuBrightness = 0;
+	_vm->paletteBrightness();
+	exitOnEscape(1);
+
+	_vm->renderImage(9, 0);
+	_vm->renderImage(9, 1);
+	_vm->renderImage(9, 9);
+	_vm->paletteFadeIn();
+	animate(9,11,10,6,kMessageRight,"Entferung von der Sonne: 1 500 000 km.|Gehen Sie auf 8000 hpm, Captain!");
+	_vm->renderImage(9, 3);
+	exitOnEscape(4);
+	_vm->renderImage(9, 4);
+	animate(9, 11,10,3); // test duration
+	_vm->removeMessage();
+	animate(9, 5,4,0,kMessageLeft,"Ok, Sir.");
+	_vm->renderImage(9, 3);
+	exitOnEscape(3);
+	_vm->renderImage(9, 2);
+	exitOnEscape(3);
+	_vm->renderImage(9, 7);
+	exitOnEscape(6);
+	_vm->renderImage(9, 6);
+	exitOnEscape(6);
+	animate(9, 0,0,0,kMessageLeft,"Geschwindigkeit:");
+	_vm->renderMessage("Zweitausend hpm", kMessageLeft);
+	exitOnEscape(28);
+	_vm->removeMessage();
+	_vm->renderMessage("Dreitausend", kMessageLeft);
+	exitOnEscape(28);
+	_vm->removeMessage();
+
+	const char *textCounting[4] =
+	{"Viertausend","F\201nftausend","Sechstausend","Siebentausend"};
+	_vm->renderImage(31, 0);
+	_vm->paletteBrightness();
+	for (int i = 0; i < 4; ++i){
+		_vm->renderMessage(textCounting[i], kMessageLeft);
+		for (int j = 0; j < 28; ++j) {
+			_vm->renderImage(31, (j % 3) + 1);
+			exitOnEscape(1);
+		}
+		_vm->removeMessage();
+	}
+	_vm->renderMessage("Achttau...", kMessageLeft);
+	_vm->renderImage(31, 6);
+	exitOnEscape(3);
+	_vm->renderImage(31, 3);
+	exitOnEscape(3);
+	_vm->renderImage(31, 4);
+	exitOnEscape(3);
+	_vm->renderImage(31, 5);
+	exitOnEscape(3);
+	_vm->renderImage(31, _gm->invertSection(5));
+	exitOnEscape(18);
+	_vm->removeMessage();
+
+	_vm->renderImage(9, 0);
+	_vm->renderImage(9, 1);
+	_vm->renderImage(9, 9);
+	_vm->paletteBrightness();
+	_vm->renderBox(0, 138, 320, 62, kColorBlack);
+	_vm->paletteBrightness();
+	animate(9, 11,10,0,kMessageRight,"Was war das?");
+	_vm->renderImage(9, 3);
+	exitOnEscape(3);
+	_vm->renderImage(9, 4);
+	animate(9, 5,4,0,kMessageLeft,"Keine Ahnung, Sir.");
+	animate(9, 0,0,0,kMessageCenter,"Ingenieur an Commander, bitte kommen!");
+	_vm->renderImage(9, 12);
+	exitOnEscape(2);
+	_vm->renderImage(9, 13);
+	exitOnEscape(2);
+	_vm->renderImage(9, 14);
+	animate(9, 19,20,0,kMessageRight,"Was ist los?");
+	animate(9, 0,0,0,kMessageCenter,"Wir haben einen Druckabfall im Hauptantriebssystem, Sir.|Einen Moment, ich schaue sofort nach, woran es liegt.");
+	exitOnEscape(20);
+	animate(9, 0,0,0,kMessageCenter,"Schei\341e, der Ionenantrieb ist explodiert!|Die Teile sind \201ber den ganzen|Maschinenraum verstreut.");
+	animate(9, 19,20,0,kMessageRight,"Ach, du meine G\201te!|Gibt es irgendeine M\224glichkeit,|den Schaden schnell zu beheben?");
+	animate(9, 0,0,0,kMessageCenter,"Nein, Sir. Es sieht schlecht aus.");
+	_vm->renderImage(9, 16);
+	exitOnEscape(3);
+	_vm->renderImage(9, 17);
+	animate(9, 19,20,18,17,0,kMessageRight,"Hmm, die Erde zu alarmieren, w\201rde zu lange dauern.");
+	animate(9, 19,20,18,17,0,kMessageRight,"Ich darf kein Risiko eingehen.|Captain, geben Sie sofort Alarm!");
+	animate(9, 5,4,0,kMessageLeft,"Ok, Sir.");
+	_vm->renderImage(9, 3);
+	exitOnEscape(3);
+	_vm->renderImage(9, 2);
+	exitOnEscape(3);
+	_vm->renderImage(9, 8);
+	exitOnEscape(6);
+	_vm->renderImage(9, 6);
+	_vm->playSound(kAudioSiren);
+
+	exitOnEscape(6);
+	_vm->renderImage(9, 3);
+	exitOnEscape(3);
+	_vm->renderImage(9, 4);
+	_vm->renderImage(9, 16);
+	exitOnEscape(3);
+	_vm->renderImage(9, 15);
+	animate(9, 19,20,0,kMessageRight,"Commander an alle! Achtung, Achtung!|Begeben Sie sich sofort zum Notraumschiff!");
+	animate(9, 19,20,0,kMessageRight,"Ich wiederhole:|Begeben Sie sich sofort zum Notraumschiff!");
+	exitOnEscape(10);
+	_vm->renderImage(9, 13);
+	exitOnEscape(2);
+	_vm->renderImage(9, 12);
+	exitOnEscape(2);
+	_vm->renderImage(9, 9);
+	animate(9, 11,10,0,kMessageRight,"Captain, bereiten Sie alles für den Start vor!|Wir m\201ssen zur\201ck zur Erde!");
+	animate(9, 5,4,0,kMessageLeft,"Ok, Sir.");
+	_vm->paletteFadeOut();
+
+	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		exitOnEscape(1);
+
+	_vm->_system->fillScreen(kColorBlack);
+	_vm->_menuBrightness = 255;
+	_vm->paletteBrightness();
+	animate(9,0,0,0,kMessageNormal,"Eine Stunde sp\204ter ...");
+	_vm->_menuBrightness = 5;
+	_vm->paletteBrightness();
+
+	_vm->renderImage(31, 0);
+	_vm->paletteFadeIn();
+	animate(31, 0,0,0,kMessageNormal,"Die Besatzung hat die \"Supernova\" verlassen.");
+	animate(31, 0,0,0,kMessageNormal,"Das Schiff wird zwar in acht Jahren sein Ziel|erreichen, allerdings ohne Mannschaft.");
+	animate(31, 0,0,0,kMessageNormal,"Das ist das kl\204gliche Ende|der Mission Supernova.");
+	animate(31, 0,0,0,kMessageNormal,"Sie k\224nnen jetzt ihren Computer ausschalten.");
+	exitOnEscape(54);
+	animate(31, 0,0,0,kMessageNormal,"Halt!");
+	animate(31, 0,0,0,kMessageNormal,"Warten Sie!");
+	animate(31, 0,0,0,kMessageNormal,"Es regt sich etwas im Schiff.");
+
+	_vm->_brightness = 0;
+	_vm->paletteBrightness();
+	exitOnEscape(10);
+	_vm->playSound(kAudioUndef6);
+	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		;
+	exitOnEscape(10);
+	_vm->playSound(kAudioUndef6);
+	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		;
+	exitOnEscape(10);
+	_vm->playSound(kAudioUndef6);
+	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		;
+	exitOnEscape(30);
+	animate(22, 0,0,0,kMessageNormal,"Uuuuaaaahhhhh");
+	exitOnEscape(18);
+	animate(22, 0,0,0,kMessageNormal,"Huch, ich bin ja gefesselt!|Wo bin ich?");
+	animate(22, 0,0,0,kMessageNormal,"Ach so, das sind ja die Sicherheitsgurte.|Ich arbeite ja jetzt in diesem Raumschiff hier.");
+	animate(22, 0,0,0,kMessageNormal,"Was? Schon zwei Uhr! Wieso|hat mich denn noch keiner|aus dem Bett geschmissen?");
+	animate(22, 0,0,0,kMessageNormal,"Ich werde mal nachsehen.");
+	exitOnEscape(18);
+	animate(22, 0,0,0,kMessageNormal,"Autsch!");
+	animate(22, 0,0,0,kMessageNormal,"Schei\341etagenbett!");
+	exitOnEscape(18);
+	animate(22, 0,0,0,kMessageNormal,"Erst mal den Lichtschalter finden.");
+	animate(22, 0,0,0,kMessageNormal,"Hmm, gar nicht so einfach|bei Schwerelosigkeit.");
+	exitOnEscape(36);
+	animate(22, 0,0,0,kMessageNormal,"Ah, hier ist er.");
+	_vm->removeMessage();
+
+#undef exitOnEscape
+}
+
+void Intro::leaveCutscene() {
+	_vm->removeMessage();
+	_gm->changeRoom(CABIN_R3);
+	_gm->_guiEnabled = true;
+	_vm->_allowSaveGame = true;
 }
 
 bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
@@ -634,6 +918,8 @@ void ShipCabinR3::onEntrance() {
 	for (int i = 0; i < 3; ++i)
 		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(i));
 
+	_vm->paletteBrightness();
+	_vm->paletteFadeIn();
 	setRoomSeen(true);
 }
 
@@ -2745,6 +3031,58 @@ bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 		return true;
 	}
 	return false;
+}
+
+void Outro::onEntrance() {
+
+}
+
+void Outro::animation() {
+
+}
+
+void Outro::animate(int filenumber, int section1, int section2, int duration) {
+	while (duration) {
+		_vm->renderImage(filenumber, section1);
+		_gm->wait2(2);
+		_vm->renderImage(filenumber, section2);
+		_gm->wait2(2);
+		--duration;
+	}
+}
+
+void Outro::animate(int filenumber, int section1, int section2, int duration,
+                    MessagePosition position, const char *text) {
+	_vm->renderMessage(text, position);
+	int delay = (Common::strnlen(text, 512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
+	while (delay) {
+		if (section1)
+			_vm->renderImage(filenumber, section1);
+		_gm->wait2(2);
+		if (section2)
+			_vm->renderImage(filenumber, section2);
+		_gm->wait2(2);
+		--delay;
+	}
+	_vm->removeMessage();
+}
+
+void Outro::animate(int filenumber, int section1, int section2, int section3, int section4,
+                    int duration, MessagePosition position, const char *text) {
+	_vm->renderMessage(text, position);
+	if (duration == 0)
+		duration = (Common::strnlen(text, 512) + 20) * _vm->_textSpeed / 40;
+
+	while(duration) {
+		_vm->renderImage(filenumber, section1);
+		_vm->renderImage(filenumber, section3);
+		_gm->wait2(2);
+		_vm->renderImage(filenumber, section2);
+		_vm->renderImage(filenumber, section4);
+		_gm->wait2(2);
+		duration--;
+	}
+	_vm->removeMessage();
 }
 
 }
