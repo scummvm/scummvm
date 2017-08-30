@@ -108,10 +108,40 @@ public:
 		_objectState[3] =
 		    Object(_id, "Discman", "Es ist eine \"Mad Monkeys\"-CD darin.", DISCMAN,
 		           TAKE | COMBINABLE, 255, 255, 0, NULLROOM, 0);
+
+		_shouldExit = false;
+
+		introText = "^(C) 1994 Thomas und Steffen Dingel#"
+		            "Story und Grafik:^ Thomas Dingel#"
+		            "Programmierung:^ Steffen Dingel#"
+		            "Musik:^ Bernd Hoffmann#"
+		            "Getestet von ...#"
+		            "^Matthias Neef#"
+		            "^Sascha Otterbach#"
+		            "^Thomas Mazzoni#"
+		            "^Matthias Klein#"
+		            "^Gerrit Rothmaier#"
+		            "^Thomas Hassler#"
+		            "^Rene Koch#"
+		            "°";
 	}
 
 	virtual void onEntrance();
-	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+
+private:
+	void animate(int filenumber, int section1, int section2, int duration);
+	void animate(int filenumber, int section1, int section2, int duration, MessagePosition position,
+	             const char *text);
+	void animate(int filenumber, int section1, int section2, int section3, int section4, int duration,
+	             MessagePosition position, const char *text);
+
+	void titleScreen();
+	void titleFadeIn();
+	void cutscene();
+	void leaveCutscene();
+
+	bool _shouldExit;
+	Common::String introText;
 };
 
 // Spaceship
@@ -1601,6 +1631,44 @@ public:
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+};
+
+class Outro : public Room {
+	Outro(SupernovaEngine *vm, GameManager *gm) {
+		_vm = vm;
+		_gm = gm;
+
+		_fileNumber = -1;
+		_id = OUTRO;
+		_shown[0] = false;
+
+		outroText = "^             E#N#D#E ...########"
+		            "#       ... des ersten Teils!########"
+		            "#########"
+		            "^Aber:#"
+		            "Das Abenteuer geht weiter, ...##"
+		            "... wenn Sie sich für 30,- DM registrieren lassen!##"
+		            "(Falls Sie das nicht schon längst getan haben.)##"
+		            "In^ Teil 2 - Der Doppelgänger^ erwarten Sie:##"
+		            "Knifflige Puzzles,##"
+		            "noch mehr Grafik und Sound,##"
+		            "ein perfekt geplanter Museumseinbruch,##"
+		            "das Virtual-Reality-Spiel \"Indiana Joe\"##"
+		            "und vieles mehr!##"
+		            "°";
+	}
+
+	virtual void onEntrance();
+	virtual void animation();
+
+private:
+	void animate(int filenumber, int section1, int section2, int duration);
+	void animate(int filenumber, int section1, int section2, int duration, MessagePosition position,
+	             const char *text);
+	void animate(int filenumber, int section1, int section2, int section3, int section4, int duration,
+	             MessagePosition position, const char *text);
+
+	Common::String outroText;
 };
 
 }
