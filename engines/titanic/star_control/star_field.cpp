@@ -201,7 +201,7 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 
 	const CBaseStarEntry *dataP = _markers.getDataPtr(_crosshairs._entryIndex);
 	v2 = dataP->_position;
-	FVector tv = camera->proc29(2, v2);
+	FVector tv = camera->getRelativePosNoCentering(2, v2); // First argument is not getting used in CViewport::fn16
 
 	if (camera->getThreshold() >= tv._z)
 		return -1.0;

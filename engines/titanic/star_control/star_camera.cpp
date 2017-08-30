@@ -86,39 +86,44 @@ void CStarCamera::setOrientation(const FVector &v) {
 		_viewport.setOrientation(v);
 }
 
+// This never gets called
 void CStarCamera::proc6(int v) {
 	if (!isLocked())
 		_viewport.setC(v);
 }
 
+// This never gets called
 void CStarCamera::proc7(int v) {
 	if (!isLocked())
 		_viewport.set10(v);
 }
 
+// This never gets called
 void CStarCamera::proc8(int v) {
 	if (!isLocked())
 		_viewport.set14(v);
 }
 
-void CStarCamera::proc9(int v) {
+// This never gets called
+void CStarCamera::setCenterYAngle(int v) {
 	if (!isLocked())
-		_viewport.set18(v);
+		_viewport.setCenterYAngle(v);
 }
 
-void CStarCamera::proc10(int v) {
+// This never gets called
+void CStarCamera::setCenterZAngle(int v) {
 	if (!isLocked())
-		_viewport.set1C(v);
+		_viewport.setCenterZAngle(v);
 }
 
-void CStarCamera::proc11() {
+void CStarCamera::randomizeOrientation() {
 	if (!isLocked())
-		_viewport.fn12();
+		_viewport.randomizeOrientation();
 }
 
 void CStarCamera::proc12(StarMode mode, double v2) {
 	if (!isLocked())
-		_viewport.fn13(mode, v2);
+		_viewport.changeStarColorPixel(mode, v2);
 }
 
 void CStarCamera::proc13(CViewport *dest) {
@@ -183,9 +188,9 @@ void CStarCamera::setPosition(const FPose &pose) {
 	}
 }
 
-void CStarCamera::proc22(FMatrix &m) {
+void CStarCamera::changeOrientation(FMatrix &m) {
 	if (!isLocked())
-		_viewport.fn15(m);
+		_viewport.changeOrientation(m);
 }
 
 FPose CStarCamera::getPose() {
@@ -204,30 +209,39 @@ double CStarCamera::proc26() const {
 	return _viewport._field14;
 }
 
-int CStarCamera::proc27() const {
-	return _viewport._field24;
+StarColor CStarCamera::getStarColor() const {
+	return _viewport._starColor;
 }
 
+// Similar to CViewport::fn17/fn18
 FVector CStarCamera::getRelativePos(int index, const FVector &src) {
 	FVector dest;
 
-	dest._x = ((_viewport._valArray[index] + src._x) * _viewport._centerVector._x)
+	double val;
+	if (index == 2) {
+		val = _viewport._isZero;
+	}
+	else {
+		val = _viewport._valArray[index];
+	}
+
+	dest._x = ((val + src._x) * _viewport._centerVector._x)
 		/ (_viewport._centerVector._y * src._z);
 	dest._y = src._y * _viewport._centerVector._x / (_viewport._centerVector._z * src._z);
 	dest._z = src._z;
 	return dest;
 }
 
-FVector CStarCamera::proc29(int index, const FVector &src) {
-	return _viewport.fn16(index, src);
+FVector CStarCamera::getRelativePosNoCentering(int index, const FVector &src) {
+	return _viewport.getRelativePosNoCentering(index, src);
 }
 
 FVector CStarCamera::proc30(int index, const FVector &v) {
-	return _viewport.fn17(index, v);
+	return _viewport.getRelativePosCentering(index, v);
 }
 
 FVector CStarCamera::proc31(int index, const FVector &v) {
-	return _viewport.fn18(index, v);
+	return _viewport.getRelativePosCentering2(index, v);
 }
 
 void CStarCamera::setViewportAngle(const FPoint &angles) {
@@ -241,7 +255,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		FPose subX(X_AXIS, angles._y);
 		FPose subY(Y_AXIS, -angles._x); // needs to be negative or looking left will cause the view to go right
 		FPose sub(subX, subY);
-		proc22(sub);
+		changeOrientation(sub);
 		break;
 	}
 
@@ -405,8 +419,8 @@ bool CStarCamera::removeLockedStar() {
 	return true;
 }
 
-void CStarCamera::proc36(double *v1, double *v2, double *v3, double *v4) {
-	_viewport.fn19(v1, v2, v3, v4);
+void CStarCamera::getRelativeXCenterPixels(double *v1, double *v2, double *v3, double *v4) {
+	_viewport.getRelativeXCenterPixels(v1, v2, v3, v4);
 }
 
 void CStarCamera::load(SimpleFile *file, int param) {
@@ -470,9 +484,9 @@ bool CStarCamera::lockMarker1(FVector v1, FVector v2, FVector v3) {
 	val7 = val3 * v1._z / _viewport._centerVector._x;
 	val8 = val6 / _viewport._centerVector._x;
 	val9 = val2 / _viewport._centerVector._x;
-	v3._x = val5 - _viewport._valArray[2];
+	v3._x = val5 - _viewport._isZero; // TODO: _viewport._isZero is always zero
 	v3._y = val7;
-	tempV._x = val9 - _viewport._valArray[2];
+	tempV._x = val9 - _viewport._isZero; // TODO: _viewport._isZero is always zero
 	tempV._y = val8;
 
 	float unusedScale = 0.0;

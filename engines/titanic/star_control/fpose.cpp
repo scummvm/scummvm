@@ -24,6 +24,25 @@
 
 namespace Titanic {
 
+// Non-member functions
+
+void fposeProd(const FPose &a, const FPose &m, FPose &C) {
+	C._row1._x = a._row1._y * m._row2._x + a._row1._z * m._row3._x + a._row1._x * m._row1._x;
+	C._row1._y = a._row1._x * m._row1._y + m._row2._y * a._row1._y + m._row3._y * a._row1._z;
+	C._row1._z = a._row1._x * m._row1._z + a._row1._y * m._row2._z + a._row1._z * m._row3._z;
+	C._row2._x = m._row1._x * a._row2._x + m._row3._x * a._row2._z + m._row2._x * a._row2._y;
+	C._row2._y = m._row3._y * a._row2._z + m._row1._y * a._row2._x + m._row2._y * a._row2._y;
+	C._row2._z = a._row2._z * m._row3._z + a._row2._x * m._row1._z + a._row2._y * m._row2._z;
+	C._row3._x = m._row1._x * a._row3._x + a._row3._z * m._row3._x + a._row3._y * m._row2._x;
+	C._row3._y = a._row3._y * m._row2._y + a._row3._z * m._row3._y + a._row3._x * m._row1._y;
+	C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
+	C._vector._x = m._row1._x * a._vector._x + a._vector._y * m._row2._x + a._vector._z * m._row3._x + m._vector._x;
+	C._vector._y = a._vector._z * m._row3._y + a._vector._y * m._row2._y + a._vector._x * m._row1._y + a._vector._y;
+	C._vector._z = a._vector._y * m._row2._z + a._vector._z * m._row3._z + a._vector._x * m._row1._z + m._vector._z;
+}
+
+// Member functions
+
 FPose::FPose() {
 	clear();
 }
@@ -37,45 +56,7 @@ FPose::FPose(const FPose &src) : FMatrix() {
 }
 
 FPose::FPose(const FPose &s1, const FPose &s2) {
-	_row1._x = s2._row1._x * s1._row1._x
-		+ s1._row1._z * s2._row3._x
-		+ s1._row1._y * s2._row2._x;
-	_row1._y = s1._row1._x * s2._row1._y
-		+ s2._row3._y * s1._row1._z
-		+ s2._row2._y * s1._row1._y;
-	_row1._z = s1._row1._x * s2._row1._z
-		+ s2._row3._z * s1._row1._z
-		+ s2._row2._z * s1._row1._y;
-	_row2._x = s2._row1._x * s1._row2._x
-		+ s1._row2._y * s2._row2._x
-		+ s1._row2._z * s2._row3._x;
-	_row2._y = s1._row2._y * s2._row2._y
-		+ s1._row2._z * s2._row3._y
-		+ s2._row1._y * s1._row2._x;
-	_row2._z = s2._row1._z * s1._row2._x
-		+ s1._row2._y * s2._row2._z
-		+ s1._row2._z * s2._row3._z;
-	_row3._x = s2._row1._x * s1._row3._x
-		+ s1._row3._y * s2._row2._x
-		+ s1._row3._z * s2._row3._x;
-	_row3._y = s1._row3._z * s2._row3._y
-		+ s1._row3._y * s2._row2._y
-		+ s2._row1._y * s1._row3._x;
-	_row3._z = s2._row3._z * s1._row3._z
-		+ s2._row2._z * s1._row3._y
-		+ s2._row1._z * s1._row3._x;
-	_vector._x = s2._row1._x * s1._vector._x
-		+ s1._vector._y * s2._row2._x
-		+ s1._vector._z * s2._row3._x
-		+ s2._vector._x;
-	_vector._y = s1._vector._z * s2._row3._y
-		+ s1._vector._y * s2._row2._y
-		+ s1._vector._x * s2._row1._y
-		+ s2._vector._y;
-	_vector._z = s1._vector._y * s2._row2._z
-		+ s1._vector._z * s2._row3._z
-		+ s1._vector._x * s2._row1._z
-		+ s2._vector._z;
+	fposeProd(s1,s2,*this);
 }
 
 void FPose::identity() {

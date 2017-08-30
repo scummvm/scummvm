@@ -89,9 +89,9 @@ public:
 	virtual void proc6(int v);
 	virtual void proc7(int v);
 	virtual void proc8(int v);
-	virtual void proc9(int v);
-	virtual void proc10(int v);
-	virtual void proc11();
+	virtual void setCenterYAngle(int v);
+	virtual void setCenterZAngle(int v);
+	virtual void randomizeOrientation();
 	virtual void proc12(StarMode mode, double v2);
 	virtual void proc13(CViewport *dest);
 
@@ -132,7 +132,7 @@ public:
 	 */
 	virtual void setPosition(const FPose &pose);
 
-	virtual void proc22(FMatrix &m);
+	virtual void changeOrientation(FMatrix &m);
 
 	/**
 	 * Get the position and direction of the camera
@@ -143,14 +143,14 @@ public:
 	virtual double getThreshold() const;
 
 	virtual double proc26() const;
-	virtual int proc27() const;
+	virtual StarColor getStarColor() const;
 
 	/**
 	 * Return the passed vector relative to the center of the viewpoint
 	 */
 	virtual FVector getRelativePos(int index, const FVector &src);
 
-	virtual FVector proc29(int index, const FVector &src);
+	virtual FVector getRelativePosNoCentering(int index, const FVector &src);
 	virtual FVector proc30(int index, const FVector &v);
 	virtual FVector proc31(int index, const FVector &v);
 
@@ -177,7 +177,15 @@ public:
 	 * the vector for the star destroys the calling star vector
 	 */
 	virtual bool removeLockedStar();
-	virtual void proc36(double *v1, double *v2, double *v3, double *v4);
+
+	/**
+	 * All arguments are return values
+	 * First is the x center coordinate relative to y
+	 * Second is the x center coordinate relative to z
+	 * Third is the first x center pixel offset
+	 * Fourth is the second x center pixel offset
+	 */	
+	virtual void getRelativeXCenterPixels(double *v1, double *v2, double *v3, double *v4);
 
 	/**
 	 * Load the data for the class from file

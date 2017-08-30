@@ -38,6 +38,10 @@ public:
 	FPose();
 	FPose(Axis axis, float amount);
 	FPose(const FPose &src);
+
+	/**
+	 * This fpose is the fpose product of s1 (on the left) and s2 (on the right)
+	 */
 	FPose(const FPose &s1, const FPose &s2);
 
 	/**
@@ -65,6 +69,13 @@ public:
 	 */
 	FPose inverseTransform() const;
 };
+
+/**
+ * Puts the fpose product between a and m in C, C = am
+ * Caller must preallocate output matrix
+ * Similar to matProd
+ */
+void fposeProd(const FPose &a, const FPose &m, FPose &C);
 
 } // End of namespace Titanic
 
