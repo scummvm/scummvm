@@ -571,10 +571,10 @@ void SupernovaEngine::paletteBrightness() {
 }
 
 void SupernovaEngine::paletteFadeOut() {
-	while (_brightness > 20) {
+	while (_brightness > 10) {
 		_menuBrightness = _brightness;
 		paletteBrightness();
-		_brightness -= 20;
+		_brightness -= 10;
 		_system->updateScreen();
 		_system->delayMillis(_delay);
 	}
@@ -585,13 +585,10 @@ void SupernovaEngine::paletteFadeOut() {
 }
 
 void SupernovaEngine::paletteFadeIn() {
-	// TODO: scene 0 (newspaper article in intro, mode 0x11)
-	//       needs to be handled differently
-
-	while (_brightness < 235) {
+	while (_brightness < 245) {
 		_menuBrightness = _brightness;
 		paletteBrightness();
-		_brightness += 20;
+		_brightness += 10;
 		_system->updateScreen();
 		_system->delayMillis(_delay);
 	}
