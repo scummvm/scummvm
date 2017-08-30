@@ -56,7 +56,7 @@ enum AudioIndex {
 	kAudioGreat,                // 44|0
 	kAudioCrash,                // 45|0
 	kAudioVoiceHalt,            // 46|0
-	kAudioGunShot,               // 46|2510
+	kAudioGunShot,              // 46|2510
 	kAudioUndef2,               // 46|4020
 	kAudioVoiceSupernova,       // 47|0
 	kAudioVoiceYeah,            // 47|24010
@@ -64,7 +64,7 @@ enum AudioIndex {
 	kAudioUndef4,               // 48|2510
 	kAudioShock,                // 48|10520
 	kAudioTurntable,            // 48|13530
-	kAudioUndef5,               // 50|0
+	kAudioSiren,                // 50|0
 	kAudioUndef6,               // 50|12786
 	kAudioRocks,                // 51|0
 	kAudioDeath,                // 53|0
@@ -74,6 +74,11 @@ enum AudioIndex {
 	kAudioDoorOpen,             // 54|30030
 	kAudioDoorClose,            // 54|31040
 	kAudioNumSamples
+};
+
+enum MusicIndex {
+	kMusicIntro = 52,
+	kMusicOutro = 49
 };
 
 struct AudioInfo {
@@ -346,7 +351,7 @@ enum RoomID {
 
 	CELL,CORRIDOR1,CORRIDOR2,CORRIDOR3,CORRIDOR4,CORRIDOR5,CORRIDOR6,CORRIDOR7,CORRIDOR8,CORRIDOR9,
 	BCORRIDOR,GUARD,GUARD3,OFFICE_L1,OFFICE_L2,OFFICE_R1,OFFICE_R2,OFFICE_L,
-	ELEVATOR,STATION,SIGN,NULLROOM
+	ELEVATOR,STATION,SIGN,OUTRO,NULLROOM
 };
 
 enum ObjectID {
