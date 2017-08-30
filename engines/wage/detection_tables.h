@@ -112,9 +112,9 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Mountain of Mayhem", "634211b004371635d191ae0687035501", 750003), // Original file name "Mountain of Mayhem †"
 	// No way to pass through the first screen
 	FANGAME("Nightcrawler Ned", "8423fc015c395bd6be54a7ea69170d99", 366542),
-	// Crash on startup
+	// No player in the world
 	FANGAMEN("Parrot Talk", "PARROT TALK V1", "c38c090be8c078d931905c93bc0689f5", 118936),
-	// Crash on startup
+	// No player in the world
 	FANGAMEN("Parrot Talk", "PARROT TALKV2", "5ec1df9e2d6d0dcf1a040a95500d9551", 118884),
 	FANGAME("Pavilion", "a980e60a291c0a7b949474177affa134", 231687),
 	FANGAMEN("Pencils", "Pencils.99", "09dbcdbefe20536c2db1b1a4fb4e5ed3", 408551),
