@@ -464,6 +464,14 @@ void GameManager::resetInputState() {
 	processInput();
 }
 
+bool GameManager::keyPressed(Common::KeyCode keycode, bool equal) {
+	bool ret = _key.keycode == keycode;
+	_key.reset();
+
+	return equal ? ret : !ret;
+}
+
+
 void GameManager::processInput() {
 	if (_mouseClickType == Common::EVENT_LBUTTONUP) {
 		_vm->removeMessage();
