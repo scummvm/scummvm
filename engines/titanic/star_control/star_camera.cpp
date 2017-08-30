@@ -512,7 +512,7 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	if (_starLockState != ONE_LOCKED)
 		return true;
 	FVector firstStarPosition = _lockedStarsPos._row1;
-	DAffine m2(X_AXIS, firstStarPosition); // Identity matrix and col4 as the 1st stars position
+	DAffine m2(0, firstStarPosition); // Identity matrix and col4 as the 1st stars position
 	DVector tempV1 = secondStarPosition - firstStarPosition;
 	DAffine m1 = tempV1.rotXY();
 	m1 = m1.compose(m2);
@@ -558,20 +558,9 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	m4._col2 = m4._col2.dAffMatrixProdVec(m2);
 	m4._col4 = m4._col4.dAffMatrixProdVec(m2);
 
-	// Find the angle that gives the minimum distance
-	DVector tempPos;
-	double minDistance = 1.0e20;
-	int minDegree = 0;
-	for (int degree = 0; degree < 360; ++degree) {
-		tempPos = m4._col1;
-		tempPos.rotVectAxisY((double)degree);
-		double distance = tempV2.getDistance(tempPos);
-
-		if (distance < minDistance) {
-			minDistance = distance;
-			minDegree = degree;
-		}
-	}
+	double minDistance;
+	// Find the angle of rotation for m4._col1 that gives the minimum distance to tempV2
+	double minDegree = calcAngleForMinDist(tempV2,m4._col1,minDistance);
 
 	m4._col1.rotVectAxisY((double)minDegree);
 	m4._col2.rotVectAxisY((double)minDegree);
@@ -629,6 +618,25 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosit
 	CStarVector *sv = new CStarVector(this, thirdStarPosition);
 	_mover->setVector(sv);
 	return true;
+}
+
+double CStarCamera::calcAngleForMinDist(DVector &x, DVector &y, double &minDistance) {
+	DVector tempPos;
+	minDistance = 1.0e20;
+	double minDegree = 0.0;
+	double degInc = 1.0; // one degree steps
+	int nDegrees = floor(360.0/degInc);
+	for (int i = 0; i < nDegrees; ++i) {
+		tempPos = y;
+		tempPos.rotVectAxisY((double)degInc*i);
+		double distance = x.getDistance(tempPos);
+
+		if (distance < minDistance) {
+			minDistance = distance;
+			minDegree = (double) degInc*i;
+		}
+	}
+	return minDegree;
 }
 
 } // End of namespace Titanic

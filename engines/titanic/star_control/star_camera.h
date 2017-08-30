@@ -198,6 +198,14 @@ public:
 	virtual void save(SimpleFile *file, int indent);
 
 	/**
+	 * Calculates the angle of rotation of y that achieves
+	 * the minimum distance to x. 
+	 * The angle is in degrees.
+	 * Also returns the minimum distance calculated
+	 */
+	double calcAngleForMinDist(DVector &x, DVector &y, double &minDistance);
+
+	/**
 	 * Returns true for whether the camera has been moved
 	 */
 	bool isMoved() const { return _isMoved; }
