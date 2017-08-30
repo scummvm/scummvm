@@ -83,10 +83,10 @@ public:
 	DAffine getFrameTransform(const DVector &v);
 
 	/**
-	 * Returns a affine matrix that does a x then a y axis frame rotation
+	 * Constructs an affine matrix that does a x then a y axis frame rotation
 	 * based on the orientation of this vector
 	 */
-	DAffine rotXY() const;
+	DAffine formRotXY() const;
 
 	/**
 	 * Returns true if the passed vector equals this one

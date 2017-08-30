@@ -325,7 +325,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 
 		tempV1 = _lockedStarsPos._row2 - _lockedStarsPos._row1;
 		diffV = tempV1;
-		m1 = diffV.rotXY();
+		m1 = diffV.formRotXY();
 		m1 = m1.compose(subX);
 		subX = m1.inverseTransform();
 		subX = subX.compose(subY);
@@ -513,12 +513,12 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 		return true;
 	FVector firstStarPosition = _lockedStarsPos._row1;
 	DAffine m2(0, firstStarPosition); // Identity matrix and col4 as the 1st stars position
-	DVector tempV1 = secondStarPosition - firstStarPosition;
-	DAffine m1 = tempV1.rotXY();
+	DVector starDelta = secondStarPosition - firstStarPosition;
+	DAffine m1 = starDelta.formRotXY();
 	m1 = m1.compose(m2);
 	m2 = m1.inverseTransform();
 	
-	DVector tempV2 = _viewport._position;
+	DVector viewPosition = _viewport._position;
 	DAffine m4;
 	m4._col1 = viewport->_position;
 	m4._col2 = DVector(0.0, 0.0, 0.0);
@@ -552,15 +552,15 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	tempV3._z = m5._row3._z * rowScale2 + m4._col1._z;
 	m4._col4 = tempV3;
 
-	tempV2 = tempV2.dAffMatrixProdVec(m2);
+	viewPosition = viewPosition.dAffMatrixProdVec(m2);
 	m4._col1 = m4._col1.dAffMatrixProdVec(m2);
 	m4._col3 = m4._col3.dAffMatrixProdVec(m2);
 	m4._col2 = m4._col2.dAffMatrixProdVec(m2);
 	m4._col4 = m4._col4.dAffMatrixProdVec(m2);
 
 	double minDistance;
-	// Find the angle of rotation for m4._col1 that gives the minimum distance to tempV2
-	double minDegree = calcAngleForMinDist(tempV2,m4._col1,minDistance);
+	// Find the angle of rotation for m4._col1 that gives the minimum distance to viewPosition
+	double minDegree = calcAngleForMinDist(viewPosition,m4._col1,minDistance);
 
 	m4._col1.rotVectAxisY((double)minDegree);
 	m4._col2.rotVectAxisY((double)minDegree);
