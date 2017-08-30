@@ -81,7 +81,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual int getMaximumSaveSlot() const {
-		return 10;
+		return 99;
 	}
 };
 
@@ -108,7 +108,7 @@ bool SupernovaMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 
 SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
-	Common::String pattern("msn_save.##");
+	Common::String pattern("msn_save.###");
 
 	filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 
@@ -134,7 +134,7 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 }
 
 void SupernovaMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("msn_save.%02d", slot);
+	Common::String filename = Common::String::format("msn_save.%03d", slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 

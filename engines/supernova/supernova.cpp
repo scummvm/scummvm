@@ -810,10 +810,10 @@ bool SupernovaEngine::loadGame(int slot) {
 	int loadGameSlot = dialog->runModalWithCurrentTarget();
 	delete dialog;
 
-	if (loadGameSlot < 0 || loadGameSlot > 10)
+	if (loadGameSlot < 0)
 		return false;
 
-	Common::String filename = Common::String::format("msn_save.%02d", loadGameSlot);
+	Common::String filename = Common::String::format("msn_save.%03d", loadGameSlot);
 //	Common::InSaveFile *savefile = _saveFileMan->openForLoading(filename);
 	Common::InSaveFile *savefile = _saveFileMan->openRawFile(filename);
 	if (!savefile)
@@ -836,10 +836,10 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	Common::String saveGameDescription = dialog->getResultString();
 	delete dialog;
 
-	if (saveGameSlot < 0 || saveGameSlot > 10)
+	if (saveGameSlot < 0)
 		return false;
 
-	Common::String filename = Common::String::format("msn_save.%02d", saveGameSlot);
+	Common::String filename = Common::String::format("msn_save.%03d", saveGameSlot);
 	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename, false);
 	if (!savefile)
 		return false;
