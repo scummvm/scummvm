@@ -948,11 +948,11 @@ void GameManager::errorTemp() {
 
 void GameManager::wait2(int ticks) {
 	int32 end = _state._time + ticksToMsec(ticks);
-	while (_state._time < end) {
+	do {
 		_vm->updateEvents();
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
-	}
+	} while (_state._time < end);
 }
 
 void GameManager::setAnimationTimer(int ticks) {
