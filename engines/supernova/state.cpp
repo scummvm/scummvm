@@ -240,7 +240,7 @@ GameManager::GameManager(SupernovaEngine *vm) {
 	_vm = vm;
 
 	initRooms();
-	_currentRoom = _rooms[SLEEP];
+	changeRoom(INTRO);
 	initState();
 	initGui();
 }
