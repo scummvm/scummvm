@@ -105,6 +105,7 @@ public:
 	uint _timePaused;
 	uint _delay;
 	bool _messageDisplayed;
+	int  _textSpeed;
 	int  _textCursorX;
 	int  _textCursorY;
 	int  _textColor;
