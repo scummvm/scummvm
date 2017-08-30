@@ -24,6 +24,7 @@
 #define STATE_H
 
 #include "common/rect.h"
+#include "common/keyboard.h"
 #include "supernova/rooms.h"
 
 namespace Supernova {
@@ -146,6 +147,7 @@ public:
 	Common::EventType getMouseInput();
 	uint16 getKeyInput(bool blockForPrintChar = false);
 	void getInput();
+	bool keyPressed(Common::KeyCode keycode, bool equal);
 	void mouseInput3();
 	void mouseWait(int delay);
 	void wait2(int ticks);
