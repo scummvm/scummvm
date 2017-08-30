@@ -794,7 +794,7 @@ bool SupernovaEngine::canLoadGameStateCurrently() {
 }
 
 Common::Error SupernovaEngine::loadGameState(int slot) {
-	return (loadGame(slot) ? Common::kNoError : Common::kWritingFailed);
+	return (loadGame(slot) ? Common::kNoError : Common::kReadingFailed);
 }
 
 bool SupernovaEngine::canSaveGameStateCurrently() {
