@@ -1635,6 +1635,7 @@ public:
 };
 
 class Outro : public Room {
+public:
 	Outro(SupernovaEngine *vm, GameManager *gm) {
 		_vm = vm;
 		_gm = gm;

@@ -299,6 +299,7 @@ void GameManager::destroyRooms() {
 	delete _rooms[ELEVATOR];
 	delete _rooms[STATION];
 	delete _rooms[SIGN];
+	delete _rooms[OUTRO];
 }
 
 
@@ -389,6 +390,7 @@ void GameManager::initRooms() {
 	_rooms[ELEVATOR] = new AxacussElevator(_vm, this);
 	_rooms[STATION] = new AxacussStation(_vm, this);
 	_rooms[SIGN] = new AxacussSign(_vm, this);
+	_rooms[OUTRO] = new Outro(_vm, this);
 }
 
 void GameManager::initGui() {
