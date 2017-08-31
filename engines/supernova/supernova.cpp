@@ -806,23 +806,18 @@ Common::Error SupernovaEngine::saveGameState(int slot, const Common::String &des
 }
 
 bool SupernovaEngine::loadGame(int slot) {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Load game:", "Load:", false);
-	int loadGameSlot = dialog->runModalWithCurrentTarget();
-	delete dialog;
-
-	if (loadGameSlot < 0)
+	if (slot < 0)
 		return false;
 
-	Common::String filename = Common::String::format("msn_save.%03d", loadGameSlot);
-//	Common::InSaveFile *savefile = _saveFileMan->openForLoading(filename);
-	Common::InSaveFile *savefile = _saveFileMan->openRawFile(filename);
+	Common::String filename = Common::String::format("msn_save.%03d", slot);
+	Common::InSaveFile *savefile = _saveFileMan->openForLoading(filename);
 	if (!savefile)
 		return false;
 
 	int descriptionSize = savefile->readSint16LE();
 	savefile->skip(descriptionSize);
 	savefile->skip(6);
-//	Graphics::skipThumbnail(*savefile);
+	Graphics::skipThumbnail(*savefile);
 	_gm->deserialize(savefile);
 
 	delete savefile;
@@ -831,16 +826,11 @@ bool SupernovaEngine::loadGame(int slot) {
 }
 
 bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
-	int saveGameSlot = dialog->runModalWithCurrentTarget();
-	Common::String saveGameDescription = dialog->getResultString();
-	delete dialog;
-
-	if (saveGameSlot < 0)
+	if (slot < 0)
 		return false;
 
-	Common::String filename = Common::String::format("msn_save.%03d", saveGameSlot);
-	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename, false);
+	Common::String filename = Common::String::format("msn_save.%03d", slot);
+	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename);
 	if (!savefile)
 		return false;
 
@@ -849,11 +839,11 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	uint32 saveDate = (currentDate.tm_mday & 0xFF) << 24 | ((currentDate.tm_mon + 1) & 0xFF) << 16 | ((currentDate.tm_year + 1900) & 0xFFFF);
 	uint16 saveTime = (currentDate.tm_hour & 0xFF) << 8 | ((currentDate.tm_min) & 0xFF);
 
-	savefile->writeSint16LE(saveGameDescription.size() + 1);
-	savefile->write(saveGameDescription.c_str(), saveGameDescription.size() + 1);
+	savefile->writeSint16LE(description.size() + 1);
+	savefile->write(description.c_str(), description.size() + 1);
 	savefile->writeUint32LE(saveDate);
 	savefile->writeUint16LE(saveTime);
-//	Graphics::saveThumbnail(*savefile);
+	Graphics::saveThumbnail(*savefile);
 	_gm->serialize(savefile);
 
 	savefile->finalize();
