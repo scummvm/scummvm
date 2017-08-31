@@ -104,6 +104,7 @@ bool Console::cmdGiveAll(int argc, const char **argv) {
 	_gm->takeObject(*_gm->_rooms[AIRLOCK]->getObject(4));   // Helmet
 	_gm->takeObject(*_gm->_rooms[AIRLOCK]->getObject(5));   // Space Suit
 	_gm->takeObject(*_gm->_rooms[AIRLOCK]->getObject(6));   // Supply
+	return true;
 }
 
 }
