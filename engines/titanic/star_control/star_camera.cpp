@@ -586,22 +586,17 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 		assert(unusedScale);
 	}
 
-	//newOr.set(m4._col3, m4._col2, m4._col4);
 	newOr.set(m4._col3, m4._col2, m4._col4);
 
 	FVector newPos = m4._col1;
 	FMatrix oldOr = _viewport.getOrientation();
-	
-	if (minDistance > 1.0e8) {
-		// The transition will do poorly in this case.
-		_mover->transitionBetweenPosOrients(oldPos, newPos, oldOr, newOr);
-		return	false;
-	}	
-	else {
-		_mover->transitionBetweenPosOrients(oldPos, newPos, oldOr, newOr);
-		CStarVector *sv = new CStarVector(this, secondStarPosition);
-		_mover->setVector(sv);
-	}
+
+	// WORKAROUND: set old position to new position (1st argument), this prevents 
+	// locking issues when locking the 2nd star. Fixes #9961.
+	_mover->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
+	CStarVector *sv = new CStarVector(this, secondStarPosition);
+	_mover->setVector(sv);
+
 	return	true;
 }
 
