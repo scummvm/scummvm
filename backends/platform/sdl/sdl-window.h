@@ -58,7 +58,7 @@ public:
 	/**
 	 * Warp the mouse to the specified position in window coordinates.
 	 */
-	void warpMouseInWindow(uint x, uint y);
+	void warpMouseInWindow(int x, int y);
 
 	/**
 	 * Iconifies the window.
