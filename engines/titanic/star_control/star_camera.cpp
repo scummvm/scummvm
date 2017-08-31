@@ -518,22 +518,22 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	m1 = m1.compose(m2);
 	m2 = m1.inverseTransform();
 	
-	DVector viewPosition = _viewport._position;
+	DVector oldPos = _viewport._position;
 	DAffine m4;
 	m4._col1 = viewport->_position;
 	m4._col2 = DVector(0.0, 0.0, 0.0);
 	m4._col3 = DVector(0.0, 0.0, 0.0);
 	m4._col4 = DVector(0.0, 0.0, 0.0);
 
-	FMatrix m5 = viewport->getOrientation();
-	double yVal1 = m5._row1._y * rowScale2;
-	double zVal1 = m5._row1._z * rowScale2;
-	double xVal1 = m5._row2._x * rowScale2;
-	double yVal2 = m5._row2._y * rowScale2;
-	double zVal2 = m5._row2._z * rowScale2;
+	FMatrix newOr = viewport->getOrientation();
+	double yVal1 = newOr._row1._y * rowScale2;
+	double zVal1 = newOr._row1._z * rowScale2;
+	double xVal1 = newOr._row2._x * rowScale2;
+	double yVal2 = newOr._row2._y * rowScale2;
+	double zVal2 = newOr._row2._z * rowScale2;
 	double zVal3 = zVal1 + m4._col1._z;
 	double yVal3 = yVal1 + m4._col1._y;
-	double xVal2 = m5._row1._x * rowScale2 + m4._col1._x;
+	double xVal2 = newOr._row1._x * rowScale2 + m4._col1._x;
 	double zVal4 = zVal2 + m4._col1._z;
 	double yVal4 = yVal2 + m4._col1._y;
 	double xVal3 = xVal1 + m4._col1._x;
@@ -543,16 +543,16 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	m4._col3 = tempV4;
 
 	FVector tempV5;
-	tempV5._x = m5._row3._x * rowScale2;
-	tempV5._y = m5._row3._y * rowScale2;
+	tempV5._x = newOr._row3._x * rowScale2;
+	tempV5._y = newOr._row3._y * rowScale2;
 	m4._col2 = tempV3;
 
 	tempV3._x = tempV5._x + m4._col1._x;
 	tempV3._y = tempV5._y + m4._col1._y;
-	tempV3._z = m5._row3._z * rowScale2 + m4._col1._z;
+	tempV3._z = newOr._row3._z * rowScale2 + m4._col1._z;
 	m4._col4 = tempV3;
 
-	viewPosition = viewPosition.dAffMatrixProdVec(m2);
+	DVector viewPosition = oldPos.dAffMatrixProdVec(m2);
 	m4._col1 = m4._col1.dAffMatrixProdVec(m2);
 	m4._col3 = m4._col3.dAffMatrixProdVec(m2);
 	m4._col2 = m4._col2.dAffMatrixProdVec(m2);
@@ -586,18 +586,19 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 		assert(unusedScale);
 	}
 
-	m5.set(m4._col3, m4._col2, m4._col4);
+	//newOr.set(m4._col3, m4._col2, m4._col4);
+	newOr.set(m4._col3, m4._col2, m4._col4);
 
 	FVector newPos = m4._col1;
-	FMatrix m6 = _viewport.getOrientation();
-
+	FMatrix oldOr = _viewport.getOrientation();
+	
 	if (minDistance > 1.0e8) {
 		// The transition will do poorly in this case.
-		_mover->transitionBetweenPosOrients(_viewport._position, _viewport._position, m6, m6);
+		_mover->transitionBetweenPosOrients(oldPos, newPos, oldOr, newOr);
 		return	false;
 	}	
 	else {
-		_mover->transitionBetweenPosOrients(_viewport._position, newPos, m6, m5);
+		_mover->transitionBetweenPosOrients(oldPos, newPos, oldOr, newOr);
 		CStarVector *sv = new CStarVector(this, secondStarPosition);
 		_mover->setVector(sv);
 	}
