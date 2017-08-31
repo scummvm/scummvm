@@ -27,8 +27,8 @@
 
 namespace Titanic {
 
-void CUnmarkedAutoMover::proc3(const FMatrix &srcOrient, const FMatrix &destOrient) {
-	CCameraAutoMover::proc3(srcOrient, destOrient);
+void CUnmarkedAutoMover::setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient) {
+	CCameraAutoMover::setOrientations(srcOrient, destOrient);
 	_orientationChanger.load(srcOrient, destOrient);
 	_transitionPercentInc = 0.1;
 	_transitionPercent = 0.0;
@@ -75,11 +75,11 @@ void CUnmarkedAutoMover::setPath(const FVector &srcV, const FVector &destV, cons
 	}
 }
 
-int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
+MoverState CUnmarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	FVector v1, v2, v3, v4;
 
 	if (!_active)
-		return 0;
+		return NOT_ACTIVE;
 
 	// Firstly we have to do a transition of the camera orientation from
 	// it's current position to one where the destination star is centered
@@ -87,13 +87,13 @@ int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orie
 		_transitionPercent += _transitionPercentInc;
 		orientation = _orientationChanger.getOrientation(_transitionPercent);
 		errorCode.set();
-		return 1;
+		return MOVING;
 	}
 
 	// From here on, we handle the movement to the given destination
 	if (!_field34) {
 		_active = false;
-		return 2;
+		return DONE_MOVING;
 	}
 
 	v2 = orientation._row3;
@@ -133,7 +133,7 @@ int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orie
 
 		--_field40;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	}
 
 	if (_field44 > 0) {
@@ -145,7 +145,7 @@ int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orie
 
 		--_field44;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	}
 
 	if (_field48 >= 0) {
@@ -159,11 +159,11 @@ int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orie
 
 		--_field48;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	}
 
 	_active = false;
-	return 2;
+	return DONE_MOVING;
 }
 
 } // End of namespace Titanic

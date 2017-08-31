@@ -34,14 +34,14 @@ class CUnmarkedAutoMover : public CCameraAutoMover {
 public:
 	virtual ~CUnmarkedAutoMover() {}
 
-	virtual void proc3(const FMatrix &srcOrient, const FMatrix &destOrient);
+	virtual void setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient);
 
 	/**
 	 * Sets the path to animate movement between
 	 */
 	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
 
-	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
+	virtual MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
 };
 
 } // End of namespace Titanic

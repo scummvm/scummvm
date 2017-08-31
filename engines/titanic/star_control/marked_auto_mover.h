@@ -41,9 +41,13 @@ private:
 public:
 	virtual ~CMarkedAutoMover() {}
 
-	virtual void proc2(const FVector &oldPos, const FVector &newPos,
+	virtual void setPath2(const FVector &oldPos, const FVector &newPos,
 		const FMatrix &oldOrientation, const FMatrix &newOrientation);
-	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
+
+	/**
+	 * Applys speeds to the mover. More than one application is usually done for several transitions
+	 */		
+	virtual MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
 };
 
 } // End of namespace Titanic

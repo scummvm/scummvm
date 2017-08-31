@@ -46,7 +46,7 @@ private:
 	static FMatrix *_newOrientation;
 private:
 	StarLockState _starLockState;
-	FMatrix _matrix;
+	FMatrix _lockedStarsPos; // Each row represents the location of a locked star
 	CCameraMover *_mover;
 	CViewport _viewport;
 	bool _isMoved;
@@ -196,6 +196,14 @@ public:
 	 * Save the data for the class to file
 	 */
 	virtual void save(SimpleFile *file, int indent);
+
+	/**
+	 * Calculates the angle of rotation of y that achieves
+	 * the minimum distance to x. 
+	 * The angle is in degrees.
+	 * Also returns the minimum distance calculated
+	 */
+	double calcAngleForMinDist(DVector &x, DVector &y, double &minDistance);
 
 	/**
 	 * Returns true for whether the camera has been moved

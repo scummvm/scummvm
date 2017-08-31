@@ -23,7 +23,6 @@
 #include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/base_stars.h" // includes class CStarVector
 #include "titanic/star_control/error_code.h"
-#include "titanic/star_control/fmatrix.h" // Also has class FVector
 #include "titanic/support/simple_file.h"
 // Not currently being used: #include "common/textconsole.h"
 
@@ -36,19 +35,35 @@ CCameraMover::CCameraMover(const CNavigationInfo *src) {
 	if (src) {
 		copyFrom(src);
 	} else {
-		_speed = 0.0;
-		_speedChangeCtr = 0.0;
-		_speedChangeInc = 20.0;
-		_unused = 0.0;
-		_maxSpeed = 50000.0;
-		_unusedX = 1.0;
-		_unusedY = 1.0;
-		_unusedZ = 0.0;
+		reset();
 	}
 }
 
 CCameraMover::~CCameraMover() {
 	clear();
+}
+
+void CCameraMover::clear() {
+	if (_starVector) {
+		delete _starVector;
+		_starVector = nullptr;
+	}
+}
+
+void CCameraMover::reset() {
+	_speed = 0.0;
+	_speedChangeCtr = 0.0;
+	_speedChangeInc = 20.0;
+	_unused = 0.0;
+	_maxSpeed = 50000.0;
+	_unusedX = 1.0;
+	_unusedY = 1.0;
+	_unusedZ = 0.0;
+}
+
+void CCameraMover::setVector(CStarVector *sv) {
+	clear();
+	_starVector = sv;
 }
 
 void CCameraMover::copyFrom(const CNavigationInfo *src) {
@@ -99,28 +114,7 @@ void CCameraMover::stop() {
 	}
 }
 
-void CCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
-	if (_speed > 0.0) {
-		pos._x += orientation._row3._x * _speed;
-		pos._y += orientation._row3._y * _speed;
-		pos._z += orientation._row3._z * _speed;
-
-		errorCode.set();
-	}
-}
-
-void CCameraMover::setVector(CStarVector *sv) {
-	clear();
-	_starVector = sv;
-}
-
-void CCameraMover::clear() {
-	if (_starVector) {
-		delete _starVector;
-		_starVector = nullptr;
-	}
-}
-
+// TODO: this is confusing to negate the val value
 void CCameraMover::load(SimpleFile *file, int val) {
 	if (!val) {
 		_speed = file->readFloat();
@@ -146,6 +140,7 @@ void CCameraMover::save(SimpleFile *file, int indent) {
 }
 
 void CCameraMover::incLockCount() {
+	if (_lockCounter < 3)
 	++_lockCounter;
 }
 

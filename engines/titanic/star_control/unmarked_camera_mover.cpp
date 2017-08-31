@@ -26,6 +26,7 @@
 #include "titanic/star_control/dvector.h"
 #include "titanic/star_control/daffine.h"
 #include "titanic/star_control/error_code.h"
+#include "titanic/star_control/fmatrix.h" // includes class FVector
 #include "titanic/titanic.h"
 // Not currently being used: #include "common/textconsole.h"
 
@@ -44,26 +45,27 @@ void CUnmarkedCameraMover::moveTo(const FVector &srcV, const FVector &destV, con
 	_autoMover.setPath(srcV, destV, orientation);
 }
 
-void CUnmarkedCameraMover::proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {
+// TODO: v3 is unused
+void CUnmarkedCameraMover::transitionBetweenOrientations(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {
 	if (isLocked())
 		decLockCount();
-	//TODO: v3 is unused
+	
 	DVector vector1 = v1;
 	DVector vector2 = v2;
 	DAffine matrix1 = vector2.getFrameTransform(vector1);
 	DAffine matrix2 = matrix1.compose(m);
 
-	_autoMover.proc3(m, matrix2);
+	_autoMover.setOrientations(m, matrix2);
 	incLockCount();
 }
 
 void CUnmarkedCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (_autoMover.isActive()) {
 		decLockCount();
-		int val = _autoMover.proc5(errorCode, pos, orientation);
-		if (val == 1)
+		MoverState moverState = _autoMover.move(errorCode, pos, orientation);
+		if (moverState == MOVING)
 			incLockCount();
-		if (val == 2) {
+		if (moverState == DONE_MOVING) {
 			stop();
 			if (_starVector)
 				_starVector->apply();
