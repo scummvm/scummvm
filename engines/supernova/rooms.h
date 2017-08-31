@@ -639,6 +639,7 @@ public:
 		_gm = gm;
 
 		_fileNumber = 12;
+		_id = OUTSIDE;
 		_shown[0] = true;
 
 		_objectState[0] = Object(_id, "Seil",Object::defaultDescription,NULLOBJECT,UNNECESSARY | EXIT,0,0,0,GENERATOR,12);
