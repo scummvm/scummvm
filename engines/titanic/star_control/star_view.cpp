@@ -518,5 +518,4 @@ void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
 		*surface = newSurface;
 }
 
-
 } // End of namespace Titanic

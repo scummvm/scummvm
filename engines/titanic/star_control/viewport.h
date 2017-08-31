@@ -30,9 +30,12 @@ class SimpleFile;
 
 namespace Titanic {
 
-enum StarColor {WHITE=0,PINK=2};	// The color of the stars when drawn (CBaseStars::draw)
-									// For starview it should be white
-									// For skyview it should be pink
+/**
+ * The color of the stars when drawn (CBaseStars::draw)
+ * For starview it should be white
+ * For skyview it should be pink
+ */
+enum StarColor { WHITE = 0, PINK = 2 };	
 
 /**
  * Implements the viewport functionality for viewing the star field in
@@ -57,11 +60,11 @@ public:
 	FVector _position;
 	double _field10;
 	double _field14;
-	StarColor _starColor; // Used in CBaseStars::draw
-	double _valArray[2]; // has value 0.0 or 30.0
+	StarColor _starColor;	// Used in CBaseStars::draw
+	double _valArray[2];	// has value 0.0 or 30.0
 	double _isZero;
-	double _pixel1OffSetX; // Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or 28000.0
-	double _pixel2OffSetX; // Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or -28000.0
+	double _pixel1OffSetX;	// Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or 28000.0
+	double _pixel2OffSetX;	// Used in CBaseStars::draw3 and CBaseStars::draw4 has value 0.0 or -28000.0
 	FVector _centerVector;
 public:
 	CViewport();
@@ -103,6 +106,7 @@ public:
 	void setOrientation(const FVector &v);
 
 	void randomizeOrientation();
+
 	/**
 	 * The view has changed between starview and skyview
 	 * Change the enum that tracks the color of the stars
@@ -115,7 +119,8 @@ public:
 	 * Applys a rotation matrix to the current
 	 * orientation
 	 */	
-	void changeOrientation(const FMatrix &matrix);
+	void changeOrientation(const FMatrix &matrix);\
+
 	FPose getPose();
 	FPose getRawPose();
 	FVector getRelativePosNoCentering(int index, const FVector &src);
@@ -139,12 +144,14 @@ public:
 	void setC(double v);
 	void set10(double v);
 	void set14(double v);
+
 	/**
 	 * Sets the center vector y angle
 	 * The actual center y value doesn't
 	 * change untill reset is called 
 	 */		
 	void setCenterYAngle(double angleDegrees);
+
 	/**
 	 * Sets the center vector z angle
 	 * The actual center z value doesn't

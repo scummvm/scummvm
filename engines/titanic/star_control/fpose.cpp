@@ -56,7 +56,7 @@ FPose::FPose(const FPose &src) : FMatrix() {
 }
 
 FPose::FPose(const FPose &s1, const FPose &s2) {
-	fposeProd(s1,s2,*this);
+	fposeProd(s1, s2, *this);
 }
 
 void FPose::identity() {

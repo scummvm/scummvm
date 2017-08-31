@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/viewport.h"
+#include "titanic/star_control/fvector.h"
 #include "titanic/debugger.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
@@ -244,14 +245,11 @@ FVector CViewport::getRelativePosCentering(int index, const FVector &src) {
 	double val;
 	if (index <2) {
 		val = _valArray[index];
-	}
-	else if (index == 2) {
+	} else if (index == 2) {
 		val = _isZero;
-	}
-	else if (index == 3) {
+	} else if (index == 3) {
 		val = _pixel1OffSetX;
-	}
-	else {
+	} else {
 		val = _pixel2OffSetX;
 	}
 
@@ -262,7 +260,6 @@ FVector CViewport::getRelativePosCentering(int index, const FVector &src) {
 	return dest;
 }
 
-
 // TODO: Identical to getRelativePosCentering, was this meant to be different?
 FVector CViewport::getRelativePosCentering2(int index, const FVector &src) {
 	FVector dest;
@@ -272,14 +269,11 @@ FVector CViewport::getRelativePosCentering2(int index, const FVector &src) {
 	double val;
 	if (index <2) {
 		val = _valArray[index];
-	}
-	else if (index == 2) {
+	} else if (index == 2) {
 		val = _isZero;
-	}	
-	else if (index == 3) {
+	} else if (index == 3) {
 		val = _pixel1OffSetX;
-	}
-	else {
+	} else {
 		val = _pixel2OffSetX;
 	}
 

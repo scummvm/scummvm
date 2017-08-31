@@ -164,15 +164,14 @@ public:
 	void setHasReference();
 	
 	/**
-	  * Handles locking in a star
-	  */
+	 * Handles locking in a star
+	 */
 	void lockStar();
 
 	/**
 	 * Handles unlocking a star
 	 */
 	void unlockStar();
-
 };
 
 } // End of namespace Titanic
