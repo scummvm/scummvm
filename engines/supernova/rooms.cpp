@@ -792,44 +792,28 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_PRESS) && (obj1._id == TURNTABLE_BUTTON)) {
 		if (!isSectionVisible(15)) {
 			_vm->renderMessage("Es ist doch gar keine Platte aufgelegt.");
-		} else if (!isSectionVisible(10) &&
-		           !isSectionVisible(11) &&
-		            isSectionVisible(12)) {
-			if (_gm->_soundDevice != 2) {
-				_gm->drawImage(14);
-				setSectionVisible(15, false);
-				for (int i = 3; i; i--) {
-					_vm->playSound(kAudioTurntable);
-					if (_gm->_soundDevice) {
-						do {
-							if (isSectionVisible(13)) {
-								_gm->drawImage(14);
-								setSectionVisible(13, false);
-							} else {
-								_gm->drawImage(13);
-								setSectionVisible(14, false);
-							}
-							_gm->wait2(3);
-						} while (_gm->_status);
+		} else if (!isSectionVisible(10) && !isSectionVisible(11) && isSectionVisible(12)) {
+			_gm->drawImage(14);
+			setSectionVisible(15, false);
+			for (int i = 3; i; i--) {
+				_vm->playSound(kAudioTurntable);
+				while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle)) {
+					if (isSectionVisible(13)) {
+						_gm->drawImage(14);
+						setSectionVisible(13, false);
 					} else {
-						_gm->wait2(1);
+						_gm->drawImage(13);
+						setSectionVisible(14, false);
 					}
-				}
-			} else {
-				for (int i = 10; i; i--) {
-					_gm->drawImage(14);
-					_gm->wait2(3);
-					_gm->drawImage(13);
 					_gm->wait2(3);
 				}
 			}
-			_gm->drawImage(15);
-			setSectionVisible(14, false);
-			setSectionVisible(13, false);
-			_vm->renderMessage("Die Platte scheint einen Sprung zu haben.");
 		}
-	} else if ((verb == ACTION_TAKE) && (obj1._id == RECORD) &&
-	           (obj1._click != 15)) {
+		_gm->drawImage(15);
+		setSectionVisible(14, false);
+		setSectionVisible(13, false);
+		_vm->renderMessage("Die Platte scheint einen Sprung zu haben.");
+	} else if ((verb == ACTION_TAKE) && (obj1._id == RECORD) && (obj1._click != 15)) {
 		_gm->drawImage(9);
 		setSectionVisible(13, false);
 		setSectionVisible(14, false);

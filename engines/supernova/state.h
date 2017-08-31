@@ -113,7 +113,6 @@ public:
 	Room *_rooms[NUMROOMS];
 	Inventory _inventory;
 	GameState _state;
-	int _status;
 	bool _processInput;
 	bool _guiEnabled;
 	bool _animationEnabled;
