@@ -112,7 +112,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
     , _screenHeight(200)
     , _messageDisplayed(false)
     , _allowLoadGame(true)
-    , _allowSaveGame(false)
+    , _allowSaveGame(true)
 {
 //	const Common::FSNode gameDataDir(ConfMan.get("path"));
 //	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
