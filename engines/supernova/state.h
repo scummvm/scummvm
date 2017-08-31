@@ -110,7 +110,7 @@ public:
 	int _mouseY;
 	int _mouseField;
 	Room *_currentRoom;
-	Room *_rooms[kRoomsNum];
+	Room *_rooms[NUMROOMS];
 	Inventory _inventory;
 	GameState _state;
 	int _status;

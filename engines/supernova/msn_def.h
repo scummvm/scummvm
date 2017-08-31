@@ -38,11 +38,11 @@ const int kMaxClickfieldZus = 80;
 const int kMaxObject = 25;
 const int kMaxCarry = 30;
 
-const int kRoomsChap0 =  1;
-const int kRoomsChap1 = 16;
-const int kRoomsChap2 =  9;
-const int kRoomsChap3 = 21;
-const int kRoomsNum = kRoomsChap0 + kRoomsChap1 + kRoomsChap2 + kRoomsChap3;
+//const int kRoomsChap0 =  1;
+//const int kRoomsChap1 = 16;
+//const int kRoomsChap2 =  9;
+//const int kRoomsChap3 = 21;
+//const int kRoomsNum = kRoomsChap0 + kRoomsChap1 + kRoomsChap2 + kRoomsChap3;
 
 enum MessagePosition {
 	kMessageNormal,
@@ -345,13 +345,13 @@ enum Action {
 enum RoomID {
 	INTRO,CORRIDOR,HALL,SLEEP,COCKPIT,AIRLOCK,
 	HOLD,LANDINGMODULE,GENERATOR,OUTSIDE,
-	CABIN_R1,CABIN_R2,CABIN_R3,CABIN_L1,CABIN_L3,CABIN_L2,BATHROOM,
+	CABIN_R1,CABIN_R2,CABIN_R3,CABIN_L1,CABIN_L2,CABIN_L3,BATHROOM,
 
 	ROCKS,CAVE,MEETUP,ENTRANCE,REST,ROGER,GLIDER,MEETUP2,MEETUP3,
 
 	CELL,CORRIDOR1,CORRIDOR2,CORRIDOR3,CORRIDOR4,CORRIDOR5,CORRIDOR6,CORRIDOR7,CORRIDOR8,CORRIDOR9,
 	BCORRIDOR,GUARD,GUARD3,OFFICE_L1,OFFICE_L2,OFFICE_R1,OFFICE_R2,OFFICE_L,
-	ELEVATOR,STATION,SIGN,OUTRO,NULLROOM
+	ELEVATOR,STATION,SIGN,OUTRO,NUMROOMS,NULLROOM
 };
 
 enum ObjectID {

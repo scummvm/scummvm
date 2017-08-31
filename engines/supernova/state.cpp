@@ -66,7 +66,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	}
 
 	// Rooms
-	for (int i = 0; i < kRoomsNum; ++i) {
+	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->serialize(out);
 	}
 
@@ -113,7 +113,7 @@ bool GameManager::deserialize(Common::ReadStream *in) {
 	}
 
 	// Rooms
-	for (int i = 0; i < kRoomsNum; ++i) {
+	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->deserialize(in);
 	}
 
