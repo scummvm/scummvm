@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fmatrix.h" // includes FVector
+#include "titanic/star_control/matrix_inv.h"
 #include "titanic/star_control/matrix_transform.h"
 
 namespace Titanic {
@@ -115,11 +116,26 @@ void DAffine::setRotationMatrix(Axis axis, double angleDeg) {
 	}
 }
 
-//TODO: Check column 4 math
 DAffine DAffine::inverseTransform() const {
 	DAffine m;
 
+	// Create a 4x4 matrix so that the column 4
+	// for the inverse can be obtained,  
+	// it is not simply -inv(R)*_col4
+	// Load input matrix
+	double A[16]={_col1._x,_col1._y,_col1._z, 0.0,
+				  _col2._x,_col2._y,_col2._z, 0.0,
+				  _col3._x,_col3._y,_col3._z, 0.0,
+				  _col4._x,_col4._y,_col4._z, 1.0};
+	// Inverse matrix
+	double B[16]={};
+
+	// B contains inverse of A
+	matrix4Inverse(A,B);
+
 	// Inverse of rotation matrix is the transpose
+	// While B contains the inverse of the rotation 
+	// this method is more numerically accurate
 	m._col1._x = _col1._x;
 	m._col2._x = _col1._y;
 	m._col3._x = _col1._z;
@@ -130,15 +146,10 @@ DAffine DAffine::inverseTransform() const {
 	m._col2._z = _col3._y;
 	m._col3._z = _col3._z;
 
-	m._col4._x = -(_col4._x * m._col1._x
-		+ _col4._y * m._col2._x
-		+ _col4._z * m._col3._x);
-	m._col4._y = -(_col4._x * m._col1._y
-		+ _col4._y * m._col2._y
-		+ _col4._z * m._col3._y);
-	m._col4._z = -(_col4._x * m._col1._z
-		+ _col4._y * m._col2._z
-		+ _col4._z * m._col3._z);
+	m._col4._x = B[12];
+	m._col4._y = B[13];
+	m._col4._z = B[14];
+
 	return m;
 }
 
