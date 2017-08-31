@@ -33,27 +33,28 @@ bool Room::serialize(Common::WriteStream *out) {
 	if (out->err())
 		return false;
 
-	out->writeByte(_id);
+	out->writeSint32LE(_id);
 	for (int i = 0; i < kMaxSection; ++i)
 		out->writeByte(_shown[i]);
 
 	int numObjects = 0;
 	while ((_objectState[numObjects]._id != INVALIDOBJECT) && (numObjects < kMaxObject))
 		++numObjects;
-	out->writeByte(numObjects);
+	out->writeSint32LE(numObjects);
 
 	for (int i = 0; i < numObjects; ++i) {
-		out->writeSint16LE(_objectState[i]._name.size() + 1);
-		out->writeString(_objectState[i]._name.c_str());
-		out->writeSint16LE(_objectState[i]._description.size() + 1);
-		out->writeString(_objectState[i]._description.c_str());
+		out->writeUint32LE(_objectState[i]._name.size());
+		out->writeString(_objectState[i]._name);
+		out->writeUint32LE(_objectState[i]._description.size());
+		out->writeString(_objectState[i]._description);
+
 		out->writeByte(_objectState[i]._roomId);
-		out->writeByte(_objectState[i]._id);
-		out->writeSint16LE(_objectState[i]._type);
+		out->writeSint32LE(_objectState[i]._id);
+		out->writeSint32LE(_objectState[i]._type);
 		out->writeByte(_objectState[i]._click);
 		out->writeByte(_objectState[i]._click2);
 		out->writeByte(_objectState[i]._section);
-		out->writeByte(_objectState[i]._exitRoom);
+		out->writeSint32LE(_objectState[i]._exitRoom);
 		out->writeByte(_objectState[i]._direction);
 	}
 
@@ -66,27 +67,37 @@ bool Room::deserialize(Common::ReadStream *in) {
 	if (in->err())
 		return false;
 
-	in->readByte();
+	in->readSint32LE();
 	for (int i = 0; i < kMaxSection; ++i)
 		_shown[i] = in->readByte();
 
-	int numObjects = in->readByte();
-	int bufferSize = 0;
-	char stringBuffer[256];
+	int numObjects = in->readSint32LE();
+	int stringLength = 0;
+	Common::SeekableReadStream *stream = NULL;
 	for (int i = 0; i < numObjects; ++i) {
-		bufferSize = in->readSint16LE();
-		in->read(stringBuffer, bufferSize > 256 ? 256 : bufferSize);
-		_objectState[i]._name = stringBuffer;
-		bufferSize = in->readSint16LE();
-		in->read(stringBuffer, bufferSize > 256 ? 256 : bufferSize);
-		_objectState[i]._description = stringBuffer;
+		stringLength = in->readUint32LE();
+		if (stringLength) {
+			stream = in->readStream(stringLength);
+			_objectState[i]._name = stream->readLine();
+		} else {
+			_objectState[i]._name = "";
+		}
+
+		stringLength = in->readUint32LE();
+		if (stringLength) {
+			stream = in->readStream(stringLength);
+			_objectState[i]._description = stream->readLine();
+		} else {
+			_objectState[i]._description = "";
+		}
+
 		_objectState[i]._roomId = in->readByte();
-		_objectState[i]._id = static_cast<ObjectID>(in->readByte());
-		_objectState[i]._type = static_cast<ObjectType>(in->readSint16LE());
+		_objectState[i]._id = static_cast<ObjectID>(in->readSint32LE());
+		_objectState[i]._type = static_cast<ObjectType>(in->readSint32LE());
 		_objectState[i]._click = in->readByte();
 		_objectState[i]._click2 = in->readByte();
 		_objectState[i]._section = in->readByte();
-		_objectState[i]._exitRoom = static_cast<RoomID>(in->readByte());
+		_objectState[i]._exitRoom = static_cast<RoomID>(in->readSint32LE());
 		_objectState[i]._direction = in->readByte();
 	}
 

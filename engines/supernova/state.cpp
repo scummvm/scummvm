@@ -56,13 +56,13 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._dream);
 
 	// Inventory
-	out->writeSByte(_inventory.getSize());
-	out->writeSByte(_inventoryScroll);
+	out->writeSint32LE(_inventory.getSize());
+	out->writeSint32LE(_inventoryScroll);
 	for (int i = 0; i < _inventory.getSize(); ++i) {
 		Object *objectStateBegin = _rooms[_inventory.get(i)->_roomId]->getObject(0);
 		byte objectIndex = _inventory.get(i) - objectStateBegin;
-		out->writeByte(_inventory.get(i)->_roomId);
-		out->writeByte(objectIndex);
+		out->writeSint32LE(_inventory.get(i)->_roomId);
+		out->writeSint32LE(objectIndex);
 	}
 
 	// Rooms
@@ -75,9 +75,8 @@ bool GameManager::serialize(Common::WriteStream *out) {
 
 
 bool GameManager::deserialize(Common::ReadStream *in) {
-	if (in->err()) {
+	if (in->err())
 		return false;
-	}
 
 	// GameState
 	_state._time = in->readSint32LE();
@@ -103,12 +102,12 @@ bool GameManager::deserialize(Common::ReadStream *in) {
 	_state._dream = in->readByte();
 
 	// Inventory
-	int inventorySize = in->readSByte();
-	_inventoryScroll = in->readSByte();
+	int inventorySize = in->readSint32LE();
+	_inventoryScroll = in->readSint32LE();
 	_inventory.clear();
 	for (int i = 0; i < inventorySize; ++i) {
-		RoomID objectRoom = static_cast<RoomID>(in->readByte());
-		int objectIndex = in->readByte();
+		RoomID objectRoom = static_cast<RoomID>(in->readSint32LE());
+		int objectIndex = in->readSint32LE();
 		_inventory.add(*_rooms[objectRoom]->getObject(objectIndex));
 	}
 
