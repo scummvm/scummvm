@@ -108,6 +108,7 @@ bool Room::deserialize(Common::ReadStream *in) {
 
 void Intro::onEntrance() {
 	_gm->_guiEnabled = false;
+	_vm->_allowSaveGame = false;
 	titleScreen();
 	cutscene();
 	leaveCutscene();
