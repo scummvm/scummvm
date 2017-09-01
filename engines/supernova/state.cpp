@@ -66,6 +66,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	}
 
 	// Rooms
+	out->writeByte(_currentRoom->getId());
 	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->serialize(out);
 	}
@@ -112,6 +113,7 @@ bool GameManager::deserialize(Common::ReadStream *in) {
 	}
 
 	// Rooms
+	_currentRoom = _rooms[static_cast<RoomID>(in->readByte())];
 	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->deserialize(in);
 	}
