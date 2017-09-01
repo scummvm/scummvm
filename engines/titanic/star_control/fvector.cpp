@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/dvector.h"
+#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fpose.h"
 //#include "common/algorithm.h"
 //#include "common/textconsole.h"
@@ -46,6 +47,16 @@ FVector FVector::crossProduct(const FVector &src) const {
 		src._x * _z - _x * src._z,
 		src._y * _x - _y * src._x
 	);
+}
+
+void FVector::rotVectAxisY(float angleDeg) {
+	float sinVal = sin(angleDeg * Deg2Rad);
+	float cosVal = cos(angleDeg * Deg2Rad);
+	float x = cosVal * _x - sinVal * _z;
+	float z = cosVal * _z + sinVal * _x;
+
+	_x = x;
+	_z = z;
 }
 
 bool FVector::normalize(float & hyp) {
@@ -73,6 +84,23 @@ FVector FVector::addAndNormalize(const FVector &v) const {
 	return tempV;
 }
 
+FVector FVector::getAnglesAsVect() const {
+	FVector vector = *this;
+	FVector dest;
+
+	if (!vector.normalize(dest._x)) {
+		// Makes this vector have magnitude=1, put the scale amount in dest._x,
+		// but if it is unsuccessful, crash
+		assert(dest._x);
+	}
+
+	dest._y = acos(vector._y);	// radian distance/angle that this vector's y component is from the +y axis,
+								// result is restricted to [0,pi]
+	dest._z = atan2(vector._x,vector._z); // result is restricted to [-pi,pi]
+
+	return dest;
+}
+
 float FVector::getDistance(const FVector &src) const {
 	float xd = src._x - _x;
 	float yd = src._y - _y;
@@ -81,12 +109,45 @@ float FVector::getDistance(const FVector &src) const {
 	return sqrt(xd * xd + yd * yd + zd * zd);
 }
 
+FVector FVector::MatProdColVect(const DAffine &pose) const {
+	FVector v;
+	v._x = pose._col1._x * _x + pose._col2._x * _y + pose._col3._x * _z + pose._col4._x;
+	v._y = pose._col1._y * _x + pose._col2._y * _y + pose._col3._y * _z + pose._col4._y;
+	v._z = pose._col1._z * _x + pose._col2._z * _y + pose._col3._z * _z + pose._col4._z;
+	return v;
+}
+
 FVector FVector::MatProdRowVect(const FPose &pose) const {
 	FVector v;
 	v._x = pose._row2._x * _y + pose._row3._x * _z + pose._row1._x * _x + pose._vector._x;
 	v._y = pose._row2._y * _y + pose._row3._y * _z + pose._row1._y * _x + pose._vector._y;
 	v._z = pose._row3._z * _z + pose._row2._z * _y + pose._row1._z * _x + pose._vector._z;
 	return v;
+}
+
+DAffine FVector::getFrameTransform(const FVector &v) {
+	DAffine matrix1, matrix2, matrix3, matrix4;
+
+	FVector vector1 = getAnglesAsVect();
+	matrix1.setRotationMatrix(X_AXIS, vector1._y * Rad2Deg);
+	matrix2.setRotationMatrix(Y_AXIS, vector1._z * Rad2Deg);
+	matrix3 = matrix1.compose(matrix2);
+	matrix4 = matrix3.inverseTransform();
+
+	vector1 = v.getAnglesAsVect();
+	matrix1.setRotationMatrix(X_AXIS, vector1._y * Rad2Deg);
+	matrix2.setRotationMatrix(Y_AXIS, vector1._z * Rad2Deg);
+	matrix3 = matrix1.compose(matrix2);
+
+	return matrix4.compose(matrix3);
+}
+
+DAffine FVector::formRotXY() const {
+	FVector v1 = getAnglesAsVect();
+	DAffine m1, m2;
+	m1.setRotationMatrix(X_AXIS, v1._y * Rad2Deg);
+	m2.setRotationMatrix(Y_AXIS, v1._z * Rad2Deg);
+	return m1.compose(m2);
 }
 
 Common::String FVector::toString() const {

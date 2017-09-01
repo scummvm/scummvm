@@ -50,8 +50,8 @@ void CUnmarkedCameraMover::transitionBetweenOrientations(const FVector &v1, cons
 	if (isLocked())
 		decLockCount();
 	
-	DVector vector1 = v1;
-	DVector vector2 = v2;
+	FVector vector1 = v1;
+	FVector vector2 = v2;
 	DAffine matrix1 = vector2.getFrameTransform(vector1);
 	DAffine matrix2 = matrix1.compose(m);
 
