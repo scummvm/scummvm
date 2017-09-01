@@ -63,6 +63,11 @@ public:
 	void setRotationMatrix(Axis axis, double angleDeg);
 
 	/**
+	 * Rotate this DAffine about the Y axis
+	 */
+	void rotVectAxisY(double angleDeg);
+
+	/**
 	 * Return the Inverse of this Daffine
 	 */
 	DAffine inverseTransform() const;
@@ -80,6 +85,8 @@ public:
 	 * as multiplying two matrices of dimensions 3x4.
 	 */
 	DAffine compose(const DAffine &m);
+
+	DAffine compose2(const DAffine &m);
 };
 
 } // End of namespace Titanic

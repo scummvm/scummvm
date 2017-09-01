@@ -116,6 +116,13 @@ void DAffine::setRotationMatrix(Axis axis, double angleDeg) {
 	}
 }
 
+void DAffine::rotVectAxisY(double angleDeg) {
+	_col1.rotVectAxisY(angleDeg);
+	_col2.rotVectAxisY(angleDeg);
+	_col3.rotVectAxisY(angleDeg);
+	_col4.rotVectAxisY(angleDeg);
+}
+
 DAffine DAffine::inverseTransform() const {
 	DAffine m;
 
@@ -208,6 +215,16 @@ DAffine DAffine::compose(const DAffine &m) {
 		+ _col4._x * m._col1._y + m._col4._y;
 	dm._col4._z = _col4._y * m._col2._z + _col4._x * m._col1._z
 		+ _col4._z * m._col3._z + m._col4._z;
+
+	return dm;
+}
+
+DAffine DAffine::compose2(const DAffine &m) {
+	DAffine dm;
+	dm._col1 = _col1.dAffMatrixProdVec(m);
+	dm._col2 = _col2.dAffMatrixProdVec(m);
+	dm._col3 = _col3.dAffMatrixProdVec(m);
+	dm._col4 = _col4.dAffMatrixProdVec(m);
 
 	return dm;
 }
