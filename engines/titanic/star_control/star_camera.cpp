@@ -41,12 +41,12 @@ FMatrix *CStarCamera::_priorOrientation;
 FMatrix *CStarCamera::_newOrientation;
 
 CStarCamera::CStarCamera(const CNavigationInfo *data) :
-		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false) {
+		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false) {
 	setupHandler(data);
 }
 
 CStarCamera::CStarCamera(CViewport *src) :
-		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _viewport(src) {
+		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false), _viewport(src) {
 }
 
 void CStarCamera::init() {
@@ -63,6 +63,10 @@ void CStarCamera::deinit() {
 
 bool CStarCamera::isLocked() { 
 	return _mover->isLocked();
+}
+
+bool CStarCamera::isNotInLockingProcess() { 
+	return !_isInLockingProcess;
 }
 
 CStarCamera::~CStarCamera() {
@@ -251,6 +255,8 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 
 	if (isLocked())
 		return;
+
+	_isInLockingProcess = false;
 
 	switch(_starLockState) {
 	case ZERO_LOCKED: {
@@ -471,6 +477,7 @@ bool CStarCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3)
 	if (_starLockState != ZERO_LOCKED)
 		return true;
 
+	_isInLockingProcess = true;
 	FVector tempV;
 	double val1, val2, val3, val4, val5;
 	double val6, val7, val8, val9;
@@ -504,12 +511,15 @@ bool CStarCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3)
 
 	CStarVector *sv = new CStarVector(this, firstStarPosition);
 	_mover->setVector(sv);
+
 	return	true;
 }
 
 bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosition) {
 	if (_starLockState != ONE_LOCKED)
 		return true;
+
+	_isInLockingProcess = true;
 	FVector firstStarPosition = _lockedStarsPos._row1;
 	DAffine m2(0, firstStarPosition); // Identity matrix and col4 as the 1st stars position
 	DVector starDelta = secondStarPosition - firstStarPosition;
@@ -603,6 +613,7 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosit
 	if (_starLockState != TWO_LOCKED)
 		return true;
 
+	_isInLockingProcess = true;
 	FMatrix newOr = viewport->getOrientation();
 	FMatrix oldOr = _viewport.getOrientation();
 	FVector newPos = viewport->_position;
@@ -612,6 +623,7 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosit
 
 	CStarVector *sv = new CStarVector(this, thirdStarPosition);
 	_mover->setVector(sv);
+
 	return true;
 }
 
