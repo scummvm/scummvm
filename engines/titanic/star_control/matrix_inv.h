@@ -52,11 +52,12 @@ namespace Titanic {
 
 // 4x4 Matrix m is column major, e.x., m[3] is the row 4 column 1 element
 // Modified version of MESA 3D library function (MIT license)
-bool matrix4Inverse(const double m[16], double invOut[16])
+template <typename T>
+bool matrix4Inverse(const T m[16], T invOut[16])
 {
-    double temp_inv[16]; 
-    double determinant;
-    double determinant_inv;
+    T temp_inv[16]; 
+    T determinant;
+    T determinant_inv;
     int i;
 
     temp_inv[0] = m[5]  * m[10] * m[15] - 
