@@ -489,26 +489,38 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				continue;
 			}
 
-			// At least version 1.00 of the US release of GK2 has multiple
-			// invalid audio36 map entries on CD 6
-			if (g_sci->getGameId() == GID_GK2 &&
-				g_sci->getLanguage() == Common::EN_ANY &&
-				map->_volumeNumber == 6 &&
-				offset + syncSize >= srcSize) {
+			if (g_sci->getGameId() == GID_GK2) {
+				// At least version 1.00 of the US release, and the German
+				// release, of GK2 have multiple invalid audio36 map entries on
+				// CD 6
+				if (map->_volumeNumber == 6 && offset + syncSize >= srcSize) {
+					bool skip;
+					switch (g_sci->getLanguage()) {
+					case Common::EN_ANY:
+						skip = (map->_mapNumber == 22 || map->_mapNumber == 160);
+						break;
+					case Common::DE_DEU:
+						skip = (map->_mapNumber == 22);
+						break;
+					default:
+						skip = false;
+					}
 
-				debugC(kDebugLevelResMan, "Invalid offset %u for %s in map %d for disc %d", offset + syncSize, id.toPatchNameBase36().c_str(), map->_mapNumber, map->_volumeNumber);
-				continue;
-			}
+					if (skip) {
+						continue;
+					}
+				}
 
-			// Map 2020 on CD 1 of the German release of GK2 is invalid. This
-			// content does not appear to ever be used by the game (it does not
-			// even exist in the US release), and there is a correct copy of it
-			// on CD 6, so just ignore the bad copy on CD 1
-			if (g_sci->getGameId() == GID_GK2 &&
-				g_sci->getLanguage() == Common::DE_DEU &&
-				map->_volumeNumber == 1 &&
-				map->_mapNumber == 2020) {
-				continue;
+				// Map 2020 on CD 1 of the German release of GK2 is invalid.
+				// This content does not appear to ever be used by the game (it
+				// does not even exist in the US release), and there is a
+				// correct copy of it on CD 6, so just ignore the bad copy on
+				// CD 1
+				if (g_sci->getLanguage() == Common::DE_DEU &&
+					map->_volumeNumber == 1 &&
+					map->_mapNumber == 2020) {
+					continue;
+				}
 			}
 
 			// Map 800 and 4176 contain content that was cut from the game. The
