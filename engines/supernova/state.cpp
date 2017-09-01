@@ -414,6 +414,14 @@ void GameManager::initGui() {
 		_guiInventory[i].setSize(inventoryX, inventoryY, inventoryX + 135, inventoryY + 9);
 		_guiInventory[i].setColor(kColorWhite25, kColorDarkRed, kColorWhite35, kColorRed);
 	}
+	_guiInventoryArrow[0].setSize(272, 161, 279, 180);
+	_guiInventoryArrow[0].setColor(kColorWhite25, kColorDarkRed, kColorWhite35, kColorRed);
+	_guiInventoryArrow[0].setText("\x82");
+	_guiInventoryArrow[0].setTextPosition(273, 166);
+	_guiInventoryArrow[1].setSize(272, 181, 279, 200);
+	_guiInventoryArrow[1].setColor(kColorWhite25, kColorDarkRed, kColorWhite35, kColorRed);
+	_guiInventoryArrow[1].setText("\x83");
+	_guiInventoryArrow[1].setTextPosition(273, 186);
 }
 
 
@@ -578,7 +586,7 @@ void GameManager::processInput() {
 
 		if (_mouseField != field) {
 			if (_mouseField >= 768) {
-				inventory_arrow(_mouseField - 768, false);
+				_guiInventoryArrow[_mouseField - 768].setHighlight(false);
 			} else if (_mouseField >= 512) {
 				_guiInventory[_mouseField - 512].setHighlight(false);
 			} else if (_mouseField >= 256) {
@@ -589,7 +597,7 @@ void GameManager::processInput() {
 
 			_mouseField = field;
 			if (_mouseField >= 768) {
-				inventory_arrow(_mouseField - 768, true);
+				_guiInventoryArrow[_mouseField - 768].setHighlight(true);
 			} else if (_mouseField >= 512) {
 				_guiInventory[_mouseField - 512].setHighlight(true);
 				_currentInputObject = _inventory.get(_mouseField - 512 + _inventoryScroll);
@@ -837,10 +845,6 @@ void GameManager::drawCommandBox() {
 	}
 }
 
-void GameManager::inventory_arrow(int num, bool brightness) {
-	// STUB
-}
-
 void GameManager::drawInventory() {
 	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
 		_vm->renderBox(_guiInventory[i].left,
@@ -854,8 +858,30 @@ void GameManager::drawInventory() {
 		                _guiInventory[i]._textColor);
 	}
 
-	_vm->renderBox(272, 161, 7, 19, kColorWhite25);
-	_vm->renderBox(272, 181, 7, 19, kColorWhite25);
+	_vm->renderBox(_guiInventoryArrow[0].left,
+	               _guiInventoryArrow[0].top,
+	               _guiInventoryArrow[0].width(),
+	               _guiInventoryArrow[0].height(),
+	               _guiInventoryArrow[0]._bgColor);
+	_vm->renderBox(_guiInventoryArrow[1].left,
+	               _guiInventoryArrow[1].top,
+	               _guiInventoryArrow[1].width(),
+	               _guiInventoryArrow[1].height(),
+	               _guiInventoryArrow[1]._bgColor);
+	if (_inventory.getSize() > ARRAYSIZE(_guiInventory)) {
+		if (_inventoryScroll != 0) {
+			_vm->renderText(_guiInventoryArrow[0]._text,
+			                _guiInventoryArrow[0]._textPosition.x,
+			                _guiInventoryArrow[0]._textPosition.y,
+			                _guiInventoryArrow[0]._textColor);
+		}
+		if (_inventoryScroll + ARRAYSIZE(_guiInventory) < _inventory.getSize()) {
+			_vm->renderText(_guiInventoryArrow[1]._text,
+			                _guiInventoryArrow[1]._textPosition.x,
+			                _guiInventoryArrow[1]._textPosition.y,
+			                _guiInventoryArrow[1]._textColor);
+		}
+	}
 }
 
 uint16 GameManager::getKeyInput(bool blockForPrintChar) {
