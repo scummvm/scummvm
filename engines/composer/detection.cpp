@@ -98,6 +98,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Baba Yaga and the Magic Geese German- from bug #10171
+	{
+		{
+			"babayaga",
+			"",
+			AD_ENTRY1s("book.ini", "2a20e73d33ecd0f2fa8123d4f9862f90", 3814),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: Imo and the King - from bug #3485018
 	{
 		{
