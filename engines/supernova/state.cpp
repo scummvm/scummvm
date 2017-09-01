@@ -817,6 +817,10 @@ void GameManager::takeObject(Object &obj) {
 	obj.setProperty(CARRIED);
 	obj._click = obj._click2 = 255;
 	_inventory.add(obj);
+	if (_inventory.getSize() > _inventoryScroll + 8) {
+		_inventoryScroll = _inventory.getSize() - 8;
+		_inventoryScroll += _inventoryScroll % 2;
+	}
 }
 
 void GameManager::drawCommandBox() {
