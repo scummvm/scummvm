@@ -500,7 +500,8 @@ void GameManager::processInput() {
 			if (_inventoryScroll >= 2)
 				_inventoryScroll -= 2;
 		} else if (_mouseField == 769) {
-			_inventoryScroll += 2;
+			if (_inventoryScroll < _inventory.getSize() - ARRAYSIZE(_guiInventory))
+				_inventoryScroll += 2;
 		}
 	} else if (_mouseClickType == Common::EVENT_RBUTTONUP) {
 		_vm->removeMessage();
