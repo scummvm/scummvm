@@ -223,8 +223,7 @@ FVector CStarCamera::getRelativePos(int index, const FVector &src) {
 	double val;
 	if (index == 2) {
 		val = _viewport._isZero;
-	}
-	else {
+	} else {
 		val = _viewport._valArray[index];
 	}
 
