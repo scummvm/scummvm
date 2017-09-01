@@ -521,8 +521,8 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 }
 
 bool Composer::ComposerEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL 
-		|| f == kSupportsSavingDuringRuntime 
+	return (f == kSupportsRTL
+		|| f == kSupportsSavingDuringRuntime
 		|| f == kSupportsLoadingDuringRuntime);
 }
 
