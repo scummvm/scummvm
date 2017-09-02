@@ -150,7 +150,7 @@ static void inclinenumber (LexState *LS) {
 			break;
 		case 4:  // ifnot
 			ifnot = 1;
-			// go through
+			// fall through
 		case 5:  // if
 			if (LS->iflevel == MAX_IFS - 1)
 				luaY_syntaxerror("too many nested $ifs", "$if");

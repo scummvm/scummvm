@@ -268,21 +268,21 @@ void FrameBuffer::blitOffscreenBuffer(Buffer *buf) {
 			to_z += UNROLL_COUNT;
 		}
 		switch (count) {
-		case 0xF: blitPixel(0xE, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0xE: blitPixel(0xD, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0xD: blitPixel(0xC, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0xC: blitPixel(0xB, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0xB: blitPixel(0xA, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0xA: blitPixel(0x9, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0x9: blitPixel(0x8, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0x8: blitPixel(0x7, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0x7: blitPixel(0x6, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0x6: blitPixel(0x5, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0x5: blitPixel(0x4, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0x4: blitPixel(0x3, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0x3: blitPixel(0x2, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0x2: blitPixel(0x1, from_z, to_z, sizeof(int), from, to, pixel_bytes);
-		case 0x1: blitPixel(0x0, from_z, to_z, sizeof(int), from, to, pixel_bytes);
+		case 0xF: blitPixel(0xE, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0xE: blitPixel(0xD, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0xD: blitPixel(0xC, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0xC: blitPixel(0xB, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0xB: blitPixel(0xA, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0xA: blitPixel(0x9, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0x9: blitPixel(0x8, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0x8: blitPixel(0x7, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0x7: blitPixel(0x6, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0x6: blitPixel(0x5, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0x5: blitPixel(0x4, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0x4: blitPixel(0x3, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0x3: blitPixel(0x2, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0x2: blitPixel(0x1, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
+		case 0x1: blitPixel(0x0, from_z, to_z, sizeof(int), from, to, pixel_bytes); // fall through
 		case 0x0: break;
 		}
 	}

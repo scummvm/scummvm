@@ -658,7 +658,7 @@ callfunc:
 			return -((task->S->top - task->S->stack) - (*task->pc++));
 		case ENDCODE:
 			task->S->top = task->S->stack + task->base;
-			// goes through
+			// fall through
 		case RETCODE:
 			lua_state->state_counter2--;
 			return (task->base + ((task->aux == 123) ? *task->pc : 0));

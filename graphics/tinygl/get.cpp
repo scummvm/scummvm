@@ -75,8 +75,10 @@ void tglGetFloatv(int pname, float *v) {
 	switch (pname) {
 	case TGL_TEXTURE_MATRIX:
 		mnr++;
+		// fall through
 	case TGL_PROJECTION_MATRIX:
 		mnr++;
+		// fall through
 	case TGL_MODELVIEW_MATRIX: {
 		float *p = &c->matrix_stack_ptr[mnr]->_m[0][0];
 		for (i = 0; i < 4; i++) {

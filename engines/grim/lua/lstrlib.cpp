@@ -266,7 +266,7 @@ init:
 	case '$':  // (possibly) end of pattern
 		if (*p == 0 || (*(p + 1) == 0 && *s == 0))
 			return s;
-		// else go through
+		// fall through
 	default:
 		{  // it is a pattern item
 			const char *ep;  // get what is next
