@@ -27,6 +27,8 @@
 #include "common/util.h"
 #include "common/debug.h"
 
+#define PRINT_RECT(x) (x).left,(x).top,(x).right,(x).bottom
+
 namespace Common {
 
 /**

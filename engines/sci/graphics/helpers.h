@@ -52,10 +52,6 @@ typedef int16 TextAlignment;
 #define PORTS_FIRSTWINDOWID 2
 #define PORTS_FIRSTSCRIPTWINDOWID 3
 
-#ifdef ENABLE_SCI32
-#define PRINT_RECT(x) (x).left,(x).top,(x).right,(x).bottom
-#endif
-
 struct Port {
 	uint16 id;
 	int16 top, left;
