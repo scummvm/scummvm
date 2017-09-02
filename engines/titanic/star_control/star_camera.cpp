@@ -26,7 +26,7 @@
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/marked_camera_mover.h"
-#include "titanic/star_control/matrix_inv.h"
+//#include "titanic/star_control/matrix_inv.h"
 #include "titanic/star_control/unmarked_camera_mover.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/support/simple_file.h"
@@ -525,20 +525,8 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	FPose m10 = starDelta.formRotXY();
 	FPose m11;
 	fposeProd(m10,m3,m11);
-	
-	float A[16]={m11._row1._x,m11._row1._y,m11._row1._z, 0.0,
-				 m11._row2._x,m11._row2._y,m11._row2._z, 0.0,
-				 m11._row3._x,m11._row3._y,m11._row3._z, 0.0,
-				 m11._vector._x,m11._vector._y,m11._vector._z, 1.0};
-	// Inverse matrix
-	float B[16]={};
 
-	// B contains inverse of A
-	matrix4Inverse<float>(A,B);
-	m10=m11.inverseTransform();
-	m10._vector._x=B[12];
-	m10._vector._y=B[13];
-	m10._vector._z=B[14];
+	m10 = m11.inverseTransform();
 
 	FVector oldPos = _viewport._position;
 

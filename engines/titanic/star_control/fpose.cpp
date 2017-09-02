@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/fpose.h"
 #include "titanic/star_control/matrix_transform.h"
+#include "titanic/star_control/matrix_inv.h"
 
 namespace Titanic {
 
@@ -159,29 +160,32 @@ void FPose::copyFrom(const FMatrix &src) {
 }
 
 FPose FPose::inverseTransform() const {
-	FPose result;
+	FPose matrix_inv;
 
-	result._row1._x = _row1._x;
-	result._row2._x = _row1._y;
-	result._row3._x = _row1._z;
-	result._row1._y = _row2._x;
-	result._row2._y = _row2._y;
-	result._row3._y = _row2._z;
-	result._row1._z = _row3._x;
-	result._row2._z = _row3._y;
-	result._row3._z = _row3._z;
+	matrix_inv._row1._x = _row1._x;
+	matrix_inv._row2._x = _row1._y;
+	matrix_inv._row3._x = _row1._z;
+	matrix_inv._row1._y = _row2._x;
+	matrix_inv._row2._y = _row2._y;
+	matrix_inv._row3._y = _row2._z;
+	matrix_inv._row1._z = _row3._x;
+	matrix_inv._row2._z = _row3._y;
+	matrix_inv._row3._z = _row3._z;
 
-	result._vector._x = -(_vector._x * result._row1._x
-		+ _vector._y * result._row2._x
-		+ _vector._z * result._row3._x);
-	result._vector._y = -(_vector._x * result._row1._y
-		+ _vector._y * result._row2._y
-		+ _vector._z * result._row3._y);
-	result._vector._z = -(_vector._x * result._row1._z
-		+ _vector._y * result._row2._z
-		+ _vector._z * result._row3._z);
+	float A[16]={_row1._x,_row1._y,_row1._z, 0.0,
+				 _row2._x,_row2._y,_row2._z, 0.0,
+				 _row3._x,_row3._y,_row3._z, 0.0,
+				 _vector._x,_vector._y,_vector._z, 1.0};
+	// Inverse matrix
+	float B[16]={};
 
-	return result;
+	// B contains inverse of A
+	matrix4Inverse<float>(A,B);	
+	matrix_inv._vector._x=B[12];
+	matrix_inv._vector._y=B[13];
+	matrix_inv._vector._z=B[14];
+
+	return matrix_inv;
 }
 
 //TODO: Check math and provide source
