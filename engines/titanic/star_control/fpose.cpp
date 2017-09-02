@@ -212,6 +212,18 @@ void FPose::loadTransform(const CMatrixTransform &src) {
 	_vector._z = 0;
 }
 
+FPose FPose::compose(const FMatrix &m) {
+	FPose dm;
+	FPose am;
+	am._row1 = m._row1;
+	am._row2 = m._row2;
+	am._row3 = m._row3;
+
+	fposeProd(*this,am,dm);
+
+	return dm;
+}
+
 FPose FPose::compose2(const FPose &m) {
 	FPose dm;
 	dm._row1 = _row1.MatProdRowVect(m);

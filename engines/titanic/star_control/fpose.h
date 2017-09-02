@@ -82,6 +82,8 @@ public:
 	 */
 	FPose inverseTransform() const;
 
+	FPose compose(const FMatrix &m);
+
 	FPose compose2(const FPose &m);
 };
 

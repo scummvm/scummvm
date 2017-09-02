@@ -117,14 +117,14 @@ public:
 	 * Returns a matrix that contains the frame rotation based on this vector and 
 	 * a vector rotation based on input vector v
 	 */
-	//DAffine getFrameTransform(const FVector &v);
+	FPose getFrameTransform(const FVector &v);
 
 	/**
 	 * Constructs an affine matrix that does a x then a y axis frame rotation
 	 * based on the orientation of this vector
 	 */
 	//DAffine formRotXY() const;
-	FPose formRotXY2() const;
+	FPose formRotXY() const;
 
 	/**
 	 * Returns true if the passed vector equals this one

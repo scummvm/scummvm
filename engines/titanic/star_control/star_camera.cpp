@@ -336,7 +336,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		fposeProd(m1,subX,m11);
 		//m1 = m1.compose(subX);
 		subX = m11.inverseTransform();
-		Fpose m12;
+		FPose m12;
 		fposeProd(subX,subY,m12);
 		//subX = subX.compose(subY);
 
@@ -528,7 +528,7 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	FPose m3(0, firstStarPosition); // Identity matrix and row4 as the 1st stars position
 	FVector starDelta = secondStarPosition - firstStarPosition;
 	//DAffine m1 = starDelta.formRotXY();
-	FPose m10 = starDelta.formRotXY2();
+	FPose m10 = starDelta.formRotXY();
 	FPose m11;
 	fposeProd(m10,m3,m11);
 	//m1 = m1.compose(m2);
