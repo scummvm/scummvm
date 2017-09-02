@@ -35,7 +35,6 @@ class FPose;
 
 /**
  * Floating point vector class.
- * @remarks		TODO: See if it can be merged with DVector
  */
 class FVector {
 public:
@@ -103,12 +102,6 @@ public:
 	 * times the 3x4 affine matrix on the right.
 	 */
 	FVector MatProdRowVect(const FPose &pose) const;
-
-	/**
-	 * Returns a vector that is this vector on the right as a column vector
-	 * times the 4x3 fpose matrix on the left.
-	 */
-	//FVector MatProdColVect(const DAffine &pose) const;	
 
 	/**
 	 * Returns a matrix that contains the frame rotation based on this vector and 

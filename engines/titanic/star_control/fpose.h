@@ -31,7 +31,6 @@ class CMatrixTransform;
 
 /*
  * This class combines a position and orientation in 3D space
- * TODO: Merge with DAffine
  */
 class FPose : public FMatrix {
 public:
@@ -82,8 +81,18 @@ public:
 	 */
 	FPose inverseTransform() const;
 
+	/**
+	 * Multiplication between this FPose (4x3) and a FMatrix (3x3)
+	 * This is done by making the matrix be a FPose with a last row
+	 * of zeros
+	 */
 	FPose compose(const FMatrix &m);
 
+	/**
+	 * Multiplication between this FPose (4x3) and another FPose
+	 * This FPose is on the left and m is on the right.
+	 * The last row of m is added to the output component wise
+	 */
 	FPose compose2(const FPose &m);
 };
 
