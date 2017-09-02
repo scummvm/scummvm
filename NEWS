@@ -18,7 +18,11 @@
 	- Added an option to take advantage of wide screens
 	- Updated the game scripts to the newest official version for non-DVD releases
 	- Implemented the Narayan shield effect
-	- Fixed the game running too fast in some conditions
+	- Fixed the game running too fast in some conditions (#1277)
+	- Added support for the Hebrew version (#1348)
+	- Fixed hotspots sometimes being too small (#1329)
+	- Fixed ambient sounds sometimes not refreshing (#1349, #1350)
+	- Added fullscreen toggling
 
 0.2.1 (2015-01-25)
 	Grim fixes:
