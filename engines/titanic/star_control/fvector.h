@@ -32,11 +32,9 @@ const double Deg2Rad = 1.0 / Rad2Deg;
 enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
 
 class FPose;
-class DVector;
 
 /**
  * Floating point vector class.
- * @remarks		TODO: See if it can be merged with DVector
  */
 class FVector {
 public:
@@ -44,7 +42,6 @@ public:
 public:
 	FVector() : _x(0), _y(0), _z(0) {}
 	FVector(float x, float y, float z) : _x(x), _y(y), _z(z) {}
-	FVector(const DVector &src);
 
 	/**
 	 * Clears the vector
@@ -66,6 +63,11 @@ public:
 	FVector crossProduct(const FVector &src) const;
 
 	/**
+	 * Rotate this vector about the Y axis
+	 */
+	void rotVectAxisY(float angleDeg);
+
+	/**
 	 * Attempts to normalizes the vector so the length from origin equals 1.0
 	 * Return value is whether or not it was successful in normalizing
 	 * First argument is scale value that normalizes the vector
@@ -83,6 +85,14 @@ public:
 	FVector addAndNormalize(const FVector &v) const;
 
 	/**
+	 * Returns a vector, v, that represents a magnitude, and two angles in radians
+	 * 1. Scale this vector to be unit magnitude and store scale in x component of v
+	 * 2. X rotation angle from +y axis of this vector is put in y component of v
+	 * 3. z component output of v is the 4-quadrant angle that z makes with x (Y axis rotation)
+	 */
+	FVector getAnglesAsVect() const;
+
+	/**
 	 * Returns the distance between a specified point and this one
 	 */
 	float getDistance(const FVector &src) const;
@@ -92,6 +102,18 @@ public:
 	 * times the 3x4 affine matrix on the right.
 	 */
 	FVector MatProdRowVect(const FPose &pose) const;
+
+	/**
+	 * Returns a matrix that contains the frame rotation based on this vector and 
+	 * a vector rotation based on input vector v
+	 */
+	FPose getFrameTransform(const FVector &v);
+
+	/**
+	 * Constructs an affine matrix that does a x then a y axis frame rotation
+	 * based on the orientation of this vector
+	 */
+	FPose formRotXY() const;
 
 	/**
 	 * Returns true if the passed vector equals this one
@@ -118,6 +140,10 @@ public:
 	const FVector operator*(float right) const {
 		return FVector(_x * right, _y * right, _z * right);
 	}
+
+	const FVector operator*(const FVector &right) const {
+		return FVector(_x * right._x, _y * right._y, _z * right._z);
+	}	
 
 	void operator+=(const FVector &delta) {
 		_x += delta._x;

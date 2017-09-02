@@ -434,8 +434,6 @@ MODULE_OBJS := \
 	star_control/base_stars.o \
 	star_control/camera_auto_mover.o \
 	star_control/camera_mover.o \
-	star_control/daffine.o \
-	star_control/dvector.o \
 	star_control/fmatrix.o \
 	star_control/fpoint.o \
 	star_control/fpose.o \

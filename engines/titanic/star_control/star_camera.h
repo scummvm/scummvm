@@ -211,7 +211,7 @@ public:
 	 * The angle is in degrees.
 	 * Also returns the minimum distance calculated
 	 */
-	double calcAngleForMinDist(DVector &x, DVector &y, double &minDistance);
+	float calcAngleForMinDist(FVector &x, FVector &y, float &minDistance);
 
 	/**
 	 * Returns true for whether the camera has been moved

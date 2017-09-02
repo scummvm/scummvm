@@ -119,7 +119,7 @@ public:
 	 * Applys a rotation matrix to the current
 	 * orientation
 	 */	
-	void changeOrientation(const FMatrix &matrix);\
+	void changeOrientation(const FMatrix &matrix);
 
 	FPose getPose();
 	FPose getRawPose();

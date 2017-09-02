@@ -27,20 +27,13 @@
 
 namespace Titanic {
 
-class DAffine;
-class DVector;
 class SimpleFile;
 
 /**
  * Floating point matrix class.
- * @remarks		TODO: See if it can be merged with DAffine
+
  */
 class FMatrix {
-private:
-	/**
-	 * Copys data from a given source
-	 */
-	void copyFrom(const DAffine &src);
 public:
 	FVector _row1;
 	FVector _row2;
@@ -48,7 +41,6 @@ public:
 public:
 	FMatrix();
 	FMatrix(const FVector &, const FVector &, const FVector &);
-	FMatrix(const DAffine &src);
 	FMatrix(const FMatrix &src);
 
 	/**
@@ -80,11 +72,6 @@ public:
 	 * Sets the data for the matrix
 	 */
 	void set(const FVector &row1, const FVector &row2, const FVector &row3);
-
-	/**
-	 * Sets the data for the matrix
-	 */
-	void set(const DVector &row1, const DVector &row2, const DVector &row3);
 
 	/**
 	 * Sets the data for the matrix from a vector

@@ -23,8 +23,7 @@
 #include "titanic/star_control/unmarked_camera_mover.h"
 #include "titanic/debugger.h"
 #include "titanic/star_control/base_stars.h" // includes class CStarVector
-#include "titanic/star_control/dvector.h"
-#include "titanic/star_control/daffine.h"
+#include "titanic/star_control/fpose.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fmatrix.h" // includes class FVector
 #include "titanic/titanic.h"
@@ -50,10 +49,10 @@ void CUnmarkedCameraMover::transitionBetweenOrientations(const FVector &v1, cons
 	if (isLocked())
 		decLockCount();
 	
-	DVector vector1 = v1;
-	DVector vector2 = v2;
-	DAffine matrix1 = vector2.getFrameTransform(vector1);
-	DAffine matrix2 = matrix1.compose(m);
+	FVector vector1 = v1;
+	FVector vector2 = v2;
+	FPose matrix1 = vector2.getFrameTransform(vector1);
+	FPose matrix2 = matrix1.compose(m);
 
 	_autoMover.setOrientations(m, matrix2);
 	incLockCount();
