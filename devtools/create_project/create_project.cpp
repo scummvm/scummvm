@@ -1045,7 +1045,7 @@ const Feature s_features[] = {
 	{         "scalers",          "USE_SCALERS",         "", true,  "Scalers" },
 	{       "hqscalers",       "USE_HQ_SCALERS",         "", true,  "HQ scalers" },
 	{           "16bit",        "USE_RGB_COLOR",         "", true,  "16bit color support" },
-	{         "mt32emu",          "USE_MT32EMU",         "", false, "integrated MT-32 emulator" }, // ResidualVM change
+//	{         "mt32emu",          "USE_MT32EMU",         "", true, "integrated MT-32 emulator" }, // ResidualVM change
 	{            "nasm",             "USE_NASM",         "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{          "opengl",           "USE_OPENGL",         "", true,  "OpenGL support" },
 	{   "openglshaders",   "USE_OPENGL_SHADERS",         "", true,  "OpenGL support (shaders)" }, // ResidualVM specific
@@ -1430,7 +1430,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
+//		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex); // ResidualVM
 		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
 		//ResidualVM specific:
