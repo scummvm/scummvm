@@ -26,7 +26,6 @@
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/marked_camera_mover.h"
-//#include "titanic/star_control/matrix_inv.h"
 #include "titanic/star_control/unmarked_camera_mover.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/support/simple_file.h"
@@ -616,7 +615,9 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosit
 	FVector newPos = viewport->_position;
 	FVector oldPos = _viewport._position;
 
-	_mover->transitionBetweenPosOrients(oldPos, newPos, oldOr, newOr);
+	// WORKAROUND: set old position to new position (1st argument), this prevents 
+	// locking issues when locking the 3rd star. Fixes #9961.
+	_mover->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
 
 	CStarVector *sv = new CStarVector(this, thirdStarPosition);
 	_mover->setVector(sv);
