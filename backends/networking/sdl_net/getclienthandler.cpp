@@ -145,7 +145,7 @@ void GetClientHandler::handle(Client *client) {
 	}
 
 	if (readBytes != 0)
-		if (client->send(_buffer, readBytes) != readBytes) {
+		if (client->send(_buffer, readBytes) != (int)readBytes) {
 			warning("GetClientHandler: unable to send all bytes to the client");
 			client->close();
 			return;

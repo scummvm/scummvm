@@ -91,7 +91,7 @@ enum {
 #pragma mark -
 
 LauncherDialog::LauncherDialog()
-	: Dialog(0, 0, 640, 400) { // ResidualVM specific
+	: Dialog(0, 0, 640, 480) { // ResidualVM specific
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -204,7 +204,10 @@ void LauncherDialog::clean() {
 	while (_firstWidget) {
 		Widget* w = _firstWidget;
 		removeWidget(w);
-		delete w;
+		// This is called from rebuild() which may result from handleCommand being called by
+		// a child widget sendCommand call. In such a case sendCommand is still being executed
+		// so we should not delete yet the child widget. Thus delay the deletion.
+		g_gui.addToTrash(w, this);
 	}
 	delete _browser;
 	delete _loadDialog;
@@ -214,7 +217,7 @@ void LauncherDialog::rebuild() {
 	clean();
 	build();
 	reflowLayout();
-	setFocusWidget(_firstWidget);
+	setDefaultFocusedWidget();
 }
 
 void LauncherDialog::open() {

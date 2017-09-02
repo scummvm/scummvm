@@ -175,6 +175,15 @@ Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
 	return 0;
 }
 
+bool Widget::containsWidgetInChain(Widget *w, Widget *search) {
+	while (w) {
+		if (w == search || w->containsWidget(search))
+			return true;
+		w = w->_next;
+	}
+	return false;
+}
+
 void Widget::setEnabled(bool e) {
 	if ((_flags & WIDGET_ENABLED) != e) {
 		if (e)
@@ -701,10 +710,12 @@ void SliderWidget::drawWidget() {
 }
 
 int SliderWidget::valueToBarWidth(int value) {
+	value = CLIP(value, _valueMin, _valueMax);
 	return (_w * (value - _valueMin) / (_valueMax - _valueMin));
 }
 
 int SliderWidget::valueToPos(int value) {
+	value = CLIP(value, _valueMin, _valueMax);
 	return ((_w - 1) * (value - _valueMin + 1) / (_valueMax - _valueMin));
 }
 
@@ -833,6 +844,10 @@ ContainerWidget::~ContainerWidget() {
 	for (Widget *w = _firstWidget; w; w = w->next()) {
 		_boss->removeWidget(w);
 	}
+}
+
+bool ContainerWidget::containsWidget(Widget *w) const {
+	return containsWidgetInChain(_firstWidget, w);
 }
 
 Widget *ContainerWidget::findWidget(int x, int y) {

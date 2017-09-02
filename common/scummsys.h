@@ -132,6 +132,7 @@
 	#include <stdlib.h>
 	#include <string.h>
 	#include <stdarg.h>
+	#include <stddef.h>
 	#include <assert.h>
 	#include <ctype.h>
 	// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
@@ -150,6 +151,19 @@
 	#if !defined(__SYMBIAN32__)
 	#include <new>
 	#endif
+#endif
+
+#ifndef STATIC_ASSERT
+	/**
+	 * Generates a compile-time assertion.
+	 *
+	 * @param expression An expression that can be evaluated at compile time.
+	 * @param message An underscore-delimited message to be presented at compile
+	 * time if the expression evaluates to false.
+	 */
+	#define STATIC_ASSERT(expression, message) \
+		extern int STATIC_ASSERT_##message[(expression) ? 1 : -1]; \
+		(void)(STATIC_ASSERT_##message);
 #endif
 
 // The following math constants are usually defined by the system math.h header, but
@@ -295,6 +309,25 @@
 	#endif
 #endif
 
+//
+// Determine 64 bitness
+// Reference: http://nadeausoftware.com/articles/2012/02/c_c_tip_how_detect_processor_type_using_compiler_predefined_macros
+//
+#if !defined(HAVE_CONFIG_H)
+
+	#if defined(__x86_64__) || \
+		  defined(_M_X64) || \
+		  defined(__ppc64__) || \
+		  defined(__powerpc64__) || \
+		  defined(__LP64__)
+
+		#if !defined(SCUMM_64BITS)
+			#define SCUMM_64BITS
+		#endif
+
+	#endif
+
+#endif
 
 //
 // Some more system specific settings.

@@ -117,6 +117,7 @@ bool debugLevelSet(int level);
 /**
  * Returns true if the debug level and channel are active
  *
+ * @param level debug level to check against. If set to -1, only channel check is active
  * @see enableDebugChannel
  */
 bool debugChannelSet(int level, uint32 debugChannels);

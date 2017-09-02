@@ -188,7 +188,7 @@ OSX_STATIC_LIBS += -lcurl
 endif
 
 ifdef USE_FREETYPE2
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a $(STATICLIBPATH)/lib/libpng.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a
 endif
 
 ifdef USE_VORBIS
@@ -215,7 +215,7 @@ OSX_STATIC_LIBS += \
 
 ifneq ($(BACKEND), iphone)
 ifneq ($(BACKEND), ios7)
-OSX_STATIC_LIBS += -lreadline
+OSX_STATIC_LIBS += -lreadline -framework AudioUnit
 endif
 endif
 endif

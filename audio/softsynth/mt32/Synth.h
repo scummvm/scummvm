@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,8 +18,13 @@
 #ifndef MT32EMU_SYNTH_H
 #define MT32EMU_SYNTH_H
 
-//#include <cstdarg>
-//#include <cstring>
+#include <cstdarg>
+#include <cstddef>
+#include <cstring>
+
+#include "globals.h"
+#include "Types.h"
+#include "Enumerations.h"
 
 namespace MT32Emu {
 
@@ -31,6 +36,8 @@ class Part;
 class Poly;
 class Partial;
 class PartialManager;
+class Renderer;
+class ROMImage;
 
 class PatchTempMemoryRegion;
 class RhythmTempMemoryRegion;
@@ -41,81 +48,10 @@ class SystemMemoryRegion;
 class DisplayMemoryRegion;
 class ResetMemoryRegion;
 
+struct ControlROMFeatureSet;
 struct ControlROMMap;
 struct PCMWaveEntry;
 struct MemParams;
-
-/**
- * Methods for emulating the connection between the LA32 and the DAC, which involves
- * some hacks in the real devices for doubling the volume.
- * See also http://en.wikipedia.org/wiki/Roland_MT-32#Digital_overflow
- */
-enum DACInputMode {
-	// Produces samples at double the volume, without tricks.
-	// * Nicer overdrive characteristics than the DAC hacks (it simply clips samples within range)
-	// * Higher quality than the real devices
-	DACInputMode_NICE,
-
-	// Produces samples that exactly match the bits output from the emulated LA32.
-	// * Nicer overdrive characteristics than the DAC hacks (it simply clips samples within range)
-	// * Much less likely to overdrive than any other mode.
-	// * Half the volume of any of the other modes.
-	// * Output gain is ignored for both LA32 and reverb output.
-	// * Perfect for developers while debugging :)
-	DACInputMode_PURE,
-
-	// Re-orders the LA32 output bits as in early generation MT-32s (according to Wikipedia).
-	// Bit order at DAC (where each number represents the original LA32 output bit number, and XX means the bit is always low):
-	// 15 13 12 11 10 09 08 07 06 05 04 03 02 01 00 XX
-	DACInputMode_GENERATION1,
-
-	// Re-orders the LA32 output bits as in later generations (personally confirmed on my CM-32L - KG).
-	// Bit order at DAC (where each number represents the original LA32 output bit number):
-	// 15 13 12 11 10 09 08 07 06 05 04 03 02 01 00 14
-	DACInputMode_GENERATION2
-};
-
-// Methods for emulating the effective delay of incoming MIDI messages introduced by a MIDI interface.
-enum MIDIDelayMode {
-	// Process incoming MIDI events immediately.
-	MIDIDelayMode_IMMEDIATE,
-
-	// Delay incoming short MIDI messages as if they where transferred via a MIDI cable to a real hardware unit and immediate sysex processing.
-	// This ensures more accurate timing of simultaneous NoteOn messages.
-	MIDIDelayMode_DELAY_SHORT_MESSAGES_ONLY,
-
-	// Delay all incoming MIDI events as if they where transferred via a MIDI cable to a real hardware unit.
-	MIDIDelayMode_DELAY_ALL
-};
-
-// Methods for emulating the effects of analogue circuits of real hardware units on the output signal.
-enum AnalogOutputMode {
-	// Only digital path is emulated. The output samples correspond to the digital signal at the DAC entrance.
-	AnalogOutputMode_DIGITAL_ONLY,
-	// Coarse emulation of LPF circuit. High frequencies are boosted, sample rate remains unchanged.
-	AnalogOutputMode_COARSE,
-	// Finer emulation of LPF circuit. Output signal is upsampled to 48 kHz to allow emulation of audible mirror spectra above 16 kHz,
-	// which is passed through the LPF circuit without significant attenuation.
-	AnalogOutputMode_ACCURATE,
-	// Same as AnalogOutputMode_ACCURATE mode but the output signal is 2x oversampled, i.e. the output sample rate is 96 kHz.
-	// This makes subsequent resampling easier. Besides, due to nonlinear passband of the LPF emulated, it takes fewer number of MACs
-	// compared to a regular LPF FIR implementations.
-	AnalogOutputMode_OVERSAMPLED
-};
-
-enum ReverbMode {
-	REVERB_MODE_ROOM,
-	REVERB_MODE_HALL,
-	REVERB_MODE_PLATE,
-	REVERB_MODE_TAP_DELAY
-};
-
-enum PartialState {
-	PartialState_INACTIVE,
-	PartialState_ATTACK,
-	PartialState_SUSTAIN,
-	PartialState_RELEASE
-};
 
 const Bit8u SYSEX_MANUFACTURER_ROLAND = 0x41;
 
@@ -132,47 +68,66 @@ const Bit8u SYSEX_CMD_EOD = 0x45; // End of data
 const Bit8u SYSEX_CMD_ERR = 0x4E; // Communications error
 const Bit8u SYSEX_CMD_RJC = 0x4F; // Rejection
 
-const int MAX_SYSEX_SIZE = 512; // FIXME: Does this correspond to a real MIDI buffer used in h/w devices?
+const Bit32u CONTROL_ROM_SIZE = 64 * 1024;
 
-const unsigned int CONTROL_ROM_SIZE = 64 * 1024;
+// Set of multiplexed output streams appeared at the DAC entrance.
+template <class T>
+struct DACOutputStreams {
+	T *nonReverbLeft;
+	T *nonReverbRight;
+	T *reverbDryLeft;
+	T *reverbDryRight;
+	T *reverbWetLeft;
+	T *reverbWetRight;
+};
 
-class ReportHandler {
-friend class Synth;
-
+// Class for the client to supply callbacks for reporting various errors and information
+class MT32EMU_EXPORT ReportHandler {
 public:
 	virtual ~ReportHandler() {}
 
-protected:
-
 	// Callback for debug messages, in vprintf() format
 	virtual void printDebug(const char *fmt, va_list list);
-
-	// Callbacks for reporting various errors and information
+	// Callbacks for reporting errors
 	virtual void onErrorControlROM() {}
 	virtual void onErrorPCMROM() {}
+	// Callback for reporting about displaying a new custom message on LCD
 	virtual void showLCDMessage(const char *message);
+	// Callback for reporting actual processing of a MIDI message
 	virtual void onMIDIMessagePlayed() {}
+	// Callback for reporting an overflow of the input MIDI queue.
+	// Returns true if a recovery action was taken and yet another attempt to enqueue the MIDI event is desired.
+	virtual bool onMIDIQueueOverflow() { return false; }
+	// Callback invoked when a System Realtime MIDI message is detected at the input.
+	virtual void onMIDISystemRealtime(Bit8u /* systemRealtime */) {}
+	// Callbacks for reporting system events
 	virtual void onDeviceReset() {}
 	virtual void onDeviceReconfig() {}
+	// Callbacks for reporting changes of reverb settings
 	virtual void onNewReverbMode(Bit8u /* mode */) {}
 	virtual void onNewReverbTime(Bit8u /* time */) {}
 	virtual void onNewReverbLevel(Bit8u /* level */) {}
-	virtual void onPolyStateChanged(int /* partNum */) {}
-	virtual void onProgramChanged(int /* partNum */, int /* bankNum */, const char * /* patchName */) {}
+	// Callbacks for reporting various information
+	virtual void onPolyStateChanged(Bit8u /* partNum */) {}
+	virtual void onProgramChanged(Bit8u /* partNum */, const char * /* soundGroupName */, const char * /* patchName */) {}
 };
 
 class Synth {
+friend class DefaultMidiStreamParser;
 friend class Part;
-friend class RhythmPart;
-friend class Poly;
 friend class Partial;
 friend class PartialManager;
-friend class Tables;
-friend class MemoryRegion;
+friend class Poly;
+friend class Renderer;
+friend class RhythmPart;
+friend class SamplerateAdapter;
+friend class SoxrAdapter;
 friend class TVA;
-friend class TVF;
 friend class TVP;
+
 private:
+	// **************************** Implementation fields **************************
+
 	PatchTempMemoryRegion *patchTempMemoryRegion;
 	RhythmTempMemoryRegion *rhythmTempMemoryRegion;
 	TimbreTempMemoryRegion *timbreTempMemoryRegion;
@@ -184,8 +139,6 @@ private:
 
 	Bit8u *paddedTimbreMaxTable;
 
-	bool isEnabled;
-
 	PCMWaveEntry *pcmWaves; // Array
 
 	const ControlROMFeatureSet *controlROMFeatures;
@@ -194,8 +147,11 @@ private:
 	Bit16s *pcmROMData;
 	size_t pcmROMSize; // This is in 16-bit samples, therefore half the number of bytes in the ROM
 
-	unsigned int partialCount;
-	Bit8s chantable[32]; // FIXME: Need explanation why 32 is set, obviously it should be 16
+	Bit8u soundGroupIx[128]; // For each standard timbre
+	const char (*soundGroupNames)[9]; // Array
+
+	Bit32u partialCount;
+	Bit8u chantable[16]; // NOTE: value above 8 means that the channel is not assigned
 
 	MidiEventQueue *midiQueue;
 	volatile Bit32u lastReceivedMIDIEventTimestamp;
@@ -215,7 +171,8 @@ private:
 
 	bool reversedStereoEnabled;
 
-	bool isOpen;
+	bool opened;
+	bool activated;
 
 	bool isDefaultReportHandler;
 	ReportHandler *reportHandler;
@@ -229,15 +186,17 @@ private:
 	Poly *abortingPoly;
 
 	Analog *analog;
+	Renderer &renderer;
+
+	// Binary compatibility helper.
+	void *reserved;
+
+	// **************************** Implementation methods **************************
 
 	Bit32u addMIDIInterfaceDelay(Bit32u len, Bit32u timestamp);
+	bool isAbortingPoly() const { return abortingPoly != NULL; }
 
-	void produceLA32Output(Sample *buffer, Bit32u len);
-	void convertSamplesToOutput(Sample *buffer, Bit32u len);
-	bool isAbortingPoly() const;
-	void doRenderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample *reverbDryLeft, Sample *reverbDryRight, Sample *reverbWetLeft, Sample *reverbWetRight, Bit32u len);
-
-	void readSysex(unsigned char channel, const Bit8u *sysex, Bit32u len) const;
+	void readSysex(Bit8u channel, const Bit8u *sysex, Bit32u len) const;
 	void initMemoryRegions();
 	void deleteMemoryRegions();
 	MemoryRegion *findMemoryRegion(Bit32u addr);
@@ -248,79 +207,105 @@ private:
 	bool loadPCMROM(const ROMImage &pcmROMImage);
 
 	bool initPCMList(Bit16u mapAddress, Bit16u count);
-	bool initTimbres(Bit16u mapAddress, Bit16u offset, int timbreCount, int startTimbre, bool compressed);
-	bool initCompressedTimbre(int drumNum, const Bit8u *mem, unsigned int memLen);
+	bool initTimbres(Bit16u mapAddress, Bit16u offset, Bit16u timbreCount, Bit16u startTimbre, bool compressed);
+	bool initCompressedTimbre(Bit16u drumNum, const Bit8u *mem, Bit32u memLen);
+	void initReverbModels(bool mt32CompatibleMode);
+	void initSoundGroups(char newSoundGroupNames[][9]);
 
 	void refreshSystemMasterTune();
 	void refreshSystemReverbParameters();
 	void refreshSystemReserveSettings();
-	void refreshSystemChanAssign(unsigned int firstPart, unsigned int lastPart);
+	void refreshSystemChanAssign(Bit8u firstPart, Bit8u lastPart);
 	void refreshSystemMasterVol();
 	void refreshSystem();
 	void reset();
+	void dispose();
 
-	void printPartialUsage(unsigned long sampleOffset = 0);
+	void printPartialUsage(Bit32u sampleOffset = 0);
 
-	void polyStateChanged(int partNum);
-	void newTimbreSet(int partNum, Bit8u timbreGroup, const char patchName[]);
+	void newTimbreSet(Bit8u partNum, Bit8u timbreGroup, Bit8u timbreNumber, const char patchName[]);
 	void printDebug(const char *fmt, ...);
 
 	// partNum should be 0..7 for Part 1..8, or 8 for Rhythm
-	const Part *getPart(unsigned int partNum) const;
+	const Part *getPart(Bit8u partNum) const;
 
 public:
-	static inline Sample clipSampleEx(SampleEx sampleEx) {
-#if MT32EMU_USE_FLOAT_SAMPLES
-		return sampleEx;
-#else
+	static inline Bit16s clipSampleEx(Bit32s sampleEx) {
 		// Clamp values above 32767 to 32767, and values below -32768 to -32768
 		// FIXME: Do we really need this stuff? I think these branches are very well predicted. Instead, this introduces a chain.
 		// The version below is actually a bit faster on my system...
-		//return ((sampleEx + 0x8000) & ~0xFFFF) ? (sampleEx >> 31) ^ 0x7FFF : (Sample)sampleEx;
-		return ((-0x8000 <= sampleEx) && (sampleEx <= 0x7FFF)) ? (Sample)sampleEx : (sampleEx >> 31) ^ 0x7FFF;
-#endif
+		//return ((sampleEx + 0x8000) & ~0xFFFF) ? Bit16s((sampleEx >> 31) ^ 0x7FFF) : (Bit16s)sampleEx;
+		return ((-0x8000 <= sampleEx) && (sampleEx <= 0x7FFF)) ? Bit16s(sampleEx) : Bit16s((sampleEx >> 31) ^ 0x7FFF);
 	}
 
-	static inline void muteSampleBuffer(Sample *buffer, Bit32u len) {
-		if (buffer == NULL) return;
+	static inline float clipSampleEx(float sampleEx) {
+		return sampleEx;
+	}
 
-#if MT32EMU_USE_FLOAT_SAMPLES
+	template <class S>
+	static inline void muteSampleBuffer(S *buffer, Bit32u len) {
+		if (buffer == NULL) return;
+		memset(buffer, 0, len * sizeof(S));
+	}
+
+	static inline void muteSampleBuffer(float *buffer, Bit32u len) {
+		if (buffer == NULL) return;
 		// FIXME: Use memset() where compatibility is guaranteed (if this turns out to be a win)
 		while (len--) {
 			*(buffer++) = 0.0f;
 		}
-#else
-		memset(buffer, 0, len * sizeof(Sample));
-#endif
 	}
 
-	static Bit32u getShortMessageLength(Bit32u msg);
-	static Bit8u calcSysexChecksum(const Bit8u *data, const Bit32u len, const Bit8u initChecksum = 0);
+	static inline Bit16s convertSample(float sample) {
+		return Synth::clipSampleEx(Bit32s(sample * 16384.0f)); // This multiplier takes into account the DAC bit shift
+	}
+
+	static inline float convertSample(Bit16s sample) {
+		return float(sample) / 16384.0f; // This multiplier takes into account the DAC bit shift
+	}
+
+	// Returns library version as an integer in format: 0x00MMmmpp, where:
+	// MM - major version number
+	// mm - minor version number
+	// pp - patch number
+	MT32EMU_EXPORT static Bit32u getLibraryVersionInt();
+	// Returns library version as a C-string in format: "MAJOR.MINOR.PATCH"
+	MT32EMU_EXPORT static const char *getLibraryVersionString();
+
+	MT32EMU_EXPORT static Bit32u getShortMessageLength(Bit32u msg);
+	MT32EMU_EXPORT static Bit8u calcSysexChecksum(const Bit8u *data, const Bit32u len, const Bit8u initChecksum = 0);
+
+	// Returns output sample rate used in emulation of stereo analog circuitry of hardware units.
+	// See comment for AnalogOutputMode.
+	MT32EMU_EXPORT static Bit32u getStereoOutputSampleRate(AnalogOutputMode analogOutputMode);
 
 	// Optionally sets callbacks for reporting various errors, information and debug messages
-	Synth(ReportHandler *useReportHandler = NULL);
-	~Synth();
+	MT32EMU_EXPORT explicit Synth(ReportHandler *useReportHandler = NULL);
+	MT32EMU_EXPORT ~Synth();
 
 	// Used to initialise the MT-32. Must be called before any other function.
 	// Returns true if initialization was sucessful, otherwise returns false.
 	// controlROMImage and pcmROMImage represent Control and PCM ROM images for use by synth.
 	// usePartialCount sets the maximum number of partials playing simultaneously for this session (optional).
 	// analogOutputMode sets the mode for emulation of analogue circuitry of the hardware units (optional).
-	bool open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, unsigned int usePartialCount = DEFAULT_MAX_PARTIALS, AnalogOutputMode analogOutputMode = AnalogOutputMode_COARSE);
+	MT32EMU_EXPORT bool open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, Bit32u usePartialCount = DEFAULT_MAX_PARTIALS, AnalogOutputMode analogOutputMode = AnalogOutputMode_COARSE);
 
 	// Overloaded method which opens the synth with default partial count.
-	bool open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, AnalogOutputMode analogOutputMode);
+	MT32EMU_EXPORT bool open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, AnalogOutputMode analogOutputMode);
 
 	// Closes the MT-32 and deallocates any memory used by the synthesizer
-	void close(bool forced = false);
+	MT32EMU_EXPORT void close();
+
+	// Returns true if the synth is in completely initialized state, otherwise returns false.
+	MT32EMU_EXPORT bool isOpen() const;
 
 	// All the enqueued events are processed by the synth immediately.
-	void flushMIDIQueue();
+	MT32EMU_EXPORT void flushMIDIQueue();
 
 	// Sets size of the internal MIDI event queue. The queue size is set to the minimum power of 2 that is greater or equal to the size specified.
 	// The queue is flushed before reallocation.
 	// Returns the actual queue size being used.
-	Bit32u setMIDIEventQueueSize(Bit32u);
+	MT32EMU_EXPORT Bit32u setMIDIEventQueueSize(Bit32u);
 
 	// Enqueues a MIDI event for subsequent playback.
 	// The MIDI event will be processed not before the specified timestamp.
@@ -330,14 +315,15 @@ public:
 	// Calls from multiple threads must be synchronised, although, no synchronisation is required with the rendering thread.
 	// The methods return false if the MIDI event queue is full and the message cannot be enqueued.
 
-	// Enqueues a single short MIDI message. The message must contain a status byte.
-	bool playMsg(Bit32u msg, Bit32u timestamp);
-	// Enqueues a single well formed System Exclusive MIDI message.
-	bool playSysex(const Bit8u *sysex, Bit32u len, Bit32u timestamp);
+	// Enqueues a single short MIDI message to play at specified time. The message must contain a status byte.
+	MT32EMU_EXPORT bool playMsg(Bit32u msg, Bit32u timestamp);
+	// Enqueues a single well formed System Exclusive MIDI message to play at specified time.
+	MT32EMU_EXPORT bool playSysex(const Bit8u *sysex, Bit32u len, Bit32u timestamp);
 
-	// Overloaded methods for the MIDI events to be processed ASAP.
-	bool playMsg(Bit32u msg);
-	bool playSysex(const Bit8u *sysex, Bit32u len);
+	// Enqueues a single short MIDI message to be processed ASAP. The message must contain a status byte.
+	MT32EMU_EXPORT bool playMsg(Bit32u msg);
+	// Enqueues a single well formed System Exclusive MIDI message to be processed ASAP.
+	MT32EMU_EXPORT bool playSysex(const Bit8u *sysex, Bit32u len);
 
 	// WARNING:
 	// The methods below don't ensure minimum 1-sample delay between sequential MIDI events,
@@ -345,40 +331,60 @@ public:
 	// A thread that invokes these methods must be explicitly synchronised with the thread performing sample rendering.
 
 	// Sends a short MIDI message to the synth for immediate playback. The message must contain a status byte.
-	void playMsgNow(Bit32u msg);
-	void playMsgOnPart(unsigned char part, unsigned char code, unsigned char note, unsigned char velocity);
+	// See the WARNING above.
+	MT32EMU_EXPORT void playMsgNow(Bit32u msg);
+	// Sends unpacked short MIDI message to the synth for immediate playback. The message must contain a status byte.
+	// See the WARNING above.
+	MT32EMU_EXPORT void playMsgOnPart(Bit8u part, Bit8u code, Bit8u note, Bit8u velocity);
 
-	// Sends a string of Sysex commands to the MT-32 for immediate interpretation
-	// The length is in bytes
-	void playSysexNow(const Bit8u *sysex, Bit32u len);
-	void playSysexWithoutFraming(const Bit8u *sysex, Bit32u len);
-	void playSysexWithoutHeader(unsigned char device, unsigned char command, const Bit8u *sysex, Bit32u len);
-	void writeSysex(unsigned char channel, const Bit8u *sysex, Bit32u len);
+	// Sends a single well formed System Exclusive MIDI message for immediate processing. The length is in bytes.
+	// See the WARNING above.
+	MT32EMU_EXPORT void playSysexNow(const Bit8u *sysex, Bit32u len);
+	// Sends inner body of a System Exclusive MIDI message for direct processing. The length is in bytes.
+	// See the WARNING above.
+	MT32EMU_EXPORT void playSysexWithoutFraming(const Bit8u *sysex, Bit32u len);
+	// Sends inner body of a System Exclusive MIDI message for direct processing. The length is in bytes.
+	// See the WARNING above.
+	MT32EMU_EXPORT void playSysexWithoutHeader(Bit8u device, Bit8u command, const Bit8u *sysex, Bit32u len);
+	// Sends inner body of a System Exclusive MIDI message for direct processing. The length is in bytes.
+	// See the WARNING above.
+	MT32EMU_EXPORT void writeSysex(Bit8u channel, const Bit8u *sysex, Bit32u len);
 
-	void setReverbEnabled(bool reverbEnabled);
-	bool isReverbEnabled() const;
+	// Allows to disable wet reverb output altogether.
+	MT32EMU_EXPORT void setReverbEnabled(bool reverbEnabled);
+	// Returns whether wet reverb output is enabled.
+	MT32EMU_EXPORT bool isReverbEnabled() const;
 	// Sets override reverb mode. In this mode, emulation ignores sysexes (or the related part of them) which control the reverb parameters.
 	// This mode is in effect until it is turned off. When the synth is re-opened, the override mode is unchanged but the state
 	// of the reverb model is reset to default.
-	void setReverbOverridden(bool reverbOverridden);
-	bool isReverbOverridden() const;
+	MT32EMU_EXPORT void setReverbOverridden(bool reverbOverridden);
+	// Returns whether reverb settings are overridden.
+	MT32EMU_EXPORT bool isReverbOverridden() const;
 	// Forces reverb model compatibility mode. By default, the compatibility mode corresponds to the used control ROM version.
 	// Invoking this method with the argument set to true forces emulation of old MT-32 reverb circuit.
 	// When the argument is false, emulation of the reverb circuit used in new generation of MT-32 compatible modules is enforced
 	// (these include CM-32L and LAPC-I).
-	void setReverbCompatibilityMode(bool mt32CompatibleMode);
-	bool isMT32ReverbCompatibilityMode() const;
-	void setDACInputMode(DACInputMode mode);
-	DACInputMode getDACInputMode() const;
-	void setMIDIDelayMode(MIDIDelayMode mode);
-	MIDIDelayMode getMIDIDelayMode() const;
+	MT32EMU_EXPORT void setReverbCompatibilityMode(bool mt32CompatibleMode);
+	// Returns whether reverb is in old MT-32 compatibility mode.
+	MT32EMU_EXPORT bool isMT32ReverbCompatibilityMode() const;
+	// Returns whether default reverb compatibility mode is the old MT-32 compatibility mode.
+	MT32EMU_EXPORT bool isDefaultReverbMT32Compatible() const;
+	// Sets new DAC input mode. See DACInputMode for details.
+	MT32EMU_EXPORT void setDACInputMode(DACInputMode mode);
+	// Returns current DAC input mode. See DACInputMode for details.
+	MT32EMU_EXPORT DACInputMode getDACInputMode() const;
+	// Sets new MIDI delay mode. See MIDIDelayMode for details.
+	MT32EMU_EXPORT void setMIDIDelayMode(MIDIDelayMode mode);
+	// Returns current MIDI delay mode. See MIDIDelayMode for details.
+	MT32EMU_EXPORT MIDIDelayMode getMIDIDelayMode() const;
 
 	// Sets output gain factor for synth output channels. Applied to all output samples and unrelated with the synth's Master volume,
 	// it rather corresponds to the gain of the output analog circuitry of the hardware units. However, together with setReverbOutputGain()
 	// it offers to the user a capability to control the gain of reverb and non-reverb output channels independently.
 	// Ignored in DACInputMode_PURE
-	void setOutputGain(float);
-	float getOutputGain() const;
+	MT32EMU_EXPORT void setOutputGain(float gain);
+	// Returns current output gain factor for synth output channels.
+	MT32EMU_EXPORT float getOutputGain() const;
 
 	// Sets output gain factor for the reverb wet output channels. It rather corresponds to the gain of the output
 	// analog circuitry of the hardware units. However, together with setOutputGain() it offers to the user a capability
@@ -389,59 +395,85 @@ public:
 	// there is a difference in the reverb analogue circuit, and the resulting output gain is 0.68
 	// of that for LA32 analogue output. This factor is applied to the reverb output gain.
 	// Ignored in DACInputMode_PURE
-	void setReverbOutputGain(float);
-	float getReverbOutputGain() const;
+	MT32EMU_EXPORT void setReverbOutputGain(float gain);
+	// Returns current output gain factor for reverb wet output channels.
+	MT32EMU_EXPORT float getReverbOutputGain() const;
 
-	void setReversedStereoEnabled(bool enabled);
-	bool isReversedStereoEnabled();
+	// Swaps left and right output channels.
+	MT32EMU_EXPORT void setReversedStereoEnabled(bool enabled);
+	// Returns whether left and right output channels are swapped.
+	MT32EMU_EXPORT bool isReversedStereoEnabled() const;
 
 	// Returns actual sample rate used in emulation of stereo analog circuitry of hardware units.
 	// See comment for render() below.
-	unsigned int getStereoOutputSampleRate() const;
+	MT32EMU_EXPORT Bit32u getStereoOutputSampleRate() const;
 
 	// Renders samples to the specified output stream as if they were sampled at the analog stereo output.
-	// When AnalogOutputMode is set to ACCURATE, the output signal is upsampled to 48 kHz in order
+	// When AnalogOutputMode is set to ACCURATE (OVERSAMPLED), the output signal is upsampled to 48 (96) kHz in order
 	// to retain emulation accuracy in whole audible frequency spectra. Otherwise, native digital signal sample rate is retained.
 	// getStereoOutputSampleRate() can be used to query actual sample rate of the output signal.
-	// The length is in frames, not bytes (in 16-bit stereo, one frame is 4 bytes).
-	void render(Sample *stream, Bit32u len);
+	// The length is in frames, not bytes (in 16-bit stereo, one frame is 4 bytes). Uses NATIVE byte ordering.
+	MT32EMU_EXPORT void render(Bit16s *stream, Bit32u len);
+	// Same as above but outputs to a float stereo stream.
+	MT32EMU_EXPORT void render(float *stream, Bit32u len);
 
 	// Renders samples to the specified output streams as if they appeared at the DAC entrance.
 	// No further processing performed in analog circuitry emulation is applied to the signal.
-	// NULL may be specified in place of any or all of the stream buffers.
-	// The length is in samples, not bytes.
-	void renderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample *reverbDryLeft, Sample *reverbDryRight, Sample *reverbWetLeft, Sample *reverbWetRight, Bit32u len);
+	// NULL may be specified in place of any or all of the stream buffers to skip it.
+	// The length is in samples, not bytes. Uses NATIVE byte ordering.
+	MT32EMU_EXPORT void renderStreams(Bit16s *nonReverbLeft, Bit16s *nonReverbRight, Bit16s *reverbDryLeft, Bit16s *reverbDryRight, Bit16s *reverbWetLeft, Bit16s *reverbWetRight, Bit32u len);
+	void renderStreams(const DACOutputStreams<Bit16s> &streams, Bit32u len) {
+		renderStreams(streams.nonReverbLeft, streams.nonReverbRight, streams.reverbDryLeft, streams.reverbDryRight, streams.reverbWetLeft, streams.reverbWetRight, len);
+	}
+	// Same as above but outputs to float streams.
+	MT32EMU_EXPORT void renderStreams(float *nonReverbLeft, float *nonReverbRight, float *reverbDryLeft, float *reverbDryRight, float *reverbWetLeft, float *reverbWetRight, Bit32u len);
+	void renderStreams(const DACOutputStreams<float> &streams, Bit32u len) {
+		renderStreams(streams.nonReverbLeft, streams.nonReverbRight, streams.reverbDryLeft, streams.reverbDryRight, streams.reverbWetLeft, streams.reverbWetRight, len);
+	}
 
 	// Returns true when there is at least one active partial, otherwise false.
-	bool hasActivePartials() const;
+	MT32EMU_EXPORT bool hasActivePartials() const;
 
-	// Returns true if hasActivePartials() returns true, or reverb is (somewhat unreliably) detected as being active.
-	bool isActive() const;
+	// Returns true if the synth is active and subsequent calls to render() may result in non-trivial output (i.e. silence).
+	// The synth is considered active when either there are pending MIDI events in the queue, there is at least one active partial,
+	// or the reverb is (somewhat unreliably) detected as being active.
+	MT32EMU_EXPORT bool isActive();
 
 	// Returns the maximum number of partials playing simultaneously.
-	unsigned int getPartialCount() const;
+	MT32EMU_EXPORT Bit32u getPartialCount() const;
 
 	// Fills in current states of all the parts into the array provided. The array must have at least 9 entries to fit values for all the parts.
 	// If the value returned for a part is true, there is at least one active non-releasing partial playing on this part.
 	// This info is useful in emulating behaviour of LCD display of the hardware units.
-	void getPartStates(bool *partStates) const;
+	MT32EMU_EXPORT void getPartStates(bool *partStates) const;
+
+	// Returns current states of all the parts as a bit set. The least significant bit corresponds to the state of part 1,
+	// total of 9 bits hold the states of all the parts. If the returned bit for a part is set, there is at least one active
+	// non-releasing partial playing on this part. This info is useful in emulating behaviour of LCD display of the hardware units.
+	MT32EMU_EXPORT Bit32u getPartStates() const;
 
 	// Fills in current states of all the partials into the array provided. The array must be large enough to accommodate states of all the partials.
-	void getPartialStates(PartialState *partialStates) const;
+	MT32EMU_EXPORT void getPartialStates(PartialState *partialStates) const;
+
+	// Fills in current states of all the partials into the array provided. Each byte in the array holds states of 4 partials
+	// starting from the least significant bits. The state of each partial is packed in a pair of bits.
+	// The array must be large enough to accommodate states of all the partials (see getPartialCount()).
+	MT32EMU_EXPORT void getPartialStates(Bit8u *partialStates) const;
 
 	// Fills in information about currently playing notes on the specified part into the arrays provided. The arrays must be large enough
 	// to accommodate data for all the playing notes. The maximum number of simultaneously playing notes cannot exceed the number of partials.
 	// Argument partNumber should be 0..7 for Part 1..8, or 8 for Rhythm.
 	// Returns the number of currently playing notes on the specified part.
-	unsigned int getPlayingNotes(unsigned int partNumber, Bit8u *keys, Bit8u *velocities) const;
+	MT32EMU_EXPORT Bit32u getPlayingNotes(Bit8u partNumber, Bit8u *keys, Bit8u *velocities) const;
 
 	// Returns name of the patch set on the specified part.
 	// Argument partNumber should be 0..7 for Part 1..8, or 8 for Rhythm.
-	const char *getPatchName(unsigned int partNumber) const;
+	MT32EMU_EXPORT const char *getPatchName(Bit8u partNumber) const;
 
-	void readMemory(Bit32u addr, Bit32u len, Bit8u *data);
-};
+	// Stores internal state of emulated synth into an array provided (as it would be acquired from hardware).
+	MT32EMU_EXPORT void readMemory(Bit32u addr, Bit32u len, Bit8u *data);
+}; // class Synth
 
-}
+} // namespace MT32Emu
 
-#endif
+#endif // #ifndef MT32EMU_SYNTH_H

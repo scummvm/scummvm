@@ -44,6 +44,9 @@ public:
 	virtual void initBackend();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
+	//Screenshots
+	virtual Common::String getScreenshotsPath();
+
 protected:
 	// Override createAudioCDManager() to get our Mac-specific
 	// version.

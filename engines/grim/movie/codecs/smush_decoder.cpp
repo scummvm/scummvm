@@ -184,7 +184,7 @@ bool SmushDecoder::readHeader() {
 
 		_file->readUint32BE();
 		_file->readUint32BE();
-		_audioTrack = new SmushAudioTrack(false, audioRate, 2);
+		_audioTrack = new SmushAudioTrack(getSoundType(), false, audioRate, 2);
 		addTrack(_audioTrack);
 		return true;
 
@@ -245,7 +245,7 @@ bool SmushDecoder::handleFramesHeader() {
 	} while (pos < size);
 	delete[] f_header;
 
-	_audioTrack = new SmushAudioTrack(true, freq, channels);
+	_audioTrack = new SmushAudioTrack(getSoundType(), true, freq, channels);
 	addTrack(_audioTrack);
 	return true;
 }
@@ -592,7 +592,8 @@ Graphics::Surface *SmushDecoder::SmushVideoTrack::decodeNextFrame() {
 void SmushDecoder::SmushVideoTrack::setMsPerFrame(int ms) {
 	_frameRate = Common::Rational(1000000, ms);
 }
-SmushDecoder::SmushAudioTrack::SmushAudioTrack(bool isVima, int freq, int channels) {
+SmushDecoder::SmushAudioTrack::SmushAudioTrack(Audio::Mixer::SoundType soundType, bool isVima, int freq, int channels) :
+	AudioTrack(soundType) {
 	_isVima = isVima;
 	_channels = channels;
 	_freq = freq;

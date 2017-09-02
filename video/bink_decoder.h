@@ -32,6 +32,7 @@
 #define VIDEO_BINK_DECODER_H
 
 #include "common/array.h"
+#include "common/bitstream.h"
 #include "common/rational.h"
 #include "graphics/surface.h" // ResidualVM specific
 
@@ -46,7 +47,6 @@ class QueuingAudioStream;
 
 namespace Common {
 class SeekableReadStream;
-class BitStream;
 class Huffman;
 
 class RDFT;
@@ -107,7 +107,7 @@ private:
 
 		uint32 sampleCount;
 
-		Common::BitStream *bits;
+		Common::BitStream32LELSB *bits;
 
 		bool first;
 
@@ -140,7 +140,7 @@ private:
 		uint32 offset;
 		uint32 size;
 
-		Common::BitStream *bits;
+		Common::BitStream32LELSB *bits;
 
 		VideoFrame();
 		~VideoFrame();
@@ -332,7 +332,7 @@ private:
 
 	class BinkAudioTrack : public AudioTrack {
 	public:
-		BinkAudioTrack(AudioInfo &audio);
+		BinkAudioTrack(AudioInfo &audio, Audio::Mixer::SoundType soundType);
 		~BinkAudioTrack();
 
 		/** Decode an audio packet. */

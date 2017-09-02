@@ -27,11 +27,11 @@
 #define AUDIO_DECODERS_WMA_H
 
 #include "common/array.h"
+#include "common/bitstream.h"
 
 #include "audio/decoders/codec.h"
 
 namespace Common {
-	class BitStream;
 	class Huffman;
 	class MDCT;
 }
@@ -181,27 +181,27 @@ private:
 	// Decoding
 
 	Common::SeekableReadStream *decodeSuperFrame(Common::SeekableReadStream &data);
-	bool decodeFrame(Common::BitStream &bits, int16 *outputData);
-	int decodeBlock(Common::BitStream &bits);
+	bool decodeFrame(Common::BitStream8MSB &bits, int16 *outputData);
+	int decodeBlock(Common::BitStream8MSB &bits);
 
 	// Decoding helpers
 
-	bool evalBlockLength(Common::BitStream &bits);
-	bool decodeChannels(Common::BitStream &bits, int bSize, bool msStereo, bool *hasChannel);
+	bool evalBlockLength(Common::BitStream8MSB &bits);
+	bool decodeChannels(Common::BitStream8MSB &bits, int bSize, bool msStereo, bool *hasChannel);
 	bool calculateIMDCT(int bSize, bool msStereo, bool *hasChannel);
 
 	void calculateCoefCount(int *coefCount, int bSize) const;
-	bool decodeNoise(Common::BitStream &bits, int bSize, bool *hasChannel, int *coefCount);
-	bool decodeExponents(Common::BitStream &bits, int bSize, bool *hasChannel);
-	bool decodeSpectralCoef(Common::BitStream &bits, bool msStereo, bool *hasChannel,
+	bool decodeNoise(Common::BitStream8MSB &bits, int bSize, bool *hasChannel, int *coefCount);
+	bool decodeExponents(Common::BitStream8MSB &bits, int bSize, bool *hasChannel);
+	bool decodeSpectralCoef(Common::BitStream8MSB &bits, bool msStereo, bool *hasChannel,
 	                        int *coefCount, int coefBitCount);
 	float getNormalizedMDCTLength() const;
 	void calculateMDCTCoefficients(int bSize, bool *hasChannel,
 	                               int *coefCount, int totalGain, float mdctNorm);
 
-	bool decodeExpHuffman(Common::BitStream &bits, int ch);
-	bool decodeExpLSP(Common::BitStream &bits, int ch);
-	bool decodeRunLevel(Common::BitStream &bits, const Common::Huffman &huffman,
+	bool decodeExpHuffman(Common::BitStream8MSB &bits, int ch);
+	bool decodeExpLSP(Common::BitStream8MSB &bits, int ch);
+	bool decodeRunLevel(Common::BitStream8MSB &bits, const Common::Huffman &huffman,
 		const float *levelTable, const uint16 *runTable, int version, float *ptr,
 		int offset, int numCoefs, int blockLen, int frameLenBits, int coefNbBits);
 
@@ -211,9 +211,9 @@ private:
 
 	float pow_m1_4(float x) const;
 
-	static int readTotalGain(Common::BitStream &bits);
+	static int readTotalGain(Common::BitStream8MSB &bits);
 	static int totalGainToBits(int totalGain);
-	static uint32 getLargeVal(Common::BitStream &bits);
+	static uint32 getLargeVal(Common::BitStream8MSB &bits);
 };
 
 } // End of namespace Audio

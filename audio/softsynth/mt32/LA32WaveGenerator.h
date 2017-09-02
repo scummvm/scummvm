@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,12 +15,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef MT32EMU_LA32_WAVE_GENERATOR_H
+#define MT32EMU_LA32_WAVE_GENERATOR_H
+
+#include "globals.h"
+#include "internals.h"
+#include "Types.h"
+
 #if MT32EMU_USE_FLOAT_SAMPLES
 #include "LA32FloatWaveGenerator.h"
 #else
-
-#ifndef MT32EMU_LA32_WAVE_GENERATOR_H
-#define MT32EMU_LA32_WAVE_GENERATOR_H
 
 namespace MT32Emu {
 
@@ -55,7 +59,7 @@ public:
 /**
  * LA32WaveGenerator is aimed to represent the exact model of LA32 wave generator.
  * The output square wave is created by adding high / low linear segments in-between
- * the rising and falling cosine segments. Basically, it’s very similar to the phase distortion synthesis.
+ * the rising and falling cosine segments. Basically, it's very similar to the phase distortion synthesis.
  * Behaviour of a true resonance filter is emulated by adding decaying sine wave.
  * The beginning and the ending of the resonant sine is multiplied by a cosine window.
  * To synthesise sawtooth waves, the resulting square wave is multiplied by synchronous cosine wave.
@@ -143,7 +147,7 @@ class LA32WaveGenerator {
 	} phase;
 
 	// Current phase of the resonance wave
-	enum {
+	enum ResonancePhase {
 		POSITIVE_RISING_RESONANCE_SINE_SEGMENT,
 		POSITIVE_FALLING_RESONANCE_SINE_SEGMENT,
 		NEGATIVE_FALLING_RESONANCE_SINE_SEGMENT,
@@ -200,7 +204,7 @@ public:
 
 	// Return current PCM interpolation factor
 	Bit32u getPCMInterpolationFactor() const;
-};
+}; // class LA32WaveGenerator
 
 // LA32PartialPair contains a structure of two partials being mixed / ring modulated
 class LA32PartialPair {
@@ -239,10 +243,10 @@ public:
 
 	// Return active state of the WG engine
 	bool isActive(const PairType master) const;
-};
+}; // class LA32PartialPair
 
 } // namespace MT32Emu
 
-#endif // #ifndef MT32EMU_LA32_WAVE_GENERATOR_H
-
 #endif // #if MT32EMU_USE_FLOAT_SAMPLES
+
+#endif // #ifndef MT32EMU_LA32_WAVE_GENERATOR_H

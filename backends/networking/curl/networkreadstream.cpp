@@ -67,6 +67,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
 	_progressDownloaded = _progressTotal = 0;
+	_bufferCopy = nullptr;
 
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
@@ -100,7 +101,14 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	} else {
 		if (post || bufferSize != 0) {
 			curl_easy_setopt(_easy, CURLOPT_POSTFIELDSIZE, bufferSize);
+#if LIBCURL_VERSION_NUM >= 0x071101
+			// CURLOPT_COPYPOSTFIELDS available since curl 7.17.1
 			curl_easy_setopt(_easy, CURLOPT_COPYPOSTFIELDS, buffer);
+#else
+			_bufferCopy = (byte*)malloc(bufferSize);
+			memcpy(_bufferCopy, buffer, bufferSize);
+			curl_easy_setopt(_easy, CURLOPT_POSTFIELDS, _bufferCopy);
+#endif
 		}
 	}
 	ConnMan.registerEasyHandle(_easy);
@@ -111,6 +119,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
 	_progressDownloaded = _progressTotal = 0;
+	_bufferCopy = nullptr;
 
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
@@ -184,6 +193,7 @@ NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, c
 NetworkReadStream::~NetworkReadStream() {
 	if (_easy)
 		curl_easy_cleanup(_easy);
+	free(_bufferCopy);
 }
 
 bool NetworkReadStream::eos() const {
@@ -228,19 +238,19 @@ Common::String NetworkReadStream::responseHeaders() const {
 }
 
 uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 maxSize) {
-	uint32 size = _sendingContentsSize - _sendingContentsPos;
-	if (size > maxSize)
-		size = maxSize;
-	for (uint32 i = 0; i < size; ++i) {
+	uint32 sendSize = _sendingContentsSize - _sendingContentsPos;
+	if (sendSize > maxSize)
+		sendSize = maxSize;
+	for (uint32 i = 0; i < sendSize; ++i) {
 		bufferToFill[i] = _sendingContentsBuffer[_sendingContentsPos + i];
 	}
-	_sendingContentsPos += size;
-	return size;
+	_sendingContentsPos += sendSize;
+	return sendSize;
 }
 
-uint32 NetworkReadStream::addResponseHeaders(char *buffer, uint32 size) {
-	_responseHeaders += Common::String(buffer, size);
-	return size;
+uint32 NetworkReadStream::addResponseHeaders(char *buffer, uint32 bufferSize) {
+	_responseHeaders += Common::String(buffer, bufferSize);
+	return bufferSize;
 }
 
 double NetworkReadStream::getProgress() const {

@@ -58,11 +58,17 @@ int MSBuildProvider::getVisualStudioVersion() {
 	if (_version == 14)
 		return 14;
 
+	if (_version == 15)
+		return 15;
+
 	error("Unsupported version passed to getVisualStudioVersion");
 }
 
 int MSBuildProvider::getSolutionVersion() {
-	return (_version < 14) ? _version + 1 : _version;
+	if (_version == 14 || _version == 15)
+		return 14;
+
+	return _version + 1;
 }
 
 namespace {
@@ -123,7 +129,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	std::string version = "v" + toString(_version) + "0";
+	std::string version = _version == 15 ? "v141" : "v" + toString(_version) + "0";
 	std::string llvm = "LLVM-vs" + toString(getVisualStudioVersion());
 
 	outputConfigurationType(setup, project, name, "Release|Win32", version);
@@ -514,7 +520,9 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 	if (!_compileFiles.empty()) {
 		projectFile << "\t<ItemGroup>\n";
 		for (std::list<FileEntry>::const_iterator entry = _compileFiles.begin(); entry != _compileFiles.end(); ++entry) {
-			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), (*entry).name + ".o") != duplicate.end());
+			std::string fileName = (*entry).name + ".o";
+			std::transform(fileName.begin(), fileName.end(), fileName.begin(), tolower);
+			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), fileName) != duplicate.end());
 
 			// Deal with duplicated file names
 			if (isDuplicate) {

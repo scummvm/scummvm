@@ -244,10 +244,10 @@ Common::WriteStream *WindowsFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 
-bool WindowsFilesystemNode::create(bool isDirectory) {
+bool WindowsFilesystemNode::create(bool isDirectoryFlag) {
 	bool success;
 
-	if (isDirectory) {
+	if (isDirectoryFlag) {
 		success = CreateDirectory(toUnicode(_path.c_str()), NULL) != 0;
 	} else {
 		success = CreateFile(toUnicode(_path.c_str()), GENERIC_READ|GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL) != INVALID_HANDLE_VALUE;
@@ -264,12 +264,12 @@ bool WindowsFilesystemNode::create(bool isDirectory) {
 				_path += '\\';
 			}
 
-			if (_isDirectory != isDirectory) warning("failed to create %s: got %s", isDirectory ? "directory" : "file", _isDirectory ? "directory" : "file");
-			return _isDirectory == isDirectory;
+			if (_isDirectory != isDirectoryFlag) warning("failed to create %s: got %s", isDirectoryFlag ? "directory" : "file", _isDirectory ? "directory" : "file");
+			return _isDirectory == isDirectoryFlag;
 		}
 
 		warning("WindowsFilesystemNode: Create%s() was a success, but GetFileAttributes() indicates there is no such %s",
-			    isDirectory ? "Directory" : "File", isDirectory ? "directory" : "file");
+			    isDirectoryFlag ? "Directory" : "File", isDirectoryFlag ? "directory" : "file");
 		return false;
 	}
 

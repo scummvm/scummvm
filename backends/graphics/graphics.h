@@ -46,6 +46,13 @@ public:
 	virtual bool setGraphicsMode(int mode) = 0;
 	virtual void resetGraphicsScale() = 0;
 	virtual int getGraphicsMode() const = 0;
+	virtual const OSystem::GraphicsMode *getSupportedShaders() const {
+		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {0, 0, 0}};
+		return no_shader;
+	};
+	virtual bool setShader(int id) { return false; }
+	virtual int getShader() const { return 0; }
+
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const = 0;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;

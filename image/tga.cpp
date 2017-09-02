@@ -27,6 +27,7 @@
 #include "image/tga.h"
 
 #include "common/util.h"
+#include "common/algorithm.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/error.h"
@@ -437,6 +438,22 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 	} else {
 		return false;
 	}
+
+	// If it's a bottom origin image, we need to vertically flip the image
+	if (!_originTop) {
+		byte *tempLine = new byte[_surface.pitch];
+		byte *line1 = (byte *)_surface.getBasePtr(0, 0);
+		byte *line2 = (byte *)_surface.getBasePtr(0, _surface.h - 1);
+
+		for (int y = 0; y < (_surface.h / 2); ++y, line1 += _surface.pitch, line2 -= _surface.pitch) {
+			Common::copy(line1, line1 + _surface.pitch, tempLine);
+			Common::copy(line2, line2 + _surface.pitch, line1);
+			Common::copy(tempLine, tempLine + _surface.pitch, line2);
+		}
+
+		delete[] tempLine;
+	}
+
 	return true;
 }
 

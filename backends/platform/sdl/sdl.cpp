@@ -174,6 +174,11 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (f == kFeatureClipboardSupport) return true;
 #endif
+#ifdef JOY_ANALOG
+	if (f == kFeatureJoystickDeadzone) return true;
+#endif
+	if (f == kFeatureKbdMouseSpeed) return true;
+
 	// ResidualVM specific code:
 	if (f == kFeatureSideTextures)
 		return true;
@@ -240,6 +245,16 @@ void OSystem_SDL::initBackend() {
 
 	_inited = true;
 
+	if (!ConfMan.hasKey("kbdmouse_speed")) {
+		ConfMan.registerDefault("kbdmouse_speed", 3);
+		ConfMan.setInt("kbdmouse_speed", 3);
+	}
+#ifdef JOY_ANALOG
+	if (!ConfMan.hasKey("joystick_deadzone")) {
+		ConfMan.registerDefault("joystick_deadzone", 3);
+		ConfMan.setInt("joystick_deadzone", 3);
+	}
+#endif
 	ModularBackend::initBackend();
 
 	// We have to initialize the graphics manager before the event manager
@@ -474,7 +489,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 	char langName[9];
 	char ctryName[9];
 
-	const LCID languageIdentifier = GetThreadLocale();
+	const LCID languageIdentifier = GetUserDefaultUILanguage();
 
 	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
 		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
@@ -611,4 +626,12 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 #else
     return _savefileManager;
 #endif
+}
+
+//Not specified in base class
+Common::String OSystem_SDL::getScreenshotsPath() {
+	Common::String path = ConfMan.get("screenshotpath");
+	if (!path.empty() && !path.hasSuffix("/"))
+		path += "/";
+	return path;
 }

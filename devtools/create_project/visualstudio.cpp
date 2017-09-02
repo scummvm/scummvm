@@ -338,7 +338,9 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 			if (producesObjectFile(node->name)) {
 				std::string name, ext;
 				splitFilename(node->name, name, ext);
-				const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), name + ".o") != duplicate.end());
+				name += ".o";
+				std::transform(name.begin(), name.end(), name.begin(), tolower);
+				const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), name) != duplicate.end());
 
 				if (ext == "asm") {
 					std::string objFileName = "$(IntDir)\\";

@@ -85,6 +85,9 @@ public:
 	virtual Common::TimerManager *getTimerManager();
 	virtual Common::SaveFileManager *getSavefileManager();
 
+	//Screenshots
+	virtual Common::String getScreenshotsPath();
+
 	// ResidualVM specific code
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
 	// ResidualVM specific code

@@ -331,10 +331,10 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	//
 	// Might also be helpful to display the full path (for when this is used
 	// from the mass detector).
-	Common::String report = Common::String::format(_("The game in '%s' seems to be unknown."), path.getPath().c_str()) + "\n";
-	report += _("Please, report the following data to the ResidualVM team along with name");
-	report += "\n";
-	report += _("of the game you tried to add and its version/language/etc.:");
+	Common::String report = Common::String::format(
+			_("The game in '%s' seems to be unknown.\n"
+			  "Please, report the following data to the ResidualVM team along with name\n"
+			  "of the game you tried to add and its version, language, etc.:"), path.getPath().c_str()) + "\n";
 	report += "\n";
 
 	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file)
@@ -345,7 +345,7 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	g_system->logMessage(LogMessageType::kInfo, report.c_str());
 }
 
-void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth) const {
+void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName) const {
 	if (depth <= 0)
 		return;
 
@@ -353,6 +353,8 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 		return;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		Common::String tstr = (_matchFullPaths && !parentName.empty() ? parentName + "/" : "") + file->getName();
+
 		if (file->isDirectory()) {
 			Common::FSList files;
 
@@ -372,10 +374,8 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 			if (!file->getChildren(files, Common::FSNode::kListAll))
 				continue;
 
-			composeFileHashMap(allFiles, files, depth - 1);
+			composeFileHashMap(allFiles, files, depth - 1, tstr);
 		}
-
-		Common::String tstr = file->getName();
 
 		// Strip any trailing dot
 		if (tstr.lastChar() == '.')
@@ -397,7 +397,9 @@ bool AdvancedMetaEngine::getFileProperties(const Common::FSNode &parent, const F
 
 		fileProps.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
 		fileProps.size = macResMan.getResForkDataSize();
-		return true;
+
+		if (fileProps.size != 0)
+			return true;
 	}
 
 	if (!allFiles.contains(fname))
@@ -623,6 +625,7 @@ AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, con
 	_guiOptions = GUIO_NONE;
 	_maxScanDepth = 1;
 	_directoryGlobs = NULL;
+	_matchFullPaths = false;
 }
 
 void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const {

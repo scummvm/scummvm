@@ -137,7 +137,7 @@ bool OSystem_MacOSX::openUrl(const Common::String &url) {
 	CFURLRef urlRef = CFURLCreateWithBytes (NULL, (UInt8*)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
 	OSStatus err = LSOpenCFURLRef(urlRef, NULL);
 	CFRelease(urlRef);
-	return err != noErr;
+	return err == noErr;
 }
 
 Common::String OSystem_MacOSX::getSystemLanguage() const {
@@ -185,6 +185,15 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 #else // USE_DETECTLANG
 	return OSystem_POSIX::getSystemLanguage();
 #endif // USE_DETECTLANG
+}
+
+Common::String OSystem_MacOSX::getScreenshotsPath() {
+	Common::String path = ConfMan.get("screenshotpath");
+	if (path.empty())
+		path = getDesktopPathMacOSX();
+	if (!path.empty() && !path.hasSuffix("/"))
+		path += "/";
+	return path;
 }
 
 AudioCDManager *OSystem_MacOSX::createAudioCDManager() {

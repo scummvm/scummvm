@@ -144,6 +144,12 @@ void ScrollContainerWidget::drawWidget() {
 	g_gui.theme()->drawDialogBackgroundClip(Common::Rect(_x, _y, _x + _w, _y + getHeight() - 1), getBossClipRect(), ThemeEngine::kDialogBackgroundDefault);
 }
 
+bool ScrollContainerWidget::containsWidget(Widget *w) const {
+	if (w == _verticalScroll || _verticalScroll->containsWidget(w))
+		return true;
+	return containsWidgetInChain(_firstWidget, w);
+}
+
 Widget *ScrollContainerWidget::findWidget(int x, int y) {
 	if (_verticalScroll->isVisible() && x >= _w - _verticalScroll->getWidth())
 		return _verticalScroll;

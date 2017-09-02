@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,7 +18,10 @@
 #ifndef MT32EMU_ANALOG_H
 #define MT32EMU_ANALOG_H
 
-#include "mt32emu.h"
+#include "globals.h"
+#include "internals.h"
+#include "Types.h"
+#include "Enumerations.h"
 
 namespace MT32Emu {
 
@@ -35,9 +38,9 @@ class AbstractLowPassFilter;
  */
 class Analog {
 public:
-	Analog(AnalogOutputMode mode, const ControlROMFeatureSet *controlROMFeatures);
+	Analog(const AnalogOutputMode mode, const bool oldMT32AnalogLPF);
 	~Analog();
-	void process(Sample **outStream, const Sample *nonReverbLeft, const Sample *nonReverbRight, const Sample *reverbDryLeft, const Sample *reverbDryRight, const Sample *reverbWetLeft, const Sample *reverbWetRight, const Bit32u outLength);
+	void process(Sample *outStream, const Sample *nonReverbLeft, const Sample *nonReverbRight, const Sample *reverbDryLeft, const Sample *reverbDryRight, const Sample *reverbWetLeft, const Sample *reverbWetRight, Bit32u outLength);
 	unsigned int getOutputSampleRate() const;
 	Bit32u getDACStreamsLength(Bit32u outputLength) const;
 	void setSynthOutputGain(float synthGain);
@@ -52,6 +55,6 @@ private:
 	Analog(Analog &);
 };
 
-}
+} // namespace MT32Emu
 
-#endif
+#endif // #ifndef MT32EMU_ANALOG_H

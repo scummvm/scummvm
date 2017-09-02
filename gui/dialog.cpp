@@ -88,13 +88,7 @@ void Dialog::open() {
 	_visible = true;
 	g_gui.openDialog(this);
 
-	Widget *w = _firstWidget;
-	// Search for the first objects that wantsFocus() (if any) and give it the focus
-	while (w && !w->wantsFocus()) {
-		w = w->_next;
-	}
-
-	setFocusWidget(w);
+	setDefaultFocusedWidget();
 }
 
 void Dialog::close() {
@@ -140,6 +134,16 @@ void Dialog::setFocusWidget(Widget *widget) {
 		widget->receivedFocus();
 
 	_focusedWidget = widget;
+}
+
+void Dialog::setDefaultFocusedWidget() {
+	Widget *w = _firstWidget;
+	// Search for the first objects that wantsFocus() (if any) and give it the focus
+	while (w && !w->wantsFocus()) {
+		w = w->_next;
+	}
+
+	setFocusWidget(w);
 }
 
 void Dialog::releaseFocus() {
@@ -361,11 +365,11 @@ Widget *Dialog::findWidget(const char *name) {
 }
 
 void Dialog::removeWidget(Widget *del) {
-	if (del == _mouseWidget)
+	if (del == _mouseWidget || del->containsWidget(_mouseWidget))
 		_mouseWidget = NULL;
-	if (del == _focusedWidget)
+	if (del == _focusedWidget || del->containsWidget(_focusedWidget))
 		_focusedWidget = NULL;
-	if (del == _dragWidget)
+	if (del == _dragWidget || del->containsWidget(_dragWidget))
 		_dragWidget = NULL;
 
 	GuiObject::removeWidget(del);

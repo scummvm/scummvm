@@ -68,6 +68,11 @@ enum AlphaType {
 	ALPHA_FULL = 2
 };
 
+enum TFilteringMode {
+	FILTER_NEAREST = 0,
+	FILTER_BILINEAR = 1
+};
+
 /**
  * A transparent graphics surface, which implements alpha blitting.
  */
@@ -141,6 +146,9 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @param newHeight the resulting height.
 	 * @see TransformStruct
 	 */
+	template <TFilteringMode filteringMode>
+	TransparentSurface *scaleT(uint16 newWidth, uint16 newHeight) const;
+
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 
 	/**
@@ -150,6 +158,9 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
 	 *
 	 */
+	template <TFilteringMode filteringMode>
+	TransparentSurface *rotoscaleT(const TransformStruct &transform) const;
+
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 
 	TransparentSurface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
@@ -166,6 +177,8 @@ struct TransparentSurface : public Graphics::Surface {
 private:
 	AlphaType _alphaMode;
 
+	template <typename Size>
+	void scaleNN(int *scaleCacheX, TransparentSurface *target) const;
 };
 
 /**

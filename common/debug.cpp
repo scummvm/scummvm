@@ -110,9 +110,9 @@ void DebugManager::disableAllDebugChannels() {
 		disableDebugChannel(i->_value.name);
 }
 
-bool DebugManager::isDebugChannelEnabled(uint32 channel) {
+bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {
 	// Debug level 11 turns on all special debug level messages
-	if (gDebugLevel == 11)
+	if (gDebugLevel == 11 && enforce == false)
 		return true;
 	else
 		return (gDebugChannelsEnabled & channel) != 0;
@@ -125,8 +125,8 @@ bool debugLevelSet(int level) {
 }
 
 bool debugChannelSet(int level, uint32 debugChannels) {
-	if (gDebugLevel != 11)
-		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannels)))
+	if (gDebugLevel != 11 || level == -1)
+		if ((level != -1 && level > gDebugLevel) || !(DebugMan.isDebugChannelEnabled(debugChannels, level == -1)))
 			return false;
 
 	return true;

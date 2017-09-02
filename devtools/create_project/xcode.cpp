@@ -665,6 +665,8 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("gui/themes/scummclassic.zip");
 		files.push_back("gui/themes/scummmodern.zip");
 		files.push_back("gui/themes/translations.dat");
+		files.push_back("dists/engine-data/access.dat");
+		files.push_back("dists/engine-data/cryo.dat");
 		files.push_back("dists/engine-data/drascula.dat");
 		files.push_back("dists/engine-data/hugo.dat");
 		files.push_back("dists/engine-data/kyra.dat");
@@ -674,9 +676,11 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("dists/engine-data/queen.tbl");
 		files.push_back("dists/engine-data/sky.cpt");
 		files.push_back("dists/engine-data/teenagent.dat");
+		files.push_back("dists/engine-data/titanic.dat");
 		files.push_back("dists/engine-data/tony.dat");
 		files.push_back("dists/engine-data/toon.dat");
 		files.push_back("dists/engine-data/wintermute.zip");
+		files.push_back("dists/engine-data/macventure.dat");
 		files.push_back("dists/pred.dic");
 		files.push_back("icons/scummvm.icns");
 	}
@@ -950,6 +954,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	scummvmOSX_LdFlags.push_back("-lvorbis");
 	scummvmOSX_LdFlags.push_back("-lmad");
 	scummvmOSX_LdFlags.push_back("-lFLAC");
+	scummvmOSX_LdFlags.push_back("-lcurl");
 	if (setup.useSDL2) {
 		scummvmOSX_LdFlags.push_back("-lSDL2main");
 		scummvmOSX_LdFlags.push_back("-lSDL2");

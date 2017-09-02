@@ -91,14 +91,14 @@
 				size = '9, 0'
 		/>
 		<widget name = 'TabWidget.Tab'
-				size = '45, 16'
+				size = '40, 16'
 				padding = '0, 0, 2, 0'
 		/>
 		<widget name = 'TabWidget.Body'
 				padding = '0, 0, 0, 0'
 		/>
 		<widget name = 'TabWidget.NavButton'
-				size = '32, 18'
+				size = '32, 14'
 				padding = '0, 0, 2, 0'
 		/>
 		<widget name = 'EditRecordLabel'
@@ -233,6 +233,42 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GlobalOptions_Control' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'grOnScreenCheckbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'grTouchpadCheckbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'grSwapMenuAndBackBtnsCheckbox'
+					type = 'Checkbox'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
+				<widget name = 'grKbdMouseSpeedDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grKbdMouseSpeedSlider'
+						type = 'Slider'
+				/>
+				<widget name = 'grKbdMouseSpeedLabel'
+						type = 'SmallLabel'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'grJoystickDeadzoneDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grJoystickDeadzoneSlider'
+						type = 'Slider'
+				/>
+				<widget name = 'grJoystickDeadzoneLabel'
+						type = 'SmallLabel'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<!-- ResidualVM - Unused
@@ -277,6 +313,19 @@
 				/>
 			</layout>
 			<!-- ResidualVM specific - End -->
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions_Shader' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'grShaderPopUpDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grShaderPopUp'
+						type = 'PopUp'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 

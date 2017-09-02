@@ -37,8 +37,6 @@
 #include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"
 
-//#define ENABLE_BILINEAR
-
 namespace Graphics {
 
 static const int kBModShift = 0;//img->format.bShift;
@@ -64,6 +62,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
+void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 
 TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
 
@@ -328,6 +327,72 @@ void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, 
 	}
 }
 
+/**
+ * Optimized version of doBlit to be used with multiply blended blitting
+ */
+void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
+	byte *in;
+	byte *out;
+
+	if (color == 0xffffffff) {
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				if (in[kAIndex] != 0) {
+					out[kRIndex] = MIN((in[kRIndex] * in[kAIndex] >> 8) * out[kRIndex] >> 8, 255);
+					out[kGIndex] = MIN((in[kGIndex] * in[kAIndex] >> 8) * out[kGIndex] >> 8, 255);
+					out[kBIndex] = MIN((in[kBIndex] * in[kAIndex] >> 8) * out[kBIndex] >> 8, 255);
+				}
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	} else {
+		byte ca = (color >> kAModShift) & 0xFF;
+		byte cr = (color >> kRModShift) & 0xFF;
+		byte cg = (color >> kGModShift) & 0xFF;
+		byte cb = (color >> kBModShift) & 0xFF;
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				uint32 ina = in[kAIndex] * ca >> 8;
+
+				if (cb != 255) {
+					out[kBIndex] = MIN<uint>(out[kBIndex] * ((in[kBIndex] * cb * ina) >> 16) >> 8, 255u);
+				} else {
+					out[kBIndex] = MIN<uint>(out[kBIndex] * (in[kBIndex] * ina >> 8) >> 8, 255u);
+				}
+
+				if (cg != 255) {
+					out[kGIndex] = MIN<uint>(out[kGIndex] * ((in[kGIndex] * cg * ina) >> 16) >> 8, 255u);
+				} else {
+					out[kGIndex] = MIN<uint>(out[kGIndex] * (in[kGIndex] * ina >> 8) >> 8, 255u);
+				}
+
+				if (cr != 255) {
+					out[kRIndex] = MIN<uint>(out[kRIndex] * ((in[kRIndex] * cr * ina) >> 16) >> 8, 255u);
+				} else {
+					out[kRIndex] = MIN<uint>(out[kRIndex] * (in[kRIndex] * ina >> 8) >> 8, 255u);
+				}
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	}
+
+}
+
 Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
 
 	Common::Rect retSize;
@@ -402,19 +467,31 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	// Handle off-screen clipping
 	if (posY < 0) {
 		img->h = MAX(0, (int)img->h - -posY);
-		img->setPixels((byte *)img->getBasePtr(0, -posY));
+		if (!(flipping & FLIP_V))
+			img->setPixels((byte *)img->getBasePtr(0, -posY));
 		posY = 0;
 	}
 
 	if (posX < 0) {
 		img->w = MAX(0, (int)img->w - -posX);
-		img->setPixels((byte *)img->getBasePtr(-posX, 0));
+		if (!(flipping & FLIP_H))
+			img->setPixels((byte *)img->getBasePtr(-posX, 0));
 		posX = 0;
 	}
 
-	img->w = CLIP((int)img->w, 0, (int)MAX((int)target.w - posX, 0));
-	img->h = CLIP((int)img->h, 0, (int)MAX((int)target.h - posY, 0));
+	if (img->w > target.w - posX) {
+		if (flipping & FLIP_H)
+			img->setPixels((byte *)img->getBasePtr(img->w - target.w + posX, 0));
+		img->w = CLIP((int)img->w, 0, (int)MAX((int)target.w - posX, 0));
+	}
 
+	if (img->h > target.h - posY) {
+		if (flipping & FLIP_V)
+			img->setPixels((byte *)img->getBasePtr(0, img->h - target.h + posY));
+		img->h = CLIP((int)img->h, 0, (int)MAX((int)target.h - posY, 0));
+	}
+
+	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
 		int xp = 0, yp = 0;
 
@@ -442,6 +519,8 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else if (blendMode == BLEND_MULTIPLY) {
+				doBlitMultiplyBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
@@ -535,19 +614,31 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 	// Handle off-screen clipping
 	if (posY < clippingArea.top) {
 		img->h = MAX(0, (int)img->h - (clippingArea.top - posY));
-		img->setPixels((byte *)img->getBasePtr(0, clippingArea.top - posY));
+		if (!(flipping & FLIP_V))
+			img->setPixels((byte *)img->getBasePtr(0, clippingArea.top - posY));
 		posY = clippingArea.top;
 	}
 
 	if (posX < clippingArea.left) {
 		img->w = MAX(0, (int)img->w - (clippingArea.left - posX));
-		img->setPixels((byte *)img->getBasePtr(clippingArea.left - posX, 0));
+		if (!(flipping & FLIP_H))
+			img->setPixels((byte *)img->getBasePtr(clippingArea.left - posX, 0));
 		posX = clippingArea.left;
 	}
 
-	img->w = CLIP((int)img->w, 0, (int)MAX((int)clippingArea.right - posX, 0));
-	img->h = CLIP((int)img->h, 0, (int)MAX((int)clippingArea.bottom - posY, 0));
+	if (img->w > clippingArea.right - posX) {
+		if (flipping & FLIP_H)
+			img->setPixels((byte *)img->getBasePtr(img->w - clippingArea.right + posX, 0));
+		img->w = CLIP((int)img->w, 0, (int)MAX((int)clippingArea.right - posX, 0));
+	}
 
+	if (img->h > clippingArea.bottom - posY) {
+		if (flipping & FLIP_V)
+			img->setPixels((byte *)img->getBasePtr(0, img->h - clippingArea.bottom + posY));
+		img->h = CLIP((int)img->h, 0, (int)MAX((int)clippingArea.bottom - posY, 0));
+	}
+
+	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
 		int xp = 0, yp = 0;
 
@@ -575,6 +666,8 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else if (blendMode == BLEND_MULTIPLY) {
+				doBlitMultiplyBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
@@ -676,8 +769,10 @@ systems.
 
 
 
+struct tColorRGBA { byte r; byte g; byte b; byte a; };
 
-TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
+template <TFilteringMode filteringMode>
+TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transform) const {
 
 	assert(transform._angle != 0); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
 
@@ -704,7 +799,6 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 	float invCos = cos(invAngle * M_PI / 180.0);
 	float invSin = sin(invAngle * M_PI / 180.0);
 
-	struct tColorRGBA { byte r; byte g; byte b; byte a; };
 	int icosx = (int)(invCos * (65536.0f * kDefaultZoomX / transform._zoom.x));
 	int isinx = (int)(invSin * (65536.0f * kDefaultZoomX / transform._zoom.x));
 	int icosy = (int)(invCos * (65536.0f * kDefaultZoomY / transform._zoom.y));
@@ -739,50 +833,50 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 				dy = sh - dy;
 			}
 
-#ifdef ENABLE_BILINEAR
-			if ((dx > -1) && (dy > -1) && (dx < sw) && (dy < sh)) {
-				const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
-				tColorRGBA c00, c01, c10, c11, cswap;
-				c00 = *sp;
-				sp += 1;
-				c01 = *sp;
-				sp += (this->pitch / 4);
-				c11 = *sp;
-				sp -= 1;
-				c10 = *sp;
-				if (flipx) {
-					cswap = c00; c00=c01; c01=cswap;
-					cswap = c10; c10=c11; c11=cswap;
+			if (filteringMode == FILTER_BILINEAR) {
+				if ((dx > -1) && (dy > -1) && (dx < sw) && (dy < sh)) {
+					const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
+					tColorRGBA c00, c01, c10, c11, cswap;
+					c00 = *sp;
+					sp += 1;
+					c01 = *sp;
+					sp += (this->pitch / 4);
+					c11 = *sp;
+					sp -= 1;
+					c10 = *sp;
+					if (flipx) {
+						cswap = c00; c00=c01; c01=cswap;
+						cswap = c10; c10=c11; c11=cswap;
+					}
+					if (flipy) {
+						cswap = c00; c00=c10; c10=cswap;
+						cswap = c01; c01=c11; c11=cswap;
+					}
+					/*
+					* Interpolate colors
+					*/
+					int ex = (sdx & 0xffff);
+					int ey = (sdy & 0xffff);
+					int t1, t2;
+					t1 = ((((c01.r - c00.r) * ex) >> 16) + c00.r) & 0xff;
+					t2 = ((((c11.r - c10.r) * ex) >> 16) + c10.r) & 0xff;
+					pc->r = (((t2 - t1) * ey) >> 16) + t1;
+					t1 = ((((c01.g - c00.g) * ex) >> 16) + c00.g) & 0xff;
+					t2 = ((((c11.g - c10.g) * ex) >> 16) + c10.g) & 0xff;
+					pc->g = (((t2 - t1) * ey) >> 16) + t1;
+					t1 = ((((c01.b - c00.b) * ex) >> 16) + c00.b) & 0xff;
+					t2 = ((((c11.b - c10.b) * ex) >> 16) + c10.b) & 0xff;
+					pc->b = (((t2 - t1) * ey) >> 16) + t1;
+					t1 = ((((c01.a - c00.a) * ex) >> 16) + c00.a) & 0xff;
+					t2 = ((((c11.a - c10.a) * ex) >> 16) + c10.a) & 0xff;
+					pc->a = (((t2 - t1) * ey) >> 16) + t1;
 				}
-				if (flipy) {
-					cswap = c00; c00=c10; c10=cswap;
-					cswap = c01; c01=c11; c11=cswap;
+			} else {
+				if ((dx >= 0) && (dy >= 0) && (dx < srcW) && (dy < srcH)) {
+					const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
+					*pc = *sp;
 				}
-				/*
-				* Interpolate colors
-				*/
-				int ex = (sdx & 0xffff);
-				int ey = (sdy & 0xffff);
-				int t1, t2;
-				t1 = ((((c01.r - c00.r) * ex) >> 16) + c00.r) & 0xff;
-				t2 = ((((c11.r - c10.r) * ex) >> 16) + c10.r) & 0xff;
-				pc->r = (((t2 - t1) * ey) >> 16) + t1;
-				t1 = ((((c01.g - c00.g) * ex) >> 16) + c00.g) & 0xff;
-				t2 = ((((c11.g - c10.g) * ex) >> 16) + c10.g) & 0xff;
-				pc->g = (((t2 - t1) * ey) >> 16) + t1;
-				t1 = ((((c01.b - c00.b) * ex) >> 16) + c00.b) & 0xff;
-				t2 = ((((c11.b - c10.b) * ex) >> 16) + c10.b) & 0xff;
-				pc->b = (((t2 - t1) * ey) >> 16) + t1;
-				t1 = ((((c01.a - c00.a) * ex) >> 16) + c00.a) & 0xff;
-				t2 = ((((c11.a - c10.a) * ex) >> 16) + c10.a) & 0xff;
-				pc->a = (((t2 - t1) * ey) >> 16) + t1;
 			}
-#else
-			if ((dx >= 0) && (dy >= 0) && (dx < srcW) && (dy < srcH)) {
-				const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
-				*pc = *sp;
-			}
-#endif
 			sdx += icosx;
 			sdy += isiny;
 			pc++;
@@ -791,192 +885,189 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 	return target;
 }
 
-TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
-
-	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
-	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
+template <TFilteringMode filteringMode>
+TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight) const {
 
 	TransparentSurface *target = new TransparentSurface();
 
-	assert(format.bytesPerPixel == 4);
+	int srcW = w;
+	int srcH = h;
+	int dstW = newWidth;
+	int dstH = newHeight;
 
-	int srcW = srcRect.width();
-	int srcH = srcRect.height();
-	int dstW = dstRect.width();
-	int dstH = dstRect.height();
+	target->create((uint16)dstW, (uint16)dstH, format);
 
-	target->create((uint16)dstW, (uint16)dstH, this->format);
+	if (filteringMode == FILTER_BILINEAR) {
+		assert(format.bytesPerPixel == 4);
 
-#ifdef ENABLE_BILINEAR
-
-	// NB: The actual order of these bytes may not be correct, but
-	// since all values are treated equal, that does not matter.
-	struct tColorRGBA { byte r; byte g; byte b; byte a; };
-
-	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
+		bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
 
 
-	int *sax = new int[dstW + 1];
-	int *say = new int[dstH + 1];
-	assert(sax && say);
+		int *sax = new int[dstW + 1];
+		int *say = new int[dstH + 1];
+		assert(sax && say);
 
-	/*
-	* Precalculate row increments
-	*/
-	int spixelw = (srcW - 1);
-	int spixelh = (srcH - 1);
-	int sx = (int) (65536.0f * (float) spixelw / (float) (dstW - 1));
-	int sy = (int) (65536.0f * (float) spixelh / (float) (dstH - 1));
-
-	/* Maximum scaled source size */
-	int ssx = (srcW << 16) - 1;
-	int ssy = (srcH << 16) - 1;
-
-	/* Precalculate horizontal row increments */
-	int csx = 0;
-	int *csax = sax;
-	for (int x = 0; x <= dstW; x++) {
-		*csax = csx;
-		csax++;
-		csx += sx;
-
-		/* Guard from overflows */
-		if (csx > ssx) {
-			csx = ssx;
-		}
-	}
-
-	/* Precalculate vertical row increments */
-	int csy = 0;
-	int *csay = say;
-	for (int y = 0; y <= dstH; y++) {
-		*csay = csy;
-		csay++;
-		csy += sy;
-
-		/* Guard from overflows */
-		if (csy > ssy) {
-			csy = ssy;
-		}
-	}
-
-	const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0, 0);
-	tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0, 0);
-	int spixelgap = srcW;
-
-	if (flipx) {
-		sp += spixelw;
-	}
-	if (flipy) {
-		sp += spixelgap * spixelh;
-	}
-
-	csay = say;
-	for (int y = 0; y < dstH; y++) {
-		const tColorRGBA *csp = sp;
-		csax = sax;
-		for (int x = 0; x < dstW; x++) {
-			/*
-			* Setup color source pointers
-			*/
-			int ex = (*csax & 0xffff);
-			int ey = (*csay & 0xffff);
-			int cx = (*csax >> 16);
-			int cy = (*csay >> 16);
-
-			const tColorRGBA *c00, *c01, *c10, *c11;
-			c00 = sp;
-			c01 = sp;
-			c10 = sp;
-			if (cy < spixelh) {
-				if (flipy) {
-					c10 -= spixelgap;
-				} else {
-					c10 += spixelgap;
-				}
-			}
-			c11 = c10;
-			if (cx < spixelw) {
-				if (flipx) {
-					c01--;
-					c11--;
-				} else {
-					c01++;
-					c11++;
-				}
-			}
-
-			/*
-			* Draw and interpolate colors
-			*/
-			int t1, t2;
-			t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
-			t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
-			dp->r = (((t2 - t1) * ey) >> 16) + t1;
-			t1 = ((((c01->g - c00->g) * ex) >> 16) + c00->g) & 0xff;
-			t2 = ((((c11->g - c10->g) * ex) >> 16) + c10->g) & 0xff;
-			dp->g = (((t2 - t1) * ey) >> 16) + t1;
-			t1 = ((((c01->b - c00->b) * ex) >> 16) + c00->b) & 0xff;
-			t2 = ((((c11->b - c10->b) * ex) >> 16) + c10->b) & 0xff;
-			dp->b = (((t2 - t1) * ey) >> 16) + t1;
-			t1 = ((((c01->a - c00->a) * ex) >> 16) + c00->a) & 0xff;
-			t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
-			dp->a = (((t2 - t1) * ey) >> 16) + t1;
-
-			/*
-			* Advance source pointer x
-			*/
-			int *salastx = csax;
-			csax++;
-			int sstepx = (*csax >> 16) - (*salastx >> 16);
-			if (flipx) {
-				sp -= sstepx;
-			} else {
-				sp += sstepx;
-			}
-
-			/*
-			* Advance destination pointer x
-			*/
-			dp++;
-		}
 		/*
-		* Advance source pointer y
+		* Precalculate row increments
 		*/
-		int *salasty = csay;
-		csay++;
-		int sstepy = (*csay >> 16) - (*salasty >> 16);
-		sstepy *= spixelgap;
+		int spixelw = (srcW - 1);
+		int spixelh = (srcH - 1);
+		int sx = (int) (65536.0f * (float) spixelw / (float) (dstW - 1));
+		int sy = (int) (65536.0f * (float) spixelh / (float) (dstH - 1));
+
+		/* Maximum scaled source size */
+		int ssx = (srcW << 16) - 1;
+		int ssy = (srcH << 16) - 1;
+
+		/* Precalculate horizontal row increments */
+		int csx = 0;
+		int *csax = sax;
+		for (int x = 0; x <= dstW; x++) {
+			*csax = csx;
+			csax++;
+			csx += sx;
+
+			/* Guard from overflows */
+			if (csx > ssx) {
+				csx = ssx;
+			}
+		}
+
+		/* Precalculate vertical row increments */
+		int csy = 0;
+		int *csay = say;
+		for (int y = 0; y <= dstH; y++) {
+			*csay = csy;
+			csay++;
+			csy += sy;
+
+			/* Guard from overflows */
+			if (csy > ssy) {
+				csy = ssy;
+			}
+		}
+
+		const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0, 0);
+		tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0, 0);
+		int spixelgap = srcW;
+
+		if (flipx) {
+			sp += spixelw;
+		}
 		if (flipy) {
-			sp = csp - sstepy;
-		} else {
-			sp = csp + sstepy;
+			sp += spixelgap * spixelh;
 		}
-	}
 
-	delete[] sax;
-	delete[] say;
+		csay = say;
+		for (int y = 0; y < dstH; y++) {
+			const tColorRGBA *csp = sp;
+			csax = sax;
+			for (int x = 0; x < dstW; x++) {
+				/*
+				* Setup color source pointers
+				*/
+				int ex = (*csax & 0xffff);
+				int ey = (*csay & 0xffff);
+				int cx = (*csax >> 16);
+				int cy = (*csay >> 16);
 
-#else
+				const tColorRGBA *c00, *c01, *c10, *c11;
+				c00 = sp;
+				c01 = sp;
+				c10 = sp;
+				if (cy < spixelh) {
+					if (flipy) {
+						c10 -= spixelgap;
+					} else {
+						c10 += spixelgap;
+					}
+				}
+				c11 = c10;
+				if (cx < spixelw) {
+					if (flipx) {
+						c01--;
+						c11--;
+					} else {
+						c01++;
+						c11++;
+					}
+				}
 
-	int *scaleCacheX = new int[dstW];
-	for (int x = 0; x < dstW; x++) {
-		scaleCacheX[x] = (x * srcW) / dstW;
-	}
+				/*
+				* Draw and interpolate colors
+				*/
+				int t1, t2;
+				t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
+				t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
+				dp->r = (((t2 - t1) * ey) >> 16) + t1;
+				t1 = ((((c01->g - c00->g) * ex) >> 16) + c00->g) & 0xff;
+				t2 = ((((c11->g - c10->g) * ex) >> 16) + c10->g) & 0xff;
+				dp->g = (((t2 - t1) * ey) >> 16) + t1;
+				t1 = ((((c01->b - c00->b) * ex) >> 16) + c00->b) & 0xff;
+				t2 = ((((c11->b - c10->b) * ex) >> 16) + c10->b) & 0xff;
+				dp->b = (((t2 - t1) * ey) >> 16) + t1;
+				t1 = ((((c01->a - c00->a) * ex) >> 16) + c00->a) & 0xff;
+				t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
+				dp->a = (((t2 - t1) * ey) >> 16) + t1;
 
-	for (int y = 0; y < dstH; y++) {
-		uint32 *destP = (uint32 *)target->getBasePtr(0, y);
-		const uint32 *srcP = (const uint32 *)getBasePtr(0, (y * srcH) / dstH);
+				/*
+				* Advance source pointer x
+				*/
+				int *salastx = csax;
+				csax++;
+				int sstepx = (*csax >> 16) - (*salastx >> 16);
+				if (flipx) {
+					sp -= sstepx;
+				} else {
+					sp += sstepx;
+				}
+
+				/*
+				* Advance destination pointer x
+				*/
+				dp++;
+			}
+			/*
+			* Advance source pointer y
+			*/
+			int *salasty = csay;
+			csay++;
+			int sstepy = (*csay >> 16) - (*salasty >> 16);
+			sstepy *= spixelgap;
+			if (flipy) {
+				sp = csp - sstepy;
+			} else {
+				sp = csp + sstepy;
+			}
+		}
+
+		delete[] sax;
+		delete[] say;
+
+	} else {
+		int *scaleCacheX = new int[dstW];
 		for (int x = 0; x < dstW; x++) {
-			*destP++ = srcP[scaleCacheX[x]];
+			scaleCacheX[x] = (x * srcW) / dstW;
 		}
-	}
-	delete[] scaleCacheX;
 
-#endif
+		switch (format.bytesPerPixel) {
+		case 1:
+			scaleNN<uint8>(scaleCacheX, target);
+			break;
+		case 2:
+			scaleNN<uint16>(scaleCacheX, target);
+			break;
+		case 4:
+			scaleNN<uint32>(scaleCacheX, target);
+			break;
+		default:
+			error("Can only scale 8bpp, 16bpp, and 32bpp");
+		}
+
+		delete[] scaleCacheX;
+	}
 
 	return target;
-
 }
 
 TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, const byte *palette) const {
@@ -1055,6 +1146,34 @@ TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, 
 	}
 
 	return surface;
+}
+
+template <typename Size>
+void TransparentSurface::scaleNN(int *scaleCacheX, TransparentSurface *target) const {
+	for (int y = 0; y < target->h; y++) {
+		Size *destP = (Size *)target->getBasePtr(0, y);
+		const Size *srcP = (const Size *)getBasePtr(0, (y * h) / target->h);
+		for (int x = 0; x < target->w; x++) {
+			*destP++ = srcP[scaleCacheX[x]];
+		}
+	}
+}
+
+template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_NEAREST>(const TransformStruct &transform) const;
+template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_BILINEAR>(const TransformStruct &transform) const;
+template TransparentSurface *TransparentSurface::scaleT<FILTER_NEAREST>(uint16 newWidth, uint16 newHeight) const;
+template TransparentSurface *TransparentSurface::scaleT<FILTER_BILINEAR>(uint16 newWidth, uint16 newHeight) const;
+
+template void TransparentSurface::scaleNN<uint8>(int *scaleCacheX, TransparentSurface *target) const;
+template void TransparentSurface::scaleNN<uint16>(int *scaleCacheX, TransparentSurface *target) const;
+template void TransparentSurface::scaleNN<uint32>(int *scaleCacheX, TransparentSurface *target) const;
+
+TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
+	return rotoscaleT<FILTER_BILINEAR>(transform);
+}
+
+TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
+	return scaleT<FILTER_NEAREST>(newWidth, newHeight);
 }
 
 } // End of namespace Graphics

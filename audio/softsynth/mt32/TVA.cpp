@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -19,11 +19,15 @@
  * This class emulates the calculations performed by the 8095 microcontroller in order to configure the LA-32's amplitude ramp for a single partial at each stage of its TVA envelope.
  * Unless we introduced bugs, it should be pretty much 100% accurate according to Mok's specifications.
 */
-//#include <cmath>
 
-#include "mt32emu.h"
-#include "mmath.h"
 #include "internals.h"
+
+#include "TVA.h"
+#include "Part.h"
+#include "Partial.h"
+#include "Poly.h"
+#include "Synth.h"
+#include "Tables.h"
 
 namespace MT32Emu {
 
@@ -31,7 +35,7 @@ namespace MT32Emu {
 static Bit8u biasLevelToAmpSubtractionCoeff[13] = {255, 187, 137, 100, 74, 54, 40, 29, 21, 15, 10, 5, 0};
 
 TVA::TVA(const Partial *usePartial, LA32Ramp *useAmpRamp) :
-	partial(usePartial), ampRamp(useAmpRamp), system_(&usePartial->getSynth()->mt32ram.system), phase(TVA_PHASE_DEAD) {
+	partial(usePartial), ampRamp(useAmpRamp), system(&usePartial->getSynth()->mt32ram.system), phase(TVA_PHASE_DEAD) {
 }
 
 void TVA::startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase) {
@@ -91,15 +95,15 @@ static int calcVeloAmpSubtraction(Bit8u veloSensitivity, unsigned int velocity) 
 	// FIXME:KG: Better variable names
 	int velocityMult = veloSensitivity - 50;
 	int absVelocityMult = velocityMult < 0 ? -velocityMult : velocityMult;
-	velocityMult = (signed)((unsigned)(velocityMult * ((signed)velocity - 64)) << 2);
+	velocityMult = signed(unsigned(velocityMult * (signed(velocity) - 64)) << 2);
 	return absVelocityMult - (velocityMult >> 8); // PORTABILITY NOTE: Assumes arithmetic shift
 }
 
-static int calcBasicAmp(const Tables *tables, const Partial *partial, const MemParams::System *system_, const TimbreParam::PartialParam *partialParam, const MemParams::PatchTemp *patchTemp, const MemParams::RhythmTemp *rhythmTemp, int biasAmpSubtraction, int veloAmpSubtraction, Bit8u expression) {
+static int calcBasicAmp(const Tables *tables, const Partial *partial, const MemParams::System *system, const TimbreParam::PartialParam *partialParam, const MemParams::PatchTemp *patchTemp, const MemParams::RhythmTemp *rhythmTemp, int biasAmpSubtraction, int veloAmpSubtraction, Bit8u expression) {
 	int amp = 155;
 
 	if (!partial->isRingModulatingSlave()) {
-		amp -= tables->masterVolToAmpSubtraction[system_->masterVol];
+		amp -= tables->masterVolToAmpSubtraction[system->masterVol];
 		if (amp < 0) {
 			return 0;
 		}
@@ -140,7 +144,7 @@ static int calcBasicAmp(const Tables *tables, const Partial *partial, const MemP
 	return amp;
 }
 
-int calcKeyTimeSubtraction(Bit8u envTimeKeyfollow, int key) {
+static int calcKeyTimeSubtraction(Bit8u envTimeKeyfollow, int key) {
 	if (envTimeKeyfollow == 0) {
 		return 0;
 	}
@@ -165,7 +169,7 @@ void TVA::reset(const Part *newPart, const TimbreParam::PartialParam *newPartial
 	biasAmpSubtraction = calcBiasAmpSubtractions(partialParam, key);
 	veloAmpSubtraction = calcVeloAmpSubtraction(partialParam->tva.veloSensitivity, velocity);
 
-	int newTarget = calcBasicAmp(tables, partial, system_, partialParam, patchTemp, newRhythmTemp, biasAmpSubtraction, veloAmpSubtraction, part->getExpression());
+	int newTarget = calcBasicAmp(tables, partial, system, partialParam, patchTemp, newRhythmTemp, biasAmpSubtraction, veloAmpSubtraction, part->getExpression());
 	int newPhase;
 	if (partialParam->tva.envTime[0] == 0) {
 		// Initially go to the TVA_PHASE_ATTACK target amp, and spend the next phase going from there to the TVA_PHASE_2 target amp
@@ -182,7 +186,7 @@ void TVA::reset(const Part *newPart, const TimbreParam::PartialParam *newPartial
 	// "Go downward as quickly as possible".
 	// Since the current value is 0, the LA32Ramp will notice that we're already at or below the target and trying to go downward,
 	// and therefore jump to the target immediately and raise an interrupt.
-	startRamp((Bit8u)newTarget, 0x80 | 127, newPhase);
+	startRamp(Bit8u(newTarget), 0x80 | 127, newPhase);
 }
 
 void TVA::startAbort() {
@@ -217,7 +221,7 @@ void TVA::recalcSustain() {
 	}
 	// We're sustaining. Recalculate all the values
 	const Tables *tables = &Tables::getInstance();
-	int newTarget = calcBasicAmp(tables, partial, system_, partialParam, patchTemp, rhythmTemp, biasAmpSubtraction, veloAmpSubtraction, part->getExpression());
+	int newTarget = calcBasicAmp(tables, partial, system, partialParam, patchTemp, rhythmTemp, biasAmpSubtraction, veloAmpSubtraction, part->getExpression());
 	newTarget += partialParam->tva.envLevel[3];
 	// Since we're in TVA_PHASE_SUSTAIN at this point, we know that target has been reached and an interrupt fired, so we can rely on it being the current amp.
 	int targetDelta = newTarget - target;
@@ -225,9 +229,9 @@ void TVA::recalcSustain() {
 	// Calculate an increment to get to the new amp value in a short, more or less consistent amount of time
 	Bit8u newIncrement;
 	if (targetDelta >= 0) {
-		newIncrement = tables->envLogarithmicTime[(Bit8u)targetDelta] - 2;
+		newIncrement = tables->envLogarithmicTime[Bit8u(targetDelta)] - 2;
 	} else {
-		newIncrement = (tables->envLogarithmicTime[(Bit8u)-targetDelta] - 2) | 0x80;
+		newIncrement = (tables->envLogarithmicTime[Bit8u(-targetDelta)] - 2) | 0x80;
 	}
 	// Configure so that once the transition's complete and nextPhase() is called, we'll just re-enter sustain phase (or decay phase, depending on parameters at the time).
 	startRamp(newTarget, newIncrement, TVA_PHASE_SUSTAIN - 1);
@@ -279,7 +283,7 @@ void TVA::nextPhase() {
 	int envPointIndex = phase;
 
 	if (!allLevelsZeroFromNowOn) {
-		newTarget = calcBasicAmp(tables, partial, system_, partialParam, patchTemp, rhythmTemp, biasAmpSubtraction, veloAmpSubtraction, part->getExpression());
+		newTarget = calcBasicAmp(tables, partial, system, partialParam, patchTemp, rhythmTemp, biasAmpSubtraction, veloAmpSubtraction, part->getExpression());
 
 		if (newPhase == TVA_PHASE_SUSTAIN || newPhase == TVA_PHASE_RELEASE) {
 			if (partialParam->tva.envLevel[3] == 0) {
@@ -311,7 +315,7 @@ void TVA::nextPhase() {
 		int envTimeSetting = partialParam->tva.envTime[envPointIndex];
 
 		if (newPhase == TVA_PHASE_ATTACK) {
-			envTimeSetting -= ((signed)partial->getPoly()->getVelocity() - 64) >> (6 - partialParam->tva.envTimeVeloSensitivity); // PORTABILITY NOTE: Assumes arithmetic shift
+			envTimeSetting -= (signed(partial->getPoly()->getVelocity()) - 64) >> (6 - partialParam->tva.envTimeVeloSensitivity); // PORTABILITY NOTE: Assumes arithmetic shift
 
 			if (envTimeSetting <= 0 && partialParam->tva.envTime[envPointIndex] != 0) {
 				envTimeSetting = 1;
@@ -338,14 +342,14 @@ void TVA::nextPhase() {
 					}
 				}
 				targetDelta = -targetDelta;
-				newIncrement = tables->envLogarithmicTime[(Bit8u)targetDelta] - envTimeSetting;
+				newIncrement = tables->envLogarithmicTime[Bit8u(targetDelta)] - envTimeSetting;
 				if (newIncrement <= 0) {
 					newIncrement = 1;
 				}
 				newIncrement = newIncrement | 0x80;
 			} else {
 				// FIXME: The last 22 or so entries in this table are 128 - surely that fucks things up, since that ends up being -128 signed?
-				newIncrement = tables->envLogarithmicTime[(Bit8u)targetDelta] - envTimeSetting;
+				newIncrement = tables->envLogarithmicTime[Bit8u(targetDelta)] - envTimeSetting;
 				if (newIncrement <= 0) {
 					newIncrement = 1;
 				}
@@ -360,7 +364,7 @@ void TVA::nextPhase() {
 		}
 	}
 
-	startRamp((Bit8u)newTarget, (Bit8u)newIncrement, newPhase);
+	startRamp(Bit8u(newTarget), Bit8u(newIncrement), newPhase);
 }
 
-}
+} // namespace MT32Emu

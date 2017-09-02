@@ -129,7 +129,7 @@ void MPEGPSDecoder::readNextPacket() {
 					typeName = "PS2 Audio";
 					// PS2 Audio stream
 					handled = true;
-					PS2AudioTrack *audioTrack = new PS2AudioTrack(packet);
+					PS2AudioTrack *audioTrack = new PS2AudioTrack(packet, getSoundType());
 					stream = audioTrack;
 					_streamMap[startCode] = audioTrack;
 					addTrack(audioTrack);
@@ -154,7 +154,7 @@ void MPEGPSDecoder::readNextPacket() {
 			} else if (startCode >= 0x1C0 && startCode <= 0x1DF) {
 #ifdef USE_MAD
 				// MPEG Audio stream
-				MPEGAudioTrack *audioTrack = new MPEGAudioTrack(*packet);
+				MPEGAudioTrack *audioTrack = new MPEGAudioTrack(*packet, getSoundType());
 				stream = audioTrack;
 				_streamMap[startCode] = audioTrack;
 				addTrack(audioTrack);
@@ -524,7 +524,8 @@ void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *f
 
 // The audio code here is almost entirely based on what we do in mp3.cpp
 
-MPEGPSDecoder::MPEGAudioTrack::MPEGAudioTrack(Common::SeekableReadStream &firstPacket) {
+MPEGPSDecoder::MPEGAudioTrack::MPEGAudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
 	_audStream = Audio::makePacketizedMP3Stream(firstPacket);
 }
 
@@ -544,7 +545,8 @@ Audio::AudioStream *MPEGPSDecoder::MPEGAudioTrack::getAudioStream() const {
 #endif
 
 // ResidualVM specific start
-MPEGPSDecoder::PS2AudioTrack::PS2AudioTrack(Common::SeekableReadStream *firstPacket) {
+MPEGPSDecoder::PS2AudioTrack::PS2AudioTrack(Common::SeekableReadStream *firstPacket, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
 	firstPacket->seek(12); // unknown data (4), 'SShd', header size (4)
 
 	_soundType = firstPacket->readUint32LE();

@@ -253,19 +253,18 @@ void CloudManager::setStorageLastSync(uint32 index, Common::String date) {
 void CloudManager::connectStorage(uint32 index, Common::String code) {
 	freeStorages();
 
-	Storage *storage = nullptr;
 	switch (index) {
 	case kStorageDropboxId:
-		storage = new Dropbox::DropboxStorage(code);
+		new Dropbox::DropboxStorage(code);
 		break;
 	case kStorageOneDriveId:
-		storage = new OneDrive::OneDriveStorage(code);
+		new OneDrive::OneDriveStorage(code);
 		break;
 	case kStorageGoogleDriveId:
-		storage = new GoogleDrive::GoogleDriveStorage(code);
+		new GoogleDrive::GoogleDriveStorage(code);
 		break;
 	case kStorageBoxId:
-		storage = new Box::BoxStorage(code);
+		new Box::BoxStorage(code);
 		break;
 	}
 	// in these constructors Storages request token using the passed code

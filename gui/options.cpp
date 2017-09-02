@@ -81,6 +81,8 @@ enum {
 	kChoosePluginsDirCmd	= 'chpl',
 	kChooseThemeCmd			= 'chtf',
 	kUpdatesCheckCmd		= 'updc',
+	kKbdMouseSpeedChanged	= 'kmsc',
+	kJoystickDeadzoneChanged= 'jodc',
 	kFullscreenToggled		= 'oful'  // ResidualVM specific
 };
 
@@ -114,7 +116,7 @@ enum {
 	kRootPathClearCmd = 'clrp'
 };
 #endif
-	
+
 enum {
 	kApplyCmd = 'appl'
 };
@@ -123,6 +125,9 @@ static const char *savePeriodLabels[] = { _s("Never"), _s("every 5 mins"), _s("e
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11 kHz"), _s("22 kHz"), _s("44 kHz"), _s("48 kHz"), 0 };
 static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
+// The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
+// "10" (value 3) is the default speed corresponding to the speed before introduction of this control
+static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", 0 };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(0) {
@@ -139,6 +144,16 @@ OptionsDialog::~OptionsDialog() {
 }
 
 void OptionsDialog::init() {
+	_enableControlSettings = false;
+	_onscreenCheckbox = 0;
+	_touchpadCheckbox = 0;
+	_swapMenuAndBackBtnsCheckbox = 0;
+	_kbdMouseSpeedDesc = 0;
+	_kbdMouseSpeedSlider = 0;
+	_kbdMouseSpeedLabel = 0;
+	_joystickDeadzoneDesc = 0;
+	_joystickDeadzoneSlider = 0;
+	_joystickDeadzoneLabel = 0;
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
 	_gfxPopUpDesc = 0;
@@ -147,6 +162,9 @@ void OptionsDialog::init() {
 	_fullscreenCheckbox = 0;
 	_filteringCheckbox = 0;
 	_aspectCheckbox = 0;
+	_enableShaderSettings = false;
+	_shaderPopUpDesc = 0;
+	_shaderPopUp = 0;
 	_vsyncCheckbox = 0;  // ResidualVM specific
 	_rendererTypePopUpDesc = 0; // ResidualVM specific
 	_rendererTypePopUp = 0; // ResidualVM specific
@@ -200,13 +218,54 @@ void OptionsDialog::init() {
 		_guioptions = parseGameGUIOptions(_guioptionsString);
 	}
 }
-	
+
 void OptionsDialog::build() {
 	// Retrieve game GUI options
 	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
+	}
+
+	// Control options
+	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
+		if (ConfMan.hasKey("onscreen_control", _domain)) {
+			bool onscreenState =  g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
+			if (_onscreenCheckbox != 0)
+				_onscreenCheckbox->setState(onscreenState);
+		}
+	}
+	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
+		if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
+			bool touchpadState =  g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
+			if (_touchpadCheckbox != 0)
+				_touchpadCheckbox->setState(touchpadState);
+		}
+	}
+	if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
+		if (ConfMan.hasKey("swap_menu_and_back_buttons", _domain)) {
+			bool state =  g_system->getFeatureState(OSystem::kFeatureSwapMenuAndBackButtons);
+			if (_swapMenuAndBackBtnsCheckbox != 0)
+				_swapMenuAndBackBtnsCheckbox->setState(state);
+		}
+	}
+	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
+		if (ConfMan.hasKey("kbdmouse_speed", _domain)) {
+			int value =  ConfMan.getInt("kbdmouse_speed", _domain);
+			if (_kbdMouseSpeedSlider && value < ARRAYSIZE(kbdMouseSpeedLabels) - 1 && value >= 0) {
+				_kbdMouseSpeedSlider->setValue(value);
+				_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[value]));
+			}
+		}
+	}
+	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
+		if (ConfMan.hasKey("joystick_deadzone", _domain)) {
+			int value =  ConfMan.getInt("joystick_deadzone", _domain);
+			if (_joystickDeadzoneSlider != 0) {
+				_joystickDeadzoneSlider->setValue(value);
+				_joystickDeadzoneLabel->setValue(value);
+			}
+		}
 	}
 
 	// Graphic options
@@ -268,6 +327,14 @@ void OptionsDialog::build() {
 
 		_rendererTypePopUp->setEnabled(true); // ResidualVM specific
 		_rendererTypePopUp->setSelectedTag(Graphics::parseRendererTypeCode(ConfMan.get("renderer", _domain))); // ResidualVM specific
+	}
+
+	// Shader options
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		if (_shaderPopUp) {
+			int value = ConfMan.getInt("shader", _domain);
+			_shaderPopUp->setSelected(value);
+		}
 	}
 
 	// Audio options
@@ -361,24 +428,27 @@ void OptionsDialog::build() {
 		_subSpeedLabel->setValue(speed);
 	}
 }
-	
+
 void OptionsDialog::clean() {
 	delete _subToggleGroup;
 	while (_firstWidget) {
 		Widget* w = _firstWidget;
 		removeWidget(w);
-		delete w;
+		// This is called from rebuild() which may result from handleCommand being called by
+		// a child widget sendCommand call. In such a case sendCommand is still being executed
+		// so we should not delete yet the child widget. Thus delay the deletion.
+		g_gui.addToTrash(w, this);
 	}
 	init();
 }
-	
+
 void OptionsDialog::rebuild() {
 	int currentTab = _tabWidget->getActiveTab();
 	clean();
 	build();
 	reflowLayout();
 	_tabWidget->setActiveTab(currentTab);
-	setFocusWidget(_firstWidget);
+	setDefaultFocusedWidget();
 }
 
 void OptionsDialog::open() {
@@ -391,8 +461,9 @@ void OptionsDialog::open() {
 }
 
 void OptionsDialog::apply() {
-	// Graphic options
 	bool graphicsModeChanged = false;
+
+	// Graphic options
 	if (_fullscreenCheckbox) {
 		if (_enableGraphicSettings) {
 			if (ConfMan.getBool("filtering", _domain) != _filteringCheckbox->getState())
@@ -480,11 +551,11 @@ void OptionsDialog::apply() {
 		// Dialog::close) is called, to prevent crashes caused by invalid
 		// widgets being referenced or similar errors.
 		g_gui.checkScreenChange();
-		
+
 		if (gfxError != OSystem::kTransactionSuccess) {
 			// Revert ConfMan to what OSystem is using.
 			Common::String message = _("Failed to apply some of the graphic options changes:");
-			
+
 			if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 				const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 				while (gm->name) {
@@ -497,31 +568,72 @@ void OptionsDialog::apply() {
 				message += "\n";
 				message += _("the video mode could not be changed.");
 			}
-			
+
 			if (gfxError & OSystem::kTransactionAspectRatioFailed) {
 				ConfMan.setBool("aspect_ratio", g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection), _domain);
 				message += "\n";
 				message += _("the aspect ratio setting could not be changed");
 			}
-			
+
 			if (gfxError & OSystem::kTransactionFullscreenFailed) {
 				ConfMan.setBool("fullscreen", g_system->getFeatureState(OSystem::kFeatureFullscreenMode), _domain);
 				message += "\n";
 				message += _("the fullscreen setting could not be changed");
 			}
-			
+
 			if (gfxError & OSystem::kTransactionFilteringFailed) {
 				ConfMan.setBool("filtering", g_system->getFeatureState(OSystem::kFeatureFilteringMode), _domain);
 				message += "\n";
 				message += _("the filtering setting could not be changed");
 			}
-			
+
 			// And display the error
 			GUI::MessageDialog dialog(message);
 			dialog.runModal();
 		}
 	}
-	
+
+	// Shader options
+	if (_enableShaderSettings) {
+		if (g_system->hasFeature(OSystem::kFeatureShader)) {
+			if (_shaderPopUp) {
+				if (ConfMan.getInt("shader", _domain) != (int32)_shaderPopUp->getSelectedTag()) {
+					ConfMan.setInt("shader", _shaderPopUp->getSelectedTag(), _domain);
+					g_system->setShader(_shaderPopUp->getSelectedTag());
+				}
+			}
+		}
+	}
+
+	// Control options
+	if (_enableControlSettings) {
+		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
+			if (ConfMan.getBool("onscreen_control", _domain) != _onscreenCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
+			if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
+			if (ConfMan.getBool("swap_menu_and_back_buttons", _domain) != _swapMenuAndBackBtnsCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureSwapMenuAndBackButtons, _swapMenuAndBackBtnsCheckbox->getState());
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
+			if (ConfMan.getInt("kbdmouse_speed", _domain) != _kbdMouseSpeedSlider->getValue()) {
+				ConfMan.setInt("kbdmouse_speed", _kbdMouseSpeedSlider->getValue(), _domain);
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
+			if (ConfMan.getInt("joystick_deadzone", _domain) != _joystickDeadzoneSlider->getValue()) {
+				ConfMan.setInt("joystick_deadzone", _joystickDeadzoneSlider->getValue(), _domain);
+			}
+		}
+	}
+
 	// Volume options
 	if (_musicVolumeSlider) {
 		if (_enableVolumeSettings) {
@@ -536,7 +648,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("mute", _domain);
 		}
 	}
-	
+
 	// Audio options
 	if (_midiPopUp) {
 		if (_enableAudioSettings) {
@@ -545,11 +657,11 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("music_driver", _domain);
 		}
 	}
-	
+
 	if (_oplPopUp) {
 		if (_enableAudioSettings) {
 			const OPL::Config::EmulatorDescription *ed = OPL::Config::findDriver(_oplPopUp->getSelectedTag());
-			
+
 			if (ed)
 				ConfMan.set("opl_driver", ed->name, _domain);
 			else
@@ -558,7 +670,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("opl_driver", _domain);
 		}
 	}
-	
+
 	if (_outputRatePopUp) {
 		if (_enableAudioSettings) {
 			if (_outputRatePopUp->getSelectedTag() != 0)
@@ -569,15 +681,15 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("output_rate", _domain);
 		}
 	}
-	
+
 	// MIDI options
 	if (_multiMidiCheckbox) {
 		if (_enableMIDISettings) {
 			saveMusicDeviceSetting(_gmDevicePopUp, "gm_device");
-			
+
 			ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
 			ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
-			
+
 			Common::String soundFont(_soundFont->getLabel());
 			if (!soundFont.empty() && (soundFont != _c("None", "soundfont")))
 				ConfMan.set("soundfont", soundFont, _domain);
@@ -590,7 +702,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("soundfont", _domain);
 		}
 	}
-	
+
 	// MT-32 options
 	if (_mt32DevicePopUp) {
 		if (_enableMT32Settings) {
@@ -603,14 +715,14 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("enable_gs", _domain);
 		}
 	}
-	
+
 	// Subtitle options
 	if (_subToggleGroup) {
 		if (_enableSubtitleSettings) {
 			bool subtitles, speech_mute;
 			int talkspeed;
 			int sliderMaxValue = _subSpeedSlider->getMaxValue();
-			
+
 			switch (_subToggleGroup->getValue()) {
 				case kSubtitlesSpeech:
 					subtitles = speech_mute = false;
@@ -624,22 +736,22 @@ void OptionsDialog::apply() {
 					subtitles = speech_mute = true;
 					break;
 			}
-			
+
 			ConfMan.setBool("subtitles", subtitles, _domain);
 			ConfMan.setBool("speech_mute", speech_mute, _domain);
-			
+
 			// Engines that reuse the subtitle speed widget set their own max value.
 			// Scale the config value accordingly (see addSubtitleControls)
 			talkspeed = (_subSpeedSlider->getValue() * 255 + sliderMaxValue / 2) / sliderMaxValue;
 			ConfMan.setInt("talkspeed", talkspeed, _domain);
-			
+
 		} else {
 			ConfMan.removeKey("subtitles", _domain);
 			ConfMan.removeKey("talkspeed", _domain);
 			ConfMan.removeKey("speech_mute", _domain);
 		}
 	}
-	
+
 	// Save config file
 	ConfMan.flushToDisk();
 }
@@ -657,18 +769,51 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
 		_midiGainLabel->draw();
 		break;
-	case kMusicVolumeChanged:
-		_musicVolumeLabel->setValue(_musicVolumeSlider->getValue());
+	case kMusicVolumeChanged: {
+		const int newValue = _musicVolumeSlider->getValue();
+		_musicVolumeLabel->setValue(newValue);
 		_musicVolumeLabel->draw();
+
+		if (_guioptions.contains(GUIO_LINKMUSICTOSFX)) {
+			updateSfxVolume(newValue);
+
+			if (_guioptions.contains(GUIO_LINKSPEECHTOSFX)) {
+				updateSpeechVolume(newValue);
+			}
+		}
+
 		break;
-	case kSfxVolumeChanged:
+	}
+	case kSfxVolumeChanged: {
+		const int newValue = _sfxVolumeSlider->getValue();
 		_sfxVolumeLabel->setValue(_sfxVolumeSlider->getValue());
 		_sfxVolumeLabel->draw();
+
+		if (_guioptions.contains(GUIO_LINKMUSICTOSFX)) {
+			updateMusicVolume(newValue);
+		}
+
+		if (_guioptions.contains(GUIO_LINKSPEECHTOSFX)) {
+			updateSpeechVolume(newValue);
+		}
+
 		break;
-	case kSpeechVolumeChanged:
-		_speechVolumeLabel->setValue(_speechVolumeSlider->getValue());
+	}
+	case kSpeechVolumeChanged: {
+		const int newValue = _speechVolumeSlider->getValue();
+		_speechVolumeLabel->setValue(newValue);
 		_speechVolumeLabel->draw();
+
+		if (_guioptions.contains(GUIO_LINKSPEECHTOSFX)) {
+			updateSfxVolume(newValue);
+
+			if (_guioptions.contains(GUIO_LINKMUSICTOSFX)) {
+				updateMusicVolume(newValue);
+			}
+		}
+
 		break;
+	}
 	case kMuteAllChanged:
 		// 'true' because if control is disabled then event do not pass
 		setVolumeSettingsState(true);
@@ -687,6 +832,14 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_soundFont->setLabel(_c("None", "soundfont"));
 		_soundFontClearButton->setEnabled(false);
 		draw();
+		break;
+	case kKbdMouseSpeedChanged:
+		_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()]));
+		_kbdMouseSpeedLabel->draw();
+		break;
+	case kJoystickDeadzoneChanged:
+		_joystickDeadzoneLabel->setValue(_joystickDeadzoneSlider->getValue());
+		_joystickDeadzoneLabel->draw();
 		break;
 	// ResidualVM specific
 	case kFullscreenToggled:
@@ -716,6 +869,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_gfxPopUp->setEnabled(enabled);
 	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
+	_filteringCheckbox->setEnabled(enabled);
 #endif
 #ifndef GUI_ENABLE_KEYSDIALOG
 	_fullscreenCheckbox->setEnabled(enabled);
@@ -809,7 +963,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	// Disable speech volume slider, when we are in subtitle only mode.
 	if (_subToggleGroup)
 		ena = ena && _subToggleGroup->getValue() != kSubtitlesSubs;
-	if (_guioptions.contains(GUIO_NOSPEECH))
+	if (_guioptions.contains(GUIO_NOSPEECH) || _guioptions.contains(GUIO_NOSPEECHVOLUME))
 		ena = false;
 
 	_speechVolumeDesc->setEnabled(ena);
@@ -837,6 +991,64 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_subSpeedDesc->setEnabled(ena);
 	_subSpeedSlider->setEnabled(ena);
 	_subSpeedLabel->setEnabled(ena);
+}
+
+void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &prefix) {
+	// Show On-Screen control
+	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl))
+		_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", _("Show On-screen control"));
+
+	// Touchpad Mouse mode
+	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode))
+		_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
+
+	// Swap menu and back buttons
+	if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons))
+		_swapMenuAndBackBtnsCheckbox = new CheckboxWidget(boss, prefix + "grSwapMenuAndBackBtnsCheckbox", _("Swap Menu and Back buttons"));
+
+	// Keyboard and joystick mouse speed
+	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
+		if (g_system->getOverlayWidth() > 320)
+			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", _("Pointer Speed:"), _("Speed for keyboard/joystick mouse pointer control"));
+		else
+			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", _c("Pointer Speed:", "lowres"), _("Speed for keyboard/joystick mouse pointer control"));
+		_kbdMouseSpeedSlider = new SliderWidget(boss, prefix + "grKbdMouseSpeedSlider", _("Speed for keyboard/joystick mouse pointer control"), kKbdMouseSpeedChanged);
+		_kbdMouseSpeedLabel = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedLabel", "  ");
+		_kbdMouseSpeedSlider->setMinValue(0);
+		_kbdMouseSpeedSlider->setMaxValue(7);
+		_kbdMouseSpeedLabel->setFlags(WIDGET_CLEARBG);
+	}
+
+	// Joystick deadzone
+	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
+		if (g_system->getOverlayWidth() > 320)
+			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", _("Joy Deadzone:"), _("Analog joystick Deadzone"));
+		else
+			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", _c("Joy Deadzone:", "lowres"), _("Analog joystick Deadzone"));
+		_joystickDeadzoneSlider = new SliderWidget(boss, prefix + "grJoystickDeadzoneSlider", _("Analog joystick Deadzone"), kJoystickDeadzoneChanged);
+		_joystickDeadzoneLabel = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneLabel", "  ");
+		_joystickDeadzoneSlider->setMinValue(1);
+		_joystickDeadzoneSlider->setMaxValue(10);
+		_joystickDeadzoneLabel->setFlags(WIDGET_CLEARBG);
+	}
+	_enableControlSettings = true;
+}
+
+void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
+	// Shader selector
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		if (g_system->getOverlayWidth() > 320)
+			_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _("HW Shader:"), _("Different hardware shaders give different visual effects"));
+		else
+			_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _c("HW Shader:", "lowres"), _("Different hardware shaders give different visual effects"));
+		_shaderPopUp = new PopUpWidget(boss, prefix + "grShaderPopUp", _("Different shaders give different visual effects"));
+		const OSystem::GraphicsMode *p = g_system->getSupportedShaders();
+		while (p->name) {
+			_shaderPopUp->appendEntry(p->name, p->id);
+			p++;
+		}
+	}
+	_enableShaderSettings = true;
 }
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
@@ -1199,6 +1411,27 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 	return kSubtitlesSubs;
 }
 
+void OptionsDialog::updateMusicVolume(const int newValue) const {
+	_musicVolumeLabel->setValue(newValue);
+	_musicVolumeSlider->setValue(newValue);
+	_musicVolumeLabel->draw();
+	_musicVolumeSlider->draw();
+}
+
+void OptionsDialog::updateSfxVolume(const int newValue) const {
+	_sfxVolumeLabel->setValue(newValue);
+	_sfxVolumeSlider->setValue(newValue);
+	_sfxVolumeLabel->draw();
+	_sfxVolumeSlider->draw();
+}
+
+void OptionsDialog::updateSpeechVolume(const int newValue) const {
+	_speechVolumeLabel->setValue(newValue);
+	_speechVolumeSlider->setValue(newValue);
+	_speechVolumeLabel->draw();
+	_speechVolumeSlider->draw();
+}
+
 void OptionsDialog::reflowLayout() {
 	if (_graphicsTabId != -1 && _tabWidget)
 		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
@@ -1278,7 +1511,7 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 	delete _fluidSynthSettingsDialog;
 #endif
 }
-	
+
 void GlobalOptionsDialog::build() {
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
@@ -1288,6 +1521,27 @@ void GlobalOptionsDialog::build() {
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 	addGraphicControls(tab, "GlobalOptions_Graphics.");
+
+	//
+	// The shader tab (currently visible only for Vita platform), visibility checking by features
+	//
+
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		tab->addTab(_("Shader"));
+		addShaderControls(tab, "GlobalOptions_Shader.");
+	}
+
+	//
+	// The control tab (currently visible only for AndroidSDL, SDL, and Vita platform, visibility checking by features
+	//
+	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode) ||
+		g_system->hasFeature(OSystem::kFeatureOnScreenControl) ||
+		g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons) ||
+		g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed) ||
+		g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
+		tab->addTab(_("Control"));
+		addControlControls(tab, "GlobalOptions_Control.");
+	}
 
 	//
 	// 2) The audio tab
@@ -1425,7 +1679,7 @@ void GlobalOptionsDialog::build() {
 
 	// Select the currently configured language or default/English if
 	// nothing is specified.
-	if (ConfMan.hasKey("gui_language"))
+	if (ConfMan.hasKey("gui_language") && !ConfMan.get("gui_language").empty())
 		_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language")));
 	else
 #ifdef USE_DETECTLANG
@@ -1601,8 +1855,12 @@ void GlobalOptionsDialog::clean() {
 
 	OptionsDialog::clean();
 }
-	
+
 void GlobalOptionsDialog::apply() {
+	OptionsDialog::apply();
+
+	bool isRebuildNeeded = false;
+
 	Common::String savePath(_savePath->getLabel());
 	if (!savePath.empty() && (savePath != _("Default")))
 		ConfMan.set("savepath", savePath, _domain);
@@ -1638,33 +1896,6 @@ void GlobalOptionsDialog::apply() {
 #endif
 
 	ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
-
-	GUI::ThemeEngine::GraphicsMode selected = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
-	const char *cfg = GUI::ThemeEngine::findModeConfigName(selected);
-	if (!ConfMan.get("gui_renderer").equalsIgnoreCase(cfg)) {
-		// FIXME: Actually, any changes (including the theme change) should
-		// only become active *after* the options dialog has closed.
-		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), selected);
-		ConfMan.set("gui_renderer", cfg, _domain);
-	}
-#ifdef USE_TRANSLATION
-	Common::String oldLang = ConfMan.get("gui_language");
-	int selLang = _guiLanguagePopUp->getSelectedTag();
-
-	ConfMan.set("gui_language", TransMan.getLangById(selLang));
-
-	Common::String newLang = ConfMan.get("gui_language").c_str();
-	if (newLang != oldLang) {
-		// Activate the selected language
-		TransMan.setLanguage(selLang);
-
-		// Rebuild the Launcher and Options dialogs
-		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
-		rebuild();
-		if (_launcher != 0)
-			_launcher->rebuild();
-	}
-#endif // USE_TRANSLATION
 
 #ifdef USE_UPDATES
 	ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
@@ -1708,35 +1939,74 @@ void GlobalOptionsDialog::apply() {
 #endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
-	
+
+	Common::String oldThemeId = g_gui.theme()->getThemeId();
+	Common::String oldThemeName = g_gui.theme()->getThemeName();
 	if (!_newTheme.empty()) {
-#ifdef USE_TRANSLATION
-		Common::String lang = TransMan.getCurrentLanguage();
-#endif
-		Common::String oldTheme = g_gui.theme()->getThemeId();
-		if (g_gui.loadNewTheme(_newTheme)) {
-#ifdef USE_TRANSLATION
-			// If the charset has changed, it means the font were not found for the
-			// new theme. Since for the moment we do not support change of translation
-			// language without restarting, we let the user know about this.
-			if (lang != TransMan.getCurrentLanguage()) {
-				TransMan.setLanguage(lang.c_str());
-				g_gui.loadNewTheme(oldTheme);
-				_curTheme->setLabel(g_gui.theme()->getThemeName());
-				MessageDialog error(_("The theme you selected does not support your current language. If you want to use this theme you need to switch to another language first."));
-				error.runModal();
-			} else {
-#endif
-				ConfMan.set("gui_theme", _newTheme);
-#ifdef USE_TRANSLATION
-			}
-#endif
-		}
-		draw();
-		_newTheme.clear();
+		ConfMan.set("gui_theme", _newTheme);
 	}
 
-	OptionsDialog::apply();
+#ifdef USE_TRANSLATION
+	int selectedLang = _guiLanguagePopUp->getSelectedTag();
+	Common::String oldLang = ConfMan.get("gui_language");
+	Common::String newLang = TransMan.getLangById(selectedLang);
+	Common::String newCharset;
+	if (newLang != oldLang) {
+		TransMan.setLanguage(newLang);
+		ConfMan.set("gui_language", newLang);
+		newCharset = TransMan.getCurrentCharset();
+		isRebuildNeeded = true;
+	}
+#endif
+
+	GUI::ThemeEngine::GraphicsMode gfxMode = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
+	Common::String oldGfxConfig = ConfMan.get("gui_renderer");
+	Common::String newGfxConfig = GUI::ThemeEngine::findModeConfigName(gfxMode);
+	if (newGfxConfig != oldGfxConfig) {
+		ConfMan.set("gui_renderer", newGfxConfig, _domain);
+	}
+
+	if (_newTheme.empty())
+		_newTheme = oldThemeId;
+
+	if (!g_gui.loadNewTheme(_newTheme, gfxMode, true)) {
+		Common::String errorMessage;
+
+		_curTheme->setLabel(oldThemeName);
+		_newTheme = oldThemeId;
+		ConfMan.set("gui_theme", _newTheme);
+		gfxMode = GUI::ThemeEngine::findMode(oldGfxConfig);
+		_rendererPopUp->setSelectedTag(gfxMode);
+		newGfxConfig = oldGfxConfig;
+		ConfMan.set("gui_renderer", newGfxConfig, _domain);
+#ifdef USE_TRANSLATION
+		bool isCharsetEqual = (newCharset == TransMan.getCurrentCharset());
+		TransMan.setLanguage(oldLang);
+		_guiLanguagePopUp->setSelectedTag(selectedLang);
+		ConfMan.set("gui_language", oldLang);
+
+		if (!isCharsetEqual)
+			errorMessage = _("Theme does not support selected language!");
+		else
+#endif
+			errorMessage = _("Theme cannot be loaded!");
+
+		g_gui.loadNewTheme(_newTheme, gfxMode, true);
+		errorMessage += _("\nMisc settings will be restored.");
+		MessageDialog error(errorMessage);
+		error.runModal();
+	}
+
+	if (isRebuildNeeded) {
+		rebuild();
+		if (_launcher != 0)
+			_launcher->rebuild();
+	}
+
+	_newTheme.clear();
+
+	// Save config file
+	ConfMan.flushToDisk();
 }
 
 void GlobalOptionsDialog::close() {
@@ -1860,7 +2130,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_LIBCURL
 	case kPopUpItemSelectedCmd:
 	{
-		//update container's scrollbar
+		// update container's scrollbar
 		reflowLayout();
 		break;
 	}
@@ -1977,6 +2247,7 @@ void GlobalOptionsDialog::handleTickle() {
 }
 
 void GlobalOptionsDialog::reflowLayout() {
+	int firstVisible = _tabWidget->getFirstVisible();
 	int activeTab = _tabWidget->getActiveTab();
 
 #if 0 // ResidualVM does not use it
@@ -1987,7 +2258,6 @@ void GlobalOptionsDialog::reflowLayout() {
 		_soundFontClearButton->setNext(0);
 		delete _soundFontClearButton;
 		_soundFontClearButton = addClearButton(_tabWidget, "GlobalOptions_MIDI.mcFontClearButton", kClearSoundFontCmd);
-
 	}
 #endif
 
@@ -2011,6 +2281,8 @@ void GlobalOptionsDialog::reflowLayout() {
 	}
 
 	_tabWidget->setActiveTab(activeTab);
+	_tabWidget->setFirstVisible(firstVisible);
+
 	OptionsDialog::reflowLayout();
 #ifdef USE_CLOUD
 	setupCloudTab();
@@ -2021,7 +2293,7 @@ void GlobalOptionsDialog::reflowLayout() {
 void GlobalOptionsDialog::setupCloudTab() {
 	int serverLabelPosition = -1; //no override
 #ifdef USE_LIBCURL
-	_selectedStorageIndex = _storagePopUp->getSelectedTag();
+	_selectedStorageIndex = (_storagePopUp ? _storagePopUp->getSelectedTag() : (uint32) Cloud::kStorageNoneId);
 
 	if (_storagePopUpDesc) _storagePopUpDesc->setVisible(true);
 	if (_storagePopUp) _storagePopUp->setVisible(true);
@@ -2182,8 +2454,10 @@ void GlobalOptionsDialog::setupCloudTab() {
 #else // USE_SDL_NET
 	if (_runServerButton)
 		_runServerButton->setVisible(false);
-	if (_serverInfoLabel)
+	if (_serverInfoLabel) {
+		_serverInfoLabel->setPos(_serverInfoLabel->getRelX(), serverLabelPosition); // Prevent compiler warning from serverLabelPosition being unused.
 		_serverInfoLabel->setVisible(false);
+	}
 	if (_rootPathButton)
 		_rootPathButton->setVisible(false);
 	if (_rootPath)

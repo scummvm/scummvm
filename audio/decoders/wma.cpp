@@ -29,7 +29,6 @@
 #include "common/error.h"
 #include "common/memstream.h"
 #include "common/mdct.h"
-#include "common/bitstream.h"
 #include "common/huffman.h"
 
 #include "audio/audiostream.h"
@@ -684,7 +683,7 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 	return new Common::MemoryReadStream((byte *) outputData, outputDataSize * 2, DisposeAfterUse::YES);
 }
 
-bool WMACodec::decodeFrame(Common::BitStream &bits, int16 *outputData) {
+bool WMACodec::decodeFrame(Common::BitStream8MSB &bits, int16 *outputData) {
 	_framePos = 0;
 	_curBlock = 0;
 
@@ -714,7 +713,7 @@ bool WMACodec::decodeFrame(Common::BitStream &bits, int16 *outputData) {
 	return true;
 }
 
-int WMACodec::decodeBlock(Common::BitStream &bits) {
+int WMACodec::decodeBlock(Common::BitStream8MSB &bits) {
 	// Computer new block length
 	if (!evalBlockLength(bits))
 		return -1;
@@ -767,7 +766,7 @@ int WMACodec::decodeBlock(Common::BitStream &bits) {
 	return 0;
 }
 
-bool WMACodec::decodeChannels(Common::BitStream &bits, int bSize,
+bool WMACodec::decodeChannels(Common::BitStream8MSB &bits, int bSize,
                               bool msStereo, bool *hasChannel) {
 
 	int totalGain    = readTotalGain(bits);
@@ -823,7 +822,7 @@ bool WMACodec::calculateIMDCT(int bSize, bool msStereo, bool *hasChannel) {
 	return true;
 }
 
-bool WMACodec::evalBlockLength(Common::BitStream &bits) {
+bool WMACodec::evalBlockLength(Common::BitStream8MSB &bits) {
 	if (_useVariableBlockLen) {
 		// Variable block lengths
 
@@ -899,7 +898,7 @@ void WMACodec::calculateCoefCount(int *coefCount, int bSize) const {
 		coefCount[i] = coefN;
 }
 
-bool WMACodec::decodeNoise(Common::BitStream &bits, int bSize,
+bool WMACodec::decodeNoise(Common::BitStream8MSB &bits, int bSize,
                            bool *hasChannel, int *coefCount) {
 	if (!_useNoiseCoding)
 		return true;
@@ -950,7 +949,7 @@ bool WMACodec::decodeNoise(Common::BitStream &bits, int bSize,
 	return true;
 }
 
-bool WMACodec::decodeExponents(Common::BitStream &bits, int bSize, bool *hasChannel) {
+bool WMACodec::decodeExponents(Common::BitStream8MSB &bits, int bSize, bool *hasChannel) {
 	// Exponents can be reused in short blocks
 	if (!((_blockLenBits == _frameLenBits) || bits.getBit()))
 		return true;
@@ -973,7 +972,7 @@ bool WMACodec::decodeExponents(Common::BitStream &bits, int bSize, bool *hasChan
 	return true;
 }
 
-bool WMACodec::decodeSpectralCoef(Common::BitStream &bits, bool msStereo, bool *hasChannel,
+bool WMACodec::decodeSpectralCoef(Common::BitStream8MSB &bits, bool msStereo, bool *hasChannel,
                                   int *coefCount, int coefBitCount) {
 	// Simple RLE encoding
 
@@ -1213,7 +1212,7 @@ static const float powTab[] = {
     7.4989420933246e+05, 8.6596432336007e+05,
 };
 
-bool WMACodec::decodeExpHuffman(Common::BitStream &bits, int ch) {
+bool WMACodec::decodeExpHuffman(Common::BitStream8MSB &bits, int ch) {
 	const float  *ptab  = powTab + 60;
 	const uint32 *iptab = (const uint32 *) ptab;
 
@@ -1311,7 +1310,7 @@ void WMACodec::lspToCurve(float *out, float *val_max_ptr, int n, float *lsp) {
 }
 
 // Decode exponents coded with LSP coefficients (same idea as Vorbis)
-bool WMACodec::decodeExpLSP(Common::BitStream &bits, int ch) {
+bool WMACodec::decodeExpLSP(Common::BitStream8MSB &bits, int ch) {
 	float lspCoefs[kLSPCoefCount];
 
 	for (int i = 0; i < kLSPCoefCount; i++) {
@@ -1329,7 +1328,7 @@ bool WMACodec::decodeExpLSP(Common::BitStream &bits, int ch) {
 	return true;
 }
 
-bool WMACodec::decodeRunLevel(Common::BitStream &bits, const Common::Huffman &huffman,
+bool WMACodec::decodeRunLevel(Common::BitStream8MSB &bits, const Common::Huffman &huffman,
 	const float *levelTable, const uint16 *runTable, int version, float *ptr,
 	int offset, int numCoefs, int blockLen, int frameLenBits, int coefNbBits) {
 
@@ -1471,7 +1470,7 @@ float WMACodec::pow_m1_4(float x) const {
 	return _lspPowETable[e] * (a + b * t.f);
 }
 
-int WMACodec::readTotalGain(Common::BitStream &bits) {
+int WMACodec::readTotalGain(Common::BitStream8MSB &bits) {
 	int totalGain = 1;
 
 	int v = 127;
@@ -1492,7 +1491,7 @@ int WMACodec::totalGainToBits(int totalGain) {
 	else                     return  9;
 }
 
-uint32 WMACodec::getLargeVal(Common::BitStream &bits) {
+uint32 WMACodec::getLargeVal(Common::BitStream8MSB &bits) {
 	// Consumes up to 34 bits
 
 	int count = 8;

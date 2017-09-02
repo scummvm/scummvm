@@ -1557,6 +1557,22 @@ ps3)
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
 	;;
+psp2)
+	_host_os=psp2
+	_host_cpu=arm
+	_host_alias=arm-vita-eabi
+
+	# The prefix is always the same on PSP2 so we hardcode the default
+	# here. It is still possible to define a custom prefix which is
+	# needed when packaging the app with a user-specific app ID.
+	test "x$prefix" = xNONE && prefix=app0:
+	# PSP2 apps are installed into app-specific directories. The
+	# default directory structure of ScummVM makes no sense here so we
+	# hardcode PSP2 specific directories here.
+	datarootdir='${prefix}/data'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
+	;;
 psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
@@ -1623,7 +1639,7 @@ fi
 #
 
 case $_host in
-caanoo | gp2x | gp2xwiz | openpandora | ps2)
+caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp2)
 	if test "$_debug_build" = auto; then
 		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
@@ -1714,6 +1730,12 @@ ps3)
 	fi
 	if test -z "$PSL1GHT"; then
 		echo "Please set PSL1GHT in your environment. export PSL1GHT=<path to psl1ght>"
+		exit 1
+	fi
+	;;
+psp2)
+	if test -z "$VITASDK"; then
+		echo "Please set VITASDK in your environment. export VITASDK=<path to psp2 toolchain>"
 		exit 1
 	fi
 	;;
@@ -1945,7 +1967,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -1998,12 +2020,29 @@ echocheck "whether -Wglobal-constructors work"
 cat > $TMPC << EOF
 int main() { return 0; }
 EOF
-cc_check -Wglobal-constructors && _global_constructors=yes
+cc_check -Wglobal-constructors -Werror && _global_constructors=yes
 
 if test "$_global_constructors" = yes; then
 	append_var CXXFLAGS "-Wglobal-constructors"
 fi
 echo $_global_constructors
+
+# If the compiler supports the -Wundefined-var-template flag, silence that warning.
+# We get this warning a lot with regard to the Singleton class as we explicitly
+# instantiate each specialisation. An alternate way to deal with it would be to
+# change the way we instantiate the singleton classes as done in PR #967.
+# Note: we check the -Wundefined-var-template as gcc does not error out on unknown
+# -Wno-xxx flags.
+echocheck "whether -Wno-undefined-var-template work"
+cat > $TMPC << EOF
+int main() { return 0; }
+EOF
+cc_check -Wundefined-var-template -Werror && _no_undefined_var_template=yes
+
+if test "$_no_undefined_var_template" = yes; then
+	append_var CXXFLAGS "-Wno-undefined-var-template"
+fi
+echo $_no_undefined_var_template
 
 echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
 if `which $_host_alias-strings >/dev/null 2>&1`; then
@@ -2165,7 +2204,7 @@ cc_check_clean tmp_find_type_with_size.cpp
 # for the smaller sizes.
 echo_n "Alignment required... "
 case $_host_cpu in
-	i[3-6]86 | amd64 | x86_64 | powerpc*)
+	i[3-6]86 | amd64 | x86_64 | powerpc* | ppc*)
 		# Unaligned access should work
 		_need_memalign=no
 		;;
@@ -2198,6 +2237,9 @@ case $_host_cpu in
 				;;
 			arm-apple-darwin11)
 				;;
+			# psvita does not like the asm code...
+			arm-vita-eabi)
+				;;
 
 			*)
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
@@ -2226,7 +2268,7 @@ case $_host_cpu in
 		echo "MIPS"
 		append_var DEFINES "-DMIPS_TARGET"
 		;;
-	powerpc*)
+	powerpc* | ppc*)
 		echo "PowerPC"
 		append_var DEFINES "-DPPC_TARGET"
 		;;
@@ -2294,7 +2336,6 @@ case $_host_os in
 				append_var CXXFLAGS "-mfpu=vfp"
 				append_var LDFLAGS "-Wl,--fix-cortex-a8"
 				ABI="armeabi-v7a"
-				# Platform version 9 is used by ResidualVM
 				ANDROID_PLATFORM=9
 				ANDROID_PLATFORM_ARCH="arm"
 				;;
@@ -2601,6 +2642,7 @@ case $_host_os in
 		append_var DEFINES "-DDISABLE_NES_APU"
 		append_var DEFINES "-DDISABLE_SID"
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
+		add_line_to_config_mk 'N64 = 1'
 		;;
 	ps2)
 		append_var CXXFLAGS "-G2"
@@ -2624,6 +2666,35 @@ case $_host_os in
 		add_line_to_config_mk 'PLAYSTATION3 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
+	psp2)
+		_freetypepath="$VITASDK/arm-vita-eabi/bin"
+		_freetype2=yes
+		_libcurlpath="$VITASDK/arm-vita-eabi/bin"
+		append_var CXXFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
+		append_var LDFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
+		append_var DEFINES "-DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		append_var CXXFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
+		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
+		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
+		#the next line fixes a crash when starting scumm-7-8 games (The Dig etc.)
+		#when either -O2, -O3 or -Os optimizations are enabled
+		append_var CXXFLAGS "-fno-optimize-sibling-calls"
+		#the next line fixes "branch out of range" error in gob engine when -Os is used
+		append_var CXXFLAGS "-mlong-calls"
+		if test "$_debug_build" = no; then
+		#optimize for smallest file size. This is necessary to prevent a crash on startup
+		#due to the large executable file size when many engines are enabled
+		#for example when --enable-all-engines is used to enable all the unstable engines
+			_optimization_level=-Os
+		fi
+		if test "$_debug_build" = yes; then
+			_optimization_level=-O0
+			append_var DEFINES "-D__PSP2_DEBUG__"
+			append_var LIBS "-lpsp2shell"
+		fi
+		add_line_to_config_mk 'PSP2 = 1'
+		add_line_to_config_h "#define PREFIX \"${prefix}\""
+		;;
 	psp)
 		if test -d "$PSPDEV/psp/lib"; then
 			append_var LDFLAGS "-L$PSPDEV/psp/lib"
@@ -2634,6 +2705,7 @@ case $_host_os in
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
+		add_line_to_config_mk 'PSP = 1'
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
@@ -2732,7 +2804,7 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_timidity=no
 			;;
-		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a)
+		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a | androidsdl-x86_64)
 			DEFINES="$DEFINES -DANDROIDSDL"
 			_unix=yes
 			_seq_midi=no
@@ -3117,6 +3189,16 @@ if test -n "$_host"; then
 			_eventrec=no
 			_port_mk="backends/platform/sdl/ps3/ps3.mk"
 			;;
+		psp2)
+			_backend="psp2"
+			_vkeybd=yes
+			_build_scalers=yes
+			_build_hq_scalers=no
+			_mt32emu=no
+			_timidity=no
+			_eventrec=no
+			_port_mk="backends/platform/sdl/psp2/psp2.mk"
+			;;
 		psp)
 			_backend="psp"
 			_build_scalers=no
@@ -3195,7 +3277,7 @@ case $_backend in
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var CXXFLAGS "-Wa,--noexecstack"
 		append_var LDFLAGS "-Wl,-z,noexecstack"
-		append_var INCLUDES "-I$ANDROID_NDK/sources/cxx-stl/system/include"
+		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
 	androidsdl)
 		;;
@@ -3289,6 +3371,17 @@ case $_backend in
 		append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 		append_var LIBS "-lpng"
 		append_var LIBS "-Wl,-Map,mapfile.txt"
+		;;
+	psp2)
+		append_var LIBS "-lvitashaders -lSDL2 -lvita2d_fbo -lSceCommonDialog_stub"
+		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
+		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
+		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub -lScePgf_stub"
+		append_var DEFINES "-DSDL_BACKEND"
+		add_line_to_config_mk "SDL_BACKEND = 1"
+		add_line_to_config_mk "USE_SDL2 = 1"
+		append_var MODULES "backends/platform/sdl"
+		append_var INCLUDES "-I$VITASDK/arm-vita-eabi/include/SDL2"
 		;;
 	samsungtv)
 		append_var DEFINES "-DSAMSUNGTV"
@@ -3400,7 +3493,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | psp2 | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3476,7 +3569,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | wii | wince)
 		_posix=no
 		;;
 	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
@@ -3647,7 +3740,7 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
-	*mingw32*)
+	*mingw32* | mingw64)
 		_plugin_prefix=""
 		_plugin_suffix=".dll"
 _mak_plugins='
@@ -4052,7 +4145,8 @@ EOF
 	cc_check $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
 fi
 if test "$_zlib" = yes ; then
-	append_var LIBS "$ZLIB_LIBS -lz"
+	append_var ZLIB_LIBS "-lz"
+	append_var LIBS "$ZLIB_LIBS"
 	append_var INCLUDES "$ZLIB_CFLAGS"
 fi
 define_in_config_if_yes "$_zlib" 'USE_ZLIB'
@@ -4184,6 +4278,9 @@ if test "$_libcurl" != "no"; then
 		case $_host_os in
 			amigaos*)
 				append_var LIBCURL_LIBS "-lpthread"
+			;;
+			psp2*)
+				append_var LIBCURL_LIBS "-lssl -lcrypto"
 			;;
 		esac
 
@@ -5310,6 +5407,8 @@ EXEPRE := $HOSTEXEPRE
 EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
+ZLIB_LIBS := $ZLIB_LIBS
+ZLIB_CFLAGS := $ZLIB_CFLAGS
 
 prefix = $prefix
 exec_prefix = $exec_prefix

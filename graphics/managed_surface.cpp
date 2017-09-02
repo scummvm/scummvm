@@ -166,15 +166,60 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 	Common::Rect srcBounds = srcRect;
 	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(),
 		destPos.y + srcRect.height());
-	assert(src.format.bytesPerPixel == format.bytesPerPixel);
+	uint destPixel;
+	byte rSrc, gSrc, bSrc, aSrc;
+	byte rDest, gDest, bDest;
+	double alpha;
 
 	if (!srcRect.isValidRect() || !clip(srcBounds, destBounds))
 		return;
 
+	if (format != src.format) {
+		// When the pixel format differs, both source an dest must be
+		// 2 or 4 bytes per pixel
+		assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4);
+		assert(src.format.bytesPerPixel == 2 || src.format.bytesPerPixel == 4);
+	}
+
 	for (int y = 0; y < srcBounds.height(); ++y) {
 		const byte *srcP = (const byte *)src.getBasePtr(srcBounds.left, srcBounds.top + y);
 		byte *destP = (byte *)getBasePtr(destBounds.left, destBounds.top + y);
-		Common::copy(srcP, srcP + srcBounds.width() * format.bytesPerPixel, destP);
+
+		if (src.format == format) {
+			// Matching surface formats, so we can do a straight copy
+			Common::copy(srcP, srcP + srcBounds.width() * format.bytesPerPixel, destP);
+		} else {
+			for (int x = 0; x < srcBounds.width(); ++x,
+					srcP += src.format.bytesPerPixel,
+					destP += format.bytesPerPixel) {
+				src.format.colorToARGB(src.format.bytesPerPixel == 2 ? *(const uint16 *)srcP : *(const uint32 *)srcP,
+					aSrc, rSrc, gSrc, bSrc);
+				format.colorToRGB(format.bytesPerPixel == 2 ? *(const uint16 *)destP : *(const uint32 *)destP,
+					rDest, gDest, bDest);
+
+				if (aSrc == 0) {
+					// Completely transparent, so skip
+					continue;
+				} else if (aSrc == 0xff) {
+					// Completely opaque, so copy RGB values over
+					rDest = rSrc;
+					gDest = gSrc;
+					bDest = bSrc;
+				} else {
+					// Partially transparent, so calculate new pixel colors
+					alpha = (double)aSrc / 255.0;
+					rDest = static_cast<byte>((rSrc * alpha) + (rDest * (1.0 - alpha)));
+					gDest = static_cast<byte>((gSrc * alpha) + (gDest * (1.0 - alpha)));
+					bDest = static_cast<byte>((bSrc * alpha) + (bDest * (1.0 - alpha)));
+				}
+
+				destPixel = format.ARGBToColor(0xff, rDest, gDest, bDest);
+				if (format.bytesPerPixel == 2)
+					*(uint16 *)destP = destPixel;
+				else
+					*(uint32 *)destP = destPixel;
+			}
+		}
 	}
 
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
@@ -197,48 +242,84 @@ void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRe
 		destPos.x + src.w, destPos.y + src.h), transColor, false, overrideColor);
 }
 
-template<typename T>
-void transBlit(const Surface &src, const Common::Rect &srcRect, Surface *dest, const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor) {
+template<typename TSRC, typename TDEST>
+void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, const Common::Rect &destRect, TSRC transColor, bool flipped, uint overrideColor) {
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
+	const Graphics::PixelFormat &srcFormat = src.format;
+	const Graphics::PixelFormat &destFormat = dest.format;
+	byte aSrc, rSrc, gSrc, bSrc;
+	byte rDest, gDest, bDest;
+	double alpha;
 
 	// Loop through drawing output lines
 	for (int destY = destRect.top, scaleYCtr = 0; destY < destRect.bottom; ++destY, scaleYCtr += scaleY) {
-		if (destY < 0 || destY >= dest->h)
+		if (destY < 0 || destY >= dest.h)
 			continue;
-		const T *srcLine = (const T *)src.getBasePtr(0, scaleYCtr / SCALE_THRESHOLD);
-		T *destLine = (T *)dest->getBasePtr(destRect.left, destY);
+		const TSRC *srcLine = (const TSRC *)src.getBasePtr(srcRect.left, scaleYCtr / SCALE_THRESHOLD + srcRect.top);
+		TDEST *destLine = (TDEST *)dest.getBasePtr(destRect.left, destY);
 
 		// Loop through drawing the pixels of the row
 		for (int destX = destRect.left, xCtr = 0, scaleXCtr = 0; destX < destRect.right; ++destX, ++xCtr, scaleXCtr += scaleX) {
-			if (destX < 0 || destX >= dest->w)
+			if (destX < 0 || destX >= dest.w)
 				continue;
 
-			T srcVal = srcLine[flipped ? src.w - scaleXCtr / SCALE_THRESHOLD - 1 : scaleXCtr / SCALE_THRESHOLD];
-			if (srcVal != transColor) {
+			TSRC srcVal = srcLine[flipped ? src.w - scaleXCtr / SCALE_THRESHOLD - 1 : scaleXCtr / SCALE_THRESHOLD];
+			if (srcVal == transColor)
+				continue;
+
+			if (srcFormat == destFormat) {
+				// Matching formats, so we can do a straight copy
 				destLine[xCtr] = overrideColor ? overrideColor : srcVal;
+			} else {
+				// Otherwise we have to manually decode and re-encode each pixel
+				srcFormat.colorToARGB(*srcLine, aSrc, rSrc, gSrc, bSrc);
+				destFormat.colorToRGB(destLine[xCtr], rDest, gDest, bDest);
+
+				if (aSrc == 0) {
+					// Completely transparent, so skip
+					continue;
+				} else if (aSrc == 0xff) {
+					// Completely opaque, so copy RGB values over
+					rDest = rSrc;
+					gDest = gSrc;
+					bDest = bSrc;
+				} else {
+					// Partially transparent, so calculate new pixel colors
+					alpha = (double)aSrc / 255.0;
+					rDest = static_cast<byte>((rSrc * alpha) + (rDest * (1.0 - alpha)));
+					gDest = static_cast<byte>((gSrc * alpha) + (gDest * (1.0 - alpha)));
+					bDest = static_cast<byte>((bSrc * alpha) + (bDest * (1.0 - alpha)));
+				}
+
+				destLine[xCtr] = destFormat.ARGBToColor(0xff, rDest, gDest, bDest);
 			}
 		}
 	}
 }
+
+#define HANDLE_BLIT(SRC_BYTES, DEST_BYTES, SRC_TYPE, DEST_TYPE) \
+	if (src.format.bytesPerPixel == SRC_BYTES && format.bytesPerPixel == DEST_BYTES) \
+		transBlit<SRC_TYPE, DEST_TYPE>(src, srcRect, _innerSurface, destRect, transColor, flipped, overrideColor); \
+	else
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRect,
 	const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor) {
 	if (src.w == 0 || src.h == 0 || destRect.width() == 0 || destRect.height() == 0)
 		return;
 
-	if (format.bytesPerPixel == 1)
-		transBlit<byte>(src, srcRect, &_innerSurface, destRect, transColor, flipped, overrideColor);
-	else if (format.bytesPerPixel == 2)
-		transBlit<uint16>(src, srcRect, &_innerSurface, destRect, transColor, flipped, overrideColor);
-	else if (format.bytesPerPixel == 4)
-		transBlit<uint32>(src, srcRect, &_innerSurface, destRect, transColor, flipped, overrideColor);
-	else
+	HANDLE_BLIT(1, 1, byte, byte)
+	HANDLE_BLIT(2, 2, uint16, uint16)
+	HANDLE_BLIT(4, 4, uint32, uint32)
+	HANDLE_BLIT(2, 4, uint16, uint32)
+	HANDLE_BLIT(4, 2, uint32, uint16)
 		error("Surface::transBlitFrom: bytesPerPixel must be 1, 2, or 4");
 
 	// Mark the affected area
 	addDirtyRect(destRect);
 }
+
+#undef HANDLE_BLIT
 
 void ManagedSurface::markAllDirty() {
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));

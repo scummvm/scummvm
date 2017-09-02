@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,6 +18,10 @@
 #ifndef MT32EMU_B_REVERB_MODEL_H
 #define MT32EMU_B_REVERB_MODEL_H
 
+#include "globals.h"
+#include "internals.h"
+#include "Types.h"
+
 namespace MT32Emu {
 
 struct BReverbSettings {
@@ -27,11 +31,11 @@ struct BReverbSettings {
 	const Bit32u * const combSizes;
 	const Bit32u * const outLPositions;
 	const Bit32u * const outRPositions;
-	const Bit32u * const filterFactors;
-	const Bit32u * const feedbackFactors;
-	const Bit32u * const dryAmps;
-	const Bit32u * const wetLevels;
-	const Bit32u lpfAmp;
+	const Bit8u * const filterFactors;
+	const Bit8u * const feedbackFactors;
+	const Bit8u * const dryAmps;
+	const Bit8u * const wetLevels;
+	const Bit8u lpfAmp;
 };
 
 class RingBuffer {
@@ -56,23 +60,23 @@ public:
 
 class CombFilter : public RingBuffer {
 protected:
-	const Bit32u filterFactor;
-	Bit32u feedbackFactor;
+	const Bit8u filterFactor;
+	Bit8u feedbackFactor;
 
 public:
-	CombFilter(const Bit32u size, const Bit32u useFilterFactor);
+	CombFilter(const Bit32u size, const Bit8u useFilterFactor);
 	virtual void process(const Sample in);
 	Sample getOutputAt(const Bit32u outIndex) const;
-	void setFeedbackFactor(const Bit32u useFeedbackFactor);
+	void setFeedbackFactor(const Bit8u useFeedbackFactor);
 };
 
 class DelayWithLowPassFilter : public CombFilter {
-	Bit32u amp;
+	Bit8u amp;
 
 public:
-	DelayWithLowPassFilter(const Bit32u useSize, const Bit32u useFilterFactor, const Bit32u useAmp);
+	DelayWithLowPassFilter(const Bit32u useSize, const Bit8u useFilterFactor, const Bit8u useAmp);
 	void process(const Sample in);
-	void setFeedbackFactor(const Bit32u) {}
+	void setFeedbackFactor(const Bit8u) {}
 };
 
 class TapDelayCombFilter : public CombFilter {
@@ -80,7 +84,7 @@ class TapDelayCombFilter : public CombFilter {
 	Bit32u outR;
 
 public:
-	TapDelayCombFilter(const Bit32u useSize, const Bit32u useFilterFactor);
+	TapDelayCombFilter(const Bit32u useSize, const Bit8u useFilterFactor);
 	void process(const Sample in);
 	Sample getLeftOutput() const;
 	Sample getRightOutput() const;
@@ -93,8 +97,8 @@ class BReverbModel {
 
 	const BReverbSettings &currentSettings;
 	const bool tapDelayMode;
-	Bit32u dryAmp;
-	Bit32u wetLevel;
+	Bit8u dryAmp;
+	Bit8u wetLevel;
 
 	static const BReverbSettings &getCM32L_LAPCSettings(const ReverbMode mode);
 	static const BReverbSettings &getMT32Settings(const ReverbMode mode);
@@ -108,11 +112,11 @@ public:
 	void close();
 	void mute();
 	void setParameters(Bit8u time, Bit8u level);
-	void process(const Sample *inLeft, const Sample *inRight, Sample *outLeft, Sample *outRight, unsigned long numSamples);
+	void process(const Sample *inLeft, const Sample *inRight, Sample *outLeft, Sample *outRight, Bit32u numSamples);
 	bool isActive() const;
 	bool isMT32Compatible(const ReverbMode mode) const;
 };
 
-}
+} // namespace MT32Emu
 
-#endif
+#endif // #ifndef MT32EMU_B_REVERB_MODEL_H

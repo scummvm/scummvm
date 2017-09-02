@@ -100,7 +100,7 @@ class Reader {
 
 	void handleFirstHeaders(Common::MemoryReadWriteStream *headers);
 	void parseFirstLine(const Common::String &headers);
-	void parsePathQueryAndAnchor(Common::String path);
+	void parsePathQueryAndAnchor(Common::String pathToParse);
 	void parseQueryParameters();
 
 	void makeWindow(uint32 size);

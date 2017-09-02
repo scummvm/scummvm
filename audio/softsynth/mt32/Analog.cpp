@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,8 +15,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include <cstring>
+#include <cstring>
+
+#include "internals.h"
+
 #include "Analog.h"
+#include "Synth.h"
 
 namespace MT32Emu {
 
@@ -106,7 +110,6 @@ static const Bit32u ACCURATE_LPF_DELTAS_OVERSAMPLED[][ACCURATE_LPF_NUMBER_OF_PHA
 class AbstractLowPassFilter {
 public:
 	static AbstractLowPassFilter &createLowPassFilter(AnalogOutputMode mode, bool oldMT32AnalogLPF);
-	static void muteRingBuffer(SampleEx *ringBuffer, unsigned int length);
 
 	virtual ~AbstractLowPassFilter() {}
 	virtual SampleEx process(SampleEx sample) = 0;
@@ -152,9 +155,9 @@ public:
 	void addPositionIncrement(unsigned int positionIncrement);
 };
 
-Analog::Analog(const AnalogOutputMode mode, const ControlROMFeatureSet *controlROMFeatures) :
-	leftChannelLPF(AbstractLowPassFilter::createLowPassFilter(mode, controlROMFeatures->isOldMT32AnalogLPF())),
-	rightChannelLPF(AbstractLowPassFilter::createLowPassFilter(mode, controlROMFeatures->isOldMT32AnalogLPF())),
+Analog::Analog(const AnalogOutputMode mode, const bool oldMT32AnalogLPF) :
+	leftChannelLPF(AbstractLowPassFilter::createLowPassFilter(mode, oldMT32AnalogLPF)),
+	rightChannelLPF(AbstractLowPassFilter::createLowPassFilter(mode, oldMT32AnalogLPF)),
 	synthGain(0),
 	reverbGain(0)
 {}
@@ -164,7 +167,7 @@ Analog::~Analog() {
 	delete &rightChannelLPF;
 }
 
-void Analog::process(Sample **outStream, const Sample *nonReverbLeft, const Sample *nonReverbRight, const Sample *reverbDryLeft, const Sample *reverbDryRight, const Sample *reverbWetLeft, const Sample *reverbWetRight, Bit32u outLength) {
+void Analog::process(Sample *outStream, const Sample *nonReverbLeft, const Sample *nonReverbRight, const Sample *reverbDryLeft, const Sample *reverbDryRight, const Sample *reverbWetLeft, const Sample *reverbWetRight, Bit32u outLength) {
 	if (outStream == NULL) {
 		leftChannelLPF.addPositionIncrement(outLength);
 		rightChannelLPF.addPositionIncrement(outLength);
@@ -179,8 +182,8 @@ void Analog::process(Sample **outStream, const Sample *nonReverbLeft, const Samp
 			outSampleL = leftChannelLPF.process(0);
 			outSampleR = rightChannelLPF.process(0);
 		} else {
-			SampleEx inSampleL = ((SampleEx)*(nonReverbLeft++) + (SampleEx)*(reverbDryLeft++)) * synthGain + (SampleEx)*(reverbWetLeft++) * reverbGain;
-			SampleEx inSampleR = ((SampleEx)*(nonReverbRight++) + (SampleEx)*(reverbDryRight++)) * synthGain + (SampleEx)*(reverbWetRight++) * reverbGain;
+			SampleEx inSampleL = (SampleEx(*(nonReverbLeft++)) + SampleEx(*(reverbDryLeft++))) * synthGain + SampleEx(*(reverbWetLeft++)) * reverbGain;
+			SampleEx inSampleR = (SampleEx(*(nonReverbRight++)) + SampleEx(*(reverbDryRight++))) * synthGain + SampleEx(*(reverbWetRight++)) * reverbGain;
 
 #if !MT32EMU_USE_FLOAT_SAMPLES
 			inSampleL >>= OUTPUT_GAIN_FRACTION_BITS;
@@ -191,8 +194,8 @@ void Analog::process(Sample **outStream, const Sample *nonReverbLeft, const Samp
 			outSampleR = rightChannelLPF.process(inSampleR);
 		}
 
-		*((*outStream)++) = Synth::clipSampleEx(outSampleL);
-		*((*outStream)++) = Synth::clipSampleEx(outSampleR);
+		*(outStream++) = Synth::clipSampleEx(outSampleL);
+		*(outStream++) = Synth::clipSampleEx(outSampleR);
 	}
 }
 
@@ -236,23 +239,6 @@ AbstractLowPassFilter &AbstractLowPassFilter::createLowPassFilter(AnalogOutputMo
 	}
 }
 
-void AbstractLowPassFilter::muteRingBuffer(SampleEx *ringBuffer, unsigned int length) {
-
-#if MT32EMU_USE_FLOAT_SAMPLES
-
-	SampleEx *p = ringBuffer;
-	while (length--) {
-		*(p++) = 0.0f;
-	}
-
-#else
-
-	memset(ringBuffer, 0, length * sizeof(SampleEx));
-
-#endif
-
-}
-
 bool AbstractLowPassFilter::hasNextSample() const {
 	return false;
 }
@@ -273,7 +259,7 @@ CoarseLowPassFilter::CoarseLowPassFilter(bool oldMT32AnalogLPF) :
 	LPF_TAPS(oldMT32AnalogLPF ? COARSE_LPF_TAPS_MT32 : COARSE_LPF_TAPS_CM32L),
 	ringBufferPosition(0)
 {
-	muteRingBuffer(ringBuffer, COARSE_LPF_DELAY_LINE_LENGTH);
+	Synth::muteSampleBuffer(ringBuffer, COARSE_LPF_DELAY_LINE_LENGTH);
 }
 
 SampleEx CoarseLowPassFilter::process(const SampleEx inSample) {
@@ -303,7 +289,7 @@ AccurateLowPassFilter::AccurateLowPassFilter(const bool oldMT32AnalogLPF, const 
 	ringBufferPosition(0),
 	phase(0)
 {
-	muteRingBuffer(ringBuffer, ACCURATE_LPF_DELAY_LINE_LENGTH);
+	Synth::muteSampleBuffer(ringBuffer, ACCURATE_LPF_DELAY_LINE_LENGTH);
 }
 
 SampleEx AccurateLowPassFilter::process(const SampleEx inSample) {
@@ -345,4 +331,4 @@ void AccurateLowPassFilter::addPositionIncrement(const unsigned int positionIncr
 	phase = (phase + positionIncrement * phaseIncrement) % ACCURATE_LPF_NUMBER_OF_PHASES;
 }
 
-}
+} // namespace MT32Emu

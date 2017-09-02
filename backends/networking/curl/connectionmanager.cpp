@@ -81,7 +81,11 @@ Request *ConnectionManager::addRequest(Request *request, RequestCallback callbac
 Common::String ConnectionManager::urlEncode(Common::String s) const {
 	if (!_multi)
 		return "";
+#if LIBCURL_VERSION_NUM >= 0x070F04
 	char *output = curl_easy_escape(_multi, s.c_str(), s.size());
+#else
+	char *output = curl_escape(s.c_str(), s.size());
+#endif
 	if (output) {
 		Common::String result = output;
 		curl_free(output);

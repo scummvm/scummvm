@@ -24,16 +24,13 @@
 #define GRIM_STUFFIT_H
 
 #include "common/archive.h"
+#include "common/bitstream.h"
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/str.h"
-
-namespace Common {
-class BitStream;
-}
 
 namespace Grim {
 
@@ -72,7 +69,7 @@ private:
 
 	// Decompression Helpers
 	void update14(uint16 first, uint16 last, byte *code, uint16 *freq) const;
-	void readTree14(Common::BitStream *bits, SIT14Data *dat, uint16 codesize, uint16 *result) const;
+	void readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uint16 codesize, uint16 *result) const;
 };
 
 } // End of namespace Grim

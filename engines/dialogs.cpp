@@ -85,11 +85,11 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), 0, kPlayCmd, 'P');
 
 	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", _("~L~oad"), 0, kLoadCmd);
-	// TODO: setEnabled -> setVisible
+	_loadButton->setVisible(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
 	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
 
 	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", _("~S~ave"), 0, kSaveCmd);
-	// TODO: setEnabled -> setVisible
+	_saveButton->setVisible(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Options", _("~O~ptions"), 0, kOptionsCmd);
@@ -231,7 +231,7 @@ void MainMenuDialog::save() {
 
 		Common::Error status = _engine->saveGameState(slot, result);
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Gamestate save failed (%s)! "
+			Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
 				  "Please consult the README for basic information, and for "
 				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);

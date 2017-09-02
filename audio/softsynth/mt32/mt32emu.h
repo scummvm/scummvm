@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,44 +18,67 @@
 #ifndef MT32EMU_MT32EMU_H
 #define MT32EMU_MT32EMU_H
 
-// Configuration
+#include "config.h"
 
-// 0: Use 16-bit signed samples and refined wave generator based on logarithmic fixed-point computations and LUTs. Maximum emulation accuracy and speed.
-// 1: Use float samples in the wave generator and renderer. Maximum output quality and minimum noise.
-#define MT32EMU_USE_FLOAT_SAMPLES 0
+/* API Configuration */
 
-namespace MT32Emu
-{
-// Sample rate to use in mixing. With the progress of development, we've found way too many thing dependent.
-// In order to achieve further advance in emulation accuracy, sample rate made fixed throughout the emulator,
-// except the emulation of analogue path.
-// The output from the synth is supposed to be resampled externally in order to convert to the desired sample rate.
-const unsigned int SAMPLE_RATE = 32000;
+/* 0: Use full-featured C++ API. Well suitable when the library is to be linked statically.
+ *    When the library is shared, ABI compatibility may be an issue. Therefore, it should
+ *    only be used within a project comprising of several modules to share the library code.
+ * 1: Use C-compatible API. Make the library looks as a regular C library with well-defined ABI.
+ *    This is also crucial when the library is to be linked with modules in a different
+ *    language, either statically or dynamically.
+ * 2: Use plugin-like API via C-interface wrapped in a C++ class. This is mainly intended
+ *    for a shared library being dynamically loaded in run-time. To get access to all the library
+ *    services, a client application only needs to bind with a single factory function.
+ * 3: Use optimised C++ API compatible with the plugin API (type 2). The facade class also wraps
+ *    the C functions but they are invoked directly. This enables the compiler to generate better
+ *    code for the library when linked statically yet being consistent with the plugin-like API.
+ */
 
-// The default value for the maximum number of partials playing simultaneously.
-const unsigned int DEFAULT_MAX_PARTIALS = 32;
+#ifdef MT32EMU_API_TYPE
+#if MT32EMU_API_TYPE == 0 && (MT32EMU_EXPORTS_TYPE == 1 || MT32EMU_EXPORTS_TYPE == 2)
+#error Incompatible setting MT32EMU_API_TYPE=0
+#elif MT32EMU_API_TYPE == 1 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
+#error Incompatible setting MT32EMU_API_TYPE=1
+#elif MT32EMU_API_TYPE == 2 && (MT32EMU_EXPORTS_TYPE == 0)
+#error Incompatible setting MT32EMU_API_TYPE=2
+#elif MT32EMU_API_TYPE == 3 && (MT32EMU_EXPORTS_TYPE == 0)
+#error Incompatible setting MT32EMU_API_TYPE=3
+#endif
+#else /* #ifdef MT32EMU_API_TYPE */
+#if 0 < MT32EMU_EXPORTS_TYPE && MT32EMU_EXPORTS_TYPE < 3
+#define MT32EMU_API_TYPE MT32EMU_EXPORTS_TYPE
+#else
+#define MT32EMU_API_TYPE 0
+#endif
+#endif /* #ifdef MT32EMU_API_TYPE */
 
-// The higher this number, the more memory will be used, but the more samples can be processed in one run -
-// various parts of sample generation can be processed more efficiently in a single run.
-// A run's maximum length is that given to Synth::render(), so giving a value here higher than render() is ever
-// called with will give no gain (but simply waste the memory).
-// Note that this value does *not* in any way impose limitations on the length given to render(), and has no effect
-// on the generated audio.
-// This value must be >= 1.
-const unsigned int MAX_SAMPLES_PER_RUN = 4096;
+/* MT32EMU_SHARED should be defined when building shared library, especially for Windows platforms. */
+/*
+#define MT32EMU_SHARED
+*/
 
-// The default size of the internal MIDI event queue.
-// It holds the incoming MIDI events before the rendering engine actually processes them.
-// The main goal is to fairly emulate the real hardware behaviour which obviously
-// uses an internal MIDI event queue to gather incoming data as well as the delays
-// introduced by transferring data via the MIDI interface.
-// This also facilitates building of an external rendering loop
-// as the queue stores timestamped MIDI events.
-const unsigned int DEFAULT_MIDI_EVENT_QUEUE_SIZE = 1024;
-}
+#include "globals.h"
+
+#if !defined(__cplusplus) || MT32EMU_API_TYPE == 1
+
+#include "c_interface/c_interface.h"
+
+#elif MT32EMU_API_TYPE == 2 || MT32EMU_API_TYPE == 3
+
+#include "c_interface/cpp_interface.h"
+
+#else /* #if !defined(__cplusplus) || MT32EMU_API_TYPE == 1 */
 
 #include "Types.h"
+#include "File.h"
+#include "FileStream.h"
 #include "ROMInfo.h"
 #include "Synth.h"
+#include "MidiStreamParser.h"
+#include "SampleRateConverter.h"
 
-#endif
+#endif /* #if !defined(__cplusplus) || MT32EMU_API_TYPE == 1 */
+
+#endif /* #ifndef MT32EMU_MT32EMU_H */

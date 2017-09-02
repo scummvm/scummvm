@@ -33,10 +33,24 @@
 #include <common/config-manager.h>
 
 #ifdef POSIX
-#include <sys/types.h>
-#include <ifaddrs.h>
-#include <netinet/in.h>
+#include <errno.h>
+#include <unistd.h>
 #include <arpa/inet.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+
+#ifndef SIOCGIFCONF
+#include <sys/sockio.h>
+#endif
+
+#ifndef _SIZEOF_ADDR_IFREQ
+#define _SIZEOF_ADDR_IFREQ sizeof
+#endif
+
+#define LSSDP_BUFFER_LEN 2048
 #endif
 
 namespace Common {
@@ -231,8 +245,8 @@ void LocalWebserver::handleClient(uint32 i) {
 			break;
 
 		// if no handler, answer with default BAD REQUEST
-		// fallthrough
 	}
+	// fall through
 
 	case BAD_REQUEST:
 		setClientGetHandler(_client[i], "<html><head><title>ScummVM - Bad Request</title></head><body>BAD REQUEST</body></html>", 400);
@@ -295,56 +309,70 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 
 	// if not - try platform-specific
 #ifdef POSIX
-	struct ifaddrs *ifAddrStruct = NULL;
 	void *tmpAddrPtr = NULL;
 
-	getifaddrs(&ifAddrStruct);
+	int fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (fd < 0) {
+		warning("LocalWebserver: failed to create socket: %s (%d)", strerror(errno), errno);
+	} else {
+		// get ifconfig
+		char buffer[LSSDP_BUFFER_LEN] = {};
+		struct ifconf ifc;
+		ifc.ifc_len = sizeof(buffer);
+		ifc.ifc_buf = (caddr_t) buffer;
 
-	for (struct ifaddrs *i = ifAddrStruct; i != NULL; i = i->ifa_next) {
-		if (!i->ifa_addr) {
-			continue;
+		if (ioctl(fd, SIOCGIFCONF, &ifc) < 0) {
+		    warning("LocalWebserver: ioctl SIOCGIFCONF failed: %s (%d)", strerror(errno), errno);
+		} else {
+			struct ifreq *i;
+			for (size_t index = 0; index < (size_t)ifc.ifc_len; index += _SIZEOF_ADDR_IFREQ(*i)) {
+				i = (struct ifreq *)(buffer + index);
+
+				Common::String addr;
+
+				// IPv4
+				if (i->ifr_addr.sa_family == AF_INET) {
+					tmpAddrPtr = &((struct sockaddr_in *)&i->ifr_addr)->sin_addr;
+					char addressBuffer[INET_ADDRSTRLEN];
+					inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+					debug(9, "%s IP Address %s", i->ifr_name, addressBuffer);
+					addr = addressBuffer;
+				}
+
+				// IPv6
+				/*
+				if (i->ifr_addr.sa_family == AF_INET6) {
+					tmpAddrPtr = &((struct sockaddr_in6 *)&i->ifr_addr)->sin6_addr;
+					char addressBuffer[INET6_ADDRSTRLEN];
+					inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
+					debug(9, "%s IP Address %s", i->ifr_name, addressBuffer);
+					addr = addressBuffer;
+				}
+				*/
+
+				if (addr.empty())
+					continue;
+
+				// ignored IPv4 addresses
+				if (addr.equals("127.0.0.1") || addr.equals("0.0.0.0") || addr.equals("localhost"))
+					continue;
+
+				// ignored IPv6 addresses
+				/*
+				if (addr.equals("::1"))
+					continue;
+				*/
+
+				// use the address found
+				_address = "http://" + addr + Common::String::format(":%u/", _serverPort);
+			}
 		}
 
-		Common::String addr;
-
-		// IPv4
-		if (i->ifa_addr->sa_family == AF_INET) {
-			tmpAddrPtr = &((struct sockaddr_in *)i->ifa_addr)->sin_addr;
-			char addressBuffer[INET_ADDRSTRLEN];
-			inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-			debug(9, "%s IP Address %s", i->ifa_name, addressBuffer);
-			addr = addressBuffer;
+		// close socket
+		if (close(fd) != 0) {
+			warning("LocalWebserver: failed to close socket [fd %d]: %s (%d)", fd, strerror(errno), errno);
 		}
-
-		// IPv6
-		/*
-		if (i->ifa_addr->sa_family == AF_INET6) {
-			tmpAddrPtr = &((struct sockaddr_in6 *)i->ifa_addr)->sin6_addr;
-			char addressBuffer[INET6_ADDRSTRLEN];
-			inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
-			debug(9, "%s IP Address %s", i->ifa_name, addressBuffer);
-			addr = addressBuffer;
-		}
-		*/
-
-		if (addr.empty())
-			continue;
-
-		// ignored IPv4 addresses
-		if (addr.equals("127.0.0.1") || addr.equals("0.0.0.0") || addr.equals("localhost"))
-			continue;
-
-		// ignored IPv6 addresses
-		/*
-		if (addr.equals("::1"))
-			continue;
-		*/
-
-		// use the address found
-		_address = "http://" + addr + Common::String::format(":%u/", _serverPort);
 	}
-
-	if (ifAddrStruct != NULL) freeifaddrs(ifAddrStruct);
 #endif
 }
 

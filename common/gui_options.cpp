@@ -29,6 +29,8 @@ namespace Common {
 
 const struct GameOpt {
 	const char *option;
+	// Each description must be a unique identifier not containing a substring
+	// of any other description
 	const char *desc;
 } g_gameOptions[] = {
 	{ GUIO_NOSUBTITLES,  "sndNoSubs" },
@@ -36,6 +38,9 @@ const struct GameOpt {
 	{ GUIO_NOSPEECH,     "sndNoSpeech" },
 	{ GUIO_NOSFX,        "sndNoSFX" },
 	{ GUIO_NOMIDI,       "sndNoMIDI" },
+	{ GUIO_LINKSPEECHTOSFX, "sndLinkSpeechToSfx" },
+	{ GUIO_LINKMUSICTOSFX,  "sndLinkMusicToSfx" },
+	{ GUIO_NOSPEECHVOLUME,  "sndNoSpchVolume" },
 
 	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
 
@@ -75,6 +80,9 @@ const struct GameOpt {
 	{ GUIO_GAMEOPTIONS7, "gameOption7" },
 	{ GUIO_GAMEOPTIONS8, "gameOption8" },
 	{ GUIO_GAMEOPTIONS9, "gameOption9" },
+	// Option strings must not contain substrings of any other options, so
+	// "gameOption10" would be invalid here because it contains "gameOption1"
+	{ GUIO_GAMEOPTIONS10, "gameOptionA" },
 
 	{ GUIO_NONE, 0 }
 };

@@ -195,11 +195,11 @@ public:
 	/**
 	* Creates a file referred by this node.
 	*
-	* @param isDirectory true if created file must be a directory
+	* @param isDirectoryFlag true if created file must be a directory
 	*
 	* @return true if file is created successfully
 	*/
-	virtual bool create(bool isDirectory) = 0;
+	virtual bool create(bool isDirectoryFlag) = 0;
 };
 
 

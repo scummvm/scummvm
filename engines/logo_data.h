@@ -1,4 +1,4 @@
-/* ResidualVM - Graphic Adventure Engine
+/* ResidualVM - A 3D game interpreter
  *
  * ResidualVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT

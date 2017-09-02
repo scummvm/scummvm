@@ -108,7 +108,7 @@ protected:
 
 	class SmushAudioTrack : public AudioTrack {
 	public:
-		SmushAudioTrack(bool isVima, int freq = 22050, int channels = -1);
+		SmushAudioTrack(Audio::Mixer::SoundType soundType, bool isVima, int freq = 22050, int channels = -1);
 		~SmushAudioTrack();
 
 		Audio::AudioStream *getAudioStream() const override { return _queueStream; }

@@ -23,10 +23,10 @@
 #ifndef IMAGE_CODECS_SVQ1_H
 #define IMAGE_CODECS_SVQ1_H
 
+#include "common/bitstream.h"
 #include "image/codecs/codec.h"
 
 namespace Common {
-class BitStream;
 class Huffman;
 struct Point;
 }
@@ -60,15 +60,15 @@ private:
 	Common::Huffman *_interMean;
 	Common::Huffman *_motionComponent;
 
-	bool svq1DecodeBlockIntra(Common::BitStream *s, byte *pixels, int pitch);
-	bool svq1DecodeBlockNonIntra(Common::BitStream *s, byte *pixels, int pitch);
-	bool svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv, Common::Point **pmv);
+	bool svq1DecodeBlockIntra(Common::BitStream32BEMSB *s, byte *pixels, int pitch);
+	bool svq1DecodeBlockNonIntra(Common::BitStream32BEMSB *s, byte *pixels, int pitch);
+	bool svq1DecodeMotionVector(Common::BitStream32BEMSB *s, Common::Point *mv, Common::Point **pmv);
 	void svq1SkipBlock(byte *current, byte *previous, int pitch, int x, int y);
-	bool svq1MotionInterBlock(Common::BitStream *ss, byte *current, byte *previous, int pitch,
+	bool svq1MotionInterBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
 			Common::Point *motion, int x, int y);
-	bool svq1MotionInter4vBlock(Common::BitStream *ss, byte *current, byte *previous, int pitch,
+	bool svq1MotionInter4vBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
 			Common::Point *motion, int x, int y);
-	bool svq1DecodeDeltaBlock(Common::BitStream *ss, byte *current, byte *previous, int pitch,
+	bool svq1DecodeDeltaBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
 			Common::Point *motion, int x, int y);
 
 	void putPixels8C(byte *block, const byte *pixels, int lineSize, int h);

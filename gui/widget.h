@@ -107,6 +107,7 @@ private:
 public:
 	static Widget *findWidgetInChain(Widget *start, int x, int y);
 	static Widget *findWidgetInChain(Widget *start, const char *name);
+	static bool containsWidgetInChain(Widget *start, Widget *search);
 
 public:
 	Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0);
@@ -157,6 +158,8 @@ public:
 	bool hasTooltip() const { return !_tooltip.empty(); }
 	const Common::String &getTooltip() const { return _tooltip; }
 	void setTooltip(const Common::String &tooltip) { _tooltip = tooltip; }
+
+	virtual bool containsWidget(Widget *) const { return false; }
 
 protected:
 	void updateState(int oldFlags, int newFlags);
@@ -388,6 +391,7 @@ public:
 	ContainerWidget(GuiObject *boss, const Common::String &name);
 	~ContainerWidget();
 
+	virtual bool containsWidget(Widget *) const;
 	virtual Widget *findWidget(int x, int y);
 	virtual void removeWidget(Widget *widget);
 protected:

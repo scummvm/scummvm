@@ -62,8 +62,8 @@ namespace Video {
  */
 class AVIDecoder : public VideoDecoder {
 public:
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	AVIDecoder();
+	AVIDecoder(const Common::Rational &frameRateOverride);
 	virtual ~AVIDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -210,9 +210,38 @@ protected:
 		bool isRewindable() const { return true; }
 		bool rewind();
 
-	protected:
+		/**
+		 * Set the video track to play in reverse or forward.
+		 *
+		 * By default, a VideoTrack must decode forward.
+		 *
+		 * @param reverse true for reverse, false for forward
+		 * @return true for success, false for failure
+		 */
+		virtual bool setReverse(bool reverse);
+
+		/**
+		 * Is the video track set to play in reverse?
+		 */
+		virtual bool isReversed() const { return _reversed; }
+
+		/**
+		 * Returns true if at the end of the video track
+		 */
+		virtual bool endOfTrack() const;
+
+		/**
+		 * Get track frame rate
+		 */
 		Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
+		/**
+		 * Force sets a new frame rate
+		 */
+		void setFrameRate(const Common::Rational &r) {
+			_vidsHeader.rate = r.getNumerator();
+			_vidsHeader.scale = r.getDenominator();
+		}
 	private:
 		AVIStreamHeader _vidsHeader;
 		BitmapInfoHeader _bmInfo;
@@ -220,6 +249,7 @@ protected:
 		byte *_initialPalette;
 		mutable bool _dirtyPalette;
 		int _frameCount, _curFrame;
+		bool _reversed;
 
 		Image::Codec *_videoCodec;
 		const Graphics::Surface *_lastFrame;
@@ -233,7 +263,6 @@ protected:
 
 		virtual void createAudioStream();
 		virtual void queueSound(Common::SeekableReadStream *stream);
-		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 		void skipAudio(const Audio::Timestamp &time, const Audio::Timestamp &frameTime);
 		virtual void resetStream();
 		uint32 getCurChunk() const { return _curChunk; }
@@ -258,7 +287,6 @@ protected:
 
 		AVIStreamHeader _audsHeader;
 		PCMWaveFormat _wvInfo;
-		Audio::Mixer::SoundType _soundType;
 		Audio::AudioStream *_audioStream;
 		Audio::PacketizedAudioStream *_packetStream;
 		uint32 _curChunk;
@@ -287,7 +315,6 @@ protected:
 	bool _foundMovieList;
 	uint32 _movieListStart, _movieListEnd;
 
-	Audio::Mixer::SoundType _soundType;
 	Common::Rational _frameRateOverride;
 
 	int _videoTrackCounter, _audioTrackCounter;
@@ -307,8 +334,10 @@ protected:
 
 	void handleNextPacket(TrackStatus& status);
 	bool shouldQueueAudio(TrackStatus& status);
-	Common::Array<TrackStatus> _videoTracks, _audioTracks;
+	void seekTransparencyFrame(int frame);
 
+	Common::Array<TrackStatus> _videoTracks, _audioTracks;
+	TrackStatus _transparencyTrack;
 public:
 	virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);
 

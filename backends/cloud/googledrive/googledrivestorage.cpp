@@ -68,8 +68,8 @@ void GoogleDriveStorage::loadKeyAndSecret() {
 #endif
 }
 
-GoogleDriveStorage::GoogleDriveStorage(Common::String accessToken, Common::String refreshToken):
-	_token(accessToken), _refreshToken(refreshToken) {}
+GoogleDriveStorage::GoogleDriveStorage(Common::String token, Common::String refreshToken):
+	_token(token), _refreshToken(refreshToken) {}
 
 GoogleDriveStorage::GoogleDriveStorage(Common::String code) {
 	getAccessToken(
@@ -192,28 +192,28 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 		return;
 	}
 
-	Common::JSONObject info = json->asObject();
+	Common::JSONObject jsonInfo = json->asObject();
 
-	Common::String uid, name, email;
+	Common::String uid, displayName, email;
 	uint64 quotaUsed = 0, quotaAllocated = 0;
 
-	if (Networking::CurlJsonRequest::jsonContainsAttribute(info, "user", "GoogleDriveStorage::infoInnerCallback") &&
-		Networking::CurlJsonRequest::jsonIsObject(info.getVal("user"), "GoogleDriveStorage::infoInnerCallback")) {
+	if (Networking::CurlJsonRequest::jsonContainsAttribute(jsonInfo, "user", "GoogleDriveStorage::infoInnerCallback") &&
+		Networking::CurlJsonRequest::jsonIsObject(jsonInfo.getVal("user"), "GoogleDriveStorage::infoInnerCallback")) {
 		//"me":true, "kind":"drive#user","photoLink": "",
 		//"displayName":"Alexander Tkachev","emailAddress":"alexander@tkachov.ru","permissionId":""
-		Common::JSONObject user = info.getVal("user")->asObject();
+		Common::JSONObject user = jsonInfo.getVal("user")->asObject();
 		if (Networking::CurlJsonRequest::jsonContainsString(user, "permissionId", "GoogleDriveStorage::infoInnerCallback"))
 			uid = user.getVal("permissionId")->asString(); //not sure it's user's id, but who cares anyway?
 		if (Networking::CurlJsonRequest::jsonContainsString(user, "displayName", "GoogleDriveStorage::infoInnerCallback"))
-			name = user.getVal("displayName")->asString();
+			displayName = user.getVal("displayName")->asString();
 		if (Networking::CurlJsonRequest::jsonContainsString(user, "emailAddress", "GoogleDriveStorage::infoInnerCallback"))
 			email = user.getVal("emailAddress")->asString();
 	}
 
-	if (Networking::CurlJsonRequest::jsonContainsAttribute(info, "storageQuota", "GoogleDriveStorage::infoInnerCallback") &&
-		Networking::CurlJsonRequest::jsonIsObject(info.getVal("storageQuota"), "GoogleDriveStorage::infoInnerCallback")) {
+	if (Networking::CurlJsonRequest::jsonContainsAttribute(jsonInfo, "storageQuota", "GoogleDriveStorage::infoInnerCallback") &&
+		Networking::CurlJsonRequest::jsonIsObject(jsonInfo.getVal("storageQuota"), "GoogleDriveStorage::infoInnerCallback")) {
 		//"usageInDrive":"6332462","limit":"18253611008","usage":"6332462","usageInDriveTrash":"0"
-		Common::JSONObject storageQuota = info.getVal("storageQuota")->asObject();
+		Common::JSONObject storageQuota = jsonInfo.getVal("storageQuota")->asObject();
 
 		if (Networking::CurlJsonRequest::jsonContainsString(storageQuota, "usage", "GoogleDriveStorage::infoInnerCallback")) {
 			Common::String usage = storageQuota.getVal("usage")->asString();
@@ -229,7 +229,7 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 	CloudMan.setStorageUsername(kStorageGoogleDriveId, email);
 
 	if (outerCallback) {
-		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaUsed, quotaAllocated)));
+		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, displayName, email, quotaUsed, quotaAllocated)));
 		delete outerCallback;
 	}
 
@@ -246,8 +246,8 @@ void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback
 
 	if (outerCallback) {
 		if (Networking::CurlJsonRequest::jsonIsObject(json, "GoogleDriveStorage::createDirectoryInnerCallback")) {
-			Common::JSONObject info = json->asObject();
-			(*outerCallback)(BoolResponse(nullptr, info.contains("id")));
+			Common::JSONObject jsonInfo = json->asObject();
+			(*outerCallback)(BoolResponse(nullptr, jsonInfo.contains("id")));
 		} else {
 			(*outerCallback)(BoolResponse(nullptr, false));
 		}
@@ -289,7 +289,7 @@ void GoogleDriveStorage::printInfo(StorageInfoResponse response) {
 	debug(9, "\tdisk usage: %lu/%lu", response.value.used(), response.value.available());
 }
 
-Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::String parentId, Common::String directoryName, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback)
 		errorCallback = getErrorPrintingCallback();
 
@@ -304,7 +304,7 @@ Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(Common::Str
 
 	Common::JSONObject jsonRequestParameters;
 	jsonRequestParameters.setVal("mimeType", new Common::JSONValue("application/vnd.google-apps.folder"));
-	jsonRequestParameters.setVal("name", new Common::JSONValue(name));
+	jsonRequestParameters.setVal("name", new Common::JSONValue(directoryName));
 	jsonRequestParameters.setVal("parents", new Common::JSONValue(parentsArray));
 
 	Common::JSONValue value(jsonRequestParameters);

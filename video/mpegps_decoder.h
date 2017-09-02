@@ -113,7 +113,7 @@ private:
 	// An MPEG audio track
 	class MPEGAudioTrack : public AudioTrack, public MPEGStream {
 	public:
-		MPEGAudioTrack(Common::SeekableReadStream &firstPacket);
+		MPEGAudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType);
 		~MPEGAudioTrack();
 
 		bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts);
@@ -129,7 +129,7 @@ private:
 // ResidualVM specific start
 	class PS2AudioTrack : public AudioTrack, public MPEGStream {
 	public:
-		PS2AudioTrack(Common::SeekableReadStream *firstPacket);
+		PS2AudioTrack(Common::SeekableReadStream *firstPacket, Audio::Mixer::SoundType soundType);
 		~PS2AudioTrack();
 
 		bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts);

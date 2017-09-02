@@ -10,8 +10,8 @@ TEST_LIBS    := audio/libaudio.a math/libmath.a common/libcommon.a
 
 #
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh --include=$(srcdir)/test/cxxtest_mingw.h
-TEST_CFLAGS  := -I$(srcdir)/test/cxxtest
-TEST_LDFLAGS := $(LIBS)
+TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest
+TEST_LDFLAGS := $(LDFLAGS) $(LIBS)
 TEST_CXXFLAGS := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
 
 ifdef HAVE_GCC3
@@ -29,11 +29,10 @@ endif
 test: test/runner
 	./test/runner
 test/runner: test/runner.cpp $(TEST_LIBS)
-	$(QUIET_LINK)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -o $@ $+ $(TEST_LDFLAGS)
+	$(QUIET_CXX)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -o $@ $+ $(TEST_LDFLAGS)
 test/runner.cpp: $(TESTS)
 	@mkdir -p test
 	$(srcdir)/test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+
-
 
 clean: clean-test
 clean-test:

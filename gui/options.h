@@ -86,7 +86,10 @@ protected:
 	virtual void clean();
 	void rebuild();
 
+
+	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
+	void addShaderControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
 	void addMT32Controls(GuiObject *boss, const Common::String &prefix);
@@ -112,6 +115,23 @@ protected:
 	int _pathsTabId;
 
 private:
+	
+	//
+	// Control controls
+	//
+	bool _enableControlSettings;
+
+	CheckboxWidget *_touchpadCheckbox;
+	CheckboxWidget *_onscreenCheckbox;
+	CheckboxWidget *_swapMenuAndBackBtnsCheckbox;
+
+	StaticTextWidget *_kbdMouseSpeedDesc;
+	SliderWidget *_kbdMouseSpeedSlider;
+	StaticTextWidget *_kbdMouseSpeedLabel;
+	StaticTextWidget *_joystickDeadzoneDesc;
+	SliderWidget *_joystickDeadzoneSlider;
+	StaticTextWidget *_joystickDeadzoneLabel;
+
 	//
 	// Graphics controls
 	//
@@ -126,6 +146,13 @@ private:
 	PopUpWidget *_rendererTypePopUp; // ResidualVM specific
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
+	
+	//
+	// Shader controls
+	//
+	bool _enableShaderSettings;
+	StaticTextWidget *_shaderPopUpDesc;
+	PopUpWidget *_shaderPopUp;
 
 	//
 	// Audio controls
@@ -178,6 +205,9 @@ private:
 	//
 	// Volume controls
 	//
+	void updateMusicVolume(const int newValue) const;
+	void updateSfxVolume(const int newValue) const;
+	void updateSpeechVolume(const int newValue) const;
 	bool _enableVolumeSettings;
 
 	StaticTextWidget *_musicVolumeDesc;

@@ -70,6 +70,15 @@ void EventDispatcher::dispatch() {
 	}
 }
 
+void EventDispatcher::clearEvents() {
+	Event event;
+
+	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
+		while (i->source->pollEvent(event)) {}
+	}
+}
+
+
 void EventDispatcher::registerMapper(EventMapper *mapper, bool autoFree) {
 	if (_autoFreeMapper) {
 		delete _mapper;

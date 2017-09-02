@@ -37,6 +37,13 @@ MODULE_OBJS += \
 	ps3/ps3.o
 endif
 
+ifdef PSP2
+CC=arm-vita-eabi-gcc
+MODULE_OBJS += \
+	psp2/psp2-main.o \
+	psp2/psp2.o
+endif
+
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 OBJS := $(MODULE_OBJS) $(OBJS)

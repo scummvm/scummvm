@@ -40,6 +40,7 @@ class NetworkReadStream: public Common::MemoryReadWriteStream {
 	const byte *_sendingContentsBuffer;
 	uint32 _sendingContentsSize;
 	uint32 _sendingContentsPos;
+	byte* _bufferCopy; // To use with old curl version where CURLOPT_COPYPOSTFIELDS is not available
 	Common::String _responseHeaders;
 	uint64 _progressDownloaded, _progressTotal;
 	void init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
@@ -128,7 +129,7 @@ public:
 	*
 	* @returns how many bytes were actually read
 	*/
-	uint32 addResponseHeaders(char *buffer, uint32 size);
+	uint32 addResponseHeaders(char *buffer, uint32 bufferSize);
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;

@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
 
 			msvcVersion = atoi(argv[++i]);
 
-			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12 && msvcVersion != 14) {
+			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12 && msvcVersion != 14 && msvcVersion != 15) {
 				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
 				return -1;
 			}
@@ -299,6 +299,19 @@ int main(int argc, char *argv[]) {
 
 		for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 			j->enable = false;
+	}
+	
+	// Disable engines for which we are missing dependencies
+	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
+		if (i->enable) {
+			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
+				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
+				if (feature != setup.features.end() && !feature->enable) {
+					setEngineBuildState(i->name, setup.engines, false);
+					break;
+				}
+			}
+		}
 	}
 
 	// Print status
@@ -566,7 +579,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("6385");
 		globalWarnings.push_back("6386");
 
-		if (msvcVersion == 14) {
+		if (msvcVersion == 14 || msvcVersion == 15) {
 			globalWarnings.push_back("4267");
 			globalWarnings.push_back("4577");
 		}
@@ -688,7 +701,8 @@ void displayHelp(const char *exe) {
 	        "                           11 stands for \"Visual Studio 2012\"\n"
 	        "                           12 stands for \"Visual Studio 2013\"\n"
 	        "                           14 stands for \"Visual Studio 2015\"\n"
-	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
+	        "                           15 stands for \"Visual Studio 2017\"\n"
+	        "                           The default is \"12\", thus \"Visual Studio 2013\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
 	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
@@ -906,7 +920,7 @@ namespace {
  */
 bool parseEngine(const std::string &line, EngineDesc &engine) {
 	// Format:
-	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"]
+	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"] ["base games"] ["dependencies"]
 	TokenList tokens = tokenize(line);
 
 	if (tokens.size() < 4)
@@ -921,8 +935,14 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 	engine.name = *token; ++token;
 	engine.desc = *token; ++token;
 	engine.enable = (*token == "yes"); ++token;
-	if (token != tokens.end())
+	if (token != tokens.end()) {
 		engine.subEngines = tokenize(*token);
+		++token;
+		if (token != tokens.end())
+			++token;
+		if (token != tokens.end())
+			engine.requiredFeatures = tokenize(*token);
+	}
 
 	return true;
 }
@@ -1427,7 +1447,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
 		in.push_back(setup.srcDir + "/NEWS");
-		in.push_back(setup.srcDir + "/README.md"); // ResidualVM change
+		in.push_back(setup.srcDir + "/README.md");
 		in.push_back(setup.srcDir + "/TODO");
 
 		// Create the main project file.
@@ -1522,7 +1542,8 @@ void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &p
 	StringList duplicate;
 
 	for (StringList::const_iterator i = includeList.begin(); i != includeList.end(); ++i) {
-		const std::string fileName = getLastPathComponent(*i);
+		std::string fileName = getLastPathComponent(*i);
+		std::transform(fileName.begin(), fileName.end(), fileName.begin(), tolower);
 
 		// Leave out non object file names.
 		if (fileName.size() < 2 || fileName.compare(fileName.size() - 2, 2, ".o"))
@@ -1535,7 +1556,9 @@ void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &p
 		// Search for duplicates
 		StringList::const_iterator j = i; ++j;
 		for (; j != includeList.end(); ++j) {
-			if (fileName == getLastPathComponent(*j)) {
+			std::string candidateFileName = getLastPathComponent(*j);
+			std::transform(candidateFileName.begin(), candidateFileName.end(), candidateFileName.begin(), tolower);
+			if (fileName == candidateFileName) {
 				duplicate.push_back(fileName);
 				break;
 			}
@@ -1741,18 +1764,20 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
 				shouldInclude.push(false);
 			else
-				shouldInclude.push(true);
+				shouldInclude.push(true && shouldInclude.top());
 		} else if (*i == "ifndef") {
 			if (tokens.size() < 2)
 				error("Malformed ifndef in " + moduleMkFile);
 			++i;
 
 			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
-				shouldInclude.push(true);
+				shouldInclude.push(true && shouldInclude.top());
 			else
 				shouldInclude.push(false);
 		} else if (*i == "else") {
-			shouldInclude.top() = !shouldInclude.top();
+			bool last = shouldInclude.top();
+			shouldInclude.pop();
+			shouldInclude.push(!last && shouldInclude.top());
 		} else if (*i == "endif") {
 			if (shouldInclude.size() <= 1)
 				error("endif without ifdef found in " + moduleMkFile);

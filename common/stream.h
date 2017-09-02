@@ -185,6 +185,32 @@ public:
 	}
 #endif
 
+
+	/**
+	 * Write the given 32-bit floating point value stored
+	 * in little endian(LSB first) order into the stream.
+	 */
+	FORCEINLINE void writeFloatLE(float value) {
+		uint32 n;
+
+		memcpy(&n, &value, 4);
+
+		writeUint32LE(n);
+	}
+
+
+	/**
+	 * Write the given 32-bit floating point value stored
+	 * in big endian order into the stream.
+	 */
+	FORCEINLINE void writeFloatBE(float value) {
+		uint32 n;
+
+		memcpy(&n, &value, 4);
+
+		writeUint32BE(n);
+	}
+
 	/**
 	 * Write the given string to the stream.
 	 * This writes str.size() characters, but no terminating zero byte.
@@ -418,6 +444,22 @@ public:
 	}
 
 	/**
+	 * Read a 32-bit floating point value stored in big endian
+	 * order from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE float readFloatBE() {
+		uint32 n = readUint32BE();
+		float f;
+
+		memcpy(&f, &n, 4);
+
+		return f;
+	}
+
+	/**
 	 * Read the specified amount of data into a malloc'ed buffer
 	 * which then is wrapped into a MemoryReadStream.
 	 * The returned stream might contain less data than requested,
@@ -426,6 +468,14 @@ public:
 	 * calling err() and eos().
 	 */
 	SeekableReadStream *readStream(uint32 dataSize);
+
+	/**
+	 * Read stream in Pascal format, that is, one byte is
+	 * string length, followed by string data
+	 *
+	 * @param transformCR	if set (default), then transform \r into \n
+	 */
+	Common::String readPascalString(bool transformCR = true);
 
 };
 
