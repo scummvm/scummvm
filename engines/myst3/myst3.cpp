@@ -148,6 +148,9 @@ Common::Error Myst3Engine::run() {
 	}
 
 	_gfx = createRenderer(_system);
+	_gfx->init();
+	_gfx->clear();
+
 	_frameLimiter = new FrameLimiter(_system, ConfMan.getInt("engine_speed"));
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);
@@ -167,8 +170,6 @@ Common::Error Myst3Engine::run() {
 	_system->showMouse(false);
 
 	openArchives();
-
-	_gfx->init();
 
 	_cursor = new Cursor(this);
 	_inventory = new Inventory(this);
