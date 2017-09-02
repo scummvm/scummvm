@@ -35,7 +35,6 @@ private:
 	CMatrixTransform resize(double factor) const;
 public:
 	double _field0;
-	//DVector _vector;
 	FVector _vector;
 public:
 	CMatrixTransform() : _field0(1.0) {}

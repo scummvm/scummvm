@@ -51,21 +51,11 @@ FMatrix::FMatrix(const FVector &row1, const FVector &row2, const FVector &row3) 
 	_row3 = row3;
 }
 
-/*FMatrix::FMatrix(const DAffine &src) {
-	copyFrom(src);
-}*/
-
 FMatrix::FMatrix(const FMatrix &src) {
 	_row1 = src._row1;
 	_row2 = src._row2;
 	_row3 = src._row3;
 }
-
-/*void FMatrix::copyFrom(const DAffine &src) {
-	_row1 = src._col1;
-	_row2 = src._col2;
-	_row3 = src._col3;
-}*/
 
 void FMatrix::load(SimpleFile *file, int param) {
 	_row1._x = file->readFloat();
@@ -114,12 +104,6 @@ void FMatrix::set(const FVector &row1, const FVector &row2, const FVector &row3)
 	_row2 = row2;
 	_row3 = row3;
 }
-
-/*void FMatrix::set(const DVector &row1, const DVector &row2, const DVector &row3) {
-	_row1 = row1;
-	_row2 = row2;
-	_row3 = row3;
-}*/
 
 void FMatrix::set(const FVector &v) {
 	_row3 = v;

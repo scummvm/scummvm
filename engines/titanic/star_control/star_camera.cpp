@@ -23,7 +23,6 @@
 #include "titanic/star_control/star_camera.h"
 #include "titanic/debugger.h"
 #include "titanic/star_control/camera_mover.h"
-#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/marked_camera_mover.h"
@@ -324,21 +323,18 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		FVector mrow1, mrow2, mrow3;
 		FVector tempV1, diffV, multV, multV2, tempV3, tempV7;
 
-		//DAffine subX(0, _lockedStarsPos._row1);
 		FPose subX(0, _lockedStarsPos._row1);
 		FPose subY(Y_AXIS, angles._y);
-		//DAffine subY(Y_AXIS, angles._y);
 
 		tempV1 = _lockedStarsPos._row2 - _lockedStarsPos._row1;
 		diffV = tempV1;
 		m1 = diffV.formRotXY();
 		FPose m11;
 		fposeProd(m1,subX,m11);
-		//m1 = m1.compose(subX);
+
 		subX = m11.inverseTransform();
 		FPose m12;
 		fposeProd(subX,subY,m12);
-		//subX = subX.compose(subY);
 
 		FMatrix m3 = _viewport.getOrientation();
 		tempV2 = _viewport._position;
@@ -524,15 +520,11 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 
 	_isInLockingProcess = true;
 	FVector firstStarPosition = _lockedStarsPos._row1;
-	//DAffine m2(0, firstStarPosition); // Identity matrix and col4 as the 1st stars position
 	FPose m3(0, firstStarPosition); // Identity matrix and row4 as the 1st stars position
 	FVector starDelta = secondStarPosition - firstStarPosition;
-	//DAffine m1 = starDelta.formRotXY();
 	FPose m10 = starDelta.formRotXY();
 	FPose m11;
 	fposeProd(m10,m3,m11);
-	//m1 = m1.compose(m2);
-	//m2 = m1.inverseTransform();
 	
 	float A[16]={m11._row1._x,m11._row1._y,m11._row1._z, 0.0,
 				 m11._row2._x,m11._row2._y,m11._row2._z, 0.0,
@@ -549,11 +541,6 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	m10._vector._z=B[14];
 
 	FVector oldPos = _viewport._position;
-	//DAffine m5;
-	//m5._col1 = viewport->_position;
-	//m5._col2 = FVector(0.0, 0.0, 0.0);
-	//m5._col3 = FVector(0.0, 0.0, 0.0);
-	//m5._col4 = FVector(0.0, 0.0, 0.0);
 
 	FPose m4;
 	m4._row1 = viewport->_position;
@@ -589,10 +576,7 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	m4._vector = tempV3;
 
 
-	//FVector viewPosition = oldPos.MatProdColVect(m2);
 	FVector viewPosition2 = oldPos.MatProdRowVect(m10);
-	//m4 = m4.compose2(m2);
-	//fposeProd(m4,m10,m3);
 	m3 = m4.compose2(m10);
 
 	float minDistance;
@@ -602,9 +586,7 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	float minDegree = calcAngleForMinDist(x1,x2,minDistance);
 
 	m3.rotVectAxisY((double)minDegree);
-	//m4 = m4.compose2(m1);
 	FPose m13;
-	//fposeProd(m3,m11,m13);
 	m13 = m3.compose2(m11);
 
 	m13._row3 -= m13._row1;

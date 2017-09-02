@@ -21,8 +21,6 @@
  */
 
 #include "titanic/star_control/fvector.h"
-//#include "titanic/star_control/dvector.h"
-//#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fpose.h"
 //#include "common/algorithm.h"
 //#include "common/textconsole.h"
@@ -131,7 +129,6 @@ FPose FVector::getFrameTransform(const FVector &v) {
 	FVector vector1 = getAnglesAsVect();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * Rad2Deg);
 	matrix2.setRotationMatrix(Y_AXIS, vector1._z * Rad2Deg);
-	//matrix3 = matrix1.compose(matrix2);
 	fposeProd(matrix1,matrix2,matrix3);
 	matrix4 = matrix3.inverseTransform();
 
@@ -139,19 +136,10 @@ FPose FVector::getFrameTransform(const FVector &v) {
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * Rad2Deg);
 	matrix2.setRotationMatrix(Y_AXIS, vector1._z * Rad2Deg);
 	fposeProd(matrix1,matrix2,matrix3);
-	//matrix3 = matrix1.compose(matrix2);
 	fposeProd(matrix4,matrix3,matrix1);
 
-	return matrix1; //matrix4.compose(matrix3);
+	return matrix1;
 }
-
-/*DAffine FVector::formRotXY() const {
-	FVector v1 = getAnglesAsVect();
-	DAffine m1, m2;
-	m1.setRotationMatrix(X_AXIS, v1._y * Rad2Deg);
-	m2.setRotationMatrix(Y_AXIS, v1._z * Rad2Deg);
-	return m1.compose(m2);
-}*/
 
 FPose FVector::formRotXY() const {
 	FVector v1 = getAnglesAsVect();

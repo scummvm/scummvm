@@ -32,8 +32,6 @@ const double Deg2Rad = 1.0 / Rad2Deg;
 enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
 
 class FPose;
-//class DVector;
-//class DAffine;
 
 /**
  * Floating point vector class.
@@ -45,7 +43,6 @@ public:
 public:
 	FVector() : _x(0), _y(0), _z(0) {}
 	FVector(float x, float y, float z) : _x(x), _y(y), _z(z) {}
-	//FVector(const DVector &src);
 
 	/**
 	 * Clears the vector
@@ -123,7 +120,6 @@ public:
 	 * Constructs an affine matrix that does a x then a y axis frame rotation
 	 * based on the orientation of this vector
 	 */
-	//DAffine formRotXY() const;
 	FPose formRotXY() const;
 
 	/**
