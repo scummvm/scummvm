@@ -38,7 +38,7 @@ public:
 	FPose();
 	FPose(Axis axis, float amount);
 	FPose(const FPose &src);
-
+	FPose(int mode, const FVector &src);
 	/**
 	 * This fpose is the fpose product of s1 (on the left) and s2 (on the right)
 	 */
@@ -55,6 +55,10 @@ public:
 	void setRotationMatrix(Axis axis, float val);
 
 	/**
+	 * Rotate this FPose about the Y axis
+	 */
+	void rotVectAxisY(double angleDeg);
+	/**
 	 * Copy from the specified source pose
 	 */
 	void copyFrom(const FPose &src);
@@ -68,6 +72,8 @@ public:
 	 * The inverse of rotation and the position vector
 	 */
 	FPose inverseTransform() const;
+
+	FPose compose2(const FPose &m);
 };
 
 /**

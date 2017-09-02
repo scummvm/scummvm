@@ -36,9 +36,9 @@ void fposeProd(const FPose &a, const FPose &m, FPose &C) {
 	C._row3._x = m._row1._x * a._row3._x + a._row3._z * m._row3._x + a._row3._y * m._row2._x;
 	C._row3._y = a._row3._y * m._row2._y + a._row3._z * m._row3._y + a._row3._x * m._row1._y;
 	C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
-	C._vector._x = m._row1._x * a._vector._x + a._vector._y * m._row2._x + a._vector._z * m._row3._x + m._vector._x;
-	C._vector._y = a._vector._z * m._row3._y + a._vector._y * m._row2._y + a._vector._x * m._row1._y + a._vector._y;
-	C._vector._z = a._vector._y * m._row2._z + a._vector._z * m._row3._z + a._vector._x * m._row1._z + m._vector._z;
+	C._vector._x = a._vector._x * m._row1._x + a._vector._y * m._row2._x + a._vector._z * m._row3._x + m._vector._x;
+	C._vector._y = a._vector._x * m._row1._y + a._vector._y * m._row2._y + a._vector._z * m._row3._y + m._vector._y;
+	C._vector._z = a._vector._x * m._row1._z + a._vector._y * m._row2._z + a._vector._z * m._row3._z + m._vector._z;
 }
 
 // Member functions
@@ -57,6 +57,29 @@ FPose::FPose(const FPose &src) : FMatrix() {
 
 FPose::FPose(const FPose &s1, const FPose &s2) {
 	fposeProd(s1, s2, *this);
+}
+
+FPose::FPose(int mode, const FVector &src) {
+	switch (mode) {
+	case 0:
+		_row1._x = 1.0;
+		_row2._y = 1.0;
+		_row3._z = 1.0;
+		_vector = src;
+		break;
+
+	case 1:
+		_row1._x = src._x;
+		_row2._y = src._y;
+		_row3._z = src._z;
+		break;
+
+	default:
+		_row1._x = 1.0;
+		_row2._y = 1.0;
+		_row3._z = 1.0;
+		break;
+	}
 }
 
 void FPose::identity() {
@@ -114,6 +137,13 @@ void FPose::setRotationMatrix(Axis axis, float amount) {
 	_vector.clear();
 }
 
+void FPose::rotVectAxisY(double angleDeg) {
+	_row1.rotVectAxisY(angleDeg);
+	_row2.rotVectAxisY(angleDeg);
+	_row3.rotVectAxisY(angleDeg);
+	_vector.rotVectAxisY(angleDeg);
+}
+
 void FPose::copyFrom(const FPose &src) {
 	_row1 = src._row1;
 	_row2 = src._row2;
@@ -151,6 +181,16 @@ FPose FPose::inverseTransform() const {
 		+ _vector._z * result._row3._z);
 
 	return result;
+}
+
+FPose FPose::compose2(const FPose &m) {
+	FPose dm;
+	dm._row1 = _row1.MatProdRowVect(m);
+	dm._row2 = _row2.MatProdRowVect(m);
+	dm._row3 = _row3.MatProdRowVect(m);
+	dm._vector = _vector.MatProdRowVect(m);
+
+	return dm;
 }
 
 } // End of namespace Titanic

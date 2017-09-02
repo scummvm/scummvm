@@ -27,6 +27,7 @@
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/marked_camera_mover.h"
+#include "titanic/star_control/matrix_inv.h"
 #include "titanic/star_control/unmarked_camera_mover.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/support/simple_file.h"
@@ -319,7 +320,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 
 	case TWO_LOCKED: {
 		FVector tempV2;
-		DAffine m1, m2, sub;
+		DAffine m1;
 		FVector mrow1, mrow2, mrow3;
 		FVector tempV1, diffV, multV, multV2, tempV3, tempV7;
 
@@ -518,17 +519,41 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	_isInLockingProcess = true;
 	FVector firstStarPosition = _lockedStarsPos._row1;
 	DAffine m2(0, firstStarPosition); // Identity matrix and col4 as the 1st stars position
+	FPose m3(0, firstStarPosition); // Identity matrix and row4 as the 1st stars position
 	FVector starDelta = secondStarPosition - firstStarPosition;
 	DAffine m1 = starDelta.formRotXY();
+	FPose m10 = starDelta.formRotXY2();
+	FPose m11;
+	fposeProd(m10,m3,m11);
 	m1 = m1.compose(m2);
 	m2 = m1.inverseTransform();
 	
+	float A[16]={m11._row1._x,m11._row1._y,m11._row1._z, 0.0,
+				 m11._row2._x,m11._row2._y,m11._row2._z, 0.0,
+				 m11._row3._x,m11._row3._y,m11._row3._z, 0.0,
+				 m11._vector._x,m11._vector._y,m11._vector._z, 1.0};
+	// Inverse matrix
+	float B[16]={};
+
+	// B contains inverse of A
+	matrix4Inverse<float>(A,B);
+	m10=m11.inverseTransform();
+	m10._vector._x=B[12];
+	m10._vector._y=B[13];
+	m10._vector._z=B[14];
+
 	FVector oldPos = _viewport._position;
-	DAffine m4;
-	m4._col1 = viewport->_position;
-	m4._col2 = FVector(0.0, 0.0, 0.0);
-	m4._col3 = FVector(0.0, 0.0, 0.0);
-	m4._col4 = FVector(0.0, 0.0, 0.0);
+	DAffine m5;
+	m5._col1 = viewport->_position;
+	m5._col2 = FVector(0.0, 0.0, 0.0);
+	m5._col3 = FVector(0.0, 0.0, 0.0);
+	m5._col4 = FVector(0.0, 0.0, 0.0);
+
+	FPose m4;
+	m4._row1 = viewport->_position;
+	m4._row2 = FVector(0.0, 0.0, 0.0);
+	m4._row3 = FVector(0.0, 0.0, 0.0);
+	m4._vector = FVector(0.0, 0.0, 0.0);
 
 	FMatrix newOr = viewport->getOrientation();
 	float yVal1 = newOr._row1._y * rowScale2;
@@ -536,58 +561,64 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	float xVal1 = newOr._row2._x * rowScale2;
 	float yVal2 = newOr._row2._y * rowScale2;
 	float zVal2 = newOr._row2._z * rowScale2;
-	float zVal3 = zVal1 + m4._col1._z;
-	float yVal3 = yVal1 + m4._col1._y;
-	float xVal2 = newOr._row1._x * rowScale2 + m4._col1._x;
-	float zVal4 = zVal2 + m4._col1._z;
-	float yVal4 = yVal2 + m4._col1._y;
-	float xVal3 = xVal1 + m4._col1._x;
+	float zVal3 = zVal1 + m4._row1._z;
+	float yVal3 = yVal1 + m4._row1._y;
+	float xVal2 = newOr._row1._x * rowScale2 + m4._row1._x;
+	float zVal4 = zVal2 + m4._row1._z;
+	float yVal4 = yVal2 + m4._row1._y;
+	float xVal3 = xVal1 + m4._row1._x;
 
 	FVector tempV4(xVal2, yVal3, zVal3);
 	FVector tempV3(xVal3, yVal4, zVal4);
-	m4._col3 = tempV4;
+	m4._row3 = tempV4;
 
 	FVector tempV5;
 	tempV5._x = newOr._row3._x * rowScale2;
 	tempV5._y = newOr._row3._y * rowScale2;
-	m4._col2 = tempV3;
+	m4._row2 = tempV3;
 
-	tempV3._x = tempV5._x + m4._col1._x;
-	tempV3._y = tempV5._y + m4._col1._y;
-	tempV3._z = newOr._row3._z * rowScale2 + m4._col1._z;
-	m4._col4 = tempV3;
+	tempV3._x = tempV5._x + m4._row1._x;
+	tempV3._y = tempV5._y + m4._row1._y;
+	tempV3._z = newOr._row3._z * rowScale2 + m4._row1._z;
+	m4._vector = tempV3;
 
 
 	FVector viewPosition = oldPos.MatProdColVect(m2);
-	m4 = m4.compose2(m2);
+	FVector viewPosition2 = oldPos.MatProdRowVect(m10);
+	//m4 = m4.compose2(m2);
+	//fposeProd(m4,m10,m3);
+	m3 = m4.compose2(m10);
 
 	float minDistance;
-	FVector x1(viewPosition);
-	FVector x2(m4._col1);
-	// Find the angle of rotation for m4._col1 that gives the minimum distance to viewPosition
+	FVector x1(viewPosition2);
+	FVector x2(m3._row1);
+	// Find the angle of rotation for m4._row1 that gives the minimum distance to viewPosition
 	float minDegree = calcAngleForMinDist(x1,x2,minDistance);
 
-	m4.rotVectAxisY((double)minDegree);
-	m4 = m4.compose2(m1);
+	m3.rotVectAxisY((double)minDegree);
+	//m4 = m4.compose2(m1);
+	FPose m13;
+	//fposeProd(m3,m11,m13);
+	m13 = m3.compose2(m11);
 
-	m4._col3 -= m4._col1;
-	m4._col2 -= m4._col1;
-	m4._col4 -= m4._col1;
+	m13._row3 -= m13._row1;
+	m13._row2 -= m13._row1;
+	m13._vector -= m13._row1;
 
 
 
-	double unusedScale=0.0;
-	if (!m4._col2.normalize(unusedScale) ||
-			!m4._col3.normalize(unusedScale) ||
-			!m4._col4.normalize(unusedScale) ) {
+	float unusedScale=0.0;
+	if (!m13._row2.normalize(unusedScale) ||
+			!m13._row3.normalize(unusedScale) ||
+			!m13._vector.normalize(unusedScale) ) {
 		// Do the normalizations, put the scale amount in unusedScale,
 		// but if any of the normalizations are unsuccessful, crash
 		assert(unusedScale);
 	}
 
-	newOr.set(m4._col3, m4._col2, m4._col4);
+	newOr.set(m13._row3, m13._row2, m13._vector);
 
-	FVector newPos = m4._col1;
+	FVector newPos = m13._row1;
 	FMatrix oldOr = _viewport.getOrientation();
 
 	// WORKAROUND: set old position to new position (1st argument), this prevents 

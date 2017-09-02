@@ -138,7 +138,7 @@ DAffine DAffine::inverseTransform() const {
 	double B[16]={};
 
 	// B contains inverse of A
-	matrix4Inverse(A,B);
+	matrix4Inverse<double>(A,B);
 
 	// Inverse of rotation matrix is the transpose
 	// While B contains the inverse of the rotation 

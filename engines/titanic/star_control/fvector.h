@@ -124,6 +124,7 @@ public:
 	 * based on the orientation of this vector
 	 */
 	DAffine formRotXY() const;
+	FPose formRotXY2() const;
 
 	/**
 	 * Returns true if the passed vector equals this one

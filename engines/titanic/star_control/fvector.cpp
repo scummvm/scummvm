@@ -150,6 +150,16 @@ DAffine FVector::formRotXY() const {
 	return m1.compose(m2);
 }
 
+FPose FVector::formRotXY2() const {
+	FVector v1 = getAnglesAsVect();
+	FPose m1, m2;
+	m1.setRotationMatrix(X_AXIS, v1._y * Rad2Deg);
+	m2.setRotationMatrix(Y_AXIS, v1._z * Rad2Deg);
+	FPose m3;
+	fposeProd(m1,m2,m3);
+	return m3;
+}
+
 Common::String FVector::toString() const {
 	return Common::String::format("(%.3f,%.3f,%.3f)", _x, _y, _z);
 }
