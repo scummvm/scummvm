@@ -152,6 +152,10 @@ public:
 		return FVector(_x * right, _y * right, _z * right);
 	}
 
+	const FVector operator*(const FVector &right) const {
+		return FVector(_x * right._x, _y * right._y, _z * right._z);
+	}	
+
 	void operator+=(const FVector &delta) {
 		_x += delta._x;
 		_y += delta._y;

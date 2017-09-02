@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/fpose.h"
+#include "titanic/star_control/matrix_transform.h"
 
 namespace Titanic {
 
@@ -181,6 +182,34 @@ FPose FPose::inverseTransform() const {
 		+ _vector._z * result._row3._z);
 
 	return result;
+}
+
+//TODO: Check math and provide source
+void FPose::loadTransform(const CMatrixTransform &src) {
+	double total = src.fn1();
+	double factor = (total <= 0.0) ? 0.0 : 2.0 / total;
+	FVector temp1V = src._vector * factor;
+	FVector temp2V = temp1V * src._vector;
+
+	double val1 = temp1V._y * src._vector._x;
+	double val2 = temp1V._z * src._vector._x;
+	double val3 = temp1V._z * src._vector._y;
+	double val4 = temp1V._x * src._field0;
+	double val5 = temp1V._y * src._field0;
+	double val6 = temp1V._z * src._field0;
+
+	_row1._x = 1.0 - (temp2V._z + temp2V._y);
+	_row1._y = val1 + val6;
+	_row1._z = val2 - val5;
+	_row2._x = val1 - val6;
+	_row2._y = 1.0 - (temp2V._z + temp2V._x);
+	_row2._z = val3 + val4;
+	_row3._x = val2 + val5;
+	_row3._y = val3 - val4;
+	_row3._z = 1.0 - (temp2V._y + temp2V._x);
+	_vector._x = 0;
+	_vector._y = 0;
+	_vector._z = 0;
 }
 
 FPose FPose::compose2(const FPose &m) {

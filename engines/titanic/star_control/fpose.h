@@ -27,6 +27,8 @@
 
 namespace Titanic {
 
+class CMatrixTransform;
+
 /*
  * This class combines a position and orientation in 3D space
  * TODO: Merge with DAffine
@@ -67,6 +69,13 @@ public:
 	 * Copy from the specified source matrix
 	 */
 	void copyFrom(const FMatrix &src);
+
+	/**
+	 * Change this Daffine to have its first three columns be some mapping from src matrix
+	 * and the 4rth column to be (three) zeros. The mapping is not as simple as replacing
+	 * matching row/colmn indices
+	 */
+	void loadTransform(const CMatrixTransform &src);
 
 	/**
 	 * The inverse of rotation and the position vector
