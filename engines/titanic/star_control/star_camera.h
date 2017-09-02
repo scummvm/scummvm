@@ -49,7 +49,8 @@ private:
 	FMatrix _lockedStarsPos; // Each row represents the location of a locked star
 	CCameraMover *_mover;
 	CViewport _viewport;
-	bool _isMoved;
+	bool _isMoved; // TODO: determine if this is being used
+	bool _isInLockingProcess; // The mover/view is homing in on a new star
 private:
 	/**
 	 * Set up a handler
@@ -75,6 +76,13 @@ public:
 
 	virtual void proc2(const CViewport *src);
 	virtual void proc3(const CNavigationInfo *src);
+
+	/**
+	 * The mover/view is not currently homing in on a new star
+	 * This can mean it is unmarked, or that it is fully locked 
+	 * onto one star or more (but not in the process of doing so)
+	 */
+	bool isNotInLockingProcess();
 
 	/**
 	 * Set the camera position

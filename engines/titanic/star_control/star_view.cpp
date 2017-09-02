@@ -434,7 +434,7 @@ void CStarView::lockStar() {
 }
 
 void CStarView::unlockStar() {
-	if (_starField && !_showingPhoto) {
+	if (_starField && !_showingPhoto && _camera.isNotInLockingProcess()) {
 		_camera.removeLockedStar();
 		_starField->fn8(_photoSurface);
 	}
