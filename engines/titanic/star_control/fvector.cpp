@@ -21,16 +21,16 @@
  */
 
 #include "titanic/star_control/fvector.h"
-#include "titanic/star_control/dvector.h"
-#include "titanic/star_control/daffine.h"
+//#include "titanic/star_control/dvector.h"
+//#include "titanic/star_control/daffine.h"
 #include "titanic/star_control/fpose.h"
 //#include "common/algorithm.h"
 //#include "common/textconsole.h"
 
 namespace Titanic {
 
-FVector::FVector(const DVector &src) : _x(src._x), _y(src._y), _z(src._z) {
-}
+//FVector::FVector(const DVector &src) : _x(src._x), _y(src._y), _z(src._z) {
+//}
 
 FVector FVector::swapComponents() const {
 	return FVector(
@@ -109,13 +109,13 @@ float FVector::getDistance(const FVector &src) const {
 	return sqrt(xd * xd + yd * yd + zd * zd);
 }
 
-FVector FVector::MatProdColVect(const DAffine &pose) const {
+/*FVector FVector::MatProdColVect(const DAffine &pose) const {
 	FVector v;
 	v._x = pose._col1._x * _x + pose._col2._x * _y + pose._col3._x * _z + pose._col4._x;
 	v._y = pose._col1._y * _x + pose._col2._y * _y + pose._col3._y * _z + pose._col4._y;
 	v._z = pose._col1._z * _x + pose._col2._z * _y + pose._col3._z * _z + pose._col4._z;
 	return v;
-}
+}*/
 
 FVector FVector::MatProdRowVect(const FPose &pose) const {
 	FVector v;
@@ -125,7 +125,7 @@ FVector FVector::MatProdRowVect(const FPose &pose) const {
 	return v;
 }
 
-DAffine FVector::getFrameTransform(const FVector &v) {
+/*DAffine FVector::getFrameTransform(const FVector &v) {
 	DAffine matrix1, matrix2, matrix3, matrix4;
 
 	FVector vector1 = getAnglesAsVect();
@@ -140,15 +140,15 @@ DAffine FVector::getFrameTransform(const FVector &v) {
 	matrix3 = matrix1.compose(matrix2);
 
 	return matrix4.compose(matrix3);
-}
+}*/
 
-DAffine FVector::formRotXY() const {
+/*DAffine FVector::formRotXY() const {
 	FVector v1 = getAnglesAsVect();
 	DAffine m1, m2;
 	m1.setRotationMatrix(X_AXIS, v1._y * Rad2Deg);
 	m2.setRotationMatrix(Y_AXIS, v1._z * Rad2Deg);
 	return m1.compose(m2);
-}
+}*/
 
 FPose FVector::formRotXY2() const {
 	FVector v1 = getAnglesAsVect();

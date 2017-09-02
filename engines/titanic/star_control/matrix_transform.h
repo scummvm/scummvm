@@ -23,7 +23,6 @@
 #ifndef TITANIC_MATRIX_TRANSFORM_H
 #define TITANIC_MATRIX_TRANSFORM_H
 
-//#include "titanic/star_control/dvector.h"
 #include "titanic/star_control/fvector.h"
 
 namespace Titanic {

@@ -320,19 +320,25 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 
 	case TWO_LOCKED: {
 		FVector tempV2;
-		DAffine m1;
+		FPose m1;
 		FVector mrow1, mrow2, mrow3;
 		FVector tempV1, diffV, multV, multV2, tempV3, tempV7;
 
-		DAffine subX(0, _lockedStarsPos._row1);
-		DAffine subY(Y_AXIS, angles._y);
+		//DAffine subX(0, _lockedStarsPos._row1);
+		FPose subX(0, _lockedStarsPos._row1);
+		FPose subY(Y_AXIS, angles._y);
+		//DAffine subY(Y_AXIS, angles._y);
 
 		tempV1 = _lockedStarsPos._row2 - _lockedStarsPos._row1;
 		diffV = tempV1;
 		m1 = diffV.formRotXY();
-		m1 = m1.compose(subX);
-		subX = m1.inverseTransform();
-		subX = subX.compose(subY);
+		FPose m11;
+		fposeProd(m1,subX,m11);
+		//m1 = m1.compose(subX);
+		subX = m11.inverseTransform();
+		Fpose m12;
+		fposeProd(subX,subY,m12);
+		//subX = subX.compose(subY);
 
 		FMatrix m3 = _viewport.getOrientation();
 		tempV2 = _viewport._position;
@@ -361,15 +367,15 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV7._x = m3._row3._x * rowScale2 + tempV3._x;
 
 		mrow3 = tempV7;
-		tempV3 = tempV3.MatProdColVect(subX);
-		mrow1 = mrow1.MatProdColVect(subX);
-		mrow2 = mrow2.MatProdColVect(subX);
-		mrow3 = mrow3.MatProdColVect(subX);
+		tempV3 = tempV3.MatProdRowVect(m12);
+		mrow1 = mrow1.MatProdRowVect(m12);
+		mrow2 = mrow2.MatProdRowVect(m12);
+		mrow3 = mrow3.MatProdRowVect(m12);
 
-		tempV3 = tempV3.MatProdColVect(m1);
-		mrow1 = mrow1.MatProdColVect(m1);
-		mrow2 = mrow2.MatProdColVect(m1);
-		mrow3 = mrow3.MatProdColVect(m1);
+		tempV3 = tempV3.MatProdRowVect(m11);
+		mrow1 = mrow1.MatProdRowVect(m11);
+		mrow2 = mrow2.MatProdRowVect(m11);
+		mrow3 = mrow3.MatProdRowVect(m11);
 
 		mrow1 -= tempV3;
 		mrow2 -= tempV3;
