@@ -91,7 +91,7 @@ void FPose::identity() {
 
 // Source: https://en.wikipedia.org/wiki/Rotation_matrix
 void FPose::setRotationMatrix(Axis axis, float amount) {
-	const float ROTATION = 2 * M_PI / 360.0;
+	const float ROTATION = (float)(2 * M_PI / 360.0);
 	float sinVal = sin(amount * ROTATION);
 	float cosVal = cos(amount * ROTATION);
 
@@ -230,10 +230,10 @@ FPose FPose::compose(const FMatrix &m) {
 
 FPose FPose::compose2(const FPose &m) {
 	FPose dm;
-	dm._row1 = _row1.MatProdRowVect(m);
-	dm._row2 = _row2.MatProdRowVect(m);
-	dm._row3 = _row3.MatProdRowVect(m);
-	dm._vector = _vector.MatProdRowVect(m);
+	dm._row1 = _row1.matProdRowVect(m);
+	dm._row2 = _row2.matProdRowVect(m);
+	dm._row3 = _row3.matProdRowVect(m);
+	dm._vector = _vector.matProdRowVect(m);
 
 	return dm;
 }

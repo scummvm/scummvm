@@ -291,10 +291,10 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV5 -= row1;
 		tempV6 -= row1;
 
-		tempV1 = tempV1.MatProdRowVect(pose);
-		tempV4 = tempV4.MatProdRowVect(pose);
-		tempV5 = tempV5.MatProdRowVect(pose);
-		tempV6 = tempV6.MatProdRowVect(pose);
+		tempV1 = tempV1.matProdRowVect(pose);
+		tempV4 = tempV4.matProdRowVect(pose);
+		tempV5 = tempV5.matProdRowVect(pose);
+		tempV6 = tempV6.matProdRowVect(pose);
 
 		tempV4 -= tempV1;
 		tempV5 -= tempV1;
@@ -362,15 +362,15 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV7._x = m3._row3._x * rowScale2 + tempV3._x;
 
 		mrow3 = tempV7;
-		tempV3 = tempV3.MatProdRowVect(m12);
-		mrow1 = mrow1.MatProdRowVect(m12);
-		mrow2 = mrow2.MatProdRowVect(m12);
-		mrow3 = mrow3.MatProdRowVect(m12);
+		tempV3 = tempV3.matProdRowVect(m12);
+		mrow1 = mrow1.matProdRowVect(m12);
+		mrow2 = mrow2.matProdRowVect(m12);
+		mrow3 = mrow3.matProdRowVect(m12);
 
-		tempV3 = tempV3.MatProdRowVect(m11);
-		mrow1 = mrow1.MatProdRowVect(m11);
-		mrow2 = mrow2.MatProdRowVect(m11);
-		mrow3 = mrow3.MatProdRowVect(m11);
+		tempV3 = tempV3.matProdRowVect(m11);
+		mrow1 = mrow1.matProdRowVect(m11);
+		mrow2 = mrow2.matProdRowVect(m11);
+		mrow3 = mrow3.matProdRowVect(m11);
 
 		mrow1 -= tempV3;
 		mrow2 -= tempV3;
@@ -563,7 +563,7 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	m4._vector = tempV3;
 
 
-	FVector viewPosition2 = oldPos.MatProdRowVect(m10);
+	FVector viewPosition2 = oldPos.matProdRowVect(m10);
 	m3 = m4.compose2(m10);
 
 	float minDistance;
@@ -627,7 +627,7 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosit
 
 float CStarCamera::calcAngleForMinDist(FVector &x, FVector &y, float &minDistance) {
 	FVector tempPos;
-	minDistance = 1.0e20;
+	minDistance = (float)1.0e20;
 	float minDegree = 0.0;
 	float degInc = 1.0; // one degree steps
 	int nDegrees = floor(360.0/degInc);

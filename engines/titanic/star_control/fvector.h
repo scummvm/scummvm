@@ -101,7 +101,7 @@ public:
 	 * Returns a vector that is this vector on the left as a row vector
 	 * times the 3x4 affine matrix on the right.
 	 */
-	FVector MatProdRowVect(const FPose &pose) const;
+	FVector matProdRowVect(const FPose &pose) const;
 
 	/**
 	 * Returns a matrix that contains the frame rotation based on this vector and 

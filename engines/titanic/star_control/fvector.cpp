@@ -103,7 +103,7 @@ float FVector::getDistance(const FVector &src) const {
 	return sqrt(xd * xd + yd * yd + zd * zd);
 }
 
-FVector FVector::MatProdRowVect(const FPose &pose) const {
+FVector FVector::matProdRowVect(const FPose &pose) const {
 	FVector v;
 	v._x = pose._row2._x * _y + pose._row3._x * _z + pose._row1._x * _x + pose._vector._x;
 	v._y = pose._row2._y * _y + pose._row3._y * _z + pose._row1._y * _x + pose._vector._y;

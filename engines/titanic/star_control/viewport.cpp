@@ -127,7 +127,7 @@ void CViewport::setPosition(const FVector &v) {
 }
 
 void CViewport::setPosition(const FPose &pose) {
-	_position = _position.MatProdRowVect(pose);
+	_position = _position.matProdRowVect(pose);
 	_poseUpToDate = false;
 }
 
@@ -233,14 +233,14 @@ FPose CViewport::getRawPose() {
 // 2 which corresponds to _isZero which has value 0.
 FVector CViewport::getRelativePosNoCentering(int index, const FVector &src) {
 	FPose current_pose = getPose();
-	FVector dest = src.MatProdRowVect(current_pose);
+	FVector dest = src.matProdRowVect(current_pose);
 	return dest;
 }
 
 FVector CViewport::getRelativePosCentering(int index, const FVector &src) {
 	FVector dest;
 	FPose pose = getPose();
-	FVector tv = src.MatProdRowVect(pose);
+	FVector tv = src.matProdRowVect(pose);
 
 	double val;
 	if (index <2) {
@@ -264,7 +264,7 @@ FVector CViewport::getRelativePosCentering(int index, const FVector &src) {
 FVector CViewport::getRelativePosCentering2(int index, const FVector &src) {
 	FVector dest;
 	FPose pose = getRawPose();
-	FVector tv = src.MatProdRowVect(pose);
+	FVector tv = src.matProdRowVect(pose);
 
 	double val;
 	if (index <2) {
