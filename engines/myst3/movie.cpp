@@ -77,6 +77,7 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 
 	Common::MemoryReadStream *binkStream = binkDesc->getData();
 	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
+	_bink.setSoundType(Audio::Mixer::kSFXSoundType);
 	_bink.loadStream(binkStream);
 
 	if (binkDesc->getType() == DirectorySubEntry::kMultitrackMovie
