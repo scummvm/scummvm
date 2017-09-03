@@ -1164,6 +1164,10 @@ void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
 	}
 
 	while (numShakes--) {
+		if (g_engine->shouldQuit()) {
+			break;
+		}
+
 		if (direction & kShakeVertical) {
 			g_system->setShakePos(_isHiRes ? 8 : 4);
 		}
