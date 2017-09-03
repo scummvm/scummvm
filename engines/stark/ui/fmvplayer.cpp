@@ -40,9 +40,11 @@ FMVPlayer::FMVPlayer(Gfx::Driver *gfx, Cursor *cursor) :
 	_visible = true;
 
 	_decoder = new Video::BinkDecoder();
+	_decoder->setDefaultHighColorFormat(_gfx->getRGBAPixelFormat());
+	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
+
 	_texture = _gfx->createTexture();
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
-	_decoder->setDefaultHighColorFormat(_gfx->getRGBAPixelFormat());
 }
 
 FMVPlayer::~FMVPlayer() {

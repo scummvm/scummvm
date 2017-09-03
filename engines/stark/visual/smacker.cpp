@@ -57,7 +57,9 @@ void VisualSmacker::load(Common::SeekableReadStream *stream) {
 	delete _smacker;
 
 	_smacker = new Video::SmackerDecoder();
+	_smacker->setSoundType(Audio::Mixer::kSFXSoundType);
 	_smacker->loadStream(stream);
+
 	rewind();
 
 	_texture = _gfx->createTexture();
