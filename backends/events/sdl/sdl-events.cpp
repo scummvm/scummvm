@@ -158,7 +158,7 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
 	} else if (unicode) {
-		// Return unicode in case it's stil set and wasn't filtered.
+		// Return unicode in case it's still set and wasn't filtered.
 		return unicode;
 	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
@@ -968,9 +968,8 @@ bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		event.kbd.keycode = Common::KEYCODE_F5;
 		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 	}
-	// Nap center (space) to tab (default action )
+	// Map center (space) to tab (default action)
 	// I wanted to map the calendar button but the calendar comes up
-	//
 	else if (ev.key.keysym.sym == SDLK_SPACE) {
 		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.keycode = Common::KEYCODE_TAB;

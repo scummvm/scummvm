@@ -62,10 +62,10 @@ public:
 	virtual void notifyVideoExpose() = 0;
 
 	/**
-	 * Notify the graphics manager about an resize event.
+	 * Notify the graphics manager about a resize event.
 	 *
 	 * It is noteworthy that the requested width/height should actually be set
-	 * up as is and not changed by the graphics manager, since else it might
+	 * up as is and not changed by the graphics manager, since otherwise it may
 	 * lead to odd behavior for certain window managers.
 	 *
 	 * It is only required to overwrite this method in case you want a
@@ -94,7 +94,7 @@ public:
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
-	 * between different SDL graphic managers on runtime.
+	 * between different SDL graphic managers at runtime.
 	 */
 	struct State {
 		int screenWidth, screenHeight;
