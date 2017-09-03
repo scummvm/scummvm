@@ -129,6 +129,23 @@ bool AVIDecoder::isSeekable() const {
 	return isVideoLoaded() && !_indexEntries.empty();
 }
 
+const Graphics::Surface *AVIDecoder::decodeNextFrame() {
+	// When playing in reverse, we need to seek to the correct prior frame
+	AVIVideoTrack *track = nullptr;
+	bool isReversed = false;
+	for (int idx = _videoTracks.size() - 1; idx >= 0; --idx) {
+		track = static_cast<AVIVideoTrack *>(_videoTracks[idx].track);
+		isReversed |= track->isReversed();
+	}
+
+	if (isReversed) {
+		Audio::Timestamp time = track->getFrameTime(getCurFrame());
+		seekIntern(time);
+	}
+
+	return VideoDecoder::decodeNextFrame();
+}
+
 const Graphics::Surface *AVIDecoder::decodeNextTransparency() {
 	if (!_transparencyTrack.track)
 		return nullptr;
@@ -544,11 +561,6 @@ void AVIDecoder::handleNextPacket(TrackStatus &status) {
 	if (!isReversed) {
 		// Start us off in this position next time
 		status.chunkSearchOffset = _fileStream->pos();
-	} else {
-		// Seek to the prior frame
-		assert(videoTrack);
-		Audio::Timestamp time = videoTrack->getFrameTime(getCurFrame());
-		seekIntern(time);
 	}
 }
 
