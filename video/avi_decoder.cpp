@@ -130,20 +130,35 @@ bool AVIDecoder::isSeekable() const {
 }
 
 const Graphics::Surface *AVIDecoder::decodeNextFrame() {
-	// When playing in reverse, we need to seek to the correct prior frame
 	AVIVideoTrack *track = nullptr;
 	bool isReversed = false;
+	int frameNum;
+
+	// Check whether the video is playing in revese
 	for (int idx = _videoTracks.size() - 1; idx >= 0; --idx) {
 		track = static_cast<AVIVideoTrack *>(_videoTracks[idx].track);
 		isReversed |= track->isReversed();
 	}
 
 	if (isReversed) {
-		Audio::Timestamp time = track->getFrameTime(getCurFrame());
-		seekIntern(time);
+		// For reverse mode we need to keep seeking to just before the
+		// desired frame prior to actually decoding a frame
+		frameNum = getCurFrame();
+		seekIntern(track->getFrameTime(frameNum));
 	}
 
-	return VideoDecoder::decodeNextFrame();
+	// Decode the next frame
+	const Graphics::Surface *frame = VideoDecoder::decodeNextFrame();
+
+	if (isReversed) {
+		// In reverse mode, set next frame to be the prior frame number
+		for (int idx = _videoTracks.size() - 1; idx >= 0; --idx) {
+			track = static_cast<AVIVideoTrack *>(_videoTracks[idx].track);
+			track->setCurFrame(frameNum - 1);
+		}
+	}
+
+	return frame;
 }
 
 const Graphics::Surface *AVIDecoder::decodeNextTransparency() {
@@ -746,7 +761,7 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 		seekTransparencyFrame(frame);
 
 	// Set the video track's frame
-	videoTrack->setCurFrame(videoTrack->isReversed() ? frame : frame - 1);
+	videoTrack->setCurFrame(frame - 1);
 
 	// Set the video track's search offset to the right spot
 	_videoTracks[0].chunkSearchOffset = _indexEntries[frameIndex].offset;
@@ -788,7 +803,7 @@ void AVIDecoder::seekTransparencyFrame(int frame) {
 		}
 	}
 
-	transTrack->setCurFrame((int)frame - 1);
+	transTrack->setCurFrame(frame - 1);
 }
 
 byte AVIDecoder::getStreamIndex(uint32 tag) {
