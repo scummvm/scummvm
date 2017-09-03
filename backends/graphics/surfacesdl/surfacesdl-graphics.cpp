@@ -2446,20 +2446,20 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
 		endGFXTransaction();
 #ifdef USE_OSD
-		char buffer[128];
+		Common::String message;
 		if (_videoMode.aspectRatioCorrection)
-			sprintf(buffer, "%s\n%d x %d -> %d x %d",
+			message = Common::String::format("%s\n%d x %d -> %d x %d",
 				_("Enabled aspect ratio correction"),
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwscreen->w, _hwscreen->h
 				);
 		else
-			sprintf(buffer, "%s\n%d x %d -> %d x %d",
+			message = Common::String::format("%s\n%d x %d -> %d x %d",
 				_("Disabled aspect ratio correction"),
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwscreen->w, _hwscreen->h
 				);
-		displayMessageOnOSD(buffer);
+		displayMessageOnOSD(message.c_str());
 #endif
 		internUpdateScreen();
 		return true;
@@ -2526,14 +2526,13 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			g++;
 		}
 		if (newScalerName) {
-			char buffer[128];
-			sprintf(buffer, "%s %s\n%d x %d -> %d x %d",
+			const Common::String message = Common::String::format(
+				"%s %s\n%d x %d -> %d x %d",
 				_("Active graphics filter:"),
 				newScalerName,
 				_videoMode.screenWidth, _videoMode.screenHeight,
-				_hwscreen->w, _hwscreen->h
-				);
-			displayMessageOnOSD(buffer);
+				_hwscreen->w, _hwscreen->h);
+			displayMessageOnOSD(message.c_str());
 		}
 #endif
 		internUpdateScreen();
