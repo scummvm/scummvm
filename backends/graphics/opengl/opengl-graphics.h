@@ -241,7 +241,7 @@ private:
 	};
 
 	/**
-	 * The currently setup video state.
+	 * The currently set up video state.
 	 */
 	VideoState _currentState;
 
@@ -444,7 +444,7 @@ private:
 	Surface *_cursor;
 
 	/**
-	 * X coordinate of the cursor in phyiscal coordinates.
+	 * X coordinate of the cursor in physical coordinates.
 	 */
 	int _cursorX;
 

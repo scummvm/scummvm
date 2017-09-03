@@ -1139,14 +1139,14 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 }
 
 void SurfaceSdlGraphicsManager::updateShader() {
-// shader init code goes here
-// currently only used on Vita port
-// the user-selected shaderID should be obtained via ConfMan.getInt("shader")
-// and the corresponding shader should then be activated here
-// this way the user can combine any software scaling (scalers)
-// with any hardware shading (shaders). The shaders could provide
-// scanline masks, overlays, but could also serve for
-// hardware-based up-scaling (sharp-bilinear-simple, etc.)
+	// shader init code goes here
+	// currently only used on Vita port
+	// the user-selected shaderID should be obtained via ConfMan.getInt("shader")
+	// and the corresponding shader should then be activated here
+	// this way the user can combine any software scaling (scalers)
+	// with any hardware shading (shaders). The shaders could provide
+	// scanline masks, overlays, but could also serve for
+	// hardware-based up-scaling (sharp-bilinear-simple, etc.)
 }
 
 void SurfaceSdlGraphicsManager::internUpdateScreen() {
