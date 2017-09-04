@@ -109,6 +109,7 @@ bool Room::deserialize(Common::ReadStream *in) {
 void Intro::onEntrance() {
 	_gm->_guiEnabled = false;
 	_vm->_allowSaveGame = false;
+	_vm->_allowLoadGame = false;
 	titleScreen();
 	cutscene();
 	leaveCutscene();
@@ -394,6 +395,7 @@ void Intro::leaveCutscene() {
 	_gm->changeRoom(CABIN_R3);
 	_gm->_guiEnabled = true;
 	_vm->_allowSaveGame = true;
+	_vm->_allowLoadGame = true;
 }
 
 bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
