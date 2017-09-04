@@ -552,14 +552,14 @@ bool CDoorbot::TextInputMsg(CTextInputMsg *msg) {
 }
 
 bool CDoorbot::EnterViewMsg(CEnterViewMsg *msg) {
-	// WORKAROUND: Calling bot in front of doors and then going through them
-	// can leave it in the view. Detect this and properly remove him when
-	// the player returns to that view
-	if (msg->_newView == getParent() && getPetControl()->canSummonBot("DoorBot"))
-		petMoveToHiddenRoom();
-
 	if ((_npcFlags & NPCFLAG_DOORBOT_INTRO) && _introMovieNum == 7)
 		playClip("SE Move And Turn", MOVIE_NOTIFY_OBJECT);
+	else if (msg->_newView == getParent() && getPetControl()->canSummonBot("DoorBot")) {
+		// WORKAROUND: Calling bot in front of doors and then going through them
+		// can leave it in the view. Detect this and properly remove him when
+		// the player returns to that view
+		petMoveToHiddenRoom();
+	}
 
 	return true;
 }
