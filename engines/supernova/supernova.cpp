@@ -814,6 +814,20 @@ bool SupernovaEngine::loadGame(int slot) {
 	if (!savefile)
 		return false;
 
+	uint saveHeader = savefile->readUint32LE();
+	if (saveHeader != SAVEGAME_HEADER) {
+		warning("No header found in '%s'", filename.c_str());
+		delete savefile;
+		return Common::kUnknownError;
+	}
+	
+	byte saveVersion = savefile->readByte();
+	if (saveVersion > SAVEGAME_VERSION) {
+		warning("Save game version %i not supported", saveVersion);
+		delete savefile;
+		return Common::kUnknownError;
+	}
+
 	int descriptionSize = savefile->readSint16LE();
 	savefile->skip(descriptionSize);
 	savefile->skip(6);
@@ -833,6 +847,9 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename);
 	if (!savefile)
 		return false;
+	
+	savefile->writeUint32LE(SAVEGAME_HEADER);
+	savefile->writeByte(SAVEGAME_VERSION);
 
 	TimeDate currentDate;
 	_system->getTimeAndDate(currentDate);
