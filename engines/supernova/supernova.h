@@ -42,6 +42,10 @@
 
 namespace Supernova {
 
+#define SAVEGAME_HEADER MKTAG('M','S','N','1')
+#define SAVEGAME_VERSION 1
+
+
 struct ScreenBuffer {
 	ScreenBuffer()
 	    : _x(0)

@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "graphics/thumbnail.h"
 #include "engines/advancedDetector.h"
 
 #include "supernova/supernova.h"
@@ -83,6 +84,7 @@ public:
 	virtual int getMaximumSaveSlot() const {
 		return 99;
 	}
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -92,6 +94,13 @@ bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	case kSupportsListSaves:
 		// fallthrough
 	case kSupportsDeleteSave:
+		// fallthrough
+	case kSavesSupportMetaInfo:
+		// fallthrough
+	case kSavesSupportThumbnail:
+		// fallthrough
+	case kSavesSupportCreationDate:
+		// fallthrough
 		return true;
 	default:
 		return false;
@@ -120,10 +129,17 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 		if (saveSlot >= 0 && saveSlot <= getMaximumSaveSlot()) {
 			Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(*file);
 			if (savefile) {
-				savefile->skip(2);
-				savefile->read(saveFileDesc, sizeof(saveFileDesc));
-				saveFileList.push_back(SaveStateDescriptor(saveSlot, saveFileDesc));
-
+				uint saveHeader = savefile->readUint32LE();
+				if (saveHeader == SAVEGAME_HEADER) {
+					byte saveVersion = savefile->readByte();
+					if (saveVersion <= SAVEGAME_VERSION) {
+						int saveFileDescSize = savefile->readSint16LE();
+						char* saveFileDesc = new char[saveFileDescSize];
+						savefile->read(saveFileDesc, saveFileDescSize);
+						saveFileList.push_back(SaveStateDescriptor(saveSlot, saveFileDesc));
+						delete [] saveFileDesc;
+					}
+				}
 				delete savefile;
 			}
 		}
@@ -137,6 +153,54 @@ void SupernovaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("msn_save.%03d", slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
+
+SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("msn_save.%03d", slot);
+	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(fileName);
+	
+	if (savefile) {
+		uint saveHeader = savefile->readUint32LE();
+		if (saveHeader != SAVEGAME_HEADER) {
+			delete savefile;
+			return SaveStateDescriptor();
+		}
+		byte saveVersion = savefile->readByte();
+		if (saveVersion > SAVEGAME_VERSION){
+			delete savefile;
+			return SaveStateDescriptor();
+		}
+		
+		int descriptionSize = savefile->readSint16LE();
+		char* description = new char[descriptionSize];
+		savefile->read(description, descriptionSize);
+		SaveStateDescriptor desc(slot, description);
+		delete [] description;
+
+		uint32 saveDate = savefile->readUint32LE();
+		int day = (saveDate >> 24) & 0xFF;
+		int month = (saveDate >> 16) & 0xFF;
+		int year = saveDate & 0xFFFF;
+		desc.setSaveDate(year, month, day);
+
+		uint16 saveTime = savefile->readUint16LE();
+		int hour = (saveTime >> 8) & 0xFF;
+		int minutes = saveTime & 0xFF;
+		desc.setSaveTime(hour, minutes);
+
+
+		if (Graphics::checkThumbnailHeader(*savefile)) {
+			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*savefile);
+			desc.setThumbnail(thumbnail);
+		}
+
+		delete savefile;
+		
+		return desc;
+	}
+	
+	return SaveStateDescriptor();
+}
+
 
 #if PLUGIN_ENABLED_DYNAMIC(SUPERNOVA)
 REGISTER_PLUGIN_DYNAMIC(SUPERNOVA, PLUGIN_TYPE_ENGINE, SupernovaMetaEngine);
