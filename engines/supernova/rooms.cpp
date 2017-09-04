@@ -1068,8 +1068,8 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 			room = _gm->_rooms[GENERATOR];
 			room->getObject(0)->_click = 15;
 			room->getObject(1)->_click = 13;
-			room->setSectionVisible(6, false);
-			room->setSectionVisible(8, false);
+			room->setSectionVisible(6, true);
+			room->setSectionVisible(8, true);
 			_gm->drawImage(_gm->invertSection(5));
 			_gm->drawImage(6);
 			setSectionVisible(4, false);
@@ -1164,22 +1164,21 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawImage(5);
 			getObject(4)->_name = "langes Kabel mit Stecker";
 			getObject(4)->_click = 6;
-			r = _gm->_rooms[CABIN_L2];
-			_gm->_inventory.remove(*r->getObject(9));
+			_gm->_inventory.remove(*_gm->_rooms[CABIN_L2]->getObject(9));
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, LANDINGMOD_HATCH)) {
 		if (getObject(5)->hasProperty(OPENED)) {
 			r = _gm->_rooms[HOLD];
 			if (isSectionVisible(5)) {
-				_gm->_rooms[HOLD]->setSectionVisible(5, false);
+				r->setSectionVisible(5, true);
 				r->getObject(0)->_click = 10;
-
-			} else
+			} else {
 				r->getObject(0)->_click = 9;
-			_gm->_rooms[HOLD]->setSectionVisible(4, false);
+			}
+			r->setSectionVisible(4, true);
 			r->getObject(0)->_name = getObject(4)->_name;
-			_gm->drawImage(_gm->invertSection(4));
 			_gm->drawImage(_gm->invertSection(5));
+			_gm->drawImage(_gm->invertSection(4));
 			setSectionVisible(11, false);
 			_gm->drawImage(6);
 			getObject(4)->_click = 7;
