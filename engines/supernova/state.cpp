@@ -1010,6 +1010,14 @@ void GameManager::handleTime() {
 
 void GameManager::screenShake() {
 	// STUB
+	for (int i = 0; i < 12; ++i) {
+		_vm->_system->setShakePos(4);
+		wait2(1);
+		_vm->_system->setShakePos(-4);
+		wait2(1);
+	}
+
+	_vm->_system->setShakePos(0);
 }
 
 void GameManager::shock() {
