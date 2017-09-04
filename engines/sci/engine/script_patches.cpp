@@ -118,6 +118,7 @@ static const char *const selectorNameTable[] = {
 	"clear",        // Torin
 	"masterVolume", // SCI2 master volume reset
 	"data",         // Phant2
+	"format",       // Phant2
 #endif
 	NULL
 };
@@ -162,7 +163,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_set,
 	SELECTOR_clear,
 	SELECTOR_masterVolume,
-	SELECTOR_data
+	SELECTOR_data,
+	SELECTOR_format
 #endif
 };
 
@@ -3877,6 +3879,37 @@ static const uint16 phant2RatboyPatch[] = {
 	PATCH_END
 };
 
+// When censorship is disabled the game sticks <PROTECTED> at the end of every
+// save game name, and when it is enabled it pads the save game name with a
+// bunch of spaces. This is annoying and not helpful, so just disable all of
+// this nonsense.
+// Applies to at least: US English
+static const uint16 phant2SaveNameSignature1[] = {
+	SIG_MAGICDWORD,
+	0x57, 0x4b, SIG_UINT16(0x06), // super SREdit, 6
+	0x63,                         // pToa (plane)
+	SIG_END
+};
+
+static const uint16 phant2SaveNamePatch1[] = {
+	PATCH_ADDTOOFFSET(+4), // super SREdit, 6
+	0x48,                  // ret
+	PATCH_END
+};
+
+static const uint16 phant2SaveNameSignature2[] = {
+	SIG_MAGICDWORD,
+	0xa5, 0x00,                  // sat 0
+	0x39, SIG_SELECTOR8(format), // pushi format
+	SIG_END
+};
+
+static const uint16 phant2SaveNamePatch2[] = {
+	PATCH_ADDTOOFFSET(+2), // sat 0
+	0x33, 0x68,            // jmp [past name mangling]
+	PATCH_END
+};
+
 // Phant2-specific version of sci2NumSavesSignature1/2
 // Applies to at least: English CD
 static const uint16 phant2NumSavesSignature[] = {
@@ -3900,6 +3933,8 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,  4081, "non-responsive mouse after ratboy puzzle",    1, phant2RatboySignature,         phant2RatboyPatch },
 	{  true, 63016, "non-responsive mouse during music fades",     1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
 	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
+	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },
+	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,      phant2SaveNamePatch2 },
 	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature,       phant2NumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
