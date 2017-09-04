@@ -3912,7 +3912,7 @@ static const uint16 phant2SaveNamePatch2[] = {
 
 // Phant2-specific version of sci2NumSavesSignature1/2
 // Applies to at least: English CD
-static const uint16 phant2NumSavesSignature[] = {
+static const uint16 phant2NumSavesSignature1[] = {
 	SIG_MAGICDWORD,
 	0x8d, 0x01, // lst 1
 	0x35, 0x14, // ldi 20
@@ -3920,8 +3920,22 @@ static const uint16 phant2NumSavesSignature[] = {
 	SIG_END
 };
 
-static const uint16 phant2NumSavesPatch[] = {
+static const uint16 phant2NumSavesPatch1[] = {
 	PATCH_ADDTOOFFSET(+2), // lst 1
+	0x35, 0x63,            // ldi 99
+	PATCH_END
+};
+
+static const uint16 phant2NumSavesSignature2[] = {
+	SIG_MAGICDWORD,
+	0x8d, 0x00, // lst 0
+	0x35, 0x14, // ldi 20
+	0x22,       // lt?
+	SIG_END
+};
+
+static const uint16 phant2NumSavesPatch2[] = {
+	PATCH_ADDTOOFFSET(+2), // lst 0
 	0x35, 0x63,            // ldi 99
 	PATCH_END
 };
@@ -3935,7 +3949,8 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },
 	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,      phant2SaveNamePatch2 },
-	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature,       phant2NumSavesPatch },
+	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature1,       phant2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",               2, phant2NumSavesSignature2,       phant2NumSavesPatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
