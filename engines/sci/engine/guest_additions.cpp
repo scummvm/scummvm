@@ -258,6 +258,7 @@ bool GuestAdditions::kGetEventHook() const {
 		return false;
 	}
 
+#ifdef ENABLE_SCI32
 	// Loading a save game while Lighthouse is still initializing itself will
 	// cause loading to fail if the save game contains a saved Robot state,
 	// because the Robot will try to restore itself into a game plane which does
@@ -272,6 +273,7 @@ bool GuestAdditions::kGetEventHook() const {
 			}
 		}
 	}
+#endif
 
 	return g_sci->_guestAdditions->restoreFromLauncher();
 }
