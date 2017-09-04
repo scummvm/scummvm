@@ -2832,94 +2832,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		}
 	}
 
-	int type_mask = g_sci->getKernel()->findRegType(reg);
-	int filter;
-	int found = 0;
-
-	debugPrintf("%04x:%04x is of type 0x%x: ", PRINT_REG(reg), type_mask);
-
-	if (reg.getSegment() == 0 && reg.getOffset() == 0) {
-		debugPrintf("Null.\n");
-		return true;
-	}
-
-	if (reg_end.getSegment() != reg.getSegment() && reg_end != NULL_REG) {
-		debugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
-		reg_end = NULL_REG;
-	}
-
-	for (filter = 1; filter < 0xf000; filter <<= 1) {
-		int type = type_mask & filter;
-
-		if (found && type) {
-			debugPrintf("--- Alternatively, it could be a ");
-		}
-
-
-		switch (type) {
-		case 0:
-			break;
-		case SIG_TYPE_LIST:
-			printList(reg);
-			break;
-		case SIG_TYPE_NODE:
-			debugPrintf("list node\n");
-			printNode(reg);
-			break;
-		case SIG_TYPE_OBJECT:
-			debugPrintf("object\n");
-			printObject(reg);
-			break;
-		case SIG_TYPE_REFERENCE: {
-			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
-#ifdef ENABLE_SCI32
-				case SEG_TYPE_ARRAY: {
-					printArray(reg);
-					break;
-				}
-				case SEG_TYPE_BITMAP: {
-					printBitmap(reg);
-					break;
-				}
-#endif
-				default: {
-					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
-					uint16 size = block.maxSize;
-
-					debugPrintf("raw data\n");
-
-					if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
-						debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
-						reg_end = NULL_REG;
-					}
-
-					if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset()))
-						size = reg_end.getOffset() - reg.getOffset();
-
-					if (reg_end.getSegment() != 0)
-						debugPrintf("Block size less than or equal to %d\n", size);
-
-					if (block.isRaw)
-						Common::hexdump(block.raw, size, 16, 0);
-					else
-						hexDumpReg(block.reg, size / 2, 4, 0);
-				}
-			}
-			break;
-		}
-		case SIG_TYPE_INTEGER:
-			debugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.getOffset(), reg.getOffset());
-			break;
-		default:
-			debugPrintf("unknown type %d.\n", type);
-		}
-
-		if (type) {
-			debugPrintf("\n");
-			found = 1;
-		}
-	}
-
+	printReference(reg, reg_end);
 	return true;
 }
 
@@ -3043,9 +2956,9 @@ bool Console::cmdDumpReference(int argc, const char **argv) {
 }
 
 bool Console::cmdViewObject(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2) {
 		debugPrintf("Examines the object at the given address.\n");
-		debugPrintf("Usage: %s <address>\n", argv[0]);
+		debugPrintf("Usage: %s <address> [<selector name> ...]\n", argv[0]);
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
@@ -3058,8 +2971,45 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 		return true;
 	}
 
-	debugPrintf("Information on the object at the given address:\n");
-	printObject(addr);
+	if (argc >= 3) {
+		for (int i = 2; i < argc; ++i) {
+			const Object *obj = _engine->_gamestate->_segMan->getObject(addr);
+			if (!obj) {
+				debugPrintf("%04x:%04x is not an object.\n", PRINT_REG(addr));
+				break;
+			}
+
+			const Selector selector = _engine->getKernel()->findSelector(argv[i]);
+			if (selector == -1) {
+				debugPrintf("Invalid selector '%s'.\n", argv[i]);
+				break;
+			}
+
+			const int index = obj->locateVarSelector(_engine->_gamestate->_segMan, selector);
+			if (index == -1) {
+				debugPrintf("Selector '%s' is not valid for object %04x:%04x.\n", argv[i], PRINT_REG(addr));
+				break;
+			}
+
+			const reg_t value = obj->getVariable(index);
+			if (i == argc - 1) {
+				if (value.isPointer()) {
+					printReference(value);
+				} else {
+					debugPrintf("%04x:%04x (%u)\n", PRINT_REG(value), value.toUint16());
+				}
+			} else if (!value.isPointer()) {
+				debugPrintf("Selector '%s' on object %04x:%04x is not a pointer to an object.\n", argv[i], PRINT_REG(addr));
+				debugPrintf("Value is %04x:%04x (%u).\n", PRINT_REG(value), value.toUint16());
+				break;
+			} else {
+				addr = value;
+			}
+		}
+	} else {
+		debugPrintf("Information on the object at the given address:\n");
+		printObject(addr);
+	}
 
 	return true;
 }
@@ -4789,6 +4739,96 @@ int Console::printNode(reg_t addr) {
 	}
 
 	return 0;
+}
+
+void Console::printReference(reg_t reg, reg_t reg_end) {
+	int type_mask = g_sci->getKernel()->findRegType(reg);
+	int filter;
+	int found = 0;
+
+	debugPrintf("%04x:%04x is of type 0x%x: ", PRINT_REG(reg), type_mask);
+
+	if (reg.getSegment() == 0 && reg.getOffset() == 0) {
+		debugPrintf("Null.\n");
+		return;
+	}
+
+	if (reg_end.getSegment() != reg.getSegment() && reg_end != NULL_REG) {
+		debugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
+		reg_end = NULL_REG;
+	}
+
+	for (filter = 1; filter < 0xf000; filter <<= 1) {
+		int type = type_mask & filter;
+
+		if (found && type) {
+			debugPrintf("--- Alternatively, it could be a ");
+		}
+
+
+		switch (type) {
+		case 0:
+			break;
+		case SIG_TYPE_LIST:
+			printList(reg);
+			break;
+		case SIG_TYPE_NODE:
+			debugPrintf("list node\n");
+			printNode(reg);
+			break;
+		case SIG_TYPE_OBJECT:
+			debugPrintf("object\n");
+			printObject(reg);
+			break;
+		case SIG_TYPE_REFERENCE: {
+			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
+#ifdef ENABLE_SCI32
+				case SEG_TYPE_ARRAY: {
+					printArray(reg);
+					break;
+				}
+				case SEG_TYPE_BITMAP: {
+					printBitmap(reg);
+					break;
+				}
+#endif
+				default: {
+					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
+					uint16 size = block.maxSize;
+
+					debugPrintf("raw data\n");
+
+					if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
+						debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
+						reg_end = NULL_REG;
+					}
+
+					if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset()))
+						size = reg_end.getOffset() - reg.getOffset();
+
+					if (reg_end.getSegment() != 0)
+						debugPrintf("Block size less than or equal to %d\n", size);
+
+					if (block.isRaw)
+						Common::hexdump(block.raw, size, 16, 0);
+					else
+						hexDumpReg(block.reg, size / 2, 4, 0);
+				}
+			}
+			break;
+		}
+		case SIG_TYPE_INTEGER:
+			debugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.getOffset(), reg.getOffset());
+			break;
+		default:
+			debugPrintf("unknown type %d.\n", type);
+		}
+
+		if (type) {
+			debugPrintf("\n");
+			found = 1;
+		}
+	}
 }
 
 #ifdef ENABLE_SCI32

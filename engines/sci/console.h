@@ -41,16 +41,10 @@ public:
 	Console(SciEngine *engine);
 	virtual ~Console();
 
-#ifdef ENABLE_SCI32
-	void printArray(reg_t reg);
-	void printBitmap(reg_t reg);
-#endif
-
 private:
 	virtual void preEnter();
 	virtual void postEnter();
 
-private:
 	// General
 	bool cmdHelp(int argc, const char **argv);
 	// Kernel
@@ -192,6 +186,11 @@ private:
 	void printKernelCallsFound(int kernelFuncNum, bool showFoundScripts);
 
 	void printBreakpoint(int index, const Breakpoint &bp);
+	void printReference(reg_t reg, reg_t reg_end = NULL_REG);
+#ifdef ENABLE_SCI32
+	void printArray(reg_t reg);
+	void printBitmap(reg_t reg);
+#endif
 
 	SciEngine *_engine;
 	DebugState &_debugState;
