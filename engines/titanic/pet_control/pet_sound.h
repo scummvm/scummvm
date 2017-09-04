@@ -33,6 +33,9 @@ namespace Titanic {
 class CPetRealLife;
 
 class CPetSound : public CPetGlyph {
+	enum SliderType {
+		MASTER_SLIDER = 0, MUSIC_SLIDER = 1, PARROT_SLIDER = 2, SPEECH_SLIDER = 3
+	};
 private:
 	CPetGfxElement _element;
 	CPetSoundSlider _masterVolume;
@@ -44,12 +47,12 @@ private:
 	CTextControl _textParrotVolume;
 	CTextControl _textSpeechVolume;
 	CPetSlider *_draggingSlider;
-	int _draggingSliderNum;
+	SliderType _draggingSliderNum;
 private:
 	/**
 	 * Called when a slider has changed
 	 */
-	void sliderChanged(double offset, int sliderNum);
+	void sliderChanged(double offset, SliderType sliderNum);
 public:
 	CPetSound();
 

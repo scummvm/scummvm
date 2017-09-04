@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-CPetSound::CPetSound() : CPetGlyph(), _draggingSlider(nullptr), _draggingSliderNum(0) {
+CPetSound::CPetSound() : CPetGlyph(), _draggingSlider(nullptr), _draggingSliderNum(MASTER_SLIDER) {
 }
 
 bool CPetSound::setup(CPetControl *petControl, CPetGlyphs *owner) {
@@ -142,7 +142,7 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 	rectRight.translate(567, 378);
 
 	CPetSlider *sliders[4] = { &_masterVolume, &_musicVolume, &_parrotVolume, &_speechVolume };
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = MASTER_SLIDER; idx <= SPEECH_SLIDER; ++idx) {
 		CPetSlider *slider = sliders[idx];
 		bool isLeft = rectLeft.contains(pt);
 		bool isRight = rectRight.contains(pt);
@@ -157,7 +157,7 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 		}
 
 		if (isLeft || isRight) {
-			sliderChanged(offset, idx);
+			sliderChanged(offset, (SliderType)idx);
 			return true;
 		}
 
@@ -169,7 +169,7 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 	return false;
 }
 
-void CPetSound::sliderChanged(double offset, int sliderNum) {
+void CPetSound::sliderChanged(double offset, SliderType sliderNum) {
 	CPetControl *pet = getPetControl();
 	if (!pet)
 		return;
@@ -182,16 +182,16 @@ void CPetSound::sliderChanged(double offset, int sliderNum) {
 	double percent = offset * 100.0;
 
 	switch (sliderNum) {
-	case 0:
+	case MASTER_SLIDER:
 		soundManager.setMasterPercent(percent);
 		break;
-	case 1:
+	case MUSIC_SLIDER:
 		soundManager.setMusicPercent(percent);
 		break;
-	case 2:
+	case PARROT_SLIDER:
 		soundManager.setParrotPercent(percent);
 		break;
-	case 3:
+	case SPEECH_SLIDER:
 		soundManager.setSpeechPercent(percent);
 		break;
 	default:
@@ -200,25 +200,25 @@ void CPetSound::sliderChanged(double offset, int sliderNum) {
 }
 
 bool CPetSound::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (_musicVolume.resetThumbFocus()) {
+	if (_masterVolume.resetThumbFocus()) {
+		_draggingSlider = &_masterVolume; 
+		getOwner()->startDragging(this, msg);
+		_draggingSliderNum = MASTER_SLIDER;
+		return true;
+	} else if (_musicVolume.resetThumbFocus()) {
 		_draggingSlider = &_musicVolume;
 		getOwner()->startDragging(this, msg);
-		_draggingSliderNum = 0;
-		return true;
-	} else if (_masterVolume.resetThumbFocus()) {
-		_draggingSlider = &_masterVolume;
-		getOwner()->startDragging(this, msg);
-		_draggingSliderNum = 1;
+		_draggingSliderNum = MUSIC_SLIDER;
 		return true;
 	} else if (_parrotVolume.resetThumbFocus()) {
 		_draggingSlider = &_parrotVolume;
 		getOwner()->startDragging(this, msg);
-		_draggingSliderNum = 2;
+		_draggingSliderNum = PARROT_SLIDER;
 		return true;
 	} else if (_speechVolume.resetThumbFocus()) {
 		_draggingSlider = &_speechVolume;
 		getOwner()->startDragging(this, msg);
-		_draggingSliderNum = 3;
+		_draggingSliderNum = SPEECH_SLIDER;
 		return true;
 	}
 
@@ -251,20 +251,20 @@ bool CPetSound::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 }
 
 bool CPetSound::MouseButtonUpMsg(const Point &pt) {
-	int sliderNum = 0;
+	SliderType sliderNum = MASTER_SLIDER;
 	CPetSlider *slider = nullptr;
 
 	if (_musicVolume.MouseButtonUpMsg(pt)) {
-		sliderNum = 0;
+		sliderNum = MASTER_SLIDER;
 		slider = &_musicVolume;
 	} else if (_masterVolume.MouseButtonUpMsg(pt)) {
-		sliderNum = 1;
+		sliderNum = MUSIC_SLIDER;
 		slider = &_masterVolume;
 	} else if (_parrotVolume.MouseButtonUpMsg(pt)) {
-		sliderNum = 2;
+		sliderNum = PARROT_SLIDER;
 		slider = &_parrotVolume;
 	} else if (_speechVolume.MouseButtonUpMsg(pt)) {
-		sliderNum = 3;
+		sliderNum = SPEECH_SLIDER;
 		slider = &_speechVolume;
 	} else {
 		return false;

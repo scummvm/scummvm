@@ -89,7 +89,7 @@ double CPetSlider::getOffsetPixels() const {
 	if (minVal == maxVal)
 		return 0.0;
 
-	return _sliderOffset / (maxVal - minVal);
+	return (double)_sliderOffset / (maxVal - minVal);
 }
 
 void CPetSlider::setSliderOffset(double offset) {
