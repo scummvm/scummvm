@@ -35,10 +35,8 @@ class GetBits : public Common::BitStreamMemory8LSB {
 public:
 	/**
 	* Constructor
-	* @param stream				Source stream to reader from
-	* @param disposeAfterUse	Whether to destroy stream in destructor
 	*/
-	GetBits(const uint8 *ptr, uint32 size) : Common::BitStreamMemory8LSB(new Common::BitStreamMemoryStream(ptr, size), DisposeAfterUse::YES) {}
+	GetBits(const byte *dataPtr, uint32 dataSize) : Common::BitStreamMemory8LSB(new Common::BitStreamMemoryStream(dataPtr, dataSize), DisposeAfterUse::YES) {}
 
 	/**
 	 * The number of bits left
