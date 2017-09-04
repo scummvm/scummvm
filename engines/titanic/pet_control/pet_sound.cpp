@@ -109,6 +109,24 @@ bool CPetSound::reset() {
 	return false;
 }
 
+void CPetSound::setSliders() {
+	CPetControl *pet = getPetControl();
+	CGameManager *gameMan = pet ? pet->getGameManager() : nullptr;
+
+	if (gameMan) {
+		CSoundManager &soundMan = gameMan->_sound._soundManager;
+		uint masterVol = soundMan.getModeVolume(VOL_NORMAL);
+		uint musicVol = soundMan.getMusicVolume();
+		uint parrotVol = soundMan.getParrotVolume();
+		uint speechVol = soundMan.getSpeechVolume();
+
+		_masterVolume.setSliderOffset(masterVol * 0.01);
+		_musicVolume.setSliderOffset(musicVol * 0.01);
+		_parrotVolume.setSliderOffset(parrotVol * 0.01);
+		_speechVolume.setSliderOffset(speechVol * 0.01);
+	}
+}
+
 void CPetSound::draw2(CScreenManager *screenManager) {
 	_element.draw(screenManager);
 

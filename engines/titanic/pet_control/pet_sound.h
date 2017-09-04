@@ -50,6 +50,11 @@ private:
 	SliderType _draggingSliderNum;
 private:
 	/**
+	 * Sets the positions of the volume sliders
+	 */
+	void setSliders();
+
+	/**
 	 * Called when a slider has changed
 	 */
 	void sliderChanged(double offset, SliderType sliderNum);
@@ -95,6 +100,13 @@ public:
 	 * Handles mouse button up messages
 	 */
 	virtual bool MouseButtonUpMsg(const Point &pt);
+
+	/**
+	 * Highlight any currently highlighted element
+	 */
+	virtual void highlightCurrent(const Point &pt) {
+		setSliders();
+	}
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected
