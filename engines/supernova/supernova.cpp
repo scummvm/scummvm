@@ -148,6 +148,12 @@ Common::Error SupernovaEngine::run() {
 	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
 	CursorMan.showMouse(true);
 
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot >= 0) {
+		if (loadGameState(saveSlot).getCode() != Common::kNoError)
+			error("Failed to load save game from slot %i", saveSlot);
+	}
+
 	while (!shouldQuit()) {
 		uint32 start = _system->getMillis();
 		updateEvents();
