@@ -102,7 +102,7 @@ void Overlays::tick() {
 	}
 }
 
-int Overlays::findById(int id) const {
+int Overlays::findById(int32 id) const {
 	for (int i = 0; i < kOverlayVideos; ++i) {
 		if (_videos[i].loaded && _videos[i].id == id) {
 			return i;
