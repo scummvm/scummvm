@@ -132,7 +132,7 @@ bool AVIDecoder::isSeekable() const {
 const Graphics::Surface *AVIDecoder::decodeNextFrame() {
 	AVIVideoTrack *track = nullptr;
 	bool isReversed = false;
-	int frameNum;
+	int frameNum = 0;
 
 	// Check whether the video is playing in revese
 	for (int idx = _videoTracks.size() - 1; idx >= 0; --idx) {
@@ -155,6 +155,7 @@ const Graphics::Surface *AVIDecoder::decodeNextFrame() {
 		for (int idx = _videoTracks.size() - 1; idx >= 0; --idx) {
 			track = static_cast<AVIVideoTrack *>(_videoTracks[idx].track);
 			track->setCurFrame(frameNum - 1);
+			findNextVideoTrack();
 		}
 	}
 
@@ -1020,7 +1021,7 @@ bool AVIDecoder::AVIVideoTrack::setReverse(bool reverse) {
 
 bool AVIDecoder::AVIVideoTrack::endOfTrack() const {
 	if (_reversed)
-		return _curFrame < 0;
+		return _curFrame < -1;
 
 	return _curFrame >= (getFrameCount() - 1);
 }
