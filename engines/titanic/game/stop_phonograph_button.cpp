@@ -26,6 +26,7 @@ namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CStopPhonographButton, CBackground)
 	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
 END_MESSAGE_MAP()
 
 void CStopPhonographButton::save(SimpleFile *file, int indent) {
@@ -44,6 +45,16 @@ bool CStopPhonographButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 	if (!queryMsg._value) {
 		playMovie(0, 1, 0);
+	}
+
+	return true;
+}
+
+bool CStopPhonographButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	CQueryPhonographState queryMsg;
+	queryMsg.execute(getParent());
+
+	if (!queryMsg._value) {
 		playMovie(1, 0, 0);
 
 		CPhonographStopMsg stopMsg;
