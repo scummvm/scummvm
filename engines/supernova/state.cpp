@@ -476,6 +476,7 @@ void GameManager::resetInputState() {
 }
 
 bool GameManager::keyPressed(Common::KeyCode keycode, bool equal) {
+	_vm->updateEvents();
 	bool ret = _key.keycode == keycode;
 	_key.reset();
 
