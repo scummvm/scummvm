@@ -205,7 +205,14 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 				// Not empty, so move onto new first one
 				info = _movieRangeInfo.front();
 				newFrame = info->_startFrame;
-				setFrameRate(info->_endFrame < info->_startFrame ? -DEFAULT_FPS : DEFAULT_FPS);
+				bool reversed = info->_endFrame < info->_startFrame;
+
+				if (isReversed() != reversed)
+					// Direction is different, so force frame seek below
+					_priorFrame = -1;
+
+				// Set the next clip's direction
+				setFrameRate(reversed ? -DEFAULT_FPS : DEFAULT_FPS);
 			}
 		}
 	}
