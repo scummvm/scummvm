@@ -626,4 +626,30 @@ CViewItem *CProjectItem::parseView(const CString &viewString) {
 	return view;
 }
 
+bool CProjectItem::changeView(const CString &viewName) {
+	return changeView(viewName, "");
+}
+
+bool CProjectItem::changeView(const CString &viewName, const CString &clipName) {
+	CViewItem *newView = parseView(viewName);
+	CGameManager *gameManager = getGameManager();
+	CViewItem *oldView = gameManager->getView();
+
+	if (!oldView || !newView)
+		return false;
+
+	CMovieClip *clip = nullptr;
+	if (!clipName.empty()) {
+		clip = oldView->findNode()->findRoom()->findClip(clipName);
+	} else {
+		CLinkItem *link = oldView->findLink(newView);
+		if (link)
+			clip = link->getClip();
+	}
+
+	gameManager->_gameState.changeView(newView, clip);
+	return true;
+}
+
+
 } // End of namespace Titanic

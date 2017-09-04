@@ -168,9 +168,18 @@ bool Debugger::cmdRoom(int argc, const char **argv) {
 	} else if (argc >= 2) {
 		CRoomItem *roomItem = findRoom(argv[1]);
 
-		if (!roomItem)
-			debugPrintf("Could not find room - %s\n", argv[1]);
-		else if (argc == 2)
+		if (!roomItem && argc == 2) {
+			// Presume it's a full view specified
+			CProjectItem *project = g_vm->_window->_project;
+			CViewItem *view = project->parseView(argv[1]);
+
+			if (view) {
+				project->changeView(argv[1]);
+				return false;
+			} else {
+				debugPrintf("Could not find view - %s\n", argv[1]);
+			}
+		} else if (argc == 2)
 			listRoom(roomItem);
 		else {
 			CNodeItem *nodeItem = findNode(roomItem, argv[2]);

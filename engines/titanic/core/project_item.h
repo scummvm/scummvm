@@ -242,6 +242,15 @@ public:
 	 */
 	CViewItem *parseView(const CString &viewString);
 
+	/**
+	 * Change the view
+	 */
+	bool changeView(const CString &viewName, const CString &clipName);
+
+	/**
+	 * Change the view
+	 */
+	bool changeView(const CString &viewName);
 };
 
 } // End of namespace Titanic
