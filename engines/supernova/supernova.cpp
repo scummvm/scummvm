@@ -249,6 +249,11 @@ void SupernovaEngine::initData() {
 		_images[i].init(i);
 
 	// Sound
+	// Note:
+	//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
+	//     where SS SS (LE uint16) is the size of the sound sample + 2
+	//   - samples end with a footer of 4 bytes: 00 00
+	// Skip those in the buffer
 	Common::File file;
 
 	for (int i = 0; i < kAudioNumSamples; ++i) {
@@ -258,12 +263,12 @@ void SupernovaEngine::initData() {
 
 		if (audioInfo[i]._offsetEnd == -1) {
 			file.seek(0, SEEK_END);
-			_soundSamples[i]._length = file.pos() - audioInfo[i]._offsetStart;
+			_soundSamples[i]._length = file.pos() - audioInfo[i]._offsetStart - 10;
 		} else {
-			_soundSamples[i]._length = audioInfo[i]._offsetEnd - audioInfo[i]._offsetStart;
+			_soundSamples[i]._length = audioInfo[i]._offsetEnd - audioInfo[i]._offsetStart - 10;
 		}
 		_soundSamples[i]._buffer = new byte[_soundSamples[i]._length];
-		file.seek(audioInfo[i]._offsetStart);
+		file.seek(audioInfo[i]._offsetStart + 6);
 		file.read(_soundSamples[i]._buffer, _soundSamples[i]._length);
 		file.close();
 	}
