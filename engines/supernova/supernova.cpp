@@ -148,6 +148,8 @@ Common::Error SupernovaEngine::run() {
 	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
 	CursorMan.showMouse(true);
 
+	setTotalPlayTime(0);
+
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) {
 		if (loadGameState(saveSlot).getCode() != Common::kNoError)
@@ -837,6 +839,7 @@ bool SupernovaEngine::loadGame(int slot) {
 	int descriptionSize = savefile->readSint16LE();
 	savefile->skip(descriptionSize);
 	savefile->skip(6);
+	setTotalPlayTime(savefile->readUint32LE() * 1000);
 	Graphics::skipThumbnail(*savefile);
 	_gm->deserialize(savefile);
 
@@ -866,6 +869,7 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	savefile->write(description.c_str(), description.size() + 1);
 	savefile->writeUint32LE(saveDate);
 	savefile->writeUint16LE(saveTime);
+	savefile->writeUint32LE(getTotalPlayTime() / 1000);
 	Graphics::saveThumbnail(*savefile);
 	_gm->serialize(savefile);
 

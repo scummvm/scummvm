@@ -101,6 +101,7 @@ bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
 		// fallthrough
 	case kSavesSupportCreationDate:
 		// fallthrough
+	case kSavesSupportPlayTime:
 		return true;
 	default:
 		return false;
@@ -187,6 +188,8 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 		int minutes = saveTime & 0xFF;
 		desc.setSaveTime(hour, minutes);
 
+		uint32 playTime =savefile->readUint32LE();
+		desc.setPlayTime(playTime * 1000);
 
 		if (Graphics::checkThumbnailHeader(*savefile)) {
 			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*savefile);
