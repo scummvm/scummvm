@@ -159,7 +159,7 @@ struct PixelFormat {
 
 	inline bool operator==(const PixelFormat &fmt) const {
 		// TODO: If aLoss==8, then the value of aShift is irrelevant, and should be ignored.
-		return 0 == memcmp(this, &fmt, sizeof(PixelFormat));
+		return 0 == memcmp(this, &fmt, 9);
 	}
 
 	inline bool operator!=(const PixelFormat &fmt) const {
