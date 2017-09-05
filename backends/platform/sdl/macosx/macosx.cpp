@@ -64,7 +64,7 @@ void OSystem_MacOSX::init() {
 void OSystem_MacOSX::initBackend() {
 	// Create the mixer manager
 	if (_mixer == 0) {
-		_mixerManager = new DoubleBufferSDLMixerManager();
+		_mixerManager = new SdlMixerManager();
 
 		// Setup and start mixer
 		_mixerManager->init();
