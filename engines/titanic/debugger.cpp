@@ -331,9 +331,6 @@ bool Debugger::cmdMovie(int argc, const char **argv) {
 bool Debugger::cmdSound(int argc, const char **argv) {
 	if (argc == 2) {
 		Common::String name = argv[1];
-		const char *ch = strchr(argv[1], '!');
-		if (ch)
-			name.setChar('#', ch - argv[1]);
 		if (!name.contains("#"))
 			name = "z#" + name;
 
