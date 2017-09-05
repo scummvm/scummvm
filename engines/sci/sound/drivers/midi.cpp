@@ -134,6 +134,12 @@ public:
 		kMaxSysExSize = 264
 	};
 
+	enum Mt32Type {
+		kMt32TypeNone,
+		kMt32TypeReal,
+		kMt32TypeEmulated
+	};
+
 	MidiPlayer_Midi(SciVersion version);
 	virtual ~MidiPlayer_Midi();
 
@@ -191,7 +197,7 @@ private:
 			keyShift(0), volAdjust(0), pan(0x40), hold(0), volume(0x7f) { }
 	};
 
-	bool _isMt32;
+	Mt32Type _mt32Type;
 	bool _useMT32Track;
 	bool _hasReverb;
 	bool _playSwitch;
@@ -214,12 +220,17 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _useMT32Track(true) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _hasReverb(false), _useMT32Track(true) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
-	if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32"))
-		_isMt32 = true;
+	if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32")) {
+		if (MidiDriver::getDeviceString(dev, MidiDriver::kDriverId) == "mt32") {
+			_mt32Type = kMt32TypeEmulated;
+		} else {
+			_mt32Type = kMt32TypeReal;
+		}
+	}
 
 	_sysExBuf[0] = 0x41;
 	_sysExBuf[1] = 0x10;
@@ -439,13 +450,13 @@ void MidiPlayer_Midi::send(uint32 b) {
 // We return 1 for mt32, because if we remap channels to 0 for mt32, those won't get played at all
 // NOTE: SSCI uses channels 1 through 8 for General MIDI as well, in the drivers I checked
 int MidiPlayer_Midi::getFirstChannel() const {
-	if (_isMt32)
+	if (_mt32Type != kMt32TypeNone)
 		return 1;
 	return 0;
 }
 
 int MidiPlayer_Midi::getLastChannel() const {
-	if (_isMt32)
+	if (_mt32Type != kMt32TypeNone)
 		return 8;
 	return 15;
 }
@@ -998,8 +1009,10 @@ void MidiPlayer_Midi::resetMt32() {
 	Common::MemoryReadStream s((const byte *)"\x01\x00", 2);
 	sendMt32SysEx(0x7f0000, s, 2, true);
 
-	// This seems to require a longer delay than usual
-	g_system->delayMillis(150);
+	if (_mt32Type != kMt32TypeEmulated) {
+		// This seems to require a longer delay than usual
+		g_sci->sleep(150);
+	}
 }
 
 int MidiPlayer_Midi::open(ResourceManager *resMan) {
@@ -1038,7 +1051,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		}
 	}
 
-	if (_isMt32) {
+	if (_mt32Type != kMt32TypeNone) {
 		// MT-32
 		resetMt32();
 
@@ -1145,7 +1158,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 }
 
 void MidiPlayer_Midi::close() {
-	if (_isMt32) {
+	if (_mt32Type != kMt32TypeNone) {
 		// Send goodbye message
 		sendMt32SysEx(0x200000, SciSpan<const byte>(_goodbyeMsg, 20), true);
 	}
@@ -1156,15 +1169,17 @@ void MidiPlayer_Midi::close() {
 void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
 	_driver->sysEx(msg, length);
 
-	// Wait the time it takes to send the SysEx data
-	uint32 delay = (length + 2) * 1000 / 3125;
+	if (_mt32Type != kMt32TypeEmulated) {
+		// Wait the time it takes to send the SysEx data
+		uint32 delay = (length + 2) * 1000 / 3125;
 
-	// Plus an additional delay for the MT-32 rev00
-	if (_isMt32)
-		delay += 40;
+		// Plus an additional delay for the MT-32 rev00
+		if (_mt32Type == kMt32TypeReal)
+			delay += 40;
 
-	g_system->updateScreen();
-	g_sci->sleep(delay);
+		g_system->updateScreen();
+		g_sci->sleep(delay);
+	}
 }
 
 byte MidiPlayer_Midi::getPlayId() const {
@@ -1173,7 +1188,7 @@ byte MidiPlayer_Midi::getPlayId() const {
 	case SCI_VERSION_0_LATE:
 		return 0x01;
 	default:
-		if (_isMt32)
+		if (_mt32Type != kMt32TypeNone)
 			return 0x0c;
 		else
 			return _useMT32Track ? 0x0c : 0x07;
