@@ -290,7 +290,8 @@ bool Debugger::parseCommand(const char *inputOrig) {
 	const char *param[256];
 
 	// Parse out any params
-	char *input = strdup(inputOrig);	// One of the rare occasions using strdup is OK (although avoiding strtok might be more elegant here).
+	// One of the rare occasions using strdup is OK, since splitCommands needs to modify it
+	char *input = strdup(inputOrig);
 	splitCommand(input, num_params, &param[0]);
 
 	// Handle commands first
