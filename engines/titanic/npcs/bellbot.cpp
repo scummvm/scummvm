@@ -103,7 +103,8 @@ bool CBellBot::EnterViewMsg(CEnterViewMsg *msg) {
 	// WORKAROUND: Calling bot in front of doors and then going through them
 	// can leave it in the view. Detect this and properly remove him when
 	// the player returns to that view
-	if (msg->_newView == getParent() && getPetControl()->canSummonBot("BellBot"))
+	if (!hasActiveMovie() && msg->_newView == getParent()
+			&& getPetControl()->canSummonBot("BellBot"))
 		petMoveToHiddenRoom();
 
 	return true;
