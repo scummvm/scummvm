@@ -312,7 +312,7 @@ bool Debugger::cmdMovie(int argc, const char **argv) {
 		tester->playMovie(MOVIE_STOP_PREVIOUS);
 	} else {
 		uint startFrame = strToInt(argv[2]);
-		uint endFrame = strToInt(argv[2]);
+		uint endFrame = (argc == 3) ? startFrame : strToInt(argv[3]);
 		tester->playMovie(startFrame, endFrame, MOVIE_STOP_PREVIOUS);
 	}
 
