@@ -562,6 +562,10 @@ bool CPetControl::checkNode(const CString &name) {
 	return nameLower.contains(str);
 }
 
+void CPetControl::syncSoundSettings() {
+	_realLife.syncSoundSettings();
+}
+
 void CPetControl::playSound(int soundNum) {
 	CTreeItem *player = getHiddenObject("PETSoundPlayer");
 	if (player) {

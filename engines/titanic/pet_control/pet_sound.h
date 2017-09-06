@@ -50,11 +50,6 @@ private:
 	SliderType _draggingSliderNum;
 private:
 	/**
-	 * Sets the positions of the volume sliders
-	 */
-	void setSliders();
-
-	/**
 	 * Called when a slider has changed
 	 */
 	void sliderChanged(double offset, SliderType sliderNum);
@@ -112,6 +107,11 @@ public:
 	 * Returns the tooltip text for when the glyph is selected
 	 */
 	virtual void getTooltip(CTextControl *text);
+
+	/**
+	 * Sets the positions of the volume sliders
+	 */
+	void setSliders();
 };
 
 } // End of namespace Titanic

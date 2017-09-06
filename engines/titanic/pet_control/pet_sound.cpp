@@ -24,6 +24,8 @@
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/game_manager.h"
+#include "titanic/titanic.h"
+#include "common/config-manager.h"
 
 namespace Titanic {
 
@@ -110,21 +112,59 @@ bool CPetSound::reset() {
 }
 
 void CPetSound::setSliders() {
-	CPetControl *pet = getPetControl();
-	CGameManager *gameMan = pet ? pet->getGameManager() : nullptr;
+	// Get the mute settings
+	bool muteAll = ConfMan.hasKey("mute") ? ConfMan.getBool("mute") : false;
+	bool musicMute = muteAll || (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute"));
+	bool sfxMute = muteAll || (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute"));
+	bool speechMute = muteAll || (ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute"));
 
-	if (gameMan) {
-		CSoundManager &soundMan = gameMan->_sound._soundManager;
-		uint masterVol = soundMan.getModeVolume(VOL_NORMAL);
-		uint musicVol = soundMan.getMusicVolume();
-		uint parrotVol = soundMan.getParrotVolume();
-		uint speechVol = soundMan.getSpeechVolume();
+	// Get the volume levels
+	uint musicVol = musicMute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
+	uint parrotVol = sfxMute ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
+	uint speechVol = speechMute ? 0 : MIN(255, ConfMan.getInt("speech_volume"));
+	uint masterVol = MAX(musicVol, MAX(parrotVol, speechVol));
 
-		_masterVolume.setSliderOffset(masterVol * 0.01);
-		_musicVolume.setSliderOffset(musicVol * 0.01);
-		_parrotVolume.setSliderOffset(parrotVol * 0.01);
-		_speechVolume.setSliderOffset(speechVol * 0.01);
+	const double FACTOR = 1.0 / 255.0;
+	_masterVolume.setSliderOffset(masterVol * FACTOR);
+	_musicVolume.setSliderOffset(musicVol * FACTOR);
+	_parrotVolume.setSliderOffset(parrotVol * FACTOR);
+	_speechVolume.setSliderOffset(speechVol * FACTOR);
+}
+
+void CPetSound::sliderChanged(double offset, SliderType sliderNum) {
+	uint newVol = (uint)(offset * 255.0);
+
+	switch (sliderNum) {
+	case MASTER_SLIDER:
+		ConfMan.setBool("music_mute", false);
+		ConfMan.setBool("sfx_mute", false);
+		ConfMan.setBool("sfx_mute", false);
+		ConfMan.setInt("music_volume", newVol);
+		ConfMan.setInt("sfx_volume", newVol);
+		ConfMan.setInt("speech_volume", newVol);
+
+		_musicVolume.setSliderOffset(newVol * 0.01);
+		_parrotVolume.setSliderOffset(newVol * 0.01);
+		_speechVolume.setSliderOffset(newVol * 0.01);
+		break;
+	case MUSIC_SLIDER:
+		ConfMan.setBool("music_mute", false);
+		ConfMan.setInt("music_volume", newVol);
+		break;
+	case PARROT_SLIDER:
+		ConfMan.setBool("sfx_mute", false);
+		ConfMan.setInt("sfx_volume", newVol);
+		break;
+	case SPEECH_SLIDER:
+		ConfMan.setBool("speech_mute", false);
+		ConfMan.setInt("speech_volume", newVol);
+		break;
+	default:
+		return;
 	}
+
+	ConfMan.setBool("mute", false);
+	g_vm->syncSoundSettings();
 }
 
 void CPetSound::draw2(CScreenManager *screenManager) {
@@ -187,36 +227,6 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 	return false;
 }
 
-void CPetSound::sliderChanged(double offset, SliderType sliderNum) {
-	CPetControl *pet = getPetControl();
-	if (!pet)
-		return;
-
-	CGameManager *gameManager = pet->getGameManager();
-	if (!gameManager)
-		return;
-
-	QSoundManager &soundManager = gameManager->_sound._soundManager;
-	double percent = offset * 100.0;
-
-	switch (sliderNum) {
-	case MASTER_SLIDER:
-		soundManager.setMasterPercent(percent);
-		break;
-	case MUSIC_SLIDER:
-		soundManager.setMusicPercent(percent);
-		break;
-	case PARROT_SLIDER:
-		soundManager.setParrotPercent(percent);
-		break;
-	case SPEECH_SLIDER:
-		soundManager.setSpeechPercent(percent);
-		break;
-	default:
-		break;
-	}
-}
-
 bool CPetSound::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (_masterVolume.resetThumbFocus()) {
 		_draggingSlider = &_masterVolume; 
@@ -262,6 +272,9 @@ bool CPetSound::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (!_draggingSlider)
 		return false;
 
+	// Flush the changed settings
+	ConfMan.flushToDisk();
+
 	bool result = _draggingSlider->MouseDragEndMsg(msg->_mousePos);
 	getOwner()->endDragging();
 
@@ -272,12 +285,12 @@ bool CPetSound::MouseButtonUpMsg(const Point &pt) {
 	SliderType sliderNum = MASTER_SLIDER;
 	CPetSlider *slider = nullptr;
 
-	if (_musicVolume.MouseButtonUpMsg(pt)) {
+	if (_masterVolume.MouseButtonUpMsg(pt)) {
 		sliderNum = MASTER_SLIDER;
-		slider = &_musicVolume;
-	} else if (_masterVolume.MouseButtonUpMsg(pt)) {
-		sliderNum = MUSIC_SLIDER;
 		slider = &_masterVolume;
+	} else if (_musicVolume.MouseButtonUpMsg(pt)) {
+		sliderNum = MUSIC_SLIDER;
+		slider = &_musicVolume;
 	} else if (_parrotVolume.MouseButtonUpMsg(pt)) {
 		sliderNum = PARROT_SLIDER;
 		slider = &_parrotVolume;

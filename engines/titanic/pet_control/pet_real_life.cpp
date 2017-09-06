@@ -123,6 +123,12 @@ void CPetRealLife::addButton(CPetGlyph *glyph) {
 	}
 }
 
-
+void CPetRealLife::syncSoundSettings() {
+	for (CPetGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
+		CPetSound *sound = dynamic_cast<CPetSound *>(*i);
+		if (sound)
+			sound->setSliders();
+	}
+}
 
 } // End of namespace Titanic

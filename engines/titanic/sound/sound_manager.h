@@ -42,11 +42,13 @@ enum VolumeMode {
  */
 class CSoundManager {
 protected:
+	uint _handleCtr;
+	// Old volume levels, deprecated in favor of setting the volumes
+	// directly in the ScummVM mixer
 	double _musicPercent;
 	double _speechPercent;
 	double _masterPercent;
 	double _parrotPercent;
-	uint _handleCtr;
 public:
 	CSoundManager();
 	virtual ~CSoundManager() {}

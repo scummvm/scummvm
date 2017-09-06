@@ -156,6 +156,11 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	/**
+	 * Handles updates to the sound levels
+	 */
+	virtual void syncSoundSettings();
+
+	/**
 	 * Gets the game features
 	 */
 	uint32 getFeatures() const;

@@ -297,6 +297,11 @@ public:
 	bool checkNode(const CString &name);
 
 	/**
+	 * Handles updates to the sound levels
+	 */
+	void syncSoundSettings();
+
+	/**
 	 * Play a sound
 	 */
 	void playSound(int soundNum);

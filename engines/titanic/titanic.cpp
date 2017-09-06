@@ -119,6 +119,8 @@ bool TitanicEngine::initialize() {
 	setItemNames();
 	setRoomNames();
 
+	syncSoundSettings();
+
 	_window->applicationStarting();
 	return true;
 }
@@ -256,6 +258,17 @@ CString TitanicEngine::getSavegameName(int slot) {
 	}
 
 	return CString();
+}
+
+void TitanicEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	if (_window->_project) {
+		CPetControl *pet = _window->_project->getPetControl();
+		if (pet) {
+			pet->syncSoundSettings();
+		}
+	}
 }
 
 void TitanicEngine::GUIError(const char *msg, ...) {
