@@ -62,6 +62,13 @@ void DoubleBufferSDLMixerManager::startAudio() {
 	SdlMixerManager::startAudio();
 }
 
+SDL_AudioSpec DoubleBufferSDLMixerManager::getAudioSpec(uint32 rate) {
+	SDL_AudioSpec desired = SdlMixerManager::getAudioSpec(rate);
+	// Don't double audio latency when double buffering
+	desired.samples /= 2;
+	return desired;
+}
+
 void DoubleBufferSDLMixerManager::mixerProducerThread() {
 	byte nextSoundBuffer;
 

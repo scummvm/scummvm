@@ -44,6 +44,8 @@ protected:
 	uint _soundBufSize;
 	byte *_soundBuffers[2];
 
+	virtual SDL_AudioSpec getAudioSpec(uint32 rate) override;
+
 	/**
 	 * Handles and swap the sound buffers
 	 */
