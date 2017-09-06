@@ -210,8 +210,10 @@ int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &pr
 		return -1;
 
 	prox._soundDuration = waveFile->getDurationTicks();
-	activateSound(waveFile, prox._disposeAfterUse);
+	if (prox._soundType != Audio::Mixer::kPlainSoundType)
+		waveFile->_soundType = prox._soundType;
 
+	activateSound(waveFile, prox._disposeAfterUse);
 	return _soundManager.playSound(*waveFile, prox);
 }
 

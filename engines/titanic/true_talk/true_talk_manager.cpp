@@ -487,6 +487,7 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 	// Setup proximities
 	CProximity p1, p2, p3;
 	if (isParrot) {
+		p1._soundType = Audio::Mixer::kSFXSoundType;
 		p1._channelMode = 3;
 		p2._channelMode = 5;
 		p3._channelMode = 4;
