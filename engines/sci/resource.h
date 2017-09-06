@@ -198,7 +198,11 @@ public:
 	Common::String toPatchNameBase36() const {
 		Common::String output;
 
-		output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
+		if (getSciVersion() >= SCI_VERSION_2) {
+			output += (getType() == kResourceTypeAudio36) ? 'A' : 'S'; // Identifier
+		} else {
+			output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
+		}
 		output += intToBase36(getNumber(), 3);                     // Map
 		output += intToBase36(getTuple() >> 24, 2);                // Noun
 		output += intToBase36((getTuple() >> 16) & 0xff, 2);       // Verb
