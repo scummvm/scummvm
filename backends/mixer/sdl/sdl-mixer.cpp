@@ -128,23 +128,27 @@ void SdlMixerManager::init() {
 SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 	SDL_AudioSpec desired;
 
-	// Determine the desired output sampling frequency.
-	uint32 samplesPerSec = 0;
-	if (ConfMan.hasKey("output_rate"))
-		samplesPerSec = ConfMan.getInt("output_rate");
-	if (samplesPerSec <= 0)
-		samplesPerSec = outputRate;
+	const char *const appDomain = Common::ConfigManager::kApplicationDomain;
+
+	// There was once a GUI option for this, but it was never used;
+	// configurability is retained for advanced users only who wish to modify
+	// their ScummVM config file directly
+	uint32 freq = 0;
+	if (ConfMan.hasKey("output_rate", appDomain))
+		freq = ConfMan.getInt("output_rate", appDomain);
+	if (freq <= 0)
+		freq = outputRate;
 
 	// Determine the sample buffer size. We want it to store enough data for
 	// at least 1/16th of a second (though at most 8192 samples). Note
 	// that it must be a power of two. So e.g. at 22050 Hz, we request a
 	// sample buffer size of 2048.
 	uint32 samples = 8192;
-	while (samples * 16 > samplesPerSec * 2)
+	while (samples * 16 > freq * 2)
 		samples >>= 1;
 
 	memset(&desired, 0, sizeof(desired));
-	desired.freq = samplesPerSec;
+	desired.freq = freq;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = (uint16)samples;

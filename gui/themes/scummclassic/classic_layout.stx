@@ -335,14 +335,6 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'auSampleRatePopupDesc'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'auSampleRatePopup'
-						type = 'PopUp'
-				/>
-			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'

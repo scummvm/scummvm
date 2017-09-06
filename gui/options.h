@@ -159,8 +159,6 @@ private:
 	PopUpWidget *_midiPopUp;
 	StaticTextWidget *_oplPopUpDesc;
 	PopUpWidget *_oplPopUp;
-	StaticTextWidget *_outputRatePopUpDesc;
-	PopUpWidget *_outputRatePopUp;
 
 	StaticTextWidget *_mt32DevicePopUpDesc;
 	PopUpWidget *_mt32DevicePopUp;
