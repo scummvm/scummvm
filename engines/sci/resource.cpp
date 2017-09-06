@@ -141,7 +141,7 @@ static const char *const s_resourceTypeSuffixes[] = {
 };
 
 const char *getResourceTypeName(ResourceType restype) {
-	if (restype != kResourceTypeInvalid)
+	if (restype < ARRAYSIZE(s_resourceTypeNames))
 		return s_resourceTypeNames[restype];
 	else
 		return "invalid";
