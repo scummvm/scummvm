@@ -117,6 +117,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("alloc_list",				WRAP_METHOD(Console, cmdAllocList));
 	registerCmd("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	registerCmd("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
+	registerCmd("integrity_dump",	WRAP_METHOD(Console, cmdResourceIntegrityDump));
 	// Game
 	registerCmd("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	registerCmd("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
@@ -373,6 +374,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" alloc_list - Lists all allocated resources\n");
 	debugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
 	debugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
+	debugPrintf(" integrity_dump - Dumps integrity data about resources in the current game to disk\n");
 	debugPrintf("\n");
 	debugPrintf("Game:\n");
 	debugPrintf(" save_game - Saves the current game state to the hard disk\n");
@@ -916,6 +918,113 @@ bool Console::cmdList(int argc, const char **argv) {
 	}
 
 	debugPrintf("\n");
+	return true;
+}
+
+bool Console::cmdResourceIntegrityDump(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Dumps integrity data about resources in the current game to disk.\n");
+		debugPrintf("Usage: %s <filename> [<skip video file hashing>] [<skip video files altogether>]\n", argv[0]);
+		return true;
+	}
+
+	Common::DumpFile outFile;
+	if (!outFile.open(argv[1])) {
+		debugPrintf("Failed to open output file %s.\n", argv[1]);
+		return true;
+	}
+
+	const bool hashVideoFiles = argc < 3;
+	const bool videoFiles = argc < 4;
+
+	for (int i = 0; i < kResourceTypeInvalid; ++i) {
+		const ResourceType resType = (ResourceType)i;
+
+		// This will list video resources inside of resource bundles even if
+		// video files are skipped, but this seems fine since those files are
+		// small because they were intended to load into memory. (This happens
+		// with VMDs in GK2.)
+		Common::List<ResourceId> resources = _engine->getResMan()->listResources(resType);
+
+		const char *extension;
+		if (videoFiles) {
+			switch (resType) {
+			case kResourceTypeRobot:
+			case kResourceTypeVMD:
+			case kResourceTypeDuck:
+			case kResourceTypeClut: {
+				extension = getResourceTypeExtension(resType);
+				assert(*extension != '\0');
+
+				const Common::String filesGlob = Common::String::format("*.%s", extension).c_str();
+				Common::ArchiveMemberList files;
+				const int numMatches = SearchMan.listMatchingMembers(files, filesGlob);
+				if (numMatches > 0) {
+					Common::ArchiveMemberList::const_iterator it;
+					for (it = files.begin(); it != files.end(); ++it) {
+						const uint resNo = atoi((*it)->getName().c_str());
+						resources.push_back(ResourceId(resType, resNo));
+					}
+				}
+
+				break;
+			}
+			default:
+				extension = "";
+			}
+		}
+
+		if (resources.size()) {
+			Common::sort(resources.begin(), resources.end());
+			Common::List<ResourceId>::const_iterator it;
+			debugPrintf("%s: ", getResourceTypeName(resType));
+			for (it = resources.begin(); it != resources.end(); ++it) {
+				Common::String statusName;
+				if (resType == kResourceTypeAudio36 || resType == kResourceTypeSync36) {
+					statusName = it->toPatchNameBase36();
+				} else {
+					statusName = Common::String::format("%d", it->getNumber());
+				}
+
+				const Common::String resourceName = it->toString();
+
+				Resource *resource = _engine->getResMan()->findResource(*it, false);
+				if (resource) {
+					Common::MemoryReadStream stream = resource->toStream();
+					writeIntegrityDumpLine(statusName, resourceName, outFile, &stream, resource->size(), true);
+				} else if (videoFiles && *extension != '\0') {
+					const Common::String fileName = Common::String::format("%u.%s", it->getNumber(), extension);
+					Common::File file;
+					Common::ReadStream *stream = nullptr;
+					if (file.open(fileName)) {
+						stream = &file;
+					}
+					writeIntegrityDumpLine(statusName, resourceName, outFile, stream, file.size(), hashVideoFiles);
+				}
+			}
+
+			debugPrintf("\n");
+		}
+	}
+
+	const char *otherVideoFiles[] = { "avi", "seq" };
+	for (uint i = 0; i < ARRAYSIZE(otherVideoFiles); ++i) {
+		const char *extension = otherVideoFiles[i];
+
+		Common::ArchiveMemberList files;
+		if (SearchMan.listMatchingMembers(files, Common::String::format("*.%s", extension).c_str()) > 0) {
+			debugPrintf("%s: ", extension);
+			Common::sort(files.begin(), files.end(), Common::ArchiveMemberListComparator());
+			Common::ArchiveMemberList::const_iterator it;
+			for (it = files.begin(); it != files.end(); ++it) {
+				const Common::ArchiveMember &file = **it;
+				Common::ScopedPtr<Common::SeekableReadStream> stream(file.createReadStream());
+				writeIntegrityDumpLine(file.getName(), file.getName(), outFile, stream.get(), stream->size(), hashVideoFiles);
+			}
+			debugPrintf("\n");
+		}
+	}
+
 	return true;
 }
 
@@ -4906,6 +5015,25 @@ void Console::printBitmap(reg_t reg) {
 }
 
 #endif
+
+void Console::writeIntegrityDumpLine(const Common::String &statusName, const Common::String &resourceName, Common::WriteStream &out, Common::ReadStream *const data, const int size, const bool writeHash) {
+	debugPrintf("%s", statusName.c_str());
+
+	out.writeString(resourceName);
+	if (!data) {
+		out.writeString(" ERROR\n");
+		debugPrintf("[ERR] ");
+	} else {
+		out.writeString(Common::String::format(" %d ", size));
+		if (writeHash) {
+			out.writeString(Common::computeStreamMD5AsString(*data));
+		} else {
+			out.writeString("disabled");
+		}
+		out.writeString("\n");
+		debugPrintf("[OK] ");
+	}
+}
 
 static void printChar(byte c) {
 	if (c < 32 || c >= 127)

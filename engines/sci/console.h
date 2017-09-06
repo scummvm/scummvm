@@ -71,6 +71,7 @@ private:
 	bool cmdResourceInfo(int argc, const char **argv);
 	bool cmdResourceTypes(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
+	bool cmdResourceIntegrityDump(int argc, const char **argv);
 	bool cmdAllocList(int argc, const char **argv);
 	bool cmdHexgrep(int argc, const char **argv);
 	bool cmdVerifyScripts(int argc, const char **argv);
@@ -191,6 +192,8 @@ private:
 	void printArray(reg_t reg);
 	void printBitmap(reg_t reg);
 #endif
+
+	void writeIntegrityDumpLine(const Common::String &statusName, const Common::String &resourceName, Common::WriteStream &out, Common::ReadStream *const data, const int size, const bool writeHash);
 
 	SciEngine *_engine;
 	DebugState &_debugState;
