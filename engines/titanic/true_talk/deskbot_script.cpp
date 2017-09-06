@@ -1129,6 +1129,11 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			setDialRegion(1, 0);
 			addResponse(getDialogueId(241268));
 			addAskBreakfast();
+		} else if (sentence->contains("skip")) {
+			// WORKAROUND: Added 'skip' to allow skipping entire checkin
+			addAssignedRoom();
+			setState(0);
+			CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 		} else {
 			// Player didn't say yes or no
 			addResponse(getDialogueId(240745));
