@@ -110,6 +110,7 @@ int Debugger::debugPrintf(const char *format, ...) {
 	count = _debuggerDialog->vprintFormat(1, format, argptr);
 #else
 	count = ::vprintf(format, argptr);
+	::fflush(stdout);
 #endif
 	va_end (argptr);
 	return count;
