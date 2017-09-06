@@ -129,6 +129,7 @@ enum ResourceType {
 };
 
 const char *getResourceTypeName(ResourceType restype);
+const char *getResourceTypeExtension(ResourceType restype);
 
 enum ResVersion {
 	kResVersionUnknown,

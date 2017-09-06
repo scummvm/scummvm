@@ -147,6 +147,13 @@ const char *getResourceTypeName(ResourceType restype) {
 		return "invalid";
 }
 
+const char *getResourceTypeExtension(ResourceType restype) {
+	if (restype < ARRAYSIZE(s_resourceTypeSuffixes))
+		return s_resourceTypeSuffixes[restype];
+	else
+		return "";
+}
+
 static const ResourceType s_resTypeMapSci0[] = {
 	kResourceTypeView, kResourceTypePic, kResourceTypeScript, kResourceTypeText,          // 0x00-0x03
 	kResourceTypeSound, kResourceTypeMemory, kResourceTypeVocab, kResourceTypeFont,       // 0x04-0x07
