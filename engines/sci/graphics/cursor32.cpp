@@ -35,7 +35,6 @@ GfxCursor32::GfxCursor32() :
 	_hideCount(0),
 	_position(0, 0),
 	_writeToVMAP(false) {
-	CursorMan.showMouse(false);
 }
 
 void GfxCursor32::init(const Buffer &vmap) {
@@ -46,7 +45,6 @@ void GfxCursor32::init(const Buffer &vmap) {
 }
 
 GfxCursor32::~GfxCursor32() {
-	CursorMan.showMouse(true);
 	free(_cursor.data);
 	free(_cursorBack.data);
 	free(_drawBuff1.data);
