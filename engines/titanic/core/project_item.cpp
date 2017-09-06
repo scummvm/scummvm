@@ -173,6 +173,7 @@ void CProjectItem::loadGame(int slotId) {
 	// Clear any existing project contents and call preload code
 	preLoad();
 	clear();
+	g_vm->_loadSaveSlot = -1;
 
 	// Open either an existing savegame slot or the new game template
 	if (slotId >= 0) {

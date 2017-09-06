@@ -69,6 +69,7 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 	_scriptHandler = nullptr;
 	_script = nullptr;
 	CMusicRoom::_musicHandler = nullptr;
+	_loadSaveSlot = -1;
 
 	// Set up debug channels
 	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
@@ -188,12 +189,16 @@ void TitanicEngine::setRoomNames() {
 bool TitanicEngine::canLoadGameStateCurrently() {
 	CGameManager *gameManager = _window->_gameManager;
 	CScreenManager *screenMan = CScreenManager::_screenManagerPtr;
+	
+	if (!gameManager)
+		// Allow loading from copyright screen and continue dialogs
+		return true;
 
 	if (!_window->_inputAllowed)
 		return false;
 	if (screenMan && screenMan->_inputHandler->isLocked())
 		return false;
-	if (!gameManager || !gameManager->isntTransitioning())
+	if (!gameManager->isntTransitioning())
 		return false;
 
 	CProjectItem *project = gameManager->_project;
@@ -220,7 +225,11 @@ bool TitanicEngine::canSaveGameStateCurrently() {
 }
 
 Common::Error TitanicEngine::loadGameState(int slot) {
-	_window->_project->loadGame(slot);
+	CGameManager *gameManager = _window->_gameManager;
+	if (!gameManager)
+		_loadSaveSlot = slot;
+	else
+		_window->_project->loadGame(slot);
 	return Common::kNoError;
 }
 

@@ -105,7 +105,6 @@ private:
 	void setRoomNames();
 protected:
 	const TitanicGameDescription *_gameDescription;
-	int _loadSaveSlot;
 
 	// Engine APIs
 	virtual void initializePath(const Common::FSNode &gamePath);
@@ -130,6 +129,7 @@ public:
 	StringArray _roomNames;
 	Strings _strings;
 	CString _stateRoomExitView;
+	int _loadSaveSlot;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

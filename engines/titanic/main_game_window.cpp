@@ -65,7 +65,14 @@ void CMainGameWindow::applicationStarting() {
 			SCREEN_WIDTH / 2 - image.w / 2,
 			SCREEN_HEIGHT / 2 - image.h / 2
 			));
-		_vm->_events->sleep(5000);
+
+		// Delay for 5 seconds
+		const int NUM_STEPS = 20;
+		for (int idx = 0; idx < NUM_STEPS; ++idx) {
+			_vm->_events->sleep(5000 / NUM_STEPS);
+			if (_vm->_loadSaveSlot >= 0)
+				break;
+		}
 	}
 
 	// Set up the game project, and get game slot
@@ -112,6 +119,10 @@ bool CMainGameWindow::isLoadingFromLauncher() const {
 }
 
 int CMainGameWindow::selectSavegame() {
+	// If a savegame was selected from GMM during the startup, return it
+	if (g_vm->_loadSaveSlot != -1)
+		return g_vm->_loadSaveSlot;
+
 	// If the user selected a savegame from the launcher, return it
 	if (ConfMan.hasKey("save_slot"))
 		return ConfMan.getInt("save_slot");
