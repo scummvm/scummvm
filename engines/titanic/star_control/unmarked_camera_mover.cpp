@@ -41,7 +41,7 @@ void CUnmarkedCameraMover::moveTo(const FVector &srcV, const FVector &destV, con
 
 	debugC(DEBUG_BASIC, kDebugStarfield, "Starfield move %s to %s", srcV.toString().c_str(),
 		destV.toString().c_str());
-	_autoMover.setPath(srcV, destV, orientation);
+	_autoMover.setPathOrient(srcV, destV, orientation);
 }
 
 // TODO: v3 is unused

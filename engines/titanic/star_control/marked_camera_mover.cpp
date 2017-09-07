@@ -32,13 +32,12 @@ CMarkedCameraMover::CMarkedCameraMover(const CNavigationInfo *src) :
 		CCameraMover(src) {
 }
 
-
 void CMarkedCameraMover::transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
 		const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	if (isLocked())
 		decLockCount();
 
-	_autoMover.setPath2(oldPos, newPos, oldOrientation, newOrientation);
+	_autoMover.setPathOrients(oldPos, newPos, oldOrientation, newOrientation);
 	incLockCount();
 }
 

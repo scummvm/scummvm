@@ -36,8 +36,8 @@ void CUnmarkedAutoMover::setOrientations(const FMatrix &srcOrient, const FMatrix
 	_active = true;
 }
 
-void CUnmarkedAutoMover::setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
-	CCameraAutoMover::setPath(srcV, destV, orientation);
+void CUnmarkedAutoMover::setPathOrient(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
+	CCameraAutoMover::setPath(srcV, destV);
 
 	if (_distance > 8000.0) {
 		_active = true;
