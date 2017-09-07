@@ -49,7 +49,7 @@ private:
 	FMatrix _lockedStarsPos; // Each row represents the location of a locked star
 	CCameraMover *_mover;
 	CViewport _viewport;
-	bool _isMoved; // TODO: determine if this is being used
+	bool _isMoved; // Used in CPetStarfield to determine if a star destination can be set
 	bool _isInLockingProcess; // The mover/view is homing in on a new star
 private:
 	/**

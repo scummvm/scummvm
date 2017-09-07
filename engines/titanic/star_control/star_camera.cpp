@@ -391,7 +391,8 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		break;
 	}
 
-	// TODO: should three stars locked do anything in this function? Error?
+	// All three stars are locked on in this case so the camera does not move
+	// in response to the users mouse movements
 	case THREE_LOCKED:
 		break;
 	}
@@ -505,7 +506,9 @@ bool CStarCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3)
 
 	FMatrix matrix = _viewport.getOrientation();
 	const FVector &pos = _viewport._position;
-	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function
+	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function, 
+																// i.e., _mover has CUnmarkedCameraMover handle which means
+																// CUnmarkedCameraMover::transitionBetweenOrientations gets called
 
 	CStarVector *sv = new CStarVector(this, firstStarPosition);
 	_mover->setVector(sv);
@@ -613,7 +616,7 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosit
 	FMatrix newOr = viewport->getOrientation();
 	FMatrix oldOr = _viewport.getOrientation();
 	FVector newPos = viewport->_position;
-	FVector oldPos = _viewport._position;
+	//FVector oldPos = _viewport._position;
 
 	// WORKAROUND: set old position to new position (1st argument), this prevents 
 	// locking issues when locking the 3rd star. Fixes #9961.
