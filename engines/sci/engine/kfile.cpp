@@ -446,6 +446,9 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				*it = '_';
 			}
 		}
+	} else if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && name == "RESDUK.PAT") {
+		// Ignore the censorship password file in lieu of our game option
+		return SIGNAL_REG;
 	}
 
 	// See kMakeSaveCatName

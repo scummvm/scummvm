@@ -160,6 +160,7 @@ enum GlobalVar {
 	kGlobalVarPhant1DACVolume      = 188, // 0 to 127
 	kGlobalVarLSL6HiresMusicVolume = 194, // 0 to 13
 	kGlobalVarGK1DAC1              = 207, // 0 to 127
+	kGlobalVarPhant2CensorshipFlag = 207,
 	kGlobalVarGK1DAC2              = 208, // 0 to 127
 	kGlobalVarLSL6HiresRestoreTextWindow = 210,
 	kGlobalVarGK1DAC3              = 211, // 0 to 127

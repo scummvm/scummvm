@@ -49,6 +49,7 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
+#include "common/gui_options.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
@@ -1282,6 +1283,13 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 		// It gets disabled in the game's death screen.
 		g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
 		break;
+#ifdef ENABLE_SCI32
+	case GID_PHANTASMAGORIA2:
+		if (Common::checkGameGUIOption(GAMEOPTION_ENABLE_CENSORING, ConfMan.get("guioptions"))) {
+			s->variables[VAR_GLOBAL][kGlobalVarPhant2CensorshipFlag] = make_reg(0, ConfMan.getBool("enable_censoring"));
+		}
+		break;
+#endif
 	default:
 		break;
 	}

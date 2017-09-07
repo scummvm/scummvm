@@ -83,6 +83,7 @@ const struct GameOpt {
 	// Option strings must not contain substrings of any other options, so
 	// "gameOption10" would be invalid here because it contains "gameOption1"
 	{ GUIO_GAMEOPTIONS10, "gameOptionA" },
+	{ GUIO_GAMEOPTIONS11, "gameOptionB" },
 
 	{ GUIO_NONE, 0 }
 };

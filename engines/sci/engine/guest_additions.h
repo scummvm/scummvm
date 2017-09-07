@@ -109,6 +109,11 @@ public:
 
 #ifdef ENABLE_SCI32
 	/**
+	 * Guest additions hook for SciEngine::initGame.
+	 */
+	void sciEngineInitGameHook();
+
+	/**
 	 * Guest additions hook for send_selector.
 	 */
 	void sendSelectorHook(const reg_t sendObj, Selector &selector, reg_t *argp);

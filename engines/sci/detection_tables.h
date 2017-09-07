@@ -3143,14 +3143,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_PHANTASMAGORIA
 #undef GUIO_PHANTASMAGORIA_MAC
 
-#define GUIO_PHANTASMAGORIA2 GUIO8(GUIO_NOSUBTITLES, \
+#define GUIO_PHANTASMAGORIA2 GUIO9(GUIO_NOSUBTITLES, \
                                    GUIO_LINKMUSICTOSFX, \
                                    GUIO_LINKSPEECHTOSFX, \
                                    GUIO_NOMIDI, \
                                    GUIO_NOASPECT, \
                                    GAMEOPTION_ORIGINAL_SAVELOAD, \
                                    GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
-                                   GAMEOPTION_HQ_VIDEO)
+                                   GAMEOPTION_HQ_VIDEO, \
+                                   GAMEOPTION_ENABLE_CENSORING)
+// TODO: Learn which are the censored game editions and give them this GUIO
+// instead
+#define GUIO_PHANTASMAGORIA2_CENSORED GUIO8(GUIO_NOSUBTITLES, \
+                                            GUIO_LINKMUSICTOSFX, \
+                                            GUIO_LINKSPEECHTOSFX, \
+                                            GUIO_NOMIDI, \
+                                            GUIO_NOASPECT, \
+                                            GAMEOPTION_ORIGINAL_SAVELOAD, \
+                                            GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                                            GAMEOPTION_HQ_VIDEO)
 
 	// Some versions of Phantasmagoria 2 were heavily censored.
 	// Censored versions (data files are currently unknown to us): UK, Australia, first English release in Germany
@@ -3248,6 +3259,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		//{"ressfx.001", 0, "343a6ca9ddd614541b11b155de6368ac", 90268706},
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+
+#undef GUIO_PHANTASMAGORIA2
+#undef GUIO_PHANTASMAGORIA2_CENSORED
 
 #endif // ENABLE_SCI32
 

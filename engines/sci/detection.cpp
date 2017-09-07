@@ -499,6 +499,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	// Phantasmagoria 2 - content censoring option
+	{
+		GAMEOPTION_ENABLE_CENSORING,
+		{
+			_s("Enable content censoring"),
+			_s("Enable the game's built-in optional content censoring"),
+			"enable_censoring",
+			false
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

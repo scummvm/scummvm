@@ -569,6 +569,10 @@ bool SciEngine::initGame() {
 	// Load game language into printLang property of game object
 	setSciLanguage();
 
+#ifdef ENABLE_SCI32
+	_guestAdditions->sciEngineInitGameHook();
+#endif
+
 	return true;
 }
 

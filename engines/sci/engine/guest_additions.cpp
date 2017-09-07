@@ -189,6 +189,12 @@ bool GuestAdditions::kDoSoundMasterVolumeHook(const int volume) const {
 }
 
 #ifdef ENABLE_SCI32
+void GuestAdditions::sciEngineInitGameHook() {
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && Common::checkGameGUIOption(GAMEOPTION_ENABLE_CENSORING, ConfMan.get("guioptions"))) {
+		_state->variables[VAR_GLOBAL][kGlobalVarPhant2CensorshipFlag] = make_reg(0, ConfMan.getBool("enable_censoring"));
+	}
+}
+
 void GuestAdditions::sendSelectorHook(const reg_t sendObj, Selector &selector, reg_t *argp) {
 	if (_features->getMessageTypeSyncStrategy() == kMessageTypeSyncStrategyLSL6Hires) {
 		syncMessageTypeToScummVMUsingLSL6HiresStrategy(sendObj, selector, argp);
