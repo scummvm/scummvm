@@ -41,8 +41,7 @@ CCameraAutoMover::CCameraAutoMover() : _srcPos(0.0, 1000000.0, 0.0) {
 	_transitionPercentInc = 0.0;
 }
 
-// TODO: same as proc2 also orientations are not used
-void CCameraAutoMover::setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient) {
+void CCameraAutoMover::clear() {
 	_srcPos.clear();
 	_destPos.clear();
 	_transitionPercent = 1.0;

@@ -28,7 +28,7 @@
 namespace Titanic {
 
 void CUnmarkedAutoMover::setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient) {
-	CCameraAutoMover::setOrientations(srcOrient, destOrient);
+	CCameraAutoMover::clear();
 	_orientationChanger.load(srcOrient, destOrient);
 	_transitionPercentInc = 0.1;
 	_transitionPercent = 0.0;

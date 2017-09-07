@@ -62,7 +62,7 @@ public:
 	/**
 	 * Clear src and dest orientation and set some default values for other fields
 	 */	
-	virtual void setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient);
+	void clear();
 
 	/**
 	 * Setup a transition to from one position to another
