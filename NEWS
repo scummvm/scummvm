@@ -50,6 +50,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      the game and ScummVM options.
    - Added possibility to load and save games using GMM.
 
+ MADE:
+   - Fixed badly distorted sound (bug #9753).
+
  SCI
    - Fixed a script bug in Police Quest 3 to now grant 10 points when giving the
      locket to Marie. Now it's possible to beat the game with a perfect score.
