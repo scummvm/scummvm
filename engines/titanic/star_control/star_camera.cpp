@@ -41,7 +41,7 @@ FMatrix *CStarCamera::_newOrientation;
 
 CStarCamera::CStarCamera(const CNavigationInfo *data) :
 		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false) {
-	setupHandler(data);
+	setMoverType(data);
 }
 
 CStarCamera::CStarCamera(CViewport *src) :
@@ -69,7 +69,7 @@ bool CStarCamera::isNotInLockingProcess() {
 }
 
 CStarCamera::~CStarCamera() {
-	deleteHandler();
+	removeMover();
 }
 
 void CStarCamera::proc2(const CViewport *src) {
@@ -404,12 +404,12 @@ bool CStarCamera::addLockedStar(const FVector v) {
 
 	CNavigationInfo data;
 	_mover->copyTo(&data);
-	deleteHandler();
+	removeMover();
 
 	FVector &row = _lockedStarsPos[(int)_starLockState];
 	_starLockState = StarLockState((int)_starLockState + 1);
 	row = v;
-	setupHandler(&data);
+	setMoverType(&data);
 	return true;
 }
 
@@ -419,10 +419,10 @@ bool CStarCamera::removeLockedStar() {
 
 	CNavigationInfo data;
 	_mover->copyTo(&data);
-	deleteHandler();
+	removeMover();
 
 	_starLockState = StarLockState((int)_starLockState - 1);
-	setupHandler(&data);
+	setMoverType(&data);
 	return true;
 }
 
@@ -438,7 +438,7 @@ void CStarCamera::save(SimpleFile *file, int indent) {
 	_viewport.save(file, indent);
 }
 
-bool CStarCamera::setupHandler(const CNavigationInfo *src) {
+bool CStarCamera::setMoverType(const CNavigationInfo *src) {
 	CCameraMover *mover = nullptr;
 
 	switch (_starLockState) {
@@ -457,7 +457,7 @@ bool CStarCamera::setupHandler(const CNavigationInfo *src) {
 	}
 
 	if (mover) {
-		assert(!_mover);
+		assert(!_mover); // removeMover() is usually called before this function so _mover is null
 		_mover = mover;
 		return true;
 	} else {
@@ -465,7 +465,7 @@ bool CStarCamera::setupHandler(const CNavigationInfo *src) {
 	}
 }
 
-void CStarCamera::deleteHandler() {
+void CStarCamera::removeMover() {
 	if (_mover) {
 		delete _mover;
 		_mover = nullptr;

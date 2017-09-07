@@ -47,20 +47,22 @@ private:
 private:
 	StarLockState _starLockState;
 	FMatrix _lockedStarsPos; // Each row represents the location of a locked star
-	CCameraMover *_mover;
+	CCameraMover *_mover; // A marked or unmarked camera mover, contains an automover
 	CViewport _viewport;
 	bool _isMoved; // Used in CPetStarfield to determine if a star destination can be set
 	bool _isInLockingProcess; // The mover/view is homing in on a new star
 private:
 	/**
-	 * Set up a handler
+	 * Set Mover type to be unmarked or marked camera mover based on 
+	 * the number of stars currently locked (_starLockState)
+	 * The CNavigationInfo data is used to initialize the mover
 	 */
-	bool setupHandler(const CNavigationInfo *src);
+	bool setMoverType(const CNavigationInfo *src);
 
 	/**
-	 * Deletes any previous handler
+	 * Deletes the previous mover handle
 	 */
-	void deleteHandler();
+	void removeMover();
 
 	/**
 	 * Return whether the handler is locked
