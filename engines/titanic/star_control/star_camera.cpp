@@ -246,7 +246,7 @@ FVector CStarCamera::proc30(int index, const FVector &v) {
 }
 
 FVector CStarCamera::proc31(int index, const FVector &v) {
-	return _viewport.getRelativePosCentering2(index, v);
+	return _viewport.getRelativePosCenteringRaw(index, v);
 }
 
 void CStarCamera::setViewportAngle(const FPoint &angles) {

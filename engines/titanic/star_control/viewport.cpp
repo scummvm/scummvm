@@ -261,7 +261,7 @@ FVector CViewport::getRelativePosCentering(int index, const FVector &src) {
 }
 
 // TODO: Identical to getRelativePosCentering, was this meant to be different?
-FVector CViewport::getRelativePosCentering2(int index, const FVector &src) {
+FVector CViewport::getRelativePosCenteringRaw(int index, const FVector &src) {
 	FVector dest;
 	FPose pose = getRawPose();
 	FVector tv = src.matProdRowVect(pose);
