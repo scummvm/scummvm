@@ -519,6 +519,7 @@ static ADGameDescription s_fallbackDesc = {
 static char s_fallbackGameIdBuf[256];
 
 static const char *directoryGlobs[] = {
+	"avi",
 	"english",
 	"french",
 	"german",

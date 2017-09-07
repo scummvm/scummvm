@@ -1890,6 +1890,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	{"kq7", "", {
 		{"resource.map", 0, "8676b0fbbd7362989a029fe72fea14c6", 18709},
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
+		// Having the same number of files in the detection entries is needed
+		// for the DOS version to have equal priority to the Windows version
+		// that is detected with additional files, and we might as well check
+		// for the DOS-specific files here too since there are at least some
+		// Windows-only releases of this game too
+		{"avi/91.rbt",   0, NULL,                               -1},
+		{"avi/911.rbt",  0, NULL,                               -1},
+		{"avi/912.rbt",  0, NULL,                               -1},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
 
@@ -1898,6 +1906,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	{"kq7", "", {
 		{"resource.map", 0, "8676b0fbbd7362989a029fe72fea14c6", 18709},
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
+		// We need to look for these AVIs before enabling the Windows version
+		// because GOG.com releases are missing them. Their contents do not
+		// matter (some users replace them with higher quality versions created
+		// from the rare 1.65c release, which should not cause a detection
+		// failure)
+		{"avi/e108x11.avi",  0, NULL,                           -1},
+		{"avi/e208x11.avi",  0, NULL,                           -1},
+		{"avi/int08x11.avi", 0, NULL,                           -1},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
 
