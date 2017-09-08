@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-09-04 04:39+0200\n"
+"POT-Creation-Date: 2017-09-08 23:16+0200\n"
 "PO-Revision-Date: 2017-08-06 17:29+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -1876,7 +1876,7 @@ msgstr "S~t~artmenu"
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:542 engines/sci/engine/kfile.cpp:941
+#: engines/sci/engine/guest_additions.cpp:548 engines/sci/engine/kfile.cpp:944
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -1897,7 +1897,7 @@ msgstr "Spel opslaan:"
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:106 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:543 engines/sci/engine/kfile.cpp:941
+#: engines/sci/engine/guest_additions.cpp:549 engines/sci/engine/kfile.cpp:944
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -2932,8 +2932,8 @@ msgstr ""
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:545
-#: engines/sci/engine/kfile.cpp:1060 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/guest_additions.cpp:551
+#: engines/sci/engine/kfile.cpp:1063 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
@@ -2946,8 +2946,8 @@ msgstr "Laad opgeslagen spel:"
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:546
-#: engines/sci/engine/kfile.cpp:1060 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/guest_additions.cpp:552
+#: engines/sci/engine/kfile.cpp:1063 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
@@ -3604,7 +3604,16 @@ msgstr ""
 "Gebruik de alternative set van zilveren cursors in plaats van de normale "
 "gouden"
 
-#: engines/sci/detection.cpp:825
+#: engines/sci/detection.cpp:506
+#, fuzzy
+msgid "Enable content censoring"
+msgstr "Zwevende wijzers inschakelen"
+
+#: engines/sci/detection.cpp:507
+msgid "Enable the game's built-in optional content censoring"
+msgstr ""
+
+#: engines/sci/detection.cpp:837
 msgid "(Autosave)"
 msgstr "(Automatisch opslaan)"
 
@@ -3630,17 +3639,17 @@ msgstr ""
 "Gebruik a.u.b. een externe viewer om het help-bestand van het spel te "
 "openen: %s"
 
-#: engines/sci/engine/savegame.cpp:1305
+#: engines/sci/engine/savegame.cpp:1313
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 "Het formaat van dit opgeslagen spel is verouderd, het laden is niet mogelijk"
 
-#: engines/sci/engine/savegame.cpp:1307
+#: engines/sci/engine/savegame.cpp:1315
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "Opgeslagen spel heeft versie %d, maximaal ondersteunde is %0d"
 
-#: engines/sci/engine/savegame.cpp:1318
+#: engines/sci/engine/savegame.cpp:1326
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
@@ -3648,7 +3657,7 @@ msgstr ""
 "Dit opgeslagen spel is gemaakt met een andere versie van het spel, het laden "
 "is niet mogelijk"
 
-#: engines/sci/resource.cpp:813
+#: engines/sci/resource.cpp:820
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "

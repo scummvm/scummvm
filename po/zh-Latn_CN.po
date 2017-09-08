@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-09-04 04:39+0200\n"
+"POT-Creation-Date: 2017-09-08 23:16+0200\n"
 "PO-Revision-Date: 2016-12-26 19:38+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -1868,7 +1868,7 @@ msgstr "~R~Fanhui Qidongqi"
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:542 engines/sci/engine/kfile.cpp:941
+#: engines/sci/engine/guest_additions.cpp:548 engines/sci/engine/kfile.cpp:944
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -1889,7 +1889,7 @@ msgstr "Baocun Youxi:"
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:106 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:543 engines/sci/engine/kfile.cpp:941
+#: engines/sci/engine/guest_additions.cpp:549 engines/sci/engine/kfile.cpp:944
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -2913,8 +2913,8 @@ msgstr ""
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:545
-#: engines/sci/engine/kfile.cpp:1060 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/guest_additions.cpp:551
+#: engines/sci/engine/kfile.cpp:1063 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
@@ -2927,8 +2927,8 @@ msgstr "Huifu Youxi:"
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:546
-#: engines/sci/engine/kfile.cpp:1060 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/guest_additions.cpp:552
+#: engines/sci/engine/kfile.cpp:1063 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
@@ -3578,7 +3578,16 @@ msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr "Shiyong Qita Yinse Guangbiao"
 
-#: engines/sci/detection.cpp:825
+#: engines/sci/detection.cpp:506
+#, fuzzy
+msgid "Enable content censoring"
+msgstr "Qiyong Xuanfu Guangbiao"
+
+#: engines/sci/detection.cpp:507
+msgid "Enable the game's built-in optional content censoring"
+msgstr ""
+
+#: engines/sci/detection.cpp:837
 #, fuzzy
 msgid "(Autosave)"
 msgstr "Zidong Baocun:"
@@ -3597,22 +3606,22 @@ msgstr ""
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1305
+#: engines/sci/engine/savegame.cpp:1313
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1307
+#: engines/sci/engine/savegame.cpp:1315
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1318
+#: engines/sci/engine/savegame.cpp:1326
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
 
-#: engines/sci/resource.cpp:813
+#: engines/sci/resource.cpp:820
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
