@@ -122,7 +122,6 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 
 	filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 
-	char saveFileDesc[128];
 	SaveStateList saveFileList;
 	for (Common::StringArray::const_iterator file = filenames.begin();
 	     file != filenames.end(); ++file) {
