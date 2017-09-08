@@ -64,7 +64,7 @@ bool CToilet::TurnOff(CTurnOff *msg) {
 		_isClosed = true;
 		_startFrame = 11;
 		_endFrame = 18;
-		playMovie(11, 18, MOVIE_WAIT_FOR_FINISH);
+		playMovie(11, 18, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		playSound("b#1.wav");
 	}
 
