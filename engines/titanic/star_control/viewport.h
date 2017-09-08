@@ -125,7 +125,7 @@ public:
 	FPose getRawPose();
 	FVector getRelativePosNoCentering(int index, const FVector &src);
 	FVector getRelativePosCentering(int index, const FVector &src);
-	FVector getRelativePosCentering2(int index, const FVector &src);
+	FVector getRelativePosCenteringRaw(int index, const FVector &src);
 
 	/**
 	 * All arguments are return values

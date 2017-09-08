@@ -41,27 +41,7 @@ CCameraAutoMover::CCameraAutoMover() : _srcPos(0.0, 1000000.0, 0.0) {
 	_transitionPercentInc = 0.0;
 }
 
-// TODO: same as setPath also orientations are not used
-void CCameraAutoMover::setPath2(const FVector &oldPos, const FVector &newPos,
-	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
-	_srcPos = oldPos;
-	_destPos = newPos;
-	_posDelta = _destPos - _srcPos;
-
-	float temp = 0.0;
-	_posDelta.normalize(temp); // Do the normalization, put the scale amount in temp
-	_distance = temp;
-	_active = false;
-	_field34 = false;
-	_transitionPercent = 1.0;
-	_field40 = -1;
-	_field44 = -1;
-	_field48 = -1;
-	_field4C = 0;
-}
-
-// TODO: same as proc2 also orientations are not used
-void CCameraAutoMover::setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient) {
+void CCameraAutoMover::clear() {
 	_srcPos.clear();
 	_destPos.clear();
 	_transitionPercent = 1.0;
@@ -70,18 +50,14 @@ void CCameraAutoMover::setOrientations(const FMatrix &srcOrient, const FMatrix &
 	_field34 = false;
 }
 
-// TODO: same as setPath2 also orientations are not used
-void CCameraAutoMover::setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
+void CCameraAutoMover::setPath(const FVector &srcV, const FVector &destV) {
 	_srcPos = srcV;
 	_destPos = destV;
 	_posDelta = _destPos - _srcPos;
 
 	float temp = 0.0;
-	if (!_posDelta.normalize(temp)) {
-		// Do the normalization, put the scale amount in temp,
-		// but if it is unsuccessful, crash
-		assert(temp);
-	}
+	_posDelta.normalize(temp); // normalization won't happen if _posDelta is zero vector
+								// and that is okay
 
 	_distance = temp;
 	_active = false;

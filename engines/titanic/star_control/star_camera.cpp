@@ -41,7 +41,7 @@ FMatrix *CStarCamera::_newOrientation;
 
 CStarCamera::CStarCamera(const CNavigationInfo *data) :
 		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false) {
-	setupHandler(data);
+	setMoverType(data);
 }
 
 CStarCamera::CStarCamera(CViewport *src) :
@@ -69,7 +69,7 @@ bool CStarCamera::isNotInLockingProcess() {
 }
 
 CStarCamera::~CStarCamera() {
-	deleteHandler();
+	removeMover();
 }
 
 void CStarCamera::proc2(const CViewport *src) {
@@ -246,7 +246,7 @@ FVector CStarCamera::proc30(int index, const FVector &v) {
 }
 
 FVector CStarCamera::proc31(int index, const FVector &v) {
-	return _viewport.getRelativePosCentering2(index, v);
+	return _viewport.getRelativePosCenteringRaw(index, v);
 }
 
 void CStarCamera::setViewportAngle(const FPoint &angles) {
@@ -391,7 +391,8 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		break;
 	}
 
-	// TODO: should three stars locked do anything in this function? Error?
+	// All three stars are locked on in this case so the camera does not move
+	// in response to the users mouse movements
 	case THREE_LOCKED:
 		break;
 	}
@@ -403,12 +404,12 @@ bool CStarCamera::addLockedStar(const FVector v) {
 
 	CNavigationInfo data;
 	_mover->copyTo(&data);
-	deleteHandler();
+	removeMover();
 
 	FVector &row = _lockedStarsPos[(int)_starLockState];
 	_starLockState = StarLockState((int)_starLockState + 1);
 	row = v;
-	setupHandler(&data);
+	setMoverType(&data);
 	return true;
 }
 
@@ -418,10 +419,10 @@ bool CStarCamera::removeLockedStar() {
 
 	CNavigationInfo data;
 	_mover->copyTo(&data);
-	deleteHandler();
+	removeMover();
 
 	_starLockState = StarLockState((int)_starLockState - 1);
-	setupHandler(&data);
+	setMoverType(&data);
 	return true;
 }
 
@@ -437,7 +438,7 @@ void CStarCamera::save(SimpleFile *file, int indent) {
 	_viewport.save(file, indent);
 }
 
-bool CStarCamera::setupHandler(const CNavigationInfo *src) {
+bool CStarCamera::setMoverType(const CNavigationInfo *src) {
 	CCameraMover *mover = nullptr;
 
 	switch (_starLockState) {
@@ -456,7 +457,7 @@ bool CStarCamera::setupHandler(const CNavigationInfo *src) {
 	}
 
 	if (mover) {
-		assert(!_mover);
+		assert(!_mover); // removeMover() is usually called before this function so _mover is null
 		_mover = mover;
 		return true;
 	} else {
@@ -464,7 +465,7 @@ bool CStarCamera::setupHandler(const CNavigationInfo *src) {
 	}
 }
 
-void CStarCamera::deleteHandler() {
+void CStarCamera::removeMover() {
 	if (_mover) {
 		delete _mover;
 		_mover = nullptr;
@@ -505,7 +506,9 @@ bool CStarCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3)
 
 	FMatrix matrix = _viewport.getOrientation();
 	const FVector &pos = _viewport._position;
-	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function
+	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function, 
+																// i.e., _mover has CUnmarkedCameraMover handle which means
+																// CUnmarkedCameraMover::transitionBetweenOrientations gets called
 
 	CStarVector *sv = new CStarVector(this, firstStarPosition);
 	_mover->setVector(sv);
@@ -613,7 +616,7 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosit
 	FMatrix newOr = viewport->getOrientation();
 	FMatrix oldOr = _viewport.getOrientation();
 	FVector newPos = viewport->_position;
-	FVector oldPos = _viewport._position;
+	//FVector oldPos = _viewport._position;
 
 	// WORKAROUND: set old position to new position (1st argument), this prevents 
 	// locking issues when locking the 3rd star. Fixes #9961.

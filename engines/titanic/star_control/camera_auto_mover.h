@@ -59,14 +59,15 @@ public:
 	CCameraAutoMover();
 	virtual ~CCameraAutoMover() {}
 
-	virtual void setPath2(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation);
-
 	/**
 	 * Clear src and dest orientation and set some default values for other fields
 	 */	
-	virtual void setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient);
-	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
+	void clear();
+
+	/**
+	 * Setup a transition to from one position to another
+	 */		
+	void setPath(const FVector &srcV, const FVector &destV);
 
 	/**
 	 * Applys speeds to the mover. More than one application is usually done for several transitions

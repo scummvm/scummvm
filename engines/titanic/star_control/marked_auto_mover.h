@@ -41,7 +41,7 @@ private:
 public:
 	virtual ~CMarkedAutoMover() {}
 
-	virtual void setPath2(const FVector &oldPos, const FVector &newPos,
+	void setPathOrients(const FVector &oldPos, const FVector &newPos,
 		const FMatrix &oldOrientation, const FMatrix &newOrientation);
 
 	/**

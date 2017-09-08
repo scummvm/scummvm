@@ -37,9 +37,9 @@ public:
 	virtual void setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient);
 
 	/**
-	 * Sets the path to animate movement between
+	 * Sets the path and starting and ending orientations to animate movement between
 	 */
-	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
+	void setPathOrient(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
 
 	virtual MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
 };

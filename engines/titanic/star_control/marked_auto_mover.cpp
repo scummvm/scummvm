@@ -26,9 +26,9 @@
 
 namespace Titanic {
 
-void CMarkedAutoMover::setPath2(const FVector &oldPos, const FVector &newPos,
+void CMarkedAutoMover::setPathOrients(const FVector &oldPos, const FVector &newPos,
 	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
-	CCameraAutoMover::setPath2(oldPos, newPos, oldOrientation, newOrientation);
+	CCameraAutoMover::setPath(oldPos, newPos);
 
 	double distance = _distance;
 	_active = true;
