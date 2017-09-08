@@ -1065,7 +1065,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	bool isEditing = true;
 	uint cursorIndex = input.size();
 	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
-	int overdrawWidth = ((length + 1) * (kFontWidth + 2) > kScreenWidth - x) ?
+	int overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
 	                    kScreenWidth - x : (length + 1) * (kFontWidth + 2);
 
 	while (isEditing) {
@@ -1344,7 +1344,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			edit(input, 91, 100, 5);
 
 			int seperator = -1;
-			for (int i = 0; i < input.size(); ++i) {
+			for (uint i = 0; i < input.size(); ++i) {
 				if (input[i] == ':') {
 					seperator = i;
 					break;
@@ -1366,7 +1366,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				}
 			}
 			decimalPlace = 1;
-			for (int i = seperator + 1; i < input.size(); ++i) {
+			for (uint i = seperator + 1; i < input.size(); ++i) {
 				if (Common::isDigit(input[i])) {
 					minutes = minutes * decimalPlace + (input[i] - '0');
 					decimalPlace *= 10;
