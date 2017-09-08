@@ -1256,7 +1256,6 @@ bool GameManager::isHelmetOff() {
 
 bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 	Room *r;
-	char t[150];
 	Common::String input;
 
 	if ((verb == ACTION_USE) && (obj1._id == SCHNUCK)) {
