@@ -400,7 +400,9 @@ void SupernovaEngine::renderRoom(Room &room) {
 }
 
 int SupernovaEngine::textWidth(const uint16 key) {
-	const char text[2] = {key & 0xFF, 0};
+	char text[2];
+	text[0] = key & 0xFF;
+	text[1] = 0;
 	return textWidth(text);
 }
 
@@ -545,7 +547,9 @@ void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
 }
 
 void SupernovaEngine::renderText(const uint16 character, int x, int y, byte color) {
-	char text[2] = {character & 0xFF, 0};
+	char text[2];
+	text[0] = character & 0xFF;
+	text[1] = 0;
 	renderText(text, x, y, color);
 }
 
@@ -554,7 +558,9 @@ void SupernovaEngine::renderText(const char *text) {
 }
 
 void SupernovaEngine::renderText(const uint16 character) {
-	char text[2] = {character & 0xFF, 0};
+	char text[2];
+	text[0] = character & 0xFF;
+	text[1] = 0;
 	renderText(text, _textCursorX, _textCursorY, _textColor);
 }
 
