@@ -117,14 +117,14 @@ FPose FVector::getFrameTransform(const FVector &v) {
 	FVector vector1 = getAnglesAsVect();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * Rad2Deg);
 	matrix2.setRotationMatrix(Y_AXIS, vector1._z * Rad2Deg);
-	fposeProd(matrix1,matrix2,matrix3);
+	fposeProd(matrix1, matrix2, matrix3);
 	matrix4 = matrix3.inverseTransform();
 
 	vector1 = v.getAnglesAsVect();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * Rad2Deg);
 	matrix2.setRotationMatrix(Y_AXIS, vector1._z * Rad2Deg);
-	fposeProd(matrix1,matrix2,matrix3);
-	fposeProd(matrix4,matrix3,matrix1);
+	fposeProd(matrix1, matrix2, matrix3);
+	fposeProd(matrix4, matrix3, matrix1);
 
 	return matrix1;
 }
@@ -135,7 +135,7 @@ FPose FVector::formRotXY() const {
 	m1.setRotationMatrix(X_AXIS, v1._y * Rad2Deg);
 	m2.setRotationMatrix(Y_AXIS, v1._z * Rad2Deg);
 	FPose m3;
-	fposeProd(m1,m2,m3);
+	fposeProd(m1, m2, m3);
 	return m3;
 }
 

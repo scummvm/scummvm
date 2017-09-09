@@ -329,11 +329,11 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		diffV = tempV1;
 		m1 = diffV.formRotXY();
 		FPose m11;
-		fposeProd(m1,subX,m11);
+		fposeProd(m1, subX, m11);
 
 		subX = m11.inverseTransform();
 		FPose m12;
-		fposeProd(subX,subY,m12);
+		fposeProd(subX, subY, m12);
 
 		FMatrix m3 = _viewport.getOrientation();
 		tempV2 = _viewport._position;
@@ -526,7 +526,7 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	FVector starDelta = secondStarPosition - firstStarPosition;
 	FPose m10 = starDelta.formRotXY();
 	FPose m11;
-	fposeProd(m10,m3,m11);
+	fposeProd(m10, m3, m11);
 
 	m10 = m11.inverseTransform();
 
@@ -573,7 +573,7 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	FVector x1(viewPosition2);
 	FVector x2(m3._row1);
 	// Find the angle of rotation for m4._row1 that gives the minimum distance to viewPosition
-	float minDegree = calcAngleForMinDist(x1,x2,minDistance);
+	float minDegree = calcAngleForMinDist(x1, x2, minDistance);
 
 	m3.rotVectAxisY((double)minDegree);
 	FPose m13;

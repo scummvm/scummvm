@@ -223,7 +223,7 @@ FPose FPose::compose(const FMatrix &m) {
 	am._row2 = m._row2;
 	am._row3 = m._row3;
 
-	fposeProd(*this,am,dm);
+	fposeProd(*this, am, dm);
 
 	return dm;
 }

@@ -115,8 +115,8 @@ bool CNavHelmet::PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg) {
 bool CNavHelmet::PETStarFieldLockMsg(CPETStarFieldLockMsg *msg) {
 	if (_helmetOn) {
 		CPetControl *pet = getPetControl();
-		CStarControl *starControl = 0;
-		bool isStarFieldMode=false;
+		CStarControl *starControl = nullptr;
+		bool isStarFieldMode = false;
 
 		if (pet)
 			starControl = pet->getStarControl();
