@@ -98,6 +98,8 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 }
 
 PegasusEngine::~PegasusEngine() {
+	throwAwayEverything();
+
 	delete _resFork;
 	delete _console;
 	delete _cursor;
