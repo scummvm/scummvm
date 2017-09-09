@@ -145,6 +145,18 @@ void CStarControl::newFrame() {
 	}
 }
 
+bool CStarControl::isStarFieldMode() {
+	if (!_petControl)
+		_petControl = getPetControl();
+
+	if (_petControl) {
+
+		if (_starField.getMode() == MODE_STARFIELD)
+			return true;
+	}
+	return false;
+}
+
 void CStarControl::doAction(StarControlAction action) {
 	if (!_enabled)
 		return;

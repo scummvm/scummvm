@@ -22,6 +22,7 @@
 
 #include "titanic/game/nav_helmet.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/star_control/star_control.h"
 
 namespace Titanic {
 
@@ -113,12 +114,28 @@ bool CNavHelmet::PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg) {
 
 bool CNavHelmet::PETStarFieldLockMsg(CPETStarFieldLockMsg *msg) {
 	if (_helmetOn) {
-		if (msg->_value) {
-			playSound("a#6.wav");
-			starFn(LOCK_STAR);
-		} else {
-			playSound("a#5.wav");
-			starFn(UNLOCK_STAR);
+		CPetControl *pet = getPetControl();
+		CStarControl *starControl = 0;
+		bool isStarFieldMode=false;
+
+		if (pet)
+			starControl = pet->getStarControl();
+
+		if (starControl)
+			isStarFieldMode = starControl->isStarFieldMode();
+
+		if (isStarFieldMode) {
+			// locking and unlocking only in starfield
+			// It already does this without the conditional
+			// but now it will also not play the sounds in
+			// photoview
+			if (msg->_value) {
+				playSound("a#6.wav");
+				starFn(LOCK_STAR);
+			} else {
+				playSound("a#5.wav");
+				starFn(UNLOCK_STAR);
+			}
 		}
 	}
 

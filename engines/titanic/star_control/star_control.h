@@ -70,6 +70,11 @@ public:
 	virtual void draw(CScreenManager *screenManager);
 
 	/**
+	 * _starField is currently showing the starfield
+	 */
+	bool isStarFieldMode();
+
+	/**
 	 * Does an action in the star control
 	 */
 	void doAction(StarControlAction action);
