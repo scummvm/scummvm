@@ -469,6 +469,7 @@ void CStarCamera::removeMover() {
 	if (_mover) {
 		delete _mover;
 		_mover = nullptr;
+		_isInLockingProcess = false;
 	}
 }
 
