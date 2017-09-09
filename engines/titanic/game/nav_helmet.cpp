@@ -48,15 +48,15 @@ void CNavHelmet::load(SimpleFile *file) {
 }
 
 bool CNavHelmet::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_flag) {
+	CPetControl *pet = getPetControl();
+	assert(pet);
+
+	if (_flag && pet->isAreaUnlocked()) {
 		setVisible(false);
 
-		CPetControl *pet = getPetControl();
-		if (pet) {
-			pet->setArea(PET_STARFIELD);
-			petDisplayMessage(1, ADJUST_VIEWING_APPARATUS);
-			pet->incAreaLocks();
-		}
+		pet->setArea(PET_STARFIELD);
+		petDisplayMessage(1, ADJUST_VIEWING_APPARATUS);
+		pet->incAreaLocks();
 
 		starFn(STAR_SHOW);
 		starFn(STAR_12);
