@@ -521,7 +521,7 @@ static const SciKernelMapSubEntry kArray_subops[] = {
 	{ SIG_SCI32,           6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
 	// there is no subop 7
 	{ SIG_SCI32,           8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
-	{ SIG_SCI32,           9, MAP_CALL(ArrayGetData),              "[or]",                 NULL },
+	{ SIG_SCI32,           9, MAP_CALL(ArrayGetData),              "[0or]",                NULL },
 	{ SIG_SCI3,           10, MAP_CALL(ArrayByteCopy),             "ririi",                NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
@@ -553,8 +553,8 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_THRU_SCI21MID,  18, MAP_CALL(StringReplaceSubstringEx),  "rrrr",                 NULL },
 
 	{ SIG_SINCE_SCI21LATE, 8, MAP_CALL(StringLength),              "r",                    NULL },
-	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringFormat),              "[ro](.*)",             NULL },
-	{ SIG_SINCE_SCI21LATE,10, MAP_CALL(StringFormatAt),            "r[ro](.*)",            NULL },
+	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringFormat),              "[0ro](.*)",            NULL },
+	{ SIG_SINCE_SCI21LATE,10, MAP_CALL(StringFormatAt),            "r[0ro](.*)",           NULL },
 	{ SIG_SINCE_SCI21LATE,11, MAP_CALL(StringToInteger),           "r",                    NULL },
 	{ SIG_SINCE_SCI21LATE,12, MAP_CALL(StringTrim),                "ri(i)",                NULL },
 	{ SIG_SINCE_SCI21LATE,13, MAP_CALL(StringToUpperCase),         "r",                    NULL },
