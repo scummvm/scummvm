@@ -3966,7 +3966,7 @@ static const uint16 phant2NumSavesPatch2[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                        patch
+//          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
 	{  true,     0, "bad arguments to get game version",           1, phant2GetVersionSignature,     phant2GetVersionPatch },
@@ -3976,8 +3976,8 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },
 	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,      phant2SaveNamePatch2 },
-	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature1,       phant2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               2, phant2NumSavesSignature2,       phant2NumSavesPatch2 },
+	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature1,      phant2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",               2, phant2NumSavesSignature2,      phant2NumSavesPatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
