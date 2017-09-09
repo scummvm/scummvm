@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CParrot, CTrueTalkNPC)
 	ON_MESSAGE(PreEnterViewMsg)
 	ON_MESSAGE(PanningAwayFromParrotMsg)
 	ON_MESSAGE(LeaveRoomMsg)
+	ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
 	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
 END_MESSAGE_MAP()
 
@@ -724,6 +725,15 @@ bool CParrot::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 		startTalking(this, 280259);
 
 	return true;
+}
+
+bool CParrot::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg) {
+	// WORKAROUND: Fix parrot freezing up if you drag the chicken whilst
+	// he's still returning to the center from a prior chicken drag
+	if (_npcFlags & (NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT))
+		_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT);
+
+	return CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(msg);
 }
 
 bool CParrot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {

@@ -51,6 +51,7 @@ class CParrot : public CTrueTalkNPC {
 	bool PreEnterViewMsg(CPreEnterViewMsg *msg);
 	bool PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg);
 	bool TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg);
 public:
 	static bool _eatingChicken;
