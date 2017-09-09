@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-09-09 02:11+0200\n"
-"PO-Revision-Date: 2017-09-09 07:36+0000\n"
+"PO-Revision-Date: 2017-09-09 07:41+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
@@ -3607,7 +3607,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:506
 msgid "Enable content censoring"
-msgstr "Attiva censure del contenuto"
+msgstr "Attiva censura del contenuto"
 
 #: engines/sci/detection.cpp:507
 msgid "Enable the game's built-in optional content censoring"
