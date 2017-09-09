@@ -648,7 +648,11 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 			error("Unknown platform %d", g_sci->getPlatform());
 		}
 	case kGetColorDepth:
-		return make_reg(0, /* 256 color */ 2);
+		if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+			return make_reg(0, /* 16-bit color */ 3);
+		} else {
+			return make_reg(0, /* 256 color */ 2);
+		}
 	case kGetCDSpeed:
 		// The value `4` comes from Rama DOS resource.cfg installed in DOSBox,
 		// and seems to correspond to the highest expected CD speed value
