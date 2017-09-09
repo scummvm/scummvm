@@ -508,7 +508,6 @@ reg_t kStringNew(EngineState *s, int argc, reg_t *argv);
 reg_t kStringGetChar(EngineState *s, int argc, reg_t *argv);
 reg_t kStringFree(EngineState *s, int argc, reg_t *argv);
 reg_t kStringCompare(EngineState *s, int argc, reg_t *argv);
-reg_t kStringGetData(EngineState *s, int argc, reg_t *argv);
 reg_t kStringLength(EngineState *s, int argc, reg_t *argv);
 reg_t kStringFormat(EngineState *s, int argc, reg_t *argv);
 reg_t kStringFormatAt(EngineState *s, int argc, reg_t *argv);

@@ -682,14 +682,6 @@ reg_t kStringCompare(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, (result > 0) - (result < 0));
 }
 
-reg_t kStringGetData(EngineState *s, int argc, reg_t *argv) {
-	if (s->_segMan->isObject(argv[0])) {
-		return readSelector(s->_segMan, argv[0], SELECTOR(data));
-	}
-
-	return argv[0];
-}
-
 reg_t kStringLength(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->_segMan->getString(argv[0]).size());
 }
