@@ -40,7 +40,8 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_modifierState(0),
 	_shouldQuit(false),
 	_shouldRTL(false),
-	_confirmExitDialogActive(false) {
+	_confirmExitDialogActive(false),
+	_shouldGenerateKeyRepeatEvents(true) {
 
 	assert(boss);
 
@@ -84,7 +85,9 @@ void DefaultEventManager::init() {
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	_dispatcher.dispatch();
 
-	handleKeyRepeat();
+	if (_shouldGenerateKeyRepeatEvents) {
+		handleKeyRepeat();
+	}
 
 	if (_eventQueue.empty()) {
 		return false;
