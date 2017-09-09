@@ -390,7 +390,7 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 		}
 		break;
 	}
-	event.synthetic = true;
+	event.kbdRepeat = true;
 }
 
 void PlaybackFile::readEventsToBuffer(uint32 size) {

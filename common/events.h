@@ -97,10 +97,12 @@ typedef uint32 CustomEventType;
 struct Event {
 	/** The type of the event. */
 	EventType type;
-	/** Flag to indicate if the event is real or synthetic. E.g. keyboard
-	  * repeat events are synthetic.
-	  */
-	bool synthetic;
+	/**
+	 * True if this is a key down repeat event.
+	 *
+	 * Only valid for EVENT_KEYDOWN events.
+	 */
+	bool kbdRepeat;
 	/**
 	  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
 	  * EVENT_KEYUP). For all other event types, content is undefined.
@@ -120,7 +122,7 @@ struct Event {
 	CustomEventType customType;
 #endif
 
-	Event() : type(EVENT_INVALID), synthetic(false) {
+	Event() : type(EVENT_INVALID), kbdRepeat(false) {
 #ifdef ENABLE_KEYMAPPER
 		customType = 0;
 #endif

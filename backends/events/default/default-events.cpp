@@ -97,7 +97,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	}
 
 	if (result) {
-		event.synthetic = false;
+		event.kbdRepeat = false;
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_modifierState = event.kbd.flags;
@@ -233,7 +233,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		if (_currentKeyDown.keycode != 0 && _keyRepeatTime < time) {
 			// fire event
 			event.type = Common::EVENT_KEYDOWN;
-			event.synthetic = true;
+			event.kbdRepeat = true;
 			event.kbd.ascii = _currentKeyDown.ascii;
 			event.kbd.keycode = (Common::KeyCode)_currentKeyDown.keycode;
 			event.kbd.flags = _currentKeyDown.flags;
