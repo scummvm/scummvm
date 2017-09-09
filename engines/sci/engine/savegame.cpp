@@ -49,6 +49,7 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
+#include "common/config-manager.h"
 #include "common/gui_options.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/graphics/cursor32.h"
