@@ -182,6 +182,7 @@ void CPetControl::enterNode(CNodeItem *node) {
 void CPetControl::enterRoom(CRoomItem *room) {
 	_rooms.enterRoom(room);
 	_remote.enterRoom(room);
+	_inventory.enterRoom(room);
 }
 
 void CPetControl::resetRemoteTarget() {

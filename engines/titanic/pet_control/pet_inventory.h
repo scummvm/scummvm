@@ -86,6 +86,11 @@ public:
 	virtual void changed(int changeType);
 
 	/**
+	 * Called when a new room is entered
+	 */
+	virtual void enterRoom(CRoomItem *room);
+
+	/**
 	 * Following are handlers for the various messages that the PET can
 	 * pass onto the currently active section/area
 	 */

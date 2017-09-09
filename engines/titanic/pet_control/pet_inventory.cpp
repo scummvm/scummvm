@@ -71,6 +71,14 @@ void CPetInventory::changed(int changeType) {
 	}
 }
 
+void CPetInventory::enterRoom(CRoomItem *room) {
+	int index = _items.getHighlightIndex();
+	if (index != -1) {
+		_items.resetHighlight();
+		_items.highlight(index);
+	}
+}
+
 bool CPetInventory::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	return _items.MouseButtonDownMsg(msg->_mousePos);
 }
