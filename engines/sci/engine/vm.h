@@ -149,9 +149,10 @@ enum GlobalVar {
 	kGlobalVarNewRoomNo      = 13,
 	kGlobalVarScore          = 15,
 	kGlobalVarGK2MusicVolume = 76, // 0 to 127
-	kGlobalVarFastCast       = 84, // SCI16
-	kGlobalVarMessageType    = 90,
-	kGlobalVarTextSpeed      = 94, // SCI32; 0 is fastest, 8 is slowest
+	kGlobalVarPhant2SecondaryVolume = 76, // 0 to 127
+	kGlobalVarFastCast             = 84, // SCI16
+	kGlobalVarMessageType          = 90,
+	kGlobalVarTextSpeed            = 94, // SCI32; 0 is fastest, 8 is slowest
 	kGlobalVarGK1Music1            = 102, // 0 to 127
 	kGlobalVarGK1Music2            = 103, // 0 to 127
 	kGlobalVarLSL6HiresGameFlags   = 137,

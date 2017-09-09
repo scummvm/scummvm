@@ -33,6 +33,21 @@ class Kernel;
 class Script;
 class SegManager;
 
+#ifdef ENABLE_SCI32
+enum {
+	// The in-game volumes for Phant2 use a volume range smaller than the
+	// actual master volume because movie volume needs to be controllable from
+	// the normal ScummVM launcher volume controls, but movie dialogue cannot be
+	// heard if the game audio is at the same level as movies. The game normally
+	// sets defaults so that the in-game volume is 85 and movies are 127, so we
+	// will just use 85 as the maximum volume.
+	kPhant2VolumeMax       = 85,
+
+	kLSL6HiresUIVolumeMax  = 13,
+	kLSL6HiresSubtitleFlag = 105
+};
+#endif
+
 /**
  * The GuestAdditions class hooks into the SCI virtual machine to provide
  * enhanced interactions between the ScummVM GUI and the game engine. Currently,

@@ -26,6 +26,9 @@
 #include "sci/engine/state.h"
 #include "sci/engine/features.h"
 #include "sci/engine/script_patches.h"
+#ifdef ENABLE_SCI32
+#include "sci/engine/guest_additions.h"
+#endif
 
 #include "common/util.h"
 
@@ -3879,6 +3882,29 @@ static const uint16 phant2RatboyPatch[] = {
 	PATCH_END
 };
 
+// Phant2 has separate in-game volume controls for handling movie volume and
+// in-game volume (misleading labelled "music volume"), but really needs the
+// in-game volume to always be significantly lower than the movie volume in
+// order for dialogue in movies to be consistently audible, so patch the in-game
+// volume slider to limit it to our maximum.
+// Applies to at least: US English
+static const uint16 phant2AudioVolumeSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x7f,           // pushi 127 (clientMax)
+	0x39, 0x14,           // pushi 20  (clientPageSize)
+	SIG_ADDTOOFFSET(+10), // skip other init arguments
+	0x51, 0x5e,           // class P2ScrollBar
+	SIG_ADDTOOFFSET(+3),  // skip send
+	0xa3, 0x06,           // sal 6 (identifies correct slider)
+	SIG_END
+};
+
+static const uint16 phant2AudioVolumePatch[] = {
+	0x39, kPhant2VolumeMax,              // pushi (our custom volume max)
+	0x39, 0x14 * kPhant2VolumeMax / 127, // pushi (ratio of original value)
+	PATCH_END
+};
+
 // When censorship is disabled the game sticks <PROTECTED> at the end of every
 // save game name, and when it is enabled it pads the save game name with a
 // bunch of spaces. This is annoying and not helpful, so just disable all of
@@ -3945,6 +3971,7 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
 	{  true,     0, "bad arguments to get game version",           1, phant2GetVersionSignature,     phant2GetVersionPatch },
 	{  true,  4081, "non-responsive mouse after ratboy puzzle",    1, phant2RatboySignature,         phant2RatboyPatch },
+	{  true, 63004, "limit in-game audio volume",                  1, phant2AudioVolumeSignature,    phant2AudioVolumePatch },
 	{  true, 63016, "non-responsive mouse during music fades",     1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
 	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },

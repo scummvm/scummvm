@@ -50,12 +50,6 @@ enum {
 	kMessageTypeSpeech    = 2
 };
 
-enum {
-	kLSL6HiresUIVolumeMax  = 13,
-	kLSL6HiresSubtitleFlag = 105
-};
-
-
 GuestAdditions::GuestAdditions(EngineState *state, GameFeatures *features, Kernel *kernel) :
 	_state(state),
 	_features(features),
@@ -912,7 +906,7 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 	}
 
 	case GID_PHANTASMAGORIA2: {
-		const int16 masterVolume = (ConfMan.getInt("sfx_volume") + 1) * Audio32::kMaxVolume / Audio::Mixer::kMaxMixerVolume;
+		const int16 masterVolume = (ConfMan.getInt("sfx_volume") + 1) * kPhant2VolumeMax / Audio::Mixer::kMaxMixerVolume;
 		syncPhant2VolumeFromScummVM(masterVolume);
 		syncPhant2UI(masterVolume);
 		break;
@@ -1016,12 +1010,13 @@ void GuestAdditions::syncLSL6HiresVolumeFromScummVM(const int16 musicVolume) con
 	g_sci->_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : (musicVolume * MUSIC_MASTERVOLUME_MAX / kLSL6HiresUIVolumeMax));
 }
 
-void GuestAdditions::syncPhant2VolumeFromScummVM(const int16 musicVolume) const {
-	_state->variables[VAR_GLOBAL][kGlobalVarPhant2MasterVolume] = make_reg(0, musicVolume);
+void GuestAdditions::syncPhant2VolumeFromScummVM(const int16 masterVolume) const {
+	_state->variables[VAR_GLOBAL][kGlobalVarPhant2MasterVolume] = make_reg(0, masterVolume);
+	_state->variables[VAR_GLOBAL][kGlobalVarPhant2SecondaryVolume] = make_reg(0, masterVolume);
 
 	const reg_t soundsId = _state->variables[VAR_GLOBAL][kGlobalVarSounds];
 	if (!soundsId.isNull()) {
-		reg_t params[] = { make_reg(0, SELECTOR(setVol)), make_reg(0, musicVolume) };
+		reg_t params[] = { make_reg(0, SELECTOR(setVol)), make_reg(0, masterVolume) };
 		invokeSelector(soundsId, SELECTOR(eachElementDo), 2, params);
 	}
 }
@@ -1080,7 +1075,7 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 
 	case GID_PHANTASMAGORIA2:
 		if (index == kGlobalVarPhant2MasterVolume) {
-			const int16 masterVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / Audio32::kMaxVolume;
+			const int16 masterVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / kPhant2VolumeMax;
 			ConfMan.setInt("music_volume", masterVolume);
 			ConfMan.setInt("sfx_volume", masterVolume);
 			ConfMan.setInt("speech_volume", masterVolume);
@@ -1247,18 +1242,18 @@ void GuestAdditions::syncPhant1UI(const int16 oldMusicVolume, const int16 musicV
 	}
 }
 
-void GuestAdditions::syncPhant2UI(const int16 musicVolume) const {
-	const reg_t musicVolumeScript = _segMan->findObjectByName("foo2");
+void GuestAdditions::syncPhant2UI(const int16 masterVolume) const {
+	const reg_t masterVolumeScript = _segMan->findObjectByName("foo2");
 	Common::Array<reg_t> scrollBars = _segMan->findObjectsByName("P2ScrollBar");
 	for (uint i = 0; i < scrollBars.size(); ++i) {
-		if (readSelector(_segMan, scrollBars[i], SELECTOR(client)) == musicVolumeScript) {
+		if (readSelector(_segMan, scrollBars[i], SELECTOR(client)) == masterVolumeScript) {
 			// P2ScrollBar objects may exist without actually being on-screen;
 			// the easiest way to tell seems to be to look to see if it has
 			// non-null pointers to subviews. (The game will correctly set the
 			// position of the scrollbar when it first becomes visible, so this
 			// is fine.)
 			if (!readSelector(_segMan, scrollBars[i], SELECTOR(physicalBar)).isNull()) {
-				reg_t params[] = { make_reg(0, musicVolume), make_reg(0, 1) };
+				reg_t params[] = { make_reg(0, masterVolume), make_reg(0, 1) };
 				invokeSelector(scrollBars[i], SELECTOR(move), 2, params);
 				break;
 			}

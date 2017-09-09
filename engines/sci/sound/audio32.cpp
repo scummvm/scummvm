@@ -359,6 +359,17 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 				} else if (volume > 84 && volume < kMaxVolume) {
 					volume = 63;
 				}
+			} else if (getSciVersion() == SCI_VERSION_3 && volume != kMaxVolume) {
+				// In SCI3, granularity of the non-maximum volumes is 1/32
+				volume &= ~4;
+
+				// NOTE: In the SSCI DOS interpreter, non-maximum volumes are
+				// divided by 8 which puts them in a range of [0, 16). That
+				// reduced volume range gets passed into a volume function which
+				// expects values [0, 32). So, effectively, all non-maximum
+				// volumes are half-volume in DOS in SCI3. In Windows, volumes
+				// [120, 124) are the same as 127 due to a programming bug.
+				// We do not emulate either of these incorrect behaviors.
 			}
 
 			leftVolume = rightVolume = volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume;
