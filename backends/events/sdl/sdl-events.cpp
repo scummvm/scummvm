@@ -696,6 +696,10 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
 	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	event.kbdRepeat = ev.key.repeat;
+#endif
+
 	return true;
 }
 
