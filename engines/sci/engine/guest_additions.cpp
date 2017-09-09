@@ -1081,7 +1081,9 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 	case GID_PHANTASMAGORIA2:
 		if (index == kGlobalVarPhant2MasterVolume) {
 			const int16 masterVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / Audio32::kMaxVolume;
+			ConfMan.setInt("music_volume", masterVolume);
 			ConfMan.setInt("sfx_volume", masterVolume);
+			ConfMan.setInt("speech_volume", masterVolume);
 		}
 		break;
 
