@@ -22,6 +22,7 @@
 
 #include "titanic/game/nav_helmet.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/star_control/star_control.h"
 
 namespace Titanic {
 
@@ -37,13 +38,13 @@ END_MESSAGE_MAP()
 
 void CNavHelmet::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_flag, indent);
+	file->writeNumberLine(_helmetOn, indent);
 	CGameObject::save(file, indent);
 }
 
 void CNavHelmet::load(SimpleFile *file) {
 	file->readNumber();
-	_flag = file->readNumber();
+	_helmetOn = file->readNumber();
 	CGameObject::load(file);
 }
 
@@ -51,7 +52,7 @@ bool CNavHelmet::MovieEndMsg(CMovieEndMsg *msg) {
 	CPetControl *pet = getPetControl();
 	assert(pet);
 
-	if (_flag && pet->isAreaUnlocked()) {
+	if (_helmetOn && pet->isAreaUnlocked()) {
 		setVisible(false);
 
 		pet->setArea(PET_STARFIELD);
@@ -78,8 +79,8 @@ bool CNavHelmet::LeaveViewMsg(CLeaveViewMsg *msg) {
 bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 	CPetControl *pet = getPetControl();
 
-	if (_flag) {
-		_flag = false;
+	if (_helmetOn) {
+		_helmetOn = false;
 		setVisible(true);
 		starFn(STAR_HIDE);
 		playMovie(61, 120, MOVIE_NOTIFY_OBJECT);
@@ -94,7 +95,7 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 		decTransitions();
 	} else {
 		incTransitions();
-		_flag = true;
+		_helmetOn = true;
 		setVisible(true);
 		playMovie(0, 60, MOVIE_NOTIFY_OBJECT);
 		playSound("a#48.wav");
@@ -105,20 +106,36 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 }
 
 bool CNavHelmet::PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg) {
-	if (_flag)
+	if (_helmetOn)
 		starFn(STAR_TOGGLE_MODE);
 
 	return true;
 }
 
 bool CNavHelmet::PETStarFieldLockMsg(CPETStarFieldLockMsg *msg) {
-	if (_flag) {
-		if (msg->_value) {
-			playSound("a#6.wav");
-			starFn(LOCK_STAR);
-		} else {
-			playSound("a#5.wav");
-			starFn(UNLOCK_STAR);
+	if (_helmetOn) {
+		CPetControl *pet = getPetControl();
+		CStarControl *starControl = 0;
+		bool isStarFieldMode=false;
+
+		if (pet)
+			starControl = pet->getStarControl();
+
+		if (starControl)
+			isStarFieldMode = starControl->isStarFieldMode();
+
+		if (isStarFieldMode) {
+			// locking and unlocking only in starfield
+			// It already does this without the conditional
+			// but now it will also not play the sounds in
+			// photoview
+			if (msg->_value) {
+				playSound("a#6.wav");
+				starFn(LOCK_STAR);
+			} else {
+				playSound("a#5.wav");
+				starFn(UNLOCK_STAR);
+			}
 		}
 	}
 

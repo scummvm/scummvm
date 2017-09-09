@@ -99,6 +99,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 		}
 	} else if (msg->_action == "Go") {
 		if (_stopEnabled) {
+			_goEnabled = false;
 			incTransitions();
 			_stopEnabled = false;
 			_actionNum = 1;
