@@ -28,6 +28,17 @@
 
 #include <Cocoa/Cocoa.h>
 
+// macOS 10.12 deprecated many constants, #define the new names we need for
+// older SDKs. (This approach was taken from qemu.)
+#ifndef MAC_OS_X_VERSION_10_12
+#define MAC_OS_X_VERSION_10_12 101200
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#define NSEventModifierFlagCommand NSCommandKeyMask
+#define NSEventModifierFlagOption  NSAlternateKeyMask
+#endif
+
 // Apple added setAppleMenu in 10.5 and removed it in 10.6.
 // But as the method still exists we declare it ourselves here.
 // Yes, this works :)
@@ -92,7 +103,7 @@ void replaceApplicationMenuItems() {
 	// Add "Hide Others" menu item
 	nsString = constructNSStringFromCString(_("Hide Others"), stringEncoding);
 	menuItem = (NSMenuItem *)[appleMenu addItemWithTitle:nsString action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
-	[menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
+	[menuItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption|NSEventModifierFlagCommand)];
 
 	// Add "Show All" menu item
 	nsString = constructNSStringFromCString(_("Show All"), stringEncoding);
