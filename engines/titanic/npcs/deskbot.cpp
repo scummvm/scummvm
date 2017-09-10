@@ -22,6 +22,7 @@
 
 #include "titanic/npcs/deskbot.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -133,6 +134,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 			CTurnOn turnOn;
 			turnOn.execute("EmbBellbotTrigger");
 			unlockMouse();
+			getGameManager()->lockInputHandler();
 			changeView("EmbLobby.Node 4.N", "");
 		} else if (_npcFlags & NPCFLAG_MOVE_LEFT) {
 			CTurnOn turnOn;

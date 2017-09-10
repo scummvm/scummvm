@@ -285,8 +285,10 @@ bool CBellBot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 bool CBellBot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
 	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
 
-	if (msg->_dialogueId == 20991)
+	if (msg->_dialogueId == 20991) {
 		petDismissBot("DoorBot");
+		getGameManager()->unlockInputHandler();
+	}
 
 	return true;
 }
