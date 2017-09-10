@@ -68,6 +68,7 @@ bool CNavHelmet::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CNavHelmet::EnterViewMsg(CEnterViewMsg *msg) {
 	petSetRemoteTarget();
+	loadFrame(120);
 	return true;
 }
 
