@@ -255,8 +255,6 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	if (isLocked())
 		return;
 
-	_isInLockingProcess = false;
-
 	switch(_starLockState) {
 	case ZERO_LOCKED: {
 		FPose subX(X_AXIS, angles._y);
