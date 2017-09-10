@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-09-09 02:11+0200\n"
+"POT-Creation-Date: 2017-09-10 06:38+0200\n"
 "PO-Revision-Date: 2017-06-20 15:35+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1877,7 +1877,7 @@ msgstr "~В~ главное меню"
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:548 engines/sci/engine/kfile.cpp:944
+#: engines/sci/engine/guest_additions.cpp:542 engines/sci/engine/kfile.cpp:944
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -1898,7 +1898,7 @@ msgstr "Сохранить игру:"
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:106 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:549 engines/sci/engine/kfile.cpp:944
+#: engines/sci/engine/guest_additions.cpp:543 engines/sci/engine/kfile.cpp:944
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -2927,7 +2927,7 @@ msgstr ""
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:551
+#: engines/sci/engine/guest_additions.cpp:545
 #: engines/sci/engine/kfile.cpp:1063 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
@@ -2941,7 +2941,7 @@ msgstr "Восстановить игру:"
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:552
+#: engines/sci/engine/guest_additions.cpp:546
 #: engines/sci/engine/kfile.cpp:1063 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62

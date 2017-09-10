@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-09-09 02:11+0200\n"
+"POT-Creation-Date: 2017-09-10 06:38+0200\n"
 "PO-Revision-Date: 2016-12-18 18:23+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -1868,7 +1868,7 @@ msgstr "Tilbake til Oppsta~r~tar"
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:548 engines/sci/engine/kfile.cpp:944
+#: engines/sci/engine/guest_additions.cpp:542 engines/sci/engine/kfile.cpp:944
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -1889,7 +1889,7 @@ msgstr "Lagra spel:"
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:106 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:549 engines/sci/engine/kfile.cpp:944
+#: engines/sci/engine/guest_additions.cpp:543 engines/sci/engine/kfile.cpp:944
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -2912,7 +2912,7 @@ msgstr ""
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:551
+#: engines/sci/engine/guest_additions.cpp:545
 #: engines/sci/engine/kfile.cpp:1063 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
@@ -2926,7 +2926,7 @@ msgstr "Gjenopprett spel:"
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:552
+#: engines/sci/engine/guest_additions.cpp:546
 #: engines/sci/engine/kfile.cpp:1063 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
