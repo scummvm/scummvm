@@ -63,6 +63,7 @@ public:
 			samplesRead = _stream->readBuffer(buffer, numSamples);
 			totalSamplesRead += samplesRead;
 			numSamples -= samplesRead;
+			buffer += samplesRead;
 		} while (samplesRead > 0 && _loop && numSamples > 0);
 		return totalSamplesRead;
 	}
