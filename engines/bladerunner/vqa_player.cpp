@@ -155,8 +155,8 @@ void VQAPlayer::updateView(View *view) {
 	_decoder.decodeView(view);
 }
 
-void VQAPlayer::updateAESC(AESC *aesc) {
-	_decoder.decodeAESC(aesc);
+void VQAPlayer::updateScreenEffects(ScreenEffects *screenEffects) {
+	_decoder.decodeScreenEffects(screenEffects);
 }
 
 void VQAPlayer::updateLights(Lights *lights) {

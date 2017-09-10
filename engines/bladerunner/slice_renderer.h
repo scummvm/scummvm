@@ -38,7 +38,7 @@ class MemoryReadStream;
 
 namespace BladeRunner {
 
-class AESC;
+class ScreenEffects;
 class BladeRunnerEngine;
 class Lights;
 class SetEffects;
@@ -52,7 +52,7 @@ class SliceRenderer {
 	float     _facing;
 	float     _scale;
 
-	AESC       *_aesc;
+	ScreenEffects       *_screenEffects;
 	View        _view;
 	Lights     *_lights;
 	SetEffects *_setEffects;
@@ -95,7 +95,7 @@ public:
 	SliceRenderer(BladeRunnerEngine *vm);
 	~SliceRenderer();
 
-	void setAESC(AESC *aesc);
+	void setScreenEffects(ScreenEffects *aesc);
 	void setView(const View &view);
 	void setLights(Lights *lights);
 	void setSetEffects(SetEffects *setEffects);

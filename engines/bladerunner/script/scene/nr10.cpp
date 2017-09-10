@@ -71,7 +71,7 @@ bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool a2) {
 		Ambient_Sounds_Remove_Looping_Sound(452, true);
 		Sound_Play(453, 52, 0, 0, 50);
 		Scene_Loop_Set_Default(0);
-		Scene_Loop_Start_Special(2, 0, 1);
+		Scene_Loop_Start_Special(kSceneLoopMode2, 0, true);
 		Un_Combat_Target_Object("BOX18");
 		Scene_Exits_Enable();
 		return true;

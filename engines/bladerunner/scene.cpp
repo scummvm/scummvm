@@ -28,11 +28,13 @@
 #include "bladerunner/chapters.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/items.h"
+#include "bladerunner/overlays.h"
+#include "bladerunner/regions.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/screen_effects.h"
 #include "bladerunner/set.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/slice_renderer.h"
-#include "bladerunner/regions.h"
 #include "bladerunner/vqa_player.h"
 #include "bladerunner/script/scene.h"
 #include "bladerunner/spinner.h"
@@ -84,9 +86,8 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	} else {
 		_regions->clear();
 		_exits->clear();
-		// TODO: Reset aesc
-		// TODO: Clear regions
-		// TODO: Destroy all overlays
+		_vm->_screenEffects->_entries.clear();
+		_vm->_overlays->removeAll();
 		_defaultLoop = 0;
 		_defaultLoopSet = false;
 		_specialLoopAtEnd = false;
@@ -210,7 +211,7 @@ int Scene::advanceFrame() {
 		blit(_vm->_surfaceInterface, _vm->_surfaceGame);
 		_vqaPlayer->updateZBuffer(_vm->_zbuffer);
 		_vqaPlayer->updateView(_vm->_view);
-		_vqaPlayer->updateAESC(_vm->_aesc);
+		_vqaPlayer->updateScreenEffects(_vm->_screenEffects);
 		_vqaPlayer->updateLights(_vm->_lights);
 	}
 	if (_specialLoopMode && _specialLoopMode != kSceneLoopMode2 && _specialLoopMode != kSceneLoopModeSpinner) {

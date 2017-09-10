@@ -100,7 +100,7 @@ bool SceneScriptHC03::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == 121) {
 		if (a2) {
 			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(2, 2, 1);
+			Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
 			Game_Flag_Set(403);
 			Item_Remove_From_World(121);
 			Unobstacle_Object("GPscisGate", true);
@@ -146,7 +146,7 @@ bool SceneScriptHC03::ClickedOnExit(int exitId) {
 				Set_Enter(75, 87);
 			} else {
 				Scene_Loop_Set_Default(6);
-				Scene_Loop_Start_Special(2, 5, 1);
+				Scene_Loop_Start_Special(kSceneLoopMode2, 5, true);
 				Game_Flag_Set(388);
 			}
 		}

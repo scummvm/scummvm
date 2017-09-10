@@ -184,7 +184,7 @@ void SceneScriptDR04::SceneFrameAdvanced(int frame) {
 		Game_Flag_Reset(515);
 		Game_Flag_Reset(271);
 		Scene_Loop_Set_Default(1);
-		Scene_Loop_Start_Special(2, 6, 1);
+		Scene_Loop_Start_Special(kSceneLoopMode2, 6, true);
 		Music_Stop(4);
 		Actor_Set_Goal_Number(kActorMoraji, 99);
 	} else {
@@ -192,7 +192,7 @@ void SceneScriptDR04::SceneFrameAdvanced(int frame) {
 			Game_Flag_Reset(271);
 			Game_Flag_Set(272);
 			Scene_Loop_Set_Default(1);
-			Scene_Loop_Start_Special(2, 6, 1);
+			Scene_Loop_Start_Special(kSceneLoopMode2, 6, true);
 			Item_Remove_From_World(78);
 		}
 		switch (frame) {

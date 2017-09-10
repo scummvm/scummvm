@@ -108,14 +108,14 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 	if (Game_Flag_Query(585)) {
 		Game_Flag_Reset(585);
 		Scene_Loop_Set_Default(3);
-		Scene_Loop_Start_Special(2, 2, 1);
+		Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
 		//return true;
 		return;
 	}
 	if (Game_Flag_Query(586)) {
 		Game_Flag_Reset(586);
 		Scene_Loop_Set_Default(0);
-		Scene_Loop_Start_Special(2, 5, 1);
+		Scene_Loop_Start_Special(kSceneLoopMode2, 5, true);
 		//return true;
 		return;
 	}

@@ -24,7 +24,6 @@
 
 #include "bladerunner/actor.h"
 #include "bladerunner/adq.h"
-#include "bladerunner/aesc.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_mixer.h"
 #include "bladerunner/audio_player.h"
@@ -42,12 +41,14 @@
 #include "bladerunner/items.h"
 #include "bladerunner/lights.h"
 #include "bladerunner/mouse.h"
+#include "bladerunner/music.h"
 #include "bladerunner/outtake.h"
 #include "bladerunner/obstacles.h"
 #include "bladerunner/overlays.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/screen_effects.h"
 #include "bladerunner/script/init.h"
 #include "bladerunner/script/scene.h"
 #include "bladerunner/script/ai.h"
@@ -86,7 +87,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_sceneScript = new SceneScript(this);
 	_settings = new Settings(this);
 	_lights = new Lights(this);
-	_aesc = new AESC(this, 0x8000);
+	_screenEffects = new ScreenEffects(this, 0x8000);
 	_combat = new Combat(this);
 	_adq = new ADQ(this);
 	_obstacles = new Obstacles(this);
@@ -126,7 +127,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	delete _obstacles;
 	delete _adq;
 	delete _combat;
-	delete _aesc;
+	delete _screenEffects;
 	delete _lights;
 	delete _settings;
 	delete _sceneScript;
@@ -219,7 +220,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_audioPlayer = new AudioPlayer(this);
 
-	// TODO: Audio: Music
+	_music = new Music(this);
 
 	_audioSpeech = new AudioSpeech(this);
 
@@ -341,7 +342,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	}
 
 	_sliceRenderer = new SliceRenderer(this);
-	_sliceRenderer->setAESC(_aesc);
+	_sliceRenderer->setScreenEffects(_screenEffects);
 
 	_crimesDatabase = new CrimesDatabase(this, "CLUES", _gameInfo->getClueCount());
 
@@ -376,6 +377,7 @@ void BladeRunnerEngine::initChapterAndScene() {
 
 	_settings->setChapter(1);
 	_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
+//	_settings->setNewSetAndScene(52, 52);
 }
 
 void BladeRunnerEngine::shutdown() {
@@ -435,29 +437,38 @@ void BladeRunnerEngine::shutdown() {
 	delete _textOptions;
 	_textOptions = nullptr;
 
-	// TODO: Delete dialogue menu
+	delete _dialogueMenu;
+	_dialogueMenu = nullptr;
 
 	delete _ambientSounds;
+	_ambientSounds = nullptr;
 
 	delete _overlays;
 	_overlays = nullptr;
 
 	delete _audioSpeech;
+	_audioSpeech = nullptr;
 
-	// TODO: Delete Audio: Music
+	delete _music;
+	_music = nullptr;
 
 	delete _audioPlayer;
+	_audioPlayer = nullptr;
 
 	delete _audioMixer;
+	_audioMixer = nullptr;
 
-	if (isArchiveOpen("MUSIC.MIX"))
+	if (isArchiveOpen("MUSIC.MIX")) {
 		closeArchive("MUSIC.MIX");
+	}
 
-	if (isArchiveOpen("SFX.MIX"))
+	if (isArchiveOpen("SFX.MIX")) {
 		closeArchive("SFX.MIX");
+	}
 
-	if (isArchiveOpen("SPCHSFX.TLK"))
+	if (isArchiveOpen("SPCHSFX.TLK")) {
 		closeArchive("SPCHSFX.TLK");
+	}
 
 	if (_mainFont) {
 		_mainFont->close();
@@ -528,8 +539,9 @@ void BladeRunnerEngine::shutdown() {
 	_surfaceInterface.free();
 	_surfaceGame.free();
 
-	if (isArchiveOpen("STARTUP.MIX"))
+	if (isArchiveOpen("STARTUP.MIX")) {
 		closeArchive("STARTUP.MIX");
+	}
 
 	// TODO: Delete MIXArchives here
 
@@ -538,8 +550,9 @@ void BladeRunnerEngine::shutdown() {
 
 bool BladeRunnerEngine::loadSplash() {
 	Image img(this);
-	if (!img.open("SPLASH.IMG"))
+	if (!img.open("SPLASH.IMG")) {
 		return false;
+	}
 
 	img.copyToSurface(&_surfaceGame);
 
@@ -666,7 +679,11 @@ void BladeRunnerEngine::gameTick() {
 			int setId = _scene->getSetId();
 			for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
 				if (_actors[i]->getSetId() == setId) {
-					if (i == 0 || i == 15 || i == 23) { // Currently limited to McCoy, Runciter and Officer Leroy
+					// TODO: remove this limitation
+					if (i == kActorMcCoy
+						|| i == kActorRunciter
+						|| i == kActorOfficerLeary
+						|| i == kActorMaggie) {
 						Common::Rect screenRect;
 						if (_actors[i]->tick(backgroundChanged, &screenRect)) {
 							_zbuffer->mark(screenRect);
@@ -811,8 +828,8 @@ void BladeRunnerEngine::gameTick() {
 #endif
 #if 0
 			//draw aesc
-			for (uint i = 0; i < _aesc->_entries.size(); i++) {
-				AESC::Entry &entry = _aesc->_entries[i];
+			for (uint i = 0; i < _screenEffects->_entries.size(); i++) {
+				ScreenEffects::Entry &entry = _screenEffects->_entries[i];
 				int j = 0;
 				for (int y = 0; y < entry.height; y++) {
 					for (int x = 0; x < entry.width; x++) {
@@ -930,13 +947,13 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 	}
 
 	if (buttonLeft && !buttonDown) {
-		Vector3 mousePosition = _mouse->getXYZ(x, y);
+		Vector3 scenePosition = _mouse->getXYZ(x, y);
 
 		int isClickable;
 		int isObstacle;
 		int isTarget;
 
-		int sceneObjectId = _sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, mousePosition.x, mousePosition.y, mousePosition.z, true, false, true);
+		int sceneObjectId = _sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, scenePosition.x, scenePosition.y, scenePosition.z, true, false, true);
 		int exitIndex = _scene->_exits->getRegionAtXY(x, y);
 
 		if ((sceneObjectId < 0 || sceneObjectId > 73) && exitIndex >= 0) {
@@ -951,9 +968,7 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 		}
 
 		if (sceneObjectId == -1) {
-			bool isRunning;
-			_playerActor->loopWalkToXYZ(mousePosition, 0, false, false, false, &isRunning);
-			debug("Clicked on nothing %f, %f, %f", mousePosition.x, mousePosition.y, mousePosition.z);
+			handleMouseClickEmpty(x, y, scenePosition);
 			return;
 		} else if (sceneObjectId >= 0 && sceneObjectId <= 73) {
 			handleMouseClickActor(x, y, sceneObjectId);
@@ -966,10 +981,13 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 			return;
 		}
 	}
+	if (!buttonLeft && buttonDown) {
+		// TODO: stop walking && switch combat mode
+	}
+
 }
 
 void BladeRunnerEngine::handleMouseClickExit(int x, int y, int exitIndex) {
-	// clickedOnExit(exitType, x, y);
 	debug("clicked on exit %d %d %d", exitIndex, x, y);
 	_sceneScript->ClickedOnExit(exitIndex);
 }
@@ -985,6 +1003,19 @@ void BladeRunnerEngine::handleMouseClick3DObject(int x, int y, int objectId, boo
 	_sceneScript->ClickedOn3DObject(objectName, false);
 }
 
+void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &mousePosition) {
+	bool sceneMouseClick = _sceneScript->MouseClick(x, y);
+
+	if (sceneMouseClick) {
+		return;
+	}
+
+
+	bool isRunning;
+	debug("Clicked on nothing %f, %f, %f", mousePosition.x, mousePosition.y, mousePosition.z);
+	_playerActor->loopWalkToXYZ(mousePosition, 0, false, false, false, &isRunning);
+}
+
 void BladeRunnerEngine::handleMouseClickItem(int x, int y, int itemId) {
 	debug("Clicked on item %d", itemId);
 	_sceneScript->ClickedOnItem(itemId, false);
@@ -992,7 +1023,10 @@ void BladeRunnerEngine::handleMouseClickItem(int x, int y, int itemId) {
 
 void BladeRunnerEngine::handleMouseClickActor(int x, int y, int actorId) {
 	debug("Clicked on actor %d", actorId);
-	_sceneScript->ClickedOnActor(actorId);
+	bool t = _sceneScript->ClickedOnActor(actorId);
+	if (!_combat->isActive() && !t) {
+		_aiScripts->ClickedByPlayer(actorId);
+	}
 }
 
 void BladeRunnerEngine::gameWaitForActive() {
@@ -1072,14 +1106,16 @@ bool BladeRunnerEngine::isArchiveOpen(const Common::String &name) {
 
 Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::String &name) {
 	for (uint i = 0; i != 10; ++i) {
-		if (!_archives[i].isOpen())
+		if (!_archives[i].isOpen()) {
 			continue;
-
-		if (false)
+		}
+		if (false) {
 			debug("getResource: Searching archive %s for %s.", _archives[i].getName().c_str(), name.c_str());
+		}
 		Common::SeekableReadStream *stream = _archives[i].createReadStreamForMember(name);
-		if (stream)
+		if (stream) {
 			return stream;
+		}
 	}
 
 	debug("getResource: Resource %s not found.", name.c_str());

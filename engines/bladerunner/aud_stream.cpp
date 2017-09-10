@@ -55,8 +55,9 @@ void AudStream::init(byte *data) {
 }
 
 AudStream::~AudStream() {
-	if (_cache)
+	if (_cache) {
 		_cache->decRef(_hash);
+	}
 }
 
 int AudStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -117,8 +118,7 @@ bool AudStream::rewind() {
 	return true;
 }
 
-int AudStream::getLength()
-{
+int AudStream::getLength() {
 	int bytesPerSecond = _frequency;
 	if (_flags & 1) { // 16 bit
 		bytesPerSecond *= 2;

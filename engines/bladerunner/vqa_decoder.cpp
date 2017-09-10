@@ -22,11 +22,11 @@
 
 #include "bladerunner/vqa_decoder.h"
 
-#include "bladerunner/aesc.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/decompress_lcw.h"
 #include "bladerunner/decompress_lzo.h"
 #include "bladerunner/lights.h"
+#include "bladerunner/screen_effects.h"
 #include "bladerunner/view.h"
 #include "bladerunner/zbuffer.h"
 
@@ -211,8 +211,8 @@ void VQADecoder::decodeView(View *view) {
 	_videoTrack->decodeView(view);
 }
 
-void VQADecoder::decodeAESC(AESC *aesc) {
-	_videoTrack->decodeAESC(aesc);
+void VQADecoder::decodeScreenEffects(ScreenEffects *screenEffects) {
+	_videoTrack->decodeScreenEffects(screenEffects);
 }
 
 void VQADecoder::decodeLights(Lights *lights) {
@@ -598,7 +598,7 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder, Graphics::Surfa
 	_zbufChunk = new uint8[roundup(_maxZBUFChunkSize)];
 
 	_viewData = nullptr;
-	_aescData = nullptr;
+	_screenEffectsData = nullptr;
 	_lightsData = nullptr;
 }
 
@@ -608,7 +608,7 @@ VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
 	delete[] _vpointer;
 
 	delete[] _viewData;
-	delete[] _aescData;
+	delete[] _screenEffectsData;
 	delete[] _lightsData;
 }
 
@@ -735,27 +735,27 @@ void VQADecoder::VQAVideoTrack::decodeView(View *view) {
 }
 
 bool VQADecoder::VQAVideoTrack::readAESC(Common::SeekableReadStream *s, uint32 size) {
-	if (_aescData) {
-		delete[] _aescData;
+	if (_screenEffectsData) {
+		delete[] _screenEffectsData;
 	}
 
-	_aescDataSize = roundup(size);
-	_aescData = new uint8[_aescDataSize];
-	s->read(_aescData, _aescDataSize);
+	_screenEffectsDataSize = roundup(size);
+	_screenEffectsData = new uint8[_screenEffectsDataSize];
+	s->read(_screenEffectsData, _screenEffectsDataSize);
 
 	return true;
 }
 
-void VQADecoder::VQAVideoTrack::decodeAESC(AESC *aesc) {
-	if (!aesc || !_aescData) {
+void VQADecoder::VQAVideoTrack::decodeScreenEffects(ScreenEffects *aesc) {
+	if (!aesc || !_screenEffectsData) {
 		return;
 	}
 
-	Common::MemoryReadStream s(_aescData, _aescDataSize);
+	Common::MemoryReadStream s(_screenEffectsData, _screenEffectsDataSize);
 	aesc->readVqa(&s);
 
-	delete[] _aescData;
-	_aescData = nullptr;
+	delete[] _screenEffectsData;
+	_screenEffectsData = nullptr;
 }
 
 bool VQADecoder::VQAVideoTrack::readLITE(Common::SeekableReadStream *s, uint32 size) {

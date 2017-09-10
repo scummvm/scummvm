@@ -74,7 +74,7 @@ void SceneScriptUG10::SceneLoaded() {
 	Obstacle_Object("SLUICEGATE_LEVER", true);
 	if (Global_Variable_Query(1) == 4 && !Game_Flag_Query(474) && Game_Flag_Query(172) && !Game_Flag_Query(693)) {
 		Scene_Loop_Set_Default(1);
-		Scene_Loop_Start_Special(2, 6, 1);
+		Scene_Loop_Start_Special(kSceneLoopMode2, 6, true);
 		Game_Flag_Set(693);
 		//return true;
 	}
@@ -158,13 +158,13 @@ bool SceneScriptUG10::ClickedOn2DRegion(int region) {
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 4.98f, 0.38f, 83.15f, 0, 1, false, 0)) {
 			if (Game_Flag_Query(474)) {
 				Scene_Loop_Set_Default(1);
-				Scene_Loop_Start_Special(2, 0, 0);
+				Scene_Loop_Start_Special(kSceneLoopMode2, 0, false);
 				Game_Flag_Reset(474);
 				Obstacle_Object("BOX01 BRIDGE", true);
 				Player_Loses_Control();
 			} else {
 				Scene_Loop_Set_Default(4);
-				Scene_Loop_Start_Special(2, 3, 0);
+				Scene_Loop_Start_Special(kSceneLoopMode2, 3, false);
 				Game_Flag_Set(474);
 				Unobstacle_Object("BOX01 BRIDGE", true);
 				Player_Loses_Control();

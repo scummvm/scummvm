@@ -23,6 +23,7 @@
 #include "bladerunner/mouse.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/dialogue_menu.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
@@ -255,8 +256,14 @@ void Mouse::updateCursorFrame() {
 }
 
 void Mouse::tick(int x, int y) {
-	if (!_vm->playerHasControl() || isDisabled())
+	if (!_vm->playerHasControl() || isDisabled()) {
 		return;
+	}
+
+	if (_vm->_dialogueMenu->isVisible()) {
+		setCursor(0);
+		return;
+	}
 
 	Vector3 mousePosition = getXYZ(x, y);
 	int cursorId = 0;

@@ -46,7 +46,7 @@ bool AIScriptOfficerLeary::Update() {
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 400);
 	} else if (!Game_Flag_Query(182) && Game_Flag_Query(147) == 1 && Game_Flag_Query(163) == 1 && Player_Query_Current_Scene() != 78 && Global_Variable_Query(1) < 3) {
-		Game_Flag_Set(186);
+		Game_Flag_Set(kFlagRC01PoliceDone);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 3);
 	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) != 1 && Actor_Query_Goal_Number(kActorOfficerLeary) != 2 && Game_Flag_Query(199) == 1) {
 		Game_Flag_Reset(199);

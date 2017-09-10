@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BLADERUNNER_AESC_H
-#define BLADERUNNER_AESC_H
+#ifndef BLADERUNNER_SCREEN_EFFECTS_H
+#define BLADERUNNER_SCREEN_EFFECTS_H
 
 #include "bladerunner/color.h"
 
@@ -32,9 +32,10 @@ class ReadStream;
 }
 
 namespace BladeRunner {
+
 class BladeRunnerEngine;
 
-class AESC {
+class ScreenEffects {
 public:
 	struct Entry
 	{
@@ -54,8 +55,8 @@ public:
 	int                   _dataSize;
 
 public:
-	AESC(BladeRunnerEngine *vm, int size);
-	~AESC();
+	ScreenEffects(BladeRunnerEngine *vm, int size);
+	~ScreenEffects();
 
 	void readVqa(Common::SeekableReadStream *stream);
 	void getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z);
@@ -63,6 +64,7 @@ public:
 	//TODO
 	//bool isAffectingArea(int x, int y, int width, int height, int unk);
 };
+
 } // End of namespace BladeRunner
 
 #endif

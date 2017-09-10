@@ -58,6 +58,7 @@ public:
 
 	int play(const Common::String &name, int a3, int a4, int a5, int a6);
 	void remove(const Common::String &name);
+	void removeAll();
 	void tick();
 
 private:
@@ -65,7 +66,6 @@ private:
 	int findEmpty() const;
 
 	void resetSingle(int i);
-	void resetAll();
 	void reset();
 };
 

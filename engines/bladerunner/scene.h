@@ -33,13 +33,6 @@ class Regions;
 class Set;
 class VQAPlayer;
 
-enum SceneLoopMode {
-	kSceneLoopModeLoseControl = 0,
-	kSceneLoopModeChangeSet = 1,
-	kSceneLoopMode2 = 2,
-	kSceneLoopModeSpinner = 3
-};
-
 class Scene {
 	BladeRunnerEngine *_vm;
 

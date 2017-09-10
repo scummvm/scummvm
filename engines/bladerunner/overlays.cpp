@@ -56,7 +56,7 @@ Overlays::~Overlays() {
 	reset();
 }
 
-int Overlays::play(const Common::String &name, int loopId, int loopForever, int a5, int a6) {
+int Overlays::play(const Common::String &name, int loopId, int loopForever, int startNow, int a6) {
 	int id = mix_id(name);
 	int index = findById(id);
 	if (index < 0) {
@@ -77,7 +77,7 @@ int Overlays::play(const Common::String &name, int loopId, int loopForever, int 
 	_videos[index].vqaPlayer->setLoop(
 		loopId,
 		loopForever ? -1 : 0,
-		a5 ? kLoopSetModeImmediate : kLoopSetModeEnqueue,
+		startNow ? kLoopSetModeImmediate : kLoopSetModeEnqueue,
 		nullptr, nullptr);
 
 	return index;
@@ -88,6 +88,14 @@ void Overlays::remove(const Common::String &name) {
 	int index = findById(id);
 	if (index >= 0) {
 		resetSingle(index);
+	}
+}
+
+void Overlays::removeAll() {
+	for (int i = 0; i < kOverlayVideos; ++i) {
+		if (_videos[i].loaded) {
+			resetSingle(i);
+		}
 	}
 }
 
@@ -129,14 +137,6 @@ void Overlays::resetSingle(int i) {
 	_videos[i].loaded = false;
 	_videos[i].id = 0;
 	_videos[i].field2 = -1;
-}
-
-void Overlays::resetAll() {
-	for (int i = 0; i < kOverlayVideos; ++i) {
-		if (_videos[i].loaded) {
-			resetSingle(i);
-		}
-	}
 }
 
 void Overlays::reset() {

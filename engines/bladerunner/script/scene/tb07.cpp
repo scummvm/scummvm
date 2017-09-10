@@ -254,7 +254,7 @@ void SceneScriptTB07::sub_401B0C() {
 	Actor_Set_At_XYZ(kActorTyrell, 68.0f, 12.0f, 288.0f, 0);
 	Actor_Change_Animation_Mode(kActorTyrell, 0);
 	Scene_Loop_Set_Default(3);
-	Scene_Loop_Start_Special(2, 2, 0);
+	Scene_Loop_Start_Special(kSceneLoopMode2, 2, false);
 	Actor_Start_Speech_Sample(kActorTyrell, 0);
 	Loop_Actor_Walk_To_XYZ(kActorTyrell, 44.0f, 12.0f, 176.0f, 0, 0, false, 0);
 	Actor_Face_Actor(kActorTyrell, kActorMcCoy, true);

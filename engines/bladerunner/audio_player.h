@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/mutex.h"
 #include "common/str.h"
+#include "audio/audiostream.h"
 
 namespace BladeRunner {
 
@@ -72,12 +73,13 @@ class AudioPlayer {
 	static const int kTracks = 6;
 
 	struct Track {
-		bool               isActive;
-		int                channel;
-		int                priority;
-		int32              hash;
-		int                volume;
-		int                pan;
+		bool                isActive;
+		int                 channel;
+		int                 priority;
+		int32               hash;
+		int                 volume;
+		int                 pan;
+		Audio::AudioStream *stream;
 
 		Track() : isActive(false) {}
 	};

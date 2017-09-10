@@ -20,23 +20,23 @@
  *
  */
 
-#include "bladerunner/aesc.h"
+#include "bladerunner/screen_effects.h"
 
 #include "common/stream.h"
 
 namespace BladeRunner {
 
-AESC::AESC(BladeRunnerEngine *vm, int size) : _vm(vm) {
+ScreenEffects::ScreenEffects(BladeRunnerEngine *vm, int size) : _vm(vm) {
 	_dataSize = size;
 	_data = new uint8[size];
 	_entries.reserve(8);
 }
 
-AESC::~AESC() {
+ScreenEffects::~ScreenEffects() {
 	delete[] _data;
 }
 
-void AESC::readVqa(Common::SeekableReadStream *stream) {
+void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 	uint8* dataPtr = _data;
 	int dataSize   = _dataSize;
 
@@ -96,7 +96,7 @@ void AESC::readVqa(Common::SeekableReadStream *stream) {
 }
 
 //TODO:
-//bool AESC::isAffectingArea(int x, int y, int width, int height, int z) {
+//bool ScreenEffects::isAffectingArea(int x, int y, int width, int height, int z) {
 //	int xx = x >> 1;
 //	int yy = y >> 1;
 //	if (_entries.empty()) {
@@ -120,7 +120,7 @@ void AESC::readVqa(Common::SeekableReadStream *stream) {
 //	return false;
 //}
 
-void AESC::getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z) {
+void ScreenEffects::getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z) {
 	Color256 color = { 0, 0, 0 };
 	for (Common::Array<Entry>::iterator entry = _entries.begin(); entry != _entries.end(); entry++) {
 		uint16 x1 = (x / 2) - entry->x;

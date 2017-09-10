@@ -130,6 +130,9 @@ AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) : _vm(vm) {
 	for (int i = 0; i != 6; ++i) {
 		_tracks[i].hash = 0;
 		_tracks[i].priority = 0;
+		_tracks[i].isActive = false;
+		_tracks[i].channel = -1;
+		_tracks[i].stream = nullptr;
 	}
 
 	_sfxVolume = 65;
@@ -174,12 +177,6 @@ void AudioPlayer::adjustPan(int track, int pan, int delay) {
 	_vm->_audioMixer->adjustPan(_tracks[track].channel, pan, 60 * delay);
 }
 
-//void AudioPlayer::tick() {
-//	for (int i = 0; i != 6; ++i) {
-//		Track *ti = &_tracks[i];
-//	}
-//}
-
 void AudioPlayer::remove(int channel) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != kTracks; ++i) {
@@ -187,7 +184,7 @@ void AudioPlayer::remove(int channel) {
 			_tracks[i].isActive = false;
 			_tracks[i].priority = 0;
 			_tracks[i].channel = -1;
-			//_cache->decRef(_tracks[i].hash);
+			_tracks[i].stream = nullptr;
 			break;
 		}
 	}
@@ -257,7 +254,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 
 	// debug("PlayStream: %s", name.c_str());
 
-	int channel = _vm->_audioMixer->playStream(
+	int channel = _vm->_audioMixer->play(
 		Audio::Mixer::kPlainSoundType,
 		audioStream,
 		priority,
@@ -268,6 +265,8 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 		this);
 
 	if (channel == -1) {
+		delete audioStream;
+		_cache->decRef(hash);
 		return -1;
 	}
 
@@ -280,6 +279,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	_tracks[track].priority = priority;
 	_tracks[track].hash     = hash;
 	_tracks[track].volume   = actualVolume;
+	_tracks[track].stream   = audioStream;
 
 	return track;
 }

@@ -82,7 +82,7 @@ bool AudioSpeech::playSpeech(const char *name, int pan) {
 
 	// TODO: shorty mode - set rate of sound to 33khz
 
-	_channel = _vm->_audioMixer->playStream(
+	_channel = _vm->_audioMixer->play(
 		Audio::Mixer::kSpeechSoundType,
 		audioStream,
 		100,

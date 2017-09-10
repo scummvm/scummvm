@@ -22,9 +22,9 @@
 
 #include "bladerunner/slice_renderer.h"
 
-#include "bladerunner/aesc.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/lights.h"
+#include "bladerunner/screen_effects.h"
 #include "bladerunner/set_effects.h"
 #include "bladerunner/slice_animations.h"
 
@@ -47,8 +47,8 @@ SliceRenderer::SliceRenderer(BladeRunnerEngine *vm) {
 SliceRenderer::~SliceRenderer() {
 }
 
-void SliceRenderer::setAESC(AESC *aesc) {
-	_aesc = aesc;
+void SliceRenderer::setScreenEffects(ScreenEffects *screenEffects) {
+	_screenEffects = screenEffects;
 }
 
 void SliceRenderer::setView(const View &view) {
@@ -531,7 +531,7 @@ void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, ui
 					int color555 = palette.color555[p[2]];
 					if (advanced) {
 						Color256 aescColor = { 0, 0, 0 };
-						_aesc->getColor(&aescColor, vertexX, y, vertexZ);
+						_screenEffects->getColor(&aescColor, vertexX, y, vertexZ);
 
 						Color256 color = palette.color[p[2]];
 						color.r = ((int)(_setEffectColor.r + _lightsColor.r * color.r) >> 16) + aescColor.r;

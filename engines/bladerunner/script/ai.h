@@ -152,6 +152,21 @@ DECLARE_SCRIPT(Leon)
 	float sub_446700(int actorId, float x, float y, float z);
 END_SCRIPT
 
+DECLARE_SCRIPT(Maggie)
+	int var_45F3F0_animation_state;
+	int var_45F3F4_animation_frame;
+	int var_462B30;
+	int var_462B34;
+	int var_45F3F8;
+	int var_45F3FC;
+	int var_45F400;
+	int var_45F404;
+	int var_45F408;
+
+	int sub_44B260();
+	float sub_44B200(int actorId, float x, float y, float z);
+END_SCRIPT
+
 #undef DECLARE_SCRIPT
 #undef END_SCRIPT
 
@@ -171,6 +186,7 @@ public:
 	void TimerExpired(int actor, int timer);
 	void CompletedMovementTrack(int actor);
 	void ReceivedClue(int actor, int clueId, int fromActorId);
+	void ClickedByPlayer(int actor);
 	void EnteredScene(int actor, int setId);
 	void OtherAgentEnteredThisScene(int actor, int otherActorId);
 	void OtherAgentExitedThisScene(int actor, int otherActorId);

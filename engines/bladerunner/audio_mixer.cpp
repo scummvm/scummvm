@@ -30,29 +30,30 @@
 #include "common/timer.h"
 
 namespace BladeRunner {
+
 AudioMixer::AudioMixer(BladeRunnerEngine *vm):
 	_vm(vm)
 {
-	for (int i = 0; i < kAudioMixerChannels; i++) {
+	for (int i = 0; i < kChannels; i++) {
 		_channels[i].isPresent = false;
 	}
-	_vm->getTimerManager()->installTimerProc(timerCallback, 25 * 1000 , this, "BladeRunnerAudioMixerTimer");
+	_vm->getTimerManager()->installTimerProc(timerCallback, (1000 / kUpdatesPerSecond) * 1000 , this, "BladeRunnerAudioMixerTimer");
 }
 
 AudioMixer::~AudioMixer() {
-	for (int i = 0; i < kAudioMixerChannels; i++) {
+	for (int i = 0; i < kChannels; i++) {
 		stop(i, 0);
 	}
 	_vm->getTimerManager()->removeTimerProc(timerCallback);
 }
 
-int AudioMixer::playStream(Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void (*endCallback)(int, void*), void *callbackData) {
+int AudioMixer::play(Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void (*endCallback)(int, void*), void *callbackData) {
 	Common::StackLock lock(_mutex);
 
 	int channel = -1;
 	int lowestPriority = 1000000;
 	int lowestPriorityChannel = -1;
-	for (int i = 0; i < kAudioMixerChannels; i++) {
+	for (int i = 0; i < kUsableChannels; i++) {
 		if (!_channels[i].isPresent) {
 			channel = i;
 			break;
@@ -70,35 +71,13 @@ int AudioMixer::playStream(Audio::Mixer::SoundType type, Audio::RewindableAudioS
 		channel = lowestPriorityChannel;
 	}
 
-	_channels[channel].isPresent = true;
-	_channels[channel].stream = stream;
-	_channels[channel].priority = priority;
-	_channels[channel].loop = loop;
-	_channels[channel].volume = volume;
-	_channels[channel].volumeTarget = 0;
-	_channels[channel].volumeDelta = 0;
-	_channels[channel].pan = pan;
-	_channels[channel].panTarget = 0;
-	_channels[channel].panDelta = 0;
-	_channels[channel].endCallback = endCallback;
-	_channels[channel].callbackData = callbackData;
+	return playInChannel(channel, type, stream, priority, loop, volume, pan, endCallback, callbackData);
+}
 
+int AudioMixer::playMusic(Audio::RewindableAudioStream *stream, int volume, void(*endCallback)(int, void *), void *callbackData) {
+	Common::StackLock lock(_mutex);
 
-	Audio::AudioStream* audioStream = stream;
-
-	if (loop) {
-		audioStream = new Audio::LoopingAudioStream(stream, 0, DisposeAfterUse::YES);
-	}
-
-	_vm->_mixer->playStream(
-		type,
-		&_channels[channel].handle,
-		audioStream,
-		-1,
-		volume * 255 / 100,
-		pan * 127 / 100);
-
-	return channel;
+	return playInChannel(kMusicChannel, Audio::Mixer::kMusicSoundType, stream, 100, false, volume, 0, endCallback, callbackData);
 }
 
 void AudioMixer::stop(int channel, int time) {
@@ -117,6 +96,37 @@ void AudioMixer::stop(int channel, int time) {
 	}
 }
 
+int AudioMixer::playInChannel(int channel, Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void(*endCallback)(int, void *), void *callbackData) {
+	_channels[channel].isPresent = true;
+	_channels[channel].stream = stream;
+	_channels[channel].priority = priority;
+	_channels[channel].loop = loop;
+	_channels[channel].volume = volume;
+	_channels[channel].volumeTarget = 0;
+	_channels[channel].volumeDelta = 0;
+	_channels[channel].pan = pan;
+	_channels[channel].panTarget = 0;
+	_channels[channel].panDelta = 0;
+	_channels[channel].endCallback = endCallback;
+	_channels[channel].callbackData = callbackData;
+
+	Audio::AudioStream* audioStream = stream;
+
+	if (loop) {
+		audioStream = new Audio::LoopingAudioStream(stream, 0, DisposeAfterUse::YES);
+	}
+
+	_vm->_mixer->playStream(
+		type,
+		&_channels[channel].handle,
+		audioStream,
+		-1,
+		volume * 255 / 100,
+		pan * 127 / 100);
+
+	return channel;
+}
+
 bool AudioMixer::isActive(int channel) {
 	Common::StackLock lock(_mutex);
 
@@ -133,7 +143,7 @@ void AudioMixer::adjustVolume(int channel, int newVolume, int time)
 
 	if (_channels[channel].isPresent) {
 		_channels[channel].volumeTarget = newVolume;
-		_channels[channel].volumeDelta = ((newVolume - _channels[channel].volume) / (time / 60.0f)) / 40.0f;
+		_channels[channel].volumeDelta = ((newVolume - _channels[channel].volume) / (time / 60.0f)) / (float)kUpdatesPerSecond;
 	}
 }
 
@@ -144,7 +154,7 @@ void AudioMixer::adjustPan(int channel, int newPan, int time)
 	if (_channels[channel].isPresent) {
 		newPan = CLIP(newPan, -100, 100);
 		_channels[channel].panTarget = newPan;
-		_channels[channel].panDelta = ((newPan - _channels[channel].pan) / (time / 60.0f)) / 40.0f;
+		_channels[channel].panDelta = ((newPan - _channels[channel].pan) / (time / 60.0f)) / (float)kUpdatesPerSecond;
 	}
 }
 
@@ -152,7 +162,7 @@ void AudioMixer::tick()
 {
 	Common::StackLock lock(_mutex);
 
-	for (int i = 0; i < kAudioMixerChannels; i++) {
+	for (int i = 0; i < kChannels; i++) {
 		Channel *channel = &_channels[i];
 		if (!channel->isPresent) {
 			continue;

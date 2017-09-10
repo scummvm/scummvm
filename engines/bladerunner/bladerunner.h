@@ -48,9 +48,16 @@ enum AnimationModes {
 	kAnimationModeCombatRun = 8
 };
 
+enum SceneLoopMode {
+	kSceneLoopModeLoseControl = 0,
+	kSceneLoopModeChangeSet = 1,
+	kSceneLoopMode2 = 2,
+	kSceneLoopModeSpinner = 3
+};
+
 class Actor;
 class ADQ;
-class AESC;
+class ScreenEffects;
 class AIScripts;
 class AmbientSounds;
 class AudioMixer;
@@ -68,6 +75,7 @@ class ItemPickup;
 class Items;
 class Lights;
 class Mouse;
+class Music;
 class Obstacles;
 class Overlays;
 class Scene;
@@ -80,6 +88,7 @@ class SliceRenderer;
 class Spinner;
 class SuspectsDatabase;
 class TextResource;
+class Vector3;
 class View;
 class Waypoints;
 class ZBuffer;
@@ -94,7 +103,7 @@ public:
 	int       _playerLosesControlCounter;
 
 	ADQ              *_adq;
-	AESC             *_aesc;
+	ScreenEffects    *_screenEffects;
 	AIScripts        *_aiScripts;
 	AmbientSounds    *_ambientSounds;
 	AudioMixer       *_audioMixer;
@@ -112,6 +121,7 @@ public:
 	Lights           *_lights;
 	Font             *_mainFont;
 	Mouse            *_mouse;
+	Music            *_music;
 	Obstacles        *_obstacles;
 	Overlays         *_overlays;
 	Scene            *_scene;
@@ -194,6 +204,7 @@ public:
 	void handleMouseClickItem(int x, int y, int itemId);
 	void handleMouseClickActor(int x, int y, int actorId);
 	void handleMouseClick3DObject(int x, int y, int objectId, bool isClickable, bool isTarget);
+	void handleMouseClickEmpty(int x, int y, Vector3 &mousePosition);
 	void gameWaitForActive();
 	void loopActorSpeaking();
 

@@ -87,13 +87,13 @@ bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 		Actor_Face_Object(kActorMcCoy, "BOLLARD", true);
 		if (Game_Flag_Query(431)) {
 			Scene_Loop_Set_Default(1);
-			Scene_Loop_Start_Special(2, 0, 0);
+			Scene_Loop_Start_Special(kSceneLoopMode2, 0, false);
 			Game_Flag_Reset(431);
 			Game_Flag_Set(436);
 			return true;
 		} else {
 			Scene_Loop_Set_Default(4);
-			Scene_Loop_Start_Special(2, 3, 0);
+			Scene_Loop_Start_Special(kSceneLoopMode2, 3, false);
 			Game_Flag_Set(431);
 			Scene_Exit_Remove(0);
 			return true;

@@ -106,7 +106,7 @@ public:
 	int  update(bool forceDraw = false);
 	void updateZBuffer(ZBuffer *zbuffer);
 	void updateView(View *view);
-	void updateAESC(AESC *aesc);
+	void updateScreenEffects(ScreenEffects *screenEffects);
 	void updateLights(Lights *lights);
 
 	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void(*callback)(void *, int, int), void *callbackData);

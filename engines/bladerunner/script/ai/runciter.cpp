@@ -37,7 +37,7 @@ void AIScriptRunciter::Initialize() {
 }
 
 bool AIScriptRunciter::Update() {
-	if (Actor_Query_Goal_Number(kActorRunciter) == 0 && Game_Flag_Query(186)) {
+	if (Actor_Query_Goal_Number(kActorRunciter) == 0 && Game_Flag_Query(kFlagRC01PoliceDone)) {
 		Actor_Set_Goal_Number(kActorRunciter, 2);
 	}
 	if (Global_Variable_Query(1) == 4 && Actor_Query_Goal_Number(kActorRunciter) < 300) {

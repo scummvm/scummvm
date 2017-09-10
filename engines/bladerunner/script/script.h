@@ -429,6 +429,34 @@ enum SpinnerDestinations {
 	kSpinnerDestinationHysteriaHall = 9
 };
 
+enum Flags {
+	kFlagIntroPlayed = 24,
+	kFlagMA02toMA06 = 33,
+	kFlagMA06ToMA02 = 34,
+	kFlagMA02ToMA04 = 35,
+	kFlagMA04ToMA02 = 36,
+	kFlagMA01toMA06 = 37,
+	kFlagMA06toMA01 = 38,
+	kFlagMA07toMA06 = 57,
+	kFlagMA06toMA07 = 58,
+	kFlagMA04toMA05 = 62,
+	kFlagMA05toMA04 = 63,
+	kFlagRC01PoliceDone = 186,
+	kFlagMA01Locked = 250
+};
+
+enum Variables {
+	kVariableWalkLoopActor = 37,
+	kVariableWalkLoopRun = 38
+};
+
+enum Outtakes {
+	kOuttakeIntro = 0,
+	kOuttakeWestwood = 28,
+	kOuttakeDescent = 33,
+	kOuttakeBladeRunner = 41
+};
+
 class BladeRunnerEngine;
 
 class ScriptBase {
@@ -561,11 +589,11 @@ protected:
 	void Footstep_Sounds_Set(int index, int value);
 	void Footstep_Sound_Override_On(int footstepSoundOverride);
 	void Footstep_Sound_Override_Off();
-	bool Music_Play(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
-	void Music_Adjust(int a1, int a2, int a3);
-	void Music_Stop(int a1);
+	bool Music_Play(int musicId, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut);
+	void Music_Adjust(int volume, int pan, int delay);
+	void Music_Stop(int delay);
 	bool Music_Is_Playing();
-	void Overlay_Play(const char *overlay, int a2, int a3, int a4, int a5);
+	void Overlay_Play(const char *overlay, int loopId, int loopForever, int startNow, int a5);
 	void Overlay_Remove(const char *overlay);
 	void Scene_Loop_Set_Default(int loopId);
 	void Scene_Loop_Start_Special(int sceneLoopMode, int loopId, bool immediately);

@@ -41,6 +41,7 @@ AIScripts::AIScripts(BladeRunnerEngine *vm, int actorsCount) : _vm(vm), _inScrip
 	_AIScripts[kActorRunciter] = new AIScriptRunciter(_vm);
 	_AIScripts[kActorOfficerLeary] = new AIScriptOfficerLeary(_vm);
 	_AIScripts[kActorLeon] = new AIScriptLeon(_vm);
+	_AIScripts[kActorMaggie] = new AIScriptMaggie(_vm);
 }
 
 AIScripts::~AIScripts() {
@@ -96,6 +97,20 @@ void AIScripts::ReceivedClue(int actor, int clueId, int fromActorId) {
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
 		_AIScripts[actor]->ReceivedClue(clueId, fromActorId);
+	}
+	_inScriptCounter--;
+}
+
+void AIScripts::ClickedByPlayer(int actor) {
+	assert(actor < _actorsCount);
+
+	if(_vm->_actors[actor]->inCombat()) {
+		return;
+	}
+
+	_inScriptCounter++;
+	if (_AIScripts[actor]) {
+		_AIScripts[actor]->ClickedByPlayer();
 	}
 	_inScriptCounter--;
 }

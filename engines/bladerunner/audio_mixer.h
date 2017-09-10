@@ -33,7 +33,10 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class AudioMixer {
-	static const int kAudioMixerChannels = 9;
+	static const int kChannels = 9;
+	static const int kUsableChannels = 8;
+	static const int kMusicChannel = 8;
+	static const int kUpdatesPerSecond = 40;
 
 	struct Channel {
 		bool isPresent;
@@ -53,14 +56,15 @@ class AudioMixer {
 
 	BladeRunnerEngine *_vm;
 
-	Channel       _channels[kAudioMixerChannels];
+	Channel       _channels[kChannels];
 	Common::Mutex _mutex;
 
 public:
 	AudioMixer(BladeRunnerEngine *vm);
 	~AudioMixer();
 
-	int playStream(Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void(*onEndCallback)(int, void *), void *callbackData);
+	int play(Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void(*endCallback)(int, void *), void *callbackData);
+	int playMusic(Audio::RewindableAudioStream *stream, int volume, void(*endCallback)(int, void *), void *callbackData);
 	void stop(int channel, int delay);
 
 	void adjustVolume(int channel, int newVolume, int time);
@@ -70,6 +74,8 @@ public:
 	void pause(int channel, int delay);
 
 private:
+	int playInChannel(int channel, Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void(*endCallback)(int, void *), void *callbackData);
+
 	bool isActive(int channel);
 	void tick();
 	static void timerCallback(void *refCon);

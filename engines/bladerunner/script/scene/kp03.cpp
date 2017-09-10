@@ -69,7 +69,7 @@ bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BRACK MID", objectName) && !Game_Flag_Query(422)) {
 		if (a2) {
 			Scene_Loop_Set_Default(5);
-			Scene_Loop_Start_Special(2, 4, 1);
+			Scene_Loop_Start_Special(kSceneLoopMode2, 4, true);
 			Actor_Change_Animation_Mode(kActorMcCoy, 39);
 			Actor_Retired_Here(kActorMcCoy, 72, 18, 1, -1);
 			Game_Flag_Set(422);
@@ -90,7 +90,7 @@ bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool a2) {
 				Game_Flag_Set(484);
 				Game_Flag_Reset(421);
 				Scene_Loop_Set_Default(7);
-				Scene_Loop_Start_Special(2, 0, 0);
+				Scene_Loop_Start_Special(kSceneLoopMode2, 0, false);
 				Actor_Voice_Over(1110, kActorVoiceOver);
 				Actor_Voice_Over(1120, kActorVoiceOver);
 			} else {
@@ -178,7 +178,7 @@ void SceneScriptKP03::SceneFrameAdvanced(int frame) {
 		}
 		if (v1 != -1) {
 			Scene_Loop_Set_Default(5);
-			Scene_Loop_Start_Special(2, 4, 1);
+			Scene_Loop_Start_Special(kSceneLoopMode2, 4, true);
 			Game_Flag_Set(422);
 			Game_Flag_Reset(421);
 			Unclickable_Object("BRACK MID");
@@ -244,7 +244,7 @@ void SceneScriptKP03::sub_401E54() {
 	Game_Flag_Set(484);
 	Game_Flag_Reset(421);
 	Scene_Loop_Set_Default(7);
-	Scene_Loop_Start_Special(2, 7, 0);
+	Scene_Loop_Start_Special(kSceneLoopMode2, 7, false);
 	Actor_Set_Goal_Number(kActorSteele, 413);
 	Actor_Says(kActorMcCoy, 2195, 14);
 	Ambient_Sounds_Play_Sound(151, 40, -60, -60, 0);

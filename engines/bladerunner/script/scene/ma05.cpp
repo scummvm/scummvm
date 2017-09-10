@@ -47,7 +47,7 @@ void SceneScriptMA05::InitializeScene() {
 		Ambient_Sounds_Add_Sound(403, 3, 3, 32, 32, 100, 100, -101, -101, 0, 0);
 	}
 	if (Global_Variable_Query(1) != 2 && Global_Variable_Query(1) != 3) {
-		Scene_Loop_Start_Special(0, 0, 0);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 	}
 	Scene_Loop_Set_Default(1);
 }
@@ -78,8 +78,8 @@ bool SceneScriptMA05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1579.0f, 0, 0, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1579.0f, 0, 0, false, 0);
-			Game_Flag_Set(63);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Game_Flag_Set(kFlagMA05toMA04);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 953.97f, 1685.0f, 0, false);
 			Set_Enter(50, 50);
@@ -97,7 +97,7 @@ void SceneScriptMA05::SceneFrameAdvanced(int frame) {
 	if (frame == 20) {
 		Sound_Play(102, 70, -100, 100, 50);
 	}
-	//return true;	
+	//return true;
 }
 
 void SceneScriptMA05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -107,7 +107,7 @@ void SceneScriptMA05::PlayerWalkedIn() {
 	Music_Play(2, 52, 0, 2, -1, 0, 0);
 	if ((Random_Query(0, 4) == 1 || (Game_Flag_Query(146) == 1 && !Game_Flag_Query(61))) && Global_Variable_Query(1) == 1) {
 		Scene_Loop_Set_Default(1);
-		Scene_Loop_Start_Special(2, 3, 1);
+		Scene_Loop_Start_Special(kSceneLoopMode2, 3, true);
 		Sound_Play(69, 100, 0, 0, 50);
 	}
 	if (Game_Flag_Query(146) && !Game_Flag_Query(61)) {

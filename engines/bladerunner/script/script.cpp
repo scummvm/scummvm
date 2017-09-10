@@ -38,6 +38,7 @@
 #include "bladerunner/items.h"
 #include "bladerunner/item_pickup.h"
 #include "bladerunner/movement_track.h"
+#include "bladerunner/music.h"
 #include "bladerunner/overlays.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/set.h"
@@ -423,12 +424,14 @@ int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
 bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int distance, int a4, bool run) {
 	_vm->gameWaitForActive();
 
-	if (actorId == _vm->_walkingActorId) {
+	if (_vm->_walkingActorId == actorId) {
 		run = true;
 	}
 	_vm->_playerActorIdle = false;
 	bool isRunning;
+
 	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, distance, a4, run, true, &isRunning);
+
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
@@ -436,8 +439,8 @@ bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int dis
 	if (isRunning == 1) {
 		_vm->_walkingActorId = actorId;
 	}
-	Global_Variable_Set(37, actorId);
-	Global_Variable_Set(38, isRunning);
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
 	return result;
 }
 
@@ -449,7 +452,9 @@ bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4
 	}
 	_vm->_playerActorIdle = false;
 	bool isRunning;
+
 	bool result = _vm->_actors[actorId]->loopWalkToItem(itemId, a3, a4, run, true, &isRunning);
+
 	if (_vm->_playerActorIdle == 1) {
 		result = true;
 		_vm->_playerActorIdle = false;
@@ -457,8 +462,8 @@ bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4
 	if (isRunning == 1) {
 		_vm->_walkingActorId = actorId;
 	}
-	Global_Variable_Set(37, actorId);
-	Global_Variable_Set(38, isRunning);
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
 	return result;
 }
 
@@ -470,7 +475,9 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 	}
 	_vm->_playerActorIdle = false;
 	bool isRunning;
+
 	bool result = _vm->_actors[actorId]->loopWalkToSceneObject(objectName, destinationOffset, a4, run, true, &isRunning);
+
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
@@ -478,52 +485,79 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 	if (isRunning == 1) {
 		_vm->_walkingActorId = actorId;
 	}
-	Global_Variable_Set(37, actorId);
-	Global_Variable_Set(38, isRunning);
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
 	return result;
 }
 
 bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, int a4, bool run) {
-	//TODO
-	warning("Loop_Actor_Walk_To_Waypoint(%d, %d, %d, %d, %d)", actorId, waypointId, destinationOffset, a4, run);
-	return false;
+	_vm->gameWaitForActive();
+
+	if (_vm->_walkingActorId == actorId) {
+		run = true;
+	}
+	_vm->_playerActorIdle = false;
+	bool isRunning;
+
+	bool result = _vm->_actors[actorId]->loopWalkToWaypoint(waypointId, destinationOffset, a4, run, true, &isRunning);
+
+	if (_vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+	if (isRunning == 1) {
+		_vm->_walkingActorId = actorId;
+	}
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
+	return result;
 }
 
 bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, int a5, bool run, int a7) {
 	_vm->gameWaitForActive();
 
-	if(_vm->_walkingActorId == actorId) {
-		if(a7) {
+	if (_vm->_walkingActorId == actorId) {
+		if (a7) {
 			_vm->_walkingActorId = -1;
 		} else {
 			run = true;
 		}
 	}
-	//TODO:
-	//PlayerActorIdle = 0;
+	_vm->_playerActorIdle = false;
 	bool isRunning;
+
 	bool result = _vm->_actors[actorId]->loopWalkToXYZ(Vector3(x, y, z), destinationOffset, a5, run, true, &isRunning);
 
-//	if (PlayerActorIdle == 1) {
-//		result = 1;
-//		PlayerActorIdle = 0;
-//	}
-	if(isRunning) {
+	if (_vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+	if (isRunning) {
 		_vm->_walkingActorId = actorId;
 	}
-	Global_Variable_Set(37, actorId);
-	Global_Variable_Set(38, isRunning);
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
 	return result;
 }
 
 void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, int run) {
-	//TODO
-	warning("Async_Actor_Walk_To_Waypoint(%d, %d, %d, %d)", actorId, waypointId, destinationOffset, run);
+	_vm->gameWaitForActive();
+
+	if (_vm->_walkingActorId == actorId) {
+		run = true;
+	}
+
+	_vm->_actors[actorId]->asyncWalkToWaypoint(waypointId, destinationOffset, run, true);
 }
 
 void ScriptBase::Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, bool run) {
-	//TODO
-	warning("Async_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d)", actorId, x, y, z, destinationOffset, run);
+	_vm->gameWaitForActive();
+
+	if (_vm->_walkingActorId == actorId) {
+		run = true;
+	}
+
+	_vm->_actors[actorId]->asyncWalkToXYZ(Vector3(x, y, z), destinationOffset, run, true);
 }
 
 void ScriptBase::Actor_Force_Stop_Walking(int actorId) {
@@ -796,30 +830,25 @@ void ScriptBase::Footstep_Sound_Override_Off() {
 	_vm->_scene->_set->resetFoodstepSoundOverride();
 }
 
-bool ScriptBase::Music_Play(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
-	//TODO
-	warning("Music_Play(%d, %d, %d, %d, %d, %d, %d)", a1,  a2,  a3,  a4,  a5,  a6,  a7);
-	return false;
+bool ScriptBase::Music_Play(int musicId, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut) {
+	const char *musicName = _vm->_gameInfo->getMusicTrack(musicId);
+	return _vm->_music->play(musicName, volume, pan, timeFadeIn, timePlay, loop, timeFadeOut);
 }
 
-void ScriptBase::Music_Adjust(int a1, int a2, int a3) {
-	//TODO
-	warning("Music_Adjust(%d, %d, %d)", a1, a2, a3);
+void ScriptBase::Music_Adjust(int volume, int pan, int delay) {
+	_vm->_music->adjust(volume, pan, delay);
 }
 
-void ScriptBase::Music_Stop(int a1) {
-	//TODO
-	warning("Music_Stop(%d)", a1);
+void ScriptBase::Music_Stop(int delay) {
+	_vm->_music->stop(delay);
 }
 
 bool ScriptBase::Music_Is_Playing() {
-	//TODO
-	warning("Music_Is_Playing()");
-	return false;
+	return _vm->_music->isPlaying();
 }
 
-void ScriptBase::Overlay_Play(const char *overlay, int a2, int a3, int a4, int a5) {
-	_vm->_overlays->play(overlay, a2, a3, a4, a5);
+void ScriptBase::Overlay_Play(const char *overlay, int loopId, int loopForever, int startNow, int a5) {
+	_vm->_overlays->play(overlay, loopId, loopForever, startNow, a5);
 }
 
 void ScriptBase::Overlay_Remove(const char *overlay) {
@@ -908,7 +937,7 @@ bool ScriptBase::Dialogue_Menu_Clear_List() {
 }
 
 bool ScriptBase::Dialogue_Menu_Add_To_List(int answer) {
-	_vm->_dialogueMenu->addToList(answer, 0, 5, 5, 5);
+	_vm->_dialogueMenu->addToList(answer, false, 5, 5, 5);
 	return false;
 }
 

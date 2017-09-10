@@ -22,8 +22,10 @@
 
 #include "bladerunner/settings.h"
 
+#include "bladerunner/ambient_sounds.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/chapters.h"
+#include "bladerunner/music.h"
 #include "bladerunner/scene.h"
 
 #include "common/debug.h"
@@ -54,10 +56,9 @@ bool Settings::openNewScene() {
 	assert(_newScene != -1);
 
 	if (_startingGame) {
-		// Stop ambient audio and music
-//		ambient::removeAllNonLoopingSounds(Ambient, 1);
-//		ambient::removeAllLoopingSounds(Ambient, 1);
-//		music::stop(Music, 2);
+		_vm->_ambientSounds->removeAllNonLoopingSounds(true);
+		_vm->_ambientSounds->removeAllLoopingSounds(1);
+		_vm->_music->stop(2);
 	}
 
 	int currentSet = _vm->_scene->getSetId();
