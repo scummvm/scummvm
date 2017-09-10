@@ -55,8 +55,15 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 
 	// Create a decoder
 	_decoder = new AVIDecoder();
-	if (!_decoder->loadFile(_movieName))
+
+	// Load the video into it
+	if (_movieName == "y222.avi") {
+		// The y222.avi is the bells animation for the music room.
+		// It needs on the fly fixing for the video header
+		_decoder->loadStream(new y222());
+	} else if (!_decoder->loadFile(_movieName)) {
 		error("Could not open video - %s", key.getString().c_str());
+	}
 
 	_streamCount = _decoder->getTransparencyTrack() ? 2 : 1;
 
@@ -530,6 +537,30 @@ bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 
 uint AVISurface::getBitDepth() const {
 	return _decoder->getVideoTrack(0).getBitCount();
+}
+
+/*------------------------------------------------------------------------*/
+
+y222::y222() {
+	_innerStream = new File();
+	_innerStream->open("y222.avi");
+}
+
+y222::~y222() {
+	delete _innerStream;
+}
+
+uint32 y222::read(void *dataPtr, uint32 dataSize) {
+	int32 currPos = pos();
+	uint32 bytesRead = _innerStream->read(dataPtr, dataSize);
+
+	if (currPos <= 48 && (currPos + bytesRead) >= 52) {
+		byte *framesP = (byte *)dataPtr + (48 - currPos);
+		if (READ_LE_UINT32(framesP) == 1)
+			WRITE_LE_UINT32(framesP, 1085);
+	}
+
+	return bytesRead;
 }
 
 } // End of namespace Titanic

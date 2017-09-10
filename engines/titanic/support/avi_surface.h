@@ -23,6 +23,7 @@
 #ifndef TITANIC_AVI_SURFACE_H
 #define TITANIC_AVI_SURFACE_H
 
+#include "common/stream.h"
 #include "video/avi_decoder.h"
 #include "graphics/managed_surface.h"
 #include "titanic/core/resource_key.h"
@@ -40,6 +41,37 @@ enum MovieFlag {
 	MOVIE_REVERSE = 8,				// Play the movie in reverse
 	MOVIE_WAIT_FOR_FINISH = 0x10	// Let finish before playing next movie for object
 };
+
+/**
+ * This implements a special read stream for the y222.avi video
+ * that fixes that totalFrames field of the header from it's
+ * incorrect value of 1 to a correct 1085.
+ */
+class y222 : virtual public Common::SeekableReadStream {
+private:
+	File *_innerStream;
+public:
+	y222();
+	virtual ~y222();
+
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual bool eos() const { return _innerStream->eos(); }
+	virtual int32 pos() const { return _innerStream->pos(); }
+	virtual int32 size() const { return _innerStream->size(); }
+	virtual bool seek(int32 offset, int whence = SEEK_SET) {
+		return _innerStream->seek(offset, whence);
+	}
+	virtual bool skip(uint32 offset) {
+		return _innerStream->skip(offset);
+	}
+	virtual char *readLine(char *s, size_t bufSize) {
+		return _innerStream->readLine(s, bufSize);
+	}
+	virtual Common::String readLine() {
+		return _innerStream->readLine();
+	}
+};
+
 
 class AVIDecoder : public Video::AVIDecoder {
 public:
