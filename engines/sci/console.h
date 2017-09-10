@@ -122,6 +122,7 @@ private:
 	bool cmdShowInstruments(int argc, const char **argv);
 	bool cmdMapInstrument(int argc, const char **argv);
 	bool cmdAudioList(int argc, const char **argv);
+	bool cmdAudioDump(int argc, const char **argv);
 	// Script
 	bool cmdAddresses(int argc, const char **argv);
 	bool cmdRegisters(int argc, const char **argv);

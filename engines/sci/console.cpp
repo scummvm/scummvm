@@ -53,9 +53,11 @@
 #include "video/avi_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
+#include "common/memstream.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
+#include "sci/sound/decoders/sol.h"
 #include "video/coktel_decoder.h"
 #endif
 
@@ -173,6 +175,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
 	registerCmd("map_instrument",		WRAP_METHOD(Console, cmdMapInstrument));
 	registerCmd("audio_list",		WRAP_METHOD(Console, cmdAudioList));
+	registerCmd("audio_dump",		WRAP_METHOD(Console, cmdAudioDump));
 	// Script
 	registerCmd("addresses",			WRAP_METHOD(Console, cmdAddresses));
 	registerCmd("registers",			WRAP_METHOD(Console, cmdRegisters));
@@ -426,6 +429,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
 	debugPrintf(" map_instrument - Dynamically maps an MT-32 instrument to a GM instrument\n");
 	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2+)\n");
+	debugPrintf(" audio_dump - Dumps the requested audio resource as an uncompressed wave file (SCI2+)\n");
 	debugPrintf("\n");
 	debugPrintf("Script:\n");
 	debugPrintf(" addresses - Provides information on how to pass addresses\n");
@@ -1449,6 +1453,142 @@ bool Console::cmdAudioList(int argc, const char **argv) {
 	debugPrintf("SCI32 isn't included in this compiled executable\n");
 #endif
 
+	return true;
+}
+
+bool Console::cmdAudioDump(int argc, const char **argv) {
+#ifdef ENABLE_SCI32
+	if (argc != 2 && argc != 6) {
+		debugPrintf("Dumps the requested audio resource as an uncompressed wave file.\n");
+		debugPrintf("Usage (audio): %s <audio resource id>\n", argv[0]);
+		debugPrintf("Usage (audio36): %s <audio map id> <noun> <verb> <cond> <seq>\n", argv[0]);
+		return true;
+	}
+
+	ResourceId id;
+	if (argc == 2) {
+		id = ResourceId(kResourceTypeAudio, atoi(argv[1]));
+	} else {
+		id = ResourceId(kResourceTypeAudio36, atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+	}
+
+	Resource *resource = _engine->_resMan->findResource(id, false);
+	if (!resource) {
+		debugPrintf("Not found.\n");
+		return true;
+	}
+
+	Common::MemoryReadStream stream = resource->toStream();
+
+	Common::DumpFile outFile;
+	const Common::String fileName = Common::String::format("%s.wav", id.toString().c_str());
+	if (!outFile.open(fileName)) {
+		debugPrintf("Could not open dump file %s.\n", fileName.c_str());
+		return true;
+	}
+
+	const bool isSol = detectSolAudio(stream);
+	const bool isWave = !isSol && detectWaveAudio(stream);
+	const bool isRaw = !isSol && !isWave;
+
+	if (isSol || isRaw) {
+		uint16 sampleRate = 11025;
+		int numChannels = 1;
+		int bytesPerSample = 1;
+		bool sourceIs8Bit = true;
+		uint32 compressedSize;
+		uint32 decompressedSize;
+
+		if (isSol) {
+			stream.seek(6, SEEK_SET);
+			sampleRate = stream.readUint16LE();
+			const byte flags = stream.readByte();
+			compressedSize = stream.readUint32LE();
+
+			// All AudioStreams must output 16-bit samples
+			bytesPerSample = 2;
+			decompressedSize = compressedSize * bytesPerSample;
+
+			if (flags & kCompressed) {
+				decompressedSize *= 2;
+			}
+			if (flags & k16Bit) {
+				sourceIs8Bit = false;
+			}
+			if (flags & kStereo) {
+				numChannels = 2;
+			}
+		} else {
+			decompressedSize = resource->size();
+		}
+
+		enum {
+			kWaveHeaderSize = 36
+		};
+
+		outFile.writeString("RIFF");
+		outFile.writeUint32LE(kWaveHeaderSize + decompressedSize);
+		outFile.writeString("WAVEfmt ");
+		outFile.writeUint32LE(16);
+		outFile.writeUint16LE(1);
+		outFile.writeUint16LE(numChannels);
+		outFile.writeUint32LE(sampleRate);
+		outFile.writeUint32LE(sampleRate * bytesPerSample * numChannels);
+		outFile.writeUint16LE(bytesPerSample * numChannels);
+		outFile.writeUint16LE(bytesPerSample * 8);
+		outFile.writeString("data");
+		outFile.writeUint32LE(decompressedSize);
+
+		if (isSol) {
+			stream.seek(0, SEEK_SET);
+			Common::ScopedPtr<Audio::SeekableAudioStream> audioStream(makeSOLStream(&stream, DisposeAfterUse::NO));
+
+			if (!audioStream) {
+				debugPrintf("Could not create SOL stream.\n");
+				return true;
+			}
+
+			byte buffer[4096];
+			const int samplesToRead = ARRAYSIZE(buffer) / 2;
+			uint bytesWritten = 0;
+			int samplesRead;
+			while ((samplesRead = audioStream->readBuffer((int16 *)buffer, samplesToRead))) {
+				uint bytesToWrite = samplesRead * bytesPerSample;
+				outFile.write(buffer, bytesToWrite);
+				bytesWritten += bytesToWrite;
+			}
+
+			if (bytesWritten != decompressedSize) {
+				debugPrintf("WARNING: Should have written %u bytes but wrote %u bytes!\n", decompressedSize, bytesWritten);
+				while (bytesWritten < decompressedSize) {
+					outFile.writeByte(0);
+					++bytesWritten;
+				}
+			}
+
+			const char *bits;
+			if (sourceIs8Bit) {
+				bits = "upconverted 16";
+			} else {
+				bits = "16";
+			}
+
+			debugPrintf("%s-bit %uHz %d-channel SOL audio, %u -> %u bytes\n", bits, sampleRate, numChannels, compressedSize, decompressedSize);
+		} else {
+			outFile.write(resource->data(), resource->size());
+			debugPrintf("%d-bit %uHz %d-channel raw audio, %u bytes\n", bytesPerSample * 8, sampleRate, numChannels, decompressedSize);
+		}
+	} else if (isWave) {
+		outFile.write(resource->data(), resource->size());
+		debugPrintf("Raw wave file\n");
+	} else {
+		error("Impossible situation");
+	}
+
+	debugPrintf("Written to %s successfully.\n", fileName.c_str());
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
 	return true;
 }
 

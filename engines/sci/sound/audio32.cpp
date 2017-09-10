@@ -46,6 +46,46 @@
 
 namespace Sci {
 
+bool detectSolAudio(Common::SeekableReadStream &stream) {
+	const size_t initialPosition = stream.pos();
+
+	byte header[6];
+	if (stream.read(header, sizeof(header)) != sizeof(header)) {
+		stream.seek(initialPosition);
+		return false;
+	}
+
+	stream.seek(initialPosition);
+
+	if ((header[0] & 0x7f) != kResourceTypeAudio || READ_BE_UINT32(header + 2) != MKTAG('S', 'O', 'L', 0)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool detectWaveAudio(Common::SeekableReadStream &stream) {
+	const size_t initialPosition = stream.pos();
+
+	byte blockHeader[8];
+	if (stream.read(blockHeader, sizeof(blockHeader)) != sizeof(blockHeader)) {
+		stream.seek(initialPosition);
+		return false;
+	}
+
+	stream.seek(initialPosition);
+	const uint32 headerType = READ_BE_UINT32(blockHeader);
+
+	if (headerType != MKTAG('R', 'I', 'F', 'F')) {
+		return false;
+	}
+
+	return true;
+}
+
+#pragma mark -
+#pragma mark MutableLoopAudioStream
+
 class MutableLoopAudioStream : public Audio::AudioStream {
 public:
 	MutableLoopAudioStream(Audio::RewindableAudioStream *stream, const bool loop_, const DisposeAfterUse::Flag dispose = DisposeAfterUse::YES) :
@@ -104,43 +144,6 @@ private:
 	Common::DisposablePtr<Audio::RewindableAudioStream> _stream;
 	bool _loop;
 };
-
-bool detectSolAudio(Common::SeekableReadStream &stream) {
-	const size_t initialPosition = stream.pos();
-
-	byte header[6];
-	if (stream.read(header, sizeof(header)) != sizeof(header)) {
-		stream.seek(initialPosition);
-		return false;
-	}
-
-	stream.seek(initialPosition);
-
-	if ((header[0] & 0x7f) != kResourceTypeAudio || READ_BE_UINT32(header + 2) != MKTAG('S', 'O', 'L', 0)) {
-		return false;
-	}
-
-	return true;
-}
-
-bool detectWaveAudio(Common::SeekableReadStream &stream) {
-	const size_t initialPosition = stream.pos();
-
-	byte blockHeader[8];
-	if (stream.read(blockHeader, sizeof(blockHeader)) != sizeof(blockHeader)) {
-		stream.seek(initialPosition);
-		return false;
-	}
-
-	stream.seek(initialPosition);
-	const uint32 headerType = READ_BE_UINT32(blockHeader);
-
-	if (headerType != MKTAG('R', 'I', 'F', 'F')) {
-		return false;
-	}
-
-	return true;
-}
 
 #pragma mark -
 

@@ -35,6 +35,9 @@
 namespace Sci {
 class Console;
 
+bool detectSolAudio(Common::SeekableReadStream &stream);
+bool detectWaveAudio(Common::SeekableReadStream &stream);
+
 #pragma mark AudioChannel
 
 /**
@@ -129,6 +132,8 @@ struct AudioChannel {
 	 */
 	int pan;
 };
+
+#pragma mark -
 
 /**
  * Special audio channel indexes used to select a channel
