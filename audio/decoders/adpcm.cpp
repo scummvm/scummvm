@@ -352,9 +352,9 @@ do { \
 int DK3_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	assert((numSamples % 4) == 0);
 
-	const uint startOffset = _stream->pos() % _blockAlign;
-	uint audioBytesLeft = _endpos - _stream->pos();
-	uint blockBytesLeft;
+	const uint32 startOffset = _stream->pos() % _blockAlign;
+	uint32 audioBytesLeft = _endpos - _stream->pos();
+	uint32 blockBytesLeft;
 	if (startOffset != 0) {
 		blockBytesLeft = _blockAlign - startOffset;
 	} else {
