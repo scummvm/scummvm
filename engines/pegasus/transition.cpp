@@ -34,54 +34,52 @@ ScreenFader::ScreenFader() {
 	_isBlack = true;
 	// Initially, assume screens are on at full brightness.
 	Fader::setFaderValue(100);
-	_screen = new Graphics::Surface();
 }
 
 ScreenFader::~ScreenFader() {
-	_screen->free();
-	delete _screen;
+	_screen.free();
 }
 
 void ScreenFader::doFadeOutSync(const TimeValue duration, const TimeValue scale, bool isBlack) {
 	_isBlack = isBlack;
-	_screen->copyFrom(*g_system->lockScreen());
+	_screen.copyFrom(*g_system->lockScreen());
 	g_system->unlockScreen();
 
 	FaderMoveSpec spec;
 	spec.makeTwoKnotFaderSpec(scale, 0, getFaderValue(), duration, 0);
 	startFaderSync(spec);
 
-	_screen->free();
+	_screen.free();
 }
 
 void ScreenFader::doFadeInSync(const TimeValue duration, const TimeValue scale, bool isBlack) {
 	_isBlack = isBlack;
-	_screen->copyFrom(*g_system->lockScreen());
+	_screen.copyFrom(*g_system->lockScreen());
 	g_system->unlockScreen();
 
 	FaderMoveSpec spec;
 	spec.makeTwoKnotFaderSpec(scale, 0, getFaderValue(), duration, 100);
 	startFaderSync(spec);
 
-	_screen->free();
+	_screen.free();
 }
 
 void ScreenFader::setFaderValue(const int32 value) {
 	if (value != getFaderValue()) {
 		Fader::setFaderValue(value);
 
-		if (_screen->getPixels()) {
+		if (_screen.getPixels()) {
 			// The original game does a gamma fade here using the Mac API. In order to do
 			// that, it would require an immense amount of CPU processing. This does a
 			// linear fade instead, which looks fairly well, IMO.
 			Graphics::Surface *screen = g_system->lockScreen();
 
-			for (uint y = 0; y < _screen->h; y++) {
-				for (uint x = 0; x < _screen->w; x++) {
-					if (_screen->format.bytesPerPixel == 2)
-						WRITE_UINT16(screen->getBasePtr(x, y), fadePixel(READ_UINT16(_screen->getBasePtr(x, y)), value));
+			for (uint y = 0; y < _screen.h; y++) {
+				for (uint x = 0; x < _screen.w; x++) {
+					if (_screen.format.bytesPerPixel == 2)
+						WRITE_UINT16(screen->getBasePtr(x, y), fadePixel(READ_UINT16(_screen.getBasePtr(x, y)), value));
 					else
-						WRITE_UINT32(screen->getBasePtr(x, y), fadePixel(READ_UINT32(_screen->getBasePtr(x, y)), value));
+						WRITE_UINT32(screen->getBasePtr(x, y), fadePixel(READ_UINT32(_screen.getBasePtr(x, y)), value));
 				}
 			}
 
@@ -97,7 +95,7 @@ static inline byte fadeComponent(byte comp, int32 percent) {
 
 uint32 ScreenFader::fadePixel(uint32 color, int32 percent) const {
 	byte r, g, b;
-	g_system->getScreenFormat().colorToRGB(color, r, g, b);
+	_screen.format.colorToRGB(color, r, g, b);
 
 	if (_isBlack) {
 		r = fadeComponent(r, percent);
@@ -109,7 +107,7 @@ uint32 ScreenFader::fadePixel(uint32 color, int32 percent) const {
 		b = 0xFF - fadeComponent(0xFF - b, percent);
 	}
 
-	return g_system->getScreenFormat().RGBToColor(r, g, b);
+	return _screen.format.RGBToColor(r, g, b);
 }
 
 Transition::Transition(const DisplayElementID id) : FaderAnimation(id) {
