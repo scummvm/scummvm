@@ -115,7 +115,7 @@ void CMusicRoomInstrument::start() {
 
 		case MV_BELLS:
 			_gameObjects[0]->loadFrame(0);
-			_gameObjects[0]->movieSetAudioTiming(true);
+			_gameObjects[0]->movieSetPlaying(true);
 			break;
 
 		case MV_SNAKE:
@@ -210,8 +210,8 @@ void CMusicRoomInstrument::update(int val) {
 		case MV_BELLS:
 			switch (val) {
 			case 60:
-				_gameObjects[0]->movieSetAudioTiming(true);
 				_gameObjects[0]->playMovie(0, 512, MOVIE_STOP_PREVIOUS);
+				_gameObjects[0]->movieSetPlaying(true);
 				_animTime = 0.6;
 				break;
 

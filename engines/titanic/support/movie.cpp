@@ -40,8 +40,7 @@ namespace Titanic {
 CMovieList *CMovie::_playingMovies;
 CVideoSurface *CMovie::_movieSurface;
 
-CMovie::CMovie() : ListItem(), _handled(false), _hasVideoFrame(false),
-		_hasAudioTiming(false) {
+CMovie::CMovie() : ListItem(), _handled(false), _hasVideoFrame(false) {
 }
 
 CMovie::~CMovie() {
@@ -198,6 +197,10 @@ void OSMovie::movieStarted() {
 
 void OSMovie::setFrameRate(double rate) {
 	_aviSurface.setFrameRate(rate);
+}
+
+void OSMovie::setPlaying(bool playingFlag) {
+	_aviSurface.setPlaying(playingFlag);
 }
 
 Graphics::ManagedSurface *OSMovie::duplicateTransparency() const {

@@ -76,8 +76,8 @@ bool CEndSequenceControl::EnterRoomMsg(CEnterRoomMsg *msg) {
 }
 
 bool CEndSequenceControl::EnterViewMsg(CEnterViewMsg *msg) {
-	movieSetAudioTiming(true);
 	playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+	movieSetPlaying(true);
 	return true;
 }
 

@@ -1374,14 +1374,14 @@ void CGameObject::setToggleColor(byte r, byte g, byte b) {
 	_toggleB = b;
 }
 
-void CGameObject::movieSetAudioTiming(bool flag) {
+void CGameObject::movieSetPlaying(bool flag) {
 	if (!_surface && !_resource.empty()) {
 		loadResource(_resource);
 		_resource.clear();
 	}
 
 	if (_surface && _surface->_movie)
-		_surface->_movie->_hasAudioTiming = flag;
+		_surface->_movie->setPlaying(flag);
 }
 
 void CGameObject::movieEvent(int frameNumber) {

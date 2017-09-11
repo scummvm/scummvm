@@ -653,9 +653,9 @@ public:
 	void stopMovie();
 
 	/**
-	 * Overrides whether the object's movie has audio timing
+	 * Overrides whether the object's movie is playing or paused
 	 */
-	void movieSetAudioTiming(bool flag);
+	void movieSetPlaying(bool flag);
 
 	/**
 	 * Get the current movie frame

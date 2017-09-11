@@ -184,6 +184,13 @@ public:
 	}
 
 	/**
+	 * Sets whether the video is playing (versus paused)
+	 */
+	virtual void setPlaying(bool playingFlag) {
+		_decoder->pauseVideo(!playingFlag);
+	}
+
+	/**
 	 * Handle any movie events relevent for the frame
 	 */
 	virtual bool handleEvents(CMovieEventList &events);

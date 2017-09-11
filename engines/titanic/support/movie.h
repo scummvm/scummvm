@@ -50,7 +50,6 @@ protected:
 public:
 	bool _handled;
 	bool _hasVideoFrame;
-	bool _hasAudioTiming;
 public:
 	static CMovieList *_playingMovies;
 	static CVideoSurface *_movieSurface;
@@ -137,6 +136,11 @@ public:
 	 * Set the frame rate for the movie
 	 */
 	virtual void setFrameRate(double rate) = 0;
+
+	/**
+	 * Sets whether the video is playing (versus paused)
+	 */
+	virtual void setPlaying(bool playingFlag) = 0;
 
 	/**
 	 * Creates a duplicate of the transparency surface
@@ -245,6 +249,11 @@ public:
 	 * Set the frame rate for the movie
 	 */
 	virtual void setFrameRate(double rate);
+
+	/**
+	 * Sets whether the video is playing (versus paused)
+	 */
+	virtual void setPlaying(bool playingFlag);
 
 	/**
 	 * Creates a duplicate of the transparency surface

@@ -57,10 +57,10 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 		CProximity prox(Audio::Mixer::kSpeechSoundType);
 		switch (_actionNum) {
 		case 1:
-			movieSetAudioTiming(true);
 			loadSound("a#12.wav");
 			sleep(1000);
 			playMovie(0, 187, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
+			movieSetPlaying(true);
 			movieEvent(0);
 			break;
 
