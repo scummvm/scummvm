@@ -2615,9 +2615,6 @@ void ResourceManager::detectSciVersion() {
 			}
 
 			error("Failed to accurately determine SCI version");
-			// No parser, we assume SCI_VERSION_01.
-			s_sciVersion = SCI_VERSION_01;
-			return;
 		}
 
 		// New decompressors. It's either SCI_VERSION_1_EGA_ONLY or SCI_VERSION_1_EARLY.

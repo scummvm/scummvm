@@ -678,6 +678,7 @@ reg_t SoundCommandParser::kDoSoundStopAll(EngineState *s, int argc, reg_t *argv)
 	//  this doesn't make sense, so i disable it for now
 	return s->r_acc;
 
+#if 0
 	Common::StackLock(_music->_mutex);
 
 	const MusicList::iterator end = _music->getPlayListEnd();
@@ -693,6 +694,7 @@ reg_t SoundCommandParser::kDoSoundStopAll(EngineState *s, int argc, reg_t *argv)
 		_music->soundStop(*i);
 	}
 	return s->r_acc;
+#endif
 }
 
 reg_t SoundCommandParser::kDoSoundSetVolume(EngineState *s, int argc, reg_t *argv) {

@@ -675,7 +675,6 @@ MoveCountType GameFeatures::detectMoveCountType() {
 		} else {
 			if (!autoDetectMoveCountType()) {
 				error("Move count autodetection failed");
-				_moveCountType = kIncrementMoveCount;	// Most games do this, so best guess
 			}
 		}
 

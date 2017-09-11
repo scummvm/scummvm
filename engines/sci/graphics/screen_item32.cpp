@@ -361,7 +361,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 			const Ratio scriptToScreenX = Ratio(screenWidth, scriptWidth);
 			const Ratio scriptToScreenY = Ratio(screenHeight, scriptHeight);
 
-			if (/* TODO: dword_C6288 */ false && _celInfo.type == kCelTypePic) {
+			if (/* TODO: dword_C6288 */ (false) && _celInfo.type == kCelTypePic) {
 				_scaledPosition.x = _position.x;
 				_scaledPosition.y = _position.y;
 			} else {
