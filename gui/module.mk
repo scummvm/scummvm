@@ -37,14 +37,6 @@ MODULE_OBJS := \
 	widgets/scrollcontainer.o \
 	widgets/tab.o
 
-# HACK: create_project's XCode generator relies on the following ifdef
-# structure to pick up the right browser implementations for iOS and Mac OS X.
-# Please keep it like this or XCode project generation will be broken.
-# FIXME: This only works because of a bug in how we handle ifdef statements in
-# create_project's module.mk parser. create_project will think that both
-# browser.o and browser_osx.o is built when both IPHONE and MACOSX is set.
-# When we do proper ifdef handling, only browser.o will be picked up, breaking
-# XCode generation.
 ifdef IPHONE
 MODULE_OBJS += \
 	browser.o
@@ -52,9 +44,6 @@ else
 ifdef MACOSX
 MODULE_OBJS += \
 	browser_osx.o
-else
-MODULE_OBJS += \
-	browser.o
 endif
 endif
 
