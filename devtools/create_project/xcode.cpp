@@ -34,6 +34,8 @@
 
 namespace CreateProjectTool {
 
+#define LAST_XCODE_VERSION "0830"
+
 #define DEBUG_XCODE_HASH 0
 
 #define IOS_TARGET 0
@@ -707,6 +709,7 @@ void XcodeProvider::setupProject() {
 	project->addProperty("compatibilityVersion", "Xcode 3.2", "", kSettingsNoValue | kSettingsQuoteVariable);
 	project->addProperty("developmentRegion", "English", "", kSettingsNoValue);
 	project->addProperty("hasScannedForEncodings", "1", "", kSettingsNoValue);
+	project->addProperty("attributes", "{ LastUpgradeCheck = " LAST_XCODE_VERSION "; }", "", kSettingsNoQuote | kSettingsNoValue);
 
 	// List of known regions
 	Property regions;
