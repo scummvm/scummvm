@@ -868,7 +868,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvm_Debug, "GCC_INPUT_FILETYPE", "automatic");
 	ADD_SETTING(scummvm_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_SIGN_COMPARE", "YES");
-	ADD_SETTING(scummvm_Debug, "WARNING_CFLAGS", "-Wno-multichar");
+	ADD_SETTING_QUOTE(scummvm_Debug, "WARNING_CFLAGS", "-Wno-multichar -Wno-undefined-var-template");
 	ValueList scummvm_defines(_defines);
 	REMOVE_DEFINE(scummvm_defines, "MACOSX");
 	REMOVE_DEFINE(scummvm_defines, "IPHONE");
