@@ -44,6 +44,9 @@ else
 ifdef MACOSX
 MODULE_OBJS += \
 	browser_osx.o
+else
+MODULE_OBJS += \
+	browser.o
 endif
 endif
 
