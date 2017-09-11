@@ -94,7 +94,7 @@ const int ModuleModXmS3m::exp2table[] = {
 		65536
 };
 
-int ModuleModXmS3m::exp2(int x) {
+int ModuleModXmS3m::moduleExp2(int x) {
 	int c, m, y;
 	int x0 = (x & FP_MASK) >> (FP_SHIFT - 7);
 	c = exp2table[x0];
@@ -103,10 +103,10 @@ int ModuleModXmS3m::exp2(int x) {
 	return (y << FP_SHIFT) >> (FP_SHIFT - (x >> FP_SHIFT));
 }
 
-int ModuleModXmS3m::log2(int x) {
+int ModuleModXmS3m::moduleLog2(int x) {
 	int y = 16 << FP_SHIFT;
 	for (int step = y; step > 0; step >>= 1) {
-		if (exp2(y - step) >= x) {
+		if (moduleExp2(y - step) >= x) {
 			y -= step;
 		}
 	}
@@ -337,7 +337,7 @@ bool ModuleModXmS3m::loadMod(Common::SeekableReadStream &st) {
 			uint period = (first & 0xF) << 8;
 			period = (period | second) * 4;
 			if (period >= 112 && period <= 6848) {
-				int key = -12 * log2((period << FP_SHIFT) / 29021);
+				int key = -12 * moduleLog2((period << FP_SHIFT) / 29021);
 				key = (key + (key & (FP_ONE >> 1))) >> FP_SHIFT;
 				patterns[i].notes[idx].key = key;
 			}
@@ -688,7 +688,7 @@ bool ModuleModXmS3m::loadS3m(Common::SeekableReadStream &st) {
 			sample.loopLength = loopLength;
 
 			bool sixteenBit = samParam & 0x4;
-			int tune = (log2(st.readUint32LE()) - log2(c2Rate)) * 12;
+			int tune = (moduleLog2(st.readUint32LE()) - moduleLog2(c2Rate)) * 12;
 			sample.relNote = tune >> FP_SHIFT;
 			sample.finetune = (tune & FP_MASK) >> (FP_SHIFT - 7);
 			st.skip(12); // skip unused bytes

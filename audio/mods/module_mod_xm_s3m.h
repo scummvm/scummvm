@@ -155,8 +155,8 @@ public:
 	bool load(Common::SeekableReadStream &stream);
 
 	// math functions
-	static int log2(int x);
-	static int exp2(int x);
+	static int moduleLog2(int x);
+	static int moduleExp2(int x);
 
 private:
 	bool loadMod(Common::SeekableReadStream &stream);

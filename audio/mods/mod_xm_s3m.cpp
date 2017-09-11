@@ -665,7 +665,7 @@ void ModXmS3mStream::trigger(Channel &channel) {
 			if (_module.linearPeriods) {
 				channel.portaPeriod = 7744 - period;
 			} else {
-				channel.portaPeriod = 29021 * ModuleModXmS3m::exp2((period << FP_SHIFT) / -768) >> FP_SHIFT;
+				channel.portaPeriod = 29021 * ModuleModXmS3m::moduleExp2((period << FP_SHIFT) / -768) >> FP_SHIFT;
 			}
 			if (!porta) {
 				channel.period = channel.portaPeriod;
@@ -720,12 +720,12 @@ void ModXmS3mStream::calculateFreq(Channel &channel) {
 		if (per < 28 || per > 7680) {
 			per = 7680;
 		}
-		channel.freq = ((_module.c2Rate >> 4) * ModuleModXmS3m::exp2(((4608 - per) << FP_SHIFT) / 768)) >> (FP_SHIFT - 4);
+		channel.freq = ((_module.c2Rate >> 4) * ModuleModXmS3m::moduleExp2(((4608 - per) << FP_SHIFT) / 768)) >> (FP_SHIFT - 4);
 	} else {
 		if (per > 29021) {
 			per = 29021;
 		}
-		per = (per << FP_SHIFT) / ModuleModXmS3m::exp2((channel.arpeggioAdd << FP_SHIFT) / 12);
+		per = (per << FP_SHIFT) / ModuleModXmS3m::moduleExp2((channel.arpeggioAdd << FP_SHIFT) / 12);
 		if (per < 28) {
 			per = 29021;
 		}
