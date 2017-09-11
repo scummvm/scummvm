@@ -408,7 +408,22 @@ AVIPlayer::IOStatus AVIPlayer::init(const bool doublePixels) {
 	_drawRect.setHeight(height);
 
 	if (!startHQVideo() && _decoder->getPixelFormat().bytesPerPixel != 1) {
-		g_sci->_gfxFrameout->setPixelFormat(_decoder->getPixelFormat());
+		const Common::List<Graphics::PixelFormat> outFormats = g_system->getSupportedFormats();
+		Graphics::PixelFormat inFormat = _decoder->getPixelFormat();
+		Graphics::PixelFormat bestFormat = outFormats.front();
+		Common::List<Graphics::PixelFormat>::const_iterator it;
+		for (it = outFormats.begin(); it != outFormats.end(); ++it) {
+			if (*it == inFormat) {
+				bestFormat = inFormat;
+				break;
+			}
+		}
+
+		if (bestFormat.bytesPerPixel != 2 && bestFormat.bytesPerPixel != 4) {
+			error("Failed to find any valid output pixel format");
+		}
+
+		g_sci->_gfxFrameout->setPixelFormat(bestFormat);
 	}
 
 	return kIOSuccess;
