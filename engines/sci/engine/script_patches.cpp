@@ -3966,6 +3966,34 @@ static const uint16 phant2NumSavesPatch2[] = {
 	PATCH_END
 };
 
+// The game script responsible for handling document scrolling in the computer
+// interface uses a spin loop to wait for 10 ticks every time the document
+// scrolls. This makes scrolling janky and makes the mouse appear
+// non-responsive. Eliminating the delay entirely makes scrolling with the arrow
+// buttons a little too quick; a delay of 3 ticks is an OK middle-ground between
+// allowing mostly fluid motion with mouse dragging and reasonably paced
+// scrolling holding down the arrows. Preferably, ScrollbarArrow::handleEvent or
+// ScrollbarArrow::action would only send cues once every N ticks whilst being
+// held down, but unfortunately the game was not programmed to do this.
+// Applies to at least: US English
+static const uint16 phant2SlowScrollSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x0a,                // ldi 10
+	0x22,                      // lt?
+	0x31, 0x17,                // bnt [end of loop]
+	0x76,                      // push0
+	0x43, 0x79, SIG_UINT16(0), // callk GetTime, 0
+	SIG_END
+};
+
+static const uint16 phant2SlowScrollPatch[] = {
+	0x78,                                     // push1
+	0x39, 0x03,                               // pushi 3
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x33, 0x13,                               // jmp [end of loop]
+	PATCH_END
+};
+
 //          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
@@ -3975,6 +4003,7 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true, 63004, "limit in-game audio volume",                  1, phant2AudioVolumeSignature,    phant2AudioVolumePatch },
 	{  true, 63016, "replace spin loop during music fades",        1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
 	{  true, 63019, "replace spin loop during computer load",      1, phant2WaitParam1Signature,     phant2WaitParam1Patch },
+	{  true, 63019, "replace spin loop during computer scrolling", 1, phant2SlowScrollSignature,     phant2SlowScrollPatch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },
 	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,      phant2SaveNamePatch2 },
 	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature1,      phant2NumSavesPatch1 },
