@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-09-11 05:19+0200\n"
-"PO-Revision-Date: 2017-08-11 09:46+0000\n"
+"PO-Revision-Date: 2017-09-11 18:49+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -194,7 +194,7 @@ msgstr "%s %s / %s %s heruntergeladen"
 #: gui/downloaddialog.cpp:258
 #, c-format
 msgid "Download speed: %s %s"
-msgstr "Geschwindigkeit: %s %s"
+msgstr "Download-Geschwindigkeit: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
