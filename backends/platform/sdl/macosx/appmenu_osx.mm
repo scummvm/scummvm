@@ -26,13 +26,8 @@
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "common/translation.h"
 
-#include <Cocoa/Cocoa.h>
-
-// macOS 10.12 deprecated many constants, #define the new names we need for
-// older SDKs. (This approach was taken from qemu.)
-#ifndef MAC_OS_X_VERSION_10_12
-#define MAC_OS_X_VERSION_10_12 101200
-#endif
+#include "backends/platform/sdl/macosx/macosx-compat.h"
+#include <cocoa/Cocoa.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 #define NSEventModifierFlagCommand NSCommandKeyMask
