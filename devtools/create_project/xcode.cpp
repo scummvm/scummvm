@@ -314,7 +314,7 @@ void XcodeProvider::createOtherBuildFiles(const BuildSetup &setup) {
 	// This needs to be done at the end when all build files have been accounted for
 	setupSourcesBuildPhase();
 
-	ouputMainProjectFile(setup);
+	outputMainProjectFile(setup);
 }
 
 // Store information about a project here, for use at the end
@@ -337,7 +337,7 @@ void XcodeProvider::createProjectFile(const std::string &, const std::string &, 
 //////////////////////////////////////////////////////////////////////////
 // Main Project file
 //////////////////////////////////////////////////////////////////////////
-void XcodeProvider::ouputMainProjectFile(const BuildSetup &setup) {
+void XcodeProvider::outputMainProjectFile(const BuildSetup &setup) {
 	std::ofstream project((setup.outputDir + '/' + PROJECT_NAME ".xcodeproj" + '/' + "project.pbxproj").c_str());
 	if (!project)
 		error("Could not open \"" + setup.outputDir + '/' + PROJECT_NAME ".xcodeproj" + '/' + "project.pbxproj\" for writing");

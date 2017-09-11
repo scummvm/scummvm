@@ -308,7 +308,7 @@ private:
 	ObjectList _buildConfiguration;
 	ObjectList _configurationList;
 
-	void ouputMainProjectFile(const BuildSetup &setup);
+	void outputMainProjectFile(const BuildSetup &setup);
 
 	// Setup objects
 	void setupCopyFilesBuildPhase();
