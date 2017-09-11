@@ -275,9 +275,6 @@ byte *loadCharacter(Common::SeekableReadStream &stream, int &encoding, int &adva
 			return bitmap;
 		}
 	}
-
-	delete[] bitmap;
-	return 0;
 }
 
 void freeBitmaps(byte **bitmaps, int size) {
