@@ -1077,7 +1077,7 @@ void XcodeProvider::setupAdditionalSources(std::string targetName, Property &fil
 void XcodeProvider::setupDefines(const BuildSetup &setup) {
 
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (*i == "USE_NASM" || *i == "USE_FLUIDSYNTH")  // Not supported on Mac
+		if (*i == "USE_NASM")  // Not supported on Mac
 			continue;
 
 		ADD_DEFINE(_defines, *i);
