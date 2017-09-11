@@ -122,6 +122,7 @@ static const char *const selectorNameTable[] = {
 	"masterVolume", // SCI2 master volume reset
 	"data",         // Phant2
 	"format",       // Phant2
+	"setSize",      // Phant2
 #endif
 	NULL
 };
@@ -167,7 +168,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_clear,
 	SELECTOR_masterVolume,
 	SELECTOR_data,
-	SELECTOR_format
+	SELECTOR_format,
+	SELECTOR_setSize
 #endif
 };
 
@@ -3994,6 +3996,42 @@ static const uint16 phant2SlowScrollPatch[] = {
 	PATCH_END
 };
 
+// WynNetDoco::open calls setSize before it calls posn, but the values set by
+// posn are used by setSize, so the left/top coordinates of the text and note
+// fields is wrong for the first render of a document or email. (Incidentally,
+// these fields are the now-seen rect fields, and the game is doing a very bad
+// thing by touching these manually and then relying on the values instead of
+// asking the kernel.) This is most noticeable during chapters 1 and 3 when the
+// computer is displaying scary messages, since every time the scary message is
+// rendered the text fields re-render at the top-left corner of the screen.
+// Applies to at least: US English
+static const uint16 phant2BadPositionSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(setSize), // pushi setSize
+	0x76,                         // push0
+	0x39, SIG_SELECTOR8(init),    // pushi init
+	0x78,                         // pushi 1
+	0x89, 0x03,                   // lsg 3
+	0x39, SIG_SELECTOR8(posn),    // pushi posn
+	0x7a,                         // push2
+	0x66, SIG_ADDTOOFFSET(+2),    // pTos (x position)
+	0x66, SIG_ADDTOOFFSET(+2),    // pTos (y position)
+	SIG_END
+};
+
+static const uint16 phant2BadPositionPatch[] = {
+	0x39, PATCH_SELECTOR8(posn),        // pushi posn
+	0x7a,                               // push2
+	0x66, PATCH_GETORIGINALUINT16(12),  // pTos (x position)
+	0x66, PATCH_GETORIGINALUINT16(15),  // pTos (y position)
+	0x39, PATCH_SELECTOR8(setSize),     // pushi setSize
+	0x76,                               // push0
+	0x39, PATCH_SELECTOR8(init),        // pushi init
+	0x78,                               // pushi 1
+	0x89, 0x03,                         // lsg 3
+	PATCH_END
+};
+
 //          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
@@ -4004,6 +4042,7 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true, 63016, "replace spin loop during music fades",        1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
 	{  true, 63019, "replace spin loop during computer load",      1, phant2WaitParam1Signature,     phant2WaitParam1Patch },
 	{  true, 63019, "replace spin loop during computer scrolling", 1, phant2SlowScrollSignature,     phant2SlowScrollPatch },
+	{  true, 63019, "fix bad doc/email name & memo positioning",   2, phant2BadPositionSignature,    phant2BadPositionPatch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },
 	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,      phant2SaveNamePatch2 },
 	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature1,      phant2NumSavesPatch1 },
