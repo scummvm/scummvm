@@ -34,7 +34,9 @@ MODULE_OBJS := \
 	decoders/xa.o \
 	mods/infogrames.o \
 	mods/maxtrax.o \
+	mods/mod_xm_s3m.o \
 	mods/module.o \
+	mods/module_mod_xm_s3m.o \
 	mods/protracker.o \
 	mods/paula.o \
 	mods/rjp1.o \
