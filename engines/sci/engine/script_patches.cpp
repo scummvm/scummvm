@@ -3747,6 +3747,28 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 #pragma mark -
 #pragma mark Phantasmagoria 2
 
+// The game uses a spin loop when navigating to and from Curtis's computer in
+// the office, and when entering passwords, which causes the mouse to appear
+// unresponsive. Replace the spin loop with a call to ScummVM kWait.
+// Applies to at least: US English
+// Responsible method: Script 3000 localproc 2ee4, script 63019 localproc 4f04
+static const uint16 phant2WaitParam1Signature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00, // ldi 0
+	0xa5, 0x00, // sat 0
+	0x8d, 0x00, // lst 0
+	0x87, 0x01, // lap 1
+	SIG_END
+};
+
+static const uint16 phant2WaitParam1Patch[] = {
+	0x78,                                     // push1
+	0x8f, 0x01,                               // lsp param[1]
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x48,                                     // ret
+	PATCH_END
+};
+
 // The interface bars at the top and bottom of the screen fade in and out when
 // hovered over. This fade is performed by a script loop that calls kFrameOut
 // directly and uses global 227 as the fade delta for each frame. Global 227
@@ -3785,28 +3807,6 @@ static const uint16 phant2Wait4FadeSignature[] = {
 static const uint16 phant2Wait4FadePatch[] = {
 	0x78,                                     // push1
 	0x8d, 0x00,                               // lst temp[0]
-	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
-	0x48,                                     // ret
-	PATCH_END
-};
-
-// The game uses a spin loop when navigating to and from Curtis's computer in
-// the office, which causes the mouse to appear unresponsive. Replace the spin
-// loop with a call to ScummVM kWait.
-// Applies to at least: US English
-// Responsible method: localproc 4f04
-static const uint16 phant2CompSlideDoorsSignature[] = {
-	SIG_MAGICDWORD,
-	0x35, 0x00, // ldi 0
-	0xa5, 0x00, // sat 0
-	0x8d, 0x00, // lst 0
-	0x87, 0x01, // lap 1
-	SIG_END
-};
-
-static const uint16 phant2CompSlideDoorsPatch[] = {
-	0x78,                                     // push1
-	0x8f, 0x01,                               // lsp param[1]
 	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
 	0x48,                                     // ret
 	PATCH_END
@@ -3970,10 +3970,11 @@ static const uint16 phant2NumSavesPatch2[] = {
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
 	{  true,     0, "bad arguments to get game version",           1, phant2GetVersionSignature,     phant2GetVersionPatch },
-	{  true,  4081, "non-responsive mouse after ratboy puzzle",    1, phant2RatboySignature,         phant2RatboyPatch },
+	{  true,  3000, "replace spin loop in alien password window",  1, phant2WaitParam1Signature,     phant2WaitParam1Patch },
+	{  true,  4081, "replace spin loop after ratboy puzzle",       1, phant2RatboySignature,         phant2RatboyPatch },
 	{  true, 63004, "limit in-game audio volume",                  1, phant2AudioVolumeSignature,    phant2AudioVolumePatch },
-	{  true, 63016, "non-responsive mouse during music fades",     1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
-	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
+	{  true, 63016, "replace spin loop during music fades",        1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
+	{  true, 63019, "replace spin loop during computer load",      1, phant2WaitParam1Signature,     phant2WaitParam1Patch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },
 	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,      phant2SaveNamePatch2 },
 	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature1,      phant2NumSavesPatch1 },
