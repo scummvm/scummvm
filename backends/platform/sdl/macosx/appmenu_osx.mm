@@ -27,7 +27,7 @@
 #include "common/translation.h"
 
 #include "backends/platform/sdl/macosx/macosx-compat.h"
-#include <cocoa/Cocoa.h>
+#include <Cocoa/Cocoa.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 #define NSEventModifierFlagCommand NSCommandKeyMask
