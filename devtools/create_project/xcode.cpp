@@ -452,11 +452,45 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSTBD("libiconv");
 
 	// Local libraries
-	DEF_LOCALLIB_STATIC("libFLAC");
-	DEF_LOCALLIB_STATIC("libmad");
-	DEF_LOCALLIB_STATIC("libvorbisidec");
-	DEF_LOCALLIB_STATIC("libfreetype");
-//	DEF_LOCALLIB_STATIC("libmpeg2");
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
+		DEF_LOCALLIB_STATIC("libFLAC");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
+		DEF_LOCALLIB_STATIC("libfluidsynth");
+		DEF_LOCALLIB_STATIC("libglib-2.0");
+		DEF_SYSTBD("libffi");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
+		DEF_LOCALLIB_STATIC("libfreetype");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_JPEG")) {
+		DEF_LOCALLIB_STATIC("libjpeg");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_LIBCURL")) {
+		DEF_LOCALLIB_STATIC("libcurl");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
+		DEF_LOCALLIB_STATIC("libmad");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
+		DEF_LOCALLIB_STATIC("libpng");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
+		DEF_LOCALLIB_STATIC("libogg");
+		DEF_LOCALLIB_STATIC("libvorbis");
+		DEF_LOCALLIB_STATIC("libvorbisfile");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
+		DEF_SYSTBD("libz");
+	}
+
+	if (setup.useSDL2) {
+		DEF_LOCALLIB_STATIC("libSDL2main");
+		DEF_LOCALLIB_STATIC("libSDL2");
+	} else {
+		DEF_LOCALLIB_STATIC("libSDLmain");
+		DEF_LOCALLIB_STATIC("libSDL");
+	}
 
 	std::string absoluteOutputDir;
 #ifdef POSIX
@@ -467,16 +501,6 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 #else
 	absoluteOutputDir = "lib";
 #endif
-
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libFLAC.a",       "libFLAC",       true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libfreetype.a",   "libfreetype",   true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libogg.a",        "libogg",        true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libpng.a",        "libpng",        true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libvorbis.a",     "libvorbis",     true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libmad.a",        "libmad",        true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libfluidsynth.a", "libfluidsynth", true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libglib.a",       "libglib",       true);
-	DEF_LOCALLIB_STATIC_PATH(absoluteOutputDir + "/libffi.a",        "libffi",        true);
 
 	frameworksGroup->_properties["children"] = children;
 	_groups.add(frameworksGroup);
@@ -521,16 +545,20 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
 		frameworks_iOS.push_back("libogg.a");
 		frameworks_iOS.push_back("libvorbis.a");
+		frameworks_iOS.push_back("libvorbisfile.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		frameworks_iOS.push_back("libmad.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
 		frameworks_iOS.push_back("libfluidsynth.a");
-		frameworks_iOS.push_back("libglib.a");
-		frameworks_iOS.push_back("libffi.a");
+		frameworks_iOS.push_back("libglib-2.0.a");
+		frameworks_iOS.push_back("libffi.tbd");
 		frameworks_iOS.push_back("CoreMIDI.framework");
 		frameworks_iOS.push_back("libiconv.tbd");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
+		frameworks_iOS.push_back("libz.tbd");
 	}
 
 	for (ValueList::iterator framework = frameworks_iOS.begin(); framework != frameworks_iOS.end(); framework++) {
@@ -570,6 +598,46 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_osx.push_back("IOKit.framework");
 	frameworks_osx.push_back("Cocoa.framework");
 	frameworks_osx.push_back("AudioUnit.framework");
+
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
+		frameworks_osx.push_back("libFLAC.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
+		frameworks_osx.push_back("libfluidsynth.a");
+		frameworks_osx.push_back("libglib-2.0.a");
+		frameworks_osx.push_back("libffi.tbd");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
+		frameworks_osx.push_back("libfreetype.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_JPEG")) {
+		frameworks_osx.push_back("libjpeg.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_LIBCURL")) {
+		frameworks_osx.push_back("libcurl.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
+		frameworks_osx.push_back("libmad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
+		frameworks_osx.push_back("libpng.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
+		frameworks_osx.push_back("libogg.a");
+		frameworks_osx.push_back("libvorbis.a");
+		frameworks_osx.push_back("libvorbisfile.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
+		frameworks_osx.push_back("libz.tbd");
+	}
+
+	if (setup.useSDL2) {
+		frameworks_osx.push_back("libSDL2main.a");
+		frameworks_osx.push_back("libSDL2.a");
+	} else {
+		frameworks_osx.push_back("libSDLmain.a");
+		frameworks_osx.push_back("libSDL.a");
+	}
 
 	order = 0;
 	for (ValueList::iterator framework = frameworks_osx.begin(); framework != frameworks_osx.end(); framework++) {
@@ -810,7 +878,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_QUOTE(scummvm_Debug, "LIBRARY_SEARCH_PATHS", "");
 	ADD_SETTING(scummvm_Debug, "ONLY_ACTIVE_ARCH", "YES");
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_CFLAGS", "");
-	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_LDFLAGS", "-lz");
+	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_LDFLAGS", "");
 	ADD_SETTING(scummvm_Debug, "ENABLE_TESTABILITY", "YES");
 
 	scummvm_Debug_Object->addProperty("name", "Debug", "", kSettingsNoValue);
@@ -944,26 +1012,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	scummvmOSX_LibPaths.push_back("\"\\\"$(SRCROOT)/lib\\\"\"");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "OTHER_CFLAGS", "");
-	ValueList scummvmOSX_LdFlags;
-	scummvmOSX_LdFlags.push_back("-logg");
-	scummvmOSX_LdFlags.push_back("-lpng");
-	scummvmOSX_LdFlags.push_back("-ljpeg");
-	scummvmOSX_LdFlags.push_back("-ltheora");
-	scummvmOSX_LdFlags.push_back("-lfreetype");
-	scummvmOSX_LdFlags.push_back("-lvorbisfile");
-	scummvmOSX_LdFlags.push_back("-lvorbis");
-	scummvmOSX_LdFlags.push_back("-lmad");
-	scummvmOSX_LdFlags.push_back("-lFLAC");
-	scummvmOSX_LdFlags.push_back("-lcurl");
-	if (setup.useSDL2) {
-		scummvmOSX_LdFlags.push_back("-lSDL2main");
-		scummvmOSX_LdFlags.push_back("-lSDL2");
-	} else {
-		scummvmOSX_LdFlags.push_back("-lSDLmain");
-		scummvmOSX_LdFlags.push_back("-lSDL");
-	}
-	scummvmOSX_LdFlags.push_back("-lz");
-	ADD_SETTING_LIST(scummvmOSX_Debug, "OTHER_LDFLAGS", scummvmOSX_LdFlags, kSettingsAsList, 5);
 	ADD_SETTING(scummvmOSX_Debug, "PRODUCT_NAME", PROJECT_NAME);
 
 	scummvmOSX_Debug_Object->addProperty("name", "Debug", "", kSettingsNoValue);
