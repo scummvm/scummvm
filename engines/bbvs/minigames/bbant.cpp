@@ -588,7 +588,7 @@ void MinigameBbAnt::insertBugSmokeObj(int x, int y, int bugObjIndex) {
 		obj->priority = 950;
 		if (bugObj->status >= 4 && (bugObj->status <= 6 || bugObj->status == 8)) {
 			obj->xIncr = 0;
-			obj->yIncr = (-1 << 16);
+			obj->yIncr = -0x10000;
 		} else {
 			obj->xIncr = bugObj->xIncr / 8;
 			obj->yIncr = bugObj->yIncr / 8;
@@ -730,8 +730,8 @@ bool MinigameBbAnt::isBugOutOfScreen(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 
 	return
-		obj->x < (-10 << 16) || obj->x > (330 << 16) ||
-		obj->y < (-10 << 16) || obj->y > (250 << 16);
+		obj->x < -0xa0000 || obj->x > (330 << 16) ||
+		obj->y < -0xa0000 || obj->y > (250 << 16);
 }
 
 void MinigameBbAnt::updateObjAnim3(int objIndex) {
@@ -931,7 +931,7 @@ void MinigameBbAnt::updateFootObj(int objIndex) {
 
 	case 1:
 		obj->xIncr = -0x8000;
-		obj->yIncr = (-4 << 16);
+		obj->yIncr = -0x40000;
 		obj->status = 2;
 		_stompCounter1 += 5;
 		_stompCounter2 = 100;
