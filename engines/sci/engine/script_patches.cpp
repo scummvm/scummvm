@@ -123,6 +123,9 @@ static const char *const selectorNameTable[] = {
 	"data",         // Phant2
 	"format",       // Phant2
 	"setSize",      // Phant2
+	"setCel",       // Phant2
+	"iconV",        // Phant2
+	"update",       // Phant2
 #endif
 	NULL
 };
@@ -169,7 +172,10 @@ enum ScriptPatcherSelectors {
 	SELECTOR_masterVolume,
 	SELECTOR_data,
 	SELECTOR_format,
-	SELECTOR_setSize
+	SELECTOR_setSize,
+	SELECTOR_setCel,
+	SELECTOR_iconV,
+	SELECTOR_update
 #endif
 };
 
@@ -4032,6 +4038,36 @@ static const uint16 phant2BadPositionPatch[] = {
 	PATCH_END
 };
 
+// WynDocuStore::refresh resets the cel of the open folder and document icons,
+// so they don't end up being rendered as closed folder/document icons, but it
+// forgets to actually update the icon's View with the kernel, so they render
+// as closed for the first render after a refresh anyway. This is most
+// noticeable during chapters 1 and 3 when the computer is displaying scary
+// messages, since every time the scary message is rendered the icons re-render
+// as closed.
+// Applies to at least: US English
+static const uint16 phant2BadIconSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setCel), // pushi setCel
+	0x78,                         // push1
+	0x78,                         // push1
+	0x38, SIG_SELECTOR16(iconV),  // pushi iconV
+	0x76,                         // push0
+	0x62, SIG_ADDTOOFFSET(+2),    // pToa curFolder/curDoco
+	0x4a, SIG_UINT16(0x04),       // send 4
+	0x4a, SIG_UINT16(0x06),       // send 6
+	SIG_END
+};
+
+static const uint16 phant2BadIconPatch[] = {
+	PATCH_ADDTOOFFSET(+5),          // pushi setCel, push1, push1
+	0x38, PATCH_SELECTOR16(update), // pushi update
+	0x76,                           // push0
+	0x4a, PATCH_UINT16(0x0a),       // send 10
+	0x33, 0x04,                     // jmp [past unused bytes]
+	PATCH_END
+};
+
 //          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
@@ -4043,6 +4079,7 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true, 63019, "replace spin loop during computer load",      1, phant2WaitParam1Signature,     phant2WaitParam1Patch },
 	{  true, 63019, "replace spin loop during computer scrolling", 1, phant2SlowScrollSignature,     phant2SlowScrollPatch },
 	{  true, 63019, "fix bad doc/email name & memo positioning",   2, phant2BadPositionSignature,    phant2BadPositionPatch },
+	{  true, 63019, "fix bad folder/doc icon refresh",             2, phant2BadIconSignature,        phant2BadIconPatch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },
 	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,      phant2SaveNamePatch2 },
 	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature1,      phant2NumSavesPatch1 },
