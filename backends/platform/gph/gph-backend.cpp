@@ -27,7 +27,6 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
-#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/gph/gph-hw.h"
 #include "backends/platform/gph/gph.h"
 #include "backends/plugins/posix/posix-provider.h"
