@@ -45,6 +45,9 @@ Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height, uint bitsPerPixel) : _
 	_iv_frame[1].the_buf = 0;
 
 	switch (bitsPerPixel) {
+	case 15:
+		_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0);
+		break;
 	case 16:
 		_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		break;

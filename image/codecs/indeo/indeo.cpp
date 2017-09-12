@@ -466,6 +466,9 @@ IVI45DecContext::IVI45DecContext() : _gb(nullptr), _frameNum(0), _frameType(0),
 
 IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height, uint bitsPerPixel) : Codec() {
 	switch (bitsPerPixel) {
+	case 15:
+		_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0);
+		break;
 	case 16:
 		_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		break;
