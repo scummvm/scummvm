@@ -2540,6 +2540,13 @@ The following keywords are recognized:
     save_slot          number   The saved game number to load on startup.
     savepath           string   The path to where a game will store its
                                 saved games.
+    screenshotpath     string   The path to where screenshots are saved.
+    iconpath           string   The path to where to look for icons to use as
+                                overlay for the ScummVM icon in the Windows
+                                taskbar or macOS X Dock when running a game.
+                                The icon files should be named after the game
+                                ids and be in ico format on Windows or png
+                                format on macOS X.
     versioninfo        string   The version of the ScummVM that created the
                                 configuration file.
 
@@ -2574,6 +2581,11 @@ The following keywords are recognized:
     opl_driver         string   The AdLib (OPL) emulator to use.
     output_rate        number   The output sample rate to use, in Hz. Sensible
                                 values are 11025, 22050 and 44100.
+    audio_buffer_size  number   Overrides the size of the audio buffer. The
+                                value must be one of: 256 512 1024 2048 4096
+                                8192 16384 32768. The default value is
+                                calculated based on the output_rate to keep
+                                audio latency below 45ms.
     alsa_port          string   Port to use for output when using the
                                 ALSA music driver.
     music_volume       number   The music volume setting (0-255)
