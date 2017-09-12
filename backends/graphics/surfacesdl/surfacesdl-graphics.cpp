@@ -465,7 +465,7 @@ Common::List<Graphics::PixelFormat> SurfaceSdlGraphicsManager::getSupportedForma
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-static void maskToBitCount(uint32 mask, uint8 &numBits, uint8 &shift) {
+static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
 	numBits = 0;
 	shift = 32;
 	for (int i = 0; i < 32; ++i) {
@@ -504,7 +504,7 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 		}
 
 		int bpp;
-		uint32 rMask, gMask, bMask, aMask;
+		Uint32 rMask, gMask, bMask, aMask;
 		if (SDL_PixelFormatEnumToMasks(defaultMode.format, &bpp, &rMask, &gMask, &bMask, &aMask) != SDL_TRUE) {
 			error("Could not convert system pixel format %s to masks", SDL_GetPixelFormatName(defaultMode.format));
 		}
