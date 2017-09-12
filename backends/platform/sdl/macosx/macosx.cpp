@@ -28,7 +28,6 @@
 #ifdef MACOSX
 
 #include "backends/audiocd/macosx/macosx-audiocd.h"
-#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/updates/macosx/macosx-updates.h"
@@ -62,14 +61,6 @@ void OSystem_MacOSX::init() {
 }
 
 void OSystem_MacOSX::initBackend() {
-	// Create the mixer manager
-	if (_mixer == 0) {
-		_mixerManager = new SdlMixerManager();
-
-		// Setup and start mixer
-		_mixerManager->init();
-	}
-
 #ifdef USE_TRANSLATION
 	// We need to initialize the translataion manager here for the following
 	// call to replaceApplicationMenuItems() work correctly
