@@ -548,6 +548,9 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 				| NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END);
 			return true;
 		}
+
+		// WORKAROUND: Prevent panning away from stalling if Parrot was moving
+		_npcFlags &= ~NPCFLAG_MOVING;
 	} else {
 		if (dragObject)
 			chickenFlag = dragObject && dragObject->isEquals("Chicken");
