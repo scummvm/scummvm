@@ -28,7 +28,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/mods/protracker.h"
+#include "audio/mods/mod_xm_s3m.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/newfatal.h"
@@ -85,9 +85,9 @@ bool SoundManager::initSoundStuff() {
 	}
 
 	for (int a = 0; a < MAX_MODS; ++a) {
-		_soundCache[a].fileLoaded = -1;
-		_soundCache[a].looping = false;
-		_soundCache[a].inSoundList = false;
+		_modCache[a].fileLoaded = -1;
+		_modCache[a].looping = false;
+		_modCache[a].inSoundList = false;
 	}
 
 	return _soundOK = true;
@@ -113,7 +113,7 @@ void SoundManager::setMusicVolume(int a, int v) {
 
 	if (g_sludge->_mixer->isSoundHandleActive(_modCache[a].handle)) {
 		_modCache[a].vol = v;
-		g_sludge->_mixer->setChannelVolume(_modCache[a].handle, _modLoudness * v / 256);
+		g_sludge->_mixer->setChannelVolume(_modCache[a].handle, _modLoudness * v);
 	}
 }
 
@@ -155,8 +155,10 @@ void SoundManager::stopMOD(int i) {
 	if (!_soundOK)
 		return;
 
-	if (g_sludge->_mixer->isSoundHandleActive(_modCache[i].handle)) {
-		g_sludge->_mixer->stopHandle(_modCache[i].handle);
+	if (_modCache[i].fileLoaded >= 0) {
+		if (g_sludge->_mixer->isSoundHandleActive(_modCache[i].handle)) {
+			g_sludge->_mixer->stopHandle(_modCache[i].handle);
+		}
 	}
 	_modCache[i].fileLoaded = -1;
 }
@@ -177,11 +179,12 @@ void SoundManager::freeSound(int a) {
 		return;
 
 	_silenceIKillYou = true;
-
-	if (g_sludge->_mixer->isSoundHandleActive(_soundCache[a].handle)) {
-		g_sludge->_mixer->stopHandle(_soundCache[a].handle);
-		if (_soundCache[a].inSoundList)
-			handleSoundLists();
+	if (_soundCache[a].fileLoaded >= 0) {
+		if (g_sludge->_mixer->isSoundHandleActive(_soundCache[a].handle)) {
+			g_sludge->_mixer->stopHandle(_soundCache[a].handle);
+			if (_soundCache[a].inSoundList)
+				handleSoundLists();
+		}
 	}
 
 	_soundCache[a].inSoundList = false;
@@ -204,7 +207,6 @@ void SoundManager::huntKillFreeSound(int filenum) {
  * Loading and playing:
  */
 bool SoundManager::playMOD(int f, int a, int fromTrack) {
-#if 0
 	if (!_soundOK)
 		return true;
 	stopMOD(a);
@@ -221,18 +223,37 @@ bool SoundManager::playMOD(int f, int a, int fromTrack) {
 	// make audio stream
 	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
 	Common::SeekableReadStream *memImage = readStream->readStream(length);
-	if (memImage->size() != (int)length || readStream->err())
-		debug("Sound reading failed");
-	Audio::AudioStream *stream = Audio::makeProtrackerStream(memImage);
 
-	if (!stream)
-		return false;
-
-	// play sound
-	g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_modCache[a].handle,
-			stream, -1, Audio::Mixer::kMaxChannelVolume);
-
+// debug output
+#if 0
+	Common::DumpFile *dump = new Common::DumpFile();
+	Common::String name = Common::String::format("mod_sound_%i", f);
+	dump->open(name);
+	byte *soundData = new byte[length];
+	memImage->read(soundData, length);
+	dump->write(soundData, length);
+	dump->finalize();
+	delete []soundData;
+	delete dump;
+	memImage->seek(0, SEEK_SET);
 #endif
+
+	if (memImage->size() != (int)length || readStream->err()) {
+		return fatal("Sound reading failed");
+	}
+	Audio::AudioStream *stream = Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO);
+
+	if (stream) {
+		// play sound
+		_modCache[a].fileLoaded = f;
+		_modCache[a].vol = _defVol;
+		g_sludge->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_modCache[a].handle, stream, -1, _modCache[a].vol);
+	} else {
+		_modCache[a].fileLoaded = -1;
+	}
+
+	g_sludge->_resMan->finishAccess();
+	setResourceForFatal(-1);
 	return true;
 }
 
@@ -242,27 +263,16 @@ bool SoundManager::stillPlayingSound(int ch) {
 			if (_soundCache[ch].fileLoaded != -1)
 				if (g_sludge->_mixer->isSoundHandleActive(_soundCache[ch].handle))
 					return true;
-
 	return false;
 }
 
 bool SoundManager::forceRemoveSound() {
 	for (int a = 0; a < MAX_SAMPLES; a++) {
-		if (_soundCache[a].fileLoaded != -1 && !stillPlayingSound(a)) {
-//			soundWarning ("Deleting silent sound", a);
-			freeSound(a);
-			return 1;
-		}
-	}
-
-	for (int a = 0; a < MAX_SAMPLES; a++) {
 		if (_soundCache[a].fileLoaded != -1) {
-//			soundWarning ("Deleting playing sound", a);
 			freeSound(a);
 			return 1;
 		}
 	}
-//	soundWarning ("Cache is empty!", 0);
 	return 0;
 }
 
@@ -570,7 +580,8 @@ int initMovieSound(int f, ALenum format, int audioChannels, ALuint samplerate,
 #endif
 
 uint SoundManager::getSoundSource(int index) {
-	return 0; /*soundCache[index].playingOnSource;*/ //TODO:false value
+	warning("getSoundSource, Unimplemented");
+	return 0; /*soundCache[index].playingOnSource;*/
 }
 
 } // End of namespace Sludge
