@@ -148,18 +148,36 @@ void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
 #endif
 }
 
+bool SdlGraphicsManager::showMouse(const bool visible) {
+	if (visible == _cursorVisible) {
+		return visible;
+	}
+
+	int showCursor = SDL_DISABLE;
+	if (visible) {
+		// _cursorX and _cursorY are currently always clipped to the active
+		// area, so we need to ask SDL where the system's mouse cursor is
+		// instead
+		int x, y;
+		SDL_GetMouseState(&x, &y);
+		if (!_activeArea.drawRect.contains(Common::Point(x, y))) {
+			showCursor = SDL_ENABLE;
+		}
+	}
+	SDL_ShowCursor(showCursor);
+
+	return WindowedGraphicsManager::showMouse(visible);
+}
+
 void SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
-	int showCursor;
-	if (_activeArea.drawRect.contains(mouse)) {
-		showCursor = SDL_DISABLE;
-	} else {
+	int showCursor = SDL_DISABLE;
+	if (!_activeArea.drawRect.contains(mouse)) {
 		mouse.x = CLIP<int>(mouse.x, _activeArea.drawRect.left, _activeArea.drawRect.right - 1);
 		mouse.y = CLIP<int>(mouse.y, _activeArea.drawRect.top, _activeArea.drawRect.bottom - 1);
 
 		if (_window->mouseIsGrabbed()) {
 			setSystemMousePosition(mouse.x, mouse.y);
-			showCursor = SDL_DISABLE;
-		} else {
+		} else if (_cursorVisible) {
 			showCursor = SDL_ENABLE;
 		}
 	}

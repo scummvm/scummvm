@@ -145,7 +145,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 	_overlayscreen(0), _tmpscreen2(0),
 	_scalerProc(0), _screenChangeCount(0),
-	_mouseVisible(false), _mouseData(0), _mouseSurface(0),
+	_mouseData(0), _mouseSurface(0),
 	_mouseOrigSurface(0), _cursorDontScale(false), _cursorPaletteDisabled(true),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
@@ -1863,17 +1863,6 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 #pragma mark --- Mouse ---
 #pragma mark -
 
-bool SurfaceSdlGraphicsManager::showMouse(bool visible) {
-	if (_mouseVisible == visible)
-		return visible;
-
-	bool last = _mouseVisible;
-	_mouseVisible = visible;
-	_cursorNeedsRedraw = true;
-
-	return last;
-}
-
 void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
 	if (!format)
@@ -2123,7 +2112,7 @@ void SurfaceSdlGraphicsManager::undrawMouse() {
 }
 
 void SurfaceSdlGraphicsManager::drawMouse() {
-	if (!_mouseVisible || !_mouseSurface) {
+	if (!_cursorVisible || !_mouseSurface) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
 	}

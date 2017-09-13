@@ -129,7 +129,6 @@ public:
 	virtual int16 getOverlayHeight() const override { return _videoMode.overlayHeight; }
 	virtual int16 getOverlayWidth() const override { return _videoMode.overlayWidth; }
 
-	virtual bool showMouse(bool visible) override;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
@@ -318,7 +317,6 @@ protected:
 			{ }
 	};
 
-	bool _mouseVisible;
 	byte *_mouseData;
 	SDL_Rect _mouseBackup;
 	MousePos _mouseCurState;
