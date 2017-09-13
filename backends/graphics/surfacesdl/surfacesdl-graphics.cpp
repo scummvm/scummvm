@@ -1991,9 +1991,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		dstPtr += _mouseOrigSurface->pitch - w * 2;
 	}
 
-	int rW, rH;
 	int cursorScale;
-
 	if (_cursorDontScale) {
 		// Don't scale the cursor at all if the user requests this behavior.
 		cursorScale = 1;
@@ -2003,8 +2001,8 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	}
 
 	// Adapt the real hotspot according to the scale factor.
-	rW = w * cursorScale;
-	rH = h * cursorScale;
+	int rW = w * cursorScale;
+	int rH = h * cursorScale;
 	_mouseCurState.rHotX = _mouseCurState.hotX * cursorScale;
 	_mouseCurState.rHotY = _mouseCurState.hotY * cursorScale;
 
