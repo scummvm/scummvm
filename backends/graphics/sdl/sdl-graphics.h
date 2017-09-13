@@ -87,6 +87,8 @@ public:
 	 */
 	virtual void notifyMousePosition(Common::Point &mouse);
 
+	virtual bool showMouse(const bool visible) override;
+
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
 	 * between different SDL graphic managers at runtime.

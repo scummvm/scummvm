@@ -58,7 +58,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       _cursor(nullptr),
       _cursorHotspotX(0), _cursorHotspotY(0),
       _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
-      _cursorKeyColor(0), _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false)
+      _cursorKeyColor(0), _cursorDontScale(false), _cursorPaletteEnabled(false)
 #ifdef USE_OSD
       , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
       _osdIconSurface(nullptr)
@@ -545,18 +545,6 @@ void OpenGLGraphicsManager::grabOverlay(void *buf, int pitch) const {
 		dst += pitch;
 		src += overlayData->pitch;
 	}
-}
-
-bool OpenGLGraphicsManager::showMouse(bool visible) {
-	// In case the mouse cursor visibility changed we need to redraw the whole
-	// screen even when nothing else changed.
-	if (_cursorVisible != visible) {
-		_cursorNeedsRedraw = true;
-	}
-
-	bool last = _cursorVisible;
-	_cursorVisible = visible;
-	return last;
 }
 
 namespace {

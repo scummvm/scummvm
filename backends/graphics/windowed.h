@@ -36,6 +36,7 @@ public:
 		_windowHeight(0),
 		_overlayVisible(false),
 		_forceRedraw(false),
+		_cursorVisible(false),
 		_cursorX(0),
 		_cursorY(0),
 		_cursorNeedsRedraw(false) {}
@@ -182,6 +183,17 @@ protected:
 	 */
 	virtual void setSystemMousePosition(const int x, const int y) = 0;
 
+	virtual bool showMouse(const bool visible) override {
+		if (_cursorVisible == visible) {
+			return visible;
+		}
+
+		const bool last = _cursorVisible;
+		_cursorVisible = visible;
+		_cursorNeedsRedraw = true;
+		return last;
+	}
+
 	/**
 	 * Move ("warp") the mouse cursor to the specified position.
 	 *
@@ -280,6 +292,11 @@ protected:
 	 * Whether the screen must be redrawn on the next frame.
 	 */
 	bool _forceRedraw;
+
+	/**
+	 * Whether the cursor is actually visible.
+	 */
+	bool _cursorVisible;
 
 	/**
 	 * Whether the mouse cursor needs to be redrawn on the next frame.

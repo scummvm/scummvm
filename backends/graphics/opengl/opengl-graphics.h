@@ -107,7 +107,6 @@ public:
 	virtual void clearOverlay() override;
 	virtual void grabOverlay(void *buf, int pitch) const override;
 
-	virtual bool showMouse(bool visible) override;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) override;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
@@ -394,11 +393,6 @@ protected:
 	 * The key color.
 	 */
 	uint32 _cursorKeyColor;
-
-	/**
-	 * Whether the cursor is actually visible.
-	 */
-	bool _cursorVisible;
 
 	/**
 	 * Whether no cursor scaling should be applied.
