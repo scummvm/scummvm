@@ -1876,9 +1876,6 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 	assert(keycolor <= 0xFF);
 #endif
 
-	if (w == 0 || h == 0)
-		return;
-
 	_mouseCurState.hotX = hotspot_x;
 	_mouseCurState.hotY = hotspot_y;
 
@@ -1889,6 +1886,10 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
 		_mouseCurState.w = w;
 		_mouseCurState.h = h;
+
+		if (!w || !h) {
+			return;
+		}
 
 		if (_mouseOrigSurface)
 			SDL_FreeSurface(_mouseOrigSurface);
@@ -1928,22 +1929,21 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 #else
 	byte color;
 #endif
-	int w, h, i, j;
 
-	if (!_mouseOrigSurface || !_mouseData)
+	int w = _mouseCurState.w;
+	int h = _mouseCurState.h;
+
+	if (!_mouseOrigSurface || !_mouseData || !w || !h)
 		return;
 
 	_cursorNeedsRedraw = true;
 
-	w = _mouseCurState.w;
-	h = _mouseCurState.h;
-
 	SDL_LockSurface(_mouseOrigSurface);
 
 	// Make whole surface transparent
-	for (i = 0; i < h + 2; i++) {
+	for (int i = 0; i < h + 2; i++) {
 		dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * i;
-		for (j = 0; j < w + 2; j++) {
+		for (int j = 0; j < w + 2; j++) {
 			*(uint16 *)dstPtr = kMouseColorKey;
 			dstPtr += 2;
 		}
@@ -1959,8 +1959,8 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	else
 		palette = _cursorPalette;
 
-	for (i = 0; i < h; i++) {
-		for (j = 0; j < w; j++) {
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
 #ifdef USE_RGB_COLOR
 			if (_cursorFormat.bytesPerPixel > 1) {
 				if (_cursorFormat.bytesPerPixel == 2)
@@ -2112,7 +2112,7 @@ void SurfaceSdlGraphicsManager::undrawMouse() {
 }
 
 void SurfaceSdlGraphicsManager::drawMouse() {
-	if (!_cursorVisible || !_mouseSurface) {
+	if (!_cursorVisible || !_mouseSurface || !_mouseCurState.w || !_mouseCurState.h) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
 	}

@@ -567,6 +567,18 @@ void applyColorKey(DstPixel *dst, const SrcPixel *src, uint w, uint h, uint dstP
 } // End of anonymous namespace
 
 void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+
+	_cursorKeyColor = keycolor;
+	_cursorHotspotX = hotspotX;
+	_cursorHotspotY = hotspotY;
+	_cursorDontScale = dontScale;
+
+	if (!w || !h) {
+		delete _cursor;
+		_cursor = nullptr;
+		return;
+	}
+
 	Graphics::PixelFormat inputFormat;
 #ifdef USE_RGB_COLOR
 	if (format) {
@@ -601,11 +613,6 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		assert(_cursor);
 		_cursor->enableLinearFiltering(_currentState.filtering);
 	}
-
-	_cursorKeyColor = keycolor;
-	_cursorHotspotX = hotspotX;
-	_cursorHotspotY = hotspotY;
-	_cursorDontScale = dontScale;
 
 	_cursor->allocate(w, h);
 	if (inputFormat.bytesPerPixel == 1) {
