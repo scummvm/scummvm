@@ -493,6 +493,12 @@ bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	
 	if (_currentFrame != ((int)startFrame - 1) || startFrame == 0) {
 		// Start video playback at the desired starting frame
+		if (startFrame > 0) {
+			// Give a chance for a key frame just prior to the start frame
+			// to be loaded first
+			setFrame(startFrame - 1);
+		}
+
 		setFrame(startFrame);
 		startAtFrame(startFrame);
 		_currentFrame = startFrame;
