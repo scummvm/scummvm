@@ -532,12 +532,10 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 	// available format, it will get one that is "cheap" to
 	// use.
 	const Graphics::PixelFormat RGBList[] = {
-#ifdef USE_RGB_COLOR
 		// RGBA8888, ARGB8888, RGB888
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24),
 		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
-#endif
 		// RGB565, XRGB1555, RGB555, RGBA4444, ARGB4444
 		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
 		Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15),
@@ -546,12 +544,10 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
 	};
 	const Graphics::PixelFormat BGRList[] = {
-#ifdef USE_RGB_COLOR
 		// ABGR8888, BGRA8888, BGR888
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
 		Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
-#endif
 		// BGR565, XBGR1555, BGR555, ABGR4444, BGRA4444
 		Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),
 		Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15),
