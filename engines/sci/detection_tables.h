@@ -866,7 +866,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
 		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK2 },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_GK2 },
 
 	// Gabriel Knight 2 - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.1"
@@ -884,7 +884,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.006", 0, "ce9359037277b7d7976da185c2fa0aad", 2977},
 		{"ressci.006", 0, "8e44e03890205a7be12f45aaba9644b4", 60659424},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK2 },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_GK2 },
 
 	// Gabriel Knight 2 - French DOS (6-CDs Sierra Originals reedition)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
@@ -902,7 +902,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.006", 0, "11b2e722170b8c93fdaa5428e2c7676f", 3001},
 		{"ressci.006", 0, "4037d941aec39d2e654e20960429aefc", 60568486},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK2 },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_TESTING, GUIO_GK2 },
 
 	// Gabriel Knight 2 - German DOS/Windows (6-CDs original release, provided by m_kiewitz)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
@@ -920,7 +920,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "9fe7e86d66deabfeb10760990d2b1724", 2053},
 		{"resmap.006", 0, "c5323f49b7ee6a2c08c4852290e351c0", 2995},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK2 },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_TESTING, GUIO_GK2 },
 
 	// Gabriel Knight 2 - English Macintosh
 	// NOTE: This only contains disc 1 files (as well as the persistent file:
@@ -932,7 +932,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data4", 0, "8b843c62eb53136a855d6e0087e3cb0d", 5889553},
 		{"Data5", 0, "f9fcf9ab2eb13b2125c33a1cda03a093", 14349984},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_CD | ADGF_UNSTABLE, GUIO_GK2_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_GK2_MAC },
 
 #undef GUIO_GK2_DEMO
 #undef GUIO_GK2
@@ -1838,7 +1838,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "2be9ab94429c721af8e05c507e048a15", 18697},
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 203882535},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - English Windows-interpreter-only (supplied by m_kiewitz)
 	// SCI interpreter version 2.100.002, VERSION file reports "1.51"
@@ -1847,7 +1847,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
 		{"resource.aud", 0, "c2a988a16053eb98c7b73a75139902a0", 217716879},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - German Windows-interpreter-only (supplied by markcoolio in bug report #2727402)
 	// SCI interpreter version 2.100.002, VERSION file reports "1.51"
@@ -1857,7 +1857,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
 		{"resource.aud", 0, "3f17bcaf8a9ff6a6c2d4de1a2078fdcc", 258119621},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - English Windows (from abevi)
 	// VERSION 1.65c
@@ -1865,7 +1865,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "4948e4e1506f1e1c4e1d47abfa06b7f8", 204385195},
 		{"resource.map", 0, "40ccafb2195301504eba2e4f4f2c7f3d", 18925},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - German Windows (from blumentopferde in bug report Trac#9738)
 	// VERSION 1.65c
@@ -1874,7 +1874,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "4948e4e1506f1e1c4e1d47abfa06b7f8", 204385195},
 		{"resource.map", 0, "59d234e4fd61c1377f659c8479a513fb", 18925},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - French Windows (from bgK)
 	// VERSION 1.65c
@@ -1883,7 +1883,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "4948e4e1506f1e1c4e1d47abfa06b7f8", 204385195},
 		{"resource.map", 0, "a134fc9138b0830d8197877c52ed7aaa", 18925},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - English DOS (from FRG)
 	// SCI interpreter version 2.100.002, VERSION file reports "2.00b"
@@ -1899,7 +1899,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"avi/911.rbt",  0, NULL,                               -1},
 		{"avi/912.rbt",  0, NULL,                               -1},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - English Windows (from FRG)
 	// SCI interpreter version 2.100.002, VERSION file reports "2.00b"
@@ -1915,7 +1915,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"avi/e208x11.avi",  0, NULL,                           -1},
 		{"avi/int08x11.avi", 0, NULL,                           -1},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - Italian DOS (from dego93 on bug report Trac#9739)
 	// VERSION file reports "2.00"
@@ -1924,7 +1924,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		{"resource.map", 0, "c174fb32f045112e210373a31681d97f", 18709},
 		AD_LISTEND},
-		Common::IT_ITA, Common::kPlatformDOS, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - Italian Windows (from dego93 on bug report Trac#9739)
 	// VERSION file reports "2.00"
@@ -1933,7 +1933,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		{"resource.map", 0, "c174fb32f045112e210373a31681d97f", 18709},
 		AD_LISTEND},
-		Common::IT_ITA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::IT_ITA, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - Spanish DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "2.00"
@@ -1941,7 +1941,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "0b62693cbe87e3aaca3e8655a437f27f", 18709},
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - Spanish Windows (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "2.00"
@@ -1949,7 +1949,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "0b62693cbe87e3aaca3e8655a437f27f", 18709},
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+		Common::ES_ESP, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
 	// King's Quest 7 - English DOS Non-Interactive Demo
 	// SCI interpreter version 2.100.002
@@ -1965,7 +1965,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "38e627a37a975aea40cc72b0518b0709", 18412},
 		{"resource.000", 0, "bad61d50aaa64298fa57a7c6ccd3bccf", 84020382},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING | ADGF_CD, GUIO_KQ7_DEMO },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING, GUIO_KQ7_DEMO },
 
 #undef GUIO_KQ7_DEMO
 #undef GUIO_KQ7
@@ -2683,7 +2683,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "0c0804434ea62278dd15032b1947426c", 8872},
 		{"resource.000", 0, "9a9f4870504444cda863dd14d077a680", 18520872},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL6HIRES },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_LSL6HIRES },
 
 	// Larry 6 - German DOS CD - HIRES (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 2.100.002
@@ -2691,7 +2691,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "badfdf446ffed569a310d2c63a249421", 8896},
 		{"resource.000", 0, "bd944d2b06614a5b39f1586906f0ee88", 18534274},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL6HIRES },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_TESTING, GUIO_LSL6HIRES },
 
 	// Larry 6 - French DOS CD - HIRES (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 2.100.002
@@ -2699,7 +2699,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "d184e9aa4f2d4b5670ddb3669db82cda", 8896},
 		{"resource.000", 0, "bd944d2b06614a5b39f1586906f0ee88", 18538987},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL6HIRES },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_TESTING, GUIO_LSL6HIRES },
 
 #undef GUIO_LSL6HIRES
 
@@ -2726,7 +2726,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "eae93e1b1d1ccc58b4691c371281c95d", 8188},
 		{"ressci.000", 0, "89353723488219e25589165d73ed663e", 66965678},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_LSL7 },
 
 	// Larry 7 - German DOS (from Tobis87)
 	// SCI interpreter version 3.000.000
@@ -2734,7 +2734,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "c11e6bfcfc2f2d05da47e5a7df3e9b1a", 8188},
 		{"ressci.000", 0, "a8c6817bb94f332ff498a71c8b47f893", 66971724},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_TESTING, GUIO_LSL7 },
 
 	// Larry 7 - French DOS (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 3.000.000
@@ -2742,7 +2742,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "4407849fd52fe3efb0c30fba60cd5cd4", 8206},
 		{"ressci.000", 0, "dc37c3055fffbefb494ff22b145d377b", 66964472},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_TESTING, GUIO_LSL7 },
 
 	// Larry 7 - Italian DOS CD (from glorifindel)
 	// SCI interpreter version 3.000.000
@@ -2750,7 +2750,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "9852a97141f789413f29bf956052acdb", 8212},
 		{"ressci.000", 0, "440b9fed89590abb4e4386ed6f948ee2", 67140181},
 		AD_LISTEND},
-		Common::IT_ITA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_TESTING, GUIO_LSL7 },
 
 	// Larry 7 - Spanish DOS (from the Leisure Suit Larry Collection)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.0s"
@@ -2758,7 +2758,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "8f3d603e1acc834a5d598b30cdfc93f3", 8188},
 		{"ressci.000", 0, "32792f9bc1bf3633a88b382bb3f6e40d", 67071418},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_LSL7 },
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_TESTING, GUIO_LSL7 },
 
 #undef GUIO_LSL7_DEMO
 #undef GUIO_LSL7
@@ -2802,7 +2802,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.002", 0, "c68db5333f152fea6ca2dfc75cad8b34", 7573},
 		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94628315},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
 
 	// Lighthouse - Japanese DOS (from m_kiewitz)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.0C"
@@ -2812,7 +2812,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.002", 0, "723fc742c623d8933e5753a264324cb0", 7657},
 		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94627469},
 		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
+		Common::JA_JPN, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
 
 	// Lighthouse - Spanish DOS (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
@@ -2822,7 +2822,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.002", 0, "e7dc85884a2417e2eff9de0c63dd65fa", 7630},
 		{"ressci.002", 0, "3c8d627c555b0e3e4f1d9955bc0f0df4", 94631127},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
 
 	// Lighthouse - French DOS (from bgK)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
@@ -2832,7 +2832,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.002", 0, "703e7ab04bd358e76bc098995d71f36a", 7642},
 		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 115212682},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
 
 #undef GUIO_LIGHTHOUSE_DEMO
 #undef GUIO_LIGHTHOUSE
@@ -2968,7 +2968,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "5159a1578c4306bfe070a3e4d8c2e1d3", 4741},
 		{"resource.000", 0, "1926925c95d82f0999590e93b02887c5", 15150768},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_MOTHERGOOSEHIRES },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_MOTHERGOOSEHIRES },
 
 	// Mixed-Up Mother Goose Deluxe - Multilingual Windows CD (EN/FR/DE/ES)
 	// Executable scanning reports "2.100.002"
@@ -2976,7 +2976,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "ef611af561898dcfea87846919ebf3eb", 4969},
 		{"ressci.000", 0, "227685bc59d90821978d330713e44a7a", 17205800},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_MOTHERGOOSEHIRES },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_MOTHERGOOSEHIRES },
 
 #undef GUIO_MOTHERGOOSEHIRES
 
@@ -3021,7 +3021,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.007", 0, "aa8175cfc93242af6f5e65bdceaafc0d", 7972},
 		//{"ressci.007", 0, "3aae6559aa1df273bc542d5ac6330d75", 25859038},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_PHANTASMAGORIA },
 
 	// Phantasmagoria - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000UK"
@@ -3041,7 +3041,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.007", 0, "afbd16ea77869a720afa1c5371de107d", 7972},
 		//{"ressci.007", 0, "3aae6559aa1df273bc542d5ac6330d75", 25859038},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_PHANTASMAGORIA },
 
 	// Phantasmagoria - German DOS/Windows
 	// Windows executable scanning reports "unknown" - "Sep 19 1995 09:39:48"
@@ -3064,7 +3064,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.007", 0, "06309b8043aecb85bd507b15d16cb544", 7984},
 		//{"ressci.007", 0, "3aae6559aa1df273bc542d5ac6330d75", 26898681},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_TESTING, GUIO_PHANTASMAGORIA },
 
 	// Phantasmagoria - French DOS
 	// Supplied by Kervala in bug #6574
@@ -3083,7 +3083,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.006", 0, "3aae6559aa1df273bc542d5ac6330d75", 85415107},
 		{"resmap.007", 0, "5633960bc106c39ca91d2d8fce18fd2d", 7984},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_TESTING, GUIO_PHANTASMAGORIA },
 
 	// Phantasmagoria - French DOS (supplied by enclume in bug report Trac#9910)
 	// VERSION file reports "1.100.000"
@@ -3102,7 +3102,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.006", 0, "3aae6559aa1df273bc542d5ac6330d75", 81076474},
 		{"resmap.007", 0, "3d15c24fe60e8f7171480bfaa2d566bc", 7984},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_TESTING, GUIO_PHANTASMAGORIA },
 
 	// Phantasmagoria - English DOS Demo
 	// Executable scanning reports "2.100.002"
@@ -3121,7 +3121,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116822037},
 		{"resmap.000", 0, "3cafc1c6a53945c1f3babbfd6380c64c", 16468},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_PHANTASMAGORIA },
 
 	// Phantasmagoria - English Macintosh
 	// NOTE: This only contains disc 1 files (as well as the two persistent files:
@@ -3137,7 +3137,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		// Data8-12 are empty
 		{"Data13", 0, "6d2c450fca19a69b5af74ed5b03c0a17", 14923328},
 		AD_LISTEND},
-	 Common::EN_ANY, Common::kPlatformMacintosh, ADGF_CD | ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_PHANTASMAGORIA_MAC },
+	 Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_PHANTASMAGORIA_MAC },
 
 #undef GUIO_PHANTASMAGORIA_DEMO
 #undef GUIO_PHANTASMAGORIA
@@ -3185,7 +3185,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "8bd5ceeedcbe16dfe55d1b90dcd4be84", 1942},
 		{"ressci.005", 0, "05f9fe2bee749659acb3cd2c90252fc5", 67905112},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - English DOS (GOG version) (supplied by littleboy in patch #1360)
 	// Note: Fully uncensored, basically the US release, but ressci.* merged into ressci.000
@@ -3196,7 +3196,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
 		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - German DOS/Windows (supplied by AReim1982)
 	// Note: Fully uncensored, but one scene is missing probably because of a mastering error (Curtis + Therese meeting near water cooler)
@@ -3218,7 +3218,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "2fc48a4a5a73b726994f189da51a8b2a", 1954},
 		{"ressci.005", 0, "e94005890d22dd3b7f605a2a7c025803", 68232146},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - French DOS/Windows (supplied by bgK)
 	// Windows executable scanning reports "3.000.000" - "Nov 09 1996 16:03:00"
@@ -3236,7 +3236,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "7811a1801660090725ceef799b62fc72", 1954},
 		{"ressci.005", 0, "b6f090a2c8fc955d17b8a47085b2f890", 68231525},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - Japanese Windows (supplied by m_kiewitz)
 	// Features English voices w/ Japanese subtitles. Background images were also localized to Japanese.
@@ -3258,7 +3258,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		//{"resaud.002", 0, "3b4c5f92e5143fd3539b227e48ac2929", 8414502},
 		//{"ressfx.001", 0, "343a6ca9ddd614541b11b155de6368ac", 90268706},
 		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformWindows, ADGF_CD | ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::JA_JPN, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
 
 #undef GUIO_PHANTASMAGORIA2
 #undef GUIO_PHANTASMAGORIA2_CENSORED
@@ -3578,7 +3578,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "1c2563fee189885e29d9348f37306d94", 12175},
 		{"ressci.000", 0, "b2e1826ca81ce2e7e764587f5a14eee9", 127149181},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_PQSWAT },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_PQSWAT },
 
 	// Police Quest: SWAT - English Windows (from the Police Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0c"
@@ -3593,7 +3593,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.004", 0, "4228038906f041623e65789500b22285", 6835},
 		{"ressci.004", 0, "b7e619e6ecf62fe65d5116a3a422e5f0", 46223872},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_PQSWAT },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PQSWAT },
 
 #undef GUIO_PQSWAT_DEMO
 #undef GUIO_PQSWAT
@@ -4722,7 +4722,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "6dddfa3a8f3a3a513ec9dfdfae955005", 10528},
 		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_SQ6 },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_SQ6 },
 
 	// Space Quest 6 - English DOS/Win3.11 CD ver 1.11 (from FRG)
 	// SCI interpreter version 2.100.002 (just a guess)
@@ -4730,7 +4730,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "e0615d6e4e10e37ae42e6a2a95aaf145", 10528},
 		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_SQ6 },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_TESTING, GUIO_SQ6 },
 
 	// Space Quest 6 - French DOS/Win3.11 CD (from French magazine Joystick - September 1997)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
@@ -4738,7 +4738,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "3c831625931d5079b73ae8c275f52c95", 10534},
 		{"resource.000", 0, "4195ca940f759424f62b90e262cc1737", 40932397},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_SQ6 },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_TESTING, GUIO_SQ6 },
 
 	// Space Quest 6 - German DOS (from Tobis87, updated info from markcoolio in bug report #2723884)
 	// SCI interpreter version 2.100.002 (just a guess)
@@ -4746,7 +4746,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "664d797415484f85c90b1b45aedc7686", 10534},
 		{"resource.000", 0, "ba87ba91e5bdabb4169dd0df75777722", 40933685},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_SQ6 },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_TESTING, GUIO_SQ6 },
 
 	// Space Quest 6 - English DOS/Win3.11 Interactive Demo (from FRG)
 	// SCI interpreter version 2.100.002 (just a guess)
@@ -4803,7 +4803,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "9a3e172cde9963d0a969f26469318cec", 3403},
 		{"ressci.000", 0, "db3e290481c35c3224e9602e71e4a1f1", 5073868},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING | ADGF_CD, GUIO_TORIN_DEMO },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING, GUIO_TORIN_DEMO },
 
 	// Torin's Passage - Multilingual EN/FR/DE w/ English audio Windows CD
 	// Also matches GOG.com English-only release
@@ -4817,21 +4817,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{"french/msg/0.msg", 0, "cbf314308636380a96f20a76f2a26ce5", 5857},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{"german/msg/0.msg", 0, "374ce3a7e540e1f4917d132f74f356b8", 5993},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	// from jvprat and m_kiewitz
 	{"torin", "", {
@@ -4839,7 +4839,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{"spanish/msg/0.msg", 0, "3c468ee0a8595d64d93df68054b116d7", 5681},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::ES_ESP, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	// from glorifindel
 	// TODO: Need to get ahold of italian/msg/0.msg from an Italian release
@@ -4848,7 +4848,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 //		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 //		// {"italian/msg/0.msg", 0, ?, ?},
 //		AD_LISTEND},
-//		Common::IT_ITA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+//		Common::IT_ITA, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	// ---
 
@@ -4859,19 +4859,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	// ---
 
@@ -4883,19 +4883,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	// ---
 
@@ -4907,7 +4907,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{ "ressci.000", 0, "e672da099fb1663b87c78abc6c8ba2a4", 130622695 },
 		{ "resmap.000", 0, "643859f8f2be8e7701611e29b3b65208", 9799 },
 	AD_LISTEND },
-	Common::RU_RUS, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+	Common::RU_RUS, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
 
 	// Torin's Passage - English Macintosh
 	{"torin", "", {
@@ -4919,7 +4919,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data6", 0, "b639487c83d1dae0e001e700f3631566", 7594881},
 		{"Data7", 0, "2afd9b5434102b89610916b904c3f73a", 7627374},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE | ADGF_CD, GUIO_TORIN_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_TORIN_MAC },
 
 #undef GUIO_TORIN_DEMO
 #undef GUIO_TORIN
