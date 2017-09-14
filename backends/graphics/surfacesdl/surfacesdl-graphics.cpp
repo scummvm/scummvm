@@ -139,14 +139,12 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_originalBitsPerPixel(0),
 #endif
 	_screen(0), _tmpscreen(0),
-#ifdef USE_RGB_COLOR
 	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
-#endif
 	_overlayscreen(0), _tmpscreen2(0),
 	_scalerProc(0), _screenChangeCount(0),
-	_mouseData(0), _mouseSurface(0),
-	_mouseOrigSurface(0), _cursorDontScale(false), _cursorPaletteDisabled(true),
+	_mouseData(nullptr), _mouseSurface(nullptr),
+	_mouseOrigSurface(nullptr), _cursorDontScale(false), _cursorPaletteDisabled(true),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 	_screenIsLocked(false),
@@ -210,21 +208,19 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	unloadGFXMode();
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_window)
-		_window->destroyWindow();
-#endif
-	if (_mouseSurface)
-		SDL_FreeSurface(_mouseSurface);
-	_mouseSurface = 0;
-	if (_mouseOrigSurface)
+	if (_mouseOrigSurface) {
 		SDL_FreeSurface(_mouseOrigSurface);
-	_mouseOrigSurface = 0;
+		if (_mouseOrigSurface == _mouseSurface) {
+			_mouseSurface = nullptr;
+		}
+	}
+	if (_mouseSurface) {
+		SDL_FreeSurface(_mouseSurface);
+	}
 	g_system->deleteMutex(_graphicsMutex);
-
 	free(_currentPalette);
 	free(_cursorPalette);
-	free(_mouseData);
+	delete[] _mouseData;
 }
 
 void SurfaceSdlGraphicsManager::activateManager() {
@@ -879,22 +875,20 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	//
 	// Create the surface that contains the 8 bit game data
 	//
-#ifdef USE_RGB_COLOR
+
+	const Graphics::PixelFormat &format = _screenFormat;
+	const Uint32 rMask = ((0xFF >> format.rLoss) << format.rShift);
+	const Uint32 gMask = ((0xFF >> format.gLoss) << format.gShift);
+	const Uint32 bMask = ((0xFF >> format.bLoss) << format.bShift);
+	const Uint32 aMask = ((0xFF >> format.aLoss) << format.aShift);
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight,
-						_screenFormat.bytesPerPixel << 3,
-						((1 << _screenFormat.rBits()) - 1) << _screenFormat.rShift ,
-						((1 << _screenFormat.gBits()) - 1) << _screenFormat.gShift ,
-						((1 << _screenFormat.bBits()) - 1) << _screenFormat.bShift ,
-						((1 << _screenFormat.aBits()) - 1) << _screenFormat.aShift );
+						_screenFormat.bytesPerPixel * 8, rMask, gMask, bMask, aMask);
 	if (_screen == NULL)
 		error("allocating _screen failed");
 
+#ifdef USE_RGB_COLOR
 	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
 	SDL_SetAlpha(_screen, 0, 255);
-#else
-	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 8, 0, 0, 0, 0);
-	if (_screen == NULL)
-		error("allocating _screen failed");
 #endif
 
 	// SDL 1.2 palettes default to all black,
@@ -1486,7 +1480,6 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-#ifdef USE_RGB_COLOR
 	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x * _screenFormat.bytesPerPixel;
 	if (_videoMode.screenWidth == w && pitch == _screen->pitch) {
 		memcpy(dst, buf, h*pitch);
@@ -1498,19 +1491,6 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int
 			dst += _screen->pitch;
 		} while (--h);
 	}
-#else
-	byte *dst = (byte *)_screen->pixels + y * _screen->pitch + x;
-	if (_screen->pitch == pitch && pitch == w) {
-		memcpy(dst, buf, h*w);
-	} else {
-		const byte *src = (const byte *)buf;
-		do {
-			memcpy(dst, src, w);
-			src += pitch;
-			dst += _screen->pitch;
-		} while (--h);
-	}
-#endif
 
 	// Unlock the screen surface
 	SDL_UnlockSurface(_screen);
@@ -1530,13 +1510,7 @@ Graphics::Surface *SurfaceSdlGraphicsManager::lockScreen() {
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	_framebuffer.init(_screen->w, _screen->h, _screen->pitch, _screen->pixels,
-#ifdef USE_RGB_COLOR
-	                  _screenFormat
-#else
-	                  Graphics::PixelFormat::createFormatCLUT8()
-#endif
-	                 );
+	_framebuffer.init(_screen->w, _screen->h, _screen->pitch, _screen->pixels, _screenFormat);
 
 	return &_framebuffer;
 }
@@ -1643,10 +1617,7 @@ int16 SurfaceSdlGraphicsManager::getWidth() const {
 
 void SurfaceSdlGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
-
-#ifdef USE_RGB_COLOR
 	assert(_screenFormat.bytesPerPixel == 1);
-#endif
 
 	// Setting the palette before _screen is created is allowed - for now -
 	// since we don't actually set the palette until the screen is updated.
@@ -1680,10 +1651,7 @@ void SurfaceSdlGraphicsManager::setPalette(const byte *colors, uint start, uint 
 
 void SurfaceSdlGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
 	assert(colors);
-
-#ifdef USE_RGB_COLOR
 	assert(_screenFormat.bytesPerPixel == 1);
-#endif
 
 	const SDL_Color *base = _currentPalette + start;
 
@@ -1863,23 +1831,27 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 #pragma mark --- Mouse ---
 #pragma mark -
 
-void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
-#ifdef USE_RGB_COLOR
-	if (!format)
-		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
-	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
-		_cursorFormat = *format;
-
-	if (_cursorFormat.bytesPerPixel < 4)
-		assert(keycolor < (uint)(1 << (_cursorFormat.bytesPerPixel << 3)));
-#else
-	assert(keycolor <= 0xFF);
+void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keyColor, bool dontScale, const Graphics::PixelFormat *format) {
+	if (format) {
+#ifndef USE_RGB_COLOR
+		assert(format->bytesPerPixel == 1);
 #endif
+		_cursorFormat = *format;
+	} else {
+		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
+	}
 
-	_mouseCurState.hotX = hotspot_x;
-	_mouseCurState.hotY = hotspot_y;
+	if (_cursorFormat.bytesPerPixel == 4) {
+		assert(keyColor == 0);
+		dontScale = true;
+	} else {
+		assert(keyColor < 1U << (_cursorFormat.bytesPerPixel * 8));
+	}
 
-	_mouseKeyColor = keycolor;
+	_mouseCurState.hotX = hotspotX;
+	_mouseCurState.hotY = hotspotY;
+
+	_mouseKeyColor = keyColor;
 
 	_cursorDontScale = dontScale;
 
@@ -1891,54 +1863,122 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 			return;
 		}
 
-		if (_mouseOrigSurface)
+		if (_mouseOrigSurface) {
 			SDL_FreeSurface(_mouseOrigSurface);
 
-		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
-		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_mouseCurState.w + 2,
-						_mouseCurState.h + 2,
-						16,
-						_hwScreen->format->Rmask,
-						_hwScreen->format->Gmask,
-						_hwScreen->format->Bmask,
-						_hwScreen->format->Amask);
+			if (_mouseSurface == _mouseOrigSurface) {
+				_mouseSurface = nullptr;
+			}
+		}
 
-		if (_mouseOrigSurface == NULL)
-			error("allocating _mouseOrigSurface failed");
-		SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
+		if (_cursorFormat.bytesPerPixel == 4) {
+			if (_mouseSurface != _mouseOrigSurface) {
+				SDL_FreeSurface(_mouseSurface);
+			}
+
+			const Uint32 rMask = ((0xFF >> format->rLoss) << format->rShift);
+			const Uint32 gMask = ((0xFF >> format->gLoss) << format->gShift);
+			const Uint32 bMask = ((0xFF >> format->bLoss) << format->bShift);
+			const Uint32 aMask = ((0xFF >> format->aLoss) << format->aShift);
+			_mouseSurface = _mouseOrigSurface = SDL_CreateRGBSurfaceFrom(const_cast<void *>(buf), w, h, format->bytesPerPixel * 8, w * format->bytesPerPixel, rMask, gMask, bMask, aMask);
+		} else {
+			// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
+			_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+							_mouseCurState.w + 2,
+							_mouseCurState.h + 2,
+							16,
+							_hwScreen->format->Rmask,
+							_hwScreen->format->Gmask,
+							_hwScreen->format->Bmask,
+							_hwScreen->format->Amask);
+		}
+
+		if (_mouseOrigSurface == nullptr) {
+			error("Allocating _mouseOrigSurface failed");
+		}
+
+		if (_cursorFormat.bytesPerPixel < 4) {
+			SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
+		}
 	}
 
-	free(_mouseData);
-#ifdef USE_RGB_COLOR
-	_mouseData = (byte *)malloc(w * h * _cursorFormat.bytesPerPixel);
-	memcpy(_mouseData, buf, w * h * _cursorFormat.bytesPerPixel);
-#else
-	_mouseData = (byte *)malloc(w * h);
-	memcpy(_mouseData, buf, w * h);
-#endif
+	delete[] _mouseData;
+	if (_cursorFormat.bytesPerPixel == 4) {
+		_mouseData = nullptr;
+	} else {
+		_mouseData = new byte[w * h * _cursorFormat.bytesPerPixel];
+		assert(_mouseData);
+		memcpy(_mouseData, buf, w * h * _cursorFormat.bytesPerPixel);
+	}
 
 	blitCursor();
 }
 
 void SurfaceSdlGraphicsManager::blitCursor() {
-	byte *dstPtr;
-	const byte *srcPtr = _mouseData;
-#ifdef USE_RGB_COLOR
-	uint32 color;
-#else
-	byte color;
-#endif
+	const int w = _mouseCurState.w;
+	const int h = _mouseCurState.h;
 
-	int w = _mouseCurState.w;
-	int h = _mouseCurState.h;
-
-	if (!_mouseOrigSurface || !_mouseData || !w || !h)
+	if (!w || !h || !_mouseOrigSurface) {
 		return;
+	}
+
+	if (_cursorFormat.bytesPerPixel != 4 && !_mouseData) {
+		return;
+	}
 
 	_cursorNeedsRedraw = true;
 
+	int cursorScale;
+	if (_cursorDontScale) {
+		// Don't scale the cursor at all if the user requests this behavior.
+		cursorScale = 1;
+	} else {
+		// Scale the cursor with the game screen scale factor.
+		cursorScale = _videoMode.scaleFactor;
+	}
+
+	assert(_cursorFormat.bytesPerPixel != 4 || cursorScale == 1);
+
+	// Adapt the real hotspot according to the scale factor.
+	int rW = w * cursorScale;
+	int rH = h * cursorScale;
+	_mouseCurState.rHotX = _mouseCurState.hotX * cursorScale;
+	_mouseCurState.rHotY = _mouseCurState.hotY * cursorScale;
+
+	// The virtual dimensions will be the same as the original.
+
+	_mouseCurState.vW = w;
+	_mouseCurState.vH = h;
+	_mouseCurState.vHotX = _mouseCurState.hotX;
+	_mouseCurState.vHotY = _mouseCurState.hotY;
+
+#ifdef USE_SCALERS
+	// store original to pass to aspect-correction function later
+	const int rH1 = rH;
+#endif
+
+	if (!_cursorDontScale && _videoMode.aspectRatioCorrection) {
+		rH = real2Aspect(rH - 1) + 1;
+		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
+	}
+
+	bool sizeChanged = false;
+	if (_mouseCurState.rW != rW || _mouseCurState.rH != rH) {
+		_mouseCurState.rW = rW;
+		_mouseCurState.rH = rH;
+		sizeChanged = true;
+	}
+
+	// 32bpp always blits directly, so no need to do any more work here
+	if (_cursorFormat.bytesPerPixel == 4) {
+		return;
+	}
+
 	SDL_LockSurface(_mouseOrigSurface);
+
+	byte *dstPtr;
+	const byte *srcPtr = _mouseData;
+	uint32 color;
 
 	// Make whole surface transparent
 	for (int i = 0; i < h + 2; i++) {
@@ -1961,71 +2001,29 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
-#ifdef USE_RGB_COLOR
-			if (_cursorFormat.bytesPerPixel > 1) {
-				if (_cursorFormat.bytesPerPixel == 2)
-					color = *(const uint16 *)srcPtr;
-				else
-					color = *(const uint32 *)srcPtr;
-				if (color != _mouseKeyColor) {	// transparent, don't draw
+			if (_cursorFormat.bytesPerPixel == 2) {
+				color = *(const uint16 *)srcPtr;
+				if (color != _mouseKeyColor) {
 					uint8 r, g, b;
 					_cursorFormat.colorToRGB(color, r, g, b);
-					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
-						r, g, b);
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format, r, g, b);
 				}
 				dstPtr += 2;
 				srcPtr += _cursorFormat.bytesPerPixel;
 			} else {
-#endif
 				color = *srcPtr;
-				if (color != _mouseKeyColor) {	// transparent, don't draw
+				if (color != _mouseKeyColor) {
 					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
 						palette[color].r, palette[color].g, palette[color].b);
 				}
 				dstPtr += 2;
 				srcPtr++;
-#ifdef USE_RGB_COLOR
 			}
-#endif
 		}
 		dstPtr += _mouseOrigSurface->pitch - w * 2;
 	}
 
-	int cursorScale;
-	if (_cursorDontScale) {
-		// Don't scale the cursor at all if the user requests this behavior.
-		cursorScale = 1;
-	} else {
-		// Scale the cursor with the game screen scale factor.
-		cursorScale = _videoMode.scaleFactor;
-	}
-
-	// Adapt the real hotspot according to the scale factor.
-	int rW = w * cursorScale;
-	int rH = h * cursorScale;
-	_mouseCurState.rHotX = _mouseCurState.hotX * cursorScale;
-	_mouseCurState.rHotY = _mouseCurState.hotY * cursorScale;
-
-	// The virtual dimensions will be the same as the original.
-
-	_mouseCurState.vW = w;
-	_mouseCurState.vH = h;
-	_mouseCurState.vHotX = _mouseCurState.hotX;
-	_mouseCurState.vHotY = _mouseCurState.hotY;
-
-#ifdef USE_SCALERS
-	int rH1 = rH; // store original to pass to aspect-correction function later
-#endif
-
-	if (!_cursorDontScale && _videoMode.aspectRatioCorrection) {
-		rH = real2Aspect(rH - 1) + 1;
-		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
-	}
-
-	if (_mouseCurState.rW != rW || _mouseCurState.rH != rH) {
-		_mouseCurState.rW = rW;
-		_mouseCurState.rH = rH;
-
+	if (sizeChanged) {
 		if (_mouseSurface)
 			SDL_FreeSurface(_mouseSurface);
 
@@ -2038,8 +2036,8 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 						_hwScreen->format->Bmask,
 						_hwScreen->format->Amask);
 
-		if (_mouseSurface == NULL)
-			error("allocating _mouseSurface failed");
+		if (_mouseSurface == nullptr)
+			error("Allocating _mouseSurface failed");
 
 		SDL_SetColorKey(_mouseSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
 	}
@@ -2159,10 +2157,17 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	dst.w = _mouseCurState.rW;
 	dst.h = _mouseCurState.rH;
 
+	// Alpha-blended cursors will happily blend into themselves if the hardware
+	// surface under the cursor is not reset first
+	if (!_forceRedraw && _cursorFormat.bytesPerPixel == 4) {
+		if (SDL_BlitSurface(_screen, &dst, _hwScreen, &dst) != 0)
+			error("SD_BlitSurface failed: %s", SDL_GetError());
+	}
+
 	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
 	// clipping necessary
 
-	if (SDL_BlitSurface(_mouseSurface, NULL, _hwScreen, &dst) != 0)
+	if (SDL_BlitSurface(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
 
 	// The screen will be updated using real surface coordinates, i.e.
