@@ -84,8 +84,10 @@ public:
 	 *
 	 * @param mouse The mouse position in window coordinates, which must be
 	 * converted synchronously to virtual coordinates.
+	 * @returns true if the mouse was in a valid position for the game and
+	 * should cause the event to be sent to the game.
 	 */
-	virtual void notifyMousePosition(Common::Point &mouse);
+	virtual bool notifyMousePosition(Common::Point &mouse);
 
 	virtual bool showMouse(const bool visible) override;
 
