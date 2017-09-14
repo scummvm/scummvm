@@ -46,7 +46,7 @@ enum CastType {
 	kCastMovie = 9,
 	kCastDigitalVideo = 10,
 	kCastLingoScript = 11,
-	kCastRTE = 12,
+	kCastRTE = 12
 };
 
 class Cast {
