@@ -20,16 +20,14 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-
 #include "common/scummsys.h"
 
 #ifdef RISCOS
 
 #include "backends/platform/sdl/riscos/riscos.h"
 #include "backends/saves/default/default-saves.h"
-#include "backends/fs/posix/posix-fs-factory.h"
-#include "backends/fs/posix/posix-fs.h"
+#include "backends/fs/riscos/riscos-fs-factory.h"
+#include "backends/fs/riscos/riscos-fs.h"
 
 #include <kernel.h>
 #include <swis.h>
@@ -40,7 +38,7 @@
 
 void OSystem_RISCOS::init() {
 	// Initialze File System Factory
-	_fsFactory = new POSIXFilesystemFactory();
+	_fsFactory = new RISCOSFilesystemFactory();
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
@@ -50,7 +48,7 @@ void OSystem_RISCOS::initBackend() {
 	// Create the savefile manager
 	if (_savefileManager == 0) {
 		Common::String savePath = "/<Choices$Write>/ScummVM/Saves";
-		if (Posix::assureDirectoryExists(savePath))
+		if (Riscos::assureDirectoryExists(savePath))
 			_savefileManager = new DefaultSaveFileManager(savePath);
 	}
 
@@ -89,7 +87,7 @@ Common::WriteStream *OSystem_RISCOS::createLogFile() {
 
 	Common::String logFile = "/<Choices$Write>/ScummVM/Logs";
 
-	if (!Posix::assureDirectoryExists(logFile)) {
+	if (!Riscos::assureDirectoryExists(logFile)) {
 		return 0;
 	}
 

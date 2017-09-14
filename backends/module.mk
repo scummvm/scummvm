@@ -210,6 +210,12 @@ MODULE_OBJS += \
 	midi/camd.o
 endif
 
+ifdef RISCOS
+MODULE_OBJS += \
+	fs/riscos/riscos-fs.o \
+	fs/riscos/riscos-fs-factory.o
+endif
+
 ifdef PLAYSTATION3
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
