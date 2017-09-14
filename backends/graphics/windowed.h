@@ -39,7 +39,8 @@ public:
 		_cursorVisible(false),
 		_cursorX(0),
 		_cursorY(0),
-		_cursorNeedsRedraw(false) {}
+		_cursorNeedsRedraw(false),
+		_cursorLastInActiveArea(true) {}
 
 	virtual void showOverlay() override {
 		if (_overlayVisible)
@@ -302,6 +303,12 @@ protected:
 	 * Whether the mouse cursor needs to be redrawn on the next frame.
 	 */
 	bool _cursorNeedsRedraw;
+
+	/**
+	 * Whether the last position of the system cursor was within the active area
+	 * of the window.
+	 */
+	bool _cursorLastInActiveArea;
 
 	/**
 	 * The position of the mouse cursor, in window coordinates.

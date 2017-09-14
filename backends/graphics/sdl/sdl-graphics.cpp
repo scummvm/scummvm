@@ -169,22 +169,47 @@ bool SdlGraphicsManager::showMouse(const bool visible) {
 	return WindowedGraphicsManager::showMouse(visible);
 }
 
-void SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
+bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	int showCursor = SDL_DISABLE;
-	if (!_activeArea.drawRect.contains(mouse)) {
+	bool valid = true;
+	if (_activeArea.drawRect.contains(mouse)) {
+		_cursorLastInActiveArea = true;
+	} else {
 		mouse.x = CLIP<int>(mouse.x, _activeArea.drawRect.left, _activeArea.drawRect.right - 1);
 		mouse.y = CLIP<int>(mouse.y, _activeArea.drawRect.top, _activeArea.drawRect.bottom - 1);
 
-		if (_window->mouseIsGrabbed()) {
+		if (_window->mouseIsGrabbed() ||
+			// Keep the mouse inside the game area during dragging to prevent an
+			// event mismatch where the mouseup event gets lost because it is
+			// performed outside of the game area
+			(_cursorLastInActiveArea && SDL_GetMouseState(nullptr, nullptr) != 0)) {
 			setSystemMousePosition(mouse.x, mouse.y);
-		} else if (_cursorVisible) {
-			showCursor = SDL_ENABLE;
+		} else {
+			// Allow the in-game mouse to get a final movement event to the edge
+			// of the window if the mouse was moved out of the game area
+			if (_cursorLastInActiveArea) {
+				_cursorLastInActiveArea = false;
+			} else if (_cursorVisible) {
+				// Keep sending events to the game if the cursor is invisible,
+				// since otherwise if a game lets you skip a cutscene by
+				// clicking and the user moved the mouse outside the active
+				// area, the clicks wouldn't do anything, which would be
+				// confusing
+				valid = false;
+			}
+
+			if (_cursorVisible) {
+				showCursor = SDL_ENABLE;
+			}
 		}
 	}
 
 	SDL_ShowCursor(showCursor);
-	setMousePosition(mouse.x, mouse.y);
-	mouse = convertWindowToVirtual(mouse.x, mouse.y);
+	if (valid) {
+		setMousePosition(mouse.x, mouse.y);
+		mouse = convertWindowToVirtual(mouse.x, mouse.y);
+	}
+	return valid;
 }
 
 void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
