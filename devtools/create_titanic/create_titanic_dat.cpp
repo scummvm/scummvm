@@ -941,7 +941,7 @@ static const char *const STRINGS_DE[197] = {
 	"Speichern Sie das Spiel.",
 	"Leer",
 	"Beenden Sie das Spiel.",
-	"Sind Sie sicher, da\xDF"" Sie das Spiel verlassen m\XF6""chten?",
+	"Sind Sie sicher, da\xDF"" Sie das Spiel verlassen m\xF6""chten?",
 	"\xC4""ndern der Lautst\xE4""rkeeinstellungen",
 	"Grundlautst\xE4""rke",
 	"Musiklautst\xE4""rke",
