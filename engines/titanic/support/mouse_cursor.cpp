@@ -81,9 +81,9 @@ void CMouseCursor::loadCursorImages() {
 		CVideoSurface *surface = _screenManager->createSurface(CURSOR_SIZE, CURSOR_SIZE);
 
 		// Open the cursors video and move to the given frame
-		OSMovie movie(key, surface);
-		movie.setFrame(idx);
-		Graphics::ManagedSurface *transSurface = movie.duplicateTransparency();
+		OSMovie *movie = new OSMovie(key, surface);
+		movie->setFrame(idx);
+		Graphics::ManagedSurface *transSurface = movie->duplicateTransparency();
 
 		// Create a managed surface to hold the RGBA version of the cursor
 		Graphics::PixelFormat rgbaFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -103,6 +103,7 @@ void CMouseCursor::loadCursorImages() {
 				*destP = (*destP & ~0xff) | *srcP;
 		}
 
+		delete movie;
 		delete transSurface;
 		delete surface;
 	}
@@ -151,18 +152,8 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 		_cursorId = cursorId;
 
 		// Set the cursor
-		#ifdef RGBA_CURSORS
 		CursorMan.replaceCursor(ce._surface->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
 			ce._centroid.x, ce._centroid.y, 0, false, &ce._surface->format);
-		#else
-		const Graphics::Surface &surf = *ce._surface;
-		Graphics::Surface *s = surf.convertTo(g_system->getScreenFormat());
-
-		CursorMan.replaceCursor(s->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
-			ce._centroid.x, ce._centroid.y, 0, false, &s->format);
-
-		delete s;
-		#endif
 	}
 }
 
