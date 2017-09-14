@@ -1162,7 +1162,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "98a39ae535dd01714ac313f8ba925045", 7260363},
 		{"resmap.000", 0, "10267a1542a73d527e50f0340549088b", 4900},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle 5 (Hoyle Classic Games) - Windows
 	{"hoyle5", "", {
@@ -1170,7 +1170,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "55ae04012a73abc15b93debf60a7df71", 16909704},
 		{"resmap.000", 0, "daf64a91344a7934fe4374765267c2af", 5767},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Bridge - Windows
 	{"hoyle5bridge", "", {
@@ -1178,7 +1178,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "b83cba09229d3003df9e0c864843f962", 16842499},
 		{"resmap.000", 0, "7b3e3030b0ad5f341053c18afce7d176", 5647},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Children's Collection - Windows
 	{"hoyle5children", "", {
@@ -1186,7 +1186,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "fd1f7dbeebd4510cd37e171a72f2b6ad", 16824349},
 		{"resmap.000", 0, "b0fe1bcc69596e10fe5caa11d0b55b23", 5671},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Solitaire (CD version) - Windows
 	{"hoyle5solitaire", "CD", {
@@ -1194,7 +1194,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "fa4eeb24b1fbf6f33739995360554485", 11628203},
 		{"resmap.000", 0, "3f63df73a49800f080775d2a9ad0e949", 3079},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Solitaire (Hard Drive version) - Windows
 	{"hoyle5solitaire", "Hard Drive", {
@@ -1202,7 +1202,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "da180c67d54d4208c84a48fcd8709671", 8582335},
 		{"resmap.000", 0, "e2feb47ab16f9e22a9b6a8580d1da3f0", 3055},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 #undef GUIO_HOYLE5
 
@@ -2968,7 +2968,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "5159a1578c4306bfe070a3e4d8c2e1d3", 4741},
 		{"resource.000", 0, "1926925c95d82f0999590e93b02887c5", 15150768},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_MOTHERGOOSEHIRES },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_MOTHERGOOSEHIRES },
 
 	// Mixed-Up Mother Goose Deluxe - Multilingual Windows CD (EN/FR/DE/ES)
 	// Executable scanning reports "2.100.002"
@@ -2976,7 +2976,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "ef611af561898dcfea87846919ebf3eb", 4969},
 		{"ressci.000", 0, "227685bc59d90821978d330713e44a7a", 17205800},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_MOTHERGOOSEHIRES },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_MOTHERGOOSEHIRES },
 
 #undef GUIO_MOTHERGOOSEHIRES
 
@@ -3185,7 +3185,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "8bd5ceeedcbe16dfe55d1b90dcd4be84", 1942},
 		{"ressci.005", 0, "05f9fe2bee749659acb3cd2c90252fc5", 67905112},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - English DOS (GOG version) (supplied by littleboy in patch #1360)
 	// Note: Fully uncensored, basically the US release, but ressci.* merged into ressci.000
@@ -3196,7 +3196,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
 		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - German DOS/Windows (supplied by AReim1982)
 	// Note: Fully uncensored, but one scene is missing probably because of a mastering error (Curtis + Therese meeting near water cooler)
@@ -3218,7 +3218,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "2fc48a4a5a73b726994f189da51a8b2a", 1954},
 		{"ressci.005", 0, "e94005890d22dd3b7f605a2a7c025803", 68232146},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - French DOS/Windows (supplied by bgK)
 	// Windows executable scanning reports "3.000.000" - "Nov 09 1996 16:03:00"
@@ -3236,7 +3236,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.005", 0, "7811a1801660090725ceef799b62fc72", 1954},
 		{"ressci.005", 0, "b6f090a2c8fc955d17b8a47085b2f890", 68231525},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_PHANTASMAGORIA2 },
 
 	// Phantasmagoria 2 - Japanese Windows (supplied by m_kiewitz)
 	// Features English voices w/ Japanese subtitles. Background images were also localized to Japanese.
@@ -3258,7 +3258,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		//{"resaud.002", 0, "3b4c5f92e5143fd3539b227e48ac2929", 8414502},
 		//{"ressfx.001", 0, "343a6ca9ddd614541b11b155de6368ac", 90268706},
 		AD_LISTEND},
-		Common::JA_JPN, Common::kPlatformWindows, ADGF_TESTING, GUIO_PHANTASMAGORIA2 },
+		Common::JA_JPN, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_PHANTASMAGORIA2 },
 
 #undef GUIO_PHANTASMAGORIA2
 #undef GUIO_PHANTASMAGORIA2_CENSORED
@@ -4023,7 +4023,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.001", 0, "775304e9b2a545156be4d94209550094", 1393},
 		{"ressci.001", 0, "259437fd75fdf51e8207fda8c01fa4fd", 2334384},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO_RAMA_DEMO },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA_DEMO },
 
 	// RAMA - English Windows (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.100.000"
@@ -4035,7 +4035,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.003", 0, "31ef4c0621711585d031f0ae81707251", 1636},
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6860492},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_RAMA },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
 
 	// RAMA - English Windows (from Quietust, in bug report #2850645)
 	{"rama", "", {
@@ -4046,7 +4046,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.003", 0, "48841e4b84ef1b98b48d43566fda9e13", 1636},
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6870356},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_RAMA },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
 
 	// RAMA - German Windows CD (from farmboy0, in pull request 397)
 	{"rama", "", {
@@ -4057,7 +4057,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.003", 0, "222096000bd83a1d56577114a452cccf", 1636},
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6954219},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_RAMA },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
 
 	// RAMA - French Windows CD (from bgK)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.000.000"
@@ -4069,7 +4069,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.003", 0, "fd2ce2312084e60b2cc5194a799873d0", 1636},
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6379952},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_RAMA },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
 
 	// RAMA - Italian Windows CD (from glorifindel)
 	// SCI interpreter version 3.000.000 (a guess?)
@@ -4077,7 +4077,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70611091},
 		{"resmap.001", 0, "70ba2ff04a2b7fb2c52420ba7fbd47c2", 8338},
 		AD_LISTEND},
-		Common::IT_ITA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_RAMA },
+		Common::IT_ITA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
 
 #undef GUIO_RAMA_DEMO
 #undef GUIO_RAMA
@@ -4101,21 +4101,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "f2ead37749ed8f6535a2445a7d05a0cc", 46525},
 		{"ressci.000", 0, "4294c6d7510935f2e0a52e302073c951", 262654836},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_SHIVERS },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_SHIVERS },
 
 	// Shivers - German Windows (from Tobis87)
 	{"shivers", "", {
 		{"resmap.000", 0, "f483d0a1f78334c18052e92785c3086e", 46537},
 		{"ressci.000", 0, "6751b144671e2deed919eb9d284b07eb", 262390692},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_SHIVERS },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_SHIVERS },
 
 	// Shivers - French Windows (from legluondunet in bug report Trac#9742)
 	{"shivers", "", {
 		{"resmap.000", 0, "73bee036dc8ece0d03f637eb340ea428", 46543},
 		{"ressci.000", 0, "8d45ebb1e5a13468d10e676b8dbce682", 262161072},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_SHIVERS },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_SHIVERS },
 
 	// Shivers - English Windows Non-interactive Demo
 	// Executable scanning reports "2.100.002"
@@ -4123,14 +4123,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "d9e0bc5eddefcbe47f528760085d8927", 1186},
 		{"ressci.000", 0, "3a93c6340b54e07e65d0e5583354d186", 10505469},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING, GUIO_SHIVERS },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_SHIVERS },
 
 	// Shivers - English Windows Interactive Demo (from bgK in bug report Trac#9745)
 	{"shivers", "Demo", {
 		{"resmap.000", 0, "58a20b0c839d31d56802ead6c8f953c4", 7069},
 		{"ressci.000", 0, "f9eb6338f658945feadd4d27e58bdb93", 37404155},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING, GUIO_SHIVERS },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_SHIVERS },
 
 #undef GUIO_SHIVERS_DEMO
 #undef GUIO_SHIVERS
@@ -4803,7 +4803,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "9a3e172cde9963d0a969f26469318cec", 3403},
 		{"ressci.000", 0, "db3e290481c35c3224e9602e71e4a1f1", 5073868},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING, GUIO_TORIN_DEMO },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN_DEMO },
 
 	// Torin's Passage - Multilingual EN/FR/DE w/ English audio Windows CD
 	// Also matches GOG.com English-only release
@@ -4817,21 +4817,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{"french/msg/0.msg", 0, "cbf314308636380a96f20a76f2a26ce5", 5857},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{"german/msg/0.msg", 0, "374ce3a7e540e1f4917d132f74f356b8", 5993},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	// from jvprat and m_kiewitz
 	{"torin", "", {
@@ -4839,7 +4839,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{"spanish/msg/0.msg", 0, "3c468ee0a8595d64d93df68054b116d7", 5681},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::ES_ESP, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	// from glorifindel
 	// TODO: Need to get ahold of italian/msg/0.msg from an Italian release
@@ -4859,19 +4859,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	// ---
 
@@ -4883,19 +4883,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	{"torin", "", {
 		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	// ---
 
@@ -4907,7 +4907,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{ "ressci.000", 0, "e672da099fb1663b87c78abc6c8ba2a4", 130622695 },
 		{ "resmap.000", 0, "643859f8f2be8e7701611e29b3b65208", 9799 },
 	AD_LISTEND },
-	Common::RU_RUS, Common::kPlatformWindows, ADGF_TESTING, GUIO_TORIN },
+	Common::RU_RUS, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	// Torin's Passage - English Macintosh
 	{"torin", "", {
