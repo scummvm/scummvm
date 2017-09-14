@@ -193,9 +193,9 @@ protected:
 
 	/** Unseen game screen */
 	SDL_Surface *_screen;
-#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 	Graphics::PixelFormat _cursorFormat;
+#ifdef USE_RGB_COLOR
 	Common::List<Graphics::PixelFormat> _supportedFormats;
 
 	/**
