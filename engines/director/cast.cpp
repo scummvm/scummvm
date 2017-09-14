@@ -173,8 +173,30 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		fontSize = stream.readUint16();
 		textSlant = 0;
 	} else {
+		fontId = 1;
+		fontSize = 12;
+
+		stream.readUint32();
+		stream.readUint32(); 
+		stream.readUint32();
+		stream.readUint32();
+		uint16 skip = stream.readUint16();
+		for (int i = 0; i < skip; i++) 
+			stream.readUint32();
+
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
+
+		stream.readUint32();
+		stream.readUint16();
+		stream.readUint16();
 	}
 
 	modified = 0;
@@ -191,6 +213,14 @@ void TextCast::importStxt(const Stxt *stxt) {
 	palinfo2 = stxt->_palinfo2;
 	palinfo3 = stxt->_palinfo3;
 	_ftext = stxt->_ftext;
+}
+
+void TextCast::importRTE(byte* text) 	{
+	//assert(rteList.size() == 3);
+	//child0 is probably font data.
+	//child1 is the raw text.
+	_ftext = Common::String((char*)text);
+	//child2 is positional?
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {

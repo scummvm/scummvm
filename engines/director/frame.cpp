@@ -171,6 +171,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		stream->read(unk, 16);
 		_actionId = stream->readUint16();
 		stream->read(unk, 5);
+	} else {
+		stream->read(unk, 16);
+		stream->read(unk, 16);
+		stream->read(unk, 10);
 	}
 
 
@@ -193,34 +197,51 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 	for (int i = 0; i < CHANNEL_COUNT; i++) {
 		Sprite &sprite = *_sprites[i + 1];
 
-		sprite._scriptId = stream->readByte();
-		sprite._spriteType = stream->readByte();
-		sprite._enabled = sprite._spriteType != 0;
-		sprite._x2 = stream->readUint16();
+		if (_vm->getVersion() <= 4) {
+			sprite._scriptId = stream->readByte();
+			sprite._spriteType = stream->readByte();
+			sprite._enabled = sprite._spriteType != 0;
+			sprite._x2 = stream->readUint16();
 
-		sprite._flags = stream->readUint16();
-		sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
+			sprite._flags = stream->readUint16();
+			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
 
-		if (sprite._flags & 0x40)
-			sprite._trails = 1;
-		else
-			sprite._trails = 0;
+			if (sprite._flags & 0x40)
+				sprite._trails = 1;
+			else
+				sprite._trails = 0;
 
-		sprite._lineSize = (sprite._flags >> 8) & 0x03;
+			sprite._lineSize = (sprite._flags >> 8) & 0x03;
 
-		sprite._castId = stream->readUint16();
-		sprite._startPoint.y = stream->readUint16();
-		sprite._startPoint.x = stream->readUint16();
-		sprite._height = stream->readUint16();
-		sprite._width = stream->readUint16();
+			sprite._castId = stream->readUint16();
+			sprite._startPoint.y = stream->readUint16();
+			sprite._startPoint.x = stream->readUint16();
+			sprite._height = stream->readUint16();
+			sprite._width = stream->readUint16();
 
-		if (_vm->getPlatform() == Common::kPlatformMacintosh && _vm->getVersion() >= 4) {
-			sprite._scriptId = stream->readUint16();
-			sprite._flags2 = stream->readByte(); // 0x40 editable, 0x80 moveable
-			sprite._unk2 = stream->readByte();
+			if (_vm->getPlatform() == Common::kPlatformMacintosh && _vm->getVersion() >= 4) {
+				sprite._scriptId = stream->readUint16();
+				sprite._flags2 = stream->readByte(); // 0x40 editable, 0x80 moveable
+				sprite._unk2 = stream->readByte();
 
-			if (_vm->getVersion() >= 5)
-				sprite._unk3 = stream->readUint32();
+				if (_vm->getVersion() >= 5)
+					sprite._unk3 = stream->readUint32();
+			}
+		} else {
+			stream->readUint16();
+			sprite._scriptId = stream->readByte();
+			sprite._spriteType = stream->readByte();
+			sprite._enabled = sprite._spriteType != 0;
+			sprite._castId = stream->readUint16();
+			stream->readUint32();
+			sprite._flags = stream->readUint16();
+			sprite._startPoint.y = stream->readUint16();
+			sprite._startPoint.x = stream->readUint16();
+			sprite._height = stream->readUint16();
+			sprite._width = stream->readUint16();
+			stream->readUint16();
+			stream->readUint16();
+			
 		}
 
 		if (sprite._castId) {
@@ -585,7 +606,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			// I don't like this implementation 100% as the 'cast' above might not actually hit a member and be null?
 			if (castType == kCastShape) {
 				renderShape(surface, i);
-			} else if (castType == kCastText) {
+			} else if (castType == kCastText || castType == kCastRTE) {
 				renderText(surface, i, NULL);
 			} else if (castType == kCastButton) {
 				renderButton(surface, i);

@@ -321,6 +321,8 @@ void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "****** Loading frames");
 
+	//stream.hexdump(stream.size());
+
 	uint32 size = stream.readUint32();
 	size -= 4;
 
@@ -337,25 +339,35 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else if (_vm->getVersion() > 4) {
 		//what data is up the top of D5 VWSC?
-		stream.readUint32();
-		stream.readUint32();
-		uint32 blockSize = stream.readUint32() - 1;
-		stream.readUint32();
-		stream.readUint32();
-		stream.readUint32();
-		stream.readUint32();
-		for (uint32 skip = 0; skip <  blockSize * 4; skip++)
-			stream.readByte();
-
-		//header number two... this is our actual score entry point.
 		uint32 unk1 = stream.readUint32();
 		uint32 unk2 = stream.readUint32();
-		stream.readUint32();
-		uint16 unk3 = stream.readUint16();
-		uint16 unk4 = stream.readUint16();
-		uint16 unk5 = stream.readUint16();
-		uint16 unk6 = stream.readUint16();
 
+		uint16 unk3, unk4, unk5, unk6;
+
+		if (unk2 > 0) {
+			uint32 blockSize = stream.readUint32() - 1;
+			stream.readUint32();
+			stream.readUint32();
+			stream.readUint32();
+			stream.readUint32();
+			for (uint32 skip = 0; skip < blockSize * 4; skip++)
+				stream.readByte();
+
+			//header number two... this is our actual score entry point.
+			unk1 = stream.readUint32();
+			unk2 = stream.readUint32();
+			stream.readUint32();
+			unk3 = stream.readUint16();
+			unk4 = stream.readUint16();
+			unk5 = stream.readUint16();
+			unk6 = stream.readUint16();
+		} else {
+			unk3 = stream.readUint16();
+			unk4 = stream.readUint16();
+			unk5 = stream.readUint16();
+			unk6 = stream.readUint16();
+			size -= 16;
+		}
 		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
 	}
 
@@ -482,13 +494,13 @@ void Score::setSpriteCasts() {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			uint16 castId = _frames[i]->_sprites[j]->_castId;
 
-			if (_vm->getSharedScore()->_loadedBitmaps->contains(castId)) {
+			if (_vm->getSharedScore() != nullptr && _vm->getSharedScore()->_loadedBitmaps->contains(castId)) {
 				_frames[i]->_sprites[j]->_bitmapCast = _vm->getSharedScore()->_loadedBitmaps->getVal(castId);
 			} else if (_loadedBitmaps->contains(castId)) {
 				_frames[i]->_sprites[j]->_bitmapCast = _loadedBitmaps->getVal(castId);
 			}
 
-			if (_vm->getSharedScore()->_loadedButtons->contains(castId)) {
+			if (_vm->getSharedScore() != nullptr && _vm->getSharedScore()->_loadedButtons->contains(castId)) {
 				_frames[i]->_sprites[j]->_buttonCast = _vm->getSharedScore()->_loadedButtons->getVal(castId);
 				if (_frames[i]->_sprites[j]->_buttonCast->children.size() == 1) {
 					_frames[i]->_sprites[j]->_textCast =
@@ -503,13 +515,13 @@ void Score::setSpriteCasts() {
 			//if (_loadedScripts->contains(castId))
 			//	_frames[i]->_sprites[j]->_bitmapCast = _loadedBitmaps->getVal(castId);
 
-			if (_vm->getSharedScore()->_loadedText->contains(castId)) {
+			if (_vm->getSharedScore() != nullptr && _vm->getSharedScore()->_loadedText->contains(castId)) {
 				_frames[i]->_sprites[j]->_textCast = _vm->getSharedScore()->_loadedText->getVal(castId);
 			} else if (_loadedText->contains(castId)) {
 				_frames[i]->_sprites[j]->_textCast = _loadedText->getVal(castId);
 			}
 
-			if (_vm->getSharedScore()->_loadedShapes->contains(castId)) {
+			if (_vm->getSharedScore() != nullptr && _vm->getSharedScore()->_loadedShapes->contains(castId)) {
 				_frames[i]->_sprites[j]->_shapeCast = _vm->getSharedScore()->_loadedShapes->getVal(castId);
 			} else if (_loadedShapes->contains(castId)) {
 				_frames[i]->_sprites[j]->_shapeCast = _loadedShapes->getVal(castId);
@@ -607,6 +619,22 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	case kCastLingoScript:
 		_loadedScripts->setVal(id, new ScriptCast(castStream, _vm->getVersion()));
 		_castTypes[id] = kCastLingoScript;
+		break;
+	case kCastRTE:
+		//TODO: Actually load RTEs correctly, don't just make fake STXT.
+		_castTypes[id] = kCastRTE;
+		_loadedText->setVal(id, new TextCast(castStream, _vm->getVersion()));
+		for (uint child = 0; child < res->children.size(); child++) {
+			_loadedText->getVal(id)->children.push_back(res->children[child]);
+			if (child == 1) {
+				Common::SeekableReadStream *rte1 = _movieArchive->getResource(res->children[child].tag, res->children[child].index);
+				byte *buffer = new byte[rte1->size() + 2];
+				rte1->read(buffer, rte1->size());
+				buffer[rte1->size()] = '\n';
+				buffer[rte1->size() + 1] = '\0';
+				_loadedText->getVal(id)->importRTE(buffer);
+			}
+		}
 		break;
 	default:
 		warning("Score::loadCastData(): Unhandled cast type: %d [%s]", castType, tag2str(castType));
