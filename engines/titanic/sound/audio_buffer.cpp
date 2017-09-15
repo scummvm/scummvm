@@ -26,45 +26,24 @@
 namespace Titanic {
 
 CAudioBuffer::CAudioBuffer(int maxSize) : _finished(false) {
-	_data.resize(maxSize);
 	reset();
 }
 
 void CAudioBuffer::reset() {
-	_frontP = _backP = &_data[0];
+	_data.clear();
 }
 
 void CAudioBuffer::push(int16 value) {
-	assert(!full());
-	compact();
-
-	*_backP++ = value;
+	_data.push(value);
 }
 
-void CAudioBuffer::push(int16 *values, int count) {
-	compact();
-	assert(freeSize() >= count);
-
-	Common::copy(values, values + count, _backP);
-	_backP += count;
+void CAudioBuffer::push(const int16 *values, int count) {
+	for (; count > 0; --count, ++values)
+		_data.push(*values);
 }
 
 int16 CAudioBuffer::pop() {
-	assert(!empty());
-	return *_frontP++;
-}
-
-void CAudioBuffer::compact() {
-	if (_frontP != &_data[0]) {
-		Common::copy(_frontP, _backP, &_data[0]);
-		_backP -= _frontP - &_data[0];
-		_frontP = &_data[0];
-	}
-}
-
-int CAudioBuffer::freeSize() {
-	compact();
-	return &_data[0] + _data.size() - _backP;
+	return _data.pop();
 }
 
 void CAudioBuffer::enterCriticalSection() {
