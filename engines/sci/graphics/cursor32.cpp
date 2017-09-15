@@ -340,6 +340,7 @@ void GfxCursor32::setPosition(const Common::Point &position) {
 	newPosition.x = (position.x * Ratio(screenWidth, scriptWidth)).toInt();
 	newPosition.y = (position.y * Ratio(screenHeight, scriptHeight)).toInt();
 
+	g_sci->getEventManager()->flushEvents();
 	g_system->warpMouse(newPosition.x, newPosition.y);
 	deviceMoved(newPosition);
 }
