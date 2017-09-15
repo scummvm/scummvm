@@ -126,6 +126,7 @@ static const char *const selectorNameTable[] = {
 	"setCel",       // Phant2
 	"iconV",        // Phant2
 	"update",       // Phant2
+	"xOff",         // Phant2
 #endif
 	NULL
 };
@@ -175,7 +176,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setSize,
 	SELECTOR_setCel,
 	SELECTOR_iconV,
-	SELECTOR_update
+	SELECTOR_update,
+	SELECTOR_xOff
 #endif
 };
 
@@ -4068,12 +4070,58 @@ static const uint16 phant2BadIconPatch[] = {
 	PATCH_END
 };
 
+// The left and right arrows move inventory items a pixel more than each
+// inventory item is wide, which causes the inventory to creep to the left by
+// one pixel per scrolled item.
+// Applies to at least: US English
+static const uint16 phant2InvLeftDeltaSignature[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x42), // delta
+	SIG_UINT16(0x19), // moveDelay
+	SIG_END
+};
+
+static const uint16 phant2InvLeftDeltaPatch[] = {
+	PATCH_UINT16(0x41), // delta
+	PATCH_END
+};
+
+static const uint16 phant2InvRightDeltaSignature[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0xffbe), // delta
+	SIG_UINT16(0x19),   // moveDelay
+	SIG_END
+};
+
+static const uint16 phant2InvRightDeltaPatch[] = {
+	PATCH_UINT16(0xffbf), // delta
+	PATCH_END
+};
+
+// The first inventory item is put too far to the right, which causes wide items
+// to get cut off on the right side of the inventory.
+// Applies to at least: US English
+static const uint16 phant2InvOffsetSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x26,                 // ldi 38
+	0x64, SIG_SELECTOR16(xOff), // aTop xOff
+	SIG_END
+};
+
+static const uint16 phant2InvOffsetPatch[] = {
+	0x35, 0x1d, // ldi 29
+	PATCH_END
+};
+
 //          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
 	{  true,     0, "bad arguments to get game version",           1, phant2GetVersionSignature,     phant2GetVersionPatch },
 	{  true,  3000, "replace spin loop in alien password window",  1, phant2WaitParam1Signature,     phant2WaitParam1Patch },
 	{  true,  4081, "replace spin loop after ratboy puzzle",       1, phant2RatboySignature,         phant2RatboyPatch },
+	{  true, 63001, "fix inventory left scroll delta",             1, phant2InvLeftDeltaSignature,   phant2InvLeftDeltaPatch },
+	{  true, 63001, "fix inventory right scroll delta",            1, phant2InvRightDeltaSignature,  phant2InvRightDeltaPatch },
+	{  true, 63001, "fix inventory wrong initial offset",          1, phant2InvOffsetSignature,      phant2InvOffsetPatch },
 	{  true, 63004, "limit in-game audio volume",                  1, phant2AudioVolumeSignature,    phant2AudioVolumePatch },
 	{  true, 63016, "replace spin loop during music fades",        1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
 	{  true, 63019, "replace spin loop during computer load",      1, phant2WaitParam1Signature,     phant2WaitParam1Patch },

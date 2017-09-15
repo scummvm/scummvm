@@ -1003,9 +1003,6 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	_height = celHeader.getUint16SEAt(2);
 	assert(_width <= kCelScalerTableSize && _height <= kCelScalerTableSize);
 	_origin.x = _width / 2 - celHeader.getInt16SEAt(4);
-	if (g_sci->_features->usesAlternateSelectors() && _mirrorX) {
-		_origin.x = _width - _origin.x - 1;
-	}
 	_origin.y = _height - celHeader.getInt16SEAt(6) - 1;
 	_skipColor = celHeader[8];
 	_compressionType = (CelCompressionType)celHeader[9];
