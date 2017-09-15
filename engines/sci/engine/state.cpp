@@ -423,4 +423,16 @@ SciCallOrigin EngineState::getCurrentCallOrigin() const {
 	return reply;
 }
 
+bool EngineState::callInStack(const reg_t object, const Selector selector) const {
+	Common::List<ExecStack>::const_iterator it;
+	for (it = _executionStack.begin(); it != _executionStack.end(); ++it) {
+		const ExecStack &call = *it;
+		if (call.sendp == object && call.debugSelector == selector) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 } // End of namespace Sci

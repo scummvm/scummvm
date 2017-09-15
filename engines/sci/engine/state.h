@@ -224,6 +224,11 @@ public:
 	 * Finds and returns the origin of the current call.
 	 */
 	SciCallOrigin getCurrentCallOrigin() const;
+
+	/**
+	 * Determines whether the given object method is in the current stack.
+	 */
+	bool callInStack(const reg_t object, const Selector selector) const;
 };
 
 } // End of namespace Sci

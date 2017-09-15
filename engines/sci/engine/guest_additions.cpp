@@ -263,15 +263,8 @@ bool GuestAdditions::kGetEventHook() const {
 	// cause loading to fail if the save game contains a saved Robot state,
 	// because the Robot will try to restore itself into a game plane which does
 	// not exist yet
-	if (g_sci->getGameId() == GID_LIGHTHOUSE) {
-		Common::List<ExecStack>::const_iterator it;
-		for (it = _state->_executionStack.begin(); it != _state->_executionStack.end(); ++it) {
-			const ExecStack &call = *it;
-			const reg_t gameObject = g_sci->getGameObject();
-			if (call.sendp == gameObject && call.debugSelector == SELECTOR(init)) {
-				return false;
-			}
-		}
+	if (g_sci->getGameId() == GID_LIGHTHOUSE && _state->callInStack(g_sci->getGameObject(), SELECTOR(init))) {
+		return false;
 	}
 #endif
 

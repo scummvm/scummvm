@@ -226,6 +226,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(scratch);
 	FIND_SELECTOR(num);
 	FIND_SELECTOR(reallyRestore);
+	FIND_SELECTOR(bookMark);
 #endif
 }
 

@@ -1227,12 +1227,12 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		saveNo += kSaveIdShift;
 	}
 
-	if (g_sci->getGameId() == GID_LIGHTHOUSE && gameName == "rst") {
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && s->callInStack(g_sci->getGameObject(), SELECTOR(bookMark))) {
+		saveNo = kAutoSaveId;
+	} else if (g_sci->getGameId() == GID_LIGHTHOUSE && gameName == "rst") {
 		saveNo = kNewGameId;
-	}
-
-	// Auto-save system used by QFG4
-	if (g_sci->getGameId() == GID_QFG4) {
+	} else if (g_sci->getGameId() == GID_QFG4) {
+		// Auto-save system used by QFG4
 		reg_t autoSaveNameId;
 		SciArray &autoSaveName = *s->_segMan->allocateArray(kArrayTypeString, 0, &autoSaveNameId);
 		MessageTuple autoSaveNameTuple(0, 0, 16, 1);
