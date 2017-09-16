@@ -3777,8 +3777,8 @@ static const uint16 phant2RatboyPatch[] = {
 // Applies to at least: US English
 static const uint16 phant2AudioVolumeSignature[] = {
 	SIG_MAGICDWORD,
-	0x39, 0x7f,           // pushi 127 (clientMax)
-	0x39, 0x14,           // pushi 20  (clientPageSize)
+	0x39, 0x7f,           // pushi 127 (clientMax value)
+	0x39, 0x14,           // pushi 20  (clientPageSize value)
 	SIG_ADDTOOFFSET(+10), // skip other init arguments
 	0x51, 0x5e,           // class P2ScrollBar
 	SIG_ADDTOOFFSET(+3),  // skip send
@@ -3992,8 +3992,8 @@ static const uint16 phant2InvOffsetPatch[] = {
 
 //          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
-	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
-	{  true,     0, "bad arguments to get game version",           1, phant2GetVersionSignature,     phant2GetVersionPatch },
+	{  true,     0, "speed up interface fades",                    3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
+	{  true,     0, "fix bad arguments to get game version",       1, phant2GetVersionSignature,     phant2GetVersionPatch },
 	{  true,  3000, "replace spin loop in alien password window",  1, phant2WaitParam1Signature,     phant2WaitParam1Patch },
 	{  true,  4081, "replace spin loop after ratboy puzzle",       1, phant2RatboySignature,         phant2RatboyPatch },
 	{  true, 63001, "fix inventory left scroll delta",             1, phant2InvLeftDeltaSignature,   phant2InvLeftDeltaPatch },
@@ -4006,9 +4006,9 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true, 63019, "fix bad doc/email name & memo positioning",   2, phant2BadPositionSignature,    phant2BadPositionPatch },
 	{  true, 63019, "fix bad folder/doc icon refresh",             2, phant2BadIconSignature,        phant2BadIconPatch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },
+	{  true, 64990, "increase number of save games (1/2)",         1, phant2NumSavesSignature1,      phant2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",         2, phant2NumSavesSignature2,      phant2NumSavesPatch2 },
 	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,      phant2SaveNamePatch2 },
-	{  true, 64990, "increase number of save games",               1, phant2NumSavesSignature1,      phant2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               2, phant2NumSavesSignature2,      phant2NumSavesPatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
