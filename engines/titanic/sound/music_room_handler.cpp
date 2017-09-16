@@ -218,9 +218,9 @@ void CMusicRoomHandler::updateAudio() {
 			// Iterate through each of the four instruments and do an additive
 			// read that will merge their data onto the output buffer
 			for (count = size, ptr = audioData; count > 0; ) {
-				int amount = musicWave->read(ptr, count);
+				int amount = musicWave->read(ptr, count * 2);
 				if (amount > 0) {
-					count -= amount;
+					count -= amount / sizeof(uint16);
 					ptr += amount / sizeof(uint16);
 				} else if (!pollInstrument(instrument)) {
 					--_instrumentsActive;
