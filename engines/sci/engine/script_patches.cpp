@@ -6108,8 +6108,8 @@ static const uint16 ramaBenchmarkSignature[] = {
 };
 
 static const uint16 ramaBenchmarkPatch[] = {
-	0x34, PATCH_UINT16(10000), // ldi 10000
-	0x48,                      // ret
+	0x34, PATCH_UINT16(0x2710), // ldi 10000
+	0x48,                       // ret
 	PATCH_END
 };
 
