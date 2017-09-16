@@ -130,6 +130,9 @@ static const char *const selectorNameTable[] = {
 	"update",       // Phant2
 	"xOff",         // Phant2
 	"setCycle",     // GK1
+	"fore",         // KQ7
+	"back",         // KQ7
+	"font",         // KQ7
 #endif
 	NULL
 };
@@ -183,7 +186,10 @@ enum ScriptPatcherSelectors {
 	SELECTOR_iconV,
 	SELECTOR_update,
 	SELECTOR_xOff,
-	SELECTOR_setCycle
+	SELECTOR_setCycle,
+	SELECTOR_fore,
+	SELECTOR_back,
+	SELECTOR_font
 #endif
 };
 
@@ -1988,155 +1994,139 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 #pragma mark -
 #pragma mark Kings Quest 7
 
-// ===========================================================================
-
-// King's Quest 7 has really weird subtitles. It seems as if the subtitles were
-// not fully finished.
+// KQ7's subtitles were left unfinished in the shipped game, so there are
+// several problems when enabling them from the ScummVM launcher:
 //
-// Method kqMessager::findTalker in script 0 tries to figure out, which class to use for
-// displaying subtitles. It uses the "talker" data of the given message to do that.
-// Strangely this "talker" data seems to be quite broken.
-// For example chapter 2 starts with a cutscene.
-// Troll king: "Welcome, most beautiful of princesses!" - talker 6
-// Which is followed by the princess going
-// "Hmm?" - which is set to talker 99, normally the princess is talker 7.
+// 1. `kqMessager::findTalker` tries to determine which class to use for
+//    displaying subtitles using the talker number of each message, but the
+//    talker data is often bogus (e.g. princess messages normally use talker 7,
+//    but talker 99 (which is for the narrator) is used for her messages at the
+//    start of chapter 2), so it can't be used.
+// 2. Some display classes render subtitles at the top or middle of the game
+//    area, blocking the view of what is on the screen.
+// 3. In some areas, the colors of the subtitles are changed arbitrarily (e.g.
+//    pink/purple at the start of chapter 2).
 //
-// Talker 99 is seen as unknown and thus treated as "narrator", which makes
-// the scripts put the text at the top of the game screen and even use a
-// different font.
-//
-// In other cases, when the player character thinks to himself talker 99
-// is also used. In such situations it may make somewhat sense to do so,
-// but putting the text at the top of the screen is also irritating to the player.
-// It's really weird.
-//
-// The scripts also put the regular text in the middle of the screen, blocking
-// animations.
-//
-// And for certain rooms, the subtitle box may use another color
-// like for example pink/purple at the start of chapter 5.
-//
-// We fix all of that (hopefully - lots of testing is required).
-// We put the text at the bottom of the play screen.
-// We also make the scripts use the regular KQTalker instead of KQNarrator.
-// And we also make the subtitle box use color 255, which is fixed white.
+// To work around these problems, we always use KQTalker, force the text area to
+// the bottom of the game area, and force it to always use black & white, which
+// are guaranteed to not be changed by game scripts.
 //
 // Applies to at least: PC CD 1.4 English, 1.51 English, 1.51 German, 2.00 English
-// Patched method: KQNarrator::init (script 31)
-static const uint16 kq7SignatureSubtitleFix1[] = {
+// Patched method: KQNarrator::init
+static const uint16 kq7SubtitleFixSignature1[] = {
 	SIG_MAGICDWORD,
-	0x39, 0x25,                         // pushi 25h (fore)
-	0x78,                               // push1
-	0x39, 0x06,                         // pushi 06 - sets back to 6
-	0x39, 0x26,                         // pushi 26 (back)
-	0x78,                               // push1
-	0x78,                               // push1 - sets back to 1
-	0x39, 0x2a,                         // pushi 2Ah (font)
-	0x78,                               // push1
-	0x89, 0x16,                         // lsg global[16h] - sets font to global[16h]
-	0x7a,                               // push2 (y)
-	0x78,                               // push1
-	0x76,                               // push0 - sets y to 0
-	0x54, SIG_UINT16(0x0018),           // self 18h
+	0x39, SIG_SELECTOR8(fore), // pushi $25 (fore)
+	0x78,                      // push1
+	0x39, 0x06,                // pushi 6 - sets fore to 6
+	0x39, SIG_SELECTOR8(back), // pushi $26 (back)
+	0x78,                      // push1
+	0x78,                      // push1 - sets back to 1
+	0x39, SIG_SELECTOR8(font), // pushi $2a (font)
+	0x78,                      // push1
+	0x89, 0x16,                // lsg global[$16] - sets font to global[$16]
+	0x7a,                      // push2 (y)
+	0x78,                      // push1
+	0x76,                      // push0 - sets y to 0
+	0x54, SIG_UINT16(0x18),    // self $18
 	SIG_END
 };
 
-static const uint16 kq7PatchSubtitleFix1[] = {
-	0x33, 0x12,                         // jmp [skip special init code]
+static const uint16 kq7SubtitleFixPatch1[] = {
+	0x33, 0x12, // jmp [skip special init code]
 	PATCH_END
 };
 
 // Applies to at least: PC CD 1.51 English, 1.51 German, 2.00 English
-// Patched method: Narrator::init (script 64928)
-static const uint16 kq7SignatureSubtitleFix2[] = {
+// Patched method: Narrator::init
+static const uint16 kq7SubtitleFixSignature2[] = {
 	SIG_MAGICDWORD,
-	0x89, 0x5a,                         // lsg global[5a]
-	0x35, 0x02,                         // ldi 02
+	0x89, 0x5a,                         // lsg global[$5a]
+	0x35, 0x02,                         // ldi 2
 	0x12,                               // and
 	0x31, 0x1e,                         // bnt [skip audio volume code]
-	0x38, SIG_ADDTOOFFSET(+2),          // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
+	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
 	0x76,                               // push0
 	0x81, 0x01,                         // lag global[1]
-	0x4a, 0x04, 0x00,                   // send 04
+	0x4a, SIG_UINT16(0x04),             // send 4
 	0x65, 0x32,                         // aTop curVolume
-	0x38, SIG_ADDTOOFFSET(+2),          // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
+	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
 	0x78,                               // push1
 	0x67, 0x32,                         // pTos curVolume
-	0x35, 0x02,                         // ldi 02
+	0x35, 0x02,                         // ldi 2
 	0x06,                               // mul
 	0x36,                               // push
-	0x35, 0x03,                         // ldi 03
+	0x35, 0x03,                         // ldi 3
 	0x08,                               // div
 	0x36,                               // push
 	0x81, 0x01,                         // lag global[1]
-	0x4a, 0x06, 0x00,                   // send 06
+	0x4a, SIG_UINT16(0x06),             // send 6
 	// end of volume code
-	0x35, 0x01,                         // ldi 01
+	0x35, 0x01,                         // ldi 1
 	0x65, 0x28,                         // aTop initialized
 	SIG_END
 };
 
-static const uint16 kq7PatchSubtitleFix2[] = {
-	PATCH_ADDTOOFFSET(+5),              // skip to bnt
-	0x31, 0x1b,                         // bnt [skip audio volume code]
-	PATCH_ADDTOOFFSET(+15),             // right after "aTop curVolume / pushi masterVolume / push1"
-	0x7a,                               // push2
-	0x06,                               // mul (saves 3 bytes in total)
-	0x36,                               // push
-	0x35, 0x03,                         // ldi 03
-	0x08,                               // div
-	0x36,                               // push
-	0x81, 0x01,                         // lag global[1]
-	0x4a, 0x06, 0x00,                   // send 06
+static const uint16 kq7SubtitleFixPatch2[] = {
+	PATCH_ADDTOOFFSET(+5),    // skip to bnt
+	0x31, 0x1b,               // bnt [skip audio volume code]
+	PATCH_ADDTOOFFSET(+15),   // right after "aTop curVolume / pushi masterVolume / push1"
+	0x7a,                     // push2
+	0x06,                     // mul (saves 3 bytes in total)
+	0x36,                     // push
+	0x35, 0x03,               // ldi 3
+	0x08,                     // div
+	0x36,                     // push
+	0x81, 0x01,               // lag global[1]
+	0x4a, PATCH_UINT16(0x06), // send 6
 	// end of volume code
-	0x35, 118,                          // ldi 118d
-	0x65, 0x16,                         // aTop y
-	0x78,                               // push1 (saves 1 byte)
-	0x69, 0x28,                         // sTop initialized
+	0x35, 0x76,               // ldi 118
+	0x65, 0x16,               // aTop y
+	0x78,                     // push1 (saves 1 byte)
+	0x69, 0x28,               // sTop initialized
 	PATCH_END
 };
 
 // Applies to at least: PC CD 1.51 English, 1.51 German, 2.00 English
-// Patched method: Narrator::say (script 64928)
-static const uint16 kq7SignatureSubtitleFix3[] = {
+// Patched method: Narrator::say
+static const uint16 kq7SubtitleFixSignature3[] = {
 	SIG_MAGICDWORD,
-	0x63, 0x28,                         // pToa initialized
-	0x18,                               // not
-	0x31, 0x07,                         // bnt [skip init code]
-	0x38, SIG_ADDTOOFFSET(+2),          // pushi init (008Eh for 2.00, 0093h for 1.51)
-	0x76,                               // push0
-	0x54, SIG_UINT16(0x0004),           // self 04
+	0x63, 0x28,                 // pToa initialized
+	0x18,                       // not
+	0x31, 0x07,                 // bnt [skip init code]
+	0x38, SIG_SELECTOR16(init), // pushi init ($8e for 2.00, $93 for 1.51)
+	0x76,                       // push0
+	0x54, SIG_UINT16(0x04),     // self 4
 	// end of init code
-	0x8f, 0x00,                         // lsp param[0]
-	0x35, 0x01,                         // ldi 01
-	0x1e,                               // gt?
-	0x31, 0x08,                         // bnt [set acc to 0]
-	0x87, 0x02,                         // lap param[2]
-	0x31, 0x04,                         // bnt [set acc to 0]
-	0x87, 0x02,                         // lap param[2]
-	0x33, 0x02,                         // jmp [over set acc to 0 code]
-	0x35, 0x00,                         // ldi 00
-	0x65, 0x18,                         // aTop caller
+	0x8f, 0x00,                 // lsp param[0]
+	0x35, 0x01,                 // ldi 1
+	0x1e,                       // gt?
+	0x31, 0x08,                 // bnt [set acc to 0]
+	0x87, 0x02,                 // lap param[2]
+	0x31, 0x04,                 // bnt [set acc to 0]
+	0x87, 0x02,                 // lap param[2]
+	0x33, 0x02,                 // jmp [over set acc to 0 code]
+	0x35, 0x00,                 // ldi 00
+	0x65, 0x18,                 // aTop caller
 	SIG_END
 };
 
-static const uint16 kq7PatchSubtitleFix3[] = {
-	PATCH_ADDTOOFFSET(+2),              // skip over "pToa initialized code"
-	0x2f, 0x0c,                         // bt [skip init code] - saved 1 byte
+static const uint16 kq7SubtitleFixPatch3[] = {
+	PATCH_ADDTOOFFSET(+2),       // skip over "pToa initialized code"
+	0x2f, 0x0c,                  // bt [skip init code] - saved 1 byte
 	0x38,
-	PATCH_GETORIGINALUINT16(+6),        // pushi (init)
-	0x76,                               // push0
-	0x54, PATCH_UINT16(0x0004),           // self 04
+	PATCH_GETORIGINALUINT16(+6), // pushi (init)
+	0x76,                        // push0
+	0x54, PATCH_UINT16(0x04),    // self 4
 	// additionally set background color here (5 bytes)
-	0x34, PATCH_UINT16(255),            // pushi 255d
-	0x65, 0x2e,                         // aTop back
+	0x34, PATCH_UINT16(0xFF),    // pushi 255
+	0x65, 0x2e,                  // aTop back
 	// end of init code
-	0x8f, 0x00,                         // lsp param[0]
-	0x35, 0x01,                         // ldi 01 - this may get optimized to get another byte
-	0x1e,                               // gt?
-	0x31, 0x04,                         // bnt [set acc to 0]
-	0x87, 0x02,                         // lap param[2]
-	0x2f, 0x02,                         // bt [over set acc to 0 code]
+	0x8f, 0x00,                  // lsp param[0]
+	0x35, 0x01,                  // ldi 1 - this may get optimized to get another byte
+	0x1e,                        // gt?
+	0x31, 0x04,                  // bnt [set acc to 0]
+	0x87, 0x02,                  // lap param[2]
+	0x2f, 0x02,                  // bt [over set acc to 0 code]
 	PATCH_END
 };
 
@@ -2148,7 +2138,7 @@ static const uint16 kq7BenchmarkSignature[] = {
 	0x51, SIG_ADDTOOFFSET(+1), // class Actor
 	0x4a, SIG_UINT16(0x04),    // send 4
 	0xa5, 0x00,                // sat 0
-	0x39, 0x0e,                // pushi $e
+	0x39, SIG_SELECTOR8(view), // pushi $e (view)
 	SIG_MAGICDWORD,
 	0x78,                      // push1
 	0x38, SIG_UINT16(0xfdd4),  // pushi 64980
@@ -2189,9 +2179,9 @@ static const uint16 kq7PragmaFailSpinPatch[] = {
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
 	{  true,     0, "remove hardcoded spinloop",                   1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
-	{  true,    31, "subtitle fix 1/3",                            1, kq7SignatureSubtitleFix1,                 kq7PatchSubtitleFix1 },
-	{  true, 64928, "subtitle fix 2/3",                            1, kq7SignatureSubtitleFix2,                 kq7PatchSubtitleFix2 },
-	{  true, 64928, "subtitle fix 3/3",                            1, kq7SignatureSubtitleFix3,                 kq7PatchSubtitleFix3 },
+	{  true,    31, "enable subtitles (1/3)",                      1, kq7SubtitleFixSignature1,                 kq7SubtitleFixPatch1 },
+	{  true, 64928, "enable subtitles (2/3)",                      1, kq7SubtitleFixSignature2,                 kq7SubtitleFixPatch2 },
+	{  true, 64928, "enable subtitles (3/3)",                      1, kq7SubtitleFixSignature3,                 kq7SubtitleFixPatch3 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
