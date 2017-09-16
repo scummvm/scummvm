@@ -135,6 +135,7 @@ static const char *const selectorNameTable[] = {
 	"font",         // KQ7
 	"setScale",     // LSL6hires
 	"setScaler",    // LSL6hires
+	"readWord",     // LSL7
 #endif
 	NULL
 };
@@ -193,7 +194,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_back,
 	SELECTOR_font,
 	SELECTOR_setScale,
-	SELECTOR_setScaler
+	SELECTOR_setScaler,
+	SELECTOR_readWord
 #endif
 };
 
@@ -2604,16 +2606,16 @@ static const uint16 larry7VolumeResetPatch1[] = {
 // Applies to at least: English CD
 static const uint16 larry7VolumeResetSignature2[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x19d), // pushi readWord
-	0x76,                    // push0
-	SIG_ADDTOOFFSET(6),      // advance file stream
-	0xa1, 0xe3,              // sag $e3 (music volume)
-	SIG_ADDTOOFFSET(3),      // line whatever
-	SIG_ADDTOOFFSET(10),     // advance file stream
-	0xa1, 0xe4,              // sag $e4 (sfx volume)
-	SIG_ADDTOOFFSET(3),      // line whatever
-	SIG_ADDTOOFFSET(10),     // advance file stream
-	0xa1, 0xe5,              // sag $e5 (speech volume)
+	0x38, SIG_SELECTOR16(readWord), // pushi readWord
+	0x76,                           // push0
+	SIG_ADDTOOFFSET(6),             // advance file stream
+	0xa1, 0xe3,                     // sag $e3 (music volume)
+	SIG_ADDTOOFFSET(3),             // line whatever
+	SIG_ADDTOOFFSET(10),            // advance file stream
+	0xa1, 0xe4,                     // sag $e4 (sfx volume)
+	SIG_ADDTOOFFSET(3),             // line whatever
+	SIG_ADDTOOFFSET(10),            // advance file stream
+	0xa1, 0xe5,                     // sag $e5 (speech volume)
 	SIG_END
 };
 
@@ -2629,66 +2631,56 @@ static const uint16 larry7VolumeResetPatch2[] = {
 	PATCH_END
 };
 
-// ===========================================================================
-// In room 540 of Leisure Suit Larry 7, Larry will use 4 items on a so called cheese maker.
-//  A short cutscene will then play.
-//  During that cutscene on state 6, an animation will get triggered via a special
-//  cycler ("End", but from script 64041), that is capable of doing ::cues on specific cels.
-//  The code of the state is broken and pushes the object itself as the 2nd cel to cue on.
-//  This parameter gets later changed to last cel by CycleCueList::init.
-//  Right now, we do not handle comparisons between references to objects and regular values like
-//  SSCI, so this will need to get fixed too. But this script bug should also get fixed, because
-//  otherwise it works just by accident.
+// In room 540 of Leisure Suit Larry 7, when using the cheese maker,
+// `soMakeCheese::changeState(6)` incorrectly pushes `self` as the end cel
+// instead of a cel number to the End cycler. In SSCI, this bad argument would
+// get corrected down to the final cel in the loop by `CycleCueList::init`, but
+// because ScummVM currently always sorts numbers higher than objects, the
+// comparison fails and the cel number is not corrected, so the cycler never
+// calls back and the game softlocks.
+// Here, we fix the call so a proper cel number is given for the second argument
+// instead of a bogus object pointer.
 //
 // Applies to at least: English PC-CD, German PC-CD
-// Responsible method: soMakeCheese::changeState(6) in script 540
-static const uint16 larry7SignatureMakeCheese[] = {
-	0x38, SIG_UINT16(4),             // pushi 04
-	0x51, 0xc4,                      // class End
-	0x36,                            // push
+static const uint16 larry7MakeCheeseCyclerSignature[] = {
+	0x38, SIG_UINT16(0x04), // pushi 4
+	0x51, 0xc4,             // class End
+	0x36,                   // push
 	SIG_MAGICDWORD,
-	0x7c,                            // pushSelf
-	0x39, 0x04,                      // pushi 04
-	0x7c,                            // pushSelf
+	0x7c,                   // pushSelf
+	0x39, 0x04,             // pushi 4
+	0x7c,                   // pushSelf
 	SIG_END
 };
 
-static const uint16 larry7PatchMakeCheese[] = {
-	0x39, 0x04,                      // pushi 04 - save 1 byte
-	0x51, 0xc4,                      // class End
-	0x36,
-	0x7c,                            // pushSelf
-	0x39, 0x04,                      // pushi 04
-	0x39, 0x10,                      // pushi 10h (last cel of view 54007, loop 0)
+static const uint16 larry7MakeCheeseCyclerPatch[] = {
+	0x39, 0x04, // pushi 4 - save 1 byte
+	0x51, 0xc4, // class End
+	0x36,       // push
+	0x7c,       // pushSelf
+	0x39, 0x04, // pushi 4
+	0x39, 0x10, // pushi $10 (last cel of view 54007, loop 0)
 	PATCH_END
 };
 
-// ===========================================================================
-// During the same cheese maker cutscene as mentioned before, there is also
-//  a little priority issue, which also happens in the original interpreter.
-//  While Larry is pouring liquid into the cheese maker, he appears shortly right
-//  in front of the guillotine instead of behind it.
-//  This is caused by soMakeCheese::changeState(2) setting priority of ego to 500.
-//  It is needed to change priority a bit, otherwise Larry would also appear behind the cheese
-//  maker and that wouldn't make sense, but the cheese maker has a priority of only 373.
-//
-// This of course also happens, when using the original interpreter.
-//
-// We change this to set priority to 374, which works fine.
-//
+// During the cheese maker cutscene, `soMakeCheese::changeState(2)` sets the
+// priority of ego to 500 to draw him over the cheese maker, but this is also
+// above the guillotine (view 54000, cel 7, priority 400), so ego gets
+// incorrectly drawn on top of the guillotine as well. The cheese maker has a
+// priority of 373, so use priority 374 instead of 500.
 // Applies to at least: English PC-CD, German PC-CD
 // Responsible method: soMakeCheese::changeState(2) in script 540
-static const uint16 larry7SignatureMakeCheesePriority[] = {
+static const uint16 larry7MakeCheesePrioritySignature[] = {
 	0x38, SIG_SELECTOR16(setPri),    // pushi (setPri)
 	SIG_MAGICDWORD,
 	0x78,                            // push1
-	0x38, SIG_UINT16(500),           // pushi 1F4h (500d)
+	0x38, SIG_UINT16(500),           // pushi $1f4
 	SIG_END
 };
 
-static const uint16 larry7PatchMakeCheesePriority[] = {
-	PATCH_ADDTOOFFSET(+4),
-	0x38, PATCH_UINT16(374),         // pushi 176h (374d)
+static const uint16 larry7MakeCheesePriorityPatch[] = {
+	PATCH_ADDTOOFFSET(+4),           // pushi setPri, push1
+	0x38, PATCH_UINT16(374),         // pushi $176
 	PATCH_END
 };
 
@@ -2714,10 +2706,10 @@ static const uint16 larry7MessageTypeResetPatch[] = {
 //          script, description,                                signature                           patch
 static const SciScriptPatcherEntry larry7Signatures[] = {
 	{  true,     0, "disable message type reset on startup", 1, larry7MessageTypeResetSignature,    larry7MessageTypeResetPatch },
-	{  true,   540, "fix make cheese cutscene (cycler)",     1, larry7SignatureMakeCheese,          larry7PatchMakeCheese },
-	{  true,   540, "fix make cheese cutscene (priority)",   1, larry7SignatureMakeCheesePriority,  larry7PatchMakeCheesePriority },
-	{  true, 64000, "disable volume reset on startup 1/2",   1, larry7VolumeResetSignature1,        larry7VolumeResetPatch1 },
-	{  true, 64000, "disable volume reset on startup 2/2",   1, larry7VolumeResetSignature2,        larry7VolumeResetPatch2 },
+	{  true,   540, "fix make cheese cutscene (cycler)",     1, larry7MakeCheeseCyclerSignature,    larry7MakeCheeseCyclerPatch },
+	{  true,   540, "fix make cheese cutscene (priority)",   1, larry7MakeCheesePrioritySignature,  larry7MakeCheesePriorityPatch },
+	{  true, 64000, "disable volume reset on startup (1/2)", 1, larry7VolumeResetSignature1,        larry7VolumeResetPatch1 },
+	{  true, 64000, "disable volume reset on startup (2/2)", 1, larry7VolumeResetSignature2,        larry7VolumeResetPatch2 },
 	{  true, 64866, "increase number of save games",         1, torinLarry7NumSavesSignature,       torinLarry7NumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
