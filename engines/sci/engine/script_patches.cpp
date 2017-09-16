@@ -1128,7 +1128,7 @@ static const uint16 gk2InvScrollSignature[] = {
 	0x78,                                   // push1
 	0x78,                                   // push1
 	0x63, 0x98,                             // pToa $98
-	0x4a, SIG_UINT16(0x06),                 // send $6
+	0x4a, SIG_UINT16(0x06),                 // send 6
 	SIG_END
 };
 
@@ -1137,7 +1137,7 @@ static const uint16 gk2InvScrollPatch[] = {
 	0x78,                                     // push1
 	0x67, 0x9a,                               // pTos $9a (delta)
 	0x63, 0x98,                               // pToa $98
-	0x4a, PATCH_UINT16(0x06),                 // send $6
+	0x4a, PATCH_UINT16(0x06),                 // send 6
 	0x18, 0x18,                               // waste bytes
 	PATCH_END
 };
@@ -1169,7 +1169,7 @@ static const uint16 gk2BenchmarkSignature[] = {
 	0xa5, 0x00,                // sat 0
 	0x7e, SIG_ADDTOOFFSET(+2), // line
 	0x7e, SIG_ADDTOOFFSET(+2), // line
-	0x39, 0x0e,                // pushi $e
+	0x39, SIG_SELECTOR8(view), // pushi $e (view)
 	SIG_MAGICDWORD,
 	0x78,                      // push1
 	0x38, SIG_UINT16(0xfdd4),  // pushi 64980
@@ -1191,9 +1191,9 @@ static const uint16 gk2BenchmarkPatch[] = {
 static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,     0, "disable volume reset on startup",                     1, gk2VolumeResetSignature,          gk2VolumeResetPatch },
 	{  true,     0, "disable video benchmarking",                          1, gk2BenchmarkSignature,            gk2BenchmarkPatch },
-	{  true,    23, "inventory starts scroll down in the wrong direction", 1, gk2InvScrollSignature,            gk2InvScrollPatch },
-	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true,    23, "fix inventory scroll start direction",                1, gk2InvScrollSignature,            gk2InvScrollPatch },
+	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",                 1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",                     1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
