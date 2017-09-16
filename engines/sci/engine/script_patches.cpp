@@ -136,7 +136,7 @@ static const char *const selectorNameTable[] = {
 	"font",         // KQ7
 	"setScale",     // LSL6hires
 	"setScaler",    // LSL6hires
-	"readWord",     // LSL7, Phant1
+	"readWord",     // LSL7, Phant1, Torin
 	"flag",         // PQ4
 	"select",       // PQ4
 #endif
@@ -6277,14 +6277,14 @@ static const uint16 torinVolumeResetPatch1[] = {
 // Applies to at least: English CD
 static const uint16 torinVolumeResetSignature2[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x20b), // pushi $020b
-	0x76,                    // push0
-	SIG_ADDTOOFFSET(6),      // advance file stream
-	0xa1, 0xe3,              // sag $e3 (music volume)
-	SIG_ADDTOOFFSET(10),     // advance file stream
-	0xa1, 0xe4,              // sag $e4 (sfx volume)
-	SIG_ADDTOOFFSET(10),     // advance file stream
-	0xa1, 0xe5,              // sag $e5 (speech volume)
+	0x38, SIG_SELECTOR16(readWord), // pushi $020b (readWord)
+	0x76,                           // push0
+	SIG_ADDTOOFFSET(6),             // advance file stream
+	0xa1, 0xe3,                     // sag $e3 (music volume)
+	SIG_ADDTOOFFSET(10),            // advance file stream
+	0xa1, 0xe4,                     // sag $e4 (sfx volume)
+	SIG_ADDTOOFFSET(10),            // advance file stream
+	0xa1, 0xe5,                     // sag $e5 (speech volume)
 	SIG_END
 };
 
@@ -6500,8 +6500,8 @@ static const uint16 torinPointSoft20700HeapPatch[] = {
 static const SciScriptPatcherEntry torinSignatures[] = {
 	{  true, 20600, "fix wrong boogle bag flag on fast-forward",   1, torinSeraglioBoogleFlagSignature,  torinSeraglioBoogleFlagPatch },
 	{  true, 20700, "fix bad heap in PointSoft release",           1, torinPointSoft20700HeapSignature,  torinPointSoft20700HeapPatch },
-	{  true, 64000, "disable volume reset on startup 1/2",         1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
-	{  true, 64000, "disable volume reset on startup 2/2",         1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
+	{  true, 64000, "disable volume reset on startup (1/2)",       1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
+	{  true, 64000, "disable volume reset on startup (2/2)",       1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
 	{  true, 64866, "increase number of save games",               1, torinLarry7NumSavesSignature,      torinLarry7NumSavesPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
