@@ -3513,8 +3513,8 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 //
 // Applies to at least: English CD from King's Quest Collection
 // Responsible method: sShowLogo::changeState
-static const uint16 mothergooseHiresSignatureLogo[] = {
-	0x38, SIG_UINT16(0x8e),          // pushi $8e
+static const uint16 mothergooseHiresLogoSignature[] = {
+	0x38, SIG_SELECTOR16(init),      // pushi $8e (init)
 	SIG_MAGICDWORD,
 	0x76,                            // push0
 	0x72, SIG_UINT16(0x82),          // lofsa logo[82]
@@ -3522,11 +3522,8 @@ static const uint16 mothergooseHiresSignatureLogo[] = {
 	SIG_END
 };
 
-static const uint16 mothergooseHiresPatchLogo[] = {
-	0x18, 0x18, 0x18,                // waste bytes
-	0x18,                            // waste bytes
-	0x18, 0x18, 0x18,                // waste bytes
-	0x18, 0x18, 0x18,                // waste bytes
+static const uint16 mothergooseHiresLogoPatch[] = {
+	0x33, 0x08, // jmp [past bad logo init]
 	PATCH_END
 };
 
@@ -3537,7 +3534,7 @@ static const uint16 mothergooseHiresPatchLogo[] = {
 //
 // Applies to at least: English CD from King's Quest Collection
 // Responsible method: rhymeScript::changeState
-static const uint16 mothergooseHiresSignatureHorse[] = {
+static const uint16 mothergooseHiresHorseSignature[] = {
 	SIG_MAGICDWORD,
 	0x39, SIG_SELECTOR8(setPri), // pushi $4a (setPri)
 	0x78,                        // push1
@@ -3545,9 +3542,9 @@ static const uint16 mothergooseHiresSignatureHorse[] = {
 	SIG_END
 };
 
-static const uint16 mothergooseHiresPatchHorse[] = {
-	PATCH_ADDTOOFFSET(3),
-	0x38, PATCH_UINT16(0x59),
+static const uint16 mothergooseHiresHorsePatch[] = {
+	PATCH_ADDTOOFFSET(3),     // pushi setPri, push1
+	0x38, PATCH_UINT16(0x59), // pushi $59
 	PATCH_END
 };
 
@@ -3555,8 +3552,8 @@ static const uint16 mothergooseHiresPatchHorse[] = {
 static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
 	{  true,     0, "disable volume reset on startup (1/2)",       2, sci2VolumeResetSignature,         sci2VolumeResetPatch },
 	{  true,    90, "disable volume reset on startup (2/2)",       1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
-	{  true,   108, "bad logo rendering",                          1, mothergooseHiresSignatureLogo,    mothergooseHiresPatchLogo },
-	{  true,   318, "bad horse z-index",                           1, mothergooseHiresSignatureHorse,   mothergooseHiresPatchHorse },
+	{  true,   108, "fix bad logo rendering",                      1, mothergooseHiresLogoSignature,    mothergooseHiresLogoPatch },
+	{  true,   318, "fix bad horse z-index",                       1, mothergooseHiresHorseSignature,   mothergooseHiresHorsePatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
