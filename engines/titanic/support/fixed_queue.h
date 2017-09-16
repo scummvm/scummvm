@@ -80,7 +80,8 @@ public:
 	 */
 	void compact() {
 		if (_data.size() == MAX_SIZE && _topIndex > 0) {
-			Common::copy(&_data[_topIndex], &_data[0] + MAX_SIZE, &_data[0]);
+			if (_topIndex < MAX_SIZE)
+				Common::copy(&_data[_topIndex], &_data[0] + MAX_SIZE, &_data[0]);
 			_data.resize(size());
 			_topIndex = 0;
 		}
