@@ -48,14 +48,7 @@ public:
 };
 
 int AudioBufferStream::readBuffer(int16 *buffer, const int numSamples) {
-	_audioBuffer->enterCriticalSection();
-	int samplesToRead = MIN((const int)numSamples, (const int)_audioBuffer->size());
-
-	for (int idx = 0; idx < samplesToRead; ++idx)
-		*buffer++ = _audioBuffer->pop();
-
-	_audioBuffer->leaveCriticalSection();
-	return samplesToRead;
+	return _audioBuffer->read(buffer, numSamples);
 }
 
 bool AudioBufferStream::endOfData() const {

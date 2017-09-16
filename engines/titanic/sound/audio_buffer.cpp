@@ -34,16 +34,37 @@ void CAudioBuffer::reset() {
 }
 
 void CAudioBuffer::push(int16 value) {
+	enterCriticalSection();
 	_data.push(value);
+	leaveCriticalSection();
 }
 
 void CAudioBuffer::push(const int16 *values, int count) {
+	enterCriticalSection();
+
 	for (; count > 0; --count, ++values)
 		_data.push(*values);
+
+	leaveCriticalSection();
 }
 
 int16 CAudioBuffer::pop() {
-	return _data.pop();
+	enterCriticalSection();
+	int16 value = _data.pop();
+	leaveCriticalSection();
+
+	return value;
+}
+
+int CAudioBuffer::read(int16 *values, int count) {
+	enterCriticalSection();
+
+	int bytesRead = 0;
+	for (; count > 0 && !_data.empty(); --count, ++bytesRead)
+		*values++ = _data.pop();
+
+	leaveCriticalSection();
+	return bytesRead;
 }
 
 void CAudioBuffer::enterCriticalSection() {

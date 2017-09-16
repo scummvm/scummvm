@@ -34,6 +34,16 @@ class CAudioBuffer {
 private:
 	Common::Mutex _mutex;
 	FixedQueue<int16, AUDIO_SAMPLING_RATE * 4> _data;
+private:
+	/**
+	 * Enters a critical section
+	 */
+	void enterCriticalSection();
+
+	/**
+	 * Leave a critical section
+	 */
+	void leaveCriticalSection();
 public:
 	bool _finished;
 public:
@@ -80,14 +90,9 @@ public:
 	int16 pop();
 
 	/**
-	 * Enters a critical section
+	 * Reads out a specified number of samples
 	 */
-	void enterCriticalSection();
-
-	/**
-	 * Leave a critical section
-	 */
-	void leaveCriticalSection();
+	int read(int16 *values, int count);
 };
 
 } // End of namespace Titanic

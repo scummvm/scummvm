@@ -202,8 +202,6 @@ bool CMusicRoomHandler::update() {
 }
 
 void CMusicRoomHandler::updateAudio() {
-	_audioBuffer->enterCriticalSection();
-
 	int size = _audioBuffer->freeSize();
 	int count;
 	int16 *ptr;
@@ -234,8 +232,6 @@ void CMusicRoomHandler::updateAudio() {
 		_audioBuffer->push(audioData, size);
 		delete[] audioData;
 	}
-
-	_audioBuffer->leaveCriticalSection();
 }
 
 void CMusicRoomHandler::updateInstruments() {
