@@ -115,6 +115,8 @@ static const char *const selectorNameTable[] = {
 	"posn",         // SCI2 benchmarking script
 	"detailLevel",  // GK2 benchmarking
 	"view",         // RAMA benchmarking
+	"fade",         // Shivers sound fix
+	"play",         // Shivers sound fix	
 	"test",         // Torin
 	"get",          // Torin
 	"set",          // Torin
@@ -166,6 +168,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_posn,
 	SELECTOR_detailLevel,
 	SELECTOR_view,
+	SELECTOR_fade,
+	SELECTOR_play,
 	SELECTOR_test,
 	SELECTOR_get,
 	SELECTOR_set,
@@ -6193,11 +6197,33 @@ static const uint16 shiversPatchSuperCall[] = {
 	PATCH_END
 };
 
+
+
+// When the Ixupi is present in the Gods and Items intro room, the game tries to play a sound using the play selector, 
+// but its arguments are only appropriate for the fade selector. 
+// If the badly constructed sound object from this call ends up receiving a signal at any time in the future, 
+// the game will try to send to a number and crash (because the third argument to play is supposed to be a client object, 
+// but here it is a number instead). Other rooms make this same call with the correct fade selector, so fix the selector here to match.
+// Applies to at least: English CD
+static const uint16 shivers1GodsItemsIxupiPlaySoundSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(play),     // pushi 33
+	0x38, SIG_UINT16(0x06),        // pushi 0006
+	SIG_END
+};
+
+static const uint16 shivers1GodsItemsIxupiPlaySoundPatch[] = {
+	0x38, PATCH_SELECTOR16(fade),  // pushi 00f3
+	0x39, 0x06,                    // pushi 06
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry shiversSignatures[] = {
 	{  true, 35170, "fix CCTV joystick interaction",               1, shiversSignatureSuperCall,     shiversPatchSuperCall },
 	{  true,   990, "fix volume & brightness sliders",             2, shiversSignatureSuperCall,     shiversPatchSuperCall },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,        sci2BenchmarkPatch },
+	{  true, 23090, "fix play call in room 23090",                 1, shivers1GodsItemsIxupiPlaySoundSignature,         shivers1GodsItemsIxupiPlaySoundPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
