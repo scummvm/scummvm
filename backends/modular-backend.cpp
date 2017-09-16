@@ -217,6 +217,7 @@ bool ModularBackend::showMouse(bool visible) {
 }
 
 void ModularBackend::warpMouse(int x, int y) {
+	_eventManager->purgeMouseEvents();
 	_graphicsManager->warpMouse(x, y);
 }
 

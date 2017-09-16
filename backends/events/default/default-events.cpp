@@ -254,4 +254,30 @@ void DefaultEventManager::pushEvent(const Common::Event &event) {
 		_artificialEventSource.addEvent(event);
 }
 
+void DefaultEventManager::purgeMouseEvents() {
+	_dispatcher.dispatch();
+
+	Common::Queue<Common::Event> filteredQueue;
+	while (!_eventQueue.empty()) {
+		Common::Event event = _eventQueue.pop();
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONUP:
+		case Common::EVENT_WHEELUP:
+		case Common::EVENT_WHEELDOWN:
+		case Common::EVENT_MBUTTONDOWN:
+		case Common::EVENT_MBUTTONUP:
+			// do nothing
+			break;
+		default:
+			filteredQueue.push(event);
+			break;
+		}
+	}
+	_eventQueue = filteredQueue;
+}
+
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

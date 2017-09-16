@@ -150,10 +150,7 @@ protected:
 #endif
 	}
 
-	virtual void setSystemMousePosition(const int x, const int y) override {
-		assert(_window);
-		_window->warpMouseInWindow(x, y);
-	}
+	virtual void setSystemMousePosition(const int x, const int y) override;
 
 	virtual void handleResizeImpl(const int width, const int height) override;
 
