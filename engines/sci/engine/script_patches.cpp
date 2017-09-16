@@ -96,7 +96,6 @@ static const char *const selectorNameTable[] = {
 	"setMotion",    // system selector
 	"overlay",      // system selector
 	"setPri",       // system selector - for setting priority
-	"deskSarg",     // Gabriel Knight
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
 	"say",          // Quest For Glory 1 VGA
@@ -114,21 +113,23 @@ static const char *const selectorNameTable[] = {
 	"scrollSelections", // GK2
 	"posn",         // SCI2 benchmarking script
 	"detailLevel",  // GK2 benchmarking
-	"view",         // RAMA benchmarking
+	"view",         // RAMA benchmarking, GK1
 	"fade",         // Shivers sound fix
 	"play",         // Shivers sound fix
 	"test",         // Torin
-	"get",          // Torin
+	"get",          // Torin, GK1
+	"has",          // GK1
 	"set",          // Torin
 	"clear",        // Torin
 	"masterVolume", // SCI2 master volume reset
 	"data",         // Phant2
 	"format",       // Phant2
 	"setSize",      // Phant2
-	"setCel",       // Phant2
+	"setCel",       // Phant2, GK1
 	"iconV",        // Phant2
 	"update",       // Phant2
 	"xOff",         // Phant2
+	"setCycle",     // GK1
 #endif
 	NULL
 };
@@ -148,7 +149,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setMotion,
 	SELECTOR_overlay,
 	SELECTOR_setPri,
-	SELECTOR_deskSarg,
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_say,
@@ -172,6 +172,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_play,
 	SELECTOR_test,
 	SELECTOR_get,
+	SELECTOR_has,
 	SELECTOR_set,
 	SELECTOR_clear,
 	SELECTOR_masterVolume,
@@ -181,7 +182,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setCel,
 	SELECTOR_iconV,
 	SELECTOR_update,
-	SELECTOR_xOff
+	SELECTOR_xOff,
+	SELECTOR_setCycle
 #endif
 };
 
@@ -882,341 +884,229 @@ static const SciScriptPatcherEntry hoyle5Signatures[] = {
 #pragma mark -
 #pragma mark Gabriel Knight 1
 
-// ===========================================================================
-// daySixBeignet::changeState (4) is called when the cop goes out and sets cycles to 220.
-//  this is not enough time to get to the door, so we patch that to 23 seconds
+// `daySixBeignet::changeState(4)` is called when the cop goes outside. It sets
+// cycles to 220. This is a CPU-speed dependent value and not usually enough
+// time to get to the door, so patch it to 22 seconds.
 // Applies to at least: English PC-CD, German PC-CD, English Mac
-// Responsible method: daySixBeignet::changeState(4), script 230
-static const uint16 gk1SignatureDay6PoliceBeignet1[] = {
-	0x35, 0x04,                         // ldi 04
-	0x1a,                               // eq?
-	0x30, SIG_ADDTOOFFSET(+2),          // bnt [next state check]
-	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
-	0x76,                               // push0
-	0x72, SIG_ADDTOOFFSET(+2),          // lofsa deskSarg
-	0x4a, SIG_UINT16(0x0004),           // send 04
+static const uint16 gk1Day6PoliceBeignetSignature1[] = {
+	0x35, 0x04,                    // ldi 4
+	0x1a,                          // eq?
+	0x30, SIG_ADDTOOFFSET(+2),     // bnt [next state check]
+	0x38, SIG_SELECTOR16(dispose), // pushi dispose
+	0x76,                          // push0
+	0x72, SIG_ADDTOOFFSET(+2),     // lofsa deskSarg
+	0x4a, SIG_UINT16(0x04),        // send 4
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(0x00dc),           // ldi 220
-	0x65, SIG_ADDTOOFFSET(+1),          // aTop cycles (1a for PC, 1c for Mac)
-	0x32,                               // jmp [end]
+	0x34, SIG_UINT16(0xdc),        // ldi 220
+	0x65, SIG_ADDTOOFFSET(+1),     // aTop cycles ($1a for PC, $1c for Mac)
+	0x32,                          // jmp [end]
 	SIG_END
 };
 
-static const uint16 gk1PatchDay6PoliceBeignet1[] = {
+static const uint16 gk1Day6PoliceBeignetPatch1[] = {
 	PATCH_ADDTOOFFSET(+16),
-	0x34, PATCH_UINT16(0x0017),         // ldi 23
-	0x65, PATCH_GETORIGINALBYTEADJUST(+20, +2), // aTop seconds (1c for PC, 1e for Mac)
+	0x34, PATCH_UINT16(0x16),                   // ldi 22
+	0x65, PATCH_GETORIGINALBYTEADJUST(+20, +2), // aTop seconds ($1c for PC, $1e for Mac)
 	PATCH_END
 };
 
-// sInGateWithPermission::changeState (0) is called, when the player walks through the swinging door.
-//  When it's day 6 and the desk sergeant is outside for the beignet, this state will also set
-//  daySixBeignet::cycles to basically reset the overall timer, which is 200.
-//  This is not enough time to get to the door, so we patch that to 20 seconds
+// `sInGateWithPermission::changeState(0)` is called whenever the player walks
+// through the swinging door. On day 6, when the cop is outside for the beignet,
+// this action will also reset the puzzle timer so the player has 200 cycles to
+// get through the area before the cop returns. This is a CPU-speed dependent
+// value and not usually enough time to get to the door, so patch it to 20
+// seconds instead.
 // Applies to at least: English PC-CD, German PC-CD, English Mac
-// Responsible method: sInGateWithPermission::changeState(0), script 230
-// Fixes bug: #9805
-static const uint16 gk1SignatureDay6PoliceBeignet2[] = {
-	0x72, SIG_ADDTOOFFSET(+2),          // lofsa daySixBeignet
-	0x1a,                               // eq?
-	0x31, 0x0d,                         // bnt [skip set cycles]
-	0x38, SIG_SELECTOR16(cycles),       // pushi (cycles)
-	0x78,                               // push1
+static const uint16 gk1Day6PoliceBeignetSignature2[] = {
+	0x72, SIG_ADDTOOFFSET(+2),    // lofsa daySixBeignet
+	0x1a,                         // eq?
+	0x31, 0x0d,                   // bnt [skip set cycles]
+	0x38, SIG_SELECTOR16(cycles), // pushi (cycles)
+	0x78,                         // push1
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(200),              // pushi 200d
-	0x72,                               // lofsa
+	0x38, SIG_UINT16(0xc8),       // pushi 200
+	0x72,                         // lofsa
 	SIG_END
 };
 
-static const uint16 gk1PatchDay6PoliceBeignet2[] = {
+static const uint16 gk1Day6PoliceBeignetPatch2[] = {
 	PATCH_ADDTOOFFSET(+6),
-	0x38, PATCH_SELECTOR16(seconds),    // pushi (seconds)
-	0x78,                               // push1
-	0x38, PATCH_UINT16(20),             // pushi 20
+	0x38, PATCH_SELECTOR16(seconds), // pushi (seconds)
+	0x78,                            // push1
+	0x38, PATCH_UINT16(0x14),        // pushi 20
 	PATCH_END
 };
 
-// sargSleeping::changeState (8) is called when the cop falls asleep and sets cycles to 220.
-//  this is not enough time to get to the door, so we patch it to 42 seconds
+// `sargSleeping::changeState(8)` is called when the cop falls asleep and sets
+// the puzzle timer to 220 cycles. This is CPU-speed dependent and not usually
+// enough time to get to the door, so patch it to 22 seconds instead.
 // Applies to at least: English PC-CD, German PC-CD, English Mac
-// Responsible method: sargSleeping::changeState
-static const uint16 gk1SignatureDay6PoliceSleep[] = {
-	0x35, 0x08,                         // ldi 08
-	0x1a,                               // eq?
-	0x31, SIG_ADDTOOFFSET(+1),          // bnt [next state check]
+static const uint16 gk1Day6PoliceSleepSignature[] = {
+	0x35, 0x08,                // ldi 8
+	0x1a,                      // eq?
+	0x31, SIG_ADDTOOFFSET(+1), // bnt [next state check]
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(0x00dc),           // ldi 220
-	0x65, SIG_ADDTOOFFSET(+1),          // aTop cycles (1a for PC, 1c for Mac)
-	0x32,                               // jmp [end]
+	0x34, SIG_UINT16(0xdc),    // ldi 220
+	0x65, SIG_ADDTOOFFSET(+1), // aTop cycles ($1a for PC, $1c for Mac)
+	0x32,                      // jmp [end]
 	SIG_END
 };
 
-static const uint16 gk1PatchDay6PoliceSleep[] = {
+static const uint16 gk1Day6PoliceSleepPatch[] = {
 	PATCH_ADDTOOFFSET(+5),
-	0x34, PATCH_UINT16(0x002a),         // ldi 42
+	0x34, PATCH_UINT16(0x16),                  // ldi 22
 	0x65, PATCH_GETORIGINALBYTEADJUST(+9, +2), // aTop seconds (1c for PC, 1e for Mac)
 	PATCH_END
 };
 
-// At the start of day 5, there is like always some dialogue with Grace.
+// At the start of day 5, when the player already has the veve but still needs
+// to get the drum book, the drum book dialogue with Grace is played twice in
+// a row, and then the veve dialogue gets played again even though it was
+// already played during day 4.
 //
-// The dialogue script code about the drum book + veve newspaper clip is a bit broken.
+// The duplicate drum book dialogue happens because it is triggered once in
+// `GetTheVeve::changeState(0)` and then again in `GetTheVeve::changeState(11)`.
+// The re-run of the veve dialogue happens because the game gives the player
+// the drum book in `GetTheVeVe::changeState(1)`, then *after* doing so, checks
+// if the player has the drum book and runs the veve dialogue if so.
 //
-// In case the player already has the veve, but is supposed to get the drum book, then the drum book
-// dialogue is repeated twice and the veve newspaper dialogue is also repeated (although it was played on day 4
-// in such case already).
+// We fix both of these issues by skipping the has-drum-book check if the player
+// just got the drum book. Doing this causes the game to jump from state 1 to
+// state 12, which bypasses the duplicate drum book dialogue in state 11, as
+// well as the veve dialogue trigger in the has-drum-book check.
 //
-// Drum book dialogue is called twice.
-// Once via GetTheVeve::changeState(0) and a second time via GetTheVeve::changeState(11).
+// More notes: The veve newspaper item is inventory 9. The drum book is
+//             inventory 14. The flag for veve research is 36, the flag for drum
+//             research is 73.
 //
-// GetTheVeve::changeState(0) would also play the first line of the veve pattern newspaper and that's skipped,
-// when the player is supposed to get the drum book.
-// GetTheVeve::changeState(1) up to state 10 will do the dialogue about the veve newspaper.
-// At the start of state 1 though, the player will get the drum book in case he ask for research.
-// Right after that the scripts check, if the player has the drum book and then go the veve newspaper route.
-//
-// We fix this by skipping the drum book check in case the player just got the drum book.
-// The scripts will then skip to state 12, skipping over the second drum book dialogue call.
-//
-// More notes: The veve newspaper item is inventory 9. The drum book is inventory 14.
-//             The flag for veve research is 36, the flag for drum research is 73.
-//
-// This bug of course also occurs, when using the original interpreter.
-//
-// Special thanks, credits and kudos to sluicebox on IRC, who did a ton of research on this and even found this game bug originally.
+// Special thanks, credits and kudos to sluicebox on IRC, who did a ton of
+// research on this and even found this game bug originally.
 //
 // Applies to at least: English PC-CD, German PC-CD
-// Responsible method: getTheVeve::changeState(1) - script 212
-static const uint16 gk1SignatureDay5DrumBookDialogue[] = {
+// Responsible method: getTheVeve::changeState(1)
+static const uint16 gk1Day5DrumBookDialogueSignature[] = {
 	0x31, 0x0b,                         // bnt [skip giving player drum book code]
-	0x38, SIG_UINT16(0x0200),           // pushi 0200h
+	0x38, SIG_SELECTOR16(get),          // pushi $200 (get)
 	0x78,                               // push1
 	SIG_MAGICDWORD,
-	0x39, 0x0e,                         // pushi 0Eh
+	0x39, 0x0e,                         // pushi $e
 	0x81, 0x00,                         // lag global[0]
-	0x4a, 0x06, 0x00,                   // send 06 - GKEgo::get(0Eh)
+	0x4a, SIG_UINT16(0x06),             // send 6 - GKEgo::get($e)
 	// end of giving player drum book code
-	0x38, SIG_UINT16(0x0202),           // pushi 0202h
+	0x38, SIG_SELECTOR16(has),          // pushi $202 (has)
 	0x78,                               // push1
-	0x39, 0x0e,                         // pushi 0Eh
+	0x39, 0x0e,                         // pushi $e
 	0x81, 0x00,                         // lag global[0]
-	0x4a, 0x06, 0x00,                   // send 06 - GKEgo::has(0Eh)
+	0x4a, SIG_UINT16(0x06),             // send 6 - GKEgo::has($e)
 	0x18,                               // not
-	0x30, SIG_UINT16(0x0025),           // bnt [veve newspaper code]
+	0x30, SIG_UINT16(0x25),             // bnt [veve newspaper code]
 	SIG_END
 };
 
-static const uint16 gk1PatchDay5DrumBookDialogue[] = {
+static const uint16 gk1Day5DrumBookDialoguePatch[] = {
 	0x31, 0x0d,                         // bnt [skip giving player drum book code] adjusted
 	PATCH_ADDTOOFFSET(+11),             // skip give player drum book original code
 	0x33, 0x0D,                         // jmp [over the check inventory for drum book code]
 	// check inventory for drum book
-	0x38, SIG_UINT16(0x0202),           // pushi 0202h
+	0x38, PATCH_SELECTOR16(has),        // pushi $202 (has)
 	0x78,                               // push1
-	0x39, 0x0e,                         // pushi 0Eh
+	0x39, 0x0e,                         // pushi $e
 	0x81, 0x00,                         // lag global[0]
-	0x4a, 0x06, 0x00,                   // send 06 - GKEgo::has(0Eh)
+	0x4a, PATCH_UINT16(0x06),           // send 6 - GKEgo::has($e)
 	0x2f, 0x23,                         // bt [veve newspaper code] (adjusted, saves 2 bytes)
 	PATCH_END
 };
 
-// startOfDay5::changeState (20h) - when gabriel goes to the phone the script will hang
+// When Gabriel goes to the phone, the script softlocks at
+// `startOfDay5::changeState(32)`.
 // Applies to at least: English PC-CD, German PC-CD, English Mac
-// Responsible method: startOfDay5::changeState
-static const uint16 gk1SignatureDay5PhoneFreeze[] = {
-	0x4a,
-	SIG_MAGICDWORD, SIG_UINT16(0x000c), // send 0c
-	0x35, 0x03,                         // ldi 03
-	0x65, SIG_ADDTOOFFSET(+1),          // aTop cycles
-	0x32, SIG_ADDTOOFFSET(+2),          // jmp [end]
-	0x3c,                               // dup
-	0x35, 0x21,                         // ldi 21
+static const uint16 gk1Day5PhoneFreezeSignature[] = {
+	0x4a,                             // send ...
+	SIG_MAGICDWORD, SIG_UINT16(0x0c), // ... $c
+	0x35, 0x03,                       // ldi 3
+	0x65, SIG_ADDTOOFFSET(+1),        // aTop cycles
+	0x32, SIG_ADDTOOFFSET(+2),        // jmp [end]
+	0x3c,                             // dup
+	0x35, 0x21,                       // ldi $21
 	SIG_END
 };
 
-static const uint16 gk1PatchDay5PhoneFreeze[] = {
-	PATCH_ADDTOOFFSET(+3),
-	0x35, 0x06,                         // ldi 01
+static const uint16 gk1Day5PhoneFreezePatch[] = {
+	PATCH_ADDTOOFFSET(+3),                     // send $c
+	0x35, 0x06,                                // ldi 1
 	0x65, PATCH_GETORIGINALBYTEADJUST(+6, +6), // aTop ticks
 	PATCH_END
 };
 
-// Floppy version: Interrogation::dispose() compares an object reference
-// (stored in the view selector) with a number, leading to a crash (this kind
-// of comparison was not used in SCI32). The view selector is used to store
-// both a view number (in some cases), and a view reference (in other cases).
-// In the floppy version, the checks are in the wrong order, so there is a
-// comparison between a number an an object. In the CD version, the checks are
-// in the correct order, thus the comparison is correct, thus we use the code
-// from the CD version in the floppy one.
+// In GK1, the `view` selector is used to store view numbers in some cases and
+// object references to Views in other cases. `Interrogation::dispose` compares
+// an object stored in the `view` selector with a number (which is not valid)
+// because its checks are in the wrong order. The check order was fixed in the
+// CD version, so just do what the CD version does.
 // Applies to at least: English Floppy
-// Responsible method: Interrogation::dispose
-// TODO: Check, if English Mac is affected too and if this patch applies
-static const uint16 gk1SignatureInterrogationBug[] = {
+// TODO: Check if English Mac is affected too and if this patch applies
+static const uint16 gk1InterrogationBugSignature[] = {
 	SIG_MAGICDWORD,
-	0x65, 0x4c,                      // aTop 4c
-	0x67, 0x50,                      // pTos 50
-	0x34, SIG_UINT16(0x2710),        // ldi 2710
+	0x65, 0x4c,                      // aTop $4c
+	0x67, 0x50,                      // pTos $50
+	0x34, SIG_UINT16(0x2710),        // ldi $2710
 	0x1e,                            // gt?
-	0x31, 0x08,                      // bnt 08  [05a0]
-	0x67, 0x50,                      // pTos 50
-	0x34, SIG_UINT16(0x2710),        // ldi 2710
+	0x31, 0x08,                      // bnt 8  [05a0]
+	0x67, 0x50,                      // pTos $50
+	0x34, SIG_UINT16(0x2710),        // ldi $2710
 	0x04,                            // sub
-	0x65, 0x50,                      // aTop 50
-	0x63, 0x50,                      // pToa 50
-	0x31, 0x15,                      // bnt 15  [05b9]
-	0x39, 0x0e,                      // pushi 0e
+	0x65, 0x50,                      // aTop $50
+	0x63, 0x50,                      // pToa $50
+	0x31, 0x15,                      // bnt $15  [05b9]
+	0x39, SIG_SELECTOR8(view),       // pushi $e (view)
 	0x76,                            // push0
-	0x4a, SIG_UINT16(0x0004),        // send 0004
-	0xa5, 0x00,                      // sat 00
+	0x4a, SIG_UINT16(0x04),          // send 4
+	0xa5, 0x00,                      // sat 0
 	0x38, SIG_SELECTOR16(dispose),   // pushi dispose
 	0x76,                            // push0
-	0x63, 0x50,                      // pToa 50
-	0x4a, SIG_UINT16(0x0004),        // send 0004
-	0x85, 0x00,                      // lat 00
-	0x65, 0x50,                      // aTop 50
+	0x63, 0x50,                      // pToa $50
+	0x4a, SIG_UINT16(0x04),          // send 4
+	0x85, 0x00,                      // lat 0
+	0x65, 0x50,                      // aTop $50
 	SIG_END
 };
 
-static const uint16 gk1PatchInterrogationBug[] = {
-	0x65, 0x4c,                      // aTop 4c
-	0x63, 0x50,                      // pToa 50
-	0x31, 0x15,                      // bnt 15  [05b9]
-	0x39, 0x0e,                      // pushi 0e
+static const uint16 gk1InterrogationBugPatch[] = {
+	0x65, 0x4c,                      // aTop $4c
+	0x63, 0x50,                      // pToa $50
+	0x31, 0x15,                      // bnt $15  [05b9]
+	0x39, PATCH_SELECTOR8(view),     // pushi $e (view)
 	0x76,                            // push0
-	0x4a, 0x04, 0x00,                // send 0004
+	0x4a, PATCH_UINT16(0x04),        // send 4
 	0xa5, 0x00,                      // sat 00
 	0x38, PATCH_SELECTOR16(dispose), // pushi dispose
 	0x76,                            // push0
-	0x63, 0x50,                      // pToa 50
-	0x4a, 0x04, 0x00,                // send 0004
-	0x85, 0x00,                      // lat 00
-	0x65, 0x50,                      // aTop 50
-	0x67, 0x50,                      // pTos 50
-	0x34, PATCH_UINT16(0x2710),      // ldi 2710
+	0x63, 0x50,                      // pToa $50
+	0x4a, PATCH_UINT16(0x04),        // send 4
+	0x85, 0x00,                      // lat 0
+	0x65, 0x50,                      // aTop $50
+	0x67, 0x50,                      // pTos $50
+	0x34, PATCH_UINT16(0x2710),      // ldi $2710
 	0x1e,                            // gt?
-	0x31, 0x08,                      // bnt 08  [05b9]
-	0x67, 0x50,                      // pTos 50
-	0x34, PATCH_UINT16(0x2710),      // ldi 2710
+	0x31, 0x08,                      // bnt 8  [05b9]
+	0x67, 0x50,                      // pTos $50
+	0x34, PATCH_UINT16(0x2710),      // ldi $2710
 	0x04,                            // sub
-	0x65, 0x50,                      // aTop 50
-	PATCH_END
-};
-
-// On day 10 nearly at the end of the game, Gabriel Knight dresses up and right after that
-// someone will be at the door. Gabriel turns around to see what's going on.
-//
-// In ScummVM Gabriel turning around plays endlessly. This is caused by the loop of Gabriel
-// being kept at 1, but view + cel were changed accordingly. The view used - which is view 859 -
-// does not have a loop 1. kNumCels is called on that, BUT kNumCels in SSCI is broken in that
-// regard. It checks for loop > count and not loop >= count and will return basically random data
-// in case loop == count.
-//
-// In SSCI this simply worked by accident. kNumCels returned 0x53 in this case, but later script code
-// fixed that up somehow, so it worked out in the end.
-//
-// The setup for this is done in SDJEnters::changeState(0). The cycler will never reach the goal
-// because the goal will be cel -1, so it loops endlessly.
-//
-// We fix this by adding a setLoop(0).
-//
-// Applies to at least: English PC-CD, German PC-CD
-// Responsible method: sDJEnters::changeState
-static const uint16 gk1SignatureDay10GabrielDressUp[] = {
-	0x87, 0x01,                         // lap param[1]
-	0x65, 0x14,                         // aTop state
-	0x36,                               // push
-	0x3c,                               // dup
-	0x35, 0x00,                         // ldi 0
-	0x1a,                               // eq?
-	0x30, SIG_UINT16(0x006f),           // bnt [next state 1]
-	SIG_ADDTOOFFSET(+84),
-	0x39, 0x0e,                         // pushi 0Eh (view)
-	0x78,                               // push1
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x035B),           // pushi 035Bh (859d)
-	0x38, SIG_UINT16(0x0141),           // pushi 0141h (setCel)
-	0x78,                               // push1
-	0x76,                               // push0
-	0x38, SIG_UINT16(0x00E9),           // pushi 00E9h (setCycle)
-	0x7a,                               // push2
-	0x51, 0x18,                         // class End
-	0x36,                               // push
-	0x7c,                               // pushSelf
-	0x81, 0x00,                         // lag global[0]
-	0x4a, 0x14, 0x00,                   // send 14h
-										// GKEgo::view(859)
-										// GKEgo::setCel(0)
-										// GKEgo::setCycle(End, sDJEnters)
-	0x32, SIG_UINT16(0x0233),           // jmp [ret]
-	// next state
-	0x3c,                               // dup
-	0x35, 0x01,                         // ldi 01
-	0x1a,                               // eq?
-	0x31, 0x07,                         // bnt [next state 2]
-	0x35, 0x02,                         // ldi 02
-	0x65, 0x1a,                         // aTop cycles
-	0x32, SIG_UINT16(0x0226),           // jmp [ret]
-	// next state
-	0x3c,                               // dup
-	0x35, 0x02,                         // ldi 02
-	0x1a,                               // eq?
-	0x31, 0x2a,                         // bnt [next state 3]
-	0x78,                               // push1
-	SIG_ADDTOOFFSET(+34),
-	// part of state 2 code, delays for 1 cycle
-	0x35, 0x01,                         // ldi 1
-	0x65, 0x1a,                         // aTop cycles
-	SIG_END
-};
-
-static const uint16 gk1PatchDay10GabrielDressUp[] = {
-	PATCH_ADDTOOFFSET(+9),
-	0x30, SIG_UINT16(0x0073),           // bnt [next state 1] - offset adjusted
-	SIG_ADDTOOFFSET(+84 + 11),
-	// added by us: setting loop to 0 (5 bytes needed)
-	0x38, SIG_UINT16(0x00FB),           // pushi 00FBh (setLoop)
-	0x78,                               // push1
-	0x76,                               // push0
-	// original code, but offset changed
-	0x38, SIG_UINT16(0x00E9),           // pushi 00E9h (setCycle)
-	0x7a,                               // push2
-	0x51, 0x18,                         // class End
-	0x36,                               // push
-	0x7c,                               // pushSelf
-	0x81, 0x00,                         // lag global[0]
-	0x4a, 0x1a, 0x00,                   // send 1Ah - adjusted
-										// GKEgo::view(859)
-										// GKEgo::setCel(0)
-										// GKEgo::setLoop(0) <-- new, by us
-										// GKEgo::setCycle(End, sDJEnters)
-	// end of original code
-	0x3a,                               // toss
-	0x48,                               // ret (saves 1 byte)
-	// state 1 code
-	0x3c,                               // dup
-	0x34, SIG_UINT16(0x0001),           // ldi 0001 (waste 1 byte)
-	0x1a,                               // eq?
-	0x31, 2,                            // bnt [next state 2]
-	0x33, 41,                           // jmp to state 2 delay code
-	SIG_ADDTOOFFSET(+41),
-	// wait 2 cycles instead of only 1
-	0x35, 0x02,                         // ldi 2
+	0x65, 0x50,                      // aTop $50
 	PATCH_END
 };
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
-	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug,     gk1PatchInterrogationBug },
-	{  true,   212, "day 5 drum book dialogue error",              1, gk1SignatureDay5DrumBookDialogue, gk1PatchDay5DrumBookDialogue },
-	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze,      gk1PatchDay5PhoneFreeze },
-	{  true,   230, "day 6 police beignet timer issue 1/2",        1, gk1SignatureDay6PoliceBeignet1,   gk1PatchDay6PoliceBeignet1 },
-	{  true,   230, "day 6 police beignet timer issue 2/2",        1, gk1SignatureDay6PoliceBeignet2,   gk1PatchDay6PoliceBeignet2 },
-	{  true,   230, "day 6 police sleep timer issue",              1, gk1SignatureDay6PoliceSleep,      gk1PatchDay6PoliceSleep },
-	{  true,   808, "day 10 gabriel dress up infinite turning",    1, gk1SignatureDay10GabrielDressUp,  gk1PatchDay10GabrielDressUp },
+	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
+	{  true,   212, "fix day 5 drum book dialogue error",          1, gk1Day5DrumBookDialogueSignature, gk1Day5DrumBookDialoguePatch },
+	{  true,   212, "fix day 5 phone softlock",                    1, gk1Day5PhoneFreezeSignature,      gk1Day5PhoneFreezePatch },
+	{  true,   230, "fix day 6 police beignet timer issue (1/2)",  1, gk1Day6PoliceBeignetSignature1,   gk1Day6PoliceBeignetPatch1 },
+	{  true,   230, "fix day 6 police beignet timer issue (2/2)",  1, gk1Day6PoliceBeignetSignature2,   gk1Day6PoliceBeignetPatch2 },
+	{  true,   230, "fix day 6 police sleep timer issue",          1, gk1Day6PoliceSleepSignature,      gk1Day6PoliceSleepPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
