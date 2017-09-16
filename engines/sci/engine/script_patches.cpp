@@ -136,6 +136,8 @@ static const char *const selectorNameTable[] = {
 	"setScale",     // LSL6hires
 	"setScaler",    // LSL6hires
 	"readWord",     // LSL7, Phant1
+	"flag",         // PQ4
+	"select",       // PQ4
 #endif
 	NULL
 };
@@ -195,7 +197,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_font,
 	SELECTOR_setScale,
 	SELECTOR_setScaler,
-	SELECTOR_readWord
+	SELECTOR_readWord,
+	SELECTOR_flag,
+	SELECTOR_select
 #endif
 };
 
@@ -4230,133 +4234,115 @@ static const SciScriptPatcherEntry pq3Signatures[] = {
 #pragma mark -
 #pragma mark Police Quest 4
 
-// Adding support to also select both (text + speech at the same time) inside the game menu.
-// There is lowres support inside this code, but the button is never created for the lowres
-// version. That's why we effectively remove lowres support in those 2 methods, which
-// gives us more spare bytes to work with.
-//
-// For this to fully work, we need to inject our own view for the button that has both text and speech enabled.
-//
+// Add support for simultaneous speech & subtitles to the in-game UI.
+// The original game code has code paths for lo-res mode but only creates the
+// buttons in hi-res mode, so the lo-res code paths are removed to gain more
+// space for the patch.
 // Applies to: English CD
-// Responsible method: iconText::init, iconText::select (script 9)
-// Implements enhancement request: #9690
-static const uint16 pq4CDGameMenuSupportBOTHSignature[] = {
-	// We don't check the 2 methods completely, only the important bits
-	0x76,                               // push0
-	0x43, 0x22, 0x00, 0x00,             // callk IsHiRes
-	0x18,                               // not
-	0x31, 0x05,                         // bnt [skip next 2 opcodes, when hires]
+// Responsible method: iconText::init, iconText::select
+static const uint16 pq4CdSpeechAndSubtitlesSignature[] = {
+	// iconText::init
+	0x76,                         // push0
+	0x43, 0x22, SIG_UINT16(0x00), // callk IsHiRes
+	0x18,                         // not
+	0x31, 0x05,                   // bnt [skip next 2 opcodes, when hires]
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(0x2661),           // ldi 2661h
-	0x65, 0x78,                         // aTop mainView
-	0x89, 0x5a,                         // lsg global[5Ah]
-	0x35, 0x01,                         // ldi 01
-	0x12,                               // and
-	0x30, SIG_UINT16(0x1b),             // bnt [when in speech mode]
-	0x76,                               // push0
-	0x43, 0x22, 0x00, 0x00,             // callk IsHiRes
-	SIG_ADDTOOFFSET(+45),               // skip over the remaining code
-	0x38, SIG_UINT16(0x93),             // pushi 93h (init)
-	0x76,                               // push0
-	0x59, 0x01,                         // &rest 01
-	0x57, 0x8f, 0x04, 0x00,             // super GCItem
-	0x48,                               // ret
-	// now we should be at iconText::select
-	0x38, SIG_UINT16(0x01c4),           // pushi 1C4h (select)
-	0x76,                               // push0
-	0x59, 0x01,                         // &rest 01
-	0x57, 0x8f, 0x04, 0x00,             // super GCItem, 04
-	0x89, 0x5a,                         // lsg global[5Ah]
-	0x35, 0x02,                         // ldi 02
-	0x12,                               // and
-	0x30, SIG_UINT16(0x1F),             // bnt [jump to currently-in-text-mode code]
-	SIG_ADDTOOFFSET(+67),               // skip over the rest
-	0x48,                               // ret
+	0x34, SIG_UINT16(0x2661),     // ldi 9825
+	0x65, 0x78,                   // aTop mainView
+	0x89, 0x5a,                   // lsg global[$5a]
+	0x35, 0x01,                   // ldi 1
+	0x12,                         // and
+	0x30, SIG_UINT16(0x1b),       // bnt [when in speech mode]
+	0x76,                         // push0
+	0x43, 0x22, SIG_UINT16(0x00), // callk IsHiRes
+	SIG_ADDTOOFFSET(+45),         // skip over the remaining code
+	0x38, SIG_SELECTOR16(init),   // pushi $93 (init)
+	0x76,                         // push0
+	0x59, 0x01,                   // &rest 01
+	0x57, 0x8f, SIG_UINT16(0x04), // super GCItem
+	0x48,                         // ret
+
+	// iconText::select
+	0x38, SIG_SELECTOR16(select), // pushi $1c4 (select)
+	0x76,                         // push0
+	0x59, 0x01,                   // &rest 01
+	0x57, 0x8f, SIG_UINT16(0x04), // super GCItem, 4
+	0x89, 0x5a,                   // lsg global[$5a]
+	0x35, 0x02,                   // ldi 2
+	0x12,                         // and
+	0x30, SIG_UINT16(0x1f),       // bnt [jump to currently-in-text-mode code]
+	SIG_ADDTOOFFSET(+67),         // skip over the rest
+	0x48,                         // ret
 	SIG_END
 };
 
-static const uint16 pq4CDGameMenuSupportBOTHPatch[] = {
-	0x76,                               // push0
-	0x41, 2, PATCH_UINT16(0),           // call our new routine, that does set view+loop+cel
-	0x33, 64,                           // jmp (to original init, super GCItem call)
+static const uint16 pq4CdSpeechAndSubtitlesPatch[] = {
+	// iconText::init
+	0x76,                           // push0
+	0x41, 0x02, PATCH_UINT16(0x00), // call [our new subroutine which sets view+loop+cel], 0
+	0x33, 0x40,                     // jmp [to original init, super GCItem call]
 	// new code for setting view+loop+cel
-	0x34, PATCH_UINT16(10987),          // ldi 10987
-	0x65, 0x78,                         // aTop mainView - always set this view, because it's used by 2 states
-	0x89, 0x5a,                         // lsg global[5Ah]
-	0x35, 0x03,                         // ldi 03
-	0x1a,                               // eq?
-	0x31, 4,                            // bnt [skip over follow up code]
-	// set, when in dual mode
-	0x78,                               // push1
-	0x69, 0x7a,                         // sTop mainLoop
-	0x48,                               // ret
-	0x89, 0x5a,                         // lsg global[5Ah]
-	0x35, 0x01,                         // ldi 01
-	0x12,                               // and
-	0x31, 4,                            // bnt [skip over follow up code]
-	// set, when in text mode
-	0x76,                               // push0
-	0x69, 0x7a,                         // sTop mainLoop
-	0x48,                               // ret
-	// set, when in speech mode
-	0x34, PATCH_UINT16(10982),          // ldi 10982
-	0x65, 0x78,                         // aTop mainView
-	0x35, 15,                           // ldi 15d
-	0x65, 0x7a,                         // aTop mainLoop
-	0x48,                               // ret
-	PATCH_ADDTOOFFSET(+38),             // skip to iconText::select
+	0x34, PATCH_UINT16(0x2aeb),     // ldi 10987
+	0x65, 0x78,                     // aTop mainView - always set this view, because it's used by 2 states
+	0x89, 0x5a,                     // lsg global[$5a]
+	0x35, 0x03,                     // ldi 3
+	0x1a,                           // eq?
+	0x31, 0x04,                     // bnt [skip over follow up code]
+	// speech+subtitles mode
+	0x78,                           // push1
+	0x69, 0x7a,                     // sTop mainLoop
+	0x48,                           // ret
+	0x89, 0x5a,                     // lsg global[$5a]
+	0x35, 0x01,                     // ldi 1
+	0x12,                           // and
+	0x31, 0x04,                     // bnt [skip over follow up code]
+	// subtitles mode
+	0x76,                           // push0
+	0x69, 0x7a,                     // sTop mainLoop
+	0x48,                           // ret
+	// speech mode
+	0x34, PATCH_UINT16(0x2ae6),     // ldi 10982
+	0x65, 0x78,                     // aTop mainView
+	0x35, 0x0f,                     // ldi 15
+	0x65, 0x7a,                     // aTop mainLoop
+	0x48,                           // ret
+	PATCH_ADDTOOFFSET(+38),         // skip to iconText::select
+
 	// iconText::select
-	PATCH_ADDTOOFFSET(+10),             // skip over the super code
-	0xC1, 0x5A,                         // plusag 5Ah (increase 5Ah by one)
-	0xA1, 0x5A,                         // sag 5Ah (save)
-	0x36,                               // push
-	0x35, 0x04,                         // ldi 04
-	0x28,                               // uge?
-	0x31, 3,                            // bnt [skip over follow up code]
-	0x78,                               // push1
-	0xA9, 0x5A,                         // ssg 5Ah (save)
-	0x76,                               // push0
-	0x41, 153, PATCH_UINT16(0),         // call our new routine, that does set view+loop+cel, effectively -103
-	0x33, 47,                           // jmp (to end of original select, show call)
+	PATCH_ADDTOOFFSET(+10),         // skip over the super code
+	0xc1, 0x5a,                     // plusag 5Ah (increase 5Ah by one)
+	0xa1, 0x5a,                     // sag 5Ah (save)
+	0x36,                           // push
+	0x35, 0x04,                     // ldi 04
+	0x28,                           // uge?
+	0x31, 0x03,                     // bnt [skip over follow up code]
+	0x78,                           // push1
+	0xa9, 0x5a,                     // ssg 5Ah (save)
+	0x76,                           // push0
+	0x41, 0x99, PATCH_UINT16(0x00), // call [our new subroutine which sets view+loop+cel, effectively -103], 0
+	0x33, 0x2f,                     // jmp [to end of original select, show call]
 	PATCH_END
 };
 
-// In Police Quest 4 inside the Bitty Kitty show (room 315), the player has to first talk with a young woman, show her the police badge, then
-// show her the red shoe. She will tell the player that may "Barbie" knows more.
-// After leaving and entering later (not detailed here), Barbie will be available.
-// Now the player needs to show her the police badge as well and then it goes a bit weird.
-//
-// The player can show her the red shoe immediately, which will work dialog-wise, but points won't be awarded and the corresponding flag will also not get set.
-// Internally the game checks if some regular talking dialog (for Barbie) has been accessed before awarding the points and setting the flags.
-// When the player does not recognize this, the player may get stuck and it will look as if a game breaking glitch has happened.
-//
-// Showing the red shoe to the young woman AND showing it to Barbie is all done using the same script.
-// It works via shoeShoe::changeState.
-//
-// The code in there of state 0 checks first who is currently inside the room using stripper::noun.
-// Afterwards for the young woman it checks local 3 if it's zero or not zero.
-// Local 3 is set, when the player has shown the police badge to the person, that is currently inside the room.
-//
-// For Barbie strangely global 9Ah is checked instead, which then causes those issues.
-//
-// We change the Barbie code to also check local 3, which seems to work out.
-// We can't simply remove the check, otherwise the flag will get set even when the player
-// hasn't shown the badge, which will cause Barbie to not answer the question and the player
-// won't be able to show her the shoe a second time.
-//
-// This of course also happened, when using the original interpreter.
-//
+// When showing the red shoe to Barbie after showing the police badge but before
+// exhausting the normal dialogue tree, the game plays the expected dialogue but
+// fails to award points or set an internal flag indicating this interaction has
+// occurred (which is needed to progress in the game). This is because the game
+// checks global $9a (dialogue progress flag) instead of local 3 (badge shown
+// flag) when interacting with Barbie. The game uses the same
+// `shoeShoe::changeState` method for showing the shoe to the young woman at the
+// bar earlier in the game, and checks local 3 then, so just check local 3 in
+// both cases to prevent the game from appearing to be in an unwinnable state
+// just because the player interacted in the "wrong" order.
 // Applies to at least: English floppy, German floppy, English CD
-// Responsible method: showShoe::changeState(0) - script 315
-// Fixes bug: #9849
 static const uint16 pq4BittyKittyShowBarieRedShoeSignature[] = {
 	// stripper::noun check is for checking, if police badge was shown
 	SIG_MAGICDWORD,
-	0x89, 0x9a,                         // lsg global[9Ah]
-	0x35, 0x02,                         // ldi 02
+	0x89, 0x9a,                         // lsg global[$9a]
+	0x35, 0x02,                         // ldi 2
 	0x1e,                               // gt?
 	0x30, SIG_UINT16(0x0028),           // bnt [skip 2 points code]
-	0x39, 0x61,                         // pushi 61h (flag)
+	0x39, SIG_SELECTOR8(flag),          // pushi $61 (flag)
 	SIG_END
 };
 
@@ -4367,22 +4353,18 @@ static const uint16 pq4BittyKittyShowBarbieRedShoePatch[] = {
 	PATCH_END
 };
 
-// In Police Quest 4 scripts for room 390 (city hall) use ticks instead of seconds.
-// Ticks are not behaving the same as seconds. Ticks will also go down within game menus including inventory.
-// When getting attacked, the player has almost no time to draw the gun - and even when the player has the gun
-// equipped in advance, afterwards the attacker needs to get cuffed. Which means selecting the cuffs inside
-// the inventory.
-// It's not obvious that this sequence doesn't stop time while inside game menus, which is why the player
-// may think it's a bug when the player is literally instantly attacked and killed after returning from inventory.
-//
-// Another action-sequence right before that uses ::seconds (woman, who attacks ego with a knife).
-//
-// That's why we change all occurrences of ::ticks to ::seconds and also adjust the values accordingly.
-//
-// This is not a perfect solution. The game system will decrease ::seconds by 1 after entering+exiting the game menu,
-// that's why I raised some of the timers for 1 or 2 seconds. A better solution would be to make it so game system
-// won't decrease ticks/seconds after returning from the game menu. That could of course break things, but should be investigated.
-//
+// In PQ4, scripts for the city hall action sequences use `ticks`. These
+// continue to count down even during inventory interaction, so if the user is
+// unable to find the correct inventory item quickly enough for the sequence,
+// the game will immediately end with a "game over" once they close the
+// inventory and the main game loop resumes. This can seem like a game bug, so
+// we change these sequences to use `seconds`, which only tick down by 1 when
+// the game returns to the main loop and the wall time has changed, even if many
+// seconds have actually elapsed. However, since `seconds` uses absolute
+// hardware clock time with a granularity of 1 second, "one" second can actually
+// be less than one second if the timer is set in between hardware clock
+// seconds, so the values are increased slightly from their equivalent tick
+// values to compensate for this.
 // Applies to at least: English Floppy, German floppy
 // Responsible method: metzAttack::changeState(2) - 120 ticks (player needs to draw gun)
 //                     stickScr::changeState(0) - 180 ticks (player needs to tell enemy to drop gun)
@@ -4390,101 +4372,106 @@ static const uint16 pq4BittyKittyShowBarbieRedShoePatch[] = {
 //                     turnMetz::changeState(5) - 600/420 ticks (player needs to cuff Metz)
 //                     all in script 390
 //
-// The code for the CD version was changed quite a bit, the selector for ticks also changed from 0x10 (so opcode-wise it's 0x20) to 0x11 (opcode-wise 0x22),
-// so additional signatures/patches will need to be added for CD version.
-//
-// metzAttack::changeState(2)
+// TODO: The object structure changed in PQ4CD so ticks moved from 0x20 to 0x22.
+// Additional signatures/patches will need to be added for CD version.
 static const uint16 pq4FloppyCityHallDrawGunTimerSignature[] = {
 	SIG_MAGICDWORD,
-	0x4a, SIG_UINT16(0x0008),           // send 08
-	0x32,                               // jmp [ret]
-	SIG_ADDTOOFFSET(+8),                // skip over some code
-	0x35, 0x78,                         // pushi 0078h (120)
-	0x65, 0x20,                         // aTop ticks
+	0x4a, SIG_UINT16(0x08), // send 8
+	0x32,                   // jmp [ret]
+	SIG_ADDTOOFFSET(+8),    // skip over some code
+	0x35, 0x78,             // pushi $78 (120)
+	0x65, 0x20,             // aTop ticks
 	SIG_END
 };
+
 static const uint16 pq4FloppyCityHallDrawGunTimerPatch[] = {
-	PATCH_ADDTOOFFSET(12),
-	0x35, 0x05,                         // pushi 4
-	0x65, 0x1c,                         // aTop seconds - raise time from 2 seconds to 4 seconds
-	PATCH_END
-};
-// stickScr::changeState(0)
-static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerSignature[] = {
-	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(180),              // pushi 00B4h (180)
-	0x65, 0x20,                         // aTop ticks
-	0x32, SIG_UINT16(0x005e),           // jmp to ret
-	SIG_END
-};
-static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerPatch[] = {
-	0x34, PATCH_UINT16(5),              // pushi 5
-	0x65, 0x1c,                         // aTop seconds - raise time from 3 seconds to 5 seconds
-	PATCH_END
-};
-// dropStick::changeState(5)
-static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerSignature[] = {
-	SIG_MAGICDWORD,
-	0x4a, SIG_UINT16(0x0004),           // send 04
-	0x35, 0x78,                         // pushi 0078h (120)
-	0x65, 0x20,                         // aTop ticks
-	SIG_END
-};
-static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerPatch[] = {
-	PATCH_ADDTOOFFSET(+3),
-	0x35, 0x03,                         // pushi 3
-	0x65, 0x1c,                         // aTop seconds - raise time from 2 seconds to 3 seconds
-	PATCH_END
-};
-// turnMetz::changeState(5)
-static const uint16 pq4FloppyCityHallCuffEnemyTimerSignature[] = {
-	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(600),              // pushi 258h (600)
-	0x65, 0x20,                         // aTop ticks
-	SIG_ADDTOOFFSET(+3),
-	0x34, SIG_UINT16(420),              // pushi 1A4h (420)
-	0x65, 0x20,                         // aTop ticks
-	SIG_END
-};
-static const uint16 pq4FloppyCityHallCuffEnemyTimerPatch[] = {
-	0x34, PATCH_UINT16(10),             // pushi 10
-	0x65, 0x1c,                         // aTop seconds - time is 10 seconds
-	PATCH_ADDTOOFFSET(+3),
-	0x34, SIG_UINT16(7),                // pushi 7
-	0x65, 0x1c,                         // aTop seconds - time is 7 seconds
+	PATCH_ADDTOOFFSET(+12), // send 8, jmp, skip over some code
+	0x35, 0x05,             // pushi 4 (120t/2s -> 4s)
+	0x65, 0x1c,             // aTop seconds
 	PATCH_END
 };
 
-// Right at the end in room 755, the last action sequence is also using ticks instead of seconds.
-// For details, read the description of city hall action sequence issues right above this.
-//
-// Applies to at least: English Floppy, German floppy, English CD
-// Responsible method: comeInLast::changeState(11) - 300 ticks (player needs to use item) - in script 755
-static const uint16 pq4LastActionHeroTimerSignature[] = {
+// stickScr::changeState(0)
+static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerSignature[] = {
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(300),              // pushi 012Ch (300)
-	0x65, SIG_ADDTOOFFSET(+1),          // aTop ticks (20h for floppy, 22h for CD)
+	0x34, SIG_UINT16(0xb4), // pushi $b4 (180)
+	0x65, 0x20,             // aTop ticks
+	0x32, SIG_UINT16(0x5e), // jmp to ret
 	SIG_END
 };
+
+static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerPatch[] = {
+	0x34, PATCH_UINT16(0x05), // pushi 5 (180t/3s -> 5s)
+	0x65, 0x1c,               // aTop seconds
+	PATCH_END
+};
+
+// dropStick::changeState(5)
+static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerSignature[] = {
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x04), // send 4
+	0x35, 0x78,             // pushi $78 (120)
+	0x65, 0x20,             // aTop ticks
+	SIG_END
+};
+
+static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerPatch[] = {
+	PATCH_ADDTOOFFSET(+3), // send 4
+	0x35, 0x03,            // pushi 3 (120t/2s -> 3s)
+	0x65, 0x1c,            // aTop seconds
+	PATCH_END
+};
+
+// turnMetz::changeState(5)
+static const uint16 pq4FloppyCityHallCuffEnemyTimerSignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x258), // pushi $258 (600)
+	0x65, 0x20,              // aTop ticks
+	SIG_ADDTOOFFSET(+3),
+	0x34, SIG_UINT16(0x1a4), // pushi $1a4 (420)
+	0x65, 0x20,              // aTop ticks
+	SIG_END
+};
+
+static const uint16 pq4FloppyCityHallCuffEnemyTimerPatch[] = {
+	0x34, PATCH_UINT16(0x0a), // pushi 10 (600t/10s)
+	0x65, 0x1c,               // aTop seconds
+	PATCH_ADDTOOFFSET(+3),
+	0x34, SIG_UINT16(0x07),   // pushi 7 (420t/7s)
+	0x65, 0x1c,               // aTop seconds
+	PATCH_END
+};
+
+// The end game action sequence also uses ticks instead of seconds. See the
+// description of city hall action sequence issues for more information.
+// Applies to at least: English Floppy, German floppy, English CD
+// Responsible method: comeInLast::changeState(11)
+static const uint16 pq4LastActionHeroTimerSignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x12c),   // pushi $12c (300)
+	0x65, SIG_ADDTOOFFSET(+1), // aTop ticks ($20 for floppy, $22 for CD)
+	SIG_END
+};
+
 static const uint16 pq4LastActionHeroTimerPatch[] = {
-	0x34, PATCH_UINT16(5),                    // pushi 5
-	0x65, PATCH_GETORIGINALBYTEADJUST(4, -4), // aTop seconds - 5 seconds
+	0x34, PATCH_UINT16(0x05),                 // pushi 5 (300t/5s)
+	0x65, PATCH_GETORIGINALBYTEADJUST(4, -4), // aTop seconds
 	PATCH_END
 };
 
 //          script, description,                                          signature                                           patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
-	{  true,     9, "CD: game menu to support BOTH",                   1, pq4CDGameMenuSupportBOTHSignature,                  pq4CDGameMenuSupportBOTHPatch },
-	{  true,   315, "show barbie the red shoe points fix",             1, pq4BittyKittyShowBarieRedShoeSignature,             pq4BittyKittyShowBarbieRedShoePatch },
-	{  true,   390, "floppy: city hall: draw gun timer",               1, pq4FloppyCityHallDrawGunTimerSignature,             pq4FloppyCityHallDrawGunTimerPatch },
-	{  true,   390, "floppy: city hall: tell enemy drop weapon timer", 1, pq4FloppyCityHallTellEnemyDropWeaponTimerSignature, pq4FloppyCityHallTellEnemyDropWeaponTimerPatch },
-	{  true,   390, "floppy: city hall: tell enemy turn around timer", 1, pq4FloppyCityHallTellEnemyTurnAroundTimerSignature, pq4FloppyCityHallTellEnemyTurnAroundTimerPatch },
-	{  true,   390, "floppy: city hall: cuff enemy timer",             1, pq4FloppyCityHallCuffEnemyTimerSignature,           pq4FloppyCityHallCuffEnemyTimerPatch },
-	{  true,   755, "last action sequence timer",                      1, pq4LastActionHeroTimerSignature,                    pq4LastActionHeroTimerPatch },
-	{  true, 64918, "Str::strip fix for floppy version",               1, sci2BrokenStrStripSignature,                        sci2BrokenStrStripPatch },
+	{  true,     9, "add speech+subtitles to in-game UI",              1, pq4CdSpeechAndSubtitlesSignature,                   pq4CdSpeechAndSubtitlesPatch },
+	{  true,   315, "fix missing points showing barbie the red shoe",  1, pq4BittyKittyShowBarieRedShoeSignature,             pq4BittyKittyShowBarbieRedShoePatch },
+	{  true,   390, "change floppy city hall use gun timer",           1, pq4FloppyCityHallDrawGunTimerSignature,             pq4FloppyCityHallDrawGunTimerPatch },
+	{  true,   390, "change floppy city hall say 'drop weapon' timer", 1, pq4FloppyCityHallTellEnemyDropWeaponTimerSignature, pq4FloppyCityHallTellEnemyDropWeaponTimerPatch },
+	{  true,   390, "change floppy city hall say 'turn around' timer", 1, pq4FloppyCityHallTellEnemyTurnAroundTimerSignature, pq4FloppyCityHallTellEnemyTurnAroundTimerPatch },
+	{  true,   390, "change floppy city hall use handcuffs timer",     1, pq4FloppyCityHallCuffEnemyTimerSignature,           pq4FloppyCityHallCuffEnemyTimerPatch },
+	{  true,   755, "change last action sequence timer",               1, pq4LastActionHeroTimerSignature,                    pq4LastActionHeroTimerPatch },
 	{  true, 64908, "disable video benchmarking",                      1, sci2BenchmarkSignature,                             sci2BenchmarkPatch },
-	{  true, 64990, "increase number of save games",                   1, sci2NumSavesSignature1,                             sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",                   1, sci2NumSavesSignature2,                             sci2NumSavesPatch2 },
+	{  true, 64918, "fix Str::strip in floppy version",                1, sci2BrokenStrStripSignature,                        sci2BrokenStrStripPatch },
+	{  true, 64990, "increase number of save games (1/2)",             1, sci2NumSavesSignature1,                             sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",             1, sci2NumSavesSignature2,                             sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",                 1, sci2ChangeDirSignature,                             sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
