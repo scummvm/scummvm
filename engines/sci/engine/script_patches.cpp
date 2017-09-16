@@ -135,7 +135,7 @@ static const char *const selectorNameTable[] = {
 	"font",         // KQ7
 	"setScale",     // LSL6hires
 	"setScaler",    // LSL6hires
-	"readWord",     // LSL7
+	"readWord",     // LSL7, Phant1
 #endif
 	NULL
 };
@@ -3564,30 +3564,30 @@ static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
 // game volumes through the launcher, so stop the game from overwriting the
 // ScummVM volumes with volumes from save games.
 // Applies to at least: English CD
-static const uint16 phant1SignatureSavedVolume[] = {
-	0x7a,                         // push2
-	0x39, 0x08,                   // pushi 8
-	0x38, SIG_UINT16(0x20b),      // push $20b (readWord)
-	0x76,                         // push0
-	0x72, SIG_UINT16(0x13c),      // lofsa $13c (PREF.DAT)
-	0x4a, SIG_UINT16(0x04),       // send 4
+static const uint16 phant1SavedVolumeSignature[] = {
+	0x7a,                           // push2
+	0x39, 0x08,                     // pushi 8
+	0x38, SIG_SELECTOR16(readWord), // push $20b (readWord)
+	0x76,                           // push0
+	0x72, SIG_UINT16(0x13c),        // lofsa $13c (PREF.DAT)
+	0x4a, SIG_UINT16(0x04),         // send 4
 	SIG_MAGICDWORD,
-	0xa1, 0xbc,                   // sag $bc
-	0x36,                         // push
-	0x43, 0x76, SIG_UINT16(0x04), // callk DoAudio[76], 4
-	0x7a,                         // push2
-	0x76,                         // push0
-	0x38, SIG_UINT16(0x20b),      // push $20b (readWord)
-	0x76,                         // push0
-	0x72, SIG_UINT16(0x13c),      // lofsa $13c (PREF.DAT)
-	0x4a, SIG_UINT16(0x04),       // send 4
-	0xa1, 0xbb,                   // sag $bb
-	0x36,                         // push
-	0x43, 0x75, SIG_UINT16(0x04), // callk DoSound[75], 4
+	0xa1, 0xbc,                     // sag $bc
+	0x36,                           // push
+	0x43, 0x76, SIG_UINT16(0x04),   // callk DoAudio[76], 4
+	0x7a,                           // push2
+	0x76,                           // push0
+	0x38, SIG_SELECTOR16(readWord), // push $20b (readWord)
+	0x76,                           // push0
+	0x72, SIG_UINT16(0x13c),        // lofsa $13c (PREF.DAT)
+	0x4a, SIG_UINT16(0x04),         // send 4
+	0xa1, 0xbb,                     // sag $bb
+	0x36,                           // push
+	0x43, 0x75, SIG_UINT16(0x04),   // callk DoSound[75], 4
 	SIG_END
 };
 
-static const uint16 phant1PatchSavedVolume[] = {
+static const uint16 phant1SavedVolumePatch[] = {
 	0x32, PATCH_UINT16(36),         // jmp [to prefFile::close]
 	PATCH_END
 };
@@ -3611,7 +3611,7 @@ static const uint16 phant1RatSignature[] = {
 	SIG_MAGICDWORD,
 	0x78,                         // push1
 	0x39, 0x1a,                   // pushi $1a
-	0x45, 0x03, SIG_UINT16(0x02), // callb 03, 0002
+	0x45, 0x03, SIG_UINT16(0x02), // callb 3, 2
 	0x18,                         // not
 	0x31, 0x18,                   // bnt $18
 	SIG_END
@@ -3624,9 +3624,9 @@ static const uint16 phant1RatPatch[] = {
 
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
-	{  true,   901, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   901, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,  1111, "ignore audio settings from save game",        1, phant1SavedVolumeSignature,      phant1SavedVolumePatch },
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
-	{  true,  1111, "ignore audio settings from save game",        1, phant1SignatureSavedVolume,      phant1PatchSavedVolume },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
