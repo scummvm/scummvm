@@ -46,7 +46,7 @@ public:
 	/**
 	 * Called when the hardware mouse moves.
 	 */
-	void deviceMoved(Common::Point &position);
+	bool deviceMoved(Common::Point &position);
 
 	/**
 	 * Called by GfxFrameout once for each show

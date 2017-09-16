@@ -340,9 +340,9 @@ void GfxCursor32::setPosition(const Common::Point &position) {
 	newPosition.x = (position.x * Ratio(screenWidth, scriptWidth)).toInt();
 	newPosition.y = (position.y * Ratio(screenHeight, scriptHeight)).toInt();
 
-	g_sci->getEventManager()->flushEvents();
-	g_system->warpMouse(newPosition.x, newPosition.y);
-	deviceMoved(newPosition);
+	if (!deviceMoved(newPosition)) {
+		g_system->warpMouse(newPosition.x, newPosition.y);
+	}
 }
 
 void GfxCursor32::gonnaPaint(Common::Rect paintRect) {
@@ -375,7 +375,7 @@ void GfxCursor32::donePainting() {
 	}
 }
 
-void GfxCursor32::deviceMoved(Common::Point &position) {
+bool GfxCursor32::deviceMoved(Common::Point &position) {
 	bool restricted = false;
 
 	if (position.x < _restrictedArea.left) {
@@ -403,6 +403,8 @@ void GfxCursor32::deviceMoved(Common::Point &position) {
 		_position = position;
 		move();
 	}
+
+	return restricted;
 }
 
 void GfxCursor32::move() {
