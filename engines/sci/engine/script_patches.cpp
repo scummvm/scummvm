@@ -987,9 +987,10 @@ static const uint16 gk1Day6PoliceSleepPatch[] = {
 // if the player has the drum book and runs the veve dialogue if so.
 //
 // We fix both of these issues by skipping the has-drum-book check if the player
-// just got the drum book. Doing this causes the game to jump from state 1 to
-// state 12, which bypasses the duplicate drum book dialogue in state 11, as
-// well as the veve dialogue trigger in the has-drum-book check.
+// just got the drum book in 'GetTheVeve::changeState(1)'.
+// Doing this causes the game to jump from state 1 to state 12, which bypasses
+// the duplicate drum book dialogue in state 11, as well as the veve dialogue
+// trigger in the has-drum-book check.
 //
 // More notes: The veve newspaper item is inventory 9. The drum book is
 //             inventory 14. The flag for veve research is 36, the flag for drum
@@ -999,7 +1000,6 @@ static const uint16 gk1Day6PoliceSleepPatch[] = {
 // research on this and even found this game bug originally.
 //
 // Applies to at least: English PC-CD, German PC-CD
-// Responsible method: getTheVeve::changeState(1)
 static const uint16 gk1Day5DrumBookDialogueSignature[] = {
 	0x31, 0x0b,                         // bnt [skip giving player drum book code]
 	0x38, SIG_SELECTOR16(get),          // pushi $200 (get)
@@ -1133,10 +1133,9 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 // The down scroll button in GK2 jumps up a pixel on mousedown because there is
 // a send to scrollSelections using an immediate value 1, which means to scroll
 // up by 1 pixel. This patch fixes the send to scrollSelections by passing the
-// button's delta instead of 1.
+// button's delta instead of 1 in 'ScrollButton::track'.
 //
 // Applies to at least: English CD 1.00, English Steam 1.01
-// Responsible method: ScrollButton::track
 static const uint16 gk2InvScrollSignature[] = {
 	0x7e, SIG_ADDTOOFFSET(2),               // line whatever
 	SIG_MAGICDWORD,
@@ -1158,8 +1157,8 @@ static const uint16 gk2InvScrollPatch[] = {
 	PATCH_END
 };
 
-// The init code that runs when GK2 starts up unconditionally resets the
-// music volume to 63, but the game should always use the volume stored in
+// The init code 'GK2::init' that runs when GK2 starts up unconditionally resets
+// the music volume to 63, but the game should always use the volume stored in
 // ScummVM.
 // Applies to at least: English 1.00 CD
 static const uint16 gk2VolumeResetSignature[] = {
@@ -1174,8 +1173,9 @@ static const uint16 gk2VolumeResetPatch[] = {
 	PATCH_END
 };
 
-// GK2 has custom video benchmarking code that needs to be disabled; see
-// sci2BenchmarkSignature
+// GK2 has custom video benchmarking code that needs to be disabled in a subroutine
+// which is called from 'GK2::init'; see sci2BenchmarkSignature
+// TODO: Patch is not applied to localized versions and needs to get adjusted
 static const uint16 gk2BenchmarkSignature[] = {
 	0x7e, SIG_ADDTOOFFSET(+2), // line
 	0x38, SIG_SELECTOR16(new), // pushi new
@@ -2021,8 +2021,9 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 // the bottom of the game area, and force it to always use black & white, which
 // are guaranteed to not be changed by game scripts.
 //
+// We make 2 changes to KQNarrator::init and one to Narrator::say.
+//
 // Applies to at least: PC CD 1.4 English, 1.51 English, 1.51 German, 2.00 English
-// Patched method: KQNarrator::init
 static const uint16 kq7SubtitleFixSignature1[] = {
 	SIG_MAGICDWORD,
 	0x39, SIG_SELECTOR8(fore), // pushi $25 (fore)
@@ -2047,7 +2048,6 @@ static const uint16 kq7SubtitleFixPatch1[] = {
 };
 
 // Applies to at least: PC CD 1.51 English, 1.51 German, 2.00 English
-// Patched method: Narrator::init
 static const uint16 kq7SubtitleFixSignature2[] = {
 	SIG_MAGICDWORD,
 	0x89, 0x5a,                         // lsg global[$5a]
@@ -2097,7 +2097,6 @@ static const uint16 kq7SubtitleFixPatch2[] = {
 };
 
 // Applies to at least: PC CD 1.51 English, 1.51 German, 2.00 English
-// Patched method: Narrator::say
 static const uint16 kq7SubtitleFixSignature3[] = {
 	SIG_MAGICDWORD,
 	0x63, 0x28,                 // pToa initialized
@@ -2140,8 +2139,8 @@ static const uint16 kq7SubtitleFixPatch3[] = {
 	PATCH_END
 };
 
-// KQ7 has custom video benchmarking code that needs to be disabled; see
-// sci2BenchmarkSignature
+// KQ7 has custom video benchmarking code that needs to be disabled in a subroutine
+// that is called by KQ7CD::init; see sci2BenchmarkSignature
 static const uint16 kq7BenchmarkSignature[] = {
 	0x38, SIG_SELECTOR16(new), // pushi new
 	0x76,                      // push0
@@ -2163,9 +2162,9 @@ static const uint16 kq7BenchmarkPatch[] = {
 
 // When attempting to use an inventory item on an object that does not interact
 // with that item, the game temporarily displays an X cursor, but does this by
-// spinning for 90000 cycles, which make the duration dependent on CPU speed,
-// maxes out the CPU for no reason, and keeps the engine from polling for events
-// (which may make the window appear nonresponsive to the OS)
+// spinning for 90000 cycles inside 'KQ7CD::pragmaFail', which make the duration
+// dependent on CPU speed, maxes out the CPU for no reason, and keeps the engine
+// from polling for events (which may make the window appear nonresponsive to the OS)
 // Applies to at least: KQ7 English 2.00b
 static const uint16 kq7PragmaFailSpinSignature[] = {
 	0x35, 0x00,               // ldi 0
@@ -4330,7 +4329,7 @@ static const uint16 pq4CdSpeechAndSubtitlesPatch[] = {
 // occurred (which is needed to progress in the game). This is because the game
 // checks global $9a (dialogue progress flag) instead of local 3 (badge shown
 // flag) when interacting with Barbie. The game uses the same
-// `shoeShoe::changeState` method for showing the shoe to the young woman at the
+// `shoeShoe::changeState(0)` method for showing the shoe to the young woman at the
 // bar earlier in the game, and checks local 3 then, so just check local 3 in
 // both cases to prevent the game from appearing to be in an unwinnable state
 // just because the player interacted in the "wrong" order.
@@ -4391,7 +4390,6 @@ static const uint16 pq4FloppyCityHallDrawGunTimerPatch[] = {
 	PATCH_END
 };
 
-// stickScr::changeState(0)
 static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerSignature[] = {
 	SIG_MAGICDWORD,
 	0x34, SIG_UINT16(0xb4), // pushi $b4 (180)
@@ -4406,7 +4404,6 @@ static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerPatch[] = {
 	PATCH_END
 };
 
-// dropStick::changeState(5)
 static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerSignature[] = {
 	SIG_MAGICDWORD,
 	0x4a, SIG_UINT16(0x04), // send 4
@@ -4422,7 +4419,6 @@ static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerPatch[] = {
 	PATCH_END
 };
 
-// turnMetz::changeState(5)
 static const uint16 pq4FloppyCityHallCuffEnemyTimerSignature[] = {
 	SIG_MAGICDWORD,
 	0x34, SIG_UINT16(0x258), // pushi $258 (600)
@@ -5476,7 +5472,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 #pragma mark -
 #pragma mark Quest for Glory 4
 
-// The trap init code incorrectly creates an int array for string data.
+// The 'Trap::init' code incorrectly creates an int array for string data.
 // Applies to at least: English CD
 static const uint16 qfg4TrapArrayTypeSignature[] = {
 	0x38, SIG_SELECTOR16(new), // pushi new
@@ -5495,8 +5491,9 @@ static const uint16 qfg4TrapArrayTypePatch[] = {
 	PATCH_END
 };
 
-// QFG4 has custom video benchmarking code that needs to be disabled; see
-// sci2BenchmarkSignature
+// QFG4 has custom video benchmarking code inside a subroutine, which is called
+// by 'glryInit::init', that needs to be disabled; see sci2BenchmarkSignature
+// Applies to at least: English CD, German Floppy
 static const uint16 qfg4BenchmarkSignature[] = {
 	0x38, SIG_SELECTOR16(new), // pushi new
 	0x76,                      // push0
@@ -6247,7 +6244,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 #pragma mark -
 #pragma mark Torins Passage
 
-// The init code that runs when Torin starts up unconditionally resets the
+// A subroutine that gets called by 'Torin::init' unconditionally resets the
 // audio volumes to defaults, but the game should always use the volume stored
 // in ScummVM. This patch is basically identical to the patch for LSL7, except
 // that they left line numbers in the LSL7 scripts and changed the music volume.
@@ -6268,7 +6265,7 @@ static const uint16 torinVolumeResetPatch1[] = {
 	PATCH_END
 };
 
-// The init code that runs when Torin starts up unconditionally resets the
+// A subroutine that gets called by 'Torin::init' unconditionally resets the
 // audio volumes to values stored in torin.prf, but the game should always use
 // the volume stored in ScummVM. This patch is basically identical to the patch
 // for LSL7, except that they left line numbers in the LSL7 scripts.
@@ -6302,14 +6299,17 @@ static const uint16 torinVolumeResetPatch2[] = {
 // tries to worm Boogle to the left side of the cave, the game will hang because
 // Boogle is on the wrong side of the navigable area barrier and cannot move
 // through it to continue the cutscene. This patch fixes the fast-forward code
-// in the seraglio so that Boogle's in-the-bag flag is set when fast forwarding.
-// Applies to at least: English CD
+// 'soBoogleBackUp::ff' in the seraglio so that Boogle's in-the-bag flag is set
+// when fast forwarding.
+// Applies to at least: English CD, Spanish CD
 static const uint16 torinSeraglioBoogleFlagSignature[] = {
 	0x35, 0x00,                 // ldi 0
 	SIG_MAGICDWORD,
 	0xa3, 0x00,                 // sal 0
 	0x38, SIG_SELECTOR16(test), // pushi test
 	SIG_ADDTOOFFSET(0x5a),      // all the rest of the method
+	// CHECKME: Spanish version seems to have a total of 0x5d bytes from this point to the ret
+	// FIXME: Check for end of method (e.g. ret) and add different signatures in case localized versions are different
 	SIG_END
 };
 
