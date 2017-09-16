@@ -4357,6 +4357,97 @@ static const SciScriptPatcherEntry pq3Signatures[] = {
 #pragma mark -
 #pragma mark Police Quest 4
 
+// Adding support to also select both (text + speech at the same time) inside the game menu.
+// There is lowres support inside this code, but the button is never created for the lowres
+// version. That's why we effectively remove lowres support in those 2 methods, which
+// gives us more spare bytes to work with.
+//
+// For this to fully work, we need to inject our own view for the button that has both text and speech enabled.
+//
+// Applies to: English CD
+// Responsible method: iconText::init, iconText::select (script 9)
+// Implements enhancement request: #9690
+static const uint16 pq4CDGameMenuSupportBOTHSignature[] = {
+	// We don't check the 2 methods completely, only the important bits
+	0x76,                               // push0
+	0x43, 0x22, 0x00, 0x00,             // callk IsHiRes
+	0x18,                               // not
+	0x31, 0x05,                         // bnt [skip next 2 opcodes, when hires]
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x2661),           // ldi 2661h
+	0x65, 0x78,                         // aTop mainView
+	0x89, 0x5a,                         // lsg global[5Ah]
+	0x35, 0x01,                         // ldi 01
+	0x12,                               // and
+	0x30, SIG_UINT16(0x1b),             // bnt [when in speech mode]
+	0x76,                               // push0
+	0x43, 0x22, 0x00, 0x00,             // callk IsHiRes
+	SIG_ADDTOOFFSET(+45),               // skip over the remaining code
+	0x38, SIG_UINT16(0x93),             // pushi 93h (init)
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01
+	0x57, 0x8f, 0x04, 0x00,             // super GCItem
+	0x48,                               // ret
+	// now we should be at iconText::select
+	0x38, SIG_UINT16(0x01c4),           // pushi 1C4h (select)
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01
+	0x57, 0x8f, 0x04, 0x00,             // super GCItem, 04
+	0x89, 0x5a,                         // lsg global[5Ah]
+	0x35, 0x02,                         // ldi 02
+	0x12,                               // and
+	0x30, SIG_UINT16(0x1F),             // bnt [jump to currently-in-text-mode code]
+	SIG_ADDTOOFFSET(+67),               // skip over the rest
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 pq4CDGameMenuSupportBOTHPatch[] = {
+	0x76,                               // push0
+	0x41, 2, PATCH_UINT16(0),           // call our new routine, that does set view+loop+cel
+	0x33, 64,                           // jmp (to original init, super GCItem call)
+	// new code for setting view+loop+cel
+	0x34, PATCH_UINT16(10987),          // ldi 10987
+	0x65, 0x78,                         // aTop mainView - always set this view, because it's used by 2 states
+	0x89, 0x5a,                         // lsg global[5Ah]
+	0x35, 0x03,                         // ldi 03
+	0x1a,                               // eq?
+	0x31, 4,                            // bnt [skip over follow up code]
+	// set, when in dual mode
+	0x78,                               // push1
+	0x69, 0x7a,                         // sTop mainLoop
+	0x48,                               // ret
+	0x89, 0x5a,                         // lsg global[5Ah]
+	0x35, 0x01,                         // ldi 01
+	0x12,                               // and
+	0x31, 4,                            // bnt [skip over follow up code]
+	// set, when in text mode
+	0x76,                               // push0
+	0x69, 0x7a,                         // sTop mainLoop
+	0x48,                               // ret
+	// set, when in speech mode
+	0x34, PATCH_UINT16(10982),          // ldi 10982
+	0x65, 0x78,                         // aTop mainView
+	0x35, 15,                           // ldi 15d
+	0x65, 0x7a,                         // aTop mainLoop
+	0x48,                               // ret
+	PATCH_ADDTOOFFSET(+38),             // skip to iconText::select
+	// iconText::select
+	PATCH_ADDTOOFFSET(+10),             // skip over the super code
+	0xC1, 0x5A,                         // plusag 5Ah (increase 5Ah by one)
+	0xA1, 0x5A,                         // sag 5Ah (save)
+	0x36,                               // push
+	0x35, 0x04,                         // ldi 04
+	0x28,                               // uge?
+	0x31, 3,                            // bnt [skip over follow up code]
+	0x78,                               // push1
+	0xA9, 0x5A,                         // ssg 5Ah (save)
+	0x76,                               // push0
+	0x41, 153, PATCH_UINT16(0),         // call our new routine, that does set view+loop+cel, effectively -103
+	0x33, 47,                           // jmp (to end of original select, show call)
+	PATCH_END
+};
+
 // In Police Quest 4 inside the Bitty Kitty show (room 315), the player has to first talk with a young woman, show her the police badge, then
 // show her the red shoe. She will tell the player that may "Barbie" knows more.
 // After leaving and entering later (not detailed here), Barbie will be available.
@@ -4510,6 +4601,7 @@ static const uint16 pq4LastActionHeroTimerPatch[] = {
 
 //          script, description,                                          signature                                           patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
+	{  true,     9, "CD: game menu to support BOTH",                   1, pq4CDGameMenuSupportBOTHSignature,                  pq4CDGameMenuSupportBOTHPatch },
 	{  true,   315, "show barbie the red shoe points fix",             1, pq4BittyKittyShowBarieRedShoeSignature,             pq4BittyKittyShowBarbieRedShoePatch },
 	{  true,   390, "floppy: city hall: draw gun timer",               1, pq4FloppyCityHallDrawGunTimerSignature,             pq4FloppyCityHallDrawGunTimerPatch },
 	{  true,   390, "floppy: city hall: tell enemy drop weapon timer", 1, pq4FloppyCityHallTellEnemyDropWeaponTimerSignature, pq4FloppyCityHallTellEnemyDropWeaponTimerPatch },
