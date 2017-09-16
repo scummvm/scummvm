@@ -133,6 +133,8 @@ static const char *const selectorNameTable[] = {
 	"fore",         // KQ7
 	"back",         // KQ7
 	"font",         // KQ7
+	"setScale",     // LSL6hires
+	"setScaler",    // LSL6hires
 #endif
 	NULL
 };
@@ -189,7 +191,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setCycle,
 	SELECTOR_fore,
 	SELECTOR_back,
-	SELECTOR_font
+	SELECTOR_font,
+	SELECTOR_setScale,
+	SELECTOR_setScaler
 #endif
 };
 
@@ -2526,16 +2530,16 @@ static const SciScriptPatcherEntry larry6Signatures[] = {
 // In SSCI this did not do much because the first argument happened to be
 // smaller than the y-position of `ego`, but in ScummVM the first argument is
 // larger and so a debug message "y value less than vanishingY" is displayed.
-static const uint16 larry6HiresSignatureSetScale[] = {
+static const uint16 larry6HiresSetScaleSignature[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x14b), // pushi 014b (setScale)
-	0x38, SIG_UINT16(0x05),  // pushi 0005
-	0x51, 0x2c,              // class 2c (Scaler)
+	0x38, SIG_SELECTOR16(setScale), // pushi $14b (setScale)
+	0x38, SIG_UINT16(0x05),         // pushi 5
+	0x51, 0x2c,                     // class 2c (Scaler)
 	SIG_END
 };
 
-static const uint16 larry6HiresPatchSetScale[] = {
-	0x38, SIG_UINT16(0x14f), // pushi 014f (setScaler)
+static const uint16 larry6HiresSetScalePatch[] = {
+	0x38, PATCH_SELECTOR16(setScaler), // pushi $14f (setScaler)
 	PATCH_END
 };
 
@@ -2543,14 +2547,14 @@ static const uint16 larry6HiresPatchSetScale[] = {
 // master music volume to 12 (and the volume dial to 11), but the game should
 // always use the volume stored in ScummVM.
 // Applies to at least: English CD
-static const uint16 larry6HiresSignatureVolumeReset[] = {
+static const uint16 larry6HiresVolumeResetSignature[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x0b,                         // ldi $0b
 	0xa1, 0xc2,                         // sag $c2
 	SIG_END
 };
 
-static const uint16 larry6HiresPatchVolumeReset[] = {
+static const uint16 larry6HiresVolumeResetPatch[] = {
 	0x32, PATCH_UINT16(1),  // jmp 1 [past volume change]
 	PATCH_END
 };
@@ -2558,11 +2562,11 @@ static const uint16 larry6HiresPatchVolumeReset[] = {
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,    71, "disable volume reset on startup (1/2)",       1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
-	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresSignatureVolumeReset,  larry6HiresPatchVolumeReset },
-	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSignatureSetScale,     larry6HiresPatchSetScale },
+	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,  larry6HiresVolumeResetPatch },
+	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,     larry6HiresSetScalePatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
