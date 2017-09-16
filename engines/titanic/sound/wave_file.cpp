@@ -188,7 +188,7 @@ const int16 *CWaveFile::lock() {
 	switch (_loadMode) {
 	case LOADMODE_SCUMMVM:
 		// Sanity checking that only raw 16-bit LE 22Khz waves can be locked
-		assert(_waveData && _rate == 22050);
+		assert(_waveData && _rate == AUDIO_SAMPLING_RATE);
 		assert(_flags == (Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS));
 		assert(_wavType == kWaveFormatPCM);
 

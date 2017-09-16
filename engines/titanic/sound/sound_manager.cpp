@@ -26,7 +26,6 @@
 
 namespace Titanic {
 
-const uint SAMPLING_RATE = 22050;
 const uint LATENCY = 100;
 const uint CHANNELS_COUNT = 16;
 
@@ -110,7 +109,7 @@ QSoundManager::QSoundManager(Audio::Mixer *mixer) : CSoundManager(), QMixer(mixe
 	Common::fill(&_channelsVolume[0], &_channelsVolume[16], 0);
 	Common::fill(&_channelsMode[0], &_channelsMode[16], 0);
 
-	qsWaveMixInitEx(QMIXCONFIG(SAMPLING_RATE, CHANNELS_COUNT, LATENCY));
+	qsWaveMixInitEx(QMIXCONFIG(AUDIO_SAMPLING_RATE, CHANNELS_COUNT, LATENCY));
 	qsWaveMixActivate(true);
 	qsWaveMixOpenChannel(0, QMIX_OPENALL);
 }

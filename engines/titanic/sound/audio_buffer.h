@@ -28,10 +28,12 @@
 
 namespace Titanic {
 
+#define AUDIO_SAMPLING_RATE 22050
+
 class CAudioBuffer {
 private:
 	Common::Mutex _mutex;
-	FixedQueue<int16, 88200> _data;
+	FixedQueue<int16, AUDIO_SAMPLING_RATE * 4> _data;
 public:
 	bool _finished;
 public:
