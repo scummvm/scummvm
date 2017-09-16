@@ -114,8 +114,9 @@ static const char *const selectorNameTable[] = {
 	"posn",         // SCI2 benchmarking script
 	"detailLevel",  // GK2 benchmarking
 	"view",         // RAMA benchmarking, GK1
-	"fade",         // Shivers sound fix
-	"play",         // Shivers sound fix
+	"fade",         // Shivers
+	"play",         // Shivers
+	"handleEvent",  // Shivers
 	"test",         // Torin
 	"get",          // Torin, GK1
 	"has",          // GK1
@@ -178,6 +179,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_view,
 	SELECTOR_fade,
 	SELECTOR_play,
+	SELECTOR_handleEvent,
 	SELECTOR_test,
 	SELECTOR_get,
 	SELECTOR_has,
@@ -6124,28 +6126,29 @@ static const SciScriptPatcherEntry ramaSignatures[] = {
 
 // In room 35170, there is a CCTV control station with a joystick that must be
 // clicked and dragged to pan the camera. In order to enable dragging, on
-// mousedown, the vJoystick::handleEvent method calls vJoystick::doVerb(1),
+// mousedown, the `vJoystick::handleEvent` method calls `vJoystick::doVerb(1)`,
 // which enables the drag functionality of the joystick. However,
-// vJoystick::handleEvent then makes a super call to ShiversProp::handleEvent,
-// which calls vJoystick::doVerb(). This second call, which fails to pass an
-// argument, causes an uninitialized read off the stack for the first parameter.
-// In SSCI, this happens to work because the uninitialized value on the stack
-// happens to be 1. Disabling the super call avoids the bad doVerb call without
-// any apparent ill effect.
+// `vJoystick::handleEvent` then makes a super call to
+// `ShiversProp::handleEvent`, which calls `vJoystick::doVerb()`. This second
+// call, which fails to pass an argument, causes an uninitialized read off the
+// stack for the first parameter. In SSCI, this happens to work because the
+// uninitialized value on the stack happens to be 1. Disabling the super call
+// avoids the bad doVerb call without any apparent ill effect.
 // The same problem exists when trying to drag the volume & brightness sliders
 // in the main menu. These controls are also fixed by this patch.
-static const uint16 shiversSignatureSuperCall[] = {
+// Applies to at least: US English
+static const uint16 shiversEventSuperCallSignature[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0xa5),    // pushi handleEvent
-	0x78,                      // push1
-	0x8f, 0x01,                // lsp 1
-	0x59, 0x02,                // &rest 2
-	0x57, 0x7f, SIG_UINT16(6), // super ShiversProp[7f], 6
+	0x38, SIG_SELECTOR16(handleEvent), // pushi handleEvent
+	0x78,                              // push1
+	0x8f, 0x01,                        // lsp 1
+	0x59, 0x02,                        // &rest 2
+	0x57, 0x7f, SIG_UINT16(0x06),      // super ShiversProp[7f], 6
 	SIG_END
 };
 
-static const uint16 shiversPatchSuperCall[] = {
-	0x48,                      // ret
+static const uint16 shiversEventSuperCallPatch[] = {
+	0x48, // ret
 	PATCH_END
 };
 
@@ -6158,25 +6161,25 @@ static const uint16 shiversPatchSuperCall[] = {
 // but here it is a number instead). Other rooms make this same call with the
 // correct fade selector, so fix the selector here to match.
 // Applies to at least: English CD
-static const uint16 shiversGodsItemsIxupiPlaySoundSignature[] = {
+static const uint16 shiversGodsIxupiPlaySoundSignature[] = {
 	SIG_MAGICDWORD,
-	0x39, SIG_SELECTOR8(play),     // pushi 33
-	0x38, SIG_UINT16(0x06),        // pushi 0006
+	0x39, SIG_SELECTOR8(play), // pushi $33
+	0x38, SIG_UINT16(0x06),    // pushi 6
 	SIG_END
 };
 
-static const uint16 shiversGodsItemsIxupiPlaySoundPatch[] = {
-	0x38, PATCH_SELECTOR16(fade),  // pushi 00f3
-	0x39, 0x06,                    // pushi 06
+static const uint16 shiversGodsIxupiPlaySoundPatch[] = {
+	0x38, PATCH_SELECTOR16(fade), // pushi $f3
+	0x39, 0x06,                   // pushi 6
 	PATCH_END
 };
 
-//          script, description,                                      signature                        patch
+//          script, description,                                      signature                           patch
 static const SciScriptPatcherEntry shiversSignatures[] = {
-	{  true, 35170, "fix CCTV joystick interaction",               1, shiversSignatureSuperCall,     shiversPatchSuperCall },
-	{  true,   990, "fix volume & brightness sliders",             2, shiversSignatureSuperCall,     shiversPatchSuperCall },
-	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,        sci2BenchmarkPatch },
-	{  true, 23090, "fix play call in room 23090",                 1, shiversGodsItemsIxupiPlaySoundSignature, shiversGodsItemsIxupiPlaySoundPatch },
+	{  true,   990, "fix volume & brightness sliders",             2, shiversEventSuperCallSignature,     shiversEventSuperCallPatch },
+	{  true, 23090, "fix bad Ixupi sound call",                    1, shiversGodsIxupiPlaySoundSignature, shiversGodsIxupiPlaySoundPatch },
+	{  true, 35170, "fix CCTV joystick interaction",               1, shiversEventSuperCallSignature,     shiversEventSuperCallPatch },
+	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,             sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
