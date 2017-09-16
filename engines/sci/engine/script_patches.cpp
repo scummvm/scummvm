@@ -6192,13 +6192,13 @@ static const SciScriptPatcherEntry shiversSignatures[] = {
 // CPU-dependent in ScummVM).
 static const uint16 sq6SlowTransitionSignature1[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x578), // pushi $0578
+	0x38, SIG_UINT16(0x578), // pushi $578
 	0x51, 0x33,              // class Styler
 	SIG_END
 };
 
 static const uint16 sq6SlowTransitionPatch1[] = {
-	0x38, SIG_UINT16(500), // pushi 500
+	0x38, SIG_UINT16(0x1f4), // pushi 500
 	PATCH_END
 };
 
@@ -6214,7 +6214,7 @@ static const uint16 sq6SlowTransitionSignature2[] = {
 };
 
 static const uint16 sq6SlowTransitionPatch2[] = {
-	0x38, SIG_UINT16(30), // pushi 30
+	0x38, SIG_UINT16(0x1e), // pushi 30
 	PATCH_END
 };
 
@@ -6233,15 +6233,15 @@ static const uint16 sq6BenchmarkSignature[] = {
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,     0, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
-	{  true,    15, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
-	{  true,    22, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,    15, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,    22, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   410, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
-	{  true,   460, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   460, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   500, "fix slow transitions",                        1, sq6SlowTransitionSignature1,     sq6SlowTransitionPatch1 },
-	{  true,   510, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   510, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sq6BenchmarkSignature,           sci2BenchmarkPatch },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
+	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,          sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
