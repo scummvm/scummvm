@@ -212,6 +212,13 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	return valid;
 }
 
+void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
+	assert(_window);
+	if (!_window->warpMouseInWindow(x, y)) {
+		_eventSource->fakeWarpMouse(x, y);
+	}
+}
+
 void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
 	_eventSource->resetKeyboardEmulation(width - 1, height - 1);
 	_forceRedraw = true;

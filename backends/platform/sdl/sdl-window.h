@@ -58,8 +58,10 @@ public:
 	/**
 	 * Warp the mouse to the specified position in window coordinates. The mouse
 	 * will only be warped if the window is focused in the window manager.
+	 *
+	 * @returns true if the system cursor was warped.
 	 */
-	void warpMouseInWindow(int x, int y);
+	bool warpMouseInWindow(int x, int y);
 
 	/**
 	 * Iconifies the window.

@@ -75,7 +75,7 @@ static uint32 convUTF8ToUTF32(const char *src) {
 #endif
 
 SdlEventSource::SdlEventSource()
-    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0)
+    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       , _queuedFakeKeyUp(false), _fakeKeyUp()
 #endif
@@ -505,6 +505,12 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 	if (screenID != _lastScreenID) {
 		_lastScreenID = screenID;
 		event.type = Common::EVENT_SCREEN_CHANGED;
+		return true;
+	}
+
+	if (_queuedFakeMouseMove) {
+		event = _fakeMouseMove;
+		_queuedFakeMouseMove = false;
 		return true;
 	}
 
@@ -1001,6 +1007,12 @@ void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.modifier = false;
 	_km.joy_x = 0;
 	_km.joy_y = 0;
+}
+
+void SdlEventSource::fakeWarpMouse(const int x, const int y) {
+	_queuedFakeMouseMove = true;
+	_fakeMouseMove.type = Common::EVENT_MOUSEMOVE;
+	_fakeMouseMove.mouse = Common::Point(x, y);
 }
 
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {

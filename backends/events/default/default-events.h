@@ -80,6 +80,7 @@ public:
 	virtual void init();
 	virtual bool pollEvent(Common::Event &event);
 	virtual void pushEvent(const Common::Event &event);
+	virtual void purgeMouseEvents() override;
 
 	virtual Common::Point getMousePos() const { return _mousePos; }
 	virtual int getButtonState() const { return _buttonState; }
