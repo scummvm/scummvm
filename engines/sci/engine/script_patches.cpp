@@ -2209,8 +2209,8 @@ static const uint16 lighthouseFlagResetPatch[] = {
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry lighthouseSignatures[] = {
 	{  true,     5, "fix bad globals clear after credits",         1, lighthouseFlagResetSignature,     lighthouseFlagResetPatch },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
