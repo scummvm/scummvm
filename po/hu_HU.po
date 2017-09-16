@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-09-15 03:46+0200\n"
+"POT-Creation-Date: 2017-09-16 06:06+0200\n"
 "PO-Revision-Date: 2017-09-09 02:29+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -892,7 +892,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Néhány játék támogatja a speciális árnyalási módokat"
 
 #: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:624
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2628
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2624
 msgid "Fullscreen mode"
 msgstr "Teljesképernyõs mód"
 
@@ -2205,7 +2205,7 @@ msgid "OpenGL"
 msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2630
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2626
 msgid "Windowed mode"
 msgstr "Ablakos mód"
 
@@ -2215,22 +2215,22 @@ msgid "Resolution: %dx%d"
 msgstr "Felbontás: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:761
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2507
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2503
 msgid "Enabled aspect ratio correction"
 msgstr "Méretarány korrekció engedélyezve"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2513
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
 msgid "Disabled aspect ratio correction"
 msgstr "Méretarány korrekció letiltva"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
 msgid "Filtering enabled"
 msgstr "Szûrés engedélyezve"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:785
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2533
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
 msgid "Filtering disabled"
 msgstr "Szûrés letiltva"
 
@@ -2245,7 +2245,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normál (nincs átméretezés)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2586
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2582
 msgid "Active graphics filter:"
 msgstr "Aktív grafikus szûrõk:"
 

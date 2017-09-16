@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-09-15 03:46+0200\n"
+"POT-Creation-Date: 2017-09-16 06:06+0200\n"
 "PO-Revision-Date: 2017-01-30 14:50+0000\n"
 "Last-Translator: Vitor Santos <vitorhgsantos90@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -909,7 +909,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Modos especiais de pontilhado suportados por alguns jogos"
 
 #: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:624
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2628
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2624
 msgid "Fullscreen mode"
 msgstr "Modo de ecrã inteiro"
 
@@ -2172,7 +2172,7 @@ msgid "OpenGL"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2630
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2626
 msgid "Windowed mode"
 msgstr ""
 
@@ -2182,22 +2182,22 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:761
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2507
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2503
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2513
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
 msgid "Filtering enabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:785
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2533
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
 msgid "Filtering disabled"
 msgstr ""
 
@@ -2212,7 +2212,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2586
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2582
 msgid "Active graphics filter:"
 msgstr ""
 
