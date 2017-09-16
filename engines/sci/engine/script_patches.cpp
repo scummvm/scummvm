@@ -99,7 +99,6 @@ static const char *const selectorNameTable[] = {
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
 	"say",          // Quest For Glory 1 VGA
-	"contains",     // Quest For Glory 2
 	"solvePuzzle",  // Quest For Glory 3
 	"timesShownID", // Space Quest 1 VGA
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
@@ -161,7 +160,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_say,
-	SELECTOR_contains,
 	SELECTOR_solvePuzzle,
 	SELECTOR_timesShownID,
 	SELECTOR_startText,
