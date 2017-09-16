@@ -4496,7 +4496,7 @@ static const SciScriptPatcherEntry pq4Signatures[] = {
 // master sound volume to 127, but the game should always use the volume stored
 // in ScummVM.
 // Applies to at least: English CD
-static const uint16 pqSwatSignatureVolumeReset1[] = {
+static const uint16 pqSwatVolumeResetSignature[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume
 	0x78,                               // push1
@@ -4505,14 +4505,14 @@ static const uint16 pqSwatSignatureVolumeReset1[] = {
 	SIG_END
 };
 
-static const uint16 pqSwatPatchVolumeReset1[] = {
+static const uint16 pqSwatVolumeResetPatch[] = {
 	0x32, PATCH_UINT16(6), // jmp 6 [past volume reset]
 	PATCH_END
 };
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry pqSwatSignatures[] = {
-	{  true,     0, "disable volume reset on startup (1/2)",       1, pqSwatSignatureVolumeReset1,       pqSwatPatchVolumeReset1 },
+	{  true,     0, "disable volume reset on startup (1/2)",       1, pqSwatVolumeResetSignature,        pqSwatVolumeResetPatch },
 	{  true,     1, "disable volume reset on startup (2/2)",       1, sci2VolumeResetSignature,          sci2VolumeResetPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
