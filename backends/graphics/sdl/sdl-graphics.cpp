@@ -231,11 +231,12 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	}
 
 	// We only update the actual window when flags change (which usually means
-	// fullscreen mode is entered/exited) or when updates are forced so that we
+	// fullscreen mode is entered/exited), when updates are forced so that we
 	// do not reset the window size whenever a game makes a call to change the
 	// size or pixel format of the internal game surface (since a user may have
-	// resized the game window)
-	if (!_window->getSDLWindow() || _lastFlags != flags || _allowWindowSizeReset) {
+	// resized the game window), or when the launcher is visible (since a user
+	// may change the scaler, which should reset the window size)
+	if (!_window->getSDLWindow() || _lastFlags != flags || _overlayVisible || _allowWindowSizeReset) {
 		if (_hintedWidth) {
 			width = _hintedWidth;
 		}
