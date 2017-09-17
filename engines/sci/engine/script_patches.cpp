@@ -4052,25 +4052,74 @@ static const uint16 phant2InvOffsetPatch[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                      patch
+// The text placement of "File" and "Note" content inside DocuStore File
+// Retrieval System makes some letters especially "g" overlap the
+// corresponding box. Set by 'WynNetDoco::open'.
+// We fix this by changing the position of those 2 inside the heap of
+// subclass 'WynNetDoco' slightly.
+// Applies to at least: English CD, Japanese CD, German CD
+static const uint16 phant2DocuStoreFileNotePlacementSignature[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x0046),   // nameX
+	SIG_UINT16(0x000a),   // nameY
+	SIG_ADDTOOFFSET(+10), // skip over nameMsg*
+	SIG_UINT16(0x0046),   // noteX
+	SIG_UINT16(0x001e),   // noteY
+	SIG_END
+};
+
+static const uint16 phant2DocuStoreFileNotePlacementPatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	PATCH_UINT16(0x0006),  // new nameY
+	PATCH_ADDTOOFFSET(+12),
+	PATCH_UINT16(0x001b),  // new noteY
+	PATCH_END
+};
+
+// The text placement of "From" and "Subject" content inside DocuStore.
+// We fix this by changing the position inside the heap of subclass
+// 'WynNetEmail' slightly.
+// For this one, we also fix the horizontal placement.
+static const uint16 phant2DocuStoreEmailPlacementSignature[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x0049),   // nameX
+	SIG_UINT16(0x0008),   // nameY
+	SIG_ADDTOOFFSET(+10), // skip over nameMsg*
+	SIG_UINT16(0x0049),   // noteX
+	SIG_UINT16(0x001c),   // noteY
+	SIG_END
+};
+
+static const uint16 phant2DocuStoreEmailPlacementPatch[] = {
+	PATCH_UINT16(0x0050), // new nameX
+	PATCH_UINT16(0x0006), // new nameY
+	SIG_ADDTOOFFSET(+10),
+	PATCH_UINT16(0x0050), // new noteX
+	PATCH_UINT16(0x001b), // new noteY
+	PATCH_END
+};
+
+//          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
-	{  true,     0, "speed up interface fades",                    3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
-	{  true,     0, "fix bad arguments to get game version",       1, phant2GetVersionSignature,     phant2GetVersionPatch },
-	{  true,  3000, "replace spin loop in alien password window",  1, phant2WaitParam1Signature,     phant2WaitParam1Patch },
-	{  true,  4081, "replace spin loop after ratboy puzzle",       1, phant2RatboySignature,         phant2RatboyPatch },
-	{  true, 63001, "fix inventory left scroll delta",             1, phant2InvLeftDeltaSignature,   phant2InvLeftDeltaPatch },
-	{  true, 63001, "fix inventory right scroll delta",            1, phant2InvRightDeltaSignature,  phant2InvRightDeltaPatch },
-	{  true, 63001, "fix inventory wrong initial offset",          1, phant2InvOffsetSignature,      phant2InvOffsetPatch },
-	{  true, 63004, "limit in-game audio volume",                  1, phant2AudioVolumeSignature,    phant2AudioVolumePatch },
-	{  true, 63016, "replace spin loop during music fades",        1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
-	{  true, 63019, "replace spin loop during computer load",      1, phant2WaitParam1Signature,     phant2WaitParam1Patch },
-	{  true, 63019, "replace spin loop during computer scrolling", 1, phant2SlowScrollSignature,     phant2SlowScrollPatch },
-	{  true, 63019, "fix bad doc/email name & memo positioning",   2, phant2BadPositionSignature,    phant2BadPositionPatch },
-	{  true, 63019, "fix bad folder/doc icon refresh",             2, phant2BadIconSignature,        phant2BadIconPatch },
-	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,      phant2SaveNamePatch1 },
-	{  true, 64990, "increase number of save games (1/2)",         1, phant2NumSavesSignature1,      phant2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games (2/2)",         2, phant2NumSavesSignature2,      phant2NumSavesPatch2 },
-	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,      phant2SaveNamePatch2 },
+	{  true,     0, "speed up interface fades",                    3, phant2SlowIFadeSignature,                  phant2SlowIFadePatch },
+	{  true,     0, "fix bad arguments to get game version",       1, phant2GetVersionSignature,                 phant2GetVersionPatch },
+	{  true,  3000, "replace spin loop in alien password window",  1, phant2WaitParam1Signature,                 phant2WaitParam1Patch },
+	{  true,  4081, "replace spin loop after ratboy puzzle",       1, phant2RatboySignature,                     phant2RatboyPatch },
+	{  true, 63001, "fix inventory left scroll delta",             1, phant2InvLeftDeltaSignature,               phant2InvLeftDeltaPatch },
+	{  true, 63001, "fix inventory right scroll delta",            1, phant2InvRightDeltaSignature,              phant2InvRightDeltaPatch },
+	{  true, 63001, "fix inventory wrong initial offset",          1, phant2InvOffsetSignature,                  phant2InvOffsetPatch },
+	{  true, 63004, "limit in-game audio volume",                  1, phant2AudioVolumeSignature,                phant2AudioVolumePatch },
+	{  true, 63016, "replace spin loop during music fades",        1, phant2Wait4FadeSignature,                  phant2Wait4FadePatch },
+	{  true, 63019, "replace spin loop during computer load",      1, phant2WaitParam1Signature,                 phant2WaitParam1Patch },
+	{  true, 63019, "replace spin loop during computer scrolling", 1, phant2SlowScrollSignature,                 phant2SlowScrollPatch },
+	{  true, 63019, "fix bad doc/email name & memo positioning",   2, phant2BadPositionSignature,                phant2BadPositionPatch },
+	{  true, 63019, "fix bad folder/doc icon refresh",             2, phant2BadIconSignature,                    phant2BadIconPatch },
+	{  true, 63019, "fix file and note content placement",         1, phant2DocuStoreFileNotePlacementSignature, phant2DocuStoreFileNotePlacementPatch },
+	{  true, 63019, "fix email content placement",                 1, phant2DocuStoreEmailPlacementSignature,    phant2DocuStoreEmailPlacementPatch },
+	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,                  phant2SaveNamePatch1 },
+	{  true, 64990, "increase number of save games (1/2)",         1, phant2NumSavesSignature1,                  phant2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",         2, phant2NumSavesSignature2,                  phant2NumSavesPatch2 },
+	{  true, 64994, "remove save game name mangling (2/2)",        1, phant2SaveNameSignature2,                  phant2SaveNamePatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
