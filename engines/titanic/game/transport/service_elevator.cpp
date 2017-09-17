@@ -23,6 +23,7 @@
 #include "titanic/game/transport/service_elevator.h"
 #include "titanic/core/room_item.h"
 #include "titanic/npcs/doorbot.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -169,7 +170,7 @@ bool CServiceElevator::TimerMsg(CTimerMsg *msg) {
 				_fieldF8 = true;
 				CServiceElevatorFloorChangeMsg changeMsg(_fieldDC, _v3);
 				changeMsg.execute(getRoom(), nullptr, MSGFLAG_SCAN);
-				_soundHandle2 = playSound("z#424.wav");
+				_soundHandle2 = playSound(TRANSLATE("z#424.wav", "z#169.wav"));
 
 				if (doorbot) {
 					CActMsg actMsg("DoorbotPlayerPressedTopButton");
@@ -209,21 +210,21 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 	CDoorbot *doorbot = dynamic_cast<CDoorbot *>(findRoom()->findByName("Doorbot"));
 
 	if (doorbot && _v3 == 0) {
-		_soundHandle1 = playSound("z#415.wav", 50);
+		_soundHandle1 = playSound(TRANSLATE("z#415.wav", "z#159.wav"), 50);
 		_timerId = addTimer(1, 1000, 500);
 	} else if (doorbot && _v3 == 1) {
-		_soundHandle1 = playSound("z#417.wav", 50);
+		_soundHandle1 = playSound(TRANSLATE("z#417.wav", "z#161.wav"), 50);
 		_timerId = addTimer(1, 1000, 500);
 	} else if (_fieldDC == _v3) {
 		switch (_v3) {
 		case 0:
-			_soundHandle1 = playSound("z#415.wav", 50);
+			_soundHandle1 = playSound(TRANSLATE("z#415.wav", "z#159.wav"), 50);
 			break;
 		case 1:
-			_soundHandle1 = playSound("z#420.wav", 50);
+			_soundHandle1 = playSound(TRANSLATE("z#420.wav", "z#164.wav"), 50);
 			break;
 		case 2:
-			_soundHandle1 = playSound("z#410.wav", 50);
+			_soundHandle1 = playSound(TRANSLATE("z#410.wav", "z#154.wav"), 50);
 			break;
 		default:
 			break;
@@ -233,13 +234,14 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 	} else {
 		switch (_v3) {
 		case 0:
-			_soundHandle1 = playSound("z#414.wav", 50);
+			_soundHandle1 = playSound(TRANSLATE("z#414.wav", "z#158.wav"), 50);
 			break;
 		case 1:
-			_soundHandle1 = playSound(_fieldDC ? "z#419.wav" : "z#418.wav", 50);
+			_soundHandle1 = playSound(_fieldDC ? TRANSLATE("z#419.wav", "z#163.wav")
+				: TRANSLATE("z#418.wav", "z#162.wav"), 50);
 			break;
 		case 2:
-			_soundHandle1 = playSound("z#409.wav", 50);
+			_soundHandle1 = playSound(TRANSLATE("z#409.wav", "z#153.wav"), 50);
 			break;
 		default:
 			break;

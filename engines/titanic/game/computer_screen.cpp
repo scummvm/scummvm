@@ -140,7 +140,7 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 		setSoundVolume(handle, 10, 2);
 		playClip(392, 450);
 		startTalking("Doorbot", 0x3611A);
-		sleep(8000);
+		sleep(TRANSLATE(8000, 7000));
 
 		playClip(450, 492);
 		startTalking("Doorbot", 0x36121);

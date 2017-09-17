@@ -23,6 +23,7 @@
 #include "titanic/core/room_item.h"
 #include "titanic/game/cdrom_tray.h"
 #include "titanic/messages/messages.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -59,7 +60,7 @@ bool CCDROMTray::ActMsg(CActMsg *msg) {
 			if (_insertedCD == "None") {
 				// No CD in tray
 				playMovie(55, 65, 0);
-				playSound("a#35.wav", 50, 0, 0);
+				playSound(TRANSLATE("a#35.wav", "a#30.wav"), 50, 0, 0);
 				_isOpened = false;
 			} else {
 				// Ejecting tray with CD
@@ -85,19 +86,19 @@ bool CCDROMTray::ActMsg(CActMsg *msg) {
 		} else if (_insertedCD == "newSTCD") {
 			// Opening tray with Starship Titanic CD
 			playMovie(0, 10, 0);
-			playSound("a#34.wav", 50, 0, 0);
+			playSound(TRANSLATE("a#34.wav", "a#29.wav"), 50, 0, 0);
 			_isOpened = true;
 		}
 	} else if (_isOpened) {
 		if (msg->_action == "newCD1" || msg->_action == "newCD2") {
 			// Standard CD dropped on CDROM Tray
 			playMovie(33, 43, MOVIE_NOTIFY_OBJECT);
-			playSound("a#35.wav", 50, 0, 0);
+			playSound(TRANSLATE("a#35.wav", "a#30.wav"), 50, 0, 0);
 		} else if (msg->_action == "newSTCD") {
 			// Starship Titanic CD dropped on CDROM Tray
 			disableMouse();
 			playMovie(11, 21, MOVIE_NOTIFY_OBJECT);
-			playSound("a#35.wav", 50, 0, 0);
+			playSound(TRANSLATE("a#35.wav", "a#30.wav"), 50, 0, 0);
 		} else {
 			return true;
 		}
