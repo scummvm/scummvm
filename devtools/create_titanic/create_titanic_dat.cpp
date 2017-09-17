@@ -1713,7 +1713,7 @@ void writeGermanData() {
 	writeStringArray("TEXT/REPLACEMENTS3/DE", 0x2413B0 + GERMAN_DIFF, 608);
 	writeStringArray("TEXT/REPLACEMENTS4/DE", 0x241D38 + GERMAN_DIFF, 195);
 	writeStringArray("TEXT/PRONOUNS/DE", 0x248610 + GERMAN_DIFF, 15);
-
+	writeSentenceMappings("Mappings/Doorbot/DE", 0x214E00 + GERMAN_DIFF, 4);
 
 	const int SENTENCES_BARBOT[2] = { 0x5B00C0, 0x5C5AC8 };
 	const int SENTENCES_BELLBOT[20] = { 0x5CACF8, 0x5D1670 };
