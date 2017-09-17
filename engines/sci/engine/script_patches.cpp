@@ -1054,6 +1054,64 @@ static const uint16 gk1Day5PhoneFreezePatch[] = {
 	PATCH_END
 };
 
+// When Gabriel is grabbing a vine 'vineSwing::changeState(1)',
+// him saying "I can't believe I'm doing this..." is cut off.
+// We change it so the scripts wait for the audio.
+// This is not supposed to be applied to the Floppy version.
+//
+// Applies to at lesat: English PC-CD, German PC-CD, Spanish PC-CD
+static const uint16 gk1Day9VineSwingSignature[] = {
+	0x38, SIG_UINT16(4),              // pushi $4
+	0x51, 0x17,                       // class CT
+	0x36,                             // push
+	0x39, 0x0b,                       // pushi $b
+	0x78,                             // push1
+	0x7c,                             // pushSelf
+	0x81, 0x00,                       // lag global[$0]
+	0x4a, SIG_UINT16(0x20),           // send $20
+	0x38, SIG_SELECTOR16(setMotion),  // pushi setMotion
+	0x78,                             // push1
+	0x76,                             // push0
+	0x72, SIG_UINT16(0x0412),         // lofsa guard1
+	0x4a, SIG_UINT16(0x06),           // send $6
+	0x38, SIG_SELECTOR16(say),        // pushi say
+	0x38, SIG_UINT16(0x04),           // pushi $4
+	SIG_MAGICDWORD,
+	0x39, 0x07,                       // pushi $7
+	0x39, 0x08,                       // pushi $8
+	0x39, 0x10,                       // pushi $10
+	0x78,                             // push1
+	0x81, 0x5b,                       // lsg global[$5b]
+	0x4a, SIG_UINT16(0x000c),         // send $c
+	SIG_END
+};
+
+static const uint16 gk1Day9VineSwingPatch[] = {
+	0x38, SIG_UINT16(3),              // pushi $3
+	0x51, 0x17,                       // class CT
+	0x36,                             // push
+	0x39, 0x0b,                       // pushi $b
+	0x78,                             // push1
+	0x81, 0x00,                       // lag global[$0]
+	0x4a, SIG_UINT16(0x1e),           // send $20
+	0x38, SIG_SELECTOR16(setMotion),  // pushi setMotion
+	0x78,                             // push1
+	0x76,                             // push0
+	0x72, SIG_UINT16(0x0412),         // lofsa guard1
+	0x4a, SIG_UINT16(0x06),           // send $6
+	0x38, SIG_SELECTOR16(say),        // pushi say
+	0x38, SIG_UINT16(0x05),           // pushi $5
+	0x39, 0x07,                       // pushi $7
+	0x39, 0x08,                       // pushi $8
+	0x39, 0x10,                       // pushi $10
+	0x78,                             // push1
+	0x7c,                             // pushSelf
+	0x81, 0x5b,                       // lsg global[$5b]
+	0x4a, SIG_UINT16(0x000e),         // send $c
+	PATCH_END
+};
+
+
 // In GK1, the `view` selector is used to store view numbers in some cases and
 // object references to Views in other cases. `Interrogation::dispose` compares
 // an object stored in the `view` selector with a number (which is not valid)
@@ -1120,6 +1178,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   230, "fix day 6 police beignet timer issue (1/2)",  1, gk1Day6PoliceBeignetSignature1,   gk1Day6PoliceBeignetPatch1 },
 	{  true,   230, "fix day 6 police beignet timer issue (2/2)",  1, gk1Day6PoliceBeignetSignature2,   gk1Day6PoliceBeignetPatch2 },
 	{  true,   230, "fix day 6 police sleep timer issue",          1, gk1Day6PoliceSleepSignature,      gk1Day6PoliceSleepPatch },
+	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
