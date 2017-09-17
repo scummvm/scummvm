@@ -23,7 +23,7 @@
 #ifndef TITANIC_BELLBOT_SCRIPT_DE_H
 #define TITANIC_BELLBOT_SCRIPT_DE_H
 
-#include "titanic/true_talk/Bellbot_script.h"
+#include "titanic/true_talk/bellbot_script.h"
 
 namespace Titanic {
 namespace German {

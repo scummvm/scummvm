@@ -23,7 +23,7 @@
 #ifndef TITANIC_MAITRED_SCRIPT_DE_H
 #define TITANIC_MAITRED_SCRIPT_DE_H
 
-#include "titanic/true_talk/MaitreD_script.h"
+#include "titanic/true_talk/maitred_script.h"
 
 namespace Titanic {
 namespace German {
