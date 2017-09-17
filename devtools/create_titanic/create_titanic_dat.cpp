@@ -57,7 +57,7 @@
  */
 
 #define VERSION_NUMBER 3
-#define HEADER_SIZE 0x1380
+#define HEADER_SIZE 0x1480
 
 Common::File inputFile, outputFile;
 Common::PEResources resEng, resGer;
@@ -1713,7 +1713,15 @@ void writeGermanData() {
 	writeStringArray("TEXT/REPLACEMENTS3/DE", 0x2413B0 + GERMAN_DIFF, 608);
 	writeStringArray("TEXT/REPLACEMENTS4/DE", 0x241D38 + GERMAN_DIFF, 195);
 	writeStringArray("TEXT/PRONOUNS/DE", 0x248610 + GERMAN_DIFF, 15);
+
+	writeSentenceMappings("Mappings/Barbot/DE", 0x1BA388 + GERMAN_DIFF, 8);
+	writeSentenceMappings("Mappings/Bellbot/DE", 0x1E1D20 + GERMAN_DIFF, 1);
+	writeSentenceMappings("Mappings/Deskbot/DE", 0x1F5A18 + GERMAN_DIFF, 4);
 	writeSentenceMappings("Mappings/Doorbot/DE", 0x214E00 + GERMAN_DIFF, 4);
+	writeSentenceMappings("Mappings/Liftbot/DE", 0x224AE0 + GERMAN_DIFF, 4);
+	writeSentenceMappings("Mappings/MaitreD/DE", 0x232E30 + GERMAN_DIFF, 1);
+	writeSentenceMappings("Mappings/Parrot/DE", 0x235FA8 + GERMAN_DIFF, 1);
+	writeSentenceMappings("Mappings/SuccUBus/DE", 0x2399C8 + GERMAN_DIFF, 1);
 
 	const int SENTENCES_BARBOT[2] = { 0x5B00C0, 0x5C5AC8 };
 	const int SENTENCES_BELLBOT[20] = { 0x5CACF8, 0x5D1670 };
