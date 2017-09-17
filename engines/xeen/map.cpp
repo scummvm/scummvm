@@ -952,7 +952,7 @@ void Map::load(int mapId) {
 				break;
 			default:
 				_animationInfo.load("dark.dat");
-				_monsterData.load("ddark.mon");
+				_monsterData.load("dark.mon");
 				_wallPicSprites.load("darkpic.dat");
 				break;
 			}
