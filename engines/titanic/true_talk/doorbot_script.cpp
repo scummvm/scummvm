@@ -546,10 +546,10 @@ ScriptChangedResult DoorbotScript::scriptChanged(const TTroomScript *roomScript,
 		CTrueTalkManager::setFlags(39, 0);
 	}
 
-	if (id >= 220000 && id <= 222418) {
+	if (id >= 220000 && id <= TRANSLATE(222418, 222430)) {
 		addResponse(getDialogueId(id));
 		applyResponse();
-	} else if (id >= 10000 && id <= 11986) {
+	} else if (id >= 10000 && id <= TRANSLATE(11986, 11999)) {
 		addResponse(id);
 		applyResponse();
 	}
