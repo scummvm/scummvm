@@ -24,6 +24,7 @@
 #include "titanic/true_talk/doorbot_script.h"
 #include "titanic/true_talk/tt_room_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/translation.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -546,10 +547,10 @@ ScriptChangedResult DoorbotScript::scriptChanged(const TTroomScript *roomScript,
 		CTrueTalkManager::setFlags(39, 0);
 	}
 
-	if (id >= 220000 && id <= TRANSLATE(222418, 222430)) {
+	if (id >= 220000 && id <= (uint)TRANSLATE(222418, 222430)) {
 		addResponse(getDialogueId(id));
 		applyResponse();
-	} else if (id >= 10000 && id <= TRANSLATE(11986, 11999)) {
+	} else if (id >= 10000 && id <= (uint)TRANSLATE(11986, 11999)) {
 		addResponse(id);
 		applyResponse();
 	}

@@ -22,7 +22,7 @@
 
 #include "titanic/game/computer_screen.h"
 #include "titanic/messages/messages.h"
-#include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -90,20 +90,20 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 
 	switch (msg->_actionVal) {
 	case 0:
-		if (!g_vm->isGerman()) {
-			loadSound("a#32.wav");
-			loadSound("a#31.wav");
-			loadSound("a#33.wav");
-			loadSound("a#30.wav");
-			loadSound("a#29.wav");
-			playSound("a#25.wav");
-		} else {
+		if (g_language == Common::DE_DEU) {
 			loadSound("a#27.wav");
 			loadSound("a#26.wav");
 			loadSound("a#28.wav");
 			loadSound("a#25.wav");
 			loadSound("a#24.wav");
 			playSound("a#20.wav");
+		} else {
+			loadSound("a#32.wav");
+			loadSound("a#31.wav");
+			loadSound("a#33.wav");
+			loadSound("a#30.wav");
+			loadSound("a#29.wav");
+			playSound("a#25.wav");
 		}
 		addTimer(1, 2000, 0);
 		break;

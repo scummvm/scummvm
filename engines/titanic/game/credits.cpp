@@ -21,7 +21,7 @@
  */
 
 #include "titanic/game/credits.h"
-#include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 

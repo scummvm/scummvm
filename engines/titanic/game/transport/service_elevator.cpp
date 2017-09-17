@@ -23,7 +23,7 @@
 #include "titanic/game/transport/service_elevator.h"
 #include "titanic/core/room_item.h"
 #include "titanic/npcs/doorbot.h"
-#include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 

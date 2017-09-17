@@ -56,10 +56,12 @@
 namespace Titanic {
 
 TitanicEngine *g_vm;
+Common::Language g_language;
 
 TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc)
 		: _gameDescription(gameDesc), Engine(syst), _randomSource("Titanic") {
 	g_vm = this;
+	g_language = getLanguage();
 	_debugger = nullptr;
 	_events = nullptr;
 	_filesManager = nullptr;

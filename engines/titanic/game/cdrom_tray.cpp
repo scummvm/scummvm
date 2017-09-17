@@ -23,7 +23,7 @@
 #include "titanic/core/room_item.h"
 #include "titanic/game/cdrom_tray.h"
 #include "titanic/messages/messages.h"
-#include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 

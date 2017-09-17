@@ -63,8 +63,6 @@ namespace Titanic {
 
 #define MAX_SAVES 99
 
-#define TRANSLATE(enVal, deVal) (g_vm->isGerman() ? deVal : enVal)
-
 // If enabled, fixes an original bug where dispensed chickens weren't
 // meant to be hot unless the Yellow fuse was left in the Fusebox.
 // This is being left disabled for now, since most walkthroughs for
