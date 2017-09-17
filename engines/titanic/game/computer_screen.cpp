@@ -59,7 +59,7 @@ bool CComputerScreen::ActMsg(CActMsg *msg) {
 }
 
 bool CComputerScreen::MovieEndMsg(CMovieEndMsg *msg) {
-	playSound("z#47.wav");
+	playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 	addTimer(0, 3000, 0);
 
 	for (int idx = 0; idx < 10; ++idx)
@@ -110,33 +110,33 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 
 	case 1:
 		playMovie(23, 26, MOVIE_STOP_PREVIOUS);
-		playSound(SOUND("a#32.wav", "a#27.wav"));
-		playSound(SOUND("a#31.wav", "a#26.wav"));
+		playSound(TRANSLATE("a#32.wav", "a#27.wav"));
+		playSound(TRANSLATE("a#31.wav", "a#26.wav"));
 		addTimer(2, 2000, 0);
 		break;
 
 	case 2: {
 		CChangeMusicMsg musicMsg(CString(), 1);
 		musicMsg.execute("HomeMusicPlayer");
-		playSound(SOUND("a#33.wav", "a#28.wav"));
-		playSound(SOUND("a#31.wav", "a#26.wav"));
+		playSound(TRANSLATE("a#33.wav", "a#28.wav"));
+		playSound(TRANSLATE("a#31.wav", "a#26.wav"));
 		changeView("Home.Node 4.E", "");
 		playClip(51, 150);
-		playSound(SOUND("a#31.wav", "a#26.wav"));
+		playSound(TRANSLATE("a#31.wav", "a#26.wav"));
 		playClip(151, 200);
 
-		handle = playSound(SOUND("a#27.wav", "a#22.wav"));
+		handle = playSound(TRANSLATE("a#27.wav", "a#22.wav"));
 		playClip(200, 306);
-		playSound(SOUND("a#30.wav", "a#25.wav"));
+		playSound(TRANSLATE("a#30.wav", "a#25.wav"));
 		stopSound(handle, 0);
 
 		playClip(306, 338);
-		handle = playSound(SOUND("a#28.wav", "a#23.wav"));
+		handle = playSound(TRANSLATE("a#28.wav", "a#23.wav"));
 		playClip(338, 392);
-		playSound(SOUND("a#29.wav", "a#24.wav"));
+		playSound(TRANSLATE("a#29.wav", "a#24.wav"));
 		stopSound(handle);
 
-		handle = playSound(SOUND("y#662.wav", "y#0.wav"));
+		handle = playSound(TRANSLATE("y#662.wav", "y#0.wav"));
 		setSoundVolume(handle, 10, 2);
 		playClip(392, 450);
 		startTalking("Doorbot", 0x3611A);
