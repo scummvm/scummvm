@@ -29,6 +29,7 @@
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
@@ -402,7 +403,135 @@ const TTscriptMapping *TTnpcScript::getMapping(int index) {
 }
 
 int TTnpcScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	return 0;
+	if (g_language != Common::DE_DEU || !roomScript)
+		return 0;
+
+	switch (val1) {
+	case 516:
+		return getValue(1) == 1 ? 0 : 1;
+	case 517:
+		return getValue(1) == 2 ? 0 : 1;
+	case 518:
+		return getValue(1) == 3 ? 0 : 1;
+	case 519:
+		return getValue(1) != 1 ? 0 : 1;
+	case 520:
+		return getValue(1) != 2 ? 0 : 1;
+	case 521:
+		return getValue(1) != 3 ? 0 : 1;
+
+	case 522:
+		return roomScript->_scriptId == 101 ? 0 : 1;
+	case 523:
+		return roomScript->_scriptId == 106 ? 0 : 1;
+	case 524:
+		return roomScript->_scriptId == 107 ? 0 : 1;
+	case 525:
+		return roomScript->_scriptId == 108 ? 0 : 1;
+	case 526:
+		return roomScript->_scriptId == 109 ? 0 : 1;
+	case 527:
+		return roomScript->_scriptId == 110 ? 0 : 1;
+	case 528:
+		return roomScript->_scriptId == 111 ? 0 : 1;
+	case 529:
+		return roomScript->_scriptId == 112 ? 0 : 1;
+	case 530:
+		return roomScript->_scriptId == 113 ? 0 : 1;
+	case 531:
+		return roomScript->_scriptId == 114 ? 0 : 1;
+	case 532:
+		return roomScript->_scriptId == 115 ? 0 : 1;
+	case 533:
+		return roomScript->_scriptId == 116 ? 0 : 1;
+	case 534:
+		return roomScript->_scriptId == 117 ? 0 : 1;
+	case 535:
+		return roomScript->_scriptId == 118 ? 0 : 1;
+	case 536:
+		return roomScript->_scriptId == 120 ? 0 : 1;
+	case 537:
+		return roomScript->_scriptId == 121 ? 0 : 1;
+	case 538:
+		return roomScript->_scriptId == 122 ? 0 : 1;
+	case 539:
+		return roomScript->_scriptId == 123 ? 0 : 1;
+	case 540:
+		return roomScript->_scriptId == 124 ? 0 : 1;
+	case 541:
+		return roomScript->_scriptId == 125 ? 0 : 1;
+	case 542:
+		return roomScript->_scriptId == 126 ? 0 : 1;
+	case 543:
+		return roomScript->_scriptId == 127 ? 0 : 1;
+	case 544:
+		return roomScript->_scriptId == 128 ? 0 : 1;
+	case 545:
+		return roomScript->_scriptId == 129 ? 0 : 1;
+	case 546:
+		return roomScript->_scriptId == 130 ? 0 : 1;
+	case 547:
+		return roomScript->_scriptId == 131 ? 0 : 1;
+	case 548:
+		return roomScript->_scriptId == 132 ? 0 : 1;
+
+	case 549:
+		return roomScript->_scriptId != 101 ? 0 : 1;
+	case 550:
+		return roomScript->_scriptId != 106 ? 0 : 1;
+	case 551:
+		return roomScript->_scriptId != 107 ? 0 : 1;
+	case 552:
+		return roomScript->_scriptId != 108 ? 0 : 1;
+	case 553:
+		return roomScript->_scriptId != 109 ? 0 : 1;
+	case 554:
+		return roomScript->_scriptId != 110 ? 0 : 1;
+	case 555:
+		return roomScript->_scriptId != 111 ? 0 : 1;
+	case 556:
+		return roomScript->_scriptId != 112 ? 0 : 1;
+	case 557:
+		return roomScript->_scriptId != 113 ? 0 : 1;
+	case 558:
+		return roomScript->_scriptId != 114 ? 0 : 1;
+	case 559:
+		return roomScript->_scriptId != 115 ? 0 : 1;
+	case 560:
+		return roomScript->_scriptId != 116 ? 0 : 1;
+	case 561:
+		return roomScript->_scriptId != 117 ? 0 : 1;
+	case 562:
+		return roomScript->_scriptId != 118 ? 0 : 1;
+	case 563:
+		return roomScript->_scriptId != 120 ? 0 : 1;
+	case 564:
+		return roomScript->_scriptId != 121 ? 0 : 1;
+	case 565:
+		return roomScript->_scriptId != 122 ? 0 : 1;
+	case 566:
+		return roomScript->_scriptId != 123 ? 0 : 1;
+	case 567:
+		return roomScript->_scriptId != 124 ? 0 : 1;
+	case 568:
+		return roomScript->_scriptId != 125 ? 0 : 1;
+	case 569:
+		return roomScript->_scriptId != 126 ? 0 : 1;
+	case 570:
+		return roomScript->_scriptId != 127 ? 0 : 1;
+	case 571:
+		return roomScript->_scriptId != 128 ? 0 : 1;
+	case 572:
+		return roomScript->_scriptId != 129 ? 0 : 1;
+	case 573:
+		return roomScript->_scriptId != 130 ? 0 : 1;
+	case 574:
+		return roomScript->_scriptId != 131 ? 0 : 1;
+	case 575:
+		return roomScript->_scriptId != 132 ? 0 : 1;
+	default:
+		return 0;
+	}
 }
 
 void TTnpcScript::save(SimpleFile *file) {
