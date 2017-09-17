@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/credits.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -58,13 +59,13 @@ bool CCredits::SignalObject(CSignalObject *msg) {
 bool CCredits::TimerMsg(CTimerMsg *msg) {
 	stopGlobalSound(true, -1);
 	setVisible(true);
-	loadSound("a#16.wav");
-	loadSound("a#24.wav");
+	loadSound(TRANSLATE("a#16.wav", "a#11.wav"));
+	loadSound(TRANSLATE("a#24.wav", "a#19.wav"));
 
 	if (playCutscene(0, 18)) {
-		playGlobalSound("a#16.wav", VOL_NORMAL, false, false, 0);
+		playGlobalSound(TRANSLATE("a#16.wav", "a#11.wav"), VOL_NORMAL, false, false, 0);
 		if (playCutscene(19, 642)) {
-			playSound("a#24.wav");
+			playSound(TRANSLATE("a#24.wav", "a#19.wav"));
 			playCutscene(643, 750);
 		}
 	}

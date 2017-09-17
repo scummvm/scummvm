@@ -108,7 +108,7 @@ bool CServiceElevator::ServiceElevatorMsg(CServiceElevatorMsg *msg) {
 		if (!_string1.empty()) {
 			if (_string1 == "DeepSpace") {
 				disableMouse();
-				_soundHandle1 = playSound("z#413.wav", 50);
+				_soundHandle1 = playSound(TRANSLATE("z#413.wav", "z#157.wav"), 50);
 				_timerId = addTimer(1, 1000, 500);
 			} else {
 				changeView(_string1);
@@ -120,9 +120,9 @@ bool CServiceElevator::ServiceElevatorMsg(CServiceElevatorMsg *msg) {
 		// Reaching destination floor
 		_fieldF8 = false;
 		_fieldDC = _v3;
-		loadSound("z#423.wav");
+		loadSound(TRANSLATE("z#423.wav", "z#168.wav"));
 		stopSound(_soundHandle2);
-		_soundHandle2 = playSound("z#423.wav", 80);
+		_soundHandle2 = playSound(TRANSLATE("z#423.wav", "z#168.wav"), 80);
 
 		switch (_fieldDC) {
 		case 0:
@@ -133,12 +133,12 @@ bool CServiceElevator::ServiceElevatorMsg(CServiceElevatorMsg *msg) {
 
 		case 1:
 			_string1 = _v2 ? "BilgeRoomWith.Node 2.N" : "BilgeRoom.Node 1.N";
-			queueSound("z#421.wav", _soundHandle2, 50);
+			queueSound(TRANSLATE("z#421.wav", "z#165.wav"), _soundHandle2, 50);
 			break;
 
 		case 2:
 			_string1 = _v1 ?  "MoonEmbLobby.Node 1.NE" : "EmbLobby.Node 1.NE";
-			queueSound("z#411.wav", _soundHandle2, 50);
+			queueSound(TRANSLATE("z#411.wav", "z#155.wav"), _soundHandle2, 50);
 			break;
 
 		default:
