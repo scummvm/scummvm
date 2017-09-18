@@ -18801,7 +18801,7 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					foundOffset = findSignature(curEntry, curRuntimeEntry, scriptData);
 					if (foundOffset != -1) {
 						// found, so apply the patch
-						debugC(kDebugLevelScriptPatcher, "Script-Patcher: '%s' on script %d offset %d", curEntry->description, scriptNr, foundOffset);
+						debugC(kDebugLevelPatcher, "Script-Patcher: '%s' on script %d offset %d", curEntry->description, scriptNr, foundOffset);
 						applyPatch(curEntry, scriptData, foundOffset);
 					}
 					applyCount--;

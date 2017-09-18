@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	event.o \
 	resource.o \
 	resource_audio.o \
+	resource_patcher.o \
 	sci.o \
 	util.o \
 	engine/features.o \

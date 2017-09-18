@@ -35,6 +35,7 @@
 #include "sci/parser/vocabulary.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
+#include "sci/resource_patcher.h"
 #include "sci/util.h"
 
 namespace Sci {
@@ -419,6 +420,7 @@ void ResourceManager::disposeVolumeFileStream(Common::SeekableReadStream *fileSt
 
 void ResourceManager::loadResource(Resource *res) {
 	res->_source->loadResource(this, res);
+	_patcher->applyPatch(*res);
 }
 
 
@@ -978,6 +980,9 @@ void ResourceManager::init() {
 #ifdef ENABLE_SCI32
 	_currentDiscNo = 1;
 #endif
+	_patcher = new ResourcePatcher(g_sci->getGameId(), g_sci->getLanguage());
+	addSource(_patcher);
+
 	// FIXME: put this in an Init() function, so that we can error out if detection fails completely
 
 	_mapVersion = detectMapVersion();
