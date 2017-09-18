@@ -23,6 +23,7 @@
 #include "titanic/npcs/deskbot.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/game_manager.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -85,7 +86,7 @@ bool CDeskbot::TurnOn(CTurnOn *msg) {
 		playClip("BellRinging");
 		playClip("Opening", MOVIE_NOTIFY_OBJECT);
 
-		playSound("b#69.wav");
+		playSound(TRANSLATE("b#69.wav", "b#47.wav"));
 		petSetArea(PET_CONVERSATION);
 
 		_npcFlags |= NPCFLAG_MOVE_START;

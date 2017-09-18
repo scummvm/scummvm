@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/pet/pet_sounds.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -43,11 +44,11 @@ void CPETSounds::load(SimpleFile *file) {
 
 bool CPETSounds::PETPlaySoundMsg(CPETPlaySoundMsg *msg) {
 	if (msg->_soundNum == 1) {
-		playSound("z#65.wav");
+		playSound(TRANSLATE("z#65.wav", "z#596.wav"));
 	} else if (msg->_soundNum == 2 && stateGetParrotMet()) {
 		uint ticks = getTicksCount();
 		if (!_ticks || ticks > (_ticks + 12000)) {
-			playSound("z#36.wav");
+			playSound(TRANSLATE("z#36.wav", "z#568.wav"));
 			_ticks = ticks;
 		}
 	}
