@@ -23,6 +23,7 @@
 #ifndef TITANIC_ST_VOCAB_H
 #define TITANIC_ST_VOCAB_H
 
+#include "titanic/support/exe_resources.h"
 #include "titanic/support/string.h"
 #include "titanic/true_talk/tt_string.h"
 #include "titanic/true_talk/tt_word.h"
@@ -34,7 +35,7 @@ private:
 	TTword *_headP;
 	TTword *_tailP;
 	TTword *_word;
-	int _vocabMode;
+	VocabMode _vocabMode;
 private:
 	/**
 	 * Load the vocab data
@@ -77,7 +78,7 @@ private:
 	 */
 	TTword *getPrefixedWord(TTstring &str) const;
 public:
-	TTvocab(int val);
+	TTvocab(VocabMode vocabMode);
 	~TTvocab();
 
 	/**

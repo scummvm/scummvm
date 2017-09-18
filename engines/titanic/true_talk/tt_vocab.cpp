@@ -28,12 +28,13 @@
 #include "titanic/true_talk/tt_picture.h"
 #include "titanic/true_talk/tt_pronoun.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 #include "common/file.h"
 
 namespace Titanic {
 
-TTvocab::TTvocab(int val): _headP(nullptr), _tailP(nullptr),
-		_word(nullptr), _vocabMode(val) {
+TTvocab::TTvocab(VocabMode vocabMode): _headP(nullptr), _tailP(nullptr),
+		_word(nullptr), _vocabMode(vocabMode) {
 	load("STVOCAB");
 }
 
@@ -131,7 +132,8 @@ int TTvocab::load(const CString &name) {
 }
 
 void TTvocab::addWord(TTword *word) {
-	TTword *existingWord = findWord(word->_text);
+	TTword *existingWord = g_language == Common::DE_DEU ? nullptr :
+		findWord(word->_text);
 
 	if (existingWord) {
 		if (word->_synP) {
@@ -160,7 +162,7 @@ TTword *TTvocab::findWord(const TTstring &str) {
 	TTword *word = _headP;
 
 	while (word && !flag) {
-		if (_vocabMode != 3 || strcmp(word->c_str(), str)) {
+		if (_vocabMode != VOCAB_MODE_EN || strcmp(word->c_str(), str)) {
 			if (word->findSynByName(str, tempNode, _vocabMode))
 				flag = true;
 			else
@@ -203,7 +205,7 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	} else {
 		// Standard word
 		for (vocabP = _headP; vocabP; vocabP = vocabP->_nextP) {
-			if (_vocabMode == 3 && !strcmp(str.c_str(), vocabP->c_str())) {
+			if (_vocabMode == VOCAB_MODE_EN && !strcmp(str.c_str(), vocabP->c_str())) {
 				newWord = vocabP->copy();
 				newWord->_nextP = nullptr;
 				newWord->setSyn(nullptr);

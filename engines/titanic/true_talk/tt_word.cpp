@@ -163,14 +163,14 @@ uint TTword::readNumber(const char *str) {
 }
 
 bool TTword::testFileHandle(FileHandle file) const {
-	if (g_vm->_exeResources.is18Equals(3))
+	if (g_vm->_exeResources.isVocabMode(VOCAB_MODE_EN))
 		return true;
 
 	// TODO: Figure out why original compares passed file handle against specific values
 	return true;
 }
 
-bool TTword::findSynByName(const TTstring &str, TTsynonym *dest, int mode) const {
+bool TTword::findSynByName(const TTstring &str, TTsynonym *dest, VocabMode mode) const {
 	if (!_synP)
 		return false;
 

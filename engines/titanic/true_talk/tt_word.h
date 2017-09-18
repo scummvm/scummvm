@@ -23,6 +23,7 @@
 #ifndef TITANIC_TT_WORD_H
 #define TITANIC_TT_WORD_H
 
+#include "titanic/support/exe_resources.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_string.h"
 #include "titanic/true_talk/tt_synonym.h"
@@ -102,9 +103,10 @@ public:
 	 * Finds a synonym in the word by name, if one exists
 	 * @param str		Name to search for
 	 * @param dest		Destination synonym instance to copy match into
+	 * @param mode		Specifies English or German vocab mode
 	 * @returns			Returns true if a match was found
 	 */
-	bool findSynByName(const TTstring &str, TTsynonym *dest, int mode) const;
+	bool findSynByName(const TTstring &str, TTsynonym *dest, VocabMode mode) const;
 
 	const char *c_str() const { return _text.c_str(); }
 	operator const char *() const { return c_str(); }

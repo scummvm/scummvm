@@ -317,7 +317,7 @@ bool TTsentence::localWord(const char *str) const {
 				foundMatch = true;
 	}
 
-	int val = g_vm->_exeResources.get18();
+	VocabMode mode = g_vm->_exeResources.getVocabMode();
 	bool result = false;
 
 	for (TTsentenceNode *nodeP = _nodesP; nodeP && !result;
@@ -327,9 +327,9 @@ bool TTsentence::localWord(const char *str) const {
 			continue;
 
 		const TTstring wordStr = nodeP->_wordP->_text;
-		if (val == 3 && wordStr == str) {
+		if (mode == VOCAB_MODE_EN && wordStr == str) {
 			result = true;
-		} else if (nodeP->_wordP->findSynByName(str, &syn, val)) {
+		} else if (nodeP->_wordP->findSynByName(str, &syn, mode)) {
 			result = true;
 		} else if (foundMatch) {
 			result = wordStr == "it" || wordStr == "that" || wordStr == "he"
