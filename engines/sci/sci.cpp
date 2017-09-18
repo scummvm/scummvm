@@ -129,7 +129,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelDclInflate, "DCL", "DCL inflate debugging");
 	DebugMan.addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
 	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
-	DebugMan.addDebugChannel(kDebugLevelScriptPatcher, "ScriptPatcher", "Notifies when scripts are patched");
+	DebugMan.addDebugChannel(kDebugLevelPatcher, "Patcher", "Notifies when scripts or resources are patched");
 	DebugMan.addDebugChannel(kDebugLevelWorkarounds, "Workarounds", "Notifies when workarounds are triggered");
 	DebugMan.addDebugChannel(kDebugLevelVideo, "Video", "Video (SEQ, VMD, RBT) debugging");
 	DebugMan.addDebugChannel(kDebugLevelGame, "Game", "Debug calls from game scripts");

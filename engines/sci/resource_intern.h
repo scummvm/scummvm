@@ -41,7 +41,8 @@ enum ResSourceType {
 	kSourceExtAudioMap,		///< SCI1 audio resource maps
 	kSourceWave,			///< External WAVE files, patched in as sound resources
 	kSourceMacResourceFork,	///< Mac SCI1.1 and later resource forks
-	kSourceChunk			///< Script chunk resources (*.chk)
+	kSourceChunk,			///< Script chunk resources (*.chk)
+	kSourceScummVM			///< Built-in resource patcher
 };
 
 
