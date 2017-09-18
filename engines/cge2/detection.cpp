@@ -157,12 +157,13 @@ const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles,
 	if (!game)
 		return 0;
 
-	SearchMan.clear();
-	SearchMan.addDirectory(fslist.begin()->getParent().getPath(), fslist.begin()->getParent());
+	SearchMan.addDirectory("CGE2MetaEngine::fallbackDetect", fslist.begin()->getParent());
 	ResourceManager *resman;
 	resman = new ResourceManager();
 	bool result = resman->exist("CGE.SAY");
 	delete resman;
+
+	SearchMan.remove("CGE2MetaEngine::fallbackDetect");
 
 	if (!result)
 		return 0;
