@@ -484,7 +484,7 @@ MODULE_OBJS := \
 	support/text_cursor.o \
 	support/time_event_info.o \
 	support/video_surface.o \
-	true_talk/german/deskbot_script.o \
+	true_talk/german/barbot_script.o \
 	true_talk/german/bellbot_script.o \
 	true_talk/german/deskbot_script.o \
 	true_talk/german/doorbot_script.o \

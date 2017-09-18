@@ -33,6 +33,16 @@ public:
 	DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
 		::Titanic::DeskbotScript(val1, charClass, v2, charName, v3, val2) {}
+
+	/**
+	 * Handles getting a pre-response
+	 */
+	virtual int preResponse(uint id);
+
+	/**
+	 * Process a sentence fragment entry
+	 */
+	virtual int doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence);
 };
 
 } // End of namespace German

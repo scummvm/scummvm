@@ -24,6 +24,7 @@
 #include "titanic/true_talk/deskbot_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -85,7 +86,16 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 				|| sentence->localWord("winning") || sentence->contains("winning")
 				|| sentence->localWord("winner") || sentence->contains("winner")
 				|| sentence->contains("35279") || sentence->contains("3 5 2 7 9")
-				) {
+				|| (g_language == Common::DE_DEU && (
+					sentence->contains("preisaus") ||
+					sentence->contains("tombola") ||
+					sentence->contains("lotterie") ||
+					sentence->contains("gewonnen") ||
+					sentence->contains("glueck") ||
+					sentence->contains("das goldene los") ||
+					sentence->contains("sechs richtige")
+				))
+			) {
 			addResponse(getDialogueId(41773));
 			applyResponse();
 			return 2;
@@ -93,7 +103,8 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			addResponse(getDialogueId(41771));
 			applyResponse();
 			return 2;
-		} else if (sentence->localWord("upgrade") || sentence->contains("upgrade")) {
+		} else if (sentence->localWord("upgrade") || sentence->contains("upgrade")
+				|| sentence->localWord("secondclass")) {
 			if (CTrueTalkManager::_currentNPC) {
 				CGameObject *obj;
 				if (CTrueTalkManager::_currentNPC->find("Magazine", &obj, FIND_PET)) {

@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/true_talk/german/deskbot_script.h"
+#include "titanic/true_talk/german/barbot_script.h"
 
 namespace Titanic {
 namespace German {

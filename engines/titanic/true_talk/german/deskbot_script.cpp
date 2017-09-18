@@ -21,9 +21,58 @@
  */
 
 #include "titanic/true_talk/german/deskbot_script.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 namespace German {
+
+int DeskbotScript::preResponse(uint id) {
+	int newId = 0;
+	if (getValue(1) >= 3 && (id == 41190 || id == 41429 || id == 41755 || id == 41757))
+		newId = 241601;
+
+	if (id == 42132)
+		CTrueTalkManager::triggerAction(20, 0);
+
+	return newId;
+}
+
+int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
+	if (val1 != 4501)
+		return TTnpcScript::doSentenceEntry(val1, srcIdP, roomScript, sentence);
+
+	int v = getValue(1);
+	int tagId = *srcIdP;
+
+	switch (v) {
+	case 1:
+		tagId = 240336;
+		break;
+
+	case 2:
+		tagId = addAssignedRoomDialogue();
+		break;
+
+	case 3:
+		if (tagId == 240431 || tagId == 240432) {
+			if (getValue(v) == 1) {
+				if (tagId == 240431)
+					tagId = 240432;
+			} else {
+				if (tagId == 240432)
+					tagId = 240431;
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	addResponse(getDialogueId(tagId));
+	applyResponse();
+	return 2;
+}
 
 } // End of namespace German
 } // End of namespace Titanic
