@@ -72,10 +72,9 @@ bool Room::deserialize(Common::ReadStream *in) {
 		_shown[i] = in->readByte();
 
 	int numObjects = in->readSint32LE();
-	int stringLength = 0;
 	Common::SeekableReadStream *stream = NULL;
 	for (int i = 0; i < numObjects; ++i) {
-		stringLength = in->readUint32LE();
+		int stringLength = in->readUint32LE();
 		if (stringLength) {
 			stream = in->readStream(stringLength);
 			_objectState[i]._name = stream->readLine();
@@ -659,9 +658,9 @@ void ShipSleepCabin::onEntrance() {
 
 bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 	// TODO: distance and remaining time not accurate
-	char c[2] = {0};
 
 	if ((verb == ACTION_LOOK) && (obj1._id == MONITOR)) {
+		char c[2] = {0, 0};
 		_gm->_guiEnabled = false;
 		_vm->renderBox(0, 0, 320, 200, kColorBlack);
 		_vm->renderText("Geschwindigkeit: ", 50, 50, kColorLightYellow);
@@ -2059,14 +2058,13 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 	byte zeilen3[4] = {1, 1, 1, 1};
 	byte zeilen4[2] = {2, 1};
 
-	bool found, flight;
-
 	if (((verb == ACTION_WALK) &&
 	        ((obj1._id == SPACESHIP) || (obj1._id == ROGER_W))) ||
 	        ((verb == ACTION_TALK) && (obj1._id == ROGER_W))) {
 		_gm->changeRoom(INTRO);
 		_vm->renderImage(30, 0);
 		_vm->paletteBrightness();
+		bool found;
 		if (_gm->_rooms[MEETUP2]->isSectionVisible(kMaxSection - 2)) {
 			_gm->reply("Was wollen Sie denn schon wieder?", 1, 1 + 128);
 			found = !_gm->dialog(2, nullptr, nullptr, 0); // row4, dialog4
@@ -2084,7 +2082,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(8));
 			_gm->reply("Oh! Vielen Dank.", 1, 1 + 128);
 			_gm->reply("Wo ist denn Ihr Raumschiff?|Soll ich Sie ein St\201ck mitnehmen?", 1, 1 + 128);
-			flight = _gm->dialog(2, nullptr, nullptr, 0); // row2, dialog2
+			bool flight = _gm->dialog(2, nullptr, nullptr, 0); // row2, dialog2
 			if (flight) {
 				_gm->reply("Wo wollen Sie denn hin?", 1, 1 + 128);
 				_gm->dialog(4, nullptr, nullptr, 0); // row3, dialog3
@@ -2196,9 +2194,9 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->wait2(10);
 		_gm->reply("Ja, sieht so aus.", 1, 1 + 128);
 
-		int i;
 		do {
-			switch (i = _gm->dialog(4, nullptr, nullptr, 2)) { // row2, dialog2
+			int i = _gm->dialog(4, nullptr, nullptr, 2); // row2, dialog2
+			switch (i) {
 			case 0:
 				_gm->reply("Sie befinden sich im Raumschiff \"Dexxa\".", 1, 1 + 128);
 				_gm->reply("Wir kommen vom Planeten Axacuss und|sind aus dem gleichen Grund hier wie Sie,|nmlich zur Erforschung der Supernova.", 1, 1 + 128);

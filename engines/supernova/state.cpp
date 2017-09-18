@@ -170,15 +170,16 @@ Object *Inventory::get(ObjectID id) const {
 
 
 GuiElement::GuiElement()
-    : _text("")
-    , _isHighlighted(false)
+    : _isHighlighted(false)
     , _bgColorNormal(kColorWhite25)
     , _bgColorHighlighted(kColorWhite44)
     , _bgColor(kColorWhite25)
     , _textColorNormal(kColorGreen)
     , _textColorHighlighted(kColorLightGreen)
     , _textColor(kColorGreen)
-{}
+{
+	_text[0] = '\0';
+}
 
 void GuiElement::setText(const char *text) {
 	strncpy(_text, text, sizeof(_text));

@@ -32,9 +32,13 @@
 
 namespace Supernova {
 
-MSNImageDecoder::MSNImageDecoder()
-    : _palette(NULL)
-    , _encodedImage(NULL) {
+MSNImageDecoder::MSNImageDecoder() {
+    _palette = nullptr;
+    _encodedImage = nullptr;
+	_filenumber = -1;
+	_pitch = 0;
+	_numSections = 0;
+	_numClickFields = 0;
 }
 
 MSNImageDecoder::~MSNImageDecoder() {
