@@ -55,6 +55,10 @@ TTstring::~TTstring() {
 }
 
 void TTstring::operator=(const TTstring &str) {
+	if (&str == this)
+		// Trying to assign string to itself
+		return;
+
 	// Delete old string reference, if any
 	if (_data && --_data->_referenceCount == 0)
 		delete _data;
