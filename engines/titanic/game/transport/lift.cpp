@@ -100,8 +100,7 @@ bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 		354, 349, 344, 339, 334, 329, 324, 319, 299
 	};
 
-	if (pet)
-		pet->setRoomsFloorNum(floorNum);
+	pet->setRoomsFloorNum(floorNum);
 	if (pet->getRoomsElevatorNum() == 2 || pet->getRoomsElevatorNum() == 4) {
 		if (floorNum > 27)
 			floorNum = 27;

@@ -868,7 +868,7 @@ void CGameObject::stopAnimTimer(int id) {
 void CGameObject::gotoView(const CString &viewName, const CString &clipName) {
 	CViewItem *newView = parseView(viewName);
 	CGameManager *gameManager = getGameManager();
-	CViewItem *oldView = gameManager ? gameManager->getView() : newView;
+	CViewItem *oldView = gameManager->getView();
 	if (!oldView || !newView)
 		return;
 

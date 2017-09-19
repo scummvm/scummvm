@@ -401,7 +401,7 @@ int TTparser::replaceNumbers(TTstring &line, int startIndex) {
 		return index;
 
 	bool flag1 = false, flag2 = false, flag3 = false;
-	int total = 0, factor = 0, endIndex = index;
+	int total = 0, factor = 0, endIndex;
 
 	do {
 		if (!(numEntry->_flags & NF_1)) {
