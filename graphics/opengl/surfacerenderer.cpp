@@ -104,11 +104,11 @@ void FixedSurfaceRenderer::prepareState() {
 void FixedSurfaceRenderer::render(const Texture *tex, const Math::Rect2d &dest) {
 	float texcropX = tex->getWidth() / float(tex->getTexWidth());
 	float texcropY = tex->getHeight() / float(tex->getTexHeight());
-	float texTop    = _flipY ? 0.0 : texcropY;
-	float texBottom = _flipY ? texcropY : 0.0;
+	float texTop    = _flipY ? 0.0f : texcropY;
+	float texBottom = _flipY ? texcropY : 0.0f;
 
 	float offsetX = dest.getTopLeft().getX();
-	float offsetY = dest.getTopLeft().getY();
+	float offsetY = _flipY ? dest.getTopLeft().getY() : 1.0f - dest.getTopLeft().getY() - dest.getHeight();
 	float sizeX   = fabsf(dest.getWidth());
 	float sizeY   = fabsf(dest.getHeight());
 
