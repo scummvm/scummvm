@@ -120,7 +120,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 			petSetArea(PET_ROOMS);
 			decTransitions();
 			unlockMouse();
-			playSound("z#47.wav");
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 			_classNum = NO_CLASS;
 		}
 
@@ -260,16 +260,31 @@ bool CDeskbot::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *m
 		return true;
 
 	CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(msg);
-	switch (msg->_dialogueId) {
-	case 41684:
-	case 41686:
-	case 41787:
-	case 41788:
-	case 41789:
-		lockMouse();
-		break;
-	default:
-		break;
+
+	if (g_language == Common::DE_DEU) {
+		switch (msg->_dialogueId) {
+		case 41701:
+		case 41703:
+		case 41804:
+		case 41805:
+		case 41806:
+			lockMouse();
+			break;
+		default:
+			break;
+		}
+	} else {
+		switch (msg->_dialogueId) {
+		case 41684:
+		case 41686:
+		case 41787:
+		case 41788:
+		case 41789:
+			lockMouse();
+			break;
+		default:
+			break;
+		}
 	}
 
 	return true;
@@ -281,23 +296,43 @@ bool CDeskbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 
 	CTurnOff turnOff;
 	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
+	 
+	if (g_language == Common::DE_DEU) {
+		switch (msg->_dialogueId) {
+		case 41701:
+		case 41804:
+		case 41805:
+		case 41806:
+			_npcFlags |= NPCFLAG_MOVE_FINISH;
+			turnOff.execute(this);
+			break;
 
-	switch (msg->_dialogueId) {
-	case 41684:
-	case 41787:
-	case 41788:
-	case 41789:
-		_npcFlags |= NPCFLAG_MOVE_FINISH;
-		turnOff.execute(this);
-		break;
+		case 41703:
+			_npcFlags |= NPCFLAG_MOVE_LEFT;
+			turnOff.execute(this);
+			break;
 
-	case 41686:
-		_npcFlags |= NPCFLAG_MOVE_LEFT;
-		turnOff.execute(this);
-		break;
+		default:
+			break;
+		}
+	} else {
+		switch (msg->_dialogueId) {
+		case 41684:
+		case 41787:
+		case 41788:
+		case 41789:
+			_npcFlags |= NPCFLAG_MOVE_FINISH;
+			turnOff.execute(this);
+			break;
 
-	default:
-		break;
+		case 41686:
+			_npcFlags |= NPCFLAG_MOVE_LEFT;
+			turnOff.execute(this);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	return true;

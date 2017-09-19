@@ -23,8 +23,9 @@
 #include "titanic/npcs/bellbot.h"
 #include "titanic/carry/carry.h"
 #include "titanic/core/room_item.h"
-#include "titanic/game_manager.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/game_manager.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -66,26 +67,31 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 	if (msg->_value == 1) {
 		_npcFlags |= NPCFLAG_MOVE_LOOP;
 	} else {
-		static const char *const ROOM_WAVES[8][2] = {
-			{ "EmbLobby",  "z#193.wav" },
-			{ "PromenadeDeck", "z#191.wav" },
-			{ "Arboretum", "z#195.wav" },
-			{ "Frozen Arboretum", "z#195.wav" },
-			{ "Bar", "z#194.wav" },
-			{ "MusicRoom", "z#192.wav" },
-			{ "MusicRoomLobby", "z#192.wav" },
-			{ "1stClassRestaurant", "z#190.wav" }
+		struct RoomWave {
+			const char *_room;
+			const char *_enSound;
+			const char *_deSound;
+		};
+		static const RoomWave ROOM_WAVES[8] = {
+			{ "EmbLobby",  "z#193.wav", "z#723.wav" },
+			{ "PromenadeDeck", "z#191.wav", "z#721.wav" },
+			{ "Arboretum", "z#195.wav", "z#725.wav" },
+			{ "Frozen Arboretum", "z#195.wav", "z#725.wav" },
+			{ "Bar", "z#194.wav", "z#724.wav" },
+			{ "MusicRoom", "z#192.wav", "z#722.wav" },
+			{ "MusicRoomLobby", "z#192.wav", "z#722.wav" },
+			{ "1stClassRestaurant", "z#190.wav", "z#720.wav" }
 		};
 
 		int idx;
 		for (idx = 0; idx < 8; ++idx) {
-			if (compareRoomNameTo(ROOM_WAVES[idx][0])) {
-				playSound(ROOM_WAVES[idx][1]);
+			if (compareRoomNameTo(ROOM_WAVES[idx]._room)) {
+				playSound(TRANSLATE(ROOM_WAVES[idx]._enSound, ROOM_WAVES[idx]._deSound));
 				break;
 			}
 		}
 		if (idx == 8)
-			playSound("z#147.wav");
+			playSound(TRANSLATE("z#147.wav", "z#703.wav"));
 
 		sleep(2000);
 		_npcFlags &= ~NPCFLAG_MOVE_LOOP;
@@ -285,7 +291,7 @@ bool CBellBot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 bool CBellBot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
 	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
 
-	if (msg->_dialogueId == 20991) {
+	if (msg->_dialogueId == TRANSLATE(20991, 20997)) {
 		petDismissBot("DoorBot");
 		getGameManager()->unlockInputHandler();
 	}
