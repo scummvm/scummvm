@@ -190,7 +190,11 @@ void CProjectItem::loadGame(int slotId) {
 	// Load the savegame header in
 	TitanicSavegameHeader header;
 	readSavegameHeader(&file, header);
-	delete header._thumbnail;
+	if (header._thumbnail) {
+		header._thumbnail->free();
+		delete header._thumbnail;
+	}
+
 	g_vm->_events->setTotalPlayTicks(header._totalFrames);
 
 	// Load the contents in
