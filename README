@@ -387,6 +387,7 @@ Other Games:
      Return to Ringworld                         [ringworld2]
      Sfinx                                       [sfinx]
      Soltys                                      [soltys]
+     Starship Titanic                            [titanic]
      The Journeyman Project: Pegasus Prime       [pegasus]
      The Labyrinth of Time                       [lab]
      The Legend of Kyrandia                      [kyra1]
@@ -1552,6 +1553,7 @@ Engines which currently support returning to the Launcher are:
     SWORD1
     SWORD2
     TEENAGENT
+    TITANIC
     TOUCHE
     TSAGE
     TUCKER
@@ -1982,6 +1984,7 @@ Where 'xxx' is exact the saved game slot (i.e., 001) under ScummVM
        SWORD2
        TEENAGENT
        TINSEL
+       TITANIC
        TOON
        TOUCHE
        TSAGE
@@ -2015,6 +2018,7 @@ Where 'xxx' is exact the saved game slot (i.e., 001) under ScummVM
        SWORD2
        TEENAGENT
        TINSEL
+       TITANIC
        TOON
        TOUCHE
        TSAGE
