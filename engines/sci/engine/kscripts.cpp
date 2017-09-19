@@ -158,7 +158,7 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 	// GK2 stores some VMDs inside of resource volumes, but usually videos are
 	// streamed from the filesystem.
 	if (res == nullptr) {
-		const char *format = nullptr;
+		const char *format;
 		switch (restype) {
 		case kResourceTypeRobot:
 			format = "%u.rbt";

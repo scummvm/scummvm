@@ -1509,7 +1509,7 @@ uint32 RobotDecoder::createCel5(const byte *rawVideoData, const int16 screenItem
 	assert(bitmap.getHunkPaletteOffset() == (uint32)bitmap.getWidth() * bitmap.getHeight() + SciBitmap::getBitmapHeaderSize());
 	bitmap.setOrigin(origin);
 
-	byte *targetBuffer = nullptr;
+	byte *targetBuffer;
 	if (_verticalScaleFactor == 100) {
 		// direct copy to bitmap
 		targetBuffer = bitmap.getPixels();
