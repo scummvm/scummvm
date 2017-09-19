@@ -217,7 +217,7 @@ void Puzzles::leversBall(int16 var) {
 	uint16 newLeverLeft = _vm->_state->getBallLeverLeft();
 	uint16 newLeverRight = _vm->_state->getBallLeverRight();
 
-	const Move *move = 0;
+	const Move *move = nullptr;
 	for (uint i = _vm->_state->getBallDoorOpen() ? 0 : 1; i < ARRAYSIZE(moves); i++)
 		if (moves[i].oldBallPosition == oldPosition
 				&& moves[i].oldLeft == oldLeverLeft
@@ -229,7 +229,7 @@ void Puzzles::leversBall(int16 var) {
 	if (!move)
 		error("Unable to find move with old levers l:%d r:%d p:%d", oldLeverLeft, oldLeverRight, oldPosition);
 
-	const NewPosition *position = 0;
+	const NewPosition *position = nullptr;
 	for (uint i = 0; i < ARRAYSIZE(move->p); i++)
 		if (move->p[i].newLeft == newLeverLeft
 				&& move->p[i].newRight == newLeverRight) {
@@ -254,7 +254,10 @@ void Puzzles::leversBall(int16 var) {
 		}
 
 		_vm->_sound->playEffect(sound, 50);
-		_drawForVarHelper(35, position->movieBallStart, position->movieBallEnd);
+
+		if (position->movieBallStart != 0) {
+			_drawForVarHelper(35, position->movieBallStart, position->movieBallEnd);
+		}
 	}
 
 	_vm->_state->setBallPosition(position->newBallPosition);
