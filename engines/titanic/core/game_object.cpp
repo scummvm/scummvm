@@ -97,6 +97,7 @@ void CGameObject::save(SimpleFile *file, int indent) {
 				i != rangeList->end(); ++i) {
 				CMovieRangeInfo *rangeInfo = new CMovieRangeInfo(*i);
 				rangeInfo->_initialFrame = (i == rangeList->begin()) ? getMovieFrame() : -1;
+				_movieRangeInfoList.push_back(rangeInfo);
 			}
 		}
 	}
