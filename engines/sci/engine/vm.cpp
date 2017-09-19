@@ -1056,6 +1056,14 @@ void run_vm(EngineState *s) {
 			if (!r_temp.isPointer())
 				error("[VM]: Invalid superclass in object");
 			else {
+				// SCI3 sets r_acc to whatever was in EAX at the start of a
+				// send. In the case of a super call this is the object ID of
+				// the superclass, as determined by the interpreter, rather than
+				// by the game scripts
+				if (getSciVersion() == SCI_VERSION_3) {
+					s->r_acc = r_temp;
+				}
+
 				s_temp = s->xs->sp;
 				s->xs->sp -= ((opparams[1] >> 1) + s->r_rest); // Adjust stack
 
