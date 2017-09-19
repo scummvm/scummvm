@@ -267,6 +267,8 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			return 2;
 		}
 	}
+	if (result == 2)
+		return 2;
 
 	if (sentence->localWord("television") || sentence->localWord("tv")
 			|| sentence->localWord("crush") || sentence->localWord("crushed")) {
