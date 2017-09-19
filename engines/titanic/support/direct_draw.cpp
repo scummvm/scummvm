@@ -64,6 +64,8 @@ DirectDrawManager::DirectDrawManager(TitanicEngine *vm, bool windowed) {
 
 void DirectDrawManager::initVideo(int width, int height, int bpp, int numBackSurfaces) {
 	debugC(DEBUG_BASIC, kDebugGraphics, "Initialising video surfaces");
+	assert(numBackSurfaces == 0);
+
 	_directDraw._width = width;
 	_directDraw._numBackSurfaces = numBackSurfaces;
 	_directDraw._height = height;
@@ -81,10 +83,9 @@ void DirectDrawManager::initFullScreen() {
 	_directDraw.setDisplayMode(_directDraw._width, _directDraw._height,
 		_directDraw._bpp, 0);
 
+	// Set up the main surface to point to the screen
 	_mainSurface = new DirectDrawSurface();
 	_mainSurface->create(g_vm->_screen);
-	_backSurfaces[0] = new DirectDrawSurface();
-	_backSurfaces[0]->create(_directDraw._width, _directDraw._height, 32);
 }
 
 DirectDrawSurface *DirectDrawManager::createSurface(int w, int h, int bpp, int surfaceNum) {
