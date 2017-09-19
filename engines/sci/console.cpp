@@ -3479,9 +3479,7 @@ bool Console::cmdTrace(int argc, const char **argv) {
 bool Console::cmdStepOver(int argc, const char **argv) {
 	_debugState.seeking = kDebugSeekStepOver;
 	_debugState.seekLevel = _engine->_gamestate->_executionStack.size();
-	_debugState.debugging = true;
-
-	return cmdExit(0, 0);
+	return cmdTrace(argc, argv);
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
