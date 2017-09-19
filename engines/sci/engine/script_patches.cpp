@@ -4417,14 +4417,14 @@ static const uint16 pq4CdSpeechAndSubtitlesPatch[] = {
 
 	// iconText::select
 	PATCH_ADDTOOFFSET(+10),         // skip over the super code
-	0xc1, 0x5a,                     // plusag 5Ah (increase 5Ah by one)
-	0xa1, 0x5a,                     // sag 5Ah (save)
+	0xc1, 0x5a,                     // +ag $5a
+	0xa1, 0x5a,                     // sag $5a
 	0x36,                           // push
-	0x35, 0x04,                     // ldi 04
+	0x35, 0x04,                     // ldi 4
 	0x28,                           // uge?
 	0x31, 0x03,                     // bnt [skip over follow up code]
 	0x78,                           // push1
-	0xa9, 0x5a,                     // ssg 5Ah (save)
+	0xa9, 0x5a,                     // ssg $5a
 	0x76,                           // push0
 	0x41, 0x99, PATCH_UINT16(0x00), // call [our new subroutine which sets view+loop+cel, effectively -103], 0
 	0x33, 0x2f,                     // jmp [to end of original select, show call]
