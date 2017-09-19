@@ -44,7 +44,7 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	_videoSurface = nullptr;
 	_streamCount = 0;
 	_movieFrameSurface[0] = _movieFrameSurface[1] = nullptr;
-	_framePixels = nullptr;
+	_framePixels = false;
 	_priorFrameTime = 0;
 
 	// Reset current frame. We need to keep track of frames separately from the decoder,
@@ -75,7 +75,6 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 AVISurface::~AVISurface() {
 	if (_videoSurface)
 		_videoSurface->_flipVertically = false;
-	delete _framePixels;
 	delete _movieFrameSurface[0];
 	delete _movieFrameSurface[1];
 	delete _decoder;
@@ -292,8 +291,7 @@ void AVISurface::setupDecompressor() {
 		}
 
 		if (!flag) {
-			_framePixels = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
-				_decoder->getVideoTrack(0).getPixelFormat());
+			_framePixels = true;
 		} else if (idx == 0) {
 			// The original developers used a vertical flipped playback to indicate
 			// an incompatibility between source video and dest surface bit-depths,

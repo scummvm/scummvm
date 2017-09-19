@@ -104,7 +104,7 @@ private:
 	CMovieRangeInfoList _movieRangeInfo;
 	int _streamCount;
 	Graphics::ManagedSurface *_movieFrameSurface[2];
-	Graphics::ManagedSurface *_framePixels;
+	bool _framePixels;
 	double _frameRate;
 	int _currentFrame, _priorFrame;
 	uint32 _priorFrameTime;
