@@ -61,6 +61,7 @@ bool CStarPoints2::initialize() {
 		}
 	}
 
+	delete stream;
 	return true;
 }
 

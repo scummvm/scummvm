@@ -56,6 +56,7 @@ bool CStarPoints1::initialize() {
 		entry._z = sin(v2) * 3000000.0;
 	}
 
+	delete stream;
 	return true;
 }
 
