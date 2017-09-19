@@ -696,7 +696,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags, const ui
 
 		if (!_blackoutRect.isEmpty() && _planeIsOwned) {
 			_blackoutPlane = new Plane(_blackoutRect);
-			g_sci->_gfxFrameout->addPlane(*_blackoutPlane);
+			g_sci->_gfxFrameout->addPlane(_blackoutPlane);
 		}
 
 		if (shouldUseCompositing()) {
@@ -897,7 +897,7 @@ void VMDPlayer::initComposited() {
 		if (_priority) {
 			_plane->_priority = _priority;
 		}
-		g_sci->_gfxFrameout->addPlane(*_plane);
+		g_sci->_gfxFrameout->addPlane(_plane);
 		_screenItem = new ScreenItem(_plane->_object, vmdCelInfo, Common::Point(), vmdScaleInfo);
 	} else {
 		_screenItem = new ScreenItem(_plane->_object, vmdCelInfo, Common::Point(_drawRect.left, _drawRect.top), vmdScaleInfo);
@@ -1040,7 +1040,7 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 
 	if (_doFrameOut) {
 		_plane = new Plane(_drawRect, kPlanePicColored);
-		g_sci->_gfxFrameout->addPlane(*_plane);
+		g_sci->_gfxFrameout->addPlane(_plane);
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 

@@ -128,7 +128,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 
 	Plane *plane = new Plane(editorPlaneRect, kPlanePicTransparent);
 	plane->changePic();
-	g_sci->_gfxFrameout->addPlane(*plane);
+	g_sci->_gfxFrameout->addPlane(plane);
 
 	CelInfo32 celInfo;
 	celInfo.type = kCelTypeMem;

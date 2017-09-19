@@ -275,7 +275,7 @@ void GfxFrameout::kernelAddPlane(const reg_t object) {
 		updatePlane(*plane);
 	} else {
 		plane = new Plane(object);
-		addPlane(*plane);
+		addPlane(plane);
 	}
 }
 
@@ -351,17 +351,17 @@ int16 GfxFrameout::kernelGetHighPlanePri() {
 	return _planes.getTopSciPlanePriority();
 }
 
-void GfxFrameout::addPlane(Plane &plane) {
-	if (_planes.findByObject(plane._object) == nullptr) {
-		plane.clipScreenRect(_screenRect);
-		_planes.add(&plane);
-	} else {
-		plane._deleted = 0;
-		if (plane._created == 0) {
-			plane._moved = g_sci->_gfxFrameout->getScreenCount();
-		}
-		_planes.sort();
+void GfxFrameout::addPlane(Plane *plane) {
+	// In SSCI, if a plane with the same object ID already existed, this call
+	// would cancel deletion and update an already-existing plane, but callers
+	// expect the passed plane object to become memory-managed by GfxFrameout,
+	// so doing what SSCI did would end up leaking the Plane objects
+	if (_planes.findByObject(plane->_object) != nullptr) {
+		error("Plane %04x:%04x already exists", PRINT_REG(plane->_object));
 	}
+
+	plane->clipScreenRect(_screenRect);
+	_planes.add(plane);
 }
 
 void GfxFrameout::updatePlane(Plane &plane) {

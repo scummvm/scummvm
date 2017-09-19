@@ -120,15 +120,13 @@ private:
 
 public:
 	/**
-	 * Creates and adds a new plane to the plane list, or
-	 * cancels deletion and updates an already-existing
-	 * plane if a plane matching the given plane VM object
-	 * already exists within the current plane list.
+	 * Creates and adds a new plane to the plane list. Ownership of the passed
+	 * object is transferred to GfxFrameout.
 	 *
 	 * @note This method is on Screen in SCI engine, but it
 	 * is only ever called on `GraphicsMgr.screen`.
 	 */
-	void addPlane(Plane &plane);
+	void addPlane(Plane *plane);
 
 	/**
 	 * Deletes a plane within the current plane list.
