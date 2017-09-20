@@ -60,7 +60,7 @@ private:
 	XeenEngine *_vm;
 	Party &_party;
 	byte *_data;
-	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic > _newData;
+	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *> _newData;
 
 	void load(Common::SeekableReadStream *stream);
 public:
