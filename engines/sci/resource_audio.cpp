@@ -339,13 +339,19 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 
 	SciSpan<const byte>::const_iterator ptr = mapRes->cbegin();
 
-	// Heuristic to detect entry size
 	uint32 entrySize = 0;
-	for (int i = mapRes->size() - 1; i >= 0; --i) {
-		if (ptr[i] == 0xff)
-			entrySize++;
-		else
-			break;
+	if (_volVersion >= kResVersionSci2) {
+		// The heuristic size detection is incompatible with at least Torin RU,
+		// which is fine because it is not needed for SCI32
+		entrySize = 11;
+	} else {
+		// Heuristic to detect entry size
+		for (int i = mapRes->size() - 1; i >= 0; --i) {
+			if (ptr[i] == 0xff)
+				entrySize++;
+			else
+				break;
+		}
 	}
 
 	if (map->_mapNumber == 65535) {
@@ -419,20 +425,34 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 
 		disposeVolumeFileStream(stream, src);
 	} else {
-		bool isEarly = (entrySize != 11);
+		// EQ1CD & SQ4CD are "early" games; KQ6CD and all SCI32 are "late" games
+		const bool isEarly = (entrySize != 11);
 
 		if (!isEarly) {
 			offset = ptr.getUint32LE();
 			ptr += 4;
 		}
 
+		enum {
+			kRaveFlag = 0x40,
+			kSyncFlag = 0x80,
+			kEndOfMapFlag = 0xFF
+		};
+
 		while (ptr != mapRes->cend()) {
 			uint32 n = ptr.getUint32BE();
 			uint32 syncSize = 0;
 			ptr += 4;
 
-			if (n == 0xffffffff)
+			// Checking the entire tuple breaks Torin RU and is not how SSCI
+			// works
+			if ((n & kEndOfMapFlag) == kEndOfMapFlag) {
+				const uint32 bytesLeft = mapRes->cend() - ptr;
+				if (bytesLeft >= entrySize) {
+					warning("End of %s reached, but %u entries remain", mapResId.toString().c_str(), bytesLeft / entrySize);
+				}
 				break;
+			}
 
 			if (isEarly) {
 				offset = ptr.getUint32LE();
@@ -442,7 +462,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				ptr += 3;
 			}
 
-			if (isEarly || (n & 0x80)) {
+			if (isEarly || (n & kSyncFlag)) {
 				syncSize = ptr.getUint16LE();
 				ptr += 2;
 
@@ -455,7 +475,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 
 			// Checking for this 0x40 flag breaks at least Laura Bow 2 CD 1.1
 			// map 448
-			if (g_sci->getGameId() == GID_KQ6 && (n & 0x40)) {
+			if (g_sci->getGameId() == GID_KQ6 && (n & kRaveFlag)) {
 				// This seems to define the size of raw lipsync data (at least
 				// in KQ6 CD Windows).
 				uint32 kq6HiresSyncSize = ptr.getUint16LE();
