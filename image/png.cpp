@@ -236,6 +236,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// Read additional data at the end.
+	// Can endInfo be used here?
 	png_read_end(pngPtr, NULL);
 
 	// Destroy libpng structures
@@ -285,11 +286,6 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 	png_infop infoPtr = png_create_info_struct(pngPtr);
 	if (!infoPtr) {
 		png_destroy_write_struct(&pngPtr, NULL);
-		return false;
-	}
-	png_infop endInfo = png_create_info_struct(pngPtr);
-	if (!endInfo) {
-		png_destroy_write_struct(&pngPtr, &infoPtr);
 		return false;
 	}
 
