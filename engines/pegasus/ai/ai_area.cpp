@@ -78,7 +78,7 @@ void AIArea::saveAIState() {
 
 	delete vm->_aiSaveStream;
 
-	Common::MemoryWriteStreamDynamic out;
+	Common::MemoryWriteStreamDynamic out(DisposeAfterUse::NO);
 	writeAIRules(&out);
 
 	vm->_aiSaveStream = new Common::MemoryReadStream(out.getData(), out.size(), DisposeAfterUse::YES);
