@@ -3858,8 +3858,37 @@ static const uint16 phant1RatPatch[] = {
 	PATCH_END
 };
 
+// In Phantasmagoria the cursor's hover state will not trigger on any of the
+// buttons in the main menu after returning to the main menu from a game, or
+// when choosing "Quit" on the main menu and then cancelling the quit in the
+// confirmation dialogue, until another button has been hovered and unhovered
+// once.
+// This happens because the quit confirmation dialogue creates its own
+// event handling loop which prevents the main event loop from handling the
+// cursor leaving the button (which would reset global 193 to 0), and the
+// dialogue does not reset global193 itself, so it remains at 2 until a new
+// button gets hovered and unhovered.
+// There is not enough space in the confirmation dialogue code to add a reset
+// of global 193, so we just remove the check entirely, since it is only used
+// to avoid resetting the cursor's view on every mouse movement, and this
+// button type is only used on the main menu and the in-game control panel.
+//
+// Applies to at least: English CD
+static const uint16 phant1RedQuitCursorSignature[] = {
+	SIG_MAGICDWORD,
+	0x89, 0xc1,                   // lsg $c1
+	0x35, 0x02,                   // ldi 02
+	SIG_END
+};
+
+static const uint16 phant1RedQuitCursorPatch[] = {
+	0x33, 0x05,                   // jmp [past global193 check]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
+	{  true,    23, "make cursor red after clicking quit",         1, phant1RedQuitCursorSignature,    phant1RedQuitCursorPatch },
 	{  true,   901, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SavedVolumeSignature,      phant1SavedVolumePatch },
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
