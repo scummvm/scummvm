@@ -61,6 +61,11 @@ DoorbotScript::DoorbotScript(int val1, const char *charClass, int v2,
 	_states.load("States/Doorbot");
 }
 
+DoorbotScript::~DoorbotScript() {
+	for (int idx = 0; idx < 11; ++idx)
+		_sentences[idx].clear();
+}
+
 void DoorbotScript::setupSentences() {
 	for (int idx = 35; idx < 40; ++idx)
 		CTrueTalkManager::setFlags(idx, 0);
