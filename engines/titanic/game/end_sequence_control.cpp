@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/end_sequence_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -71,7 +72,7 @@ bool CEndSequenceControl::EnterRoomMsg(CEnterRoomMsg *msg) {
 	petHide();
 	disableMouse();
 	addTimer(1, 1000, 0);
-	playGlobalSound("a#15.wav", VOL_NORMAL, true, true, 0, Audio::Mixer::kSpeechSoundType);
+	playGlobalSound(TRANSLATE("a#15.wav", "a#8.wav"), VOL_NORMAL, true, true, 0, Audio::Mixer::kSpeechSoundType);
 	return true;
 }
 

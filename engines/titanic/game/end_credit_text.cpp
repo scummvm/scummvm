@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/end_credit_text.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -43,7 +44,7 @@ void CEndCreditText::load(SimpleFile *file) {
 }
 
 bool CEndCreditText::ActMsg(CActMsg *msg) {
-	playGlobalSound("z#41.wav", VOL_NORMAL, false, false, 0);
+	playGlobalSound(TRANSLATE("z#41.wav", "z#573.wav"), VOL_NORMAL, false, false, 0);
 	createCredits();
 	_flag = true;
 	return true;
