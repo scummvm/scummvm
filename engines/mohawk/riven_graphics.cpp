@@ -329,6 +329,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 
 	_transitionMode = kRivenTransitionModeFastest;
 	_transitionOffset = -1;
+	_waterEffect = nullptr;
 	_fliesEffect = nullptr;
 }
 
@@ -384,93 +385,101 @@ void RivenGraphics::updateScreen() {
 }
 
 void RivenGraphics::scheduleWaterEffect(uint16 sfxeID) {
+	clearWaterEffect();
+
+	_waterEffect = new WaterEffect(_vm, sfxeID);
+}
+
+void RivenGraphics::clearWaterEffect() {
+	delete _waterEffect;
+	_waterEffect = nullptr;
+}
+
+WaterEffect::WaterEffect(MohawkEngine_Riven *vm, uint16 sfxeID) :
+		_vm(vm) {
 	Common::SeekableReadStream *sfxeStream = _vm->getResource(ID_SFXE, sfxeID);
 
 	if (sfxeStream->readUint16BE() != 'SL')
 		error ("Unknown sfxe tag");
 
 	// Read in header info
-	SFXERecord sfxeRecord;
-	sfxeRecord.frameCount = sfxeStream->readUint16BE();
+	uint16 frameCount = sfxeStream->readUint16BE();
 	uint32 offsetTablePosition = sfxeStream->readUint32BE();
-	sfxeRecord.rect.left = sfxeStream->readUint16BE();
-	sfxeRecord.rect.top = sfxeStream->readUint16BE();
-	sfxeRecord.rect.right = sfxeStream->readUint16BE();
-	sfxeRecord.rect.bottom = sfxeStream->readUint16BE();
-	sfxeRecord.speed = sfxeStream->readUint16BE();
+	_rect.left = sfxeStream->readUint16BE();
+	_rect.top = sfxeStream->readUint16BE();
+	_rect.right = sfxeStream->readUint16BE();
+	_rect.bottom = sfxeStream->readUint16BE();
+	_speed = sfxeStream->readUint16BE();
 	// Skip the rest of the fields...
 
 	// Read in offsets
 	sfxeStream->seek(offsetTablePosition);
-	uint32 *frameOffsets = new uint32[sfxeRecord.frameCount];
-	for (uint16 i = 0; i < sfxeRecord.frameCount; i++)
+	Common::Array<uint32> frameOffsets;
+	frameOffsets.resize(frameCount);
+	for (uint16 i = 0; i < frameCount; i++)
 		frameOffsets[i] = sfxeStream->readUint32BE();
-	sfxeStream->seek(frameOffsets[0]);
 
 	// Read in the scripts
-	for (uint16 i = 0; i < sfxeRecord.frameCount; i++)
-		sfxeRecord.frameScripts.push_back(sfxeStream->readStream((i == sfxeRecord.frameCount - 1) ? sfxeStream->size() - frameOffsets[i] : frameOffsets[i + 1] - frameOffsets[i]));
+	sfxeStream->seek(frameOffsets[0]);
+	for (uint16 i = 0; i < frameCount; i++) {
+		uint scriptLength = (i == frameCount - 1) ? sfxeStream->size() - frameOffsets[i] : frameOffsets[i + 1] - frameOffsets[i];
+		_frameScripts.push_back(sfxeStream->readStream(scriptLength));
+	}
 
 	// Set it to the first frame
-	sfxeRecord.curFrame = 0;
-	sfxeRecord.lastFrameTime = 0;
+	_curFrame = 0;
+	_lastFrameTime = 0;
 
-	delete[] frameOffsets;
 	delete sfxeStream;
-	_waterEffects.push_back(sfxeRecord);
 }
 
-void RivenGraphics::clearWaterEffects() {
-	_waterEffects.clear();
-}
+void WaterEffect::update() {
+	if (_vm->_system->getMillis() <= _lastFrameTime + 1000 / _speed) {
+		return; // Nothing to do yet
+	}
 
-void RivenGraphics::runScheduledWaterEffects() {
-	// Don't run the effect if it's disabled
-	if (_vm->_vars["waterenabled"] == 0)
-		return;
+	// Make sure the script is at the starting point
+	Common::SeekableReadStream *script = _frameScripts[_curFrame];
+	script->seek(0);
 
-	Graphics::Surface *screen = NULL;
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	Graphics::Surface *mainScreen = _vm->_gfx->getBackScreen();
+	assert(screen->format == mainScreen->format);
 
-	for (uint16 i = 0; i < _waterEffects.size(); i++) {
-		if (_vm->_system->getMillis() > _waterEffects[i].lastFrameTime + 1000 / _waterEffects[i].speed) {
-			// Lock the screen!
-			if (!screen)
-				screen = _vm->_system->lockScreen();
+	// Run script
+	uint16 curRow = 0;
+	for (uint16 op = script->readUint16BE(); op != 4; op = script->readUint16BE()) {
+		if (op == 1) {        // Increment Row
+			curRow++;
+		} else if (op == 3) { // Copy Pixels
+			uint16 dstLeft = script->readUint16BE();
+			uint16 srcLeft = script->readUint16BE();
+			uint16 srcTop = script->readUint16BE();
+			uint16 rowWidth = script->readUint16BE();
 
-			// Make sure the script is at the starting point
-			Common::SeekableReadStream *script = _waterEffects[i].frameScripts[_waterEffects[i].curFrame];
-			if (script->pos() != 0)
-				script->seek(0);
+			byte *src = (byte *)mainScreen->getBasePtr(srcLeft, srcTop);
+			byte *dst = (byte *)screen->getBasePtr(dstLeft, curRow + _rect.top);
 
-			// Run script
-			uint16 curRow = 0;
-			for (uint16 op = script->readUint16BE(); op != 4; op = script->readUint16BE()) {
-				if (op == 1) {        // Increment Row
-					curRow++;
-				} else if (op == 3) { // Copy Pixels
-					uint16 dstLeft = script->readUint16BE();
-					uint16 srcLeft = script->readUint16BE();
-					uint16 srcTop = script->readUint16BE();
-					uint16 rowWidth = script->readUint16BE();
-					memcpy ((byte *)screen->getBasePtr(dstLeft, curRow + _waterEffects[i].rect.top), (byte *)_mainScreen->getBasePtr(srcLeft, srcTop), rowWidth * _pixelFormat.bytesPerPixel);
-				} else if (op != 4) { // End of Script
-					error ("Unknown SFXE opcode %d", op);
-				}
-			}
-
-			// Increment frame
-			_waterEffects[i].curFrame++;
-			if (_waterEffects[i].curFrame == _waterEffects[i].frameCount)
-				_waterEffects[i].curFrame = 0;
-
-			// Set the new time
-			_waterEffects[i].lastFrameTime = _vm->_system->getMillis();
+			memcpy(dst, src, rowWidth * screen->format.bytesPerPixel);
+		} else if (op != 4) { // End of Script
+			error ("Unknown SFXE opcode %d", op);
 		}
 	}
 
-	// Unlock the screen if it has been locked and return true to update the screen
-	if (screen) {
-		_vm->_system->unlockScreen();
+	_vm->_system->unlockScreen();
+
+	// Increment frame
+	_curFrame++;
+	if (_curFrame == _frameScripts.size())
+		_curFrame = 0;
+
+	// Set the new time
+	_lastFrameTime = _vm->_system->getMillis();
+}
+
+WaterEffect::~WaterEffect() {
+	for (uint i = 0; i < _frameScripts.size(); i++) {
+		delete _frameScripts[i];
 	}
 }
 
@@ -731,7 +740,9 @@ Graphics::Surface *RivenGraphics::getEffectScreen() {
 }
 
 void RivenGraphics::updateEffects() {
-	runScheduledWaterEffects();
+	if (_waterEffect && _vm->_vars["waterenabled"] != 0) {
+		_waterEffect->update();
+	}
 
 	if (_fliesEffect) {
 		_fliesEffect->update();

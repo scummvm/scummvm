@@ -29,6 +29,7 @@ namespace Mohawk {
 
 class MohawkEngine_Riven;
 class FliesEffect;
+class WaterEffect;
 
 enum RivenTransition {
 	kRivenTransitionNone      = -1,
@@ -75,7 +76,7 @@ public:
 
 	// Water Effect
 	void scheduleWaterEffect(uint16);
-	void clearWaterEffects();
+	void clearWaterEffect();
 
 	// Flies Effect
 	void setFliesEffect(uint16 count, bool fireflies);
@@ -106,23 +107,8 @@ private:
 	bool _screenUpdateRunning;
 	bool _enableCardUpdateScript;
 
-	// Water Effects
-	struct SFXERecord {
-		// Record values
-		uint16 frameCount;
-		Common::Rect rect;
-		uint16 speed;
-		Common::Array<Common::SeekableReadStream *> frameScripts;
-
-		// Cur frame
-		uint16 curFrame;
-		uint32 lastFrameTime;
-	};
-	Common::Array<SFXERecord> _waterEffects;
-
-	void runScheduledWaterEffects();
-
-	// Flies Effect
+	// Effects
+	WaterEffect *_waterEffect;
 	FliesEffect *_fliesEffect;
 
 	// Transitions
@@ -144,6 +130,29 @@ private:
 
 	// Credits
 	uint _creditsImage, _creditsPos;
+};
+
+/**
+ * Move slightly the water portions of a view to simulate waves
+ */
+class WaterEffect {
+public:
+	WaterEffect(MohawkEngine_Riven *vm, uint16 sfxeID);
+	~WaterEffect();
+
+	void update();
+
+private:
+	MohawkEngine_Riven *_vm;
+
+	// Record values
+	Common::Rect _rect;
+	uint16 _speed;
+	Common::Array<Common::SeekableReadStream *> _frameScripts;
+
+	// Cur frame
+	uint16 _curFrame;
+	uint32 _lastFrameTime;
 };
 
 /**

@@ -54,7 +54,7 @@ RivenCard::~RivenCard() {
 		delete _hotspots[i];
 	}
 
-	_vm->_gfx->clearWaterEffects();
+	_vm->_gfx->clearWaterEffect();
 	_vm->_gfx->clearFliesEffect();
 	_vm->_video->closeVideos();
 }
