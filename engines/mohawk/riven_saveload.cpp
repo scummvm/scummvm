@@ -287,7 +287,7 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	if (_vm->getFeatures() & GF_DVD)
 		stream->writeUint32BE(kDVDSaveGameVersion);
 	else
@@ -296,7 +296,7 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
 		stream->writeUint32BE(1); // Reference counter
@@ -312,7 +312,7 @@ static int stringCompareToIgnoreCase(const Common::String &s1, const Common::Str
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	stream->writeUint16BE(_vm->_vars.size());
 
@@ -354,7 +354,7 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genZIPSSection() {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	stream->writeUint16BE(_vm->_zipModeData.size());
 
@@ -368,7 +368,7 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genZIPSSection() {
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genTHMBSection() const {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	Graphics::saveThumbnail(*stream);
 
@@ -376,7 +376,7 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genTHMBSection() const {
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genMETASection(const Common::String &desc) const {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	Common::Serializer serializer = Common::Serializer(nullptr, stream);
 
 	TimeDate t;
