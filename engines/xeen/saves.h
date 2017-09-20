@@ -44,14 +44,19 @@ struct XeenSavegameHeader {
 class XeenEngine;
 class SavesManager;
 
-class OutFile : public Common::MemoryWriteStreamDynamic {
+class OutFile : public Common::WriteStream {
 private:
 	XeenEngine *_vm;
 	Common::String _filename;
+	Common::MemoryWriteStreamDynamic _backingStream;
 public:
 	OutFile(XeenEngine *vm, const Common::String filename);
 
 	void finalize();
+
+	uint32 write(const void *dataPtr, uint32 dataSize) override;
+
+	int32 pos() const override;
 };
 
 class SavesManager: public BaseCCArchive {

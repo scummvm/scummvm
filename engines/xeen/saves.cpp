@@ -30,7 +30,17 @@
 namespace Xeen {
 
 OutFile::OutFile(XeenEngine *vm, const Common::String filename) :
-	_vm(vm), _filename(filename) {
+		_vm(vm),
+		_filename(filename),
+		_backingStream(DisposeAfterUse::YES) {
+}
+
+uint32 OutFile::write(const void *dataPtr, uint32 dataSize) {
+	return _backingStream.write(dataPtr, dataSize);
+}
+
+int32 OutFile::pos() const {
+	return _backingStream.pos();
 }
 
 void OutFile::finalize() {
@@ -40,7 +50,7 @@ void OutFile::finalize() {
 		_vm->_saves->_newData[id] = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	Common::MemoryWriteStreamDynamic *out = _vm->_saves->_newData[id];
-	out->write(getData(), size());
+	out->write(_backingStream.getData(), _backingStream.size());
 }
 
 /*------------------------------------------------------------------------*/
