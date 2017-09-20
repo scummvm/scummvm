@@ -273,11 +273,11 @@ Common::SeekableReadStream *SaveManager::getSlotFile(uint slot) {
 
 void SaveManager::prepareSaveBuffer() {
 	delete _tempThumbnail;
-	_tempThumbnail = new Common::MemoryWriteStreamDynamic;
+	_tempThumbnail = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	Graphics::saveThumbnail(*_tempThumbnail);
 
 	delete _tempSave;
-	_tempSave = new Common::MemoryWriteStreamDynamic;
+	_tempSave = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	_engine->getScriptManager()->serialize(_tempSave);
 }
 
