@@ -303,7 +303,7 @@ static int volToBalance(int volL, int volR) {
 uint8 Control::runPanel() {
 	// Make a thumbnail of the screen before displaying the menu in case we want to save
 	// the game from the menu.
-	_tempThumbnail = new Common::MemoryWriteStreamDynamic;
+	_tempThumbnail = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	Graphics::saveThumbnail(*_tempThumbnail);
 
 	_panelShown = true;
