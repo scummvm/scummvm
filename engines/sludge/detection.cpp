@@ -122,26 +122,22 @@ const ADGameDescription *SludgeMetaEngine::fallbackDetect(const FileMap &allFile
 		if (!(fileName.hasSuffix(".slg") || fileName == "gamedata"))
 			continue;
 
-		SearchMan.clear();
-		SearchMan.addDirectory(file->getParent().getName(), file->getParent());
-
-		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(file->getName());
-
-		if (!stream)
+		Common::File f;
+		if (!f.open(*file))
 			continue;
 
 		bool headerBad = false;
-		if (stream->readByte() != 'S')
+		if (f.readByte() != 'S')
 			headerBad = true;
-		if (stream->readByte() != 'L')
+		if (f.readByte() != 'L')
 			headerBad = true;
-		if (stream->readByte() != 'U')
+		if (f.readByte() != 'U')
 			headerBad = true;
-		if (stream->readByte() != 'D')
+		if (f.readByte() != 'D')
 			headerBad = true;
-		if (stream->readByte() != 'G')
+		if (f.readByte() != 'G')
 			headerBad = true;
-		if (stream->readByte() != 'E')
+		if (f.readByte() != 'E')
 			headerBad = true;
 		if (headerBad) {
 			continue;
