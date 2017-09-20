@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/head_smash_lever.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -55,14 +56,14 @@ void CHeadSmashLever::load(SimpleFile *file) {
 bool CHeadSmashLever::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_enabled) {
 		playMovie(0, 14, 0);
-		playSound("z#54.wav");
-		int soundHandle = playSound("z#45.wav");
-		queueSound("z#49.wav", soundHandle);
+		playSound(TRANSLATE("z#54.wav", "z#585.wav"));
+		int soundHandle = playSound(TRANSLATE("z#45.wav", "z#576.wav"));
+		queueSound(TRANSLATE("z#49.wav", "z#580.wav"), soundHandle);
 		_ticks = getTicksCount();
 		_fieldE4 = true;
 	} else {
 		playMovie(0);
-		playSound("z#56.wav");
+		playSound(TRANSLATE("z#56.wav", "z#587.wav"));
 	}
 
 	return true;
@@ -84,7 +85,7 @@ bool CHeadSmashLever::FrameMsg(CFrameMsg *msg) {
 		CActMsg actMsg2("PlayToEnd");
 		actMsg2.execute("SmashingStatue");
 
-		playSound("b#16.wav");
+		playSound(TRANSLATE("b#16.wav", "b#100.wav"));
 		_fieldE4 = false;
 	}
 

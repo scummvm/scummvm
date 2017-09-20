@@ -22,6 +22,7 @@
 
 #include "titanic/moves/enter_sec_class_state.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -49,7 +50,7 @@ void CEnterSecClassState::load(SimpleFile *file) {
 
 bool CEnterSecClassState::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (getPassengerClass() > 2) {
-		playSound("b#105.wav");
+		playSound(TRANSLATE("b#105.wav", "b#84.wav"));
 		petDisplayMessage(1, CLASS_NOT_PERMITTED_IN_AREA);
 	} else if (!compareRoomNameTo("SecClassLittleLift") || _mode == 2)  {
 		CActMsg actMsg(getFullViewName().deleteRight(2) + ".S");
@@ -65,20 +66,20 @@ bool CEnterSecClassState::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	if (msg->_newStatus == _mode || (_mode == 2 && msg->_newStatus == 3)) {
 		if (_mode == 2) {
-			_soundHandle = queueSound("b#36.wav", _soundHandle);
+			_soundHandle = queueSound(TRANSLATE("b#36.wav", "b#15.wav"), _soundHandle);
 		} else {
-			_soundHandle = queueSound("b#31.wav", _soundHandle);
+			_soundHandle = queueSound(TRANSLATE("b#31.wav", "b#10.wav"), _soundHandle);
 		}
 		if (msg->_newStatus == 3)
 			msg->_newStatus = 2;
 	} else {
 		changeView("SecClassLittleLift.Node 1.N");
 		if (msg->_newStatus == 1) {
-			_soundHandle = queueSound("b#32.wav", _soundHandle);
+			_soundHandle = queueSound(TRANSLATE("b#32.wav", "b#11.wav"), _soundHandle);
 		} else if (msg->_newStatus == 2) {
-			_soundHandle = queueSound("b#25.wav", _soundHandle);
+			_soundHandle = queueSound(TRANSLATE("b#25.wav", "b#4.wav"), _soundHandle);
 		} else if (msg->_newStatus == 3) {
-			_soundHandle = queueSound("b#33.wav", _soundHandle);
+			_soundHandle = queueSound(TRANSLATE("b#33.wav", "b#12.wav"), _soundHandle);
 			msg->_newStatus = 2;
 		}
 	}
