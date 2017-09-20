@@ -21,6 +21,7 @@
  */
 
 #include "titanic/sound/seasonal_music_player.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -119,14 +120,14 @@ bool CSeasonalMusicPlayer::ChangeMusicMsg(CChangeMusicMsg *msg) {
 
 	if (!_isRepeated && msg->_flags == 2) {
 		_isRepeated = true;
-		loadSound("c#64.wav");
-		loadSound("c#63.wav");
-		loadSound("c#65.wav");
-		loadSound("c#62.wav");
-		playGlobalSound("c#64.wav", _springMode, _isSpring, true, 0);
-		playGlobalSound("c#63.wav", _summerMode, _isSummer, true, 1);
-		playGlobalSound("c#65.wav", _autumnMode, _isAutumn, true, 2);
-		playGlobalSound("c#62.wav", _winterMode, _isWinter, true, 3);
+		loadSound(TRANSLATE("c#64.wav", "c#47.wav"));
+		loadSound(TRANSLATE("c#63.wav", "c#46.wav"));
+		loadSound(TRANSLATE("c#65.wav", "c#48.wav"));
+		loadSound(TRANSLATE("c#62.wav", "c#47.wav"));
+		playGlobalSound(TRANSLATE("c#64.wav", "c#47.wav"), _springMode, _isSpring, true, 0);
+		playGlobalSound(TRANSLATE("c#63.wav", "c#46.wav"), _summerMode, _isSummer, true, 1);
+		playGlobalSound(TRANSLATE("c#65.wav", "c#48.wav"), _autumnMode, _isAutumn, true, 2);
+		playGlobalSound(TRANSLATE("c#62.wav", "c#47.wav"), _winterMode, _isWinter, true, 3);
 	}
 
 	return true;

@@ -24,6 +24,7 @@
 #include "titanic/debugger.h"
 #include "titanic/moves/multi_move.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -241,9 +242,9 @@ bool CLift::EnterRoomMsg(CEnterRoomMsg *msg) {
 		CPetControl *pet = getPetControl();
 		int floorNum = pet->getRoomsFloorNum();
 		int elevNum = pet->getRoomsElevatorNum();
-		loadSound("z#520.wav");
-		loadSound("z#519.wav");
-		loadSound("z#518.wav");
+		loadSound(TRANSLATE("z#520.wav", "z#259.wav"));
+		loadSound(TRANSLATE("z#519.wav", "z#258.wav"));
+		loadSound(TRANSLATE("z#518.wav", "z#257.wav"));
 
 		if (elevNum == 4 && _hasHead && !_hasCorrectHead) {
 			CVisibleMsg visibleMsg;
@@ -251,17 +252,17 @@ bool CLift::EnterRoomMsg(CEnterRoomMsg *msg) {
 		}
 
 		if (floorNum < 20) {
-			playGlobalSound("z#520.wav", VOL_QUIET, true, true, 0);
-			playGlobalSound("z#519.wav", VOL_MUTE, false, true, 1);
-			playGlobalSound("z#518.wav", VOL_MUTE, false, true, 2);
+			playGlobalSound(TRANSLATE("z#520.wav", "z#259.wav"), VOL_QUIET, true, true, 0);
+			playGlobalSound(TRANSLATE("z#519.wav", "z#258.wav"), VOL_MUTE, false, true, 1);
+			playGlobalSound(TRANSLATE("z#518.wav", "z#257.wav"), VOL_MUTE, false, true, 2);
 		} else if (floorNum < 28) {
-			playGlobalSound("z#520.wav", VOL_MUTE, false, true, 0);
-			playGlobalSound("z#519.wav", VOL_QUIET, true, true, 1);
-			playGlobalSound("z#518.wav", VOL_MUTE, false, true, 2);
+			playGlobalSound(TRANSLATE("z#520.wav", "z#259.wav"), VOL_MUTE, false, true, 0);
+			playGlobalSound(TRANSLATE("z#519.wav", "z#258.wav"), VOL_QUIET, true, true, 1);
+			playGlobalSound(TRANSLATE("z#518.wav", "z#257.wav"), VOL_MUTE, false, true, 2);
 		} else {
-			playGlobalSound("z#520.wav", VOL_MUTE, false, true, 0);
-			playGlobalSound("z#519.wav", VOL_MUTE, false, true, 1);
-			playGlobalSound("z#518.wav", VOL_QUIET, true, true, 2);
+			playGlobalSound(TRANSLATE("z#520.wav", "z#259.wav"), VOL_MUTE, false, true, 0);
+			playGlobalSound(TRANSLATE("z#519.wav", "z#258.wav"), VOL_MUTE, false, true, 1);
+			playGlobalSound(TRANSLATE("z#518.wav", "z#257.wav"), VOL_QUIET, true, true, 2);
 		}
 	}
 

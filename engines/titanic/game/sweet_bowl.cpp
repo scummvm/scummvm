@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sweet_bowl.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -47,8 +48,8 @@ bool CSweetBowl::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CSweetBowl::EnterViewMsg(CEnterViewMsg *msg) {
 	setVisible(false);
-	loadSound("b#43.wav");
-	loadSound("b#42.wav");
+	loadSound(TRANSLATE("b#43.wav", "b#26.wav"));
+	loadSound(TRANSLATE("b#42.wav", "b#25.wav"));
 	return true;
 }
 
@@ -56,7 +57,9 @@ bool CSweetBowl::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Jiggle") {
 		setVisible(true);
 		playMovie(MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
-		playSound(getRandomNumber(1) == 1 ? "b#42.wav" : "b#43.wav");
+		playSound(getRandomNumber(1) == 1 ? 
+			TRANSLATE("b#42.wav", "b#25.wav") :
+			TRANSLATE("b#43.wav", "b#26.wav"));
 	}
 
 	petDisplayMessage(isEquals("BowlNutsRustler") ?

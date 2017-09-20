@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/end_credits.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -47,8 +48,8 @@ bool CEndCredits::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		stopGlobalSound(true, -1);
 		_flag = false;
 	} else {
-		loadSound("z#41.wav");
-		playGlobalSound("z#41.wav", VOL_NORMAL, false, false, 0);
+		loadSound(TRANSLATE("z#41.wav", "z#573.wav"));
+		playGlobalSound(TRANSLATE("z#41.wav", "z#573.wav"), VOL_NORMAL, false, false, 0);
 		_flag = true;
 	}
 
