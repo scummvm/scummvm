@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/deskchair.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -49,7 +50,7 @@ bool CDeskchair::TurnOn(CTurnOn *msg) {
 		_startFrame = 0;
 		_endFrame = 16;
 		playMovie(0, 16, MOVIE_WAIT_FOR_FINISH);
-		playSound("b#8.wav");
+		playSound(TRANSLATE("b#8.wav", "b#93.wav"));
 	}
 
 	return true;
@@ -62,7 +63,7 @@ bool CDeskchair::TurnOff(CTurnOff *msg) {
 		_startFrame = 16;
 		_endFrame = 32;
 		playMovie(16, 32, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-		playSound("b#2.wav");
+		playSound(TRANSLATE("b#2.wav", "b#87.wav"));
 	}
 
 	return true;

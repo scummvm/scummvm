@@ -23,6 +23,7 @@
 #include "titanic/game/sgt/bedhead.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -112,7 +113,7 @@ bool CBedhead::TurnOn(CTurnOn *msg) {
 
 				_statics->_bedhead = entry._name4;
 				playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-				playSound("b#6.wav");
+				playSound(TRANSLATE("b#6.wav", "b#91.wav"));
 				_isClosed = false;
 			}
 		}

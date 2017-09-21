@@ -24,6 +24,7 @@
 #include "titanic/carry/chicken.h"
 #include "titanic/core/view_item.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -80,7 +81,7 @@ bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 		if (_afterReceiveStartFrame >= 0)
 			playMovie(_afterReceiveStartFrame, _afterReceiveEndFrame, MOVIE_WAIT_FOR_FINISH);
 
-		playSound("z#28.wav", 70);
+		playSound(TRANSLATE("z#28.wav", "z#559.wav"), 70);
 	} else if (!_isOn) {
 		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
 		return false;
@@ -184,10 +185,10 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (msg->_endFrame == _trayOutEndFrame) {
 		if (_offStartFrame >= 0)
-			playSound("z#27.wav");
+			playSound(TRANSLATE("z#27.wav", "z#558.wav"));
 	} else if (msg->_endFrame == _offEndFrame) {
 		if (_endingStartFrame >= 0)
-			playSound("z#30.wav");
+			playSound(TRANSLATE("z#30.wav", "z#561.wav"));
 	} else {
 		if (msg->_endFrame == _onEndFrame && pet) {
 			if (_motherBlocked) {
@@ -212,11 +213,11 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			switch (_sendAction) {
 			case SA_EATEN:
 				stopSound(_soundHandle, 1);
-				_soundHandle = playSound("z#3.wav", 1);
+				_soundHandle = playSound(TRANSLATE("z#3.wav", "z#539.wav"), 1);
 				break;
 			case SA_BILGE_FEATHERS:
 				stopSound(_soundHandle);
-				_soundHandle = playSound("z#12.wav");
+				_soundHandle = playSound(TRANSLATE("z#12.wav", "z#532.wav"));
 				break;
 			case SA_BILGE_SENT:
 				if (_isChicken) {
@@ -250,8 +251,8 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			}
 
 		} else if (msg->_endFrame == _sneezing1EndFrame) {
-			playSound("z#25.wav", 70);
-			playSound("z#24.wav", 70);
+			playSound(TRANSLATE("z#25.wav", "z#556.wav"), 70);
+			playSound(TRANSLATE("z#24.wav", "z#555.wav"), 70);
 
 		} else if (msg->_endFrame == _sneezing2EndFrame) {
 			changeView("BilgeRoomWith.Node 1.N", "");
@@ -337,7 +338,7 @@ bool CBilgeSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 	petContainerRemove(item);
 	pet->phonographAction("");
 	item->setVisible(false);
-	playSound("z#23.wav");
+	playSound(TRANSLATE("z#23.wav", "z#554.wav"));
 
 	CChicken *chicken = dynamic_cast<CChicken *>(item);
 	bool chickenFlag = chicken ? chicken->_condiment == "None" : false;
@@ -399,7 +400,7 @@ bool CBilgeSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_isOn) {
 		_isOn = false;
 		if (_offStartFrame >= 0)
-			playSound("z#27.wav");
+			playSound(TRANSLATE("z#27.wav", "z#558.wav"));
 	}
 
 	performAction(true);
@@ -422,7 +423,7 @@ bool CBilgeSuccUBus::TurnOn(CTurnOn *msg) {
 	if (pet) {
 		if (_onStartFrame >= 0) {
 			playMovie(_onStartFrame, _onEndFrame, MOVIE_NOTIFY_OBJECT);
-			playSound("z#26.wav");
+			playSound(TRANSLATE("z#26.wav", "z#557.wav"));
 		}
 
 		if (mailExists(pet->getRoomFlags()) && _okStartFrame >= 0)

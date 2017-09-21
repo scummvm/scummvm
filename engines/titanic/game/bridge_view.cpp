@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/bridge_view.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -78,7 +79,7 @@ bool CBridgeView::ActMsg(CActMsg *msg) {
 			CChangeMusicMsg musicMsg;
 			musicMsg._flags = 1;
 			musicMsg.execute("BridgeAutoMusicPlayer");
-			playSound("a#42.wav");
+			playSound(TRANSLATE("a#42.wav", "a#35.wav"));
 			playMovie(MOVIE_NOTIFY_OBJECT);
 		}
 	}

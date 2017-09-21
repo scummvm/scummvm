@@ -22,6 +22,7 @@
 
 #include "titanic/game/bowl_unlocker.h"
 #include "titanic/core/room_item.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -60,7 +61,7 @@ bool CBowlUnlocker::MovieEndMsg(CMovieEndMsg *msg) {
 	CNutPuzzleMsg puzzleMsg("BowlUnlocked");
 	puzzleMsg.execute(getRoom(), nullptr, MSGFLAG_SCAN);
 
-	playSound("z#47.wav");
+	playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 	return true;
 }
 

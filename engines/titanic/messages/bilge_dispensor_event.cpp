@@ -23,6 +23,7 @@
 #include "titanic/messages/bilge_dispensor_event.h"
 #include "titanic/events.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -66,7 +67,7 @@ bool CBilgeDispensorEvent::FrameMsg(CFrameMsg *msg) {
 		if (getRandomNumber(2) == 0) {
 			int volume = 20 + getRandomNumber(30);
 			int balance = getRandomNumber(20) - 10;
-			_soundHandle = playSound("b#18.wav", volume, balance);
+			_soundHandle = playSound(TRANSLATE("b#18.wav", "b#102.wav"), volume, balance);
 		} else {
 			_ticksDelayEnd = ticks + 1000;
 		}

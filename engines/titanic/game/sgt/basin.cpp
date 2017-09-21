@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/basin.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -49,7 +50,7 @@ bool CBasin::TurnOn(CTurnOn *msg) {
 		_startFrame = 0;
 		_endFrame = 6;
 		playMovie(0, 6, MOVIE_WAIT_FOR_FINISH);
-		playSound("b#13.wav");
+		playSound(TRANSLATE("b#13.wav", "b#98.wav"));
 	}
 
 	return true;
@@ -62,7 +63,7 @@ bool CBasin::TurnOff(CTurnOff *msg) {
 		_startFrame = 8;
 		_endFrame = 14;
 		playMovie(8, 14, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-		playSound("b#13.wav");
+		playSound(TRANSLATE("b#13.wav", "b#98.wav"));
 	}
 
 	return true;
