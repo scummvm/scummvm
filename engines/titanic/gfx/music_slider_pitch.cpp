@@ -21,6 +21,7 @@
  */
 
 #include "titanic/gfx/music_slider_pitch.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -48,7 +49,7 @@ bool CMusicSliderPitch::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
 		loadFrame(3 - _controlVal);
 		playSound("z#54.wav", 50);
 	} else {
-		playSound("z#46.wav");
+		playSound(TRANSLATE("z#46.wav", "z#577.wav"));
 	}
 
 	return true;

@@ -24,6 +24,7 @@
 #include "titanic/core/room_item.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -90,7 +91,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 		if (!msg->_key)
 			return true;
 
-		playSound("z#228.wav");
+		playSound(TRANSLATE("z#228.wav", "z#134.wav"));
 		editMsg._mode = EDIT_KEYPRESS;
 		editMsg._param = msg->_key;
 		editMsg.execute(loginControl);
@@ -120,7 +121,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 		if (!msg->_key)
 			return true;
 
-		playSound("z#228.wav");
+		playSound(TRANSLATE("z#228.wav", "z#134.wav"));
 		editMsg._mode = EDIT_KEYPRESS;
 		editMsg._param = msg->_key;
 		editMsg.execute(loginControl);

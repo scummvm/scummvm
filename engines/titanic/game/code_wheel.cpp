@@ -22,6 +22,8 @@
 
 #include "titanic/game/code_wheel.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -91,7 +93,7 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		_value = (_value <= 0) ? 14 : _value - 1;
 	}
 
-	playSound("z#59.wav");
+	playSound(TRANSLATE("z#59.wav", "z#590.wav"));
 	return true;
 }
 

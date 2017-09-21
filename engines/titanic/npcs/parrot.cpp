@@ -25,6 +25,7 @@
 #include "titanic/carry/carry.h"
 #include "titanic/carry/chicken.h"
 #include "titanic/game_manager.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -386,7 +387,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 	if ((getTicksCount() - _lastSpeakTime) < 20000 || _speechCounter)
 		return true;
 
-	playSound("z#475.wav", 50);
+	playSound(TRANSLATE("z#475.wav", "z#212.wav"), 50);
 
 	if (msg->_target == "Bomb") {
 		startTalking("PerchedParrot", 280236);

@@ -22,6 +22,7 @@
 
 #include "titanic/game/gondolier/gondolier_mixer.h"
 #include "titanic/core/room_item.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -173,7 +174,7 @@ bool CGondolierMixer::SignalObject(CSignalObject *msg) {
 			CVisibleMsg visibleMsg;
 			visibleMsg.execute("Mouth");
 
-			playSound("z#47.wav");
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 		} else {
 			CSetVolumeMsg volumeMsg(_volume1, 2);
 			volumeMsg.execute(this);

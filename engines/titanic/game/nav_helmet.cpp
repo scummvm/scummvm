@@ -23,6 +23,7 @@
 #include "titanic/game/nav_helmet.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/star_control/star_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -85,8 +86,8 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 		setVisible(true);
 		starFn(STAR_HIDE);
 		playMovie(61, 120, MOVIE_NOTIFY_OBJECT);
-		playSound("a#47.wav");
-		playSound("a#48.wav");
+		playSound(TRANSLATE("a#47.wav", "a#40.wav"));
+		playSound(TRANSLATE("a#48.wav", "a#41.wav"));
 
 		if (pet) {
 			pet->decAreaLocks();
@@ -99,8 +100,8 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 		_helmetOn = true;
 		setVisible(true);
 		playMovie(0, 60, MOVIE_NOTIFY_OBJECT);
-		playSound("a#48.wav");
-		playSound("a#47.wav");
+		playSound(TRANSLATE("a#48.wav", "a#41.wav"));
+		playSound(TRANSLATE("a#47.wav", "a#40.wav"));
 	}
 
 	return true;
@@ -131,10 +132,10 @@ bool CNavHelmet::PETStarFieldLockMsg(CPETStarFieldLockMsg *msg) {
 			// but now it will also not play the sounds in
 			// photoview
 			if (msg->_value) {
-				playSound("a#6.wav");
+				playSound(TRANSLATE("a#6.wav", "a#58.wav"));
 				starFn(LOCK_STAR);
 			} else {
-				playSound("a#5.wav");
+				playSound(TRANSLATE("a#5.wav", "a#57.wav"));
 				starFn(UNLOCK_STAR);
 			}
 		}

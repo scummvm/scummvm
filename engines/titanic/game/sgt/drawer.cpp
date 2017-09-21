@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/drawer.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -54,7 +55,7 @@ bool CDrawer::TurnOn(CTurnOn *msg) {
 		setVisible(true);
 		_statics->_drawer = "Open";
 		playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-		playSound("b#10.wav");
+		playSound(TRANSLATE("b#10.wav", "b#95.wav"));
 	}
 
 	return true;
@@ -67,7 +68,7 @@ bool CDrawer::TurnOff(CTurnOff *msg) {
 		_endFrame = 100;
 		_isClosed = true;
 		playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-		playSound("b#10.wav");
+		playSound(TRANSLATE("b#10.wav", "b#95.wav"));
 	}
 
 	return true;

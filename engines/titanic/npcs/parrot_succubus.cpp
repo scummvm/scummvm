@@ -23,6 +23,7 @@
 #include "titanic/npcs/parrot_succubus.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/carry/hose.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -79,7 +80,7 @@ bool CParrotSuccUBus::HoseConnectedMsg(CHoseConnectedMsg *msg) {
 			_isOn = false;
 		} else {
 			playMovie(_onStartFrame, _onEndFrame, 0);
-			playSound("z#26.wav");
+			playSound(TRANSLATE("z#26.wav", "z#557.wav"));
 		}
 
 		playMovie(_hoseStartFrame, _hoseEndFrame, MOVIE_NOTIFY_OBJECT);
@@ -117,7 +118,7 @@ bool CParrotSuccUBus::EnterViewMsg(CEnterViewMsg *msg) {
 bool CParrotSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == _hoseEndFrame) {
 		playMovie(_pumpingStartFrame, _pumpingEndFrame, MOVIE_REPEAT);
-		_pumpingSound = playSound("z#472.wav");
+		_pumpingSound = playSound(TRANSLATE("z#472.wav", "z#209.wav"));
 		return true;
 	} else {
 		return CSuccUBus::MovieEndMsg(msg);
@@ -139,7 +140,7 @@ bool CParrotSuccUBus::LeaveNodeMsg(CLeaveNodeMsg *msg) {
 	if (_hoseConnected) {
 		getHiddenObject(_pumpingTarget);
 		if (CHose::_statics->_actionTarget.empty()) {
-			playSound("z#51.wav");
+			playSound(TRANSLATE("z#51.wav", "z#582.wav"));
 			CHoseConnectedMsg hoseMsg;
 			hoseMsg._connected = false;
 			hoseMsg.execute(this);

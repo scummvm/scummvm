@@ -22,6 +22,7 @@
 
 #include "titanic/game/fan_noises.h"
 #include "titanic/core/room_item.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -75,12 +76,12 @@ bool CFanNoises::EnterRoomMsg(CEnterRoomMsg *msg) {
 
 		switch (_state) {
 		case 1:
-			_soundHandle = playSound("b#60.wav", 0, _soundBalance, true);
+			_soundHandle = playSound(TRANSLATE("b#60.wav", "b#40.wav"), 0, _soundBalance, true);
 			setSoundVolume(_soundHandle, _soundPercent, _soundSeconds);
 			_startFlag = true;
 			break;
 		case 2:
-			_soundHandle = playSound("b#58.wav", 0, _soundBalance, true);
+			_soundHandle = playSound(TRANSLATE("b#58.wav", "b#38.wav"), 0, _soundBalance, true);
 			setSoundVolume(_soundHandle, _soundPercent, _soundSeconds);
 			_startFlag = true;
 			break;
@@ -122,7 +123,7 @@ bool CFanNoises::StatusChangeMsg(CStatusChangeMsg *msg) {
 			switch (oldState) {
 			case 1:
 			case 2:
-				playSound("b#59.wav", _soundPercent, _soundBalance);
+				playSound(TRANSLATE("b#59.wav", "b#39.wav"), _soundPercent, _soundBalance);
 				break;
 			default:
 				break;
@@ -140,7 +141,7 @@ bool CFanNoises::StatusChangeMsg(CStatusChangeMsg *msg) {
 			switch (oldState) {
 			case 0:
 			case 2:
-				_soundHandle = playSound("b#60.wav", _soundPercent, _soundBalance, true);
+				_soundHandle = playSound(TRANSLATE("b#60.wav", "b#40.wav"), _soundPercent, _soundBalance, true);
 				_startFlag = true;
 				break;
 			default:
@@ -157,7 +158,7 @@ bool CFanNoises::StatusChangeMsg(CStatusChangeMsg *msg) {
 			}
 
 			if (oldState == 1) {
-				_soundHandle = playSound("b#58.wav", _soundPercent, _soundBalance, true);
+				_soundHandle = playSound(TRANSLATE("b#58.wav", "b#38.wav"), _soundPercent, _soundBalance, true);
 				_startFlag = true;
 			}
 			break;
@@ -186,13 +187,13 @@ bool CFanNoises::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 
 		switch (_state) {
 		case 1:
-			playSound("b#60.wav", 0, _soundBalance, true);
+			playSound(TRANSLATE("b#60.wav", "b#40.wav"), 0, _soundBalance, true);
 			setSoundVolume(_soundHandle, _soundPercent, _soundSeconds);
 			_startFlag = true;
 			break;
 
 		case 2:
-			playSound("b#58.wav", 0, _soundBalance, true);
+			playSound(TRANSLATE("b#58.wav", "b#38.wav"), 0, _soundBalance, true);
 			setSoundVolume(_soundHandle, _soundPercent, _soundSeconds);
 			_startFlag = true;
 			break;

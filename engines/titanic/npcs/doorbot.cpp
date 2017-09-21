@@ -163,27 +163,32 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CDoorbot::OnSummonBotMsg(COnSummonBotMsg *msg) {
-	const char *const ROOM_WAVES[8][2] = {
-		{ "EmbLobby", "z#186.wav" },
-		{ "PromenadeDeck", "z#184.wav" },
-		{ "Arboretum", "z#188.wav" },
-		{ "Frozen Arboretum", "z#188.wav" },
-		{ "Bar", "z#187.wav" },
-		{ "MusicRoom", "z#185.wav" },
-		{ "MusicRoomLobby", "z#185.wav" },
-		{ "1stClassRestaurant", "z#183.wav" },
+	struct RoomWave {
+		const char *_room;
+		const char *_enSound;
+		const char *_deSound;
+	};
+	const RoomWave ROOM_WAVES[8] = {
+		{ "EmbLobby", "z#186.wav", "z#716.wav" },
+		{ "PromenadeDeck", "z#184.wav", "z#714.wav" },
+		{ "Arboretum", "z#188.wav", "z#718.wav" },
+		{ "Frozen Arboretum", "z#188.wav", "z#718.wav" },
+		{ "Bar", "z#187.wav", "z#717.wav" },
+		{ "MusicRoom", "z#185.wav", "z#715.wav" },
+		{ "MusicRoomLobby", "z#185.wav", "z#715.wav" },
+		{ "1stClassRestaurant", "z#183.wav", "z#713.wav" },
 	};
 
 	if (msg->_value != -1) {
 		int idx;
 		for (idx = 0; idx < 8; ++idx) {
-			if (compareRoomNameTo(ROOM_WAVES[idx][0])) {
-				playSound(ROOM_WAVES[idx][1]);
+			if (compareRoomNameTo(ROOM_WAVES[idx]._room)) {
+				playSound(TRANSLATE(ROOM_WAVES[idx]._enSound, ROOM_WAVES[idx]._deSound));
 				break;
 			}
 		}
 		if (idx == 8)
-			playSound("z#146.wav");
+			playSound(TRANSLATE("z#146.wav", "z#702.wav"));
 
 		sleep(2000);
 	}

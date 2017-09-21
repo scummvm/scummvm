@@ -22,6 +22,7 @@
 
 #include "titanic/game/parrot/parrot_nut_bowl_actor.h"
 #include "titanic/core/room_item.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -70,7 +71,7 @@ bool CParrotNutBowlActor::BowlStateChangeMsg(CBowlStateChangeMsg *msg) {
 		if (!_puzzleDone) {
 			CReplaceBowlAndNutsMsg replaceMsg;
 			replaceMsg.execute(findRoom(), nullptr, MSGFLAG_SCAN);
-			playSound("z#47.wav");
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 		}
 
 		_puzzleDone = true;

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/hammer_dispensor_button.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -68,7 +69,7 @@ bool CHammerDispensorButton::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
 }
 
 bool CHammerDispensorButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	playSound("z#93.wav");
+	playSound(TRANSLATE("z#93.wav", "z#624.wav"));
 	petDisplayMessage(1, POKE_WITH_LONG_STICK);
 	return true;
 }
@@ -97,7 +98,7 @@ bool CHammerDispensorButton::FrameMsg(CFrameMsg *msg) {
 
 		if (!_open) {
 			if (flag) {
-				playSound("z#93.wav");
+				playSound(TRANSLATE("z#93.wav", "z#624.wav"));
 				if (++_hitCounter == 5) {
 					if (!_hammerTaken) {
 						CActMsg actMsg(_msgAction);

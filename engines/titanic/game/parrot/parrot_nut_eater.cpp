@@ -22,6 +22,7 @@
 
 #include "titanic/game/parrot/parrot_nut_eater.h"
 #include "titanic/core/room_item.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -55,7 +56,7 @@ bool CParrotNutEater::MovieEndMsg(CMovieEndMsg *msg) {
 	CNutPuzzleMsg nutMsg("NutsGone");
 	nutMsg.execute(getRoom(), nullptr, MSGFLAG_SCAN);
 
-	playSound("z#47.wav");
+	playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 	return true;
 }
 
@@ -70,7 +71,7 @@ bool CParrotNutEater::NutPuzzleMsg(CNutPuzzleMsg *msg) {
 		playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		movieEvent(68);
 		movieEvent(132);
-		playSound("z#215.wav");
+		playSound(TRANSLATE("z#215.wav", "z#6.wav"));
 
 		CTrueTalkTriggerActionMsg triggerMsg;
 		triggerMsg._param1 = triggerMsg._param2 = 0;
@@ -85,10 +86,10 @@ bool CParrotNutEater::MovieFrameMsg(CMovieFrameMsg *msg) {
 
 	switch (msg->_frameNumber) {
 	case 68:
-		playSound("z#214.wav", prox);
+		playSound(TRANSLATE("z#214.wav", "z#5.wav"), prox);
 		break;
 	case 132:
-		playSound("z#216.wav", prox);
+		playSound(TRANSLATE("z#216.wav", "z#7.wav"), prox);
 		break;
 	default:
 		break;

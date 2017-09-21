@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/fan_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -74,7 +75,7 @@ bool CFanControl::ActMsg(CActMsg *msg) {
 
 bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 	if (!_starlingsDying) {
-		playSound("z#42.wav");
+		playSound(TRANSLATE("z#42.wav", "z#743.wav"));
 		if (_enabled) {
 			switch (msg->_newStatus) {
 			case 1:
