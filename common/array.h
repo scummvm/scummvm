@@ -87,10 +87,10 @@ public:
 	 * Construct an array by copying data from a regular array.
 	 */
 	template<class T2>
-	Array(const T2 *data, size_type n) {
+	Array(const T2 *array, size_type n) {
 		_size = n;
 		allocCapacity(n);
-		uninitialized_copy(data, data + _size, _storage);
+		uninitialized_copy(array, array + _size, _storage);
 	}
 
 	~Array() {
@@ -121,6 +121,16 @@ public:
 		_size--;
 		// We also need to destroy the last object properly here.
 		_storage[_size].~T();
+	}
+
+	/** Returns a pointer to the underlying memory serving as element storage. */
+	const T *data() const {
+		return _storage;
+	}
+
+	/** Returns a pointer to the underlying memory serving as element storage. */
+	T *data() {
+		return _storage;
 	}
 
 	/** Returns a reference to the first element of the array. */
