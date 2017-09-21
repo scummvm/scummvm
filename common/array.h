@@ -59,6 +59,23 @@ protected:
 public:
 	Array() : _capacity(0), _size(0), _storage(0) {}
 
+	/**
+	 * Constructs an array with `count` default-inserted instances of T. No
+	 * copies are made.
+	 */
+	explicit Array(size_type count) : _size(0) {
+		allocCapacity(count);
+		resize(count);
+	}
+
+	/**
+	 * Constructs an array with `count` copies of elements with value `value`.
+	 */
+	Array(size_type count, const T &value) : _size(count) {
+		allocCapacity(count);
+		uninitialized_fill_n(_storage, count, value);
+	}
+
 	Array(const Array<T> &array) : _capacity(array._size), _size(array._size), _storage(0) {
 		if (array._storage) {
 			allocCapacity(_size);

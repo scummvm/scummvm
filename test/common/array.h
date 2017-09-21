@@ -298,6 +298,49 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array2.size(), (unsigned int)3);
 	}
 
+	class Copyable {
+		bool _copied;
+		int _value;
+		Copyable &operator=(Copyable &);
+	public:
+		Copyable() : _copied(false), _value(1) {}
+		explicit Copyable(const int v) : _copied(false), _value(v) {}
+		Copyable(const Copyable &other) : _copied(true), _value(other._value) {}
+		bool copied() const { return _copied; }
+		int value() const { return _value; }
+	};
+
+	void test_array_constructor_count() {
+		Common::Array<int> array(10);
+		TS_ASSERT_EQUALS(array.size(), 10U);
+		TS_ASSERT_EQUALS(array[0], 0);
+		TS_ASSERT_EQUALS(array[9], 0);
+	}
+
+	void test_array_constructor_count_copy_value() {
+		Common::Array<int> trivial(5, 1);
+		TS_ASSERT_EQUALS(trivial.size(), 5U);
+		TS_ASSERT_EQUALS(trivial[0], 1);
+		TS_ASSERT_EQUALS(trivial[4], 1);
+
+		Copyable c(123);
+		typedef Common::Array<Copyable> NonTrivialArray;
+
+		NonTrivialArray nonTrivialCopy(3, c);
+		TS_ASSERT_EQUALS(nonTrivialCopy.size(), 3U);
+		for (NonTrivialArray::size_type i = 0; i < nonTrivialCopy.size(); ++i) {
+			TS_ASSERT_EQUALS(nonTrivialCopy[0].value(), 123);
+			TS_ASSERT(nonTrivialCopy[0].copied());
+		}
+
+		NonTrivialArray nonTrivialDefault(3);
+		TS_ASSERT_EQUALS(nonTrivialDefault.size(), 3U);
+		for (NonTrivialArray::size_type i = 0; i < nonTrivialDefault.size(); ++i) {
+			TS_ASSERT_EQUALS(nonTrivialDefault[0].value(), 1);
+			TS_ASSERT(!nonTrivialDefault[0].copied());
+		}
+	}
+
 	void test_array_constructor_str() {
 		const char *array1[] = { "a", "b", "c" };
 
