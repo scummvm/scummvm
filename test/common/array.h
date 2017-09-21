@@ -353,6 +353,15 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array2.size(), (unsigned int)3);
 	}
 
+	void test_data() {
+		Common::Array<int> array;
+		TS_ASSERT(array.data() == nullptr);
+		array.resize(2);
+		TS_ASSERT(array.data() != nullptr);
+		TS_ASSERT_EQUALS(array.data(), &array.front());
+		TS_ASSERT_EQUALS(array.data() + array.size() - 1, &array.back());
+	}
+
 	void test_front_back_push_pop() {
 		Common::Array<int> container;
 
