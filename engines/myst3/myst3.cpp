@@ -1470,8 +1470,10 @@ Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType
 	}
 
 	if (!_state->load(saveFile)) {
+		delete saveFile;
 		return Common::kUnknownError;
 	}
+	delete saveFile;
 
 	_inventory->loadFromState();
 
