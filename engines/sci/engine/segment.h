@@ -505,10 +505,14 @@ public:
 	}
 
 	/**
-	 * Returns the size of the array, in bytes.
+	 * Returns the maximum number of bytes that can be stored in the array.
 	 */
 	uint16 byteSize() const {
-		return _size * _elementSize;
+		uint16 size = _size;
+		if (_type == kArrayTypeID || _type == kArrayTypeInt16) {
+			size *= sizeof(uint16);
+		}
+		return size;
 	}
 
 	/**
@@ -892,7 +896,7 @@ public:
 			break;
 		}
 
-		return Common::String::format("type %s; %u entries; %u bytes", type, size(), byteSize());
+		return Common::String::format("type %s; %u entries", type, size());
 	}
 
 protected:
