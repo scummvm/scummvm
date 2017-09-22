@@ -76,12 +76,12 @@ bool CCDROMTray::ActMsg(CActMsg *msg) {
 		} else if (_insertedCD == "None") {
 			// Opening tray with no CD
 			playMovie(44, 54, 0);
-			playSound("a#34.wav", 50, 0, 0);
+			playSound(TRANSLATE("a#34.wav", "a#29.wav"), 50, 0, 0);
 			_isOpened = true;
 		} else if (_insertedCD == "newCD1" || _insertedCD == "newCD2") {
 			// Opening tray with standard CD
 			playMovie(22, 32, 0);
-			playSound("a#34.wav", 50, 0, 0);
+			playSound(TRANSLATE("a#34.wav", "a#29.wav"), 50, 0, 0);
 			_isOpened = true;
 		} else if (_insertedCD == "newSTCD") {
 			// Opening tray with Starship Titanic CD

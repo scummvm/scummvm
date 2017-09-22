@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/nose_holder.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -54,7 +55,7 @@ bool CNoseHolder::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Sneeze" && !_itemName.empty() && _dropEnabled) {
 		CProximity prox;
 		prox._positioningMode = POSMODE_VECTOR;
-		playSound("z#35.wav", prox);
+		playSound(TRANSLATE("z#35.wav", "z#567.wav"), prox);
 
 		if (getView() == findView()) {
 			setVisible(true);
