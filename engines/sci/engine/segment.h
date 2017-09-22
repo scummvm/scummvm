@@ -531,14 +531,6 @@ public:
 	}
 
 	/**
-	 * Shrinks a string array to its optimal size.
-	 */
-	void snug() {
-		assert(_type == kArrayTypeString || _type == kArrayTypeByte);
-		resize(Common::strnlen((char *)_data, _size) + 1, true);
-	}
-
-	/**
 	 * Returns a pointer to the array's raw data storage.
 	 */
 	void *getRawData() { return _data; }
