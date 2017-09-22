@@ -21,6 +21,7 @@
  */
 
 #include "titanic/sound/titania_speech.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -57,7 +58,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 		CProximity prox(Audio::Mixer::kSpeechSoundType);
 		switch (_actionNum) {
 		case 1:
-			loadSound("a#12.wav");
+			loadSound(TRANSLATE("a#12.wav", "a#0.wav"));
 			sleep(1000);
 			playMovie(0, 187, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			movieSetPlaying(true);
@@ -65,7 +66,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 			break;
 
 		case 2:
-			loadSound("a#11.wav");
+			loadSound(TRANSLATE("a#11.wav", "a#4.wav"));
 			addTimer(0);
 			startAnimTimer("Para2", 300);
 			addTimer(6000);
@@ -78,25 +79,25 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 		case 3:
 			visibleMsg._visible = false;
 			visibleMsg.execute("TitaniaStillControl");
-			loadSound("a#10.wav");
+			loadSound(TRANSLATE("a#10.wav", "a#2.wav"));
 			playMovie(585, 706, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
-			playSound("a#10.wav", prox);
+			playSound(TRANSLATE("a#10.wav", "a#2.wav"), prox);
 			break;
 
 		case 4:
 			visibleMsg._visible = false;
 			visibleMsg.execute("TitaniaStillControl");
-			loadSound("a#9.wav");
+			loadSound(TRANSLATE("a#9.wav", "a#3.wav"));
 			playMovie(707, 905, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
-			playSound("a#9.wav", prox);
+			playSound(TRANSLATE("a#9.wav", "a#3.wav"), prox);
 			break;
 
 		case 5:
 			visibleMsg._visible = false;
 			visibleMsg.execute("TitaniaStillControl");
-			loadSound("a#8.wav");
+			loadSound(TRANSLATE("a#8.wav", "a#1.wav"));
 			playMovie(906, 938, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
-			playSound("a#8.wav", prox);
+			playSound(TRANSLATE("a#8.wav", "a#1.wav"), prox);
 			break;
 
 		default:
@@ -125,7 +126,7 @@ bool CTitaniaSpeech::MovieFrameMsg(CMovieFrameMsg *msg) {
 	int frame = getMovieFrame();
 	if (frame == 0) {
 		CProximity prox(Audio::Mixer::kSpeechSoundType);
-		playSound("a#12.wav", prox);
+		playSound(TRANSLATE("a#12.wav", "a#0.wav"), prox);
 	}
 
 	return true;
@@ -142,7 +143,7 @@ bool CTitaniaSpeech::TimerMsg(CTimerMsg *msg) {
 		actMsg.execute(this);
 	} else if (msg->_action == "Para2") {
 		CProximity prox(Audio::Mixer::kSpeechSoundType);
-		playSound("a#11.wav", prox);
+		playSound(TRANSLATE("a#11.wav", "a#4.wav"), prox);
 	} else {
 		frameMsg._frameNumber = _backgroundFrame++;
 		frameMsg.execute("TitaniaStillControl");

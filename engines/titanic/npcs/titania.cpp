@@ -21,6 +21,7 @@
  */
 
 #include "titanic/npcs/titania.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -146,7 +147,7 @@ bool CTitania::ActMsg(CActMsg *msg) {
 	if (msg->_action == "SleepTitania") {
 		setVisible(true);
 		playCutscene(52, 104);
-		playSound("z#47.wav", 100);
+		playSound(TRANSLATE("z#47.wav", "z#578.wav"), 100);
 		changeView("Titania.Node 7.S", "");
 
 		// Re-enable control, and reset bomb's volume back to normal 60%
@@ -178,7 +179,7 @@ bool CTitania::ActMsg(CActMsg *msg) {
 				&& _mouth && _visionCentre && _speechCentre
 				&& _olfactoryCentre && _auditoryCentre) {
 			CProximity prox(Audio::Mixer::kSpeechSoundType);
-			playSound("z#47.wav", prox);
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"), prox);
 
 			CActMsg actMsg("Woken");
 			actMsg.execute("MouthSlot");

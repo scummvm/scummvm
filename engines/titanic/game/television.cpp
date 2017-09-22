@@ -26,6 +26,7 @@
 #include "titanic/debugger.h"
 #include "titanic/game/get_lift_eye2.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -245,8 +246,8 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 			// You may be a winner
 			CProximity prox1, prox2;
 			prox1._soundType = prox2._soundType = Audio::Mixer::kSpeechSoundType;
-			playSound("z#47.wav", prox1);
-			_soundHandle = playSound("b#20.wav", prox2);
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"), prox1);
+			_soundHandle = playSound(TRANSLATE("b#20.wav", "b#1.wav"), prox2);
 
 			// Get the room flags for the SGT floor we're on
 			CPetControl *pet = getPetControl();

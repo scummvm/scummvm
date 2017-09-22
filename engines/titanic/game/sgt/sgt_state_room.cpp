@@ -22,6 +22,7 @@
 
 #include "titanic/game/sgt/sgt_state_room.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -141,7 +142,7 @@ bool CSGTStateRoom::EnterRoomMsg(CEnterRoomMsg *msg) {
 		if (roomFlags == assignedRoom && getPassengerClass() == 3
 				&& _statics->_announcementFlag) {
 			// Congratulations, you may have won an upgrade
-			playSound("b#21.wav");
+			playSound(TRANSLATE("b#21.wav", "b#2.wav"));
 			_statics->_announcementFlag = false;
 		}
 

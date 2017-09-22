@@ -25,6 +25,7 @@
 #include "titanic/carry/chicken.h"
 #include "titanic/core/view_item.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -289,7 +290,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 
 		item->setVisible(false);
 		if (_startFrame1 >= 0) {
-			playSound("z#23.wav");
+			playSound(TRANSLATE("z#23.wav", "z#554.wav"));
 			playMovie(_startFrame1, _endFrame1, 0);
 		}
 
@@ -366,7 +367,7 @@ bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_isOn) {
 		_isOn = false;
 		if (_offStartFrame >= 0)
-			playSound("z#27.wav", 100);
+			playSound(TRANSLATE("z#27.wav", "z#558.wav"), 100);
 
 		if (_signalFlag)
 			setVisible(false);
@@ -535,7 +536,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (msg->_endFrame == _offEndFrame) {
 		if (_endingStartFrame >= 0)
-			playSound("z#30.wav", 100);
+			playSound(TRANSLATE("z#30.wav", "z#561.wav"), 100);
 
 		if (_signalFlag) {
 			_signalFlag = false;
@@ -680,12 +681,12 @@ bool CSuccUBus::TurnOn(CTurnOn *msg) {
 	if (pet) {
 		if (!_signalFlag && _initialStartFrame >= 0) {
 			playMovie(_initialStartFrame, _initialEndFrame, 0);
-			playSound("z#30.wav", 100);
+			playSound(TRANSLATE("z#30.wav", "z#561.wav"), 100);
 		}
 
 		if (_onStartFrame >= 0) {
 			playMovie(_onStartFrame, _onEndFrame, MOVIE_NOTIFY_OBJECT);
-			playSound("z#26.wav", 100);
+			playSound(TRANSLATE("z#26.wav", "z#557.wav"), 100);
 		}
 
 		uint petRoomFlags = pet->getRoomFlags();
@@ -712,7 +713,7 @@ bool CSuccUBus::TurnOff(CTurnOff *msg) {
 	}
 
 	if (_offStartFrame >= 0) {
-		playSound("z#27.wav", 100);
+		playSound(TRANSLATE("z#27.wav", "z#558.wav"), 100);
 		playMovie(_offStartFrame, _offEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
@@ -753,7 +754,7 @@ bool CSuccUBus::SUBTransition(CSUBTransition *msg) {
 bool CSuccUBus::SetChevRoomBits(CSetChevRoomBits *msg) {
 	if (_isOn) {
 		_destRoomFlags = msg->_roomFlags;
-		playSound("z#98.wav", 100);
+		playSound(TRANSLATE("z#98.wav", "z#629.wav"), 100);
 	}
 
 	return true;

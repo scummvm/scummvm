@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/toilet.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -51,7 +52,7 @@ bool CToilet::TurnOn(CTurnOn *msg) {
 		_startFrame = 0;
 		_endFrame = 11;
 		playMovie(0, 11, MOVIE_WAIT_FOR_FINISH);
-		playSound("b#1.wav");
+		playSound(TRANSLATE("b#1.wav", "b#86.wav"));
 	}
 
 	return true;
@@ -65,7 +66,7 @@ bool CToilet::TurnOff(CTurnOff *msg) {
 		_startFrame = 11;
 		_endFrame = 18;
 		playMovie(11, 18, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-		playSound("b#1.wav");
+		playSound(TRANSLATE("b#1.wav", "b#86.wav"));
 	}
 
 	return true;
