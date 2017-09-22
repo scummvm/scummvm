@@ -24,21 +24,33 @@
 #include "titanic/true_talk/barbot_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
-static const int STATE_ARRAY[7] = {
-	0xCAB0, 0xCAB2, 0xCAB3, 0xCAB4, 0xCAB5, 0xCAB6, 0xCAB7
+static const int STATE_ARRAY_EN[7] = {
+	51888, 51890, 51891, 51892, 51893, 51894, 51895
+};
+static const int STATE_ARRAY_DE[7] = {
+	51903, 51905, 51906, 51907, 51908, 51909, 51910
 };
 
-static const uint ARRAY1[] = {
+static const uint ARRAY1_EN[23] = {
 	0, 50033, 50044, 50045, 50046, 50047, 50048, 50049,
 	50050, 50051, 50034, 50035, 50036, 50037, 50038, 50039,
 	50040, 50041, 50042, 50043, 50411, 0
 };
+static const uint ARRAY1_DE[23] = {
+	0, 50033, 50044, 50045, 50046, 50047, 50048, 50049, 50050,
+	50051, 50034, 50035, 50036, 50037, 50038, 50039, 50040,
+	50041, 50042, 50043, 50421, 0, 0
+};
 
-static const uint ARRAY2[] = {
+static const uint ARRAY2_EN[10] = {
 	51899, 51900, 51901, 51902, 51903, 51904, 51905, 51906, 51907, 0
+};
+static const uint ARRAY2_DE[10] = {
+	51914, 51915, 51916, 51917, 51918, 51919, 51920, 51921, 51922, 0
 };
 
 BarbotScript::BarbotScript(int val1, const char *charClass, int v2,
@@ -74,9 +86,9 @@ int BarbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentenc
 	if (tag == MKTAG('D', 'N', 'A', '1') || tag == MKTAG('H', 'H', 'G', 'Q') ||
 			tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
 		if (_state < 7) {
-			addResponse(STATE_ARRAY[_state++]);
+			addResponse(TRANSLATE(STATE_ARRAY_EN[_state++], STATE_ARRAY_DE[_state++]));
 		} else {
-			selectResponse(51896);
+			selectResponse(TRANSLATE(51896, 51911));
 			setState(1);
 			_state = 0;
 		}
@@ -142,7 +154,11 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 	if (isState9()) {
 		if (sentence->localWord("visioncenter") || sentence->localWord("brain") ||
 				sentence->contains("vision") || sentence->contains("visual") ||
-				sentence->contains("brain") || sentence->contains("crystal")) {
+				sentence->contains("brain") || sentence->contains("crystal") ||
+				sentence->contains("gesichtsmodul") || sentence->contains("sehmodul") ||
+				sentence->contains("gesichtszentrum") || sentence->contains("hirn") ||
+				sentence->contains("hirnstueck")
+			) {
 			if (CTrueTalkManager::getStateValue(2)) {
 				addResponse(getDialogueId(251003));
 				applyResponse();
@@ -151,40 +167,40 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			}
 		}
 
-		if (sentence->contains("goldfish")) {
+		if (sentence->contains("goldfish") || sentence->contains("goldfisch")) {
 			addResponse(getDialogueId(250184));
 			applyResponse();
 			return 2;
 		}
 
-		dialogueId = ARRAY1[getRandomNumber(20)];
-		if (!ARRAY2[_arrIndex])
+		dialogueId = TRANSLATE(ARRAY1_EN[getRandomNumber(20)], ARRAY1_DE[getRandomNumber(20)]);
+		if (!TRANSLATE(ARRAY2_EN[_arrIndex], ARRAY2_DE[_arrIndex]))
 			_arrIndex = 0;
 
 		if (_arrIndex) {
-			dialogueId = ARRAY2[_arrIndex++];
+			dialogueId = TRANSLATE(ARRAY2_EN[_arrIndex++], ARRAY2_DE[_arrIndex++]);
 		} else if (getRandomNumber(100) > 35) {
-			dialogueId = ARRAY2[0];
+			dialogueId = TRANSLATE(ARRAY2_EN[0], ARRAY2_DE[0]);
 			_arrIndex = 1;
 		} else if (getRandomNumber(100) > 60) {
 			switch (sentence->_category) {
 			case 2:
-				dialogueId = 51914;
+				dialogueId = TRANSLATE(51914, 51929);
 				break;
 			case 3:
-				dialogueId = 51911;
+				dialogueId = TRANSLATE(51911, 51926);
 				break;
 			case 4:
-				dialogueId = 51913;
+				dialogueId = TRANSLATE(51913, 51928);
 				break;
 			case 5:
-				dialogueId = 51912;
+				dialogueId = TRANSLATE(51912, 51927);
 				break;
 			case 6:
-				dialogueId = 51915;
+				dialogueId = TRANSLATE(51915, 51930);
 				break;
 			case 7:
-				dialogueId = 51909;
+				dialogueId = TRANSLATE(51909, 51924);
 				break;
 			default:
 				break;
@@ -215,56 +231,60 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 
 	if (!val34) {
 		goto done;
-	} else if (val34 > 50357) {
+	} else if (val34 > TRANSLATE(50357, 50366)) {
 		goto done;
-	} else if (val34 == 50357) {
-		return applySentenceIds(50358, -1);
+	} else if (val34 == TRANSLATE(50357, 50366)) {
+		return applySentenceIds(TRANSLATE(50358, 50367), -1);
 	}
 
 	switch (val34) {
 	case 1:
 		if (flag)
-			return applySentenceIds(51898, 2);
+			return applySentenceIds(TRANSLATE(51898, 51913), 2);
 		if (flag2)
-			return applySentenceIds(51897);
+			return applySentenceIds(TRANSLATE(51897, 51912));
 		break;
 	case 2:
 		if (flag)
-			return applySentenceIds(51897);
+			return applySentenceIds(TRANSLATE(51897, 51912));
 		break;
 	case 3:
-		if (sentence->localWord("useless") || sentence->contains("useless"))
-			return applySentenceIds(50824);
+		if (sentence->localWord("useless") || sentence->contains("useless") ||
+				sentence->contains("hoffnungsloser fall"))
+			return applySentenceIds(TRANSLATE(50824, 50837));
 		break;
 	case 4:
 		if (flag)
-			return applySentenceIds(getRandomBit() ? 50512 : 51642);
+			return applySentenceIds(getRandomBit() ?
+				TRANSLATE(50512, 50522) : TRANSLATE(51642, 51657));
 		else if (flag2)
-			return applySentenceIds(getRandomBit() ? 50511 : 51643);
+			return applySentenceIds(getRandomBit() ?
+				TRANSLATE(50511, 50521) : TRANSLATE(51643, 51658));
 		break;
 	case 5:
 		if (flag)
-			return applySentenceIds(50829, 6);
+			return applySentenceIds(TRANSLATE(50829, 50842), 6);
 		if (flag2)
-			return applySentenceIds(50828);
+			return applySentenceIds(TRANSLATE(50828, 50841));
 		break;
 	case 6:
 		if (flag)
-			return applySentenceIds(50831);
+			return applySentenceIds(TRANSLATE(50831, 50844));
 		if (flag2)
-			return applySentenceIds(50830);
+			return applySentenceIds(TRANSLATE(50830, 50843));
 		break;
 	case 7:
-		if (flag2 || sentence->contains("never"))
-			return applySentenceIds(51553);
-		if (flag || sentence->contains("nicest"))
-			return applySentenceIds(51554);
+		if (flag2 || sentence->contains("never") || sentence->contains("niemals") ||
+				sentence->contains("nie"))
+			return applySentenceIds(TRANSLATE(51553, 51568));
+		if (flag || sentence->contains("nicest") || sentence->contains("schoenste"))
+			return applySentenceIds(TRANSLATE(51554, 51569));
 		break;
 	case 8:
 		if (flag)
-			return applySentenceIds(50961);
+			return applySentenceIds(TRANSLATE(50961, 50974));
 		if (flag2)
-			return applySentenceIds(50960);
+			return applySentenceIds(TRANSLATE(50960, 50973));
 		break;
 	case 9:
 		if (flag)
@@ -299,7 +319,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			return applySentenceIds(getDialogueId(250946));
 		break;
 	case 15:
-		if (flag || sentence->contains("or")) {
+		if (flag || sentence->contains("or") || sentence->contains("oder")) {
 			return applySentenceIds(getDialogueId(250526), 16);
 		} else {
 			if (g_vm->_trueTalkManager->_quotesTree.search(
@@ -311,9 +331,9 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		break;
 	case 17:
 		if (flag) {
-			return applySentenceIds(50382);
+			return applySentenceIds(TRANSLATE(50382, 50391));
 		} else if (flag2) {
-			return applySentenceIds(51423);
+			return applySentenceIds(TRANSLATE(51423, 51438));
 		}
 		// Intentional fall-through
 
@@ -327,15 +347,15 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		return applySentenceIds(getDialogueId(250565), 20);
 	case 20:
 		if (flag)
-			return applySentenceIds(50307);
+			return applySentenceIds(TRANSLATE(50307, 50315));
 		if (flag2)
-			return applySentenceIds(50306);
+			return applySentenceIds(TRANSLATE(50306, 50314));
 		break;
 	case 21:
 		if (flag)
-			return applySentenceIds(50359);
+			return applySentenceIds(TRANSLATE(50359, 50368));
 		if (flag2)
-			return applySentenceIds(50357);
+			return applySentenceIds(TRANSLATE(50357, 50366));
 		break;
 	case 23:
 		if (val2C == 6 || val2C == 10)
@@ -344,7 +364,10 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 	case 24:
 		if (sentence->contains("do not know")
 				|| sentence->contains("no idea")
-				|| sentence->contains("a clue")) {
+				|| sentence->contains("a clue")
+				|| sentence->contains("keine ahnung")
+				|| sentence->contains("weiss nicht")
+				|| sentence->contains("keinen schimmer")) {
 			return applySentenceIds(getDialogueId(250553));
 		} else {
 			return applySentenceIds(getDialogueId(250552));
@@ -354,7 +377,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		if (flag || val2C == 10)
 			applySentenceIds(getDialogueId(251899), 26);
 		else if (flag2)
-			return applySentenceIds(50215);
+			return applySentenceIds(TRANSLATE(50215, 50223));
 		break;
 	case 26:
 		if (g_vm->_trueTalkManager->_quotesTree.search(
@@ -387,7 +410,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			return applySentenceIds(getDialogueId(250642));
 		break;
 	case 33:
-		return applySentenceIds(50763);
+		return applySentenceIds(TRANSLATE(50763, 50776));
 	case 34:
 		if (flag)
 			return applySentenceIds(getDialogueId(251622));
@@ -400,15 +423,15 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		break;
 	case 36:
 		if (flag)
-			return applySentenceIds(50335);
+			return applySentenceIds(TRANSLATE(50335, 50344));
 		if (flag2)
-			return applySentenceIds(50334);
+			return applySentenceIds(TRANSLATE(50334, 50343));
 		break;
 	case 37:
 		if (flag)
-			return applySentenceIds(50217);
+			return applySentenceIds(TRANSLATE(50217, 50225));
 		if (flag2)
-			return applySentenceIds(50153);
+			return applySentenceIds(TRANSLATE(50153, 50157));
 		break;
 	case 38:
 		return applySentenceIds(getDialogueId(250637));
@@ -426,9 +449,9 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		break;
 	case 43:
 		if (flag)
-			return applySentenceIds(50416, -1);
+			return applySentenceIds(TRANSLATE(50416, 50426), -1);
 		if (flag2)
-			return applySentenceIds(50415, -1);
+			return applySentenceIds(TRANSLATE(50415, 50425), -1);
 		break;
 	case 44:
 		if (flag)
@@ -443,91 +466,99 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 		if (sentence->localWord("summer")
 				|| sentence->contains("summer")
 				|| sentence->localWord("autumn")
-				|| sentence->contains("autumn")) {
-			return applySentenceIds(50743);
+				|| sentence->contains("autumn")
+				|| sentence->contains("herbst")) {
+			return applySentenceIds(TRANSLATE(50743, 50755));
 		} else if (sentence->localWord("winter") || sentence->contains("winter")) {
-			return applySentenceIds(50696);
+			return applySentenceIds(TRANSLATE(50696, 50708));
 		} else {
-			return applySentenceIds(50225);
+			return applySentenceIds(TRANSLATE(50225, 50233));
 		}
 		break;
 	case 46:
 		if (val2C == 7 || val2C == 10)
-			return applySentenceIds(50698);
+			return applySentenceIds(TRANSLATE(50698, 50710));
 		break;
 	case 47:
 		if (flag || flag2 || val2C == 6)
-			return applySentenceIds(50717);
+			return applySentenceIds(TRANSLATE(50717, 50729));
 		break;
 	case 48:
 		if (flag)
-			return applySentenceIds(50710);
+			return applySentenceIds(TRANSLATE(50710, 50722));
 		if (flag2)
-			return applySentenceIds(50225);
+			return applySentenceIds(TRANSLATE(50225, 50233));
 		break;
 	case 49:
-		if (sentence->localWord("scraliontis") || sentence->contains("scraliontis"))
-			return applySentenceIds(50711);
+		if (sentence->localWord("scraliontis") || sentence->contains("scraliontis") ||
+				sentence->contains("skraliontis"))
+			return applySentenceIds(TRANSLATE(50711, 50723));
 		if (sentence->localWord("brobostigon") || sentence->contains("brobostigon"))
-			return applySentenceIds(50712);
+			return applySentenceIds(TRANSLATE(50712, 50724));
 		break;
 	case 50:
-		return applySentenceIds(50713);
+		return applySentenceIds(TRANSLATE(50713, 50725));
 	case 51:
 		if (flag)
-			return applySentenceIds(50715);
+			return applySentenceIds(TRANSLATE(50715, 50727));
 		if (flag2)
-			return applySentenceIds(50714);
+			return applySentenceIds(TRANSLATE(50714, 50726));
 		break;
 	case 52:
 		if (sentence->localWord("note") || sentence->contains("note"))
-			return applySentenceIds(50716);
-		return  applySentenceIds(50210);
+			return applySentenceIds(TRANSLATE(50716, 50728));
+		return  applySentenceIds(TRANSLATE(50210, 50218));
 	case 53:
-		return applySentenceIds(50210);
+		return applySentenceIds(TRANSLATE(50210, 50218));
 	case 54:
 		if (getDialRegion(0) != 0) {
-			if (val2C == 12)
-				return applySentenceIds(50174);
+			if (val2C)
+				return applySentenceIds(TRANSLATE(50174, 50178));
 			else
-				return applySentenceIds(50300);
+				return applySentenceIds(TRANSLATE(50300, 50308));
 		} else if (val2C == 7 || val2C == 10) {
-			return applySentenceIds(50871);
+			return applySentenceIds(TRANSLATE(50871, 50884));
 		}
 		break;
 	case 55:
 		if (flag)
-			return applySentenceIds(50302);
+			return applySentenceIds(TRANSLATE(50302, 50310));
 		if (flag2)
-			return applySentenceIds(50301);
+			return applySentenceIds(TRANSLATE(50301, 50309));
 		break;
 	case 56:
 		if (flag)
-			return applySentenceIds(50304);
+			return applySentenceIds(TRANSLATE(50304, 50312));
 		if (flag2)
-			return applySentenceIds(50303);
+			return applySentenceIds(TRANSLATE(50303, 50311));
 		break;
 	case 57:
 		if (sentence->localWord("mustard")
 			|| sentence->contains("mustard")
 			|| sentence->localWord("tomato")
-			|| sentence->contains("tomato"))
-			return applySentenceIds(50320);
+			|| sentence->contains("tomato")
+			|| sentence->contains("senf")
+			|| sentence->contains("tomate"))
+			return applySentenceIds(TRANSLATE(50320, 50329));
 		if (sentence->localWord("sauce")
 			|| sentence->localWord("puree")
 			|| sentence->contains("sauce")
 			|| sentence->contains("puree")
 			|| sentence->contains("bird")
-			|| sentence->contains("starling")) {
-			applySentenceIds(50321);
+			|| sentence->contains("starling")
+			|| sentence->contains("sosse")
+			|| sentence->contains("pueree")
+			|| sentence->contains("vogel")
+			|| sentence->contains("staren")) {
+			applySentenceIds(TRANSLATE(50321, 50330));
 			CTrueTalkManager::triggerAction(30, 0);
 			return 2;
 		}
 
-		return applySentenceIds(50320);
+		return applySentenceIds(TRANSLATE(50320, 50329));
 	case 58:
 		if (val2C == 6 || val2C == 10)
-			return applySentenceIds(50880);
+			return applySentenceIds(TRANSLATE(50880, 50893));
 		break;
 	case 59:
 		if (flag) {
@@ -581,7 +612,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			return applySentenceIds(getDialogueId(250631));
 		break;
 	case 65:
-		if (sentence->localWord("now") || sentence->localWord("soonh"))
+		if (sentence->localWord("now") || sentence->localWord("soon"))
 			return applySentenceIds(getDialogueId(250424));
 		return applySentenceIds(getDialogueId(250506));
 	case 66:
@@ -623,7 +654,7 @@ done:
 
 	updateCurrentDial(true);
 
-	if (sentence->contains("goldfish")) {
+	if (sentence->contains("goldfish") || sentence->contains("goldfisch")) {
 		addResponse(250184);
 	} else if ((sentence->localWord("puree") || sentence->localWord("pureed"))
 		&& sentence->localWord("parrot")) {
