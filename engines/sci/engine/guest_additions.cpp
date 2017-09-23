@@ -446,7 +446,7 @@ void GuestAdditions::patchGameSaveRestorePhant2(Script &script) const {
 	for (ObjMap::const_iterator it = objects.begin(); it != objects.end(); ++it) {
 		const Object &obj = it->_value;
 
-		if (strncmp(_segMan->derefString(obj.getNameSelector()), "srGetGame", 9) != 0) {
+		if (strcmp(_segMan->derefString(obj.getNameSelector()), "srGetGame") != 0) {
 			continue;
 		}
 
