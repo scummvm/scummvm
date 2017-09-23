@@ -171,8 +171,11 @@ public:
 	void animateDirectionChange(float pitch, float heading, uint16 scriptTicks);
 	void getMovieLookAt(uint16 id, bool start, float &pitch, float &heading);
 
-	void processInput(bool lookOnly);
 	void drawFrame(bool noSwap = false);
+
+	void processInput(bool lookOnly);
+	void updateInputState();
+	void resetInput();
 
 	bool inputValidatePressed();
 	bool inputEscapePressed();
@@ -186,7 +189,7 @@ private:
 	OSystem *_system;
 	Console *_console;
 	const Myst3GameDescription *_gameDescription;
-	
+
 	Node *_node;
 
 	Common::Array<Archive *> _archivesCommon;

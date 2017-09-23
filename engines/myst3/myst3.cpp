@@ -530,10 +530,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 	}
 
 	// The input state variables need to be set before calling the scripts
-	_state->setInputMousePressed(inputValidatePressed());
-	_state->setInputTildePressed(_inputTildePressed);
-	_state->setInputSpacePressed(_inputSpacePressed);
-	_state->setInputEscapePressed(_inputEscapePressed);
+	updateInputState();
 
 	if (shouldInteractWithHoveredElement) {
 		interactWithHoveredElement(lookOnly);
@@ -597,6 +594,32 @@ void Myst3Engine::processEventForGamepad(const Common::Event &event) {
 		default:
 			break;
 		}
+	}
+}
+
+void Myst3Engine::updateInputState() {
+	_state->setInputMousePressed(inputValidatePressed());
+	_state->setInputTildePressed(_inputTildePressed);
+	_state->setInputSpacePressed(_inputSpacePressed);
+	_state->setInputEscapePressed(_inputEscapePressed);
+}
+
+void Myst3Engine::resetInput() {
+	_inputSpacePressed = false;
+	_inputEnterPressed = false;
+	_inputEscapePressed = false;
+	_inputEscapePressedNotConsumed = false;
+	_inputTildePressed = false;
+
+	updateInputState();
+
+	if (_state->hasVarGamePadUpPressed()) {
+		_state->setGamePadUpPressed(false);
+		_state->setGamePadDownPressed(false);
+		_state->setGamePadLeftPressed(false);
+		_state->setGamePadRightPressed(false);
+		_state->setGamePadActionPressed(false);
+		_state->setGamePadCancelPressed(false);
 	}
 }
 
