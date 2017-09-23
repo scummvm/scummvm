@@ -29,8 +29,11 @@
 
 namespace Titanic {
 
-static const int STATE_ARRAY[9] = {
-	0x2E2A, 0x2E2B, 0x2E2C, 0x2E2D, 0x2E2E, 0x2E2F, 0x2E30, 0x2E31, 0x2E32
+static const int STATE_ARRAY_EN[9] = {
+	11818, 11819, 11820, 11821, 11822, 11823, 11824, 11825, 11826
+};
+static const int STATE_ARRAY_DE[9] = {
+	11831, 11832, 11833, 11834, 11835, 11836, 11837, 11838, 11839
 };
 
 static const RoomDialogueId ROOM_DIALOGUES1[] = {
@@ -91,10 +94,10 @@ int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 		tag == MKTAG('A', 'N', 'S', 'W') || tag == MKTAG('S', 'U', 'M', 'S')) {
 		if (_stateIndex > 9)
 			_stateIndex = 0;
-		addResponse(STATE_ARRAY[_stateIndex]);
+		addResponse(TRANSLATE(STATE_ARRAY_EN[_stateIndex], STATE_ARRAY_DE[_stateIndex]));
 		applyResponse();
 
-		if (STATE_ARRAY[_stateIndex] == 11826)
+		if (_stateIndex == 8)
 			setState(1);
 		++_stateIndex;
 		return 2;
@@ -202,7 +205,8 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		return setResponse(getDialogueId(220113));
 	}
 
-	if (sentence->_category == 6 && sentence->contains("why not")) {
+	if (sentence->_category == 6 && (sentence->contains("why not") ||
+				sentence->contains("warum nicht"))) {
 		return setResponse(11871, 8);
 	}
 
@@ -215,53 +219,55 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		switch (currState) {
 		case 1:
 			if (flag1)
-				return setResponse(11828, 2);
+				return setResponse(TRANSLATE(11828, 11841), 2);
 			if (flag2)
-				return setResponse(11827, 0);
+				return setResponse(TRANSLATE(11827, 11840), 0);
 			break;
 
 		case 2:
 			if (flag1)
-				return setResponse(11827, 0);
+				return setResponse(TRANSLATE(11827, 11840), 0);
 			break;
 
 		case 3:
 			if (sentMode == 3)
-				return setResponse(10406, 0);
+				return setResponse(TRANSLATE(10406, 10417), 0);
 			break;
 
 		case 4:
 			if (flag1)
-				return setResponse(11332, 0);
+				return setResponse(TRANSLATE(11332, 11345), 0);
 			if (flag2)
-				return setResponse(11331, 0);
+				return setResponse(TRANSLATE(11331, 11344), 0);
 			break;
 
 		case 5:
-			return setResponse(11868, 0);
+			if (g_language == Common::EN_ANY)
+				return setResponse(11868, 0);
+			break;
 
 		case 6:
-			return setResponse(11872, 0);
+			return setResponse(TRANSLATE(11872, 11885), 7);
 
 		case 7:
-			return setResponse(11869, 0);
+			return setResponse(TRANSLATE(11869, 11882), 0);
 
 		case 8:
-			return setResponse(11870, 0);
+			return setResponse(TRANSLATE(11870, 11883), 0);
 
 		case 12:
 			if (flag1)
-				return setResponse(11894, 13);
+				return setResponse(TRANSLATE(11894, 11907), 13);
 			if (flag2)
-				return setResponse(11893, 13);
+				return setResponse(TRANSLATE(11893, 11906), 13);
 			break;
 
 		case 13:
-			return setResponse(11895, 12);
+			return setResponse(TRANSLATE(11895, 11908), 12);
 
 		case 15:
 			if (sentMode == 3 || sentMode == 6)
-				return setResponse(10257, 0);
+				return setResponse(TRANSLATE(10257, 10260), 0);
 			break;
 
 		case 16: {
@@ -307,47 +313,47 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 		case 21:
 			if (flag2)
-				return setResponse(10935, 0);
+				return setResponse(TRANSLATE(10935, 10947), 0);
 			break;
 
 		case 22:
 			if (flag1) {
 				if (getRandomBit()) {
-					return setResponse(11211, 23);
+					return setResponse(TRANSLATE(11211, 11223), 23);
 				} else {
-					return setResponse(10127, 0);
+					return setResponse(TRANSLATE(10127, 10128), 0);
 				}
 			}
 			if (flag2)
-				return setResponse(10136, 0);
+				return setResponse(TRANSLATE(10136, 10137), 0);
 			break;
 
 		case 23:
-			return setResponse(10212, 0);
+			return setResponse(TRANSLATE(10212, 10213), 0);
 
 		case 24:
 			if (flag1)
-				return setResponse(11151, 0);
+				return setResponse(TRANSLATE(11151, 11163), 0);
 			if (flag2)
-				return setResponse(11150, 0);
+				return setResponse(TRANSLATE(11150, 11162), 0);
 			break;
 
 		case 25:
 		case 26:
 			if (flag2) {
 				if (getRandomBit()) {
-					return setResponse(11211, 23);
+					return setResponse(TRANSLATE(11211, 11223), 23);
 				} else {
-					return setResponse(10127, 0);
+					return setResponse(TRANSLATE(10127, 10128), 0);
 				}
 			}
 			if (flag1)
-				return setResponse(10136, 0);
+				return setResponse(TRANSLATE(10136, 10137), 0);
 			break;
 
 		case 27:
 			if (flag1 || sentence->localWord("did") || sentence->contains("did"))
-				return setResponse(221175, 28);
+				return setResponse(getDialogueId(221175), 28);
 			break;
 
 		case 28:
@@ -365,17 +371,20 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 		case 31:
 			if (sentMode == 3 || sentMode == 10)
-				return setResponse(10350, 0);
+				return setResponse(TRANSLATE(10350, 10353), 0);
 			break;
 
 		case 32:
-			return setResponse(10110, 0);
+			return setResponse(TRANSLATE(10110, 10111), 0);
 
 		case 33:
 			if (sentence->contains("sieve") || sentence->contains("colander")
 					|| sentence->contains("vegetable") || sentence->contains("ground")
 					|| sentence->contains("earth") || sentence->contains("garden")
-					|| sentence->contains("cheese") || sentence->contains("strainer")) {
+					|| sentence->contains("cheese") || sentence->contains("strainer")
+					|| sentence->contains("sieb") || sentence->contains("emmenthaler")
+					|| sentence->contains("gemuese") || sentence->contains("kaese")
+					|| sentence->contains("erde") || sentence->contains("garten")) {
 				return setResponse(getDialogueId(221375), 0);
 			} else if (getRandomNumber(100) > 30) {
 				return setResponse(getDialogueId(221376), 33);
@@ -386,67 +395,74 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 		case 34:
 			if (sentence->localWord("bellbot"))
-				return setResponse(10094, 0);
-			if (sentence->localWord("bellbot"))
-				return setResponse(10349, 0);
-			if (sentence->localWord("deskbot") || sentence->localWord("titania"))
-				return setResponse(10148, 0);
-			if (sentence->localWord("barbot") || sentence->localWord("rowbot")
-				|| sentence->localWord("liftbot") || sentence->localWord("maitredbot"))
-				return setResponse(10147, 0);
+				return setResponse(TRANSLATE(10094, 10095), 0);
+			if (sentence->localWord("doorbot"))
+				return setResponse(TRANSLATE(10349, 10352), 0);
+
+			if (g_language == Common::EN_ANY) {
+				if (sentence->localWord("deskbot") || sentence->localWord("titania"))
+					return setResponse(10148, 0);
+				if (sentence->localWord("barbot") || sentence->localWord("rowbot")
+					|| sentence->localWord("liftbot") || sentence->localWord("maitredbot"))
+					return setResponse(10147, 0);
+			}
 			break;
 
 		case 35:
-			return setResponse(10811, 36);
+			return setResponse(TRANSLATE(10811, 10822), 36);
 
 		case 36:
 			if (flag1)
-				return setResponse(10813, 37);
+				return setResponse(TRANSLATE(10813, 10824), 37);
 			if (flag2)
-				return setResponse(10812, 37);
+				return setResponse(TRANSLATE(10812, 10823), 37);
 			break;
 
 		case 37:
 			if (flag1)
-				return setResponse(10815, 37);
+				return setResponse(TRANSLATE(10815, 10826), 37);
 			if (flag2)
-				return setResponse(10814, 37);
+				return setResponse(TRANSLATE(10814, 10825), 37);
 			break;
 
 		case 38:
-			return setResponse(10848, 39);
+			if (g_language == Common::EN_ANY)
+				return setResponse(10848, 39);
 
 		case 39:
-			return setResponse(10823, 40);
+			if (g_language == Common::EN_ANY)
+				return setResponse(10823, 40);
 
 		case 40:
-			return setResponse(10832, 41);
+			return setResponse(TRANSLATE(10832, 10843), 41);
 
 		case 41:
-			addResponse(10833);
-			return setResponse(10835, 0);
+			addResponse(TRANSLATE(10833, 10844));
+			return setResponse(TRANSLATE(10835, 10846), 0);
 
 		case 42:
 			if (sentence->localWord("please"))
-				return setResponse(10840, 43);
-			return setResponse(10844, 0);
+				return setResponse(TRANSLATE(10840, 10851), 43);
+			return setResponse(TRANSLATE(10844, 10855), 0);
 
 		case 43:
 		case 45:
-			return setResponse(10844, 0);
+			return setResponse(TRANSLATE(10844, 10855), 0);
 
 		case 44:
 			if (sentence->localWord("thanks"))
-				return setResponse(10843, 45);
-			return setResponse(10844, 0);
+				return setResponse(TRANSLATE(10843, 10854), 45);
+			return setResponse(TRANSLATE(10844, 10855), 0);
 
 		case 46:
 			if (flag1)
 				return setResponse(getDialogueId(222251), 0);
-			if (flag2)
+			if (g_language == Common::EN_ANY && flag2)
 				return setResponse(10713, 0);
 			break;
 
+		default:
+			break;
 		}
 	}
 
@@ -457,39 +473,48 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		return setResponse(getDialogueId(221043), 0);
 
 	int result = 0;
-	switch (roomScript->_scriptId) {
-	case 100:
-	case 101:
-	case 102:
-	case 107:
-	case 110:
-	case 111:
-	case 124:
-	case 129:
-	case 131:
-	case 132:
-		result = processEntries(&_sentences[roomScript->_scriptId], 0, roomScript, sentence);
-		break;
-	default:
-		break;
+	if (g_language == Common::EN_ANY) {
+		switch (roomScript->_scriptId) {
+		case 100:
+		case 101:
+		case 102:
+		case 107:
+		case 110:
+		case 111:
+		case 124:
+		case 129:
+		case 131:
+		case 132:
+			result = processEntries(&_sentences[roomScript->_scriptId], 0, roomScript, sentence);
+			break;
+		default:
+			break;
+		}
+
+		if (result == 2)
+			return 2;
 	}
-	if (result == 2)
-		return 2;
 
 	if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2
 			|| processEntries(_defaultEntries, 0, roomScript, sentence) == 2
 			|| defaultProcess(roomScript, sentence))
 		return 2;
 
+	if (g_language == Common::DE_DEU && sentence->contains("42")) {
+		selectResponse(11831);
+		applyResponse();
+		return 2;
+	}
+
 	switch (sentence->_category) {
 	case 11:
 		if (getRandomNumber(100) > 90)
-			return setResponse(10839, 42);
-		return setResponse(222415, 0);
+			return setResponse(TRANSLATE(10839, 10850), 42);
+		return setResponse(getDialogueId(222415), 0);
 
 	case 12:
 		if (getRandomNumber(100) > 90)
-			return setResponse(10841, 44);
+			return setResponse(TRANSLATE(10841, 10852), 44);
 		return setResponse(getDialogueId(222416), 0);
 
 	case 13:
@@ -745,7 +770,7 @@ int DoorbotScript::updateState(uint oldId, uint newId, int index) {
 int DoorbotScript::preResponse(uint id) {
 	uint newId = 0;
 	if (getDialRegion(0) != 1 && getRandomNumber(100) > 60) {
-		addResponse(11195);
+		addResponse(TRANSLATE(11195, 11207));
 		newId = 222193;
 	}
 
