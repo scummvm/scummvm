@@ -41,6 +41,7 @@
 #include "sci/sound/audio.h"
 #include "sci/console.h"
 #ifdef ENABLE_SCI32
+#include "graphics/thumbnail.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/message.h"
 #include "sci/resource.h"
@@ -262,6 +263,34 @@ static bool saveCatalogueExists(const Common::String &name) {
 
 	return exists;
 }
+
+static Common::String getRamaSaveName(EngineState *s, const uint saveNo) {
+	const reg_t catalogId = s->variables[VAR_GLOBAL][kGlobalVarRamaCatalogFile];
+	if (catalogId.isNull()) {
+		error("Could not find CatalogFile object to retrieve save game name");
+	}
+
+	const List *list = s->_segMan->lookupList(readSelector(s->_segMan, catalogId, SELECTOR(elements)));
+	if (!list) {
+		error("Could not read CatalogFile object list");
+	}
+
+	Node *node = s->_segMan->lookupNode(list->first);
+	while (node) {
+		const reg_t entryId = node->value;
+		if (readSelectorValue(s->_segMan, entryId, SELECTOR(fileNumber)) == saveNo) {
+			reg_t description = readSelector(s->_segMan, entryId, SELECTOR(description));
+			if (s->_segMan->isObject(description)) {
+				description = readSelector(s->_segMan, description, SELECTOR(data));
+			}
+			return s->_segMan->getString(description);
+		}
+
+		node = s->_segMan->lookupNode(node->succ);
+	}
+
+	error("Could not find a save name for save %u", saveNo);
+}
 #endif
 
 reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
@@ -403,39 +432,6 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		if (name == "temp.tmp") {
 			return make_reg(0, kVirtualFileHandleSci32Save);
 		}
-
-		// KQ7 tries to read out game information from catalogues directly
-		// instead of using the standard kSaveGetFiles function
-		if (name == "kq7cdsg.cat") {
-			if (mode == kFileOpenModeOpenOrCreate || mode == kFileOpenModeCreate) {
-				// Suppress creation of the catalogue file, since it is not necessary
-				debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
-				return SIGNAL_REG;
-			} else if (mode == kFileOpenModeOpenOrFail) {
-				Common::Array<SavegameDesc> saves;
-				listSavegames(saves);
-
-				const uint recordSize = sizeof(int16) + kMaxSaveNameLength;
-				const uint numSaves = MIN<uint>(saves.size(), 10);
-				const uint size = numSaves * recordSize + /* terminator */ 2;
-				byte *const buffer = (byte *)malloc(size);
-
-				byte *out = buffer;
-				for (uint i = 0; i < numSaves; ++i) {
-					WRITE_UINT16(out, saves[i].id - kSaveIdShift);
-					strncpy((char *)out + sizeof(int16), saves[i].name, kMaxSaveNameLength);
-					out += recordSize;
-				}
-				WRITE_UINT16(out, 0xFFFF);
-
-				const uint handle = findFreeFileHandle(s);
-				s->_fileHandles[handle]._in = new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
-				s->_fileHandles[handle]._out = nullptr;
-				s->_fileHandles[handle]._name = "";
-
-				return make_reg(0, handle);
-			}
-		}
 	} else if (g_sci->getGameId() == GID_PQSWAT) {
 		// PQSWAT tries to create subdirectories for each game profile
 		for (Common::String::iterator it = name.begin(); it != name.end(); ++it) {
@@ -446,6 +442,52 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	} else if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && name == "RESDUK.PAT") {
 		// Ignore the censorship password file in lieu of our game option
 		return SIGNAL_REG;
+	} else if (g_sci->getGameId() == GID_RAMA) {
+		int saveNo = -1;
+		if (name == "autorama.sg") {
+			saveNo = kAutoSaveId;
+		} else if (sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
+			saveNo += kSaveIdShift;
+		}
+
+		if (saveNo != -1) {
+			Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+			const Common::String fileName = g_sci->getSavegameName(saveNo);
+			Common::SeekableReadStream *in = nullptr;
+			Common::OutSaveFile *out = nullptr;
+			bool valid = false;
+
+			if (mode == kFileOpenModeOpenOrFail) {
+				in = saveFileMan->openForLoading(fileName);
+				if (in) {
+					SavegameMetadata meta;
+					if (get_savegame_metadata(in, meta)) {
+						Graphics::skipThumbnail(*in);
+						valid = true;
+					}
+				}
+			} else {
+				out = saveFileMan->openForSaving(fileName);
+				if (out) {
+					Common::String saveName;
+					if (saveNo != kAutoSaveId) {
+						saveName = getRamaSaveName(s, saveNo - kSaveIdShift);
+					}
+					Common::ScopedPtr<Common::SeekableReadStream> versionFile(SearchMan.createReadStreamForMember("VERSION"));
+					const Common::String gameVersion = versionFile->readLine();
+					set_savegame_metadata(out, saveName, gameVersion);
+					valid = true;
+				}
+			}
+
+			if (valid) {
+				uint handle = findFreeFileHandle(s);
+				s->_fileHandles[handle]._in = in;
+				s->_fileHandles[handle]._out = out;
+				s->_fileHandles[handle]._name = "-scummvm-save-";
+				return make_reg(0, handle);
+			}
+		}
 	}
 
 	// See kMakeSaveCatName
@@ -456,6 +498,27 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	if (isSaveCatalogue(name)) {
 		const bool exists = saveCatalogueExists(name);
 		if (exists) {
+			// KQ7 & RAMA read out game information from catalogues directly
+			// instead of using the standard kSaveGetFiles function
+			if (name == "kq7cdsg.cat" || name == "ramasg.cat") {
+				if (mode == kFileOpenModeOpenOrCreate || mode == kFileOpenModeCreate) {
+					// Suppress creation of the catalogue file, since it is not necessary
+					debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
+					return SIGNAL_REG;
+				} else if (mode == kFileOpenModeOpenOrFail) {
+					const uint handle = findFreeFileHandle(s);
+
+					if (name == "kq7cdsg.cat") {
+						s->_fileHandles[handle]._in = makeCatalogue(10, kMaxSaveNameLength, "", false);
+					} else {
+						s->_fileHandles[handle]._in = makeCatalogue(100, 20, "ramasg.%d", true);
+					}
+					s->_fileHandles[handle]._out = nullptr;
+					s->_fileHandles[handle]._name = "";
+					return make_reg(0, handle);
+				}
+			}
+
 			// Dummy handle is used to represent the catalogue and ignore any
 			// direct game script writes
 			return make_reg(0, kVirtualFileHandleSci32Save);
@@ -753,10 +816,24 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		return saveCatalogueExists(name) ? TRUE_REG : NULL_REG;
 	}
 
-	// LSL7 checks to see if the autosave save exists when deciding whether to
-	// go to the main menu or not on startup
+	int findSaveNo = -1;
+
 	if (g_sci->getGameId() == GID_LSL7 && name == "autosvsg.000") {
-		return g_sci->getSaveFileManager()->listSavefiles(g_sci->getSavegameName(0)).empty() ? NULL_REG : TRUE_REG;
+		// LSL7 checks to see if the autosave save exists when deciding whether
+		// to go to the main menu or not on startup
+		findSaveNo = kAutoSaveId;
+	} else if (g_sci->getGameId() == GID_RAMA) {
+		// RAMA checks to see if save game files exist before showing them in
+		// the native save/load dialogue
+		if (name == "autorama.sg") {
+			findSaveNo = kAutoSaveId;
+		} else if (sscanf(name.c_str(), "ramasg.%i", &findSaveNo) == 1) {
+			findSaveNo += kSaveIdShift;
+		}
+	}
+
+	if (findSaveNo != -1) {
+		return g_sci->getSaveFileManager()->listSavefiles(g_sci->getSavegameName(findSaveNo)).empty() ? NULL_REG : TRUE_REG;
 	}
 #endif
 
@@ -859,24 +936,48 @@ reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv) {
-	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	const uint16 handle = argv[0].toUint16();
+	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
-		return NULL_REG;
-	return make_reg(0, f->_in->readUint16LE());
+		return s->r_acc;
+
+	reg_t value;
+	if (s->_fileHandles[handle]._name == "-scummvm-save-") {
+		value._segment = f->_in->readUint16LE();
+		value._offset = f->_in->readUint16LE();
+	} else {
+		value = make_reg(0, f->_in->readUint16LE());
+	}
+
+	if (f->_in->err()) {
+		return s->r_acc;
+	}
+
+	return value;
 }
 
 reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
-	uint16 handle = argv[0].toUint16();
+	const uint16 handle = argv[0].toUint16();
 
-#ifdef ENABLE_SCI32
 	if (handle == kVirtualFileHandleSci32Save) {
 		return s->r_acc;
 	}
-#endif
 
 	FileHandle *f = getFileFromHandle(s, handle);
-	if (f)
+	if (!f) {
+		return s->r_acc;
+	}
+
+	if (s->_fileHandles[handle]._name == "-scummvm-save-") {
+		f->_out->writeUint16LE(argv[1]._segment);
+		f->_out->writeUint16LE(argv[1]._offset);
+	} else {
+		if (argv[1].isPointer()) {
+			error("Attempt to write non-number %04x:%04x", PRINT_REG(argv[1]));
+		}
 		f->_out->writeUint16LE(argv[1].toUint16());
+	}
+
 	return s->r_acc;
 }
 

@@ -155,6 +155,7 @@ enum GlobalVar {
 	kGlobalVarTextSpeed            = 94, // SCI32; 0 is fastest, 8 is slowest
 	kGlobalVarGK1Music1            = 102, // 0 to 127
 	kGlobalVarGK1Music2            = 103, // 0 to 127
+	kGlobalVarRamaCatalogFile      = 130,
 	kGlobalVarLSL6HiresGameFlags   = 137,
 	kGlobalVarGK1NarratorMode      = 166, // 0 for text, 1 for speech
 	kGlobalVarPhant1MusicVolume    = 187, // 0 to 15

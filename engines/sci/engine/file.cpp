@@ -374,6 +374,74 @@ int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId) {
 	return -1;
 }
 
+#ifdef ENABLE_SCI32
+Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameNameSize, const Common::String &fileNamePattern, const bool ramaFormat) {
+	enum {
+		kGameIdSize = sizeof(int16),
+		kNumSavesSize = sizeof(int16),
+		kFreeSlotSize = sizeof(int16),
+		kTerminatorSize = kGameIdSize,
+		kTerminator = 0xFFFF
+	};
+
+	Common::Array<SavegameDesc> games;
+	listSavegames(games);
+
+	const uint numSaves = MIN(games.size(), maxNumSaves);
+	const uint fileNameSize = fileNamePattern.empty() ? 0 : 12;
+	const uint entrySize = kGameIdSize + fileNameSize + gameNameSize;
+	uint dataSize = numSaves * entrySize + kTerminatorSize;
+	if (ramaFormat) {
+		dataSize += kNumSavesSize + kFreeSlotSize * maxNumSaves;
+	}
+
+	byte *out = (byte *)malloc(dataSize);
+	const byte *const data = out;
+
+	Common::Array<bool> usedSlots;
+	if (ramaFormat) {
+		WRITE_LE_UINT16(out, numSaves);
+		out += kNumSavesSize;
+		usedSlots.resize(maxNumSaves);
+	}
+
+	for (uint i = 0; i < numSaves; ++i) {
+		const SavegameDesc &save = games[i];
+		const uint16 id = save.id - kSaveIdShift;
+		if (!ramaFormat) {
+			WRITE_LE_UINT16(out, id);
+			out += kGameIdSize;
+		}
+		if (fileNameSize) {
+			const Common::String fileName = Common::String::format(fileNamePattern.c_str(), id);
+			strncpy(reinterpret_cast<char *>(out), fileName.c_str(), fileNameSize);
+			out += fileNameSize;
+		}
+		// Game names can be up to exactly gameNameSize
+		strncpy(reinterpret_cast<char *>(out), save.name, gameNameSize);
+		out += gameNameSize;
+		if (ramaFormat) {
+			WRITE_LE_UINT16(out, id);
+			out += kGameIdSize;
+
+			assert(id >= 0 && id < maxNumSaves);
+			usedSlots[id] = true;
+		}
+	}
+
+	if (ramaFormat) {
+		// A table indicating which save game slots are occupied
+		for (uint i = 0; i < usedSlots.size(); ++i) {
+			WRITE_LE_UINT16(out, !usedSlots[i]);
+			out += kFreeSlotSize;
+		}
+	}
+
+	WRITE_LE_UINT16(out, kTerminator);
+
+	return new Common::MemoryReadStream(data, dataSize, DisposeAfterUse::YES);
+}
+#endif
 
 FileHandle::FileHandle() : _in(0), _out(0) {
 }

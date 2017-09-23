@@ -138,6 +138,8 @@ static const char *const selectorNameTable[] = {
 	"readWord",     // LSL7, Phant1, Torin
 	"flag",         // PQ4
 	"select",       // PQ4
+	"handle",       // RAMA
+	"saveFilePtr",  // RAMA
 #endif
 	NULL
 };
@@ -199,7 +201,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setScaler,
 	SELECTOR_readWord,
 	SELECTOR_flag,
-	SELECTOR_select
+	SELECTOR_select,
+	SELECTOR_handle,
+	SELECTOR_saveFilePtr
 #endif
 };
 
@@ -6218,9 +6222,37 @@ static const uint16 ramaBenchmarkPatch[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                        patch
+// RAMA uses a custom save game format that game scripts read and write
+// manually. The save game format serialises object references, which in the
+// original engine could be done just by writing int16s (since object references
+// were just 16-bit indexes), but in ScummVM we have to write the full 32-bit
+// reg_t. We hijack kFileIOReadWord/kFileIOWriteWord to do this for us, but we
+// need the game to agree to use those kFileIO calls instead of doing raw reads
+// and creating its own numbers, as it tries to do here in
+// `SaveManager::readWord`.
+static const uint16 ramaSerializeRegTSignature1[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(newWith), // pushi $10b (newWith)
+	0x7a,                          // push2
+	0x7a,                          // push2
+	0x72, SIG_UINT16(0x00),        // lofsa ""
+	0x36,                          // push
+	0x51, 0x0f,                    // class Str
+	SIG_END
+};
+
+static const uint16 ramaSerializeRegTPatch1[] = {
+	0x38, PATCH_SELECTOR16(readWord),    // pushi readWord
+	0x76,                                // push0
+	0x62, PATCH_SELECTOR16(saveFilePtr), // pToa saveFilePtr
+	0x4a, PATCH_UINT16(0x04),            // send 4
+	0x48,                                // ret
+	PATCH_END
+};
+
 static const SciScriptPatcherEntry ramaSignatures[] = {
-	{  true, 64908, "disable video benchmarking",                  1, ramaBenchmarkSignature,          ramaBenchmarkPatch },
+	{  true,    85, "fix SaveManager to use normal readWord calls", 1, ramaSerializeRegTSignature1,     ramaSerializeRegTPatch1 },
+	{  true, 64908, "disable video benchmarking",                   1, ramaBenchmarkSignature,          ramaBenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

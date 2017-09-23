@@ -168,6 +168,14 @@ void listSavegames(Common::Array<SavegameDesc> &saves);
 int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId);
 bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc);
 
+#ifdef ENABLE_SCI32
+/**
+ * Constructs an in-memory stream from the ScummVM save game list that is
+ * compatible with game scripts' game catalogue readers.
+ */
+Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameNameSize, const Common::String &fileNamePattern, const bool ramaFormat);
+#endif
+
 } // End of namespace Sci
 
 #endif // SCI_ENGINE_FILE_H
