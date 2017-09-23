@@ -243,7 +243,12 @@ void GuestAdditions::instantiateScriptHook(Script &script, const bool ignoreDela
 		// segment table to change (versus save games that are not patched),
 		// breaking persistent objects (like the control panel in SQ6) which
 		// require reg_ts created during game startup to always be the same
-		patchGameSaveRestoreSCI32(script);
+
+		if (g_sci->getGameId() == GID_RAMA) {
+			patchGameSaveRestoreRama(script);
+		} else {
+			patchGameSaveRestoreSCI32(script);
+		}
 	}
 }
 
@@ -392,25 +397,7 @@ static const byte SRDialogPatch[] = {
 };
 
 void GuestAdditions::patchGameSaveRestoreSCI32(Script &script) const {
-	const ObjMap &objMap = script.getObjectMap();
-	for (ObjMap::const_iterator it = objMap.begin(); it != objMap.end(); ++it) {
-		const Object &obj = it->_value;
-		if (strncmp(_segMan->getObjectName(obj.getPos()), "SRDialog", 8) != 0) {
-			continue;
-		}
-
-		const uint16 methodCount = obj.getMethodCount();
-		for (uint16 methodNr = 0; methodNr < methodCount; ++methodNr) {
-			const uint16 selectorId = obj.getFuncSelector(methodNr);
-			const Common::String methodName = _kernel->getSelectorName(selectorId);
-			if (methodName == "doit") {
-				const reg_t methodAddress = obj.getFunction(methodNr);
-				byte *patchPtr = const_cast<byte *>(script.getBuf(methodAddress.getOffset()));
-				memcpy(patchPtr, SRDialogPatch, sizeof(SRDialogPatch));
-				break;
-			}
-		}
-	}
+	patchSRDialogDoit(script, "SRDialog", SRDialogPatch, sizeof(SRDialogPatch));
 }
 
 static const byte SRTorinPatch[] = {
@@ -461,6 +448,50 @@ void GuestAdditions::patchGameSaveRestorePhant2(Script &script) const {
 	}
 }
 
+static const byte RamaSRDialogPatch[] = {
+	0x78,                                 // push1
+	0x7c,                                 // pushSelf
+	0x43, kScummVMSaveLoadId, 0x02, 0x00, // callk kScummVMSaveLoad, 0
+	0x48                                  // ret
+};
+
+static const int RamaSRDialogUint16Offsets[] = { 4 };
+
+void GuestAdditions::patchGameSaveRestoreRama(Script &script) const {
+	patchSRDialogDoit(script, "Save", RamaSRDialogPatch, sizeof(RamaSRDialogPatch), RamaSRDialogUint16Offsets, ARRAYSIZE(RamaSRDialogUint16Offsets));
+	patchSRDialogDoit(script, "Restore", RamaSRDialogPatch, sizeof(RamaSRDialogPatch), RamaSRDialogUint16Offsets, ARRAYSIZE(RamaSRDialogUint16Offsets));
+}
+
+void GuestAdditions::patchSRDialogDoit(Script &script, const char *const objectName, const byte *patchData, const int patchSize, const int *uint16Offsets, const uint numOffsets) const {
+	const ObjMap &objMap = script.getObjectMap();
+	for (ObjMap::const_iterator it = objMap.begin(); it != objMap.end(); ++it) {
+		const Object &obj = it->_value;
+		if (strcmp(_segMan->getObjectName(obj.getPos()), objectName) != 0) {
+			continue;
+		}
+
+		const uint16 methodCount = obj.getMethodCount();
+		for (uint16 methodNr = 0; methodNr < methodCount; ++methodNr) {
+			const uint16 selectorId = obj.getFuncSelector(methodNr);
+			const Common::String methodName = _kernel->getSelectorName(selectorId);
+			if (methodName == "doit") {
+				const reg_t methodAddress = obj.getFunction(methodNr);
+				byte *patchPtr = const_cast<byte *>(script.getBuf(methodAddress.getOffset()));
+				memcpy(patchPtr, patchData, patchSize);
+
+				if (g_sci->isBE()) {
+					for (uint i = 0; i < numOffsets; ++i) {
+						const int offset = uint16Offsets[i];
+						SWAP(patchPtr[offset], patchPtr[offset + 1]);
+					}
+				}
+
+				return;
+			}
+		}
+	}
+}
+
 reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) const {
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
 		return promptSaveRestorePhant2(s, argc, argv);
@@ -468,6 +499,10 @@ reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) co
 
 	if (g_sci->getGameId() == GID_LSL7 || g_sci->getGameId() == GID_TORIN) {
 		return promptSaveRestoreTorin(s, argc, argv);
+	}
+
+	if (g_sci->getGameId() == GID_RAMA) {
+		return promptSaveRestoreRama(s, argc, argv);
 	}
 
 	return promptSaveRestoreDefault(s, argc, argv);
@@ -522,6 +557,87 @@ reg_t GuestAdditions::promptSaveRestorePhant2(EngineState *s, int argc, reg_t *a
 	return make_reg(0, saveNo);
 }
 
+reg_t GuestAdditions::promptSaveRestoreRama(EngineState *s, int argc, reg_t *argv) const {
+	assert(argc == 1);
+	const bool isSave = (strcmp(_segMan->getObjectName(argv[0]), "Save") == 0);
+
+	const reg_t editor = _segMan->findObjectByName("editI");
+	reg_t outDescription = readSelector(_segMan, editor, SELECTOR(text));
+	if (!_segMan->isValidAddr(outDescription, SEG_TYPE_ARRAY)) {
+		_segMan->allocateArray(kArrayTypeString, 0, &outDescription);
+		writeSelector(_segMan, editor, SELECTOR(text), outDescription);
+	}
+
+	int saveNo = runSaveRestore(isSave, outDescription, s->_delayedRestoreGameId);
+	int saveIndex = -1;
+	if (saveNo != -1) {
+		// The save number returned by runSaveRestore is a SCI save number
+		// because normally SRDialogs return the save ID, but RAMA returns the
+		// save game's index in the save game list instead, so we need to
+		// convert back to the ScummVM save number here to find the correct
+		// index
+		saveNo += kSaveIdShift;
+
+		Common::Array<SavegameDesc> saves;
+		listSavegames(saves);
+		saveIndex = findSavegame(saves, saveNo);
+
+		if (isSave) {
+			bool resetCatalogFile = false;
+			const Common::String saveGameName = _segMan->getString(outDescription);
+
+			// The original game save/restore code returns index 0 when a game
+			// is created that does not already exist and then the scripts find
+			// the next hole and insert there, but the ScummVM GUI works
+			// differently and allows users to insert a game wherever they want,
+			// so we need to force the save game to exist in advance so RAMA's
+			// save code will successfully put it where we want it
+			if (saveIndex == -1) {
+				// We need to touch the save file just so it exists here, since
+				// otherwise the game will not let us save to the new save slot
+				// (it will try to come up with a brand new slot instead)
+				Common::ScopedPtr<Common::OutSaveFile> out(g_sci->getSaveFileManager()->openForSaving(g_sci->getSavegameName(saveNo)));
+				set_savegame_metadata(out.get(), saveGameName, "");
+
+				// We have to re-retrieve saves and find the index instead of
+				// assuming the newest save will be in index 0 because save game
+				// times are not guaranteed to be steady
+				saves.clear();
+				listSavegames(saves);
+				saveIndex = findSavegame(saves, saveNo);
+				if (saveIndex == -1) {
+					warning("Stub save not found when trying to save a new game to slot %d", saveNo);
+				} else {
+					// Kick the CatalogFile into believing that this new save
+					// game exists already, otherwise it the game will not
+					// actually save into the new save
+					resetCatalogFile = true;
+				}
+			} else if (strncmp(saveGameName.c_str(), saves[saveIndex].name, kMaxSaveNameLength) != 0) {
+				// The game doesn't let the save game name change for the same
+				// slot, but ScummVM's GUI does, so force the new name into the
+				// save file metadata if it has changed so it actually makes it
+				// into the save game
+				Common::ScopedPtr<Common::OutSaveFile> out(g_sci->getSaveFileManager()->openForSaving(g_sci->getSavegameName(saveNo)));
+				set_savegame_metadata(out.get(), saveGameName, "");
+				resetCatalogFile = true;
+			}
+
+			if (resetCatalogFile) {
+				const reg_t catalogFileId = _state->variables[VAR_GLOBAL][kGlobalVarRamaCatalogFile];
+				if (catalogFileId.isNull()) {
+					warning("Could not find CatalogFile when saving from launcher");
+				}
+				reg_t args[] = { NULL_REG };
+				invokeSelector(catalogFileId, SELECTOR(dispose));
+				invokeSelector(catalogFileId, SELECTOR(init), ARRAYSIZE(args), args);
+			}
+		}
+	}
+
+	return make_reg(0, saveIndex);
+}
+
 int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, const int forcedSaveNo) const {
 	int saveNo;
 	Common::String descriptionString;
@@ -564,7 +680,7 @@ int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, cons
 		// number here to match what would come from the normal SCI save/restore
 		// dialog. There is additional special code for handling the autosave
 		// game inside of kRestoreGame32.
-		--saveNo;
+		saveNo -= kSaveIdShift;
 	}
 
 	return saveNo;

@@ -186,6 +186,7 @@ struct SelectorCache {
 	Selector bookMark; // for Phant2 auto-save
 	Selector fileNumber; // for RAMA save/load
 	Selector description; // for RAMA save/load
+	Selector dispose; // for RAMA save/load save from launcher
 #endif
 };
 

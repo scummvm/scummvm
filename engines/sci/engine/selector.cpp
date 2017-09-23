@@ -229,6 +229,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(bookMark);
 	FIND_SELECTOR(fileNumber);
 	FIND_SELECTOR(description);
+	FIND_SELECTOR(dispose);
 #endif
 }
 

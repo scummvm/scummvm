@@ -220,6 +220,17 @@ private:
 	void patchGameSaveRestorePhant2(Script &script) const;
 
 	/**
+	 * Patches the ScummVM save/load dialogue into RAMA.
+	 */
+	void patchGameSaveRestoreRama(Script &script) const;
+
+	/**
+	 * Patches the `doit` method of an SRDialog object with the given name
+	 * using the given patch data.
+	 */
+	void patchSRDialogDoit(Script &script, const char *const objectName, const byte *patchData, const int patchSize, const int *uint16Offsets = nullptr, const uint numOffsets = 0) const;
+
+	/**
 	 * Prompts for a save game and returns it to game scripts using default
 	 * SRDialog game class semantics.
 	 */
@@ -236,6 +247,12 @@ private:
 	 * custom ControlPanel class semantics.
 	 */
 	reg_t promptSaveRestorePhant2(EngineState *s, int argc, reg_t *argv) const;
+
+	/**
+	 * Prompts for a save game and returns it to game scripts using RAMA's
+	 * custom SRDialog class semantics.
+	 */
+	reg_t promptSaveRestoreRama(EngineState *s, int argc, reg_t *argv) const;
 
 	/**
 	 * Prompts the user to save or load a game.
