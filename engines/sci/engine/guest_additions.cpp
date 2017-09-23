@@ -740,6 +740,14 @@ bool GuestAdditions::restoreFromLauncher() const {
 			// which will automatically return the `_delayedRestoreGameId` instead
 			// of prompting the user for a save game
 			invokeSelector(g_sci->getGameObject(), SELECTOR(restore));
+
+			// The normal save game system resets _delayedRestoreGameId with a
+			// call to `EngineState::reset`, but RAMA uses a custom save game
+			// system which does not reset the engine, so we need to clear the
+			// ID here or the engine will just try to restore the game forever
+			if (g_sci->getGameId() == GID_RAMA) {
+				_state->_delayedRestoreGameId = -1;
+			}
 		}
 
 		_restoring = false;
