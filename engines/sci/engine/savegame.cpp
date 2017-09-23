@@ -1395,22 +1395,21 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
 }
 
-bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {
+bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata &meta) {
 	assert(stream);
-	assert(meta);
 
-	Common::Serializer ser(stream, 0);
-	sync_SavegameMetadata(ser, *meta);
+	Common::Serializer ser(stream, nullptr);
+	sync_SavegameMetadata(ser, meta);
 
 	if (stream->eos())
 		return false;
 
-	if ((meta->version < MINIMUM_SAVEGAME_VERSION) ||
-	    (meta->version > CURRENT_SAVEGAME_VERSION)) {
-		if (meta->version < MINIMUM_SAVEGAME_VERSION)
+	if ((meta.version < MINIMUM_SAVEGAME_VERSION) ||
+	    (meta.version > CURRENT_SAVEGAME_VERSION)) {
+		if (meta.version < MINIMUM_SAVEGAME_VERSION)
 			warning("Old savegame version detected- can't load");
 		else
-			warning("Savegame version is %d- maximum supported is %0d", meta->version, CURRENT_SAVEGAME_VERSION);
+			warning("Savegame version is %d- maximum supported is %0d", meta.version, CURRENT_SAVEGAME_VERSION);
 
 		return false;
 	}

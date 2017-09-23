@@ -307,7 +307,7 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc) {
 	}
 
 	SavegameMetadata meta;
-	if (!get_savegame_metadata(in.get(), &meta) || meta.name.empty()) {
+	if (!get_savegame_metadata(in.get(), meta) || meta.name.empty()) {
 		return false;
 	}
 

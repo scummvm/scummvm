@@ -812,7 +812,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				SavegameMetadata meta;
-				if (!get_savegame_metadata(in, &meta)) {
+				if (!get_savegame_metadata(in, meta)) {
 					// invalid
 					delete in;
 					continue;
@@ -861,7 +861,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 	if (in) {
 		SavegameMetadata meta;
 
-		if (!get_savegame_metadata(in, &meta)) {
+		if (!get_savegame_metadata(in, meta)) {
 			// invalid
 			delete in;
 
