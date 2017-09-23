@@ -33,6 +33,11 @@ public:
 	BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
 		::Titanic::BellbotScript(val1, charClass, v2, charName, v3, val2) {}
+
+	/**
+	 * Process a sentence fragment entry
+	 */
+	virtual int doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence);
 };
 
 } // End of namespace German
