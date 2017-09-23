@@ -6222,6 +6222,25 @@ static const uint16 ramaBenchmarkPatch[] = {
 	PATCH_END
 };
 
+// RAMA initialises the font system with an incorrect text resolution (it uses
+// the resolution from Phant1) which causes text to be scaled incorrectly.
+static const uint16 ramaTextResolutionSignature[] = {
+	0x39, 0x03,                   // pushi 3
+	0x78,                         // push1
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x276),      // pushi 630
+	0x38, SIG_UINT16(0x1c2),      // pushi 450
+	0x43, 0x49, SIG_UINT16(0x06), // callk Font, 6
+	SIG_END
+};
+
+static const uint16 ramaTextResolutionPatch[] = {
+	PATCH_ADDTOOFFSET(+3),     // pushi 3, push1
+	0x38, PATCH_UINT16(0x280), // pushi 640
+	0x38, PATCH_UINT16(0x1e0), // pushi 480
+	PATCH_END
+};
+
 // RAMA uses a custom save game format that game scripts read and write
 // manually. The save game format serialises object references, which in the
 // original engine could be done just by writing int16s (since object references
@@ -6251,6 +6270,7 @@ static const uint16 ramaSerializeRegTPatch1[] = {
 };
 
 static const SciScriptPatcherEntry ramaSignatures[] = {
+	{  true,     0, "fix bad text resolution",                      1, ramaTextResolutionSignature,     ramaTextResolutionPatch },
 	{  true,    85, "fix SaveManager to use normal readWord calls", 1, ramaSerializeRegTSignature1,     ramaSerializeRegTPatch1 },
 	{  true, 64908, "disable video benchmarking",                   1, ramaBenchmarkSignature,          ramaBenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
