@@ -932,7 +932,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			}
 		}
 
-		debugC(kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d", PRINT_REG(controlObject), x, y, SCI_MAX_SAVENAME_LENGTH);
+		debugC(kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y);
 		g_sci->_gfxControls16->kernelDrawList(rect, controlObject, maxChars, listCount, listStrings, fontId, style, upperPos, cursorPos, isAlias, hilite);
 		delete[] listStrings;
 		return;

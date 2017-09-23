@@ -34,28 +34,7 @@
 namespace Sci {
 
 #ifdef ENABLE_SCI32
-/**
- * A MemoryWriteStreamDynamic with additional read functionality.
- * The read and write functions share a single stream position.
- */
-class MemoryDynamicRWStream : public Common::MemoryWriteStreamDynamic, public Common::SeekableReadStream {
-protected:
-	bool _eos;
-public:
-	MemoryDynamicRWStream(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : MemoryWriteStreamDynamic(disposeMemory), _eos(false) { }
-
-	uint32 read(void *dataPtr, uint32 dataSize);
-
-	bool eos() const { return _eos; }
-	int32 pos() const { return _pos; }
-	int32 size() const { return _size; }
-	void clearErr() { _eos = false; Common::MemoryWriteStreamDynamic::clearErr(); }
-	bool seek(int32 offs, int whence = SEEK_SET) { return Common::MemoryWriteStreamDynamic::seek(offs, whence); }
-
-};
-
-uint32 MemoryDynamicRWStream::read(void *dataPtr, uint32 dataSize)
-{
+uint32 MemoryDynamicRWStream::read(void *dataPtr, uint32 dataSize) {
 	// Read at most as many bytes as are still available...
 	if (dataSize > _size - _pos) {
 		dataSize = _size - _pos;
@@ -69,40 +48,18 @@ uint32 MemoryDynamicRWStream::read(void *dataPtr, uint32 dataSize)
 	return dataSize;
 }
 
-/**
- * A MemoryDynamicRWStream intended to re-write a file.
- * It reads the contents of `inFile` in the constructor, and writes back
- * the changes to `fileName` in the destructor (and when calling commit() ).
- */
-class SaveFileRewriteStream : public MemoryDynamicRWStream {
-public:
-	SaveFileRewriteStream(Common::String fileName,
-	                      Common::SeekableReadStream *inFile,
-	                      kFileOpenMode mode, bool compress);
-	virtual ~SaveFileRewriteStream();
-
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) { _changed = true; return MemoryDynamicRWStream::write(dataPtr, dataSize); }
-
-	void commit(); //< Save back to disk
-
-protected:
-	Common::String _fileName;
-	bool _compress;
-	bool _changed;
-};
-
-SaveFileRewriteStream::SaveFileRewriteStream(Common::String fileName,
+SaveFileRewriteStream::SaveFileRewriteStream(const Common::String &fileName,
                                              Common::SeekableReadStream *inFile,
                                              kFileOpenMode mode,
-                                             bool compress)
-: MemoryDynamicRWStream(DisposeAfterUse::YES),
-  _fileName(fileName), _compress(compress)
-{
-	const bool truncate = mode == _K_FILE_MODE_CREATE;
-	const bool seekToEnd = mode == _K_FILE_MODE_OPEN_OR_CREATE;
+                                             bool compress) :
+	MemoryDynamicRWStream(DisposeAfterUse::YES),
+	_fileName(fileName),
+	_compress(compress) {
+	const bool truncate = (mode == kFileOpenModeCreate);
+	const bool seekToEnd = (mode == kFileOpenModeOpenOrCreate);
 
 	if (!truncate && inFile) {
-		unsigned int s = inFile->size();
+		const uint s = inFile->size();
 		ensureCapacity(s);
 		inFile->read(_data, s);
 		if (seekToEnd) {
@@ -119,16 +76,14 @@ SaveFileRewriteStream::~SaveFileRewriteStream() {
 }
 
 void SaveFileRewriteStream::commit() {
-	// Write contents of buffer back to file
-
-	if (_changed) {
-		Common::WriteStream *outFile = g_sci->getSaveFileManager()->openForSaving(_fileName, _compress);
-		outFile->write(_data, _size);
-		delete outFile;
-		_changed = false;
+	if (!_changed) {
+		return;
 	}
-}
 
+	Common::ScopedPtr<Common::WriteStream> outFile(g_sci->getSaveFileManager()->openForSaving(_fileName, _compress));
+	outFile->write(_data, _size);
+	_changed = false;
+}
 #endif
 
 uint findFreeFileHandle(EngineState *s) {
@@ -217,8 +172,19 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 	}
 
 #ifdef ENABLE_SCI32
-	if ((g_sci->getGameId() == GID_PHANTASMAGORIA && (filename == "phantsg.dir" || filename == "chase.dat" || filename == "tmp.dat")) ||
-	    (g_sci->getGameId() == GID_PQSWAT && filename == "swat.dat")) {
+	bool isRewritableFile;
+	switch (g_sci->getGameId()) {
+	case GID_PHANTASMAGORIA:
+		isRewritableFile = (filename == "phantsg.dir" || filename == "chase.dat" || filename == "tmp.dat");
+		break;
+	case GID_PQSWAT:
+		isRewritableFile = (filename == "swat.dat");
+		break;
+	default:
+		isRewritableFile = false;
+	}
+
+	if (isRewritableFile) {
 		debugC(kDebugLevelFile, "  -> file_open opening %s for rewriting", wrappedName.c_str());
 
 		inFile = saveFileMan->openForLoading(wrappedName);
@@ -227,8 +193,8 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 		if (!inFile)
 			inFile = SearchMan.createReadStreamForMember(englishName);
 
-		if (mode == _K_FILE_MODE_OPEN_OR_FAIL && !inFile) {
-			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
+		if (mode == kFileOpenModeOpenOrFail && !inFile) {
+			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeOpenOrFail): failed to open file '%s'", englishName.c_str());
 			return SIGNAL_REG;
 		}
 
@@ -241,7 +207,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 		outFile = stream;
 	} else
 #endif
-	if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
+	if (mode == kFileOpenModeOpenOrFail) {
 		// Try to open file, abort if not possible
 		inFile = saveFileMan->openForLoading(wrappedName);
 		// If no matching savestate exists: fall back to reading from a regular
@@ -250,19 +216,19 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 			inFile = SearchMan.createReadStreamForMember(englishName);
 
 		if (!inFile)
-			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
-	} else if (mode == _K_FILE_MODE_CREATE) {
+			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeOpenOrFail): failed to open file '%s'", englishName.c_str());
+	} else if (mode == kFileOpenModeCreate) {
 		// Create the file, destroying any content it might have had
 		outFile = saveFileMan->openForSaving(wrappedName, isCompressed);
 		if (!outFile)
-			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
-	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
+			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeCreate): failed to create file '%s'", englishName.c_str());
+	} else if (mode == kFileOpenModeOpenOrCreate) {
 		// Try to open file, create it if it doesn't exist
 		outFile = saveFileMan->openForSaving(wrappedName, isCompressed);
 		if (!outFile)
-			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
+			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeCreate): failed to create file '%s'", englishName.c_str());
 
-		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first,
+		// QfG1 opens the character export file with kFileOpenModeCreate first,
 		// closes it immediately and opens it again with this here. Perhaps
 		// other games use this for read access as well. I guess changing this
 		// whole code into using virtual files and writing them after close
@@ -287,7 +253,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 }
 
 FileHandle *getFileFromHandle(EngineState *s, uint handle) {
-	if ((handle == 0) || ((handle >= VIRTUALFILE_HANDLE_START) && (handle <= VIRTUALFILE_HANDLE_END))) {
+	if ((handle == 0) || ((handle >= kVirtualFileHandleStart) && (handle <= kVirtualFileHandleEnd))) {
 		error("Attempt to use invalid file handle (%d)", handle);
 		return 0;
 	}
@@ -333,38 +299,34 @@ static bool _savegame_sort_byDate(const SavegameDesc &l, const SavegameDesc &r) 
 	return (l.time > r.time);
 }
 
-bool fillSavegameDesc(const Common::String &filename, SavegameDesc *desc) {
+bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc) {
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-	Common::SeekableReadStream *in;
-	if ((in = saveFileMan->openForLoading(filename)) == nullptr) {
+	Common::ScopedPtr<Common::SeekableReadStream> in(saveFileMan->openForLoading(filename));
+	if (!in) {
 		return false;
 	}
 
 	SavegameMetadata meta;
-	if (!get_savegame_metadata(in, &meta) || meta.name.empty()) {
-		// invalid
-		delete in;
+	if (!get_savegame_metadata(in.get(), &meta) || meta.name.empty()) {
 		return false;
 	}
-	delete in;
 
 	const int id = strtol(filename.end() - 3, NULL, 10);
-	desc->id = id;
-	desc->date = meta.saveDate;
+	desc.id = id;
 	// We need to fix date in here, because we save DDMMYYYY instead of
 	// YYYYMMDD, so sorting wouldn't work
-	desc->date = ((desc->date & 0xFFFF) << 16) | ((desc->date & 0xFF0000) >> 8) | ((desc->date & 0xFF000000) >> 24);
-	desc->time = meta.saveTime;
-	desc->version = meta.version;
-	desc->gameVersion = meta.gameVersion;
-	desc->script0Size = meta.script0Size;
-	desc->gameObjectOffset = meta.gameObjectOffset;
+	desc.date = ((meta.saveDate & 0xFFFF) << 16) | ((meta.saveDate & 0xFF0000) >> 8) | ((meta.saveDate & 0xFF000000) >> 24);
+	desc.time = meta.saveTime;
+	desc.version = meta.version;
+	desc.gameVersion = meta.gameVersion;
+	desc.script0Size = meta.script0Size;
+	desc.gameObjectOffset = meta.gameObjectOffset;
 #ifdef ENABLE_SCI32
 	if (g_sci->getGameId() == GID_SHIVERS) {
-		desc->lowScore = meta.lowScore;
-		desc->highScore = meta.highScore;
+		desc.lowScore = meta.lowScore;
+		desc.highScore = meta.highScore;
 	} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
-		desc->avatarId = meta.avatarId;
+		desc.avatarId = meta.avatarId;
 	}
 #endif
 
@@ -372,10 +334,10 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc *desc) {
 		meta.name.deleteLastChar();
 
 	// At least Phant2 requires use of strncpy, since it creates save game
-	// names of exactly SCI_MAX_SAVENAME_LENGTH
-	strncpy(desc->name, meta.name.c_str(), SCI_MAX_SAVENAME_LENGTH);
+	// names of exactly kMaxSaveNameLength
+	strncpy(desc.name, meta.name.c_str(), kMaxSaveNameLength);
 
-	return desc;
+	return true;
 }
 
 // Create an array containing all found savedgames, sorted by creation date
@@ -394,8 +356,9 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 #endif
 
 		SavegameDesc desc;
-		fillSavegameDesc(filename, &desc);
-		saves.push_back(desc);
+		if (fillSavegameDesc(filename, desc)) {
+			saves.push_back(desc);
+		}
 	}
 
 	// Sort the list by creation date of the saves
