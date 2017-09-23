@@ -24,13 +24,17 @@
 #include "titanic/true_talk/liftbot_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
 int LiftbotScript::_stateIndex;
 
-static const int STATE_ARRAY[7] = {
-	0x78BE, 0x78C0, 0x78C1, 0x78C2, 0x78C3, 0x78C4, 0x78C5
+static const int STATE_ARRAY_EN[7] = {
+	30910, 30912, 30913, 30914, 30915, 30916, 30917
+};
+static const int STATE_ARRAY_DE[7] = {
+	30919, 30921, 30922, 30923, 30924, 30925, 30926
 };
 
 LiftbotScript::LiftbotScript(int val1, const char *charClass, int v2,
@@ -63,21 +67,22 @@ int LiftbotScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 	case MKTAG('H', 'H', 'G', 'Q'):
 	case MKTAG('A', 'N', 'S', 'W'):
 		if (_stateIndex >= 7) {
-			selectResponse(30918);
+			selectResponse(TRANSLATE(30918, 30927));
 			setState(2);
 			_stateIndex = 0;
 		} else {
-			addResponse(STATE_ARRAY[_stateIndex++]);
+			addResponse(TRANSLATE(STATE_ARRAY_EN[_stateIndex++],
+				STATE_ARRAY_DE[_stateIndex++]));
 		}
 
 		applyResponse();
 		return 2;
 
 	case MKTAG('O', 'R', 'D', '8'):
-		addResponse(30475);
-		addResponse(30467);
-		addResponse(30466);
-		addResponse(30474);
+		addResponse(TRANSLATE(30475, 30484));
+		addResponse(TRANSLATE(30467, 30476));
+		addResponse(TRANSLATE(30466, 30475));
+		addResponse(TRANSLATE(30474, 30483));
 		applyResponse();
 		return SS_2;
 
@@ -103,22 +108,22 @@ int LiftbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		switch (currState) {
 		case 2:
 			if (flag1)
-				return addDialogueAndState(30920, 3);
+				return addDialogueAndState(TRANSLATE(30920, 30929), 3);
 			if (flag2)
-				return addDialogueAndState(30919, 1);
+				return addDialogueAndState(TRANSLATE(30919, 30928), 1);
 			break;
 
 		case 3:
 			if (flag1)
-				return addDialogueAndState(30919, 1);
+				return addDialogueAndState(TRANSLATE(30919, 30928), 1);
 			break;
 
 		case 4:
-			return addDialogueAndState(210391, 1);
+			return addDialogueAndState(getDialogueId(210391), 1);
 
 		case 5:
 			if (sentence->contains("reborzo") || sentence->contains("is that"))
-				return addDialogueAndState(30515, 1);
+				return addDialogueAndState(TRANSLATE(30515, 30524), 1);
 			break;
 
 		case 6:
@@ -184,7 +189,7 @@ ScriptChangedResult LiftbotScript::scriptChanged(const TTroomScript *roomScript,
 		break;
 
 	case 155:
-		selectResponse(30446);
+		selectResponse(TRANSLATE(30446, 30455));
 		applyResponse();
 		break;
 
@@ -192,7 +197,7 @@ ScriptChangedResult LiftbotScript::scriptChanged(const TTroomScript *roomScript,
 		if (getCurrentFloor() == 1) {
 			addResponse(getDialogueId(210614));
 		} else {
-			selectResponse(30270);
+			selectResponse(TRANSLATE(30270, 30272));
 		}
 		applyResponse();
 		break;
@@ -201,7 +206,7 @@ ScriptChangedResult LiftbotScript::scriptChanged(const TTroomScript *roomScript,
 		break;
 	}
 
-	if (id >= 210000 && id <= 211001) {
+	if (id >= 210000 && id <= (uint)TRANSLATE(211001, 211003)) {
 		addResponse(getDialogueId(id));
 		applyResponse();
 	}
@@ -333,8 +338,13 @@ int LiftbotScript::updateState(uint oldId, uint newId, int index) {
 }
 
 int LiftbotScript::preResponse(uint id) {
-	if (id == 30565 || id == 30566 || id == 30567 || id == 30568
-			|| id == 30569 || id == 30570 || id == 30571)
+	if (id == (uint)TRANSLATE(30565, 30574)
+			|| id == (uint)TRANSLATE(30566, 30575)
+			|| id == (uint)TRANSLATE(30567, 30576)
+			|| id == (uint)TRANSLATE(30568, 30577)
+			|| id == (uint)TRANSLATE(30569, 30578)
+			|| id == (uint)TRANSLATE(30570, 30579)
+			|| id == (uint)TRANSLATE(30571, 30580))
 		return 210901;
 
 	if (getDialRegion(0) == 0 && getRandomNumber(100) > 60)
@@ -355,7 +365,6 @@ uint LiftbotScript::getDialsBitset() const {
 	return bits;
 }
 
-
 int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	// Responses for each floor when asked "what floor are we on"
 	static const int FLOOR_RESPONSE_IDS[] = {
@@ -374,7 +383,9 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 	getState();
 	int stateVal;
 
-	switch (val1) {
+	int state = (g_language == Common::DE_DEU && val1 > 3000 && val1 < 3020)
+		? val1 - 3000 : val1;
+	switch (state) {
 	case 1:
 		if (getValue(1) != 1)
 			return 1;
@@ -394,8 +405,9 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		if (sentence->localWord("big") || sentence->localWord("small")) {
 			addResponse(getDialogueId(210215));
 			applyResponse();
-		} else if (sentence->localWord("my") || sentence->contains("my") ||
-				sentence->contains("bedroom") || sentence->contains("state")) {
+		} else if (sentence->localWord("my") || sentence->contains("my")
+				|| sentence->contains("bedroom") || sentence->contains("state")
+				|| sentence->contains("mein") || sentence->contains("schlafzimmer")) {
 			addResponse1(CTrueTalkManager::getStateValue(4), true, 0);
 		} else {
 			selectResponse(210763);
@@ -434,9 +446,11 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 	case 14:
 		// Which lift am I in
 		stateVal = getState6();
-		if (sentence->contains("elevator") ||
-			(!sentence->contains("lift") && getRandomNumber(100) > 60))
-			stateVal += 4;
+		if (g_language == Common::EN_ANY) {
+			if (sentence->contains("elevator") ||
+				(!sentence->contains("lift") && getRandomNumber(100) > 60))
+				stateVal += 4;
+		}
 		selectResponse(LIFT_RESPONSE_IDS[stateVal]);
 		applyResponse();
 		return 2;
@@ -450,7 +464,9 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		applyResponse();
 		return 2;
 	case 16:
-		if (sentence->contains("elevator") || sentence->contains("elavator"))
+		if (g_language == Common::DE_DEU)
+			addResponse(30589);
+		else if (sentence->contains("elevator") || sentence->contains("elavator"))
 			addResponse(30579);
 		else
 			addResponse(30580);
@@ -461,6 +477,7 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 			return 1;
 		break;
 	default:
+
 		break;
 	}
 
@@ -510,11 +527,12 @@ int LiftbotScript::addResponse1(int index, bool flag, int id) {
 		return 1;
 	} else if (index == getCurrentFloor()) {
 		if (index == 1) {
-			addResponse(30558 - (getRandomBit() ? 290 : 0));
+			addResponse(TRANSLATE(30558 - (getRandomBit() ? 290 : 0),
+				30567 - (getRandomBit() ? 297 : 0)));
 			addResponse(getDialogueId(210589));
 		} else {
 			if (index == 39)
-				addResponse(30346);
+				addResponse(TRANSLATE(30346, 30348));
 			addResponse(getDialogueId(210589));
 		}
 
@@ -539,9 +557,10 @@ int LiftbotScript::addResponse1(int index, bool flag, int id) {
 
 	if (flag) {
 		if (index == 1) {
-			selectResponse(30558 - (getRandomBit() ? 290 : 0));
+			selectResponse(TRANSLATE(30558 - (getRandomBit() ? 290 : 0),
+				30567 - (getRandomBit() ? 297 : 0)));
 		} else if (index == 39) {
-			addResponse(30346);
+			addResponse(TRANSLATE(30346, 30348));
 		} else {
 			if (getRandomNumber(100) > 35 && index >= 2 && index <= 38) {
 				addResponse(getDialogueId(DIALOGUE_IDS[index - 2]));
@@ -638,7 +657,7 @@ int LiftbotScript::sentence1(const TTsentence *sentence) {
 		diff = -100;
 	}
 
-	if (sentence->localWord("lobby"))
+	if (g_language == Common::EN_ANY && sentence->localWord("lobby"))
 		diff = (getValue(1) == 0 ? 1 : 0) - 99;
 	if (sentence->localWord("bottomofwell") || sentence->contains("bottom"))
 		diff = 39;
@@ -656,22 +675,25 @@ int LiftbotScript::sentence1(const TTsentence *sentence) {
 	}
 
 	if (sentence->_category == 4 || sentence->localWord("find")
-			|| sentence->contains("get to")) {
+			|| sentence->contains("get to")
+			|| sentence->contains("komme ich")
+			|| sentence->contains("ich will zum")
+			|| sentence->contains("ich will zur")
+			|| sentence->contains("ich will ins")
+			|| sentence->contains("ich will in")) {
 		if (getCurrentFloor() != diff) {
 			selectResponse(diff == 1 ? 210769 : 210764);
-			applyResponse();
 		} else if (!newId) {
 			selectResponse(210764);
-			applyResponse();
-		} else if (newId >= 210715 && newId <= 210719) {
-			selectResponse(newId);
-			applyResponse();
-		} else {
+		} else if (newId > 210715 && newId <= 210719) {
 			addResponse(getDialogueId(210720));
+			selectResponse(getDialogueId(newId));
 			selectResponse(210715);
-			applyResponse();
+		} else {
+			selectResponse(newId);
 		}
 
+		applyResponse();
 		return 1;
 	}
 
