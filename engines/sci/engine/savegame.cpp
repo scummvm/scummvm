@@ -1184,30 +1184,8 @@ void SegManager::reconstructClones() {
 
 
 bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
-	TimeDate curTime;
-	g_system->getTimeAndDate(curTime);
-
-	SavegameMetadata meta;
-	meta.version = CURRENT_SAVEGAME_VERSION;
-	meta.name = savename;
-	meta.gameVersion = version;
-	meta.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	meta.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
-
-	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-	meta.script0Size = script0->size();
-	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
-
-	// Checking here again
-// TODO: This breaks Torin autosave, is there actually any reason for it?
-//	if (s->executionStackBase) {
-//		warning("Cannot save from below kernel function");
-//		return false;
-//	}
-
-	Common::Serializer ser(0, fh);
-	sync_SavegameMetadata(ser, meta);
-	Graphics::saveThumbnail(*fh);
+	set_savegame_metadata(fh, savename, version);
+	Common::Serializer ser(nullptr, fh);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
@@ -1393,6 +1371,27 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// signal restored game to game scripts
 	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
+}
+
+void set_savegame_metadata(Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+
+	SavegameMetadata meta;
+	meta.version = CURRENT_SAVEGAME_VERSION;
+	meta.name = savename;
+	meta.gameVersion = version;
+	meta.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	meta.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+
+	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+	assert(script0);
+	meta.script0Size = script0->size();
+	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
+
+	Common::Serializer ser(nullptr, fh);
+	sync_SavegameMetadata(ser, meta);
+	Graphics::saveThumbnail(*fh);
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata &meta) {

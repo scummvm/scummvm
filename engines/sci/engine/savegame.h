@@ -120,6 +120,10 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *save);
  */
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata &meta);
 
+/**
+ * Write the header to a savegame.
+ */
+void set_savegame_metadata(Common::WriteStream *fh, const Common::String &savename, const Common::String &version);
 
 } // End of namespace Sci
 
