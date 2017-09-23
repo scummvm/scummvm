@@ -697,7 +697,7 @@ void Database::cacheRoom(uint32 roomID, uint32 ageID) {
 
 	// Remove old rooms from cache and add the new one
 	for (NodesCache::iterator it = _roomNodesCache.begin(); it != _roomNodesCache.end(); it++) {
-		if (!isCommonRoom(roomID, ageID)) {
+		if (!isCommonRoom(it->_key.roomID, it->_key.ageID)) {
 			_roomNodesCache.erase(it);
 		}
 	}
