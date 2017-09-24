@@ -596,8 +596,13 @@ reg_t GuestAdditions::promptSaveRestoreRama(EngineState *s, int argc, reg_t *arg
 				// We need to touch the save file just so it exists here, since
 				// otherwise the game will not let us save to the new save slot
 				// (it will try to come up with a brand new slot instead)
-				Common::ScopedPtr<Common::OutSaveFile> out(g_sci->getSaveFileManager()->openForSaving(g_sci->getSavegameName(saveNo)));
-				set_savegame_metadata(out.get(), saveGameName, "");
+				Common::OutSaveFile *out = g_sci->getSaveFileManager()->openForSaving(g_sci->getSavegameName(saveNo));
+				set_savegame_metadata(out, saveGameName, "");
+
+				// Make sure the save file is fully written before we try to
+				// re-retrieve the list of saves, since otherwise it may not
+				// show up in the list
+				delete out;
 
 				// We have to re-retrieve saves and find the index instead of
 				// assuming the newest save will be in index 0 because save game
