@@ -212,6 +212,7 @@ void CTrueTalkManager::removeCompleted() {
 
 		if (talker->_done) {
 			i = _talkers.erase(i);
+			talker->speechEnded();
 			delete talker;
 		} else {
 			++i;
