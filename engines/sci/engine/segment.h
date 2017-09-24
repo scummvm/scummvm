@@ -436,7 +436,7 @@ public:
 		_size(0),
 		_data(nullptr) {}
 
-	SciArray(const SciArray &array) : Common::Serializable() {
+	SciArray(const SciArray &array) {
 		_type = array._type;
 		_size = array._size;
 		_elementSize = array._elementSize;
@@ -972,7 +972,7 @@ public:
 
 	inline SciBitmap() : _data(nullptr), _dataSize(0), _gc(true) {}
 
-	inline SciBitmap(const SciBitmap &other) : Common::Serializable() {
+	inline SciBitmap(const SciBitmap &other) {
 		_dataSize = other._dataSize;
 		_data = (byte *)malloc(other._dataSize);
 		memcpy(_data, other._data, other._dataSize);
