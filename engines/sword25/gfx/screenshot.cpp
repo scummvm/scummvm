@@ -113,11 +113,11 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 	}
 
 	// Create a PNG representation of the thumbnail data
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
-	saveToFile(&thumbnail, stream);
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::NO);
+	saveToFile(&thumbnail, &stream);
 
 	// Output a MemoryReadStream that encompasses the written data
-	Common::SeekableReadStream *result = new Common::MemoryReadStream(stream->getData(), stream->size(),
+	Common::SeekableReadStream *result = new Common::MemoryReadStream(stream.getData(), stream.size(),
 		DisposeAfterUse::YES);
 	return result;
 }

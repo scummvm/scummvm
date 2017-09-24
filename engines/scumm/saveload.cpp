@@ -228,7 +228,7 @@ void ScummEngine_v4::prepareSavegame() {
 	_savePreparedSavegame = NULL;
 
 	// store headerless savegame in a compressed memory stream
-	memStream = new Common::MemoryWriteStreamDynamic();
+	memStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::NO);
 	writeStream = Common::wrapCompressedWriteStream(memStream);
 	if (saveState(writeStream, false)) {
 		// we have to finalize the compression-stream first, otherwise the internal

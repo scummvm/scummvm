@@ -30,17 +30,27 @@
 namespace Xeen {
 
 OutFile::OutFile(XeenEngine *vm, const Common::String filename) :
-	_vm(vm), _filename(filename) {
+		_vm(vm),
+		_filename(filename),
+		_backingStream(DisposeAfterUse::YES) {
+}
+
+uint32 OutFile::write(const void *dataPtr, uint32 dataSize) {
+	return _backingStream.write(dataPtr, dataSize);
+}
+
+int32 OutFile::pos() const {
+	return _backingStream.pos();
 }
 
 void OutFile::finalize() {
 	uint16 id = BaseCCArchive::convertNameToId(_filename);
 
 	if (!_vm->_saves->_newData.contains(id))
-		_vm->_saves->_newData[id] = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+		_vm->_saves->_newData[id] = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
-	Common::MemoryWriteStreamDynamic &out = _vm->_saves->_newData[id];
-	out.write(getData(), size());
+	Common::MemoryWriteStreamDynamic *out = _vm->_saves->_newData[id];
+	out->write(_backingStream.getData(), _backingStream.size());
 }
 
 /*------------------------------------------------------------------------*/
@@ -54,6 +64,9 @@ SavesManager::SavesManager(XeenEngine *vm, Party &party) :
 }
 
 SavesManager::~SavesManager() {
+	for (Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *>::iterator it = _newData.begin(); it != _newData.end(); it++) {
+		delete (*it)._value;
+	}
 	delete[] _data;
 }
 
@@ -86,8 +99,8 @@ Common::SeekableReadStream *SavesManager::createReadStreamForMember(const Common
 	// save manager, then return that new resource
 	uint16 id = BaseCCArchive::convertNameToId(name);
 	if (_newData.contains(id)) {
-		Common::MemoryWriteStreamDynamic stream = _newData[id];
-		return new Common::MemoryReadStream(stream.getData(), stream.size());
+		Common::MemoryWriteStreamDynamic *stream = _newData[id];
+		return new Common::MemoryReadStream(stream->getData(), stream->size());
 	}
 
 	// Retrieve the resource from the loaded savefile

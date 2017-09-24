@@ -782,7 +782,7 @@ void EventManager::processCommandQueue() {
 			delete _vm->_saveThumbnail;
 			_vm->_saveThumbnail = nullptr;
 		} else if (!_vm->_saveThumbnail) {
-			_vm->_saveThumbnail = new Common::MemoryWriteStreamDynamic();
+			_vm->_saveThumbnail = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 			Graphics::saveThumbnail(*_vm->_saveThumbnail);
 		}
 

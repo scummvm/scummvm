@@ -211,7 +211,7 @@ void GnapEngine::runMenu() {
 	_menuDone = false;
 
 	delete _tempThumbnail;
-	_tempThumbnail = new Common::MemoryWriteStreamDynamic;
+	_tempThumbnail = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	Graphics::saveThumbnail(*_tempThumbnail);
 
 	createMenuSprite();
