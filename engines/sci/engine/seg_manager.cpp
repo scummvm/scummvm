@@ -614,7 +614,25 @@ static inline void setChar(const SegmentRef &ref, uint offset, byte value) {
 		val->setOffset((val->getOffset() & 0xff00) | value);
 }
 
-// TODO: memcpy, strcpy and strncpy could maybe be folded into a single function
+template <bool STRING>
+static void forwardCopy(byte *dest, const byte *src, size_t n) {
+	const bool zeroPad = (STRING && n != 0xFFFFFFFFU);
+
+	while (n) {
+		--n;
+		const byte b = *src++;
+		*dest++ = b;
+		if (STRING && b == '\0') {
+			break;
+		}
+	}
+	if (STRING && zeroPad) {
+		while (n--) {
+			*dest++ = '\0';
+		}
+	}
+}
+
 void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
 	SegmentRef dest_r = dereference(dest);
 	if (!dest_r.isValid()) {
@@ -624,11 +642,7 @@ void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
 
 
 	if (dest_r.isRaw) {
-		// raw -> raw
-		if (n == 0xFFFFFFFFU)
-			::strcpy((char *)dest_r.raw, src);
-		else
-			::strncpy((char *)dest_r.raw, src, n);
+		forwardCopy<true>(dest_r.raw, (const byte *)src, n);
 	} else {
 		// raw -> non-raw
 		for (uint i = 0; i < n; i++) {
@@ -711,7 +725,7 @@ void SegManager::memcpy(reg_t dest, const byte* src, size_t n) {
 
 	if (dest_r.isRaw) {
 		// raw -> raw
-		::memcpy((char *)dest_r.raw, src, n);
+		forwardCopy<false>(dest_r.raw, src, n);
 	} else {
 		// raw -> non-raw
 		for (uint i = 0; i < n; i++)
@@ -767,7 +781,7 @@ void SegManager::memcpy(byte *dest, reg_t src, size_t n) {
 
 	if (src_r.isRaw) {
 		// raw -> raw
-		::memcpy(dest, src_r.raw, n);
+		forwardCopy<false>(dest, src_r.raw, n);
 	} else {
 		// non-raw -> raw
 		for (uint i = 0; i < n; i++) {
