@@ -30,6 +30,8 @@ namespace Image {
 
 BitmapRawDecoder::BitmapRawDecoder(int width, int height, int bitsPerPixel) : Codec(),
 		_surface(0), _width(width), _height(height), _bitsPerPixel(bitsPerPixel) {
+	_surface = new Graphics::Surface();
+	_surface->create(_width, _height, getPixelFormat());
 }
 
 BitmapRawDecoder::~BitmapRawDecoder() {
@@ -41,9 +43,6 @@ BitmapRawDecoder::~BitmapRawDecoder() {
 
 const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStream &stream) {
 	Graphics::PixelFormat format = getPixelFormat();
-
-	_surface = new Graphics::Surface();
-	_surface->create(_width, _height, format);
 
 	int srcPitch = _width * (_bitsPerPixel >> 3);
 	int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
