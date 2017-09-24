@@ -50,7 +50,7 @@ size_t NetworkReadStream::curlHeadersCallback(char *d, size_t n, size_t l, void 
 	return 0;
 }
 
-int NetworkReadStream::curlProgressCallback(void *p, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
+static int curlProgressCallback(void *p, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
 	if (stream)
 		stream->setProgress(dlnow, dltotal);

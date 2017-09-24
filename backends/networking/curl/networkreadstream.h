@@ -63,13 +63,9 @@ class NetworkReadStream: public Common::ReadStream {
 	*/
 	uint32 addResponseHeaders(char *buffer, uint32 bufferSize);
 
-	/** Used in curl progress callback to pass current downloaded/total values. */
-	void setProgress(uint64 downloaded, uint64 total);
-
 	static size_t curlDataCallback(char *d, size_t n, size_t l, void *p);
 	static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p);
 	static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p);
-	static int curlProgressCallback(void *p, long dltotal, long dlnow, long ultotal, long ulnow);
 	static int curlProgressCallbackOlder(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
 public:
 	/** Send <postFields>, using POST by default. */
@@ -142,6 +138,9 @@ public:
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;
+
+	/** Used in curl progress callback to pass current downloaded/total values. */
+	void setProgress(uint64 downloaded, uint64 total);
 };
 
 } // End of namespace Networking
