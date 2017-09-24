@@ -743,6 +743,20 @@ VMDPlayer::EventFlags VMDPlayer::checkForEvent(const EventFlags flags) {
 }
 
 void VMDPlayer::initOverlay() {
+	// Composited videos forced through the overlay renderer (due to HQ video
+	// mode) still need to occlude whatever is behind them in the renderer (as
+	// in composited mode) to prevent palette glitches caused by premature
+	// submission of occluded screen items (e.g. leaving the lava room sphere in
+	// the volcano in Lighthouse, the pic after the video finishes playing will
+	// be rendered with the wrong palette)
+	if (isNormallyComposited() && _planeIsOwned) {
+		_plane = new Plane(_drawRect, kPlanePicColored);
+		if (_priority) {
+			_plane->_priority = _priority;
+		}
+		g_sci->_gfxFrameout->addPlane(_plane);
+	}
+
 	// Make sure that any pending graphics changes from the game are submitted
 	// before starting playback, since if they aren't, and the video player
 	// yields back to the VM in the middle of playback, there may be a flash of
@@ -854,6 +868,11 @@ void VMDPlayer::submitPalette(const uint8 rawPalette[256 * 3]) const {
 }
 
 void VMDPlayer::closeOverlay() {
+	if (isNormallyComposited() && _planeIsOwned && _plane != nullptr) {
+		g_sci->_gfxFrameout->deletePlane(*_plane);
+		_plane = nullptr;
+	}
+
 #ifdef USE_RGB_COLOR
 	if (_hqVideoMode) {
 		if (endHQVideo()) {

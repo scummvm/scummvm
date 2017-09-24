@@ -503,10 +503,14 @@ private:
 	 */
 	bool shouldUseCompositing() const {
 #ifdef USE_RGB_COLOR
-		return getSciVersion() == SCI_VERSION_3 && !shouldStartHQVideo();
+		return isNormallyComposited() && !shouldStartHQVideo();
 #else
-		return getSciVersion() == SCI_VERSION_3;
+		return isNormallyComposited();
 #endif
+	}
+
+	bool isNormallyComposited() const {
+		return getSciVersion() == SCI_VERSION_3;
 	}
 
 	void initOverlay();
