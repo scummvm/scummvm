@@ -859,19 +859,19 @@ reg_t kArrayFill(EngineState *s, int argc, reg_t *argv) {
 reg_t kArrayCopy(EngineState *s, int argc, reg_t *argv) {
 	SciArray &target = *s->_segMan->lookupArray(argv[0]);
 	const uint16 targetIndex = argv[1].toUint16();
+	const uint16 sourceIndex = argv[3].toUint16();
+	const int16 count = argv[4].toSint16();
 
-	SciArray source;
-	// String copies may be made from static script data
 	if (!s->_segMan->isArray(argv[2])) {
+		// String copies may be made from static script data
+		SciArray source;
 		source.setType(kArrayTypeString);
 		source.fromString(s->_segMan->getString(argv[2]));
+		target.copy(source, sourceIndex, targetIndex, count);
 	} else {
-		source = *s->_segMan->lookupArray(argv[2]);
+		target.copy(*s->_segMan->lookupArray(argv[2]), sourceIndex, targetIndex, count);
 	}
-	const uint16 sourceIndex = argv[3].toUint16();
-	const uint16 count = argv[4].toUint16();
 
-	target.copy(source, sourceIndex, targetIndex, count);
 	return argv[0];
 }
 

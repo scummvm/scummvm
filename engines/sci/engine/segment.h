@@ -761,12 +761,12 @@ public:
 	 * Copies values from the source array. Both arrays will be grown if needed
 	 * to prevent out-of-bounds reads/writes.
 	 */
-	void copy(SciArray &source, const uint16 sourceIndex, const uint16 targetIndex, uint16 count) {
-		if (count == 65535 /* -1 */) {
+	void copy(SciArray &source, const uint16 sourceIndex, const uint16 targetIndex, int16 count) {
+		if (count == -1) {
 			count = source.size() - sourceIndex;
 		}
 
-		if (!count) {
+		if (count < 1) {
 			return;
 		}
 
