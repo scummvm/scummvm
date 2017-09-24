@@ -130,6 +130,10 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 
 bool CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
 	debugC(DEBUG_DETAILED, kDebugScripts, "%s TrueTalkNotifySpeechEndedMsg flags=%x dialogueId=%d", getName().c_str(), _npcFlags, msg->_dialogueId);
+
+	if (!getGameManager())
+		return false;
+
 	_npcFlags &= ~NPCFLAG_SPEAKING;
 	--_speechCounter;
 	_speechDuration = 0;
