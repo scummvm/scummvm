@@ -730,86 +730,159 @@ int BellbotScript::preResponse(uint id) {
 }
 
 int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	switch (val1) {
-	case 1:
-		addResponse(getDialogueId(*srcIdP));
-		applyResponse();
-		return 2;
-
-	case 2:
-		addResponse(getDialogueId(*srcIdP));
-		addResponse(getDialogueId(getRandomNumber(2) == 1 ? 200192 : 200157));
-		addResponse(getDialogueId(200176));
-		applyResponse();
-		return 2;
-
-	case 21:
-		if (CTrueTalkManager::getStateValue(7) == 0) {
-			selectResponse(21372);
+	if (g_language == Common::EN_ANY) {
+		switch (val1) {
+		case 1:
+			addResponse(getDialogueId(*srcIdP));
 			applyResponse();
 			return 2;
-		}
 
-		if (!sentence->localWord("broken") && !sentence->contains("broken") &&
+		case 2:
+			addResponse(getDialogueId(*srcIdP));
+			addResponse(getDialogueId(getRandomNumber(2) == 1 ? 200192 : 200157));
+			addResponse(getDialogueId(200176));
+			applyResponse();
+			return 2;
+
+		case 21:
+			if (CTrueTalkManager::getStateValue(7) == 0) {
+				selectResponse(21372);
+				applyResponse();
+				return 2;
+			}
+
+			if (!sentence->localWord("broken") && !sentence->contains("broken") &&
 				CTrueTalkManager::_currentNPC) {
-			CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
-			if (node) {
-				CString nodeName = node->getName();
-				if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
+				CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
+				if (node) {
+					CString nodeName = node->getName();
+					if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
 						|| nodeName.containsIgnoreCase("7")) {
-					CTrueTalkManager::triggerAction(29, 2);
-					selectResponse(201571);
-					applyResponse();
-					return 2;
+						CTrueTalkManager::triggerAction(29, 2);
+						selectResponse(201571);
+						applyResponse();
+						return 2;
+					}
 				}
 			}
-		}
 
-		CTrueTalkManager::triggerAction(29, 1);
-		selectResponse(201771);
-		applyResponse();
-		return 2;
-
-	case 22:
-		if (CTrueTalkManager::getStateValue(7) == 0) {
-			selectResponse(21372);
+			CTrueTalkManager::triggerAction(29, 1);
+			selectResponse(201771);
 			applyResponse();
 			return 2;
-		}
 
-		if (!sentence->localWord("broken") && !sentence->contains("broken") &&
-			CTrueTalkManager::_currentNPC) {
-			CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
-			if (node) {
-				CString nodeName = node->getName();
-				if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
+		case 22:
+			if (CTrueTalkManager::getStateValue(7) == 0) {
+				selectResponse(21372);
+				applyResponse();
+				return 2;
+			}
+
+			if (!sentence->localWord("broken") && !sentence->contains("broken") &&
+				CTrueTalkManager::_currentNPC) {
+				CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
+				if (node) {
+					CString nodeName = node->getName();
+					if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
 						|| nodeName.containsIgnoreCase("7")) {
-					CTrueTalkManager::triggerAction(29, 2);
-					selectResponse(201571);
-					applyResponse();
-					return 2;
+						CTrueTalkManager::triggerAction(29, 2);
+						selectResponse(201571);
+						applyResponse();
+						return 2;
+					}
 				}
 			}
-		}
 
-		CTrueTalkManager::triggerAction(29, 1);
-		selectResponse(201771);
-		applyResponse();
-		return 2;
-
-	case 23:
-	case 24:
-		if (CTrueTalkManager::getStateValue(7) == 0) {
-			selectResponse(21372);
+			CTrueTalkManager::triggerAction(29, 1);
+			selectResponse(201771);
 			applyResponse();
 			return 2;
+
+		case 23:
+		case 24:
+			if (CTrueTalkManager::getStateValue(7) == 0) {
+				selectResponse(21372);
+				applyResponse();
+				return 2;
+			}
+
+			CTrueTalkManager::triggerAction(29, val1 == 23 ? 3 : 4);
+			break;
+
+		default:
+			break;
 		}
+	} else {
+		switch (val1) {
+		case 5001:
+		case 5021:
+			return 0;
 
-		CTrueTalkManager::triggerAction(29, val1 == 23 ? 3 : 4);
-		break;
+		case 5002:
+			addResponse(getDialogueId(*srcIdP));
+			addResponse(getDialogueId(200000));
+			applyResponse();
+			return 2;
 
-	default:
-		break;
+		case 5003:
+			addResponse(getDialogueId(*srcIdP));
+			return 2;
+
+		case 5022:
+		case 5023:
+			if (CTrueTalkManager::getStateValue(7)) {
+				bool flag = true;
+
+				if (!sentence->localWord("broken") && !sentence->contains("kaputt") &&
+					!sentence->contains("im eimer") && !sentence->contains("funktioniert nicht") &&
+					CTrueTalkManager::_currentNPC) {
+					CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
+					if (node) {
+						CString nodeName = node->getName();
+						if (nodeName.contains("5") || nodeName.contains("6") || nodeName.contains("7"))
+							flag = false;
+					}
+				}
+
+				if (flag) {
+					CTrueTalkManager::triggerAction(29, 1);
+					selectResponse(201771);
+				}
+				else {
+					CTrueTalkManager::triggerAction(29, 2);
+					selectResponse(201554);
+				}
+			}
+			else {
+				selectResponse(21378);
+			}
+
+			applyResponse();
+			return 2;
+
+		case 5024:
+			if (CTrueTalkManager::getStateValue(7)) {
+				CTrueTalkManager::triggerAction(29, 3);
+				return 0;
+			}
+
+			selectResponse(21378);
+			applyResponse();
+			return 2;
+
+		case 5025:
+			if (CTrueTalkManager::getStateValue(7)) {
+				CTrueTalkManager::triggerAction(29, 4);
+				return 0;
+			}
+
+			selectResponse(21378);
+			applyResponse();
+			return 2;
+
+		default:
+			return TTnpcScript::doSentenceEntry(val1, srcIdP, roomScript, sentence);
+		}
 	}
 
 	return 0;

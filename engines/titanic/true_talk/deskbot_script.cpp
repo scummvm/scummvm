@@ -364,10 +364,15 @@ exit:
 
 int DeskbotScript::preResponse(uint id) {
 	int newId = 0;
-	if (getValue(1) >= 3 && (id == 41176 || id == 41738 || id == 41413 || id == 41740))
+	if (getValue(1) >= 3 && (
+			id == TRANSLATE(41176, 41190) ||
+			id == TRANSLATE(41738, 41429) ||
+			id == TRANSLATE(41413, 41755) ||
+			id == TRANSLATE(41740, 41757)
+		)) {
 		newId = 241601;
-
-	if (id == 42114)
+	}
+	if (id == TRANSLATE(42114, 42132))
 		CTrueTalkManager::triggerAction(20, 0);
 
 	return newId;
@@ -382,6 +387,9 @@ uint DeskbotScript::getDialsBitset() const {
 
 int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	uint id;
+
+	if (g_language == Common::DE_DEU && val1 != 4501)
+		return TTnpcScript::doSentenceEntry(val1, srcIdP, roomScript, sentence);
 
 	switch (val1) {
 	case 1:

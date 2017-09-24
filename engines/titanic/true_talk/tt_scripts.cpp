@@ -30,14 +30,6 @@
 #include "titanic/true_talk/maitred_script.h"
 #include "titanic/true_talk/parrot_script.h"
 #include "titanic/true_talk/succubus_script.h"
-#include "titanic/true_talk/german/barbot_script.h"
-#include "titanic/true_talk/german/bellbot_script.h"
-#include "titanic/true_talk/german/deskbot_script.h"
-#include "titanic/true_talk/german/doorbot_script.h"
-#include "titanic/true_talk/german/liftbot_script.h"
-#include "titanic/true_talk/german/maitred_script.h"
-#include "titanic/true_talk/german/parrot_script.h"
-#include "titanic/true_talk/german/succubus_script.h"
 #include "titanic/translation.h"
 
 namespace Titanic {
@@ -72,25 +64,14 @@ TTscripts::TTscripts() {
 		addScript(new TTroomScript(scriptNum));
 
 	// Load npc scripts
-	if (g_language == Common::DE_DEU) {
-		addScript(new German::BarbotScript(100, "Barbot", 0, "Fortillian", 9, 1, -1, -1, -1, 0), 112);
-		addScript(new German::BellbotScript(101, "Bellbot", 0, "Krage", 8, 1), 110);
-		addScript(new German::DeskbotScript(103, "DeskBot", 0, "Marsinta", 11, 2), 110);
-		addScript(new German::DoorbotScript(104, "Doorbot", 0, "Fentible", 11, 1, -1, -1, -1, 0), 100);
-		addScript(new German::LiftbotScript(105, "LiftBot", 0, "Nobby", 11, 1, -1, -1, -1, 0), 103);
-		addScript(new German::ParrotScript(107, "Parrot", 0, "The Parrot", 5, 1, -1, -1, -1, 0), 111);
-		addScript(new German::SuccUBusScript(111, "Succubus", 0, "Shorbert", 9, 1, -1, -1, -1, 0), 110);
-		addScript(new German::MaitreDScript(112, "MaitreDBot", 0, "Dastrogaaar", 8, 1), 132);
-	} else {
-		addScript(new BarbotScript(100, "Barbot", 0, "Fortillian", 9, 1, -1, -1, -1, 0), 112);
-		addScript(new BellbotScript(101, "Bellbot", 0, "Krage", 8, 1), 110);
-		addScript(new DeskbotScript(103, "DeskBot", 0, "Marsinta", 11, 2), 110);
-		addScript(new DoorbotScript(104, "Doorbot", 0, "Fentible", 11, 1, -1, -1, -1, 0), 100);
-		addScript(new LiftbotScript(105, "LiftBot", 0, "Nobby", 11, 1, -1, -1, -1, 0), 103);
-		addScript(new ParrotScript(107, "Parrot", 0, "The Parrot", 5, 1, -1, -1, -1, 0), 111);
-		addScript(new SuccUBusScript(111, "Succubus", 0, "Shorbert", 9, 1, -1, -1, -1, 0), 110);
-		addScript(new MaitreDScript(112, "MaitreDBot", 0, "Dastrogaaar", 8, 1), 132);
-	}
+	addScript(new BarbotScript(100, "Barbot", 0, "Fortillian", 9, 1, -1, -1, -1, 0), 112);
+	addScript(new BellbotScript(101, "Bellbot", 0, "Krage", 8, 1), 110);
+	addScript(new DeskbotScript(103, "DeskBot", 0, "Marsinta", 11, 2), 110);
+	addScript(new DoorbotScript(104, "Doorbot", 0, "Fentible", 11, 1, -1, -1, -1, 0), 100);
+	addScript(new LiftbotScript(105, "LiftBot", 0, "Nobby", 11, 1, -1, -1, -1, 0), 103);
+	addScript(new ParrotScript(107, "Parrot", 0, "The Parrot", 5, 1, -1, -1, -1, 0), 111);
+	addScript(new SuccUBusScript(111, "Succubus", 0, "Shorbert", 9, 1, -1, -1, -1, 0), 110);
+	addScript(new MaitreDScript(112, "MaitreDBot", 0, "Dastrogaaar", 8, 1), 132);
 }
 
 void TTscripts::addScript(TTnpcScript *script, int scriptId) {
