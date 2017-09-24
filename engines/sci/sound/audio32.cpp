@@ -1312,6 +1312,27 @@ void Audio32::kernelLoop(const int argc, const reg_t *const argv) {
 	setLoop(channelIndex, loop);
 }
 
+void Audio32::kernelPan(const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+
+	const int16 channelIndex = findChannelByArgs(argc, argv, 1, argc == 3 ? argv[2] : NULL_REG);
+	const int16 pan = argv[0].toSint16();
+	if (channelIndex != kNoExistingChannel) {
+		setPan(channelIndex, pan);
+	} else {
+		warning("Attempt to pan a channel that does not exist");
+	}
+}
+
+void Audio32::kernelPanOff(const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+
+	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc == 2 ? argv[1] : NULL_REG);
+	if (channelIndex != kNoExistingChannel) {
+		setPan(channelIndex, -1);
+	}
+}
+
 #pragma mark -
 #pragma mark Debugging
 

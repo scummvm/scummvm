@@ -236,8 +236,8 @@ static const SciKernelMapSubEntry kDoAudio_subops[] = {
 	{ SIG_SINCE_SCI21MID, 17, MAP_CALL(DoAudioHasSignal),          "",                     NULL },
 	{ SIG_SINCE_SCI21MID, 18, MAP_EMPTY(DoAudioCritical),          "(i)",                  NULL },
 	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(DoAudioSetLoop),            "iii(o)",               NULL },
-	{ SIG_SCI3,           20, MAP_DUMMY(DoAudioPan),               "",                     NULL },
-	{ SIG_SCI3,           21, MAP_DUMMY(DoAudioPanOff),            "",                     NULL },
+	{ SIG_SCI3,           20, MAP_CALL(DoAudioPan),                "ii(i)(iii)",           NULL },
+	{ SIG_SCI3,           21, MAP_CALL(DoAudioPanOff),             "i(i)(iii)",            NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 #endif

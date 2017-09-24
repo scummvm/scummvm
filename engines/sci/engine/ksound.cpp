@@ -466,6 +466,16 @@ reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kDoAudioPan(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_audio32->kernelPan(argc, argv);
+	return s->r_acc;
+}
+
+reg_t kDoAudioPanOff(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_audio32->kernelPanOff(argc, argv);
+	return s->r_acc;
+}
+
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv) {
 	// This is used by script 90 of MUMG Deluxe from the main menu to toggle
 	// the audio language between English and Spanish.

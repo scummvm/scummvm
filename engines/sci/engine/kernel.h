@@ -440,6 +440,8 @@ reg_t kDoAudioPreload(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPan(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPanOff(EngineState *s, int argc, reg_t *argv);
 
 reg_t kRobot(EngineState *s, int argc, reg_t *argv);
 reg_t kRobotOpen(EngineState *s, int argc, reg_t *argv);

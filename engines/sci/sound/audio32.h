@@ -508,6 +508,14 @@ public:
 		setLoop(findChannelById(resourceId, soundNode), loop);
 	}
 
+	/**
+	 * Sets the stereo panning for the given channel.
+	 */
+	void setPan(const int16 channelIndex, const int16 pan) {
+		Common::StackLock lock(_mutex);
+		getChannel(channelIndex).pan = pan;
+	}
+
 private:
 	/**
 	 * The tick when audio was globally paused.
@@ -644,6 +652,8 @@ public:
 	reg_t kernelMixing(const int argc, const reg_t *const argv);
 	reg_t kernelFade(const int argc, const reg_t *const argv);
 	void kernelLoop(const int argc, const reg_t *const argv);
+	void kernelPan(const int argc, const reg_t *const argv);
+	void kernelPanOff(const int argc, const reg_t *const argv);
 
 #pragma mark -
 #pragma mark Debugging
