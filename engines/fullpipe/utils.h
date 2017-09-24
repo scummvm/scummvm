@@ -23,6 +23,7 @@
 #ifndef FULLPIPE_UTILS_H
 #define FULLPIPE_UTILS_H
 
+#include "common/hash-ptr.h"
 #include "common/hash-str.h"
 #include "common/array.h"
 #include "common/file.h"
@@ -32,18 +33,7 @@ namespace Fullpipe {
 class CObject;
 class NGIArchive;
 
-struct Pointer_EqualTo {
-	bool operator()(const void *x, const void *y) const { return x == y; }
-};
-
-struct Pointer_Hash {
-	uint operator()(const void *x) const {
-		uint x = static_cast<uint>(reinterpret_cast<uintptr>(v));
-		return x + (x >> 3);
-	}
-};
-
-typedef Common::HashMap<void *, int, Pointer_Hash, Pointer_EqualTo> ObjHash;
+typedef Common::HashMap<void *, int> ObjHash;
 
 typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ClassMap;
 
