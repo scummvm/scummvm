@@ -71,6 +71,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_inputSpacePressed(false), _inputEnterPressed(false),
 		_inputEscapePressed(false), _inputTildePressed(false),
 		_inputEscapePressedNotConsumed(false),
+		_interactive(false),
 		_menuAction(0), _projectorBackground(0),
 		_shakeEffect(0), _rotationEffect(0), _backgroundSoundScriptLastRoomId(0),
 		_transition(0), _frameLimiter(0), _inventoryManualHide(false) {
@@ -198,7 +199,7 @@ Common::Error Myst3Engine::run() {
 
 	while (!shouldQuit()) {
 		runNodeBackgroundScripts();
-		processInput(false);
+		processInput(true);
 		updateCursor();
 
 		if (_menuAction) {
@@ -417,9 +418,8 @@ void Myst3Engine::updateCursor() {
 	}
 }
 
-void Myst3Engine::processInput(bool lookOnly) {
-	// Process events
-	Common::Event event;
+void Myst3Engine::processInput(bool interactive) {
+	_interactive = interactive;
 
 	if (_state->hasVarGamePadUpPressed()) {
 		// Reset the gamepad directions once they had a chance to be read by the scripts
@@ -432,6 +432,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 
 	bool shouldInteractWithHoveredElement = false;
 
+	// Process events
+	Common::Event event;
 	while (getEventManager()->pollEvent(event)) {
 		if (_state->hasVarGamePadUpPressed()) {
 			processEventForGamepad(event);
@@ -448,8 +450,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 			shouldInteractWithHoveredElement = true;
 		} else if (event.type == Common::EVENT_RBUTTONDOWN) {
-			// Skip the event when in look only mode
-			if (lookOnly)
+			// Skip the event when in non-interactive mode
+			if (!interactive)
 				continue;
 			// Nothing to do if not in cube view
 			if (_state->getViewType() != kCube)
@@ -489,7 +491,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 				break;
 			case Common::KEYCODE_F5:
 				// Open main menu
-				if (_cursor->isVisible() && !lookOnly) {
+				if (_cursor->isVisible() && interactive) {
 					if (_state->getLocationRoom() != 901)
 						_menu->goToNode(100);
 				}
@@ -532,8 +534,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 	// The input state variables need to be set before calling the scripts
 	updateInputState();
 
-	if (shouldInteractWithHoveredElement) {
-		interactWithHoveredElement(lookOnly);
+	if (shouldInteractWithHoveredElement && interactive) {
+		interactWithHoveredElement();
 	}
 
 	// Open main menu
@@ -542,7 +544,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 	// need to be honored after leaving the inner script loop,
 	// especially when the script loop was cancelled due to pressing
 	// escape.
-	if (_inputEscapePressedNotConsumed && !lookOnly) {
+	if (_inputEscapePressedNotConsumed && interactive) {
 		_inputEscapePressedNotConsumed = false;
 		if (_cursor->isVisible() && _state->hasVarMenuEscapePressed()) {
 			if (_state->getLocationRoom() != 901)
@@ -623,11 +625,7 @@ void Myst3Engine::resetInput() {
 	}
 }
 
-void Myst3Engine::interactWithHoveredElement(bool lookOnly) {
-	// Skip the event when in look only mode
-	if (lookOnly)
-		return;
-
+void Myst3Engine::interactWithHoveredElement() {
 	if (isInventoryVisible() && _inventory->isMouseInside()) {
 		uint16 hoveredInventory = _inventory->hoveredItem();
 		if (hoveredInventory > 0) {
@@ -769,9 +767,10 @@ void Myst3Engine::setupTransition() {
 
 void Myst3Engine::drawTransition(TransitionType transitionType) {
 	if (_transition) {
+		_interactive = false; // Don't allow loading while drawing transitions
 		_transition->draw(transitionType);
 		delete _transition;
-		_transition = 0;
+		_transition = nullptr;
 	}
 }
 
@@ -1207,7 +1206,7 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe, bool refreshAmbient
 		movie.update();
 
 		// Process events
-		processInput(true);
+		processInput(false);
 
 		// Handle skipping
 		if (_inputSpacePressed || _inputEscapePressed) {
@@ -1426,7 +1425,7 @@ void Myst3Engine::dragSymbol(uint16 var, uint16 id) {
 	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom(), _state->getLocationAge());
 
 	while (inputValidatePressed() && !shouldQuit()) {
-		processInput(true);
+		processInput(false);
 
 		HotSpot *hovered = getHoveredHotspot(nodeData, var);
 		drag.setFrame(hovered ? 2 : 1);
@@ -1457,7 +1456,7 @@ void Myst3Engine::dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 
 	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom(), _state->getLocationAge());
 
 	while (inputValidatePressed() && !shouldQuit()) {
-		processInput(true);
+		processInput(false);
 
 		HotSpot *hovered = getHoveredHotspot(nodeData, itemVar);
 		drag.setFrame(hovered ? hoverFrame : frame);
@@ -1479,7 +1478,11 @@ void Myst3Engine::dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 
 }
 
 bool Myst3Engine::canLoadGameStateCurrently() {
-	return true;
+	// Loading from the GMM is only possible when the game is interactive
+	// This is to prevent loading from inner loops. Loading while
+	// in an inner loop can cause the exit condition to never happen,
+	// or can unload required resources.
+	return _interactive;
 }
 
 Common::Error Myst3Engine::loadGameState(int slot) {
@@ -1552,7 +1555,7 @@ void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading,
 	if (numTicks != 0.0f) {
 		while (1) {
 			uint elapsedTicks = _state->getTickCount() - startTick;
-			if (elapsedTicks >= numTicks)
+			if (elapsedTicks >= numTicks || shouldQuit())
 				break;
 
 			float step;

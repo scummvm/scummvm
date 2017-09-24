@@ -148,11 +148,11 @@ void Puzzles::_drawForVarHelper(int16 var, int32 startValue, int32 endValue) {
 				_vm->_state->setVar(var2, varValue);
 			}
 
-			_vm->processInput(true);
+			_vm->processInput(false);
 			_vm->drawFrame();
 			currentTick = _vm->_state->getTickCount();
 
-			if (currentTick > endTick)
+			if (currentTick > endTick || _vm->shouldQuit())
 				break;
 		}
 	}
@@ -164,8 +164,8 @@ void Puzzles::_drawForVarHelper(int16 var, int32 startValue, int32 endValue) {
 void Puzzles::_drawXTicks(uint16 ticks) {
 	uint32 endTick = _vm->_state->getTickCount() + ticks;
 
-	while (_vm->_state->getTickCount() < endTick) {
-		_vm->processInput(true);
+	while (_vm->_state->getTickCount() < endTick && !_vm->shouldQuit()) {
+		_vm->processInput(false);
 		_vm->drawFrame();
 	}
 }
@@ -411,7 +411,7 @@ void Puzzles::resonanceRingsLaunchBall() {
 	int32 boardMoviePlaying;
 
 	do {
-		_vm->processInput(true);
+		_vm->processInput(false);
 		_vm->drawFrame();
 
 		ballMoviePlaying = _vm->_state->getVar(27);
@@ -477,7 +477,7 @@ void Puzzles::resonanceRingsLaunchBall() {
 
 			_vm->_ambient->playCurrentNode(100, 2);
 		}
-	} while (ballMoviePlaying || boardMoviePlaying);
+	} while ((ballMoviePlaying || boardMoviePlaying) && !_vm->shouldQuit());
 
 	_vm->_state->setResonanceRingsSolved(!ballShattered);
 }

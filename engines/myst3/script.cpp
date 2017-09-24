@@ -300,7 +300,7 @@ bool Script::run(const Common::Array<Opcode> *script) {
 	c.script = script;
 	c.op = script->begin();
 
-	while (c.op != script->end()) {
+	while (c.op != script->end() && !_vm->shouldQuit()) {
 		runOp(c, *c.op);
 
 		if (c.endScript || c.op == script->end())
@@ -1736,7 +1736,7 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 		_vm->_state->setVar(var, position);
 
 		// Draw a frame
-		_vm->processInput(true);
+		_vm->processInput(false);
 		_vm->drawFrame();
 
 		mousePressed = _vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
@@ -1752,7 +1752,7 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 			_vm->runScriptsFromNode(abs(script));
 		}
 
-		if (!mousePressed)
+		if (!mousePressed || _vm->shouldQuit())
 			break;
 	}
 
@@ -1799,7 +1799,7 @@ void Script::leverDragPositions(Context &c, const Opcode &cmd) {
 		_vm->_state->setVar(var, position);
 
 		// Draw a frame
-		_vm->processInput(true);
+		_vm->processInput(false);
 		_vm->drawFrame();
 
 		mousePressed = _vm->inputValidatePressed();
@@ -1815,7 +1815,7 @@ void Script::leverDragPositions(Context &c, const Opcode &cmd) {
 			_vm->runScriptsFromNode(abs(script));
 		}
 
-		if (!mousePressed)
+		if (!mousePressed || _vm->shouldQuit())
 			break;
 	}
 
@@ -1851,7 +1851,7 @@ void Script::leverDragXY(Context &c, const Opcode &cmd) {
 		_vm->_state->setVar(varY, distanceY);
 
 		// Draw a frame
-		_vm->processInput(true);
+		_vm->processInput(false);
 		_vm->drawFrame();
 
 		mousePressed = _vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
@@ -1860,7 +1860,7 @@ void Script::leverDragXY(Context &c, const Opcode &cmd) {
 		// Run script
 		if (script)
 			_vm->runScriptsFromNode(script);
-	} while (mousePressed);
+	} while (mousePressed && !_vm->shouldQuit());
 }
 
 void Script::itemDrag(Context &c, const Opcode &cmd) {
@@ -1889,7 +1889,7 @@ void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
 		dragging |= _vm->_state->hasVarGamePadActionPressed() && _vm->_state->getGamePadActionPressed();
 		_vm->_state->setDragEnded(!dragging);
 
-		_vm->processInput(true);
+		_vm->processInput(false);
 		_vm->drawFrame();
 
 		if (!dragWithDirectionKeys) {
@@ -1946,9 +1946,9 @@ void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
 		}
 
 		_vm->runScriptsFromNode(script);
-		_vm->processInput(true);
+		_vm->processInput(false);
 		_vm->drawFrame();
-	} while (dragging);
+	} while (dragging && !_vm->shouldQuit());
 
 	if (dragWithDirectionKeys) {
 		_vm->_state->setDragWithDirectionKeys(false);
@@ -2119,8 +2119,8 @@ void Script::drawXTicks(Context &c, const Opcode &cmd) {
 
 	uint32 endTick = _vm->_state->getTickCount() + cmd.args[0];
 
-	while (_vm->_state->getTickCount() < endTick) {
-		_vm->processInput(true);
+	while (_vm->_state->getTickCount() < endTick && !_vm->shouldQuit()) {
+		_vm->processInput(false);
 		_vm->drawFrame();
 	}
 }
@@ -2128,8 +2128,8 @@ void Script::drawXTicks(Context &c, const Opcode &cmd) {
 void Script::drawWhileCond(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: While condition %d, draw", cmd.op, cmd.args[0]);
 
-	while (_vm->_state->evaluate(cmd.args[0]) && !_vm->inputEscapePressed()) {
-		_vm->processInput(true);
+	while (_vm->_state->evaluate(cmd.args[0]) && !_vm->inputEscapePressed() && !_vm->shouldQuit()) {
+		_vm->processInput(false);
 		_vm->drawFrame();
 	}
 }
@@ -2147,7 +2147,7 @@ void Script::whileStart(Context &c, const Opcode &cmd) {
 		} while (c.op != c.script->end() && c.op->op != whileEndCommand.op);
 	}
 
-	_vm->processInput(true);
+	_vm->processInput(false);
 	_vm->drawFrame();
 }
 
@@ -2161,13 +2161,13 @@ void Script::whileEnd(Context &c, const Opcode &cmd) {
 void Script::runScriptWhileCond(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: While condition %d, run script %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	while (_vm->_state->evaluate(cmd.args[0])) {
+	while (_vm->_state->evaluate(cmd.args[0]) && !_vm->shouldQuit()) {
 		_vm->runScriptsFromNode(cmd.args[1]);
-		_vm->processInput(true);
+		_vm->processInput(false);
 		_vm->drawFrame();
 	}
 
-	_vm->processInput(true);
+	_vm->processInput(false);
 	_vm->drawFrame();
 }
 
@@ -2182,7 +2182,7 @@ void Script::runScriptWhileCondEachXFrames(Context &c, const Opcode &cmd) {
 
 	uint nextScript = _vm->_state->getTickCount() + firstStep;
 
-	while (_vm->_state->evaluate(cmd.args[0])) {
+	while (_vm->_state->evaluate(cmd.args[0]) && !_vm->shouldQuit()) {
 
 		if (_vm->_state->getTickCount() >= nextScript) {
 			nextScript = _vm->_state->getTickCount() + step;
@@ -2190,11 +2190,11 @@ void Script::runScriptWhileCondEachXFrames(Context &c, const Opcode &cmd) {
 			_vm->runScriptsFromNode(cmd.args[1]);
 		}
 
-		_vm->processInput(true);
+		_vm->processInput(false);
 		_vm->drawFrame();
 	}
 
-	_vm->processInput(true);
+	_vm->processInput(false);
 	_vm->drawFrame();
 }
 
@@ -2300,7 +2300,7 @@ void Script::runScriptForVarDrawTicksHelper(uint16 var, int32 startValue, int32 
 					}
 				}
 
-				_vm->processInput(true);
+				_vm->processInput(false);
 				_vm->drawFrame();
 				currentTick = _vm->_state->getTickCount();
 
@@ -2327,7 +2327,7 @@ void Script::runScriptForVarDrawTicksHelper(uint16 var, int32 startValue, int32 
 				_vm->runScriptsFromNode(script);
 
 			for (uint i = _vm->_state->getTickCount(); i < endTick; i = _vm->_state->getTickCount()) {
-				_vm->processInput(true);
+				_vm->processInput(false);
 				_vm->drawFrame();
 			}
 
@@ -2528,8 +2528,8 @@ void Script::soundPlayBlocking(Context &c, const Opcode &cmd) {
 		return;
 	}
 
-	while (_vm->_sound->isPlaying(soundId) && !_vm->inputEscapePressed()) {
-		_vm->processInput(true);
+	while (_vm->_sound->isPlaying(soundId) && !_vm->inputEscapePressed() && !_vm->shouldQuit()) {
+		_vm->processInput(false);
 		_vm->drawFrame();
 	}
 }
@@ -2853,7 +2853,7 @@ void Script::movieSetStartupSoundVolumeH(Context &c, const Opcode &cmd) {
 void Script::drawOneFrame(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Draw one frame", cmd.op);
 
-	_vm->processInput(true);
+	_vm->processInput(false);
 	_vm->drawFrame();
 }
 

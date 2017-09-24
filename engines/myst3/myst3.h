@@ -173,7 +173,7 @@ public:
 
 	void drawFrame(bool noSwap = false);
 
-	void processInput(bool lookOnly);
+	void processInput(bool interactive);
 	void updateInputState();
 	void resetInput();
 
@@ -217,6 +217,8 @@ private:
 	bool _inputEscapePressedNotConsumed;
 	bool _inputTildePressed;
 
+	bool _interactive;
+
 	uint32 _backgroundSoundScriptLastRoomId;
 
 	/**
@@ -238,7 +240,7 @@ private:
 
 	bool isInventoryVisible();
 
-	void interactWithHoveredElement(bool lookOnly);
+	void interactWithHoveredElement();
 	void processEventForGamepad(const Common::Event &event);
 
 	friend class Console;
