@@ -805,7 +805,7 @@ Common::MemoryReadStream *SupernovaEngine::convertToMod(const char *filename, in
 	while ((nb = msnFile.read(buf, 4096)) > 0)
 		buffer.write(buf, nb);
 
-	return new Common::MemoryReadStream(buffer.getData(), buffer.size());
+	return new Common::MemoryReadStream(buffer.getData(), buffer.size(), DisposeAfterUse::YES);
 }
 
 bool SupernovaEngine::canLoadGameStateCurrently() {
