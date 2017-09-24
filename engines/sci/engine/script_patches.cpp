@@ -96,6 +96,9 @@ static const char *const selectorNameTable[] = {
 	"setMotion",    // system selector
 	"overlay",      // system selector
 	"setPri",       // system selector - for setting priority
+	"play",         // system selector
+	"number",       // system selector
+	"setScript",    // system selector
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
 	"say",          // Quest For Glory 1 VGA
@@ -114,7 +117,6 @@ static const char *const selectorNameTable[] = {
 	"detailLevel",  // GK2 benchmarking
 	"view",         // RAMA benchmarking, GK1
 	"fade",         // Shivers
-	"play",         // Shivers
 	"handleEvent",  // Shivers
 	"test",         // Torin
 	"get",          // Torin, GK1
@@ -161,6 +163,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setMotion,
 	SELECTOR_overlay,
 	SELECTOR_setPri,
+	SELECTOR_play,
+	SELECTOR_number,
+	SELECTOR_setScript,
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_say,
@@ -180,7 +185,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_detailLevel,
 	SELECTOR_view,
 	SELECTOR_fade,
-	SELECTOR_play,
 	SELECTOR_handleEvent,
 	SELECTOR_test,
 	SELECTOR_get,
@@ -5740,6 +5744,97 @@ static const uint16 sq4CdPatchWalkInFromBelowRoom45[] = {
 	PATCH_END
 };
 
+// Sierra seems to have forgotten to include code to play the audio
+// describing the "Universal Remote Control" inside the "Hz So good" store.
+//
+// We add it, so that the audio is now playing.
+//
+// Applies to at least: English PC CD
+// Responsible method: doCatalog::changeState(1Ch) in script 391
+// Implements enhancement: #10227
+static const uint16 sq4CdSignatureMissingAudioUniversalRemote[] = {
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x00b1),           // bnt [skip over state 1Ch code]
+	0x35, 0x1c,                         // ldi 1Ch
+	0x39, 0x0c,                         // pushi 0Ch
+	SIG_ADDTOOFFSET(+127),              // skip over to substate 1 code of state 1Ch code
+	0x32, SIG_UINT16(0x0028),           // jmp [to toss/ret, substate 0-code]
+	// substate 1 code
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0021),           // bnt [skip over substate 1 code]
+	0x39, SIG_SELECTOR8(number),        // pushi (number)
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x0188),           // pushi 188h
+	0x38, SIG_UINT16(0x018b),           // pushi 18Bh
+	0x43, 0x3C, 0x04,                   // call kRandom, 4
+	0x36,                               // push
+	0x39, SIG_SELECTOR8(play),          // pushi (play)
+	0x76,                               // push0
+	0x81, 0x64,                         // lag global[64h]
+	0x4a, 0x0a,                         // send 0Ah
+	0x38, SIG_SELECTOR16(setScript),    // pushi (setScript)
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x0488),           // lofsa startTerminal
+	0x36,                               // push
+	0x63, 0x12,                         // pToa client
+	0x4a, 0x06,                         // send 06
+	0x3a,                               // toss
+	0x33, 0x14,                         // jmp [to toss/ret]
+	// state 1Dh, called when returning back to main menu from catalog sub menu
+	0x3c,                               // dup
+	0x35, 0x1d,                         // ldi 1Dh
+	0x1a,                               // eq?
+	0x31, 0x0e,                         // bnt [skip last state and toss/ret]
+	0x35, 0x1d,                         // ldi 1Dh
+	0x38, SIG_SELECTOR16(setScript),    // pushi (setScript)
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x0488),           // lofsa startTerminal
+	0x36,                               // push
+	0x63, 0x12,                         // pToa client
+	0x4a, 0x06,                         // send 06
+	0x3a,                               // toss
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 sq4CdPatchMissingAudioUniversalRemote[] = {
+	0x30, SIG_UINT16(0x00b7),           // bnt [now directly to last state code, saving 6 bytes]
+	0x32, PATCH_UINT16(+154),           // jmp [to our new code]
+	// 1 not used byte here
+	SIG_ADDTOOFFSET(+128),              // skip over to substate 1 code of state 1Ch code
+	0x32, PATCH_UINT16(0x003f),         // substate 0 code, jumping to toss/ret
+	// directly start with substate 1 code, saving 7 bytes
+	0x39, PATCH_SELECTOR8(number),      // pushi 28h (number)
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x38, PATCH_UINT16(0x0188),         // pushi 188h
+	0x38, PATCH_UINT16(0x018b),         // pushi 18Bh
+	0x43, 0x3C, 0x04,                   // call kRandom, 4
+	0x36,                               // push
+	0x39, PATCH_SELECTOR8(play),        // pushi (play)
+	0x76,                               // push0
+	0x81, 0x64,                         // lag global[64h]
+	0x4a, 0x0a,                         // send 0Ah
+	0x33, 0x1a,                         // jmp [state 1Dh directly, saving 12 bytes]
+	// additional code for playing missing audio (18 bytes w/o jmp back)
+	0x89, 0x5a,                         // lsg global[5Ah]
+	0x35, 0x01,                         // ldi 1
+	0x1c,                               // ne?
+	0x31, 0x0b,                         // bnt [skip play audio]
+	0x38, PATCH_SELECTOR16(say),        // pushi 0123h (say)
+	0x78,                               // push1
+	0x39, 0x14,                         // pushi 14h
+	0x72, PATCH_UINT16(0x0850),         // lofsa newRob
+	0x4a, 0x06,                         // send 06
+	// now get back
+	0x39, 0x0c,                         // pushi 0Ch
+	0x32, PATCH_UINT16(0xff50),         // jmp back
+	PATCH_END
+};
+
 // It seems that Sierra forgot to set a script flag, when cleaning out the bank account
 // in Space Quest 4 CD. This was probably caused by the whole bank account interaction
 // getting a rewrite and polish in the CD version.
@@ -5947,14 +6042,15 @@ static const uint16 sq4CdPatchTextOptions[] = {
 
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
-	{  true,   298, "Floppy: endless flight",                      1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
-	{  true,   700, "Floppy: throw stuff at sequel police bug",    1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
-	{  true,    45, "CD: walk in from below for room 45 fix",      1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
-	{  true,   396, "CD: get points for changing back clothes fix",1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
-	{  true,   701, "CD: getting shot, while getting rope",        1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
-	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
-	{  true,   818, "CD: Speech and subtitles option",             1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
-	{  true,   818, "CD: Speech and subtitles option button",      1, sq4CdSignatureTextOptionsButton,               sq4CdPatchTextOptionsButton },
+	{  true,   298, "Floppy: endless flight",                         1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
+	{  true,   700, "Floppy: throw stuff at sequel police bug",       1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
+	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
+	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
+	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
+	{  true,   701, "CD: getting shot, while getting rope",           1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
+	{  true,     0, "CD: Babble icon speech and subtitles fix",       1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
+	{  true,   818, "CD: Speech and subtitles option",                1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
+	{  true,   818, "CD: Speech and subtitles option button",         1, sq4CdSignatureTextOptionsButton,               sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
