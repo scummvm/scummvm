@@ -48,12 +48,12 @@ namespace Supernova {
 
 struct ScreenBuffer {
 	ScreenBuffer()
-	    : _x(0)
-	    , _y(0)
-	    , _width(0)
-	    , _height(0)
-	    , _pitch(0)
-	    , _pixels(NULL)
+		: _x(0)
+		, _y(0)
+		, _width(0)
+		, _height(0)
+		, _pitch(0)
+		, _pixels(NULL)
 	{}
 
 	byte *_pixels;

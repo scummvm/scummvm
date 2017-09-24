@@ -122,7 +122,7 @@ bool GameManager::deserialize(Common::ReadStream *in) {
 }
 
 Inventory::Inventory()
-    : _numObjects(0)
+	: _numObjects(0)
 {}
 
 // TODO: Update Inventory surface for scrolling
@@ -170,13 +170,13 @@ Object *Inventory::get(ObjectID id) const {
 
 
 GuiElement::GuiElement()
-    : _isHighlighted(false)
-    , _bgColorNormal(kColorWhite25)
-    , _bgColorHighlighted(kColorWhite44)
-    , _bgColor(kColorWhite25)
-    , _textColorNormal(kColorGreen)
-    , _textColorHighlighted(kColorLightGreen)
-    , _textColor(kColorGreen)
+	: _isHighlighted(false)
+	, _bgColorNormal(kColorWhite25)
+	, _bgColorHighlighted(kColorWhite44)
+	, _bgColor(kColorWhite25)
+	, _textColorNormal(kColorGreen)
+	, _textColorHighlighted(kColorLightGreen)
+	, _textColor(kColorGreen)
 {
 	_text[0] = '\0';
 }

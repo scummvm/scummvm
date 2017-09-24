@@ -214,7 +214,7 @@ void Intro::cutscene() {
 #define exitOnEscape(X) do { \
 	_gm->wait2(X); \
 	if (_gm->keyPressed(Common::KEYCODE_ESCAPE, true)) \
-	    return; \
+		return; \
 } while (0);
 
 	_vm->_system->fillScreen(kColorBlack);
