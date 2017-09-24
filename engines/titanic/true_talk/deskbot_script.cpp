@@ -365,14 +365,14 @@ exit:
 int DeskbotScript::preResponse(uint id) {
 	int newId = 0;
 	if (getValue(1) >= 3 && (
-			id == TRANSLATE(41176, 41190) ||
-			id == TRANSLATE(41738, 41429) ||
-			id == TRANSLATE(41413, 41755) ||
-			id == TRANSLATE(41740, 41757)
+			id == (uint)TRANSLATE(41176, 41190) ||
+			id == (uint)TRANSLATE(41738, 41429) ||
+			id == (uint)TRANSLATE(41413, 41755) ||
+			id == (uint)TRANSLATE(41740, 41757)
 		)) {
 		newId = 241601;
 	}
-	if (id == TRANSLATE(42114, 42132))
+	if (id == (uint)TRANSLATE(42114, 42132))
 		CTrueTalkManager::triggerAction(20, 0);
 
 	return newId;
