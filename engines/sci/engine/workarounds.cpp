@@ -236,6 +236,26 @@ static const uint16 sig_uninitread_qfg3_2[] = {
 	SIG_END
 };
 
+//                Game: RAMA
+//      Calling method: securityKeypad::newRoom
+//   Subroutine offset: English 0x3b20 (script 6110)
+// Applies to at least: English
+static const uint16 sig_uninitread_rama_1[] = {
+	0x7e, SIG_UINT16(0x121),                                                      // line 289
+	0x7d, 0x73, 0x65, 0x63, 0x75, 0x72, 0x6b, 0x65, 0x79, 0x2e, 0x73, 0x63, 0x00, // file "securkey.sc"
+	SIG_END
+};
+
+//                Game: RAMA
+//      Calling method: key1::doVerb, key2, key3, etc.
+//   Subroutine offset: English 0x5254 (script 6107)
+// Applies to at least: English
+static const uint16 sig_uninitread_rama_2[] = {
+	0x7e, SIG_UINT16(0xf2),                                                       // line 242
+	0x7d, 0x61, 0x76, 0x73, 0x65, 0x63, 0x75, 0x72, 0x37, 0x2e, 0x73, 0x63, 0x00, // file "avsecur7.sc"
+	SIG_END
+};
+
 //                Game: Space Quest 1
 //      Calling method: firePulsar::changeState
 //   Subroutine offset: English 0x018a (script 703)
@@ -401,6 +421,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG4,          800, 64950,  0,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // CD version, in the room with the spider pillar, when climbing on the pillar
 	{ GID_RAMA,           -1, 64950, -1,                 NULL, "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the main game interface, or the main menu buttons, or mousing over things in the main game window
 	{ GID_RAMA,           -1, 64923, -1,              "Inset", "init",                            NULL,     0, { WORKAROUND_FAKE,   0 } }, // When receiving a message on the pocket computer at the start of the game
+	{ GID_RAMA,          6107, 6107, -1,                 NULL, "doVerb",         sig_uninitread_rama_2,     0, { WORKAROUND_FAKE,   0 } }, // When pressing keys on the final console in the Avian Lair
+	{ GID_RAMA,          6110, 6110, -1,     "securityKeypad", "newRoom",        sig_uninitread_rama_1,     0, { WORKAROUND_FAKE,   0 } }, // When entering the correct key combination on the security console in the Avian Lair
 	{ GID_SHIVERS,        -1,   952,  0,       "SoundManager", "stop",                            NULL,     2, { WORKAROUND_FAKE,   0 } }, // Just after Sierra logo
 	{ GID_SHIVERS,        -1, 64950,  0,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the locked door at the beginning
 	{ GID_SHIVERS,        -1, 64950,  0,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the gargoyle eye at the beginning
