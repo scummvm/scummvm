@@ -233,11 +233,6 @@ private:
 	bool qdm2_decodeFrame(Common::SeekableReadStream &in, QueuingAudioStream *audioStream);
 };
 
-// Fix compilation for non C99-compliant compilers, like MSVC
-#ifndef int64_t
-typedef signed long long int int64_t;
-#endif
-
 #define QDM2_LIST_ADD(list, size, packet) \
 	do { \
 		if (size > 0) \
@@ -323,7 +318,7 @@ static inline uint16 round_sample(int *sum) {
 }
 
 static inline int MULH(int a, int b) {
-	return ((int64_t)(a) * (int64_t)(b))>>32;
+	return ((int64)(a) * (int64)(b))>>32;
 }
 
 // signed 16x16 -> 32 multiply add accumulate
@@ -894,9 +889,8 @@ void QDM2Stream::rndTableInit(void) {
 	uint16 i;
 	uint16 j;
 	uint32 ldw, hdw;
-	// TODO: Replace Code with uint64 less version...
-	int64_t tmp64_1;
-	int64_t random_seed = 0;
+	int64 tmp64_1;
+	int64 random_seed = 0;
 	float delta = 1.0 / 16384.0;
 
 	for(i = 0; i < ARRAYSIZE(_noiseTable); i++) {
@@ -912,7 +906,7 @@ void QDM2Stream::rndTableInit(void) {
 			ldw = (uint32)ldw % (uint32)random_seed;
 			tmp64_1 = (random_seed * 0x55555556);
 			hdw = (uint32)(tmp64_1 >> 32);
-			random_seed = (int64_t)(hdw + (ldw >> 31));
+			random_seed = (int64)(hdw + (ldw >> 31));
 		}
 	}
 
@@ -1490,8 +1484,7 @@ void QDM2Stream::fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_
 	int ch, sb, j;
 	int tmp, acc, esp_40, comp;
 	int add1, add2, add3, add4;
-	// TODO : Remove multres 64 bit variable necessity...
-	int64_t multres;
+	int64 multres;
 
 	// This should never happen
 	if (nb_channels <= 0)
