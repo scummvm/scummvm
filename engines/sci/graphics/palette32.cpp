@@ -751,7 +751,24 @@ void GfxPalette32::applyVary() {
 }
 
 void GfxPalette32::kernelPalVarySet(const GuiResourceId paletteId, const int16 percent, const int32 ticks, const int16 fromColor, const int16 toColor) {
-	const Palette palette = getPaletteFromResource(paletteId);
+	Palette palette;
+
+	if (getSciVersion() == SCI_VERSION_3 && paletteId == 0xFFFF) {
+		palette = _currentPalette;
+		assert(fromColor >= 0 && fromColor < 256);
+		assert(toColor >= 0 && toColor < 256);
+		// While palette varying is normally inclusive of `toColor`, the
+		// palette inversion code in SSCI excludes `toColor`, and RAMA room
+		// 6201 requires this or else parts of the game's UI get inverted
+		for (int i = fromColor; i < toColor; ++i) {
+			palette.colors[i].r = ~palette.colors[i].r;
+			palette.colors[i].g = ~palette.colors[i].g;
+			palette.colors[i].b = ~palette.colors[i].b;
+		}
+	} else {
+		palette = getPaletteFromResource(paletteId);
+	}
+
 	setVary(palette, percent, ticks, fromColor, toColor);
 }
 
