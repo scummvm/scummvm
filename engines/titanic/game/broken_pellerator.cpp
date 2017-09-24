@@ -142,9 +142,11 @@ bool CBrokenPellerator::MovieEndMsg(CMovieEndMsg *msg) {
 	switch (_closeAction) {
 	case 1:
 		changeView(_exitLeftView);
+		_closeAction = CLOSE_NONE;
 		break;
 	case 2:
 		changeView(_exitRightView);
+		_closeAction = CLOSE_NONE;
 		break;
 	default:
 		break;
