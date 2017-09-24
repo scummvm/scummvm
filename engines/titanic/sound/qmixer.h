@@ -204,6 +204,7 @@ class QMixer {
 		ChannelEntry() : _volume(0), _panRate(0), _volumeChangeStart(0),
 			_volumeChangeEnd(0), _volumeStart(0), _volumeEnd(0),
 			_distance(0.0), _resetDistance(true) {}
+		~ChannelEntry();
 
 		/**
 		 * Calculates the raw volume level to pass to ScummVM playStream, taking
@@ -217,7 +218,7 @@ protected:
 	Audio::Mixer *_mixer;
 public:
 	QMixer(Audio::Mixer *mixer);
-	virtual ~QMixer() {}
+	virtual ~QMixer();
 
 	/**
 	 * Initializes the mixer

@@ -29,6 +29,10 @@ namespace Titanic {
 QMixer::QMixer(Audio::Mixer *mixer) : _mixer(mixer) {
 }
 
+QMixer::~QMixer() {
+	_channels.clear();
+}
+
 bool QMixer::qsWaveMixInitEx(const QMIXCONFIG &config) {
 	assert(_channels.empty());
 	assert(config.iChannels > 0 && config.iChannels < 256);
@@ -236,6 +240,11 @@ void QMixer::qsWaveMixPump() {
 }
 
 /*------------------------------------------------------------------------*/
+
+QMixer::ChannelEntry::~ChannelEntry() {
+	for (Common::List<SoundEntry>::iterator i = _sounds.begin(); i != _sounds.end(); ++i)
+		delete (*i)._waveFile;
+}
 
 byte QMixer::ChannelEntry::getRawVolume() const {
 	// Emperically decided adjustment divisor for distances
