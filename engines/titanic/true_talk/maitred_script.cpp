@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "titanic/true_talk/maitred_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -81,9 +82,10 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		stopFighting(false);
 		_answerCtr = 0;
 
-		if (sentence->contains("restaurant at the end of the universe")
+		if (sentence->contains(TRANSLATE("restaurant at the end of the universe",
+				"restaurant am ende des universums"))
 				|| sentence->contains("milliway")
-				|| sentence->contains("big bang burger bar")) {
+				|| sentence->contains(TRANSLATE("big bang burger bar", "frittenbude"))) {
 			addResponse(getDialogueId(260975));
 			applyResponse();
 		} else if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2) {
@@ -111,7 +113,20 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 	if (++_answerCtr > 50 || sentence->localWord("stop") || sentence->localWord("enough")
 			|| sentence->contains("i give up") || sentence->contains("i give in")
-			|| sentence->contains("i surrender") || sentence->contains("i submit")) {
+			|| sentence->contains("i surrender") || sentence->contains("i submit")
+			|| sentence->contains("ich gebe auf")
+			|| sentence->contains("ich ergebe mich")
+			|| sentence->contains("ich kapituliere")
+			|| sentence->contains("ich unterwerfe mich")
+			|| sentence->contains("hoer auf")
+			|| sentence->contains("lass")
+			|| sentence->contains("schluss")
+			|| sentence->contains("hoer sofort")
+			|| sentence->contains("genug")
+			|| sentence->contains("basta")
+			|| sentence->contains("halt")
+			|| sentence->contains("voll")
+			|| sentence->contains("was soll")) {
 		_answerCtr = 0;
 		stopFighting(false);
 		addResponse(getDialogueId(260063));
@@ -123,17 +138,22 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		addResponse(getDialogueId(260678));
 	} else if (sentence->contains("touche") || sentence->contains("toushe")) {
 		addResponse(getDialogueId(260098));
-	} else if (sentence->contains("have at you")) {
+	} else if (sentence->contains("have at you") || sentence->contains("ausfall")) {
 		addResponse(getDialogueId(260047));
-	} else if (sentence->contains("en garde") || sentence->contains("on guard")) {
+	} else if (sentence->contains("en garde") || sentence->contains("on guard")
+			|| sentence->contains("attacke")) {
 		addResponse(getDialogueId(260008));
+	} else if (g_language == Common::DE_DEU && !sentence->contains("ich")
+			&& (sentence->contains("surrender") || sentence->contains("gebe auf")
+				|| sentence->contains("ergebe mich"))) {
+		addResponse(getDialogueId(260086));
 	} else if ((sentence->localWord("surrender") && !sentence->contains("i surrender"))
 			|| (sentence->contains("give up") && !sentence->contains("i give up"))
 			|| (sentence->contains("give in") && !sentence->contains("i give in"))
 			|| (sentence->contains("submit") && !sentence->contains("i submit"))) {
 		addResponse(getDialogueId(260086));
 	} else {
-		addResponse(getDialogueId(260031));
+		addResponse(getDialogueId(260131));
 	}
 
 	applyResponse();
@@ -539,14 +559,14 @@ int MaitreDScript::updateState(uint oldId, uint newId, int index) {
 	}
 
 	if (!getValue(12)) {
-		static const uint FLAG_IDS[] = {
+		static const uint FIGHTING_IDS[] = {
 			260080, 260066, 260067, 260062, 260050, 260087, 260090, 260171, 260173,
 			260184, 260193, 260202, 260205, 260220, 260221, 260223, 260231, 260232,
 			260365, 260373, 260374, 260387, 260421, 260622, 260695, 0
 		};
 
-		for (uint idx = 0; FLAG_IDS[idx]; ++idx) {
-			if (FLAG_IDS[idx] == newId) {
+		for (uint idx = 0; FIGHTING_IDS[idx]; ++idx) {
+			if (FIGHTING_IDS[idx] == newId) {
 				startFighting();
 				break;
 			}
@@ -916,7 +936,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 21:
 	case 22:
-		if (sentence->contains("cooking")
+		if (sentence->contains(TRANSLATE("cooking", "kochen"))
 				|| (sentence->localWord("what") && sentence->localWord("mean"))) {
 			addResponse(getDialogueId(260238));
 			applyFlag = true;
