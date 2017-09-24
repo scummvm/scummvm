@@ -74,6 +74,18 @@ int SoundCommandParser::getSoundResourceId(reg_t obj) {
 		if (resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, resourceId + 1000)))
 			resourceId += 1000;
 	}
+	if (g_sci->isCD() && g_sci->getGameId() == GID_SQ4 && resourceId < 1000) {
+		// For Space Quest 4 a few additional samples and also higher quality samples were played.
+		// We must not connect this to General MIDI support, because that will get disabled
+		// in case the user hasn't also chosen a General MIDI output device.
+		// We use those samples for DOS platform as well. We do basically the same for Space Quest 3,
+		// which also contains a few samples that were not played under the original interpreter.
+		// Maybe some fan wishes to opt-out of this. In this case a game specific option should be added.
+		// For more information see enhancement/bug #10228
+		// TODO: Check, if there are also enhanced samples for any of the other General MIDI games.
+		if (_resMan->testResource(ResourceId(kResourceTypeAudio, resourceId + 1000)))
+			resourceId += 1000;
+	}
 
 	return resourceId;
 }
