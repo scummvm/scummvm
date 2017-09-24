@@ -845,24 +845,34 @@ int CGameObject::addTimer(uint firstDuration, uint repeatDuration) {
 	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration != 0,
 		firstDuration, repeatDuration, this, 0, CString());
 
-	getGameManager()->addTimer(timer);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan)
+		gameMan->addTimer(timer);
 	return timer->_id;
 }
 
 void CGameObject::stopTimer(int id) {
-	getGameManager()->stopTimer(id);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan)
+		gameMan->stopTimer(id);
 }
 
 int CGameObject::startAnimTimer(const CString &action, uint firstDuration, uint repeatDuration) {
-	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration > 0,
-		firstDuration, repeatDuration, this, 0, action);
-	getGameManager()->addTimer(timer);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan) {
+		CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration > 0,
+			firstDuration, repeatDuration, this, 0, action);
+		gameMan->addTimer(timer);
+		return timer->_id;
+	}
 
-	return timer->_id;
+	return -1;
 }
 
 void CGameObject::stopAnimTimer(int id) {
-	getGameManager()->stopTimer(id);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan)
+		gameMan->stopTimer(id);
 }
 
 void CGameObject::gotoView(const CString &viewName, const CString &clipName) {
