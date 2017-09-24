@@ -698,9 +698,9 @@ int Script::relocateOffsetSci3(uint32 offset) const {
 }
 #endif
 
-bool Script::relocateLocal(SegmentId segment, int location) {
+bool Script::relocateLocal(SegmentId segment, int location, uint32 offset) {
 	if (_localsBlock)
-		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, getHeapOffset());
+		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, offset);
 	else
 		return false;
 }
@@ -804,7 +804,7 @@ void Script::relocateSci0Sci21(const SegmentId segmentId) {
 		// We only relocate locals and objects here, and ignore relocation of
 		// code blocks. In SCI1.1 and newer versions, only locals and objects
 		// are relocated.
-		if (!relocateLocal(segmentId, pos)) {
+		if (!relocateLocal(segmentId, pos, getHeapOffset())) {
 			// Not a local? It's probably an object or code block. If it's an
 			// object, relocate it.
 			const ObjMap::iterator end = _objects.end();
@@ -817,19 +817,23 @@ void Script::relocateSci0Sci21(const SegmentId segmentId) {
 
 #ifdef ENABLE_SCI32
 void Script::relocateSci3(const SegmentId segmentId) {
-	SciSpan<const byte> relocStart = _buf->subspan(_buf->getUint32SEAt(8));
+	SciSpan<const byte> relocEntry = _buf->subspan(_buf->getUint32SEAt(8));
 	const uint relocCount = _buf->getUint16SEAt(18);
 
-	ObjMap::iterator it;
-	for (it = _objects.begin(); it != _objects.end(); ++it) {
-		SciSpan<const byte> seeker = relocStart;
-		for (uint i = 0; i < relocCount; ++i) {
-			it->_value.relocateSci3(segmentId,
-						seeker.getUint32SEAt(0),
-						seeker.getUint32SEAt(4),
-						_script.size());
-			seeker += 10;
+	for (uint i = 0; i < relocCount; ++i) {
+		const uint location = relocEntry.getUint32SEAt(0);
+		const uint offset = relocEntry.getUint32SEAt(4);
+
+		if (!relocateLocal(segmentId, location, offset)) {
+			const ObjMap::iterator end = _objects.end();
+			for (ObjMap::iterator it = _objects.begin(); it != end; ++it) {
+				if (it->_value.relocateSci3(segmentId, location, offset, _script.size())) {
+					break;
+				}
+			}
 		}
+
+		relocEntry += 10;
 	}
 }
 #endif
@@ -973,7 +977,7 @@ void Script::initializeLocals(SegManager *segMan) {
 			const SciSpan<const byte> base = _buf->subspan(getLocalsOffset());
 
 			for (uint16 i = 0; i < getLocalsCount(); i++)
-				locals->_locals[i] = make_reg(0, base.getUint16SEAt(i * 2));
+				locals->_locals[i] = make_reg(0, base.getUint16SEAt(i * sizeof(uint16)));
 		} else {
 			// In SCI0 early, locals are set at run time, thus zero them all here
 			for (uint16 i = 0; i < getLocalsCount(); i++)
