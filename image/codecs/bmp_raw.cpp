@@ -29,16 +29,12 @@
 namespace Image {
 
 BitmapRawDecoder::BitmapRawDecoder(int width, int height, int bitsPerPixel) : Codec(),
-		_surface(0), _width(width), _height(height), _bitsPerPixel(bitsPerPixel) {
-	_surface = new Graphics::Surface();
-	_surface->create(_width, _height, getPixelFormat());
+		_width(width), _height(height), _bitsPerPixel(bitsPerPixel) {
+	_surface.create(_width, _height, getPixelFormat());
 }
 
 BitmapRawDecoder::~BitmapRawDecoder() {
-	if (_surface) {
-		_surface->free();
-		delete _surface;
-	}
+	_surface.free();
 }
 
 const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStream &stream) {
@@ -54,7 +50,7 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 
 	if (_bitsPerPixel == 1) {
 		for (int i = 0; i < _height; i++) {
-			byte *dst = (byte *)_surface->getBasePtr(0, i);
+			byte *dst = (byte *)_surface.getBasePtr(0, i);
 			for (int j = 0; j != _width;) {
 				byte color = stream.readByte();
 				for (int k = 0; k < 8; k++) {
@@ -70,7 +66,7 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 		}
 	} else if (_bitsPerPixel == 4) {
 		for (int i = 0; i < _height; i++) {
-			byte *dst = (byte *)_surface->getBasePtr(0, _height - i - 1);
+			byte *dst = (byte *)_surface.getBasePtr(0, _height - i - 1);
 			for (int j = 0; j < _width; j++) {
 				byte color = stream.readByte();
 
@@ -86,14 +82,14 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 			stream.skip(extraDataLength);
 		}
 	} else if (_bitsPerPixel == 8) {
-		byte *dst = (byte *)_surface->getPixels();
+		byte *dst = (byte *)_surface.getPixels();
 
 		for (int i = 0; i < _height; i++) {
 			stream.read(dst + (_height - i - 1) * _width, _width);
 			stream.skip(extraDataLength);
 		}
 	} else if (_bitsPerPixel == 24) {
-		byte *dst = (byte *)_surface->getBasePtr(0, _height - 1);
+		byte *dst = (byte *)_surface.getBasePtr(0, _height - 1);
 
 		for (int i = 0; i < _height; i++) {
 			for (int j = 0; j < _width; j++) {
@@ -107,10 +103,10 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 			}
 
 			stream.skip(extraDataLength);
-			dst -= _surface->pitch * 2;
+			dst -= _surface.pitch * 2;
 		}
 	} else { // 32 bpp
-		byte *dst = (byte *)_surface->getBasePtr(0, _height - 1);
+		byte *dst = (byte *)_surface.getBasePtr(0, _height - 1);
 
 		for (int i = 0; i < _height; i++) {
 			for (int j = 0; j < _width; j++) {
@@ -128,11 +124,11 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 			}
 
 			stream.skip(extraDataLength);
-			dst -= _surface->pitch * 2;
+			dst -= _surface.pitch * 2;
 		}
 	}
 
-	return _surface;
+	return &_surface;
 }
 
 Graphics::PixelFormat BitmapRawDecoder::getPixelFormat() const {
