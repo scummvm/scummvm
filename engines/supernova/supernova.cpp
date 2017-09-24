@@ -47,26 +47,26 @@
 namespace Supernova {
 
 const AudioInfo audioInfo[kAudioNumSamples] = {
-    {44,     0,    -1},
-    {45,     0,    -1},
-    {46,     0,  2510},
-    {46,  2510,  4020},
-    {46,  4020,    -1},
-    {47,     0, 24010},
-    {47, 24010,    -1},
-    {48,     0,  2510},
-    {48,  2510, 10520},
-    {48, 10520, 13530},
-    {48, 13530,    -1},
-    {50,     0, 12786},
-    {50, 12786,    -1},
-    {51,     0,    -1},
-    {53,     0,    -1},
-    {54,     0,  8010},
-    {54,  8010, 24020},
-    {54, 24020, 30030},
-    {54, 30030, 31040},
-    {54, 31040,    -1}
+	{44,     0,    -1},
+	{45,     0,    -1},
+	{46,     0,  2510},
+	{46,  2510,  4020},
+	{46,  4020,    -1},
+	{47,     0, 24010},
+	{47, 24010,    -1},
+	{48,     0,  2510},
+	{48,  2510, 10520},
+	{48, 10520, 13530},
+	{48, 13530,    -1},
+	{50,     0, 12786},
+	{50, 12786,    -1},
+	{51,     0,    -1},
+	{53,     0,    -1},
+	{54,     0,  8010},
+	{54,  8010, 24020},
+	{54, 24020, 30030},
+	{54, 30030, 31040},
+	{54, 31040,    -1}
 };
 
 const char *const Object::defaultDescription = "Es ist nichts Besonderes daran.";
@@ -98,21 +98,21 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 }
 
 SupernovaEngine::SupernovaEngine(OSystem *syst)
-    : Engine(syst)
-    , _console(NULL)
-    , _gm(NULL)
-    , _currentImage(_images)
-    , _brightness(255)
-    , _menuBrightness(255)
-    , _imageIndex(0)
-    , _sectionIndex(0)
-    , _delay(33)
-    , _textSpeed(kTextSpeed[2])
-    , _screenWidth(320)
-    , _screenHeight(200)
-    , _messageDisplayed(false)
-    , _allowLoadGame(true)
-    , _allowSaveGame(true)
+	: Engine(syst)
+	, _console(NULL)
+	, _gm(NULL)
+	, _currentImage(_images)
+	, _brightness(255)
+	, _menuBrightness(255)
+	, _imageIndex(0)
+	, _sectionIndex(0)
+	, _delay(33)
+	, _textSpeed(kTextSpeed[2])
+	, _screenWidth(320)
+	, _screenHeight(200)
+	, _messageDisplayed(false)
+	, _allowLoadGame(true)
+	, _allowSaveGame(true)
 {
 //	const Common::FSNode gameDataDir(ConfMan.get("path"));
 //	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
@@ -892,7 +892,7 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 
 
 ScreenBufferStack::ScreenBufferStack()
-    : _last(_buffer) {
+	: _last(_buffer) {
 }
 
 void ScreenBufferStack::push(int x, int y, int width, int height, int pitch) {
