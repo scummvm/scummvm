@@ -92,12 +92,8 @@ struct Pointer_EqualTo {
 
 struct Pointer_Hash {
 	uint operator()(const void *x) const {
-#ifdef SCUMM_64BITS
-		uint64 v = (uint64)x;
-		return (v >> 32) ^ (v & 0xffffffff);
-#else
-		return (uint)x;
-#endif
+		uint x = static_cast<uint>(reinterpret_cast<uintptr>(v));
+		return x + (x >> 3);
 	}
 };
 

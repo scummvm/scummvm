@@ -2149,13 +2149,11 @@ EOF
 echo_n "Checking 64-bitness... "
 pointer_is_32bit
 if test $? -eq 0; then
-	type_ptr=int32
+	type_ptr=uint32
 	echo "no"
-	add_line_to_config_h "/* #define SCUMM_64BITS */"
 else
-	type_ptr=int64
+	type_ptr=uint64
 	echo "yes"
-	add_line_to_config_h "#define SCUMM_64BITS"
 fi
 
 #
@@ -5187,6 +5185,8 @@ typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
 typedef signed $type_8_byte int64;
+
+typedef $type_ptr  uintptr;
 
 #if defined(__APPLE__) && !defined(__ppc__)
 #ifndef _UINT64
