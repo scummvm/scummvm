@@ -204,6 +204,12 @@ protected:
 private:
 	void enter();
 
+	/**
+	 * Splits up the input into individual parameters
+	 * @remarks		Adapted from code provided by torek on StackOverflow
+	 */
+	void splitCommand(char *input, int &argc, const char **argv);
+
 	bool parseCommand(const char *input);
 	bool tabComplete(const char *input, Common::String &completion) const;
 

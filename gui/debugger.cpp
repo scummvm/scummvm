@@ -289,17 +289,11 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &result) {
 bool Debugger::parseCommand(const char *inputOrig) {
 	int num_params = 0;
 	const char *param[256];
-	char *input = strdup(inputOrig);	// One of the rare occasions using strdup is OK (although avoiding strtok might be more elegant here).
 
 	// Parse out any params
-	char *tok = strtok(input, " ");
-	if (tok) {
-		do {
-			param[num_params++] = tok;
-		} while ((tok = strtok(NULL, " ")) != NULL);
-	} else {
-		param[num_params++] = input;
-	}
+	// One of the rare occasions using strdup is OK, since splitCommands needs to modify it
+	char *input = strdup(inputOrig);
+	splitCommand(input, num_params, &param[0]);
 
 	// Handle commands first
 	bool result;
@@ -397,6 +391,57 @@ bool Debugger::parseCommand(const char *inputOrig) {
 	debugPrintf("Unknown command or variable\n");
 	free(input);
 	return true;
+}
+
+void Debugger::splitCommand(char *input, int &argc, const char **argv) {
+	byte c;
+	enum states { DULL, IN_WORD, IN_STRING } state = DULL;
+	const char *paramStart = nullptr;
+	
+	argc = 0;
+	for (char *p = input; *p; ++p) {
+		c = (byte)*p;
+
+		switch (state) {
+		case DULL: 
+			// not in a word, not in a double quoted string
+			if (isspace(c))
+				break;
+			
+			// not a space -- if it's a double quote we go to IN_STRING, else to IN_WORD
+			if (c == '"') {
+				state = IN_STRING;
+				paramStart = p + 1; // word starts at *next* char, not this one
+			} else {
+				state = IN_WORD;
+				paramStart = p;		// word starts here
+			}
+			break;
+
+		case IN_STRING:
+			// we're in a double quoted string, so keep going until we hit a close "
+			if (c == '"') {
+				// Add entire quoted string to parameter list
+				*p = '\0';
+				argv[argc++] = paramStart;
+				state = DULL;	// back to "not in word, not in string" state
+			}
+			break;
+
+		case IN_WORD:
+			// we're in a word, so keep going until we get to a space
+			if (isspace(c)) {
+				*p = '\0';
+				argv[argc++] = paramStart;
+				state = DULL;	// back to "not in word, not in string" state
+			}
+			break;
+		}
+	}
+
+	if (state != DULL)
+		// Add in final parameter
+		argv[argc++] = paramStart;
 }
 
 // returns true if something has been completed

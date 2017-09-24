@@ -1206,28 +1206,11 @@ void CGameObject::loadSurface() {
 }
 
 bool CGameObject::changeView(const CString &viewName) {
-	return changeView(viewName, "");
+	return getRoot()->changeView(viewName, "");
 }
 
 bool CGameObject::changeView(const CString &viewName, const CString &clipName) {
-	CViewItem *newView = parseView(viewName);
-	CGameManager *gameManager = getGameManager();
-	CViewItem *oldView = gameManager->getView();
-
-	if (!oldView || !newView)
-		return false;
-
-	CMovieClip *clip = nullptr;
-	if (!clipName.empty()) {
-		clip = oldView->findNode()->findRoom()->findClip(clipName);
-	} else {
-		CLinkItem *link = oldView->findLink(newView);
-		if (link)
-			clip = link->getClip();
-	}
-
-	gameManager->_gameState.changeView(newView, clip);
-	return true;
+	return getRoot()->changeView(viewName, clipName);
 }
 
 void CGameObject::dragMove(const Point &pt) {
