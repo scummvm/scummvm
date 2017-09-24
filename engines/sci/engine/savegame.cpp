@@ -1184,8 +1184,8 @@ void SegManager::reconstructClones() {
 
 
 bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
-	set_savegame_metadata(fh, savename, version);
 	Common::Serializer ser(nullptr, fh);
+	set_savegame_metadata(ser, fh, savename, version);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
@@ -1373,7 +1373,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
 }
 
-void set_savegame_metadata(Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
+void set_savegame_metadata(Common::Serializer &ser, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
 	TimeDate curTime;
 	g_system->getTimeAndDate(curTime);
 
@@ -1389,9 +1389,13 @@ void set_savegame_metadata(Common::WriteStream *fh, const Common::String &savena
 	meta.script0Size = script0->size();
 	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
 
-	Common::Serializer ser(nullptr, fh);
 	sync_SavegameMetadata(ser, meta);
 	Graphics::saveThumbnail(*fh);
+}
+
+void set_savegame_metadata(Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
+	Common::Serializer ser(nullptr, fh);
+	set_savegame_metadata(ser, fh, savename, version);
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata &meta) {

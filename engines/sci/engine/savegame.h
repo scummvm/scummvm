@@ -123,6 +123,7 @@ bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata 
 /**
  * Write the header to a savegame.
  */
+void set_savegame_metadata(Common::Serializer &ser, Common::WriteStream *fh, const Common::String &savename, const Common::String &version);
 void set_savegame_metadata(Common::WriteStream *fh, const Common::String &savename, const Common::String &version);
 
 } // End of namespace Sci
