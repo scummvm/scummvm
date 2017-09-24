@@ -140,6 +140,8 @@ static const char *const selectorNameTable[] = {
 	"select",       // PQ4
 	"handle",       // RAMA
 	"saveFilePtr",  // RAMA
+	"priority",     // RAMA
+	"plane",        // RAMA
 #endif
 	NULL
 };
@@ -203,7 +205,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_flag,
 	SELECTOR_select,
 	SELECTOR_handle,
-	SELECTOR_saveFilePtr
+	SELECTOR_saveFilePtr,
+	SELECTOR_priority,
+	SELECTOR_plane
 #endif
 };
 
@@ -6269,8 +6273,34 @@ static const uint16 ramaSerializeRegTPatch1[] = {
 	PATCH_END
 };
 
+// When opening a datacube on the pocket computer, `DocReader::init` will try
+// to perform arithmetic on a pointer to `thighComputer::plane` and then use the
+// resulting value as the priority for the DocReader. This happened to work in
+// SSCI because the plane pointer would just be a high numeric value, but
+// ScummVM needs an actual number, not a pointer.
+// Applies to at least: US English
+static const uint16 ramaDocReaderInitSignature[] = {
+	0x39, SIG_SELECTOR8(priority), // pushi $1a (priority)
+	0x78,                          // push1
+	0x39, SIG_SELECTOR8(plane),    // pushi $19 (plane)
+	0x76,                          // push0
+	0x7a,                          // push2
+	SIG_MAGICDWORD,
+	0x39, 0x2c,                    // pushi 44
+	0x76,                          // push0
+	0x43, 0x02, SIG_UINT16(0x04),  // callk ScriptID, 4
+	SIG_END
+};
+
+static const uint16 ramaDocReaderInitPatch[] = {
+	PATCH_ADDTOOFFSET(+3),           // pushi priority, push1
+	0x39, PATCH_SELECTOR8(priority), // pushi priority
+	PATCH_END
+};
+
 static const SciScriptPatcherEntry ramaSignatures[] = {
 	{  true,     0, "fix bad text resolution",                      1, ramaTextResolutionSignature,     ramaTextResolutionPatch },
+	{  true,    55, "fix bad DocReader::init priority calculation", 1, ramaDocReaderInitSignature,      ramaDocReaderInitPatch },
 	{  true,    85, "fix SaveManager to use normal readWord calls", 1, ramaSerializeRegTSignature1,     ramaSerializeRegTPatch1 },
 	{  true, 64908, "disable video benchmarking",                   1, ramaBenchmarkSignature,          ramaBenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
