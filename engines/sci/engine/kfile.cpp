@@ -444,7 +444,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	} else if (g_sci->getGameId() == GID_RAMA) {
 		int saveNo = -1;
-		if (name == "autorama.sg") {
+		if (name == "911.sg") {
 			saveNo = kAutoSaveId;
 		} else if (sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
 			saveNo += kSaveIdShift;
@@ -470,7 +470,9 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				out = saveFileMan->openForSaving(fileName);
 				if (out) {
 					Common::String saveName;
-					if (saveNo != kAutoSaveId) {
+					if (saveNo == kAutoSaveId) {
+						saveName = _("(Autosave)");
+					} else {
 						saveName = getRamaSaveName(s, saveNo - kSaveIdShift);
 					}
 					Common::ScopedPtr<Common::SeekableReadStream> versionFile(SearchMan.createReadStreamForMember("VERSION"));
@@ -936,13 +938,12 @@ reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv) {
-	const uint16 handle = argv[0].toUint16();
-	FileHandle *f = getFileFromHandle(s, handle);
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (!f)
 		return s->r_acc;
 
 	reg_t value;
-	if (s->_fileHandles[handle]._name == "-scummvm-save-") {
+	if (f->_name == "-scummvm-save-") {
 		value._segment = f->_in->readUint16LE();
 		value._offset = f->_in->readUint16LE();
 	} else {
@@ -968,12 +969,12 @@ reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	if (s->_fileHandles[handle]._name == "-scummvm-save-") {
+	if (f->_name == "-scummvm-save-") {
 		f->_out->writeUint16LE(argv[1]._segment);
 		f->_out->writeUint16LE(argv[1]._offset);
 	} else {
 		if (argv[1].isPointer()) {
-			error("Attempt to write non-number %04x:%04x", PRINT_REG(argv[1]));
+			error("kFileIO(WriteWord): Attempt to write non-number %04x:%04x to non-save file", PRINT_REG(argv[1]));
 		}
 		f->_out->writeUint16LE(argv[1].toUint16());
 	}
