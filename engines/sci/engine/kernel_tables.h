@@ -473,6 +473,7 @@ static const SciKernelMapSubEntry kPlayVMD_subops[] = {
 	{ SIG_SINCE_SCI21,    23, MAP_CALL(PlayVMDRestrictPalette),    "ii",                   NULL },
 	{ SIG_SCI3,           27, MAP_CALL(PlayVMDSetPlane),           "i(i)",                 NULL },
 	{ SIG_SCI3,           28, MAP_EMPTY(PlayVMDSetPreload),        "i",                    NULL },
+	{ SIG_SCI3,           31, MAP_EMPTY(PlayVMDSetFrameRate),      "i",                    NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
