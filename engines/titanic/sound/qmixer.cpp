@@ -241,11 +241,6 @@ void QMixer::qsWaveMixPump() {
 
 /*------------------------------------------------------------------------*/
 
-QMixer::ChannelEntry::~ChannelEntry() {
-	for (Common::List<SoundEntry>::iterator i = _sounds.begin(); i != _sounds.end(); ++i)
-		delete (*i)._waveFile;
-}
-
 byte QMixer::ChannelEntry::getRawVolume() const {
 	// Emperically decided adjustment divisor for distances
 	const double ADJUSTMENT_FACTOR = 5.0;

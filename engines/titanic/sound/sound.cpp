@@ -26,6 +26,12 @@
 
 namespace Titanic {
 
+CSoundItem::~CSoundItem() {
+	delete _waveFile;
+}
+
+/*------------------------------------------------------------------------*/
+
 CSound::CSound(CGameManager *owner, Audio::Mixer *mixer) :
 		_gameManager(owner), _soundManager(mixer) {
 	g_vm->_movieManager.setSoundManager(&_soundManager);
