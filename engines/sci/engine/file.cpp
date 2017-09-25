@@ -424,7 +424,7 @@ Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameN
 			WRITE_LE_UINT16(out, id);
 			out += kGameIdSize;
 
-			assert(id >= 0 && id < maxNumSaves);
+			assert(id < maxNumSaves);
 			usedSlots[id] = true;
 		}
 	}
