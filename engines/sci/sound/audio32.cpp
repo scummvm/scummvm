@@ -1061,8 +1061,21 @@ void Audio32::setLoop(const int16 channelIndex, const bool loop) {
 #pragma mark Effects
 
 int16 Audio32::getVolume(const int16 channelIndex) const {
-	if (channelIndex < 0 || channelIndex >= _numActiveChannels) {
+	bool getGlobalVolume = false;
+	switch (getSciVersion()) {
+	case SCI_VERSION_3:
+		getGlobalVolume = (channelIndex == kAllChannels);
+		break;
+	default:
+		getGlobalVolume = (channelIndex < 0 || channelIndex >= _numActiveChannels);
+	}
+
+	if (getGlobalVolume) {
 		return (_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) + 1) * kMaxVolume / Audio::Mixer::kMaxMixerVolume;
+	}
+
+	if (channelIndex < 0 || channelIndex >= _numActiveChannels) {
+		return -1;
 	}
 
 	Common::StackLock lock(_mutex);
@@ -1266,7 +1279,13 @@ reg_t Audio32::kernelVolume(const int argc, const reg_t *const argv) {
 	Common::StackLock lock(_mutex);
 
 	const int16 volume = argc > 0 ? argv[0].toSint16() : -1;
-	const int16 channelIndex = findChannelByArgs(argc, argv, 1, argc > 2 ? argv[2] : NULL_REG);
+	int16 channelIndex;
+
+	if (getSciVersion() == SCI_VERSION_3 && argc < 2) {
+		channelIndex = kAllChannels;
+	} else {
+		channelIndex = findChannelByArgs(argc, argv, 1, argc > 2 ? argv[2] : NULL_REG);
+	}
 
 	if (volume != -1) {
 		setVolume(channelIndex, volume);

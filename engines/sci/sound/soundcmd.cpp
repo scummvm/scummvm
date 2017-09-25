@@ -514,8 +514,19 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 	if (musicSlot->isSample) {
 #ifdef ENABLE_SCI32
 		if (_soundVersion >= SCI_VERSION_2) {
-			const int position = g_sci->_audio32->getPosition(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
+			const ResourceId audioId = ResourceId(kResourceTypeAudio, musicSlot->resourceId);
 
+			if (getSciVersion() == SCI_VERSION_3) {
+				// In SSCI the volume is first set to -1 and then reset later if
+				// a sample is playing in the audio player, but since our audio
+				// code returns -1 for not-found samples, the extra check is not
+				// needed and we can just always set it to the return value of
+				// the getVolume call
+				const int16 volume = g_sci->_audio32->getVolume(audioId, musicSlot->soundObj);
+				writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(vol), volume);
+			}
+
+			const int16 position = g_sci->_audio32->getPosition(audioId, musicSlot->soundObj);
 			if (position == -1) {
 				processStopSound(musicSlot->soundObj, true);
 			}
