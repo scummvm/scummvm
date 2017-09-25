@@ -4022,14 +4022,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_QFG4_FLOPPY
 #undef GUIO_QFG4_CD
 
-// TODO: Correct GUIOs
-#define GUIO_RAMA_DEMO GUIO5(GUIO_NOMIDI, \
+#define GUIO_RAMA_DEMO GUIO7(GUIO_NOMIDI, \
                              GUIO_NOLAUNCHLOAD, \
                              GUIO_NOASPECT, \
+                             GUIO_LINKSPEECHTOSFX, \
+                             GUIO_LINKMUSICTOSFX, \
                              GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                              GAMEOPTION_HQ_VIDEO)
-#define GUIO_RAMA      GUIO5(GUIO_NOMIDI, \
+#define GUIO_RAMA      GUIO7(GUIO_NOMIDI, \
                              GUIO_NOASPECT, \
+                             GUIO_LINKSPEECHTOSFX, \
+                             GUIO_LINKMUSICTOSFX, \
                              GAMEOPTION_ORIGINAL_SAVELOAD, \
                              GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                              GAMEOPTION_HQ_VIDEO)
@@ -4040,9 +4043,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.001", 0, "775304e9b2a545156be4d94209550094", 1393},
 		{"ressci.001", 0, "259437fd75fdf51e8207fda8c01fa4fd", 2334384},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA_DEMO },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE, GUIO_RAMA_DEMO },
 
-	// RAMA - English Windows (from jvprat)
+	// RAMA - English DOS/Windows (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.100.000"
 	{"rama", "", {
 		{"resmap.001", 0, "3bac72a1910a563f8f92cf5b77c8b7f2", 8338},
@@ -4052,9 +4055,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.003", 0, "31ef4c0621711585d031f0ae81707251", 1636},
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6860492},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_RAMA },
 
-	// RAMA - English Windows (from Quietust, in bug report #2850645)
+	// RAMA - English DOS/Windows (from Quietust, in bug report #2850645)
 	{"rama", "", {
 		{"resmap.001", 0, "4a2f3dd87f8033dc0deac43e820cc1ca", 8338},
 		{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70599164},
@@ -4063,9 +4066,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.003", 0, "48841e4b84ef1b98b48d43566fda9e13", 1636},
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6870356},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_RAMA },
 
-	// RAMA - German Windows CD (from farmboy0, in pull request 397)
+	// RAMA - German DOS/Windows CD (from farmboy0, in gh-397)
 	{"rama", "", {
 		{"resmap.001", 0, "f68cd73308c46977a9632dfc618e1e38", 8338},
 		{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70595521},
@@ -4074,9 +4077,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.003", 0, "222096000bd83a1d56577114a452cccf", 1636},
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6954219},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_RAMA },
 
-	// RAMA - French Windows CD (from bgK)
+	// RAMA - French DOS/Windows CD (from bgK)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.000.000"
 	{"rama", "", {
 		{"resmap.001", 0, "c931947115a69bb4c1760cef04e4018f", 8338},
@@ -4086,15 +4089,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.003", 0, "fd2ce2312084e60b2cc5194a799873d0", 1636},
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6379952},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_RAMA },
 
-	// RAMA - Italian Windows CD (from glorifindel)
-	// SCI interpreter version 3.000.000 (a guess?)
+	// RAMA - Italian DOS/Windows CD (from glorifindel)
 	{"rama", "", {
 		{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70611091},
 		{"resmap.001", 0, "70ba2ff04a2b7fb2c52420ba7fbd47c2", 8338},
 		AD_LISTEND},
-		Common::IT_ITA, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_RAMA },
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_UNSTABLE, GUIO_RAMA },
 
 #undef GUIO_RAMA_DEMO
 #undef GUIO_RAMA
