@@ -184,48 +184,8 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 	_cursorInfo.loopNo = loopNo;
 	_cursorInfo.celNo = celNo;
 
-	if (_macCursorRemap.empty() && viewId != -1) {
-		CelObjView view(viewId, loopNo, celNo);
-
-		_hotSpot = view._origin;
-		_width = view._width;
-		_height = view._height;
-
-		// SSCI never increased the size of cursors, but some of the cursors
-		// in early SCI32 games were designed for low-resolution display mode
-		// and so are kind of hard to pick out when running in high-resolution
-		// mode.
-		// To address this, we make some slight adjustments to cursor display
-		// in these early games:
-		// GK1: All the cursors are increased in size since they all appear to
-		//      be designed for low-res display.
-		// PQ4: We only make the cursors bigger if they are above a set
-		//      threshold size because inventory items usually have a
-		//      high-resolution cursor representation.
-		bool pixelDouble = false;
-		if (g_sci->_gfxFrameout->_isHiRes &&
-			(g_sci->getGameId() == GID_GK1 ||
-			(g_sci->getGameId() == GID_PQ4 && _width <= 22 && _height <= 22))) {
-
-			_width *= 2;
-			_height *= 2;
-			_hotSpot.x *= 2;
-			_hotSpot.y *= 2;
-			pixelDouble = true;
-		}
-
-		_cursor.data = (byte *)realloc(_cursor.data, _width * _height);
-		_cursor.rect = Common::Rect(_width, _height);
-		memset(_cursor.data, 255, _width * _height);
-		_cursor.skipColor = 255;
-
-		Buffer target(_width, _height, _cursor.data);
-		if (pixelDouble) {
-			view.draw(target, _cursor.rect, Common::Point(0, 0), false, 2, 2);
-		} else {
-			view.draw(target, _cursor.rect, Common::Point(0, 0), false);
-		}
-	} else if (!_macCursorRemap.empty() && viewId != -1) {
+#ifdef ENABLE_SCI32_MAC
+	if (!_macCursorRemap.empty() && viewId != -1) {
 		// Mac cursor handling
 		GuiResourceId viewNum = viewId;
 
@@ -269,6 +229,49 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 
 		// The cursor will be drawn on next refresh
 		delete macCursor;
+	} else
+#endif
+	if (viewId != -1) {
+		CelObjView view(viewId, loopNo, celNo);
+
+		_hotSpot = view._origin;
+		_width = view._width;
+		_height = view._height;
+
+		// SSCI never increased the size of cursors, but some of the cursors
+		// in early SCI32 games were designed for low-resolution display mode
+		// and so are kind of hard to pick out when running in high-resolution
+		// mode.
+		// To address this, we make some slight adjustments to cursor display
+		// in these early games:
+		// GK1: All the cursors are increased in size since they all appear to
+		//      be designed for low-res display.
+		// PQ4: We only make the cursors bigger if they are above a set
+		//      threshold size because inventory items usually have a
+		//      high-resolution cursor representation.
+		bool pixelDouble = false;
+		if (g_sci->_gfxFrameout->_isHiRes &&
+			(g_sci->getGameId() == GID_GK1 ||
+			(g_sci->getGameId() == GID_PQ4 && _width <= 22 && _height <= 22))) {
+
+			_width *= 2;
+			_height *= 2;
+			_hotSpot.x *= 2;
+			_hotSpot.y *= 2;
+			pixelDouble = true;
+		}
+
+		_cursor.data = (byte *)realloc(_cursor.data, _width * _height);
+		_cursor.rect = Common::Rect(_width, _height);
+		memset(_cursor.data, 255, _width * _height);
+		_cursor.skipColor = 255;
+
+		Buffer target(_width, _height, _cursor.data);
+		if (pixelDouble) {
+			view.draw(target, _cursor.rect, Common::Point(0, 0), false, 2, 2);
+		} else {
+			view.draw(target, _cursor.rect, Common::Point(0, 0), false);
+		}
 	} else {
 		_hotSpot = Common::Point(0, 0);
 		_width = _height = 1;
@@ -462,9 +465,11 @@ void GfxCursor32::move() {
 	}
 }
 
+#ifdef ENABLE_SCI32_MAC
 void GfxCursor32::setMacCursorRemapList(int cursorCount, reg_t *cursors) {
 	for (int i = 0; i < cursorCount; i++)
 		_macCursorRemap.push_back(cursors[i].toUint16());
 }
+#endif
 
 } // End of namespace Sci

@@ -70,7 +70,7 @@ CREATE_DOSOUND_FORWARD(DoSoundSetVolume)
 CREATE_DOSOUND_FORWARD(DoSoundSetPriority)
 CREATE_DOSOUND_FORWARD(DoSoundSetLoop)
 
-#ifdef ENABLE_SCI32
+#ifdef ENABLE_SCI32_MAC
 reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv) {
 	// Phantasmagoria Mac (and seemingly no other game (!)) uses this
 	// cutdown version of kDoSound.

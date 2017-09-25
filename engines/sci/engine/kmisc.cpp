@@ -529,7 +529,7 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		// In SCI1, its usage is still unknown
 		// In SCI1.1, it's NOP
 		// In SCI32, it's used for remapping cursor ID's
-#ifdef ENABLE_SCI32
+#ifdef ENABLE_SCI32_MAC
 		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) // Set Mac cursor remap
 			g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
 		else
@@ -643,10 +643,12 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 		case Common::kPlatformWindows:
 			return make_reg(0, kSciPlatformWindows);
 		case Common::kPlatformMacintosh:
+#ifdef ENABLE_SCI32_MAC
 			// For Mac versions, kPlatform(0) with other args has more functionality
 			if (argc > 1)
 				return kMacPlatform(s, argc - 1, argv + 1);
 			else
+#endif
 				return make_reg(0, kSciPlatformMacintosh);
 		default:
 			error("Unknown platform %d", g_sci->getPlatform());

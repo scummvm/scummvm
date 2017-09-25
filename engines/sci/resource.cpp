@@ -476,12 +476,14 @@ void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStrea
 	bool canBeCompressed = !(g_sci && g_sci->getGameId() == GID_KQ6) && isCompressableResource(resource->_id.getType());
 	uint32 uncompressedSize = 0;
 
+#ifdef ENABLE_SCI32_MAC
 	// GK2 Mac is crazy. In its Patches resource fork, picture 2315 is not
 	// compressed and it is hardcoded in the executable to say that it's
 	// not compressed. Why didn't they just add four zeroes to the end of
 	// the resource? (Checked with PPC disasm)
 	if (g_sci && g_sci->getGameId() == GID_GK2 && resource->_id.getType() == kResourceTypePic && resource->_id.getNumber() == 2315)
 		canBeCompressed = false;
+#endif
 
 	// Get the uncompressed size from the end of the resource
 	if (canBeCompressed && stream->size() > 4) {

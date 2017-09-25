@@ -109,7 +109,9 @@ public:
 	 */
 	void clearRestrictedArea();
 
+#ifdef ENABLE_SCI32_MAC
 	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
+#endif
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
