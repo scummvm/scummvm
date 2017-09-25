@@ -345,6 +345,15 @@ public:
 		assert(index < _remaps.size());
 		const SingleRemap &singleRemap = _remaps[index];
 		assert(singleRemap._type != kRemapNone);
+		// SSCI never really properly handled attempts to draw to a target with
+		// pixels above the remap color maximum. In RAMA, the cursor views have
+		// a remap color outlining the cursor, and so get drawn into a target
+		// surface filled with a skip color of 255. In SSCI, this causes the
+		// remapped color to be read from some statically allocated, never
+		// written memory and so always ends up being 0 (black).
+		if (targetColor >= ARRAYSIZE(singleRemap._remapColors)) {
+			return 0;
+		}
 		return singleRemap._remapColors[targetColor];
 	}
 
