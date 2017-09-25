@@ -189,8 +189,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && g_sci->getGameId() != GID_TORIN) {
-			// Torin Mac seems to be the only game that uses view cursors
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 			delete hotspot; // Mac cursors have their own hotspot, so ignore any we get here
 			g_sci->_gfxCursor->kernelSetMacCursor(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16());
 		} else {

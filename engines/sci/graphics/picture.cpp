@@ -179,15 +179,6 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 	Common::SpanOwner<SciSpan<byte> > celBitmap;
 	celBitmap->allocate(pixelCount, _resource->name());
 
-	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2) {
-		// See GfxView::unpackCel() for why this black/white swap is done
-		// This picture swap is only needed in SCI32, not SCI1.1
-		if (clearColor == 0)
-			clearColor = 0xff;
-		else if (clearColor == 0xff)
-			clearColor = 0;
-	}
-
 	if (compression) {
 		unpackCelData(inbuffer, *celBitmap, clearColor, rlePos, literalPos, _resMan->getViewType(), width, false);
 	} else
