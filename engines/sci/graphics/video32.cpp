@@ -168,21 +168,21 @@ VideoPlayer::EventFlags VideoPlayer::checkForEvent(const EventFlags flags) {
 		return kEventFlagEnd;
 	}
 
-	SciEvent event = _eventMan->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK);
-	if ((flags & kEventFlagMouseDown) && event.type == SCI_EVENT_MOUSE_PRESS) {
+	SciEvent event = _eventMan->getSciEvent(kSciEventMousePress | kSciEventPeek);
+	if ((flags & kEventFlagMouseDown) && event.type == kSciEventMousePress) {
 		return kEventFlagMouseDown;
 	}
 
-	event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
-	if ((flags & kEventFlagEscapeKey) && event.type == SCI_EVENT_KEYBOARD) {
+	event = _eventMan->getSciEvent(kSciEventKeyDown | kSciEventPeek);
+	if ((flags & kEventFlagEscapeKey) && event.type == kSciEventKeyDown) {
 		if (getSciVersion() < SCI_VERSION_3) {
-			while ((event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD)),
-				   event.type != SCI_EVENT_NONE) {
-				if (event.character == SCI_KEY_ESC) {
+			while ((event = _eventMan->getSciEvent(kSciEventKeyDown)),
+				   event.type != kSciEventNone) {
+				if (event.character == kSciKeyEsc) {
 					return kEventFlagEscapeKey;
 				}
 			}
-		} else if (event.character == SCI_KEY_ESC) {
+		} else if (event.character == kSciKeyEsc) {
 			return kEventFlagEscapeKey;
 		}
 	}
@@ -734,8 +734,8 @@ VMDPlayer::EventFlags VMDPlayer::checkForEvent(const EventFlags flags) {
 		return stopFlag;
 	}
 
-	const SciEvent event = _eventMan->getSciEvent(SCI_EVENT_HOT_RECTANGLE | SCI_EVENT_PEEK);
-	if ((flags & kEventFlagHotRectangle) && event.type == SCI_EVENT_HOT_RECTANGLE) {
+	const SciEvent event = _eventMan->getSciEvent(kSciEventHotRectangle | kSciEventPeek);
+	if ((flags & kEventFlagHotRectangle) && event.type == kSciEventHotRectangle) {
 		return kEventFlagHotRectangle;
 	}
 

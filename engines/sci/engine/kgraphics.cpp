@@ -1165,7 +1165,7 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// keep ScummVM responsive. Fixes ScummVM "freezing" during the credits,
 	// bug #3101846
 	if (g_sci->getGameId() == GID_ECOQUEST && s->currentRoomNumber() == 680)
-		g_sci->getEventManager()->getSciEvent(SCI_EVENT_PEEK);
+		g_sci->getEventManager()->getSciEvent(kSciEventPeek);
 
 	return s->r_acc;
 }

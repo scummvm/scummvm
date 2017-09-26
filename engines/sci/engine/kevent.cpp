@@ -42,10 +42,9 @@
 namespace Sci {
 
 reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
-	int mask = argv[0].toUint16();
+	SciEventType mask = (SciEventType)argv[0].toUint16();
 	reg_t obj = argv[1];
 	SciEvent curEvent;
-	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
 	uint16 modifiers = 0;
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
@@ -59,16 +58,16 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
-	if (g_debug_simulated_key && (mask & SCI_EVENT_KEYBOARD)) {
+	if (g_debug_simulated_key && (mask & kSciEventKeyDown)) {
 		// In case we use a simulated event we query the current mouse position
 		mousePos = g_sci->_gfxCursor->getPosition();
 
 		// Limit the mouse cursor position, if necessary
 		g_sci->_gfxCursor->refreshPosition();
 
-		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD); // Keyboard event
+		writeSelectorValue(segMan, obj, SELECTOR(type), kSciEventKeyDown);
 		writeSelectorValue(segMan, obj, SELECTOR(message), g_debug_simulated_key);
-		writeSelectorValue(segMan, obj, SELECTOR(modifiers), SCI_KEYMOD_NUMLOCK); // Numlock on
+		writeSelectorValue(segMan, obj, SELECTOR(modifiers), kSciKeyModNumLock);
 		writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
 		writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
 		g_debug_simulated_key = 0;
@@ -153,8 +152,9 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
 
 	// Get current keyboard modifiers, only keep relevant bits
-	modifiers = curEvent.modifiers & modifier_mask;
-	if (g_sci->getPlatform() == Common::kPlatformDOS) {
+	const int modifierMask = getSciVersion() <= SCI_VERSION_01 ? kSciKeyModAll : kSciKeyModNonSticky;
+	modifiers = curEvent.modifiers & modifierMask;
+	if (g_sci->getPlatform() == Common::kPlatformDOS && getSciVersion() <= SCI_VERSION_01) {
 		// We are supposed to emulate SCI running in DOS
 
 		// We set the higher byte of the modifiers to 02h
@@ -169,30 +169,28 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// SCI32 also resets the upper byte.
 
 		// This was verified in SSCI itself by creating a SCI game and checking behavior.
-		if (getSciVersion() <= SCI_VERSION_01) {
-			modifiers |= 0x0200;
-		}
+		modifiers |= 0x0200;
 	}
 
 	switch (curEvent.type) {
-	case SCI_EVENT_QUIT:
+	case kSciEventQuit:
 		s->abortScriptProcessing = kAbortQuitGame; // Terminate VM
 		g_sci->_debugState.seeking = kDebugSeekNothing;
 		g_sci->_debugState.runningStep = 0;
 		break;
 
-	case SCI_EVENT_KEYBOARD:
-		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD); // Keyboard event
+	case kSciEventKeyDown:
+		writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
 		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.character);
 		// We only care about the translated character
 		writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
 		s->r_acc = TRUE_REG;
 		break;
 
-	case SCI_EVENT_MOUSE_RELEASE:
-	case SCI_EVENT_MOUSE_PRESS:
+	case kSciEventMouseRelease:
+	case kSciEventMousePress:
 		// track left buttton clicks, if requested
-		if (curEvent.type == SCI_EVENT_MOUSE_PRESS && curEvent.modifiers == 0 && g_debug_track_mouse_clicks) {
+		if (curEvent.type == kSciEventMousePress && curEvent.modifiers == 0 && g_debug_track_mouse_clicks) {
 			g_sci->getSciDebugger()->debugPrintf("Mouse clicked at %d, %d\n",
 						mousePos.x, mousePos.y);
 		}
@@ -206,7 +204,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 #ifdef ENABLE_SCI32
-	case SCI_EVENT_HOT_RECTANGLE:
+	case kSciEventHotRectangle:
 		writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
 		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.hotRectangleIndex);
 		s->r_acc = TRUE_REG;
@@ -215,7 +213,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	default:
 		// Return a null event
-		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_NONE);
+		writeSelectorValue(segMan, obj, SELECTOR(type), kSciEventNone);
 		writeSelectorValue(segMan, obj, SELECTOR(message), 0);
 		writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
 		s->r_acc = NULL_REG;
@@ -228,14 +226,14 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		Console *con = g_sci->getSciDebugger();
 		con->debugPrintf("SCI event occurred: ");
 		switch (curEvent.type) {
-		case SCI_EVENT_QUIT:
+		case kSciEventQuit:
 			con->debugPrintf("quit event\n");
 			break;
-		case SCI_EVENT_KEYBOARD:
+		case kSciEventKeyDown:
 			con->debugPrintf("keyboard event\n");
 			break;
-		case SCI_EVENT_MOUSE_RELEASE:
-		case SCI_EVENT_MOUSE_PRESS:
+		case kSciEventMousePress:
+		case kSciEventMouseRelease:
 			con->debugPrintf("mouse click event\n");
 			break;
 		default:
@@ -270,31 +268,31 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 }
 
 struct KeyDirMapping {
-	uint16 key;
+	SciKeyCode key;
 	uint16 direction;
 };
 
 const KeyDirMapping keyToDirMap[] = {
-	{ SCI_KEY_HOME,   8 }, { SCI_KEY_UP,     1 }, { SCI_KEY_PGUP,   2 },
-	{ SCI_KEY_LEFT,   7 }, { SCI_KEY_CENTER, 0 }, { SCI_KEY_RIGHT,  3 },
-	{ SCI_KEY_END,    6 }, { SCI_KEY_DOWN,   5 }, { SCI_KEY_PGDOWN, 4 },
+	{ kSciKeyHome, 8 }, { kSciKeyUp,     1 }, { kSciKeyPageUp,   2 },
+	{ kSciKeyLeft, 7 }, { kSciKeyCenter, 0 }, { kSciKeyRight,    3 },
+	{ kSciKeyEnd,  6 }, { kSciKeyDown,   5 }, { kSciKeyPageDown, 4 },
 };
 
 reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	SegManager *segMan = s->_segMan;
 
-	if (readSelectorValue(segMan, obj, SELECTOR(type)) == SCI_EVENT_KEYBOARD) { // Keyboard
+	if (readSelectorValue(segMan, obj, SELECTOR(type)) == kSciEventKeyDown) {
 		uint16 message = readSelectorValue(segMan, obj, SELECTOR(message));
-		uint16 eventType = SCI_EVENT_DIRECTION;
-		// It seems with SCI1 Sierra started to add the SCI_EVENT_DIRECTION bit instead of setting it directly.
+		SciEventType eventType = kSciEventDirection;
+		// It seems with SCI1 Sierra started to add the kSciEventDirection bit instead of setting it directly.
 		// It was done inside the keyboard driver and is required for the PseudoMouse functionality and class
 		// to work (script 933).
 		if (g_sci->_features->detectPseudoMouseAbility() == kPseudoMouseAbilityTrue) {
-			eventType |= SCI_EVENT_KEYBOARD;
+			eventType |= kSciEventKeyDown;
 		}
 
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < ARRAYSIZE(keyToDirMap); i++) {
 			if (keyToDirMap[i].key == message) {
 				writeSelectorValue(segMan, obj, SELECTOR(type), eventType);
 				writeSelectorValue(segMan, obj, SELECTOR(message), keyToDirMap[i].direction);

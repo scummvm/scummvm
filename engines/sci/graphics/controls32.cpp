@@ -154,22 +154,22 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 		// the last event just gets posted back to the event manager for
 		// reprocessing, but instead, we only remove the event from the
 		// queue *after* we have determined it is not a defocusing event
-		const SciEvent event = eventManager->getSciEvent(SCI_EVENT_ANY | SCI_EVENT_PEEK);
+		const SciEvent event = eventManager->getSciEvent(kSciEventAny | kSciEventPeek);
 
 		bool focused = true;
 		// Original engine did not have a QUIT event but we have to handle it
-		if (event.type == SCI_EVENT_QUIT) {
+		if (event.type == kSciEventQuit) {
 			focused = false;
-		} else if (event.type == SCI_EVENT_MOUSE_PRESS && !editorPlaneRect.contains(event.mousePosSci)) {
+		} else if (event.type == kSciEventMousePress && !editorPlaneRect.contains(event.mousePosSci)) {
 			focused = false;
-		} else if (event.type == SCI_EVENT_KEYBOARD) {
+		} else if (event.type == kSciEventKeyDown) {
 			switch (event.character) {
-			case SCI_KEY_ESC:
-			case SCI_KEY_UP:
-			case SCI_KEY_DOWN:
-			case SCI_KEY_TAB:
-			case SCI_KEY_SHIFT_TAB:
-			case SCI_KEY_ENTER:
+			case kSciKeyEsc:
+			case kSciKeyUp:
+			case kSciKeyDown:
+			case kSciKeyTab:
+			case kSciKeyShiftTab:
+			case kSciKeyEnter:
 				focused = false;
 				break;
 			}
@@ -181,8 +181,8 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 
 		// Consume the event now that we know it is not one of the
 		// defocusing events above
-		if (event.type != SCI_EVENT_NONE)
-			eventManager->getSciEvent(SCI_EVENT_ANY);
+		if (event.type != kSciEventNone)
+			eventManager->getSciEvent(kSciEventAny);
 
 		// NOTE: In the original engine, the font and bitmap were
 		// reset here on each iteration through the loop, but it
@@ -195,33 +195,33 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 		bool shouldDeleteChar = false;
 		bool shouldRedrawText = false;
 		uint16 lastCursorPosition = editor.cursorCharPosition;
- 		if (event.type == SCI_EVENT_KEYBOARD) {
+		if (event.type == kSciEventKeyDown) {
 			switch (event.character) {
-			case SCI_KEY_LEFT:
+			case kSciKeyLeft:
 				clearTextOnInput = false;
 				if (editor.cursorCharPosition > 0) {
 					--editor.cursorCharPosition;
 				}
 				break;
 
-			case SCI_KEY_RIGHT:
+			case kSciKeyRight:
 				clearTextOnInput = false;
 				if (editor.cursorCharPosition < editor.text.size()) {
 					++editor.cursorCharPosition;
 				}
 				break;
 
-			case SCI_KEY_HOME:
+			case kSciKeyHome:
 				clearTextOnInput = false;
 				editor.cursorCharPosition = 0;
 				break;
 
-			case SCI_KEY_END:
+			case kSciKeyEnd:
 				clearTextOnInput = false;
 				editor.cursorCharPosition = editor.text.size();
 				break;
 
-			case SCI_KEY_INSERT:
+			case kSciKeyInsert:
 				clearTextOnInput = false;
 				// Redrawing also changes the cursor rect to
 				// reflect the new insertion mode
@@ -229,14 +229,14 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 				_overwriteMode = !_overwriteMode;
 				break;
 
-			case SCI_KEY_DELETE:
+			case kSciKeyDelete:
 				clearTextOnInput = false;
 				if (editor.cursorCharPosition < editor.text.size()) {
 					shouldDeleteChar = true;
 				}
 				break;
 
-			case SCI_KEY_BACKSPACE:
+			case kSciKeyBackspace:
 				clearTextOnInput = false;
 				shouldDeleteChar = true;
 				if (editor.cursorCharPosition > 0) {
@@ -244,7 +244,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 				}
 				break;
 
-			case SCI_KEY_ETX:
+			case kSciKeyEtx:
 				editor.text.clear();
 				editor.cursorCharPosition = 0;
 				shouldRedrawText = true;

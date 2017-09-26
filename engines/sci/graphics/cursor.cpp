@@ -479,7 +479,7 @@ void GfxCursor::kernelMoveCursor(Common::Point pos) {
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	_event->getSciEvent(SCI_EVENT_PEEK);
+	_event->getSciEvent(kSciEventPeek);
 }
 
 void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum) {

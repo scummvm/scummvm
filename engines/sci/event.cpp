@@ -66,47 +66,46 @@ struct SciKeyConversion {
 };
 
 static const SciKeyConversion keyMappings[] = {
-	{ Common::KEYCODE_UP          , SCI_KEY_UP     , SCI_KEY_UP     },
-	{ Common::KEYCODE_DOWN        , SCI_KEY_DOWN   , SCI_KEY_DOWN   },
-	{ Common::KEYCODE_RIGHT       , SCI_KEY_RIGHT  , SCI_KEY_RIGHT  },
-	{ Common::KEYCODE_LEFT        , SCI_KEY_LEFT   , SCI_KEY_LEFT   },
-	{ Common::KEYCODE_INSERT      , SCI_KEY_INSERT , SCI_KEY_INSERT },
-	{ Common::KEYCODE_HOME        , SCI_KEY_HOME   , SCI_KEY_HOME   },
-	{ Common::KEYCODE_END         , SCI_KEY_END    , SCI_KEY_END    },
-	{ Common::KEYCODE_PAGEUP      , SCI_KEY_PGUP   , SCI_KEY_PGUP   },
-	{ Common::KEYCODE_PAGEDOWN    , SCI_KEY_PGDOWN , SCI_KEY_PGDOWN },
-	{ Common::KEYCODE_DELETE      , SCI_KEY_DELETE , SCI_KEY_DELETE },
-	// Keypad
-	{ Common::KEYCODE_KP0         , SCI_KEY_INSERT , '0'            },
-	{ Common::KEYCODE_KP1         , SCI_KEY_END    , '1'            },
-	{ Common::KEYCODE_KP2         , SCI_KEY_DOWN   , '2'            },
-	{ Common::KEYCODE_KP3         , SCI_KEY_PGDOWN , '3'            },
-	{ Common::KEYCODE_KP4         , SCI_KEY_LEFT   , '4'            },
-	{ Common::KEYCODE_KP5         , SCI_KEY_CENTER , '5'            },
-	{ Common::KEYCODE_KP6         , SCI_KEY_RIGHT  , '6'            },
-	{ Common::KEYCODE_KP7         , SCI_KEY_HOME   , '7'            },
-	{ Common::KEYCODE_KP8         , SCI_KEY_UP     , '8'            },
-	{ Common::KEYCODE_KP9         , SCI_KEY_PGUP   , '9'            },
-	{ Common::KEYCODE_KP_PERIOD   , SCI_KEY_DELETE , '.'            },
-	{ Common::KEYCODE_KP_ENTER    , SCI_KEY_ENTER  , SCI_KEY_ENTER  },
-	{ Common::KEYCODE_KP_PLUS     , '+'            , '+'            },
-	{ Common::KEYCODE_KP_MINUS    , '-'            , '-'            },
-	{ Common::KEYCODE_KP_MULTIPLY , '*'            , '*'            },
-	{ Common::KEYCODE_KP_DIVIDE   , '/'            , '/'            },
+	{ Common::KEYCODE_UP          , kSciKeyUp       , kSciKeyUp       },
+	{ Common::KEYCODE_DOWN        , kSciKeyDown     , kSciKeyDown     },
+	{ Common::KEYCODE_RIGHT       , kSciKeyRight    , kSciKeyRight    },
+	{ Common::KEYCODE_LEFT        , kSciKeyLeft     , kSciKeyLeft     },
+	{ Common::KEYCODE_INSERT      , kSciKeyInsert   , kSciKeyInsert   },
+	{ Common::KEYCODE_HOME        , kSciKeyHome     , kSciKeyHome     },
+	{ Common::KEYCODE_END         , kSciKeyEnd      , kSciKeyEnd      },
+	{ Common::KEYCODE_PAGEUP      , kSciKeyPageUp   , kSciKeyPageUp   },
+	{ Common::KEYCODE_PAGEDOWN    , kSciKeyPageDown , kSciKeyPageDown },
+	{ Common::KEYCODE_DELETE      , kSciKeyDelete   , kSciKeyDelete   },
+	{ Common::KEYCODE_KP0         , kSciKeyInsert   , '0'             },
+	{ Common::KEYCODE_KP1         , kSciKeyEnd      , '1'             },
+	{ Common::KEYCODE_KP2         , kSciKeyDown     , '2'             },
+	{ Common::KEYCODE_KP3         , kSciKeyPageDown , '3'             },
+	{ Common::KEYCODE_KP4         , kSciKeyLeft     , '4'             },
+	{ Common::KEYCODE_KP5         , kSciKeyCenter   , '5'             },
+	{ Common::KEYCODE_KP6         , kSciKeyRight    , '6'             },
+	{ Common::KEYCODE_KP7         , kSciKeyHome     , '7'             },
+	{ Common::KEYCODE_KP8         , kSciKeyUp       , '8'             },
+	{ Common::KEYCODE_KP9         , kSciKeyPageUp   , '9'             },
+	{ Common::KEYCODE_KP_PERIOD   , kSciKeyDelete   , '.'             },
+	{ Common::KEYCODE_KP_ENTER    , kSciKeyEnter    , kSciKeyEnter    },
+	{ Common::KEYCODE_KP_PLUS     , '+'             , '+'             },
+	{ Common::KEYCODE_KP_MINUS    , '-'             , '-'             },
+	{ Common::KEYCODE_KP_MULTIPLY , '*'             , '*'             },
+	{ Common::KEYCODE_KP_DIVIDE   , '/'             , '/'             }
 };
 
 struct MouseEventConversion {
 	Common::EventType commonType;
-	short sciType;
+	SciEventType sciType;
 };
 
 static const MouseEventConversion mouseEventMappings[] = {
-	{ Common::EVENT_LBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
-	{ Common::EVENT_RBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
-	{ Common::EVENT_MBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
-	{   Common::EVENT_LBUTTONUP, SCI_EVENT_MOUSE_RELEASE },
-	{   Common::EVENT_RBUTTONUP, SCI_EVENT_MOUSE_RELEASE },
-	{   Common::EVENT_MBUTTONUP, SCI_EVENT_MOUSE_RELEASE }
+	{ Common::EVENT_LBUTTONDOWN , kSciEventMousePress   },
+	{ Common::EVENT_RBUTTONDOWN , kSciEventMousePress   },
+	{ Common::EVENT_MBUTTONDOWN , kSciEventMousePress   },
+	{ Common::EVENT_LBUTTONUP   , kSciEventMouseRelease },
+	{ Common::EVENT_RBUTTONUP   , kSciEventMouseRelease },
+	{ Common::EVENT_MBUTTONUP   , kSciEventMouseRelease }
 };
 
 EventManager::EventManager(bool fontIsExtended) :
@@ -119,12 +118,13 @@ EventManager::EventManager(bool fontIsExtended) :
 EventManager::~EventManager() {
 }
 
-static int altify(int ch) {
-	// Calculates a PC keyboard scancode from a character */
-	int row;
-	int c = toupper((char)ch);
+/**
+ * Calculates the IBM keyboard alt-key scancode of a printable character.
+ */
+static int altify(char ch) {
+	const char c = toupper(ch);
 
-	for (row = 0; row < ARRAYSIZE(scancodeAltifyRows); row++) {
+	for (int row = 0; row < ARRAYSIZE(scancodeAltifyRows); ++row) {
 		const char *keys = scancodeAltifyRows[row].keys;
 		int offset = scancodeAltifyRows[row].offset;
 
@@ -132,8 +132,8 @@ static int altify(int ch) {
 			if (*keys == c)
 				return offset << 8;
 
-			offset++;
-			keys++;
+			++offset;
+			++keys;
 		}
 	}
 
@@ -142,31 +142,24 @@ static int altify(int ch) {
 
 SciEvent EventManager::getScummVMEvent() {
 #ifdef ENABLE_SCI32
-	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point(), -1 };
-	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point(), -1 };
+	SciEvent input   = { kSciEventNone, kSciKeyModNone, 0, Common::Point(), Common::Point(), -1 };
+	SciEvent noEvent = { kSciEventNone, kSciKeyModNone, 0, Common::Point(), Common::Point(), -1 };
 #else
-	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point() };
-	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+	SciEvent input   = { kSciEventNone, kSciKeyModNone, 0, Common::Point() };
+	SciEvent noEvent = { kSciEventNone, kSciKeyModNone, 0, Common::Point() };
 #endif
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
 
-	bool found = em->pollEvent(ev);
-
-	// Don't generate events for mouse movement
-	while (found && ev.type == Common::EVENT_MOUSEMOVE)
+	// SCI does not generate separate events for mouse movement (it puts the
+	// current mouse position on every event, including non-mouse events), so
+	// skip past all mousemove events in the event queue
+	bool found;
+	do {
 		found = em->pollEvent(ev);
+	} while (found && ev.type == Common::EVENT_MOUSEMOVE);
 
-	// Save the mouse position
-	//
-	// We call getMousePos of the event manager here, since we also want to
-	// store the mouse position in case of keyboard events, which do not feature
-	// any mouse position information itself.
-	// This should be safe, since the mouse position in the event manager should
-	// only be updated when a mouse related event has been taken from the queue
-	// via pollEvent.
-	// We also adjust the position based on the scaling of the screen.
 	Common::Point mousePos = em->getMousePos();
 
 #if ENABLE_SCI32
@@ -196,15 +189,17 @@ SciEvent EventManager::getScummVMEvent() {
 
 	if (!found || ev.type == Common::EVENT_MOUSEMOVE) {
 		int modifiers = em->getModifierState();
-		noEvent.modifiers =
-			((modifiers & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
-			((modifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
-			((modifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
+		if (modifiers & Common::KBD_ALT)
+			noEvent.modifiers |= kSciKeyModAlt;
+		if (modifiers & Common::KBD_CTRL)
+			noEvent.modifiers |= kSciKeyModCtrl;
+		if (modifiers & Common::KBD_SHIFT)
+			noEvent.modifiers |= kSciKeyModShift;
 
 		return noEvent;
 	}
 	if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RTL) {
-		input.type = SCI_EVENT_QUIT;
+		input.type = kSciEventQuit;
 		return input;
 	}
 
@@ -222,14 +217,16 @@ SciEvent EventManager::getScummVMEvent() {
 		break;
 	}
 
-	input.modifiers =
-		((scummVMKeyFlags & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
-		((scummVMKeyFlags & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
-		((scummVMKeyFlags & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
-		// Caps lock and Scroll lock have been removed, cause we already handle upper
-		// case keys and Scroll lock doesn't seem to be used anywhere
-		//((ourModifiers & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
-		//((ourModifiers & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
+	// Caps lock and scroll lock are not handled here because we already
+	// handle upper case keys elsewhere, and scroll lock doesn't seem to
+	// ever be used
+	input.modifiers = kSciKeyModNone;
+	if (scummVMKeyFlags & Common::KBD_ALT)
+		input.modifiers |= kSciKeyModAlt;
+	if (scummVMKeyFlags & Common::KBD_CTRL)
+		input.modifiers |= kSciKeyModCtrl;
+	if (scummVMKeyFlags & Common::KBD_SHIFT)
+		input.modifiers |= kSciKeyModShift;
 
 	// Handle mouse events
 	for (int i = 0; i < ARRAYSIZE(mouseEventMappings); i++) {
@@ -243,11 +240,11 @@ SciEvent EventManager::getScummVMEvent() {
 			switch (ev.type) {
 			case Common::EVENT_RBUTTONDOWN: // right button
 			case Common::EVENT_RBUTTONUP:
-				input.modifiers |= (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT); // this value was hardcoded in the mouse interrupt handler
+				input.modifiers |= kSciKeyModShift; // this value was hardcoded in the mouse interrupt handler
 				break;
 			case Common::EVENT_MBUTTONDOWN: // middle button
 			case Common::EVENT_MBUTTONUP:
-				input.modifiers |= SCI_KEYMOD_CTRL; // this value was hardcoded in the mouse interrupt handler
+				input.modifiers |= kSciKeyModCtrl; // this value was hardcoded in the mouse interrupt handler
 				break;
 			default:
 				break;
@@ -261,21 +258,18 @@ SciEvent EventManager::getScummVMEvent() {
 		return noEvent;
 
 	// Check for Control-Shift-D (debug console)
-	if (ev.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_SHIFT) && ev.kbd.keycode == Common::KEYCODE_d) {
+	if (ev.type == Common::EVENT_KEYDOWN && ev.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_SHIFT) && ev.kbd.keycode == Common::KEYCODE_d) {
 		// Open debug console
 		Console *con = g_sci->getSciDebugger();
 		con->attach();
 		return noEvent;
 	}
 
-	// Process keyboard events
 
-	bool numlockOn = (ev.kbd.flags & Common::KBD_NUM);
-
-	Common::KeyCode scummVMKeycode = ev.kbd.keycode;
+	const Common::KeyCode scummVMKeycode = ev.kbd.keycode;
 
 	input.character = ev.kbd.ascii;
-	input.type = SCI_EVENT_KEYBOARD;
+	input.type = kSciEventKeyDown;
 
 	if (scummVMKeycode >= Common::KEYCODE_KP0 && scummVMKeycode <= Common::KEYCODE_KP9) {
 		if (!(scummVMKeyFlags & Common::KBD_NUM)) {
@@ -286,60 +280,59 @@ SciEvent EventManager::getScummVMEvent() {
 		}
 	}
 
-	if ((input.character) && (input.character <= 0xFF)) {
-		// Directly accept most common keys without conversion
-		if ((input.character >= 0x80) && (input.character <= 0xFF)) {
-			// If there is no extended font, we will just clear the
-			// current event.
-			// Sierra SCI actually accepted those characters, but
-			// didn't display them inside text edit controls because
-			// the characters were missing inside the font(s).
-			// We filter them out for non-multilingual games because
-			// of that.
-			if (!_fontIsExtended)
+	if (input.character && input.character <= 0xFF) {
+		// Extended characters need to be converted to the old to DOS CP850/437
+		// character sets for multilingual games
+		if (input.character >= 0x80 && input.character <= 0xFF) {
+			// SSCI accepted all input scan codes, regardless of locale, and
+			// just didn't display any characters that were missing from fonts
+			// used by text input controls. We intentionally filter them out
+			// entirely for non-multilingual games here instead, so we can have
+			// better error detection for bugs in the text controls
+			if (!_fontIsExtended) {
 				return noEvent;
-			// Convert 8859-1 characters to DOS (cp850/437) for
-			// multilingual SCI01 games
+			}
+
 			input.character = codePageMap88591ToDOS[input.character & 0x7f];
 		}
+
 		if (scummVMKeycode == Common::KEYCODE_TAB) {
-			input.character = SCI_KEY_TAB;
+			input.character = kSciKeyTab;
 			if (scummVMKeyFlags & Common::KBD_SHIFT)
-				input.character = SCI_KEY_SHIFT_TAB;
+				input.character = kSciKeyShiftTab;
 		}
+
 		if (scummVMKeycode == Common::KEYCODE_DELETE)
-			input.character = SCI_KEY_DELETE;
-	} else if ((scummVMKeycode >= Common::KEYCODE_F1) && scummVMKeycode <= Common::KEYCODE_F10) {
-		// SCI_K_F1 == 59 << 8
-		// SCI_K_SHIFT_F1 == 84 << 8
-		if (!(scummVMKeyFlags & Common::KBD_SHIFT))
-			input.character = SCI_KEY_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
+			input.character = kSciKeyDelete;
+	} else if (scummVMKeycode >= Common::KEYCODE_F1 && scummVMKeycode <= Common::KEYCODE_F10) {
+		if (scummVMKeyFlags & Common::KBD_SHIFT)
+			input.character = kSciKeyShiftF1 + ((scummVMKeycode - Common::KEYCODE_F1) << 8);
 		else
-			input.character = SCI_KEY_SHIFT_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
+			input.character = kSciKeyF1 + ((scummVMKeycode - Common::KEYCODE_F1) << 8);
 	} else {
-		// Special keys that need conversion
+		// Arrow keys, numpad keys, etc.
 		for (int i = 0; i < ARRAYSIZE(keyMappings); i++) {
 			if (keyMappings[i].scummVMKey == scummVMKeycode) {
+				const bool numlockOn = (ev.kbd.flags & Common::KBD_NUM);
 				input.character = numlockOn ? keyMappings[i].sciKeyNumlockOn : keyMappings[i].sciKeyNumlockOff;
 				break;
 			}
 		}
 	}
 
-	// When Ctrl AND Alt are pressed together with a regular key, Linux will give us control-key, Windows will give
-	//  us the actual key. My opinion is that windows is right, because under DOS the keys worked the same, anyway
-	//  we support the other case as well
+	// TODO: Leaky abstractions from SDL should not be handled in game engines!
+	// When Ctrl and Alt are pressed together with a printable key, SDL1 on
+	// Linux will give us a control character instead of the printable
+	// character we need to convert to an alt scancode
 	if ((scummVMKeyFlags & Common::KBD_ALT) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
 
-	// Scancodify if appropriate
-	if (scummVMKeyFlags & Common::KBD_ALT)
-		input.character = altify(input.character);
-
-	// In SSCI, Ctrl+<key> generates ASCII control characters, but the backends
-	// usually give us a latin character + Ctrl flag, so convert this combo back
-	// into what is expected by game scripts
-	if ((scummVMKeyFlags & Common::KBD_NON_STICKY) == Common::KBD_CTRL && input.character >= 'a' && input.character <= 'z') {
+	if (scummVMKeyFlags & Common::KBD_ALT) {
+		input.character = altify(input.character & 0xFF);
+	} else if ((scummVMKeyFlags & Common::KBD_NON_STICKY) == Common::KBD_CTRL && input.character >= 'a' && input.character <= 'z') {
+		// In SSCI, Ctrl+<key> generates ASCII control characters, but the
+		// backends usually give us a printable character + Ctrl flag, so
+		// convert this combo back into what is expected by game scripts
 		input.character -= 96;
 	}
 
@@ -368,11 +361,11 @@ void EventManager::updateScreen() {
 	}
 }
 
-SciEvent EventManager::getSciEvent(uint32 mask) {
+SciEvent EventManager::getSciEvent(SciEventType mask) {
 #ifdef ENABLE_SCI32
-	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point(), -1 };
+	SciEvent event = { kSciEventNone, kSciKeyModNone, 0, Common::Point(), Common::Point(), -1 };
 #else
-	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+	SciEvent event = { kSciEventNone, kSciKeyModNone, 0, Common::Point() };
 #endif
 
 	if (getSciVersion() < SCI_VERSION_2) {
@@ -382,9 +375,9 @@ SciEvent EventManager::getSciEvent(uint32 mask) {
 	// Get all queued events from graphics driver
 	do {
 		event = getScummVMEvent();
-		if (event.type != SCI_EVENT_NONE)
+		if (event.type != kSciEventNone)
 			_events.push_back(event);
-	} while (event.type != SCI_EVENT_NONE);
+	} while (event.type != kSciEventNone);
 
 	// Search for matching event in queue
 	Common::List<SciEvent>::iterator iter = _events.begin();
@@ -396,12 +389,12 @@ SciEvent EventManager::getSciEvent(uint32 mask) {
 		event = *iter;
 
 		// If not peeking at the queue, remove the event
-		if (!(mask & SCI_EVENT_PEEK))
+		if (!(mask & kSciEventPeek))
 			_events.erase(iter);
 	} else {
-		// No event found: we must return a SCI_EVT_NONE event.
+		// No event found: we must return a kSciEventNone event.
 
-		// Because event.type is SCI_EVT_NONE already here,
+		// Because event.type is kSciEventNone already here,
 		// there is no need to change it.
 	}
 
@@ -434,7 +427,7 @@ void EventManager::checkHotRectangles(const Common::Point &mousePosition) {
 			_activeRectIndex = i;
 			if (i != lastActiveRectIndex) {
 				SciEvent hotRectEvent;
-				hotRectEvent.type = SCI_EVENT_HOT_RECTANGLE;
+				hotRectEvent.type = kSciEventHotRectangle;
 				hotRectEvent.hotRectangleIndex = i;
 				_events.push_front(hotRectEvent);
 				break;
@@ -447,7 +440,7 @@ void EventManager::checkHotRectangles(const Common::Point &mousePosition) {
 	if (lastActiveRectIndex != _activeRectIndex && lastActiveRectIndex != -1) {
 		_activeRectIndex = -1;
 		SciEvent hotRectEvent;
-		hotRectEvent.type = SCI_EVENT_HOT_RECTANGLE;
+		hotRectEvent.type = kSciEventHotRectangle;
 		hotRectEvent.hotRectangleIndex = -1;
 		_events.push_front(hotRectEvent);
 	}

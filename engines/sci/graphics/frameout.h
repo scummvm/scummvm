@@ -394,7 +394,7 @@ private:
 		// position is rendered instead of whatever position it was at the last
 		// time kGetEvent was called. Without this, the mouse appears stuck
 		// during loops that do not make calls to kGetEvent, like transitions.
-		g_sci->getEventManager()->getSciEvent(SCI_EVENT_PEEK);
+		g_sci->getEventManager()->getSciEvent(kSciEventPeek);
 	}
 
 	/**
