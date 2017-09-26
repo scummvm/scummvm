@@ -988,6 +988,10 @@ void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, reg_t curV
 }
 
 void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
+	if (s->abortScriptProcessing != kAbortNone) {
+		return;
+	}
+
 	Kernel *kernel = g_sci->getKernel();
 	if (!kernelSubCall) {
 		debugN("k%s: ", kernelCall->name);
