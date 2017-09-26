@@ -58,6 +58,8 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
+	// TODO: This does not really work as expected for keyup events, since the
+	// fake event is disposed halfway through the normal event lifecycle.
 	if (g_debug_simulated_key && (mask & kSciEventKeyDown)) {
 		// In case we use a simulated event we query the current mouse position
 		mousePos = g_sci->_gfxCursor->getPosition();
@@ -180,6 +182,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case kSciEventKeyDown:
+	case kSciEventKeyUp:
 		writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
 		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.character);
 		// We only care about the translated character
@@ -230,6 +233,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 			con->debugPrintf("quit event\n");
 			break;
 		case kSciEventKeyDown:
+		case kSciEventKeyUp:
 			con->debugPrintf("keyboard event\n");
 			break;
 		case kSciEventMousePress:

@@ -253,10 +253,6 @@ SciEvent EventManager::getScummVMEvent() {
 		}
 	}
 
-	// If we reached here, make sure that it's a keydown event
-	if (ev.type != Common::EVENT_KEYDOWN)
-		return noEvent;
-
 	// Check for Control-Shift-D (debug console)
 	if (ev.type == Common::EVENT_KEYDOWN && ev.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_SHIFT) && ev.kbd.keycode == Common::KEYCODE_d) {
 		// Open debug console
@@ -265,19 +261,23 @@ SciEvent EventManager::getScummVMEvent() {
 		return noEvent;
 	}
 
+	// The IBM keyboard driver prior to SCI1.1 only sent keydown events to the
+	// interpreter
+	if (ev.type != Common::EVENT_KEYDOWN && getSciVersion() < SCI_VERSION_1_1) {
+		return noEvent;
+	}
 
 	const Common::KeyCode scummVMKeycode = ev.kbd.keycode;
 
 	input.character = ev.kbd.ascii;
-	input.type = kSciEventKeyDown;
 
-	if (scummVMKeycode >= Common::KEYCODE_KP0 && scummVMKeycode <= Common::KEYCODE_KP9) {
-		if (!(scummVMKeyFlags & Common::KBD_NUM)) {
-			// HACK: Num-Lock not enabled
-			// We shouldn't get a valid ascii code in these cases. We fix it here, so that cursor keys
-			// on the numpad work properly.
-			input.character = 0;
-		}
+	if (scummVMKeycode >= Common::KEYCODE_KP0 && scummVMKeycode <= Common::KEYCODE_KP9 && !(scummVMKeyFlags & Common::KBD_NUM)) {
+		// TODO: Leaky abstractions from SDL should not be handled in game
+		// engines!
+		// SDL may provide a character value for numpad keys even if numlock is
+		// turned off, but arrow/navigation keys won't get mapped below if a
+		// character value is provided
+		input.character = 0;
 	}
 
 	if (input.character && input.character <= 0xFF) {
@@ -336,10 +336,24 @@ SciEvent EventManager::getScummVMEvent() {
 		input.character -= 96;
 	}
 
-	// If no actual key was pressed (e.g. if only a modifier key was pressed),
-	// ignore the event
-	if (!input.character)
+	// In SCI1.1, if only a modifier key is pressed, the IBM keyboard driver
+	// sends an event the same as if a key had been released
+	if (getSciVersion() != SCI_VERSION_1_1 && !input.character) {
 		return noEvent;
+	} else if (!input.character || ev.type == Common::EVENT_KEYUP) {
+		input.type = kSciEventKeyUp;
+
+		// SCI32 includes the released key character code in keyup messages, but
+		// the IBM keyboard driver in SCI1.1 sends a special character value
+		// instead. This is necessary to prevent at least Island of Dr Brain
+		// from processing keyup events as though they were keydown events in
+		// the word search puzzle
+		if (getSciVersion() == SCI_VERSION_1_1) {
+			input.character = 0x8000;
+		}
+	} else {
+		input.type = kSciEventKeyDown;
+	}
 
 	return input;
 }
