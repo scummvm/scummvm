@@ -27,6 +27,11 @@
 
 namespace Titanic {
 
+TTsentenceConcept::~TTsentenceConcept() {
+	for (int idx = 0; idx < 5; ++idx)
+		delete _concepts[idx];
+}
+
 TTsentenceConcept *TTsentenceConcept::addSibling() {
 	if (_nextP != nullptr)
 		// This should never happen
