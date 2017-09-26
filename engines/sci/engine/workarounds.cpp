@@ -412,6 +412,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState",     sig_uninitread_sq1_1,     0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
 	{ GID_SQ4,            -1,   398,  0,            "showBox", "changeState",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // CD: called when rummaging in Software Excess bargain bin
 	{ GID_SQ4,            -1,   928, -1,           "Narrator", "startText",                       NULL,  1000, { WORKAROUND_FAKE,   1 } }, // CD: happens in the options dialog and in-game when speech and subtitles are used simultaneously
+	{ GID_SQ4,           395,   395,  -1,   "fromStoreScript", "changeState",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // CD: happens, when shoplifting in Galaxy Galleria - bug #10229
 	{ GID_SQ4,            -1,   708, -1,            "exitBut", "doVerb",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "close" button in the sq4 hintbook - bug #6447
 	{ GID_SQ4,            -1,   708, -1,                   "", "doVerb",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "close" button... in Russian version - bug #5573
 	{ GID_SQ4,            -1,   708, -1,            "prevBut", "doVerb",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "previous" button in the sq4 hintbook - bug #6447
