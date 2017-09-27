@@ -531,18 +531,18 @@ void GfxPalette32::updateHardware() {
 #endif
 
 #ifdef ENABLE_SCI32_MAC
-	if (g_sci->getPlatform() != Common::kPlatformMacintosh) {
-		// The last color must always be white
-		bpal[255 * 3    ] = 255;
-		bpal[255 * 3 + 1] = 255;
-		bpal[255 * 3 + 2] = 255;
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		bpal[255 * 3    ] = 0;
+		bpal[255 * 3 + 1] = 0;
+		bpal[255 * 3 + 2] = 0;
 	} else {
 #else
 	{
 #endif
-		bpal[255 * 3    ] = 0;
-		bpal[255 * 3 + 1] = 0;
-		bpal[255 * 3 + 2] = 0;
+		// The last color must always be white
+		bpal[255 * 3    ] = 255;
+		bpal[255 * 3 + 1] = 255;
+		bpal[255 * 3 + 2] = 255;
 	}
 
 	// If the system is in a high color mode, which can happen during video
