@@ -71,6 +71,7 @@ private:
 		CVideoSurface **surface);
 public:
 	CStarView();
+	~CStarView();
 
 	/**
 	 * Load the data for the class from file
