@@ -37,6 +37,10 @@ CSound::CSound(CGameManager *owner, Audio::Mixer *mixer) :
 	g_vm->_movieManager.setSoundManager(&_soundManager);
 }
 
+CSound::~CSound() {
+	_sounds.destroyContents();
+}
+
 void CSound::save(SimpleFile *file) const {
 	_soundManager.save(file);
 }

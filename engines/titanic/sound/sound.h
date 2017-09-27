@@ -77,6 +77,7 @@ public:
 	QSoundManager _soundManager;
 public:
 	CSound(CGameManager *owner, Audio::Mixer *mixer);
+	~CSound();
 
 	/**
 	 * Save the data for the class to file
