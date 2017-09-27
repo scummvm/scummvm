@@ -55,16 +55,31 @@ bool iOS7_isBigDevice() {
 	return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
 }
 
+static inline void execute_on_main_thread(void (^block)(void)) {
+	if ([NSThread currentThread] == [NSThread mainThread]) {
+		block();
+	}
+	else {
+		dispatch_sync(dispatch_get_main_queue(), block);
+	}
+}
+
 void iOS7_updateScreen() {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
 	if (!g_needsScreenUpdate) {
 		g_needsScreenUpdate = 1;
-		[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(updateSurface) withObject:nil waitUntilDone: NO];
+		execute_on_main_thread(^{
+			[[iOS7AppDelegate iPhoneView] updateSurface];
+		});
 	}
 }
 
 bool iOS7_fetchEvent(InternalEvent *event) {
-	return [[iOS7AppDelegate iPhoneView] fetchEvent:event];
+	__block bool fetched;
+	execute_on_main_thread(^{
+		fetched = [[iOS7AppDelegate iPhoneView] fetchEvent:event];
+	});
+	return fetched;
 }
 
 uint getSizeNextPOT(uint size) {

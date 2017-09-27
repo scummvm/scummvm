@@ -365,6 +365,10 @@ bool iOS7_touchpadModeEnabled() {
 	return sys && sys->touchpadModeEnabled();
 }
 
+void iOS7_buildSharedOSystemInstance() {
+	OSystem_iOS7::sharedInstance();
+}
+
 void iOS7_main(int argc, char **argv) {
 
 	//OSystem_iOS7::migrateApp();
