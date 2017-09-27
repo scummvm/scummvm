@@ -149,13 +149,13 @@ void CPetRoomsGlyph::getTooltip(CTextControl *text) {
 
 	CString prefix;
 	if (isCurrentlyAssigned()) {
-		prefix = "Your assigned room: ";
+		prefix = g_vm->_strings[YOUR_ASSIGNED_ROOM];
 	} else if (isPreviouslyAssigned()) {
-		prefix = "A previously assigned room: ";
+		prefix = g_vm->_strings[PREVIOUSLY_ASSIGNED_ROOM];
 	} else if (!_mailFlag) {
-		prefix = "Saved Chevron: ";
+		prefix = g_vm->_strings[SAVED_CHEVRON];
 	} else if (_mailFlag == 1 && owner->getRoomFlags() == _roomFlags) {
-		prefix = "Current location: ";
+		prefix = g_vm->_strings[CURRENT_LOCATION];
 	}
 
 	// Get the room description
