@@ -386,48 +386,70 @@ uint DeskbotScript::getDialsBitset() const {
 }
 
 int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	uint id;
+	uint id = *srcIdP;
 
-	if (g_language == Common::DE_DEU && val1 != 4501)
-		return TTnpcScript::doSentenceEntry(val1, srcIdP, roomScript, sentence);
+	if (g_language == Common::DE_DEU) {
+		if (val1 != 4501)
+			return TTnpcScript::doSentenceEntry(val1, srcIdP, roomScript, sentence);
 
-	switch (val1) {
-	case 1:
-		id = *srcIdP;
-		if (id == 240431 || id == 240432) {
-			switch (getValue(1)) {
-			case 1:
-				id = 240336;
-				break;
-			case 2:
-				id = addAssignedRoomDialogue();
-				break;
-			case 3:
+		switch (getValue(1)) {
+		case 1:
+			id = 240336;
+			break;
+		case 2:
+			addAssignedRoom();
+			break;
+		case 3:
+			if (id == 240431 || id == 240432) {
 				if (getValue(3) == 1) {
 					if (id == 240431)
 						id = 240432;
-				}
-				else {
+				} else {
 					if (id == 240432)
 						id = 240431;
 				}
-			default:
-				break;
 			}
-
-			addResponse(getDialogueId(id));
-			applyResponse();
-			return 2;
+			break;
+		default:
+			break;
 		}
-		break;
+	} else {
+		switch (val1) {
+		case 1:
+			if (id == 240431 || id == 240432) {
+				switch (getValue(1)) {
+				case 1:
+					id = 240336;
+					break;
+				case 2:
+					id = addAssignedRoomDialogue();
+					break;
+				case 3:
+					if (getValue(3) == 1) {
+						if (id == 240431)
+							id = 240432;
+					} else {
+						if (id == 240432)
+							id = 240431;
+					}
+				default:
+					break;
+				}
 
-	case 2:
-		if (getValue(1) == 1)
-			return true;
-		break;
+				addResponse(getDialogueId(id));
+				applyResponse();
+				return 2;
+			}
+			break;
 
-	default:
-		break;
+		case 2:
+			if (getValue(1) == 1)
+				return true;
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	return 0;
