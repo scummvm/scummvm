@@ -38,6 +38,7 @@ CSound::CSound(CGameManager *owner, Audio::Mixer *mixer) :
 }
 
 CSound::~CSound() {
+	_soundManager.qsWaveMixCloseSession();
 	_sounds.destroyContents();
 }
 
