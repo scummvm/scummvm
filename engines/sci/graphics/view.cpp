@@ -119,7 +119,6 @@ void GfxView::initData(GuiResourceId resourceId) {
 	_loop.resize(0);
 	_embeddedPal = false;
 	_EGAmapping.clear();
-	_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
 	_isScaleable = true;
 
 	// we adjust inside getCelRect for SCI0EARLY (that version didn't have the +1 when calculating bottom)
@@ -413,10 +412,6 @@ uint16 GfxView::getCelCount(int16 loopNo) const {
 
 Palette *GfxView::getPalette() {
 	return _embeddedPal ? &_viewPalette : NULL;
-}
-
-bool GfxView::isSci2Hires() {
-	return _sci2ScaleRes > SCI_VIEW_NATIVERES_320x200;
 }
 
 bool GfxView::isScaleable() {
@@ -933,11 +928,11 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 }
 
 void GfxView::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
-	_screen->adjustToUpscaledCoordinates(y, x, _sci2ScaleRes);
+	_screen->adjustToUpscaledCoordinates(y, x);
 }
 
 void GfxView::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
-	_screen->adjustBackUpscaledCoordinates(y, x, _sci2ScaleRes);
+	_screen->adjustBackUpscaledCoordinates(y, x);
 }
 
 } // End of namespace Sci
