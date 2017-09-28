@@ -142,9 +142,11 @@ int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 	} else if (tag == MKTAG('N', 'A', 'U', 'T')) {
 		return setResponse(getDialogueId(222259));
 	} else if (tag == MKTAG('T', 'R', 'A', '2')) {
-		return setResponse(getRandomBit() ? 11860 : 11859);
+		return setResponse(getRandomBit() ? TRANSLATE(11860, 11873)
+			: TRANSLATE(11858, 11871));
 	} else if (tag == MKTAG('T', 'R', 'A', '3')) {
-		return setResponse(getRandomBit() ? 11859 : 11858);
+		return setResponse(getRandomBit() ? TRANSLATE(11859, 11872)
+			: TRANSLATE(11857, 11870));
 	} else if (tag == MKTAG('B', 'R', 'N', 'D')) {
 		switch (getRandomNumber(3)) {
 		case 1:
@@ -156,6 +158,8 @@ int DoorbotScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 		default:
 			break;
 		}
+	} else if (g_language == Common::DE_DEU && tag == MKTAG('K', 'O', 'H', 'L')) {
+		return setResponse(getDialogueId(220976));
 	}
 
 	return TTnpcScript::chooseResponse(roomScript, sentence, tag);
