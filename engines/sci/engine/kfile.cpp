@@ -443,6 +443,10 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		// Ignore the censorship password file in lieu of our game option
 		return SIGNAL_REG;
 	} else if (g_sci->getGameId() == GID_RAMA) {
+		if (name == "PREF.DAT") {
+			return SIGNAL_REG;
+		}
+
 		int saveNo = -1;
 		if (name == "911.sg") {
 			saveNo = kAutoSaveId;
