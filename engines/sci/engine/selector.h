@@ -187,6 +187,8 @@ struct SelectorCache {
 	Selector fileNumber; // for RAMA save/load
 	Selector description; // for RAMA save/load
 	Selector dispose; // for RAMA save/load save from launcher
+	Selector masterVolume; // for RAMA volume sync
+	Selector setCel; // for RAMA volume sync
 #endif
 };
 

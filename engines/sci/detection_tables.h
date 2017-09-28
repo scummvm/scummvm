@@ -4022,17 +4022,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_QFG4_FLOPPY
 #undef GUIO_QFG4_CD
 
-#define GUIO_RAMA_DEMO GUIO7(GUIO_NOMIDI, \
+#define GUIO_RAMA_DEMO GUIO8(GUIO_NOSUBTITLES, \
+                             GUIO_NOMIDI, \
                              GUIO_NOLAUNCHLOAD, \
                              GUIO_NOASPECT, \
                              GUIO_LINKSPEECHTOSFX, \
                              GUIO_LINKMUSICTOSFX, \
                              GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                              GAMEOPTION_HQ_VIDEO)
-#define GUIO_RAMA      GUIO7(GUIO_NOMIDI, \
+#define GUIO_RAMA      GUIO7(GUIO_NOSUBTITLES, \
+                             GUIO_NOMIDI, \
                              GUIO_NOASPECT, \
                              GUIO_LINKSPEECHTOSFX, \
-                             GUIO_LINKMUSICTOSFX, \
                              GAMEOPTION_ORIGINAL_SAVELOAD, \
                              GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                              GAMEOPTION_HQ_VIDEO)

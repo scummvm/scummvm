@@ -43,6 +43,7 @@ enum {
 	// will just use 85 as the maximum volume.
 	kPhant2VolumeMax       = 85,
 
+	kRamaVolumeMax         = 16,
 	kLSL6HiresUIVolumeMax  = 13,
 	kLSL6HiresSubtitleFlag = 105
 };
@@ -388,6 +389,7 @@ private:
 	void syncGK2VolumeFromScummVM(const int16 musicVolume) const;
 	void syncLSL6HiresVolumeFromScummVM(const int16 musicVolume) const;
 	void syncPhant2VolumeFromScummVM(const int16 masterVolume) const;
+	void syncRamaVolumeFromScummVM(const int16 musicVolume) const;
 	void syncTorinVolumeFromScummVM(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const;
 
 	/**
@@ -421,6 +423,7 @@ private:
 	void syncPQ4UI(const int16 musicVolume) const;
 	void syncPQSWATUI() const;
 	void syncQFG4UI(const int16 musicVolume) const;
+	void syncRamaUI(const int16 musicVolume) const;
 	void syncShivers1UI(const int16 dacVolume) const;
 	void syncSQ6UI() const;
 	void syncTorinUI(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const;

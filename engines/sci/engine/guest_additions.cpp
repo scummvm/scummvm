@@ -100,7 +100,7 @@ bool GuestAdditions::shouldSyncAudioToScummVM() const {
 			// SCI16 with menu bar
 			return true;
 		} else if (objName == "volumeSlider") {
-			// SCI16 with icon bar, QFG4, Hoyle5
+			// SCI16 with icon bar, QFG4, Hoyle5, RAMA
 			return true;
 		} else if (gameId == GID_MOTHERGOOSE256 && objName == "soundBut") {
 			return true;
@@ -163,6 +163,8 @@ void GuestAdditions::writeVarHook(const int type, const int index, const reg_t v
 				syncAudioVolumeGlobalsToScummVM(index, value);
 			} else if (g_sci->getGameId() == GID_GK1) {
 				syncGK1StartupVolumeFromScummVM(index, value);
+			} else if (g_sci->getGameId() == GID_RAMA && index == kGlobalVarRamaMusicVolume) {
+				syncRamaVolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kRamaVolumeMax / Audio::Mixer::kMaxMixerVolume);
 			}
 
 			if (_features->supportsTextSpeed()) {
@@ -1034,6 +1036,13 @@ void GuestAdditions::syncAudioVolumeGlobalsFromScummVM() const {
 		break;
 	}
 
+	case GID_RAMA: {
+		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * kRamaVolumeMax / Audio::Mixer::kMaxMixerVolume;
+		syncRamaVolumeFromScummVM(musicVolume);
+		syncRamaUI(musicVolume);
+		break;
+	}
+
 	case GID_LSL7:
 	case GID_TORIN: {
 		const int16 musicVolume  = (ConfMan.getInt("music_volume") + 1)  * 100 / Audio::Mixer::kMaxMixerVolume;
@@ -1143,6 +1152,15 @@ void GuestAdditions::syncPhant2VolumeFromScummVM(const int16 masterVolume) const
 	}
 }
 
+void GuestAdditions::syncRamaVolumeFromScummVM(const int16 musicVolume) const {
+	_state->variables[VAR_GLOBAL][kGlobalVarRamaMusicVolume] = make_reg(0, musicVolume);
+	const reg_t gameId = _state->variables[VAR_GLOBAL][kGlobalVarGame];
+	if (!gameId.isNull()) {
+		reg_t args[] = { make_reg(0, musicVolume) };
+		invokeSelector(gameId, SELECTOR(masterVolume), 1, args);
+	}
+}
+
 void GuestAdditions::syncTorinVolumeFromScummVM(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const {
 	_state->variables[VAR_GLOBAL][kGlobalVarTorinMusicVolume]  = make_reg(0, musicVolume);
 	_state->variables[VAR_GLOBAL][kGlobalVarTorinSFXVolume]    = make_reg(0, sfxVolume);
@@ -1201,6 +1219,13 @@ void GuestAdditions::syncAudioVolumeGlobalsToScummVM(const int index, const reg_
 			ConfMan.setInt("music_volume", masterVolume);
 			ConfMan.setInt("sfx_volume", masterVolume);
 			ConfMan.setInt("speech_volume", masterVolume);
+		}
+		break;
+
+	case GID_RAMA:
+		if (index == kGlobalVarRamaMusicVolume) {
+			const int16 musicVolume = value.toSint16() * Audio::Mixer::kMaxMixerVolume / kRamaVolumeMax;
+			ConfMan.setInt("music_volume", musicVolume);
 		}
 		break;
 
@@ -1431,6 +1456,14 @@ void GuestAdditions::syncQFG4UI(const int16 musicVolume) const {
 		if (g_sci->_gfxFrameout->getPlanes().findByObject(planeId) != nullptr) {
 			g_sci->_gfxFrameout->kernelUpdateScreenItem(sliderId);
 		}
+	}
+}
+
+void GuestAdditions::syncRamaUI(const int16 musicVolume) const {
+	const reg_t sliderId = _segMan->findObjectByName("volumeSlider");
+	if (!sliderId.isNull() && !readSelector(_segMan, sliderId, SELECTOR(plane)).isNull()) {
+		reg_t args[] = { make_reg(0, musicVolume) };
+		invokeSelector(sliderId, SELECTOR(setCel), 1, args);
 	}
 }
 

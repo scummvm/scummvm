@@ -577,8 +577,8 @@ bool GameFeatures::audioVolumeSyncUsesGlobals() const {
 	case GID_LSL7:
 	case GID_PHANTASMAGORIA:
 	case GID_PHANTASMAGORIA2:
+	case GID_RAMA:
 	case GID_TORIN:
-		// TODO: SCI3
 		return true;
 	default:
 		return false;

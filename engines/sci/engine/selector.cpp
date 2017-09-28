@@ -230,6 +230,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(fileNumber);
 	FIND_SELECTOR(description);
 	FIND_SELECTOR(dispose);
+	FIND_SELECTOR(masterVolume);
+	FIND_SELECTOR(setCel);
 #endif
 }
 
