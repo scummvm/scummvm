@@ -4367,6 +4367,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Space Quest 3 - English DOS (from darksoul42, bug report Trac#10245)
+	// Game version 1.0P 1989-03-22
+	// SCI interpreter version 0.000.453
+	{"sq3", "", {
+		{"resource.map", 0, "876445bb0085a62d5966f4153e2ddf52", 5484},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 485059},
+		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 720133},
+		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 688294},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Space Quest 3 - English DOS (from abevi, bug report #2612718)
 	{"sq3", "", {
 		{"resource.map", 0, "eca165515c6b62b05fa86b7d8f727660", 5598},
