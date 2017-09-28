@@ -5060,6 +5060,63 @@ static const uint16 qfg2PatchSaurusFreeze[] = {
 	PATCH_END
 };
 
+// The Jackalmen combat code has at least one serious issue.
+//
+// Jackalmen may attack in groups.
+// This is handled by 2 globals.
+// Global 136h contains the amount of cur. Jackalmen alive.
+// Global 137h contains the amount of cur. Jackalmen killed during combat.
+//
+// Global 137h is subtracted from Global 136h after combat
+// has ended, BUT when the player manages to hit the last enemy
+// AFTER defeating it during its death animation (yes, that is possible - don't ask),
+// the code is called a second time. Subtracting 137h twice, which will make global 136h
+// negative and which will then make it so that there is an inconsistent state.
+// Some variables will show that there is still an enemy, while others don't.
+//
+// Which will then make the game crash when leaving the current room.
+// The original interpreter would show the infamous "Oops, you did something we weren't expecting...".
+// 
+// Applies to at least: English Floppy (1.102+1.105)
+// TODO: Check, if patch works for 1.000. That version surely has the same bug.
+// Responsible method: jackalMan::die (script 695)
+// Fixes bug: #10218
+static const uint16 qfg2SignatureOopsJackalMen[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x00,                         // lsl local[0]
+	0x35, 0x00,                         // ldi 0
+	0x22,                               // lt?
+	0x30, SIG_UINT16(0x000b),           // bnt [Jackalman death animation code]
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi (die)
+	0x76,                               // push0
+	0x57, 0x66, 0x04,                   // super Monster, 4
+	0x48,                               // ret
+	0x32, SIG_UINT16(0x001a),           // jmp (seems to be a compiler bug)
+	// Jackalman death animation code
+	0x83, 0x00,                         // lal local[0]
+	0x18,                               // not
+	0x30, SIG_UINT16(0x0003),           // bnt [make next enemy walk in]
+   SIG_END
+};
+
+static const uint16 qfg2PatchOopsJackalMen[] = {
+	0x80, PATCH_UINT16(0x0136),         // lag global[136h]
+	0x31, 0x0E,                         // bnt [skip everything] - requires 5 extra bytes
+	0x8b, 0x00,                         // lsl local[0]
+	0x35, 0x00,                         // ldi 0
+	0x22,                               // lt?
+	0x31, 0x08,                         // bnt [Jackalman death animation code] - save 1 byte
+	0x38, PATCH_GETORIGINALUINT16(+9),  // pushi (die)
+	0x76,                               // push0
+	0x57, 0x66, 0x04,                   // super Monster, 4
+	0x48,                               // ret
+	// Jackalman death animation code
+	0x83, 0x00,                         // lal local[0]
+	0x18,                               // not
+	0x31, 0x03,                         // bnt [make next enemy walk in] - save 1 byte
+	PATCH_END
+};
+
 // Script 944 in QFG2 contains the FileSelector system class, used in the
 // character import screen. This gets incorrectly called constantly, whenever
 // the user clicks on a button in order to refresh the file list. This was
@@ -5092,7 +5149,7 @@ static const uint16 qfg2PatchImportDialog[] = {
 };
 
 // Quest For Glory 2 character import doesn't properly set the character type
-//  in versions 1.102 and below, which makes all importerted characters a fighter.
+//  in versions 1.102 and below, which makes all imported characters a fighter.
 //
 // Sierra released an official patch. However the fix is really easy to
 //  implement on our side, so we also patch the flaw in here in case we find it.
@@ -5141,6 +5198,7 @@ static const uint16 qfg2PatchImportCharType[] = {
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg2Signatures[] = {
 	{  true,   665, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,   qfg2PatchSaurusFreeze },
+	{  true,   695, "Oops Jackalmen fix",                          1, qfg2SignatureOopsJackalMen,  qfg2PatchOopsJackalMen },
 	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType, qfg2PatchImportCharType },
 	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog,   qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
