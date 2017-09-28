@@ -666,11 +666,15 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		result = saveFileMan->removeSavefile(name);
 #ifdef ENABLE_SCI32
 	} else if (getSciVersion() >= SCI_VERSION_2) {
-		// Special case for KQ7, basically identical to the SQ4 case above,
-		// where the game hardcodes its save game names
-		if (name.hasPrefix("kq7cdsg.")) {
-			int saveNo = atoi(name.c_str() + name.size() - 3);
+		// Special cases for KQ7 & RAMA, basically identical to the SQ4 case
+		// above, where the game hardcodes its save game names
+		int saveNo;
+		if (sscanf(name.c_str(), "kq7cdsg.%i", &saveNo) == 1 ||
+			sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
+
 			name = g_sci->getSavegameName(saveNo + kSaveIdShift);
+		} else if (g_sci->getGameId() == GID_RAMA && name == "911.sg") {
+			name = g_sci->getSavegameName(kAutoSaveId);
 		}
 
 		// The file name may be already wrapped, so check both cases
