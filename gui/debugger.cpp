@@ -276,6 +276,8 @@ void Debugger::enter() {
 }
 
 bool Debugger::handleCommand(int argc, const char **argv, bool &result) {
+	assert(argc > 0);
+
 	if (_cmds.contains(argv[0])) {
 		assert(_cmds[argv[0]]);
 		result = (*_cmds[argv[0]])(argc, argv);
@@ -294,6 +296,9 @@ bool Debugger::parseCommand(const char *inputOrig) {
 	// One of the rare occasions using strdup is OK, since splitCommands needs to modify it
 	char *input = strdup(inputOrig);
 	splitCommand(input, num_params, &param[0]);
+
+	if (num_params == 0)
+		return true;
 
 	// Handle commands first
 	bool result;
