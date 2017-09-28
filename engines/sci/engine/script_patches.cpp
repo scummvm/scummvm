@@ -144,6 +144,7 @@ static const char *const selectorNameTable[] = {
 	"saveFilePtr",  // RAMA
 	"priority",     // RAMA
 	"plane",        // RAMA
+	"state",        // RAMA
 #endif
 	NULL
 };
@@ -211,7 +212,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_handle,
 	SELECTOR_saveFilePtr,
 	SELECTOR_priority,
-	SELECTOR_plane
+	SELECTOR_plane,
+	SELECTOR_state
 #endif
 };
 
@@ -6394,11 +6396,31 @@ static const uint16 ramaDocReaderInitPatch[] = {
 	PATCH_END
 };
 
+// It is not possible to change the directory for ScummVM save games, so disable
+// the "change directory" button in the RAMA save dialogue
+static const uint16 ramaChangeDirSignature[] = {
+	SIG_MAGICDWORD,
+	0x7e, SIG_UINT16(0x64),     // line 100
+	0x39, SIG_SELECTOR8(state), // pushi $1d (state)
+	0x78,                       // push1
+	0x39, 0x03,                 // pushi 3
+	0x72, SIG_ADDTOOFFSET(+2),  // lofsa changeDirI
+	0x4a, SIG_UINT16(0x0e),     // send 14
+	SIG_END
+};
+
+static const uint16 ramaChangeDirPatch[] = {
+	PATCH_ADDTOOFFSET(+6),    // line 100, pushi state, push1
+	0x39, 0x00,               // pushi 0
+	PATCH_END
+};
+
 static const SciScriptPatcherEntry ramaSignatures[] = {
 	{  true,     0, "fix bad text resolution",                      1, ramaTextResolutionSignature,     ramaTextResolutionPatch },
 	{  true,    55, "fix bad DocReader::init priority calculation", 1, ramaDocReaderInitSignature,      ramaDocReaderInitPatch },
 	{  true,    85, "fix SaveManager to use normal readWord calls", 1, ramaSerializeRegTSignature1,     ramaSerializeRegTPatch1 },
 	{  true, 64908, "disable video benchmarking",                   1, ramaBenchmarkSignature,          ramaBenchmarkPatch },
+	{  true, 64990, "disable change directory button",              1, ramaChangeDirSignature,          ramaChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
