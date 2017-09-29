@@ -57,7 +57,7 @@
  */
 
 #define VERSION_NUMBER 3
-#define HEADER_SIZE 0x1600
+#define HEADER_SIZE 0x1700
 
 Common::File inputFile, outputFile;
 Common::PEResources resEng, resGer;
@@ -1334,9 +1334,11 @@ void writeWords(const char *name, uint tableOffset, int recordCount = 2) {
 		val = inputFile.readLong();
 		strOffset = inputFile.readLong();
 
-		if (!val)
+		if (!val) {
 			// Reached end of list
+			assert(idx >= 128);
 			break;
+		}
 
 		outputFile.writeLong(val);
 		writeString(strOffset);
@@ -1685,8 +1687,8 @@ void writeData() {
 	writeSentenceMappings("Mappings/Parrot", MAPPINGS_PARROT[_version], 1);
 	writeSentenceMappings("Mappings/SuccUBus", MAPPINGS_SUCCUBUS[_version], 1);
 	writeWords("Words/Barbot", WORDS_BARBOT[_version]);
-	writeWords("Words/Bellbot", WORDS_BELLBOT[_version]);
-	writeWords("Words/Deskbot", WORDS_DESKBOT[_version]);
+	writeWords("Words/Bellbot", WORDS_BELLBOT[_version], 3);
+	writeWords("Words/Deskbot", WORDS_DESKBOT[_version], 3);
 	writeWords("Words/Doorbot", WORDS_DOORBOT[_version], 3);
 	writeWords("Words/Liftbot", WORDS_LIFTBOT[_version]);
 	writePhrases("Phrases/Bellbot", BELLBOT_COMMON_PHRASES);
@@ -1722,6 +1724,11 @@ void writeGermanData() {
 	writeSentenceMappings("Mappings/MaitreD/DE", 0x232E30 + GERMAN_DIFF, 1);
 	writeSentenceMappings("Mappings/Parrot/DE", 0x235FA8 + GERMAN_DIFF, 1);
 	writeSentenceMappings("Mappings/SuccUBus/DE", 0x2399C8 + GERMAN_DIFF, 1);
+	writeWords("Words/Barbot/DE", 0x5C68B8);
+	writeWords("Words/Bellbot/DE", 0x5E8378, 3);
+	writeWords("Words/Deskbot/DE", 0x5FE8D8, 3);
+	writeWords("Words/Doorbot/DE", 0x61B398, 3);
+	writeWords("Words/Liftbot/DE", 0x629618);
 
 	const int SENTENCES_BARBOT[2] = { 0x5B00C0, 0x5C5AC8 };
 	const int SENTENCES_BELLBOT[20] = { 0x5CACF8, 0x5D1670 };
