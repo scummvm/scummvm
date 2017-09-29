@@ -447,11 +447,20 @@ void writeScriptQuotes(const char *name, const ScriptQuote *quotes,
 	dataOffset += size;
 }
 
-void writeAllScriptQuotes() {
+void writeAllScriptQuotesEN() {
 	writeScriptQuotes("Quotes/Barbot", BARBOT_QUOTES, 221376, 221375, 0, 999);
 	writeScriptQuotes("Quotes/Bellbot", BELLBOT_QUOTES, 201687, 201686, 270000, 270500);
 	writeScriptQuotes("Quotes/Deskbot", DESKBOT_QUOTES, 241191, 241166, 270000, 270500);
 	writeScriptQuotes("Quotes/Doorbot", DOORBOT_QUOTES, 221376, 221375, 0, 999);
 	writeScriptQuotes("Quotes/Liftbot", LIFTBOT_QUOTES, 210581, 210580, 0, 999);
 	writeScriptQuotes("Quotes/MaitreD", MAITRED_QUOTES, 260167, 260147, 270000, 270500);
+}
+
+void writeAllScriptQuotesDE() {
+	writeScriptQuotes("Quotes/Barbot/DE", BARBOT_QUOTES, 251682, 250738, 0, 999);
+	writeScriptQuotes("Quotes/Bellbot", BELLBOT_QUOTES, 201686, 201687, 270000, 270500);
+	writeScriptQuotes("Quotes/Deskbot", DESKBOT_QUOTES, 241166, 241191, 270000, 270500);
+	writeScriptQuotes("Quotes/Doorbot", DOORBOT_QUOTES, 221375, 221376, 0, 999);
+	writeScriptQuotes("Quotes/Liftbot", LIFTBOT_QUOTES, 210580, 210581, 0, 999);
+	writeScriptQuotes("Quotes/MaitreD", MAITRED_QUOTES, 260147, 260167, 270000, 270500);
 }

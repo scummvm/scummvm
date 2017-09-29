@@ -31,7 +31,8 @@ struct ScriptQuote {
 	uint _dialogueId;
 };
 
-extern void writeAllScriptQuotes();
+extern void writeAllScriptQuotesEN();
+extern void writeAllScriptQuotesDE();
 extern void writeEntryHeader(const char *name, uint offset, uint size);
 extern uint dataOffset;
 

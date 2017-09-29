@@ -280,7 +280,7 @@ struct CommonPhrase {
 	uint _val1;
 };
 
-static const CommonPhrase BELLBOT_COMMON_PHRASES[] = {
+static const CommonPhrase BELLBOT_COMMON_PHRASES_EN[] = {
 	{ "what is wrong with her", 0x30FF9, 0x7B, 0 },
 	{ "what is wrong with titania", 0x30FF9, 0x7B, 0 },
 	{ "something for the weekend", 0x30D8B, 0x00, 0 },
@@ -1691,11 +1691,11 @@ void writeData() {
 	writeWords("Words/Deskbot", WORDS_DESKBOT[_version], 3);
 	writeWords("Words/Doorbot", WORDS_DOORBOT[_version], 3);
 	writeWords("Words/Liftbot", WORDS_LIFTBOT[_version]);
-	writePhrases("Phrases/Bellbot", BELLBOT_COMMON_PHRASES);
+	writePhrases("Phrases/Bellbot", BELLBOT_COMMON_PHRASES_EN);
 
 	writeResponseTree();
 	writeNumbers();
-	writeAllScriptQuotes();
+	writeAllScriptQuotesEN();
 	writeAllScriptResponses();
 	writeAllScriptRanges();
 
@@ -1729,6 +1729,7 @@ void writeGermanData() {
 	writeWords("Words/Deskbot/DE", 0x5FE8D8, 3);
 	writeWords("Words/Doorbot/DE", 0x61B398, 3);
 	writeWords("Words/Liftbot/DE", 0x629618);
+	writePhrases("Phrases/Bellbot/DE", BELLBOT_COMMON_PHRASES_DE);
 
 	const int SENTENCES_BARBOT[2] = { 0x5B00C0, 0x5C5AC8 };
 	const int SENTENCES_BELLBOT[20] = { 0x5CACF8, 0x5D1670 };
