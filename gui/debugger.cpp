@@ -297,8 +297,10 @@ bool Debugger::parseCommand(const char *inputOrig) {
 	char *input = strdup(inputOrig);
 	splitCommand(input, num_params, &param[0]);
 
-	if (num_params == 0)
+	if (num_params == 0) {
+		free(input);
 		return true;
+	}
 
 	// Handle commands first
 	bool result;
