@@ -297,8 +297,12 @@ void ScreenItem::calcRects(const Plane &plane) {
 	if (scaleX.getNumerator() && scaleY.getNumerator()) {
 		_screenItemRect = _insetRect;
 
-		const Ratio celToScreenX(screenWidth, celObj._xResolution);
-		const Ratio celToScreenY(screenHeight, celObj._yResolution);
+		Ratio celToScreenX;
+		Ratio celToScreenY;
+		if (getSciVersion() < SCI_VERSION_3) {
+			celToScreenX = Ratio(screenWidth, celObj._xResolution);
+			celToScreenY = Ratio(screenHeight, celObj._yResolution);
+		}
 
 		// Cel may use a coordinate system that is not the same size as the
 		// script coordinate system (usually this means high-resolution
@@ -307,9 +311,11 @@ void ScreenItem::calcRects(const Plane &plane) {
 			// high resolution coordinates
 
 			if (_useInsetRect) {
-				const Ratio scriptToCelX(celObj._xResolution, scriptWidth);
-				const Ratio scriptToCelY(celObj._yResolution, scriptHeight);
-				mulru(_screenItemRect, scriptToCelX, scriptToCelY, 0);
+				if (getSciVersion() < SCI_VERSION_3) {
+					const Ratio scriptToCelX(celObj._xResolution, scriptWidth);
+					const Ratio scriptToCelY(celObj._yResolution, scriptHeight);
+					mulru(_screenItemRect, scriptToCelX, scriptToCelY, 0);
+				}
 
 				if (_screenItemRect.intersects(celRect)) {
 					_screenItemRect.clip(celRect);
@@ -445,7 +451,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 			_scaledPosition.y += plane._gameRect.top;
 			_screenItemRect.translate(plane._gameRect.left, plane._gameRect.top);
 
-			if (celObj._xResolution != screenWidth || celObj._yResolution != screenHeight) {
+			if (!celToScreenX.isOne() || !celToScreenY.isOne()) {
 				mulru(_scaledPosition, celToScreenX, celToScreenY);
 				mulru(_screenItemRect, celToScreenX, celToScreenY, 1);
 			}
@@ -626,9 +632,11 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 		// high resolution coordinates
 
 		if (_useInsetRect) {
-			Ratio scriptToCelX(celObj._xResolution, scriptWidth);
-			Ratio scriptToCelY(celObj._yResolution, scriptHeight);
-			mulru(nsRect, scriptToCelX, scriptToCelY, 0);
+			if (getSciVersion() < SCI_VERSION_3) {
+				const Ratio scriptToCelX(celObj._xResolution, scriptWidth);
+				const Ratio scriptToCelY(celObj._yResolution, scriptHeight);
+				mulru(nsRect, scriptToCelX, scriptToCelY, 0);
+			}
 
 			if (nsRect.intersects(celObjRect)) {
 				nsRect.clip(celObjRect);
@@ -668,8 +676,12 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 			}
 		}
 
-		Ratio celToScriptX(scriptWidth, celObj._xResolution);
-		Ratio celToScriptY(scriptHeight, celObj._yResolution);
+		Ratio celToScriptX;
+		Ratio celToScriptY;
+		if (getSciVersion() < SCI_VERSION_3) {
+			celToScriptX = Ratio(scriptWidth, celObj._xResolution);
+			celToScriptY = Ratio(scriptHeight, celObj._yResolution);
+		}
 
 		originX = (originX * scaleX * celToScriptX).toInt();
 		originY = (originY * scaleY * celToScriptY).toInt();

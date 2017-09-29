@@ -75,8 +75,11 @@ reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 
 	CelObjView celObj(viewId, loopNo, celNo);
 
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const Ratio scaleX(scriptWidth, celObj._xResolution);
+	Ratio scaleX;
+	if (getSciVersion() < SCI_VERSION_3) {
+		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		scaleX = Ratio(scriptWidth, celObj._xResolution);
+	}
 
 	int16 brLeft;
 
@@ -414,7 +417,11 @@ reg_t kCelHigh32(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = argv[1].toSint16();
 	int16 celNo = argv[2].toSint16();
 	CelObjView celObj(resourceId, loopNo, celNo);
-	return make_reg(0, mulru(celObj._height, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, celObj._yResolution)));
+	int16 height = celObj._height;
+	if (getSciVersion() < SCI_VERSION_3) {
+		height = mulru(height, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, celObj._yResolution));
+	}
+	return make_reg(0, height);
 }
 
 reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
@@ -422,7 +429,11 @@ reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = argv[1].toSint16();
 	int16 celNo = argv[2].toSint16();
 	CelObjView celObj(resourceId, loopNo, celNo);
-	return make_reg(0, mulru(celObj._width, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, celObj._xResolution)));
+	int16 width = celObj._width;
+	if (getSciVersion() < SCI_VERSION_3) {
+		width = mulru(width, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, celObj._xResolution));
+	}
+	return make_reg(0, width);
 }
 
 // Used by Shivers 1, room 23601 to determine what blocks on the red door
