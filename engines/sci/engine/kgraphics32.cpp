@@ -670,11 +670,6 @@ reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kBitmapDrawLine(EngineState *s, int argc, reg_t *argv) {
-	// bitmapMemId, (x1, y1, x2, y2) OR (x2, y2, x1, y1), line color, unknown int, unknown int
-	return kStubNull(s, argc + 1, argv - 1);
-}
-
 reg_t kBitmapDrawView(EngineState *s, int argc, reg_t *argv) {
 	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
 	CelObjView view(argv[1].toUint16(), argv[2].toSint16(), argv[3].toSint16());
@@ -722,12 +717,6 @@ reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv) {
 	int16 borderColor = argv[11].toSint16();
 	bool dimmed = argv[12].toUint16();
 
-	// NOTE: Technically the engine checks these things:
-	// textRect.bottom > 0
-	// textRect.right > 0
-	// textRect.left < bitmap.width
-	// textRect.top < bitmap.height
-	// Then clips. But this seems stupid.
 	textRect.clip(Common::Rect(bitmap.getWidth(), bitmap.getHeight()));
 
 	reg_t textBitmapObject = g_sci->_gfxText32->createFontBitmap(textRect.width(), textRect.height(), Common::Rect(textRect.width(), textRect.height()), text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, false, false);
@@ -751,18 +740,6 @@ reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv) {
 
 	bitmap.getBuffer().fillRect(fillRect, argv[5].toSint16());
 	return s->r_acc;
-}
-
-reg_t kBitmapDrawBitmap(EngineState *s, int argc, reg_t *argv) {
-	// target bitmap, source bitmap, x, y, unknown boolean
-
-	return kStubNull(s, argc + 1, argv - 1);
-}
-
-reg_t kBitmapInvert(EngineState *s, int argc, reg_t *argv) {
-	// bitmap, left, top, right, bottom, foreColor, backColor
-
-	return kStubNull(s, argc + 1, argv - 1);
 }
 
 reg_t kBitmapSetOrigin(EngineState *s, int argc, reg_t *argv) {
@@ -798,18 +775,6 @@ reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv) {
 	return bitmapId;
 }
 
-reg_t kBitmapCopyPixels(EngineState *s, int argc, reg_t *argv) {
-	// target bitmap, source bitmap
-
-	return kStubNull(s, argc + 1, argv - 1);
-}
-
-reg_t kBitmapClone(EngineState *s, int argc, reg_t *argv) {
-	// bitmap
-
-	return kStub(s, argc + 1, argv - 1);
-}
-
 reg_t kBitmapGetInfo(EngineState *s, int argc, reg_t *argv) {
 	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
 
@@ -829,16 +794,6 @@ reg_t kBitmapGetInfo(EngineState *s, int argc, reg_t *argv) {
 	assert(offset >= 0 && offset < bitmap.getWidth() * bitmap.getHeight());
 	const uint8 color = bitmap.getPixels()[offset];
 	return make_reg(0, color);
-}
-
-reg_t kBitmapScale(EngineState *s, int argc, reg_t *argv) {
-	// TODO: SCI3
-	return kStubNull(s, argc + 1, argv - 1);
-}
-
-reg_t kBitmapCreateFromUnknown(EngineState *s, int argc, reg_t *argv) {
-	// TODO: SCI3
-	return kStub(s, argc + 1, argv - 1);
 }
 
 reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
