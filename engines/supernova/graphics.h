@@ -79,6 +79,7 @@ public:
 	} _clickField[kMaxClickFields];
 
 private:
+	bool loadFromEngineDataFile();
 	bool loadSections();
 };
 

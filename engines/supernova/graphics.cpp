@@ -24,11 +24,13 @@
 #include "common/file.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "graphics.h"
 #include "msn_def.h"
+#include "supernova.h"
 
 namespace Supernova {
 
@@ -55,6 +57,48 @@ bool MSNImageDecoder::init(int filenumber) {
 	loadStream(file);
 
 	return true;
+}
+
+bool MSNImageDecoder::loadFromEngineDataFile() {
+	Common::String name;
+	if (_filenumber == 1)
+		name = "IMG1";
+	else if (_filenumber == 2)
+		name = "IMG2";
+	else
+		return false;
+
+	Common::String cur_lang = ConfMan.get("language");
+
+	// Note: we don't print any warning or errors here if we cannot find the file
+	// or the format is not as expected. We will get those warning when reading the
+	// strings anyway (actually the engine will even refuse to start).
+	Common::File f;
+	if (!f.open(SUPERNOVA_DAT))
+		return false;
+
+	char id[5], lang[5];
+	id[4] = lang[4] = '\0';
+	f.read(id, 3);
+	if (strncmp(id, "MSN", 3) != 0)
+		return false;
+	int version = f.readByte();
+	if (version != SUPERNOVA_DAT_VERSION)
+		return false;
+
+	while (!f.eos()) {
+		f.read(id, 4);
+		f.read(lang, 4);
+		uint32 size = f.readUint32LE();
+		if (f.eos())
+			break;
+		if (name == id && cur_lang == lang) {
+			return f.read(_encodedImage, size) == size;
+		} else
+			f.skip(size);
+	}
+
+	return false;
 }
 
 bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -113,30 +157,35 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_clickField[i].next = stream.readByte();
 	}
 
-	byte zwCodes[256] = {0};
-	byte numRepeat = stream.readByte();
-	byte numZw = stream.readByte();
-	stream.read(zwCodes, numZw);
-	numZw += numRepeat;
+	// Newspaper images may be in the engine data file. So first try to read
+	// it from there.
+	if (!loadFromEngineDataFile()) {
+		// Load the image from the stream
+		byte zwCodes[256] = {0};
+		byte numRepeat = stream.readByte();
+		byte numZw = stream.readByte();
+		stream.read(zwCodes, numZw);
+		numZw += numRepeat;
 
-	byte input = 0;
-	uint i = 0;
+		byte input = 0;
+		uint i = 0;
 
-	while (stream.read(&input, 1)) {
-		if (input < numRepeat) {
-			++input;
-			byte value = stream.readByte();
-			for (--value; input > 0; --input) {
-				_encodedImage[i++] = value;
+		while (stream.read(&input, 1)) {
+			if (input < numRepeat) {
+				++input;
+				byte value = stream.readByte();
+				for (--value; input > 0; --input) {
+					_encodedImage[i++] = value;
+				}
+			} else if (input < numZw) {
+				input = zwCodes[input - numRepeat];
+				--input;
+				_encodedImage[i++] = input;
+				_encodedImage[i++] = input;
+			} else {
+				input -= pal_diff;
+				_encodedImage[i++] = input;
 			}
-		} else if (input < numZw) {
-			input = zwCodes[input - numRepeat];
-			--input;
-			_encodedImage[i++] = input;
-			_encodedImage[i++] = input;
-		} else {
-			input -= pal_diff;
-			_encodedImage[i++] = input;
 		}
 	}
 
