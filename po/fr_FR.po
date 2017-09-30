@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-09-28 21:58+0200\n"
+"POT-Creation-Date: 2017-09-30 02:56+0200\n"
 "PO-Revision-Date: 2017-07-03 10:14+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3613,7 +3613,7 @@ msgstr ""
 "Quest for Glory 1, 'qfg2' for Quest for Glory 2. Par exemple : 'qfg2-thief."
 "sav'."
 
-#: engines/sci/engine/kgraphics32.cpp:344
+#: engines/sci/engine/kgraphics32.cpp:347
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-09-28 21:58+0200\n"
+"POT-Creation-Date: 2017-09-30 02:56+0200\n"
 "PO-Revision-Date: 2017-04-28 11:12+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3634,7 +3634,7 @@ msgid ""
 "Example: 'qfg2-thief.sav'."
 msgstr ""
 
-#: engines/sci/engine/kgraphics32.cpp:344
+#: engines/sci/engine/kgraphics32.cpp:347
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
