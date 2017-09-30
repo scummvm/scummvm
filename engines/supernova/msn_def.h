@@ -400,27 +400,27 @@ enum ObjectID {
 	TICKETS
 };
 
-
-static const char *const broken_DE = "Hmm, er scheint kaputt zu sein.";
-static const char *const broken_EN = "Hmm, it seems to be broken.";
-
-static const char *const guiCommand_DE[] = {
-	"Gehe",
-	"Schau",
-	"Nimm",
-	"\231ffne",
-	"Schlie\341e",
-	"Dr\201cke",
-	"Ziehe",
-	"Benutze",
-	"Rede",
-	"Gib"
+enum StringID {
+	kCommandGo = 0, kCommandLook, kCommandTake, kCommandOpen, kCommandClose,
+	kCommandPress, kCommandPull, kCommandUse, kCommandTalk, kCommandGive,
+	kStatusCommandGo, kStatusCommandLook, kStatusCommandTake, kStatusCommandOpen, kStatusCommandClose,
+	kStatusCommandPress, kStatusCommandPull, kStatusCommandUse, kStatusCommandTalk, kStatusCommandGive,
+	kBroken, kIntro1, kIntro2, kIntro3, kIntro4,
+	kIntro5, kIntro6, kIntro7, kIntro8, kIntro9,
+	kIntro10, kIntro11, kIntro12, kIntro13, kKeycard,
+	kKeycardDesc, kKnife, kKnifeDesc, kWatch, kDiscman,
+	kDiscmanDesc
 };
 
-static const char *const guiStatusCommand_DE[10] =
-{"Gehe zu ","Schau ","Nimm ","\231ffne ","Schlie\341e ","Dr\201cke ","Ziehe ","Benutze ","Rede mit ","Gib "};
-static const char *const guiStatusCommand_EN[10] =
-{"Go to ", "Look at ", "Take ", "Open ", "Close ", "Press ", "Pull ", "Use ", "Talk to ", "Give "};
+static StringID guiCommands[] = {
+	kCommandGo, kCommandLook, kCommandTake, kCommandOpen, kCommandClose,
+	kCommandPress, kCommandPull, kCommandUse, kCommandTalk, kCommandGive
+};
+
+static StringID guiStatusCommands[] = {
+	kStatusCommandGo, kStatusCommandLook, kStatusCommandTake, kStatusCommandOpen, kStatusCommandClose,
+	kStatusCommandPress, kStatusCommandPull, kStatusCommandUse, kStatusCommandTalk, kStatusCommandGive
+};
 
 ObjectType operator|(ObjectType a, ObjectType b);
 ObjectType operator&(ObjectType a, ObjectType b);

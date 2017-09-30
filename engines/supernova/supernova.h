@@ -154,6 +154,26 @@ public:
 			return _nullString;
 		return _gameStrings[idx];
 	}
+	int  textWidth(const Common::String &text) {
+		if (text.empty())
+			return 0;
+		return textWidth(text.c_str());
+	}
+	void renderMessage(StringID stringId, MessagePosition position = kMessageNormal) {
+		renderMessage(getGameString(stringId), position);
+	}
+	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal) {
+		if (!text.empty())
+			renderMessage(text.c_str(), position);
+	}
+	void renderText(const Common::String &text, int x, int y, byte color) {
+		if (!text.empty())
+			renderText(text.c_str(), x, y, color);
+	}
+	void renderText(const Common::String &text) {
+		if (!text.empty())
+			renderText(text.c_str());
+	}
 
 	Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 

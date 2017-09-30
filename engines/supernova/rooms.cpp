@@ -2757,7 +2757,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
-			_vm->renderMessage(broken_DE);
+			_vm->renderMessage(kBroken);
 		else
 			_gm->telomat(0);
 	} else if (((verb == ACTION_OPEN) || (verb == ACTION_USE)) &&
@@ -2840,7 +2840,7 @@ bool AxacussOffice2::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
-			_vm->renderMessage(broken_DE);
+			_vm->renderMessage(kBroken);
 		else
 			_gm->telomat(1);
 	} else
@@ -2865,7 +2865,7 @@ bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
-			_vm->renderMessage(broken_DE);
+			_vm->renderMessage(kBroken);
 		else
 			_gm->telomat(2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == PAINTING)) {
@@ -2894,7 +2894,7 @@ bool AxacussOffice4::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
-			_vm->renderMessage(broken_DE);
+			_vm->renderMessage(kBroken);
 		else
 			_gm->telomat(3);
 	} else
