@@ -1928,10 +1928,16 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 						volumeName = "RESAUD.001";
 					}
 				} else if (resId.getNumber() == 65535) {
-					if (g_sci->getGameId() == GID_RAMA && Common::File::exists("RESOURCE.SFX")) {
-						volumeName = "RESOURCE.SFX";
-					} else {
+					if (g_sci->getGameId() == GID_RAMA) {
 						volumeName = Common::String::format("RESSFX.%03d", mapVolumeNr);
+
+						if (g_sci->getGameId() == GID_RAMA && !Common::File::exists(volumeName)) {
+							if (Common::File::exists("RESOURCE.SFX")) {
+								volumeName = "RESOURCE.SFX";
+							} else if (Common::File::exists("RESSFX.001")) {
+								volumeName = "RESSFX.001";
+							}
+						}
 					}
 				} else {
 					volumeName = Common::String::format("RESAUD.%03d", mapVolumeNr);
