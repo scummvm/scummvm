@@ -191,7 +191,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 				debugN("\t%s[%x],", (param_value < kernel->_kernelFuncs.size()) ?
 							((param_value < kernel->getKernelNamesSize()) ? kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
-			} else if (opcode == op_class) {
+			} else if (opcode == op_class || opcode == op_super) {
 				const reg_t classAddr = s->_segMan->getClassAddress(param_value, SCRIPT_GET_DONT_LOAD, retval.getSegment());
 				if (!classAddr.isNull()) {
 					debugN("\t%s", s->_segMan->getObjectName(classAddr));
@@ -199,15 +199,8 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 				} else {
 					debugN(opsize ? "\t%02x" : "\t%04x", param_value);
 				}
-			} else if (opcode == op_super) {
-				if (obj != nullptr) {
-					debugN("\t%s", s->_segMan->getObjectName(obj->getSuperClassSelector()));
-					debugN(opsize ? "[%02x]" : "[%04x]", param_value);
-				} else {
-					debugN(opsize ? "\t%02x" : "\t%04x", param_value);
-				}
 
-				debugN(",");
+				debugN(", ");
 #ifdef ENABLE_SCI32
 			} else if (
 				opcode == op_pToa || opcode == op_aTop ||
