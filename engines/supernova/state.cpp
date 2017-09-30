@@ -398,14 +398,15 @@ void GameManager::initRooms() {
 void GameManager::initGui() {
 	int commandButtonX = 0;
 	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
+		const Common::String &text = _vm->getGameString(guiCommands[i]);
 		int width;
 		if (i < 9)
-			width = _vm->textWidth(guiCommand_DE[i]) + 2;
+			width = _vm->textWidth(text) + 2;
 		else
 			width = 320 - commandButtonX;
 
 		_guiCommandButton[i].setSize(commandButtonX, 150, commandButtonX + width, 159);
-		_guiCommandButton[i].setText(guiCommand_DE[i]);
+		_guiCommandButton[i].setText(text.c_str());
 		_guiCommandButton[i].setColor(kColorWhite25, kColorDarkGreen, kColorWhite44, kColorGreen);
 		commandButtonX += width + 2;
 	}
@@ -1174,7 +1175,7 @@ void GameManager::takeMoney(int amount) {
 void GameManager::drawStatus() {
 	int index = static_cast<int>(_inputVerb);
 	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
-	_vm->renderText(guiStatusCommand_DE[index], 1, 141, kColorDarkGreen);
+	_vm->renderText(_vm->getGameString(guiStatusCommands[index]), 1, 141, kColorDarkGreen);
 
 	if (Object::isNullObject(_inputObject[0])) {
 		_vm->renderText(_currentInputObject->_name.c_str());
