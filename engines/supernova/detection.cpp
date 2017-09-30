@@ -47,6 +47,15 @@ static const ADGameDescription gameDescriptions[] = {
         ADGF_UNSTABLE,
         GUIO1(GUIO_NONE)
     },
+	{
+		"msn1",
+		NULL,
+		AD_ENTRY1s("msn.exe", "d11264516c529c7fc2ca81d8ba062d9e", 65536),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
 
     // Mission Supernova 2
     {
