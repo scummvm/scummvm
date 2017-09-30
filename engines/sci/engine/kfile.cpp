@@ -448,7 +448,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		int saveNo = -1;
-		if (name == "911.sg") {
+		if (name == "911.sg" || name == "autorama.sg") {
 			saveNo = kAutoSaveId;
 		} else if (sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
 			saveNo += kSaveIdShift;
@@ -673,7 +673,7 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 			sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
 
 			name = g_sci->getSavegameName(saveNo + kSaveIdShift);
-		} else if (g_sci->getGameId() == GID_RAMA && name == "911.sg") {
+		} else if (g_sci->getGameId() == GID_RAMA && (name == "911.sg" || name == "autorama.sg")) {
 			name = g_sci->getSavegameName(kAutoSaveId);
 		}
 
