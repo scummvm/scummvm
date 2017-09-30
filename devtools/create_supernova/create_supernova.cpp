@@ -1,6 +1,7 @@
 #include "create_supernova.h"
 #include "gametext.h"
 #include "file.h"
+#include "po_parser.h"
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
@@ -105,10 +106,10 @@ void writeGermanStrings(File& outputFile) {
 }
 
 void writeStrings(File& outputFile, const char* language) {
-	File poFile;
 	char fileName[16];
 	sprintf(fileName, "strings-%s.po", language);
-	if (!poFile.open(fileName, kFileReadMode)) {
+	PoMessageList* poList = parsePoFile(fileName);
+	if (!poList) {
 		printf("Cannot find strings file for language '%s'.\n", language);
 		return;
 	}
@@ -130,19 +131,21 @@ void writeStrings(File& outputFile, const char* language) {
 	uint32 blockSize = 0;
 	outputFile.writeLong(blockSize);
 
-
-
-	// TODO: read all the strings
-	// build german - translated map
-	// Then iterate on gameText and for each (german) string look for the corresponding translated string
-	// and write it (or write "" if not found).
-	// Doing so also count the number of byte written.
-	// Then finally go back to block size pos and write the block size.
-	// And go back to end of file.
-
-
-
-	poFile.close();
+	// Write all the strings.
+	// If a string is not translated we use the German one.
+	const char **s = &gameText[0];
+	while (*s) {
+		const char* translation = poList->findTranslation(*s);
+		if (translation) {
+			outputFile.writeString(translation);
+			blockSize += strlen(translation) + 1;
+		} else {
+			outputFile.writeString(*s);
+			blockSize += strlen(*s) + 1;
+		}
+		++s;
+	}
+	delete poList;
 
 	// Now write the block size and then go back to the end of the file.
 	outputFile.seek(blockSizePos, SEEK_SET);
