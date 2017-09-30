@@ -599,20 +599,26 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 		return kIOSuccess;
 	}
 
-	if (_isComposited) {
-		closeComposited();
-	} else {
-		closeOverlay();
-	}
+	if (_isInitialized) {
+		if (_isComposited) {
+			closeComposited();
+		} else {
+			closeOverlay();
+		}
 
-	if (_blackoutPlane != nullptr) {
-		g_sci->_gfxFrameout->deletePlane(*_blackoutPlane);
-		_blackoutPlane = nullptr;
-	}
+		if (_blackoutPlane != nullptr) {
+			g_sci->_gfxFrameout->deletePlane(*_blackoutPlane);
+			_blackoutPlane = nullptr;
+		}
 
-	if (!_leaveLastFrame && !_leaveScreenBlack) {
-		// This call *actually* deletes the blackout plane
-		g_sci->_gfxFrameout->frameOut(true);
+		if (!_leaveLastFrame && !_leaveScreenBlack) {
+			// This call *actually* deletes the blackout plane
+			g_sci->_gfxFrameout->frameOut(true);
+		}
+
+		if (!_showCursor) {
+			g_sci->_gfxCursor32->unhide();
+		}
 	}
 
 	_decoder->close();
@@ -620,10 +626,6 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 	if (_bundledVmd) {
 		g_sci->getResMan()->unlockResource(_bundledVmd);
 		_bundledVmd = nullptr;
-	}
-
-	if (!_showCursor) {
-		g_sci->_gfxCursor32->unhide();
 	}
 
 	_isOpen = false;
