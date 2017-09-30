@@ -76,7 +76,7 @@ reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 	CelObjView celObj(viewId, loopNo, celNo);
 
 	Ratio scaleX;
-	if (getSciVersion() < SCI_VERSION_3) {
+	if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 		scaleX = Ratio(scriptWidth, celObj._xResolution);
 	}
@@ -418,7 +418,7 @@ reg_t kCelHigh32(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = argv[2].toSint16();
 	CelObjView celObj(resourceId, loopNo, celNo);
 	int16 height = celObj._height;
-	if (getSciVersion() < SCI_VERSION_3) {
+	if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 		height = mulru(height, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, celObj._yResolution));
 	}
 	return make_reg(0, height);
@@ -430,7 +430,7 @@ reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = argv[2].toSint16();
 	CelObjView celObj(resourceId, loopNo, celNo);
 	int16 width = celObj._width;
-	if (getSciVersion() < SCI_VERSION_3) {
+	if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 		width = mulru(width, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, celObj._xResolution));
 	}
 	return make_reg(0, width);

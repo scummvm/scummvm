@@ -480,11 +480,12 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		// don't have sounds at all, but they're using a SCI2 kernel
 		if (g_sci->getGameId() == GID_CHEST || g_sci->getGameId() == GID_KQUESTIONS) {
 			_sci21KernelType = SCI_VERSION_2;
-			return true;
+		} else if (g_sci->getGameId() == GID_RAMA && g_sci->isDemo()) {
+			_sci21KernelType = SCI_VERSION_2_1_MIDDLE;
+		} else {
+			warning("autoDetectSci21KernelType(): Sound object not loaded, assuming a SCI2.1 table");
+			_sci21KernelType = SCI_VERSION_2_1_EARLY;
 		}
-
-		warning("autoDetectSci21KernelType(): Sound object not loaded, assuming a SCI2.1 table");
-		_sci21KernelType = SCI_VERSION_2_1_EARLY;
 		return true;
 	}
 

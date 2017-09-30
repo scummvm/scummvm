@@ -73,6 +73,7 @@ struct SciKernelMapSubEntry {
 #define SIG_SINCE_SCI21      SCI_VERSION_2_1_EARLY, SCI_VERSION_3
 #define SIG_SINCE_SCI21MID   SCI_VERSION_2_1_MIDDLE, SCI_VERSION_3
 #define SIG_SINCE_SCI21LATE  SCI_VERSION_2_1_LATE, SCI_VERSION_3
+#define SIG_SCI21LATE        SCI_VERSION_2_1_LATE, SCI_VERSION_2_1_LATE
 #define SIG_SCI3             SCI_VERSION_3, SCI_VERSION_3
 
 #define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
@@ -898,7 +899,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// our garbage collector (i.e. the SCI0-SCI1.1 semantics).
 	{ "Purge", kFlushResources,    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(SetShowStyle),      SIG_THRU_SCI21MID, SIGFOR_ALL, "ioiiiii([ri])(i)", NULL,            NULL },
-	{ MAP_CALL(SetShowStyle),      SIG_SINCE_SCI21LATE, SIGFOR_ALL, "ioiiiiii(r)(i)", NULL,            NULL },
+	{ MAP_CALL(SetShowStyle),      SIG_SCI21LATE,     SIGFOR_ALL, "ioiiiii([ri])([ri])(i)", NULL,      NULL },
+	{ MAP_CALL(SetShowStyle),      SIG_SCI3,          SIGFOR_ALL, "ioiiiiii(r)(i)",   NULL,            NULL },
 	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  kString_subops,  NULL },
 	{ MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },

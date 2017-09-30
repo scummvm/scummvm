@@ -835,6 +835,10 @@ reg_t kArrayGetSize(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kArrayGetElement(EngineState *s, int argc, reg_t *argv) {
+	if (getSciVersion() == SCI_VERSION_2_1_LATE) {
+		return kStringGetChar(s, argc, argv);
+	}
+
 	SciArray &array = *s->_segMan->lookupArray(argv[0]);
 	return array.getAsID(argv[1].toUint16());
 }
@@ -846,6 +850,10 @@ reg_t kArraySetElements(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kArrayFree(EngineState *s, int argc, reg_t *argv) {
+	if (getSciVersion() == SCI_VERSION_2_1_LATE && !s->_segMan->isValidAddr(argv[0], SEG_TYPE_ARRAY)) {
+		return s->r_acc;
+	}
+
 	s->_segMan->freeArray(argv[0]);
 	return s->r_acc;
 }

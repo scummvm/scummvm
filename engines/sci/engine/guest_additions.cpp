@@ -163,7 +163,7 @@ void GuestAdditions::writeVarHook(const int type, const int index, const reg_t v
 				syncAudioVolumeGlobalsToScummVM(index, value);
 			} else if (g_sci->getGameId() == GID_GK1) {
 				syncGK1StartupVolumeFromScummVM(index, value);
-			} else if (g_sci->getGameId() == GID_RAMA && index == kGlobalVarRamaMusicVolume) {
+			} else if (g_sci->getGameId() == GID_RAMA && !g_sci->isDemo() && index == kGlobalVarRamaMusicVolume) {
 				syncRamaVolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kRamaVolumeMax / Audio::Mixer::kMaxMixerVolume);
 			}
 

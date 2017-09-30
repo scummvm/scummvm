@@ -1228,7 +1228,7 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 		scaledPosition.x -= screenItem._scaledPosition.x;
 		scaledPosition.y -= screenItem._scaledPosition.y;
 
-		if (getSciVersion() < SCI_VERSION_3) {
+		if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 			mulru(scaledPosition, Ratio(celObj._xResolution, _currentBuffer.screenWidth), Ratio(celObj._yResolution, _currentBuffer.screenHeight));
 		}
 

@@ -299,7 +299,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 
 		Ratio celToScreenX;
 		Ratio celToScreenY;
-		if (getSciVersion() < SCI_VERSION_3) {
+		if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 			celToScreenX = Ratio(screenWidth, celObj._xResolution);
 			celToScreenY = Ratio(screenHeight, celObj._yResolution);
 		}
@@ -311,7 +311,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 			// high resolution coordinates
 
 			if (_useInsetRect) {
-				if (getSciVersion() < SCI_VERSION_3) {
+				if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 					const Ratio scriptToCelX(celObj._xResolution, scriptWidth);
 					const Ratio scriptToCelY(celObj._yResolution, scriptHeight);
 					mulru(_screenItemRect, scriptToCelX, scriptToCelY, 0);
@@ -632,7 +632,7 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 		// high resolution coordinates
 
 		if (_useInsetRect) {
-			if (getSciVersion() < SCI_VERSION_3) {
+			if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 				const Ratio scriptToCelX(celObj._xResolution, scriptWidth);
 				const Ratio scriptToCelY(celObj._yResolution, scriptHeight);
 				mulru(nsRect, scriptToCelX, scriptToCelY, 0);
@@ -678,7 +678,7 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 
 		Ratio celToScriptX;
 		Ratio celToScriptY;
-		if (getSciVersion() < SCI_VERSION_3) {
+		if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 			celToScriptX = Ratio(scriptWidth, celObj._xResolution);
 			celToScriptY = Ratio(scriptHeight, celObj._yResolution);
 		}
