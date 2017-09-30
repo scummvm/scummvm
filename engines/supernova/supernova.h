@@ -104,6 +104,8 @@ public:
 	int _screenHeight;
 	bool _allowLoadGame;
 	bool _allowSaveGame;
+	Common::StringArray _gameStrings;
+	Common::String _nullString;
 
 	byte _imageIndex;
 	byte _sectionIndex;
@@ -120,6 +122,7 @@ public:
 	void pauseTimer(bool pause);
 	int  textWidth(const char *text);
 	int  textWidth(const uint16 key);
+	Common::Error loadGameStrings();
 	void initData();
 	void initPalette();
 	void paletteFadeIn();
@@ -145,6 +148,12 @@ public:
 	void command_print();
 	bool loadGame(int slot);
 	bool saveGame(int slot, const Common::String &description);
+
+	const Common::String &getGameString(int idx) const {
+		if (idx < 0 || idx >= _gameStrings.size())
+			return _nullString;
+		return _gameStrings[idx];
+	}
 
 	Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 
