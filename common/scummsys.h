@@ -454,11 +454,6 @@ typedef uint32 uintptr;
 
 #endif
 
-//
-// Overlay color type (FIXME: shouldn't be declared here)
-//
-typedef uint16 OverlayColor;
-
 #include "common/forbidden.h"
 
 #endif
