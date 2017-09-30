@@ -1,0 +1,2897 @@
+# Mission Supernova Translation.
+# Copyright (C) YEAR ScummVM Team
+# This file is distributed under the same license as the ScummVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Mission Supernova 1.0\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2017-07-21 23:49+0100\n"
+"PO-Revision-Date: 2017-09-03 15:57+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"Language-Team: none\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CP850\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2.9\n"
+
+#. I18N: Go
+#: ../../msn/msn.c:1610
+msgid "Gehe"
+msgstr "Go"
+
+#. I18N: Look
+#: ../../msn/msn.c:1612
+msgid "Schau"
+msgstr "Look"
+
+#. I18N: Take
+#: ../../msn/msn.c:1614
+msgid "Nimm"
+msgstr "Take"
+
+#. I18N: Open
+#: ../../msn/msn.c:1616
+msgid "™ffne"
+msgstr "Open"
+
+#. I18N: Close
+#: ../../msn/msn.c:1618
+msgid "Schlieáe"
+msgstr "Close"
+
+#. I18N: Press
+#: ../../msn/msn.c:1620
+msgid "Drcke"
+msgstr "Press"
+
+#. I18N: Pull
+#: ../../msn/msn.c:1622
+msgid "Ziehe"
+msgstr "Pull"
+
+#. I18N: Use
+#: ../../msn/msn.c:1624
+msgid "Benutze"
+msgstr "Use"
+
+#. I18N: Talk
+#: ../../msn/msn.c:1626
+msgid "Rede"
+msgstr "Talk"
+
+#. I18N: Give
+#: ../../msn/msn.c:1628
+msgid "Gib"
+msgstr "Give"
+
+#. I18N: End of conversation
+#: ../../msn/msn.c:2204
+msgid "Gespr„ch beenden"
+msgstr "End of conversation"
+
+#. I18N: Go to
+#: ../../msn/msn.c:2334
+msgid "Gehe zu "
+msgstr "Go to "
+
+#. I18N: Look at
+#: ../../msn/msn.c:2336
+msgid "Schau "
+msgstr "Look at "
+
+#. I18N: Take
+#: ../../msn/msn.c:2338
+msgid "Nimm "
+msgstr "Take "
+
+#. I18N: Open
+#: ../../msn/msn.c:2340
+msgid "™ffne "
+msgstr "Open "
+
+#. I18N: Close
+#: ../../msn/msn.c:2342
+msgid "Schlieáe "
+msgstr "Close "
+
+#. I18N: Press
+#: ../../msn/msn.c:2344
+msgid "Drcke "
+msgstr "Press "
+
+#. I18N: Pull
+#: ../../msn/msn.c:2346
+msgid "Ziehe "
+msgstr "Pull "
+
+#. I18N: Use
+#: ../../msn/msn.c:2348
+msgid "Benutze "
+msgstr "Use "
+
+#. I18N: Talk to
+#: ../../msn/msn.c:2350
+msgid "Rede mit "
+msgstr "Talk to "
+
+#. I18N: Give
+#: ../../msn/msn.c:2352
+msgid "Gib "
+msgstr "Give "
+
+#: ../../msn/msn.c:2368
+msgid " an "
+msgstr " to "
+
+#: ../../msn/msn.c:2371
+msgid " mit "
+msgstr " with "
+
+#. I18N: Load
+#: ../../msn/msn.c:2880
+msgid "Laden"
+msgstr "Load"
+
+#. I18N: Save
+#: ../../msn/msn.c:2883
+msgid "Speichern"
+msgstr "Save"
+
+#. I18N: Back
+#: ../../msn/msn.c:2886
+msgid "Zurck"
+msgstr "Back"
+
+#. I18N: Restart
+#: ../../msn/msn.c:2889
+msgid "Neustart"
+msgstr "Restart"
+
+#. I18N: Help
+#: ../../msn/msn.c:3163
+msgid "F1    Hilfe"
+msgstr "F1    Help"
+
+#. I18N: Instructions
+#: ../../msn/msn.c:3165
+msgid "F2    Anleitung"
+msgstr "F2    Instructions"
+
+#. I18N: Program information
+#: ../../msn/msn.c:3167
+msgid "F3    Programminformationen"
+msgstr "F3    Program information"
+
+#. I18N: Text Speed
+#: ../../msn/msn.c:3169
+msgid "F4    Textgeschwindigkeit"
+msgstr "F4    Text speed"
+
+#. I18N: Load / Save
+#: ../../msn/msn.c:3171
+msgid "F5    Laden / Speichern"
+msgstr "F5    Load / Save"
+
+#. I18N: Skip intro
+#: ../../msn/msn.c:3173
+msgid "ESC   Vorspann berspringen"
+msgstr "ESC   Skip intro"
+
+#. I18N: Exit program
+#: ../../msn/msn.c:3175
+msgid "Alt-X Programm abbrechen"
+msgstr "Alt-X Exit program"
+
+#. I18N: Text Speed
+#: ../../msn/msn.c:3219
+msgid "Textgeschwindigkeit:"
+msgstr "Text speed:"
+
+#. I18N: Leave game?
+#: ../../msn/msn.c:3267
+msgid "Spiel abbrechen?"
+msgstr "Leave game?"
+
+#: ../../msn/msn.c:3270
+msgid "Ja"
+msgstr "Yes"
+
+#: ../../msn/msn.c:3271
+msgid "Nein"
+msgstr "No"
+
+#. I18N: You already carry this.
+#: ../../msn/msn.c:3341
+msgid "Das tr„gst du doch bei dir."
+msgstr "You already carry this."
+
+#. I18N: You're already there.
+#: ../../msn/msn.c:3344
+msgid "Du bist doch schon da."
+msgstr "You are already there."
+
+#. I18N: This is closed
+#: ../../msn/msn.c:3347 ../../msn/msn_r1.c:683
+msgid "Das ist geschlossen."
+msgstr "This is closed."
+
+#. I18N: You already have that
+#: ../../msn/msn.c:3357
+msgid "Das hast du doch schon."
+msgstr "You already have that."
+
+#. I18N: You do not need that.
+#: ../../msn/msn.c:3360
+msgid "Das brauchst du nicht."
+msgstr "You do not need that."
+
+#. I18N: You can't take that.
+#: ../../msn/msn.c:3363
+msgid "Das kannst du nicht nehmen."
+msgstr "You can't take that."
+
+#. I18N: This can't be opened
+#: ../../msn/msn.c:3370
+msgid "Das l„át sich nicht ”ffnen."
+msgstr "This cannot be opened."
+
+#. I18N: This is already opened.
+#: ../../msn/msn.c:3373
+msgid "Das ist schon offen."
+msgstr "This is already opened."
+
+#. I18N: This is locked.
+#: ../../msn/msn.c:3376
+msgid "Das ist verschlossen."
+msgstr "This is locked."
+
+#. I18N: This can't be closed.
+#: ../../msn/msn.c:3393
+msgid "Das l„át sich nicht schlieáen."
+msgstr "This cannot be closed."
+
+#. I18N: This is already closed.
+#: ../../msn/msn.c:3396 ../../msn/msn_r1.c:829
+msgid "Das ist schon geschlossen."
+msgstr "This is already closed."
+
+#. I18N: Better keep it!
+#: ../../msn/msn.c:3412
+msgid "Behalt es lieber!"
+msgstr "Better keep it!"
+
+#. I18N: This is not possible.
+#: ../../msn/msn.c:3418
+msgid "Das geht nicht."
+msgstr "This is not possible."
+
+#: ../../msn/msn_mod.c:573
+msgid "^(C) 1994 Thomas und Steffen Dingel#"
+msgstr "^(C) 1994 Thomas and Steffen Dingel#"
+
+#: ../../msn/msn_mod.c:574
+msgid "Story und Grafik:^ Thomas Dingel#"
+msgstr "Story and Graphics:^ Thomas Dingel#"
+
+#: ../../msn/msn_mod.c:575
+msgid "Programmierung:^ Steffen Dingel#"
+msgstr "Programming:^ Steffen Dingel#"
+
+#: ../../msn/msn_mod.c:576
+msgid "Musik:^ Bernd Hoffmann#"
+msgstr "Music:^ Bernd Hoffmann#"
+
+#: ../../msn/msn_mod.c:577
+msgid "Getestet von ...#"
+msgstr "Tested by ...#"
+
+#: ../../msn/msn_mod.c:587
+msgid "^             E#N#D#E ...########"
+msgstr "^          T#H#E E#N#D ...########"
+
+#: ../../msn/msn_mod.c:588
+msgid "#       ... des ersten Teils!########"
+msgstr "#       ... of the first part!########"
+
+#: ../../msn/msn_mod.c:590
+msgid "^Aber:#"
+msgstr "^But:#"
+
+#: ../../msn/msn_mod.c:591
+msgid "Das Abenteuer geht weiter, ...##"
+msgstr "The adventure continues ...##"
+
+#: ../../msn/msn_mod.c:592
+msgid "... wenn Sie sich fr 30,- DM registrieren lassen!##"
+msgstr "... if you register for 30, - DM!##"
+
+#: ../../msn/msn_mod.c:593
+msgid "(Falls Sie das nicht schon l„ngst getan haben.)##"
+msgstr "(If you have not already done so.)##"
+
+#: ../../msn/msn_mod.c:594
+msgid "In^ Teil 2 - Der Doppelg„nger^ erwarten Sie:##"
+msgstr "In^ Part 2 - The Doppelganger^ you can expect:##"
+
+#: ../../msn/msn_mod.c:595
+msgid "Knifflige Puzzles,##"
+msgstr "tricky puzzles,##"
+
+#: ../../msn/msn_mod.c:596
+msgid "noch mehr Grafik und Sound,##"
+msgstr "even more graphics and sound,##"
+
+#: ../../msn/msn_mod.c:597
+msgid "ein perfekt geplanter Museumseinbruch,##"
+msgstr "a perfectly planned museum burglary,##"
+
+#: ../../msn/msn_mod.c:598
+msgid "das Virtual-Reality-Spiel \"Indiana Joe\"##"
+msgstr "the virtual reality game \"Indiana Joe\"##"
+
+#: ../../msn/msn_mod.c:599
+msgid "und vieles mehr!##"
+msgstr "and much more!##"
+
+#. I18N: There's nothing special about it
+#: ../../msn/msn_r0.c:25
+msgid "Es ist nichts Besonderes daran."
+msgstr "There's nothing special about it."
+
+#. I18N: You first have to take it
+#: ../../msn/msn_r0.c:27 ../../msn/msn_r0.c:230
+msgid "Das muát du erst nehmen."
+msgstr "You first have to take it."
+
+#. I18N: Hello
+#: ../../msn/msn_r0.c:32
+msgid "Hallo!"
+msgstr "Hello!"
+
+#. I18N: Good day!
+#: ../../msn/msn_r0.c:34
+msgid "Guten Tag!"
+msgstr "Good day!"
+
+#. I18N: It's me, Horst Hummel
+#: ../../msn/msn_r0.c:36
+msgid "Ich bin's, Horst Hummel."
+msgstr "It's me, Horst Hummel."
+
+#: ../../msn/msn_r0.c:147
+msgid "Ok."
+msgstr "OK."
+
+#: ../../msn/msn_r0.c:166
+msgid "Irgendwie ist ein Raumhelm|beim Essen unpraktisch."
+msgstr "Somehow, a space helmet is|impractical when eating."
+
+#: ../../msn/msn_r0.c:182 ../../msn/msn_r0.c:192
+msgid "Schmeckt ganz gut."
+msgstr "Tastes good."
+
+#: ../../msn/msn_r0.c:194
+msgid "Da war irgendetwas drin,|aber jetzt hast du es|mit runtergeschluckt."
+msgstr "There was something in it, but now you swallowed it."
+
+#: ../../msn/msn_r0.c:202
+msgid "Du hast es doch schon ge”ffnet."
+msgstr "You've already opened it."
+
+#: ../../msn/msn_r0.c:206
+msgid "In dem Ei ist eine Tablette|in einer Plastikhlle."
+msgstr "The egg contains a tablet|in a plastic sleeve."
+
+#: ../../msn/msn_r0.c:214
+msgid "Du iát die Tablette und merkst,|daá sich irgendetwas ver„ndert hat."
+msgstr "You eat the tablet and realize|that something has changed."
+
+#: ../../msn/msn_r0.c:224
+msgid ""
+"Komisch! Auf einmal kannst du die Schrift lesen!|Darauf steht:\"Wenn Sie "
+"diese Schrift jetzt|lesen k”nnen, hat die Tablette gewirkt.\""
+msgstr ""
+"Funny! Now you can read the inscription! It says, \"If you can read this "
+"text now, the tablet has worked.\""
+
+#: ../../msn/msn_r0.c:232
+msgid "Sie ist leer."
+msgstr "It is empty."
+
+#: ../../msn/msn_r0.c:235
+msgid "Du findest 10 Buckazoids und eine Keycard."
+msgstr "You find 10 buckazoids and a keycard."
+
+#: ../../msn/msn_r0.c:242
+msgid "Es ist eine Art elektronische Zeitung."
+msgstr "This is a kind of electronic newspaper."
+
+#: ../../msn/msn_r0.c:245
+msgid "Halt, hier ist ein interessanter Artikel."
+msgstr "Here, this article looks interesting."
+
+#: ../../msn/msn_r0.c:268
+msgid "Hmm, irgendwie komme|ich mir verarscht vor."
+msgstr ""
+
+#: ../../msn/msn_r0.c:273
+msgid "Es ist die Keycard des Commanders."
+msgstr "This is the keycard of the Commander."
+
+#: ../../msn/msn_r0.c:277
+msgid ""
+"Es ist eine Uhr mit extra|lautem Wecker. Sie hat einen|Knopf zum Verstellen "
+"der Alarmzeit.|Uhrzeit: "
+msgstr ""
+"This is a clock with a very loud alarm. It has a button|for adjusting the "
+"alarm time.|Time: "
+
+#: ../../msn/msn_r0.c:279
+msgid "   Alarmzeit: "
+msgstr "   Alarm time: "
+
+#: ../../msn/msn_r0.c:291
+msgid "Neue Alarmzeit (hh:mm) :"
+msgstr "New alarm time (hh:mm):"
+
+#: ../../msn/msn_r0.c:332 ../../msn/msn_r1.c:486 ../../msn/msn_r1.c:595
+msgid "Leitung mit Lsterklemme"
+msgstr "Cable with terminal strip"
+
+#: ../../msn/msn_r0.c:344
+msgid "Kabelrolle mit Lsterklemme"
+msgstr "Cable reel with terminal strip"
+
+#: ../../msn/msn_r0.c:355 ../../msn/msn_r1.c:495 ../../msn/msn_r1.c:604
+msgid "Womit denn?"
+msgstr "With what?"
+
+#: ../../msn/msn_r0.c:366 ../../msn/msn_r1.c:499 ../../msn/msn_r1.c:608
+#: ../../msn/msn_r1_r.c:115
+msgid "langes Kabel mit Stecker"
+msgstr "long cable with plug"
+
+#: ../../msn/msn_r0.c:381 ../../msn/msn_r0.c:418 ../../msn/msn_r0.c:454
+msgid "Die Luft hier ist atembar,|du ziehst den Anzug aus."
+msgstr "The air here is breathable,|you take off your suit."
+
+#: ../../msn/msn_r0.c:387 ../../msn/msn_r0.c:424 ../../msn/msn_r0.c:460
+msgid "Hier drinnen brauchtst du deinen Anzug nicht."
+msgstr "Inside you do not need your suit."
+
+#: ../../msn/msn_r0.c:395
+msgid "Du muát erst den Helm abnehmen."
+msgstr "You must take off your helmet first."
+
+#: ../../msn/msn_r0.c:397
+msgid "Du muát erst den Versorgungsteil abnehmen."
+msgstr "You must take off your supply first."
+
+#: ../../msn/msn_r0.c:401
+msgid "Du ziehst den Raumanzug aus."
+msgstr "Your take off your space suit."
+
+#: ../../msn/msn_r0.c:407
+msgid "Du ziehst den Raumanzug an."
+msgstr "You put on your space suit."
+
+#: ../../msn/msn_r0.c:431
+msgid "Den Helm h„ttest du|besser angelassen!"
+msgstr "You should have kept your helmet on!"
+
+#: ../../msn/msn_r0.c:441
+msgid "Du ziehst den Helm auf."
+msgstr "You take off your helmet."
+
+#: ../../msn/msn_r0.c:443 ../../msn/msn_r0.c:479
+msgid "Du muát erst den Anzug anziehen."
+msgstr "You must wear the suit first."
+
+#: ../../msn/msn_r0.c:467
+msgid "Den Versorungsteil h„ttest du|besser nicht abgenommen!"
+msgstr "You should have not taken off your supply!"
+
+#: ../../msn/msn_r0.c:469
+msgid "Du nimmst den Versorgungsteil ab."
+msgstr "You take off your supply."
+
+#: ../../msn/msn_r0.c:477
+msgid "Du ziehst den Versorgungsteil an."
+msgstr "You put on your supply."
+
+#: ../../msn/msn_r0.c:489
+msgid "Die Leitung ist hier unntz."
+msgstr "The cable is useless here."
+
+#: ../../msn/msn_r0.c:492
+msgid ""
+"Stark, das ist ja die Fortsetzung zum \"Anhalter\":|\"Das Restaurant am Ende "
+"des Universums\"."
+msgstr ""
+"Great, this is the sequel to the \"Hitchhiker\":|\"The Restaurant at the End "
+"of the Universe\"."
+
+#: ../../msn/msn_r0.c:495
+msgid ""
+"Moment mal, es ist ein Lesezeichen drin,|auf dem \"Zweiundvierzig\" steht."
+msgstr "Wait a minute, there is a bookmark in it|that says \"Forty-two\"."
+
+#: ../../msn/msn_r0.c:507
+msgid "Du h„ttest besser vorher|den Stecker rausgezogen."
+msgstr "You should have pulled|the plug before."
+
+#: ../../msn/msn_r0.c:567
+msgid "Deine Armbanduhr piepst,|die Alarmzeit ist erreicht."
+msgstr "Your watch beeps,|this is the alarm."
+
+#: ../../msn/msn_r0.c:803 ../../msn/msn_r1_r.c:117
+msgid "Keycard"
+msgstr "keycard"
+
+#: ../../msn/msn_r0.c:803
+msgid "Die Keycard fr deine Schr„nke."
+msgstr "The keycard for your locker."
+
+#: ../../msn/msn_r0.c:805
+msgid "Taschenmesser"
+msgstr "pocket knife"
+
+#: ../../msn/msn_r0.c:805
+msgid "Es ist nicht mehr das sch„rfste."
+msgstr "It is quite blunt."
+
+#: ../../msn/msn_r0.c:807 ../../msn/msn_r3.c:1531
+msgid "Armbanduhr"
+msgstr "watch"
+
+#: ../../msn/msn_r0.c:808 ../../msn/msn_r1_r.c:199
+msgid "Discman"
+msgstr "Discman"
+
+#: ../../msn/msn_r0.c:808 ../../msn/msn_r1_r.c:199
+msgid "Es ist eine \"Mad Monkeys\"-CD darin."
+msgstr "There is a \"Mad Monkeys\" CD in it."
+
+#: ../../msn/msn_r1.c:58
+msgid ""
+"In der Kche warst du schon|oft genug, im Moment hast|du keinen Appetit."
+msgstr "You have been often enough|in the kitchen and you are|no longer hungry."
+
+#. I18N: FORTYTWO
+#: ../../msn/msn_r1.c:91
+msgid "ZWEIUNDVIERZIG"
+msgstr "FORTY-TWO"
+
+#. I18N: Destination reached
+#: ../../msn/msn_r1.c:104
+msgid "Flugziel erreicht"
+msgstr "Destination reached"
+
+#. I18N: Energy depleted
+#: ../../msn/msn_r1.c:110
+msgid "Energie ersch”pft"
+msgstr "Energy depleted"
+
+#. I18N: Artificial coma interrupted
+#: ../../msn/msn_r1.c:112
+msgid "Tiefschlafprozess abgebrochen"
+msgstr "Artificial coma interrupted"
+
+#: ../../msn/msn_r1.c:120 ../../msn/msn_r1.c:156
+msgid "Bitte legen Sie sich in die angezeigte Schlafkammer."
+msgstr "Please lay down in the indicated stasis pod."
+
+#: ../../msn/msn_r1.c:125
+msgid "Bitte Passwort eingeben:"
+msgstr "Please enter your password:"
+
+#: ../../msn/msn_r1.c:135 ../../msn/msn_r3.c:1175
+msgid "Falsches Passwort"
+msgstr "Password incorrect"
+
+#: ../../msn/msn_r1.c:141
+msgid "Schlafdauer in Tagen:"
+msgstr "Sleep duration in days:"
+
+#: ../../msn/msn_r1.c:172
+msgid ""
+"Es wrde wenig bringen,|sich in eine Schlafkammer zu legen,|die nicht "
+"eingeschaltet ist."
+msgstr ""
+"Going into a stasis pod|that is not switched on|is not going to achieve "
+"anything."
+
+#: ../../msn/msn_r1.c:174
+msgid "Dazu muát du erst den Raumanzug ausziehen."
+msgstr "To do this you have to take off the space suit first."
+
+#: ../../msn/msn_r1.c:248 ../../msn/msn_s.c:210
+msgid "Was war das?"
+msgstr "What was that?"
+
+#: ../../msn/msn_r1.c:266
+msgid "Achtung"
+msgstr "Danger"
+
+#: ../../msn/msn_r1.c:289
+msgid ""
+"Du wachst mit brummendem Sch„del auf|und merkst, daá du nur getr„umt hast."
+msgstr ""
+"You wake up with a buzzing sensation in your head|and realise that it was "
+"only a dream."
+
+#: ../../msn/msn_r1.c:292
+msgid ""
+"Beim Aufprall des Raumschiffs|muát du mit dem Kopf aufgeschlagen|und "
+"bewuátlos geworden sein."
+msgstr ""
+"During the space ship impact|you must have hit your head|and lost "
+"consciousness."
+
+#: ../../msn/msn_r1.c:295
+msgid "Was steht dir jetzt wohl wirklich bevor?"
+msgstr ""
+
+#: ../../msn/msn_r1.c:307
+msgid "Geschwindigkeit: "
+msgstr "Speed: "
+
+#: ../../msn/msn_r1.c:308
+#, fuzzy
+msgid "8000 hpm"
+msgstr "8000 hpm"
+
+#: ../../msn/msn_r1.c:309
+#, fuzzy
+msgid "0 hpm"
+msgstr "0 hpm"
+
+#: ../../msn/msn_r1.c:310
+msgid "Ziel: Arsano 3"
+msgstr "Destination: Arsano 3"
+
+#: ../../msn/msn_r1.c:311
+msgid "Entfernung: "
+msgstr "Distance: "
+
+#: ../../msn/msn_r1.c:318
+msgid " Lichtjahre"
+msgstr " light years"
+
+#: ../../msn/msn_r1.c:319
+msgid "Dauer der Reise bei momentaner Geschwindigkeit:"
+msgstr "Duration of trip at current speed:"
+
+#: ../../msn/msn_r1.c:321
+msgid " Tage"
+msgstr " days"
+
+#: ../../msn/msn_r1.c:330
+msgid ""
+"Vergiá nicht, du bist nur der|Schiffskoch und hast keine Ahnung,|wie man ein "
+"Raumschiff fliegt."
+msgstr ""
+"Do not forget, you're only the|ship's cook and have no idea|how to fly a "
+"spaceship."
+
+#: ../../msn/msn_r1.c:344
+msgid "Achtung: Triebwerke funktionsunf„hig"
+msgstr "Warning: Engine malfunction"
+
+#: ../../msn/msn_r1.c:357
+msgid "Energievorrat ersch”pft"
+msgstr "Energy supply exhausted"
+
+#: ../../msn/msn_r1.c:358
+msgid "Notstromversorgung aktiv"
+msgstr "Emergency energy supply active"
+
+#: ../../msn/msn_r1.c:447
+msgid "Zu niedriger Luftdruck soll ungesund sein."
+msgstr "Air pressure too low is unhealthy."
+
+#: ../../msn/msn_r1.c:454
+msgid "Er zeigt Null an."
+msgstr "It indicates zero."
+
+#: ../../msn/msn_r1.c:455
+msgid "Er zeigt Normaldruck an."
+msgstr "It indicates normal pressure."
+
+#: ../../msn/msn_r1.c:464
+msgid "Ein Stck Schrott."
+msgstr "Some scrap metal."
+
+#: ../../msn/msn_r1.c:476
+msgid "Du muát erst hingehen."
+msgstr "You must go there first."
+
+#: ../../msn/msn_r1.c:480 ../../msn/msn_r1.c:639 ../../msn/msn_r1.c:728
+msgid "Das Kabel ist im Weg."
+msgstr "The cable is in the way."
+
+#: ../../msn/msn_r1.c:483 ../../msn/msn_r1.c:642 ../../msn/msn_r1.c:698
+msgid "Das Kabel ist schon ganz|richtig an dieser Stelle."
+msgstr "The cable is already in the right place."
+
+#: ../../msn/msn_r1.c:519
+msgid "Die Leitung ist zu kurz."
+msgstr "The line is too short."
+
+#: ../../msn/msn_r1.c:567
+msgid "Es ist nicht spitz genug."
+msgstr "It is not sharp enough."
+
+#: ../../msn/msn_r1.c:570
+msgid "Du wirst aus den Anzeigen nicht schlau."
+msgstr "You cannot make sense of it."
+
+#: ../../msn/msn_r1.c:572
+msgid "Laá lieber die Finger davon!"
+msgstr "You better keep your hands off!"
+
+#: ../../msn/msn_r1.c:591
+msgid "An dem Kabel ist doch gar kein Stecker."
+msgstr "There is no plug on the cable."
+
+#: ../../msn/msn_r1.c:635
+msgid "Du solltest die Luke vielleicht erst ”ffnen."
+msgstr "You should open the hatch first."
+
+#: ../../msn/msn_r1.c:668
+msgid "Das Seil ist im Weg."
+msgstr "The cable is in the way."
+
+#: ../../msn/msn_r1.c:685
+msgid "Das geht nicht.|Die Luke ist mindestens|5 Meter ber dem Boden."
+msgstr "That will not do.|The hatch is at least|5 meters above the ground."
+
+#: ../../msn/msn_r1.c:694
+msgid "Keycard des Commanders"
+msgstr "Keycard of the Commander"
+
+#: ../../msn/msn_r1.c:766
+#, fuzzy
+msgid "Was ntzt dir der Anschluá|ohne eine Stromquelle?!"
+msgstr "The connection is useless without a power source!"
+
+#: ../../msn/msn_r1.c:770
+msgid "Die Spannung ist auf Null abgesunken."
+msgstr "The voltage has dropped to zero."
+
+#: ../../msn/msn_r1.c:771
+msgid "Es zeigt volle Spannung an."
+msgstr "It displays full voltage."
+
+#: ../../msn/msn_r1.c:782
+msgid "Du muát die Luke erst ”ffnen."
+msgstr "You must open the hatch first."
+
+#: ../../msn/msn_r1.c:801
+#, fuzzy
+msgid "Das Seil ist hier schon ganz richtig."
+msgstr "The cable is already at the right place."
+
+#: ../../msn/msn_r1.c:806
+msgid "Das Kabel ist zu kurz."
+msgstr "The cable is too short."
+
+#: ../../msn/msn_r1.c:913
+msgid "Du hast die Platte schon aufgelegt."
+msgstr "You already put the record on."
+
+#: ../../msn/msn_r1.c:925
+msgid "Es ist doch gar keine Platte aufgelegt."
+msgstr "You haven't put a record on yet."
+
+#: ../../msn/msn_r1.c:960
+msgid "Die Platte scheint einen Sprung zu haben."
+msgstr "The record seems to be scratched."
+
+#: ../../msn/msn_r1.c:981
+msgid "Schneid doch besser ein|l„ngeres Stck Kabel ab!"
+msgstr "You should cut a longer|piece of cable!"
+
+#: ../../msn/msn_r1.c:1003
+msgid "Leitung mit Stecker"
+msgstr "Cable with plug"
+
+#: ../../msn/msn_r1.c:1008 ../../msn/msn_r3.c:74
+msgid "Das ist befestigt."
+msgstr "This is fixed."
+
+#: ../../msn/msn_r1.c:1084
+msgid "Du hast jetzt besseres zu tun."
+msgstr "You have better things to do now."
+
+#: ../../msn/msn_r1.c:1086
+msgid "Wenn du unbedingt aufs Klo|willst, spiel doch Larry 1."
+msgstr "If you absolutely want to go|to the loo, play Larry 1."
+
+#: ../../msn/msn_r1.c:1097
+msgid "Was?! Keiner im Cockpit!|Die sind wohl verrckt!"
+msgstr "What?! No one in the cockpit!|They're crazy!"
+
+#: ../../msn/msn_r1.c:1105
+msgid "Komisch, es ist nur|noch ein Raumanzug da."
+msgstr "Funny, there's only|one spacesuit."
+
+#: ../../msn/msn_r1.c:1113
+msgid ""
+"Was ist denn das fr ein Chaos?|Und auáerdem fehlt das Notraumschiff!|Jetzt "
+"wird mir einiges klar.|Die anderen sind geflchtet,|und ich habe es verpennt."
+msgstr ""
+"What is that chaos? And also|the escape ship is missing!|Now I understand. "
+"The others|have escaped, and they left|me behind."
+
+#: ../../msn/msn_r1_r.c:16 ../../msn/msn_r1_r.c:17 ../../msn/msn_r1_r.c:18
+#: ../../msn/msn_r1_r.c:19 ../../msn/msn_r1_r.c:20 ../../msn/msn_r1_r.c:21
+#: ../../msn/msn_r1_r.c:22 ../../msn/msn_r1_r.c:31 ../../msn/msn_r1_r.c:32
+#: ../../msn/msn_r1_r.c:34 ../../msn/msn_r1_r.c:44 ../../msn/msn_r1_r.c:45
+#: ../../msn/msn_r1_r.c:63 ../../msn/msn_r1_r.c:65 ../../msn/msn_r1_r.c:89
+#: ../../msn/msn_r1_r.c:93 ../../msn/msn_r1_r.c:108 ../../msn/msn_r1_r.c:120
+#: ../../msn/msn_r1_r.c:122 ../../msn/msn_r1_r.c:136 ../../msn/msn_r1_r.c:150
+#: ../../msn/msn_r1_r.c:165 ../../msn/msn_r1_r.c:201 ../../msn/msn_r1_r.c:219
+#: ../../msn/msn_r1_r.c:245 ../../msn/msn_r1_r.c:279
+msgid "Luke"
+msgstr "Hatch"
+
+#: ../../msn/msn_r1_r.c:23 ../../msn/msn_r1_r.c:67 ../../msn/msn_r1_r.c:68
+#: ../../msn/msn_r1_r.c:103 ../../msn/msn_r1_r.c:239 ../../msn/msn_r2.c:1256
+#: ../../msn/msn_r2.c:1293 ../../msn/msn_r2.c:1294 ../../msn/msn_r2.c:1295
+#: ../../msn/msn_r2.c:1296 ../../msn/msn_r3.c:1483 ../../msn/msn_r3.c:1681
+#: ../../msn/msn_r3.c:1682
+msgid "Knopf"
+msgstr "Button"
+
+#: ../../msn/msn_r1_r.c:23
+msgid "Er geh”rt zu der groáen Luke."
+msgstr "It belongs to the large hatch."
+
+#: ../../msn/msn_r1_r.c:24 ../../msn/msn_r1_r.c:37 ../../msn/msn_r1_r.c:130
+msgid "Leiter"
+msgstr "Ladder"
+
+#: ../../msn/msn_r1_r.c:25 ../../msn/msn_r1_r.c:47 ../../msn/msn_r1_r.c:57
+#: ../../msn/msn_r1_r.c:92 ../../msn/msn_r1_r.c:293 ../../msn/msn_r2.c:1221
+#: ../../msn/msn_r2.c:1223 ../../msn/msn_r2.c:1259 ../../msn/msn_r2.c:1277
+#: ../../msn/msn_r2.c:1292 ../../msn/msn_r3.c:1502 ../../msn/msn_r3.c:1503
+#: ../../msn/msn_r3.c:1510 ../../msn/msn_r3.c:1511 ../../msn/msn_r3.c:1512
+#: ../../msn/msn_r3.c:1519 ../../msn/msn_r3.c:1526 ../../msn/msn_r3.c:1527
+#: ../../msn/msn_r3.c:1539 ../../msn/msn_r3.c:1540 ../../msn/msn_r3.c:1547
+#: ../../msn/msn_r3.c:1548 ../../msn/msn_r3.c:1556 ../../msn/msn_r3.c:1557
+#: ../../msn/msn_r3.c:1565 ../../msn/msn_r3.c:1572 ../../msn/msn_r3.c:1582
+#: ../../msn/msn_r3.c:1583 ../../msn/msn_r3.c:1598 ../../msn/msn_r3.c:1612
+#: ../../msn/msn_r3.c:1683 ../../msn/msn_r3.c:1699
+msgid "Ausgang"
+msgstr "Exit"
+
+#: ../../msn/msn_r1_r.c:31
+msgid "Sie fhrt ins Cockpit."
+msgstr "It leads into the cockpit."
+
+#: ../../msn/msn_r1_r.c:32
+msgid "Sie fhrt zur Kche."
+msgstr "It leads to the kitchen."
+
+#: ../../msn/msn_r1_r.c:34
+msgid "Sie fhrt zu den Tiefschlafkammern."
+msgstr "It leads to the stasis pods."
+
+#: ../../msn/msn_r1_r.c:36 ../../msn/msn_r1_r.c:123 ../../msn/msn_r1_r.c:151
+#: ../../msn/msn_r1_r.c:166 ../../msn/msn_r1_r.c:179 ../../msn/msn_r1_r.c:180
+#: ../../msn/msn_r1_r.c:181 ../../msn/msn_r1_r.c:182 ../../msn/msn_r1_r.c:202
+#: ../../msn/msn_r1_r.c:220 ../../msn/msn_r1_r.c:246 ../../msn/msn_r1_r.c:256
+#: ../../msn/msn_r1_r.c:257 ../../msn/msn_r1_r.c:258 ../../msn/msn_r1_r.c:259
+#: ../../msn/msn_r1_r.c:280 ../../msn/msn_r2.c:1252 ../../msn/msn_r2.c:1298
+#: ../../msn/msn_r3.c:1700
+msgid "Schlitz"
+msgstr "Slot"
+
+#: ../../msn/msn_r1_r.c:36 ../../msn/msn_r1_r.c:123 ../../msn/msn_r1_r.c:151
+#: ../../msn/msn_r1_r.c:166 ../../msn/msn_r1_r.c:179 ../../msn/msn_r1_r.c:180
+#: ../../msn/msn_r1_r.c:181 ../../msn/msn_r1_r.c:182 ../../msn/msn_r1_r.c:202
+#: ../../msn/msn_r1_r.c:220 ../../msn/msn_r1_r.c:246 ../../msn/msn_r1_r.c:256
+#: ../../msn/msn_r1_r.c:257 ../../msn/msn_r1_r.c:258 ../../msn/msn_r1_r.c:259
+#: ../../msn/msn_r1_r.c:280
+msgid "Es ist ein Keycard-Leser."
+msgstr "It is a keycard reader."
+
+#: ../../msn/msn_r1_r.c:38 ../../msn/msn_r3.c:1599
+msgid "Gang"
+msgstr "Corridor"
+
+#: ../../msn/msn_r1_r.c:44 ../../msn/msn_r1_r.c:45
+msgid "Dies ist eine der Tiefschlafkammern."
+msgstr "This is one of the stasis pods."
+
+#: ../../msn/msn_r1_r.c:46 ../../msn/msn_r3.c:1626 ../../msn/msn_r3.c:1638
+#: ../../msn/msn_r3.c:1649 ../../msn/msn_r3.c:1661 ../../msn/msn_r3.c:1672
+msgid "Computer"
+msgstr "Computer"
+
+#: ../../msn/msn_r1_r.c:53 ../../msn/msn_r2.c:1302
+msgid "Instrumente"
+msgstr "Instruments"
+
+#: ../../msn/msn_r1_r.c:53
+msgid "Hmm, sieht ziemlich kompliziert aus."
+msgstr "Hmm, this looks pretty complicated."
+
+#: ../../msn/msn_r1_r.c:55 ../../msn/msn_r1_r.c:56 ../../msn/msn_r1_r.c:105
+msgid "Monitor"
+msgstr "Monitor"
+
+#: ../../msn/msn_r1_r.c:56
+msgid "Dieser Monitor sagt dir nichts."
+msgstr "There is nothing on this monitor."
+
+#: ../../msn/msn_r1_r.c:63
+msgid "Das ist eine Luke !!!"
+msgstr "This is a hatch !!!"
+
+#: ../../msn/msn_r1_r.c:65
+msgid "Dies ist eine Luke !!!"
+msgstr "This is a hatch !!!"
+
+#: ../../msn/msn_r1_r.c:69
+msgid "Helm"
+msgstr "Helmet"
+
+#: ../../msn/msn_r1_r.c:69
+msgid "Es ist der Helm zum Raumanzug."
+msgstr "This is the helmet for the spacesuit."
+
+#: ../../msn/msn_r1_r.c:70
+msgid "Raumanzug"
+msgstr "Spacesuit"
+
+#: ../../msn/msn_r1_r.c:70
+msgid "Der einzige Raumanzug, den die|anderen hiergelassen haben ..."
+msgstr "The only space suit the others have left ..."
+
+#: ../../msn/msn_r1_r.c:72
+#, fuzzy
+msgid "Versorgung"
+msgstr "Supply"
+
+#: ../../msn/msn_r1_r.c:72
+msgid "Es ist der Versorgungsteil zum Raumanzug."
+msgstr "It is the supply for the spacesuit."
+
+#: ../../msn/msn_r1_r.c:74
+msgid "Druckmesser"
+msgstr "Manometer"
+
+#: ../../msn/msn_r1_r.c:81 ../../msn/msn_r1_r.c:84
+msgid "Schrott"
+msgstr "Scrap"
+
+#: ../../msn/msn_r1_r.c:81
+msgid ""
+"Da ist eine Lsterklemme dran, die|noch ganz brauchbar aussieht.|Ich nehme "
+"sie mit."
+msgstr ""
+"There is a terminal strip on it|that looks quite useful.|I will take it with "
+"me."
+
+#: ../../msn/msn_r1_r.c:83
+msgid "Lsterklemme"
+msgstr "Terminal strip"
+
+#: ../../msn/msn_r1_r.c:84
+#, fuzzy
+msgid ""
+"Junge, Junge! Die Explosion hat ein|ganz sch”nes Durcheinander angerichtet."
+msgstr "Boy, oh boy! The explosion wreaked|quite some havoc."
+
+#: ../../msn/msn_r1_r.c:86
+msgid "Reaktor"
+msgstr "Reactor"
+
+#: ../../msn/msn_r1_r.c:86
+msgid "Das war einmal der Reaktor."
+msgstr "This was a reactor once."
+
+#: ../../msn/msn_r1_r.c:87
+msgid "Dse"
+msgstr ""
+
+#: ../../msn/msn_r1_r.c:88
+msgid "blauer Krbis"
+msgstr "blue pumpkin"
+
+#: ../../msn/msn_r1_r.c:88
+msgid "Keine Ahnung, was das ist."
+msgstr "No idea what this is."
+
+#: ../../msn/msn_r1_r.c:90
+msgid "Landef„hre"
+msgstr "Landing module"
+
+#: ../../msn/msn_r1_r.c:90
+#, fuzzy
+msgid "Sie war eigentlich fr Bodenuntersuchungen|auf Arsano 3 gedacht."
+msgstr "It was supposed to be used for soil|investigation on Arsano 3."
+
+#: ../../msn/msn_r1_r.c:93 ../../msn/msn_r1_r.c:120
+msgid "Sie fhrt nach drauáen."
+msgstr "It leads outside."
+
+#: ../../msn/msn_r1_r.c:95
+msgid "Generator"
+msgstr "Generator"
+
+#: ../../msn/msn_r1_r.c:95
+msgid "Er versorgt das Raumschiff mit Strom."
+msgstr "It supplies power to the spaceship."
+
+#: ../../msn/msn_r1_r.c:102 ../../msn/msn_r1_r.c:154 ../../msn/msn_r1_r.c:169
+#: ../../msn/msn_r1_r.c:205 ../../msn/msn_r1_r.c:223 ../../msn/msn_r1_r.c:249
+#: ../../msn/msn_r1_r.c:283 ../../msn/msn_r3.c:1490
+msgid "Steckdose"
+msgstr "Socket"
+
+#: ../../msn/msn_r1_r.c:103
+msgid ""
+"Es ist ein Sicherheitsknopf.|Er kann nur mit einem spitzen|Gegenstand "
+"gedrckt werden."
+msgstr "It's a safety button.|It can only be pressed|with a pointed object."
+
+#: ../../msn/msn_r1_r.c:106 ../../msn/msn_r2.c:1300
+msgid "Tastatur"
+msgstr "Keyboard"
+
+#: ../../msn/msn_r1_r.c:116
+msgid "leere Kabelrolle"
+msgstr "Empty cable reel"
+
+#: ../../msn/msn_r1_r.c:117
+msgid ""
+"Hey, das ist die Keycard des Commanders!|Er muá sie bei dem šberstrzten|"
+"Aufbruch verloren haben."
+msgstr ""
+"Hey, that's the commander's keycard!|He must have lost it in the "
+"rushed|departure."
+
+#: ../../msn/msn_r1_r.c:119 ../../msn/msn_r1_r.c:137 ../../msn/msn_r1_r.c:188
+#: ../../msn/msn_r2.c:1212
+msgid "Seil"
+msgstr "Rope"
+
+#: ../../msn/msn_r1_r.c:124
+msgid "Klappe"
+msgstr "Hatch"
+
+#: ../../msn/msn_r1_r.c:125 ../../msn/msn_r1_r.c:128 ../../msn/msn_r1_r.c:242
+#: ../../msn/msn_r1_r.c:243 ../../msn/msn_r3.c:1489
+msgid "Leitung"
+msgstr "Cable"
+
+#: ../../msn/msn_r1_r.c:126
+msgid "Spannungmessger„t"
+msgstr "Voltmeter"
+
+#: ../../msn/msn_r1_r.c:127
+msgid "Klemme"
+msgstr "Clamp"
+
+#: ../../msn/msn_r1_r.c:128
+msgid "Sie fhrt vom Generator zum Spannungmessger„t."
+msgstr "It goes from the generator to the voltage meter."
+
+#: ../../msn/msn_r1_r.c:143 ../../msn/msn_r1_r.c:212 ../../msn/msn_r1_r.c:213
+#: ../../msn/msn_r1_r.c:214 ../../msn/msn_r1_r.c:217 ../../msn/msn_r3.c:1603
+#: ../../msn/msn_r3.c:1618 ../../msn/msn_r3.c:1640 ../../msn/msn_r3.c:1650
+#: ../../msn/msn_r3.c:1651
+msgid "Bild"
+msgstr "Image"
+
+#: ../../msn/msn_r1_r.c:143
+msgid "Manche Leute haben schon|einen komischen Geschmack."
+msgstr "Some people have funny tastes."
+
+#: ../../msn/msn_r1_r.c:145
+msgid "Zeichenger„te"
+msgstr "Drawing instruments"
+
+#: ../../msn/msn_r1_r.c:146
+msgid ""
+"Auf dem Zettel sind lauter|unverst„ndliche Skizzen und Berechnungen.|"
+"(Jedenfalls fr dich unverst„ndlich.)"
+msgstr ""
+"There are incomprehensible sketches|and calculations on that note.|(In any "
+"case, it's incomprehensible to you.)"
+
+#: ../../msn/msn_r1_r.c:148 ../../msn/msn_r1_r.c:215 ../../msn/msn_r1_r.c:233
+#: ../../msn/msn_r1_r.c:276
+msgid "Magnete"
+msgstr "Magnets"
+
+#: ../../msn/msn_r1_r.c:148 ../../msn/msn_r1_r.c:215 ../../msn/msn_r1_r.c:233
+#: ../../msn/msn_r1_r.c:276
+#, fuzzy
+msgid "Damit werden Sachen auf|dem Tisch festgehalten."
+msgstr "This keeps things|on the board."
+
+#: ../../msn/msn_r1_r.c:152 ../../msn/msn_r1_r.c:167 ../../msn/msn_r1_r.c:190
+#: ../../msn/msn_r1_r.c:203 ../../msn/msn_r1_r.c:221 ../../msn/msn_r1_r.c:247
+#: ../../msn/msn_r1_r.c:260 ../../msn/msn_r1_r.c:281
+msgid "Schrank"
+msgstr "Cabinet"
+
+#: ../../msn/msn_r1_r.c:153 ../../msn/msn_r1_r.c:168 ../../msn/msn_r1_r.c:183
+#: ../../msn/msn_r1_r.c:186 ../../msn/msn_r1_r.c:195 ../../msn/msn_r1_r.c:204
+#: ../../msn/msn_r1_r.c:222 ../../msn/msn_r1_r.c:248 ../../msn/msn_r1_r.c:262
+#: ../../msn/msn_r1_r.c:264 ../../msn/msn_r1_r.c:267 ../../msn/msn_r1_r.c:282
+#: ../../msn/msn_r2.c:1299
+#, fuzzy
+msgid "Fach"
+msgstr "Compartment"
+
+#: ../../msn/msn_r1_r.c:155 ../../msn/msn_r1_r.c:170 ../../msn/msn_r1_r.c:206
+#: ../../msn/msn_r1_r.c:224 ../../msn/msn_r1_r.c:250 ../../msn/msn_r1_r.c:278
+#: ../../msn/msn_r2.c:1254
+msgid "Toilette"
+msgstr "Toilet"
+
+#: ../../msn/msn_r1_r.c:161 ../../msn/msn_r1_r.c:176 ../../msn/msn_r2.c:1283
+msgid "Schachspiel"
+msgstr "Game of chess"
+
+#: ../../msn/msn_r1_r.c:161
+#, fuzzy
+msgid "Es macht wohl Spaá, an|der Decke Schach zu spielen."
+msgstr "I guess it's fun to play|chess on the ceiling."
+
+#: ../../msn/msn_r1_r.c:163
+msgid "Tennisschl„ger"
+msgstr "Tennis racquets"
+
+#: ../../msn/msn_r1_r.c:163
+#, fuzzy
+msgid "Fliegt Boris Becker auch mit?"
+msgstr "Is Boris Becker part of the crew?"
+
+#: ../../msn/msn_r1_r.c:164
+msgid "Tennisball"
+msgstr "Tennis ball"
+
+#: ../../msn/msn_r1_r.c:164 ../../msn/msn_r1_r.c:213
+msgid "Toll!"
+msgstr "Awesome!"
+
+#: ../../msn/msn_r1_r.c:176
+msgid "Dein Magnetschachspiel. Schach war|schon immer deine Leidenschaft."
+msgstr "Your magnetic chess game. Chess|has always been your passion."
+
+#: ../../msn/msn_r1_r.c:178
+msgid "Bett"
+msgstr "Bed"
+
+#: ../../msn/msn_r1_r.c:178
+msgid "Das ist dein Bett. Toll, nicht wahr?"
+msgstr "This is your bed. Great, isn't it?"
+
+#: ../../msn/msn_r1_r.c:183 ../../msn/msn_r1_r.c:186 ../../msn/msn_r1_r.c:195
+#, fuzzy
+msgid "Das ist eins deiner drei F„cher."
+msgstr "It's one of your three compartments."
+
+#: ../../msn/msn_r1_r.c:185
+msgid "Alben"
+msgstr "Albums"
+
+#: ../../msn/msn_r1_r.c:185
+msgid "Deine Briefmarkensammlung."
+msgstr "Your stamp collection."
+
+#: ../../msn/msn_r1_r.c:188
+msgid "Es ist ungef„hr 10 m lang und 4 cm dick."
+msgstr "It is about 10 m long and 4 cm thick."
+
+#: ../../msn/msn_r1_r.c:190
+msgid "Das ist dein Schrank."
+msgstr "This is your cabinet."
+
+#: ../../msn/msn_r1_r.c:191 ../../msn/msn_r1_r.c:274 ../../msn/msn_r1_r.c:275
+#, fuzzy
+msgid "Krimskram"
+msgstr "Junk"
+
+#: ../../msn/msn_r1_r.c:191 ../../msn/msn_r1_r.c:274 ../../msn/msn_r1_r.c:275
+#, fuzzy
+msgid "Es ist nichts brauchbares dabei."
+msgstr "There is nothing useful in there."
+
+#: ../../msn/msn_r1_r.c:192 ../../msn/msn_r1_r.c:273
+msgid "Kleider"
+msgstr "Clothes"
+
+#: ../../msn/msn_r1_r.c:192
+msgid "Es sind Standard-Weltraum-Klamotten."
+msgstr "They are standard space gear."
+
+#: ../../msn/msn_r1_r.c:193 ../../msn/msn_r1_r.c:269 ../../msn/msn_r1_r.c:271
+msgid "Unterw„sche"
+msgstr "Underwear"
+
+#: ../../msn/msn_r1_r.c:194
+#, fuzzy
+msgid "Strmpfe"
+msgstr "Socks"
+
+#: ../../msn/msn_r1_r.c:197 ../../msn/msn_r1_r.c:268
+msgid "Buch"
+msgstr "Book"
+
+#: ../../msn/msn_r1_r.c:197
+msgid "Es ist|\"Per Anhalter durch die Galaxis\"|von Douglas Adams."
+msgstr "This is|\"The Hitchhiker's Guide to the Galaxy\"|by Douglas Adams."
+
+#: ../../msn/msn_r1_r.c:212
+#, fuzzy
+msgid "Herb!"
+msgstr "Austere!"
+
+#: ../../msn/msn_r1_r.c:214
+msgid "Genial!"
+msgstr "Brilliant!"
+
+#: ../../msn/msn_r1_r.c:217
+msgid "Es scheint noch nicht fertig zu sein."
+msgstr "It doesn't seem ready yet."
+
+#: ../../msn/msn_r1_r.c:218
+msgid "Stift"
+msgstr "Pen"
+
+#: ../../msn/msn_r1_r.c:218
+msgid "Ein Kugelschreiber."
+msgstr "A ballpoint pen."
+
+#: ../../msn/msn_r1_r.c:230 ../../msn/msn_r1_r.c:231
+msgid "Poster"
+msgstr "Poster"
+
+#: ../../msn/msn_r1_r.c:230
+#, fuzzy
+msgid "Ein Poster von \"Big Boss\"."
+msgstr "A poster from \"Big Boss\""
+
+#: ../../msn/msn_r1_r.c:231
+#, fuzzy
+msgid "Ein Poster von \"Rock Desaster\"."
+msgstr "A poster for \"Rock Disaster\"."
+
+#: ../../msn/msn_r1_r.c:232
+#, fuzzy
+msgid "Box"
+msgstr "Speaker"
+
+#: ../../msn/msn_r1_r.c:235
+msgid "Schallplatte"
+msgstr "Record"
+
+#: ../../msn/msn_r1_r.c:235
+#, fuzzy
+msgid "Die Platte ist von \"Big Boss\"."
+msgstr "This record is from \"Big Boss\"."
+
+#: ../../msn/msn_r1_r.c:237
+msgid "Schallplattenst„nder"
+msgstr "Record stand"
+
+#: ../../msn/msn_r1_r.c:237
+msgid "Du hast jetzt keine Zeit, in|der Plattensammlung rumzust”bern."
+msgstr "You don't have time to rummage|around the record collection now."
+
+#: ../../msn/msn_r1_r.c:240
+msgid "Plattenspieler"
+msgstr "Record player"
+
+#: ../../msn/msn_r1_r.c:240
+msgid "Sieht aus, als k„me|er aus dem Museum."
+msgstr "Looks like something from a museum."
+
+#: ../../msn/msn_r1_r.c:244
+#, fuzzy
+msgid "Stecker"
+msgstr "Male plug"
+
+#: ../../msn/msn_r1_r.c:261
+msgid "Pistole"
+msgstr "Gun"
+
+#: ../../msn/msn_r1_r.c:261
+msgid "Es ist keine Munition drin."
+msgstr "There is no ammunition in it."
+
+#: ../../msn/msn_r1_r.c:263
+msgid "Bcher"
+msgstr "Books"
+
+#: ../../msn/msn_r1_r.c:263
+msgid "Lauter wissenschaftliche Bcher."
+msgstr "All scientific books."
+
+#: ../../msn/msn_r1_r.c:265
+msgid "Kabelrolle"
+msgstr "Cable reel"
+
+#: ../../msn/msn_r1_r.c:265
+msgid "Da sind mindestens zwanzig Meter drauf."
+msgstr "There is at least 20 meters of cable on it."
+
+#: ../../msn/msn_r1_r.c:269 ../../msn/msn_r1_r.c:271
+msgid "Ich habe keine Lust, in|der Unterw„sche des|Commanders rumzuwhlen."
+msgstr "I don't feel like digging around|in the commander's underwear."
+
+#: ../../msn/msn_r1_r.c:284
+msgid "Ordner"
+msgstr "Folders"
+
+#: ../../msn/msn_r1_r.c:284
+msgid ""
+"Darauf steht \"Dienstanweisungen|zur Mission Supernova\".|Es steht nichts "
+"wichtiges drin."
+msgstr ""
+"It says,\"Instructions for the Mission Supernova.\"|There is nothing "
+"important in it."
+
+#: ../../msn/msn_r1_r.c:291
+msgid "Klo"
+msgstr "Loo"
+
+#: ../../msn/msn_r1_r.c:291
+#, fuzzy
+msgid "Ein Klo mit Saugmechanismus."
+msgstr "A toilet with suction mechanism."
+
+#: ../../msn/msn_r1_r.c:292
+msgid "Dusche"
+msgstr "Shower"
+
+#: ../../msn/msn_r2.c:57
+#, fuzzy
+msgid "Die Raumschiffe sind alle verschlossen."
+msgstr "The spaceships are all locked."
+
+#: ../../msn/msn_r2.c:64 ../../msn/msn_r2.c:1098
+msgid "Unsinn!"
+msgstr "Nonsense!"
+
+#: ../../msn/msn_r2.c:91
+msgid ""
+"Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Treffpunkt "
+"Galactica\"."
+msgstr "Funny! You can read the sign now! It says \"Galactica meeting point\"."
+
+#: ../../msn/msn_r2.c:92
+msgid "Darauf steht:|\"Treffpunkt Galactica\"."
+msgstr "It says:|\"Galactica meeting point\"."
+
+#: ../../msn/msn_r2.c:144
+#, fuzzy
+msgid "Wieso das denn nicht?"
+msgstr "Why the hell not?"
+
+#: ../../msn/msn_r2.c:145 ../../msn/msn_r2.c:154 ../../msn/msn_r2.c:1082
+msgid "Wo bin ich hier?"
+msgstr "Where am I here?"
+
+#: ../../msn/msn_r2.c:146 ../../msn/msn_r2.c:183
+msgid "Wo soll ich die Schuhe ablegen?"
+msgstr "Where should I put my shoes?"
+
+#: ../../msn/msn_r2.c:147
+msgid "Schwachsinn! Ich gehe jetzt nach oben!"
+msgstr "Bullshit! I'm going upstairs now!"
+
+#: ../../msn/msn_r2.c:155
+msgid "Sch”nes Wetter heute, nicht wahr?"
+msgstr "Nice weather today, isn't it?"
+
+#: ../../msn/msn_r2.c:156
+msgid "Wrden Sie mich bitte durchlassen."
+msgstr "Would you please let me through?"
+
+#: ../../msn/msn_r2.c:157
+msgid "Hey Alter, laá mich durch!"
+msgstr "Hey, dude, let me through!"
+
+#: ../../msn/msn_r2.c:164
+msgid "Was haben Sie gesagt?"
+msgstr "What did you say?"
+
+#: ../../msn/msn_r2.c:165
+msgid "Sprechen Sie bitte etwas deutlicher!"
+msgstr "Please speak more clearly!"
+
+#: ../../msn/msn_r2.c:174
+msgid "Durch deinen Helm kannst|du nicht sprechen."
+msgstr "You can't talk with your helmet on."
+
+#: ../../msn/msn_r2.c:189 ../../msn/msn_r2.c:251
+msgid "Was, das wissen Sie nicht?"
+msgstr "What, you don't know that?"
+
+#: ../../msn/msn_r2.c:190 ../../msn/msn_r2.c:252
+msgid "Sie befinden sich im Restaurant|\"Treffpunkt Galactica\"."
+msgstr "You are in the restaurant|\"Galactica meeting point\"."
+
+#: ../../msn/msn_r2.c:191 ../../msn/msn_r2.c:253
+msgid ""
+"Wir sind bei den interessantesten|Ereignissen in der Galaxis|immer zur "
+"Stelle."
+msgstr ""
+
+#: ../../msn/msn_r2.c:194
+msgid "Wenn Sie meinen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:199 ../../msn/msn_r2.c:256
+msgid "In der Toilette gibt es|Schlieáf„cher fr Schuhe."
+msgstr ""
+
+#: ../../msn/msn_r2.c:204
+msgid ""
+"Wenn Sie das Lokal betreten|wollen, mssen Sie erst|ihre Schuhe ausziehen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:208
+msgid "Wollen Sie, daá ich Sie rauáschmeiáe?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:216 ../../msn/msn_r2.c:274
+msgid "Hhius otgfh Dgfdrkjlh Fokj gf."
+msgstr ""
+
+#: ../../msn/msn_r2.c:230 ../../msn/msn_s.c:289
+msgid "Halt!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:232
+msgid "Uhwdejkt!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:241
+msgid "Sie mssen erst ihre Schuhe ausziehen, Sie Trottel!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:243
+msgid ""
+"Was f„llt ihnen ein!|Sie k”nnen doch ein Lokal|nicht mit Schuhen betreten!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:249
+msgid "Fragen Sie nicht so doof!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:262
+msgid "Das wrde ich an ihrer|Stelle nicht versuchen!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:300
+msgid "Du ziehst deine Schuhe|aus und legst sie in|eins der Schlieáf„cher."
+msgstr ""
+
+#: ../../msn/msn_r2.c:307
+msgid "Du ziehst deine Schuhe wieder an."
+msgstr ""
+
+#: ../../msn/msn_r2.c:311
+msgid ""
+"Du durchsuchst die Klos nach|anderen brauchbaren Sachen,|findest aber nichts."
+msgstr ""
+
+#: ../../msn/msn_r2.c:316
+msgid "Bevor du aufs Klo gehst,|solltest du besser deinen|Raumanzug ausziehen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:319
+msgid "Du gehst seit sieben Jahren das|erste Mal wieder aufs Klo!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:322
+msgid ""
+"In einem der Schlieáf„cher,|die sich auch im Raum befinden,|findest du "
+"einige Mnzen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:332
+msgid "Mach doch zuerst das Fach leer!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:340
+msgid "Mnze"
+msgstr ""
+
+#: ../../msn/msn_r2.c:353
+msgid ""
+"Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Zutritt nur "
+"fr Personal\"."
+msgstr ""
+
+#: ../../msn/msn_r2.c:361
+msgid ""
+"Komisch! Auf einmal kannst|du das Schild lesen!|Darauf steht:\"Toilette\"."
+msgstr ""
+
+#: ../../msn/msn_r2.c:362
+msgid "Darauf steht:|\"Toilette\"."
+msgstr ""
+
+#: ../../msn/msn_r2.c:372
+msgid "Du ziehst den Raumanzug wieder an."
+msgstr ""
+
+#: ../../msn/msn_r2.c:382 ../../msn/msn_r3.c:488 ../../msn/msn_r3.c:540
+msgid "Nicht so gewaltt„tig!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:603
+msgid ""
+"Du hast das komische Gefhl,|daá drauáen etwas passiert,|und eilst zum "
+"Restaurant."
+msgstr ""
+
+#: ../../msn/msn_r2.c:617
+msgid "Da! Die Supernova!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:630
+msgid "Zwei Minuten sp„ter ..."
+msgstr ""
+
+#: ../../msn/msn_r2.c:638
+msgid "Hey, was machen Sie in meinem Raumschiff?!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:641
+msgid "Geben Sie mir sofort meine Brieftasche wieder!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:644
+msgid "Versuchen Sie das ja nicht nochmal!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:647
+msgid "Und jetzt raus mit Ihnen!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:660
+msgid "Zehn Minuten sp„ter ..."
+msgstr ""
+
+#: ../../msn/msn_r2.c:690
+msgid "K”nnten Sie mir ein Gericht empfehlen?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:691
+msgid "Wie lange dauert es denn noch bis zur Supernova?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:692
+msgid "Sie kommen mir irgendwie bekannt vor."
+msgstr ""
+
+#: ../../msn/msn_r2.c:704
+msgid "Hey, Witzkeks, laá die Brieftasche da liegen!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:708
+msgid "Das ist nicht deine."
+msgstr ""
+
+#: ../../msn/msn_r2.c:713
+msgid "Roger ist im Moment nicht ansprechbar."
+msgstr ""
+
+#: ../../msn/msn_r2.c:718
+msgid "Bestellen Sie lieber nichts!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:719
+msgid ""
+"Ich habe vor zwei Stunden mein Essen|bestellt und immer noch nichts bekommen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:721
+msgid "Noch mindestens zwei Stunden."
+msgstr ""
+
+#: ../../msn/msn_r2.c:722
+msgid ""
+"Haben Sie keine Idee, womit wir uns|bis dahin die Zeit vertreiben k”nnen?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:723
+msgid ""
+"Hmm ... im Moment f„llt mir nichts ein, aber vielleicht|hat der Spieler des "
+"Adventures ja eine Idee."
+msgstr ""
+
+#: ../../msn/msn_r2.c:725
+msgid "Nein, Sie mssen sich irren.|Ich kenne Sie jedenfalls nicht."
+msgstr ""
+
+#: ../../msn/msn_r2.c:726
+msgid "Aber ihre Kleidung habe ich irgendwo schon mal gesehen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:727
+msgid "Ja? Komisch."
+msgstr ""
+
+#: ../../msn/msn_r2.c:728
+msgid "Jetzt weiá ich's. Sie sind Roger W. !"
+msgstr ""
+
+#: ../../msn/msn_r2.c:729
+msgid "Pssst, nicht so laut, sonst will|gleich jeder ein Autogramm von mir."
+msgstr ""
+
+#: ../../msn/msn_r2.c:730
+msgid ""
+"Ich habe extra eine Maske auf, damit|ich nicht von jedem angelabert werde."
+msgstr ""
+
+#: ../../msn/msn_r2.c:731
+msgid "h ... ach so."
+msgstr ""
+
+#: ../../msn/msn_r2.c:732
+msgid "Wann kommt denn das n„chste SQ-Abenteuer raus?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:733
+msgid "SQ 127 máte in einem Monat erscheinen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:734
+msgid "Was, Teil 127 ??"
+msgstr ""
+
+#: ../../msn/msn_r2.c:735
+msgid "Bei uns ist gerade Teil 8 erschienen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:736
+msgid "Hmm ... von welchem Planeten sind Sie denn?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:737
+msgid "Von der Erde."
+msgstr ""
+
+#: ../../msn/msn_r2.c:738
+msgid "Erde? Nie geh”rt."
+msgstr ""
+
+#: ../../msn/msn_r2.c:739
+msgid ""
+"Wahrscheinlich irgendein Kaff, wo Neuerungen|erst hundert Jahre sp„ter "
+"hingelangen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:740
+msgid "h ... kann sein."
+msgstr ""
+
+#: ../../msn/msn_r2.c:741
+msgid "Aber eins mssen Sie mir erkl„ren!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:742
+msgid ""
+"Wieso sehen Sie mir so verdammt „hnlich, wenn|Sie nicht von Xenon stammen, "
+"wie ich?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:743
+msgid ""
+"Keine Ahnung. Bis jetzt dachte ich immer, Sie w„ren ein|von Programmierern "
+"auf der Erde erfundenes Computersprite."
+msgstr ""
+
+#: ../../msn/msn_r2.c:744
+msgid "Was? Lachhaft!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:745
+msgid "Wie erkl„ren Sie sich dann,|daá ich ihnen gegenbersitze?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:746
+msgid "Ja, das ist in der Tat seltsam."
+msgstr ""
+
+#: ../../msn/msn_r2.c:747
+msgid ""
+"Halt, jetzt weiá ich es. Sie sind von der Konkurrenz,|von \"Georgefilm Games"
+"\" und wollen mich verunsichern."
+msgstr ""
+
+#: ../../msn/msn_r2.c:748
+msgid "Nein, ich bin nur ein Ahnungsloser Koch von der Erde."
+msgstr ""
+
+#: ../../msn/msn_r2.c:749
+msgid ""
+"Na gut, ich glaube Ihnen. Lassen wir jetzt|dieses Thema, langsam wird es mir "
+"zu bunt!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:761
+msgid "Eine Partie Schach! Das ist eine gute Idee."
+msgstr ""
+
+#: ../../msn/msn_r2.c:762
+msgid "Schach? Was ist das denn?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:763
+msgid "Schach ist ein interessantes Spiel.|Ich werde es Ihnen erkl„ren."
+msgstr ""
+
+#: ../../msn/msn_r2.c:769
+msgid "Knapp zwei Stunden sp„ter ..."
+msgstr ""
+
+#: ../../msn/msn_r2.c:787
+msgid "Roger W. steht kurz vor dem Schachmatt|und grbelt nach einem Ausweg."
+msgstr ""
+
+#: ../../msn/msn_r2.c:831
+msgid "Darf ich hier Platz nehmen?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:832
+msgid "Klar!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:892
+msgid "Du tippst auf den Tasten herum,|aber es passiert nichts."
+msgstr ""
+
+#: ../../msn/msn_r2.c:917
+msgid "Ach, Ihnen geh”rt die. Ich habe sie eben im Sand gefunden."
+msgstr ""
+
+#: ../../msn/msn_r2.c:918
+msgid "Nein, tut mir leid."
+msgstr ""
+
+#: ../../msn/msn_r2.c:924
+msgid "Nein, danke. Ich bleibe lieber hier."
+msgstr ""
+
+#: ../../msn/msn_r2.c:925
+msgid "Ja, das w„re gut."
+msgstr ""
+
+#: ../../msn/msn_r2.c:931
+msgid "Zur Erde."
+msgstr ""
+
+#: ../../msn/msn_r2.c:932
+msgid "Zum Pr„sident der Galaxis."
+msgstr ""
+
+#: ../../msn/msn_r2.c:933
+msgid "Nach Xenon."
+msgstr ""
+
+#: ../../msn/msn_r2.c:934
+msgid "Mir egal, setzen Sie mich irgendwo ab!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:940
+msgid "Ich habe gerade Ihre Brieftasche gefunden!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:941
+msgid "Sie lag da drben hinter einem Felsen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:942
+msgid "Ich wollte nur wissen, ob Sie die Brieftasche wiederhaben."
+msgstr ""
+
+#: ../../msn/msn_r2.c:959
+msgid "Was wollen Sie denn schon wieder?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:965
+msgid ""
+"Haben Sie zuf„llig meine Brieftasche gesehen?|Ich muá Sie irgendwo verloren "
+"haben."
+msgstr ""
+
+#: ../../msn/msn_r2.c:966
+msgid ""
+"Ohne die Brieftasche kann ich nicht|starten, weil meine Keycard darin ist."
+msgstr ""
+
+#: ../../msn/msn_r2.c:975
+msgid "Oh! Vielen Dank."
+msgstr ""
+
+#: ../../msn/msn_r2.c:976
+msgid "Wo ist denn Ihr Raumschiff?|Soll ich Sie ein Stck mitnehmen?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:979
+msgid "Wo wollen Sie denn hin?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:981
+msgid "Ok, steigen Sie ein!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:983
+msgid "Wie Sie wollen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1030
+msgid "Huch, du lebst ja noch!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1057
+msgid ""
+"Das wrde ich jetzt nicht tun, schlieálich|steht Roger W. neben seinem "
+"Schiff."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1069
+msgid "Alle Raumschiffe haben|den Planeten verlassen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1071
+msgid "Alle Raumschiffe haben den Planeten|verlassen, bis auf eins ..."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1083
+msgid "Was wollen Sie von mir?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1084
+msgid "Hilfe!!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1085
+msgid "Warum sprechen Sie meine Sprache?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1091
+msgid "Ja, ich bin einverstanden."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1092
+msgid "Nein, lieber bleibe ich hier, als mit Ihnen zu fliegen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1141
+msgid "Ich glaube, er wacht auf."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1143
+msgid "Ja, sieht so aus."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1148
+msgid "Sie befinden sich im Raumschiff \"Dexxa\"."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1149
+msgid ""
+"Wir kommen vom Planeten Axacuss und|sind aus dem gleichen Grund hier wie "
+"Sie,|n„mlich zur Erforschung der Supernova."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1151
+msgid "Sie k”nnen beruhigt sein, wir wollen Ihnen nur helfen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1152
+msgid "Und wieso hat der Typ im Raumanzug|eben auf mich geschossen?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1153
+msgid "Das war eine Schreckreaktion."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1154
+msgid ""
+"Schlieálich ist es fr uns das erste Mal,|daá wir auf eine fremde "
+"Intelligenz treffen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1155
+msgid "Wie wir festgestellt haben, ist|Ihr Raumschiff v”llig zerst”rt."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1156
+msgid "Wahrscheinlich k”nnen Sie nicht|mehr auf ihren Heimatplaneten zurck."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1157
+msgid "Wir bieten Ihnen an, Sie|mit nach Axacuss zu nehmen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1160 ../../msn/msn_r2.c:1169
+msgid "Sind Sie sich da wirklich sicher?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1161 ../../msn/msn_r2.c:1170
+msgid "Wenn ich es mir genau berlege,|fliege ich doch lieber mit."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1163
+msgid ""
+"Gut, wir nehmen Sie unter der|Bedingung mit, daá wir Sie jetzt|sofort in "
+"Tiefschlaf versetzen drfen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1164
+msgid "Diese Art des Reisens ist Ihnen|ja scheinbar nicht unbekannt."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1165
+msgid ""
+"Sie werden in vier Jahren nach der|Landung der \"Dexxa\" wieder aufgeweckt."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1166
+msgid "Sind Sie damit einverstanden?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1172
+msgid "Gut, haben Sie noch irgendwelche Fragen?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1174
+msgid "Keine Panik!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1175
+msgid "Wir tun Ihnen nichts."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1177
+msgid "Wir sprechen nicht ihre Sprache,|sondern Sie sprechen unsere."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1178
+msgid ""
+"Nach einer Gehirnanalyse konnten|wir Ihr Gehirn an unsere Sprache anpassen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1179
+msgid "Was? Sie haben in mein Gehirn eingegriffen?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1180
+msgid "Keine Angst, wir haben sonst nichts ver„ndert."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1181
+msgid "Ohne diesen Eingriff w„ren|Sie verloren gewesen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1186
+msgid "Ich habe keine weiteren Fragen mehr."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1187
+msgid "Gut, dann versetzen wir Sie jetzt in Tiefschlaf."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1188
+msgid "Gute Nacht!"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1213 ../../msn/msn_r2.c:1214
+msgid "Stein"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1215
+msgid "Loch"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1215
+msgid "Es scheint eine H”hle zu sein."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1221
+msgid "Hier bist du gerade hergekommen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1229 ../../msn/msn_r2.c:1310 ../../msn/msn_r2.c:1319
+msgid "H”hle"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1230 ../../msn/msn_r2.c:1243 ../../msn/msn_r2.c:1257
+#: ../../msn/msn_r3.c:1691
+msgid "Schild"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1230 ../../msn/msn_r2.c:1243 ../../msn/msn_r2.c:1257
+msgid "Diese Schrift kannst du nicht lesen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1231
+msgid "Eingang"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1232 ../../msn/msn_r2.c:1318
+msgid "Stern"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1233 ../../msn/msn_r2.c:1234 ../../msn/msn_r2.c:1309
+msgid "Raumschiff"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1240
+msgid "Portier"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1240
+msgid "Du siehst doch selbst, wie er aussieht."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1242 ../../msn/msn_r3.c:1484 ../../msn/msn_r3.c:1549
+#: ../../msn/msn_r3.c:1564 ../../msn/msn_r3.c:1573 ../../msn/msn_r3.c:1584
+#: ../../msn/msn_r3.c:1586 ../../msn/msn_r3.c:1588 ../../msn/msn_r3.c:1590
+#: ../../msn/msn_r3.c:1600 ../../msn/msn_r3.c:1613 ../../msn/msn_r3.c:1614
+#: ../../msn/msn_r3.c:1615 ../../msn/msn_r3.c:1625 ../../msn/msn_r3.c:1637
+#: ../../msn/msn_r3.c:1648 ../../msn/msn_r3.c:1660 ../../msn/msn_r3.c:1671
+#: ../../msn/msn_r3.c:1692
+msgid "Tr"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1245
+msgid "Kaugummi"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1246
+msgid "Gummib„rchen"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1247
+msgid "Schokokugel"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1248
+msgid "šberraschungsei"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1249
+msgid "Lakritz"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1250
+msgid "Tablette"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1250
+msgid ""
+"Die Plastikhlle zeigt einen|Mund mit einer Sprechblase. Was|darin steht, "
+"kannst du nicht lesen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1253
+msgid "Automat"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1253
+msgid "Sieht aus wie ein Kaugummiautomat."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1254
+msgid "Die Toiletten sind denen|auf der Erde sehr „hnlich."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1258 ../../msn/msn_r2.c:1269
+msgid "Treppe"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1260
+msgid "Mnzen"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1260
+msgid "Es sind seltsame|K”pfe darauf abgebildet."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1262
+msgid "Tablettenhlle"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1262
+msgid ""
+"Darauf steht:\"Wenn Sie diese|Schrift jetzt lesen k”nnen,|hat die Tablette "
+"gewirkt.\""
+msgstr ""
+
+#: ../../msn/msn_r2.c:1270
+msgid "Stuhl"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1271
+msgid "Schuhe"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1271
+msgid "Wie ist der denn mit|Schuhen hier reingekommen?"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1278
+msgid "Froschgesicht"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1279
+msgid "Gekritzel"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1279
+msgid "\"Mr Spock was here\""
+msgstr ""
+
+#: ../../msn/msn_r2.c:1280
+msgid "Brieftasche"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1281
+msgid "Speisekarte"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1281
+msgid "\"Heute empfehlen wir:|Fonua Opra mit Ulk.\""
+msgstr ""
+
+#: ../../msn/msn_r2.c:1282
+msgid "Tasse"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1282
+msgid "Sie enth„lt eine grnliche Flssigkeit."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1284
+msgid "10-Buckazoid-Schein"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1284
+msgid "Nicht gerade sehr viel Geld."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1286 ../../msn/msn_r2.c:1297
+msgid "Keycard von Roger"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1301
+msgid "Anzeige"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1301 ../../msn/msn_r2.c:1302
+msgid "Hmm, seltsame Anzeigen."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1308
+msgid "Roger W."
+msgstr ""
+
+#: ../../msn/msn_r2.c:1317
+msgid "Ufo"
+msgstr ""
+
+#: ../../msn/msn_r2.c:1317
+msgid "Der Eingang scheint offen zu sein."
+msgstr ""
+
+#: ../../msn/msn_r3.c:26
+msgid "Du drckst den Knopf,|aber nichts passiert."
+msgstr ""
+
+#: ../../msn/msn_r3.c:87
+msgid "Bei deinem Fluchtversuch hat|dich der Roboter erschossen."
+msgstr ""
+
+#: ../../msn/msn_r3.c:90
+msgid "Du iát etwas, aber|es schmeckt scheuálich."
+msgstr ""
+
+#: ../../msn/msn_r3.c:170
+msgid "Du wachst auf und findest dich in|einem geschlossenen Raum wieder."
+msgstr ""
+
+#: ../../msn/msn_r3.c:229
+msgid "h ... nein, mein Name ist Mller."
+msgstr ""
+
+#: ../../msn/msn_r3.c:230
+msgid "Oh, ich habe mich im Gang vertan."
+msgstr ""
+
+#: ../../msn/msn_r3.c:236
+msgid "Wrden Sie mich bitte zum Fahrstuhl lassen?"
+msgstr ""
+
+#: ../../msn/msn_r3.c:237
+msgid "Ich gehe wieder."
+msgstr ""
+
+#: ../../msn/msn_r3.c:242
+msgid "Dann gehe ich eben wieder."
+msgstr ""
+
+#: ../../msn/msn_r3.c:243
+msgid "Ach, halten Sie's Maul, ich gehe trotzdem!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:244 ../../msn/msn_r3.c:245
+msgid "Wenn Sie mich durchlassen gebe ich Ihnen         "
+msgstr ""
+
+#: ../../msn/msn_r3.c:257
+msgid "Sie schon wieder?"
+msgstr ""
+
+#: ../../msn/msn_r3.c:263
+msgid "Halt! Sie sind doch dieser Hummel.|Bleiben Sie sofort stehen!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:265
+msgid "Sehr witzig!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:268
+msgid "Kann auch sein, auf jeden Fall|sind Sie der Nicht-Axacussaner."
+msgstr ""
+
+#: ../../msn/msn_r3.c:272
+msgid "Nein!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:285 ../../msn/msn_r3.c:286
+msgid " Xa."
+msgstr ""
+
+#: ../../msn/msn_r3.c:311
+msgid "Das máte schon ein biáchen mehr sein."
+msgstr ""
+
+#: ../../msn/msn_r3.c:325
+msgid "Ok, dann machen Sie daá Sie wegkommen!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:431
+msgid "Der Axacussaner hat dich erwischt."
+msgstr ""
+
+#: ../../msn/msn_r3.c:548
+msgid ""
+"Diese Tr wrde ich lieber|nicht ”ffnen. Nach dem Schild zu|urteilen, ist "
+"jemand in dem Raum."
+msgstr ""
+
+#: ../../msn/msn_r3.c:643
+msgid "Du stellst dich hinter die S„ule."
+msgstr ""
+
+#: ../../msn/msn_r3.c:657
+msgid "Hmm, er scheint kaputt zu sein."
+msgstr ""
+
+#: ../../msn/msn_r3.c:658
+msgid "Hmm, it seems to be broken."
+msgstr ""
+
+#: ../../msn/msn_r3.c:697
+msgid "Welche Zahlenkombination willst|du eingeben?"
+msgstr ""
+
+#: ../../msn/msn_r3.c:709
+msgid ""
+"Hmm, das haut nicht ganz hin,|aber irgendwie muá die Zahl|mit dem Code "
+"zusammenh„ngen."
+msgstr ""
+
+#: ../../msn/msn_r3.c:711
+msgid "Das war die falsche Kombination."
+msgstr ""
+
+#: ../../msn/msn_r3.c:749
+msgid "Streng geheim"
+msgstr ""
+
+#: ../../msn/msn_r3.c:750
+msgid "418-98"
+msgstr ""
+
+#: ../../msn/msn_r3.c:751
+msgid "Sehr geehrter Dr. Hansi,"
+msgstr ""
+
+#: ../../msn/msn_r3.c:752
+msgid "Ich muá Ihren Roboterexperten ein Lob aussprechen. Die"
+msgstr ""
+
+#: ../../msn/msn_r3.c:753
+msgid "Imitation von Horst Hummel ist perfekt gelungen, wie ich"
+msgstr ""
+
+#: ../../msn/msn_r3.c:754
+msgid "heute bei der šbertragung des Interviews feststellen"
+msgstr ""
+
+#: ../../msn/msn_r3.c:755
+msgid "konnte. Dem Aufschwung Ihrer Firma durch die Werbe-"
+msgstr ""
+
+#: ../../msn/msn_r3.c:756
+msgid "kampagne mit dem falschen Horst Hummel drfte ja jetzt"
+msgstr ""
+
+#: ../../msn/msn_r3.c:757
+msgid "nichts mehr im Wege stehen."
+msgstr ""
+
+#: ../../msn/msn_r3.c:758
+msgid "PS: Herzlichen zum Geburtstag!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:759
+msgid "Hochachtungsvoll"
+msgstr ""
+
+#: ../../msn/msn_r3.c:760
+msgid "Commander Sumoti"
+msgstr ""
+
+#: ../../msn/msn_r3.c:767
+msgid "Nicht zu fassen!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:839
+msgid "Hey, hinter dem Bild ist Geld|versteckt. Ich nehme es mit."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1048
+msgid "DR. ALAB HANSI"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1048
+msgid "ALAB HANSI"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1049
+msgid "SAVAL LUN"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1049 ../../msn/msn_r3.c:1051
+msgid "x"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1050
+msgid "PROF. DR. UGNUL TSCHABB"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1050
+msgid "UGNUL TSCHABB"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1051
+msgid "ALGA HURZ LI"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1055
+msgid "Alab Hansi"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1055
+msgid "Saval Lun"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1055
+msgid "Ugnul Tschabb"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1055
+msgid "Alga Hurz Li"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1061
+msgid "Guten Tag, hier ist Horst Hummel."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1063
+msgid "Es ist sehr wichtig."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1069
+msgid "Vom Mars."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1070
+msgid "Vom Klo."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1071
+msgid "Das werde ich kaum erz„hlen."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1080
+msgid "1 Bromanager"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1081
+msgid "2 Telomat"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1082
+msgid "3 ProText"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1083
+msgid "4 Calculata"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1084
+msgid "Bitte w„hlen"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1092
+msgid "Geben Sie den gewnschten Namen ein:"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1093
+msgid "(Vor- und Nachname)"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1107
+msgid "Name unbekannt"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1113
+msgid "Verbindung unm”glich"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1117
+msgid "Verbindung wird hergestellt"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1123
+msgid " am Apparat."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1129
+msgid "Hier ist "
+msgstr ""
+
+#: ../../msn/msn_r3.c:1131
+msgid ". K”nnen Sie mal gerade kommen?"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1138
+msgid "Huch, Sie h”ren sich aber|nicht gut an. Ich komme sofort."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1149
+msgid "Horst Hummel! Von wo rufen Sie an?"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1155
+msgid "Hmm, keine Antwort."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1168
+msgid "Passwort:"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1219
+msgid "Was war das fr ein Ger„usch?"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1221 ../../msn/msn_s.c:312
+msgid "Ich werde mal nachsehen."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1309
+msgid "Jetzt verschwinden Sie endlich!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1310
+msgid "Huch, ich habe mich vertan."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1372
+msgid ""
+"Nachdem du zwei Stunden im|Dschungel herumgeirrt bist,|findest du ein "
+"Geb„ude."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1485
+msgid "Tablett"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1485
+msgid "Es ist irgendein Fraá und|etwas zu Trinken darauf."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1487
+msgid "Stange"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1487
+msgid "Es scheint eine Lampe zu sein."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1488
+msgid "Augen"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1488
+msgid "Es ist nur ein Bild."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1490
+msgid "Sieht etwas anders aus als auf der Erde."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1492
+msgid "Metallblock"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1492
+msgid "Er ist ziemlich schwer."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1494
+msgid "Roboter"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1494
+msgid "Den hast du erledigt."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1495 ../../msn/msn_r3.c:1532
+msgid "Tisch"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1495
+msgid "Ein kleiner Metalltisch."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1528
+msgid "Zellentr"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1528
+msgid "Hier warst du eingesperrt."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1530
+msgid "Laptop"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1580 ../../msn/msn_r3.c:1581
+msgid "S„ule"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1584
+msgid "Auf einem Schild an der Tr steht \"Dr. Alab Hansi\"."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1586
+msgid "Auf einem Schild an der Tr steht \"Saval Lun\"."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1588
+msgid "Auf einem Schild an der Tr steht \"Prof. Dr. Ugnul Tschabb\"."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1590
+msgid "Auf einem Schild an der Tr steht \"Alga Hurz Li\"."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1601 ../../msn/msn_r3.c:1617
+msgid "Axacussaner"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1601
+msgid "Du mátest ihn irgendwie ablenken."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1603
+msgid "Komisches Bild."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1604
+msgid "Karte"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1604
+msgid "Darauf steht: \"Generalkarte\"."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1616
+msgid "Lampe"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1618
+msgid "Seltsam!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1627 ../../msn/msn_r3.c:1674
+msgid "Geld"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1627
+msgid "Es sind 500 Xa."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1628
+msgid "Schlieáfach"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1628
+msgid "Es hat ein elektronisches Zahlenschloá."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1630
+msgid "Brief"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1639
+msgid "Wrfel"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1639
+msgid "Sonderbar!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1640
+msgid "Affenstark!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1641
+msgid "Komisches Ding"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1641
+msgid "Wundersam!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1650 ../../msn/msn_r3.c:1651
+msgid "Es ist ein Axacussanerkopf auf dem Bild."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1652 ../../msn/msn_r3.c:1663
+msgid "Pflanze"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1662
+msgid "Figur"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1662
+msgid "Stark!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1663
+msgid "Sie ist den Pflanzen auf der Erde sehr „hnlich."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1672
+msgid "Er funktioniert nicht."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1673
+msgid "Graffiti"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1673
+msgid "Seltsamer Broschmuck!"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1674
+msgid "Es sind 350 Xa."
+msgstr ""
+
+#: ../../msn/msn_r3.c:1684
+msgid "Dschungel"
+msgstr ""
+
+#: ../../msn/msn_r3.c:1684
+msgid "Lauter B„ume."
+msgstr ""
+
+#: ../../msn/msn_s.c:84
+msgid "Teil 1:"
+msgstr ""
+
+#: ../../msn/msn_s.c:85
+msgid "Das Schicksal"
+msgstr ""
+
+#: ../../msn/msn_s.c:86
+msgid "des Horst Hummel"
+msgstr ""
+
+#: ../../msn/msn_s.c:131
+msgid "Viertausend"
+msgstr ""
+
+#: ../../msn/msn_s.c:131
+msgid "Fnftausend"
+msgstr ""
+
+#: ../../msn/msn_s.c:131
+msgid "Sechstausend"
+msgstr ""
+
+#: ../../msn/msn_s.c:131
+msgid "Siebentausend"
+msgstr ""
+
+#: ../../msn/msn_s.c:144
+msgid "Zwei Tage nach dem Start|im Cockpit der \"Supernova\" ..."
+msgstr ""
+
+#: ../../msn/msn_s.c:153
+msgid "Entferung von der Sonne: 1 500 000 km.|Gehen Sie auf 8000 hpm, Captain!"
+msgstr ""
+
+#: ../../msn/msn_s.c:168
+msgid "Geschwindigkeit:"
+msgstr ""
+
+#: ../../msn/msn_s.c:169
+msgid "Zweitausend hpm"
+msgstr ""
+
+#: ../../msn/msn_s.c:172
+msgid "Dreitausend"
+msgstr ""
+
+#: ../../msn/msn_s.c:189
+msgid "Achttau..."
+msgstr ""
+
+#: ../../msn/msn_s.c:214
+msgid "Keine Ahnung, Sir."
+msgstr ""
+
+#: ../../msn/msn_s.c:215
+msgid "Ingenieur an Commander, bitte kommen!"
+msgstr ""
+
+#: ../../msn/msn_s.c:221
+msgid "Was ist los?"
+msgstr ""
+
+#: ../../msn/msn_s.c:222
+msgid ""
+"Wir haben einen Druckabfall im Hauptantriebssystem, Sir.|Einen Moment, ich "
+"schaue sofort nach, woran es liegt."
+msgstr ""
+
+#: ../../msn/msn_s.c:224
+msgid ""
+"Scheiáe, der Ionenantrieb ist explodiert!|Die Teile sind ber den ganzen|"
+"Maschinenraum verstreut."
+msgstr ""
+
+#: ../../msn/msn_s.c:225
+msgid ""
+"Ach, du meine Gte!|Gibt es irgendeine M”glichkeit,|den Schaden schnell zu "
+"beheben?"
+msgstr ""
+
+#: ../../msn/msn_s.c:226
+msgid "Nein, Sir. Es sieht schlecht aus."
+msgstr ""
+
+#: ../../msn/msn_s.c:230
+msgid "Hmm, die Erde zu alarmieren, wrde zu lange dauern."
+msgstr ""
+
+#: ../../msn/msn_s.c:231
+msgid "Ich darf kein Risiko eingehen.|Captain, geben Sie sofort Alarm!"
+msgstr ""
+
+#: ../../msn/msn_s.c:232 ../../msn/msn_s.c:264
+msgid "Ok, Sir."
+msgstr ""
+
+#: ../../msn/msn_s.c:255
+msgid ""
+"Commander an alle! Achtung, Achtung!|Begeben Sie sich sofort zum "
+"Notraumschiff!"
+msgstr ""
+
+#: ../../msn/msn_s.c:256
+msgid "Ich wiederhole:|Begeben Sie sich sofort zum Notraumschiff!"
+msgstr ""
+
+#: ../../msn/msn_s.c:263
+msgid ""
+"Captain, bereiten Sie alles fr den Start vor!|Wir mssen zurck zur Erde!"
+msgstr ""
+
+#: ../../msn/msn_s.c:277
+msgid "Eine Stunde sp„ter ..."
+msgstr ""
+
+#: ../../msn/msn_s.c:284
+msgid "Die Besatzung hat die \"Supernova\" verlassen."
+msgstr ""
+
+#: ../../msn/msn_s.c:285
+msgid ""
+"Das Schiff wird zwar in acht Jahren sein Ziel|erreichen, allerdings ohne "
+"Mannschaft."
+msgstr ""
+
+#: ../../msn/msn_s.c:286
+msgid "Das ist das kl„gliche Ende|der Mission Supernova."
+msgstr ""
+
+#: ../../msn/msn_s.c:287
+msgid "Sie k”nnen jetzt ihren Computer ausschalten."
+msgstr ""
+
+#: ../../msn/msn_s.c:290
+msgid "Warten Sie!"
+msgstr ""
+
+#: ../../msn/msn_s.c:291
+msgid "Es regt sich etwas im Schiff."
+msgstr ""
+
+#: ../../msn/msn_s.c:307
+msgid "Uuuuaaaahhhhh"
+msgstr ""
+
+#: ../../msn/msn_s.c:309
+msgid "Huch, ich bin ja gefesselt!|Wo bin ich?"
+msgstr ""
+
+#: ../../msn/msn_s.c:310
+msgid ""
+"Ach so, das sind ja die Sicherheitsgurte.|Ich arbeite ja jetzt in diesem "
+"Raumschiff hier."
+msgstr ""
+
+#: ../../msn/msn_s.c:311
+msgid ""
+"Was? Schon zwei Uhr! Wieso|hat mich denn noch keiner|aus dem Bett "
+"geschmissen?"
+msgstr ""
+
+#: ../../msn/msn_s.c:314
+msgid "Autsch!"
+msgstr ""
+
+#: ../../msn/msn_s.c:315
+msgid "Scheiáetagenbett!"
+msgstr ""
+
+#: ../../msn/msn_s.c:317
+msgid "Erst mal den Lichtschalter finden."
+msgstr ""
+
+#: ../../msn/msn_s.c:318
+msgid "Hmm, gar nicht so einfach|bei Schwerelosigkeit."
+msgstr ""
+
+#: ../../msn/msn_s.c:320
+msgid "Ah, hier ist er."
+msgstr ""
