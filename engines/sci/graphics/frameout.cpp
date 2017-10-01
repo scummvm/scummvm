@@ -80,7 +80,7 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	} else {
 		_currentBuffer.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
-	initGraphics(_currentBuffer.w, _currentBuffer.h, _isHiRes);
+	initGraphics(_currentBuffer.w, _currentBuffer.h);
 
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:

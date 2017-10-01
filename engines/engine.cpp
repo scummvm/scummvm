@@ -194,38 +194,16 @@ void Engine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 4);
 }
 
-void initCommonGFX(bool defaultTo1XScaler) {
+void initCommonGFX() {
 	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
 	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
 
 	assert(transientDomain);
 
-	const bool useDefaultGraphicsMode =
-		(!transientDomain->contains("gfx_mode") ||
-		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "normal") ||
-		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "default")
-		)
-		 &&
-		(
-		!gameDomain ||
-		!gameDomain->contains("gfx_mode") ||
-		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "normal") ||
-		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "default")
-		);
-
-	// See if the game should default to 1x scaler
-	if (useDefaultGraphicsMode && defaultTo1XScaler) {
-		g_system->resetGraphicsScale();
-	} else {
-		// Override global scaler with any game-specific define
-		if (ConfMan.hasKey("gfx_mode")) {
-			Common::String gfxMode = ConfMan.get("gfx_mode");
-			g_system->setGraphicsMode(gfxMode.c_str());
-
-			// HACK: For OpenGL modes, we will still honor the graphics scale override
-			if (defaultTo1XScaler && gfxMode.equalsIgnoreCase("opengl"))
-				g_system->resetGraphicsScale();
-		}
+	// Override global scaler with any game-specific define
+	if (ConfMan.hasKey("gfx_mode")) {
+		Common::String gfxMode = ConfMan.get("gfx_mode");
+		g_system->setGraphicsMode(gfxMode.c_str());
 	}
 
 	// Note: The following code deals with the fullscreen / ASR settings. This
@@ -307,11 +285,11 @@ void splashScreen() {
 	splash = true;
 }
 
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format) {
+void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	g_system->beginGFXTransaction();
 
-		initCommonGFX(defaultTo1xScaler);
+		initCommonGFX();
 #ifdef USE_RGB_COLOR
 		if (format)
 			g_system->initSize(width, height, format);
@@ -399,20 +377,20 @@ inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Commo
 }
 
 
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList) {
+void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList) {
 	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
-	initGraphics(width, height, defaultTo1xScaler, &format);
+	initGraphics(width, height, &format);
 }
 
-void initGraphics(int width, int height, bool defaultTo1xScaler) {
+void initGraphics(int width, int height) {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	initGraphics(width, height, defaultTo1xScaler, &format);
+	initGraphics(width, height, &format);
 }
 
 void GUIErrorMessage(const Common::String &msg) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
-		initCommonGFX(false);
+		initCommonGFX();
 		g_system->initSize(320, 200);
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		GUI::MessageDialog dialog(msg);

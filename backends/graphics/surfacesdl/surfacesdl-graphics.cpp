@@ -332,7 +332,6 @@ void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 	_transactionDetails.needHotswap = false;
 	_transactionDetails.needUpdatescreen = false;
 
-	_transactionDetails.normal1xScaler = false;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_transactionDetails.needTextureUpdate = false;
 #endif
@@ -657,7 +656,6 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 		return false;
 	}
 
-	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
 

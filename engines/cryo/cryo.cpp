@@ -74,7 +74,7 @@ Common::Error CryoEngine::run() {
 	_timerTicks = 0;   // incremented in realtime
 
 	// Initialize graphics using following:
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 	_screen.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	_game->run();

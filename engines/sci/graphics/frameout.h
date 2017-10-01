@@ -207,7 +207,7 @@ public:
 	 * Resets the pixel format of the hardware surface to the given format.
 	 */
 	void setPixelFormat(const Graphics::PixelFormat &format) const {
-		initGraphics(_currentBuffer.w, _currentBuffer.h, _isHiRes, &format);
+		initGraphics(_currentBuffer.w, _currentBuffer.h, &format);
 	}
 
 	/**

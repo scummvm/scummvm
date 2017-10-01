@@ -40,13 +40,13 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 	if (_vm->getFeatures() & GF_ME) {
 		// High color
-		initGraphics(_viewport.width(), _viewport.height(), true, nullptr);
+		initGraphics(_viewport.width(), _viewport.height(), nullptr);
 
 		if (_vm->_system->getScreenFormat().bytesPerPixel == 1)
 			error("Myst ME requires greater than 256 colors to run");
 	} else {
 		// Paletted
-		initGraphics(_viewport.width(), _viewport.height(), true);
+		initGraphics(_viewport.width(), _viewport.height());
 		clearScreenPalette();
 	}
 

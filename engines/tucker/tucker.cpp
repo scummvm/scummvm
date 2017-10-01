@@ -89,7 +89,7 @@ bool TuckerEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error TuckerEngine::run() {
-	initGraphics(kScreenWidth, kScreenHeight, false);
+	initGraphics(kScreenWidth, kScreenHeight);
 	syncSoundSettings();
 	_compressedSound.openFile();
 	if (_startSlot == -1)

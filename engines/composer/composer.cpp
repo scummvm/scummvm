@@ -101,7 +101,7 @@ Common::Error ComposerEngine::run() {
 	uint height = 480;
 	if (_bookIni.hasKey("Height", "Common"))
 		height = atoi(getStringFromConfig("Common", "Height").c_str());
-	initGraphics(width, height, true);
+	initGraphics(width, height);
 	_screen.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
