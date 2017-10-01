@@ -640,10 +640,6 @@ bool GrimMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup);
 }
 
-static bool cmpSave(const SaveStateDescriptor &x, const SaveStateDescriptor &y) {
-	return x.getSaveSlot() < y.getSaveSlot();
-}
-
 SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
@@ -679,7 +675,7 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
-	Common::sort(saveList.begin(), saveList.end(), cmpSave);
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
