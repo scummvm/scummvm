@@ -857,7 +857,7 @@ void GameManager::drawInventory() {
 		               _guiInventory[i].width(),
 		               _guiInventory[i].height(),
 		               _guiInventory[i]._bgColor);
-		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name.c_str(),
+		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name,
 		                _guiInventory[i]._textPosition.x,
 		                _guiInventory[i]._textPosition.y,
 		                _guiInventory[i]._textColor);
@@ -1178,16 +1178,16 @@ void GameManager::drawStatus() {
 	_vm->renderText(_vm->getGameString(guiStatusCommands[index]), 1, 141, kColorDarkGreen);
 
 	if (Object::isNullObject(_inputObject[0])) {
-		_vm->renderText(_currentInputObject->_name.c_str());
+		_vm->renderText(_currentInputObject->_name);
 	} else {
-		_vm->renderText(_inputObject[0]->_name.c_str());
+		_vm->renderText(_inputObject[0]->_name);
 		if (_inputVerb == ACTION_GIVE) {
 			_vm->renderText(" an ");
 		} else if (_inputVerb == ACTION_USE) {
 			_vm->renderText(" mit ");
 		}
 
-		_vm->renderText(_currentInputObject->_name.c_str());
+		_vm->renderText(_currentInputObject->_name);
 	}
 }
 
@@ -1321,8 +1321,8 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		roomBrightness();
 		_vm->renderMessage("Hmm, irgendwie komme|ich mir verarscht vor.");
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KEYCARD2)) {
-		_vm->renderMessage(obj1._description.c_str());
-		obj1._description = "Es ist die Keycard des Commanders.";
+		_vm->renderMessage(obj1._description);
+		obj1._description = kStringKeycard2Description2;
 	} else if ((verb == ACTION_LOOK) && (obj1._id == WATCH)) {
 		_vm->renderMessage(Common::String::format(
 		    "Es ist eine Uhr mit extra|lautem Wecker. "
@@ -1392,11 +1392,11 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		r = _rooms[CABIN_L3];
 		if (!r->getObject(8)->hasProperty(CARRIED)) {
 			if (r->isSectionVisible(26))
-				_vm->renderMessage(Object::takeMessage);
+				_vm->renderMessage(kStringTakeMessage);
 			else
 				return false;
 		} else {
-			r->getObject(8)->_name = "Leitung mit L\201sterklemme";
+			r->getObject(8)->_name = kStringWireAndClip;
 			r = _rooms[HOLD];
 			_inventory.remove(*r->getObject(2));
 			_state._terminalStripConnected = true;
@@ -1406,7 +1406,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, SPOOL)) {
 		r = _rooms[CABIN_L2];
 		takeObject(*r->getObject(9));
-		r->getObject(9)->_name = "Kabelrolle mit L\201sterklemme";
+		r->getObject(9)->_name = kSringSpoolAndClip;
 		r = _rooms[HOLD];
 		_inventory.remove(*r->getObject(2));
 		_state._terminalStripConnected = true;
@@ -1420,12 +1420,12 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				return false;
 		} else {
 			if (!r->getObject(8)->hasProperty(CARRIED)) {
-				_vm->renderMessage(Object::takeMessage);
+				_vm->renderMessage(kStringTakeMessage);
 			} else {
 				r = _rooms[CABIN_L2];
 				takeObject(*r->getObject(9));
 				r = _rooms[CABIN_L3];
-				r->getObject(8)->_name = "langes Kabel mit Stecker";
+				r->getObject(8)->_name = kStringGeneratorWire;
 				r = _rooms[CABIN_L2];
 				_inventory.remove(*r->getObject(9));
 				_state._cableConnected = true;
@@ -1537,7 +1537,7 @@ void GameManager::handleInput() {
 	if (!validCommand) {
 		switch (_inputVerb) {
 		case ACTION_LOOK:
-			_vm->renderMessage(_inputObject[0]->_description.c_str());
+			_vm->renderMessage(_inputObject[0]->_description);
 			break;
 
 		case ACTION_WALK:

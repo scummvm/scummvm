@@ -43,7 +43,7 @@
 namespace Supernova {
 
 #define SAVEGAME_HEADER MKTAG('M','S','N','1')
-#define SAVEGAME_VERSION 1
+#define SAVEGAME_VERSION 2
 
 #define SUPERNOVA_DAT "supernova.dat"
 #define SUPERNOVA_DAT_VERSION 1
@@ -166,9 +166,15 @@ public:
 		if (!text.empty())
 			renderMessage(text.c_str(), position);
 	}
+	void renderText(StringID stringId, int x, int y, byte color) {
+		renderText(getGameString(stringId), x, y, color);
+	}
 	void renderText(const Common::String &text, int x, int y, byte color) {
 		if (!text.empty())
 			renderText(text.c_str(), x, y, color);
+	}
+	void renderText(StringID stringId) {
+		renderText(getGameString(stringId));
 	}
 	void renderText(const Common::String &text) {
 		if (!text.empty())

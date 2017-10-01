@@ -43,11 +43,8 @@ bool Room::serialize(Common::WriteStream *out) {
 	out->writeSint32LE(numObjects);
 
 	for (int i = 0; i < numObjects; ++i) {
-		out->writeUint32LE(_objectState[i]._name.size());
-		out->writeString(_objectState[i]._name);
-		out->writeUint32LE(_objectState[i]._description.size());
-		out->writeString(_objectState[i]._description);
-
+		out->writeSint32LE(_objectState[i]._name);
+		out->writeSint32LE(_objectState[i]._description);
 		out->writeByte(_objectState[i]._roomId);
 		out->writeSint32LE(_objectState[i]._id);
 		out->writeSint32LE(_objectState[i]._type);
@@ -72,24 +69,9 @@ bool Room::deserialize(Common::ReadStream *in) {
 		_shown[i] = in->readByte();
 
 	int numObjects = in->readSint32LE();
-	Common::SeekableReadStream *stream = NULL;
 	for (int i = 0; i < numObjects; ++i) {
-		int stringLength = in->readUint32LE();
-		if (stringLength) {
-			stream = in->readStream(stringLength);
-			_objectState[i]._name = stream->readLine();
-		} else {
-			_objectState[i]._name = "";
-		}
-
-		stringLength = in->readUint32LE();
-		if (stringLength) {
-			stream = in->readStream(stringLength);
-			_objectState[i]._description = stream->readLine();
-		} else {
-			_objectState[i]._description = "";
-		}
-
+		_objectState[i]._name = static_cast<StringID>(in->readSint32LE());
+		_objectState[i]._description = static_cast<StringID>(in->readSint32LE());
 		_objectState[i]._roomId = in->readByte();
 		_objectState[i]._id = static_cast<ObjectID>(in->readSint32LE());
 		_objectState[i]._type = static_cast<ObjectType>(in->readSint32LE());
@@ -103,6 +85,45 @@ bool Room::deserialize(Common::ReadStream *in) {
 	_seen = in->readByte();
 
 	return !in->err();
+}
+
+Intro::Intro(SupernovaEngine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = -1;
+	_id = INTRO;
+	_shown[0] = false;
+
+	_objectState[0] =
+	Object(_id, kStringKeycard, kStringKeycardDescription, KEYCARD,
+		   TAKE | CARRIED | COMBINABLE, 255, 255, 0, NULLROOM, 0);
+	_objectState[1] =
+	Object(_id, kStringKnife, kStringKnifeDescription, KNIFE,
+		   TAKE | CARRIED | COMBINABLE, 255, 255, 0, NULLROOM, 0);
+	_objectState[2] =
+	Object(_id, kStringWatch, kStringDefaultDescription, WATCH,
+		   TAKE | COMBINABLE | CARRIED, 255, 255, 8, NULLROOM, 0);
+	_objectState[3] =
+	Object(_id, kStringDiscman, kStringDiscmanDescription, DISCMAN,
+		   TAKE | COMBINABLE, 255, 255, 0, NULLROOM, 0);
+
+	_shouldExit = false;
+
+	introText =
+		_vm->getGameString(kStringIntro1) +
+		_vm->getGameString(kStringIntro2) +
+		_vm->getGameString(kStringIntro3) +
+		_vm->getGameString(kStringIntro4) +
+		_vm->getGameString(kStringIntro5) +
+		_vm->getGameString(kStringIntro6) +
+		_vm->getGameString(kStringIntro7) +
+		_vm->getGameString(kStringIntro8) +
+		_vm->getGameString(kStringIntro9) +
+		_vm->getGameString(kStringIntro10) +
+		_vm->getGameString(kStringIntro11) +
+		_vm->getGameString(kStringIntro12) +
+		_vm->getGameString(kStringIntro13);
 }
 
 void Intro::onEntrance() {
@@ -132,10 +153,10 @@ void Intro::titleScreen() {
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		_gm->wait2(1);
 	titleFadeIn();
-	_vm->renderText("V2.02", 295, 190, kColorWhite44);
-	_vm->renderText("Teil 1:", 64, 120, kColorLightBlue);
-	_vm->renderText("Das Schicksal", 44, 132, kColorWhite99);
-	_vm->renderText("des Horst Hummel", 35, 142, kColorWhite99);
+	_vm->renderText(kStringTitleVersion, 295, 190, kColorWhite44);
+	_vm->renderText(kStringTitle1, 64, 120, kColorLightBlue);
+	_vm->renderText(kStringTitle2, 44, 132, kColorWhite99);
+	_vm->renderText(kStringTitle3, 35, 142, kColorWhite99);
 	_gm->wait2(1);
 	CursorMan.showMouse(true);
 	_vm->playSoundMod(kMusicIntro);
@@ -488,7 +509,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 
 			input.toUppercase();
 			if (_gm->_key.keycode != Common::KEYCODE_ESCAPE) {
-				if (input == _codeword_DE) {
+				if (input == _vm->getGameString(kStringComputerPassword)) {
 					_gm->great(6);
 					g_system->fillScreen(kColorDarkBlue);
 					_vm->renderText("Schlafdauer in Tagen:", 30, 85, kColorWhite99);
@@ -846,7 +867,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 		if (isSectionVisible(10) && isSectionVisible(11)) {
 			_gm->drawImage(_gm->invertSection(10));
 			_gm->drawImage(_gm->invertSection(11));
-			getObject(8)->_name = "Leitung mit Stecker";
+			getObject(8)->_name = kStringWireAndPlug;
 			_gm->takeObject(*getObject(8));
 			getObject(9)->_click = 255;
 			getObject(10)->_click = 255;
@@ -1035,9 +1056,9 @@ void ShipAirlock::onEntrance() {
 bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 	Room *room;
 
-	if ((verb == ACTION_LOOK) && (obj1._id == SCRAP_LK) && (obj1._description != _descriptionScrap)) {
-		_vm->renderMessage(obj1._description.c_str());
-		obj1._description = _descriptionScrap;
+	if ((verb == ACTION_LOOK) && (obj1._id == SCRAP_LK) && (obj1._description != kStringScrapDescription3)) {
+		_vm->renderMessage(obj1._description);
+		obj1._description = kStringScrapDescription3;
 		_gm->takeObject(*getObject(2));
 	} else if (((verb == ACTION_OPEN) || (verb == ACTION_CLOSE)) &&
 	           (obj1._id == OUTERHATCH_TOP)) {
@@ -1049,7 +1070,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 	         ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, LANDINGMOD_HATCH)))
 		_vm->renderMessage("Das Kabel ist schon ganz|richtig an dieser Stelle.");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, HOLD_WIRE)) {
-		getObject(0)->_name = "Leitung mit L\201sterklemme";
+		getObject(0)->_name = kStringWireAndClip;
 		_gm->_inventory.remove(*getObject(2));
 		_gm->_state._terminalStripConnected = true;
 		_gm->_state._terminalStripWire = true;
@@ -1059,7 +1080,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage("Womit denn?");
 		else {
 			_gm->drawImage(5);
-			getObject(0)->_name = "langes Kabel mit Stecker";
+			getObject(0)->_name = kStringWireAndPlug2;
 			getObject(0)->_click = 10;
 			room = _gm->_rooms[CABIN_L2];
 			_gm->_inventory.remove(*getObject(9));
@@ -1095,7 +1116,7 @@ void ShipHold::onEntrance() {
 bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 	Room *r;
 	if ((verb == ACTION_PRESS) && (obj1._id == LANDINGMOD_BUTTON))
-		_vm->renderMessage(obj1._description.c_str());
+		_vm->renderMessage(obj1._description);
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, PEN, LANDINGMOD_BUTTON)) {
 		if (_gm->_state._landingModuleEnergyDaysLeft) {
 			r = _gm->_rooms[GENERATOR];
@@ -1153,7 +1174,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage("An dem Kabel ist doch gar kein Stecker.");
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, TERMINALSTRIP)) {
 		_gm->drawImage(11);
-		getObject(4)->_name = "Leitung mit L\201sterklemme";
+		getObject(4)->_name = kStringWireAndClip;
 		r = _gm->_rooms[HOLD];
 		_gm->_inventory.remove(*r->getObject(2));
 		_gm->_state._terminalStripConnected = true;
@@ -1163,7 +1184,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage("Womit denn?");
 		else {
 			_gm->drawImage(5);
-			getObject(4)->_name = "langes Kabel mit Stecker";
+			getObject(4)->_name = kStringWireAndPlug2;
 			getObject(4)->_click = 6;
 			_gm->_inventory.remove(*_gm->_rooms[CABIN_L2]->getObject(9));
 		}
@@ -1429,7 +1450,7 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 		if (_gm->_state._language == 2)
 			_vm->renderMessage("Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Treffpunkt Galactica\".");
 
-		obj1._description = "Darauf steht:|\"Treffpunkt Galactica\".";
+		obj1._description = kStringSignDescription2;
 		if (_gm->_state._language == 1)
 			return false;
 
@@ -1632,7 +1653,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 			getObject(8 - _gm->_state._coins)->_click = 7;
 			--_gm->_state._coins;
 			if (_gm->_state._coins == 1) {
-				getObject(16)->_name = "M\201nze";
+				getObject(16)->_name = kStringCoin;
 			}
 			if (_gm->_state._coins == 0) {
 				_gm->_inventory.remove(*getObject(16));
@@ -1642,14 +1663,14 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KITCHEN_SIGN) && _gm->_state._language) {
 		if (_gm->_state._language == 2)
 			_vm->renderMessage("Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Zutritt nur f\201r Personal\".");
-		obj1._description = "Darauf steht:|\"Zutritt nur f\201r Personal\".";
+		obj1._description = kStringDoorDescription5;
 		if (_gm->_state._language == 1)
 			return false;
 		_gm->_state._language = 1;
 	} else if ((verb == ACTION_LOOK) && (obj1._id == BATHROOM_SIGN) && _gm->_state._language) {
 		if (_gm->_state._language == 2)
 			_vm->renderMessage("Komisch! Auf einmal kannst|du das Schild lesen!|Darauf steht:\"Toilette\".");
-		obj1._description = "Darauf steht:|\"Toilette\".";
+		obj1._description = kStringDoorDescription6;
 		if (_gm->_state._language == 1)
 			return false;
 		_gm->_state._language = 1;
@@ -2670,11 +2691,11 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if (((verb == ACTION_WALK) || ((verb == ACTION_OPEN) && !obj1.hasProperty(OPENED))) &&
 	           (obj1._id >= DOOR1) && (obj1._id <= DOOR4) &&
 	           obj1.hasProperty(OCCUPIED)) {
-		_vm->renderMessage(_dontEnter.c_str());
+		_vm->renderMessage(kStringDontEnter);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR1) &&
 	           !getObject(4)->hasProperty(OPENED)) {
 		if (getObject(4)->hasProperty(OCCUPIED))
-			_vm->renderMessage(_dontEnter.c_str());
+			_vm->renderMessage(kStringDontEnter);
 		else {
 			_gm->drawImage(1);
 			_vm->playSound(kAudioDoorOpen);
@@ -2685,7 +2706,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR2) &&
 	           !getObject(5)->hasProperty(OPENED)) {
 		if (getObject(5)->hasProperty(OCCUPIED)) {
-			_vm->renderMessage(_dontEnter.c_str());
+			_vm->renderMessage(kStringDontEnter);
 		} else {
 			_gm->drawImage(2);
 			_vm->playSound(kAudioDoorOpen);
@@ -2696,7 +2717,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR3) &&
 	           !getObject(6)->hasProperty(OPENED)) {
 		if (getObject(6)->hasProperty(OCCUPIED)) {
-			_vm->renderMessage(_dontEnter.c_str());
+			_vm->renderMessage(kStringDontEnter);
 		} else {
 			_gm->drawImage(3);
 			_vm->playSound(kAudioDoorOpen);
@@ -2707,7 +2728,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR4) &&
 	           !getObject(7)->hasProperty(OPENED)) {
 		if (getObject(7)->hasProperty(OCCUPIED)) {
-			_vm->renderMessage(_dontEnter.c_str());
+			_vm->renderMessage(kStringDontEnter);
 		} else {
 			_gm->drawImage(4);
 			_vm->playSound(kAudioDoorOpen);
@@ -2757,7 +2778,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
-			_vm->renderMessage(kBroken);
+			_vm->renderMessage(kStringBroken);
 		else
 			_gm->telomat(0);
 	} else if (((verb == ACTION_OPEN) || (verb == ACTION_USE)) &&
@@ -2840,7 +2861,7 @@ bool AxacussOffice2::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
-			_vm->renderMessage(kBroken);
+			_vm->renderMessage(kStringBroken);
 		else
 			_gm->telomat(1);
 	} else
@@ -2865,7 +2886,7 @@ bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
-			_vm->renderMessage(kBroken);
+			_vm->renderMessage(kStringBroken);
 		else
 			_gm->telomat(2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == PAINTING)) {
@@ -2894,7 +2915,7 @@ bool AxacussOffice4::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
-			_vm->renderMessage(kBroken);
+			_vm->renderMessage(kStringBroken);
 		else
 			_gm->telomat(3);
 	} else
@@ -3026,6 +3047,31 @@ bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 		return true;
 	}
 	return false;
+}
+
+Outro::Outro(SupernovaEngine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = -1;
+	_id = OUTRO;
+	_shown[0] = false;
+
+	outroText =
+		_vm->getGameString(kStringOutro1) +
+		_vm->getGameString(kStringOutro2) +
+		_vm->getGameString(kStringOutro3) +
+		_vm->getGameString(kStringOutro4) +
+		_vm->getGameString(kStringOutro5) +
+		_vm->getGameString(kStringOutro6) +
+		_vm->getGameString(kStringOutro7) +
+		_vm->getGameString(kStringOutro8) +
+		_vm->getGameString(kStringOutro9) +
+		_vm->getGameString(kStringOutro10) +
+		_vm->getGameString(kStringOutro11) +
+		_vm->getGameString(kStringOutro12) +
+		_vm->getGameString(kStringOutro13) +
+		_vm->getGameString(kStringOutro14);
 }
 
 void Outro::onEntrance() {
