@@ -793,4 +793,25 @@ void GameState::markNodeAsVisited(uint16 node, uint16 room, uint32 age) {
 	_data.zipDestinations[arrayIndex] |= 1 << (zipBitIndex % 32);
 }
 
+Common::String Saves::buildName(const char *name, Common::Platform platform) {
+	const char *format;
+
+	if (platform == Common::kPlatformXbox) {
+		format = "%s.m3x";
+	} else {
+		format = "%s.m3s";
+	}
+
+	return Common::String::format(format, name);
+}
+
+Common::StringArray Saves::list(Common::SaveFileManager *saveFileManager, Common::Platform platform) {
+	Common::String searchPattern = Saves::buildName("*", platform);
+	Common::StringArray filenames = saveFileManager->listSavefiles(searchPattern);
+
+	// The saves are sorted alphabetically
+	Common::sort(filenames.begin(), filenames.end());
+
+	return filenames;
+}
 } // End of namespace Myst3

@@ -431,6 +431,17 @@ private:
 	void updateTickCounters();
 };
 
+/**
+ * Save files related utility functions
+ */
+struct Saves {
+	/** Build a save file name according to the game platform */
+	static Common::String buildName(const char *name, Common::Platform platform);
+
+	/** List all the save file names for the game platform, sorted alphabetically */
+	static Common::StringArray list(Common::SaveFileManager *saveFileManager, Common::Platform platform);
+};
+
 } // End of namespace Myst3
 
 #endif // VARIABLES_H_

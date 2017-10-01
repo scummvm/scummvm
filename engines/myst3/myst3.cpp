@@ -1486,7 +1486,8 @@ bool Myst3Engine::canLoadGameStateCurrently() {
 }
 
 Common::Error Myst3Engine::loadGameState(int slot) {
-	return loadGameState(_saveFileMan->listSavefiles("*.M3S")[slot], kTransitionNone);
+	Common::StringArray filenames = Saves::list(_saveFileMan, getPlatform());
+	return loadGameState(filenames[slot], kTransitionNone);
 }
 
 Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType transition) {

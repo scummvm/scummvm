@@ -478,10 +478,7 @@ void PagingMenu::saveLoadAction(uint16 action, uint16 item) {
 }
 
 void PagingMenu::loadMenuOpen() {
-	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
-
-	// The saves are sorted alphabetically
-	Common::sort(_saveLoadFiles.begin(), _saveLoadFiles.end());
+	_saveLoadFiles = Saves::list(_vm->getSaveFileManager(), _vm->getPlatform());
 
 	_vm->_state->setMenuSaveLoadCurrentPage(0);
 	saveLoadUpdateVars();
@@ -561,10 +558,7 @@ void PagingMenu::loadMenuLoad() {
 }
 
 void PagingMenu::saveMenuOpen() {
-	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
-
-	// The saves are sorted alphabetically
-	Common::sort(_saveLoadFiles.begin(), _saveLoadFiles.end());
+	_saveLoadFiles = Saves::list(_vm->getSaveFileManager(), _vm->getPlatform());
 
 	_saveLoadAgeName = getAgeLabel(_vm->_state);
 	_saveCaretCounter = kCaretSpeed;
@@ -644,10 +638,7 @@ void PagingMenu::saveLoadErase() {
 	if (!_vm->getSaveFileManager()->removeSavefile(_saveLoadFiles[index]))
 		_vm->openDialog(dialogIdFromType(kErrorEraseSavedGame)); // Error dialog
 
-	_saveLoadFiles = _vm->getSaveFileManager()->listSavefiles("*.m3s");
-
-	// The saves are sorted alphabetically
-	Common::sort(_saveLoadFiles.begin(), _saveLoadFiles.end());
+	_saveLoadFiles = Saves::list(_vm->getSaveFileManager(), _vm->getPlatform());
 
 	saveLoadUpdateVars();
 

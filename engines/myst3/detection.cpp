@@ -212,33 +212,19 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
-		Common::String searchPattern = buildSaveName("*", platform);
+		Common::StringArray filenames = Saves::list(g_system->getSavefileManager(), platform);
 
 		SaveStateList saveList;
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(searchPattern);
-
 		for (uint32 i = 0; i < filenames.size(); i++)
 			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
 
 		return saveList;
 	}
 
-	Common::String buildSaveName(const char *name, Common::Platform platform) const {
-		const char *format;
-
-		if (platform == Common::kPlatformXbox) {
-			format = "%s.m3x";
-		} else {
-			format = "%s.m3s";
-		}
-
-		return Common::String::format(format, name);
-	}
-
 	SaveStateDescriptor getSaveDescription(const char *target, int slot) const {
 		SaveStateList saves = listSaves(target);
 
-		SaveStateDescriptor description = SaveStateDescriptor();
+		SaveStateDescriptor description;
 		for (uint32 i = 0; i < saves.size(); i++) {
 			if (saves[i].getSaveSlot() == slot) {
 				description = saves[i];
