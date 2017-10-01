@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Mission Supernova 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-21 23:49+0100\n"
-"PO-Revision-Date: 2017-09-03 15:57+0000\n"
+"PO-Revision-Date: 2017-09-29 19:51+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
@@ -2287,7 +2287,7 @@ msgstr ""
 
 #: ../../msn/msn_r3.c:657
 msgid "Hmm, er scheint kaputt zu sein."
-msgstr ""
+msgstr "Hmm, it seems to be broken."
 
 #: ../../msn/msn_r3.c:658
 msgid "Hmm, it seems to be broken."
