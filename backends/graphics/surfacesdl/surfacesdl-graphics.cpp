@@ -614,42 +614,25 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 		break;
 #ifdef USE_SCALERS
 	case GFX_DOUBLESIZE:
+	case GFX_2XSAI:
+	case GFX_SUPER2XSAI:
+	case GFX_SUPEREAGLE:
+	case GFX_ADVMAME2X:
+	case GFX_TV2X:
+	case GFX_DOTMATRIX:
+#ifdef USE_HQ_SCALERS
+	case GFX_HQ2X:
+#endif
 		newScaleFactor = 2;
 		break;
 	case GFX_TRIPLESIZE:
-		newScaleFactor = 3;
-		break;
-
-	case GFX_2XSAI:
-		newScaleFactor = 2;
-		break;
-	case GFX_SUPER2XSAI:
-		newScaleFactor = 2;
-		break;
-	case GFX_SUPEREAGLE:
-		newScaleFactor = 2;
-		break;
-	case GFX_ADVMAME2X:
-		newScaleFactor = 2;
-		break;
 	case GFX_ADVMAME3X:
-		newScaleFactor = 3;
-		break;
 #ifdef USE_HQ_SCALERS
-	case GFX_HQ2X:
-		newScaleFactor = 2;
-		break;
 	case GFX_HQ3X:
+#endif
 		newScaleFactor = 3;
 		break;
 #endif
-	case GFX_TV2X:
-		newScaleFactor = 2;
-		break;
-	case GFX_DOTMATRIX:
-		newScaleFactor = 2;
-		break;
-#endif // USE_SCALERS
 
 	default:
 		warning("unknown gfx mode %d", mode);
