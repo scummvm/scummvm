@@ -43,8 +43,7 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
 
-	virtual bool setGraphicsMode(int mode);
-	virtual void resetGraphicsScale();
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
 
 #ifdef USE_RGB_COLOR
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
@@ -69,6 +68,8 @@ protected:
 	virtual void refreshScreen();
 
 	virtual void *getProcAddress(const char *name) const;
+	virtual int getGraphicsModeScale(int mode) const override { return 1; }
+
 private:
 	bool setupMode(uint width, uint height);
 

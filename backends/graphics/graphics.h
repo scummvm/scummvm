@@ -27,6 +27,7 @@
 #include "common/noncopyable.h"
 #include "common/keyboard.h"
 
+#include "graphics/mode.h"
 #include "graphics/palette.h"
 
 /**
@@ -58,6 +59,7 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void initSizeHint(const Graphics::ModeList &modes) = 0;
 	virtual int getScreenChangeID() const = 0;
 
 	virtual void beginGFXTransaction() = 0;

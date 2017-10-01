@@ -122,14 +122,26 @@ public:
 	 */
 	SdlWindow *getWindow() const { return _window; }
 
+	virtual void initSizeHint(const Graphics::ModeList &modes) override;
+
 protected:
+	virtual int getGraphicsModeScale(int mode) const = 0;
+
+	bool defaultGraphicsModeConfig() const;
+	int getGraphicsModeIdByName(const Common::String &name) const;
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:
-	void unlockWindowSize() { _allowWindowSizeReset = true; }
+	void unlockWindowSize() {
+		_allowWindowSizeReset = true;
+		_hintedWidth = 0;
+		_hintedHeight = 0;
+	}
 
 protected:
 	Uint32 _lastFlags;
 	bool _allowWindowSizeReset;
+	int _hintedWidth, _hintedHeight;
 
 	bool createOrUpdateWindow(const int width, const int height, const Uint32 flags);
 #endif

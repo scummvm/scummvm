@@ -598,19 +598,11 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 }
 #endif
 
-bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
-	Common::StackLock lock(_graphicsMutex);
-
-	assert(_transactionMode == kTransactionActive);
-
-	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
-		return true;
-
-	int newScaleFactor = 1;
-
+int SurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
+	int scale;
 	switch (mode) {
 	case GFX_NORMAL:
-		newScaleFactor = 1;
+		scale = 1;
 		break;
 #ifdef USE_SCALERS
 	case GFX_DOUBLESIZE:
@@ -623,18 +615,34 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 #ifdef USE_HQ_SCALERS
 	case GFX_HQ2X:
 #endif
-		newScaleFactor = 2;
+		scale = 2;
 		break;
 	case GFX_TRIPLESIZE:
 	case GFX_ADVMAME3X:
 #ifdef USE_HQ_SCALERS
 	case GFX_HQ3X:
 #endif
-		newScaleFactor = 3;
+		scale = 3;
 		break;
 #endif
-
 	default:
+		scale = -1;
+	}
+
+	return scale;
+}
+
+bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
+	Common::StackLock lock(_graphicsMutex);
+
+	assert(_transactionMode == kTransactionActive);
+
+	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
+		return true;
+
+	int newScaleFactor = getGraphicsModeScale(mode);
+
+	if (newScaleFactor == -1) {
 		warning("unknown gfx mode %d", mode);
 		return false;
 	}
@@ -773,6 +781,15 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
 		return;
 #endif
+
+	if ((int)w != _videoMode.screenWidth || (int)h != _videoMode.screenHeight) {
+		const bool useDefault = defaultGraphicsModeConfig();
+		if (useDefault && w > 320) {
+			resetGraphicsScale();
+		} else {
+			setGraphicsMode(getGraphicsModeIdByName(ConfMan.get("gfx_mode")));
+		}
+	}
 
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;

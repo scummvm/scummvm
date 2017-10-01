@@ -25,6 +25,7 @@
 #include "backends/audiocd/audiocd.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
+#include "engines/util.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
 
@@ -707,6 +708,13 @@ Common::Error GobEngine::initGraphics() {
 		_height = 200;
 		_mode   = 0x14;
 	}
+
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(_width, _height));
+	if (getGameType() == kGameTypeLostInTime) {
+		modes.push_back(Graphics::Mode(640, 400));
+	}
+	initGraphicsModes(modes);
 
 	_video->setSize();
 
