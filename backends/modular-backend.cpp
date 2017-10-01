@@ -113,6 +113,10 @@ void ModularBackend::initSize(uint w, uint h, const Graphics::PixelFormat *forma
 	_graphicsManager->initSize(w, h, format);
 }
 
+void ModularBackend::initSizeHint(const Graphics::ModeList &modes) {
+	_graphicsManager->initSizeHint(modes);
+}
+
 int ModularBackend::getScreenChangeID() const {
 	return _graphicsManager->getScreenChangeID();
 }

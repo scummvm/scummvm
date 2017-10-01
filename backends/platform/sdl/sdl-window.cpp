@@ -223,6 +223,33 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	const uint32 oldNonUpdateableFlags = _lastFlags & ~updateableFlagsMask;
 	const uint32 newNonUpdateableFlags = flags & ~updateableFlagsMask;
 
+	const uint32 fullscreenFlags = flags & fullscreenMask;
+
+	// This is terrible, but there is no way in SDL to get information on the
+	// maximum bounds of a window with decoration, and SDL is too dumb to make
+	// sure the window's surface doesn't grow beyond the display bounds, which
+	// can easily happen with 3x scalers. There is a function in SDL to get the
+	// window decoration size, but it only exists starting in SDL 2.0.5, which
+	// is a buggy release on some platforms so we can't safely use 2.0.5+
+	// features since some users replace the SDL dynamic library with 2.0.4, and
+	// the documentation says it only works on X11 anyway, which means it is
+	// basically worthless. So we'll just try to keep things closeish to the
+	// maximum for now.
+	SDL_DisplayMode displayMode;
+	SDL_GetDesktopDisplayMode(0, &displayMode);
+	if (!fullscreenFlags) {
+		displayMode.w -= 20;
+		displayMode.h -= 30;
+	}
+
+	if (width > displayMode.w) {
+		width = displayMode.w;
+	}
+
+	if (height > displayMode.h) {
+		height = displayMode.h;
+	}
+
 	if (!_window || oldNonUpdateableFlags != newNonUpdateableFlags) {
 		destroyWindow();
 		_window = SDL_CreateWindow(_windowCaption.c_str(), _lastX,
@@ -231,8 +258,6 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 			setupIcon();
 		}
 	} else {
-		const uint32 fullscreenFlags = flags & fullscreenMask;
-
 		if (fullscreenFlags) {
 			SDL_DisplayMode fullscreenMode;
 			fullscreenMode.w = width;

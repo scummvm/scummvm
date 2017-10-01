@@ -32,6 +32,7 @@
 
 #include "engines/engine.h"
 #include "engines/dialogs.h"
+#include "engines/util.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -195,35 +196,21 @@ void Engine::initializePath(const Common::FSNode &gamePath) {
 }
 
 void initCommonGFX() {
-	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
 	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
 
-	assert(transientDomain);
-
-	// Override global scaler with any game-specific define
-	if (ConfMan.hasKey("gfx_mode")) {
-		Common::String gfxMode = ConfMan.get("gfx_mode");
-		g_system->setGraphicsMode(gfxMode.c_str());
-	}
-
-	// Note: The following code deals with the fullscreen / ASR settings. This
-	// is a bit tricky, because there are three ways the user can affect these
-	// settings: Via the config file, via the command line, and via in-game
-	// hotkeys.
 	// Any global or command line settings already have been applied at the time
-	// we get here. Hence we only do something
+	// we get here, so we only do something if the game domain overrides those
+	// values
+	if (gameDomain) {
+		if (gameDomain->contains("aspect_ratio"))
+			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 
-	// (De)activate aspect-ratio correction as determined by the config settings
-	if (gameDomain && gameDomain->contains("aspect_ratio"))
-		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		if (gameDomain->contains("fullscreen"))
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 
-	// (De)activate fullscreen mode as determined by the config settings
-	if (gameDomain && gameDomain->contains("fullscreen"))
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-	
-	// (De)activate filtering mode as determined by the config settings
-	if (gameDomain && gameDomain->contains("filtering"))
-		g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+		if (gameDomain->contains("filtering"))
+			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+	}
 }
 
 // Please leave the splash screen in working order for your releases, even if they're commercial.
@@ -283,6 +270,10 @@ void splashScreen() {
 	g_system->hideOverlay();
 
 	splash = true;
+}
+
+void initGraphicsModes(const Graphics::ModeList &modes) {
+	g_system->initSizeHint(modes);
 }
 
 void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
