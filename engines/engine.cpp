@@ -353,9 +353,6 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 	}
 }
 
-
-using Graphics::PixelFormat;
-
 /**
  * Determines the first matching format between two lists.
  *
@@ -364,16 +361,16 @@ using Graphics::PixelFormat;
  * @return			The first item on the backend list that also occurs on the frontend list
  *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
  */
-inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
+inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::PixelFormat> &backend, const Common::List<Graphics::PixelFormat> &frontend) {
 #ifdef USE_RGB_COLOR
-	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
-		for (Common::List<PixelFormat>::iterator j = frontend.begin(); j != frontend.end(); ++j) {
+	for (Common::List<Graphics::PixelFormat>::const_iterator i = backend.begin(); i != backend.end(); ++i) {
+		for (Common::List<Graphics::PixelFormat>::const_iterator j = frontend.begin(); j != frontend.end(); ++j) {
 			if (*i == *j)
 				return *i;
 		}
 	}
 #endif
-	return PixelFormat::createFormatCLUT8();
+	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
 
