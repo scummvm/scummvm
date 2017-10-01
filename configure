@@ -126,6 +126,7 @@ done
 # Default settings
 #
 # Default lib behavior yes/no/auto
+_ogg=auto
 _vorbis=auto
 _sdlnet=auto
 _libcurl=auto
@@ -999,8 +1000,10 @@ Optional Libraries:
   --disable-alsa           disable ALSA midi sound support [autodetect]
 
   --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
+  --disable-ogg      	   disable Ogg support [autodetect]
+
   --with-vorbis-prefix=DIR Prefix where libvorbis is installed (optional)
-  --disable-vorbis         disable Ogg Vorbis support [autodetect]
+  --disable-vorbis         disable Vorbis support [autodetect]
 
   --with-tremor-prefix=DIR Prefix where tremor is installed (optional)
   --disable-tremor         disable tremor support [autodetect]
@@ -1107,6 +1110,8 @@ for ac_option in $@; do
 	--disable-sndio)          _sndio=no       ;;
 	--enable-timidity)        _timidity=yes   ;;
 	--disable-timidity)       _timidity=no    ;;
+	--enable-ogg)             _ogg=yes        ;;
+	--disable-ogg)            _ogg=no         ;;
 	--enable-vorbis)          _vorbis=yes     ;;
 	--disable-vorbis)         _vorbis=no      ;;
 	--enable-tremor)          _tremor=yes     ;;
@@ -3905,21 +3910,45 @@ EOF
 cc_check -lm && append_var LIBS "-lm"
 
 #
-# Check for Ogg Vorbis
+# Check for Ogg
 #
-echocheck "Ogg Vorbis"
+echocheck "Ogg"
+if test "$_ogg" = auto ; then
+	_ogg=no
+	cat > $TMPC << EOF
+#include <ogg/ogg.h>
+int main(void) { return 0; }
+EOF
+	cc_check $OGG_CFLAGS $OGG_LIBS -logg && _ogg=yes
+fi
+if test "$_ogg" = yes ; then
+	append_var LIBS "$OGG_LIBS -logg"
+	append_var INCLUDES "$OGG_CFLAGS"
+fi
+define_in_config_if_yes "$_ogg" 'USE_OGG'
+echo "$_ogg"
+
+#
+# Check for Vorbis
+#
+echocheck "Vorbis"
 if test "$_vorbis" = auto ; then
 	_vorbis=no
 	cat > $TMPC << EOF
 #include <vorbis/codec.h>
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
-	cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
-		-lvorbisfile -lvorbis -logg && _vorbis=yes
+	if test "$_ogg" = yes ; then
+		cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
+			-lvorbisfile -lvorbis -logg && _vorbis=yes
+	else
+		cc_check $VORBIS_CFLAGS $VORBIS_LIBS \
+			-lvorbisfile -lvorbis && _vorbis=yes
+	fi
 fi
 if test "$_vorbis" = yes ; then
-	append_var LIBS "$OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
-	append_var INCLUDES "$OGG_CFLAGS $VORBIS_CFLAGS"
+	append_var LIBS "$VORBIS_LIBS -lvorbisfile -lvorbis"
+	append_var INCLUDES "$VORBIS_CFLAGS"
 fi
 define_in_config_if_yes "$_vorbis" 'USE_VORBIS'
 echo "$_vorbis"
@@ -3938,8 +3967,13 @@ if test "$_tremor" = auto ; then
 #include <tremor/ivorbiscodec.h>
 int main(void) { vorbis_info_init(0); return 0; }
 EOF
-	cc_check $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
-	_tremor=yes
+	if test "$_ogg" = yes ; then
+		cc_check $TREMOR_CFLAGS $TREMOR_LIBS $OGG_CFLAGS $OGG_LIBS \
+			-lvorbisidec -logg && _tremor=yes
+	else
+		cc_check $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
+		_tremor=yes
+	fi
 fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
 	add_line_to_config_h '#define USE_TREMOR'
@@ -3955,7 +3989,7 @@ if test "$_tremor" = yes && test "$_vorbis" = no; then
 	append_var INCLUDES "$TREMOR_CFLAGS"
 else
 	if test "$_vorbis" = yes; then
-		_tremor="no (Ogg Vorbis/Tremor support is mutually exclusive)"
+		_tremor="no (Vorbis/Tremor support is mutually exclusive)"
 	fi
 	add_line_to_config_h '#undef USE_TREMOR'
 fi
@@ -3969,10 +4003,15 @@ echocheck "FLAC >= 1.0.1"
 if test "$_flac" = auto ; then
 	_flac=no
 	cat > $TMPC << EOF
+#include <FLAC/stream_decoder.h>
 #include <FLAC/format.h>
-int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
+int main(void) {
+	FLAC__StreamDecoder *decoder = FLAC__stream_decoder_new();
+	FLAC__stream_decoder_delete(decoder);
+	return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */
+}
 EOF
-	if test "$_vorbis" = yes ; then
+	if test "$_ogg" = yes ; then
 		cc_check $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
 			-lFLAC -logg && _flac=yes
 	else
@@ -3981,11 +4020,7 @@ EOF
 	fi
 fi
 if test "$_flac" = yes ; then
-	if test "$_vorbis" = yes ; then
-		append_var LIBS "$FLAC_LIBS $OGG_LIBS -lFLAC -logg"
-	else
-		append_var LIBS "$FLAC_LIBS -lFLAC"
-	fi
+	append_var LIBS "$FLAC_LIBS -lFLAC"
 	append_var INCLUDES "$FLAC_CFLAGS"
 fi
 define_in_config_if_yes "$_flac" 'USE_FLAC'
