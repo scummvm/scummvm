@@ -70,8 +70,6 @@ const AudioInfo audioInfo[kAudioNumSamples] = {
 	{54, 31040,    -1}
 };
 
-const char *const Object::defaultDescription = "Es ist nichts Besonderes daran.";
-const char *const Object::takeMessage = "Das mußt du erst nehmen.";
 const Object Object::nullObject = Object();
 
 ObjectType operator|(ObjectType a, ObjectType b) {
@@ -906,7 +904,8 @@ bool SupernovaEngine::loadGame(int slot) {
 	}
 	
 	byte saveVersion = savefile->readByte();
-	if (saveVersion > SAVEGAME_VERSION) {
+	// Save version 1 was used during development and is no longer supported
+	if (saveVersion > SAVEGAME_VERSION || saveVersion == 1) {
 		warning("Save game version %i not supported", saveVersion);
 		delete savefile;
 		return Common::kUnknownError;

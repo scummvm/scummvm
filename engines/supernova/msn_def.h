@@ -401,25 +401,80 @@ enum ObjectID {
 };
 
 enum StringID {
-	kCommandGo = 0, kCommandLook, kCommandTake, kCommandOpen, kCommandClose,
-	kCommandPress, kCommandPull, kCommandUse, kCommandTalk, kCommandGive,
-	kStatusCommandGo, kStatusCommandLook, kStatusCommandTake, kStatusCommandOpen, kStatusCommandClose,
-	kStatusCommandPress, kStatusCommandPull, kStatusCommandUse, kStatusCommandTalk, kStatusCommandGive,
-	kBroken, kIntro1, kIntro2, kIntro3, kIntro4,
-	kIntro5, kIntro6, kIntro7, kIntro8, kIntro9,
-	kIntro10, kIntro11, kIntro12, kIntro13, kKeycard,
-	kKeycardDesc, kKnife, kKnifeDesc, kWatch, kDiscman,
-	kDiscmanDesc
+	kNoString = -1,
+	// 0
+	kStringCommandGo = 0, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
+	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive,
+	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
+	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive,
+	kStringTitleVersion, kStringTitle1, kStringTitle2, kStringTitle3, kStringIntro1,
+	kStringIntro2, kStringIntro3, kStringIntro4, kStringIntro5, kStringIntro6,
+	kStringIntro7, kStringIntro8, kStringIntro9, kStringIntro10, kStringIntro11,
+	kStringIntro12, kStringIntro13, kStringBroken, kStringDefaultDescription, kStringTakeMessage,
+	kStringKeycard, kStringKeycardDescription, kStringKnife, kStringKnifeDescription, kStringWatch,
+	kStringDiscman, kStringDiscmanDescription, kStringHatch, kStringButton, kStringHatchButtonDescription,
+	// 50
+	kStringLadder, kStringExit, kStringCockpitHatchDescription, kStringKitchenHatchDescription, kStringStasisHatchDescription,
+	kStringStasisHatchDescription2, kStringSlot, kStringSlotDescription, kStringCorridor, kStringComputer,
+	kStringComputerPassword, kStringInstruments, kStringInstrumentsDescription1, kStringMonitor, kStringMonitorDescription,
+	kStringImage, kStringGenericDescription1, kStringGenericDescription2, kStringGenericDescription3, kStringGenericDescription4,
+	kStringMagnete, kStringMagneteDescription, kStringPen, kStringPenDescription, kStringShelf,
+	kStringCompartment, kStringSocket, kStringToilet, kStringPistol, kStringPistolDescription,
+	kStringBooks, kStringBooksDescription, kStringSpool, kStringSpoolDescription, kStringBook,
+	kStringUnderwear, kStringUnderwearDescription, kStringClothes, kStringJunk, kStringJunkDescription,
+	kStringFolders, kStringFoldersDescription, kStringPoster, kStringPosterDescription1, kStringPosterDescription2,
+	kStringSpeaker, kStringRecord, kStringRecordDescription, kStringRecordStand, kStringRecordStandDescription,
+	// 100
+	kStringTurntable, kStringTurntableDescription, kStringWire, kStringPlug, kStringImageDescription1,
+	kStringDrawingInstruments, kStringDrawingInstrumentsDescription, kStringChessGame, kStringChessGameDescription1, kStringTennisRacket,
+	kStringTennisRacketDescription, kStringTennisBall, kStringChessGameDescription2, kStringBed, kStringBedDescription,
+	kStringCompartmentDescription, kStringAlbums, kStringAlbumsDescription, kStringRope, kStringRopeDescription,
+	kStringShelfDescription, kStringClothesDescription, kStringSocks, kStringBookHitchhiker, kStringBathroom,
+	kStringBathroomDescription, kStringShower, kStringHatchDescription1, kStringHatchDescription2, kStringHelmet,
+	kStringHelmetDescription, kStringSuit, kStringSuitDescription, kStringLifeSupport, kStringLifeSupportDescription,
+	kStringScrap, kStringScrapDescription1, kStringTerminalStrip, kStringScrapDescription2, kStringReactor,
+	kStringReactorDescription, kStringNozzle, kStringPumpkin, kStringPumpkinDescription, kStringLandingModule,
+	kStringLandingModuleDescription, kStringHatchDescription3, kStringGenerator, kStringGeneratorDescription, kStringScrapDescription3,
+	// 150
+	kSafetyButtonDescription, kStringKeyboard, kStringGeneratorWire, kStringEmptySpool, kStringKeycard2,
+	kStringKeycard2Description, kStringTrap, kStringVoltmeter, kStringClip, kStringWireDescription,
+	kStringStone, kStringCaveOpening, kStringCaveOpeningDescription, kStringExitDescription, kStringCave,
+	kStringSign, kStringSignDescription, kStringEntrance, kStringStar, kStringSpaceshift,
+	kStringPorter, kStringPorterDescription, kStringDoor, kStringChewingGum, kStringGummyBears,
+	kStringChocolateBall, kStringEgg, kStringLiquorice, kStringPill, kStringPillDescription,
+	kStringVendingMachine, kStringVendingMachineDescription, kStringToiletDescription, kStringStaircase, kStringCoins,
+	kStringCoinsDescription, kStringTabletPackage, kStringTabletPackageDescription, kStringChair, kStringShoes,
+	kStringShoesDescription, kStringFrogFace, kStringScrible, kStringScribleDescription, kStringWallet,
+	kStringMenu, kStringMenuDescription, kStringCup, kStringCupDescription, kStringBill,
+	// 200
+	kStringBillDescription, kStringKeycard3, kStringAnnouncement, kStringAnnouncementDescription, kStringRoger,
+	kStringUfo, kStringUfoDescription, kStringTray, kStringTrayDescription, kStringLamp,
+	kStringLampDescription, kStringEyes, kStringEyesDescription, kStringSocketDescription, kStringMetalBlock,
+	kStringMetalBlockDescription, kStringRobot, kStringRobotDescription, kStringTable, kStringTableDescription,
+	kStringCellDoor, kStringCellDoorDescription, kStringLaptop, kStringWristwatch, kStringPillar,
+	kStringDoorDescription1, kStringDoorDescription2, kStringDoorDescription3, kStringDoorDescription4, kStringDontEnter,
+	kStringAxacussan, kStringAxacussanDescription, kStringImageDescription2, kStringMastercard, kStringMastercardDescription,
+	kStringLamp2, kStringGenericDescription5, kStringMoney, kStringMoneyDescription1, kStringLocker,
+	kStringLockerDescription, kStringLetter, kStringCube, kStringGenericDescription6, kStringGenericDescription7,
+	kStringStrangeThing, kStringGenericDescription8, kStringImageDescription3, kStringPlant, kStringStatue,
+	// 250
+	kStringStatueDescription, kStringPlantDescription, kStringComputerDescription, kStringGraffiti, kStringGraffitiDescription,
+	kStringMoneyDescription2, kStringJungle, kStringJungleDescription, kStringOutro1, kStringOutro2,
+	kStringOutro3, kStringOutro4, kStringOutro5, kStringOutro6, kStringOutro7,
+	kStringOutro8, kStringOutro9, kStringOutro10, kStringOutro11, kStringOutro12,
+	kStringOutro13, kStringOutro14, kStringWireAndPlug, kStringWireAndClip, kStringWireAndPlug2,
+	kStringSignDescription2, kStringCoin, kStringDoorDescription5, kStringDoorDescription6, kStringKeycard2Description2,
+	kSringSpoolAndClip
 };
 
 static StringID guiCommands[] = {
-	kCommandGo, kCommandLook, kCommandTake, kCommandOpen, kCommandClose,
-	kCommandPress, kCommandPull, kCommandUse, kCommandTalk, kCommandGive
+	kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
+	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive
 };
 
 static StringID guiStatusCommands[] = {
-	kStatusCommandGo, kStatusCommandLook, kStatusCommandTake, kStatusCommandOpen, kStatusCommandClose,
-	kStatusCommandPress, kStatusCommandPull, kStatusCommandUse, kStatusCommandTalk, kStatusCommandGive
+	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
+	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive
 };
 
 ObjectType operator|(ObjectType a, ObjectType b);
@@ -430,13 +485,11 @@ ObjectType &operator&=(ObjectType &a, ObjectType b);
 ObjectType &operator^=(ObjectType &a, ObjectType b);
 
 struct Object {
-	static const char *const defaultDescription;
-	static const char *const takeMessage;
 	static const Object nullObject;
 
 	Object()
-		: _name("")
-		, _description(Object::defaultDescription)
+		: _name(kNoString)
+		, _description(kStringDefaultDescription)
 		, _id(INVALIDOBJECT)
 		, _roomId(NULLROOM)
 		, _type(NULLTYPE)
@@ -446,7 +499,7 @@ struct Object {
 		, _exitRoom(NULLROOM)
 		, _direction(0)
 	{}
-	Object(byte roomId, const char *name, const char *description, ObjectID id, ObjectType type,
+	Object(byte roomId, StringID name, StringID description, ObjectID id, ObjectType type,
 	       byte click, byte click2, byte section = 0, RoomID exitRoom = NULLROOM, byte direction = 0)
 		: _name(name)
 		, _description(description)
@@ -491,8 +544,8 @@ struct Object {
 	}
 
 	byte _roomId;
-	Common::String _name;
-	Common::String _description;
+	StringID _name;
+	StringID _description;
 	ObjectID _id;
 	ObjectType _type;
 	byte _click;

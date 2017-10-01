@@ -36,233 +36,414 @@
 
 const char *gameText[] = {
 	// 0
-	"Gehe",         // kCommandGo
-	"Schau",        // kCommandLook
-	"Nimm",         // kCommandTake
-	"\231ffne",     // kCommandOpen
-	"Schlie\341e",  // kCommandClose
+	"Gehe",         // kStringCommandGo
+	"Schau",        // kStringCommandLook
+	"Nimm",         // kStringCommandTake
+	"\231ffne",     // kStringCommandOpen
+	"Schlie\341e",  // kStringCommandClose
 	// 5
-	"Dr\201cke",    // kCommandPress
-	"Ziehe",        // kCommandPull
-	"Benutze",      // kCommandUse
-	"Rede",         // kCommandTalk
-	"Gib",          // kCommandGive
+	"Dr\201cke",    // kStringCommandPress
+	"Ziehe",        // kStringCommandPull
+	"Benutze",      // kStringCommandUse
+	"Rede",         // kStringCommandTalk
+	"Gib",          // kStringCommandGive
 	// 10
-	"Gehe zu ",     // kStatusCommandGo
-	"Schau ",       // kStatusCommandLook
-	"Nimm ",        // kStatusCommandTake
-	"\231ffne ",    // kStatusCommandOpen
-	"Schlie\341e ", // kStatusCommandClose
+	"Gehe zu ",     // kStringStatusCommandGo
+	"Schau ",       // kStringStatusCommandLook
+	"Nimm ",        // kStringStatusCommandTake
+	"\231ffne ",    // kStringStatusCommandOpen
+	"Schlie\341e ", // kStringStatusCommandClose
 	// 15
-	"Dr\201cke ",   // kStatusCommandPress
-	"Ziehe ",       // kStatusCommandPull
-	"Benutze ",     // kStatusCommandUse
-	"Rede mit ",    // kStatusCommandTalk
-	"Gib ",         // kStatusCommandGive
+	"Dr\201cke ",   // kStringStatusCommandPress
+	"Ziehe ",       // kStringStatusCommandPull
+	"Benutze ",     // kStringStatusCommandUse
+	"Rede mit ",    // kStringStatusCommandTalk
+	"Gib ",         // kStringStatusCommandGive
 	// 20
-	"Hmm, er scheint kaputt zu sein.",       // kBroken
-	"^(C) 1994 Thomas und Steffen Dingel#",  // kIntro1
-	"Story und Grafik:^ Thomas Dingel#",     // kIntro2
-	"Programmierung:^ Steffen Dingel#",      // kIntro3
-	"Musik:^ Bernd Hoffmann#",               // kIntro4
+	"V2.02",            // kStringTitleVersion
+	"Teil 1:",          // kStringTitle1
+	"Das Schicksal",    // kStringTitle2
+	"des Horst Hummel", // kStringTitle3
+	"^(C) 1994 Thomas und Steffen Dingel#",  // kStringIntro1
 	// 25
-	"Getestet von ...#",                     // kIntro5
-	"^Matthias Neef#",                       // kIntro6
-	"^Sascha Otterbach#",                    // kIntro7
-	"^Thomas Mazzoni#",                      // kIntro8
-	"^Matthias Klein#",                      // kIntro9
+	"Story und Grafik:^ Thomas Dingel#",     // kStringIntro2
+	"Programmierung:^ Steffen Dingel#",      // kStringIntro3
+	"Musik:^ Bernd Hoffmann#",               // kStringIntro4
+	"Getestet von ...#",                     // kStringIntro5
+	"^Matthias Neef#",                       // kStringIntro6
 	// 30
-	"^Gerrit Rothmaier#",                    // kIntro10
-	"^Thomas Hassler#",                      // kIntro11
-	"^Rene Koch#",                           // kIntro12
-	"°",                                     // kIntro13
-	"Keycard",                               // kKeycard
+	"^Sascha Otterbach#",                    // kStringIntro7
+	"^Thomas Mazzoni#",                      // kStringIntro8
+	"^Matthias Klein#",                      // kStringIntro9
+	"^Gerrit Rothmaier#",                    // kStringIntro10
+	"^Thomas Hassler#",                      // kStringIntro11
 	// 35
-	"Die Keycard f\224r deine Schr\204nke.", // kKeycardDesc
-	"Taschenmesser",                         // kKnife
-	"Es ist nicht mehr das sch\204rfste.",   // kKnifeDesc
-	"Armbanduhr",                            // kWatch
-	"Discman",                               // kDiscman
+	"^Rene Koch#",                           // kStringIntro12
+	"\233",                                  // kStringIntro13
+	"Hmm, er scheint kaputt zu sein.",       // kStringBroken
+	"Es ist nichts Besonderes daran.",       // kStringDefaultDescription
+	"Das mußt du erst nehmen.",              // kStringTakeMessage
 	// 40
-	"Es ist eine \"Mad Monkeys\"-CD darin.", // kDiscmanDesc
-	"", //
-	"", //
-	"", //
-	"", //
+	"Keycard",                               // kStringKeycard
+	"Die Keycard f\224r deine Schr\204nke.", // kStringKeycardDescription
+	"Taschenmesser",                         // kStringKnife
+	"Es ist nicht mehr das sch\204rfste.",   // kStringKnifeDescription
+	"Armbanduhr",                            // kStringWatch
 	// 45
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Discman",                               // kStringDiscman
+	"Es ist eine \"Mad Monkeys\"-CD darin.", // kStringDiscmanDescription
+	"Luke",                                  // kStringHatch
+	"Knopf",                                 // kStringButton
+	"Er geh\224rt zu der gro\341en Luke.",   // kStringHatchButtonDescription
 	// 50
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Leiter",                                // kStringLadder
+	"Ausgang",                               // kStringExit
+	"Sie f\204hrt ins Cockpit.",             // kStringCockpitHatchDescription
+	"Sie f\204hrt zur K\201che.",            // kStringKitchenHatchDescription
+	"Sie f\204hrt zu den Tiefschlafkammern.", // kStringStasisHatchDescription
 	// 55
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Dies ist eine der Tiefschlafkammern.",  // kStringStasisHatchDescription2
+	"Schlitz",                               // kStringSlot
+	"Es ist ein Keycard-Leser.",             // kStringSlotDescription
+	"Gang",                                  // kStringCorridor
+	"Computer",                              // kStringComputer
 	// 60
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"ZWEIUNDVIERZIG",                        // kStringComputerPassword
+	"Instrumente",                           // kStringInstruments
+	"Hmm, sieht ziemlich kompliziert aus.",  // kStringInstrumentsDescription1
+	"Monitor",                               // kStringMonitor
+	"Dieser Monitor sagt dir nichts.",       // kStringMonitorDescription
 	// 65
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Bild",                                  // kStringImage
+	"Herb!",                                 // kStringGenericDescription1
+	"Toll!",                                 // kStringGenericDescription2
+	"Genial!",                               // kStringGenericDescription3
+	"Es scheint noch nicht fertig zu sein.", // kStringGenericDescription4
 	// 70
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Magnete",                               // kStringMagnete
+	"Damit werden Sachen auf|dem Tisch festgehalten.", // kStringMagneteDescription
+	"Stift",                                 // kStringPen
+	"Ein Kugelschreiber.",                   // kStringPenDescription
+	"Schrank",                               // kStringShelf
 	// 75
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Fach",                                  // kStringCompartment
+	"Steckdose",                             // kStringSocket
+	"Toilette",                              // kStringToilet
+	"Pistole",                               // kStringPistol
+	"Es ist keine Munition drin.",           // kStringPistolDescription
 	// 80
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"B\201cher",                             // kStringBooks
+	"Lauter wissenschaftliche B\201cher.",   // kStringBooksDescription
+	"Kabelrolle",                            // kStringSpool
+	"Da sind mindestens zwanzig Meter drauf.", // kStringSpoolDescription
+	"Buch",                                  // kStringBook
 	// 85
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Unterw\204sche",                        // kStringUnderwear
+	"Ich habe keine Lust, in|der Unterw\204sche des|Commanders rumzuw\201hlen.", // kStringUnderwearDescription
+	"Kleider",                               // kStringClothes
+	"Krimskram",                             // kStringJunk
+	"Es ist nichts brauchbares dabei.",      // kStringJunkDescription
 	// 90
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Ordner",                                // kStringFolders
+	"Darauf steht \"Dienstanweisungen|zur Mission Supernova\".|Es steht nichts wichtiges drin.", // kStringFoldersDescription
+	"Poster",                                // kStringPoster
+	"Ein Poster von \"Big Boss\".",          // kStringPosterDescription1
+	"Ein Poster von \"Rock Desaster\".",     // kStringPosterDescription2
 	// 95
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Box",                                   // kStringSpeaker
+	"Schallplatte",                          // kStringRecord
+	"Die Platte ist von \"Big Boss\".",      // kStringRecordDescription
+	"Schallplattenst\204nder",               // kStringRecordStand
+	"Du hast jetzt keine Zeit, in|der Plattensammlung rumzust\224bern.", // kStringRecordStandDescription
 	// 100
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Plattenspieler",                        // kStringTurntable
+	"Sieht aus, als k\204me|er aus dem Museum.", // kStringTurntableDescription
+	"Leitung",                               // kStringWire
+	"Stecker",                               // kStringPlug
+	"Manche Leute haben schon|einen komischen Geschmack.", // kStringImageDescription1
 	// 105
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Zeichenger\204te",                      // kStringDrawingInstruments
+	"Auf dem Zettel sind lauter|unverst\204ndliche Skizzen und Berechnungen.|(Jedenfalls f\201r dich unverst\204ndlich.)", // kStringDrawingInstrumentsDescription
+	"Schachspiel",                           // kStringChessGame
+	"Es macht wohl Spa\341, an|der Decke Schach zu spielen.", // kStringChessGameDescription1
+	"Tennisschl\204ger",                     // kStringTennisRacket
 	// 110
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Fliegt Boris Becker auch mit?",         // kStringTennisRacketDescription
+	"Tennisball",                            // kStringTennisBall
+	"Dein Magnetschachspiel. Schach war|schon immer deine Leidenschaft.", // kStringChessGameDescription2
+	"Bett",                                  // kStringBed
+	"Das ist dein Bett. Toll, nicht wahr?",  // kStringBedDescription
 	// 115
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Das ist eins deiner drei F\204cher.",   // kStringCompartmentDescription
+	"Alben",                                 // kStringAlbums
+	"Deine Briefmarkensammlung.",            // kStringAlbumsDescription
+	"Seil",                                  // kStringRope
+	"Es ist ungef\204hr 10 m lang und 4 cm dick.", // kStringRopeDescription
 	// 120
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Das ist dein Schrank.",                 // kStringShelfDescription
+	"Es sind Standard-Weltraum-Klamotten.",  // kStringClothesDescription
+	"Str\201mpfe",                           // kStringSocks
+	"Es ist|\"Per Anhalter durch die Galaxis\"|von Douglas Adams.", // kStringBookHitchhiker
+	"Klo",                                   // kStringBathroom
 	// 125
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Ein Klo mit Saugmechanismus.",          // kStringBathroomDescription
+	"Dusche",                                // kStringShower
+	"Das ist eine Luke !!!",                 // kStringHatchDescription1
+	"Dies ist eine Luke !!!",                // kStringHatchDescription2
+	"Helm",                                  // kStringHelmet
 	// 130
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Es ist der Helm zum Raumanzug.",        // kStringHelmetDescription
+	"Raumanzug",                             // kStringSuit
+	"Der einzige Raumanzug, den die|anderen hiergelassen haben ...", // kStringSuitDescription
+	"Versorgung",                            // kStringLifeSupport
+	"Es ist der Versorgungsteil zum Raumanzug.", // kStringLifeSupportDescription
 	// 135
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Schrott",                               // kStringScrap
+	"Da ist eine L\201sterklemme dran, die|noch ganz brauchbar aussieht.|Ich nehme sie mit.", // kStringScrapDescription1
+	"L\201sterklemme",                       // kStringTerminalStrip
+	"Junge, Junge! Die Explosion hat ein|ganz sch\224nes Durcheinander angerichtet.", // kStringScrapDescription2
+	"Reaktor",                               // kStringReactor
 	// 140
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Das war einmal der Reaktor.",           // kStringReactorDescription
+	"D\201se",                               // kStringNozzle
+	"blauer K\201rbis",                      // kStringPumpkin
+	"Keine Ahnung, was das ist.",            // kStringPumpkinDescription
+	"Landef\204hre",                         // kStringLandingModule
 	// 145
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Sie war eigentlich f\201r Bodenuntersuchungen|auf Arsano 3 gedacht.", // kStringLandingModuleDescription
+	"Sie f\201hrt nach drau\341en.",        // kStringHatchDescription3
+	"Generator",                            // kStringGenerator
+	"Er versorgt das Raumschiff mit Strom.", // kStringGeneratorDescription
+	"Ein St\201ck Schrott.",                 // kStringScrapDescription3
 	// 150
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Es ist ein Sicherheitsknopf.|Er kann nur mit einem spitzen|Gegenstand gedr\201ckt werden.", // kSafetyButtonDescription
+	"Tastatur",                              // kStringKeyboard
+	"langes Kabel mit Stecker",              // kStringGeneratorWire
+	"leere Kabelrolle",                      // kStringEmptySpool
+	"Keycard des Commanders",                // kStringKeycard2
 	// 155
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Hey, das ist die Keycard des Commanders!|Er mu\341 sie bei dem \201berst\201rzten|Aufbruch verloren haben.", // kStringKeycard2Description
+	"Klappe",                                // kStringTrap
+	"Spannungmessger\204t",                  // kStringVoltmeter
+	"Klemme",                                // kStringClip
+	"Sie f\201hrt vom Generator zum Spannungmessger\204t.", // kStringWireDescription
 	// 160
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Stein",                                 // kStringStone
+	"Loch",                                  // kStringCaveOpening
+	"Es scheint eine H\224hle zu sein.",     // kStringCaveOpeningDescription
+	"Hier bist du gerade hergekommen.",      // kStringExitDescription
+	"H\224hle",                              // kStringCave
 	// 165
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Schild",                                // kStringSign
+	"Diese Schrift kannst du nicht lesen.",  // kStringSignDescription
+	"Eingang",                               // kStringEntrance
+	"Stern",                                 // kStringStar
+	"Raumschiff",                            // kStringSpaceshift
 	// 170
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Portier",                               // kStringPorter
+	"Du siehst doch selbst, wie er aussieht.", // kStringPorterDescription
+	"T\201r",                                // kStringDoor
+	"Kaugummi",                              // kStringChewingGum
+	"Gummib\204rchen",                       // kStringGummyBears
 	// 175
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Schokokugel",                           // kStringChocolateBall
+	"\232berraschungsei",                    // kStringEgg
+	"Lakritz",                               // kStringLiquorice
+	"Tablette",                              // kStringPill
+	"Die Plastikh\201lle zeigt einen|Mund mit einer Sprechblase. Was|darin steht, kannst du nicht lesen.", // kStringPillDescription
 	// 180
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Automat",                               // kStringVendingMachine
+	"Sieht aus wie ein Kaugummiautomat.",    // kStringVendingMachineDescription
+	"Die Toiletten sind denen|auf der Erde sehr \204hnlich.", // kStringToiletDescription
+	"Treppe",                                // kStringStaircase
+	"M\201nzen",                             // kStringCoins
 	// 185
+	"Es sind seltsame|K\224pfe darauf abgebildet.", // kStringCoinsDescription
+	"Tablettenh\201lle",                     // kStringTabletPackage
+	"Darauf steht:\"Wenn Sie diese|Schrift jetzt lesen k\224nnen,|hat die Tablette gewirkt.\"", // kStringTabletPackageDescription
+	"Stuhl",                                 // kStringChair
+	"Schuhe",                                // kStringShoes
+	// 190
+	"Wie ist der denn mit|Schuhen hier reingekommen?", // kStringShoesDescription
+	"Froschgesicht",                         // kStringFrogFace
+	"Gekritzel",                             // kStringScrible
+	"\"Mr Spock was here\"",                 // kStringScribleDescription
+	"Brieftasche",                           // kStringWallet
+	// 195
+	"Speisekarte",                           // kStringMenu
+	"\"Heute empfehlen wir:|Fonua Opra mit Ulk.\"", // kStringMenuDescription
+	"Tasse",                                 // kStringCup
+	"Sie enth\204lt eine gr\201nliche Fl\201ssigkeit.", // kStringCupDescription
+	"10-Buckazoid-Schein",                   // kStringBill
+	// 200
+	"Nicht gerade sehr viel Geld.",          // kStringBillDescription
+	"Keycard von Roger",                     // kStringKeycard3
+	"Anzeige",                               // kStringAnnouncement
+	"Hmm, seltsame Anzeigen.",               // kStringAnnouncementDescription
+	"Roger W.",                              // kStringRoger
+	// 205
+	"Ufo",                                   // kStringUfo
+	"Der Eingang scheint offen zu sein.",    // kStringUfoDescription
+	"Tablett",                               // kStringTray
+	"Es ist irgendein Fra\341 und|etwas zu Trinken darauf.", // kStringTrayDescription
+	"Stange",                                // kStringLamp
+	// 210
+	"Es scheint eine Lampe zu sein.",        // kStringLampDescription
+	"Augen",                                 // kStringEyes
+	"Es ist nur ein Bild.",                  // kStringEyesDescription
+	"Sieht etwas anders aus als auf der Erde.", // kStringSocketDescription
+	"Metallblock",                           // kStringMetalBlock
+	// 215
+	"Er ist ziemlich schwer.",               // kStringMetalBlockDescription
+	"Roboter",                               // kStringRobot
+	"Den hast du erledigt.",                 // kStringRobotDescription
+	"Tisch",                                 // kStringTable
+	"Ein kleiner Metalltisch.",              // kStringTableDescription
+	// 220
+	"Zellent\201r",                          // kStringCellDoor
+	"Hier warst du eingesperrt.",            // kStringCellDoorDescription
+	"Laptop",                                // kStringLaptop
+	"Armbanduhr",                            // kStringWristwatch
+	"S\204ule",                              // kStringPillar
+	// 225
+	"Auf einem Schild an der T\201r steht \"Dr. Alab Hansi\".", // kStringDoorDescription1
+	"Auf einem Schild an der T\201r steht \"Saval Lun\".", // kStringDoorDescription2
+	"Auf einem Schild an der T\201r steht \"Prof. Dr. Ugnul Tschabb\".", // kStringDoorDescription3
+	"Auf einem Schild an der T\201r steht \"Alga Hurz Li\".", // kStringDoorDescription4
+	"Diese T\201r w\201rde ich lieber|nicht \224ffnen. Nach dem Schild zu|urteilen, ist jemand in dem Raum.", // kStringDontEnter
+	// 230
+	"Axacussaner",                           // kStringAxacussan
+	"Du m\201\341test ihn irgendwie ablenken.", // kStringAxacussanDescription
+	"Komisches Bild.",                       // kStringImageDescription2
+	"Karte",                                 // kStringMastercard
+	"Darauf steht: \"Generalkarte\".",       // kStringMastercardDescription
+	// 235
+	"Lampe",                                 // kStringLamp2
+	"Seltsam!",                              // kStringGenericDescription5
+	"Geld",                                  // kStringMoney
+	"Es sind 500 Xa.",                       // kStringMoneyDescription1
+	"Schließfach",                           // kStringLocker
+	// 240
+	"Es hat ein elektronisches Zahlenschlo\341.", // kStringLockerDescription
+	"Brief",                                 // kStringLetter
+	"W\201rfel",                             // kStringCube
+	"Sonderbar!",                            // kStringGenericDescription6
+	"Affenstark!",                           // kStringGenericDescription7
+	// 245
+	"Komisches Ding",                        // kStringStrangeThing
+	"Wundersam",                             // kStringGenericDescription8
+	"Es ist ein Axacussanerkopf auf dem Bild.", // kStringImageDescription3
+	"Pflanze",                               // kStringPlant
+	"Figur",                                 // kStringStatue
+	// 250
+	"Stark!",                                // kStringStatueDescription
+	"Sie ist den Pflanzen auf der Erde sehr ähnlich.", // kStringPlantDescription
+	"Er funktioniert nicht.",                // kStringComputerDescription
+	"Graffiti",                              // kStringGraffiti
+	"Seltsamer B\201roschmuck!",             // kStringGraffitiDescription
+	// 255
+	"Es sind 350 Xa.",                       // kStringMoneyDescription2
+	"Dschungel",                             // kStringJungle
+	"Lauter B\204ume.",                      // kStringJungleDescription
+	"^             E#N#D#E ...########",     // kStringOutro1
+	"#       ... des ersten Teils!########", // kStringOutro2
+	// 260
+	"#########",                             // kStringOutro3
+	"^Aber:#",                               // kStringOutro4
+	"Das Abenteuer geht weiter, ...##",      // kStringOutro5
+	"... wenn Sie sich für 30,- DM registrieren lassen!##", // kStringOutro6
+	"(Falls Sie das nicht schon längst getan haben.)##", // kStringOutro7
+	// 265
+	"In^ Teil 2 - Der Doppelgänger^ erwarten Sie:##", // kStringOutro8
+	"Knifflige Puzzles,##",                  // kStringOutro9
+	"noch mehr Grafik und Sound,##",         // kStringOutro10
+	"ein perfekt geplanter Museumseinbruch,##", // kStringOutro11
+	"das Virtual-Reality-Spiel \"Indiana Joe\"##", // kStringOutro12
+	// 270
+	"und vieles mehr!##",                     // kStringOutro13
+	"\233",                                   // kStringOutro14
+	"Leitung mit Stecker",                    // kStringWireAndPlug
+	"Leitung mit L\201sterklemme",            // kStringWireAndClip
+	"langes Kabel mit Stecker",               // kStringWireAndPlug2
+	// 275
+	"Darauf steht:|\"Treffpunkt Galactica\".", // kStringSignDescription2
+	"M\201nze",                               // kStringCoin
+	"Darauf steht:|\"Zutritt nur f\201r Personal\".", // kStringDoorDescription5
+	"Darauf steht:|\"Toilette\".",            // kStringDoorDescription6
+	"Es ist die Keycard des Commanders.",     // kStringKeycard2Description2
+	// 280
+	"Kabelrolle mit L\201sterklemme",         // kSringSpoolAndClip
+	"", //
+	"", //
+	"", //
+	"", //
+	// 285
 	"", //
 	"", //
 	"", //
 	"", //
 	"", //
+	// 290
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+	// 295
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+	// 300
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+	// 305
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+	// 310
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+	// 315
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+	// 320
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+	// 325
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+	// 330
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+	// 335
+	"", //
+	"", //
+	"", //
+	"", //
+	"", //
+
 	NULL
 };
 
