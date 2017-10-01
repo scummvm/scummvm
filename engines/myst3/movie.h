@@ -161,6 +161,9 @@ public:
 	void refreshAmbientSounds();
 
 	void setSynchronized(bool b) { _synchronized = b; }
+
+	void play();
+
 private:
 	bool _synchronized;
 	uint _startEngineTick;

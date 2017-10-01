@@ -1158,7 +1158,7 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 }
 
 void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe, bool refreshAmbientSounds) {
-	SimpleMovie movie = SimpleMovie(this, id);
+	SimpleMovie movie(this, id);
 
 	if (!movie.isVideoLoaded()) {
 		// The video was not loaded and it was optional, just do nothing
@@ -1194,7 +1194,7 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe, bool refreshAmbient
 		movie.setPosV(_state->getViewType() == kMenu ? Renderer::kTopBorderHeight : 0);
 	}
 
-	movie.playStartupSound();
+	movie.play();
 
 	if (refreshAmbientSounds) {
 		movie.refreshAmbientSounds();

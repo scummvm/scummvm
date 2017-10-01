@@ -86,8 +86,6 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 		_bink.setAudioTrack(language);
 	}
 
-	_bink.start();
-
 	if (ConfMan.getBool("subtitles"))
 		_subtitles = Subtitles::create(_vm, id);
 
@@ -241,6 +239,7 @@ ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :
 		_volumeVar(0),
 		_loop(false),
 		_transparencyVar(0) {
+	_bink.start();
 }
 
 void ScriptedMovie::draw() {
@@ -396,13 +395,20 @@ SimpleMovie::SimpleMovie(Myst3Engine *vm, uint16 id) :
 	_startEngineTick = _vm->_state->getTickCount();
 }
 
-void SimpleMovie::update() {
-	if (_bink.getCurFrame() < (_startFrame - 1)) {
+void SimpleMovie::play() {
+	playStartupSound();
+
+	_bink.setEndFrame(_endFrame - 1);
+	_bink.setVolume(_volume * Audio::Mixer::kMaxChannelVolume / 100);
+
+	if (_bink.getCurFrame() < _startFrame - 1) {
 		_bink.seekToFrame(_startFrame - 1);
 	}
 
-	_bink.setVolume(_volume * Audio::Mixer::kMaxChannelVolume / 100);
+	_bink.start();
+}
 
+void SimpleMovie::update() {
 	uint16 scriptStartFrame = _vm->_state->getMovieScriptStartFrame();
 	if (scriptStartFrame && _bink.getCurFrame() > scriptStartFrame) {
 		uint16 script = _vm->_state->getMovieScript();
@@ -437,7 +443,12 @@ void SimpleMovie::update() {
 }
 
 bool SimpleMovie::endOfVideo() {
-	return _bink.endOfVideo() || _bink.getCurFrame() >= _endFrame;
+	if (!_synchronized) {
+		return _bink.getTime() >= (uint)_bink.getEndTime().msecs();
+	} else {
+		int tickBasedEndFrame = (_vm->_state->getTickCount() - _startEngineTick) >> 1;
+		return tickBasedEndFrame >= _endFrame;
+	}
 }
 
 void SimpleMovie::playStartupSound() {
