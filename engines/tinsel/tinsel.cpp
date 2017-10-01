@@ -900,13 +900,13 @@ Common::Error TinselEngine::run() {
 	// Initialize backend
 	if (getGameID() == GID_DW2) {
 #ifndef DW2_EXACT_SIZE
-		initGraphics(640, 480, true);
+		initGraphics(640, 480);
 #else
-		initGraphics(640, 432, true);
+		initGraphics(640, 432);
 #endif
 		_screenSurface.create(640, 432, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
-		initGraphics(320, 200, false);
+		initGraphics(320, 200);
 		_screenSurface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 

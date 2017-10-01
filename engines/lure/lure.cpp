@@ -55,7 +55,7 @@ Common::Error LureEngine::init() {
 	_initialized = false;
 	_saveLoadAllowed = false;
 
-	initGraphics(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT, false);
+	initGraphics(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 
 	// Check the version of the lure.dat file
 	Common::File f;

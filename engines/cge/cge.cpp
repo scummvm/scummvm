@@ -219,7 +219,7 @@ Common::Error CGEEngine::run() {
 	}
 
 	// Initialize graphics using following:
-	initGraphics(kScrWidth, kScrHeight, false);
+	initGraphics(kScrWidth, kScrHeight);
 
 	// Setup necessary game objects
 	init();

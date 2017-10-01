@@ -54,7 +54,7 @@ Screen::Screen(VoyeurEngine *vm) : Graphics::Screen(), _vm(vm), _drawPtr(&_defau
 }
 
 void Screen::sInitGraphics() {
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, false);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
 	clearPalette();
 }

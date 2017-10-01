@@ -200,7 +200,7 @@ Common::Error GnapEngine::run() {
 #else
 	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #endif
-	initGraphics(800, 600, true, &format);
+	initGraphics(800, 600, &format);
 
 	// We do not support color conversion yet
 	if (_system->getScreenFormat() != format)

@@ -442,7 +442,7 @@ Common::Error Sword2Engine::run() {
 	_resman = NULL;
 	_memory = NULL;
 
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 	_screen = new Screen(this, 640, 480);
 
 	// Create the debugger as early as possible (but not before the

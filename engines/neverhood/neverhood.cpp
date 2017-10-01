@@ -65,7 +65,7 @@ NeverhoodEngine::~NeverhoodEngine() {
 }
 
 Common::Error NeverhoodEngine::run() {
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 

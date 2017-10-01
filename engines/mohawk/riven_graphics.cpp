@@ -308,7 +308,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 
 	// Restrict ourselves to a single pixel format to simplify the effects implementation
 	_pixelFormat = Graphics::createPixelFormat<565>();
-	initGraphics(608, 436, true, &_pixelFormat);
+	initGraphics(608, 436, &_pixelFormat);
 
 	// The actual game graphics only take up the first 392 rows. The inventory
 	// occupies the rest of the screen and we don't use the buffer to hold that.

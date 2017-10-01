@@ -84,7 +84,7 @@ bool CruiseEngine::hasFeature(EngineFeature f) const {
 
 Common::Error CruiseEngine::run() {
 	// Initialize backend
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 
 	if (!loadLanguageStrings()) {
 		error("Could not setup language data for your version");

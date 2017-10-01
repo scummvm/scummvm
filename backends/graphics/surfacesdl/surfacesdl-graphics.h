@@ -238,7 +238,6 @@ protected:
 		bool sizeChanged;
 		bool needHotswap;
 		bool needUpdatescreen;
-		bool normal1xScaler;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		bool needTextureUpdate;
 #endif

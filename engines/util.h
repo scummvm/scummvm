@@ -30,7 +30,7 @@
 /**
  * Setup the backend's graphics mode.
  */
-void initCommonGFX(bool defaultTo1XScaler);
+void initCommonGFX();
 
 /**
  * Setup the backend's screen size and graphics mode.
@@ -45,8 +45,8 @@ void initCommonGFX(bool defaultTo1XScaler);
  * Uses the backend's preferred format if graphics format pointer is NULL.
  * Finds the best compatible format if a list of graphics formats is provided.
  */
-void initGraphics(int width, int height, bool defaultTo1xScaler);
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format);
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList);
+void initGraphics(int width, int height);
+void initGraphics(int width, int height, const Graphics::PixelFormat *format);
+void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList);
 
 #endif

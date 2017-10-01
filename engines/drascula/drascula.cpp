@@ -236,7 +236,7 @@ bool DrasculaEngine::hasFeature(EngineFeature f) const {
 
 Common::Error DrasculaEngine::run() {
 	// Initialize backend
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 
 	switch (getLanguage()) {
 	case Common::EN_ANY:

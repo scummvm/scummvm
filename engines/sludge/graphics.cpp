@@ -143,7 +143,7 @@ void GraphicsManager::kill() {
 }
 
 bool GraphicsManager::initGfx() {
-	initGraphics(_winWidth, _winHeight, true, _vm->getScreenPixelFormat());
+	initGraphics(_winWidth, _winHeight, _vm->getScreenPixelFormat());
 	_renderSurface.create(_winWidth, _winHeight, *_vm->getScreenPixelFormat());
 
 	if (!killResizeBackdrop(_winWidth, _winHeight))

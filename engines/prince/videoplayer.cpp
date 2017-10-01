@@ -30,7 +30,7 @@ namespace Prince {
 
 void PrinceEngine::playVideo(Common::String videoFilename) {
         // Set the correct video mode
-        initGraphics(640, 480, true, 0);
+        initGraphics(640, 480, nullptr);
         if (_system->getScreenFormat().bytesPerPixel == 1) {
                 warning("Couldn't switch to a RGB color video mode to play a video.");
                 return;
@@ -42,7 +42,7 @@ void PrinceEngine::playVideo(Common::String videoFilename) {
 	if (!videoDecoder->loadFile(videoFilename)) {
 		delete videoDecoder;
 		warning("Unable to open video %s", videoFilename.c_str());
-		initGraphics(640, 480, true);
+		initGraphics(640, 480);
 		return;
 	}
 
@@ -78,7 +78,7 @@ void PrinceEngine::playVideo(Common::String videoFilename) {
 
 	delete videoDecoder;
 
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 }
 
 } // End of namespace Prince

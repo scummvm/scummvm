@@ -82,7 +82,7 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	}
 	_currentBuffer.setPixels(calloc(1, _currentBuffer.screenWidth * _currentBuffer.screenHeight));
 	_screenRect = Common::Rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
-	initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight, _isHiRes);
+	initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
 
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:

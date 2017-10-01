@@ -292,7 +292,7 @@ Common::Error MadeEngine::run() {
 	syncSoundSettings();
 
 	// Initialize backend
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 
 	resetAllTimers();
 

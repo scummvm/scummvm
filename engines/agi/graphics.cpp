@@ -210,7 +210,7 @@ int GfxMgr::initVideo() {
 	_displayPixels = _displayScreenWidth * _displayScreenHeight;
 	_displayScreen = (byte *)calloc(_displayPixels, 1);
 
-	initGraphics(_displayScreenWidth, _displayScreenHeight, _displayScreenWidth > 320);
+	initGraphics(_displayScreenWidth, _displayScreenHeight);
 
 	setPalette(true); // set gfx-mode palette
 

@@ -83,8 +83,8 @@ void ChewyEngine::initialize() {
 
 Common::Error ChewyEngine::run() {
 	// Initialize backend
-	//initGraphics(640, 480, true);
-	initGraphics(320, 200, false);
+	//initGraphics(640, 480);
+	initGraphics(320, 200);
 
 	initialize();
 
