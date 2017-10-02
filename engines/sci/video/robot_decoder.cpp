@@ -1594,16 +1594,18 @@ void RobotDecoder::preallocateCelMemory(const byte *rawVideoData, const int16 nu
 			maxFrameArea = area;
 		}
 
+		const bool remap = (getSciVersion() == SCI_VERSION_3);
+
 		CelHandleInfo &celHandle = _celHandles[i];
 		if (celHandle.status == CelHandleInfo::kRobotLifetime) {
 			if (_maxCelArea[i] < area) {
 				_segMan->freeBitmap(celHandle.bitmapId);
-				_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, false, false);
+				_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, remap, false);
 				celHandle.area = area;
 				celHandle.status = CelHandleInfo::kFrameLifetime;
 			}
 		} else if (celHandle.status == CelHandleInfo::kNoCel) {
-			_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, false, false);
+			_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, remap, false);
 			celHandle.area = area;
 			celHandle.status = CelHandleInfo::kFrameLifetime;
 		} else {
