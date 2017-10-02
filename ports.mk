@@ -302,10 +302,6 @@ ifdef USE_FREETYPE2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfreetype.a $(STATICLIBPATH)/lib/libbz2.a
 endif
 
-ifdef USE_OGG
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libogg.a
-endif
-
 ifdef USE_VORBIS
 OSX_STATIC_LIBS += \
 		$(STATICLIBPATH)/lib/libvorbisfile.a \
@@ -318,6 +314,10 @@ endif
 
 ifdef USE_FLAC
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libFLAC.a
+endif
+
+ifdef USE_OGG
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libogg.a
 endif
 
 ifdef USE_FLUIDSYNTH

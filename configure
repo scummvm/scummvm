@@ -3921,10 +3921,6 @@ int main(void) { return 0; }
 EOF
 	cc_check $OGG_CFLAGS $OGG_LIBS -logg && _ogg=yes
 fi
-if test "$_ogg" = yes ; then
-	append_var LIBS "$OGG_LIBS -logg"
-	append_var INCLUDES "$OGG_CFLAGS"
-fi
 define_in_config_if_yes "$_ogg" 'USE_OGG'
 echo "$_ogg"
 
@@ -4025,6 +4021,12 @@ if test "$_flac" = yes ; then
 fi
 define_in_config_if_yes "$_flac" 'USE_FLAC'
 echo "$_flac"
+
+# Add the link to ogg only after verbs tremor and flac as it might be used by those.
+if test "$_ogg" = yes ; then
+	append_var LIBS "$OGG_LIBS -logg"
+	append_var INCLUDES "$OGG_CFLAGS"
+fi
 
 #
 # Check for MAD (MP3 library)
