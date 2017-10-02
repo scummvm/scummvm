@@ -469,6 +469,9 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 						Graphics::skipThumbnail(*in);
 						valid = true;
 					}
+					if (meta.version >= 34) {
+						g_sci->setTickCount(meta.playTime);
+					}
 				}
 			} else {
 				out = saveFileMan->openForSaving(fileName);
