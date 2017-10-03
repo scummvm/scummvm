@@ -1507,13 +1507,17 @@ bool Console::cmdAudioDump(int argc, const char **argv) {
 
 			// All AudioStreams must output 16-bit samples
 			bytesPerSample = 2;
-			decompressedSize = compressedSize * bytesPerSample;
+
+			decompressedSize = compressedSize;
 
 			if (flags & kCompressed) {
 				decompressedSize *= 2;
 			}
 			if (flags & k16Bit) {
 				sourceIs8Bit = false;
+			} else {
+				// 8-bit is implicitly up-converted by AudioStream to 16-bit
+				decompressedSize *= 2;
 			}
 			if (flags & kStereo) {
 				numChannels = 2;
