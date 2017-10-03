@@ -26,14 +26,12 @@
 namespace Titanic {
 
 CPetTranslation::CPetTranslation() {
-	Rect rect1(0, 0, 580, 70);
-	rect1.translate(32, 368);
+	Rect rect1(32, 368, 586, 438);
 	_message.setBounds(rect1);
 	_message.resize(50);
 	_message.setHasBorder(false);
 
-	Rect rect2(0, 0, 580, 15);
-	rect2.translate(32, 445);
+	Rect rect2(32, 445, 586, 460);
 	_tooltip.setBounds(rect2);
 	_tooltip.setHasBorder(false);
 }
