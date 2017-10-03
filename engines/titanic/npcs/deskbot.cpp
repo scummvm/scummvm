@@ -102,6 +102,11 @@ bool CDeskbot::EnterViewMsg(CEnterViewMsg *msg) {
 	_fieldC4 = 0;
 	loadFrame(625);
 
+	// WORKAROUND: If loading directly from the launcher when Marcinta
+	// is active, reset the active NPC back to none at the same time
+	CPetControl *pet = getPetControl();
+	pet->resetActiveNPC();
+
 	return true;
 }
 
