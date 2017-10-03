@@ -396,9 +396,11 @@ int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		case 1:
 			id = 240336;
 			break;
+
 		case 2:
-			addAssignedRoom();
+			id = addAssignedRoomDialogue();
 			break;
+
 		case 3:
 			if (id == 240431 || id == 240432) {
 				if (getValue(3) == 1) {
@@ -410,9 +412,13 @@ int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 				}
 			}
 			break;
+
 		default:
 			break;
 		}
+
+		addResponse(getDialogueId(id));
+		return 2;
 	} else {
 		switch (val1) {
 		case 1:
@@ -444,15 +450,20 @@ int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 
 		case 2:
 			if (getValue(1) == 1)
-				return true;
+				return 1;
+			break;
+
+		case 3:
+			if (getValue(1) != 1)
+				return 1;
 			break;
 
 		default:
 			break;
 		}
-	}
 
-	return 0;
+		return 0;
+	}
 }
 
 bool DeskbotScript::randomResponse(uint index) {
