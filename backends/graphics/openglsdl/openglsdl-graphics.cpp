@@ -151,6 +151,13 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 
 		_fullscreenVideoModes.push_back(VideoMode(mode.w, mode.h));
 	}
+
+	if (ConfMan.hasKey("force_frame_update")) {
+		_forceFrameUpdate = ConfMan.getInt("force_frame_update", Common::ConfigManager::kApplicationDomain);
+	} else {
+		_forceFrameUpdate = 0;
+	}
+
 #else
 	const SDL_Rect *const *availableModes = SDL_ListModes(NULL, SDL_OPENGL | SDL_FULLSCREEN);
 	// TODO: NULL means that there are no fullscreen modes supported. We
@@ -163,6 +170,8 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 			_fullscreenVideoModes.push_back(VideoMode(mode->w, mode->h));
 		}
 	}
+
+	_forceFrameUpdate = 0;
 #endif
 
 	// Sort the modes in ascending order.
@@ -337,6 +346,29 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 #endif
 
 void OpenGLSdlGraphicsManager::updateScreen() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	static unsigned int lastUpdateTime = 0;
+	unsigned int currentTime;
+
+	if (_forceFrameUpdate) {
+		if (_forceRedraw) {
+			lastUpdateTime = SDL_GetTicks();
+		} else {
+			currentTime = SDL_GetTicks();
+			// Though this works for the most part. Anything > 20 but < 40 gets
+			// around 24fps. Its not till we set it to 20 that it changes and jumps
+			// to around 40fps.
+			// 50 ~ 16fps
+			// 40 ~ 24fps
+			// 20 ~ 45fps
+			if (currentTime - lastUpdateTime > _forceFrameUpdate) {
+				_forceRedraw = true;
+				lastUpdateTime = SDL_GetTicks();
+			}
+		}
+	}
+#endif
+
 	if (_ignoreResizeEvents) {
 		--_ignoreResizeEvents;
 	}
@@ -413,6 +445,7 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 }
 
 void OpenGLSdlGraphicsManager::refreshScreen() {
+
 	// Swap OpenGL buffers
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_GL_SwapWindow(_window->getSDLWindow());
