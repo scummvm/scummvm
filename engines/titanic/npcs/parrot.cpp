@@ -697,7 +697,7 @@ bool CParrot::PutParrotBackMsg(CPutParrotBackMsg *msg) {
 
 bool CParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 	if (_state == PARROT_IN_CAGE) {
-		loadMovie("z167.avi", false);
+		loadMovie(TRANSLATE("z167.avi", "z190.avi"), false);
 		loadFrame(0);
 	}
 
