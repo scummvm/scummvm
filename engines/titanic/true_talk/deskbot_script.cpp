@@ -418,6 +418,7 @@ int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		}
 
 		addResponse(getDialogueId(id));
+		applyResponse();
 		return 2;
 	} else {
 		switch (val1) {
