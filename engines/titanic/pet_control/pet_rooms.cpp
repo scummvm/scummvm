@@ -22,6 +22,7 @@
 
 #include "titanic/pet_control/pet_rooms.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -202,8 +203,8 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 	if (!petControl)
 		return false;
 
-	Rect rect1(0, 0, 470, 15);
-	rect1.moveTo(32, 445);
+	Rect rect1(0, 0, 470, TRANSLATE(15, 32));
+	rect1.moveTo(32, TRANSLATE(445, 439));
 	_text.setBounds(rect1);
 	_text.setHasBorder(false);
 
