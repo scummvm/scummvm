@@ -29,6 +29,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/screen.h"
 #include "video/avi_decoder.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -57,7 +58,7 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	_decoder = new AVIDecoder();
 
 	// Load the video into it
-	if (_movieName == "y222.avi") {
+	if (_movieName == TRANSLATE("y222.avi", "y237.avi")) {
 		// The y222.avi is the bells animation for the music room.
 		// It needs on the fly fixing for the video header
 		_decoder->loadStream(new y222());
@@ -547,7 +548,7 @@ uint AVISurface::getBitDepth() const {
 
 y222::y222() {
 	_innerStream = new File();
-	_innerStream->open("y222.avi");
+	_innerStream->open(TRANSLATE("y222.avi", "y237.avi"));
 }
 
 y222::~y222() {
