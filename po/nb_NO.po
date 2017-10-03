@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-09-30 02:56+0200\n"
+"POT-Creation-Date: 2017-10-04 01:57+0200\n"
 "PO-Revision-Date: 2016-12-26 17:36+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -1840,7 +1840,7 @@ msgstr "~T~ilbake til oppstarter"
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658
-#: engines/sci/engine/kfile.cpp:1051 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
@@ -1861,7 +1861,7 @@ msgstr "Lagret spill:"
 #: engines/mohawk/dialogs.cpp:106 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659
-#: engines/sci/engine/kfile.cpp:1051 engines/scumm/dialogs.cpp:184
+#: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -2886,7 +2886,7 @@ msgstr ""
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
 #: engines/sci/engine/guest_additions.cpp:661
-#: engines/sci/engine/kfile.cpp:1170 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1173 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
@@ -2900,7 +2900,7 @@ msgstr "Gjennopprett spill:"
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
 #: engines/sci/engine/guest_additions.cpp:662
-#: engines/sci/engine/kfile.cpp:1170 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1173 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
@@ -3560,7 +3560,7 @@ msgstr "Aktiver flytende muspekere"
 msgid "Enable the game's built-in optional content censoring"
 msgstr ""
 
-#: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:478
+#: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
 #, fuzzy
 msgid "(Autosave)"
 msgstr "Autolagre:"
