@@ -145,7 +145,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			// Check whether a valid username and password has been entered
 			static const char *const PASSWORDS_EN[3] = { "other", "this", "that" };
 			static const char *const PASSWORDS_DE[3] = { "t'ok", "t'ik", "t'ak" };
-			static const char *const *pwds = g_vm->isGerman() ? PASSWORDS_DE : PASSWORDS_EN;
+			static const char *const *pwds = TRANSLATE(PASSWORDS_EN, PASSWORDS_DE);
 
 			bool validFlag = false;
 			if ((_username == "leovinus" && _password == pwds[0]) ||
@@ -336,6 +336,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		editMsg._mode = EDIT_BORDERS;
 		editMsg._param = 8;
 		editMsg.execute("MissiveOMat Login Control");
+		petHideCursor();
 		editMsg._mode = EDIT_SHOW_CURSOR;
 		editMsg.execute("MissiveOMat Login Control");
 
