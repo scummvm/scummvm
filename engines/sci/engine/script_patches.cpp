@@ -2288,9 +2288,37 @@ static const uint16 lighthouseFlagResetPatch[] = {
 	PATCH_END
 };
 
+// When doing a system check on the portal computer in the lighthouse, the game
+// counts up to 1024MB, one megabyte at a time. In the original engine, this
+// count speed would be video speed dependent, but with our frame rate
+// throttler, it takes 17 seconds. So, replace this slowness with a much faster
+// POST that is more accurate to the original game.
+// Applies to at least: US English 1.0c
+static const uint16 lighthouseMemoryCountSignature[] = {
+	SIG_MAGICDWORD,
+	0x8d, 0x02,             // lst 2
+	0x35, 0x0a,             // ldi 10
+	0x24,                   // le?
+	0x31, 0x3b,             // bnt [to second digit overflow]
+	SIG_ADDTOOFFSET(+4),    // ldi, sat
+	0x8d, 0x03,             // lst 3
+	0x35, 0x0a,             // ldi 10
+	SIG_END
+};
+
+static const uint16 lighthouseMemoryCountPatch[] = {
+	PATCH_ADDTOOFFSET(+2), // lst 2
+	0x35, 0x02,            // ldi 2
+	PATCH_ADDTOOFFSET(+9), // le?, bnt, ldi, sat, lst
+	0x35, 0x02,            // ldi 2
+	PATCH_END
+};
+
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry lighthouseSignatures[] = {
 	{  true,     5, "fix bad globals clear after credits",         1, lighthouseFlagResetSignature,     lighthouseFlagResetPatch },
+	{  true,   360, "fix slow computer memory counter",            1, lighthouseMemoryCountSignature,   lighthouseMemoryCountPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
