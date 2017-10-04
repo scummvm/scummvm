@@ -158,6 +158,7 @@ public:
 	int getFirstChannel() const;
 	int getLastChannel() const;
 	void setVolume(byte volume);
+	void onNewSound();
 	int getVolume();
 	void setReverb(int8 reverb);
 	void playSwitch(bool play);
@@ -204,6 +205,7 @@ private:
 	int _masterVolume;
 
 	byte _reverbConfig[kReverbConfigNr][3];
+	int8 _defaultReverb;
 	Channel _channels[16];
 	uint8 _percussionMap[128];
 	int8 _keyShift[128];
@@ -220,7 +222,7 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _hasReverb(false), _useMT32Track(true) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _hasReverb(false), _defaultReverb(-1), _useMT32Track(true) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
@@ -477,6 +479,14 @@ int MidiPlayer_Midi::getVolume() {
 	return _masterVolume;
 }
 
+void MidiPlayer_Midi::onNewSound() {
+	if (_defaultReverb >= 0)
+		// SCI0 in combination with MT-32 requires a reset of the reverb to
+		// the default value that is present in either the MT-32 patch data
+		// or MT32.DRV itself.
+		setReverb(_defaultReverb);
+}
+
 void MidiPlayer_Midi::setReverb(int8 reverb) {
 	assert(reverb < kReverbConfigNr);
 
@@ -610,7 +620,7 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 	setMt32Volume(volume);
 
 	// Reverb default only used in (roughly) SCI0/SCI01
-	byte reverb = stream.readByte();
+	_defaultReverb = stream.readByte();
 
 	_hasReverb = true;
 
@@ -648,10 +658,6 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 		// Partial reserve
 		sendMt32SysEx(0x100004, stream, 9);
 	}
-
-	// Reverb for SCI0
-	if (_version <= SCI_VERSION_0_LATE)
-		setReverb(reverb);
 
 	// Send after-SysEx text
 	stream.seek(0);
@@ -780,7 +786,7 @@ void MidiPlayer_Midi::readMt32DrvData() {
 
 		if (size == 2771) {
 			// MT32.DRV in LSL2 early contains more data, like a normal patch
-			byte reverb = f.readByte();
+			_defaultReverb = f.readByte();
 
 			_hasReverb = true;
 
@@ -799,8 +805,6 @@ void MidiPlayer_Midi::readMt32DrvData() {
 			// Patches 1-48
 			sendMt32SysEx(0x50000, f, 256);
 			sendMt32SysEx(0x50200, f, 128);
-
-			setReverb(reverb);
 
 			// Send the after-SysEx text
 			f.seek(0x3d);
