@@ -131,11 +131,17 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 		}
 		setArea(PET_CONVERSATION);
 
-		const int XLIST_EN[] = { 73, 54, 85, 109, 38, 71 };
-		for (uint idx = 0; idx < _petAreas.size(); ++idx) {
-			_titles[idx].setBounds(Rect(0, 0, 110, 11));
-			_titles[idx].translate(TRANSLATE(608 - XLIST_EN[idx],
-				608 - 107), 471);
+		if (g_language == Common::EN_ANY) {
+			const int XLIST_EN[] = { 73, 54, 85, 109, 38, 71 };
+			for (uint idx = 0; idx < _petAreas.size(); ++idx) {
+				_titles[idx].setBounds(Rect(0, 0, 110, 11));
+				_titles[idx].translate(608 - XLIST_EN[idx], 471);
+			}
+		} else {
+			for (uint idx = 0; idx < 7; ++idx) {
+				_titles[idx].setBounds(Rect(0, 0, 110, 11));
+				_titles[idx].translate(501, 469);
+			}
 		}
 	}
 
