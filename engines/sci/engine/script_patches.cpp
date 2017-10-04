@@ -2275,7 +2275,7 @@ static const SciScriptPatcherEntry kq7Signatures[] = {
 // (global 204 bit 15), but global 201 is not a flag global (it holds a
 // reference to theInvisCursor). This patch stops clearing after 1359 (global
 // 200 bit 15). Hopefully that is good enough to not break the game.
-// Applies to at least: English 1.0 & 2.0
+// Applies to at least: English 1.0c & 2.0a
 static const uint16 lighthouseFlagResetSignature[] = {
 	SIG_MAGICDWORD,
 	0x34, SIG_UINT16(0x58f), // ldi 1423
