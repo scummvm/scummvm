@@ -22,7 +22,7 @@
 
 #include "titanic/pet_control/pet_frame.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -103,10 +103,10 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 
 		// Set up the PET areas we'll have buttons for
 		_petAreas.clear();
-		if (g_vm->isGerman())
-			_petAreas.assign(&PET_AREAS_DE[0], &PET_AREAS_DE[0] + 6);
-		else
+		if (g_language == Common::EN_ANY)
 			_petAreas.assign(&PET_AREAS_EN[0], &PET_AREAS_EN[0] + 5);
+		else
+			_petAreas.assign(&PET_AREAS_DE[0], &PET_AREAS_DE[0] + 6);
 
 		// Set the bounds of the individual elements
 		_background.setBounds(Rect(20, 350, 620, 480));
@@ -126,15 +126,16 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 		_modeButtons.resize(_petAreas.size());
 		for (uint idx = 0; idx < _modeButtons.size(); ++idx) {
 			_modeButtons[idx].setBounds(r);
-			_modeButtons[idx].translate(4, g_vm->isGerman() ? YLIST_DE[idx] : YLIST_EN[idx]);
+			_modeButtons[idx].translate(TRANSLATE(4, 0),
+				TRANSLATE(YLIST_EN[idx], YLIST_DE[idx]));
 		}
 		setArea(PET_CONVERSATION);
 
 		const int XLIST_EN[] = { 73, 54, 85, 109, 38, 71 };
 		for (uint idx = 0; idx < _petAreas.size(); ++idx) {
 			_titles[idx].setBounds(Rect(0, 0, 110, 11));
-			_titles[idx].translate(g_vm->isGerman() ? 608 - 107 :
-				608 - XLIST_EN[idx], 471);
+			_titles[idx].translate(TRANSLATE(608 - XLIST_EN[idx],
+				608 - 107), 471);
 		}
 	}
 
