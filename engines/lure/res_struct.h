@@ -404,7 +404,7 @@ private:
 	int _numParams;
 public:
 	CharacterScheduleEntry() { _action = NONE; _parent = NULL; }
-	CharacterScheduleEntry(Action theAction, ...);
+	CharacterScheduleEntry(int theAction, ...);
 	CharacterScheduleEntry(CharacterScheduleSet *parentSet,
 		CharacterScheduleResource *&rec);
 	CharacterScheduleEntry(CharacterScheduleEntry *src);
@@ -412,7 +412,7 @@ public:
 	Action action() { return _action; }
 	int numParams() { return _numParams; }
 	uint16 param(int index);
-	void setDetails(Action theAction, ...);
+	void setDetails(int theAction, ...);
 	void setDetails2(Action theAction, int numParamEntries, uint16 *paramList);
 	CharacterScheduleEntry *next();
 	CharacterScheduleSet *parent() { return _parent; }
