@@ -147,13 +147,13 @@ void RivenScriptManager::runQueuedScripts() {
 	_runningQueuedScripts = false;
 }
 
-RivenScriptPtr RivenScriptManager::createScriptFromData(uint16 commandCount, ...) {
+RivenScriptPtr RivenScriptManager::createScriptFromData(uint commandCount, ...) {
 	va_list args;
 	va_start(args, commandCount);
 
 	// Build a script from the variadic arguments
 	Common::MemoryWriteStreamDynamic writeStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
-	writeStream.writeUint16BE(commandCount);
+	writeStream.writeUint16BE((uint16)commandCount);
 
 	for (uint i = 0; i < commandCount; i++) {
 		uint16 command = va_arg(args, int);

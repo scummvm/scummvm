@@ -179,7 +179,7 @@ public:
 	RivenScriptPtr readScriptFromData(uint16 *data, uint16 size);
 
 	/** Create a script from the caller provided arguments containing raw data */
-	RivenScriptPtr createScriptFromData(uint16 commandCount, ...);
+	RivenScriptPtr createScriptFromData(uint commandCount, ...);
 
 	/**
 	 * Create a script with a single user provided command
