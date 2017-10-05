@@ -52,7 +52,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 		"which requires access to the Internet.\n"
   		"\n"
 		"Would you like to enable this feature?");
-	const char *message2 = _("(You can always enable it in the options dialog on the Misc tab)");
+	const char *message2 = _("You can always enable it in the options dialog on the Misc tab.");
 
 	// First, determine the size the dialog needs. For this we have to break
 	// down the string into lines, and taking the maximum of their widths.
@@ -60,7 +60,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	// the real size of the dialog
 	Common::Array<Common::String> lines, lines2;
 	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
-	int maxlineWidth2 = g_gui.getFont(ThemeEngine::kFontStyleTooltip).wordWrapText(message2, screenW - 2 * 20, lines2);
+	int maxlineWidth2 = g_gui.getFont().wordWrapText(message2, screenW - 2 * 20, lines2);
 
 	_w = MAX(MAX(maxlineWidth, maxlineWidth2), (2 * buttonWidth) + 10) + 20;
 
@@ -79,12 +79,12 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	uint y = 10;
 	for (uint i = 0; i < lines.size(); i++) {
 		new StaticTextWidget(this, 10, y, maxlineWidth, kLineHeight,
-								lines[i], Graphics::kTextAlignCenter);
+								lines[i], Graphics::kTextAlignLeft);
 		y += kLineHeight;
 	}
 	for (uint i = 0; i < lines2.size(); i++) {
 		new StaticTextWidget(this, 10, y, maxlineWidth2, kLineHeight,
-								lines2[i], Graphics::kTextAlignCenter, 0, ThemeEngine::kFontStyleTooltip);
+								lines2[i], Graphics::kTextAlignLeft);
 		y += kLineHeight;
 	}
 
