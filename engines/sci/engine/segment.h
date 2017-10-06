@@ -1102,12 +1102,11 @@ public:
 
 	BITMAP_PROPERTY(32, DataOffset, 24);
 
-	// NOTE: This property is used as a "magic number" for
-	// validating that a block of memory is a valid bitmap,
-	// and so is always set to the size of the header.
+	// This property is used as a "magic number" for validating that a block of
+	// memory is a valid bitmap, and so is always set to the size of the header.
 	BITMAP_PROPERTY(32, UncompressedDataOffset, 28);
 
-	// NOTE: This property always seems to be zero
+	// This property always seems to be zero in SSCI
 	BITMAP_PROPERTY(32, ControlOffset, 32);
 
 	inline uint16 getXResolution() const {
