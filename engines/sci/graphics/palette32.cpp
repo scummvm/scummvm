@@ -39,11 +39,10 @@ namespace Sci {
 
 HunkPalette::HunkPalette(const SciSpan<const byte> &rawPalette) :
 	_version(0),
-	// NOTE: The header size in palettes is garbage. In at least KQ7 2.00b and
-	// Phant1, the 999.pal sets this value to 0. In most other palettes it is
-	// set to 14, but the *actual* size of the header structure used in SSCI is
-	// 13, which is reflected by `kHunkPaletteHeaderSize`.
-	// _headerSize(rawPalette[0]),
+	// The header size in palettes is garbage. In at least KQ7 2.00b and Phant1,
+	// the 999.pal sets this value to 0. In most other palettes it is set to 14,
+	// but the *actual* size of the header structure used in SSCI is 13, which
+	// is reflected by `kHunkPaletteHeaderSize`.
 	_numPalettes(rawPalette.getUint8At(kNumPaletteEntriesOffset)),
 	_data() {
 	assert(_numPalettes == 0 || _numPalettes == 1);
@@ -371,28 +370,22 @@ static const uint8 gammaTables[GfxPalette32::numGammaTables][256] = {
 	_varyLastTick(0),
 	_varyTime(0),
 	_varyDirection(0),
+	_varyPercent(0),
 	_varyTargetPercent(0),
 	_varyNumTimesPaused(0),
 
 	// Palette cycling
-	_cyclers(),
 	_cycleMap(),
 
 	// Gamma correction
 	_gammaLevel(-1),
 	_gammaChanged(false) {
 
-	_varyPercent = _varyTargetPercent;
 	for (int i = 0, len = ARRAYSIZE(_fadeTable); i < len; ++i) {
 		_fadeTable[i] = 100;
 	}
 
 	loadPalette(999);
-}
-
-GfxPalette32::~GfxPalette32() {
-	varyOff();
-	cycleAllOff();
 }
 
 bool GfxPalette32::loadPalette(const GuiResourceId resourceId) {
@@ -604,16 +597,16 @@ void GfxPalette32::setVary(const Palette &target, const int16 percent, const int
 }
 
 void GfxPalette32::setVaryPercent(const int16 percent, const int32 ticks) {
-	if (_varyTargetPalette != nullptr) {
+	if (_varyTargetPalette) {
 		setVaryTime(percent, ticks);
 	}
 
-	// NOTE: SSCI had two additional parameters for this function to change the
+	// SSCI had two additional parameters for this function to change the
 	// `_varyFromColor`, but they were always hardcoded to be ignored
 }
 
 void GfxPalette32::setVaryTime(const int32 time) {
-	if (_varyTargetPalette != nullptr) {
+	if (_varyTargetPalette) {
 		setVaryTime(_varyTargetPercent, time);
 	}
 }
@@ -645,16 +638,8 @@ void GfxPalette32::varyOff() {
 	_varyFromColor = 0;
 	_varyToColor = 255;
 	_varyDirection = 0;
-
-	if (_varyTargetPalette != nullptr) {
-		delete _varyTargetPalette;
-		_varyTargetPalette = nullptr;
-	}
-
-	if (_varyStartPalette != nullptr) {
-		delete _varyStartPalette;
-		_varyStartPalette = nullptr;
-	}
+	_varyTargetPalette.reset();
+	_varyStartPalette.reset();
 }
 
 void GfxPalette32::varyPause() {
@@ -667,7 +652,7 @@ void GfxPalette32::varyOn() {
 		--_varyNumTimesPaused;
 	}
 
-	if (_varyTargetPalette != nullptr && _varyNumTimesPaused == 0) {
+	if (_varyTargetPalette && _varyNumTimesPaused == 0) {
 		if (_varyPercent != _varyTargetPercent && _varyTime != 0) {
 			_varyDirection = (_varyTargetPercent - _varyPercent > 0) ? 1 : -1;
 		} else {
@@ -677,28 +662,26 @@ void GfxPalette32::varyOn() {
 }
 
 void GfxPalette32::setTarget(const Palette &palette) {
-	delete _varyTargetPalette;
-	_varyTargetPalette = new Palette(palette);
+	_varyTargetPalette.reset(new Palette(palette));
 }
 
 void GfxPalette32::setStart(const Palette &palette) {
-	delete _varyStartPalette;
-	_varyStartPalette = new Palette(palette);
+	_varyStartPalette.reset(new Palette(palette));
 }
 
 void GfxPalette32::mergeStart(const Palette &palette) {
-	if (_varyStartPalette != nullptr) {
+	if (_varyStartPalette) {
 		mergePalette(*_varyStartPalette, palette);
 	} else {
-		_varyStartPalette = new Palette(palette);
+		_varyStartPalette.reset(new Palette(palette));
 	}
 }
 
 void GfxPalette32::mergeTarget(const Palette &palette) {
-	if (_varyTargetPalette != nullptr) {
+	if (_varyTargetPalette) {
 		mergePalette(*_varyTargetPalette, palette);
 	} else {
-		_varyTargetPalette = new Palette(palette);
+		_varyTargetPalette.reset(new Palette(palette));
 	}
 }
 
@@ -714,9 +697,9 @@ void GfxPalette32::applyVary() {
 		_varyPercent += _varyDirection;
 	}
 
-	if (_varyPercent == 0 || _varyTargetPalette == nullptr) {
+	if (_varyPercent == 0 || !_varyTargetPalette) {
 		for (int i = 0; i < ARRAYSIZE(_nextPalette.colors); ++i) {
-			if (_varyStartPalette != nullptr && i >= _varyFromColor && i <= _varyToColor) {
+			if (_varyStartPalette && i >= _varyFromColor && i <= _varyToColor) {
 				_nextPalette.colors[i] = _varyStartPalette->colors[i];
 			} else {
 				_nextPalette.colors[i] = _sourcePalette.colors[i];
@@ -728,7 +711,7 @@ void GfxPalette32::applyVary() {
 				Color targetColor = _varyTargetPalette->colors[i];
 				Color sourceColor;
 
-				if (_varyStartPalette != nullptr) {
+				if (_varyStartPalette) {
 					sourceColor = _varyStartPalette->colors[i];
 				} else {
 					sourceColor = _sourcePalette.colors[i];
@@ -816,27 +799,28 @@ void GfxPalette32::setCycle(const uint8 fromColor, const uint8 toColor, const in
 		clearCycleMap(fromColor, cycler->numColorsToCycle);
 	} else {
 		for (int i = 0; i < kNumCyclers; ++i) {
-			if (_cyclers[i] == nullptr) {
-				_cyclers[i] = cycler = new PalCycler;
+			if (!_cyclers[i]) {
+				cycler = new PalCycler;
+				_cyclers[i].reset(cycler);
 				break;
 			}
 		}
 	}
 
-	// If there are no free cycler slots, SCI engine overrides the first oldest
-	// cycler that it finds, where "oldest" is determined by the difference
-	// between the tick and now
+	// If there are no free cycler slots, SSCI overrides the first oldest cycler
+	// that it finds, where "oldest" is determined by the difference between the
+	// tick and now
 	if (cycler == nullptr) {
 		const uint32 now = g_sci->getTickCount();
 		uint32 minUpdateDelta = 0xFFFFFFFF;
 
 		for (int i = 0; i < kNumCyclers; ++i) {
-			PalCycler *const candidate = _cyclers[i];
+			PalCyclerOwner &candidate = _cyclers[i];
 
 			const uint32 updateDelta = now - candidate->lastUpdateTick;
 			if (updateDelta < minUpdateDelta) {
 				minUpdateDelta = updateDelta;
-				cycler = candidate;
+				cycler = candidate.get();
 			}
 		}
 
@@ -882,19 +866,18 @@ void GfxPalette32::cyclePause(const uint8 fromColor) {
 
 void GfxPalette32::cycleAllOn() {
 	for (int i = 0; i < kNumCyclers; ++i) {
-		PalCycler *const cycler = _cyclers[i];
-		if (cycler != nullptr && cycler->numTimesPaused > 0) {
+		PalCyclerOwner &cycler = _cyclers[i];
+		if (cycler && cycler->numTimesPaused > 0) {
 			--cycler->numTimesPaused;
 		}
 	}
 }
 
 void GfxPalette32::cycleAllPause() {
-	// NOTE: The original engine did not check for null pointers in the
-	// palette cyclers pointer array.
+	// SSCI did not check for null pointers in the palette cyclers pointer array
 	for (int i = 0; i < kNumCyclers; ++i) {
-		PalCycler *const cycler = _cyclers[i];
-		if (cycler != nullptr) {
+		PalCyclerOwner &cycler = _cyclers[i];
+		if (cycler) {
 			// This seems odd, because currentCycle is 0..numColorsPerCycle,
 			// but fromColor is 0..255. When applyAllCycles runs, the values
 			// end up back in range
@@ -905,8 +888,8 @@ void GfxPalette32::cycleAllPause() {
 	applyAllCycles();
 
 	for (int i = 0; i < kNumCyclers; ++i) {
-		PalCycler *const cycler = _cyclers[i];
-		if (cycler != nullptr) {
+		PalCyclerOwner &cycler = _cyclers[i];
+		if (cycler) {
 			++cycler->numTimesPaused;
 		}
 	}
@@ -914,11 +897,10 @@ void GfxPalette32::cycleAllPause() {
 
 void GfxPalette32::cycleOff(const uint8 fromColor) {
 	for (int i = 0; i < kNumCyclers; ++i) {
-		PalCycler *const cycler = _cyclers[i];
-		if (cycler != nullptr && cycler->fromColor == fromColor) {
+		PalCyclerOwner &cycler = _cyclers[i];
+		if (cycler && cycler->fromColor == fromColor) {
 			clearCycleMap(fromColor, cycler->numColorsToCycle);
-			delete cycler;
-			_cyclers[i] = nullptr;
+			_cyclers[i].reset();
 			break;
 		}
 	}
@@ -926,11 +908,10 @@ void GfxPalette32::cycleOff(const uint8 fromColor) {
 
 void GfxPalette32::cycleAllOff() {
 	for (int i = 0; i < kNumCyclers; ++i) {
-		PalCycler *const cycler = _cyclers[i];
-		if (cycler != nullptr) {
+		PalCyclerOwner &cycler = _cyclers[i];
+		if (cycler) {
 			clearCycleMap(cycler->fromColor, cycler->numColorsToCycle);
-			delete cycler;
-			_cyclers[i] = nullptr;
+			_cyclers[i].reset();
 		}
 	}
 }
@@ -969,9 +950,9 @@ void GfxPalette32::setCycleMap(const uint16 fromColor, const uint16 numColorsToS
 
 PalCycler *GfxPalette32::getCycler(const uint16 fromColor) {
 	for (int cyclerIndex = 0; cyclerIndex < kNumCyclers; ++cyclerIndex) {
-		PalCycler *cycler = _cyclers[cyclerIndex];
-		if (cycler != nullptr && cycler->fromColor == fromColor) {
-			return cycler;
+		PalCyclerOwner &cycler = _cyclers[cyclerIndex];
+		if (cycler && cycler->fromColor == fromColor) {
+			return cycler.get();
 		}
 	}
 
@@ -980,12 +961,12 @@ PalCycler *GfxPalette32::getCycler(const uint16 fromColor) {
 
 void GfxPalette32::applyAllCycles() {
 	Color paletteCopy[256];
-	memcpy(paletteCopy, _nextPalette.colors, sizeof(Color) * 256);
+	memcpy(paletteCopy, _nextPalette.colors, sizeof(paletteCopy));
 
 	for (int i = 0; i < kNumCyclers; ++i) {
-		PalCycler *const cycler = _cyclers[i];
-		if (cycler != nullptr) {
-			cycler->currentCycle = (((int) cycler->currentCycle) + 1) % cycler->numColorsToCycle;
+		PalCyclerOwner &cycler = _cyclers[i];
+		if (cycler) {
+			cycler->currentCycle = (cycler->currentCycle + 1) % cycler->numColorsToCycle;
 			for (int j = 0; j < cycler->numColorsToCycle; j++) {
 				_nextPalette.colors[cycler->fromColor + j] = paletteCopy[cycler->fromColor + (cycler->currentCycle + j) % cycler->numColorsToCycle];
 			}
@@ -995,12 +976,12 @@ void GfxPalette32::applyAllCycles() {
 
 void GfxPalette32::applyCycles() {
 	Color paletteCopy[256];
-	memcpy(paletteCopy, _nextPalette.colors, sizeof(Color) * 256);
+	memcpy(paletteCopy, _nextPalette.colors, sizeof(paletteCopy));
 
 	const uint32 now = g_sci->getTickCount();
 	for (int i = 0; i < kNumCyclers; ++i) {
-		PalCycler *const cycler = _cyclers[i];
-		if (cycler == nullptr) {
+		PalCyclerOwner &cycler = _cyclers[i];
+		if (!cycler) {
 			continue;
 		}
 

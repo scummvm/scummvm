@@ -866,25 +866,25 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 #ifdef ENABLE_SCI32
-static void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
-	s.syncAsUint32LE(palette->timestamp);
-	for (int i = 0; i < ARRAYSIZE(palette->colors); ++i) {
-		s.syncAsByte(palette->colors[i].used);
-		s.syncAsByte(palette->colors[i].r);
-		s.syncAsByte(palette->colors[i].g);
-		s.syncAsByte(palette->colors[i].b);
+static void saveLoadPalette32(Common::Serializer &s, Palette &palette) {
+	s.syncAsUint32LE(palette.timestamp);
+	for (int i = 0; i < ARRAYSIZE(palette.colors); ++i) {
+		s.syncAsByte(palette.colors[i].used);
+		s.syncAsByte(palette.colors[i].r);
+		s.syncAsByte(palette.colors[i].g);
+		s.syncAsByte(palette.colors[i].b);
 	}
 }
 
-static void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
+static void saveLoadOptionalPalette32(Common::Serializer &s, Common::ScopedPtr<Palette> &palette) {
 	bool hasPalette = false;
 	if (s.isSaving()) {
-		hasPalette = (*palette != nullptr);
+		hasPalette = palette;
 	}
 	s.syncAsByte(hasPalette);
 	if (hasPalette) {
 		if (s.isLoading()) {
-			*palette = new Palette;
+			palette.reset(new Palette);
 		}
 		saveLoadPalette32(s, *palette);
 	}
@@ -899,14 +899,11 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 		++_version;
 
 		for (int i = 0; i < kNumCyclers; ++i) {
-			delete _cyclers[i];
-			_cyclers[i] = nullptr;
+			_cyclers[i].reset();
 		}
 
-		delete _varyTargetPalette;
-		_varyTargetPalette = nullptr;
-		delete _varyStartPalette;
-		_varyStartPalette = nullptr;
+		_varyTargetPalette.reset();
+		_varyStartPalette.reset();
 	}
 
 	s.syncAsSint16LE(_varyDirection);
@@ -928,14 +925,14 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (g_sci->_features->hasLatePaletteCode() && s.getVersion() >= 41) {
 		s.syncAsSint16LE(_gammaLevel);
-		saveLoadPalette32(s, &_sourcePalette);
+		saveLoadPalette32(s, _sourcePalette);
 		++_version;
 		_needsUpdate = true;
 		_gammaChanged = true;
 	}
 
-	saveLoadOptionalPalette32(s, &_varyTargetPalette);
-	saveLoadOptionalPalette32(s, &_varyStartPalette);
+	saveLoadOptionalPalette32(s, _varyTargetPalette);
+	saveLoadOptionalPalette32(s, _varyStartPalette);
 
 	// _nextPalette is not saved by SSCI
 
@@ -944,14 +941,15 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 
 		bool hasCycler = false;
 		if (s.isSaving()) {
-			cycler = _cyclers[i];
+			cycler = _cyclers[i].get();
 			hasCycler = (cycler != nullptr);
 		}
 		s.syncAsByte(hasCycler);
 
 		if (hasCycler) {
 			if (s.isLoading()) {
-				_cyclers[i] = cycler = new PalCycler;
+				cycler = new PalCycler;
+				_cyclers[i].reset(cycler);
 			}
 
 			s.syncAsByte(cycler->fromColor);
