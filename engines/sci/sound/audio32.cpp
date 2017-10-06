@@ -153,6 +153,7 @@ Audio32::Audio32(ResourceManager *resMan) :
 	_handle(),
 	_mutex(),
 
+	_channels(getSciVersion() < SCI_VERSION_2_1_EARLY ? 10 : getSciVersion() < SCI_VERSION_3 ? 5 : 8),
 	_numActiveChannels(0),
 	_inAudioThread(false),
 
@@ -170,22 +171,10 @@ Audio32::Audio32(ResourceManager *resMan) :
 	_startedAtTick(0),
 
 	_attenuatedMixing(true),
+	_useModifiedAttenuation(g_sci->_features->usesModifiedAudioAttenuation()),
 
 	_monitoredChannelIndex(-1),
-	_monitoredBuffer(nullptr),
-	_monitoredBufferSize(0),
 	_numMonitoredSamples(0) {
-
-	if (getSciVersion() < SCI_VERSION_2_1_EARLY) {
-		_channels.resize(10);
-	} else if (getSciVersion() < SCI_VERSION_3) {
-		_channels.resize(5);
-	} else {
-		_channels.resize(8);
-	}
-
-	_useModifiedAttenuation = g_sci->_features->usesModifiedAudioAttenuation();
-
 	// In games where scripts premultiply master audio volumes into the volumes
 	// of the individual audio channels sent to the mixer, Audio32 needs to use
 	// the kPlainSoundType so that the master SFX volume is not applied twice.
@@ -202,15 +191,14 @@ Audio32::Audio32(ResourceManager *resMan) :
 Audio32::~Audio32() {
 	stop(kAllChannels);
 	_mixer->stopHandle(_handle);
-	free(_monitoredBuffer);
 }
 
 #pragma mark -
 #pragma mark AudioStream implementation
 
-int Audio32::writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume) {
+int Audio32::writeAudioInternal(Audio::AudioStream &sourceStream, Audio::RateConverter &converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume) {
 	const int samplePairsToRead = numSamples >> 1;
-	const int samplePairsWritten = converter->flow(*sourceStream, targetBuffer, samplePairsToRead, leftVolume, rightVolume);
+	const int samplePairsWritten = converter.flow(sourceStream, targetBuffer, samplePairsToRead, leftVolume, rightVolume);
 	return samplePairsWritten << 1;
 }
 
@@ -243,34 +231,28 @@ bool Audio32::channelShouldMix(const AudioChannel &channel) const {
 	return true;
 }
 
-// In earlier versions of SCI32 engine, audio mixing is
-// split into three different functions.
+// In earlier versions of SCI32 engine, audio mixing is split into three
+// different functions.
 //
-// The first function is called from the main game thread in
-// AsyncEventCheck; later versions of SSCI also call it when
-// getting the playback position. This function is
-// responsible for cleaning up finished channels and
-// filling active channel buffers with decompressed audio
-// matching the hardware output audio format so they can
-// just be copied into the main DAC buffer directly later.
+// The first function is called from the main game thread in AsyncEventCheck;
+// later versions of SSCI also call it when getting the playback position. This
+// function is responsible for cleaning up finished channels and filling active
+// channel buffers with decompressed audio matching the hardware output audio
+// format so they can just be copied into the main DAC buffer directly later.
 //
-// The second function is called by the audio hardware when
-// the DAC buffer needs to be filled, and by `play` when
-// there is only one active sample (so it can just blow away
-// whatever was already in the DAC buffer). It merges all
-// active channels into the DAC buffer and then updates the
-// offset into the DAC buffer.
+// The second function is called by the audio hardware when the DAC buffer needs
+// to be filled, and by `play` when there is only one active sample (so it can
+// just blow away whatever was already in the DAC buffer). It merges all active
+// channels into the DAC buffer and then updates the offset into the DAC buffer.
 //
-// Finally, a third function is called by the second
-// function, and it actually puts data into the DAC buffer,
-// performing volume, distortion, and balance adjustments.
+// Finally, a third function is called by the second function, and it actually
+// puts data into the DAC buffer, performing volume, distortion, and balance
+// adjustments.
 //
-// Since we only have one callback from the audio thread,
-// and should be able to do all audio processing in
-// real time, and we have streams, and we do not need to
-// completely fill the audio buffer, the functionality of
-// all these original functions is combined here and
-// simplified.
+// Since we only have one callback from the audio thread, and should be able to
+// do all audio processing in real time, and we have streams, and we do not need
+// to completely fill the audio buffer, the functionality of all these original
+// functions is combined here and simplified.
 int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
@@ -278,20 +260,17 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 		return 0;
 	}
 
-	// ResourceManager is not thread-safe so we need to
-	// avoid calling into it from the audio thread, but at
-	// the same time we need to be able to clear out any
-	// finished channels on a regular basis
+	// ResourceManager is not thread-safe so we need to avoid calling into it
+	// from the audio thread, but at the same time we need to be able to clear
+	// out any finished channels on a regular basis
 	_inAudioThread = true;
 	freeUnusedChannels();
 
 	const bool playOnlyMonitoredChannel = getSciVersion() != SCI_VERSION_3 && _monitoredChannelIndex != -1;
 
-	// The caller of `readBuffer` is a rate converter,
-	// which reuses (without clearing) an intermediate
-	// buffer, so we need to zero the intermediate buffer
-	// to prevent mixing into audio data from the last
-	// callback.
+	// The caller of `readBuffer` is a rate converter, which reuses (without
+	// clearing) an intermediate buffer, so we need to zero the intermediate
+	// buffer to prevent mixing into audio data from the last callback.
 	memset(buffer, 0, numSamples * sizeof(Audio::st_sample_t));
 
 	// This emulates the attenuated mixing mode of SSCI engine, which reduces
@@ -340,8 +319,8 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 			continue;
 		}
 
-		// Channel finished fading and had the
-		// stopChannelOnFade flag set, so no longer exists
+		// Channel finished fading and had the stopChannelOnFade flag set, so no
+		// longer exists
 		if (channel.fadeStartTick && processFade(channelIndex)) {
 			--channelIndex;
 			continue;
@@ -352,10 +331,10 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 		if (channel.pan == -1 || !isStereo()) {
 			int volume = channel.volume;
 			if (getSciVersion() == SCI_VERSION_2) {
-				// NOTE: In SSCI, audio is decompressed into a temporary
-				// buffer, then the samples in that buffer are looped over,
-				// shifting each sample right 3, 2, or 1 bits to reduce the
-				// volume.
+				// In SSCI, audio is decompressed into a temporary buffer, then
+				// the samples in that buffer are looped over, shifting each
+				// sample right 3, 2, or 1 bits to reduce the volume within the
+				// ranges given here
 				if (volume > 0 && volume <= 42) {
 					volume = 15;
 				} else if (volume > 42 && volume <= 84) {
@@ -367,20 +346,18 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 				// In SCI3, granularity of the non-maximum volumes is 1/32
 				volume &= ~4;
 
-				// NOTE: In the SSCI DOS interpreter, non-maximum volumes are
-				// divided by 8 which puts them in a range of [0, 16). That
-				// reduced volume range gets passed into a volume function which
-				// expects values [0, 32). So, effectively, all non-maximum
-				// volumes are half-volume in DOS in SCI3. In Windows, volumes
-				// [120, 124) are the same as 127 due to a programming bug.
-				// We do not emulate either of these incorrect behaviors.
+				// In the SSCI DOS interpreter, non-maximum volumes are divided
+				// by 8 which puts them in a range of [0, 16). That reduced
+				// volume range gets passed into a volume function which expects
+				// values [0, 32). So, effectively, all non-maximum volumes are
+				// half-volume in DOS in SCI3 due to a programming bug. In
+				// Windows, volumes [120, 124) are the same as 127 due to
+				// another programming bug. We do not emulate either of these
+				// incorrect behaviors.
 			}
 
 			leftVolume = rightVolume = volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume;
 		} else {
-			// TODO: This should match the SCI3 algorithm,
-			// which seems to halve the volume of each
-			// channel when centered; is this intended?
 			leftVolume = channel.volume * (100 - channel.pan) / 100 * Audio::Mixer::kMaxChannelVolume / kMaxVolume;
 			rightVolume = channel.volume * channel.pan / 100 * Audio::Mixer::kMaxChannelVolume / kMaxVolume;
 		}
@@ -397,19 +374,15 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 		}
 
 		if (channelIndex == _monitoredChannelIndex) {
-			const size_t bufferSize = numSamples * sizeof(Audio::st_sample_t);
-			if (_monitoredBufferSize < bufferSize) {
-				_monitoredBuffer = (Audio::st_sample_t *)realloc(_monitoredBuffer, bufferSize);
-				_monitoredBufferSize = bufferSize;
+			if (numSamples > (int)_monitoredBuffer.size()) {
+				_monitoredBuffer.resize(numSamples);
 			}
+			memset(_monitoredBuffer.data(), 0, _monitoredBuffer.size() * sizeof(Audio::st_sample_t));
+			_numMonitoredSamples = writeAudioInternal(*channel.stream, *channel.converter, _monitoredBuffer.data(), numSamples, leftVolume, rightVolume);
 
-			memset(_monitoredBuffer, 0, _monitoredBufferSize);
-
-			_numMonitoredSamples = writeAudioInternal(channel.stream, channel.converter, _monitoredBuffer, numSamples, leftVolume, rightVolume);
-
-			Audio::st_sample_t *sourceBuffer = _monitoredBuffer;
+			Audio::st_sample_t *sourceBuffer = _monitoredBuffer.data();
 			Audio::st_sample_t *targetBuffer = buffer;
-			const Audio::st_sample_t *const end = _monitoredBuffer + _numMonitoredSamples;
+			const Audio::st_sample_t *const end = _monitoredBuffer.data() + _numMonitoredSamples;
 			while (sourceBuffer != end) {
 				Audio::clampedAdd(*targetBuffer++, *sourceBuffer++);
 			}
@@ -428,7 +401,7 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 				leftVolume = rightVolume = 0;
 			}
 
-			const int channelSamplesWritten = writeAudioInternal(channel.stream, channel.converter, buffer, numSamples, leftVolume, rightVolume);
+			const int channelSamplesWritten = writeAudioInternal(*channel.stream, *channel.converter, buffer, numSamples, leftVolume, rightVolume);
 			if (channelSamplesWritten > maxSamplesWritten) {
 				maxSamplesWritten = channelSamplesWritten;
 			}
@@ -458,10 +431,9 @@ uint8 Audio32::getNumUnlockedChannels() const {
 }
 
 int16 Audio32::findChannelByArgs(int argc, const reg_t *argv, const int startIndex, const reg_t soundNode) const {
-	// NOTE: argc/argv are already reduced by one in our engine because
-	// this call is always made from a subop, so no reduction for the
-	// subop is made in this function. SSCI takes extra steps to skip
-	// the subop argument.
+	// SSCI takes extra steps to skip the subop argument here, but argc/argv are
+	// already reduced by one in our engine by the kernel since these calls are
+	// always subops so we do not need to do anything extra
 
 	argc -= startIndex;
 	if (argc <= 0) {
@@ -501,10 +473,10 @@ int16 Audio32::findChannelById(const ResourceId resourceId, const reg_t soundNod
 
 	if (resourceId.getType() == kResourceTypeAudio) {
 		for (int16 i = 0; i < _numActiveChannels; ++i) {
-			const AudioChannel channel = _channels[i];
+			const AudioChannel &candidate = _channels[i];
 			if (
-				channel.id == resourceId &&
-				(soundNode.isNull() || soundNode == channel.soundNode)
+				candidate.id == resourceId &&
+				(soundNode.isNull() || soundNode == candidate.soundNode)
 			) {
 				return i;
 			}
@@ -553,7 +525,7 @@ void Audio32::freeUnusedChannels() {
 }
 
 void Audio32::freeChannel(const int16 channelIndex) {
-	// The original engine did this:
+	// SSCI did this:
 	// 1. Unlock memory-cached resource, if one existed
 	// 2. Close patched audio file descriptor, if one existed
 	// 3. Free decompression memory buffer, if one existed
@@ -563,14 +535,13 @@ void Audio32::freeChannel(const int16 channelIndex) {
 
 	// Robots have no corresponding resource to free
 	if (channel.robot) {
-		delete channel.stream;
-		channel.stream = nullptr;
+		channel.stream.reset();
 		channel.robot = false;
 	} else {
-		// We cannot unlock resources from the audio thread
-		// because ResourceManager is not thread-safe; instead,
-		// we just record that the resource needs unlocking and
-		// unlock it whenever we are on the main thread again
+		// We cannot unlock resources from the audio thread because
+		// ResourceManager is not thread-safe; instead, we just record that the
+		// resource needs unlocking and unlock it whenever we are on the main
+		// thread again
 		if (_inAudioThread) {
 			_resourcesToUnlock.push_back(channel.resource);
 		} else {
@@ -578,12 +549,10 @@ void Audio32::freeChannel(const int16 channelIndex) {
 		}
 
 		channel.resource = nullptr;
-		delete channel.stream;
-		channel.stream = nullptr;
+		channel.stream.reset();
 	}
 
-	delete channel.converter;
-	channel.converter = nullptr;
+	channel.converter.reset();
 
 	if (_monitoredChannelIndex == channelIndex) {
 		_monitoredChannelIndex = -1;
@@ -677,13 +646,12 @@ bool Audio32::playRobotAudio(const RobotAudioStream::RobotAudioPacket &packet) {
 		channel.pausedAtTick = 0;
 		channel.soundNode = NULL_REG;
 		channel.volume = kMaxVolume;
-		// TODO: SCI3 introduces stereo audio
 		channel.pan = -1;
-		channel.converter = Audio::makeRateConverter(RobotAudioStream::kRobotSampleRate, getRate(), false);
+		channel.converter.reset(Audio::makeRateConverter(RobotAudioStream::kRobotSampleRate, getRate(), false));
 		// The RobotAudioStream buffer size is
 		// ((bytesPerSample * channels * sampleRate * 2000ms) / 1000ms) & ~3
 		// where bytesPerSample = 2, channels = 1, and sampleRate = 22050
-		channel.stream = new RobotAudioStream(88200);
+		channel.stream.reset(new RobotAudioStream(88200));
 		_robotAudioPaused = false;
 
 		if (_numActiveChannels == 1) {
@@ -691,7 +659,7 @@ bool Audio32::playRobotAudio(const RobotAudioStream::RobotAudioPacket &packet) {
 		}
 	}
 
-	return static_cast<RobotAudioStream *>(channel.stream)->addPacket(packet);
+	return static_cast<RobotAudioStream *>(channel.stream.get())->addPacket(packet);
 }
 
 bool Audio32::queryRobotAudio(RobotAudioStream::StreamState &status) const {
@@ -703,7 +671,7 @@ bool Audio32::queryRobotAudio(RobotAudioStream::StreamState &status) const {
 		return false;
 	}
 
-	status = static_cast<RobotAudioStream *>(getChannel(channelIndex).stream)->getStatus();
+	status = static_cast<RobotAudioStream *>(getChannel(channelIndex).stream.get())->getStatus();
 	return true;
 }
 
@@ -715,7 +683,7 @@ bool Audio32::finishRobotAudio() {
 		return false;
 	}
 
-	static_cast<RobotAudioStream *>(getChannel(channelIndex).stream)->finish();
+	static_cast<RobotAudioStream *>(getChannel(channelIndex).stream.get())->finish();
 	return true;
 }
 
@@ -741,7 +709,7 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 
 	if (channelIndex != kNoExistingChannel) {
 		AudioChannel &channel = getChannel(channelIndex);
-		MutableLoopAudioStream *stream = dynamic_cast<MutableLoopAudioStream *>(channel.stream);
+		MutableLoopAudioStream *stream = dynamic_cast<MutableLoopAudioStream *>(channel.stream.get());
 		if (stream == nullptr) {
 			error("[Audio32::play]: Unable to cast stream for resource %s", resourceId.toString().c_str());
 		}
@@ -760,43 +728,42 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 		return 0;
 	}
 
-	// NOTE: SCI engine itself normally searches in this order:
+	// SSCI normally searches in this order:
 	//
 	// For Audio36:
 	//
-	// 1. First, request a FD using Audio36 name and use it as the
-	//    source FD for reading the audio resource data.
-	// 2a. If the returned FD is -1, or equals the audio map, or
-	//     equals the audio bundle, try to get the offset of the
-	//     data from the audio map, using the Audio36 name.
+	// 1. First, request a FD using Audio36 name and use it as the source FD for
+	//    reading the audio resource data.
+	// 2a. If the returned FD is -1, or equals the audio map, or equals the
+	//     audio bundle, try to get the offset of the data from the audio map,
+	//     using the Audio36 name.
 	//
-	//     If the returned offset is -1, this is not a valid resource;
-	//     return 0. Otherwise, set the read offset for the FD to the
-	//     returned offset.
-	// 2b. Otherwise, use the FD as-is (it is a patch file), with zero
-	//     offset, and record it separately so it can be closed later.
+	//     If the returned offset is -1, this is not a valid resource; return 0.
+	//     Otherwise, set the read offset for the FD to the returned offset.
+	// 2b. Otherwise, use the FD as-is (it is a patch file), with zero offset,
+	//     and record it separately so it can be closed later.
 	//
 	// For plain audio:
 	//
-	// 1. First, request an Audio resource from the resource cache. If
-	//    one does not exist, make the same request for a Wave resource.
-	// 2a. If an audio resource was discovered, record its memory ID
-	//     and clear the streaming FD
-	// 2b. Otherwise, request an Audio FD. If one does not exist, make
-	//     the same request for a Wave FD. If neither exist, this is not
-	//     a valid resource; return 0. Otherwise, use the returned FD as
-	//     the streaming ID and set the memory ID to null.
+	// 1. First, request an Audio resource from the resource cache. If one does
+	//    not exist, make the same request for a Wave resource.
+	// 2a. If an audio resource was discovered, record its memory ID and clear
+	//     the streaming FD
+	// 2b. Otherwise, request an Audio FD. If one does not exist, make the same
+	//     request for a Wave FD. If neither exist, this is not a valid
+	//     resource; return 0. Otherwise, use the returned FD as the streaming
+	//     ID and set the memory ID to null.
 	//
 	// Once these steps are complete, the audio engine either has a file
-	// descriptor + offset that it can use to read streamed audio, or it
-	// has a memory ID that it can use to read cached audio.
+	// descriptor + offset that it can use to read streamed audio, or it has a
+	// memory ID that it can use to read cached audio.
 	//
-	// Here in ScummVM we just ask the resource manager to give us the
-	// resource and we get a seekable stream.
+	// Here in ScummVM we just ask the resource manager to give us the resource
+	// and we get a seekable stream.
 
-	// TODO: This should be fixed to use streaming, which means
-	// fixing the resource manager to allow streaming, which means
-	// probably rewriting a bunch of the resource manager.
+	// TODO: This should be fixed to use streaming, which means fixing the
+	// resource manager to allow streaming, which means probably rewriting a
+	// bunch of the resource manager.
 	Resource *resource = _resMan->findResource(resourceId, true);
 	if (resource == nullptr) {
 		warning("[Audio32::play]: %s could not be found", resourceId.toString().c_str());
@@ -812,7 +779,6 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	channel.fadeStartTick = 0;
 	channel.soundNode = soundNode;
 	channel.volume = volume < 0 || volume > kMaxVolume ? (int)kMaxVolume : volume;
-	// TODO: SCI3 introduces stereo audio
 	channel.pan = -1;
 
 	if (monitor) {
@@ -842,18 +808,17 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 		audioStream = Audio::makeRawStream(dataStream, _globalSampleRate, flags, DisposeAfterUse::YES);
 	}
 
-	channel.stream = new MutableLoopAudioStream(audioStream, loop);
-	channel.converter = Audio::makeRateConverter(channel.stream->getRate(), getRate(), channel.stream->isStereo(), false);
+	channel.stream.reset(new MutableLoopAudioStream(audioStream, loop));
+	channel.converter.reset(Audio::makeRateConverter(channel.stream->getRate(), getRate(), channel.stream->isStereo(), false));
 
-	// NOTE: SCI engine sets up a decompression buffer here for the audio
-	// stream, plus writes information about the sample to the channel to
-	// convert to the correct hardware output format, and allocates the
-	// monitoring buffer to match the bitrate/samplerate/channels of the
-	// original stream. We do not need to do any of these things since we
-	// use audio streams, and allocate and fill the monitoring buffer
-	// when reading audio data from the stream.
+	// SSCI sets up a decompression buffer here for the audio stream, plus
+	// writes information about the sample to the channel to convert to the
+	// correct hardware output format, and allocates the monitoring buffer to
+	// match the bitrate/samplerate/channels of the original stream. We do not
+	// need to do any of these things since we use audio streams, and allocate
+	// and fill the monitoring buffer when reading audio data from the stream.
 
-	MutableLoopAudioStream *stream = dynamic_cast<MutableLoopAudioStream *>(channel.stream);
+	MutableLoopAudioStream *stream = dynamic_cast<MutableLoopAudioStream *>(channel.stream.get());
 	if (stream == nullptr) {
 		error("[Audio32::play]: Unable to cast stream for resource %s", resourceId.toString().c_str());
 	}
@@ -958,8 +923,8 @@ bool Audio32::pause(const int16 channelIndex) {
 			}
 		}
 
-		// NOTE: The actual engine returns false here regardless of whether
-		// or not channels were paused
+		// SSCI returns false here regardless of whether or not channels were
+		// paused, so we emulate this behaviour
 	} else {
 		AudioChannel &channel = getChannel(channelIndex);
 
@@ -996,9 +961,10 @@ int16 Audio32::stop(const int16 channelIndex) {
 		}
 	}
 
-	// NOTE: SSCI stops the DSP interrupt and frees the
-	// global decompression buffer here if there are no
-	// more active channels
+	// SSCI stops the DSP interrupt and frees the global decompression buffer
+	// here if there are no more active channels, which we do not need to do
+	// since the system manages audio callbacks and we have no static
+	// decompression buffer
 
 	return oldNumChannels;
 }
@@ -1015,13 +981,14 @@ int16 Audio32::getPosition(const int16 channelIndex) const {
 		return -1;
 	}
 
-	// NOTE: SSCI treats this as an unsigned short except for
-	// when the value is 65535, then it treats it as signed
+	// SSCI treats this as an unsigned short except for when the value is 65535,
+	// then it treats it as signed
 	int position = -1;
 	const uint32 now = g_sci->getTickCount();
 
-	// NOTE: The original engine also queried the audio driver to see whether
-	// it thought that there was audio playback occurring via driver opcode 9
+	// SSCI also queried the audio driver to see whether it thought that there
+	// was audio playback occurring via driver opcode 9, but we have no analogue
+	// to query
 	if (channelIndex == kAllChannels) {
 		if (_pausedAtTick) {
 			position = _pausedAtTick - _startedAtTick;
@@ -1052,7 +1019,7 @@ void Audio32::setLoop(const int16 channelIndex, const bool loop) {
 
 	AudioChannel &channel = getChannel(channelIndex);
 
-	MutableLoopAudioStream *stream = dynamic_cast<MutableLoopAudioStream *>(channel.stream);
+	MutableLoopAudioStream *stream = dynamic_cast<MutableLoopAudioStream *>(channel.stream.get());
 	assert(stream);
 	stream->loop() = loop;
 }
@@ -1161,8 +1128,8 @@ bool Audio32::hasSignal() const {
 		return false;
 	}
 
-	const Audio::st_sample_t *buffer = _monitoredBuffer;
-	const Audio::st_sample_t *const end = _monitoredBuffer + _numMonitoredSamples;
+	const Audio::st_sample_t *buffer = _monitoredBuffer.data();
+	const Audio::st_sample_t *const end = _monitoredBuffer.data() + _numMonitoredSamples;
 
 	while (buffer != end) {
 		const Audio::st_sample_t sample = *buffer++;
@@ -1193,9 +1160,9 @@ reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *cons
 		if (argc < 6 || argv[5].toSint16() == 1) {
 			loop = false;
 		} else {
-			// NOTE: Uses -1 for infinite loop. Presumably the
-			// engine was supposed to allow counter loops at one
-			// point, but ended up only using loop as a boolean.
+			// SSCI uses -1 for infinite loop. Presumably the engine was
+			// supposed to allow counter loops at one point, but ended up only
+			// using loop as a boolean.
 			loop = (bool)argv[5].toSint16();
 		}
 
@@ -1311,8 +1278,10 @@ reg_t Audio32::kernelFade(const int argc, const reg_t *const argv) {
 
 	Common::StackLock lock(_mutex);
 
-	// NOTE: In SSCI, this call to find the channel is hacked up; argc is
-	// set to 2 before the call, and then restored after the call.
+	// In SSCI, this call to find the channel is hacked up; argc is set to 2
+	// before the call, and then restored after the call. We just implemented
+	// findChannelByArgs in a manner that allows us to pass this information
+	// without messing with argc/argv instead
 	const int16 channelIndex = findChannelByArgs(2, argv, 0, argc > 5 ? argv[5] : NULL_REG);
 	const int16 volume = argv[1].toSint16();
 	const int16 speed = argv[2].toSint16();
@@ -1359,7 +1328,7 @@ void Audio32::printAudioList(Console *con) const {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i < _numActiveChannels; ++i) {
 		const AudioChannel &channel = _channels[i];
-		const MutableLoopAudioStream *stream = dynamic_cast<MutableLoopAudioStream *>(channel.stream);
+		const MutableLoopAudioStream *stream = dynamic_cast<MutableLoopAudioStream *>(channel.stream.get());
 		con->debugPrintf("  %d[%04x:%04x]: %s, started at %d, pos %d/%d, vol %d, pan %d%s%s\n",
 						 i,
 						 PRINT_REG(channel.soundNode),

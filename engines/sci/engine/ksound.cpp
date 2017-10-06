@@ -384,10 +384,6 @@ reg_t kDoAudioPosition(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioRate(EngineState *s, int argc, reg_t *argv) {
-	// NOTE: In the original engine this would set the hardware
-	// DSP sampling rate; ScummVM mixer does not need this, so
-	// we only store the value to satisfy engine compatibility.
-
 	if (argc > 0) {
 		const uint16 sampleRate = argv[0].toUint16();
 		if (sampleRate != 0) {
@@ -407,10 +403,6 @@ reg_t kDoAudioGetCapability(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioBitDepth(EngineState *s, int argc, reg_t *argv) {
-	// NOTE: In the original engine this would set the hardware
-	// DSP bit depth; ScummVM mixer does not need this, so
-	// we only store the value to satisfy engine compatibility.
-
 	if (argc > 0) {
 		const uint16 bitDepth = argv[0].toUint16();
 		if (bitDepth != 0) {
@@ -426,10 +418,6 @@ reg_t kDoAudioMixing(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioChannels(EngineState *s, int argc, reg_t *argv) {
-	// NOTE: In the original engine this would set the hardware
-	// DSP stereo output; ScummVM mixer does not need this, so
-	// we only store the value to satisfy engine compatibility.
-
 	if (argc > 0) {
 		const int16 numChannels = argv[0].toSint16();
 		if (numChannels != 0) {
@@ -441,11 +429,6 @@ reg_t kDoAudioChannels(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioPreload(EngineState *s, int argc, reg_t *argv) {
-	// NOTE: In the original engine this would cause audio
-	// data for new channels to be preloaded to memory when
-	// the channel was initialized; we do not need this, so
-	// we only store the value to satisfy engine compatibility.
-
 	if (argc > 0) {
 		g_sci->_audio32->setPreload(argv[0].toUint16());
 	}
@@ -477,11 +460,8 @@ reg_t kDoAudioPanOff(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv) {
-	// This is used by script 90 of MUMG Deluxe from the main menu to toggle
-	// the audio language between English and Spanish.
-	// Basically, it instructs the interpreter to switch the audio resources
-	// (resource.aud and associated map files) and load them from the "Spanish"
-	// subdirectory instead.
+	// Used by script 90 of MUMG Deluxe from the main menu to toggle between
+	// English and Spanish.
 	const Common::String audioDirectory = s->_segMan->getString(argv[0]);
 	g_sci->getResMan()->changeAudioDirectory(audioDirectory);
 	return s->r_acc;

@@ -350,11 +350,9 @@ reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
 		}
 
 #ifdef ENABLE_SCI32
-		// NOTE: The original engine also expected a global
-		// "kernel call" flag to be true in order to perform
-		// this action, but the architecture of the ScummVM
-		// implementation is so different that it doesn't
-		// matter here
+		// SSCI also expected a global "kernel call" flag to be true in order to
+		// perform this action, but the architecture of the ScummVM
+		// implementation is so different that it doesn't matter here
 		if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
 			if (shouldPause) {
 				g_sci->_audio32->pause(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
