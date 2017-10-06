@@ -418,31 +418,19 @@ public:
 			Array<T>::insert(where, element);
 	}
 
-	T &operator[](size_type idx) {
-		error("Operation []= not allowed with SortedArray");
-	}
-
-	void insert_at(size_type idx, const T &element) {
-		error("Operation insert_at(idx, element) not allowed with SortedArray");
-	}
-
-	void insert_at(size_type idx, const Array<T> &array) {
-		error("Operation insert_at(idx, array) not allowed with SortedArray");
-	}
-
-	void insert(iterator pos, const T &element) {
-		error("Operation insert(pos, elemnet) not allowed with SortedArray");
-	}
-
-	void push_back(const T &element) {
-		error("Operation push_back(element) not allowed with SortedArray");
-	}
-
-	void push_back(const Array<T> &array) {
-		error("Operation push_back(array) not allowed with SortedArray");
-	}
-
 private:
+	T &operator[](size_type idx);
+
+	void insert_at(size_type idx, const T &element);
+
+	void insert_at(size_type idx, const Array<T> &array);
+
+	void insert(iterator pos, const T &element);
+
+	void push_back(const T &element);
+
+	void push_back(const Array<T> &array);
+
 	// Based on code Copyright (C) 2008-2009 Ksplice, Inc.
 	// Author: Tim Abbott <tabbott@ksplice.com>
 	// Licensed under GPLv2+
@@ -465,7 +453,6 @@ private:
 		return &this->_storage[start_];
 	}
 
-private:
 	int (*_comparator)(const void *, const void *);
 };
 
