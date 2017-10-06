@@ -42,9 +42,9 @@ reg_t GfxPaint32::kernelAddLine(const reg_t planeObject, const Common::Point &st
 	CelInfo32 celInfo;
 	celInfo.type = kCelTypeMem;
 	celInfo.bitmap = bitmapId;
-	// SSCI stores the line color on `celInfo`, even though
-	// this is not a `kCelTypeColor`, as a hack so that
-	// `kUpdateLine` can get the originally used color
+	// SSCI stores the line color on `celInfo`, even though this is not a
+	// `kCelTypeColor`, as a hack so that `kUpdateLine` can get the originally
+	// used color
 	celInfo.color = color;
 
 	ScreenItem *screenItem = new ScreenItem(planeObject, celInfo, gameRect);
@@ -93,7 +93,8 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 	const uint32 index = bitmapWidth * y + x;
 
 	// Only draw the points in the bitmap, and ignore the rest. SSCI scripts
-	// can draw lines ending outside the visible area (e.g. negative coordinates)
+	// can draw lines ending outside the visible area (e.g. negative
+	// coordinates)
 	if (x >= 0 && x < bitmapWidth && y >= 0 && y < bitmapHeight) {
 		if (properties.solid) {
 			pixels[index] = (uint8)color;
