@@ -44,7 +44,7 @@ int16 GfxText32::_yResolution = 0;
 GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 	_segMan(segMan),
 	_cache(fonts),
-	// Not a typo, the original engine did not initialise height, only width
+	// SSCI did not initialise height, so we intentionally do not do so also
 	_width(0),
 	_text(""),
 	_bitmap(NULL_REG) {
@@ -84,8 +84,8 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 		mulinc(_textRect, scaleX, scaleY);
 	}
 
-	// _textRect represents where text is drawn inside the
-	// bitmap; clipRect is the entire bitmap
+	// `_textRect` represents where text is drawn inside the bitmap; `clipRect`
+	// is the entire bitmap
 	Common::Rect bitmapRect(_width, _height);
 
 	if (_textRect.intersects(bitmapRect)) {
@@ -134,9 +134,9 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 
 	SciBitmap &bitmap = *_segMan->allocateBitmap(&_bitmap, _width, _height, _skipColor, 0, 0, _xResolution, _yResolution, 0, false, gc);
 
-	// NOTE: The engine filled the bitmap pixels with 11 here, which is silly
-	// because then it just erased the bitmap using the skip color. So we don't
-	// fill the bitmap redundantly here.
+	// SSCI filled the bitmap pixels with 11 here, which is silly because then
+	// it just erased the bitmap using the skip color. So we don't fill the
+	// bitmap redundantly here.
 
 	_backColor = _skipColor;
 	erase(bitmapRect, false);
@@ -164,9 +164,10 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 }
 
 void GfxText32::setFont(const GuiResourceId fontId) {
-	// NOTE: In SCI engine this calls FontMgr::BuildFontTable and then a font
-	// table is built on the FontMgr directly; instead, because we already have
-	// font resources, this code just grabs a font out of GfxCache.
+	// In SSCI, this calls FontMgr::BuildFontTable, and then a font table is
+	// built on the FontMgr directly; instead, because we already have GfxFont
+	// resources from SCI16 and those resources did not change in SCI32, this
+	// code just grabs those out of GfxCache
 	if (fontId != _fontId) {
 		_fontId = fontId;
 		_font = _cache->getFont(_fontId);
@@ -179,7 +180,7 @@ void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint
 	SciBitmap &bitmap = *_segMan->lookupBitmap(_bitmap);
 	byte *pixels = bitmap.getPixels() + rect.top * _width + rect.left;
 
-	// NOTE: Not fully disassembled, but this should be right
+	// Not fully disassembled, but appears to be correct in all cases
 	int16 rectWidth = targetRect.width();
 	int16 heightRemaining = targetRect.height();
 	int16 sidesHeight = heightRemaining - size * 2;
@@ -275,10 +276,9 @@ void GfxText32::drawTextBox(const Common::String &text) {
 void GfxText32::drawText(const uint index, uint length) {
 	assert(index + length <= _text.size());
 
-	// NOTE: This draw loop implementation is somewhat different than the
-	// implementation in the actual engine, but should be accurate. Primarily
-	// the changes revolve around eliminating some extra temporaries and
-	// fixing the logic to match.
+	// This draw loop implementation is somewhat different than the
+	// implementation in SSCI, but is accurate. Primarily the changes revolve
+	// around eliminating some extra temporaries and fixing the logic to match.
 	const char *text = _text.c_str() + index;
 	while (length-- > 0) {
 		char currentChar = *text++;
@@ -341,10 +341,10 @@ void GfxText32::invertRect(const reg_t bitmapId, int16 bitmapStride, const Commo
 
 	SciBitmap &bitmap = *_segMan->lookupBitmap(bitmapId);
 
-	// NOTE: SCI code is super weird here; it seems to be trying to look at the
-	// entire size of the bitmap including the header, instead of just the pixel
-	// data size. We just look at the pixel size. This function generally is an
-	// odd duck since the stride dimension for a bitmap is built in to the bitmap
+	// SSCI is super weird here; it seems to be trying to look at the entire
+	// size of the bitmap including the header, instead of just the pixel data
+	// size. We just look at the pixel size. This function generally is an odd
+	// duck since the stride dimension for a bitmap is built in to the bitmap
 	// header, so perhaps it was once an unheadered bitmap format and this
 	// function was never updated to match? Or maybe they exploit the
 	// configurable stride length somewhere else to do stair stepping inverts...
@@ -355,7 +355,7 @@ void GfxText32::invertRect(const reg_t bitmapId, int16 bitmapStride, const Commo
 		error("InvertRect too big: %u >= %u", invertSize, bitmapSize);
 	}
 
-	// NOTE: Actual engine just added the bitmap header size hardcoded here
+	// SSCI just added a hardcoded bitmap header size here
 	byte *pixel = bitmap.getPixels() + bitmapStride * targetRect.top + targetRect.left;
 
 	int16 stride = bitmapStride - targetRect.width();
@@ -392,16 +392,17 @@ uint GfxText32::getLongest(uint *charIndex, const int16 width) {
 
 	char currentChar;
 	while ((currentChar = *text++) != '\0') {
-		// NOTE: In the original engine, the font, color, and alignment were
-		// reset here to their initial values
+		// In SSCI, the font, color, and alignment were reset here to their
+		// initial values; this does not seem to be necessary and really
+		// complicates the font system, so we do not do it
 
 		// The text to render contains a line break; stop at the line break
 		if (currentChar == '\r' || currentChar == '\n') {
-			// Skip the rest of the line break if it is a Windows-style
-			// \r\n or non-standard \n\r
-			// NOTE: In the original engine, the `text` pointer had not been
-			// advanced yet so the indexes used to access characters were
-			// one higher
+			// Skip the rest of the line break if it is a Windows-style \r\n (or
+			// non-standard \n\r)
+
+			// In SSCI, the `text` pointer had not been advanced yet here, so
+			// the indexes used to access characters were one higher there
 			if (
 				(currentChar == '\r' && text[0] == '\n') ||
 				(currentChar == '\n' && text[0] == '\r' && text[1] != '\n')
@@ -418,16 +419,20 @@ uint GfxText32::getLongest(uint *charIndex, const int16 width) {
 			}
 
 			// Skip the line break and return all text seen up to now
-			// NOTE: In original engine, the font, color, and alignment were
-			// reset, then getTextWidth was called to use its side-effects to
-			// set font, color, and alignment according to the text from
-			// `initialCharIndex` to `testLength`
+			// In SSCI, the font, color, and alignment were reset, then
+			// getTextWidth was called to use its side-effects to set font,
+			// color, and alignment according to the text from
+			// `initialCharIndex` to `testLength`. This is complicated and
+			// apparently not necessary for correct operation, so we do not do
+			// it
+
 			++*charIndex;
 			return testLength;
 		} else if (currentChar == ' ') {
-			// The last word in the line made it too wide to fit in the text area;
-			// return up to the previous word, then collapse the whitespace
-			// between that word and its next sibling word into the line break
+			// The last word in the line made it too wide to fit in the text
+			// area; return up to the previous word, then collapse the
+			// whitespace between that word and its next sibling word into the
+			// line break
 			if (getTextWidth(initialCharIndex, testLength) > width) {
 				*charIndex = lastWordBreakIndex;
 				const char *nextChar = _text.c_str() + lastWordBreakIndex;
@@ -435,14 +440,17 @@ uint GfxText32::getLongest(uint *charIndex, const int16 width) {
 					++*charIndex;
 				}
 
-				// NOTE: In original engine, the font, color, and alignment were
-				// set here to the values that were seen at the last space character
+				// In SSCI, the font, color, and alignment were set here to the
+				// values that were seen at the last space character, but this
+				// is complicated and unnecessary so we do not do it
+
 				return length;
 			}
 
-			// NOTE: In the original engine, the values of _fontId, _foreColor,
-			// and _alignment were stored for use in the return path mentioned
-			// just above here
+			// In SSCI, the values of `_fontId`, `_foreColor`, and `_alignment`
+			// were stored for use in the return path mentioned just above here,
+			// but we do not need to do this because we do not cause
+			// side-effects when calculating text dimensions
 
 			// We found a word break that was within the text area, memorise it
 			// and continue processing. +1 on the character index because it has
@@ -456,8 +464,9 @@ uint GfxText32::getLongest(uint *charIndex, const int16 width) {
 		++*charIndex;
 		++testLength;
 
-		// NOTE: In the original engine, the font, color, and alignment were
-		// reset here to their initial values
+		// In SSCI, the font, color, and alignment were reset here to their
+		// initial values, but we do not need to do this because we do not cause
+		// side-effects when calculating text dimensions
 
 		// The text to render contained no word breaks yet but is already too
 		// wide for the text area; just split the word in half at the point
@@ -471,10 +480,11 @@ uint GfxText32::getLongest(uint *charIndex, const int16 width) {
 	// The complete text to render was a single word, or was narrower than
 	// the text area, so return the entire line
 	if (length == 0 || getTextWidth(initialCharIndex, testLength) <= width) {
-		// NOTE: In original engine, the font, color, and alignment were
-		// reset, then getTextWidth was called to use its side-effects to
-		// set font, color, and alignment according to the text from
-		// `initialCharIndex` to `testLength`
+		// In SSCI, the font, color, and alignment were reset, then getTextWidth
+		// was called to use its side-effects to set font, color, and alignment
+		// according to the text from `initialCharIndex` to `testLength`. This
+		// is not necessary because we do not cause side-effects when
+		// calculating text dimensions
 		return testLength;
 	}
 
@@ -495,14 +505,13 @@ int16 GfxText32::getTextWidth(const uint index, uint length) const {
 	while (length > 0 && currentChar != '\0') {
 		// Control codes are in the format `|<code><value>|`
 		if (currentChar == '|') {
-			// NOTE: Original engine code changed the global state of the
-			// FontMgr here upon encountering any color, alignment, or
-			// font control code.
-			// To avoid requiring all callers to manually restore these
-			// values on every call, we ignore control codes other than
-			// font change (since alignment and color do not change the
-			// width of characters), and simply update the font pointer
-			// on stack instead of the member property font.
+			// SSCI changed the global state of the FontMgr here upon
+			// encountering any color, alignment, or font control code. To avoid
+			// requiring all callers to manually restore these values on every
+			// call, we ignore control codes other than font change (since
+			// alignment and color do not change the width of characters), and
+			// simply update the font pointer on stack instead of the member
+			// property font to avoid these unnecessary side-effects.
 			currentChar = *text++;
 			--length;
 
@@ -548,12 +557,12 @@ int16 GfxText32::getTextWidth(const Common::String &text, const uint index, cons
 }
 
 Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, bool doScaling) {
-	// NOTE: Like most of the text rendering code, this function was pretty
-	// weird in the original engine. The initial result rectangle was actually
-	// a 1x1 rectangle (0, 0, 0, 0), which was then "fixed" after the main
-	// text size loop finished running by subtracting 1 from the right and
-	// bottom edges. Like other functions in SCI32, this has been converted
-	// to use exclusive rects with inclusive rounding.
+	// Like most of the text rendering code, this function was pretty weird in
+	// SSCI. The initial result rectangle was actually a 1x1 rectangle
+	// (0, 0, 0, 0), which was then "fixed" after the main text size loop
+	// finished running by subtracting 1 from the right and bottom edges. Like
+	// other functions in SCI32, this has been converted to use exclusive rects
+	// with inclusive rounding.
 
 	Common::Rect result;
 
@@ -598,17 +607,18 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 		if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
 			result.bottom = 0;
 		} else {
-			// NOTE: In the original engine code, the bottom was not decremented
-			// by 1, which means that the rect was actually a pixel taller than
-			// the height of the font. This was not the case in the other branch,
-			// which decremented the bottom by 1 at the end of the loop.
+			// In SSCI, the bottom was not decremented by 1, which means that
+			// the rect was actually a pixel taller than the height of the font.
+			// This was not the case in the other branch, which decremented the
+			// bottom by 1 at the end of the loop. For accuracy, we do what SSCI
+			// did, even though this means the result is a pixel off
 			result.bottom = _font->getHeight() + 1;
 		}
 	}
 
 	if (doScaling) {
-		// NOTE: The original engine code also scaled top/left but these are
-		// always zero so there is no reason to do that.
+		// SSCI also scaled top/left but these are always zero so there is no
+		// reason to do that
 		result.right = ((result.right - 1) * scriptWidth + _xResolution - 1) / _xResolution + 1;
 		result.bottom = ((result.bottom - 1) * scriptHeight + _yResolution - 1) / _yResolution + 1;
 	}
@@ -700,7 +710,10 @@ void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 c
 
 	_foreColor = color;
 	_alignment = align;
-	//int fc = _foreColor;
+
+	// As with other font functions, SSCI saved _foreColor here so it could be
+	// restored after the getTextWidth call, but this call is side-effect-free
+	// in our implementation so this is not necessary
 
 	setFont(fontId);
 
@@ -713,8 +726,8 @@ void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 c
 		_drawPosition.x += _textRect.width() - textWidth;
 	}
 
-	//_foreColor = fc;
-	//setFont(fontId);
+	// _foreColor and font were restored here in SSCI due to side-effects of
+	// getTextWidth which do not exist in our implementation
 
 	drawText(0, lineText.size());
 }
