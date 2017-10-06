@@ -2289,10 +2289,10 @@ static const uint16 lighthouseFlagResetPatch[] = {
 };
 
 // When doing a system check on the portal computer in the lighthouse, the game
-// counts up to 1024MB, one megabyte at a time. In the original engine, this
-// count speed would be video speed dependent, but with our frame rate
-// throttler, it takes 17 seconds. So, replace this slowness with a much faster
-// POST that is more accurate to the original game.
+// counts up to 1024MB, one megabyte at a time. In SSCI, this count speed would
+// be video speed dependent, but with our frame rate throttler, it takes 17
+// seconds. So, replace this slowness with a much faster POST that is more
+// accurate to the original game.
 // Applies to at least: US English 1.0c
 static const uint16 lighthouseMemoryCountSignature[] = {
 	SIG_MAGICDWORD,
@@ -6411,13 +6411,12 @@ static const uint16 ramaBenchmarkPatch[] = {
 };
 
 // RAMA uses a custom save game format that game scripts read and write
-// manually. The save game format serialises object references, which in the
-// original engine could be done just by writing int16s (since object references
-// were just 16-bit indexes), but in ScummVM we have to write the full 32-bit
-// reg_t. We hijack kFileIOReadWord/kFileIOWriteWord to do this for us, but we
-// need the game to agree to use those kFileIO calls instead of doing raw reads
-// and creating its own numbers, as it tries to do here in
-// `SaveManager::readWord`.
+// manually. The save game format serialises object references, which SSCI could
+// be done just by writing int16s (since object references were just 16-bit
+// indexes), but in ScummVM we have to write the full 32-bit reg_t. We hijack
+// kFileIOReadWord/kFileIOWriteWord to do this for us, but we need the game to
+// agree to use those kFileIO calls instead of doing raw reads and creating its
+// own numbers, as it tries to do here in `SaveManager::readWord`.
 static const uint16 ramaSerializeRegTSignature1[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(newWith), // pushi $10b (newWith)
