@@ -102,9 +102,9 @@ reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 reg_t kSetNowSeen32(EngineState *s, int argc, reg_t *argv) {
 	const bool found = g_sci->_gfxFrameout->kernelSetNowSeen(argv[0]);
 
-	// NOTE: MGDX is assumed to use the older kSetNowSeen since it was
-	// released before SQ6, but this has not been verified since it cannot be
-	// disassembled at the moment (Phar Lap Windows-only release)
+	// MGDX is assumed to use the older kSetNowSeen since it was released before
+	// SQ6, but this has not been verified since it cannot be disassembled at
+	// the moment (Phar Lap Windows-only release)
 	// (See also getNowSeenRect)
 	if (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
 		g_sci->getGameId() == GID_SQ6 ||
