@@ -126,7 +126,7 @@ void GfxTransitions32::processShowStyles() {
 			g_sci->_gfxFrameout->frameOut(true);
 			throttle();
 		}
-	} while(continueProcessing && doFrameOut);
+	} while (continueProcessing && doFrameOut);
 }
 
 void GfxTransitions32::processEffects(PlaneShowStyle &showStyle) {
@@ -249,14 +249,13 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 
 	if (createNewEntry) {
 		entry = new PlaneShowStyle;
-		// NOTE: SCI2.1 engine tests if allocation returned a null pointer
-		// but then only avoids setting currentStep if this is so. Since
-		// this is a nonsensical approach, we do not do that here
+		// SSCI2.1 tests if allocation returned a null pointer but then only
+		// avoids setting currentStep if this is so. Since this nonsensical, we
+		// do not do that here
 		entry->currentStep = 0;
 		entry->processed = false;
 		entry->divisions = hasDivisions ? divisions : _defaultDivisions[type];
 		entry->plane = planeObj;
-		entry->fadeColorRangesCount = 0;
 
 		if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
 			// for pixel dissolve
@@ -267,32 +266,26 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 			entry->screenItems.clear();
 			entry->width = plane->_gameRect.width();
 			entry->height = plane->_gameRect.height();
-		} else {
-			entry->fadeColorRanges = nullptr;
-			if (hasFadeArray) {
-				// NOTE: SCI2.1mid engine does no check to verify that an array is
-				// successfully retrieved, and SegMan will cause a fatal error
-				// if we try to use a memory segment that is not an array
-				SciArray &table = *_segMan->lookupArray(pFadeArray);
+		} else if (hasFadeArray) {
+			// SSCI2.1mid does no check to verify that an array is successfully
+			// retrieved
+			SciArray &table = *_segMan->lookupArray(pFadeArray);
 
-				uint32 rangeCount = table.size();
-				entry->fadeColorRangesCount = rangeCount;
+			const uint32 rangeCount = table.size();
 
-				// NOTE: SCI engine code always allocates memory even if the range
-				// table has no entries, but this does not really make sense, so
-				// we avoid the allocation call in this case
-				if (rangeCount > 0) {
-					entry->fadeColorRanges = new uint16[rangeCount];
-					for (size_t i = 0; i < rangeCount; ++i) {
-						entry->fadeColorRanges[i] = table.getAsInt16(i);
-					}
+			// SSCI always allocates memory even if the range table has no
+			// entries, but this does not really make sense, so we avoid the
+			// allocation call in this case
+			if (rangeCount > 0) {
+				entry->fadeColorRanges.reserve(rangeCount);
+				for (uint32 i = 0; i < rangeCount; ++i) {
+					entry->fadeColorRanges.push_back(table.getAsInt16(i));
 				}
 			}
 		}
 	}
 
-	// NOTE: The original engine had no nullptr check and would just crash
-	// if it got to here
+	// SSCI had no nullptr check and would just crash if it got to here
 	if (entry == nullptr) {
 		error("Cannot edit non-existing ShowStyle entry");
 	}
@@ -397,10 +390,9 @@ ShowStyleList::iterator GfxTransitions32::deleteShowStyle(const ShowStyleList::i
 		break;
 	case kShowStyleFadeIn:
 	case kShowStyleFadeOut:
-		if (getSciVersion() > SCI_VERSION_2_1_EARLY && showStyle->fadeColorRangesCount > 0) {
-			delete[] showStyle->fadeColorRanges;
-		}
-		break;
+		// SSCI manually allocated the color ranges for fades and deleted that
+		// memory here, but we use a container so there is no extra cleanup
+		// needed
 	case kShowStyleNone:
 	case kShowStyleMorph:
 	case kShowStyleHShutterIn:
@@ -944,8 +936,8 @@ bool GfxTransitions32::processFade(const int8 direction, PlaneShowStyle &showSty
 		percent *= 100;
 		percent /= showStyle.divisions - 1;
 
-		if (showStyle.fadeColorRangesCount > 0) {
-			for (int i = 0, len = showStyle.fadeColorRangesCount; i < len; i += 2) {
+		if (showStyle.fadeColorRanges.size()) {
+			for (uint i = 0, len = showStyle.fadeColorRanges.size(); i < len; i += 2) {
 				g_sci->_gfxPalette32->setFade(percent, showStyle.fadeColorRanges[i], showStyle.fadeColorRanges[i + 1]);
 			}
 		} else {

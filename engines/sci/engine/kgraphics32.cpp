@@ -368,10 +368,10 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	const uint16 type = argv[0].toUint16();
 	reg_t planeObj = argv[1];
 	int16 seconds = argv[2].toSint16();
-	// NOTE: This value seems to indicate whether the transition is an
-	// “exit” transition (0) or an “enter” transition (-1) for fade
-	// transitions. For other types of transitions, it indicates a palette
-	// index value to use when filling the screen.
+	// This value indicates whether the transition is an "exit" transition (0)
+	// or an "enter" transition (-1) for fade transitions. For other types of
+	// transitions, it indicates a palette index value to use when filling the
+	// screen.
 	int16 back = argv[3].toSint16();
 	int16 priority = argv[4].toSint16();
 	int16 animate = argv[5].toSint16();
@@ -404,9 +404,8 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 		error("Illegal show style %d for plane %04x:%04x", type, PRINT_REG(planeObj));
 	}
 
-	// NOTE: The order of planeObj and showStyle are reversed
-	// because this is how SCI3 called the corresponding method
-	// on the KernelMgr
+	// The order of planeObj and showStyle are reversed because this is how
+	// SSCI3 called the corresponding method on the KernelMgr
 	g_sci->_gfxTransitions32->kernelSetShowStyle(argc, planeObj, (ShowStyleType)type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
 
 	return s->r_acc;
@@ -881,8 +880,8 @@ reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
 	const int16 deltaY = argv[2].toSint16();
 	const GuiResourceId pictureId = argv[3].toUint16();
 	const bool animate = argv[4].toUint16();
-	// NOTE: speed was accepted as an argument, but then never actually used
-	// const int16 speed = argc > 5 ? (bool)argv[5].toSint16() : -1;
+	// argv[5] was some speed argument, but it was not actually used by SSCI, so
+	// we ignore it here
 	const bool mirrorX = argc > 6 ? (bool)argv[6].toUint16() : false;
 
 	g_sci->_gfxTransitions32->kernelSetScroll(plane, deltaX, deltaY, pictureId, animate, mirrorX);
