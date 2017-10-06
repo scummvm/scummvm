@@ -43,8 +43,8 @@ GfxControls32::GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *tex
 	_gfxText32(text),
 	_overwriteMode(false),
 	_nextCursorFlashTick(0),
-	// SSCI used a memory handle for a ScrollWindow object
-	// as ID. We use a simple numeric handle instead.
+	// SSCI used a memory handle for a ScrollWindow object as ID. We use a
+	// simple numeric handle instead.
 	_nextScrollWindowId(10000) {}
 
 GfxControls32::~GfxControls32() {
@@ -137,27 +137,27 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 	ScreenItem *screenItem = new ScreenItem(plane->_object, celInfo, Common::Point(), ScaleInfo());
 	plane->_screenItemList.add(screenItem);
 
-	// frameOut must be called after the screen item is
-	// created, and before it is updated at the end of the
-	// event loop, otherwise it has both created and updated
-	// flags set which crashes the engine (it runs updates
-	// before creations)
+	// frameOut must be called after the screen item is created, and before it
+	// is updated at the end of the event loop, otherwise it has both created
+	// and updated flags set which crashes the engine (updates are handled
+	// before creations, but the screen item is not in the correct state for an
+	// update)
 	g_sci->_gfxFrameout->frameOut(true);
 
 	EventManager *eventManager = g_sci->getEventManager();
 	bool clearTextOnInput = true;
 	bool textChanged = false;
 	for (;;) {
-		// We peek here because the last event needs to be allowed to
-		// dispatch a second time to the normal event handling system.
-		// In the actual engine, the event is always consumed and then
-		// the last event just gets posted back to the event manager for
-		// reprocessing, but instead, we only remove the event from the
-		// queue *after* we have determined it is not a defocusing event
+		// We peek here because the last event needs to be allowed to dispatch a
+		// second time to the normal event handling system. In SSCI, the event
+		// is always consumed and then the last event just gets posted back to
+		// the event manager for reprocessing, but instead, we only remove the
+		// event from the queue *after* we have determined it is not a
+		// defocusing event
 		const SciEvent event = eventManager->getSciEvent(kSciEventAny | kSciEventPeek);
 
 		bool focused = true;
-		// Original engine did not have a QUIT event but we have to handle it
+		// SSCI did not have a QUIT event, but we do, so we have to handle it
 		if (event.type == kSciEventQuit) {
 			focused = false;
 		} else if (event.type == kSciEventMousePress && !editorPlaneRect.contains(event.mousePosSci)) {
@@ -179,18 +179,16 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 			break;
 		}
 
-		// Consume the event now that we know it is not one of the
-		// defocusing events above
+		// Consume the event now that we know it is not one of the defocusing
+		// events above
 		if (event.type != kSciEventNone)
 			eventManager->getSciEvent(kSciEventAny);
 
-		// NOTE: In the original engine, the font and bitmap were
-		// reset here on each iteration through the loop, but it
-		// doesn't seem like this should be necessary since
-		// control is not yielded back to the VM until input is
-		// received, which means there is nothing that could modify
-		// the GfxText32's state with a different font in the
-		// meantime
+		// In SSCI, the font and bitmap were reset here on each iteration
+		// through the loop, but this is not necessary since control is not
+		// yielded back to the VM until input is received, which means there is
+		// nothing that could modify the GfxText32's state with a different font
+		// in the meantime
 
 		bool shouldDeleteChar = false;
 		bool shouldRedrawText = false;
@@ -223,8 +221,8 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 
 			case kSciKeyInsert:
 				clearTextOnInput = false;
-				// Redrawing also changes the cursor rect to
-				// reflect the new insertion mode
+				// Redrawing also changes the cursor rect to reflect the new
+				// insertion mode
 				shouldRedrawText = true;
 				_overwriteMode = !_overwriteMode;
 				break;
@@ -324,10 +322,9 @@ void GfxControls32::drawCursor(TextEditor &editor) {
 
 		const int16 scaledFontHeight = _gfxText32->scaleUpHeight(_gfxText32->_font->getHeight());
 
-		// NOTE: The original code branched on borderColor here but
-		// the two branches appeared to be identical, differing only
-		// because the compiler decided to be differently clever
-		// when optimising multiplication in each branch
+		// SSCI branched on borderColor here but the two branches appeared to be
+		// identical, differing only because the compiler decided to be
+		// differently clever when optimising multiplication in each branch
 		if (_overwriteMode) {
 			editor.cursorRect.top = editor.textRect.top;
 			editor.cursorRect.setHeight(scaledFontHeight);
@@ -465,9 +462,8 @@ reg_t ScrollWindow::add(const Common::String &text, const GuiResourceId fontId, 
 	if (_entries.size() == _maxNumEntries) {
 		ScrollWindowEntry removedEntry = _entries.remove_at(0);
 		_text.erase(0, removedEntry.text.size());
-		// `_firstVisibleChar` will be reset shortly if
-		// `scrollTo` is true, so there is no reason to
-		// update it
+		// `_firstVisibleChar` will be reset shortly if `scrollTo` is true, so
+		// there is no reason to update it
 		if (!scrollTo) {
 			_firstVisibleChar -= removedEntry.text.size();
 		}
@@ -476,17 +472,17 @@ reg_t ScrollWindow::add(const Common::String &text, const GuiResourceId fontId, 
 	_entries.push_back(ScrollWindowEntry());
 	ScrollWindowEntry &entry = _entries.back();
 
-	// NOTE: In SSCI the line ID was a memory handle for the
-	// string of this line. We use a numeric ID instead.
+	// In SSCI, the line ID was a memory handle for the string of this line. We
+	// use a numeric ID instead.
 	entry.id = make_reg(0, _nextEntryId++);
 
 	if (_nextEntryId > _maxNumEntries) {
 		_nextEntryId = 1;
 	}
 
-	// NOTE: In SSCI this was updated after _text was
-	// updated, which meant there was an extra unnecessary
-	// subtraction operation (subtracting `entry.text` size)
+	// In SSCI, this was updated after _text was updated, which meant there was
+	// an extra unnecessary subtraction operation (subtracting `entry.text`
+	// size)
 	if (scrollTo) {
 		_firstVisibleChar = _text.size();
 	}
@@ -517,9 +513,8 @@ void ScrollWindow::fillEntry(ScrollWindowEntry &entry, const Common::String &tex
 	// with properties -1 can inherit properties from the previously rendered
 	// line instead of the defaults.
 
-	// NOTE: SSCI added "|s<lineIndex>|" here, but |s| is
-	// not a valid control code, so it just always ended up
-	// getting skipped
+	// SSCI added "|s<lineIndex>|" here, but |s| is not a valid control code, so
+	// it just always ended up getting skipped by the text rendering code
 	if (entry.fontId != -1) {
 		formattedText += Common::String::format("|f%d|", entry.fontId);
 	}
@@ -705,9 +700,8 @@ void ScrollWindow::pageDown() {
 
 void ScrollWindow::computeLineIndices() {
 	_gfxText32.setFont(_fontId);
-	// NOTE: Unlike SSCI, foreColor and alignment are not
-	// set since these properties do not affect the width of
-	// lines
+	// Unlike SSCI, foreColor and alignment are not set since these properties
+	// do not affect the width of lines
 
 	if (_gfxText32._font->getHeight() != _pointSize) {
 		error("Illegal font size font = %d pointSize = %d, should be %d.", _fontId, _gfxText32._font->getHeight(), _pointSize);
@@ -717,8 +711,8 @@ void ScrollWindow::computeLineIndices() {
 
 	_startsOfLines.clear();
 
-	// NOTE: The original engine had a 1000-line limit; we
-	// do not enforce any limit
+	// SSCI had a 1000-line limit; we do not enforce any limit since we use
+	// dynamic containers
 	for (uint charIndex = 0; charIndex < _text.size(); ) {
 		_startsOfLines.push_back(charIndex);
 		charIndex += _gfxText32.getTextCount(_text, charIndex, lineRect, false);
