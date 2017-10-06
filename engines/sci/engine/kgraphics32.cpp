@@ -1057,9 +1057,9 @@ reg_t kRemapColorsByRange(EngineState *s, int argc, reg_t *argv) {
 	const int16 from = argv[1].toSint16();
 	const int16 to = argv[2].toSint16();
 	const int16 base = argv[3].toSint16();
-	// NOTE: There is an optional last parameter after `base`
-	// which was only used by the priority map debugger, which
-	// does not exist in release versions of SSCI
+	// There is an optional last parameter after `base` which was only used by
+	// the priority map debugger which does not exist in release versions of
+	// SSCI
 	g_sci->_gfxRemap32->remapByRange(color, from, to, base);
 	return s->r_acc;
 }
@@ -1067,9 +1067,9 @@ reg_t kRemapColorsByRange(EngineState *s, int argc, reg_t *argv) {
 reg_t kRemapColorsByPercent(EngineState *s, int argc, reg_t *argv) {
 	const uint8 color = argv[0].toUint16();
 	const int16 percent = argv[1].toSint16();
-	// NOTE: There is an optional last parameter after `percent`
-	// which was only used by the priority map debugger, which
-	// does not exist in release versions of SSCI
+	// There is an optional last parameter after `percent` which was only used
+	// by the priority map debugger, which does not exist in release versions of
+	// SSCI
 	g_sci->_gfxRemap32->remapByPercent(color, percent);
 	return s->r_acc;
 }
@@ -1077,9 +1077,9 @@ reg_t kRemapColorsByPercent(EngineState *s, int argc, reg_t *argv) {
 reg_t kRemapColorsToGray(EngineState *s, int argc, reg_t *argv) {
 	const uint8 color = argv[0].toUint16();
 	const int16 gray = argv[1].toSint16();
-	// NOTE: There is an optional last parameter after `gray`
-	// which was only used by the priority map debugger, which
-	// does not exist in release versions of SSCI
+	// There is an optional last parameter after `gray` which was only used by
+	// the priority map debugger, which does not exist in release versions of
+	// SSCI
 	g_sci->_gfxRemap32->remapToGray(color, gray);
 	return s->r_acc;
 }
@@ -1088,9 +1088,9 @@ reg_t kRemapColorsToPercentGray(EngineState *s, int argc, reg_t *argv) {
 	const uint8 color = argv[0].toUint16();
 	const int16 gray = argv[1].toSint16();
 	const int16 percent = argv[2].toSint16();
-	// NOTE: There is an optional last parameter after `percent`
-	// which was only used by the priority map debugger, which
-	// does not exist in release versions of SSCI
+	// There is an optional last parameter after `percent` which was only used
+	// by the priority map debugger, which does not exist in release versions of
+	// SSCI
 	g_sci->_gfxRemap32->remapToPercentGray(color, gray, percent);
 	return s->r_acc;
 }
