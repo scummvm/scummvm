@@ -626,13 +626,7 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 	assert(volume <= MUSIC_VOLUME_MAX);
-	if (pSnd->isSample) {
-#ifdef ENABLE_SCI32
-		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
-			g_sci->_audio32->setVolume(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj, volume);
-		}
-#endif
-	} else if (pSnd->pMidiParser) {
+	if (!pSnd->isSample && pSnd->pMidiParser) {
 		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->setVolume(volume);
