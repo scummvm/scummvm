@@ -320,9 +320,9 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 
 	for (ScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
 		// Items can be added to ScreenItemList and we don't want to process
-		// those new items, but the list also can grow smaller, so we need
-		// to check that we are still within the upper bound of the list and
-		// quit if we aren't any more
+		// those new items, but the list also can grow smaller, so we need to
+		// check that we are still within the upper bound of the list and quit
+		// if we aren't any more
 		if (i >= _screenItemList.size()) {
 			break;
 		}
@@ -332,18 +332,17 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 			continue;
 		}
 
-		// NOTE: The original engine used an array without bounds checking
-		// so could just get the visible screen item directly; we need to
-		// verify that the index is actually within the valid range for
-		// the visible plane before accessing the item to avoid a range
-		// error.
+		// SSCI used an array without bounds checking so could just get the
+		// visible screen item directly; we need to verify that the index is
+		// actually within the valid range for the visible plane before
+		// accessing the item to avoid a range error.
 		const ScreenItem *visibleItem = nullptr;
 		if (i < visiblePlaneItemCount) {
 			visibleItem = visiblePlane._screenItemList[i];
 		}
 
-		// Keep erase rects for this screen item from drawing outside
-		// of its owner plane
+		// Keep erase rects for this screen item from drawing outside of its
+		// owner plane
 		Common::Rect visibleItemScreenRect;
 		if (visibleItem != nullptr) {
 			visibleItemScreenRect = visibleItem->_screenRect;
@@ -427,8 +426,8 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 	breakEraseListByPlanes(eraseList, planeList);
 	breakDrawListByPlanes(drawList, planeList);
 
-	// We store the current size of the drawlist, as we want to loop
-	// over the currently inserted entries later.
+	// The current size of the draw list is stored here, as we need to loop over
+	// only the already-inserted entries later.
 	DrawList::size_type drawListSizePrimary = drawList.size();
 	const RectList::size_type eraseListCount = eraseList.size();
 
@@ -823,8 +822,8 @@ void Plane::sync(const Plane *other, const Common::Rect &screenRect) {
 
 	convertGameRectToPlaneRect();
 	_screenRect = _planeRect;
-	// NOTE: screenRect originally was retrieved through globals
-	// instead of being passed into the function
+	// screenRect was retrieved through globals in SSCI instead of being passed
+	// into the function. We don't do that just to avoid the extra indirection
 	clipScreenRect(screenRect);
 }
 

@@ -128,7 +128,7 @@ public:
 	inline bool hasTransparentPicturePlanes() const {
 		const SciGameId &gid = g_sci->getGameId();
 
-		// NOTE: MGDX is assumed to not have transparent picture planes since it
+		// MGDX is assumed to not have transparent picture planes since it
 		// was released before SQ6, but this has not been verified since it
 		// cannot be disassembled at the moment (Phar Lap Windows-only release)
 		return getSciVersion() >= SCI_VERSION_2_1_MIDDLE &&
