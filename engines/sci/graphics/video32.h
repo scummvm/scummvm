@@ -331,7 +331,7 @@ public:
 	 */
 	VMDStatus getStatus() const;
 
-	// NOTE: Was WaitForEvent in SSCI
+	// Was WaitForEvent in SSCI
 	EventFlags kernelPlayUntilEvent(const EventFlags flags, const int16 lastFrameNo, const int16 yieldInterval);
 
 private:
@@ -347,7 +347,8 @@ private:
 
 	/**
 	 * The Resource object for VMDs that are read out of a resource bundle
-	 * instead of being streamed from the filesystem.
+	 * instead of being streamed from the filesystem. The resource is owned by
+	 * ResourceManager.
 	 */
 	Resource *_bundledVmd;
 
@@ -399,12 +400,13 @@ protected:
 
 private:
 	/**
-	 * The plane where the VMD will be drawn.
+	 * The plane where the VMD will be drawn. The plane is owned by GfxFrameout.
 	 */
 	Plane *_plane;
 
 	/**
-	 * The screen item representing the VMD surface.
+	 * The screen item representing the VMD surface. The screen item is owned by
+	 * GfxFrameout.
 	 */
 	ScreenItem *_screenItem;
 
@@ -538,7 +540,7 @@ private:
 
 	/**
 	 * An optional plane that will be used to black out areas of the screen
-	 * outside of the VMD surface.
+	 * outside of the VMD surface. The plane is owned by GfxFrameout.
 	 */
 	Plane *_blackoutPlane;
 
@@ -675,6 +677,7 @@ protected:
 private:
 	/**
 	 * An empty plane drawn behind the video when the doFrameOut flag is true.
+	 * The plane is owned by GfxFrameout.
 	 */
 	Plane *_plane;
 

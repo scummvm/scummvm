@@ -63,8 +63,8 @@ bool VideoPlayer::open(const Common::String &fileName) {
 	}
 
 #ifndef USE_RGB_COLOR
-	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on
-	// a system with no RGB support
+	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on a
+	// system with no RGB support
 	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
 		void showScummVMDialog(const Common::String &message);
 		showScummVMDialog(Common::String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
@@ -117,8 +117,8 @@ bool VideoPlayer::endHQVideo() {
 }
 
 VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, const uint32 maxSleepMs) {
-	// Flushing all the keyboard and mouse events out of the event manager
-	// keeps events queued from before the start of playback from accidentally
+	// Flushing all the keyboard and mouse events out of the event manager keeps
+	// events queued from before the start of playback from accidentally
 	// activating a video stop flag
 	_eventMan->flushEvents();
 
@@ -201,11 +201,10 @@ void VideoPlayer::submitPalette(const uint8 palette[256 * 3]) const {
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	// KQ7 1.x has videos encoded using Microsoft Video 1 where palette 0 is
-	// white and 255 is black, which is basically the opposite of DOS/Win
-	// SCI palettes. So, when drawing to an 8bpp hwscreen, whenever a new
-	// palette is seen, the screen must be re-filled with the new black
-	// entry to ensure areas outside the video are always black and not some
-	// other color
+	// white and 255 is black, which is basically the opposite of DOS/Win SCI
+	// palettes. So, when drawing to an 8bpp hwscreen, whenever a new palette is
+	// seen, the screen must be re-filled with the new black entry to ensure
+	// areas outside the video are always black and not some other color
 	for (int color = 0; color < 256; ++color) {
 		if (palette[0] == 0 && palette[1] == 0 && palette[2] == 0) {
 			g_system->fillScreen(color);
@@ -231,7 +230,8 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 	if (_decoder->getWidth() != _drawRect.width() || _decoder->getHeight() != _drawRect.height()) {
 		Graphics::Surface *const unscaledFrame(convertedFrame);
 		// TODO: The only reason TransparentSurface is used here because it is
-		// where common scaler code is right now.
+		// where common scaler code is right now, which should just be part of
+		// Graphics::Surface (or some free functions).
 		const Graphics::TransparentSurface tsUnscaledFrame(*unscaledFrame);
 #ifdef USE_RGB_COLOR
 		if (_hqVideoMode) {
@@ -315,9 +315,9 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 	const int16 scaledWidth = (_decoder->getWidth() * Ratio(screenWidth, scriptWidth)).toInt();
 	const int16 scaledHeight = (_decoder->getHeight() * Ratio(screenHeight, scriptHeight)).toInt();
 
-	// Normally we would use the coordinates passed into the play function
-	// to position the video, but since we are scaling the video (which SSCI
-	// did not do), the coordinates are not correct. Since videos are always
+	// Normally we would use the coordinates passed into the play function to
+	// position the video, but since we are scaling the video (which SSCI did
+	// not do), the coordinates are not correct. Since videos are always
 	// intended to play in the center of the screen, we just recalculate the
 	// origin here.
 	_drawRect.left = (screenWidth - scaledWidth) / 2;
@@ -449,9 +449,9 @@ AVIPlayer::IOStatus AVIPlayer::play(const int16 from, const int16 to, const int1
 }
 
 AVIPlayer::EventFlags AVIPlayer::playUntilEvent(const EventFlags flags, const uint32 maxSleepMs) {
-	// NOTE: In SSCI, whether or not a video could be skipped was controlled by
-	// game scripts; here, we always allow skipping video with the mouse or
-	// escape key, to improve the user experience
+	// In SSCI, whether or not a video could be skipped was controlled by game
+	// scripts; here, we always allow skipping video with the mouse or escape
+	// key, to improve the user experience
 	return VideoPlayer::playUntilEvent(flags | kEventFlagMouseDown | kEventFlagEscapeKey, maxSleepMs);
 }
 
@@ -681,8 +681,8 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 
 VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags, const uint32) {
 	if (flags & kEventFlagReverse) {
-		// NOTE: This flag may not work properly since SSCI does not care
-		// if a video has audio, but the VMD decoder does.
+		// This flag may not work properly since SSCI does not care if a video
+		// has audio, but the VMD decoder does.
 		warning("VMD reverse playback flag was set. Please report this event to the bug tracker");
 		const bool success = _decoder->setReverse(true);
 		assert(success);
@@ -838,10 +838,10 @@ void VMDPlayer::submitPalette(const uint8 rawPalette[256 * 3]) const {
 	if (_isComposited) {
 		SciBitmap *bitmap = _segMan->lookupBitmap(_bitmapId);
 		bitmap->setPalette(palette);
-		// NOTE: SSCI calls updateScreenItem and frameOut here, but this should
-		// not be necessary in ScummVM since the new palette gets submitted
-		// before the next frame is rendered, and the frame rendering call will
-		// perform the same operations.
+		// SSCI calls updateScreenItem and frameOut here, but this is not
+		// necessary in ScummVM since the new palette gets submitted before the
+		// next frame is rendered, and the frame rendering call will perform the
+		// same operations.
 	} else {
 		g_sci->_gfxPalette32->submit(palette);
 		g_sci->_gfxPalette32->updateForFrame();
@@ -931,7 +931,7 @@ void VMDPlayer::initComposited() {
 		_screenItem->_drawBlackLines = true;
 	}
 
-	// NOTE: There was code for positioning the screen item using insetRect
+	// In SSCI, there was code for positioning the screen item using insetRect
 	// here, but none of the game scripts seem to use this functionality.
 
 	g_sci->_gfxFrameout->addScreenItem(*_screenItem);
@@ -1016,9 +1016,8 @@ void VMDPlayer::setPlane(const int16 priority, const reg_t planeId) {
 
 void VMDPlayer::restrictPalette(const uint8 startColor, const int16 endColor) {
 	_startColor = startColor;
-	// At least GK2 sends 256 as the end color, which is wrong,
-	// but works in the original engine as the storage size is 4 bytes
-	// and used values are clamped to 0-255
+	// At least GK2 sends 256 as the end color, which is wrong, but works in
+	// SSCI as the storage size is 4 bytes and used values are clamped to 0-255
 	_endColor = MIN<int16>(255, endColor);
 }
 
