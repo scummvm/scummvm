@@ -157,11 +157,10 @@ SOLStream<STEREO, S16BIT, OLDDPCM8>::SOLStream(Common::SeekableReadStream *strea
 template <bool STEREO, bool S16BIT, bool OLDDPCM8>
 bool SOLStream<STEREO, S16BIT, OLDDPCM8>::seek(const Audio::Timestamp &where) {
 	if (where != 0) {
-		// In order to seek in compressed SOL files, all
-		// previous bytes must be known since it uses
-		// differential compression. Therefore, only seeking
-		// to the beginning is supported now (SSCI does not
-		// offer seeking anyway)
+		// In order to seek in compressed SOL files, all previous bytes must be
+		// known since it uses differential compression. Therefore, only seeking
+		// to the beginning is supported now (SSCI does not offer seeking
+		// anyway)
 		return false;
 	}
 
