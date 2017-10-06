@@ -201,10 +201,9 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 		} else {
 			screenItem->_position = celObj->_relativePosition;
 		}
-		_screenItemList.add(screenItem);
+		screenItem->_celObj.reset(celObj);
 
-		delete screenItem->_celObj;
-		screenItem->_celObj = celObj;
+		_screenItemList.add(screenItem);
 	}
 	_type = (g_sci->_features->hasTransparentPicturePlanes() && transparent) ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
 }

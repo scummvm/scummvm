@@ -169,7 +169,6 @@ public:
 		}
 	}
 
-	// NOTE: In real engine, -info- is treated as byte size
 	void clearInfoSelectorFlag(infoSelectorFlags flag) {
 		if (getSciVersion() == SCI_VERSION_3) {
 			_infoSelectorSci3 &= ~flag;
