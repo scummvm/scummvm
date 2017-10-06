@@ -52,7 +52,10 @@ class SegManager;
 // Unlike traditional AV formats, Robot videos almost always require playback
 // within the game engine because certain information (like the resolution of
 // the Robot coordinates and the background for the video) is dependent on data
-// that does not exist within the Robot file itself.
+// that does not exist within the Robot file itself. In version 6, robots could
+// also participate in palette remapping by drawing remap pixels, and the
+// information for processing these pixels is also not stored within the Robot
+// file.
 //
 // The Robot container consists of a file header, an optional primer audio
 // section, an optional colour palette, a frame seek index, a set of cuepoints,
@@ -66,9 +69,9 @@ class SegManager;
 // contiguous data blocks, each of which can be independently compressed with
 // LZS or left uncompressed. An entire cel can also be line decimated, where
 // lines are deleted from the source bitmap at compression time and are
-// reconstructed by decompression using line doubling. Each cel also includes
-// coordinates where it should be placed within the video frame, relative to the
-// top-left corner of the frame.
+// reconstructed by decompression using line interpolation. Each cel also
+// includes coordinates where it should be placed within the video frame,
+// relative to the top-left corner of the frame.
 //
 // Audio coding is fixed-length, and all audio blocks except for the primer
 // audio are the same size. Audio is encoded with Sierra SOL DPCM16 compression,
@@ -254,8 +257,8 @@ class SegManager;
 #pragma mark RobotAudioStream
 
 /**
- * A Robot audio stream is a simple loop buffer
- * that accepts audio blocks from the Robot engine.
+ * A Robot audio stream is a simple loop buffer that accepts audio blocks from
+ * the Robot engine.
  */
 class RobotAudioStream : public Audio::AudioStream {
 public:
@@ -266,40 +269,34 @@ public:
 		kRobotSampleRate = 22050,
 
 		/**
-		 * Multiplier for the size of a packet that
-		 * is being expanded by writing to every other
-		 * byte of the target buffer.
+		 * Multiplier for the size of a packet that is being expanded by writing
+		 * to every other byte of the target buffer.
 		 */
 		kEOSExpansion    = 2
 	};
 
 	/**
-	 * Playback state information. Used for framerate
-	 * calculation.
+	 * Playback state information. Used for framerate calculation.
 	 */
 	struct StreamState {
 		/**
-		 * The current position of the read head of
-		 * the audio stream.
+		 * The current position of the read head of the audio stream.
 		 */
 		int bytesPlaying;
 
 		/**
-		 * The sample rate of the audio stream.
-		 * Always 22050.
+		 * The sample rate of the audio stream. Always 22050.
 		 */
 		uint16 rate;
 
 		/**
-		 * The bit depth of the audio stream.
-		 * Always 16.
+		 * The bit depth of the audio stream. Always 16.
 		 */
 		uint8 bits;
 	};
 
 	/**
-	 * A single packet of compressed audio from a
-	 * Robot data stream.
+	 * A single packet of compressed audio from a Robot data stream.
 	 */
 	struct RobotAudioPacket {
 		/**
@@ -314,8 +311,7 @@ public:
 		int dataSize;
 
 		/**
-		 * The uncompressed, file-relative position
-		 * of this audio packet.
+		 * The uncompressed, file-relative position of this audio packet.
 		 */
 		int position;
 
@@ -328,20 +324,19 @@ public:
 
 	/**
 	 * Adds a new audio packet to the stream.
-	 * @returns `true` if the audio packet was fully
-	 * consumed, otherwise `false`.
+	 * @returns `true` if the audio packet was fully consumed, otherwise
+	 * `false`.
 	 */
 	bool addPacket(const RobotAudioPacket &packet);
 
 	/**
-	 * Prevents any additional audio packets from
-	 * being added to the audio stream.
+	 * Prevents any additional audio packets from being added to the audio
+	 * stream.
 	 */
 	void finish();
 
 	/**
-	 * Returns the current status of the audio
-	 * stream.
+	 * Returns the current status of the audio stream.
 	 */
 	StreamState getStatus() const;
 
@@ -349,8 +344,7 @@ private:
 	Common::Mutex _mutex;
 
 	/**
-	 * Loop buffer for playback. Contains decompressed
-	 * 16-bit PCM samples.
+	 * Loop buffer for playback. Contains decompressed 16-bit PCM samples.
 	 */
 	byte *_loopBuffer;
 
@@ -360,66 +354,57 @@ private:
 	int32 _loopBufferSize;
 
 	/**
-	 * The position of the read head within the loop
-	 * buffer, in bytes.
+	 * The position of the read head within the loop buffer, in bytes.
 	 */
 	int32 _readHead;
 
 	/**
-	 * The lowest file position that can be buffered,
-	 * in uncompressed bytes.
+	 * The lowest file position that can be buffered, in uncompressed bytes.
 	 */
 	int32 _readHeadAbs;
 
 	/**
-	 * The highest file position that can be buffered,
-	 * in uncompressed bytes.
+	 * The highest file position that can be buffered, in uncompressed bytes.
 	 */
 	int32 _maxWriteAbs;
 
 	/**
-	 * The highest file position, in uncompressed bytes,
-	 * that has been written to the stream.
-	 * Different from `_maxWriteAbs`, which is the highest
-	 * uncompressed position which *can* be written right
-	 * now.
+	 * The highest file position, in uncompressed bytes, that has been written
+	 * to the stream. This is different from `_maxWriteAbs`, which is the
+	 * highest uncompressed position which *can* be written right now.
 	 */
 	int32 _writeHeadAbs;
 
 	/**
-	 * The highest file position, in uncompressed bytes,
-	 * that has been written to the even & odd sides of
-	 * the stream.
+	 * The highest file position, in uncompressed bytes, that has been written
+	 * to the even & odd sides of the stream.
 	 *
-	 * Index 0 corresponds to the 'even' side; index
-	 * 1 correspond to the 'odd' side.
+	 * Index 0 corresponds to the 'even' side; index 1 corresponds to the 'odd'
+	 * side.
 	 */
 	int32 _jointMin[2];
 
 	/**
-	 * When `true`, the stream is waiting for all primer
-	 * blocks to be received before allowing playback to
-	 * begin.
+	 * When `true`, the stream is waiting for all primer blocks to be received
+	 * before allowing playback to begin.
 	 */
 	bool _waiting;
 
 	/**
-	 * When `true`, the stream will accept no more audio
-	 * blocks.
+	 * When `true`, the stream will accept no more audio blocks.
 	 */
 	bool _finished;
 
 	/**
-	 * The uncompressed position of the first packet of
-	 * robot data. Used to decide whether all primer
-	 * blocks have been received and the stream should
+	 * The uncompressed position of the first packet of robot data. Used to
+	 * decide whether all primer blocks have been received and the stream should
 	 * be started.
 	 */
 	int32 _firstPacketPosition;
 
 	/**
-	 * Decompression buffer, used to temporarily store
-	 * an uncompressed block of audio data.
+	 * Decompression buffer, used to temporarily store an uncompressed block of
+	 * audio data.
 	 */
 	byte *_decompressionBuffer;
 
@@ -429,23 +414,20 @@ private:
 	int32 _decompressionBufferSize;
 
 	/**
-	 * The position of the packet currently in the
-	 * decompression buffer. Used to avoid
-	 * re-decompressing audio data that has already
-	 * been decompressed during a partial packet read.
+	 * The position of the packet currently in the decompression buffer. Used to
+	 * avoid re-decompressing audio data that has already been decompressed
+	 * during a partial packet read.
 	 */
 	int32 _decompressionBufferPosition;
 
 	/**
-	 * Calculates the absolute ranges for new fills
-	 * into the loop buffer.
+	 * Calculates the absolute ranges for new fills into the loop buffer.
 	 */
 	void fillRobotBuffer(const RobotAudioPacket &packet, const int8 bufferIndex);
 
 	/**
-	 * Interpolates `numSamples` samples from the read
-	 * head, if no true samples were written for one
-	 * (or both) of the joint channels.
+	 * Interpolates `numSamples` samples from the read head, if no true samples
+	 * were written for one (or both) of the joint channels.
 	 */
 	void interpolateMissingSamples(const int32 numSamples);
 
@@ -501,9 +483,8 @@ public:
 	};
 
 	enum {
-		// Special high value used to represent
-		// parameters that should be left unchanged
-		// when calling `showFrame`
+		// Special high value used to represent parameters that should be left
+		// unchanged when calling `showFrame`
 		kUnspecified = 50000
 	};
 
@@ -530,8 +511,8 @@ private:
 		kCueListSize           = 256,
 
 		/**
-		 * Maximum number of 'fixed' cels that never
-		 * change for the duration of a robot.
+		 * Maximum number of 'fixed' cels that never change for the duration of
+		 * a robot.
 		 */
 		kFixedCelListSize      = 4,
 
@@ -541,27 +522,22 @@ private:
 		kRawPaletteSize        = 1200,
 
 		/**
-		 * The size of a frame of Robot data. This
-		 * value was used to align the first block of
-		 * data after the main Robot header to the next
-		 * CD sector.
+		 * The size of a frame of Robot data. This value was used to align the
+		 * first block of data after the main Robot header to the next CD
+		 * sector.
 		 */
 		kRobotFrameSize        = 2048,
 
 		/**
-		 * The size of a block of zero-compressed
-		 * audio. Used to fill audio when the size of
-		 * an audio packet does not match the expected
-		 * packet size.
+		 * The size of a block of zero-compressed audio. Used to fill audio when
+		 * the size of an audio packet does not match the expected packet size.
 		 */
 		kRobotZeroCompressSize = 2048,
 
 		/**
-		 * The size of the audio block header, in bytes.
-		 * The audio block header consists of the
-		 * compressed size of the audio in the record,
-		 * plus the position of the audio in the
-		 * compressed data stream.
+		 * The size of the audio block header, in bytes. The audio block header
+		 * consists of the compressed size of the audio in the record, plus the
+		 * position of the audio in the compressed data stream.
 		 */
 		kAudioBlockHeaderSize  = 8,
 
@@ -571,23 +547,20 @@ private:
 		kCelHeaderSize         = 22,
 
 		/**
-		 * The maximum amount that the frame rate is
-		 * allowed to drift from the nominal frame rate
-		 * in order to correct for AV drift or slow
-		 * playback.
+		 * The maximum amount that the frame rate is allowed to drift from the
+		 * nominal frame rate in order to correct for AV drift or slow playback.
 		 */
 		kMaxFrameRateDrift     = 1
 	};
 
 	/**
-	 * The version number for the currently loaded
-	 * robot.
+	 * The version number for the currently loaded robot.
 	 *
 	 * There are several known versions of robot:
 	 *
 	 * v2: before Nov 1994; no known examples
 	 * v3: before Nov 1994; no known examples
-	 * v4: Jan 1995; PQ:SWAT demo
+	 * v4: Jan 1995; KQ7 1.65, PQ:SWAT demo
 	 * v5: Mar 1995; SCI2.1 and SCI3 games
 	 * v6: SCI3 games
 	 */
@@ -625,8 +598,8 @@ private:
 #pragma mark Playback
 public:
 	/**
-	 * Opens a robot file for playback.
-	 * Newly opened robots are paused by default.
+	 * Opens a robot file for playback. Newly opened robots are paused by
+	 * default.
 	 */
 	void open(const GuiResourceId robotId, const reg_t plane, const int16 priority, const int16 x, const int16 y, const int16 scale);
 
@@ -636,8 +609,8 @@ public:
 	void close();
 
 	/**
-	 * Pauses the robot. Once paused, the audio for a robot
-	 * is disabled until the end of playback.
+	 * Pauses the robot. Once paused, the audio for a robot is disabled until
+	 * the end of playback.
 	 */
 	void pause();
 
@@ -654,8 +627,7 @@ public:
 	void showFrame(const uint16 frameNo, const uint16 newX, const uint16 newY, const uint16 newPriority);
 
 	/**
-	 * Retrieves the value associated with the
-	 * current cue point.
+	 * Retrieves the value associated with the current cue point.
 	 */
 	int16 getCue() const;
 
@@ -688,27 +660,23 @@ private:
 	PositionList _recordPositions;
 
 	/**
-	 * The offset of the Robot file within a
-	 * resource bundle.
+	 * The offset of the Robot file within a resource bundle.
 	 */
 	int32 _fileOffset;
 
 	/**
-	 * A list of cue times that is updated to
-	 * prevent earlier cue values from being
-	 * given to the game more than once.
+	 * A list of cue times that is updated to prevent earlier cue values from
+	 * being given to the game more than once.
 	 */
 	mutable int32 _cueTimes[kCueListSize];
 
 	/**
-	 * The original list of cue times from the
-	 * raw Robot data.
+	 * The original list of cue times from the raw Robot data.
 	 */
 	int32 _masterCueTimes[kCueListSize];
 
 	/**
-	 * The list of values to provide to a game
-	 * when a cue value is requested.
+	 * The list of values to provide to a game when a cue value is requested.
 	 */
 	int32 _cueValues[kCueListSize];
 
@@ -723,23 +691,20 @@ private:
 	int16 _normalFrameRate;
 
 	/**
-	 * The minimal playback frame rate. Used to
-	 * correct for AV sync drift when the video
-	 * is more than one frame ahead of the audio.
+	 * The minimal playback frame rate. Used to correct for AV sync drift when
+	 * the video is more than one frame ahead of the audio.
 	 */
 	int16 _minFrameRate;
 
 	/**
-	 * The maximum playback frame rate. Used to
-	 * correct for AV sync drift when the video
-	 * is more than one frame behind the audio.
+	 * The maximum playback frame rate. Used to correct for AV sync drift when
+	 * the video is more than one frame behind the audio.
 	 */
 	int16 _maxFrameRate;
 
 	/**
-	 * The maximum number of record blocks that
-	 * can be skipped without causing audio to
-	 * drop out.
+	 * The maximum number of record blocks that can be skipped without causing
+	 * audio to drop out.
 	 */
 	int16 _maxSkippablePackets;
 
@@ -754,32 +719,28 @@ private:
 	int _previousFrameNo;
 
 	/**
-	 * The time, in ticks, when the robot was
-	 * last started or resumed.
+	 * The time, in ticks, when the robot was last started or resumed.
 	 */
 	int32 _startTime;
 
 	/**
-	 * The first frame displayed when the
-	 * robot was resumed.
+	 * The first frame displayed when the robot was resumed.
 	 */
 	int32 _startFrameNo;
 
 	/**
-	 * The last frame displayed when the robot
-	 * was resumed.
+	 * The last frame displayed when the robot was resumed.
 	 */
 	int32 _startingFrameNo;
 
 	/**
-	 * Seeks the raw data stream to the record for
-	 * the given frame number.
+	 * Seeks the raw data stream to the record for the given frame number.
 	 */
 	bool seekToFrame(const int frameNo);
 
 	/**
-	 * Sets the start time and frame of the robot
-	 * when the robot is started or resumed.
+	 * Sets the start time and frame of the robot when the robot is started or
+	 * resumed.
 	 */
 	void setRobotTime(const int frameNo);
 
@@ -787,11 +748,10 @@ private:
 #pragma mark Timing
 private:
 	/**
-	 * This class tracks the amount of time it takes for
-	 * a frame of robot animation to be rendered. This
-	 * information is used by the player to speculatively
-	 * skip rendering of future frames to keep the
-	 * animation in sync with the robot audio.
+	 * This class tracks the amount of time it takes for a frame of robot
+	 * animation to be rendered. This information is used by the player to
+	 * speculatively skip rendering of future frames to keep the animation in
+	 * sync with the robot audio.
 	 */
 	class DelayTime {
 	public:
@@ -808,14 +768,13 @@ private:
 		void endTiming();
 
 		/**
-		 * Returns whether or not timing is currently in
-		 * progress.
+		 * Returns whether or not timing is currently in progress.
 		 */
 		bool timingInProgress() const;
 
 		/**
-		 * Returns the median time, in ticks, of the
-		 * currently stored timing samples.
+		 * Returns the median time, in ticks, of the currently stored timing
+		 * samples.
 		 */
 		int predictedTicks() const;
 
@@ -823,24 +782,23 @@ private:
 		RobotDecoder *_decoder;
 
 		/**
-		 * The start time, in ticks, of the current timing
-		 * loop. If no loop is in progress, the value is 0.
+		 * The start time, in ticks, of the current timing loop. If no loop is
+		 * in progress, the value is 0.
 		 *
-		 * @note This is slightly different than SSCI where
-		 * the not-timing value was -1.
+		 * @note This is slightly different than SSCI where the not-timing value
+		 * was -1.
 		 */
 		uint32 _startTime;
 
 		/**
-		 * A sorted list containing the timing data for
-		 * the last `kDelayListSize` frames, in ticks.
+		 * A sorted list containing the timing data for the last
+		 * `kDelayListSize` frames, in ticks.
 		 */
 		int _delays[kDelayListSize];
 
 		/**
-		 * A list of monotonically increasing identifiers
-		 * used to identify and replace the oldest sample
-		 * in the `_delays` array when finishing the
+		 * A list of monotonically increasing identifiers used to identify and
+		 * replace the oldest sample in the `_delays` array when finishing the
 		 * next timing operation.
 		 */
 		uint _timestamps[kDelayListSize];
@@ -862,17 +820,14 @@ private:
 	};
 
 	/**
-	 * Calculates the next frame number that needs
-	 * to be rendered, using the timing data
-	 * collected by DelayTime.
+	 * Calculates the next frame number that needs to be rendered, using the
+	 * timing data collected by DelayTime.
 	 */
 	uint16 calculateNextFrameNo(const uint32 extraTicks = 0) const;
 
 	/**
-	 * Calculates and returns the number of frames
-	 * that should be rendered in `ticks` time,
-	 * according to the current target frame rate
-	 * of the robot.
+	 * Calculates and returns the number of frames that should be rendered in
+	 * `ticks` time, according to the current target frame rate of the robot.
 	 */
 	uint32 ticksToFrames(const uint32 ticks) const;
 
@@ -891,15 +846,13 @@ private:
 private:
 	enum {
 		/**
-		 * The number of ticks that should elapse
-		 * between each AV sync check.
+		 * The number of ticks that should elapse between each AV sync check.
 		 */
 		kAudioSyncCheckInterval = 5 * 60 /* 5 seconds */
 	};
 
 	/**
-	 * The status of the audio track of a Robot
-	 * animation.
+	 * The status of the audio track of a Robot animation.
 	 */
 	enum RobotAudioStatus {
 		kRobotAudioReady    = 1,
@@ -913,8 +866,7 @@ private:
 #pragma mark Audio - AudioList
 private:
 	/**
-	 * This class manages packetized audio playback
-	 * for robots.
+	 * This class manages packetized audio playback for robots.
 	 */
 	class AudioList {
 	public:
@@ -926,8 +878,8 @@ private:
 		void startAudioNow();
 
 		/**
-		 * Stops playback of robot audio, allowing
-		 * any queued audio to finish playing back.
+		 * Stops playback of robot audio, allowing any queued audio to finish
+		 * playing back.
 		 */
 		void stopAudio();
 
@@ -937,40 +889,36 @@ private:
 		void stopAudioNow();
 
 		/**
-		 * Submits as many blocks of audio as possible
-		 * to the audio engine.
+		 * Submits as many blocks of audio as possible to the audio engine.
 		 */
 		void submitDriverMax();
 
 		/**
 		 * Adds a new AudioBlock to the queue.
 		 *
-		 * @param position The absolute position of the
-		 * audio for the block, in compressed bytes.
+		 * @param position The absolute position of the audio for the block, in
+		 *                 compressed bytes.
 		 * @param size The size of the buffer.
-		 * @param buffer A pointer to compressed audio
-		 * data that will be copied into the new
-		 * AudioBlock.
+		 * @param buffer A pointer to compressed audio data that will be copied
+		 *               into the new AudioBlock.
 		 */
 		void addBlock(const int position, const int size, const byte *buffer);
 
 		/**
-		 * Immediately stops any active playback and
-		 * purges all audio data in the audio list.
+		 * Immediately stops any active playback and purges all audio data in
+		 * the audio list.
 		 */
 		void reset();
 
 		/**
-		 * Pauses the robot audio channel in
-		 * preparation for the first block of audio
-		 * data to be read.
+		 * Pauses the robot audio channel in preparation for the first block of
+		 * audio data to be read.
 		 */
 		void prepareForPrimer();
 
 		/**
-		 * Sets the audio offset which is used to
-		 * offset the position of audio packets
-		 * sent to the audio stream.
+		 * Sets the audio offset which is used to offset the position of audio
+		 * packets sent to the audio stream.
 		 */
 		void setAudioOffset(const int offset);
 
@@ -979,8 +927,7 @@ private:
 
 	private:
 		/**
-		 * AudioBlock represents a block of audio
-		 * from the Robot's audio track.
+		 * AudioBlock represents a block of audio from the Robot's audio track.
 		 */
 		class AudioBlock {
 		public:
@@ -988,44 +935,37 @@ private:
 			~AudioBlock();
 
 			/**
-			 * Submits the block of audio to the
-			 * audio manager.
-			 * @returns true if the block was fully
-			 * read, or false if the block was not
-			 * read or only partially read.
+			 * Submits the block of audio to the audio manager.
+			 * @returns true if the block was fully read, or false if the block
+			 * was not read or only partially read.
 			 */
 			bool submit(const int startOffset);
 
 		private:
 			/**
-			 * The absolute position, in compressed
-			 * bytes, of this audio block's audio
-			 * data in the audio stream.
+			 * The absolute position, in compressed bytes, of this audio block's
+			 * audio data in the audio stream.
 			 */
 			int _position;
 
 			/**
-			 * The compressed size, in bytes, of
-			 * this audio block's audio data.
+			 * The compressed size, in bytes, of this audio block's audio data.
 			 */
 			int _size;
 
 			/**
-			 * A buffer containing raw
-			 * SOL-compressed audio data.
+			 * A buffer containing raw SOL-compressed audio data.
 			 */
 			byte *_data;
 		};
 
 		/**
-		 * The list of compressed audio blocks
-		 * submitted for playback.
+		 * The list of compressed audio blocks submitted for playback.
 		 */
 		AudioBlock *_blocks[kAudioListSize];
 
 		/**
-		 * The number of blocks in `_blocks` that are
-		 * ready to be submitted.
+		 * The number of blocks in `_blocks` that are ready to be submitted.
 		 */
 		uint8 _blocksSize;
 
@@ -1040,8 +980,7 @@ private:
 		uint8 _newestBlockIndex;
 
 		/**
-		 * The offset used when sending packets to the
-		 * audio stream.
+		 * The offset used when sending packets to the audio stream.
 		 */
 		int _startOffset;
 
@@ -1068,46 +1007,42 @@ private:
 	AudioList _audioList;
 
 	/**
-	 * The size, in bytes, of a block of audio data,
-	 * excluding the audio block header.
+	 * The size, in bytes, of a block of audio data, excluding the audio block
+	 * header.
 	 */
 	uint16 _audioBlockSize;
 
 	/**
-	 * The expected size of a block of audio data,
-	 * in bytes, excluding the audio block header.
+	 * The expected size of a block of audio data, in bytes, excluding the audio
+	 * block header.
 	 */
 	int16 _expectedAudioBlockSize;
 
 	/**
-	 * The number of compressed audio bytes that are
-	 * needed per frame to fill the audio buffer
-	 * without causing audio to drop out.
+	 * The number of compressed audio bytes that are needed per frame to fill
+	 * the audio buffer without causing audio to drop out.
 	 */
 	int16 _audioRecordInterval;
 
 	/**
-	 * If true, primer audio buffers should be filled
-	 * with silence instead of trying to read buffers
-	 * from the Robot data.
+	 * If true, primer audio buffers should be filled with silence instead of
+	 * trying to read buffers from the Robot data.
 	 */
 	uint16 _primerZeroCompressFlag;
 
 	/**
-	 * The size, in bytes, of the primer audio in the
-	 * Robot, including any extra alignment padding.
+	 * The size, in bytes, of the primer audio in the Robot, including any extra
+	 * alignment padding.
 	 */
 	uint16 _primerReservedSize;
 
 	/**
-	 * The combined size, in bytes, of the even and odd
-	 * primer channels.
+	 * The combined size, in bytes, of the even and odd primer channels.
 	 */
 	int32 _totalPrimerSize;
 
 	/**
-	 * The absolute offset of the primer audio data in
-	 * the robot data stream.
+	 * The absolute offset of the primer audio data in the robot data stream.
 	 */
 	int32 _primerPosition;
 
@@ -1122,54 +1057,47 @@ private:
 	int32 _oddPrimerSize;
 
 	/**
-	 * The absolute position in the audio stream of
-	 * the first audio packet.
+	 * The absolute position in the audio stream of the first audio packet.
 	 */
 	int32 _firstAudioRecordPosition;
 
 	/**
-	 * A temporary buffer used to hold one frame of
-	 * raw (DPCM-compressed) audio when reading audio
-	 * records from the robot stream.
+	 * A temporary buffer used to hold one frame of raw (DPCM-compressed) audio
+	 * when reading audio records from the robot stream.
 	 */
 	byte *_audioBuffer;
 
 	/**
-	 * The next tick count when AV sync should be
-	 * checked and framerate adjustments made, if
-	 * necessary.
+	 * The next tick count when AV sync should be checked and framerate
+	 * adjustments made, if necessary.
 	 */
 	uint32 _checkAudioSyncTime;
 
 	/**
-	 * Primes the audio buffer with the first frame
-	 * of audio data.
+	 * Primes the audio buffer with the first frame of audio data.
 	 *
 	 * @note `primeAudio` was `InitAudio` in SSCI
 	 */
 	bool primeAudio(const uint32 startTick);
 
 	/**
-	 * Reads primer data from the robot data stream
-	 * and puts it into the given buffers.
+	 * Reads primer data from the robot data stream and puts it into the given
+	 * buffers.
 	 */
 	bool readPrimerData(byte *outEvenBuffer, byte *outOddBuffer);
 
 	/**
-	 * Reads audio data for the given frame number
-	 * into the given buffer.
+	 * Reads audio data for the given frame number into the given buffer.
 	 *
-	 * @param outAudioPosition The position of the
-	 * audio, in compressed bytes, in the data stream.
-	 * @param outAudioSize The size of the audio data,
-	 * in compressed bytes.
+	 * @param outAudioPosition The position of the audio, in compressed bytes,
+	 *                         in the data stream.
+	 * @param outAudioSize The size of the audio data, in compressed bytes.
 	 */
 	bool readAudioDataFromRecord(const int frameNo, byte *outBuffer, int &outAudioPosition, int &outAudioSize);
 
 	/**
-	 * Submits part of the audio packet of the given
-	 * frame to the audio list, starting `startPosition`
-	 * bytes into the audio.
+	 * Submits part of the audio packet of the given frame to the audio list,
+	 * starting `startPosition` bytes into the audio.
 	 */
 	bool readPartialAudioRecordAndSubmit(const int startFrame, const int startPosition);
 
@@ -1198,35 +1126,33 @@ public:
 	}
 
 	/**
-	 * Puts the current dimensions of the robot, in game script
-	 * coordinates, into the given rect, and returns the total
-	 * number of frames in the robot animation.
+	 * Puts the current dimensions of the robot, in game script coordinates,
+	 * into the given rect, and returns the total number of frames in the robot
+	 * animation.
 	 */
 	uint16 getFrameSize(Common::Rect &outRect) const;
 
 	/**
-	 * Pumps the robot player for the next frame of video.
-	 * This is the main rendering function.
+	 * Pumps the robot player for the next frame of video. This is the main
+	 * rendering function.
 	 */
 	void doRobot();
 
 	/**
-	 * Submits any outstanding audio blocks that should
-	 * be added to the queue before the robot frame
-	 * becomes visible.
+	 * Submits any outstanding audio blocks that should be added to the queue
+	 * before the robot frame becomes visible.
 	 */
 	void frameAlmostVisible();
 
 	/**
-	 * Evaluates frame drift and makes modifications to
-	 * the player in order to ensure that future frames
-	 * will arrive on time.
+	 * Evaluates frame drift and makes modifications to the player in order to
+	 * ensure that future frames will arrive on time.
 	 */
 	void frameNowVisible();
 
 	/**
-	 * Scales a vertically compressed cel to its original
-	 * uncompressed dimensions.
+	 * Scales a vertically compressed cel to its original uncompressed
+	 * dimensions.
 	 */
 	void expandCel(byte *target, const byte* source, const int16 celWidth, const int16 celHeight) const;
 
@@ -1258,21 +1184,18 @@ private:
 		};
 
 		/**
-		 * A reg_t pointer to an in-memory
-		 * bitmap containing the cel.
+		 * A reg_t pointer to an in-memory bitmap containing the cel.
 		 */
 		reg_t bitmapId;
 
 		/**
-		 * The lifetime of the cel, either just
-		 * for this frame or for the entire
+		 * The lifetime of the cel, either just for this frame or for the entire
 		 * duration of the robot playback.
 		 */
 		CelHandleLifetime status;
 
 		/**
-		 * The size, in pixels, of the decompressed
-		 * cel.
+		 * The size, in pixels, of the decompressed cel.
 		 */
 		int area;
 
@@ -1298,16 +1221,14 @@ private:
 	void createCels5(const byte *rawVideoData, const int16 numCels, const bool usePalette);
 
 	/**
-	 * Creates a single screen item for a cel in a
-	 * version 5/6 robot.
+	 * Creates a single screen item for a cel in a version 5/6 robot.
 	 *
 	 * Returns the size, in bytes, of the raw cel data.
 	 */
 	uint32 createCel5(const byte *rawVideoData, const int16 screenItemIndex, const bool usePalette);
 
 	/**
-	 * Preallocates memory for the next `numCels` cels
-	 * in the robot data stream.
+	 * Preallocates memory for the next `numCels` cels in the robot data stream.
 	 */
 	void preallocateCelMemory(const byte *rawVideoData, const int16 numCels);
 
@@ -1322,8 +1243,7 @@ private:
 	reg_t _planeId;
 
 	/**
-	 * The origin of the robot animation, in screen
-	 * coordinates.
+	 * The origin of the robot animation, in screen coordinates.
 	 */
 	Common::Point _position;
 
@@ -1338,80 +1258,72 @@ private:
 	int16 _xResolution, _yResolution;
 
 	/**
-	 * Whether or not the coordinates read from robot
-	 * data are high resolution.
+	 * Whether or not the coordinates read from robot data are high resolution.
 	 */
 	bool _isHiRes;
 
 	/**
-	 * The maximum number of cels that will be rendered
-	 * on any given frame in this robot. Used for
-	 * preallocation of cel memory.
+	 * The maximum number of cels that will be rendered on any given frame in
+	 * this robot. Used for preallocation of cel memory.
 	 */
 	int16 _maxCelsPerFrame;
 
 	/**
-	 * The maximum areas, in pixels, for each of
-	 * the fixed cels in the robot. Used for
-	 * preallocation of cel memory.
+	 * The maximum areas, in pixels, for each of the fixed cels in the robot.
+	 * Used for preallocation of cel memory.
 	 */
 	MaxCelAreaList _maxCelArea;
 
 	/**
-	 * The hunk palette to use when rendering the
-	 * current frame, if the `usePalette` flag was set
-	 * in the robot header.
+	 * The hunk palette to use when rendering the current frame, if the
+	 * `usePalette` flag was set in the robot header.
 	 */
 	uint8 *_rawPalette;
 
 	/**
-	 * A list of the raw video data sizes, in bytes,
-	 * for each frame of the robot.
+	 * A list of the raw video data sizes, in bytes, for each frame of the
+	 * robot.
 	 */
 	VideoSizeList _videoSizes;
 
 	/**
-	 * A list of cels that will be present for the
-	 * entire duration of the robot animation.
+	 * A list of cels that will be present for the entire duration of the robot
+	 * animation.
 	 */
 	FixedCelsList _fixedCels;
 
 	/**
-	 * A list of handles for each cel in the current
-	 * frame.
+	 * A list of handles for each cel in the current frame.
 	 */
 	CelHandleList _celHandles;
 
 	/**
-	 * Scratch memory used to temporarily store
-	 * decompressed cel data for vertically squashed
-	 * cels.
+	 * Scratch memory used to temporarily store decompressed cel data for
+	 * vertically squashed cels.
 	 */
 	ScratchMemory _celDecompressionBuffer;
 
 	/**
-	 * The size, in bytes, of the squashed cel
-	 * decompression buffer.
+	 * The size, in bytes, of the squashed cel decompression buffer.
 	 */
 	int _celDecompressionArea;
 
 	/**
-	 * If true, the robot just started playing and
-	 * is awaiting output for the first frame.
+	 * If true, the robot just started playing and is awaiting output for the
+	 * first frame.
 	 */
 	bool _syncFrame;
 
 	/**
-	 * Scratch memory used to store the compressed robot
-	 * video data for the current frame.
+	 * Scratch memory used to store the compressed robot video data for the
+	 * current frame.
 	 */
 	ScratchMemory _doVersion5Scratch;
 
 	/**
-	 * When set to a non-negative value, forces the next
-	 * call to doRobot to render the given frame number
-	 * instead of whatever frame would have normally been
-	 * rendered.
+	 * When set to a non-negative value, forces the next call to doRobot to
+	 * render the given frame number instead of whatever frame would have
+	 * normally been rendered.
 	 */
 	mutable int _cueForceShowFrame;
 
@@ -1426,14 +1338,14 @@ private:
 	RobotScreenItemList _screenItemList;
 
 	/**
-	 * The positions of the various screen items in this
-	 * robot, in screen coordinates.
+	 * The positions of the various screen items in this robot, in screen
+	 * coordinates.
 	 */
 	Common::Array<int16> _screenItemX, _screenItemY;
 
 	/**
-	 * The raw position values from the cel header for
-	 * each screen item currently on-screen.
+	 * The raw position values from the cel header for each screen item
+	 * currently on-screen.
 	 */
 	Common::Array<int16> _originalScreenItemX, _originalScreenItemY;
 
@@ -1449,11 +1361,10 @@ private:
 	int16 _priority;
 
 	/**
-	 * The amount of visual vertical compression applied
-	 * to the current cel. A value of 100 means no
-	 * compression; a value above 100 indicates how much
-	 * the cel needs to be scaled along the y-axis to
-	 * return to its original dimensions.
+	 * The amount of visual vertical compression applied to the current cel. A
+	 * value of 100 means no compression; a value above 100 indicates how much
+	 * the cel needs to be scaled along the y-axis to return to its original
+	 * dimensions.
 	 */
 	uint8 _verticalScaleFactor;
 };

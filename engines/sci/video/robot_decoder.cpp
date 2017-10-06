@@ -112,8 +112,8 @@ bool RobotAudioStream::addPacket(const RobotAudioPacket &packet) {
 	// 4 (odd).
 	const int8 bufferIndex = packet.position % 4 ? 1 : 0;
 
-	// Packet 0 is the first primer, packet 2 is the second primer,
-	// packet 4+ are regular audio data
+	// Packet 0 is the first primer, packet 2 is the second primer, packet 4+
+	// are regular audio data
 	if (packet.position <= 2 && _firstPacketPosition == -1) {
 		_readHead = 0;
 		_readHeadAbs = 0;
@@ -445,8 +445,8 @@ void RobotDecoder::initVideo(const int16 x, const int16 y, const int16 scale, co
 	_maxFrameRate = _frameRate + kMaxFrameRateDrift;
 
 	if (_xResolution == 0 || _yResolution == 0) {
-		// TODO: Default values were taken from RESOURCE.CFG hires property
-		// if it exists, so need to check games' configuration files for those
+		// In SSCI, default values were taken from RESOURCE.CFG hires property
+		// if it exists, but no games seem to take advantage of this
 		_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
 		_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
 	}
@@ -1386,12 +1386,8 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 	for (RobotScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
 		Common::Point position(_screenItemX[i], _screenItemY[i]);
 
-// TODO: Version 6 robot?
-//		int scaleXRemainder;
 		if (_scaleInfo.signal == kScaleSignalManual) {
 			position.x = (position.x * _scaleInfo.x) / 128;
-// TODO: Version 6 robot?
-//			scaleXRemainder = (position.x * _scaleInfo.x) % 128;
 			position.y = (position.y * _scaleInfo.y) / 128;
 		}
 
@@ -1400,8 +1396,6 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 			celInfo.bitmap = _celHandles[i].bitmapId;
 			ScreenItem *screenItem = new ScreenItem(_planeId, celInfo, position, _scaleInfo);
 			_screenItemList[i] = screenItem;
-			// TODO: Version 6 robot?
-			// screenItem->_field_30 = scaleXRemainder;
 
 			if (_priority == -1) {
 				screenItem->_fixedPriority = false;
@@ -1414,8 +1408,6 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 			ScreenItem *screenItem = _screenItemList[i];
 			screenItem->_celInfo.bitmap = _celHandles[i].bitmapId;
 			screenItem->_position = position;
-			// TODO: Version 6 robot?
-			// screenItem->_field_30 = scaleXRemainder;
 
 			if (_priority == -1) {
 				screenItem->_fixedPriority = false;
@@ -1570,7 +1562,7 @@ void RobotDecoder::preallocateCelMemory(const byte *rawVideoData, const int16 nu
 	for (int i = 0; i < numFixedCels; ++i) {
 		CelHandleInfo &celHandle = _celHandles[i];
 
-		// NOTE: There was a check to see if the cel handle was not allocated
+		// In SSCI, there was a check to see if the cel handle was not allocated
 		// here, for some reason, which would mean that nothing was ever
 		// allocated from fixed cels, because the _celHandles array just got
 		// deleted and recreated...
