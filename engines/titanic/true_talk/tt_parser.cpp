@@ -1741,9 +1741,10 @@ void TTparser::preprocessGerman(TTstring &line) {
 		"et ", "st ", "s ", "e ", "n ", "t "
 	};
 
-	for (uint idx = 0; idx < _replacements4.size(); idx += 3) {
-		if (!line.hasSuffix(_replacements4[idx + 2]))
+	for (uint idx = 0; idx < _replacements4.size(); ++idx) {
+		if (!line.hasSuffix(_replacements4[idx]))
 			continue;
+
 		const char *lineP = line.c_str();
 		const char *p = strstr(lineP, _replacements4[idx].c_str());
 		if (!p || p == lineP || *(p - 1) != ' ')

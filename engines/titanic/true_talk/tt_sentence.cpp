@@ -24,6 +24,7 @@
 #include "titanic/true_talk/tt_concept.h"
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -311,6 +312,12 @@ bool TTsentence::isConcept34(int slotIndex, const TTconceptNode *node) const {
 bool TTsentence::localWord(const char *str) const {
 	CScriptHandler &scriptHandler = *g_vm->_exeResources._owner;
 	bool foundMatch = false;
+	static const char *const ARTICLES_EN[11] = {
+		"it", "that", "he", "she", "him", "her", "them", "they", "those", "1", "thing"
+	};
+	static const char *const ARTICLES_DE[9] = {
+		"es", "das", "er", "ihn", "ihm", "ihnen", "diese", "man", "ding"
+	};
 
 	if (scriptHandler._concept1P) {
 		TTstring s = scriptHandler._concept1P->getText();
@@ -332,15 +339,15 @@ bool TTsentence::localWord(const char *str) const {
 			continue;
 
 		const TTstring wordStr = nodeP->_wordP->_text;
-		if (mode == VOCAB_MODE_EN && wordStr == str) {
+		if ((g_language == Common::DE_DEU || mode == VOCAB_MODE_EN) && wordStr == str) {
 			result = true;
 		} else if (nodeP->_wordP->findSynByName(str, &syn, mode)) {
 			result = true;
 		} else if (foundMatch) {
-			result = wordStr == "it" || wordStr == "that" || wordStr == "he"
-				|| wordStr == "she" || wordStr == "him" || wordStr == "her"
-				|| wordStr == "them" || wordStr == "they" || wordStr == "those"
-				|| wordStr == "1" || wordStr == "thing";
+			result = false;
+			for (int idx = 0; idx < TRANSLATE(11, 9) && !result; ++idx) {
+				result = wordStr == TRANSLATE(ARTICLES_EN[idx], ARTICLES_DE[idx]);
+			}
 		}
 	}
 

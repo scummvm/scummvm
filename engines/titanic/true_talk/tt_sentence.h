@@ -119,6 +119,10 @@ public:
 
 	bool isConcept34(int slotIndex, const TTconceptNode *node = nullptr) const;
 
+	/**
+	 * Returns true if the sentence contains the specified word,
+	 * allowing for common synonyms of the desired word
+	 */
 	bool localWord(const char *str) const;
 
 	/**
