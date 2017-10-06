@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
+#include "common/safe-bool.h"
 #include "common/types.h"
 
 namespace Common {
@@ -103,7 +104,7 @@ private:
  * a plain pointer is only possible via SharedPtr::get.
  */
 template<class T>
-class SharedPtr {
+class SharedPtr : public SafeBool<SharedPtr<T> > {
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 	template<class T2> friend class SharedPtr;
 #endif
@@ -167,7 +168,7 @@ public:
 	 * Implicit conversion operator to bool for convenience, to make
 	 * checks like "if (sharedPtr) ..." possible.
 	 */
-	operator bool() const { return _pointer != 0; }
+	bool operator_bool() const { return _pointer != nullptr; }
 
 	/**
 	 * Checks if the SharedPtr object is the only object refering
@@ -223,7 +224,7 @@ private:
 };
 
 template<typename T>
-class ScopedPtr : NonCopyable {
+class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T> > {
 public:
 	typedef T ValueType;
 	typedef T *PointerType;
@@ -238,7 +239,7 @@ public:
 	 * Implicit conversion operator to bool for convenience, to make
 	 * checks like "if (scopedPtr) ..." possible.
 	 */
-	operator bool() const { return _pointer != 0; }
+	bool operator_bool() const { return _pointer != nullptr; }
 
 	~ScopedPtr() {
 		delete _pointer;
@@ -277,7 +278,7 @@ private:
 
 
 template<typename T>
-class DisposablePtr : NonCopyable {
+class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T> > {
 public:
 	typedef T  ValueType;
 	typedef T *PointerType;
@@ -296,7 +297,7 @@ public:
 	 * Implicit conversion operator to bool for convenience, to make
 	 * checks like "if (scopedPtr) ..." possible.
 	 */
-	operator bool() const { return _pointer; }
+	bool operator_bool() const { return _pointer != nullptr; }
 
 	/**
 	 * Returns the plain pointer value.
