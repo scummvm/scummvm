@@ -69,7 +69,6 @@ bool GPHGraphicsManager::setGraphicsMode(int mode) {
 		return false;
 	}
 
-	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
 
