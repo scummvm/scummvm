@@ -53,8 +53,8 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 	}
 
 void GfxText32::init() {
-	_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	_xResolution = g_sci->_gfxFrameout->getScriptWidth();
+	_yResolution = g_sci->_gfxFrameout->getScriptHeight();
 }
 
 reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling, const bool gc) {
@@ -73,8 +73,8 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 	setFont(fontId);
 
 	if (doScaling) {
-		int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-		int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+		int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 		Ratio scaleX(_xResolution, scriptWidth);
 		Ratio scaleY(_yResolution, scriptHeight);
@@ -115,8 +115,8 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 
 	setFont(fontId);
 
-	int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	mulinc(_textRect, Ratio(_xResolution, scriptWidth), Ratio(_yResolution, scriptHeight));
 
@@ -218,7 +218,7 @@ void GfxText32::drawChar(const char charIndex) {
 }
 
 int16 GfxText32::getScaledFontHeight() const {
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 	return (_font->getHeight() * scriptHeight + _yResolution - 1) / _yResolution;
 }
 
@@ -335,7 +335,7 @@ void GfxText32::drawText(const uint index, uint length) {
 void GfxText32::invertRect(const reg_t bitmapId, int16 bitmapStride, const Common::Rect &rect, const uint8 foreColor, const uint8 backColor, const bool doScaling) {
 	Common::Rect targetRect = rect;
 	if (doScaling) {
-		bitmapStride = bitmapStride * _xResolution / g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		bitmapStride = bitmapStride * _xResolution / g_sci->_gfxFrameout->getScriptWidth();
 		targetRect = scaleRect(rect);
 	}
 
@@ -566,8 +566,8 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 
 	Common::Rect result;
 
-	int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	maxWidth = maxWidth * _xResolution / scriptWidth;
 
@@ -638,8 +638,8 @@ int16 GfxText32::getStringWidth(const Common::String &text) {
 }
 
 int16 GfxText32::getTextCount(const Common::String &text, const uint index, const Common::Rect &textRect, const bool doScaling) {
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	Common::Rect scaledRect(textRect);
 	if (doScaling) {

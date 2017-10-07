@@ -39,7 +39,7 @@ GfxCursor32::GfxCursor32() :
 
 void GfxCursor32::init(const Buffer &outputBuffer) {
 	_screen = outputBuffer;
-	_screenRegion.rect = Common::Rect(_screen.screenWidth, _screen.screenHeight);
+	_screenRegion.rect = Common::Rect(_screen.w, _screen.h);
 	_screenRegion.data = static_cast<byte *>(_screen.getPixels());
 	_restrictedArea = _screenRegion.rect;
 }
@@ -151,10 +151,10 @@ void GfxCursor32::show() {
 void GfxCursor32::setRestrictedArea(const Common::Rect &rect) {
 	_restrictedArea = rect;
 
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	mulru(_restrictedArea, Ratio(screenWidth, scriptWidth), Ratio(screenHeight, scriptHeight), 0);
 
@@ -259,7 +259,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 		//      threshold size because inventory items usually have a
 		//      high-resolution cursor representation.
 		bool pixelDouble = false;
-		if (g_sci->_gfxFrameout->_isHiRes &&
+		if (g_sci->_gfxFrameout->isHiRes() &&
 			(g_sci->getGameId() == GID_GK1 ||
 			(g_sci->getGameId() == GID_PQ4 && _width <= 22 && _height <= 22))) {
 
@@ -275,7 +275,8 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 		memset(_cursor.data, 255, _width * _height);
 		_cursor.skipColor = 255;
 
-		Buffer target(_width, _height, _cursor.data);
+		Buffer target;
+		target.init(_width, _height, _width, _cursor.data, Graphics::PixelFormat::createFormatCLUT8());
 		if (pixelDouble) {
 			view.draw(target, _cursor.rect, Common::Point(0, 0), false, 2, 2);
 		} else {
@@ -314,10 +315,10 @@ void GfxCursor32::copyFromScreen(DrawRegion &target) {
 }
 
 void GfxCursor32::setPosition(const Common::Point &position) {
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 	Common::Point newPosition;
 	newPosition.x = (position.x * Ratio(screenWidth, scriptWidth)).toInt();

@@ -391,8 +391,8 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, con
 	_gfxText32.setFont(_fontId);
 	_pointSize = _gfxText32._font->getHeight();
 
-	const uint16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const uint16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const uint16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const uint16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	Common::Rect bitmapRect(gameRect);
 	mulinc(bitmapRect, Ratio(_gfxText32._xResolution, scriptWidth), Ratio(_gfxText32._yResolution, scriptHeight));

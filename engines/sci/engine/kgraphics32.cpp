@@ -77,7 +77,7 @@ reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 
 	Ratio scaleX;
 	if (getSciVersion() < SCI_VERSION_2_1_LATE) {
-		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
 		scaleX = Ratio(scriptWidth, celObj._xResolution);
 	}
 
@@ -160,11 +160,12 @@ reg_t kShakeScreen32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
-	const Buffer &buffer = g_sci->_gfxFrameout->getCurrentBuffer();
-	if (buffer.screenWidth < 640 || buffer.screenHeight < 400)
-		return make_reg(0, 0);
+	const GfxFrameout *gfxFrameout = g_sci->_gfxFrameout;
+	if (gfxFrameout->getScreenWidth() < 640 || gfxFrameout->getScreenHeight() < 400) {
+		return NULL_REG;
+	}
 
-	return make_reg(0, 1);
+	return TRUE_REG;
 }
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
@@ -412,25 +413,25 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCelHigh32(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId resourceId = argv[0].toUint16();
-	int16 loopNo = argv[1].toSint16();
-	int16 celNo = argv[2].toSint16();
-	CelObjView celObj(resourceId, loopNo, celNo);
+	const GuiResourceId resourceId = argv[0].toUint16();
+	const int16 loopNo = argv[1].toSint16();
+	const int16 celNo = argv[2].toSint16();
+	const CelObjView celObj(resourceId, loopNo, celNo);
 	int16 height = celObj._height;
 	if (getSciVersion() < SCI_VERSION_2_1_LATE) {
-		height = mulru(height, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, celObj._yResolution));
+		height = mulru(height, Ratio(g_sci->_gfxFrameout->getScriptHeight(), celObj._yResolution));
 	}
 	return make_reg(0, height);
 }
 
 reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId resourceId = argv[0].toUint16();
-	int16 loopNo = argv[1].toSint16();
-	int16 celNo = argv[2].toSint16();
-	CelObjView celObj(resourceId, loopNo, celNo);
+	const GuiResourceId resourceId = argv[0].toUint16();
+	const int16 loopNo = argv[1].toSint16();
+	const int16 celNo = argv[2].toSint16();
+	const CelObjView celObj(resourceId, loopNo, celNo);
 	int16 width = celObj._width;
 	if (getSciVersion() < SCI_VERSION_2_1_LATE) {
-		width = mulru(width, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, celObj._xResolution));
+		width = mulru(width, Ratio(g_sci->_gfxFrameout->getScriptWidth(), celObj._xResolution));
 	}
 	return make_reg(0, width);
 }

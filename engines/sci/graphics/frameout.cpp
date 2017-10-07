@@ -61,7 +61,7 @@
 namespace Sci {
 
 GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
-	_isHiRes(gameIsHiRes()),
+	_isHiRes(detectHiRes()),
 	_palette(palette),
 	_cursor(cursor),
 	_segMan(segMan),
@@ -74,15 +74,13 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	_lastScreenUpdateTick(0) {
 
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
-		_currentBuffer = Buffer(630, 450, nullptr);
+		_currentBuffer.create(630, 450, Graphics::PixelFormat::createFormatCLUT8());
 	} else if (_isHiRes) {
-		_currentBuffer = Buffer(640, 480, nullptr);
+		_currentBuffer.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
-		_currentBuffer = Buffer(320, 200, nullptr);
+		_currentBuffer.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
-	_currentBuffer.setPixels(calloc(1, _currentBuffer.screenWidth * _currentBuffer.screenHeight));
-	_screenRect = Common::Rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
-	initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight, _isHiRes);
+	initGraphics(_currentBuffer.w, _currentBuffer.h, _isHiRes);
 
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:
@@ -91,18 +89,20 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	case GID_PHANTASMAGORIA2:
 	case GID_TORIN:
 	case GID_RAMA:
-		_currentBuffer.scriptWidth = 640;
-		_currentBuffer.scriptHeight = 480;
+		_scriptWidth = 640;
+		_scriptHeight = 480;
 		break;
 	case GID_GK2:
 	case GID_PQSWAT:
 		if (!g_sci->isDemo()) {
-			_currentBuffer.scriptWidth = 640;
-			_currentBuffer.scriptHeight = 480;
+			_scriptWidth = 640;
+			_scriptHeight = 480;
+			break;
 		}
-		break;
+		// fall through
 	default:
-		// default script width for other games is 320x200
+		_scriptWidth = 320;
+		_scriptHeight = 200;
 		break;
 	}
 }
@@ -110,7 +110,7 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 GfxFrameout::~GfxFrameout() {
 	clear();
 	CelObj::deinit();
-	free(_currentBuffer.getPixels());
+	_currentBuffer.free();
 }
 
 void GfxFrameout::run() {
@@ -122,7 +122,7 @@ void GfxFrameout::run() {
 	// This plane is created in SCI::InitPlane in SSCI, and is a background fill
 	// plane to ensure "hidden" planes (planes with negative priority) are never
 	// drawn
-	Plane *initPlane = new Plane(Common::Rect(_currentBuffer.scriptWidth, _currentBuffer.scriptHeight));
+	Plane *initPlane = new Plane(Common::Rect(_scriptWidth, _scriptHeight));
 	initPlane->_priority = 0;
 	_planes.add(initPlane);
 }
@@ -133,7 +133,7 @@ void GfxFrameout::clear() {
 	_showList.clear();
 }
 
-bool GfxFrameout::gameIsHiRes() const {
+bool GfxFrameout::detectHiRes() const {
 	// QFG4 is always low resolution
 	if (g_sci->getGameId() == GID_QFG4) {
 		return false;
@@ -360,7 +360,7 @@ void GfxFrameout::addPlane(Plane *plane) {
 		error("Plane %04x:%04x already exists", PRINT_REG(plane->_object));
 	}
 
-	plane->clipScreenRect(_screenRect);
+	plane->clipScreenRect(Common::Rect(_currentBuffer.w, _currentBuffer.h));
 	_planes.add(plane);
 }
 
@@ -369,7 +369,7 @@ void GfxFrameout::updatePlane(Plane &plane) {
 	assert(_planes.findByObject(plane._object) == &plane);
 
 	Plane *visiblePlane = _visiblePlanes.findByObject(plane._object);
-	plane.sync(visiblePlane, _screenRect);
+	plane.sync(visiblePlane, Common::Rect(_currentBuffer.w, _currentBuffer.h));
 	// updateScreenRect was called a second time here in SSCI, but it is already
 	// called at the end of the sync call (also in SSCI) so there is no reason
 	// to do it again
@@ -455,7 +455,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 
 	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][kGlobalVarPreviousRoomNo].toSint16();
 
-	Common::Rect rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
+	Common::Rect rect(_currentBuffer.w, _currentBuffer.h);
 	_showList.add(rect);
 	showBits();
 
@@ -557,24 +557,39 @@ void GfxFrameout::directFrameOut(const Common::Rect &showRect) {
 }
 
 #ifdef USE_RGB_COLOR
+void GfxFrameout::redrawGameScreen(const Common::Rect &skipRect) const {
+	Common::ScopedPtr<Graphics::Surface> game(_currentBuffer.convertTo(g_system->getScreenFormat(), _palette->getHardwarePalette()));
+	assert(game);
+
+	Common::Rect rects[4];
+	int splitCount = splitRects(Common::Rect(game->w, game->h), skipRect, rects);
+	if (splitCount != -1) {
+		while (splitCount--) {
+			const Common::Rect &drawRect = rects[splitCount];
+			g_system->copyRectToScreen(game->getBasePtr(drawRect.left, drawRect.top), game->pitch, drawRect.left, drawRect.top, drawRect.width(), drawRect.height());
+		}
+	}
+
+	game->free();
+}
+
 void GfxFrameout::resetHardware() {
 	updateMousePositionForRendering();
-	_showList.add(Common::Rect(getCurrentBuffer().screenWidth, getCurrentBuffer().screenHeight));
+	_showList.add(Common::Rect(_currentBuffer.w, _currentBuffer.h));
 	g_system->getPaletteManager()->setPalette(_palette->getHardwarePalette(), 0, 256);
 	showBits();
 }
 #endif
 
 /**
- * Determines the parts of `middleRect` that aren't overlapped
- * by `showRect`, optimised for contiguous memory writes.
- * Returns -1 if `middleRect` and `showRect` have no intersection.
- * Returns number of returned parts (in `outRects`) otherwise.
- * (In particular, this returns 0 if `middleRect` is contained
- * in `other`.)
+ * Determines the parts of `middleRect` that aren't overlapped by `showRect`,
+ * optimised for contiguous memory writes.
  *
- * `middleRect` is modified directly to extend into the upper
- * and lower rects.
+ * `middleRect` is modified directly to extend into the upper and lower rects.
+ *
+ * @returns -1 if `middleRect` and `showRect` have no intersection, or the
+ * number of returned parts (in `outRects`) otherwise. (In particular, this
+ * returns 0 if `middleRect` is contained in `showRect`.)
  */
 int splitRectsForRender(Common::Rect &middleRect, const Common::Rect &showRect, Common::Rect(&outRects)[2]) {
 	if (!middleRect.intersects(showRect)) {
@@ -998,7 +1013,7 @@ void GfxFrameout::showBits() {
 		rounded.left &= ~1;
 		rounded.right = (rounded.right + 1) & ~1;
 
-		byte *sourceBuffer = (byte *)_currentBuffer.getPixels() + rounded.top * _currentBuffer.screenWidth + rounded.left;
+		byte *sourceBuffer = (byte *)_currentBuffer.getPixels() + rounded.top * _currentBuffer.w + rounded.left;
 
 		// Sometimes screen items (especially from SCI2.1early transitions, like
 		// in the asteroids minigame in PQ4) generate zero-dimension show
@@ -1023,7 +1038,7 @@ void GfxFrameout::showBits() {
 #else
 		{
 #endif
-			g_system->copyRectToScreen(sourceBuffer, _currentBuffer.screenWidth, rounded.left, rounded.top, rounded.width(), rounded.height());
+			g_system->copyRectToScreen(sourceBuffer, _currentBuffer.w, rounded.left, rounded.top, rounded.width(), rounded.height());
 		}
 	}
 
@@ -1083,7 +1098,7 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 
 	byte *pixels = (byte *)_currentBuffer.getPixels();
 
-	for (int pixelIndex = 0, numPixels = _currentBuffer.screenWidth * _currentBuffer.screenHeight; pixelIndex < numPixels; ++pixelIndex) {
+	for (int pixelIndex = 0, numPixels = _currentBuffer.w * _currentBuffer.h; pixelIndex < numPixels; ++pixelIndex) {
 		byte currentValue = pixels[pixelIndex];
 		int8 styleRangeValue = styleRanges[currentValue];
 		if (styleRangeValue == -1 && styleRangeValue == style) {
@@ -1205,7 +1220,7 @@ reg_t GfxFrameout::kernelIsOnMe(const reg_t object, const Common::Point &positio
 bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const Common::Point &position, const bool checkPixel) const {
 
 	Common::Point scaledPosition(position);
-	mulru(scaledPosition, Ratio(_currentBuffer.screenWidth, _currentBuffer.scriptWidth), Ratio(_currentBuffer.screenHeight, _currentBuffer.scriptHeight));
+	mulru(scaledPosition, Ratio(_currentBuffer.w, _scriptWidth), Ratio(_currentBuffer.h, _scriptHeight));
 	scaledPosition.x += plane._planeRect.left;
 	scaledPosition.y += plane._planeRect.top;
 
@@ -1222,7 +1237,7 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 		scaledPosition.y -= screenItem._scaledPosition.y;
 
 		if (getSciVersion() < SCI_VERSION_2_1_LATE) {
-			mulru(scaledPosition, Ratio(celObj._xResolution, _currentBuffer.screenWidth), Ratio(celObj._yResolution, _currentBuffer.screenHeight));
+			mulru(scaledPosition, Ratio(celObj._xResolution, _currentBuffer.w), Ratio(celObj._yResolution, _currentBuffer.h));
 		}
 
 		if (screenItem._scale.signal != kScaleSignalNone && screenItem._scale.x && screenItem._scale.y) {

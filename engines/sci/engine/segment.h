@@ -977,7 +977,7 @@ public:
 		_data = (byte *)malloc(other._dataSize);
 		memcpy(_data, other._data, other._dataSize);
 		if (_dataSize) {
-			_buffer = Buffer(getWidth(), getHeight(), getPixels());
+			_buffer.init(getWidth(), getHeight(), getWidth(), getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 		}
 		_gc = other._gc;
 	}
@@ -998,7 +998,7 @@ public:
 		_data = (byte *)malloc(other._dataSize);
 		memcpy(_data, other._data, _dataSize);
 		if (_dataSize) {
-			_buffer = Buffer(getWidth(), getHeight(), getPixels());
+			_buffer.init(getWidth(), getHeight(), getWidth(), getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 		}
 		_gc = other._gc;
 
@@ -1032,7 +1032,7 @@ public:
 		setXResolution(xResolution);
 		setYResolution(yResolution);
 
-		_buffer = Buffer(getWidth(), getHeight(), getPixels());
+		_buffer.init(getWidth(), getHeight(), getWidth(), getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	inline int getRawSize() const {

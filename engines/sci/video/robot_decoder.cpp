@@ -447,8 +447,8 @@ void RobotDecoder::initVideo(const int16 x, const int16 y, const int16 scale, co
 	if (_xResolution == 0 || _yResolution == 0) {
 		// In SSCI, default values were taken from RESOURCE.CFG hires property
 		// if it exists, but no games seem to take advantage of this
-		_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-		_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+		_xResolution = g_sci->_gfxFrameout->getScreenWidth();
+		_yResolution = g_sci->_gfxFrameout->getScreenHeight();
 	}
 
 	if (hasPalette) {
@@ -677,10 +677,10 @@ void RobotDecoder::showFrame(const uint16 frameNo, const uint16 newX, const uint
 			if (_isHiRes) {
 				SciBitmap &bitmap = *_segMan->lookupBitmap(_celHandles[i].bitmapId);
 
-				const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-				const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-				const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-				const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+				const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+				const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+				const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+				const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 				if (scriptWidth == kLowResX && scriptHeight == kLowResY) {
 					const Ratio lowResToScreenX(screenWidth, kLowResX);
@@ -1453,10 +1453,10 @@ uint32 RobotDecoder::createCel5(const byte *rawVideoData, const int16 screenItem
 
 	rawVideoData += kCelHeaderSize;
 
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 	Common::Point origin;
 	if (scriptWidth == kLowResX && scriptHeight == kLowResY) {

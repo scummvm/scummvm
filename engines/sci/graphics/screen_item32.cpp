@@ -251,10 +251,10 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 }
 
 void ScreenItem::calcRects(const Plane &plane) {
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 	const CelObj &celObj = getCelObj();
 
@@ -587,8 +587,8 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 		nsRect = celObjRect;
 	}
 
-	const uint16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const uint16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const uint16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const uint16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	Ratio scaleX, scaleY;
 	if (_scale.signal == kScaleSignalManual) {

@@ -47,10 +47,34 @@ public:
 	GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor);
 	~GfxFrameout();
 
-	bool _isHiRes;
-
 	void clear();
 	void run();
+
+	/**
+	 * Returns true if the game should render at a resolution greater than
+	 * 320x240.
+	 */
+	inline bool isHiRes() const { return _isHiRes; }
+
+	/**
+	 * Gets the x-resolution used by game scripts.
+	 */
+	inline int16 getScriptWidth() const { return _scriptWidth; }
+
+	/**
+	 * Gets the y-resolution used by game scripts.
+	 */
+	inline int16 getScriptHeight() const { return _scriptHeight; }
+
+	/**
+	 * Gets the x-resolution of the output buffer.
+	 */
+	inline int16 getScreenWidth() const { return _currentBuffer.w; }
+
+	/**
+	 * Gets the y-resolution of the output buffer.
+	 */
+	inline int16 getScreenHeight() const { return _currentBuffer.h; }
 
 private:
 	GfxCursor32 *_cursor;
@@ -59,10 +83,21 @@ private:
 	SegManager *_segMan;
 
 	/**
+	 * Whether or not the game should render at a resolution above 320x240.
+	 */
+	bool _isHiRes;
+
+	/**
+	 * The resolution used by game scripts.
+	 * @see celobj32.h comments on kLowResX/kLowResY.
+	 */
+	int16 _scriptWidth, _scriptHeight;
+
+	/**
 	 * Determines whether the current game should be rendered in high
 	 * resolution.
 	 */
-	bool gameIsHiRes() const;
+	bool detectHiRes() const;
 
 #pragma mark -
 #pragma mark Screen items
@@ -172,7 +207,7 @@ public:
 	 * Resets the pixel format of the hardware surface to the given format.
 	 */
 	void setPixelFormat(const Graphics::PixelFormat &format) const {
-		initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight, _isHiRes, &format);
+		initGraphics(_currentBuffer.w, _currentBuffer.h, _isHiRes, &format);
 	}
 
 	/**
@@ -215,6 +250,14 @@ public:
 	 * processing any other graphics updates except for cursor changes.
 	 */
 	void directFrameOut(const Common::Rect &showRect);
+
+	/**
+	 * Redraws the game screen from the internal frame buffer to the system.
+	 * Used after pixel format changes.
+	 *
+	 * @param skipRect An area of the screen that does not need to be redrawn.
+	 */
+	void redrawGameScreen(const Common::Rect &skipRect) const;
 
 #ifdef USE_RGB_COLOR
 	/**
@@ -269,13 +312,6 @@ private:
 	 * screen items with remap data need to be redrawn.
 	 */
 	bool _remapOccurred;
-
-	/**
-	 * The dimensions of the output buffer, in display coordinates.
-	 *
-	 * @note This field is on `GraphicsMgr.screen` in SSCI.
-	 */
-	Common::Rect _screenRect;
 
 	/**
 	 * A list of rectangles, in screen coordinates, that represent portions of

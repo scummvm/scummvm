@@ -658,9 +658,9 @@ struct RENDERER {
 	_skipColor(skipColor) {}
 
 	inline void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-		byte *targetPixel = (byte *)target.getPixels() + target.screenWidth * targetRect.top + targetRect.left;
+		byte *targetPixel = (byte *)target.getPixels() + target.w * targetRect.top + targetRect.left;
 
-		const int16 skipStride = target.screenWidth - targetRect.width();
+		const int16 skipStride = target.w - targetRect.width();
 		const int16 targetWidth = targetRect.width();
 		const int16 targetHeight = targetRect.height();
 		for (int16 y = 0; y < targetHeight; ++y) {
@@ -1265,8 +1265,8 @@ CelObjColor::CelObjColor(const uint8 color, const int16 width, const int16 heigh
 	_info.color = color;
 	_origin.x = 0;
 	_origin.y = 0;
-	_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	_xResolution = g_sci->_gfxFrameout->getScriptWidth();
+	_yResolution = g_sci->_gfxFrameout->getScriptHeight();
 	_hunkPaletteOffset = 0;
 	_mirrorX = false;
 	_remap = false;

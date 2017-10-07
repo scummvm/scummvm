@@ -307,10 +307,10 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 		return;
 	}
 
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 	const int16 scaledWidth = (_decoder->getWidth() * Ratio(screenWidth, scriptWidth)).toInt();
 	const int16 scaledHeight = (_decoder->getHeight() * Ratio(screenHeight, scriptHeight)).toInt();
@@ -392,8 +392,8 @@ AVIPlayer::IOStatus AVIPlayer::init(const bool doublePixels) {
 		height *= 2;
 	}
 
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 	// When scaling videos, they must not grow larger than the hardware screen
 	// or else the engine will crash. This is particularly important for the GK1
@@ -783,20 +783,7 @@ void VMDPlayer::redrawGameScreen() const {
 		return;
 	}
 
-	Graphics::Surface *game = g_sci->_gfxFrameout->getCurrentBuffer().convertTo(g_system->getScreenFormat(), g_sci->_gfxPalette32->getHardwarePalette());
-	assert(game);
-
-	Common::Rect rects[4];
-	int splitCount = splitRects(Common::Rect(game->w, game->h), _drawRect, rects);
-	if (splitCount != -1) {
-		while (splitCount--) {
-			const Common::Rect &drawRect = rects[splitCount];
-			g_system->copyRectToScreen(game->getBasePtr(drawRect.left, drawRect.top), game->pitch, drawRect.left, drawRect.top, drawRect.width(), drawRect.height());
-		}
-	}
-
-	game->free();
-	delete game;
+	g_sci->_gfxFrameout->redrawGameScreen(_drawRect);
 }
 #endif
 
@@ -900,8 +887,8 @@ void VMDPlayer::initComposited() {
 	}
 
 	const uint32 hunkPaletteSize = HunkPalette::calculateHunkPaletteSize(256, false);
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 	SciBitmap &vmdBitmap = *_segMan->allocateBitmap(&_bitmapId, _drawRect.width(), _drawRect.height(), 255, 0, 0, screenWidth, screenHeight, hunkPaletteSize, false, false);
 	vmdBitmap.getBuffer().fillRect(Common::Rect(_drawRect.width(), _drawRect.height()), 0);

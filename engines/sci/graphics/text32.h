@@ -139,10 +139,10 @@ private:
 
 	inline Common::Rect scaleRect(const Common::Rect &rect) {
 		Common::Rect scaledRect(rect);
-		int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-		int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-		Ratio scaleX(_xResolution, scriptWidth);
-		Ratio scaleY(_yResolution, scriptHeight);
+		const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+		const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+		const Ratio scaleX(_xResolution, scriptWidth);
+		const Ratio scaleY(_yResolution, scriptHeight);
 		mulinc(scaledRect, scaleX, scaleY);
 		return scaledRect;
 	}
@@ -191,12 +191,12 @@ public:
 	reg_t createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed, const bool gc);
 
 	inline int scaleUpWidth(int value) const {
-		const int scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		const int scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
 		return (value * scriptWidth + _xResolution - 1) / _xResolution;
 	}
 
 	inline int scaleUpHeight(int value) const {
-		const int scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		const int scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 		return (value * scriptHeight + _yResolution - 1) / _yResolution;
 	}
 

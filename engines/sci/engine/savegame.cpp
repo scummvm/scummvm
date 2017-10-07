@@ -801,7 +801,7 @@ void SciBitmap::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncBytes(_data, _dataSize);
 
 	if (s.isLoading()) {
-		_buffer = Buffer(getWidth(), getHeight(), getPixels());
+		_buffer.init(getWidth(), getHeight(), getWidth(), getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 }
 #endif

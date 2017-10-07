@@ -164,7 +164,7 @@ SciEvent EventManager::getScummVMEvent() {
 
 #if ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		const Buffer &screen = g_sci->_gfxFrameout->getCurrentBuffer();
+		const GfxFrameout *gfxFrameout = g_sci->_gfxFrameout;
 
 		// This will clamp `mousePos` according to the restricted zone,
 		// so any cursor or screen item associated with the mouse position
@@ -172,7 +172,7 @@ SciEvent EventManager::getScummVMEvent() {
 		g_sci->_gfxCursor32->deviceMoved(mousePos);
 
 		Common::Point mousePosSci = mousePos;
-		mulru(mousePosSci, Ratio(screen.scriptWidth, screen.screenWidth), Ratio(screen.scriptHeight, screen.screenHeight));
+		mulru(mousePosSci, Ratio(gfxFrameout->getScriptWidth(), gfxFrameout->getScreenWidth()), Ratio(gfxFrameout->getScriptHeight(), gfxFrameout->getScreenHeight()));
 		noEvent.mousePosSci = input.mousePosSci = mousePosSci;
 
 		if (_hotRectanglesActive) {

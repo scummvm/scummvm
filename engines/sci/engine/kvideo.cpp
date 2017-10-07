@@ -460,8 +460,8 @@ reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv) {
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	Common::Rect blackoutArea;
 	blackoutArea.left = MAX<int16>(0, argv[0].toSint16());

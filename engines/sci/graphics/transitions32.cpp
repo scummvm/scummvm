@@ -544,7 +544,8 @@ void GfxTransitions32::configure21EarlyDissolve(PlaneShowStyle &showStyle, const
 	showStyle.bitmap = bitmapId;
 
 	const Buffer &source = g_sci->_gfxFrameout->getCurrentBuffer();
-	Buffer target(showStyle.width, showStyle.height, bitmap.getPixels());
+	Buffer target;
+	target.init(showStyle.width, showStyle.height, showStyle.width, bitmap.getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 
 	target.fillRect(Common::Rect(bitmap.getWidth(), bitmap.getHeight()), kDefaultSkipColor);
 	target.copyRectToSurface(source, 0, 0, gameRect);
@@ -754,7 +755,8 @@ bool GfxTransitions32::processPixelDissolve21Early(PlaneShowStyle &showStyle) {
 	bool unchanged = true;
 
 	SciBitmap &bitmap = *_segMan->lookupBitmap(showStyle.bitmap);
-	Buffer buffer(showStyle.width, showStyle.height, bitmap.getPixels());
+	Buffer buffer;
+	buffer.init(showStyle.width, showStyle.height, showStyle.width, bitmap.getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 
 	uint32 numPixels = showStyle.width * showStyle.height;
 	uint32 numPixelsPerDivision = (numPixels + showStyle.divisions) / showStyle.divisions;

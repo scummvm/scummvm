@@ -137,10 +137,10 @@ void Plane::init() {
 }
 
 void Plane::convertGameRectToPlaneRect() {
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	const Ratio ratioX = Ratio(screenWidth, scriptWidth);
 	const Ratio ratioY = Ratio(screenHeight, scriptHeight);

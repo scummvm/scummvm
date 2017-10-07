@@ -126,8 +126,8 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 	thickness = (MAX<uint8>(1, thickness) - 1) | 1;
 	const uint8 halfThickness = thickness >> 1;
 
-	const uint16 scriptWidth  = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const uint16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const uint16 scriptWidth  = g_sci->_gfxFrameout->getScriptWidth();
+	const uint16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	outRect.left   = MIN<int16>(startPoint.x, endPoint.x);
 	outRect.top    = MIN<int16>(startPoint.y, endPoint.y);
