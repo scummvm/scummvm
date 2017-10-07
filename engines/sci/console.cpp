@@ -300,7 +300,7 @@ void Console::postEnter() {
 			if (duckMode) {
 				Common::List<Graphics::PixelFormat> formats;
 				formats.push_back(videoDecoder->getPixelFormat());
-				initGraphics(640, 480, true, formats);
+				initGraphics(640, 480, formats);
 
 				if (g_system->getScreenFormat().bytesPerPixel != videoDecoder->getPixelFormat().bytesPerPixel)
 					error("Could not switch screen format for the duck video");
@@ -316,7 +316,7 @@ void Console::postEnter() {
 #ifdef ENABLE_SCI32
 			// Switch back to 8bpp if we played a duck video
 			if (duckMode)
-				initGraphics(oldWidth, oldHeight, oldWidth > 320);
+				initGraphics(oldWidth, oldHeight);
 #endif
 
 			_engine->_gfxCursor->kernelShow();

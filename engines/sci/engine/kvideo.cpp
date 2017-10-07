@@ -140,7 +140,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			// The only argument is the string for the video
 
 			// HACK: Switch to 16bpp graphics for Cinepak.
-			initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
+			initGraphics(screenWidth, screenHeight, nullptr);
 
 			if (g_system->getScreenFormat().bytesPerPixel == 1) {
 				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
@@ -176,7 +176,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 				// The only known movie to do use this codec is the GK2 demo trailer
 				// If another video turns up that uses Indeo, we may have to add a better
 				// check.
-				initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
+				initGraphics(screenWidth, screenHeight, nullptr);
 
 				if (g_system->getScreenFormat().bytesPerPixel == 1) {
 					warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
@@ -206,7 +206,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		// HACK: Switch back to 8bpp if we played a true color video.
 		// We also won't be copying the screen to the SCI screen...
 		if (g_system->getScreenFormat().bytesPerPixel != 1)
-			initGraphics(screenWidth, screenHeight, screenWidth > 320);
+			initGraphics(screenWidth, screenHeight);
 		else if (getSciVersion() < SCI_VERSION_2) {
 			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 			g_sci->_gfxPalette16->kernelSyncScreenPalette();

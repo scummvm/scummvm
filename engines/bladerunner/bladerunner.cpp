@@ -139,7 +139,7 @@ bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
 
 Common::Error BladeRunnerEngine::run() {
 	Graphics::PixelFormat format = createRGB555();
-	initGraphics(640, 480, true, &format);
+	initGraphics(640, 480, &format);
 
 	_system->showMouse(true);
 

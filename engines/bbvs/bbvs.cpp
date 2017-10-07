@@ -170,7 +170,7 @@ Common::Error BbvsEngine::run() {
 	_isSaveAllowed = false;
 	_hasSnapshot = false;
 
-	initGraphics(320, 240, false);
+	initGraphics(320, 240);
 
 	_screen = new Screen(_system);
 	_gameModule = new GameModule();

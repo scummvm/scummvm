@@ -111,7 +111,7 @@ LastExpressEngine::~LastExpressEngine() {
 Common::Error LastExpressEngine::run() {
 	// Initialize the graphics
 	const Graphics::PixelFormat dataPixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	initGraphics(640, 480, true, &dataPixelFormat);
+	initGraphics(640, 480, &dataPixelFormat);
 
 	// We do not support color conversion
 	if (_system->getScreenFormat() != dataPixelFormat)

@@ -332,7 +332,6 @@ void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 	_transactionDetails.needHotswap = false;
 	_transactionDetails.needUpdatescreen = false;
 
-	_transactionDetails.normal1xScaler = false;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_transactionDetails.needTextureUpdate = false;
 #endif
@@ -599,6 +598,40 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 }
 #endif
 
+int SurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
+	int scale;
+	switch (mode) {
+	case GFX_NORMAL:
+		scale = 1;
+		break;
+#ifdef USE_SCALERS
+	case GFX_DOUBLESIZE:
+	case GFX_2XSAI:
+	case GFX_SUPER2XSAI:
+	case GFX_SUPEREAGLE:
+	case GFX_ADVMAME2X:
+	case GFX_TV2X:
+	case GFX_DOTMATRIX:
+#ifdef USE_HQ_SCALERS
+	case GFX_HQ2X:
+#endif
+		scale = 2;
+		break;
+	case GFX_TRIPLESIZE:
+	case GFX_ADVMAME3X:
+#ifdef USE_HQ_SCALERS
+	case GFX_HQ3X:
+#endif
+		scale = 3;
+		break;
+#endif
+	default:
+		scale = -1;
+	}
+
+	return scale;
+}
+
 bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
 
@@ -607,57 +640,13 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
 		return true;
 
-	int newScaleFactor = 1;
+	int newScaleFactor = getGraphicsModeScale(mode);
 
-	switch (mode) {
-	case GFX_NORMAL:
-		newScaleFactor = 1;
-		break;
-#ifdef USE_SCALERS
-	case GFX_DOUBLESIZE:
-		newScaleFactor = 2;
-		break;
-	case GFX_TRIPLESIZE:
-		newScaleFactor = 3;
-		break;
-
-	case GFX_2XSAI:
-		newScaleFactor = 2;
-		break;
-	case GFX_SUPER2XSAI:
-		newScaleFactor = 2;
-		break;
-	case GFX_SUPEREAGLE:
-		newScaleFactor = 2;
-		break;
-	case GFX_ADVMAME2X:
-		newScaleFactor = 2;
-		break;
-	case GFX_ADVMAME3X:
-		newScaleFactor = 3;
-		break;
-#ifdef USE_HQ_SCALERS
-	case GFX_HQ2X:
-		newScaleFactor = 2;
-		break;
-	case GFX_HQ3X:
-		newScaleFactor = 3;
-		break;
-#endif
-	case GFX_TV2X:
-		newScaleFactor = 2;
-		break;
-	case GFX_DOTMATRIX:
-		newScaleFactor = 2;
-		break;
-#endif // USE_SCALERS
-
-	default:
+	if (newScaleFactor == -1) {
 		warning("unknown gfx mode %d", mode);
 		return false;
 	}
 
-	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
 
@@ -784,9 +773,23 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 	}
 #endif
 
-	// Avoid redundant res changes
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+	// Avoid redundant res changes, only in SDL1. In SDL2, redundancies may not
+	// actually be redundant if ScummVM is switching between game engines and
+	// the screen dimensions are being reinitialized, since window resizing is
+	// supposed to reset when this happens
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
 		return;
+#endif
+
+	if ((int)w != _videoMode.screenWidth || (int)h != _videoMode.screenHeight) {
+		const bool useDefault = defaultGraphicsModeConfig();
+		if (useDefault && w > 320) {
+			resetGraphicsScale();
+		} else {
+			setGraphicsMode(getGraphicsModeIdByName(ConfMan.get("gfx_mode")));
+		}
+	}
 
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
@@ -2797,7 +2800,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 
-	if (!_window->createOrUpdateWindow(width, height, createWindowFlags)) {
+	if (!createOrUpdateWindow(width, height, createWindowFlags)) {
 		return nullptr;
 	}
 

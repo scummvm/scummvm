@@ -99,7 +99,7 @@ void DreamWebEngine::gettingShot() {
 }
 
 void DreamWebEngine::bibleQuote() {
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 
 	showPCX("I00");
 	fadeScreenUps();
@@ -285,7 +285,7 @@ void DreamWebEngine::realCredits() {
 	_sound->loadRoomsSample(_roomsSample);
 	_sound->volumeSet(0);
 
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 	hangOn(35);
 
 	showPCX("I01");

@@ -357,7 +357,7 @@ Common::Error DMEngine::run() {
 	initConstants();
 
 	// scummvm/engine specific
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 	_console = new Console(this);
 	_displayMan = new DisplayMan(this);
 	_dungeonMan = new DungeonMan(this);

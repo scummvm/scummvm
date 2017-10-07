@@ -25,6 +25,7 @@
 #include "backends/audiocd/audiocd.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
+#include "engines/util.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
 
@@ -260,7 +261,7 @@ void GobEngine::setTrueColor(bool trueColor) {
 
 	_features = (_features & ~kFeaturesTrueColor) | (trueColor ? kFeaturesTrueColor : 0);
 
-	_video->setSize(is640x480());
+	_video->setSize();
 
 	_pixelFormat = g_system->getScreenFormat();
 
@@ -708,7 +709,14 @@ Common::Error GobEngine::initGraphics() {
 		_mode   = 0x14;
 	}
 
-	_video->setSize(is640x480());
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(_width, _height));
+	if (getGameType() == kGameTypeLostInTime) {
+		modes.push_back(Graphics::Mode(640, 400));
+	}
+	initGraphicsModes(modes);
+
+	_video->setSize();
 
 	_pixelFormat = g_system->getScreenFormat();
 

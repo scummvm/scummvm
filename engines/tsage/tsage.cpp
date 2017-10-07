@@ -53,7 +53,7 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 }
 
 Common::Error TSageEngine::init() {
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, false);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	return Common::kNoError;
 }

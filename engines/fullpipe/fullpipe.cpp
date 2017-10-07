@@ -280,7 +280,7 @@ Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &desc
 Common::Error FullpipeEngine::run() {
 	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	// Initialize backend
-	initGraphics(800, 600, true, &format);
+	initGraphics(800, 600, &format);
 
 	_backgroundSurface = new Graphics::Surface;
 	_backgroundSurface->create(800, 600, format);

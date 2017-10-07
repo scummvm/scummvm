@@ -268,22 +268,19 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-bool OpenGLSdlGraphicsManager::setGraphicsMode(int mode) {
+void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	// HACK: This is stupid but the SurfaceSDL backend defaults to 2x. This
 	// assures that the launcher (which requests 320x200) has a reasonable
 	// size. It also makes small games have a reasonable size (i.e. at least
 	// 640x400). We follow the same logic here until we have a better way to
 	// give hints to our backend for that.
-	_graphicsScale = 2;
+	if (w > 320) {
+		_graphicsScale = 1;
+	} else {
+		_graphicsScale = 2;
+	}
 
-	return OpenGLGraphicsManager::setGraphicsMode(mode);
-}
-
-void OpenGLSdlGraphicsManager::resetGraphicsScale() {
-	OpenGLGraphicsManager::resetGraphicsScale();
-
-	// HACK: See OpenGLSdlGraphicsManager::setGraphicsMode.
-	_graphicsScale = 1;
+	return OpenGLGraphicsManager::initSize(w, h, format);
 }
 
 #ifdef USE_RGB_COLOR
@@ -509,16 +506,8 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
 
-	if (!_window->createOrUpdateWindow(width, height, flags)) {
-		// We treat fullscreen requests as a "hint" for now. This means in
-		// case it is not available we simply ignore it.
-		if (_wantsFullScreen) {
-			_window->createOrUpdateWindow(width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-		}
-
-		if (!_window->getSDLWindow()) {
-			return false;
-		}
+	if (!createOrUpdateWindow(width, height, flags)) {
+		return false;
 	}
 
 	_glContext = SDL_GL_CreateContext(_window->getSDLWindow());

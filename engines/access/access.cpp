@@ -153,7 +153,7 @@ AccessEngine::~AccessEngine() {
 }
 
 void AccessEngine::setVGA() {
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 }
 
 void AccessEngine::initialize() {

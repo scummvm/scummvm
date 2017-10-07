@@ -23,17 +23,29 @@
 #ifndef ENGINES_UTIL_H
 #define ENGINES_UTIL_H
 
+#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/list.h"
 #include "graphics/pixelformat.h"
+#include "graphics/mode.h"
 
 /**
  * Setup the backend's graphics mode.
  */
-void initCommonGFX(bool defaultTo1XScaler);
+void initCommonGFX();
 
 /**
- * Setup the backend's screen size and graphics mode.
+ * Sends a list of graphics modes to the backend so it can make a decision
+ * about the best way to set up the display hardware.
+ *
+ * Engines that switch between different virtual screen sizes during a game
+ * should call this function prior to any call to initGraphics. Engines that use
+ * only a single screen size do not need to call this function.
+ */
+void initGraphicsModes(const Graphics::ModeList &modes);
+
+/**
+ * Sets up the backend's screen size and graphics mode.
  *
  * Shows an various warnings on certain backend graphics
  * transaction failures (aspect switch, fullscreen switch, etc.).
@@ -45,8 +57,8 @@ void initCommonGFX(bool defaultTo1XScaler);
  * Uses the backend's preferred format if graphics format pointer is NULL.
  * Finds the best compatible format if a list of graphics formats is provided.
  */
-void initGraphics(int width, int height, bool defaultTo1xScaler);
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format);
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList);
+void initGraphics(int width, int height);
+void initGraphics(int width, int height, const Graphics::PixelFormat *format);
+void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList);
 
 #endif

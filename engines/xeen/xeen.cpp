@@ -107,7 +107,7 @@ void XeenEngine::initialize() {
 	_eventData = f.readStream(f.size());
 
 	// Set graphics mode
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
