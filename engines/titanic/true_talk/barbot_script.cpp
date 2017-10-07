@@ -1049,124 +1049,136 @@ uint BarbotScript::getDialsBitset() const {
 int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	uint id = 0;
 
-	if (val1 > 0x200) {
-		switch (val1 - 0x201) {
-		case 0:
-			if (getValue(4) != 2)
-				id = 250738;
-			break;
-		case 1:
-			if (getValue(4) != 3)
-				id = 250738;
-			break;
-		case 2:
-			if (getValue(4) != 0)
-				id = 250738;
-			break;
-		default:
-			break;
+	int index = val1;
+	if (g_language == Common::DE_DEU && !(val1 >= 512 && val1 <= 515))
+		index -= 1000;
+
+	switch (index) {
+	case 2:
+		if (getValue(1) != 1)
+			return 1;
+		break;
+
+	case 3:
+		if (getValue(1) != 2)
+			return 1;
+		break;
+
+	case 4:
+		if (getValue(1) != 3)
+			return 1;
+		break;
+
+	case 5:
+		if (getValue(1) == 3)
+			return 1;
+		break;
+
+	case 6:
+		if (sentence->contains("do not") || sentence->contains("have no") ||
+			sentence->contains("got no"))
+			return 1;
+		break;
+
+	case 7:
+		if (!sentence->contains(TRANSLATE("do not", "idem")) && !sentence->contains(TRANSLATE("have no", "habe kein")) &&
+				!sentence->contains("got no"))
+			return 1;
+		break;
+
+	case 8:
+		if (sentence->_field38 == 2)
+			return 1;
+		break;
+
+	case 9: {
+		uint val = CTrueTalkManager::getStateValue(3);
+		bool lemonFlag = (val & 1) != 0;
+		bool puretFlag = (val & 4) != 0;
+		bool tvFlag = (val & 8) != 0;
+
+		if (puretFlag) {
+			if (!lemonFlag) {
+				id = tvFlag ? 50369 : 250085;
+				break;
+			} else if (!tvFlag) {
+				id = 250627;
+			}
+		} else {
+			if (lemonFlag) {
+				id = tvFlag ? 50367 : 50365;
+			} else if (tvFlag) {
+				id = 50370;
+			}
 		}
-	} else if (val1 == 0x200) {
+		break;
+	}
+
+	case 10: {
+		uint val = CTrueTalkManager::getStateValue(3);
+		bool lemonFlag = (val & 1) != 0;
+		bool puretFlag = (val & 4) != 0;
+		bool tvFlag = (val & 8) != 0;
+
+		if (lemonFlag && puretFlag && tvFlag) {
+			addResponse(getDialogueId(251027));
+			applyResponse();
+			CTrueTalkManager::triggerAction(7, 0);
+			return 2;
+		} else {
+			if (getDialRegion(1) == 1) {
+				if (*srcIdP != 251650)
+					id = 251651;
+			} else {
+				addResponse(getDialRegion(0) != 0 ? 51444 : 51530);
+				applyResponse();
+				return 2;
+			}
+		}
+		break;
+	}
+
+	case 11:
+		if (CTrueTalkManager::getStateValue(2) != 0) {
+			CTrueTalkManager::triggerAction(6, 0);
+			id = 251003;
+		}
+		break;
+
+	case 12:
+		if (getDialRegion(1) == 0) {
+			addResponse(getDialogueId(251871));
+			applyResponse();
+			return 2;
+		} else if (getRandomNumber(100) > 25 && addRandomResponse(false)) {
+			return 2;
+		}
+		break;
+
+	case 512:
 		if (getValue(4) != 1)
 			id = 250738;
-	} else {
-		switch (val1) {
-		case 2:
-			if (getValue(1) != 1)
-				return 1;
-			break;
-		case 3:
-			if (getValue(1) != 2)
-				return 1;
-			break;
-		case 4:
-			if (getValue(1) != 3)
-				return 1;
-			break;
-		case 5:
-			if (getValue(1) == 3)
-				return 1;
-			break;
-		case 6:
-			if (sentence->contains("do not") || sentence->contains("have no") ||
-					sentence->contains("got no"))
-				return 1;
-			break;
-		case 7:
-			if (!sentence->contains("do not") && !sentence->contains("have no") &&
-					!sentence->contains("got no"))
-				return 1;
-			break;
-		case 8:
-			if (sentence->_field38 == 2)
-				return 1;
-			break;
-		case 9: {
-			uint val = CTrueTalkManager::getStateValue(3);
-			bool lemonFlag = (val & 1) != 0;
-			bool puretFlag = (val & 4) != 0;
-			bool tvFlag = (val & 8) != 0;
+		break;
 
-			if (puretFlag) {
-				if (!lemonFlag) {
-					id = tvFlag ? 50369 : 250085;
-					break;
-				} else if (!tvFlag) {
-					id = 250627;
-				}
-			} else {
-				if (lemonFlag) {
-					id = tvFlag ? 50367 : 50365;
-				} else if (tvFlag) {
-					id = 50370;
-				}
-			}
-			break;
-		}
+	case 513:
+		if (getValue(4) != 2)
+			id = 250738;
+		break;
 
-		case 10: {
-			uint val = CTrueTalkManager::getStateValue(3);
-			bool lemonFlag = (val & 1) != 0;
-			bool puretFlag = (val & 4) != 0;
-			bool tvFlag = (val & 8) != 0;
+	case 514:
+		if (getValue(4) != 3)
+			id = 250738;
+		break;
 
-			if (lemonFlag && puretFlag && tvFlag) {
-				addResponse(getDialogueId(251027));
-				applyResponse();
-				CTrueTalkManager::triggerAction(7, 0);
-				return 2;
-			} else {
-				if (getDialRegion(1) == 1) {
-					if (*srcIdP != 251650)
-						id = 251651;
-				} else {
-					addResponse(getDialRegion(0) != 0 ? 51444 : 51530);
-					applyResponse();
-					return 2;
-				}
-			}
-			break;
-		}
+	case 515:
+		if (getValue(4) != 0)
+			id = 250738;
+		break;
 
-		case 11:
-			if (CTrueTalkManager::getStateValue(2) != 0) {
-				CTrueTalkManager::triggerAction(6, 0);
-				id = 251003;
-			}
-			break;
-
-		case 12:
-			if (getDialRegion(1) == 0) {
-				addResponse(getDialogueId(251871));
-				applyResponse();
-				return 2;
-			} else if (getRandomNumber(100) > 25 && addRandomResponse(false)) {
-				return 2;
-			}
-
-		default:
-			break;
-		}
+	default:
+		if (g_language == Common::DE_DEU)
+			return TTnpcScript::doSentenceEntry(val1, srcIdP, roomScript, sentence);
+		break;
 	}
 
 	if (id) {
