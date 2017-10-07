@@ -2520,7 +2520,7 @@ static const uint16 larry1SignatureBuyApple[] = {
 	0x36,                            // push
 	0x38, SIG_UINT16(0x0126),        // pushi setAvoider
 	0x78,                            // push1
-	0x51, 0x6d,                      // class PAvoider
+	0x51, SIG_ADDTOOFFSET(+1),       // class PAvoider (original 0x25, w/ patch file 0x6d)
 	0x36,                            // push
 	0x38, SIG_UINT16(0x0116),        // pushi setMotion
 	SIG_MAGICDWORD,
