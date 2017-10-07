@@ -489,11 +489,16 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 
 	// Compute the precise game settings using gameVariantsTable.
 	for (const GameSettings *g = gameVariantsTable; g->gameid; ++g) {
-		if (g->gameid[0] == 0 || !scumm_stricmp(md5Entry->gameid, g->gameid)) {
+		if (g->gameid[0] != 0 && !!scumm_stricmp(md5Entry->gameid, g->gameid)) continue;
 			// The gameid either matches, or is empty. The latter indicates
 			// a generic entry, currently used for some generic HE settings.
-			if (g->variant == 0 || !scumm_stricmp(md5Entry->variant, g->variant)) {
-				// Perfect match found, use it and stop the loop
+
+		if (g->variant != 0 && !!scumm_stricmp(md5Entry->variant, g->variant)) continue;
+		// Variant matches too
+
+		if (g->preferredTag !=0 && !!scumm_stricmp(md5Entry->extra, g->preferredTag)) continue;
+		//OH, and do check the extra field in the entry too, otherwise we miss demos
+		
 				dr.game = *g;
 				dr.game.gameid = md5Entry->gameid;
 
@@ -524,8 +529,6 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 
 				break;
 			}
-		}
-	}
 }
 
 static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist, int depth, const char *const *globs) {
