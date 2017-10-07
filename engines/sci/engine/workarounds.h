@@ -55,7 +55,8 @@ struct SciWorkaroundEntry {
 	const char *objectName;
 	const char *methodName;
 	const uint16 *localCallSignature;
-	int index;
+	int fromIndex;
+	int toIndex;
 	SciWorkaroundSolution newValue;
 };
 
