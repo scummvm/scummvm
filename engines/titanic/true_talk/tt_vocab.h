@@ -68,7 +68,7 @@ private:
 	 * @param str		Word to check
 	 * @returns			New word instance for found match, or nullptr otherwise
 	 */
-	TTword *getSuffixedWord(TTstring &str) const;
+	TTword *getSuffixedWord(TTstring &str, TTword **srcWord = nullptr) const;
 
 	/**
 	 * Checks the passed word for common prefixes, and checks for a word
@@ -76,7 +76,7 @@ private:
 	 * @param str		Word to check
 	 * @returns			New word instance for found match, or nullptr otherwise
 	 */
-	TTword *getPrefixedWord(TTstring &str) const;
+	TTword *getPrefixedWord(TTstring &str, TTword **srcWord = nullptr) const;
 public:
 	TTvocab(VocabMode vocabMode);
 	~TTvocab();

@@ -182,10 +182,10 @@ TTword *TTvocab::getWord(TTstring &str, TTword **srcWord) const {
 	if (!word) {
 		TTstring tempStr(str);
 		if (tempStr.size() > 2) {
-			word = getSuffixedWord(tempStr);
+			word = getSuffixedWord(tempStr, srcWord);
 
 			if (!word)
-				word = getPrefixedWord(tempStr);
+				word = getPrefixedWord(tempStr, srcWord);
 		}
 	}
 
@@ -230,11 +230,11 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	return newWord;
 }
 
-TTword *TTvocab::getSuffixedWord(TTstring &str) const {
+TTword *TTvocab::getSuffixedWord(TTstring &str, TTword **srcWord) const {
 	TTstring tempStr(str);
 	TTword *word = nullptr;
 
-	if (g_vm->isGerman()) {
+	if (g_language == Common::DE_DEU) {
 		static const char *const SUFFIXES[11] = {
 			"est", "em", "en", "er", "es", "et", "st",
 			"s", "e", "n", "t"
@@ -243,7 +243,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 		for (int idx = 0; idx < 11; ++idx) {
 			if (tempStr.hasSuffix(SUFFIXES[idx])) {
 				tempStr.deleteSuffix(strlen(SUFFIXES[idx]));
-				word = getPrimeWord(tempStr);
+				word = getPrimeWord(tempStr, srcWord);
 				if (word)
 					break;
 				tempStr = str;
@@ -514,7 +514,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 	return word;
 }
 
-TTword *TTvocab::getPrefixedWord(TTstring &str) const {
+TTword *TTvocab::getPrefixedWord(TTstring &str, TTword **srcWord) const {
 	TTstring tempStr(str);
 	TTword *word = nullptr;
 	int prefixLen = 0;
