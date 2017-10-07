@@ -644,7 +644,7 @@ public:
 	 *
 	 * @param modes the list of graphics modes the engine will probably use.
 	 */
-	virtual void initSizeHint(const Graphics::ModeList &modes) = 0;
+	virtual void initSizeHint(const Graphics::ModeList &modes) {}
 
 	/**
 	 * Return an int value which is changed whenever any screen
