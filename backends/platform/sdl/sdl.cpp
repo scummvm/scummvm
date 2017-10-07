@@ -181,8 +181,8 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #endif
 #ifdef JOY_ANALOG
 	if (f == kFeatureJoystickDeadzone) return true;
-#endif
 	if (f == kFeatureKbdMouseSpeed) return true;
+#endif
 	return ModularBackend::hasFeature(f);
 }
 
