@@ -99,6 +99,7 @@ static const char *const selectorNameTable[] = {
 	"play",         // system selector
 	"number",       // system selector
 	"setScript",    // system selector
+	"setCycle",     // system selector
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
 	"say",          // Quest For Glory 1 VGA
@@ -131,7 +132,6 @@ static const char *const selectorNameTable[] = {
 	"iconV",        // Phant2
 	"update",       // Phant2
 	"xOff",         // Phant2
-	"setCycle",     // GK1
 	"fore",         // KQ7
 	"back",         // KQ7
 	"font",         // KQ7
@@ -167,6 +167,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_play,
 	SELECTOR_number,
 	SELECTOR_setScript,
+	SELECTOR_setCycle,
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_say,
@@ -200,7 +201,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_iconV,
 	SELECTOR_update,
 	SELECTOR_xOff,
-	SELECTOR_setCycle,
 	SELECTOR_fore,
 	SELECTOR_back,
 	SELECTOR_font,
@@ -2470,6 +2470,130 @@ static const uint16 longbowPatchBerryBushFix[] = {
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode, longbowPatchShowHandCode },
 	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix, longbowPatchBerryBushFix },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Leisure Suit Larry 1 (Spanish)
+//
+// It seems originally the Spanish version of Larry 1 used some beta code at
+// least for the man wearing a barrel, who walks around in front of the casino.
+// The script inside the resource files even uses a class, that does not exist
+// inside those resource files, which causes a hard error.
+// The patch files included with the Spanish version (300.scr,300.tex, 927.scr)
+// add this class, but at least inside ScummVM a write to a non-existent selector
+// happens right after the player tries to buy an apple from that man.
+//
+// In the original English releases (2.0+2.1) this was handled differently.
+// Which is why this script patch changes that code to work just like in the English release.
+//
+// Attention: for at least some release of this game, view 302 (man wearing a barrel) is fully
+//            broken! Which also causes a crash. The original interpreter crashes as well.
+//            The only way to fix this is to dump that view from another release of Larry 1
+//            and then use the view patch file on this release.
+//
+// Applies to at least: Spanish floppy
+// Responsible method: sBuyApple::changeScript(2)
+// Fixes bug: #10240
+static const uint16 larry1SignatureBuyApple[] = {
+	// end of state 0
+	0x35, 0x01,                      // ldi 01
+	0x65, 0x10,                      // aTop cycles
+	0x32, SIG_UINT16(0x0248),        // jmp [ret]
+	0x3c,                            // dup
+	0x35, 0x01,                      // ldi 01
+	0x1a,                            // eq?
+	0x30, SIG_UINT16(0x0007),        // bnt [step 2 check]
+	// state 1 code
+	0x35, 0x01,                      // ldi 01
+	0x65, 0x10,                      // aTop cycles
+	0x32, SIG_UINT16(0x023a),        // jmp [ret]
+	0x3c,                            // dup
+	0x35, 0x02,                      // ldi 02
+	0x1a,                            // eq?
+	0x30, SIG_UINT16(0x0036),        // bnt [step 3 check]
+	// state 2 code
+	0x35, 0x02,                      // ldi 02
+	0x38, SIG_UINT16(0x0091),        // pushi setCycle
+	0x78,                            // push1
+	0x51, 0x18,                      // class Walk
+	0x36,                            // push
+	0x38, SIG_UINT16(0x0126),        // pushi setAvoider
+	0x78,                            // push1
+	0x51, 0x6d,                      // class PAvoider
+	0x36,                            // push
+	0x38, SIG_UINT16(0x0116),        // pushi setMotion
+	SIG_MAGICDWORD,
+	0x39, 0x04,                      // pushi 04
+	0x51, 0x24,                      // class PolyPath
+	0x36,                            // push
+	0x39, 0x04,                      // pushi 04
+	0x76,                            // push0
+	0x72, SIG_UINT16(0x0f4e),        // lofsa aAppleMan
+	0x4a, 0x04,                      // send 04
+	0x36,                            // push
+	0x35, 0x1d,                      // ldi 1Dh
+	0x02,                            // add
+	0x36,                            // push
+	0x39, 0x03,                      // pushi 03
+	0x76,                            // push0
+	0x72, SIG_UINT16(0x0f4e),        // lofsa aAppleMan
+	0x4a, 0x04,                      // send 04
+	0x36,                            // push
+	0x7c,                            // pushSelf
+	0x81, 0x00,                      // lag global[0]
+	0x4a, 0x18,                      // send 18h
+	0x32, SIG_UINT16(0x01fd),        // jmp [ret]
+	SIG_END
+};
+
+static const uint16 larry1PatchBuyApple[] = {
+	PATCH_ADDTOOFFSET(+11),
+	0x2f, 0xf3,                        // bt [jump to end of step 1 code], saves 8 bytes
+	0x3c,                              // dup
+	0x35, 0x02,                        // ldi 02
+	0x1a,                              // eq?
+	0x31, 0x3f,                        // bnt [step 3 check]
+	0x38, PATCH_UINT16(0x00e1),        // pushi distanceTo
+	0x78,                              // push1
+	0x72, PATCH_UINT16(0x0f4e),        // lofsa sAppleMan
+	0x36,                              // push
+	0x81, 0x00,                        // lag global[0]
+	0x4a, 0x06,                        // send 06
+	0x36,                              // push
+	0x35, 0x1e,                        // ldi 1Eh
+	0x1e,                              // gt?
+	0x31, 0xdb,                        // bnt [jump to end of step 1 code]
+	0x38, PATCH_SELECTOR16(setCycle),  // pushi setCycle
+	0x78,                              // push1
+	0x51, 0x18,                        // class Walk
+	0x36,                              // push
+	0x38, PATCH_SELECTOR16(setMotion), // pushi setMotion
+	0x39, 0x04,                        // pushi 04
+	0x51, 0x24,                        // class PolyPath
+	0x36,                              // push
+	0x39, 0x04,                        // pushi 04
+	0x76,                              // push0
+	0x72, PATCH_UINT16(0x0f4e),        // lofsa aAppleMan
+	0x4a, 0x04,                        // send 04
+	0x36,                              // push
+	0x35, 0x1d,                        // ldi 1Dh
+	0x02,                              // add
+	0x36,                              // push
+	0x39, 0x03,                        // pushi 03
+	0x76,                              // push0
+	0x72, PATCH_UINT16(0x0f4e),        // lofsa aAppleMan
+	0x4a, 0x04,                        // send 04
+	0x36,                              // push
+	0x7c,                              // pushSelf
+	0x81, 0x00,                        // lag global[0]
+	0x4a, 0x12,                        // send 12h
+	PATCH_END
+};
+
+//          script, description,                               signature                patch
+static const SciScriptPatcherEntry larry1Signatures[] = {
+	{  true,   300, "Spanish: buy apple from barrel man",    1, larry1SignatureBuyApple, larry1PatchBuyApple },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -7362,6 +7486,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 #endif
 	case GID_LONGBOW:
 		signatureTable = longbowSignatures;
+		break;
+	case GID_LSL1:
+		signatureTable = larry1Signatures;
 		break;
 	case GID_LSL2:
 		signatureTable = larry2Signatures;
