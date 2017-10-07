@@ -63,9 +63,10 @@ public:
 	 * Constructs an array with `count` default-inserted instances of T. No
 	 * copies are made.
 	 */
-	explicit Array(size_type count) : _size(0) {
+	explicit Array(size_type count) : _size(count) {
 		allocCapacity(count);
-		resize(count);
+		for (size_type i = 0; i < count; ++i)
+			new ((void *)&_storage[i]) T();
 	}
 
 	/**

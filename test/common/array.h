@@ -1,6 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "common/array.h"
+#include "common/noncopyable.h"
 #include "common/str.h"
 
 class ArrayTestSuite : public CxxTest::TestSuite
@@ -315,6 +316,10 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array.size(), 10U);
 		TS_ASSERT_EQUALS(array[0], 0);
 		TS_ASSERT_EQUALS(array[9], 0);
+
+		// This will fail at compile time if it is not possible to construct an
+		// array without copy-construction
+		Common::Array<Common::NonCopyable> nonCopyable(1);
 	}
 
 	void test_array_constructor_count_copy_value() {
