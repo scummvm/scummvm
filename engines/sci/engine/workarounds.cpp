@@ -325,7 +325,6 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,        300,   300,  0,                   "", "export 2",     sig_uninitread_hoyle5_1,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",                   NULL,    58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",                            NULL,     3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
-	{ GID_ISLANDBRAIN,   180,   190,  0,               "word", "dispatchEvent",                   NULL,    -1, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle, temps 14 and 15
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
 	{ GID_JONES,           1,   232,  0,        "weekendText", "draw",          sig_uninitread_jones_1,     0, { WORKAROUND_FAKE,   0 } }, // jones/cd only - gets called during the game
 	{ GID_JONES,           1,   255,  0,                   "", "export 0",                        NULL,    -1, { WORKAROUND_FAKE,   0 } }, // jones/cd only - called when a game ends, temps 13 and 14
