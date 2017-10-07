@@ -273,7 +273,8 @@ static const uint16 sig_uninitread_sq1_1[] = {
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CAMELOT,        40,    40,  0,               "Rm40", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // when looking at the ground at the pool of Siloam - bug #6401
 	{ GID_CASTLEBRAIN,   280,   280,  0,         "programmer", "dispatchEvent",                   NULL,     0, { WORKAROUND_FAKE, 0xf } }, // pressing 'q' on the computer screen in the robot room, and closing the help dialog that pops up (bug #5143). Moves the cursor to the view with the ID returned (in this case, the robot hand)
-	{ GID_CASTLEBRAIN,   320,   325,  0,               "word", "dispatchEvent",                   NULL,    -1, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle, temp 14 and 15 - bug #9783
+	{ GID_CASTLEBRAIN,   320,   325,  0,               "word", "dispatchEvent",                   NULL,    14, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle - bug #9783
+	{ GID_CASTLEBRAIN,   320,   325,  0,               "word", "dispatchEvent",                   NULL,    15, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle - bug #9783
 	{ GID_CNICK_KQ,       -1,     0,  1,          "Character", "say",                             NULL,    -1, { WORKAROUND_FAKE,   0 } }, // checkers/backgammon, like in hoyle 3 - temps 504 and 505 - bug #6255
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "open",                            NULL,    -1, { WORKAROUND_FAKE,   0 } }, // when entering the control menu, like in hoyle 3
 	{ GID_CNICK_KQ,      300,   303,  0,      "theDoubleCube", "<noname520>",                     NULL,     5, { WORKAROUND_FAKE,   0 } }, // while playing backgammon with doubling enabled - bug #6426 (same as the theDoubleCube::make workaround for Hoyle 3)
@@ -325,7 +326,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,        300,   300,  0,                   "", "export 2",     sig_uninitread_hoyle5_1,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",                   NULL,    58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",                            NULL,     3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
-	{ GID_ISLANDBRAIN,   180,   190,  0,               "word", "dispatchEvent",                   NULL,    -1, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle, temps 14 and 15
+	{ GID_ISLANDBRAIN,   180,   190,  0,               "word", "dispatchEvent",                   NULL,    14, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle
+	{ GID_ISLANDBRAIN,   180,   190,  0,               "word", "dispatchEvent",                   NULL,    15, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
 	{ GID_JONES,           1,   232,  0,        "weekendText", "draw",          sig_uninitread_jones_1,     0, { WORKAROUND_FAKE,   0 } }, // jones/cd only - gets called during the game
 	{ GID_JONES,           1,   255,  0,                   "", "export 0",                        NULL,    -1, { WORKAROUND_FAKE,   0 } }, // jones/cd only - called when a game ends, temps 13 and 14
