@@ -938,7 +938,7 @@ static const char *const STRINGS_DE[199] = {
 	"Gespeichertes Abzeichen: ",
 	"Derzeitige Position: ",
 	"Aufzug %d",
-	" (Chevrons verändern mit Umschalt-Taste+Klicken)",
+	" (Chevrons ver\xE4" "ndern mit Umschalt-Taste+Klicken)",
 	"Eine hei\xDF""e",
 	"Eine kalte",
 	"Laden Sie das Spiel.",
