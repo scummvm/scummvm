@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-07 05:57+0200\n"
+"POT-Creation-Date: 2017-10-07 19:31+0200\n"
 "PO-Revision-Date: 2017-09-09 07:41+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -63,7 +63,7 @@ msgstr "Su"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: gui/updates-dialog.cpp:113 engines/engine.cpp:558
+#: gui/updates-dialog.cpp:113 engines/engine.cpp:524
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
@@ -156,7 +156,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:525
 #: gui/launcher.cpp:529 gui/massadd.cpp:92 gui/options.cpp:1682
-#: gui/saveload-dialog.cpp:1114 engines/engine.cpp:477 engines/engine.cpp:488
+#: gui/saveload-dialog.cpp:1114 engines/engine.cpp:443 engines/engine.cpp:454
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -899,8 +899,8 @@ msgstr "Resa grafica:"
 msgid "Special dithering modes supported by some games"
 msgstr "Modalità di resa grafica speciali supportate da alcuni giochi"
 
-#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:624
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2624
+#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:613
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
 msgid "Fullscreen mode"
 msgstr "Modalità a schermo intero"
 
@@ -1916,27 +1916,27 @@ msgstr "~A~nnulla"
 msgid "~K~eys"
 msgstr "~T~asti"
 
-#: engines/engine.cpp:346
+#: engines/engine.cpp:315
 msgid "Could not initialize color format."
 msgstr "Impossibile inizializzare il formato colore."
 
-#: engines/engine.cpp:354
+#: engines/engine.cpp:323
 msgid "Could not switch to video mode: '"
 msgstr "Impossibile cambiare la modalità video: '"
 
-#: engines/engine.cpp:363
+#: engines/engine.cpp:332
 msgid "Could not apply aspect ratio setting."
 msgstr "Impossibile applicare l'impostazione proporzioni."
 
-#: engines/engine.cpp:368
+#: engines/engine.cpp:337
 msgid "Could not apply fullscreen setting."
 msgstr "Impossibile applicare l'impostazione schermo intero."
 
-#: engines/engine.cpp:373
+#: engines/engine.cpp:342
 msgid "Could not apply filtering setting."
 msgstr "Impossibile applicare l'impostazione di filtraggio."
 
-#: engines/engine.cpp:473
+#: engines/engine.cpp:439
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1950,7 +1950,7 @@ msgstr ""
 "sull'hard disk.\n"
 "Vedi il file README per i dettagli."
 
-#: engines/engine.cpp:484
+#: engines/engine.cpp:450
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1964,7 +1964,7 @@ msgstr ""
 "la musica del gioco.\n"
 "Vedi il file README per i dettagli."
 
-#: engines/engine.cpp:542
+#: engines/engine.cpp:508
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -1974,7 +1974,7 @@ msgstr ""
 "informazioni di base e per le istruzioni su come ottenere ulteriore "
 "assistenza."
 
-#: engines/engine.cpp:555
+#: engines/engine.cpp:521
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -1984,7 +1984,7 @@ msgstr ""
 "ScummVM. È quindi possibile che sia instabile, e i salvataggi potrebbero non "
 "funzionare con future versioni di ScummVM."
 
-#: engines/engine.cpp:558
+#: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Avvia comunque"
 
@@ -2227,33 +2227,33 @@ msgstr "Fai scivolare tre dita verso destra per cambiare."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2626
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:615
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
 msgid "Windowed mode"
 msgstr "Modalità finestra"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:740
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:729
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Risoluzione: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:761
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2503
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:750
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
 msgid "Enabled aspect ratio correction"
 msgstr "Correzione proporzioni attivata"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:752
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2512
 msgid "Disabled aspect ratio correction"
 msgstr "Correzione proporzioni disattivata"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:772
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2530
 msgid "Filtering enabled"
 msgstr "Filtro video attivato"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:785
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2532
 msgid "Filtering disabled"
 msgstr "Filtro disattivato"
 
@@ -2268,7 +2268,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normale (no ridim.)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2582
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2585
 msgid "Active graphics filter:"
 msgstr "Filtro grafico attivo:"
 

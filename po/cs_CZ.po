@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-07 05:57+0200\n"
+"POT-Creation-Date: 2017-10-07 19:31+0200\n"
 "PO-Revision-Date: 2016-12-04 15:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -65,7 +65,7 @@ msgstr "Jít nahoru"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: gui/updates-dialog.cpp:113 engines/engine.cpp:558
+#: gui/updates-dialog.cpp:113 engines/engine.cpp:524
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
@@ -158,7 +158,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:525
 #: gui/launcher.cpp:529 gui/massadd.cpp:92 gui/options.cpp:1682
-#: gui/saveload-dialog.cpp:1114 engines/engine.cpp:477 engines/engine.cpp:488
+#: gui/saveload-dialog.cpp:1114 engines/engine.cpp:443 engines/engine.cpp:454
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -897,8 +897,8 @@ msgstr "Re¾im vykreslení:"
 msgid "Special dithering modes supported by some games"
 msgstr "Speciální re¾imy chvìní podporované nìkterými hrami"
 
-#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:624
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2624
+#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:613
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
 msgid "Fullscreen mode"
 msgstr "Re¾im celé obrazovky"
 
@@ -1909,28 +1909,28 @@ msgstr "~Z~ru¹it"
 msgid "~K~eys"
 msgstr "~K~lávesy"
 
-#: engines/engine.cpp:346
+#: engines/engine.cpp:315
 msgid "Could not initialize color format."
 msgstr "Nelze zavést barevný formát."
 
-#: engines/engine.cpp:354
+#: engines/engine.cpp:323
 msgid "Could not switch to video mode: '"
 msgstr "Nelze pøepnout na re¾im obrazu: '"
 
-#: engines/engine.cpp:363
+#: engines/engine.cpp:332
 msgid "Could not apply aspect ratio setting."
 msgstr "Nelze pou¾ít nastavení pomìru stran."
 
-#: engines/engine.cpp:368
+#: engines/engine.cpp:337
 msgid "Could not apply fullscreen setting."
 msgstr "Nelze pou¾ít nastavení celé obrazovky."
 
-#: engines/engine.cpp:373
+#: engines/engine.cpp:342
 #, fuzzy
 msgid "Could not apply filtering setting."
 msgstr "Nelze pou¾ít nastavení celé obrazovky."
 
-#: engines/engine.cpp:473
+#: engines/engine.cpp:439
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1944,7 +1944,7 @@ msgstr ""
 "datové soubory na Vá¹ pevný disk.\n"
 "Pro podrobnosti si pøeètìte README."
 
-#: engines/engine.cpp:484
+#: engines/engine.cpp:450
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1958,7 +1958,7 @@ msgstr ""
 "abyste mohli poslouchat hudbu ve høe.\n"
 "Pro podrobnosti si pøeètìte README."
 
-#: engines/engine.cpp:542
+#: engines/engine.cpp:508
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -1967,7 +1967,7 @@ msgstr ""
 "Naètení stavu hry selhalo (%s)! Prosím pøeètìte si dokumentaci pro základní "
 "informace a pokyny k získání dal¹í podpory."
 
-#: engines/engine.cpp:555
+#: engines/engine.cpp:521
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -1977,7 +1977,7 @@ msgstr ""
 "ScummVM. Proto je mo¾né, ¾e bude nestabilní a jakékoli ulo¾ené hry nemusí "
 "fungovat v budoucích verzích ScummVM."
 
-#: engines/engine.cpp:558
+#: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Pøesto spustit"
 
@@ -2220,34 +2220,34 @@ msgstr "Pro zapnutí pøejeïte tøemi prsty doprava."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2626
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:615
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
 msgid "Windowed mode"
 msgstr "Re¾im do okna"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:740
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:729
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:761
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2503
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:750
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
 msgid "Enabled aspect ratio correction"
 msgstr "Povolena korekce pomìru stran"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:752
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2512
 msgid "Disabled aspect ratio correction"
 msgstr "Zakázána korekce pomìru stran"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:772
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2530
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Kliknutí Povoleno"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:785
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2532
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Kliknutí Zakázáno"
@@ -2263,7 +2263,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normální (bez zmìny velikosti)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2582
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2585
 msgid "Active graphics filter:"
 msgstr "Aktivní grafický filtr:"
 

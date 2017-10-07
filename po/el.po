@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-07 05:57+0200\n"
+"POT-Creation-Date: 2017-10-07 19:31+0200\n"
 "PO-Revision-Date: 2017-04-28 11:12+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -62,7 +62,7 @@ msgstr "Μετάβαση πάνω"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: gui/updates-dialog.cpp:113 engines/engine.cpp:558
+#: gui/updates-dialog.cpp:113 engines/engine.cpp:524
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
@@ -155,7 +155,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:525
 #: gui/launcher.cpp:529 gui/massadd.cpp:92 gui/options.cpp:1682
-#: gui/saveload-dialog.cpp:1114 engines/engine.cpp:477 engines/engine.cpp:488
+#: gui/saveload-dialog.cpp:1114 engines/engine.cpp:443 engines/engine.cpp:454
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -911,8 +911,8 @@ msgstr ""
 "Ειδικές λειτουργίες χρωματικής αντιπαράθεσης οι οποίες υποστηρίζονται από "
 "ορισμένα παιχνίδια"
 
-#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:624
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2624
+#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:613
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
 msgid "Fullscreen mode"
 msgstr "Λειτουργία πλήρους οθόνης"
 
@@ -1937,27 +1937,27 @@ msgstr "~Α~κύρωση"
 msgid "~K~eys"
 msgstr "Π~λ~ήκτρα"
 
-#: engines/engine.cpp:346
+#: engines/engine.cpp:315
 msgid "Could not initialize color format."
 msgstr "Δεν ήταν δυνατή η προετοιμασία μορφής χρώματος."
 
-#: engines/engine.cpp:354
+#: engines/engine.cpp:323
 msgid "Could not switch to video mode: '"
 msgstr "Δεν ήταν δυνατή η αλλαγή σε λειτουργία οθόνης: '"
 
-#: engines/engine.cpp:363
+#: engines/engine.cpp:332
 msgid "Could not apply aspect ratio setting."
 msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης διόρθωσης αναλογίας διαστάσεων."
 
-#: engines/engine.cpp:368
+#: engines/engine.cpp:337
 msgid "Could not apply fullscreen setting."
 msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης πλήρους οθόνης."
 
-#: engines/engine.cpp:373
+#: engines/engine.cpp:342
 msgid "Could not apply filtering setting."
 msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης φιλτραρίσματος."
 
-#: engines/engine.cpp:473
+#: engines/engine.cpp:439
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1971,7 +1971,7 @@ msgstr ""
 "τα αρχεία δεδομένων στο σκληρό σας δίσκο.\n"
 "Δείτε το αρχείο README για λεπτομέρειες."
 
-#: engines/engine.cpp:484
+#: engines/engine.cpp:450
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1985,7 +1985,7 @@ msgstr ""
 "να ακούσετε τη μουσική του παιχνιδιού.\n"
 "Δείτε το αρχείο README για λεπτομέρειες."
 
-#: engines/engine.cpp:542
+#: engines/engine.cpp:508
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -1995,7 +1995,7 @@ msgstr ""
 "το αρχείο README για βασικές πληροφορίες, καθώς και για οδηγίες σχετικά με "
 "το πώς να λάβετε περαιτέρω βοήθεια."
 
-#: engines/engine.cpp:555
+#: engines/engine.cpp:521
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2006,7 +2006,7 @@ msgstr ""
 "παιχνίδι που κάνετε μπορεί να μη λειτουργεί σε μελλοντικές εκδόσεις του "
 "ScummVM."
 
-#: engines/engine.cpp:558
+#: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Εκκίνηση ούτως ή άλλως"
 
@@ -2249,33 +2249,33 @@ msgstr "Περάστε τρία δάχτυλα προς τα δεξιά για εναλλαγή."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2626
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:615
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
 msgid "Windowed mode"
 msgstr "Λειτουργία παραθύρου"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:740
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:729
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Ανάλυση: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:761
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2503
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:750
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
 msgid "Enabled aspect ratio correction"
 msgstr "Ενεργοποιημένη διόρθωση αναλογίας διαστάσεων"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:752
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2512
 msgid "Disabled aspect ratio correction"
 msgstr "Απενεργοποιημένη διόρθωση αναλογίας διαστάσεων"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:772
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2530
 msgid "Filtering enabled"
 msgstr "Ενεργοποίηση φιλτραρίσματος"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:785
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2532
 msgid "Filtering disabled"
 msgstr "Απενεργοποίηση φιλτραρίσματος"
 
@@ -2290,7 +2290,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Κανονικό (χωρίς κλιμάκωση)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2582
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2585
 msgid "Active graphics filter:"
 msgstr "Ενεργό φίλτρο γραφικών:"
 
