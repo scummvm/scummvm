@@ -28,6 +28,7 @@
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -161,12 +162,12 @@ void CPetRoomsGlyph::getTooltip(CTextControl *text) {
 	// Get the room description
 	CString roomStr = roomFlags.getRoomDesc();
 
-	if (roomStr == "The Elevator") {
+	if (roomStr == TRANSLATE("The Elevator", "Der Aufzug")) {
 		int elevNum = owner->getElevatorNum();
-		roomStr = CString::format("Elevator %d", elevNum);
+		roomStr = CString::format(g_vm->_strings[ELEVATOR_NUM].c_str(), elevNum);
 	}
 
-	roomStr += " (shift-click edits)";
+	roomStr += g_vm->_strings[SHIFT_CLICK_TO_EDIT];
 	text->setText(prefix + roomStr);
 }
 

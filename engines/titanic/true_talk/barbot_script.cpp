@@ -872,8 +872,8 @@ ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, 
 }
 
 int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint val, uint tagId, uint remainder) {
-	switch (tagId) {
+		uint tag1, uint tag2, uint remainder) {
+	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
 	case MKTAG('A', 'R', 'T', 'Y'):
@@ -894,7 +894,7 @@ int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *
 	case MKTAG('T', 'E', 'A', 'M'):
 	case MKTAG('T', 'U', 'S', 'H'):
 	case MKTAG('W', 'W', 'E', 'B'):
-		tagId = MKTAG('E', 'N', 'T', 'N');
+		tag2 = MKTAG('E', 'N', 'T', 'N');
 		break;
 	case MKTAG('A', 'U', 'T', 'H'):
 	case MKTAG('B', 'A', 'R', 'K'):
@@ -923,61 +923,61 @@ int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *
 	case MKTAG('T', 'D', 'V', 'P'):
 	case MKTAG('T', 'W', 'A', 'T'):
 	case MKTAG('W', 'E', 'A', 'T'):
-		tagId = MKTAG('P', 'R', 'S', 'N');
+		tag2 = MKTAG('P', 'R', 'S', 'N');
 		break;
 	case MKTAG('C', 'H', 'S', 'E'):
 	case MKTAG('C', 'M', 'N', 'T'):
 	case MKTAG('F', 'I', 'L', 'M'):
 	case MKTAG('J', 'F', 'O', 'D'):
 	case MKTAG('L', 'I', 'Q', 'D'):
-		tagId = MKTAG('F', 'O', 'O', 'D');
+		tag2 = MKTAG('F', 'O', 'O', 'D');
 		break;
 	case MKTAG('C', 'R', 'M', 'N'):
 	case MKTAG('C', 'S', 'P', 'Y'):
 	case MKTAG('U', 'B', 'A', 'D'):
-		tagId = MKTAG('V', 'B', 'A', 'D');
+		tag2 = MKTAG('V', 'B', 'A', 'D');
 		break;
 	case MKTAG('E', 'A', 'R', 'T'):
 	case MKTAG('H', 'O', 'M', 'E'):
 	case MKTAG('N', 'P', 'L', 'C'):
 	case MKTAG('P', 'L', 'A', 'C'):
 	case MKTAG('P', 'L', 'A', 'N'):
-		tagId = MKTAG('P', 'L', 'A', 'C');
+		tag2 = MKTAG('P', 'L', 'A', 'C');
 		break;
 	case MKTAG('F', 'A', 'U', 'N'):
 	case MKTAG('F', 'I', 'S', 'H'):
 	case MKTAG('F', 'L', 'O', 'R'):
-		tagId = MKTAG('N', 'A', 'T', 'R');
+		tag2 = MKTAG('N', 'A', 'T', 'R');
 		break;
 	case MKTAG('H', 'H', 'L', 'D'):
 	case MKTAG('T', 'O', 'Y', 'S'):
 	case MKTAG('W', 'E', 'A', 'P'):
-		tagId = MKTAG('M', 'A', 'C', 'H');
+		tag2 = MKTAG('M', 'A', 'C', 'H');
 			break;
 	case MKTAG('M', 'L', 'T', 'Y'):
 	case MKTAG('P', 'G', 'R', 'P'):
 	case MKTAG('P', 'T', 'I', 'C'):
-		tagId = MKTAG('G', 'R', 'U', 'P');
+		tag2 = MKTAG('G', 'R', 'U', 'P');
 		break;
 	case MKTAG('P', 'K', 'U', 'P'):
 	case MKTAG('S', 'E', 'X', '1'):
 	case MKTAG('S', 'W', 'E', 'R'):
-		tagId = MKTAG('R', 'U', 'D', 'E');
+		tag2 = MKTAG('R', 'U', 'D', 'E');
 		break;
 	case MKTAG('P', 'H', 'I', 'L'):
 	case MKTAG('R', 'C', 'K', 'T'):
 	case MKTAG('S', 'C', 'I', 'E'):
-		tagId = MKTAG('S', 'C', 'I', 'E');
+		tag2 = MKTAG('S', 'C', 'I', 'E');
 		break;
 	case MKTAG('T', 'R', 'A', '2'):
 	case MKTAG('T', 'R', 'A', '3'):
-		tagId = MKTAG('T', 'R', 'A', 'V');
+		tag2 = MKTAG('T', 'R', 'A', 'V');
 		break;
 	default:
 		break;
 	}
 
-	if (val == 36) {
+	if (tag1 == 36) {
 		switch (getValue(1)) {
 		case 1:
 			return setResponse(getDialogueId(220837), -1);
@@ -987,11 +987,11 @@ int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *
 		default:
 			return setResponse(getDialogueId(220858), -1);
 		}
-	} else if (val == 61 && getValue(1) > 2) {
+	} else if (tag1 == 61 && getValue(1) > 2) {
 		return setResponse(getDialogueId(222301), -1);
 	}
 
-	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
+	return TTnpcScript::handleQuote(roomScript, sentence, tag1, tag2, remainder);
 }
 
 int BarbotScript::updateState(uint oldId, uint newId, int index) {

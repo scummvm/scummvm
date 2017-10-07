@@ -56,7 +56,7 @@
  * ASCIIZ  - name of the resource
  */
 
-#define VERSION_NUMBER 3
+#define VERSION_NUMBER 4
 #define HEADER_SIZE 0x1700
 
 Common::File inputFile, outputFile;
@@ -615,7 +615,7 @@ static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
 	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
 };
 
-static const char *const STRINGS_EN[151] = {
+static const char *const STRINGS_EN[153] = {
 	"",
 	"You are standing outside the Pellerator.",
 	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
@@ -760,6 +760,8 @@ static const char *const STRINGS_EN[151] = {
 	"A previously assigned room: ",
 	"Saved Chevron: ",
 	"Current location: ",
+	"Elevator %d",
+	" (shift-click edits)",
 	"A hot",
 	"A cold",
 	"Load the game.",
@@ -774,20 +776,20 @@ static const char *const STRINGS_EN[151] = {
 	"Speech volume"
 };
 
-static const char *const STRINGS_DE[197] = {
+static const char *const STRINGS_DE[199] = {
 	"",
 	"Sie befinden sich vor dem Pellerator.",
 	"Wir bedauern, da ein Bot den Weg versperrt, ist Ihnen der "
 		"Zutritt zum Pellerator Ihnen gegenwSrtig verwehrt.",
-	"Wir bedauern, Zutritt zu diesem Pellerator ist nicht m\0xF6"
-		"glich, da die T\0xFC" "r zugefroren ist.",
+	"Wir bedauern, Zutritt zu diesem Pellerator ist nicht m\xF6"
+		"glich, da die T\xFC" "r zugefroren ist.",
 	"Der Sukk-U-Bus befindet sich gegenwSrtig im Standby-oder \"AUS\"-Betrieb.",
 	"Zur Zeit gibt es nichts zuzustellen.",
 	"Gegenw\xE4rtig befindet sich nichts im Ablagekorb.",
-	"Der Sukk-U-Bus ist ein Einzel-St\0xFC" "ck-Liefergerst.",
+	"Der Sukk-U-Bus ist ein Einzel-St\xFC" "ck-Liefergerst.",
 	"Nur ein H\xFChnchen pro Passagier. Wir bedanken uns f\xFC"
 		"r Ihr Verst\xE4ndnis.",
-	"H\0xFChner werden nur in Eine-Einheit-Pro-Person-Rationen zugeteilt.",
+	"H\xFChner werden nur in Eine-Einheit-Pro-Person-Rationen zugeteilt.",
 	"Sie sind in die Erste Klasse h\xF6hergestuft worden. Genie\xDF"
 		"en Sie es in vollen Z\xFCgen.",
 	"Sie sind in die Zweite Klasse h\xF6hergestuft worden. Genie\xDF"
@@ -935,6 +937,8 @@ static const char *const STRINGS_DE[197] = {
 	"Dein zuvor zugewiesenes Zimmer: ",
 	"Gespeichertes Abzeichen: ",
 	"Derzeitige Position: ",
+	"Aufzug %d",
+	" (Chevrons verändern mit Umschalt-Taste+Klicken)",
 	"Eine hei\xDF""e",
 	"Eine kalte",
 	"Laden Sie das Spiel.",
@@ -951,28 +955,28 @@ static const char *const STRINGS_DE[197] = {
 	"Sommer",
 	"Herbst",
 	"Winter",
-	"Fr\0xFC" "nhling",
+	"Fr\xFC" "nhling",
 	"Sn'ood",
 	"J'af'ah",
 	"Bitta",
-	"Fr\0xAA" "ic",
-	"Pflanzen bitte nicht ber\0xFC" "nhren.",
-	"!\0xBC" "ta'\0xAD" "ta! !T\0xAA" "z n\0xAA" " sappibundli t\0xAA"
-		"cn\0xAA" "z!",
+	"Fr\xAA" "ic",
+	"Pflanzen bitte nicht ber\xFC" "nhren.",
+	"!\xBC" "ta'\xAD" "ta! !T\xAA" "z n\xAA" " sappibundli t\xAA"
+		"cn\xAA" "z!",
 
 	"Stop",
 	"!Hanaz!",
 	"VorwSrts",
 	"!Panaz!",
-	"T\0xAA" "z k'b\0xAA" "z",
+	"T\xAA" "z k'b\xAA" "z",
 	"Ein wenig herumkurven",
-	"Otundo a\0x92" " doom\0xAA" "n n\0x92" "sanza",
+	"Otundo a\x92" " doom\xAA" "n n\x92" "sanza",
 	"Sinnlose Drehung des Steuerrads",
-	"!0xBC" "ta\0x92\0xAD" "ta!  T\0xAA""z vidsta\0x92" "jaha i\0xAC"
-		"in\0x92" "qu\0xAA" " m\0xAA" "n\0xAA" "z",
-	"Sternenpanorama des Reiseziels hier einf\0xFC" "ngen.",
+	"!0xBC" "ta\x92\xAD" "ta!  T\xAA""z vidsta\x92" "jaha i\xAC"
+		"in\x92" "qu\xAA" " m\xAA" "n\xAA" "z",
+	"Sternenpanorama des Reiseziels hier einf\xFC" "ngen.",
 
-	"V'lo\0xAC",
+	"V'lo\xAC",
 	"Geschwindigkeit",
 	"Pan",
 	"Ein",
@@ -983,29 +987,29 @@ static const char *const STRINGS_DE[197] = {
 	"Pido",
 	"Schnell",
 
-	"\0xBC" "lu\0xAD" " q\0xB0 scu'b\0xAA" "rri",
-	"H\0xFC" "hnchen a la sauce tomate",
-	"\0xBC" "lu\0xAD" " q\0xB0 scu'jajaja",
+	"\xBC" "lu\xAD" " q\xB0 scu'b\xAA" "rri",
+	"H\xFC" "hnchen a la sauce tomate",
+	"\xBC" "lu\xAD" " q\xB0 scu'jajaja",
 	"H0xFC" "hnchen a la sauce moutarde",
-	"\0xBC" "lu0xAD q\0xB0 scu'\0xAD" "lu\0xAD",
-	"H\0xFC" "hnchen a la sauce 'Vogel'",
-	"\0xBC" "lu\0xAD" " sanza scu, n\0xAA n\0xAA n\0xAA",
-	"H\0xFC" "hnchen bar jeglicher sauce",
+	"\xBC" "lu0xAD q\xB0 scu'\xAD" "lu\xAD",
+	"H\xFC" "hnchen a la sauce 'Vogel'",
+	"\xBC" "lu\xAD" " sanza scu, n\xAA n\xAA n\xAA",
+	"H\xFC" "hnchen bar jeglicher sauce",
 
-	"!\0xB2" "la! !\0xB2" "la!  !!!Sizzlo ab\0x92\0xAA\0xAA" "o s\0xAA"
-		"nza cr\0xAA" "dibo!!!  N\0xAA" "nto p\0xAA" "rificio i\0xAC" "ind\0xAA",
+	"!\xB2" "la! !\xB2" "la!  !!!Sizzlo ab\x92\xAA\xAA" "o s\xAA"
+		"nza cr\xAA" "dibo!!!  N\xAA" "nto p\xAA" "rificio i\xAC" "ind\xAA",
 	"Achtung, Lebensgefahr. Unglaublich hohe Voltzahl!!! Innen keine "
-		"artungsbed\0xFC" "rftigen Teile vorhanden.",
-	"!!!Birin\0xAC" "i sp\0xAA" "culato t\0xAA" "z n\0xAA n\0xAA n\0xAA"
-		" ouvraditiniz!  J\0x92" "in n\0xAA n\0xAA upraximus stifibilimus"
-		" j\0x92" "in sigorto funct",
-	"Sie hStten die erste Kontrollt\0xFC" "r nicht \0xF6"
-		"ffnen sollen! Dies ist nicht nur ungeheuer gef\0xE4"
-		"hrlich, Sie verlieren auch jegliche Garantie-Anspr\0xFC" "che.",
-	"!T\0xAA" "z n\0xAA bleabaz t\0xAA" "z n\0xAA j\0x92" "abaz!  Coco?",
-	"Und sagen Sie hinterher blo\0xFC nicht, niemand hStte Sie gewarnt.",
-	"Pin\0xAA" "z-pin\0xAA" "z stot \0xAF" "r\0xB0 jibbli",
-	"Dr\0xFC" "cken Sie den Knopf um die Bombe zu entschSrfen."
+		"artungsbed\xFC" "rftigen Teile vorhanden.",
+	"!!!Birin\xAC" "i sp\xAA" "culato t\xAA" "z n\xAA n\xAA n\xAA"
+		" ouvraditiniz!  J\x92" "in n\xAA n\xAA upraximus stifibilimus"
+		" j\x92" "in sigorto funct",
+	"Sie hStten die erste Kontrollt\xFC" "r nicht \xF6"
+		"ffnen sollen! Dies ist nicht nur ungeheuer gef\xE4"
+		"hrlich, Sie verlieren auch jegliche Garantie-Anspr\xFC" "che.",
+	"!T\xAA" "z n\xAA bleabaz t\xAA" "z n\xAA j\x92" "abaz!  Coco?",
+	"Und sagen Sie hinterher blo\xFC nicht, niemand hStte Sie gewarnt.",
+	"Pin\xAA" "z-pin\xAA" "z stot \xAF" "r\xB0 jibbli",
+	"Dr\xFC" "cken Sie den Knopf um die Bombe zu entschSrfen."
 };
 
 static const char *const MUSIC_DATA[4] = {
@@ -1142,6 +1146,9 @@ void writeResource(const char *resName, const char *sectionStr, uint32 resId, bo
 void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	char nameBuffer[256];
 	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
+	if (!isEnglish)
+		strcat(nameBuffer, "/DE");
+	
 	writeResource(nameBuffer, sectionStr, resId, isEnglish);
 }
 
@@ -1556,11 +1563,6 @@ void writeData() {
 	writeResource("TEXT/STVOCAB", "TEXT", "STVOCAB.TXT");
 	writeResource("TEXT/JRQUOTES", "TEXT", "JRQUOTES.TXT");
 	writeResource("TEXT", 155);
-	if (!resGer.empty()) {
-		writeResource("TEXT/STVOCAB/DE", "TEXT", "STVOCABDE.TXT", false);
-		writeResource("TEXT/JRQUOTES/DE", "TEXT", "JRQUOTESDE.TXT", false);
-		writeResource("TEXT/155/DE", "TEXT", 155, false);
-	}
 
 	writeResource("STARFIELD", 132);
 	writeStarfieldPoints();
@@ -1571,8 +1573,8 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-	writeStringArray("TEXT/STRINGS", STRINGS_EN, 151);
-	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 197);
+	writeStringArray("TEXT/STRINGS", STRINGS_EN, 153);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 199);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };
@@ -1695,7 +1697,7 @@ void writeData() {
 
 	writeResponseTree();
 	writeNumbers();
-	writeAllScriptQuotesEN();
+	writeAllScriptQuotes();
 	writeAllScriptResponses();
 	writeAllScriptRanges();
 
@@ -1709,6 +1711,10 @@ void writeData() {
 }
 
 void writeGermanData() {
+	writeResource("TEXT/STVOCAB/DE", "TEXT", "STVOCABDE.TXT", false);
+	writeResource("TEXT/JRQUOTES/DE", "TEXT", "JRQUOTESDE.TXT", false);
+	writeResource("TEXT/155/DE", "TEXT", 155, false);
+
 	writeStringArray("TEXT/PHRASES/DE", 0x23EEC8 + GERMAN_DIFF, 178);
 	writeStringArray("TEXT/REPLACEMENTS1/DE", 0x23F198 + GERMAN_DIFF, 1362);
 	writeStringArray("TEXT/REPLACEMENTS2/DE", 0x2406E8 + GERMAN_DIFF, 816);
@@ -1753,6 +1759,11 @@ void writeGermanData() {
 	writeSentenceEntries("Sentences/SuccUBus/DE", 0x637CD8);
 
 	writeMissiveOMatMessagesDE();
+
+	writeResource("STFONT", 149, false);
+	writeResource("STFONT", 151, false);
+	writeResource("STFONT", 152, false);
+	writeResource("STFONT", 153, false);
 }
 
 void createScriptMap() {

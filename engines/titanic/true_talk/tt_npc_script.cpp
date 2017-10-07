@@ -282,51 +282,43 @@ bool TTnpcScript::handleWord(uint id) const {
 }
 
 int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint val, uint tagId, uint remainder) {
+		uint tag1, uint tag2, uint remainder) {
 	if (_quotes.empty())
 		return 1;
 
-
-	int loopCounter = 0;
-	for (uint idx = 0; idx < _quotes.size() && loopCounter < 2; ++idx) {
+	for (uint idx = 3; idx < _quotes.size(); ++idx) {
 		const TThandleQuoteEntry *qe = &_quotes[idx];
 
-		if (!qe->_index) {
-			// End of list; start at beginning again
-			++loopCounter;
-			idx = 0;
-			qe = &_quotes[0];
-		}
-
-		if (qe->_index == val && (
-				(tagId == 0 && loopCounter == 2) ||
-				(qe->_tagId < MKTAG('A', 'A', 'A', 'A')) ||
-				(qe->_tagId == tagId)
-				)) {
-			uint foundTagId = qe->_tagId;
-			if (foundTagId > 0 && foundTagId < 100) {
-				if (!tagId)
-					foundTagId >>= 1;
-				if (getRandomNumber(100) < foundTagId)
+		if (qe->_tag1 == tag1 && 
+				(qe->_tag2 == tag2 || qe->_tag2 < MKTAG('A', 'A', 'A', 'A'))) {
+			uint threshold = qe->_tag2;
+			if (threshold > 0 && threshold < 100) {
+				if (!tag2)
+					threshold >>= 1;
+				if (getRandomNumber(100) < threshold)
 					return 1;
 			}
 
-			uint dialogueId = qe->_dialogueId;
+			uint dialogueId = qe->_index;
 			if (dialogueId >= _quotes._rangeStart && dialogueId <= _quotes._rangeEnd) {
 				dialogueId -= _quotes._rangeStart;
-				if (dialogueId > 3)
-					error("Invalid dialogue index in BarbotScript");
+				if (dialogueId >= _quotes.size())
+					error("Invalid dialogue index in bot script");
+				TThandleQuoteEntry &quote = _quotes[dialogueId];
 
-				const int RANDOM_LIMITS[4] = { 30, 50, 70, 60 };
-				int rangeLimit = RANDOM_LIMITS[dialogueId];
-				int dialRegion = getDialRegion(0);
-
-				if (dialRegion != 1) {
-					rangeLimit = MAX(rangeLimit - 20, 20);
+				int rangeLimit;
+				if (isQuoteDialled()) {
+					// Barbot and Doorbot response is affected by dial region
+					int dialRegion = getDialRegion(0);
+					if (dialRegion != 1) {
+						rangeLimit = MAX((int)quote._tag1 - 20, 20);
+					}
+				} else {
+					rangeLimit = quote._index;
 				}
 
-				dialogueId = (((int)remainder + 25) % 100) >= rangeLimit
-					? _quotes._tag1 : _quotes._tag2;
+				dialogueId = ((remainder + _quotes._incr) % 100) >= (uint)rangeLimit
+					? quote._tag2 : quote._tag1;
 			}
 
 			addResponse(getDialogueId(dialogueId));
@@ -336,7 +328,6 @@ int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *s
 	}
 
 	return 1;
-
 }
 
 uint TTnpcScript::getRangeValue(uint id) {

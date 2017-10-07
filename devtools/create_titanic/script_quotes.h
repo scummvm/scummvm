@@ -26,13 +26,12 @@
 #include "common/scummsys.h"
 
 struct ScriptQuote {
+	uint _tag1;
+	uint _tag2;
 	uint _index;
-	uint _tagId;
-	uint _dialogueId;
 };
 
-extern void writeAllScriptQuotesEN();
-extern void writeAllScriptQuotesDE();
+extern void writeAllScriptQuotes();
 extern void writeEntryHeader(const char *name, uint offset, uint size);
 extern uint dataOffset;
 
