@@ -86,6 +86,7 @@ void CodeWheel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_correctValue, indent);
 	file->writeNumberLine(_value, indent);
 	file->writeNumberLine(_matched, indent);
+
 	if (g_language == Common::DE_DEU) {
 		file->writeNumberLine(_row, indent);
 		file->writeNumberLine(_column, indent);
@@ -99,13 +100,14 @@ void CodeWheel::load(SimpleFile *file) {
 	_correctValue = file->readNumber();
 	_value = file->readNumber();
 	_matched = file->readNumber();
+
 	if (g_language == Common::DE_DEU) {
 		_row = file->readNumber();
 		_column = file->readNumber();
 
-		assert(_value >= 0 && _value < 8);
-		assert(_row >= 0 && _row < 3);
-		_correctValue = CORRECT_VALUES_DE[_row][_column];
+		assert(_column >= 1 && _column <= 8);
+		assert(_row >= 0 && _row <= 2);
+		_correctValue = CORRECT_VALUES_DE[_row][_column - 1];
 	}
 
 	CBomb::load(file);
@@ -115,11 +117,9 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	int yp = _bounds.top + _bounds.height() / 2;
 	_matched = false;
 
-	if (_value == _correctValue)
-		_matched = true;
-
 	if (msg->_mousePos.y > yp) {
 		_value = (_value + 1) % TRANSLATE(15, 27);
+
 		playMovie(TRANSLATE(START_FRAMES_EN[_value], START_FRAMES_DE[_value]),
 			TRANSLATE(END_FRAMES_EN[_value], END_FRAMES_DE[_value]),
 			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
@@ -131,6 +131,9 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 		_value = (_value <= 0) ? TRANSLATE(14, 26) : _value - 1;
 	}
+
+	if (_value == _correctValue)
+		_matched = true;
 
 	playSound(TRANSLATE("z#59.wav", "z#590.wav"));
 	return true;
