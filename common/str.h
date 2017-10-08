@@ -235,6 +235,17 @@ public:
 	 */
 	void trim();
 
+	/**
+	 * Wraps the text in the string to the given line maximum. Lines will be
+	 * broken at any whitespace character. New lines are assumed to be
+	 * represented using '\n'.
+	 *
+	 * This is a very basic line wrap which does not perform tab stop
+	 * calculation, consecutive whitespace collapsing, auto-hyphenation, or line
+	 * balancing.
+	 */
+	void wordWrap(const uint32 maxLength);
+
 	uint hash() const;
 
 	/**@{
