@@ -32,7 +32,7 @@ public:
 	MaemoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
 protected:
-	virtual bool loadGFXMode();
+	virtual bool loadGFXMode() override;
 };
 
 #endif

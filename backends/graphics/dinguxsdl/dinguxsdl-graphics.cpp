@@ -487,14 +487,6 @@ bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-SurfaceSdlGraphicsManager::MousePos *DINGUXSdlGraphicsManager::getMouseCurState() {
-	return &_mouseCurState;
-}
-
-SurfaceSdlGraphicsManager::VideoState *DINGUXSdlGraphicsManager::getVideoMode() {
-	return &_videoMode;
-}
-
 void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
