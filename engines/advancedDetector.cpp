@@ -466,6 +466,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 		bool allFilesPresent = true;
 		int curFilesMatched = 0;
+		bool hashOrSizeMismatch = false;
 
 		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
@@ -477,16 +478,21 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 				break;
 			}
 
+			if (hashOrSizeMismatch)
+				continue;
+
 			if (fileDesc->md5 != NULL && fileDesc->md5 != filesProps[tstr].md5) {
 				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[tstr].md5.c_str());
 				fileMissing = true;
-				break;
+				hashOrSizeMismatch = true;
+				continue;
 			}
 
 			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[tstr].size) {
 				debug(3, "Size Mismatch. Skipping");
 				fileMissing = true;
-				break;
+				hashOrSizeMismatch = true;
+				continue;
 			}
 
 			debug(3, "Matched file: %s", tstr.c_str());
