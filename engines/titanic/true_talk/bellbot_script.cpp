@@ -847,13 +847,11 @@ int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 				if (flag) {
 					CTrueTalkManager::triggerAction(29, 1);
 					selectResponse(201771);
-				}
-				else {
+				} else {
 					CTrueTalkManager::triggerAction(29, 2);
 					selectResponse(201554);
 				}
-			}
-			else {
+			} else {
 				selectResponse(21378);
 			}
 
