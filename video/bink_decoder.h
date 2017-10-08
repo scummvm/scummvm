@@ -254,6 +254,11 @@ private:
 		/** Value of the last decoded high nibble in color data types. */
 		int _colLastVal;
 
+		uint32 _yBlockWidth;   ///< Width of the Y plane in blocks
+		uint32 _yBlockHeight;  ///< Height of the Y plane in blocks
+		uint32 _uvBlockWidth;  ///< Width of the U and V planes in blocks
+		uint32 _uvBlockHeight; ///< Height of the U and V planes in blocks
+
 		byte *_curPlanes[4]; ///< The 4 color planes, YUVA, current frame.
 		byte *_oldPlanes[4]; ///< The 4 color planes, YUVA, last frame.
 

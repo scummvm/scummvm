@@ -286,28 +286,31 @@ BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const G
 	_surface.h = height;
 	_surface.w = width;
 
-	// Give the planes a bit extra space
-	width  = _surface.w + 32;
-	height = _surface.h + 32;
+	// Compute the video dimensions in blocks
+	_yBlockWidth   = (width  +  7) >> 3;
+	_yBlockHeight  = (height +  7) >> 3;
+	_uvBlockWidth  = (width  + 15) >> 4;
+	_uvBlockHeight = (height + 15) >> 4;
 
-	_curPlanes[0] = new byte[ width       *  height      ]; // Y
-	_curPlanes[1] = new byte[(width >> 1) * (height >> 1)]; // U, 1/4 resolution
-	_curPlanes[2] = new byte[(width >> 1) * (height >> 1)]; // V, 1/4 resolution
-	_curPlanes[3] = new byte[ width       *  height      ]; // A
-	_oldPlanes[0] = new byte[ width       *  height      ]; // Y
-	_oldPlanes[1] = new byte[(width >> 1) * (height >> 1)]; // U, 1/4 resolution
-	_oldPlanes[2] = new byte[(width >> 1) * (height >> 1)]; // V, 1/4 resolution
-	_oldPlanes[3] = new byte[ width       *  height      ]; // A
+	// The planes are sized according to the number of blocks
+	_curPlanes[0] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // Y
+	_curPlanes[1] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // U, 1/4 resolution
+	_curPlanes[2] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // V, 1/4 resolution
+	_curPlanes[3] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // A
+	_oldPlanes[0] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // Y
+	_oldPlanes[1] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // U, 1/4 resolution
+	_oldPlanes[2] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // V, 1/4 resolution
+	_oldPlanes[3] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // A
 
 	// Initialize the video with solid black
-	memset(_curPlanes[0],   0,  width       *  height      );
-	memset(_curPlanes[1],   0, (width >> 1) * (height >> 1));
-	memset(_curPlanes[2],   0, (width >> 1) * (height >> 1));
-	memset(_curPlanes[3], 255,  width       *  height      );
-	memset(_oldPlanes[0],   0,  width       *  height      );
-	memset(_oldPlanes[1],   0, (width >> 1) * (height >> 1));
-	memset(_oldPlanes[2],   0, (width >> 1) * (height >> 1));
-	memset(_oldPlanes[3], 255,  width       *  height      );
+	memset(_curPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+	memset(_curPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_curPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_curPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+	memset(_oldPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+	memset(_oldPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_oldPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_oldPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
 
 	initBundles();
 	initHuffman();
@@ -357,7 +360,7 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	// to allow for odd-sized videos.
 	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
 	YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2],
-			_surfaceWidth, _surfaceHeight, _surfaceWidth, _surfaceWidth >> 1);
+			_surfaceWidth, _surfaceHeight, _yBlockWidth * 8, _uvBlockWidth * 8);
 
 	// And swap the planes with the reference planes
 	for (int i = 0; i < 4; i++)
@@ -367,10 +370,10 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 }
 
 void BinkDecoder::BinkVideoTrack::decodePlane(VideoFrame &video, int planeIdx, bool isChroma) {
-	uint32 blockWidth  = isChroma ? ((_surface.w  + 15) >> 4) : ((_surface.w  + 7) >> 3);
-	uint32 blockHeight = isChroma ? ((_surface.h + 15) >> 4) : ((_surface.h + 7) >> 3);
-	uint32 width       = isChroma ?  (_surface.w        >> 1) :   _surface.w;
-	uint32 height      = isChroma ?  (_surface.h       >> 1) :   _surface.h;
+	uint32 blockWidth  = isChroma ? _uvBlockWidth  : _yBlockWidth;
+	uint32 blockHeight = isChroma ? _uvBlockHeight : _yBlockHeight;
+	uint32 width       = blockWidth  * 8;
+	uint32 height      = blockHeight * 8;
 
 	DecodeContext ctx;
 
