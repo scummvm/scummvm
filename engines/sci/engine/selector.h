@@ -131,6 +131,11 @@ struct SelectorCache {
 	Selector iconIndex; ///< Used to index icon bar objects
 	Selector select;
 
+	Selector handsOff;
+	Selector setStep;
+	Selector setMotion;
+	Selector cycleSpeed;
+
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures

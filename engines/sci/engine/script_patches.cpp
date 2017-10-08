@@ -100,6 +100,9 @@ static const char *const selectorNameTable[] = {
 	"number",       // system selector
 	"setScript",    // system selector
 	"setCycle",     // system selector
+	"setStep",      // system selector
+	"cycleSpeed",   // system selector
+	"handsOff",     // system selector
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
 	"say",          // Quest For Glory 1 VGA
@@ -168,6 +171,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_number,
 	SELECTOR_setScript,
 	SELECTOR_setCycle,
+	SELECTOR_setStep,
+	SELECTOR_cycleSpeed,
+	SELECTOR_handsOff,
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_say,
@@ -5846,14 +5852,89 @@ static const uint16 qfg4BenchmarkPatch[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                         patch
+// Right at the start of the game inside room 800, when automatically sliding down a slope
+// an error may happen inside Grooper::doit caused by a timing issue.
+//
+// We delay a bit, so that hero::cycler should always be set.
+//
+// Applies to: English CD, English floppy, German floppy
+// Responsible method: sFallsBackSide::changeState (script 803)
+// Fixes bug #9801
+static const uint16 qfg4SlidingDownSlopeSignature[] = {
+	0x87, 0x01,                       // lap param[1]
+	0x65, SIG_ADDTOOFFSET(+1),        // aTop state
+	0x36,                             // push
+	0x3c,                             // dup
+	0x35, 0x00,                       // ldi 00
+	0x1a,                             // eq?
+	0x31, 0x30,                       // bnt [skip state 0]
+	0x38, SIG_SELECTOR16(handsOff),   // pushi handsOff
+	0x76,                             // push0
+	0x81, 0x01,                       // lag global[1]
+	0x4a, SIG_UINT16(0x0004),         // send 04
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(cycleSpeed), // pushi cycleSpeed
+	0x76,                             // push0
+	0x81, 0x00,                       // lag global[0]
+	0x4a, SIG_UINT16(0x0004),         // send 04
+	0xa3, 0x00,                       // sal local[0]
+	0x38, SIG_SELECTOR16(setStep),    // pushi setStep
+	0x7a,                             // push2
+	0x78,                             // push1
+	0x78,                             // push1
+	0x38, SIG_SELECTOR16(setMotion),  // pushi setMotion
+	0x38, SIG_UINT16(0x0004),         // pushi 04
+	0x51, SIG_ADDTOOFFSET(+1),        // class PolyPath
+	0x36,                             // push
+	0x39, 0x49,                       // pushi $49
+	0x39, 0x50,                       // pushi $50
+	0x7c,                             // pushSelf
+	0x81, 0x00,                       // lag global[0]
+	0x4a, SIG_UINT16(0x0014),         // send $14
+	SIG_END
+};
+
+static const uint16 qfg4SlidingDownSlopePatch[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x2f, 0x34,                         // bt [skip state 0]
+	0x38, PATCH_SELECTOR16(handsOff),   // pushi handsOff
+	0x76,                               // push0
+	0x81, 0x01,                         // lag global[1]
+	0x4a, PATCH_UINT16(0x0004),         // send 04
+
+	0x78,                                     // push1
+	0x39, 0x20,                               // pushi $20
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, $2
+	0x38, PATCH_SELECTOR16(setStep),    // pushi setStep
+	0x7a,                               // push2
+	0x78,                               // push1
+	0x78,                               // push1
+	0x38, PATCH_SELECTOR16(setMotion),  // pushi setMotion
+	0x38, PATCH_UINT16(0x0004),         // pushi 04
+	0x51, PATCH_GETORIGINALBYTE(+44),   // class PolyPath
+	0x36,                               // push
+	0x39, 0x49,                         // pushi $49
+	0x39, 0x50,                         // pushi $50
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag global[0]
+	0x38, PATCH_SELECTOR16(cycleSpeed), // pushi cycleSpeed
+	0x76,                               // push0
+	0x4a, PATCH_UINT16(0x0018),         // send $18
+	0xa3, 0x00,                         // sal local[0]
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_END
+};
+
+//          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
-	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
-	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,           qfg4BenchmarkPatch },
-	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,       qfg4TrapArrayTypePatch },
-	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
-	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,      sci2VolumeResetPatch },
+	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
+	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
+	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
+	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,        sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,        sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,        sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

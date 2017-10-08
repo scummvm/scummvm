@@ -165,6 +165,10 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(vanishingY);
 	FIND_SELECTOR(iconIndex);
 	FIND_SELECTOR(select);
+	FIND_SELECTOR(handsOff);
+	FIND_SELECTOR(setStep);
+	FIND_SELECTOR(setMotion);
+	FIND_SELECTOR(cycleSpeed);
 
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);
