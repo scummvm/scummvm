@@ -46,9 +46,9 @@ public:
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 
-	bool hasFeature(OSystem::Feature f);
+	bool hasFeature(OSystem::Feature f) const;
 	void setFeatureState(OSystem::Feature f, bool enable);
-	bool getFeatureState(OSystem::Feature f);
+	bool getFeatureState(OSystem::Feature f) const;
 
 	int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(int mode);
