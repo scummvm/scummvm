@@ -162,4 +162,8 @@ bool CodeWheel::CheckCodeWheelsMsg(CCheckCodeWheelsMsg *msg) {
 	return true;
 }
 
+void CodeWheel::reset() {
+	_value = TRANSLATE(4, 14);
+}
+
 } // End of namespace Titanic

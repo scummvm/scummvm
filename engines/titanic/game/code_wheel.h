@@ -57,7 +57,7 @@ public:
 	/**
 	 * Resets a code wheel back to the default 'O' value
 	 */
-	void reset() { _value = 4; }
+	void reset();
 };
 
 } // End of namespace Titanic
