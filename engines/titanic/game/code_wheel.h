@@ -39,8 +39,7 @@ private:
 	int _value;
 	bool _matched;
 	// German specific fields
-	int _field114;
-	int _field118;
+	int _row, _column;
 public:
 	CLASSDEF;
 	CodeWheel();
