@@ -77,7 +77,10 @@ const ADGameDescription *GobMetaEngine::fallbackDetect(const FileMap &allFiles, 
 			return 0;
 	}
 
-	reportUnknown(fslist.begin()->getParent(), filesProps);
+	ADGameIdList gameIds;
+	gameIds.push_back(game->desc.gameId);
+
+	reportUnknown(fslist.begin()->getParent(), filesProps, gameIds);
 	return (const ADGameDescription *)game;
 }
 
