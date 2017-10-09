@@ -58,9 +58,18 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed badly distorted sound (bug #9753).
 
  SCI
+   - Improved startup speed when using the MT-32 emulator.
+   - Improved handling of MT-32 reverb in SCI0 games.
+   - Improved selection of synthesized sound effects in SCI0 games.
+   - Improved selection of digital audio in SQ4.
+   - Improved resource bounds checking.
+   - Improved error handling of corrupt MIDI data.
+   - Fixed slow leak of small amounts of data into save games over time.
+   - Fixed broken day/night cycle in QFG3.
    - Fixed a script bug in Police Quest 3 to now grant 10 points when giving the
      locket to Marie. Now it's possible to beat the game with a perfect score.
-     This bug is also present, when using the original interpreter.
+     This bug is also present when using the original interpreter.
+   - Fixed various other script bugs.
 
 1.9.1 (YYYY-MM-DD)
  General:
