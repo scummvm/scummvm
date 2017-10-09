@@ -11,7 +11,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Riven.
    - Added support for Starship Titanic.
 
-
  New Games (Sierra SCI2 - SCI3):
    - Added support for Gabriel Knight.
    - Added support for Gabriel Knight 2.
@@ -40,6 +39,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for on-the-fly GUI language switching.
    - Updated Munt MT-32 emulation code to version 2.0.3.
    - Improved handling of joysticks.
+   - Improved audio latency.
+   - Improved management of the ScummVM window in games that switch display
+     modes.
 
  AGOS:
    - Fixed subtitle speed setting in the Hebrew version of Simon the Sorcerer 1.
