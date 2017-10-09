@@ -147,10 +147,10 @@ public:
 	Common::EventType getMouseInput();
 	uint16 getKeyInput(bool blockForPrintChar = false);
 	void getInput();
-	bool keyPressed(Common::KeyCode keycode, bool equal);
 	void mouseInput3();
 	void mouseWait(int delay);
 	void wait2(int ticks);
+	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void turnOff();
 	void turnOn();
 	void screenShake();

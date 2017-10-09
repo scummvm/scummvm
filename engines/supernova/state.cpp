@@ -477,15 +477,6 @@ void GameManager::resetInputState() {
 	processInput();
 }
 
-bool GameManager::keyPressed(Common::KeyCode keycode, bool equal) {
-	_vm->updateEvents();
-	bool ret = _key.keycode == keycode;
-	_key.reset();
-
-	return equal ? ret : !ret;
-}
-
-
 void GameManager::processInput() {
 	if (_mouseClickType == Common::EVENT_LBUTTONUP) {
 		_vm->removeMessage();
@@ -990,10 +981,27 @@ void GameManager::errorTemp() {
 void GameManager::wait2(int ticks) {
 	int32 end = _state._time + ticksToMsec(ticks);
 	do {
+		g_system->delayMillis(_vm->_delay);
 		_vm->updateEvents();
 		g_system->updateScreen();
-		g_system->delayMillis(_vm->_delay);
 	} while (_state._time < end);
+}
+
+bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
+	keycode = Common::KEYCODE_INVALID;
+	int32 end = _state._time + ticksToMsec(ticks);
+	do {
+		g_system->delayMillis(_vm->_delay);
+		_vm->updateEvents();
+		g_system->updateScreen();
+		if (_keyPressed) {
+			keycode = _key.keycode;
+			_key.reset();
+			return true;
+		} else if (_mouseClicked)
+			return true;
+	} while (_state._time < end);
+	return false;
 }
 
 void GameManager::setAnimationTimer(int ticks) {

@@ -202,7 +202,7 @@ void SupernovaEngine::updateEvents() {
 		case Common::EVENT_LBUTTONUP:
 			// fallthrough
 		case Common::EVENT_RBUTTONUP:
-			if (_mixer->isSoundHandleActive(_soundHandle))
+			if (_gm->_currentRoom->getId() != INTRO && _mixer->isSoundHandleActive(_soundHandle))
 				return;
 			_gm->_mouseClicked = true;
 			// fallthrough

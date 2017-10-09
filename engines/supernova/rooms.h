@@ -92,10 +92,10 @@ public:
 	virtual void onEntrance();
 
 private:
-	void animate(int filenumber, int section1, int section2, int duration);
-	void animate(int filenumber, int section1, int section2, int duration, MessagePosition position,
+	bool animate(int filenumber, int section1, int section2, int duration);
+	bool animate(int filenumber, int section1, int section2, int duration, MessagePosition position,
 	             StringID text);
-	void animate(int filenumber, int section1, int section2, int section3, int section4, int duration,
+	bool animate(int filenumber, int section1, int section2, int section3, int section4, int duration,
 	             MessagePosition position, StringID text);
 
 	void titleScreen();
