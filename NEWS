@@ -57,7 +57,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  MADE:
    - Fixed badly distorted sound (bug #9753).
 
- SCI
+ SCI:
    - Improved startup speed when using the MT-32 emulator.
    - Improved handling of MT-32 reverb in SCI0 games.
    - Improved selection of synthesized sound effects in SCI0 games.
