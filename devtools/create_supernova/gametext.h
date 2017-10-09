@@ -373,56 +373,56 @@ const char *gameText[] = {
 	"Es ist die Keycard des Commanders.",     // kStringKeycard2Description2
 	// 280
 	"Kabelrolle mit L\201sterklemme",         // kSringSpoolAndClip
-	"", //
-	"", //
-	"", //
-	"", //
+	"Zwei Tage nach dem Start|im Cockpit der \"Supernova\" ...", // kStringIntroCutscene1
+	"Entferung von der Sonne: 1 500 000 km.|Gehen Sie auf 8000 hpm, Captain!", // kStringIntroCutscene2
+	"Ok, Sir.",                               // kStringIntroCutscene3
+	"Geschwindigkeit:",                       // kStringIntroCutscene4
 	// 285
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Zweitausend hpm",                        // kStringIntroCutscene5
+	"Dreitausend",                            // kStringIntroCutscene6
+	"Viertausend",                            // kStringIntroCutscene7
+	"F\201nftausend",                         // kStringIntroCutscene8
+	"Sechstausend",                           // kStringIntroCutscene9
 	// 290
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Siebentausend",                          // kStringIntroCutscene10
+	"Achttau...",                             // kStringIntroCutscene11
+	"Was war das?",                           // kStringIntroCutscene12
+	"Keine Ahnung, Sir.",                     // kStringIntroCutscene13
+	"Ingenieur an Commander, bitte kommen!",  // kStringIntroCutscene14
 	// 295
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Was ist los?",                           // kStringIntroCutscene15
+	"Wir haben einen Druckabfall im Hauptantriebssystem, Sir.|Einen Moment, ich schaue sofort nach, woran es liegt.", // kStringIntroCutscene16
+	"Schei\341e, der Ionenantrieb ist explodiert!|Die Teile sind \201ber den ganzen|Maschinenraum verstreut.", // kStringIntroCutscene17
+	"Ach, du meine G\201te!|Gibt es irgendeine M\224glichkeit,|den Schaden schnell zu beheben?", // kStringIntroCutscene18
+	"Nein, Sir. Es sieht schlecht aus.",      // kStringIntroCutscene19
 	// 300
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Hmm, die Erde zu alarmieren, w\201rde zu lange dauern.", // kStringIntroCutscene20
+	"Ich darf kein Risiko eingehen.|Captain, geben Sie sofort Alarm!", // kStringIntroCutscene21
+	"Commander an alle! Achtung, Achtung!|Begeben Sie sich sofort zum Notraumschiff!", // kStringIntroCutscene22
+	"Ich wiederhole:|Begeben Sie sich sofort zum Notraumschiff!", // kStringIntroCutscene23
+	"Captain, bereiten Sie alles für den Start vor!|Wir m\201ssen zur\201ck zur Erde!", // kStringIntroCutscene24
 	// 305
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Eine Stunde sp\204ter ...",              // kStringIntroCutscene25
+	"Die Besatzung hat die \"Supernova\" verlassen.", // kStringIntroCutscene26
+	"Das Schiff wird zwar in acht Jahren sein Ziel|erreichen, allerdings ohne Mannschaft.", // kStringIntroCutscene27
+	"Das ist das kl\204gliche Ende|der Mission Supernova.", // kStringIntroCutscene28
+	"Sie k\224nnen jetzt ihren Computer ausschalten.", // kStringIntroCutscene29
 	// 310
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Halt!",                                  // kStringIntroCutscene30
+	"Warten Sie!",                            // kStringIntroCutscene31
+	"Es regt sich etwas im Schiff.",          // kStringIntroCutscene32
+	"Uuuuaaaahhhhh",                          // kStringIntroCutscene33
+	"Huch, ich bin ja gefesselt!|Wo bin ich?", // kStringIntroCutscene34
 	// 315
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Ach so, das sind ja die Sicherheitsgurte.|Ich arbeite ja jetzt in diesem Raumschiff hier.", // kStringIntroCutscene35
+	"Was? Schon zwei Uhr! Wieso|hat mich denn noch keiner|aus dem Bett geschmissen?", // kStringIntroCutscene36
+	"Ich werde mal nachsehen.",               // kStringIntroCutscene37
+	"Autsch!",                                // kStringIntroCutscene38
+	"Schei\341etagenbett!",                   // kStringIntroCutscene39
 	// 320
-	"", //
-	"", //
-	"", //
+	"Erst mal den Lichtschalter finden.",     // kStringIntroCutscene40
+	"Hmm, gar nicht so einfach|bei Schwerelosigkeit.", // kStringIntroCutscene41
+	"Ah, hier ist er.",                       // kStringIntroCutscene42
 	"", //
 	"", //
 	// 325
