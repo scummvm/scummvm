@@ -464,7 +464,16 @@ enum StringID {
 	kStringOutro8, kStringOutro9, kStringOutro10, kStringOutro11, kStringOutro12,
 	kStringOutro13, kStringOutro14, kStringWireAndPlug, kStringWireAndClip, kStringWireAndPlug2,
 	kStringSignDescription2, kStringCoin, kStringDoorDescription5, kStringDoorDescription6, kStringKeycard2Description2,
-	kSringSpoolAndClip
+	kSringSpoolAndClip, kStringIntroCutscene1, kStringIntroCutscene2, kStringIntroCutscene3, kStringIntroCutscene4,
+	kStringIntroCutscene5, kStringIntroCutscene6, kStringIntroCutscene7, kStringIntroCutscene8, kStringIntroCutscene9,
+	kStringIntroCutscene10, kStringIntroCutscene11, kStringIntroCutscene12, kStringIntroCutscene13, kStringIntroCutscene14,
+	kStringIntroCutscene15, kStringIntroCutscene16, kStringIntroCutscene17, kStringIntroCutscene18, kStringIntroCutscene19,
+	// 300
+	kStringIntroCutscene20, kStringIntroCutscene21, kStringIntroCutscene22, kStringIntroCutscene23, kStringIntroCutscene24,
+	kStringIntroCutscene25, kStringIntroCutscene26, kStringIntroCutscene27, kStringIntroCutscene28, kStringIntroCutscene29,
+	kStringIntroCutscene30, kStringIntroCutscene31, kStringIntroCutscene32, kStringIntroCutscene33, kStringIntroCutscene34,
+	kStringIntroCutscene35, kStringIntroCutscene36, kStringIntroCutscene37, kStringIntroCutscene38, kStringIntroCutscene39,
+	kStringIntroCutscene40, kStringIntroCutscene41, kStringIntroCutscene42
 };
 
 static StringID guiCommands[] = {

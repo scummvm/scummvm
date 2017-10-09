@@ -198,9 +198,10 @@ void Intro::animate(int filenumber, int section1, int section2, int duration) {
 }
 
 void Intro::animate(int filenumber, int section1, int section2, int duration,
-                    MessagePosition position, const char *text) {
+                    MessagePosition position, StringID textId) {
+	const Common::String& text = _vm->getGameString(textId);
 	_vm->renderMessage(text, position);
-	int delay = (Common::strnlen(text, 512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
+	int delay = (MIN(text.size(), (uint)512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
 	while (delay) {
 		if (section1)
 			_vm->renderImage(filenumber, section1);
@@ -214,10 +215,11 @@ void Intro::animate(int filenumber, int section1, int section2, int duration,
 }
 
 void Intro::animate(int filenumber, int section1, int section2, int section3, int section4,
-                    int duration, MessagePosition position, const char *text) {
+                    int duration, MessagePosition position, StringID textId) {
+	const Common::String& text = _vm->getGameString(textId);
 	_vm->renderMessage(text, position);
 	if (duration == 0)
-		duration = (Common::strnlen(text, 512) + 20) * _vm->_textSpeed / 40;
+		duration = (MIN(text.size(), (uint)512) + 20) * _vm->_textSpeed / 40;
 
 	while(duration) {
 		_vm->renderImage(filenumber, section1);
@@ -241,7 +243,7 @@ void Intro::cutscene() {
 	_vm->_system->fillScreen(kColorBlack);
 	_vm->_menuBrightness = 255;
 	_vm->paletteBrightness();
-	animate(31, 0, 0, 0, kMessageNormal, "Zwei Tage nach dem Start|im Cockpit der \"Supernova\" ...");
+	animate(31, 0, 0, 0, kMessageNormal, kStringIntroCutscene1);
 	_vm->_menuBrightness = 0;
 	_vm->paletteBrightness();
 	exitOnEscape(1);
@@ -250,13 +252,13 @@ void Intro::cutscene() {
 	_vm->renderImage(9, 1);
 	_vm->renderImage(9, 9);
 	_vm->paletteFadeIn();
-	animate(9,11,10,6,kMessageRight,"Entferung von der Sonne: 1 500 000 km.|Gehen Sie auf 8000 hpm, Captain!");
+	animate(9,11,10,6,kMessageRight,kStringIntroCutscene2);
 	_vm->renderImage(9, 3);
 	exitOnEscape(4);
 	_vm->renderImage(9, 4);
 	animate(9, 11,10,3); // test duration
 	_vm->removeMessage();
-	animate(9, 5,4,0,kMessageLeft,"Ok, Sir.");
+	animate(9, 5,4,0,kMessageLeft,kStringIntroCutscene3);
 	_vm->renderImage(9, 3);
 	exitOnEscape(3);
 	_vm->renderImage(9, 2);
@@ -265,16 +267,16 @@ void Intro::cutscene() {
 	exitOnEscape(6);
 	_vm->renderImage(9, 6);
 	exitOnEscape(6);
-	animate(9, 0,0,0,kMessageLeft,"Geschwindigkeit:");
-	_vm->renderMessage("Zweitausend hpm", kMessageLeft);
+	animate(9, 0,0,0,kMessageLeft,kStringIntroCutscene4);
+	_vm->renderMessage(kStringIntroCutscene5, kMessageLeft);
 	exitOnEscape(28);
 	_vm->removeMessage();
-	_vm->renderMessage("Dreitausend", kMessageLeft);
+	_vm->renderMessage(kStringIntroCutscene6, kMessageLeft);
 	exitOnEscape(28);
 	_vm->removeMessage();
 
-	const char *textCounting[4] =
-	{"Viertausend","F\201nftausend","Sechstausend","Siebentausend"};
+	StringID textCounting[4] =
+	{kStringIntroCutscene7,kStringIntroCutscene8,kStringIntroCutscene9,kStringIntroCutscene10};
 	_vm->renderImage(31, 0);
 	_vm->paletteBrightness();
 	for (int i = 0; i < 4; ++i){
@@ -285,7 +287,7 @@ void Intro::cutscene() {
 		}
 		_vm->removeMessage();
 	}
-	_vm->renderMessage("Achttau...", kMessageLeft);
+	_vm->renderMessage(kStringIntroCutscene11, kMessageLeft);
 	_vm->renderImage(31, 6);
 	exitOnEscape(3);
 	_vm->renderImage(31, 3);
@@ -304,29 +306,29 @@ void Intro::cutscene() {
 	_vm->paletteBrightness();
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 	_vm->paletteBrightness();
-	animate(9, 11,10,0,kMessageRight,"Was war das?");
+	animate(9, 11,10,0,kMessageRight,kStringIntroCutscene12);
 	_vm->renderImage(9, 3);
 	exitOnEscape(3);
 	_vm->renderImage(9, 4);
-	animate(9, 5,4,0,kMessageLeft,"Keine Ahnung, Sir.");
-	animate(9, 0,0,0,kMessageCenter,"Ingenieur an Commander, bitte kommen!");
+	animate(9, 5,4,0,kMessageLeft,kStringIntroCutscene13);
+	animate(9, 0,0,0,kMessageCenter,kStringIntroCutscene14);
 	_vm->renderImage(9, 12);
 	exitOnEscape(2);
 	_vm->renderImage(9, 13);
 	exitOnEscape(2);
 	_vm->renderImage(9, 14);
-	animate(9, 19,20,0,kMessageRight,"Was ist los?");
-	animate(9, 0,0,0,kMessageCenter,"Wir haben einen Druckabfall im Hauptantriebssystem, Sir.|Einen Moment, ich schaue sofort nach, woran es liegt.");
+	animate(9, 19,20,0,kMessageRight,kStringIntroCutscene15);
+	animate(9, 0,0,0,kMessageCenter,kStringIntroCutscene16);
 	exitOnEscape(20);
-	animate(9, 0,0,0,kMessageCenter,"Schei\341e, der Ionenantrieb ist explodiert!|Die Teile sind \201ber den ganzen|Maschinenraum verstreut.");
-	animate(9, 19,20,0,kMessageRight,"Ach, du meine G\201te!|Gibt es irgendeine M\224glichkeit,|den Schaden schnell zu beheben?");
-	animate(9, 0,0,0,kMessageCenter,"Nein, Sir. Es sieht schlecht aus.");
+	animate(9, 0,0,0,kMessageCenter,kStringIntroCutscene17);
+	animate(9, 19,20,0,kMessageRight,kStringIntroCutscene18);
+	animate(9, 0,0,0,kMessageCenter,kStringIntroCutscene19);
 	_vm->renderImage(9, 16);
 	exitOnEscape(3);
 	_vm->renderImage(9, 17);
-	animate(9, 19,20,18,17,0,kMessageRight,"Hmm, die Erde zu alarmieren, w\201rde zu lange dauern.");
-	animate(9, 19,20,18,17,0,kMessageRight,"Ich darf kein Risiko eingehen.|Captain, geben Sie sofort Alarm!");
-	animate(9, 5,4,0,kMessageLeft,"Ok, Sir.");
+	animate(9, 19,20,18,17,0,kMessageRight,kStringIntroCutscene20);
+	animate(9, 19,20,18,17,0,kMessageRight,kStringIntroCutscene21);
+	animate(9, 5,4,0,kMessageLeft,kStringIntroCutscene3);
 	_vm->renderImage(9, 3);
 	exitOnEscape(3);
 	_vm->renderImage(9, 2);
@@ -343,16 +345,16 @@ void Intro::cutscene() {
 	_vm->renderImage(9, 16);
 	exitOnEscape(3);
 	_vm->renderImage(9, 15);
-	animate(9, 19,20,0,kMessageRight,"Commander an alle! Achtung, Achtung!|Begeben Sie sich sofort zum Notraumschiff!");
-	animate(9, 19,20,0,kMessageRight,"Ich wiederhole:|Begeben Sie sich sofort zum Notraumschiff!");
+	animate(9, 19,20,0,kMessageRight,kStringIntroCutscene22);
+	animate(9, 19,20,0,kMessageRight,kStringIntroCutscene23);
 	exitOnEscape(10);
 	_vm->renderImage(9, 13);
 	exitOnEscape(2);
 	_vm->renderImage(9, 12);
 	exitOnEscape(2);
 	_vm->renderImage(9, 9);
-	animate(9, 11,10,0,kMessageRight,"Captain, bereiten Sie alles für den Start vor!|Wir m\201ssen zur\201ck zur Erde!");
-	animate(9, 5,4,0,kMessageLeft,"Ok, Sir.");
+	animate(9, 11,10,0,kMessageRight,kStringIntroCutscene24);
+	animate(9, 5,4,0,kMessageLeft,kStringIntroCutscene3);
 	_vm->paletteFadeOut();
 
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
@@ -361,20 +363,20 @@ void Intro::cutscene() {
 	_vm->_system->fillScreen(kColorBlack);
 	_vm->_menuBrightness = 255;
 	_vm->paletteBrightness();
-	animate(9,0,0,0,kMessageNormal,"Eine Stunde sp\204ter ...");
+	animate(9,0,0,0,kMessageNormal,kStringIntroCutscene25);
 	_vm->_menuBrightness = 5;
 	_vm->paletteBrightness();
 
 	_vm->renderImage(31, 0);
 	_vm->paletteFadeIn();
-	animate(31, 0,0,0,kMessageNormal,"Die Besatzung hat die \"Supernova\" verlassen.");
-	animate(31, 0,0,0,kMessageNormal,"Das Schiff wird zwar in acht Jahren sein Ziel|erreichen, allerdings ohne Mannschaft.");
-	animate(31, 0,0,0,kMessageNormal,"Das ist das kl\204gliche Ende|der Mission Supernova.");
-	animate(31, 0,0,0,kMessageNormal,"Sie k\224nnen jetzt ihren Computer ausschalten.");
+	animate(31, 0,0,0,kMessageNormal,kStringIntroCutscene26);
+	animate(31, 0,0,0,kMessageNormal,kStringIntroCutscene27);
+	animate(31, 0,0,0,kMessageNormal,kStringIntroCutscene28);
+	animate(31, 0,0,0,kMessageNormal,kStringIntroCutscene29);
 	exitOnEscape(54);
-	animate(31, 0,0,0,kMessageNormal,"Halt!");
-	animate(31, 0,0,0,kMessageNormal,"Warten Sie!");
-	animate(31, 0,0,0,kMessageNormal,"Es regt sich etwas im Schiff.");
+	animate(31, 0,0,0,kMessageNormal,kStringIntroCutscene30);
+	animate(31, 0,0,0,kMessageNormal,kStringIntroCutscene31);
+	animate(31, 0,0,0,kMessageNormal,kStringIntroCutscene32);
 
 	_vm->_brightness = 0;
 	_vm->paletteBrightness();
@@ -391,20 +393,20 @@ void Intro::cutscene() {
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		;
 	exitOnEscape(30);
-	animate(22, 0,0,0,kMessageNormal,"Uuuuaaaahhhhh");
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene33);
 	exitOnEscape(18);
-	animate(22, 0,0,0,kMessageNormal,"Huch, ich bin ja gefesselt!|Wo bin ich?");
-	animate(22, 0,0,0,kMessageNormal,"Ach so, das sind ja die Sicherheitsgurte.|Ich arbeite ja jetzt in diesem Raumschiff hier.");
-	animate(22, 0,0,0,kMessageNormal,"Was? Schon zwei Uhr! Wieso|hat mich denn noch keiner|aus dem Bett geschmissen?");
-	animate(22, 0,0,0,kMessageNormal,"Ich werde mal nachsehen.");
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene34);
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene35);
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene36);
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene37);
 	exitOnEscape(18);
-	animate(22, 0,0,0,kMessageNormal,"Autsch!");
-	animate(22, 0,0,0,kMessageNormal,"Schei\341etagenbett!");
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene38);
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene39);
 	exitOnEscape(18);
-	animate(22, 0,0,0,kMessageNormal,"Erst mal den Lichtschalter finden.");
-	animate(22, 0,0,0,kMessageNormal,"Hmm, gar nicht so einfach|bei Schwerelosigkeit.");
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene40);
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene41);
 	exitOnEscape(36);
-	animate(22, 0,0,0,kMessageNormal,"Ah, hier ist er.");
+	animate(22, 0,0,0,kMessageNormal,kStringIntroCutscene42);
 	_vm->removeMessage();
 
 #undef exitOnEscape
