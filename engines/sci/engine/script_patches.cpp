@@ -148,6 +148,7 @@ static const char *const selectorNameTable[] = {
 	"priority",     // RAMA
 	"plane",        // RAMA
 	"state",        // RAMA
+	"getSubscriberObj", // RAMA
 #endif
 	NULL
 };
@@ -219,7 +220,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_saveFilePtr,
 	SELECTOR_priority,
 	SELECTOR_plane,
-	SELECTOR_state
+	SELECTOR_state,
+	SELECTOR_getSubscriberObj
 #endif
 };
 
@@ -6642,6 +6644,31 @@ static const uint16 ramaSerializeRegTPatch1[] = {
 	PATCH_END
 };
 
+// When restoring a NukeTimer client, the game makes a self-call to
+// `NukeTimer::getSubscriberObj` from `NukeTimer::serialize`, but forgets to
+// pass a required argument. In SSCI this happens to work because the value on
+// the stack where the first argument should be is the `getSubscriberObj`
+// selector, so it evaluates to true, but currently ScummVM defaults
+// uninitialised param reads to 0 so the game was following the wrong path and
+// breaking.
+// Applies to at least: US English
+static const uint16 ramaNukeTimerSignature[] = {
+	0x7e, SIG_ADDTOOFFSET(+2),              // line whatever
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(getSubscriberObj), // pushi $3ca (getSubscriberObj)
+	0x76,                                   // push0
+	0x54, SIG_UINT16(0x04),                 // self 4
+	SIG_END
+};
+
+static const uint16 ramaNukeTimerPatch[] = {
+	0x38, PATCH_SELECTOR16(getSubscriberObj), // pushi $3ca (getSubscriberObj)
+	0x78,                                     // push1
+	0x38, PATCH_UINT16(0x01),                 // pushi 1 (wasting bytes)
+	0x54, PATCH_UINT16(0x06),                 // self 6
+	PATCH_END
+};
+
 // When opening a datacube on the pocket computer, `DocReader::init` will try
 // to perform arithmetic on a pointer to `thighComputer::plane` and then use the
 // resulting value as the priority for the DocReader. This happened to work in
@@ -6687,10 +6714,11 @@ static const uint16 ramaChangeDirPatch[] = {
 };
 
 static const SciScriptPatcherEntry ramaSignatures[] = {
-	{  true,    55, "fix bad DocReader::init priority calculation", 1, ramaDocReaderInitSignature,      ramaDocReaderInitPatch },
-	{  true,    85, "fix SaveManager to use normal readWord calls", 1, ramaSerializeRegTSignature1,     ramaSerializeRegTPatch1 },
-	{  true, 64908, "disable video benchmarking",                   1, ramaBenchmarkSignature,          ramaBenchmarkPatch },
-	{  true, 64990, "disable change directory button",              1, ramaChangeDirSignature,          ramaChangeDirPatch },
+	{  true,    55, "fix bad DocReader::init priority calculation",   1, ramaDocReaderInitSignature,      ramaDocReaderInitPatch },
+	{  true,    85, "fix SaveManager to use normal readWord calls",   1, ramaSerializeRegTSignature1,     ramaSerializeRegTPatch1 },
+	{  true,   201, "fix crash restoring save games using NukeTimer", 1, ramaNukeTimerSignature,          ramaNukeTimerPatch },
+	{  true, 64908, "disable video benchmarking",                     1, ramaBenchmarkSignature,          ramaBenchmarkPatch },
+	{  true, 64990, "disable change directory button",                1, ramaChangeDirSignature,          ramaChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
