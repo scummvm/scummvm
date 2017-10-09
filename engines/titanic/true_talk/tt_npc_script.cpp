@@ -306,15 +306,13 @@ int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *s
 					error("Invalid dialogue index in bot script");
 				TThandleQuoteEntry &quote = _quotes[dialogueId];
 
-				int rangeLimit;
+				int rangeLimit = quote._index;
 				if (isQuoteDialled()) {
 					// Barbot and Doorbot response is affected by dial region
 					int dialRegion = getDialRegion(0);
 					if (dialRegion != 1) {
 						rangeLimit = MAX((int)quote._tag1 - 20, 20);
 					}
-				} else {
-					rangeLimit = quote._index;
 				}
 
 				dialogueId = ((remainder + _quotes._incr) % 100) >= (uint)rangeLimit

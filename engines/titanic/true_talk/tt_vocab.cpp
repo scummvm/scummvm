@@ -315,7 +315,9 @@ TTword *TTvocab::getSuffixedWord(TTstring &str, TTword **srcWord) const {
 
 		if (word) {
 			if (word->_wordClass == WC_ACTION) {
-				dynamic_cast<TTaction *>(word)->setVal(1);
+				TTaction *action = dynamic_cast<TTaction *>(word);
+				assert(action);
+				action->setVal(1);
 			}
 		} else {
 			tempStr = str;
