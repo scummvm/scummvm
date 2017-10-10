@@ -82,7 +82,7 @@ const char *gameText[] = {
 	"\233",                                  // kStringIntro13
 	"Hmm, er scheint kaputt zu sein.",       // kStringBroken
 	"Es ist nichts Besonderes daran.",       // kStringDefaultDescription
-	"Das mußt du erst nehmen.",              // kStringTakeMessage
+	"Das mu\341t du erst nehmen.",              // kStringTakeMessage
 	// 40
 	"Keycard",                               // kStringKeycard
 	"Die Keycard f\224r deine Schr\204nke.", // kStringKeycardDescription
@@ -322,7 +322,7 @@ const char *gameText[] = {
 	"Seltsam!",                              // kStringGenericDescription5
 	"Geld",                                  // kStringMoney
 	"Es sind 500 Xa.",                       // kStringMoneyDescription1
-	"Schließfach",                           // kStringLocker
+	"Schlie\341fach",                           // kStringLocker
 	// 240
 	"Es hat ein elektronisches Zahlenschlo\341.", // kStringLockerDescription
 	"Brief",                                 // kStringLetter
@@ -337,7 +337,7 @@ const char *gameText[] = {
 	"Figur",                                 // kStringStatue
 	// 250
 	"Stark!",                                // kStringStatueDescription
-	"Sie ist den Pflanzen auf der Erde sehr ähnlich.", // kStringPlantDescription
+	"Sie ist den Pflanzen auf der Erde sehr \204hnlich.", // kStringPlantDescription
 	"Er funktioniert nicht.",                // kStringComputerDescription
 	"Graffiti",                              // kStringGraffiti
 	"Seltsamer B\201roschmuck!",             // kStringGraffitiDescription
@@ -351,10 +351,10 @@ const char *gameText[] = {
 	"#########",                             // kStringOutro3
 	"^Aber:#",                               // kStringOutro4
 	"Das Abenteuer geht weiter, ...##",      // kStringOutro5
-	"... wenn Sie sich für 30,- DM registrieren lassen!##", // kStringOutro6
-	"(Falls Sie das nicht schon längst getan haben.)##", // kStringOutro7
+	"... wenn Sie sich f\201r 30,- DM registrieren lassen!##", // kStringOutro6
+	"(Falls Sie das nicht schon l\204ngst getan haben.)##", // kStringOutro7
 	// 265
-	"In^ Teil 2 - Der Doppelgänger^ erwarten Sie:##", // kStringOutro8
+	"In^ Teil 2 - Der Doppelg\204nger^ erwarten Sie:##", // kStringOutro8
 	"Knifflige Puzzles,##",                  // kStringOutro9
 	"noch mehr Grafik und Sound,##",         // kStringOutro10
 	"ein perfekt geplanter Museumseinbruch,##", // kStringOutro11
@@ -400,7 +400,7 @@ const char *gameText[] = {
 	"Ich darf kein Risiko eingehen.|Captain, geben Sie sofort Alarm!", // kStringIntroCutscene21
 	"Commander an alle! Achtung, Achtung!|Begeben Sie sich sofort zum Notraumschiff!", // kStringIntroCutscene22
 	"Ich wiederhole:|Begeben Sie sich sofort zum Notraumschiff!", // kStringIntroCutscene23
-	"Captain, bereiten Sie alles für den Start vor!|Wir m\201ssen zur\201ck zur Erde!", // kStringIntroCutscene24
+	"Captain, bereiten Sie alles f\201r den Start vor!|Wir m\201ssen zur\201ck zur Erde!", // kStringIntroCutscene24
 	// 305
 	"Eine Stunde sp\204ter ...",              // kStringIntroCutscene25
 	"Die Besatzung hat die \"Supernova\" verlassen.", // kStringIntroCutscene26
