@@ -5,15 +5,26 @@ Programmcodes finden Sie auf Englisch unter:
 1.10.0 (DD.MM.YYYY)
  Neue Spiele:
    - Unterstützung für Full Pipe hinzugefügt.
+   - Unterstützung für Hi-Res Adventure #3: Cranston Manor hinzugefügt.
+   - Unterstützung für Hi-Res Adventure #4: Ulysses and the Golden Fleece hinzugefügt.
+   - Unterstützung für Hi-Res Adventure #5: Time Zone hinzugefügt.
+   - Unterstützung für Hi-Res Adventure #6: The Dark Crystal hinzugefügt.
+   - Unterstützung für Riven hinzugefügt.
+   - Unterstützung für Starship Titanic (Raumschiff Titanic) hinzugefügt.
 
- Neue Spiele (Sierra SCI2 - SCI2.1):
+ Neue Spiele (Sierra SCI2 - SCI3):
    - Unterstützung für Gabriel Knight hinzugefügt.
    - Unterstützung für Gabriel Knight 2 hinzugefügt.
    - Unterstützung für King's Quest VII hinzugefügt.
    - Unterstützung für King's Questions hinzugefügt.
    - Unterstützung für Leisure Suit Larry 6 (hires) hinzugefügt.
+   - Unterstützung für Leisure Suit Larry 7 hinzugefügt.
+   - Unterstützung für Lighthouse hinzugefügt.
+   - Unterstützung für Mixed-Up Mother Goose Deluxe hinzugefügt.
    - Unterstützung für Phantasmagoria hinzugefügt.
+   - Unterstützung für Phantasmagoria 2 hinzugefügt.
    - Unterstützung für Police Quest 4 hinzugefügt.
+   - Unterstützung für RAMA hinzugefügt.
    - Unterstützung für Shivers hinzugefügt.
    - Unterstützung für Space Quest 6 hinzugefügt.
    - Unterstützung für Torin's Passage hinzugefügt.
@@ -29,6 +40,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Sprache der Benutzeroberfläche kann ohne Programmneustart geändert werden.
    - Integrierter Munt MT-32-Emulator auf Version 2.0.3 aktualisiert.
    - Verbesserte Joystick-Bedienung.
+   - Verbesserte Audio-Latenz.
+   - Verbesserte Verwaltung des ScummVM-Fensters in Spielen, die den Bildschirm-Modus wechseln.
 
  AGOS:
    - Einstellung für die Untertitel-Geschwindigkeit in der hebräischen Version von
@@ -43,10 +56,19 @@ Programmcodes finden Sie auf Englisch unter:
    - Spielstände können jetzt mithilfe des GMM gespeichert und geladen werden.
 
  SCI:
+   - Verbesserte Ladezeit bei Verwendung des MT-32-Emulators.
+   - Verbesserte Behandlung von MT-32-Halleffekten in SCI0-Spielen.
+   - Verbesserte Auswahl synthetisierter Soundeffekte in SCI0-Spielen.
+   - Verbesserte Auswahl der digitalen Audio-Ausgabe in SQ4.
+   - Verbesserte Ressourcenverwaltung.
+   - Verbesserte Fehlerbehandlung fehlerhafter MIDI-Daten.
+   - Fehler behoben, der die Speicherstände mit der Zeit mit unnötigen Daten gefüllt hat.
+   - Fehlerhafter Tag/Nacht-Rhythmus in QFG3 behoben.
    - Skript-Fehler in Police Quest 3 behoben. Wenn der Spieler Marie das Medaillon
      übergibt, erhält er dafür 10 Punkte. Damit ist es jetzt möglich, das Spiel mit
      einer perfekten Punktzahl zu beenden. Dieser Fehler ist auch im Originalspiel
      vorhanden.
+   - Verschiedene andere Skript-Fehler wurden behoben.
 
 1.9.1 (DD.MM.YYYY)
  Allgemein:
