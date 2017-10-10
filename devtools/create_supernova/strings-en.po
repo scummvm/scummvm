@@ -8,12 +8,12 @@ msgstr ""
 "Project-Id-Version: Mission Supernova 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-21 23:49+0100\n"
-"PO-Revision-Date: 2017-09-29 19:51+0000\n"
+"PO-Revision-Date: 2017-10-10 22:14+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CP850\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 2.9\n"
@@ -416,7 +416,7 @@ msgstr "Here, this article looks interesting."
 
 #: ../../msn/msn_r0.c:268
 msgid "Hmm, irgendwie komme|ich mir verarscht vor."
-msgstr ""
+msgstr "Hmm, somehow|I feel tricked."
 
 #: ../../msn/msn_r0.c:273
 msgid "Es ist die Keycard des Commanders."
@@ -641,12 +641,10 @@ msgid "Geschwindigkeit: "
 msgstr "Speed: "
 
 #: ../../msn/msn_r1.c:308
-#, fuzzy
 msgid "8000 hpm"
 msgstr "8000 hpm"
 
 #: ../../msn/msn_r1.c:309
-#, fuzzy
 msgid "0 hpm"
 msgstr "0 hpm"
 
@@ -755,9 +753,8 @@ msgid "Keycard des Commanders"
 msgstr "Keycard of the Commander"
 
 #: ../../msn/msn_r1.c:766
-#, fuzzy
 msgid "Was nÅtzt dir der Anschlu·|ohne eine Stromquelle?!"
-msgstr "The connection is useless without a power source!"
+msgstr "What good would come from connecting it|without a power source?!"
 
 #: ../../msn/msn_r1.c:770
 msgid "Die Spannung ist auf Null abgesunken."
@@ -772,9 +769,8 @@ msgid "Du mu·t die Luke erst îffnen."
 msgstr "You must open the hatch first."
 
 #: ../../msn/msn_r1.c:801
-#, fuzzy
 msgid "Das Seil ist hier schon ganz richtig."
-msgstr "The cable is already at the right place."
+msgstr "The cable is in the right place."
 
 #: ../../msn/msn_r1.c:806
 msgid "Das Kabel ist zu kurz."
@@ -955,9 +951,8 @@ msgid "Der einzige Raumanzug, den die|anderen hiergelassen haben ..."
 msgstr "The only space suit the others have left ..."
 
 #: ../../msn/msn_r1_r.c:72
-#, fuzzy
 msgid "Versorgung"
-msgstr "Supply"
+msgstr "Oxygen Supply"
 
 #: ../../msn/msn_r1_r.c:72
 msgid "Es ist der Versorgungsteil zum Raumanzug."
@@ -984,10 +979,9 @@ msgid "LÅsterklemme"
 msgstr "Terminal strip"
 
 #: ../../msn/msn_r1_r.c:84
-#, fuzzy
 msgid ""
 "Junge, Junge! Die Explosion hat ein|ganz schînes Durcheinander angerichtet."
-msgstr "Boy, oh boy! The explosion wreaked|quite some havoc."
+msgstr "Boy, oh boy! The explosion created|quite a mess."
 
 #: ../../msn/msn_r1_r.c:86
 msgid "Reaktor"
@@ -999,7 +993,7 @@ msgstr "This was a reactor once."
 
 #: ../../msn/msn_r1_r.c:87
 msgid "DÅse"
-msgstr ""
+msgstr "Thruster"
 
 #: ../../msn/msn_r1_r.c:88
 msgid "blauer KÅrbis"
@@ -1014,9 +1008,8 @@ msgid "LandefÑhre"
 msgstr "Landing module"
 
 #: ../../msn/msn_r1_r.c:90
-#, fuzzy
 msgid "Sie war eigentlich fÅr Bodenuntersuchungen|auf Arsano 3 gedacht."
-msgstr "It was supposed to be used for soil|investigation on Arsano 3."
+msgstr "It was supposed to be used for soil analysis|on Arsano 3."
 
 #: ../../msn/msn_r1_r.c:93 ../../msn/msn_r1_r.c:120
 msgid "Sie fÅhrt nach drau·en."
@@ -1114,9 +1107,8 @@ msgstr "Magnets"
 
 #: ../../msn/msn_r1_r.c:148 ../../msn/msn_r1_r.c:215 ../../msn/msn_r1_r.c:233
 #: ../../msn/msn_r1_r.c:276
-#, fuzzy
 msgid "Damit werden Sachen auf|dem Tisch festgehalten."
-msgstr "This keeps things|on the board."
+msgstr "This keeps things|on the table."
 
 #: ../../msn/msn_r1_r.c:152 ../../msn/msn_r1_r.c:167 ../../msn/msn_r1_r.c:190
 #: ../../msn/msn_r1_r.c:203 ../../msn/msn_r1_r.c:221 ../../msn/msn_r1_r.c:247
@@ -1129,9 +1121,8 @@ msgstr "Cabinet"
 #: ../../msn/msn_r1_r.c:222 ../../msn/msn_r1_r.c:248 ../../msn/msn_r1_r.c:262
 #: ../../msn/msn_r1_r.c:264 ../../msn/msn_r1_r.c:267 ../../msn/msn_r1_r.c:282
 #: ../../msn/msn_r2.c:1299
-#, fuzzy
 msgid "Fach"
-msgstr "Compartment"
+msgstr "Storage compartment"
 
 #: ../../msn/msn_r1_r.c:155 ../../msn/msn_r1_r.c:170 ../../msn/msn_r1_r.c:206
 #: ../../msn/msn_r1_r.c:224 ../../msn/msn_r1_r.c:250 ../../msn/msn_r1_r.c:278
@@ -1153,7 +1144,6 @@ msgid "TennisschlÑger"
 msgstr "Tennis racquets"
 
 #: ../../msn/msn_r1_r.c:163
-#, fuzzy
 msgid "Fliegt Boris Becker auch mit?"
 msgstr "Is Boris Becker part of the crew?"
 
@@ -1178,9 +1168,8 @@ msgid "Das ist dein Bett. Toll, nicht wahr?"
 msgstr "This is your bed. Great, isn't it?"
 
 #: ../../msn/msn_r1_r.c:183 ../../msn/msn_r1_r.c:186 ../../msn/msn_r1_r.c:195
-#, fuzzy
 msgid "Das ist eins deiner drei FÑcher."
-msgstr "It's one of your three compartments."
+msgstr "It's one of your three storage compartments."
 
 #: ../../msn/msn_r1_r.c:185
 msgid "Alben"
@@ -1199,12 +1188,10 @@ msgid "Das ist dein Schrank."
 msgstr "This is your cabinet."
 
 #: ../../msn/msn_r1_r.c:191 ../../msn/msn_r1_r.c:274 ../../msn/msn_r1_r.c:275
-#, fuzzy
 msgid "Krimskram"
 msgstr "Junk"
 
 #: ../../msn/msn_r1_r.c:191 ../../msn/msn_r1_r.c:274 ../../msn/msn_r1_r.c:275
-#, fuzzy
 msgid "Es ist nichts brauchbares dabei."
 msgstr "There is nothing useful in there."
 
@@ -1221,7 +1208,6 @@ msgid "UnterwÑsche"
 msgstr "Underwear"
 
 #: ../../msn/msn_r1_r.c:194
-#, fuzzy
 msgid "StrÅmpfe"
 msgstr "Socks"
 
@@ -1234,7 +1220,6 @@ msgid "Es ist|\"Per Anhalter durch die Galaxis\"|von Douglas Adams."
 msgstr "This is|\"The Hitchhiker's Guide to the Galaxy\"|by Douglas Adams."
 
 #: ../../msn/msn_r1_r.c:212
-#, fuzzy
 msgid "Herb!"
 msgstr "Austere!"
 
@@ -1259,17 +1244,14 @@ msgid "Poster"
 msgstr "Poster"
 
 #: ../../msn/msn_r1_r.c:230
-#, fuzzy
 msgid "Ein Poster von \"Big Boss\"."
-msgstr "A poster from \"Big Boss\""
+msgstr "A poster from \"Big Boss\"."
 
 #: ../../msn/msn_r1_r.c:231
-#, fuzzy
 msgid "Ein Poster von \"Rock Desaster\"."
 msgstr "A poster for \"Rock Disaster\"."
 
 #: ../../msn/msn_r1_r.c:232
-#, fuzzy
 msgid "Box"
 msgstr "Speaker"
 
@@ -1278,9 +1260,8 @@ msgid "Schallplatte"
 msgstr "Record"
 
 #: ../../msn/msn_r1_r.c:235
-#, fuzzy
 msgid "Die Platte ist von \"Big Boss\"."
-msgstr "This record is from \"Big Boss\"."
+msgstr "This record is the soundtrack from \"Big Boss\"."
 
 #: ../../msn/msn_r1_r.c:237
 msgid "SchallplattenstÑnder"
@@ -1299,7 +1280,6 @@ msgid "Sieht aus, als kÑme|er aus dem Museum."
 msgstr "Looks like something from a museum."
 
 #: ../../msn/msn_r1_r.c:244
-#, fuzzy
 msgid "Stecker"
 msgstr "Male plug"
 
@@ -1348,7 +1328,6 @@ msgid "Klo"
 msgstr "Loo"
 
 #: ../../msn/msn_r1_r.c:291
-#, fuzzy
 msgid "Ein Klo mit Saugmechanismus."
 msgstr "A toilet with suction mechanism."
 
@@ -1357,7 +1336,6 @@ msgid "Dusche"
 msgstr "Shower"
 
 #: ../../msn/msn_r2.c:57
-#, fuzzy
 msgid "Die Raumschiffe sind alle verschlossen."
 msgstr "The spaceships are all locked."
 
@@ -1376,7 +1354,6 @@ msgid "Darauf steht:|\"Treffpunkt Galactica\"."
 msgstr "It says:|\"Galactica meeting point\"."
 
 #: ../../msn/msn_r2.c:144
-#, fuzzy
 msgid "Wieso das denn nicht?"
 msgstr "Why the hell not?"
 
@@ -1428,45 +1405,47 @@ msgstr "You are in the restaurant|\"Galactica meeting point\"."
 msgid ""
 "Wir sind bei den interessantesten|Ereignissen in der Galaxis|immer zur "
 "Stelle."
-msgstr ""
+msgstr "We are always there when|interesting things happen|in the galaxy."
 
 #: ../../msn/msn_r2.c:194
 msgid "Wenn Sie meinen."
-msgstr ""
+msgstr "If you say so."
 
 #: ../../msn/msn_r2.c:199 ../../msn/msn_r2.c:256
 msgid "In der Toilette gibt es|Schlie·fÑcher fÅr Schuhe."
-msgstr ""
+msgstr "There are lockers for shoes|in the restroom."
 
 #: ../../msn/msn_r2.c:204
 msgid ""
 "Wenn Sie das Lokal betreten|wollen, mÅssen Sie erst|ihre Schuhe ausziehen."
 msgstr ""
+"If you want to enter the restaurant,|you have to take off your shoes first."
 
 #: ../../msn/msn_r2.c:208
 msgid "Wollen Sie, da· ich Sie rau·schmei·e?"
-msgstr ""
+msgstr "You want me to kick you out?"
 
 #: ../../msn/msn_r2.c:216 ../../msn/msn_r2.c:274
 msgid "Hhius otgfh Dgfdrkjlh Fokj gf."
-msgstr ""
+msgstr "Hhius otgfh Dgfdrkjlh Fokj gf."
 
 #: ../../msn/msn_r2.c:230 ../../msn/msn_s.c:289
 msgid "Halt!"
-msgstr ""
+msgstr "Halt!"
 
 #: ../../msn/msn_r2.c:232
 msgid "Uhwdejkt!"
-msgstr ""
+msgstr "Uhwdejkt!"
 
 #: ../../msn/msn_r2.c:241
 msgid "Sie mÅssen erst ihre Schuhe ausziehen, Sie Trottel!"
-msgstr ""
+msgstr "You have to take off your shoes first, idiot!"
 
 #: ../../msn/msn_r2.c:243
 msgid ""
 "Was fÑllt ihnen ein!|Sie kînnen doch ein Lokal|nicht mit Schuhen betreten!"
 msgstr ""
+"What are you thinking!|You cannot enter a restaurant|with your shoes on!"
 
 #: ../../msn/msn_r2.c:249
 msgid "Fragen Sie nicht so doof!"
@@ -2715,183 +2694,188 @@ msgstr ""
 
 #: ../../msn/msn_s.c:84
 msgid "Teil 1:"
-msgstr ""
+msgstr "Part 1:"
 
 #: ../../msn/msn_s.c:85
 msgid "Das Schicksal"
-msgstr ""
+msgstr "The fate of"
 
 #: ../../msn/msn_s.c:86
 msgid "des Horst Hummel"
-msgstr ""
+msgstr "Horst Hummel"
 
 #: ../../msn/msn_s.c:131
 msgid "Viertausend"
-msgstr ""
+msgstr "Four thousand"
 
 #: ../../msn/msn_s.c:131
 msgid "FÅnftausend"
-msgstr ""
+msgstr "Five thousand"
 
 #: ../../msn/msn_s.c:131
 msgid "Sechstausend"
-msgstr ""
+msgstr "Six thousand"
 
 #: ../../msn/msn_s.c:131
 msgid "Siebentausend"
-msgstr ""
+msgstr "Seven thousand"
 
 #: ../../msn/msn_s.c:144
 msgid "Zwei Tage nach dem Start|im Cockpit der \"Supernova\" ..."
-msgstr ""
+msgstr "Two days after take-off|in the cockpit of the \"Supernova\"..."
 
 #: ../../msn/msn_s.c:153
 msgid "Entferung von der Sonne: 1 500 000 km.|Gehen Sie auf 8000 hpm, Captain!"
-msgstr ""
+msgstr "Distance from the sun: 1 500 000 km.|Go to 8000 hpm, Captain!"
 
 #: ../../msn/msn_s.c:168
 msgid "Geschwindigkeit:"
-msgstr ""
+msgstr "Speed:"
 
 #: ../../msn/msn_s.c:169
 msgid "Zweitausend hpm"
-msgstr ""
+msgstr "Two thousand hpm"
 
 #: ../../msn/msn_s.c:172
 msgid "Dreitausend"
-msgstr ""
+msgstr "Three thousand"
 
 #: ../../msn/msn_s.c:189
 msgid "Achttau..."
-msgstr ""
+msgstr "Eight thous..."
 
 #: ../../msn/msn_s.c:214
 msgid "Keine Ahnung, Sir."
-msgstr ""
+msgstr "I have no idea, Sir."
 
 #: ../../msn/msn_s.c:215
 msgid "Ingenieur an Commander, bitte kommen!"
-msgstr ""
+msgstr "Engineer to Commander, come in!"
 
 #: ../../msn/msn_s.c:221
 msgid "Was ist los?"
-msgstr ""
+msgstr "What's going on?"
 
 #: ../../msn/msn_s.c:222
 msgid ""
 "Wir haben einen Druckabfall im Hauptantriebssystem, Sir.|Einen Moment, ich "
 "schaue sofort nach, woran es liegt."
 msgstr ""
+"We have a pressure drop in the main propulsion system, sir.|Wait a minute, "
+"I'll have a look."
 
 #: ../../msn/msn_s.c:224
 msgid ""
 "Schei·e, der Ionenantrieb ist explodiert!|Die Teile sind Åber den ganzen|"
 "Maschinenraum verstreut."
-msgstr ""
+msgstr "Shit, the Ion drive blew up!|The parts are all over the engine room."
 
 #: ../../msn/msn_s.c:225
 msgid ""
 "Ach, du meine GÅte!|Gibt es irgendeine Mîglichkeit,|den Schaden schnell zu "
 "beheben?"
-msgstr ""
+msgstr "Oh, my God!|Any way to fix the damage quickly?"
 
 #: ../../msn/msn_s.c:226
 msgid "Nein, Sir. Es sieht schlecht aus."
-msgstr ""
+msgstr "No, sir. It looks bad."
 
 #: ../../msn/msn_s.c:230
 msgid "Hmm, die Erde zu alarmieren, wÅrde zu lange dauern."
-msgstr ""
+msgstr "Hmm, alerting Earth would take too long."
 
 #: ../../msn/msn_s.c:231
 msgid "Ich darf kein Risiko eingehen.|Captain, geben Sie sofort Alarm!"
-msgstr ""
+msgstr "I can't take any chances.|Captain, sound the alarm!"
 
 #: ../../msn/msn_s.c:232 ../../msn/msn_s.c:264
 msgid "Ok, Sir."
-msgstr ""
+msgstr "Ok, Sir."
 
 #: ../../msn/msn_s.c:255
 msgid ""
 "Commander an alle! Achtung, Achtung!|Begeben Sie sich sofort zum "
 "Notraumschiff!"
 msgstr ""
+"Commander to all! Attention, attention! Attention!|Get to the emergency ship "
+"immediately!"
 
 #: ../../msn/msn_s.c:256
 msgid "Ich wiederhole:|Begeben Sie sich sofort zum Notraumschiff!"
-msgstr ""
+msgstr "I repeat,|proceed immediately to the emergency spaceship!"
 
 #: ../../msn/msn_s.c:263
 msgid ""
 "Captain, bereiten Sie alles fÅr den Start vor!|Wir mÅssen zurÅck zur Erde!"
 msgstr ""
+"Captain, get everything ready for departure!|We have to get back to Earth!"
 
 #: ../../msn/msn_s.c:277
 msgid "Eine Stunde spÑter ..."
-msgstr ""
+msgstr "An hour later..."
 
 #: ../../msn/msn_s.c:284
 msgid "Die Besatzung hat die \"Supernova\" verlassen."
-msgstr ""
+msgstr "The crew has left the \"Supernova\"."
 
 #: ../../msn/msn_s.c:285
 msgid ""
 "Das Schiff wird zwar in acht Jahren sein Ziel|erreichen, allerdings ohne "
 "Mannschaft."
-msgstr ""
+msgstr "The ship will reach its destination in eight years,|but without a crew."
 
 #: ../../msn/msn_s.c:286
 msgid "Das ist das klÑgliche Ende|der Mission Supernova."
-msgstr ""
+msgstr "This is the pitiful end|of the Supernova mission."
 
 #: ../../msn/msn_s.c:287
 msgid "Sie kînnen jetzt ihren Computer ausschalten."
-msgstr ""
+msgstr "You can now turn off your computer."
 
 #: ../../msn/msn_s.c:290
 msgid "Warten Sie!"
-msgstr ""
+msgstr "Wait, wait!"
 
 #: ../../msn/msn_s.c:291
 msgid "Es regt sich etwas im Schiff."
-msgstr ""
+msgstr "There's something stirring in the ship."
 
 #: ../../msn/msn_s.c:307
 msgid "Uuuuaaaahhhhh"
-msgstr ""
+msgstr "Uuuuaaaahhhhh"
 
 #: ../../msn/msn_s.c:309
 msgid "Huch, ich bin ja gefesselt!|Wo bin ich?"
-msgstr ""
+msgstr "Argh, I'm tied up!|Where am I?"
 
 #: ../../msn/msn_s.c:310
 msgid ""
 "Ach so, das sind ja die Sicherheitsgurte.|Ich arbeite ja jetzt in diesem "
 "Raumschiff hier."
-msgstr ""
+msgstr "Ah yes, these are the seat belts.|I work in this spaceship now."
 
 #: ../../msn/msn_s.c:311
 msgid ""
 "Was? Schon zwei Uhr! Wieso|hat mich denn noch keiner|aus dem Bett "
 "geschmissen?"
-msgstr ""
+msgstr "What? It's 2:00 already!|How come no one has kicked me|out of bed yet?"
 
 #: ../../msn/msn_s.c:314
 msgid "Autsch!"
-msgstr ""
+msgstr "Ouch!"
 
 #: ../../msn/msn_s.c:315
 msgid "Schei·etagenbett!"
-msgstr ""
+msgstr "Shitty bunk bed!"
 
 #: ../../msn/msn_s.c:317
 msgid "Erst mal den Lichtschalter finden."
-msgstr ""
+msgstr "First, find the light switch."
 
 #: ../../msn/msn_s.c:318
 msgid "Hmm, gar nicht so einfach|bei Schwerelosigkeit."
-msgstr ""
+msgstr "Hmm, not so easy|in weightlessness."
 
 #: ../../msn/msn_s.c:320
 msgid "Ah, hier ist er."
-msgstr ""
+msgstr "Ah, here it is."
