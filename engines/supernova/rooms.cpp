@@ -154,9 +154,12 @@ void Intro::titleScreen() {
 		_gm->wait2(1);
 	titleFadeIn();
 	_vm->renderText(kStringTitleVersion, 295, 190, kColorWhite44);
-	_vm->renderText(kStringTitle1, 64, 120, kColorLightBlue);
-	_vm->renderText(kStringTitle2, 44, 132, kColorWhite99);
-	_vm->renderText(kStringTitle3, 35, 142, kColorWhite99);
+	const Common::String& title1 = _vm->getGameString(kStringTitle1);
+	const Common::String& title2 = _vm->getGameString(kStringTitle2);
+	const Common::String& title3 = _vm->getGameString(kStringTitle3);
+	_vm->renderText(title1, 78 - _vm->textWidth(title1)/2, 120, kColorLightBlue);
+	_vm->renderText(title2, 78 - _vm->textWidth(title2)/2, 132, kColorWhite99);
+	_vm->renderText(title3, 78 - _vm->textWidth(title3)/2, 142, kColorWhite99);
 	_gm->wait2(1);
 	CursorMan.showMouse(true);
 	_vm->playSoundMod(kMusicIntro);
