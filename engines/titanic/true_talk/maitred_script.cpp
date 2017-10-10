@@ -72,7 +72,7 @@ int MaitreDScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	if (roomScript->_scriptId != 132)
 		return 2;
-	if (preprocess(roomScript, sentence) == 1)
+	if (preprocess(roomScript, sentence) != 1)
 		return 1;
 
 	CTrueTalkManager::setFlags(10, 0);
