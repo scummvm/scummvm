@@ -371,6 +371,7 @@ int TTparser::searchAndReplace(TTstring &line, int startIndex, const StringArray
 				// Replace the text in the line with it's replacement
 				line = CString(line.c_str(), line.c_str() + startIndex) + replacementStr +
 					CString(line.c_str() + startIndex + origStr.size());
+				lineSize = line.size();
 
 				startIndex += replacementStr.size();
 				break;
