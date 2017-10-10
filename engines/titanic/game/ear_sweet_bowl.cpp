@@ -49,7 +49,7 @@ bool CEarSweetBowl::MovieEndMsg(CMovieEndMsg *msg) {
 	if (!doneMsg._value) {
 		CPetControl *pet = getPetControl();
 		if (pet)
-			pet->hasRoomFlags();
+			pet->isInAssignedRoom();
 
 		CIsParrotPresentMsg parrotMsg;
 		parrotMsg.execute(findRoom());

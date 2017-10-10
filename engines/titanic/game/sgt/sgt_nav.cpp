@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/sgt_nav.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -43,7 +44,9 @@ bool SGTNav::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CTurnOn onMsg;
 	CTurnOff offMsg;
 
-	if (_statics->_chestOfDrawers == "Open" && _statics->_bedhead == "Open") {
+	CPetControl *pet = getPetControl();
+	if (_statics->_chestOfDrawers == "Open" && _statics->_bedhead == "Open"
+			&& pet->isInAssignedRoom()) {
 		if (_statics->_vase == "Open")
 			offMsg.execute("Vase");
 		if (_statics->_tv == "Closed")
@@ -68,10 +71,14 @@ bool SGTNav::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool SGTNav::MouseMoveMsg(CMouseMoveMsg *msg) {
-	if (_statics->_chestOfDrawers == "Open" && _statics->_bedhead == "Open")
-		_cursorId = CURSOR_MOVE_FORWARD;
-	else
-		_cursorId = CURSOR_ARROW;
+	_cursorId = CURSOR_ARROW;
+
+	if (_statics->_chestOfDrawers == "Open" && _statics->_bedhead == "Open") {
+		CPetControl *pet = getPetControl();
+		if (pet->isInAssignedRoom()) {
+			_cursorId = CURSOR_MOVE_FORWARD;
+		}
+	}
 
 	return true;
 }
