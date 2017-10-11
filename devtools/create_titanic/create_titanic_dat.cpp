@@ -56,7 +56,7 @@
  * ASCIIZ  - name of the resource
  */
 
-#define VERSION_NUMBER 4
+#define VERSION_NUMBER 5
 #define HEADER_SIZE 0x1700
 
 Common::File inputFile, outputFile;
@@ -615,7 +615,7 @@ static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
 	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
 };
 
-static const char *const STRINGS_EN[153] = {
+static const char *const STRINGS_EN[156] = {
 	"",
 	"You are standing outside the Pellerator.",
 	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
@@ -761,6 +761,8 @@ static const char *const STRINGS_EN[153] = {
 	"Saved Chevron: ",
 	"Current location: ",
 	"Elevator %d",
+	"Floor %d",
+	"Room %d",
 	" (shift-click edits)",
 	"A hot",
 	"A cold",
@@ -776,7 +778,7 @@ static const char *const STRINGS_EN[153] = {
 	"Speech volume"
 };
 
-static const char *const STRINGS_DE[199] = {
+static const char *const STRINGS_DE[202] = {
 	"",
 	"Sie befinden sich vor dem Pellerator.",
 	"Wir bedauern, da ein Bot den Weg versperrt, ist Ihnen der "
@@ -938,6 +940,8 @@ static const char *const STRINGS_DE[199] = {
 	"Gespeichertes Abzeichen: ",
 	"Derzeitige Position: ",
 	"Aufzug %d",
+	"Stock %d",
+	"Kabine %d",
 	" (Chevrons ver\xE4" "ndern mit Umschalt-Taste+Klicken)",
 	"Eine hei\xDF""e",
 	"Eine kalte",
@@ -1573,8 +1577,8 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-	writeStringArray("TEXT/STRINGS", STRINGS_EN, 153);
-	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 199);
+	writeStringArray("TEXT/STRINGS", STRINGS_EN, 156);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 202);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };

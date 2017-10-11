@@ -124,13 +124,6 @@ public:
 	uint getElevatorNum() const { return getElevatorBits() + 1; }
 
 	/**
-	 * Get a description for the elevator number
-	 */
-	CString getElevatorDesc() const {
-		return CString::format("Elevator %d", getElevatorNum());
-	}
-
-	/**
 	 * Gets the bits for the passenger class
 	 */
 	uint getPassengerClassBits() const;
@@ -168,13 +161,6 @@ public:
 	uint getFloorNum() const;
 
 	/**
-	 * Get a description for the floor number
-	 */
-	CString getFloorDesc() const {
-		return CString::format("Floor %d", getFloorNum());
-	}
-
-	/**
 	 * Sets the bits for the room number
 	 */
 	void setRoomBits(uint roomBits);
@@ -190,11 +176,19 @@ public:
 	uint getRoomNum() const { return getRoomBits(); }
 
 	/**
+	 * Get a description for the elevator number
+	 */
+	CString getElevatorDesc() const;
+
+	/**
+	 * Get a description for the floor number
+	 */
+	CString getFloorDesc() const;
+
+	/**
 	 * Gets a string for the room number
 	 */
-	CString getRoomNumDesc() const {
-		return CString::format("Room %d", getRoomNum());
-	}
+	CString getRoomNumDesc() const;
 
 	bool getBit0() const;
 
