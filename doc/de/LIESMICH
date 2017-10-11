@@ -360,14 +360,14 @@ Spiele von Sierra (SCI):
      Leisure Suit Larry 5                        [lsl5]
      Leisure Suit Larry 6                        [lsl6]
      Leisure Suit Larry 6 (hires)                [lsl6hires]
-	 Leisure Suit Larry 7                        [lsl7]
-	 Lighthouse: The Dark Being                  [lighthouse]
+     Leisure Suit Larry 7                        [lsl7]
+     Lighthouse: The Dark Being                  [lighthouse]
      Mixed-up Fairy Tales                        [fairytales]
      Mixed-up Mother Goose                       [mothergoose]
-	 Mixed-up Mother Goose Deluxe                [mothergoosehires]
+     Mixed-up Mother Goose Deluxe                [mothergoosehires]
      Pepper's Adventures in Time                 [pepper]
      Phantasmagoria                              [phantasmagoria]
-	 Phantasmagoria 2: A Puzzle of Flesh         [phantasmagoria2]
+     Phantasmagoria 2: A Puzzle of Flesh         [phantasmagoria2]
      Police Quest 1                              [pq1sci]
      Police Quest 2                              [pq2]
      Police Quest 3                              [pq3]
@@ -376,7 +376,7 @@ Spiele von Sierra (SCI):
      Quest for Glory 1                           [qfg1vga]
      Quest for Glory 2                           [qfg2]
      Quest for Glory 3                           [qfg3]
-	 RAMA                                        [rama]
+     RAMA                                        [rama]
      Slater & Charlie Go Camping                 [slater]
      Shivers                                     [shivers]
      Space Quest I                               [sq1sci]
@@ -424,11 +424,11 @@ Andere Spiele:
      Nippon Safes Inc.                           [nippon]
      Rex Nebular and the Cosmic Gender Bender    [nebular]
      Ringworld: Revenge of the Patriarch         [ringworld]
-	 Riven: The Sequel to Myst                   [riven]
+     Riven: The Sequel to Myst                   [riven]
      Return to Ringworld                         [ringworld2]
      Sfinx                                       [sfinx]
      Soltys                                      [soltys]
-	 Starship Titanic                            [titanic]
+     Starship Titanic                            [titanic]
      TeenAgent                                   [teenagent]
      The 7th Guest                               [t7g]
      The Journeyman Project: Pegasus Prime       [pegasus]
@@ -1662,7 +1662,7 @@ Die Engines, die momentan das Zurückkehren zur Spieleliste unterstützen, sind:
     SWORD1
     SWORD2
     TEENAGENT
-	TITANIC
+    TITANIC
     TOUCHE
     TSAGE
     TUCKER
@@ -2052,11 +2052,11 @@ den Originalversionen verwendet werden.
 
   Myst
     - Bennen Sie die Spielstanddatei in "myst-xxx.mys" um.
-	- Spielstände der Masterpiece Edition und der normalen Ausgabe sind austauschbar.
+    - Spielstände der Masterpiece Edition und der normalen Ausgabe sind austauschbar.
 
   Riven
     - Bennen Sie die Spielstanddatei in "riven-xxx.rvn" um.
-	- Spielstände der CD- und der DVD-Ausgabe sind nicht austauschbar.
+    - Spielstände der CD- und der DVD-Ausgabe sind nicht austauschbar.
 
   Simon the Sorcerer 1
     - Benennen Sie die Spielstanddatei in „simon1.xxx“ um.
@@ -2114,7 +2114,7 @@ der Spielstand unter ScummVM befinden soll.
        SWORD2
        TEENAGENT
        TINSEL
-	   TITANIC
+       TITANIC
        TOON
        TOUCHE
        TSAGE
@@ -2150,7 +2150,7 @@ der Spielstand unter ScummVM befinden soll.
        SWORD2
        TEENAGENT
        TINSEL
-	   TITANIC
+       TITANIC
        TOON
        TOUCHE
        TSAGE
@@ -2719,14 +2719,14 @@ Die folgenden Schlüsselwörter werden erkannt:
     save_slot          Zahl     Nummer des Spielstands, der zu Spielbeginn
                                 geladen werden soll
     savepath           Text     Verzeichnis für Spielstände des Spiels
-	screenshotpath     Text     Verzeichnis für Bildschirmfotos
-	iconpaths          Text     Verzeichnis, in dem nach Icons gesucht wird,
-	                            die für das ScummVM-Icon in der Windows-Taskbar
-								oder im macOS X-Dock verwendet werden, wenn
-								ein Spiel läuft. Die Icon-Dateien sollten nach
-								der Spiele-Kennung benannt werden und sich unter
-								Windows im .ico-Format und unter macOS X im
-								.png-Format befinden.
+    screenshotpath     Text     Verzeichnis für Bildschirmfotos
+    iconpaths          Text     Verzeichnis, in dem nach Icons gesucht wird,
+                                die für das ScummVM-Icon in der Windows-Taskbar
+                                oder im macOS X-Dock verwendet werden, wenn
+                                ein Spiel läuft. Die Icon-Dateien sollten nach
+                                der Spiele-Kennung benannt werden und sich unter
+                                Windows im .ico-Format und unter macOS X im
+                                .png-Format befinden.
     versioninfo        Text     Die Version von ScummVM, welche diese
                                 Konfigurationsdatei erstellt hat
 
@@ -2763,11 +2763,11 @@ Die folgenden Schlüsselwörter werden erkannt:
     opl_driver         Text     Verwendung von AdLib-(OPL-)Emulator
     output_rate        Zahl     Zu verwendende Ausgabefrequenz in Hz. Sinnvolle
                                 Werte sind 11025, 22050 und 44100.
-	audio_buffer_size  Zahl     Überschreibt die Größe des Audio-Zwischenspeichers.
-	                            Zulässige Werte sind: 256 512 1024 2048 4096
-								8192 16384 32768. Das Standard-Wert wird anhand der
-								output_rate berechnet, um die Audio-Latenz unter
-								45ms zu halten.
+    audio_buffer_size  Zahl     Überschreibt die Größe des Audio-Zwischenspeichers.
+                                Zulässige Werte sind: 256 512 1024 2048 4096
+                                8192 16384 32768. Das Standard-Wert wird anhand der
+                                output_rate berechnet, um die Audio-Latenz unter
+                                45ms zu halten.
     alsa_port          Text     Zu verwendender Port für Ausgabe mittels
                                 ALSA-Musiktreiber
     music_volume       Zahl     Musiklautstärke-Einstellung (0-255)
