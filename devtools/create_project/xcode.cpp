@@ -467,6 +467,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
 		DEF_LOCALLIB_STATIC("libfluidsynth");
+		DEF_LOCALLIB_STATIC("libffi");
 		DEF_LOCALLIB_STATIC("libglib-2.0");
 		DEF_SYSTBD("libffi");
 	}
@@ -504,16 +505,6 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		DEF_LOCALLIB_STATIC("libSDLmain");
 		DEF_LOCALLIB_STATIC("libSDL");
 	}
-
-	std::string absoluteOutputDir;
-#ifdef POSIX
-	char *c_path = realpath(setup.outputDir.c_str(), NULL);
-	absoluteOutputDir = c_path;
-	absoluteOutputDir += "/lib";
-	free(c_path);
-#else
-	absoluteOutputDir = "lib";
-#endif
 
 	frameworksGroup->_properties["children"] = children;
 	_groups.add(frameworksGroup);
@@ -569,7 +560,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
 		frameworks_iOS.push_back("libfluidsynth.a");
 		frameworks_iOS.push_back("libglib-2.0.a");
-		frameworks_iOS.push_back("libffi.tbd");
+		frameworks_iOS.push_back("libffi.a");
 		frameworks_iOS.push_back("CoreMIDI.framework");
 		frameworks_iOS.push_back("libiconv.tbd");
 	}
