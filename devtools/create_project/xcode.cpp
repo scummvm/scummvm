@@ -543,6 +543,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
 		frameworks_iOS.push_back("libfreetype.a");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_JPEG")) {
+		frameworks_iOS.push_back("libjpeg.a");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		frameworks_iOS.push_back("libpng.a");
 	}
