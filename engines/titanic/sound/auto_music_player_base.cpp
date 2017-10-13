@@ -70,7 +70,7 @@ bool CAutoMusicPlayerBase::TimerMsg(CTimerMsg *msg) {
 
 bool CAutoMusicPlayerBase::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 	if (_isEnabled)
-		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0,
+		playAmbientSound(_filename, _volumeMode, _initialMute, true, 0,
 			Audio::Mixer::kMusicSoundType);
 
 	return true;
@@ -79,22 +79,22 @@ bool CAutoMusicPlayerBase::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 bool CAutoMusicPlayerBase::ChangeMusicMsg(CChangeMusicMsg *msg) {
 	if (_isEnabled && msg->_action == MUSIC_STOP) {
 		_isEnabled = false;
-		stopGlobalSound(_transition, -1);
+		stopAmbientSound(_transition, -1);
 	}
 
 	if (!msg->_filename.empty()) {
 		_filename = msg->_filename;
 
 		if (_isEnabled) {
-			stopGlobalSound(_transition, -1);
-			playGlobalSound(_filename, _volumeMode, _initialMute, true, 0,
+			stopAmbientSound(_transition, -1);
+			playAmbientSound(_filename, _volumeMode, _initialMute, true, 0,
 				Audio::Mixer::kMusicSoundType);
 		}
 	}
 
 	if (!_isEnabled && msg->_action == MUSIC_START) {
 		_isEnabled = true;
-		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0,
+		playAmbientSound(_filename, _volumeMode, _initialMute, true, 0,
 			Audio::Mixer::kMusicSoundType);
 	}
 

@@ -77,7 +77,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 	} else if (classNum == 3 || (msg->_newStatus > 4 && classNum != 1)) {
 		petDisplayMessage(1, CLASS_NOT_ALLOWED_AT_DEST);
 	} else if (newDest > _destination) {
-		playGlobalSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
+		playAmbientSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
 
 		CString name = getName();
 		changeView(name == "PelleratorObject2" ?
@@ -180,7 +180,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 		playMovie(264, 264, MOVIE_NOTIFY_OBJECT);
 		_destination = newDest;
 	} else if (newDest < _destination) {
-		playGlobalSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
+		playAmbientSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
 
 		CString name = getName();
 		changeView(name == "PelleratorObject2" ?
@@ -341,7 +341,7 @@ bool CPellerator::EnterRoomMsg(CEnterRoomMsg *msg) {
 
 bool CPellerator::MovieEndMsg(CMovieEndMsg *msg) {
 	setVisible(false);
-	stopGlobalSound(true, -1);
+	stopAmbientSound(true, -1);
 
 	switch (_destination) {
 	case 0:

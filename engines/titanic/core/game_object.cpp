@@ -465,7 +465,7 @@ bool CGameObject::isSoundActive(int handle) const {
 	return false;
 }
 
-void CGameObject::playGlobalSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
+void CGameObject::playAmbientSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
 		int handleIndex, Audio::Mixer::SoundType soundType) {
 	if (handleIndex < 0 || handleIndex > 3)
 		return;
@@ -524,7 +524,7 @@ void CGameObject::setSoundVolume(int handle, uint percent, uint seconds) {
 	}
 }
 
-void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
+void CGameObject::stopAmbientSound(bool transition, int handleIndex) {
 	CGameManager *gameManager = getGameManager();
 	if (!gameManager)
 		return;
@@ -550,7 +550,7 @@ void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
 	}
 }
 
-void CGameObject::setGlobalSoundVolume(VolumeMode mode, uint seconds, int handleIndex) {
+void CGameObject::setAmbientSoundVolume(VolumeMode mode, uint seconds, int handleIndex) {
 	CGameManager *gameManager = getGameManager();
 	if (!gameManager)
 		return;
@@ -559,7 +559,7 @@ void CGameObject::setGlobalSoundVolume(VolumeMode mode, uint seconds, int handle
 	if (handleIndex == -1) {
 		// Iterate through calling the method for each handle
 		for (int idx = 0; idx < 3; ++idx)
-			setGlobalSoundVolume(mode, seconds, idx);
+			setAmbientSoundVolume(mode, seconds, idx);
 	} else if (handleIndex >= 0 && handleIndex <= 3 && _soundHandles[handleIndex] != -1) {
 		uint newVolume = sound._soundManager.getModeVolume(mode);
 		sound.setVolume(_soundHandles[handleIndex], newVolume, seconds);

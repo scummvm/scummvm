@@ -254,7 +254,7 @@ protected:
 	void setSoundVolume(int handle, uint percent, uint seconds);
 
 	/**
-	 * Plays a sound, and saves it's handle in the global sound handles list
+	 * Plays an ambient sound, and saves it's handle in the ambient sound handles list
 	 * @param resName		Filename of sound to play
 	 * @param mode			Volume mode level
 	 * @param initialMute	If set, sound transitions in from mute over 2 seconds
@@ -262,23 +262,23 @@ protected:
 	 * @param handleIndex	Slot 0 to 3 in the shared sound handle list to store the sound's handle
 	 * @param soundType		Specifies whether the sound is a sound effect or music
 	 */
-	void playGlobalSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
+	void playAmbientSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
 		int handleIndex, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 
 	/**
-	 * Stops a sound saved in the global sound handle list
+	 * Stops playing an ambient sound
 	 * @param transition	If set, the sound transitions to silent before stopping
-	 * @param handleIndex	Index of sound to stop. If -1, all global sounds are stopped
+	 * @param handleIndex	Index of sound to stop. If -1, all ambient sounds are stopped
 	 */
-	void stopGlobalSound(bool transition, int handleIndex);
+	void stopAmbientSound(bool transition, int handleIndex);
 
 	/**
-	 * Updates the volume for a global sound based on the specified mode's volume
+	 * Updates the volume for an ambient sound based on the specified mode's volume
 	 * @param mode			Volume level mode
 	 * @param seconds		Number of seconds to transition to new volume
-	 * @param handleIndex	Index of global sound to update. If -1, all global sounds are updated
+	 * @param handleIndex	Index of ambient sound to update. If -1, all ambient sounds are updated
 	 */
-	void setGlobalSoundVolume(VolumeMode mode, uint seconds, int handleIndex);
+	void setAmbientSoundVolume(VolumeMode mode, uint seconds, int handleIndex);
 
 	/**
 	 * Stops sound channel 3 or 0
