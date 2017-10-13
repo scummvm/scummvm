@@ -69,7 +69,6 @@ void CPellerator::load(SimpleFile *file) {
 
 bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(true);
-	playGlobalSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
 	int classNum = getPassengerClass();
 	int newDest = msg->_newStatus;
 
@@ -78,6 +77,8 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 	} else if (classNum == 3 || (msg->_newStatus > 4 && classNum != 1)) {
 		petDisplayMessage(1, CLASS_NOT_ALLOWED_AT_DEST);
 	} else if (newDest > _destination) {
+		playGlobalSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
+
 		CString name = getName();
 		changeView(name == "PelleratorObject2" ?
 			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
@@ -179,6 +180,8 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 		playMovie(264, 264, MOVIE_NOTIFY_OBJECT);
 		_destination = newDest;
 	} else if (newDest < _destination) {
+		playGlobalSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
+
 		CString name = getName();
 		changeView(name == "PelleratorObject2" ?
 			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
