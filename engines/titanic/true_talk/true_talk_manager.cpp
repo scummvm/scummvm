@@ -386,7 +386,7 @@ CString CTrueTalkManager::readDialogueString() {
 
 		// Strip off any non-printable characters
 		for (byte *p = buffer; *p != '\0'; ++p) {
-			if (*p < 32 || *p > 127)
+			if (*p < 32)
 				*p = ' ';
 		}
 
