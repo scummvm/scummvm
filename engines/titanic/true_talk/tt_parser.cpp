@@ -30,6 +30,7 @@
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_word.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -64,7 +65,7 @@ void TTparser::loadArrays() {
 	loadArray(_replacements1, "TEXT/REPLACEMENTS1");
 	loadArray(_replacements2, "TEXT/REPLACEMENTS2");
 	loadArray(_replacements3, "TEXT/REPLACEMENTS3");
-	if (g_vm->isGerman())
+	if (g_language == Common::DE_DEU)
 		loadArray(_replacements4, "TEXT/REPLACEMENTS4");
 	loadArray(_phrases, "TEXT/PHRASES");
 	loadArray(_pronouns, "TEXT/PRONOUNS");
@@ -85,17 +86,24 @@ int TTparser::preprocess(TTsentence *sentence) {
 	if (normalize(sentence))
 		return 0;
 
-	if (g_vm->isGerman())
+	if (g_language == Common::DE_DEU) {
 		preprocessGerman(sentence->_normalizedLine);
-
-	// Scan for and replace common slang and contractions with verbose versions
-	searchAndReplace(sentence->_normalizedLine, _replacements1);
-	searchAndReplace(sentence->_normalizedLine, _replacements2);
+	} else {
+		// Scan for and replace common slang and contractions with verbose versions
+		searchAndReplace(sentence->_normalizedLine, _replacements1);
+		searchAndReplace(sentence->_normalizedLine, _replacements2);
+	}
 
 	// Check entire normalized line against common phrases to replace
 	for (uint idx = 0; idx < _phrases.size(); idx += 2) {
 		if (!_phrases[idx].compareTo(sentence->_normalizedLine))
 			sentence->_normalizedLine = _phrases[idx + 1];
+	}
+
+	if (g_language == Common::DE_DEU) {
+		// Scan for and replace common slang and contractions with verbose versions
+		searchAndReplace(sentence->_normalizedLine, _replacements1);
+		searchAndReplace(sentence->_normalizedLine, _replacements2);
 	}
 
 	// Do a further search and replace of roman numerals to decimal
