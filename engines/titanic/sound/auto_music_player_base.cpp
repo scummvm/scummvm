@@ -21,6 +21,7 @@
  */
 
 #include "titanic/sound/auto_music_player_base.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -69,9 +70,19 @@ bool CAutoMusicPlayerBase::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CAutoMusicPlayerBase::LoadSuccessMsg(CLoadSuccessMsg *msg) {
-	if (_isEnabled)
+	if (_isEnabled) {
+		// WORKAROUND: A problem was encountered with the EmbLobby music player
+		// not getting turned off when room was left, so was turned on again
+		// when loading a savegame elsewhere. This guards against it
+		CRoomItem *newRoom = getGameManager()->getRoom();
+		if (findRoom() != newRoom) {
+			_isEnabled = false;
+			return true;
+		}
+
 		playAmbientSound(_filename, _volumeMode, _initialMute, true, 0,
 			Audio::Mixer::kMusicSoundType);
+	}
 
 	return true;
 }
