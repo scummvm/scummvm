@@ -90,15 +90,15 @@ bool CSeasonalMusicPlayer::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 
 bool CSeasonalMusicPlayer::ArboretumGateMsg(CArboretumGateMsg *msg) {
 	CChangeMusicMsg changeMsg;
-	changeMsg._flags = msg->_value ? 2 : 1;
+	changeMsg._action = msg->_value ? MUSIC_START : MUSIC_STOP;
 	changeMsg.execute(this);
 
 	return true;
 }
 
 bool CSeasonalMusicPlayer::ChangeMusicMsg(CChangeMusicMsg *msg) {
-	if (_isRepeated && msg->_flags == 1) {
-		_isRepeated = false;
+	if (_isEnabled && msg->_action == MUSIC_STOP) {
+		_isEnabled = false;
 		stopGlobalSound(_transition, -1);
 	}
 
@@ -118,8 +118,8 @@ bool CSeasonalMusicPlayer::ChangeMusicMsg(CChangeMusicMsg *msg) {
 		}
 	}
 
-	if (!_isRepeated && msg->_flags == 2) {
-		_isRepeated = true;
+	if (!_isEnabled && msg->_action == MUSIC_START) {
+		_isEnabled = true;
 		loadSound(TRANSLATE("c#64.wav", "c#47.wav"));
 		loadSound(TRANSLATE("c#63.wav", "c#46.wav"));
 		loadSound(TRANSLATE("c#65.wav", "c#48.wav"));

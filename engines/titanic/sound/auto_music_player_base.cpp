@@ -32,13 +32,13 @@ BEGIN_MESSAGE_MAP(CAutoMusicPlayerBase, CGameObject)
 END_MESSAGE_MAP()
 
 CAutoMusicPlayerBase::CAutoMusicPlayerBase() : CGameObject(),
-	_initialMute(true), _isRepeated(false), _volumeMode(VOL_NORMAL), _transition(1) {
+	_initialMute(true), _isEnabled(false), _volumeMode(VOL_NORMAL), _transition(1) {
 }
 void CAutoMusicPlayerBase::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_filename, indent);
 	file->writeNumberLine(_initialMute, indent);
-	file->writeNumberLine(_isRepeated, indent);
+	file->writeNumberLine(_isEnabled, indent);
 	file->writeNumberLine(_volumeMode, indent);
 	file->writeNumberLine(_transition, indent);
 
@@ -49,7 +49,7 @@ void CAutoMusicPlayerBase::load(SimpleFile *file) {
 	file->readNumber();
 	_filename = file->readString();
 	_initialMute = file->readNumber();
-	_isRepeated = file->readNumber();
+	_isEnabled = file->readNumber();
 	_volumeMode = (VolumeMode)file->readNumber();
 	_transition = file->readNumber();
 
@@ -62,14 +62,14 @@ bool CAutoMusicPlayerBase::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 bool CAutoMusicPlayerBase::TimerMsg(CTimerMsg *msg) {
 	CChangeMusicMsg musicMsg;
-	musicMsg._flags = 2;
+	musicMsg._action = MUSIC_START;
 	musicMsg.execute(this);
 
 	return true;
 }
 
 bool CAutoMusicPlayerBase::LoadSuccessMsg(CLoadSuccessMsg *msg) {
-	if (_isRepeated)
+	if (_isEnabled)
 		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0,
 			Audio::Mixer::kMusicSoundType);
 
@@ -77,23 +77,23 @@ bool CAutoMusicPlayerBase::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 }
 
 bool CAutoMusicPlayerBase::ChangeMusicMsg(CChangeMusicMsg *msg) {
-	if (_isRepeated && msg->_flags == 1) {
-		_isRepeated = false;
+	if (_isEnabled && msg->_action == MUSIC_STOP) {
+		_isEnabled = false;
 		stopGlobalSound(_transition, -1);
 	}
 
 	if (!msg->_filename.empty()) {
 		_filename = msg->_filename;
 
-		if (_isRepeated) {
+		if (_isEnabled) {
 			stopGlobalSound(_transition, -1);
 			playGlobalSound(_filename, _volumeMode, _initialMute, true, 0,
 				Audio::Mixer::kMusicSoundType);
 		}
 	}
 
-	if (!_isRepeated && msg->_flags == 2) {
-		_isRepeated = true;
+	if (!_isEnabled && msg->_action == MUSIC_START) {
+		_isEnabled = true;
 		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0,
 			Audio::Mixer::kMusicSoundType);
 	}
