@@ -108,3 +108,10 @@ config.mk engines/plugins_table.h engines/engines.mk: config.h
 ifneq ($(origin port_mk), undefined)
 include $(srcdir)/$(port_mk)
 endif
+
+.PHONY: print-dists print-executables
+print-dists:
+	@echo $(foreach V, $(filter DIST_FILES_%, $(.VARIABLES)), $($V))
+
+print-executables:
+	@echo $(EXECUTABLE) $(PLUGINS)
