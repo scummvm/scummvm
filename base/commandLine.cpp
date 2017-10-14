@@ -807,7 +807,7 @@ static void listAudioDevices() {
 }
 
 /** Display all games in the given directory, or current directory if empty */
-static GameList getGameList(Common::FSNode dir) {
+static GameList getGameList(const Common::FSNode &dir) {
 	Common::FSList files;
 
 	//Collect all files from directory
@@ -827,7 +827,7 @@ static GameList getGameList(Common::FSNode dir) {
 }
 
 static bool addGameToConf(const GameDescriptor &gd) {
-	Common::String domain = gd.preferredtarget();
+	const Common::String &domain = gd.preferredtarget();
 
 	// If game has already been added, don't add
 	if (ConfMan.hasGameDomain(domain))
@@ -852,7 +852,7 @@ static bool addGameToConf(const GameDescriptor &gd) {
 	return true;
 }
 
-static GameList recListGames(Common::FSNode dir, Common::String gameId, bool recursive) {
+static GameList recListGames(const Common::FSNode &dir, const Common::String &gameId, bool recursive) {
 	GameList list = getGameList(dir);
 
 	if (recursive) {
@@ -871,11 +871,8 @@ static GameList recListGames(Common::FSNode dir, Common::String gameId, bool rec
 }
 
 /** Display all games in the given directory, return ID of first detected game */
-static Common::String detectGames(Common::String path, Common::String gameId, Common::String recursiveOptStr) {
+static Common::String detectGames(const Common::String &path, const Common::String &gameId, bool recursive) {
 	bool noPath = path.empty();
-	if (noPath)
-		path = ".";
-	bool recursive = (recursiveOptStr == "true");
 	//Current directory
 	Common::FSNode dir(path);
 	GameList candidates = recListGames(dir, gameId, recursive);
@@ -900,7 +897,7 @@ static Common::String detectGames(Common::String path, Common::String gameId, Co
 	return candidates[0].gameid();
 }
 
-static int recAddGames(Common::FSNode dir, Common::String game, bool recursive) {
+static int recAddGames(const Common::FSNode &dir, const Common::String &game, bool recursive) {
 	int count = 0;
 	GameList list = getGameList(dir);
 	for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
@@ -927,15 +924,12 @@ static int recAddGames(Common::FSNode dir, Common::String game, bool recursive) 
 	return count;
 }
 
-static bool addGames(Common::String path, Common::String game, Common::String recursiveOptStr) {
-	if (path.empty())
-		path = ".";
-	bool recursive = (recursiveOptStr == "true");
+static bool addGames(const Common::String &path, const Common::String &game, bool recursive) {
 	//Current directory
 	Common::FSNode dir(path);
 	int added = recAddGames(dir, game, recursive);
 	printf("Added %d games\n", added);
-	if (added == 0 && recursive == false) {
+	if (added == 0 && !recursive) {
 		printf("Consider using --recursive to search inside subdirectories\n");
 	}
 	ConfMan.flushToDisk();
@@ -1168,10 +1162,11 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		printf(HELP_STRING, s_appName);
 		return true;
 	} else if (command == "auto-detect") {
+		bool resursive = settings["recursive"] == "true";
 		// If auto-detects fails (returns an empty ID) return true to close ScummVM.
 		// If we get a non-empty ID, we store it in command so that it gets processed together with the
 		// other command line options below.
-		if (settings["recursive"] == "true") {
+		if (resursive) {
 			printf("ERROR: Autodetection not supported with --recursive; are you sure you didn't want --detect?\n");
 			err = Common::kUnknownError;
 			return true;
@@ -1179,17 +1174,17 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			// From an UX point of view, however, it might get confusing.
 			// Consider removing this if consensus says otherwise.
 		} else {
-			command = detectGames(settings["path"], settings["game"], settings["recursive"]);
+			command = detectGames(settings["path"], settings["game"], resursive);
 			if (command.empty()) {
 				err = Common::kNoGameDataFoundError;
 				return true;
 			}
 		}
 	} else if (command == "detect") {
-		detectGames(settings["path"], settings["game"], settings["recursive"]);
+		detectGames(settings["path"], settings["game"], settings["recursive"] == "true");
 		return true;
 	} else if (command == "add") {
-		addGames(settings["path"], settings["game"], settings["recursive"]);
+		addGames(settings["path"], settings["game"], settings["recursive"] == "true");
 		return true;
 	}
 #ifdef DETECTOR_TESTING_HACK
