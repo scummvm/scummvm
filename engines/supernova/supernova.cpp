@@ -900,7 +900,7 @@ bool SupernovaEngine::loadGame(int slot) {
 	if (saveHeader != SAVEGAME_HEADER) {
 		warning("No header found in '%s'", filename.c_str());
 		delete savefile;
-		return Common::kUnknownError;
+		return false; //Common::kUnknownError
 	}
 	
 	byte saveVersion = savefile->readByte();
@@ -908,7 +908,7 @@ bool SupernovaEngine::loadGame(int slot) {
 	if (saveVersion > SAVEGAME_VERSION || saveVersion == 1) {
 		warning("Save game version %i not supported", saveVersion);
 		delete savefile;
-		return Common::kUnknownError;
+		return false; //Common::kUnknownError;
 	}
 
 	int descriptionSize = savefile->readSint16LE();

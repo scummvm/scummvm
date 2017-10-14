@@ -150,7 +150,7 @@ public:
 	bool saveGame(int slot, const Common::String &description);
 
 	const Common::String &getGameString(int idx) const {
-		if (idx < 0 || idx >= _gameStrings.size())
+		if (idx < 0 || idx >= (int)_gameStrings.size())
 			return _nullString;
 		return _gameStrings[idx];
 	}
