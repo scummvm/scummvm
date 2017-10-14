@@ -490,6 +490,11 @@ bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	if (g_vm->shouldQuit())
 		return false;
 	
+	// TODO: Fixes slight "jumping back" when rotating in place in Top Of Well
+	// balcony between two elevators. Need a more generalized fix at some point
+	if (_movieName == "z48.avi")
+		_currentFrame = -1;
+
 	if (_currentFrame != ((int)startFrame - 1) || startFrame == 0) {
 		// Start video playback at the desired starting frame
 		if (startFrame > 0) {
@@ -505,6 +510,7 @@ bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		// Already in position, so pick up where we left off
 		_decoder->start();
 	}
+	setFrameRate(2);
 
 	bool isDifferent = _movieFrameSurface[0]->w != r.width() ||
 		_movieFrameSurface[0]->h != r.height();
