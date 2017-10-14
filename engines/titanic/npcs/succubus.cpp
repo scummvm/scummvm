@@ -426,7 +426,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		_sendAction = SA_SENT;
 		_mailPresent = false;
 		_inProgress = true;
-		incTransitions();
+		lockMouse();
 
 		if (_isFeathers) {
 			// The feather has special handling to be rejected by the SuccUBus
@@ -521,7 +521,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			if (_receiveStartFrame >= 0) {
 				_sendAction = SA_FEATHERS;
 				_inProgress = true;
-				incTransitions();
+				lockMouse();
 				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT);
 			}
 		}
@@ -625,7 +625,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 		if (_inProgress) {
 			_inProgress = false;
-			decTransitions();
+			unlockMouse();
 		}
 
 		CSUBTransition transMsg;
@@ -642,7 +642,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		_mailP = nullptr;
 		if (_inProgress) {
 			_inProgress = false;
-			decTransitions();
+			unlockMouse();
 		}
 
 		CSUBTransition transMsg;
