@@ -44,9 +44,7 @@ public:
 
 private:
 	PopUpWidget *_updatesPopUp;
-	ButtonWidget *_yesButton;
-	ButtonWidget *_noButton;
-	CheckboxWidget *_updatesCheckbox;
+	ButtonWidget *_proceedButton;
 };
 
 } // End of namespace GUI
