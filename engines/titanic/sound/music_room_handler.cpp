@@ -195,10 +195,12 @@ bool CMusicRoomHandler::update() {
 		_soundStartTicks = currentTicks;
 	}
 
-	updateAudio();
-	updateInstruments();
+	if (_instrumentsActive > 0) {
+		updateAudio();
+		updateInstruments();
+	}
 
-	return _instrumentsActive > 0;
+	return !_audioBuffer->isFinished();
 }
 
 void CMusicRoomHandler::updateAudio() {
