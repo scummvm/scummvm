@@ -423,27 +423,27 @@ const char *gameText[] = {
 	"Erst mal den Lichtschalter finden.",     // kStringIntroCutscene40
 	"Hmm, gar nicht so einfach|bei Schwerelosigkeit.", // kStringIntroCutscene41
 	"Ah, hier ist er.",                       // kStringIntroCutscene42
-	"", //
-	"", //
+	"In der K\201che warst du schon|oft genug, im Moment hast|du keinen Appetit.", // kStringShipHall1
+	"Flugziel erreicht", // kStringShipSleepCabin1
 	// 325
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Energie ersch\224pft", // kStringShipSleepCabin2
+	"Tiefschlafprozess abgebrochen", // kStringShipSleepCabin3
+	"Schlafdauer in Tagen:", // kStringShipSleepCabin4
+	"Bitte legen Sie sich in die angezeigte Schlafkammer.", // kStringShipSleepCabin5
+	"Bitte Passwort eingeben:", // kStringShipSleepCabin6
 	// 330
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
+	"Schlafdauer in Tagen:", // kStringShipSleepCabin7
+	"Bitte legen Sie sich in die angezeigte Schlafkammer.", // kStringShipSleepCabin8
+	"Falsches Passwort", // kStringShipSleepCabin9
+	"Es w\201rde wenig bringen,|sich in eine Schlafkammer zu legen,|die nicht eingeschaltet ist.", // kStringShipSleepCabin10
+	"Dazu mu\341t du erst den Raumanzug ausziehen.", // kStringShipSleepCabin11
 	// 335
-	"", //
-	"", //
-	"", //
-	"", //
-	"", //
-
+	"Was war das?", // kStringShipSleepCabin12
+	"Achtung", // kStringShipSleepCabin13
+	"Du wachst mit brummendem Sch\204del auf|und merkst, daﬂ du nur getr\204umt hast.", // kStringShipSleepCabin14
+	"Beim Aufprall des Raumschiffs|mu\341t du mit dem Kopf aufgeschlagen|und bewu\341tlos geworden sein.", // kStringShipSleepCabin15
+	"Was steht dir jetzt wohl wirklich bevor?", // kStringShipSleepCabin16
+	// 340
 	NULL
 };
 
