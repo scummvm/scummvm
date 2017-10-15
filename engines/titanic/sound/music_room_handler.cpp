@@ -232,6 +232,10 @@ void CMusicRoomHandler::updateAudio() {
 		_audioBuffer->push(audioData, size);
 		delete[] audioData;
 	}
+
+	if (_instrumentsActive == 0)
+		// Reaching end of music
+		_audioBuffer->finalize();
 }
 
 void CMusicRoomHandler::updateInstruments() {

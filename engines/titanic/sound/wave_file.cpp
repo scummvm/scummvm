@@ -52,7 +52,7 @@ int AudioBufferStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool AudioBufferStream::endOfData() const {
-	return _audioBuffer->_finished;
+	return _audioBuffer->isFinished();
 }
 
 /*------------------------------------------------------------------------*/

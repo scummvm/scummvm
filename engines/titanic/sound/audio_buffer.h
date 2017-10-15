@@ -44,7 +44,7 @@ private:
 	 * Leave a critical section
 	 */
 	void leaveCriticalSection();
-public:
+private:
 	bool _finished;
 public:
 	CAudioBuffer(int maxSize);
@@ -75,6 +75,11 @@ public:
 	bool full() const { return _data.full(); }
 
 	/**
+	 * Returns true if the audio buffering is finished
+	 */
+	bool isFinished() const { return _finished && empty(); }
+
+	/**
 	 * Adds a value to the buffer
 	 */
 	void push(int16 value);
@@ -93,6 +98,11 @@ public:
 	 * Reads out a specified number of samples
 	 */
 	int read(int16 *values, int count);
+
+	/**
+	 * Marks the buffer as finishing, and that no more new data will arrive
+	 */
+	void finalize() { _finished = true; }
 };
 
 } // End of namespace Titanic
