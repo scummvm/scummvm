@@ -33,8 +33,6 @@ const int kTextSpeed[] = {19, 14, 10, 7, 4};
 const int kMsecPerTick = 55;
 
 const int kMaxSection = 40;
-const int kMaxSectionZus = 50;
-const int kMaxClickfieldZus = 80;
 const int kMaxObject = 25;
 const int kMaxCarry = 30;
 
