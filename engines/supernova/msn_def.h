@@ -474,7 +474,11 @@ enum StringID {
 	kStringIntroCutscene25, kStringIntroCutscene26, kStringIntroCutscene27, kStringIntroCutscene28, kStringIntroCutscene29,
 	kStringIntroCutscene30, kStringIntroCutscene31, kStringIntroCutscene32, kStringIntroCutscene33, kStringIntroCutscene34,
 	kStringIntroCutscene35, kStringIntroCutscene36, kStringIntroCutscene37, kStringIntroCutscene38, kStringIntroCutscene39,
-	kStringIntroCutscene40, kStringIntroCutscene41, kStringIntroCutscene42
+	kStringIntroCutscene40, kStringIntroCutscene41, kStringIntroCutscene42, kStringShipHall1,       kStringShipSleepCabin1,
+	//325
+	kStringShipSleepCabin2,  kStringShipSleepCabin3,  kStringShipSleepCabin4,  kStringShipSleepCabin5,  kStringShipSleepCabin6,
+	kStringShipSleepCabin7,  kStringShipSleepCabin8,  kStringShipSleepCabin9,  kStringShipSleepCabin10, kStringShipSleepCabin11,
+	kStringShipSleepCabin12, kStringShipSleepCabin13, kStringShipSleepCabin14, kStringShipSleepCabin15, kStringShipSleepCabin16
 };
 
 static StringID guiCommands[] = {

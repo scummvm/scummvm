@@ -516,7 +516,7 @@ bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 
 bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_OPEN) && (obj1._id == KITCHEN_HATCH)) {
-		_vm->renderMessage("In der K\201che warst du schon|oft genug, im Moment hast|du keinen Appetit.");
+		_vm->renderMessage(_vm->getGameString(kStringShipHall1));
 	} else if ((verb == ACTION_USE) && Object::combine(obj1,obj2,KEYCARD2,SLEEP_SLOT)) {
 		if (_objectState[2].hasProperty(OPENED)) {
 			_objectState[2].disableProperty(OPENED);
@@ -555,24 +555,23 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 		g_system->fillScreen(kColorDarkBlue);
 		if (_gm->_state._arrivalDaysLeft == 0) {
 			// Destination reached
-			_vm->renderText("Flugziel erreicht", 60, 95, kColorWhite99);
+			_vm->renderText(kStringShipSleepCabin1, 60, 95, kColorWhite99);
 			_gm->getInput();
 		} else if (_gm->_state._powerOff) {
 			// Energy depleted
-			_vm->renderText("Energie ersch\224pft", 60, 95, kColorWhite99);
+			_vm->renderText(kStringShipSleepCabin2, 60, 95, kColorWhite99);
 			// Artificial coma interrupted
-			_vm->renderText("Tiefschlafprozess abgebrochen", 60, 115, kColorWhite99);
+			_vm->renderText(kStringShipSleepCabin3, 60, 115, kColorWhite99);
 			_gm->getInput();
 		} else if (isSectionVisible(5)) {
 			// Sleep duration in days
-			_vm->renderText("Schlafdauer in Tagen:", 30, 85, kColorWhite99);
+			_vm->renderText(kStringShipSleepCabin4, 30, 85, kColorWhite99);
 			_vm->renderText(Common::String::format("%d",_gm->_state._timeSleep).c_str(),
 			                150, 85, kColorWhite99);
-			_vm->renderText("Bitte legen Sie sich in die angezeigte Schlafkammer.",
-			                30, 105, kColorWhite99);
+			_vm->renderText(kStringShipSleepCabin5, 30, 105, kColorWhite99);
 			_gm->getInput();
 		} else {
-			_vm->renderText("Bitte Passwort eingeben:", 100, 85, kColorWhite99);
+			_vm->renderText(kStringShipSleepCabin6, 100, 85, kColorWhite99);
 			_gm->edit(input, 100, 105, 30);
 
 			input.toUppercase();
@@ -580,7 +579,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 				if (input == _vm->getGameString(kStringComputerPassword)) {
 					_gm->great(6);
 					g_system->fillScreen(kColorDarkBlue);
-					_vm->renderText("Schlafdauer in Tagen:", 30, 85, kColorWhite99);
+					_vm->renderText(kStringShipSleepCabin7, 30, 85, kColorWhite99);
 					uint daysSleep = 0;
 					do {
 						input.clear();
@@ -600,13 +599,13 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 						}
 						if (daysSleep != 0) {
 							_gm->_state._timeSleep = daysSleep;
-							_vm->renderText("Bitte legen Sie sich in die angezeigte Schlafkammer.", 30, 105, kColorWhite99);
+							_vm->renderText(kStringShipSleepCabin8, 30, 105, kColorWhite99);
 							_gm->wait2(18);
 							setSectionVisible(5, true);
 						}
 					} while (daysSleep == 0);
 				} else {
-					_vm->renderText("Falsches Passwort", 100, 125, kColorLightRed);
+					_vm->renderText(kStringShipSleepCabin9, 100, 125, kColorLightRed);
 					_gm->wait2(18);
 				}
 			}
@@ -618,9 +617,9 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 	           ((obj1._id == CABINS) || (obj1._id == CABIN))) {
 		room = _gm->_rooms[AIRLOCK];
 		if (!(obj1._id == CABIN) || !isSectionVisible(5)) {
-			_vm->renderMessage("Es w\201rde wenig bringen,|sich in eine Schlafkammer zu legen,|die nicht eingeschaltet ist.");
+			_vm->renderMessage(kStringShipSleepCabin10);
 		} else if (room->getObject(5)->hasProperty(WORN)) {
-			_vm->renderMessage("Dazu mu\341t du erst den Raumanzug ausziehen.");
+			_vm->renderMessage(kStringShipSleepCabin11);
 		} else {
 			_vm->paletteFadeOut();
 			_gm->drawImage(_gm->invertSection(5));
@@ -693,7 +692,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->playSound(kAudioCrash);
 				_gm->screenShake();
 				_gm->wait2(18);
-				_vm->renderMessage("Was war das?");
+				_vm->renderMessage(kStringShipSleepCabin12);
 			}
 		}
 	} else {
@@ -720,7 +719,7 @@ void ShipSleepCabin::animation() {
 				_color = kColorLightRed;
 			}
 
-			_vm->renderText("Achtung", 60, 75, _color);
+			_vm->renderText(kStringShipSleepCabin13, 60, 75, _color);
 		}
 	} else if (isSectionVisible(5) && _gm->_guiEnabled) {
 		if (isSectionVisible(4))
@@ -733,13 +732,13 @@ void ShipSleepCabin::animation() {
 }
 void ShipSleepCabin::onEntrance() {
 	if (_gm->_state._dream && (_gm->_rooms[CAVE]->getObject(1)->_exitRoom == MEETUP3)) {
-		_vm->renderMessage("Du wachst mit brummendem Sch\204del auf|und merkst, daß du nur getr\204umt hast.");
+		_vm->renderMessage(kStringShipSleepCabin14);
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
-		_vm->renderMessage("Beim Aufprall des Raumschiffs|mu\341t du mit dem Kopf aufgeschlagen|und bewu\341tlos geworden sein.");
+		_vm->renderMessage(kStringShipSleepCabin15);
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
-		_vm->renderMessage("Was steht dir jetzt wohl wirklich bevor?");
+		_vm->renderMessage(kStringShipSleepCabin16);
 		_gm->_state._dream = false;
 	}
 	setRoomSeen(true);
