@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-10-15 15:55+0200\n"
-"PO-Revision-Date: 2017-09-11 18:50+0000\n"
+"PO-Revision-Date: 2017-10-15 15:10+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1644,7 +1644,6 @@ msgid "Antialiased"
 msgstr "Kantenglättung"
 
 #: gui/updates-dialog.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
@@ -1652,7 +1651,6 @@ msgid ""
 msgstr ""
 "ScummVM unterstützt die automatische Suche nach Aktualisierungen,\n"
 "wozu ein Internetzugang erforderlich ist.\n"
-"\n"
 "Möchten Sie diese Funktion aktivieren?"
 
 #: gui/updates-dialog.cpp:52
@@ -1660,6 +1658,8 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Sie können diese Einstellung später im Reiter \"Sonstiges\"\n"
+"im Optionsfenster ändern."
 
 #: gui/updates-dialog.cpp:118
 msgid "Proceed"
