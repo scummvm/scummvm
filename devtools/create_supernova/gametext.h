@@ -444,6 +444,60 @@ const char *gameText[] = {
 	"Beim Aufprall des Raumschiffs|mu\341t du mit dem Kopf aufgeschlagen|und bewu\341tlos geworden sein.", // kStringShipSleepCabin15
 	"Was steht dir jetzt wohl wirklich bevor?", // kStringShipSleepCabin16
 	// 340
+	"Geschwindigkeit: ",
+	"8000 hpm",
+	"0 hpm",
+	"Ziel: Arsano 3",
+	"Entfernung: ",
+	//345
+	" Lichtjahre",
+	"Dauer der Reise bei momentaner Geschwindigkeit:",
+	" Tage",
+	"Vergi\341 nicht, du bist nur der|Schiffskoch und hast keine Ahnung,|wie man ein Raumschiff fliegt.",
+	"Achtung: Triebwerke funktionsunf\204hig",
+	//350
+	"Energievorrat ersch\224pft",
+	"Notstromversorgung aktiv",
+	"Was?! Keiner im Cockpit!|Die sind wohl verr\201ckt!",
+	"",
+	"",
+	//355
+	"",
+	"",
+	"",
+	"",
+	"",
+	//360
+	"",
+	"",
+	"",
+	"",
+	"",
+	//365
+	"",
+	"",
+	"",
+	"",
+	"",
+	//370
+	"",
+	"",
+	"",
+	"",
+	"",
+	//375
+	"",
+	"",
+	"",
+	"",
+	"",
+	//380
+	"",
+	"",
+	"",
+	"",
+	"",
+	//385
 	NULL
 };
 
