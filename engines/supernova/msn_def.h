@@ -482,7 +482,9 @@ enum StringID {
 	kStringShipCockpit1, kStringShipCockpit2, kStringShipCockpit3, kStringShipCockpit4, kStringShipCockpit5,
 	kStringShipCockpit6, kStringShipCockpit7, kStringShipCockpit8, kStringShipCockpit9, kStringShipCockpit10,
 	// 350
-	kStringShipCockpit11, kStringShipCockpit12, kStringShipCockpit13
+	kStringShipCockpit11, kStringShipCockpit12, kStringShipCockpit13, kStringShipCabinL3_1, kStringShipCabinL3_2,
+	kStringShipCabinL3_3, kStringShipCabinL3_4, kStringShipCabinL3_5, kStringShipAirlock1, kStringShipAirlock2,
+	kStringShipAirlock3, kStringShipAirlock4
 };
 
 static StringID guiCommands[] = {

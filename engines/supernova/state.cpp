@@ -1035,7 +1035,7 @@ void GameManager::screenShake() {
 
 void GameManager::shock() {
 	_vm->playSound(kAudioShock);
-	death("Du h\204ttest besser vorher|den Stecker rausgezogen.");
+	dead("Du h\204ttest besser vorher|den Stecker rausgezogen.");
 }
 
 void GameManager::showMenu() {
@@ -1159,7 +1159,7 @@ void GameManager::shot(int a, int b) {
 	if (b)
 		drawImage(b);
 
-	death("Der Axacussaner hat dich erwischt.");
+	dead("Der Axacussaner hat dich erwischt.");
 }
 
 void GameManager::takeMoney(int amount) {
@@ -1221,7 +1221,32 @@ void GameManager::closeLocker(const Room *room, Object *obj, Object *lock, int s
 	}
 }
 
-void GameManager::death(const char *message) {
+void GameManager::dead(StringID messageId) {
+	_vm->paletteFadeOut();
+	_guiEnabled = false;
+	_vm->renderImage(11, 0);
+	_vm->renderMessage(messageId);
+	_vm->playSound(kAudioDeath);
+	_vm->paletteFadeIn();
+	getInput();
+	_vm->paletteFadeOut();
+	_vm->removeMessage();
+
+	// TODO: Load screen
+	destroyRooms();
+	initRooms();
+	initState();
+	initGui();
+	_inventory.clear();
+	changeRoom(CABIN_R3);
+	g_system->fillScreen(kColorBlack);
+	_vm->paletteFadeIn();
+
+	_guiEnabled = true;
+}
+
+// TODO: Remove this function when all the texts are properly extracted
+void GameManager::dead(const char *message) {
 	_vm->paletteFadeOut();
 	_guiEnabled = false;
 	_vm->renderImage(11, 0);
@@ -1480,7 +1505,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		} else {
 			if (obj1.hasProperty(WORN)) {
 				if (airless()) {
-					death("Den Helm h\204ttest du|besser angelassen!");
+					dead("Den Helm h\204ttest du|besser angelassen!");
 				}
 				obj1.disableProperty(WORN);
 				_vm->renderMessage("Du ziehst den Helm ab.");
@@ -1507,7 +1532,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		} else {
 			if (obj1.hasProperty(WORN)) {
 				if (airless()) {
-					death("Den Versorgungsteil h\204ttest du|besser nicht abgenommen!");
+					dead("Den Versorgungsteil h\204ttest du|besser nicht abgenommen!");
 				}
 				obj1.disableProperty(WORN);
 				_vm->renderMessage("Du nimmst den Versorgungsteil ab.");
