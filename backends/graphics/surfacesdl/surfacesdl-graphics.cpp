@@ -851,7 +851,7 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	_forceRedraw = true;
 
-#if !defined(__MAEMO__) && !defined(DINGUX) && !defined(GPH_DEVICE) && !defined(LINUXMOTO) && !defined(OPENPANDORA)
+#if !defined(__MAEMO__) && !defined(DINGUX) && !defined(GPH_DEVICE) && !defined(LINUXMOTO)
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
