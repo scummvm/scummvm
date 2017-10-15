@@ -1129,13 +1129,13 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->takeObject(*getObject(2));
 	} else if (((verb == ACTION_OPEN) || (verb == ACTION_CLOSE)) &&
 	           (obj1._id == OUTERHATCH_TOP)) {
-		_vm->renderMessage("Du mu\341t erst hingehen.");
+		_vm->renderMessage(kStringShipHold1);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == LANDINGMOD_HATCH) &&
 	           (isSectionVisible(4) || isSectionVisible(6)))
-		_vm->renderMessage("Das Kabel ist im Weg.");
+		_vm->renderMessage(kStringCable1);
 	else if (((verb == ACTION_TAKE) && (obj1._id == HOLD_WIRE)) ||
 	         ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, LANDINGMOD_HATCH)))
-		_vm->renderMessage("Das Kabel ist schon ganz|richtig an dieser Stelle.");
+		_vm->renderMessage(kStringCable2);
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, HOLD_WIRE)) {
 		getObject(0)->_name = kStringWireAndClip;
 		_gm->_inventory.remove(*getObject(2));
@@ -1144,7 +1144,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage("Ok.");
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, SPOOL)) {
 		if (!_gm->_state._terminalStripConnected)
-			_vm->renderMessage("Womit denn?");
+			_vm->renderMessage(kStringCable3);
 		else {
 			_gm->drawImage(5);
 			getObject(0)->_name = kStringWireAndPlug2;
@@ -1164,7 +1164,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 			setSectionVisible(4, false);
 			getObject(0)->_click = 11;
 		} else {
-			_vm->renderMessage("Die Leitung ist zu kurz.");
+			_vm->renderMessage(kStringCable4);
 		}
 	} else {
 		return false;
@@ -1175,7 +1175,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 
 void ShipHold::onEntrance() {
 	if (!hasSeen())
-		_vm->renderMessage("Was ist denn das f\201r ein Chaos?|Und au\341erdem fehlt das Notraumschiff!|Jetzt wird mir einiges klar.|Die anderen sind gefl\201chtet,|und ich habe es verpennt.");
+		_vm->renderMessage(kStringShipHold2);
 	setRoomSeen(true);
 	_gm->_rooms[COCKPIT]->setRoomSeen(true);
 }
@@ -1218,12 +1218,12 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, LANDINGMOD_BUTTON))
-		_vm->renderMessage("Es ist nicht spitz genug.");
+		_vm->renderMessage(kStringShipHold3);
 	else if ((verb == ACTION_LOOK) && (obj1._id == LANDINGMOD_MONITOR) &&
 	         isSectionVisible(7))
-		_vm->renderMessage("Du wirst aus den Anzeigen nicht schlau.");
+		_vm->renderMessage(kStringShipHold4);
 	else if ((verb == ACTION_USE) && (obj1._id == KEYBOARD))
-		_vm->renderMessage("La\341 lieber die Finger davon!");
+		_vm->renderMessage(kStringShipHold5);
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, LANDINGMOD_SOCKET)) {
 		r = _gm->_rooms[CABIN_L3];
 		_gm->_inventory.remove(*r->getObject(8));
@@ -1238,7 +1238,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->drawImage(11);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SPOOL, LANDINGMOD_SOCKET))
-		_vm->renderMessage("An dem Kabel ist doch gar kein Stecker.");
+		_vm->renderMessage(kStringShipHold8);
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, TERMINALSTRIP)) {
 		_gm->drawImage(11);
 		getObject(4)->_name = kStringWireAndClip;
@@ -1248,7 +1248,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_state._terminalStripWire = true;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, SPOOL)) {
 		if (!_gm->_state._terminalStripConnected)
-			_vm->renderMessage("Womit denn?");
+			_vm->renderMessage(kStringCable3);
 		else {
 			_gm->drawImage(5);
 			getObject(4)->_name = kStringWireAndPlug2;
@@ -1272,14 +1272,14 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawImage(6);
 			getObject(4)->_click = 7;
 		} else {
-			_vm->renderMessage("Du solltest die Luke vielleicht erst \224ffnen.");
+			_vm->renderMessage(kStringShipHold6);
 		}
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == LANDINGMOD_HATCH) &&
 	           isSectionVisible(6)) {
-		_vm->renderMessage("Das Kabel ist im Weg.");
+		_vm->renderMessage(kStringCable1);
 	} else if (((verb == ACTION_TAKE) || (verb == ACTION_PULL)) &&
 	         (obj1._id == LANDINGMOD_WIRE)) {
-		_vm->renderMessage("Das Kabel ist schon ganz|richtig an dieser Stelle.");
+		_vm->renderMessage(kStringCable2);
 	} else {
 		return false;
 	}
@@ -1307,7 +1307,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!obj1.hasProperty(OPENED))
 			return false;
 		if (isSectionVisible(11) || isSectionVisible(12)) {
-			_vm->renderMessage("Das Seil ist im Weg.");
+			_vm->renderMessage(kStringShipHold7);
 		} else {
 			_vm->playSound(kAudioDoorSound);
 			_gm->drawImage(_gm->invertSection(1));
@@ -1322,15 +1322,15 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_WALK) && (obj1._id == OUTERHATCH) &&
 	           isSectionVisible(7)) {
 		if (!obj1.hasProperty(OPENED))
-			_vm->renderMessage("Das ist geschlossen.");
+			_vm->renderMessage(kStringShipHold9);
 		else if (!isSectionVisible(11))
-			_vm->renderMessage("Das geht nicht.|Die Luke ist mindestens|5 Meter \201ber dem Boden.");
+			_vm->renderMessage(kStringShipHold10);
 		else {
 			obj1._exitRoom = ROCKS;
 			return false;
 		}
 	} else if ((verb == ACTION_TAKE) && (obj1._id == GENERATOR_WIRE))
-		_vm->renderMessage("Das Kabel ist schon ganz|richtig an dieser Stelle.");
+		_vm->renderMessage(kStringCable2);
 	else if ((verb == ACTION_PULL) && (obj1._id == SHORT_WIRE) &&
 	         (obj1._click != 11)) {
 		_gm->drawImage(3);
@@ -1361,7 +1361,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == TRAP)) {
 		if (isSectionVisible(9))
-			_vm->renderMessage("Das Kabel ist im Weg.");
+			_vm->renderMessage(kStringCable1);
 		else {
 			setSectionVisible(3, false);
 			return false;
@@ -1395,12 +1395,12 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 	           (Object::combine(obj1, obj2, WIRE, CLIP) ||
 	            Object::combine(obj1, obj2, SPOOL, CLIP)) &&
 	           isSectionVisible(3)) {
-		_vm->renderMessage("Was n\201tzt dir der Anschlu\341|ohne eine Stromquelle?!");
+		_vm->renderMessage(kStringShipHold11);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == VOLTMETER)) {
 		if (_gm->_state._powerOff)
-			_vm->renderMessage("Die Spannung ist auf Null abgesunken.");
+			_vm->renderMessage(kStringShipHold12);
 		else
-			_vm->renderMessage("Es zeigt volle Spannung an.");
+			_vm->renderMessage(kStringShipHold13);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LADDER, ROPE)) {
 		_gm->drawImage(13);
 		r = _gm->_rooms[CABIN_R3];
@@ -1408,7 +1408,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		getObject(3)->_click = 18;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, OUTERHATCH, GENERATOR_ROPE)) {
 		if (!isSectionVisible(1))
-			_vm->renderMessage("Du mu\341t die Luke erst \224ffnen.");
+			_vm->renderMessage(kStringShipHold14);
 		else {
 			_gm->drawImage(_gm->invertSection(13));
 			_gm->drawImage(1);
@@ -1424,10 +1424,10 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			getObject(3)->_click = 17;
 		}
 	} else if ((verb == ACTION_TAKE) && (obj1._id == GENERATOR_ROPE)) {
-		_vm->renderMessage("Das Seil ist hier schon ganz richtig.");
+		_vm->renderMessage(kStringShipHold15);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, OUTERHATCH, GENERATOR_WIRE) &&
 	           isSectionVisible(1)) {
-		_vm->renderMessage("Das Kabel ist zu kurz.");
+		_vm->renderMessage(kStringShipHold16);
 	} else {
 		return false;
 	}
