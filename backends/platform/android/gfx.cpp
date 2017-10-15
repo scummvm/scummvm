@@ -408,7 +408,7 @@ void OSystem_Android::setPalette(const byte *colors, uint start, uint num) {
 		WRITE_UINT16(p, pf.RGBToColor(colors[0], colors[1], colors[2]));
 }
 
-void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_Android::grabPalette(byte *colors, uint start, uint num) const {
 	ENTER("%p, %u, %u", colors, start, num);
 
 #ifdef USE_RGB_COLOR

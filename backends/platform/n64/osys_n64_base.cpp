@@ -408,7 +408,7 @@ void OSystem_N64::rebuildOffscreenMouseBuffer(void) {
 	}
 }
 
-void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_N64::grabPalette(byte *colors, uint start, uint num) const {
 #ifdef N64_EXTREME_MEMORY_SAVING  // This way loses precisions
 	uint32 i;
 	uint16 color;

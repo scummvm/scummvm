@@ -268,7 +268,7 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 	refreshCursor();
 }
 
-void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) {
+void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) const {
 //	consolePrintf("Grabpalette");
 
 	for (unsigned int r = start; r < start + num; r++) {

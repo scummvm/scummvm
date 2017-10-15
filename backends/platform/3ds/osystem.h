@@ -105,7 +105,7 @@ public:
 	int16 getHeight(){ return _gameHeight; }
 	int16 getWidth(){ return _gameWidth; }
 	void setPalette(const byte *colors, uint start, uint num);
-	void grabPalette(byte *colors, uint start, uint num);
+	void grabPalette(byte *colors, uint start, uint num) const;
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w,
 	                      int h);
 	Graphics::Surface *lockScreen();

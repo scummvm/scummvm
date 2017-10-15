@@ -280,7 +280,7 @@ int16 OSystem_PSP::getOverlayHeight() {
 	return (int16)_overlay.getHeight();
 }
 
-void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) const {
 	DEBUG_ENTER_FUNC();
 	_screen.getPartialPalette(colors, start, num);
 }
