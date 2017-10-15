@@ -192,6 +192,11 @@ protected:
 	 */
 	virtual void setInternalMousePosition(int x, int y) = 0;
 
+	/**
+	 * Whether the screen contents shall be forced to redrawn.
+	 */
+	bool _forceRedraw;
+
 private:
 	/**
 	 * Create a surface with the specified pixel format.
@@ -527,11 +532,6 @@ private:
 	//
 	// Misc
 	//
-
-	/**
-	 * Whether the screen contents shall be forced to redrawn.
-	 */
-	bool _forceRedraw;
 
 #ifdef USE_OSD
 	//

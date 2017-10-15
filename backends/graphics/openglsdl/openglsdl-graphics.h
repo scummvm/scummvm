@@ -83,6 +83,7 @@ private:
 
 	void getWindowDimensions(int *width, int *height);
 
+	uint _forceFrameUpdate;
 	uint _lastRequestedWidth;
 	uint _lastRequestedHeight;
 	uint _graphicsScale;
