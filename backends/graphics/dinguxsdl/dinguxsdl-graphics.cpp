@@ -457,7 +457,7 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
 
-bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return
 	    (f == OSystem::kFeatureAspectRatioCorrection) ||
 	    (f == OSystem::kFeatureCursorPalette);
@@ -477,7 +477,7 @@ void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 	}
 }
 
-bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	assert(_transactionMode == kTransactionNone);
 
 	switch (f) {
