@@ -440,7 +440,7 @@ const char *gameText[] = {
 	// 335
 	"Was war das?", // kStringShipSleepCabin12
 	"Achtung", // kStringShipSleepCabin13
-	"Du wachst mit brummendem Sch\204del auf|und merkst, daﬂ du nur getr\204umt hast.", // kStringShipSleepCabin14
+	"Du wachst mit brummendem Sch\204del auf|und merkst, da\341 du nur getr\204umt hast.", // kStringShipSleepCabin14
 	"Beim Aufprall des Raumschiffs|mu\341t du mit dem Kopf aufgeschlagen|und bewu\341tlos geworden sein.", // kStringShipSleepCabin15
 	"Was steht dir jetzt wohl wirklich bevor?", // kStringShipSleepCabin16
 	// 340
