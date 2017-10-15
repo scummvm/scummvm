@@ -751,29 +751,29 @@ bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
 		char c[2] = {0, 0};
 		_gm->_guiEnabled = false;
 		_vm->renderBox(0, 0, 320, 200, kColorBlack);
-		_vm->renderText("Geschwindigkeit: ", 50, 50, kColorLightYellow);
+		_vm->renderText(kStringShipCockpit1, 50, 50, kColorLightYellow);
 		if (_gm->_state._arrivalDaysLeft)
-			_vm->renderText("8000 hpm");
+			_vm->renderText(kStringShipCockpit2);
 		else
-			_vm->renderText("0 hpm");
-		_vm->renderText("Ziel: Arsano 3", 50, 70, kColorLightYellow);
-		_vm->renderText("Entfernung: ", 50, 90, kColorLightYellow);
+			_vm->renderText(kStringShipCockpit3);
+		_vm->renderText(kStringShipCockpit4, 50, 70, kColorLightYellow);
+		_vm->renderText(kStringShipCockpit5, 50, 90, kColorLightYellow);
 		_vm->renderText(Common::String::format("%d", _gm->_state._arrivalDaysLeft / 400).c_str());
 		_vm->renderText(",");
 		c[0] = (_gm->_state._arrivalDaysLeft / 40) % 10 + '0';
 		_vm->renderText(c);
 		c[0] = (_gm->_state._arrivalDaysLeft / 4) % 10 + '0';
 		_vm->renderText(c);
-		_vm->renderText(" Lichtjahre");
-		_vm->renderText("Dauer der Reise bei momentaner Geschwindigkeit:", 50, 110, kColorLightYellow);
+		_vm->renderText(kStringShipCockpit6);
+		_vm->renderText(kStringShipCockpit7, 50, 110, kColorLightYellow);
 		_vm->renderText(Common::String::format("%d", _gm->_state._arrivalDaysLeft).c_str(),
 		                50, 120, kColorLightYellow);
-		_vm->renderText(" Tage");
+		_vm->renderText(kStringShipCockpit8);
 
 		_gm->getInput();
 		_gm->_guiEnabled = true;
 	} else if ((verb == ACTION_USE) && (obj1._id == INSTRUMENTS))
-		_vm->renderMessage("Vergi\341 nicht, du bist nur der|Schiffskoch und hast keine Ahnung,|wie man ein Raumschiff fliegt.");
+		_vm->renderMessage(kStringShipCockpit9);
 	else
 		return false;
 
@@ -788,7 +788,7 @@ void ShipCockpit::animation() {
 			_color = kColorLightYellow;
 			_gm->setAnimationTimer(10);
 		}
-		_vm->renderText("Achtung: Triebwerke funktionsunf\204hig", 50, 145, _color);
+		_vm->renderText(kStringShipCockpit10, 50, 145, _color);
 	} else {
 		if (isSectionVisible(21)) {
 			_gm->drawImage(_gm->invertSection(21));
@@ -800,8 +800,8 @@ void ShipCockpit::animation() {
 	}
 	if (_gm->_state._powerOff) {
 		if (!_gm->_guiEnabled) {
-			_vm->renderText("Energievorrat ersch\224pft", 97, 165, _color);
-			_vm->renderText("Notstromversorgung aktiv", 97, 175, _color);
+			_vm->renderText(kStringShipCockpit11, 97, 165, _color);
+			_vm->renderText(kStringShipCockpit12, 97, 175, _color);
 		} else {
 			if (isSectionVisible(21))
 				_gm->drawImage(22);
@@ -813,7 +813,7 @@ void ShipCockpit::animation() {
 
 void ShipCockpit::onEntrance() {
 	if (!hasSeen())
-		_vm->renderMessage("Was?! Keiner im Cockpit!|Die sind wohl verr\201ckt!");
+		_vm->renderMessage(kStringShipCockpit13);
 	setRoomSeen(true);
 }
 
