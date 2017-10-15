@@ -516,7 +516,7 @@ bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 
 bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_OPEN) && (obj1._id == KITCHEN_HATCH)) {
-		_vm->renderMessage(_vm->getGameString(kStringShipHall1));
+		_vm->renderMessage(kStringShipHall1);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1,obj2,KEYCARD2,SLEEP_SLOT)) {
 		if (_objectState[2].hasProperty(OPENED)) {
 			_objectState[2].disableProperty(OPENED);
