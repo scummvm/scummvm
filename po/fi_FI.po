@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-15 20:27+0200\n"
+"POT-Creation-Date: 2017-10-15 20:55+0200\n"
 "PO-Revision-Date: 2017-10-15 17:04+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -1185,7 +1185,7 @@ msgstr "ScummVM:n kieli:"
 msgid "Language of ScummVM GUI"
 msgstr "ScummVM käyttöliittymän kieli"
 
-#: gui/options.cpp:1600 gui/updates-dialog.cpp:87
+#: gui/options.cpp:1600 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "Päivitystarkistus:"
 
@@ -1638,7 +1638,7 @@ msgstr ""
 "Voit muuttaa tätä asetusta myöhemmin Muut-\n"
 "välilehden Asetukset-dialogista."
 
-#: gui/updates-dialog.cpp:118
+#: gui/updates-dialog.cpp:116
 msgid "Proceed"
 msgstr "Jatka"
 

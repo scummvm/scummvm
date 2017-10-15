@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-15 20:27+0200\n"
+"POT-Creation-Date: 2017-10-15 20:55+0200\n"
 "PO-Revision-Date: 2017-02-20 14:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -1189,7 +1189,7 @@ msgstr "Idioma GUI:"
 msgid "Language of ScummVM GUI"
 msgstr "Idioma de la interfície d'usuari de ScummVM"
 
-#: gui/options.cpp:1600 gui/updates-dialog.cpp:87
+#: gui/options.cpp:1600 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr ""
 
@@ -1636,7 +1636,7 @@ msgid ""
 "in the Options dialog."
 msgstr ""
 
-#: gui/updates-dialog.cpp:118
+#: gui/updates-dialog.cpp:116
 msgid "Proceed"
 msgstr ""
 
