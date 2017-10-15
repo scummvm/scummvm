@@ -870,8 +870,11 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
-	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
-		_videoMode.aspectRatioCorrection = false;
+	if (_videoMode.aspectRatioCorrection) {
+		// Check that he current domain supports aspect ratio correction
+		if (Common::checkGameGUIOption(GUIO_NOASPECT, ConfMan.get("guioptions", ConfMan.getActiveDomainName())))
+			_videoMode.aspectRatioCorrection = false;
+	}
 
 	if (_videoMode.aspectRatioCorrection)
 		_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);

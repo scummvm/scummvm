@@ -37,8 +37,11 @@
 #include "common/tokenizer.h"
 #include "common/rect.h"
 #endif
+#include "common/gui_options.h"
+#include "common/config-manager.h"
 
 #include "graphics/conversion.h"
+#include "graphics/scaler/aspect.h"
 #ifdef USE_OSD
 #include "graphics/fontman.h"
 #include "graphics/font.h"
@@ -1196,12 +1199,10 @@ frac_t OpenGLGraphicsManager::getDesiredGameScreenAspect() const {
 	const uint height = _currentState.gameHeight;
 
 	if (_currentState.aspectRatioCorrection) {
-		// In case we enable aspect ratio correction we force a 4/3 ratio.
-		// But just for 320x200 and 640x400 games, since other games do not need
-		// this.
-		if ((width == 320 && height == 200) || (width == 640 && height == 400)) {
-			return intToFrac(4) / 3;
-		}
+		// Check that the current domain supports aspect ratio correction
+		bool supportsAspectRatio = !Common::checkGameGUIOption(GUIO_NOASPECT, ConfMan.get("guioptions", ConfMan.getActiveDomainName()));
+		if (supportsAspectRatio)
+			return intToFrac(width) / real2Aspect(height);
 	}
 
 	return intToFrac(width) / height;
