@@ -870,7 +870,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, RECORD, TURNTABLE)) {
 		if (!_gm->_guiEnabled || isSectionVisible(15))
-			_vm->renderMessage("Du hast die Platte schon aufgelegt.");
+			_vm->renderMessage(kStringShipCabinL3_1);
 		else {
 			if (!getObject(4)->hasProperty(CARRIED))
 				_gm->drawImage(_gm->invertSection(8));
@@ -881,7 +881,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == TURNTABLE_BUTTON)) {
 		if (!isSectionVisible(15)) {
-			_vm->renderMessage("Es ist doch gar keine Platte aufgelegt.");
+			_vm->renderMessage(kStringShipCabinL3_2);
 		} else if (!isSectionVisible(10) && !isSectionVisible(11) && isSectionVisible(12)) {
 			_gm->drawImage(14);
 			setSectionVisible(15, false);
@@ -902,7 +902,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawImage(15);
 		setSectionVisible(14, false);
 		setSectionVisible(13, false);
-		_vm->renderMessage("Die Platte scheint einen Sprung zu haben.");
+		_vm->renderMessage(kStringShipCabinL3_3);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == RECORD) && (obj1._click != 15)) {
 		_gm->drawImage(9);
 		setSectionVisible(13, false);
@@ -919,7 +919,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(10, false);
 		getObject(10)->_click = 20;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE2))
-		_vm->renderMessage("Schneid doch besser ein|l\204ngeres St\201ck Kabel ab!");
+		_vm->renderMessage(kStringShipCabinL3_4);
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE)) {
 		r = _gm->_rooms[AIRLOCK];
 		if (!isSectionVisible(10) && !r->getObject(5)->hasProperty(WORN)) {
@@ -939,7 +939,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 			getObject(9)->_click = 255;
 			getObject(10)->_click = 255;
 		} else {
-			_vm->renderMessage("Das ist befestigt.");
+			_vm->renderMessage(kStringShipCabinL3_5);
 		}
 	} else {
 		return false;
@@ -1096,7 +1096,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 				if (!r->getObject(4)->hasProperty(WORN) ||
 				    !r->getObject(5)->hasProperty(WORN) ||
 				    !r->getObject(6)->hasProperty(WORN)) {
-					_gm->dead("Zu niedriger Luftdruck soll ungesund sein.");
+					_gm->dead(kStringShipAirlock1);
 					return true;
 				}
 			}
@@ -1104,9 +1104,9 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == MANOMETER)) {
 		if (getObject(1)->hasProperty(OPENED))
-			_vm->renderMessage("Er zeigt Null an.");
+			_vm->renderMessage(kStringShipAirlock2);
 		else
-			_vm->renderMessage("Er zeigt Normaldruck an.");
+			_vm->renderMessage(kStringShipAirlock3);
 	} else
 		return false;
 
@@ -1115,7 +1115,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 
 void ShipAirlock::onEntrance() {
 	if (!hasSeen())
-		_vm->renderMessage("Komisch, es ist nur|noch ein Raumanzug da.");
+		_vm->renderMessage(kStringShipAirlock4);
 
 	setRoomSeen(true);
 }

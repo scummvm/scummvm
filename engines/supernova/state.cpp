@@ -1221,6 +1221,31 @@ void GameManager::closeLocker(const Room *room, Object *obj, Object *lock, int s
 	}
 }
 
+void GameManager::dead(StringID messageId) {
+	_vm->paletteFadeOut();
+	_guiEnabled = false;
+	_vm->renderImage(11, 0);
+	_vm->renderMessage(messageId);
+	_vm->playSound(kAudioDeath);
+	_vm->paletteFadeIn();
+	getInput();
+	_vm->paletteFadeOut();
+	_vm->removeMessage();
+
+	// TODO: Load screen
+	destroyRooms();
+	initRooms();
+	initState();
+	initGui();
+	_inventory.clear();
+	changeRoom(CABIN_R3);
+	g_system->fillScreen(kColorBlack);
+	_vm->paletteFadeIn();
+
+	_guiEnabled = true;
+}
+
+// TODO: Remove this function when all the texts are properly extracted
 void GameManager::dead(const char *message) {
 	_vm->paletteFadeOut();
 	_guiEnabled = false;
