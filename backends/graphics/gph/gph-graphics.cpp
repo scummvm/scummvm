@@ -477,7 +477,7 @@ bool GPHGraphicsManager::loadGFXMode() {
 	return true;
 }
 
-bool GPHGraphicsManager::hasFeature(OSystem::Feature f) {
+bool GPHGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return
 	    (f == OSystem::kFeatureAspectRatioCorrection) ||
 	    (f == OSystem::kFeatureCursorPalette);
@@ -497,7 +497,7 @@ void GPHGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	}
 }
 
-bool GPHGraphicsManager::getFeatureState(OSystem::Feature f) {
+bool GPHGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	assert(_transactionMode == kTransactionNone);
 
 	switch (f) {
@@ -508,14 +508,6 @@ bool GPHGraphicsManager::getFeatureState(OSystem::Feature f) {
 	default:
 		return false;
 	}
-}
-
-SurfaceSdlGraphicsManager::MousePos *GPHGraphicsManager::getMouseCurState() {
-	return &_mouseCurState;
-}
-
-SurfaceSdlGraphicsManager::VideoState *GPHGraphicsManager::getVideoMode() {
-	return &_videoMode;
 }
 
 void GPHGraphicsManager::warpMouse(int x, int y) {

@@ -56,9 +56,12 @@ public:
 	bool hasMouseFocus() const;
 
 	/**
-	 * Warp the mouse to the specified position in window coordinates.
+	 * Warp the mouse to the specified position in window coordinates. The mouse
+	 * will only be warped if the window is focused in the window manager.
+	 *
+	 * @returns true if the system cursor was warped.
 	 */
-	void warpMouseInWindow(uint x, uint y);
+	bool warpMouseInWindow(int x, int y);
 
 	/**
 	 * Iconifies the window.
@@ -72,6 +75,11 @@ public:
 	 * for accessing it in a version safe manner.
 	 */
 	bool getSDLWMInformation(SDL_SysWMinfo *info) const;
+
+	bool mouseIsGrabbed() const { return _inputGrabState; }
+
+private:
+	bool _inputGrabState;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:
@@ -108,7 +116,6 @@ private:
 	 */
 	int _lastX, _lastY;
 
-	bool _inputGrabState;
 	Common::String _windowCaption;
 #endif
 };

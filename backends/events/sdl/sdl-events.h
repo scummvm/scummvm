@@ -51,6 +51,12 @@ public:
 	 */
 	virtual void resetKeyboardEmulation(int16 x_max, int16 y_max);
 
+	/**
+	 * Emulates a mouse movement that would normally be caused by a mouse warp
+	 * of the system mouse.
+	 */
+	void fakeWarpMouse(const int x, const int y);
+
 protected:
 	/** @name Keyboard mouse emulation
 	 * Disabled by fingolfin 2004-12-18.
@@ -117,7 +123,7 @@ protected:
 	 * Assigns the mouse coords to the mouse event. Furthermore notify the
 	 * graphics manager about the position change.
 	 */
-	virtual void processMouseEvent(Common::Event &event, int x, int y);
+	virtual bool processMouseEvent(Common::Event &event, int x, int y);
 
 	/**
 	 * Remaps key events. This allows platforms to configure
@@ -155,6 +161,18 @@ protected:
 	 * Extracts the keycode for the specified key sym.
 	 */
 	SDLKey obtainKeycode(const SDL_keysym keySym);
+
+	/**
+	 * Whether _fakeMouseMove contains an event we need to send.
+	 */
+	bool _queuedFakeMouseMove;
+
+	/**
+	 * A fake mouse motion event sent when the graphics manager is told to warp
+	 * the mouse but the system mouse is unable to be warped (e.g. because the
+	 * window is not focused).
+	 */
+	Common::Event _fakeMouseMove;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/**

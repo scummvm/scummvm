@@ -135,8 +135,10 @@ void SdlWindow::toggleMouseGrab() {
 #else
 	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
+		_inputGrabState = true;
 	} else {
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
+		_inputGrabState = false;
 	}
 #endif
 }
@@ -153,14 +155,20 @@ bool SdlWindow::hasMouseFocus() const {
 #endif
 }
 
-void SdlWindow::warpMouseInWindow(uint x, uint y) {
+bool SdlWindow::warpMouseInWindow(int x, int y) {
+	if (hasMouseFocus()) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_window && hasMouseFocus()) {
-		SDL_WarpMouseInWindow(_window, x, y);
-	}
+		if (_window) {
+			SDL_WarpMouseInWindow(_window, x, y);
+			return true;
+		}
 #else
-	SDL_WarpMouse(x, y);
+		SDL_WarpMouse(x, y);
+		return true;
 #endif
+	}
+
+	return false;
 }
 
 void SdlWindow::iconifyWindow() {

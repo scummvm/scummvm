@@ -395,6 +395,11 @@ public:
 	 */
 	virtual void pushEvent(const Event &event) = 0;
 
+	/**
+	 * Purges all unprocessed mouse events already in the event queue.
+	 */
+	virtual void purgeMouseEvents() = 0;
+
 	/** Return the current mouse position */
 	virtual Point getMousePos() const = 0;
 

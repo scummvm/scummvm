@@ -28,15 +28,11 @@
 #include "graphics/scaler/aspect.h"
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
-	: _eventSource(source), _window(window)
+	: _eventSource(source), _window(window), _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	, _allowWindowSizeReset(false), _hintedWidth(0), _hintedHeight(0), _lastFlags(0)
 #endif
-	  {
-}
-
-SdlGraphicsManager::~SdlGraphicsManager() {
-}
+{}
 
 void SdlGraphicsManager::activateManager() {
 	_eventSource->setGraphicsManager(this);
@@ -46,7 +42,7 @@ void SdlGraphicsManager::deactivateManager() {
 	_eventSource->setGraphicsManager(0);
 }
 
-SdlGraphicsManager::State SdlGraphicsManager::getState() {
+SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 	State state;
 
 	state.screenWidth   = getWidth();
@@ -152,6 +148,82 @@ void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
 #endif
 }
 
+bool SdlGraphicsManager::showMouse(const bool visible) {
+	if (visible == _cursorVisible) {
+		return visible;
+	}
+
+	int showCursor = SDL_DISABLE;
+	if (visible) {
+		// _cursorX and _cursorY are currently always clipped to the active
+		// area, so we need to ask SDL where the system's mouse cursor is
+		// instead
+		int x, y;
+		SDL_GetMouseState(&x, &y);
+		if (!_activeArea.drawRect.contains(Common::Point(x, y))) {
+			showCursor = SDL_ENABLE;
+		}
+	}
+	SDL_ShowCursor(showCursor);
+
+	return WindowedGraphicsManager::showMouse(visible);
+}
+
+bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
+	int showCursor = SDL_DISABLE;
+	bool valid = true;
+	if (_activeArea.drawRect.contains(mouse)) {
+		_cursorLastInActiveArea = true;
+	} else {
+		mouse.x = CLIP<int>(mouse.x, _activeArea.drawRect.left, _activeArea.drawRect.right - 1);
+		mouse.y = CLIP<int>(mouse.y, _activeArea.drawRect.top, _activeArea.drawRect.bottom - 1);
+
+		if (_window->mouseIsGrabbed() ||
+			// Keep the mouse inside the game area during dragging to prevent an
+			// event mismatch where the mouseup event gets lost because it is
+			// performed outside of the game area
+			(_cursorLastInActiveArea && SDL_GetMouseState(nullptr, nullptr) != 0)) {
+			setSystemMousePosition(mouse.x, mouse.y);
+		} else {
+			// Allow the in-game mouse to get a final movement event to the edge
+			// of the window if the mouse was moved out of the game area
+			if (_cursorLastInActiveArea) {
+				_cursorLastInActiveArea = false;
+			} else if (_cursorVisible) {
+				// Keep sending events to the game if the cursor is invisible,
+				// since otherwise if a game lets you skip a cutscene by
+				// clicking and the user moved the mouse outside the active
+				// area, the clicks wouldn't do anything, which would be
+				// confusing
+				valid = false;
+			}
+
+			if (_cursorVisible) {
+				showCursor = SDL_ENABLE;
+			}
+		}
+	}
+
+	SDL_ShowCursor(showCursor);
+	if (valid) {
+		setMousePosition(mouse.x, mouse.y);
+		mouse = convertWindowToVirtual(mouse.x, mouse.y);
+	}
+	return valid;
+}
+
+void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
+	assert(_window);
+	if (!_window->warpMouseInWindow(x, y)) {
+		_eventSource->fakeWarpMouse(x, y);
+	}
+}
+
+void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
+	_eventSource->resetKeyboardEmulation(width - 1, height - 1);
+	_forceRedraw = true;
+}
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint32 flags) {
 	if (!_window) {
@@ -159,11 +231,12 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	}
 
 	// We only update the actual window when flags change (which usually means
-	// fullscreen mode is entered/exited) or when updates are forced so that we
+	// fullscreen mode is entered/exited), when updates are forced so that we
 	// do not reset the window size whenever a game makes a call to change the
 	// size or pixel format of the internal game surface (since a user may have
-	// resized the game window)
-	if (!_window->getSDLWindow() || _lastFlags != flags || _allowWindowSizeReset) {
+	// resized the game window), or when the launcher is visible (since a user
+	// may change the scaler, which should reset the window size)
+	if (!_window->getSDLWindow() || _lastFlags != flags || _overlayVisible || _allowWindowSizeReset) {
 		if (_hintedWidth) {
 			width = _hintedWidth;
 		}
