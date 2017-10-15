@@ -83,13 +83,11 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 
 	y += kLineHeight;
 
-
 	const char *updMessage = _("Update check:");
 
 	int updatelineWidth = g_gui.getFont().wordWrapText(updMessage, screenW - 2 * 20, lines3) + 5;
 
-	new StaticTextWidget(this, 10, y, maxlineWidth, kLineHeight,
-							lines3[0], Graphics::kTextAlignLeft);
+	new StaticTextWidget(this, 10, y, maxlineWidth, kLineHeight, lines3[0], Graphics::kTextAlignLeft);
 
 	_updatesPopUp = new PopUpWidget(this, 10 + updatelineWidth, y, _w - 20 - updatelineWidth, g_gui.xmlEval()->getVar("Globals.PopUp.Height", kLineHeight));
 
