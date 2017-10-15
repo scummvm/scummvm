@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-07 19:31+0200\n"
+"POT-Creation-Date: 2017-10-15 15:55+0200\n"
 "PO-Revision-Date: 2017-09-09 13:38+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -63,8 +63,7 @@ msgstr "Siirry ylös"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: gui/updates-dialog.cpp:113 engines/engine.cpp:524
-#: backends/events/default/default-events.cpp:196
+#: engines/engine.cpp:524 backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
@@ -1186,7 +1185,7 @@ msgstr "ScummVM:n kieli:"
 msgid "Language of ScummVM GUI"
 msgstr "ScummVM käyttöliittymän kieli"
 
-#: gui/options.cpp:1600
+#: gui/options.cpp:1600 gui/updates-dialog.cpp:87
 msgid "Update check:"
 msgstr "Päivitystarkistus:"
 
@@ -1621,27 +1620,25 @@ msgstr "Antialiasoitu renderöijä"
 msgid "Antialiased"
 msgstr "Antialiasoitu"
 
-#: gui/updates-dialog.cpp:51
+#: gui/updates-dialog.cpp:49
+#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
-"which requires access to the Internet.\n"
-"\n"
-"Would you like to enable this feature?"
+"which requires access to the Internet. Would you\n"
+"like to enable this feature?"
 msgstr ""
 "ScummVM tukee nyt automaattista päivitysten tarkistusta\n"
 "joka vaatii pääsyn internetiin\n"
 "\n"
 "Haluaisitko laittaa päälle tämän ominaisuuden?"
 
-#: gui/updates-dialog.cpp:55
-msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr "(Voit aina laittaa sen päälle asetusvalikon \"Muut\"-välilehdestä)"
+#: gui/updates-dialog.cpp:52
+msgid ""
+"You can change this setting later in the Misc tab\n"
+"in the Options dialog."
+msgstr ""
 
-#: gui/updates-dialog.cpp:92
-msgid "Check for updates automatically"
-msgstr "Tarkista päivitykset automaattisesti"
-
-#: gui/updates-dialog.cpp:111
+#: gui/updates-dialog.cpp:118
 msgid "Proceed"
 msgstr "Jatka"
 
@@ -4637,6 +4634,12 @@ msgstr ""
 "Tämä pelitallennus käyttää versiota %u, mutta tämä pelimoottorin tuki on "
 "vain versioon %d asti. Tarvitset päivitetyn version tästä pelimoottorista "
 "käyttääksesi tätä pelitallennusta."
+
+#~ msgid "(You can always enable it in the options dialog on the Misc tab)"
+#~ msgstr "(Voit aina laittaa sen päälle asetusvalikon \"Muut\"-välilehdestä)"
+
+#~ msgid "Check for updates automatically"
+#~ msgstr "Tarkista päivitykset automaattisesti"
 
 #~ msgid "8 kHz"
 #~ msgstr "8 kHz"

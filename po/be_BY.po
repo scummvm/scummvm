@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-07 19:31+0200\n"
+"POT-Creation-Date: 2017-10-15 15:55+0200\n"
 "PO-Revision-Date: 2017-07-26 18:23+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -64,8 +64,7 @@ msgstr "Уверх"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: gui/updates-dialog.cpp:113 engines/engine.cpp:524
-#: backends/events/default/default-events.cpp:196
+#: engines/engine.cpp:524 backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
@@ -1187,7 +1186,7 @@ msgstr "Мова GUI:"
 msgid "Language of ScummVM GUI"
 msgstr "Мова графічнага інтэрфейсу ScummVM"
 
-#: gui/options.cpp:1600
+#: gui/options.cpp:1600 gui/updates-dialog.cpp:87
 msgid "Update check:"
 msgstr "Правяраць абнаўленні:"
 
@@ -1622,27 +1621,25 @@ msgstr "Растарызатар са згладжваннем"
 msgid "Antialiased"
 msgstr "Са згладжваннем"
 
-#: gui/updates-dialog.cpp:51
+#: gui/updates-dialog.cpp:49
+#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
-"which requires access to the Internet.\n"
-"\n"
-"Would you like to enable this feature?"
+"which requires access to the Internet. Would you\n"
+"like to enable this feature?"
 msgstr ""
 "ScummVM стаў падтрымліваць аўтаматычную праверку\n"
 "абнаўленняў, якая патрабуе доступу ў Інтэрнэт.\n"
 "\n"
 "Ці жадаеце вы ўключыць гэту опцыю?"
 
-#: gui/updates-dialog.cpp:55
-msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr "(Вы заўсёды можаце ўключыць яе ў наладах на закладцы \"Рознае\")"
+#: gui/updates-dialog.cpp:52
+msgid ""
+"You can change this setting later in the Misc tab\n"
+"in the Options dialog."
+msgstr ""
 
-#: gui/updates-dialog.cpp:92
-msgid "Check for updates automatically"
-msgstr "Аўтаматычна правяраць абнаўленні"
-
-#: gui/updates-dialog.cpp:111
+#: gui/updates-dialog.cpp:118
 msgid "Proceed"
 msgstr "Працягнуць"
 
@@ -4640,6 +4637,12 @@ msgid ""
 msgstr ""
 "Гэты файл захаванай гульні мае версію %u, але рухавічок падтрымвае версіі да "
 "%d. Вам патрэбна новая версія ScummVM для карыстання гэтым файлам."
+
+#~ msgid "(You can always enable it in the options dialog on the Misc tab)"
+#~ msgstr "(Вы заўсёды можаце ўключыць яе ў наладах на закладцы \"Рознае\")"
+
+#~ msgid "Check for updates automatically"
+#~ msgstr "Аўтаматычна правяраць абнаўленні"
 
 #~ msgid "8 kHz"
 #~ msgstr "8 кГц"

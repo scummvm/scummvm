@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-07 19:31+0200\n"
+"POT-Creation-Date: 2017-10-15 15:55+0200\n"
 "PO-Revision-Date: 2017-04-23 05:59+0000\n"
 "Last-Translator: Santiago Sanchez <sanchez.santiago.j@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -63,8 +63,7 @@ msgstr "Arriba"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: gui/updates-dialog.cpp:113 engines/engine.cpp:524
-#: backends/events/default/default-events.cpp:196
+#: engines/engine.cpp:524 backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
@@ -1196,7 +1195,7 @@ msgstr "Idioma:"
 msgid "Language of ScummVM GUI"
 msgstr "Idioma de la interfaz de ScummVM"
 
-#: gui/options.cpp:1600
+#: gui/options.cpp:1600 gui/updates-dialog.cpp:87
 msgid "Update check:"
 msgstr "Buscar actualizaciones:"
 
@@ -1635,27 +1634,25 @@ msgstr "Suavizado"
 msgid "Antialiased"
 msgstr "Suavizado"
 
-#: gui/updates-dialog.cpp:51
+#: gui/updates-dialog.cpp:49
+#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
-"which requires access to the Internet.\n"
-"\n"
-"Would you like to enable this feature?"
+"which requires access to the Internet. Would you\n"
+"like to enable this feature?"
 msgstr ""
 "Ahora ScummVM puede buscar actualizaciones automáticamente,\n"
 "para lo cual se requiere una conexión a Internet.\n"
 "\n"
 "Would you like to enable this feature?"
 
-#: gui/updates-dialog.cpp:55
-msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr "(Puedes activar esta función en la pestaña Otras del menú de opciones)"
+#: gui/updates-dialog.cpp:52
+msgid ""
+"You can change this setting later in the Misc tab\n"
+"in the Options dialog."
+msgstr ""
 
-#: gui/updates-dialog.cpp:92
-msgid "Check for updates automatically"
-msgstr "Buscar actualizaciones automáticamente"
-
-#: gui/updates-dialog.cpp:111
+#: gui/updates-dialog.cpp:118
 msgid "Proceed"
 msgstr "Aplicar"
 
@@ -4641,6 +4638,13 @@ msgstr ""
 "Esta partida guardada usa la versión %u, pero este motor soporta hasta la "
 "versión %d. Será necesaria una versión atualizada del motor para poder "
 "usarla."
+
+#~ msgid "(You can always enable it in the options dialog on the Misc tab)"
+#~ msgstr ""
+#~ "(Puedes activar esta función en la pestaña Otras del menú de opciones)"
+
+#~ msgid "Check for updates automatically"
+#~ msgstr "Buscar actualizaciones automáticamente"
 
 #~ msgid "8 kHz"
 #~ msgstr "8 kHz"
