@@ -1924,7 +1924,7 @@ void ArsanoRemaining::animation() {
 
 void ArsanoRoger::onEntrance() {
 	// This is not a normal shown variable, it's a dialog
-	if (_shown[kMaxSection - 2] = 0) {
+	if (_shown[kMaxSection - 2] == 0) {
 		_gm->say("Darf ich hier Platz nehmen?");
 		_gm->reply("Klar!", 2, 2 + 128);
 		_shown[kMaxSection - 2] = 1;
