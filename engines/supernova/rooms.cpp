@@ -93,7 +93,7 @@ Intro::Intro(SupernovaEngine *vm, GameManager *gm) {
 
 	_fileNumber = -1;
 	_id = INTRO;
-	_shown[0] = false;
+	_shown[0] = kShownFalse;
 
 	_objectState[0] =
 	Object(_id, kStringKeycard, kStringKeycardDescription, KEYCARD,
@@ -1712,7 +1712,9 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->_state._coins = 5;
 			}
 		}
-		_shown[kMaxSection - 5] = true;
+		// This shown object is an abuse in the original engine as it's not a real shown variable
+		// It's an internal (boolean) status
+		_shown[kMaxSection - 5] = kShownTrue;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COINS, CAR_SLOT)) {
 		if ((_gm->_state._coins < 5) && (getObject(7 - _gm->_state._coins)->_click == 7))
 			_vm->renderMessage("Mach doch zuerst das Fach leer!");
@@ -1922,10 +1924,11 @@ void ArsanoRemaining::animation() {
 }
 
 void ArsanoRoger::onEntrance() {
-	if (!_shown[kMaxSection - 2]) {
+	// This is not a normal shown variable, it's a dialog
+	if (_shown[kMaxSection - 2] = 0) {
 		_gm->say("Darf ich hier Platz nehmen?");
 		_gm->reply("Klar!", 2, 2 + 128);
-		_shown[kMaxSection - 2] = true;
+		_shown[kMaxSection - 2] = 1;
 	}
 }
 
@@ -2128,17 +2131,18 @@ bool ArsanoGlider::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void ArsanoMeetup2::onEntrance() {
-	switch (!_gm->_guiEnabled) {
+	// We use 1, 2, 3 because those are dialog status and not "real" _shown
+	switch (_shown[kMaxSection - 1]) {
 	case 1:
 		_gm->shipStart();
 		break;
 	case 2:
-		_vm->renderMessage("Alle Raumschiffe haben|den Planeten verlassen.");
+		_vm->renderMessage("Alle Raumschiffe haben|den Planeten verlassen."); // All spaceships have left the planet
 		break;
 	case 3:
-		_vm->renderMessage("Alle Raumschiffe haben den Planeten|verlassen, bis auf eins ...");
+		_vm->renderMessage("Alle Raumschiffe haben den Planeten|verlassen, bis auf eins ..."); // All spaceships have left the planet, except one ...
 	}
-	_gm->_guiEnabled = true;
+	_shown[kMaxSection - 1] = 0;
 }
 
 bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
@@ -3123,7 +3127,7 @@ Outro::Outro(SupernovaEngine *vm, GameManager *gm) {
 
 	_fileNumber = -1;
 	_id = OUTRO;
-	_shown[0] = false;
+	_shown[0] = kShownFalse;
 
 	outroText =
 		_vm->getGameString(kStringOutro1) +
