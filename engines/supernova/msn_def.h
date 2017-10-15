@@ -44,6 +44,9 @@ const int kMaxCarry = 30;
 //const int kRoomsChap3 = 21;
 //const int kRoomsNum = kRoomsChap0 + kRoomsChap1 + kRoomsChap2 + kRoomsChap3;
 
+const byte kShownFalse = 0;
+const byte kShownTrue = 1;
+
 enum MessagePosition {
 	kMessageNormal,
 	kMessageLeft,

@@ -37,7 +37,7 @@ public:
 	Room() {
 		_seen = false;
 		for (int i = 0; i < kMaxSection; ++i)
-			_shown[i] = false;
+			_shown[i] = kShownFalse;
 	}
 
 	bool hasSeen() {
@@ -55,10 +55,11 @@ public:
 	}
 
 	void setSectionVisible(uint section, bool visible) {
-		_shown[section] = visible;
+		_shown[section] = visible ? kShownTrue : kShownFalse;
 	}
+
 	bool isSectionVisible(uint index) const {
-		return _shown[index];
+		return _shown[index] == kShownTrue;
 	}
 	Object *getObject(uint index) {
 		return &_objectState[index];
@@ -75,7 +76,7 @@ public:
 
 protected:
 	int _fileNumber;
-	bool _shown[kMaxSection];
+	byte _shown[kMaxSection];
 	Object _objectState[kMaxObject];
 	RoomID _id;
 	SupernovaEngine *_vm;
@@ -116,11 +117,11 @@ public:
 
 		_fileNumber = 17;
 		_id = CORRIDOR;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = false;
-		_shown[4] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringHatch, kStringDefaultDescription, HATCH1, OPENABLE | EXIT, 0, 6, 1, CABIN_L1, 15);
 		_objectState[1] = Object(_id, kStringHatch, kStringDefaultDescription, NULLOBJECT, OPENABLE | EXIT, 1, 7, 2, CABIN_L2, 10);
@@ -145,7 +146,7 @@ public:
 
 		_fileNumber = 15;
 		_id = HALL;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringHatch, kStringCockpitHatchDescription, NULLOBJECT, OPENABLE | EXIT, 4, 5, 1, COCKPIT, 10);
 		_objectState[1] = Object(_id, kStringHatch, kStringKitchenHatchDescription, KITCHEN_HATCH, OPENABLE | EXIT, 0, 0, 0, NULLROOM, 1);
@@ -166,7 +167,7 @@ public:
 
 		_fileNumber = 33;
 		_id = SLEEP;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringHatch, kStringStasisHatchDescription2, CABINS, NULLTYPE, 0, 0, 0, NULLROOM, 0);
 		_objectState[1] = Object(_id, kStringHatch, kStringStasisHatchDescription2, CABIN, NULLTYPE, 1, 1, 0, NULLROOM, 0);
@@ -190,7 +191,7 @@ public:
 
 		_fileNumber = 9;
 		_id = COCKPIT;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringInstruments, kStringInstrumentsDescription1, INSTRUMENTS, NULLTYPE, 2, 2, 0, NULLROOM, 0);
 		_objectState[1] = Object(_id, kStringMonitor, kStringDefaultDescription, MONITOR, NULLTYPE, 0, 0, 0, NULLROOM, 0);
@@ -214,12 +215,12 @@ public:
 
 		_fileNumber = 21;
 		_id = CABIN_L1;
-		_shown[0] = true;
-		_shown[1] = true;
-		_shown[2] = true;
-		_shown[3] = true;
-		_shown[4] = true;
-		_shown[5] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownTrue;
+		_shown[2] = kShownTrue;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownTrue;
+		_shown[5] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringImage, kStringGenericDescription1, NULLOBJECT, UNNECESSARY, 5, 5, 0, NULLROOM, 0);
 		_objectState[1] = Object(_id, kStringImage, kStringGenericDescription2, NULLOBJECT, UNNECESSARY, 6, 6, 0, NULLROOM, 0);
@@ -244,23 +245,23 @@ public:
 
 		_fileNumber = 21;
 		_id = CABIN_L2;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = false;
-		_shown[4] = false;
-		_shown[5] = false;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_KL1,COMBINABLE,31,31,0);
 		_objectState[1] = Object(_id, kStringSlot,kStringSlotDescription,SLOT_KL2,COMBINABLE,32,32,0);
@@ -300,19 +301,19 @@ public:
 
 		_fileNumber = 21;
 		_id = CABIN_L3;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = false;
-		_shown[4] = false;
-		_shown[5] = false;
-		_shown[6] = true;
-		_shown[7] = true;
-		_shown[8] = true;
-		_shown[9] = true;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownTrue;
+		_shown[7] = kShownTrue;
+		_shown[8] = kShownTrue;
+		_shown[9] = kShownTrue;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringPoster,kStringPosterDescription1,NULLOBJECT,UNNECESSARY,11,11,0);
 		_objectState[1] = Object(_id, kStringPoster,kStringPosterDescription2,NULLOBJECT,UNNECESSARY,12,12,0);
@@ -344,9 +345,9 @@ public:
 
 		_fileNumber = 22;
 		_id = CABIN_R1;
-		_shown[0] = true;
-		_shown[1] = true;
-		_shown[2] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownTrue;
+		_shown[2] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringImage,kStringImageDescription1,NULLOBJECT,UNNECESSARY,5,5,0);
 		_objectState[1] = Object(_id, kStringDrawingInstruments,kStringDrawingInstrumentsDescription,NULLOBJECT,UNNECESSARY,6,6,0);
@@ -368,12 +369,12 @@ public:
 
 		_fileNumber = 22;
 		_id = CABIN_R2;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = true;
-		_shown[4] = true;
-		_shown[5] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownTrue;
+		_shown[5] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringChessGame,kStringChessGameDescription1,NULLOBJECT,UNNECESSARY,11,11,0);
 		_objectState[1] = Object(_id, kStringTennisRacket,kStringTennisRacketDescription,NULLOBJECT,UNNECESSARY,8,8,0);
@@ -395,22 +396,22 @@ public:
 
 		_fileNumber = 22;
 		_id = CABIN_R3;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = false;
-		_shown[4] = false;
-		_shown[5] = false;
-		_shown[6] = false;
-		_shown[7] = true;
-		_shown[8] = true;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownTrue;
+		_shown[8] = kShownTrue;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringChessGame,kStringChessGameDescription2,CHESS,TAKE | COMBINABLE,12,12,7 | 128);
 		_objectState[1] = Object(_id, kStringBed,kStringBedDescription,NULLOBJECT,NULLTYPE,13,13,0);
@@ -450,7 +451,7 @@ public:
 
 		_fileNumber = 23;
 		_id = BATHROOM;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringBathroom,kStringBathroomDescription,TOILET,NULLTYPE,0,0,0);
 		_objectState[1] = Object(_id, kStringShower,kStringDefaultDescription,SHOWER,NULLTYPE,1,1,0);
@@ -466,13 +467,13 @@ public:
 
 		_fileNumber = 34;
 		_id = AIRLOCK;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = false;
-		_shown[4] = false;
-		_shown[5] = false;
-		_shown[6] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringHatch,kStringHatchDescription1,NULLOBJECT,EXIT | OPENABLE | OPENED | CLOSED,0,0,0,CORRIDOR,10);
 		_objectState[1] = Object(_id, kStringHatch,kStringHatchDescription2,NULLOBJECT,EXIT | OPENABLE | CLOSED,1,1,0,HOLD,14);
@@ -495,7 +496,7 @@ public:
 
 		_fileNumber = 24;
 		_id = HOLD;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kNoString,kStringDefaultDescription,HOLD_WIRE,COMBINABLE,255,255,0);
 		_objectState[1] = Object(_id, kStringScrap,kStringScrapDescription1,SCRAP_LK,NULLTYPE,4,4,0);
@@ -523,7 +524,7 @@ public:
 
 		_fileNumber = 25;
 		_id = LANDINGMODULE;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringSocket,kStringDefaultDescription,LANDINGMOD_SOCKET,COMBINABLE,1,1,0);
 		_objectState[1] = Object(_id, kStringButton,kSafetyButtonDescription,LANDINGMOD_BUTTON,PRESS | COMBINABLE,2,2,0);
@@ -544,12 +545,12 @@ public:
 
 		_fileNumber = 18;
 		_id = GENERATOR;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = false;
-		_shown[4] = false;
-		_shown[5] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringGeneratorWire,kStringDefaultDescription,GENERATOR_WIRE,COMBINABLE,255,255,0);
 		_objectState[1] = Object(_id, kStringEmptySpool,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
@@ -577,7 +578,7 @@ public:
 
 		_fileNumber = 4;
 		_id = OUTSIDE;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringHatch,kStringDefaultDescription,NULLOBJECT,EXIT,0,0,0,GENERATOR,3);
 		_objectState[1] = Object(_id, kStringRope,kStringDefaultDescription,NULLOBJECT,UNNECESSARY,255,255,0);
@@ -593,7 +594,7 @@ public:
 
 		_fileNumber = 12;
 		_id = OUTSIDE;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringRope,kStringDefaultDescription,NULLOBJECT,UNNECESSARY | EXIT,0,0,0,GENERATOR,12);
 		_objectState[1] = Object(_id, kStringStone,kStringDefaultDescription,STONE,NULLTYPE,1,1,0);
@@ -612,7 +613,7 @@ public:
 
 		_fileNumber = 12;
 		_id = CAVE;
-		_shown[0] = false;
+		_shown[0] = kShownFalse;
 
 		_objectState[0] = Object(_id, kStringExit,kStringExitDescription,NULLOBJECT,EXIT,255,255,0,ROCKS,22);
 		_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,MEETUP,2);
@@ -626,7 +627,7 @@ public:
 
 		_fileNumber = 37;
 		_id = MEETUP;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringCave,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
 		_objectState[1] = Object(_id, kStringSign,kStringSignDescription,MEETUP_SIGN,NULLTYPE,0,0,0);
@@ -652,7 +653,7 @@ public:
 
 		_fileNumber = 10;
 		_id = ENTRANCE;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringPorter,kStringPorterDescription,PORTER,TALK,0,0,0);
 		_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,NULLOBJECT,EXIT | OPENABLE | CLOSED,1,1,0,NULLROOM,5);
@@ -708,13 +709,13 @@ public:
 
 		_fileNumber = 28;
 		_id = REST;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringStaircase,kStringDefaultDescription,NULLOBJECT,EXIT,0,0,0,ENTRANCE,17);
 		_objectState[1] = Object(_id, kStringChair,kStringDefaultDescription,NULLOBJECT,EXIT,1,1,0,ROGER,2);
 		_objectState[2] = Object(_id, kStringShoes,kStringShoesDescription,NULLOBJECT,NULLTYPE,2,2,0);
 
-		_chewing = true;
+		_chewing = kShownTrue;
 	}
 
 	virtual void animation();
@@ -731,7 +732,7 @@ public:
 
 		_fileNumber = 29;
 		_id = ROGER;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,REST,19);
 		_objectState[1] = Object(_id, kStringFrogFace,kStringDefaultDescription,ROGER_W,TALK,0,0,0);
@@ -768,7 +769,7 @@ public:
 
 		_fileNumber = 19;
 		_id = GLIDER;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,MEETUP,15);
 		_objectState[1] = Object(_id, kStringButton,kStringDefaultDescription,GLIDER_BUTTON1,PRESS,0,0,0);
@@ -797,7 +798,7 @@ public:
 
 		_fileNumber = 38;
 		_id = MEETUP2;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringRoger,kStringDefaultDescription,ROGER_W,TALK,255,255,0);
 		_objectState[1] = Object(_id, kStringSpaceshift,kStringDefaultDescription,SPACESHIP,COMBINABLE,255,255,0);
@@ -835,7 +836,7 @@ public:
 
 		_fileNumber = 39;
 		_id = MEETUP3;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringUfo,kStringUfoDescription,UFO,EXIT,0,0,0,NULLROOM,3);
 		_objectState[1] = Object(_id, kStringStar,kStringDefaultDescription,STAR,NULLTYPE,1,1,0);
@@ -865,38 +866,38 @@ public:
 
 		_fileNumber = 43;
 		_id = CELL;
-		_shown[0] = true;
-		_shown[1] = true;
-		_shown[2] = false;
-		_shown[3] = false;
-		_shown[4] = false;
-		_shown[5] = false;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = false;
-		_shown[17] = false;
-		_shown[18] = false;
-		_shown[19] = false;
-		_shown[20] = false;
-		_shown[21] = false;
-		_shown[22] = false;
-		_shown[23] = false;
-		_shown[24] = false;
-		_shown[25] = false;
-		_shown[26] = false;
-		_shown[27] = false;
-		_shown[28] = false;
-		_shown[29] = false;
-		_shown[30] = false;
-		_shown[31] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownTrue;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownFalse;
+		_shown[18] = kShownFalse;
+		_shown[19] = kShownFalse;
+		_shown[20] = kShownFalse;
+		_shown[21] = kShownFalse;
+		_shown[22] = kShownFalse;
+		_shown[23] = kShownFalse;
+		_shown[24] = kShownFalse;
+		_shown[25] = kShownFalse;
+		_shown[26] = kShownFalse;
+		_shown[27] = kShownFalse;
+		_shown[28] = kShownFalse;
+		_shown[29] = kShownFalse;
+		_shown[30] = kShownFalse;
+		_shown[31] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringButton,kStringDefaultDescription,CELL_BUTTON,PRESS,1,1,0);
 		_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,CELL_DOOR,EXIT|OPENABLE|CLOSED,0,0,31+128,CORRIDOR4,1);
@@ -922,32 +923,32 @@ public:
 
 		_fileNumber = 16;
 		_id = CORRIDOR1;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = true;
-		_shown[4] = true;
-		_shown[5] = true;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = true;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = false;
-		_shown[17] = false;
-		_shown[18] = false;
-		_shown[19] = false;
-		_shown[20] = false;
-		_shown[21] = true;
-		_shown[22] = false;
-		_shown[23] = true;
-		_shown[24] = false;
-		_shown[25] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownTrue;
+		_shown[5] = kShownTrue;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownTrue;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownFalse;
+		_shown[18] = kShownFalse;
+		_shown[19] = kShownFalse;
+		_shown[20] = kShownFalse;
+		_shown[21] = kShownTrue;
+		_shown[22] = kShownFalse;
+		_shown[23] = kShownTrue;
+		_shown[24] = kShownFalse;
+		_shown[25] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,GUARD3,2);
 		_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR2,22);
@@ -963,31 +964,31 @@ public:
 
 		_fileNumber = 16;
 		_id = CORRIDOR2;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = true;
-		_shown[3] = true;
-		_shown[4] = true;
-		_shown[5] = true;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = false;
-		_shown[17] = true;
-		_shown[18] = false;
-		_shown[19] = false;
-		_shown[20] = false;
-		_shown[21] = true;
-		_shown[22] = false;
-		_shown[23] = false;
-		_shown[24] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownTrue;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownTrue;
+		_shown[5] = kShownTrue;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownTrue;
+		_shown[18] = kShownFalse;
+		_shown[19] = kShownFalse;
+		_shown[20] = kShownFalse;
+		_shown[21] = kShownTrue;
+		_shown[22] = kShownFalse;
+		_shown[23] = kShownFalse;
+		_shown[24] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR1,2);
 		_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR3,22);
@@ -1004,30 +1005,30 @@ public:
 
 		_fileNumber = 16;
 		_id = CORRIDOR3;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = true;
-		_shown[4] = false;
-		_shown[5] = true;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = false;
-		_shown[17] = false;
-		_shown[18] = false;
-		_shown[19] = true;
-		_shown[20] = false;
-		_shown[21] = false;
-		_shown[22] = false;
-		_shown[23] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownTrue;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownFalse;
+		_shown[18] = kShownFalse;
+		_shown[19] = kShownTrue;
+		_shown[20] = kShownFalse;
+		_shown[21] = kShownFalse;
+		_shown[22] = kShownFalse;
+		_shown[23] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR2,2);
 	}
@@ -1042,33 +1043,33 @@ public:
 
 		_fileNumber = 16;
 		_id = CORRIDOR4;
-		_shown[0] = true;
-		_shown[1] = true;
-		_shown[2] = true;
-		_shown[3] = false;
-		_shown[4] = false;
-		_shown[5] = false;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = true;
-		_shown[9] = true;
-		_shown[10] = false;
-		_shown[11] = true;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = true;
-		_shown[16] = false;
-		_shown[17] = false;
-		_shown[18] = true;
-		_shown[19] = false;
-		_shown[20] = true;
-		_shown[21] = false;
-		_shown[22] = false;
-		_shown[23] = false;
-		_shown[24] = false;
-		_shown[25] = false;
-		_shown[26] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownTrue;
+		_shown[2] = kShownTrue;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownTrue;
+		_shown[9] = kShownTrue;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownTrue;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownTrue;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownFalse;
+		_shown[18] = kShownTrue;
+		_shown[19] = kShownFalse;
+		_shown[20] = kShownTrue;
+		_shown[21] = kShownFalse;
+		_shown[22] = kShownFalse;
+		_shown[23] = kShownFalse;
+		_shown[24] = kShownFalse;
+		_shown[25] = kShownFalse;
+		_shown[26] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,0,0,0,CORRIDOR2,10);
 		_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,1,1,0,GUARD,14);
@@ -1090,31 +1091,31 @@ public:
 
 		_fileNumber = 16;
 		_id = CORRIDOR5;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = true;
-		_shown[4] = true;
-		_shown[5] = true;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = true;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = false;
-		_shown[17] = false;
-		_shown[18] = false;
-		_shown[19] = false;
-		_shown[20] = false;
-		_shown[21] = false;
-		_shown[22] = true;
-		_shown[23] = true;
-		_shown[24] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownTrue;
+		_shown[5] = kShownTrue;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownTrue;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownFalse;
+		_shown[18] = kShownFalse;
+		_shown[19] = kShownFalse;
+		_shown[20] = kShownFalse;
+		_shown[21] = kShownFalse;
+		_shown[22] = kShownTrue;
+		_shown[23] = kShownTrue;
+		_shown[24] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,DOOR,EXIT,2,2,0,NULLROOM,2);
 		_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR6,22);
@@ -1145,32 +1146,32 @@ public:
 
 		_fileNumber = 16;
 		_id = CORRIDOR6;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = true;
-		_shown[4] = true;
-		_shown[5] = true;
-		_shown[6] = true;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = false;
-		_shown[17] = false;
-		_shown[18] = false;
-		_shown[19] = false;
-		_shown[20] = false;
-		_shown[21] = false;
-		_shown[22] = true;
-		_shown[23] = false;
-		_shown[24] = true;
-		_shown[25] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownTrue;
+		_shown[5] = kShownTrue;
+		_shown[6] = kShownTrue;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownFalse;
+		_shown[18] = kShownFalse;
+		_shown[19] = kShownFalse;
+		_shown[20] = kShownFalse;
+		_shown[21] = kShownFalse;
+		_shown[22] = kShownTrue;
+		_shown[23] = kShownFalse;
+		_shown[24] = kShownTrue;
+		_shown[25] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR5,2);
 		_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,22);
@@ -1188,32 +1189,32 @@ public:
 
 		_fileNumber = 16;
 		_id = CORRIDOR7;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = true;
-		_shown[4] = true;
-		_shown[5] = true;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = true;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = false;
-		_shown[17] = false;
-		_shown[18] = false;
-		_shown[19] = false;
-		_shown[20] = false;
-		_shown[21] = true;
-		_shown[22] = false;
-		_shown[23] = false;
-		_shown[24] = true;
-		_shown[25] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownTrue;
+		_shown[5] = kShownTrue;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownTrue;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownFalse;
+		_shown[18] = kShownFalse;
+		_shown[19] = kShownFalse;
+		_shown[20] = kShownFalse;
+		_shown[21] = kShownTrue;
+		_shown[22] = kShownFalse;
+		_shown[23] = kShownFalse;
+		_shown[24] = kShownTrue;
+		_shown[25] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,CORRIDOR6,2);
 		_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,GUARD,22);
@@ -1229,35 +1230,35 @@ public:
 
 		_fileNumber = 16;
 		_id = CORRIDOR8;
-		_shown[0] = true;
-		_shown[1] = true;
-		_shown[2] = false;
-		_shown[3] = false;
-		_shown[4] = true;
-		_shown[5] = false;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = true;
-		_shown[16] = false;
-		_shown[17] = false;
-		_shown[18] = false;
-		_shown[19] = false;
-		_shown[20] = true;
-		_shown[21] = false;
-		_shown[22] = true;
-		_shown[23] = false;
-		_shown[24] = false;
-		_shown[25] = false;
-		_shown[26] = false;
-		_shown[27] = false;
-		_shown[28] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownTrue;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownTrue;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownTrue;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownFalse;
+		_shown[18] = kShownFalse;
+		_shown[19] = kShownFalse;
+		_shown[20] = kShownTrue;
+		_shown[21] = kShownFalse;
+		_shown[22] = kShownTrue;
+		_shown[23] = kShownFalse;
+		_shown[24] = kShownFalse;
+		_shown[25] = kShownFalse;
+		_shown[26] = kShownFalse;
+		_shown[27] = kShownFalse;
+		_shown[28] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE,0,0,0,CORRIDOR6,10);
 		_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,BCORRIDOR,22);
@@ -1274,35 +1275,35 @@ public:
 
 		_fileNumber = 16;
 		_id = CORRIDOR9;
-		_shown[0] = true;
-		_shown[1] = true;
-		_shown[2] = false;
-		_shown[3] = true;
-		_shown[4] = false;
-		_shown[5] = false;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = true;
-		_shown[15] = false;
-		_shown[16] = false;
-		_shown[17] = false;
-		_shown[18] = false;
-		_shown[19] = true;
-		_shown[20] = false;
-		_shown[21] = false;
-		_shown[22] = false;
-		_shown[23] = true;
-		_shown[24] = false;
-		_shown[25] = false;
-		_shown[26] = false;
-		_shown[27] = false;
-		_shown[28] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownTrue;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownTrue;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownFalse;
+		_shown[18] = kShownFalse;
+		_shown[19] = kShownTrue;
+		_shown[20] = kShownFalse;
+		_shown[21] = kShownFalse;
+		_shown[22] = kShownFalse;
+		_shown[23] = kShownTrue;
+		_shown[24] = kShownFalse;
+		_shown[25] = kShownFalse;
+		_shown[26] = kShownFalse;
+		_shown[27] = kShownFalse;
+		_shown[28] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,2,2,0,BCORRIDOR,2);
 		_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE,0,0,0,GUARD,10);
@@ -1319,10 +1320,10 @@ public:
 
 		_fileNumber = 6;
 		_id = BCORRIDOR;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringPillar,kStringDefaultDescription,PILLAR1,NULLTYPE,4,4,0);
 		_objectState[1] = Object(_id, kStringPillar,kStringDefaultDescription,PILLAR2,NULLTYPE,5,5,0);
@@ -1348,7 +1349,7 @@ public:
 
 		_fileNumber = 40;
 		_id = GUARD;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR4,21);
 		_objectState[1] = Object(_id, kStringCorridor,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,5);
@@ -1369,7 +1370,7 @@ public:
 
 		_fileNumber = 42;
 		_id = GUARD3;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR1,22);
 		_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,0,0,0,NULLROOM,20);
@@ -1391,23 +1392,23 @@ public:
 
 		_fileNumber = 7;
 		_id = OFFICE_L1;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = true;
-		_shown[3] = false;
-		_shown[4] = false;
-		_shown[5] = false;
-		_shown[6] = false;
-		_shown[7] = true;
-		_shown[8] = false;
-		_shown[9] = true;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownTrue;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownTrue;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownTrue;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
 		_objectState[1] = Object(_id, kStringComputer,kStringDefaultDescription,COMPUTER,COMBINABLE,4,4,0);
@@ -1426,23 +1427,23 @@ public:
 
 		_fileNumber = 7;
 		_id = OFFICE_L2;
-		_shown[0] = true;
-		_shown[1] = true;
-		_shown[2] = false;
-		_shown[3] = false;
-		_shown[4] = false;
-		_shown[5] = false;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = true;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownTrue;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownFalse;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownFalse;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownTrue;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
 		_objectState[1] = Object(_id, kStringComputer,kStringDefaultDescription,COMPUTER,COMBINABLE,4,4,0);
@@ -1461,10 +1462,10 @@ public:
 
 		_fileNumber = 8;
 		_id = OFFICE_R1;
-		_shown[0] = true;
-		_shown[1] = true;
-		_shown[2] = false;
-		_shown[3] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownTrue;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
 		_objectState[1] = Object(_id, kStringComputer,kStringDefaultDescription,COMPUTER,COMBINABLE,4,4,0);
@@ -1484,10 +1485,10 @@ public:
 
 		_fileNumber = 8;
 		_id = OFFICE_R2;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = true;
-		_shown[3] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownTrue;
+		_shown[3] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,0,0,3,BCORRIDOR,5);
 		_objectState[1] = Object(_id, kStringComputer,kStringDefaultDescription,COMPUTER,COMBINABLE,4,4,0);
@@ -1505,24 +1506,24 @@ public:
 
 		_fileNumber = 7;
 		_id = OFFICE_L;
-		_shown[0] = true;
-		_shown[1] = false;
-		_shown[2] = false;
-		_shown[3] = true;
-		_shown[4] = false;
-		_shown[5] = true;
-		_shown[6] = false;
-		_shown[7] = false;
-		_shown[8] = false;
-		_shown[9] = false;
-		_shown[10] = false;
-		_shown[11] = false;
-		_shown[12] = false;
-		_shown[13] = false;
-		_shown[14] = false;
-		_shown[15] = false;
-		_shown[16] = false;
-		_shown[17] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownFalse;
+		_shown[2] = kShownFalse;
+		_shown[3] = kShownTrue;
+		_shown[4] = kShownFalse;
+		_shown[5] = kShownTrue;
+		_shown[6] = kShownFalse;
+		_shown[7] = kShownFalse;
+		_shown[8] = kShownFalse;
+		_shown[9] = kShownFalse;
+		_shown[10] = kShownFalse;
+		_shown[11] = kShownFalse;
+		_shown[12] = kShownFalse;
+		_shown[13] = kShownFalse;
+		_shown[14] = kShownFalse;
+		_shown[15] = kShownFalse;
+		_shown[16] = kShownFalse;
+		_shown[17] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,17,GUARD3,9);
 		_objectState[1] = Object(_id, kStringComputer,kStringComputerDescription,COMPUTER,COMBINABLE,4,4,0);
@@ -1541,7 +1542,7 @@ public:
 
 		_fileNumber = 3;
 		_id = ELEVATOR;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringButton,kStringDefaultDescription,BUTTON1,PRESS,0,0,0);
 		_objectState[1] = Object(_id, kStringButton,kStringDefaultDescription,BUTTON2,PRESS,1,1,0);
@@ -1559,7 +1560,7 @@ public:
 
 		_fileNumber = 5;
 		_id = STATION;
-		_shown[0] = true;
+		_shown[0] = kShownTrue;
 		_objectState[0] = Object(_id, kStringSign,kStringDefaultDescription,STATION_SIGN,NULLTYPE,0,0,0);
 		_objectState[1] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,7);
 	}
@@ -1574,8 +1575,8 @@ public:
 
 		_fileNumber = 32;
 		_id = SIGN;
-		_shown[0] = true;
-		_shown[1] = true;
+		_shown[0] = kShownTrue;
+		_shown[1] = kShownTrue;
 
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,STATION,22);
 		_objectState[1] = Object(_id, kStringSlot,kStringDefaultDescription,STATION_SLOT,COMBINABLE,0,0,0);
