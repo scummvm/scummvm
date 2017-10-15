@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-15 15:55+0200\n"
+"POT-Creation-Date: 2017-10-15 20:27+0200\n"
 "PO-Revision-Date: 2017-10-15 17:04+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
+"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -893,8 +893,8 @@ msgstr "Renderˆintitila:"
 msgid "Special dithering modes supported by some games"
 msgstr "Erityiset dithering asetukset joita jotkut pelit tukevat"
 
-#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:613
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
+#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:587
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2528
 msgid "Fullscreen mode"
 msgstr "Kokoruututila"
 
@@ -2203,52 +2203,52 @@ msgstr "Automaattiraahaustila on nyt"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Muuta tilaa pyyhk‰isem‰ll‰ kolmella sormella oikealle."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:151
+#: backends/graphics/opengl/opengl-graphics.cpp:149
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:615
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:589
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2530
 msgid "Windowed mode"
 msgstr "Ikkunoitu tila"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:729
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:703
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Resoluutio: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:750
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Enabled aspect ratio correction"
 msgstr "Kuvasuhteen korjaus p‰‰ll‰"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:752
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2512
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2397
 msgid "Disabled aspect ratio correction"
 msgstr "Kuvasuhteen korjaus pois p‰‰lt‰"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:772
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2530
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2415
 msgid "Filtering enabled"
 msgstr "Suodatus p‰‰ll‰"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2532
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:748
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2417
 msgid "Filtering disabled"
 msgstr "Suodatus pois p‰‰lt‰"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:56
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:95
 msgid "Normal (no scaling)"
 msgstr "Normaali (ei skaalausta)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normaali (ei skaalausta)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2585
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
 msgid "Active graphics filter:"
 msgstr "Valittu grafiikkasuodatin:"
 
