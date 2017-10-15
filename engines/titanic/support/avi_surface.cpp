@@ -510,7 +510,6 @@ bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		// Already in position, so pick up where we left off
 		_decoder->start();
 	}
-	setFrameRate(2);
 
 	bool isDifferent = _movieFrameSurface[0]->w != r.width() ||
 		_movieFrameSurface[0]->h != r.height();
