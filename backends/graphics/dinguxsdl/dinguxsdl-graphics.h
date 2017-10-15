@@ -38,7 +38,7 @@ public:
 
 	bool hasFeature(OSystem::Feature f) const override;
 	void setFeatureState(OSystem::Feature f, bool enable) override;
-	bool getFeatureState(OSystem::Feature f) override;
+	bool getFeatureState(OSystem::Feature f) const override;
 	int getDefaultGraphicsMode() const override;
 
 	void initSize(uint w, uint h) override;
