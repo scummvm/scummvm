@@ -1181,8 +1181,10 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Add the area covered by the mouse cursor to the list of dirty rects if
-	// we have to redraw the mouse.
-	if (_cursorNeedsRedraw)
+	// we have to redraw the mouse, or if the cursor is alpha-blended since
+	// alpha-blended cursors will happily blend into themselves if the surface
+	// under the cursor is not reset first
+	if (_cursorNeedsRedraw || _cursorFormat.bytesPerPixel == 4)
 		undrawMouse();
 
 #ifdef USE_OSD
@@ -1843,7 +1845,6 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 
 	if (_cursorFormat.bytesPerPixel == 4) {
 		assert(keyColor == 0);
-		dontScale = true;
 	} else {
 		assert(keyColor < 1U << (_cursorFormat.bytesPerPixel * 8));
 	}
@@ -1936,8 +1937,6 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		// Scale the cursor with the game screen scale factor.
 		cursorScale = _videoMode.scaleFactor;
 	}
-
-	assert(_cursorFormat.bytesPerPixel != 4 || cursorScale == 1);
 
 	// Adapt the real hotspot according to the scale factor.
 	int rW = w * cursorScale;
@@ -2157,18 +2156,16 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	dst.w = _mouseCurState.rW;
 	dst.h = _mouseCurState.rH;
 
-	// Alpha-blended cursors will happily blend into themselves if the hardware
-	// surface under the cursor is not reset first
-	if (!_forceRedraw && _cursorFormat.bytesPerPixel == 4) {
-		if (SDL_BlitSurface(_screen, &dst, _hwScreen, &dst) != 0)
-			error("SD_BlitSurface failed: %s", SDL_GetError());
-	}
-
 	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
 	// clipping necessary
 
-	if (SDL_BlitSurface(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
-		error("SDL_BlitSurface failed: %s", SDL_GetError());
+	if (_cursorFormat.bytesPerPixel == 4 && scale != 1) {
+		if (SDL_BlitScaled(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
+			error("SDL_BlitScaled failed: %s", SDL_GetError());
+	} else {
+		if (SDL_BlitSurface(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
+			error("SDL_BlitSurface failed: %s", SDL_GetError());
+	}
 
 	// The screen will be updated using real surface coordinates, i.e.
 	// they will not be scaled or aspect-ratio corrected.
