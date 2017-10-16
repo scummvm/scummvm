@@ -73,7 +73,7 @@ private:
 	 */
 	void setupArray(int minVal, int maxVal);
 public:
-	double _animTime;
+	double _insStartTime;
 public:
 	/**
 	 * Handles initialization of static fields

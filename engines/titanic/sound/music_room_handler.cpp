@@ -38,7 +38,7 @@ CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *sound
 	for (int idx = 0; idx < 4; ++idx)
 		_songs[idx] = new CMusicSong(idx);
 	Common::fill(&_startPos[0], &_startPos[4], 0);
-	Common::fill(&_animTime[0], &_animTime[4], 0.0);
+	Common::fill(&_animExpiryTime[0], &_animExpiryTime[4], 0.0);
 	Common::fill(&_position[0], &_position[4], 0);
 
 	_audioBuffer = new CAudioBuffer(88200);
@@ -89,7 +89,7 @@ void CMusicRoomHandler::setup(int volume) {
 		}
 
 		_position[idx] = _startPos[idx];
-		_animTime[idx] = 0.0;
+		_animExpiryTime[idx] = 0.0;
 	}
 
 	_instrumentsActive = 4;
@@ -180,7 +180,7 @@ void CMusicRoomHandler::start() {
 }
 
 bool CMusicRoomHandler::update() {
-	uint currentTicks = g_vm->_events->getTicksCount();
+	uint currentTicks =  g_system->getMillis();
 
 	if (!_startTicks) {
 		start();
@@ -239,9 +239,14 @@ void CMusicRoomHandler::updateAudio() {
 		// Reaching end of music
 		_audioBuffer->finalize();
 }
-
+bool flag = false;
 void CMusicRoomHandler::updateInstruments() {
+	uint currentTicks = g_system->getMillis();
+
 	if (_active && _soundStartTicks) {
+		if (!flag) {
+			flag = true; warning("STARTING TICKS %d", currentTicks);//***DEBUG***/
+		}
 		for (MusicInstrument instrument = BELLS; instrument <= BASS;
 				instrument = (MusicInstrument)((int)instrument + 1)) {
 			MusicRoomInstrument &ins1 = _array1[instrument];
@@ -254,12 +259,11 @@ void CMusicRoomHandler::updateInstruments() {
 				continue;
 			}
 
-			uint ticks = g_vm->_events->getTicksCount() - _soundStartTicks;
-			double time = (double)ticks * 0.001 - 0.6;
-			double threshold = _animTime[instrument] - ins->_animTime;
+			double time = (double)(currentTicks - _soundStartTicks) / 1000.0 - 0.6;
+			double threshold = _animExpiryTime[instrument] - ins->_insStartTime;
 
 			if (time >= threshold) {
-				_animTime[instrument] += getAnimDuration(instrument, _position[instrument]);
+				_animExpiryTime[instrument] += getAnimDuration(instrument, _position[instrument]);
 
 				const CValuePair &vp = (*_songs[instrument])[_position[instrument]];
 				if (vp._data != 0x7FFFFFFF) {

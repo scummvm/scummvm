@@ -52,7 +52,7 @@ void CMusicRoomInstrument::deinit() {
 CMusicRoomInstrument::CMusicRoomInstrument(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument) :
 		_project(project), _soundManager(soundManager), _instrument(instrument) {
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
-	_animTime = 0.0;
+	_insStartTime = 0.0;
 	_waveIndex = -1;
 	_readPos = 0;
 	_readIncrement = 0;
@@ -66,7 +66,7 @@ CMusicRoomInstrument::CMusicRoomInstrument(CProjectItem *project, CSoundManager 
 		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Piano Mouth"));
 		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Piano Left Arm"));
 		_gameObjects[3] = static_cast<CGameObject *>(_project->findByName("Piano Right Arm"));
-		_animTime = 0.45;
+		_insStartTime = 0.45;
 		break;
 
 	case MV_BASS:
@@ -75,14 +75,14 @@ CMusicRoomInstrument::CMusicRoomInstrument(CProjectItem *project, CSoundManager 
 
 	case MV_BELLS:
 		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Tubular Bells"));
-		_animTime = 0.4;
+		_insStartTime = 0.4;
 		break;
 	
 	case MV_SNAKE:
 		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Snake_Hammer"));
 		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Snake_Glass"));
 		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Snake_Head"));
-		_animTime = 0.17;
+		_insStartTime = 0.17;
 		break;
 	}
 }
@@ -212,12 +212,12 @@ void CMusicRoomInstrument::update(int val) {
 			case 60:
 				_gameObjects[0]->playMovie(0, 512, MOVIE_STOP_PREVIOUS);
 				_gameObjects[0]->movieSetPlaying(true);
-				_animTime = 0.6;
+				_insStartTime = 0.6;
 				break;
 
 			case 62:
 				_gameObjects[0]->playMovie(828, 1023, MOVIE_STOP_PREVIOUS);
-				_animTime = 0.3;
+				_insStartTime = 0.3;
 				break;
 
 			case 63:

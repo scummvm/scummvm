@@ -55,7 +55,7 @@ private:
 	CMusicSong *_songs[4];
 	int _startPos[4];
 	int _position[4];
-	double _animTime[4];
+	double _animExpiryTime[4];
 
 	bool _active;
 	CWaveFile *_waveFile;
