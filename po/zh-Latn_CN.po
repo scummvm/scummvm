@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-16 04:39+0200\n"
+"POT-Creation-Date: 2017-10-16 07:28+0200\n"
 "PO-Revision-Date: 2016-12-26 19:38+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -887,7 +887,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Youxi Zhichi Teshu de Doudong Moshi"
 
 #: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:587
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2562
 msgid "Fullscreen mode"
 msgstr "Quanping Moshi"
 
@@ -2203,7 +2203,7 @@ msgid "OpenGL"
 msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:589
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2564
 msgid "Windowed mode"
 msgstr "Chuangkou Moshi"
 
@@ -2213,23 +2213,23 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2388
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2425
 msgid "Enabled aspect ratio correction"
 msgstr "Qiyong Bili Jiaozheng"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2431
 msgid "Disabled aspect ratio correction"
 msgstr "Jinyong Bili Jiaozheng"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2412
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2449
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Qidong Dianji"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:748
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2414
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2451
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Jinyong Dianji"
@@ -2245,7 +2245,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Putong"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
 msgid "Active graphics filter:"
 msgstr "Huodong de Tuxing Guolvqi:"
 

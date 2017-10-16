@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-16 04:39+0200\n"
+"POT-Creation-Date: 2017-10-16 07:28+0200\n"
 "PO-Revision-Date: 2017-10-15 15:10+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -903,7 +903,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Spezielle Farbmischungsmethoden werden von manchen Spielen unterstützt"
 
 #: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:587
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2562
 msgid "Fullscreen mode"
 msgstr "Vollbildmodus"
 
@@ -2237,7 +2237,7 @@ msgid "OpenGL"
 msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:589
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2564
 msgid "Windowed mode"
 msgstr "Fenstermodus"
 
@@ -2247,22 +2247,22 @@ msgid "Resolution: %dx%d"
 msgstr "Auflösung: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2388
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2425
 msgid "Enabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur an"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2431
 msgid "Disabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur aus"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2412
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2449
 msgid "Filtering enabled"
 msgstr "Bilineare Filterung aktiviert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:748
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2414
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2451
 msgid "Filtering disabled"
 msgstr "Bilineare Filterung deaktiviert"
 
@@ -2277,7 +2277,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal ohn.Skalieren"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
 msgid "Active graphics filter:"
 msgstr "Aktiver Grafikfilter:"
 
