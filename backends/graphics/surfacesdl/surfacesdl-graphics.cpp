@@ -1968,8 +1968,50 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		sizeChanged = true;
 	}
 
-	// 32bpp always blits directly, so no need to do any more work here
 	if (_cursorFormat.bytesPerPixel == 4) {
+		if (_mouseSurface != _mouseOrigSurface) {
+			SDL_FreeSurface(_mouseSurface);
+		}
+
+		if (cursorScale == 1) {
+			_mouseSurface = _mouseOrigSurface;
+			return;
+		}
+
+		SDL_PixelFormat *format = _mouseOrigSurface->format;
+		_mouseSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+											 rW, rH,
+											 format->BitsPerPixel,
+											 format->Rmask,
+											 format->Gmask,
+											 format->Bmask,
+											 format->Amask);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_BlitScaled(_mouseOrigSurface, nullptr, _mouseSurface, nullptr);
+#else
+		SDL_LockSurface(_mouseOrigSurface);
+		SDL_LockSurface(_mouseSurface);
+
+		const byte *src = (const byte *)_mouseOrigSurface->pixels;
+		byte *dst = (byte *)_mouseSurface->pixels;
+		for (int y = 0; y < _mouseOrigSurface->h; ++y) {
+			uint32 *rowDst = (uint32 *)dst;
+			for (int scaleY = 0; scaleY < cursorScale; ++scaleY) {
+				const uint32 *rowSrc = (const uint32 *)src;
+				for (int x = 0; x < _mouseOrigSurface->w; ++x) {
+					for (int scaleX = 0; scaleX < cursorScale; ++scaleX) {
+						*rowDst++ = *rowSrc;
+					}
+					++rowSrc;
+				}
+				dst += _mouseSurface->pitch;
+			}
+			src += _mouseOrigSurface->pitch;
+		}
+
+		SDL_UnlockSurface(_mouseSurface);
+		SDL_UnlockSurface(_mouseOrigSurface);
+#endif
 		return;
 	}
 
@@ -2159,13 +2201,8 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
 	// clipping necessary
 
-	if (_cursorFormat.bytesPerPixel == 4 && scale != 1) {
-		if (SDL_BlitScaled(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
-			error("SDL_BlitScaled failed: %s", SDL_GetError());
-	} else {
-		if (SDL_BlitSurface(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
-			error("SDL_BlitSurface failed: %s", SDL_GetError());
-	}
+	if (SDL_BlitSurface(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
+		error("SDL_BlitSurface failed: %s", SDL_GetError());
 
 	// The screen will be updated using real surface coordinates, i.e.
 	// they will not be scaled or aspect-ratio corrected.
