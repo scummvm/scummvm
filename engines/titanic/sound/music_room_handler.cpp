@@ -239,14 +239,11 @@ void CMusicRoomHandler::updateAudio() {
 		// Reaching end of music
 		_audioBuffer->finalize();
 }
-bool flag = false;
+
 void CMusicRoomHandler::updateInstruments() {
 	uint currentTicks = g_system->getMillis();
 
 	if (_active && _soundStartTicks) {
-		if (!flag) {
-			flag = true; warning("STARTING TICKS %d", currentTicks);//***DEBUG***/
-		}
 		for (MusicInstrument instrument = BELLS; instrument <= BASS;
 				instrument = (MusicInstrument)((int)instrument + 1)) {
 			MusicRoomInstrument &ins1 = _array1[instrument];
