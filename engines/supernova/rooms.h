@@ -625,20 +625,20 @@ public:
 		_objectState[16] = Object(_id, kStringCoins,kStringCoinsDescription,COINS,TAKE|COMBINABLE,255,255,0);
 		_objectState[17] = Object(_id, kStringTabletPackage,kStringTabletPackageDescription,PILL_HULL,TAKE,255,255,0);
 
-		_dialog1[0] = "Wieso das denn nicht?";
-		_dialog1[1] = "Wo bin ich hier?";
-		_dialog1[2] = "Wo soll ich die Schuhe ablegen?";
-		_dialog1[3] = "Schwachsinn! Ich gehe jetzt nach oben!";
-		_dialog1[4] = "|";
+		_dialog1[0] = kStringArsanoDialog7;
+		_dialog1[1] = kStringArsanoDialog1;
+		_dialog1[2] = kStringArsanoDialog8;
+		_dialog1[3] = kStringArsanoDialog9;
+		_dialog1[4] = kStringDialogSeparator;
 
-		_dialog2[0] = "Wo bin ich hier?";
-		_dialog2[1] = "Sch\224nes Wetter heute, nicht wahr?";
-		_dialog2[2] = "W\201rden Sie mich bitte durchlassen.";
-		_dialog2[3] = "Hey Alter, la\341 mich durch!";
-		_dialog2[4] = "|";
+		_dialog2[0] = kStringArsanoDialog1;
+		_dialog2[1] = kStringArsanoDialog2;
+		_dialog2[2] = kStringArsanoDialog3;
+		_dialog2[3] = kStringArsanoDialog4;
+		_dialog2[4] = kStringDialogSeparator;
 
-		_dialog3[0] = "Was haben Sie gesagt?";
-		_dialog3[1] = "Sprechen Sie bitte etwas deutlicher!";
+		_dialog3[0] = kStringArsanoDialog5;
+		_dialog3[1] = kStringArsanoDialog6;
 
 		_eyewitness = 5;
 	}
@@ -647,9 +647,9 @@ public:
 	virtual void animation();
 
 private:
-	Common::String _dialog1[5];
-	Common::String _dialog2[5];
-	Common::String _dialog3[5];
+	StringID _dialog1[5];
+	StringID _dialog2[5];
+	StringID _dialog3[5];
 	byte _eyewitness;
 };
 class ArsanoRemaining : public Room {
@@ -695,10 +695,10 @@ public:
 		_objectState[7] = Object(_id, kStringBill,kStringBillDescription,NULLOBJECT,TAKE|COMBINABLE,255,255,0);
 		_objectState[8] = Object(_id, kStringKeycard3,kStringDefaultDescription,KEYCARD_R,TAKE|COMBINABLE,255,255,0);
 
-		_dialog1[0] = "K\224nnten Sie mir ein Gericht empfehlen?";
-		_dialog1[1] = "Wie lange dauert es denn noch bis zur Supernova?";
-		_dialog1[2] = "Sie kommen mir irgendwie bekannt vor.";
-		_dialog1[3] = "|";
+		_dialog1[0] = kStringDialogArsanoRoger1;
+		_dialog1[1] = kStringDialogArsanoRoger2;
+		_dialog1[2] = kStringDialogArsanoRoger3;
+		_dialog1[3] = kStringDialogSeparator;
 
 		_eyewitness = 5;
 	}
@@ -708,7 +708,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	Common::String _dialog1[4];
+	StringID _dialog1[4];
 	byte _eyewitness;
 	byte _hands;
 };
@@ -793,19 +793,19 @@ public:
 		_objectState[1] = Object(_id, kStringStar,kStringDefaultDescription,STAR,NULLTYPE,1,1,0);
 		_objectState[2] = Object(_id, kStringCave,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
 
-		_dialog2[0] = "Wo bin ich hier?";
-		_dialog2[1] = "Was wollen Sie von mir?";
-		_dialog2[2] = "Hilfe!!";
-		_dialog2[3] = "Warum sprechen Sie meine Sprache?";
-		_dialog3[0] = "Ja, ich bin einverstanden.";
-		_dialog3[1] = "Nein, lieber bleibe ich hier, als mit Ihnen zu fliegen.";
+		_dialog2[0] = kStringArsanoDialog1;
+		_dialog2[1] = kStringDialogArsanoMeetup3_1;
+		_dialog2[2] = kStringDialogArsanoMeetup3_2;
+		_dialog2[3] = kStringDialogArsanoMeetup3_3;
+		_dialog3[0] = kStringDialogArsanoMeetup3_4;
+		_dialog3[1] = kStringDialogArsanoMeetup3_5;
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	Common::String _dialog2[4];
-	Common::String _dialog3[2];
+	StringID _dialog2[4];
+	StringID _dialog3[2];
 };
 
 // Axacuss

@@ -1489,12 +1489,12 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_WALK) &&
 	    ((obj1._id == SPACESHIPS) ||
 	     ((obj1._id == SPACESHIP) && !obj1.hasProperty(OPENED)))) {
-		_vm->renderMessage("Die Raumschifft sind alle verschlossen.");
+		_vm->renderMessage(kStringArsanoMeetup1);
 	} else if ((verb == ACTION_WALK) && (obj1._id == SPACESHIP)) {
 		_gm->changeRoom(GLIDER);
 		_gm->_newRoom = true;
 	} else if ((verb == ACTION_WALK) && (obj1._id == STAR)) {
-		_vm->renderMessage("Unsinn!");
+		_vm->renderMessage(kStringArsanoMeetup2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == STAR)) {
 		_vm->renderImage(26, 0);
 		_vm->paletteBrightness();
@@ -1515,7 +1515,7 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 	} else if ((verb == ACTION_LOOK) && (obj1._id == MEETUP_SIGN) && _gm->_state._language) {
 		if (_gm->_state._language == 2)
-			_vm->renderMessage("Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Treffpunkt Galactica\".");
+			_vm->renderMessage(kStringArsanoMeetup3);
 
 		obj1._description = kStringSignDescription2;
 		if (_gm->_state._language == 1)
@@ -1576,43 +1576,43 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 
 	if ((verb == ACTION_TALK) && (obj1._id == PORTER)) {
 		if (_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) {
-			_vm->renderMessage("Durch deinen Helm kannst|du nicht sprechen.");
+			_vm->renderMessage(kStringArsanoEntrance1);
 		} else {
 			if (_gm->_state._language) {
 				do {
 					if (_gm->_state._shoes == 1) {
-						_dialog2[2] = "Wo soll ich die Schuhe ablegen?";
+						_dialog2[2] = kStringArsanoEntrance2;
 						_gm->addSentence(2, 2);
 					} else if (_gm->_state._shoes > 1) {
 						_gm->removeSentence(2, 2);
 					}
 					switch (e = _gm->dialog(5, nullptr, nullptr, 2)) { // row2, dialog2
 					case 0:
-						_gm->reply("Was, das wissen Sie nicht?", 1, _gm->invertSection(1));
-						_gm->reply("Sie befinden sich im Restaurant|\"Treffpunkt Galactica\".", 1, _gm->invertSection(1));
-						_gm->reply("Wir sind bei den interessantesten|Ereignissen in der Galaxis|immer zur Stelle.", 1, _gm->invertSection(1));
+						_gm->reply(kStringArsanoEntrance3, 1, _gm->invertSection(1));
+						_gm->reply(kStringArsanoEntrance4, 1, _gm->invertSection(1));
+						_gm->reply(kStringArsanoEntrance5, 1, _gm->invertSection(1));
 						_gm->removeSentence(1, 1);
 						break;
 					case 1:
-						_gm->reply("Wenn Sie meinen.", 1, _gm->invertSection(1));
+						_gm->reply(kStringArsanoEntrance6, 1, _gm->invertSection(1));
 						_gm->addSentence(1, 2);
 						break;
 					case 2:
 						if (_gm->_state._shoes == 1) {
-							_gm->reply("In der Toilette gibt es|Schlie\341f\204cher f\201r Schuhe.", 1, _gm->invertSection(1));
+							_gm->reply(kStringArsanoEntrance7, 1, _gm->invertSection(1));
 							_gm->_state._shoes = 2;
 						} else {
-							_gm->reply("Wenn Sie das Lokal betreten|wollen, m\201ssen Sie erst|ihre Schuhe ausziehen.", 1, _gm->invertSection(1));
+							_gm->reply(kStringArsanoEntrance8, 1, _gm->invertSection(1));
 							_gm->_state._shoes = 1;
 						}
 						break;
 					case 3:
-						_gm->reply("Wollen Sie, da\341 ich Sie rau\341schmei\341e?", 1, _gm->invertSection(1));
+						_gm->reply(kStringArsanoEntrance9, 1, _gm->invertSection(1));
 					}
 				} while (e != 4);
 			} else {
 				if (_gm->dialog(5, nullptr, nullptr, 0) != 4) // row2, dialog2
-					_gm->reply("Hhius otgfh Dgfdrkjlh Fokj gf.", 1, _gm->invertSection(1));
+					_gm->reply(kStringArsanoEntrance10, 1, _gm->invertSection(1));
 			}
 		}
 	} else if ((verb == ACTION_WALK) && (obj1._id == STAIRCASE) && (_gm->_state._shoes != 3)) {
@@ -1623,9 +1623,9 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		if (_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN))
 			_gm->reply("|", 1, _gm->invertSection(1));
 		else if (_gm->_state._language)
-			_gm->reply("Halt!", 1, _gm->invertSection(1));
+			_gm->reply(kStringArsanoEntrance11, 1, _gm->invertSection(1));
 		else
-			_gm->reply("Uhwdejkt!", 1, _gm->invertSection(1));
+			_gm->reply(kStringArsanoEntrance12, 1, _gm->invertSection(1));
 		_gm->drawImage(3);
 		setSectionVisible(4, false);
 		_gm->wait2(2);
@@ -1633,23 +1633,23 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) {
 			if (_gm->_state._language) {
 				if (_gm->_state._shoes)
-					_gm->reply("Sie m\201ssen erst ihre Schuhe ausziehen, Sie Trottel!", 1, _gm->invertSection(1));
+					_gm->reply(kStringArsanoEntrance13, 1, _gm->invertSection(1));
 				else
-					_gm->reply("Was f\204llt ihnen ein!|Sie k\224nnen doch ein Lokal|nicht mit Schuhen betreten!", 1, _gm->invertSection(1));
+					_gm->reply(kStringArsanoEntrance14, 1, _gm->invertSection(1));
 				e = 0;
 				while ((e < 3) && (_shown[kMaxSection - 1] != 15)) {
 					switch (e = _gm->dialog(5, nullptr, nullptr, 1)) { // row1, dialog1
 					case 0:
-						_gm->reply("Fragen Sie nicht so doof!", 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance15, 1, 1 + 128);
 						break;
 					case 1:
-						_gm->reply("Was, das wissen Sie nicht?", 1, 1 + 128);
-						_gm->reply("Sie befinden sich im Restaurant|\"Treffpunkt Galactica\".", 1, 1 + 128);
-						_gm->reply("Wir sind bei den interessantesten|Ereignissen in der Galaxis|immer zur Stelle.", 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance3, 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance4, 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance5, 1, 1 + 128);
 						_gm->removeSentence(0, 2);
 						break;
 					case 2:
-						_gm->reply("In der Toilette gibt es|Schlie\341f\204cher f\201r Schuhe.", 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance7, 1, 1 + 128);
 						_gm->_state._shoes = 2;
 						break;
 					case 3:
@@ -1657,7 +1657,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						_gm->wait2(2);
 						_gm->drawImage(4);
 						setSectionVisible(3, false);
-						_gm->reply("Das w\201rde ich an ihrer|Stelle nicht versuchen!", 1, 1 + 128);
+						_gm->reply(kStringArsanoEntrance16, 1, 1 + 128);
 						_gm->drawImage(3);
 						setSectionVisible(4, false);
 						_gm->wait2(2);
@@ -1668,7 +1668,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				}
 			} else {
 				_gm->dialog(2, nullptr, nullptr, 0); // row3, dialog3
-				_gm->reply("Hhius otgfh Dgfdrkjlh Fokj gf.", 1, 1 + 128);
+				_gm->reply(kStringArsanoEntrance10, 1, 1 + 128);
 			}
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BATHROOM_BUTTON)) {
@@ -1690,23 +1690,23 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_WALK) && (obj1._id == ARSANO_BATHROOM)) {
 		if (_gm->_state._coins) {
 			if (_gm->_state._shoes == 2) {
-				_vm->renderMessage("Du ziehst deine Schuhe|aus und legst sie in|eins der Schlie\341f\204cher.");
+				_vm->renderMessage(kStringArsanoEntrance17);
 				_gm->_state._shoes = 3;
 				_gm->removeSentence(2, 2);
 				_gm->removeSentence(3, 2);
 			} else if (_gm->_state._shoes == 3) {
-				_vm->renderMessage("Du ziehst deine Schuhe wieder an.");
+				_vm->renderMessage(kStringArsanoEntrance18);
 				_gm->_state._shoes = 2;
 			} else
-				_vm->renderMessage("Du durchsuchst die Klos nach|anderen brauchbaren Sachen,|findest aber nichts.");
+				_vm->renderMessage(kStringArsanoEntrance19);
 		} else {
 			if (_gm->_rooms[AIRLOCK]->getObject(5)->hasProperty(WORN))
-				_vm->renderMessage("Bevor du aufs Klo gehst,|solltest du besser deinen|Raumanzug ausziehen.");
+				_vm->renderMessage(kStringArsanoEntrance20);
 			else {
-				_vm->renderMessage("Du gehst seit sieben Jahren das|erste Mal wieder aufs Klo!");
+				_vm->renderMessage(kStringArsanoEntrance21);
 				_gm->mouseWait(_gm->_timer1);
 				_vm->removeMessage();
-				_vm->renderMessage("In einem der Schlie\341f\204cher,|die sich auch im Raum befinden,|findest du einige M\201nzen.");
+				_vm->renderMessage(kStringArsanoEntrance22);
 				_gm->takeObject(*getObject(16));
 				_gm->_state._coins = 5;
 			}
@@ -1716,7 +1716,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		_shown[kMaxSection - 5] = kShownTrue;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COINS, CAR_SLOT)) {
 		if ((_gm->_state._coins < 5) && (getObject(7 - _gm->_state._coins)->_click == 7))
-			_vm->renderMessage("Mach doch zuerst das Fach leer!");
+			_vm->renderMessage(kStringArsanoEntrance23);
 		else {
 			_gm->drawImage(15 - _gm->_state._coins);
 			getObject(8 - _gm->_state._coins)->_click = 7;
@@ -1731,14 +1731,14 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KITCHEN_SIGN) && _gm->_state._language) {
 		if (_gm->_state._language == 2)
-			_vm->renderMessage("Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Zutritt nur f\201r Personal\".");
+			_vm->renderMessage(kStringArsanoEntrance24);
 		obj1._description = kStringDoorDescription5;
 		if (_gm->_state._language == 1)
 			return false;
 		_gm->_state._language = 1;
 	} else if ((verb == ACTION_LOOK) && (obj1._id == BATHROOM_SIGN) && _gm->_state._language) {
 		if (_gm->_state._language == 2)
-			_vm->renderMessage("Komisch! Auf einmal kannst|du das Schild lesen!|Darauf steht:\"Toilette\".");
+			_vm->renderMessage(kStringArsanoEntrance25);
 		obj1._description = kStringDoorDescription6;
 		if (_gm->_state._language == 1)
 			return false;
@@ -1747,7 +1747,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!((_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) &&
 		      (_gm->_rooms[AIRLOCK]->getObject(5)->hasProperty(WORN)) &&
 		      (_gm->_rooms[AIRLOCK]->getObject(6)->hasProperty(WORN)))) {
-			_vm->renderMessage("Du ziehst den Raumanzug wieder an.");
+			_vm->renderMessage(kStringArsanoEntrance26);
 			getObject(4)->setProperty(WORN);
 			getObject(5)->setProperty(WORN);
 			getObject(6)->setProperty(WORN);
@@ -1756,9 +1756,10 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 		return false;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, PORTER))
-		_vm->renderMessage("Nicht so gewaltt\204tig!");
+		_vm->renderMessage(kStringArsanoEntrance27);
 	else
 		return false;
+
 	return true;
 }
 
@@ -2251,7 +2252,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 	byte zeilen3[2] = {1, 1};
 
 	if ((verb == ACTION_WALK) && (obj1._id == STAR))
-		_vm->renderMessage("Unsinn!");
+		_vm->renderMessage(kStringArsanoMeetup2);
 	else if ((verb == ACTION_LOOK) && (obj1._id == STAR)) {
 		_vm->renderImage(26, 0);
 		_vm->paletteBrightness();

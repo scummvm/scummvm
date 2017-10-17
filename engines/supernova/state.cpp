@@ -787,6 +787,10 @@ void GameManager::say(const char *text) {
 	// STUB
 }
 
+void GameManager::reply(StringID textId, int aus1, int aus2) {
+	// STUB
+}
+
 void GameManager::reply(const char *text, int aus1, int aus2) {
 	// STUB
 }

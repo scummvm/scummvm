@@ -489,7 +489,18 @@ enum StringID {
 	kStringShipHold5, kStringShipHold6, kStringShipHold7, kStringShipHold8, kStringShipHold9,
 	// 375
 	kStringShipHold10, kStringShipHold11, kStringShipHold12, kStringShipHold13, kStringShipHold14,
-	kStringShipHold15, kStringShipHold16
+	kStringShipHold15, kStringShipHold16, kStringArsanoMeetup1, kStringArsanoMeetup2, kStringArsanoMeetup3,
+	kStringArsanoEntrance1, kStringArsanoEntrance2, kStringArsanoEntrance3, kStringArsanoEntrance4, kStringArsanoEntrance5,
+	kStringArsanoEntrance6, kStringArsanoEntrance7, kStringArsanoEntrance8, kStringArsanoEntrance9, kStringArsanoEntrance10,
+	kStringArsanoEntrance11, kStringArsanoEntrance12, kStringArsanoEntrance13, kStringArsanoEntrance14, kStringArsanoEntrance15,
+	// 400
+	kStringArsanoEntrance16, kStringArsanoEntrance17, kStringArsanoEntrance18, kStringArsanoEntrance19, kStringArsanoEntrance20,
+	kStringArsanoEntrance21, kStringArsanoEntrance22, kStringArsanoEntrance23, kStringArsanoEntrance24, kStringArsanoEntrance25,
+	kStringArsanoEntrance26, kStringArsanoEntrance27, kStringArsanoDialog1, kStringArsanoDialog2, kStringArsanoDialog3,
+	kStringArsanoDialog4, kStringArsanoDialog5, kStringArsanoDialog6, kStringArsanoDialog7, kStringArsanoDialog8,
+	kStringArsanoDialog9, kStringDialogSeparator, kStringDialogArsanoRoger1, kStringDialogArsanoRoger2, kStringDialogArsanoRoger3,
+	// 425
+	kStringDialogArsanoMeetup3_1, kStringDialogArsanoMeetup3_2, kStringDialogArsanoMeetup3_3, kStringDialogArsanoMeetup3_4, kStringDialogArsanoMeetup3_5
 };
 
 static StringID guiCommands[] = {
