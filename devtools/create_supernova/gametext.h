@@ -444,60 +444,114 @@ const char *gameText[] = {
 	"Beim Aufprall des Raumschiffs|mu\341t du mit dem Kopf aufgeschlagen|und bewu\341tlos geworden sein.", // kStringShipSleepCabin15
 	"Was steht dir jetzt wohl wirklich bevor?", // kStringShipSleepCabin16
 	// 340
-	"Geschwindigkeit: ",
-	"8000 hpm",
-	"0 hpm",
-	"Ziel: Arsano 3",
-	"Entfernung: ",
+	"Geschwindigkeit: ", // kStringShipCockpit1
+	"8000 hpm", // kStringShipCockpit2
+	"0 hpm", // kStringShipCockpit3
+	"Ziel: Arsano 3", // kStringShipCockpit4
+	"Entfernung: ", // kStringShipCockpit5
 	//345
-	" Lichtjahre",
-	"Dauer der Reise bei momentaner Geschwindigkeit:",
-	" Tage",
-	"Vergi\341 nicht, du bist nur der|Schiffskoch und hast keine Ahnung,|wie man ein Raumschiff fliegt.",
-	"Achtung: Triebwerke funktionsunf\204hig",
+	" Lichtjahre", // kStringShipCockpit6
+	"Dauer der Reise bei momentaner Geschwindigkeit:", // kStringShipCockpit7
+	" Tage", // kStringShipCockpit8
+	"Vergi\341 nicht, du bist nur der|Schiffskoch und hast keine Ahnung,|wie man ein Raumschiff fliegt.", // kStringShipCockpit9
+	"Achtung: Triebwerke funktionsunf\204hig", // kStringShipCockpit10
 	//350
-	"Energievorrat ersch\224pft",
-	"Notstromversorgung aktiv",
-	"Was?! Keiner im Cockpit!|Die sind wohl verr\201ckt!",
-	"Du hast die Platte schon aufgelegt.",
-	"Es ist doch gar keine Platte aufgelegt.",
+	"Energievorrat ersch\224pft", // kStringShipCockpit11
+	"Notstromversorgung aktiv", // kStringShipCockpit12
+	"Was?! Keiner im Cockpit!|Die sind wohl verr\201ckt!", // kStringShipCockpit13
+	"Du hast die Platte schon aufgelegt.", // kStringShipCabinL3_1
+	"Es ist doch gar keine Platte aufgelegt.", // kStringShipCabinL3_2
 	//355
-	"Die Platte scheint einen Sprung zu haben.",
-	"Schneid doch besser ein|l\204ngeres St\201ck Kabel ab!",
-	"Das ist befestigt.",
-	"Zu niedriger Luftdruck soll ungesund sein.",
-	"Er zeigt Null an.",
+	"Die Platte scheint einen Sprung zu haben.", // kStringShipCabinL3_3
+	"Schneid doch besser ein|l\204ngeres St\201ck Kabel ab!", // kStringShipCabinL3_4
+	"Das ist befestigt.", // kStringShipCabinL3_5
+	"Zu niedriger Luftdruck soll ungesund sein.", // kStringShipAirlock1
+	"Er zeigt Null an.", // kStringShipAirlock2
 	//360
-	"Er zeigt Normaldruck an.",
-	"Komisch, es ist nur|noch ein Raumanzug da.",
-	"Du mu\341t erst hingehen.",
-	"Das Kabel ist im Weg.",
-	"Das Kabel ist schon ganz|richtig an dieser Stelle.",
+	"Er zeigt Normaldruck an.", // kStringShipAirlock3
+	"Komisch, es ist nur|noch ein Raumanzug da.", // kStringShipAirlock4
+	"Du mu\341t erst hingehen.", // kStringShipHold1
+	"Das Kabel ist im Weg.", // kStringCable1
+	"Das Kabel ist schon ganz|richtig an dieser Stelle.", // kStringCable2
 	//365
-	"Womit denn?",
-	"Die Leitung ist zu kurz.",
-	"Was ist denn das f\201r ein Chaos?|Und au\341erdem fehlt das Notraumschiff!|Jetzt wird mir einiges klar.|Die anderen sind gefl\201chtet,|und ich habe es verpennt.",
-	"Es ist nicht spitz genug.",
-	"Du wirst aus den Anzeigen nicht schlau.",
+	"Womit denn?", // kStringCable3
+	"Die Leitung ist zu kurz.", // kStringCable4
+	"Was ist denn das f\201r ein Chaos?|Und au\341erdem fehlt das Notraumschiff!|Jetzt wird mir einiges klar.|Die anderen sind gefl\201chtet,|und ich habe es verpennt.", // kStringShipHold2
+	"Es ist nicht spitz genug.", // kStringShipHold3
+	"Du wirst aus den Anzeigen nicht schlau.", // kStringShipHold4
 	//370
-	"La\341 lieber die Finger davon!",
-	"An dem Kabel ist doch gar kein Stecker.",
-	"Du solltest die Luke vielleicht erst \224ffnen.",
-	"Das Seil ist im Weg.",
-	"Das ist geschlossen.",
+	"La\341 lieber die Finger davon!", // kStringShipHold5
+	"An dem Kabel ist doch gar kein Stecker.", // kStringShipHold6
+	"Du solltest die Luke vielleicht erst \224ffnen.", // kStringShipHold7
+	"Das Seil ist im Weg.", // kStringShipHold8
+	"Das ist geschlossen.", // kStringShipHold9
 	//375
-	"Das geht nicht.|Die Luke ist mindestens|5 Meter \201ber dem Boden.",
-	"Was n\201tzt dir der Anschlu\341|ohne eine Stromquelle?!",
-	"Die Spannung ist auf Null abgesunken.",
-	"Es zeigt volle Spannung an.",
-	"Du mu\341t die Luke erst \224ffnen.",
+	"Das geht nicht.|Die Luke ist mindestens|5 Meter \201ber dem Boden.", // kStringShipHold10
+	"Was n\201tzt dir der Anschlu\341|ohne eine Stromquelle?!", // kStringShipHold11
+	"Die Spannung ist auf Null abgesunken.", // kStringShipHold12
+	"Es zeigt volle Spannung an.", // kStringShipHold13
+	"Du mu\341t die Luke erst \224ffnen.", // kStringShipHold14
 	//380
-	"Das Seil ist hier schon ganz richtig.",
-	"Das Kabel ist zu kurz.",
-	"",
-	"",
-	"",
+	"Das Seil ist hier schon ganz richtig.", // kStringShipHold15
+	"Das Kabel ist zu kurz.", // kStringShipHold16
+	"Die Raumschifft sind alle verschlossen.", // kStringArsanoMeetup1
+	"Unsinn!", // kStringArsanoMeetup2
+	"Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Treffpunkt Galactica\".", // kStringArsanoMeetup3
 	//385
+	"Durch deinen Helm kannst|du nicht sprechen.", // kStringArsanoEntrance1
+	"Wo soll ich die Schuhe ablegen?", // kStringArsanoEntrance2
+	"Was, das wissen Sie nicht?", // kStringArsanoEntrance3
+	"Sie befinden sich im Restaurant|\"Treffpunkt Galactica\".", // kStringArsanoEntrance4
+	"Wir sind bei den interessantesten|Ereignissen in der Galaxis|immer zur Stelle.", // kStringArsanoEntrance5
+	//390
+	"Wenn Sie meinen.", // kStringArsanoEntrance6
+	"In der Toilette gibt es|Schlie\341f\204cher f\201r Schuhe.", // kStringArsanoEntrance7
+	"Wenn Sie das Lokal betreten|wollen, m\201ssen Sie erst|ihre Schuhe ausziehen.", // kStringArsanoEntrance8
+	"Wollen Sie, da\341 ich Sie rau\341schmei\341e?", // kStringArsanoEntrance9
+	"Hhius otgfh Dgfdrkjlh Fokj gf.", // kStringArsanoEntrance10
+	//395
+	"Halt!", // kStringArsanoEntrance11
+	"Uhwdejkt!", // kStringArsanoEntrance12
+	"Sie m\201ssen erst ihre Schuhe ausziehen, Sie Trottel!", // kStringArsanoEntrance13
+	"Was f\204llt ihnen ein!|Sie k\224nnen doch ein Lokal|nicht mit Schuhen betreten!", // kStringArsanoEntrance14
+	"Fragen Sie nicht so doof!", // kStringArsanoEntrance15
+	// 400
+	"Das w\201rde ich an ihrer|Stelle nicht versuchen!", // kStringArsanoEntrance16
+	"Du ziehst deine Schuhe|aus und legst sie in|eins der Schlie\341f\204cher.", // kStringArsanoEntrance17
+	"Du ziehst deine Schuhe wieder an.", // kStringArsanoEntrance18
+	"Du durchsuchst die Klos nach|anderen brauchbaren Sachen,|findest aber nichts.", // kStringArsanoEntrance19
+	"Bevor du aufs Klo gehst,|solltest du besser deinen|Raumanzug ausziehen.", // kStringArsanoEntrance20
+	// 405
+	"Du gehst seit sieben Jahren das|erste Mal wieder aufs Klo!", // kStringArsanoEntrance21
+	"In einem der Schlie\341f\204cher,|die sich auch im Raum befinden,|findest du einige M\201nzen.", // kStringArsanoEntrance22
+	"Mach doch zuerst das Fach leer!", // kStringArsanoEntrance23
+	"Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Zutritt nur f\201r Personal\".", // kStringArsanoEntrance24
+	"Komisch! Auf einmal kannst|du das Schild lesen!|Darauf steht:\"Toilette\".", // kStringArsanoEntrance25
+	// 410
+	"Du ziehst den Raumanzug wieder an.", // kStringArsanoEntrance26
+	"Nicht so gewaltt\204tig!", // kStringArsanoEntrance27
+	"Wo bin ich hier?", // kStringArsanoDialog1
+	"Sch\224nes Wetter heute, nicht wahr?", // kStringArsanoDialog2
+	"W\201rden Sie mich bitte durchlassen.", // kStringArsanoDialog3
+	// 415
+	"Hey Alter, la\341 mich durch!", // kStringArsanoDialog4
+	"Was haben Sie gesagt?", // kStringArsanoDialog5
+	"Sprechen Sie bitte etwas deutlicher!", // kStringArsanoDialog6
+	"Wieso das denn nicht?", // kStringArsanoDialog7
+	"Wo soll ich die Schuhe ablegen?", // kStringArsanoDialog8
+	// 420
+	"Schwachsinn! Ich gehe jetzt nach oben!", // kStringArsanoDialog9
+	"|", // kStringDialogSeparator
+	"K\224nnten Sie mir ein Gericht empfehlen?", // kStringDialogArsanoRoger1
+	"Wie lange dauert es denn noch bis zur Supernova?", // kStringDialogArsanoRoger2
+	"Sie kommen mir irgendwie bekannt vor.", // kStringDialogArsanoRoger3
+	// 425
+	"Was wollen Sie von mir?", // kStringDialogArsanoMeetup3_1
+	"Hilfe!!", // kStringDialogArsanoMeetup3_2
+	"Warum sprechen Sie meine Sprache?", // kStringDialogArsanoMeetup3_3
+	"Ja, ich bin einverstanden.", // kStringDialogArsanoMeetup3_4
+	"Nein, lieber bleibe ich hier, als mit Ihnen zu fliegen.", // kStringDialogArsanoMeetup3_5
+	// 430
 	NULL
 };
 

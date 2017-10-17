@@ -185,6 +185,7 @@ public:
 	void removeSentence(int sentence, int number);
 	void addSentence(int sentence, int number);
 	void say(const char *text);
+	void reply(StringID textId, int aus1, int aus2);
 	void reply(const char *text, int aus1, int aus2);
 	void shipStart();
 	void shot(int a, int b);
