@@ -1621,7 +1621,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawImage(4);
 		setSectionVisible(3, false);
 		if (_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN))
-			_gm->reply("|", 1, _gm->invertSection(1));
+			_gm->reply(kStringDialogSeparator, 1, _gm->invertSection(1));
 		else if (_gm->_state._language)
 			_gm->reply(kStringArsanoEntrance11, 1, _gm->invertSection(1));
 		else
