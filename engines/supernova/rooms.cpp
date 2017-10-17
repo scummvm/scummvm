@@ -1926,8 +1926,8 @@ void ArsanoRemaining::animation() {
 void ArsanoRoger::onEntrance() {
 	// This is not a normal shown variable, it's a dialog
 	if (_shown[kMaxSection - 2] == 0) {
-		_gm->say("Darf ich hier Platz nehmen?");
-		_gm->reply("Klar!", 2, 2 + 128);
+		_gm->say(kStringArsanoRoger1);
+		_gm->reply(kStringArsanoRoger2, 2, 2 + 128);
 		_shown[kMaxSection - 2] = 1;
 	}
 }
@@ -1966,64 +1966,64 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->great(0);
 			return false;
 		}
-		_gm->reply("Hey, Witzkeks, la\341 die Brieftasche da liegen!", 2, 2 + 128);
+		_gm->reply(kStringArsanoRoger3, 2, 2 + 128);
 	} else if ((verb == ACTION_USE) && (obj1._id == CUP)) {
-		_vm->renderMessage("Das ist nicht deine.");
+		_vm->renderMessage(kStringArsanoRoger4);
 	} else if ((verb == ACTION_TALK) && (obj1._id == ROGER_W)) {
 		if (isSectionVisible(3))
-			_vm->renderMessage("Roger ist im Moment nicht ansprechbar.");
+			_vm->renderMessage(kStringArsanoRoger5);
 		else {
 			switch (_gm->dialog(4, nullptr, nullptr, 1)) { // row1, dialog1
 			case 0:
-				_gm->reply("Bestellen Sie lieber nichts!", 2, 2 + 128);
-				_gm->reply("Ich habe vor zwei Stunden mein Essen|bestellt und immer noch nichts bekommen.", 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger6, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger7, 2, 2 + 128);
 				break;
 			case 1:
-				_gm->reply("Noch mindestens zwei Stunden.", 2, 2 + 128);
-				_gm->reply("Haben Sie keine Idee, womit wir uns|bis dahin die Zeit vertreiben k\224nnen?", 2, 2 + 128);
-				_gm->say("Hmm ... im Moment f\201llt mir nichts ein, aber vielleicht|hat der Spieler des Adventures ja eine Idee.");
+				_gm->reply(kStringArsanoRoger8, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger9, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger10);
 				break;
 			case 2:
-				_gm->reply("Nein, Sie m\201ssen sich irren.|Ich kenne Sie jedenfalls nicht.", 2, 2 + 128);
-				_gm->say("Aber ihre Kleidung habe ich irgendwo schon mal gesehen.");
-				_gm->reply("Ja? Komisch.", 2, 2 + 128);
-				_gm->say("Jetzt wei\341 ich's. Sie sind Roger W. !");
-				_gm->reply("Pssst, nicht so laut, sonst will|gleich jeder ein Autogramm von mir.", 2, 2 + 128);
-				_gm->reply("Ich habe extra eine Maske auf, damit|ich nicht von jedem angelabert werde.", 2, 2 + 128);
-				_gm->say("\216h ... ach so.");
-				_gm->say("Wann kommt denn das n\204chste SQ-Abenteuer raus?");
-				_gm->reply("SQ 127 m\201\341te in einem Monat erscheinen.", 2, 2 + 128);
-				_gm->say("Was, Teil 127 ??");
-				_gm->say("Bei uns ist gerade Teil 8 erschienen.");
-				_gm->reply("Hmm ... von welchem Planeten sind Sie denn?", 2, 2 + 128);
-				_gm->say("Von der Erde.");
-				_gm->reply("Erde? Nie geh\224rt.", 2, 2 + 128);
-				_gm->reply("Wahrscheinlich irgendein Kaff, wo Neuerungen|erst hundert Jahre sp\204ter hingelangen.", 2, 2 + 128);
-				_gm->say("\216h ... kann sein.");
-				_gm->reply("Aber eins m\201ssen Sie mir erkl\204ren!", 2, 2 + 128);
-				_gm->reply("Wieso sehen Sie mir so verdammt \204hnlich, wenn|Sie nicht von Xenon stammen, wie ich?", 2, 2 + 128);
-				_gm->say("Keine Ahnung. Bis jetzt dachte ich immer, Sie w\201ren ein|von Programmierern auf der Erde erfundenes Computersprite.");
-				_gm->reply("Was? Lachhaft!", 2, 2 + 128);
-				_gm->reply("Wie erkl\204ren Sie sich dann,|da\341 ich ihnen gegen\201bersitze?", 2, 2 + 128);
-				_gm->say("Ja, das ist in der Tat seltsam.");
-				_gm->reply("Halt, jetzt wei\341 ich es. Sie sind von der Konkurrenz,|von \"Georgefilm Games\" und wollen mich verunsichern.", 2, 2 + 128);
-				_gm->say("Nein, ich bin nur ein Ahnungsloser Koch von der Erde.");
-				_gm->reply("Na gut, ich glaube Ihnen. Lassen wir jetzt|dieses Thema, langsam wird es mir zu bunt!", 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger11, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger12);
+				_gm->reply(kStringArsanoRoger13, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger14);
+				_gm->reply(kStringArsanoRoger15, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger16, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger17);
+				_gm->say(kStringArsanoRoger18);
+				_gm->reply(kStringArsanoRoger19, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger20);
+				_gm->say(kStringArsanoRoger21);
+				_gm->reply(kStringArsanoRoger22, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger23);
+				_gm->reply(kStringArsanoRoger24, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger25, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger26);
+				_gm->reply(kStringArsanoRoger27, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger28, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger29);
+				_gm->reply(kStringArsanoRoger30, 2, 2 + 128);
+				_gm->reply(kStringArsanoRoger31, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger32);
+				_gm->reply(kStringArsanoRoger33, 2, 2 + 128);
+				_gm->say(kStringArsanoRoger34);
+				_gm->reply(kStringArsanoRoger35, 2, 2 + 128);
 			}
 		}
 	} else if (((verb == ACTION_USE) && Object::combine(obj1, obj2, CHESS, ROGER_W)) ||
 	           ((verb == ACTION_GIVE) && (obj1._id == CHESS) && (obj2._id == ROGER_W))) {
 		_gm->drawImage(11);
 		_gm->great(0);
-		_gm->say("Eine Partie Schach! Das ist eine gute Idee.");
-		_gm->reply("Schach? Was ist das denn?", 2, 2 + 128);
-		_gm->say("Schach ist ein interessantes Spiel.|Ich werde es Ihnen erkl\204ren.");
+		_gm->say(kStringArsanoRoger36);
+		_gm->reply(kStringArsanoRoger37, 2, 2 + 128);
+		_gm->say(kStringArsanoRoger38);
 		_vm->paletteFadeOut();
 		_gm->_inventory.remove(*_gm->_rooms[CABIN_R3]->getObject(0)); // Chess board
 		g_system->fillScreen(kColorBlack);
 		_vm->_menuBrightness = 255;
 		_vm->paletteBrightness();
-		_vm->renderMessage("Knapp zwei Stunden sp\204ter ...");
+		_vm->renderMessage(kStringArsanoRoger39);
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
@@ -2042,12 +2042,11 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		getObject(5)->_click = 6;
 		getObject(6)->_click = 7;
 		_vm->paletteFadeIn();
-		_vm->renderMessage("Roger W. steht kurz vor dem Schachmatt|und gr\201belt nach einem Ausweg.");
+		_vm->renderMessage(kStringArsanoRoger40);
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
-	} else {
+	} else
 		return false;
-	}
 
 	return true;
 }

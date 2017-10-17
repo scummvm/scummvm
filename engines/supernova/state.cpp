@@ -783,6 +783,10 @@ void GameManager::addSentence(int sentence, int number) {
 	// STUB
 }
 
+void GameManager::say(StringID textId) {
+	// STUB
+}
+
 void GameManager::say(const char *text) {
 	// STUB
 }
