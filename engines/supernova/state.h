@@ -184,6 +184,7 @@ public:
 	void sentence(int number, bool brightness);
 	void removeSentence(int sentence, int number);
 	void addSentence(int sentence, int number);
+	void say(StringID textId);
 	void say(const char *text);
 	void reply(StringID textId, int aus1, int aus2);
 	void reply(const char *text, int aus1, int aus2);

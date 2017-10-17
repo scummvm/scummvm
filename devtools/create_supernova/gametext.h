@@ -552,6 +552,60 @@ const char *gameText[] = {
 	"Ja, ich bin einverstanden.", // kStringDialogArsanoMeetup3_4
 	"Nein, lieber bleibe ich hier, als mit Ihnen zu fliegen.", // kStringDialogArsanoMeetup3_5
 	// 430
+	"Darf ich hier Platz nehmen?", // kStringArsanoRoger1
+	"Klar!", // kStringArsanoRoger2
+	"Hey, Witzkeks, la\341 die Brieftasche da liegen!", // kStringArsanoRoger3
+	"Das ist nicht deine.", // kStringArsanoRoger4
+	"Roger ist im Moment nicht ansprechbar.", // kStringArsanoRoger5
+	// 435
+	"Bestellen Sie lieber nichts!", // kStringArsanoRoger6
+	"Ich habe vor zwei Stunden mein Essen|bestellt und immer noch nichts bekommen.", // kStringArsanoRoger7
+	"Noch mindestens zwei Stunden.", // kStringArsanoRoger8
+	"Haben Sie keine Idee, womit wir uns|bis dahin die Zeit vertreiben k\224nnen?", // kStringArsanoRoger9
+	"Hmm ... im Moment f\201llt mir nichts ein, aber vielleicht|hat der Spieler des Adventures ja eine Idee.", // kStringArsanoRoger10
+	// 440
+	"Nein, Sie m\201ssen sich irren.|Ich kenne Sie jedenfalls nicht.", // kStringArsanoRoger11
+	"Aber ihre Kleidung habe ich irgendwo schon mal gesehen.", // kStringArsanoRoger12
+	"Ja? Komisch.", // kStringArsanoRoger13
+	"Jetzt wei\341 ich's. Sie sind Roger W. !", // kStringArsanoRoger14
+	"Pssst, nicht so laut, sonst will|gleich jeder ein Autogramm von mir.", // kStringArsanoRoger15
+	// 415
+	"Ich habe extra eine Maske auf, damit|ich nicht von jedem angelabert werde.", // kStringArsanoRoger16
+	"\216h ... ach so.", // kStringArsanoRoger17
+	"Wann kommt denn das n\204chste SQ-Abenteuer raus?", // kStringArsanoRoger18
+	"SQ 127 m\201\341te in einem Monat erscheinen.", // kStringArsanoRoger19
+	"Was, Teil 127 ??", // kStringArsanoRoger20
+	// 420
+	"Bei uns ist gerade Teil 8 erschienen.", // kStringArsanoRoger21
+	"Hmm ... von welchem Planeten sind Sie denn?", // kStringArsanoRoger22
+	"Von der Erde.", // kStringArsanoRoger23
+	"Erde? Nie geh\224rt.", // kStringArsanoRoger24
+	"Wahrscheinlich irgendein Kaff, wo Neuerungen|erst hundert Jahre sp\204ter hingelangen.", // kStringArsanoRoger25
+	// 425
+	"\216h ... kann sein.", // kStringArsanoRoger26
+	"Aber eins m\201ssen Sie mir erkl\204ren!", // kStringArsanoRoger27
+	"Wieso sehen Sie mir so verdammt \204hnlich, wenn|Sie nicht von Xenon stammen, wie ich?", // kStringArsanoRoger28
+	"Keine Ahnung. Bis jetzt dachte ich immer, Sie w\201ren ein|von Programmierern auf der Erde erfundenes Computersprite.", // kStringArsanoRoger29
+	"Was? Lachhaft!", // kStringArsanoRoger30
+	// 430
+	"Wie erkl\204ren Sie sich dann,|da\341 ich ihnen gegen\201bersitze?", // kStringArsanoRoger31
+	"Ja, das ist in der Tat seltsam.", // kStringArsanoRoger32
+	"Halt, jetzt wei\341 ich es. Sie sind von der Konkurrenz,|von \"Georgefilm Games\" und wollen mich verunsichern.", // kStringArsanoRoger33
+	"Nein, ich bin nur ein Ahnungsloser Koch von der Erde.", // kStringArsanoRoger34
+	"Na gut, ich glaube Ihnen. Lassen wir jetzt|dieses Thema, langsam wird es mir zu bunt!", // kStringArsanoRoger35
+	// 435
+	"Eine Partie Schach! Das ist eine gute Idee.", // kStringArsanoRoger36
+	"Schach? Was ist das denn?", // kStringArsanoRoger37
+	"Schach ist ein interessantes Spiel.|Ich werde es Ihnen erkl\204ren.", // kStringArsanoRoger38
+	"Knapp zwei Stunden sp\204ter ...", // kStringArsanoRoger39
+	"Roger W. steht kurz vor dem Schachmatt|und gr\201belt nach einem Ausweg.", // kStringArsanoRoger40
+	// 440
+	"",
+	"",
+	"",
+	"",
+	"",
+	// 445
 	NULL
 };
 

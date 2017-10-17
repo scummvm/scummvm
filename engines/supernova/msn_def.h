@@ -500,7 +500,15 @@ enum StringID {
 	kStringArsanoDialog4, kStringArsanoDialog5, kStringArsanoDialog6, kStringArsanoDialog7, kStringArsanoDialog8,
 	kStringArsanoDialog9, kStringDialogSeparator, kStringDialogArsanoRoger1, kStringDialogArsanoRoger2, kStringDialogArsanoRoger3,
 	// 425
-	kStringDialogArsanoMeetup3_1, kStringDialogArsanoMeetup3_2, kStringDialogArsanoMeetup3_3, kStringDialogArsanoMeetup3_4, kStringDialogArsanoMeetup3_5
+	kStringDialogArsanoMeetup3_1, kStringDialogArsanoMeetup3_2, kStringDialogArsanoMeetup3_3, kStringDialogArsanoMeetup3_4, kStringDialogArsanoMeetup3_5,
+	kStringArsanoRoger1, kStringArsanoRoger2, kStringArsanoRoger3, kStringArsanoRoger4, kStringArsanoRoger5,
+	kStringArsanoRoger6, kStringArsanoRoger7, kStringArsanoRoger8, kStringArsanoRoger9, kStringArsanoRoger10,
+	kStringArsanoRoger11, kStringArsanoRoger12, kStringArsanoRoger13, kStringArsanoRoger14, kStringArsanoRoger15,
+	kStringArsanoRoger16, kStringArsanoRoger17, kStringArsanoRoger18, kStringArsanoRoger19, kStringArsanoRoger20,
+	kStringArsanoRoger21, kStringArsanoRoger22, kStringArsanoRoger23, kStringArsanoRoger24, kStringArsanoRoger25,
+	kStringArsanoRoger26, kStringArsanoRoger27, kStringArsanoRoger28, kStringArsanoRoger29, kStringArsanoRoger30,
+	kStringArsanoRoger31, kStringArsanoRoger32, kStringArsanoRoger33, kStringArsanoRoger34, kStringArsanoRoger35,
+	kStringArsanoRoger36, kStringArsanoRoger37, kStringArsanoRoger38, kStringArsanoRoger39, kStringArsanoRoger40
 };
 
 static StringID guiCommands[] = {
