@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-16 07:28+0200\n"
+"POT-Creation-Date: 2017-10-18 01:42+0200\n"
 "PO-Revision-Date: 2017-01-25 12:49+0000\n"
 "Last-Translator: Rafa³ Rzepecki <divided.mind@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -897,7 +897,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Specjalne tryby ditheringu wspierane przez niektóre gry"
 
 #: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:587
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2562
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2565
 msgid "Fullscreen mode"
 msgstr "Pe³ny ekran"
 
@@ -2212,7 +2212,7 @@ msgid "OpenGL"
 msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:589
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2564
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2567
 msgid "Windowed mode"
 msgstr "Okno"
 
@@ -2222,23 +2222,23 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2425
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2428
 msgid "Enabled aspect ratio correction"
 msgstr "W³±czono korekcjê formatu obrazu"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2431
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2434
 msgid "Disabled aspect ratio correction"
 msgstr "Wy³±czono korekcjê formatu obrazu"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2449
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2452
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Klikanie w³±czone"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:748
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2451
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2454
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Klikanie wy³±czone"
@@ -2254,7 +2254,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Zwyk³y (bez skalowania)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2514
 msgid "Active graphics filter:"
 msgstr "Aktywny filtr graficzny:"
 
