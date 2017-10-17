@@ -600,12 +600,66 @@ const char *gameText[] = {
 	"Knapp zwei Stunden sp\204ter ...", // kStringArsanoRoger39
 	"Roger W. steht kurz vor dem Schachmatt|und gr\201belt nach einem Ausweg.", // kStringArsanoRoger40
 	// 440
-	"",
-	"",
-	"",
-	"",
-	"",
+	"Du tippst auf den Tasten herum,|aber es passiert nichts.", // kStringArsanoGlider1
+	"Alle Raumschiffe haben|den Planeten verlassen.", // kStringArsanoMeetup2_1
+	"Alle Raumschiffe haben den Planeten|verlassen, bis auf eins ...", // kStringArsanoMeetup2_2
+	"Was wollen Sie denn schon wieder?", // kStringArsanoMeetup2_3
+	"Nein.", // kStringArsanoMeetup2_4
 	// 445
+	"Haben Sie zuf\204llig meine Brieftasche gesehen?|Ich mu\341 Sie irgendwo verloren haben.", // kStringArsanoMeetup2_5
+	"Ohne die Brieftasche kann ich nicht|starten, weil meine Keycard darin ist.", // kStringArsanoMeetup2_6
+	"Oh! Vielen Dank.", // kStringArsanoMeetup2_7
+	"Wo ist denn Ihr Raumschiff?|Soll ich Sie ein St\201ck mitnehmen?", // kStringArsanoMeetup2_8
+	"Wo wollen Sie denn hin?", // kStringArsanoMeetup2_9
+	// 450
+	"Ok, steigen Sie ein!", // kStringArsanoMeetup2_10
+	"Wie Sie wollen.", // kStringArsanoMeetup2_11
+	"Huch, du lebst ja noch!", // kStringArsanoMeetup2_12
+	"Das w\201rde ich jetzt nicht tun, schlie\341lich|steht Roger W. neben seinem Schiff.", // kStringArsanoMeetup2_13
+	"Ich glaube, er wacht auf.", // kStringArsanoMeetup3_1
+	// 455
+	"Ja, sieht so aus.", // kStringArsanoMeetup3_2
+	"Sie befinden sich im Raumschiff \"Dexxa\".", // kStringArsanoMeetup3_3
+	"Wir kommen vom Planeten Axacuss und|sind aus dem gleichen Grund hier wie Sie,|n?mlich zur Erforschung der Supernova.", // kStringArsanoMeetup3_4
+	"Sie k\224nnen beruhigt sein, wir wollen Ihnen nur helfen.", // kStringArsanoMeetup3_5
+	"Und wieso hat der Typ im Raumanzug|eben auf mich geschossen?", // kStringArsanoMeetup3_6
+	// 460
+	"Das war eine Schreckreaktion.", // kStringArsanoMeetup3_7
+	"Schlie\341lich ist es f\201r uns das erste Mal,|da\341 wir auf eine fremde Intelligenz treffen.", // kStringArsanoMeetup3_8
+	"Wie wir festgestellt haben, ist|Ihr Raumschiff v\224llig zerst\224rt.", // kStringArsanoMeetup3_9
+	"Wahrscheinlich k\224nnen Sie nicht|mehr auf ihren Heimatplaneten zur\201ck.", // kStringArsanoMeetup3_10
+	"Wir bieten Ihnen an, Sie|mit nach Axacuss zu nehmen.", // kStringArsanoMeetup3_11
+	// 465
+	"Sind Sie sich da wirklich sicher?", // kStringArsanoMeetup3_12
+	"Wenn ich es mir genau \201berlege,|fliege ich doch lieber mit.", // kStringArsanoMeetup3_13
+	"Gut, wir nehmen Sie unter der|Bedingung mit, da\341 wir Sie jetzt|sofort in Tiefschlaf versetzen d\201rfen.", // kStringArsanoMeetup3_14
+	"Diese Art des Reisens ist Ihnen|ja scheinbar nicht unbekannt.", // kStringArsanoMeetup3_15
+	"Sie werden in vier Jahren nach der|Landung der \"Dexxa\" wieder aufgeweckt.", // kStringArsanoMeetup3_16
+	// 470
+	"Sind Sie damit einverstanden?", // kStringArsanoMeetup3_17
+	"Gut, haben Sie noch irgendwelche Fragen?", // kStringArsanoMeetup3_18
+	"Keine Panik!", // kStringArsanoMeetup3_19
+	"Wir tun Ihnen nichts.", // kStringArsanoMeetup3_20
+	"Wir sprechen nicht ihre Sprache,|sondern Sie sprechen unsere.", // kStringArsanoMeetup3_21
+	// 475
+	"Nach einer Gehirnanalyse konnten|wir Ihr Gehirn an unsere Sprache anpassen.", // kStringArsanoMeetup3_22
+	"Was? Sie haben in mein Gehirn eingegriffen?", // kStringArsanoMeetup3_23
+	"Keine Angst, wir haben sonst nichts ver\204ndert.", // kStringArsanoMeetup3_24
+	"Ohne diesen Eingriff w\204ren|Sie verloren gewesen.", // kStringArsanoMeetup3_25
+	"Ich habe keine weiteren Fragen mehr.", // kStringArsanoMeetup3_26
+	// 480
+	"Gut, dann versetzen wir Sie jetzt in Tiefschlaf.", // kStringArsanoMeetup3_27
+	"Gute Nacht!", // kStringArsanoMeetup3_28
+	"Du wachst auf und findest dich in|einem geschlossenen Raum wieder.", // kStringAxacussCell_1
+	"Du dr\201ckst den Knopf,|aber nichts passiert.", // kStringAxacussCell_2
+	"Das ist befestigt.", // kStringAxacussCell_3
+	// 485
+	"Bei deinem Fluchtversuch hat|dich der Roboter erschossen.", // kStringAxacussCell_4
+	"Du i\341t etwas, aber|es schmeckt scheu\341lich.", // kStringAxacussCell_5
+	"Ok.", // kStringOk
+	"", // 
+	"", // 
+	// 490
 	NULL
 };
 

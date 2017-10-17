@@ -1141,7 +1141,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_inventory.remove(*getObject(2));
 		_gm->_state._terminalStripConnected = true;
 		_gm->_state._terminalStripWire = true;
-		_vm->renderMessage("Ok.");
+		_vm->renderMessage(kStringOk);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, HOLD_WIRE, SPOOL)) {
 		if (!_gm->_state._terminalStripConnected)
 			_vm->renderMessage(kStringCable3);
@@ -2121,25 +2121,24 @@ bool ArsanoGlider::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->wait2(4);
 		_gm->drawImage(_gm->invertSection(i));
 	} else if ((verb == ACTION_USE) && (obj1._id == GLIDER_BUTTONS)) {
-		_vm->renderMessage("Du tippst auf den Tasten herum,|aber es passiert nichts.");
-	} else {
+		_vm->renderMessage(kStringArsanoGlider1);
+	} else
 		return false;
-	}
 
 	return true;
 }
 
 void ArsanoMeetup2::onEntrance() {
-	// We use 1, 2, 3 because those are dialog status and not "real" _shown
+	// We don't use the enum because those are dialog status and not "real" _shown
 	switch (_shown[kMaxSection - 1]) {
 	case 1:
 		_gm->shipStart();
 		break;
 	case 2:
-		_vm->renderMessage("Alle Raumschiffe haben|den Planeten verlassen."); // All spaceships have left the planet
+		_vm->renderMessage(kStringArsanoMeetup2_1); // All spaceships have left the planet
 		break;
 	case 3:
-		_vm->renderMessage("Alle Raumschiffe haben den Planeten|verlassen, bis auf eins ..."); // All spaceships have left the planet, except one ...
+		_vm->renderMessage(kStringArsanoMeetup2_2); // All spaceships have left the planet, except one ...
 	}
 	_shown[kMaxSection - 1] = 0;
 }
@@ -2158,13 +2157,13 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->paletteBrightness();
 		bool found;
 		if (_gm->_rooms[MEETUP2]->isSectionVisible(kMaxSection - 2)) {
-			_gm->reply("Was wollen Sie denn schon wieder?", 1, 1 + 128);
+			_gm->reply(kStringArsanoMeetup2_3, 1, 1 + 128);
 			found = !_gm->dialog(2, nullptr, nullptr, 0); // row4, dialog4
 			if (!(found))
-				_gm->reply("Nein.", 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup2_4, 1, 1 + 128);
 		} else {
-			_gm->reply("Haben Sie zuf\204llig meine Brieftasche gesehen?|Ich mu\341 Sie irgendwo verloren haben.", 1, 1 + 128);
-			_gm->reply("Ohne die Brieftasche kann ich nicht|starten, weil meine Keycard darin ist.", 1, 1 + 128);
+			_gm->reply(kStringArsanoMeetup2_5, 1, 1 + 128);
+			_gm->reply(kStringArsanoMeetup2_6, 1, 1 + 128);
 			found = !_gm->dialog(2, nullptr, nullptr, 0); // row1, dialog1
 			_gm->_rooms[MEETUP2]->setSectionVisible(kMaxSection - 2, true);
 		}
@@ -2172,15 +2171,15 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(3));
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(7));
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(8));
-			_gm->reply("Oh! Vielen Dank.", 1, 1 + 128);
-			_gm->reply("Wo ist denn Ihr Raumschiff?|Soll ich Sie ein St\201ck mitnehmen?", 1, 1 + 128);
+			_gm->reply(kStringArsanoMeetup2_7, 1, 1 + 128);
+			_gm->reply(kStringArsanoMeetup2_8, 1, 1 + 128);
 			bool flight = _gm->dialog(2, nullptr, nullptr, 0); // row2, dialog2
 			if (flight) {
-				_gm->reply("Wo wollen Sie denn hin?", 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup2_9, 1, 1 + 128);
 				_gm->dialog(4, nullptr, nullptr, 0); // row3, dialog3
-				_gm->reply("Ok, steigen Sie ein!", 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup2_10, 1, 1 + 128);
 			} else {
-				_gm->reply("Wie Sie wollen.", 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup2_11, 1, 1 + 128);
 			}
 			_gm->changeRoom(MEETUP2);
 			_gm->_rooms[MEETUP2]->setSectionVisible(12, false);
@@ -2221,7 +2220,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderImage(11, 0);
 				_vm->paletteFadeIn();
 				_gm->wait2(18);
-				_vm->renderMessage("Huch, du lebst ja noch!");
+				_vm->renderMessage(kStringArsanoMeetup2_12);
 				_gm->great(0);
 				_gm->mouseWait(_gm->_timer1);
 				_vm->removeMessage();
@@ -2239,7 +2238,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->changeRoom(MEETUP2);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KEYCARD_R, SPACESHIP))
-		_vm->renderMessage("Das w\201rde ich jetzt nicht tun, schlie\341lich|steht Roger W. neben seinem Schiff.");
+		_vm->renderMessage(kStringArsanoMeetup2_13);
 	else
 		return false;
 
@@ -2270,67 +2269,67 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->wait2(6);
 		_vm->renderImage(36, 4);
 		_vm->playSound(kAudioGunShot);
-		// TODO: wait until audio finshed playing
+		// TODO: wait until audio finished playing
 		_vm->renderImage(36, 5);
 		_gm->wait2(3);
 		_vm->renderImage(36, 4);
 		_vm->playSound(kAudioGunShot);
-		// TODO: wait until audio finshed playing
+		// TODO: wait until audio finished playing
 		_vm->renderImage(36, 5);
 		_vm->paletteFadeOut();
 		_gm->wait2(12);
 		_vm->renderImage(0, 0);
 		_vm->paletteFadeIn();
 		_gm->wait2(18);
-		_gm->reply("Ich glaube, er wacht auf.", 2, 2 + 128);
+		_gm->reply(kStringArsanoMeetup3_1, 2, 2 + 128);
 		_gm->wait2(10);
-		_gm->reply("Ja, sieht so aus.", 1, 1 + 128);
+		_gm->reply(kStringArsanoMeetup3_2, 1, 1 + 128);
 
 		do {
 			int i = _gm->dialog(4, nullptr, nullptr, 2); // row2, dialog2
 			switch (i) {
 			case 0:
-				_gm->reply("Sie befinden sich im Raumschiff \"Dexxa\".", 1, 1 + 128);
-				_gm->reply("Wir kommen vom Planeten Axacuss und|sind aus dem gleichen Grund hier wie Sie,|nmlich zur Erforschung der Supernova.", 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup3_3, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup3_4, 1, 1 + 128);
 				break;
 			case 1:
-				_gm->reply("Sie k\224nnen beruhigt sein, wir wollen Ihnen nur helfen.", 2, 2 + 128);
-				_gm->say("Und wieso hat der Typ im Raumanzug|eben auf mich geschossen?");
-				_gm->reply("Das war eine Schreckreaktion.", 2, 2 + 128);
-				_gm->reply("Schlie\341lich ist es f\201r uns das erste Mal,|da\341 wir auf eine fremde Intelligenz treffen.", 2, 2 + 128);
-				_gm->reply("Wie wir festgestellt haben, ist|Ihr Raumschiff v\224llig zerst\224rt.", 2, 2 + 128);
-				_gm->reply("Wahrscheinlich k\224nnen Sie nicht|mehr auf ihren Heimatplaneten zur\201ck.", 2, 2 + 128);
-				_gm->reply("Wir bieten Ihnen an, Sie|mit nach Axacuss zu nehmen.", 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_5, 2, 2 + 128);
+				_gm->say(kStringArsanoMeetup3_6);
+				_gm->reply(kStringArsanoMeetup3_7, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_8, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_9, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_10, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_11, 2, 2 + 128);
 				if (_gm->dialog(2, nullptr, nullptr, 0)) { // row3, dialog3
-					_gm->reply("Sind Sie sich da wirklich sicher?", 2, 2 + 128);
-					_gm->say("Wenn ich es mir genau \201berlege,|fliege ich doch lieber mit.");
+					_gm->reply(kStringArsanoMeetup3_12, 2, 2 + 128);
+					_gm->say(kStringArsanoMeetup3_13);
 				}
-				_gm->reply("Gut, wir nehmen Sie unter der|Bedingung mit, da\341 wir Sie jetzt|sofort in Tiefschlaf versetzen d\201rfen.", 2, 2 + 128);
-				_gm->reply("Diese Art des Reisens ist Ihnen|ja scheinbar nicht unbekannt.", 2, 2 + 128);
-				_gm->reply("Sie werden in vier Jahren nach der|Landung der \"Dexxa\" wieder aufgeweckt.", 2, 2 + 128);
-				_gm->reply("Sind Sie damit einverstanden?", 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_14, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_15, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_16, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_17, 2, 2 + 128);
 				if (_gm->dialog(2, nullptr, nullptr, 0)) { // row3, dialog3
-					_gm->reply("Sind Sie sich da wirklich sicher?", 2, 2 + 128);
-					_gm->say("Wenn ich es mir genau \201berlege,|fliege ich doch lieber mit.");
+					_gm->reply(kStringArsanoMeetup3_12, 2, 2 + 128);
+					_gm->say(kStringArsanoMeetup3_13);
 				}
-				_gm->reply("Gut, haben Sie noch irgendwelche Fragen?", 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_18, 2, 2 + 128);
 				break;
 			case 2:
-				_gm->reply("Keine Panik!", 2, 2 + 128);
-				_gm->reply("Wir tun Ihnen nichts.", 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_19, 2, 2 + 128);
+				_gm->reply(kStringArsanoMeetup3_20, 2, 2 + 128);
 				break;
 			case 3:
-				_gm->reply("Wir sprechen nicht ihre Sprache,|sondern Sie sprechen unsere.", 1, 1 + 128);
-				_gm->reply("Nach einer Gehirnanalyse konnten|wir Ihr Gehirn an unsere Sprache anpassen.", 1, 1 + 128);
-				_gm->say("Was? Sie haben in mein Gehirn eingegriffen?");
-				_gm->reply("Keine Angst, wir haben sonst nichts ver\204ndert.", 1, 1 + 128);
-				_gm->reply("Ohne diesen Eingriff w\204ren|Sie verloren gewesen.", 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup3_21, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup3_22, 1, 1 + 128);
+				_gm->say(kStringArsanoMeetup3_23);
+				_gm->reply(kStringArsanoMeetup3_24, 1, 1 + 128);
+				_gm->reply(kStringArsanoMeetup3_25, 1, 1 + 128);
 			}
 			_gm->removeSentence(2, 2);
 		} while (_shown[kMaxSection - 2] != 15);
-		_gm->say("Ich habe keine weiteren Fragen mehr.");
-		_gm->reply("Gut, dann versetzen wir Sie jetzt in Tiefschlaf.", 1, 1 + 128);
-		_gm->reply("Gute Nacht!", 1, 1 + 128);
+		_gm->say(kStringArsanoMeetup3_26);
+		_gm->reply(kStringArsanoMeetup3_27, 1, 1 + 128);
+		_gm->reply(kStringArsanoMeetup3_28, 1, 1 + 128);
 		_vm->paletteFadeOut();
 		_gm->_inventory.clear();
 		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(1));  // Knife
@@ -2348,7 +2347,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 
 void AxacussCell::onEntrance() {
 	if (_gm->_state._dream) {
-		_vm->renderMessage("Du wachst auf und findest dich in|einem geschlossenen Raum wieder.");
+		_vm->renderMessage(kStringAxacussCell_1);
 		_gm->_state._time = ticksToMsec(500000);
 		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_state._time);
 		_gm->_state._powerOff = false;
@@ -2423,7 +2422,7 @@ void AxacussCell::animation() {
 
 bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == CELL_BUTTON))
-		_vm->renderMessage("Du dr\201ckst den Knopf,|aber nichts passiert.");
+		_vm->renderMessage(kStringAxacussCell_2);
 	else if ((verb == ACTION_PULL) && (obj1._id == CELL_WIRE) &&
 	         !isSectionVisible(2) &&
 	         !isSectionVisible(3) &&
@@ -2498,7 +2497,7 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawImage(_gm->invertSection(5));
 			_gm->takeObject(obj1);
 		} else {
-			_vm->renderMessage("Das ist befestigt.");
+			_vm->renderMessage(kStringAxacussCell_3);
 		}
 	} else if ((verb == ACTION_WALK) && (obj1._id == CELL_DOOR) &&
 	           (obj1.hasProperty(OPENED))) {
@@ -2508,14 +2507,14 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 		// TODO: wait till sound is played
 		_vm->playSound(kAudioGunShot);
 		_vm->playSound(kAudioGunShot);
-		_gm->dead("Bei deinem Fluchtversuch hat|dich der Roboter erschossen.");
+		_gm->dead(kStringAxacussCell_4);
 	} else if ((verb == ACTION_USE) && (obj1._id == TRAY))
-		_vm->renderMessage("Du i\341t etwas, aber|es schmeckt scheu\341lich.");
+		_vm->renderMessage(kStringAxacussCell_5);
 	else if ((verb == ACTION_TAKE) && (obj1._id == MAGNET)) {
 		if (isSectionVisible(6))
 			_gm->shock();
 		_gm->takeObject(obj1);
-		_vm->renderMessage("Ok.");
+		_vm->renderMessage(kStringOk);
 	} else
 		return false;
 

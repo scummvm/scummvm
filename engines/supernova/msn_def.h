@@ -505,10 +505,22 @@ enum StringID {
 	kStringArsanoRoger6, kStringArsanoRoger7, kStringArsanoRoger8, kStringArsanoRoger9, kStringArsanoRoger10,
 	kStringArsanoRoger11, kStringArsanoRoger12, kStringArsanoRoger13, kStringArsanoRoger14, kStringArsanoRoger15,
 	kStringArsanoRoger16, kStringArsanoRoger17, kStringArsanoRoger18, kStringArsanoRoger19, kStringArsanoRoger20,
+	// 450
 	kStringArsanoRoger21, kStringArsanoRoger22, kStringArsanoRoger23, kStringArsanoRoger24, kStringArsanoRoger25,
 	kStringArsanoRoger26, kStringArsanoRoger27, kStringArsanoRoger28, kStringArsanoRoger29, kStringArsanoRoger30,
 	kStringArsanoRoger31, kStringArsanoRoger32, kStringArsanoRoger33, kStringArsanoRoger34, kStringArsanoRoger35,
-	kStringArsanoRoger36, kStringArsanoRoger37, kStringArsanoRoger38, kStringArsanoRoger39, kStringArsanoRoger40
+	kStringArsanoRoger36, kStringArsanoRoger37, kStringArsanoRoger38, kStringArsanoRoger39, kStringArsanoRoger40,
+	kStringArsanoGlider1, kStringArsanoMeetup2_1, kStringArsanoMeetup2_2, kStringArsanoMeetup2_3, kStringArsanoMeetup2_4,
+	// 475
+	kStringArsanoMeetup2_5, kStringArsanoMeetup2_6, kStringArsanoMeetup2_7, kStringArsanoMeetup2_8, kStringArsanoMeetup2_9,
+	kStringArsanoMeetup2_10, kStringArsanoMeetup2_11, kStringArsanoMeetup2_12, kStringArsanoMeetup2_13, kStringArsanoMeetup3_1,
+	kStringArsanoMeetup3_2, kStringArsanoMeetup3_3, kStringArsanoMeetup3_4, kStringArsanoMeetup3_5, kStringArsanoMeetup3_6,
+	kStringArsanoMeetup3_7, kStringArsanoMeetup3_8, kStringArsanoMeetup3_9, kStringArsanoMeetup3_10, kStringArsanoMeetup3_11,
+	kStringArsanoMeetup3_12, kStringArsanoMeetup3_13, kStringArsanoMeetup3_14, kStringArsanoMeetup3_15, kStringArsanoMeetup3_16,
+	kStringArsanoMeetup3_17, kStringArsanoMeetup3_18, kStringArsanoMeetup3_19, kStringArsanoMeetup3_20, kStringArsanoMeetup3_21,
+	kStringArsanoMeetup3_22, kStringArsanoMeetup3_23, kStringArsanoMeetup3_24, kStringArsanoMeetup3_25, kStringArsanoMeetup3_26,
+	kStringArsanoMeetup3_27, kStringArsanoMeetup3_28, kStringAxacussCell_1, kStringAxacussCell_2, kStringAxacussCell_3,
+	kStringAxacussCell_4, kStringAxacussCell_5, kStringOk
 };
 
 static StringID guiCommands[] = {
