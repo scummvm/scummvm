@@ -1986,9 +1986,11 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 											 format->Gmask,
 											 format->Bmask,
 											 format->Amask);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		SDL_BlitScaled(_mouseOrigSurface, nullptr, _mouseSurface, nullptr);
-#else
+
+		// At least SDL 2.0.4 on Windows apparently has a broken SDL_BlitScaled
+		// implementation, and SDL 1 has no such API at all, and our other
+		// scalers operate exclusively at 16bpp, so here is a scrappy 32bpp
+		// point scaler
 		SDL_LockSurface(_mouseOrigSurface);
 		SDL_LockSurface(_mouseSurface);
 
@@ -1996,22 +1998,23 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		byte *dst = (byte *)_mouseSurface->pixels;
 		for (int y = 0; y < _mouseOrigSurface->h; ++y) {
 			uint32 *rowDst = (uint32 *)dst;
-			for (int scaleY = 0; scaleY < cursorScale; ++scaleY) {
-				const uint32 *rowSrc = (const uint32 *)src;
-				for (int x = 0; x < _mouseOrigSurface->w; ++x) {
-					for (int scaleX = 0; scaleX < cursorScale; ++scaleX) {
-						*rowDst++ = *rowSrc;
-					}
-					++rowSrc;
+			const uint32 *rowSrc = (const uint32 *)src;
+			for (int x = 0; x < _mouseOrigSurface->w; ++x) {
+				for (int scaleX = 0; scaleX < cursorScale; ++scaleX) {
+					*rowDst++ = *rowSrc;
 				}
+				++rowSrc;
+			}
+			for (int scaleY = 0; scaleY < cursorScale - 1; ++scaleY) {
+				memcpy(dst + _mouseSurface->pitch, dst, _mouseSurface->pitch);
 				dst += _mouseSurface->pitch;
 			}
+			dst += _mouseSurface->pitch;
 			src += _mouseOrigSurface->pitch;
 		}
 
 		SDL_UnlockSurface(_mouseSurface);
 		SDL_UnlockSurface(_mouseOrigSurface);
-#endif
 		return;
 	}
 
