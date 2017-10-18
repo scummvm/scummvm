@@ -799,7 +799,7 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 	// STUB
 }
 
-int GameManager::dialog(int num, byte *rowLength[], const char **text[6], int number) {
+int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number) {
 	// STUB
 	return 0;
 }
