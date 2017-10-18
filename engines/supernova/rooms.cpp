@@ -1567,10 +1567,9 @@ void ArsanoEntrance::animation() {
 }
 
 bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
-	// TODO: Refactor row/dialog data structure for dialog()
-	byte zeilen1[5] = {1, 1, 1, 1, 1};
-	byte zeilen2[5] = {1, 1, 1, 1, 1};
-	byte zeilen3[2] = {1, 1};
+	static byte row1[6] = {1, 1, 1, 1, 1, 0};
+	static byte row2[6] = {1, 1, 1, 1, 1, 0};
+	static byte row3[6] = {1, 1, 0, 0, 0, 0};
 
 	char e;
 
@@ -1586,7 +1585,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 					} else if (_gm->_state._shoes > 1) {
 						_gm->removeSentence(2, 2);
 					}
-					switch (e = _gm->dialog(5, nullptr, nullptr, 2)) { // row2, dialog2
+					switch (e = _gm->dialog(5, row2, _dialog2, 2)) {
 					case 0:
 						_gm->reply(kStringArsanoEntrance3, 1, _gm->invertSection(1));
 						_gm->reply(kStringArsanoEntrance4, 1, _gm->invertSection(1));
@@ -1610,10 +1609,8 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						_gm->reply(kStringArsanoEntrance9, 1, _gm->invertSection(1));
 					}
 				} while (e != 4);
-			} else {
-				if (_gm->dialog(5, nullptr, nullptr, 0) != 4) // row2, dialog2
-					_gm->reply(kStringArsanoEntrance10, 1, _gm->invertSection(1));
-			}
+			} else if (_gm->dialog(5, row2, _dialog2, 0) != 4)
+				_gm->reply(kStringArsanoEntrance10, 1, _gm->invertSection(1));
 		}
 	} else if ((verb == ACTION_WALK) && (obj1._id == STAIRCASE) && (_gm->_state._shoes != 3)) {
 		_gm->drawImage(3);
@@ -1638,7 +1635,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->reply(kStringArsanoEntrance14, 1, _gm->invertSection(1));
 				e = 0;
 				while ((e < 3) && (_shown[kMaxSection - 1] != 15)) {
-					switch (e = _gm->dialog(5, nullptr, nullptr, 1)) { // row1, dialog1
+					switch (e = _gm->dialog(5, row1, _dialog1, 1)) {
 					case 0:
 						_gm->reply(kStringArsanoEntrance15, 1, 1 + 128);
 						break;
@@ -1667,7 +1664,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->removeSentence(0, 1);
 				}
 			} else {
-				_gm->dialog(2, nullptr, nullptr, 0); // row3, dialog3
+				_gm->dialog(2, row3, _dialog3, 0);
 				_gm->reply(kStringArsanoEntrance10, 1, 1 + 128);
 			}
 		}
@@ -1959,7 +1956,7 @@ void ArsanoRoger::animation() {
 }
 
 bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
-	byte zeilen1[4] = {1, 1, 1, 1};
+	static byte row1[6] = {1, 1, 1, 1, 0, 0};
 
 	if ((verb == ACTION_TAKE) && (obj1._id == WALLET)) {
 		if (isSectionVisible(3)) {
@@ -1973,7 +1970,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		if (isSectionVisible(3))
 			_vm->renderMessage(kStringArsanoRoger5);
 		else {
-			switch (_gm->dialog(4, nullptr, nullptr, 1)) { // row1, dialog1
+			switch (_gm->dialog(4, row1, _dialog1, 1)) {
 			case 0:
 				_gm->reply(kStringArsanoRoger6, 2, 2 + 128);
 				_gm->reply(kStringArsanoRoger7, 2, 2 + 128);
@@ -2144,10 +2141,10 @@ void ArsanoMeetup2::onEntrance() {
 }
 
 bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
-	byte zeilen1[2] = {1, 1};
-	byte zeilen2[2] = {1, 1};
-	byte zeilen3[4] = {1, 1, 1, 1};
-	byte zeilen4[2] = {2, 1};
+	static byte row1[6] = {1, 1, 0, 0, 0, 0};
+	static byte row2[6] = {1, 1, 0, 0, 0, 0};
+	static byte row3[6] = {1, 1, 1, 1, 0, 0};
+	static byte row4[6] = {2, 1, 0, 0, 0, 0};
 
 	if (((verb == ACTION_WALK) &&
 	        ((obj1._id == SPACESHIP) || (obj1._id == ROGER_W))) ||
@@ -2158,13 +2155,13 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 		bool found;
 		if (_gm->_rooms[MEETUP2]->isSectionVisible(kMaxSection - 2)) {
 			_gm->reply(kStringArsanoMeetup2_3, 1, 1 + 128);
-			found = !_gm->dialog(2, nullptr, nullptr, 0); // row4, dialog4
+			found = !_gm->dialog(2, row4, _dialog4, 0);
 			if (!(found))
 				_gm->reply(kStringArsanoMeetup2_4, 1, 1 + 128);
 		} else {
 			_gm->reply(kStringArsanoMeetup2_5, 1, 1 + 128);
 			_gm->reply(kStringArsanoMeetup2_6, 1, 1 + 128);
-			found = !_gm->dialog(2, nullptr, nullptr, 0); // row1, dialog1
+			found = !_gm->dialog(2, row1, _dialog1, 0);
 			_gm->_rooms[MEETUP2]->setSectionVisible(kMaxSection - 2, true);
 		}
 		if (found) {
@@ -2173,10 +2170,10 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(8));
 			_gm->reply(kStringArsanoMeetup2_7, 1, 1 + 128);
 			_gm->reply(kStringArsanoMeetup2_8, 1, 1 + 128);
-			bool flight = _gm->dialog(2, nullptr, nullptr, 0); // row2, dialog2
+			bool flight = _gm->dialog(2, row2, _dialog2, 0);
 			if (flight) {
 				_gm->reply(kStringArsanoMeetup2_9, 1, 1 + 128);
-				_gm->dialog(4, nullptr, nullptr, 0); // row3, dialog3
+				_gm->dialog(4, row3, _dialog3, 0);
 				_gm->reply(kStringArsanoMeetup2_10, 1, 1 + 128);
 			} else {
 				_gm->reply(kStringArsanoMeetup2_11, 1, 1 + 128);
@@ -2246,8 +2243,11 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
-	byte zeilen2[4] = {1, 1, 1, 1};
-	byte zeilen3[2] = {1, 1};
+	byte row2[6] = {1, 1, 1, 1, 0, 0};
+	byte row3[6] = {1, 1, 0, 0, 0, 0};
+
+	// TODO: Hack, to be move away and renamed when the other uses are found
+	byte rowsX[6] = {1, 1, 1, 0, 0, 0};
 
 	if ((verb == ACTION_WALK) && (obj1._id == STAR))
 		_vm->renderMessage(kStringArsanoMeetup2);
@@ -2256,11 +2256,12 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->paletteBrightness();
 		_gm->getInput();
 		g_system->fillScreen(kColorBlack);
+		// CHECKME: Doesn't look complete - check sb_meetup()
 	} else if ((verb == ACTION_WALK) && (obj1._id == UFO)) {
 		g_system->fillScreen(kColorBlack);
 		_vm->renderImage(36, 0);
 		_vm->paletteBrightness();
-		_gm->dialog(3, nullptr, nullptr, 0); // rowX, dialogX
+		_gm->dialog(3, rowsX, _dialogsX, 0);
 		_vm->renderImage(36, 1);
 		_gm->wait2(3);
 		_vm->renderImage(36, 2);
@@ -2286,7 +2287,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->reply(kStringArsanoMeetup3_2, 1, 1 + 128);
 
 		do {
-			int i = _gm->dialog(4, nullptr, nullptr, 2); // row2, dialog2
+			int i = _gm->dialog(4, row2, _dialog2, 2);
 			switch (i) {
 			case 0:
 				_gm->reply(kStringArsanoMeetup3_3, 1, 1 + 128);
@@ -2300,7 +2301,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply(kStringArsanoMeetup3_9, 2, 2 + 128);
 				_gm->reply(kStringArsanoMeetup3_10, 2, 2 + 128);
 				_gm->reply(kStringArsanoMeetup3_11, 2, 2 + 128);
-				if (_gm->dialog(2, nullptr, nullptr, 0)) { // row3, dialog3
+				if (_gm->dialog(2, row3, _dialog3, 0)) {
 					_gm->reply(kStringArsanoMeetup3_12, 2, 2 + 128);
 					_gm->say(kStringArsanoMeetup3_13);
 				}
@@ -2308,7 +2309,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply(kStringArsanoMeetup3_15, 2, 2 + 128);
 				_gm->reply(kStringArsanoMeetup3_16, 2, 2 + 128);
 				_gm->reply(kStringArsanoMeetup3_17, 2, 2 + 128);
-				if (_gm->dialog(2, nullptr, nullptr, 0)) { // row3, dialog3
+				if (_gm->dialog(2, row3, _dialog3, 0)) {
 					_gm->reply(kStringArsanoMeetup3_12, 2, 2 + 128);
 					_gm->say(kStringArsanoMeetup3_13);
 				}
@@ -2580,8 +2581,7 @@ void AxacussCorridor5::onEntrance() {
 
 bool AxacussCorridor5::interact(Action verb, Object &obj1, Object &obj2) {
 	// TODO: needs to be refactored
-//	static char
-//	rows[] = {1, 1, 1, 1},
+	static byte rows[6] = {1, 1, 1, 1, 0, 0};
 
 	int sum;
 
@@ -2595,22 +2595,23 @@ bool AxacussCorridor5::interact(Action verb, Object &obj1, Object &obj2) {
 		} else {
 			_gm->_guiEnabled = true;
 			_gm->reply("Halt! Sie sind doch dieser Hummel.|Bleiben Sie sofort stehen!", 1, 1 + 128);
-			if (_gm->dialog(2, nullptr, nullptr, 0)) // rows, dialog1
+			if (_gm->dialog(2, rows, _dialog1, 0))
 				_gm->reply("Sehr witzig!", 1, 1 + 128);
 			else {
 				_gm->reply("Kann auch sein, auf jeden Fall|sind Sie der Nicht-Axacussaner.", 1, 1 + 128);
 bestechen:
-				if (_gm->dialog(2, nullptr, nullptr, 0) == 0) { // rows, dialog2
+				if (_gm->dialog(2, rows, _dialog2, 0) == 0) {
 					_gm->reply("Nein!", 1, 1 + 128);
 					setSectionVisible(kMaxSection - 2, false);
 					if (_gm->_state._money == 0) {
 						_gm->removeSentence(2, 2);
 						_gm->removeSentence(3, 2);
 					} else {
-						_dialog3[2] += Common::String::format("%d Xa.", _gm->_state._money - 200);
-						_dialog3[3] += Common::String::format("%d Xa.", _gm->_state._money);
+						// TODO: Handle string manipulation in dialogs
+						// _dialog3[2] += Common::String::format("%d Xa.", _gm->_state._money - 200);
+						// _dialog3[3] += Common::String::format("%d Xa.", _gm->_state._money);
 					}
-					switch (_gm->dialog(4, nullptr, nullptr, 2)) { // rows, dialog3
+					switch (_gm->dialog(4, rows, _dialog3, 2)) {
 					case 1:
 						_gm->wait2(3);
 						_gm->drawImage(1);

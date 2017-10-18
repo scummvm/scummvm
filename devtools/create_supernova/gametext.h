@@ -569,97 +569,121 @@ const char *gameText[] = {
 	"Ja? Komisch.", // kStringArsanoRoger13
 	"Jetzt wei\341 ich's. Sie sind Roger W. !", // kStringArsanoRoger14
 	"Pssst, nicht so laut, sonst will|gleich jeder ein Autogramm von mir.", // kStringArsanoRoger15
-	// 415
+	// 445
 	"Ich habe extra eine Maske auf, damit|ich nicht von jedem angelabert werde.", // kStringArsanoRoger16
 	"\216h ... ach so.", // kStringArsanoRoger17
 	"Wann kommt denn das n\204chste SQ-Abenteuer raus?", // kStringArsanoRoger18
 	"SQ 127 m\201\341te in einem Monat erscheinen.", // kStringArsanoRoger19
 	"Was, Teil 127 ??", // kStringArsanoRoger20
-	// 420
+	// 450
 	"Bei uns ist gerade Teil 8 erschienen.", // kStringArsanoRoger21
 	"Hmm ... von welchem Planeten sind Sie denn?", // kStringArsanoRoger22
 	"Von der Erde.", // kStringArsanoRoger23
 	"Erde? Nie geh\224rt.", // kStringArsanoRoger24
 	"Wahrscheinlich irgendein Kaff, wo Neuerungen|erst hundert Jahre sp\204ter hingelangen.", // kStringArsanoRoger25
-	// 425
+	// 455
 	"\216h ... kann sein.", // kStringArsanoRoger26
 	"Aber eins m\201ssen Sie mir erkl\204ren!", // kStringArsanoRoger27
 	"Wieso sehen Sie mir so verdammt \204hnlich, wenn|Sie nicht von Xenon stammen, wie ich?", // kStringArsanoRoger28
 	"Keine Ahnung. Bis jetzt dachte ich immer, Sie w\201ren ein|von Programmierern auf der Erde erfundenes Computersprite.", // kStringArsanoRoger29
 	"Was? Lachhaft!", // kStringArsanoRoger30
-	// 430
+	// 460
 	"Wie erkl\204ren Sie sich dann,|da\341 ich ihnen gegen\201bersitze?", // kStringArsanoRoger31
 	"Ja, das ist in der Tat seltsam.", // kStringArsanoRoger32
 	"Halt, jetzt wei\341 ich es. Sie sind von der Konkurrenz,|von \"Georgefilm Games\" und wollen mich verunsichern.", // kStringArsanoRoger33
 	"Nein, ich bin nur ein Ahnungsloser Koch von der Erde.", // kStringArsanoRoger34
 	"Na gut, ich glaube Ihnen. Lassen wir jetzt|dieses Thema, langsam wird es mir zu bunt!", // kStringArsanoRoger35
-	// 435
+	// 465
 	"Eine Partie Schach! Das ist eine gute Idee.", // kStringArsanoRoger36
 	"Schach? Was ist das denn?", // kStringArsanoRoger37
 	"Schach ist ein interessantes Spiel.|Ich werde es Ihnen erkl\204ren.", // kStringArsanoRoger38
 	"Knapp zwei Stunden sp\204ter ...", // kStringArsanoRoger39
 	"Roger W. steht kurz vor dem Schachmatt|und gr\201belt nach einem Ausweg.", // kStringArsanoRoger40
-	// 440
+	// 470
 	"Du tippst auf den Tasten herum,|aber es passiert nichts.", // kStringArsanoGlider1
 	"Alle Raumschiffe haben|den Planeten verlassen.", // kStringArsanoMeetup2_1
 	"Alle Raumschiffe haben den Planeten|verlassen, bis auf eins ...", // kStringArsanoMeetup2_2
 	"Was wollen Sie denn schon wieder?", // kStringArsanoMeetup2_3
 	"Nein.", // kStringArsanoMeetup2_4
-	// 445
+	// 475
 	"Haben Sie zuf\204llig meine Brieftasche gesehen?|Ich mu\341 Sie irgendwo verloren haben.", // kStringArsanoMeetup2_5
 	"Ohne die Brieftasche kann ich nicht|starten, weil meine Keycard darin ist.", // kStringArsanoMeetup2_6
 	"Oh! Vielen Dank.", // kStringArsanoMeetup2_7
 	"Wo ist denn Ihr Raumschiff?|Soll ich Sie ein St\201ck mitnehmen?", // kStringArsanoMeetup2_8
 	"Wo wollen Sie denn hin?", // kStringArsanoMeetup2_9
-	// 450
+	// 480
 	"Ok, steigen Sie ein!", // kStringArsanoMeetup2_10
 	"Wie Sie wollen.", // kStringArsanoMeetup2_11
 	"Huch, du lebst ja noch!", // kStringArsanoMeetup2_12
 	"Das w\201rde ich jetzt nicht tun, schlie\341lich|steht Roger W. neben seinem Schiff.", // kStringArsanoMeetup2_13
 	"Ich glaube, er wacht auf.", // kStringArsanoMeetup3_1
-	// 455
+	// 485
 	"Ja, sieht so aus.", // kStringArsanoMeetup3_2
 	"Sie befinden sich im Raumschiff \"Dexxa\".", // kStringArsanoMeetup3_3
 	"Wir kommen vom Planeten Axacuss und|sind aus dem gleichen Grund hier wie Sie,|n?mlich zur Erforschung der Supernova.", // kStringArsanoMeetup3_4
 	"Sie k\224nnen beruhigt sein, wir wollen Ihnen nur helfen.", // kStringArsanoMeetup3_5
 	"Und wieso hat der Typ im Raumanzug|eben auf mich geschossen?", // kStringArsanoMeetup3_6
-	// 460
+	// 490
 	"Das war eine Schreckreaktion.", // kStringArsanoMeetup3_7
 	"Schlie\341lich ist es f\201r uns das erste Mal,|da\341 wir auf eine fremde Intelligenz treffen.", // kStringArsanoMeetup3_8
 	"Wie wir festgestellt haben, ist|Ihr Raumschiff v\224llig zerst\224rt.", // kStringArsanoMeetup3_9
 	"Wahrscheinlich k\224nnen Sie nicht|mehr auf ihren Heimatplaneten zur\201ck.", // kStringArsanoMeetup3_10
 	"Wir bieten Ihnen an, Sie|mit nach Axacuss zu nehmen.", // kStringArsanoMeetup3_11
-	// 465
+	// 495
 	"Sind Sie sich da wirklich sicher?", // kStringArsanoMeetup3_12
 	"Wenn ich es mir genau \201berlege,|fliege ich doch lieber mit.", // kStringArsanoMeetup3_13
 	"Gut, wir nehmen Sie unter der|Bedingung mit, da\341 wir Sie jetzt|sofort in Tiefschlaf versetzen d\201rfen.", // kStringArsanoMeetup3_14
 	"Diese Art des Reisens ist Ihnen|ja scheinbar nicht unbekannt.", // kStringArsanoMeetup3_15
 	"Sie werden in vier Jahren nach der|Landung der \"Dexxa\" wieder aufgeweckt.", // kStringArsanoMeetup3_16
-	// 470
+	// 500
 	"Sind Sie damit einverstanden?", // kStringArsanoMeetup3_17
 	"Gut, haben Sie noch irgendwelche Fragen?", // kStringArsanoMeetup3_18
 	"Keine Panik!", // kStringArsanoMeetup3_19
 	"Wir tun Ihnen nichts.", // kStringArsanoMeetup3_20
 	"Wir sprechen nicht ihre Sprache,|sondern Sie sprechen unsere.", // kStringArsanoMeetup3_21
-	// 475
+	// 505
 	"Nach einer Gehirnanalyse konnten|wir Ihr Gehirn an unsere Sprache anpassen.", // kStringArsanoMeetup3_22
 	"Was? Sie haben in mein Gehirn eingegriffen?", // kStringArsanoMeetup3_23
 	"Keine Angst, wir haben sonst nichts ver\204ndert.", // kStringArsanoMeetup3_24
 	"Ohne diesen Eingriff w\204ren|Sie verloren gewesen.", // kStringArsanoMeetup3_25
 	"Ich habe keine weiteren Fragen mehr.", // kStringArsanoMeetup3_26
-	// 480
+	// 510
 	"Gut, dann versetzen wir Sie jetzt in Tiefschlaf.", // kStringArsanoMeetup3_27
 	"Gute Nacht!", // kStringArsanoMeetup3_28
 	"Du wachst auf und findest dich in|einem geschlossenen Raum wieder.", // kStringAxacussCell_1
 	"Du dr\201ckst den Knopf,|aber nichts passiert.", // kStringAxacussCell_2
 	"Das ist befestigt.", // kStringAxacussCell_3
-	// 485
+	// 515
 	"Bei deinem Fluchtversuch hat|dich der Roboter erschossen.", // kStringAxacussCell_4
 	"Du i\341t etwas, aber|es schmeckt scheu\341lich.", // kStringAxacussCell_5
 	"Ok.", // kStringOk
-	"", // 
-	"", // 
-	// 490
+	"Ach, Ihnen geh\224rt die. Ich habe sie eben im Sand gefunden.", // kStringDialogArsanoMeetup2_1
+	"Nein, tut mir leid.", // kStringDialogArsanoMeetup2_2
+	// 520
+	"Nein, danke. Ich bleibe lieber hier.", // kStringDialogArsanoMeetup2_3
+	"Ja, das w\204re gut.", // kStringDialogArsanoMeetup2_4
+	"Zur Erde.", // kStringDialogArsanoMeetup2_5
+	"Zum Pr\204sident der Galaxis.", // kStringDialogArsanoMeetup2_6
+	"Nach Xenon.", // kStringDialogArsanoMeetup2_7
+	// 525
+	"Mir egal, setzen Sie mich irgendwo ab!", // kStringDialogArsanoMeetup2_8
+	"Ich habe gerade Ihre Brieftasche gefunden!", // kStringDialogArsanoMeetup2_9
+	"Sie lag da dr\201ben hinter einem Felsen.", // kStringDialogArsanoMeetup2_10
+	"Ich wollte nur wissen, ob Sie die Brieftasche wiederhaben.", // kStringDialogArsanoMeetup2_11
+	"\216h ... nein, mein Name ist M\201ller.", // kStringDialogAxacussCorridor5_1
+	// 530
+	"Oh, ich habe mich im Gang vertan.", // kStringDialogAxacussCorridor5_2
+	"W\201rden Sie mich bitte zum Fahrstuhl lassen?", // kStringDialogAxacussCorridor5_3
+	"Ich gehe wieder.", // kStringDialogAxacussCorridor5_4
+	"Dann gehe ich eben wieder.", // kStringDialogAxacussCorridor5_5
+	"Ach, halten Sie's Maul, ich gehe trotzdem!", // kStringDialogAxacussCorridor5_6
+	// 535
+	"Wenn Sie mich durchlassen gebe ich Ihnen ",  // kStringDialogAxacussCorridor5_7
+	"Hallo!", // kStringDialogX1
+	"Guten Tag!", // kStringDialogX2
+	"Ich bin's, Horst Hummel.", // kStringDialogX3
+	"",
+	// 540
 	NULL
 };
 

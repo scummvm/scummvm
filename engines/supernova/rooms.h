@@ -751,31 +751,33 @@ public:
 		_id = MEETUP2;
 		_shown[0] = kShownTrue;
 
-		_objectState[0] = Object(_id, kStringRoger,kStringDefaultDescription,ROGER_W,TALK,255,255,0);
-		_objectState[1] = Object(_id, kStringSpaceshift,kStringDefaultDescription,SPACESHIP,COMBINABLE,255,255,0);
-		_objectState[2] = Object(_id, kStringCave,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
+		_objectState[0] = Object(_id, kStringRoger, kStringDefaultDescription, ROGER_W, TALK, 255, 255, 0);
+		_objectState[1] = Object(_id, kStringSpaceshift, kStringDefaultDescription, SPACESHIP, COMBINABLE, 255, 255, 0);
+		_objectState[2] = Object(_id, kStringCave, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, CAVE, 22);
 
-		_dialog1[0] = "Ach, Ihnen geh\224rt die. Ich habe sie eben im Sand gefunden.";
-		_dialog1[1] = "Nein, tut mir leid.";
-		_dialog2[0] = "Nein, danke. Ich bleibe lieber hier.";
-		_dialog2[1] = "Ja, das w\204re gut.";
-		_dialog3[0] = "Zur Erde.";
-		_dialog3[1] = "Zum Pr\204sident der Galaxis.";
-		_dialog3[2] = "Nach Xenon.";
-		_dialog3[3] = "Mir egal, setzen Sie mich irgendwo ab!";
-		_dialog4[0] = "Ich habe gerade Ihre Brieftasche gefunden!";
-		_dialog4[1] = "Sie lag da dr\201ben hinter einem Felsen.";
-		_dialog4[2] = "Ich wollte nur wissen, ob Sie die Brieftasche wiederhaben.";
+		_dialog1[0] = kStringDialogArsanoMeetup2_1;
+		_dialog1[1] = kStringDialogArsanoMeetup2_2;
+		_dialog2[0] = kStringDialogArsanoMeetup2_3;
+		_dialog2[1] = kStringDialogArsanoMeetup2_4;
+		_dialog3[0] = kStringDialogArsanoMeetup2_5;
+		_dialog3[1] = kStringDialogArsanoMeetup2_6;
+		_dialog3[2] = kStringDialogArsanoMeetup2_7;
+		_dialog3[3] = kStringDialogArsanoMeetup2_8;
+		_dialog4[0] = kStringDialogArsanoMeetup2_9;
+		_dialog4[1] = kStringDialogArsanoMeetup2_10;
+		_dialog4[2] = kStringDialogArsanoMeetup2_11;
 	}
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	Common::String _dialog1[2];
-	Common::String _dialog2[2];
-	Common::String _dialog3[4];
-	Common::String _dialog4[3];
+	// TODO: change to 6, fix initialization
+	StringID _dialog1[2];
+	StringID _dialog2[2];
+	StringID _dialog3[4];
+	StringID _dialog4[3];
+
 	bool _found;
 	bool _flug;
 };
@@ -799,6 +801,11 @@ public:
 		_dialog2[3] = kStringDialogArsanoMeetup3_3;
 		_dialog3[0] = kStringDialogArsanoMeetup3_4;
 		_dialog3[1] = kStringDialogArsanoMeetup3_5;
+
+		// TODO: Hack, to be move away and renamed when the other uses are found
+		_dialogsX[0] = kStringDialogX1;
+		_dialogsX[1] = kStringDialogX2;
+		_dialogsX[2] = kStringDialogX3;
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
@@ -806,6 +813,10 @@ public:
 private:
 	StringID _dialog2[4];
 	StringID _dialog3[2];
+
+	// TODO: Hack, to be move away and renamed when the other uses are found
+	StringID _dialogsX[6];
+	//
 };
 
 // Axacuss
@@ -954,23 +965,24 @@ public:
 		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,DOOR,EXIT,2,2,0,NULLROOM,2);
 		_objectState[1] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR6,22);
 
-		_dialog1[0] = "\216h ... nein, mein Name ist M\201ller.";
-		_dialog1[1] = "Oh, ich habe mich im Gang vertan.";
-		_dialog2[0] = "W\201rden Sie mich bitte zum Fahrstuhl lassen?";
-		_dialog2[1] = "Ich gehe wieder.";
-		_dialog3[0] = "Dann gehe ich eben wieder.";
-		_dialog3[1] = "Ach, halten Sie's Maul, ich gehe trotzdem!";
-		_dialog3[2] = "Wenn Sie mich durchlassen gebe ich Ihnen ";
-		_dialog3[3] = "Wenn Sie mich durchlassen gebe ich Ihnen ";
+		_dialog1[0] = kStringDialogAxacussCorridor5_1;
+		_dialog1[1] = kStringDialogAxacussCorridor5_2;
+		_dialog2[0] = kStringDialogAxacussCorridor5_3;
+		_dialog2[1] = kStringDialogAxacussCorridor5_4;
+		_dialog3[0] = kStringDialogAxacussCorridor5_5;
+		_dialog3[1] = kStringDialogAxacussCorridor5_6;
+		_dialog3[2] = kStringDialogAxacussCorridor5_7;
+		_dialog3[3] = kStringDialogAxacussCorridor5_7;
 	}
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	Common::String _dialog1[2];
-	Common::String _dialog2[2];
-	Common::String _dialog3[4];
+	// TODO: Change to 6, or change struct, and fix initialization
+	StringID _dialog1[2];
+	StringID _dialog2[2];
+	StringID _dialog3[4];
 };
 class AxacussCorridor6 : public Room {
 public:

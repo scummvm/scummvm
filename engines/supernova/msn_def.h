@@ -464,6 +464,7 @@ enum StringID {
 	kStringOutro3, kStringOutro4, kStringOutro5, kStringOutro6, kStringOutro7,
 	kStringOutro8, kStringOutro9, kStringOutro10, kStringOutro11, kStringOutro12,
 	kStringOutro13, kStringOutro14, kStringWireAndPlug, kStringWireAndClip, kStringWireAndPlug2,
+	// 275
 	kStringSignDescription2, kStringCoin, kStringDoorDescription5, kStringDoorDescription6, kStringKeycard2Description2,
 	kSringSpoolAndClip, kStringIntroCutscene1, kStringIntroCutscene2, kStringIntroCutscene3, kStringIntroCutscene4,
 	kStringIntroCutscene5, kStringIntroCutscene6, kStringIntroCutscene7, kStringIntroCutscene8, kStringIntroCutscene9,
@@ -517,10 +518,16 @@ enum StringID {
 	kStringArsanoMeetup3_2, kStringArsanoMeetup3_3, kStringArsanoMeetup3_4, kStringArsanoMeetup3_5, kStringArsanoMeetup3_6,
 	kStringArsanoMeetup3_7, kStringArsanoMeetup3_8, kStringArsanoMeetup3_9, kStringArsanoMeetup3_10, kStringArsanoMeetup3_11,
 	kStringArsanoMeetup3_12, kStringArsanoMeetup3_13, kStringArsanoMeetup3_14, kStringArsanoMeetup3_15, kStringArsanoMeetup3_16,
+	// 500
 	kStringArsanoMeetup3_17, kStringArsanoMeetup3_18, kStringArsanoMeetup3_19, kStringArsanoMeetup3_20, kStringArsanoMeetup3_21,
 	kStringArsanoMeetup3_22, kStringArsanoMeetup3_23, kStringArsanoMeetup3_24, kStringArsanoMeetup3_25, kStringArsanoMeetup3_26,
 	kStringArsanoMeetup3_27, kStringArsanoMeetup3_28, kStringAxacussCell_1, kStringAxacussCell_2, kStringAxacussCell_3,
-	kStringAxacussCell_4, kStringAxacussCell_5, kStringOk
+	kStringAxacussCell_4, kStringAxacussCell_5, kStringOk, kStringDialogArsanoMeetup2_1, kStringDialogArsanoMeetup2_2,
+	kStringDialogArsanoMeetup2_3, kStringDialogArsanoMeetup2_4, kStringDialogArsanoMeetup2_5, kStringDialogArsanoMeetup2_6, kStringDialogArsanoMeetup2_7,
+	// 525
+	kStringDialogArsanoMeetup2_8, kStringDialogArsanoMeetup2_9, kStringDialogArsanoMeetup2_10, kStringDialogArsanoMeetup2_11, kStringDialogAxacussCorridor5_1,
+	kStringDialogAxacussCorridor5_2, kStringDialogAxacussCorridor5_3, kStringDialogAxacussCorridor5_4, kStringDialogAxacussCorridor5_5, kStringDialogAxacussCorridor5_6,
+	kStringDialogAxacussCorridor5_7, kStringDialogX1, kStringDialogX2, kStringDialogX3
 };
 
 static StringID guiCommands[] = {
