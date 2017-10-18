@@ -2608,8 +2608,10 @@ bestechen:
 						_gm->removeSentence(3, 2);
 					} else {
 						// TODO: Handle string manipulation in dialogs
-						// _dialog3[2] += Common::String::format("%d Xa.", _gm->_state._money - 200);
-						// _dialog3[3] += Common::String::format("%d Xa.", _gm->_state._money);
+						// _dialog3[2] and _dialog3[3] are both using kStringDialogAxacussCorridor5_7
+						//    ("Wenn Sie mich durchlassen gebe ich Ihnen %d Xa.")
+						// _dialog3[2] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money - 200);
+						// _dialog3[3] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money);
 					}
 					switch (_gm->dialog(4, rows, _dialog3, 2)) {
 					case 1:
