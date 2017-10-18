@@ -405,8 +405,8 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section) {
 
 	Common::Rect sectionRect(image._section[section].x1,
 	                         image._section[section].y1,
-	                         image._section[section].x2,
-	                         image._section[section].y2);
+	                         image._section[section].x2 + 1,
+	                         image._section[section].y2 + 1) ;
 	if (image._filenumber == 1 || image._filenumber == 2) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);
