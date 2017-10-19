@@ -2576,81 +2576,81 @@ bool AxacussCorridor4::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void AxacussCorridor5::onEntrance() {
+}
 
+bool AxacussCorridor5::handleMoneyDialog() {
+	if (_gm->dialog(2, _rows, _dialog2, 0) == 0) {
+		_gm->reply(kStringAxacussCorridor5_5, 1, 1 + 128);
+		setSectionVisible(kMaxSection - 2, false);
+		if (_gm->_state._money == 0) {
+			_gm->removeSentence(2, 2);
+			_gm->removeSentence(3, 2);
+		} else {
+			// TODO: Handle string manipulation in dialogs
+			// _dialog3[2] and _dialog3[3] are both using kStringDialogAxacussCorridor5_7
+			//    ("Wenn Sie mich durchlassen gebe ich Ihnen %d Xa.")
+			// One way could be to keep an array of string[6], replace the %d of the previous sentence by a %s,
+			// and format the dialog string when the associated parameter string isn't empty. 
+			// The following code is broken and only kept in order to remember the values used.
+			// _dialog3[2] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money - 200);
+			// _dialog3[3] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money);
+		}
+		switch (_gm->dialog(4, _rows, _dialog3, 2)) {
+		case 1:
+			_gm->wait2(3);
+			_gm->drawImage(1);
+			_vm->playSound(kAudioVoiceHalt);
+			_gm->drawImage(_gm->invertSection(1));
+			_gm->wait2(5);
+			_gm->drawImage(2);
+			_gm->wait2(2);
+			_gm->shot(3, _gm->invertSection(3));
+			break;
+		case 3:
+			if (_gm->_state._money >= 900) {
+				stopInteract(_gm->_state._money);
+				return true;
+			}
+		case 2:
+			if (_gm->_state._money > 1100) {
+				stopInteract(_gm->_state._money - 200);
+				return true;
+			}
+			_gm->reply(kStringAxacussCorridor5_6, 1, 1 + 128);
+		}
+	}
+	return false;
+}
+
+void AxacussCorridor5::stopInteract(int sum) {
+	_gm->reply(kStringAxacussCorridor5_7, 1, 1 + 128);
+	_gm->great(0);
+	_gm->changeRoom(ELEVATOR);
+	_gm->_newRoom = true;
+	_gm->takeMoney(-sum);
 }
 
 bool AxacussCorridor5::interact(Action verb, Object &obj1, Object &obj2) {
-	// TODO: needs to be refactored
-	static byte rows[6] = {1, 1, 1, 1, 0, 0};
-
-	int sum;
-
 	if ((verb == ACTION_WALK) && (obj1._id == DOOR)) {
 		g_system->fillScreen(kColorBlack);
 		_vm->renderImage(41, 0);
 		_vm->paletteBrightness();
 		if (_gm->_guiEnabled) {
 			_gm->reply(kStringAxacussCorridor5_1, 1, 1 + 128);
-			goto bestechen;
+			if (handleMoneyDialog())
+				return true;
 		} else {
 			_gm->_guiEnabled = true;
 			_gm->reply(kStringAxacussCorridor5_2, 1, 1 + 128);
-			if (_gm->dialog(2, rows, _dialog1, 0))
+			if (_gm->dialog(2, _rows, _dialog1, 0))
 				_gm->reply(kStringAxacussCorridor5_3, 1, 1 + 128);
 			else {
 				_gm->reply(kStringAxacussCorridor5_4, 1, 1 + 128);
-bestechen:
-				if (_gm->dialog(2, rows, _dialog2, 0) == 0) {
-					_gm->reply(kStringAxacussCorridor5_5, 1, 1 + 128);
-					setSectionVisible(kMaxSection - 2, false);
-					if (_gm->_state._money == 0) {
-						_gm->removeSentence(2, 2);
-						_gm->removeSentence(3, 2);
-					} else {
-						// TODO: Handle string manipulation in dialogs
-						// _dialog3[2] and _dialog3[3] are both using kStringDialogAxacussCorridor5_7
-						//    ("Wenn Sie mich durchlassen gebe ich Ihnen %d Xa.")
-						// One way could be to keep an array of string[6], replace the %d of the previous sentence by a %s,
-						// and format the dialog string when the associated parameter string isn't empty. 
-						// The following code is broken and only kept in order to remember the values used.
-						// _dialog3[2] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money - 200);
-						// _dialog3[3] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money);
-					}
-					switch (_gm->dialog(4, rows, _dialog3, 2)) {
-					case 1:
-						_gm->wait2(3);
-						_gm->drawImage(1);
-						_vm->playSound(kAudioVoiceHalt);
-						_gm->drawImage(_gm->invertSection(1));
-						_gm->wait2(5);
-						_gm->drawImage(2);
-						_gm->wait2(2);
-						_gm->shot(3, _gm->invertSection(3));
-						break;
-					case 3:
-						if (_gm->_state._money >= 900) {
-							sum = _gm->_state._money;
-							goto genug;
-						}
-					case 2:
-						if (_gm->_state._money > 1100) {
-							sum = _gm->_state._money - 200;
-							goto genug;
-						}
-						_gm->reply(kStringAxacussCorridor5_6, 1, 1 + 128);
-					}
-				}
+				if (handleMoneyDialog())
+					return true;
 			}
 		}
 		g_system->fillScreen(kColorBlack);
-		return true;
-
-genug:
-		_gm->reply(kStringAxacussCorridor5_7, 1, 1 + 128);
-		_gm->great(0);
-		_gm->changeRoom(ELEVATOR);
-		_gm->_newRoom = true;
-		_gm->takeMoney(-sum);
 		return true;
 	}
 	return false;
