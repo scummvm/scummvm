@@ -2590,18 +2590,18 @@ bool AxacussCorridor5::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(41, 0);
 		_vm->paletteBrightness();
 		if (_gm->_guiEnabled) {
-			_gm->reply("Sie schon wieder?", 1, 1 + 128);
+			_gm->reply(kStringAxacussCorridor5_1, 1, 1 + 128);
 			goto bestechen;
 		} else {
 			_gm->_guiEnabled = true;
-			_gm->reply("Halt! Sie sind doch dieser Hummel.|Bleiben Sie sofort stehen!", 1, 1 + 128);
+			_gm->reply(kStringAxacussCorridor5_2, 1, 1 + 128);
 			if (_gm->dialog(2, rows, _dialog1, 0))
-				_gm->reply("Sehr witzig!", 1, 1 + 128);
+				_gm->reply(kStringAxacussCorridor5_3, 1, 1 + 128);
 			else {
-				_gm->reply("Kann auch sein, auf jeden Fall|sind Sie der Nicht-Axacussaner.", 1, 1 + 128);
+				_gm->reply(kStringAxacussCorridor5_4, 1, 1 + 128);
 bestechen:
 				if (_gm->dialog(2, rows, _dialog2, 0) == 0) {
-					_gm->reply("Nein!", 1, 1 + 128);
+					_gm->reply(kStringAxacussCorridor5_5, 1, 1 + 128);
 					setSectionVisible(kMaxSection - 2, false);
 					if (_gm->_state._money == 0) {
 						_gm->removeSentence(2, 2);
@@ -2610,6 +2610,9 @@ bestechen:
 						// TODO: Handle string manipulation in dialogs
 						// _dialog3[2] and _dialog3[3] are both using kStringDialogAxacussCorridor5_7
 						//    ("Wenn Sie mich durchlassen gebe ich Ihnen %d Xa.")
+						// One way could be to keep an array of string[6], replace the %d of the previous sentence by a %s,
+						// and format the dialog string when the associated parameter string isn't empty. 
+						// The following code is broken and only kept in order to remember the values used.
 						// _dialog3[2] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money - 200);
 						// _dialog3[3] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money);
 					}
@@ -2634,7 +2637,7 @@ bestechen:
 							sum = _gm->_state._money - 200;
 							goto genug;
 						}
-						_gm->reply("Das m\201\341te schon ein bi\341chen mehr sein.", 1, 1 + 128);
+						_gm->reply(kStringAxacussCorridor5_6, 1, 1 + 128);
 					}
 				}
 			}
@@ -2643,7 +2646,7 @@ bestechen:
 		return true;
 
 genug:
-		_gm->reply("Ok, dann machen Sie da\341 Sie wegkommen!", 1, 1 + 128);
+		_gm->reply(kStringAxacussCorridor5_7, 1, 1 + 128);
 		_gm->great(0);
 		_gm->changeRoom(ELEVATOR);
 		_gm->_newRoom = true;

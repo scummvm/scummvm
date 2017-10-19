@@ -682,8 +682,20 @@ const char *gameText[] = {
 	"Hallo!", // kStringDialogX1
 	"Guten Tag!", // kStringDialogX2
 	"Ich bin's, Horst Hummel.", // kStringDialogX3
-	"",
+	"Sie schon wieder?", // kStringAxacussCorridor5_1
 	// 540
+	"Halt! Sie sind doch dieser Hummel.|Bleiben Sie sofort stehen!", // kStringAxacussCorridor5_2
+	"Sehr witzig!", // kStringAxacussCorridor5_3
+	"Kann auch sein, auf jeden Fall|sind Sie der Nicht-Axacussaner.", // kStringAxacussCorridor5_4
+	"Nein!", // kStringAxacussCorridor5_5
+	"Das m\201\341te schon ein bi\341chen mehr sein.", // kStringAxacussCorridor5_6
+	// 545
+	"Ok, dann machen Sie da\341 Sie wegkommen!", kStringAxacussCorridor5_7
+	"",
+	"",
+	"",
+	"",
+	// 550
 	NULL
 };
 

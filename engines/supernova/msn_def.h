@@ -527,7 +527,9 @@ enum StringID {
 	// 525
 	kStringDialogArsanoMeetup2_8, kStringDialogArsanoMeetup2_9, kStringDialogArsanoMeetup2_10, kStringDialogArsanoMeetup2_11, kStringDialogAxacussCorridor5_1,
 	kStringDialogAxacussCorridor5_2, kStringDialogAxacussCorridor5_3, kStringDialogAxacussCorridor5_4, kStringDialogAxacussCorridor5_5, kStringDialogAxacussCorridor5_6,
-	kStringDialogAxacussCorridor5_7, kStringDialogX1, kStringDialogX2, kStringDialogX3
+	kStringDialogAxacussCorridor5_7, kStringDialogX1, kStringDialogX2, kStringDialogX3, kStringAxacussCorridor5_1,
+	kStringAxacussCorridor5_2, kStringAxacussCorridor5_3, kStringAxacussCorridor5_4, kStringAxacussCorridor5_5, kStringAxacussCorridor5_6,
+	kStringAxacussCorridor5_7
 };
 
 static StringID guiCommands[] = {
