@@ -973,17 +973,30 @@ public:
 		_dialog3[1] = kStringDialogAxacussCorridor5_6;
 		_dialog3[2] = kStringDialogAxacussCorridor5_7;
 		_dialog3[3] = kStringDialogAxacussCorridor5_7;
+
+		_rows[0] = 1;
+		_rows[1] = 1;
+		_rows[2] = 1;
+		_rows[3] = 1;
+		_rows[4] = 0;
+		_rows[5] = 0;
 	}
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
+	void stopInteract(int sum);
+	bool handleMoneyDialog();
+
 	// TODO: Change to 6, or change struct, and fix initialization
 	StringID _dialog1[2];
 	StringID _dialog2[2];
 	StringID _dialog3[4];
+
+	byte _rows[6];
 };
+
 class AxacussCorridor6 : public Room {
 public:
 	AxacussCorridor6(SupernovaEngine *vm, GameManager *gm) {
