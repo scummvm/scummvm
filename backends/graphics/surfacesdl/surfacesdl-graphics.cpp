@@ -2642,7 +2642,9 @@ void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 }
 
 void SurfaceSdlGraphicsManager::notifyResize(const int width, const int height) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	handleResize(width, height);
+#endif
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
