@@ -1445,6 +1445,7 @@ androidsdl-x86_64)
 arm-*riscos)
 	_host_os=riscos
 	_host_cpu=arm
+	_host_alias=$_host
 	datarootdir='/\<ScummVM\$$Dir\>'
 	datadir='${datarootdir}/data'
 	docdir='${datarootdir}/docs'
@@ -1550,6 +1551,7 @@ openpandora)
 ppc-amigaos)
 	_host_os=amigaos
 	_host_cpu=powerpc
+	_host_alias=$_host
 	;;
 ps2)
 	_host_os=ps2
@@ -2842,11 +2844,6 @@ if test -n "$_host"; then
 		arm-*riscos)
 			_opengl_mode=none
 			_build_hq_scalers=no
-			# toolchain binaries prefixed by host
-			_ranlib=$_host-ranlib
-			_strip=$_host-strip
-			_ar="$_host-ar cru"
-			_as="$_host-as"
 			;;
 		bfin*)
 			;;
@@ -3162,13 +3159,6 @@ if test -n "$_host"; then
 			# Only static builds link successfully on buildbot
 			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
 			append_var LDFLAGS "-static"
-
-			# toolchain binaries prefixed by host
-			_ranlib=$_host-ranlib
-			_strip=$_host-strip
-			_ar="$_host-ar cru"
-			_as="$_host-as"
-			_windres=$_host-windres
 
 			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
