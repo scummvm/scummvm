@@ -29,13 +29,19 @@ export LANGUAGE
 
 # Save the current environment variables for next runs
 SAVED_CONFIGFLAGS=$@
-SAVED_LDFLAGS=$LDFLAGS
+SAVED_AR=$AR
+SAVED_AS=$AS
+SAVED_ASFLAGS=$ASFLAGS
+SAVED_CPPFLAGS=$CPPFLAGS
 SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
-SAVED_CPPFLAGS=$CPPFLAGS
-SAVED_ASFLAGS=$ASFLAGS
-SAVED_WINDRESFLAGS=$WINDRESFLAGS
+SAVED_LD=$LD
+SAVED_LDFLAGS=$LDFLAGS
+SAVED_RANLIB=$RANLIB
 SAVED_SDL_CONFIG=$SDL_CONFIG
+SAVED_STRIP=$STRIP
+SAVED_WINDRES=$WINDRES
+SAVED_WINDRESFLAGS=$WINDRESFLAGS
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -1095,7 +1101,7 @@ cat >> $TMPLOG <<EOF
 Invocation command line was:
 $0 $@
 Saved environment variables:
-LDFLAGS="$SAVED_LDFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" ASFLAGS="$SAVED_ASFLAGS" WINDRESFLAGS="$SAVED_WINDRESFLAGS" SDL_CONFIG="$SAVED_SDL_CONFIG"
+AR="$SAVED_AR" AS="$SAVED_AS" ASFLAGS="$SAVED_ASFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" LD="$SAVED_LD" LDFLAGS="$SAVED_LDFLAGS" RANLIB="$SAVED_RANLIB" SDL_CONFIG="$SAVED_SDL_CONFIG" STRIP="$SAVED_STRIP" WINDRES="$SAVED_WINDRES" WINDRESFLAGS="$SAVED_WINDRESFLAGS"
 EOF
 
 
@@ -1852,7 +1858,26 @@ if test -z "$CXX"; then
 	exit 1
 fi
 
-# By default, use the C++ compiler as linker
+if test -n "$RANLIB"; then
+	_ranlib=$RANLIB
+fi
+
+if test -n "$STRIP"; then
+	_strip=$STRIP
+fi
+
+if test -n "$AR"; then
+	_ar="$AR cru"
+fi
+
+if test -n "$AS"; then
+	_as=$AS
+fi
+
+if test -n "$WINDRES"; then
+	_windres=$WINDRES
+fi
+
 LD=$CXX
 
 #
@@ -2070,13 +2095,17 @@ if test "$_no_undefined_var_template" = yes; then
 fi
 echo $_no_undefined_var_template
 
-echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
-if `which $_host_alias-strings >/dev/null 2>&1`; then
-_strings=$_host_alias-strings
-echo yes >> "$TMPLOG"
+if test -n "$STRINGS"; then
+	_strings=$STRINGS
 else
-_strings=strings
-echo no >> "$TMPLOG"
+	echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
+	if `which $_host_alias-strings >/dev/null 2>&1`; then
+		_strings=$_host_alias-strings
+		echo yes >> "$TMPLOG"
+	else
+		_strings=strings
+		echo no >> "$TMPLOG"
+	fi
 fi
 
 #
@@ -5299,13 +5328,19 @@ $_mak_plugins
 port_mk = $_port_mk
 
 SAVED_CONFIGFLAGS  := $SAVED_CONFIGFLAGS
-SAVED_LDFLAGS      := $SAVED_LDFLAGS
+SAVED_AR           := $SAVED_AR
+SAVED_AS           := $SAVED_AS
+SAVED_ASFLAGS      := $SAVED_ASFLAGS
+SAVED_CPPFLAGS     := $SAVED_CPPFLAGS
 SAVED_CXX          := $SAVED_CXX
 SAVED_CXXFLAGS     := $SAVED_CXXFLAGS
-SAVED_CPPFLAGS     := $SAVED_CPPFLAGS
-SAVED_ASFLAGS      := $SAVED_ASFLAGS
-SAVED_WINDRESFLAGS := $SAVED_WINDRESFLAGS
+SAVED_LD           := $SAVED_LD
+SAVED_LDFLAGS      := $SAVED_LDFLAGS
+SAVED_RANLIB       := $SAVED_RANLIB
 SAVED_SDL_CONFIG   := $SAVED_SDL_CONFIG
+SAVED_STRIP        := $SAVED_STRIP
+SAVED_WINDRES      := $SAVED_WINDRES
+SAVED_WINDRESFLAGS := $SAVED_WINDRESFLAGS
 EOF
 
 #
