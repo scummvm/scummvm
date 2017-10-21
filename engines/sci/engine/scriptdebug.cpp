@@ -264,7 +264,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 			reg_t addr;
 			addr.setSegment(retval.getSegment());
 			addr.setOffset(offset);
-			if (getSciVersion() == SCI_VERSION_3 && !s->_segMan->isObject(addr)) {
+			if (!s->_segMan->isObject(addr)) {
 				debugN("\t\"%s\"", s->_segMan->derefString(addr));
 			} else {
 				debugN("\t%s", s->_segMan->getObjectName(addr));
