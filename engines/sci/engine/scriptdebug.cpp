@@ -260,7 +260,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 				retval.incOffset(2);
 			}
 
-			const uint32 offset = findOffset(param_value, script_entity, retval.getOffset());
+			const uint32 offset = findOffset(param_value, script_entity, pos.getOffset() + bytecount);
 			reg_t addr;
 			addr.setSegment(retval.getSegment());
 			addr.setOffset(offset);
@@ -277,11 +277,11 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 			if (opsize) {
 				int8 offset = (int8)scr[retval.getOffset()];
 				retval.incOffset(1);
-				debugN("\t%02x  [%04x]", 0xff & offset, kOffsetMask & (retval.getOffset() + offset));
+				debugN("\t%02x  [%04x]", 0xff & offset, kOffsetMask & (pos.getOffset() + bytecount + offset));
 			} else {
 				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
 				retval.incOffset(2);
-				debugN("\t%04x  [%04x]", 0xffff & offset, kOffsetMask & (retval.getOffset() + offset));
+				debugN("\t%04x  [%04x]", 0xffff & offset, kOffsetMask & (pos.getOffset() + bytecount + offset));
 			}
 			break;
 
