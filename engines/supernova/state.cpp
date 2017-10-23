@@ -1043,7 +1043,7 @@ void GameManager::screenShake() {
 
 void GameManager::shock() {
 	_vm->playSound(kAudioShock);
-	dead("Du h\204ttest besser vorher|den Stecker rausgezogen.");
+	dead(kStringShock);
 }
 
 void GameManager::showMenu() {
@@ -1167,7 +1167,7 @@ void GameManager::shot(int a, int b) {
 	if (b)
 		drawImage(b);
 
-	dead("Der Axacussaner hat dich erwischt.");
+	dead(kStringShot);
 }
 
 void GameManager::takeMoney(int amount) {
@@ -1218,7 +1218,7 @@ void GameManager::openLocker(const Room *room, Object *obj, Object *lock, int se
 
 void GameManager::closeLocker(const Room *room, Object *obj, Object *lock, int section) {
 	if (!obj->hasProperty(OPENED)) {
-		_vm->renderMessage("Das ist schon geschlossen.");
+		_vm->renderMessage(kStringCloseLocker_1);
 	} else {
 		drawImage(invertSection(section));
 		obj->disableProperty(OPENED);
@@ -1290,7 +1290,7 @@ int GameManager::invertSection(int section) {
 bool GameManager::isHelmetOff() {
 	Object *helmet = _inventory.get(HELMET);
 	if (helmet && helmet->hasProperty(WORN)) {
-		_vm->renderMessage("Irgendwie ist ein Raumhelm|beim Essen unpraktisch.");
+		_vm->renderMessage(kStringIsHelmetOff_1);
 		return false;
 	}
 
@@ -1304,31 +1304,31 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_USE) && (obj1._id == SCHNUCK)) {
 		if (isHelmetOff()) {
 			takeObject(obj1);
-			_vm->renderMessage("Schmeckt ganz gut.");
+			_vm->renderMessage(kStringGenericInteract_1);
 			_inventory.remove(obj1);
 		}
 	} else if ((verb == ACTION_USE) && (obj1._id == EGG)) {
 		if (isHelmetOff()) {
 			takeObject(obj1);
 			if (obj1.hasProperty(OPENED))
-				_vm->renderMessage("Schmeckt ganz gut.");
+				_vm->renderMessage(kStringGenericInteract_1);
 			else
-				_vm->renderMessage("Da war irgendetwas drin,|aber jetzt hast du es|mit runtergeschluckt.");
+				_vm->renderMessage(kStringGenericInteract_2);
 
 			_inventory.remove(obj1);
 		}
 	} else if ((verb == ACTION_OPEN) && (obj1._id == EGG)) {
 		takeObject(obj1);
 		if (obj1.hasProperty(OPENED)) {
-			_vm->renderMessage("Du hast es doch schon ge\224ffnet.");
+			_vm->renderMessage(kStringGenericInteract_3);
 		} else {
 			takeObject(*_rooms[ENTRANCE]->getObject(8));
-			_vm->renderMessage("In dem Ei ist eine Tablette|in einer Plastikh\201lle.");
+			_vm->renderMessage(kStringGenericInteract_4);
 			obj1.setProperty(OPENED);
 		}
 	} else if ((verb == ACTION_USE) && (obj1._id == PILL)) {
 		if (isHelmetOff()) {
-			_vm->renderMessage("Du iát die Tablette und merkst,|da\341 sich irgendetwas ver\216ndert hat.");
+			_vm->renderMessage(kStringGenericInteract_5);
 			great(0);
 			_inventory.remove(obj1);
 			_state._language = 2;
@@ -1336,23 +1336,23 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == PILL_HULL) &&
 	           (_state._language == 2)) {
-		_vm->renderMessage("Komisch! Auf einmal kannst du die Schrift lesen!|Darauf steht:\"Wenn Sie diese Schrift jetzt|lesen k\224nnen, hat die Tablette gewirkt.\"");
+		_vm->renderMessage(kStringGenericInteract_6);
 		_state._language = 1;
 	} else if ((verb == ACTION_OPEN) && (obj1._id == WALLET)) {
 		if (!_rooms[ROGER]->getObject(3)->hasProperty(CARRIED)) {
-			_vm->renderMessage("Das mu\341t du erst nehmen.");
+			_vm->renderMessage(kStringGenericInteract_7);
 		} else if (_rooms[ROGER]->getObject(7)->hasProperty(CARRIED)) {
-			_vm->renderMessage("Sie ist leer.");
+			_vm->renderMessage(kStringGenericInteract_8);
 		} else {
-			_vm->renderMessage("Du findest 10 Buckazoids und eine Keycard.");
+			_vm->renderMessage(kStringGenericInteract_9);
 			takeObject(*_rooms[ROGER]->getObject(7));
 			takeObject(*_rooms[ROGER]->getObject(8));
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == NEWSPAPER)) {
-		_vm->renderMessage("Es ist eine Art elektronische Zeitung.");
+		_vm->renderMessage(kStringGenericInteract_10);
 		mouseWait(_timer1);
 		_vm->removeMessage();
-		_vm->renderMessage("Halt, hier ist ein interessanter Artikel.");
+		_vm->renderMessage(kStringGenericInteract_11);
 		mouseWait(_timer1);
 		_vm->removeMessage();
 		_vm->renderImage(2, 0);
@@ -1360,15 +1360,13 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		getInput();
 		_vm->renderRoom(*_currentRoom);
 		roomBrightness();
-		_vm->renderMessage("Hmm, irgendwie komme|ich mir verarscht vor.");
+		_vm->renderMessage(kStringGenericInteract_12);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KEYCARD2)) {
 		_vm->renderMessage(obj1._description);
 		obj1._description = kStringKeycard2Description2;
 	} else if ((verb == ACTION_LOOK) && (obj1._id == WATCH)) {
 		_vm->renderMessage(Common::String::format(
-		    "Es ist eine Uhr mit extra|lautem Wecker. "
-		    "Sie hat einen|Knopf zum Verstellen der Alarmzeit.|"
-		    "Uhrzeit: %s   Alarmzeit: %s",
+		    "Es ist eine Uhr mit extra|lautem Wecker. Sie hat einen|Knopf zum Verstellen der Alarmzeit.|Uhrzeit: %s   Alarmzeit: %s",
 		    timeToString(_state._time).c_str(),
 		    timeToString(_state._timeAlarm).c_str()).c_str());
 	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
