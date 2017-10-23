@@ -712,8 +712,32 @@ const char *gameText[] = {
 	"Commander Sumoti", // kStringAxacussOffice1_15
 	"Nicht zu fassen!", // kStringAxacussOffice1_16
 	"Hey, hinter dem Bild ist Geld|versteckt. Ich nehme es mit.", // kStringAxacussOffice3_1
-	"",
+	"Jetzt verschwinden Sie endlich!", // kStringAxacussElevator_1
 	// 565
+	"Huch, ich habe mich vertan.", // kStringAxacussElevator_2
+	"Nachdem du zwei Stunden im|Dschungel herumgeirrt bist,|findest du ein Geb\204ude.", // kStringAxacussElevator_3
+	"Du h\204ttest besser vorher|den Stecker rausgezogen.", // kStringShock
+	"Der Axacussaner hat dich erwischt.", // kStringShot
+	"Das ist schon geschlossen.", // kStringCloseLocker_1
+	// 570
+	"Irgendwie ist ein Raumhelm|beim Essen unpraktisch.", // kStringIsHelmetOff_1
+	"Schmeckt ganz gut.", // kStringGenericInteract_1
+	"Da war irgendetwas drin,|aber jetzt hast du es|mit runtergeschluckt.", // kStringGenericInteract_2
+	"Du hast es doch schon ge\224ffnet.", // kStringGenericInteract_3
+	"In dem Ei ist eine Tablette|in einer Plastikh\201lle.", // kStringGenericInteract_4
+	// 575
+	"Du iát die Tablette und merkst,|da\341 sich irgendetwas ver\216ndert hat.", // kStringGenericInteract_5
+	"Komisch! Auf einmal kannst du die Schrift lesen!|Darauf steht:\"Wenn Sie diese Schrift jetzt|lesen k\224nnen, hat die Tablette gewirkt.\"", // kStringGenericInteract_6
+	"Das mu\341t du erst nehmen.", // kStringGenericInteract_7
+	"Sie ist leer.", // kStringGenericInteract_8
+	"Du findest 10 Buckazoids und eine Keycard.", // kStringGenericInteract_9
+	// 580
+	"Es ist eine Art elektronische Zeitung.", // kStringGenericInteract_10
+	"Halt, hier ist ein interessanter Artikel.", // kStringGenericInteract_11
+	"Hmm, irgendwie komme|ich mir verarscht vor.", // kStringGenericInteract_12
+	"",
+	"",
+	// 585
 	NULL
 };
 

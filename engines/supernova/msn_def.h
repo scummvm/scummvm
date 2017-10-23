@@ -533,7 +533,10 @@ enum StringID {
 	kStringAxacussOffice1_4, kStringAxacussOffice1_5, kStringAxacussOffice1_6, kStringAxacussOffice1_7, kStringAxacussOffice1_8,
 	kStringAxacussOffice1_9, kStringAxacussOffice1_10, kStringAxacussOffice1_11, kStringAxacussOffice1_12, kStringAxacussOffice1_13,
 	kStringAxacussOffice1_14, kStringAxacussOffice1_15, kStringAxacussOffice1_16, kStringAxacussOffice3_1, kStringAxacussElevator_1,
-	kStringAxacussElevator_2, kStringAxacussElevator_3
+	kStringAxacussElevator_2, kStringAxacussElevator_3, kStringShock, kStringShot, kStringCloseLocker_1,
+	kStringIsHelmetOff_1, kStringGenericInteract_1, kStringGenericInteract_2, kStringGenericInteract_3, kStringGenericInteract_4,
+	kStringGenericInteract_5, kStringGenericInteract_6, kStringGenericInteract_7, kStringGenericInteract_8, kStringGenericInteract_9,
+	kStringGenericInteract_10, kStringGenericInteract_11, kStringGenericInteract_12
 };
 
 static StringID guiCommands[] = {
