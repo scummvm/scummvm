@@ -2818,7 +2818,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 	} else if ((verb == ACTION_WALK) &&
 	           ((obj1._id == PILLAR1) || (obj1._id == PILLAR2))) {
-		_vm->renderMessage("Du stellst dich hinter die S\204ule.");
+		_vm->renderMessage(kStringAxacussBcorridor_1);
 		_gm->_guiEnabled = true;
 	} else
 		return false;
@@ -2860,7 +2860,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if (((verb == ACTION_OPEN) || (verb == ACTION_USE)) &&
 	           (obj1._id == LOCKER) &&
 	           !obj1.hasProperty(OPENED)) {
-		_vm->renderMessage("Welche Zahlenkombination willst|du eingeben?");
+		_vm->renderMessage(kStringAxacussOffice1_1);
 		_vm->renderBox(160, 70, 70, 10, kColorDarkBlue);
 		_gm->edit(input, 161, 71, 10);
 
@@ -2868,9 +2868,9 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 		if (_gm->_key.keycode != Common::KEYCODE_ESCAPE) {
 			if (!input.equals("89814")) {
 				if (input.equals("41898"))
-					_vm->renderMessage("Hmm, das haut nicht ganz hin,|aber irgendwie mu\341 die Zahl|mit dem Code zusammenh\204ngen.");
+					_vm->renderMessage(kStringAxacussOffice1_2);
 				else
-					_vm->renderMessage("Das war die falsche Kombination.");
+					_vm->renderMessage(kStringAxacussOffice1_3);
 			} else {
 				_gm->drawImage(6);
 				setSectionVisible(7, false);
@@ -2899,21 +2899,21 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->takeMoney(500);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == LETTER)) {
 		g_system->fillScreen(kColorBlack);
-		_vm->renderText("Streng geheim", 10, 10, 4);
-		_vm->renderText("418-98", 270, 10, 4);
-		_vm->renderText("Sehr geehrter Dr. Hansi,", 10, 60, 4);
-		_vm->renderText("Ich muá Ihren Roboterexperten ein Lob aussprechen. Die", 10, 75, 4);
-		_vm->renderText("Imitation von Horst Hummel ist perfekt gelungen, wie ich", 10, 86, 4);
-		_vm->renderText("heute bei der \232bertragung des Interviews feststellen", 10, 97, 4);
-		_vm->renderText("konnte. Dem Aufschwung Ihrer Firma durch die Werbe-", 10, 108, 4);
-		_vm->renderText("kampagne mit dem falschen Horst Hummel d\201rfte ja jetzt", 10, 119, 4);
-		_vm->renderText("nichts mehr im Wege stehen.", 10, 130, 4);
-		_vm->renderText("PS: Herzlichen zum Geburtstag!", 10, 147, 4);
-		_vm->renderText("Hochachtungsvoll", 200, 170, 4);
-		_vm->renderText("Commander Sumoti", 200, 181, 4);
+		_vm->renderText(kStringAxacussOffice1_4, 10, 10, 4);
+		_vm->renderText(kStringAxacussOffice1_5, 270, 10, 4);
+		_vm->renderText(kStringAxacussOffice1_6, 10, 60, 4);
+		_vm->renderText(kStringAxacussOffice1_7, 10, 75, 4);
+		_vm->renderText(kStringAxacussOffice1_8, 10, 86, 4);
+		_vm->renderText(kStringAxacussOffice1_9, 10, 97, 4);
+		_vm->renderText(kStringAxacussOffice1_10, 10, 108, 4);
+		_vm->renderText(kStringAxacussOffice1_11, 10, 119, 4);
+		_vm->renderText(kStringAxacussOffice1_12, 10, 130, 4);
+		_vm->renderText(kStringAxacussOffice1_13, 10, 147, 4);
+		_vm->renderText(kStringAxacussOffice1_14, 200, 170, 4);
+		_vm->renderText(kStringAxacussOffice1_15, 200, 181, 4);
 		_gm->getInput();
 		g_system->fillScreen(kColorBlack);
-		_vm->renderMessage("Nicht zu fassen!");
+		_vm->renderMessage(kStringAxacussOffice1_16);
 	} else
 		return false;
 
@@ -2966,7 +2966,7 @@ bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
 		else
 			_gm->telomat(2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == PAINTING)) {
-		_vm->renderMessage("Hey, hinter dem Bild ist Geld|versteckt. Ich nehme es mit.");
+		_vm->renderMessage(kStringAxacussOffice3_1);
 		_gm->takeMoney(300);
 		obj1._id = NULLOBJECT;
 	} else
@@ -3023,8 +3023,8 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		g_system->fillScreen(kColorBlack);
 		_vm->renderImage(41, 0);
 		_vm->paletteBrightness();
-		_gm->reply("Jetzt verschwinden Sie endlich!", 1, 1 + 128);
-		_gm->say("Huch, ich habe mich vertan.");
+		_gm->reply(kStringAxacussElevator_1, 1, 1 + 128);
+		_gm->say(kStringAxacussElevator_2);
 		g_system->fillScreen(kColorBlack);
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BUTTON1)) {
 		if (!isSectionVisible(3)) {
@@ -3064,7 +3064,7 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		g_system->fillScreen(kColorBlack);
 		_vm->_menuBrightness = 255;
 		_vm->paletteBrightness();
-		_vm->renderMessage("Nachdem du zwei Stunden im|Dschungel herumgeirrt bist,|findest du ein Geb\204ude.");
+		_vm->renderMessage(kStringAxacussElevator_3);
 		_gm->mouseWait(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;

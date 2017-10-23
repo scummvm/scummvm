@@ -690,12 +690,30 @@ const char *gameText[] = {
 	"Nein!", // kStringAxacussCorridor5_5
 	"Das m\201\341te schon ein bi\341chen mehr sein.", // kStringAxacussCorridor5_6
 	// 545
-	"Ok, dann machen Sie da\341 Sie wegkommen!", kStringAxacussCorridor5_7
-	"",
-	"",
-	"",
-	"",
+	"Ok, dann machen Sie da\341 Sie wegkommen!", // kStringAxacussCorridor5_7
+	"Du stellst dich hinter die S\204ule.", // kStringAxacussBcorridor_1
+	"Welche Zahlenkombination willst|du eingeben?", // kStringAxacussOffice1_1
+	"Hmm, das haut nicht ganz hin,|aber irgendwie mu\341 die Zahl|mit dem Code zusammenh\204ngen.", // kStringAxacussOffice1_2
+	"Das war die falsche Kombination.", // kStringAxacussOffice1_3
 	// 550
+	"Streng geheim", // kStringAxacussOffice1_4
+	"418-98", // kStringAxacussOffice1_5
+	"Sehr geehrter Dr. Hansi,", // kStringAxacussOffice1_6
+	"Ich muá Ihren Roboterexperten ein Lob aussprechen. Die", // kStringAxacussOffice1_7
+	"Imitation von Horst Hummel ist perfekt gelungen, wie ich", // kStringAxacussOffice1_8
+	// 555
+	"heute bei der \232bertragung des Interviews feststellen", // kStringAxacussOffice1_9
+	"konnte. Dem Aufschwung Ihrer Firma durch die Werbe-", // kStringAxacussOffice1_10
+	"kampagne mit dem falschen Horst Hummel d\201rfte ja jetzt", // kStringAxacussOffice1_11
+	"nichts mehr im Wege stehen.", // kStringAxacussOffice1_12
+	"PS: Herzlichen zum Geburtstag!", // kStringAxacussOffice1_13
+	// 560
+	"Hochachtungsvoll", // kStringAxacussOffice1_14
+	"Commander Sumoti", // kStringAxacussOffice1_15
+	"Nicht zu fassen!", // kStringAxacussOffice1_16
+	"Hey, hinter dem Bild ist Geld|versteckt. Ich nehme es mit.", // kStringAxacussOffice3_1
+	"",
+	// 565
 	NULL
 };
 

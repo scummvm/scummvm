@@ -529,7 +529,11 @@ enum StringID {
 	kStringDialogAxacussCorridor5_2, kStringDialogAxacussCorridor5_3, kStringDialogAxacussCorridor5_4, kStringDialogAxacussCorridor5_5, kStringDialogAxacussCorridor5_6,
 	kStringDialogAxacussCorridor5_7, kStringDialogX1, kStringDialogX2, kStringDialogX3, kStringAxacussCorridor5_1,
 	kStringAxacussCorridor5_2, kStringAxacussCorridor5_3, kStringAxacussCorridor5_4, kStringAxacussCorridor5_5, kStringAxacussCorridor5_6,
-	kStringAxacussCorridor5_7
+	kStringAxacussCorridor5_7, kStringAxacussBcorridor_1, kStringAxacussOffice1_1, kStringAxacussOffice1_2, kStringAxacussOffice1_3,
+	kStringAxacussOffice1_4, kStringAxacussOffice1_5, kStringAxacussOffice1_6, kStringAxacussOffice1_7, kStringAxacussOffice1_8,
+	kStringAxacussOffice1_9, kStringAxacussOffice1_10, kStringAxacussOffice1_11, kStringAxacussOffice1_12, kStringAxacussOffice1_13,
+	kStringAxacussOffice1_14, kStringAxacussOffice1_15, kStringAxacussOffice1_16, kStringAxacussOffice3_1, kStringAxacussElevator_1,
+	kStringAxacussElevator_2, kStringAxacussElevator_3
 };
 
 static StringID guiCommands[] = {
