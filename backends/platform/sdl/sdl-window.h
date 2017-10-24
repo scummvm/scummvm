@@ -76,7 +76,14 @@ public:
 	 */
 	bool getSDLWMInformation(SDL_SysWMinfo *info) const;
 
-	bool mouseIsGrabbed() const { return _inputGrabState; }
+	bool mouseIsGrabbed() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (_window) {
+			return SDL_GetWindowGrab(_window) == SDL_TRUE;
+		}
+#endif
+		return _inputGrabState;
+	}
 
 private:
 	bool _inputGrabState;

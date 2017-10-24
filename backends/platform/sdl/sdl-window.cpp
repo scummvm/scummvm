@@ -129,7 +129,7 @@ void SdlWindow::setWindowCaption(const Common::String &caption) {
 void SdlWindow::toggleMouseGrab() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_window) {
-		_inputGrabState = !(SDL_GetWindowGrab(_window) == SDL_TRUE);
+		_inputGrabState = SDL_GetWindowGrab(_window) == SDL_FALSE;
 		SDL_SetWindowGrab(_window, _inputGrabState ? SDL_TRUE : SDL_FALSE);
 	}
 #else
@@ -279,7 +279,8 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 		}
 
 		SDL_SetWindowFullscreen(_window, fullscreenFlags);
-		SDL_SetWindowGrab(_window, (flags & SDL_WINDOW_INPUT_GRABBED) ? SDL_TRUE : SDL_FALSE);
+		const bool shouldGrab = (flags & SDL_WINDOW_INPUT_GRABBED) | fullscreenFlags;
+		SDL_SetWindowGrab(_window, shouldGrab ? SDL_TRUE : SDL_FALSE);
 	}
 
 	if (!_window) {
