@@ -699,7 +699,7 @@ const char *gameText[] = {
 	"Streng geheim", // kStringAxacussOffice1_4
 	"418-98", // kStringAxacussOffice1_5
 	"Sehr geehrter Dr. Hansi,", // kStringAxacussOffice1_6
-	"Ich muá Ihren Roboterexperten ein Lob aussprechen. Die", // kStringAxacussOffice1_7
+	"Ich mu\341 Ihren Roboterexperten ein Lob aussprechen. Die", // kStringAxacussOffice1_7
 	"Imitation von Horst Hummel ist perfekt gelungen, wie ich", // kStringAxacussOffice1_8
 	// 555
 	"heute bei der \232bertragung des Interviews feststellen", // kStringAxacussOffice1_9
@@ -726,7 +726,7 @@ const char *gameText[] = {
 	"Du hast es doch schon ge\224ffnet.", // kStringGenericInteract_3
 	"In dem Ei ist eine Tablette|in einer Plastikh\201lle.", // kStringGenericInteract_4
 	// 575
-	"Du iát die Tablette und merkst,|da\341 sich irgendetwas ver\216ndert hat.", // kStringGenericInteract_5
+	"Du i\341t die Tablette und merkst,|da\341 sich irgendetwas ver\216ndert hat.", // kStringGenericInteract_5
 	"Komisch! Auf einmal kannst du die Schrift lesen!|Darauf steht:\"Wenn Sie diese Schrift jetzt|lesen k\224nnen, hat die Tablette gewirkt.\"", // kStringGenericInteract_6
 	"Das mu\341t du erst nehmen.", // kStringGenericInteract_7
 	"Sie ist leer.", // kStringGenericInteract_8
