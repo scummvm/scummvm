@@ -2363,7 +2363,8 @@ case $_host_os in
 			android | android-arm)
 				append_var CXXFLAGS "-march=armv5te"
 				append_var CXXFLAGS "-mtune=xscale"
-				append_var CXXFLAGS "-msoft-float"
+				append_var CXXFLAGS "-mfloat-abi=softfp"
+				append_var LDFLAGS "-mthumb"
 				ABI="armeabi"
 				ANDROID_PLATFORM=9
 				ANDROID_PLATFORM_ARCH="arm"
@@ -2404,10 +2405,6 @@ case $_host_os in
 				;;
 		esac
 
-		# Setup platform version and arch
-		append_var CXXFLAGS "--sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
-		append_var LDFLAGS "--sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
-
 		append_var CXXFLAGS "-fpic"
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-funwind-tables"
@@ -2418,36 +2415,9 @@ case $_host_os in
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var CXXFLAGS "-fstrict-aliasing"
 		fi
-		append_var CXXFLAGS "-finline-limit=300"
 		_optimization_level=-Os
 
-		if test "$_host" = android -o "$_host" = android-arm; then
-			append_var CXXFLAGS "-mthumb-interwork"
-			# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
-			append_var CXXFLAGS "-D__ARM_ARCH_5__"
-			append_var CXXFLAGS "-D__ARM_ARCH_5T__"
-			append_var CXXFLAGS "-D__ARM_ARCH_5E__"
-			append_var CXXFLAGS "-D__ARM_ARCH_5TE__"
-		fi
-
-		# surpress 'mangling of 'va_list' has changed in GCC 4.4' warning
-		append_var CXXFLAGS "-Wno-psabi"
-
-		if test "$_host" = android -o "$_host" = android-arm; then
-			append_var LDFLAGS "-mthumb-interwork"
-		fi
-
-		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/include/"
-		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/include/"
-		append_var LDFLAGS "-L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
-		append_var LIBS "-lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
-		if test -d "$ANDROID_SDK"/build-tools; then
-			_build_tools_version=`cd "$ANDROID_SDK"/build-tools && ls -1 | sort -rn | head -1`
-			add_line_to_config_mk "ANDROID_BTOOLS = build-tools/$_build_tools_version"
-		else
-			add_line_to_config_mk "ANDROID_BTOOLS = platform-tools"
-		fi
 		_seq_midi=no
 		;;
 	beos*)
