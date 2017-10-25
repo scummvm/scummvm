@@ -536,7 +536,14 @@ enum StringID {
 	kStringAxacussElevator_2, kStringAxacussElevator_3, kStringShock, kStringShot, kStringCloseLocker_1,
 	kStringIsHelmetOff_1, kStringGenericInteract_1, kStringGenericInteract_2, kStringGenericInteract_3, kStringGenericInteract_4,
 	kStringGenericInteract_5, kStringGenericInteract_6, kStringGenericInteract_7, kStringGenericInteract_8, kStringGenericInteract_9,
-	kStringGenericInteract_10, kStringGenericInteract_11, kStringGenericInteract_12
+	kStringGenericInteract_10, kStringGenericInteract_11, kStringGenericInteract_12, kPhrasalVerbParticleGiveTo, kPhrasalVerbParticleUseWith,
+	kStringGenericInteract_13, kStringGenericInteract_14, kStringGenericInteract_15, kStringGenericInteract_16, kStringGenericInteract_17,
+	kStringGenericInteract_18, kStringGenericInteract_19, kStringGenericInteract_20, kStringGenericInteract_21, kStringGenericInteract_22,
+	kStringGenericInteract_23, kStringGenericInteract_24, kStringGenericInteract_25, kStringGenericInteract_26, kStringGenericInteract_27,
+	kStringGenericInteract_28, kStringGenericInteract_29, kStringGenericInteract_30, kStringGenericInteract_31, kStringGenericInteract_32,
+	kStringGenericInteract_33, kStringGenericInteract_34, kStringGenericInteract_35, kStringGenericInteract_36, kStringGenericInteract_37,
+	kStringGenericInteract_38, kStringGenericInteract_39, kStringGenericInteract_40, kStringGenericInteract_41, kStringGenericInteract_42,
+	kStringGenericInteract_43
 };
 
 static StringID guiCommands[] = {

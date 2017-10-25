@@ -735,9 +735,51 @@ const char *gameText[] = {
 	"Es ist eine Art elektronische Zeitung.", // kStringGenericInteract_10
 	"Halt, hier ist ein interessanter Artikel.", // kStringGenericInteract_11
 	"Hmm, irgendwie komme|ich mir verarscht vor.", // kStringGenericInteract_12
-	"",
-	"",
+	" an ", // kPhrasalVerbParticleGiveTo
+	" mit ", // kPhrasalVerbParticleUseWith
 	// 585
+	"Es ist eine Uhr mit extra|lautem Wecker. Sie hat einen|Knopf zum Verstellen der Alarmzeit.|Uhrzeit: %s   Alarmzeit: %s", // kStringGenericInteract_13
+	"Neue Alarmzeit (hh:mm) :", // kStringGenericInteract_14
+	"Die Luft hier ist atembar,|du ziehst den Anzug aus.", // kStringGenericInteract_15
+	"Hier drinnen brauchtst du deinen Anzug nicht.", // kStringGenericInteract_16
+	"Du mu\341t erst den Helm abnehmen.", // kStringGenericInteract_17
+	// 590
+	"Du mu\341t erst den Versorgungsteil abnehmen.", // kStringGenericInteract_18
+	"Du ziehst den Raumanzug aus.", // kStringGenericInteract_19
+	"Du ziehst den Raumanzug an.", // kStringGenericInteract_20
+	"Die Luft hier ist atembar,|du ziehst den Anzug aus.", // kStringGenericInteract_21
+	"Hier drinnen brauchtst du deinen Anzug nicht.", // kStringGenericInteract_22
+	// 595
+	"Den Helm h\204ttest du|besser angelassen!", // kStringGenericInteract_23
+	"Du ziehst den Helm ab.", // kStringGenericInteract_24
+	"Du ziehst den Helm auf.", // kStringGenericInteract_25
+	"Du mu\341t erst den Anzug anziehen.", // kStringGenericInteract_26
+	"Den Versorgungsteil h\204ttest du|besser nicht abgenommen!", // kStringGenericInteract_27
+	// 600
+	"Du nimmst den Versorgungsteil ab.", // kStringGenericInteract_28
+	"Du ziehst den Versorgungsteil an.", // kStringGenericInteract_29
+	"Die Leitung ist hier unn\201tz.", // kStringGenericInteract_30
+	"Stark, das ist ja die Fortsetzung zum \"Anhalter\":|\"Das Restaurant am Ende des Universums\".", // kStringGenericInteract_31
+	"Moment mal, es ist ein Lesezeichen drin,|auf dem \"Zweiundvierzig\" steht.", // kStringGenericInteract_32
+	// 605
+	"Das tr\204gst du doch bei dir.", // kStringGenericInteract_33
+	"Du bist doch schon da.", // kStringGenericInteract_34
+	"Das hast du doch schon.", // kStringGenericInteract_35
+	"Das brauchst du nicht.", // kStringGenericInteract_36
+	"Das kannst du nicht nehmen.", // kStringGenericInteract_37
+	// 610
+	"Das l\204\341t sich nicht \224ffnen.", // kStringGenericInteract_38
+	"Das ist schon offen.", // kStringGenericInteract_39
+	"Das ist verschlossen.", // kStringGenericInteract_40
+	"Das l\204\341t sich nicht schlie\341en.", // kStringGenericInteract_41
+	"Behalt es lieber!", // kStringGenericInteract_42
+	// 615
+	"Das geht nicht.", // kStringGenericInteract_43
+	"",
+	"",
+	"",
+	"",
+	// 620
 	NULL
 };
 

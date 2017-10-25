@@ -218,7 +218,7 @@ void GuiElement::setHighlight(bool isHighlighted) {
 	}
 }
 
-
+// Used by Look Watch (when it's fixed). Do not remove.
 static Common::String timeToString(int msec) {
 	char s[9] = " 0:00:00";
 	msec /= 1000;
@@ -1197,11 +1197,10 @@ void GameManager::drawStatus() {
 		_vm->renderText(_currentInputObject->_name);
 	} else {
 		_vm->renderText(_inputObject[0]->_name);
-		if (_inputVerb == ACTION_GIVE) {
-			_vm->renderText(" an ");
-		} else if (_inputVerb == ACTION_USE) {
-			_vm->renderText(" mit ");
-		}
+		if (_inputVerb == ACTION_GIVE)
+			_vm->renderText(kPhrasalVerbParticleGiveTo);
+		else if (_inputVerb == ACTION_USE)
+			_vm->renderText(kPhrasalVerbParticleUseWith);
 
 		_vm->renderText(_currentInputObject->_name);
 	}
@@ -1365,10 +1364,10 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(obj1._description);
 		obj1._description = kStringKeycard2Description2;
 	} else if ((verb == ACTION_LOOK) && (obj1._id == WATCH)) {
-		_vm->renderMessage(Common::String::format(
-		    "Es ist eine Uhr mit extra|lautem Wecker. Sie hat einen|Knopf zum Verstellen der Alarmzeit.|Uhrzeit: %s   Alarmzeit: %s",
-		    timeToString(_state._time).c_str(),
-		    timeToString(_state._timeAlarm).c_str()).c_str());
+		// FIXME: kStringGenericInteract_13 requires 2 string parameters in order to format the string properly
+		_vm->renderMessage(kStringGenericInteract_13, kMessageNormal);
+		//    timeToString(_state._time).c_str(),
+		//    timeToString(_state._timeAlarm).c_str());
 	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
 		bool validInput = true;
 		int hours = 0;
@@ -1377,7 +1376,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		animationOff();
 		_vm->saveScreen(88, 87, 144, 24);
 		_vm->renderBox(88, 87, 144, 24, kColorWhite35);
-		_vm->renderText("Neue Alarmzeit (hh:mm) :", 91, 90, kColorWhite99);
+		_vm->renderText(kStringGenericInteract_14, 91, 90, kColorWhite99);
 		do {
 			validInput = true;
 			input.clear();
@@ -1440,7 +1439,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			_inventory.remove(*r->getObject(2));
 			_state._terminalStripConnected = true;
 			_state._terminalStripWire = true;
-			_vm->renderMessage("Ok.");
+			_vm->renderMessage(kStringOk);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, TERMINALSTRIP, SPOOL)) {
 		r = _rooms[CABIN_L2];
@@ -1449,12 +1448,12 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		r = _rooms[HOLD];
 		_inventory.remove(*r->getObject(2));
 		_state._terminalStripConnected = true;
-		_vm->renderMessage("Ok.");
+		_vm->renderMessage(kStringOk);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, SPOOL)) {
 		r = _rooms[CABIN_L3];
 		if (!_state._terminalStripConnected) {
 			if (r->isSectionVisible(26))
-				_vm->renderMessage("Womit denn?");
+				_vm->renderMessage(kStringCable3);
 			else
 				return false;
 		} else {
@@ -1468,60 +1467,60 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				r = _rooms[CABIN_L2];
 				_inventory.remove(*r->getObject(9));
 				_state._cableConnected = true;
-				_vm->renderMessage("Ok.");
+				_vm->renderMessage(kStringOk);
 			}
 		}
 	} else if ((verb == ACTION_USE) && (obj1._id == SUIT)) {
 		takeObject(obj1);
 		if ((_currentRoom->getId() >= ENTRANCE) && (_currentRoom->getId() <= ROGER)) {
 			if (obj1.hasProperty(WORN)) {
-				_vm->renderMessage("Die Luft hier ist atembar,|du ziehst den Anzug aus.");
+				_vm->renderMessage(kStringGenericInteract_15);
 				_rooms[AIRLOCK]->getObject(4)->disableProperty(WORN);
 				_rooms[AIRLOCK]->getObject(5)->disableProperty(WORN);
 				_rooms[AIRLOCK]->getObject(6)->disableProperty(WORN);
 			} else
-				_vm->renderMessage("Hier drinnen brauchtst du deinen Anzug nicht.");
+				_vm->renderMessage(kStringGenericInteract_16);
 		} else {
 			if (obj1.hasProperty(WORN)) {
 				r = _rooms[AIRLOCK];
 				if (r->getObject(4)->hasProperty(WORN)) {
-					_vm->renderMessage("Du mu\341t erst den Helm abnehmen.");
+					_vm->renderMessage(kStringGenericInteract_17);
 				} else if (r->getObject(6)->hasProperty(WORN)) {
-					_vm->renderMessage("Du mu\341t erst den Versorgungsteil abnehmen.");
+					_vm->renderMessage(kStringGenericInteract_18);
 				} else {
 					obj1.disableProperty(WORN);
-					_vm->renderMessage("Du ziehst den Raumanzug aus.");
+					_vm->renderMessage(kStringGenericInteract_19);
 				}
 			} else {
 				obj1.setProperty(WORN);
-				_vm->renderMessage("Du ziehst den Raumanzug an.");
+				_vm->renderMessage(kStringGenericInteract_20);
 			}
 		}
 	} else if ((verb == ACTION_USE) && (obj1._id == HELMET)) {
 		takeObject(obj1);
 		if ((_currentRoom->getId() >= ENTRANCE) && (_currentRoom->getId() <= ROGER)) {
 			if (obj1.hasProperty(WORN)) {
-				_vm->renderMessage("Die Luft hier ist atembar,|du ziehst den Anzug aus.");
+				_vm->renderMessage(kStringGenericInteract_21);
 				_rooms[AIRLOCK]->getObject(4)->disableProperty(WORN);
 				_rooms[AIRLOCK]->getObject(5)->disableProperty(WORN);
 				_rooms[AIRLOCK]->getObject(6)->disableProperty(WORN);
 			} else {
-				_vm->renderMessage("Hier drinnen brauchtst du deinen Anzug nicht.");
+				_vm->renderMessage(kStringGenericInteract_22);
 			}
 		} else {
 			if (obj1.hasProperty(WORN)) {
 				if (airless()) {
-					dead("Den Helm h\204ttest du|besser angelassen!");
+					dead(kStringGenericInteract_23);
 				}
 				obj1.disableProperty(WORN);
-				_vm->renderMessage("Du ziehst den Helm ab.");
+				_vm->renderMessage(kStringGenericInteract_24);
 			} else {
 				r = _rooms[AIRLOCK];
 				if (r->getObject(5)->hasProperty(WORN)) {
 					obj1.setProperty(WORN);
-					_vm->renderMessage("Du ziehst den Helm auf.");
+					_vm->renderMessage(kStringGenericInteract_25);
 				} else {
-					_vm->renderMessage("Du mu\341t erst den Anzug anziehen.");
+					_vm->renderMessage(kStringGenericInteract_26);
 				}
 			}
 		}
@@ -1529,39 +1528,38 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		takeObject(obj1);
 		if ((_currentRoom->getId() >= ENTRANCE) && (_currentRoom->getId() <= ROGER)) {
 			if (obj1.hasProperty(WORN)) {
-				_vm->renderMessage("Die Luft hier ist atembar,|du ziehst den Anzug aus.");
+				_vm->renderMessage(kStringGenericInteract_21);
 				_rooms[AIRLOCK]->getObject(4)->disableProperty(WORN);
 				_rooms[AIRLOCK]->getObject(5)->disableProperty(WORN);
 				_rooms[AIRLOCK]->getObject(6)->disableProperty(WORN);
 			} else
-				_vm->renderMessage("Hier drinnen brauchtst du deinen Anzug nicht.");
+				_vm->renderMessage(kStringGenericInteract_22);
 		} else {
 			if (obj1.hasProperty(WORN)) {
-				if (airless()) {
-					dead("Den Versorgungsteil h\204ttest du|besser nicht abgenommen!");
-				}
+				if (airless())
+					dead(kStringGenericInteract_27);
+
 				obj1.disableProperty(WORN);
-				_vm->renderMessage("Du nimmst den Versorgungsteil ab.");
+				_vm->renderMessage(kStringGenericInteract_28);
 			} else {
 				r = _rooms[AIRLOCK];
 				if (r->getObject(5)->hasProperty(WORN)) {
 					obj1.setProperty(WORN);
-					_vm->renderMessage("Du ziehst den Versorgungsteil an.");
-				} else {
-					_vm->renderMessage("Du mu\341t erst den Anzug anziehen.");
-				}
+					_vm->renderMessage(kStringGenericInteract_29);
+				} else
+					_vm->renderMessage(kStringGenericInteract_26);
 			}
 		}
 	} else if ((verb == ACTION_WALK) && (obj1._id == BATHROOM_DOOR)) {
 //		*bathroom = current_room;
 		return false;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, SOCKET))
-		_vm->renderMessage("Die Leitung ist hier unn\201tz.");
+		_vm->renderMessage(kStringGenericInteract_30);
 	else if ((verb == ACTION_LOOK) && (obj1._id == BOOK2)) {
-		_vm->renderMessage("Stark, das ist ja die Fortsetzung zum \"Anhalter\":|\"Das Restaurant am Ende des Universums\".");
+		_vm->renderMessage(kStringGenericInteract_31);
 		mouseWait(_timer1);
 		_vm->removeMessage();
-		_vm->renderMessage("Moment mal, es ist ein Lesezeichen drin,|auf dem \"Zweiundvierzig\" steht.");
+		_vm->renderMessage(kStringGenericInteract_32);
 	} else {
 		return false;
 	}
@@ -1582,13 +1580,13 @@ void GameManager::handleInput() {
 		case ACTION_WALK:
 			if (_inputObject[0]->hasProperty(CARRIED)) {
 				// You already carry this.
-				_vm->renderMessage("Das tr\204gst du doch bei dir.");
+				_vm->renderMessage(kStringGenericInteract_33);
 			} else if (!_inputObject[0]->hasProperty(EXIT)) {
 				// You're already there.
-				_vm->renderMessage("Du bist doch schon da.");
+				_vm->renderMessage(kStringGenericInteract_34);
 			} else if (_inputObject[0]->hasProperty(OPENABLE) && !_inputObject[0]->hasProperty(OPENED)) {
 				// This is closed
-				_vm->renderMessage("Das ist geschlossen.");
+				_vm->renderMessage(kStringShipHold9);
 			} else {
 				changeRoom(_inputObject[0]->_exitRoom);
 			}
@@ -1597,13 +1595,13 @@ void GameManager::handleInput() {
 		case ACTION_TAKE:
 			if (_inputObject[0]->hasProperty(OPENED)) {
 				// You already have that
-				_vm->renderMessage("Das hast du doch schon.");
+				_vm->renderMessage(kStringGenericInteract_35);
 			} else if (_inputObject[0]->hasProperty(UNNECESSARY)) {
 				// You do not need that.
-				_vm->renderMessage("Das brauchst du nicht.");
+				_vm->renderMessage(kStringGenericInteract_36);
 			} else if (!_inputObject[0]->hasProperty(TAKE)) {
 				// You can't take that.
-				_vm->renderMessage("Das kannst du nicht nehmen.");
+				_vm->renderMessage(kStringGenericInteract_37);
 			} else {
 				takeObject(*_inputObject[0]);
 			}
@@ -1612,13 +1610,13 @@ void GameManager::handleInput() {
 		case ACTION_OPEN:
 			if (!_inputObject[0]->hasProperty(OPENABLE)) {
 				// This can't be opened
-				_vm->renderMessage("Das l\204\341t sich nicht \224ffnen.");
+				_vm->renderMessage(kStringGenericInteract_38);
 			} else if (_inputObject[0]->hasProperty(OPENED)) {
 				// This is already opened.
-				_vm->renderMessage("Das ist schon offen.");
+				_vm->renderMessage(kStringGenericInteract_39);
 			} else if (_inputObject[0]->hasProperty(CLOSED)) {
 				// This is locked.
-				_vm->renderMessage("Das ist verschlossen.");
+				_vm->renderMessage(kStringGenericInteract_40);
 			} else {
 				drawImage(_inputObject[0]->_section);
 				_inputObject[0]->setProperty(OPENED);
@@ -1634,10 +1632,10 @@ void GameManager::handleInput() {
 			    (_inputObject[0]->hasProperty(CLOSED) &&
 			     _inputObject[0]->hasProperty(OPENED))) {
 				// This can't be closed.
-				_vm->renderMessage("Das l\204\341t sich nicht schlie\341en.");
+				_vm->renderMessage(kStringGenericInteract_41);
 			} else if (!_inputObject[0]->hasProperty(OPENED)) {
 				// This is already closed.
-				_vm->renderMessage("Das ist schon geschlossen.");
+				_vm->renderMessage(kStringCloseLocker_1);
 			} else {
 				drawImage(invertSection(_inputObject[0]->_section));
 				_inputObject[0]->disableProperty(OPENED);
@@ -1651,13 +1649,13 @@ void GameManager::handleInput() {
 		case ACTION_GIVE:
 			if (_inputObject[0]->hasProperty(CARRIED)) {
 				// Better keep it!
-				_vm->renderMessage("Behalt es lieber!");
+				_vm->renderMessage(kStringGenericInteract_42);
 			}
 			break;
 
 		default:
 			// This is not possible.
-			_vm->renderMessage("Das geht nicht.");
+			_vm->renderMessage(kStringGenericInteract_43);
 		}
 	}
 }
