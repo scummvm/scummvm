@@ -242,10 +242,6 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 	output << "    add_definitions(-DPOSIX)\n";
 	output << "endif()\n";
 
-	output << "if (CMAKE_SIZEOF_VOID_P MATCHES 8)\n";
-	output << "    add_definitions(-DSCUMM_64BITS)\n";
-	output << "endif()\n";
-
 	output << "add_definitions(-DSDL_BACKEND)\n\n";
 }
 

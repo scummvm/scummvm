@@ -2154,13 +2154,11 @@ EOF
 echo_n "Checking 64-bitness... "
 pointer_is_32bit
 if test $? -eq 0; then
-	type_ptr=int32
+	type_ptr=uint32
 	echo "no"
-	add_line_to_config_h "/* #define SCUMM_64BITS */"
 else
-	type_ptr=int64
+	type_ptr=uint64
 	echo "yes"
-	add_line_to_config_h "#define SCUMM_64BITS"
 fi
 
 #
@@ -2188,12 +2186,7 @@ echo_n "Type with 8 bytes... "
 type_8_byte=`find_type_with_size 8`
 TMPR="$?"
 echo "$type_8_byte"
-if test $TMPR -eq 0; then
-	_def_64bit_type_signed="typedef signed $type_8_byte int64;"
-	_def_64bit_type_unsigned="typedef unsigned $type_8_byte uint64;"
-fi
-# force cleanup after check for 8 bytes type
-cc_check_clean tmp_find_type_with_size.cpp
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 #
 # Check whether memory alignment is required
@@ -5224,29 +5217,19 @@ typedef unsigned int uint;
 typedef unsigned $type_1_byte uint8;
 typedef unsigned $type_2_byte uint16;
 typedef unsigned $type_4_byte uint32;
+typedef unsigned $type_8_byte uint64;
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
-EOF
+typedef signed $type_8_byte int64;
 
-if test -n "$_def_64bit_type_unsigned"  ; then
-cat >> config.h << EOF
+typedef $type_ptr  uintptr;
 
-/* 64-bit stuff */
-$_def_64bit_type_signed
 #if defined(__APPLE__) && !defined(__ppc__)
 #ifndef _UINT64
 #define _UINT64
-$_def_64bit_type_unsigned
 #endif
-#else
-$_def_64bit_type_unsigned
 #endif
-#define HAVE_INT64
-EOF
-fi
-
-cat >> config.h << EOF
 
 #endif /* CONFIG_H */
 EOF
