@@ -195,6 +195,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Myst - Russian
+	// From AndyILC in bug #10303
+	{
+		{
+			"myst",
+			"",
+			AD_ENTRY1("MYST.DAT", "196384f87e8bcb51731bce8416ab6a07"),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST
+		},
+		GType_MYST,
+		0,
+		0,
+	},
+
 	// Making of Myst
 	// English Windows 3.11
 	// From clone2727
