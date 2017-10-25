@@ -33,6 +33,7 @@
 
 #include "engines/engine.h"
 #include "engines/metaengine.h"
+
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
@@ -42,7 +43,6 @@
 #include "common/debug.h"
 #include "common/debug-channels.h" /* for debug manager */
 #include "common/events.h"
-#include "gui/EventRecorder.h"
 #include "common/fs.h"
 #ifdef ENABLE_EVENTRECORDER
 #include "common/recorderfile.h"
@@ -53,11 +53,12 @@
 #include "common/translation.h"
 #include "common/osd_message_queue.h"
 
-#include "gui/gui-manager.h"
+#include "gui/EventRecorder.h"
 #include "gui/error.h"
+#include "gui/gui-manager.h"
 
 #include "audio/mididrv.h"
-#include "audio/musicplugin.h"  /* for music manager */
+#include "audio/musicplugin.h" /* for music manager */
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
@@ -90,7 +91,6 @@
 #endif
 
 static bool launcherDialog() {
-
 	// Discard any command line options. Those that affect the graphics
 	// mode and the others (like bootparam etc.) should not
 	// blindly be passed to the first game launched from the launcher.
@@ -128,7 +128,7 @@ static const EnginePlugin *detectPlugin() {
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
 	printf("  Looking for a plugin supporting this gameid... ");
 
- 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
 		printf("failed\n");
@@ -153,7 +153,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	// needed because otherwise the g_system->getSupportedFormats might return
 	// bad values.
 	g_system->beginGFXTransaction();
-		g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+	g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 	if (g_system->endGFXTransaction() != OSystem::kTransactionSuccess) {
 		warning("Switching graphics mode to '%s' failed", ConfMan.get("gfx_mode").c_str());
 		return Common::kUnknownError;
@@ -161,16 +161,16 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 #endif
 
 	// Verify that the game path refers to an actual directory
-        if (!dir.exists()) {
+	if (!dir.exists()) {
 		err = Common::kPathDoesNotExist;
-        } else if (!dir.isDirectory()) {
+	} else if (!dir.isDirectory()) {
 		err = Common::kPathNotDirectory;
-        }
+	}
 
 	// Create the game engine
 	if (err.getCode() == Common::kNoError) {
 		// Set default values for all of the custom engine options
-		// Appareantly some engines query them in their constructor, thus we
+		// Apparently some engines query them in their constructor, thus we
 		// need to set this up before instance creation.
 		const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(Common::String());
 		for (uint i = 0; i < engineOptions.size(); i++) {
@@ -212,8 +212,8 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		caption = EngineMan.findGame(ConfMan.get("gameid")).description();
 	}
 	if (caption.empty())
-		caption = ConfMan.getActiveDomainName();	// Use the domain (=target) name
-	if (!caption.empty())	{
+		caption = ConfMan.getActiveDomainName(); // Use the domain (=target) name
+	if (!caption.empty()) {
 		system.setWindowCaption(caption.c_str());
 	}
 
@@ -282,19 +282,18 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 }
 
 static void setupGraphics(OSystem &system) {
-
 	system.beginGFXTransaction();
-		// Set the user specified graphics mode (if any).
-		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+	// Set the user specified graphics mode (if any).
+	system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
-		system.initSize(320, 200);
+	system.initSize(320, 200);
 
-		if (ConfMan.hasKey("aspect_ratio"))
-			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
-		if (ConfMan.hasKey("fullscreen"))
-			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-		if (ConfMan.hasKey("filtering"))
-			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+	if (ConfMan.hasKey("aspect_ratio"))
+		system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+	if (ConfMan.hasKey("fullscreen"))
+		system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+	if (ConfMan.hasKey("filtering"))
+		system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 	system.endGFXTransaction();
 
 	// When starting up launcher for the first time, the user might have specified
@@ -393,7 +392,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("debuglevel")) {
 		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
 		printf("Debuglevel (from command line): %d\n", gDebugLevel);
-		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
+		settings.erase("debuglevel"); // This option should not be passed to ConfMan.
 	} else if (ConfMan.hasKey("debuglevel"))
 		gDebugLevel = ConfMan.getInt("debuglevel");
 
@@ -515,13 +514,15 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			Common::String recordFileName = ConfMan.get("record_file_name");
 
 			if (recordMode == "record") {
-				g_eventRec.init(g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName()), GUI::EventRecorder::kRecorderRecord);
+				g_eventRec.init(g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName()),
+								GUI::EventRecorder::kRecorderRecord);
 			} else if (recordMode == "playback") {
 				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderPlayback);
 			} else if ((recordMode == "info") && (!recordFileName.empty())) {
 				Common::PlaybackFile record;
 				record.openRead(recordFileName);
-				debug("info:author=%s name=%s description=%s", record.getHeader().author.c_str(), record.getHeader().name.c_str(), record.getHeader().description.c_str());
+				debug("info:author=%s name=%s description=%s", record.getHeader().author.c_str(),
+					record.getHeader().name.c_str(), record.getHeader().description.c_str());
 				break;
 			}
 #endif
@@ -534,12 +535,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			g_eventRec.deinit();
 #endif
 
-		#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
-			// do our best to prevent fragmentation by unloading as soon as we can
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
+			// do our best to prevent fragmentation by unloading as soon as we
+			// can
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 			// reallocate the config manager to get rid of any fragmentation
 			ConfMan.defragment();
-		#endif
+#endif
 
 			// Did an error occur ?
 			if (result.getCode() != Common::kNoError && result.getCode() != Common::kUserCanceled) {
@@ -551,17 +553,17 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			#ifndef FORCE_RTL
 			if (result.getCode() == Common::kNoError && !g_system->getEventManager()->shouldRTL())
 				break;
-			#endif
+#endif
 			// Reset RTL flag in case we want to load another engine
 			g_system->getEventManager()->resetRTL();
-			#ifdef FORCE_RTL
+#ifdef FORCE_RTL
 			g_system->getEventManager()->resetQuit();
-			#endif
-			#ifdef ENABLE_EVENTRECORDER
+#endif
+#ifdef ENABLE_EVENTRECORDER
 			if (g_eventRec.checkForContinueGame()) {
 				continue;
 			}
-			#endif
+#endif
 
 			// At this point, we usually return to the launcher. However, the
 			// game may have requested that one or more other games be "chained"
@@ -589,7 +591,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				ConfMan.setActiveDomain("");
 			}
 
-			PluginManager::instance().loadAllPlugins(); // only for cached manager
+			// only for cached manager
+			PluginManager::instance().loadAllPlugins();
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 
@@ -609,7 +612,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 #ifdef USE_LIBCURL
 	Networking::ConnectionManager::destroy();
-	//I think it's important to destroy it after ConnectionManager
+	// I think it's important to destroy it after ConnectionManager
 	Cloud::CloudManager::destroy();
 #endif
 #endif

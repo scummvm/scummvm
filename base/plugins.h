@@ -48,8 +48,6 @@
  * TODO
  */
 
-
-
 // Plugin versioning
 
 /** Global Plugin API version */
@@ -58,38 +56,34 @@
 enum PluginType {
 	PLUGIN_TYPE_ENGINE = 0,
 	PLUGIN_TYPE_MUSIC,
-	/* PLUGIN_TYPE_SCALER, */	// TODO: Add graphics scaler plugins
+	/* PLUGIN_TYPE_SCALER, */ // TODO: Add graphics scaler plugins
 
 	PLUGIN_TYPE_MAX
 };
 
 // TODO: Make the engine API version depend on ScummVM's version
-// because of the backlinking (posibly from the checkout revision)
+// because of the backlinking (possibly from the checkout revision)
 #define PLUGIN_TYPE_ENGINE_VERSION 1
 #define PLUGIN_TYPE_MUSIC_VERSION 1
 
 extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
-
 
 // Plugin linking
 
 #define STATIC_PLUGIN 1
 #define DYNAMIC_PLUGIN 2
 
-#define PLUGIN_ENABLED_STATIC(ID) \
-	(ENABLE_##ID && !PLUGIN_ENABLED_DYNAMIC(ID))
+#define PLUGIN_ENABLED_STATIC(ID) (ENABLE_##ID && !PLUGIN_ENABLED_DYNAMIC(ID))
 
 #ifdef DYNAMIC_MODULES
-	#define PLUGIN_ENABLED_DYNAMIC(ID) \
-		(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN))
+#define PLUGIN_ENABLED_DYNAMIC(ID) (ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN))
 #else
-	#define PLUGIN_ENABLED_DYNAMIC(ID) 0
+#define PLUGIN_ENABLED_DYNAMIC(ID) 0
 #endif
 
 // see comments in backends/plugins/elf/elf-provider.cpp
 #if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
-#define PLUGIN_DYNAMIC_DSO_HANDLE \
-	uint32 __dso_handle __attribute__((visibility("hidden"))) = 0;
+#define PLUGIN_DYNAMIC_DSO_HANDLE uint32 __dso_handle __attribute__((visibility("hidden"))) = 0;
 #else
 #define PLUGIN_DYNAMIC_DSO_HANDLE
 #endif
@@ -110,11 +104,9 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
  *
  * @see REGISTER_PLUGIN_DYNAMIC
  */
-#define REGISTER_PLUGIN_STATIC(ID,TYPE,PLUGINCLASS) \
+#define REGISTER_PLUGIN_STATIC(ID, TYPE, PLUGINCLASS) \
 	PluginType g_##ID##_type = TYPE; \
-	PluginObject *g_##ID##_getObject() { \
-		return new PLUGINCLASS(); \
-	} \
+	PluginObject *g_##ID##_getObject() { return new PLUGINCLASS(); } \
 	void dummyFuncToAllowTrailingSemicolon()
 
 #ifdef DYNAMIC_MODULES
@@ -128,21 +120,18 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
  *
  * @see REGISTER_PLUGIN_STATIC
  */
-#define REGISTER_PLUGIN_DYNAMIC(ID,TYPE,PLUGINCLASS) \
+#define REGISTER_PLUGIN_DYNAMIC(ID, TYPE, PLUGINCLASS) \
 	extern "C" { \
-		PLUGIN_DYNAMIC_DSO_HANDLE \
-		PLUGIN_DYNAMIC_BUILD_DATE \
-		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
-		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
-		PLUGIN_EXPORT int32 PLUGIN_getTypeVersion() { return TYPE##_VERSION; } \
-		PLUGIN_EXPORT PluginObject *PLUGIN_getObject() { \
-			return new PLUGINCLASS(); \
-		} \
+	PLUGIN_DYNAMIC_DSO_HANDLE \
+	PLUGIN_DYNAMIC_BUILD_DATE \
+	PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
+	PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
+	PLUGIN_EXPORT int32 PLUGIN_getTypeVersion() { return TYPE##_VERSION; } \
+	PLUGIN_EXPORT PluginObject *PLUGIN_getObject() { return new PLUGINCLASS(); } \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 
 #endif // DYNAMIC_MODULES
-
 
 // Abstract plugins
 
@@ -173,10 +162,12 @@ protected:
 	PluginType _type;
 
 public:
-	Plugin() : _pluginObject(0), _type(PLUGIN_TYPE_MAX) {}
+	Plugin()
+		: _pluginObject(0)
+		, _type(PLUGIN_TYPE_MAX) {}
 	virtual ~Plugin() {
-		//if (isLoaded())
-			//unloadPlugin();
+		// if (isLoaded())
+		// unloadPlugin();
 	}
 
 //	virtual bool isLoaded() const = 0;	// TODO
@@ -206,16 +197,12 @@ typedef Common::Array<Plugin *> PluginList;
  * subclasses. Namely, the PluginSubclass will manage PluginObjects
  * of a type specified via the PO_t template parameter.
  */
-template<class PO_t>
+template <class PO_t>
 class PluginSubclass : public Plugin {
 public:
-	PO_t &operator*() const {
-		return *(PO_t *)_pluginObject;
-	}
+	PO_t &operator*() const { return *(PO_t *)_pluginObject; }
 
-	PO_t *operator->() const {
-		return (PO_t *)_pluginObject;
-	}
+	PO_t *operator->() const { return (PO_t *)_pluginObject; }
 
 	typedef Common::Array<PluginSubclass *> List;
 };
@@ -325,13 +312,16 @@ protected:
 public:
 	virtual ~PluginManager();
 
-	static void destroy() { delete _instance; _instance = 0; }
+	static void destroy() {
+		delete _instance;
+		_instance = 0;
+	}
 	static PluginManager &instance();
 
 	void addPluginProvider(PluginProvider *pp);
 
 	// Functions used by the uncached PluginManager
-	virtual void init()	{}
+	virtual void init() {}
 	virtual void loadFirstPlugin() {}
 	virtual bool loadNextPlugin() { return false; }
 	virtual bool loadPluginFromGameId(const Common::String &gameId) { return false; }
@@ -366,7 +356,7 @@ public:
 	virtual bool loadPluginFromGameId(const Common::String &gameId);
 	virtual void updateConfigWithFileName(const Common::String &gameId);
 
-	virtual void loadAllPlugins() {} 	// we don't allow this
+	virtual void loadAllPlugins() {} // we don't allow this
 };
 
 #endif
