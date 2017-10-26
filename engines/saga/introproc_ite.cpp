@@ -128,6 +128,8 @@ EventColumns *Scene::queueIntroDialogue(EventColumns *eventColumns, int n_dialog
 		textEntry.rect.top = INTRO_DE_CAPTION_Y;
 	} else if (_vm->getLanguage() == Common::IT_ITA) {
 		textEntry.rect.top = INTRO_IT_CAPTION_Y;
+	} else if (_vm->getLanguage() == Common::FR_FRA) {
+		textEntry.rect.top = INTRO_IT_CAPTION_Y;
 	} else {
 		textEntry.rect.top = INTRO_CAPTION_Y;
 	}
@@ -379,6 +381,8 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 		lang = 1;
 	else if (_vm->getLanguage() == Common::IT_ITA)
 		lang = 2;
+	else if (_vm->getLanguage() == Common::FR_FRA)
+		lang = 3;
 
 	int n_dialogues = 0;
 

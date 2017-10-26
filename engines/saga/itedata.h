@@ -137,11 +137,11 @@ extern const IntroDialogue introDialogueCave2[][3];
 extern const IntroDialogue introDialogueCave3[][3];
 extern const IntroDialogue introDialogueCave4[][4];
 
-extern const IntroCredit creditsValley[13];
-extern const IntroCredit creditsTreeHouse1[13];
-extern const IntroCredit creditsTreeHouse2[19];
-extern const IntroCredit creditsFairePath1[15];
-extern const IntroCredit creditsFairePath2[4];
+extern const IntroCredit creditsValley[16];
+extern const IntroCredit creditsTreeHouse1[17];
+extern const IntroCredit creditsTreeHouse2[23];
+extern const IntroCredit creditsFairePath1[20];
+extern const IntroCredit creditsFairePath2[7];
 
 } // End of namespace Saga
 

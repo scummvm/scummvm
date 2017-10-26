@@ -498,6 +498,30 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEPatch_Files,
 	},
 
+	// Inherit the earth - French Windows/Linux/DOS CD version (fan translation)
+	{
+		{
+			"ite",
+			"Windows/Linux/DOS CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", 8929384},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", 355877},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		ITEPatch_Files,
+	},
+
 	// Inherit the earth - DOS CD version
 	{
 		{
