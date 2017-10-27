@@ -71,7 +71,7 @@ private:
 	int _fieldE8;
 	Common::Point _moveStartPos;
 	Common::Point _moveDestPos;
-	uint _moveStartTime, _moveEndTime;
+	uint32 _moveStartTime, _moveEndTime;
 
 	/**
 	 * Load the images for each cursor
