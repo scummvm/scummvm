@@ -506,7 +506,7 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 		"cesoie", "righello", "sega", "mazza", "pennello"
 	},
 	{
-		"tournevis", "pinces", "\202taux \205 vis", "\202taux en bois", "niveau",
+		"tournevis", "pince", "\202tau \205 vis", "pince \205 bois", "niveau",
 		"ficelle", "rabot \205 bois", "marteau", "m\212tre ruban", "hachette",
 		"ciseaux", "r\212gle", "scie", "maillet", "pinceau"
 	}
@@ -645,7 +645,7 @@ const char *optionsStr[][4] = {
 		"Penso che la tessera %s sia nel posto sbagliato."
 	},
 	{
-		"\"Je r\202soudrais cette \202nigme plus tard.\"",
+		"\"Je r\202soudrai cette \202nigme plus tard.\"",
 		"\"Oui, j'aimerais un indice s'il vous plait.\"",
 		"\"Non merci, je voudrais r\202soudre cela par moi même.\"",
 		"Je crois que t'as mal plac\202 l'%s."
