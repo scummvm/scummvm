@@ -996,72 +996,74 @@ Optional Features:
                            you are doing!
 
 Optional Libraries:
-  --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
+  --with-alsa-prefix=DIR   prefix where alsa is installed (optional)
   --disable-alsa           disable ALSA midi sound support [autodetect]
 
-  --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
-  --disable-ogg      	   disable Ogg support [autodetect]
+  --with-ogg-prefix=DIR    prefix where libogg is installed (optional)
+  --disable-ogg            disable Ogg support [autodetect]
 
-  --with-vorbis-prefix=DIR Prefix where libvorbis is installed (optional)
+  --with-vorbis-prefix=DIR prefix where libvorbis is installed (optional)
   --disable-vorbis         disable Vorbis support [autodetect]
 
-  --with-tremor-prefix=DIR Prefix where tremor is installed (optional)
+  --with-tremor-prefix=DIR prefix where tremor is installed (optional)
   --disable-tremor         disable tremor support [autodetect]
 
-  --with-mad-prefix=DIR    Prefix where libmad is installed (optional)
+  --with-mad-prefix=DIR    prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
 
-  --with-flac-prefix=DIR   Prefix where libFLAC is installed (optional)
+  --with-flac-prefix=DIR   prefix where libFLAC is installed (optional)
   --disable-flac           disable FLAC support [autodetect]
 
-  --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
+  --with-zlib-prefix=DIR   prefix where zlib is installed (optional)
   --disable-zlib           disable zlib (compression) support [autodetect]
 
-  --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
+  --with-mpeg2-prefix=DIR  prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
 
-  --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
+  --with-jpeg-prefix=DIR   prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
 
-  --with-png-prefix=DIR    Prefix where libpng is installed (optional)
+  --with-png-prefix=DIR    prefix where libpng is installed (optional)
   --disable-png            disable PNG decoder [autodetect]
 
-  --with-theoradec-prefix=DIR Prefix where libtheoradec is installed (optional)
+  --with-theoradec-prefix=DIR  prefix where libtheoradec is installed (optional)
   --disable-theoradec      disable Theora decoder [autodetect]
 
-  --with-faad-prefix=DIR   Prefix where libfaad is installed (optional)
+  --with-faad-prefix=DIR   prefix where libfaad is installed (optional)
   --disable-faad           disable AAC decoder [autodetect]
 
-  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
+  --with-fluidsynth-prefix=DIR prefix where libfluidsynth is
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (OS X/Windows only - optional)
-  --disable-sparkle        disable sparkle automatic update support [OS X/Windows only - autodetect]
+  --with-sparkle-prefix=DIR    prefix where sparkle is installed
+                           (OS X/Windows only - optional)
+  --disable-sparkle        disable sparkle automatic update support
+                           [OS X/Windows only - autodetect]
 
-  --disable-osx-dock-plugin disable the NSDockTilePlugin support [Mac OS X only - autodetect]
+  --disable-osx-dock-plugin    disable the NSDockTilePlugin support
+                               [Mac OS X only - autodetect]
 
-  --with-sdl-prefix=DIR    Prefix where the sdl-config script is
+  --with-sdl-prefix=DIR    prefix where the sdl-config script is
                            installed (optional)
 
-  --with-freetype2-prefix=DIR Prefix where the freetype-config script is
-                           installed (optional)
-  --disable-freetype2     disable freetype2 TTF library usage [autodetect]
+  --with-freetype2-prefix=DIR  prefix where the freetype-config script is
+                               installed (optional)
+  --disable-freetype2      disable freetype2 TTF library usage [autodetect]
 
-  --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
+  --with-nasm-prefix=DIR   prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
-  --with-readline-prefix=DIR    Prefix where readline is installed (optional)
+  --with-readline-prefix=DIR   prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
 
-  --with-libunity-prefix=DIR   Prefix where libunity is installed (optional)
-  --disable-libunity           disable Unity launcher integration [autodetect]
+  --with-libunity-prefix=DIR   prefix where libunity is installed (optional)
+  --disable-libunity       disable Unity launcher integration [autodetect]
 
-  --with-sndio-prefix=DIR  Prefix where sndio is installed (optional)
+  --with-sndio-prefix=DIR  prefix where sndio is installed (optional)
   --disable-sndio          disable sndio MIDI driver [autodetect]
 
-  --with-sdlnet-prefix=DIR  Prefix where SDL_Net is
-                           installed (optional)
+  --with-sdlnet-prefix=DIR prefix where SDL_Net is installed (optional)
   --disable-sdlnet         disable SDL_Net networking library [autodetect]
   --disable-libcurl        disable libcurl networking library [autodetect]
 
