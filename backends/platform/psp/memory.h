@@ -72,7 +72,7 @@ public:
 	// This is the interface to the outside world
 	static void *fastCopy(void *dstv, const void *srcv, int32 bytes) {
 		byte *dst = (byte *)dstv;
-		byte *src = (byte *)srcv;
+		const byte *src = (const byte *)srcv;
 
 		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY) {
 			copy8(dst, src, bytes);
@@ -114,9 +114,9 @@ private:
 public:
 	static void fastSwap(byte *dst, const byte *src, uint32 bytes, PSPPixelFormat &format) {
 		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY * 2) {
-			swap16((uint16 *)dst, (uint16 *)src, bytes, format);
+			swap16((uint16 *)dst, (const uint16 *)src, bytes, format);
 		} else {	// go to more powerful copy
-			swap((uint16 *)dst, (uint16 *)src, bytes, format);
+			swap((uint16 *)dst, (const uint16 *)src, bytes, format);
 		}
 	}
 };
