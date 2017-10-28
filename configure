@@ -1065,6 +1065,8 @@ Optional Libraries:
 
   --with-sdlnet-prefix=DIR prefix where SDL_Net is installed (optional)
   --disable-sdlnet         disable SDL_Net networking library [autodetect]
+
+  --with-libcurl-prefix=DIR    prefix where libcurl is installed (optional)
   --disable-libcurl        disable libcurl networking library [autodetect]
 
 Some influential environment variables:
@@ -1314,6 +1316,10 @@ for ac_option in $@; do
 	--with-freetype2-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_freetypepath="$arg:$arg/bin"
+		;;
+	--with-libcurl-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_libcurlpath="$arg:$arg/bin"
 		;;
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
