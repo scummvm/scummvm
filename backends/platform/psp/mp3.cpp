@@ -98,13 +98,13 @@ bool Mp3PspStream::initDecoder() {
 	uint32 firmware = sceKernelDevkitVersion();
 	PSP_DEBUG_PRINT("Firmware version 0x%x\n", firmware);
     if (firmware == 0x01050001){
-		if (!loadStartAudioModule((char *)(void *)"flash0:/kd/me_for_vsh.prx",
+		if (!loadStartAudioModule("flash0:/kd/me_for_vsh.prx",
 			PSP_MEMORY_PARTITION_KERNEL)) {
 			PSP_ERROR("failed to load me_for_vsh.prx. ME cannot start.\n");
 			_decoderFail = true;
 			return false;
 		}
-        if (!loadStartAudioModule((char *)(void *)"flash0:/kd/audiocodec.prx", PSP_MEMORY_PARTITION_KERNEL)) {
+        if (!loadStartAudioModule("flash0:/kd/audiocodec.prx", PSP_MEMORY_PARTITION_KERNEL)) {
 			PSP_ERROR("failed to load audiocodec.prx. ME cannot start.\n");
 			_decoderFail = true;
 			return false;
