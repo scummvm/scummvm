@@ -4615,8 +4615,19 @@ if test "$_freetype2" != "no"; then
 	if test -z "$_freetypeconfig"; then
 		_freetype2=no
 	else
-		FREETYPE2_LIBS=`$_freetypeconfig --prefix="$_freetypepath" --libs`
-		FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$_freetypepath" --cflags`
+		# Since 2.3.12, freetype-config prepends $SYSROOT to everything.
+		# This means we can't pass it a --prefix that includes $SYSROOT.
+		freetypeprefix="$_freetypepath"
+		if test -n "$SYSROOT" -a "$SYSROOT" != "/"; then
+			teststring=VeryImplausibleSysrootX1Y2Z3
+			if ( env SYSROOT=/$teststring "$_freetypeconfig" --cflags | grep $teststring 2> /dev/null > /dev/null ); then
+				echo "Adapting FreeType prefix to SYSROOT" >> "$TMPLOG"
+				freetypeprefix="${freetypeprefix##$SYSROOT}"
+			fi
+		fi
+
+		FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
+		FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$freetypeprefix" --cflags`
 
 		if test "$_freetype2" = "auto"; then
 			_freetype2=no
