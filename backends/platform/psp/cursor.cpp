@@ -220,10 +220,6 @@ inline void Cursor::adjustXYForScreenSize(int32 &x, int32 &y) {
 void Cursor::setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat *format) {
 	DEBUG_ENTER_FUNC();
 
-	uint32 oldPaletteSize = 0;
-	if (_screenPalette.isAllocated())
-		oldPaletteSize = _screenPalette.getSizeInBytes();
-
 	PSPPixelFormat::Type bufferType = PSPPixelFormat::Type_Unknown;
 	PSPPixelFormat::Type paletteType = PSPPixelFormat::Type_Unknown;
 	bool swapRedBlue = false;
@@ -247,13 +243,10 @@ void Cursor::setSizeAndScummvmPixelFormat(uint32 width, uint32 height, const Gra
 
 	PSP_DEBUG_PRINT("useCursorPalette[%s]\n", _useCursorPalette ? "true" : "false");
 
-	uint32 oldBufferSize = 0, oldPaletteSize = 0;
+	uint32 oldBufferSize = 0;
 
 	if (_buffer.isAllocated())
 		oldBufferSize = _buffer.getSizeInBytes();
-
-	if (_palette.isAllocated())
-		oldPaletteSize = _palette.getSizeInBytes();
 
 	setSize(width, height);
 
