@@ -114,4 +114,4 @@ print-dists:
 	@echo $(foreach V, $(filter DIST_FILES_%, $(.VARIABLES)), $($V))
 
 print-executables:
-	@echo $(EXECUTABLE) $(PLUGINS)
+	@echo $(if $(DIST_EXECUTABLES),$(DIST_EXECUTABLES),$(EXECUTABLE) $(PLUGINS))
