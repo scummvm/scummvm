@@ -103,13 +103,13 @@ private:
 	static void swap32Misaligned(uint32 *dst32, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
 	// For swapping, we know that we have multiples of 16 bits
 	static void swap16(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format) {
-	PSP_DEBUG_PRINT("swap16 called with dst16[%p], src16[%p], bytes[%d]\n", dst16, src16, bytes);
-	uint32 shorts = bytes >> 1;
+		PSP_DEBUG_PRINT("swap16 called with dst16[%p], src16[%p], bytes[%d]\n", dst16, src16, bytes);
+		uint32 shorts = bytes >> 1;
 
-	while (shorts--) {
-		*dst16++ = format.swapRedBlue16(*src16++);
+		while (shorts--) {
+			*dst16++ = format.swapRedBlue16(*src16++);
+		}
 	}
-}
 
 public:
 	static void fastSwap(byte *dst, const byte *src, uint32 bytes, PSPPixelFormat &format) {
