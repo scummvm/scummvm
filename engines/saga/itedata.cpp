@@ -588,7 +588,7 @@ const char *sakkaStr[][NUM_SAKKA] = {
 		"Forza ragazzi, non si pu\225!"
 	},
 	{
-		"H\202, vous n'êtes pas suppos\202s aider les concurrents!",
+		"H\202, vous n'\210tes pas suppos\202s aider les concurrents!",
 		"Les gars! C'est suppos\202 être un test!",
 		"Allez les gars, c'est pas dans les r\212gles!"
 	}
@@ -620,7 +620,7 @@ const char *whineStr[][NUM_WHINES] = {
 		"Rohh, allez Sakka!",
 		"Un indice ne peut pas faire de mal.",
 		"Pfff...",
-		"Je crois que ton carnet te monte \205 la tête, Sakka!",
+		"Je crois que ton carnet te monte \205 la t\210te, Sakka!",
 		"Bon, je ne me souviens d'aucune r\212gle concernant les indices."
 	}
 };
@@ -647,7 +647,7 @@ const char *optionsStr[][4] = {
 	{
 		"\"Je r\202soudrai cette \202nigme plus tard.\"",
 		"\"Oui, j'aimerais un indice s'il vous plait.\"",
-		"\"Non merci, je voudrais r\202soudre cela par moi même.\"",
+		"\"Non merci, je voudrais r\202soudre cela par moi m\210me.\"",
 		"Je crois que t'as mal plac\202 l'%s."
 	}
 };
