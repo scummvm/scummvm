@@ -82,7 +82,7 @@ PspIoStream::~PspIoStream() {
 /* Function to open the file pointed to by the path.
  *
  */
-void *PspIoStream::open() {
+SceUID PspIoStream::open() {
 	DEBUG_ENTER_FUNC();
 
 	if (PowerMan.beginCriticalSection()) {
@@ -91,9 +91,9 @@ void *PspIoStream::open() {
 	}
 
 	_handle = sceIoOpen(_path.c_str(), _writeMode ? PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC : PSP_O_RDONLY, 0777);
-	if (!_handle) {
+	if (_handle <= 0) {
 		_error = true;
-		_handle = NULL;
+		_handle = 0;
 	}
 
 	// Get the file size. This way is much faster than going to the end of the file and back
@@ -107,7 +107,7 @@ void *PspIoStream::open() {
 
 	PowerMan.endCriticalSection();
 
-	return (void *)_handle;
+	return _handle;
 }
 
 bool PspIoStream::err() const {
