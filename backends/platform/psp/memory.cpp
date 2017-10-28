@@ -72,7 +72,7 @@ void PspMemory::copy(byte *dst, const byte *src, uint32 bytes) {
 	if (alignSrc) {						// we'll need to realign our reads
 		copy32Misaligned((uint32 *)dst, src, bytes, alignSrc);
 	} else {
-		copy32Aligned((uint32 *)dst, (uint32 *)src, bytes);
+		copy32Aligned((uint32 *)dst, (const uint32 *)src, bytes);
 	}
 
 #ifdef TEST_MEMORY_COPY
@@ -141,7 +141,7 @@ void PspMemory::copy32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes) 
 	PSP_DEBUG_PRINT("bytesLeft[%d]\n", bytesLeft);
 
 	byte *dst = (byte *)dst32;
-	byte *src = (byte *)src32;
+	const byte *src = (const byte *)src32;
 
 	while (bytesLeft--) {
 		*dst++ = *src++;
@@ -343,7 +343,7 @@ void PspMemorySwap::swap32Aligned(uint32 *dst32, const uint32 *src32, uint32 byt
 	bytesLeft = bytes & 0x3;
 
 	if (bytesLeft) {	// for swap, can only be 1 short left
-		*((uint16 *)dst32) = format.swapRedBlue16(*((uint16 *)src32));
+		*((uint16 *)dst32) = format.swapRedBlue16(*((const uint16 *)src32));
 	}
 }
 
