@@ -42,6 +42,7 @@ namespace Saga {
 #define INTRO_CAPTION_Y 170
 #define INTRO_DE_CAPTION_Y 160
 #define INTRO_IT_CAPTION_Y 160
+#define INTRO_FR_CAPTION_Y 160
 #define INTRO_VOICE_PAD 50
 #define INTRO_VOICE_LETTERLEN 90
 
@@ -129,7 +130,7 @@ EventColumns *Scene::queueIntroDialogue(EventColumns *eventColumns, int n_dialog
 	} else if (_vm->getLanguage() == Common::IT_ITA) {
 		textEntry.rect.top = INTRO_IT_CAPTION_Y;
 	} else if (_vm->getLanguage() == Common::FR_FRA) {
-		textEntry.rect.top = INTRO_IT_CAPTION_Y;
+		textEntry.rect.top = INTRO_FR_CAPTION_Y;
 	} else {
 		textEntry.rect.top = INTRO_CAPTION_Y;
 	}
