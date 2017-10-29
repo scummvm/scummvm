@@ -187,8 +187,8 @@ support an unsupported game -- read the FAQ on our web site first.
 
 2.1) Reporting Bugs:
 ---- ---------------
-To report a bug, please create a SourceForge account and follow the
-"Bug Tracker" link from our homepage. Please make sure the bug is
+To report a bug, please follow the "Bug Tracker" link from our homepage
+and log in with your GitHub account. Please make sure the bug is
 reproducible, and still occurs in the latest git/Daily build version.
 Also check the known problems list (below) and the compatibility list
 on our website for that game, to ensure the issue is not already known:
