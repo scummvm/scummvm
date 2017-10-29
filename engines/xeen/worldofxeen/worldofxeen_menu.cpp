@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "xeen/worldofxeen/worldofxeen_menu.h"
 #include "xeen/resources.h"
+#include "xeen/worldofxeen/worldofxeen.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
@@ -92,13 +93,17 @@ void WorldOfXeenMenu::execute() {
 			int key = toupper(_buttonValue);
 			_buttonValue = 0;
 
-			if (key == 'C' || key == 'V') {
+			if (key == 27) {
+				// Hide the options menu
+				break;
+			} else if (key == 'C' || key == 'V') {
 				// Show credits
 				CreditsScreen::show(_vm);
 				break;
-			} else if (key == 27) {
-				// Hide the options menu
-				break;
+			} else if (key == 'S') {
+				// Start new game
+				WOX_VM._pendingAction = WOX_PLAY_GAME;
+				return;
 			}
 		}
 	}

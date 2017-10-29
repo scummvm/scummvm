@@ -38,6 +38,10 @@ WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *g
 void WorldOfXeenEngine::outerGameLoop() {
 	//_pendingAction = getGameID() == GType_DarkSide ? WOX_DARKSIDE_INTRO : WOX_CLOUDS_INTRO;
 	_pendingAction = WOX_MENU;
+	if (gDebugLevel >= 1)
+		// Skip main menu when starting in debug mode
+		_pendingAction = WOX_PLAY_GAME;
+
 	while (!shouldQuit() && _pendingAction != WOX_QUIT) {
 		switch (_pendingAction) {
 		case WOX_CLOUDS_INTRO:

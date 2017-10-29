@@ -61,6 +61,8 @@ public:
 	void setPendingAction(WOXGameAction action) { _pendingAction = action; }
 };
 
+#define WOX_VM (*(::Xeen::WorldOfXeen::WorldOfXeenEngine *)g_vm)
+
 } // End of namespace WorldOfXeen
 } // End of namespace Xeen
 
