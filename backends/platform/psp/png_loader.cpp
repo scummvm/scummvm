@@ -144,7 +144,7 @@ bool PngLoader::findImageDimensions() {
 
 	bool status = basicImageLoad();
 
-	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], channels[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _channels, _infoPtr->rowbytes);
+	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], channels[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _channels, png_get_rowbytes(_pngPtr, _infoPtr));
 	png_destroy_read_struct(&_pngPtr, &_infoPtr, NULL);
 	return status;
 }
