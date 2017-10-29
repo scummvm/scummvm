@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Mission Supernova 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-22 19:53+0100\n"
-"PO-Revision-Date: 2017-10-22 18:01+0000\n"
+"PO-Revision-Date: 2017-10-29 16:51+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
@@ -635,7 +635,6 @@ msgstr ""
 "consciousness."
 
 #: ../../msn/msn_r1.c:295
-#, fuzzy
 msgid "Was steht dir jetzt wohl wirklich bevor?"
 msgstr "What is going to happen to you now?"
 
@@ -1138,7 +1137,6 @@ msgid "Schachspiel"
 msgstr "Game of chess"
 
 #: ../../msn/msn_r1_r.c:161
-#, fuzzy
 msgid "Es macht wohl Spa·, an|der Decke Schach zu spielen."
 msgstr "I guess it's fun to play|chess on the ceiling."
 
@@ -1248,7 +1246,7 @@ msgstr "Poster"
 
 #: ../../msn/msn_r1_r.c:230
 msgid "Ein Poster von \"Big Boss\"."
-msgstr "A poster from \"Big Boss\"."
+msgstr "A poster of \"Big Boss\"."
 
 #: ../../msn/msn_r1_r.c:231
 msgid "Ein Poster von \"Rock Desaster\"."
@@ -1695,7 +1693,6 @@ msgid "Was? Lachhaft!"
 msgstr "What? Ridiculous!"
 
 #: ../../msn/msn_r2.c:745
-#, fuzzy
 msgid "Wie erklÑren Sie sich dann,|da· ich ihnen gegenÅbersitze?"
 msgstr "How do you explain then|that I am seated opposite you?"
 
@@ -1716,13 +1713,11 @@ msgid "Nein, ich bin nur ein Ahnungsloser Koch von der Erde."
 msgstr "No, I'm just a clueless cook from the Earth."
 
 #: ../../msn/msn_r2.c:749
-#, fuzzy
 msgid ""
 "Na gut, ich glaube Ihnen. Lassen wir jetzt|dieses Thema, langsam wird es mir "
 "zu bunt!"
 msgstr ""
-"All right, I believe you. Let's drop this subject, it slowly becomes "
-"colorful to me!"
+"OK. I believe you. Let's move away from this topic|before it goes too far!"
 
 #: ../../msn/msn_r2.c:761
 msgid "Eine Partie Schach! Das ist eine gute Idee."
@@ -1757,9 +1752,8 @@ msgid "Du tippst auf den Tasten herum,|aber es passiert nichts."
 msgstr "You tap the buttons,|but nothing happens."
 
 #: ../../msn/msn_r2.c:917
-#, fuzzy
 msgid "Ach, Ihnen gehîrt die. Ich habe sie eben im Sand gefunden."
-msgstr "Oh, they are yours. I just found them in the sand."
+msgstr "Oh, it is yours. I just found it in the sand."
 
 #: ../../msn/msn_r2.c:918
 msgid "Nein, tut mir leid."
@@ -1794,7 +1788,6 @@ msgid "Ich habe gerade Ihre Brieftasche gefunden!"
 msgstr "I just found your wallet!"
 
 #: ../../msn/msn_r2.c:941
-#, fuzzy
 msgid "Sie lag da drÅben hinter einem Felsen."
 msgstr "It was over there behind a rock."
 
@@ -2140,7 +2133,6 @@ msgid "Wie ist der denn mit|Schuhen hier reingekommen?"
 msgstr "How did he get in here|with his shoes on?"
 
 #: ../../msn/msn_r2.c:1278
-#, fuzzy
 msgid "Froschgesicht"
 msgstr "Frog face"
 
@@ -2185,14 +2177,12 @@ msgid "Keycard von Roger"
 msgstr "Roger's keycard"
 
 #: ../../msn/msn_r2.c:1301
-#, fuzzy
 msgid "Anzeige"
-msgstr "Advertisement"
+msgstr "Display"
 
 #: ../../msn/msn_r2.c:1301 ../../msn/msn_r2.c:1302
-#, fuzzy
 msgid "Hmm, seltsame Anzeigen."
-msgstr "Hmm, weird ads."
+msgstr "Hmm, weird instruments."
 
 #: ../../msn/msn_r2.c:1308
 msgid "Roger W."
@@ -2271,9 +2261,8 @@ msgid "Nein!"
 msgstr "No!"
 
 #: ../../msn/msn_r3.c:310
-#, fuzzy
 msgid "Das mÅ·te schon ein bi·chen mehr sein."
-msgstr "That should be a little more than that."
+msgstr "It should be a little more than that."
 
 #: ../../msn/msn_r3.c:324
 msgid "Ok, dann machen Sie da· Sie wegkommen!"
@@ -2551,7 +2540,6 @@ msgid "Es ist nur ein Bild."
 msgstr "It's just a picture."
 
 #: ../../msn/msn_r3.c:1486
-#, fuzzy
 msgid "Sieht etwas anders aus als auf der Erde."
 msgstr "Looks a little different than on Earth."
 
@@ -2568,7 +2556,6 @@ msgid "Roboter"
 msgstr "Robot"
 
 #: ../../msn/msn_r3.c:1490
-#, fuzzy
 msgid "Den hast du erledigt."
 msgstr "You took care of it."
 
@@ -2661,9 +2648,8 @@ msgid "Brief"
 msgstr "Note"
 
 #: ../../msn/msn_r3.c:1635
-#, fuzzy
 msgid "WÅrfel"
-msgstr "Dice"
+msgstr "Cubes"
 
 #: ../../msn/msn_r3.c:1635
 msgid "Sonderbar!"
