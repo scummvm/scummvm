@@ -212,19 +212,20 @@ und des Chats Englisch ist und keine andere Sprache dort verwendet werden
 sollte.
 
 
-2.1) Fehler berichten:
+2.1) Fehler melden:
 ---- -----------------
-Um einen Fehler zu berichten, erstellen Sie bitte ein SourceForge-Konto und
-folgen Sie dem Link „Bug Tracker“ auf der ScummVM-Website. Bitte stellen Sie
-sicher, dass sich der Bug reproduzieren lässt und immer noch in der aktuellen
-Git-Version oder im Daily Build auftritt. Bitte sehen Sie auch auf der
-Kompatibilitätsliste der ScummVM-Website für dieses Spiel nach, um
-sicherzustellen, dass das Problem nicht bereits bekannt ist:
+Um einen Fehler zu melden, folgen Sie dem Link „Fehlerberichte“ auf der
+ScummVM-Website und melden Sie sich dort mit Ihrem GitHub-Konto an.
+Bitte stellen Sie sicher, dass sich der Bug reproduzieren lässt und
+immer noch in der aktuellen Git-Version oder der Entwicklerversion
+auftritt. Bitte sehen Sie auch auf der Kompatibilitätsliste der ScummVM-Website
+für dieses Spiel nach, um sicherzustellen, dass das Problem nicht bereits
+bekannt ist:
 
-  http://www.scummvm.org/compatibility_stable.php
+  <http://scummvm.org/compatibility/>
 
-Bitte berichten Sie keine Fehler zu Spielen, die nicht als durchspielbar im
-Bereich „Supported Games“ oder der Kompatibilitätsliste aufgelistet sind.
+Bitte melden Sie keine Fehler zu Spielen, die nicht als durchspielbar im
+Bereich „Unterstützte Spiele“ oder der Kompatibilitätsliste aufgelistet sind.
 Wir -wissen-, dass diese Spiele Fehler aufweisen.
 
 Bitte liefern Sie folgende Informationen:
