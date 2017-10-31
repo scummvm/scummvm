@@ -660,6 +660,12 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		if (d.md5Entry)
 			continue;
 
+		// Prevent executables being detected as Steam variant. If we don't
+		// know the md5, then it's just the regular executable. Otherwise we
+		// will most likely fail on trying read the index from the executable.
+		// Fixes bug #10290
+		if (gfp->genMethod == kGenRoomNumSteam || gfp->genMethod == kGenDiskNumSteam)
+			continue;
 
 		//  ____            _     ____
 		// |  _ \ __ _ _ __| |_  |___ \ *
