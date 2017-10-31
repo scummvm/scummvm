@@ -37,38 +37,38 @@ static const PlainGameDescriptor supernovaGames[] = {
 
 namespace Supernova {
 static const ADGameDescription gameDescriptions[] = {
-    // Mission Supernova 1
-    {
-        "msn1",
-        NULL,
-        AD_ENTRY1s("msn.exe", "d11264516c529c7fc2ca81d8ba062d9e", 65536),
-        Common::DE_DEU,
-        Common::kPlatformDOS,
-        ADGF_UNSTABLE,
-        GUIO1(GUIO_NONE)
-    },
+	// Mission Supernova 1
 	{
 		"msn1",
 		NULL,
-		AD_ENTRY1s("msn.exe", "d11264516c529c7fc2ca81d8ba062d9e", 65536),
+		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"msn1",
+		NULL,
+		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
-    // Mission Supernova 2
-    {
-        "msn2",
-        NULL,
-        AD_ENTRY1s("ms2.exe", "e1b725393c3665f30efa96e2f46d589e", 82944),
-        Common::DE_DEU,
-        Common::kPlatformDOS,
-        ADGF_UNSTABLE,
-        GUIO1(GUIO_NONE)
-    },
+	// Mission Supernova 2
+	{
+		"msn2",
+		NULL,
+		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
 
-    AD_TABLE_END_MARKER
+	AD_TABLE_END_MARKER
 };
 }
 
