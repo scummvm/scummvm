@@ -911,6 +911,10 @@ bool SupernovaEngine::loadGame(int slot) {
 		return false; //Common::kUnknownError;
 	}
 
+	// Make sure no message is displayed as this would otherwise delay the
+	// switch to the new location until a mouse click.
+	removeMessage();
+
 	int descriptionSize = savefile->readSint16LE();
 	savefile->skip(descriptionSize);
 	savefile->skip(6);
