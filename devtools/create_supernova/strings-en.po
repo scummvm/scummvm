@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Mission Supernova 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-22 19:53+0100\n"
-"PO-Revision-Date: 2017-10-29 16:51+0000\n"
+"PO-Revision-Date: 2017-10-31 22:17+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
@@ -227,7 +227,7 @@ msgstr "You already have that."
 #. I18N: You do not need that.
 #: ../../msn/msn.c:3360
 msgid "Das brauchst du nicht."
-msgstr "You do not need that."
+msgstr "You don't need that."
 
 #. I18N: You can't take that.
 #: ../../msn/msn.c:3363
@@ -267,7 +267,7 @@ msgstr "Better keep it!"
 #. I18N: This is not possible.
 #: ../../msn/msn.c:3418
 msgid "Das geht nicht."
-msgstr "This is not possible."
+msgstr "You can't do that."
 
 #: ../../msn/msn_mod.c:573
 msgid "^(C) 1994 Thomas und Steffen Dingel#"
@@ -470,7 +470,7 @@ msgstr "You must take off your helmet first."
 
 #: ../../msn/msn_r0.c:397
 msgid "Du mu·t erst den Versorgungsteil abnehmen."
-msgstr "You must take off your supply first."
+msgstr "You must take off your oxygen supply unit first."
 
 #: ../../msn/msn_r0.c:401
 msgid "Du ziehst den Raumanzug aus."
@@ -484,6 +484,10 @@ msgstr "You put on your space suit."
 msgid "Den Helm hÑttest du|besser angelassen!"
 msgstr "You should have kept your helmet on!"
 
+#: ../../msn/msn_r0.c:433
+msgid "Du ziehst den Helm ab."
+msgstr "You put on your helmet."
+
 #: ../../msn/msn_r0.c:441
 msgid "Du ziehst den Helm auf."
 msgstr "You take off your helmet."
@@ -494,15 +498,15 @@ msgstr "You must wear the suit first."
 
 #: ../../msn/msn_r0.c:467
 msgid "Den Versorungsteil hÑttest du|besser nicht abgenommen!"
-msgstr "You should have not taken off your supply!"
+msgstr "You should not have taken off your oxygen supply unit!"
 
 #: ../../msn/msn_r0.c:469
 msgid "Du nimmst den Versorgungsteil ab."
-msgstr "You take off your supply."
+msgstr "You take off your oxygen supply unit."
 
 #: ../../msn/msn_r0.c:477
 msgid "Du ziehst den Versorgungsteil an."
-msgstr "You put on your supply."
+msgstr "You put on your oxygen supply unit."
 
 #: ../../msn/msn_r0.c:489
 msgid "Die Leitung ist hier unnÅtz."
@@ -692,7 +696,7 @@ msgstr "Emergency energy supply active"
 
 #: ../../msn/msn_r1.c:447
 msgid "Zu niedriger Luftdruck soll ungesund sein."
-msgstr "Air pressure too low is unhealthy."
+msgstr "Air pressure too low unhealthy is."
 
 #: ../../msn/msn_r1.c:454
 msgid "Er zeigt Null an."
@@ -816,7 +820,7 @@ msgstr "What?! No one in the cockpit!|They're crazy!"
 
 #: ../../msn/msn_r1.c:1105
 msgid "Komisch, es ist nur|noch ein Raumanzug da."
-msgstr "Funny, there's only|one spacesuit."
+msgstr "Funny, there's only|one space suit."
 
 #: ../../msn/msn_r1.c:1113
 msgid ""
@@ -942,23 +946,23 @@ msgstr "Helmet"
 
 #: ../../msn/msn_r1_r.c:69
 msgid "Es ist der Helm zum Raumanzug."
-msgstr "This is the helmet for the spacesuit."
+msgstr "This is the helmet for the space suit."
 
 #: ../../msn/msn_r1_r.c:70
 msgid "Raumanzug"
-msgstr "Spacesuit"
+msgstr "Space suit"
 
 #: ../../msn/msn_r1_r.c:70
 msgid "Der einzige Raumanzug, den die|anderen hiergelassen haben ..."
-msgstr "The only space suit the others have left ..."
+msgstr "The only space suit left behind by the others..."
 
 #: ../../msn/msn_r1_r.c:72
 msgid "Versorgung"
-msgstr "Oxygen Supply"
+msgstr "Oxygen Supply Unit"
 
 #: ../../msn/msn_r1_r.c:72
 msgid "Es ist der Versorgungsteil zum Raumanzug."
-msgstr "It is the supply for the spacesuit."
+msgstr "It is the oxygen supply unit for the space suit."
 
 #: ../../msn/msn_r1_r.c:74
 msgid "Druckmesser"
@@ -1099,8 +1103,8 @@ msgid ""
 "Auf dem Zettel sind lauter|unverstÑndliche Skizzen und Berechnungen.|"
 "(Jedenfalls fÅr dich unverstÑndlich.)"
 msgstr ""
-"There are incomprehensible sketches|and calculations on that note.|(In any "
-"case, it's incomprehensible to you.)"
+"There are incomprehensible sketches|and calculations on that note.|(At "
+"least, it's incomprehensible to you.)"
 
 #: ../../msn/msn_r1_r.c:148 ../../msn/msn_r1_r.c:215 ../../msn/msn_r1_r.c:233
 #: ../../msn/msn_r1_r.c:276
@@ -1230,7 +1234,7 @@ msgstr "Brilliant!"
 
 #: ../../msn/msn_r1_r.c:217
 msgid "Es scheint noch nicht fertig zu sein."
-msgstr "It doesn't seem ready yet."
+msgstr "It looks like it is not yet finished."
 
 #: ../../msn/msn_r1_r.c:218
 msgid "Stift"
@@ -1262,7 +1266,7 @@ msgstr "Record"
 
 #: ../../msn/msn_r1_r.c:235
 msgid "Die Platte ist von \"Big Boss\"."
-msgstr "This record is the soundtrack from \"Big Boss\"."
+msgstr "A record from \"Big Boss\"."
 
 #: ../../msn/msn_r1_r.c:237
 msgid "SchallplattenstÑnder"
@@ -1894,7 +1898,7 @@ msgstr "Don't worry, we just want to help you."
 
 #: ../../msn/msn_r2.c:1152
 msgid "Und wieso hat der Typ im Raumanzug|eben auf mich geschossen?"
-msgstr "And why did the guy in the spacesuit|shoot at me?"
+msgstr "And why did the guy in the space suit|shoot at me?"
 
 #: ../../msn/msn_r2.c:1153
 msgid "Das war eine Schreckreaktion."
