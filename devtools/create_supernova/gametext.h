@@ -98,9 +98,9 @@ const char *gameText[] = {
 	// 50
 	"Leiter",                                // kStringLadder
 	"Ausgang",                               // kStringExit
-	"Sie f\204hrt ins Cockpit.",             // kStringCockpitHatchDescription
-	"Sie f\204hrt zur K\201che.",            // kStringKitchenHatchDescription
-	"Sie f\204hrt zu den Tiefschlafkammern.", // kStringStasisHatchDescription
+	"Sie f\201hrt ins Cockpit.",             // kStringCockpitHatchDescription
+	"Sie f\201hrt zur K\201che.",            // kStringKitchenHatchDescription
+	"Sie f\201hrt zu den Tiefschlafkammern.", // kStringStasisHatchDescription
 	// 55
 	"Dies ist eine der Tiefschlafkammern.",  // kStringStasisHatchDescription2
 	"Schlitz",                               // kStringSlot
