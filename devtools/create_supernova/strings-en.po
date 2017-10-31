@@ -1051,7 +1051,7 @@ msgstr "Empty cable reel"
 
 #: ../../msn/msn_r1_r.c:117
 msgid ""
-"Hey, das ist die Keycard des Commanders!|Er muá sie bei dem šberstrzten|"
+"Hey, das ist die Keycard des Commanders!|Er muá sie bei dem berstrzten|"
 "Aufbruch verloren haben."
 msgstr ""
 "Hey, that's the commander's keycard!|He must have lost it in the rushed|"
