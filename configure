@@ -192,7 +192,6 @@ _plugin_prefix=
 _plugin_suffix=
 _nasm=auto
 _optimization_level=
-_default_optimization_level=-O2
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -1664,20 +1663,6 @@ fi
 # Determine extra build flags for debug and/or release builds
 #
 
-case $_host in
-caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp2)
-	if test "$_debug_build" = auto; then
-		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
-		_debug_build=no
-	fi
-
-	if test "$_optimizations" = auto; then
-		# Enable optimizations by default.
-		_optimizations=yes
-	fi
-	;;
-esac
-
 if test "$_debug_build" != no; then
 	# debug mode not explicitly disabled -> compile with debug information
 	case $_host_os in
@@ -2327,7 +2312,6 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	3ds)
-		_optimization_level=-O2
 		append_var DEFINES "-D__3DS__"
 		append_var DEFINES "-DARM"
 		append_var DEFINES "-DARM11"
@@ -2415,7 +2399,6 @@ case $_host_os in
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var CXXFLAGS "-fstrict-aliasing"
 		fi
-		_optimization_level=-Os
 
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
@@ -2584,7 +2567,6 @@ case $_host_os in
 		append_var CXXFLAGS "-I/usr/local/include"
 		;;
 	gamecube)
-		_optimization_level=-Os
 		append_var CXXFLAGS "-mogc"
 		append_var CXXFLAGS "-mcpu=750"
 		append_var CXXFLAGS "-meabi"
@@ -2691,14 +2673,7 @@ case $_host_os in
 		append_var CXXFLAGS "-fno-optimize-sibling-calls"
 		#the next line fixes "branch out of range" error in gob engine when -Os is used
 		append_var CXXFLAGS "-mlong-calls"
-		if test "$_debug_build" = no; then
-		#optimize for smallest file size. This is necessary to prevent a crash on startup
-		#due to the large executable file size when many engines are enabled
-		#for example when --enable-all-engines is used to enable all the unstable engines
-			_optimization_level=-Os
-		fi
 		if test "$_debug_build" = yes; then
-			_optimization_level=-O0
 			append_var DEFINES "-D__PSP2_DEBUG__"
 			append_var LIBS "-lpsp2shell"
 		fi
@@ -2711,7 +2686,6 @@ case $_host_os in
 		fi
 		append_var LDFLAGS "-L$PSPSDK/lib"
 		append_var LDFLAGS "-specs=$_srcdir/backends/platform/psp/psp.spec"
-		_optimization_level=-O3
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
@@ -2728,7 +2702,6 @@ case $_host_os in
 		append_var CXXFLAGS "-march=armv3m"
 		append_var CXXFLAGS "-mtune=xscale"
 		append_var LDFLAGS "-static"
-		_optimization_level=-O2
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-fdata-sections"
 		append_var LDFLAGS "-Wl,--gc-sections"
@@ -2763,7 +2736,6 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	wii)
-		_optimization_level=-Os
 		append_var CXXFLAGS "-mrvl"
 		append_var CXXFLAGS "-mcpu=750"
 		append_var CXXFLAGS "-meabi"
@@ -2784,7 +2756,6 @@ case $_host_os in
 		fi
 		;;
 	wince)
-		_optimization_level=-O3
 		append_var CXXFLAGS "-fno-inline-functions"
 		append_var CXXFLAGS "-march=armv4"
 		append_var CXXFLAGS "-mtune=xscale"
@@ -2848,10 +2819,6 @@ if test -n "$_host"; then
 			;;
 		caanoo)
 			append_var DEFINES "-DCAANOO"
-			if test "$_debug_build" = no; then
-				# Use -O3 on the Caanoo for non-debug builds.
-				_optimization_level=-O3
-			fi
 			append_var CXXFLAGS "-mcpu=arm926ej-s"
 			append_var CXXFLAGS "-mtune=arm926ej-s"
 			_backend="gph"
@@ -2875,7 +2842,6 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
 			_mt32emu=no
-			_optimization_level=-O3
 			# Disable alsa midi to get the port build on OpenDingux toolchain
 			_alsa=no
 			# Disable cloud and SDL_Net due to outdated toolchain
@@ -2926,7 +2892,6 @@ if test -n "$_host"; then
 			if test "$_release_build" = yes -o "$_debug_build" != yes; then
 				append_var DEFINES "-DNOSERIAL"
 			fi
-			_optimization_level=-O3
 			append_var CXXFLAGS "-funroll-loops"
 			append_var CXXFLAGS "-fschedule-insns2"
 			append_var CXXFLAGS "-fomit-frame-pointer"
@@ -2984,7 +2949,6 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_timidity=no
 			_build_scalers=yes
-			_optimization_level=-O3
 			_vkeybd=yes
 			_keymapper=yes
 			_vorbis=no
@@ -3042,7 +3006,6 @@ if test -n "$_host"; then
 			_seq_midi=no
 			;;
 		maemo)
-			_optimization_level=-Os
 			append_var CXXFLAGS "-mcpu=arm926ej-s"
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var INCLUDES "-I/usr/X11R6/include"
@@ -3131,11 +3094,6 @@ if test -n "$_host"; then
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			if test "$_release_build" = no; then
 				append_var DEFINES "-DOP_DEBUG"
-			fi
-
-			# Use -O3 on the OpenPandora for optimized builds.
-			if test "$_optimizations" = yes; then
-				_optimization_level=-O3
 			fi
 
 			append_var CXXFLAGS "-march=armv7-a"
@@ -3635,28 +3593,43 @@ echo_n "Checking whether to have a verbose build... "
 echo "$_verbose_build"
 add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
 
-
-#
-# If a specific optimization level was requested, enable optimizations
-#
-if test -n "$_optimization_level" ; then
-	# Ports will specify an optimization level and expect that to be enabled
-	if test "$_optimizations" != no ; then
-		_optimizations=yes
-	fi
-else
-	_optimization_level=$_default_optimization_level
-fi
-
 #
 # Check whether to enable optimizations
 #
+echo_n "Checking best optimization level... "
+cat > $TMPC << EOF
+int main() { return 0; }
+EOF
 if test "$_optimizations" = yes ; then
-	# Enable optimizations. This also
-	# makes it possible to use -Wuninitialized, so let's do that.
+	if test -z "$_optimization_level" ; then
+		# For pretty much all systems, -Os is the best level if it is supported
+		# by the compiler, since old devices are memory-constrained and (as a
+		# default optimization strategy) new devices are generally fastest when
+		# cache misses are minimized by keeping the code small as well.
+		cc_check_no_clean -Os && _optimization_level=-Os || _optimization_level=-O2
+		echo_n -- "$_optimization_level"
+	else
+		echo_n -- "$_optimization_level (forced)"
+	fi
 	append_var CXXFLAGS "$_optimization_level"
+
+	if cc_check_no_clean $_optimization_level -ftree-vectorize; then
+		echo_n " with auto-vectorization"
+		append_var CXXFLAGS "-ftree-vectorize"
+	fi
+	echo ""
+
+	# Enabling optimizations also makes it possible to use -Wuninitialized, so
+	# let's do that.
 	append_var CXXFLAGS "-Wuninitialized"
+elif test "$_optimizations" != no && cc_check_no_clean -Og; then
+	echo "-Og"
+	append_var CXXFLAGS "-Og"
+	append_var CXXFLAGS "-Wuninitialized"
+else
+	echo "none"
 fi
+cc_check_clean
 
 #
 # Check whether plugin support is requested and possible
