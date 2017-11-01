@@ -475,9 +475,9 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	s.syncString(saveDescription, 149);
 
 #ifdef SCUMM_BIG_ENDIAN
-	Graphics::PixelFormat saveFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 0, 8, 16);
+	Graphics::PixelFormat saveFormat = Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0);
 #else
-	Graphics::PixelFormat saveFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	Graphics::PixelFormat saveFormat = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24);
 #endif
 
 	if (s.isLoading()) {
