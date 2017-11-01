@@ -55,6 +55,13 @@ PLUGIN:=
 # Add to "plugins" target
 plugins: $(PLUGIN-$(MODULE))
 
+ifdef SPLIT_DWARF
+$(PLUGIN-$(MODULE)).dwp: $(PLUGIN-$(MODULE))
+	$(QUIET_DWP)$(DWP) -e $(PLUGIN-$(MODULE))
+
+plugins: $(PLUGIN-$(MODULE)).dwp
+endif
+
 # Add to the PLUGINS variable
 PLUGINS += $(PLUGIN-$(MODULE))
 
