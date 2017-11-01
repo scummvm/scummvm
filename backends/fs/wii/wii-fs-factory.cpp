@@ -22,8 +22,7 @@
 
 #if defined(__WII__)
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <unistd.h>
 

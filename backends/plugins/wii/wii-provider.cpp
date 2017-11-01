@@ -20,9 +20,11 @@
  *
  */
 
-#include "common/scummsys.h"
-
 #if defined(DYNAMIC_MODULES) && defined(__WII__)
+
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/scummsys.h"
 
 #include <malloc.h>
 #include <ogc/cache.h>
