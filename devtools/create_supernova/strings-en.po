@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Mission Supernova 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-22 19:53+0100\n"
-"PO-Revision-Date: 2017-10-31 22:17+0000\n"
+"PO-Revision-Date: 2017-11-01 00:16+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
@@ -486,11 +486,11 @@ msgstr "You should have kept your helmet on!"
 
 #: ../../msn/msn_r0.c:433
 msgid "Du ziehst den Helm ab."
-msgstr "You put on your helmet."
+msgstr "You take off your helmet."
 
 #: ../../msn/msn_r0.c:441
 msgid "Du ziehst den Helm auf."
-msgstr "You take off your helmet."
+msgstr "You put on your helmet."
 
 #: ../../msn/msn_r0.c:443 ../../msn/msn_r0.c:479
 msgid "Du mu·t erst den Anzug anziehen."
@@ -608,8 +608,8 @@ msgid ""
 "Es wÅrde wenig bringen,|sich in eine Schlafkammer zu legen,|die nicht "
 "eingeschaltet ist."
 msgstr ""
-"Going into a stasis pod|that is not switched on|is not going to achieve "
-"anything."
+"You are not going to achieve anything|by using a stasis pod that is|not "
+"switched on."
 
 #: ../../msn/msn_r1.c:174
 msgid "Dazu mu·t du erst den Raumanzug ausziehen."
