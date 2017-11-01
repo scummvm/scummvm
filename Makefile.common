@@ -8,6 +8,9 @@
 
 all: $(EXECUTABLE) plugins
 
+ifdef SPLIT_DWARF
+all: $(EXECUTABLE).dwp
+endif
 
 ######################################################################
 # Module settings
@@ -70,6 +73,7 @@ QUIET_AR      = @echo '   ' AR '     ' $@;
 QUIET_RANLIB  = @echo '   ' RANLIB ' ' $@;
 QUIET_PLUGIN  = @echo '   ' PLUGIN ' ' $@;
 QUIET_LINK    = @echo '   ' LINK '   ' $@;
+QUIET_DWP     = @echo '   ' DWP '    ' $@;
 QUIET_WINDRES = @echo '   ' WINDRES '' $@;
 QUIET         = @
 endif
@@ -80,12 +84,20 @@ endif
 $(EXECUTABLE): $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
+ifdef SPLIT_DWARF
+$(EXECUTABLE).dwp: $(EXECUTABLE)
+	$(QUIET_DWP)$(DWP) -e $(EXECUTABLE)
+endif
+
 distclean: clean clean-devtools
 	$(RM) config.h config.mk config.log engines/engines.mk engines/plugins_table.h
 
 clean:
 	$(RM_REC) $(DEPDIRS)
 	$(RM) $(OBJS) $(EXECUTABLE)
+ifdef SPLIT_DWARF
+	$(RM) $(EXECUTABLE).dwp
+endif
 
 
 #
