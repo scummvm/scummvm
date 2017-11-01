@@ -1690,7 +1690,7 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 
 	_vm->_cursor->changeCursor(2);
 
-	bool mousePressed = true;
+	int16 previousPosition = -1;
 	while (true) {
 		float ratioPosition = 0.0;
 		// Compute the distance to the minimum lever point
@@ -1739,7 +1739,7 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 		_vm->processInput(false);
 		_vm->drawFrame();
 
-		mousePressed = _vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
+		bool mousePressed = (_vm->getEventManager()->getButtonState() & Common::EventManager::LBUTTON) != 0;
 		_vm->_state->setDragEnded(!mousePressed);
 
 		if (_vm->_state->getDragLeverSpeed()) {
@@ -1747,10 +1747,11 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 			return;
 		}
 
-		if (script) {
+		if (script && (position != previousPosition || !mousePressed)) {
 			_vm->_state->setVar(var, position);
 			_vm->runScriptsFromNode(abs(script));
 		}
+		previousPosition = position;
 
 		if (!mousePressed || _vm->shouldQuit())
 			break;
@@ -1772,13 +1773,13 @@ void Script::leverDragPositions(Context &c, const Opcode &cmd) {
 
 	_vm->_cursor->changeCursor(2);
 
-	bool mousePressed = true;
+	int16 previousPosition = -1;
 	while (true) {
 		float pitch, heading;
 		_vm->_cursor->getDirection(pitch, heading);
 
 		float minDistance = 180.0;
-		uint position = 0;
+		int16 position = 0;
 
 		// Find the lever position where the distance between the lever
 		// and the mouse is minimal, by trying every possible position.
@@ -1802,7 +1803,7 @@ void Script::leverDragPositions(Context &c, const Opcode &cmd) {
 		_vm->processInput(false);
 		_vm->drawFrame();
 
-		mousePressed = _vm->inputValidatePressed();
+		bool mousePressed = _vm->inputValidatePressed();
 		_vm->_state->setDragEnded(!mousePressed);
 
 		if (_vm->_state->getDragLeverSpeed()) {
@@ -1810,10 +1811,11 @@ void Script::leverDragPositions(Context &c, const Opcode &cmd) {
 			return;
 		}
 
-		if (script) {
+		if (script && (position != previousPosition || !mousePressed)) {
 			_vm->_state->setVar(var, position);
 			_vm->runScriptsFromNode(abs(script));
 		}
+		previousPosition = position;
 
 		if (!mousePressed || _vm->shouldQuit())
 			break;
