@@ -2074,9 +2074,7 @@ esac
 # If possible, we want to use -Wglobal-constructors
 # However, not all compilers support that, so check whether the active one does.
 echocheck "whether -Wglobal-constructors work"
-cat > $TMPC << EOF
-int main() { return 0; }
-EOF
+echo "int main() { return 0; }" > $TMPC
 cc_check -Wglobal-constructors -Werror && _global_constructors=yes
 
 if test "$_global_constructors" = yes; then
@@ -2091,9 +2089,7 @@ echo $_global_constructors
 # Note: we check the -Wundefined-var-template as gcc does not error out on unknown
 # -Wno-xxx flags.
 echocheck "whether -Wno-undefined-var-template work"
-cat > $TMPC << EOF
-int main() { return 0; }
-EOF
+echo "int main() { return 0; }" > $TMPC
 cc_check -Wundefined-var-template -Werror && _no_undefined_var_template=yes
 
 if test "$_no_undefined_var_template" = yes; then
@@ -3618,9 +3614,7 @@ add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
 # Check whether to enable optimizations
 #
 echo_n "Checking best optimization level... "
-cat > $TMPC << EOF
-int main() { return 0; }
-EOF
+echo "int main() { return 0; }" > $TMPC
 if test "$_optimizations" = yes ; then
 	if test -z "$_optimization_level" ; then
 		# For pretty much all systems, -Os is the best level if it is supported
