@@ -57,6 +57,12 @@ For a more comprehensive changelog of the latest experimental code, see:
  MADE:
    - Fixed badly distorted sound (bug #9753).
 
+ MOHAWK:
+   - Added patch to the original data files to correct the vault access
+     instructions in Myst ME.
+   - Fixed situations where Myst could appear to be unresponsive.
+   - Reworked sound handling in Myst to be more accurate.
+
  SCI:
    - Improved startup speed when using the MT-32 emulator.
    - Improved handling of MT-32 reverb in SCI0 games.
