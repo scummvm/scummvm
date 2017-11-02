@@ -494,7 +494,7 @@ const char *gameText[] = {
 	//380
 	"Das Seil ist hier schon ganz richtig.", // kStringShipHold15
 	"Das Kabel ist zu kurz.", // kStringShipHold16
-	"Die Raumschifft sind alle verschlossen.", // kStringArsanoMeetup1
+	"Die Raumschiffe sind alle verschlossen.", // kStringArsanoMeetup1
 	"Unsinn!", // kStringArsanoMeetup2
 	"Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Treffpunkt Galactica\".", // kStringArsanoMeetup3
 	//385
