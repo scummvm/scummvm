@@ -317,9 +317,8 @@ bool DrasculaEngine::loadGame(int slot) {
 	takeObject = in->readSint32LE();
 	pickedObject = in->readSint32LE();
 	_loadedDifferentChapter = false;
-	if (!sscanf(currentData, "%d.ald", &roomNum)) {
+	if (!sscanf(currentData, "%d.ald", &roomNum))
 		error("Bad save format");
-	}
 
 	// When loading room 102 while being attached below the pendulum Some variables
 	// are not correctly set and can cause random crashes when calling enterRoom below.
