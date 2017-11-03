@@ -456,7 +456,6 @@ public:
 	int blinking;
 	int igorX, igorY, trackIgor;
 	int drasculaX, drasculaY, trackDrascula;
-	int bjX, bjY, trackBJ;
 	int framesWithoutAction;
 	int term_int;
 	int currentChapter;
@@ -526,7 +525,6 @@ public:
 	bool animate(const char *animation, int FPS);
 	void pause(int);
 	void placeIgor();
-	void placeBJ();
 	void placeDrascula();
 
 	void talkInit(const char *filename);

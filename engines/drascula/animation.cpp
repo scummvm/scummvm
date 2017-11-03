@@ -430,9 +430,6 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		for (l = 0; l < 200; l++)
 			factor_red[l] = 99;
-		bjX = 170;
-		bjY = 90;
-		trackBJ = 0;
 		curX = 91;
 		curY = 95;
 		trackProtagonist = 1;

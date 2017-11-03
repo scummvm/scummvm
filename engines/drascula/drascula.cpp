@@ -70,9 +70,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_talkSequences = 0;
 	_currentSaveSlot = 0;
 
-	bjX = 0;
-	bjY = 0;
-	trackBJ = 0;
     framesWithoutAction = 0;
 	term_int = 0;
 	currentChapter = 0;

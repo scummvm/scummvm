@@ -55,17 +55,6 @@ void DrasculaEngine::placeDrascula() {
 		copyRect(drX, 122, drasculaX, drasculaY, 45, 77, backSurface, screenSurface);
 }
 
-void DrasculaEngine::placeBJ() {
-	int bX = 0;
-
-	if (trackBJ == 3)
-		bX = 10;
-	else if (trackBJ == 0)
-		bX = 37;
-
-	copyRect(bX, 99, bjX, bjY, 26, 76, drawSurface3, screenSurface);
-}
-
 void DrasculaEngine::hiccup(int counter) {
 	int y = 0, trackCharacter = 0;
 	if (currentChapter == 3)

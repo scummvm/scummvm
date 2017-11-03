@@ -1153,9 +1153,6 @@ void DrasculaEngine::updateRefresh_pre() {
 			break;
 		}
 	}
-
-	if (currentChapter == 1 && _roomNumber == 16)
-		placeBJ();
 }
 
 void DrasculaEngine::update_1_pre() {
@@ -1309,15 +1306,15 @@ void DrasculaEngine::update_14_pre() {
 }
 
 void DrasculaEngine::update_16_pre() {
-	if (currentChapter != 2) {
-		debug(4, "update_16_pre: Special case, current chapter is not 2, not performing update");
-		return;
+	if (currentChapter == 1) {
+		// Place BJ
+		copyRect(37, 99, 170, 90, 26, 76, drawSurface3, screenSurface);
+	} else if (currentChapter == 2) {
+		if (flags[17] == 0)
+			copyBackground(1, 103, 24, 72, 33, 95, drawSurface3, screenSurface);
+		if (flags[19] == 1)
+			copyBackground(37, 151, 224, 115, 56, 47, drawSurface3, screenSurface);
 	}
-
-	if (flags[17] == 0)
-		copyBackground(1, 103, 24, 72, 33, 95, drawSurface3, screenSurface);
-	if (flags[19] == 1)
-		copyBackground(37, 151, 224, 115, 56, 47, drawSurface3, screenSurface);
 }
 
 void DrasculaEngine::update_18_pre() {
@@ -1678,9 +1675,8 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	strcpy(currentData, fileName);
 
 	Common::SeekableReadStream *stream = _archives.open(fileName);
-	if (!stream) {
+	if (!stream)
 		error("missing data file %s", fileName);
-	}
 
 	TextResourceParser p(stream, DisposeAfterUse::YES);
 
