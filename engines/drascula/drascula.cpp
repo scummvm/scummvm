@@ -744,8 +744,7 @@ bool DrasculaEngine::verify1() {
 		removeObject();
 	else {
 		for (l = 0; l < numRoomObjs; l++) {
-			if (_mouseX >= _objectX1[l] && _mouseY >= _objectY1[l]
-					&& _mouseX <= _objectX2[l] && _mouseY <= _objectY2[l] && doBreak == 0) {
+			if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && doBreak == 0) {
 				if (exitRoom(l))
 					return true;
 				if (doBreak == 1)
@@ -758,10 +757,9 @@ bool DrasculaEngine::verify1() {
 			doBreak = 1;
 
 		for (l = 0; l < numRoomObjs; l++) {
-			if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
-					&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l] && doBreak == 0) {
-				roomX = roomObjX[l];
-				roomY = roomObjY[l];
+			if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && doBreak == 0) {
+				roomX = _roomObject[l].x;
+				roomY = _roomObject[l].y;
 				trackFinal = trackObj[l];
 				doBreak = 1;
 				_walkToObject = true;
@@ -792,11 +790,10 @@ bool DrasculaEngine::verify2() {
 				return true;
 		} else {
 			for (l = 0; l < numRoomObjs; l++) {
-				if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
-						&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l] && visible[l] == 1) {
+				if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && visible[l] == 1) {
 					trackFinal = trackObj[l];
 					_walkToObject = true;
-					gotoObject(roomObjX[l], roomObjY[l]);
+					gotoObject(_roomObject[l].x, _roomObject[l].y);
 					if (checkAction(objectNum[l]))
 						return true;
 					if (currentChapter == 4)

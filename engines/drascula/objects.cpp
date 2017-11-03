@@ -102,9 +102,7 @@ void DrasculaEngine::checkObjects() {
 	_hasName = false;
 
 	for (l = 0; l < numRoomObjs; l++) {
-		if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
-				&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l]
-				&& visible[l] == 1 && isDoor[l] == 0) {
+		if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && visible[l] == 1 && isDoor[l] == 0) {
 			strcpy(textName, objName[l]);
 			_hasName = true;
 		}

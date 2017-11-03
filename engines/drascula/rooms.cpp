@@ -1705,24 +1705,29 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	p.parseInt(numRoomObjs);
 
+	int x1, y1, x2, y2;
+
 	for (l = 0; l < numRoomObjs; l++) {
 		p.parseInt(objectNum[l]);
 		p.parseString(objName[l]);
-		p.parseInt(_objectX1[l]);
-		p.parseInt(_objectY1[l]);
-		p.parseInt(_objectX2[l]);
-		p.parseInt(_objectY2[l]);
-		p.parseInt(roomObjX[l]);
-		p.parseInt(roomObjY[l]);
+		p.parseInt(x1);
+		p.parseInt(y1);
+		p.parseInt(x2);
+		p.parseInt(y2);
+		_objectRect[l] = Common::Rect(x1, y1, x2, y2);
+		p.parseInt(x1);
+		p.parseInt(y1);
+		_roomObject[l] = Common::Point(x1, y1);
 		p.parseInt(trackObj[l]);
 		p.parseInt(visible[l]);
 		p.parseInt(isDoor[l]);
 		if (isDoor[l] != 0) {
-			p.parseString(_targetSurface[l]);
-			p.parseInt(_destX[l]);
-			p.parseInt(_destY[l]);
+			p.parseInt(_doorDestRoom[l]);
+			p.parseInt(x1);
+			p.parseInt(y1);
+			_doorDestPoint[l] = Common::Point(x1, y1);
 			p.parseInt(trackCharacter_alkeva[l]);
-			p.parseInt(roomExits[l]);
+			p.parseInt(_roomExitId[l]);
 			updateDoor(l);
 		}
 	}
@@ -1767,8 +1772,8 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	if (currentChapter == 2) {
 		if (curX == -1) {
-			curX = _destX[objIsExit];
-			curY = _destY[objIsExit] - curHeight;
+			curX = _doorDestPoint[objIsExit].x;
+			curY = _doorDestPoint[objIsExit].y - curHeight;
 		}
 		_characterMoved = false;
 	}
@@ -1820,8 +1825,8 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	if (currentChapter != 2) {
 		if (curX == -1) {
-			curX = _destX[objIsExit];
-			curY = _destY[objIsExit];
+			curX = _doorDestPoint[objIsExit].x;
+			curY = _doorDestPoint[objIsExit].y;
 			curHeight = (CHARACTER_HEIGHT * factor_red[curY]) / 100;
 			curWidth = (CHARACTER_WIDTH * factor_red[curY]) / 100;
 			curY = curY - curHeight;
@@ -1915,7 +1920,7 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 		((currentChapter != 3 && currentChapter != 5) || visible[doorNumber] == 1)) {
 
 		hideCursor();
-		gotoObject(roomObjX[doorNumber], roomObjY[doorNumber]);
+		gotoObject(_roomObject[doorNumber].x, _roomObject[doorNumber].y);
 		if (currentChapter != 2) {
 			trackProtagonist = trackObj[doorNumber];
 			updateRoom();
@@ -1923,7 +1928,7 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 		}
 		_characterMoved = false;
 		trackProtagonist = trackCharacter_alkeva[doorNumber];
-		objExit = roomExits[doorNumber];
+		objExit = _roomExitId[doorNumber];
 		doBreak = 1;
 		previousMusic = roomMusic;
 
@@ -1960,9 +1965,7 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 			_characterVisible = true;
 
 		clearRoom();
-		if (!sscanf(_targetSurface[doorNumber], "%d", &roomNum)) {
-			error("Malformed roomNum in targetSurface (%s)", _targetSurface[doorNumber]);
-		}
+		roomNum = _doorDestRoom[doorNumber];
 		curX = -1;
 		enterRoom(roomNum);
 

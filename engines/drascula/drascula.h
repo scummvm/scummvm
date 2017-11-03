@@ -420,11 +420,13 @@ public:
 	char iconName[44][13];
 
 	int objectNum[40], visible[40], isDoor[40];
-	int roomObjX[40], roomObjY[40], trackObj[40];
+	int trackObj[40];
+	Common::Point _roomObject[40];
 	int inventoryObjects[43];
-	char _targetSurface[40][20];
-	int _destX[40], _destY[40], trackCharacter_alkeva[40], roomExits[40];
-	int _objectX1[40], _objectY1[40], _objectX2[40], _objectY2[40];
+	int _doorDestRoom[40];
+	Common::Point _doorDestPoint[40];
+	int trackCharacter_alkeva[40], _roomExitId[40];
+	Common::Rect _objectRect[40];
 	int takeObject, pickedObject;
 	bool _subtitlesDisabled;
 	bool _menuBar, _menuScreen, _hasName;
