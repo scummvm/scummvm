@@ -457,7 +457,6 @@ public:
 	int blinking;
 	int igorX, igorY, trackIgor;
 	int drasculaX, drasculaY, trackDrascula;
-	int framesWithoutAction;
 	int term_int;
 	int currentChapter;
 	bool _loadedDifferentChapter;

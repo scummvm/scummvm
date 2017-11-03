@@ -70,7 +70,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_talkSequences = 0;
 	_currentSaveSlot = 0;
 
-    framesWithoutAction = 0;
 	term_int = 0;
 	currentChapter = 0;
 	_loadedDifferentChapter = false;
@@ -310,7 +309,6 @@ Common::Error DrasculaEngine::run() {
 		vonBraunX = 120;
 		trackVonBraun = 1;
 		vonBraunHasMoved = 0;
-		framesWithoutAction = 0;
 		term_int = 0;
 		musicStopped = 0;
 		globalSpeed = 0;
@@ -399,6 +397,7 @@ void DrasculaEngine::endChapter() {
 
 bool DrasculaEngine::runCurrentChapter() {
 	int n;
+	int framesWithoutAction = 0;
 
 	_rightMouseButton = 0;
 
