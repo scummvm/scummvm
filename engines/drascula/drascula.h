@@ -435,8 +435,8 @@ public:
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int curX, curY, characterMoved, curDirection, trackProtagonist, _characterFrame;
-	int characterVisible;
+	int curX, curY, curDirection, trackProtagonist, _characterFrame;
+	bool _characterMoved, _characterVisible;
 	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;

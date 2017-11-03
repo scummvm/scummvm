@@ -980,12 +980,12 @@ bool DrasculaEngine::room_59(int fl) {
 			playSound(12);
 			pause(19);
 			stopSound();
-			characterVisible = 0;
+			_characterVisible = false;
 			updateRoom();
 			copyRect(101, 34, curX - 4, curY - 1, 37, 70, drawSurface3, screenSurface);
 			copyBackground(0, 0, 0, 0, 320, 200, screenSurface, bgSurface);
 			updateScreen();
-			characterVisible = 1;
+			_characterVisible = true;
 			clearRoom();
 			loadPic("tlef0.alg", bgSurface, COMPLETE_PAL);
 			loadPic("tlef1.alg", drawSurface3);
@@ -1399,7 +1399,7 @@ void DrasculaEngine::update_58_pre() {
 }
 
 void DrasculaEngine::update_58() {
-	if (characterVisible == 1)
+	if (_characterVisible)
 		copyRect(67, 139, 140, 147, 12, 16, drawSurface3, screenSurface);
 }
 
@@ -1524,7 +1524,7 @@ void DrasculaEngine::update_102() {
 
 bool DrasculaEngine::checkAction(int fl) {
 	hideCursor();
-	characterMoved = 0;
+	_characterMoved = false;
 	updateRoom();
 	updateScreen();
 
@@ -1774,7 +1774,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 			curX = _destX[objIsExit];
 			curY = _destY[objIsExit] - curHeight;
 		}
-		characterMoved = 0;
+		_characterMoved = false;
 	}
 
 	loadPic(roomDisk, drawSurface3);
@@ -1833,7 +1833,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 			curHeight = (CHARACTER_HEIGHT * factor_red[curY]) / 100;
 			curWidth = (CHARACTER_WIDTH * factor_red[curY]) / 100;
 		}
-		characterMoved = 0;
+		_characterMoved = false;
 	}
 
 	if (currentChapter == 2) {
@@ -1845,7 +1845,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	}
 
 	if (currentChapter == 5)
-		characterVisible = 1;
+		_characterVisible = true;
 
 	updateVisible();
 
@@ -1885,7 +1885,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	if (currentChapter == 5) {
 		if (_roomNumber == 45)
-			characterVisible = 0;
+			_characterVisible = false;
 		if (_roomNumber == 49 && flags[7] == 0) {
 			playTalkSequence(4);	// sequence 4, chapter 5
 		}
@@ -1925,7 +1925,7 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 			updateRoom();
 			updateScreen();
 		}
-		characterMoved = 0;
+		_characterMoved = false;
 		trackProtagonist = trackCharacter_alkeva[doorNumber];
 		objExit = roomExits[doorNumber];
 		doBreak = 1;
@@ -1961,7 +1961,7 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 		}
 
 		if (currentChapter == 5)
-			characterVisible = 1;
+			_characterVisible = true;
 
 		clearRoom();
 		if (!sscanf(_targetSurface[doorNumber], "%d", &roomNum)) {

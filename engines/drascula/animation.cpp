@@ -363,7 +363,7 @@ void DrasculaEngine::animation_2_1() {
 	int l;
 
 	gotoObject(231, 91);
-	characterVisible = 0;
+	_characterVisible = false;
 
 	term_int = 0;
 
@@ -436,7 +436,7 @@ void DrasculaEngine::animation_2_1() {
 		curX = 91;
 		curY = 95;
 		trackProtagonist = 1;
-		characterVisible = 1;
+		_characterVisible = true;
 
 		loadPic("97g.alg", extraSurface);
 		if (animate("lev.bin", 15))
@@ -1143,7 +1143,7 @@ void DrasculaEngine::animation_6_3() {
 	int yoda_x[] = { 3 ,82, 161, 240, 3, 82 };
 	int yoda_y[] = { 3, 3, 3, 3, 94, 94 };
 
-	characterMoved = 0;
+	_characterMoved = false;
 	flags[3] = 1;
 	updateRoom();
 	updateScreen();
@@ -1239,7 +1239,7 @@ void DrasculaEngine::animation_1_5() {
 		talk_bj(21);
 
 		while (!shouldQuit()) {
-			if (characterMoved == 0)
+			if (!_characterMoved)
 				break;
 			updateRoom();
 			updateScreen();
@@ -1437,10 +1437,10 @@ void DrasculaEngine::animation_12_5() {
 
 	doBreak = 1;
 	previousMusic = roomMusic;
-	characterVisible = 1;
+	_characterVisible = true;
 	clearRoom();
 	trackProtagonist = 1;
-	characterMoved = 0;
+	_characterMoved = false;
 	curX = -1;
 	objExit = 104;
 	selectVerb(kVerbNone);
@@ -1547,7 +1547,7 @@ void DrasculaEngine::animation_1_6() {
 	updateEvents();
 	clearRoom();
 	black();
-	characterVisible = 0;
+	_characterVisible = false;
 	flags[0] = 0;
 	updateRoom();
 	updateScreen();
@@ -1622,7 +1622,7 @@ void DrasculaEngine::animation_6_6() {
 	curX = -1;
 	selectVerb(kVerbNone);
 	enterRoom(58);
-	characterVisible = 1;
+	_characterVisible = true;
 	trackProtagonist = 1;
 	animate("hbp.bin", 14);
 
@@ -2144,7 +2144,7 @@ void DrasculaEngine::animation_5_4(){
 	loadPic("anh_dr.alg", backSurface);
 	gotoObject(99, 160);
 	gotoObject(38, 177);
-	characterVisible = 0;
+	_characterVisible = false;
 	updateRoom();
 	updateScreen();
 	delay(800);
@@ -2162,7 +2162,7 @@ void DrasculaEngine::animation_5_4(){
 	talk_igor(30, kIgorFront);
 	loadPic(96, frontSurface);
 	loadPic(99, backSurface);
-	characterVisible = 1;
+	_characterVisible = true;
 	fadeToBlack(0);
 	exitRoom(0);
 }
@@ -2217,7 +2217,7 @@ void DrasculaEngine::activatePendulum() {
 	debug(4, "activatePendulum()");
 
 	flags[1] = 2;
-	characterVisible = 0;
+	_characterVisible = false;
 	_roomNumber = 102;
 	loadPic(102, bgSurface, HALF_PAL);
 	loadPic("an_p1.alg", drawSurface3);

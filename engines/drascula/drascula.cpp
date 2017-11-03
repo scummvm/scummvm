@@ -136,11 +136,11 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	frame_y = 0;
 	curX = 0;
 	curY = 0;
-	characterMoved = 0;
+	_characterMoved = false;
 	curDirection = 0;
 	trackProtagonist = 0;
 	_characterFrame = 0;
-	characterVisible = 0;
+	_characterVisible = false;
 	roomX = 0;
 	roomY = 0;
 	checkFlags = 0;
@@ -292,10 +292,10 @@ Common::Error DrasculaEngine::run() {
 		_hasName = false;
 		frame_y = 0;
 		curX = -1;
-		characterMoved = 0;
+		_characterMoved = false;
 		trackProtagonist = 3;
 		_characterFrame = 0;
-		characterVisible = 1;
+		_characterVisible = true;
 		checkFlags = 1;
 		doBreak = 0;
 		walkToObject = 0;
@@ -537,11 +537,11 @@ bool DrasculaEngine::runCurrentChapter() {
 	showCursor();
 
 	while (!shouldQuit()) {
-		if (characterMoved == 0) {
+		if (!_characterMoved) {
 			stepX = STEP_X;
 			stepY = STEP_Y;
 		}
-		if (characterMoved == 0 && walkToObject == 1) {
+		if (!_characterMoved && walkToObject == 1) {
 			trackProtagonist = trackFinal;
 			walkToObject = 0;
 		}
@@ -629,7 +629,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			!(currentChapter == 5 && pickedObject == 16)) {
 #endif
 			_rightMouseButton = 0;
-			characterMoved = 0;
+			_characterMoved = false;
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
 			if (currentChapter == 4) {

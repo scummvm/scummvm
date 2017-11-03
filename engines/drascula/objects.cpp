@@ -62,7 +62,7 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 	hideCursor();
 
 	if (currentChapter == 5 || currentChapter == 6) {
-		if (characterVisible == 0) {
+		if (!_characterVisible) {
 			curX = roomX;
 			curY = roomY;
 			updateRoom();
@@ -78,7 +78,7 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 		updateRoom();
 		updateScreen();
 		updateEvents();
-		if (characterMoved == 0)
+		if (!_characterMoved)
 			break;
 
 		pause(3);
