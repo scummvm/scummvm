@@ -690,7 +690,7 @@ bool DrasculaEngine::room_26(int fl) {
 	else if (pickedObject == 16 && fl == 50 && flags[18] == 1 && flags[12] == 1)
 		animation_5_4();
 	else if (pickedObject == kVerbPick && fl == 143 && flags[18] == 1) {
-		gotoObject(260, 180);
+		walkToPoint(Common::Point(260, 180));
 		pickObject(10);
 		visible[1] = 0;
 		flags[12] = 1;
@@ -699,14 +699,14 @@ bool DrasculaEngine::room_26(int fl) {
 		talk_igor(27, kIgorDoor);
 		flags[30] = 1;
 		talk_igor(28, kIgorDoor);
-		gotoObject(153, 180);
+		walkToPoint(Common::Point(153, 180));
 	} else if (pickedObject == kVerbPick && fl == 143 && flags[18] == 0) {
-		gotoObject(260, 180);
+		walkToPoint(Common::Point(260, 180));
 		copyBackground(80, 78, 199, 94, 38, 27, drawSurface3, screenSurface);
 		updateScreen(199, 94, 199, 94, 38, 27, screenSurface);
 		pause(3);
 		talk_igor(25, kIgorWig);
-		gotoObject(153, 180);
+		walkToPoint(Common::Point(153, 180));
 	} else if (pickedObject == kVerbTalk && fl == 51)
 		animation_1_4();
 	else
@@ -927,7 +927,7 @@ bool DrasculaEngine::room_55(int fl) {
 		playSound(11);
 		animate("det.bin", 17);
 		finishSound();
-		gotoObject(curX - 3, curY + curHeight + 6);
+		walkToPoint(Common::Point(curX - 3, curY + curHeight + 6));
 	} else
 		hasAnswer = 0;
 
@@ -972,7 +972,7 @@ bool DrasculaEngine::room_59(int fl) {
 			delay(40);
 			finishSound();
 			delay(10);
-			gotoObject(174, 168);
+			walkToPoint(Common::Point(174, 168));
 			trackProtagonist = 2;
 			updateRoom();
 			updateScreen();
@@ -1920,7 +1920,7 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 		((currentChapter != 3 && currentChapter != 5) || visible[doorNumber] == 1)) {
 
 		hideCursor();
-		gotoObject(_roomObject[doorNumber].x, _roomObject[doorNumber].y);
+		walkToPoint(_roomObject[doorNumber]);
 		if (currentChapter != 2) {
 			trackProtagonist = trackObj[doorNumber];
 			updateRoom();
@@ -1940,8 +1940,8 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 			if (objectNum[doorNumber] == 136)
 				animation_2_2();
 			if (objectNum[doorNumber] == 124) {
-				gotoObject(163, 106);
-				gotoObject(287, 101);
+				walkToPoint(Common::Point(163, 106));
+				walkToPoint(Common::Point(287, 101));
 				trackProtagonist = 0;
 			}
 			if (objectNum[doorNumber] == 173) {
@@ -1958,7 +1958,7 @@ bool DrasculaEngine::exitRoom(int doorNumber) {
 				addObject(kItemEarplugs);
 			}
 		} else if (currentChapter == 4 && objectNum[doorNumber] == 108) {
-			gotoObject(171, 78);
+			walkToPoint(Common::Point(171, 78));
 		}
 
 		if (currentChapter == 5)

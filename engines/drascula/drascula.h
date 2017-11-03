@@ -487,7 +487,7 @@ public:
 
 	void enterRoom(int);
 	void clearRoom();
-	void gotoObject(int, int);
+	void walkToPoint(Common::Point pos);
 	void moveCursor();
 	void checkObjects();
 	void selectVerbFromBar();

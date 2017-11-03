@@ -444,7 +444,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			enterRoom(62);
 			curX = -20;
 			curY = 56;
-			gotoObject(65, 145);
+			walkToPoint(Common::Point(65, 145));
 		}
 
 		// REMINDER: This is a good place to debug animations
@@ -550,14 +550,14 @@ bool DrasculaEngine::runCurrentChapter() {
 			// made the character start walking off screen, as his actual position was
 			// different than the displayed one
 			if (_roomNumber == 3 && (curX == 279) && (curY + curHeight == 101)) {
-				gotoObject(178, 121);
-				gotoObject(169, 135);
+				walkToPoint(Common::Point(178, 121));
+				walkToPoint(Common::Point(169, 135));
 			} else if (_roomNumber == 14 && (curX == 214) && (curY + curHeight == 121)) {
 				_walkToObject = true;
-				gotoObject(190, 130);
+				walkToPoint(Common::Point(190, 130));
 			} else if (_roomNumber == 14 && (curX == 246) && (curY + curHeight == 112)) {
 				_walkToObject = true;
-				gotoObject(190, 130);
+				walkToPoint(Common::Point(190, 130));
 			}
 		}
 
@@ -793,7 +793,7 @@ bool DrasculaEngine::verify2() {
 				if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && visible[l] == 1) {
 					trackFinal = trackObj[l];
 					_walkToObject = true;
-					gotoObject(_roomObject[l].x, _roomObject[l].y);
+					walkToPoint(_roomObject[l]);
 					if (checkAction(objectNum[l]))
 						return true;
 					if (currentChapter == 4)

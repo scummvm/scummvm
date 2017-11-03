@@ -57,7 +57,7 @@ void DrasculaEngine::chooseObject(int object) {
 	pickedObject = object;
 }
 
-void DrasculaEngine::gotoObject(int pointX, int pointY) {
+void DrasculaEngine::walkToPoint(Common::Point pos) {
 	bool cursorVisible = isCursorVisible();
 	hideCursor();
 
@@ -70,8 +70,8 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 			return;
 		}
 	}
-	roomX = pointX;
-	roomY = pointY;
+	roomX = pos.x;
+	roomY = pos.y;
 	startWalking();
 
 	while (!shouldQuit()) {
