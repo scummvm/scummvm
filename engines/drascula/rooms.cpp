@@ -1732,10 +1732,11 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		}
 	}
 
-	p.parseInt(floorX1);
-	p.parseInt(floorY1);
-	p.parseInt(floorX2);
-	p.parseInt(floorY2);
+	p.parseInt(x1);
+	p.parseInt(y1);
+	p.parseInt(x2);
+	p.parseInt(y2);
+	_walkRect = Common::Rect(x1, y1, x2, y2);
 
 	if (currentChapter != 2) {
 		p.parseInt(upperLimit);
@@ -1797,27 +1798,27 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 		color_abc(kColorLightGreen);
 
 	if (currentChapter != 2) {
-		for (l = 0; l <= floorY1; l++)
+		for (l = 0; l <= _walkRect.top; l++)
 			factor_red[l] = upperLimit;
-		for (l = floorY1; l <= 201; l++)
+		for (l = _walkRect.top; l <= 201; l++)
 			factor_red[l] = lowerLimit;
 
-		chiquez = (float)(lowerLimit - upperLimit) / (float)(floorY2 - floorY1);
-		for (l = floorY1; l <= floorY2; l++) {
+		chiquez = (float)(lowerLimit - upperLimit) / (float)(_walkRect.bottom - _walkRect.top);
+		for (l = _walkRect.top; l <= _walkRect.bottom; l++) {
 			factor_red[l] = (int)(upperLimit + pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
 
 	if (_roomNumber == 24) {
-		for (l = floorY1 - 1; l > 74; l--) {
+		for (l = _walkRect.top - 1; l > 74; l--) {
 			factor_red[l] = (int)(upperLimit - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
 
 	if (currentChapter == 5 && _roomNumber == 54) {
-		for (l = floorY1 - 1; l > 84; l--) {
+		for (l = _walkRect.top - 1; l > 84; l--) {
 			factor_red[l] = (int)(upperLimit - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}

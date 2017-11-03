@@ -94,10 +94,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_talkSequencesSize = 0;
 	_numLangs = 0;
 	feetHeight = 0;
-	floorX1 = 0;
-	floorY1 = 0;
-	floorX2 = 0;
-	floorY2 = 0;
 	lowerLimit = 0;
 	upperLimit = 0;
 	trackFinal = 0;
@@ -768,8 +764,8 @@ bool DrasculaEngine::verify1() {
 		}
 
 		if (doBreak == 0) {
-			roomX = CLIP(_mouseX, floorX1, floorX2);
-			roomY = CLIP(_mouseY, floorY1 + feetHeight, floorY2);
+			roomX = CLIP<int16>(_mouseX, _walkRect.left, _walkRect.right);
+			roomY = CLIP<int16>(_mouseY, _walkRect.top + feetHeight, _walkRect.bottom);
 			startWalking();
 		}
 		doBreak = 0;

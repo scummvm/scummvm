@@ -443,7 +443,7 @@ public:
 	int doBreak;
 	int stepX, stepY;
 	int curHeight, curWidth, feetHeight;
-	int floorX1, floorY1, floorX2, floorY2;
+	Common::Rect _walkRect;
 	int lowerLimit, upperLimit;
 	int trackFinal;
 	bool _walkToObject;
