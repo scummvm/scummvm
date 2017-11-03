@@ -775,11 +775,7 @@ const char *gameText[] = {
 	"Behalt es lieber!", // kStringGenericInteract_42
 	// 615
 	"Das geht nicht.", // kStringGenericInteract_43
-	"",
-	"",
-	"",
-	"",
-	// 620
+	"Gespr\204ch beenden", // kStringConversationEnd
 	NULL
 };
 
