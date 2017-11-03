@@ -443,7 +443,8 @@ public:
 	int curHeight, curWidth, feetHeight;
 	int floorX1, floorY1, floorX2, floorY2;
 	int lowerLimit, upperLimit;
-	int trackFinal, walkToObject;
+	int trackFinal;
+	bool _walkToObject;
 	int objExit;
 	int _startTime;
 	int hasAnswer;

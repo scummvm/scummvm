@@ -1230,7 +1230,7 @@ void DrasculaEngine::animation_1_5() {
 		talk(438);
 		roomX = 120;
 		roomY = 157;
-		walkToObject = 1;
+		_walkToObject = true;
 		trackFinal = 1;
 		startWalking();
 		talk_bj(21);

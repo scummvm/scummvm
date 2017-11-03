@@ -84,8 +84,8 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 		pause(3);
 	}
 
-	if (walkToObject == 1) {
-		walkToObject = 0;
+	if (_walkToObject) {
+		_walkToObject = false;
 		trackProtagonist = trackFinal;
 	}
 	updateRoom();

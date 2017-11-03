@@ -102,7 +102,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	lowerLimit = 0;
 	upperLimit = 0;
 	trackFinal = 0;
-	walkToObject = 0;
+	_walkToObject = false;
 	objExit = 0;
 	_startTime = 0;
 	hasAnswer = 0;
@@ -295,7 +295,7 @@ Common::Error DrasculaEngine::run() {
 		_characterVisible = true;
 		checkFlags = 1;
 		doBreak = 0;
-		walkToObject = 0;
+		_walkToObject = false;
 
 		stepX = STEP_X;
 		stepY = STEP_Y;
@@ -538,9 +538,9 @@ bool DrasculaEngine::runCurrentChapter() {
 			stepX = STEP_X;
 			stepY = STEP_Y;
 		}
-		if (!_characterMoved && walkToObject == 1) {
+		if (!_characterMoved && _walkToObject) {
 			trackProtagonist = trackFinal;
-			walkToObject = 0;
+			_walkToObject = false;
 		}
 
 		if (currentChapter == 2) {
@@ -554,10 +554,10 @@ bool DrasculaEngine::runCurrentChapter() {
 				gotoObject(178, 121);
 				gotoObject(169, 135);
 			} else if (_roomNumber == 14 && (curX == 214) && (curY + curHeight == 121)) {
-				walkToObject = 1;
+				_walkToObject = true;
 				gotoObject(190, 130);
 			} else if (_roomNumber == 14 && (curX == 246) && (curY + curHeight == 112)) {
-				walkToObject = 1;
+				_walkToObject = true;
 				gotoObject(190, 130);
 			}
 		}
@@ -765,7 +765,7 @@ bool DrasculaEngine::verify1() {
 				roomY = roomObjY[l];
 				trackFinal = trackObj[l];
 				doBreak = 1;
-				walkToObject = 1;
+				_walkToObject = true;
 				startWalking();
 			}
 		}
@@ -796,7 +796,7 @@ bool DrasculaEngine::verify2() {
 				if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
 						&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l] && visible[l] == 1) {
 					trackFinal = trackObj[l];
-					walkToObject = 1;
+					_walkToObject = true;
 					gotoObject(roomObjX[l], roomObjY[l]);
 					if (checkAction(objectNum[l]))
 						return true;
