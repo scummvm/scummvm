@@ -22,7 +22,7 @@
 
 #include "common/rect.h"
 
-#include "engines/stark/ui/fmvplayer.h"
+#include "engines/stark/ui/world/fmvplayer.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"

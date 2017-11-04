@@ -33,13 +33,13 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 
-#include "engines/stark/ui/actionmenu.h"
 #include "engines/stark/ui/cursor.h"
-#include "engines/stark/ui/dialogpanel.h"
-#include "engines/stark/ui/fmvplayer.h"
-#include "engines/stark/ui/gamewindow.h"
-#include "engines/stark/ui/inventorywindow.h"
-#include "engines/stark/ui/topmenu.h"
+#include "engines/stark/ui/world/actionmenu.h"
+#include "engines/stark/ui/world/dialogpanel.h"
+#include "engines/stark/ui/world/fmvplayer.h"
+#include "engines/stark/ui/world/gamewindow.h"
+#include "engines/stark/ui/world/inventorywindow.h"
+#include "engines/stark/ui/world/topmenu.h"
 
 namespace Stark {
 

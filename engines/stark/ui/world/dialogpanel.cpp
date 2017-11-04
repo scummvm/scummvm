@@ -20,8 +20,8 @@
  *
  */
 
-#include "engines/stark/ui/dialogpanel.h"
-#include "engines/stark/ui/clicktext.h"
+#include "engines/stark/ui/world/dialogpanel.h"
+#include "engines/stark/ui/world/clicktext.h"
 
 #include "engines/stark/gfx/driver.h"
 

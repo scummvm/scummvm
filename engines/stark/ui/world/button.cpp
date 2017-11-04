@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/ui/button.h"
+#include "engines/stark/ui/world/button.h"
 
 #include "engines/stark/services/services.h"
 

@@ -84,16 +84,16 @@ MODULE_OBJS := \
 	tools/block.o \
 	tools/command.o \
 	tools/decompiler.o \
-	ui/actionmenu.o \
-	ui/button.o \
-	ui/clicktext.o \
 	ui/cursor.o \
-	ui/dialogpanel.o \
-	ui/fmvplayer.o \
-	ui/gamewindow.o \
-	ui/inventorywindow.o \
-	ui/topmenu.o \
 	ui/window.o \
+	ui/world/actionmenu.o \
+	ui/world/button.o \
+	ui/world/clicktext.o \
+	ui/world/topmenu.o \
+	ui/world/dialogpanel.o \
+	ui/world/fmvplayer.o \
+	ui/world/gamewindow.o \
+	ui/world/inventorywindow.o \
 	visual/actor.o \
 	visual/image.o \
 	visual/prop.o \

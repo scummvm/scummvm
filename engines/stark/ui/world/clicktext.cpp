@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/ui/clicktext.h"
+#include "engines/stark/ui/world/clicktext.h"
 
 #include "engines/stark/services/services.h"
 

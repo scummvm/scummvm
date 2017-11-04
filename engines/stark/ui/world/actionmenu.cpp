@@ -20,10 +20,10 @@
  *
  */
 
-#include "engines/stark/ui/actionmenu.h"
+#include "engines/stark/ui/world/actionmenu.h"
 
 #include "engines/stark/ui/cursor.h"
-#include "engines/stark/ui/inventorywindow.h"
+#include "engines/stark/ui/world/inventorywindow.h"
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"

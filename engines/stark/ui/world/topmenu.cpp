@@ -20,10 +20,10 @@
  *
  */
 
-#include "engines/stark/ui/topmenu.h"
+#include "engines/stark/ui/world/topmenu.h"
 
-#include "engines/stark/ui/button.h"
 #include "engines/stark/ui/cursor.h"
+#include "engines/stark/ui/world/button.h"
 
 #include "engines/stark/gfx/driver.h"
 

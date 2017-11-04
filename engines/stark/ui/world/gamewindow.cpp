@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/ui/gamewindow.h"
+#include "engines/stark/ui/world/gamewindow.h"
 
 #include "engines/stark/scene.h"
 
@@ -37,9 +37,9 @@
 #include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/userinterface.h"
 
-#include "engines/stark/ui/actionmenu.h"
 #include "engines/stark/ui/cursor.h"
-#include "engines/stark/ui/inventorywindow.h"
+#include "engines/stark/ui/world/actionmenu.h"
+#include "engines/stark/ui/world/inventorywindow.h"
 
 namespace Stark {
 
