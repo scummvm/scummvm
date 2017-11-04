@@ -36,6 +36,8 @@ bool Room::serialize(Common::WriteStream *out) {
 	out->writeSint32LE(_id);
 	for (int i = 0; i < kMaxSection; ++i)
 		out->writeByte(_shown[i]);
+	for (int i = 0; i < kMaxDialog ; ++i)
+		out->writeByte(_sentenceRemoved[i]);
 
 	int numObjects = 0;
 	while ((_objectState[numObjects]._id != INVALIDOBJECT) && (numObjects < kMaxObject))
@@ -60,13 +62,20 @@ bool Room::serialize(Common::WriteStream *out) {
 	return !out->err();
 }
 
-bool Room::deserialize(Common::ReadStream *in) {
+bool Room::deserialize(Common::ReadStream *in, int version) {
 	if (in->err())
 		return false;
 
 	in->readSint32LE();
+
 	for (int i = 0; i < kMaxSection; ++i)
 		_shown[i] = in->readByte();
+
+	// Prior to version 3, _sentenceRemoved was part of _shown (the last two values)
+	// But on the other hand dialog was not implemented anyway, so we don't even try to
+	// recover it.
+	for (int i = 0; i < kMaxDialog ; ++i)
+		_sentenceRemoved[i] = version < 3 ? 0 : in->readByte();
 
 	int numObjects = in->readSint32LE();
 	for (int i = 0; i < numObjects; ++i) {
@@ -1634,7 +1643,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				else
 					_gm->reply(kStringArsanoEntrance14, 1, _gm->invertSection(1));
 				e = 0;
-				while ((e < 3) && (_shown[kMaxSection - 1] != 15)) {
+				while ((e < 3) && (!allSentencesRemoved(4, 1))) {
 					switch (e = _gm->dialog(5, row1, _dialog1, 1)) {
 					case 0:
 						_gm->reply(kStringArsanoEntrance15, 1, 1 + 128);
@@ -1921,11 +1930,10 @@ void ArsanoRemaining::animation() {
 }
 
 void ArsanoRoger::onEntrance() {
-	// This is not a normal shown variable, it's a dialog
-	if (_shown[kMaxSection - 2] == 0) {
+	if (!sentenceRemoved(0, 2)) {
 		_gm->say(kStringArsanoRoger1);
 		_gm->reply(kStringArsanoRoger2, 2, 2 + 128);
-		_shown[kMaxSection - 2] = 1;
+		removeSentence(0, 2);
 	}
 }
 
@@ -2126,18 +2134,15 @@ bool ArsanoGlider::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void ArsanoMeetup2::onEntrance() {
-	// We don't use the enum because those are dialog status and not "real" _shown
-	switch (_shown[kMaxSection - 1]) {
-	case 1:
-		_gm->shipStart();
-		break;
-	case 2:
+	if (sentenceRemoved(0, 1)) {
+		if (sentenceRemoved(1, 1))
+			_vm->renderMessage(kStringArsanoMeetup2_2); // All spaceships have left the planet, except one ...
+		else
+			_gm->shipStart();
+	} else if (sentenceRemoved(1, 1))
 		_vm->renderMessage(kStringArsanoMeetup2_1); // All spaceships have left the planet
-		break;
-	case 3:
-		_vm->renderMessage(kStringArsanoMeetup2_2); // All spaceships have left the planet, except one ...
-	}
-	_shown[kMaxSection - 1] = 0;
+
+	addAllSentences(1);
 }
 
 bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
@@ -2153,7 +2158,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(30, 0);
 		_vm->paletteBrightness();
 		bool found;
-		if (_gm->_rooms[MEETUP2]->isSectionVisible(kMaxSection - 2)) {
+		if (sentenceRemoved(0, 2) || sentenceRemoved(1, 2)) {
 			_gm->reply(kStringArsanoMeetup2_3, 1, 1 + 128);
 			found = !_gm->dialog(2, row4, _dialog4, 0);
 			if (!(found))
@@ -2162,7 +2167,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->reply(kStringArsanoMeetup2_5, 1, 1 + 128);
 			_gm->reply(kStringArsanoMeetup2_6, 1, 1 + 128);
 			found = !_gm->dialog(2, row1, _dialog1, 0);
-			_gm->_rooms[MEETUP2]->setSectionVisible(kMaxSection - 2, true);
+			removeSentence(0, 2);
 		}
 		if (found) {
 			_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(3));
@@ -2327,7 +2332,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply(kStringArsanoMeetup3_25, 1, 1 + 128);
 			}
 			removeSentence(2, 2);
-		} while (_shown[kMaxSection - 2] != 15);
+		} while (!allSentencesRemoved(4, 2));
 		_gm->say(kStringArsanoMeetup3_26);
 		_gm->reply(kStringArsanoMeetup3_27, 1, 1 + 128);
 		_gm->reply(kStringArsanoMeetup3_28, 1, 1 + 128);
@@ -2581,7 +2586,7 @@ void AxacussCorridor5::onEntrance() {
 bool AxacussCorridor5::handleMoneyDialog() {
 	if (_gm->dialog(2, _rows, _dialog2, 0) == 0) {
 		_gm->reply(kStringAxacussCorridor5_5, 1, 1 + 128);
-		setSectionVisible(kMaxSection - 2, false);
+		addAllSentences(2);
 		if (_gm->_state._money == 0) {
 			removeSentence(2, 2);
 			removeSentence(3, 2);

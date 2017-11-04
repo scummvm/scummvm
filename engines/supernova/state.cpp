@@ -75,7 +75,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 }
 
 
-bool GameManager::deserialize(Common::ReadStream *in) {
+bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	if (in->err())
 		return false;
 
@@ -115,7 +115,7 @@ bool GameManager::deserialize(Common::ReadStream *in) {
 	// Rooms
 	_currentRoom = _rooms[static_cast<RoomID>(in->readByte())];
 	for (int i = 0; i < NUMROOMS; ++i) {
-		_rooms[i]->deserialize(in);
+		_rooms[i]->deserialize(in, version);
 	}
 
 	return !in->err();
@@ -852,7 +852,7 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number) {
 	bool remove[6];
 	for (int i = 0; i < 5; ++i)
-		remove[i] = _currentRoom->sentencedRemoved(i, number);
+		remove[i] = _currentRoom->sentenceRemoved(i, number);
 	// The original does not initialize remove[5]!!!
 	// Set it to false/0. But maybe the loop above should use 6 instead of 5?
 	remove[5] = false;

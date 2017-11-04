@@ -920,7 +920,7 @@ bool SupernovaEngine::loadGame(int slot) {
 	savefile->skip(6);
 	setTotalPlayTime(savefile->readUint32LE() * 1000);
 	Graphics::skipThumbnail(*savefile);
-	_gm->deserialize(savefile);
+	_gm->deserialize(savefile, saveVersion);
 
 	delete savefile;
 

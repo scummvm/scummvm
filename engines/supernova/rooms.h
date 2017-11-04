@@ -38,6 +38,8 @@ public:
 		_seen = false;
 		for (int i = 0; i < kMaxSection; ++i)
 			_shown[i] = kShownFalse;
+		for (int i = 0; i < kMaxDialog; ++i)
+			_sentenceRemoved[i] = 0;
 	}
 
 	bool hasSeen() {
@@ -64,18 +66,32 @@ public:
 
 	void removeSentence(int sentence, int number) {
 		if (number > 0)
-			_shown[kMaxSection - number] |= (1 << sentence);
+			_sentenceRemoved[number - 1] |= (1 << sentence);
 	}
 
 	void addSentence(int sentence, int number) {
 		if (number > 0)
-			_shown[kMaxSection - number] &= ~(1 << sentence);
+			_sentenceRemoved[number - 1] &= ~(1 << sentence);
 	}
 
-	bool sentencedRemoved(int sentence, int number) {
+	void addAllSentences(int number) {
+		if (number > 0)
+			_sentenceRemoved[number - 1] = 0;
+	}
+
+	bool sentenceRemoved(int sentence, int number) {
 		if (number <= 0)
 			return false;
-		return (_shown[kMaxSection - number] & (1 << sentence));
+		return (_sentenceRemoved[number - 1] & (1 << sentence));
+	}
+
+	bool allSentencesRemoved(int maxSentence, int number) {
+		if (number <= 0)
+			return false;
+		for (int i = 0, flag = 1 ; i < maxSentence ; ++i, flag <<= 1)
+			if (!(_sentenceRemoved[number - 1] & flag))
+				return false;
+		return true;
 	}
 
 	Object *getObject(uint index) {
@@ -89,11 +105,12 @@ public:
 		return false;
 	}
 	virtual bool serialize(Common::WriteStream *out);
-	virtual bool deserialize(Common::ReadStream *in);
+	virtual bool deserialize(Common::ReadStream *in, int version);
 
 protected:
 	int _fileNumber;
-	byte _shown[kMaxSection];
+	bool _shown[kMaxSection];
+	byte _sentenceRemoved[kMaxDialog];
 	Object _objectState[kMaxObject];
 	RoomID _id;
 	SupernovaEngine *_vm;

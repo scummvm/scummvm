@@ -99,7 +99,7 @@ public:
 	void processInput();
 	void executeRoom();
 	bool serialize(Common::WriteStream *out);
-	bool deserialize(Common::ReadStream *in);
+	bool deserialize(Common::ReadStream *in, int version);
 
 	SupernovaEngine *_vm;
 	Common::KeyState _key;
