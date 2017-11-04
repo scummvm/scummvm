@@ -61,6 +61,23 @@ public:
 	bool isSectionVisible(uint index) const {
 		return _shown[index] == kShownTrue;
 	}
+
+	void removeSentence(int sentence, int number) {
+		if (number > 0)
+			_shown[kMaxSection - number] |= (1 << sentence);
+	}
+
+	void addSentence(int sentence, int number) {
+		if (number > 0)
+			_shown[kMaxSection - number] &= ~(1 << sentence);
+	}
+
+	bool sentencedRemoved(int sentence, int number) {
+		if (number <= 0)
+			return false;
+		return (_shown[kMaxSection - number] & (1 << sentence));
+	}
+
 	Object *getObject(uint index) {
 		return &_objectState[index];
 	}

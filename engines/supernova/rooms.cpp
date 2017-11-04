@@ -1581,20 +1581,20 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				do {
 					if (_gm->_state._shoes == 1) {
 						_dialog2[2] = kStringArsanoEntrance2;
-						_gm->addSentence(2, 2);
+						addSentence(2, 2);
 					} else if (_gm->_state._shoes > 1) {
-						_gm->removeSentence(2, 2);
+						removeSentence(2, 2);
 					}
 					switch (e = _gm->dialog(5, row2, _dialog2, 2)) {
 					case 0:
 						_gm->reply(kStringArsanoEntrance3, 1, _gm->invertSection(1));
 						_gm->reply(kStringArsanoEntrance4, 1, _gm->invertSection(1));
 						_gm->reply(kStringArsanoEntrance5, 1, _gm->invertSection(1));
-						_gm->removeSentence(1, 1);
+						removeSentence(1, 1);
 						break;
 					case 1:
 						_gm->reply(kStringArsanoEntrance6, 1, _gm->invertSection(1));
-						_gm->addSentence(1, 2);
+						addSentence(1, 2);
 						break;
 					case 2:
 						if (_gm->_state._shoes == 1) {
@@ -1643,7 +1643,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						_gm->reply(kStringArsanoEntrance3, 1, 1 + 128);
 						_gm->reply(kStringArsanoEntrance4, 1, 1 + 128);
 						_gm->reply(kStringArsanoEntrance5, 1, 1 + 128);
-						_gm->removeSentence(0, 2);
+						removeSentence(0, 2);
 						break;
 					case 2:
 						_gm->reply(kStringArsanoEntrance7, 1, 1 + 128);
@@ -1661,7 +1661,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						_gm->drawImage(_gm->invertSection(3));
 						break;
 					}
-					_gm->removeSentence(0, 1);
+					removeSentence(0, 1);
 				}
 			} else {
 				_gm->dialog(2, row3, _dialog3, 0);
@@ -1689,8 +1689,8 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 			if (_gm->_state._shoes == 2) {
 				_vm->renderMessage(kStringArsanoEntrance17);
 				_gm->_state._shoes = 3;
-				_gm->removeSentence(2, 2);
-				_gm->removeSentence(3, 2);
+				removeSentence(2, 2);
+				removeSentence(3, 2);
 			} else if (_gm->_state._shoes == 3) {
 				_vm->renderMessage(kStringArsanoEntrance18);
 				_gm->_state._shoes = 2;
@@ -2326,7 +2326,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply(kStringArsanoMeetup3_24, 1, 1 + 128);
 				_gm->reply(kStringArsanoMeetup3_25, 1, 1 + 128);
 			}
-			_gm->removeSentence(2, 2);
+			removeSentence(2, 2);
 		} while (_shown[kMaxSection - 2] != 15);
 		_gm->say(kStringArsanoMeetup3_26);
 		_gm->reply(kStringArsanoMeetup3_27, 1, 1 + 128);
@@ -2583,8 +2583,8 @@ bool AxacussCorridor5::handleMoneyDialog() {
 		_gm->reply(kStringAxacussCorridor5_5, 1, 1 + 128);
 		setSectionVisible(kMaxSection - 2, false);
 		if (_gm->_state._money == 0) {
-			_gm->removeSentence(2, 2);
-			_gm->removeSentence(3, 2);
+			removeSentence(2, 2);
+			removeSentence(3, 2);
 		} else {
 			// TODO: Handle string manipulation in dialogs
 			// _dialog3[2] and _dialog3[3] are both using kStringDialogAxacussCorridor5_7
