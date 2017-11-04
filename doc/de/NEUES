@@ -39,9 +39,10 @@ Programmcodes finden Sie auf Englisch unter:
      den Optionen-Dialog zu schließen.
    - Sprache der Benutzeroberfläche kann ohne Programmneustart geändert werden.
    - Integrierter Munt MT-32-Emulator auf Version 2.0.3 aktualisiert.
-   - Verbesserte Joystick-Bedienung.
+   - Verbesserte Joystick-Behandlung.
    - Verbesserte Audio-Latenz.
-   - Verbesserte Verwaltung des ScummVM-Fensters in Spielen, die den Bildschirm-Modus wechseln.
+   - Verbesserte Verwaltung des ScummVM-Fensters in Spielen, die den Bildschirm-Modus
+     wechseln.
 
  AGOS:
    - Einstellung für die Untertitel-Geschwindigkeit in der hebräischen Version von
@@ -54,6 +55,15 @@ Programmcodes finden Sie auf Englisch unter:
    - Lautstärke-Regelung hinzugefügt und Lautstärke-Synchronisation zwischen dem Spiel
      und den ScummVM-Einstellungen korrigiert.
    - Spielstände können jetzt mithilfe des GMM gespeichert und geladen werden.
+
+ MADE:
+   - Fehlerhafte Audio-Wiedergabe behoben (Fehler #9753).
+
+ MOHAWK:
+   - Verbesserungen an den originalen Spieldaten vorgenommen, um die Anweisungen
+     zum Öffnen des Tresors in Myst ME zu korrigieren.
+   - Situationen korrigiert, in denen Myst scheinbar nicht mehr reagiert.
+   - Behandlung der Audio-Wiedergabe in Myst überarbeitet und verbessert.
 
  SCI:
    - Verbesserte Ladezeit bei Verwendung des MT-32-Emulators.
