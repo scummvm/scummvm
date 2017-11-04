@@ -132,6 +132,12 @@ public:
 	GuiElement _guiInventoryArrow[2];
 	// 0 PC Speaker | 1 SoundBlaster | 2 No Sound
 	int _soundDevice;
+	// Dialog
+	int _currentSentence;
+	int _sentenceNumber[6];
+	StringID _texts[6];
+	byte _rows[6];
+	byte _rowsStart[6];
 
 	void takeObject(Object &obj);
 
@@ -182,12 +188,11 @@ public:
 	void dead(StringID messageId);
 	int  dialog(int num, byte rowLength[6], StringID text[6], int number);
 	void sentence(int number, bool brightness);
-	void removeSentence(int sentence, int number);
-	void addSentence(int sentence, int number);
 	void say(StringID textId);
 	void say(const char *text);
 	void reply(StringID textId, int aus1, int aus2);
 	void reply(const char *text, int aus1, int aus2);
+	void mousePosDialog(int x, int y);
 	void shipStart();
 	void shot(int a, int b);
 	void takeMoney(int amount);
