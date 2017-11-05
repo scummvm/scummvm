@@ -82,8 +82,8 @@ public:
 	Graphics::Surface *getScreenshot() const;
 
 protected:
-	virtual void onMouseMove(const Common::Point &pos) = 0;
-	virtual void onClick(const Common::Point &pos) = 0;
+	virtual void onMouseMove(const Common::Point &pos) {}
+	virtual void onClick(const Common::Point &pos) {}
 	virtual void onRightClick(const Common::Point &pos) {}
 	virtual void onDoubleClick(const Common::Point &pos) {}
 	virtual void onRender() = 0;

@@ -34,68 +34,45 @@
 #include "engines/stark/services/staticprovider.h"
 
 #include "engines/stark/ui/cursor.h"
-#include "engines/stark/ui/world/actionmenu.h"
-#include "engines/stark/ui/world/dialogpanel.h"
-#include "engines/stark/ui/world/fmvplayer.h"
-#include "engines/stark/ui/world/gamewindow.h"
 #include "engines/stark/ui/world/inventorywindow.h"
-#include "engines/stark/ui/world/topmenu.h"
+#include "engines/stark/ui/world/fmvscreen.h"
+#include "engines/stark/ui/world/gamescreen.h"
+#include "engines/stark/ui/world/gamewindow.h"
 
 namespace Stark {
 
 UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursor(nullptr),
-		_topMenu(nullptr),
-		_dialogPanel(nullptr),
-		_inventoryWindow(nullptr),
 		_exitGame(false),
-		_fmvPlayer(nullptr),
-		_actionMenu(nullptr),
-		_gameWindow(nullptr),
+		_fmvScreen(nullptr),
+		_gameScreen(nullptr),
 		_interactive(true),
 		_interactionAttemptDenied(false),
-		_currentScreen(kScreenGame),
+		_currentScreen(nullptr),
 		_gameWindowThumbnail(nullptr) {
 }
 
 UserInterface::~UserInterface() {
 	freeGameScreenThumbnail();
 
-	delete _gameWindow;
-	delete _actionMenu;
-	delete _topMenu;
-	delete _dialogPanel;
-	delete _inventoryWindow;
-	delete _fmvPlayer;
+	delete _gameScreen;
+	delete _fmvScreen;
 	delete _cursor;
 }
 
 void UserInterface::init() {
-	// Game screen windows
 	_cursor = new Cursor(_gfx);
-	_topMenu = new TopMenu(_gfx, _cursor);
-	_dialogPanel = new DialogPanel(_gfx, _cursor);
-	_actionMenu = new ActionMenu(_gfx, _cursor);
-	_inventoryWindow = new InventoryWindow(_gfx, _cursor, _actionMenu);
-	_actionMenu->setInventory(_inventoryWindow);
-	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu, _inventoryWindow);
 
-	_gameScreenWindows.push_back(_actionMenu);
-	_gameScreenWindows.push_back(_inventoryWindow);
-	_gameScreenWindows.push_back(_gameWindow);
-	_gameScreenWindows.push_back(_topMenu);
-	_gameScreenWindows.push_back(_dialogPanel);
-
-	// FMV Screen window
-	_fmvPlayer = new FMVPlayer(_gfx, _cursor);
+	_currentScreen = _gameScreen = new GameScreen(_gfx, _cursor);
+	_fmvScreen = new FMVScreen(_gfx, _cursor);
 }
 
 void UserInterface::update() {
 	StarkStaticProvider->onGameLoop();
 
 	// Check for UI mouse overs
-	dispatchEvent(&Window::handleMouseMove);
+	_currentScreen->handleMouseMove();
 }
 
 void UserInterface::handleMouseMove(const Common::Point &pos) {
@@ -103,104 +80,89 @@ void UserInterface::handleMouseMove(const Common::Point &pos) {
 }
 
 void UserInterface::handleClick() {
-	dispatchEvent(&Window::handleClick);
+	_currentScreen->handleClick();
 }
 
 void UserInterface::handleRightClick() {
-	dispatchEvent(&Window::handleRightClick);
+	_currentScreen->handleRightClick();
 }
 
 void UserInterface::handleDoubleClick() {
-	dispatchEvent(&Window::handleDoubleClick);
-}
-
-void UserInterface::dispatchEvent(WindowHandler handler) {
-	switch (_currentScreen) {
-		case kScreenGame:
-			for (uint i = 0; i < _gameScreenWindows.size(); i++) {
-				if (_gameScreenWindows[i]->isMouseInside()) {
-					(*_gameScreenWindows[i].*handler)();
-					return;
-				}
-			}
-			break;
-		case kScreenFMV:
-			if (_fmvPlayer->isMouseInside()) {
-				(*_fmvPlayer.*handler)();
-				return;
-			}
-			break;
-		default: // Nothing goes here
-			break;
-	}
+	_currentScreen->handleDoubleClick();
 }
 
 void UserInterface::inventoryOpen(bool open) {
 	// Make the inventory update its contents.
 	if (open) {
-		_inventoryWindow->open();
+		_gameScreen->getInventoryWindow()->open();
 	} else {
-		_inventoryWindow->close();
+		_gameScreen->getInventoryWindow()->close();
 	}
 }
 
 int16 UserInterface::getSelectedInventoryItem() const {
-	if (_inventoryWindow) {
-		return _inventoryWindow->getSelectedInventoryItem();
+	if (_gameScreen) {
+		return _gameScreen->getInventoryWindow()->getSelectedInventoryItem();
 	} else {
 		return -1;
 	}
 }
 
 void UserInterface::selectInventoryItem(int16 itemIndex) {
-	_inventoryWindow->setSelectedInventoryItem(itemIndex);
+	_gameScreen->getInventoryWindow()->setSelectedInventoryItem(itemIndex);
 }
 
 void UserInterface::requestFMVPlayback(const Common::String &name) {
 	// TODO: Save the current screen so that it can be restored when the playback ends
-	changeScreen(kScreenFMV);
+	changeScreen(Screen::kScreenFMV);
 
-	_fmvPlayer->play(name);
+	_fmvScreen->play(name);
 }
 
 void UserInterface::onFMVStopped() {
 	// TODO: Restore the previous screen
-	changeScreen(kScreenGame);
+	changeScreen(Screen::kScreenGame);
 }
 
-void UserInterface::changeScreen(Screen screen) {
-	_currentScreen = screen;
+void UserInterface::changeScreen(Screen::Name screenName) {
+	if (screenName == _currentScreen->getName()) {
+		return;
+	}
+
+	_currentScreen->close();
+	_currentScreen = getScreenByName(screenName);
+	_currentScreen->open();
+}
+
+Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
+	switch (screenName) {
+		case Screen::kScreenFMV:
+			return _fmvScreen;
+		case Screen::kScreenGame:
+			return _gameScreen;
+		default:
+			error("Unhandled screen name '%d'", screenName);
+	}
 }
 
 bool UserInterface::isInGameScreen() const {
-	return _currentScreen == kScreenGame;
+	return _currentScreen->getName() == Screen::kScreenGame;
 }
 
 bool UserInterface::isInventoryOpen() const {
-	return _inventoryWindow->isVisible();
+	return _gameScreen->getInventoryWindow()->isVisible();
 }
 
 bool UserInterface::skipFMV() {
-	if (_currentScreen == kScreenFMV) {
-		_fmvPlayer->stop();
+	if (_currentScreen->getName() == Screen::kScreenFMV) {
+		_fmvScreen->stop();
 		return true;
 	}
 	return false;
 }
 
 void UserInterface::render() {
-	switch (_currentScreen) {
-		case kScreenGame:
-			for (int i = _gameScreenWindows.size() - 1; i >= 0; i--) {
-				_gameScreenWindows[i]->render();
-			}
-			break;
-		case kScreenFMV:
-			_fmvPlayer->render();
-			break;
-		default: // Nothing goes here
-			break;
-	}
+	_currentScreen->render();
 
 	// The cursor depends on the UI being done.
 	_cursor->render();
@@ -231,9 +193,7 @@ bool UserInterface::wasInteractionDenied() const {
 }
 
 void UserInterface::clearLocationDependentState() {
-	_dialogPanel->reset();
-	_gameWindow->reset();
-	_inventoryWindow->reset();
+	_gameScreen->reset();
 }
 
 void UserInterface::optionsOpen() {
@@ -246,7 +206,7 @@ void UserInterface::optionsOpen() {
 void UserInterface::saveGameScreenThumbnail() {
 	freeGameScreenThumbnail();
 
-	Graphics::Surface *big = _gameWindow->getScreenshot();
+	Graphics::Surface *big = _gameScreen->getGameWindow()->getScreenshot();
 	assert(big->format.bytesPerPixel == 4);
 
 	_gameWindowThumbnail = new Graphics::Surface();
@@ -281,8 +241,7 @@ const Graphics::Surface *UserInterface::getGameWindowThumbnail() const {
 }
 
 void UserInterface::onScreenChanged() {
-	_dialogPanel->onScreenChanged();
+	_gameScreen->onScreenChanged();
 }
 
 } // End of namespace Stark
-

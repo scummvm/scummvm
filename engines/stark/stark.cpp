@@ -420,10 +420,17 @@ void StarkEngine::pauseEngineIntern(bool pause) {
 	_frameLimiter->pause(pause);
 
 	// Grab a game screen thumbnail in case we need one when writing a save file
-	if (pause) {
-		_userInterface->saveGameScreenThumbnail();
-	} else {
-		_userInterface->freeGameScreenThumbnail();
+	if (_userInterface->isInGameScreen()) {
+		if (pause) {
+			_userInterface->saveGameScreenThumbnail();
+		} else {
+			_userInterface->freeGameScreenThumbnail();
+		}
+	}
+
+	// The user may have moved the mouse while the engine was paused
+	if (!pause) {
+		StarkUserInterface->handleMouseMove(_eventMan->getMousePos());
 	}
 }
 } // End of namespace Stark

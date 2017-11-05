@@ -179,5 +179,9 @@ VisualImageXMG *RenderEntry::getImage() const {
 	return _visual->get<VisualImageXMG>();
 }
 
+VisualText *RenderEntry::getText() const {
+	return _visual->get<VisualText>();
+}
+
 } // End of namespace Gfx
 } // End of namespace Stark

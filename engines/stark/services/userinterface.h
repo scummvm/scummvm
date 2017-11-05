@@ -23,6 +23,8 @@
 #ifndef STARK_SERVICES_USER_INTERFACE_H
 #define STARK_SERVICES_USER_INTERFACE_H
 
+#include "engines/stark/ui/screen.h"
+
 #include "common/rect.h"
 #include "common/str-array.h"
 
@@ -41,30 +43,18 @@ namespace Gfx {
 class Driver;
 }
 
-class ActionMenu;
-class DialogPanel;
-class InventoryWindow;
-class TopMenu;
+class DiaryIndexScreen;
+class GameScreen;
 class Cursor;
-class FMVPlayer;
-class GameWindow;
-class Window;
+class FMVScreen;
 
 /**
  * Facade object for interacting with the user interface from the rest of the engine
- *
- * @todo: perhaps move all window management to a new class
- * @todo: perhaps introduce a 'Screen' class or just a window with sub-windows for the game screen
  */
 class UserInterface {
 public:
-	UserInterface(Gfx::Driver *gfx);
+	explicit UserInterface(Gfx::Driver *gfx);
 	virtual ~UserInterface();
-
-	enum Screen {
-		kScreenGame,
-		kScreenFMV
-	};
 
 	void init();
 	void update();
@@ -91,7 +81,7 @@ public:
 	bool skipFMV();
 
 	/** Set the currently displayed screen */
-	void changeScreen(Screen screen);
+	void changeScreen(Screen::Name screenName);
 
 	/** Is the game screen currently displayed? */
 	bool isInGameScreen() const;
@@ -139,27 +129,16 @@ public:
 	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;
 
 private:
-	typedef void (Window::*WindowHandler)();
-	void dispatchEvent(WindowHandler handler);
+	Screen *getScreenByName(Screen::Name screenName) const;
 
-	// Game Screen windows
-	ActionMenu *_actionMenu;
-	DialogPanel *_dialogPanel;
-	InventoryWindow *_inventoryWindow;
-	TopMenu *_topMenu;
-	GameWindow *_gameWindow;
-
-	// Game screen windows array
-	Common::Array<Window *> _gameScreenWindows;
-
-	// FMV screen window
-	FMVPlayer *_fmvPlayer;
+	GameScreen *_gameScreen;
+	FMVScreen *_fmvScreen;
+	Screen *_currentScreen;
 
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;
 	bool _exitGame;
 
-	Screen _currentScreen;
 	bool _interactive;
 	bool _interactionAttemptDenied;
 

@@ -91,7 +91,8 @@ MODULE_OBJS := \
 	ui/world/clicktext.o \
 	ui/world/topmenu.o \
 	ui/world/dialogpanel.o \
-	ui/world/fmvplayer.o \
+	ui/world/fmvscreen.o \
+	ui/world/gamescreen.o \
 	ui/world/gamewindow.o \
 	ui/world/inventorywindow.o \
 	visual/actor.o \

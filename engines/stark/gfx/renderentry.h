@@ -34,6 +34,7 @@ namespace Stark {
 
 class Visual;
 class VisualImageXMG;
+class VisualText;
 
 namespace Resources {
 class ItemVisual;
@@ -66,7 +67,7 @@ public:
 	RenderEntry(Resources::ItemVisual *owner, const Common::String &name);
 	virtual ~RenderEntry() {}
 
-	void render(const LightEntryArray &lights);
+	void render(const LightEntryArray &lights = LightEntryArray());
 
 	void setVisual(Visual *visual);
 	void setPosition(const Common::Point &position);
@@ -77,8 +78,14 @@ public:
 	/** Gets the owner-object */
 	Resources::ItemVisual *getOwner() const { return _owner; }
 
+	/** Gets the entry's name */
+	const Common::String &getName() const { return _name; }
+
 	/** Obtain the underlying image visual, if any */
 	VisualImageXMG *getImage() const;
+
+	/** Obtain the underlying text visual, if any */
+	VisualText *getText() const;
 
 	/**
 	 * Mouse picking test for 2D items

@@ -22,7 +22,7 @@
 
 #include "common/rect.h"
 
-#include "engines/stark/ui/world/fmvplayer.h"
+#include "engines/stark/ui/world/fmvscreen.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
@@ -34,8 +34,8 @@
 
 namespace Stark {
 
-FMVPlayer::FMVPlayer(Gfx::Driver *gfx, Cursor *cursor) :
-		Window(gfx, cursor) {
+FMVScreen::FMVScreen(Gfx::Driver *gfx, Cursor *cursor) :
+		SingleWindowScreen(Screen::kScreenFMV, gfx, cursor) {
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kOriginalHeight);
 	_visible = true;
 
@@ -47,13 +47,13 @@ FMVPlayer::FMVPlayer(Gfx::Driver *gfx, Cursor *cursor) :
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
 
-FMVPlayer::~FMVPlayer() {
+FMVScreen::~FMVScreen() {
 	delete _decoder;
 	delete _texture;
 	delete _surfaceRenderer;
 }
 
-void FMVPlayer::play(const Common::String &name) {
+void FMVScreen::play(const Common::String &name) {
 	Common::SeekableReadStream *stream = StarkArchiveLoader->getExternalFile(name, "Global/");
 	if (!stream) {
 		warning("Could not open %s", name.c_str());
@@ -66,7 +66,7 @@ void FMVPlayer::play(const Common::String &name) {
 	_decoder->start();
 }
 
-void FMVPlayer::onRender() {
+void FMVScreen::onRender() {
 	// TODO: Refactor this into an update method
 	if (isPlaying()) {
 		if (_decoder->needsUpdate()) {
@@ -80,11 +80,11 @@ void FMVPlayer::onRender() {
 	_surfaceRenderer->render(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight));
 }
 
-bool FMVPlayer::isPlaying() {
+bool FMVScreen::isPlaying() {
 	return _decoder->isPlaying() && !_decoder->endOfVideo();
 }
 
-void FMVPlayer::stop() {
+void FMVScreen::stop() {
 	_decoder->stop();
 	StarkUserInterface->onFMVStopped();
 }

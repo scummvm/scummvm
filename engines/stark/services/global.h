@@ -96,7 +96,7 @@ public:
 	void setNormalSpeed() { _fastForward = false; }
 	void setMillisecondsPerGameloop(uint millisecondsPerGameloop) { _millisecondsPerGameloop = millisecondsPerGameloop; }
 	void setApril(Resources::GlobalItemTemplate *april) { _april = april; }
-	void setInventory(Resources::KnowledgeSet * inventory) { _inventory = inventory; }
+	void setInventory(Resources::KnowledgeSet *inventory) { _inventory = inventory; }
 
 	/** Retrieve the current chapter number from the global resource tree */
 	int32 getCurrentChapter();
@@ -104,6 +104,7 @@ public:
 	/** Temporary HACK to allow us to query the inventory */
 	void printInventory(bool printAll);
 	void enableInventoryItem(int32 num);
+	bool hasInventoryItem(const Common::String &itemName) const;
 
 	/** Change the current chapter */
 	void setCurrentChapter(int32 value);

@@ -73,4 +73,16 @@ Common::String Global::getCharacterName(int32 id) {
 	return character->getName();
 }
 
+bool Global::hasInventoryItem(const Common::String &itemName) const {
+	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
+
+	for (uint i = 0; i < inventoryItems.size(); i++) {
+		if (inventoryItems[i]->getName() == itemName && inventoryItems[i]->isEnabled()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 } // End of namespace Stark
