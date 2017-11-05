@@ -45,10 +45,6 @@
 
 struct lua_State;
 
-#if defined(MACOSX) || defined(SOLARIS) || defined(__MINGW32__)
-#define sqrtf(x)	((float)sqrt(x))
-#endif
-
 namespace Sword25 {
 
 /**
@@ -67,7 +63,7 @@ public:
 	 * @remark              If only distances should be compared, sqrDist() should be used, since it is faster.
 	 */
 	inline int distance(const Vertex &vertex) const {
-		return (int)(sqrtf(static_cast<float>(sqrDist(vertex))) + 0.5);
+		return (int)(sqrt(static_cast<float>(sqrDist(vertex))) + 0.5);
 	}
 
 	static Vertex &luaVertexToVertex(lua_State *L, int StackIndex, Vertex &vertex);
