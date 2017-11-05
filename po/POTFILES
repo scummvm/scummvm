@@ -43,7 +43,6 @@ audio/mididrv.cpp
 audio/musicplugin.cpp
 audio/null.h
 audio/null.cpp
-audio/softsynth/mt32.cpp
 
 backends/cloud/storage.cpp
 backends/events/default/default-events.cpp
