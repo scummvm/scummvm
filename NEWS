@@ -1,8 +1,12 @@
 
-0.3.0 (2017-xx-xx)
+0.4.0 (YYYY-MM-DD)
 	New Games:
 	- ...
 
+	General:
+	- ...
+
+0.3.0 (2017-xx-xx)
 	General:
 	- OpenGL shaders are now detected at runtime
 	- Support for selecting graphics renderer at runtime
