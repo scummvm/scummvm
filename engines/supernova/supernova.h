@@ -108,7 +108,6 @@ public:
 	Common::String _nullString;
 
 	byte _imageIndex;
-	byte _sectionIndex;
 	byte _menuBrightness;
 	byte _brightness;
 	uint _timePaused;
