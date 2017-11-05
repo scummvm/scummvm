@@ -8,6 +8,7 @@
 
 0.3.0 (2017-xx-xx)
 	General:
+        - Switched SDL backend to SDL2 by default. SDL1 is still a fallback
 	- OpenGL shaders are now detected at runtime
 	- Support for selecting graphics renderer at runtime
 	- Enabled support for multi language
@@ -18,7 +19,7 @@
 	- Improve lighting
 
 	Myst III changes:
-	- Added support for XBox version of Myst III
+	- Added support for the XBox version of Myst III
 	- Added an option to take advantage of wide screens
 	- Updated the game scripts to the newest official version for non-DVD releases
 	- Implemented the Narayan shield effect
