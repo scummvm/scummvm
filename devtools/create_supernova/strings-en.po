@@ -1629,7 +1629,7 @@ msgstr "Pssst, not so loud, otherwise|everyone will want an autograph from me."
 #: ../../msn/msn_r2.c:730
 msgid ""
 "Ich habe extra eine Maske auf, damit|ich nicht von jedem angelabert werde."
-msgstr "I have an extra mask on so I don't get yakked on by everyone."
+msgstr "I have an extra mask on so I don't|get yakked on by everyone."
 
 #: ../../msn/msn_r2.c:731
 msgid "Žh ... ach so."
