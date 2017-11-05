@@ -32,6 +32,8 @@ namespace Resources {
 class Anim;
 class Image;
 class Level;
+class Location;
+class Sound;
 }
 
 class ArchiveLoader;
@@ -46,7 +48,7 @@ class VisualImageXMG;
  */
 class StaticProvider {
 public:
-	StaticProvider(ArchiveLoader *archiveLoader);
+	explicit StaticProvider(ArchiveLoader *archiveLoader);
 
 	enum UIElement {
 		kInventoryScrollUpArrow = 1,
@@ -88,12 +90,30 @@ public:
 	/** Get an image for a static UI element */
 	VisualImageXMG *getUIImage(UIImage image);
 
+	/** Load a static location and set it as current */
+	Resources::Location *loadLocation(const char *locationName);
+
+	/** Is a static location currently loaded? */
+	bool isStaticLocation() const;
+
+	/** Obtain the currently loaded static location, if any */
+	Resources::Location *getLocation() const;
+
+	/** Look up a sound resource in the current static location by its index */
+	Resources::Sound *getLocationSound(uint16 index) const;
+
+	/** Unload the current static location */
+	void unloadLocation(Resources::Location *location);
+
 private:
 	ArchiveLoader *_archiveLoader;
 
 	Resources::Level *_level;
+	Resources::Location *_location;
 	Common::Array<Resources::Anim *> _stockAnims;
 	Common::Array<Resources::Image *> _stockImages;
+
+	Common::String buildLocationArchiveName(const char *locationName) const;
 };
 
 } // End of namespace Stark

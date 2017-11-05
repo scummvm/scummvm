@@ -23,9 +23,12 @@
 #include "engines/stark/services/staticprovider.h"
 
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/container.h"
 #include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/level.h"
+#include "engines/stark/resources/location.h"
+#include "engines/stark/resources/sound.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/visual/image.h"
@@ -34,7 +37,8 @@ namespace Stark {
 
 StaticProvider::StaticProvider(ArchiveLoader *archiveLoader) :
 		_archiveLoader(archiveLoader),
-		_level(nullptr) {
+		_level(nullptr),
+		_location(nullptr) {
 }
 
 void StaticProvider::init() {
@@ -51,7 +55,7 @@ void StaticProvider::init() {
 	_stockAnims = staticItem->listChildren<Resources::Anim>();
 
 	for (uint i = 0; i< _stockAnims.size(); i++) {
-		_stockAnims[i]->applyToItem(0);
+		_stockAnims[i]->applyToItem(nullptr);
 	}
 
 	Resources::Anim *imagesAnim = _stockAnims[kImages];
@@ -63,6 +67,10 @@ void StaticProvider::onGameLoop() {
 }
 
 void StaticProvider::shutdown() {
+	if (_location) {
+		unloadLocation(_location);
+	}
+
 	_level = nullptr;
 
 	_archiveLoader->returnRoot("static/static.xarc");
@@ -81,6 +89,57 @@ VisualImageXMG *StaticProvider::getUIElement(UIElement element) {
 VisualImageXMG *StaticProvider::getUIImage(UIImage image) {
 	Resources::Image *anim = _stockImages[image];
 	return anim->getVisual()->get<VisualImageXMG>();
+}
+
+Common::String StaticProvider::buildLocationArchiveName(const char *locationName) const {
+	return Common::String::format("static/%s/%s.xarc", locationName, locationName);
+}
+
+Resources::Location *StaticProvider::loadLocation(const char *locationName) {
+	assert(!_location);
+
+	Common::String archiveName = buildLocationArchiveName(locationName);
+
+	_archiveLoader->load(archiveName);
+	_location = _archiveLoader->useRoot<Resources::Location>(archiveName);
+
+	_location->onAllLoaded();
+	_location->onEnterLocation();
+
+	// Start background music
+	Common::Array<Resources::Sound *> sounds = _location->listChildren<Resources::Sound>(Resources::Sound::kSoundSub3);
+	for (uint i = 0; i < sounds.size(); i++) {
+		sounds[i]->play();
+	}
+
+	return _location;
+}
+
+void StaticProvider::unloadLocation(Resources::Location *location) {
+	assert(_location == location);
+
+	location->onExitLocation();
+
+	Common::String archiveName = buildLocationArchiveName(location->getName().c_str());
+	_archiveLoader->returnRoot(archiveName);
+	_archiveLoader->unloadUnused();
+
+	_location = nullptr;
+}
+
+bool StaticProvider::isStaticLocation() const {
+	return _location != nullptr;
+}
+
+Resources::Location *StaticProvider::getLocation() const {
+	return _location;
+}
+
+Resources::Sound *StaticProvider::getLocationSound(uint16 index) const {
+	assert(_location);
+
+	Resources::Container *sounds = _location->findChildWithSubtype<Resources::Container>(Resources::Container::kSounds);
+	return sounds->findChildWithIndex<Resources::Sound>(index);
 }
 
 } // End of namespace Stark
