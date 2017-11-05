@@ -562,7 +562,7 @@ const char *gameText[] = {
 	"Ich habe vor zwei Stunden mein Essen|bestellt und immer noch nichts bekommen.", // kStringArsanoRoger7
 	"Noch mindestens zwei Stunden.", // kStringArsanoRoger8
 	"Haben Sie keine Idee, womit wir uns|bis dahin die Zeit vertreiben k\224nnen?", // kStringArsanoRoger9
-	"Hmm ... im Moment f\201llt mir nichts ein, aber vielleicht|hat der Spieler des Adventures ja eine Idee.", // kStringArsanoRoger10
+	"Hmm ... im Moment f\204llt mir nichts ein, aber vielleicht|hat der Spieler des Adventures ja eine Idee.", // kStringArsanoRoger10
 	// 440
 	"Nein, Sie m\201ssen sich irren.|Ich kenne Sie jedenfalls nicht.", // kStringArsanoRoger11
 	"Aber ihre Kleidung habe ich irgendwo schon mal gesehen.", // kStringArsanoRoger12
@@ -585,7 +585,7 @@ const char *gameText[] = {
 	"\216h ... kann sein.", // kStringArsanoRoger26
 	"Aber eins m\201ssen Sie mir erkl\204ren!", // kStringArsanoRoger27
 	"Wieso sehen Sie mir so verdammt \204hnlich, wenn|Sie nicht von Xenon stammen, wie ich?", // kStringArsanoRoger28
-	"Keine Ahnung. Bis jetzt dachte ich immer, Sie w\201ren ein|von Programmierern auf der Erde erfundenes Computersprite.", // kStringArsanoRoger29
+	"Keine Ahnung. Bis jetzt dachte ich immer, Sie w\204ren ein|von Programmierern auf der Erde erfundenes Computersprite.", // kStringArsanoRoger29
 	"Was? Lachhaft!", // kStringArsanoRoger30
 	// 460
 	"Wie erkl\204ren Sie sich dann,|da\341 ich ihnen gegen\201bersitze?", // kStringArsanoRoger31
