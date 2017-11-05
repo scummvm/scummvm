@@ -27,6 +27,7 @@
 #include "engines/stark/resources/location.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
+#include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/services.h"
 
 namespace Stark {
@@ -55,7 +56,10 @@ Resources::Object *ResourceReference::resolve() const {
 
 		switch (element.getType().get()) {
 		case Resources::Type::kLevel:
-			if (element.getIndex()) {
+			if (StarkStaticProvider->isStaticLocation()) {
+				resource = level = StarkStaticProvider->getLevel();
+				assert(resource->getIndex() == element.getIndex());
+			} else if (element.getIndex()) {
 				resource = level = StarkResourceProvider->getLevel(element.getIndex());
 			} else {
 				resource = level = StarkGlobal->getLevel();
@@ -71,7 +75,12 @@ Resources::Object *ResourceReference::resolve() const {
 				error("Cannot resolve location '%d' without resolving a level first", element.getIndex());
 			}
 
-			resource = StarkResourceProvider->getLocation(level->getIndex(), element.getIndex());
+			if (StarkStaticProvider->isStaticLocation()) {
+				resource = StarkStaticProvider->getLocation();
+				assert(resource->getIndex() == element.getIndex());
+			} else {
+				resource = StarkResourceProvider->getLocation(level->getIndex(), element.getIndex());
+			}
 
 			if (!resource) {
 				error("Location '%d' not found in level '%d'", element.getIndex(), level->getIndex());
