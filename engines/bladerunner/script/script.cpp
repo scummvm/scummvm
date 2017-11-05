@@ -357,7 +357,7 @@ int ScriptBase::Actor_Query_Inch_Distance_From_Waypoint(int actorId, int waypoin
 	float distX = actorX - waypointX;
 	float distZ = actorZ - waypointZ;
 
-	return sqrtf(distX * distX + distZ * distZ);
+	return sqrt(distX * distX + distZ * distZ);
 }
 
 bool ScriptBase::Actor_Query_In_Between_Two_Actors(int actorId, int otherActor1Id, int otherActor2Id) {

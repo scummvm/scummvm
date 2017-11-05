@@ -47,7 +47,7 @@ public:
 
 	Vector3(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
 
-	float length() { return sqrtf(x * x + y * y + z * z); }
+	float length() { return sqrt(x * x + y * y + z * z); }
 	Vector3 normalize() {
 		float len = length();
 		if (len == 0) {

@@ -196,8 +196,8 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool inWalkLoop) {
 
 	float angle_rad = _facing / 512.0 * M_PI;
 
-	_current.x += stepDistance * sinf(angle_rad);
-	_current.z -= stepDistance * cosf(angle_rad);
+	_current.x += stepDistance * sin(angle_rad);
+	_current.z -= stepDistance * cos(angle_rad);
 	_current.y = _vm->_scene->_set->getAltitudeAtXZ(_current.x, _current.z, &walkboxFound);
 
 	return false;

@@ -118,9 +118,9 @@ Matrix3x2 SliceRenderer::calculateFacingRotationMatrix() {
 	assert(_sliceFramePtr);
 
 	Vector3 viewPos = _view->_sliceViewMatrix * _position;
-	float dir = atan2f(viewPos.x, viewPos.z) + _facing;
-	float s = sinf(dir);
-	float c = cosf(dir);
+	float dir = atan2(viewPos.x, viewPos.z) + _facing;
+	float s = sin(dir);
+	float c = cos(dir);
 
 	Matrix3x2 mRotation(c, -s, 0.0f,
 	                    s,  c, 0.0f);
@@ -488,11 +488,11 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	loadFrame(animationId, animationFrame);
 
 	float frameHeight = _frameSliceHeight * _frameSliceCount;
-	float frameSize = sqrtf(_frameScale.x * 255.0f * _frameScale.x * 255.0f + _frameScale.y * 255.0f * _frameScale.y * 255.0f);
+	float frameSize = sqrt(_frameScale.x * 255.0f * _frameScale.x * 255.0f + _frameScale.y * 255.0f * _frameScale.y * 255.0f);
 	float size = scale / MAX(frameSize, frameHeight);
 
-	float s = sinf(_facing);
-	float c = cosf(_facing);
+	float s = sin(_facing);
+	float c = cos(_facing);
 
 	Matrix3x2 m_rotation(c, -s, 0.0f,
 	                     s,  c, 0.0f);
