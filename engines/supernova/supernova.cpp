@@ -177,7 +177,7 @@ Common::Error SupernovaEngine::run() {
 
 void SupernovaEngine::updateEvents() {
 	_gm->handleTime();
-	if (_gm->_animationEnabled && _gm->_animationTimer == 0)
+	if (_gm->_animationEnabled && !_messageDisplayed && _gm->_animationTimer == 0)
 		_gm->_currentRoom->animation();
 
 	_gm->_mouseClicked = false;
