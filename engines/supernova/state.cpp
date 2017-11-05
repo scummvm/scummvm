@@ -313,6 +313,10 @@ void GameManager::initState() {
 	_processInput = false;
 	_guiEnabled = true;
 	_animationEnabled = true;
+	_mouseClicked = false;
+	_keyPressed = false;
+	_mouseX = -1;
+	_mouseY = -1;
 	_mouseField = -1;
 	_inventoryScroll = 0;
 	_oldTime = 0;
