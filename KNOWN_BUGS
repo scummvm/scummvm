@@ -11,7 +11,8 @@ Grim
 ----
  * Characters might pop into place at times
  * Some animations will show their initial state at the end
+ * Manny turns orange when using the grinder (#1140)
 
 MYST III
 --------
- * Catherine's extra speech at start is distorted, see issue #1038
+ * None

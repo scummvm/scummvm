@@ -8,15 +8,17 @@
 
 0.3.0 (2017-xx-xx)
 	General:
-        - Switched SDL backend to SDL2 by default. SDL1 is still a fallback
+	- Switched SDL backend to SDL2 by default. SDL1 is still a fallback
 	- Added support for selecting between the legacy OpenGL and shaders OpenGL
-          game renderers at runtime
+	  game renderers at runtime
+	- Improvements and fixes in TinyGL renderer
 	- Enabled support for multi language
 
 	Grim changes:
 	- Added support for German, French, Italian and Spanish Grim Fandango Demo
 	- Added support for English Grim Fandango Demo (with intro video version)
 	- Improved lighting
+	- Fixed buggy character in the Blue Casket when using the TinyGL Renderer (#1251)
 
 	Myst III changes:
 	- Added support for the XBox version of Myst III
@@ -106,6 +108,5 @@
 
 
 0.1.0 (2012-12-21)
-
 	- First release.
 	- Grim Fandango full game and demo supported.
