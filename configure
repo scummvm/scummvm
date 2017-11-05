@@ -1986,7 +1986,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -2635,6 +2635,8 @@ case $_host_os in
 		;;
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		append_var DEFINES "-D_GNU_SOURCE"
+		append_var DEFINES "-D_ISOC11_SOURCE"
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
@@ -3017,10 +3019,8 @@ if test -n "$_host"; then
 			_timidity=no
 			;;
 		m68k-atari-mint)
-			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			_ranlib=m68k-atari-mint-ranlib
-			_ar="m68k-atari-mint-ar cru"
 			_seq_midi=no
+			_timidity=no
 			;;
 		maemo)
 			append_var CXXFLAGS "-mcpu=arm926ej-s"
