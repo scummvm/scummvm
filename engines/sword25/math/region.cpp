@@ -266,10 +266,10 @@ Vertex Region::findClosestPointOnLine(const Vertex &lineStart, const Vertex &lin
 	float vector1Y = static_cast<float>(point.y - lineStart.y);
 	float vector2X = static_cast<float>(lineEnd.x - lineStart.x);
 	float vector2Y = static_cast<float>(lineEnd.y - lineStart.y);
-	float vector2Length = sqrtf(vector2X * vector2X + vector2Y * vector2Y);
+	float vector2Length = sqrt(vector2X * vector2X + vector2Y * vector2Y);
 	vector2X /= vector2Length;
 	vector2Y /= vector2Length;
-	float distance = sqrtf(static_cast<float>((lineStart.x - lineEnd.x) * (lineStart.x - lineEnd.x) +
+	float distance = sqrt(static_cast<float>((lineStart.x - lineEnd.x) * (lineStart.x - lineEnd.x) +
 	                       (lineStart.y - lineEnd.y) * (lineStart.y - lineEnd.y)));
 	float dot = vector1X * vector2X + vector1Y * vector2Y;
 
