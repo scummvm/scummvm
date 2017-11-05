@@ -425,12 +425,14 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section) {
 		}
 	}
 
-	uint offset = image._section[section].y1 * image._pitch + image._section[section].x1;
-	if (invert)
+	uint offset = 0;
+	if (invert) {
+		offset = image._section[section].y1 * image._pitch + image._section[section].x1;
 		section = 0;
+	}
 
 	_system->copyRectToScreen(static_cast<const byte *>(image._sectionSurfaces[section]->getPixels()) + offset,
-	                          image._pitch,
+	                          sectionRect.width(),
 	                          sectionRect.left, sectionRect.top,
 	                          sectionRect.width(), sectionRect.height());
 }
