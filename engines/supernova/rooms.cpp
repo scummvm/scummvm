@@ -742,10 +742,10 @@ void ShipSleepCabin::animation() {
 void ShipSleepCabin::onEntrance() {
 	if (_gm->_state._dream && (_gm->_rooms[CAVE]->getObject(1)->_exitRoom == MEETUP3)) {
 		_vm->renderMessage(kStringShipSleepCabin14);
-		_gm->mouseWait(_gm->_timer1);
+		_gm->waitOnInput(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringShipSleepCabin15);
-		_gm->mouseWait(_gm->_timer1);
+		_gm->waitOnInput(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringShipSleepCabin16);
 		_gm->_state._dream = false;
@@ -1710,7 +1710,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderMessage(kStringArsanoEntrance20);
 			else {
 				_vm->renderMessage(kStringArsanoEntrance21);
-				_gm->mouseWait(_gm->_timer1);
+				_gm->waitOnInput(_gm->_timer1);
 				_vm->removeMessage();
 				_vm->renderMessage(kStringArsanoEntrance22);
 				_gm->takeObject(*getObject(16));
@@ -1757,7 +1757,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 			getObject(4)->setProperty(WORN);
 			getObject(5)->setProperty(WORN);
 			getObject(6)->setProperty(WORN);
-			_gm->mouseWait(_gm->_timer1);
+			_gm->waitOnInput(_gm->_timer1);
 			_vm->removeMessage();
 		}
 		return false;
@@ -2029,7 +2029,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->_menuBrightness = 255;
 		_vm->paletteBrightness();
 		_vm->renderMessage(kStringArsanoRoger39);
-		_gm->mouseWait(_gm->_timer1);
+		_gm->waitOnInput(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
 		_vm->paletteBrightness();
@@ -2048,7 +2048,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		getObject(6)->_click = 7;
 		_vm->paletteFadeIn();
 		_vm->renderMessage(kStringArsanoRoger40);
-		_gm->mouseWait(_gm->_timer1);
+		_gm->waitOnInput(_gm->_timer1);
 		_vm->removeMessage();
 	} else
 		return false;
@@ -2224,7 +2224,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->wait2(18);
 				_vm->renderMessage(kStringArsanoMeetup2_12);
 				_gm->great(0);
-				_gm->mouseWait(_gm->_timer1);
+				_gm->waitOnInput(_gm->_timer1);
 				_vm->removeMessage();
 				_vm->paletteFadeOut();
 				g_system->fillScreen(kColorBlack);
@@ -3070,7 +3070,7 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->_menuBrightness = 255;
 		_vm->paletteBrightness();
 		_vm->renderMessage(kStringAxacussElevator_3);
-		_gm->mouseWait(_gm->_timer1);
+		_gm->waitOnInput(_gm->_timer1);
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
 		_vm->paletteBrightness();
