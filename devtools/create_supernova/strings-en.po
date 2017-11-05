@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Mission Supernova 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-22 19:53+0100\n"
-"PO-Revision-Date: 2017-11-05 21:18+0000\n"
+"PO-Revision-Date: 2017-11-05 21:23+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
@@ -1596,14 +1596,14 @@ msgstr "At least two more hours."
 #: ../../msn/msn_r2.c:722
 msgid ""
 "Haben Sie keine Idee, womit wir uns|bis dahin die Zeit vertreiben kînnen?"
-msgstr "Don't you have an idea|that can help pass the time?"
+msgstr "Don't you have an idea that|can help pass the time?"
 
 #: ../../msn/msn_r2.c:723
 msgid ""
 "Hmm ... im Moment fÑllt mir nichts ein, aber vielleicht|hat der Spieler des "
 "Adventures ja eine Idee."
 msgstr ""
-"Hmm ... at the moment I'm not sure,|but maybe the Adventure Game Player has "
+"Hmm ... at the moment I'm not sure,but maybe|the Adventure Game Player has "
 "an idea."
 
 #: ../../msn/msn_r2.c:725
@@ -1698,7 +1698,7 @@ msgstr "What? Ridiculous!"
 
 #: ../../msn/msn_r2.c:745
 msgid "Wie erklÑren Sie sich dann,|da· ich ihnen gegenÅbersitze?"
-msgstr "How do you explain then|that I am seated opposite you?"
+msgstr "How do you explain then that|I am seated opposite you?"
 
 #: ../../msn/msn_r2.c:746
 msgid "Ja, das ist in der Tat seltsam."
