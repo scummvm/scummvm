@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Mission Supernova 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-22 19:53+0100\n"
-"PO-Revision-Date: 2017-11-05 01:01+0000\n"
+"PO-Revision-Date: 2017-11-05 21:18+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
@@ -1624,7 +1624,7 @@ msgstr "Now I know. You are Roger W.!"
 
 #: ../../msn/msn_r2.c:729
 msgid "Pssst, nicht so laut, sonst will|gleich jeder ein Autogramm von mir."
-msgstr "Pssst, not so loud, otherwise|everyone will want an autograph from me."
+msgstr "Pssst, not so loud, otherwise everyone|will want an autograph from me."
 
 #: ../../msn/msn_r2.c:730
 msgid ""
@@ -1649,7 +1649,7 @@ msgstr "What, part 127 ??"
 
 #: ../../msn/msn_r2.c:735
 msgid "Bei uns ist gerade Teil 8 erschienen."
-msgstr "We have just released part 8."
+msgstr "Part 8 has just been released."
 
 #: ../../msn/msn_r2.c:736
 msgid "Hmm ... von welchem Planeten sind Sie denn?"
@@ -1667,7 +1667,7 @@ msgstr "Earth? Never heard of it."
 msgid ""
 "Wahrscheinlich irgendein Kaff, wo Neuerungen|erst hundert Jahre sp„ter "
 "hingelangen."
-msgstr "Probably some Dump, where innovations happen|only a century late."
+msgstr "Probably some Dump, where innovations|happen only a century late."
 
 #: ../../msn/msn_r2.c:740
 msgid "Žh ... kann sein."
@@ -1721,7 +1721,7 @@ msgid ""
 "Na gut, ich glaube Ihnen. Lassen wir jetzt|dieses Thema, langsam wird es mir "
 "zu bunt!"
 msgstr ""
-"OK. I believe you. Let's move away from this topic|before it goes too far!"
+"OK. I believe you. Let's move away from|this topic before it goes too far!"
 
 #: ../../msn/msn_r2.c:761
 msgid "Eine Partie Schach! Das ist eine gute Idee."
