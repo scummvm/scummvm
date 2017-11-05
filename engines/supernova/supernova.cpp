@@ -967,16 +967,32 @@ ScreenBufferStack::ScreenBufferStack()
 	: _last(_buffer) {
 }
 
-void ScreenBufferStack::push(int x, int y, int width, int height, int pitch) {
+void ScreenBufferStack::push(int x, int y, int width, int height) {
 	if (_last == ARRAYEND(_buffer))
 		return;
 
+	Graphics::Surface* screenSurface = g_system->lockScreen();
+
+	if (x < 0) {
+		width += x;
+		x = 0;
+	}
+	if (x + width > screenSurface->w)
+		width = screenSurface->w - x;
+
+	if (y < 0) {
+		height += y;
+		y = 0;
+	}
+	if (y + height > screenSurface->h)
+		height = screenSurface->h - y;
+
 	_last->_pixels = new byte[width * height];
 	byte *pixels = _last->_pixels;
-	const byte *screen = static_cast<const byte *>(g_system->lockScreen()->getBasePtr(x, y));
+	const byte *screen = static_cast<const byte *>(screenSurface->getBasePtr(x, y));
 	for (int i = 0; i < height; ++i) {
 		Common::copy(screen, screen + width, pixels);
-		screen += pitch;
+		screen += screenSurface->pitch;
 		pixels += width;
 	}
 	g_system->unlockScreen();
@@ -985,7 +1001,6 @@ void ScreenBufferStack::push(int x, int y, int width, int height, int pitch) {
 	_last->_y = y;
 	_last->_width = width;
 	_last->_height = height;
-	_last->_pitch = pitch;
 
 	++_last;
 }

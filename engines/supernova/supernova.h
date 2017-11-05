@@ -55,7 +55,6 @@ struct ScreenBuffer {
 		, _y(0)
 		, _width(0)
 		, _height(0)
-		, _pitch(0)
 		, _pixels(NULL)
 	{}
 
@@ -64,13 +63,12 @@ struct ScreenBuffer {
 	int _y;
 	int _width;
 	int _height;
-	int _pitch;
 };
 class ScreenBufferStack {
 public:
 	ScreenBufferStack();
 
-	void push(int x, int y, int width, int height, int pitch = 320);
+	void push(int x, int y, int width, int height);
 	void restore();
 
 private:
