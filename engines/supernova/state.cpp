@@ -622,8 +622,8 @@ void GameManager::drawImage(int section) {
 		section -= 128;
 	}
 
+	_currentRoom->setSectionVisible(section, sectionVisible);
 	do {
-		_currentRoom->setSectionVisible(section, sectionVisible);
 		if (sectionVisible)
 			_vm->renderImage(_currentRoom->getFileNumber(), section);
 		else
