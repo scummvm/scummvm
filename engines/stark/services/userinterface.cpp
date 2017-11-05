@@ -34,6 +34,7 @@
 #include "engines/stark/services/staticprovider.h"
 
 #include "engines/stark/ui/cursor.h"
+#include "engines/stark/ui/menu/diaryindex.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 #include "engines/stark/ui/world/fmvscreen.h"
 #include "engines/stark/ui/world/gamescreen.h"
@@ -44,6 +45,7 @@ namespace Stark {
 UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursor(nullptr),
+		_diaryIndexScreen(nullptr),
 		_exitGame(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
@@ -58,6 +60,7 @@ UserInterface::~UserInterface() {
 
 	delete _gameScreen;
 	delete _fmvScreen;
+	delete _diaryIndexScreen;
 	delete _cursor;
 }
 
@@ -65,6 +68,7 @@ void UserInterface::init() {
 	_cursor = new Cursor(_gfx);
 
 	_currentScreen = _gameScreen = new GameScreen(_gfx, _cursor);
+	_diaryIndexScreen = new DiaryIndexScreen(_gfx, _cursor);
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
 }
 
@@ -138,6 +142,8 @@ Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
 	switch (screenName) {
 		case Screen::kScreenFMV:
 			return _fmvScreen;
+		case Screen::kScreenDiaryIndex:
+			return _diaryIndexScreen;
 		case Screen::kScreenGame:
 			return _gameScreen;
 		default:
@@ -197,10 +203,7 @@ void UserInterface::clearLocationDependentState() {
 }
 
 void UserInterface::optionsOpen() {
-	// TODO: Open the TLJ menu instead of the ResidualVM one
-	Common::Event event;
-	event.type = Common::EVENT_MAINMENU;
-	g_system->getEventManager()->pushEvent(event);
+	changeScreen(Screen::kScreenDiaryIndex);
 }
 
 void UserInterface::saveGameScreenThumbnail() {

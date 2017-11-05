@@ -133,6 +133,7 @@ private:
 
 	GameScreen *_gameScreen;
 	FMVScreen *_fmvScreen;
+	DiaryIndexScreen *_diaryIndexScreen;
 	Screen *_currentScreen;
 
 	Gfx::Driver *_gfx;

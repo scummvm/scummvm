@@ -37,7 +37,8 @@ class Screen {
 public:
 	enum Name {
 		kScreenGame,
-		kScreenFMV
+		kScreenFMV,
+		kScreenDiaryIndex
 	};
 
 	explicit Screen(Name name) : _name(name) {};
