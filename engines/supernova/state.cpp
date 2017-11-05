@@ -821,7 +821,7 @@ void GameManager::say(const char *text) {
 	_vm->renderBox(0, 141, 320, numRows * 10 - 1, kColorWhite25);
 	for (int r = 0; r < numRows; ++r)
 		_vm->renderText(row[r], 1, 142 + r * 10, kColorDarkGreen);
-	mouseWait((t.size() + 20) * _vm->_textSpeed / 10);
+	waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 }
 
@@ -837,12 +837,12 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 
 	for (int z = (strlen(text) + 20) * _vm->_textSpeed / 40; z > 0; --z) {
 		drawImage(aus1);
-		mouseWait(2);
-		if (_keyPressed) // ?? origin: key != -1, need to check what mouseWait does...
+		waitOnInput(2);
+		if (_keyPressed || _mouseClicked)
 			z = 1;
 		drawImage(aus2);
-		mouseWait(2);
-		if (_keyPressed)
+		waitOnInput(2);
+		if (_keyPressed || _mouseClicked)
 			z = 1;
 	}
 	if (*text != '|')
@@ -876,10 +876,12 @@ int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number
 			rq += rowLength[i];
 	}
 
+	_guiEnabled = false;
 	_currentSentence = -1;
 	do {
 		mouseInput3();
-	} while (_currentSentence == -1);
+	} while (_currentSentence == -1 && !_vm->shouldQuit());
+	_guiEnabled = true;
 
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 
@@ -1012,33 +1014,33 @@ uint16 GameManager::getKeyInput(bool blockForPrintChar) {
 }
 
 Common::EventType GameManager::getMouseInput() {
-	while (true) {
+	while (!_vm->shouldQuit()) {
 		_vm->updateEvents();
-		if (_mouseClicked) {
+		if (_mouseClicked)
 			return _mouseClickType;
-		}
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
 	}
+	return Common::EVENT_INVALID;
 }
 
 void GameManager::getInput() {
 	while (true) {
 		_vm->updateEvents();
-		if (_mouseClicked || _keyPressed) {
+		if (_mouseClicked || _keyPressed)
 			break;
-		}
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
 	}
 }
 
-// TODO: Unify mouseInput3 and mouseWait with getMouseInput
 void GameManager::mouseInput3() {
-	// STUB
-}
-void GameManager::mouseWait(int delay) {
-	// STUB
+	do {
+		_vm->updateEvents();
+		mousePosDialog(_mouseX, _mouseY);
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	} while (!_mouseClicked && !_vm->shouldQuit());
 }
 
 void GameManager::roomBrightness() {
@@ -1086,7 +1088,16 @@ void GameManager::wait2(int ticks) {
 		g_system->delayMillis(_vm->_delay);
 		_vm->updateEvents();
 		g_system->updateScreen();
-	} while (_state._time < end);
+	} while (_state._time < end && !_vm->shouldQuit());
+}
+
+void GameManager::waitOnInput(int ticks) {
+	int32 end = _state._time + ticksToMsec(ticks);
+	do {
+		g_system->delayMillis(_vm->_delay);
+		_vm->updateEvents();
+		g_system->updateScreen();
+	} while (_state._time < end && !_vm->shouldQuit() && !_keyPressed && !_mouseClicked);
 }
 
 bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
@@ -1102,7 +1113,7 @@ bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
 			return true;
 		} else if (_mouseClicked)
 			return true;
-	} while (_state._time < end);
+	} while (_state._time < end  && !_vm->shouldQuit());
 	return false;
 }
 
@@ -1440,10 +1451,10 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == NEWSPAPER)) {
 		_vm->renderMessage(kStringGenericInteract_10);
-		mouseWait(_timer1);
+		waitOnInput(_timer1);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringGenericInteract_11);
-		mouseWait(_timer1);
+		waitOnInput(_timer1);
 		_vm->removeMessage();
 		_vm->renderImage(2, 0);
 		_vm->setColor63(40);
@@ -1648,7 +1659,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringGenericInteract_30);
 	else if ((verb == ACTION_LOOK) && (obj1._id == BOOK2)) {
 		_vm->renderMessage(kStringGenericInteract_31);
-		mouseWait(_timer1);
+		waitOnInput(_timer1);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringGenericInteract_32);
 	} else {
