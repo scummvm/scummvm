@@ -1544,6 +1544,7 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 
 void ArsanoEntrance::animation() {
 	if (!_vm->_messageDisplayed && isSectionVisible(kMaxSection - 5)) {
+		_gm->animationOff(); // to avoid recursive call
 		_vm->playSound(kAudioDoorSound);
 		_gm->drawImage(8);
 		setSectionVisible(9, false);
@@ -1560,6 +1561,7 @@ void ArsanoEntrance::animation() {
 		_gm->drawImage(_gm->invertSection(5));
 		getObject(11)->_click = 255;
 		setSectionVisible(kMaxSection - 5, false);
+		_gm->animationOn();
 	}
 	if (isSectionVisible(2)) {
 		_gm->drawImage(_gm->invertSection(2));
