@@ -1,0 +1,220 @@
+# LANGUAGE translation for ResidualVM.
+# Copyright (C) YEAR ResidualVM Team
+# This file is distributed under the same license as the ResidualVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ResidualVM 0.4.0git\n"
+"Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
+"POT-Creation-Date: 2017-11-05 14:10+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:106
+msgid "Quit ResidualVM"
+msgstr ""
+
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:80
+msgid "About ResidualVM"
+msgstr ""
+
+#: gui/launcher.cpp:143
+msgid "Change global ResidualVM options"
+msgstr ""
+
+#: gui/launcher.cpp:529
+msgid ""
+"ResidualVM could not find any engine capable of running the selected game!"
+msgstr ""
+
+#: gui/options.cpp:1091
+msgid "Preserve aspect ratio"
+msgstr ""
+
+#: gui/options.cpp:1091
+msgid "Preserve the aspect ratio in fullscreen mode"
+msgstr ""
+
+#: gui/options.cpp:1094
+msgid "V-Sync"
+msgstr ""
+
+#: gui/options.cpp:1094
+msgid "Wait for the vertical sync to refresh the screen"
+msgstr ""
+
+#: gui/options.cpp:1096
+msgid "Game Renderer:"
+msgstr ""
+
+#: gui/options.cpp:1666
+msgid "Language of ResidualVM GUI"
+msgstr ""
+
+#: gui/options.cpp:1694
+msgid "How often to check ResidualVM updates"
+msgstr ""
+
+#: gui/updates-dialog.cpp:51
+msgid ""
+"ResidualVM now supports automatic check for updates\n"
+"which requires access to the Internet.\n"
+"\n"
+"Would you like to enable this feature?"
+msgstr ""
+
+#: engines/advancedDetector.cpp:335
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ResidualVM team along with name\n"
+"of the game you tried to add and its version, language, etc.:"
+msgstr ""
+
+#: engines/engine.cpp:556
+msgid ""
+"WARNING: The game you are about to start is not yet fully supported by "
+"ResidualVM. As such, it is likely to be unstable, and any saved game you "
+"make might not work in future versions of ResidualVM."
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:88
+msgid "Hide ResidualVM"
+msgstr ""
+
+#: engines/grim/detection.cpp:57
+msgid "Load user patch (unsupported)"
+msgstr ""
+
+#: engines/grim/detection.cpp:58
+msgid ""
+"Load an user patch. Please note that the ResidualVM-team doesn't provide "
+"support for using such patches."
+msgstr ""
+
+#: engines/grim/detection.cpp:66
+msgid "Show FPS"
+msgstr ""
+
+#: engines/grim/detection.cpp:67
+msgid "Show the current FPS-rate, while you play."
+msgstr ""
+
+#: engines/grim/grim.cpp:314
+#, c-format
+msgid ""
+"ResidualVM found some problems with your game data files.\n"
+"Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
+"Do you still want to run %s?"
+msgstr ""
+
+#: engines/grim/grim.cpp:317
+msgid "Escape From Monkey Island"
+msgstr ""
+
+#: engines/grim/grim.cpp:317
+msgid "Grim Fandango"
+msgstr ""
+
+#: engines/grim/md5check.cpp:546
+#, c-format
+msgid "'%s' may be corrupted. MD5: '%s'"
+msgstr ""
+
+#: engines/grim/md5check.cpp:547
+#, c-format
+msgid ""
+"The game data file %s may be corrupted.\n"
+"If you are sure it is not please provide the ResidualVM team the following "
+"code, along with the file name, the language and a description of your game "
+"version (i.e. dvd-box or jewelcase):\n"
+"%s"
+msgstr ""
+
+#: engines/grim/md5check.cpp:553
+#, c-format
+msgid "Could not open %s for checking"
+msgstr ""
+
+#: engines/grim/md5check.cpp:554
+#, c-format
+msgid ""
+"Could not open the file %s for checking.\n"
+"It may be missing or you may not have the rights to open it.\n"
+"Go to http://wiki.residualvm.org/index.php/Datafiles to see a list of the "
+"needed files."
+msgstr ""
+
+#: engines/grim/md5checkdialog.cpp:42
+msgid ""
+"ResidualVM will now verify the game data files, to make sure you have the "
+"best gaming experience.\n"
+"This may take a while, please wait.\n"
+"Successive runs will not check them again."
+msgstr ""
+
+#: engines/grim/resource.cpp:96
+msgid ""
+"The original patch of Grim Fandango\n"
+"is missing. Please download it from\n"
+"http://www.residualvm.org/downloads/\n"
+"and put it in the game data files directory"
+msgstr ""
+
+#: engines/grim/resource.cpp:101
+msgid ""
+"The original patch of Escape from Monkey Island is missing. \n"
+"Please download it from http://www.residualvm.org/downloads/\n"
+"and put it in the game data files directory.\n"
+"Pay attention to download the correct version according to the game's "
+"language"
+msgstr ""
+
+#: engines/grim/resource.cpp:121
+msgid "residualvm-grim-patch.lab not found"
+msgstr ""
+
+#: engines/grim/resource.cpp:143
+msgid ""
+"Loading datausr.lab. Please note that the ResidualVM-team doesn't provide "
+"support for using such patches"
+msgstr ""
+
+#: engines/grim/resource.cpp:150
+#, c-format
+msgid "%s not found"
+msgstr ""
+
+#: engines/grim/resource.cpp:181
+msgid ""
+"Loading datausr.m4b. Please note that the ResidualVM-team doesn't provide "
+"support for using such patches"
+msgstr ""
+
+#: engines/grim/resource.cpp:188
+msgid "Cannot find game data - check configuration file"
+msgstr ""
+
+#: engines/myst3/detection.cpp:175
+msgid "Widescreen mod"
+msgstr ""
+
+#: engines/myst3/detection.cpp:176
+msgid "Enable enable widescreen rendering in fullscreen mode."
+msgstr ""
+
+#: engines/myst3/myst3.cpp:348
+msgid ""
+"This version of Myst III has not been updated with the latest official "
+"patch.\n"
+"Please install the official update corresponding to your game's language.\n"
+"The updates can be downloaded from:\n"
+"http://www.residualvm.org/downloads/"
+msgstr ""
