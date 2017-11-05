@@ -67,8 +67,8 @@ shaders/stark_fade.vertex        FILE    "engines/stark/shaders/stark_fade.verte
 #endif
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION     0,3,0,0
- PRODUCTVERSION  0,3,0,0
+ FILEVERSION     0,4,0,0
+ PRODUCTVERSION  0,4,0,0
  FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
  FILEFLAGS       VS_FF_DEBUG
@@ -86,12 +86,12 @@ BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "residualvm.org\0"
             VALUE "FileDescription", "http://www.residualvm.org/\0"
-            VALUE "FileVersion", "0.3.0git\0"
+            VALUE "FileVersion", "0.4.0git\0"
             VALUE "InternalName", "residualvm\0"
             VALUE "LegalCopyright", "Copyrights information are in AUTHORS file\0"
             VALUE "OriginalFilename", "residualvm.exe\0"
             VALUE "ProductName", "ResidualVM\0"
-            VALUE "ProductVersion", "0.3.0git\0"
+            VALUE "ProductVersion", "0.4.0git\0"
         END
     END
 

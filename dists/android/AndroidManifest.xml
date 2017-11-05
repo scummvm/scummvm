@@ -4,7 +4,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.residualvm.residualvm"
 		android:versionCode="1000"
-		android:versionName="0.3.0git"
+		android:versionName="0.4.0git"
 		android:sharedUserId="org.residualvm.residualvm">
 
 	<uses-sdk android:minSdkVersion="12"

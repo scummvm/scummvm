@@ -1,5 +1,5 @@
 product residualvm
-    id "ResidualVM 0.3.0git"
+    id "ResidualVM 0.4.0git"
     image sw
         id "software"
         version 18
