@@ -104,7 +104,6 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	, _brightness(255)
 	, _menuBrightness(255)
 	, _imageIndex(0)
-	, _sectionIndex(0)
 	, _delay(33)
 	, _textSpeed(kTextSpeed[2])
 	, _screenWidth(320)
@@ -391,10 +390,13 @@ void SupernovaEngine::playSoundMod(int filenumber)
 }
 
 void SupernovaEngine::renderImage(MSNImageDecoder &image, int section) {
-	_sectionIndex = section;
-
-	if (section > 128)
+	// Note: inverting means we are removing the section. So we should get the rect for that
+	// section but draw the background (section 0) instead.
+	bool invert = false;
+	if (section > 128) {
 		section -= 128;
+		invert = true;
+	}
 	if (section > image._numSections - 1)
 		return;
 
@@ -424,7 +426,7 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section) {
 	}
 
 	uint offset = image._section[section].y1 * image._pitch + image._section[section].x1;
-	if (_sectionIndex > 128)
+	if (invert)
 		section = 0;
 
 	_system->copyRectToScreen(static_cast<const byte *>(image._sectionSurfaces[section]->getPixels()) + offset,
