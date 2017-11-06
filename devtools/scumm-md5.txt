@@ -673,6 +673,10 @@ pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
 	4aa93cb30e485b728504ba3a693f12bf	-1	ru	Windows	HE 100	-	-	sev
 	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 101	Updated	-	Jonathan
 	c225bec1b6c0798a2b8c89ac226dc793	-1	en	Wii	HE 101	-	-	sanguinehearts
+	111b36172bdc9bfe498e135878c03d38	66878	nl	Wii	HE 101	-	-	Ben Castricum
+	1d56c91148cbdfab7a5f3a6040cbb52f	66878	fr	Wii	HE 101	-	-	Ben Castricum
+	813af095ff338dacf349aca377e48041	66878	de	Wii	HE 101	-	-	Ben Castricum
+	d09bae8a49f8dfd9339efd705013920b	66878	en	Wii	HE 101	-	-	Ben Castricum
 
 	f237bf8a5ef9af78b2a6a4f3901da341	18354	en	All	-	Demo	-	khalek, sev
 	7f945525abcd48015adf1632637a44a1	-1	fr	All	-	Demo	-	Kirben
