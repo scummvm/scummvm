@@ -1562,7 +1562,7 @@ msgstr "Could you recommend a dish for me?"
 
 #: ../../msn/msn_r2.c:691
 msgid "Wie lange dauert es denn noch bis zur Supernova?"
-msgstr "How long does it take to reach the Supernova?"
+msgstr "How long do we have before the supernova?"
 
 #: ../../msn/msn_r2.c:692
 msgid "Sie kommen mir irgendwie bekannt vor."
@@ -1596,7 +1596,7 @@ msgstr "At least two more hours."
 #: ../../msn/msn_r2.c:722
 msgid ""
 "Haben Sie keine Idee, womit wir uns|bis dahin die Zeit vertreiben k”nnen?"
-msgstr "Don't you have an idea that|can help pass the time?"
+msgstr "Do you have an idea what we could|do to pass the time?"
 
 #: ../../msn/msn_r2.c:723
 msgid ""
