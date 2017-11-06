@@ -1,6 +1,4 @@
 
-ronindir = /usr/local/ronin
-
 CC := $(CXX)
 ASFLAGS := $(CXXFLAGS)
 

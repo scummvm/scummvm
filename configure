@@ -1701,6 +1701,12 @@ android)
 		exit 1
 	fi
 	;;
+dreamcast)
+	if test -z "$RONINDIR"; then
+		echo "Please set RONINDIR in your environment. export RONINDIR=<path to libronin>"
+		exit 1
+	fi
+	;;
 n64)
 	if test -z "$N64SDK"; then
 		echo "Please set N64SDK in your environment. export N64SDK=<path to n64 sdk>"
@@ -2913,13 +2919,6 @@ if test -n "$_host"; then
 			fi
 			_backend="dc"
 			_build_scalers=no
-			_mad=yes
-			_zlib=yes
-			if test -z "$RONINDIR"; then
-				add_line_to_config_mk "ronindir := /usr/local/ronin"
-			else
-				add_line_to_config_mk "ronindir := $RONINDIR"
-			fi
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
@@ -3272,11 +3271,9 @@ case $_backend in
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
-		append_var INCLUDES '-isystem $(ronindir)/include'
 		append_var LDFLAGS "-Wl,-Ttext,0x8c010000"
 		append_var LDFLAGS "-nostartfiles"
-		append_var LDFLAGS '$(ronindir)/lib/crt0.o'
-		append_var LDFLAGS '-L$(ronindir)/lib'
+		append_var LIBS "$RONINDIR/lib/crt0.o"
 		# Enable serial debugging output only when --enable-debug is passed
 		if test "$_release_build" = yes -o "$_debug_build" != yes; then
 			append_var LIBS "-lronin-noserial -lm"
