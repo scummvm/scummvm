@@ -527,7 +527,7 @@ void GameManager::processInput() {
 		if (((_mouseField >= 0) && (_mouseField < 256)) ||
 		    ((_mouseField >= 512) && (_mouseField < 768))) {
 			_inputObject[0] = _currentInputObject;
-			ObjectType type = _inputObject[0]->_type;
+			ObjectTypes type = _inputObject[0]->_type;
 			if (type & OPENABLE) {
 				if (type & OPENED)
 					_inputVerb = ACTION_CLOSE;

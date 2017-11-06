@@ -330,6 +330,7 @@ enum ObjectType {
 	OCCUPIED    =   2048,
 	CAUGHT      =   4096
 };
+typedef uint16 ObjectTypes;
 
 enum Action {
 	ACTION_WALK,
@@ -613,7 +614,7 @@ struct Object {
 	}
 
 	void disableProperty(ObjectType type) {
-		_type ^= type;
+		_type &= ~type;
 	}
 
 	bool hasProperty(ObjectType type) const {
@@ -632,7 +633,7 @@ struct Object {
 	StringID _name;
 	StringID _description;
 	ObjectID _id;
-	ObjectType _type;
+	ObjectTypes _type;
 	byte _click;
 	byte _click2;
 	byte _section;
