@@ -776,6 +776,16 @@ const char *gameText[] = {
 	// 615
 	"Das geht nicht.", // kStringGenericInteract_43
 	"Gespr\204ch beenden", // kStringConversationEnd
+	"Du hast das komische Gef\201hl,|da\341 drau\341en etwas passiert,|und eilst zum Restaurant.", // kStringSupernova1
+	"Da! Die Supernova!", // kStringSupernova2
+	"Zwei Minuten sp\204ter ...", // kStringSupernova3
+	// 620
+	"Hey, was machen Sie in meinem Raumschiff?!", // kStringSupernova4
+	"Geben Sie mir sofort meine Brieftasche wieder!", // kStringSupernova5
+	"Versuchen Sie das ja nicht nochmal!", // kStringSupernova6
+	"Und jetzt raus mit Ihnen!", // kStringSupernova7
+	"Zehn Minuten sp\204ter ...", // kStringSupernova8
+	//625
 	NULL
 };
 
