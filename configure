@@ -2911,10 +2911,6 @@ if test -n "$_host"; then
 			if test "$_release_build" = yes -o "$_debug_build" != yes; then
 				append_var DEFINES "-DNOSERIAL"
 			fi
-			append_var CXXFLAGS "-funroll-loops"
-			append_var CXXFLAGS "-fschedule-insns2"
-			append_var CXXFLAGS "-fomit-frame-pointer"
-			append_var CXXFLAGS "-fdelete-null-pointer-checks"
 			_backend="dc"
 			_build_scalers=no
 			_mad=yes
