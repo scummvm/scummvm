@@ -180,6 +180,32 @@ void SupernovaEngine::updateEvents() {
 	if (_gm->_animationEnabled && !_messageDisplayed && _gm->_animationTimer == 0)
 		_gm->_currentRoom->animation();
 
+	if (_gm->_state._eventCallback != kNoFn && _gm->_state._time >= _gm->_state._eventTime) {
+		_gm->_state._eventTime = 0xffffffff;
+		EventFunction fn = _gm->_state._eventCallback;
+		_gm->_state._eventCallback = kNoFn;
+		switch (fn) {
+		case kNoFn:
+			break;
+		case kSupernovaFn:
+			_gm->supernovaEvent();
+			break;
+		case kGuardReturnedFn:
+			_gm->guardReturnedEvent();
+			break;
+		case kGuardWalkFn:
+			_gm->guardWalkEvent();
+			break;
+		case kTaxiFn:
+			_gm->taxiEvent();
+			break;
+		case kSearchStartFn:
+			_gm->searchStartEvent();
+			break;
+		}
+		return;
+	}
+
 	_gm->_mouseClicked = false;
 	_gm->_keyPressed = false;
 	while (g_system->getEventManager()->pollEvent(_event)) {

@@ -2035,12 +2035,10 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
 		_vm->paletteBrightness();
-		_gm->_state._time -= ticksToMsec(125000); // 2 hours
-		_gm->_state._timeAlarm -= ticksToMsec(125000);
-		_gm->_state._eventTime = _gm->_state._time + ticksToMsec(4000);
-		// TODO: implement event calling
-//		_gm->_state.event = &supernova;
+		_gm->_state._time += ticksToMsec(125000); // 2 hours
 		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_state._time);
+		_gm->_state._eventTime = _gm->_state._time + ticksToMsec(4000);
+		_gm->_state._eventCallback = kSupernovaFn;
 		setSectionVisible(11, false);
 		setSectionVisible(1, false);
 		_vm->renderRoom(*this);
@@ -3126,7 +3124,7 @@ bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawImage(2);
 		setSectionVisible(1, false);
 		_gm->_state._eventTime = _gm->_state._time + ticksToMsec(600);
-//		*event = &taxi;
+		_gm->_state._eventCallback = kTaxiFn;
 		return true;
 	}
 	return false;
