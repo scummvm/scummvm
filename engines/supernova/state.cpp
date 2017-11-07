@@ -463,7 +463,7 @@ void GameManager::processInput(Common::KeyState &state) {
 		// show game info
 		break;
 	case Common::KEYCODE_F4:
-		// set text speed
+		_vm->setTextSpeed();
 		break;
 	case Common::KEYCODE_F5:
 		// load/save

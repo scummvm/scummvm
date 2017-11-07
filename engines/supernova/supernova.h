@@ -143,6 +143,7 @@ public:
 	void command_print();
 	bool loadGame(int slot);
 	bool saveGame(int slot, const Common::String &description);
+	void setTextSpeed();
 
 	const Common::String &getGameString(int idx) const {
 		if (idx < 0 || idx >= (int)_gameStrings.size())

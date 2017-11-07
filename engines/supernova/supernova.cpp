@@ -115,6 +115,9 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 //	const Common::FSNode gameDataDir(ConfMan.get("path"));
 //	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
+	if (ConfMan.hasKey("textspeed"))
+		_textSpeed = ConfMan.getInt("textspeed");
+
 	// setup engine specific debug channels
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
 
@@ -710,6 +713,60 @@ void SupernovaEngine::paletteFadeIn() {
 void SupernovaEngine::setColor63(byte value) {
 	byte color[3] = {value, value, value};
 	_system->getPaletteManager()->setPalette(color, 63, 1);
+}
+
+void SupernovaEngine::setTextSpeed() {
+	const Common::String& textSpeedString = getGameString(kStringTextSpeed);
+	int stringWidth = textWidth(textSpeedString);
+	int textX = (320 - stringWidth) / 2;
+	int textY = 100;
+	stringWidth += 4;
+	int boxX = stringWidth > 110 ? (320 - stringWidth) / 2 : 105;
+	int boxY = 97;
+	int boxWidth = stringWidth > 110 ? stringWidth : 110;
+	int boxHeight = 27;
+
+	_gm->animationOff();
+	_gm->saveTime();
+	saveScreen(boxX, boxY, boxWidth, boxHeight);
+
+	renderBox(boxX, boxY, boxWidth, boxHeight, kColorBlue);
+	renderText(textSpeedString, textX, textY, kColorWhite99); // Text speed
+
+	// Find the closest index in kTextSpeed for the current _textSpeed.
+	// Important note: values in kTextSpeed decrease with the index.
+	int speedIndex = 0;
+	while (speedIndex < 4 && _textSpeed < (kTextSpeed[speedIndex] + kTextSpeed[speedIndex+1]) / 2)
+		++speedIndex;
+
+	char nbString[2];
+	nbString[1] = 0;
+	for (int i = 0; i < 5; ++i) {
+		byte color = i == speedIndex ? kColorWhite63 : kColorWhite35;
+		renderBox(110 + 21 * i, 111, 16, 10, color);
+
+		nbString[0] = '1' + i;
+		renderText(nbString, 115 + 21 * i, 112, kColorWhite99);
+	}
+	do {
+		_gm->getInput();
+		int key = _gm->_keyPressed ? _gm->_key.keycode : Common::KEYCODE_INVALID;
+		if (!_gm->_keyPressed && _gm->_mouseClicked && _gm->_mouseY >= 111 && _gm->_mouseY < 121 && (_gm->_mouseX + 16) % 21 < 16)
+			key = Common::KEYCODE_0 - 5 + (_gm->_mouseX + 16) / 21;
+		if (key == Common::KEYCODE_ESCAPE)
+			break;
+		else if (key >= Common::KEYCODE_1 && key <= Common::KEYCODE_5) {
+			speedIndex = key - Common::KEYCODE_1;
+			_textSpeed = kTextSpeed[speedIndex];
+			ConfMan.setInt("textspeed", _textSpeed);
+			break;
+		}
+	} while (!shouldQuit());
+	_gm->resetInputState();
+
+	restoreScreen();
+	_gm->loadTime();
+	_gm->animationOn();
 }
 
 Common::MemoryReadStream *SupernovaEngine::convertToMod(const char *filename, int version) {
