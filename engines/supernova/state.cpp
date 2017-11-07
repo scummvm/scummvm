@@ -325,6 +325,8 @@ void GameManager::initState() {
 	_mouseField = -1;
 	_inventoryScroll = 0;
 	_oldTime = 0;
+	_timerPaused = 0;
+	_timePaused = false;
 	_timer1 = 0;
 	_animationTimer = 0;
 
@@ -1193,14 +1195,6 @@ void GameManager::roomBrightness() {
 	_vm->paletteBrightness();
 }
 
-void GameManager::loadTime() {
-	warning("STUB: loadTime");
-}
-
-void GameManager::saveTime() {
-	warning("STUB: saveTime");
-}
-
 bool GameManager::saveGame(int number) {
 	warning("STUB: savegame %d", number);
 	return false;
@@ -1254,6 +1248,8 @@ void GameManager::setAnimationTimer(int ticks) {
 }
 
 void GameManager::handleTime() {
+	if (_timerPaused)
+		return;
 	int32 delta = g_system->getMillis() - _oldTime;
 	_state._time += delta;
 	if (_state._time > 86400000)
@@ -1264,6 +1260,29 @@ void GameManager::handleTime() {
 		_animationTimer = 0;
 
 	_oldTime = g_system->getMillis();
+}
+
+void GameManager::pauseTimer(bool pause) {
+	if (pause == _timerPaused)
+		return;
+
+	if (pause) {
+		_timerPaused = true;
+		int32 delta = g_system->getMillis() - _oldTime;
+		_timePaused = _state._time + delta;
+	} else {
+		_state._time = _timePaused;
+		_oldTime = g_system->getMillis();
+		_timerPaused = false;
+	}
+}
+
+void GameManager::loadTime() {
+	pauseTimer(false);
+}
+
+void GameManager::saveTime() {
+	pauseTimer(true);
 }
 
 void GameManager::screenShake() {
