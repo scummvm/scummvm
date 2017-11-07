@@ -43,7 +43,9 @@
 
 namespace Sword25 {
 
+#ifndef FLT_EPSILON
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
+#endif
 
 #ifdef USE_THEORADEC
 MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder() {
