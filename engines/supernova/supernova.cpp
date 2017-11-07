@@ -181,6 +181,8 @@ void SupernovaEngine::updateEvents() {
 		_gm->_currentRoom->animation();
 
 	if (_gm->_state._eventCallback != kNoFn && _gm->_state._time >= _gm->_state._eventTime) {
+		_allowLoadGame = false;
+		_allowSaveGame = false;
 		_gm->_state._eventTime = 0xffffffff;
 		EventFunction fn = _gm->_state._eventCallback;
 		_gm->_state._eventCallback = kNoFn;
@@ -203,6 +205,8 @@ void SupernovaEngine::updateEvents() {
 			_gm->searchStartEvent();
 			break;
 		}
+		_allowLoadGame = true;
+		_allowSaveGame = true;
 		return;
 	}
 
