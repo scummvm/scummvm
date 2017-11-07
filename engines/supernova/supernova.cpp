@@ -677,7 +677,7 @@ void SupernovaEngine::paletteBrightness() {
 		if (_currentImage->getPalette()) {
 			imagePalette = _currentImage->getPalette();
 		} else {
-			imagePalette = palette;
+			imagePalette = palette + 48;
 		}
 		palette[i + 48] = (imagePalette[i] * _brightness) >> 8;
 	}
