@@ -124,7 +124,6 @@ public:
 	Object *_inputObject[2];
 	bool _waitEvent;
 	bool _newRoom;
-	bool _newOverlay;
 	int32 _oldTime;
 	int32 _timer1;
 	int32 _animationTimer;
@@ -172,7 +171,6 @@ public:
 	void showMenu();
 	void animationOff();
 	void animationOn();
-	void loadOverlayStart();
 	void openLocker(const Room *room, Object *obj, Object *lock, int section);
 	void closeLocker(const Room *room, Object *obj, Object *lock, int section);
 	void edit(Common::String &input, int x, int y, uint length);
