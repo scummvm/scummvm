@@ -550,7 +550,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		switch (spr->_ref) {
 		case 1:
 			_commandHandler->addCommand(kCmdSay,   20001, 20011, NULL);        // Say "It'a my turn"
-			_commandHandler->addCommand(kCmdSeq,   20001,     1, NULL);        // Throw dice
+			_commandHandler->addCommand(kCmdSeq,   20001,     1, NULL);        // Throw dice
 			_commandHandler->addCommand(kCmdWait,  20001,     1, NULL);        // wait
 			_commandHandler->addCommand(kCmdSetZ,  20700,     2, NULL);        // hide dice
 			_commandHandler->addCommand(kCmdHide,  20007,     1, NULL);        // hide dice
@@ -564,7 +564,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 
 		case 20001:
 			_commandHandler->addCommand(kCmdSay,   20002, 20012, NULL);        // Say "Now it's mine"
-			_commandHandler->addCommand(kCmdSeq,   20002,     1, NULL);        // Throw dice
+			_commandHandler->addCommand(kCmdSeq,   20002,     1, NULL);        // Throw dice
 			_commandHandler->addCommand(kCmdWait,  20002,     3, NULL);        // wait
 			_commandHandler->addCommand(kCmdSetZ,  20700,     2, NULL);        // hide dice
 			_commandHandler->addCommand(kCmdHide,  20007,     1, NULL);        // hide dice
@@ -581,7 +581,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			_commandHandler->addCommand(kCmdWalk,  20005,    -1, NULL);        // Walk to table
 			_commandHandler->addCommand(kCmdWait,      1,    -1, NULL);        // Wait
 			_commandHandler->addCommand(kCmdCover,     1, 20101, NULL);        // grasol ??
-			_commandHandler->addCommand(kCmdSeq,   20101,     1, NULL);        // Start Chief animation (20solgra)
+			_commandHandler->addCommand(kCmdSeq,   20101,     1, NULL);        // Start Chief animation (20solgra)
 			_commandHandler->addCommand(kCmdWait,  20101,     5, NULL);        // Wait
 			_commandHandler->addCommand(kCmdSetZ,  20700,     2, NULL);        // Hide dice
 			_commandHandler->addCommand(kCmdHide,  20007,     1, NULL);        // Hide dice
