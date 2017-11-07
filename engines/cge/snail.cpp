@@ -1192,7 +1192,7 @@ void CGEEngine::snFlash(bool on) {
 		if (pal) {
 			memcpy(pal, _vga->_sysPal, kPalSize);
 			for (int i = 0; i < kPalCount; i++) {
-				register int c;
+				int c;
 				c = pal[i]._r << 1;
 				pal[i]._r = (c < 64) ? c : 63;
 				c = pal[i]._g << 1;

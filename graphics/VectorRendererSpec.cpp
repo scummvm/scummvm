@@ -52,7 +52,7 @@ inline frac_t fp_sqroot(uint32 x) {
 	// decreasing values. By feeding it the sqrt of the previous old x, as well
 	// as the old x, it should be possible to compute the correct sqrt with far
 	// fewer than 23 iterations.
-	register uint32 root, remHI, remLO, testDIV, count;
+	uint32 root, remHI, remLO, testDIV, count;
 
 	root = 0;
 	remHI = 0;
@@ -443,10 +443,10 @@ namespace Graphics {
  */
 template<typename PixelType>
 void colorFill(PixelType *first, PixelType *last, PixelType color) {
-	register int count = (last - first);
+	int count = (last - first);
 	if (!count)
 		return;
-	register int n = (count + 7) >> 3;
+	int n = (count + 7) >> 3;
 	switch (count % 8) {
 	case 0: do {
 				*first++ = color;	// fall through
@@ -466,26 +466,26 @@ void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX
 	if (realY < clippingArea.top || realY >= clippingArea.bottom)
 		return;
 
-	register int count = (last - first);
+	int count = (last - first);
 
 	if (realX > clippingArea.right || realX + count < clippingArea.left)
 		return;
 
 	if (realX < clippingArea.left) {
-		register int diff = (clippingArea.left - realX);
+		int diff = (clippingArea.left - realX);
 		realX += diff;
 		count -= diff;
 	}
 
 	if (clippingArea.right <= realX + count) {
-		register int diff = (realX + count - clippingArea.right);
+		int diff = (realX + count - clippingArea.right);
 		count -= diff;
 	}
 
 	if (!count)
 		return;
 
-	register int n = (count + 7) >> 3;
+	int n = (count + 7) >> 3;
 	switch (count % 8) {
 	case 0: do {
 		*first++ = color;	// fall through

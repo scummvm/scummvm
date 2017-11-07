@@ -1223,12 +1223,12 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		dstPitch = _hwScreen->pitch;
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
-			register int dst_y = r->y + _currentShakePos;
-			register int dst_h = 0;
+			int dst_y = r->y + _currentShakePos;
+			int dst_h = 0;
 #ifdef USE_SCALERS
-			register int orig_dst_y = 0;
+			int orig_dst_y = 0;
 #endif
-			register int rx1 = r->x * scale1;
+			int rx1 = r->x * scale1;
 
 			if (dst_y < height) {
 				dst_h = r->h;

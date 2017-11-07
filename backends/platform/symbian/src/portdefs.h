@@ -99,9 +99,9 @@ typedef signed long int int32;
 	/* convert double float to double int (dfdi) */
 	long long inline
 	scumm_fixdfdi (double a1) { // __fixdfdi (double a1)
-	    register union double_long dl1;
-	    register int exp;
-	    register long long l;
+	    union double_long dl1;
+	    int exp;
+	    long long l;
 
 	    dl1.d = a1;
 
