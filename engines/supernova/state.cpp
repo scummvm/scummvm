@@ -1184,15 +1184,12 @@ void GameManager::mouseInput3() {
 }
 
 void GameManager::roomBrightness() {
+	_vm->_brightness = 255;
 	if ((_currentRoom->getId() != OUTSIDE) && (_currentRoom->getId() < ROCKS) ) {
 		if (_state._powerOff)
 			_vm->_brightness = 153;
-		else
-			_vm->_brightness = 255;
 	} else if (_currentRoom->getId() == CAVE) {
 		_vm->_brightness = 0;
-	} else if (_currentRoom->getId() == MEETUP) {
-		_vm->_brightness = 255;
 	} else if (_currentRoom->getId() == GUARD3) {
 		if (_state._powerOff)
 			_vm->_brightness = 0;
