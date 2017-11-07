@@ -127,9 +127,8 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	return !in->err();
 }
 
-Inventory::Inventory()
-	: _numObjects(0)
-{}
+Inventory::Inventory() : _numObjects(0) {
+}
 
 // TODO: Update Inventory surface for scrolling
 void Inventory::add(Object &obj) {
@@ -648,12 +647,8 @@ void GameManager::corridorOnEntrance() {
 		busted(0);
 }
 
-void busted(int i) {
-	// STUB
-}
-
 void GameManager::telomat(int number) {
-	// STUB
+	warning("STUB: telomat %d", number);
 }
 
 void GameManager::startSearch() {
@@ -669,7 +664,7 @@ void GameManager::search(int time) {
 }
 
 void GameManager::guardNoticed() {
-	// STUB
+	warning("STUB: guardNoticed");
 }
 
 void GameManager::busted(int i) {
@@ -855,7 +850,7 @@ void GameManager::guardReturnedEvent() {
 }
 
 void GameManager::guardWalkEvent() {
-	// STUBS
+	warning("STUB: guardWalkEvent");
 }
 
 void GameManager::taxiEvent() {
@@ -882,7 +877,7 @@ void GameManager::taxiEvent() {
 }
 
 void GameManager::searchStartEvent() {
-	// STUBS
+	warning("STUB: searchStartEvent");
 }
 
 void GameManager::outro() {
@@ -920,7 +915,7 @@ bool GameManager::airless() {
 }
 
 void GameManager::shipStart() {
-	// STUB
+	warning("STUB: shipStart");
 }
 
 void GameManager::sentence(int number, bool brightness) {
@@ -1199,15 +1194,15 @@ void GameManager::roomBrightness() {
 }
 
 void GameManager::loadTime() {
-	// STUB
+	warning("STUB: loadTime");
 }
 
 void GameManager::saveTime() {
-	// STUB
+	warning("STUB: saveTime");
 }
 
 bool GameManager::saveGame(int number) {
-	// STUB
+	warning("STUB: savegame %d", number);
 	return false;
 }
 
@@ -1216,7 +1211,7 @@ void GameManager::changeRoom(RoomID id) {
 }
 
 void GameManager::errorTemp() {
-	// STUB
+	warning("STUB: errorTemp");
 }
 
 void GameManager::wait2(int ticks) {
