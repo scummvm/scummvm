@@ -29,11 +29,14 @@
 
 namespace Supernova {
 
+enum EventFunction { kNoFn, kSupernovaFn, kGuardReturnedFn, kGuardWalkFn, kTaxiFn, kSearchStartFn };
+
 struct GameState {
 	int32  _time;
 	int32  _timeSleep;
 	int32  _timeAlarm;
 	int32  _eventTime;
+	EventFunction _eventCallback;
 	int32  _arrivalDaysLeft;
 	int32  _shipEnergyDaysLeft;
 	int32  _landingModuleEnergyDaysLeft;
@@ -199,12 +202,16 @@ public:
 	void search(int time);
 	void startSearch();
 	void guardNoticed();
-	void guardReturned();
 	void busted(int i);
 	void corridorOnEntrance();
 	void event(int time);
 	void telomat(int number);
-	void taxi();
+	void novaScroll();
+	void supernovaEvent();
+	void guardReturnedEvent();
+	void guardWalkEvent();
+	void taxiEvent();
+	void searchStartEvent();
 	void outro();
 };
 

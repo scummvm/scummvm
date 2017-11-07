@@ -25,6 +25,7 @@
 #include "gui/message.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
+#include "graphics/cursorman.h"
 
 namespace Supernova {
 
@@ -37,6 +38,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeSint32LE(_state._timeSleep);
 	out->writeSint32LE(_state._timeAlarm);
 	out->writeSint32LE(_state._eventTime);
+	out->writeSint32LE(_state._eventCallback);
 	out->writeSint32LE(_state._arrivalDaysLeft);
 	out->writeSint32LE(_state._shipEnergyDaysLeft);
 	out->writeSint32LE(_state._landingModuleEnergyDaysLeft);
@@ -84,6 +86,10 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._timeSleep = in->readSint32LE();
 	_state._timeAlarm = in->readSint32LE();
 	_state._eventTime = in->readSint32LE();
+	if (version >= 4)
+		_state._eventCallback = (EventFunction)in->readSint32LE();
+	else
+		_state._eventCallback = kNoFn;
 	_state._arrivalDaysLeft = in->readSint32LE();
 	_state._shipEnergyDaysLeft = in->readSint32LE();
 	_state._landingModuleEnergyDaysLeft = in->readSint32LE();
@@ -335,6 +341,7 @@ void GameManager::initState() {
 	_state._timeSleep = 0;
 	_state._timeAlarm = ticksToMsec(458182);    // 7 am
 	_state._eventTime = 0xffffffff;
+	_state._eventCallback = kNoFn;
 	_state._arrivalDaysLeft = 2840;
 	_state._shipEnergyDaysLeft = 2135;
 	_state._landingModuleEnergyDaysLeft = 923;
@@ -658,7 +665,7 @@ void GameManager::startSearch() {
 
 void GameManager::search(int time) {
 	_state._eventTime = _state._time + time;
-//	*event = &search_start;
+	_state._eventCallback = kSearchStartFn;
 }
 
 void GameManager::guardNoticed() {
@@ -709,7 +716,128 @@ void GameManager::busted(int i) {
 	shot(0, 0);
 }
 
-void GameManager::guardReturned() {
+void GameManager::novaScroll() {
+	static byte planet_f[6] = {0xeb,0xec,0xf0,0xed,0xf1,0xf2};
+	static byte nova_f[13] = {0xea,0xe9,0xf5,0xf3,0xf7,0xf4,0xf6,
+		0xf9,0xfb,0xfc,0xfd,0xfe,0xfa};
+	static byte rgb[65][3] = {
+		{ 5, 0, 0},{10, 0, 0},{15, 0, 0},{20, 0, 0},{25, 0, 0},
+		{30, 0, 0},{35, 0, 0},{40, 0, 0},{45, 0, 0},{50, 0, 0},
+		{55, 0, 0},{60, 0, 0},{63,10, 5},{63,20,10},{63,30,15},
+		{63,40,20},{63,50,25},{63,60,30},{63,63,33},{63,63,30},
+		{63,63,25},{63,63,20},{63,63,15},{63,63,10},{60,60,15},
+		{57,57,20},{53,53,25},{50,50,30},{47,47,35},{43,43,40},
+		{40,40,45},{37,37,50},{33,33,53},{30,30,56},{27,27,59},
+		{23,23,61},{20,20,63},{21,25,63},{22,30,63},{25,35,63},
+		{30,40,63},{35,45,63},{40,50,63},{45,55,63},{50,60,63},
+		{55,63,63},{59,63,63},{63,63,63},{63,60,63},{60,50,60},
+		{55,40,55},{50,30,50},{45,20,45},{40,10,40},{42,15,42},
+		{45,20,45},{47,25,47},{50,30,50},{52,35,52},{55,40,55},
+		{57,45,57},{60,50,60},{62,55,62},{63,60,63},{63,63,63}};
+
+	byte palette[768];
+	_vm->_system->getPaletteManager()->grabPalette(palette, 0, 255);
+
+	for (int t = 0; t < 65; ++t) {
+		for (int i = 0; i < 6; ++i) {
+			int idx = 3 * (planet_f[i] - 1);
+			for (int c = 0 ; c < 3 ; ++c) {
+				if (palette[idx+c] < rgb[t][c])
+					palette[idx+c] = rgb[t][c];
+			}
+		}
+		for (int kreis = 0; kreis < t && kreis < 13; ++kreis) {
+			int idx = 3 * (nova_f[kreis] - 1);
+			for (int c = 0 ; c < 3 ; ++c)
+				palette[idx+c] = rgb[t-kreis-1][c];
+		}
+
+		_vm->_system->getPaletteManager()->setPalette(palette, 0, 255);
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(_vm->_delay);
+	}
+}
+
+void GameManager::supernovaEvent() {
+	_vm->removeMessage();
+	CursorMan.showMouse(false);
+	if (_currentRoom->getId() <= CAVE) {
+		_vm->renderMessage(kStringSupernova1);
+		waitOnInput(_timer1);
+		_vm->removeMessage();
+		_vm->paletteFadeOut();
+		changeRoom(MEETUP);
+		_rooms[AIRLOCK]->getObject(0)->disableProperty(OPENED);
+		_rooms[AIRLOCK]->setSectionVisible(3, true);
+		_rooms[AIRLOCK]->getObject(1)->setProperty(OPENED);
+		_rooms[AIRLOCK]->setSectionVisible(17, true);
+		_rooms[AIRLOCK]->setSectionVisible(6, false);
+		_vm->renderRoom(*_currentRoom);
+		_vm->paletteFadeIn();
+	}
+	_vm->renderMessage(kStringSupernova2);
+	waitOnInput(_timer1);
+	_vm->removeMessage();
+	_vm->renderImage(26, 0);
+	_vm->paletteBrightness();
+	novaScroll();
+	_vm->paletteFadeOut();
+	_vm->renderBox(0, 0, 320, 200, kColorBlack);
+	_vm->_menuBrightness = 255;
+	_vm->paletteBrightness();
+
+	if (_currentRoom->getId() == GLIDER) {
+		_vm->renderMessage(kStringSupernova3);
+		waitOnInput(_timer1);
+		_vm->removeMessage();
+		_vm->_menuBrightness = 0;
+		_vm->paletteBrightness();
+		_vm->renderRoom(*_currentRoom);
+		_vm->paletteFadeIn();
+		_vm->renderMessage(kStringSupernova4, kMessageTop);
+		waitOnInput(_timer1);
+		_vm->removeMessage();
+		_vm->renderMessage(kStringSupernova5, kMessageTop);
+		waitOnInput(_timer1);
+		_vm->removeMessage();
+		_vm->renderMessage(kStringSupernova6, kMessageTop);
+		waitOnInput(_timer1);
+		_vm->removeMessage();
+		_vm->renderMessage(kStringSupernova7, kMessageTop);
+		waitOnInput(_timer1);
+		_vm->removeMessage();
+		changeRoom(MEETUP2);
+		_rooms[MEETUP2]->setSectionVisible(1, true);
+		_rooms[MEETUP2]->removeSentence(0, 1);
+		_inventory.remove(*(_rooms[ROGER]->getObject(3)));
+		_inventory.remove(*(_rooms[ROGER]->getObject(7)));
+		_inventory.remove(*(_rooms[ROGER]->getObject(8)));
+	} else {
+		_vm->renderMessage(kStringSupernova8);
+		waitOnInput(_timer1);
+		_vm->removeMessage();
+		_vm->_menuBrightness = 0;
+		_vm->paletteBrightness();
+		changeRoom(MEETUP2);
+		if (_rooms[ROGER]->getObject(3)->hasProperty(CARRIED) && !_rooms[GLIDER]->isSectionVisible(5)) {
+			_rooms[MEETUP2]->setSectionVisible(1, true);
+			_rooms[MEETUP2]->setSectionVisible(12, true);
+			_rooms[MEETUP2]->getObject(1)->_click = 0;
+			_rooms[MEETUP2]->getObject(0)->_click = 1;
+			_rooms[MEETUP2]->removeSentence(0, 1);
+		}
+		_rooms[MEETUP2]->removeSentence(1, 1);
+		_vm->paletteFadeIn();
+	}
+	_rooms[AIRLOCK]->getObject(4)->setProperty(WORN);
+	_rooms[AIRLOCK]->getObject(5)->setProperty(WORN);
+	_rooms[AIRLOCK]->getObject(6)->setProperty(WORN);
+	_rooms[CAVE]->getObject(1)->_exitRoom = MEETUP2;
+	_guiEnabled = true;
+	CursorMan.showMouse(true);
+}
+
+void GameManager::guardReturnedEvent() {
 	if (_currentRoom->getId() == GUARD)
 		busted(-1);
 	else if ((_currentRoom->getId() == CORRIDOR9) && (_currentRoom->isSectionVisible(27)))
@@ -726,7 +854,11 @@ void GameManager::guardReturned() {
 	_rooms[CORRIDOR9]->getObject(1)->disableProperty(OPENED);
 }
 
-void GameManager::taxi() {
+void GameManager::guardWalkEvent() {
+	// STUBS
+}
+
+void GameManager::taxiEvent() {
 	if (_currentRoom->getId() == SIGN) {
 		changeRoom(STATION);
 	}
@@ -747,6 +879,10 @@ void GameManager::taxi() {
 	}
 	_rooms[SIGN]->setSectionVisible(2, false);
 	_rooms[SIGN]->setSectionVisible(3, true);
+}
+
+void GameManager::searchStartEvent() {
+	// STUBS
 }
 
 void GameManager::outro() {
