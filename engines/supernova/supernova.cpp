@@ -264,16 +264,7 @@ bool SupernovaEngine::hasFeature(EngineFeature f) const {
 
 void SupernovaEngine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
-	pauseTimer(pause);
-}
-
-void SupernovaEngine::pauseTimer(bool pause) {
-	if (pause) {
-		_timePaused = _gm->_state._time;
-	} else {
-		_gm->_state._time = _timePaused;
-		_gm->_oldTime = _system->getMillis();
-	}
+	_gm->pauseTimer(pause);
 }
 
 Common::Error SupernovaEngine::loadGameStrings() {

@@ -125,6 +125,8 @@ public:
 	bool _waitEvent;
 	bool _newRoom;
 	int32 _oldTime;
+	uint _timePaused;
+	bool _timerPaused;
 	int32 _timer1;
 	int32 _animationTimer;
 	int _inventoryScroll;
@@ -162,8 +164,6 @@ public:
 	void turnOff();
 	void turnOn();
 	void screenShake();
-	void loadTime();
-	void saveTime();
 	bool saveGame(int number);
 	void errorTemp();
 	void roomBrightness();
@@ -184,6 +184,9 @@ public:
 	void resetInputState();
 	void handleInput();
 	void handleTime();
+	void pauseTimer(bool pause);
+	void loadTime();
+	void saveTime();
 	void setAnimationTimer(int ticks);
 	void dead(const char *message);
 	void dead(StringID messageId);
