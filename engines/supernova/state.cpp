@@ -959,7 +959,7 @@ void GameManager::say(const char *text) {
 
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 	_vm->renderBox(0, 141, 320, numRows * 10 - 1, kColorWhite25);
-	for (int r = 0; r < numRows; ++r)
+	for (uint r = 0; r < numRows; ++r)
 		_vm->renderText(row[r], 1, 142 + r * 10, kColorDarkGreen);
 	waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
