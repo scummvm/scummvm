@@ -1390,10 +1390,6 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	}
 }
 
-void GameManager::loadOverlayStart() {
-	// STUB
-}
-
 void GameManager::shot(int a, int b) {
 	if (a)
 		drawImage(a);

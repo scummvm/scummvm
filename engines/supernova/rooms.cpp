@@ -2343,7 +2343,6 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(3));  // Discman
 		_gm->changeRoom(CELL);
 		_gm->_newRoom = true;
-		_gm->_newOverlay = true;
 		_gm->_state._dream = true;
 	} else
 		return false;
