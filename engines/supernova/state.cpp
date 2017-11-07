@@ -1162,7 +1162,7 @@ Common::EventType GameManager::getMouseInput() {
 }
 
 void GameManager::getInput() {
-	while (true) {
+	while (!_vm->shouldQuit()) {
 		_vm->updateEvents();
 		if (_mouseClicked || _keyPressed)
 			break;
