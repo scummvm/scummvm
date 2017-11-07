@@ -549,8 +549,9 @@ enum StringID {
 	kStringGenericInteract_33, kStringGenericInteract_34, kStringGenericInteract_35, kStringGenericInteract_36, kStringGenericInteract_37,
 	kStringGenericInteract_38, kStringGenericInteract_39, kStringGenericInteract_40, kStringGenericInteract_41, kStringGenericInteract_42,
 	kStringGenericInteract_43, kStringConversationEnd, kStringSupernova1, kStringSupernova2, kStringSupernova3,
-	kStringSupernova4, kStringSupernova5, kStringSupernova6, kStringSupernova7, kStringSupernova8
+	kStringSupernova4, kStringSupernova5, kStringSupernova6, kStringSupernova7, kStringSupernova8,
 	// 625
+	kStringTextSpeed
 };
 
 static StringID guiCommands[] = {
