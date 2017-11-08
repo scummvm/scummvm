@@ -1830,6 +1830,8 @@ void Combat::multiAttack(int powNum) {
 			sound.playFX(21);
 			return;
 		}
+
+		sound.playFX(49);
 	} else {
 		_shooting[0] = 1;
 		_shootType = ST_0;
@@ -1914,7 +1916,7 @@ void Combat::multiAttack(int powNum) {
 		}
 	} else {
 		int cell = map.getCell(2);
-		if (cell < map.mazeData()._difficulties._wallNoPass) {
+		if (cell >= map.mazeData()._difficulties._wallNoPass) {
 			sound.playFX(46);
 			goto finished;
 		}
@@ -1964,7 +1966,7 @@ void Combat::multiAttack(int powNum) {
 		}
 	} else {
 		int cell = map.getCell(7);
-		if (cell < map.mazeData()._difficulties._wallNoPass) {
+		if (cell >= map.mazeData()._difficulties._wallNoPass) {
 			sound.playFX(46);
 			goto finished;
 		}
@@ -2014,7 +2016,7 @@ void Combat::multiAttack(int powNum) {
 		}
 	} else {
 		int cell = map.getCell(14);
-		if (cell < map.mazeData()._difficulties._wallNoPass) {
+		if (cell >= map.mazeData()._difficulties._wallNoPass) {
 			sound.playFX(46);
 			goto finished;
 		}
