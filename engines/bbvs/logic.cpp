@@ -82,7 +82,7 @@ bool BbvsEngine::evalCondition(Conditions &conditions) {
 			break;
 		case kCondIsButtheadAtBgObject:
 			result = _buttheadObject &&
-				_gameModule->getBgObject(condition.value2)->rect.contains(_buttheadObject->x >> 16, _buttheadObject->y >> 16);
+				_gameModule->getBgObject(condition.value2)->rect.contains(_buttheadObject->x / 65536, _buttheadObject->y / 65536);
 			break;
 		case kCondIsNotSceneVisited:
 			result = _sceneVisited[_currSceneNum] == 0;
@@ -209,7 +209,7 @@ int BbvsEngine::evalDialogCondition(Conditions &conditions) {
 			break;
 		case kCondIsButtheadAtBgObject:
 			success = _buttheadObject &&
-				_gameModule->getBgObject(condition.value2)->rect.contains(_buttheadObject->x >> 16, _buttheadObject->y >> 16);
+				_gameModule->getBgObject(condition.value2)->rect.contains(_buttheadObject->x / 65536, _buttheadObject->y / 65536);
 			break;
 		case kCondIsNotSceneVisited:
 			success = _sceneVisited[_currSceneNum] == 0;

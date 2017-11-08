@@ -496,8 +496,8 @@ void BbvsEngine::buildDrawList(DrawList &drawList) {
 			Animation *anim = sceneObject->anim;
 			if (anim) {
 				drawList.add(anim->frameSpriteIndices[sceneObject->frameIndex],
-					(sceneObject->x >> 16) - _cameraPos.x, (sceneObject->y >> 16) - _cameraPos.y,
-					sceneObject->y >> 16);
+					(sceneObject->x / 65536) - _cameraPos.x, (sceneObject->y / 65536) - _cameraPos.y,
+					sceneObject->y / 65536);
 			}
 		}
 
@@ -774,8 +774,8 @@ void BbvsEngine::updateScene(bool clicked) {
 		SceneObject *sceneObject = &_sceneObjects[i];
 		if (sceneObject->anim) {
 			Common::Rect frameRect = sceneObject->anim->frameRects1[sceneObject->frameIndex];
-			const int objY = sceneObject->y >> 16;
-			frameRect.translate(sceneObject->x >> 16, objY);
+			const int objY = sceneObject->y / 65536;
+			frameRect.translate(sceneObject->x / 65536, objY);
 			if (lastPriority <= objY && frameRect.width() > 0 && frameRect.contains(_mousePos)) {
 				lastPriority = objY;
 				_activeItemIndex = i;
@@ -898,7 +898,7 @@ void BbvsEngine::updateScene(bool clicked) {
 
 		if (_beavisObject->anim) {
 			Common::Rect frameRect = _beavisObject->anim->frameRects2[_beavisObject->frameIndex];
-			frameRect.translate(_beavisObject->x >> 16, (_beavisObject->y >> 16) + 1);
+			frameRect.translate(_beavisObject->x / 65536, (_beavisObject->y / 65536) + 1);
 			if (!frameRect.isEmpty() && frameRect.contains(_walkMousePos))
 				_walkMousePos.y = frameRect.bottom;
 		}
@@ -938,7 +938,7 @@ bool BbvsEngine::performActionCommand(ActionCommand *actionCommand) {
 		{
 			SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
 			debug(5, "[%s] walks from (%d, %d) to (%d, %d)", sceneObject->sceneObjectDef->name,
-				sceneObject->x >> 16, sceneObject->y >> 16, actionCommand->walkDest.x, actionCommand->walkDest.y);
+				sceneObject->x / 65536, sceneObject->y / 65536, actionCommand->walkDest.x, actionCommand->walkDest.y);
 			walkObject(sceneObject, actionCommand->walkDest, actionCommand->param);
 		}
 		return true;
@@ -946,8 +946,8 @@ bool BbvsEngine::performActionCommand(ActionCommand *actionCommand) {
 	case kActionCmdMoveObject:
 		{
 			SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
-			sceneObject->x = actionCommand->walkDest.x << 16;
-			sceneObject->y = actionCommand->walkDest.y << 16;
+			sceneObject->x = actionCommand->walkDest.x * 65536;
+			sceneObject->y = actionCommand->walkDest.y * 65536;
 			sceneObject->xIncr = 0;
 			sceneObject->yIncr = 0;
 			sceneObject->walkCount = 0;
@@ -1074,7 +1074,7 @@ bool BbvsEngine::processCurrAction() {
 		if (sceneObject->walkDestPt.x != -1) {
 			debug(5, "waiting for walk to finish");
 			actionsFinished = false;
-		} else if ((int16)(sceneObject->x >> 16) != soAction->walkDest.x || (int16)(sceneObject->y >> 16) != soAction->walkDest.y) {
+		} else if ((int16)(sceneObject->x / 65536) != soAction->walkDest.x || (int16)(sceneObject->y / 65536) != soAction->walkDest.y) {
 			debug(5, "starting to walk");
 			sceneObject->walkDestPt = soAction->walkDest;
 			actionsFinished = false;
@@ -1214,8 +1214,8 @@ void BbvsEngine::updateCommon() {
 	}
 
 	if (!_currAction && _buttheadObject) {
-		int16 buttheadX = _buttheadObject->x >> 16;
-		int16 buttheadY = _buttheadObject->y >> 16;
+		int16 buttheadX = _buttheadObject->x / 65536;
+		int16 buttheadY = _buttheadObject->y / 65536;
 		CameraInit *cameraInit = _gameModule->getCameraInit(_currCameraNum);
 		for (int i = 0; i < 8; ++i) {
 			if (cameraInit->rects[i].contains(buttheadX, buttheadY)) {
@@ -1252,8 +1252,8 @@ void BbvsEngine::updateCommon() {
 
 	// Check if Butthead is inside a scene exit
 	if (_newSceneNum == 0 && !_currAction && _buttheadObject) {
-		int16 buttheadX = _buttheadObject->x >> 16;
-		int16 buttheadY = _buttheadObject->y >> 16;
+		int16 buttheadX = _buttheadObject->x / 65536;
+		int16 buttheadY = _buttheadObject->y / 65536;
 		for (int i = 0; i < _gameModule->getSceneExitsCount(); ++i) {
 			SceneExit *sceneExit = _gameModule->getSceneExit(i);
 			if (sceneExit->rect.contains(buttheadX, buttheadY)) {
