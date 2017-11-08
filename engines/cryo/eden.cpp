@@ -3126,13 +3126,11 @@ void EdenGame::tyranDies(perso_t *perso) {
 }
 
 void EdenGame::specialObjects(perso_t *perso, char objid) {
-#pragma pack(push, 1)
 	struct SpecialObject {
 		int8  _characterType;
 		int8  _objectId;
 		void  (EdenGame::*dispFct)(perso_t *perso);
 	};
-#pragma pack(pop)
 
 	static SpecialObject kSpecialObjectActions[] = {
 		//    persoType, objectId, dispFct
