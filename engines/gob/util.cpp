@@ -37,7 +37,7 @@
 namespace Gob {
 
 Util::Util(GobEngine *vm) : _vm(vm) {
-	_mouseButtons   = kMouseButtonsNone,
+	_mouseButtons   = kMouseButtonsNone;
 	_keyBufferHead  = 0;
 	_keyBufferTail  = 0;
 	_fastMode       = 0;

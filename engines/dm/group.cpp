@@ -819,7 +819,8 @@ T0209058_MoveInRandomDirection:
 							do {
 								AL0450_i_DestinationMapX = eventMapX;
 								AL0451_i_DestinationMapY = eventMapY;
-								AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction], AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
+								AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction];
+								AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
 								if (((activeGroup->_priorMapX != AL0450_i_DestinationMapX) ||
 									(activeGroup->_priorMapY != AL0451_i_DestinationMapY) ||
 									 (moveToPriorLocation = !_vm->getRandomNumber(4))) /* 1/4 chance of moving back to the square that the creature comes from */
@@ -910,7 +911,8 @@ T0209085_SingleSquareMove:
 						(!_vm->getRandomNumber(4) && isMovementPossible(&creatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->returnOppositeDir((Direction)primaryDirectionToOrFromParty), false))) {
 						AL0450_i_DestinationMapX = eventMapX;
 						AL0451_i_DestinationMapY = eventMapY;
-						AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction], AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
+						AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction];
+						AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
 						goto T0209061_MoveGroup;
 					}
 					if (isArchEnemy) {
@@ -922,7 +924,8 @@ T0209089_DoubleSquareMove:
 							((_fluxCageCount >= 2) && isArchenemyDoubleMovementPossible(&creatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->returnOppositeDir((Direction)primaryDirectionToOrFromParty)))) {
 							AL0450_i_DestinationMapX = eventMapX;
 							AL0451_i_DestinationMapY = eventMapY;
-							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2, AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
+							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2;
+							AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
 							_vm->_sound->requestPlay(kDMSoundIndexBuzz, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY, kDMSoundModePlayIfPrioritized);
 							goto T0209061_MoveGroup;
 						}
@@ -1451,7 +1454,8 @@ bool GroupMan::isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX,
 	if (_fluxCages[dir])
 		return false;
 
-	mapX += _vm->_dirIntoStepCountEast[dir], mapY += _vm->_dirIntoStepCountNorth[dir];
+	mapX += _vm->_dirIntoStepCountEast[dir];
+	mapY += _vm->_dirIntoStepCountNorth[dir];
 	return isMovementPossible(info, mapX, mapY, dir, false);
 }
 

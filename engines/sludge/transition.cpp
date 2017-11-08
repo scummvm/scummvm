@@ -152,7 +152,8 @@ void resetRandW() {
 		}
 	}
 
-	p1 = 0, p2 = 10;
+	p1 = 0;
+	p2 = 10;
 }
 
 #if 0

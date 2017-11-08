@@ -149,8 +149,14 @@ struct PixelFormat {
 						byte RBits, byte GBits, byte BBits, byte ABits,
 						byte RShift, byte GShift, byte BShift, byte AShift) {
 		bytesPerPixel = BytesPerPixel;
-		rLoss = 8 - RBits, gLoss = 8 - GBits, bLoss = 8 - BBits, aLoss = 8 - ABits;
-		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
+		rLoss = 8 - RBits;
+		gLoss = 8 - GBits;
+		bLoss = 8 - BBits;
+		aLoss = 8 - ABits;
+		rShift = RShift;
+		gShift = GShift;
+		bShift = BShift;
+		aShift = AShift;
 	}
 
 	static inline PixelFormat createFormatCLUT8() {

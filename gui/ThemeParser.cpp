@@ -622,11 +622,12 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 	if (stepNode->values.contains("padding")) {
 		val = stepNode->values["padding"];
 		int pr, pt, pl, pb;
-		if (parseIntegerKey(val, 4, &pl, &pt, &pr, &pb))
-			drawstep->padding.left = pl,
-			drawstep->padding.top = pt,
-			drawstep->padding.right = pr,
+		if (parseIntegerKey(val, 4, &pl, &pt, &pr, &pb)) {
+			drawstep->padding.left = pl;
+			drawstep->padding.top = pt;
+			drawstep->padding.right = pr;
 			drawstep->padding.bottom = pb;
+		}
 	}
 
 #undef PARSER_ASSIGN_INT

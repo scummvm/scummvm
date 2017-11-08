@@ -1350,7 +1350,7 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 	bool first;
 
 	bestDistance = SAGA_DRAGON_SEARCH_DIAMETER;
-	bestU = SAGA_DRAGON_SEARCH_CENTER,
+	bestU = SAGA_DRAGON_SEARCH_CENTER;
 	bestV = SAGA_DRAGON_SEARCH_CENTER;
 
 	uBase = (start.u() >> 4) - SAGA_DRAGON_SEARCH_CENTER;
@@ -1505,7 +1505,7 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 
 
 	bestDistance = SAGA_SEARCH_DIAMETER;
-	bestU = SAGA_SEARCH_CENTER,
+	bestU = SAGA_SEARCH_CENTER;
 	bestV = SAGA_SEARCH_CENTER;
 
 	uBase = (start.u() >> 4) - SAGA_SEARCH_CENTER;

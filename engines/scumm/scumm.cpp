@@ -952,7 +952,7 @@ ScummEngine_v100he::~ScummEngine_v100he() {
 ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) : Engine(syst){
 	_syst = syst;
 	_game = dr.game;
-	_filenamePattern = dr.fp,
+	_filenamePattern = dr.fp;
 
 	_cupPlayer = new CUP_Player(syst, this, _mixer);
 }

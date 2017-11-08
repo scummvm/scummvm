@@ -1263,7 +1263,8 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		setChampionDirectionToPartyDirection(curChampion);
 		nextMapX = dungeon._partyMapX;
 		nextMapY = dungeon._partyMapY;
-		nextMapX += _vm->_dirIntoStepCountEast[dungeon._partyDir], nextMapY += _vm->_dirIntoStepCountNorth[dungeon._partyDir];
+		nextMapX += _vm->_dirIntoStepCountEast[dungeon._partyDir];
+		nextMapY += _vm->_dirIntoStepCountNorth[dungeon._partyDir];
 		_vm->_groupMan->fuseAction(nextMapX, nextMapY);
 		break;
 	case kDMActionHeal: {
