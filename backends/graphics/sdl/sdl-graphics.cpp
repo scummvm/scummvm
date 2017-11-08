@@ -95,6 +95,10 @@ bool SdlGraphicsManager::defaultGraphicsModeConfig() const {
 }
 
 int SdlGraphicsManager::getGraphicsModeIdByName(const Common::String &name) const {
+	if (name == "normal" || name == "default") {
+		return getDefaultGraphicsMode();
+	}
+
 	const OSystem::GraphicsMode *mode = getSupportedGraphicsModes();
 	while (mode && mode->name != nullptr) {
 		if (name.equalsIgnoreCase(mode->name)) {
