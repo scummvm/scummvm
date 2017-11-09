@@ -69,7 +69,10 @@ static const int ATTACK_TYPE_FX[23] = {
 	4, 5, 4, 9, 27, 29, 44, 51, 53, 61, 71
 };
 
-static const int MONSTER_SHOOT_POW[7] = { 12, 14, 0, 4, 8, 10, 13 };
+static const PowType MONSTER_SHOOT_POW[7] = { 
+	POW_12, POW_SWORD_AND_DEATH, POW_FIREBALL, POW_MEGAVOLTS,
+	POW_COLD_RAY, POW_SPRAY, POW_ENERGY_BLAST
+};
 
 static const int COMBAT_SHOOTING[4] = { 1, 1, 2, 3 };
 
@@ -540,7 +543,7 @@ void Combat::monstersAttack() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	int powNum = -1;
+	PowType powNum = POW_INVALID;
 	MonsterStruct *monsterData = nullptr;
 	OutdoorDrawList &outdoorList = intf._outdoorList;
 	IndoorDrawList &indoorList = intf._indoorList;
@@ -549,12 +552,12 @@ void Combat::monstersAttack() {
 		if (_gmonHit[idx] != -1) {
 			monsterData = &map._monsterData[_gmonHit[idx]];
 			powNum = MONSTER_SHOOT_POW[monsterData->_attackType];
-			if (powNum != 12)
+			if (powNum != POW_12)
 				break;
 		}
 	}
 
-	_powSprites.load(Common::String::format("pow%d.icn", powNum));
+	_powSprites.load(Common::String::format("pow%d.icn", (int)powNum));
 	sound.playFX(ATTACK_TYPE_FX[monsterData->_attackType]);
 
 	for (int charNum = 0; charNum < MAX_PARTY_COUNT; ++charNum) {
@@ -1799,7 +1802,7 @@ void Combat::giveExperience(int experience) {
 	}
 }
 
-void Combat::rangedAttack(int powNum) {
+void Combat::rangedAttack(PowType powNum) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -1809,7 +1812,7 @@ void Combat::rangedAttack(int powNum) {
 		_damageType = DT_POISON;
 		_shootType = ST_1;
 		Common::fill(&_shooting[0], &_shooting[6], 1);
-	} else if (powNum == 11) {
+	} else if (powNum == POW_ARROW) {
 		_shootType = ST_1;
 		bool flag = false;
 
@@ -1838,7 +1841,7 @@ void Combat::rangedAttack(int powNum) {
 	}
 
 	intf._charsShooting = true;
-	_powSprites.load(Common::String::format("pow%d.icn", powNum));
+	_powSprites.load(Common::String::format("pow%d.icn", (int)powNum));
 	int monsterIndex = _monsterIndex;
 	int monster2Attack = _monster2Attack;
 	bool attackedFlag = false;
@@ -2060,7 +2063,7 @@ done:
 void Combat::shootRangedWeapon() {
 	_rangeType = RT_ALL;
 	_damageType = DT_PHYSICAL;
-	rangedAttack(11);
+	rangedAttack(POW_ARROW);
 }
 
 } // End of namespace Xeen

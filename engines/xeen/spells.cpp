@@ -250,7 +250,7 @@ void Spells::acidSpray() {
 	combat._damageType = DT_POISON;
 	combat._rangeType = RT_ALL;
 	sound.playFX(17);
-	combat.rangedAttack(10);
+	combat.rangedAttack(POW_SPRAY);
 }
 
 void Spells::awaken() {
@@ -277,7 +277,7 @@ void Spells::beastMaster() {
 	combat._damageType = DT_BEASTMASTER;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(18);
-	combat.rangedAttack(7);
+	combat.rangedAttack(POW_SLEEP_AND_MASTER);
 }
 
 void Spells::bless() {
@@ -302,7 +302,7 @@ void Spells::coldRay() {
 	combat._damageType = DT_COLD;
 	combat._rangeType = RT_ALL;
 	sound.playFX(15);
-	combat.rangedAttack(8);
+	combat.rangedAttack(POW_COLD_RAY);
 }
 
 void Spells::createFood() {
@@ -378,7 +378,7 @@ void Spells::dancingSword() {
 	combat._damageType = DT_PHYSICAL;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(18);
-	combat.rangedAttack(14);
+	combat.rangedAttack(POW_SWORD_AND_DEATH);
 }
 
 void Spells::dayOfProtection() {
@@ -422,7 +422,7 @@ void Spells::deadlySwarm() {
 	combat._damageType = DT_PHYSICAL;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(13);
-	combat.rangedAttack(15);
+	combat.rangedAttack(POW_DEADLY_SWARM);
 }
 
 void Spells::detectMonster() {
@@ -505,14 +505,16 @@ void Spells::dragonSleep() {
 	combat._damageType = DT_DRAGONSLEEP;
 	combat._rangeType = RT_SINGLE;
 	sound.playFX(18);
-	combat.rangedAttack(7);
+	combat.rangedAttack(POW_SLEEP_AND_MASTER);
 }
 
 void Spells::elementalStorm() {
 	Combat &combat = *_vm->_combat;
 	Sound &sound = *_vm->_sound;
 	static const int STORM_FX_LIST[4] = { 13, 14, 15, 17 };
-	static const int STORM_MA_LIST[4] = { 0, 5, 9, 10 };
+	static const PowType STORM_MA_LIST[4] = {
+		POW_FIREBALL, POW_SPARKS, POW_FROST2, POW_SPRAY
+	};
 
 	combat._monsterDamage = 150;
 	combat._damageType = (DamageType)_vm->getRandomNumber(DT_FIRE, DT_POISON);
@@ -541,7 +543,7 @@ void Spells::energyBlast() {
 	combat._damageType = DT_ENERGY;
 	combat._rangeType = RT_SINGLE;
 	sound.playFX(16);
-	combat.rangedAttack(13);
+	combat.rangedAttack(POW_ENERGY_BLAST);
 }
 
 void Spells::etherialize() {
@@ -570,7 +572,7 @@ void Spells::fantasticFreeze() {
 	combat._damageType = DT_COLD;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(15);
-	combat.rangedAttack(8);
+	combat.rangedAttack(POW_COLD_RAY);
 }
 
 void Spells::fieryFlail() {
@@ -581,7 +583,7 @@ void Spells::fieryFlail() {
 	combat._damageType = DT_FIRE;
 	combat._rangeType = RT_SINGLE;
 	sound.playFX(13);
-	combat.rangedAttack(2);
+	combat.rangedAttack(POW_FIERY_FLAIL);
 }
 
 void Spells::fingerOfDeath() {
@@ -592,7 +594,7 @@ void Spells::fingerOfDeath() {
 	combat._damageType = DT_FINGEROFDEATH;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(18);
-	combat.rangedAttack(14);
+	combat.rangedAttack(POW_SWORD_AND_DEATH);
 }
 
 void Spells::fireball() {
@@ -603,7 +605,7 @@ void Spells::fireball() {
 	combat._damageType = DT_FIRE;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(13);
-	combat.rangedAttack(0);
+	combat.rangedAttack(POW_FIREBALL);
 }
 
 void Spells::firstAid() {
@@ -629,7 +631,7 @@ void Spells::flyingFist() {
 	combat._damageType = DT_PHYSICAL;
 	combat._rangeType = RT_SINGLE;
 	sound.playFX(18);
-	combat.rangedAttack(14);
+	combat.rangedAttack(POW_SWORD_AND_DEATH);
 }
 
 void Spells::frostbite() {
@@ -640,7 +642,7 @@ void Spells::frostbite() {
 	combat._damageType = DT_COLD;
 	combat._rangeType = RT_SINGLE;
 	sound.playFX(8);
-	combat.rangedAttack(8);
+	combat.rangedAttack(POW_COLD_RAY);
 }
 
 void Spells::golemStopper() {
@@ -651,7 +653,7 @@ void Spells::golemStopper() {
 	combat._damageType = DT_GOLEMSTOPPER;
 	combat._rangeType = RT_SINGLE;
 	sound.playFX(16);
-	combat.rangedAttack(6);
+	combat.rangedAttack(POW_STOPPER_AND_IMPLOSION);
 }
 
 void Spells::heroism() {
@@ -680,7 +682,7 @@ void Spells::holyWord() {
 	combat._damageType = DT_HOLYWORD;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(18);
-	combat.rangedAttack(13);
+	combat.rangedAttack(POW_ENERGY_BLAST);
 }
 
 void Spells::hypnotize() {
@@ -691,7 +693,7 @@ void Spells::hypnotize() {
 	combat._damageType = DT_HYPNOTIZE;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(18);
-	combat.rangedAttack(7);
+	combat.rangedAttack(POW_SLEEP_AND_MASTER);
 }
 
 void Spells::identifyMonster() {
@@ -713,7 +715,7 @@ void Spells::implosion() {
 	combat._damageType = DT_ENERGY;
 	combat._rangeType = RT_SINGLE;
 	sound.playFX(18);
-	combat.rangedAttack(6);
+	combat.rangedAttack(POW_STOPPER_AND_IMPLOSION);
 }
 
 void Spells::incinerate() {
@@ -724,7 +726,7 @@ void Spells::incinerate() {
 	combat._damageType = DT_FIRE;
 	combat._rangeType = RT_SINGLE;
 	sound.playFX(22);
-	combat.rangedAttack(1);
+	combat.rangedAttack(POW_INCINERATE);
 }
 
 void Spells::inferno() {
@@ -735,7 +737,7 @@ void Spells::inferno() {
 	combat._damageType = DT_FIRE;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(13);
-	combat.rangedAttack(1);
+	combat.rangedAttack(POW_INCINERATE);
 }
 
 void Spells::insectSpray() {
@@ -746,7 +748,7 @@ void Spells::insectSpray() {
 	combat._damageType = DT_INSECT_SPRAY;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(17);
-	combat.rangedAttack(10);
+	combat.rangedAttack(POW_SPRAY);
 }
 
 void Spells::itemToGold() {
@@ -825,7 +827,7 @@ void Spells::lightningBolt() {
 	combat._damageType = DT_ELECTRICAL;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(14);
-	combat.rangedAttack(3);
+	combat.rangedAttack(POW_LIGHTNING);
 }
 
 void Spells::lloydsBeacon() {
@@ -842,7 +844,7 @@ void Spells::magicArrow() {
 	combat._monsterDamage = 0;
 	combat._damageType = DT_MAGIC_ARROW;
 	combat._rangeType = RT_SINGLE;
-	combat.rangedAttack(11);
+	combat.rangedAttack(POW_ARROW);
 }
 
 void Spells::massDistortion() {
@@ -853,7 +855,7 @@ void Spells::massDistortion() {
 	combat._damageType = DT_MASS_DISTORTION;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(18);
-	combat.rangedAttack(6);
+	combat.rangedAttack(POW_STOPPER_AND_IMPLOSION);
 }
 
 void Spells::megaVolts() {
@@ -864,7 +866,7 @@ void Spells::megaVolts() {
 	combat._damageType = DT_ELECTRICAL;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(14);
-	combat.rangedAttack(4);
+	combat.rangedAttack(POW_MEGAVOLTS);
 }
 
 void Spells::moonRay() {
@@ -877,7 +879,7 @@ void Spells::moonRay() {
 	combat._damageType = DT_ENERGY;
 	combat._rangeType = RT_ALL;
 	sound.playFX(16);
-	combat.rangedAttack(13);
+	combat.rangedAttack(POW_ENERGY_BLAST);
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		sound.playFX(30);
@@ -910,7 +912,7 @@ void Spells::pain() {
 	combat._damageType = DT_PHYSICAL;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(18);
-	combat.rangedAttack(14);
+	combat.rangedAttack(POW_SWORD_AND_DEATH);
 }
 
 void Spells::poisonVolley() {
@@ -921,7 +923,7 @@ void Spells::poisonVolley() {
 	combat._damageType = DT_POISON_VOLLEY;
 	combat._rangeType = RT_ALL;
 	sound.playFX(49);
-	combat.rangedAttack(11);
+	combat.rangedAttack(POW_ARROW);
 }
 
 void Spells::powerCure() {
@@ -956,7 +958,7 @@ void Spells::prismaticLight() {
 	combat._damageType = (DamageType)_vm->getRandomNumber(DT_PHYSICAL, DT_ENERGY);
 	combat._rangeType = RT_ALL;
 	sound.playFX(18);
-	combat.rangedAttack(14);
+	combat.rangedAttack(POW_SWORD_AND_DEATH);
 }
 
 void Spells::protectionFromElements() {
@@ -1074,7 +1076,7 @@ void Spells::shrapMetal() {
 	combat._damageType = DT_PHYSICAL;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(16);
-	combat.rangedAttack(15);
+	combat.rangedAttack(POW_DEADLY_SWARM);
 }
 
 void Spells::sleep() {
@@ -1085,7 +1087,7 @@ void Spells::sleep() {
 	combat._damageType = DT_SLEEP;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(18);
-	combat.rangedAttack(7);
+	combat.rangedAttack(POW_SLEEP_AND_MASTER);
 }
 
 void Spells::sparks() {
@@ -1096,7 +1098,7 @@ void Spells::sparks() {
 	combat._damageType = DT_ELECTRICAL;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(14);
-	combat.rangedAttack(5);
+	combat.rangedAttack(POW_SPARKS);
 }
 
 void Spells::starBurst() {
@@ -1107,7 +1109,7 @@ void Spells::starBurst() {
 	combat._damageType = DT_FIRE;
 	combat._rangeType = RT_ALL;
 	sound.playFX(13);
-	combat.rangedAttack(15);
+	combat.rangedAttack(POW_DEADLY_SWARM);
 }
 
 void Spells::stoneToFlesh() {
@@ -1132,7 +1134,7 @@ void Spells::sunRay() {
 	combat._damageType = DT_ENERGY;
 	combat._rangeType = RT_ALL;
 	sound.playFX(16);
-	combat.rangedAttack(13);
+	combat.rangedAttack(POW_ENERGY_BLAST);
 }
 
 void Spells::superShelter() {
@@ -1284,7 +1286,7 @@ void Spells::toxicCloud() {
 	combat._damageType = DT_POISON;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(17);
-	combat.rangedAttack(10);
+	combat.rangedAttack(POW_SPRAY);
 }
 
 void Spells::turnUndead() {
@@ -1295,7 +1297,7 @@ void Spells::turnUndead() {
 	combat._damageType = DT_UNDEAD;
 	combat._rangeType = RT_GROUP;
 	sound.playFX(18);
-	combat.rangedAttack(13);
+	combat.rangedAttack(POW_ENERGY_BLAST);
 }
 
 void Spells::walkOnWater() {
@@ -1323,7 +1325,7 @@ void Spells::frostbite2() {
 	combat._damageType = DT_COLD;
 	combat._rangeType = RT_SINGLE;
 	sound.playFX(15);
-	combat.rangedAttack(9);
+	combat.rangedAttack(POW_FROST2);
 }
 
 } // End of namespace Xeen
