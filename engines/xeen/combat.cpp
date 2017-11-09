@@ -70,8 +70,8 @@ static const int ATTACK_TYPE_FX[23] = {
 };
 
 static const PowType MONSTER_SHOOT_POW[7] = { 
-	POW_12, POW_SWORD_AND_DEATH, POW_FIREBALL, POW_MEGAVOLTS,
-	POW_COLD_RAY, POW_SPRAY, POW_ENERGY_BLAST
+	POW_MAGIC_ARROW, POW_SPARKLES, POW_FIREBALL,
+	POW_MEGAVOLTS, POW_COLD_RAY, POW_SPRAY, POW_ENERGY_BLAST
 };
 
 static const int COMBAT_SHOOTING[4] = { 1, 1, 2, 3 };
@@ -552,7 +552,7 @@ void Combat::monstersAttack() {
 		if (_gmonHit[idx] != -1) {
 			monsterData = &map._monsterData[_gmonHit[idx]];
 			powNum = MONSTER_SHOOT_POW[monsterData->_attackType];
-			if (powNum != POW_12)
+			if (powNum != POW_MAGIC_ARROW)
 				break;
 		}
 	}
