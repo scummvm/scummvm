@@ -2293,6 +2293,11 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	// Init the OSD display parameters, and the fade out
 	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
 	_osdMessageFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
+	// Enable alpha blending
+	SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCALPHA, _osdMessageAlpha);
+
+	// Ensure a full redraw takes place next time the screen is updated
+	_forceRedraw = true;
 }
 
 SDL_Rect SurfaceSdlGraphicsManager::getOSDMessageRect() const {
@@ -2381,7 +2386,7 @@ void SurfaceSdlGraphicsManager::updateOSD() {
 				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
 				_osdMessageAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
 			}
-			SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdMessageAlpha);
+			SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCALPHA, _osdMessageAlpha);
 			_forceRedraw = true;
 		}
 
