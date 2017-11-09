@@ -208,7 +208,10 @@ public:
 
 	int stopAttack(const Common::Point &diffPt);
 
-	void multiAttack(int powNum);
+	/**
+	 * Called to do ranged attacks, both with bows or using a spell
+	 */
+	void rangedAttack(int powNum);
 
 	/**
 	 * Fires off a ranged attack at all oncoming monsters

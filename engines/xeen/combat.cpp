@@ -1799,7 +1799,7 @@ void Combat::giveExperience(int experience) {
 	}
 }
 
-void Combat::multiAttack(int powNum) {
+void Combat::rangedAttack(int powNum) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -2060,7 +2060,7 @@ done:
 void Combat::shootRangedWeapon() {
 	_rangeType = RT_ALL;
 	_damageType = DT_PHYSICAL;
-	multiAttack(11);
+	rangedAttack(11);
 }
 
 } // End of namespace Xeen
