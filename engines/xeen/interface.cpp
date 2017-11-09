@@ -1247,6 +1247,7 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 
+	events.updateGameCounter();
 	if (screen._windows[11]._enabled)
 		return;
 
