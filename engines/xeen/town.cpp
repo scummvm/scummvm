@@ -1219,19 +1219,20 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 
 	int result = -1;
 	Common::String msgText = text;
-	for (;;) {
+	do {
 		Common::String msg = Common::String::format("\r\v014\x03c\t125%s\t000\v054%s",
 			name.c_str(), msgText.c_str());
+
+		// Count the number of words
 		const char *msgEnd = w.writeString(msg.c_str());
 		int wordCount = 0;
 
-		const char *msgP = msg.c_str();
-		do {
+		for (const char *msgP = msg.c_str(); msgP != msgEnd && *msgP; ++msgP) {
 			if (*msgP == ' ')
 				++wordCount;
-		} while (msgP != msgEnd && *++msgP);
+		}
 
-		town._drawCtr2 = wordCount * 2;
+		town._drawCtr2 = wordCount * 2;	// Set timeout
 		town._townSprites[1].draw(screen, 0, Common::Point(16, 16));
 		town._townSprites[0].draw(screen, town._drawFrameIndex, Common::Point(23, 22));
 		w.update();
@@ -1258,28 +1259,31 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 				clearButtons();
 
 			do {
-				events.wait(3);
+				events.pollEventsAndWait();
 				checkEvents(_vm);
+
 				if (_vm->shouldQuit())
 					return false;
 
-				town.drawTownAnim(false);
-				events.updateGameCounter();
+				while (events.timeElapsed() >= 3) {
+					town.drawTownAnim(false);
+					events.updateGameCounter();
+				}
 			} while (!_buttonValue);
 
 			if (msgEnd)
+				// Another screen of text remaining
 				break;
 
-			if (!msgEnd) {
-				if (confirm || _buttonValue == Common::KEYCODE_ESCAPE ||
-						_buttonValue == Common::KEYCODE_n)
-					result = 0;
-				else if (_buttonValue == Common::KEYCODE_y)
-					result = 1;
-			}
+			if (confirm || _buttonValue == Common::KEYCODE_ESCAPE ||
+					_buttonValue == Common::KEYCODE_n)
+				result = 0;
+			else if (_buttonValue == Common::KEYCODE_y)
+				result = 1;
 		} while (result == -1);
 
 		if (msgEnd) {
+			// Text remaining, so cut off already displayed page's
 			msgText = Common::String(msgEnd);
 			town._drawCtr2 = wordCount;
 			continue;
@@ -1292,6 +1296,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 
 	town._townSprites[0].clear();
 	town._townSprites[1].clear();
+	events.clearEvents();
 	return result == 1;
 }
 

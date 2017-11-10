@@ -77,6 +77,11 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 				return true;
 			}
 		}
+
+		if (Common::Rect(8, 8, 224, 135).contains(pt)) {
+			_buttonValue = 1;
+			return true;
+		}
 	} else if (events.isKeyPending()) {
 		Common::KeyState keyState;
 		events.getKey(keyState);
