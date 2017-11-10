@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-10 16:59+0100\n"
-"PO-Revision-Date: 2017-10-15 17:04+0000\n"
+"PO-Revision-Date: 2017-11-10 17:07+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1786,20 +1786,22 @@ msgid "<Bad value>"
 msgstr "<Huono arvo>"
 
 #: engines/advancedDetector.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown %s engine game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Peli kansiossa \"%s\" n‰ytt‰‰ olevan tuntematon.\n"
-"Ole kiltti ja raportoi seuraavat tiedot ScummVM:n kehitt‰jille pelin nimen,\n"
+"Peli kansiossa \"%s\" n‰ytt‰‰ olevan tuntematon %s pelimoottorin "
+"pelivariantti.\n"
+"Ole kiltti ja raportoi seuraavat tiedot ScummVM:n kehitt‰jille osoitteessa %"
+"s pelin nimen,\n"
 "version, kielen, yms. kera:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr ""
+msgstr "Tarkastetut peli ID:t:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
