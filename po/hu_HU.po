@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-31 11:04+0100\n"
+"POT-Creation-Date: 2017-11-10 16:59+0100\n"
 "PO-Revision-Date: 2017-10-15 14:17+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -1779,16 +1779,21 @@ msgstr "Havonta"
 msgid "<Bad value>"
 msgstr "<Rossz érték>"
 
-#: engines/advancedDetector.cpp:335
-#, c-format
+#: engines/advancedDetector.cpp:330
+#, fuzzy, c-format
 msgid ""
-"The game in '%s' seems to be unknown.\n"
-"Please, report the following data to the ScummVM team along with name\n"
-"of the game you tried to add and its version, language, etc.:"
+"The game in '%s' seems to be an unknown %s engine game variant.\n"
+"\n"
+"Please report the following data to the ScummVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
 msgstr ""
 "A '%s' játék ismeretlennek tûnik.\n"
 "Kérlek jelezd a ScummVM csapatnak a következõ adatokat, együtt a játék\n"
 "címével és megbízható adataival játékverzió/nyelv(ek)/stb.:"
+
+#: engines/advancedDetector.cpp:338
+msgid "Matched game IDs:"
+msgstr ""
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"

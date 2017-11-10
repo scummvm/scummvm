@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-10-31 11:04+0100\n"
+"POT-Creation-Date: 2017-11-10 16:59+0100\n"
 "PO-Revision-Date: 2017-07-26 18:23+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -1786,16 +1786,21 @@ msgstr "Штомесяц"
 msgid "<Bad value>"
 msgstr "<Хібнае значэнне>"
 
-#: engines/advancedDetector.cpp:335
-#, c-format
+#: engines/advancedDetector.cpp:330
+#, fuzzy, c-format
 msgid ""
-"The game in '%s' seems to be unknown.\n"
-"Please, report the following data to the ScummVM team along with name\n"
-"of the game you tried to add and its version, language, etc.:"
+"The game in '%s' seems to be an unknown %s engine game variant.\n"
+"\n"
+"Please report the following data to the ScummVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
 msgstr ""
 "Здаецца, гульня ў '%s' невядомая.\n"
 "Калі ласка, перадайце камандзе ScummVM наступныя дадзеныя разам\n"
 "з назвай гульні, яе версіяй, мовай і інш.:"
+
+#: engines/advancedDetector.cpp:338
+msgid "Matched game IDs:"
+msgstr ""
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
