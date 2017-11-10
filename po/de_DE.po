@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-10 16:59+0100\n"
-"PO-Revision-Date: 2017-11-05 13:42+0000\n"
+"PO-Revision-Date: 2017-11-10 16:58+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1809,20 +1809,23 @@ msgid "<Bad value>"
 msgstr "<Fehlerhafter Wert>"
 
 #: engines/advancedDetector.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown %s engine game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Das Spiel in '%s' scheint noch unbekannt zu sein.\n"
-"Bitte teilen Sie dem ScummVM-Team die folgenden Daten sowie den\n"
-"Namen des Spiels, das Sie starten wollten, dessen Version, Sprache usw. mit:"
+"Das Spiel in '%s' ist offenbar eine unbekannte Variante eines Spiels, dass "
+"die Engine %s verwendet.\n"
+"\n"
+"Bitte teilen Sie dem ScummVM-Team unter %s die folgenden Informationen "
+"zusammen mit dem Namen, der Version und der Sprache des Spiels, welches Sie "
+"hinzufügen möchten, mit:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr ""
+msgstr "Übereinstimmende Spiele-Kennungen:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
