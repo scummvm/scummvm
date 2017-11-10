@@ -1193,6 +1193,9 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 		int confirm) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
 	Window &w = screen._windows[11];
@@ -1205,7 +1208,8 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 	if (!confirm)
 		loadButtons();
 
-	if (town._townSprites[0].empty()) {
+	if (town._townSprites.empty()) {
+		town._townSprites.resize(2);
 		town._townSprites[0].load(Common::String::format("face%02d.fac", portrait));
 		town._townSprites[1].load("frame.fac");
 	}
@@ -1221,19 +1225,25 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 		const char *msgEnd = w.writeString(msg.c_str());
 		int wordCount = 0;
 
-		for (const char *msgP = msg.c_str(); msgP < msgEnd; ++msgP) {
+		const char *msgP = msg.c_str();
+		do {
 			if (*msgP == ' ')
 				++wordCount;
-		}
+		} while (msgP != msgEnd && *++msgP);
 
 		town._drawCtr2 = wordCount * 2;
 		town._townSprites[1].draw(screen, 0, Common::Point(16, 16));
 		town._townSprites[0].draw(screen, town._drawFrameIndex, Common::Point(23, 22));
 		w.update();
 
-		if (!msgEnd) {
-			// Doesn't look like the code here in original can ever be reached
-			assert(0);
+		if (!msgEnd && !confirm) {
+			res._globalSprites.draw(screen, 7, Common::Point(232, 74));
+			res._globalSprites.draw(screen, 0, Common::Point(235, 75));
+			res._globalSprites.draw(screen, 2, Common::Point(260, 75));
+			screen._windows[34].update();
+
+			intf._face1State = map._headData[party._mazePosition.y][party._mazePosition.x]._left;
+			intf._face2State = map._headData[party._mazePosition.y][party._mazePosition.x]._right;
 		}
 
 		if (confirm == 2) {
