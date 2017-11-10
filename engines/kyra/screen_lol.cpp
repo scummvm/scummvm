@@ -54,7 +54,7 @@ Screen_LoL::~Screen_LoL() {
 	delete[] _grayOverlay;
 }
 
-void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) {
+void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint flags, ...) {
 	if (!format)
 		return;
 
@@ -90,7 +90,7 @@ void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint
 	printText(string, x, y, col1, col2);
 }
 
-void Screen_LoL::fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...) {
+void Screen_LoL::fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint flags, ...) {
 	char buffer[400];
 
 	va_list args;
