@@ -4284,7 +4284,7 @@ void InterfaceMap::drawIndoors() {
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
 	} else if (_wo[167]) {
 		_indoorList._fwl_1F1R._frame = _overallFrame + 1;
-		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl1;
 	} else if (_wo[127]) {
 		_indoorList._fwl_1F1R._frame = 1;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
