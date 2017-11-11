@@ -754,10 +754,13 @@ int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha) {
 		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE)) {
 			return -1;
 		}
+		SDL_SetSurfaceRLE(surface, 0);
 	} else {
 		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND)) {
 			return -1;
 		}
+		if (flag & SDL_RLEACCEL)
+			SDL_SetSurfaceRLE(surface, 1);
 	}
 
 	return 0;
@@ -765,7 +768,13 @@ int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha) {
 
 #undef SDL_SetColorKey
 int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
-	return SDL_SetColorKey(surface, SDL_TRUE, key) ? -1 : 0;
+	if (SDL_SetColorKey(surface, SDL_TRUE, key)) {
+		return -1;
+	}
+
+	if (flag & SDL_RLEACCEL)
+		SDL_SetSurfaceRLE(surface, 1);
+	return 0;
 }
 #endif
 
