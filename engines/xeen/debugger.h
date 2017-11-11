@@ -37,6 +37,8 @@ private:
 
 	bool cmdSpell(int argc, const char **argv);
 	bool cmdDump(int argc, const char **argv);
+	bool cmdGold(int argc, const char **argv);
+	bool cmdGems(int argc, const char **argv);
 public:
 	Debugger(XeenEngine *vm);
 

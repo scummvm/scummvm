@@ -48,6 +48,8 @@ Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
 	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
+	registerCmd("gold", WRAP_METHOD(Debugger, cmdGold));
+	registerCmd("gems", WRAP_METHOD(Debugger, cmdGems));
 
 	_spellId = -1;
 }
@@ -108,6 +110,32 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 		} else {
 			debugPrintf("Could not find resource with that name\n");
 		}
+	}
+
+	return true;
+}
+
+bool Debugger::cmdGold(int argc, const char **argv) {
+	Party &party = *_vm->_party;
+	if (argc == 1) {
+		debugPrintf("Current gold: %d, bank: %d\n", party._gold, party._bankGold);
+	} else {
+		party._gold = strToInt(argv[1]);
+		if (argc > 2)
+			party._bankGold = strToInt(argv[2]);
+	}
+
+	return true;
+}
+
+bool Debugger::cmdGems(int argc, const char **argv) {
+	Party &party = *_vm->_party;
+	if (argc == 1) {
+		debugPrintf("Current gems: %d, bank: %d\n", party._gems, party._bankGems);
+	} else {
+		party._gems = strToInt(argv[1]);
+		if (argc > 2)
+			party._bankGems = strToInt(argv[2]);
 	}
 
 	return true;
