@@ -1843,9 +1843,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
 	}
 
-	if (_cursorFormat.bytesPerPixel == 4) {
-		assert(keyColor == 0);
-	} else {
+	if (_cursorFormat.bytesPerPixel < 4) {
 		assert(keyColor < 1U << (_cursorFormat.bytesPerPixel * 8));
 	}
 
@@ -1898,7 +1896,9 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 			error("Allocating _mouseOrigSurface failed");
 		}
 
-		if (_cursorFormat.bytesPerPixel < 4) {
+		if (_cursorFormat.bytesPerPixel == 4) {
+			SDL_SetColorKey(_mouseOrigSurface, SDL_SRCCOLORKEY | SDL_SRCALPHA, _mouseKeyColor);
+		} else {
 			SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
 		}
 	}
@@ -1979,13 +1979,15 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		}
 
 		SDL_PixelFormat *format = _mouseOrigSurface->format;
-		_mouseSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA,
+		_mouseSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCCOLORKEY | SDL_SRCALPHA,
 											 rW, rH,
 											 format->BitsPerPixel,
 											 format->Rmask,
 											 format->Gmask,
 											 format->Bmask,
 											 format->Amask);
+
+		SDL_SetColorKey(_mouseSurface, SDL_SRCCOLORKEY | SDL_SRCALPHA, _mouseKeyColor);
 
 		// At least SDL 2.0.4 on Windows apparently has a broken SDL_BlitScaled
 		// implementation, and SDL 1 has no such API at all, and our other
