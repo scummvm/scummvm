@@ -893,7 +893,7 @@ public:
 	void cantDrop();
 	void entryAnims();
 	bool finishedWalking();
-	void emergencyPurge();
+	void emergencyPurge(uint8 from);
 	void purgeAnItem();
 	uint8 nextSymbol(uint8 symbol);
 	void enterSymbol();
