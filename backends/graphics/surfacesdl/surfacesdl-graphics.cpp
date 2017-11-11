@@ -2366,6 +2366,7 @@ void SurfaceSdlGraphicsManager::removeOSDMessage() {
 	// Remove the previous message
 	if (_osdMessageSurface) {
 		SDL_FreeSurface(_osdMessageSurface);
+		_forceRedraw = true;
 	}
 
 	_osdMessageSurface = NULL;
@@ -2387,7 +2388,6 @@ void SurfaceSdlGraphicsManager::updateOSD() {
 				_osdMessageAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
 			}
 			SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCALPHA, _osdMessageAlpha);
-			_forceRedraw = true;
 		}
 
 		if (_osdMessageAlpha == SDL_ALPHA_TRANSPARENT) {
@@ -2395,8 +2395,8 @@ void SurfaceSdlGraphicsManager::updateOSD() {
 		}
 	}
 
-	if (_osdIconSurface) {
-		// Redraw the area below the icon for the transparent blit to give correct results.
+	if (_osdIconSurface || _osdMessageSurface) {
+		// Redraw the area below the icon and message for the transparent blit to give correct results.
 		_forceRedraw = true;
 	}
 }
