@@ -151,9 +151,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 	// Iterate over all files in the given directory
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
-			const char *fileName = file->getName().c_str();
-
-			if (0 == scumm_stricmp("sky.dsk", fileName)) {
+			if (0 == scumm_stricmp("sky.dsk", file->getName().c_str())) {
 				Common::File dataDisk;
 				if (dataDisk.open(*file)) {
 					hasSkyDsk = true;
@@ -161,7 +159,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 				}
 			}
 
-			if (0 == scumm_stricmp("sky.dnr", fileName)) {
+			if (0 == scumm_stricmp("sky.dnr", file->getName().c_str())) {
 				Common::File dinner;
 				if (dinner.open(*file)) {
 					hasSkyDnr = true;
