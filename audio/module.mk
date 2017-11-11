@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	mpu401.o \
 	musicplugin.o \
 	null.o \
+	rate.o \
 	timestamp.o \
 	decoders/3do.o \
 	decoders/aac.o \
@@ -63,15 +64,6 @@ MODULE_OBJS := \
 ifdef USE_ALSA
 MODULE_OBJS += \
 	alsa_opl.o
-endif
-
-ifndef USE_ARM_SOUND_ASM
-MODULE_OBJS += \
-	rate.o
-else
-MODULE_OBJS += \
-	rate_arm.o \
-	rate_arm_asm.o
 endif
 
 # Include common rules

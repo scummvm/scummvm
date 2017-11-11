@@ -47,13 +47,6 @@ MODULE_OBJS += \
 	scaler/scale3x.o \
 	scaler/scalebit.o
 
-ifdef USE_ARM_SCALER_ASM
-MODULE_OBJS += \
-	scaler/downscalerARM.o \
-	scaler/scale2xARM.o \
-	scaler/Normal2xARM.o
-endif
-
 ifdef USE_HQ_SCALERS
 MODULE_OBJS += \
 	scaler/hq2x.o \

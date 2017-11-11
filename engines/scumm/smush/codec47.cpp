@@ -338,28 +338,6 @@ void Codec47Decoder::makeTables47(int width) {
 	} while (c < 32768);
 }
 
-#ifdef USE_ARM_SMUSH_ASM
-
-#ifndef IPHONE
-#define ARM_Smush_decode2 _ARM_Smush_decode2
-#endif
-
-extern "C" void ARM_Smush_decode2(      byte  *dst,
-                                  const byte  *src,
-                                        int    width,
-                                        int    height,
-                                  const byte  *param_ptr,
-                                        int16 *_table,
-                                        byte  *_tableBig,
-                                        int32  offset1,
-                                        int32  offset2,
-                                        byte  *_tableSmall);
-
-#define decode2(SRC,DST,WIDTH,HEIGHT,PARAM) \
- ARM_Smush_decode2(SRC,DST,WIDTH,HEIGHT,PARAM,_table,_tableBig, \
-                   _offset1,_offset2,_tableSmall)
-
-#else
 void Codec47Decoder::level3(byte *d_dst) {
 	int32 tmp;
 	byte code = *_d_src++;
@@ -521,7 +499,6 @@ void Codec47Decoder::decode2(byte *dst, const byte *src, int width, int height, 
 		dst += next_line;
 	} while (--bh);
 }
-#endif
 
 Codec47Decoder::Codec47Decoder(int width, int height) {
 	_lastTableWidth = -1;

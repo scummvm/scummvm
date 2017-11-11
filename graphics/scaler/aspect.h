@@ -67,8 +67,4 @@ int stretch200To240(uint8 *buf,
  */
 DECLARE_SCALER(Normal1xAspect);
 
-#ifdef USE_ARM_SCALER_ASM
-DECLARE_SCALER(Normal2xAspect);
-#endif
-
 #endif

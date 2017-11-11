@@ -151,12 +151,6 @@ typedef signed long int int32;
 	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
 #endif
 
-#ifndef __WINS__
-#define USE_ARM_GFX_ASM
-#define USE_ARM_SMUSH_ASM
-#define USE_ARM_COSTUME_ASM
-#define USE_ARM_SOUND_ASM
-#endif
 // This is not really functioning yet.
 // Default SDL keys should map to standard keys I think!
 //#define ENABLE_KEYMAPPER

@@ -102,12 +102,7 @@ SOURCEPATH ..\..\..\..\audio
 SOURCE softsynth\fmtowns_pc98\towns_pc98_fmsynth.cpp // Included since its excluded by filter
 SOURCE miles_mt32.cpp
 
-#if defined (WINS)
-SOURCE rate.cpp			// WINS emulator version: add regular .cpp
-#else
-SOURCE rate_arm.cpp		// ARM version: add ASM .cpp wrapper
-SOURCE rate_arm_asm.s	// ARM version: add ASM routines
-#endif
+SOURCE rate.cpp
 
 SOURCEPATH ..\..\..\..\video
 //START_AUTO_OBJECTS_VIDEO_//
