@@ -32,7 +32,9 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	, _allowWindowSizeReset(false), _hintedWidth(0), _hintedHeight(0), _lastFlags(0)
 #endif
-{}
+{
+	SDL_GetMouseState(&_cursorX, &_cursorY);
+}
 
 void SdlGraphicsManager::activateManager() {
 	_eventSource->setGraphicsManager(this);
