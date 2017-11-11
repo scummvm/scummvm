@@ -1711,11 +1711,11 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 
 	switch (mode) {
 	case 0:
-		return mask >= v;
+		return v >= mask;
 	case 1:
-		return mask == v;
+		return v = mask;
 	case 2:
-		return mask <= v;
+		return v <= mask;
 	default:
 		return false;
 	}
