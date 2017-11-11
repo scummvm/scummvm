@@ -1170,7 +1170,9 @@ bool producesObjectFile(const std::string &fileName) {
 }
 
 std::string toString(int num) {
-	return static_cast<std::ostringstream*>(&(std::ostringstream() << num))->str();
+	std::ostringstream os;
+	os << num;
+	return os.str();
 }
 
 /**
