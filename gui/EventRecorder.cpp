@@ -598,8 +598,7 @@ void EventRecorder::setFileHeader() {
 		return;
 	}
 	TimeDate t;
-	const EnginePlugin *plugin = 0;
-	GameDescriptor desc = EngineMan.findGame(ConfMan.getActiveDomainName(), &plugin);
+	GameDescriptor desc = EngineMan.findGame(ConfMan.getActiveDomainName());
 	g_system->getTimeAndDate(t);
 	if (_author.empty()) {
 		setAuthor("Unknown Author");
@@ -619,19 +618,19 @@ SDL_Surface *EventRecorder::getSurface(int width, int height) {
 
 bool EventRecorder::switchMode() {
 	const Common::String gameId = ConfMan.get("gameid");
-	const EnginePlugin *plugin = 0;
+	const Plugin *plugin = nullptr;
 	EngineMan.findGame(gameId, &plugin);
-	bool metaInfoSupport = (*plugin)->hasFeature(MetaEngine::kSavesSupportMetaInfo);
+	bool metaInfoSupport = plugin->get<MetaEngine>().hasFeature(MetaEngine::kSavesSupportMetaInfo);
 	bool featuresSupport = metaInfoSupport &&
 						  g_engine->canSaveGameStateCurrently() &&
-						  (*plugin)->hasFeature(MetaEngine::kSupportsListSaves) &&
-						  (*plugin)->hasFeature(MetaEngine::kSupportsDeleteSave);
+						  plugin->get<MetaEngine>().hasFeature(MetaEngine::kSupportsListSaves) &&
+						  plugin->get<MetaEngine>().hasFeature(MetaEngine::kSupportsDeleteSave);
 	if (!featuresSupport) {
 		return false;
 	}
 
 	int emptySlot = 1;
-	SaveStateList saveList = (*plugin)->listSaves(gameId.c_str());
+	SaveStateList saveList = plugin->get<MetaEngine>().listSaves(gameId.c_str());
 	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
 		int saveSlot = x->getSaveSlot();
 		if (saveSlot == 0) {
@@ -667,9 +666,9 @@ bool EventRecorder::checkForContinueGame() {
 void EventRecorder::deleteTemporarySave() {
 	if (_temporarySlot == -1) return;
 	const Common::String gameId = ConfMan.get("gameid");
-	const EnginePlugin *plugin = 0;
+	const Plugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
-	 (*plugin)->removeSaveState(gameId.c_str(), _temporarySlot);
+	 plugin->get<MetaEngine>().removeSaveState(gameId.c_str(), _temporarySlot);
 	_temporarySlot = -1;
 }
 
