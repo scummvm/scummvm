@@ -142,7 +142,7 @@ bool MusicDriver::cmdChangeFrequency(const byte *&srcP, byte param) {
 		srcP += 3;
 	}
 
-	return true;
+	return false;
 }
 
 bool MusicDriver::musEndSubroutine(const byte *&srcP, byte param) {
