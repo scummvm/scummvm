@@ -151,7 +151,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformApple2,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES3
@@ -166,7 +166,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformApple2,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES4
