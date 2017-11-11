@@ -161,9 +161,8 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool r
 			if (directory.hasPrefix("clusters") && directory.size() <= 9 && !recursion)
 				continue;
 
-			const char *fileName = file->getName().c_str();
 			for (int cnt = 0; cnt < NUM_FILES_TO_CHECK; cnt++)
-				if (scumm_stricmp(fileName, g_filesToCheck[cnt]) == 0)
+				if (scumm_stricmp(file->getName().c_str(), g_filesToCheck[cnt]) == 0)
 					filesFound[cnt] = true;
 		} else {
 			for (int cnt = 0; cnt < ARRAYSIZE(g_dirNames); cnt++)
