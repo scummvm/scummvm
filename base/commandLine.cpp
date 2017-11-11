@@ -673,9 +673,9 @@ static void listGames() {
 	printf("Game ID              Full Title                                            \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	const EnginePlugin::List &plugins = EngineMan.getPlugins();
-	for (EnginePlugin::List::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		GameList list = (**iter)->getSupportedGames();
+	const PluginList &plugins = EngineMan.getPlugins();
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		GameList list = (*iter)->get<MetaEngine>().getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
 			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
 		}
@@ -741,7 +741,7 @@ static Common::Error listSaves(const char *target) {
 	gameid.toLowercase();	// Normalize it to lower case
 
 	// Find the plugin that will handle the specified gameid
-	const EnginePlugin *plugin = 0;
+	const Plugin *plugin = nullptr;
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (!plugin) {
@@ -749,13 +749,15 @@ static Common::Error listSaves(const char *target) {
 						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	}
 
-	if (!(*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
+	const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+
+	if (!metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
 		// TODO: Include more info about the target (desc, engine name, ...) ???
 		return Common::Error(Common::kEnginePluginNotSupportSaves,
 						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	} else {
 		// Query the plugin for a list of saved games
-		SaveStateList saveList = (*plugin)->listSaves(target);
+		SaveStateList saveList = metaEngine.listSaves(target);
 
 		if (saveList.size() > 0) {
 			// TODO: Include more info about the target (desc, engine name, ...) ???
@@ -793,13 +795,14 @@ static void listThemes() {
 
 /** Lists all output devices */
 static void listAudioDevices() {
-	MusicPlugin::List pluginList = MusicMan.getPlugins();
+	PluginList pluginList = MusicMan.getPlugins();
 
 	printf("ID                             Description\n");
 	printf("------------------------------ ------------------------------------------------\n");
 
-	for (MusicPlugin::List::const_iterator i = pluginList.begin(), iend = pluginList.end(); i != iend; ++i) {
-		MusicDevices deviceList = (**i)->getDevices();
+	for (PluginList::const_iterator i = pluginList.begin(), iend = pluginList.end(); i != iend; ++i) {
+		const MusicPluginObject &musicObject = (*i)->get<MusicPluginObject>();
+		MusicDevices deviceList = musicObject.getDevices();
 		for (MusicDevices::iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
 			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
 		}
