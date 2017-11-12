@@ -754,7 +754,7 @@ int global_messageHandler4(ExCommand *cmd) {
 	return 1;
 }
 
-int MovGraph_messageHandler(ExCommand *cmd) {
+int MovGraph::messageHandler(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
 
