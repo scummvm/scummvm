@@ -2429,8 +2429,8 @@ drawBevelSquareAlgClip(int x, int y, int w, int h, int bevel, PixelType top_colo
 	x = MAX(x - bevel, 0);
 	y = MAX(y - bevel, 0);
 
-	w = MIN(w + (bevel * 2), (int)_activeSurface->w);
-	h = MIN(h + (bevel * 2), (int)_activeSurface->h);
+	w = MIN(x + w + (bevel * 2), (int)_activeSurface->w) - x;
+	h = MIN(y + h + (bevel * 2), (int)_activeSurface->h) - y;
 
 	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
 	ptr_x = x; ptr_y = y;
