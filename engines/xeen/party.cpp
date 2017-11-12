@@ -75,7 +75,7 @@ Party::Party(XeenEngine *vm) {
 	_vm = vm;
 	_mazeDirection = DIR_NORTH;
 	_mazeId = _priorMazeId = 0;
-	_levitateActive = false;
+	_levitateCount = 0;
 	_automapOn = false;
 	_wizardEyeActive = false;
 	_clairvoyanceActive = false;
@@ -111,7 +111,8 @@ Party::Party(XeenEngine *vm) {
 
 	Common::fill(&_gameFlags[0], &_gameFlags[512], false);
 	Common::fill(&_worldFlags[0], &_worldFlags[128], false);
-	Common::fill(&_quests[0], &_quests[64], false);
+	Common::fill(&_quests[0][0], &_quests[0][32], false);
+	Common::fill(&_quests[1][0], &_quests[1][32], false);
 	Common::fill(&_questItems[0], &_questItems[85], 0);
 
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
@@ -158,7 +159,7 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncBytes(dummy, 3);
 
 	s.syncAsByte(_priorMazeId);
-	s.syncAsByte(_levitateActive);
+	s.syncAsByte(_levitateCount);
 	s.syncAsByte(_automapOn);
 	s.syncAsByte(_wizardEyeActive);
 	s.syncAsByte(_clairvoyanceActive);
@@ -203,7 +204,8 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_rested);
 	SavesManager::syncBitFlags(s, &_gameFlags[0], &_gameFlags[512]);
 	SavesManager::syncBitFlags(s, &_worldFlags[0], &_worldFlags[128]);
-	SavesManager::syncBitFlags(s, &_quests[0], &_quests[64]);
+	SavesManager::syncBitFlags(s, &_quests[0][0], &_quests[0][32]);
+	SavesManager::syncBitFlags(s, &_quests[1][0], &_quests[1][32]);
 
 	for (int i = 0; i < 85; ++i)
 		s.syncAsByte(_questItems[i]);
@@ -441,7 +443,7 @@ void Party::resetTemps() {
 	_electricityResistence = 0;
 	_fireResistence = 0;
 	_lightCount = 0;
-	_levitateActive = false;
+	_levitateCount = 0;
 	_walkOnWaterActive = false;
 	_wizardEyeActive = false;
 	_clairvoyanceActive = false;
@@ -725,9 +727,298 @@ bool Party::canShoot() const {
 	return false;
 }
 
-bool Party::giveTake(int mode1, uint32 mask1, int mode2, int mask2, int charIdx) {
-	error("TODO");
+bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charIdx) {
+	Combat &combat = *_vm->_combat;
+	FileManager &files = *_vm->_files;
+	Resources &res = *_vm->_resources;
+	Scripts &scripts = *_vm->_scripts;
+
+	if (charIdx > 7) {
+		charIdx = 7;
+		mode1 = 0;
+	}
+
+	Character &ps = _activeParty[charIdx];
+	if (mode1 && !mask1 && mode1 != 104) {
+		mask1 = howMuch();
+		if (!mask1)
+			return true;
+
+		if (mode2 && !mask2)
+			mask2 = mask1;
+	} else if (mode1 == mode2 && mask1 == mask2) {
+		if (mask2)
+			mask1 = _vm->getRandomNumber(1, mask2);
+		mask2 = 0;
+		mode2 = 0;
+	}
+
+	switch (mode1) {
+	case 8:
+		combat.giveCharDamage(mask1, scripts._nEdamageType, charIdx);
+		break;
+	case 9:
+		if (ps._hasSpells) {
+			ps._currentSp -= mask1;
+			if (ps._currentSp < 1)
+				ps._currentSp = 0;
+		}
+		break;
+	case 10:
+	case 77:
+		ps._ACTemp -= mask1;
+		break;
+	case 11:
+		ps._level._temporary -= mask1;
+		break;
+	case 12:
+		ps._tempAge -= mask1;
+		break;
+	case 13:
+		ps._skills[THIEVERY] = 0;
+		break;
+	case 15:
+		ps.setAward(mask1, false);
+		break;
+	case 16:
+		ps._experience -= mask1;
+		break;
+	case 17:
+		_poisonResistence -= mask1;
+		break;
+	case 18:
+		ps._conditions[mask1] = 0;
+		break;
+	case 19: {
+		int idx2 = 0;
+		switch (ps._class) {
+		case CLASS_PALADIN:
+		case CLASS_CLERIC:
+			idx2 = 0;
+			break;
+		case CLASS_ARCHER:
+		case CLASS_SORCERER:
+			idx2 = 1;
+			break;
+		case CLASS_DRUID:
+		case CLASS_RANGER:
+			idx2 = 2;
+			break;
+		default:
+			break;
+		}
+
+		for (int idx = 0; idx < 39; ++idx) {
+			if (res.SPELLS_ALLOWED[idx2][idx] == mask1) {
+				ps._spells[idx] = 0;
+				break;
+			}
+		}
+		break;
+	}
+	case 20:
+		//TODO: _gameFlags[files._isDarkCC][mask1] = true;
+		break;
+	case 21: {
+		bool found = false;
+		for (int idx = 0; idx < 9; ++idx) {
+			if (mask1 < 35) {
+				if (ps._weapons[idx]._id == mask1) {
+					ps._weapons[idx].clear();
+					ps._weapons.sort();
+					found = true;
+					break;
+				}
+			} else if (mask1 < 49) {
+				if (ps._armor[idx]._id == ((int)mask1 - 35)) {
+					ps._armor[idx].clear();
+					ps._armor.sort();
+					found = true;
+					break;
+				}
+			} else if (mask1 < 60) {
+				if (ps._accessories[idx]._id == ((int)mask1 - 49)) {
+					ps._accessories[idx].clear();
+					ps._accessories.sort();
+					found = true;
+					break;
+				}
+			} else if (mask1 < 82) {
+				if (ps._misc[idx]._material == ((int)mask1 - 60)) {
+					ps._misc[idx].clear();
+					ps._misc.sort();
+					found = true;
+					break;
+				}
+			} else {
+				error("Invalid id");
+			}
+		}
+		if (!found)
+			return true;
+		break;
+	}
+	case 22:
+		changeTime(mask1);
+		break;
+	case 34:
+		if (!subtract(0, mask1, 0, WT_3))
+			return true;
+		break;
+	case 35:
+		if (!subtract(1, mask1, 0, WT_3))
+			return true;
+		break;
+	case 37:
+		ps._might._temporary -= mask1;
+		break;
+	case 38:
+		ps._intellect._temporary -= mask1;
+		break;
+	case 39:
+		ps._personality._temporary -= mask1;
+		break;
+	case 40:
+		ps._endurance._temporary -= mask1;
+		break;
+	case 41:
+		ps._speed._temporary -= mask1;
+		break;
+	case 42:
+		ps._accuracy._temporary -= mask1;
+		break;
+	case 43:
+		ps._luck._temporary -= mask1;
+		break;
+	case 45:
+		ps._might._permanent -= mask1;
+		break;
+	case 46:
+		ps._intellect._permanent -= mask1;
+		break;
+	case 47:
+		ps._personality._permanent -= mask1;
+		break;
+	case 48:
+		ps._endurance._permanent -= mask1;
+		break;
+	case 49:
+		ps._speed._permanent -= mask1;
+		break;
+	case 50:
+		ps._accuracy._permanent -= mask1;
+		break;
+	case 51:
+		ps._luck._permanent -= mask1;
+		break;
+	case 52:
+		ps._fireResistence._permanent -= mask1;
+		break;
+	case 53:
+		ps._electricityResistence._permanent -= mask1;
+		break;
+	case 54:
+		ps._coldResistence._permanent -= mask1;
+		break;
+	case 55:
+		ps._poisonResistence._permanent -= mask1;
+		break;
+	case 56:
+		ps._energyResistence._permanent -= mask1;
+		break;
+	case 57:
+		ps._magicResistence._permanent -= mask1;
+		break;
+	case 58:
+		ps._fireResistence._temporary -= mask1;
+		break;
+	case 59:
+		ps._electricityResistence._temporary -= mask1;
+		break;
+	case 60:
+		ps._coldResistence._temporary -= mask1;
+		break;
+	case 61:
+		ps._poisonResistence._temporary -= mask1;
+		break;
+	case 62:
+		ps._energyResistence._temporary -= mask1;
+		break;
+	case 63:
+		ps._magicResistence._temporary -= mask1;
+		break;
+	case 64:
+		ps._level._permanent -= mask1;
+		break;
+	case 65:
+		if (!subtract(2, mask1, 0, WT_3))
+			return true;
+		break;
+	case 69:
+		_levitateCount -= mask1;
+		break;
+	case 70:
+		_lightCount -= mask1;
+		break;
+	case 71:
+		_fireResistence -= mask1;
+		break;
+	case 72:
+		_electricityResistence -= mask1;
+		break;
+	case 73:
+		_coldResistence -= mask1;
+		break;
+	case 74:
+		_levitateCount -= mask1;
+		_lightCount -= mask1;
+		_fireResistence -= mask1;
+		_electricityResistence -= mask1;
+		_coldResistence -= mask1;
+		_poisonResistence -= mask1;
+		_walkOnWaterActive = false;
+		break;
+	case 76:
+		subPartyTime(mask1 * 1440);
+		break;
+	case 79:
+		_wizardEyeActive = false;
+		break;
+	case 85:
+		_year -= mask1;
+		break;
+	case 94:
+		_walkOnWaterActive = false;
+		break;
+	case 103:
+		_worldFlags[mask1] = false;
+		break;
+	case 104:
+		_quests[files._isDarkCc][mask1] = true;
+		break;
+	case 107:
+		_characterFlags[ps._rosterId][mask1] = true;
+		break;
+	default:
+		break;
+	}
+
+	// TODO
+	return false;
 }
 
+int Party::howMuch() {
+	warning("TODO");
+	return -1;
+}
+
+void Party::subPartyTime(int time) {
+	for (_minutes -= time; _minutes < 0; _minutes += 1440) {
+		if (--_day < 0) {
+			_day += 100;
+			--_year;
+		}
+	}
+}
 
 } // End of namespace Xeen

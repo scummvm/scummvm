@@ -114,7 +114,7 @@ void InfoDialog::protectionText() {
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}
 
-	if (party._levitateActive) {
+	if (party._levitateCount) {
 		_lines.push_back(Common::String::format(Res.LEVITATE_TEXT,
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}

@@ -672,7 +672,7 @@ void Interface::doStepCode() {
 			party.addTime(170);
 		break;
 	case SURFTYPE_CLOUD:
-		if (!party._levitateActive) {
+		if (!party._levitateCount) {
 			party._damageType = DT_PHYSICAL;
 			_falling = true;
 			damage = 100;
@@ -1751,7 +1751,7 @@ void Interface::assembleBorder() {
 
 	// Draw the animating bat character on the left screen edge to indicate
 	// that the party is being levitated
-	_borderSprites.draw(screen._windows[0], _vm->_party->_levitateActive ? _levitateUIFrame + 16 : 16,
+	_borderSprites.draw(screen._windows[0], _vm->_party->_levitateCount ? _levitateUIFrame + 16 : 16,
 		Common::Point(0, 82));
 	_levitateUIFrame = (_levitateUIFrame + 1) % 12;
 

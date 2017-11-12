@@ -82,13 +82,23 @@ private:
 	 * Give a treasure item to the given character's inventory
 	 */
 	void giveTreasureToCharacter(Character &c, ItemCategory category, int itemIndex);
+
+	/**
+	 * Enter an amount of how much
+	 */
+	int howMuch();
+
+	/**
+	 * Subtracts an amount from the party time
+	 */
+	void subPartyTime(int time);
 public:
 	// Dynamic data that's saved
 	Direction _mazeDirection;
 	Common::Point _mazePosition;
 	int _mazeId;
 	int _priorMazeId;
-	bool _levitateActive;
+	int _levitateCount;
 	bool _automapOn;
 	bool _wizardEyeActive;
 	bool _clairvoyanceActive;
@@ -127,7 +137,7 @@ public:
 	bool _rested;
 	bool _gameFlags[512];
 	bool _worldFlags[128];
-	bool _quests[64];
+	bool _quests[2][32];
 	int _questItems[TOTAL_QUEST_ITEMS];
 	bool _characterFlags[30][24];
 public:
@@ -196,7 +206,7 @@ public:
 
 	bool canShoot() const;
 
-	bool giveTake(int mode1, uint32 mask1, int mode2, int mask2, int charIdx);
+	bool giveTake(int mode1, uint32 mask1, int mode2, uint mask2, int charIdx);
 };
 
 } // End of namespace Xeen

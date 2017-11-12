@@ -1380,8 +1380,7 @@ void Character::setValue(int id, uint value) {
 		party._food = value;
 		break;
 	case 69:
-		// Set levitate active
-		party._levitateActive = value != 0;
+		party._levitateCount = value;
 		break;
 	case 70:
 		party._lightCount = value;
@@ -1403,7 +1402,7 @@ void Character::setValue(int id, uint value) {
 		party._electricityResistence = value;
 		party._fireResistence = value;
 		party._lightCount = value;
-		party._levitateActive = value != 0;
+		party._levitateCount = value;
 		break;
 	case 76:
 		// Set day of the year (0-99)
@@ -1413,7 +1412,7 @@ void Character::setValue(int id, uint value) {
 		party._wizardEyeActive = true;
 		break;
 	case 83:
-		scripts._nEdamageType = value;
+		scripts._nEdamageType = (DamageType)value;
 		break;
 	case 84:
 		party._mazeDirection = (Direction)value;

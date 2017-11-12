@@ -324,7 +324,7 @@ public:
 	int _animCounter;
 	bool _eventSkipped;
 	int _whoWill;
-	int _nEdamageType;
+	DamageType _nEdamageType;
 	int _itemType;
 	int _v2;
 	Common::Array<MirrorEntry> _mirror;

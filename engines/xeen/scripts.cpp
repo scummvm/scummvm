@@ -95,7 +95,7 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_lineNum = 0;
 	_charIndex = 0;
 	_v2 = 0;
-	_nEdamageType = 0;
+	_nEdamageType = DT_PHYSICAL;
 	_animCounter = 0;
 	_eventSkipped = false;
 	_mirrorId = -1;
@@ -147,7 +147,7 @@ int Scripts::checkEvents() {
 		_currentPos = party._mazePosition;
 		_charIndex = 1;
 		_v2 = 1;
-		_nEdamageType = 0;
+		_nEdamageType = DT_PHYSICAL;
 //		int var40 = -1;
 
 		while (!_vm->shouldQuit() && _lineNum >= 0) {
@@ -1615,8 +1615,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		v = party._food;
 		break;
 	case 69:
-		// Test for Levitate being active
-		v = party._levitateActive ? 1 : 0;
+		v = party._levitateCount;
 		break;
 	case 70:
 		// Amount of light

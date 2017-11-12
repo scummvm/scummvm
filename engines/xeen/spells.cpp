@@ -408,7 +408,7 @@ void Spells::dayOfSorcery() {
 	party._powerShield = lvl;
 	party._clairvoyanceActive = true;
 	party._wizardEyeActive = true;
-	party._levitateActive = true;
+	party._levitateCount = 1;
 	party._lightCount = lvl;
 	party._automapOn = false;
 	sound.playFX(20);
@@ -804,7 +804,7 @@ void Spells::jump() {
 }
 
 void Spells::levitate() {
-	_vm->_party->_levitateActive = true;
+	_vm->_party->_levitateCount = 1;
 	_vm->_sound->playFX(20);
 }
 
