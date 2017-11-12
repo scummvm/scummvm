@@ -127,14 +127,14 @@ class PtrTestSuite : public CxxTest::TestSuite {
 
 	void test_deleter() {
 		Deleter<int> myDeleter;
-		myDeleter.test = new bool(false);
+		bool test = false;
+		myDeleter.test = &test;
 
 		{
 			Common::SharedPtr<int> p(new int(1), myDeleter);
 		}
 
-		TS_ASSERT_EQUALS(*myDeleter.test, true);
-		delete myDeleter.test;
+		TS_ASSERT_EQUALS(test, true);
 	}
 
 	void test_compare() {
