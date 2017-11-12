@@ -1712,7 +1712,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 	case 0:
 		return v >= mask;
 	case 1:
-		return v = mask;
+		return v == mask;
 	case 2:
 		return v <= mask;
 	default:

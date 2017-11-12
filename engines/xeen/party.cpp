@@ -727,69 +727,67 @@ bool Party::canShoot() const {
 	return false;
 }
 
-bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charIdx) {
+bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int charIdx) {
 	Combat &combat = *_vm->_combat;
 	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
-	Resources &res = *_vm->_resources;
 	Scripts &scripts = *_vm->_scripts;
-	int val;
 
 	if (charIdx > 7) {
 		charIdx = 7;
-		mode1 = 0;
+		takeMode = 0;
 	}
 
 	Character &ps = _activeParty[charIdx];
-	if (mode1 && !mask1 && mode1 != 104) {
-		mask1 = howMuch();
-		if (!mask1)
+	if (takeMode && !takeVal && takeMode != 104) {
+		takeVal = howMuch();
+		if (!takeVal)
 			return true;
 
-		if (mode2 && !mask2)
-			mask2 = mask1;
-	} else if (mode1 == mode2 && mask1 == mask2) {
-		if (mask2)
-			mask1 = _vm->getRandomNumber(1, mask2);
-		mask2 = 0;
-		mode2 = 0;
+		if (giveMode && !giveVal)
+			giveVal = takeVal;
+	} else if (takeMode == giveMode && takeVal == giveVal) {
+		if (giveVal)
+			takeVal = _vm->getRandomNumber(1, giveVal);
+		giveVal = 0;
+		giveMode = 0;
 	}
 
-	switch (mode1) {
+	switch (takeMode) {
 	case 8:
-		combat.giveCharDamage(mask1, scripts._nEdamageType, charIdx);
+		combat.giveCharDamage(takeVal, scripts._nEdamageType, charIdx);
 		break;
 	case 9:
 		if (ps._hasSpells) {
-			ps._currentSp -= mask1;
+			ps._currentSp -= takeVal;
 			if (ps._currentSp < 1)
 				ps._currentSp = 0;
 		}
 		break;
 	case 10:
 	case 77:
-		ps._ACTemp -= mask1;
+		ps._ACTemp -= takeVal;
 		break;
 	case 11:
-		ps._level._temporary -= mask1;
+		ps._level._temporary -= takeVal;
 		break;
 	case 12:
-		ps._tempAge -= mask1;
+		ps._tempAge -= takeVal;
 		break;
 	case 13:
 		ps._skills[THIEVERY] = 0;
 		break;
 	case 15:
-		ps.setAward(mask1, false);
+		ps.setAward(takeVal, false);
 		break;
 	case 16:
-		ps._experience -= mask1;
+		ps._experience -= takeVal;
 		break;
 	case 17:
-		_poisonResistence -= mask1;
+		_poisonResistence -= takeVal;
 		break;
 	case 18:
-		ps._conditions[mask1] = 0;
+		ps._conditions[takeVal] = 0;
 		break;
 	case 19: {
 		int idx2 = 0;
@@ -811,7 +809,7 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		}
 
 		for (int idx = 0; idx < 39; ++idx) {
-			if (res.SPELLS_ALLOWED[idx2][idx] == mask1) {
+			if (Res.SPELLS_ALLOWED[idx2][idx] == takeVal) {
 				ps._spells[idx] = 0;
 				break;
 			}
@@ -819,34 +817,34 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		break;
 	}
 	case 20:
-		//TODO: _gameFlags[files._isDarkCC][mask1] = true;
+		//TODO: _gameFlags[files._isDarkCC][takeVal] = true;
 		break;
 	case 21: {
 		bool found = false;
 		for (int idx = 0; idx < 9; ++idx) {
-			if (mask1 < 35) {
-				if (ps._weapons[idx]._id == mask1) {
+			if (takeVal < 35) {
+				if (ps._weapons[idx]._id == takeVal) {
 					ps._weapons[idx].clear();
 					ps._weapons.sort();
 					found = true;
 					break;
 				}
-			} else if (mask1 < 49) {
-				if (ps._armor[idx]._id == ((int)mask1 - 35)) {
+			} else if (takeVal < 49) {
+				if (ps._armor[idx]._id == (takeVal - 35)) {
 					ps._armor[idx].clear();
 					ps._armor.sort();
 					found = true;
 					break;
 				}
-			} else if (mask1 < 60) {
-				if (ps._accessories[idx]._id == ((int)mask1 - 49)) {
+			} else if (takeVal < 60) {
+				if (ps._accessories[idx]._id == (takeVal - 49)) {
 					ps._accessories[idx].clear();
 					ps._accessories.sort();
 					found = true;
 					break;
 				}
-			} else if (mask1 < 82) {
-				if (ps._misc[idx]._material == ((int)mask1 - 60)) {
+			} else if (takeVal < 82) {
+				if (ps._misc[idx]._material == ((int)takeVal - 60)) {
 					ps._misc[idx].clear();
 					ps._misc.sort();
 					found = true;
@@ -861,198 +859,198 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		break;
 	}
 	case 25:
-		changeTime(mask1);
+		changeTime(takeVal);
 		break;
 	case 34:
-		if (!subtract(0, mask1, 0, WT_3))
+		if (!subtract(0, takeVal, 0, WT_3))
 			return true;
 		break;
 	case 35:
-		if (!subtract(1, mask1, 0, WT_3))
+		if (!subtract(1, takeVal, 0, WT_3))
 			return true;
 		break;
 	case 37:
-		ps._might._temporary -= mask1;
+		ps._might._temporary -= takeVal;
 		break;
 	case 38:
-		ps._intellect._temporary -= mask1;
+		ps._intellect._temporary -= takeVal;
 		break;
 	case 39:
-		ps._personality._temporary -= mask1;
+		ps._personality._temporary -= takeVal;
 		break;
 	case 40:
-		ps._endurance._temporary -= mask1;
+		ps._endurance._temporary -= takeVal;
 		break;
 	case 41:
-		ps._speed._temporary -= mask1;
+		ps._speed._temporary -= takeVal;
 		break;
 	case 42:
-		ps._accuracy._temporary -= mask1;
+		ps._accuracy._temporary -= takeVal;
 		break;
 	case 43:
-		ps._luck._temporary -= mask1;
+		ps._luck._temporary -= takeVal;
 		break;
 	case 45:
-		ps._might._permanent -= mask1;
+		ps._might._permanent -= takeVal;
 		break;
 	case 46:
-		ps._intellect._permanent -= mask1;
+		ps._intellect._permanent -= takeVal;
 		break;
 	case 47:
-		ps._personality._permanent -= mask1;
+		ps._personality._permanent -= takeVal;
 		break;
 	case 48:
-		ps._endurance._permanent -= mask1;
+		ps._endurance._permanent -= takeVal;
 		break;
 	case 49:
-		ps._speed._permanent -= mask1;
+		ps._speed._permanent -= takeVal;
 		break;
 	case 50:
-		ps._accuracy._permanent -= mask1;
+		ps._accuracy._permanent -= takeVal;
 		break;
 	case 51:
-		ps._luck._permanent -= mask1;
+		ps._luck._permanent -= takeVal;
 		break;
 	case 52:
-		ps._fireResistence._permanent -= mask1;
+		ps._fireResistence._permanent -= takeVal;
 		break;
 	case 53:
-		ps._electricityResistence._permanent -= mask1;
+		ps._electricityResistence._permanent -= takeVal;
 		break;
 	case 54:
-		ps._coldResistence._permanent -= mask1;
+		ps._coldResistence._permanent -= takeVal;
 		break;
 	case 55:
-		ps._poisonResistence._permanent -= mask1;
+		ps._poisonResistence._permanent -= takeVal;
 		break;
 	case 56:
-		ps._energyResistence._permanent -= mask1;
+		ps._energyResistence._permanent -= takeVal;
 		break;
 	case 57:
-		ps._magicResistence._permanent -= mask1;
+		ps._magicResistence._permanent -= takeVal;
 		break;
 	case 58:
-		ps._fireResistence._temporary -= mask1;
+		ps._fireResistence._temporary -= takeVal;
 		break;
 	case 59:
-		ps._electricityResistence._temporary -= mask1;
+		ps._electricityResistence._temporary -= takeVal;
 		break;
 	case 60:
-		ps._coldResistence._temporary -= mask1;
+		ps._coldResistence._temporary -= takeVal;
 		break;
 	case 61:
-		ps._poisonResistence._temporary -= mask1;
+		ps._poisonResistence._temporary -= takeVal;
 		break;
 	case 62:
-		ps._energyResistence._temporary -= mask1;
+		ps._energyResistence._temporary -= takeVal;
 		break;
 	case 63:
-		ps._magicResistence._temporary -= mask1;
+		ps._magicResistence._temporary -= takeVal;
 		break;
 	case 64:
-		ps._level._permanent -= mask1;
+		ps._level._permanent -= takeVal;
 		break;
 	case 65:
-		if (!subtract(2, mask1, 0, WT_3))
+		if (!subtract(2, takeVal, 0, WT_3))
 			return true;
 		break;
 	case 69:
-		_levitateCount -= mask1;
+		_levitateCount -= takeVal;
 		break;
 	case 70:
-		_lightCount -= mask1;
+		_lightCount -= takeVal;
 		break;
 	case 71:
-		_fireResistence -= mask1;
+		_fireResistence -= takeVal;
 		break;
 	case 72:
-		_electricityResistence -= mask1;
+		_electricityResistence -= takeVal;
 		break;
 	case 73:
-		_coldResistence -= mask1;
+		_coldResistence -= takeVal;
 		break;
 	case 74:
-		_levitateCount -= mask1;
-		_lightCount -= mask1;
-		_fireResistence -= mask1;
-		_electricityResistence -= mask1;
-		_coldResistence -= mask1;
-		_poisonResistence -= mask1;
+		_levitateCount -= takeVal;
+		_lightCount -= takeVal;
+		_fireResistence -= takeVal;
+		_electricityResistence -= takeVal;
+		_coldResistence -= takeVal;
+		_poisonResistence -= takeVal;
 		_walkOnWaterActive = false;
 		break;
 	case 76:
-		subPartyTime(mask1 * 1440);
+		subPartyTime(takeVal * 1440);
 		break;
 	case 79:
 		_wizardEyeActive = false;
 		break;
 	case 85:
-		_year -= mask1;
+		_year -= takeVal;
 		break;
 	case 94:
 		_walkOnWaterActive = false;
 		break;
 	case 103:
-		_worldFlags[mask1] = false;
+		_worldFlags[takeVal] = false;
 		break;
 	case 104:
-		_quests[files._isDarkCc][mask1] = false;
+		_quests[files._isDarkCc][takeVal] = false;
 		break;
 	case 107:
-		_characterFlags[ps._rosterId][mask1] = false;
+		_characterFlags[ps._rosterId][takeVal] = false;
 		break;
 	default:
 		break;
 	}
 
-	switch (mode2) {
+	switch (giveMode) {
 	case 3:
-		ps._sex = (Sex)mask2;
+		ps._sex = (Sex)giveVal;
 		break;
 	case 4:
-		ps._race = (Race)mask2;
+		ps._race = (Race)giveVal;
 		break;
 	case 5:
-		ps._class = (CharacterClass)mask2;
+		ps._class = (CharacterClass)giveVal;
 		break;
 	case 8:
 		intf.spellFX(&ps);
-		ps._currentHp += mask2;
+		ps._currentHp += giveVal;
 		break;
 	case 9:
-		ps._currentSp += mask2;
+		ps._currentSp += giveVal;
 		break;
 	case 10:
-		ps._ACTemp += mask2;
+		ps._ACTemp += giveVal;
 		break;
 	case 11:
-		ps._level._temporary += mask2;
+		ps._level._temporary += giveVal;
 		break;
 	case 12:
-		ps._tempAge += mask2;
+		ps._tempAge += giveVal;
 		break;
 	case 13:
-		ps._skills[mask2]++;
+		ps._skills[giveVal]++;
 		break;
 	case 15:
-		ps.setAward(mask2, true);
-		if (mask2 != 8)
+		ps.setAward(giveVal, true);
+		if (giveVal != 8)
 			intf.spellFX(&ps);
 		break;
 	case 16:
-		ps._experience += mask2;
+		ps._experience += giveVal;
 		intf.spellFX(&ps);
 		break;
 	case 17:
-		_poisonResistence += mask2;
+		_poisonResistence += giveVal;
 		break;
 	case 18:
-		if (mask2 == 16) {
+		if (giveVal == 16) {
 			Common::fill(&ps._conditions[0], &ps._conditions[16], 0);
-		} else if (mask2 == 6) {
-			ps._conditions[mask2] = 1;
+		} else if (giveVal == 6) {
+			ps._conditions[giveVal] = 1;
 		} else {
-			ps._conditions[mask2]++;
+			ps._conditions[giveVal]++;
 		}
 
 		// TODO
@@ -1077,7 +1075,7 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		}
 
 		for (int idx = 0; idx < 39; ++idx) {
-			if (res.SPELLS_ALLOWED[idx2][idx] == mask2) {
+			if (Res.SPELLS_ALLOWED[idx2][idx] == giveVal) {
 				ps._spells[idx] = 1;
 				intf.spellFX(&ps);
 				break;
@@ -1089,31 +1087,32 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		// TODO: _gameFlags
 		break;
 	case 21: {
+		// TODO: Code below is unfinished
 		bool found = false;
 		for (int idx = 0; idx < 9; ++idx) {
-			if (mask1 < 35) {
-				if (ps._weapons[idx]._id == mask1) {
+			if (takeVal < 35) {
+				if (ps._weapons[idx]._id == takeVal) {
 					ps._weapons[idx].clear();
 					ps._weapons.sort();
 					found = true;
 					break;
 				}
-			} else if (mask1 < 49) {
-				if (ps._armor[idx]._id == ((int)mask1 - 35)) {
+			} else if (takeVal < 49) {
+				if (ps._armor[idx]._id == (takeVal - 35)) {
 					ps._armor[idx].clear();
 					ps._armor.sort();
 					found = true;
 					break;
 				}
-			} else if (mask1 < 60) {
-				if (ps._accessories[idx]._id == ((int)mask1 - 49)) {
+			} else if (takeVal < 60) {
+				if (ps._accessories[idx]._id == (takeVal - 49)) {
 					ps._accessories[idx].clear();
 					ps._accessories.sort();
 					found = true;
 					break;
 				}
-			} else if (mask1 < 82) {
-				if (ps._misc[idx]._material == ((int)mask1 - 60)) {
+			} else if (takeVal < 82) {
+				if (ps._misc[idx]._material == ((int)takeVal - 60)) {
 					ps._misc[idx].clear();
 					ps._misc.sort();
 					found = true;
@@ -1128,158 +1127,158 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		break;
 	}
 	case 25:
-		subPartyTime(mask2);
+		subPartyTime(giveVal);
 		intf.spellFX(&ps);
 		break;
 	case 34:
-		_gold += mask2;
+		_gold += giveVal;
 		break;
 	case 35:
-		_gems += mask2;
+		_gems += giveVal;
 		break;
 	case 37:
-		ps._might._temporary = MIN(ps._might._temporary + mask2, (uint)255);
+		ps._might._temporary = MIN(ps._might._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 38:
-		ps._intellect._temporary = MIN(ps._intellect._temporary + mask2, (uint)255);
+		ps._intellect._temporary = MIN(ps._intellect._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 39:
-		ps._personality._temporary = MIN(ps._personality._temporary + mask2, (uint)255);
+		ps._personality._temporary = MIN(ps._personality._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 40:
-		ps._endurance._temporary = MIN(ps._endurance._temporary + mask2, (uint)255);
+		ps._endurance._temporary = MIN(ps._endurance._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 41:
-		ps._speed._temporary = MIN(ps._speed._temporary + mask2, (uint)255);
+		ps._speed._temporary = MIN(ps._speed._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 42:
-		ps._accuracy._temporary = MIN(ps._accuracy._temporary + mask2, (uint)255);
+		ps._accuracy._temporary = MIN(ps._accuracy._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 43:
-		ps._luck._temporary = MIN(ps._luck._temporary + mask2, (uint)255);
+		ps._luck._temporary = MIN(ps._luck._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 45:
-		ps._might._permanent = MIN(ps._might._permanent + mask2, (uint)255);
+		ps._might._permanent = MIN(ps._might._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 46:
-		ps._intellect._permanent = MIN(ps._intellect._permanent + mask2, (uint)255);
+		ps._intellect._permanent = MIN(ps._intellect._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 47:
-		ps._personality._permanent = MIN(ps._personality._permanent + mask2, (uint)255);
+		ps._personality._permanent = MIN(ps._personality._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 48:
-		ps._endurance._permanent = MIN(ps._endurance._permanent + mask2, (uint)255);
+		ps._endurance._permanent = MIN(ps._endurance._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 49:
-		ps._speed._permanent = MIN(ps._speed._permanent + mask2, (uint)255);
+		ps._speed._permanent = MIN(ps._speed._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 50:
-		ps._accuracy._permanent = MIN(ps._accuracy._permanent + mask2, (uint)255);
+		ps._accuracy._permanent = MIN(ps._accuracy._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 51:
-		ps._luck._permanent = MIN(ps._luck._permanent + mask2, (uint)255);
+		ps._luck._permanent = MIN(ps._luck._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 52:
-		ps._fireResistence._permanent = MIN(ps._fireResistence._permanent + mask2, (uint)255);
+		ps._fireResistence._permanent = MIN(ps._fireResistence._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 53:
-		ps._electricityResistence._permanent = MIN(ps._electricityResistence._permanent + mask2, (uint)255);
+		ps._electricityResistence._permanent = MIN(ps._electricityResistence._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 54:
-		ps._coldResistence._permanent = MIN(ps._coldResistence._permanent + mask2, (uint)255);
+		ps._coldResistence._permanent = MIN(ps._coldResistence._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 55:
-		ps._poisonResistence._permanent = MIN(ps._poisonResistence._permanent + mask2, (uint)255);
+		ps._poisonResistence._permanent = MIN(ps._poisonResistence._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 56:
-		ps._energyResistence._permanent = MIN(ps._energyResistence._permanent + mask2, (uint)255);
+		ps._energyResistence._permanent = MIN(ps._energyResistence._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 57:
-		ps._magicResistence._permanent = MIN(ps._magicResistence._permanent + mask2, (uint)255);
+		ps._magicResistence._permanent = MIN(ps._magicResistence._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 58:
-		ps._luck._temporary = MIN(ps._luck._temporary + mask2, (uint)255);
+		ps._luck._temporary = MIN(ps._luck._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 59:
-		ps._electricityResistence._temporary = MIN(ps._electricityResistence._temporary + mask2, (uint)255);
+		ps._electricityResistence._temporary = MIN(ps._electricityResistence._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 60:
-		ps._coldResistence._temporary = MIN(ps._coldResistence._temporary + mask2, (uint)255);
+		ps._coldResistence._temporary = MIN(ps._coldResistence._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 61:
-		ps._poisonResistence._temporary = MIN(ps._poisonResistence._temporary + mask2, (uint)255);
+		ps._poisonResistence._temporary = MIN(ps._poisonResistence._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 62:
-		ps._energyResistence._temporary = MIN(ps._energyResistence._temporary + mask2, (uint)255);
+		ps._energyResistence._temporary = MIN(ps._energyResistence._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 63:
-		ps._magicResistence._temporary = MIN(ps._magicResistence._temporary + mask2, (uint)255);
+		ps._magicResistence._temporary = MIN(ps._magicResistence._temporary + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 64:
-		ps._level._permanent = MIN(ps._level._permanent + mask2, (uint)255);
+		ps._level._permanent = MIN(ps._level._permanent + giveVal, (uint)255);
 		intf.spellFX(&ps);
 		break;
 	case 65:
-		_food += mask2;
+		_food += giveVal;
 		break;
 	case 66:
 		// TODO
 		break;
 	case 69:
-		_levitateCount += mask2;
+		_levitateCount += giveVal;
 		break;
 	case 70:
-		_lightCount += mask2;
+		_lightCount += giveVal;
 		break;
 	case 71:
-		_fireResistence += mask2;
+		_fireResistence += giveVal;
 		break;
 	case 72:
-		_electricityResistence += mask2;
+		_electricityResistence += giveVal;
 		break;
 	case 73:
-		_coldResistence += mask2;
+		_coldResistence += giveVal;
 		break;
 	case 74:
-		_levitateCount += mask2;
-		_lightCount += mask2;
-		_fireResistence += mask2;
-		_electricityResistence += mask2;
-		_coldResistence += mask2;
-		_poisonResistence += mask2;
+		_levitateCount += giveVal;
+		_lightCount += giveVal;
+		_fireResistence += giveVal;
+		_electricityResistence += giveVal;
+		_coldResistence += giveVal;
+		_poisonResistence += giveVal;
 		_walkOnWaterActive = false;
 		break;
 	case 76:
-		addTime(mask2 * 1440);
+		addTime(giveVal * 1440);
 		break;
 	case 77:
-		ps._ACTemp += mask2;
+		ps._ACTemp += giveVal;
 		intf.spellFX(&ps);
 		break;
 	case 78:
@@ -1294,10 +1293,10 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		intf.spellFX(&ps);
 		break;
 	case 82:
-		combat.giveCharDamage(mask2, scripts._nEdamageType, charIdx);
+		combat.giveCharDamage(giveVal, scripts._nEdamageType, charIdx);
 		break;
 	case 85:
-		_year += mask2;
+		_year += giveVal;
 		resetYearlyBits();
 		resetTemps();
 		_rested = true;
@@ -1306,16 +1305,16 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		_walkOnWaterActive = true;
 		break;
 	case 100:
-		_gold += _vm->getRandomNumber(1, mask2);
+		_gold += _vm->getRandomNumber(1, giveVal);
 		break;
 	case 103:
-		_worldFlags[mask1] = true;
+		_worldFlags[takeVal] = true;
 		break;
 	case 104:
-		_quests[files._isDarkCc][mask2] = true;
+		_quests[files._isDarkCc][giveVal] = true;
 		break;
 	case 107:
-		_characterFlags[ps._rosterId][mask1] = true;
+		_characterFlags[ps._rosterId][takeVal] = true;
 		break;
 	default:
 		break;

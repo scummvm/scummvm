@@ -208,7 +208,10 @@ public:
 
 	bool canShoot() const;
 
-	bool giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charIdx);
+	/**
+	 * Gives and/or takes amounts from various character and/or party properties
+	 */
+	bool giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int charIdx);
 };
 
 } // End of namespace Xeen
