@@ -1954,7 +1954,7 @@ void Movement::loadPixelData() {
 		mov = mov->_currMovement;
 
 	for (uint i = 0; i < mov->_dynamicPhases.size(); i++) {
-		if ((Statics *)mov->_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000))
+		if (mov->_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000))
 			mov->_dynamicPhases[i]->getPixelData();
 	}
 
