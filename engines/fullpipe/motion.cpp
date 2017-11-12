@@ -495,7 +495,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		int ox = ani->_ox;
 		int oy = ani->_oy;
 
-		ani->_movement->calcSomeXY(point, 1, ani->_someDynamicPhaseIndex);
+		point = ani->_movement->calcSomeXY(1, ani->_someDynamicPhaseIndex);
 		ani->_statics = ani->_movement->_staticsObj2;
 		ani->_movement = 0;
 		ani->setOXY(point.x + ox, point.y + oy);
@@ -545,7 +545,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		int ox = ani->_ox;
 		int oy = ani->_oy;
 
-		ani->getMovementById(_ladmovements[pos]->movVars->varUpStop)->calcSomeXY(point, 0, -1);
+		point = ani->getMovementById(_ladmovements[pos]->movVars->varUpStop)->calcSomeXY(0, -1);
 
 		mkQueue.ani = ani;
 
@@ -583,7 +583,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		int nx = ani->_ox;
 		int ny = ani->_oy;
 
-		_aniHandler.getTransitionSize(&point, ani->_id, ani->_statics->_staticsId, _ladmovements[pos]->staticIds[0]);
+		point = _aniHandler.getTransitionSize(ani->_id, ani->_statics->_staticsId, _ladmovements[pos]->staticIds[0]);
 
 		nx += point.x;
 		ny += point.y;
@@ -609,7 +609,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		int nx = ani->_ox;
 		int ny = ani->_oy;
 
-		ani->getMovementById(_ladmovements[pos]->movVars->varDownStop)->calcSomeXY(point, 0, -1);
+		point = ani->getMovementById(_ladmovements[pos]->movVars->varDownStop)->calcSomeXY(0, -1);
 
 		nx += point.x;
 		ny += point.y;
@@ -1796,7 +1796,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni *item) {
 
 			item->_subItems[dir]._walk[act]._mov = mov;
 			if (mov) {
-				mov->calcSomeXY(point, 0, -1);
+				point = mov->calcSomeXY(0, -1);
 				item->_subItems[dir]._walk[act]._mx = point.x;
 				item->_subItems[dir]._walk[act]._my = point.y;
 			}
@@ -1826,7 +1826,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni *item) {
 
 			item->_subItems[dir]._turn[act]._mov = mov;
 			if (mov) {
-				mov->calcSomeXY(point, 0, -1);
+				point = mov->calcSomeXY(0, -1);
 				item->_subItems[dir]._turn[act]._mx = point.x;
 				item->_subItems[dir]._turn[act]._my = point.y;
 			}
@@ -1856,7 +1856,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni *item) {
 
 			item->_subItems[dir]._turnS[act]._mov = mov;
 			if (mov) {
-				mov->calcSomeXY(point, 0, -1);
+				point = mov->calcSomeXY(0, -1);
 				item->_subItems[dir]._turnS[act]._mx = point.x;
 				item->_subItems[dir]._turnS[act]._my = point.y;
 			}
@@ -2242,7 +2242,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 			newx = obj->_ox;
 			newy = obj->_oy;
 		} else {
-			obj->_movement->calcSomeXY(point, 0, picAniInfo.dynamicPhaseIndex);
+			point = obj->_movement->calcSomeXY(0, picAniInfo.dynamicPhaseIndex);
 			newx = obj->_movement->_ox - point.x;
 			newy = obj->_movement->_oy - point.y;
 			if (idxsub != 1 && idxsub) {
@@ -2540,7 +2540,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 	int a2 = 0;
 	int mgmLen;
 
-	_aniHandler.getNumCycles(&point, _items2[info->index]->_subItems[info->subIndex]._walk[1]._mov, x, y, &mgmLen, &a2, info->flags & 1);
+	point = _aniHandler.getNumCycles(_items2[info->index]->_subItems[info->subIndex]._walk[1]._mov, x, y, &mgmLen, &a2, info->flags & 1);
 
 	int x1 = point.x;
 	int y1 = point.y;

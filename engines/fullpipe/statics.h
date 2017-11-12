@@ -44,8 +44,8 @@ class StepArray : public CObject {
 	int getCurrPointIndex() { return _currPointIndex; }
 	int getPointsCount() { return _maxPointIndex; }
 
-	Common::Point *getCurrPoint(Common::Point *point);
-	Common::Point *getPoint(Common::Point *point, int index, int offset);
+	Common::Point getCurrPoint() const;
+	Common::Point getPoint(int index, int offset) const;
 	bool gotoNextPoint();
 	void insertPoints(Common::Point **points, int pointsCount);
 };
@@ -101,8 +101,8 @@ class Statics : public DynamicPhase {
 	virtual void init();
 	Statics *getStaticsById(int itemId);
 
-	Common::Point *getSomeXY(Common::Point &p);
-	Common::Point *getCenter(Common::Point *p);
+	Common::Point getSomeXY() const;
+	Common::Point getCenter() const;
 };
 
 class StaticANIObject;
@@ -142,11 +142,11 @@ class Movement : public GameObject {
 	virtual bool load(MfcArchive &file);
 	bool load(MfcArchive &file, StaticANIObject *ani);
 
-	Common::Point *getCurrDynamicPhaseXY(Common::Point &p);
-	Common::Point *getCenter(Common::Point *p);
-	Common::Point *getDimensionsOfPhase(Common::Point *p, int phaseIndex);
+	Common::Point getCurrDynamicPhaseXY() const;
+	Common::Point getCenter() const;
+	Dims getDimensionsOfPhase(int phaseIndex) const;
 
-	Common::Point *calcSomeXY(Common::Point &p, int idx, int dynidx);
+	Common::Point calcSomeXY(int idx, int dynidx);
 
 	void initStatics(StaticANIObject *ani);
 	void updateCurrDynamicPhase();
@@ -208,9 +208,9 @@ public:
 	Movement *getMovementById(int id);
 	int getMovementIdById(int itemId);
 	Movement *getMovementByName(const Common::String &name);
-	Common::Point *getCurrDimensions(Common::Point &p);
+	Common::Point getCurrDimensions() const;
 
-	Common::Point *getSomeXY(Common::Point &p);
+	Common::Point getSomeXY() const;
 
 	void clearFlags();
 	void setFlags40(bool state);

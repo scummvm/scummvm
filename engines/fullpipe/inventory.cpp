@@ -256,8 +256,6 @@ void Inventory2::rebuildItemRects() {
 	}
 
 	for (uint i = 0; i < _inventoryItems.size(); i++) {
-		Common::Point point;
-
 		int idx = getInventoryPoolItemIndexById(_inventoryItems[i]->itemId);
 
 		InventoryIcon *icn = new InventoryIcon();
@@ -268,19 +266,19 @@ void Inventory2::rebuildItemRects() {
 		icn->pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectHover, 0);
 		icn->pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectSelected, 0);
 
-		icn->pictureObjectNormal->getDimensions(&point);
+		const Dims dims = icn->pictureObjectNormal->getDimensions();
 
 		if (_itemsPool[idx]->flags & 0x10000) {
 			icn->x1 = 730;
 			icn->y1 = itemY;
-			icn->x2 = point.x + 730;
-			icn->y2 = point.y + itemY + 10;
+			icn->x2 = dims.x + 730;
+			icn->y2 = dims.y + itemY + 10;
 		} else {
 			icn->x1 = itemX;
 			icn->y1 = itemY;
-			icn->x2 = itemX + point.x;
+			icn->x2 = itemX + dims.x;
 			itemX = icn->x2 + 1;
-			icn->y2 = point.y + itemY + 10;
+			icn->y2 = dims.y + itemY + 10;
 		}
 
 		_inventoryIcons.push_back(icn);

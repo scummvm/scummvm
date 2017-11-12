@@ -168,12 +168,6 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	return true;
 }
 
-Common::Point *PictureObject::getDimensions(Common::Point *p) {
-	_picture->getDimensions(p);
-
-	return p;
-}
-
 void PictureObject::draw() {
 	if (_flags & 1)
 		_picture->draw(_ox, _oy, 2, 0);
@@ -562,13 +556,6 @@ void Picture::init() {
 	_bitmap->_flags |= 0x1000000;
 }
 
-Common::Point *Picture::getDimensions(Common::Point *p) {
-	p->x = _width;
-	p->y = _height;
-
-	return p;
-}
-
 void Picture::getDibInfo() {
 	int off = _dataSize & ~0xf;
 
@@ -635,14 +622,13 @@ void Picture::draw(int x, int y, int style, int angle) {
 		pal = g_fp->_globalPalette;
 	}
 
-	Common::Point point;
-
 	switch (style) {
-	case 1:
+	case 1: {
 		//flip
-		getDimensions(&point);
-		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + point.y, pal, _alpha);
+		const Dims dims = getDimensions();
+		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + dims.y, pal, _alpha);
 		break;
+	}
 	case 2:
 		//vrtSetFadeRatio(g_vrtDrawHandle, 0.34999999);
 		//vrtSetFadeTable(g_vrtDrawHandle, &unk_477F88, 1.0, 1000.0, 0, 0);
@@ -1214,18 +1200,16 @@ void Shadows::initMovement(Movement *mov) {
 	_items.clear();
 	_items.resize(num);
 
-	Common::Point point;
-
-	_items[0].dynPhase = (DynamicPhase *)mov->_staticsObj1;
-	_items[0].dynPhase->getDimensions(&point);
-	_items[0].width = point.x;
-	_items[0].height = point.y;
+	_items[0].dynPhase = mov->_staticsObj1;
+	Dims dims = _items[0].dynPhase->getDimensions();
+	_items[0].width = dims.x;
+	_items[0].height = dims.y;
 
 	for (uint i = 1; i < num; i++) {
 		_items[i].dynPhase = mov->getDynamicPhaseByIndex(i - 1);
-		_items[i].dynPhase->getDimensions(&point);
-		_items[i].width = point.x;
-		_items[i].height = point.y;
+		dims = _items[i].dynPhase->getDimensions();
+		_items[i].width = dims.x;
+		_items[i].height = dims.y;
 	}
 }
 
