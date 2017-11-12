@@ -525,12 +525,10 @@ bool ModalMap::init2(int counterdiff) {
 
 				g_fp->playSound(SND_CMN_070, 0);
 			} else {
-				Common::Point p1, p2;
+				const Dims d1 = _picI03->getDimensions();
+				const Dims d2 = _highlightedPic->getDimensions();
 
-				_picI03->getDimensions(&p1);
-				_highlightedPic->getDimensions(&p2);
-
-				_picI03->setOXY(_highlightedPic->_ox + p2.x / 2 - p1.x / 2, _highlightedPic->_oy + p2.y / 2 - p1.y / 2);
+				_picI03->setOXY(_highlightedPic->_ox + d2.x / 2 - d1.x / 2, _highlightedPic->_oy + d2.y / 2 - d1.y / 2);
 				_picI03->_flags |= 4;
 			}
 		}
@@ -644,14 +642,12 @@ void ModalMap::initMap() {
 
 	pic = getScenePicture(g_fp->_currentScene->_sceneId);
 
-	Common::Point point;
-	Common::Point point2;
-
 	if (pic) {
-		pic->getDimensions(&point);
+		const Dims dims = pic->getDimensions();
+		Dims dims2;
 
-		_rect2.left = point.x / 2 + pic->_ox - 400;
-		_rect2.top = point.y / 2 + pic->_oy - 300;
+		_rect2.left = dims.x / 2 + pic->_ox - 400;
+		_rect2.top = dims.y / 2 + pic->_oy - 300;
 		_rect2.right = _rect2.left + 800;
 		_rect2.bottom = _rect2.top + 600;
 
@@ -660,15 +656,15 @@ void ModalMap::initMap() {
 		_mapScene->updateScrolling2();
 
 		_pic = _mapScene->getPictureObjectById(PIC_MAP_I02, 0);
-		_pic->getDimensions(&point2);
+		dims2 = _pic->getDimensions();
 
-		_pic->setOXY(pic->_ox + point.x / 2 - point2.x / 2, point.y - point2.y / 2 + pic->_oy - 24);
+		_pic->setOXY(pic->_ox + dims.x / 2 - dims2.x / 2, dims.y - dims2.y / 2 + pic->_oy - 24);
 		_pic->_flags |= 4;
 
 		_pic = _mapScene->getPictureObjectById(PIC_MAP_I01, 0);
-		_pic->getDimensions(&point2);
+		dims2 = _pic->getDimensions();
 
-		_pic->setOXY(pic->_ox + point.x / 2 - point2.x / 2, point.y - point2.y / 2 + pic->_oy - 25);
+		_pic->setOXY(pic->_ox + dims.x / 2 - dims2.x / 2, dims.y - dims2.y / 2 + pic->_oy - 25);
 		_pic->_flags |= 4;
 	}
 
@@ -1134,8 +1130,6 @@ void ModalFinal::update() {
 }
 
 ModalCredits::ModalCredits() {
-	Common::Point point;
-
 	_sceneTitles = g_fp->accessScene(SC_TITLES);
 
 	_creditsPic = _sceneTitles->getPictureObjectById(PIC_TTL_CREDITS, 0);
@@ -1144,15 +1138,15 @@ ModalCredits::ModalCredits() {
 	_fadeIn = true;
 	_fadeOut = false;
 
-	_creditsPic->getDimensions(&point);
+	const Dims dims = _creditsPic->getDimensions();
 
-	_countdown = point.y / 2 + 470;
+	_countdown = dims.y / 2 + 470;
 	_sfxVolume = g_fp->_sfxVolume;
 
 	_currY = 630;
-	_maxY = -1000 - point.y;
+	_maxY = -1000 - dims.y;
 
-	_currX = 400 - point.x / 2;
+	_currX = 400 - dims.x / 2;
 
 	_creditsPic->setOXY(_currX, _currY);
 }
@@ -1641,16 +1635,14 @@ int ModalMainMenu::checkHover(Common::Point &point) {
 }
 
 bool ModalMainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
-	Common::Point p;
-
-	obj->getDimensions(&p);
+	const Dims dims = obj->getDimensions();
 
 	int left = point->x - 8;
 	int right = point->x + 12;
 	int down = point->y - 11;
 	int up = point->y + 9;
 
-	if (left >= obj->_ox && right < obj->_ox + p.x && down >= obj->_oy && up < obj->_oy + p.y)
+	if (left >= obj->_ox && right < obj->_ox + dims.x && down >= obj->_oy && up < obj->_oy + dims.y)
 		return true;
 
 	return false;
@@ -2091,9 +2083,7 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_SPACE_D, 0));
 	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_SPACE_L, 0));
 
-	Common::Point point;
-
-	int x = _bgr->_ox + _bgr->getDimensions(&point)->x / 2;
+	int x = _bgr->_ox + _bgr->getDimensions().x / 2;
 	int y = _bgr->_oy + 90;
 	int w;
 	FileInfo *fileinfo;
@@ -2106,20 +2096,19 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 
 		if (!getFileInfo(i, fileinfo)) {
 			fileinfo->empty = true;
-			w = _emptyD->getDimensions(&point)->x;
+			w = _emptyD->getDimensions().x;
 		} else {
 			w = 0;
 
 			for (uint j = 0; j < _arrayL.size(); j++) {
-				_arrayL[j]->getDimensions(&point);
-				w += point.x + 2;
+				w += _arrayL[j]->getDimensions().x + 2;
 			}
 		}
 
 		fileinfo->fx1 = x - w / 2;
 		fileinfo->fx2 = x + w / 2;
 		fileinfo->fy1 = y;
-		fileinfo->fy2 = y + _emptyD->getDimensions(&point)->y;
+		fileinfo->fy2 = y + _emptyD->getDimensions().y;
 
 		_files.push_back(fileinfo);
 
@@ -2200,8 +2189,6 @@ void ModalSaveGame::update() {
 
 	g_fp->setCursor(g_fp->_cursorId);
 
-	Common::Point point;
-
 	for (uint i = 0; i < _files.size(); i++) {
 		if (g_fp->_mouseScreenPos.x < _files[i]->fx1 || g_fp->_mouseScreenPos.x > _files[i]->fx2 ||
 			g_fp->_mouseScreenPos.y < _files[i]->fy1 || g_fp->_mouseScreenPos.y > _files[i]->fy2 ) {
@@ -2215,7 +2202,7 @@ void ModalSaveGame::update() {
 					_arrayL[_files[i]->date[j]]->setOXY(x + 1, _files[i]->fy1);
 					_arrayL[_files[i]->date[j]]->draw();
 
-					x += _arrayL[_files[i]->date[j]]->getDimensions(&point)->x + 2;
+					x += _arrayL[_files[i]->date[j]]->getDimensions().x + 2;
 				}
 			}
 		} else {
@@ -2229,7 +2216,7 @@ void ModalSaveGame::update() {
 					_arrayD[_files[i]->date[j]]->setOXY(x + 1, _files[i]->fy1);
 					_arrayD[_files[i]->date[j]]->draw();
 
-					x += _arrayD[_files[i]->date[j]]->getDimensions(&point)->x + 2;
+					x += _arrayD[_files[i]->date[j]]->getDimensions().x + 2;
 				}
 			}
 		}

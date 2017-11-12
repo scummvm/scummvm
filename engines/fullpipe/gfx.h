@@ -34,6 +34,8 @@ class DynamicPhase;
 class Movement;
 struct PicAniInfo;
 
+typedef Common::Point Dims;
+
 struct Bitmap {
 	int _x;
 	int _y;
@@ -105,7 +107,7 @@ class Picture : public MemoryObject {
 	byte getAlpha() { return (byte)_alpha; }
 	void setAlpha(byte alpha) { _alpha = alpha; }
 
-	Common::Point *getDimensions(Common::Point *p);
+	Dims getDimensions() const { return Dims(_width, _height); }
 	bool isPointInside(int x, int y);
 	bool isPixelHitAtPos(int x, int y);
 	int getPixelAtPos(int x, int y);
@@ -171,7 +173,7 @@ class PictureObject : public GameObject {
 	virtual bool load(MfcArchive &file, bool bigPicture);
 	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
 
-	Common::Point *getDimensions(Common::Point *p);
+	Dims getDimensions() const { return _picture->getDimensions(); }
 	void draw();
 	void drawAt(int x, int y);
 

@@ -437,23 +437,23 @@ void sceneHandler06_catchBall() {
 
 			if (g_vars->scene06_mumsy->_movement->_id == MV_MOM_JUMPFW) {
 				if (g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex <= 5) {
-					g_vars->scene06_mumsy->_movement->calcSomeXY(point, 0, g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex);
+					point = g_vars->scene06_mumsy->_movement->calcSomeXY(0, g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex);
 
 					point.x = -point.x;
 					point.y = -point.y;
 				} else {
-					g_vars->scene06_mumsy->_movement->calcSomeXY(point, 1, -1);
+					point = g_vars->scene06_mumsy->_movement->calcSomeXY(1, -1);
 
 					g_vars->scene06_mumsyPos++;
 				}
 			} else if (g_vars->scene06_mumsy->_movement->_id == MV_MOM_JUMPBK) {
 				if (g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex <= 4) {
-					g_vars->scene06_mumsy->_movement->calcSomeXY(point, 0, g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex);
+					point = g_vars->scene06_mumsy->_movement->calcSomeXY(0, g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex);
 
 					point.x = -point.x;
 					point.y = -point.y;
 				} else {
-					g_vars->scene06_mumsy->_movement->calcSomeXY(point, 1, -1);
+					point = g_vars->scene06_mumsy->_movement->calcSomeXY(1, -1);
 
 					g_vars->scene06_mumsyPos--;
 				}

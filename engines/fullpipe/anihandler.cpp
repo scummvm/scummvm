@@ -77,7 +77,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int 
 	do {
 		subidx = startidx + endidx * _items[idx]->statics.size();
 
-		_items[idx]->subItems[subidx]->movement->calcSomeXY(point, 0, -1);
+		point = _items[idx]->subItems[subidx]->movement->calcSomeXY(0, -1);
 
 		if (pointArr) {
 			int sz;
@@ -254,9 +254,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	int n1x = mkQueue->x1 - mkQueue->x2 - sub1->x - sub2->x;
 	int n1y = mkQueue->y1 - mkQueue->y2 - sub1->y - sub2->y;
 
-	Common::Point point1;
-
-	mov->calcSomeXY(point1, 0, -1);
+	const Common::Point point1 = mov->calcSomeXY(0, -1);
 
 	int n2x = point1.x;
 	int n2y = point1.y;
@@ -269,7 +267,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 		n2x *= mult;
 		n2y *= mult;
 	} else {
-		getNumCycles(&point, mov, n1x, n1y, &mult, &len, 1);
+		point = getNumCycles(mov, n1x, n1y, &mult, &len, 1);
 		n2x = point.x;
 		n2y = point.y;
 	}
@@ -435,9 +433,7 @@ void AniHandler::putObjectToStatics(StaticANIObject *ani, int staticsId) {
 	}
 
 	if (ani->_statics) {
-		Common::Point point;
-
-		getTransitionSize(&point, ani->_id, ani->_statics->_staticsId, staticsId);
+		const Common::Point point = getTransitionSize(ani->_id, ani->_statics->_staticsId, staticsId);
 
 		ani->setOXY(ani->_ox + point.x, ani->_oy + point.y);
 
@@ -445,47 +441,41 @@ void AniHandler::putObjectToStatics(StaticANIObject *ani, int staticsId) {
 	}
 }
 
-Common::Point *AniHandler::getTransitionSize(Common::Point *point, int objectId, int staticsId1, int staticsId2) {
-	debugC(4, kDebugPathfinding, "AniHandler::getTransitionSize([%d, %d], %d, %d, %d)", point->x, point->y, objectId, staticsId1, staticsId2);
+Common::Point AniHandler::getTransitionSize(int objectId, int staticsId1, int staticsId2) {
+	debugC(4, kDebugPathfinding, "AniHandler::getTransitionSize(%d, %d, %d)", objectId, staticsId1, staticsId2);
 
 	int idx = getIndex(objectId);
 
 	if (idx == -1) {
-		point->x = -1;
-		point->y = -1;
-	} else {
-		int st1idx = getStaticsIndexById(idx, staticsId1);
-		int st2idx = getStaticsIndexById(idx, staticsId2);
+		return Common::Point(-1, -1);
+	}
 
-		if (st1idx == st2idx) {
-			point->x = 0;
-			point->y = 0;
-		} else {
-			int subidx = st1idx + st2idx * _items[idx]->statics.size();
+	int st1idx = getStaticsIndexById(idx, staticsId1);
+	int st2idx = getStaticsIndexById(idx, staticsId2);
 
-			if (!_items[idx]->subItems[subidx]->movement) {
-				clearVisitsList(idx);
-				seekWay(idx, st1idx, st2idx, false, true);
+	if (st1idx == st2idx) {
+		return Common::Point(0, 0);
+	}
 
-				if (!_items[idx]->subItems[subidx]->movement) {
-					clearVisitsList(idx);
-					seekWay(idx, st1idx, st2idx, true, false);
-				}
-			}
+	int subidx = st1idx + st2idx * _items[idx]->statics.size();
 
-			MGMSubItem *sub = _items[idx]->subItems[subidx];
+	if (!_items[idx]->subItems[subidx]->movement) {
+		clearVisitsList(idx);
+		seekWay(idx, st1idx, st2idx, false, true);
 
-			if (sub->movement) {
-				point->x = sub->x;
-				point->y = sub->y;
-			} else {
-				point->x = 0;
-				point->y = 0;
-			}
+		if (!_items[idx]->subItems[subidx]->movement) {
+			clearVisitsList(idx);
+			seekWay(idx, st1idx, st2idx, true, false);
 		}
 	}
 
-	return point;
+	const MGMSubItem *sub = _items[idx]->subItems[subidx];
+
+	if (!sub->movement) {
+		return Common::Point(0, 0);
+	}
+
+	return Common::Point(sub->x, sub->y);
 }
 
 int AniHandler::getStaticsIndexById(int idx, int16 id) {
@@ -565,7 +555,7 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 				item->subItems[subIdx]->field_8 = recalc + 1;
 				item->subItems[subIdx]->field_C = newsz;
 
-				mov->calcSomeXY(point, 0, -1);
+				point = mov->calcSomeXY(0, -1);
 
 				item->subItems[subIdx]->x = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->x + point.x;
 				item->subItems[subIdx]->y = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->y + point.y;
@@ -594,7 +584,7 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 
 				item->subItems[subIdx]->field_C = sz + item->subItems[stidx + st2idx * _items[idx]->statics.size()]->field_C;
 
-				mov->calcSomeXY(point, 0, -1);
+				point = mov->calcSomeXY(0, -1);
 
 				item->subItems[subIdx]->x = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->x - point.x;
 				item->subItems[subIdx]->y = item->subItems[stidx + st2idx * _items[idx]->statics.size()]->y - point.y;
@@ -631,20 +621,18 @@ int AniHandler::getNumMovements(int objectId, int idx1, int idx2) {
 	return idx;
 }
 
-Common::Point *AniHandler::getNumCycles(Common::Point *pRes, Movement *mov, int x, int y, int *mult, int *len, int flag) {
-	Common::Point point;
-
-	mov->calcSomeXY(point, 0, -1);
+Common::Point AniHandler::getNumCycles(Movement *mov, int x, int y, int *mult, int *len, int flag) {
+	Common::Point point = mov->calcSomeXY(0, -1);
 	int p1x = point.x;
 	int p1y = point.y;
 
 	int newmult = 0;
 
 	if (abs(p1y) > abs(p1x)) {
-		if (mov->calcSomeXY(point, 0, -1)->y)
-			newmult = (int)((double)y / mov->calcSomeXY(point, 0, -1)->y);
-	} else if (mov->calcSomeXY(point, 0, -1)->x) {
-		newmult = (int)((double)x / mov->calcSomeXY(point, 0, -1)->x);
+		if (mov->calcSomeXY(0, -1).y)
+			newmult = (int)((double)y / mov->calcSomeXY(0, -1).y);
+	} else if (mov->calcSomeXY(0, -1).x) {
+		newmult = (int)((double)x / mov->calcSomeXY(0, -1).x);
 	}
 
 	if (newmult < 0)
@@ -657,7 +645,7 @@ Common::Point *AniHandler::getNumCycles(Common::Point *pRes, Movement *mov, int 
 
 	if (flag) {
 		if (abs(p1y) > abs(p1x)) {
-			while (abs(p1y * newmult + mov->calcSomeXY(point, 0, phase)->y) < abs(y)) {
+			while (abs(p1y * newmult + mov->calcSomeXY(0, phase).y) < abs(y)) {
 				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
 				if (phase > sz)
@@ -666,7 +654,7 @@ Common::Point *AniHandler::getNumCycles(Common::Point *pRes, Movement *mov, int 
 				phase++;
 			}
 		} else {
-			while (abs(p1x * newmult + mov->calcSomeXY(point, 0, phase)->x) < abs(x)) {
+			while (abs(p1x * newmult + mov->calcSomeXY(0, phase).x) < abs(x)) {
 				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
 
 				if (phase >= sz)
@@ -690,7 +678,7 @@ Common::Point *AniHandler::getNumCycles(Common::Point *pRes, Movement *mov, int 
 	if (*len > 0) {
 		++*mult;
 
-		mov->calcSomeXY(point, 0, *len);
+		point = mov->calcSomeXY(0, *len);
 		p2x = point.x;
 		p2y = point.y;
 
@@ -700,10 +688,7 @@ Common::Point *AniHandler::getNumCycles(Common::Point *pRes, Movement *mov, int 
 			p2y = p1y;
 	}
 
-	pRes->x = p2x + p1x * newmult;
-	pRes->y = p2y + p1y * newmult;
-
-	return pRes;
+	return Common::Point(p2x + p1x * newmult, p2y + p1y * newmult);
 }
 
 ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {

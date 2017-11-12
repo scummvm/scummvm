@@ -72,12 +72,10 @@ void setInputDisabled(bool state) {
 
 void InputController::addCursor(CursorInfo *cursor) {
 	CursorInfo *newc = new CursorInfo(cursor);
-	Common::Point p;
+	const Dims dims = cursor->picture->getDimensions();
 
-	cursor->picture->getDimensions(&p);
-
-	newc->width = p.x;
-	newc->height = p.y;
+	newc->width = dims.x;
+	newc->height = dims.y;
 
 	newc->picture->_x = -1;
 	newc->picture->_y = -1;
@@ -331,20 +329,18 @@ void FullpipeEngine::processArcade(ExCommand *cmd) {
 }
 
 void FullpipeEngine::setArcadeOverlay(int picId) {
-	Common::Point point;
-	Common::Point point2;
-
 	_arcadeOverlayX = 800;
 	_arcadeOverlayY = 545;
 
 	_arcadeOverlayHelper = accessScene(SC_INV)->getPictureObjectById(PIC_CSR_HELPERBGR, 0);
 	_arcadeOverlay = accessScene(SC_INV)->getPictureObjectById(picId, 0);
 
-	_arcadeOverlay->getDimensions(&point);
-	_arcadeOverlayHelper->getDimensions(&point2);
+	const Dims dims = _arcadeOverlay->getDimensions();
+	const Dims dims2 = _arcadeOverlayHelper->getDimensions();
 
-	_arcadeOverlayMidX = (point2.x - point.x) / 2;
-	_arcadeOverlayMidY = abs(point2.y - point.y) / 2;
+	// TODO: Only Y gets abs?
+	_arcadeOverlayMidX = (dims2.x - dims.x) / 2;
+	_arcadeOverlayMidY = abs(dims2.y - dims.y) / 2;
 }
 
 int FullpipeEngine::drawArcadeOverlay(int adjust) {

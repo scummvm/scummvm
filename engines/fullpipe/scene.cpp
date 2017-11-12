@@ -591,13 +591,11 @@ void Scene::updateScrolling() {
 
 void Scene::updateScrolling2() {
 	if (_picObjList.size()) {
-		Common::Point point;
 		int offsetY = 0;
 		int offsetX = 0;
 
-		((PictureObject *)_picObjList[0])->getDimensions(&point);
-
-		int flags = ((PictureObject *)_picObjList[0])->_flags;
+		const Dims dims = _picObjList[0]->getDimensions();
+		const int flags = _picObjList[0]->_flags;
 
 		if (g_fp->_sceneRect.left < 0 && !(flags & 2))
 			offsetX = -g_fp->_sceneRect.left;
@@ -605,11 +603,11 @@ void Scene::updateScrolling2() {
 		if (g_fp->_sceneRect.top < 0 && !(flags & 0x20))
 			offsetY = -g_fp->_sceneRect.top;
 
-		if (g_fp->_sceneRect.right > point.x - 1 && g_fp->_sceneRect.left > 0 && !(flags & 2))
-			offsetX = point.x - g_fp->_sceneRect.right - 1;
+		if (g_fp->_sceneRect.right > dims.x - 1 && g_fp->_sceneRect.left > 0 && !(flags & 2))
+			offsetX = dims.x - g_fp->_sceneRect.right - 1;
 
-		if (g_fp->_sceneRect.bottom > point.y - 1 && g_fp->_sceneRect.top > 0 && !(flags & 0x20))
-			offsetY = point.y - g_fp->_sceneRect.bottom - 1;
+		if (g_fp->_sceneRect.bottom > dims.y - 1 && g_fp->_sceneRect.top > 0 && !(flags & 0x20))
+			offsetY = dims.y - g_fp->_sceneRect.bottom - 1;
 
 		g_fp->_sceneRect.translate(offsetX, offsetY);
 	}
@@ -694,35 +692,35 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 	debugC(1, kDebugDrawing, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
-	Common::Point point;
+	Dims dims;
 
 	debugC(1, kDebugDrawing, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
 
 	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
 
-		_bigPictureArray[0][0]->getDimensions(&point);
+		dims = _bigPictureArray[0][0]->getDimensions();
 
-		int width = point.x;
-		int height = point.y;
+		int width = dims.x;
+		int height = dims.y;
 
 		debugC(8, kDebugDrawing, "w: %d h:%d", width, height);
 
-		((PictureObject *)_picObjList[0])->getDimensions(&point);
+		dims = _picObjList[0]->getDimensions();
 
-		debugC(8, kDebugDrawing, "w2: %d h2:%d", point.x, point.y);
+		debugC(8, kDebugDrawing, "w2: %d h2:%d", dims.x, dims.y);
 
-		int bgStX = g_fp->_sceneRect.left % point.x;
+		int bgStX = g_fp->_sceneRect.left % dims.x;
 
 		if (bgStX < 0)
-			bgStX += point.x;
+			bgStX += dims.x;
 
 		int bgNumX = bgStX / width;
 		int bgOffsetX = bgStX % width;
 
-		int bgStY = g_fp->_sceneRect.top % point.y;
+		int bgStY = g_fp->_sceneRect.top % dims.y;
 
 		if (bgStY < 0)
-			bgStY += point.y;
+			bgStY += dims.y;
 
 		int bgNumY = bgStY / height;
 		int bgOffsetY = bgStY % height;
@@ -735,7 +733,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 				for (int y = g_fp->_sceneRect.top - bgOffsetY; y < g_fp->_sceneRect.bottom - 1;) {
 					BigPicture *v27 = _bigPictureArray[bgNumX][v25];
 					v27->draw(bgPosX, y, 0, 0);
-					y += v27->getDimensions(&point)->y;
+					y += v27->getDimensions().y;
 					v25++;
 
 					if (v25 >= _bigPictureArray2Count) {
@@ -744,9 +742,9 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 						v25 = 0;
 					}
 				}
-				_bigPictureArray[bgNumX][0]->getDimensions(&point);
-				int oldx = point.x + bgPosX;
-				bgPosX += point.x;
+				dims = _bigPictureArray[bgNumX][0]->getDimensions();
+				int oldx = dims.x + bgPosX;
+				bgPosX += dims.x;
 				bgNumX++;
 
 				if (bgNumX >= _bigPictureArray1Count) {
@@ -772,10 +770,10 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 		debugC(8, kDebugDrawing, "obj: %d %d", objX, objY);
 
-		obj->getDimensions(&point);
+		dims = obj->getDimensions();
 
-		int width = point.x;
-		int height = point.y;
+		int width = dims.x;
+		int height = dims.y;
 
 		if (obj->_flags & 8) {
 			while (objX > g_fp->_sceneRect.right) {

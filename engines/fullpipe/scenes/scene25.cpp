@@ -441,7 +441,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 
 	if (flag) {
 		if (ani->_movement) {
-			ani->_movement->calcSomeXY(point, 0, ani->_movement->_currDynamicPhaseIndex);
+			point = ani->_movement->calcSomeXY(0, ani->_movement->_currDynamicPhaseIndex);
 			newx = point.x;
 			aniY = ani->_oy - point.y;
 		}
@@ -478,7 +478,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 				newy = pnty;
 			}
 
-			ani->getMovementById(ex->_messageNum)->calcSomeXY(point, 0, -1);
+			point = ani->getMovementById(ex->_messageNum)->calcSomeXY(0, -1);
 			pntx += point.x;
 			pnty += point.y;
 		}

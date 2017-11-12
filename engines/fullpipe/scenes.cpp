@@ -539,7 +539,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	if (!scene)
 		return 0;
 
-	((PictureObject *)scene->_picObjList.front())->getDimensions(&sceneDim);
+	sceneDim = scene->_picObjList.front()->getDimensions();
 	_sceneWidth = sceneDim.x;
 	_sceneHeight = sceneDim.y;
 

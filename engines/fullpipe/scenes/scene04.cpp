@@ -1003,9 +1003,7 @@ void sceneHandler04_springWobble() {
 		}
 	}
 
-	Common::Point point;
-
-	int oldpos = g_vars->scene04_spring->getCurrDimensions(point)->y - oldDynIndex;
+	int oldpos = g_vars->scene04_spring->getCurrDimensions().y - oldDynIndex;
 
 	if (g_vars->scene04_dynamicPhaseIndex) {
 		if (!g_vars->scene04_spring->_movement)
@@ -1017,7 +1015,7 @@ void sceneHandler04_springWobble() {
 	}
 
 	if (g_vars->scene04_dynamicPhaseIndex != oldDynIndex) {
-		sceneHandler04_bottleUpdateObjects(oldpos - (g_vars->scene04_spring->getCurrDimensions(point)->y - g_vars->scene04_dynamicPhaseIndex));
+		sceneHandler04_bottleUpdateObjects(oldpos - (g_vars->scene04_spring->getCurrDimensions().y - g_vars->scene04_dynamicPhaseIndex));
 	}
 }
 
@@ -1316,8 +1314,6 @@ void sceneHandler04_testPlank(ExCommand *ex) {
 }
 
 void sceneHandler04_updateBottle() {
-	Common::Point point;
-
 	int yoff;
 
 	if (g_vars->scene04_hand->_movement)
@@ -1325,7 +1321,7 @@ void sceneHandler04_updateBottle() {
 	else
 		yoff = g_vars->scene04_hand->_oy;
 
-	int newy = g_vars->scene04_hand->getSomeXY(point)->y + yoff + 140;
+	int newy = g_vars->scene04_hand->getSomeXY().y + yoff + 140;
 
 	sceneHandler04_bottleUpdateObjects(newy - g_vars->scene04_spring->_oy);
 
