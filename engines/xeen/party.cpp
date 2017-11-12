@@ -730,8 +730,10 @@ bool Party::canShoot() const {
 bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charIdx) {
 	Combat &combat = *_vm->_combat;
 	FileManager &files = *_vm->_files;
+	Interface &intf = *_vm->_interface;
 	Resources &res = *_vm->_resources;
 	Scripts &scripts = *_vm->_scripts;
+	int val;
 
 	if (charIdx > 7) {
 		charIdx = 7;
@@ -858,7 +860,7 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 			return true;
 		break;
 	}
-	case 22:
+	case 25:
 		changeTime(mask1);
 		break;
 	case 34:
@@ -994,7 +996,323 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		_worldFlags[mask1] = false;
 		break;
 	case 104:
-		_quests[files._isDarkCc][mask1] = true;
+		_quests[files._isDarkCc][mask1] = false;
+		break;
+	case 107:
+		_characterFlags[ps._rosterId][mask1] = false;
+		break;
+	default:
+		break;
+	}
+
+	switch (mode2) {
+	case 3:
+		ps._sex = (Sex)mask2;
+		break;
+	case 4:
+		ps._race = (Race)mask2;
+		break;
+	case 5:
+		ps._class = (CharacterClass)mask2;
+		break;
+	case 8:
+		intf.spellFX(&ps);
+		ps._currentHp += mask2;
+		break;
+	case 9:
+		ps._currentSp += mask2;
+		break;
+	case 10:
+		ps._ACTemp += mask2;
+		break;
+	case 11:
+		ps._level._temporary += mask2;
+		break;
+	case 12:
+		ps._tempAge += mask2;
+		break;
+	case 13:
+		ps._skills[mask2]++;
+		break;
+	case 15:
+		ps.setAward(mask2, true);
+		if (mask2 != 8)
+			intf.spellFX(&ps);
+		break;
+	case 16:
+		ps._experience += mask2;
+		intf.spellFX(&ps);
+		break;
+	case 17:
+		_poisonResistence += mask2;
+		break;
+	case 18:
+		if (mask2 == 16) {
+			Common::fill(&ps._conditions[0], &ps._conditions[16], 0);
+		} else if (mask2 == 6) {
+			ps._conditions[mask2] = 1;
+		} else {
+			ps._conditions[mask2]++;
+		}
+
+		// TODO
+		break;
+	case 19: {
+		int idx2 = 0;
+		switch (ps._class) {
+		case CLASS_PALADIN:
+		case CLASS_CLERIC:
+			idx2 = 0;
+			break;
+		case CLASS_ARCHER:
+		case CLASS_SORCERER:
+			idx2 = 1;
+			break;
+		case CLASS_DRUID:
+		case CLASS_RANGER:
+			idx2 = 2;
+			break;
+		default:
+			break;
+		}
+
+		for (int idx = 0; idx < 39; ++idx) {
+			if (res.SPELLS_ALLOWED[idx2][idx] == mask2) {
+				ps._spells[idx] = 1;
+				intf.spellFX(&ps);
+				break;
+			}
+		}
+		break;
+	}
+	case 20:
+		// TODO: _gameFlags
+		break;
+	case 21: {
+		bool found = false;
+		for (int idx = 0; idx < 9; ++idx) {
+			if (mask1 < 35) {
+				if (ps._weapons[idx]._id == mask1) {
+					ps._weapons[idx].clear();
+					ps._weapons.sort();
+					found = true;
+					break;
+				}
+			} else if (mask1 < 49) {
+				if (ps._armor[idx]._id == ((int)mask1 - 35)) {
+					ps._armor[idx].clear();
+					ps._armor.sort();
+					found = true;
+					break;
+				}
+			} else if (mask1 < 60) {
+				if (ps._accessories[idx]._id == ((int)mask1 - 49)) {
+					ps._accessories[idx].clear();
+					ps._accessories.sort();
+					found = true;
+					break;
+				}
+			} else if (mask1 < 82) {
+				if (ps._misc[idx]._material == ((int)mask1 - 60)) {
+					ps._misc[idx].clear();
+					ps._misc.sort();
+					found = true;
+					break;
+				}
+			} else {
+				error("Invalid id");
+			}
+		}
+		if (!found)
+			return true;
+		break;
+	}
+	case 25:
+		subPartyTime(mask2);
+		intf.spellFX(&ps);
+		break;
+	case 34:
+		_gold += mask2;
+		break;
+	case 35:
+		_gems += mask2;
+		break;
+	case 37:
+		ps._might._temporary = MIN(ps._might._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 38:
+		ps._intellect._temporary = MIN(ps._intellect._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 39:
+		ps._personality._temporary = MIN(ps._personality._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 40:
+		ps._endurance._temporary = MIN(ps._endurance._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 41:
+		ps._speed._temporary = MIN(ps._speed._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 42:
+		ps._accuracy._temporary = MIN(ps._accuracy._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 43:
+		ps._luck._temporary = MIN(ps._luck._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 45:
+		ps._might._permanent = MIN(ps._might._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 46:
+		ps._intellect._permanent = MIN(ps._intellect._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 47:
+		ps._personality._permanent = MIN(ps._personality._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 48:
+		ps._endurance._permanent = MIN(ps._endurance._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 49:
+		ps._speed._permanent = MIN(ps._speed._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 50:
+		ps._accuracy._permanent = MIN(ps._accuracy._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 51:
+		ps._luck._permanent = MIN(ps._luck._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 52:
+		ps._fireResistence._permanent = MIN(ps._fireResistence._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 53:
+		ps._electricityResistence._permanent = MIN(ps._electricityResistence._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 54:
+		ps._coldResistence._permanent = MIN(ps._coldResistence._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 55:
+		ps._poisonResistence._permanent = MIN(ps._poisonResistence._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 56:
+		ps._energyResistence._permanent = MIN(ps._energyResistence._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 57:
+		ps._magicResistence._permanent = MIN(ps._magicResistence._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 58:
+		ps._luck._temporary = MIN(ps._luck._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 59:
+		ps._electricityResistence._temporary = MIN(ps._electricityResistence._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 60:
+		ps._coldResistence._temporary = MIN(ps._coldResistence._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 61:
+		ps._poisonResistence._temporary = MIN(ps._poisonResistence._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 62:
+		ps._energyResistence._temporary = MIN(ps._energyResistence._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 63:
+		ps._magicResistence._temporary = MIN(ps._magicResistence._temporary + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 64:
+		ps._level._permanent = MIN(ps._level._permanent + mask2, (uint)255);
+		intf.spellFX(&ps);
+		break;
+	case 65:
+		_food += mask2;
+		break;
+	case 66:
+		// TODO
+		break;
+	case 69:
+		_levitateCount += mask2;
+		break;
+	case 70:
+		_lightCount += mask2;
+		break;
+	case 71:
+		_fireResistence += mask2;
+		break;
+	case 72:
+		_electricityResistence += mask2;
+		break;
+	case 73:
+		_coldResistence += mask2;
+		break;
+	case 74:
+		_levitateCount += mask2;
+		_lightCount += mask2;
+		_fireResistence += mask2;
+		_electricityResistence += mask2;
+		_coldResistence += mask2;
+		_poisonResistence += mask2;
+		_walkOnWaterActive = false;
+		break;
+	case 76:
+		addTime(mask2 * 1440);
+		break;
+	case 77:
+		ps._ACTemp += mask2;
+		intf.spellFX(&ps);
+		break;
+	case 78:
+		ps._currentHp = ps.getMaxHP();
+		intf.spellFX(&ps);
+		break;
+	case 79:
+		_wizardEyeActive = true;
+		break;
+	case 81:
+		ps._currentSp = ps.getMaxSP();
+		intf.spellFX(&ps);
+		break;
+	case 82:
+		combat.giveCharDamage(mask2, scripts._nEdamageType, charIdx);
+		break;
+	case 85:
+		_year += mask2;
+		resetYearlyBits();
+		resetTemps();
+		_rested = true;
+		break;
+	case 94:
+		_walkOnWaterActive = true;
+		break;
+	case 100:
+		_gold += _vm->getRandomNumber(1, mask2);
+		break;
+	case 103:
+		_worldFlags[mask1] = true;
+		break;
+	case 104:
+		_quests[files._isDarkCc][mask2] = true;
 		break;
 	case 107:
 		_characterFlags[ps._rosterId][mask1] = true;
@@ -1003,7 +1321,6 @@ bool Party::giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charI
 		break;
 	}
 
-	// TODO
 	return false;
 }
 
@@ -1019,6 +1336,10 @@ void Party::subPartyTime(int time) {
 			--_year;
 		}
 	}
+}
+
+void Party::resetYearlyBits() {
+	// TODO
 }
 
 } // End of namespace Xeen

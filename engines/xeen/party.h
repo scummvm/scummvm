@@ -92,6 +92,8 @@ private:
 	 * Subtracts an amount from the party time
 	 */
 	void subPartyTime(int time);
+
+	void resetYearlyBits();
 public:
 	// Dynamic data that's saved
 	Direction _mazeDirection;
@@ -206,7 +208,7 @@ public:
 
 	bool canShoot() const;
 
-	bool giveTake(int mode1, uint32 mask1, int mode2, uint mask2, int charIdx);
+	bool giveTake(int mode1, uint32 mask1, int mode2, uint32 mask2, int charIdx);
 };
 
 } // End of namespace Xeen
