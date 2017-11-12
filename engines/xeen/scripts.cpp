@@ -1171,7 +1171,7 @@ void Scripts::cmdGiveEnchanted(Common::Array<byte> &params) {
 			cmdNoAction(params);
 			return;
 		} else {
-			party._gameFlags[6 + params[0]] = true;
+			error("Invalid id");
 		}
 	}
 

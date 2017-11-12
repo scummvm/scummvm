@@ -137,7 +137,7 @@ public:
 	uint _bankGems;
 	int _totalTime;
 	bool _rested;
-	bool _gameFlags[512];
+	bool _gameFlags[2][256];
 	bool _worldFlags[128];
 	bool _quests[2][32];
 	int _questItems[TOTAL_QUEST_ITEMS];

@@ -1024,7 +1024,7 @@ void Map::load(int mapId) {
 					if ((_mobData._monsters[0]._position.x > 31 || _mobData._monsters[0]._position.y > 31) &&
 						(_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) &&
 						(_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
-						_vm->_party->_gameFlags[56] = true;
+						_vm->_party->_gameFlags[0][56] = true;
 					}
 				}
 			}

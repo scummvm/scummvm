@@ -109,7 +109,8 @@ Party::Party(XeenEngine *vm) {
 	_totalTime = 0;
 	_rested = false;
 
-	Common::fill(&_gameFlags[0], &_gameFlags[512], false);
+	Common::fill(&_gameFlags[0][0], &_gameFlags[0][256], false);
+	Common::fill(&_gameFlags[1][0], &_gameFlags[1][256], false);
 	Common::fill(&_worldFlags[0], &_worldFlags[128], false);
 	Common::fill(&_quests[0][0], &_quests[0][32], false);
 	Common::fill(&_quests[1][0], &_quests[1][32], false);
@@ -202,7 +203,8 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_bankGems);
 	s.syncAsUint32LE(_totalTime);
 	s.syncAsByte(_rested);
-	SavesManager::syncBitFlags(s, &_gameFlags[0], &_gameFlags[512]);
+	SavesManager::syncBitFlags(s, &_gameFlags[0][0], &_gameFlags[0][256]);
+	SavesManager::syncBitFlags(s, &_gameFlags[1][0], &_gameFlags[1][256]);
 	SavesManager::syncBitFlags(s, &_worldFlags[0], &_worldFlags[128]);
 	SavesManager::syncBitFlags(s, &_quests[0][0], &_quests[0][32]);
 	SavesManager::syncBitFlags(s, &_quests[1][0], &_quests[1][32]);
@@ -817,7 +819,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	}
 	case 20:
-		//TODO: _gameFlags[files._isDarkCC][takeVal] = true;
+		_gameFlags[files._isDarkCc][takeVal] = false;
 		break;
 	case 21: {
 		bool found = false;
@@ -1053,7 +1055,8 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 			ps._conditions[giveVal]++;
 		}
 
-		// TODO
+		if (giveVal >= 13 && giveVal <= 15 && ps._currentHp > 0)
+			ps._currentHp = 0;
 		break;
 	case 19: {
 		int idx2 = 0;
@@ -1084,48 +1087,43 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	}
 	case 20:
-		// TODO: _gameFlags
+		_gameFlags[files._isDarkCc][giveVal] = true;
 		break;
 	case 21: {
-		// TODO: Code below is unfinished
-		bool found = false;
-		for (int idx = 0; idx < 9; ++idx) {
-			if (takeVal < 35) {
-				if (ps._weapons[idx]._id == takeVal) {
-					ps._weapons[idx].clear();
-					ps._weapons.sort();
-					found = true;
-					break;
-				}
-			} else if (takeVal < 49) {
-				if (ps._armor[idx]._id == (takeVal - 35)) {
-					ps._armor[idx].clear();
-					ps._armor.sort();
-					found = true;
-					break;
-				}
-			} else if (takeVal < 60) {
-				if (ps._accessories[idx]._id == (takeVal - 49)) {
-					ps._accessories[idx].clear();
-					ps._accessories.sort();
-					found = true;
-					break;
-				}
-			} else if (takeVal < 82) {
-				if (ps._misc[idx]._material == ((int)takeVal - 60)) {
-					ps._misc[idx].clear();
-					ps._misc.sort();
-					found = true;
-					break;
-				}
-			} else {
-				error("Invalid id");
+		int idx;
+		if (giveVal < 35) {
+			for (idx = 0; idx < 10 && _treasure._weapons[idx]._id; ++idx);
+			if (idx < 10) {
+				_treasure._weapons[idx]._id = giveVal;
+				_treasure._hasItems = true;
+				return false;
 			}
+		} else if (giveVal < 49) {
+			for (idx = 0; idx < 10 && _treasure._armor[idx]._id; ++idx);
+			if (idx < 10) {
+				_treasure._armor[idx]._id = giveVal - 35;
+				_treasure._hasItems = true;
+				return false;
+			}
+		} else if (giveVal < 60) {
+			for (idx = 0; idx < 10 && _treasure._accessories[idx]._id; ++idx);
+			if (idx < 10) {
+				_treasure._accessories[idx]._id = giveVal - 49;
+				_treasure._hasItems = true;
+				return false;
+			}
+		} else if (giveVal < 82) {
+			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx);
+			if (idx < 10) {
+				_treasure._accessories[idx]._material = giveVal - 60;
+				_treasure._hasItems = true;
+				return false;
+			}
+		} else {
+			error("Invalid id");
 		}
-		if (!found)
-			return true;
-		break;
-	}
+		return true;
+	}	
 	case 25:
 		subPartyTime(giveVal);
 		intf.spellFX(&ps);
@@ -1247,9 +1245,67 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 	case 65:
 		_food += giveVal;
 		break;
-	case 66:
-		// TODO
+	case 66: {
+		warning("TODO: Verify case 66");
+		Character c;
+		int idx = -1;
+		if (scripts._itemType != 0) {
+			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx);
+			if (idx == 10)
+				return true;
+		}
+
+		int result = ps.makeItem(giveVal, 0, (idx == -1) ? 12 : 0);
+		switch (result) {
+		case 0:
+			for (idx = 0; idx < 10 && _treasure._weapons[idx]._id; ++idx);
+			if (idx == 10)
+				return true;
+
+			ps._weapons[idx]._material = c._weapons[0]._material;
+			ps._weapons[idx]._id = c._weapons[0]._id;
+			ps._weapons[idx]._bonusFlags = c._weapons[0]._bonusFlags;
+			_treasure._hasItems = true;
+			break;
+
+		case 1:
+			for (idx = 0; idx < 10 && _treasure._armor[idx]._id; ++idx);
+			if (idx == 10)
+				return true;
+
+			ps._armor[idx]._material = c._armor[0]._material;
+			ps._armor[idx]._id = c._armor[0]._id;
+			ps._armor[idx]._bonusFlags = c._armor[0]._bonusFlags;
+			_treasure._hasItems = true;
+			break;
+
+		case 2:
+			for (idx = 0; idx < 10 && _treasure._accessories[idx]._id; ++idx);
+			if (idx == 10)
+				return true;
+
+			ps._accessories[idx]._material = c._accessories[0]._material;
+			ps._accessories[idx]._id = c._accessories[0]._id;
+			ps._accessories[idx]._bonusFlags = c._accessories[0]._bonusFlags;
+			_treasure._hasItems = true;
+			break;
+
+		case 3:
+			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx);
+			if (idx == 10)
+				return true;
+
+			ps._misc[idx]._material = c._misc[0]._material;
+			ps._misc[idx]._id = c._misc[0]._id;
+			ps._misc[idx]._bonusFlags = c._misc[0]._bonusFlags;
+			_treasure._hasItems = true;
+			break;
+
+		default:
+			return true;
+		}
 		break;
+	}
 	case 69:
 		_levitateCount += giveVal;
 		break;
