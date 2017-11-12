@@ -23,6 +23,8 @@
 #ifndef FULLPIPE_GFX_H
 #define FULLPIPE_GFX_H
 
+#include "common/ptr.h"
+
 namespace Graphics {
 	struct Surface;
 	struct TransparentSurface;
@@ -34,7 +36,10 @@ class DynamicPhase;
 class Movement;
 struct PicAniInfo;
 
+typedef Common::Array<int32> Palette;
 typedef Common::Point Dims;
+
+typedef Common::SharedPtr<Graphics::TransparentSurface> TransSurfacePtr;
 
 struct Bitmap {
 	int _x;
@@ -44,52 +49,42 @@ struct Bitmap {
 	int _type;
 	int _dataSize;
 	int _flags;
-	Graphics::TransparentSurface *_surface;
 	int _flipping;
-	bool _copied_surface;
+	TransSurfacePtr _surface;
 
 	Bitmap();
-	Bitmap(Bitmap *src);
+	Bitmap(const Bitmap &src);
 	~Bitmap();
 
 	void load(Common::ReadStream *s);
-	void decode(byte *pixels, int32 *palette);
-	void putDib(int x, int y, int32 *palette, byte alpha);
-	bool putDibRB(byte *pixels, int32 *palette);
-	void putDibCB(byte *pixels, int32 *palette);
+	void decode(byte *pixels, const Palette &palette);
+	void putDib(int x, int y, const Palette &palette, byte alpha);
+	bool putDibRB(byte *pixels, const Palette &palette);
+	void putDibCB(byte *pixels, const Palette &palette);
 
 	void colorFill(uint32 *dest, int len, int32 color);
-	void paletteFill(uint32 *dest, byte *src, int len, int32 *palette);
-	void copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format);
-	void copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_format);
+	void paletteFill(uint32 *dest, byte *src, int len, const Palette &palette);
+	void copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, const Palette &palette, bool cb05_format);
+	void copier(uint32 *dest, byte *src, int len, const Palette &palette, bool cb05_format);
 
-	Bitmap *reverseImage(bool flip = true);
-	Bitmap *flipVertical();
+	/** ownership of returned object is transferred to caller */
+	Bitmap *reverseImage(bool flip = true) const;
+	/** ownership of returned object is transferred to caller */
+	Bitmap *flipVertical() const;
 
-	void drawShaded(int type, int x, int y, byte *palette, int alpha);
-	void drawRotated(int x, int y, int angle, byte *palette, int alpha);
+	void drawShaded(int type, int x, int y, const Palette &palette, int alpha);
+	void drawRotated(int x, int y, int angle, const Palette &palette, int alpha);
 
 	bool isPixelHitAtPos(int x, int y);
+
+private:
+	Bitmap operator=(const Bitmap &);
 };
 
+typedef Common::SharedPtr<Bitmap> BitmapPtr;
+
 class Picture : public MemoryObject {
- public:
-	Common::Rect _rect;
-	Bitmap *_convertedBitmap;
-	int _x;
-	int _y;
-	int _field_44;
-	int _width;
-	int _height;
-	Bitmap *_bitmap;
-	int _field_54;
-	MemoryObject2 *_memoryObject2;
-	int _alpha;
-	byte *_paletteData;
-
-	void displayPicture();
-
-  public:
+public:
 	Picture();
 	virtual ~Picture();
 
@@ -100,7 +95,7 @@ class Picture : public MemoryObject {
 	void setAOIDs();
 	virtual void init();
 	void getDibInfo();
-	Bitmap *getPixelData();
+	const Bitmap *getPixelData();
 	virtual void draw(int x, int y, int style, int angle);
 	void drawRotated(int x, int y, int angle);
 
@@ -113,10 +108,27 @@ class Picture : public MemoryObject {
 	int getPixelAtPos(int x, int y);
 	int getPixelAtPosEx(int x, int y);
 
-	byte *getPaletteData() { return _paletteData; }
-	void setPaletteData(byte *pal);
+	const Bitmap *getConvertedBitmap() const { return _convertedBitmap.get(); }
+	const Palette &getPaletteData() const { return _paletteData; }
+	void setPaletteData(const Palette &pal);
 
 	void copyMemoryObject2(Picture *src);
+
+	int _x, _y;
+
+protected:
+	Common::Rect _rect;
+	Common::ScopedPtr<Bitmap> _convertedBitmap;
+	int _field_44;
+	int _width;
+	int _height;
+	BitmapPtr _bitmap;
+	int _field_54;
+	Common::ScopedPtr<MemoryObject2> _memoryObject2;
+	int _alpha;
+	Palette _paletteData;
+
+	void displayPicture();
 };
 
 class BigPicture : public Picture {
@@ -191,7 +203,7 @@ class Background : public CObject {
 	int _x;
 	int _y;
 	int16 _messageQueueId;
-	MemoryObject *_palette;
+	Palette _palette;
 	int _bigPictureArray1Count;
 	int _bigPictureArray2Count;
 	BigPicture ***_bigPictureArray;

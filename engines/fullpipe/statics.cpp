@@ -528,41 +528,41 @@ void Movement::draw(bool flipFlag, int angle) {
 	int x = _ox - point.x;
 	int y = _oy - point.y;
 
-	if (_currDynamicPhase->getPaletteData())
-		g_fp->_globalPalette = _currDynamicPhase->getPaletteData();
+	if (_currDynamicPhase->getPaletteData().size())
+		g_fp->_globalPalette = &_currDynamicPhase->getPaletteData();
 
-	Bitmap *bmp;
+	Common::ScopedPtr<Bitmap> bmp;
 	if (_currMovement) {
-		bmp = _currDynamicPhase->getPixelData()->reverseImage();
+		bmp.reset(_currDynamicPhase->getPixelData()->reverseImage());
 	} else {
-		bmp = _currDynamicPhase->getPixelData()->reverseImage(false);
+		bmp.reset(_currDynamicPhase->getPixelData()->reverseImage(false));
 	}
 
 	if (flipFlag) {
-		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect->bottom, _currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect->bottom, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	} else if (angle) {
-		bmp->drawRotated(x, y, angle, _currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+		bmp->drawRotated(x, y, angle, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	} else {
-		bmp->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+		bmp->putDib(x, y, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	}
-	//Prevent memory leak after new was used to create bmp in reverseImage()
-	delete bmp;
 
 	if (_currDynamicPhase->_rect->top) {
-		if (!_currDynamicPhase->_convertedBitmap) {
+		if (!_currDynamicPhase->getConvertedBitmap()) {
 			//v12 = Picture_getPixelData(v5);
 			//v13 = Bitmap_convertTo16Bit565(v12, (unsigned int *)&_currDynamicPhase->rect);
 			//_currDynamicPhase->convertedBitmap = v13;
 		}
 
-		if (_currDynamicPhase->_convertedBitmap) {
+		if (_currDynamicPhase->getConvertedBitmap()) {
 			if (_currMovement) {
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, LOBYTE(_currDynamicPhase->rect.top));
-				_currDynamicPhase->_convertedBitmap->reverseImage()->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+				bmp.reset(_currDynamicPhase->getConvertedBitmap()->reverseImage());
+				bmp->putDib(x, y, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
 			} else {
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, LOBYTE(_currDynamicPhase->rect.top));
-				_currDynamicPhase->_convertedBitmap->reverseImage(false)->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+				bmp.reset(_currDynamicPhase->getConvertedBitmap()->reverseImage(false));
+				bmp->putDib(x, y, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
 			}
 		}
@@ -1441,11 +1441,7 @@ void Statics::init() {
 	Picture::init();
 
 	if (_staticsId & 0x4000) {
-		Bitmap *reversed = _bitmap->reverseImage();
-		// TODO: properly dispose old _bitmap
-		// Enabling the call below causes corruption in flipped bitmaps
-		//freePixelData();
-		_bitmap = reversed;
+		_bitmap = BitmapPtr(_bitmap->reverseImage());
 	}
 }
 
@@ -2166,7 +2162,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		if (!src->_bitmap)
 			src->init();
 
-		_bitmap = src->_bitmap->reverseImage();
+		_bitmap = BitmapPtr(src->_bitmap->reverseImage());
 		_dataSize = src->_dataSize;
 
 		if (g_fp->_currArchive) {
@@ -2188,11 +2184,9 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_mfield_10 = src->_mfield_10;
 		_libHandle = src->_libHandle;
 
-		_bitmap = src->_bitmap;
-		if (_bitmap) {
+		if (src->_bitmap) {
 			_field_54 = 1;
-
-			_bitmap = src->_bitmap->reverseImage(false);
+			_bitmap = BitmapPtr(src->_bitmap->reverseImage(false));
 		}
 
 		_someX = src->_someX;
