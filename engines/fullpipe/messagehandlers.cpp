@@ -345,7 +345,7 @@ int global_messageHandler2(ExCommand *cmd) {
 			SoundList *s = g_fp->_currSoundList1[snd];
 			int ms = s->getCount();
 			for (int i = 0; i < ms; i++) {
-				s->getSoundByIndex(i)->setPanAndVolumeByStaticAni();
+				s->getSoundByIndex(i).setPanAndVolumeByStaticAni();
 			}
 		}
 	}

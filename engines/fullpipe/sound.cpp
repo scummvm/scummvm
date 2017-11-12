@@ -38,39 +38,23 @@
 
 namespace Fullpipe {
 
-SoundList::SoundList() {
-	_soundItems = 0;
-	_soundItemsCount = 0;
-	_libHandle = 0;
-}
-
-SoundList::~SoundList() {
-	for (int i = 0; i < _soundItemsCount; i++)
-		delete _soundItems[i];
-	free(_soundItems);
-}
-
 bool SoundList::load(MfcArchive &file, const Common::String &fname) {
 	debugC(5, kDebugLoading, "SoundList::load()");
 
-	_soundItemsCount = file.readUint32LE();
-	_soundItems = (Sound **)calloc(_soundItemsCount, sizeof(Sound *));
+	uint32 count = file.readUint32LE();
+	_soundItems.resize(count);
 
 	if (!fname.empty()) {
-		_libHandle = makeNGIArchive(fname);
+		_libHandle.reset(makeNGIArchive(fname));
 	} else {
-		_libHandle = 0;
+		_libHandle.reset();
 	}
 
-	for (int i = 0; i < _soundItemsCount; i++) {
-		Sound *snd = new Sound();
-
-		_soundItems[i] = snd;
-		snd->load(file, _libHandle);
+	for (uint i = 0; i < count; i++) {
+		_soundItems[i].load(file, _libHandle.get());
 	}
 
 	return true;
-
 }
 
 bool SoundList::loadFile(const Common::String &fname, const Common::String &libname) {
@@ -85,26 +69,21 @@ bool SoundList::loadFile(const Common::String &fname, const Common::String &libn
 }
 
 Sound *SoundList::getSoundItemById(int id) {
-	if (_soundItemsCount == 0) {
-		return _soundItems[0]->getId() != id ? 0 : _soundItems[0];
+	for (uint i = 0; i < _soundItems.size(); ++i) {
+		if (_soundItems[i].getId() == id)
+			return &_soundItems[i];
 	}
-
-	for (int i = 0; i < _soundItemsCount; i++) {
-		if (_soundItems[i]->getId() == id)
-			return _soundItems[i];
-	}
-	return NULL;
+	return nullptr;
 }
 
-Sound::Sound() {
-	_id = 0;
-	_directSoundBuffer = 0;
-	_soundData = 0;
-	_objectId = 0;
-	memset(_directSoundBuffers, 0, sizeof(_directSoundBuffers));
-	_volume = 100;
-	_handle = new Audio::SoundHandle();
-}
+Sound::Sound() :
+	_id(0),
+	_directSoundBuffer(0),
+	_directSoundBuffers(),
+	_soundData(nullptr),
+	_handle(new Audio::SoundHandle()),
+	_volume(100),
+	_objectId(0) {}
 
 Sound::~Sound() {
 	freeSound();
@@ -389,7 +368,7 @@ void FullpipeEngine::playOggSound(const Common::String &trackName, Audio::SoundH
 void FullpipeEngine::stopAllSounds() {
 	for (int i = 0; i < _currSoundListCount; i++)
 		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
-			_currSoundList1[i]->getSoundByIndex(j)->stop();
+			_currSoundList1[i]->getSoundByIndex(j).stop();
 		}
 }
 
@@ -542,7 +521,7 @@ void FullpipeEngine::updateSoundVolume() {
 
 	for (int i = 0; i < _currSoundListCount; i++)
 		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
-			_currSoundList1[i]->getSoundByIndex(j)->setPanAndVolume(_sfxVolume, 0);
+			_currSoundList1[i]->getSoundByIndex(j).setPanAndVolume(_sfxVolume, 0);
 		}
 }
 

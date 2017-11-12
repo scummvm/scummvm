@@ -1504,11 +1504,11 @@ void ModalMainMenu::updateVolume() {
 	}
 }
 
-void ModalMainMenu::updateSoundVolume(Sound *snd) {
-	if (!snd->_objectId)
+void ModalMainMenu::updateSoundVolume(Sound &snd) {
+	if (!snd._objectId)
 		return;
 
-	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(snd->_objectId, -1);
+	StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(snd._objectId, -1);
 	if (!ani)
 		return;
 
@@ -1522,7 +1522,7 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 
 			if (ani->_oy <= _screct.bottom) {
 				if (ani->_oy >= _screct.top) {
-					snd->setPanAndVolume(g_fp->_sfxVolume, 0);
+					snd.setPanAndVolume(g_fp->_sfxVolume, 0);
 
 					return;
 				}
@@ -1534,7 +1534,7 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 			par = 0;
 
 			if (dx > 800) {
-				snd->setPanAndVolume(-3500, 0);
+				snd.setPanAndVolume(-3500, 0);
 				return;
 			}
 
@@ -1545,7 +1545,7 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 			int dx = ani->_ox - _screct.right;
 
 			if (dx > 800) {
-				snd->setPanAndVolume(-3500, 0);
+				snd.setPanAndVolume(-3500, 0);
 				return;
 			}
 
@@ -1557,7 +1557,7 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 
 		int32 pp = b * a;
 
-		snd->setPanAndVolume(pan + pp / 800, par);
+		snd.setPanAndVolume(pan + pp / 800, par);
 
 		return;
 	}
@@ -1570,9 +1570,9 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 		if (p > g_fp->_sfxVolume)
 			p = g_fp->_sfxVolume;
 
-		snd->setPanAndVolume(p, dx * (-3500) / 800);
+		snd.setPanAndVolume(p, dx * (-3500) / 800);
 	} else {
-		snd->setPanAndVolume(-3500, 0);
+		snd.setPanAndVolume(-3500, 0);
 	}
 }
 

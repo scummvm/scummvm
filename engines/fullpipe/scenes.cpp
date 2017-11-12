@@ -577,7 +577,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 			_currSoundList1[1] = scene->_soundList;
 
 			for (int i = 0; i < scene->_soundList->getCount(); i++) {
-				scene->_soundList->getSoundByIndex(i)->updateVolume();
+				scene->_soundList->getSoundByIndex(i).updateVolume();
 			}
 		} else {
 			_currSoundListCount = 1;
