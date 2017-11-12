@@ -518,12 +518,11 @@ bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 }
 
 bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
-	StaticANIObject *ani = (StaticANIObject *)obj;
-
 	if (abs(_xOffs + obj->_ox - subj->_ox) <= 1
 		&& abs(obj->_oy + _yOffs - subj->_oy) <= 1) {
 		if (!_staticsId2 || (subj->_statics != 0 && subj->_statics->_staticsId == _staticsId2)) {
-			if (!_staticsId1 || !(_flags & 1) || (ani->_statics != 0 && ani->_statics->_staticsId == _staticsId1))
+			StaticANIObject *ani = dynamic_cast<StaticANIObject *>(obj);
+			if (!_staticsId1 || !(_flags & 1) || (ani && ani->_statics != 0 && ani->_statics->_staticsId == _staticsId1))
 				return true;
 		}
 	}
