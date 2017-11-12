@@ -228,7 +228,7 @@ private:
 	void enableDebugMenu(char c);
 	int checkHover(Common::Point &point);
 	void updateVolume();
-	void updateSoundVolume(Sound *snd);
+	void updateSoundVolume(Sound &snd);
 	void updateSliderPos();
 	bool isOverArea(PictureObject *obj, Common::Point *point);
 };
