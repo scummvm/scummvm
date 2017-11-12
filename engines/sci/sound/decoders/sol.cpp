@@ -151,7 +151,7 @@ SOLStream<STEREO, S16BIT, OLDDPCM8>::SOLStream(Common::SeekableReadStream *strea
 		const uint8 compressionRatio = 2;
 		const uint8 numChannels = STEREO ? 2 : 1;
 		const uint8 bytesPerSample = S16BIT ? 2 : 1;
-		_length = Audio::Timestamp((_rawDataSize * compressionRatio * 1000) / (_sampleRate * numChannels * bytesPerSample), 60);
+		_length = ((uint64)_rawDataSize * compressionRatio * 1000) / (_sampleRate * numChannels * bytesPerSample);
 	}
 
 template <bool STEREO, bool S16BIT, bool OLDDPCM8>
