@@ -276,17 +276,22 @@ struct MovGraphItem {
 };
 
 class MovGraph : public MotionController {
-public:
+friend class MctlCompound;
+friend class MctlGraph;
+friend class MotionController;
+private:
 	ObList _nodes;
 	ObList _links;
 	int _field_44;
-	Common::Array<MovGraphItem *> _items;
+	Common::Array<MovGraphItem> _items;
 	MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter);
 	AniHandler _aniHandler;
 
 public:
 	MovGraph();
 	virtual ~MovGraph();
+
+	static int messageHandler(ExCommand *cmd);
 
 	virtual bool load(MfcArchive &file);
 
