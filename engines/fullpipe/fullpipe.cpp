@@ -76,7 +76,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_pictureScale = 8;
 	_scrollSpeed = 0;
 	_currSoundListCount = 0;
-	_globalPalette = 0;
 
 	_updateTicks = 0;
 	_lastInputTicks = 0;
@@ -290,6 +289,7 @@ Common::Error FullpipeEngine::run() {
 	_console = new Console(this);
 
 	initialize();
+	_globalPalette = &_defaultPalette;
 
 	_isSaveAllowed = false;
 
@@ -338,6 +338,7 @@ Common::Error FullpipeEngine::run() {
 			freeGameLoader();
 			_currentScene = 0;
 			_updateTicks = 0;
+			_globalPalette = &_defaultPalette;
 
 			loadGam("fullpipe.gam");
 			_needRestart = false;

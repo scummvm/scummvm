@@ -41,7 +41,6 @@ Background::Background() {
 	_bigPictureArray1Count = 0;
 	_bigPictureArray2Count = 0;
 	_bigPictureArray = 0;
-	_palette = 0;
 }
 
 Background::~Background() {
@@ -432,35 +431,17 @@ bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	return false;
 }
 
-Picture::Picture() {
-	_x = 0;
-	_y = 0;
-	_field_44 = 0;
-	_field_54 = 0;
-	_bitmap = 0;
-	_alpha = -1;
-	_paletteData = 0;
-	_convertedBitmap = 0;
-	_memoryObject2 = 0;
-	_width = 0;
-	_height = 0;
-}
+Picture::Picture() :
+	_x(0),
+	_y(0),
+	_field_44(0),
+	_field_54(0),
+	_alpha(-1),
+	_width(0),
+	_height(0) {}
 
 Picture::~Picture() {
 	freePicture();
-
-	_bitmap = 0;
-
-	if (_memoryObject2)
-		delete _memoryObject2;
-
-	if (_paletteData)
-		free(_paletteData);
-
-	if (_convertedBitmap) {
-		delete _convertedBitmap;
-		_convertedBitmap = 0;
-	}
 }
 
 void Picture::freePicture() {
@@ -469,20 +450,12 @@ void Picture::freePicture() {
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			delete _bitmap;
-			_bitmap = 0;
 		}
+		_bitmap.reset();
+		_data = nullptr;
 	}
 
-	if (_bitmap) {
-		_bitmap = 0;
-		_data = 0;
-	}
-
-	if (_convertedBitmap) {
-		delete _convertedBitmap;
-		_convertedBitmap = 0;
-	}
+	_convertedBitmap.reset();
 }
 
 void Picture::freePixelData() {
@@ -505,7 +478,7 @@ bool Picture::load(MfcArchive &file) {
 
 	_mflags |= 1;
 
-	_memoryObject2 = new MemoryObject2;
+	_memoryObject2.reset(new MemoryObject2);
 	_memoryObject2->load(file);
 
 	if (_memoryObject2->_data) {
@@ -519,8 +492,10 @@ bool Picture::load(MfcArchive &file) {
 	int havePal = file.readUint32LE();
 
 	if (havePal > 0) {
-		_paletteData = (byte *)calloc(1024, 1);
-		file.read(_paletteData, 1024);
+		_paletteData.reserve(256);
+		for (int i = 0; i < 256; ++i) {
+			_paletteData.push_back(file.readUint32LE());
+		}
 	}
 
 	getData();
@@ -549,7 +524,7 @@ void Picture::init() {
 
 	MemoryObject::getData();
 
-	_bitmap = new Bitmap();
+	_bitmap = BitmapPtr(new Bitmap());
 
 	getDibInfo();
 
@@ -583,14 +558,14 @@ void Picture::getDibInfo() {
 	_bitmap->load(s);
 	delete s;
 
-	_bitmap->decode(_data, (int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
+	_bitmap->decode(_data, _paletteData.size() ? _paletteData : *g_fp->_globalPalette);
 }
 
-Bitmap *Picture::getPixelData() {
+const Bitmap *Picture::getPixelData() {
 	if (!_bitmap)
 		init();
 
-	return _bitmap;
+	return _bitmap.get();
 }
 
 void Picture::draw(int x, int y, int style, int angle) {
@@ -615,9 +590,10 @@ void Picture::draw(int x, int y, int style, int angle) {
 		debugC(7, kDebugDrawing, "Picture:draw: alpha = %0x", _alpha);
 	}
 
-	byte *pal = _paletteData;
-
-	if (!pal) {
+	const Palette *pal;
+	if (_paletteData.size()) {
+		pal = &_paletteData;
+	} else {
 		//warning("Picture:draw: using global palette");
 		pal = g_fp->_globalPalette;
 	}
@@ -626,13 +602,13 @@ void Picture::draw(int x, int y, int style, int angle) {
 	case 1: {
 		//flip
 		const Dims dims = getDimensions();
-		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + dims.y, pal, _alpha);
+		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + dims.y, *pal, _alpha);
 		break;
 	}
 	case 2:
 		//vrtSetFadeRatio(g_vrtDrawHandle, 0.34999999);
 		//vrtSetFadeTable(g_vrtDrawHandle, &unk_477F88, 1.0, 1000.0, 0, 0);
-		_bitmap->drawShaded(2, x1, y1, pal, _alpha);
+		_bitmap->drawShaded(2, x1, y1, *pal, _alpha);
 		//vrtSetFadeRatio(g_vrtDrawHandle, 0.0);
 		//vrtSetFadeTable(g_vrtDrawHandle, &unk_477F90, 1.0, 1000.0, 0, 0);
 		break;
@@ -640,7 +616,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 		if (angle)
 			drawRotated(x1, y1, angle);
 		else {
-			_bitmap->putDib(x1, y1, (int32 *)pal, _alpha);
+			_bitmap->putDib(x1, y1, *pal, _alpha);
 		}
 	}
 }
@@ -680,13 +656,11 @@ void Picture::displayPicture() {
 	}
 }
 
-void Picture::setPaletteData(byte *pal) {
-	if (_paletteData)
-		free(_paletteData);
-
-	if (pal) {
-		_paletteData = (byte *)malloc(1024);
-		memcpy(_paletteData, pal, 1024);
+void Picture::setPaletteData(const Palette &pal) {
+	if (pal.size()) {
+		_paletteData = pal;
+	} else {
+		_paletteData.clear();
 	}
 }
 
@@ -750,29 +724,26 @@ Bitmap::Bitmap() {
 	_type = 0;
 	_dataSize = 0;
 	_flags = 0;
-	_surface = 0;
 	_flipping = Graphics::FLIP_NONE;
-	_copied_surface = false;
 }
 
-Bitmap::Bitmap(Bitmap *src) {
-	_x = src->_x;
-	_y = src->_y;
-	_flags = src->_flags;
-	_dataSize = src->_dataSize;
-	_type = src->_type;
-	_width = src->_width;
-	_height = src->_height;
-	_surface = new Graphics::TransparentSurface(*src->_surface);
-	_copied_surface = true;
-	_flipping = src->_flipping;
+Bitmap::Bitmap(const Bitmap &src) {
+	_x = src._x;
+	_y = src._y;
+	_flags = src._flags;
+	_dataSize = src._dataSize;
+	_type = src._type;
+	_width = src._width;
+	_height = src._height;
+	_surface = TransSurfacePtr(src._surface);
+	_flipping = src._flipping;
 }
 
 Bitmap::~Bitmap() {
-	if (!_copied_surface)
+	// TODO: This is a hack because Graphics::Surface has terrible resource
+	// management
+	if (_surface.unique())
 		_surface->free();
-	delete _surface;
-	_surface = 0;
 }
 
 void Bitmap::load(Common::ReadStream *s) {
@@ -801,8 +772,8 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 	return ((*((int32 *)_surface->getBasePtr(x - _x, y - _y)) & 0xff) != 0);
 }
 
-void Bitmap::decode(byte *pixels, int32 *palette) {
-	_surface = new Graphics::TransparentSurface;
+void Bitmap::decode(byte *pixels, const Palette &palette) {
+	_surface = TransSurfacePtr(new Graphics::TransparentSurface);
 
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
@@ -812,7 +783,7 @@ void Bitmap::decode(byte *pixels, int32 *palette) {
 		putDibCB(pixels, palette);
 }
 
-void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
+void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 	debugC(7, kDebugDrawing, "Bitmap::putDib(%d, %d)", x, y);
 
 	int x1 = x - g_fp->_sceneRect.left;
@@ -841,7 +812,7 @@ void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
 	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(x1, y1), g_fp->_backgroundSurface->pitch, x1, y1, sub.width(), sub.height());
 }
 
-bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
+bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 	uint32 *curDestPtr;
 	int endy;
 	int x;
@@ -852,7 +823,7 @@ bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
 
-	if (!palette) {
+	if (!palette.size()) {
 		debugC(2, kDebugDrawing, "Bitmap::putDibRB(): Both global and local palettes are empty");
 		return false;
 	}
@@ -934,7 +905,7 @@ bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
 
 				if (y <= endy) {
 					curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
-					paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, (int32 *)palette);
+					paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, palette);
 				}
 			}
 		}
@@ -943,7 +914,7 @@ bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
 	return false;
 }
 
-void Bitmap::putDibCB(byte *pixels, int32 *palette) {
+void Bitmap::putDibCB(byte *pixels, const Palette &palette) {
 	uint32 *curDestPtr;
 	int endx;
 	int endy;
@@ -956,7 +927,7 @@ void Bitmap::putDibCB(byte *pixels, int32 *palette) {
 
 	cb05_format = (_type == MKTAG('C', 'B', '\05', 'e'));
 
-	if (!palette && !cb05_format)
+	if (!palette.size() && !cb05_format)
 		error("Bitmap::putDibCB(): Both global and local palettes are empty");
 
 	bpp = cb05_format ? 2 : 1;
@@ -973,12 +944,12 @@ void Bitmap::putDibCB(byte *pixels, int32 *palette) {
 	if (_flags & 0x1000000) {
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
 			curDestPtr = (uint32 *)_surface->getBasePtr(startx, y);
-			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, (int32 *)palette, cb05_format);
+			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, palette, cb05_format);
 		}
 	} else {
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
 			curDestPtr = (uint32 *)_surface->getBasePtr(startx, y);
-			copier(curDestPtr, srcPtr, endx - startx + 1, (int32 *)palette, cb05_format);
+			copier(curDestPtr, srcPtr, endx - startx + 1, palette, cb05_format);
 		}
 	}
 }
@@ -1004,7 +975,7 @@ void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
 		*dest++ = c;
 }
 
-void Bitmap::paletteFill(uint32 *dest, byte *src, int len, int32 *palette) {
+void Bitmap::paletteFill(uint32 *dest, byte *src, int len, const Palette &palette) {
 #if 0
 	if (blendMode) {
 		if (blendMode != 1)
@@ -1025,7 +996,7 @@ void Bitmap::paletteFill(uint32 *dest, byte *src, int len, int32 *palette) {
 	}
 }
 
-void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format) {
+void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, const Palette &palette, bool cb05_format) {
 #if 0
 	if (blendMode) {
 		if (blendMode == 1) {
@@ -1070,7 +1041,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, int3
 	}
 }
 
-void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_format) {
+void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bool cb05_format) {
 #if 0
 	if (blendMode) {
 		if (blendMode == 1) {
@@ -1106,8 +1077,8 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_
 	}
 }
 
-Bitmap *Bitmap::reverseImage(bool flip) {
-	Bitmap *b = new Bitmap(this);
+Bitmap *Bitmap::reverseImage(bool flip) const {
+	Bitmap *b = new Bitmap(*this);
 
 	if (flip)
 		b->_flipping ^= Graphics::FLIP_H;
@@ -1115,25 +1086,25 @@ Bitmap *Bitmap::reverseImage(bool flip) {
 	return b;
 }
 
-Bitmap *Bitmap::flipVertical() {
-	Bitmap *b = new Bitmap(this);
+Bitmap *Bitmap::flipVertical() const {
+	Bitmap *b = new Bitmap(*this);
 
 	b->_flipping ^= Graphics::FLIP_V;
 
 	return b;
 }
 
-void Bitmap::drawShaded(int type, int x, int y, byte *palette, int alpha) {
+void Bitmap::drawShaded(int type, int x, int y, const Palette &palette, int alpha) {
 	if (alpha != 255)
 		warning("STUB: Bitmap::drawShaded(%d, %d, %d, %d)", type, x, y, alpha);
 
-	putDib(x, y, (int32 *)palette, alpha);
+	putDib(x, y, palette, alpha);
 }
 
-void Bitmap::drawRotated(int x, int y, int angle, byte *palette, int alpha) {
+void Bitmap::drawRotated(int x, int y, int angle, const Palette &palette, int alpha) {
 	warning("STUB: Bitmap::drawRotated(%d, %d, %d, %d)", x, y, angle, alpha);
 
-	putDib(x, y, (int32 *)palette, alpha);
+	putDib(x, y, palette, alpha);
 }
 
 bool BigPicture::load(MfcArchive &file) {
@@ -1159,7 +1130,7 @@ void BigPicture::draw(int x, int y, int style, int angle) {
 		if (y != -1)
 			ny = y;
 
-		_bitmap->putDib(nx, ny, 0, _alpha);
+		_bitmap->putDib(nx, ny, Palette(), _alpha);
 	}
 }
 

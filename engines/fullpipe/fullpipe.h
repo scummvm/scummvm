@@ -83,6 +83,7 @@ class Scene;
 class SoundList;
 class StaticANIObject;
 class Vars;
+typedef Common::Array<int32> Palette;
 
 int global_messageHandler1(ExCommand *cmd);
 int global_messageHandler2(ExCommand *cmd);
@@ -151,7 +152,8 @@ public:
 	Scene *_scene3;
 	StaticANIObject *_aniMan;
 	StaticANIObject *_aniMan2;
-	byte *_globalPalette;
+	Palette _defaultPalette;
+	const Palette *_globalPalette;
 
 	InputController *_inputController;
 	bool _inputDisabled;

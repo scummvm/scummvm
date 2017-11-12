@@ -129,7 +129,6 @@ Scene::Scene() {
 Scene::~Scene() {
 	delete _soundList;
 	delete _shadows;
-	delete _palette;
 
 	// _faObjlist is not used
 
@@ -216,10 +215,16 @@ bool Scene::load(MfcArchive &file) {
 		Common::strlcpy(fname, _bgname.c_str(), 260);
 		Common::strlcpy(strrchr(fname, '.') + 1, "col", 260);
 
-		MemoryObject *col = new MemoryObject();
+		Common::ScopedPtr<MemoryObject> col(new MemoryObject());
 		col->loadFile(fname);
-
-		_palette = col;
+		if (col->getDataSize()) {
+			assert(col->getDataSize() == 256 * sizeof(uint32));
+			const byte *data = col->getData();
+			for (int i = 0; i < 256; ++i) {
+				_palette.push_back(READ_LE_UINT32(data));
+				data += sizeof(uint32);
+			}
+		}
 	}
 
 	Common::String shdname = genFileName(0, _sceneId, "shd");
@@ -670,8 +675,8 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	if (!_picObjList.size() && !_bigPictureArray1Count)
 		return;
 
-	if (_palette) {
-		g_fp->_globalPalette = _palette->_data;
+	if (_palette.size()) {
+		g_fp->_globalPalette = &_palette;
 	}
 
 	debugC(1, kDebugDrawing, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
