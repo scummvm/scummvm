@@ -57,7 +57,7 @@ bool SoundList::load(MfcArchive &file, const Common::String &fname) {
 	_soundItems = (Sound **)calloc(_soundItemsCount, sizeof(Sound *));
 
 	if (!fname.empty()) {
-	  _libHandle = (NGIArchive *)makeNGIArchive(fname);
+		_libHandle = makeNGIArchive(fname);
 	} else {
 		_libHandle = 0;
 	}
