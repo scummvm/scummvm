@@ -107,7 +107,7 @@ public:
 };
 
 class ObList : public Common::List<CObject *>, public CObject {
- public:
+public:
 	virtual bool load(MfcArchive &file);
 };
 

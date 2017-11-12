@@ -512,7 +512,7 @@ bool Picture::load(MfcArchive &file) {
 		setAOIDs();
 	}
 
-	assert (g_fp->_gameProjectVersion >= 12);
+	assert(g_fp->_gameProjectVersion >= 12);
 
 	_alpha = file.readUint32LE() & 0xff;
 
