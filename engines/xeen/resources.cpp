@@ -98,6 +98,8 @@ const char *const Resources::THE_PARTY_NEEDS_REST = "\x0B""012The Party needs re
 const char *const Resources::WHO_WILL = "\x03""c\x0B""000\x09""000%s\x0A\x0A"
 	"Who will\x0A%s?\x0A\x0B""055F1 - F%d";
 
+const char *const Resources::HOW_MUCH = "\x3""cHow Much\n\n";
+
 const char *const Resources::WHATS_THE_PASSWORD = "What's the Password?";
 
 const char *const Resources::IN_NO_CONDITION = "\x0B""007%s is not in any condition to perform actions!";

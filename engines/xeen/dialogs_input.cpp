@@ -272,4 +272,32 @@ void Choose123::loadButtons(int numOptions) {
 		addButton(Common::Rect(286, 75, 311, 95), Common::KEYCODE_3, &_iconSprites);
 }
 
+/*------------------------------------------------------------------------*/
+
+int HowMuch::show(XeenEngine *vm) {
+	HowMuch *dlg = new HowMuch(vm);
+	int result = dlg->execute();
+	delete dlg;
+
+	return result;
+}
+
+int HowMuch::execute() {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	Window &w = screen._windows[6];
+	Common::String num;
+
+	w.open();
+	w.writeString(Res.HOW_MUCH);
+	w.update();
+	int lineSize = Input::show(_vm, &w, num, 8, 70, true);
+	w.close();
+
+	if (!lineSize)
+		return -1;
+	return atoi(num.c_str());
+}
+
 } // End of namespace Xeen

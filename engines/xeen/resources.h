@@ -45,6 +45,7 @@ public:
 	static const char *const OPTIONS_TITLE;
 	static const char *const THE_PARTY_NEEDS_REST;
 	static const char *const WHO_WILL;
+	static const char *const HOW_MUCH;
 	static const char *const WHATS_THE_PASSWORD;
 	static const char *const IN_NO_CONDITION;
 	static const char *const NOTHING_HERE;

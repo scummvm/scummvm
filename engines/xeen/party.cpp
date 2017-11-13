@@ -24,6 +24,7 @@
 #include "common/algorithm.h"
 #include "xeen/party.h"
 #include "xeen/dialogs_error.h"
+#include "xeen/dialogs_input.h"
 #include "xeen/files.h"
 #include "xeen/resources.h"
 #include "xeen/saves.h"
@@ -1380,8 +1381,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 }
 
 int Party::howMuch() {
-	warning("TODO");
-	return -1;
+	return HowMuch::show(_vm);
 }
 
 void Party::subPartyTime(int time) {

@@ -82,6 +82,17 @@ public:
 	static int show(XeenEngine *vm, int numOptions);
 };
 
+class HowMuch : public ButtonContainer {
+private:
+	SpriteResource _iconSprites;
+
+	HowMuch(XeenEngine *vm) : ButtonContainer(vm) {}
+
+	int execute();
+public:
+	static int show(XeenEngine *vm);
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_STRING_INPUT_H */
