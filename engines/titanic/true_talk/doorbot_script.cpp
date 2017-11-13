@@ -448,10 +448,12 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		case 38:
 			if (g_language == Common::EN_ANY)
 				return setResponse(10848, 39);
+			break;
 
 		case 39:
 			if (g_language == Common::EN_ANY)
 				return setResponse(10823, 40);
+			break;
 
 		case 40:
 			return setResponse(TRANSLATE(10832, 10843), 41);
