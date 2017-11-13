@@ -107,6 +107,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 			break;
 		case 11:
 			sound.playFX(0);
+			break;
 		case 27:
 		case 30:
 			sound.playFX(3);

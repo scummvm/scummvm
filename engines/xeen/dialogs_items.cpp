@@ -220,9 +220,10 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
 				));
+				break;
 
 			case ITEMMODE_BLACKSMITH: {
-				// Original uses var in this block that's never set?!
+				// TODO: Original uses var in this block that's never set?!
 				const int v1 = 0;
 				screen._windows[30].writeString(Common::String::format(Res.AVAILABLE_GOLD_COST,
 					Res.CATEGORY_NAMES[category],

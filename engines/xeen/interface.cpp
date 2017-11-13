@@ -295,7 +295,7 @@ void Interface::perform() {
 				scripts.openGrate(13, 1);
 				eventsFlag = _buttonValue != 0;
 			}
-
+			break;
 		case 6:
 			// Open grate being closed
 			if (!map._isOutdoors) {

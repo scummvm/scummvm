@@ -499,6 +499,7 @@ Character *Town::doTownOptions(Character *c) {
 	case 4:
 		// Temple
 		c = doTempleOptions(c);
+		break;
 	case 5:
 		// Training
 		c = doTrainingOptions(c);

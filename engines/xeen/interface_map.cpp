@@ -965,6 +965,7 @@ void InterfaceMap::setMazeBits() {
 		break;
 	case 6:
 		++_wo[206];
+		break;
 	case 8:
 		++_wo[146];
 		break;
@@ -1208,6 +1209,7 @@ void InterfaceMap::setMazeBits() {
 		break;
 	case 10:
 		++_wo[237];
+		break;
 	case 11:
 		++_wo[157];
 		break;
@@ -1510,6 +1512,7 @@ void InterfaceMap::setMazeBits() {
 		break;
 	case 2:
 		++_wo[168];
+		break;
 	case 3:
 	case 12:
 		++_wo[88];

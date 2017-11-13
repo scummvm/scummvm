@@ -283,7 +283,6 @@ int HowMuch::show(XeenEngine *vm) {
 }
 
 int HowMuch::execute() {
-	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Window &w = screen._windows[6];
