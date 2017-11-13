@@ -1394,7 +1394,10 @@ void Party::subPartyTime(int time) {
 }
 
 void Party::resetYearlyBits() {
-	// TODO
+	_gameFlags[0][55] = false;
+	_gameFlags[0][155] = false;
+	_gameFlags[0][222] = false;
+	_gameFlags[0][231] = false;
 }
 
 } // End of namespace Xeen
