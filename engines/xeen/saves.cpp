@@ -167,6 +167,11 @@ void SavesManager::reset() {
 	Common::Serializer sChar(&fChar, nullptr);
 	_party._roster.synchronize(sChar);
 	fChar.close();
+
+	// Set any final initial values
+	_party.resetBlacksmithWares();
+	_party._year = _vm->getGameID() == GType_WorldOfXeen ? 610 : 850;
+	_party._totalTime = 0;
 }
 
 void SavesManager::readCharFile() {

@@ -97,11 +97,6 @@ private:
 	void resetYearlyBits();
 
 	/**
-	 * Resets the inventory that Blacksmiths sell
-	 */
-	void resetBlacksmithWares();
-
-	/**
 	 * Applies interest to any gold and gems in the player's bank account
 	 */
 	void giveBankInterest();
@@ -223,6 +218,11 @@ public:
 	 * Gives and/or takes amounts from various character and/or party properties
 	 */
 	bool giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int charIdx);
+
+	/**
+	 * Resets the inventory that Blacksmiths sell
+	 */
+	void resetBlacksmithWares();
 };
 
 } // End of namespace Xeen
