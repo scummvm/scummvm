@@ -180,13 +180,11 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(file->c_str() + file->size() - 2);
 
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
 			if (in) {
 				Fullpipe::FullpipeSavegameHeader header;
-				Fullpipe::readSavegameHeader(in, header);
+				Fullpipe::readSavegameHeader(in.get(), header);
 				saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-				delete header.thumbnail;
-				delete in;
 			}
 		}
 	}
@@ -201,13 +199,12 @@ void FullpipeMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
-		Fullpipe::getSavegameFile(slot));
+	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
+		Fullpipe::getSavegameFile(slot)));
 
 	if (f) {
 		Fullpipe::FullpipeSavegameHeader header;
-		Fullpipe::readSavegameHeader(f, header);
-		delete f;
+		Fullpipe::readSavegameHeader(f.get(), header);
 
 		// Create the return descriptor
 		SaveStateDescriptor desc(slot, header.saveName);
