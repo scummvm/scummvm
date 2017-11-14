@@ -172,7 +172,10 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		return false;
 
 	if (!inter->_objectId2) {
-		StaticANIObject *ani = (StaticANIObject *)obj;
+		if (obj->_objtype != kObjTypeStaticANIObject)
+			return false;
+
+		StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
 
 		if (!ani->isIdle())
 			return false;
@@ -521,9 +524,14 @@ bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
 	if (abs(_xOffs + obj->_ox - subj->_ox) <= 1
 		&& abs(obj->_oy + _yOffs - subj->_oy) <= 1) {
 		if (!_staticsId2 || (subj->_statics != 0 && subj->_statics->_staticsId == _staticsId2)) {
-			StaticANIObject *ani = dynamic_cast<StaticANIObject *>(obj);
-			if (!_staticsId1 || !(_flags & 1) || (ani && ani->_statics != 0 && ani->_statics->_staticsId == _staticsId1))
+			if (!_staticsId1 || !(_flags & 1))
 				return true;
+
+			if (obj->_objtype == kObjTypeStaticANIObject) {
+				const StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
+				if (ani->_statics != 0 && ani->_statics->_staticsId == _staticsId1)
+					return true;
+			}
 		}
 	}
 	return false;

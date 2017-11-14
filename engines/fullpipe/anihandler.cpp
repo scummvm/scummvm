@@ -163,14 +163,14 @@ void AniHandler::resetData(int objId) {
 
 	debugC(1, kDebugPathfinding, "WWW rebuild. idx: %d, size: %d", idx, obj->_staticsList.size() * obj->_staticsList.size());
 	for (uint i = 0; i < obj->_staticsList.size(); i++) {
-		_items[idx]->statics.push_back((Statics *)obj->_staticsList[i]);
+		_items[idx]->statics.push_back(obj->_staticsList[i]);
 
 		for (uint j = 0; j < obj->_staticsList.size(); j++) // Yes, square
 			_items[idx]->subItems.push_back(MGMSubItem());
 	}
 
 	for (uint i = 0; i < obj->_movements.size(); i++) {
-		_items[idx]->movements1.push_back((Movement *)obj->_movements[i]);
+		_items[idx]->movements1.push_back(obj->_movements[i]);
 		_items[idx]->movements2.push_back(0);
 	}
 

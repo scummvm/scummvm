@@ -235,7 +235,7 @@ void sceneHandler27_startBat(StaticANIObject *bat) {
 	newbat->currX = newbat->powerCos + (double)g_fp->_aniMan->_ox + 42.0;
 	newbat->currY = newbat->powerSin + (double)g_fp->_aniMan->_oy + 58.0;
 
-	bat->_statics = (Statics *)bat->_staticsList[0];
+	bat->_statics = bat->_staticsList[0];
 	bat->setOXY((int)newbat->currX, (int)newbat->currY);
 	bat->_flags |= 4;
 

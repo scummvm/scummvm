@@ -275,7 +275,7 @@ void sceneHandler04_checkBigBallClick() {
 
 	if (ball)
 		for (uint i = 0; i < ball->_movements.size(); i++)
-			((Movement *)ball->_movements[i])->_counterMax = 73;
+			ball->_movements[i]->_counterMax = 73;
 
 	g_vars->scene04_bigBallIn = true;
 }
@@ -1127,7 +1127,7 @@ void sceneHandler04_bigBallOut() {
 
 	if (ball && ball->_flags & 4)
 		for (uint i = 0; i < ball->_movements.size(); i++)
-			((Movement *)ball->_movements[i])->_counterMax = 0;
+			ball->_movements[i]->_counterMax = 0;
 
 	g_vars->scene04_bigBallIn = false;
 }
