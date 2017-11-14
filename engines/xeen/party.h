@@ -101,7 +101,10 @@ private:
 	 */
 	void resetBlacksmithWares();
 
-	void giveInterest();
+	/**
+	 * Applies interest to any gold and gems in the player's bank account
+	 */
+	void giveBankInterest();
 public:
 	// Dynamic data that's saved
 	Direction _mazeDirection;

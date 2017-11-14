@@ -395,7 +395,7 @@ void Party::addTime(int numMinutes) {
 	if ((_day % 10) == 1 || numMinutes > (24 * 60)) {
 		if (_day != day) {
 			resetBlacksmithWares();
-			giveInterest();
+			giveBankInterest();
 		}
 	}
 
@@ -1525,8 +1525,9 @@ void Party::resetBlacksmithWares() {
 	}
 }
 
-void Party::giveInterest() {
-
+void Party::giveBankInterest() {
+	_bankGold += _bankGold / 100;
+	_bankGems += _bankGems / 100;
 }
 
 } // End of namespace Xeen
