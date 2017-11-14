@@ -171,7 +171,7 @@ void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int prio
 
 				sceneObj->addStaticANIObject(ani, 1);
 
-				ani->_statics = (Statics *)ani->_staticsList[0];
+				ani->_statics = ani->_staticsList[0];
 				ani->setOXY(x, y);
 				ani->_priority = priority;
 			}
