@@ -1425,7 +1425,7 @@ void Statics::init() {
 	Picture::init();
 
 	if (_staticsId & 0x4000) {
-		_bitmap = BitmapPtr(_bitmap->reverseImage());
+		_bitmap.reset(_bitmap->reverseImage());
 	}
 }
 
@@ -2136,7 +2136,7 @@ DynamicPhase::DynamicPhase(DynamicPhase &src, bool reverse) {
 		if (!src._bitmap)
 			src.init();
 
-		_bitmap = BitmapPtr(src._bitmap->reverseImage());
+		_bitmap.reset(src._bitmap->reverseImage());
 		_dataSize = src._dataSize;
 
 		if (g_fp->_currArchive) {
@@ -2160,7 +2160,7 @@ DynamicPhase::DynamicPhase(DynamicPhase &src, bool reverse) {
 
 		if (src._bitmap) {
 			_field_54 = 1;
-			_bitmap = BitmapPtr(src._bitmap->reverseImage(false));
+			_bitmap.reset(src._bitmap->reverseImage(false));
 		}
 
 		_someX = src._someX;

@@ -81,8 +81,6 @@ private:
 	Bitmap operator=(const Bitmap &);
 };
 
-typedef Common::SharedPtr<Bitmap> BitmapPtr;
-
 class Picture : public MemoryObject {
 public:
 	Picture();
@@ -122,7 +120,7 @@ protected:
 	int _field_44;
 	int _width;
 	int _height;
-	BitmapPtr _bitmap;
+	Common::ScopedPtr<Bitmap> _bitmap;
 	int _field_54;
 	Common::ScopedPtr<MemoryObject2> _memoryObject2;
 	int _alpha;
