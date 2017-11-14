@@ -117,18 +117,9 @@ void SceneTag::loadScene() {
 	g_fp->_currArchive = 0;
 }
 
-Scene::Scene() {
-	_sceneId = 0;
-	_field_BC = 0;
-	_shadows = 0;
-	_soundList = 0;
-	_libHandle = 0;
-}
+Scene::Scene() : _sceneId(0), _field_BC(0) {}
 
 Scene::~Scene() {
-	delete _soundList;
-	delete _shadows;
-
 	// _faObjlist is not used
 
 	for (uint i = 0; i < _messageQueueList.size(); i++)
@@ -140,8 +131,6 @@ Scene::~Scene() {
 		delete _staticANIObjectList1[i];
 
 	_staticANIObjectList1.clear();
-
-	delete _libHandle;
 
 	// delete _field_BC;
 }
@@ -206,7 +195,7 @@ bool Scene::load(MfcArchive &file) {
 		assert(0);
 	}
 
-	_libHandle = g_fp->_currArchive;
+	_libHandle.reset(g_fp->_currArchive);
 
 	if (_picObjList.size() > 0 && !_bgname.empty()) {
 		char fname[260];
@@ -231,12 +220,14 @@ bool Scene::load(MfcArchive &file) {
 	Shadows *shd = new Shadows();
 
 	if (shd->loadFile(shdname))
-		_shadows = shd;
+		_shadows.reset(shd);
+	else
+		delete shd;
 
 	Common::String slsname = genFileName(0, _sceneId, "sls");
 
 	if (g_fp->_soundEnabled) {
-		_soundList = new SoundList();
+		_soundList.reset(new SoundList());
 
 		if (g_fp->_flgSoundList) {
 			Common::String nlname = genFileName(17, _sceneId, "nl");

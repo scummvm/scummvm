@@ -286,7 +286,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 
 		if (g_fp->_soundEnabled) {
 			g_fp->_currSoundListCount = 1;
-			g_fp->_currSoundList1[0] = g_fp->accessScene(SC_COMMON)->_soundList;
+			g_fp->_currSoundList1[0] = g_fp->accessScene(SC_COMMON)->_soundList.get();
 		}
 
 		g_vars->scene18_inScene18p1 = false;

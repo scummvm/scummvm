@@ -23,6 +23,7 @@
 #ifndef FULLPIPE_SCENE_H
 #define FULLPIPE_SCENE_H
 
+#include "common/ptr.h"
 #include "fullpipe/gfx.h"
 
 namespace Fullpipe {
@@ -35,12 +36,12 @@ class Scene : public Background {
 	Common::Array<StaticANIObject *> _staticANIObjectList2;
 	Common::Array<MessageQueue *> _messageQueueList;
 	// PtrList _faObjectList; // not used
-	Shadows *_shadows;
-	SoundList *_soundList;
+	Common::ScopedPtr<Shadows> _shadows;
+	Common::ScopedPtr<SoundList> _soundList;
 	int16 _sceneId;
 	Common::String _sceneName;
 	int _field_BC;
-	NGIArchive *_libHandle;
+	Common::ScopedPtr<NGIArchive> _libHandle;
 
   public:
 	Scene();

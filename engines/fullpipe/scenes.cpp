@@ -573,15 +573,15 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	if (_soundEnabled) {
 		if (scene->_soundList) {
 			_currSoundListCount = 2;
-			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList;
-			_currSoundList1[1] = scene->_soundList;
+			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList.get();
+			_currSoundList1[1] = scene->_soundList.get();
 
 			for (int i = 0; i < scene->_soundList->getCount(); i++) {
 				scene->_soundList->getSoundByIndex(i).updateVolume();
 			}
 		} else {
 			_currSoundListCount = 1;
-			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList;
+			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList.get();
 		}
 	}
 
