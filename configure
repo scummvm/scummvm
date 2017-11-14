@@ -1474,7 +1474,7 @@ dreamcast)
 ds)
 	_host_os=ds
 	_host_cpu=arm
-	_host_alias=arm-eabi
+	_host_alias=arm-none-eabi
 	;;
 gamecube)
 	_host_os=gamecube
@@ -2566,7 +2566,8 @@ case $_host_os in
 		append_var DEFINES "-DARM"
 		append_var DEFINES "-DNONSTANDARD_PORT"
 		append_var CXXFLAGS "-isystem $DEVKITPRO/libnds/include"
-		append_var CXXFLAGS "-isystem $DEVKITPRO/devkitARM/arm-eabi/include"
+		append_var CXXFLAGS "-I$DEVKITPRO/portlibs/nds/include"
+		append_var CXXFLAGS "-I$DEVKITPRO/portlibs/armv5te/include"
 		append_var CXXFLAGS "-mcpu=arm9tdmi"
 		append_var CXXFLAGS "-mtune=arm9tdmi"
 		append_var CXXFLAGS "-fomit-frame-pointer"
@@ -2577,7 +2578,7 @@ case $_host_os in
 		append_var CXXFLAGS "-fuse-cxa-atexit"
 		append_var LDFLAGS "-specs=ds_arm9.specs"
 		append_var LDFLAGS "-mthumb-interwork"
-		append_var LDFLAGS "-mno-fpu"
+		append_var LDFLAGS "-mfloat-abi=soft"
 		append_var LDFLAGS "-Wl,-Map,map.txt"
 		if test "$_dynamic_modules" = no ; then
 			append_var LDFLAGS "-Wl,--gc-sections"
@@ -2587,6 +2588,8 @@ case $_host_os in
 			# append_var LDFLAGS "-Wl,--retain-symbols-file,ds.syms"
 		fi
 		append_var LDFLAGS "-L$DEVKITPRO/libnds/lib"
+		append_var LDFLAGS "-L$DEVKITPRO/portlibs/nds/lib"
+		append_var LDFLAGS "-L$DEVKITPRO/portlibs/armv5te/lib"
 		append_var LIBS "-lnds9"
 		;;
 	freebsd*)
@@ -3726,7 +3729,7 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 		append_var DEFINES "-DELF_NO_MEM_MANAGER"
 _mak_plugins='
-PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mfloat-abi=soft
 '
 		;;
 	freebsd*)
@@ -5231,6 +5234,7 @@ cat > config.h << EOF
 $_config_h_data
 
 /* Data types */
+#ifndef SCUMMVM_DONT_DEFINE_TYPES
 typedef unsigned $type_1_byte byte;
 typedef unsigned int uint;
 typedef unsigned $type_1_byte uint8;
@@ -5241,6 +5245,7 @@ typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
 typedef signed $type_8_byte int64;
+#endif
 
 typedef $type_ptr  uintptr;
 
