@@ -34,7 +34,6 @@
 
 #include "graphics/palette.h"
 #include "graphics/surface.h"
-#include "video/avi_decoder.h"
 
 #include "engines/savestate.h"
 #include "engines/advancedDetector.h"
@@ -363,30 +362,48 @@ void ModalIntroDemo::finish() {
 		g_fp->_gameLoader->updateSystems(42);
 }
 
-void ModalVideoPlayer::play(const char *filename) {
-	Video::AVIDecoder *aviDecoder = new Video::AVIDecoder();
+static bool checkSkipVideo(const Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_ESCAPE:
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_SPACE:
+			return true;
+		default:
+			return false;
+		}
+	case Common::EVENT_QUIT:
+	case Common::EVENT_RTL:
+		return true;
+	default:
+		return false;
+	}
+}
 
-	if (!aviDecoder->loadFile(filename))
+void ModalVideoPlayer::play(const char *filename) {
+	if (!_decoder.loadFile(filename))
 		return;
 
-	uint16 x = (g_system->getWidth() - aviDecoder->getWidth()) / 2;
-	uint16 y = (g_system->getHeight() - aviDecoder->getHeight()) / 2;
-	bool skipVideo = false;
+	uint16 x = (g_system->getWidth() - _decoder.getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - _decoder.getHeight()) / 2;
 
-	aviDecoder->start();
+	_decoder.start();
 
-	while (!g_fp->shouldQuit() && !aviDecoder->endOfVideo() && !skipVideo) {
-		if (aviDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = aviDecoder->decodeNextFrame();
+	while (!g_fp->shouldQuit() && !_decoder.endOfVideo()) {
+		if (_decoder.needsUpdate()) {
+			const Graphics::Surface *frame = _decoder.decodeNextFrame();
 			if (frame) {
-				Graphics::Surface *frameCopy = frame->convertTo(g_system->getScreenFormat());
-				g_fp->_system->copyRectToScreen(frameCopy->getPixels(), frameCopy->pitch,
-					x, y, frameCopy->w, frameCopy->h);
-				frameCopy->free();
-				delete frameCopy;
+				Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> tmpFrame;
+				if (frame->format != g_system->getScreenFormat()) {
+					tmpFrame.reset(frame->convertTo(g_system->getScreenFormat()));
+					frame = tmpFrame.get();
+				}
+				g_fp->_system->copyRectToScreen(frame->getPixels(), frame->pitch,
+					x, y, frame->w, frame->h);
 
-				if (aviDecoder->hasDirtyPalette())
-					g_fp->_system->getPaletteManager()->setPalette(aviDecoder->getPalette(), 0, 256);
+				if (_decoder.hasDirtyPalette())
+					g_fp->_system->getPaletteManager()->setPalette(_decoder.getPalette(), 0, 256);
 
 				g_fp->_system->updateScreen();
 			}
@@ -394,15 +411,16 @@ void ModalVideoPlayer::play(const char *filename) {
 
 		Common::Event event;
 		while (g_fp->_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-														 event.kbd.keycode == Common::KEYCODE_RETURN ||
-														 event.kbd.keycode == Common::KEYCODE_SPACE))
-				 || event.type == Common::EVENT_LBUTTONUP)
-				skipVideo = true;
+			if (checkSkipVideo(event)) {
+				goto finish;
+			}
 		}
 
-		g_fp->_system->delayMillis(aviDecoder->getTimeToNextFrame());
+		g_fp->_system->delayMillis(_decoder.getTimeToNextFrame());
 	}
+
+finish:
+	_decoder.close();
 }
 
 ModalMap::ModalMap() {

@@ -23,6 +23,8 @@
 #ifndef FULLPIPE_MODAL_H
 #define FULLPIPE_MODAL_H
 
+#include "video/avi_decoder.h"
+
 namespace Fullpipe {
 
 class PictureObject;
@@ -108,6 +110,9 @@ public:
 	virtual void saveload() {}
 
 	void play(const char *fname);
+
+private:
+	Video::AVIDecoder _decoder;
 };
 
 class ModalMap : public BaseModalObject {
