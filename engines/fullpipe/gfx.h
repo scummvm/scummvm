@@ -112,7 +112,7 @@ public:
 	const Palette &getPaletteData() const { return _paletteData; }
 	void setPaletteData(const Palette &pal);
 
-	void copyMemoryObject2(Picture *src);
+	void copyMemoryObject2(Picture &src);
 
 	int _x, _y;
 

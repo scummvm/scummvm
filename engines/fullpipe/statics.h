@@ -78,7 +78,7 @@ class DynamicPhase : public StaticPhase {
 
   public:
 	DynamicPhase();
-	DynamicPhase(DynamicPhase *src, bool reverse);
+	DynamicPhase(DynamicPhase &src, bool reverse);
 
 	virtual bool load(MfcArchive &file);
 
@@ -89,12 +89,11 @@ class Statics : public DynamicPhase {
  public:
  	int16 _staticsId;
 	Common::String _staticsName;
-	Picture *_picture;
+	Picture _picture;
 
   public:
 	Statics();
-	Statics(Statics *src, bool reverse);
-	virtual ~Statics();
+	Statics(Statics &src, bool reverse);
 
 	virtual bool load(MfcArchive &file);
 	virtual void init();

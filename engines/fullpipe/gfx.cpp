@@ -664,9 +664,9 @@ void Picture::setPaletteData(const Palette &pal) {
 	}
 }
 
-void Picture::copyMemoryObject2(Picture *src) {
-	if (_width == src->_width && _height == src->_height) {
-		if (src->_memoryObject2 && src->_memoryObject2->_rows && _memoryObject2) {
+void Picture::copyMemoryObject2(Picture &src) {
+	if (_width == src._width && _height == src._height) {
+		if (src._memoryObject2 && src._memoryObject2->_rows && _memoryObject2) {
 			byte *data = loadData();
 			_memoryObject2->copyData(data, _dataSize);
 			setAOIDs();
