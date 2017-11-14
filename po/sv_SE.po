@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-11 16:18+0100\n"
+"POT-Creation-Date: 2017-11-14 19:19+0100\n"
 "PO-Revision-Date: 2017-01-06 09:18+0000\n"
 "Last-Translator: Petter Sjölund <ignalina@mac.com>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -2787,7 +2787,7 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Sök efter uppdateringar..."
 
-#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:963
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:970
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
 #: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
@@ -2796,7 +2796,7 @@ msgstr "Sök efter uppdateringar..."
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Kunde inte hitta spelmotorns datafil '%s'."
 
-#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:977
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:984
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
 #: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
 #: engines/toon/toon.cpp:4930
@@ -2804,7 +2804,7 @@ msgstr "Kunde inte hitta spelmotorns datafil '%s'."
 msgid "The '%s' engine data file is corrupt."
 msgstr "Datafilen '%s' är trasig."
 
-#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:988
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:995
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
 #: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
 #: engines/toon/toon.cpp:4941

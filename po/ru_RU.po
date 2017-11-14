@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-11 16:18+0100\n"
+"POT-Creation-Date: 2017-11-14 19:19+0100\n"
 "PO-Revision-Date: 2017-06-20 15:35+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2786,7 +2786,7 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Проверить обновления..."
 
-#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:963
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:970
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
 #: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
@@ -2795,7 +2795,7 @@ msgstr "Проверить обновления..."
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Не удалось найти файл движка %s."
 
-#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:977
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:984
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
 #: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
 #: engines/toon/toon.cpp:4930
@@ -2803,7 +2803,7 @@ msgstr "Не удалось найти файл движка %s."
 msgid "The '%s' engine data file is corrupt."
 msgstr "Файл движка %s повреждён."
 
-#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:988
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:995
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
 #: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
 #: engines/toon/toon.cpp:4941

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-11 16:18+0100\n"
+"POT-Creation-Date: 2017-11-14 19:19+0100\n"
 "PO-Revision-Date: 2017-04-23 05:59+0000\n"
 "Last-Translator: Santiago Sanchez <sanchez.santiago.j@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -2796,7 +2796,7 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Buscar actualizaciones..."
 
-#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:963
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:970
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
 #: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
@@ -2805,7 +2805,7 @@ msgstr "Buscar actualizaciones..."
 msgid "Unable to locate the '%s' engine data file."
 msgstr "No se puede localizar el archivo de datos del motor '%s'."
 
-#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:977
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:984
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
 #: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
 #: engines/toon/toon.cpp:4930
@@ -2813,7 +2813,7 @@ msgstr "No se puede localizar el archivo de datos del motor '%s'."
 msgid "The '%s' engine data file is corrupt."
 msgstr "El archivo de datos del motor '%s' está corrupto."
 
-#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:988
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:995
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
 #: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
 #: engines/toon/toon.cpp:4941
