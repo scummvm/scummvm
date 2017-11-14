@@ -186,8 +186,8 @@ void FullpipeEngine::defHandleKeyDown(int key) {
 			_normalSpeed = !_normalSpeed;
 			break;
 		case 3:								// OHWAIT
-			_gamePaused = 1;
-			_flgGameIsRunning = 0;
+			_gamePaused = true;
+			_flgGameIsRunning = false;
 			break;
 		case 4:								// MUSOFF
 			if (_musicAllowed & 2)
