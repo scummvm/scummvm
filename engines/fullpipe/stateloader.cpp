@@ -359,8 +359,6 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 GameProject::GameProject() {
 	_field_4 = 0;
 	_field_10 = 12;
-
-	_sceneTagList = 0;
 }
 
 bool GameProject::load(MfcArchive &file) {
@@ -380,7 +378,7 @@ bool GameProject::load(MfcArchive &file) {
 	debugC(1, kDebugLoading, "_scrollSpeed = %d", g_fp->_scrollSpeed);
 	debugC(1, kDebugLoading, "_headerFilename = %s", _headerFilename.c_str());
 
-	_sceneTagList = new SceneTagList();
+	_sceneTagList.reset(new SceneTagList());
 
 	_sceneTagList->load(file);
 
@@ -393,10 +391,6 @@ bool GameProject::load(MfcArchive &file) {
 	}
 
 	return true;
-}
-
-GameProject::~GameProject() {
-	delete _sceneTagList;
 }
 
 GameVar::GameVar() {

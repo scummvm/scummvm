@@ -23,6 +23,7 @@
 #ifndef FULLPIPE_OBJECTS_H
 #define FULLPIPE_OBJECTS_H
 
+#include "common/ptr.h"
 #include "fullpipe/utils.h"
 
 namespace Fullpipe {
@@ -34,12 +35,11 @@ class GameProject : public CObject {
  public:
 	int _field_4;
 	Common::String _headerFilename;
-	SceneTagList *_sceneTagList;
+	Common::ScopedPtr<SceneTagList> _sceneTagList;
 	int _field_10;
 
  public:
 	GameProject();
-	~GameProject();
 	virtual bool load(MfcArchive &file);
 };
 

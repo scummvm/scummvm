@@ -61,9 +61,8 @@ bool SceneTagList::load(MfcArchive &file) {
 	int numEntries = file.readUint16LE();
 
 	for (int i = 0; i < numEntries; i++) {
-		SceneTag *t = new SceneTag();
-		t->load(file);
-		push_back(*t);
+		push_back(SceneTag());
+		back().load(file);
 	}
 
 	return true;
