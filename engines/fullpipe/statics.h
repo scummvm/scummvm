@@ -71,7 +71,7 @@ class DynamicPhase : public StaticPhase {
  public:
 	int _someX;
 	int _someY;
-	Common::Rect *_rect;
+	Common::Rect _rect;
 	int16 _field_7C;
 	int16 _field_7E;
 	int _dynFlags;
@@ -79,7 +79,6 @@ class DynamicPhase : public StaticPhase {
   public:
 	DynamicPhase();
 	DynamicPhase(DynamicPhase *src, bool reverse);
-	virtual ~DynamicPhase();
 
 	virtual bool load(MfcArchive &file);
 

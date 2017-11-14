@@ -539,14 +539,14 @@ void Movement::draw(bool flipFlag, int angle) {
 	}
 
 	if (flipFlag) {
-		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect->bottom, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
+		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect.bottom, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	} else if (angle) {
 		bmp->drawRotated(x, y, angle, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	} else {
 		bmp->putDib(x, y, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	}
 
-	if (_currDynamicPhase->_rect->top) {
+	if (_currDynamicPhase->_rect.top) {
 		if (!_currDynamicPhase->getConvertedBitmap()) {
 			//v12 = Picture_getPixelData(v5);
 			//v13 = Bitmap_convertTo16Bit565(v12, (unsigned int *)&_currDynamicPhase->rect);
@@ -595,8 +595,6 @@ void StaticANIObject::draw() {
 	if ((_flags & 4) == 0)
 		return;
 
-	Common::Rect rect;
-
 	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic(_objectName), _id, _ox, _oy);
 
 	if (_shadowsOn && g_fp->_currentScene && g_fp->_currentScene->_shadows
@@ -615,7 +613,7 @@ void StaticANIObject::draw() {
 		}
 
 		if (dyn->getDynFlags() & 4) {
-			rect = *dyn->_rect;
+			const Common::Rect &rect = dyn->_rect;
 
 			DynamicPhase *shd = g_fp->_currentScene->_shadows->findSize(rect.width(), rect.height());
 			if (shd) {
@@ -1450,17 +1448,15 @@ Common::Point Statics::getSomeXY() const {
 }
 
 Common::Point Statics::getCenter() const {
-	Common::Rect rect;
-
-	rect = *_rect;
+	Common::Rect rect(_rect);
 
 	if (_staticsId & 0x4000) {
 		const Dims dims = getDimensions();
-		rect.moveTo(dims.x - _rect->right, _rect->top);
+		rect.moveTo(dims.x - _rect.right, _rect.top);
 	}
 
-	return Common::Point(rect.left + _rect->width() / 2,
-						 rect.top + _rect->height() / 2);
+	return Common::Point(rect.left + _rect.width() / 2,
+						 rect.top + _rect.height() / 2);
 }
 
 Movement::Movement() {
@@ -2124,22 +2120,19 @@ void Movement::gotoLastFrame() {
 }
 
 Common::Point Movement::getCenter() const {
-	Common::Rect rect;
-
-	rect = *_currDynamicPhase->_rect;
+	Common::Rect rect(_currDynamicPhase->_rect);
 
 	if (_currMovement) {
 		const Dims dims = _currMovement->getDimensionsOfPhase(_currDynamicPhaseIndex);
-		rect.moveTo(dims.x - _currDynamicPhase->_rect->right, _currDynamicPhase->_rect->top);
+		rect.moveTo(dims.x - _currDynamicPhase->_rect.right, _currDynamicPhase->_rect.top);
 	}
 
-	return Common::Point(rect.left + _currDynamicPhase->_rect->width() / 2,
-						 rect.top + _currDynamicPhase->_rect->height() / 2);
+	return Common::Point(rect.left + _currDynamicPhase->_rect.width() / 2,
+						 rect.top + _currDynamicPhase->_rect.height() / 2);
 }
 
 DynamicPhase::DynamicPhase() {
 	_someX = 0;
-	_rect = 0;
 	_field_7C = 0;
 	_field_7E = 0;
 	_dynFlags = 0;
@@ -2147,14 +2140,9 @@ DynamicPhase::DynamicPhase() {
 	_data = nullptr;
 }
 
-DynamicPhase::~DynamicPhase() {
-	delete _rect;
-}
-
 DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7C = src->_field_7C;
 	_field_7E = 0;
-	_rect = new Common::Rect();
 
 	debugC(1, kDebugAnimation, "DynamicPhase::DynamicPhase(src, %d)", reverse);
 
@@ -2193,7 +2181,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_someY = src->_someY;
 	}
 
-	*_rect = *src->_rect;
+	_rect = src->_rect;
 
 	_width = src->_width;
 	_height = src->_height;
@@ -2219,11 +2207,10 @@ bool DynamicPhase::load(MfcArchive &file) {
 	StaticPhase::load(file);
 
 	_field_7C = file.readUint16LE();
-	_rect = new Common::Rect();
-	_rect->left = file.readSint32LE();
-	_rect->top = file.readSint32LE();
-	_rect->right = file.readSint32LE();
-	_rect->bottom = file.readSint32LE();
+	_rect.left = file.readSint32LE();
+	_rect.top = file.readSint32LE();
+	_rect.right = file.readSint32LE();
+	_rect.bottom = file.readSint32LE();
 
 	assert(g_fp->_gameProjectVersion >= 1);
 
