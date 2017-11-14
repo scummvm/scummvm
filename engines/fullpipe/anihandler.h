@@ -67,8 +67,8 @@ struct MakeQueueStruct {
 };
 
 class AniHandler : public CObject {
-public:
-	Common::Array<MGMItem *> _items;
+protected:
+	Common::Array<MGMItem> _items;
 
 public:
 	void detachAllObjects();
