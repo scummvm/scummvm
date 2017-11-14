@@ -1948,4 +1948,17 @@ void GameManager::guardShot() {
 	shot(4, 3);
 }
 
+void GameManager::guard3Shot() {
+	drawImage(1);
+	wait2(3);
+	_vm->playSound(kAudioVoiceHalt); // 46/0
+	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		wait2(1);
+
+	wait2(5);
+	drawImage(2);
+	wait2(3);
+	shot(3,2);
+}
+
 }

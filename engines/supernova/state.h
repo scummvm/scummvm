@@ -167,7 +167,6 @@ public:
 	bool saveGame(int number);
 	void errorTemp();
 	void roomBrightness();
-	void palette();
 	void showMenu();
 	void animationOff();
 	void animationOn();
@@ -215,6 +214,7 @@ public:
 	void searchStartEvent();
 	void outro();
 	void guardShot();
+	void guard3Shot();
 };
 
 }

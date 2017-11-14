@@ -2860,8 +2860,33 @@ bool AxacussIntersection::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
-	// STUB
-	return false;
+	if (((verb == ACTION_WALK) || (verb == ACTION_OPEN)) && (obj1._id == DOOR) && !_gm->_state._powerOff)
+		_gm->guard3Shot();
+	else if ((verb == ACTION_TALK) && (obj1._id == GUARDIAN)) {
+		// FIXME: refactor _rowsX and _dialogsX
+		// _gm->dialog(3, &_rowsX, &_dialogsX,0);
+		_gm->guard3Shot();
+	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LAMP, MAGNET)) {
+		_gm->_inventory.remove(*_gm->_rooms[CELL]->getObject(7));
+		for (int i = 4; i <= 11; i++) {
+			_gm->drawImage(i);
+			if (i == 11)
+				_vm->playSound(kAudioUndef2); // 046/4020
+			_gm->wait2(1);
+			_gm->drawImage(i + 128);
+		}
+		_gm->_state._powerOff = true;
+		_gm->_currentRoom->getObject(5)->_click = 255;
+
+		_gm->search(450);
+		_gm->roomBrightness();
+		_vm->paletteBrightness();
+	} else if ((verb == ACTION_USE) && (Object::combine(obj1,obj2,MAGNET,GUARDIAN) || Object::combine(obj1,obj2,KNIFE,GUARDIAN)))
+		_vm->renderMessage(kStringArsanoEntrance27);
+	else
+		return false;
+
+	return true;
 }
 
 bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
