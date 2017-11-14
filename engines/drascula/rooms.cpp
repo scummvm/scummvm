@@ -404,7 +404,7 @@ bool DrasculaEngine::room_13(int fl) {
 		talk(411);
 		trackProtagonist = 3;
 		talk(412);
-		strcpy(objName[1], "yoda");
+		strcpy(objName[1], _textmisc[4]); // "yoda"
 	} else if (pickedObject == kVerbTalk && fl == 51) {
 		converse(7);
 	} else if (pickedObject == 19 && fl == 51) {

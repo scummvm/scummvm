@@ -973,7 +973,7 @@ void DrasculaEngine::grr() {
 	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);
 
 	if (!_subtitlesDisabled)
-		centerText("groaaarrrrgghhhh!", 153, 65);
+		centerText(_textmisc[6], 153, 65); // "groaaarrrrgghhhh!"
 
 	updateScreen();
 

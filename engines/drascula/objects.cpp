@@ -111,7 +111,7 @@ void DrasculaEngine::checkObjects() {
 	if (_mouseX > curX + 2 && _mouseY > curY + 2
 			&& _mouseX < curX + curWidth - 2 && _mouseY < curY + curHeight - 2) {
 		if (currentChapter == 2 || !_hasName) {
-			strcpy(textName, "hacker");
+			strcpy(textName, _textmisc[3]); // "hacker"
 			_hasName = true;
 		}
 	}

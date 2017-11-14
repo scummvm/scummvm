@@ -2080,7 +2080,7 @@ void DrasculaEngine::animation_1_4() {
 	debug(4, "animation_1_4()");
 
 	if (flags[21] == 0) {
-		strcpy(objName[2], "igor");
+		strcpy(objName[2], _textmisc[5]); // "igor"
 		talk(275);
 
 		updateRefresh_pre();

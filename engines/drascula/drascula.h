@@ -54,7 +54,7 @@
  */
 namespace Drascula {
 
-#define DRASCULA_DAT_VER 4
+#define DRASCULA_DAT_VER 5
 #define DATAALIGNMENT 4
 
 enum DrasculaGameFeatures {
