@@ -23,6 +23,7 @@
 #ifndef FULLPIPE_GAMELOADER_H
 #define FULLPIPE_GAMELOADER_H
 
+#include "common/ptr.h"
 #include "engines/savestate.h"
 
 #include "fullpipe/objects.h"
@@ -83,7 +84,7 @@ struct FullpipeSavegameHeader {
 	uint32 date;
 	uint16 time;
 	uint32 playtime;
-	Graphics::Surface *thumbnail;
+	Common::SharedPtr<Graphics::Surface> thumbnail;
 };
 
 struct SaveHeader {

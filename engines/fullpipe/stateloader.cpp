@@ -195,8 +195,6 @@ void fillDummyHeader(Fullpipe::FullpipeSavegameHeader &header) {
 }
 
 bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
-	header.thumbnail = NULL;
-
 	uint oldPos = in->pos();
 
 	in->seek(-4, SEEK_END);
@@ -239,7 +237,7 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 	header.saveName = Common::String::format("%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
+	header.thumbnail = Common::SharedPtr<Graphics::Surface>(Graphics::loadThumbnail(*in), Graphics::SurfaceDeleter());
 
 	in->seek(oldPos, SEEK_SET); // Rewind the file
 
