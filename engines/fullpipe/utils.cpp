@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/ptr.h"
 
 #include "fullpipe/objects.h"
 #include "fullpipe/motion.h"
@@ -166,7 +167,7 @@ void MemoryObject::loadFile(const Common::String &filename) {
 		if (g_fp->_currArchive != _libHandle && _libHandle)
 			g_fp->_currArchive = _libHandle;
 
-		Common::SeekableReadStream *s = g_fp->_currArchive->createReadStreamForMember(filename);
+		Common::ScopedPtr<Common::SeekableReadStream> s(g_fp->_currArchive->createReadStreamForMember(filename));
 
 		if (s) {
 			assert(s->size() > 0);
@@ -176,8 +177,6 @@ void MemoryObject::loadFile(const Common::String &filename) {
 			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename.c_str(), _dataSize);
 			_data = (byte *)calloc(_dataSize, 1);
 			s->read(_data, _dataSize);
-
-			delete s;
 		} else {
 			// We have no object to read. This is fine
 		}
