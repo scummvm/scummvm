@@ -115,7 +115,7 @@ public:
 	bool isDemo();
 	Common::Language getLanguage() const;
 
-	Common::RandomSource *_rnd;
+	Common::RandomSource _rnd;
 
 	Common::KeyCode _keyState;
 	uint16 _buttonState;

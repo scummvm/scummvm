@@ -84,13 +84,13 @@ void scene20_initScene(Scene *sc) {
 	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_20"));
 
 	for (int i = 0; i < 3; i++) {
-		g_fp->_floaters->genFlies(sc, g_fp->_rnd->getRandomNumber(101) + 70, g_fp->_rnd->getRandomNumber(51) + 175, 100, 0);
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val13 = g_fp->_rnd->getRandomNumber(9);
+		g_fp->_floaters->genFlies(sc, g_fp->_rnd.getRandomNumber(101) + 70, g_fp->_rnd.getRandomNumber(51) + 175, 100, 0);
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val13 = g_fp->_rnd.getRandomNumber(9);
 	}
 
 	g_fp->_currentScene = oldsc;
 
-	g_vars->scene20_fliesCountdown = g_fp->_rnd->getRandomNumber(200) + 400;
+	g_vars->scene20_fliesCountdown = g_fp->_rnd.getRandomNumber(200) + 400;
 }
 
 void sceneHandler20_updateFlies() {
@@ -101,7 +101,7 @@ void sceneHandler20_updateFlies() {
 		g_fp->_floaters->_array2[sz - 1]->val2 = 250;
 		g_fp->_floaters->_array2[sz - 1]->val3 = 200;
 	} else {
-		int idx = g_fp->_rnd->getRandomNumber(sz);
+		int idx = g_fp->_rnd.getRandomNumber(sz);
 
 		g_fp->_floaters->_array2[idx]->countdown = 0;
 		g_fp->_floaters->_array2[idx]->fflags |= 4u;
@@ -112,7 +112,7 @@ void sceneHandler20_updateFlies() {
 		g_fp->_floaters->_array2[idx]->ani->_priority = 200;
 	}
 
-	g_vars->scene20_fliesCountdown = g_fp->_rnd->getRandomNumber(200) + 400;
+	g_vars->scene20_fliesCountdown = g_fp->_rnd.getRandomNumber(200) + 400;
 }
 
 int sceneHandler20(ExCommand *cmd) {

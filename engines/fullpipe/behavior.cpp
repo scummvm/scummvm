@@ -139,7 +139,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorAnim *e
 				mq->sendNextCommand();
 
 				bhi->_flags &= 0xFFFFFFFD;
-			} else if (behaviorInfo->_counter >= bhi->_delay && bhi->_percent && g_fp->_rnd->getRandomNumber(32767) <= entry->_behaviorMoves[i]->_percent) {
+			} else if (behaviorInfo->_counter >= bhi->_delay && bhi->_percent && g_fp->_rnd.getRandomNumber(32767) <= entry->_behaviorMoves[i]->_percent) {
 				MessageQueue *mq = new MessageQueue(bhi->_messageQueue, 0, 1);
 
 				mq->sendNextCommand();
@@ -156,7 +156,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 	MessageQueue *mq = 0;
 
 	if (bhe->_flags & 1) {
-		uint rnd = g_fp->_rnd->getRandomNumber(32767);
+		uint rnd = g_fp->_rnd.getRandomNumber(32767);
 		uint runPercent = 0;
 		for (int i = 0; i < bhe->_movesCount; i++) {
 			if (!(bhe->_behaviorMoves[i]->_flags & 1) && bhe->_behaviorMoves[i]->_percent) {
@@ -171,7 +171,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 		for (int i = 0; i < bhe->_movesCount; i++) {
 			if (!(bhe->_behaviorMoves[i]->_flags & 1) && delay >= bhe->_behaviorMoves[i]->_delay) {
 				if (bhe->_behaviorMoves[i]->_percent) {
-					if (g_fp->_rnd->getRandomNumber(32767) <= bhe->_behaviorMoves[i]->_percent) {
+					if (g_fp->_rnd.getRandomNumber(32767) <= bhe->_behaviorMoves[i]->_percent) {
 						mq = new MessageQueue(bhe->_behaviorMoves[i]->_messageQueue, 0, 1);
 						break;
 					}

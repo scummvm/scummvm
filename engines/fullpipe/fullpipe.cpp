@@ -48,7 +48,10 @@ namespace Fullpipe {
 FullpipeEngine *g_fp = 0;
 Vars *g_vars = 0;
 
-FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) :
+	Engine(syst),
+	_gameDescription(gameDesc),
+	_rnd("fullpipe") {
 	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
 	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
@@ -69,7 +72,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_sfxVolume = ConfMan.getInt("sfx_volume") * 39 - 10000;
 	_musicVolume = ConfMan.getInt("music_volume");
 
-	_rnd = new Common::RandomSource("fullpipe");
 	_console = 0;
 
 	_gameProjectVersion = 0;
@@ -203,7 +205,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 FullpipeEngine::~FullpipeEngine() {
-	delete _rnd;
 	delete _console;
 	delete _globalMessageQueueList;
 	delete _soundStream1;

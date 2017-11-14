@@ -56,7 +56,7 @@ void scene04_speakerCallback(int *phase) {
 
 			if (scene04_speakerPhases[g_vars->scene04_speakerPhase + 6 * g_vars->scene04_speakerVariant] < 0) {
 				g_vars->scene04_speakerPhase = 0;
-				g_vars->scene04_speakerVariant = g_fp->_rnd->getRandomNumber(2);
+				g_vars->scene04_speakerVariant = g_fp->_rnd.getRandomNumber(2);
 			}
 		} else {
 			++g_vars->scene04_speakerPhase;
@@ -709,9 +709,9 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 
 	mkQueue.ani = ani;
 	mkQueue.staticsId2 = ST_KZW_SIT;
-	mkQueue.x1 = 397 - 4 * g_fp->_rnd->getRandomNumber(1);
+	mkQueue.x1 = 397 - 4 * g_fp->_rnd.getRandomNumber(1);
 	mkQueue.field_1C = ani->_priority;
-	mkQueue.y1 = g_vars->scene04_bottle->_oy - 4 * g_fp->_rnd->getRandomNumber(1) + 109;
+	mkQueue.y1 = g_vars->scene04_bottle->_oy - 4 * g_fp->_rnd.getRandomNumber(1) + 109;
 	mkQueue.field_10 = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_KZW_JUMPROTATE;
@@ -1253,7 +1253,7 @@ void sceneHandler04_bigBallWalkIn() {
 		 && (!ball || !(ball->_flags & 4))
 		 && g_vars->scene04_ladder->collisionDetection(g_fp->_aniMan) > 3) {
 
-		if (!g_fp->_rnd->getRandomNumber(49)) {
+		if (!g_fp->_rnd.getRandomNumber(49)) {
 			if (g_vars->scene04_bigBallFromLeft)
 				chainQueue(QU_BALL_WALKR, 0);
 			else

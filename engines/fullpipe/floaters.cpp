@@ -111,7 +111,7 @@ void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
 	else
 		nummoves = ani->_movement->_dynamicPhases.size();
 
-	ani->_movement->setDynamicPhaseIndex(g_fp->_rnd->getRandomNumber(nummoves - 1));
+	ani->_movement->setDynamicPhaseIndex(g_fp->_rnd.getRandomNumber(nummoves - 1));
 
 	FloaterArray2 *arr2 = new FloaterArray2;
 
@@ -165,7 +165,7 @@ void Floaters::update() {
 				if (_array2[i]->val4 == _array2[i]->val2 && _array2[i]->val5 == _array2[i]->val3) {
 					_array2[i]->val9 = 0.0;
 
-					_array2[i]->val13 = g_fp->_rnd->getRandomNumber(200) + 20;
+					_array2[i]->val13 = g_fp->_rnd.getRandomNumber(200) + 20;
 
 					if (_array2[i]->fflags & 1) {
 						g_fp->_currentScene->deleteStaticANIObject(_array2[i]->ani);
@@ -190,7 +190,7 @@ void Floaters::update() {
 					_array2[i]->val3 = _array2[i]->val7;
 				} else {
 					if (_array2[i]->fflags & 2) {
-						int idx1 = g_fp->_rnd->getRandomNumber(_array1.size() - 1);
+						int idx1 = g_fp->_rnd.getRandomNumber(_array1.size() - 1);
 
 						_array2[i]->val2 = _array1[idx1]->val1;
 						_array2[i]->val3 = _array1[idx1]->val2;
@@ -202,8 +202,8 @@ void Floaters::update() {
 
 						_hRgn->getBBox(&rect);
 
-						int x2 = rect.left + g_fp->_rnd->getRandomNumber(rect.right - rect.left);
-						int y2 = rect.top + g_fp->_rnd->getRandomNumber(rect.bottom - rect.top);
+						int x2 = rect.left + g_fp->_rnd.getRandomNumber(rect.right - rect.left);
+						int y2 = rect.top + g_fp->_rnd.getRandomNumber(rect.bottom - rect.top);
 
 						if (_hRgn->pointInRegion(x2, y2)) {
 							int dx = _array2[i]->val2 - x2;

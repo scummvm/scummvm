@@ -86,7 +86,7 @@ void sceneHandler28_makeFaces(ExCommand *cmd) {
 		for (int i = 0; i < 5; i++) {
 			int pos;
 
-			while (frames[pos = g_fp->_rnd->getRandomNumber(4)] == 0)
+			while (frames[pos = g_fp->_rnd.getRandomNumber(4)] == 0)
 				;
 
 			mq->getExCommandByIndex(i)->_messageNum = frames[pos];
@@ -173,12 +173,12 @@ void sceneHandler28_turnOn2() {
 		g_fp->_floaters->genFlies(g_fp->_currentScene, 1013, 329, 60, 4);
 
 		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val13 = 30;
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd->getRandomNumber(12) + 12;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd.getRandomNumber(12) + 12;
 
 		g_fp->_floaters->genFlies(g_fp->_currentScene, 1074, 311, 60, 4);
 
 		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val13 = 30;
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd->getRandomNumber(12) + 12;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd.getRandomNumber(12) + 12;
 	}
 
 	g_vars->scene28_fliesArePresent = false;
