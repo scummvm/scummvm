@@ -77,6 +77,7 @@ class Party {
 	friend class InventoryItems;
 private:
 	static XeenEngine *_vm;
+	Character _itemsCharacter;
 
 	/**
 	 * Give a treasure item to the given character's inventory
@@ -94,6 +95,13 @@ private:
 	void subPartyTime(int time);
 
 	void resetYearlyBits();
+
+	/**
+	 * Resets the inventory that Blacksmiths sell
+	 */
+	void resetBlacksmithWares();
+
+	void giveInterest();
 public:
 	// Dynamic data that's saved
 	Direction _mazeDirection;

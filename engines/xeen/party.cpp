@@ -33,6 +33,8 @@
 
 namespace Xeen {
 
+/*------------------------------------------------------------------------*/
+
 Roster::Roster() {
 	resize(TOTAL_CHARACTERS);
 
@@ -392,7 +394,8 @@ void Party::addTime(int numMinutes) {
 
 	if ((_day % 10) == 1 || numMinutes > (24 * 60)) {
 		if (_day != day) {
-			warning("TODO: resetBlacksmith? and giveInterest?");
+			resetBlacksmithWares();
+			giveInterest();
 		}
 	}
 
@@ -1248,7 +1251,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	case 66: {
 		warning("TODO: Verify case 66");
-		Character c;
+		Character &c = _itemsCharacter;
 		int idx = -1;
 		if (scripts._itemType != 0) {
 			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx);
@@ -1398,6 +1401,132 @@ void Party::resetYearlyBits() {
 	_gameFlags[0][155] = false;
 	_gameFlags[0][222] = false;
 	_gameFlags[0][231] = false;
+}
+
+const int BLACKSMITH_DATA1[4][4] = {
+	{ 15, 5, 5, 5 },{ 5, 10, 5, 5 },{ 0, 5, 10, 5 },{ 0, 0, 0, 5 }
+};
+const int BLACKSMITH_DATA2[4][4] = {
+	{ 10, 5, 0, 5 },{ 10, 5, 5, 5 },{ 0, 5, 5, 10 },{ 0, 5, 10, 0 }
+};
+
+void Party::resetBlacksmithWares() {
+	Character &c = _itemsCharacter;
+	int catCount[4];
+
+	// Clear existing blacksmith wares
+	for (int i = 0; i < 2; ++i) {
+		for (int j = 0; j < ITEMS_COUNT; ++j) {
+			_blacksmithWeapons[i][j].clear();
+			_blacksmithArmor[i][j].clear();
+			_blacksmithAccessories[i][j].clear();
+			_blacksmithWeapons[i][j].clear();
+		}
+	}
+
+	for (int idx1 = 0; idx1 < 4; ++idx1) {
+		Common::fill(&catCount[0], &catCount[4], 0);
+
+		for (int idx2 = 0; idx2 < 4; ++idx2) {
+			for (int idx3 = 0; idx3 < BLACKSMITH_DATA1[idx2][idx1]; ++idx3) {
+				int itemCat = c.makeItem(idx2, 0, 0);
+				if (catCount[itemCat] < 8) {
+					switch (itemCat) {
+					case 0: {
+						XeenItem &item = _blacksmithWeapons[0][idx2 * 4 + catCount[itemCat]];
+						item._id = c._weapons[0]._id;
+						item._material = c._weapons[0]._material;
+						item._bonusFlags = c._weapons[0]._bonusFlags;
+						break;
+					}
+
+					case 1: {
+						XeenItem &item = _blacksmithArmor[0][idx2 * 4 + catCount[itemCat]];
+						item._id = c._weapons[0]._id;
+						item._material = c._weapons[0]._material;
+						item._bonusFlags = c._weapons[0]._bonusFlags;
+						break;
+					}
+
+					case 2: {
+						XeenItem &item = _blacksmithAccessories[0][idx2 * 4 + catCount[itemCat]];
+						item._id = c._weapons[0]._id;
+						item._material = c._weapons[0]._material;
+						item._bonusFlags = c._weapons[0]._bonusFlags;
+						break;
+					}
+
+					case 3: {
+						XeenItem &item = _blacksmithMisc[0][idx2 * 4 + catCount[itemCat]];
+						item._id = c._weapons[0]._id;
+						item._material = c._weapons[0]._material;
+						item._bonusFlags = c._weapons[0]._bonusFlags;
+						break;
+					}
+
+					default:
+						break;
+					}
+
+					++catCount[itemCat];
+				}
+			}
+		}
+	}
+
+	for (int idx1 = 0; idx1 < 4; ++idx1) {
+		Common::fill(&catCount[0], &catCount[4], 0);
+
+		for (int idx2 = 0; idx2 < 4; ++idx2) {
+			for (int idx3 = 0; idx3 < BLACKSMITH_DATA2[idx2][idx1]; ++idx3) {
+				int itemCat = c.makeItem(idx2 + (idx1 >= 2 ? 3 : 1), 0, 0);
+				if (catCount[itemCat] < 8) {
+					switch (itemCat) {
+					case 0: {
+						XeenItem &item = _blacksmithWeapons[1][idx2 * 4 + catCount[itemCat]];
+						item._id = c._weapons[0]._id;
+						item._material = c._weapons[0]._material;
+						item._bonusFlags = c._weapons[0]._bonusFlags;
+						break;
+					}
+
+					case 1: {
+						XeenItem &item = _blacksmithArmor[1][idx2 * 4 + catCount[itemCat]];
+						item._id = c._weapons[0]._id;
+						item._material = c._weapons[0]._material;
+						item._bonusFlags = c._weapons[0]._bonusFlags;
+						break;
+					}
+
+					case 2: {
+						XeenItem &item = _blacksmithAccessories[1][idx2 * 4 + catCount[itemCat]];
+						item._id = c._weapons[0]._id;
+						item._material = c._weapons[0]._material;
+						item._bonusFlags = c._weapons[0]._bonusFlags;
+						break;
+					}
+
+					case 3: {
+						XeenItem &item = _blacksmithMisc[1][idx2 * 4 + catCount[itemCat]];
+						item._id = c._weapons[0]._id;
+						item._material = c._weapons[0]._material;
+						item._bonusFlags = c._weapons[0]._bonusFlags;
+						break;
+					}
+
+					default:
+						break;
+					}
+
+					++catCount[itemCat];
+				}
+			}
+		}
+	}
+}
+
+void Party::giveInterest() {
+
 }
 
 } // End of namespace Xeen
