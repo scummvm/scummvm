@@ -296,7 +296,8 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 	memset(bitmaps, 0, sizeof(byte *) * font.numCharacters);
 	byte *advances = new byte[font.numCharacters];
 	BdfBoundingBox *boxes = new BdfBoundingBox[font.numCharacters];
-	char *familyName, *slant;
+	char *familyName = nullptr;
+	char *slant = nullptr;
 
 	int descent = -1;
 
