@@ -57,7 +57,7 @@ void DrasculaEngine::chooseObject(int object) {
 	pickedObject = object;
 }
 
-void DrasculaEngine::gotoObject(int pointX, int pointY) {
+void DrasculaEngine::walkToPoint(Common::Point pos) {
 	bool cursorVisible = isCursorVisible();
 	hideCursor();
 
@@ -70,8 +70,8 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 			return;
 		}
 	}
-	roomX = pointX;
-	roomY = pointY;
+	roomX = pos.x;
+	roomY = pos.y;
 	startWalking();
 
 	while (!shouldQuit()) {
@@ -102,9 +102,7 @@ void DrasculaEngine::checkObjects() {
 	_hasName = false;
 
 	for (l = 0; l < numRoomObjs; l++) {
-		if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
-				&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l]
-				&& visible[l] == 1 && isDoor[l] == 0) {
+		if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && visible[l] == 1 && isDoor[l] == 0) {
 			strcpy(textName, objName[l]);
 			_hasName = true;
 		}
