@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-14 19:19+0100\n"
+"POT-Creation-Date: 2017-11-15 00:50+0100\n"
 "PO-Revision-Date: 2016-12-26 19:38+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -2773,7 +2773,7 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Jiancha Gengxin..."
 
-#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:970
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:963
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
 #: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
@@ -2782,7 +2782,7 @@ msgstr "Jiancha Gengxin..."
 msgid "Unable to locate the '%s' engine data file."
 msgstr ""
 
-#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:984
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:977
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
 #: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
 #: engines/toon/toon.cpp:4930
@@ -2790,7 +2790,7 @@ msgstr ""
 msgid "The '%s' engine data file is corrupt."
 msgstr ""
 
-#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:995
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:988
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
 #: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
 #: engines/toon/toon.cpp:4941
