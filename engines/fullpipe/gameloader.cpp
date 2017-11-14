@@ -253,7 +253,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 bool preloadCallback(PreloadItem &pre, int flag) {
 	if (flag) {
 		if (flag == 50)
-			g_fp->_aniMan->preloadMovements(g_fp->_movTable);
+			g_fp->_aniMan->preloadMovements(g_fp->_movTable.get());
 
 		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
 

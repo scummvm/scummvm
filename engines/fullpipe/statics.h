@@ -244,6 +244,7 @@ public:
 	void draw();
 	void draw2();
 
+	/** ownership of returned object is transferred to caller */
 	MovTable *countMovements();
 	Common::Point *calcStepLen(Common::Point *p);
 	void setSpeed(int speed);
@@ -257,14 +258,6 @@ public:
 
 	bool getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly = false);
 	bool isPixelHitAtPos(int x, int y);
-};
-
-struct MovTable {
-	int count;
-	int16 *movs;
-
-	MovTable() { count = 0; movs = 0; }
-	~MovTable() { free(movs); }
 };
 
 } // End of namespace Fullpipe

@@ -668,22 +668,19 @@ MovTable *StaticANIObject::countMovements() {
 	GameVar *preloadSubVar = g_fp->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
 	if (!preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
-		return 0;
+		return nullptr;
 
 	MovTable *movTable = new MovTable;
-
-	movTable->count = _movements.size();
-	movTable->movs = (int16 *)calloc(_movements.size(), sizeof(int16));
-
+	movTable->reserve(_movements.size());
 	for (uint i = 0; i < _movements.size(); i++) {
-		movTable->movs[i] = 2;
-
+		int16 value = 2;
 		for (GameVar *sub = preloadSubVar->_subVars; sub; sub = sub->_nextVarObj) {
 			if (scumm_stricmp(_movements[i]->getName().c_str(), sub->_varName.c_str()) == 0) {
-				movTable->movs[i] = 1;
+				value = 1;
 				break;
 			}
 		}
+		movTable->push_back(value);
 	}
 
 	return movTable;
@@ -728,9 +725,9 @@ void StaticANIObject::preloadMovements(MovTable *mt) {
 		for (uint i = 0; i < _movements.size(); i++) {
 			Movement *mov = _movements[i];
 
-			if (mt->movs[i] == 1)
+			if ((*mt)[i] == 1)
 				mov->loadPixelData();
-			else if (mt->movs[i] == 2)
+			else if ((*mt)[i] == 2)
 				mov->freePixelData();
 		}
 	}

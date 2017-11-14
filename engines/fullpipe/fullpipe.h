@@ -77,7 +77,6 @@ class GameObject;
 class GlobalMessageQueueList;
 struct MessageHandler;
 class MessageQueue;
-struct MovTable;
 class AniHandler;
 class NGIArchive;
 class PictureObject;
@@ -86,6 +85,7 @@ class Scene;
 class SoundList;
 class StaticANIObject;
 class Vars;
+typedef Common::Array<int16> MovTable;
 typedef Common::Array<int32> Palette;
 
 int global_messageHandler1(ExCommand *cmd);
@@ -217,7 +217,7 @@ public:
 
 	Common::ScopedPtr<BehaviorManager> _behaviorManager;
 
-	MovTable *_movTable;
+	Common::ScopedPtr<MovTable> _movTable;
 
 	Common::ScopedPtr<Floaters> _floaters;
 	Common::ScopedPtr<AniHandler> _aniHandler;
