@@ -635,8 +635,8 @@ void Picture::displayPicture() {
 	if (!_dataSize)
 		return;
 
-	g_fp->_backgroundSurface->fillRect(Common::Rect(0, 0, 800, 600), 0);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(0, 0), g_fp->_backgroundSurface->pitch, 0, 0, 800, 600);
+	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
 
 	draw(0, 0, 0, 0);
 
@@ -808,8 +808,8 @@ void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 
 	int alphac = TS_ARGB(0xff, alpha, 0xff, 0xff);
 
-	_surface->blit(*g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(x1, y1), g_fp->_backgroundSurface->pitch, x1, y1, sub.width(), sub.height());
+	_surface->blit(g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(x1, y1), g_fp->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
 bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
@@ -967,7 +967,7 @@ void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
 #endif
 	byte r, g, b;
 
-	g_fp->_origFormat->colorToRGB(color, r, g, b);
+	g_fp->_origFormat.colorToRGB(color, r, g, b);
 
 	uint32 c = TS_ARGB(0xff, r, g, b);
 
@@ -990,7 +990,7 @@ void Bitmap::paletteFill(uint32 *dest, byte *src, int len, const Palette &palett
 	byte r, g, b;
 
 	for (int i = 0; i < len; i++) {
-		g_fp->_origFormat->colorToRGB(READ_LE_UINT32(&palette[*src++]) & 0xffff, r, g, b);
+		g_fp->_origFormat.colorToRGB(palette[*src++] & 0xffff, r, g, b);
 
 		*dest++ = TS_ARGB(0xff, r, g, b);
 	}
@@ -1019,7 +1019,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, cons
 	if (!cb05_format) {
 		for (int i = 0; i < len; i++) {
 			if (*src != keyColor) {
-				g_fp->_origFormat->colorToRGB(READ_LE_UINT32(&palette[*src]) & 0xffff, r, g, b);
+				g_fp->_origFormat.colorToRGB(palette[*src] & 0xffff, r, g, b);
 				*dest = TS_ARGB(0xff, r, g, b);
 			}
 
@@ -1031,7 +1031,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, cons
 
 		for (int i = 0; i < len; i++) {
 			if (*src16 != 0) {
-				g_fp->_origFormat->colorToRGB(READ_LE_UINT16(src16) & 0xffff, r, g, b);
+				g_fp->_origFormat.colorToRGB(READ_LE_UINT16(src16), r, g, b);
 				*dest = TS_ARGB(0xff, r, g, b);
 			}
 
@@ -1063,7 +1063,7 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bo
 
 	if (!cb05_format) {
 		for (int i = 0; i < len; i++) {
-			g_fp->_origFormat->colorToRGB(READ_LE_UINT32(&palette[*src++]) & 0xffff, r, g, b);
+			g_fp->_origFormat.colorToRGB(palette[*src++] & 0xffff, r, g, b);
 
 			*dest++ = TS_ARGB(0xff, r, g, b);
 		}
@@ -1071,7 +1071,7 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bo
 		int16 *src16 = (int16 *)src;
 
 		for (int i = 0; i < len; i++) {
-			g_fp->_origFormat->colorToRGB(READ_LE_UINT32(src16++) & 0xffff, r, g, b);
+			g_fp->_origFormat.colorToRGB(READ_LE_UINT16(src16++), r, g, b);
 			*dest++ = TS_ARGB(0xff, r, g, b);
 		}
 	}
@@ -1203,7 +1203,7 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 
 void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
 	for (int y = y1; y < y2; y++) {
-		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface->getBasePtr(x1, y);
+		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface.getBasePtr(x1, y);
 
 		for (int x = x1; x < x2; x++) {
 			uint32 color = *ptr;
@@ -1222,8 +1222,8 @@ void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
 		int ticks = g_fp->_system->getMillis();
 		sc->draw();
 
-		drawAlphaRectangle(0, 0, g_fp->_backgroundSurface->w, g_fp->_backgroundSurface->h, direction ? dim : 255 - dim);
-		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(0, 0), g_fp->_backgroundSurface->pitch, 0, 0, 800, 600);
+		drawAlphaRectangle(0, 0, g_fp->_backgroundSurface.w, g_fp->_backgroundSurface.h, direction ? dim : 255 - dim);
+		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
 
 		g_fp->_system->updateScreen();
 		ticks = g_fp->_system->getMillis() - ticks;

@@ -121,7 +121,7 @@ class GameLoader : public CObject {
 
 	void restoreDefPicAniInfos();
 
-	GameProject *_gameProject;
+	Common::ScopedPtr<GameProject> _gameProject;
 	InteractionController *_interactionController;
 	InputController *_inputController;
 	Inventory2 _inventory;

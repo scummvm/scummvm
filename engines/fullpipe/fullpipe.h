@@ -23,12 +23,15 @@
 #ifndef FULLPIPE_FULLPIPE_H
 #define FULLPIPE_FULLPIPE_H
 
+#include "audio/mixer.h"
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/ptr.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "graphics/surface.h"
 
 #include "engines/engine.h"
 
@@ -101,8 +104,8 @@ public:
 	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~FullpipeEngine();
 
-	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	Console _console;
+	GUI::Debugger *getDebugger() { return &_console; }
 
 	void initialize();
 	void restartGame();
@@ -123,10 +126,10 @@ public:
 
 	void updateEvents();
 
-	Graphics::Surface *_backgroundSurface;
-	Graphics::PixelFormat *_origFormat;
+	Graphics::Surface _backgroundSurface;
+	Graphics::PixelFormat _origFormat;
 
-	GameLoader *_gameLoader;
+	Common::ScopedPtr<GameLoader> _gameLoader;
 	GameProject *_gameProject;
 	bool loadGam(const char *fname, int scene = 0);
 
@@ -187,7 +190,7 @@ public:
 	void updateTrackDelay();
 	void startSceneTrack();
 	void startSoundStream1(const Common::String &trackName);
-	void playOggSound(const Common::String &trackName, Audio::SoundHandle *stream);
+	void playOggSound(const Common::String &trackName, Audio::SoundHandle &stream);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
@@ -197,7 +200,7 @@ public:
 	int _sfxVolume;
 	int _musicVolume;
 
-	GlobalMessageQueueList *_globalMessageQueueList;
+	Common::ScopedPtr<GlobalMessageQueueList> _globalMessageQueueList;
 	MessageHandler *_messageHandlers;
 
 	int _msgX;
@@ -212,12 +215,12 @@ public:
 	int _mouseVirtY;
 	Common::Point _mouseScreenPos;
 
-	BehaviorManager *_behaviorManager;
+	Common::ScopedPtr<BehaviorManager> _behaviorManager;
 
 	MovTable *_movTable;
 
-	Floaters *_floaters;
-	AniHandler *_aniHandler;
+	Common::ScopedPtr<Floaters> _floaters;
+	Common::ScopedPtr<AniHandler> _aniHandler;
 
 	Common::Array<Common::Point *> _arcadeKeys;
 
@@ -333,10 +336,10 @@ public:
 	void lift_openLift();
 
 	GameVar *_musicGameVar;
-	Audio::SoundHandle *_soundStream1;
-	Audio::SoundHandle *_soundStream2;
-	Audio::SoundHandle *_soundStream3;
-	Audio::SoundHandle *_soundStream4;
+	Audio::SoundHandle _soundStream1;
+	Audio::SoundHandle _soundStream2;
+	Audio::SoundHandle _soundStream3;
+	Audio::SoundHandle _soundStream4;
 
 	bool _stream2playing;
 

@@ -54,8 +54,6 @@ GameLoader::GameLoader() {
 	_interactionController = new InteractionController();
 	_inputController = new InputController();
 
-	_gameProject = 0;
-
 	addMessageHandlerByIndex(global_messageHandler2, 0, 0);
 	insertMessageHandler(global_messageHandler3, 0, 128);
 	insertMessageHandler(global_messageHandler4, 0, 1);
@@ -77,11 +75,8 @@ GameLoader::GameLoader() {
 }
 
 GameLoader::~GameLoader() {
-	delete _gameProject;
 	delete _interactionController;
 	delete _inputController;
-
-	g_fp->_gameLoader = 0;
 
 	for (uint i = 0; i < _sc2array.size(); i++) {
 		if (_sc2array[i]._defPicAniInfos)
@@ -112,11 +107,11 @@ bool GameLoader::load(MfcArchive &file) {
 	_gameName = file.readPascalString();
 	debugC(1, kDebugLoading, "_gameName: %s", _gameName.c_str());
 
-	_gameProject = new GameProject();
+	_gameProject.reset(new GameProject());
 
 	_gameProject->load(file);
 
-	g_fp->_gameProject = _gameProject;
+	g_fp->_gameProject = _gameProject.get();
 
 	if (g_fp->_gameProjectVersion < 12) {
 		error("Old gameProjectVersion: %d", g_fp->_gameProjectVersion);
