@@ -66,8 +66,6 @@ struct InventoryItem {
 	InventoryItem(int id, int cnt) : itemId(id), count(cnt) {}
 };
 
-typedef Common::Array<InventoryItem *> InventoryItems;
-
 class PictureObject;
 
 struct InventoryIcon {
@@ -83,11 +81,9 @@ struct InventoryIcon {
 	bool isMouseHover;
 };
 
-typedef Common::Array<InventoryIcon *> InventoryIcons;
-
 class Inventory2 : public Inventory {
-	InventoryItems _inventoryItems;
-	InventoryIcons _inventoryIcons;
+	Common::Array<InventoryItem> _inventoryItems;
+	Common::Array<InventoryIcon> _inventoryIcons;
 	int _selectedId;
 	int _field_48;
 	bool _isInventoryOut;
