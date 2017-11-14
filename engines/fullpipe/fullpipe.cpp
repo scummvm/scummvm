@@ -45,13 +45,18 @@
 
 namespace Fullpipe {
 
-FullpipeEngine *g_fp = 0;
-Vars *g_vars = 0;
+FullpipeEngine *g_fp = nullptr;
+Vars *g_vars = nullptr;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 	Engine(syst),
 	_gameDescription(gameDesc),
-	_rnd("fullpipe") {
+	_console(this),
+	_rnd("fullpipe"),
+	_gameProject(nullptr),
+	_modalObject(nullptr),
+	_currSoundList1(),
+	_mapTable() {
 	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
 	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
@@ -71,8 +76,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	syncSoundSettings();
 	_sfxVolume = ConfMan.getInt("sfx_volume") * 39 - 10000;
 	_musicVolume = ConfMan.getInt("music_volume");
-
-	_console = 0;
 
 	_gameProjectVersion = 0;
 	_pictureScale = 8;
@@ -96,13 +99,10 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_currentCheat = -1;
 	_currentCheatPos = 0;
 
-	_modalObject = 0;
-	_origFormat = 0;
-
 	_liftEnterMQ = 0;
 	_liftExitMQ = 0;
 	_lift = 0;
-	_lastLiftButton = 0;
+	_lastLiftButton = nullptr;
 	_liftX = 0;
 	_liftY = 0;
 
@@ -125,32 +125,23 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_musicLocal = 0;
 	_trackStartDelay = 0;
 
-	_soundStream1 = new Audio::SoundHandle();
-	_soundStream2 = new Audio::SoundHandle();
-	_soundStream3 = new Audio::SoundHandle();
-	_soundStream4 = new Audio::SoundHandle();
-
 	_stream2playing = false;
 
 	_numSceneTracks = 0;
 	_sceneTrackHasSequence = false;
 	_sceneTrackIsPlaying = false;
 
-	_aniMan = 0;
-	_aniMan2 = 0;
-	_currentScene = 0;
-	_loaderScene = 0;
-	_scene2 = 0;
-	_scene3 = 0;
-	_movTable = 0;
-	_floaters = 0;
-	_aniHandler = 0;
+	_aniMan = nullptr;
+	_aniMan2 = nullptr;
+	_currentScene = nullptr;
+	_loaderScene = nullptr;
+	_scene2 = nullptr;
+	_scene3 = nullptr;
+	_movTable = nullptr;
+	_messageHandlers = nullptr;
 
-	_globalMessageQueueList = 0;
-	_messageHandlers = 0;
-
-	_updateScreenCallback = 0;
-	_updateCursorCallback = 0;
+	_updateScreenCallback = nullptr;
+	_updateCursorCallback = nullptr;
 
 	_msgX = 0;
 	_msgY = 0;
@@ -161,15 +152,10 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_currSelectedInventoryItemId = 0;
 
-	_behaviorManager = 0;
-
 	_cursorId = 0;
 
 	_keyState = Common::KEYCODE_INVALID;
 	_buttonState = 0;
-
-	_gameLoader = 0;
-	_gameProject = 0;
 
 	_updateFlag = true;
 	_flgCanOpenMap = true;
@@ -177,22 +163,16 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_sceneWidth = 1;
 	_sceneHeight = 1;
 
-	for (int i = 0; i < 11; i++)
-		_currSoundList1[i] = 0;
-
-	for (int i = 0; i < 200; i++)
-		_mapTable[i] = 0;
-
-	_inventoryScene = 0;
-	_inventory = 0;
+	_inventoryScene = nullptr;
+	_inventory = nullptr;
 
 	_minCursorId = 0xffff;
 	_maxCursorId = 0;
 	_objectAtCursor = 0;
 	_objectIdAtCursor = 0;
 
-	_arcadeOverlay = 0;
-	_arcadeOverlayHelper = 0;
+	_arcadeOverlay = nullptr;
+	_arcadeOverlayHelper = nullptr;
 	_arcadeOverlayX = 0;
 	_arcadeOverlayY = 0;
 	_arcadeOverlayMidX = 0;
@@ -205,25 +185,9 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 FullpipeEngine::~FullpipeEngine() {
-	delete _console;
-	delete _globalMessageQueueList;
-	delete _soundStream1;
-	delete _soundStream2;
-	delete _soundStream3;
-	delete _soundStream4;
-}
-
-void FullpipeEngine::initialize() {
-	_globalMessageQueueList = new GlobalMessageQueueList;
-	_behaviorManager = new BehaviorManager;
-
-	_sceneRect.left = 0;
-	_sceneRect.top = 0;
-	_sceneRect.right = 799;
-	_sceneRect.bottom = 599;
-
-	_floaters = new Floaters;
-	_aniHandler = new AniHandler;
+	g_fp = nullptr;
+	delete g_vars;
+	g_vars = nullptr;
 }
 
 void FullpipeEngine::restartGame() {
@@ -236,13 +200,13 @@ void FullpipeEngine::restartGame() {
 
 	if (_scene2) {
 		_scene2->getAniMan();
-		_scene2 = 0;
+		_scene2 = nullptr;
 	}
 
 	if (_currentScene) {
 		_gameLoader->unloadScene(_currentScene->_sceneId);
 
-		_currentScene = 0;
+		_currentScene = nullptr;
 	}
 
 	_gameLoader->restoreDefPicAniInfos();
@@ -286,14 +250,19 @@ Common::Error FullpipeEngine::run() {
 	// Initialize backend
 	initGraphics(800, 600, &format);
 
-	_backgroundSurface = new Graphics::Surface;
-	_backgroundSurface->create(800, 600, format);
+	_backgroundSurface.create(800, 600, format);
+	_origFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
-	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	_globalMessageQueueList.reset(new GlobalMessageQueueList);
+	_behaviorManager.reset(new BehaviorManager);
 
-	_console = new Console(this);
+	_sceneRect.left = 0;
+	_sceneRect.top = 0;
+	_sceneRect.right = 799;
+	_sceneRect.bottom = 599;
 
-	initialize();
+	_floaters.reset(new Floaters);
+	_aniHandler.reset(new AniHandler);
 	_globalPalette = &_defaultPalette;
 
 	_isSaveAllowed = false;
@@ -336,13 +305,9 @@ Common::Error FullpipeEngine::run() {
 		}
 
 		if (_needRestart) {
-			if (_modalObject) {
-				delete _modalObject;
-				_modalObject = 0;
-			}
-
+			delete _modalObject;
 			freeGameLoader();
-			_currentScene = 0;
+			_currentScene = nullptr;
 			_updateTicks = 0;
 			_globalPalette = &_defaultPalette;
 
@@ -357,6 +322,7 @@ Common::Error FullpipeEngine::run() {
 	freeGameLoader();
 
 	cleanup();
+	_backgroundSurface.free();
 
 	return Common::kNoError;
 }
@@ -488,7 +454,7 @@ void FullpipeEngine::freeGameLoader() {
 	setCursor(0);
 	delete _movTable;
 	_floaters->stopAll();
-	delete _gameLoader;
+	_gameLoader.reset();
 	_currentScene = 0;
 	_scene2 = 0;
 	_loaderScene = 0;
@@ -504,11 +470,6 @@ void FullpipeEngine::cleanup() {
 		delete (*_globalMessageQueueList)[i];
 
 	stopAllSoundStreams();
-
-	delete _origFormat;
-	_backgroundSurface->free();
-
-	delete _backgroundSurface;
 }
 
 void FullpipeEngine::updateScreen() {

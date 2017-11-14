@@ -228,8 +228,8 @@ void Sound::stop() {
 void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 	stopSoundStream2();
 
-	if (_mixer->isSoundHandleActive(*_soundStream3))
-		_mixer->stopHandle(*_soundStream4);
+	if (_mixer->isSoundHandleActive(_soundStream3))
+		_mixer->stopHandle(_soundStream4);
 
 	if (_musicLocal)
 		stopAllSoundStreams();
@@ -288,7 +288,7 @@ void FullpipeEngine::updateTrackDelay() {
 
 void FullpipeEngine::startSceneTrack() {
 	if (_sceneTrackIsPlaying) {
-		if (!_mixer->isSoundHandleActive(*_soundStream1)) { // Simulate end of sound callback
+		if (!_mixer->isSoundHandleActive(_soundStream1)) { // Simulate end of sound callback
 			updateTrackDelay();
 		}
 	}
@@ -349,9 +349,9 @@ void FullpipeEngine::startSoundStream1(const Common::String &trackName) {
 	playOggSound(trackName, _soundStream1);
 }
 
-void FullpipeEngine::playOggSound(const Common::String &trackName, Audio::SoundHandle *stream) {
+void FullpipeEngine::playOggSound(const Common::String &trackName, Audio::SoundHandle &stream) {
 #ifdef USE_VORBIS
-	if (_mixer->isSoundHandleActive(*stream))
+	if (_mixer->isSoundHandleActive(stream))
 		return;
 
 	Common::File *track = new Common::File();
@@ -361,7 +361,7 @@ void FullpipeEngine::playOggSound(const Common::String &trackName, Audio::SoundH
 		return;
 	}
 	Audio::RewindableAudioStream *ogg = Audio::makeVorbisStream(track, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, stream, ogg);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &stream, ogg);
 #endif
 }
 
@@ -399,8 +399,8 @@ void FullpipeEngine::playSound(int id, int flag) {
 }
 
 void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
-	if (_mixer->isSoundHandleActive(*_soundStream3))
-		_mixer->stopHandle(*_soundStream4);
+	if (_mixer->isSoundHandleActive(_soundStream3))
+		_mixer->stopHandle(_soundStream4);
 
 	stopSoundStream2();
 
@@ -491,17 +491,17 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 void FullpipeEngine::stopSoundStream2() {
 	_stream2playing = false;
 
-	if (_mixer->isSoundHandleActive(*_soundStream3)) {
-		_mixer->stopHandle(*_soundStream2);
-		_mixer->stopHandle(*_soundStream3);
+	if (_mixer->isSoundHandleActive(_soundStream3)) {
+		_mixer->stopHandle(_soundStream2);
+		_mixer->stopHandle(_soundStream3);
 	}
 }
 
 void FullpipeEngine::stopAllSoundStreams() {
-	_mixer->stopHandle(*_soundStream1);
-	_mixer->stopHandle(*_soundStream2);
-	_mixer->stopHandle(*_soundStream3);
-	_mixer->stopHandle(*_soundStream4);
+	_mixer->stopHandle(_soundStream1);
+	_mixer->stopHandle(_soundStream2);
+	_mixer->stopHandle(_soundStream3);
+	_mixer->stopHandle(_soundStream4);
 
 	_stream2playing = false;
 }

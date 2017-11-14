@@ -1086,13 +1086,13 @@ void updateSound() {
 		return;
 
 	case 1:
-		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream2)) {
+		if (!g_fp->_mixer->isSoundHandleActive(g_fp->_soundStream2)) {
 			g_fp->playOggSound("sc4_loop.ogg", g_fp->_soundStream3);
 			g_vars->scene04_musicStage = 2;
 		}
 		break;
 	case 2:
-		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream3)) {
+		if (!g_fp->_mixer->isSoundHandleActive(g_fp->_soundStream3)) {
 			if (g_fp->_stream2playing) { // Looop it
 				g_fp->playOggSound("sc4_loop.ogg", g_fp->_soundStream3);
 			} else {
@@ -1102,7 +1102,7 @@ void updateSound() {
 		}
 		break;
 	case 3:
-		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream4)) {
+		if (!g_fp->_mixer->isSoundHandleActive(g_fp->_soundStream4)) {
 			g_vars->scene04_musicStage = 0;
 		}
 		break;

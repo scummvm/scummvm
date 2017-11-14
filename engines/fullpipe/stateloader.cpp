@@ -280,7 +280,7 @@ void gameLoaderSavegameCallback(MfcArchive *archive, bool mode) {
 }
 
 bool FullpipeEngine::loadGam(const char *fname, int scene) {
-	_gameLoader = new GameLoader();
+	_gameLoader.reset(new GameLoader());
 
 	if (!_gameLoader->loadFile(fname))
 		return false;

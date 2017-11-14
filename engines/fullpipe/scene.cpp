@@ -523,7 +523,7 @@ void Scene::draw() {
 	updateScrolling();
 
 	// Clean previous stuff
-	g_fp->_backgroundSurface->fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
 
 	drawContent(60000, 0, true);
 
