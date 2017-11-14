@@ -137,7 +137,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_loaderScene = nullptr;
 	_scene2 = nullptr;
 	_scene3 = nullptr;
-	_movTable = nullptr;
 	_messageHandlers = nullptr;
 
 	_updateScreenCallback = nullptr;
@@ -452,7 +451,6 @@ void FullpipeEngine::updateEvents() {
 
 void FullpipeEngine::freeGameLoader() {
 	setCursor(0);
-	delete _movTable;
 	_floaters->stopAll();
 	_gameLoader.reset();
 	_currentScene = 0;

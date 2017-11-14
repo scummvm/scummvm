@@ -310,7 +310,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	_aniMan = accessScene(SC_COMMON)->getAniMan();
 	_scene2 = 0;
 
-	_movTable = _aniMan->countMovements();
+	_movTable.reset(_aniMan->countMovements());
 
 	_aniMan->setSpeed(1);
 
