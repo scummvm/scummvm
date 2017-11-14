@@ -694,6 +694,8 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	data.bitmaps = bitmaps;
 	data.advances = advances;
 	data.boxes = boxes;
+	data.familyName = nullptr;
+	data.slant = nullptr;
 	return new BdfFont(data, DisposeAfterUse::YES);
 }
 
