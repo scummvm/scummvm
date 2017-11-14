@@ -25,6 +25,9 @@ lib*.a
 /*,e1f
 /scummvm-ps3.pkg
 /*.ipk
+/map.txt
+*.elf
+/*.nds
 /.project
 /.cproject
 /.settings
@@ -53,6 +56,7 @@ lib*.a
 /backends/platform/ds/arm7/build
 /backends/platform/ds/arm7/source/libcartreset/*.bak
 /backends/platform/ds/arm7/source/libcartreset/*.d
+/backends/platform/ds/arm9/data/*.h
 /backends/platform/ds/arm9/scummvm-?
 
 /backends/platform/maemo/scummvm
