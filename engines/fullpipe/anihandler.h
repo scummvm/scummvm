@@ -42,7 +42,7 @@ struct MGMSubItem {
 
 struct MGMItem {
 	int16 objId;
-	Common::Array<MGMSubItem *> subItems;
+	Common::Array<MGMSubItem> subItems;
 	Common::Array<Statics *> statics;
 	Common::Array<Movement *> movements1;
 	Common::Array<int> movements2;
