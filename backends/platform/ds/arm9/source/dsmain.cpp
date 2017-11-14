@@ -573,7 +573,7 @@ void initGame() {
 		s_currentGame = &gameList[0];		// Default game
 
 		for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
-			if (!stricmp(gameName, gameList[r].gameId)) {
+			if (!scumm_stricmp(gameName, gameList[r].gameId)) {
 				s_currentGame = &gameList[r];
 	//			consolePrintf("Game list num: %d\n", r);
 			}

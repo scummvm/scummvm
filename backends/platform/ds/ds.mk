@@ -75,7 +75,7 @@ endif
 
 
 # Compiler options for files which should be optimised for speed
-OPT_SPEED := -O3 -mno-thumb
+OPT_SPEED := -O3 -marm
 
 # Compiler options for files which should be optimised for space
 OPT_SIZE := -Os -mthumb
@@ -134,7 +134,8 @@ engines/teenagent/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
 #
 #############################################################################
 
-all: scummvm.nds scummvm.ds.gba
+# FIXME: Newer versions of devkitARM don't include dsbuild, which is needed to create scummvm.ds.gba
+all: scummvm.nds # scummvm.ds.gba
 
 clean: dsclean
 
@@ -170,10 +171,10 @@ dsclean:
 
 # HACK/FIXME: C compiler, for cartreset.c -- we should switch this to use CXX
 # as soon as possible.
-CC := $(DEVKITPRO)/devkitARM/bin/arm-eabi-gcc
+CC := $(DEVKITPRO)/devkitARM/bin/arm-none-eabi-gcc
 
 # HACK/TODO: Pointer to objcopy. This should really be set by configure
-OBJCOPY := $(DEVKITPRO)/devkitARM/bin/arm-eabi-objcopy
+OBJCOPY := $(DEVKITPRO)/devkitARM/bin/arm-none-eabi-objcopy
 
 #
 # Set various flags
@@ -194,7 +195,7 @@ ARM7_CFLAGS	:=	-g -Wall -O2\
 
 ARM7_CXXFLAGS	:= $(ARM7_CFLAGS) -fno-exceptions -fno-rtti
 
-ARM7_LDFLAGS	:= -g $(ARM7_ARCH) -mno-fpu
+ARM7_LDFLAGS	:= -g $(ARM7_ARCH) -mfloat-abi=soft
 
 # HACK/FIXME: Define a custom build rule for cartreset.c.
 # We do this because it is a .c file, not a .cpp file and so is outside our
