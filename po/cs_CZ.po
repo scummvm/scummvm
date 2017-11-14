@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-11 16:18+0100\n"
-"PO-Revision-Date: 2016-12-04 15:43+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/cs/>\n"
+"PO-Revision-Date: 2017-11-14 12:24+0000\n"
+"Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
+"Language-Team: Czech "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
 "Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -822,9 +822,8 @@ msgid "the fullscreen setting could not be changed"
 msgstr "nastavení celé obrazovky nemohlo být zmìnìno"
 
 #: gui/options.cpp:544
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "nastavení celé obrazovky nemohlo být zmìnìno"
+msgstr "nastavení filtrování nemohlo být zmìnìno"
 
 #: gui/options.cpp:932
 msgid "Show On-screen control"
@@ -840,19 +839,17 @@ msgid "Swap Menu and Back buttons"
 msgstr ""
 
 #: gui/options.cpp:945
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Rychlost:"
+msgstr "Rychlost ukazatele:"
 
 #: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr ""
 
 #: gui/options.cpp:947
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Rychlost:"
+msgstr "Rychlost ukazatele:"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
@@ -1123,9 +1120,8 @@ msgid "Shader"
 msgstr ""
 
 #: gui/options.cpp:1450
-#, fuzzy
 msgid "Control"
-msgstr "Ovládání My¹i"
+msgstr "Ovládání"
 
 #: gui/options.cpp:1476
 msgid "FluidSynth Settings"
@@ -1629,7 +1625,6 @@ msgid "Antialiased"
 msgstr "S vyhlazenými hranami"
 
 #: gui/updates-dialog.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
@@ -1637,7 +1632,6 @@ msgid ""
 msgstr ""
 "ScummVM nyní podporuje automatickou kontrolu\n"
 "aktualizací která vy¾aduje pøipojení k internetu.\n"
-"\n"
 "Chtìli byste tuto funkci nyní zapnout?"
 
 #: gui/updates-dialog.cpp:52
@@ -1739,7 +1733,6 @@ msgid "Could not find suitable engine plugin"
 msgstr "Nelze nalézt vhodný zás. modul jádra"
 
 #: common/error.cpp:68
-#, fuzzy
 msgid "Engine plugin does not support saved games"
 msgstr "Zás. modul jádra nepodporuje ulo¾ené stavy"
 
@@ -1889,12 +1882,12 @@ msgstr ""
 "dal¹í pomoc."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:395
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Ulo¾ení stavu hry selhalo (%s)! Prosím pøeètìte si dokumentaci pro základní "
+"Ulo¾ení hry selhalo (%s)! Prosím pøeètìte si dokumentaci pro základní "
 "informace a pokyny k získání dal¹í podpory."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:102
@@ -1928,9 +1921,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Nelze pou¾ít nastavení celé obrazovky."
 
 #: engines/engine.cpp:342
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Nelze pou¾ít nastavení celé obrazovky."
+msgstr "Nelze pou¾ít nastavení filtrování."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1961,13 +1953,13 @@ msgstr ""
 "Pro podrobnosti si pøeètìte README."
 
 #: engines/engine.cpp:508
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Naètení stavu hry selhalo (%s)! Prosím pøeètìte si dokumentaci pro základní "
-"informace a pokyny k získání dal¹í podpory."
+"Naètení ulo¾ené hry selhalo (%s)! Prosím pøeètìte si dokumentaci pro "
+"základní informace a pokyny k získání dal¹í podpory."
 
 #: engines/engine.cpp:521
 msgid ""
@@ -2230,7 +2222,7 @@ msgstr "Re¾im do okna"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:703
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Rozli¹ení: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2435
@@ -2244,15 +2236,13 @@ msgstr "Zakázána korekce pomìru stran"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2459
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Kliknutí Povoleno"
+msgstr "Filtrování povoleno"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:748
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2461
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Kliknutí Zakázáno"
+msgstr "Filtrování zakázáno"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -2807,7 +2797,7 @@ msgstr ""
 #: engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr ""
+msgstr "Datové soubory jádra '%s' jsou po¹kozeny."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:988
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
@@ -2923,24 +2913,24 @@ msgid "Restore"
 msgstr "Obnovit"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game from file:\n"
 "\n"
 "%s"
 msgstr ""
-"Nahrání stavu hry selhalo ze souboru:\n"
+"Nahrání ulo¾ené hry ze souboru selhalo:\n"
 "\n"
 "%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game to file:\n"
 "\n"
 "%s"
 msgstr ""
-"Ulo¾ení stavu hry selhalo do souboru:\n"
+"Ulo¾ení hry do souboru selhalo:\n"
 "\n"
 "%s"
 
@@ -2969,7 +2959,6 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Standardnì zapínat re¾im pro barvoslepé"
 
 #: engines/drascula/saveload.cpp:47
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
@@ -2997,15 +2986,13 @@ msgstr "Zobrazit grafiku pomocí jasné palety hry"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-#, fuzzy
 msgid "Failed to load saved game from file."
-msgstr "Nelze naèíst stav hry ze souboru."
+msgstr "Naèteni hry ze souboru selhalo."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-#, fuzzy
 msgid "Failed to save game to file."
-msgstr "Nelze ulo¾it stav hry do souboru."
+msgstr "Ulo¾ení hry do souboru selhalo."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
@@ -4604,11 +4591,10 @@ msgid "Use high resolution MPEG video"
 msgstr "Pou¾ít video MPEG ve vysokém rozli¹ení"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Pou¾ít video MPEG pocházející z DVD verze, namísto videa AVI v nízkém "
-"rozli¹ení."
+"Pou¾ít video MPEG pocházející z DVD verze namísto videa AVI v nízkém "
+"rozli¹ení"
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
