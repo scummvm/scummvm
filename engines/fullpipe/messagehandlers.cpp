@@ -801,12 +801,12 @@ int MovGraph::messageHandler(ExCommand *cmd) {
 	}
 
 	if (ani->_movement) {
-		ani->_movement->_currDynamicPhase->_rect->top = 255 - top;
+		ani->_movement->_currDynamicPhase->_rect.top = 255 - top;
 		return 0;
 	}
 
 	if (ani->_statics)
-		ani->_statics->_rect->top = 255 - top;
+		ani->_statics->_rect.top = 255 - top;
 
 	return 0;
 }
