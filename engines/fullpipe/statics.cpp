@@ -179,7 +179,7 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 	_objtype = kObjTypeStaticANIObject;
 
 	for (uint i = 0; i < src->_staticsList.size(); i++)
-		_staticsList.push_back(new Statics(src->_staticsList[i], 0));
+		_staticsList.push_back(new Statics(*src->_staticsList[i], false));
 
 	_movement = 0;
 	_statics = 0;
@@ -580,11 +580,11 @@ void StaticANIObject::freeMovementsPixelData() {
 }
 
 Statics *StaticANIObject::addReverseStatics(Statics *st) {
+	assert(st);
 	Statics *res = getStaticsById(st->_staticsId ^ 0x4000);
 
 	if (!res) {
-		res = new Statics(st, true);
-
+		res = new Statics(*st, true);
 		_staticsList.push_back(res);
 	}
 
@@ -1396,27 +1396,20 @@ Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
 
 Statics::Statics() {
 	_staticsId = 0;
-	_picture = nullptr;
 	_data = nullptr;
 }
 
-Statics::~Statics() {
-	delete _picture;
-}
-
-Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
-	_staticsId = src->_staticsId;
+Statics::Statics(Statics &src, bool reverse) : DynamicPhase(src, reverse) {
+	_staticsId = src._staticsId;
 
 	if (reverse) {
 		_staticsId ^= 0x4000;
-		_staticsName = sO_MirroredTo + src->_staticsName;
+		_staticsName = sO_MirroredTo + src._staticsName;
 	} else {
-		_staticsName = src->_staticsName;
+		_staticsName = src._staticsName;
 	}
 
-	_memfilename = src->_memfilename;
-
-	_picture = new Picture();
+	_memfilename = src._memfilename;
 }
 
 bool Statics::load(MfcArchive &file) {
@@ -1429,8 +1422,7 @@ bool Statics::load(MfcArchive &file) {
 	_staticsName = file.readPascalString();
 	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic(_staticsName), _staticsId, _staticsId);
 
-	_picture = new Picture();
-	_picture->load(file);
+	_picture.load(file);
 
 	return true;
 }
@@ -1613,7 +1605,7 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 			src->setDynamicPhaseIndex(i);
 
 			if (i < newSize - 1)
-				_dynamicPhases.push_back(new DynamicPhase(src->_currDynamicPhase, 0));
+				_dynamicPhases.push_back(new DynamicPhase(*src->_currDynamicPhase, 0));
 
 			_framePosOffsets[i]->x = src->_framePosOffsets[i]->x;
 			_framePosOffsets[i]->y = src->_framePosOffsets[i]->y;
@@ -2140,18 +2132,18 @@ DynamicPhase::DynamicPhase() {
 	_data = nullptr;
 }
 
-DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
-	_field_7C = src->_field_7C;
+DynamicPhase::DynamicPhase(DynamicPhase &src, bool reverse) {
+	_field_7C = src._field_7C;
 	_field_7E = 0;
 
 	debugC(1, kDebugAnimation, "DynamicPhase::DynamicPhase(src, %d)", reverse);
 
 	if (reverse) {
-		if (!src->_bitmap)
-			src->init();
+		if (!src._bitmap)
+			src.init();
 
-		_bitmap = BitmapPtr(src->_bitmap->reverseImage());
-		_dataSize = src->_dataSize;
+		_bitmap = BitmapPtr(src._bitmap->reverseImage());
+		_dataSize = src._dataSize;
 
 		if (g_fp->_currArchive) {
 			_mfield_14 = 0;
@@ -2160,43 +2152,43 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 
 		_mflags |= 1;
 
-		_someX = src->_someX;
-		_someY = src->_someY;
+		_someX = src._someX;
+		_someY = src._someY;
 	} else {
-		_mfield_14 = src->_mfield_14;
-		_mfield_8 = src->_mfield_8;
-		_mflags = src->_mflags;
+		_mfield_14 = src._mfield_14;
+		_mfield_8 = src._mfield_8;
+		_mflags = src._mflags;
 
-		_memfilename = src->_memfilename;
-		_dataSize = src->_dataSize;
-		_mfield_10 = src->_mfield_10;
-		_libHandle = src->_libHandle;
+		_memfilename = src._memfilename;
+		_dataSize = src._dataSize;
+		_mfield_10 = src._mfield_10;
+		_libHandle = src._libHandle;
 
-		if (src->_bitmap) {
+		if (src._bitmap) {
 			_field_54 = 1;
-			_bitmap = BitmapPtr(src->_bitmap->reverseImage(false));
+			_bitmap = BitmapPtr(src._bitmap->reverseImage(false));
 		}
 
-		_someX = src->_someX;
-		_someY = src->_someY;
+		_someX = src._someX;
+		_someY = src._someY;
 	}
 
-	_rect = src->_rect;
+	_rect = src._rect;
 
-	_width = src->_width;
-	_height = src->_height;
-	_field_7C = src->_field_7C;
+	_width = src._width;
+	_height = src._height;
+	_field_7C = src._field_7C;
 
-	if (src->getExCommand())
-		_exCommand = src->getExCommand()->createClone();
+	if (src.getExCommand())
+		_exCommand = src.getExCommand()->createClone();
 	else
 		_exCommand = 0;
 
-	_initialCountdown = src->_initialCountdown;
-	_field_6A = src->_field_6A;
-	_dynFlags = src->_dynFlags;
+	_initialCountdown = src._initialCountdown;
+	_field_6A = src._field_6A;
+	_dynFlags = src._dynFlags;
 
-	setPaletteData(src->getPaletteData());
+	setPaletteData(src.getPaletteData());
 
 	copyMemoryObject2(src);
 }
