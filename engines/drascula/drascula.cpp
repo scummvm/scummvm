@@ -94,6 +94,10 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_talkSequencesSize = 0;
 	_numLangs = 0;
 	feetHeight = 0;
+	floorX1 = 0;
+	floorY1 = 0;
+	floorX2 = 0;
+	floorY2 = 0;
 	lowerLimit = 0;
 	upperLimit = 0;
 	trackFinal = 0;
@@ -440,7 +444,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			enterRoom(62);
 			curX = -20;
 			curY = 56;
-			walkToPoint(Common::Point(65, 145));
+			gotoObject(65, 145);
 		}
 
 		// REMINDER: This is a good place to debug animations
@@ -546,14 +550,14 @@ bool DrasculaEngine::runCurrentChapter() {
 			// made the character start walking off screen, as his actual position was
 			// different than the displayed one
 			if (_roomNumber == 3 && (curX == 279) && (curY + curHeight == 101)) {
-				walkToPoint(Common::Point(178, 121));
-				walkToPoint(Common::Point(169, 135));
+				gotoObject(178, 121);
+				gotoObject(169, 135);
 			} else if (_roomNumber == 14 && (curX == 214) && (curY + curHeight == 121)) {
 				_walkToObject = true;
-				walkToPoint(Common::Point(190, 130));
+				gotoObject(190, 130);
 			} else if (_roomNumber == 14 && (curX == 246) && (curY + curHeight == 112)) {
 				_walkToObject = true;
-				walkToPoint(Common::Point(190, 130));
+				gotoObject(190, 130);
 			}
 		}
 
@@ -740,7 +744,8 @@ bool DrasculaEngine::verify1() {
 		removeObject();
 	else {
 		for (l = 0; l < numRoomObjs; l++) {
-			if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && doBreak == 0) {
+			if (_mouseX >= _objectX1[l] && _mouseY >= _objectY1[l]
+					&& _mouseX <= _objectX2[l] && _mouseY <= _objectY2[l] && doBreak == 0) {
 				if (exitRoom(l))
 					return true;
 				if (doBreak == 1)
@@ -753,9 +758,10 @@ bool DrasculaEngine::verify1() {
 			doBreak = 1;
 
 		for (l = 0; l < numRoomObjs; l++) {
-			if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && doBreak == 0) {
-				roomX = _roomObject[l].x;
-				roomY = _roomObject[l].y;
+			if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
+					&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l] && doBreak == 0) {
+				roomX = roomObjX[l];
+				roomY = roomObjY[l];
 				trackFinal = trackObj[l];
 				doBreak = 1;
 				_walkToObject = true;
@@ -764,8 +770,8 @@ bool DrasculaEngine::verify1() {
 		}
 
 		if (doBreak == 0) {
-			roomX = CLIP<int16>(_mouseX, _walkRect.left, _walkRect.right);
-			roomY = CLIP<int16>(_mouseY, _walkRect.top + feetHeight, _walkRect.bottom);
+			roomX = CLIP(_mouseX, floorX1, floorX2);
+			roomY = CLIP(_mouseY, floorY1 + feetHeight, floorY2);
 			startWalking();
 		}
 		doBreak = 0;
@@ -786,10 +792,11 @@ bool DrasculaEngine::verify2() {
 				return true;
 		} else {
 			for (l = 0; l < numRoomObjs; l++) {
-				if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && visible[l] == 1) {
+				if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
+						&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l] && visible[l] == 1) {
 					trackFinal = trackObj[l];
 					_walkToObject = true;
-					walkToPoint(_roomObject[l]);
+					gotoObject(roomObjX[l], roomObjY[l]);
 					if (checkAction(objectNum[l]))
 						return true;
 					if (currentChapter == 4)
