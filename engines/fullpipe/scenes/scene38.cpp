@@ -101,7 +101,7 @@ void sceneHandler38_propose() {
 	if (!g_vars->scene38_tally->_movement) {
 		if (g_vars->scene38_tally->_flags & 4) {
 			if (!(g_vars->scene38_tally->_flags & 2) && g_vars->scene38_tallyCounter > 0
-				&& g_fp->_rnd->getRandomNumber(32767) < 32767) {
+				&& g_fp->_rnd.getRandomNumber(32767) < 32767) {
 				chainQueue(QU_DLD_DENY, 0);
 				g_vars->scene38_tallyCounter = 0;
 			}
@@ -112,7 +112,7 @@ void sceneHandler38_propose() {
 void sceneHandler38_point() {
 	if ((!g_vars->scene38_boss->_movement && ((g_vars->scene38_boss->_flags & 4) || !(g_vars->scene38_boss->_flags & 2)))
 		&& g_vars->scene38_bossCounter > 0
-		&& g_fp->_rnd->getRandomNumber(32767) < 32767) {
+		&& g_fp->_rnd.getRandomNumber(32767) < 32767) {
 		if (g_vars->scene38_boss->_statics->_staticsId == ST_GLV_HAMMER) {
 			chainQueue(QU_GLV_TOSMALL, 0);
 			g_vars->scene38_bossCounter = 0;
@@ -130,7 +130,7 @@ void sceneHandler38_hammerKick() {
 		if (g_vars->scene38_shorty->_flags & 4) {
 			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_shortyCounter > 1
 				&& g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
-				&& g_fp->_rnd->getRandomNumber(32767) < 3276) {
+				&& g_fp->_rnd.getRandomNumber(32767) < 3276) {
 				chainQueue(QU_MLS_TURNR, 0);
 				g_vars->scene38_shortyCounter = 0;
 			}
@@ -150,7 +150,7 @@ void sceneHandler38_drink() {
 		if (g_vars->scene38_shorty->_flags & 4) {
 			if (!(g_vars->scene38_shorty->_flags & 2) && g_vars->scene38_shortyCounter > 0
 				&& g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2
-				&& g_fp->_rnd->getRandomNumber(32767) < 3276) {
+				&& g_fp->_rnd.getRandomNumber(32767) < 3276) {
 				chainQueue(QU_MLS_TURNR, 0);
 				g_vars->scene38_shortyCounter = 0;
 			}
@@ -189,9 +189,9 @@ void sceneHandler38_animateAlcoholics() {
 			} else {
 				int bossAnim = 0;
 
-				if (g_fp->_rnd->getRandomNumber(32767) >= 1310 || g_vars->scene38_boss->_statics->_staticsId != ST_GLV_HAMMER) {
-					if (g_fp->_rnd->getRandomNumber(32767) >= 1310) {
-						if (g_fp->_rnd->getRandomNumber(32767) < 1310) {
+				if (g_fp->_rnd.getRandomNumber(32767) >= 1310 || g_vars->scene38_boss->_statics->_staticsId != ST_GLV_HAMMER) {
+					if (g_fp->_rnd.getRandomNumber(32767) >= 1310) {
+						if (g_fp->_rnd.getRandomNumber(32767) < 1310) {
 							if (bossSt == ST_GLV_HAMMER)
 								bossAnim = QU_GLV_DRINK;
 							else if (bossSt == ST_GLV_NOHAMMER)
@@ -237,10 +237,10 @@ void sceneHandler38_animateAlcoholics() {
 	if (g_vars->scene38_tallyCounter >= 50) {
 		int tallyAnim = 0;
 
-		if (g_fp->_rnd->getRandomNumber(32767) >= 1310) {
-			if (g_fp->_rnd->getRandomNumber(32767) >= 1310) {
-				if (g_fp->_rnd->getRandomNumber(32767) >= 1310) {
-					if (g_fp->_rnd->getRandomNumber(32767) < 1310)
+		if (g_fp->_rnd.getRandomNumber(32767) >= 1310) {
+			if (g_fp->_rnd.getRandomNumber(32767) >= 1310) {
+				if (g_fp->_rnd.getRandomNumber(32767) >= 1310) {
+					if (g_fp->_rnd.getRandomNumber(32767) < 1310)
 						tallyAnim = QU_DLD_ICK;
 				} else {
 					tallyAnim = QU_DLD_GLOT;
@@ -285,9 +285,9 @@ void sceneHandler38_animateAlcoholics() {
 
 	int shortyAnim = 0;
 
-	if (g_fp->_rnd->getRandomNumber(32767) >= 1310) {
-		if (g_fp->_rnd->getRandomNumber(32767) >= 1310 || g_vars->scene38_shorty->_statics->_staticsId != ST_MLS_LEFT2) {
-			if (g_vars->scene38_boss->_statics->_staticsId != ST_GLV_SLEEP2 && g_vars->scene38_bossCounter > 30 && g_fp->_rnd->getRandomNumber(32767) < 0x3FFF && g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2)
+	if (g_fp->_rnd.getRandomNumber(32767) >= 1310) {
+		if (g_fp->_rnd.getRandomNumber(32767) >= 1310 || g_vars->scene38_shorty->_statics->_staticsId != ST_MLS_LEFT2) {
+			if (g_vars->scene38_boss->_statics->_staticsId != ST_GLV_SLEEP2 && g_vars->scene38_bossCounter > 30 && g_fp->_rnd.getRandomNumber(32767) < 0x3FFF && g_vars->scene38_shorty->_statics->_staticsId == ST_MLS_LEFT2)
 				shortyAnim = QU_MLS_HAND;
 		} else {
 			shortyAnim = QU_MLS_BLINK;

@@ -56,7 +56,7 @@ void scene02_initScene(Scene *sc) {
 		g_vars->scene02_boxOpen = false;
 	} else {
 		g_vars->scene02_boxOpen = true;
-		g_vars->scene02_boxDelay = 100 * g_fp->_rnd->getRandomNumber(32767) + 150;
+		g_vars->scene02_boxDelay = 100 * g_fp->_rnd.getRandomNumber(32767) + 150;
 	}
 
 	g_fp->_floaters->init(g_fp->_gameLoader->_gameVar->getSubVarByName("SC_2"));
@@ -116,13 +116,13 @@ int sceneHandler02(ExCommand *ex) {
 				if (g_fp->_floaters->_array2[0]->val5 == -50) {
 					g_fp->_floaters->stopAll();
 					g_vars->scene02_boxOpen = false;
-					g_vars->scene02_boxDelay = 100 * g_fp->_rnd->getRandomNumber(32767) + 150;
+					g_vars->scene02_boxDelay = 100 * g_fp->_rnd.getRandomNumber(32767) + 150;
 				} else {
 					g_fp->_floaters->_array2[0]->val3 = -50;
 				}
 			} else {
-				g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd->getRandomNumber(700) + 100, -50, 0, 0);
-				g_vars->scene02_boxDelay = 500 * g_fp->_rnd->getRandomNumber(32767) + 1000;
+				g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd.getRandomNumber(700) + 100, -50, 0, 0);
+				g_vars->scene02_boxDelay = 500 * g_fp->_rnd.getRandomNumber(32767) + 1000;
 			}
 		}
 

@@ -128,7 +128,7 @@ int sceneHandler15(ExCommand *cmd) {
 		break;
 
 	case MSG_SC15_ASSDRYG:
-		if (g_fp->_rnd->getRandomNumber(1))
+		if (g_fp->_rnd.getRandomNumber(1))
 			g_fp->playSound(SND_15_011, 0);
 		else
 			g_fp->playSound(SND_15_006, 0);

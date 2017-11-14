@@ -181,7 +181,7 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 		else
 			ani->startAnim(MV_KSL_SWING, 0, -1);
 
-		ani->_movement->setDynamicPhaseIndex(g_fp->_rnd->getRandomNumber(17));
+		ani->_movement->setDynamicPhaseIndex(g_fp->_rnd.getRandomNumber(17));
 
 		g_vars->scene18_swingers.push_back(swinger);
 	}

@@ -151,12 +151,12 @@ void sceneHandler05_genFlies() {
 	if (g_vars->scene05_floatersTicker <= 1000)
 		return;
 
-	if (g_fp->_rnd->getRandomNumber(1)) {
-		int numFlies = g_fp->_rnd->getRandomNumber(3) + 1;
+	if (g_fp->_rnd.getRandomNumber(1)) {
+		int numFlies = g_fp->_rnd.getRandomNumber(3) + 1;
 
 		for (int i = 0; i < numFlies; i++) {
-			int x = g_fp->_rnd->getRandomNumber(55) + 538;
-			int y = g_fp->_rnd->getRandomNumber(60) + i * 30 + 520;
+			int x = g_fp->_rnd.getRandomNumber(55) + 538;
+			int y = g_fp->_rnd.getRandomNumber(60) + i * 30 + 520;
 
 			g_fp->_floaters->genFlies(g_fp->_currentScene, x, y, 5, 1);
 			g_fp->_floaters->_array2.back()->val2 = 585;

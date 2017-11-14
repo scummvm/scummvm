@@ -123,10 +123,10 @@ void sceneHandler35_genFlies() {
 	StaticANIObject *fly = g_fp->_currentScene->getStaticANIObject1ById(ANI_FLY, -1);
 
 	int xoff = 0;
-	if ((!fly || !(fly->_flags & 4)) && !(g_fp->_rnd->getRandomNumber(32767) % 30)) {
+	if ((!fly || !(fly->_flags & 4)) && !(g_fp->_rnd.getRandomNumber(32767) % 30)) {
 		int x, y;
 
-		if (g_fp->_rnd->getRandomNumber(1)) {
+		if (g_fp->_rnd.getRandomNumber(1)) {
 			x = 600;
 			y = 0;
 		} else {
@@ -134,10 +134,10 @@ void sceneHandler35_genFlies() {
 			y = 600;
 		}
 
-		int numFlies = g_fp->_rnd->getRandomNumber(3) + 1;
+		int numFlies = g_fp->_rnd.getRandomNumber(3) + 1;
 
 		while (numFlies--) {
-			g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd->getRandomNumber(55) + 1057,  g_fp->_rnd->getRandomNumber(60) + x + xoff, 4, 1);
+			g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd.getRandomNumber(55) + 1057,  g_fp->_rnd.getRandomNumber(60) + x + xoff, 4, 1);
 
 			xoff += 40;
 

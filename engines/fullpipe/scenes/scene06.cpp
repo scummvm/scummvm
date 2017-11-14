@@ -382,7 +382,7 @@ void sceneHandler06_throwBall() {
 }
 
 void sceneHandler06_eggieWalk() {
-	if (15 - g_vars->scene06_numBallsGiven >= 4 && !g_fp->_rnd->getRandomNumber(9)) {
+	if (15 - g_vars->scene06_numBallsGiven >= 4 && !g_fp->_rnd.getRandomNumber(9)) {
 		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_EGGIE, -1);
 
 		if (!ani || !(ani->_flags & 4)) {
