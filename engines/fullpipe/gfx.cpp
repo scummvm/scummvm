@@ -524,7 +524,7 @@ void Picture::init() {
 
 	MemoryObject::getData();
 
-	_bitmap = BitmapPtr(new Bitmap());
+	_bitmap.reset(new Bitmap());
 
 	getDibInfo();
 
@@ -735,7 +735,7 @@ Bitmap::Bitmap(const Bitmap &src) {
 	_type = src._type;
 	_width = src._width;
 	_height = src._height;
-	_surface = TransSurfacePtr(src._surface);
+	_surface = src._surface;
 	_flipping = src._flipping;
 }
 
@@ -773,8 +773,7 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 }
 
 void Bitmap::decode(byte *pixels, const Palette &palette) {
-	_surface = TransSurfacePtr(new Graphics::TransparentSurface);
-
+	_surface = TransSurfacePtr(new Graphics::TransparentSurface, Graphics::SurfaceDeleter());
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
