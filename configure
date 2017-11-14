@@ -3557,7 +3557,7 @@ esac
 # Enable High resolution engines (>320x240) support only for backends which support it
 #
 case $_host in
-	gcw0)
+	ds | gcw0)
 		if test "$_highres" = yes ; then
 			_highres=yes
 		else
