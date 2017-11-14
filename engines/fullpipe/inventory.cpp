@@ -94,18 +94,12 @@ Inventory2::~Inventory2() {
 }
 
 bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially
-	for (uint i = 0; i < _inventoryItems.size(); i++)
-		delete _inventoryItems[i];
-
 	_inventoryItems.clear();
 
 	int numInvs = file.readUint32LE();
 
 	for (int i = 0; i < numInvs; i++) {
-		InventoryItem *t = new InventoryItem();
-		t->itemId = file.readUint16LE();
-		t->count = file.readUint16LE();
-		_inventoryItems.push_back(t);
+		_inventoryItems.push_back(InventoryItem(file.readUint16LE(), file.readUint16LE()));
 	}
 
 	return true;
@@ -115,8 +109,8 @@ bool Inventory2::savePartial(MfcArchive &file) {
 	file.writeUint32LE(_inventoryItems.size());
 
 	for (uint i = 0; i < _inventoryItems.size(); i++) {
-		file.writeUint16LE(_inventoryItems[i]->itemId);
-		file.writeUint16LE(_inventoryItems[i]->count);
+		file.writeUint16LE(_inventoryItems[i].itemId);
+		file.writeUint16LE(_inventoryItems[i].count);
 	}
 
 	return true;
@@ -124,7 +118,7 @@ bool Inventory2::savePartial(MfcArchive &file) {
 
 void Inventory2::addItem(int itemId, int count) {
 	if (getInventoryPoolItemIndexById(itemId) >= 0)
-		_inventoryItems.push_back(new InventoryItem(itemId, count));
+		_inventoryItems.push_back(InventoryItem(itemId, count));
 }
 
 void Inventory2::addItem2(StaticANIObject *obj) {
@@ -140,14 +134,15 @@ void Inventory2::removeItem(int itemId, int count) {
 	while (count) {
 		int i;
 		for (i = _inventoryItems.size() - 1; i >= 0; i--) {
-			if (_inventoryItems[i]->itemId == itemId) {
+			InventoryItem &item = _inventoryItems[i];
+			if (item.itemId == itemId) {
 				if (_selectedId == itemId)
 					unselectItem(false);
 
-				if (_inventoryItems[i]->count > count) {
-					_inventoryItems[i]->count -= count;
+				if (item.count > count) {
+					item.count -= count;
 				} else {
-					count -= _inventoryItems[i]->count;
+					count -= item.count;
 					_inventoryItems.remove_at(i);
 				}
 
@@ -166,7 +161,7 @@ void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int prio
 	debugC(2, kDebugInventory, "removeItem2(*, %d, %d, %d, %d)", itemId, x, y, priority);
 
 	if (idx >= 0) {
-		if (_inventoryItems[idx]->count) {
+		if (_inventoryItems[idx].count) {
 			removeItem(itemId, 1);
 
 			Scene *sc = g_fp->accessScene(_sceneId);
@@ -188,8 +183,8 @@ int Inventory2::getCountItemsWithId(int itemId) {
 	int res = 0;
 
 	for (uint i = 0; i < _inventoryItems.size(); i++) {
-		if (_inventoryItems[i]->itemId == itemId)
-			res += _inventoryItems[i]->count;
+		if (_inventoryItems[i].itemId == itemId)
+			res += _inventoryItems[i].count;
 	}
 
 	return res;
@@ -197,7 +192,7 @@ int Inventory2::getCountItemsWithId(int itemId) {
 
 int Inventory2::getInventoryItemIndexById(int itemId) {
 	for (uint i = 0; i < _inventoryItems.size(); i++) {
-		if (_inventoryItems[i]->itemId == itemId)
+		if (_inventoryItems[i].itemId == itemId)
 			return i;
 	}
 
@@ -256,36 +251,35 @@ void Inventory2::rebuildItemRects() {
 	}
 
 	for (uint i = 0; i < _inventoryItems.size(); i++) {
-		int idx = getInventoryPoolItemIndexById(_inventoryItems[i]->itemId);
+		int idx = getInventoryPoolItemIndexById(_inventoryItems[i].itemId);
 
-		InventoryIcon *icn = new InventoryIcon();
+		_inventoryIcons.push_back(InventoryIcon());
+		InventoryIcon &icn = _inventoryIcons.back();
 
-		icn->inventoryItemId = _itemsPool[idx]->id;
+		icn.inventoryItemId = _itemsPool[idx]->id;
 
-		icn->pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormal, 0);
-		icn->pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectHover, 0);
-		icn->pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectSelected, 0);
+		icn.pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormal, 0);
+		icn.pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectHover, 0);
+		icn.pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectSelected, 0);
 
-		const Dims dims = icn->pictureObjectNormal->getDimensions();
+		const Dims dims = icn.pictureObjectNormal->getDimensions();
 
 		if (_itemsPool[idx]->flags & 0x10000) {
-			icn->x1 = 730;
-			icn->y1 = itemY;
-			icn->x2 = dims.x + 730;
-			icn->y2 = dims.y + itemY + 10;
+			icn.x1 = 730;
+			icn.y1 = itemY;
+			icn.x2 = dims.x + 730;
+			icn.y2 = dims.y + itemY + 10;
 		} else {
-			icn->x1 = itemX;
-			icn->y1 = itemY;
-			icn->x2 = itemX + dims.x;
-			itemX = icn->x2 + 1;
-			icn->y2 = dims.y + itemY + 10;
+			icn.x1 = itemX;
+			icn.y1 = itemY;
+			icn.x2 = itemX + dims.x;
+			itemX = icn.x2 + 1;
+			icn.y2 = dims.y + itemY + 10;
 		}
 
-		_inventoryIcons.push_back(icn);
-
-		if (itemX >= 2 * (icn->x1 - icn->x2) + 800) {
+		if (itemX >= 2 * (icn.x1 - icn.x2) + 800) {
 			itemX = 9;
-			itemY = icn->y2 + 1;
+			itemY = icn.y2 + 1;
 		}
 	}
 }
@@ -303,15 +297,15 @@ void Inventory2::draw() {
 	_picture->draw(-1, -1, 0, 0);
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
-		InventoryIcon *icn = _inventoryIcons[i];
+		const InventoryIcon &icn = _inventoryIcons[i];
 
-		if (icn->isSelected) {
-			icn->pictureObjectSelected->drawAt(icn->x1, icn->y1 + 10);
+		if (icn.isSelected) {
+			icn.pictureObjectSelected->drawAt(icn.x1, icn.y1 + 10);
 		} else {
-			if (icn->isMouseHover)
-				icn->pictureObjectHover->drawAt(icn->x1, icn->y1 + 10);
+			if (icn.isMouseHover)
+				icn.pictureObjectHover->drawAt(icn.x1, icn.y1 + 10);
 			else
-				icn->pictureObjectNormal->drawAt(icn->x1, icn->y1 + 10);
+				icn.pictureObjectNormal->drawAt(icn.x1, icn.y1 + 10);
 		}
 	}
 
@@ -394,22 +388,23 @@ bool Inventory2::handleLeftClick(ExCommand *cmd) {
 	bool res = false;
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
-		if (cmd->_x >= _inventoryIcons[i]->x1 && cmd->_x <= _inventoryIcons[i]->x2 &&
-			cmd->_y >= _inventoryIcons[i]->y1 && cmd->_y <= _inventoryIcons[i]->y2) {
+		InventoryIcon &icon = _inventoryIcons[i];
+		if (cmd->_x >= icon.x1 && cmd->_x <= icon.x2 &&
+			cmd->_y >= icon.y1 && cmd->_y <= icon.y2) {
 			if (getSelectedItemId()) {
-				if (getSelectedItemId() != _inventoryIcons[i]->inventoryItemId)
+				if (getSelectedItemId() != icon.inventoryItemId)
 					unselectItem(0);
 			}
-			if (getItemFlags(_inventoryIcons[i]->inventoryItemId) & 1) {
+			if (getItemFlags(icon.inventoryItemId) & 1) {
 				ExCommand *ex = new ExCommand(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
 				ex->_field_2C = 11;
-				ex->_field_14 = _inventoryIcons[i]->inventoryItemId;
+				ex->_field_14 = _inventoryIcons[i].inventoryItemId;
 				ex->_excFlags |= 3;
 				ex->postMessage();
 			}
-			if (!(getItemFlags(_inventoryIcons[i]->inventoryItemId) & 2)) {
-				selectItem(_inventoryIcons[i]->inventoryItemId);
-				_inventoryIcons[i]->isSelected = true;
+			if (!(getItemFlags(icon.inventoryItemId) & 2)) {
+				selectItem(icon.inventoryItemId);
+				icon.isSelected = true;
 			}
 			res = true;
 		}
@@ -446,8 +441,8 @@ bool Inventory2::unselectItem(bool flag) {
 	_selectedId = -1;
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
-		if (_inventoryIcons[i]->isSelected)
-			_inventoryIcons[i]->isSelected = false;
+		if (_inventoryIcons[i].isSelected)
+			_inventoryIcons[i].isSelected = false;
 	}
 
 	g_fp->getGameLoaderInputController()->setCursorItemPicture(0);
@@ -473,16 +468,16 @@ int Inventory2::getHoveredItem(Common::Point *point) {
 		return 0;
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
-		InventoryIcon *icn = _inventoryIcons[i];
+		InventoryIcon &icn = _inventoryIcons[i];
 		if (selId ||
-			point->x < icn->x1 ||
-			point->x > icn->x2 ||
-			point->y < _topOffset + icn->y1 ||
-			point->y > _topOffset + icn->y2) {
-			icn->isMouseHover = false;
+			point->x < icn.x1 ||
+			point->x > icn.x2 ||
+			point->y < _topOffset + icn.y1 ||
+			point->y > _topOffset + icn.y2) {
+			icn.isMouseHover = false;
 		} else {
-			icn->isMouseHover = true;
-			return icn->inventoryItemId;
+			icn.isMouseHover = true;
+			return icn.inventoryItemId;
 		}
 	}
 
@@ -493,7 +488,7 @@ void Inventory2::clear() {
 	unselectItem(0);
 
 	for (uint i = 0; i < _inventoryItems.size(); i++)
-		getInventoryPoolItemFieldCById(_inventoryItems[i]->itemId);
+		getInventoryPoolItemFieldCById(_inventoryItems[i].itemId);
 
 	_inventoryItems.clear();
 }
