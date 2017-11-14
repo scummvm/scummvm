@@ -1162,13 +1162,12 @@ public:
 		_id = GUARD;
 		_shown[0] = kShownTrue;
 
-		_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CORRIDOR4,21);
-		_objectState[1] = Object(_id, kStringCorridor,kStringDefaultDescription,NULLOBJECT,EXIT,3,3,0,CORRIDOR7,5);
-		_objectState[2] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE,1,1,6,CORRIDOR9,3);
-		// Originally GUARD was ObjectID..
-		_objectState[3] = Object(_id, kStringAxacussan,kStringAxacussanDescription,INSTRUMENTS,TALK,0,0,0);
-		_objectState[4] = Object(_id, kStringImage,kStringImageDescription2,NULLOBJECT,NULLTYPE,2,2,0);
-		_objectState[5] = Object(_id, kStringMastercard,kStringMastercardDescription,MASTERKEYCARD,TAKE|COMBINABLE,255,255,1);
+		_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, CORRIDOR4, 21);
+		_objectState[1] = Object(_id, kStringCorridor, kStringDefaultDescription, NULLOBJECT, EXIT, 3, 3, 0, CORRIDOR7, 5);
+		_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 1, 1, 6, CORRIDOR9, 3);
+		_objectState[3] = Object(_id, kStringAxacussan, kStringAxacussanDescription, GUARDIAN, TALK, 0, 0, 0);
+		_objectState[4] = Object(_id, kStringImage, kStringImageDescription2, NULLOBJECT, NULLTYPE, 2, 2, 0);
+		_objectState[5] = Object(_id, kStringMastercard, kStringMastercardDescription, MASTERKEYCARD, TAKE | COMBINABLE, 255, 255, 1);
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
