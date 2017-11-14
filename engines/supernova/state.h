@@ -214,6 +214,7 @@ public:
 	void taxiEvent();
 	void searchStartEvent();
 	void outro();
+	void guardShot();
 };
 
 }

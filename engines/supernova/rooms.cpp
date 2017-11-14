@@ -2831,8 +2831,32 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 bool AxacussIntersection::interact(Action verb, Object &obj1, Object &obj2) {
-	// STUB
-	return false;
+	if (((verb == ACTION_WALK) || (verb == ACTION_OPEN)) && (obj1._id == DOOR) && !isSectionVisible(1))
+		_gm->guardShot();
+	else if ((verb == ACTION_OPEN) && (obj1._id == DOOR) && !obj1.hasProperty(OPENED)) {
+		_gm->_rooms[CORRIDOR9]->setSectionVisible(27, true);
+		_gm->_rooms[CORRIDOR9]->setSectionVisible(28, false);
+		_gm->_rooms[CORRIDOR9]->getObject(1)->setProperty(OPENED);
+		return false;
+	} else if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) && obj1.hasProperty(OPENED)) {
+		_gm->_rooms[CORRIDOR9]->setSectionVisible(27, false);
+		_gm->_rooms[CORRIDOR9]->setSectionVisible(28, true);
+		_gm->_rooms[CORRIDOR9]->getObject(1)->disableProperty(OPENED);
+		return false;
+	} else if ((verb == ACTION_TALK) && (obj1._id == GUARDIAN)) {
+		// FIXME: refactor _rowsX and _dialogsX
+		// _gm->dialog(3, &rowsx, &_dialogsX, 0);
+		_gm->guardShot();
+	} else if ((verb == ACTION_TAKE) && (obj1._id == MASTERKEYCARD)) {
+		_gm->great(0);
+		setSectionVisible(7, false);
+		return false;
+	} else if ((verb == ACTION_USE) && (Object::combine(obj1, obj2, MAGNET, GUARDIAN) || Object::combine(obj1, obj2, KNIFE, GUARDIAN)))
+		_vm->renderMessage(kStringArsanoEntrance27);
+	else
+		return false;
+
+	return true;
 }
 
 bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {

@@ -1930,4 +1930,22 @@ void GameManager::executeRoom() {
 		_currentRoom->onEntrance();
 }
 
+void GameManager::guardShot() {
+	drawImage(2);
+	drawImage(5);
+	wait2(3);
+	drawImage(2);
+
+	_vm->playSound(kAudioVoiceHalt);
+	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		wait2(1);
+
+	drawImage(5);
+	wait2(5);
+	drawImage(3);
+	wait2(3);
+
+	shot(4, 3);
+}
+
 }
