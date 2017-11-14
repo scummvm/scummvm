@@ -106,6 +106,7 @@ public:
 
 	void initialize();
 	void restartGame();
+	bool shouldQuit();
 
 	void setMusicAllowed(int val) { _musicAllowed = val; }
 

@@ -626,7 +626,7 @@ void Picture::drawRotated(int x, int y, int angle) {
 }
 
 void Picture::displayPicture() {
-	if (!g_fp->_gameContinue)
+	if (g_fp->shouldQuit())
 		return;
 
 	getData();
@@ -644,7 +644,7 @@ void Picture::displayPicture() {
 	g_fp->_system->delayMillis(10);
 	g_fp->_system->updateScreen();
 
-	while (g_fp->_gameContinue) {
+	while (!g_fp->shouldQuit()) {
 		g_fp->updateEvents();
 		g_fp->_system->delayMillis(10);
 		g_fp->_system->updateScreen();

@@ -262,6 +262,10 @@ void FullpipeEngine::restartGame() {
 	}
 }
 
+bool FullpipeEngine::shouldQuit() {
+	return !_gameContinue || Engine::shouldQuit();
+}
+
 Common::Error FullpipeEngine::loadGameState(int slot) {
 	if (_gameLoader->readSavegame(getSavegameFile(slot)))
 		return Common::kNoError;
@@ -312,15 +316,16 @@ Common::Error FullpipeEngine::run() {
 	loadAllScenes();
 #endif
 
-	_gameContinue = true;
-
 	int time1 = g_fp->_system->getMillis();
 
 	// Center mouse
 	_system->warpMouse(400, 300);
 
-	while (_gameContinue) {
+	for (;;) {
 		updateEvents();
+		if (shouldQuit()) {
+			break;
+		}
 
 		int time2 = g_fp->_system->getMillis();
 
@@ -436,8 +441,7 @@ void FullpipeEngine::updateEvents() {
 			_mouseScreenPos = event.mouse;
 			break;
 		case Common::EVENT_QUIT:
-			_gameContinue = false;
-			break;
+			return;
 		case Common::EVENT_RBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
 				ex = new ExCommand(0, 17, 107, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
