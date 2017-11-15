@@ -31,6 +31,10 @@
 
 namespace Fullpipe {
 
+enum QueueFlags {
+	kInGlobalQueue = 2
+};
+
 class Message : public CObject {
  public:
 	int _messageKind;
@@ -146,6 +150,7 @@ class MessageQueue : public CObject {
 
 	void setParamInt(int key1, int key2);
 
+	/** `ani` will own `this` if `chain` returns true */
 	bool chain(StaticANIObject *ani);
 	void update();
 	void sendNextCommand();
@@ -168,6 +173,7 @@ class GlobalMessageQueueList : public Common::Array<MessageQueue *> {
 	void deleteQueueById(int id);
 	void removeQueueById(int id);
 	void disableQueueById(int id);
+	/** `msg` becomes owned by `this` */
 	void addMessageQueue(MessageQueue *msg);
 
 	int compact();
