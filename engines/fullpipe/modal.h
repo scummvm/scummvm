@@ -205,7 +205,7 @@ class ModalMainMenu : public BaseModalObject {
 public:
 	Scene *_scene;
 	int _hoverAreaId;
-	Common::Array<MenuArea *> _areas;
+	Common::Array<MenuArea> _areas;
 	int _menuSliderIdx;
 	int _musicSliderIdx;
 	MenuArea *_lastArea;

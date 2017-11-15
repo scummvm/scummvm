@@ -1234,8 +1234,6 @@ void ModalCredits::update() {
 }
 
 ModalMainMenu::ModalMainMenu() {
-	_areas.clear();
-
 	_lastArea = 0;
 	_hoverAreaId = 0;
 	_mfield_34 = 0;
@@ -1262,66 +1260,68 @@ ModalMainMenu::ModalMainMenu() {
 
 	MenuArea *area;
 
-	area = new MenuArea();
+	_areas.push_back(MenuArea());
+	area = &_areas.back();
 	area->picIdL = PIC_MNU_EXIT_L;
 	area->picObjD = 0;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
-	_areas.push_back(area);
 
-	area = new MenuArea();
+	_areas.push_back(MenuArea());
+	area = &_areas.back();
 	area->picIdL = PIC_MNU_CONTINUE_L;
 	area->picObjD = 0;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
-	_areas.push_back(area);
 
 	if (isSaveAllowed()) {
-		area = new MenuArea();
+		_areas.push_back(MenuArea());
+		area = &_areas.back();
 		area->picIdL = PIC_MNU_SAVE_L;
 		area->picObjD = 0;
 		area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 		area->picObjL->_flags &= 0xFFFB;
-		_areas.push_back(area);
 	}
 
-	area = new MenuArea();
+	_areas.push_back(MenuArea());
+	area = &_areas.back();
 	area->picIdL = PIC_MNU_LOAD_L;
 	area->picObjD = 0;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
-	_areas.push_back(area);
 
-	area = new MenuArea();
+	_areas.push_back(MenuArea());
+	area = &_areas.back();
 	area->picIdL = PIC_MNU_RESTART_L;
 	area->picObjD = 0;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
-	_areas.push_back(area);
 
-	area = new MenuArea();
+	_areas.push_back(MenuArea());
+	area = &_areas.back();
 	area->picIdL = PIC_MNU_AUTHORS_L;
 	area->picObjD = 0;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
-	_areas.push_back(area);
 
-	area = new MenuArea();
+	_areas.push_back(MenuArea());
+	area = &_areas.back();
 	area->picIdL = PIC_MNU_SLIDER_L;
 	area->picObjD = _scene->getPictureObjectById(PIC_MNU_SLIDER_D, 0);
 	area->picObjD->_flags |= 4;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
-	_areas.push_back(area);
+
 	_menuSliderIdx = _areas.size() - 1;
 
-	area = new MenuArea();
+	_areas.push_back(MenuArea());
+	area = &_areas.back();
 	area->picIdL = PIC_MNU_MUSICSLIDER_L;
 	area->picObjD = _scene->getPictureObjectById(PIC_MNU_MUSICSLIDER_D, 0);
 	area->picObjD->_flags |= 4;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
-	_areas.push_back(area);
+
 	_musicSliderIdx = _areas.size() - 1;
 
 	if (g_fp->_mainMenu_debugEnabled)
@@ -1348,20 +1348,20 @@ bool ModalMainMenu::handleMessage(ExCommand *message) {
 
 		if (numarea >= 0) {
 			if (numarea == _menuSliderIdx) {
-				_lastArea = _areas[_menuSliderIdx];
+				_lastArea = &_areas[_menuSliderIdx];
 				_sliderOffset = _lastArea->picObjL->_ox - point.x;
 
 				return false;
 			}
 
 			if (numarea == _musicSliderIdx) {
-				_lastArea = _areas[_musicSliderIdx];
+				_lastArea = &_areas[_musicSliderIdx];
 				_sliderOffset = _lastArea->picObjL->_ox - point.x;
 
 				return false;
 			}
 
-			_hoverAreaId = _areas[numarea]->picIdL;
+			_hoverAreaId = _areas[numarea].picIdL;
 		}
 
 		return false;
@@ -1628,23 +1628,23 @@ void ModalMainMenu::updateSliderPos() {
 
 int ModalMainMenu::checkHover(Common::Point &point) {
 	for (uint i = 0; i < _areas.size(); i++) {
-		if (_areas[i]->picObjL->isPixelHitAtPos(point.x, point.y)) {
-			_areas[i]->picObjL->_flags |= 4;
+		if (_areas[i].picObjL->isPixelHitAtPos(point.x, point.y)) {
+			_areas[i].picObjL->_flags |= 4;
 
 			return i;
 		} else {
-			_areas[i]->picObjL->_flags &= 0xFFFB;
+			_areas[i].picObjL->_flags &= 0xFFFB;
 		}
 	}
 
-	if (isOverArea(_areas[_menuSliderIdx]->picObjL, &point)) {
-		_areas[_menuSliderIdx]->picObjL->_flags |= 4;
+	if (isOverArea(_areas[_menuSliderIdx].picObjL, &point)) {
+		_areas[_menuSliderIdx].picObjL->_flags |= 4;
 
 		return _menuSliderIdx;
 	}
 
-	if (isOverArea(_areas[_musicSliderIdx]->picObjL, &point)) {
-		_areas[_musicSliderIdx]->picObjL->_flags |= 4;
+	if (isOverArea(_areas[_musicSliderIdx].picObjL, &point)) {
+		_areas[_musicSliderIdx].picObjL->_flags |= 4;
 
 		return _musicSliderIdx;
 	}
@@ -1697,25 +1697,23 @@ void ModalMainMenu::enableDebugMenu(char c) {
 }
 
 void ModalMainMenu::enableDebugMenuButton() {
-	MenuArea *area;
-
 	for (uint i = 0; i < _areas.size(); i++)
-		if (_areas[i]->picIdL == PIC_MNU_DEBUG_L)
+		if (_areas[i].picIdL == PIC_MNU_DEBUG_L)
 			return;
 
-	area = new MenuArea();
+	_areas.push_back(MenuArea());
+	MenuArea *area = &_areas.back();
 	area->picIdL = PIC_MNU_DEBUG_L;
 	area->picObjD = 0;
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
-	_areas.push_back(area);
 
 	g_fp->_mainMenu_debugEnabled = true;
 }
 
 void ModalMainMenu::setSliderPos() {
 	int x = 173 * (g_fp->_sfxVolume + 3000) / 3000 + 65;
-	PictureObject *obj = _areas[_menuSliderIdx]->picObjD;
+	PictureObject *obj = _areas[_menuSliderIdx].picObjD;
 
 	if (x >= 65) {
 		if (x > 238)
@@ -1725,10 +1723,10 @@ void ModalMainMenu::setSliderPos() {
 	}
 
 	obj->setOXY(x, obj->_oy);
-	_areas[_menuSliderIdx]->picObjL->setOXY(x, obj->_oy);
+	_areas[_menuSliderIdx].picObjL->setOXY(x, obj->_oy);
 
 	x = 173 * g_fp->_musicVolume / 255 + 65;
-	obj = _areas[_musicSliderIdx]->picObjD;
+	obj = _areas[_musicSliderIdx].picObjD;
 
 	if (x >= 65) {
 		if (x > 238)
@@ -1738,7 +1736,7 @@ void ModalMainMenu::setSliderPos() {
 	}
 
 	obj->setOXY(x, obj->_oy);
-	_areas[_musicSliderIdx]->picObjL->setOXY(x, obj->_oy);
+	_areas[_musicSliderIdx].picObjL->setOXY(x, obj->_oy);
 }
 
 ModalHelp::ModalHelp() {
