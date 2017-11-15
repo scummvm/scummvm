@@ -65,6 +65,7 @@ class Scene : public Background {
 	MessageQueue *getMessageQueueByName(const Common::String &name);
 
 	void deleteStaticANIObject(StaticANIObject *obj);
+	/** takes ownership of the passed obj */
 	void addStaticANIObject(StaticANIObject *obj, bool addList2);
 
 	void setPictureObjectsFlag4();
@@ -94,14 +95,14 @@ class Scene : public Background {
 
 class SceneTag : public CObject {
  public:
-	CObject *_field_4;
 	Common::String _tag;
+	/** owned, but cannot use ScopedPtr because this object must be copyable */
 	Scene *_scene;
 	int16 _sceneId;
 
  public:
 	SceneTag();
-	~SceneTag();
+	virtual ~SceneTag();
 
 	virtual bool load(MfcArchive &file);
 	void loadScene();
