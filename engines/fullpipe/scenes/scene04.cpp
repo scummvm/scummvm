@@ -958,7 +958,7 @@ void sceneHandler04_walkKozyawka() {
 void sceneHandler04_bottleUpdateObjects(int off) {
 	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
 		if ((*it)->_objtype == kObjTypeStaticANIObject) {
-			StaticANIObject *st = (StaticANIObject *)*it;
+			StaticANIObject *st = static_cast<StaticANIObject *>(*it);
 
 			st->setOXY(st->_ox, off + st->_oy);
 		} else {
@@ -1138,7 +1138,7 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 
 	if (!(g_fp->_aniMan->_flags & 0x100)) {
 		if (getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->_objtype == kObjTypeMctlCompound) {
-			MctlCompound *mc = (MctlCompound *)getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
+			MctlCompound *mc = static_cast<MctlCompound *>(getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId));
 
 			if (mc->_motionControllers[0]->_movGraphReactObj->pointInRegion(g_fp->_sceneRect.left + ex->_x, g_fp->_sceneRect.top + ex->_y)) {
 				if (g_vars->scene04_ladder->collisionDetection(g_fp->_aniMan)) {

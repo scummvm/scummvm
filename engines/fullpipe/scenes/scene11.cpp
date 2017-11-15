@@ -134,9 +134,7 @@ void scene11_initScene(Scene *sc) {
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 1);
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 1);
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 0);
-
-		((MctlCompound *)getCurrSceneSc2MotionController())->replaceNodeX(805, 905);
-
+		getCurrSceneSc2MotionController()->replaceNodeX(805, 905);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->replaceNodeX(303, 353);
 	} else if (swingie == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
 				|| swingie == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
@@ -148,8 +146,7 @@ void scene11_initScene(Scene *sc) {
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 0);
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 1);
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 0);
-
-		((MctlCompound *)getCurrSceneSc2MotionController())->replaceNodeX(905, 805);
+		getCurrSceneSc2MotionController()->replaceNodeX(905, 805);
 	} else {
 		g_vars->scene11_swingIsSwinging = false;
 		g_vars->scene11_swingieStands = false;

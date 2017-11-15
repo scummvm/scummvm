@@ -2340,7 +2340,7 @@ bool ModalDemo::launch() {
 		_scene = sc;
 
 		for (uint i = 1; i < sc->_picObjList.size(); i++) {
-			if (((PictureObject *)sc->_picObjList[i])->_id == 399)
+			if (sc->_picObjList[i]->_id == 399)
 				sc->_picObjList[i]->_flags |= 4;
 			else
 				sc->_picObjList[i]->_flags &= 0xFFFB;

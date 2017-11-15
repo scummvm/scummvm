@@ -215,7 +215,7 @@ void FullpipeEngine::winArcade() {
 void FullpipeEngine::updateCursorCommon() {
 	GameObject *ani = _currentScene->getStaticANIObjectAtPos(_mouseVirtX, _mouseVirtY);
 
-	GameObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
+	PictureObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
 	if (!ani || (pic && pic->_priority < ani->_priority))
 		ani = pic;
 
@@ -241,7 +241,7 @@ void FullpipeEngine::updateCursorCommon() {
 			_cursorId = PIC_CSR_DEFAULT_INV;
 			return;
 		}
-		if (_objectIdAtCursor == ANI_LIFTBUTTON && lift_getButtonIdP(((StaticANIObject *)ani)->_statics->_staticsId)) {
+		if (_objectIdAtCursor == ANI_LIFTBUTTON && ani->_objtype == kObjTypeStaticANIObject && lift_getButtonIdP(static_cast<StaticANIObject *>(ani)->_statics->_staticsId)) {
 			_cursorId = PIC_CSR_LIFT;
 			return;
 		}

@@ -85,7 +85,7 @@ bool GameLoader::readSavegame(const char *fname) {
 	Common::MemoryReadStream *archiveStream = new Common::MemoryReadStream(data, header.encSize);
 	MfcArchive *archive = new MfcArchive(archiveStream);
 
-	GameVar *var = (GameVar *)archive->readClass();
+	GameVar *var = archive->readClass<GameVar>();
 
 	GameVar *v = _gameVar->getSubVarByName("OBJSTATES");
 
@@ -301,7 +301,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	_inventory->rebuildItemRects();
 
 	for (uint i = 0; i < _inventory->getScene()->_picObjList.size(); i++)
-		((MemoryObject *)_inventory->getScene()->_picObjList[i]->_picture)->load();
+		_inventory->getScene()->_picObjList[i]->_picture->MemoryObject::load();
 
 	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;
@@ -474,11 +474,11 @@ bool GameVar::load(MfcArchive &file) {
 	}
 
 	file.incLevel();
-	_parentVarObj = (GameVar *)file.readClass();
-	_prevVarObj = (GameVar *)file.readClass();
-	_nextVarObj = (GameVar *)file.readClass();
-	_field_14 = (GameVar *)file.readClass();
-	_subVars = (GameVar *)file.readClass();
+	_parentVarObj = file.readClass<GameVar>();
+	_prevVarObj = file.readClass<GameVar>();
+	_nextVarObj = file.readClass<GameVar>();
+	_field_14 = file.readClass<GameVar>();
+	_subVars = file.readClass<GameVar>();
 	file.decLevel();
 
 	return true;

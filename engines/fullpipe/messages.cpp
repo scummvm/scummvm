@@ -317,7 +317,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 
 MessageQueue::~MessageQueue() {
 	for (Common::List<ExCommand *>::iterator it = _exCommands.begin(); it != _exCommands.end(); ++it) {
-		ExCommand *ex = (ExCommand *)*it;
+		ExCommand *ex = *it;
 
 		if (ex && ex->_excFlags & 2)
 			delete ex;
@@ -347,8 +347,7 @@ bool MessageQueue::load(MfcArchive &file) {
 	_queueName = file.readPascalString();
 
 	for (int i = 0; i < count; i++) {
-		ExCommand *tmp = (ExCommand *)file.readClass();
-
+		ExCommand *tmp = file.readClass<ExCommand>();
 		_exCommands.push_back(tmp);
 	}
 

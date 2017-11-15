@@ -280,8 +280,10 @@ friend class MctlCompound;
 friend class MctlGraph;
 friend class MotionController;
 private:
-	ObList _nodes;
-	ObList _links;
+	typedef ObList<MovGraphNode> NodeList;
+	typedef ObList<MovGraphLink> LinkList;
+	NodeList _nodes;
+	LinkList _links;
 	int _field_44;
 	Common::Array<MovGraphItem> _items;
 	MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter);

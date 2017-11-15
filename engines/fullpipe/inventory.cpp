@@ -238,7 +238,7 @@ void Inventory2::rebuildItemRects() {
 	int itemY = 0;
 
 	for (uint i = 0; i < _scene->_picObjList.size(); i++) {
-		PictureObject *pic = (PictureObject *)_scene->_picObjList[i];
+		PictureObject *pic = _scene->_picObjList[i];
 
 		for (uint j = 0; j < _itemsPool.size(); j++) {
 			if (_itemsPool[j]->pictureObjectNormal == pic->_id) {

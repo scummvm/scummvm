@@ -45,7 +45,7 @@ GameObject *sceneHandlerDbgMenu_getObjectAtXY(int x, int y) {
 		return 0;
 
 	for (uint i = 1; i < g_fp->_currentScene->_picObjList.size(); i++) {
-		PictureObject *pic = (PictureObject *)g_fp->_currentScene->_picObjList[i];
+		PictureObject *pic = g_fp->_currentScene->_picObjList[i];
 
 		if (x >= pic->_ox && y >= pic->_oy) {
 			const Dims dims = pic->getDimensions();

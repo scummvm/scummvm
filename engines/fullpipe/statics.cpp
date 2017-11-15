@@ -1592,8 +1592,8 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 				_framePosOffsets[i]->y = src->_framePosOffsets[oldIdxs[i]]->y;
 			}
 		}
-		_staticsObj1 = (Statics *)_dynamicPhases.front();
-		_staticsObj2 = (Statics *)_dynamicPhases.back();
+		_staticsObj1 = dynamic_cast<Statics *>(_dynamicPhases.front());
+		_staticsObj2 = dynamic_cast<Statics *>(_dynamicPhases.back());
 	} else {
 		for (int i = 0; i < newSize; i++) {
 			src->setDynamicPhaseIndex(i);
@@ -2231,7 +2231,7 @@ bool StaticPhase::load(MfcArchive &file) {
 	_field_6A = file.readUint16LE();
 
 	if (g_fp->_gameProjectVersion >= 12) {
-		_exCommand = (ExCommand *)file.readClass();
+		_exCommand = file.readClass<ExCommand>();
 
 		return true;
 	}

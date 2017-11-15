@@ -517,7 +517,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		return doSomeAnimation2(cmd->_parentId, cmd->_param);
 	case 63:
 		if (cmd->_objtype == kObjTypeObjstateCommand) {
-			ObjstateCommand *c = (ObjstateCommand *)cmd;
+			ObjstateCommand *c = static_cast<ObjstateCommand *>(cmd);
 			result = 1;
 			g_fp->setObjectState(c->_objCommandName.c_str(), c->_value);
 		}
@@ -595,12 +595,14 @@ int global_messageHandler4(ExCommand *cmd) {
 		if (flags <= 0)
 			flags = -1;
 
-		ExCommand2 *cmd2 = (ExCommand2 *)cmd;
+		if (cmd->_objtype == kObjTypeExCommand2) {
+			ExCommand2 *cmd2 = static_cast<ExCommand2 *>(cmd);
 
-		if (cmd->_excFlags & 1) {
-			ani->startAnimSteps(cmd->_messageNum, 0, cmd->_x, cmd->_y, cmd2->_points, cmd2->_pointsSize, flags);
-		} else {
-			ani->startAnimSteps(cmd->_messageNum, cmd->_parId, cmd->_x, cmd->_y, cmd2->_points, cmd2->_pointsSize, flags);
+			if (cmd->_excFlags & 1) {
+				ani->startAnimSteps(cmd->_messageNum, 0, cmd->_x, cmd->_y, cmd2->_points, cmd2->_pointsSize, flags);
+			} else {
+				ani->startAnimSteps(cmd->_messageNum, cmd->_parId, cmd->_x, cmd->_y, cmd2->_points, cmd2->_pointsSize, flags);
+			}
 		}
 		break;
 	}
@@ -769,20 +771,20 @@ int MovGraph::messageHandler(ExCommand *cmd) {
 	if (getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->_objtype != kObjTypeMovGraph || !ani)
 		return 0;
 
-	MovGraph *gr = (MovGraph *)getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
+	MovGraph *gr = getSc2MovGraphBySceneId(g_fp->_currentScene->_sceneId);
 
 	MovGraphLink *link = 0;
 	double mindistance = 1.0e10;
 	Common::Point point;
 
-	for (ObList::iterator i = gr->_links.begin(); i != gr->_links.end(); ++i) {
+	for (LinkList::iterator i = gr->_links.begin(); i != gr->_links.end(); ++i) {
 		point.x = ani->_ox;
 		point.y = ani->_oy;
 
-		double dst = gr->putToLink(&point, (MovGraphLink *)(*i), 0);
+		double dst = gr->putToLink(&point, *i, 0);
 		if (dst >= 0.0 && dst < mindistance) {
 			mindistance = dst;
-			link = (MovGraphLink *)(*i);
+			link = *i;
 		}
 	}
 

@@ -45,22 +45,6 @@ bool CObject::loadFile(const Common::String &fname) {
 	return load(archive);
 }
 
-bool ObList::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "ObList::load()");
-	int count = file.readCount();
-
-	debugC(9, kDebugLoading, "ObList::count: %d:", count);
-
-	for (int i = 0; i < count; i++) {
-		debugC(9, kDebugLoading, "ObList::[%d]", i);
-		CObject *t = file.readClass();
-
-		push_back(t);
-	}
-
-	return true;
-}
-
 bool ObArray::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "ObArray::load()");
 	int count = file.readCount();
@@ -68,7 +52,7 @@ bool ObArray::load(MfcArchive &file) {
 	resize(count);
 
 	for (int i = 0; i < count; i++) {
-		CObject *t = file.readClass();
+		CObject *t = file.readClass<CObject>();
 
 		push_back(*t);
 	}
@@ -379,7 +363,7 @@ void MfcArchive::init() {
 	_objectIdMap.push_back(kNullObject);
 }
 
-CObject *MfcArchive::readClass() {
+CObject *MfcArchive::readBaseClass() {
 	bool isCopyReturned;
 	CObject *res = parseClass(&isCopyReturned);
 
