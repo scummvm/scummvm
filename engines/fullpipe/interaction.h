@@ -90,7 +90,6 @@ struct EntranceInfo {
 	int32 _sceneId;
 	int32 _field_4;
 	int32 _messageQueueId;
-	byte _gap_C[292]; // FIXME
 	int32 _field_130;
 
 	bool load(MfcArchive &file);
