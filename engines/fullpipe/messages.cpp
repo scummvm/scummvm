@@ -684,7 +684,7 @@ int GlobalMessageQueueList::compact() {
 	for (uint i = 0; i < size();) {
 		if (_storage[i]->_isFinished) {
 			disableQueueById(_storage[i]->_id);
-			remove_at(i);
+			delete remove_at(i);
 		} else {
 			if ((uint)_storage[i]->_id < size() + 2)
 				useList[_storage[i]->_id] = 1;
