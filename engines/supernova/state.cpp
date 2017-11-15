@@ -108,6 +108,8 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._powerOff = in->readByte();
 	_state._dream = in->readByte();
 
+	_oldTime = g_system->getMillis();
+
 	// Inventory
 	int inventorySize = in->readSint32LE();
 	_inventoryScroll = in->readSint32LE();
@@ -324,7 +326,7 @@ void GameManager::initState() {
 	_mouseY = -1;
 	_mouseField = -1;
 	_inventoryScroll = 0;
-	_oldTime = 0;
+	_oldTime = g_system->getMillis();
 	_timerPaused = 0;
 	_timePaused = false;
 	_timer1 = 0;
@@ -1250,7 +1252,8 @@ void GameManager::setAnimationTimer(int ticks) {
 void GameManager::handleTime() {
 	if (_timerPaused)
 		return;
-	int32 delta = g_system->getMillis() - _oldTime;
+	int32 newTime = g_system->getMillis();
+	int32 delta = newTime - _oldTime;
 	_state._time += delta;
 	if (_state._time > 86400000)
 		_state._time -= 86400000; // 24h wrap around
@@ -1259,7 +1262,7 @@ void GameManager::handleTime() {
 	else
 		_animationTimer = 0;
 
-	_oldTime = g_system->getMillis();
+	_oldTime = newTime;
 }
 
 void GameManager::pauseTimer(bool pause) {
