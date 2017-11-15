@@ -1187,8 +1187,7 @@ public:
 		_objectState[2] = Object(_id, kStringDoor,kStringDefaultDescription,NULLOBJECT,EXIT|OPENABLE|CLOSED,1,1,0,NULLROOM,15);
 		_objectState[3] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE,2,2,11,OFFICE_L,0);
 		_objectState[4] = Object(_id, kStringLamp2,kStringDefaultDescription,LAMP,COMBINABLE,3,3,0);
-		// Originally GUARD was ObjectID..
-		_objectState[5] = Object(_id, kStringAxacussan,kStringDefaultDescription,INSTRUMENTS,TALK,5,5,0);
+		_objectState[5] = Object(_id, kStringAxacussan,kStringDefaultDescription,GUARDIAN,TALK,5,5,0);
 		_objectState[6] = Object(_id, kStringImage,kStringGenericDescription5,NULLOBJECT,NULLTYPE,4,4,0);
 	}
 
