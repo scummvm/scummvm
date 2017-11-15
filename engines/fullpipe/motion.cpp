@@ -49,10 +49,10 @@ void MotionController::enableLinks(const char *linkName, bool enable) {
 		if (con->_objtype == kObjTypeMovGraph) {
 			MovGraph *gr = static_cast<MovGraph *>(con);
 
-			for (ObList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
-				assert(((CObject *)*l)->_objtype == kObjTypeMovGraphLink);
+			for (MovGraph::LinkList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
+				assert((*l)->_objtype == kObjTypeMovGraphLink);
 
-				MovGraphLink *lnk = (MovGraphLink *)*l;
+				MovGraphLink *lnk = static_cast<MovGraphLink *>(*l);
 
 				if (lnk->_name == linkName) {
 					if (enable)
@@ -69,18 +69,18 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 	debugC(4, kDebugPathfinding, "MotionController::getLinkByName(%s)", name);
 
 	if (_objtype == kObjTypeMctlCompound) {
-		MctlCompound *obj = (MctlCompound *)this;
+		MctlCompound *obj = static_cast<MctlCompound *>(this);
 
 		for (uint i = 0;  i < obj->getMotionControllerCount(); i++) {
 			MotionController *con = obj->getMotionController(i);
 
 			if (con->_objtype == kObjTypeMovGraph) {
-				MovGraph *gr = (MovGraph *)con;
+				MovGraph *gr = static_cast<MovGraph *>(con);
 
-				for (ObList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
-					assert(((CObject *)*l)->_objtype == kObjTypeMovGraphLink);
+				for (MovGraph::LinkList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
+					assert((*l)->_objtype == kObjTypeMovGraphLink);
 
-					MovGraphLink *lnk = (MovGraphLink *)*l;
+					MovGraphLink *lnk = static_cast<MovGraphLink *>(*l);
 
 					if (lnk->_name == name)
 						return lnk;
@@ -90,12 +90,12 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 	}
 
 	if (_objtype == kObjTypeMovGraph) {
-		MovGraph *gr = (MovGraph *)this;
+		MovGraph *gr = static_cast<MovGraph *>(this);
 
-		for (ObList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
-			assert(((CObject *)*l)->_objtype == kObjTypeMovGraphLink);
+		for (MovGraph::LinkList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
+			assert((*l)->_objtype == kObjTypeMovGraphLink);
 
-			MovGraphLink *lnk = (MovGraphLink *)*l;
+			MovGraphLink *lnk = static_cast<MovGraphLink *>(*l);
 
 			if (lnk->_name == name)
 				return lnk;
@@ -116,14 +116,14 @@ bool MctlCompound::load(MfcArchive &file) {
 		debugC(6, kDebugLoading, "CompoundArray[%d]", i);
 		MctlItem *obj = new MctlItem();
 
-		obj->_motionControllerObj = (MotionController *)file.readClass();
+		obj->_motionControllerObj = file.readClass<MotionController>();
 
 		int count1 = file.readUint32LE();
 
 		debugC(6, kDebugLoading, "ConnectionPoint::count: %d", count1);
 		for (int j = 0; j < count1; j++) {
 			debugC(6, kDebugLoading, "ConnectionPoint[%d]", j);
-			MctlConnectionPoint *obj1 = (MctlConnectionPoint *)file.readClass();
+			MctlConnectionPoint *obj1 = file.readClass<MctlConnectionPoint>();
 
 			obj->_connectionPoints.push_back(obj1);
 		}
@@ -132,7 +132,7 @@ bool MctlCompound::load(MfcArchive &file) {
 		obj->_field_24 = file.readUint32LE();
 
 		debugC(6, kDebugLoading, "graphReact");
-		obj->_movGraphReactObj = (MovGraphReact *)file.readClass();
+		obj->_movGraphReactObj = file.readClass<MovGraphReact>();
 
 		_motionControllers.push_back(obj);
 	}
@@ -166,7 +166,7 @@ void MctlCompound::initMctlGraph() {
 		if (_motionControllers[i]->_motionControllerObj->_objtype != kObjTypeMovGraph)
 			continue;
 
-		MovGraph *gr = (MovGraph *)_motionControllers[i]->_motionControllerObj;
+		MovGraph *gr = static_cast<MovGraph *>(_motionControllers[i]->_motionControllerObj);
 
 		MctlGraph *newgr = new MctlGraph();
 
@@ -701,10 +701,10 @@ MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, in
 void MctlCompound::replaceNodeX(int from, int to) {
 	for (uint i = 0; i < _motionControllers.size(); i++) {
 		if (_motionControllers[i]->_motionControllerObj->_objtype == kObjTypeMovGraph) {
-			MovGraph *gr = (MovGraph *)_motionControllers[i]->_motionControllerObj;
+			MovGraph *gr = static_cast<MovGraph *>(_motionControllers[i]->_motionControllerObj);
 
-			for (ObList::iterator n = gr->_nodes.begin(); n != gr->_nodes.end(); ++n) {
-				MovGraphNode *node = (MovGraphNode *)*n;
+			for (MovGraph::NodeList::iterator n = gr->_nodes.begin(); n != gr->_nodes.end(); ++n) {
+				MovGraphNode *node = static_cast<MovGraphNode *>(*n);
 
 				if (node->_x == from)
 					node->_x = to;
@@ -816,10 +816,10 @@ MovGraph::MovGraph() {
 }
 
 MovGraph::~MovGraph() {
-	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i)
+	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i)
 		delete *i;
 
-	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (NodeList::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		delete *i;
 
 	detachAllObjects();
@@ -1395,10 +1395,10 @@ double MovGraph::putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMa
 void MovGraph::recalcLinkParams() {
 	debugC(4, kDebugPathfinding, "MovGraph::recalcLinkParams()");
 
-	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
-		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphLink);
+	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		assert((*i)->_objtype == kObjTypeMovGraphLink);
 
-		MovGraphLink *lnk = (MovGraphLink *)*i;
+		MovGraphLink *lnk = static_cast<MovGraphLink *>(*i);
 
 		lnk->_flags &= 0x7FFFFFFF;
 
@@ -1413,8 +1413,8 @@ bool MovGraph::getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr) 
 	double mindist = 1.0e20;
 	int resx = 0, resy = 0;
 
-	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
-		MovGraphLink *lnk = (MovGraphLink *)*i;
+	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		MovGraphLink *lnk = static_cast<MovGraphLink *>(*i);
 
 		if ((lnk->_flags & 0x10000000) && !(lnk->_flags & 0x20000000) ) {
 			double dx1 = lnk->_graphSrc->_x - p->x;
@@ -1483,8 +1483,8 @@ Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int 
 	Common::Array<MovArr *> *arr = new Common::Array<MovArr *>;
 	MovArr *movarr;
 
-	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
-		MovGraphLink *lnk = (MovGraphLink *)*i;
+	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		MovGraphLink *lnk = static_cast<MovGraphLink *>(*i);
 
 		if (flag1) {
 			Common::Point point(x, y);
@@ -1556,8 +1556,8 @@ void MovGraph::findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, Common::Array
 
 		tempObList1.push_back(lnk);
 
-		for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
-			MovGraphLink *l = (MovGraphLink *)*i;
+		for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
+			MovGraphLink *l = static_cast<MovGraphLink *>(*i);
 
 			if (l->_graphSrc != lnk->_graphSrc) {
 				if (l->_graphDst != lnk->_graphSrc) {
@@ -2430,10 +2430,10 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 }
 
 MovGraphNode *MctlGraph::getHitNode(int x, int y, int strictMatch) {
-	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
-		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphNode);
+	for (NodeList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		assert((*i)->_objtype == kObjTypeMovGraphNode);
 
-		MovGraphNode *node = (MovGraphNode *)*i;
+		MovGraphNode *node = *i;
 
 		if (!strictMatch) {
 			if (abs(node->_x - x) < 15 && abs(node->_y - y) < 15)
@@ -2719,10 +2719,10 @@ MovGraphLink *MctlGraph::getHitLink(int x, int y, int idx, int fuzzyMatch) {
 	Common::Point point;
 	MovGraphLink *res = 0;
 
-	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
-		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphLink);
+	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		assert((*i)->_objtype == kObjTypeMovGraphLink);
 
-		MovGraphLink *lnk = (MovGraphLink *)*i;
+		MovGraphLink *lnk = static_cast<MovGraphLink *>(*i);
 
 		if (fuzzyMatch) {
 			point.x = x;
@@ -2755,10 +2755,10 @@ MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
 	double mindist = 1.0e20;
 	MovGraphLink *res = 0;
 
-	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
-		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphLink);
+	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
+		assert((*i)->_objtype == kObjTypeMovGraphLink);
 
-		MovGraphLink *lnk = (MovGraphLink *)*i;
+		MovGraphLink *lnk = static_cast<MovGraphLink *>(*i);
 
 		if (!(lnk->_flags & 0x20000000)) {
 			double n1x = lnk->_graphSrc->_x;
@@ -2802,8 +2802,8 @@ double MctlGraph::iterate(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Comm
 		double minDistance = -1.0;
 
 		if (linkInfoSource->node) {
-			for (ObList::iterator i = _links.begin(); i != _links.end(); ++i) {
-				MovGraphLink *lnk = (MovGraphLink *)*i;
+			for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
+				MovGraphLink *lnk = static_cast<MovGraphLink *>(*i);
 
 				if ((lnk->_graphSrc == linkInfoSource->node || lnk->_graphDst == linkInfoSource->node) && !(lnk->_flags & 0xA0000000)) {
 					linkInfoWorkSource.node = 0;
@@ -2872,10 +2872,10 @@ MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
 	MovGraphNode *res = 0;
 	double mindist = 1.0e10;
 
-	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
-		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphNode);
+	for (NodeList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		assert((*i)->_objtype == kObjTypeMovGraphNode);
 
-		MovGraphNode *node = (MovGraphNode *)*i;
+		MovGraphNode *node = static_cast<MovGraphNode *>(*i);
 
 		double dist = sqrt((double)((node->_x - oy) * (node->_x - oy) + (node->_x - ox) * (node->_x - ox)));
 		if (dist < mindist) {
@@ -2917,16 +2917,16 @@ bool MovGraphLink::load(MfcArchive &file) {
 	_flags = file.readUint32LE();
 
 	debugC(8, kDebugLoading, "GraphNode1");
-	_graphSrc = (MovGraphNode *)file.readClass();
+	_graphSrc = file.readClass<MovGraphNode>();
 	debugC(8, kDebugLoading, "GraphNode2");
-	_graphDst = (MovGraphNode *)file.readClass();
+	_graphDst = file.readClass<MovGraphNode>();
 
 	_length = file.readDouble();
 	_angle = file.readDouble();
 
 	debugC(8, kDebugLoading, "length: %g, angle: %g", _length, _angle);
 
-	_movGraphReact = (MovGraphReact *)file.readClass();
+	_movGraphReact = file.readClass<MovGraphReact>();
 	_name = file.readPascalString();
 
 	return true;

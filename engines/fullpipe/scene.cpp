@@ -251,7 +251,7 @@ void Scene::init() {
 	g_fp->_sceneRect.moveTo(0, 0);
 
 	for (uint i = 0; i < _picObjList.size(); i++)
-		((PictureObject *)_picObjList[i])->clearFlags();
+		_picObjList[i]->clearFlags();
 
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++)
 		_staticANIObjectList1[i]->clearFlags();
@@ -324,7 +324,7 @@ void Scene::addStaticANIObject(StaticANIObject *obj, bool addList2) {
 
 void Scene::setPictureObjectsFlag4() {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		((PictureObject *)_picObjList[i])->_flags |= 4;
+		_picObjList[i]->_flags |= 4;
 	}
 }
 
@@ -335,8 +335,8 @@ void Scene::stopAllSounds() {
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_odelay == flags)
-			return (PictureObject *)_picObjList[i];
+		if (_picObjList[i]->_id == objId && _picObjList[i]->_odelay == flags)
+			return _picObjList[i];
 	}
 
 	return 0;
@@ -344,8 +344,8 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 
 PictureObject *Scene::getPictureObjectByName(const Common::String &objName, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if ((((PictureObject *)_picObjList[i])->_objectName == objName) && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
-			return (PictureObject *)_picObjList[i];
+		if ((_picObjList[i]->_objectName == objName) && (_picObjList[i]->_odelay == flags || flags == -1))
+			return _picObjList[i];
 	}
 
 	return 0;
@@ -353,7 +353,7 @@ PictureObject *Scene::getPictureObjectByName(const Common::String &objName, int 
 
 void Scene::deletePictureObject(PictureObject *obj) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i]) == obj) {
+		if (_picObjList[i] == obj) {
 			_picObjList.remove_at(i);
 			delete obj;
 
@@ -547,7 +547,7 @@ void Scene::updateScrolling() {
 		int offsetY = 0;
 
 		if (_x < 0) {
-			if (!g_fp->_sceneRect.left && !(((PictureObject *)_picObjList[0])->_flags & 2))
+			if (!g_fp->_sceneRect.left && !(_picObjList[0]->_flags & 2))
 				_x = 0;
 
 			if (_x <= -g_fp->_scrollSpeed) {
@@ -620,7 +620,7 @@ PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
 	PictureObject *res = 0;
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		PictureObject *p = (PictureObject *)_picObjList[i];
+		PictureObject *p = _picObjList[i];
 		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
 				p->isPixelHitAtPos(x, y) &&
 				(!res || res->_priority >= p->_priority))
@@ -635,7 +635,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 	int res = 0;
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		PictureObject *p = (PictureObject *)_picObjList[i];
+		PictureObject *p = _picObjList[i];
 		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
 				p->isPixelHitAtPos(x, y) &&
 				(!res || resp->_priority >= p->_priority)) {
@@ -673,7 +673,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 #endif
 
 	if (minPri == -1 && _picObjList.size())
-		minPri = ((PictureObject *)_picObjList.back())->_priority - 1;
+		minPri = _picObjList.back()->_priority - 1;
 
 	if (maxPri == -1)
 		maxPri = 60000;
@@ -725,7 +725,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 					v25++;
 
 					if (v25 >= _bigPictureArray2Count) {
-						if (!(((PictureObject *)_picObjList[0])->_flags & 0x20))
+						if (!(_picObjList[0]->_flags & 0x20))
 							break;
 						v25 = 0;
 					}
@@ -736,7 +736,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 				bgNumX++;
 
 				if (bgNumX >= _bigPictureArray1Count) {
-					if (!(((PictureObject *)_picObjList[0])->_flags & 0x2))
+					if (!(_picObjList[0]->_flags & 0x2))
 						break;
 					bgNumX = 0;
 				}
@@ -748,7 +748,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		PictureObject *obj = (PictureObject *)_picObjList[i];
+		PictureObject *obj = _picObjList[i];
 
 		if (obj->_priority < minPri || obj->_priority >= maxPri)
 			continue;

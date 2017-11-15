@@ -62,13 +62,16 @@ class Interaction : public CObject {
 };
 
 class InteractionController : public CObject {
- public:
-	ObList _interactions;
-	int16 _field_20;
+	friend bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId);
+
+public:
+	typedef ObList<Interaction> InteractionList;
 	bool _flag24;
 
  private:
-	static bool compareInteractions(const void *p1, const void *p2);
+	InteractionList _interactions;
+	int16 _field_20;
+	static bool compareInteractions(const Interaction *i1, const Interaction *i2);
 
  public:
 	InteractionController() : _field_20(0), _flag24(true) {}

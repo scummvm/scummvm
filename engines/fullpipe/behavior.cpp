@@ -63,7 +63,7 @@ void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 			StaticANIObject *ani = sc->getStaticANIObject1ByName(subvar->_varName, -1);
 			if (ani) {
 				for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-					if (((StaticANIObject *)sc->_staticANIObjectList1[i])->_id == ani->_id) {
+					if (sc->_staticANIObjectList1[i]->_id == ani->_id) {
 						_behaviors.push_back(BehaviorInfo());
 						BehaviorInfo &behinfo = _behaviors.back();
 						behinfo.initObjectBehavior(subvar, sc, ani);

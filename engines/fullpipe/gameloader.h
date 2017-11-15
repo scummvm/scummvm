@@ -39,6 +39,7 @@ class MctlCompound;
 class InputController;
 class InteractionController;
 class MotionController;
+class MovGraph;
 
 class Sc2 : public CObject {
  public:
@@ -148,6 +149,7 @@ void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDesc
 Inventory2 *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();
 MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
+MovGraph *getSc2MovGraphBySceneId(int16 sceneId);
 MctlCompound *getCurrSceneSc2MotionController();
 
 } // End of namespace Fullpipe

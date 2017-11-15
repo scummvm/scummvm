@@ -300,8 +300,8 @@ void GameObject::renumPictures(Common::Array<StaticANIObject *> *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
-		if (_id == ((GameObject *)((*lst)[i]))->_id)
-			buf[((GameObject *)((*lst)[i]))->_odelay] = 1;
+		if (_id == (*lst)[i]->_id)
+			buf[(*lst)[i]->_odelay] = 1;
 	}
 
 	if (buf[_odelay]) {
@@ -318,8 +318,8 @@ void GameObject::renumPictures(Common::Array<PictureObject *> *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
-		if (_id == ((GameObject *)((*lst)[i]))->_id)
-			buf[((GameObject *)((*lst)[i]))->_odelay] = 1;
+		if (_id == (*lst)[i]->_id)
+			buf[(*lst)[i]->_odelay] = 1;
 	}
 
 	if (buf[_odelay]) {
@@ -348,7 +348,7 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 	}
 
 	if (_objtype == kObjTypeStaticANIObject) {
-		StaticANIObject *ani = (StaticANIObject *)this;
+		StaticANIObject *ani = static_cast<StaticANIObject *>(this);
 
 		info->type = (ani->_messageQueueId << 16) | 1;
 		info->objectId = ani->_id;
@@ -398,8 +398,8 @@ bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 		return true;
 	}
 
-	if (picAniInfo->type & 1) {
-		StaticANIObject *ani = (StaticANIObject *)this;
+	if (picAniInfo->type & 1 && _objtype == kObjTypeStaticANIObject) {
+		StaticANIObject *ani = static_cast<StaticANIObject *>(this);
 
 		ani->_messageQueueId = (picAniInfo->type >> 16) & 0xffff;
 		ani->_odelay = picAniInfo->field_8;

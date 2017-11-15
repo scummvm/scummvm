@@ -195,7 +195,7 @@ void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	_lift = sc->getStaticANIObject1ById(ANI_LIFT, -1);
 
 	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-		StaticANIObject *ani = (StaticANIObject *)sc->_staticANIObjectList1[i];
+		StaticANIObject *ani = sc->_staticANIObjectList1[i];
 
 		if (ani->_id == ANI_LIFTBUTTON)
 			ani->_statics = ani->getStaticsById(lift_getButtonIdP(ani->_statics->_staticsId));
@@ -205,7 +205,7 @@ void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	if (var) {
 		for (var = var->_subVars; var; var = var->_nextVarObj) {
 			for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-				StaticANIObject *ani = (StaticANIObject *)sc->_staticANIObjectList1[i];
+				StaticANIObject *ani = sc->_staticANIObjectList1[i];
 
 				if (ani->_id == ANI_LIFTBUTTON) {
 					int id = lift_getButtonIdN(ani->_statics->_staticsId);
@@ -506,7 +506,7 @@ bool FullpipeEngine::lift_checkButton(const char *varName) {
 
 void FullpipeEngine::lift_setButtonStatics(Scene *sc, int buttonId) {
 	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-		StaticANIObject *ani = (StaticANIObject *)sc->_staticANIObjectList1[i];
+		StaticANIObject *ani = sc->_staticANIObjectList1[i];
 
 		if (ani->_id == ANI_LIFTBUTTON) {
 			int id = lift_getButtonIdN(ani->_statics->_staticsId);

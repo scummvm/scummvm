@@ -53,13 +53,13 @@ int scene06_updateCursor() {
 
 			return PIC_CSR_ARCADE2_D;
 		}
-		if (g_fp->_aniMan == (StaticANIObject *)g_fp->_objectAtCursor) {
+		if (g_fp->_aniMan == g_fp->_objectAtCursor) {
 			if (g_fp->_aniMan->_statics->_staticsId == ST_MAN6_BALL && g_fp->_cursorId == PIC_CSR_DEFAULT) {
 				g_fp->_cursorId = PIC_CSR_ITN;
 
 				return PIC_CSR_ITN;
 			}
-		} else if (g_fp->_objectAtCursor && (StaticANIObject *)g_fp->_objectAtCursor == g_vars->scene06_currentBall
+		} else if (g_fp->_objectAtCursor && g_fp->_objectAtCursor == g_vars->scene06_currentBall
 					&& g_fp->_cursorId == PIC_CSR_DEFAULT) {
 			g_fp->_cursorId = PIC_CSR_ITN;
 		}

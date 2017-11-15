@@ -38,12 +38,32 @@ Inventory2 *getGameLoaderInventory() {
 	return &g_fp->_gameLoader->_inventory;
 }
 
-MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
-	for (uint i = 0; i < g_fp->_gameLoader->_sc2array.size(); i++)
-		if (g_fp->_gameLoader->_sc2array[i]._sceneId == sceneId)
-			return (MctlCompound *)g_fp->_gameLoader->_sc2array[i]._motionController;
+static MotionController *getMotionControllerBySceneId(int16 sceneId) {
+	for (uint i = 0; i < g_fp->_gameLoader->_sc2array.size(); i++) {
+		if (g_fp->_gameLoader->_sc2array[i]._sceneId == sceneId) {
+			return g_fp->_gameLoader->_sc2array[i]._motionController;
+		}
+	}
 
-	return 0;
+	return nullptr;
+}
+
+MovGraph *getSc2MovGraphBySceneId(int16 sceneId) {
+	MotionController *mc = getMotionControllerBySceneId(sceneId);
+	if (mc) {
+		assert(mc->_objtype == kObjTypeMovGraph);
+		return static_cast<MovGraph *>(mc);
+	}
+	return nullptr;
+}
+
+MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
+	MotionController *mc = getMotionControllerBySceneId(sceneId);
+	if (mc) {
+		assert(mc->_objtype == kObjTypeMctlCompound);
+		return static_cast<MctlCompound *>(mc);
+	}
+	return nullptr;
 }
 
 InteractionController *getGameLoaderInteractionController() {
@@ -136,7 +156,7 @@ bool GameLoader::load(MfcArchive &file) {
 
 		debugC(1, kDebugLoading, "sc: %s", tmp);
 
-		_sc2array[i].loadFile((const char *)tmp);
+		_sc2array[i].loadFile(tmp);
 	}
 
 	_preloadItems.load(file);
@@ -146,7 +166,7 @@ bool GameLoader::load(MfcArchive &file) {
 
 	debugC(1, kDebugLoading, "_field_FA: %d\n_field_F8: %d", _field_FA, _field_F8);
 
-	_gameVar = (GameVar *)file.readClass();
+	_gameVar = file.readClass<GameVar>();
 
 	return true;
 }
@@ -615,7 +635,7 @@ bool Sc2::load(MfcArchive &file) {
 
 	_sceneId = file.readUint16LE();
 
-	_motionController = (MotionController *)file.readClass();
+	_motionController = file.readClass<MotionController>();
 
 	_count1 = file.readUint32LE();
 	debugC(4, kDebugLoading, "count1: %d", _count1);
