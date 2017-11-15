@@ -122,7 +122,7 @@ class Movement : public GameObject {
 	int _counter;
 	Common::Array<DynamicPhase *> _dynamicPhases;
 	int _field_78;
-	Common::Point **_framePosOffsets;
+	Common::Array<Common::Point> _framePosOffsets;
 	Movement *_currMovement;
 	int _field_84;
 	DynamicPhase *_currDynamicPhase;

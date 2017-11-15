@@ -116,7 +116,7 @@ bool MctlCompound::load(MfcArchive &file) {
 		debugC(6, kDebugLoading, "CompoundArray[%d]", i);
 		MctlItem *obj = new MctlItem();
 
-		obj->_motionControllerObj = file.readClass<MotionController>();
+		obj->_motionControllerObj.reset(file.readClass<MotionController>());
 
 		int count1 = file.readUint32LE();
 
@@ -132,7 +132,7 @@ bool MctlCompound::load(MfcArchive &file) {
 		obj->_field_24 = file.readUint32LE();
 
 		debugC(6, kDebugLoading, "graphReact");
-		obj->_movGraphReactObj = file.readClass<MovGraphReact>();
+		obj->_movGraphReactObj.reset(file.readClass<MovGraphReact>());
 
 		_motionControllers.push_back(obj);
 	}
@@ -166,19 +166,14 @@ void MctlCompound::initMctlGraph() {
 		if (_motionControllers[i]->_motionControllerObj->_objtype != kObjTypeMovGraph)
 			continue;
 
-		MovGraph *gr = static_cast<MovGraph *>(_motionControllers[i]->_motionControllerObj);
+		MovGraph *gr = static_cast<MovGraph *>(_motionControllers[i]->_motionControllerObj.get());
 
 		MctlGraph *newgr = new MctlGraph();
 
 		newgr->_links = gr->_links;
 		newgr->_nodes = gr->_nodes;
 
-		gr->_links.clear();
-		gr->_nodes.clear();
-
-		delete gr;
-
-		_motionControllers[i]->_motionControllerObj = newgr;
+		_motionControllers[i]->_motionControllerObj.reset(newgr);
 	}
 }
 
@@ -324,11 +319,6 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 	}
 
 	return mq;
-}
-
-MctlItem::~MctlItem() {
-	delete _movGraphReactObj;
-	delete _motionControllerObj;
 }
 
 MctlLadder::MctlLadder() {
@@ -490,7 +480,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 	Common::Point point;
 
 	if (ani->_movement) {
-		ani->getPicAniInfo(&picinfo);
+		ani->getPicAniInfo(picinfo);
 
 		int ox = ani->_ox;
 		int oy = ani->_oy;
@@ -502,7 +492,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 
 		mq = makeQueue(ani, normx, normy, fuzzyMatch, staticsId);
 
-		ani->setPicAniInfo(&picinfo);
+		ani->setPicAniInfo(picinfo);
 
 		return mq;
 	}
@@ -588,7 +578,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		nx += point.x;
 		ny += point.y;
 
-		ani->getPicAniInfo(&picinfo);
+		ani->getPicAniInfo(picinfo);
 
 		ani->_statics = ani->getStaticsById(_ladmovements[pos]->staticIds[0]);
 		ani->_movement = 0;
@@ -600,7 +590,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 
 		delete newmq;
 
-		ani->setPicAniInfo(&picinfo);
+		ani->setPicAniInfo(picinfo);
 
 		return mq;
 	}
@@ -701,7 +691,7 @@ MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, in
 void MctlCompound::replaceNodeX(int from, int to) {
 	for (uint i = 0; i < _motionControllers.size(); i++) {
 		if (_motionControllers[i]->_motionControllerObj->_objtype == kObjTypeMovGraph) {
-			MovGraph *gr = static_cast<MovGraph *>(_motionControllers[i]->_motionControllerObj);
+			MovGraph *gr = static_cast<MovGraph *>(_motionControllers[i]->_motionControllerObj.get());
 
 			for (MovGraph::NodeList::iterator n = gr->_nodes.begin(); n != gr->_nodes.end(); ++n) {
 				MovGraphNode *node = static_cast<MovGraphNode *>(*n);
@@ -721,12 +711,6 @@ MctlConnectionPoint::MctlConnectionPoint() {
 	_mctlflags = 0;
 	_mctlstatic = 0;
 	_mctlmirror = 0;
-	_messageQueueObj = 0;
-	_motionControllerObj = 0;
-}
-
-MctlConnectionPoint::~MctlConnectionPoint() {
-	delete _messageQueueObj;
 }
 
 MctlMQ::MctlMQ(MctlMQ *src) {
@@ -753,6 +737,10 @@ void MctlMQ::clear() {
 	items.clear();
 	itemsCount = 0;
 	flags = 0;
+}
+
+MctlItem::~MctlItem() {
+	Common::for_each(_connectionPoints.begin(), _connectionPoints.end(), Common::DefaultDeleter<MctlConnectionPoint>());
 }
 
 bool MctlCompoundArray::load(MfcArchive &file) {
@@ -1089,7 +1077,7 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 
 	Common::Array<MovItem *> *movitem = getPaths(subj, xpos, ypos, fuzzyMatch, &ss);
 
-	subj->getPicAniInfo(&picAniInfo);
+	subj->getPicAniInfo(picAniInfo);
 
 	if (movitem) {
 		MovArr *goal = _callback1(subj, movitem, ss);
@@ -1130,7 +1118,7 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 				arridx++;
 
 				if (arridx >= _items[idx].count) {
-					subj->setPicAniInfo(&picAniInfo);
+					subj->setPicAniInfo(picAniInfo);
 					return 0;
 				}
 			}
@@ -1150,13 +1138,13 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 				ex->_field_3C = 1;
 				mq->addExCommandToEnd(ex);
 			}
-			subj->setPicAniInfo(&picAniInfo);
+			subj->setPicAniInfo(picAniInfo);
 
 			return mq;
 		}
 	}
 
-	subj->setPicAniInfo(&picAniInfo);
+	subj->setPicAniInfo(picAniInfo);
 
 	return 0;
 }
@@ -1166,7 +1154,7 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 
 	PicAniInfo picinfo;
 
-	ani->getPicAniInfo(&picinfo);
+	ani->getPicAniInfo(picinfo);
 
 	ani->_statics = ani->getStaticsById(stid);
 	ani->_movement = 0;
@@ -1177,7 +1165,7 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 	Common::Array<MovItem *> *movitems = getPaths(ani, x1, y1, flag1, &rescount);
 
 	if (!movitems) {
-		ani->setPicAniInfo(&picinfo);
+		ani->setPicAniInfo(picinfo);
 
 		return 0;
 	}
@@ -1204,7 +1192,7 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 		}
 	}
 
-	ani->setPicAniInfo(&picinfo);
+	ani->setPicAniInfo(picinfo);
 
 	return res;
 }
@@ -2162,11 +2150,11 @@ MessageQueue *MctlGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int
 		if (mq->getCount() <= 1 || mq->getExCommandByIndex(0)->_messageKind != 22) {
 			PicAniInfo picAniInfo;
 
-			ani->getPicAniInfo(&picAniInfo);
+			ani->getPicAniInfo(picAniInfo);
 			ani->updateStepPos();
 			MessageQueue *mq1 = makeQueue(ani, xpos, ypos, fuzzyMatch, staticsId);
 
-			ani->setPicAniInfo(&picAniInfo);
+			ani->setPicAniInfo(picAniInfo);
 
 			if (mq1) {
 				delete mq;
@@ -2209,7 +2197,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 
 	point.x = 0;
 
-	obj->getPicAniInfo(&picAniInfo);
+	obj->getPicAniInfo(picAniInfo);
 
 	int idxsub;
 
@@ -2260,7 +2248,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 		if (staticsId && obj->_statics->_staticsId != staticsId) {
 			int idxwalk = getDirByStatics(idx, staticsId);
 			if (idxwalk == -1) {
-				obj->setPicAniInfo(&picAniInfo);
+				obj->setPicAniInfo(picAniInfo);
 
 				delete mq;
 
@@ -2289,7 +2277,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 			mq->addExCommandToEnd(ex);
 		}
 
-		obj->setPicAniInfo(&picAniInfo);
+		obj->setPicAniInfo(picAniInfo);
 
 		return mq;
 	}
@@ -2303,7 +2291,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 			linkInfoSource.link = getNearestLink(obj->_ox, obj->_oy);
 
 			if (!linkInfoSource.link) {
-				obj->setPicAniInfo(&picAniInfo);
+				obj->setPicAniInfo(picAniInfo);
 
 				return 0;
 			}
@@ -2316,7 +2304,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 		linkInfoDest.link = getHitLink(xpos, ypos, idxsub, fuzzyMatch);
 
 		if (!linkInfoDest.link) {
-			obj->setPicAniInfo(&picAniInfo);
+			obj->setPicAniInfo(picAniInfo);
 
 			return 0;
 		}
@@ -2424,7 +2412,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 		mq = 0;
 	}
 
-	obj->setPicAniInfo(&picAniInfo);
+	obj->setPicAniInfo(picAniInfo);
 
 	return mq;
 }

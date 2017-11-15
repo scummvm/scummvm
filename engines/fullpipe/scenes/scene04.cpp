@@ -97,8 +97,8 @@ void scene04_initScene(Scene *sc) {
 			for (uint i = 0; i < kozsize; i++) {
 				kozmov->setDynamicPhaseIndex(i);
 
-				if (kozmov->_framePosOffsets) {
-					g_vars->scene04_jumpingKozyawki[i] = *kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
+				if (kozmov->_framePosOffsets.size()) {
+					g_vars->scene04_jumpingKozyawki[i] = kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
 				} else {
 					kozmov->_somePoint.x = 0;
 					kozmov->_somePoint.y = 0;
@@ -114,8 +114,8 @@ void scene04_initScene(Scene *sc) {
 			for (uint i = 0; i < kozsize; i++) {
 				kozmov->setDynamicPhaseIndex(i);
 
-				if (kozmov->_framePosOffsets) {
-					g_vars->scene04_jumpRotateKozyawki[i] = *kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
+				if (kozmov->_framePosOffsets.size()) {
+					g_vars->scene04_jumpRotateKozyawki[i] = kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
 				} else {
 					kozmov->_somePoint.x = 0;
 					kozmov->_somePoint.y = 0;
@@ -747,8 +747,8 @@ void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *poin
 		mov->setDynamicPhaseIndex(i);
 
 		Common::Point *p;
-		if (mov->_framePosOffsets) {
-			p = mov->_framePosOffsets[mov->_currDynamicPhaseIndex];
+		if (mov->_framePosOffsets.size()) {
+			p = &mov->_framePosOffsets[mov->_currDynamicPhaseIndex];
 		} else {
 			p = &mov->_somePoint;
 			p->x = 0;

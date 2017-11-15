@@ -66,6 +66,7 @@ struct PicAniInfo {
 
 	PicAniInfo() { memset(this, 0, sizeof(PicAniInfo)); }
 };
+typedef Common::Array<PicAniInfo> PicAniInfoList;
 
 union VarValue {
 	float floatValue;

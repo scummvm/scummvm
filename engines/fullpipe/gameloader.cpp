@@ -97,28 +97,7 @@ GameLoader::GameLoader() {
 GameLoader::~GameLoader() {
 	delete _interactionController;
 	delete _inputController;
-
-	for (uint i = 0; i < _sc2array.size(); i++) {
-		if (_sc2array[i]._defPicAniInfos)
-			free(_sc2array[i]._defPicAniInfos);
-
-		if (_sc2array[i]._picAniInfos)
-			free(_sc2array[i]._picAniInfos);
-
-		if (_sc2array[i]._motionController)
-			delete _sc2array[i]._motionController;
-
-		if (_sc2array[i]._data1)
-			free(_sc2array[i]._data1);
-
-		if (_sc2array[i]._entranceData)
-			free(_sc2array[i]._entranceData);
-	}
-
 	delete _gameVar;
-	_gameVar = 0;
-
-	_sc2array.clear();
 }
 
 bool GameLoader::load(MfcArchive &file) {
@@ -185,11 +164,11 @@ bool GameLoader::loadScene(int sceneId) {
 	if (st->_scene) {
 		st->_scene->init();
 
-		applyPicAniInfos(st->_scene, _sc2array[idx]._defPicAniInfos, _sc2array[idx]._defPicAniInfosCount);
-		applyPicAniInfos(st->_scene, _sc2array[idx]._picAniInfos, _sc2array[idx]._picAniInfosCount);
+		applyPicAniInfos(st->_scene, _sc2array[idx]._defPicAniInfos);
+		applyPicAniInfos(st->_scene, _sc2array[idx]._picAniInfos);
 
 		_sc2array[idx]._scene = st->_scene;
-		_sc2array[idx]._isLoaded = 1;
+		_sc2array[idx]._isLoaded = true;
 
 		return true;
 	}
@@ -208,18 +187,18 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 	if (!_sc2array[sc2idx]._isLoaded)
 		return false;
 
-	if (_sc2array[sc2idx]._entranceDataCount < 1) {
+	if (_sc2array[sc2idx]._entranceData.size() < 1) {
 		g_fp->_currentScene = st->_scene;
 		return true;
 	}
 
-	if (_sc2array[sc2idx]._entranceDataCount <= 0)
+	if (!_sc2array[sc2idx]._entranceData.size())
 		return false;
 
-	int entranceIdx = 0;
+	uint entranceIdx = 0;
 	if (sceneId != 726) // WORKAROUND
-		for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]->_field_4 != entranceId; entranceIdx++) {
-			if (entranceIdx >= _sc2array[sc2idx]._entranceDataCount)
+		for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]._field_4 != entranceId; entranceIdx++) {
+			if (entranceIdx >= _sc2array[sc2idx]._entranceData.size())
 				return false;
 		}
 
@@ -237,7 +216,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 
 	g_fp->_currentScene = st->_scene;
 
-	MessageQueue *mq1 = g_fp->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]->_messageQueueId);
+	MessageQueue *mq1 = g_fp->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]._messageQueueId);
 	if (mq1) {
 		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
 
@@ -442,8 +421,8 @@ bool GameLoader::unloadScene(int sceneId) {
 	delete tag->_scene;
 	tag->_scene = nullptr;
 
-	_sc2array[sceneTag]._isLoaded = 0;
-	_sc2array[sceneTag]._scene = 0;
+	_sc2array[sceneTag]._isLoaded = false;
+	_sc2array[sceneTag]._scene = nullptr;
 
 	return true;
 }
@@ -467,46 +446,47 @@ int GameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {
 	return -1;
 }
 
-void GameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount) {
-	if (picAniInfoCount <= 0)
+void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
+	if (!picAniInfo.size())
 		return;
 
-	debugC(0, kDebugAnimation, "GameLoader::applyPicAniInfos(sc, ptr, %d)", picAniInfoCount);
+	debugC(0, kDebugAnimation, "GameLoader::applyPicAniInfos(sc, ptr, %d)", picAniInfo.size());
 
 	PictureObject *pict;
 	StaticANIObject *ani;
 
-	for (int i = 0; i < picAniInfoCount; i++) {
-		debugC(7, kDebugAnimation, "PicAniInfo: id: %d type: %d", picAniInfo[i]->objectId, picAniInfo[i]->type);
-		if (picAniInfo[i]->type & 2) {
-			pict = sc->getPictureObjectById(picAniInfo[i]->objectId, picAniInfo[i]->field_8);
+	for (uint i = 0; i < picAniInfo.size(); i++) {
+		const PicAniInfo &info = picAniInfo[i];
+		debugC(7, kDebugAnimation, "PicAniInfo: id: %d type: %d", info.objectId, info.type);
+		if (info.type & 2) {
+			pict = sc->getPictureObjectById(info.objectId, info.field_8);
 			if (pict) {
-				pict->setPicAniInfo(picAniInfo[i]);
+				pict->setPicAniInfo(info);
 				continue;
 			}
-			pict = sc->getPictureObjectById(picAniInfo[i]->objectId, 0);
+			pict = sc->getPictureObjectById(info.objectId, 0);
 			if (pict) {
 				PictureObject *pictNew = new PictureObject(pict);
 
 				sc->_picObjList.push_back(pictNew);
-				pictNew->setPicAniInfo(picAniInfo[i]);
+				pictNew->setPicAniInfo(info);
 				continue;
 			}
 		} else {
-			if (!(picAniInfo[i]->type & 1))
+			if (!(info.type & 1))
 				continue;
 
-			Scene *scNew = g_fp->accessScene(picAniInfo[i]->sceneId);
+			Scene *scNew = g_fp->accessScene(info.sceneId);
 			if (!scNew)
 				continue;
 
-			ani = sc->getStaticANIObject1ById(picAniInfo[i]->objectId, picAniInfo[i]->field_8);
+			ani = sc->getStaticANIObject1ById(info.objectId, info.field_8);
 			if (ani) {
 				ani->setPicAniInfo(picAniInfo[i]);
 				continue;
 			}
 
-			ani = scNew->getStaticANIObject1ById(picAniInfo[i]->objectId, 0);
+			ani = scNew->getStaticANIObject1ById(info.objectId, 0);
 			if (ani) {
 				StaticANIObject *aniNew = new StaticANIObject(ani);
 
@@ -533,42 +513,29 @@ void GameLoader::saveScenePicAniInfos(int sceneId) {
 	if (!st->_scene)
 		return;
 
-	int picAniInfosCount;
-
-	PicAniInfo **pic = savePicAniInfos(st->_scene, 0, 128, &picAniInfosCount);
-
-	if (_sc2array[idx]._picAniInfos)
-		free(_sc2array[idx]._picAniInfos);
-
-	_sc2array[idx]._picAniInfos = pic;
-	_sc2array[idx]._picAniInfosCount = picAniInfosCount;
+	_sc2array[idx]._picAniInfos = savePicAniInfos(st->_scene, 0, 128);
 }
 
-PicAniInfo **GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2, int *picAniInfoCount) {
-	PicAniInfo **res;
-
-	*picAniInfoCount = 0;
+PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 	if (!sc)
-		return NULL;
+		return PicAniInfoList();
 
 	if (!sc->_picObjList.size())
-		return NULL;
+		return PicAniInfoList();
 
 	int numInfos = sc->_staticANIObjectList1.size() + sc->_picObjList.size() - 1;
 	if (numInfos < 1)
-		return NULL;
+		return PicAniInfoList();
 
-	res = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * numInfos);
-
-	int idx = 0;
+	PicAniInfoList res;
+	res.reserve(numInfos);
 
 	for (uint i = 0; i < sc->_picObjList.size(); i++) {
 		PictureObject *obj = sc->_picObjList[i];
 
 		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_field_8 & flag2) == flag2)) {
-			res[idx] = new PicAniInfo();
-			obj->getPicAniInfo(res[idx]);
-			idx++;
+			res.push_back(PicAniInfo());
+			obj->getPicAniInfo(res.back());
 		}
 	}
 
@@ -576,21 +543,13 @@ PicAniInfo **GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2, int *p
 		StaticANIObject *obj = sc->_staticANIObjectList1[i];
 
 		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_field_8 & flag2) == flag2)) {
-			res[idx] = new PicAniInfo();
-			obj->getPicAniInfo(res[idx]);
-			res[idx]->type &= 0xFFFF;
-			idx++;
+			res.push_back(PicAniInfo());
+			obj->getPicAniInfo(res.back());
+			res.back().type &= 0xFFFF;
 		}
 	}
 
-	*picAniInfoCount = idx;
-
-	debugC(4, kDebugBehavior | kDebugAnimation, "savePicAniInfos: Stored %d infos", idx);
-
-	if (!idx) {
-		free(res);
-		return NULL;
-	}
+	debugC(4, kDebugBehavior | kDebugAnimation, "savePicAniInfos: Stored %d infos", res.size());
 
 	return res;
 }
@@ -614,20 +573,15 @@ void GameLoader::updateSystems(int counterdiff) {
 	}
 }
 
-Sc2::Sc2() {
-	_sceneId = 0;
-	_field_2 = 0;
-	_scene = 0;
-	_motionController = 0;
-	_data1 = 0;
-	_count1 = 0;
-	_defPicAniInfos = 0;
-	_defPicAniInfosCount = 0;
-	_picAniInfos = 0;
-	_picAniInfosCount = 0;
-	_isLoaded = 0;
-	_entranceData = 0;
-	_entranceDataCount = 0;
+Sc2::Sc2() :
+	_sceneId(0),
+	_field_2(0),
+	_scene(nullptr),
+	_isLoaded(false),
+	_motionController(nullptr) {}
+
+Sc2::~Sc2() {
+	delete _motionController;
 }
 
 bool Sc2::load(MfcArchive &file) {
@@ -635,49 +589,35 @@ bool Sc2::load(MfcArchive &file) {
 
 	_sceneId = file.readUint16LE();
 
+	delete _motionController;
 	_motionController = file.readClass<MotionController>();
 
-	_count1 = file.readUint32LE();
-	debugC(4, kDebugLoading, "count1: %d", _count1);
-	if (_count1 > 0) {
-		_data1 = (int32 *)malloc(_count1 * sizeof(int32));
-
-		for (int i = 0; i < _count1; i++) {
-			_data1[i] = file.readUint32LE();
+	const uint count1 = file.readUint32LE();
+	debugC(4, kDebugLoading, "count1: %d", count1);
+	if (count1) {
+		_data1.reserve(count1);
+		for (uint i = 0; i < count1; i++) {
+			_data1.push_back(file.readUint32LE());
 		}
-	} else {
-		_data1 = 0;
 	}
 
-	_defPicAniInfosCount = file.readUint32LE();
-	debugC(4, kDebugLoading, "defPicAniInfos: %d", _defPicAniInfosCount);
-	if (_defPicAniInfosCount > 0) {
-		_defPicAniInfos = (PicAniInfo **)malloc(_defPicAniInfosCount * sizeof(PicAniInfo *));
-
-		for (int i = 0; i < _defPicAniInfosCount; i++) {
-			_defPicAniInfos[i] = new PicAniInfo();
-
-			_defPicAniInfos[i]->load(file);
+	const uint defPicAniInfosCount = file.readUint32LE();
+	debugC(4, kDebugLoading, "defPicAniInfos: %d", defPicAniInfosCount);
+	if (defPicAniInfosCount) {
+		_defPicAniInfos.resize(defPicAniInfosCount);
+		for (uint i = 0; i < defPicAniInfosCount; i++) {
+			_defPicAniInfos[i].load(file);
 		}
-	} else {
-		_defPicAniInfos = 0;
 	}
 
-	_picAniInfos = 0;
-	_picAniInfosCount = 0;
+	const uint entranceDataCount = file.readUint32LE();
+	debugC(4, kDebugLoading, "_entranceData: %d", entranceDataCount);
 
-	_entranceDataCount = file.readUint32LE();
-	debugC(4, kDebugLoading, "_entranceData: %d", _entranceDataCount);
-
-	if (_entranceDataCount > 0) {
-		_entranceData = (EntranceInfo **)malloc(_entranceDataCount * sizeof(EntranceInfo *));
-
-		for (int i = 0; i < _entranceDataCount; i++) {
-			_entranceData[i] = new EntranceInfo();
-			_entranceData[i]->load(file);
+	if (entranceDataCount) {
+		_entranceData.resize(entranceDataCount);
+		for (uint i = 0; i < entranceDataCount; i++) {
+			_entranceData[i].load(file);
 		}
-	} else {
-		_entranceData = 0;
 	}
 
 	if (file.size() - file.pos() > 0)
@@ -714,14 +654,8 @@ const char *getSavegameFile(int saveGameIdx) {
 
 void GameLoader::restoreDefPicAniInfos() {
 	for (uint i = 0; i < _sc2array.size(); i++) {
-		if (_sc2array[i]._picAniInfos) {
-			free(_sc2array[i]._picAniInfos);
-			_sc2array[i]._picAniInfos = 0;
-			_sc2array[i]._picAniInfosCount = 0;
-		}
-
 		if (_sc2array[i]._scene)
-			applyPicAniInfos(_sc2array[i]._scene, _sc2array[i]._defPicAniInfos, _sc2array[i]._defPicAniInfosCount);
+			applyPicAniInfos(_sc2array[i]._scene, _sc2array[i]._defPicAniInfos);
 	}
 }
 

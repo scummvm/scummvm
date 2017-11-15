@@ -109,20 +109,19 @@ bool GameLoader::readSavegame(const char *fname) {
 	debugC(3, kDebugLoading, "Reading %d infos", arrSize);
 
 	for (uint i = 0; i < arrSize; i++) {
-		_sc2array[i]._picAniInfosCount = archive->readUint32LE();
 
-		if (_sc2array[i]._picAniInfosCount)
-			debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
+		const uint picAniInfosCount = archive->readUint32LE();
+		if (picAniInfosCount)
+			debugC(3, kDebugLoading, "Count %d: %d", i, picAniInfosCount);
 
-		free(_sc2array[i]._picAniInfos);
-		_sc2array[i]._picAniInfos = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * _sc2array[i]._picAniInfosCount);
+		_sc2array[i]._picAniInfos.clear();
+		_sc2array[i]._picAniInfos.resize(picAniInfosCount);
 
-		for (int j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
-			_sc2array[i]._picAniInfos[j] = new PicAniInfo();
-			_sc2array[i]._picAniInfos[j]->load(*archive);
+		for (uint j = 0; j < picAniInfosCount; j++) {
+			_sc2array[i]._picAniInfos[j].load(*archive);
 		}
 
-		_sc2array[i]._isLoaded = 0;
+		_sc2array[i]._isLoaded = false;
 	}
 
 	delete archiveStream;

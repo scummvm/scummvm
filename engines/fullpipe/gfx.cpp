@@ -189,19 +189,17 @@ void PictureObject::drawAt(int x, int y) {
 		_picture->draw(x, y, 0, 0);
 }
 
-bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
-	if (!(picAniInfo->type & 2) || (picAniInfo->type & 1)) {
-		error("PictureObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
-
-		return false;
+bool PictureObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
+	if (!(picAniInfo.type & 2) || (picAniInfo.type & 1)) {
+		error("PictureObject::setPicAniInfo(): Wrong type: %d", picAniInfo.type);
 	}
 
-	if (picAniInfo->type & 2) {
-		setOXY(picAniInfo->ox, picAniInfo->oy);
-		_priority = picAniInfo->priority;
-		_odelay = picAniInfo->field_8;
-		setFlags(picAniInfo->flags);
-		_field_8 = picAniInfo->field_24;
+	if (picAniInfo.type & 2) {
+		setOXY(picAniInfo.ox, picAniInfo.oy);
+		_priority = picAniInfo.priority;
+		_odelay = picAniInfo.field_8;
+		setFlags(picAniInfo.flags);
+		_field_8 = picAniInfo.field_24;
 
 		return true;
 	}
@@ -332,17 +330,17 @@ void GameObject::renumPictures(Common::Array<PictureObject *> *lst) {
 	free(buf);
 }
 
-bool GameObject::getPicAniInfo(PicAniInfo *info) {
+bool GameObject::getPicAniInfo(PicAniInfo &info) {
 	if (_objtype == kObjTypePictureObject) {
-		info->type = 2;
-		info->objectId = _id;
-		info->sceneId = 0;
-		info->field_8 = _odelay;
-		info->flags = _flags;
-		info->field_24 = _field_8;
-		info->ox = _ox;
-		info->oy = _oy;
-		info->priority = _priority;
+		info.type = 2;
+		info.objectId = _id;
+		info.sceneId = 0;
+		info.field_8 = _odelay;
+		info.flags = _flags;
+		info.field_24 = _field_8;
+		info.ox = _ox;
+		info.oy = _oy;
+		info.priority = _priority;
 
 		return true;
 	}
@@ -350,30 +348,30 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 	if (_objtype == kObjTypeStaticANIObject) {
 		StaticANIObject *ani = static_cast<StaticANIObject *>(this);
 
-		info->type = (ani->_messageQueueId << 16) | 1;
-		info->objectId = ani->_id;
-		info->field_8 = ani->_odelay;
-		info->sceneId = ani->_sceneId;
-		info->flags = ani->_flags;
-		info->field_24 = ani->_field_8;
+		info.type = (ani->_messageQueueId << 16) | 1;
+		info.objectId = ani->_id;
+		info.field_8 = ani->_odelay;
+		info.sceneId = ani->_sceneId;
+		info.flags = ani->_flags;
+		info.field_24 = ani->_field_8;
 		if (ani->_movement) {
-			info->ox = ani->_movement->_ox;
-			info->oy = ani->_movement->_oy;
+			info.ox = ani->_movement->_ox;
+			info.oy = ani->_movement->_oy;
 		} else {
-			info->ox = ani->_ox;
-			info->oy = ani->_oy;
+			info.ox = ani->_ox;
+			info.oy = ani->_oy;
 		}
-		info->priority = ani->_priority;
+		info.priority = ani->_priority;
 
 		if (ani->_statics)
-			info->staticsId = ani->_statics->_staticsId;
+			info.staticsId = ani->_statics->_staticsId;
 
 		if (ani->_movement) {
-			info->movementId = ani->_movement->_id;
-			info->dynamicPhaseIndex = ani->_movement->_currDynamicPhaseIndex;
+			info.movementId = ani->_movement->_id;
+			info.dynamicPhaseIndex = ani->_movement->_currDynamicPhaseIndex;
 		}
 
-		info->someDynamicPhaseIndex = ani->_someDynamicPhaseIndex;
+		info.someDynamicPhaseIndex = ani->_someDynamicPhaseIndex;
 
 		return true;
 	}
@@ -381,49 +379,49 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 	return false;
 }
 
-bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
-	if (!(picAniInfo->type & 3)) {
-		warning("StaticANIObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
+bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
+	if (!(picAniInfo.type & 3)) {
+		warning("StaticANIObject::setPicAniInfo(): Wrong type: %d", picAniInfo.type);
 
 		return false;
 	}
 
-	if (picAniInfo->type & 2) {
-		setOXY(picAniInfo->ox, picAniInfo->oy);
-		_priority = picAniInfo->priority;
-		_odelay = picAniInfo->field_8;
-		setFlags(picAniInfo->flags);
-		_field_8 = picAniInfo->field_24;
+	if (picAniInfo.type & 2) {
+		setOXY(picAniInfo.ox, picAniInfo.oy);
+		_priority = picAniInfo.priority;
+		_odelay = picAniInfo.field_8;
+		setFlags(picAniInfo.flags);
+		_field_8 = picAniInfo.field_24;
 
 		return true;
 	}
 
-	if (picAniInfo->type & 1 && _objtype == kObjTypeStaticANIObject) {
+	if (picAniInfo.type & 1 && _objtype == kObjTypeStaticANIObject) {
 		StaticANIObject *ani = static_cast<StaticANIObject *>(this);
 
-		ani->_messageQueueId = (picAniInfo->type >> 16) & 0xffff;
-		ani->_odelay = picAniInfo->field_8;
-		ani->setFlags(picAniInfo->flags);
-		ani->_field_8 = picAniInfo->field_24;
+		ani->_messageQueueId = (picAniInfo.type >> 16) & 0xffff;
+		ani->_odelay = picAniInfo.field_8;
+		ani->setFlags(picAniInfo.flags);
+		ani->_field_8 = picAniInfo.field_24;
 
-		if (picAniInfo->staticsId) {
-			ani->_statics = ani->getStaticsById(picAniInfo->staticsId);
+		if (picAniInfo.staticsId) {
+			ani->_statics = ani->getStaticsById(picAniInfo.staticsId);
 		} else {
 			ani->_statics = 0;
 		}
 
-		if (picAniInfo->movementId) {
-			ani->_movement = ani->getMovementById(picAniInfo->movementId);
+		if (picAniInfo.movementId) {
+			ani->_movement = ani->getMovementById(picAniInfo.movementId);
 			if (ani->_movement)
-				ani->_movement->setDynamicPhaseIndex(picAniInfo->dynamicPhaseIndex);
+				ani->_movement->setDynamicPhaseIndex(picAniInfo.dynamicPhaseIndex);
 		} else {
 			ani->_movement = 0;
 		}
 
-		ani->setOXY(picAniInfo->ox, picAniInfo->oy);
-		ani->_priority = picAniInfo->priority;
+		ani->setOXY(picAniInfo.ox, picAniInfo.oy);
+		ani->_priority = picAniInfo.priority;
 
-		ani->setSomeDynamicPhaseIndex(picAniInfo->someDynamicPhaseIndex);
+		ani->setSomeDynamicPhaseIndex(picAniInfo.someDynamicPhaseIndex);
 
 		return true;
 	}

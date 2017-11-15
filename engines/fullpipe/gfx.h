@@ -163,8 +163,8 @@ class GameObject : public CObject {
 	void clearFlags() { _flags = 0; }
 	Common::String getName() { return _objectName; }
 
-	bool getPicAniInfo(PicAniInfo *info);
-	bool setPicAniInfo(PicAniInfo *info);
+	bool getPicAniInfo(PicAniInfo &info);
+	bool setPicAniInfo(const PicAniInfo &info);
 };
 
 class PictureObject : public GameObject {
@@ -187,7 +187,7 @@ class PictureObject : public GameObject {
 	void draw();
 	void drawAt(int x, int y);
 
-	bool setPicAniInfo(PicAniInfo *picAniInfo);
+	bool setPicAniInfo(const PicAniInfo &picAniInfo);
 	bool isPointInside(int x, int y);
 	bool isPixelHitAtPos(int x, int y);
 	void setOXY2();

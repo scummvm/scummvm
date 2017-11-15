@@ -129,7 +129,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 
 			PicAniInfo aniInfo;
 
-			obj->getPicAniInfo(&aniInfo);
+			obj->getPicAniInfo(aniInfo);
 
 			if (cinter->_staticsId1 && obj->_objtype == kObjTypeStaticANIObject) {
 				StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
@@ -139,7 +139,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			int xpos = cinter->_xOffs + obj->_ox;
 			int ypos = cinter->_yOffs + obj->_oy;
 
-			obj->setPicAniInfo(&aniInfo);
+			obj->setPicAniInfo(aniInfo);
 
 			if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1) {
 				debugC(0, kDebugPathfinding, "Calling makeQueue() at [%d, %d]", xpos, ypos);
@@ -298,7 +298,7 @@ LABEL_38:
 		bool someFlag = false;
 		PicAniInfo aniInfo;
 
-		obj->getPicAniInfo(&aniInfo);
+		obj->getPicAniInfo(aniInfo);
 
 		if (obj->_objtype == kObjTypeStaticANIObject && inter->_staticsId1) {
 			StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
@@ -310,7 +310,7 @@ LABEL_38:
 		int xpos = inter->_xOffs + obj->_ox;
 		int ypos = inter->_yOffs + obj->_oy;
 
-		obj->setPicAniInfo(&aniInfo);
+		obj->setPicAniInfo(aniInfo);
 
 		if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1
 				|| (inter->_staticsId2 != 0 && (subj->_statics == 0 || subj->_statics->_staticsId != inter->_staticsId2))) {
