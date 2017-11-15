@@ -119,7 +119,7 @@ bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new Xeen::WorldOfXeen::WorldOfXeenEngine(syst, gd);
 		break;
 	default:
-		break;
+		error("Invalid game");
 	}
 
 	return gd != 0;

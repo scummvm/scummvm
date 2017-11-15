@@ -885,8 +885,8 @@ void Combat::doMonsterTurn(int monsterId) {
 						switch (_combatParty[idx]->worstCondition()) {
 						case PARALYZED:
 						case UNCONSCIOUS:
-							if (flag)
-								skip = true;
+							//if (flag)
+							//	skip = true;
 							break;
 						case DEAD:
 						case STONED:
@@ -1326,7 +1326,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 			divisor = 8;
 			break;
 		default:
-			break;
+			error("Invalid class");
 		}
 
 		int numberOfAttacks = c.getCurrentLevel() / divisor + 1;

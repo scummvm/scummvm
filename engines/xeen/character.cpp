@@ -1462,6 +1462,7 @@ uint Character::nextExperienceLevel() const {
 		shift = 10;
 	} else {
 		base = 0;
+		assert(_level._permanent > 0);
 		shift = _level._permanent - 1;
 	}
 
@@ -1709,8 +1710,10 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 
 		case 3:
 			mult = p1 == 7 || vm->getRandomNumber(1, 100) > 70 ? 1 : 0;
-			v16 = vm->getRandomNumber(Res.MAKE_ITEM_ARR4[mult][p1][0],
-				Res.MAKE_ITEM_ARR4[mult][p1][1]);
+			v16 = vm->getRandomNumber(Res.MAKE_ITEM_ARR4[mult][p1 - 1][0],
+				Res.MAKE_ITEM_ARR4[mult][p1 - 1][1]);
+			if (mult)
+				v16 += 9;
 			break;
 
 		case 4:

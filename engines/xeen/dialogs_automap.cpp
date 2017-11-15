@@ -85,7 +85,7 @@ void AutoMapDialog::execute() {
 
 		if (map._isOutdoors) {
 			// Draw outdoors map
-			for (int yp = 38, yDiff = pt.y + 7; pt.y < 166; --yDiff, yp += 8) {
+			for (int yp = 38, yDiff = pt.y + 7; yp < 166; --yDiff, yp += 8) {
 				for (int xp = 80, xDiff = pt.x - 7; xp < 240; xp += 10, ++xDiff) {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0);
 
@@ -105,7 +105,6 @@ void AutoMapDialog::execute() {
 						map._tileSprites.draw(screen, wallType, Common::Point(xp, yp));
 				}
 			}
-
 
 			for (int yp = 38, yDiff = pt.y + 7; yp < 166; yp += 8, --yDiff) {
 				for (int xp = 80, xDiff = -7; xp < 240; xp += 10, ++xDiff) {
