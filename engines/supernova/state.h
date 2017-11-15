@@ -196,7 +196,6 @@ public:
 	void reply(StringID textId, int aus1, int aus2);
 	void reply(const char *text, int aus1, int aus2);
 	void mousePosDialog(int x, int y);
-	void shipStart();
 	void shot(int a, int b);
 	void takeMoney(int amount);
 	void search(int time);

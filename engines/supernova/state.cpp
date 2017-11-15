@@ -918,10 +918,6 @@ bool GameManager::airless() {
 	        (_currentRoom->getId() == AIRLOCK && _rooms[AIRLOCK]->getObject(1)->hasProperty(OPENED)));
 }
 
-void GameManager::shipStart() {
-	warning("STUB: shipStart");
-}
-
 void GameManager::sentence(int number, bool brightness) {
 	if (number < 0)
 		return;

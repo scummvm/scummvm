@@ -805,6 +805,8 @@ public:
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
+	void shipStart();
+
 private:
 	// TODO: change to 6, fix initialization
 	StringID _dialog1[2];

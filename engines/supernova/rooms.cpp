@@ -2138,7 +2138,7 @@ void ArsanoMeetup2::onEntrance() {
 		if (sentenceRemoved(1, 1))
 			_vm->renderMessage(kStringArsanoMeetup2_2); // All spaceships have left the planet, except one ...
 		else
-			_gm->shipStart();
+			shipStart();
 	} else if (sentenceRemoved(1, 1))
 		_vm->renderMessage(kStringArsanoMeetup2_1); // All spaceships have left the planet
 
@@ -2189,7 +2189,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_rooms[MEETUP2]->getObject(1)->_click = 255;
 			_vm->renderRoom(*this);
 			_vm->paletteBrightness();
-			_gm->shipStart();
+			shipStart();
 			if (flight) {
 				_vm->renderImage(13, 0);
 				_vm->paletteBrightness();
@@ -2245,6 +2245,19 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 
 	return true;
+}
+
+void ArsanoMeetup2::shipStart() {
+	_gm->wait2(12);
+	for (int i = 2; i <= 11; ++i) {
+		if (i >= 9)
+			_gm->drawImage(i - 1 + 128);
+		else
+			setSectionVisible(i - 1, false);
+		_gm->drawImage(i);
+		_gm->wait2(2);
+	}
+	_gm->drawImage(11 + 128);
 }
 
 bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
