@@ -2656,10 +2656,12 @@ void SurfaceSdlGraphicsManager::notifyResize(const int width, const int height) 
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 void SurfaceSdlGraphicsManager::deinitializeRenderer() {
-	SDL_DestroyTexture(_screenTexture);
+	if (_screenTexture)
+		SDL_DestroyTexture(_screenTexture);
 	_screenTexture = nullptr;
 
-	SDL_DestroyRenderer(_renderer);
+	if (_renderer)
+		SDL_DestroyRenderer(_renderer);
 	_renderer = nullptr;
 }
 
