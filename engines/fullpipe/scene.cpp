@@ -68,17 +68,16 @@ bool SceneTagList::load(MfcArchive &file) {
 	return true;
 }
 
-SceneTag::SceneTag() {
-	_field_4 = 0;
-	_scene = 0;
-	_sceneId = 0;
+SceneTag::SceneTag() :
+	_scene(nullptr),
+	_sceneId(0) {}
+
+SceneTag::~SceneTag() {
+	delete _scene;
 }
 
 bool SceneTag::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "SceneTag::load()");
-
-	_field_4 = 0;
-	_scene = 0;
 
 	_sceneId = file.readUint16LE();
 
@@ -89,11 +88,6 @@ bool SceneTag::load(MfcArchive &file) {
 	return true;
 }
 
-SceneTag::~SceneTag() {
-	delete _scene;
-	delete _field_4;
-}
-
 void SceneTag::loadScene() {
 	Common::String archname = genFileName(0, _sceneId, "nl");
 
@@ -101,20 +95,19 @@ void SceneTag::loadScene() {
 
 	Common::String fname = genFileName(0, _sceneId, "sc");
 
-	Common::SeekableReadStream *file = arch->createReadStreamForMember(fname);
+	Common::ScopedPtr<Common::SeekableReadStream> file(arch->createReadStreamForMember(fname));
 
+	delete _scene;
 	_scene = new Scene();
 
-	MfcArchive archive(file);
+	MfcArchive archive(file.get());
 
 	_scene->load(archive);
 
 	if (_scene->_shadows)
 		_scene->_shadows->init();
 
-	delete file;
-
-	g_fp->_currArchive = 0;
+	g_fp->_currArchive = nullptr;
 }
 
 Scene::Scene() : _sceneId(0), _field_BC(0) {}

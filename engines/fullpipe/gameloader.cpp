@@ -420,7 +420,7 @@ bool GameLoader::unloadScene(int sceneId) {
 	_sc2array[sceneTag]._motionController->detachAllObjects();
 
 	delete tag->_scene;
-	tag->_scene = 0;
+	tag->_scene = nullptr;
 
 	_sc2array[sceneTag]._isLoaded = 0;
 	_sc2array[sceneTag]._scene = 0;

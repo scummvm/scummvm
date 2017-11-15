@@ -130,6 +130,7 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 void scene19_preload() {
 	for (SceneTagList::iterator s = g_fp->_gameProject->_sceneTagList->begin(); s != g_fp->_gameProject->_sceneTagList->end(); ++s) {
 		if (s->_sceneId == SC_18) {
+			delete s->_scene;
 			s->_scene = g_fp->_scene3;
 
 			break;
