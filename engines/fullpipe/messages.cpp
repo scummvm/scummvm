@@ -362,17 +362,16 @@ bool MessageQueue::load(MfcArchive &file) {
 
 bool MessageQueue::chain(StaticANIObject *ani) {
 	if (checkGlobalExCommandList1() && checkGlobalExCommandList2()) {
-		if (!(getFlags() & 2)) {
+		if (!(getFlags() & kInGlobalQueue)) {
 			g_fp->_globalMessageQueueList->addMessageQueue(this);
-			_flags |= 2;
+			_flags |= kInGlobalQueue;
 		}
 		if (ani) {
 			ani->queueMessageQueue(this);
-			return true;
 		} else {
 			sendNextCommand();
-			return true;
 		}
+		return true;
 	}
 	return false;
 }
@@ -653,8 +652,7 @@ MessageQueue *GlobalMessageQueueList::getMessageQueueById(int id) {
 void GlobalMessageQueueList::deleteQueueById(int id) {
 	for (uint i = 0; i < size(); i++)
 		if (_storage[i]->_id == id) {
-			remove_at(i);
-
+			delete remove_at(i);
 			disableQueueById(id);
 			return;
 		}
@@ -663,7 +661,7 @@ void GlobalMessageQueueList::deleteQueueById(int id) {
 void GlobalMessageQueueList::removeQueueById(int id) {
 	for (uint i = 0; i < size(); i++)
 		if (_storage[i]->_id == id) {
-			_storage[i]->_flags &= 0xFD; // It is quite pointless
+			_storage[i]->_flags &= ~kInGlobalQueue;
 			remove_at(i);
 
 			disableQueueById(id);
@@ -708,7 +706,7 @@ int GlobalMessageQueueList::compact() {
 }
 
 void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
-	msg->setFlags(msg->getFlags() | 2);
+	msg->setFlags(msg->getFlags() | kInGlobalQueue);
 
 	push_back(msg);
 }
