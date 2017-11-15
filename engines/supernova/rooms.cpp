@@ -2250,8 +2250,6 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 	byte row2[6] = {1, 1, 1, 1, 0, 0};
 	byte row3[6] = {1, 1, 0, 0, 0, 0};
-
-	// TODO: Hack, to be move away and renamed when the other uses are found
 	byte rowsX[6] = {1, 1, 1, 0, 0, 0};
 
 	if ((verb == ACTION_WALK) && (obj1._id == STAR))
@@ -2831,6 +2829,8 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 bool AxacussIntersection::interact(Action verb, Object &obj1, Object &obj2) {
+	byte rowsX[6] = {1, 1, 1, 0, 0, 0};
+
 	if (((verb == ACTION_WALK) || (verb == ACTION_OPEN)) && (obj1._id == DOOR) && !isSectionVisible(1))
 		_gm->guardShot();
 	else if ((verb == ACTION_OPEN) && (obj1._id == DOOR) && !obj1.hasProperty(OPENED)) {
@@ -2844,8 +2844,7 @@ bool AxacussIntersection::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_rooms[CORRIDOR9]->getObject(1)->disableProperty(OPENED);
 		return false;
 	} else if ((verb == ACTION_TALK) && (obj1._id == GUARDIAN)) {
-		// FIXME: refactor _rowsX and _dialogsX
-		// _gm->dialog(3, &rowsx, &_dialogsX, 0);
+		_gm->dialog(3, rowsX, _dialogsX, 0);
 		_gm->guardShot();
 	} else if ((verb == ACTION_TAKE) && (obj1._id == MASTERKEYCARD)) {
 		_gm->great(0);
@@ -2860,11 +2859,12 @@ bool AxacussIntersection::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
+	byte rowsX[6] = {1, 1, 1, 0, 0, 0};
+
 	if (((verb == ACTION_WALK) || (verb == ACTION_OPEN)) && (obj1._id == DOOR) && !_gm->_state._powerOff)
 		_gm->guard3Shot();
 	else if ((verb == ACTION_TALK) && (obj1._id == GUARDIAN)) {
-		// FIXME: refactor _rowsX and _dialogsX
-		// _gm->dialog(3, &_rowsX, &_dialogsX,0);
+		_gm->dialog(3, rowsX, _dialogsX,0);
 		_gm->guard3Shot();
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LAMP, MAGNET)) {
 		_gm->_inventory.remove(*_gm->_rooms[CELL]->getObject(7));

@@ -836,7 +836,6 @@ public:
 		_dialog3[0] = kStringDialogArsanoMeetup3_4;
 		_dialog3[1] = kStringDialogArsanoMeetup3_5;
 
-		// TODO: Hack, to be move away and renamed when the other uses are found
 		_dialogsX[0] = kStringDialogX1;
 		_dialogsX[1] = kStringDialogX2;
 		_dialogsX[2] = kStringDialogX3;
@@ -1168,10 +1167,18 @@ public:
 		_objectState[3] = Object(_id, kStringAxacussan, kStringAxacussanDescription, GUARDIAN, TALK, 0, 0, 0);
 		_objectState[4] = Object(_id, kStringImage, kStringImageDescription2, NULLOBJECT, NULLTYPE, 2, 2, 0);
 		_objectState[5] = Object(_id, kStringMastercard, kStringMastercardDescription, MASTERKEYCARD, TAKE | COMBINABLE, 255, 255, 1);
+
+		_dialogsX[0] = kStringDialogX1;
+		_dialogsX[1] = kStringDialogX2;
+		_dialogsX[2] = kStringDialogX3;
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+
+private:
+	StringID _dialogsX[6];
 };
+
 class AxacussExit : public Room {
 public:
 	AxacussExit(SupernovaEngine *vm, GameManager *gm) {
@@ -1189,9 +1196,16 @@ public:
 		_objectState[4] = Object(_id, kStringLamp2,kStringDefaultDescription,LAMP,COMBINABLE,3,3,0);
 		_objectState[5] = Object(_id, kStringAxacussan,kStringDefaultDescription,GUARDIAN,TALK,5,5,0);
 		_objectState[6] = Object(_id, kStringImage,kStringGenericDescription5,NULLOBJECT,NULLTYPE,4,4,0);
+
+		_dialogsX[0] = kStringDialogX1;
+		_dialogsX[1] = kStringDialogX2;
+		_dialogsX[2] = kStringDialogX3;
 	}
 
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+
+private:
+	StringID _dialogsX[6];
 };
 class AxacussOffice1 : public Room {
 public:
