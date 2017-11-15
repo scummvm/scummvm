@@ -42,8 +42,10 @@ Name: se; MessagesFile: compiler:Languages\Swedish.isl
 [Icons]
 Name: {group}\{cm:UninstallProgram, ScummVM}; Filename: {uninstallexe}
 Name: {group}\ScummVM; Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0
-Name: {group}\ScummVM (noconsole); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0
-Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists
+Name: {group}\ScummVM (noconsole); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0; Languages: not de
+Name: {group}\ScummVM (ohne Konsolenfenster); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex:0; Languages: de
+Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: not de
+Name: {group}\Mitwirkende; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: de
 Name: {group}\Copying; Filename: {app}\COPYING.txt; WorkingDir: {app}; Comment: COPYING; Flags: createonlyiffileexists
 Name: {group}\Copying.BSD; Filename: {app}\COPYING.BSD.txt; WorkingDir: {app}; Comment: COPYING.BSD; Flags: createonlyiffileexists
 Name: {group}\Copying.FREEFONT; Filename: {app}\COPYING.FREEFONT.txt; WorkingDir: {app}; Comment: COPYING.FREEFONT; Flags: createonlyiffileexists
@@ -65,9 +67,12 @@ Name: {group}\PrectiMe; Filename: {app}\PrectiMe.txt; WorkingDir: {app}; Comment
 Name: {group}\Liesmich; Filename: {app}\LIESMICH.txt; WorkingDir: {app}; Comment: LIESMICH; Flags: createonlyiffileexists; Languages: de
 Name: {group}\LasMig; Filename: {app}\LasMig.txt; WorkingDir: {app}; Comment: LasMig; Flags: createonlyiffileexists; Languages: se
 
-Name: {group}\Saved Games\Migrate Saved Games; Filename: {app}\migration.bat; WorkingDir: {app}; Comment: Migrate Saved Games; IconIndex: 0; MinVersion: 0, 1
-Name: {group}\Saved Games\Saved Games (old default); Filename: {app}; WorkingDir: {app}; Comment: Saved Games (old default); IconIndex: 0; MinVersion: 0, 1
-Name: {group}\Saved Games\Saved Games (new default); Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Saved Games (new default); IconIndex: 0; MinVersion: 0, 1
+Name: {group}\Saved Games\Migrate Saved Games; Filename: {app}\migration.bat; WorkingDir: {app}; Comment: Migrate Saved Games; IconIndex: 0; MinVersion: 0, 1; Languages: not de
+Name: {group}\Spielstände\Spielstände migrieren; Filename: {app}\migration.bat; WorkingDir: {app}; Comment: Spielstände migrieren; IconIndex: 0; MinVersion: 0, 1; Languages: de
+Name: {group}\Saved Games\Saved Games (old default); Filename: {app}; WorkingDir: {app}; Comment: Saved Games (old default); IconIndex: 0; MinVersion: 0, 1; Languages: not de
+Name: {group}\Spielstände\Spielstände (alter Standard); Filename: {app}; WorkingDir: {app}; Comment: Spielstände (alter Standard); IconIndex: 0; MinVersion: 0, 1; Languages: de
+Name: {group}\Saved Games\Saved Games (new default); Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Saved Games (new default); IconIndex: 0; MinVersion: 0, 1; Languages: not de
+Name: {group}\Spielstände\Spielstände; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielstände; IconIndex: 0; MinVersion: 0, 1; Languages: de
 
 [Run]
 Filename: {app}\ScummVM.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent
