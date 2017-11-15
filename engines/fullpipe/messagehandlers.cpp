@@ -204,9 +204,9 @@ int global_messageHandler1(ExCommand *cmd) {
 			case '8':
 				{
 					int num = 32;
-					for (int i = 0; i < g_fp->_gameLoader->_sc2array[num]._picAniInfosCount; i++) {
+					for (uint i = 0; i < g_fp->_gameLoader->_sc2array[num]._picAniInfos.size(); i++) {
 						debug("pic %d, %d:", num, i);
-						g_fp->_gameLoader->_sc2array[num]._picAniInfos[i]->print();
+						g_fp->_gameLoader->_sc2array[num]._picAniInfos[i].print();
 					}
 				}
 				break;

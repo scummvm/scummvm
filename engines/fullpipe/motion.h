@@ -84,15 +84,15 @@ public:
 
 class MctlItem : public CObject {
 public:
-	MotionController *_motionControllerObj;
-	MovGraphReact *_movGraphReactObj;
+	Common::ScopedPtr<MotionController> _motionControllerObj;
+	Common::ScopedPtr<MovGraphReact> _movGraphReactObj;
 	Common::Array<MctlConnectionPoint *> _connectionPoints;
 	int _field_20;
 	int _field_24;
 	int _field_28;
 
 public:
-	MctlItem() : _movGraphReactObj(0), _motionControllerObj(0), _field_20(0), _field_24(0), _field_28(0) {}
+	MctlItem() : _field_20(0), _field_24(0), _field_28(0) {}
 	~MctlItem();
 };
 
@@ -120,7 +120,7 @@ public:
 	void replaceNodeX(int from, int to);
 
 	uint getMotionControllerCount() { return _motionControllers.size(); }
-	MotionController *getMotionController(int num) { return _motionControllers[num]->_motionControllerObj; }
+	MotionController *getMotionController(int num) { return _motionControllers[num]->_motionControllerObj.get(); }
 };
 
 struct MctlLadderMovementVars {
@@ -414,11 +414,10 @@ public:
 	int _mctlflags;
 	int _mctlstatic;
 	int16 _mctlmirror;
-	MessageQueue *_messageQueueObj;
+	Common::ScopedPtr<MessageQueue> _messageQueueObj;
 	int _motionControllerObj;
 
 	MctlConnectionPoint();
-	~MctlConnectionPoint();
 };
 
 } // End of namespace Fullpipe

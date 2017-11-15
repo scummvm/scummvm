@@ -2156,10 +2156,10 @@ bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 
 	Fullpipe::parseSavegameHeader(header, desc);
 
-	snprintf(res, 17, "%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
+	snprintf(res, sizeof(res), "%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
 
 	for (int i = 0; i < 16; i++) {
-		switch(res[i]) {
+		switch (res[i]) {
 		case '.':
 			fileinfo->date[i] = 11;
 			break;

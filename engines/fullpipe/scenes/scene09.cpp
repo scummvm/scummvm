@@ -190,14 +190,14 @@ void sceneHandler09_spitterClick() {
 	if (g_vars->scene09_spitter->_flags & 4) {
 		PicAniInfo info;
 
-		g_vars->scene09_spitter->getPicAniInfo(&info);
+		g_vars->scene09_spitter->getPicAniInfo(info);
 		g_vars->scene09_spitter->_messageQueueId = 0;
 		g_vars->scene09_spitter->changeStatics2(ST_PLV_SIT);
 
 		int x = g_vars->scene09_spitter->_ox - 10;
 		int y = g_vars->scene09_spitter->_oy + 145;
 
-		g_vars->scene09_spitter->setPicAniInfo(&info);
+		g_vars->scene09_spitter->setPicAniInfo(info);
 
 		if (ABS(x - g_fp->_aniMan->_ox) > 1 || ABS(y - g_fp->_aniMan->_oy) > 1) {
 			MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, y, 1, ST_MAN_UP);

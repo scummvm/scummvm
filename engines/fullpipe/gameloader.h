@@ -46,19 +46,17 @@ class Sc2 : public CObject {
 	int16 _sceneId;
 	int16 _field_2;
 	Scene *_scene;
+	/** owned */
 	MotionController *_motionController;
-	int32 *_data1; // FIXME, could be a struct
-	int _count1;
-	PicAniInfo **_defPicAniInfos;
-	int _defPicAniInfosCount;
-	PicAniInfo **_picAniInfos;
-	int _picAniInfosCount;
-	int _isLoaded;
-	EntranceInfo **_entranceData;
-	int _entranceDataCount;
+	Common::Array<int32> _data1; // FIXME, could be a struct
+	PicAniInfoList _defPicAniInfos;
+	PicAniInfoList _picAniInfos;
+	bool _isLoaded;
+	Common::Array<EntranceInfo> _entranceData;
 
  public:
 	Sc2();
+	virtual ~Sc2();
 	virtual bool load(MfcArchive &file);
 };
 
@@ -112,9 +110,9 @@ class GameLoader : public CObject {
 	void updateSystems(int counterdiff);
 
 	int getSceneTagBySceneId(int sceneId, SceneTag **st);
-	void applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount);
+	void applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo);
 	void saveScenePicAniInfos(int sceneId);
-	PicAniInfo **savePicAniInfos(Scene *sc, int flag1, int flag2, int *picAniInfoCount);
+	PicAniInfoList savePicAniInfos(Scene *sc, int flag1, int flag2);
 
 	bool readSavegame(const char *fname);
 	bool writeSavegame(Scene *sc, const char *fname);

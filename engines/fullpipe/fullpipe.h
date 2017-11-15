@@ -283,7 +283,7 @@ public:
 	int getObjectEnumState(const Common::String &name, const char *state);
 
 	void sceneAutoScrolling();
-	bool sceneSwitcher(EntranceInfo *entrance);
+	bool sceneSwitcher(const EntranceInfo &entrance);
 	Scene *accessScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
 	int convertScene(int scene);

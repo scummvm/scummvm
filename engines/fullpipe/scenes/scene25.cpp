@@ -161,14 +161,14 @@ void sceneHandler25_enterMan() {
 void sceneHandler25_enterTruba() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int id = g_fp->_aniMan->_statics->_staticsId;
 	int qid = 0;
@@ -196,14 +196,14 @@ void sceneHandler25_saveEntrance(int value) {
 void sceneHandler25_toLadder() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int id = g_fp->_aniMan->_statics->_staticsId;
 	int qid = 0;
@@ -275,14 +275,14 @@ void sceneHandler25_sneeze() {
 void sceneHandler25_rowShovel() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int id = g_fp->_aniMan->_statics->_staticsId;
 	int qid = 0;
@@ -309,14 +309,14 @@ void sceneHandler25_rowShovel() {
 void sceneHandler25_rowHand() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int id = g_fp->_aniMan->_statics->_staticsId;
 	int qid = 0;
@@ -363,14 +363,14 @@ void sceneHandler25_tryWater() {
 void sceneHandler25_tryRow(int obj) {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int qid = 0;
 
