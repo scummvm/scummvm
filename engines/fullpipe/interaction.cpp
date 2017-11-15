@@ -543,7 +543,7 @@ bool EntranceInfo::load(MfcArchive &file) {
 	_sceneId = file.readUint32LE();
 	_field_4 = file.readUint32LE();
 	_messageQueueId = file.readUint32LE();
-	file.read(_gap_C, 292); // FIXME, Ugh
+	file.skip(292); // FIXME: Ugh
 	_field_130 = file.readUint32LE();
 
 	return true;
