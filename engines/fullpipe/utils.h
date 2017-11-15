@@ -59,6 +59,7 @@ public:
 	double readDouble();
 	CObject *parseClass(bool *isCopyReturned);
 
+	/** ownership of returned object is passed to caller */
 	template <typename T>
 	T *readClass() {
 		CObject *obj = readBaseClass();
