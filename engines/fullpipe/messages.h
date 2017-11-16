@@ -53,8 +53,6 @@ class Message : public CObject {
 
  public:
 	Message();
-	Message(Message *src);
-	virtual ~Message() {}
 
 	Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, int sceneClickX, int sceneClickY, int a10);
 };

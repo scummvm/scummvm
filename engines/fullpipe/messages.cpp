@@ -37,7 +37,7 @@ ExCommand::ExCommand() {
 	_parId = 0;
 }
 
-ExCommand::ExCommand(ExCommand *src) : Message(src) {
+ExCommand::ExCommand(ExCommand *src) : Message(*src) {
 	_field_3C = 1;
 	_messageNum = src->_messageNum;
 	_excFlags = src->_excFlags;
@@ -172,22 +172,6 @@ Message::Message() {
 	_field_2C = 0;
 	_field_30 = 0;
 	_field_34 = 0;
-}
-
-Message::Message(Message *src) {
-	_parentId = src->_parentId;
-	_messageKind = src->_messageKind;
-	_x = src->_x;
-	_y = src->_y;
-	_field_14 = src->_field_14;
-	_sceneClickX = src->_sceneClickX;
-	_sceneClickY = src->_sceneClickY;
-	_field_20 = src->_field_20;
-	_field_24 = src->_field_24;
-	_param = src->_param;
-	_field_2C = src->_field_2C;
-	_field_30 = src->_field_30;
-	_field_34 = src->_field_34;
 }
 
 Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, int sceneClickX, int sceneClickY, int a10) {
