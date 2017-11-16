@@ -457,11 +457,6 @@ void SupernovaEngine::renderImageSection(int section) {
 	                          sectionRect.width(), sectionRect.height());
 }
 
-void SupernovaEngine::renderImage(int filenumber, int section) {
-	if (setCurrentImage(filenumber))
-		renderImage(section);
-}
-
 void SupernovaEngine::renderImage(int section) {
 	bool sectionVisible = true;
 

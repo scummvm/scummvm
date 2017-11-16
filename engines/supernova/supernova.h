@@ -129,7 +129,6 @@ public:
 	void playSoundMod(int filenumber);
 	void stopSound();
 	void renderImageSection(int section);
-	void renderImage(int filenumber, int section);
 	void renderImage(int section);
 	bool setCurrentImage(int filenumber);
 	void saveScreen(int x, int y, int width, int height);

@@ -760,7 +760,8 @@ void GameManager::supernovaEvent() {
 	_vm->renderMessage(kStringSupernova2);
 	waitOnInput(_timer1);
 	_vm->removeMessage();
-	_vm->renderImage(26, 0);
+	_vm->setCurrentImage(26);
+	_vm->renderImage(0);
 	_vm->paletteBrightness();
 	novaScroll();
 	_vm->paletteFadeOut();
@@ -873,7 +874,8 @@ void GameManager::outro() {
 	_vm->playSoundMod(49);
 //	title = 0;
 	_vm->paletteFadeOut();
-	_vm->renderImage(55, 0);
+	_vm->setCurrentImage(55);
+	_vm->renderImage(0);
 	_vm->paletteFadeIn();
 	getInput();
 	_vm->paletteFadeOut();
@@ -1463,7 +1465,8 @@ void GameManager::closeLocker(const Room *room, Object *obj, Object *lock, int s
 void GameManager::dead(StringID messageId) {
 	_vm->paletteFadeOut();
 	_guiEnabled = false;
-	_vm->renderImage(11, 0);
+	_vm->setCurrentImage(11);
+	_vm->renderImage(0);
 	_vm->renderMessage(messageId);
 	_vm->playSound(kAudioDeath);
 	_vm->paletteFadeIn();
@@ -1488,7 +1491,8 @@ void GameManager::dead(StringID messageId) {
 void GameManager::dead(const char *message) {
 	_vm->paletteFadeOut();
 	_guiEnabled = false;
-	_vm->renderImage(11, 0);
+	_vm->setCurrentImage(11);
+	_vm->renderImage(0);
 	_vm->renderMessage(message);
 	_vm->playSound(kAudioDeath);
 	_vm->paletteFadeIn();
@@ -1586,7 +1590,8 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringGenericInteract_11);
 		waitOnInput(_timer1);
 		_vm->removeMessage();
-		_vm->renderImage(2, 0);
+		_vm->setCurrentImage(2);
+		_vm->renderImage(0);
 		_vm->setColor63(40);
 		getInput();
 		_vm->renderRoom(*_currentRoom);

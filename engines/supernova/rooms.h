@@ -127,10 +127,10 @@ public:
 	virtual void onEntrance();
 
 private:
-	bool animate(int filenumber, int section1, int section2, int duration);
-	bool animate(int filenumber, int section1, int section2, int duration, MessagePosition position,
+	bool animate(int section1, int section2, int duration);
+	bool animate(int section1, int section2, int duration, MessagePosition position,
 	             StringID text);
-	bool animate(int filenumber, int section1, int section2, int section3, int section4, int duration,
+	bool animate(int section1, int section2, int section3, int section4, int duration,
 	             MessagePosition position, StringID text);
 
 	void titleScreen();
