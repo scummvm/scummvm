@@ -285,7 +285,7 @@ MessageQueue::~MessageQueue() {
 	if (_field_14)
 		delete _field_14;
 
-	if (_flags & 2) {
+	if (_flags & kInGlobalQueue) {
 		g_fp->_globalMessageQueueList->removeQueueById(_id);
 	}
 
