@@ -84,7 +84,7 @@ public:
 	void clearVisitsList(int idx);
 	int seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop);
 	Common::Point getNumCycles(Movement *mov, int x, int y, int *mult, int *len, int flag);
-	ExCommand2 *createCommand(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len);
+	ExCommand2 *createCommand(Movement *mov, int objId, int x1, int y1, Common::Point &x2, Common::Point &y2, int len);
 	MessageQueue *makeQueue(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);
 	int getFramesCount(int idx, int subIdx, int subOffset, int flag);
 	int getNumMovements(int objectId, int idx1, int idx2);

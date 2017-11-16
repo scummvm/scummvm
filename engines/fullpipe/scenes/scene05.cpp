@@ -159,9 +159,9 @@ void sceneHandler05_genFlies() {
 			int y = g_fp->_rnd.getRandomNumber(60) + i * 30 + 520;
 
 			g_fp->_floaters->genFlies(g_fp->_currentScene, x, y, 5, 1);
-			g_fp->_floaters->_array2.back()->val2 = 585;
-			g_fp->_floaters->_array2.back()->val3 = -70;
-			g_fp->_floaters->_array2.back()->val11 = 8.0;
+			g_fp->_floaters->_array2.back().val2 = 585;
+			g_fp->_floaters->_array2.back().val3 = -70;
+			g_fp->_floaters->_array2.back().val11 = 8.0;
 		}
 	}
 

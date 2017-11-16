@@ -160,9 +160,9 @@ void sceneHandler34_climb() {
 void sceneHandler34_genFlies() {
 	g_fp->_floaters->genFlies(g_fp->_currentScene, 1072, -50, 100, 4);
 
-	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = 1;
-	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val6 = 1072;
-	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val7 = -50;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].countdown = 1;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val6 = 1072;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val7 = -50;
 
 	g_vars->scene34_fliesCountdown = g_fp->_rnd.getRandomNumber(500) + 500;
 }

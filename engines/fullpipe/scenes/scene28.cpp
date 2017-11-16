@@ -172,13 +172,13 @@ void sceneHandler28_turnOn2() {
 	if (g_vars->scene28_fliesArePresent) {
 		g_fp->_floaters->genFlies(g_fp->_currentScene, 1013, 329, 60, 4);
 
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val13 = 30;
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd.getRandomNumber(12) + 12;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val13 = 30;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].countdown = g_fp->_rnd.getRandomNumber(12) + 12;
 
 		g_fp->_floaters->genFlies(g_fp->_currentScene, 1074, 311, 60, 4);
 
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val13 = 30;
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd.getRandomNumber(12) + 12;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val13 = 30;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].countdown = g_fp->_rnd.getRandomNumber(12) + 12;
 	}
 
 	g_vars->scene28_fliesArePresent = false;
@@ -467,8 +467,8 @@ int sceneHandler28(ExCommand *cmd) {
 		g_fp->_floaters->update();
 
 		for (uint i = 0; i < g_fp->_floaters->_array2.size(); i++)
-			if (g_fp->_floaters->_array2[i]->val13 == 1)
-				g_fp->_floaters->_array2[i]->ani->_priority = 15;
+			if (g_fp->_floaters->_array2[i].val13 == 1)
+				g_fp->_floaters->_array2[i].ani->_priority = 15;
 
 		g_fp->_behaviorManager->updateBehaviors();
 

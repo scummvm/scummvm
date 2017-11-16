@@ -266,9 +266,6 @@ GameObject::GameObject(GameObject *src) {
 	_field_8 = src->_field_8;
 }
 
-GameObject::~GameObject() {
-}
-
 bool GameObject::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "GameObject::load()");
 	_odelay = 0;

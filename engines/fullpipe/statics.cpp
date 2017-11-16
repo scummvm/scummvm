@@ -35,56 +35,37 @@
 namespace Fullpipe {
 
 StepArray::StepArray() {
-	_points = 0;
-	_maxPointIndex = 0;
 	_currPointIndex = 0;
-	_pointsCount = 0;
-	_isEos = 0;
-}
-
-StepArray::~StepArray() {
-	if (_pointsCount) {
-		for (int i = 0; i < _pointsCount; i++)
-			delete _points[i];
-
-		free(_points);
-
-		_points = 0;
-	}
+	_isEos = false;
 }
 
 void StepArray::clear() {
 	_currPointIndex = 0;
-	_maxPointIndex = 0;
-	_isEos = 0;
-
-	for (int i = 0; i < _pointsCount; i++) {
-		_points[i]->x = 0;
-		_points[i]->y = 0;
-	}
+	_isEos = false;
+	_points.clear();
 }
 
 Common::Point StepArray::getCurrPoint() const {
-	if (_isEos || _points == 0) {
+	if (_isEos || !_points.size()) {
 		return Common::Point();
 	}
 
-	return Common::Point(_points[_currPointIndex]->x,
-						 _points[_currPointIndex]->y);
+	return Common::Point(_points[_currPointIndex].x,
+						 _points[_currPointIndex].y);
 }
 
 Common::Point StepArray::getPoint(int index, int offset) const {
 	if (index == -1)
 		index = _currPointIndex;
 
-	if (index + offset > _maxPointIndex - 1)
-		offset = _maxPointIndex - index;
+	if (index + offset > getPointsCount() - 1)
+		offset = getPointsCount() - index;
 
 	Common::Point point;
 
 	while (offset >= 1) {
-		point.x += _points[index]->x;
-		point.y += _points[index]->y;
+		point.x += _points[index].x;
+		point.y += _points[index].y;
 
 		index++;
 		offset--;
@@ -94,33 +75,18 @@ Common::Point StepArray::getPoint(int index, int offset) const {
 }
 
 bool StepArray::gotoNextPoint() {
-	if (_currPointIndex < _maxPointIndex - 1) {
+	if (_currPointIndex < getPointsCount() - 1) {
 		_currPointIndex++;
 		return true;
 	} else {
-		_isEos = 1;
+		_isEos = true;
 		return false;
 	}
 }
 
-void StepArray::insertPoints(Common::Point **points, int pointsCount) {
-	if (_currPointIndex + pointsCount >= _pointsCount) {
-		_points = (Common::Point **)realloc(_points, sizeof(Common::Point *) * (_pointsCount + pointsCount));
-
-		if (!_points) {
-			error("Out of memory at StepArray::insertPoints()");
-		}
-
-		for(int i = 0; i < pointsCount; i++)
-			_points[_pointsCount + i] = new Common::Point;
-
-		_pointsCount += pointsCount;
-	}
-
-	_maxPointIndex = _currPointIndex + pointsCount;
-
-	for (int i = 0; i < pointsCount; i++)
-		*_points[_currPointIndex + i] = *points[i];
+void StepArray::insertPoints(const PointList &points) {
+	_points.resize(_currPointIndex + points.size());
+	Common::copy(points.begin(), points.end(), _points.begin() + _currPointIndex);
 }
 
 StaticANIObject::StaticANIObject() {
@@ -179,7 +145,7 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 	_objtype = kObjTypeStaticANIObject;
 
 	for (uint i = 0; i < src->_staticsList.size(); i++)
-		_staticsList.push_back(new Statics(*src->_staticsList[i], false));
+		_staticsList.push_back(new Statics(src->_staticsList[i], false));
 
 	_movement = 0;
 	_statics = 0;
@@ -427,7 +393,7 @@ Movement *StaticANIObject::getMovementById(int itemId) {
 	return 0;
 }
 
-int StaticANIObject::getMovementIdById(int itemId) {
+int StaticANIObject::getMovementIdById(int itemId) const {
 	for (uint i = 0; i < _movements.size(); i++) {
 		Movement *mov = _movements[i];
 
@@ -581,7 +547,7 @@ Statics *StaticANIObject::addReverseStatics(Statics *st) {
 	Statics *res = getStaticsById(st->_staticsId ^ 0x4000);
 
 	if (!res) {
-		res = new Statics(*st, true);
+		res = new Statics(st, true);
 		_staticsList.push_back(res);
 	}
 
@@ -1169,7 +1135,7 @@ void StaticANIObject::playIdle() {
 		adjustSomeXY();
 }
 
-void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, int y, Common::Point **points, int pointsCount, int someDynamicPhaseIndex) {
+void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex) {
 	Movement *mov = 0;
 
 	if (!(_flags & 0x80)) {
@@ -1205,7 +1171,7 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 		_movement->gotoFirstFrame();
 
 	_stepArray.clear();
-	_stepArray.insertPoints(points, pointsCount);
+	_stepArray.insertPoints(points);
 
 	if (!(_flags & 0x40)) {
 		if (!_movement->_currDynamicPhaseIndex) {
@@ -1393,17 +1359,17 @@ Statics::Statics() {
 	_data = nullptr;
 }
 
-Statics::Statics(Statics &src, bool reverse) : DynamicPhase(src, reverse) {
-	_staticsId = src._staticsId;
+Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
+	_staticsId = src->_staticsId;
 
 	if (reverse) {
 		_staticsId ^= 0x4000;
-		_staticsName = sO_MirroredTo + src._staticsName;
+		_staticsName = sO_MirroredTo + src->_staticsName;
 	} else {
-		_staticsName = src._staticsName;
+		_staticsName = src->_staticsName;
 	}
 
-	_memfilename = src._memfilename;
+	_memfilename = src->_memfilename;
 }
 
 bool Statics::load(MfcArchive &file) {
@@ -1582,7 +1548,7 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 			src->setDynamicPhaseIndex(i);
 
 			if (i < newSize - 1)
-				_dynamicPhases.push_back(new DynamicPhase(*src->_currDynamicPhase, 0));
+				_dynamicPhases.push_back(new DynamicPhase(src->_currDynamicPhase, 0));
 
 			_framePosOffsets[i].x = src->_framePosOffsets[i].x;
 			_framePosOffsets[i].y = src->_framePosOffsets[i].y;
@@ -2106,18 +2072,18 @@ DynamicPhase::DynamicPhase() {
 	_data = nullptr;
 }
 
-DynamicPhase::DynamicPhase(DynamicPhase &src, bool reverse) {
-	_field_7C = src._field_7C;
+DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
+	_field_7C = src->_field_7C;
 	_field_7E = 0;
 
 	debugC(1, kDebugAnimation, "DynamicPhase::DynamicPhase(src, %d)", reverse);
 
 	if (reverse) {
-		if (!src._bitmap)
-			src.init();
+		if (!src->_bitmap)
+			src->init();
 
-		_bitmap.reset(src._bitmap->reverseImage());
-		_dataSize = src._dataSize;
+		_bitmap.reset(src->_bitmap->reverseImage());
+		_dataSize = src->_dataSize;
 
 		if (g_fp->_currArchive) {
 			_mfield_14 = 0;
@@ -2126,45 +2092,45 @@ DynamicPhase::DynamicPhase(DynamicPhase &src, bool reverse) {
 
 		_mflags |= 1;
 
-		_someX = src._someX;
-		_someY = src._someY;
+		_someX = src->_someX;
+		_someY = src->_someY;
 	} else {
-		_mfield_14 = src._mfield_14;
-		_mfield_8 = src._mfield_8;
-		_mflags = src._mflags;
+		_mfield_14 = src->_mfield_14;
+		_mfield_8 = src->_mfield_8;
+		_mflags = src->_mflags;
 
-		_memfilename = src._memfilename;
-		_dataSize = src._dataSize;
-		_mfield_10 = src._mfield_10;
-		_libHandle = src._libHandle;
+		_memfilename = src->_memfilename;
+		_dataSize = src->_dataSize;
+		_mfield_10 = src->_mfield_10;
+		_libHandle = src->_libHandle;
 
-		if (src._bitmap) {
+		if (src->_bitmap) {
 			_field_54 = 1;
-			_bitmap.reset(src._bitmap->reverseImage(false));
+			_bitmap.reset(src->_bitmap->reverseImage(false));
 		}
 
-		_someX = src._someX;
-		_someY = src._someY;
+		_someX = src->_someX;
+		_someY = src->_someY;
 	}
 
-	_rect = src._rect;
+	_rect = src->_rect;
 
-	_width = src._width;
-	_height = src._height;
-	_field_7C = src._field_7C;
+	_width = src->_width;
+	_height = src->_height;
+	_field_7C = src->_field_7C;
 
-	if (src.getExCommand())
-		_exCommand = src.getExCommand()->createClone();
+	if (src->getExCommand())
+		_exCommand = src->getExCommand()->createClone();
 	else
 		_exCommand = 0;
 
-	_initialCountdown = src._initialCountdown;
-	_field_6A = src._field_6A;
-	_dynFlags = src._dynFlags;
+	_initialCountdown = src->_initialCountdown;
+	_field_6A = src->_field_6A;
+	_dynFlags = src->_dynFlags;
 
-	setPaletteData(src.getPaletteData());
+	setPaletteData(src->getPaletteData());
 
-	copyMemoryObject2(src);
+	copyMemoryObject2(*src);
 }
 
 bool DynamicPhase::load(MfcArchive &file) {

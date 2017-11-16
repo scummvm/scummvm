@@ -356,7 +356,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	for (int i = subIdx; i != st2idx;) {
 		const MGMSubItem &s = _items[itemIdx].subItems[i + st2idx * _items[itemIdx].statics.size()];
 
-		ex2 = createCommand(s.movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
+		ex2 = createCommand(s.movement, mkQueue->ani->_id, x1, y1, x2, y2, -1);
 		ex2->_parId = mq->_id;
 		ex2->_param = mkQueue->ani->_odelay;
 
@@ -373,7 +373,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 		else
 			plen = -1;
 
-		ex2 = createCommand(mov, mkQueue->ani->_id, x1, y1, &x2, &y2, plen);
+		ex2 = createCommand(mov, mkQueue->ani->_id, x1, y1, x2, y2, plen);
 		ex2->_parId = mq->_id;
 		ex2->_param = mkQueue->ani->_odelay;
 
@@ -383,7 +383,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	for (int j = st1idx; j != subOffset;) {
 		const MGMSubItem &s = _items[itemIdx].subItems[j + subOffset * _items[itemIdx].statics.size()];
 
-		ex2 = createCommand(s.movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
+		ex2 = createCommand(s.movement, mkQueue->ani->_id, x1, y1, x2, y2, -1);
 		ex2->_parId = mq->_id;
 		ex2->_param = mkQueue->ani->_odelay;
 
@@ -701,8 +701,8 @@ Common::Point AniHandler::getNumCycles(Movement *mov, int x, int y, int *mult, i
 	return Common::Point(p2x + p1x * newmult, p2y + p1y * newmult);
 }
 
-ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {
-	debugC(2, kDebugPathfinding, "AniHandler::createCommand(mov, %d, %d, %d, [%d, %d], [%d, %d], %d)", objId, x1, y1, x2->x, x2->y, y2->x, y2->y, len);
+ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, Common::Point &x2, Common::Point &y2, int len) {
+	debugC(2, kDebugPathfinding, "AniHandler::createCommand(mov, %d, %d, %d, [%d, %d], [%d, %d], %d)", objId, x1, y1, x2.x, x2.y, y2.x, y2.y, len);
 
 	uint cnt;
 
@@ -714,43 +714,36 @@ ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, 
 	if (len > 0 && cnt > (uint)len)
 		cnt = len;
 
-	Common::Point **points = (Common::Point **)malloc(sizeof(Common::Point *) * cnt);
+	PointList points(cnt);
 
 	for (uint i = 0; i < cnt; i++) {
 		int flags = mov->getDynamicPhaseByIndex(i)->getDynFlags();
 
-		points[i] = new Common::Point;
-
 		if (flags & 1) {
-			points[i]->x = x1 + x2->x;
+			points[i].x = x1 + x2.x;
 
-			y2->x -= x2->x;
+			y2.x -= x2.x;
 
-			if (!y2->x)
-				x2->x = 0;
+			if (!y2.x)
+				x2.x = 0;
 		}
 
 		if (flags & 2) {
-			points[i]->y = y1 + x2->y;
+			points[i].y = y1 + x2.y;
 
-			y2->y -= x2->y;
+			y2.y -= x2.y;
 
-			if (!y2->y)
-				x2->y = 0;
+			if (!y2.y)
+				x2.y = 0;
 		}
 	}
 
-	ExCommand2 *ex = new ExCommand2(20, objId, points, cnt);
+	ExCommand2 *ex = new ExCommand2(20, objId, points);
 	ex->_excFlags = 2;
 	ex->_messageNum = mov->_id;
 	ex->_field_14 = len;
 	ex->_field_24 = 1;
 	ex->_param = -1;
-
-	for (uint i = 0; i < cnt; i++)
-		delete points[i];
-
-	free(points);
 
 	return ex;
 }

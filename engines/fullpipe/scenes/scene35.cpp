@@ -141,9 +141,9 @@ void sceneHandler35_genFlies() {
 
 			xoff += 40;
 
-			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val2 = 1084;
-			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val3 = y;
-			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val11 = 8.0;
+			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val2 = 1084;
+			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val3 = y;
+			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val11 = 8.0;
 		}
 
 		g_vars->scene35_fliesCounter = 0;

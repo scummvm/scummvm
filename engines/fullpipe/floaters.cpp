@@ -32,10 +32,6 @@
 
 namespace Fullpipe {
 
-Floaters::~Floaters() {
-	delete _hRgn;
-}
-
 void Floaters::init(GameVar *var) {
 	_array1.clear();
 	_array2.clear();
@@ -48,21 +44,16 @@ void Floaters::init(GameVar *var) {
 	GameVar *sub = varFliers->getSubVarByName("flyIdleRegion");
 
 	if (sub) {
-		_hRgn = new ReactPolygonal();
+		_hRgn.reset(new ReactPolygonal());
 
-		_hRgn->_pointCount = sub->getSubVarsCount();
-		_hRgn->_points = (Common::Point **)malloc(sizeof(Common::Point *) * _hRgn->_pointCount);
+		_hRgn->_points.resize(sub->getSubVarsCount());
 
 		sub = sub->_subVars;
-
-		int idx = 0;
-
+		uint idx = 0;
 		while (sub) {
-			_hRgn->_points[idx] = new Common::Point;
-			_hRgn->_points[idx]->x = sub->_subVars->_value.intValue;
-			_hRgn->_points[idx]->y = sub->_subVars->_nextVarObj->_value.intValue;
-
-			idx++;
+			_hRgn->_points[idx].x = sub->_subVars->_value.intValue;
+			_hRgn->_points[idx].y = sub->_subVars->_nextVarObj->_value.intValue;
+			++idx;
 			sub = sub->_nextVarObj;
 		}
 	}
@@ -70,24 +61,20 @@ void Floaters::init(GameVar *var) {
 	sub = varFliers->getSubVarByName("flyIdlePath");
 
 	if (sub) {
-		_array1.reserve(sub->getSubVarsCount());
+		_array1.resize(sub->getSubVarsCount());
 
 		sub = sub->_subVars;
 
-		int idx = 0;
-
+		uint idx = 0;
 		while (sub) {
-			FloaterArray1 *f = new FloaterArray1;
+			FloaterArray1 &f = _array1[idx];
 
-			f->val1 = sub->_subVars->_value.intValue;
-			f->val2 = sub->_subVars->_nextVarObj->_value.intValue;
+			f.val1 = sub->_subVars->_value.intValue;
+			f.val2 = sub->_subVars->_nextVarObj->_value.intValue;
 
-			_array1.push_back(f);
-
-			idx++;
+			++idx;
 			sub = sub->_nextVarObj;
 		}
-
 	}
 }
 
@@ -113,65 +100,64 @@ void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
 
 	ani->_movement->setDynamicPhaseIndex(g_fp->_rnd.getRandomNumber(nummoves - 1));
 
-	FloaterArray2 *arr2 = new FloaterArray2;
-
-	arr2->ani = ani;
-	arr2->val11 = 15.0;
-	arr2->val3 = y;
-	arr2->val5 = y;
-	arr2->val2 = x;
-	arr2->val4 = x;
-	arr2->fflags = flags;
-
-	_array2.push_back(arr2);
+	_array2.push_back(FloaterArray2());
+	FloaterArray2 &arr2 = _array2.back();
+	arr2.ani = ani;
+	arr2.val11 = 15.0;
+	arr2.val3 = y;
+	arr2.val5 = y;
+	arr2.val2 = x;
+	arr2.val4 = x;
+	arr2.fflags = flags;
 }
 
 void Floaters::update() {
 	for (uint i = 0; i < _array2.size(); ++i) {
-		if (_array2[i]->val13 <= 0) {
-			if (_array2[i]->val4 != _array2[i]->val2 || _array2[i]->val5 != _array2[i]->val3) {
-				if (_array2[i]->val9 < 2.0)
-					_array2[i]->val9 = 2.0;
+		FloaterArray2 &a2 = _array2[i];
+		if (_array2[i].val13 <= 0) {
+			if (_array2[i].val4 != a2.val2 || a2.val5 != a2.val3) {
+				if (_array2[i].val9 < 2.0)
+					_array2[i].val9 = 2.0;
 
-				int dy = _array2[i]->val3 - _array2[i]->val5;
-				int dx = _array2[i]->val2 - _array2[i]->val4;
+				int dy = a2.val3 - a2.val5;
+				int dx = a2.val2 - a2.val4;
 				double dst = sqrt((double)(dy * dy + dx * dx));
 				double at = atan2((double)dy, (double)dx);
-				int newX = (int)(cos(at) * _array2[i]->val9);
-				int newY = (int)(sin(at) * _array2[i]->val9);
+				int newX = (int)(cos(at) * a2.val9);
+				int newY = (int)(sin(at) * a2.val9);
 
-				if (dst < _array2[i]->val9) {
-					newX = _array2[i]->val2 - _array2[i]->val4;
-					newY = _array2[i]->val3 - _array2[i]->val5;
+				if (dst < a2.val9) {
+					newX = a2.val2 - a2.val4;
+					newY = a2.val3 - a2.val5;
 				}
 				if (dst <= 30.0) {
 					if (dst < 30.0) {
-						_array2[i]->val9 = _array2[i]->val9 - _array2[i]->val9 * 0.5;
+						a2.val9 = a2.val9 - a2.val9 * 0.5;
 
-						if (_array2[i]->val9 < 2.0)
-							_array2[i]->val9 = 2.0;
+						if (a2.val9 < 2.0)
+							a2.val9 = 2.0;
 					}
 				} else {
-					_array2[i]->val9 = _array2[i]->val9 * 0.5 + _array2[i]->val9;
+					a2.val9 = a2.val9 * 0.5 + a2.val9;
 
-					if (_array2[i]->val9 > _array2[i]->val11)
-						_array2[i]->val9 = _array2[i]->val11;
+					if (a2.val9 > a2.val11)
+						a2.val9 = a2.val11;
 				}
 
-				_array2[i]->val4 += newX;
-				_array2[i]->val5 += newY;
-				_array2[i]->ani->setOXY(newX + _array2[i]->ani->_ox, newY + _array2[i]->ani->_oy);
+				a2.val4 += newX;
+				a2.val5 += newY;
+				a2.ani->setOXY(newX + a2.ani->_ox, newY + a2.ani->_oy);
 
-				if (_array2[i]->val4 == _array2[i]->val2 && _array2[i]->val5 == _array2[i]->val3) {
-					_array2[i]->val9 = 0.0;
+				if (a2.val4 == a2.val2 && a2.val5 == a2.val3) {
+					a2.val9 = 0.0;
 
-					_array2[i]->val13 = g_fp->_rnd.getRandomNumber(200) + 20;
+					a2.val13 = g_fp->_rnd.getRandomNumber(200) + 20;
 
-					if (_array2[i]->fflags & 1) {
-						g_fp->_currentScene->deleteStaticANIObject(_array2[i]->ani);
+					if (a2.fflags & 1) {
+						g_fp->_currentScene->deleteStaticANIObject(a2.ani);
 
-						if (_array2[i]->ani)
-							delete _array2[i]->ani;
+						if (a2.ani)
+							delete a2.ani;
 
 						_array2.remove_at(i);
 
@@ -184,66 +170,64 @@ void Floaters::update() {
 					}
 				}
 			} else {
-				if ((_array2[i]->fflags & 4) && _array2[i]->countdown < 1) {
-					_array2[i]->fflags |= 1;
-					_array2[i]->val2 = _array2[i]->val6;
-					_array2[i]->val3 = _array2[i]->val7;
+				if ((a2.fflags & 4) && a2.countdown < 1) {
+					a2.fflags |= 1;
+					a2.val2 = a2.val6;
+					a2.val3 = a2.val7;
 				} else {
-					if (_array2[i]->fflags & 2) {
+					if (a2.fflags & 2) {
 						int idx1 = g_fp->_rnd.getRandomNumber(_array1.size() - 1);
 
-						_array2[i]->val2 = _array1[idx1]->val1;
-						_array2[i]->val3 = _array1[idx1]->val2;
+						a2.val2 = _array1[idx1].val1;
+						a2.val3 = _array1[idx1].val2;
 					} else {
-						Common::Rect rect;
-
 						if (!_hRgn)
 							error("Floaters::update(): empty fliers region");
 
-						_hRgn->getBBox(&rect);
+						const Common::Rect rect = _hRgn->getBBox();
 
 						int x2 = rect.left + g_fp->_rnd.getRandomNumber(rect.right - rect.left);
 						int y2 = rect.top + g_fp->_rnd.getRandomNumber(rect.bottom - rect.top);
 
 						if (_hRgn->pointInRegion(x2, y2)) {
-							int dx = _array2[i]->val2 - x2;
-							int dy = _array2[i]->val3 - y2;
+							int dx = a2.val2 - x2;
+							int dy = a2.val3 - y2;
 							double dst = sqrt((double)(dy * dy + dx * dx));
 
-							if (dst < 300.0 || !_hRgn->pointInRegion(_array2[i]->val4, _array2[i]->val5)) {
-								_array2[i]->val2 = x2;
-								_array2[i]->val3 = y2;
+							if (dst < 300.0 || !_hRgn->pointInRegion(a2.val4, a2.val5)) {
+								a2.val2 = x2;
+								a2.val3 = y2;
 							}
 						}
 					}
 
 					g_fp->playSound(SND_CMN_061, 0);
 
-					if (_array2[i]->fflags & 4)
-						_array2[i]->countdown--;
+					if (a2.fflags & 4)
+						a2.countdown--;
 				}
 			}
 		} else {
-			_array2[i]->val13--;
+			a2.val13--;
 		}
 
-		if (!_array2[i]->ani->_movement && _array2[i]->ani->_statics->_staticsId == ST_FLY_FLY) {
-			if (!_array2[i]->val15) {
+		if (!a2.ani->_movement && a2.ani->_statics->_staticsId == ST_FLY_FLY) {
+			if (!a2.val15) {
 				g_fp->playSound(SND_CMN_060, 1);
 
-				_array2[i]->val15 = 1;
+				a2.val15 = 1;
 			}
 
-			_array2[i]->ani->startAnim(MV_FLY_FLY, 0, -1);
+			a2.ani->startAnim(MV_FLY_FLY, 0, -1);
 		}
 	}
 }
 
 void Floaters::stopAll() {
 	for (uint i = 0; i < _array2.size(); i++) {
-		g_fp->_currentScene->deleteStaticANIObject(_array2[i]->ani);
-
-		delete _array2[i]->ani;
+		FloaterArray2 &a2 = _array2[i];
+		g_fp->_currentScene->deleteStaticANIObject(a2.ani);
+		delete a2.ani;
 	}
 
 	_array2.clear();
