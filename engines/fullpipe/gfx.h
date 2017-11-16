@@ -167,17 +167,10 @@ class GameObject : public CObject {
 };
 
 class PictureObject : public GameObject {
-  public:
-	Picture *_picture;
-	Common::Array<GameObject *> *_pictureObject2List;
-	int _ox2;
-	int _oy2;
-
-  public:
+public:
 	PictureObject();
 
 	PictureObject(PictureObject *src);
-	virtual ~PictureObject();
 
 	virtual bool load(MfcArchive &file, bool bigPicture);
 	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
@@ -190,10 +183,18 @@ class PictureObject : public GameObject {
 	bool isPointInside(int x, int y);
 	bool isPixelHitAtPos(int x, int y);
 	void setOXY2();
+
+	Common::SharedPtr<Picture> _picture;
+
+private:
+	Common::Array<GameObject> _pictureObject2List;
+	int _ox2;
+	int _oy2;
 };
 
 class Background : public CObject {
-  public:
+public:
+	/** list items are owned */
 	Common::Array<PictureObject *> _picObjList;
 
 	Common::String _bgname;
@@ -201,18 +202,19 @@ class Background : public CObject {
 	int _y;
 	int16 _messageQueueId;
 	Palette _palette;
-	int _bigPictureArray1Count;
-	int _bigPictureArray2Count;
-	BigPicture ***_bigPictureArray;
+	/** list items are owned */
+	Common::Array<BigPicture *> _bigPictureArray;
+	uint _bigPictureXDim;
+	uint _bigPictureYDim;
 
-  public:
+public:
 	Background();
 	virtual ~Background();
 
 	virtual bool load(MfcArchive &file);
 	void addPictureObject(PictureObject *pct);
 
-	BigPicture *getBigPicture(int x, int y) { return _bigPictureArray[x][y]; }
+	BigPicture *getBigPicture(int x, int y) { return _bigPictureArray[y * _bigPictureYDim + x]; }
 };
 
 struct ShadowsItem {

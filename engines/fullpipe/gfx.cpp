@@ -38,22 +38,11 @@ Background::Background() {
 	_x = 0;
 	_y = 0;
 	_messageQueueId = 0;
-	_bigPictureArray1Count = 0;
-	_bigPictureArray2Count = 0;
-	_bigPictureArray = 0;
 }
 
 Background::~Background() {
-	_picObjList.clear();
-
-	for (int i = 0; i < _bigPictureArray1Count; i++) {
-		for (int j = 0; j < _bigPictureArray2Count; j++)
-			delete _bigPictureArray[i][j];
-
-		free(_bigPictureArray[i]);
-	}
-
-	free(_bigPictureArray);
+	Common::for_each(_picObjList.begin(), _picObjList.end(), Common::DefaultDeleter<PictureObject>());
+	Common::for_each(_bigPictureArray.begin(), _bigPictureArray.end(), Common::DefaultDeleter<BigPicture>());
 }
 
 bool Background::load(MfcArchive &file) {
@@ -69,25 +58,16 @@ bool Background::load(MfcArchive &file) {
 		addPictureObject(pct);
 	}
 
-	assert(g_fp->_gameProjectVersion >= 4);
-
-	_bigPictureArray1Count = file.readUint32LE();
-
 	assert(g_fp->_gameProjectVersion >= 5);
 
-	_bigPictureArray2Count = file.readUint32LE();
+	_bigPictureXDim = file.readUint32LE();
+	_bigPictureYDim = file.readUint32LE();
 
-	_bigPictureArray = (BigPicture ***)calloc(_bigPictureArray1Count, sizeof(BigPicture **));
+	debugC(6, kDebugLoading, "bigPictureArray[%d][%d]", _bigPictureXDim, _bigPictureYDim);
 
-	debugC(6, kDebugLoading, "bigPictureArray[%d][%d]", _bigPictureArray1Count, _bigPictureArray2Count);
-
-	for (int i = 0; i < _bigPictureArray1Count; i++) {
-		_bigPictureArray[i] = (BigPicture **)calloc(_bigPictureArray2Count, sizeof(BigPicture *));
-		for (int j = 0; j < _bigPictureArray2Count; j++) {
-			_bigPictureArray[i][j] = new BigPicture();
-
-			_bigPictureArray[i][j]->load(file);
-		}
+	for (uint i = 0; i < _bigPictureXDim * _bigPictureYDim; ++i) {
+		_bigPictureArray.push_back(new BigPicture());
+		_bigPictureArray[i]->load(file);
 	}
 
 	return true;
@@ -114,17 +94,9 @@ void Background::addPictureObject(PictureObject *pct) {
 PictureObject::PictureObject() {
 	_ox = 0;
 	_oy = 0;
-	_picture = 0;
 	_ox2 = 0;
 	_oy2 = 0;
-	_pictureObject2List = 0;
 	_objtype = kObjTypePictureObject;
-}
-
-PictureObject::~PictureObject() {
-	delete _picture;
-	_pictureObject2List->clear();
-	delete _pictureObject2List;
 }
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
@@ -140,21 +112,17 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	GameObject::load(file);
 
 	if (bigPicture)
-		_picture = new BigPicture();
+		_picture = Common::SharedPtr<Picture>(new BigPicture());
 	else
-		_picture = new Picture();
+		_picture = Common::SharedPtr<Picture>(new Picture());
 
 	_picture->load(file);
-
-	_pictureObject2List = new Common::Array<GameObject *>;
 
 	int count = file.readUint16LE();
 
 	if (count > 0) {
-		GameObject *o = new GameObject();
-
-		o->load(file);
-		_pictureObject2List->push_back(o);
+		_pictureObject2List.push_back(GameObject());
+		_pictureObject2List.back().load(file);
 	}
 
 	_ox2 = _ox;

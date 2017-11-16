@@ -427,7 +427,7 @@ int Inventory2::selectItem(int itemId) {
 	if (_scene) {
 		int idx = getInventoryPoolItemIndexById(itemId);
 
-		Picture *pic = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectId1, 0)->_picture;
+		Picture *pic = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectId1, 0)->_picture.get();
 		g_fp->getGameLoaderInputController()->setCursorItemPicture(pic);
 	}
 
