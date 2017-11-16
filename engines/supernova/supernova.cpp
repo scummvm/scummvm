@@ -482,8 +482,10 @@ void SupernovaEngine::renderImage(int section) {
 }
 
 bool SupernovaEngine::setCurrentImage(int filenumber) {
-	if (filenumber == -1 || filenumber > ARRAYSIZE(_images) - 1)
+	if (filenumber == -1 || filenumber > ARRAYSIZE(_images) - 1) {
+		warning("Trying to display image from out of bound file number %d", filenumber);
 		return false;
+	}
 
 	_currentImage = &(_images[filenumber]);
 	_system->getPaletteManager()->setPalette(_currentImage->getPalette(), 16, 239);
