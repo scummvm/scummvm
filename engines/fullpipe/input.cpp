@@ -71,7 +71,7 @@ void setInputDisabled(bool state) {
 }
 
 void InputController::addCursor(CursorInfo *cursor) {
-	CursorInfo *newc = new CursorInfo(cursor);
+	CursorInfo *newc = new CursorInfo(*cursor);
 	const Dims dims = cursor->picture->getDimensions();
 
 	newc->width = dims.x;
@@ -117,28 +117,6 @@ void InputController::setCursor(int cursorId) {
 			}
 		}
 	}
-}
-
-CursorInfo::CursorInfo() {
-	pictureId = 0;
-	picture = 0;
-	hotspotX = 0;
-	hotspotY = 0;
-	itemPictureOffsX = 0;
-	itemPictureOffsY = 0;
-	width = 0;
-	height = 0;
-}
-
-CursorInfo::CursorInfo(CursorInfo *src) {
-	pictureId = src->pictureId;
-	picture = src->picture;
-	hotspotX = src->hotspotX;
-	hotspotY = src->hotspotY;
-	itemPictureOffsX = src->itemPictureOffsX;
-	itemPictureOffsY = src->itemPictureOffsY;
-	width = src->width;
-	height = src->height;
 }
 
 void FullpipeEngine::setCursor(int id) {

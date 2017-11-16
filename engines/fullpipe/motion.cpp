@@ -713,19 +713,6 @@ MctlConnectionPoint::MctlConnectionPoint() {
 	_mctlmirror = 0;
 }
 
-MctlMQ::MctlMQ(MctlMQ *src) {
-	index = src->index;
-	pt1 = src->pt1;
-	pt2 = src->pt2;
-	distance1 = src->distance1;
-	distance2 = src->distance2;
-	subIndex = src->subIndex;
-	item1Index = src->item1Index;
-	items = src->items;
-	itemsCount = src->itemsCount;
-	flags = src->flags;
-}
-
 void MctlMQ::clear() {
 	index = 0;
 	pt1.x = pt1.y = 0;
