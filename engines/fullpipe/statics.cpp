@@ -2112,9 +2112,9 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7C = src->_field_7C;
 
 	if (src->getExCommand())
-		_exCommand = src->getExCommand()->createClone();
+		_exCommand.reset(src->getExCommand()->createClone());
 	else
-		_exCommand = 0;
+		_exCommand.reset();
 
 	_initialCountdown = src->_initialCountdown;
 	_field_6A = src->_field_6A;
@@ -2153,11 +2153,6 @@ StaticPhase::StaticPhase() {
 	_initialCountdown = 0;
 	_countdown = 0;
 	_field_68 = 0;
-	_exCommand = 0;
-}
-
-StaticPhase::~StaticPhase() {
-	delete _exCommand;
 }
 
 bool StaticPhase::load(MfcArchive &file) {
@@ -2168,15 +2163,9 @@ bool StaticPhase::load(MfcArchive &file) {
 	_initialCountdown = file.readUint16LE();
 	_field_6A = file.readUint16LE();
 
-	if (g_fp->_gameProjectVersion >= 12) {
-		_exCommand = file.readClass<ExCommand>();
+	assert(g_fp->_gameProjectVersion >= 12);
 
-		return true;
-	}
-
-	assert (g_fp->_gameProjectVersion >= 12);
-
-	warning("StaticPhase::load(): Code continues here");
+	_exCommand.reset(file.readClass<ExCommand>());
 
 	return true;
 }
