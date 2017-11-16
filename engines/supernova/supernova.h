@@ -105,7 +105,6 @@ public:
 	Common::StringArray _gameStrings;
 	Common::String _nullString;
 
-	byte _imageIndex;
 	byte _menuBrightness;
 	byte _brightness;
 	uint _delay;
@@ -127,8 +126,10 @@ public:
 	void playSound(AudioIndex sample);
 	void playSoundMod(int filenumber);
 	void stopSound();
-	void renderImage(MSNImageDecoder &image, int section);
+	void renderImageSection(int section);
 	void renderImage(int filenumber, int section);
+	void renderImage(int section);
+	bool setCurrentImage(int filenumber);
 	void saveScreen(int x, int y, int width, int height);
 	void restoreScreen();
 	void renderRoom(Room &room);

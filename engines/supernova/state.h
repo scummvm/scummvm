@@ -123,7 +123,6 @@ public:
 	Object *_currentInputObject;
 	Object *_inputObject[2];
 	bool _waitEvent;
-	bool _newRoom;
 	int32 _oldTime;
 	uint _timePaused;
 	bool _timerPaused;
@@ -178,7 +177,6 @@ public:
 	void drawStatus();
 	void drawCommandBox();
 	void drawInventory();
-	void drawImage(int section);
 	void changeRoom(RoomID id);
 	void resetInputState();
 	void handleInput();

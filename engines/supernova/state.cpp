@@ -121,10 +121,11 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	}
 
 	// Rooms
-	_currentRoom = _rooms[static_cast<RoomID>(in->readByte())];
+	RoomID curRoomId = static_cast<RoomID>(in->readByte());
 	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
+	changeRoom(curRoomId);
 
 	return !in->err();
 }
@@ -628,24 +629,6 @@ void GameManager::processInput() {
 	}
 }
 
-void GameManager::drawImage(int section) {
-	bool sectionVisible = true;
-
-	if (section > 128) {
-		sectionVisible = false;
-		section -= 128;
-	}
-
-	_currentRoom->setSectionVisible(section, sectionVisible);
-	do {
-		if (sectionVisible)
-			_vm->renderImage(_currentRoom->getFileNumber(), section);
-		else
-			_vm->renderImage(_currentRoom->getFileNumber(), section + 128);
-		section = _vm->_currentImage->_section[section].next;
-	} while (section != 0);
-}
-
 void GameManager::corridorOnEntrance() {
 	if (_state._corridorSearch)
 		busted(0);
@@ -673,7 +656,7 @@ void GameManager::guardNoticed() {
 
 void GameManager::busted(int i) {
 	if (i > 0)
-		drawImage(i);
+		_vm->renderImage(i);
 	if (i == 0) {
 		if ((_currentRoom->getId() >= OFFICE_L1) && (_currentRoom->getId() <= OFFICE_R2)) {
 			if (_currentRoom->getId() < OFFICE_R1)
@@ -681,33 +664,33 @@ void GameManager::busted(int i) {
 			else
 				i = 5;
 			if (!_currentRoom->getObject(0)->hasProperty(OPENED)) {
-				drawImage(i - 1);
+				_vm->renderImage(i - 1);
 				_vm->playSound(kAudioDoorOpen);
 				wait2(2);
 			}
-			drawImage(i);
+			_vm->renderImage(i);
 			wait2(3);
-			drawImage(i + 3);
+			_vm->renderImage(i + 3);
 			_vm->playSound(kAudioVoiceHalt);
-			drawImage(i);
+			_vm->renderImage(i);
 			wait2(5);
 			if (_currentRoom->getId() == OFFICE_L2)
 				i = 13;
-			drawImage(i + 1);
+			_vm->renderImage(i + 1);
 			wait2(3);
-			drawImage(i + 2);
+			_vm->renderImage(i + 2);
 			shot(0, 0);
 		} else if (_currentRoom->getId() == BCORRIDOR) {
-			drawImage(21);
+			_vm->renderImage(21);
 		} else {
 			if (_currentRoom->isSectionVisible(4))
-				drawImage(32); // below
+				_vm->renderImage(32); // below
 			else if (_currentRoom->isSectionVisible(2))
-				drawImage(30); // right
+				_vm->renderImage(30); // right
 			else if (_currentRoom->isSectionVisible(1))
-				drawImage(31); // left
+				_vm->renderImage(31); // left
 			else
-				drawImage(33); // above
+				_vm->renderImage(33); // above
 		}
 	}
 	_vm->playSound(kAudioVoiceHalt);
@@ -860,21 +843,22 @@ void GameManager::guardWalkEvent() {
 void GameManager::taxiEvent() {
 	if (_currentRoom->getId() == SIGN) {
 		changeRoom(STATION);
+		_vm->renderRoom(*_currentRoom);
 	}
 
-	drawImage(1);
-	drawImage(2);
+	_vm->renderImage(1);
+	_vm->renderImage(2);
 	_vm->playSound(kAudioRocks);
 	screenShake();
-	drawImage(9);
+	_vm->renderImage(9);
 	_currentRoom->getObject(1)->setProperty(OPENED);
-	drawImage(1);
+	_vm->renderImage(1);
 	_currentRoom->setSectionVisible(2, false);
-	drawImage(3);
+	_vm->renderImage(3);
 	for (int i = 4; i <= 8; i++) {
 		wait2(2);
-		drawImage(invertSection(i - 1));
-		drawImage(i);
+		_vm->renderImage(invertSection(i - 1));
+		_vm->renderImage(i);
 	}
 	_rooms[SIGN]->setSectionVisible(2, false);
 	_rooms[SIGN]->setSectionVisible(3, true);
@@ -971,11 +955,11 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 		_vm->renderMessage(text, kMessageTop);
 
 	for (int z = (strlen(text) + 20) * _vm->_textSpeed / 40; z > 0; --z) {
-		drawImage(aus1);
+		_vm->renderImage(aus1);
 		waitOnInput(2);
 		if (_keyPressed || _mouseClicked)
 			z = 1;
-		drawImage(aus2);
+		_vm->renderImage(aus2);
 		waitOnInput(2);
 		if (_keyPressed || _mouseClicked)
 			z = 1;
@@ -1056,7 +1040,7 @@ void GameManager::takeObject(Object &obj) {
 		return;
 
 	if (obj._section != 0)
-		drawImage(obj._section);
+		_vm->renderImage(obj._section);
 	obj.setProperty(CARRIED);
 	obj._click = obj._click2 = 255;
 	_inventory.add(obj);
@@ -1402,18 +1386,18 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 
 void GameManager::shot(int a, int b) {
 	if (a)
-		drawImage(a);
+		_vm->renderImage(a);
 	_vm->playSound(kAudioGunShot);
 	wait2(2);
 	if (b)
-		drawImage(b);
+		_vm->renderImage(b);
 	wait2(2);
 	if (a)
-		drawImage(a);
+		_vm->renderImage(a);
 	_vm->playSound(kAudioGunShot);
 	wait2(2);
 	if (b)
-		drawImage(b);
+		_vm->renderImage(b);
 
 	dead(kStringShot);
 }
@@ -1455,7 +1439,7 @@ void GameManager::drawStatus() {
 }
 
 void GameManager::openLocker(const Room *room, Object *obj, Object *lock, int section) {
-	drawImage(section);
+	_vm->renderImage(section);
 	obj->setProperty(OPENED);
 	lock->_click = 255;
 	int i = obj->_click;
@@ -1467,7 +1451,7 @@ void GameManager::closeLocker(const Room *room, Object *obj, Object *lock, int s
 	if (!obj->hasProperty(OPENED)) {
 		_vm->renderMessage(kStringCloseLocker_1);
 	} else {
-		drawImage(invertSection(section));
+		_vm->renderImage(invertSection(section));
 		obj->disableProperty(OPENED);
 		lock->_click = lock->_click2;
 		int i = obj->_click;
@@ -1866,7 +1850,7 @@ void GameManager::handleInput() {
 				// This is locked.
 				_vm->renderMessage(kStringGenericInteract_40);
 			} else {
-				drawImage(_inputObject[0]->_section);
+				_vm->renderImage(_inputObject[0]->_section);
 				_inputObject[0]->setProperty(OPENED);
 				byte i = _inputObject[0]->_click;
 				_inputObject[0]->_click  = _inputObject[0]->_click2;
@@ -1885,7 +1869,7 @@ void GameManager::handleInput() {
 				// This is already closed.
 				_vm->renderMessage(kStringCloseLocker_1);
 			} else {
-				drawImage(invertSection(_inputObject[0]->_section));
+				_vm->renderImage(invertSection(_inputObject[0]->_section));
 				_inputObject[0]->disableProperty(OPENED);
 				byte i = _inputObject[0]->_click;
 				_inputObject[0]->_click  = _inputObject[0]->_click2;
@@ -1930,32 +1914,32 @@ void GameManager::executeRoom() {
 }
 
 void GameManager::guardShot() {
-	drawImage(2);
-	drawImage(5);
+	_vm->renderImage(2);
+	_vm->renderImage(5);
 	wait2(3);
-	drawImage(2);
+	_vm->renderImage(2);
 
 	_vm->playSound(kAudioVoiceHalt);
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		wait2(1);
 
-	drawImage(5);
+	_vm->renderImage(5);
 	wait2(5);
-	drawImage(3);
+	_vm->renderImage(3);
 	wait2(3);
 
 	shot(4, 3);
 }
 
 void GameManager::guard3Shot() {
-	drawImage(1);
+	_vm->renderImage(1);
 	wait2(3);
 	_vm->playSound(kAudioVoiceHalt); // 46/0
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		wait2(1);
 
 	wait2(5);
-	drawImage(2);
+	_vm->renderImage(2);
 	wait2(3);
 	shot(3,2);
 }

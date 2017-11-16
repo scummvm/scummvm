@@ -500,22 +500,22 @@ bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		if (_objectState[6].hasProperty(OPENED)) {
 			_vm->playSound(kAudioDoorSound);
 			_objectState[6].disableProperty(OPENED);
-			_gm->drawImage(8);
+			_vm->renderImage(8);
 			setSectionVisible(9, false);
 			_gm->wait2(2);
-			_gm->drawImage(7);
+			_vm->renderImage(7);
 			setSectionVisible(8, false);
 			_gm->wait2(2);
-			_gm->drawImage(_gm->invertSection(7));
+			_vm->renderImage(_gm->invertSection(7));
 		} else {
 			_vm->playSound(kAudioDoorSound);
 			_objectState[6].setProperty(OPENED);
-			_gm->drawImage(7);
+			_vm->renderImage(7);
 			_gm->wait2(2);
-			_gm->drawImage(8);
+			_vm->renderImage(8);
 			setSectionVisible(7, false);
 			_gm->wait2(2);
-			_gm->drawImage(9);
+			_vm->renderImage(9);
 			setSectionVisible(8, false);
 		}
 		return true;
@@ -529,21 +529,21 @@ bool ShipHall::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1,obj2,KEYCARD2,SLEEP_SLOT)) {
 		if (_objectState[2].hasProperty(OPENED)) {
 			_objectState[2].disableProperty(OPENED);
-			_gm->drawImage(3);
+			_vm->renderImage(3);
 			setSectionVisible(4, false);
 			_gm->wait2(2);
-			_gm->drawImage(2);
+			_vm->renderImage(2);
 			setSectionVisible(3, false);
 			_gm->wait2(2);
-			_gm->drawImage(_gm->invertSection(2));
+			_vm->renderImage(_gm->invertSection(2));
 		} else {
 			_objectState[2].setProperty(OPENED);
-			_gm->drawImage(2);
+			_vm->renderImage(2);
 			_gm->wait2(2);
-			_gm->drawImage(3);
+			_vm->renderImage(3);
 			setSectionVisible(2, false);
 			_gm->wait2(2);
-			_gm->drawImage(4);
+			_vm->renderImage(4);
 			setSectionVisible(3, false);
 			_gm->great(1);
 		}
@@ -631,8 +631,8 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage(kStringShipSleepCabin11);
 		} else {
 			_vm->paletteFadeOut();
-			_gm->drawImage(_gm->invertSection(5));
-			_gm->drawImage(_gm->invertSection(4));
+			_vm->renderImage(_gm->invertSection(5));
+			_vm->renderImage(_gm->invertSection(4));
 			room = _gm->_rooms[GENERATOR];
 			int32 *energyDaysLeft;
 			if (room->isSectionVisible(9)) {
@@ -655,7 +655,7 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 				}
 			}
 			if (_gm->_state._timeSleep == _gm->_state._arrivalDaysLeft) {
-				_gm->drawImage(3);
+				_vm->renderImage(3);
 				room = _gm->_rooms[COCKPIT];
 				room->setSectionVisible(23, true);
 				room = _gm->_rooms[CABIN_R2];
@@ -715,10 +715,10 @@ void ShipSleepCabin::animation() {
 	if (_gm->_state._powerOff && _gm->_state._arrivalDaysLeft) {
 		if (_gm->_guiEnabled) {
 			if (isSectionVisible(1)) {
-				_gm->drawImage(2);
+				_vm->renderImage(2);
 				setSectionVisible(1, false);
 			} else {
-				_gm->drawImage(1);
+				_vm->renderImage(1);
 				setSectionVisible(2, false);
 			}
 		} else {
@@ -732,9 +732,9 @@ void ShipSleepCabin::animation() {
 		}
 	} else if (isSectionVisible(5) && _gm->_guiEnabled) {
 		if (isSectionVisible(4))
-			_gm->drawImage(_gm->invertSection(4));
+			_vm->renderImage(_gm->invertSection(4));
 		else
-			_gm->drawImage(4);
+			_vm->renderImage(4);
 	}
 
 	_gm->setAnimationTimer(6);
@@ -800,10 +800,10 @@ void ShipCockpit::animation() {
 		_vm->renderText(kStringShipCockpit10, 50, 145, _color);
 	} else {
 		if (isSectionVisible(21)) {
-			_gm->drawImage(_gm->invertSection(21));
+			_vm->renderImage(_gm->invertSection(21));
 			_gm->setAnimationTimer(5);
 		} else {
-			_gm->drawImage(21);
+			_vm->renderImage(21);
 			_gm->setAnimationTimer(10);
 		}
 	}
@@ -813,9 +813,9 @@ void ShipCockpit::animation() {
 			_vm->renderText(kStringShipCockpit12, 97, 175, _color);
 		} else {
 			if (isSectionVisible(21))
-				_gm->drawImage(22);
+				_vm->renderImage(22);
 			else
-				_gm->drawImage(_gm->invertSection(22));
+				_vm->renderImage(_gm->invertSection(22));
 		}
 	}
 }
@@ -830,7 +830,7 @@ bool ShipCabinL2::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_KL1, KEYCARD2)) {
 		_gm->openLocker(this, getObject(4), getObject(0), 17);
 		if (getObject(5)->_click == 255)
-			_gm->drawImage(20); // Remove Pistol
+			_vm->renderImage(20); // Remove Pistol
 		_gm->great(2);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_KL2, KEYCARD2)) {
 		_gm->openLocker(this, getObject(6), getObject(1), 18);
@@ -838,12 +838,12 @@ bool ShipCabinL2::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_KL3, KEYCARD2)) {
 		_gm->openLocker(this, getObject(8), getObject(2), 19);
 		if (getObject(9)->_click == 255)
-			_gm->drawImage(21); // Remove cable spool
+			_vm->renderImage(21); // Remove cable spool
 		_gm->great(2);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_KL4, KEYCARD2)) {
 		_gm->openLocker(this, getObject(10), getObject(3), 22);
 		if (getObject(11)->_click == 255)
-			_gm->drawImage(23); // Remove book
+			_vm->renderImage(23); // Remove book
 		_gm->great(2);
 	}
 
@@ -882,49 +882,49 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage(kStringShipCabinL3_1);
 		else {
 			if (!getObject(4)->hasProperty(CARRIED))
-				_gm->drawImage(_gm->invertSection(8));
+				_vm->renderImage(_gm->invertSection(8));
 			else
 				_gm->_inventory.remove(*getObject(4));
-			_gm->drawImage(15);
+			_vm->renderImage(15);
 			getObject(4)->_click = 48;
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == TURNTABLE_BUTTON)) {
 		if (!isSectionVisible(15)) {
 			_vm->renderMessage(kStringShipCabinL3_2);
 		} else if (!isSectionVisible(10) && !isSectionVisible(11) && isSectionVisible(12)) {
-			_gm->drawImage(14);
+			_vm->renderImage(14);
 			setSectionVisible(15, false);
 			for (int i = 3; i; i--) {
 				_vm->playSound(kAudioTurntable);
 				while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle)) {
 					if (isSectionVisible(13)) {
-						_gm->drawImage(14);
+						_vm->renderImage(14);
 						setSectionVisible(13, false);
 					} else {
-						_gm->drawImage(13);
+						_vm->renderImage(13);
 						setSectionVisible(14, false);
 					}
 					_gm->wait2(3);
 				}
 			}
 		}
-		_gm->drawImage(15);
+		_vm->renderImage(15);
 		setSectionVisible(14, false);
 		setSectionVisible(13, false);
 		_vm->renderMessage(kStringShipCabinL3_3);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == RECORD) && (obj1._click != 15)) {
-		_gm->drawImage(9);
+		_vm->renderImage(9);
 		setSectionVisible(13, false);
 		setSectionVisible(14, false);
 		setSectionVisible(15, false);
 		obj1._section = 0;
 		_gm->takeObject(obj1);
 	} else if ((verb == ACTION_PULL) && (obj1._id == PLUG)) {
-		_gm->drawImage(10);
+		_vm->renderImage(10);
 		setSectionVisible(7, false);
 		obj1._click = 21;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, PLUG, SOCKET)) {
-		_gm->drawImage(7);
+		_vm->renderImage(7);
 		setSectionVisible(10, false);
 		getObject(10)->_click = 20;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE2))
@@ -932,17 +932,17 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE)) {
 		r = _gm->_rooms[AIRLOCK];
 		if (!isSectionVisible(10) && !r->getObject(5)->hasProperty(WORN)) {
-			_gm->drawImage(25);
+			_vm->renderImage(25);
 			_gm->shock();
 		}
-		_gm->drawImage(11);
-		_gm->drawImage(26);
+		_vm->renderImage(11);
+		_vm->renderImage(26);
 		setSectionVisible(12, false);
 	} else if ((verb == ACTION_TAKE) &&
 	           ((obj1._id == WIRE) || (obj1._id == WIRE2) || (obj1._id == PLUG))) {
 		if (isSectionVisible(10) && isSectionVisible(11)) {
-			_gm->drawImage(_gm->invertSection(10));
-			_gm->drawImage(_gm->invertSection(11));
+			_vm->renderImage(_gm->invertSection(10));
+			_vm->renderImage(_gm->invertSection(11));
 			getObject(8)->_name = kStringWireAndPlug;
 			_gm->takeObject(*getObject(8));
 			getObject(9)->_click = 255;
@@ -963,15 +963,15 @@ bool ShipCabinR3::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_K2, KEYCARD)) {
 		_gm->openLocker(this, getObject(8), getObject(3), 10);
 		if (getObject(9)->_click == 255)
-			_gm->drawImage(12); // Remove rope
+			_vm->renderImage(12); // Remove rope
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_K3, KEYCARD)) {
 		_gm->openLocker(this, getObject(10), getObject(4), 11);
 		if (getObject(17)->_click == 255)
-			_gm->drawImage(16); // Remove Discman
+			_vm->renderImage(16); // Remove Discman
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SLOT_K4, KEYCARD)) {
 		_gm->openLocker(this, getObject(15), getObject(5), 13);
 		if (getObject(16)->_click == 255)
-			_gm->drawImage(14); // Remove Book
+			_vm->renderImage(14); // Remove Book
 	}
 
 	else if ((verb == ACTION_CLOSE) && (obj1._id == SHELF1))
@@ -993,7 +993,7 @@ bool ShipCabinR3::interact(Action verb, Object &obj1, Object &obj2) {
 		getObject(10)->_click = 34; // Locker empty
 		obj1._click = 255;
 		_gm->takeObject(*_gm->_rooms[0]->getObject(3));
-		_gm->drawImage(16);
+		_vm->renderImage(16);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == ROPE) &&
 	           obj1.hasProperty(CARRIED)) {
 		getObject(8)->_click = 31; // Shelf empty
@@ -1023,84 +1023,84 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 
 	if ((verb == ACTION_PRESS) && (obj1._id == BUTTON1)) {
 		if (!getObject(1)->hasProperty(OPENED)) {
-			_gm->drawImage(10);
+			_vm->renderImage(10);
 			_vm->playSound(kAudioDoorSound);
 			if (getObject(0)->hasProperty(OPENED)) {
 				getObject(0)->disableProperty(OPENED);
-				_gm->drawImage(1);
+				_vm->renderImage(1);
 				_gm->wait2(2);
-				_gm->drawImage(2);
+				_vm->renderImage(2);
 				setSectionVisible(1, false);
 				_gm->wait2(2);
-				_gm->drawImage(3);
+				_vm->renderImage(3);
 				setSectionVisible(2, false);
 			} else {
 				getObject(0)->setProperty(OPENED);
-				_gm->drawImage(2);
+				_vm->renderImage(2);
 				setSectionVisible(3, false);
 				_gm->wait2(2);
-				_gm->drawImage(1);
+				_vm->renderImage(1);
 				setSectionVisible(2, false);
 				_gm->wait2(2);
-				_gm->drawImage(_gm->invertSection(1));
+				_vm->renderImage(_gm->invertSection(1));
 			}
-			_gm->drawImage(_gm->invertSection(10));
+			_vm->renderImage(_gm->invertSection(10));
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BUTTON2)) {
 		if (!getObject(0)->hasProperty(OPENED)) {
-			_gm->drawImage(11);
+			_vm->renderImage(11);
 			if (getObject(1)->hasProperty(OPENED)) {
 				_vm->playSound(kAudioDoorSound);
 				getObject(1)->disableProperty(OPENED);
-				_gm->drawImage(4);
+				_vm->renderImage(4);
 				_gm->wait2(2);
-				_gm->drawImage(5);
+				_vm->renderImage(5);
 				setSectionVisible(4, false);
 				_gm->wait2(2);
-				_gm->drawImage(6);
+				_vm->renderImage(6);
 				setSectionVisible(5, false);
-				_gm->drawImage(16);
+				_vm->renderImage(16);
 				setSectionVisible(17, false);
 				_gm->wait2(3);
-				_gm->drawImage(15);
+				_vm->renderImage(15);
 				setSectionVisible(16, false);
 				_gm->wait2(3);
-				_gm->drawImage(14);
+				_vm->renderImage(14);
 				setSectionVisible(15, false);
 				_gm->wait2(3);
-				_gm->drawImage(13);
+				_vm->renderImage(13);
 				setSectionVisible(14, false);
 				_gm->wait2(3);
-				_gm->drawImage(12);
+				_vm->renderImage(12);
 				setSectionVisible(13, false);
 				_gm->wait2(3);
-				_gm->drawImage(_gm->invertSection(12));
+				_vm->renderImage(_gm->invertSection(12));
 			} else {
 				getObject(1)->setProperty(OPENED);
-				_gm->drawImage(12);
+				_vm->renderImage(12);
 				_gm->wait2(3);
-				_gm->drawImage(13);
+				_vm->renderImage(13);
 				setSectionVisible(12, false);
 				_gm->wait2(3);
-				_gm->drawImage(14);
+				_vm->renderImage(14);
 				setSectionVisible(13, false);
 				_gm->wait2(3);
-				_gm->drawImage(15);
+				_vm->renderImage(15);
 				setSectionVisible(14, false);
 				_gm->wait2(3);
-				_gm->drawImage(16);
+				_vm->renderImage(16);
 				setSectionVisible(15, false);
 				_gm->wait2(3);
-				_gm->drawImage(17);
+				_vm->renderImage(17);
 				setSectionVisible(16, false);
 				_vm->playSound(kAudioDoorSound);
-				_gm->drawImage(5);
+				_vm->renderImage(5);
 				setSectionVisible(6, false);
 				_gm->wait2(2);
-				_gm->drawImage(4);
+				_vm->renderImage(4);
 				setSectionVisible(5, false);
 				_gm->wait2(2);
-				_gm->drawImage(_gm->invertSection(4));
+				_vm->renderImage(_gm->invertSection(4));
 				r = _gm->_rooms[AIRLOCK];
 				if (!r->getObject(4)->hasProperty(WORN) ||
 				    !r->getObject(5)->hasProperty(WORN) ||
@@ -1109,7 +1109,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 					return true;
 				}
 			}
-			_gm->drawImage(_gm->invertSection(11));
+			_vm->renderImage(_gm->invertSection(11));
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == MANOMETER)) {
 		if (getObject(1)->hasProperty(OPENED))
@@ -1155,7 +1155,7 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!_gm->_state._terminalStripConnected)
 			_vm->renderMessage(kStringCable3);
 		else {
-			_gm->drawImage(5);
+			_vm->renderImage(5);
 			getObject(0)->_name = kStringWireAndPlug2;
 			getObject(0)->_click = 10;
 			room = _gm->_rooms[CABIN_L2];
@@ -1168,8 +1168,8 @@ bool ShipHold::interact(Action verb, Object &obj1, Object &obj2) {
 			room->getObject(1)->_click = 13;
 			room->setSectionVisible(6, true);
 			room->setSectionVisible(8, true);
-			_gm->drawImage(_gm->invertSection(5));
-			_gm->drawImage(6);
+			_vm->renderImage(_gm->invertSection(5));
+			_vm->renderImage(6);
 			setSectionVisible(4, false);
 			getObject(0)->_click = 11;
 		} else {
@@ -1197,33 +1197,32 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		if (_gm->_state._landingModuleEnergyDaysLeft) {
 			r = _gm->_rooms[GENERATOR];
 			if (isSectionVisible(7)) {
-				_gm->drawImage(_gm->invertSection(9));
-				_gm->drawImage(_gm->invertSection(2));
-				_gm->drawImage(_gm->invertSection(8));
-				_gm->drawImage(_gm->invertSection(7));
-				_gm->drawImage(_gm->invertSection(10));
+				_vm->renderImage(_gm->invertSection(9));
+				_vm->renderImage(_gm->invertSection(2));
+				_vm->renderImage(_gm->invertSection(8));
+				_vm->renderImage(_gm->invertSection(7));
+				_vm->renderImage(_gm->invertSection(10));
 				if (r->isSectionVisible(9))
 					_gm->_state._powerOff = true;
 				_gm->roomBrightness();
 				_vm->paletteBrightness();
 			} else {
-				_gm->drawImage(7);
+				_vm->renderImage(7);
 				if (r->isSectionVisible(9))
 					_gm->_state._powerOff = false;
-//				load("MSN_DATA.025");
 				_gm->roomBrightness();
 				_vm->paletteBrightness();
 				r = _gm->_rooms[SLEEP];
 				r->setSectionVisible(1, false);
 				r->setSectionVisible(2, false);
 				_gm->wait2(2);
-				_gm->drawImage(2);
+				_vm->renderImage(2);
 				_gm->wait2(3);
-				_gm->drawImage(8);
+				_vm->renderImage(8);
 				_gm->wait2(2);
-				_gm->drawImage(9);
+				_vm->renderImage(9);
 				_gm->wait2(1);
-				_gm->drawImage(10);
+				_vm->renderImage(10);
 			}
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, LANDINGMOD_BUTTON))
@@ -1237,19 +1236,19 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		r = _gm->_rooms[CABIN_L3];
 		_gm->_inventory.remove(*r->getObject(8));
 		getObject(4)->_name = r->getObject(8)->_name;
-		_gm->drawImage(4);
+		_vm->renderImage(4);
 		if (_gm->_state._cableConnected) {
-			_gm->drawImage(5);
+			_vm->renderImage(5);
 			getObject(4)->_click = 6;
 		} else {
 			getObject(4)->_click = 5;
 			if (_gm->_state._terminalStripWire)
-				_gm->drawImage(11);
+				_vm->renderImage(11);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SPOOL, LANDINGMOD_SOCKET))
 		_vm->renderMessage(kStringShipHold8);
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LANDINGMOD_WIRE, TERMINALSTRIP)) {
-		_gm->drawImage(11);
+		_vm->renderImage(11);
 		getObject(4)->_name = kStringWireAndClip;
 		r = _gm->_rooms[HOLD];
 		_gm->_inventory.remove(*r->getObject(2));
@@ -1259,7 +1258,7 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!_gm->_state._terminalStripConnected)
 			_vm->renderMessage(kStringCable3);
 		else {
-			_gm->drawImage(5);
+			_vm->renderImage(5);
 			getObject(4)->_name = kStringWireAndPlug2;
 			getObject(4)->_click = 6;
 			_gm->_inventory.remove(*_gm->_rooms[CABIN_L2]->getObject(9));
@@ -1275,10 +1274,10 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 			r->setSectionVisible(4, true);
 			r->getObject(0)->_name = getObject(4)->_name;
-			_gm->drawImage(_gm->invertSection(5));
-			_gm->drawImage(_gm->invertSection(4));
+			_vm->renderImage(_gm->invertSection(5));
+			_vm->renderImage(_gm->invertSection(4));
 			setSectionVisible(11, false);
-			_gm->drawImage(6);
+			_vm->renderImage(6);
 			getObject(4)->_click = 7;
 		} else {
 			_vm->renderMessage(kStringShipHold6);
@@ -1303,11 +1302,11 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		if (obj1.hasProperty(OPENED))
 			return false;
 		_vm->playSound(kAudioDoorSound);
-		_gm->drawImage(1);
+		_vm->renderImage(1);
 		if (isSectionVisible(7))
-			_gm->drawImage(10);
+			_vm->renderImage(10);
 		if (isSectionVisible(13))
-			_gm->drawImage(13);
+			_vm->renderImage(13);
 		_gm->_rooms[HOLD]->setSectionVisible(3, true);
 		obj1.setProperty(OPENED);
 		obj1._click = 2;
@@ -1319,10 +1318,10 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage(kStringShipHold7);
 		} else {
 			_vm->playSound(kAudioDoorSound);
-			_gm->drawImage(_gm->invertSection(1));
+			_vm->renderImage(_gm->invertSection(1));
 			setSectionVisible(10, false);
 			if (isSectionVisible(13))
-				_gm->drawImage(13);
+				_vm->renderImage(13);
 			_gm->_rooms[HOLD]->setSectionVisible(3, false);
 			obj1.disableProperty(OPENED);
 			obj1._click = 1;
@@ -1342,27 +1341,27 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringCable2);
 	else if ((verb == ACTION_PULL) && (obj1._id == SHORT_WIRE) &&
 	         (obj1._click != 11)) {
-		_gm->drawImage(3);
-		_gm->drawImage(4);
+		_vm->renderImage(3);
+		_vm->renderImage(4);
 		obj1._click = 11;
 		_gm->turnOff();
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, SHORT_WIRE, CLIP) &&
 	           (getObject(11)->_click == 11) && !isSectionVisible(9)) {
-		_gm->drawImage(2);
+		_vm->renderImage(2);
 		setSectionVisible(3, false);
 		setSectionVisible(4, false);
 		getObject(11)->_click = 10;
 		if (_gm->_state._shipEnergyDaysLeft)
 			_gm->turnOn();
 		else
-			_gm->drawImage(4);
+			_vm->renderImage(4);
 	} else if ((verb == ACTION_OPEN) && (obj1._id == TRAP)) {
 		_vm->playSound(kAudioDoorSound);
-		_gm->drawImage(2);
+		_vm->renderImage(2);
 		if (getObject(11)->_click == 11)
-			_gm->drawImage(3);
+			_vm->renderImage(3);
 		if (_gm->_state._powerOff)
-			_gm->drawImage(4);
+			_vm->renderImage(4);
 		obj1.setProperty(OPENED);
 		obj1._click = 6;
 
@@ -1377,26 +1376,26 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, GENERATOR_WIRE, CLIP) &&
 	           isSectionVisible(3) && (getObject(0)->_click != 16)) {
-		_gm->drawImage(_gm->invertSection(8));
-		_gm->drawImage(2);
+		_vm->renderImage(_gm->invertSection(8));
+		_vm->renderImage(2);
 		setSectionVisible(4, false);
-		_gm->drawImage(3);
-		_gm->drawImage(9);
+		_vm->renderImage(3);
+		_vm->renderImage(9);
 		getObject(0)->_click = 16;
 		r = _gm->_rooms[LANDINGMODULE];
 		if (_gm->_state._landingModuleEnergyDaysLeft && r->isSectionVisible(7))
 			_gm->turnOn();
 		else
-		_gm->drawImage(4);
+		_vm->renderImage(4);
 		_gm->_rooms[HOLD]->setSectionVisible(7, true);
 		_gm->great(3);
 	} else if ((verb == ACTION_PULL) && (obj1._id == GENERATOR_WIRE) &&
 	           (obj1._click == 16)) {
-		_gm->drawImage(_gm->invertSection(9));
-		_gm->drawImage(2);
-		_gm->drawImage(3);
-		_gm->drawImage(4);
-		_gm->drawImage(8);
+		_vm->renderImage(_gm->invertSection(9));
+		_vm->renderImage(2);
+		_vm->renderImage(3);
+		_vm->renderImage(4);
+		_vm->renderImage(8);
 		obj1._click = 15;
 		_gm->turnOff();
 		_gm->_rooms[HOLD]->setSectionVisible(7, false);
@@ -1411,7 +1410,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		else
 			_vm->renderMessage(kStringShipHold13);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LADDER, ROPE)) {
-		_gm->drawImage(13);
+		_vm->renderImage(13);
 		r = _gm->_rooms[CABIN_R3];
 		_gm->_inventory.remove(*r->getObject(9));
 		getObject(3)->_click = 18;
@@ -1419,13 +1418,13 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!isSectionVisible(1))
 			_vm->renderMessage(kStringShipHold14);
 		else {
-			_gm->drawImage(_gm->invertSection(13));
-			_gm->drawImage(1);
+			_vm->renderImage(_gm->invertSection(13));
+			_vm->renderImage(1);
 			if (isSectionVisible(7)) {
-				_gm->drawImage(10);
-				_gm->drawImage(11);
+				_vm->renderImage(10);
+				_vm->renderImage(11);
 			} else {
-				_gm->drawImage(12);
+				_vm->renderImage(12);
 			}
 			r = _gm->_rooms[OUTSIDE];
 			r->setSectionVisible(1, true);
@@ -1452,11 +1451,11 @@ void ArsanoRocks::onEntrance() {
 bool ArsanoRocks::interact(Action verb, Object &obj1, Object &obj2) {
 	if (((verb == ACTION_PULL) || (verb == ACTION_PRESS)) &&
 	    (obj1._id == STONE) && !isSectionVisible(3)) {
-		_gm->drawImage(1);
+		_vm->renderImage(1);
 		_gm->wait2(2);
-		_gm->drawImage(2);
+		_vm->renderImage(2);
 		_gm->wait2(2);
-		_gm->drawImage(3);
+		_vm->renderImage(3);
 		_vm->playSound(kAudioRocks);
 		obj1._click = 3;
 		getObject(3)->_click = 4;
@@ -1469,10 +1468,10 @@ bool ArsanoRocks::interact(Action verb, Object &obj1, Object &obj2) {
 void ArsanoMeetup::onEntrance() {
 	if (isSectionVisible(7)) {
 		_gm->wait2(3);
-		_gm->drawImage(6);
+		_vm->renderImage(6);
 		setSectionVisible(7, false);
 		_gm->wait2(3);
-		_gm->drawImage(_gm->invertSection(6));
+		_vm->renderImage(_gm->invertSection(6));
 	}
 	if (!(_gm->_state._greatFlag & 0x8000)) {
 		_vm->playSound(kAudioGreat);
@@ -1481,14 +1480,14 @@ void ArsanoMeetup::onEntrance() {
 }
 
 void ArsanoMeetup::animation() {
-	_gm->drawImage(_gm->invertSection(1) + _beacon);
+	_vm->renderImage(_gm->invertSection(1) + _beacon);
 	_beacon = (_beacon + 1) % 5;
-	_gm->drawImage(_beacon + 1);
-	_gm->drawImage(_beacon + 8);
+	_vm->renderImage(_beacon + 1);
+	_vm->renderImage(_beacon + 8);
 	if (isSectionVisible(_sign + 13))
-		_gm->drawImage(_gm->invertSection(13) + _sign);
+		_vm->renderImage(_gm->invertSection(13) + _sign);
 	else
-		_gm->drawImage(13 + _sign);
+		_vm->renderImage(13 + _sign);
 
 	_sign = (_sign + 1) % 14;
 	_gm->setAnimationTimer(3);
@@ -1501,7 +1500,6 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringArsanoMeetup1);
 	} else if ((verb == ACTION_WALK) && (obj1._id == SPACESHIP)) {
 		_gm->changeRoom(GLIDER);
-		_gm->_newRoom = true;
 	} else if ((verb == ACTION_WALK) && (obj1._id == STAR)) {
 		_vm->renderMessage(kStringArsanoMeetup2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == STAR)) {
@@ -1511,13 +1509,12 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->getInput();
 		_gm->animationOn();
 		g_system->fillScreen(kColorBlack);
-		// TODO: those two function calls needed?
 		_vm->renderRoom(*this);
 		_vm->paletteBrightness();
 	} else if ((verb == ACTION_WALK) && (obj1._id == DOOR)) {
-		_gm->drawImage(6);
+		_vm->renderImage(6);
 		_gm->wait2(3);
-		_gm->drawImage(7);
+		_vm->renderImage(7);
 		setSectionVisible(6, false);
 		_gm->wait2(3);
 
@@ -1534,7 +1531,6 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KEYCARD_R, SPACESHIP)) {
 		getObject(5)->setProperty(OPENED);
 		_gm->changeRoom(GLIDER);
-		_gm->_newRoom = true;
 	} else {
 		return false;
 	}
@@ -1546,31 +1542,31 @@ void ArsanoEntrance::animation() {
 	if (!_vm->_messageDisplayed && isSectionVisible(kMaxSection - 5)) {
 		_gm->animationOff(); // to avoid recursive call
 		_vm->playSound(kAudioDoorSound);
-		_gm->drawImage(8);
+		_vm->renderImage(8);
 		setSectionVisible(9, false);
 		_gm->wait2(2);
-		_gm->drawImage(7);
+		_vm->renderImage(7);
 		setSectionVisible(8, false);
 		_gm->wait2(2);
-		_gm->drawImage(6);
+		_vm->renderImage(6);
 		setSectionVisible(7, false);
 		_gm->wait2(2);
-		_gm->drawImage(5);
+		_vm->renderImage(5);
 		setSectionVisible(6, false);
 		_gm->wait2(2);
-		_gm->drawImage(_gm->invertSection(5));
+		_vm->renderImage(_gm->invertSection(5));
 		getObject(11)->_click = 255;
 		setSectionVisible(kMaxSection - 5, false);
 		_gm->animationOn();
 	}
 	if (isSectionVisible(2)) {
-		_gm->drawImage(_gm->invertSection(2));
+		_vm->renderImage(_gm->invertSection(2));
 	} else {
 		if (_eyewitness) {
 			--_eyewitness;
 		} else {
 			_eyewitness = 20;
-			_gm->drawImage(2);
+			_vm->renderImage(2);
 		}
 	}
 
@@ -1624,9 +1620,9 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply(kStringArsanoEntrance10, 1, _gm->invertSection(1));
 		}
 	} else if ((verb == ACTION_WALK) && (obj1._id == STAIRCASE) && (_gm->_state._shoes != 3)) {
-		_gm->drawImage(3);
+		_vm->renderImage(3);
 		_gm->wait2(2);
-		_gm->drawImage(4);
+		_vm->renderImage(4);
 		setSectionVisible(3, false);
 		if (_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN))
 			_gm->reply(kStringDialogSeparator, 1, _gm->invertSection(1));
@@ -1634,10 +1630,10 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->reply(kStringArsanoEntrance11, 1, _gm->invertSection(1));
 		else
 			_gm->reply(kStringArsanoEntrance12, 1, _gm->invertSection(1));
-		_gm->drawImage(3);
+		_vm->renderImage(3);
 		setSectionVisible(4, false);
 		_gm->wait2(2);
-		_gm->drawImage(_gm->invertSection(3));
+		_vm->renderImage(_gm->invertSection(3));
 		if (!_gm->_rooms[AIRLOCK]->getObject(4)->hasProperty(WORN)) {
 			if (_gm->_state._language) {
 				if (_gm->_state._shoes)
@@ -1661,15 +1657,15 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 						_gm->_state._shoes = 2;
 						break;
 					case 3:
-						_gm->drawImage(3);
+						_vm->renderImage(3);
 						_gm->wait2(2);
-						_gm->drawImage(4);
+						_vm->renderImage(4);
 						setSectionVisible(3, false);
 						_gm->reply(kStringArsanoEntrance16, 1, 1 + 128);
-						_gm->drawImage(3);
+						_vm->renderImage(3);
 						setSectionVisible(4, false);
 						_gm->wait2(2);
-						_gm->drawImage(_gm->invertSection(3));
+						_vm->renderImage(_gm->invertSection(3));
 						break;
 					}
 					removeSentence(0, 1);
@@ -1681,18 +1677,18 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BATHROOM_BUTTON)) {
 		_vm->playSound(kAudioDoorSound);
-		_gm->drawImage(5);
+		_vm->renderImage(5);
 		_gm->wait2(2);
-		_gm->drawImage(6);
+		_vm->renderImage(6);
 		setSectionVisible(5, false);
 		_gm->wait2(2);
-		_gm->drawImage(7);
+		_vm->renderImage(7);
 		setSectionVisible(6, false);
 		_gm->wait2(2);
-		_gm->drawImage(8);
+		_vm->renderImage(8);
 		setSectionVisible(7, false);
 		_gm->wait2(2);
-		_gm->drawImage(9);
+		_vm->renderImage(9);
 		setSectionVisible(8, false);
 		getObject(11)->_click = 9;
 	} else if ((verb == ACTION_WALK) && (obj1._id == ARSANO_BATHROOM)) {
@@ -1726,7 +1722,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		if ((_gm->_state._coins < 5) && (getObject(7 - _gm->_state._coins)->_click == 7))
 			_vm->renderMessage(kStringArsanoEntrance23);
 		else {
-			_gm->drawImage(15 - _gm->_state._coins);
+			_vm->renderImage(15 - _gm->_state._coins);
 			getObject(8 - _gm->_state._coins)->_click = 7;
 			--_gm->_state._coins;
 			if (_gm->_state._coins == 1) {
@@ -1774,159 +1770,159 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 void ArsanoRemaining::animation() {
 	switch (_i) {
 	case  0:
-		_gm->drawImage(1);
-		_gm->drawImage(_gm->invertSection(4));
+		_vm->renderImage(1);
+		_vm->renderImage(_gm->invertSection(4));
 		break;
 	case  1:
-		_gm->drawImage(_gm->invertSection(1));
-		_gm->drawImage(4);
+		_vm->renderImage(_gm->invertSection(1));
+		_vm->renderImage(4);
 		break;
 	case  2:
-		_gm->drawImage(2);
-		_gm->drawImage(_gm->invertSection(4));
+		_vm->renderImage(2);
+		_vm->renderImage(_gm->invertSection(4));
 		break;
 
 	case  3:
-		_gm->drawImage(7); // Dragon
-		_gm->drawImage(_gm->invertSection(2));
-		_gm->drawImage(4);
+		_vm->renderImage(7); // Dragon
+		_vm->renderImage(_gm->invertSection(2));
+		_vm->renderImage(4);
 		break;
 	case  4:
-		_gm->drawImage(8);
+		_vm->renderImage(8);
 		setSectionVisible(7, false);
-		_gm->drawImage(2);
-		_gm->drawImage(_gm->invertSection(4));
+		_vm->renderImage(2);
+		_vm->renderImage(_gm->invertSection(4));
 		break;
 	case  5:
-		_gm->drawImage(_gm->invertSection(8));
-		_gm->drawImage(_gm->invertSection(2));
+		_vm->renderImage(_gm->invertSection(8));
+		_vm->renderImage(_gm->invertSection(2));
 		break;
 	case  6:
-		_gm->drawImage(3);
-		_gm->drawImage(2);
+		_vm->renderImage(3);
+		_vm->renderImage(2);
 		break;
 	case  7:
-		_gm->drawImage(_gm->invertSection(3));
-		_gm->drawImage(_gm->invertSection(2));
+		_vm->renderImage(_gm->invertSection(3));
+		_vm->renderImage(_gm->invertSection(2));
 		break;
 	case  8:
-		_gm->drawImage(3);
+		_vm->renderImage(3);
 		break;
 	case  9:
-		_gm->drawImage(14); // Card Player 1
-		_gm->drawImage(4);
-		_gm->drawImage(_gm->invertSection(3));
+		_vm->renderImage(14); // Card Player 1
+		_vm->renderImage(4);
+		_vm->renderImage(_gm->invertSection(3));
 		break;
 	case 10:
-		_gm->drawImage(15);
-		_gm->drawImage(14);
-		_gm->drawImage(_gm->invertSection(4));
-		_gm->drawImage(3);
+		_vm->renderImage(15);
+		_vm->renderImage(14);
+		_vm->renderImage(_gm->invertSection(4));
+		_vm->renderImage(3);
 		break;
 	case 11:
-		_gm->drawImage(16);
+		_vm->renderImage(16);
 		setSectionVisible(15, false);
-		_gm->drawImage(4);
-		_gm->drawImage(_gm->invertSection(3));
+		_vm->renderImage(4);
+		_vm->renderImage(_gm->invertSection(3));
 		break;
 	case 12:
-		_gm->drawImage(17);
+		_vm->renderImage(17);
 		setSectionVisible(16, false);
-		_gm->drawImage(_gm->invertSection(4));
-		_gm->drawImage(3);
+		_vm->renderImage(_gm->invertSection(4));
+		_vm->renderImage(3);
 		break;
 	case 13:
-		_gm->drawImage(_gm->invertSection(17));
-		_gm->drawImage(4);
-		_gm->drawImage(_gm->invertSection(3));
+		_vm->renderImage(_gm->invertSection(17));
+		_vm->renderImage(4);
+		_vm->renderImage(_gm->invertSection(3));
 		break;
 	case 14:
-		_gm->drawImage(_gm->invertSection(4));
+		_vm->renderImage(_gm->invertSection(4));
 		break;
 	case 15:
-		_gm->drawImage(6);
+		_vm->renderImage(6);
 		break;
 	case 16:
-		_gm->drawImage(18); // Card Player 2
-		_gm->drawImage(5);
+		_vm->renderImage(18); // Card Player 2
+		_vm->renderImage(5);
 		break;
 	case 17:
-		_gm->drawImage(19);
+		_vm->renderImage(19);
 		setSectionVisible(18, false);
-		_gm->drawImage(_gm->invertSection(5));
+		_vm->renderImage(_gm->invertSection(5));
 		break;
 	case 18:
-		_gm->drawImage(20);
+		_vm->renderImage(20);
 		setSectionVisible(19, false);
-		_gm->drawImage(5);
+		_vm->renderImage(5);
 		break;
 	case 19:
-		_gm->drawImage(21);
+		_vm->renderImage(21);
 		setSectionVisible(20, false);
-		_gm->drawImage(_gm->invertSection(5));
+		_vm->renderImage(_gm->invertSection(5));
 		break;
 	case 20:
-		_gm->drawImage(_gm->invertSection(21));
-		_gm->drawImage(5);
+		_vm->renderImage(_gm->invertSection(21));
+		_vm->renderImage(5);
 		break;
 	case 21:
-		_gm->drawImage(_gm->invertSection(5));
+		_vm->renderImage(_gm->invertSection(5));
 		break;
 	case 22:
-		_gm->drawImage(5);
+		_vm->renderImage(5);
 		break;
 	case 23:
-		_gm->drawImage(10);
+		_vm->renderImage(10);
 		_chewing = false;
-		_gm->drawImage(_gm->invertSection(5));
+		_vm->renderImage(_gm->invertSection(5));
 		break;
 	case 24:
-		_gm->drawImage(11);
+		_vm->renderImage(11);
 		setSectionVisible(10, false);
 		break;
 	case 25:
-		_gm->drawImage(12);
+		_vm->renderImage(12);
 		setSectionVisible(11, false);
 		break;
 	case 26:
-		_gm->drawImage(13);
+		_vm->renderImage(13);
 		setSectionVisible(12, false);
 		break;
 	case 27:
-		_gm->drawImage(12);
+		_vm->renderImage(12);
 		setSectionVisible(13, false);
 		break;
 	case 28:
-		_gm->drawImage(11);
+		_vm->renderImage(11);
 		setSectionVisible(12, false);
 		break;
 	case 29:
-		_gm->drawImage(10);
+		_vm->renderImage(10);
 		setSectionVisible(11, false);
 		break;
 	case 30:
-		_gm->drawImage(_gm->invertSection(10));
+		_vm->renderImage(_gm->invertSection(10));
 		_chewing = true;
 		break;
 	case 31:
-		_gm->drawImage(22); // Card Player 3
+		_vm->renderImage(22); // Card Player 3
 		break;
 	case 32:
-		_gm->drawImage(_gm->invertSection(22));
+		_vm->renderImage(_gm->invertSection(22));
 		break;
 	case 33:
-		_gm->drawImage(_gm->invertSection(6));
+		_vm->renderImage(_gm->invertSection(6));
 		break;
 	case 34:
-		_gm->drawImage(4);
+		_vm->renderImage(4);
 	}
 
 	_i = (_i + 1) % 35;
 	if (_chewing) {
 		if (isSectionVisible(9))
-			_gm->drawImage(_gm->invertSection(9));
+			_vm->renderImage(_gm->invertSection(9));
 		else
-			_gm->drawImage(9);
+			_vm->renderImage(9);
 	}
 	_gm->setAnimationTimer(3);
 }
@@ -1941,9 +1937,9 @@ void ArsanoRoger::onEntrance() {
 
 void ArsanoRoger::animation() {
 	if (isSectionVisible(1))
-		_gm->drawImage(_gm->invertSection(1));
+		_vm->renderImage(_gm->invertSection(1));
 	else if (isSectionVisible(10)) {
-		_gm->drawImage(12);
+		_vm->renderImage(12);
 		setSectionVisible(10, false);
 		setSectionVisible(12, false);
 	} else {
@@ -1952,15 +1948,15 @@ void ArsanoRoger::animation() {
 		} else {
 			_eyewitness = 20;
 			if (isSectionVisible(3))
-				_gm->drawImage(10);
+				_vm->renderImage(10);
 			else
-				_gm->drawImage(1);
+				_vm->renderImage(1);
 		}
 	}
 	if (isSectionVisible(3)) {
 		setSectionVisible(5 + _hands, false);
 		_hands = (_hands + 1) % 5;
-		_gm->drawImage(5 + _hands);
+		_vm->renderImage(5 + _hands);
 	}
 	_gm->setAnimationTimer(4);
 }
@@ -2020,7 +2016,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if (((verb == ACTION_USE) && Object::combine(obj1, obj2, CHESS, ROGER_W)) ||
 	           ((verb == ACTION_GIVE) && (obj1._id == CHESS) && (obj2._id == ROGER_W))) {
-		_gm->drawImage(11);
+		_vm->renderImage(11);
 		_gm->great(0);
 		_gm->say(kStringArsanoRoger36);
 		_gm->reply(kStringArsanoRoger37, 2, 2 + 128);
@@ -2042,7 +2038,7 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(11, false);
 		setSectionVisible(1, false);
 		_vm->renderRoom(*this);
-		_gm->drawImage(3);
+		_vm->renderImage(3);
 		getObject(3)->_click = 5;
 		getObject(5)->_click = 6;
 		getObject(6)->_click = 7;
@@ -2060,9 +2056,9 @@ void ArsanoGlider::animation() {
 	if (isSectionVisible(8)) {
 		setSectionVisible(24 + _sinus, false);
 		_sinus = (_sinus + 1) % 14;
-		_gm->drawImage(24 + _sinus);
+		_vm->renderImage(24 + _sinus);
 	} else if (isSectionVisible(24 + _sinus))
-		_gm->drawImage(_gm->invertSection(24 + _sinus));
+		_vm->renderImage(_gm->invertSection(24 + _sinus));
 
 	_gm->setAnimationTimer(2);
 }
@@ -2070,24 +2066,24 @@ void ArsanoGlider::animation() {
 bool ArsanoGlider::interact(Action verb, Object &obj1, Object &obj2) {
 	static char l, r;
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KEYCARD_R, GLIDER_SLOT)) {
-		_gm->drawImage(5);
+		_vm->renderImage(5);
 		_gm->wait2(7);
-		_gm->drawImage(8);
+		_vm->renderImage(8);
 		getObject(5)->_click = 10;
 		_gm->_inventory.remove(*_gm->_rooms[ROGER]->getObject(8));
 	} else if (((verb == ACTION_TAKE) || (verb == ACTION_PULL)) &&
 	           (obj1._id == GLIDER_KEYCARD)) {
-		_gm->drawImage(_gm->invertSection(5));
-		_gm->drawImage(_gm->invertSection(8));
+		_vm->renderImage(_gm->invertSection(5));
+		_vm->renderImage(_gm->invertSection(8));
 		getObject(5)->_click = 255;
 		_gm->takeObject(*_gm->_rooms[ROGER]->getObject(8));
 		for (int i = 9; i <= 22; i++)
-			_gm->drawImage(_gm->invertSection(i));
+			_vm->renderImage(_gm->invertSection(i));
 		l = r = 0;
 	} else if ((verb == ACTION_PRESS) &&
 	           (obj1._id >= GLIDER_BUTTON1) && (obj1._id <= GLIDER_BUTTON4)) {
 		int i = obj1._id - GLIDER_BUTTON1 + 1;
-		_gm->drawImage(i);
+		_vm->renderImage(i);
 		if (isSectionVisible(8)) {
 			l = 0;
 			r = 0;
@@ -2101,30 +2097,30 @@ bool ArsanoGlider::interact(Action verb, Object &obj1, Object &obj2) {
 			case 1:
 				if (l < 7) {
 					l++;
-					_gm->drawImage(l + 8);
+					_vm->renderImage(l + 8);
 				}
 				break;
 			case 3:
 				if (r < 7) {
 					r++;
-					_gm->drawImage(r + 15);
+					_vm->renderImage(r + 15);
 				}
 				break;
 			case 2:
 				if (l) {
-					_gm->drawImage(_gm->invertSection(l + 8));
+					_vm->renderImage(_gm->invertSection(l + 8));
 					l--;
 				}
 				break;
 			case 4:
 				if (r) {
-					_gm->drawImage(_gm->invertSection(r + 15));
+					_vm->renderImage(_gm->invertSection(r + 15));
 					r--;
 				}
 			}
 		}
 		_gm->wait2(4);
-		_gm->drawImage(_gm->invertSection(i));
+		_vm->renderImage(_gm->invertSection(i));
 	} else if ((verb == ACTION_USE) && (obj1._id == GLIDER_BUTTONS)) {
 		_vm->renderMessage(kStringArsanoGlider1);
 	} else
@@ -2196,26 +2192,26 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->wait2(36);
 				for (int i = 1; i <= 13; i++) {
 					if (i > 1)
-						_gm->drawImage(_gm->invertSection(i - 1));
-					_gm->drawImage(i);
+						_vm->renderImage(13, _gm->invertSection(i - 1));
+					_vm->renderImage(13, i);
 					_gm->wait2(2);
 				}
-				_gm->drawImage(_gm->invertSection(13));
+				_vm->renderImage(13, _gm->invertSection(13));
 				_gm->wait2(20);
 				_vm->renderImage(14, 0);
 				_vm->paletteBrightness();
 				_gm->wait2(36);
 				for (int i = 1; i <= 13; i++) {
 					if (i > 1)
-						_gm->drawImage(_gm->invertSection(i - 1));
-					_gm->drawImage(i);
+						_vm->renderImage(14, _gm->invertSection(i - 1));
+					_vm->renderImage(14, i);
 					_gm->wait2(2);
 				}
-				_gm->drawImage(_gm->invertSection(13));
+				_vm->renderImage(14, _gm->invertSection(13));
 				_gm->wait2(9);
 				_vm->playSound(kAudioCrash);
 				for (int i = 14; i <= 19; i++) {
-					_gm->drawImage(i);
+					_vm->renderImage(14, i);
 					_gm->wait2(3);
 				}
 				_vm->paletteFadeOut();
@@ -2230,14 +2226,16 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 				g_system->fillScreen(kColorBlack);
 				_gm->_state._dream = false;
 				// TODO:
+				// The original at this points loads a savegame from "MSN.TMP"
+				// which is provided with the data file.
 //				if (!load_game(-2)) error_temp();
 				_gm->loadTime();
-				_gm->_newRoom = true;
 				_gm->_rooms[CAVE]->getObject(1)->_exitRoom = MEETUP3;
 				_gm->_state._dream = true;
 			}
 		} else {
 			_gm->changeRoom(MEETUP2);
+			_vm->renderRoom(*this);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KEYCARD_R, SPACESHIP))
 		_vm->renderMessage(kStringArsanoMeetup2_13);
@@ -2251,13 +2249,13 @@ void ArsanoMeetup2::shipStart() {
 	_gm->wait2(12);
 	for (int i = 2; i <= 11; ++i) {
 		if (i >= 9)
-			_gm->drawImage(i - 1 + 128);
+			_vm->renderImage(i - 1 + 128);
 		else
 			setSectionVisible(i - 1, false);
-		_gm->drawImage(i);
+		_vm->renderImage(i);
 		_gm->wait2(2);
 	}
-	_gm->drawImage(11 + 128);
+	_vm->renderImage(11 + 128);
 }
 
 bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
@@ -2272,6 +2270,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->paletteBrightness();
 		_gm->getInput();
 		g_system->fillScreen(kColorBlack);
+		_vm->renderRoom(*this);
 		// CHECKME: Doesn't look complete - check sb_meetup()
 	} else if ((verb == ACTION_WALK) && (obj1._id == UFO)) {
 		g_system->fillScreen(kColorBlack);
@@ -2353,7 +2352,6 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(2));  // Watch
 		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(3));  // Discman
 		_gm->changeRoom(CELL);
-		_gm->_newRoom = true;
 		_gm->_state._dream = true;
 	} else
 		return false;
@@ -2375,43 +2373,43 @@ void AxacussCell::animation() {
 	++_gm->_state._timeRobot;
 
 	if (_gm->_state._timeRobot == 299) {
-		_gm->drawImage(_gm->invertSection(31));
-		_gm->drawImage(28);
+		_vm->renderImage(_gm->invertSection(31));
+		_vm->renderImage(28);
 		getObject(0)->_click = 255;
 		getObject(1)->setProperty(EXIT | OPENABLE | OPENED | CLOSED);
 	} else if ((_gm->_state._timeRobot >= 301) && (_gm->_state._timeRobot <= 320)) {
-		_gm->drawImage(_gm->invertSection(329 - _gm->_state._timeRobot));
-		_gm->drawImage(328 - _gm->_state._timeRobot);
+		_vm->renderImage(_gm->invertSection(329 - _gm->_state._timeRobot));
+		_vm->renderImage(328 - _gm->_state._timeRobot);
 	} else if (_gm->_state._timeRobot == 321) {
-		_gm->drawImage(31);
+		_vm->renderImage(31);
 		setSectionVisible(8, false);
 		getObject(0)->_click = 1;
 		getObject(1)->setProperty(EXIT | OPENABLE | CLOSED);
 	}
 
 	if (_gm->_state._timeRobot == 599) {
-		_gm->drawImage(_gm->invertSection(31));
-		_gm->drawImage(8);
+		_vm->renderImage(_gm->invertSection(31));
+		_vm->renderImage(8);
 		getObject(0)->_click = 255;
 		getObject(1)->setProperty(EXIT | OPENABLE | OPENED | CLOSED);
 	} else if ((_gm->_state._timeRobot >= 601) && (_gm->_state._timeRobot <= 620)) {
-		_gm->drawImage(_gm->_state._timeRobot - 593 + 128);
-		_gm->drawImage(_gm->_state._timeRobot - 592);
+		_vm->renderImage(_gm->_state._timeRobot - 593 + 128);
+		_vm->renderImage(_gm->_state._timeRobot - 592);
 	} else if (_gm->_state._timeRobot == 621) {
-		_gm->drawImage(31);
+		_vm->renderImage(31);
 		setSectionVisible(28, false);
 		getObject(0)->_click = 1;
 		getObject(1)->setProperty(EXIT | OPENABLE | CLOSED);
 	} else if (_gm->_state._timeRobot == 700) {
 		_gm->_state._timeRobot = 0;
 	} else if (_gm->_state._timeRobot == 10002) {
-		_gm->drawImage(18 + 128);
-		_gm->drawImage(29);
-		_gm->drawImage(7);
+		_vm->renderImage(18 + 128);
+		_vm->renderImage(29);
+		_vm->renderImage(7);
 		getObject(2)->_click = 13;
 	} else if (_gm->_state._timeRobot == 10003) {
 		setSectionVisible(29, false);
-		_gm->drawImage(30);
+		_vm->renderImage(30);
 		getObject(8)->_click = 12;
 		getObject(7)->_click = 14;
 		_vm->playSound(kAudioUndef4);
@@ -2420,7 +2418,7 @@ void AxacussCell::animation() {
 	}
 
 	if (_gm->_state._timeRobot == 312) {
-		_gm->drawImage(7);
+		_vm->renderImage(7);
 		getObject(2)->_click = 13;
 	} else if (_gm->_state._timeRobot == 610) {
 		setSectionVisible(7, false);
@@ -2444,16 +2442,16 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 	         !isSectionVisible(3) &&
 	         !isSectionVisible(5)) {
 		if (isSectionVisible(1)) {
-			_gm->drawImage(_gm->invertSection(1));
-			_gm->drawImage(2);
+			_vm->renderImage(_gm->invertSection(1));
+			_vm->renderImage(2);
 			getObject(5)->_click = 7;
 		} else if (isSectionVisible(4)) {
-			_gm->drawImage(_gm->invertSection(4));
-			_gm->drawImage(3);
+			_vm->renderImage(_gm->invertSection(4));
+			_vm->renderImage(3);
 			getObject(5)->_click = 8;
 		} else if (isSectionVisible(6)) {
-			_gm->drawImage(_gm->invertSection(6));
-			_gm->drawImage(5);
+			_vm->renderImage(_gm->invertSection(6));
+			_vm->renderImage(5);
 			getObject(5)->_click = 10;
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, CELL_WIRE, SOCKET) &&
@@ -2461,20 +2459,20 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 	           !isSectionVisible(4) &&
 	           !isSectionVisible(6)) {
 		if (isSectionVisible(2)) {
-			_gm->drawImage(_gm->invertSection(2));
-			_gm->drawImage(1);
+			_vm->renderImage(_gm->invertSection(2));
+			_vm->renderImage(1);
 			getObject(5)->_click = 6;
 		} else if (isSectionVisible(3)) {
-			_gm->drawImage(_gm->invertSection(3));
-			_gm->drawImage(4);
+			_vm->renderImage(_gm->invertSection(3));
+			_vm->renderImage(4);
 			getObject(5)->_click = 9;
 		} else if (isSectionVisible(5)) {
-			_gm->drawImage(_gm->invertSection(5));
-			_gm->drawImage(6);
+			_vm->renderImage(_gm->invertSection(5));
+			_vm->renderImage(6);
 			getObject(5)->_click = 11;
 		} else {
 			_gm->_inventory.remove(*getObject(5));
-			_gm->drawImage(4);
+			_vm->renderImage(4);
 			getObject(5)->_click = 9;
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, CELL_WIRE, KNIFE) &&
@@ -2482,8 +2480,8 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 		if (isSectionVisible(1))
 			_gm->shock();
 		else {
-			_gm->drawImage(_gm->invertSection(2));
-			_gm->drawImage(3);
+			_vm->renderImage(_gm->invertSection(2));
+			_vm->renderImage(3);
 			getObject(5)->_click = 8;
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, CELL_WIRE, CELL_TABLE) &&
@@ -2492,25 +2490,25 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 	           !isSectionVisible(5) &&
 	           !isSectionVisible(6)) {
 		if (isSectionVisible(3)) {
-			_gm->drawImage(_gm->invertSection(3));
-			_gm->drawImage(5);
+			_vm->renderImage(_gm->invertSection(3));
+			_vm->renderImage(5);
 			getObject(5)->_click = 10;
 		} else if (isSectionVisible(4)) {
-			_gm->drawImage(_gm->invertSection(4));
-			_gm->drawImage(6);
+			_vm->renderImage(_gm->invertSection(4));
+			_vm->renderImage(6);
 			_gm->shock();
 		} else {
 			_gm->_inventory.remove(*getObject(5));
-			_gm->drawImage(5);
+			_vm->renderImage(5);
 			getObject(5)->_click = 10;
 		}
 	} else if ((verb == ACTION_TAKE) && (obj1._id == CELL_WIRE) &&
 	           !(obj1.hasProperty(CARRIED))) {
 		if (isSectionVisible(3)) {
-			_gm->drawImage(_gm->invertSection(3));
+			_vm->renderImage(_gm->invertSection(3));
 			_gm->takeObject(obj1);
 		} else if (isSectionVisible(5)) {
-			_gm->drawImage(_gm->invertSection(5));
+			_vm->renderImage(_gm->invertSection(5));
 			_gm->takeObject(obj1);
 		} else {
 			_vm->renderMessage(kStringAxacussCell_3);
@@ -2566,7 +2564,7 @@ bool AxacussCorridor4::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(9, false);
 		_gm->takeObject(obj1);
 		if (isSectionVisible(29))
-			_gm->drawImage(29);
+			_vm->renderImage(29);
 	} else if (((verb == ACTION_USE) && Object::combine(obj1, obj2, TABLE, WATCH)) ||
 	           ((verb == ACTION_GIVE) && (obj1._id == WATCH) &&
 	            (obj2._id == TABLE))) {
@@ -2575,7 +2573,7 @@ bool AxacussCorridor4::interact(Action verb, Object &obj1, Object &obj2) {
 		else
 			_gm->_inventory.remove(obj2);
 
-		_gm->drawImage(29);
+		_vm->renderImage(29);
 		getObject(4)->_click = 8;
 	} else if ((verb == ACTION_TAKE) && (obj1._id == WATCH) &&
 	           !obj1.hasProperty(CARRIED)) {
@@ -2583,7 +2581,7 @@ bool AxacussCorridor4::interact(Action verb, Object &obj1, Object &obj2) {
 		getObject(4)->_click = 255;
 		_gm->takeObject(*_gm->_rooms[INTRO]->getObject(2));
 		if (isSectionVisible(9))
-			_gm->drawImage(9);
+			_vm->renderImage(9);
 	} else
 		return false;
 
@@ -2613,11 +2611,11 @@ bool AxacussCorridor5::handleMoneyDialog() {
 		switch (_gm->dialog(4, _rows, _dialog3, 2)) {
 		case 1:
 			_gm->wait2(3);
-			_gm->drawImage(1);
+			_vm->renderImage(1);
 			_vm->playSound(kAudioVoiceHalt);
-			_gm->drawImage(_gm->invertSection(1));
+			_vm->renderImage(_gm->invertSection(1));
 			_gm->wait2(5);
-			_gm->drawImage(2);
+			_vm->renderImage(2);
 			_gm->wait2(2);
 			_gm->shot(3, _gm->invertSection(3));
 			break;
@@ -2641,7 +2639,6 @@ void AxacussCorridor5::stopInteract(int sum) {
 	_gm->reply(kStringAxacussCorridor5_7, 1, 1 + 128);
 	_gm->great(0);
 	_gm->changeRoom(ELEVATOR);
-	_gm->_newRoom = true;
 	_gm->takeMoney(-sum);
 }
 
@@ -2678,7 +2675,7 @@ void AxacussCorridor6::onEntrance() {
 bool AxacussCorridor6::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        (obj1.hasProperty(OPENED))) {
-		_gm->drawImage(6);
+		_vm->renderImage(6);
 		setSectionVisible(7, false);
 		obj1.setProperty(EXIT | OPENABLE | CLOSED);
 		_gm->_rooms[CORRIDOR8]->setSectionVisible(27, false);
@@ -2702,7 +2699,7 @@ void AxacussCorridor8::onEntrance() {
 bool AxacussCorridor8::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_OPEN) && (obj1._id == DOOR) &&
 	        !obj1.hasProperty(OPENED)) {
-		_gm->drawImage(27);
+		_vm->renderImage(27);
 		setSectionVisible(28, false);
 		obj1.setProperty(OPENED);
 		_gm->_rooms[CORRIDOR6]->setSectionVisible(6, false);
@@ -2712,7 +2709,7 @@ bool AxacussCorridor8::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	           (obj1._type & OPENED)) {
-		_gm->drawImage(28);
+		_vm->renderImage(28);
 		setSectionVisible(27, false);
 		obj1.disableProperty(OPENED);
 		_gm->_rooms[CORRIDOR6]->setSectionVisible(6, true);
@@ -2732,7 +2729,7 @@ void AxacussCorridor9::onEntrance() {
 bool AxacussCorridor9::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        (obj1.hasProperty(OPENED))) {
-		_gm->drawImage(28);
+		_vm->renderImage(28);
 		setSectionVisible(27, false);
 		obj1.disableProperty(OPENED);
 		_gm->_rooms[GUARD]->setSectionVisible(6, false);
@@ -2740,7 +2737,7 @@ bool AxacussCorridor9::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_OPEN) && (obj1._id == DOOR) &&
 	           !obj1.hasProperty(OPENED)) {
-		_gm->drawImage(27);
+		_vm->renderImage(27);
 		setSectionVisible(28, false);
 		obj1.setProperty(OPENED);
 		_gm->_rooms[GUARD]->setSectionVisible(6, true);
@@ -2768,7 +2765,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 
 	if ((verb == ACTION_CLOSE) && (obj1._id >= DOOR1) && (obj1._id <= DOOR4) &&
 	    obj1.hasProperty(OPENED)) {
-		_gm->drawImage(_gm->invertSection(obj1._id - DOOR1 + 1));
+		_vm->renderImage(_gm->invertSection(obj1._id - DOOR1 + 1));
 		_vm->playSound(kAudioDoorClose);
 		if (obj1.hasProperty(OCCUPIED)) {
 			_gm->_state._destination = 255;
@@ -2788,7 +2785,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		if (getObject(4)->hasProperty(OCCUPIED))
 			_vm->renderMessage(kStringDontEnter);
 		else {
-			_gm->drawImage(1);
+			_vm->renderImage(1);
 			_vm->playSound(kAudioDoorOpen);
 			if (getObject(4)->hasProperty(CAUGHT))
 				_gm->busted(11);
@@ -2799,7 +2796,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		if (getObject(5)->hasProperty(OCCUPIED)) {
 			_vm->renderMessage(kStringDontEnter);
 		} else {
-			_gm->drawImage(2);
+			_vm->renderImage(2);
 			_vm->playSound(kAudioDoorOpen);
 			if (getObject(5)->hasProperty(CAUGHT))
 				_gm->busted(16);
@@ -2810,7 +2807,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		if (getObject(6)->hasProperty(OCCUPIED)) {
 			_vm->renderMessage(kStringDontEnter);
 		} else {
-			_gm->drawImage(3);
+			_vm->renderImage(3);
 			_vm->playSound(kAudioDoorOpen);
 			if (getObject(6)->hasProperty(CAUGHT))
 				_gm->busted(15);
@@ -2821,7 +2818,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		if (getObject(7)->hasProperty(OCCUPIED)) {
 			_vm->renderMessage(kStringDontEnter);
 		} else {
-			_gm->drawImage(4);
+			_vm->renderImage(4);
 			_vm->playSound(kAudioDoorOpen);
 			if (getObject(7)->hasProperty(CAUGHT))
 				_gm->busted(20);
@@ -2882,14 +2879,14 @@ bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, LAMP, MAGNET)) {
 		_gm->_inventory.remove(*_gm->_rooms[CELL]->getObject(7));
 		for (int i = 4; i <= 11; i++) {
-			_gm->drawImage(i);
+			_vm->renderImage(i);
 			if (i == 11)
 				_vm->playSound(kAudioUndef2); // 046/4020
 			_gm->wait2(1);
-			_gm->drawImage(i + 128);
+			_vm->renderImage(i + 128);
 		}
 		_gm->_state._powerOff = true;
-		_gm->_currentRoom->getObject(5)->_click = 255;
+		_objectState[5]._click = 255;
 
 		_gm->search(450);
 		_gm->roomBrightness();
@@ -2906,16 +2903,16 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 	Common::String input;
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        obj1.hasProperty(OPENED)) {
-		_gm->drawImage(_gm->invertSection(9));
+		_vm->renderImage(_gm->invertSection(9));
 		obj1.setProperty(EXIT | OPENABLE | CLOSED);
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
 	           !getObject(0)->hasProperty(OPENED)) {
-		_gm->drawImage(9);
+		_vm->renderImage(9);
 		getObject(0)->setProperty(EXIT | OPENABLE | OPENED);
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
-		_gm->drawImage(4);
+		_vm->renderImage(4);
 		setSectionVisible(16, false);
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
@@ -2938,11 +2935,11 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 				else
 					_vm->renderMessage(kStringAxacussOffice1_3);
 			} else {
-				_gm->drawImage(6);
+				_vm->renderImage(6);
 				setSectionVisible(7, false);
 				obj1.setProperty(OPENABLE | OPENED);
 				if (getObject(2)->hasProperty(TAKE)) {
-					_gm->drawImage(8);
+					_vm->renderImage(8);
 					getObject(2)->_click = 9;
 				}
 				_vm->playSound(kAudioDoorOpen);
@@ -2951,14 +2948,14 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == LOCKER) &&
 	           obj1.hasProperty(OPENED)) {
-		_gm->drawImage(7);
+		_vm->renderImage(7);
 		setSectionVisible(6, false);
 		obj1.setProperty(OPENABLE | CLOSED);
 		setSectionVisible(8, false);
 		getObject(2)->_click = 255;
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == TICKETS)) {
-		_gm->drawImage(6);
+		_vm->renderImage(6);
 		setSectionVisible(8, false);
 		getObject(2)->_click = 255;
 		getObject(2)->resetProperty();
@@ -2989,16 +2986,16 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 bool AxacussOffice2::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        obj1.hasProperty(OPENED)) {
-		_gm->drawImage(_gm->invertSection(9));
+		_vm->renderImage(_gm->invertSection(9));
 		obj1.setProperty(EXIT | OPENABLE | CLOSED);
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
 	           !getObject(0)->hasProperty(OPENED)) {
-		_gm->drawImage(9);
+		_vm->renderImage(9);
 		getObject(0)->setProperty(EXIT | OPENABLE | OPENED);
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
-		_gm->drawImage(4);
+		_vm->renderImage(4);
 		setSectionVisible(16, false);
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
@@ -3015,16 +3012,16 @@ bool AxacussOffice2::interact(Action verb, Object &obj1, Object &obj2) {
 bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        obj1.hasProperty(OPENED)) {
-		_gm->drawImage(_gm->invertSection(3));
+		_vm->renderImage(_gm->invertSection(3));
 		obj1.setProperty(EXIT | OPENABLE | CLOSED);
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
 	           !getObject(0)->hasProperty(OPENED)) {
-		_gm->drawImage(3);
+		_vm->renderImage(3);
 		getObject(0)->setProperty(EXIT | OPENABLE | OPENED);
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
-		_gm->drawImage(4);
+		_vm->renderImage(4);
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
@@ -3044,16 +3041,16 @@ bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
 bool AxacussOffice4::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        obj1.hasProperty(OPENED)) {
-		_gm->drawImage(_gm->invertSection(3));
+		_vm->renderImage(_gm->invertSection(3));
 		obj1.setProperty(EXIT | OPENABLE | CLOSED);
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
 	           !getObject(0)->hasProperty(OPENED)) {
-		_gm->drawImage(3);
+		_vm->renderImage(3);
 		getObject(0)->setProperty(EXIT | OPENABLE | OPENED);
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
-		_gm->drawImage(4);
+		_vm->renderImage(4);
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
@@ -3072,10 +3069,10 @@ void AxacussOffice5::onEntrance() {
 
 bool AxacussOffice5::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
-		_gm->drawImage(4);
+		_vm->renderImage(4);
 		_vm->playSound(kAudioUndef2);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == TICKETS)) {
-		_gm->drawImage(_gm->invertSection(5));
+		_vm->renderImage(_gm->invertSection(5));
 		obj1._click = 255;
 		_gm->takeMoney(350);
 	} else
@@ -3094,17 +3091,17 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		g_system->fillScreen(kColorBlack);
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BUTTON1)) {
 		if (!isSectionVisible(3)) {
-			_gm->drawImage(1);
+			_vm->renderImage(1);
 			getObject(2)->resetProperty();
 			_vm->playSound(kAudioDoorSound);
 			_gm->wait2(25);
 			for (int i = 3; i <= 7; i++) {
 				_gm->wait2(2);
-				_gm->drawImage(i);
+				_vm->renderImage(i);
 			}
 			getObject(3)->resetProperty(EXIT);
 			getObject(3)->_click = 2;
-			_gm->drawImage(_gm->invertSection(1));
+			_vm->renderImage(_gm->invertSection(1));
 			if (!(_gm->_state._greatFlag & 0x4000)) {
 				_vm->playSound(kAudioGreat);
 				_gm->_state._greatFlag |= 0x4000;
@@ -3112,18 +3109,18 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BUTTON2)) {
 		if (isSectionVisible(3)) {
-			_gm->drawImage(2);
+			_vm->renderImage(2);
 			getObject(3)->resetProperty();
 			getObject(3)->_click = 255;
 			_vm->playSound(kAudioDoorSound);
 			for (int i = 7; i >= 3; i--) {
 				_gm->wait2(2);
-				_gm->drawImage(_gm->invertSection(i));
+				_vm->renderImage(_gm->invertSection(i));
 			}
 			_gm->wait2(25);
 			_vm->playSound(kAudioDoorSound);
 			getObject(2)->resetProperty(EXIT);
-			_gm->drawImage(_gm->invertSection(2));
+			_vm->renderImage(_gm->invertSection(2));
 		}
 	} else if ((verb == ACTION_WALK) && (obj1._id == JUNGLE)) {
 		_vm->paletteFadeOut();
@@ -3149,7 +3146,6 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_LOOK) && (obj1._id == STATION_SIGN)) {
 		_gm->changeRoom(SIGN);
-		_gm->_newRoom = true;
 	} else if ((verb == ACTION_WALK) && (obj1._id == DOOR) &&
 	           obj1.hasProperty(OPENED)) {
 		_gm->great(0);
@@ -3182,7 +3178,7 @@ bool AxacussSign::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, STATION_SLOT, MONEY) &&
 	    isSectionVisible(1)) {
 		_gm->takeMoney(-180);
-		_gm->drawImage(2);
+		_vm->renderImage(2);
 		setSectionVisible(1, false);
 		_gm->_state._eventTime = _gm->_state._time + ticksToMsec(600);
 		_gm->_state._eventCallback = kTaxiFn;
