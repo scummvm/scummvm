@@ -33,17 +33,21 @@ void AniHandler::detachAllObjects() {
 	_items.clear();
 }
 
-MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr) {
-	debugC(4, kDebugPathfinding, "AniHandler::makeQueue(*%d, %d, %d, res, point)", ani->_id, staticsIndex, staticsId);
+MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int, int *, Common::Point **) {
+	debugC(4, kDebugPathfinding, "AniHandler::makeQueue(*%d, %d, id, res, point)", ani->_id, staticsIndex);
 
 	int idx = getIndex(ani->_id);
 
 	if (idx == -1)
 		return 0;
 
+#if 0
 	int stid = staticsId;
 
 	if (!staticsId) {
+#else
+	int stid;
+#endif
 		if (ani->_movement) {
 			stid = ani->_movement->_staticsObj2->_staticsId;
 		} else {
@@ -52,7 +56,9 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int 
 
 			stid = ani->_statics->_staticsId;
 		}
+#if 0
 	}
+#endif
 
 	if (stid == staticsIndex)
 		return new MessageQueue(g_fp->_globalMessageQueueList->compact());
@@ -79,6 +85,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int 
 
 		point = _items[idx].subItems[subidx].movement->calcSomeXY(0, -1);
 
+#if 0
 		if (pointArr) {
 			int sz;
 
@@ -91,8 +98,11 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int 
 
 			ex->_messageNum = _items[idx].subItems[subidx].movement->_id;
 		} else {
+#endif
 			ex = new ExCommand(ani->_id, 1, _items[idx].subItems[subidx].movement->_id, 0, 0, 0, 1, 0, 0, 0);
+#if 0
 		}
+#endif
 
 		ex->_param = ani->_odelay;
 		ex->_field_3C = 1;
@@ -100,8 +110,10 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int 
 
 		mq->addExCommandToEnd(ex);
 
+#if 0
 		if (resStatId)
 			*resStatId = _items[idx].subItems[subidx].movement->_id;
+#endif
 
 		startidx = _items[idx].subItems[subidx].staticsIndex;
 
