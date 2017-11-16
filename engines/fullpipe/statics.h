@@ -53,15 +53,14 @@ class StaticPhase : public Picture {
 	int16 _countdown;
 	int16 _field_68;
 	int16 _field_6A;
-	ExCommand *_exCommand;
+	Common::ScopedPtr<ExCommand> _exCommand;
 
   public:
 	StaticPhase();
-	virtual ~StaticPhase();
 
 	virtual bool load(MfcArchive &file);
 
-	ExCommand *getExCommand() { return _exCommand; }
+	ExCommand *getExCommand() { return _exCommand.get(); }
 };
 
 class DynamicPhase : public StaticPhase {
