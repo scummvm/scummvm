@@ -149,13 +149,15 @@ void Intro::titleScreen() {
 	CursorMan.showMouse(false);
 	_vm->_brightness = 0;
 	_vm->paletteBrightness();
-	_vm->renderImage(1, 0);
+	_vm->setCurrentImage(1);
+	_vm->renderImage(0);
 	_vm->paletteFadeIn();
 	_gm->getInput();
 	_vm->paletteFadeOut();
 
 	// Title Screen
-	_vm->renderImage(31, 0);
+	_vm->setCurrentImage(31);
+	_vm->renderImage(0);
 	_vm->paletteFadeIn();
 	_gm->wait2(1);
 	_vm->playSound(kAudioVoiceSupernova);
@@ -198,13 +200,13 @@ void Intro::titleFadeIn() {
 	}
 }
 
-bool Intro::animate(int filenumber, int section1, int section2, int duration) {
+bool Intro::animate(int section1, int section2, int duration) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
 	while (duration) {
-		_vm->renderImage(filenumber, section1);
+		_vm->renderImage(section1);
 		if (_gm->waitOnInput(2, key))
 			return key != Common::KEYCODE_ESCAPE;
-		_vm->renderImage(filenumber, section2);
+		_vm->renderImage(section2);
 		if (_gm->waitOnInput(2, key))
 			return key != Common::KEYCODE_ESCAPE;
 		--duration;
@@ -212,7 +214,7 @@ bool Intro::animate(int filenumber, int section1, int section2, int duration) {
 	return true;
 }
 
-bool Intro::animate(int filenumber, int section1, int section2, int duration,
+bool Intro::animate(int section1, int section2, int duration,
                     MessagePosition position, StringID textId) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
 	const Common::String& text = _vm->getGameString(textId);
@@ -220,13 +222,13 @@ bool Intro::animate(int filenumber, int section1, int section2, int duration,
 	int delay = (MIN(text.size(), (uint)512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
 	while (delay) {
 		if (section1)
-			_vm->renderImage(filenumber, section1);
+			_vm->renderImage(section1);
 		if (_gm->waitOnInput(2, key)) {
 			_vm->removeMessage();
 			return key != Common::KEYCODE_ESCAPE;
 		}
 		if (section2)
-			_vm->renderImage(filenumber, section2);
+			_vm->renderImage(section2);
 		if (_gm->waitOnInput(2, key)) {
 			_vm->removeMessage();
 			return key != Common::KEYCODE_ESCAPE;
@@ -237,7 +239,7 @@ bool Intro::animate(int filenumber, int section1, int section2, int duration,
 	return true;
 }
 
-bool Intro::animate(int filenumber, int section1, int section2, int section3, int section4,
+bool Intro::animate(int section1, int section2, int section3, int section4,
                     int duration, MessagePosition position, StringID textId) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
 	const Common::String& text = _vm->getGameString(textId);
@@ -246,14 +248,14 @@ bool Intro::animate(int filenumber, int section1, int section2, int section3, in
 		duration = (MIN(text.size(), (uint)512) + 20) * _vm->_textSpeed / 40;
 
 	while(duration) {
-		_vm->renderImage(filenumber, section1);
-		_vm->renderImage(filenumber, section3);
+		_vm->renderImage(section1);
+		_vm->renderImage(section3);
 		if (_gm->waitOnInput(2, key)) {
 			_vm->removeMessage();
 			return key != Common::KEYCODE_ESCAPE;
 		}
-		_vm->renderImage(filenumber, section2);
-		_vm->renderImage(filenumber, section4);
+		_vm->renderImage(section2);
+		_vm->renderImage(section4);
 		if (_gm->waitOnInput(2, key)) {
 			_vm->removeMessage();
 			return key != Common::KEYCODE_ESCAPE;
@@ -272,39 +274,41 @@ void Intro::cutscene() {
 } while (0);
 
 	_vm->_system->fillScreen(kColorBlack);
+	_vm->setCurrentImage(31);
 	_vm->_menuBrightness = 255;
 	_vm->paletteBrightness();
-	if (!animate(31, 0, 0, 0, kMessageNormal, kStringIntroCutscene1))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene1))
 		return;
 	_vm->_menuBrightness = 0;
 	_vm->paletteBrightness();
 	exitOnEscape(1);
 
-	_vm->renderImage(9, 0);
-	_vm->renderImage(9, 1);
-	_vm->renderImage(9, 9);
+	_vm->setCurrentImage(9);
+	_vm->renderImage(0);
+	_vm->renderImage(1);
+	_vm->renderImage(9);
 	_vm->paletteFadeIn();
-	if (!animate(9, 11, 10, 6, kMessageRight, kStringIntroCutscene2))
+	if (!animate(11, 10, 6, kMessageRight, kStringIntroCutscene2))
 		return;
-	_vm->renderImage(9, 3);
+	_vm->renderImage(3);
 	exitOnEscape(4);
-	_vm->renderImage(9, 4);
-	if (!animate(9, 11, 10, 3)) {// test duration
+	_vm->renderImage(4);
+	if (!animate(11, 10, 3)) {// test duration
 		_vm->removeMessage();
 		return;
 	}
 	_vm->removeMessage();
-	if (!animate(9, 5, 4, 0, kMessageLeft, kStringIntroCutscene3))
+	if (!animate(5, 4, 0, kMessageLeft, kStringIntroCutscene3))
 		return;
-	_vm->renderImage(9, 3);
+	_vm->renderImage(3);
 	exitOnEscape(3);
-	_vm->renderImage(9, 2);
+	_vm->renderImage(2);
 	exitOnEscape(3);
-	_vm->renderImage(9, 7);
+	_vm->renderImage(7);
 	exitOnEscape(6);
-	_vm->renderImage(9, 6);
+	_vm->renderImage(6);
 	exitOnEscape(6);
-	if (!animate(9, 0, 0, 0, kMessageLeft, kStringIntroCutscene4))
+	if (!animate(0, 0, 0, kMessageLeft, kStringIntroCutscene4))
 		return;
 	_vm->renderMessage(kStringIntroCutscene5, kMessageLeft);
 	exitOnEscape(28);
@@ -315,12 +319,13 @@ void Intro::cutscene() {
 
 	StringID textCounting[4] =
 	{kStringIntroCutscene7, kStringIntroCutscene8, kStringIntroCutscene9, kStringIntroCutscene10};
-	_vm->renderImage(31, 0);
+	_vm->setCurrentImage(31);
+	_vm->renderImage(0);
 	_vm->paletteBrightness();
 	for (int i = 0; i < 4; ++i){
 		_vm->renderMessage(textCounting[i], kMessageLeft);
 		for (int j = 0; j < 28; ++j) {
-			_vm->renderImage(31, (j % 3) + 1);
+			_vm->renderImage((j % 3) + 1);
 			Common::KeyCode key = Common::KEYCODE_INVALID;
 			if (_gm->waitOnInput(1, key)) {
 				if (key == Common::KEYCODE_ESCAPE)
@@ -331,87 +336,88 @@ void Intro::cutscene() {
 		_vm->removeMessage();
 	}
 	_vm->renderMessage(kStringIntroCutscene11, kMessageLeft);
-	_vm->renderImage(31, 6);
+	_vm->renderImage(6);
 	exitOnEscape(3);
-	_vm->renderImage(31, 3);
+	_vm->renderImage(3);
 	exitOnEscape(3);
-	_vm->renderImage(31, 4);
+	_vm->renderImage(4);
 	exitOnEscape(3);
-	_vm->renderImage(31, 5);
+	_vm->renderImage(5);
 	exitOnEscape(3);
-	_vm->renderImage(31, _gm->invertSection(5));
+	_vm->renderImage(_gm->invertSection(5));
 	exitOnEscape(18);
 	_vm->removeMessage();
 
-	_vm->renderImage(9, 0);
-	_vm->renderImage(9, 1);
-	_vm->renderImage(9, 9);
+	_vm->setCurrentImage(9);
+	_vm->renderImage(0);
+	_vm->renderImage(1);
+	_vm->renderImage(9);
 	_vm->paletteBrightness();
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 	_vm->paletteBrightness();
-	if (!animate(9, 11, 10, 0, kMessageRight, kStringIntroCutscene12))
+	if (!animate(11, 10, 0, kMessageRight, kStringIntroCutscene12))
 		return;
-	_vm->renderImage(9, 3);
+	_vm->renderImage(3);
 	exitOnEscape(3);
-	_vm->renderImage(9, 4);
-	if (!animate(9, 5, 4, 0, kMessageLeft, kStringIntroCutscene13))
+	_vm->renderImage(4);
+	if (!animate(5, 4, 0, kMessageLeft, kStringIntroCutscene13))
 		return;
-	if (!animate(9, 0, 0, 0, kMessageCenter, kStringIntroCutscene14))
+	if (!animate(0, 0, 0, kMessageCenter, kStringIntroCutscene14))
 		return;
-	_vm->renderImage(9, 12);
+	_vm->renderImage(12);
 	exitOnEscape(2);
-	_vm->renderImage(9, 13);
+	_vm->renderImage(13);
 	exitOnEscape(2);
-	_vm->renderImage(9, 14);
-	if (!animate(9, 19, 20, 0, kMessageRight, kStringIntroCutscene15))
+	_vm->renderImage(14);
+	if (!animate(19, 20, 0, kMessageRight, kStringIntroCutscene15))
 		return;
-	if (!animate(9, 0, 0, 0, kMessageCenter, kStringIntroCutscene16))
+	if (!animate(0, 0, 0, kMessageCenter, kStringIntroCutscene16))
 		return;
 	exitOnEscape(20);
-	if (!animate(9, 0, 0, 0, kMessageCenter, kStringIntroCutscene17))
+	if (!animate(0, 0, 0, kMessageCenter, kStringIntroCutscene17))
 		return;
-	if (!animate(9, 19, 20, 0, kMessageRight, kStringIntroCutscene18))
+	if (!animate(19, 20, 0, kMessageRight, kStringIntroCutscene18))
 		return;
-	if (!animate(9, 0, 0, 0, kMessageCenter, kStringIntroCutscene19))
+	if (!animate(0, 0, 0, kMessageCenter, kStringIntroCutscene19))
 		return;
-	_vm->renderImage(9, 16);
+	_vm->renderImage(16);
 	exitOnEscape(3);
-	_vm->renderImage(9, 17);
-	if (!animate(9, 19, 20, 18, 17, 0, kMessageRight, kStringIntroCutscene20))
+	_vm->renderImage(17);
+	if (!animate(19, 20, 18, 17, 0, kMessageRight, kStringIntroCutscene20))
 		return;
-	if (!animate(9, 19, 20, 18, 17, 0, kMessageRight, kStringIntroCutscene21))
+	if (!animate(19, 20, 18, 17, 0, kMessageRight, kStringIntroCutscene21))
 		return;
-	if (!animate(9, 5, 4, 0, kMessageLeft, kStringIntroCutscene3))
+	if (!animate(5, 4, 0, kMessageLeft, kStringIntroCutscene3))
 		return;
-	_vm->renderImage(9, 3);
+	_vm->renderImage(3);
 	exitOnEscape(3);
-	_vm->renderImage(9, 2);
+	_vm->renderImage(2);
 	exitOnEscape(3);
-	_vm->renderImage(9, 8);
+	_vm->renderImage(8);
 	exitOnEscape(6);
-	_vm->renderImage(9, 6);
+	_vm->renderImage(6);
 	_vm->playSound(kAudioSiren);
 
 	exitOnEscape(6);
-	_vm->renderImage(9, 3);
+	_vm->renderImage(3);
 	exitOnEscape(3);
-	_vm->renderImage(9, 4);
-	_vm->renderImage(9, 16);
+	_vm->renderImage(4);
+	_vm->renderImage(16);
 	exitOnEscape(3);
-	_vm->renderImage(9, 15);
-	if (!animate(9, 19, 20, 0, kMessageRight, kStringIntroCutscene22))
+	_vm->renderImage(15);
+	if (!animate(19, 20, 0, kMessageRight, kStringIntroCutscene22))
 		return;
-	if (!animate(9, 19, 20, 0, kMessageRight, kStringIntroCutscene23))
+	if (!animate(19, 20, 0, kMessageRight, kStringIntroCutscene23))
 		return;
 	exitOnEscape(10);
-	_vm->renderImage(9, 13);
+	_vm->renderImage(13);
 	exitOnEscape(2);
-	_vm->renderImage(9, 12);
+	_vm->renderImage(12);
 	exitOnEscape(2);
-	_vm->renderImage(9, 9);
-	if (!animate(9, 11, 10, 0, kMessageRight, kStringIntroCutscene24))
+	_vm->renderImage(9);
+	if (!animate(11, 10, 0, kMessageRight, kStringIntroCutscene24))
 		return;
-	if (!animate(9, 5, 4, 0, kMessageLeft, kStringIntroCutscene3))
+	if (!animate(5, 4, 0, kMessageLeft, kStringIntroCutscene3))
 		return;
 	_vm->paletteFadeOut();
 
@@ -421,27 +427,28 @@ void Intro::cutscene() {
 	_vm->_system->fillScreen(kColorBlack);
 	_vm->_menuBrightness = 255;
 	_vm->paletteBrightness();
-	if (!animate(9, 0, 0, 0, kMessageNormal, kStringIntroCutscene25))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene25))
 		return;
 	_vm->_menuBrightness = 5;
 	_vm->paletteBrightness();
 
-	_vm->renderImage(31, 0);
+	_vm->setCurrentImage(31);
+	_vm->renderImage(0);
 	_vm->paletteFadeIn();
-	if (!animate(31, 0, 0, 0, kMessageNormal, kStringIntroCutscene26))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene26))
 		return;
-	if (!animate(31, 0, 0, 0, kMessageNormal, kStringIntroCutscene27))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene27))
 		return;
-	if (!animate(31, 0, 0, 0, kMessageNormal, kStringIntroCutscene28))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene28))
 		return;
-	if (!animate(31, 0, 0, 0, kMessageNormal, kStringIntroCutscene29))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene29))
 		return;
 	exitOnEscape(54);
-	if (!animate(31, 0, 0, 0, kMessageNormal, kStringIntroCutscene30))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene30))
 		return;
-	if (!animate(31, 0, 0, 0, kMessageNormal, kStringIntroCutscene31))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene31))
 		return;
-	if (!animate(31, 0, 0, 0, kMessageNormal, kStringIntroCutscene32))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene32))
 		return;
 
 	_vm->_brightness = 0;
@@ -459,29 +466,30 @@ void Intro::cutscene() {
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		;
 	exitOnEscape(30);
-	if (!animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene33))
+	_vm->setCurrentImage(22);
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene33))
 		return;
 	exitOnEscape(18);
-	if (!animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene34))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene34))
 		return;
-	if (!animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene35))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene35))
 		return;
-	if (!animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene36))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene36))
 		return;
-	if (!animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene37))
-		return;
-	exitOnEscape(18);
-	if (!animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene38))
-		return;
-	if (!animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene39))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene37))
 		return;
 	exitOnEscape(18);
-	if (!animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene40))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene38))
 		return;
-	if (!animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene41))
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene39))
+		return;
+	exitOnEscape(18);
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene40))
+		return;
+	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene41))
 		return;
 	exitOnEscape(36);
-	animate(22, 0, 0, 0, kMessageNormal, kStringIntroCutscene42);
+	animate(0, 0, 0, kMessageNormal, kStringIntroCutscene42);
 	_vm->removeMessage();
 
 #undef exitOnEscape
@@ -1503,7 +1511,8 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_WALK) && (obj1._id == STAR)) {
 		_vm->renderMessage(kStringArsanoMeetup2);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == STAR)) {
-		_vm->renderImage(26, 0);
+		_vm->setCurrentImage(26);
+		_vm->renderImage(0);
 		_vm->paletteBrightness();
 		_gm->animationOff();
 		_gm->getInput();
@@ -2151,7 +2160,8 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 	        ((obj1._id == SPACESHIP) || (obj1._id == ROGER_W))) ||
 	        ((verb == ACTION_TALK) && (obj1._id == ROGER_W))) {
 		_gm->changeRoom(INTRO);
-		_vm->renderImage(30, 0);
+		_vm->setCurrentImage(30);
+		_vm->renderImage(0);
 		_vm->paletteBrightness();
 		bool found;
 		if (sentenceRemoved(0, 2) || sentenceRemoved(1, 2)) {
@@ -2187,35 +2197,38 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->paletteBrightness();
 			shipStart();
 			if (flight) {
-				_vm->renderImage(13, 0);
+				_vm->setCurrentImage(13);
+				_vm->renderImage(0);
 				_vm->paletteBrightness();
 				_gm->wait2(36);
 				for (int i = 1; i <= 13; i++) {
 					if (i > 1)
-						_vm->renderImage(13, _gm->invertSection(i - 1));
-					_vm->renderImage(13, i);
+						_vm->renderImage(_gm->invertSection(i - 1));
+					_vm->renderImage(i);
 					_gm->wait2(2);
 				}
-				_vm->renderImage(13, _gm->invertSection(13));
+				_vm->renderImage(_gm->invertSection(13));
 				_gm->wait2(20);
-				_vm->renderImage(14, 0);
+				_vm->setCurrentImage(14);
+				_vm->renderImage(0);
 				_vm->paletteBrightness();
 				_gm->wait2(36);
 				for (int i = 1; i <= 13; i++) {
 					if (i > 1)
-						_vm->renderImage(14, _gm->invertSection(i - 1));
-					_vm->renderImage(14, i);
+						_vm->renderImage(_gm->invertSection(i - 1));
+					_vm->renderImage(i);
 					_gm->wait2(2);
 				}
-				_vm->renderImage(14, _gm->invertSection(13));
+				_vm->renderImage(_gm->invertSection(13));
 				_gm->wait2(9);
 				_vm->playSound(kAudioCrash);
 				for (int i = 14; i <= 19; i++) {
-					_vm->renderImage(14, i);
+					_vm->renderImage(i);
 					_gm->wait2(3);
 				}
 				_vm->paletteFadeOut();
-				_vm->renderImage(11, 0);
+				_vm->setCurrentImage(11);
+				_vm->renderImage(0);
 				_vm->paletteFadeIn();
 				_gm->wait2(18);
 				_vm->renderMessage(kStringArsanoMeetup2_12);
@@ -2266,7 +2279,8 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_WALK) && (obj1._id == STAR))
 		_vm->renderMessage(kStringArsanoMeetup2);
 	else if ((verb == ACTION_LOOK) && (obj1._id == STAR)) {
-		_vm->renderImage(26, 0);
+		_vm->setCurrentImage(26);
+		_vm->renderImage(0);
 		_vm->paletteBrightness();
 		_gm->getInput();
 		g_system->fillScreen(kColorBlack);
@@ -2274,27 +2288,29 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		// CHECKME: Doesn't look complete - check sb_meetup()
 	} else if ((verb == ACTION_WALK) && (obj1._id == UFO)) {
 		g_system->fillScreen(kColorBlack);
-		_vm->renderImage(36, 0);
+		_vm->setCurrentImage(36);
+		_vm->renderImage(0);
 		_vm->paletteBrightness();
 		_gm->dialog(3, rowsX, _dialogsX, 0);
-		_vm->renderImage(36, 1);
+		_vm->renderImage(1);
 		_gm->wait2(3);
-		_vm->renderImage(36, 2);
+		_vm->renderImage(2);
 		_gm->wait2(3);
-		_vm->renderImage(36, 3);
+		_vm->renderImage(3);
 		_gm->wait2(6);
-		_vm->renderImage(36, 4);
+		_vm->renderImage(4);
 		_vm->playSound(kAudioGunShot);
 		// TODO: wait until audio finished playing
-		_vm->renderImage(36, 5);
+		_vm->renderImage(5);
 		_gm->wait2(3);
-		_vm->renderImage(36, 4);
+		_vm->renderImage(4);
 		_vm->playSound(kAudioGunShot);
 		// TODO: wait until audio finished playing
-		_vm->renderImage(36, 5);
+		_vm->renderImage(5);
 		_vm->paletteFadeOut();
 		_gm->wait2(12);
-		_vm->renderImage(0, 0);
+		_vm->setCurrentImage(0);
+		_vm->renderImage(0);
 		_vm->paletteFadeIn();
 		_gm->wait2(18);
 		_gm->reply(kStringArsanoMeetup3_1, 2, 2 + 128);
@@ -2645,7 +2661,8 @@ void AxacussCorridor5::stopInteract(int sum) {
 bool AxacussCorridor5::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_WALK) && (obj1._id == DOOR)) {
 		g_system->fillScreen(kColorBlack);
-		_vm->renderImage(41, 0);
+		_vm->setCurrentImage(41);
+		_vm->renderImage(0);
 		_vm->paletteBrightness();
 		if (_gm->_guiEnabled) {
 			_gm->reply(kStringAxacussCorridor5_1, 1, 1 + 128);
@@ -3084,7 +3101,8 @@ bool AxacussOffice5::interact(Action verb, Object &obj1, Object &obj2) {
 bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_WALK) && (obj1._id == DOOR)) {
 		g_system->fillScreen(kColorBlack);
-		_vm->renderImage(41, 0);
+		_vm->setCurrentImage(41);
+		_vm->renderImage(0);
 		_vm->paletteBrightness();
 		_gm->reply(kStringAxacussElevator_1, 1, 1 + 128);
 		_gm->say(kStringAxacussElevator_2);
@@ -3150,21 +3168,22 @@ bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
 	           obj1.hasProperty(OPENED)) {
 		_gm->great(0);
 		_vm->paletteFadeOut();
-		_vm->renderImage(35, 0);
-		_vm->renderImage(35, 1);
+		_vm->setCurrentImage(35);
+		_vm->renderImage(0);
+		_vm->renderImage(1);
 		_vm->paletteFadeIn();
 		_gm->wait2(10);
 		for (int i = 8; i <= 21; i++) {
-			_vm->renderImage(35, i);
+			_vm->renderImage(i);
 			_gm->wait2(2);
-			_vm->renderImage(35, _gm->invertSection(i));
+			_vm->renderImage(_gm->invertSection(i));
 		}
 		_gm->wait2(18);
-		_vm->renderImage(35, _gm->invertSection(1));
+		_vm->renderImage(_gm->invertSection(1));
 		for (int i = 2; i <= 7; i++) {
-			_vm->renderImage(35, _gm->invertSection(i));
+			_vm->renderImage(_gm->invertSection(i));
 			_gm->wait2(3);
-			_vm->renderImage(35, _gm->invertSection(i));
+			_vm->renderImage(_gm->invertSection(i));
 		}
 		_gm->outro();
 	} else {
@@ -3221,10 +3240,11 @@ void Outro::animation() {
 }
 
 void Outro::animate(int filenumber, int section1, int section2, int duration) {
+	_vm->setCurrentImage(filenumber);
 	while (duration) {
-		_vm->renderImage(filenumber, section1);
+		_vm->renderImage(section1);
 		_gm->wait2(2);
-		_vm->renderImage(filenumber, section2);
+		_vm->renderImage(section2);
 		_gm->wait2(2);
 		--duration;
 	}
@@ -3234,12 +3254,13 @@ void Outro::animate(int filenumber, int section1, int section2, int duration,
                     MessagePosition position, const char *text) {
 	_vm->renderMessage(text, position);
 	int delay = (Common::strnlen(text, 512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
+	_vm->setCurrentImage(filenumber);
 	while (delay) {
 		if (section1)
-			_vm->renderImage(filenumber, section1);
+			_vm->renderImage(section1);
 		_gm->wait2(2);
 		if (section2)
-			_vm->renderImage(filenumber, section2);
+			_vm->renderImage(section2);
 		_gm->wait2(2);
 		--delay;
 	}
@@ -3252,12 +3273,13 @@ void Outro::animate(int filenumber, int section1, int section2, int section3, in
 	if (duration == 0)
 		duration = (Common::strnlen(text, 512) + 20) * _vm->_textSpeed / 40;
 
+	_vm->setCurrentImage(filenumber);
 	while(duration) {
-		_vm->renderImage(filenumber, section1);
-		_vm->renderImage(filenumber, section3);
+		_vm->renderImage(section1);
+		_vm->renderImage(section3);
 		_gm->wait2(2);
-		_vm->renderImage(filenumber, section2);
-		_vm->renderImage(filenumber, section4);
+		_vm->renderImage(section2);
+		_vm->renderImage(section4);
 		_gm->wait2(2);
 		duration--;
 	}

@@ -47,7 +47,11 @@ bool Console::cmdRenderImage(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->renderImage(atoi(argv[1]), atoi(argv[2]));
+	int image = atoi(argv[1]);
+	if (_vm->setCurrentImage(image))
+		_vm->renderImage(atoi(argv[2]));
+	else
+		debugPrintf("Image %d is invalid!", image);
 
 	return true;
 }
