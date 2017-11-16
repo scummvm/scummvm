@@ -90,6 +90,8 @@ public:
 	ScreenBufferStack _screenBuffer;
 	byte _mouseNormal[256];
 	byte _mouseWait[256];
+	// TODO check this! There are 56 data files (0 to 55) and at least the outro
+	// tries to displayimage from file 55 (and fails!).
 	MSNImageDecoder _images[44];
 	MSNImageDecoder *_currentImage;
 	struct SoundSample {
