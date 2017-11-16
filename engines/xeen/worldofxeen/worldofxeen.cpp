@@ -33,6 +33,7 @@ WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *g
 		: XeenEngine(syst, gameDesc), CloudsCutscenes(this),
 		DarkSideCutscenes(this) {
 	_seenDarkSideIntro = false;
+	_pendingAction = WOX_PLAY_GAME;
 }
 
 void WorldOfXeenEngine::outerGameLoop() {

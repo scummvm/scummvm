@@ -528,6 +528,9 @@ MazeDifficulties::MazeDifficulties() {
 	_bashDoor = 0;
 	_bashGrate = 0;
 	_bashWall = 0;
+	_wallNoPass = -1;
+	_surfaceNoPass = -1;
+	_chance2Run = -1;
 }
 
 void MazeDifficulties::synchronize(Common::SeekableReadStream &s) {
@@ -563,6 +566,7 @@ void MazeData::clear() {
 	_trapDamage = 0;
 	_wallKind = 0;
 	_tavernTips = 0;
+	_mazeId = 0;
 }
 
 void MazeData::synchronize(Common::SeekableReadStream &s) {

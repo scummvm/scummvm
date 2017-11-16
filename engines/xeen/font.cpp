@@ -27,12 +27,12 @@
 namespace Xeen {
 
 FontSurface::FontSurface() : XSurface(), _fontData(nullptr), _bgColor(DEFAULT_BG_COLOR),
-		_fontReduced(false),_fontJustify(JUSTIFY_NONE), _msgWraps(false) {
+		_fontReduced(false),_fontJustify(JUSTIFY_NONE), _msgWraps(false), _displayString(nullptr) {
 	setTextColor(0);
 }
 
 FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv), _fontData(nullptr), _msgWraps(false),
-		_bgColor(DEFAULT_BG_COLOR), _fontReduced(false), _fontJustify(JUSTIFY_NONE) {
+		_bgColor(DEFAULT_BG_COLOR), _fontReduced(false), _fontJustify(JUSTIFY_NONE), _displayString(nullptr) {
 	create(w, h);
 	setTextColor(0);
 }

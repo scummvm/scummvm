@@ -58,11 +58,12 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_spells = nullptr;
 	_town = nullptr;
 	_eventData = nullptr;
-	_quitMode = 0;
 	_noDirectionSense = false;
+	_startupWindowActive = false;
+	_quitMode = 0;
 	_mode = MODE_0;
 	_endingScore = 0;
-	_startupWindowActive = false;
+	_loadSaveSlot = -1;
 	g_vm = this;
 }
 

@@ -105,6 +105,7 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_var50 = false;
 	_redrawDone = false;
 	_windowIndex = -1;
+	_event = nullptr;
 }
 
 int Scripts::checkEvents() {
