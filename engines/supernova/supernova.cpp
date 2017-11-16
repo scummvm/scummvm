@@ -103,7 +103,6 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	, _currentImage(_images)
 	, _brightness(255)
 	, _menuBrightness(255)
-	, _imageIndex(0)
 	, _delay(33)
 	, _textSpeed(kTextSpeed[2])
 	, _screenWidth(320)
@@ -413,7 +412,7 @@ void SupernovaEngine::playSoundMod(int filenumber)
 	                   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
-void SupernovaEngine::renderImage(MSNImageDecoder &image, int section) {
+void SupernovaEngine::renderImageSection(int section) {
 	// Note: inverting means we are removing the section. So we should get the rect for that
 	// section but draw the background (section 0) instead.
 	bool invert = false;
@@ -421,19 +420,14 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section) {
 		section -= 128;
 		invert = true;
 	}
-	if (section > image._numSections - 1)
+	if (!_currentImage || section > _currentImage->_numSections - 1)
 		return;
 
-	_currentImage = &image;
-	_imageIndex = image._filenumber;
-	_system->getPaletteManager()->setPalette(image.getPalette(), 16, 239);
-	paletteBrightness();
-
-	Common::Rect sectionRect(image._section[section].x1,
-	                         image._section[section].y1,
-	                         image._section[section].x2 + 1,
-	                         image._section[section].y2 + 1) ;
-	if (image._filenumber == 1 || image._filenumber == 2) {
+	Common::Rect sectionRect(_currentImage->_section[section].x1,
+	                         _currentImage->_section[section].y1,
+	                         _currentImage->_section[section].x2 + 1,
+	                         _currentImage->_section[section].y2 + 1) ;
+	if (_currentImage->_filenumber == 1 || _currentImage->_filenumber == 2) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);
 		if (_screenWidth != 640) {
@@ -452,22 +446,49 @@ void SupernovaEngine::renderImage(MSNImageDecoder &image, int section) {
 	uint offset = 0;
 	int pitch = sectionRect.width();
 	if (invert) {
-		pitch = image._pitch;
-		offset = image._section[section].y1 * pitch + image._section[section].x1;
+		pitch = _currentImage->_pitch;
+		offset = _currentImage->_section[section].y1 * pitch + _currentImage->_section[section].x1;
 		section = 0;
 	}
 
-	_system->copyRectToScreen(static_cast<const byte *>(image._sectionSurfaces[section]->getPixels()) + offset,
+	_system->copyRectToScreen(static_cast<const byte *>(_currentImage->_sectionSurfaces[section]->getPixels()) + offset,
 	                          pitch,
 	                          sectionRect.left, sectionRect.top,
 	                          sectionRect.width(), sectionRect.height());
 }
 
 void SupernovaEngine::renderImage(int filenumber, int section) {
-	if (filenumber > ARRAYSIZE(_images) - 1)
-		return;
+	if (setCurrentImage(filenumber))
+		renderImage(section);
+}
 
-	renderImage(_images[filenumber], section);
+void SupernovaEngine::renderImage(int section) {
+	bool sectionVisible = true;
+
+	if (section > 128) {
+		sectionVisible = false;
+		section -= 128;
+	}
+
+	_gm->_currentRoom->setSectionVisible(section, sectionVisible);
+
+	do {
+		if (sectionVisible)
+			renderImageSection(section);
+		else
+			renderImageSection(section + 128);
+		section = _currentImage->_section[section].next;
+	} while (section != 0);
+}
+
+bool SupernovaEngine::setCurrentImage(int filenumber) {
+	if (filenumber == -1 || filenumber > ARRAYSIZE(_images) - 1)
+		return false;
+
+	_currentImage = &(_images[filenumber]);
+	_system->getPaletteManager()->setPalette(_currentImage->getPalette(), 16, 239);
+	paletteBrightness();
+	return true;
 }
 
 void SupernovaEngine::saveScreen(int x, int y, int width, int height) {
@@ -479,13 +500,12 @@ void SupernovaEngine::restoreScreen() {
 }
 
 void SupernovaEngine::renderRoom(Room &room) {
-	if (room.getFileNumber() != -1) {
-		_currentImage = &(_images[room.getFileNumber()]);
+	if (setCurrentImage(room.getFileNumber())) {
 		for (int i = 0; i < _currentImage->_numSections; ++i) {
 			int section = i;
 			if (room.isSectionVisible(section)) {
 				do {
-					renderImage(*_currentImage, section);
+					renderImageSection(section);
 					section = _currentImage->_section[section].next;
 				} while (section != 0);
 			}
