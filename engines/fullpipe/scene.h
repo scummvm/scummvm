@@ -32,7 +32,9 @@ class MessageQueue;
 
 class Scene : public Background {
  public:
+	/** list items are owned */
 	Common::Array<StaticANIObject *> _staticANIObjectList1;
+
 	Common::Array<StaticANIObject *> _staticANIObjectList2;
 	Common::Array<MessageQueue *> _messageQueueList;
 	// PtrList _faObjectList; // not used

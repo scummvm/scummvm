@@ -655,7 +655,7 @@ void Scene::update(int counterdiff) {
 }
 
 void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
-	if (!_picObjList.size() && !_bigPictureArray1Count)
+	if (!_picObjList.size() && !_bigPictureXDim)
 		return;
 
 	if (_palette.size()) {
@@ -682,11 +682,11 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 	Dims dims;
 
-	debugC(1, kDebugDrawing, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
+	debugC(1, kDebugDrawing, "_bigPict: %d objlist: %d", _bigPictureXDim, _picObjList.size());
 
-	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
+	if (drawBg && _bigPictureXDim && _picObjList.size()) {
 
-		dims = _bigPictureArray[0][0]->getDimensions();
+		dims = _bigPictureArray[0]->getDimensions();
 
 		int width = dims.x;
 		int height = dims.y;
@@ -716,26 +716,26 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int bgPosX = g_fp->_sceneRect.left - bgOffsetX;
 
 		if (bgPosX < g_fp->_sceneRect.right - 1) {
-			while (1) {
-				int v25 = bgNumY;
+			for (;;) {
+				uint v25 = bgNumY;
 				for (int y = g_fp->_sceneRect.top - bgOffsetY; y < g_fp->_sceneRect.bottom - 1;) {
-					BigPicture *v27 = _bigPictureArray[bgNumX][v25];
+					BigPicture *v27 = getBigPicture(bgNumX, v25);
 					v27->draw(bgPosX, y, 0, 0);
 					y += v27->getDimensions().y;
 					v25++;
 
-					if (v25 >= _bigPictureArray2Count) {
+					if (v25 >= _bigPictureYDim) {
 						if (!(_picObjList[0]->_flags & 0x20))
 							break;
 						v25 = 0;
 					}
 				}
-				dims = _bigPictureArray[bgNumX][0]->getDimensions();
+				dims = getBigPicture(bgNumX, 0)->getDimensions();
 				int oldx = dims.x + bgPosX;
 				bgPosX += dims.x;
 				bgNumX++;
 
-				if (bgNumX >= _bigPictureArray1Count) {
+				if (bgNumX >= (int)_bigPictureXDim) {
 					if (!(_picObjList[0]->_flags & 0x2))
 						break;
 					bgNumX = 0;
