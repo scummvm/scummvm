@@ -171,7 +171,9 @@ void MctlCompound::initMctlGraph() {
 		MctlGraph *newgr = new MctlGraph();
 
 		newgr->_links = gr->_links;
+		gr->_links.clear();
 		newgr->_nodes = gr->_nodes;
+		gr->_nodes.clear();
 
 		_motionControllers[i]->_motionControllerObj.reset(newgr);
 	}
