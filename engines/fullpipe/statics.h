@@ -177,7 +177,9 @@ class StaticANIObject : public GameObject {
 	int _initialCounter;
 	void (*_callback1)(int, Common::Point *point, int, int);
 	void (*_callback2)(int *);
+	/** items in list are owned */
 	Common::Array<Movement *> _movements;
+	/** items in list are owned */
 	Common::Array<Statics *> _staticsList;
 	StepArray _stepArray;
 	int16 _field_96;

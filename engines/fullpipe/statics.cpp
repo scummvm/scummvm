@@ -112,16 +112,8 @@ StaticANIObject::StaticANIObject() {
 }
 
 StaticANIObject::~StaticANIObject() {
-	for (uint i = 0; i < _staticsList.size(); i++)
-		delete _staticsList[i];
-
-	_staticsList.clear();
-
-	for (uint i = 0; i < _movements.size(); i++)
-		delete _movements[i];
-
-	_movements.clear();
-
+	Common::for_each(_staticsList.begin(), _staticsList.end(), Common::DefaultDeleter<Statics>());
+	Common::for_each(_movements.begin(), _movements.end(), Common::DefaultDeleter<Movement>());
 	g_fp->_aniHandler->detachAllObjects();
 }
 
