@@ -157,9 +157,9 @@ void sceneHandler17_moonshineFill() {
 void sceneHandler17_updateFlies() {
 	g_fp->_floaters->genFlies(g_fp->_currentScene, 239, -50, 20, 4);
 
-	g_fp->_floaters->_array2[0]->countdown = g_fp->_rnd.getRandomNumber(5) + 6;
-	g_fp->_floaters->_array2[0]->val6 = 239;
-	g_fp->_floaters->_array2[0]->val7 = -50;
+	g_fp->_floaters->_array2[0].countdown = g_fp->_rnd.getRandomNumber(5) + 6;
+	g_fp->_floaters->_array2[0].val6 = 239;
+	g_fp->_floaters->_array2[0].val7 = -50;
 }
 
 

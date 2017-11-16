@@ -50,9 +50,9 @@ void scene12_initScene(Scene *sc) {
 void sceneHandler12_updateFloaters() {
 	g_fp->_floaters->genFlies(g_fp->_currentScene, 397, -50, 100, 6);
 
-	g_fp->_floaters->_array2[0]->countdown = g_fp->_rnd.getRandomNumber(6) + 4;
-	g_fp->_floaters->_array2[0]->val6 = 397;
-	g_fp->_floaters->_array2[0]->val7 = -50;
+	g_fp->_floaters->_array2[0].countdown = g_fp->_rnd.getRandomNumber(6) + 4;
+	g_fp->_floaters->_array2[0].val6 = 397;
+	g_fp->_floaters->_array2[0].val7 = -50;
 }
 
 int sceneHandler12(ExCommand *cmd) {

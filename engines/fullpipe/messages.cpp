@@ -146,36 +146,12 @@ void ExCommand::firef34() {
 	}
 }
 
-ExCommand2::ExCommand2(int messageKind, int parentId, Common::Point **points, int pointsSize) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
+ExCommand2::ExCommand2(int messageKind, int parentId, const PointList &points) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
 	_objtype = kObjTypeExCommand2;
-
-	_pointsSize = pointsSize;
-	_points = (Common::Point **)malloc(sizeof(Common::Point *) * pointsSize);
-
-	for (int i = 0; i < pointsSize; i++) {
-		_points[i] = new Common::Point;
-
-		*_points[i] = *points[i];
-	}
+	_points = points;
 }
 
-ExCommand2::ExCommand2(ExCommand2 *src) : ExCommand(src) {
-	_pointsSize = src->_pointsSize;
-	_points = (Common::Point **)malloc(sizeof(Common::Point *) * _pointsSize);
-
-	for (int i = 0; i < _pointsSize; i++) {
-		_points[i] = new Common::Point;
-
-		*_points[i] = *src->_points[i];
-	}
-}
-
-ExCommand2::~ExCommand2() {
-	for (int i = 0; i < _pointsSize; i++)
-		delete _points[i];
-
-	free(_points);
-}
+ExCommand2::ExCommand2(ExCommand2 *src) : ExCommand(src), _points(src->_points) {}
 
 ExCommand2 *ExCommand2::createClone() {
 	return new ExCommand2(this);
@@ -240,9 +216,6 @@ ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : ExCommand(src) {
 	_objtype = kObjTypeObjstateCommand;
 
 	_objCommandName = src->_objCommandName;
-}
-
-ObjstateCommand::~ObjstateCommand() {
 }
 
 bool ObjstateCommand::load(MfcArchive &file) {

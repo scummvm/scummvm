@@ -87,6 +87,7 @@ class StaticANIObject;
 class Vars;
 typedef Common::Array<int16> MovTable;
 typedef Common::Array<int32> Palette;
+typedef Common::Array<Common::Point> PointList;
 
 int global_messageHandler1(ExCommand *cmd);
 int global_messageHandler2(ExCommand *cmd);

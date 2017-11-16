@@ -86,12 +86,10 @@ class ExCommand : public Message {
 
 class ExCommand2 : public ExCommand {
  public:
-	Common::Point **_points;
-	int _pointsSize;
+	PointList _points;
 
-	ExCommand2(int messageKind, int parentId, Common::Point **points, int pointsSize);
+	ExCommand2(int messageKind, int parentId, const PointList &points);
 	ExCommand2(ExCommand2 *src);
-	virtual ~ExCommand2();
 
 	virtual ExCommand2 *createClone();
 };
@@ -104,7 +102,6 @@ class ObjstateCommand : public ExCommand {
  public:
 	ObjstateCommand();
 	ObjstateCommand(ObjstateCommand *src);
-	virtual ~ObjstateCommand();
 
 	virtual bool load(MfcArchive &file);
 

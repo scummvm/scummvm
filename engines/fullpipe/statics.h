@@ -31,23 +31,20 @@ class ExCommand;
 
 class StepArray : public CObject {
 	int _currPointIndex;
-	Common::Point **_points;
-	int _maxPointIndex;
-	int _pointsCount;
-	int _isEos;
+	PointList _points;
+	bool _isEos;
 
   public:
 	StepArray();
-	~StepArray();
 	void clear();
 
-	int getCurrPointIndex() { return _currPointIndex; }
-	int getPointsCount() { return _maxPointIndex; }
+	int getCurrPointIndex() const { return _currPointIndex; }
+	int getPointsCount() const { return _points.size(); }
 
 	Common::Point getCurrPoint() const;
 	Common::Point getPoint(int index, int offset) const;
 	bool gotoNextPoint();
-	void insertPoints(Common::Point **points, int pointsCount);
+	void insertPoints(const PointList &points);
 };
 
 class StaticPhase : public Picture {
@@ -78,7 +75,7 @@ class DynamicPhase : public StaticPhase {
 
   public:
 	DynamicPhase();
-	DynamicPhase(DynamicPhase &src, bool reverse);
+	DynamicPhase(DynamicPhase *src, bool reverse);
 
 	virtual bool load(MfcArchive &file);
 
@@ -93,7 +90,7 @@ class Statics : public DynamicPhase {
 
   public:
 	Statics();
-	Statics(Statics &src, bool reverse);
+	Statics(Statics *src, bool reverse);
 
 	virtual bool load(MfcArchive &file);
 	virtual void init();
@@ -122,7 +119,7 @@ class Movement : public GameObject {
 	int _counter;
 	Common::Array<DynamicPhase *> _dynamicPhases;
 	int _field_78;
-	Common::Array<Common::Point> _framePosOffsets;
+	PointList _framePosOffsets;
 	Movement *_currMovement;
 	int _field_84;
 	DynamicPhase *_currDynamicPhase;
@@ -204,7 +201,7 @@ public:
 	Statics *getStaticsById(int id);
 	Statics *getStaticsByName(const Common::String &name);
 	Movement *getMovementById(int id);
-	int getMovementIdById(int itemId);
+	int getMovementIdById(int itemId) const;
 	Movement *getMovementByName(const Common::String &name);
 	Common::Point getCurrDimensions() const;
 
@@ -232,7 +229,7 @@ public:
 
 	bool startAnim(int movementId, int messageQueueId, int dynPhaseIdx);
 	bool startAnimEx(int movid, int parId, int flag1, int flag2);
-	void startAnimSteps(int movementId, int messageQueueId, int x, int y, Common::Point **points, int pointsCount, int someDynamicPhaseIndex);
+	void startAnimSteps(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex);
 
 	void hide();
 	void show1(int x, int y, int movementId, int mqId);

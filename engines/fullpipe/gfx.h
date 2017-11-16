@@ -153,7 +153,6 @@ class GameObject : public CObject {
   public:
 	GameObject();
 	GameObject(GameObject *src);
-	~GameObject();
 
 	virtual bool load(MfcArchive &file);
 	void setOXY(int x, int y);
