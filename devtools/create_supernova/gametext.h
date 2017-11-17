@@ -620,7 +620,7 @@ const char *gameText[] = {
 	// 485
 	"Ja, sieht so aus.", // kStringArsanoMeetup3_2
 	"Sie befinden sich im Raumschiff \"Dexxa\".", // kStringArsanoMeetup3_3
-	"Wir kommen vom Planeten Axacuss und|sind aus dem gleichen Grund hier wie Sie,|n?mlich zur Erforschung der Supernova.", // kStringArsanoMeetup3_4
+	"Wir kommen vom Planeten Axacuss und|sind aus dem gleichen Grund hier wie Sie,|n\204mlich zur Erforschung der Supernova.", // kStringArsanoMeetup3_4
 	"Sie k\224nnen beruhigt sein, wir wollen Ihnen nur helfen.", // kStringArsanoMeetup3_5
 	"Und wieso hat der Typ im Raumanzug|eben auf mich geschossen?", // kStringArsanoMeetup3_6
 	// 490
