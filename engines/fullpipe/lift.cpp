@@ -403,12 +403,12 @@ void FullpipeEngine::lift_goAnimation() {
 		int numItems = _gameLoader->_preloadItems.size();
 
 		for (int i = 0; i < numItems; i++) {
-			PreloadItem *pre = _gameLoader->_preloadItems[i];
+			PreloadItem &pre = _gameLoader->_preloadItems[i];
 
-			if (pre->preloadId2 == buttonId && pre->preloadId1 == _currentScene->_sceneId) {
+			if (pre.preloadId2 == buttonId && pre.preloadId1 == _currentScene->_sceneId) {
 				MessageQueue *mq = new MessageQueue(_globalMessageQueueList->compact());
 
-				ExCommand *ex = new ExCommand(ANI_MAN, 1, (pre->param != LiftDown ? MV_MAN_LIFTDOWN : MV_MAN_LIFTUP), 0, 0, 0, 1, 0, 0, 0);
+				ExCommand *ex = new ExCommand(ANI_MAN, 1, (pre.param != LiftDown ? MV_MAN_LIFTDOWN : MV_MAN_LIFTUP), 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_param = -1;
 				ex->_field_24 = 1;
