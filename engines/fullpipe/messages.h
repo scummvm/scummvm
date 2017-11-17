@@ -163,13 +163,14 @@ class MessageQueue : public CObject {
 };
 
 class GlobalMessageQueueList : public Common::Array<MessageQueue *> {
-  public:
+public:
 	MessageQueue *getMessageQueueById(int id);
 	void deleteQueueById(int id);
 	void removeQueueById(int id);
 	void disableQueueById(int id);
 	/** `msg` becomes owned by `this` */
 	void addMessageQueue(MessageQueue *msg);
+	void clear();
 
 	int compact();
 };
