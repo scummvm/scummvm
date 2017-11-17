@@ -651,7 +651,25 @@ void GameManager::search(int time) {
 }
 
 void GameManager::guardNoticed() {
-	warning("STUB: guardNoticed");
+	_vm->paletteFadeOut();
+	Room *r = _currentRoom;
+	_currentRoom = _rooms[GUARD];
+	_vm->setCurrentImage(40);
+	_vm->renderBox(0, 0, 320, 200, 0);
+	_vm->renderImage(0);
+	_vm->paletteFadeIn();
+	_vm->renderImage(2);
+	reply("Was war das für ein Geräusch?",2,5);
+	wait2(2);
+	reply("Ich werde mal nachsehen.",2,5);
+	_vm->paletteFadeOut();
+	r->setSectionVisible(2, false);
+	r->setSectionVisible(5, false);
+	_currentRoom = r;
+	_guiEnabled = true;
+	drawMapExits();
+	// new_room = true;
+	warning("SKIPPED: new_room");
 }
 
 void GameManager::busted(int i) {
