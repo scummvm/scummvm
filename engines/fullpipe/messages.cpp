@@ -280,8 +280,6 @@ MessageQueue::~MessageQueue() {
 			delete ex;
 	}
 
-	_exCommands.clear();
-
 	if (_field_14)
 		delete _field_14;
 
