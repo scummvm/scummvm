@@ -173,7 +173,9 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject &ani, int delay, c
 
 	if (mq) {
 		mq->setParamInt(-1, ani._odelay);
-		mq->chain(&ani);
+		if (!mq->chain(&ani)) {
+			g_fp->_globalMessageQueueList->deleteQueueById(mq->_id);
+		}
 	}
 }
 
