@@ -2299,12 +2299,18 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->wait2(6);
 		_vm->renderImage(4);
 		_vm->playSound(kAudioGunShot);
-		// TODO: wait until audio finished playing
+
+		while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+			_gm->wait2(1);
+
 		_vm->renderImage(5);
 		_gm->wait2(3);
 		_vm->renderImage(4);
 		_vm->playSound(kAudioGunShot);
-		// TODO: wait until audio finished playing
+
+		while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+			_gm->wait2(1);
+
 		_vm->renderImage(5);
 		_vm->paletteFadeOut();
 		_gm->wait2(12);
@@ -2533,7 +2539,10 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 		if (isSectionVisible(30) || isSectionVisible(29))
 			return false;
 		_vm->playSound(kAudioGunShot);
-		// TODO: wait till sound is played
+
+		while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+			_gm->wait2(1);
+
 		_vm->playSound(kAudioGunShot);
 		_vm->playSound(kAudioGunShot);
 		_gm->dead(kStringAxacussCell_4);
