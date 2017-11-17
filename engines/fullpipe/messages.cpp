@@ -303,6 +303,7 @@ bool MessageQueue::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		ExCommand *tmp = file.readClass<ExCommand>();
+		tmp->_excFlags |= 2;
 		_exCommands.push_back(tmp);
 	}
 
