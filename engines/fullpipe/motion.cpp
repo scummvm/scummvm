@@ -105,6 +105,10 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 	return 0;
 }
 
+MctlCompound::~MctlCompound() {
+	Common::for_each(_motionControllers.begin(), _motionControllers.end(), Common::DefaultDeleter<MctlItem>());
+}
+
 bool MctlCompound::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MctlCompound::load()");
 
@@ -729,18 +733,6 @@ void MctlMQ::clear() {
 
 MctlItem::~MctlItem() {
 	Common::for_each(_connectionPoints.begin(), _connectionPoints.end(), Common::DefaultDeleter<MctlConnectionPoint>());
-}
-
-bool MctlCompoundArray::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "MctlCompoundArray::load()");
-
-	int count = file.readUint32LE();
-
-	debugC(0, kDebugLoading, "MctlCompoundArray::count = %d", count);
-
-	assert(0);
-
-	return true;
 }
 
 MovGraphItem::MovGraphItem() {
