@@ -883,9 +883,8 @@ bool chainQueue(int queueId, int flags) {
 
 	nmq->_flags |= flags;
 
-	if (!nmq->chain(0)) {
-		delete nmq;
-
+	if (!nmq->chain(nullptr)) {
+		g_fp->_globalMessageQueueList->deleteQueueById(nmq->_id);
 		return false;
 	}
 
@@ -903,8 +902,7 @@ bool chainObjQueue(StaticANIObject *obj, int queueId, int flags) {
 	nmq->_flags |= flags;
 
 	if (!nmq->chain(obj)) {
-		delete nmq;
-
+		g_fp->_globalMessageQueueList->deleteQueueById(nmq->_id);
 		return false;
 	}
 
