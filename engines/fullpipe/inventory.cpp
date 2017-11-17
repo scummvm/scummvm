@@ -30,27 +30,23 @@
 
 namespace Fullpipe {
 
-Inventory::~Inventory() {
-	_itemsPool.clear();
-}
-
 bool Inventory::load(MfcArchive &file) {
 	debugC(5, kDebugLoading | kDebugInventory, "Inventory::load()");
 
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();
 
+	_itemsPool.resize(numInvs);
 	for (int i = 0; i < numInvs; i++) {
-		InventoryPoolItem *t = new InventoryPoolItem();
-		t->id = file.readUint16LE();
-		t->pictureObjectNormal = file.readUint16LE();
-		t->pictureObjectId1 = file.readUint16LE();
-		t->pictureObjectHover = file.readUint16LE();
-		t->pictureObjectSelected = file.readUint16LE();
-		t->flags = file.readUint32LE();
-		t->field_C = 0;
-		t->field_A = -536;
-		_itemsPool.push_back(t);
+		InventoryPoolItem &t = _itemsPool[i];
+		t.id = file.readUint16LE();
+		t.pictureObjectNormal = file.readUint16LE();
+		t.pictureObjectId1 = file.readUint16LE();
+		t.pictureObjectHover = file.readUint16LE();
+		t.pictureObjectSelected = file.readUint16LE();
+		t.flags = file.readUint32LE();
+		t.field_C = 0;
+		t.field_A = -536;
 	}
 
 	return true;
@@ -61,7 +57,7 @@ int Inventory::getInventoryPoolItemIndexById(int itemId) {
 		return -1;
 
 	for (uint i = 0; i < _itemsPool.size(); i++) {
-		if (_itemsPool[i]->id == itemId)
+		if (_itemsPool[i].id == itemId)
 			return i;
 	}
 
@@ -74,7 +70,7 @@ bool Inventory::setItemFlags(int itemId, int flags) {
 	if (idx < 0)
 		return false;
 	else
-		_itemsPool[idx]->flags = flags;
+		_itemsPool[idx].flags = flags;
 
 	return true;
 }
@@ -200,13 +196,13 @@ int Inventory2::getInventoryItemIndexById(int itemId) {
 }
 
 int Inventory2::getInventoryPoolItemIdAtIndex(int itemId) {
-	return _itemsPool[itemId]->id;
+	return _itemsPool[itemId].id;
 }
 
 int Inventory2::getInventoryPoolItemFieldCById(int itemId) {
 	for (uint i = 0; i < _itemsPool.size(); i++) {
-		if (_itemsPool[i]->id == itemId)
-			return _itemsPool[i]->field_C;
+		if (_itemsPool[i].id == itemId)
+			return _itemsPool[i].field_C;
 	}
 
 	return 0;
@@ -218,7 +214,7 @@ int Inventory2::getItemFlags(int itemId) {
 	if (idx < 0)
 		return 0;
 
-	return _itemsPool[idx]->flags;
+	return _itemsPool[idx].flags;
 }
 
 void Inventory2::rebuildItemRects() {
@@ -241,7 +237,7 @@ void Inventory2::rebuildItemRects() {
 		PictureObject *pic = _scene->_picObjList[i];
 
 		for (uint j = 0; j < _itemsPool.size(); j++) {
-			if (_itemsPool[j]->pictureObjectNormal == pic->_id) {
+			if (_itemsPool[j].pictureObjectNormal == pic->_id) {
 				if (pic->_odelay)
 					_scene->deletePictureObject(pic);
 				else
@@ -256,15 +252,15 @@ void Inventory2::rebuildItemRects() {
 		_inventoryIcons.push_back(InventoryIcon());
 		InventoryIcon &icn = _inventoryIcons.back();
 
-		icn.inventoryItemId = _itemsPool[idx]->id;
+		icn.inventoryItemId = _itemsPool[idx].id;
 
-		icn.pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectNormal, 0);
-		icn.pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectHover, 0);
-		icn.pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectSelected, 0);
+		icn.pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx].pictureObjectNormal, 0);
+		icn.pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx].pictureObjectHover, 0);
+		icn.pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx].pictureObjectSelected, 0);
 
 		const Dims dims = icn.pictureObjectNormal->getDimensions();
 
-		if (_itemsPool[idx]->flags & 0x10000) {
+		if (_itemsPool[idx].flags & 0x10000) {
 			icn.x1 = 730;
 			icn.y1 = itemY;
 			icn.x2 = dims.x + 730;
@@ -427,7 +423,7 @@ int Inventory2::selectItem(int itemId) {
 	if (_scene) {
 		int idx = getInventoryPoolItemIndexById(itemId);
 
-		Picture *pic = _scene->getPictureObjectById(_itemsPool[idx]->pictureObjectId1, 0)->_picture.get();
+		Picture *pic = _scene->getPictureObjectById(_itemsPool[idx].pictureObjectId1, 0)->_picture.get();
 		g_fp->getGameLoaderInputController()->setCursorItemPicture(pic);
 	}
 

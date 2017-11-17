@@ -40,7 +40,7 @@ struct InventoryPoolItem {
 	int flags;
 };
 
-typedef Common::Array<InventoryPoolItem *> InventoryPoolItems;
+typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
 
 class Inventory : public CObject {
  protected:
@@ -49,7 +49,6 @@ class Inventory : public CObject {
 
  public:
 	Inventory() { _sceneId = 0; }
-	virtual ~Inventory();
 
 	virtual bool load(MfcArchive &file);
 
