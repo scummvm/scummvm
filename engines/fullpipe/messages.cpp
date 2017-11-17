@@ -263,7 +263,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 
 	_id = g_fp->_globalMessageQueueList->compact();
 	_dataId = src->_dataId;
-	_flags = src->_flags;
+	_flags = src->_flags & ~kInGlobalQueue;
 	_queueName = "";
 
 	g_fp->_globalMessageQueueList->addMessageQueue(this);
@@ -319,7 +319,6 @@ bool MessageQueue::chain(StaticANIObject *ani) {
 	if (checkGlobalExCommandList1() && checkGlobalExCommandList2()) {
 		if (!(getFlags() & kInGlobalQueue)) {
 			g_fp->_globalMessageQueueList->addMessageQueue(this);
-			_flags |= kInGlobalQueue;
 		}
 		if (ani) {
 			ani->queueMessageQueue(this);
@@ -656,9 +655,23 @@ int GlobalMessageQueueList::compact() {
 }
 
 void GlobalMessageQueueList::addMessageQueue(MessageQueue *msg) {
-	msg->setFlags(msg->getFlags() | kInGlobalQueue);
+	if ((msg->getFlags() & kInGlobalQueue) == 0) {
+		msg->setFlags(msg->getFlags() | kInGlobalQueue);
+		push_back(msg);
+	} else {
+		warning("Trying to add a MessageQueue already in the queue");
+	}
+}
 
-	push_back(msg);
+void GlobalMessageQueueList::clear() {
+	for (iterator it = begin(); it != end(); ++it) {
+		// The MessageQueue destructor will try to remove itself from the global
+		// queue if it thinks it is in the global queue, which will break the
+		// iteration over the list
+		(*it)->_flags &= ~kInGlobalQueue;
+		delete *it;
+	}
+	Common::Array<MessageQueue *>::clear();
 }
 
 void clearGlobalMessageQueueList() {
