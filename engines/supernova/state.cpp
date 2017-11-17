@@ -594,7 +594,7 @@ void GameManager::processInput() {
 			for (int i = 0; (_currentRoom->getObject(i)->_id != INVALIDOBJECT) &&
 			                (field == -1) && i < kMaxObject; i++) {
 				click = _currentRoom->getObject(i)->_click;
-				if (click != 255) {
+				if (click != 255 && _vm->_currentImage) {
 					MSNImageDecoder::ClickField *clickField = _vm->_currentImage->_clickField;
 					do {
 						if ((_mouseX >= clickField[click].x1) && (_mouseX <= clickField[click].x2) &&
