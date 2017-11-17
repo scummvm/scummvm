@@ -127,6 +127,10 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	}
 	changeRoom(curRoomId);
 
+	// Some additional variables
+	_guiEnabled = true;
+	_animationEnabled = true;
+
 	return !in->err();
 }
 
@@ -989,6 +993,9 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 }
 
 int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number) {
+	_vm->_allowLoadGame = false;
+	_guiEnabled = false;
+
 	bool remove[6];
 	for (int i = 0; i < 5; ++i)
 		remove[i] = _currentRoom->sentenceRemoved(i, number);
@@ -1015,17 +1022,18 @@ int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number
 			rq += rowLength[i];
 	}
 
-	_guiEnabled = false;
 	_currentSentence = -1;
 	do {
 		mouseInput3();
 	} while (_currentSentence == -1 && !_vm->shouldQuit());
-	_guiEnabled = true;
 
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 
 	if (number && _texts[_rowsStart[_currentSentence]] != kStringDialogSeparator)
 		_currentRoom->removeSentence(_currentSentence, number);
+
+	_guiEnabled = true;
+	_vm->_allowLoadGame = true;
 
 	return _currentSentence;
 }

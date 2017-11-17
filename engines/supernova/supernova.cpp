@@ -982,7 +982,8 @@ Common::Error SupernovaEngine::loadGameState(int slot) {
 }
 
 bool SupernovaEngine::canSaveGameStateCurrently() {
-	return _allowSaveGame;
+	// Do not allow saving when either _allowSaveGame, _animationEnabled or _guiEnabled is false
+	return _allowSaveGame && _gm->_animationEnabled && _gm->_guiEnabled;
 }
 
 Common::Error SupernovaEngine::saveGameState(int slot, const Common::String &desc) {
@@ -1024,6 +1025,13 @@ bool SupernovaEngine::loadGame(int slot) {
 	Graphics::skipThumbnail(*savefile);
 	_gm->deserialize(savefile, saveVersion);
 
+	if (saveVersion >= 5) {
+		_menuBrightness = savefile->readByte();
+		_brightness = savefile->readByte();
+	} else {
+		_menuBrightness = _brightness = 255;
+	}
+
 	delete savefile;
 
 	return true;
@@ -1053,6 +1061,9 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	savefile->writeUint32LE(getTotalPlayTime() / 1000);
 	Graphics::saveThumbnail(*savefile);
 	_gm->serialize(savefile);
+
+	savefile->writeByte(_menuBrightness);
+	savefile->writeByte(_brightness);
 
 	savefile->finalize();
 	delete savefile;
