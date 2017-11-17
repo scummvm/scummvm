@@ -279,9 +279,10 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 		}
 
 		SDL_SetWindowFullscreen(_window, fullscreenFlags);
-		const bool shouldGrab = (flags & SDL_WINDOW_INPUT_GRABBED) | fullscreenFlags;
-		SDL_SetWindowGrab(_window, shouldGrab ? SDL_TRUE : SDL_FALSE);
 	}
+
+	const bool shouldGrab = (flags & SDL_WINDOW_INPUT_GRABBED) || fullscreenFlags;
+	SDL_SetWindowGrab(_window, shouldGrab ? SDL_TRUE : SDL_FALSE);
 
 	if (!_window) {
 		return false;
