@@ -71,7 +71,7 @@ struct PreloadItem {
 
 bool preloadCallback(PreloadItem &pre, int flag);
 
-class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
+class PreloadItems : public Common::Array<PreloadItem>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
@@ -105,7 +105,7 @@ class GameLoader : public CObject {
 	bool preloadScene(int sceneId, int entranceId);
 	bool unloadScene(int sceneId);
 
-	void addPreloadItem(PreloadItem *item);
+	void addPreloadItem(const PreloadItem &item);
 
 	void updateSystems(int counterdiff);
 

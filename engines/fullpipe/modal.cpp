@@ -570,10 +570,10 @@ bool ModalMap::init2(int counterdiff) {
 
 int ModalMap::findMapSceneId(int picId) {
 	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++) {
-		PreloadItem *pitem = g_fp->_gameLoader->_preloadItems[i];
+		PreloadItem &pitem = g_fp->_gameLoader->_preloadItems[i];
 
-		if (pitem->preloadId1 == SC_MAP && pitem->preloadId2 == picId) {
-			return pitem->sceneId;
+		if (pitem.preloadId1 == SC_MAP && pitem.preloadId2 == picId) {
+			return pitem.sceneId;
 		}
 	}
 
@@ -705,11 +705,11 @@ void ModalMap::clickButton(PictureObject *pic) {
 		return;
 	}
 
-	PreloadItem *pitem = 0;
+	PreloadItem *pitem = nullptr;
 
 	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++)
-		if (g_fp->_gameLoader->_preloadItems[i]->preloadId2 == SC_MAP) {
-			pitem = g_fp->_gameLoader->_preloadItems[i];
+		if (g_fp->_gameLoader->_preloadItems[i].preloadId2 == SC_MAP) {
+			pitem = &g_fp->_gameLoader->_preloadItems[i];
 			break;
 		}
 
@@ -717,16 +717,16 @@ void ModalMap::clickButton(PictureObject *pic) {
 		PreloadItem preload;
 
 		preload.preloadId2 = SC_MAP;
-		g_fp->_gameLoader->addPreloadItem(&preload);
-		pitem = g_fp->_gameLoader->_preloadItems[g_fp->_gameLoader->_preloadItems.size() - 1];
+		g_fp->_gameLoader->addPreloadItem(preload);
+		pitem = &g_fp->_gameLoader->_preloadItems[g_fp->_gameLoader->_preloadItems.size() - 1];
 	}
 
-	PreloadItem *pitem2 = 0;
+	PreloadItem *pitem2 = nullptr;
 
 	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++)
-		if (g_fp->_gameLoader->_preloadItems[i]->preloadId1 == SC_MAP &&
-				g_fp->_gameLoader->_preloadItems[i]->preloadId2 == pic->_id) {
-			pitem2 = g_fp->_gameLoader->_preloadItems[i];
+		if (g_fp->_gameLoader->_preloadItems[i].preloadId1 == SC_MAP &&
+				g_fp->_gameLoader->_preloadItems[i].preloadId2 == pic->_id) {
+			pitem2 = &g_fp->_gameLoader->_preloadItems[i];
 			break;
 		}
 

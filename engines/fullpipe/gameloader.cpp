@@ -347,8 +347,8 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 	return true;
 }
 
-void GameLoader::addPreloadItem(PreloadItem *item) {
-	_preloadItems.push_back(new PreloadItem(*item));
+void GameLoader::addPreloadItem(const PreloadItem &item) {
+	_preloadItems.push_back(item);
 }
 
 bool GameLoader::preloadScene(int sceneId, int entranceId) {
@@ -363,7 +363,7 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 	int idx = -1;
 
 	for (uint i = 0; i < _preloadItems.size(); i++)
-		if (_preloadItems[i]->preloadId1 == sceneId && _preloadItems[i]->preloadId2 == entranceId) {
+		if (_preloadItems[i].preloadId1 == sceneId && _preloadItems[i].preloadId2 == entranceId) {
 			idx = i;
 			break;
 		}
@@ -375,7 +375,7 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 	}
 
 	if (_preloadCallback) {
-		if (!_preloadCallback(*_preloadItems[idx], 0))
+		if (!_preloadCallback(_preloadItems[idx], 0))
 			return false;
 	}
 
@@ -387,19 +387,19 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 	unloadScene(sceneId);
 
 	if (_preloadCallback)
-		_preloadCallback(*_preloadItems[idx], 50);
+		_preloadCallback(_preloadItems[idx], 50);
 
-	loadScene(_preloadItems[idx]->sceneId);
+	loadScene(_preloadItems[idx].sceneId);
 
-	ExCommand *ex = new ExCommand(_preloadItems[idx]->sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
+	ExCommand *ex = new ExCommand(_preloadItems[idx].sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags = 2;
-	ex->_param = _preloadItems[idx]->param;
+	ex->_param = _preloadItems[idx].param;
 
 	_preloadSceneId = 0;
 	_preloadEntranceId = 0;
 
 	if (_preloadCallback)
-		_preloadCallback(*_preloadItems[idx], 100);
+		_preloadCallback(_preloadItems[idx], 100);
 
 	ex->postMessage();
 
@@ -633,14 +633,13 @@ bool PreloadItems::load(MfcArchive &file) {
 
 	clear();
 
+	resize(count);
 	for (int i = 0; i < count; i++) {
-		PreloadItem *t = new PreloadItem();
-		t->preloadId1 = file.readUint32LE();
-		t->preloadId2 = file.readUint32LE();
-		t->sceneId = file.readUint32LE();
-		t->param = file.readSint32LE();
-
-		push_back(t);
+		PreloadItem &t = (*this)[i];
+		t.preloadId1 = file.readUint32LE();
+		t.preloadId2 = file.readUint32LE();
+		t.sceneId = file.readUint32LE();
+		t.param = file.readSint32LE();
 	}
 
 	return true;
