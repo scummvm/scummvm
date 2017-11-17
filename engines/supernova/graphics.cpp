@@ -50,7 +50,8 @@ MSNImageDecoder::~MSNImageDecoder() {
 bool MSNImageDecoder::init(int filenumber) {
 	Common::File file;
 	if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
-		error("File %s could not be read!", file.getName());
+		warning("Image data file %s could not be read!", file.getName());
+		return false;
 	}
 
 	_filenumber = filenumber;

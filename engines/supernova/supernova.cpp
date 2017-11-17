@@ -100,7 +100,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	: Engine(syst)
 	, _console(NULL)
 	, _gm(NULL)
-	, _currentImage(_images)
+	, _currentImage(NULL)
 	, _brightness(255)
 	, _menuBrightness(255)
 	, _delay(33)
@@ -126,6 +126,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 SupernovaEngine::~SupernovaEngine() {
 	DebugMan.clearAllDebugChannels();
 
+	delete _currentImage;
 	delete _rnd;
 	delete _console;
 	delete _gm;
@@ -329,10 +330,6 @@ Common::Error SupernovaEngine::loadGameStrings() {
 }
 
 void SupernovaEngine::initData() {
-	// Images
-	for (int i = 0; i < 44; ++i)
-		_images[i].init(i);
-
 	// Sound
 	// Note:
 	//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
@@ -458,6 +455,9 @@ void SupernovaEngine::renderImageSection(int section) {
 }
 
 void SupernovaEngine::renderImage(int section) {
+	if (!_currentImage)
+		return;
+
 	bool sectionVisible = true;
 
 	if (section > 128) {
@@ -477,12 +477,17 @@ void SupernovaEngine::renderImage(int section) {
 }
 
 bool SupernovaEngine::setCurrentImage(int filenumber) {
-	if (filenumber == -1 || filenumber > ARRAYSIZE(_images) - 1) {
-		warning("Trying to display image from out of bound file number %d", filenumber);
+	if (_currentImage && _currentImage->_filenumber == filenumber)
+		return true;
+
+	delete _currentImage;
+	_currentImage = new MSNImageDecoder();
+	if (!_currentImage->init(filenumber)) {
+		delete _currentImage;
+		_currentImage = NULL;
 		return false;
 	}
 
-	_currentImage = &(_images[filenumber]);
 	_system->getPaletteManager()->setPalette(_currentImage->getPalette(), 16, 239);
 	paletteBrightness();
 	return true;
@@ -690,7 +695,7 @@ void SupernovaEngine::paletteBrightness() {
 	}
 	for (uint i = 0; i < 717; ++i) {
 		const byte *imagePalette;
-		if (_currentImage->getPalette()) {
+		if (_currentImage && _currentImage->getPalette()) {
 			imagePalette = _currentImage->getPalette();
 		} else {
 			imagePalette = palette + 48;
