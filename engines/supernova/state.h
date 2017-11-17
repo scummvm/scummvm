@@ -163,8 +163,6 @@ public:
 	void turnOff();
 	void turnOn();
 	void screenShake();
-	bool saveGame(int number);
-	void errorTemp();
 	void roomBrightness();
 	void showMenu();
 	void animationOff();

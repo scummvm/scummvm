@@ -1197,17 +1197,8 @@ void GameManager::roomBrightness() {
 	_vm->paletteBrightness();
 }
 
-bool GameManager::saveGame(int number) {
-	warning("STUB: savegame %d", number);
-	return false;
-}
-
 void GameManager::changeRoom(RoomID id) {
 	_currentRoom = _rooms[id];
-}
-
-void GameManager::errorTemp() {
-	warning("STUB: errorTemp");
 }
 
 void GameManager::wait2(int ticks) {

@@ -37,6 +37,8 @@ const int kMaxDialog = 2;
 const int kMaxObject = 25;
 const int kMaxCarry = 30;
 
+const int kSleepAutosaveSlot = 999;
+
 //const int kRoomsChap0 =  1;
 //const int kRoomsChap1 = 16;
 //const int kRoomsChap2 =  9;
