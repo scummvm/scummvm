@@ -116,6 +116,7 @@ class Movement : public GameObject {
 	int _field_50;
 	int _counterMax;
 	int _counter;
+	/** a confusing mix of owned and unowned items */
 	Common::Array<DynamicPhase *> _dynamicPhases;
 	int _field_78;
 	PointList _framePosOffsets;

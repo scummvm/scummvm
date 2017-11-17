@@ -1429,14 +1429,17 @@ Movement::~Movement() {
 	if (!_currMovement) {
 		if (_updateFlag1) {
 			_dynamicPhases[0]->freePixelData();
-			_dynamicPhases.remove_at(0);
+			delete _dynamicPhases.remove_at(0);
 		}
 
 		// FIXME: At this point, the last entry in _dynamicPhases is invalid
-		for (uint i = 0; i < _dynamicPhases.size() - 1; i++)
-			_dynamicPhases[i]->freePixelData();
-
-		_dynamicPhases.clear();
+		for (uint i = 0; i < _dynamicPhases.size() - 1; i++) {
+			DynamicPhase *phase = _dynamicPhases[i];
+			if (phase != _staticsObj1 && phase != _staticsObj2)
+				delete phase;
+			else
+				_dynamicPhases[i]->freePixelData();
+		}
 	}
 }
 
@@ -1844,12 +1847,12 @@ void Movement::removeFirstPhase() {
 			gotoNextFrame(0, 0);
 
 		if (!_currMovement) {
-			_dynamicPhases.remove_at(0);
+			delete _dynamicPhases.remove_at(0);
 
 			for (uint i = 0; i < _dynamicPhases.size(); i++) {
-				_framePosOffsets[i].x = _framePosOffsets[i + 1].x;
-				_framePosOffsets[i].y = _framePosOffsets[i + 1].y;
+				_framePosOffsets[i] = _framePosOffsets[i + 1];
 			}
+			_framePosOffsets.pop_back();
 		}
 		_currDynamicPhaseIndex--;
 	}
