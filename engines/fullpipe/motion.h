@@ -92,16 +92,13 @@ public:
 	~MctlItem();
 };
 
-class MctlCompoundArray : public Common::Array<MctlItem *>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
-
 class MctlCompound : public MotionController {
 public:
-	MctlCompoundArray _motionControllers;
+	/** list items are owned */
+	Common::Array<MctlItem *> _motionControllers;
 
 	MctlCompound() { _objtype = kObjTypeMctlCompound; }
+	virtual ~MctlCompound();
 
 	virtual bool load(MfcArchive &file);
 
