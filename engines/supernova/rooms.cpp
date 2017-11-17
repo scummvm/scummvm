@@ -2243,6 +2243,7 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->loadTime();
 				_gm->_rooms[CAVE]->getObject(1)->_exitRoom = MEETUP3;
 				_gm->_state._dream = true;
+				_vm->paletteFadeIn();
 			}
 		} else {
 			_gm->changeRoom(MEETUP2);
