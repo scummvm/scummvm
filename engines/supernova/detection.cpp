@@ -134,7 +134,7 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveFileList;
 	for (Common::StringArray::const_iterator file = filenames.begin();
 	     file != filenames.end(); ++file) {
-		int saveSlot = atoi(file->c_str() + file->size() - 2);
+		int saveSlot = atoi(file->c_str() + file->size() - 3);
 		if (saveSlot >= 0 && saveSlot <= getMaximumSaveSlot()) {
 			Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(*file);
 			if (savefile) {
