@@ -787,6 +787,8 @@ const char *gameText[] = {
 	"Zehn Minuten sp\204ter ...", // kStringSupernova8
 	//625
 	"Textgeschwindigkeit:", // kStringTextSpeed
+	"Was war das f\201r ein Ger\204usch?", // kStringGuardNoticed1
+	"Ich werde mal nachsehen.", // kStringGuardNoticed2
 	NULL
 };
 

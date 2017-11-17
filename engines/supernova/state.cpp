@@ -663,9 +663,9 @@ void GameManager::guardNoticed() {
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
 	_vm->renderImage(2);
-	reply("Was war das für ein Geräusch?",2,5);
+	reply(kStringGuardNoticed1, 2, 5);
 	wait2(2);
-	reply("Ich werde mal nachsehen.",2,5);
+	reply(kStringGuardNoticed2, 2, 5);
 	_vm->paletteFadeOut();
 	r->setSectionVisible(2, false);
 	r->setSectionVisible(5, false);
