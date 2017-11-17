@@ -698,8 +698,8 @@ bool ShipSleepCabin::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 			if (_gm->_state._arrivalDaysLeft == 0) {
 				_gm->saveTime();
-				if (!_gm->saveGame(-2))
-					_gm->errorTemp();
+				if (!_vm->saveGame(kSleepAutosaveSlot, "Sleep autosave"))
+					_vm->errorTempSave(true);
 				_gm->_state._dream = true;
 				_gm->loadTime();
 			}
@@ -2238,10 +2238,8 @@ bool ArsanoMeetup2::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->paletteFadeOut();
 				g_system->fillScreen(kColorBlack);
 				_gm->_state._dream = false;
-				// TODO:
-				// The original at this points loads a savegame from "MSN.TMP"
-				// which is provided with the data file.
-//				if (!load_game(-2)) error_temp();
+				if (!_vm->loadGame(kSleepAutosaveSlot))
+					_vm->errorTempSave(false);
 				_gm->loadTime();
 				_gm->_rooms[CAVE]->getObject(1)->_exitRoom = MEETUP3;
 				_gm->_state._dream = true;

@@ -145,6 +145,7 @@ public:
 	void command_print();
 	bool loadGame(int slot);
 	bool saveGame(int slot, const Common::String &description);
+	void errorTempSave(bool saving);
 	void setTextSpeed();
 
 	const Common::String &getGameString(int idx) const {

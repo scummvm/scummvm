@@ -1060,6 +1060,14 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	return true;
 }
 
+void SupernovaEngine::errorTempSave(bool saving) {
+	// TODO: At this point the engine should terminate with the error
+	// "Failed to save temporary game state. Make sure your save game directory "
+	// "is set in scummvm and that you can write to it."
+	// or
+	// "Failed to load temporary game state."
+	warning("STUB: errorTempSave");
+}
 
 ScreenBufferStack::ScreenBufferStack()
 	: _last(_buffer) {
