@@ -56,8 +56,7 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 }
 
 InteractionController::~InteractionController() {
-	_interactions.clear();
-
+	Common::for_each(_interactions.begin(), _interactions.end(), Common::DefaultDeleter<Interaction>());
 	removeMessageHandler(124, -1);
 }
 
