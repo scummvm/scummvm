@@ -987,7 +987,7 @@ void Map::load(int mapId) {
 
 			if (isDarkCc && mapId == 50)
 				mazeDataP->setAllTilesStepped();
-			if (!isDarkCc && _vm->_party->_gameFlags[25] &&
+			if (!isDarkCc && _vm->_party->_gameFlags[0][25] &&
 					(mapId == 42 || mapId == 43 || mapId == 4)) {
 				mazeDataP->clearCellSurfaces();
 			}
@@ -1061,7 +1061,7 @@ void Map::load(int mapId) {
 			_mobData._objects[29]._spriteId = 0;
 			_mobData._objects[29]._id = 8;
 			_mobData._objectSprites[i]._sprites.clear();
-		} else if (mapId == 12 && _vm->_party->_gameFlags[43] &&
+		} else if (mapId == 12 && _vm->_party->_gameFlags[0][43] &&
 			_mobData._objectSprites[i]._spriteId == 118 && !isDarkCc) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
@@ -1451,11 +1451,11 @@ int Map::getCell(int idx) {
 				_currentWall = INVALID_CELL;
 				return INVALID_CELL;
 			}
-
-			_mazeDataIndex = 0;
-			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-				++_mazeDataIndex;
 		}
+
+		_mazeDataIndex = 0;
+		while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+			++_mazeDataIndex;
 	}
 
 	if (pt.x & 16) {
@@ -1494,10 +1494,10 @@ int Map::getCell(int idx) {
 			++_mazeDataIndex;
 	}
 
+	assert(ABS(pt.x) < 16 && ABS(pt.y) < 16);
 	int wallData = _mazeData[_mazeDataIndex]._wallData[pt.y][pt.x]._data;
 	if (_isOutdoors) {
 		if (mapId) {
-			// TODO: tile is set to word of (wallLayers >> 8) && 0xff? Makes no sense
 			_currentTile = (wallData >> 8) & 0xFF;
 			_currentWall = (wallData >> 4) & 0xF;
 			_currentSurfaceId = wallData & 0xF;
@@ -1510,11 +1510,7 @@ int Map::getCell(int idx) {
 		if (!mapId)
 			return 0;
 
-		if (pt.x > 31 || pt.y > 31)
-			_currentSurfaceId = 7;
-		else
-			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
-
+		_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
 		_currentWall = wallData;
 		return (_currentWall >> Res.WALL_SHIFTS[dir][idx]) & 0xF;
 	}

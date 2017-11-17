@@ -1446,9 +1446,9 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 	}
 	case 20:
 		if (_vm->_files->_isDarkCc)
-			mask += 0x100;
-		assert(mask < 0x200);
-		v = party._gameFlags[mask] ? mask : 0xffffffff;
+			mask += 256;
+		assert(mask < 512);
+		v = party._gameFlags[mask / 256][mask % 256] ? mask : 0xffffffff;
 		break;
 	case 21:
 		// Scans inventories for given item number
@@ -1480,7 +1480,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		} else {
 			int baseFlag = 8 * (6 + mask);
 			for (int idx = 0; idx < 8; ++idx) {
-				if (party._gameFlags[baseFlag + idx]) {
+				if (party._gameFlags[0][baseFlag + idx]) {
 					v = mask;
 					break;
 				}
