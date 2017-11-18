@@ -1494,7 +1494,7 @@ int Map::getCell(int idx) {
 			++_mazeDataIndex;
 	}
 
-	assert(ABS(pt.x) < 16 && ABS(pt.y) < 16);
+	assert(pt.x >= 0 && pt.x < 16 && pt.y >= 0 && pt.y < 16);
 	int wallData = _mazeData[_mazeDataIndex]._wallData[pt.y][pt.x]._data;
 	if (_isOutdoors) {
 		if (mapId) {

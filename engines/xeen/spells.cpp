@@ -449,10 +449,11 @@ void Spells::detectMonster() {
 				MazeMonster &monster = map._mobData._monsters[monIndex];
 				Common::Point pt = party._mazePosition + Common::Point(xDiff, yDiff);
 				if (monster._position == pt) {
-					if (++grid[yDiff][xDiff] > 3)
-						grid[yDiff][xDiff] = 3;
+					int &gridEntry = grid[yDiff + 3][xDiff + 3];
+					if (++gridEntry > 3)
+						gridEntry = 3;
 
-					sprites.draw(w, grid[yDiff][xDiff], Common::Point(xDiff * 9 + 244,
+					sprites.draw(w, gridEntry, Common::Point(xDiff * 9 + 244,
 						yDiff * 7 + 81));
 				}
 			}

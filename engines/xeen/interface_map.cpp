@@ -4402,6 +4402,7 @@ void InterfaceMap::drawOutdoors() {
 	const int TERRAIN_INDEXES4[5] = { 5, 9, 7, 0, 4 };
 
 	// Loops to set draw entries for the terrain
+	assert(map._currentWall != INVALID_CELL);
 	for (int idx = 0; idx < 9; ++idx) {
 		map.getCell(TERRAIN_INDEXES1[idx]);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];

@@ -288,8 +288,10 @@ void Party::changeTime(int numMinutes) {
 					!player._conditions[ERADICATED]) {
 				for (int statNum = 0; statNum < TOTAL_STATS; ++statNum) {
 					int statVal = player.getStat((Attribute)statNum);
-					if (statVal < 1)
+					if (statVal < 1) {
 						player._conditions[DEAD] = 1;
+						killed = true;
+					}
 				}
 			}
 
@@ -1036,6 +1038,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		ps._tempAge += giveVal;
 		break;
 	case 13:
+		assert(giveVal < 18);
 		ps._skills[giveVal]++;
 		break;
 	case 15:
@@ -1056,6 +1059,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		} else if (giveVal == 6) {
 			ps._conditions[giveVal] = 1;
 		} else {
+			assert(giveVal < 16);
 			ps._conditions[giveVal]++;
 		}
 
@@ -1368,12 +1372,15 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_gold += _vm->getRandomNumber(1, giveVal);
 		break;
 	case 103:
+		assert(takeVal < 128);
 		_worldFlags[takeVal] = true;
 		break;
 	case 104:
+		assert(giveVal < 32);
 		_quests[files._isDarkCc][giveVal] = true;
 		break;
 	case 107:
+		assert(takeVal < 24);
 		_characterFlags[ps._rosterId][takeVal] = true;
 		break;
 	default:
