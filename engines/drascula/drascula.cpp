@@ -781,7 +781,7 @@ bool DrasculaEngine::verify2() {
 		if (pickupObject())
 			return true;
 	} else {
-		if (!strcmp(textName, "hacker") && _hasName) {
+		if (!strcmp(textName, _textmisc[3]) && _hasName) {
 			if (checkAction(50))
 				return true;
 		} else {

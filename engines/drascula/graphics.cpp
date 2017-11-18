@@ -76,7 +76,7 @@ void DrasculaEngine::moveCursor() {
 	moveCharacters();
 	updateRefresh();
 
-	if (!strcmp(textName, "hacker") && _hasName) {
+	if (!strcmp(textName, _textmisc[3]) && _hasName) {
 		if (_color != kColorRed && !_menuScreen)
 			color_abc(kColorRed);
 	} else if (!_menuScreen && _color != kColorLightGreen)
