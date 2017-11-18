@@ -706,10 +706,11 @@ void SupernovaEngine::paletteBrightness() {
 }
 
 void SupernovaEngine::paletteFadeOut() {
-	while (_brightness > 10) {
-		_menuBrightness = _brightness;
+	while (_menuBrightness > 10) {
+		_menuBrightness -= 10;
+		if (_brightness > _menuBrightness)
+			_brightness = _menuBrightness;
 		paletteBrightness();
-		_brightness -= 10;
 		_system->updateScreen();
 		_system->delayMillis(_delay);
 	}
@@ -720,15 +721,16 @@ void SupernovaEngine::paletteFadeOut() {
 }
 
 void SupernovaEngine::paletteFadeIn() {
-	while (_brightness < 245) {
-		_menuBrightness = _brightness;
+	while (_menuBrightness < 245) {
+		if (_brightness < _gm->_roomBrightness)
+			_brightness += 10;
+		_menuBrightness += 10;
 		paletteBrightness();
-		_brightness += 10;
 		_system->updateScreen();
 		_system->delayMillis(_delay);
 	}
 	_menuBrightness = 255;
-	_brightness = 255;
+	_brightness = _gm->_roomBrightness;
 	paletteBrightness();
 	_system->updateScreen();
 }
