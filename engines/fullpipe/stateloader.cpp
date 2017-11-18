@@ -42,7 +42,7 @@ namespace Fullpipe {
 
 bool GameLoader::readSavegame(const char *fname) {
 	SaveHeader header;
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(fname);
+	Common::ScopedPtr<Common::InSaveFile> saveFile(g_system->getSavefileManager()->openForLoading(fname));
 
 	if (!saveFile) {
 		warning("Cannot open save %s for loading", fname);
@@ -63,29 +63,28 @@ bool GameLoader::readSavegame(const char *fname) {
 
 	_updateCounter = header.updateCounter;
 
-	byte *data = (byte *)malloc(header.encSize);
-	saveFile->read(data, header.encSize);
+	Common::Array<byte> data(header.encSize);
+	saveFile->read(data.data(), header.encSize);
 
-	byte *map = (byte *)malloc(800);
-	saveFile->read(map, 800);
+	Common::Array<byte> map(800);
+	saveFile->read(map.data(), 800);
 
-	Common::MemoryReadStream *tempStream = new Common::MemoryReadStream(map, 800);
-	MfcArchive temp(tempStream);
+	{
+		Common::MemoryReadStream tempStream(map.data(), 800, DisposeAfterUse::NO);
+		MfcArchive temp(&tempStream);
 
-	if (_savegameCallback)
-		_savegameCallback(&temp, false);
-
-	delete tempStream;
-	delete saveFile;
+		if (_savegameCallback)
+			_savegameCallback(&temp, false);
+	}
 
 	// Deobfuscate the data
 	for (int i = 0; i < header.encSize; i++)
 		data[i] -= i & 0x7f;
 
-	Common::MemoryReadStream *archiveStream = new Common::MemoryReadStream(data, header.encSize);
-	MfcArchive *archive = new MfcArchive(archiveStream);
+	Common::MemoryReadStream archiveStream(data.data(), header.encSize, DisposeAfterUse::NO);
+	MfcArchive archive(&archiveStream);
 
-	GameVar *var = archive->readClass<GameVar>();
+	GameVar *var = archive.readClass<GameVar>();
 
 	GameVar *v = _gameVar->getSubVarByName("OBJSTATES");
 
@@ -94,23 +93,22 @@ bool GameLoader::readSavegame(const char *fname) {
 
 		if (!v) {
 			warning("No state to save");
-			delete archiveStream;
-			delete archive;
+			delete var;
 			return false;
 		}
 	}
 
 	addVar(var, v);
 
-	getGameLoaderInventory()->loadPartial(*archive);
+	getGameLoaderInventory()->loadPartial(archive);
 
-	uint32 arrSize = archive->readUint32LE();
+	uint32 arrSize = archive.readUint32LE();
 
 	debugC(3, kDebugLoading, "Reading %d infos", arrSize);
 
 	for (uint i = 0; i < arrSize; i++) {
 
-		const uint picAniInfosCount = archive->readUint32LE();
+		const uint picAniInfosCount = archive.readUint32LE();
 		if (picAniInfosCount)
 			debugC(3, kDebugLoading, "Count %d: %d", i, picAniInfosCount);
 
@@ -118,14 +116,11 @@ bool GameLoader::readSavegame(const char *fname) {
 		_sc2array[i]._picAniInfos.resize(picAniInfosCount);
 
 		for (uint j = 0; j < picAniInfosCount; j++) {
-			_sc2array[i]._picAniInfos[j].load(*archive);
+			_sc2array[i]._picAniInfos[j].load(archive);
 		}
 
 		_sc2array[i]._isLoaded = false;
 	}
-
-	delete archiveStream;
-	delete archive;
 
 	getGameLoaderInventory()->rebuildItemRects();
 
