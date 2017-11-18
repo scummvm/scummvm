@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-15 00:50+0100\n"
-"PO-Revision-Date: 2017-11-16 13:30+0000\n"
+"PO-Revision-Date: 2017-11-18 09:31+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
@@ -830,9 +830,8 @@ msgid "Show On-screen control"
 msgstr ""
 
 #: gui/options.cpp:936
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Touchpad re¾im vypnut."
+msgstr "Re¾im Touchpad my¹i"
 
 #: gui/options.cpp:940
 msgid "Swap Menu and Back buttons"
@@ -1305,7 +1304,7 @@ msgstr ""
 
 #: gui/options.cpp:1681
 msgid "Apply"
-msgstr ""
+msgstr "Pou¾ít"
 
 #: gui/options.cpp:1824
 msgid "Failed to change cloud storage!"
@@ -1791,6 +1790,11 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"Hra nacházející se v '%s' pravdìpodobnì vyu¾ívá neznámou variantu jádra %s ."
+"\n"
+"\n"
+"Prosím pøepo¹lete následující data týmu ScummVM na %s spolu s názvem hry, "
+"kterou jste chtìli pøidat, a její verzí, jazykem, atd.:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
@@ -2785,7 +2789,7 @@ msgstr "Zkontrolovat Aktualizace..."
 #: engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr ""
+msgstr "Nelze najít datové soubory jádra '%s'."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:977
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
@@ -2804,6 +2808,7 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
+"Nalezena data jádra '%s' s nesprávnou verzí. Oèekávána %d.%d, ale byla %d.%d."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
 msgid "Color mode"
@@ -2930,13 +2935,13 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
-"Stav hry úspì¹nì ulo¾en do:\n"
+"Hra byla úspì¹nì ulo¾ena do souboru:\n"
 "\n"
 "%s"
 
@@ -3080,14 +3085,12 @@ msgid "Move Back"
 msgstr "Vzad"
 
 #: engines/kyra/eobcommon.cpp:333
-#, fuzzy
 msgid "Move Left"
-msgstr "Pøesunout se Doleva"
+msgstr "Pøesunout se doleva"
 
 #: engines/kyra/eobcommon.cpp:334
-#, fuzzy
 msgid "Move Right"
-msgstr "Pøesunout se Doprava"
+msgstr "Pøesunout se doprava"
 
 #: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2514
@@ -3100,9 +3103,8 @@ msgid "Turn Right"
 msgstr "Otoèit se doprava"
 
 #: engines/kyra/eobcommon.cpp:337
-#, fuzzy
 msgid "Open/Close Inventory"
-msgstr "Inventáø"
+msgstr "Otevøít/Zavøít Inventáø"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
@@ -3110,36 +3112,35 @@ msgstr ""
 
 #: engines/kyra/eobcommon.cpp:339
 msgid "Camp"
-msgstr ""
+msgstr "Táboøit"
 
 #: engines/kyra/eobcommon.cpp:340
-#, fuzzy
 msgid "Cast Spell"
-msgstr "Zvolit Kouzlo"
+msgstr "Seslat kouzlo"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Kouzlo úrovnì 1"
 
 #: engines/kyra/eobcommon.cpp:344
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Kouzlo úrovnì 2"
 
 #: engines/kyra/eobcommon.cpp:345
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Kouzlo úrovnì 3"
 
 #: engines/kyra/eobcommon.cpp:346
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Kouzlo úrovnì 4"
 
 #: engines/kyra/eobcommon.cpp:347
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Kouzlo úrovnì 5"
 
 #: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Kouzlo úrovnì 6"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -3232,17 +3233,16 @@ msgid "Easy mouse interface"
 msgstr ""
 
 #: engines/mads/detection.cpp:92
-#, fuzzy
 msgid "Shows object names when hovering the mouse over them"
-msgstr "Zobrazit jmenovky objektù pøi najetí my¹i"
+msgstr "Zobrazit jmenovky objektù pøi najetí my¹i na nì"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
-msgstr ""
+msgstr "Animované polo¾ky inventáøe"
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
-msgstr ""
+msgstr "Animované herní rozhraní"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
@@ -3311,6 +3311,8 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
+"Schází vám spustitelný soubor Riven. Ve Windows se soubor jmenuje "
+"'riven.exe' nebo 'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:150
 msgid ""
@@ -3417,9 +3419,8 @@ msgstr ""
 "Prosím nahlaste to týmu."
 
 #: engines/pegasus/pegasus.cpp:716
-#, fuzzy
 msgid "Invalid file name for saving"
-msgstr "Zadejte název souboru pro ulo¾ení"
+msgstr "Neplatný název soubor pro ulo¾ení"
 
 #: engines/pegasus/pegasus.cpp:2512
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -3536,7 +3537,6 @@ msgid "Use silver cursors"
 msgstr "Pou¾ít støíbrné kurzory"
 
 #: engines/sci/detection.cpp:496
-#, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr "Pou¾ít alternativní sadu støíbrných kurzorù místo standardních zlatých"
@@ -3547,12 +3547,11 @@ msgstr "Povolit cenzuru obsahu"
 
 #: engines/sci/detection.cpp:507
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "Povolit nepovinnou cenzuru obsahu zabudovanou ve høe"
 
 #: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
-#, fuzzy
 msgid "(Autosave)"
-msgstr "Autoukládání:"
+msgstr "(Autoulo¾eno)"
 
 #: engines/sci/engine/kgraphics.cpp:984
 msgid ""
@@ -3570,18 +3569,18 @@ msgstr ""
 
 #: engines/sci/engine/savegame.cpp:1290
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "Formát této ulo¾ené hry je zastaralý, nelze ji naèíst"
 
 #: engines/sci/engine/savegame.cpp:1292
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "Verze ulo¾ené hry je %d, nejvy¹¹í podporovaná verze je %0d"
 
 #: engines/sci/engine/savegame.cpp:1303
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
-msgstr ""
+msgstr "Ulo¾ená hra byla vytvoøena v jiné verzi hry, nelze ji naèíst"
 
 #: engines/sci/resource.cpp:822
 msgid ""
@@ -4400,7 +4399,7 @@ msgstr "Zobrazit okna s èásteènì prùhledným pozadím"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "Datový soubor jádra \"sky.cpt\" má nesprávnou délku."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4430,7 +4429,6 @@ msgid "Cutscene '%s' not found"
 msgstr "Video '%s' nenalezeno"
 
 #: engines/sword1/control.cpp:885
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -4440,8 +4438,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM zjistil, ¾e máte staré ulo¾ené pozice pro Broken Sword 1, které by "
-"mìly být pøevedeny.\n"
+"ScummVM zjistil, ¾e máte staré ulo¾ené hry pro Broken Sword 1, které by mìly "
+"být pøevedeny.\n"
 "Starý formát ulo¾ených her ji¾ není podporován, tak¾e pokud je nepøevedete, "
 "nebudete moci va¹e hry naèíst.\n"
 "\n"
@@ -4505,11 +4503,9 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 
 #: engines/toon/toon.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
-"Nelze ulo¾it hru do pozice %i\n"
-"\n"
+msgstr "Hra ulo¾ena do pozice #%d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
@@ -4517,16 +4513,14 @@ msgid "Could not quick save into slot #%d"
 msgstr ""
 
 #: engines/toon/toon.cpp:239
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
-"Nelze ulo¾it hru do pozice %i\n"
-"\n"
+msgstr "Ulo¾ená pozice #%d byla rychle naètena"
 
 #: engines/toon/toon.cpp:243
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "Chcete naèíst ulo¾enou pozici?"
+msgstr "Ulo¾enou pozici #%d nelze rychle naèíst"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4588,6 +4582,8 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+"Tato ulo¾ená hra je z verze %u, ale nejvy¹¹í verze, které toto jádro "
+"podporuje, je %d. Abyste tuto hru naèetli, musíte získat novìj¹í verzi jádra."
 
 #~ msgid "(You can always enable it in the options dialog on the Misc tab)"
 #~ msgstr "(Toto nastavení v¾dy mù¾ete zmìnit ve Volbách v kartì Rùzné)"
