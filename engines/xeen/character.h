@@ -33,6 +33,7 @@
 namespace Xeen {
 
 #define INV_ITEMS_TOTAL 9
+#define MAX_SPELLS_PER_CLASS 39
 
 enum BonusFlags {
 	ITEMFLAG_BONUS_MASK = 0xBF, ITEMFLAG_CURSED = 0x40, ITEMFLAG_BROKEN = 0x80
@@ -287,7 +288,7 @@ public:
 	int _tempAge;
 	int _skills[18];
 	bool _awards[128];
-	int _spells[39];
+	int _spells[MAX_SPELLS_PER_CLASS];
 	int _lloydMap;
 	Common::Point _lloydPosition;
 	bool _hasSpells;

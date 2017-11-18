@@ -345,7 +345,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 			if (party._mazeId == 49 || party._mazeId == 37) {
 				for (uint spellId = 0; spellId < 76; ++spellId) {
 					int idx = 0;
-					while (idx < MAX_SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] == spellId)
+					while (idx < MAX_SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != spellId)
 						++idx;
 
 					// Handling if the spell is appropriate for the character's class
@@ -416,7 +416,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 		if (c->getMaxSP() == 0) {
 			return Res.NOT_A_SPELL_CASTER;
 		} else {
-			for (int spellIndex = 0; spellIndex < (MAX_SPELLS_PER_CLASS - 1); ++spellIndex) {
+			for (int spellIndex = 0; spellIndex < MAX_SPELLS_PER_CLASS; ++spellIndex) {
 				if (c->_spells[spellIndex]) {
 					int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
 					int gemCost = Res.SPELL_GEM_COST[spellId];
