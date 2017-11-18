@@ -5,6 +5,14 @@
 class PtrTestSuite : public CxxTest::TestSuite {
 	public:
 
+	struct A {
+		int a;
+	};
+
+	struct B : public A {
+		int b;
+	};
+
 	// A simple class which keeps track of all its instances
 	class InstanceCountingClass {
 	public:
@@ -24,6 +32,61 @@ class PtrTestSuite : public CxxTest::TestSuite {
 			TS_ASSERT_EQUALS(InstanceCountingClass::count, 2);
 		}
 		TS_ASSERT_EQUALS(InstanceCountingClass::count, 0);
+	}
+
+	struct CustomDeleter {
+		static bool invoked;
+		void operator()(int *object) {
+			invoked = true;
+			delete object;
+		}
+	};
+
+	void test_scoped_deleter() {
+		CustomDeleter::invoked = false;
+
+		{
+			Common::ScopedPtr<int, CustomDeleter> a(new int(0));
+			TS_ASSERT(!CustomDeleter::invoked);
+		}
+
+		TS_ASSERT(CustomDeleter::invoked);
+	}
+
+	void test_disposable_deleter() {
+		CustomDeleter::invoked = false;
+
+		{
+			Common::DisposablePtr<int, CustomDeleter> a1(new int, DisposeAfterUse::YES);
+			TS_ASSERT(!CustomDeleter::invoked);
+		}
+
+		TS_ASSERT(CustomDeleter::invoked);
+		CustomDeleter::invoked = false;
+
+		int *a = new int;
+		{
+			Common::DisposablePtr<int, CustomDeleter> a2(a, DisposeAfterUse::NO);
+		}
+
+		TS_ASSERT(!CustomDeleter::invoked);
+		delete a;
+	}
+
+	void test_scoped_deref() {
+		A *raw = new A();
+		raw->a = 123;
+		Common::ScopedPtr<A> a(raw);
+		TS_ASSERT_EQUALS(&*a, &*raw);
+		TS_ASSERT_EQUALS(a->a, raw->a);
+	}
+
+	void test_disposable_deref() {
+		A *raw = new A();
+		raw->a = 123;
+		Common::DisposablePtr<A> a(raw, DisposeAfterUse::YES);
+		TS_ASSERT_EQUALS(&*a, &*raw);
+		TS_ASSERT_EQUALS(a->a, raw->a);
 	}
 
 	void test_assign() {
@@ -88,14 +151,6 @@ class PtrTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!p1);
 	}
 
-	struct A {
-		int a;
-	};
-
-	struct B : public A {
-		int b;
-	};
-
 	void test_cast() {
 		Common::SharedPtr<B> b(new B);
 		Common::SharedPtr<A> a(b);
@@ -104,3 +159,4 @@ class PtrTestSuite : public CxxTest::TestSuite {
 };
 
 int PtrTestSuite::InstanceCountingClass::count = 0;
+bool PtrTestSuite::CustomDeleter::invoked = false;

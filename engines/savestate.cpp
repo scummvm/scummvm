@@ -39,7 +39,7 @@ void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 	if (_thumbnail.get() == t)
 		return;
 
-	_thumbnail = Common::SharedPtr<Graphics::Surface>(t, Graphics::SharedPtrSurfaceDeleter());
+	_thumbnail = Common::SharedPtr<Graphics::Surface>(t, Graphics::SurfaceDeleter());
 }
 
 void SaveStateDescriptor::setSaveDate(int year, int month, int day) {
