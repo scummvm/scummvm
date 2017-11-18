@@ -223,7 +223,7 @@ public:
 	Common::ScopedPtr<Floaters> _floaters;
 	Common::ScopedPtr<AniHandler> _aniHandler;
 
-	Common::Array<Common::Point *> _arcadeKeys;
+	Common::Array<Common::Point> _arcadeKeys;
 
 	void initMap();
 	void updateMap(PreloadItem *pre);

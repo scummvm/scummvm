@@ -262,16 +262,12 @@ void FullpipeEngine::initArcadeKeys(const char *varname) {
 		return;
 
 	int cnt = var->getSubVarsCount();
-
+	_arcadeKeys.resize(cnt);
 	for (int i = 0; i < cnt; i++) {
-		Common::Point *point = new Common::Point;
-
+		Common::Point &point = _arcadeKeys[i];
 		GameVar *sub = var->getSubVarByIndex(i);
-
-		point->x = sub->getSubVarAsInt("X");
-		point->y = sub->getSubVarAsInt("Y");
-
-		_arcadeKeys.push_back(point);
+		point.x = sub->getSubVarAsInt("X");
+		point.y = sub->getSubVarAsInt("Y");
 	}
 }
 
@@ -283,7 +279,7 @@ void FullpipeEngine::processArcade(ExCommand *cmd) {
 
 	if (cmd->_sceneClickX <= g_fp->_aniMan2->_ox) {
 		for (idx = (int)_arcadeKeys.size() - 1; idx >= 0; idx--) {
-			if (_arcadeKeys[idx]->x < g_fp->_aniMan2->_ox)
+			if (_arcadeKeys[idx].x < g_fp->_aniMan2->_ox)
 				break;
 		}
 
@@ -291,7 +287,7 @@ void FullpipeEngine::processArcade(ExCommand *cmd) {
 			return;
 	} else {
 		for (idx = 0; idx < (int)_arcadeKeys.size(); idx++) {
-			if (_arcadeKeys[idx]->x > g_fp->_aniMan2->_ox)
+			if (_arcadeKeys[idx].x > g_fp->_aniMan2->_ox)
 				break;
 		}
 
@@ -299,8 +295,8 @@ void FullpipeEngine::processArcade(ExCommand *cmd) {
 			return;
 	}
 
-	cmd->_sceneClickX = _arcadeKeys[idx]->x;
-	cmd->_sceneClickY = _arcadeKeys[idx]->y;
+	cmd->_sceneClickX = _arcadeKeys[idx].x;
+	cmd->_sceneClickY = _arcadeKeys[idx].y;
 
 	cmd->_x = cmd->_sceneClickX - g_fp->_sceneRect.left;
 	cmd->_y = cmd->_sceneClickY - g_fp->_sceneRect.top;
