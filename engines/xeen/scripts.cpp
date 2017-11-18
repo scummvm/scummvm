@@ -1688,8 +1688,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		break;
 	case 104:
 		// Get value of quest flag
-		v = (_vm->_files->_isDarkCc ? party._quests[1][mask - 2] :
-			party._quests[0][mask]) ? mask : 0xffffffff;
+		v = party._questFlags[_vm->_files->_isDarkCc][mask] ? mask : 0xffffffff;
 		break;
 	case 105:
 		// Test number of Megacredits in party. Only used by King's Engineer in Castle Burlock
