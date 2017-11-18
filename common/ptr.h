@@ -40,12 +40,7 @@ class SharedPtrDeletionImpl : public SharedPtrDeletionInternal {
 public:
 	SharedPtrDeletionImpl(T *ptr) : _ptr(ptr) {}
 	~SharedPtrDeletionImpl() {
-		// Checks if the supplied type is not just a plain
-		// forward definition, taken from boost::checked_delete
-		// This makes the user really aware what he tries to do
-		// when using this with an incomplete type.
-		typedef char completeCheck[sizeof(T) ? 1 : -1];
-		(void)sizeof(completeCheck);
+		STATIC_ASSERT(sizeof(T) > 0, SharedPtr_cannot_delete_incomplete_type);
 		delete _ptr;
 	}
 private:
@@ -223,8 +218,16 @@ private:
 	PointerType _pointer;
 };
 
-template<typename T>
-class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T> > {
+template <typename T>
+struct DefaultDeleter {
+	inline void operator()(T *object) {
+		STATIC_ASSERT(sizeof(T) > 0, cannot_delete_incomplete_type);
+		delete object;
+	}
+};
+
+template<typename T, class D = DefaultDeleter<T> >
+class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T, D> > {
 public:
 	typedef T ValueType;
 	typedef T *PointerType;
@@ -242,14 +245,14 @@ public:
 	bool operator_bool() const { return _pointer != nullptr; }
 
 	~ScopedPtr() {
-		delete _pointer;
+		D()(_pointer);
 	}
 
 	/**
 	 * Resets the pointer with the new value. Old object will be destroyed
 	 */
 	void reset(PointerType o = 0) {
-		delete _pointer;
+		D()(_pointer);
 		_pointer = o;
 	}
 
@@ -276,9 +279,8 @@ private:
 	PointerType _pointer;
 };
 
-
-template<typename T>
-class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T> > {
+template<typename T, class D = DefaultDeleter<T> >
+class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T, D> > {
 public:
 	typedef T  ValueType;
 	typedef T *PointerType;
@@ -287,7 +289,7 @@ public:
 	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose) {}
 
 	~DisposablePtr() {
-		if (_dispose) delete _pointer;
+		if (_dispose) D()(_pointer);
 	}
 
 	ReferenceType operator*() const { return *_pointer; }
