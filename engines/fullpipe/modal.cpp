@@ -1338,6 +1338,9 @@ bool ModalMainMenu::handleMessage(ExCommand *message) {
 	if (message->_messageKind != 17)
 		return false;
 
+	if (!_scene)
+		return false;
+
 	Common::Point point;
 
 	if (message->_messageNum == 29) {
@@ -1412,6 +1415,7 @@ bool ModalMainMenu::init(int counterdiff) {
 
 	case PIC_MNU_DEBUG_L:
 		g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+		_scene = nullptr;
 		g_fp->_sceneRect = _screct;
 
 		if (!g_fp->_currentScene)
@@ -1427,6 +1431,7 @@ bool ModalMainMenu::init(int counterdiff) {
 	case PIC_MNU_CONTINUE_L:
 		if (!_mfield_34) {
 			g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+			_scene = nullptr;
 			g_fp->_sceneRect = _screct;
 
 			if (g_fp->_currentScene) {
