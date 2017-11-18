@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
 #include "common/safe-bool.h"
+#include "common/type-traits.h"
 #include "common/types.h"
 
 namespace Common {
@@ -40,13 +41,20 @@ class SharedPtrDeletionImpl : public SharedPtrDeletionInternal {
 public:
 	SharedPtrDeletionImpl(T *ptr) : _ptr(ptr) {}
 	~SharedPtrDeletionImpl() {
-		// Checks if the supplied type is not just a plain
-		// forward definition, taken from boost::checked_delete
-		// This makes the user really aware what he tries to do
-		// when using this with an incomplete type.
-		typedef char completeCheck[sizeof(T) ? 1 : -1];
-		(void)sizeof(completeCheck);
+		STATIC_ASSERT(sizeof(T) > 0, SharedPtr_cannot_delete_incomplete_type);
 		delete _ptr;
+	}
+private:
+	T *_ptr;
+};
+
+template<class T>
+class SharedPtrDeletionImpl<T[]> : public SharedPtrDeletionInternal {
+public:
+	SharedPtrDeletionImpl(T ptr[]) : _ptr(ptr) {}
+	~SharedPtrDeletionImpl() {
+		STATIC_ASSERT(sizeof(T) > 0, SharedPtr_cannot_delete_incomplete_type);
+		delete[] _ptr;
 	}
 private:
 	T *_ptr;
@@ -110,14 +118,15 @@ class SharedPtr : public SafeBool<SharedPtr<T> > {
 #endif
 public:
 	typedef int RefValue;
-	typedef T ValueType;
-	typedef T *PointerType;
-	typedef T &ReferenceType;
+	typedef typename RemoveArray<T>::type ValueType;
+	typedef ValueType *PointerType;
+	typedef ValueType &ReferenceType;
 
-	SharedPtr() : _refCount(0), _deletion(0), _pointer(0) {}
+	SharedPtr() : _refCount(0), _deletion(nullptr), _pointer(nullptr) {}
 
 	template<class T2>
-	explicit SharedPtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionImpl<T2>(p)), _pointer(p) {}
+	explicit SharedPtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionImpl<T2>(p)), _pointer(p) {
+	}
 
 	template<class T2, class D>
 	SharedPtr(T2 *p, D d) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionDeleterImpl<T2, D>(p, d)), _pointer(p) {}
@@ -153,8 +162,15 @@ public:
 		return *this;
 	}
 
-	ReferenceType operator*() const { assert(_pointer); return *_pointer; }
-	PointerType operator->() const { assert(_pointer); return _pointer; }
+	ReferenceType operator*() const {
+		assert(_pointer);
+		return *_pointer;
+	}
+
+	PointerType operator->() const {
+		assert(_pointer);
+		return _pointer;
+	}
 
 	/**
 	 * Returns the plain pointer value. Be sure you know what you
@@ -178,13 +194,13 @@ public:
 	bool unique() const { return refCount() == 1; }
 
 	/**
-	 * Resets the SharedPtr object to a NULL pointer.
+	 * Resets the SharedPtr object to a null pointer.
 	 */
 	void reset() {
 		decRef();
-		_deletion = 0;
-		_refCount = 0;
-		_pointer = 0;
+		_refCount = nullptr;
+		_deletion = nullptr;
+		_pointer = nullptr;
 	}
 
 	template<class T2>
@@ -211,9 +227,9 @@ private:
 			if (!*_refCount) {
 				delete _refCount;
 				delete _deletion;
-				_deletion = 0;
-				_refCount = 0;
-				_pointer = 0;
+				_refCount = nullptr;
+				_deletion = nullptr;
+				_pointer = nullptr;
 			}
 		}
 	}
@@ -223,17 +239,131 @@ private:
 	PointerType _pointer;
 };
 
-template<typename T>
-class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T> > {
+template<class T>
+class SharedPtr<T[]> : public SafeBool<SharedPtr<T[]> > {
+#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
+	template<class T2> friend class SharedPtr;
+#endif
+public:
+	typedef int RefValue;
+	typedef typename RemoveArray<T>::type ValueType;
+	typedef ValueType *PointerType;
+	typedef ValueType &ReferenceType;
+
+	SharedPtr() : _refCount(0), _deletion(nullptr), _pointer(nullptr) {}
+
+	template<class T2>
+	explicit SharedPtr(T2 p) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionImpl<typename RemovePointer<T2>::type[]>(p)), _pointer(p) {
+	}
+
+	template<class T2, class D>
+	SharedPtr(T2 *p, D d) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionDeleterImpl<T2, D>(p, d)), _pointer(p) {}
+
+	SharedPtr(const SharedPtr &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
+	template<class T2>
+	SharedPtr(const SharedPtr<T2> &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
+
+	~SharedPtr() { decRef(); }
+
+	SharedPtr &operator=(const SharedPtr &r) {
+		if (r._refCount)
+			++(*r._refCount);
+		decRef();
+
+		_refCount = r._refCount;
+		_deletion = r._deletion;
+		_pointer = r._pointer;
+
+		return *this;
+	}
+
+	template<class T2>
+	SharedPtr &operator=(const SharedPtr<T2> &r) {
+		if (r._refCount)
+			++(*r._refCount);
+		decRef();
+
+		_refCount = r._refCount;
+		_deletion = r._deletion;
+		_pointer = r._pointer;
+
+		return *this;
+	}
+
+	ReferenceType operator[](const int index) const { return _pointer[index]; }
+	PointerType get() const { return _pointer; }
+	bool operator_bool() const { return _pointer != nullptr; }
+	bool unique() const { return refCount() == 1; }
+	void reset() {
+		decRef();
+		_refCount = nullptr;
+		_deletion = nullptr;
+		_pointer = nullptr;
+	}
+
+	template<class T2>
+	bool operator==(const SharedPtr<T2> &r) const {
+		return _pointer == r.get();
+	}
+
+	template<class T2>
+	bool operator!=(const SharedPtr<T2> &r) const {
+		return _pointer != r.get();
+	}
+
+	RefValue refCount() const { return _refCount ? *_refCount : 0; }
+#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
+private:
+#endif
+	void decRef() {
+		if (_refCount) {
+			--(*_refCount);
+			if (!*_refCount) {
+				delete _refCount;
+				delete _deletion;
+				_refCount = nullptr;
+				_deletion = nullptr;
+				_pointer = nullptr;
+			}
+		}
+	}
+
+	RefValue *_refCount;
+	SharedPtrDeletionInternal *_deletion;
+	PointerType _pointer;
+};
+
+template <typename T>
+struct DefaultDeleter {
+	inline void operator()(T *object) {
+		STATIC_ASSERT(sizeof(T) > 0, cannot_delete_incomplete_type);
+		delete object;
+	}
+};
+template <typename T>
+struct DefaultDeleter<T[]> {
+	inline void operator()(T object[]) {
+		STATIC_ASSERT(sizeof(T) > 0, cannot_delete_incomplete_type);
+		delete[] object;
+	}
+};
+
+template<typename T, class D = DefaultDeleter<T> >
+class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T, D> > {
 public:
 	typedef T ValueType;
 	typedef T *PointerType;
 	typedef T &ReferenceType;
 
-	explicit ScopedPtr(PointerType o = 0) : _pointer(o) {}
+	explicit ScopedPtr(PointerType o = nullptr) : _pointer(o) {}
 
-	ReferenceType operator*() const { return *_pointer; }
-	PointerType operator->() const { return _pointer; }
+	ReferenceType operator*() const {
+		return *_pointer;
+	}
+
+	PointerType operator->() const {
+		return _pointer;
+	}
 
 	/**
 	 * Implicit conversion operator to bool for convenience, to make
@@ -242,14 +372,14 @@ public:
 	bool operator_bool() const { return _pointer != nullptr; }
 
 	~ScopedPtr() {
-		delete _pointer;
+		D()(_pointer);
 	}
 
 	/**
 	 * Resets the pointer with the new value. Old object will be destroyed
 	 */
-	void reset(PointerType o = 0) {
-		delete _pointer;
+	void reset(PointerType o = nullptr) {
+		D()(_pointer);
 		_pointer = o;
 	}
 
@@ -268,7 +398,7 @@ public:
 	 */
 	PointerType release() {
 		PointerType r = _pointer;
-		_pointer = 0;
+		_pointer = nullptr;
 		return r;
 	}
 
@@ -276,22 +406,55 @@ private:
 	PointerType _pointer;
 };
 
-
-template<typename T>
-class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T> > {
+// This code duplication only necessary because of C++98. C++11 allows default
+// arguments in function templates so can use SFINAE to remove specialised
+// member functions inside a single class definition.
+template<typename T, class D>
+class ScopedPtr<T[], D> : private NonCopyable, public SafeBool<ScopedPtr<T[], D> > {
 public:
-	typedef T  ValueType;
+	typedef T ValueType;
+	typedef T *PointerType;
+	typedef T &ReferenceType;
+
+	explicit ScopedPtr(PointerType o = nullptr) : _pointer(o) {}
+
+	ReferenceType operator[](const int index) const {
+		return _pointer[index];
+	}
+
+	bool operator_bool() const { return _pointer != nullptr; }
+	~ScopedPtr() { D()(_pointer); }
+	void reset(PointerType o = nullptr) { D()(_pointer); _pointer = o; }
+	PointerType get() const { return _pointer; }
+	PointerType release() {
+		PointerType r = _pointer;
+		_pointer = nullptr;
+		return r;
+	}
+private:
+	PointerType _pointer;
+};
+
+template<typename T, class D = DefaultDeleter<T> >
+class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T, D> > {
+public:
+	typedef T ValueType;
 	typedef T *PointerType;
 	typedef T &ReferenceType;
 
 	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose) {}
 
 	~DisposablePtr() {
-		if (_dispose) delete _pointer;
+		if (_dispose) D()(_pointer);
 	}
 
-	ReferenceType operator*() const { return *_pointer; }
-	PointerType operator->() const { return _pointer; }
+	ReferenceType operator*() const {
+		return *_pointer;
+	}
+
+	PointerType operator->() const {
+		return _pointer;
+	}
 
 	/**
 	 * Implicit conversion operator to bool for convenience, to make
@@ -304,6 +467,25 @@ public:
 	 *
 	 * @return the pointer the DisposablePtr manages
 	 */
+	PointerType get() const { return _pointer; }
+
+private:
+	PointerType           _pointer;
+	DisposeAfterUse::Flag _dispose;
+};
+
+template<typename T, class D>
+class DisposablePtr<T[], D> : private NonCopyable, public SafeBool<DisposablePtr<T[], D> > {
+public:
+	typedef T ValueType;
+	typedef T *PointerType;
+	typedef T &ReferenceType;
+
+	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose) {}
+
+	~DisposablePtr() { if (_dispose) D()(_pointer); }
+	ReferenceType operator[](const int index) const { return _pointer[index]; }
+	bool operator_bool() const { return _pointer != nullptr; }
 	PointerType get() const { return _pointer; }
 
 private:
