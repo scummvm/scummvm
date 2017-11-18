@@ -1988,14 +1988,6 @@ ModalSaveGame::ModalSaveGame() {
 
 ModalSaveGame::~ModalSaveGame() {
 	g_fp->_sceneRect = _rect;
-
-	_arrayD.clear();
-	_arrayL.clear();
-
-	for (uint i = 0; i < _files.size(); i++)
-		free(_files[i]);
-
-	_files.clear();
 }
 
 void ModalSaveGame::setScene(Scene *sc) {
@@ -2107,16 +2099,16 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 	int x = _bgr->_ox + _bgr->getDimensions().x / 2;
 	int y = _bgr->_oy + 90;
 	int w;
-	FileInfo *fileinfo;
 
+	_files.clear();
+	_files.resize(7);
 	for (int i = 0; i < 7; i++) {
-		fileinfo = new FileInfo;
-		memset(fileinfo, 0, sizeof(FileInfo));
+		FileInfo &fileinfo = _files[i];
 
-		Common::strlcpy(fileinfo->filename, getSavegameFile(i), 160);
+		Common::strlcpy(fileinfo.filename, getSavegameFile(i), sizeof(fileinfo.filename));
 
-		if (!getFileInfo(i, fileinfo)) {
-			fileinfo->empty = true;
+		if (!getFileInfo(i, &fileinfo)) {
+			fileinfo.empty = true;
 			w = _emptyD->getDimensions().x;
 		} else {
 			w = 0;
@@ -2126,14 +2118,11 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 			}
 		}
 
-		fileinfo->fx1 = x - w / 2;
-		fileinfo->fx2 = x + w / 2;
-		fileinfo->fy1 = y;
-		fileinfo->fy2 = y + _emptyD->getDimensions().y;
-
-		_files.push_back(fileinfo);
-
-		y = fileinfo->fy2 + 3;
+		fileinfo.fx1 = x - w / 2;
+		fileinfo.fx2 = x + w / 2;
+		fileinfo.fy1 = y;
+		fileinfo.fy2 = y + _emptyD->getDimensions().y;
+		y = fileinfo.fy2 + 3;
 	}
 }
 
@@ -2141,19 +2130,18 @@ char *ModalSaveGame::getSaveName() {
 	if (_queryRes < 0)
 		return 0;
 
-	return _files[_queryRes - 1]->filename;
+	return _files[_queryRes - 1].filename;
 }
 
 bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
-		Fullpipe::getSavegameFile(slot));
+	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
+		Fullpipe::getSavegameFile(slot)));
 
 	if (!f)
 		return false;
 
 	Fullpipe::FullpipeSavegameHeader header;
-	Fullpipe::readSavegameHeader(f, header);
-	delete f;
+	Fullpipe::readSavegameHeader(f.get(), header);
 
 	// Create the return descriptor
 	SaveStateDescriptor desc(slot, header.saveName);
@@ -2165,6 +2153,7 @@ bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 
 	for (int i = 0; i < 16; i++) {
 		switch (res[i]) {
+		case '-':
 		case '.':
 			fileinfo->date[i] = 11;
 			break;
@@ -2211,33 +2200,33 @@ void ModalSaveGame::update() {
 	g_fp->setCursor(g_fp->_cursorId);
 
 	for (uint i = 0; i < _files.size(); i++) {
-		if (g_fp->_mouseScreenPos.x < _files[i]->fx1 || g_fp->_mouseScreenPos.x > _files[i]->fx2 ||
-			g_fp->_mouseScreenPos.y < _files[i]->fy1 || g_fp->_mouseScreenPos.y > _files[i]->fy2 ) {
-			if (_files[i]->empty) {
-				_emptyD->setOXY(_files[i]->fx1, _files[i]->fy1);
+		if (g_fp->_mouseScreenPos.x < _files[i].fx1 || g_fp->_mouseScreenPos.x > _files[i].fx2 ||
+			g_fp->_mouseScreenPos.y < _files[i].fy1 || g_fp->_mouseScreenPos.y > _files[i].fy2 ) {
+			if (_files[i].empty) {
+				_emptyD->setOXY(_files[i].fx1, _files[i].fy1);
 				_emptyD->draw();
 			} else {
-				int x = _files[i]->fx1;
+				int x = _files[i].fx1;
 
 				for (int j = 0; j < 16; j++) {
-					_arrayL[_files[i]->date[j]]->setOXY(x + 1, _files[i]->fy1);
-					_arrayL[_files[i]->date[j]]->draw();
+					_arrayL[_files[i].date[j]]->setOXY(x + 1, _files[i].fy1);
+					_arrayL[_files[i].date[j]]->draw();
 
-					x += _arrayL[_files[i]->date[j]]->getDimensions().x + 2;
+					x += _arrayL[_files[i].date[j]]->getDimensions().x + 2;
 				}
 			}
 		} else {
-			if (_files[i]->empty) {
-				_emptyL->setOXY(_files[i]->fx1, _files[i]->fy1);
+			if (_files[i].empty) {
+				_emptyL->setOXY(_files[i].fx1, _files[i].fy1);
 				_emptyL->draw();
 			} else {
-				int x = _files[i]->fx1;
+				int x = _files[i].fx1;
 
 				for (int j = 0; j < 16; j++) {
-					_arrayD[_files[i]->date[j]]->setOXY(x + 1, _files[i]->fy1);
-					_arrayD[_files[i]->date[j]]->draw();
+					_arrayD[_files[i].date[j]]->setOXY(x + 1, _files[i].fy1);
+					_arrayD[_files[i].date[j]]->draw();
 
-					x += _arrayD[_files[i]->date[j]]->getDimensions().x + 2;
+					x += _arrayD[_files[i].date[j]]->getDimensions().x + 2;
 				}
 			}
 		}
@@ -2262,11 +2251,11 @@ bool ModalSaveGame::handleMessage(ExCommand *cmd) {
 
 void ModalSaveGame::processMouse(int x, int y) {
 	for (uint i = 0; i < _files.size(); i++) {
-		if (x >= _files[i]->fx1 && x <= _files[i]->fx2 && y >= _files[i]->fy1 && y <= _files[i]->fy2) {
+		if (x >= _files[i].fx1 && x <= _files[i].fx2 && y >= _files[i].fy1 && y <= _files[i].fy2) {
 			_queryRes = i + 1;
 
 			if (_mode) {
-				if (!_files[i]->empty) {
+				if (!_files[i].empty) {
 					_queryDlg = new ModalQuery;
 
 					_queryDlg->create(_menuScene, 0, PIC_MOV_BGR);
