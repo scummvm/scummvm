@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-15 00:50+0100\n"
-"PO-Revision-Date: 2017-11-18 09:31+0000\n"
+"PO-Revision-Date: 2017-11-18 10:07+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
@@ -827,7 +827,7 @@ msgstr "nastavení filtrování nemohlo být zmìnìno"
 
 #: gui/options.cpp:932
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Zobrazit ovládání na obrazovce"
 
 #: gui/options.cpp:936
 msgid "Touchpad mouse mode"
@@ -835,7 +835,7 @@ msgstr "Re¾im Touchpad my¹i"
 
 #: gui/options.cpp:940
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Zamìnit tlaèítka Menu a Zpìt"
 
 #: gui/options.cpp:945
 msgid "Pointer Speed:"
@@ -843,7 +843,7 @@ msgstr "Rychlost ukazatele:"
 
 #: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Rychlost ovládání ukazatele my¹i pomocí klávesnice/joysticku"
 
 #: gui/options.cpp:947
 msgctxt "lowres"
@@ -856,7 +856,7 @@ msgstr ""
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "Mrtvá zóna analogového joysticku"
 
 #: gui/options.cpp:960
 msgctxt "lowres"
@@ -878,7 +878,7 @@ msgstr ""
 
 #: gui/options.cpp:977
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Ka¾dý shader vytváøí rùzné vizuální efekty"
 
 #: gui/options.cpp:994
 msgid "Graphics mode:"
