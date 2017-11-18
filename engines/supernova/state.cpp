@@ -325,6 +325,7 @@ void GameManager::initState() {
 	_processInput = false;
 	_guiEnabled = true;
 	_animationEnabled = true;
+	_roomBrightness = 255;
 	_mouseClicked = false;
 	_keyPressed = false;
 	_mouseX = -1;
@@ -832,7 +833,6 @@ void GameManager::supernovaEvent() {
 			_rooms[MEETUP2]->removeSentence(0, 1);
 		}
 		_rooms[MEETUP2]->removeSentence(1, 1);
-		_vm->paletteFadeIn();
 	}
 	_rooms[AIRLOCK]->getObject(4)->setProperty(WORN);
 	_rooms[AIRLOCK]->getObject(5)->setProperty(WORN);
@@ -1048,7 +1048,12 @@ void GameManager::mousePosDialog(int x, int y) {
 }
 
 void GameManager::turnOff() {
+	if (_state._powerOff)
+		return;
+
 	_state._powerOff = true;
+	roomBrightness();
+	_vm->paletteBrightness();
 }
 
 void GameManager::turnOn() {
@@ -1191,18 +1196,19 @@ void GameManager::mouseInput3() {
 }
 
 void GameManager::roomBrightness() {
-	_vm->_brightness = 255;
+	_roomBrightness = 255;
 	if ((_currentRoom->getId() != OUTSIDE) && (_currentRoom->getId() < ROCKS) ) {
 		if (_state._powerOff)
-			_vm->_brightness = 153;
+			_roomBrightness = 153;
 	} else if (_currentRoom->getId() == CAVE) {
-		_vm->_brightness = 0;
+		_roomBrightness = 0;
 	} else if (_currentRoom->getId() == GUARD3) {
 		if (_state._powerOff)
-			_vm->_brightness = 0;
+			_roomBrightness = 0;
 	}
 
-	_vm->paletteBrightness();
+	if (_vm->_brightness != 0)
+		_vm->_brightness = _roomBrightness;
 }
 
 void GameManager::changeRoom(RoomID id) {
@@ -1613,6 +1619,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		getInput();
 		_vm->renderRoom(*_currentRoom);
 		roomBrightness();
+		_vm->paletteBrightness();
 		_vm->renderMessage(kStringGenericInteract_12);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KEYCARD2)) {
 		_vm->renderMessage(obj1._description);
@@ -1930,7 +1937,13 @@ void GameManager::executeRoom() {
 		drawStatus();
 		drawCommandBox();
 	}
+
 	roomBrightness();
+	if (_vm->_brightness == 0)
+		_vm->paletteFadeIn();
+	else
+		_vm->paletteBrightness();
+
 	if (!_currentRoom->hasSeen())
 		_currentRoom->onEntrance();
 }

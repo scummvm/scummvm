@@ -119,6 +119,7 @@ public:
 	bool _processInput;
 	bool _guiEnabled;
 	bool _animationEnabled;
+	byte _roomBrightness;
 	Action _inputVerb;
 	Object *_currentInputObject;
 	Object *_inputObject[2];
