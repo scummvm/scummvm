@@ -247,7 +247,7 @@ void DefaultEventManager::handleKeyRepeat() {
 		}
 	} else {
 		// Check if event should be sent again (keydown)
-		if (_currentKeyDown.keycode != Common::KEYCODE_INVALID && _keyRepeatTime < time) {
+		if (_currentKeyDown.keycode != Common::KEYCODE_INVALID && _keyRepeatTime <= time) {
 			// fire event
 			Common::Event repeatEvent;
 			repeatEvent.type = Common::EVENT_KEYDOWN;
