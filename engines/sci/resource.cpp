@@ -1805,7 +1805,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 				}
 			}
 
-			addResource(resId, source, offset & (((~bMask) << 24) | 0xFFFFFF), 0, map->getLocationName());
+			addResource(resId, source, offset & ((((byte)~bMask) << 24) | 0xFFFFFF), 0, map->getLocationName());
 		}
 	} while (!fileStream->eos());
 

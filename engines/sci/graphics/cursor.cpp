@@ -113,7 +113,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	byte colorMapping[4];
 	int16 x, y;
 	byte color;
-	int16 maskA, maskB;
+	uint16 maskA, maskB;
 	byte *pOut;
 	int16 heightWidth;
 
