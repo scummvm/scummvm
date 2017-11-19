@@ -106,22 +106,19 @@ void ASpit::xaatrusbookprevpage(const ArgumentArray &args) {
 	uint32 &page = _vm->_vars["aatrusbook"];
 
 	// Keep turning pages while the mouse is pressed
-	bool firstPageTurn = true;
-	while (mouseIsDown() || firstPageTurn) {
+	while (keepTurningPages()) {
 		// Check for the first page
 		if (page == 1)
 			return;
 
-		if (!pageTurn(kRivenTransitionWipeRight)) {
-			return;
-		}
-
 		// Update the page number
 		page--;
-		firstPageTurn = false;
 
+		pageTurn(kRivenTransitionWipeRight);
 		_vm->getCard()->drawPicture(page);
 		_vm->doFrame();
+
+		waitForPageTurnSound();
 	}
 }
 
@@ -130,22 +127,20 @@ void ASpit::xaatrusbooknextpage(const ArgumentArray &args) {
 	uint32 &page = _vm->_vars["aatrusbook"];
 
 	// Keep turning pages while the mouse is pressed
-	bool firstPageTurn = true;
-	while ((mouseIsDown() || firstPageTurn) && !_vm->hasGameEnded()) {
+	while (keepTurningPages()) {
 		// Check for the last page
 		if (((_vm->getFeatures() & GF_DEMO) && page == 6) || page == 10)
 			return;
 
-		if (!pageTurn(kRivenTransitionWipeLeft)) {
-			return;
-		}
-
 		// Update the page number
 		page++;
-		firstPageTurn = false;
 
+		pageTurn(kRivenTransitionWipeLeft);
 		_vm->getCard()->drawPicture(page);
 		_vm->doFrame();
+
+		// Wait until the previous page turn sound completes
+		waitForPageTurnSound();
 	}
 }
 
@@ -210,23 +205,19 @@ void ASpit::xacathbookprevpage(const ArgumentArray &args) {
 	uint32 &page = _vm->_vars["acathbook"];
 
 	// Keep turning pages while the mouse is pressed
-	bool firstPageTurn = true;
-	while (mouseIsDown() || firstPageTurn) {
+	while (keepTurningPages()) {
 		// Check for the first page
 		if (page == 1)
 			return;
 
-		if (!pageTurn(kRivenTransitionWipeDown)) {
-			return;
-		}
-
 		// Update the page number
 		page--;
-		firstPageTurn = false;
 
+		pageTurn(kRivenTransitionWipeDown);
 		cathBookDrawPage(page);
-
 		_vm->doFrame();
+
+		waitForPageTurnSound();
 	}
 }
 
@@ -235,23 +226,19 @@ void ASpit::xacathbooknextpage(const ArgumentArray &args) {
 	uint32 &page = _vm->_vars["acathbook"];
 
 	// Keep turning pages while the mouse is pressed
-	bool firstPageTurn = true;
-	while ((mouseIsDown() || firstPageTurn) && !_vm->hasGameEnded()) {
+	while (keepTurningPages()) {
 		// Check for the last page
 		if (page == 49)
 			return;
 
-		if (!pageTurn(kRivenTransitionWipeUp)) {
-			return;
-		}
-
 		// Update the page number
 		page++;
-		firstPageTurn = false;
 
+		pageTurn(kRivenTransitionWipeUp);
 		cathBookDrawPage(page);
-
 		_vm->doFrame();
+
+		waitForPageTurnSound();
 	}
 }
 

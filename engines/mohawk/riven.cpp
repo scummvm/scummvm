@@ -203,8 +203,11 @@ void MohawkEngine_Riven::doFrame() {
 	_sound->updateSLST();
 	_video->updateMovies();
 
-	Common::Event event;
+	if (!_scriptMan->hasQueuedScripts()) {
+		_stack->keyResetAction();
+	}
 
+	Common::Event event;
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:

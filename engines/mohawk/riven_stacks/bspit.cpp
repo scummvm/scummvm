@@ -96,20 +96,15 @@ void BSpit::xblabbookprevpage(const ArgumentArray &args) {
 	uint32 &page = _vm->_vars["blabpage"];
 
 	// Keep turning pages while the mouse is pressed
-	bool firstPageTurn = true;
-	while (mouseIsDown() || firstPageTurn) {
+	while (keepTurningPages()) {
 		// Check for the first page
 		if (page == 1)
 			return;
 
-		if (!pageTurn(kRivenTransitionWipeRight)) {
-			return;
-		}
-
 		// Update the page number
 		page--;
-		firstPageTurn = false;
 
+		pageTurn(kRivenTransitionWipeRight);
 		_vm->getCard()->drawPicture(page);
 
 		if (page == 14) {
@@ -117,6 +112,8 @@ void BSpit::xblabbookprevpage(const ArgumentArray &args) {
 		}
 
 		_vm->doFrame();
+
+		waitForPageTurnSound();
 	}
 }
 
@@ -125,20 +122,15 @@ void BSpit::xblabbooknextpage(const ArgumentArray &args) {
 	uint32 &page = _vm->_vars["blabpage"];
 
 	// Keep turning pages while the mouse is pressed
-	bool firstPageTurn = true;
-	while ((mouseIsDown() || firstPageTurn) && !_vm->hasGameEnded()) {
+	while (keepTurningPages()) {
 		// Check for the last page
 		if (page == 22)
 			return;
 
-		if (!pageTurn(kRivenTransitionWipeLeft)) {
-			return;
-		}
-
 		// Update the page number
 		page++;
-		firstPageTurn = false;
 
+		pageTurn(kRivenTransitionWipeLeft);
 		_vm->getCard()->drawPicture(page);
 
 		if (page == 14) {
@@ -146,6 +138,8 @@ void BSpit::xblabbooknextpage(const ArgumentArray &args) {
 		}
 
 		_vm->doFrame();
+
+		waitForPageTurnSound();
 	}
 }
 

@@ -30,6 +30,7 @@
 #include "common/str-array.h"
 
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_stack.h"
 
 namespace Mohawk {
 
@@ -182,7 +183,10 @@ public:
 	void runDemoBoundaryDialog();
 	void runEndGame(uint16 videoCode, uint32 delay);
 	void runCredits(uint16 video, uint32 delay);
-	bool pageTurn(RivenTransition transition);
+
+	void pageTurn(RivenTransition transition);
+	bool keepTurningPages();
+	void waitForPageTurnSound();
 
 protected:
 	typedef Common::Functor1<const ArgumentArray &, void> ExternalCommand;

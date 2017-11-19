@@ -72,6 +72,7 @@ private:
 	void cathBookDrawTelescopeCombination();
 
 	void cathBookDrawPage(uint32 page);
+
 };
 
 } // End of namespace RivenStacks
