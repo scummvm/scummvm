@@ -412,8 +412,10 @@ bool Scripts::cmdNPC(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 
 	if (TownMessage::show(_vm, params[2], _message, map._events._text[params[1]],
-			params[3]))
-		_lineNum = params[4] - 1;
+			params[3])) {
+		_lineNum = params[4];
+		return false;
+	}
 
 	return true;
 }
@@ -528,8 +530,10 @@ bool Scripts::cmdIf(Common::Array<byte> &params) {
 		}
 	}
 
-	if (result)
-		_lineNum = newLineNum - 1;
+	if (result) {
+		_lineNum = newLineNum;
+		return false;
+	}
 
 	return true;
 }
@@ -863,8 +867,10 @@ bool Scripts::cmdGiveExtended(Common::Array<byte> &params) {
 		}
 	}
 
-	if (result)
-		_lineNum = newLineNum - 1;
+	if (result) {
+		_lineNum = newLineNum;
+		return false;
+	}
 
 	return true;
 }
@@ -938,8 +944,10 @@ bool Scripts::cmdDamage(Common::Array<byte> &params) {
 
 bool Scripts::cmdJumpRnd(Common::Array<byte> &params) {
 	int v = _vm->getRandomNumber(1, params[0]);
-	if (v == params[1])
-		_lineNum = params[2] - 1;
+	if (v == params[1]) {
+		_lineNum = params[2];
+		return false;
+	}
 
 	return true;
 }
@@ -963,9 +971,9 @@ bool Scripts::cmdAlterEvent(Common::Array<byte> &params) {
 bool Scripts::cmdCallEvent(Common::Array<byte> &params) {
 	_stack.push(StackEntry(_currentPos, _lineNum));
 	_currentPos = Common::Point(params[0], params[1]);
-	_lineNum = params[2] - 1;
+	_lineNum = params[2];
 
-	return true;
+	return false;
 }
 
 bool Scripts::cmdReturn(Common::Array<byte> &params) {
@@ -1116,7 +1124,8 @@ bool Scripts::cmdIfMapFlag(Common::Array<byte> &params) {
 	MazeMonster &monster = map._mobData._monsters[params[0]];
 
 	if (monster._position.x >= 32 || monster._position.y >= 32) {
-		_lineNum = params[1] - 1;
+		_lineNum = params[1];
+		return false;
 	}
 
 	return true;
@@ -1220,7 +1229,8 @@ bool Scripts::cmdCheckProtection(Common::Array<byte> &params) {
 bool Scripts::cmdChooseNumeric(Common::Array<byte> &params) {
 	int choice = Choose123::show(_vm, params[0]);
 	if (choice) {
-		_lineNum = params[choice] - 1;
+		_lineNum = params[choice];
+		return false;
 	}
 
 	return true;
@@ -1282,15 +1292,17 @@ bool Scripts::cmdDisplayMain(Common::Array<byte> &params) {
 bool Scripts::cmdGoto(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 	map.getCell(1);
-	if (params[0] == map._currentSurfaceId)
-		_lineNum = params[1] - 1;
+	if (params[0] == map._currentSurfaceId) {
+		_lineNum = params[1];
+		return false;
+	}
 
 	return true;
 }
 
 bool Scripts::cmdGotoRandom(Common::Array<byte> &params) {
-	_lineNum = params[_vm->getRandomNumber(1, params[0])] - 1;
-	return true;
+	_lineNum = params[_vm->getRandomNumber(1, params[0])];
+	return false;
 }
 
 bool Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) {
