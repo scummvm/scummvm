@@ -79,6 +79,7 @@ install -m644 -D dists/engine-data/queen.tbl %{buildroot}%{_datadir}/scummvm/que
 install -m644 -D dists/engine-data/sky.cpt %{buildroot}%{_datadir}/scummvm/sky.cpt
 install -m644 -D dists/engine-data/drascula.dat %{buildroot}%{_datadir}/scummvm/drascula.dat
 install -m644 -D dists/engine-data/teenagent.dat %{buildroot}%{_datadir}/scummvm/teenagent.dat
+install -m644 -D dists/engine-data/titanic.dat %{buildroot}%{_datadir}/scummvm/titanic.dat
 install -m644 -D dists/engine-data/hugo.dat %{buildroot}%{_datadir}/scummvm/hugo.dat
 install -m644 -D dists/engine-data/tony.dat %{buildroot}%{_datadir}/scummvm/tony.dat
 install -m644 -D dists/engine-data/toon.dat %{buildroot}%{_datadir}/scummvm/toon.dat
@@ -123,6 +124,7 @@ fi
 %{_datadir}/scummvm/lure.dat
 %{_datadir}/scummvm/drascula.dat
 %{_datadir}/scummvm/teenagent.dat
+%{_datadir}/scummvm/titanic.dat
 %{_datadir}/scummvm/hugo.dat
 %{_datadir}/scummvm/tony.dat
 %{_datadir}/scummvm/toon.dat
