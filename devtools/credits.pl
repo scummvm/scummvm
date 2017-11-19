@@ -1058,6 +1058,10 @@ begin_credits("Credits");
 				add_person("Paul Smedley", "Creeping", "");
 			end_section();
 
+			begin_section("RISC OS");
+				add_person("Cameron Cawley", "ccawley2011", "");
+			end_section();
+
 			begin_section("SlackWare");
 				add_person("Robert Kelsen", "", "");
 			end_section();
