@@ -1225,7 +1225,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 			name.c_str(), msgText.c_str());
 
 		// Count the number of words
-		const char *msgEnd = w.writeString(msg.c_str());
+		const char *msgEnd = w.writeString(msg);
 		int wordCount = 0;
 
 		for (const char *msgP = msg.c_str(); msgP != msgEnd && *msgP; ++msgP) {
