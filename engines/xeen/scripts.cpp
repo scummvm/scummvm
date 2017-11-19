@@ -539,11 +539,9 @@ void Scripts::cmdMoveObj(Common::Array<byte> &params) {
 void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	int mode1, mode2, mode3;
+	int mode1, mode2, mode3, param2;
 	uint32 mask1, mask2, mask3;
 	byte *extraP;
-	// TODO: See if this needs to maintain values set in other opcodes
-	int param2 = 0;
 
 	mode1 = params[0];
 	switch (mode1) {
@@ -562,11 +560,11 @@ void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 		break;
 	default:
 		mask1 = params[1];
-		extraP = &params[2];
+		extraP = &params[9];
 		break;
 	}
 
-	mode2 = *extraP++;
+	param2 = mode2 = *extraP++;
 	switch (mode2) {
 	case 16:
 	case 34:
@@ -605,7 +603,7 @@ void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 		break;
 	}
 
-	if (mode2)
+	if (mode2 == 67)
 		screen.closeWindows();
 
 	switch (_event->_opcode) {
