@@ -160,7 +160,7 @@ int Scripts::checkEvents() {
 
 			_eventSkipped = false;
 			uint eventIndex;
-			for (eventIndex = 0; eventIndex < map._events.size(); ++eventIndex) {
+			for (eventIndex = 0; eventIndex < map._events.size() && !_vm->shouldQuit(); ++eventIndex) {
 				MazeEvent &event = map._events[eventIndex];
 
 				if (event._position == _currentPos && party._mazeDirection !=
@@ -321,7 +321,7 @@ typedef void(Scripts::*ScriptMethodPtr)(Common::Array<byte> &);
 
 void Scripts::doOpcode(MazeEvent &event) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
-		nullptr, &Scripts::cmdDisplay1, &Scripts::cmdDoorTextSml,
+		&Scripts::cmdNoAction, &Scripts::cmdDisplay1, &Scripts::cmdDoorTextSml,
 		&Scripts::cmdDoorTextLrg, &Scripts::cmdSignText,
 		&Scripts::cmdNPC, &Scripts::cmdPlayFX, &Scripts::cmdTeleport,
 		&Scripts::cmdIf, &Scripts::cmdIf, &Scripts::cmdIf,
