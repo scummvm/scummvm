@@ -758,7 +758,6 @@ void ShipSleepCabin::onEntrance() {
 		_vm->renderMessage(kStringShipSleepCabin16);
 		_gm->_state._dream = false;
 	}
-	setRoomSeen(true);
 }
 
 bool ShipCockpit::interact(Action verb, Object &obj1, Object &obj2) {
