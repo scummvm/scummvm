@@ -618,7 +618,7 @@ bool DrasculaEngine::room_22(int fl) {
 		finishSound();
 		selectVerb(kVerbNone);
 		removeObject(22);
-		updateVisible();
+		updateVisible();	// sets visible[2] to 0 and visible[1] to 1
 		trackProtagonist = 3;
 		talk(499);
 		talk(500);
@@ -825,7 +825,7 @@ bool DrasculaEngine::room_35(int fl) {
 		visible[1] = 0;
 		flags[15] = 1;
 		flags[17] = 1;
-		updateVisible();
+		updateVisible();	// sets visible[1] to 0 and visible[3] to 1
 	} else if (pickedObject == kVerbPick && fl == 149) {
 		pickObject(13);
 		visible[3] = 0;
@@ -872,7 +872,7 @@ bool DrasculaEngine::room_53(int fl) {
 	} else if (pickedObject == 16 && fl == 121) {
 		flags[2] = 1;
 		selectVerb(kVerbNone);
-		updateVisible();
+		updateVisible();	// sets visible[3] to 0
 		pickedObject = kVerbMove;
 	} else if (pickedObject == 16) {
 		// Wall plug in chapter 5
@@ -906,7 +906,7 @@ bool DrasculaEngine::room_54(int fl) {
 		pickObject(8);
 		flags[13] = 1;
 		talk_mus(10);
-		updateVisible();
+		updateVisible();	// sets visible[3] to 0
 	} else if (pickedObject == 10 && fl == 119) {
 		pause(4);
 		talk(436);
@@ -922,7 +922,7 @@ bool DrasculaEngine::room_55(int fl) {
 	if (pickedObject == kVerbPick && fl == 122) {
 		pickObject(12);
 		flags[8] = 1;
-		updateVisible();
+		updateVisible();	// sets visible[1] to 0
 	} else if (fl == 206) {
 		playSound(11);
 		animate("det.bin", 17);
@@ -947,7 +947,7 @@ bool DrasculaEngine::room_56(int fl) {
 bool DrasculaEngine::room_58(int fl) {
 	if (pickedObject == kVerbMove && fl == 103) {
 		flags[8] = 1;
-		updateVisible();
+		updateVisible();	// sets isDoor[1] to 1
 	} else {
 		hasAnswer = 0;
 	}

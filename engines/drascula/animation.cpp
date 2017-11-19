@@ -1293,7 +1293,7 @@ void DrasculaEngine::animation_5_5(){
 	}
 
 	flags[6] = 1;
-	updateVisible();
+	updateVisible();	// sets visible[1] to 1 and visible[2] to 0
 	pause(12);
 
 	loadPic(96, frontSurface);
