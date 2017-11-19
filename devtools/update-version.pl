@@ -50,6 +50,7 @@ my @subs_files = qw(
 	dists/openpandora/index.html
 	dists/gph/README-GPH
 	dists/gph/scummvm.ini
+	dists/riscos/!Boot,feb
 	backends/platform/psp/README.PSP
 	);
 
