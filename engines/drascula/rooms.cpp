@@ -1665,9 +1665,9 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	char fileName[20];
 	sprintf(fileName, "%d.ald", roomIndex);
-	int soc, l, martin = 0, objIsExit = 0;
+	int soc, l, overridenWidth = 0, objIsExit = 0;
 	float chiquez = 0, pequegnez = 0;
-	char pant1[20], pant2[20], pant3[20], pant4[20];
+	char surfaceName[20];
 	int palLevel = 0;
 
 	_hasName = false;
@@ -1685,22 +1685,42 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	p.parseString(roomDisk);
 	p.parseInt(palLevel);
 
-	if (currentChapter == 2)
-		p.parseInt(martin);
+	if (currentChapter == 2) {
+		p.parseInt(overridenWidth);
 
-	if (currentChapter == 2 && martin != 0) {
-		curWidth = martin;
-		p.parseInt(curHeight);
-		p.parseInt(feetHeight);
-		p.parseInt(stepX);
-		p.parseInt(stepY);
+		if (overridenWidth != 0) {
+			curWidth = overridenWidth;
+			p.parseInt(curHeight);
+			p.parseInt(feetHeight);
+			p.parseInt(stepX);
+			p.parseInt(stepY);
 
-		p.parseString(pant1);
-		p.parseString(pant2);
-		p.parseString(pant3);
-		p.parseString(pant4);
+			p.parseString(surfaceName);
+			loadPic(surfaceName, frontSurface);
 
-		strcpy(menuBackground, pant4);
+			p.parseString(surfaceName);
+			loadPic(surfaceName, extraSurface);
+
+			p.parseString(surfaceName);
+			// unused
+
+			p.parseString(surfaceName);
+			loadPic(surfaceName, backSurface);
+
+			strcpy(menuBackground, surfaceName);
+		} else {
+			curWidth = CHARACTER_WIDTH;
+			curHeight = CHARACTER_HEIGHT;
+			feetHeight = FEET_HEIGHT;
+			stepX = STEP_X;
+			stepY = STEP_Y;
+
+			loadPic(97, extraSurface);
+			loadPic(96, frontSurface);
+			loadPic(99, backSurface);
+
+			strcpy(menuBackground, "99.alg");
+		}
 	}
 
 	p.parseInt(numRoomObjs);
@@ -1744,27 +1764,6 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	}
 	// no need to delete the stream, since TextResourceParser takes ownership
 	// delete stream;
-
-	if (currentChapter == 2 && martin != 0) {
-		loadPic(pant2, extraSurface);
-		loadPic(pant1, frontSurface);
-		loadPic(pant4, backSurface);
-	}
-
-	if (currentChapter == 2) {
-		if (martin == 0) {
-			stepX = STEP_X;
-			stepY = STEP_Y;
-			curHeight = CHARACTER_HEIGHT;
-			curWidth = CHARACTER_WIDTH;
-			feetHeight = FEET_HEIGHT;
-			loadPic(97, extraSurface);
-			loadPic(96, frontSurface);
-			loadPic(99, backSurface);
-
-			strcpy(menuBackground, "99.alg");
-		}
-	}
 
 	for (l = 0; l < numRoomObjs; l++) {
 		if (objectNum[l] == objExit)
