@@ -1812,7 +1812,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			}
 		}
 	} else if ((verb == ACTION_WALK) && (obj1._id == BATHROOM_DOOR)) {
-//		*bathroom = current_room;
+		_rooms[BATHROOM]->getObject(2)->_exitRoom = _currentRoom->getId();
 		return false;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, WIRE, SOCKET))
 		_vm->renderMessage(kStringGenericInteract_30);
