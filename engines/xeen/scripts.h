@@ -77,7 +77,7 @@ enum Opcode {
 	OP_PlayEventVoc = 0x28,
 	OP_DisplayBottom = 0x29,
 	OP_IfMapFlag	= 0x2A,
-	OP_SelRndChar	= 0x2B,
+	OP_SelectRandomChar = 0x2B,
 	OP_GiveEnchanted= 0x2C,
 	OP_ItemType		= 0x2D,
 	OP_MakeNothingHere = 0x2E,
@@ -282,26 +282,96 @@ private:
 	 * called the script
 	 */
 	bool cmdReturn(Common::Array<byte> &params);
+
+	/**
+	 * Sets variables on characters like race, sex, and class
+	 */
 	bool cmdSetVar(Common::Array<byte> &params);
+
+	/**
+	 * Play the Clouds endgame
+	 */
 	bool cmdCutsceneEndClouds(Common::Array<byte> &params);
+
+	/**
+	 * Prompts the user for which character will do an action
+	 */
 	bool cmdWhoWill(Common::Array<byte> &params);
+
+	/**
+	 * Deals a random amount of damage to a character
+	 */
 	bool cmdRndDamage(Common::Array<byte> &params);
+
+	/**
+	 * Moves the wall object to the given coordinates. Doesn't change it's orientation.
+	 * Wall objects are only visible when viewed straight on, and were never intended
+	 * to be anywhere but on squares directly facing walls
+	 */
 	bool cmdMoveWallObj(Common::Array<byte> &params);
+
+	/**
+	 * Sets the cell flag at the specified X/Y coordinate on the current map
+	 */
 	bool cmdAlterCellFlag(Common::Array<byte> &params);
+
+	/**
+	 * Sets the word value at the current X/Y location in the HED file
+	 * in memory to the given two bytes
+	 */
 	bool cmdAlterHed(Common::Array<byte> &params);
+
+	/**
+	 * Displays a text string which includes some stat of the currently selected character
+	 */
 	bool cmdDisplayStat(Common::Array<byte> &params);
-	bool cmdSeatTextSml(Common::Array<byte> &params);
+
+	/**
+	 * Displays text in the scene window for various objects
+	 * the user interacts with
+	 */
+	bool cmdSignTextSml(Common::Array<byte> &params);
+
+	/**
+	 * An array of six VOC filenames are hard-coded into the game executable file.
+	 * This function plays the VOC file at the specified index in this array
+	 */
 	bool cmdPlayEventVoc(Common::Array<byte> &params);
+
+	/**
+	 * Displays a large text message across the bottom of the screen
+	 */
 	bool cmdDisplayBottom(Common::Array<byte> &params);
+
+	/**
+	 * Checks if a given map flag/monster has been set, and if so
+	 * jumps to a given line
+	 */
 	bool cmdIfMapFlag(Common::Array<byte> &params);
-	bool cmdSelRndChar(Common::Array<byte> &params);
+
+	/**
+	 * Selects a random character for further other actions
+	 */
+	bool cmdSelectRandomChar(Common::Array<byte> &params);
+
+	/**
+	 * Gives an enchanted item to a character
+	 */
 	bool cmdGiveEnchanted(Common::Array<byte> &params);
+
+	/**
+	 * Sets the item category for used in character operations
+	 */
 	bool cmdItemType(Common::Array<byte> &params);
 
 	/**
 	 * Disable all the scripts at the party's current position
 	 */
 	bool cmdMakeNothingHere(Common::Array<byte> &params);
+
+	/**
+	 * Does a copy protection check
+	 */
 	bool cmdCheckProtection(Common::Array<byte> &params);
 
 	/**
@@ -309,14 +379,30 @@ private:
 	 * those options, jumps to whichever line for the option the user selects
 	 */
 	bool cmdChooseNumeric(Common::Array<byte> &params);
+
+	/**
+	 * Displays a two line message at the bottom of the screen
+	 */
 	bool cmdDisplayBottomTwoLines(Common::Array<byte> &params);
+
+	/**
+	 * Displays a message
+	 */
 	bool cmdDisplayLarge(Common::Array<byte> &params);
 
 	/**
 	 * Exchange the positions of two objects in the maze
 	 */
 	bool cmdExchObj(Common::Array<byte> &params);
+
+	/**
+	 * Handles making the player fall down to the ground
+	 */
 	bool cmdFallToMap(Common::Array<byte> &params);
+
+	/**
+	 * Displays a message
+	 */
 	bool cmdDisplayMain(Common::Array<byte> &params);
 
 	/**
@@ -330,9 +416,25 @@ private:
 	 * Pick a random value from the parameter list and jump to that line number
 	 */
 	bool cmdGotoRandom(Common::Array<byte> &params);
+
+	/**
+	 * Plays the Dark Side of Xeen ending
+	 */
 	bool cmdCutsceneEndDarkside(Common::Array<byte> &params);
-	bool cmdCutsceneEdWorld(Common::Array<byte> &params);
+
+	/**
+	 * Plays the World of Xeen ending
+	 */
+	bool cmdCutsceneEndWorld(Common::Array<byte> &params);
+
+	/**
+	 * Switches the player between the Clouds and Dark Side
+	 */
 	bool cmdFlipWorld(Common::Array<byte> &params);
+
+	/**
+	 * Plays a CD track
+	 */
 	bool cmdPlayCD(Common::Array<byte> &params);
 
 	int whoWill(int v1, int v2, int v3);
@@ -350,8 +452,14 @@ private:
 	 */
 	bool ifProc(int action, uint32 mask, int mode, int charIndex);
 
+	/**
+	 * Prompts the user for a copy protection check
+	 */
 	bool copyProtectionCheck();
 
+	/**
+	 * Displays a message
+	 */
 	void display(bool justifyFlag, int var46);
 public:
 	int _animCounter;

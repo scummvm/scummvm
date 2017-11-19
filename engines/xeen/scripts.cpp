@@ -335,14 +335,14 @@ bool Scripts::doOpcode(MazeEvent &event) {
 		&Scripts::cmdTeleport, &Scripts::cmdWhoWill,
 		&Scripts::cmdRndDamage, &Scripts::cmdMoveWallObj, &Scripts::cmdAlterCellFlag,
 		&Scripts::cmdAlterHed, &Scripts::cmdDisplayStat, &Scripts::cmdTakeOrGive,
-		&Scripts::cmdSeatTextSml, &Scripts::cmdPlayEventVoc, &Scripts::cmdDisplayBottom,
-		&Scripts::cmdIfMapFlag, &Scripts::cmdSelRndChar, &Scripts::cmdGiveEnchanted,
+		&Scripts::cmdSignTextSml, &Scripts::cmdPlayEventVoc, &Scripts::cmdDisplayBottom,
+		&Scripts::cmdIfMapFlag, &Scripts::cmdSelectRandomChar, &Scripts::cmdGiveEnchanted,
 		&Scripts::cmdItemType, &Scripts::cmdMakeNothingHere, &Scripts::cmdCheckProtection,
 		&Scripts::cmdChooseNumeric, &Scripts::cmdDisplayBottomTwoLines,
 		&Scripts::cmdDisplayLarge, &Scripts::cmdExchObj, &Scripts::cmdFallToMap,
 		&Scripts::cmdDisplayMain, &Scripts::cmdGoto, &Scripts::cmdConfirmEnding,
 		&Scripts::cmdGotoRandom, &Scripts::cmdCutsceneEndDarkside,
-		&Scripts::cmdCutsceneEdWorld, &Scripts::cmdFlipWorld, &Scripts::cmdPlayCD
+		&Scripts::cmdCutsceneEndWorld, &Scripts::cmdFlipWorld, &Scripts::cmdPlayCD
 	};
 
 	_event = &event;
@@ -1085,7 +1085,7 @@ bool Scripts::cmdDisplayStat(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdSeatTextSml(Common::Array<byte> &params) {
+bool Scripts::cmdSignTextSml(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
 
 	intf._screenText = Common::String::format("\x2\f08\x3""c\t116\v090%s\x3l\fd\x1",
@@ -1122,7 +1122,7 @@ bool Scripts::cmdIfMapFlag(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdSelRndChar(Common::Array<byte> &params) {
+bool Scripts::cmdSelectRandomChar(Common::Array<byte> &params) {
 	_charIndex = _vm->getRandomNumber(1, _vm->_party->_activeParty.size());
 	return true;
 }
@@ -1306,7 +1306,7 @@ bool Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) {
 	return false;
 }
 
-bool Scripts::cmdCutsceneEdWorld(Common::Array<byte> &params) {
+bool Scripts::cmdCutsceneEndWorld(Common::Array<byte> &params) {
 	_vm->_saves->_wonWorld = true;
 	_vm->_party->_worldEnd = true;
 
