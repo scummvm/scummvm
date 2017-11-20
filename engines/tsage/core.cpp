@@ -93,7 +93,7 @@ InvObject::InvObject(int strip, int frame) {
 void InvObject::setCursor() {
 	if (g_vm->getGameID() != GType_Ringworld) {
 		// All other games
-		_cursorId = (CursorType)BF_GLOBALS._inventory->indexOf(this);
+		_cursorId = (CursorType)g_globals->_inventory->indexOf(this);
 		g_globals->_events.setCursor(_cursorId);
 	} else {
 		// Ringworld cursor handling
