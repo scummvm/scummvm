@@ -119,6 +119,7 @@ public:
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
+	bool endOfData() const;
 	bool endOfStream() const;
 
 	// PacketizedAudioStream API
@@ -484,12 +485,17 @@ int PacketizedMP3Stream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
+bool PacketizedMP3Stream::endOfData() const {
+	Common::StackLock lock(_mutex);
+	return BaseMP3Stream::endOfData();
+}
+
 bool PacketizedMP3Stream::endOfStream() const {
+	Common::StackLock lock(_mutex);
+
 	if (!endOfData())
 		return false;
 
-	// Lock the mutex
-	Common::StackLock lock(_mutex);
 	if (!_queue.empty())
 		return false;
 
