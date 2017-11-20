@@ -34,7 +34,7 @@ struct PALQ;
 
 enum {
 	/** the maximum number of objects */
-	NUM_OBJECTS	= 256,
+	NUM_OBJECTS	= 512,
 
 	// object flags
 	DMA_WNZ		= 0x0001,	///< write non-zero data
