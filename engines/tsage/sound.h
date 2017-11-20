@@ -196,7 +196,6 @@ public:
 	virtual void listenerSynchronize(Serializer &s);
 	virtual void postInit();
 	void syncSounds();
-	void update();
 
 	static void saveNotifier(bool postFlag);
 	void saveNotifierProc(bool postFlag);
@@ -256,7 +255,6 @@ public:
 	static void sfProcessFading();
 	static void sfUpdateVoiceStructs();
 	static void sfUpdateVoiceStructs2();
-	static void sfUpdateCallback(void *ref);
 };
 
 class Sound: public EventHandler {

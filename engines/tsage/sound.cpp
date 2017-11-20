@@ -147,10 +147,6 @@ void SoundManager::syncSounds() {
 	}
 }
 
-void SoundManager::update() {
-	sfSoundServer();
-}
-
 Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 	assert(_sndmgrReady);
 	_availableDrivers.clear();
@@ -542,10 +538,6 @@ void SoundManager::sfUpdateVoiceStructs2() {
 			}
 		}
 	}
-}
-
-void SoundManager::sfUpdateCallback(void *ref) {
-	((SoundManager *)ref)->update();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3016,7 +3008,7 @@ void AdlibSoundDriver::onTimer() {
 	Common::StackLock slock1(SoundManager::sfManager()._serverDisabledMutex);
 	Common::StackLock slock2(SoundManager::sfManager()._serverSuspendedMutex);
 
-	SoundManager::sfUpdateCallback(NULL);
+	SoundManager::sfSoundServer();
 	flush();
 }
 
