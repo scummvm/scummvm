@@ -95,7 +95,9 @@ bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartiall
 	int numInvs = file.readUint32LE();
 
 	for (int i = 0; i < numInvs; i++) {
-		_inventoryItems.push_back(InventoryItem(file.readUint16LE(), file.readUint16LE()));
+		int16 itemId = file.readUint16LE();
+		int16 count = file.readUint16LE();
+		_inventoryItems.push_back(InventoryItem(itemId, count));
 	}
 
 	return true;
