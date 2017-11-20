@@ -1885,6 +1885,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
 
+	// King's Quest 7 - French Windows (from gatesbillou)
+	// VERSION 1.51
+	{"kq7", "", {
+		{"resource.aud", 0, "d8b89ef2f7248c63d5810f2e49fb7255", 205546166},
+		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
+		{"resource.map", 0, "838b9ff132bd6962026fee832e8a7ddb", 18697},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_KQ7 },
+
 	// King's Quest 7 - French Windows (from bgK)
 	// VERSION 1.65c
 	{"kq7", "", {
