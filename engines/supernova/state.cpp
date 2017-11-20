@@ -651,7 +651,7 @@ void GameManager::startSearch() {
 }
 
 void GameManager::search(int time) {
-	_state._eventTime = _state._time + time;
+	_state._eventTime = _state._time + ticksToMsec(time);
 	_state._eventCallback = kSearchStartFn;
 }
 
