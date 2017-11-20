@@ -1553,7 +1553,9 @@ void Sound::play(int soundNum) {
 }
 
 void Sound::stop() {
-	g_globals->_soundManager.removeFromPlayList(this);
+	if (g_globals) {
+		g_globals->_soundManager.removeFromPlayList(this);
+	}
 	_unPrime();
 }
 
