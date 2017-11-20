@@ -251,7 +251,7 @@ public:
 	static void sfDoAddToPlayList(Sound *sound);
 	static bool sfDoRemoveFromPlayList(Sound *sound);
 	static void sfDoUpdateVolume(Sound *sound);
-	static void sfSoundServer();
+	static void sfSoundServer(void *);
 	static void sfProcessFading();
 	static void sfUpdateVoiceStructs();
 	static void sfUpdateVoiceStructs2();
@@ -458,6 +458,7 @@ private:
 	byte _portContents[256];
 	const byte *_patchData;
 	int _masterVolume;
+	Common::Mutex _queueMutex;
 	Common::Queue<RegisterValue> _queue;
 
 	bool _channelVoiced[ADLIB_CHANNEL_COUNT];
