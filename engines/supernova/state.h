@@ -45,6 +45,7 @@ struct GameState {
 	int16  _money;
 	byte   _coins;
 	byte   _shoes;
+	byte   _origin;
 	byte   _destination;
 	byte   _language;
 	bool   _corridorSearch;
@@ -205,12 +206,16 @@ public:
 	void novaScroll();
 	void supernovaEvent();
 	void guardReturnedEvent();
+	void walk(int a);
 	void guardWalkEvent();
 	void taxiEvent();
 	void searchStartEvent();
 	void outro();
 	void guardShot();
 	void guard3Shot();
+
+private:
+	int _prevImgId;
 };
 
 }
