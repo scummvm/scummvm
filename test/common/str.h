@@ -340,7 +340,7 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_string_printf() {
-		TS_ASSERT_EQUALS( Common::String::format(""), "" );
+		TS_ASSERT_EQUALS( Common::String::format(" "), " " );
 		TS_ASSERT_EQUALS( Common::String::format("%s", "test"), "test" );
 		TS_ASSERT_EQUALS( Common::String::format("%s.s%.02d", "monkey", 1), "monkey.s01" );
 		TS_ASSERT_EQUALS( Common::String::format("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456), "Some text to make this string longer than the default built-in capacity 123456" );
