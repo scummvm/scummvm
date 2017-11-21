@@ -74,11 +74,6 @@ MODULE_OBJS := \
 	vars.o \
 	verbs.o
 
-ifdef USE_ARM_COSTUME_ASM
-MODULE_OBJS += \
-	proc3ARM.o
-endif
-
 ifdef ENABLE_SCUMM_7_8
 MODULE_OBJS += \
 	nut_renderer.o \
@@ -105,17 +100,6 @@ MODULE_OBJS += \
 	smush/saud_channel.o \
 	smush/smush_mixer.o \
 	smush/smush_font.o
-
-ifdef USE_ARM_SMUSH_ASM
-MODULE_OBJS += \
-	smush/codec47ARM.o
-endif
-
-endif
-
-ifdef USE_ARM_GFX_ASM
-MODULE_OBJS += \
-	gfxARM.o
 endif
 
 ifdef ENABLE_HE

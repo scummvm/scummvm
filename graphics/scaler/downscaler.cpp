@@ -22,24 +22,6 @@
 #include "graphics/scaler/downscaler.h"
 #include "graphics/scaler/intern.h"
 
-#ifdef USE_ARM_SCALER_ASM
-extern "C" {
-	void DownscaleAllByHalfARM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, int mask, int round);
-}
-
-void DownscaleAllByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	// Rounding constants and masks used for different pixel formats
-	static const int roundingconstants[] = { 0x00200802, 0x00201002 };
-	static const int redbluegreenMasks[] = { 0x03E07C1F, 0x07E0F81F };
-
-	extern int gBitFormat;
-
-	const int maskUsed = (gBitFormat == 565);
-	DownscaleAllByHalfARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed], roundingconstants[maskUsed]);
-}
-
-#else
-
 template<typename ColorMask>
 void DownscaleAllByHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
@@ -70,9 +52,6 @@ void DownscaleAllByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	else
 		DownscaleAllByHalfTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
-
-#endif
-
 
 /**
  * This filter (down)scales the source image horizontally by a factor of 1/2.

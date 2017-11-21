@@ -50,11 +50,6 @@ SOURCEPATH ..\..\..\..\engines\scumm
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_SCUMM_//
-#if !defined (WINS)
-SOURCE gfxARM.s					// ARM version: add ASM routines
-SOURCE proc3ARM.s				// ARM version: add ASM routines
-#endif
-
 
 //START_AUTO_OBJECTS_SCUMM_ENABLE_SCUMM_7_8//
 

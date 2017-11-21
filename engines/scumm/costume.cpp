@@ -411,25 +411,6 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 #undef LINE
 #undef MASK_AT
 
-#ifdef USE_ARM_COSTUME_ASM
-
-#ifndef IPHONE
-#define ClassicProc3RendererShadowARM _ClassicProc3RendererShadowARM
-#endif
-
-extern "C" int ClassicProc3RendererShadowARM(int _scaleY,
-                                        ClassicCostumeRenderer::Codec1 *v1,
-                                        Graphics::Surface *_out,
-                                        const byte *src,
-                                        int   height,
-                                        int _scaleX,
-                                        int _scaleIndexX,
-                                        byte *_shadow_table,
-                                        uint16 _palette[32],
-                                        int32 _numStrips,
-                                        int _scaleIndexY);
-#endif
-
 void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 	const byte *mask, *src;
 	byte *dst;
@@ -438,26 +419,6 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 	uint color, height, pcolor;
 	byte scaleIndexY;
 	bool masked;
-
-#ifdef USE_ARM_COSTUME_ASM
-	if (((_shadow_mode & 0x20) == 0) &&
-	    (v1.mask_ptr != NULL) &&
-	    (_shadow_table != NULL))
-	{
-		_scaleIndexX = ClassicProc3RendererShadowARM(_scaleY,
-		                                             &v1,
-		                                             &_out,
-		                                             _srcptr,
-		                                             _height,
-		                                             _scaleX,
-		                                             _scaleIndexX,
-		                                             _shadow_table,
-		                                             _palette,
-		                                             _numStrips,
-		                                             _scaleIndexY);
-		return;
-	}
-#endif /* USE_ARM_COSTUME_ASM */
 
 	y = v1.y;
 	src = _srcptr;

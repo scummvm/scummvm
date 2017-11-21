@@ -34,25 +34,11 @@
 #include "scumm/he/wiz_he.h"
 #include "scumm/util.h"
 
-#ifdef USE_ARM_GFX_ASM
-
-#ifndef IPHONE
-#define asmDrawStripToScreen _asmDrawStripToScreen
-#define asmCopy8Col _asmCopy8Col
-#endif
-
-extern "C" void asmDrawStripToScreen(int height, int width, void const* text, void const* src, byte* dst,
-	int vsPitch, int vmScreenWidth, int textSurfacePitch);
-extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height, uint8 bitDepth);
-#endif /* USE_ARM_GFX_ASM */
-
 namespace Scumm {
 
 static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, uint8 bitDepth);
 static void fill(byte *dst, int dstPitch, uint16 color, int w, int h, uint8 bitDepth);
-#ifndef USE_ARM_GFX_ASM
 static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8 bitDepth);
-#endif
 static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth);
 
 static void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height);
@@ -682,9 +668,6 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				textPtr += _textSurface.pitch - width * m;
 			}
 		} else {
-#ifdef USE_ARM_GFX_ASM
-			asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
-#else
 			// We blit four pixels at a time, for improved performance.
 			const uint32 *src32 = (const uint32 *)src;
 			uint32 *dst32 = (uint32 *)_compositeBuf;
@@ -715,7 +698,6 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 				src32 += vsPitch;
 				text32 += textPitch;
 			}
-#endif
 		}
 		src = _compositeBuf;
 		pitch = width * vs->format.bytesPerPixel;
@@ -1196,12 +1178,6 @@ static void fill(byte *dst, int dstPitch, uint16 color, int w, int h, uint8 bitD
 	}
 }
 
-#ifdef USE_ARM_GFX_ASM
-
-#define copy8Col(A,B,C,D,E) asmCopy8Col(A,B,C,D,E)
-
-#else
-
 static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8 bitDepth) {
 
 	do {
@@ -1219,8 +1195,6 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8
 		src += dstPitch;
 	} while (--height);
 }
-
-#endif /* USE_ARM_GFX_ASM */
 
 static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth) {
 	do {

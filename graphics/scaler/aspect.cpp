@@ -23,10 +23,6 @@
 #include "graphics/scaler/intern.h"
 #include "graphics/scaler/aspect.h"
 
-#ifdef USE_ARM_NEON_ASPECT_CORRECTOR
-#include <arm_neon.h>
-#endif
-
 #define	kSuperFastAndUglyAspectMode	0	// No interpolation at all, but super-fast
 #define	kVeryFastAndGoodAspectMode	1	// Good quality with very good speed
 #define	kFastAndVeryGoodAspectMode	2	// Very good quality with good speed
@@ -58,66 +54,13 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 
 #if ASPECT_MODE == kVeryFastAndGoodAspectMode
 
-#ifdef USE_ARM_NEON_ASPECT_CORRECTOR
-
-template<typename ColorMask>
-static void interpolate5LineNeon(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width, int k1, int k2) {
-	uint16x4_t kRedBlueMask_4 = vdup_n_u16(ColorMask::kRedBlueMask);
-	uint16x4_t kGreenMask_4 = vdup_n_u16(ColorMask::kGreenMask);
-	uint16x4_t k1_4 = vdup_n_u16(k1);
-	uint16x4_t k2_4 = vdup_n_u16(k2);
-	while (width >= 4) {
-		uint16x4_t srcA_4 = vld1_u16(srcA);
-		uint16x4_t srcB_4 = vld1_u16(srcB);
-		uint16x4_t p1_4 = srcB_4;
-		uint16x4_t p2_4 = srcA_4;
-
-		uint16x4_t p1_rb_4 = vand_u16(p1_4, kRedBlueMask_4);
-		uint16x4_t p1_g_4  = vand_u16(p1_4, kGreenMask_4);
-		uint16x4_t p2_rb_4 = vand_u16(p2_4, kRedBlueMask_4);
-		uint16x4_t p2_g_4  = vand_u16(p2_4, kGreenMask_4);
-
-		uint32x4_t tmp_rb_4 = vshrq_n_u32(vmlal_u16(vmull_u16(p2_rb_4, k2_4), p1_rb_4, k1_4), 3);
-		uint32x4_t tmp_g_4  = vshrq_n_u32(vmlal_u16(vmull_u16(p2_g_4, k2_4), p1_g_4, k1_4), 3);
-		uint16x4_t p_rb_4 = vmovn_u32(tmp_rb_4);
-		p_rb_4 = vand_u16(p_rb_4, kRedBlueMask_4);
-		uint16x4_t p_g_4 = vmovn_u32(tmp_g_4);
-		p_g_4 = vand_u16(p_g_4, kGreenMask_4);
-
-		uint16x4_t result_4 = p_rb_4 | p_g_4;
-		vst1_u16(dst, result_4);
-
-		dst += 4;
-		srcA += 4;
-		srcB += 4;
-		width -= 4;
-	}
-}
-#endif // USE_ARM_NEON_ASPECT_CORRECTOR
-
 template<typename ColorMask, int scale>
 static void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	if (scale == 1) {
-#ifdef USE_NEON_ASPECT_CORRECTOR
-		int width4 = width & ~3;
-		interpolate5LineNeon<ColorMask>(dst, srcA, srcB, width4, 7, 1);
-		srcA += width4;
-		srcB += width4;
-		dst += width4;
-		width -= width4;
-#endif // USE_ARM_NEON_ASPECT_CORRECTOR
 		while (width--) {
 			*dst++ = interpolate16_7_1<ColorMask>(*srcB++, *srcA++);
 		}
 	} else {
-#ifdef USE_ARM_NEON_ASPECT_CORRECTOR
-		int width4 = width & ~3;
-		interpolate5LineNeon<ColorMask>(dst, srcA, srcB, width4, 5, 3);
-		srcA += width4;
-		srcB += width4;
-		dst += width4;
-		width -= width4;
-#endif // USE_ARM_NEON_ASPECT_CORRECTOR
 		while (width--) {
 			*dst++ = interpolate16_5_3<ColorMask>(*srcB++, *srcA++);
 		}
@@ -306,45 +249,3 @@ void Normal1xAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 	else
 		Normal1xAspectTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
-
-#ifdef USE_ARM_SCALER_ASM
-extern "C" void Normal2xAspectMask(const uint8  *srcPtr,
-                                         uint32  srcPitch,
-                                         uint8  *dstPtr,
-                                         uint32  dstPitch,
-                                         int     width,
-                                         int     height,
-                                         uint32  mask);
-
-/**
- * A 2x scaler which also does aspect ratio correction.
- * This is Normal2x combined with vertical stretching,
- * so it will scale a 320x200 surface to a 640x480 surface.
- */
-void Normal2xAspect(const uint8  *srcPtr,
-                          uint32  srcPitch,
-                          uint8  *dstPtr,
-                          uint32  dstPitch,
-                          int     width,
-                          int     height) {
-	extern int gBitFormat;
-	if (gBitFormat == 565) {
-		Normal2xAspectMask(srcPtr,
-		                   srcPitch,
-		                   dstPtr,
-		                   dstPitch,
-		                   width,
-		                   height,
-		                   0x07e0F81F);
-	} else {
-		Normal2xAspectMask(srcPtr,
-		                   srcPitch,
-		                   dstPtr,
-		                   dstPitch,
-		                   width,
-		                   height,
-		                   0x03e07C1F);
-	}
-}
-
-#endif	// USE_ARM_SCALER_ASM

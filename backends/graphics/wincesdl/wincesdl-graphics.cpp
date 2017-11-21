@@ -386,7 +386,6 @@ bool WINCESdlGraphicsManager::update_scalers() {
 
 		return true;
 	} else if (CEDevice::hasWideResolution()) {
-#ifdef USE_ARM_SCALER_ASM
 		if (_videoMode.mode == GFX_DOUBLESIZE && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth)) {
 			if (!_panelVisible && !_overlayVisible && _canBeAspectScaled) {
 				_scaleFactorXm = 2;
@@ -404,7 +403,6 @@ bool WINCESdlGraphicsManager::update_scalers() {
 			}
 			return true;
 		}
-#endif
 	} else if (CEDevice::hasSmartphoneResolution()) {
 		if (_videoMode.mode != GFX_NORMAL)
 			return false;

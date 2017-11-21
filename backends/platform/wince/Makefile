@@ -69,11 +69,6 @@ REMOTE_DIRECTORY = \Storage Card\Program Files\Scummvm
 
 USE_SCALERS = 1
 USE_HQ_SCALERS = 1
-USE_ARM_SOUND_ASM = 1
-USE_ARM_SMUSH_ASM = 1
-USE_ARM_GFX_ASM   = 1
-USE_ARM_COSTUME_ASM = 1
-USE_ARM_SCALER_ASM = 1
 
 ########################################################################
 ##    Hopefully you shouldn't need to change anything below here.     ##
@@ -154,22 +149,6 @@ endif
 
 ifdef USE_HQ_SCALERS
 DEFINES += -DUSE_HQ_SCALERS
-endif
-
-ifdef USE_ARM_SMUSH_ASM
-DEFINES += -DUSE_ARM_SMUSH_ASM
-endif
-
-ifdef USE_ARM_GFX_ASM
-DEFINES += -DUSE_ARM_GFX_ASM
-endif
-
-ifdef USE_ARM_COSTUME_ASM
-DEFINES += -DUSE_ARM_COSTUME_ASM
-endif
-
-ifdef USE_ARM_SCALER_ASM
-DEFINES += -DUSE_ARM_SCALER_ASM
 endif
 
 ########################################################################

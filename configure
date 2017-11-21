@@ -2247,26 +2247,6 @@ echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
 		echo "ARM"
-		case $_host in
-			openpandora)
-				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
-				;;
-			android | android-arm | androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo | tizen | wince)
-				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
-				# FIXME: The following feature exhibits a bug. It produces distorted
-				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
-				# assembly will need to be properly adapted to the changes to the C
-				# code in 8f5a7cde2f99de9fef849b0ff688906f05f4643e.
-				# See bug #6957: "AUDIO: ARM ASM sound code causes distorted audio on 32 bit armv6"
-				#define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
-				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
-				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
-				# FIXME: The following feature exhibits a bug during the intro scene of Indy 4
-				# (on Pandora and iPhone at least)
-				#define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
-				;;
-		esac
-
 		append_var DEFINES "-DARM_TARGET"
 		;;
 	i[3-6]86)

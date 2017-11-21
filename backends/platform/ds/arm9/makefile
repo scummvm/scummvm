@@ -109,15 +109,12 @@ vpath %.s $(srcdir)
 # arm-eabi-nm -S --radix=d --demangle scummvm.elf |sort -n -r --key=2 |less
 
 ARM = 1
-USE_ARM_SOUND_ASM = 1
-USE_ARM_COSTUME_ASM = 1
 #WRAP_MALLOC = 1
 
 ifdef DS_BUILD_A
-	DEFINES = -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
+	DEFINES = -DDS_BUILD_A
 	LOGO = logoa.bmp
 	ENABLE_SCUMM = STATIC_PLUGIN
-	USE_ARM_GFX_ASM = 1
 	BUILD=scummvm-A
 endif
 
@@ -210,7 +207,7 @@ LD	= arm-eabi-g++
 
 CFLAGS	=	-Wno-multichar -Wall\
 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
-		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1 -DDISABLE_SID
+		-mthumb-interwork -DDISABLE_SID
 
 
 # -ffast-math
