@@ -4,7 +4,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.scummvm.scummvm"
 		android:versionCode="@ANDROID_VERSIONCODE@"
-		android:versionName="1.10.0git"
+		android:versionName="2.0.0git"
 		android:sharedUserId="org.scummvm.scummvm">
 
 	<!-- This version works on Android 1.5 (SDK 3) and newer, but we
