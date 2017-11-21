@@ -214,7 +214,7 @@ public:
 	virtual bool load(MfcArchive &file);
 	void addPictureObject(PictureObject *pct);
 
-	BigPicture *getBigPicture(int x, int y) { return _bigPictureArray[y * _bigPictureYDim + x]; }
+	BigPicture *getBigPicture(int x, int y) { return _bigPictureArray[y * _bigPictureXDim + x]; }
 };
 
 struct ShadowsItem {
