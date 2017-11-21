@@ -287,6 +287,7 @@ const int kyra1FloppyOldNeed[] = {
 	k1SpecialPalette30,
 	k1SpecialPalette31,
 	k1SpecialPalette32,
+	k1SpecialPalette33,
 	k1PutDownString,
 	k1WaitAmuletString,
 	k1BlackJewelString,

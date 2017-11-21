@@ -442,6 +442,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1SpecialPalette30, kKyra1, kPlatformDOS, kOldFloppy, UNK_LANG, &k1SpecialPalette30DOSOldFloppyProvider },
 	{ k1SpecialPalette31, kKyra1, kPlatformDOS, kOldFloppy, UNK_LANG, &k1SpecialPalette31DOSOldFloppyProvider },
 	{ k1SpecialPalette32, kKyra1, kPlatformDOS, kOldFloppy, UNK_LANG, &k1SpecialPalette32DOSOldFloppyProvider },
+	{ k1SpecialPalette33, kKyra1, kPlatformDOS, kOldFloppy, UNK_LANG, &k1SpecialPalette33DOSOldFloppyProvider },
 	{ k1PutDownString, kKyra1, kPlatformDOS, kOldFloppy, RU_RUS, &k1PutDownStringDOSOldFloppyRussianProvider },
 	{ k1WaitAmuletString, kKyra1, kPlatformDOS, kOldFloppy, RU_RUS, &k1WaitAmuletStringDOSOldFloppyRussianProvider },
 	{ k1BlackJewelString, kKyra1, kPlatformDOS, kOldFloppy, RU_RUS, &k1BlackJewelStringDOSOldFloppyRussianProvider },
