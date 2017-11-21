@@ -93,6 +93,9 @@ Common::String RISCOSFilesystemNode::toUnix(Common::String &path) {
 		case '/':
 			out.setChar('.', ptr);
 			break;
+		case '\xA0':
+			out.setChar(' ', ptr);
+			break;
 		default:
 			break;
 		}
