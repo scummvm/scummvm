@@ -47,6 +47,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeSint16LE(_state._money);
 	out->writeByte(_state._coins);
 	out->writeByte(_state._shoes);
+	out->writeByte(_state._origin);
 	out->writeByte(_state._destination);
 	out->writeByte(_state._language);
 	out->writeByte(_state._corridorSearch);
@@ -98,6 +99,10 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._money = in->readSint16LE();
 	_state._coins = in->readByte();
 	_state._shoes = in->readByte();
+	if (version >= 6)
+		_state._origin = in->readByte();
+	else
+		_state._origin = 0;
 	_state._destination = in->readByte();
 	_state._language = in->readByte();
 	_state._corridorSearch = in->readByte();
@@ -359,6 +364,7 @@ void GameManager::initState() {
 	_state._money = 0;
 	_state._coins = 0;
 	_state._shoes = 0;
+	_state._origin = 0;
 	_state._destination = 255;
 	_state._language = 0;
 	_state._corridorSearch = false;
@@ -368,6 +374,8 @@ void GameManager::initState() {
 	_state._cableConnected = false;
 	_state._powerOff = false;
 	_state._dream = false;
+
+	_prevImgId = 0;
 }
 
 void GameManager::initRooms() {
@@ -859,8 +867,147 @@ void GameManager::guardReturnedEvent() {
 	_rooms[CORRIDOR9]->getObject(1)->disableProperty(OPENED);
 }
 
+void GameManager::walk(int imgId) {
+	if (_prevImgId)
+		_vm->renderImage(_prevImgId + 128);
+	_vm->renderImage(imgId);
+	_prevImgId = imgId;
+	wait2(3);
+}
+
 void GameManager::guardWalkEvent() {
-	warning("STUB: guardWalkEvent");
+	_prevImgId = 0;
+	bool behind = (!_rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OCCUPIED) || _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
+	_rooms[BCORRIDOR]->getObject(_state._origin + 4)->resetProperty(OCCUPIED);
+	if (_currentRoom == _rooms[BCORRIDOR]) {
+		if (_vm->_messageDisplayed)
+			_vm->removeMessage();
+
+		if (!behind) {
+			_vm->renderImage(_state._origin + 1);
+			_prevImgId = _state._origin + 1;
+			_vm->playSound(kAudioDoorOpen);
+			wait2(3);
+		}
+
+		int imgId;
+		switch (_state._origin) {
+		case 0:
+			imgId = 11;
+			break;
+		case 1:
+			imgId = 16;
+			break;
+		case 2:
+			imgId = 15;
+			break;
+		case 3:
+		default:
+			imgId = 20;
+			break;
+		}
+		_vm->renderImage(imgId);
+		if (!behind) {
+			wait2(3);
+			_vm->renderImage(_prevImgId + 128);
+			_vm->playSound(kAudioDoorClose);
+		}
+
+		_prevImgId = imgId;
+		wait2(3);
+		switch (_state._origin) {
+		case 0:
+			walk(12);
+			walk(13);
+			break;
+		case 1:
+			walk(17);
+			walk(18);
+			break;
+		case 2:
+			walk(14);
+			walk(13);
+			break;
+		case 3:
+			walk(19);
+			walk(18);
+		}
+	
+		if (!_currentRoom->isSectionVisible(kMaxSection - 1)) {
+			if (_state._origin & 1)
+				walk(10);
+			else
+				walk(5);
+			busted(-1);
+		}
+
+		if ((_state._origin & 1) && !(_state._destination & 1)) {
+			for (int i = 10; i >= 5; i--)
+				walk(i);
+			walk(13);
+		} else if (!(_state._origin & 1) && (_state._destination & 1)) {
+			for (int i = 5; i <= 10; i++)
+				walk(i);
+			walk(18);
+		}
+
+		switch (_state._destination) {
+		case 0:
+			for (int i = 13; i >= 11; i--)
+				walk(i);
+			break;
+		case 1:
+			for (int i = 18; i >= 16; i--)
+				walk(i);
+			break;
+		case 2:
+			for (int i = 13; i <= 15; i++)
+				walk(i);
+			break;
+		case 3:
+			for (int i = 18; i <= 20; i++)
+				walk(i);
+		}
+
+		if (behind) {
+			_vm->renderImage(_state._destination + 1);
+			_vm->playSound(kAudioDoorOpen);
+			wait2(3);
+			_vm->renderImage(_prevImgId + 128);
+			wait2(3);
+			_vm->renderImage(_state._destination + 1 + 128);
+			_vm->playSound(kAudioDoorClose);
+			_rooms[BCORRIDOR]->getObject(_state._destination + 4)->setProperty(OCCUPIED);
+			_state._destination = 255;
+		} else if (_rooms[BCORRIDOR]->isSectionVisible(_state._destination + 1)) {
+			_vm->renderImage(_prevImgId + 128);
+			_rooms[BCORRIDOR]->getObject(_state._destination + 4)->setProperty(OCCUPIED);
+			SWAP(_state._origin, _state._destination);
+			_state._eventTime = _state._time + ticksToMsec(60);
+			_state._eventCallback = kGuardWalkFn;
+		} else {
+			wait2(18);
+			SWAP(_state._origin, _state._destination);
+			_state._eventCallback = kGuardWalkFn;
+		}
+	} else {
+		if (behind) {
+			_rooms[BCORRIDOR]->getObject(_state._destination + 4)->setProperty(OCCUPIED);
+			if (_currentRoom == _rooms[OFFICE_L1 + _state._destination])
+				busted(0);
+			_state._destination = 255;
+		} else if (_rooms[BCORRIDOR]->isSectionVisible(_state._destination + 1) && _rooms[OFFICE_L1 + _state._destination]->getObject(0)->hasProperty(OPENED)) {
+			_rooms[BCORRIDOR]->getObject(_state._destination + 4)->setProperty(OCCUPIED);
+			if (_currentRoom == _rooms[OFFICE_L1 + _state._destination])
+				busted(0);
+			SWAP(_state._origin, _state._destination);
+			_state._eventTime = _state._time + ticksToMsec(60);
+			_state._eventCallback = kGuardWalkFn;
+		} else {
+			SWAP(_state._origin, _state._destination);
+			_state._eventCallback = kGuardWalkFn;
+		}
+	}
 }
 
 void GameManager::taxiEvent() {
@@ -1433,9 +1580,9 @@ void GameManager::takeMoney(int amount) {
 		great(0);
 	// TODO: kmaxobject - 1?
 //	_rooms[OFFICE_R1]->getObject(5)->_name = _rooms[OFFICE_R1]->getObject(kMaxObject - 1);
-//	raumz[OFFICE_R1]->object[5].name = &(raumz[OFFICE_R1]->object[MAX_OBJECT-1]);
-//	strcpy(raumz[OFFICE_R1]->object[5].name,ltoa((long)_state.money));
-//	strcat(raumz[OFFICE_R1]->object[5].name," Xa");
+//	_rooms[OFFICE_R1]->object[5].name = &(_rooms[OFFICE_R1]->object[MAX_OBJECT-1]);
+//	strcpy(_rooms[OFFICE_R1]->object[5].name,ltoa((long)_state.money));
+//	strcat(_rooms[OFFICE_R1]->object[5].name," Xa");
 
 	if (_state._money) {
 		if (!_rooms[OFFICE_R1]->getObject(5)->hasProperty(CARRIED))
