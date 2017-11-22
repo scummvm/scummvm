@@ -515,7 +515,11 @@ void GameManager::resetInputState() {
 
 void GameManager::processInput() {
 	if (_mouseClickType == Common::EVENT_LBUTTONUP) {
-		_vm->removeMessage();
+		if (_vm->_messageDisplayed) {
+			// Hide the message and consume the event
+			_vm->removeMessage();
+			return;
+		}
 
 		if (((_mouseField >= 0) && (_mouseField < 256)) ||
 		    ((_mouseField >= 512) && (_mouseField < 768))) {
@@ -544,7 +548,11 @@ void GameManager::processInput() {
 				_inventoryScroll += 2;
 		}
 	} else if (_mouseClickType == Common::EVENT_RBUTTONUP) {
-		_vm->removeMessage();
+		if (_vm->_messageDisplayed) {
+			// Hide the message and consume the event
+			_vm->removeMessage();
+			return;
+		}
 		if (Object::isNullObject(_currentInputObject))
 			return;
 
