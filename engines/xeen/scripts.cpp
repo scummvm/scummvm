@@ -31,6 +31,28 @@
 
 namespace Xeen {
 
+byte EventParameters::Iterator::readByte() {
+	byte result = (_index >= _data.size()) ? 0 : _data[_index];
+	++_index;
+	return result;
+}
+
+uint16 EventParameters::Iterator::readUint16LE() {
+	uint16 result = ((_index + 1) >= _data.size()) ? 0 :
+		READ_LE_UINT16(&_data[_index]);
+	_index += 2;
+	return result;
+}
+
+uint32 EventParameters::Iterator::readUint32LE() {
+	uint16 result = ((_index + 3) >= _data.size()) ? 0 :
+		READ_LE_UINT32(&_data[_index]);
+	_index += 4;
+	return result;
+}
+
+/*------------------------------------------------------------------------*/
+
 MazeEvent::MazeEvent() : _direction(DIR_ALL), _line(-1), _opcode(OP_None) {
 }
 
@@ -317,9 +339,8 @@ void Scripts::openGrate(int wallVal, int action) {
 	}
 }
 
-typedef bool(Scripts::*ScriptMethodPtr)(Common::Array<byte> &);
- 
 bool Scripts::doOpcode(MazeEvent &event) {
+	typedef bool(Scripts::*ScriptMethodPtr)(ParamsIterator &);
 	static const ScriptMethodPtr COMMAND_LIST[] = {
 		&Scripts::cmdDoNothing, &Scripts::cmdDisplay1, &Scripts::cmdDoorTextSml,
 		&Scripts::cmdDoorTextLrg, &Scripts::cmdSignText,
@@ -346,7 +367,8 @@ bool Scripts::doOpcode(MazeEvent &event) {
 	};
 
 	_event = &event;
-	bool result = (this->*COMMAND_LIST[event._opcode])(event._parameters);
+	ParamsIterator params = event._parameters.getIterator();
+	bool result = (this->*COMMAND_LIST[event._opcode])(params);
 	if (result)
 		// Move to next line
 		_lineNum = _vm->_party->_partyDead ? -1 : _lineNum + 1;
@@ -354,13 +376,13 @@ bool Scripts::doOpcode(MazeEvent &event) {
 	return result;
 }
 
-bool Scripts::cmdDoNothing(Common::Array<byte> &params) {
+bool Scripts::cmdDoNothing(ParamsIterator &params) {
 	return true;
 }
 
-bool Scripts::cmdDisplay1(Common::Array<byte> &params) {
+bool Scripts::cmdDisplay1(ParamsIterator &params) {
 	Screen &screen = *_vm->_screen;
-	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
+	Common::String paramText = _vm->_map->_events._text[params.readByte()];
 	Common::String msg = Common::String::format("\r\x03""c%s", paramText.c_str());
 
 	screen._windows[12].close();
@@ -372,10 +394,10 @@ bool Scripts::cmdDisplay1(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
+bool Scripts::cmdDoorTextSml(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 
-	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
+	Common::String paramText = _vm->_map->_events._text[params.readByte()];
 	intf._screenText = Common::String::format("\x02\f""08\x03""c\t116\v025%s\x03""l\fd""\x01",
 		paramText.c_str());
 	intf._upDoorText = true;
@@ -384,10 +406,10 @@ bool Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
+bool Scripts::cmdDoorTextLrg(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 
-	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
+	Common::String paramText = _vm->_map->_events._text[params.readByte()];
 	intf._screenText = Common::String::format("\f04\x03""c\t116\v030%s\x03""l\fd",
 		paramText.c_str());
 	intf._upDoorText = true;
@@ -396,10 +418,10 @@ bool Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdSignText(Common::Array<byte> &params) {
+bool Scripts::cmdSignText(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 
-	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
+	Common::String paramText = _vm->_map->_events._text[params.readByte()];
 	intf._screenText = Common::String::format("\f08\x03""c\t120\v088%s\x03""l\fd",
 		paramText.c_str());
 	intf._upDoorText = true;
@@ -408,25 +430,31 @@ bool Scripts::cmdSignText(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdNPC(Common::Array<byte> &params) {
+bool Scripts::cmdNPC(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 
-	if (TownMessage::show(_vm, params[2], _message, map._events._text[params[1]],
-			params[3])) {
-		_lineNum = params[4];
+	params.readByte();
+	int textNum = params.readByte();
+	int portrait = params.readByte();
+	int confirm = params.readByte();
+	int lineNum = params.readByte();
+
+	if (TownMessage::show(_vm, portrait, _message, map._events._text[textNum],
+			confirm)) {
+		_lineNum = lineNum;
 		return false;
 	}
 
 	return true;
 }
 
-bool Scripts::cmdPlayFX(Common::Array<byte> &params) {
-	_vm->_sound->playFX(params[0]);
+bool Scripts::cmdPlayFX(ParamsIterator &params) {
+	_vm->_sound->playFX(params.readByte());
 
 	return true;
 }
 
-bool Scripts::cmdTeleport(Common::Array<byte> &params) {
+bool Scripts::cmdTeleport(ParamsIterator &params) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
@@ -436,12 +464,12 @@ bool Scripts::cmdTeleport(Common::Array<byte> &params) {
 
 	screen.closeWindows();
 
-	int mapId;
+	int mapId = params.readByte();
 	Common::Point pt;
 
-	if (params[0]) {
-		mapId = params[0];
-		pt = Common::Point((int8)params[1], (int8)params[2]);
+	if (mapId) {
+		pt.x = params.readShort();
+		pt.y = params.readShort();
 	} else {
 		assert(_mirrorId > 0);
 		MirrorEntry &me = _mirror[_mirrorId - 1];
@@ -493,39 +521,40 @@ bool Scripts::cmdTeleport(Common::Array<byte> &params) {
 	}
 }
 
-bool Scripts::cmdIf(Common::Array<byte> &params) {
+bool Scripts::cmdIf(ParamsIterator &params) {
 	Party &party = *_vm->_party;
 	uint32 mask;
 	int newLineNum;
 
-	switch (params[0]) {
+	int mode = params.readByte();
+	switch (mode) {
 	case 16:
 	case 34:
 	case 100:
-		mask = (params[4] << 24) | (params[3] << 16) | (params[2] << 8) | params[1];
-		newLineNum = params[5];
+		mask = params.readUint32LE();
+		newLineNum = params.readByte();
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		mask = (params[2] << 8) | params[1];
-		newLineNum = params[3];
+		mask = params.readUint16LE();
+		newLineNum = params.readByte();
 		break;
 	default:
-		mask = params[1];
-		newLineNum = params[2];
+		mask = params.readByte();
+		newLineNum = params.readByte();
 		break;
 	}
 
 	bool result;
-	if ((_charIndex != 0 && _charIndex != 8) || params[0] == 44) {
-		result = ifProc(params[0], mask, _event->_opcode - 8, _charIndex - 1);
+	if ((_charIndex != 0 && _charIndex != 8) || mode == 44) {
+		result = ifProc(mode, mask, _event->_opcode - 8, _charIndex - 1);
 	} else {
 		result = false;
 		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
 			if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
-				result = ifProc(params[0], mask, _event->_opcode - 8, idx);
+				result = ifProc(mode, mask, _event->_opcode - 8, idx);
 			}
 		}
 	}
@@ -538,84 +567,78 @@ bool Scripts::cmdIf(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdMoveObj(Common::Array<byte> &params) {
-	MazeObject &mazeObj = _vm->_map->_mobData._objects[params[0]];
+bool Scripts::cmdMoveObj(ParamsIterator &params) {
+	MazeObject &mazeObj = _vm->_map->_mobData._objects[params.readByte()];
+	int x = params.readShort(), y = params.readShort();
 
-	if (mazeObj._position.x == params[1] && mazeObj._position.y == params[2]) {
+	if (mazeObj._position.x == x && mazeObj._position.y == y) {
 		// Already in position, so simply flip it
 		mazeObj._flipped = !mazeObj._flipped;
 	} else {
-		mazeObj._position.x = params[1];
-		mazeObj._position.y = params[2];
+		mazeObj._position.x = x;
+		mazeObj._position.y = y;
 	}
 
 	return true;
 }
 
-bool Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
+bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	int mode1, mode2, mode3, param2;
-	uint32 mask1, mask2, mask3;
-	byte *extraP;
+	uint32 val1, val2, val3;
 
-	mode1 = params[0];
+	mode1 = params.readByte();
 	switch (mode1) {
 	case 16:
 	case 34:
 	case 100:
-		mask1 = (params[4] << 24) | (params[3] << 16) | (params[2] << 8) | params[1];
-		extraP = &params[5];
+		val1 = params.readUint32LE();
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		mask1 = (params[2] << 8) | params[1];
-		extraP = &params[3];
+		val1 = params.readUint16LE();
 		break;
 	default:
-		mask1 = params[1];
-		extraP = &params[9];
+		val1 = params.readByte();
 		break;
 	}
 
-	param2 = mode2 = *extraP++;
+	param2 = mode2 = params.readByte();
 	switch (mode2) {
 	case 16:
 	case 34:
 	case 100:
-		mask2 = (extraP[3] << 24) | (extraP[2] << 16) | (extraP[1] << 8) | extraP[0];
-		extraP += 4;
+		val2 = params.readUint32LE();
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		mask2 = (extraP[1] << 8) | extraP[0];
-		extraP += 2;
+		val2 = params.readUint16LE();
 		break;
 	default:
-		mask2 = extraP[0];
-		extraP++;
+		val2 = params.readByte();
 		break;
 	}
 
-	mode3 = *extraP++;
+	mode3 = params.readByte();
 	switch (mode3) {
 	case 16:
 	case 34:
 	case 100:
-		mask3 = (extraP[3] << 24) | (extraP[2] << 16) | (extraP[1] << 8) | extraP[0];
+		val3 = params.readUint32LE();
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		mask3 = (extraP[1] << 8) | extraP[0];
+		val3 = params.readUint16LE();
 		break;
 	default:
-		mask3 = extraP[0];
+		val3 = params.readByte();
 		break;
 	}
 
@@ -627,15 +650,15 @@ bool Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
-					if (ifProc(params[0], mask1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
-						party.giveTake(0, 0, mode2, mask2, idx);
+					if (ifProc(mode1, val1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
+						party.giveTake(0, 0, mode2, val2, idx);
 						if (mode2 == 82)
 							break;
 					}
 				}
 			}
-		} else if (ifProc(params[0], mask1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, _charIndex - 1)) {
-			party.giveTake(0, 0, mode2, mask2, _charIndex - 1);
+		} else if (ifProc(mode1, val1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, _charIndex - 1)) {
+			party.giveTake(0, 0, mode2, val2, _charIndex - 1);
 		}
 		break;
 
@@ -643,16 +666,16 @@ bool Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
-					if (ifProc(params[0], mask1, 1, idx) && ifProc(mode2, mask2, 1, idx)) {
-						party.giveTake(0, 0, mode2, mask3, idx);
+					if (ifProc(mode1, val1, 1, idx) && ifProc(mode2, val2, 1, idx)) {
+						party.giveTake(0, 0, mode2, val3, idx);
 						if (mode2 == 82)
 							break;
 					}
 				}
 			}
-		} else if (ifProc(params[0], mask1, 1, _charIndex - 1) &&
-				ifProc(mode2, mask2, 1, _charIndex - 1)) {
-			party.giveTake(0, 0, mode2, mask3, _charIndex - 1);
+		} else if (ifProc(mode1, val1, 1, _charIndex - 1) &&
+				ifProc(mode2, val2, 1, _charIndex - 1)) {
+			party.giveTake(0, 0, mode2, val3, _charIndex - 1);
 		}
 		break;
 
@@ -660,15 +683,15 @@ bool Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
-					if (ifProc(params[0], mask1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
-						party.giveTake(0, 0, mode2, mask2, idx);
+					if (ifProc(mode1, val1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
+						party.giveTake(0, 0, mode2, val2, idx);
 						if (mode2 == 82)
 							break;
 					}
 				}
 			}
-		} else if (ifProc(params[0], mask1, 1, _charIndex - 1)) {
-			party.giveTake(0, 0, mode2, mask2, _charIndex - 1);
+		} else if (ifProc(mode1, val1, 1, _charIndex - 1)) {
+			party.giveTake(0, 0, mode2, val2, _charIndex - 1);
 		}
 		break;
 
@@ -676,7 +699,7 @@ bool Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
-					party.giveTake(mode1, mask1, mode1, mask2, idx);
+					party.giveTake(mode1, val1, mode1, val2, idx);
 
 					switch (mode1) {
 					case 8:
@@ -747,7 +770,7 @@ bool Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 				}
 			}
 		} else {
-			if (!party.giveTake(mode1, mask1, mode2, mask2, _charIndex - 1)) {
+			if (!party.giveTake(mode1, val1, mode2, val2, _charIndex - 1)) {
 				if (mode2 == 79)
 					screen.closeWindows();
 			}
@@ -758,7 +781,7 @@ bool Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdRemove(Common::Array<byte> &params) {
+bool Scripts::cmdRemove(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 
@@ -772,8 +795,8 @@ bool Scripts::cmdRemove(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdSetChar(Common::Array<byte> &params) {
-	if (params[0] != 7) {
+bool Scripts::cmdSetChar(ParamsIterator &params) {
+	if (params.readByte() != 7) {
 		_charIndex = WhoWill::show(_vm, 22, 3, false);
 		if (_charIndex == 0) {
 			return cmdExit(params);
@@ -786,83 +809,88 @@ bool Scripts::cmdSetChar(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdSpawn(Common::Array<byte> &params) {
+bool Scripts::cmdSpawn(ParamsIterator &params) {
 	Map &map = *_vm->_map;
-	if (params[0] >= map._mobData._monsters.size())
-		map._mobData._monsters.resize(params[0] + 1);
+	uint index = params.readByte();
 
-	MazeMonster &monster = _vm->_map->_mobData._monsters[params[0]];
+	if (index >= map._mobData._monsters.size())
+		map._mobData._monsters.resize(index + 1);
+
+	MazeMonster &monster = _vm->_map->_mobData._monsters[index];
 	MonsterStruct &monsterData = _vm->_map->_monsterData[monster._spriteId];
 	monster._monsterData = &monsterData;
-	monster._position.x = params[1];
-	monster._position.y = params[2];
+	monster._position.x = params.readShort();
+	monster._position.y = params.readShort();
 	monster._frame = _vm->getRandomNumber(7);
-	monster._damageType = 0;
-	monster._isAttacking = params[1] != 0;
+	monster._damageType = DT_PHYSICAL;
+	monster._isAttacking = false;
 	monster._hp = monsterData._hp;
 
 	return true;
 }
 
-bool Scripts::cmdDoTownEvent(Common::Array<byte> &params) {
-	_scriptResult = _vm->_town->townAction(params[0]);
+bool Scripts::cmdDoTownEvent(ParamsIterator &params) {
+	_scriptResult = _vm->_town->townAction(params.readByte());
 	_vm->_party->_stepped = true;
 	_refreshIcons = true;
 
 	return cmdExit(params);
 }
 
-bool Scripts::cmdExit(Common::Array<byte> &params) {
+bool Scripts::cmdExit(ParamsIterator &params) {
 	_lineNum = -1;
 	return false;
 }
 
-bool Scripts::cmdAlterMap(Common::Array<byte> &params) {
+bool Scripts::cmdAlterMap(ParamsIterator &params) {
 	Map &map = *_vm->_map;
+	int x = params.readShort();
+	int y = params.readShort();
+	Direction dir = (Direction)params.readByte();
+	int val = params.readByte();
 
-	if (params[2] == DIR_ALL) {
-		for (int dir = DIR_NORTH; dir <= DIR_WEST; ++dir)
-			map.setWall(Common::Point(params[0], params[1]), (Direction)dir, params[3]);
+	if (dir == DIR_ALL) {
+		for (dir = DIR_NORTH; dir <= DIR_WEST; dir = (Direction)((int)dir + 1))
+			map.setWall(Common::Point(x, y), dir, val);
 	} else {
-		map.setWall(Common::Point(params[0], params[1]), (Direction)params[2], params[3]);
+		map.setWall(Common::Point(x, y), dir, val);
 	}
 
 	return true;
 }
 
-bool Scripts::cmdGiveExtended(Common::Array<byte> &params) {
+bool Scripts::cmdGiveExtended(ParamsIterator &params) {
 	Party &party = *_vm->_party;
-	uint32 mask;
+	uint32 val;
 	int newLineNum;
 	bool result;
 
-	switch (params[0]) {
+	int mode = params.readByte();
+	switch (mode) {
 	case 16:
 	case 34:
 	case 100:
-		mask = (params[4] << 24) | params[3] | (params[2] << 8) | (params[1] << 16);
-		newLineNum = params[5];
+		val = params.readUint32LE();
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		mask = (params[2] << 8) | params[1];
-		newLineNum = params[3];
+		val = params.readUint16LE();
 		break;
 	default:
-		mask = params[1];
-		newLineNum = params[2];
+		val = params.readByte();
 		break;
 	}
+	newLineNum = params.readByte();
 
-	if ((_charIndex != 0 && _charIndex != 8) || params[0] == 44) {
-		result = ifProc(params[0], mask, _event->_opcode - OP_If1, _charIndex - 1);
+	if ((_charIndex != 0 && _charIndex != 8) || mode == 44) {
+		result = ifProc(mode, val, _event->_opcode - OP_If1, _charIndex - 1);
 	} else {
 		result = false;
 		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
 			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
-				result = ifProc(params[0], mask, _event->_opcode - OP_If1, idx);
+				result = ifProc(mode, val, _event->_opcode - OP_If1, idx);
 			}
 		}
 	}
@@ -875,22 +903,27 @@ bool Scripts::cmdGiveExtended(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdConfirmEnding(Common::Array<byte> &params) {
+bool Scripts::cmdConfirmEnding(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Common::String msg1 = params[2] ? map._events._text[params[2]] :
+	int inputType = params.readByte();
+	int lineNum = params.readByte();
+	int param2 = params.readByte();
+	int param3 = params.readByte();
+
+	Common::String msg1 = param2 ? map._events._text[param2] :
 		_vm->_interface->_interfaceText;
 	Common::String msg2;
 
 	if (_event->_opcode == OP_ConfirmWord_2) {
-		msg2 = map._events._text[params[3]];
-	} else if (params[3]) {
+		msg2 = map._events._text[param3];
+	} else if (param3) {
 		msg2 = "";
 	} else {
 		msg2 = Res.WHATS_THE_PASSWORD;
 	}
 
-	int result = StringInput::show(_vm, params[0], msg1, msg2,_event->_opcode);
+	int result = StringInput::show(_vm, inputType, msg1, msg2,_event->_opcode);
 	if (result) {
 		if (result == 33 && _vm->_files->_isDarkCc) {
 			doEndGame2();
@@ -920,14 +953,14 @@ bool Scripts::cmdConfirmEnding(Common::Array<byte> &params) {
 				}
 			}
 
-			_lineNum = result == -1 ? params[3] : params[1];
+			_lineNum = result == -1 ? param3 : lineNum;
 		}
 	}
 
 	return true;
 }
 
-bool Scripts::cmdDamage(Common::Array<byte> &params) {
+bool Scripts::cmdDamage(ParamsIterator &params) {
 	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
 
@@ -936,47 +969,51 @@ bool Scripts::cmdDamage(Common::Array<byte> &params) {
 		_redrawDone = true;
 	}
 
-	int damage = (params[1] << 8) | params[0];
-	combat.giveCharDamage(damage, (DamageType)params[2], _charIndex);
+	int damage = params.readUint16LE();
+	DamageType damageType = (DamageType)params.readByte();
+	combat.giveCharDamage(damage, damageType, _charIndex);
 
 	return true;
 }
 
-bool Scripts::cmdJumpRnd(Common::Array<byte> &params) {
-	int v = _vm->getRandomNumber(1, params[0]);
-	if (v == params[1]) {
-		_lineNum = params[2];
+bool Scripts::cmdJumpRnd(ParamsIterator &params) {
+	int v = _vm->getRandomNumber(1, params.readByte());
+	if (v == params.readByte()) {
+		_lineNum = params.readByte();
 		return false;
 	}
 
 	return true;
 }
 
-bool Scripts::cmdAlterEvent(Common::Array<byte> &params) {
+bool Scripts::cmdAlterEvent(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
+	int lineNum = params.readByte();
+	Opcode opcode = (Opcode)params.readByte();
 
 	for (uint idx = 0; idx < map._events.size(); ++idx) {
 		MazeEvent &evt = map._events[idx];
 		if (evt._position == party._mazePosition &&
 				(evt._direction == DIR_ALL || evt._direction == party._mazeDirection) &&
-				evt._line == params[0]) {
-			evt._opcode = (Opcode)params[1];
+				evt._line == lineNum) {
+			evt._opcode = opcode;
 		}
 	}
 
 	return true;
 }
 
-bool Scripts::cmdCallEvent(Common::Array<byte> &params) {
+bool Scripts::cmdCallEvent(ParamsIterator &params) {
 	_stack.push(StackEntry(_currentPos, _lineNum));
-	_currentPos = Common::Point(params[0], params[1]);
-	_lineNum = params[2];
+	_currentPos.x = params.readShort();
+	_currentPos.y = params.readShort();
+	_lineNum = params.readByte();
 
 	return false;
 }
 
-bool Scripts::cmdReturn(Common::Array<byte> &params) {
+bool Scripts::cmdReturn(ParamsIterator &params) {
 	StackEntry &se = _stack.top();
 	_currentPos = se;
 	_lineNum = se.line;
@@ -984,35 +1021,36 @@ bool Scripts::cmdReturn(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdSetVar(Common::Array<byte> &params) {
+bool Scripts::cmdSetVar(ParamsIterator &params) {
 	Party &party = *_vm->_party;
 	uint val;
 	_refreshIcons = true;
 
-	switch (params[0]) {
+	int mode = params.readByte();
+	switch (mode) {
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		val = (params[2] << 8) | params[1];
+		val = params.readUint16LE();
 		break;
 	case 16:
 	case 34:
 	case 100:
-		val = (params[4] << 24) | (params[3] << 16) | (params[2] << 8) | params[3];
+		val = params.readUint32LE();
 		break;
 	default:
-		val = params[1];
+		val = params.readByte();
 		break;
 	}
 
 	if (_charIndex != 0 && _charIndex != 8) {
-		party._activeParty[_charIndex - 1].setValue(params[0], val);
+		party._activeParty[_charIndex - 1].setValue(mode, val);
 	} else {
 		// Set value for entire party
 		for (int idx = 0; idx < (int)party._activeParty.size(); ++idx) {
 			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
-				party._activeParty[idx].setValue(params[0], val);
+				party._activeParty[idx].setValue(mode, val);
 			}
 		}
 	}
@@ -1020,10 +1058,12 @@ bool Scripts::cmdSetVar(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdCutsceneEndClouds(Common::Array<byte> &params) { error("TODO"); }
+bool Scripts::cmdCutsceneEndClouds(ParamsIterator &params) { error("TODO"); }
 
-bool Scripts::cmdWhoWill(Common::Array<byte> &params) {
-	_charIndex = WhoWill::show(_vm, params[0], params[1], true);
+bool Scripts::cmdWhoWill(ParamsIterator &params) {
+	int msg = params.readByte();
+	int action = params.readByte();
+	_charIndex = WhoWill::show(_vm, msg, action, true);
 
 	if (_charIndex == 0)
 		return cmdExit(params);
@@ -1031,7 +1071,7 @@ bool Scripts::cmdWhoWill(Common::Array<byte> &params) {
 		return true;
 }
 
-bool Scripts::cmdRndDamage(Common::Array<byte> &params) {
+bool Scripts::cmdRndDamage(ParamsIterator &params) {
 	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
 
@@ -1040,47 +1080,56 @@ bool Scripts::cmdRndDamage(Common::Array<byte> &params) {
 		_redrawDone = true;
 	}
 
-	combat.giveCharDamage(_vm->getRandomNumber(1, params[1]), (DamageType)params[0], _charIndex);
+	DamageType dmgType = (DamageType)params.readByte();
+	int max = params.readByte();
+	combat.giveCharDamage(_vm->getRandomNumber(1, max), dmgType, _charIndex);
 	return true;
 }
 
-bool Scripts::cmdMoveWallObj(Common::Array<byte> &params) {
+bool Scripts::cmdMoveWallObj(ParamsIterator &params) {
 	Map &map = *_vm->_map;
+	int itemNum = params.readByte();
+	int x = params.readShort();
+	int y = params.readShort();
 
-	map._mobData._wallItems[params[0]]._position = Common::Point(params[1], params[2]);
+	map._mobData._wallItems[itemNum]._position = Common::Point(x, y);
 	return true;
 }
 
-bool Scripts::cmdAlterCellFlag(Common::Array<byte> &params) {
+bool Scripts::cmdAlterCellFlag(ParamsIterator &params) {
 	Map &map = *_vm->_map;
-	Common::Point pt(params[0], params[1]);
+	Common::Point pt;
+	pt.x = params.readShort();
+	pt.y = params.readShort();
+	int surfaceId = params.readByte();
+
 	map.cellFlagLookup(pt);
 
 	if (map._isOutdoors) {
 		MazeWallLayers &wallData = map.mazeDataCurrent()._wallData[pt.y][pt.x];
-		wallData._data = (wallData._data & 0xFFF0) | params[2];
+		wallData._data = (wallData._data & 0xFFF0) | surfaceId;
 	} else {
 		pt.x &= 0xF;
 		pt.y &= 0xF;
 		MazeCell &cell = map.mazeDataCurrent()._cells[pt.y][pt.x];
-		cell._surfaceId = params[2];
+		cell._surfaceId = surfaceId;
 	}
 
 	return true;
 }
 
-bool Scripts::cmdAlterHed(Common::Array<byte> &params) {
+bool Scripts::cmdAlterHed(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 
 	HeadData::HeadEntry &he = map._headData[party._mazePosition.y][party._mazePosition.x];
-	he._left = params[0];
-	he._right = params[1];
+	he._left = params.readByte();
+	he._right = params.readByte();
 
 	return true;
 }
 
-bool Scripts::cmdDisplayStat(Common::Array<byte> &params) {
+bool Scripts::cmdDisplayStat(ParamsIterator &params) {
 	Party &party = *_vm->_party;
 	Window &w = _vm->_screen->_windows[12];
 	Character &c = party._activeParty[_charIndex - 1];
@@ -1093,7 +1142,7 @@ bool Scripts::cmdDisplayStat(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdSignTextSml(Common::Array<byte> &params) {
+bool Scripts::cmdSignTextSml(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 
 	intf._screenText = Common::String::format("\x2\f08\x3""c\t116\v090%s\x3l\fd\x1",
@@ -1104,75 +1153,79 @@ bool Scripts::cmdSignTextSml(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdPlayEventVoc(Common::Array<byte> &params) {
+bool Scripts::cmdPlayEventVoc(ParamsIterator &params) {
 	Sound &sound = *_vm->_sound;
 	sound.stopSound();
-	sound.playSound(Res.EVENT_SAMPLES[params[0]], 1);
+	sound.playSound(Res.EVENT_SAMPLES[params.readByte()], 1);
 
 	return true;
 }
 
-bool Scripts::cmdDisplayBottom(Common::Array<byte> &params) {
+bool Scripts::cmdDisplayBottom(ParamsIterator &params) {
 	_windowIndex = 12;
 
 	display(false, 0);
 	return true;
 }
 
-bool Scripts::cmdIfMapFlag(Common::Array<byte> &params) {
+bool Scripts::cmdIfMapFlag(ParamsIterator &params) {
 	Map &map = *_vm->_map;
-	MazeMonster &monster = map._mobData._monsters[params[0]];
+	MazeMonster &monster = map._mobData._monsters[params.readByte()];
 
 	if (monster._position.x >= 32 || monster._position.y >= 32) {
-		_lineNum = params[1];
+		_lineNum = params.readByte();
 		return false;
 	}
 
 	return true;
 }
 
-bool Scripts::cmdSelectRandomChar(Common::Array<byte> &params) {
+bool Scripts::cmdSelectRandomChar(ParamsIterator &params) {
 	_charIndex = _vm->getRandomNumber(1, _vm->_party->_activeParty.size());
 	return true;
 }
 
-bool Scripts::cmdGiveEnchanted(Common::Array<byte> &params) {
+bool Scripts::cmdGiveEnchanted(ParamsIterator &params) {
 	Party &party = *_vm->_party;
 
-	if (params[0] >= 35) {
-		if (params[0] < 49) {
+	int id = params.readByte();
+	int material = params.readByte();
+	int flags = params.readByte();
+
+	if (id >= 35) {
+		if (id < 49) {
 			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 				XeenItem &item = party._treasure._armor[idx];
 				if (!item.empty()) {
-					item._id = params[0] - 35;
-					item._material = params[1];
-					item._bonusFlags = params[2];
+					item._id = id - 35;
+					item._material = material;
+					item._bonusFlags = flags;
 					party._treasure._hasItems = true;
 					break;
 				}
 			}
 
 			return true;
-		} else if (params[0] < 60) {
+		} else if (id < 60) {
 			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 				XeenItem &item = party._treasure._accessories[idx];
 				if (!item.empty()) {
-					item._id = params[0] - 49;
-					item._material = params[1];
-					item._bonusFlags = params[2];
+					item._id = id - 49;
+					item._material = material;
+					item._bonusFlags = flags;
 					party._treasure._hasItems = true;
 					break;
 				}
 			}
 
 			return true;
-		} else if (params[0] < 82) {
+		} else if (id < 82) {
 			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 				XeenItem &item = party._treasure._misc[idx];
 				if (!item.empty()) {
-					item._id = params[0];
-					item._material = params[1];
-					item._bonusFlags = params[2];
+					item._id = id;
+					item._material = material;
+					item._bonusFlags = flags;
 					party._treasure._hasItems = true;
 					break;
 				}
@@ -1187,9 +1240,9 @@ bool Scripts::cmdGiveEnchanted(Common::Array<byte> &params) {
 	for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 		XeenItem &item = party._treasure._weapons[idx];
 		if (!item.empty()) {
-			item._id = params[0];
-			item._material = params[1];
-			item._bonusFlags = params[2];
+			item._id = id;
+			item._material = material;
+			item._bonusFlags = flags;
 			party._treasure._hasItems = true;
 			break;
 		}
@@ -1198,13 +1251,13 @@ bool Scripts::cmdGiveEnchanted(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdItemType(Common::Array<byte> &params) {
-	_itemType = params[0];
+bool Scripts::cmdItemType(ParamsIterator &params) {
+	_itemType = params.readByte();
 
 	return true;
 }
 
-bool Scripts::cmdMakeNothingHere(Common::Array<byte> &params) {
+bool Scripts::cmdMakeNothingHere(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 
@@ -1219,31 +1272,33 @@ bool Scripts::cmdMakeNothingHere(Common::Array<byte> &params) {
 	return cmdExit(params);
 }
 
-bool Scripts::cmdCheckProtection(Common::Array<byte> &params) {
+bool Scripts::cmdCheckProtection(ParamsIterator &params) {
 	if (copyProtectionCheck())
 		return true;
 	else
 		return cmdExit(params);
 }
 
-bool Scripts::cmdChooseNumeric(Common::Array<byte> &params) {
-	int choice = Choose123::show(_vm, params[0]);
+bool Scripts::cmdChooseNumeric(ParamsIterator &params) {
+	int choice = Choose123::show(_vm, params.readByte());
 	if (choice) {
-		_lineNum = params[choice];
+		_lineNum = _event->_parameters[choice];
 		return false;
 	}
 
 	return true;
 }
 
-bool Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) {
+bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 	Window &w = _vm->_screen->_windows[12];
 
-	warning("TODO: cmdDisplayBottomTwoLines");
+	params.readByte();
+	int textId = params.readByte();
+
 	Common::String msg = Common::String::format("\r\x03c\t000\v007%s\n\n%s",
 		"",
-		map._events._text[params[1]].c_str());
+		map._events._text[textId].c_str());
 	w.close();
 	w.open();
 	w.writeString(msg);
@@ -1254,16 +1309,18 @@ bool Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) {
 	return false;
 }
 
-bool Scripts::cmdDisplayLarge(Common::Array<byte> &params) {
+bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
 	error("TODO: Implement event text loading");
 
 	display(true, 0);
 	return true;
 }
 
-bool Scripts::cmdExchObj(Common::Array<byte> &params) {
-	MazeObject &obj1 = _vm->_map->_mobData._objects[params[0]];
-	MazeObject &obj2 = _vm->_map->_mobData._objects[params[1]];
+bool Scripts::cmdExchObj(ParamsIterator &params) {
+	int id1 = params.readByte(), id2 = params.readByte();
+
+	MazeObject &obj1 = _vm->_map->_mobData._objects[id1];
+	MazeObject &obj2 = _vm->_map->_mobData._objects[id2];
 
 	Common::Point pt = obj1._position;
 	obj1._position = obj2._position;
@@ -1272,40 +1329,41 @@ bool Scripts::cmdExchObj(Common::Array<byte> &params) {
 	return true;
 }
 
-bool Scripts::cmdFallToMap(Common::Array<byte> &params) {
+bool Scripts::cmdFallToMap(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	party._fallMaze = params[0];
-	party._fallPosition = Common::Point(params[1], params[2]);
-	party._fallDamage = params[3];
+	party._fallMaze = params.readByte();
+	party._fallPosition.x = params.readShort();
+	party._fallPosition.y = params.readShort();
+	party._fallDamage = params.readByte();
 	intf.startFalling(true);
 
 	_lineNum = -1;
 	return false;
 }
 
-bool Scripts::cmdDisplayMain(Common::Array<byte> &params) {
+bool Scripts::cmdDisplayMain(ParamsIterator &params) {
 	display(false, 0);
 	return true;
 }
 
-bool Scripts::cmdGoto(Common::Array<byte> &params) {
+bool Scripts::cmdGoto(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 	map.getCell(1);
-	if (params[0] == map._currentSurfaceId) {
-		_lineNum = params[1];
+	if (map._currentSurfaceId == params.readByte()) {
+		_lineNum = params.readByte();
 		return false;
 	}
 
 	return true;
 }
 
-bool Scripts::cmdGotoRandom(Common::Array<byte> &params) {
-	_lineNum = params[_vm->getRandomNumber(1, params[0])];
+bool Scripts::cmdGotoRandom(ParamsIterator &params) {
+	_lineNum = _event->_parameters[_vm->getRandomNumber(1, params.readByte())];
 	return false;
 }
 
-bool Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) {
+bool Scripts::cmdCutsceneEndDarkside(ParamsIterator &params) {
 	Party &party = *_vm->_party;
 	_vm->_saves->_wonDarkSide = true;
 	party._questItems[53] = 1;
@@ -1318,7 +1376,7 @@ bool Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) {
 	return false;
 }
 
-bool Scripts::cmdCutsceneEndWorld(Common::Array<byte> &params) {
+bool Scripts::cmdCutsceneEndWorld(ParamsIterator &params) {
 	_vm->_saves->_wonWorld = true;
 	_vm->_party->_worldEnd = true;
 
@@ -1326,12 +1384,12 @@ bool Scripts::cmdCutsceneEndWorld(Common::Array<byte> &params) {
 	return false;
 }
 
-bool Scripts::cmdFlipWorld(Common::Array<byte> &params) {
-	_vm->_map->_loadDarkSide = params[0] != 0;
+bool Scripts::cmdFlipWorld(ParamsIterator &params) {
+	_vm->_map->_loadDarkSide = params.readByte() != 0;
 	return true;
 }
 
-bool Scripts::cmdPlayCD(Common::Array<byte> &params) { error("TODO"); }
+bool Scripts::cmdPlayCD(ParamsIterator &params) { error("TODO"); }
 
 void Scripts::doEndGame() {
 	doEnding("ENDGAME", 0);

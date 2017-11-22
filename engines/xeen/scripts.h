@@ -99,13 +99,52 @@ enum Opcode {
 
 class XeenEngine;
 
+class EventParameters : public Common::Array<byte> {
+public:
+	class Iterator {
+	private:
+		uint _index;
+		const EventParameters &_data;
+	public:
+		Iterator(const EventParameters &owner) : _data(owner), _index(0) {}
+		Iterator(const Iterator &it) : _data(it._data), _index(0) {}
+
+		/**
+		* Return a byte
+		*/
+		byte readByte();
+
+		/**
+		* Return a signed byte
+		*/
+		int8 readShort() { return (int8)readByte(); }
+
+		/**
+		* Return a word
+		*/
+		uint16 readUint16LE();
+
+		/**
+		* Return a 32-bit dword
+		*/
+		uint32 readUint32LE();
+	};
+public:
+	/**
+	 * Return an iterator for getting parameters
+	 */
+	Iterator getIterator() const {
+		return Iterator(*this);
+	}
+};
+
 class MazeEvent {
 public:
 	Common::Point _position;
 	int _direction;
 	int _line;
 	Opcode _opcode;
-	Common::Array<byte> _parameters;
+	EventParameters _parameters;
 public:
 	MazeEvent();
 
@@ -155,6 +194,8 @@ private:
 	Common::String _message;
 	Common::String _displayMessage;
 
+	typedef EventParameters::Iterator ParamsIterator;
+
 	/**
 	 * Handles executing a given script command
 	 */
@@ -163,279 +204,279 @@ private:
 	/**
 	 * Do nothing
 	 */
-	bool cmdDoNothing(Common::Array<byte> &params);
+	bool cmdDoNothing(ParamsIterator &params);
 
 	/**
 	 * Display a msesage on-screen
 	 */
-	bool cmdDisplay1(Common::Array<byte> &params);
+	bool cmdDisplay1(ParamsIterator &params);
 
 	/**
 	 * Displays a door text message using the small font
 	 */
-	bool cmdDoorTextSml(Common::Array<byte> &params);
+	bool cmdDoorTextSml(ParamsIterator &params);
 
 	/**
 	 * Displays a door text message using the large font
 	 */
-	bool cmdDoorTextLrg(Common::Array<byte> &params);
+	bool cmdDoorTextLrg(ParamsIterator &params);
 
 	/**
 	 * Show a sign text on-screen
 	 */
-	bool cmdSignText(Common::Array<byte> &params);
+	bool cmdSignText(ParamsIterator &params);
 
 	/**
 	 * Show an NPC interaction message
 	 */
-	bool cmdNPC(Common::Array<byte> &params);
+	bool cmdNPC(ParamsIterator &params);
 
 	/**
 	 * Play a sound FX
 	 */
-	bool cmdPlayFX(Common::Array<byte> &params);
+	bool cmdPlayFX(ParamsIterator &params);
 
 	/**
 	 * Handles teleportation
 	 */
-	bool cmdTeleport(Common::Array<byte> &params);
+	bool cmdTeleport(ParamsIterator &params);
 
 	/**
 	 * Do a conditional check
 	 */
-	bool cmdIf(Common::Array<byte> &params);
+	bool cmdIf(ParamsIterator &params);
 
 	/**
 	 * Moves the position of an object
 	 */
-	bool cmdMoveObj(Common::Array<byte> &params);
+	bool cmdMoveObj(ParamsIterator &params);
 	
 	/**
 	 * Take or give amounts from various character or party figures
 	 */
-	bool cmdTakeOrGive(Common::Array<byte> &params);
+	bool cmdTakeOrGive(ParamsIterator &params);
 
 	/**
 	 * Removes an object from the playfield
 	 */
-	bool cmdRemove(Common::Array<byte> &params);
+	bool cmdRemove(ParamsIterator &params);
 
 	/**
 	 * Set the currently active character for other script operations
 	 */
-	bool cmdSetChar(Common::Array<byte> &params);
+	bool cmdSetChar(ParamsIterator &params);
 
 	/**
 	 * Spawn a monster
 	 */
-	bool cmdSpawn(Common::Array<byte> &params);
+	bool cmdSpawn(ParamsIterator &params);
 
 	/**
 	 * Does various things that can be done within towns, like visiting
 	 * banks, guilds, etc.
 	 */
-	bool cmdDoTownEvent(Common::Array<byte> &params);
+	bool cmdDoTownEvent(ParamsIterator &params);
 
 	/**
 	 * Stop executing the script
 	 */
-	bool cmdExit(Common::Array<byte> &params);
+	bool cmdExit(ParamsIterator &params);
 
 	/**
 	 * Changes the value for the wall on a given cell
 	 */
-	bool cmdAlterMap(Common::Array<byte> &params);
+	bool cmdAlterMap(ParamsIterator &params);
 
 	/**
 	 *
 	 */
-	bool cmdGiveExtended(Common::Array<byte> &params);
+	bool cmdGiveExtended(ParamsIterator &params);
 	
 	/**
 	 * Confirms with the player for initiating the endgame
 	 */
-	bool cmdConfirmEnding(Common::Array<byte> &params);
+	bool cmdConfirmEnding(ParamsIterator &params);
 	
 	/**
 	 * Deals damage to a character
 	 */
-	bool cmdDamage(Common::Array<byte> &params);
+	bool cmdDamage(ParamsIterator &params);
 
 	/**
 	 * Jump if a random number matches a given value
 	 */
-	bool cmdJumpRnd(Common::Array<byte> &params);
+	bool cmdJumpRnd(ParamsIterator &params);
 
 	/**
 	 * Alter an existing event
 	 */
-	bool cmdAlterEvent(Common::Array<byte> &params);
+	bool cmdAlterEvent(ParamsIterator &params);
 
 	/**
 	 * Stores the current location and line for later resuming, and set up to execute
 	 * a script at a given location
 	 */
-	bool cmdCallEvent(Common::Array<byte> &params);
+	bool cmdCallEvent(ParamsIterator &params);
 
 	/**
 	 * Return from executing a script to the script location that previously
 	 * called the script
 	 */
-	bool cmdReturn(Common::Array<byte> &params);
+	bool cmdReturn(ParamsIterator &params);
 
 	/**
 	 * Sets variables on characters like race, sex, and class
 	 */
-	bool cmdSetVar(Common::Array<byte> &params);
+	bool cmdSetVar(ParamsIterator &params);
 
 	/**
 	 * Play the Clouds endgame
 	 */
-	bool cmdCutsceneEndClouds(Common::Array<byte> &params);
+	bool cmdCutsceneEndClouds(ParamsIterator &params);
 
 	/**
 	 * Prompts the user for which character will do an action
 	 */
-	bool cmdWhoWill(Common::Array<byte> &params);
+	bool cmdWhoWill(ParamsIterator &params);
 
 	/**
 	 * Deals a random amount of damage to a character
 	 */
-	bool cmdRndDamage(Common::Array<byte> &params);
+	bool cmdRndDamage(ParamsIterator &params);
 
 	/**
 	 * Moves the wall object to the given coordinates. Doesn't change it's orientation.
 	 * Wall objects are only visible when viewed straight on, and were never intended
 	 * to be anywhere but on squares directly facing walls
 	 */
-	bool cmdMoveWallObj(Common::Array<byte> &params);
+	bool cmdMoveWallObj(ParamsIterator &params);
 
 	/**
 	 * Sets the cell flag at the specified X/Y coordinate on the current map
 	 */
-	bool cmdAlterCellFlag(Common::Array<byte> &params);
+	bool cmdAlterCellFlag(ParamsIterator &params);
 
 	/**
 	 * Sets the word value at the current X/Y location in the HED file
 	 * in memory to the given two bytes
 	 */
-	bool cmdAlterHed(Common::Array<byte> &params);
+	bool cmdAlterHed(ParamsIterator &params);
 
 	/**
 	 * Displays a text string which includes some stat of the currently selected character
 	 */
-	bool cmdDisplayStat(Common::Array<byte> &params);
+	bool cmdDisplayStat(ParamsIterator &params);
 
 	/**
 	 * Displays text in the scene window for various objects
 	 * the user interacts with
 	 */
-	bool cmdSignTextSml(Common::Array<byte> &params);
+	bool cmdSignTextSml(ParamsIterator &params);
 
 	/**
 	 * An array of six VOC filenames are hard-coded into the game executable file.
 	 * This function plays the VOC file at the specified index in this array
 	 */
-	bool cmdPlayEventVoc(Common::Array<byte> &params);
+	bool cmdPlayEventVoc(ParamsIterator &params);
 
 	/**
 	 * Displays a large text message across the bottom of the screen
 	 */
-	bool cmdDisplayBottom(Common::Array<byte> &params);
+	bool cmdDisplayBottom(ParamsIterator &params);
 
 	/**
 	 * Checks if a given map flag/monster has been set, and if so
 	 * jumps to a given line
 	 */
-	bool cmdIfMapFlag(Common::Array<byte> &params);
+	bool cmdIfMapFlag(ParamsIterator &params);
 
 	/**
 	 * Selects a random character for further other actions
 	 */
-	bool cmdSelectRandomChar(Common::Array<byte> &params);
+	bool cmdSelectRandomChar(ParamsIterator &params);
 
 	/**
 	 * Gives an enchanted item to a character
 	 */
-	bool cmdGiveEnchanted(Common::Array<byte> &params);
+	bool cmdGiveEnchanted(ParamsIterator &params);
 
 	/**
 	 * Sets the item category for used in character operations
 	 */
-	bool cmdItemType(Common::Array<byte> &params);
+	bool cmdItemType(ParamsIterator &params);
 
 	/**
 	 * Disable all the scripts at the party's current position
 	 */
-	bool cmdMakeNothingHere(Common::Array<byte> &params);
+	bool cmdMakeNothingHere(ParamsIterator &params);
 
 	/**
 	 * Does a copy protection check
 	 */
-	bool cmdCheckProtection(Common::Array<byte> &params);
+	bool cmdCheckProtection(ParamsIterator &params);
 
 	/**
 	 * Given a number of options, and a list of line numbers associated with
 	 * those options, jumps to whichever line for the option the user selects
 	 */
-	bool cmdChooseNumeric(Common::Array<byte> &params);
+	bool cmdChooseNumeric(ParamsIterator &params);
 
 	/**
 	 * Displays a two line message at the bottom of the screen
 	 */
-	bool cmdDisplayBottomTwoLines(Common::Array<byte> &params);
+	bool cmdDisplayBottomTwoLines(ParamsIterator &params);
 
 	/**
 	 * Displays a message
 	 */
-	bool cmdDisplayLarge(Common::Array<byte> &params);
+	bool cmdDisplayLarge(ParamsIterator &params);
 
 	/**
 	 * Exchange the positions of two objects in the maze
 	 */
-	bool cmdExchObj(Common::Array<byte> &params);
+	bool cmdExchObj(ParamsIterator &params);
 
 	/**
 	 * Handles making the player fall down to the ground
 	 */
-	bool cmdFallToMap(Common::Array<byte> &params);
+	bool cmdFallToMap(ParamsIterator &params);
 
 	/**
 	 * Displays a message
 	 */
-	bool cmdDisplayMain(Common::Array<byte> &params);
+	bool cmdDisplayMain(ParamsIterator &params);
 
 	/**
 	 * Jumps to a given line number if the surface at relative cell position 1 matches
 	 * a specified surface.
 	 * @remarks		This opcode is apparently never actually used
 	 */
-	bool cmdGoto(Common::Array<byte> &params);
+	bool cmdGoto(ParamsIterator &params);
 
 	/**
 	 * Pick a random value from the parameter list and jump to that line number
 	 */
-	bool cmdGotoRandom(Common::Array<byte> &params);
+	bool cmdGotoRandom(ParamsIterator &params);
 
 	/**
 	 * Plays the Dark Side of Xeen ending
 	 */
-	bool cmdCutsceneEndDarkside(Common::Array<byte> &params);
+	bool cmdCutsceneEndDarkside(ParamsIterator &params);
 
 	/**
 	 * Plays the World of Xeen ending
 	 */
-	bool cmdCutsceneEndWorld(Common::Array<byte> &params);
+	bool cmdCutsceneEndWorld(ParamsIterator &params);
 
 	/**
 	 * Switches the player between the Clouds and Dark Side
 	 */
-	bool cmdFlipWorld(Common::Array<byte> &params);
+	bool cmdFlipWorld(ParamsIterator &params);
 
 	/**
 	 * Plays a CD track
 	 */
-	bool cmdPlayCD(Common::Array<byte> &params);
+	bool cmdPlayCD(ParamsIterator &params);
 
 	int whoWill(int v1, int v2, int v3);
 
