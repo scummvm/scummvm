@@ -43,7 +43,7 @@
 namespace Supernova {
 
 #define SAVEGAME_HEADER MKTAG('M','S','N','1')
-#define SAVEGAME_VERSION 5
+#define SAVEGAME_VERSION 6
 
 #define SUPERNOVA_DAT "supernova.dat"
 #define SUPERNOVA_DAT_VERSION 1
@@ -78,7 +78,7 @@ private:
 
 class SupernovaEngine : public Engine {
 public:
-	SupernovaEngine(OSystem *syst);
+	explicit SupernovaEngine(OSystem *syst);
 	~SupernovaEngine();
 
 	virtual Common::Error run();
