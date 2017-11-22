@@ -411,12 +411,12 @@ void GameManager::initRooms() {
 	_rooms[CORRIDOR1] = new AxacussCorridor1(_vm, this);
 	_rooms[CORRIDOR2] = new AxacussCorridor2(_vm, this);
 	_rooms[CORRIDOR3] = new AxacussCorridor3(_vm, this);
-	_rooms[CORRIDOR4] = new AxacussCorridor3(_vm, this);
-	_rooms[CORRIDOR5] = new AxacussCorridor4(_vm, this);
-	_rooms[CORRIDOR6] = new AxacussCorridor5(_vm, this);
-	_rooms[CORRIDOR7] = new AxacussCorridor6(_vm, this);
-	_rooms[CORRIDOR8] = new AxacussCorridor7(_vm, this);
-	_rooms[CORRIDOR9] = new AxacussCorridor8(_vm, this);
+	_rooms[CORRIDOR4] = new AxacussCorridor4(_vm, this);
+	_rooms[CORRIDOR5] = new AxacussCorridor5(_vm, this);
+	_rooms[CORRIDOR6] = new AxacussCorridor6(_vm, this);
+	_rooms[CORRIDOR7] = new AxacussCorridor7(_vm, this);
+	_rooms[CORRIDOR8] = new AxacussCorridor8(_vm, this);
+	_rooms[CORRIDOR9] = new AxacussCorridor9(_vm, this);
 	_rooms[BCORRIDOR] = new AxacussBcorridor(_vm, this);
 	_rooms[GUARD] = new AxacussIntersection(_vm, this);
 	_rooms[GUARD3] = new AxacussExit(_vm, this);
@@ -1035,7 +1035,9 @@ void GameManager::taxiEvent() {
 }
 
 void GameManager::searchStartEvent() {
-	warning("STUB: searchStartEvent");
+	if ((_currentRoom >= _rooms[CORRIDOR1]) && (_currentRoom <= _rooms[BCORRIDOR]))
+		busted(0);
+	_state._corridorSearch = true;
 }
 
 void GameManager::outro() {
