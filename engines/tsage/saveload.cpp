@@ -211,12 +211,14 @@ Common::Error Saver::restore(int slot) {
 	// Note: I don't store pointers to instantiated objects here, because it's not necessary - the mere act
 	// of instantiating a saved object registers it with the saver, and will then be resolved to whatever
 	// object originally had a pointer to it as part of the post-processing step
+	DynObjects dynObjects;
 	Common::String className;
 	serializer.syncString(className);
 	while (className != "END") {
 		SavedObject *savedObject;
 		if (!_factoryPtr || ((savedObject = _factoryPtr(className)) == NULL))
 			error("Unknown class name '%s' encountered trying to restore savegame", className.c_str());
+		dynObjects.push_back(savedObject);
 
 		// Populate the contents of the object
 		savedObject->synchronize(serializer);
@@ -226,7 +228,12 @@ Common::Error Saver::restore(int slot) {
 	}
 
 	// Post-process any unresolved pointers to get the correct pointer
-	resolveLoadPointers();
+	resolveLoadPointers(dynObjects);
+
+	// Post-process safety check: if any dynamically created objects didn't get any
+	// references, then delete them, since they'd never be freed otherwise
+	for (DynObjects::iterator i = dynObjects.begin(); i != dynObjects.end(); ++i)
+		delete *i;
 
 	delete saveFile;
 
@@ -392,7 +399,7 @@ void Saver::listObjects() {
 /**
  * Returns the pointer associated with the specified object index
  */
-void Saver::resolveLoadPointers() {
+void Saver::resolveLoadPointers(DynObjects &dynObjects) {
 	if (_unresolvedPtrs.size() == 0)
 		// Nothing to resolve
 		return;
@@ -410,6 +417,9 @@ void Saver::resolveLoadPointers() {
 				SavedObject **objPP = r._savedObject;
 				*objPP = pObj;
 				iPtr = _unresolvedPtrs.erase(iPtr);
+
+				// If it's a dynamic object, remove it from the dynamic objects list
+				dynObjects.remove(pObj);
 			} else {
 				++iPtr;
 			}

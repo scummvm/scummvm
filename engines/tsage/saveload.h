@@ -201,6 +201,7 @@ public:
 typedef SavedObject *(*SavedObjectFactory)(const Common::String &className);
 
 class Saver {
+	typedef Common::List<SavedObject *> DynObjects;
 private:
 	Common::List<SavedObject *> _objList;
 	FunctionList<bool> _saveNotifiers;
@@ -213,7 +214,7 @@ private:
 	bool _macroSaveFlag;
 	bool _macroRestoreFlag;
 
-	void resolveLoadPointers();
+	void resolveLoadPointers(DynObjects &dynObjects);
 public:
 	Saver();
 	~Saver();
