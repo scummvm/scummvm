@@ -1666,20 +1666,15 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 			rval = vm->getRandomNumber(1, 100);
 			if (rval <= 25) {
 				mult = 0;
-			}
-			else if (rval <= 45) {
+			} else if (rval <= 45) {
 				mult = 1;
-			}
-			else if (rval <= 60) {
+			} else if (rval <= 60) {
 				mult = 2;
-			}
-			else if (rval <= 75) {
+			} else if (rval <= 75) {
 				mult = 3;
-			}
-			else if (rval <= 95) {
+			} else if (rval <= 95) {
 				mult = 4;
-			}
-			else {
+			} else {
 				mult = 5;
 			}
 
