@@ -66,7 +66,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		if (redrawFlag == REDRAW_FULL) {
 			if ((mode != ITEMMODE_CHAR_INFO || category != CATEGORY_MISC) && mode != ITEMMODE_ENCHANT
 					&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
-				_buttons[8]._bounds.moveTo(148, _buttons[8]._bounds.top);
+				_buttons[4]._bounds.moveTo(148, _buttons[4]._bounds.top);
 				_buttons[9]._draw = false;
 			} else if (mode == ITEMMODE_RECHARGE) {
 				_buttons[4]._value = Common::KEYCODE_r;
@@ -75,7 +75,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			} else if (mode == ITEMMODE_TO_GOLD) {
 				_buttons[4]._value = Common::KEYCODE_g;
 			} else {
-				_buttons[8]._bounds.moveTo(0, _buttons[8]._bounds.top);
+				_buttons[4]._bounds.moveTo(0, _buttons[4]._bounds.top);
 				_buttons[9]._draw = true;
 				_buttons[9]._value = Common::KEYCODE_u;
 			}
@@ -85,7 +85,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			if (mode != ITEMMODE_CHAR_INFO && mode != ITEMMODE_8 && mode != ITEMMODE_ENCHANT
 					&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
 				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT1,
-					Res.BTN_SELL, Res.BTN_IDENTIFY, Res.BTN_FIX);
+					Res.BTN_BUY, Res.BTN_SELL, Res.BTN_IDENTIFY, Res.BTN_FIX);
 			} else if (mode != ITEMMODE_ENCHANT  && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
 				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT1,
 					category == 3 ? Res.BTN_USE : Res.BTN_EQUIP,
@@ -135,7 +135,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			}
 
 			for (int idx = 0; idx < 9; ++idx) {
-				_itemsDrawList[idx]._y = 10 + idx * 9;
+				_itemsDrawList[idx]._x = 8;
+				_itemsDrawList[idx]._y = 18 + idx * 9;
 
 				switch (category) {
 				case CATEGORY_WEAPON:
