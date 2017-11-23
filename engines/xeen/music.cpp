@@ -200,7 +200,6 @@ bool MusicDriver::fxEndSubroutine(const byte *&srcP, byte param) {
 
 void MusicDriver::playFX(uint effectId, const byte *data) {
 	if (!_fxPlaying || effectId < 7 || effectId >= 11) {
-		_musStartPtr = nullptr;
 		_fxDataPtr = _fxStartPtr = data;
 		_fxCountdownTimer = 0;
 		_channels[7]._changeFrequency = _channels[8]._changeFrequency = false;
