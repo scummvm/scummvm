@@ -33,7 +33,7 @@ namespace Xeen {
 Town::Town(XeenEngine *vm) : ButtonContainer(vm) {
 	Common::fill(&_arr1[0], &_arr1[6], 0);
 	_townMaxId = 0;
-	_townActionId = 0;
+	_townActionId = BANK;
 	_drawFrameIndex = 0;
 	_currentCharLevel = 0;
 	_v1 = 0;
@@ -64,7 +64,7 @@ void Town::loadStrings(const Common::String &name) {
 	f.close();
 }
 
-int Town::townAction(int actionId) {
+int Town::townAction(TownAction actionId) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -92,7 +92,7 @@ int Town::townAction(int actionId) {
 	_icons2.clear();
 
 	switch (actionId) {
-	case 0:
+	case BANK:
 		// Bank
 		_icons1.load("bank.icn");
 		_icons2.load("bank2.icn");
@@ -105,7 +105,7 @@ int Town::townAction(int actionId) {
 		vocName = isDarkCc ? "bank1.voc" : "banker.voc";
 		break;
 
-	case 1:
+	case BLACKSMITH:
 		// Blacksmith
 		_icons1.load("esc.icn");
 		addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
@@ -118,7 +118,7 @@ int Town::townAction(int actionId) {
 		vocName = isDarkCc ? "see2.voc" : "whaddayo.voc";
 		break;
 
-	case 2:
+	case GUILD:
 		// Guild
 		loadStrings("spldesc.bin");
 		_icons1.load("esc.icn");
@@ -133,7 +133,7 @@ int Town::townAction(int actionId) {
 		vocName = isDarkCc ? "parrot1.voc" : "guild10.voc";
 		break;
 
-	case 3:
+	case TAVERN:
 		// Tavern
 		loadStrings("tavern.bin");
 		_icons1.load("tavern.icn");
@@ -149,7 +149,7 @@ int Town::townAction(int actionId) {
 		vocName = isDarkCc ? "hello1.voc" : "hello.voc";
 		break;
 
-	case 4:
+	case TEMPLE:
 		// Temple
 		_icons1.load("esc.icn");
 		addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
@@ -162,7 +162,7 @@ int Town::townAction(int actionId) {
 		vocName = isDarkCc ? "help2.voc" : "maywe2.voc";
 		break;
 
-	case 5:
+	case TRAINING:
 		// Training
 		Common::fill(&_arr1[0], &_arr1[6], 0);
 		_v2 = 0;
@@ -175,27 +175,27 @@ int Town::townAction(int actionId) {
 		vocName = isDarkCc ? "training.voc" : "youtrn1.voc";
 		break;
 
-	case 6:
+	case ARENA:
 		// Arena event
 		arenaEvent();
 		return false;
 
-	case 8:
+	case REAPER:
 		// Reaper event
 		reaperEvent();
 		return false;
 
-	case 9:
+	case GOLEM:
 		// Golem event
 		golemEvent();
 		return false;
 
-	case 10:
-	case 13:
+	case DWARF1:
+	case DWARF2:
 		dwarfEvent();
 		return false;
 
-	case 11:
+	case SPHINX:
 		sphinxEvent();
 		return false;
 
@@ -334,29 +334,30 @@ Common::String Town::createTownText(Character &ch) {
 	Common::String msg;
 
 	switch (_townActionId) {
-	case 0:
+	case BANK:
 		// Bank
 		return Common::String::format(Res.BANK_TEXT,
 			XeenEngine::printMil(party._bankGold).c_str(),
 			XeenEngine::printMil(party._bankGems).c_str(),
 			XeenEngine::printMil(party._gold).c_str(),
 			XeenEngine::printMil(party._gems).c_str());
-	case 1:
+
+	case BLACKSMITH:
 		// Blacksmith
 		return Common::String::format(Res.BLACKSMITH_TEXT,
 			ch._name.c_str(), XeenEngine::printMil(party._gold).c_str());
 
-	case 2:
+	case GUILD:
 		// Guild
 		return !ch.guildMember() ? Res.GUILD_NOT_MEMBER_TEXT :
 			Common::String::format(Res.GUILD_TEXT, ch._name.c_str());
 
-	case 3:
+	case TAVERN:
 		// Tavern
 		return Common::String::format(Res.TAVERN_TEXT, ch._name.c_str(),
 			Res.FOOD_AND_DRINK, XeenEngine::printMil(party._gold).c_str());
 
-	case 4:
+	case TEMPLE:
 		// Temple
 		_donation = 0;
 		_uncurseCost = 0;
@@ -425,7 +426,7 @@ Common::String Town::createTownText(Character &ch) {
 			_healCost, _donation, XeenEngine::printK(_uncurseCost).c_str(),
 			XeenEngine::printMil(party._gold).c_str());
 
-	case 5:
+	case TRAINING:
 		// Training
 		if (_vm->_files->_isDarkCc) {
 			switch (party._mazeId) {
@@ -480,27 +481,27 @@ Common::String Town::createTownText(Character &ch) {
 
 Character *Town::doTownOptions(Character *c) {
 	switch (_townActionId) {
-	case 0:
+	case BANK:
 		// Bank
 		c = doBankOptions(c);
 		break;
-	case 1:
+	case BLACKSMITH:
 		// Blacksmith
 		c = doBlacksmithOptions(c);
 		break;
-	case 2:
+	case GUILD:
 		// Guild
 		c = doGuildOptions(c);
 		break;
-	case 3:
+	case TAVERN:
 		// Tavern
 		c = doTavernOptions(c);
 		break;
-	case 4:
+	case TEMPLE:
 		// Temple
 		c = doTempleOptions(c);
 		break;
-	case 5:
+	case TRAINING:
 		// Training
 		c = doTrainingOptions(c);
 		break;
@@ -1072,7 +1073,7 @@ void Town::drawTownAnim(bool flag) {
 	}
 
 	switch (_townActionId) {
-	case 0:
+	case BANK:
 		if (sound.isPlaying() || (isDarkCc && intf._overallFrame)) {
 			if (isDarkCc) {
 				if (sound.isPlaying() || intf._overallFrame == 1) {
@@ -1090,7 +1091,7 @@ void Town::drawTownAnim(bool flag) {
 		}
 		break;
 
-	case 2:
+	case GUILD:
 		if (sound.isPlaying()) {
 			if (isDarkCc) {
 				if (intf._overallFrame) {
@@ -1103,19 +1104,20 @@ void Town::drawTownAnim(bool flag) {
 		}
 		break;
 
-	case 3:
+	case TAVERN:
 		if (sound.isPlaying() && isDarkCc) {
 			_townSprites[4].draw(screen, _vm->getRandomNumber(7), Common::Point(153, 49));
 		}
 		break;
-	case 4:
+
+	case TEMPLE:
 		if (sound.isPlaying()) {
 			_townSprites[3].draw(screen, _vm->getRandomNumber(2, 4), Common::Point(8, 8));
 
 		}
 		break;
 
-	case 5:
+	case TRAINING:
 		if (sound.isPlaying()) {
 			if (isDarkCc) {
 				_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
@@ -1128,6 +1130,10 @@ void Town::drawTownAnim(bool flag) {
 				_townSprites[1].draw(screen, _vm->getRandomNumber(8, 12), Common::Point(8, 8));
 			}
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	if (flag) {
@@ -1202,7 +1208,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 	Window &w = screen._windows[11];
 
 	town._townMaxId = 4;
-	town._townActionId = 7;
+	town._townActionId = NO_ACTION;
 	town._drawFrameIndex = 0;
 	town._townPos = Common::Point(23, 22);
 

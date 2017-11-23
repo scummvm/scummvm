@@ -830,7 +830,7 @@ bool Scripts::cmdSpawn(ParamsIterator &params) {
 }
 
 bool Scripts::cmdDoTownEvent(ParamsIterator &params) {
-	_scriptResult = _vm->_town->townAction(params.readByte());
+	_scriptResult = _vm->_town->townAction((TownAction)params.readByte());
 	_vm->_party->_stepped = true;
 	_refreshIcons = true;
 

@@ -134,7 +134,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				break;
 			}
 
-			for (int idx = 0; idx < 9; ++idx) {
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				_itemsDrawList[idx]._x = 8;
 				_itemsDrawList[idx]._y = 18 + idx * 9;
 
