@@ -72,7 +72,7 @@ int Town::townAction(TownAction actionId) {
 	Sound &sound = *_vm->_sound;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
-	if (actionId == 12) {
+	if (actionId == ACTION12) {
 		pyramidEvent();
 		return 0;
 	}
@@ -220,7 +220,7 @@ int Town::townAction(TownAction actionId) {
 	intf._levitateUIFrame = 0;
 
 	_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
-	if (actionId == 0 && isDarkCc) {
+	if (actionId == BANK && isDarkCc) {
 		_townSprites[4].draw(screen, _vm->getRandomNumber(13, 18),
 			Common::Point(8, 30));
 	}
@@ -236,7 +236,7 @@ int Town::townAction(TownAction actionId) {
 	intf.highlightChar(0);
 	drawTownAnim(1);
 
-	if (actionId == 0)
+	if (actionId == BANK)
 		intf._overallFrame = 2;
 
 	sound.playSound(vocName, 1);
@@ -244,12 +244,13 @@ int Town::townAction(TownAction actionId) {
 	do {
 		townWait();
 		charP = doTownOptions(charP);
+		title = createTownText(*charP);
 		screen._windows[10].writeString(title);
 		drawButtons(&screen);
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
 	switch (actionId) {
-	case 1:
+	case BLACKSMITH:
 		// Leave blacksmith
 		if (isDarkCc) {
 			sound.stopSound();
@@ -257,7 +258,7 @@ int Town::townAction(TownAction actionId) {
 		}
 		break;
 
-	case 3: {
+	case TAVERN: {
 		// Leave Tavern
 		sound.stopSound();
 		sound.playSound(isDarkCc ? "gdluck1.voc" : "goodbye.voc", 1);
