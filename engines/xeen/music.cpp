@@ -735,6 +735,9 @@ void Music::playSong(Common::SeekableReadStream &stream) {
 }
 
 void Music::playSong(const Common::String &name, int param) {
+	_priorMusic = _currentMusic;
+	_currentMusic = name;
+
 	File f(name);
 	playSong(f);
 }

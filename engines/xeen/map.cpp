@@ -38,6 +38,24 @@ const int MAP_GRID_PRIOR_INDEX2[] = { 0, 0, 0, 0, 2, 3, 4, 1, 0 };
 
 const int MAP_GRID_PRIOR_DIRECTION2[] = { 0, 1, 2, 3, 0, 1, 2, 3, 0 };
 
+const char *const MUSIC_FILES1[5] = {
+	"outdoors.m", "town.m", "cavern.m", "dungeon.m", "castle.m"
+};
+
+const char *const MUSIC_FILES2[6][7] = {
+	{ "outday1.m", "outday2.m", "outday4.m", "outnght1.m",
+	"outnght2.m", "outnght4.m", "daydesrt.m" },
+	{ "townday1.m", "twnwlk.m", "newbrigh.m", "twnnitea.m",
+	"twnniteb.m", "twnwlk.m", "townday1.m" },
+	{ "cavern1.m", "cavern2.m", "cavern3a.m", "cavern1.m",
+	"cavern2.m", "cavern3a.m", "cavern1.m" },
+	{ "dngon1.m", "dngon2.m", "dngon3.m", "dngon1.m",
+	"dngon2.m", "dngon3.m", "dngon1.m" },
+	{ "cstl1rev.m", "cstl2rev.m", "cstl3rev.m", "cstl1rev.m",
+	"cstl2rev.m", "cstl3rev.m", "cstl1rev.m" },
+	{ "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m" }
+};
+
 MonsterStruct::MonsterStruct() {
 	_experience = 0;
 	_hp = 0;
@@ -890,6 +908,7 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 void Map::load(int mapId) {
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
 	IndoorDrawList &indoorList = _vm->_interface->_indoorList;
 	OutdoorDrawList &outdoorList = _vm->_interface->_outdoorList;
 
@@ -1098,8 +1117,19 @@ void Map::load(int mapId) {
 
 	// Handle loading miscellaneous sprites for the map
 	if (_isOutdoors) {
-		warning("TODO");	// Sound loading
+		// Start playing relevant music
+		Common::String musName;
 
+		if (_vm->_files->_isDarkCc) {
+			int randIndex = _vm->getRandomNumber(6);
+			musName = MUSIC_FILES2[_mazeData->_wallKind][randIndex];
+		} else {
+			musName = "outdoors.m";
+		}
+		if (musName != sound._currentMusic)
+			sound.playSong(musName, 207);
+
+		// Load sprite sets needed for scene rendering
 		_groundSprites.load("water.out");
 		_tileSprites.load("outdoor.til");
 		outdoorList._sky1._sprites = &_skySprites[0];
@@ -1119,8 +1149,20 @@ void Map::load(int mapId) {
 				_surfaceSprites[i].load(Res.SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 	} else {
-		warning("TODO");	// Sound loading
+		// Start playing relevant music
+		const int MUS_INDEXES[] = { 1, 2, 3, 4, 3, 5 };
+		Common::String musName;
 
+		if (_vm->_files->_isDarkCc) {
+			int randIndex = _vm->getRandomNumber(6);
+			musName = MUSIC_FILES2[MUS_INDEXES[_mazeData->_wallKind]][randIndex];
+		} else {
+			musName = MUSIC_FILES1[MUS_INDEXES[_mazeData->_wallKind]];
+		}
+		if (musName != sound._currentMusic)
+			sound.playSong(musName, 207);
+
+		// Load sprite sets needed for scene rendering
 		_skySprites[1].load(Common::String::format("%s.sky",
 			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_groundSprites.load(Common::String::format("%s.gnd",
