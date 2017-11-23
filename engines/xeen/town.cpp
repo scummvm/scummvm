@@ -169,7 +169,7 @@ int Town::townAction(TownAction actionId) {
 
 		_icons1.load("train.icn");
 		addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
-		addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t);
+		addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_icons1);
 
 		sound.stopSound();
 		vocName = isDarkCc ? "training.voc" : "youtrn1.voc";
@@ -471,7 +471,7 @@ Common::String Town::createTownText(Character &ch) {
 				ch._name.c_str(), ch._level._permanent + 1);
 		}
 
-		return Common::String::format(Res.TRAINING_TEXT,
+		return Common::String::format(Res.TRAINING_TEXT, msg.c_str(),
 			XeenEngine::printMil(party._gold).c_str());
 
 	default:
