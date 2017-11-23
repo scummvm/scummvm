@@ -108,7 +108,7 @@ int Town::townAction(int actionId) {
 	case 1:
 		// Blacksmith
 		_icons1.load("esc.icn");
-		addButton(Common::Rect(261, 100, 285, 120), Common::KEYCODE_ESCAPE, &_icons1);
+		addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
 		addButton(Common::Rect(234, 54, 308, 62), 0);
 		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
 		addButton(Common::Rect(234, 74, 308, 82), 0);
@@ -122,7 +122,7 @@ int Town::townAction(int actionId) {
 		// Guild
 		loadStrings("spldesc.bin");
 		_icons1.load("esc.icn");
-		addButton(Common::Rect(261, 100, 285, 120), Common::KEYCODE_ESCAPE, &_icons1);
+		addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
 		addButton(Common::Rect(234, 54, 308, 62), 0);
 		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
 		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_s);
@@ -152,7 +152,7 @@ int Town::townAction(int actionId) {
 	case 4:
 		// Temple
 		_icons1.load("esc.icn");
-		addButton(Common::Rect(261, 100, 285, 120), Common::KEYCODE_ESCAPE, &_icons1);
+		addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
 		addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_h);
 		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_d);
 		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_u);
@@ -344,7 +344,7 @@ Common::String Town::createTownText(Character &ch) {
 	case 1:
 		// Blacksmith
 		return Common::String::format(Res.BLACKSMITH_TEXT,
-			XeenEngine::printMil(party._gold).c_str());
+			ch._name.c_str(), XeenEngine::printMil(party._gold).c_str());
 
 	case 2:
 		// Guild
