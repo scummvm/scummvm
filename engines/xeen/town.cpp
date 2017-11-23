@@ -44,7 +44,7 @@ Town::Town(XeenEngine *vm) : ButtonContainer(vm) {
 	_v10 = _v11 = 0;
 	_v12 = _v13 = 0;
 	_v14 = 0;
-	_v20 = 0;
+	_maxLevel = 0;
 	_v21 = 0;
 	_v22 = 0;
 	_v23 = 0;
@@ -431,42 +431,45 @@ Common::String Town::createTownText(Character &ch) {
 		if (_vm->_files->_isDarkCc) {
 			switch (party._mazeId) {
 			case 29:
-				_v20 = 30;
+				_maxLevel = 30;
 				break;
 			case 31:
-				_v20 = 50;
+				_maxLevel = 50;
 				break;
 			case 37:
-				_v20 = 200;
+				_maxLevel = 200;
 				break;
 			default:
-				_v20 = 100;
+				_maxLevel = 100;
 				break;
 			}
 		} else {
 			switch (party._mazeId) {
 			case 28:
-				_v20 = 10;
+				_maxLevel = 10;
 				break;
 			case 30:
-				_v20 = 15;
+				_maxLevel = 15;
 				break;
 			default:
-				_v20 = 20;
+				_maxLevel = 20;
 				break;
 			}
 		}
 
 		_experienceToNextLevel = ch.experienceToNextLevel();
 
-		if (_experienceToNextLevel >= 0x10000 && ch._level._permanent < _v20) {
+		if (_experienceToNextLevel && ch._level._permanent < _maxLevel) {
+			// Need more experience
 			int nextLevel = ch._level._permanent + 1;
-			return Common::String::format(Res.EXPERIENCE_FOR_LEVEL,
+			msg = Common::String::format(Res.EXPERIENCE_FOR_LEVEL,
 				ch._name.c_str(), _experienceToNextLevel, nextLevel);
-		} else if (ch._level._permanent >= 20) {
+		} else if (ch._level._permanent >= _maxLevel) {
+			// At maximum level
 			_experienceToNextLevel = 1;
 			msg = Common::String::format(Res.LEARNED_ALL, ch._name.c_str());
 		} else {
+			// Eligble for level increase
 			msg = Common::String::format(Res.ELIGIBLE_FOR_LEVEL,
 				ch._name.c_str(), ch._level._permanent + 1);
 		}
@@ -904,7 +907,7 @@ Character *Town::doTrainingOptions(Character *c) {
 			_drawFrameIndex = 0;
 
 			Common::String name;
-			if (c->_level._permanent >= _v20) {
+			if (c->_level._permanent >= _maxLevel) {
 				name = isDarkCc ? "gtlost.voc" : "trainin1.voc";
 			} else {
 				name = isDarkCc ? "gtlost.voc" : "trainin0.voc";
