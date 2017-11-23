@@ -57,6 +57,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  MADE:
    - Fixed badly distorted sound (bug #9753).
 
+ MADS:
+   - Fix rare crash that can happen when Rex is first locked up
+
  MOHAWK:
    - Added patch to the original data files to correct the vault access
      instructions in Myst ME.
@@ -76,6 +79,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      locket to Marie. Now it's possible to beat the game with a perfect score.
      This bug is also present when using the original interpreter.
    - Fixed various other script bugs.
+
+ TsAGE:
+   - Display fixes for Return to Ringworld Demo
+   - Fix loading Return to Ringworld savegames with unreferenced dynamic objects
 
 1.9.1 (YYYY-MM-DD)
  General:
@@ -98,6 +105,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Fixed some Discworld 2 text/voice not displaying & playing all the way through
+   - Fix crash in in-game save menu when all slots are used with long names
 
  TsAGE:
    - Fixed recently introduced bug preventing animations in Return to Ringworld from playing.
