@@ -691,14 +691,15 @@ const int Resources::TOWN_MAXES[2][11] = {
 	{ 26, 19, 48, 27, 26, 37, 16, 16, 16, 16, 16 }
 };
 
-const char *const Resources::TOWN_ACTION_MUSIC[14] = {
-	"bank.m", "smith.m", "guild.m", "tavern.m", "temple.m",
-	"grounds.m", "endgame.m", "bank.m", "sf09.m", "guild.m",
-	"tavern.m", "temple.m", "smith.m", "endgame.m"
+const char *const Resources::TOWN_ACTION_MUSIC[2][7] = {
+	{ "bank.m", "smith.m", "guild.m", "tavern.m",
+	"temple.m", "grounds.m", "endgame.m" },
+	{ "bank.m", "sf09.m", "guild.m", "tavern.m",
+	"temple.m", "smith.m", "endgame.m" }
 };
 
-const char *const Resources::TOWN_ACTION_SHAPES[4] = {
-	"bankr", "blck", "gild", "tvrn"
+const char *const Resources::TOWN_ACTION_SHAPES[7] = {
+	"bankr", "blck", "gild", "tvrn", "tmpl", "trng", "eface08"
 };
 
 const int Resources::TOWN_ACTION_FILES[2][7] = {

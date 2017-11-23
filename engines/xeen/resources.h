@@ -124,8 +124,8 @@ public:
 	static const int MAKE_ITEM_ARR5[8][2];
 	static const int OUTDOOR_DRAWSTRCT_INDEXES[44];
 	static const int TOWN_MAXES[2][11];
-	static const char *const TOWN_ACTION_MUSIC[14];
-	static const char *const TOWN_ACTION_SHAPES[4];
+	static const char *const TOWN_ACTION_MUSIC[2][7];
+	static const char *const TOWN_ACTION_SHAPES[7];
 	static const int TOWN_ACTION_FILES[2][7];
 	static const char *const BANK_TEXT;
 	static const char *const BLACKSMITH_TEXT;
