@@ -69,21 +69,39 @@ static const char *directoryGlobs[] = {
 	flags                                                                       \
 },
 
-#define MYST3ENTRY_XBOX(lang, langFile, md5lang) 								\
-{																				\
-	{																			\
-		"myst3",																\
-		0,																		\
-		{																		\
-			{ "RSRC.m3r", 0, "3de23eb5a036a62819186105478f9dde", 1226192 },		\
-			{ langFile, 0, md5lang, -1 },										\
-		},																		\
-		lang,																	\
-		Common::kPlatformXbox,													\
-		ADGF_UNSTABLE,															\
-		GUIO_NONE																\
-	},																			\
-	kLocMulti6																	\
+#define MYST3ENTRY_DVD(lang, langFile, md5lang, extra, flags)                   \
+{                                                                               \
+	{                                                                           \
+		"myst3",                                                                \
+		extra,                                                                  \
+		{                                                                       \
+			{ "RSRC.m3r",    0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },  \
+			{ "ENGLISH.m3t", 0, "74726de866c0594d3f2a05ff754c973d", 3407120 },  \
+			{ langFile, 0, md5lang, -1 },                                       \
+		},                                                                      \
+		lang,                                                                   \
+		Common::kPlatformWindows,                                               \
+		ADGF_NO_FLAGS,                                                          \
+		GUIO_NONE                                                               \
+	},                                                                          \
+	flags                                                                       \
+},
+
+#define MYST3ENTRY_XBOX(lang, langFile, md5lang)                                \
+{                                                                               \
+	{                                                                           \
+		"myst3",                                                                \
+		0,                                                                      \
+		{                                                                       \
+			{ "RSRC.m3r", 0, "3de23eb5a036a62819186105478f9dde", 1226192 },     \
+			{ langFile, 0, md5lang, -1 },                                       \
+		},                                                                      \
+		lang,                                                                   \
+		Common::kPlatformXbox,                                                  \
+		ADGF_UNSTABLE,                                                          \
+		GUIO_NONE                                                               \
+	},                                                                          \
+	kLocMulti6                                                                  \
 },
 
 
@@ -118,12 +136,12 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "55ceb165dad02211ef2d25946c3aac8e", 0, kLocMulti6)
 
 	// DVD releases (1.27)
-	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3u",  "e200b416f43e70fee76148a80d195d5c", "DVD", kLocMulti6)
-	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "5679ce65c5e9af8899835ef9af398f1a", "DVD", kLocMulti6)
-	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "2997afdb4306c573153fdbb391ed2fff", "DVD", kLocMulti6)
-	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "09f32e6ceb414463e8fc22ca1a9564d3", "DVD", kLocMulti6)
-	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "51fb02f6bf37dde811d7cde648365260", "DVD", kLocMulti6)
-	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "e27e610fe8ce35223a3239ff170a85ec", "DVD", kLocMulti6)
+	MYST3ENTRY_DVD(Common::EN_ANY, "ENGLISH.m3u",  "e200b416f43e70fee76148a80d195d5c", "DVD", kLocMulti6)
+	MYST3ENTRY_DVD(Common::FR_FRA, "FRENCH.m3u",   "5679ce65c5e9af8899835ef9af398f1a", "DVD", kLocMulti6)
+	MYST3ENTRY_DVD(Common::NL_NLD, "DUTCH.m3u",    "2997afdb4306c573153fdbb391ed2fff", "DVD", kLocMulti6)
+	MYST3ENTRY_DVD(Common::DE_DEU, "GERMAN.m3u",   "09f32e6ceb414463e8fc22ca1a9564d3", "DVD", kLocMulti6)
+	MYST3ENTRY_DVD(Common::IT_ITA, "ITALIAN.m3u",  "51fb02f6bf37dde811d7cde648365260", "DVD", kLocMulti6)
+	MYST3ENTRY_DVD(Common::ES_ESP, "SPANISH.m3u",  "e27e610fe8ce35223a3239ff170a85ec", "DVD", kLocMulti6)
 
 	// Myst 3 Xbox (PAL)
 	MYST3ENTRY_XBOX(Common::EN_ANY, "ENGLISHX.m3t", "c4d012ab02b8ca7d0c7e79f4dbd4e676")
