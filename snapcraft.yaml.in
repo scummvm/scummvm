@@ -1,5 +1,5 @@
 name: scummvm
-version: "2.0.0git"
+version: "@VERSION@"
 summary: ScummVM
 description: |
     ScummVM is a program which allows you to run certain classic graphical

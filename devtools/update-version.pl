@@ -51,6 +51,7 @@ my @subs_files = qw(
 	dists/gph/scummvm.ini
 	dists/riscos/!Boot,feb
 	backends/platform/psp/README.PSP
+	snapcraft.yaml
 	);
 
 my %subs = (
