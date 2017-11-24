@@ -523,7 +523,7 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 
 bool Scripts::cmdIf(ParamsIterator &params) {
 	Party &party = *_vm->_party;
-	uint32 mask;
+	uint32 val;
 	int newLineNum;
 
 	int mode = params.readByte();
@@ -531,30 +531,28 @@ bool Scripts::cmdIf(ParamsIterator &params) {
 	case 16:
 	case 34:
 	case 100:
-		mask = params.readUint32LE();
-		newLineNum = params.readByte();
+		val = params.readUint32LE();
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		mask = params.readUint16LE();
-		newLineNum = params.readByte();
+		val = params.readUint16LE();
 		break;
 	default:
-		mask = params.readByte();
-		newLineNum = params.readByte();
+		val = params.readByte();
 		break;
 	}
+	newLineNum = params.readByte();
 
 	bool result;
 	if ((_charIndex != 0 && _charIndex != 8) || mode == 44) {
-		result = ifProc(mode, mask, _event->_opcode - 8, _charIndex - 1);
+		result = ifProc(mode, val, _event->_opcode - 8, _charIndex - 1);
 	} else {
 		result = false;
 		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
 			if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
-				result = ifProc(mode, mask, _event->_opcode - 8, idx);
+				result = ifProc(mode, val, _event->_opcode - 8, idx);
 			}
 		}
 	}
@@ -699,7 +697,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
-					party.giveTake(mode1, val1, mode1, val2, idx);
+					party.giveTake(mode1, val1, mode2, val2, idx);
 
 					switch (mode1) {
 					case 8:
@@ -796,16 +794,22 @@ bool Scripts::cmdRemove(ParamsIterator &params) {
 }
 
 bool Scripts::cmdSetChar(ParamsIterator &params) {
-	if (params.readByte() != 7) {
-		_charIndex = WhoWill::show(_vm, 22, 3, false);
-		if (_charIndex == 0) {
-			return cmdExit(params);
-		}
-	} else {
+	int charId = params.readByte();
+
+	if (charId == 0) {
+		_charIndex = 0;
+		_v2 = 0;
+	} else if (charId < 7) {
+		_v2 = charId;
+	} else if (charId == 7) {
 		_charIndex = _vm->getRandomNumber(1, _vm->_party->_activeParty.size());
+		_v2 = 1;
+	} else {
+		_charIndex = WhoWill::show(_vm, 22, 3, false);
+		if (_charIndex == 0)
+			return cmdExit(params);
 	}
 
-	_v2 = 1;
 	return true;
 }
 
@@ -1424,7 +1428,7 @@ void Scripts::doEnding(const Common::String &endStr, int v2) {
 	error("TODO: doEnding");
 }
 
-bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
+bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 	Party &party = *_vm->_party;
 	Character &ps = party._activeParty[charIndex];
 	uint v = 0;
@@ -1463,15 +1467,15 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		v = ps.getAge(false);
 		break;
 	case 13:
-		assert(mask < 18);
-		if (ps._skills[mask])
-			v = mask;
+		assert(val < 18);
+		if (ps._skills[val])
+			v = val;
 		break;
 	case 15:
 		// Award
-		assert(mask < 128);
-		if (ps.hasAward(mask))
-			v = mask;
+		assert(val < 128);
+		if (ps.hasAward(val))
+			v = val;
 		break;
 	case 16:
 		// Experience
@@ -1483,9 +1487,9 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		break;
 	case 18:
 		// Condition
-		assert(mask < 16);
-		if (!ps._conditions[mask] && !(mask & 0x10))
-			v = mask;
+		assert(val < 16);
+		if (!ps._conditions[val] && !(val & 0x10))
+			v = val;
 		break;
 	case 19: {
 		// Can player cast a given spell
@@ -1512,10 +1516,10 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 
 		// Check if the character class can cast the particular spell
 		for (int idx = 0; idx < 39; ++idx) {
-			if (Res.SPELLS_ALLOWED[category][idx] == mask) {
+			if (Res.SPELLS_ALLOWED[category][idx] == val) {
 				// Can cast it. Check if the player has it in their spellbook
 				if (ps._spells[idx])
-					v = mask;
+					v = val;
 				break;
 			}
 		}
@@ -1523,33 +1527,33 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 	}
 	case 20:
 		if (_vm->_files->_isDarkCc)
-			mask += 256;
-		assert(mask < 512);
-		v = party._gameFlags[mask / 256][mask % 256] ? mask : 0xffffffff;
+			val += 256;
+		assert(val < 512);
+		v = party._gameFlags[val / 256][val % 256] ? val : 0xffffffff;
 		break;
 	case 21:
 		// Scans inventories for given item number
 		v = 0xFFFFFFFF;
-		if (mask < 82) {
+		if (val < 82) {
 			for (int idx = 0; idx < 9; ++idx) {
-				if (mask == 35) {
-					if (ps._weapons[idx]._id == mask) {
-						v = mask;
+				if (val == 35) {
+					if (ps._weapons[idx]._id == val) {
+						v = val;
 						break;
 					}
-				} else if (mask < 49) {
-					if (ps._armor[idx]._id == (mask - 35)) {
-						v = mask;
+				} else if (val < 49) {
+					if (ps._armor[idx]._id == (val - 35)) {
+						v = val;
 						break;
 					}
-				} else if (mask < 60) {
-					if (ps._accessories[idx]._id == (mask - 49)) {
-						v = mask;
+				} else if (val < 60) {
+					if (ps._accessories[idx]._id == (val - 49)) {
+						v = val;
 						break;
 					}
 				} else {
-					if (ps._misc[idx]._id == (mask - 60)) {
-						v = mask;
+					if (ps._misc[idx]._id == (val - 60)) {
+						v = val;
 						break;
 					}
 				}
@@ -1599,8 +1603,8 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		v = ps._luck._temporary;
 		break;
 	case 44:
-		v = YesNo::show(_vm, mask);
-		v = (!v && !mask) ? 2 : mask;
+		v = YesNo::show(_vm, val);
+		v = (!v && !val) ? 2 : val;
 		break;
 	case 45:
 		// Might base (before bonus)
@@ -1753,7 +1757,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		break;
 	case 99:
 		// Party skills check
-		v = party.checkSkill((Skill)mask) ? mask : 0xffffffff;
+		v = party.checkSkill((Skill)val) ? val : 0xffffffff;
 		break;
 	case 102:
 		// Thievery skill
@@ -1761,11 +1765,11 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		break;
 	case 103:
 		// Get value of world flag
-		v = party._worldFlags[mask] ? mask : 0xffffffff;
+		v = party._worldFlags[val] ? val : 0xffffffff;
 		break;
 	case 104:
 		// Get value of quest flag
-		v = party._questFlags[_vm->_files->_isDarkCc][mask] ? mask : 0xffffffff;
+		v = party._questFlags[_vm->_files->_isDarkCc][val] ? val : 0xffffffff;
 		break;
 	case 105:
 		// Test number of Megacredits in party. Only used by King's Engineer in Castle Burlock
@@ -1781,11 +1785,11 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 
 	switch (mode) {
 	case 0:
-		return v >= mask;
+		return v >= val;
 	case 1:
-		return v == mask;
+		return v == val;
 	case 2:
-		return v <= mask;
+		return v <= val;
 	default:
 		return false;
 	}

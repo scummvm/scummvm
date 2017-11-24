@@ -491,7 +491,7 @@ private:
 	/**
 	 * This monstrosity handles doing the various types of If checks on various data
 	 */
-	bool ifProc(int action, uint32 mask, int mode, int charIndex);
+	bool ifProc(int action, uint32 val, int mode, int charIndex);
 
 	/**
 	 * Prompts the user for a copy protection check

@@ -1089,7 +1089,7 @@ int Character::getThievery() const {
 
 	result += itemScan(10);
 
-	// If the character doesn't have a thievery skill, then do'nt allow any result
+	// If the character doesn't have a thievery skill, then don't allow any result
 	if (!_skills[THIEVERY])
 		result = 0;
 
