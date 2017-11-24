@@ -93,6 +93,8 @@ void CharacterInfo::execute(int charIndex) {
 			} else {
 				_vm->_mode = MODE_CHARACTER_INFO;
 			}
+
+			intf.highlightChar(_buttonValue);
 			redrawFlag = true;
 			break;
 
