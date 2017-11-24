@@ -370,7 +370,7 @@ bool Scripts::doOpcode(MazeEvent &event) {
 	_event = &event;
 
 	// Some opcodes use the first parameter as a message
-	int msgId = event._parameters.empty() ? 0 : event._parameters[0];
+	uint msgId = event._parameters.empty() ? 0 : event._parameters[0];
 	_message = msgId >= map._events._text.size() ? "" : map._events._text[msgId];
 
 	// Execute the opcode

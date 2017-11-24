@@ -432,27 +432,34 @@ Common::String Town::createTownText(Character &ch) {
 		if (_vm->_files->_isDarkCc) {
 			switch (party._mazeId) {
 			case 29:
+				// Castleview
 				_maxLevel = 30;
 				break;
 			case 31:
+				// Sandcaster
 				_maxLevel = 50;
 				break;
 			case 37:
+				// Olympus
 				_maxLevel = 200;
 				break;
 			default:
+				// Kalindra's Castle
 				_maxLevel = 100;
 				break;
 			}
 		} else {
 			switch (party._mazeId) {
 			case 28:
+				// Vertigo
 				_maxLevel = 10;
 				break;
 			case 30:
+				// Rivercity
 				_maxLevel = 15;
 				break;
 			default:
+				// Newcastle
 				_maxLevel = 20;
 				break;
 			}
