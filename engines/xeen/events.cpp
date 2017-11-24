@@ -33,9 +33,9 @@ namespace Xeen {
 
 EventsManager::EventsManager(XeenEngine *vm) : _vm(vm),
 		_frameCounter(0), _priorFrameCounterTime(0), _gameCounter(0),
-		_leftButton(false), _rightButton(false), _sprites("mouse.icn"),
-		_keyCode(Common::KEYCODE_INVALID) {
+		_leftButton(false), _rightButton(false), _sprites("mouse.icn") {
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
+	_key.keycode = Common::KEYCODE_INVALID;
 }
 
 EventsManager::~EventsManager() {
@@ -81,7 +81,7 @@ void EventsManager::pollEvents() {
 				_vm->_debugger->attach();
 				_vm->_debugger->onFrame();
 			} else {
-				_keyCode = event.kbd.keycode;
+				_key = event.kbd;
 			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -111,7 +111,7 @@ void EventsManager::pollEventsAndWait() {
 }
 
 void EventsManager::clearEvents() {
-	_keyCode = Common::KEYCODE_INVALID;
+	_key.keycode = Common::KEYCODE_INVALID;
 	_leftButton = _rightButton = false;
 
 }
@@ -122,17 +122,17 @@ void EventsManager::debounceMouse() {
 	}
 }
 bool EventsManager::getKey(Common::KeyState &key) {
-	if (_keyCode == Common::KEYCODE_INVALID) {
+	if (_key.keycode == Common::KEYCODE_INVALID) {
 		return false;
 	} else {
-		key = _keyCode;
-		_keyCode = Common::KEYCODE_INVALID;
+		key = _key;
+		_key.keycode = Common::KEYCODE_INVALID;
 		return true;
 	}
 }
 
 bool EventsManager::isKeyPending() const {
-	return _keyCode != Common::KEYCODE_INVALID;
+	return _key.keycode != Common::KEYCODE_INVALID;
 }
 
 bool EventsManager::isKeyMousePressed() {

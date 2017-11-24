@@ -94,7 +94,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 		else if (_buttonValue == Common::KEYCODE_KP_ENTER)
 			_buttonValue = Common::KEYCODE_RETURN;
 
-		_buttonValue |= (keyState.flags << 8);
+		_buttonValue |= keyState.flags << 16;
 		if (_buttonValue)
 			return true;
 	}
