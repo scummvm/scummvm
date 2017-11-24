@@ -43,7 +43,7 @@ PartyDrawer::PartyDrawer(XeenEngine *vm): _vm(vm) {
 	_restoreSprites.load("restorex.icn");
 	_hpSprites.load("hpbars.icn");
 	_dseFace.load("dse.fac");
-	_hiliteChar = -1;
+	_hiliteChar = HILIGHT_CHAR_NONE;
 }
 
 void PartyDrawer::drawParty(bool updateFlag) {
@@ -88,7 +88,7 @@ void PartyDrawer::drawParty(bool updateFlag) {
 		_hpSprites.draw(screen, frame, Common::Point(Res.HP_BARS_X[idx], 182));
 	}
 
-	if (_hiliteChar != -1)
+	if (_hiliteChar != HILIGHT_CHAR_NONE)
 		res._globalSprites.draw(screen, 8, Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 
 	if (updateFlag)
@@ -101,7 +101,7 @@ void PartyDrawer::highlightChar(int charId) {
 
 	if (charId != _hiliteChar && _hiliteChar != HILIGHT_CHAR_DISABLED) {
 		// Handle deselecting any previusly selected char
-		if (_hiliteChar != -1) {
+		if (_hiliteChar != HILIGHT_CHAR_NONE) {
 			res._globalSprites.draw(screen, 9 + _hiliteChar,
 				Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 		}
@@ -117,16 +117,16 @@ void PartyDrawer::unhighlightChar() {
 	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 
-	if (_hiliteChar != -1) {
+	if (_hiliteChar != HILIGHT_CHAR_NONE) {
 		res._globalSprites.draw(screen, _hiliteChar + 9,
 			Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
-		_hiliteChar = -1;
+		_hiliteChar = HILIGHT_CHAR_NONE;
 		screen._windows[33].update();
 	}
 }
 
 void PartyDrawer::resetHighlight() {
-	_hiliteChar = -1;
+	_hiliteChar = HILIGHT_CHAR_NONE;
 }
 /*------------------------------------------------------------------------*/
 

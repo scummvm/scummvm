@@ -35,6 +35,7 @@ class XeenEngine;
 
 #define MINIMAP_SIZE 7
 #define HILIGHT_CHAR_DISABLED -2
+#define HILIGHT_CHAR_NONE -1
 
 /**
  * Class responsible for drawing the images of the characters in the party

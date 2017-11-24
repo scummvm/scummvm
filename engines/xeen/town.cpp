@@ -258,14 +258,14 @@ int Town::townAction(TownAction actionId) {
 		}
 		break;
 
-	case TAVERN: {
+	case TAVERN:
 		// Leave Tavern
 		sound.stopSound();
 		sound.playSound(isDarkCc ? "gdluck1.voc" : "goodbye.voc", 1);
 
 		map.mazeData()._mazeNumber = party._mazeId;
 		break;
-	}
+
 	default:
 		break;
 	}
