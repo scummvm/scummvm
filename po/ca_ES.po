@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-24 19:38+0100\n"
+"POT-Creation-Date: 2017-11-24 23:45+0100\n"
 "PO-Revision-Date: 2017-02-20 14:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -60,8 +60,8 @@ msgstr "Amunt"
 #: gui/fluidsynth-dialog.cpp:152 gui/KeysDialog.cpp:43 gui/massadd.cpp:95
 #: gui/options.cpp:1680 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
-#: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
-#: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
+#: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:445
+#: gui/saveload-dialog.cpp:727 gui/saveload-dialog.cpp:1121
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: engines/engine.cpp:524 backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:207
@@ -155,7 +155,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:525
 #: gui/launcher.cpp:529 gui/massadd.cpp:92 gui/options.cpp:1682
-#: gui/saveload-dialog.cpp:1114 engines/engine.cpp:443 engines/engine.cpp:454
+#: gui/saveload-dialog.cpp:1122 engines/engine.cpp:443 engines/engine.cpp:454
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -1419,7 +1419,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr ""
 
 #: gui/recorderdialog.cpp:68 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:443
+#: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:445
 msgid "Delete"
 msgstr "Suprimeix"
 
@@ -1465,59 +1465,59 @@ msgstr "Vista de llistat"
 msgid "Grid view"
 msgstr "Vista de quadrícula"
 
-#: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:530
+#: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:532
 msgid "No date saved"
 msgstr "No hi ha data desada"
 
-#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:531
+#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:533
 msgid "No time saved"
 msgstr "No hi ha hora desada"
 
-#: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:532
+#: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:534
 msgid "No playtime saved"
 msgstr "No hi ha temps de joc desat"
 
-#: gui/saveload-dialog.cpp:442
+#: gui/saveload-dialog.cpp:444
 msgid "Do you really want to delete this saved game?"
 msgstr "Realment voleu suprimir aquesta partida?"
 
-#: gui/saveload-dialog.cpp:556 gui/saveload-dialog.cpp:1062
+#: gui/saveload-dialog.cpp:558 gui/saveload-dialog.cpp:1070
 msgid "Date: "
 msgstr "Data: "
 
-#: gui/saveload-dialog.cpp:560 gui/saveload-dialog.cpp:1068
+#: gui/saveload-dialog.cpp:562 gui/saveload-dialog.cpp:1076
 msgid "Time: "
 msgstr "Hora: "
 
-#: gui/saveload-dialog.cpp:566 gui/saveload-dialog.cpp:1076
+#: gui/saveload-dialog.cpp:568 gui/saveload-dialog.cpp:1084
 msgid "Playtime: "
 msgstr "Temps de joc: "
 
-#: gui/saveload-dialog.cpp:579 gui/saveload-dialog.cpp:667
+#: gui/saveload-dialog.cpp:581 gui/saveload-dialog.cpp:669
 msgid "Untitled saved game"
 msgstr "Partida sense nom"
 
-#: gui/saveload-dialog.cpp:720
+#: gui/saveload-dialog.cpp:728
 msgid "Next"
 msgstr "Següent"
 
-#: gui/saveload-dialog.cpp:723
+#: gui/saveload-dialog.cpp:731
 msgid "Prev"
 msgstr "Anterior"
 
-#: gui/saveload-dialog.cpp:926
+#: gui/saveload-dialog.cpp:934
 msgid "New Save"
 msgstr "Nova partida desada"
 
-#: gui/saveload-dialog.cpp:926
+#: gui/saveload-dialog.cpp:934
 msgid "Create a new saved game"
 msgstr "Crea una nova partida desada"
 
-#: gui/saveload-dialog.cpp:1055
+#: gui/saveload-dialog.cpp:1063
 msgid "Name: "
 msgstr "Nom: "
 
-#: gui/saveload-dialog.cpp:1133
+#: gui/saveload-dialog.cpp:1141
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Entreu la descripció per l'espai %d:"
