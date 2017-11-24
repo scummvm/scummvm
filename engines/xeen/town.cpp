@@ -244,10 +244,13 @@ int Town::townAction(TownAction actionId) {
 	do {
 		townWait();
 		charP = doTownOptions(charP);
+		if (_vm->shouldQuit())
+			return 0;
+
 		title = createTownText(*charP);
 		screen._windows[10].writeString(title);
 		drawButtons(&screen);
-	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
+	} while (_buttonValue != Common::KEYCODE_ESCAPE);
 
 	switch (actionId) {
 	case BLACKSMITH:
