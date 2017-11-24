@@ -669,6 +669,13 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	int result = 0;
 	int level = skillLevel & 0x7f;
 
+	InventoryItems *invGroups[4] = {
+		&c->_weapons, &c->_armor, &c->_accessories, &c->_misc
+	};
+	const int *BASE_COSTS[4] = {
+		Res.WEAPON_BASE_COSTS, Res.ARMOR_BASE_COSTS, Res.ACCESSORY_BASE_COSTS, Res.MISC_BASE_COSTS
+	};
+
 	switch (mode) {
 	case ITEMMODE_BLACKSMITH:
 		level = 0;
@@ -691,11 +698,8 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	case CATEGORY_WEAPON:
 	case CATEGORY_ARMOR:
 	case CATEGORY_ACCESSORY: {
-		// 0=Weapons, 1=Armor, 2=Accessories
-		XeenItem &i = (mode == 0) ? c->_weapons[itemIndex] :
-			(mode == 1 ? c->_armor[itemIndex] : c->_accessories[itemIndex]);
-		amount1 = (mode == 0) ? Res.WEAPON_BASE_COSTS[i._id] :
-			(mode == 1 ? Res.ARMOR_BASE_COSTS[i._id] : Res.ACCESSORY_BASE_COSTS[i._id]);
+		XeenItem &i = (*invGroups[category])[itemIndex];
+		amount1 = (BASE_COSTS[category])[i._id];
 
 		if (i._material > 36 && i._material < 59) {
 			switch (i._material) {
@@ -738,7 +742,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		break;
 	}
 
-	case 3: {
+	case CATEGORY_MISC: {
 		// Misc
 		XeenItem &i = c->_misc[itemIndex];
 		amount1 = Res.MISC_MATERIAL_COSTS[i._material];
