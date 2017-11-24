@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-21 22:47+0100\n"
+"POT-Creation-Date: 2017-11-24 19:38+0100\n"
 "PO-Revision-Date: 2017-11-10 16:20+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -63,8 +63,8 @@ msgstr "Feljebb"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: engines/engine.cpp:524 backends/events/default/default-events.cpp:196
-#: backends/events/default/default-events.cpp:218
+#: engines/engine.cpp:524 backends/events/default/default-events.cpp:185
+#: backends/events/default/default-events.cpp:207
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
@@ -2103,19 +2103,19 @@ msgstr "Letöltés befejezõdött."
 msgid "Download failed."
 msgstr "Letöltés nem sikerült."
 
-#: backends/events/default/default-events.cpp:196
+#: backends/events/default/default-events.cpp:185
 msgid "Do you really want to return to the Launcher?"
 msgstr "Biztos hogy visszatérsz az indítópulthoz?"
 
-#: backends/events/default/default-events.cpp:196
+#: backends/events/default/default-events.cpp:185
 msgid "Launcher"
 msgstr "Indítópult"
 
-#: backends/events/default/default-events.cpp:218
+#: backends/events/default/default-events.cpp:207
 msgid "Do you really want to quit?"
 msgstr "Biztos hogy ki akarsz lépni ?"
 
-#: backends/events/default/default-events.cpp:218
+#: backends/events/default/default-events.cpp:207
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
@@ -2388,7 +2388,7 @@ msgstr "Kattintás Mód"
 
 #: backends/platform/maemo/maemo.cpp:214
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: backends/platform/tizen/form.cpp:275
+#: backends/platform/tizen/form.cpp:274
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
 msgid "Left Click"
@@ -2400,7 +2400,7 @@ msgstr "Középsõ katt"
 
 #: backends/platform/maemo/maemo.cpp:220
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: backends/platform/tizen/form.cpp:267
+#: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
 msgid "Right Click"
 msgstr "Jobb katt"
@@ -2485,27 +2485,27 @@ msgstr "Virtuális billentyûzet"
 msgid "Key mapper"
 msgstr "Billentyû kiosztás"
 
-#: backends/platform/tizen/form.cpp:263
+#: backends/platform/tizen/form.cpp:262
 msgid "Right Click Once"
 msgstr "Jobb katt egyszer"
 
-#: backends/platform/tizen/form.cpp:271
+#: backends/platform/tizen/form.cpp:270
 msgid "Move Only"
 msgstr "Csak lépés"
 
-#: backends/platform/tizen/form.cpp:294
+#: backends/platform/tizen/form.cpp:293
 msgid "Escape Key"
 msgstr "Escape gomb"
 
-#: backends/platform/tizen/form.cpp:299
+#: backends/platform/tizen/form.cpp:298
 msgid "Game Menu"
 msgstr "Játék Menü"
 
-#: backends/platform/tizen/form.cpp:304
+#: backends/platform/tizen/form.cpp:303
 msgid "Show Keypad"
 msgstr "Kézi billentyûzet"
 
-#: backends/platform/tizen/form.cpp:309
+#: backends/platform/tizen/form.cpp:308
 msgid "Control Mouse"
 msgstr "Egér irányitás"
 

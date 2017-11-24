@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-21 22:47+0100\n"
+"POT-Creation-Date: 2017-11-24 19:38+0100\n"
 "PO-Revision-Date: 2017-11-23 12:42+0000\n"
 "Last-Translator: Santiago G. Sanz <santiagogarciasanz@gmail.com>\n"
-"Language-Team: Galician "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/gl/>\n"
+"Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/gl/>\n"
 "Language: gl_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -63,8 +63,8 @@ msgstr "Arriba"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:719 gui/saveload-dialog.cpp:1113
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: engines/engine.cpp:524 backends/events/default/default-events.cpp:196
-#: backends/events/default/default-events.cpp:218
+#: engines/engine.cpp:524 backends/events/default/default-events.cpp:185
+#: backends/events/default/default-events.cpp:207
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
@@ -2116,19 +2116,19 @@ msgstr "Descarga completada."
 msgid "Download failed."
 msgstr "Erro ao descargar."
 
-#: backends/events/default/default-events.cpp:196
+#: backends/events/default/default-events.cpp:185
 msgid "Do you really want to return to the Launcher?"
 msgstr "Seguro que queres volver ao Iniciador?"
 
-#: backends/events/default/default-events.cpp:196
+#: backends/events/default/default-events.cpp:185
 msgid "Launcher"
 msgstr "Iniciador"
 
-#: backends/events/default/default-events.cpp:218
+#: backends/events/default/default-events.cpp:207
 msgid "Do you really want to quit?"
 msgstr "Seguro que queres saír?"
 
-#: backends/events/default/default-events.cpp:218
+#: backends/events/default/default-events.cpp:207
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
@@ -2401,7 +2401,7 @@ msgstr "Modo Rato"
 
 #: backends/platform/maemo/maemo.cpp:214
 #: backends/platform/symbian/src/SymbianActions.cpp:42
-#: backends/platform/tizen/form.cpp:275
+#: backends/platform/tizen/form.cpp:274
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
 msgid "Left Click"
@@ -2413,7 +2413,7 @@ msgstr "Botón central"
 
 #: backends/platform/maemo/maemo.cpp:220
 #: backends/platform/symbian/src/SymbianActions.cpp:43
-#: backends/platform/tizen/form.cpp:267
+#: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
 msgid "Right Click"
 msgstr "Botón secundario"
@@ -2498,27 +2498,27 @@ msgstr "Teclado virtual"
 msgid "Key mapper"
 msgstr "Asignador de teclas"
 
-#: backends/platform/tizen/form.cpp:263
+#: backends/platform/tizen/form.cpp:262
 msgid "Right Click Once"
 msgstr "Botón secundario unha vez"
 
-#: backends/platform/tizen/form.cpp:271
+#: backends/platform/tizen/form.cpp:270
 msgid "Move Only"
 msgstr "Mover unicamente"
 
-#: backends/platform/tizen/form.cpp:294
+#: backends/platform/tizen/form.cpp:293
 msgid "Escape Key"
 msgstr "ESC"
 
-#: backends/platform/tizen/form.cpp:299
+#: backends/platform/tizen/form.cpp:298
 msgid "Game Menu"
 msgstr "Menú do xogo"
 
-#: backends/platform/tizen/form.cpp:304
+#: backends/platform/tizen/form.cpp:303
 msgid "Show Keypad"
 msgstr "Mostrar teclado numérico"
 
-#: backends/platform/tizen/form.cpp:309
+#: backends/platform/tizen/form.cpp:308
 msgid "Control Mouse"
 msgstr "Rato"
 
@@ -3233,8 +3233,8 @@ msgstr ""
 "Importación exitosa de %d ficheiros de gardado orixinais a ScummVM.\n"
 "Se queres importar manualmente outros ficheiros de gardado orixinais máis "
 "adiante,\n"
-"abre a consola de depuración de ScummVM e emprega o comando \""
-"import_savefile\".\n"
+"abre a consola de depuración de ScummVM e emprega o comando \"import_savefile"
+"\".\n"
 "\n"
 
 #: engines/mads/detection.cpp:91
