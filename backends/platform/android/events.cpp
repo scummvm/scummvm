@@ -443,7 +443,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 		if (arg5 > 0)
-			e.synthetic = true;
+			e.kbdRepeat = true;
 
 		// map special keys to 'our' ascii codes
 		switch (e.kbd.keycode) {

@@ -177,7 +177,7 @@ bool EventRecorder::processDelayMillis() {
 }
 
 void EventRecorder::checkForKeyCode(const Common::Event &event) {
-	if ((event.type == Common::EVENT_KEYDOWN) && (event.kbd.flags & Common::KBD_CTRL) && (event.kbd.keycode == Common::KEYCODE_p) && (!event.synthetic)) {
+	if ((event.type == Common::EVENT_KEYDOWN) && (event.kbd.flags & Common::KBD_CTRL) && (event.kbd.keycode == Common::KEYCODE_p) && (!event.kbdRepeat)) {
 		togglePause();
 	}
 }
@@ -445,7 +445,7 @@ Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Com
 	evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
 	switch (_recordMode) {
 	case kRecorderPlayback:
-		if (ev.synthetic != true) {
+		if (ev.kbdRepeat != true) {
 			return Common::List<Common::Event>();
 		}
 		return Common::DefaultEventMapper::mapEvent(ev, source);

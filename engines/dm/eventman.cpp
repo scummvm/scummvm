@@ -609,7 +609,7 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN: {
-			if (event.synthetic)
+			if (event.kbdRepeat)
 				break;
 
 			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {

@@ -67,12 +67,11 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 		kKeyRepeatSustainDelay = 100
 	};
 
-	struct {
-		uint16 ascii;
-		byte flags;
-		int keycode;
-	} _currentKeyDown;
+	bool _shouldGenerateKeyRepeatEvents;
+	Common::KeyState _currentKeyDown;
 	uint32 _keyRepeatTime;
+
+	void handleKeyRepeat();
 public:
 	DefaultEventManager(Common::EventSource *boss);
 	~DefaultEventManager();
@@ -97,6 +96,17 @@ public:
 	 // this, please talk to tsoliman and/or LordHoto.
 	virtual Common::Keymapper *getKeymapper() { return _keymapper; }
 #endif
+
+	/**
+	 * Controls whether repeated key down events are generated while a key is pressed
+	 *
+	 * Backends that generate their own keyboard repeat events should disable this.
+	 *
+	 * @param generateKeyRepeatEvents
+	 */
+	void setGenerateKeyRepeatEvents(bool generateKeyRepeatEvents) {
+		_shouldGenerateKeyRepeatEvents = generateKeyRepeatEvents;
+	}
 };
 
 #endif

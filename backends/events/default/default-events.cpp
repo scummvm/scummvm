@@ -40,7 +40,8 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_modifierState(0),
 	_shouldQuit(false),
 	_shouldRTL(false),
-	_confirmExitDialogActive(false) {
+	_confirmExitDialogActive(false),
+	_shouldGenerateKeyRepeatEvents(true) {
 
 	assert(boss);
 
@@ -50,10 +51,6 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_dispatcher.registerObserver(this, kEventManPriority, false);
 
 	// Reset key repeat
-	_currentKeyDown.keycode = 0;
-	_currentKeyDown.ascii = 0;
-	_currentKeyDown.flags = 0;
-
 	_keyRepeatTime = 0;
 
 #ifdef ENABLE_VKEYBD
@@ -86,143 +83,163 @@ void DefaultEventManager::init() {
 }
 
 bool DefaultEventManager::pollEvent(Common::Event &event) {
-	// Skip recording of these events
-	uint32 time = g_system->getMillis(true);
-	bool result = false;
-
 	_dispatcher.dispatch();
-	if (!_eventQueue.empty()) {
-		event = _eventQueue.pop();
-		result = true;
+
+	if (_shouldGenerateKeyRepeatEvents) {
+		handleKeyRepeat();
 	}
 
-	if (result) {
-		event.synthetic = false;
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			_modifierState = event.kbd.flags;
-			// init continuous event stream
-			_currentKeyDown.ascii = event.kbd.ascii;
-			_currentKeyDown.keycode = event.kbd.keycode;
-			_currentKeyDown.flags = event.kbd.flags;
-			_keyRepeatTime = time + kKeyRepeatInitialDelay;
+	if (_eventQueue.empty()) {
+		return false;
+	}
 
-			if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
-				// WORKAROUND: Some engines incorrectly attempt to use the
-				// ascii value instead of the keycode to detect the backspace
-				// key (a non-portable behavior). This fails at least on
-				// Mac OS X, possibly also on other systems.
-				// As a workaround, we force the ascii value for backspace
-				// key pressed. A better fix would be for engines to stop
-				// making invalid assumptions about ascii values.
-				event.kbd.ascii = Common::KEYCODE_BACKSPACE;
-				_currentKeyDown.ascii = Common::KEYCODE_BACKSPACE;
+	event = _eventQueue.pop();
+	bool forwardEvent = true;
+
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		_modifierState = event.kbd.flags;
+
+		if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+			// WORKAROUND: Some engines incorrectly attempt to use the
+			// ascii value instead of the keycode to detect the backspace
+			// key (a non-portable behavior). This fails at least on
+			// Mac OS X, possibly also on other systems.
+			// As a workaround, we force the ascii value for backspace
+			// key pressed. A better fix would be for engines to stop
+			// making invalid assumptions about ascii values.
+			event.kbd.ascii = Common::KEYCODE_BACKSPACE;
+			_currentKeyDown.ascii = Common::KEYCODE_BACKSPACE;
+		}
+		break;
+
+	case Common::EVENT_KEYUP:
+		_modifierState = event.kbd.flags;
+		break;
+
+	case Common::EVENT_MOUSEMOVE:
+		_mousePos = event.mouse;
+		break;
+
+	case Common::EVENT_LBUTTONDOWN:
+		_mousePos = event.mouse;
+		_buttonState |= LBUTTON;
+		break;
+
+	case Common::EVENT_LBUTTONUP:
+		_mousePos = event.mouse;
+		_buttonState &= ~LBUTTON;
+		break;
+
+	case Common::EVENT_RBUTTONDOWN:
+		_mousePos = event.mouse;
+		_buttonState |= RBUTTON;
+		break;
+
+	case Common::EVENT_RBUTTONUP:
+		_mousePos = event.mouse;
+		_buttonState &= ~RBUTTON;
+		break;
+
+	case Common::EVENT_MAINMENU:
+		if (g_engine && !g_engine->isPaused())
+			g_engine->openMainMenuDialog();
+
+		if (_shouldQuit)
+			event.type = Common::EVENT_QUIT;
+		else if (_shouldRTL)
+			event.type = Common::EVENT_RTL;
+		break;
+#ifdef ENABLE_VKEYBD
+	case Common::EVENT_VIRTUAL_KEYBOARD:
+		if (_vk->isDisplaying()) {
+			_vk->close(true);
+		} else {
+			if (g_engine)
+				g_engine->pauseEngine(true);
+			_vk->show();
+			if (g_engine)
+				g_engine->pauseEngine(false);
+			forwardEvent = false;
+		}
+		break;
+#endif
+#ifdef ENABLE_KEYMAPPER
+	case Common::EVENT_KEYMAPPER_REMAP:
+		if (!_remap) {
+			_remap = true;
+			Common::RemapDialog _remapDialog;
+			if (g_engine)
+				g_engine->pauseEngine(true);
+			_remapDialog.runModal();
+			if (g_engine)
+				g_engine->pauseEngine(false);
+			_remap = false;
+		}
+		break;
+#endif
+	case Common::EVENT_RTL:
+		if (ConfMan.getBool("confirm_exit")) {
+			if (g_engine)
+				g_engine->pauseEngine(true);
+			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?"), _("Launcher"), _("Cancel"));
+			forwardEvent = _shouldRTL = (alert.runModal() == GUI::kMessageOK);
+			if (g_engine)
+				g_engine->pauseEngine(false);
+		} else
+			_shouldRTL = true;
+		break;
+
+	case Common::EVENT_MUTE:
+		if (g_engine)
+			g_engine->flipMute();
+		break;
+
+	case Common::EVENT_QUIT:
+		if (ConfMan.getBool("confirm_exit")) {
+			if (_confirmExitDialogActive) {
+				forwardEvent = false;
+				break;
 			}
+			_confirmExitDialogActive = true;
+			if (g_engine)
+				g_engine->pauseEngine(true);
+			GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
+			forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
+			if (g_engine)
+				g_engine->pauseEngine(false);
+			_confirmExitDialogActive = false;
+		} else
+			_shouldQuit = true;
+
+		break;
+
+	default:
+		break;
+	}
+
+	return forwardEvent;
+}
+
+void DefaultEventManager::handleKeyRepeat() {
+	uint32 time = g_system->getMillis(true);
+
+	if (!_eventQueue.empty()) {
+		// Peek in the event queue
+		const Common::Event &nextEvent = _eventQueue.front();
+
+		switch (nextEvent.type) {
+		case Common::EVENT_KEYDOWN:
+			// init continuous event stream
+			_currentKeyDown = nextEvent.kbd;
+			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 			break;
 
 		case Common::EVENT_KEYUP:
-			_modifierState = event.kbd.flags;
-			if (event.kbd.keycode == _currentKeyDown.keycode) {
+			if (nextEvent.kbd.keycode == _currentKeyDown.keycode) {
 				// Only stop firing events if it's the current key
-				_currentKeyDown.keycode = 0;
+				_currentKeyDown.keycode = Common::KEYCODE_INVALID;
 			}
-			break;
-
-		case Common::EVENT_MOUSEMOVE:
-			_mousePos = event.mouse;
-			break;
-
-		case Common::EVENT_LBUTTONDOWN:
-			_mousePos = event.mouse;
-			_buttonState |= LBUTTON;
-			break;
-
-		case Common::EVENT_LBUTTONUP:
-			_mousePos = event.mouse;
-			_buttonState &= ~LBUTTON;
-			break;
-
-		case Common::EVENT_RBUTTONDOWN:
-			_mousePos = event.mouse;
-			_buttonState |= RBUTTON;
-			break;
-
-		case Common::EVENT_RBUTTONUP:
-			_mousePos = event.mouse;
-			_buttonState &= ~RBUTTON;
-			break;
-
-		case Common::EVENT_MAINMENU:
-			if (g_engine && !g_engine->isPaused())
-				g_engine->openMainMenuDialog();
-
-			if (_shouldQuit)
-				event.type = Common::EVENT_QUIT;
-			else if (_shouldRTL)
-				event.type = Common::EVENT_RTL;
-			break;
-#ifdef ENABLE_VKEYBD
-		case Common::EVENT_VIRTUAL_KEYBOARD:
-			if (_vk->isDisplaying()) {
-				_vk->close(true);
-			} else {
-				if (g_engine)
-					g_engine->pauseEngine(true);
-				_vk->show();
-				if (g_engine)
-					g_engine->pauseEngine(false);
-				result = false;
-			}
-			break;
-#endif
-#ifdef ENABLE_KEYMAPPER
-		case Common::EVENT_KEYMAPPER_REMAP:
-			if (!_remap) {
-				_remap = true;
-				Common::RemapDialog _remapDialog;
-				if (g_engine)
-					g_engine->pauseEngine(true);
-				_remapDialog.runModal();
-				if (g_engine)
-					g_engine->pauseEngine(false);
-				_remap = false;
-			}
-			break;
-#endif
-		case Common::EVENT_RTL:
-			if (ConfMan.getBool("confirm_exit")) {
-				if (g_engine)
-					g_engine->pauseEngine(true);
-				GUI::MessageDialog alert(_("Do you really want to return to the Launcher?"), _("Launcher"), _("Cancel"));
-				result = _shouldRTL = (alert.runModal() == GUI::kMessageOK);
-				if (g_engine)
-					g_engine->pauseEngine(false);
-			} else
-				_shouldRTL = true;
-			break;
-
-		case Common::EVENT_MUTE:
-			if (g_engine)
-				g_engine->flipMute();
-			break;
-
-		case Common::EVENT_QUIT:
-			if (ConfMan.getBool("confirm_exit")) {
-				if (_confirmExitDialogActive) {
-					result = false;
-					break;
-				}
-				_confirmExitDialogActive = true;
-				if (g_engine)
-					g_engine->pauseEngine(true);
-				GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
-				result = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
-				if (g_engine)
-					g_engine->pauseEngine(false);
-				_confirmExitDialogActive = false;
-			} else
-				_shouldQuit = true;
-
 			break;
 
 		default:
@@ -230,19 +247,17 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		}
 	} else {
 		// Check if event should be sent again (keydown)
-		if (_currentKeyDown.keycode != 0 && _keyRepeatTime < time) {
+		if (_currentKeyDown.keycode != Common::KEYCODE_INVALID && _keyRepeatTime <= time) {
 			// fire event
-			event.type = Common::EVENT_KEYDOWN;
-			event.synthetic = true;
-			event.kbd.ascii = _currentKeyDown.ascii;
-			event.kbd.keycode = (Common::KeyCode)_currentKeyDown.keycode;
-			event.kbd.flags = _currentKeyDown.flags;
+			Common::Event repeatEvent;
+			repeatEvent.type = Common::EVENT_KEYDOWN;
+			repeatEvent.kbdRepeat = true;
+			repeatEvent.kbd = _currentKeyDown;
 			_keyRepeatTime = time + kKeyRepeatSustainDelay;
-			result = true;
+
+			_eventQueue.push(repeatEvent);
 		}
 	}
-
-	return result;
 }
 
 void DefaultEventManager::pushEvent(const Common::Event &event) {
