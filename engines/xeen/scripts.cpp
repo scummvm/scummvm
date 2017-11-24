@@ -340,6 +340,7 @@ void Scripts::openGrate(int wallVal, int action) {
 }
 
 bool Scripts::doOpcode(MazeEvent &event) {
+	Map &map = *_vm->_map;
 	typedef bool(Scripts::*ScriptMethodPtr)(ParamsIterator &);
 	static const ScriptMethodPtr COMMAND_LIST[] = {
 		&Scripts::cmdDoNothing, &Scripts::cmdDisplay1, &Scripts::cmdDoorTextSml,
@@ -367,6 +368,12 @@ bool Scripts::doOpcode(MazeEvent &event) {
 	};
 
 	_event = &event;
+
+	// Some opcodes use the first parameter as a message
+	int msgId = event._parameters.empty() ? 0 : event._parameters[0];
+	_message = msgId >= map._events._text.size() ? "" : map._events._text[msgId];
+
+	// Execute the opcode
 	ParamsIterator params = event._parameters.getIterator();
 	bool result = (this->*COMMAND_LIST[event._opcode])(params);
 	if (result)
