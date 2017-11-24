@@ -257,7 +257,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			assert(byteCount == lineLength);
 
 			drawBounds.top = MIN(drawBounds.top, destPos.y);
-			drawBounds.bottom = MAX(drawBounds.bottom, destPos.y);
+			drawBounds.bottom = MAX((int)drawBounds.bottom, destPos.y + 1);
 
 			// Handle drawing out the line
 			byte *destP = (byte *)dest.getBasePtr(destPos.x, destPos.y);
@@ -274,7 +274,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right &&
 							((!(flags & SPRFLAG_SCENE_CLIPPED) && !enlarge) || (xp >= SCENE_CLIP_LEFT && xp < SCENE_CLIP_RIGHT))) {
 						drawBounds.left = MIN(drawBounds.left, xp);
-						drawBounds.right = MAX(drawBounds.right, xp);
+						drawBounds.right = MAX((int)drawBounds.right, xp + 1);
 						*destP = (byte)*lineP;
 						if (enlarge)
 							*(destP + SCREEN_WIDTH) = (byte)*lineP;
