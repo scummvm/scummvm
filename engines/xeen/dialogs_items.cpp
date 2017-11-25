@@ -526,7 +526,7 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
 		addButton(Common::Rect(12, 109, 36, 129), Common::KEYCODE_w, &_iconSprites);
 		addButton(Common::Rect(46, 109, 70, 129), Common::KEYCODE_a, &_iconSprites);
 		addButton(Common::Rect(80, 109, 104, 129), Common::KEYCODE_c, &_iconSprites);
-		addButton(Common::Rect(114, 109, 138, 129), Common::KEYCODE_n, &_iconSprites);
+		addButton(Common::Rect(114, 109, 138, 129), Common::KEYCODE_m, &_iconSprites);
 		addButton(Common::Rect(148, 109, 172, 129), Common::KEYCODE_e, &_iconSprites);
 		addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites);
 		addButton(Common::Rect(148, 109, 172, 129), Common::KEYCODE_u, &_iconSprites);
@@ -543,7 +543,7 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
 		addButton(Common::Rect(12, 109, 36, 129), Common::KEYCODE_w, &_iconSprites);
 		addButton(Common::Rect(46, 109, 70, 129), Common::KEYCODE_a, &_iconSprites);
 		addButton(Common::Rect(80, 109, 104, 129), Common::KEYCODE_c, &_iconSprites);
-		addButton(Common::Rect(114, 109, 138, 129), Common::KEYCODE_n, &_iconSprites);
+		addButton(Common::Rect(114, 109, 138, 129), Common::KEYCODE_m, &_iconSprites);
 		addButton(Common::Rect(148, 109, 172, 129), Common::KEYCODE_e, &_iconSprites);
 		addButton(Common::Rect(182, 109, 206, 129), Common::KEYCODE_r, &_iconSprites);
 		addButton(Common::Rect(216, 109, 240, 129), Common::KEYCODE_d, &_iconSprites);

@@ -112,8 +112,8 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 				win.update();
 
 				// Slight delay
-				screen.update();
-				events.wait(4);
+				events.updateGameCounter();
+				events.wait(2);
 
 				// Redraw button in it's original non-depressed form
 				btn._sprites->draw(screen, btnIndex * 2,
