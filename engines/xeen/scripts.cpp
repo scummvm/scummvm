@@ -350,7 +350,7 @@ bool Scripts::doOpcode(MazeEvent &event) {
 		&Scripts::cmdMoveObj, &Scripts::cmdTakeOrGive, &Scripts::cmdDoNothing,
 		&Scripts::cmdRemove, &Scripts::cmdSetChar, &Scripts::cmdSpawn,
 		&Scripts::cmdDoTownEvent, &Scripts::cmdExit, &Scripts::cmdAlterMap,
-		&Scripts::cmdGiveExtended, &Scripts::cmdConfirmEnding, &Scripts::cmdDamage,
+		&Scripts::cmdGiveExtended, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
 		&Scripts::cmdJumpRnd, &Scripts::cmdAlterEvent, &Scripts::cmdCallEvent,
 		&Scripts::cmdReturn, &Scripts::cmdSetVar, &Scripts::cmdTakeOrGive,
 		&Scripts::cmdTakeOrGive, &Scripts::cmdCutsceneEndClouds,
@@ -362,7 +362,7 @@ bool Scripts::doOpcode(MazeEvent &event) {
 		&Scripts::cmdItemType, &Scripts::cmdMakeNothingHere, &Scripts::cmdCheckProtection,
 		&Scripts::cmdChooseNumeric, &Scripts::cmdDisplayBottomTwoLines,
 		&Scripts::cmdDisplayLarge, &Scripts::cmdExchObj, &Scripts::cmdFallToMap,
-		&Scripts::cmdDisplayMain, &Scripts::cmdGoto, &Scripts::cmdConfirmEnding,
+		&Scripts::cmdDisplayMain, &Scripts::cmdGoto, &Scripts::cmdConfirmWord,
 		&Scripts::cmdGotoRandom, &Scripts::cmdCutsceneEndDarkside,
 		&Scripts::cmdCutsceneEndWorld, &Scripts::cmdFlipWorld, &Scripts::cmdPlayCD
 	};
@@ -914,7 +914,7 @@ bool Scripts::cmdGiveExtended(ParamsIterator &params) {
 	return true;
 }
 
-bool Scripts::cmdConfirmEnding(ParamsIterator &params) {
+bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	int inputType = params.readByte();
@@ -922,19 +922,18 @@ bool Scripts::cmdConfirmEnding(ParamsIterator &params) {
 	int param2 = params.readByte();
 	int param3 = params.readByte();
 
-	Common::String msg1 = param2 ? map._events._text[param2] :
-		_vm->_interface->_interfaceText;
+	Common::String msg1 = param2 ? map._events._text[param2] : _message;
 	Common::String msg2;
 
 	if (_event->_opcode == OP_ConfirmWord_2) {
-		msg2 = map._events._text[param3];
-	} else if (param3) {
 		msg2 = "";
+	} else if (param3) {
+		msg2 = map._events._text[param3];
 	} else {
 		msg2 = Res.WHATS_THE_PASSWORD;
 	}
 
-	int result = StringInput::show(_vm, inputType, msg1, msg2,_event->_opcode);
+	int result = StringInput::show(_vm, inputType, msg1, msg2, _event->_opcode);
 	if (result) {
 		if (result == 33 && _vm->_files->_isDarkCc) {
 			doEndGame2();

@@ -293,9 +293,10 @@ private:
 	bool cmdGiveExtended(ParamsIterator &params);
 	
 	/**
-	 * Confirms with the player for initiating the endgame
+	 * Prompts the user to enter a word for passwords or mirror
+	 * teleport destinations
 	 */
-	bool cmdConfirmEnding(ParamsIterator &params);
+	bool cmdConfirmWord(ParamsIterator &params);
 	
 	/**
 	 * Deals damage to a character
