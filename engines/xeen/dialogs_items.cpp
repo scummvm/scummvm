@@ -168,7 +168,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 							ds._frame = i._frame;
 						else
 							ds._frame = 14;
-					} else if (ds._sprites == nullptr) {
+					} else if (ds._sprites == nullptr && idx == 0) {
 						lines.push_back(Res.NO_ITEMS_AVAILABLE);
 					}
 					break;
