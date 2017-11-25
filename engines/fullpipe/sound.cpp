@@ -332,7 +332,7 @@ int FullpipeEngine::getSceneTrack() {
 
 		int track = num + 1;
 
-		if (!_trackName[num + 2])
+		if (num + 2 >= (int)_trackName.size())
 			track = 0;
 
 		_musicGameVar->setSubVarAsInt("TRACKS", track);
