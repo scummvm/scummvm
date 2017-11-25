@@ -223,18 +223,14 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				));
 				break;
 
-			case ITEMMODE_BLACKSMITH: {
-				// TODO: Original uses var in this block that's never set?!
-				const int v1 = 0;
+			case ITEMMODE_BLACKSMITH:
 				screen._windows[30].writeString(Common::String::format(Res.AVAILABLE_GOLD_COST,
-					Res.CATEGORY_NAMES[category],
-					v1 ? "" : "s", party._gold,
+					Res.CATEGORY_NAMES[category], party._gold,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
 				));
 				break;
-			}
 
 			case ITEMMODE_2:
 			case ITEMMODE_RECHARGE:
@@ -618,7 +614,7 @@ void ItemsDialog::setEquipmentIcons() {
 	for (int typeIndex = 0; typeIndex < 4; ++typeIndex) {
 		for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 			switch (typeIndex) {
-			case 0: {
+			case CATEGORY_WEAPON: {
 				XeenItem &i = _itemsCharacter._weapons[idx];
 				if (i._id <= 17)
 					i._frame = 1;
@@ -629,7 +625,7 @@ void ItemsDialog::setEquipmentIcons() {
 				break;
 			}
 
-			case 1: {
+			case CATEGORY_ARMOR: {
 				XeenItem &i = _itemsCharacter._armor[idx];
 				if (i._id <= 7)
 					i._frame = 3;
@@ -644,7 +640,7 @@ void ItemsDialog::setEquipmentIcons() {
 				break;
 			}
 
-			case 2: {
+			case CATEGORY_ACCESSORY: {
 				XeenItem &i = _itemsCharacter._accessories[idx];
 				if (i._id == 1)
 					i._id = 8;

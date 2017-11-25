@@ -1130,7 +1130,7 @@ const char *const Resources::WEAPON_NAMES[35] = {
 };
 
 const char *const Resources::ARMOR_NAMES[14] = {
-	nullptr, "Robes ", "Scale rmor ", "ring mail ", "chain mail ",
+	nullptr, "robes ", "sale armor ", "ring mail ", "chain mail ",
 	"splint mail ", "plate mail ", "plate armor ", "shield ",
 	"helm ", "boots ", "cloak ", "cape ", "gauntlets "
 };
@@ -1258,7 +1258,7 @@ const int Resources::WEAPON_BASE_COSTS[35] = {
 	100, 15, 30, 15, 200, 80, 250, 150, 400, 100, 40, 120,
 	300, 100, 200, 300, 25, 100, 50, 15, 0
 };
-const int Resources::ARMOR_BASE_COSTS[25] = {
+const int Resources::ARMOR_BASE_COSTS[14] = {
 	0, 20, 100, 200, 400, 600, 1000, 2000, 100, 60, 40, 250, 200, 100
 };
 const int Resources::ACCESSORY_BASE_COSTS[11] = {
@@ -1314,7 +1314,7 @@ const char *const Resources::X_FOR_Y_GOLD =
 const char *const Resources::FMT_CHARGES = "\x3rr\t000Charges\x3l";
 
 const char *const Resources::AVAILABLE_GOLD_COST =
-	"\x1\fd\r\x3l\v000\t000Available %s%s\t150Gold - %lu\x3r\t000Cost"
+	"\x1\fd\r\x3l\v000\t000Available %s\t150Gold - %lu\x3r\t000Cost"
 	"\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\xC""d";
 
 const char *const Resources::CHARGES = "Charges";

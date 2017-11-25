@@ -1439,7 +1439,7 @@ void Party::resetBlacksmithWares() {
 				int itemCat = c.makeItem(idx2 + 1, 0, 0);
 				if (catCount[itemCat] < 8) {
 					switch (itemCat) {
-					case 0: {
+					case CATEGORY_WEAPON: {
 						XeenItem &item = _blacksmithWeapons[0][catCount[itemCat] * 4 + idx1];
 						item._id = c._weapons[0]._id;
 						item._material = c._weapons[0]._material;
@@ -1447,27 +1447,27 @@ void Party::resetBlacksmithWares() {
 						break;
 					}
 
-					case 1: {
+					case CATEGORY_ARMOR: {
 						XeenItem &item = _blacksmithArmor[0][catCount[itemCat] * 4 + idx1];
-						item._id = c._weapons[0]._id;
-						item._material = c._weapons[0]._material;
-						item._bonusFlags = c._weapons[0]._bonusFlags;
+						item._id = c._armor[0]._id;
+						item._material = c._armor[0]._material;
+						item._bonusFlags = c._armor[0]._bonusFlags;
 						break;
 					}
 
-					case 2: {
+					case CATEGORY_ACCESSORY: {
 						XeenItem &item = _blacksmithAccessories[0][catCount[itemCat] * 4 + idx1];
-						item._id = c._weapons[0]._id;
-						item._material = c._weapons[0]._material;
-						item._bonusFlags = c._weapons[0]._bonusFlags;
+						item._id = c._accessories[0]._id;
+						item._material = c._accessories[0]._material;
+						item._bonusFlags = c._accessories[0]._bonusFlags;
 						break;
 					}
 
-					case 3: {
+					case CATEGORY_MISC: {
 						XeenItem &item = _blacksmithMisc[0][catCount[itemCat] * 4 + idx1];
-						item._id = c._weapons[0]._id;
-						item._material = c._weapons[0]._material;
-						item._bonusFlags = c._weapons[0]._bonusFlags;
+						item._id = c._misc[0]._id;
+						item._material = c._misc[0]._material;
+						item._bonusFlags = c._misc[0]._bonusFlags;
 						break;
 					}
 
@@ -1489,7 +1489,7 @@ void Party::resetBlacksmithWares() {
 				int itemCat = c.makeItem(idx2 + (idx1 >= 2 ? 3 : 1), 0, 0);
 				if (catCount[itemCat] < 8) {
 					switch (itemCat) {
-					case 0: {
+					case CATEGORY_WEAPON: {
 						XeenItem &item = _blacksmithWeapons[1][catCount[itemCat] * 4 + idx1];
 						item._id = c._weapons[0]._id;
 						item._material = c._weapons[0]._material;
@@ -1497,27 +1497,27 @@ void Party::resetBlacksmithWares() {
 						break;
 					}
 
-					case 1: {
+					case CATEGORY_ARMOR: {
 						XeenItem &item = _blacksmithArmor[1][catCount[itemCat] * 4 + idx1];
-						item._id = c._weapons[0]._id;
-						item._material = c._weapons[0]._material;
-						item._bonusFlags = c._weapons[0]._bonusFlags;
+						item._id = c._armor[0]._id;
+						item._material = c._armor[0]._material;
+						item._bonusFlags = c._armor[0]._bonusFlags;
 						break;
 					}
 
-					case 2: {
+					case CATEGORY_ACCESSORY: {
 						XeenItem &item = _blacksmithAccessories[1][catCount[itemCat] * 4 + idx1];
-						item._id = c._weapons[0]._id;
-						item._material = c._weapons[0]._material;
-						item._bonusFlags = c._weapons[0]._bonusFlags;
+						item._id = c._accessories[0]._id;
+						item._material = c._accessories[0]._material;
+						item._bonusFlags = c._accessories[0]._bonusFlags;
 						break;
 					}
 
-					case 3: {
+					case CATEGORY_MISC: {
 						XeenItem &item = _blacksmithMisc[1][catCount[itemCat] * 4 + idx1];
-						item._id = c._weapons[0]._id;
-						item._material = c._weapons[0]._material;
-						item._bonusFlags = c._weapons[0]._bonusFlags;
+						item._id = c._misc[0]._id;
+						item._material = c._misc[0]._material;
+						item._bonusFlags = c._misc[0]._bonusFlags;
 						break;
 					}
 

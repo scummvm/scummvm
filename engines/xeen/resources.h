@@ -233,7 +233,7 @@ public:
 	static const char *const EFFECTIVENESS_NAMES[7];
 	static const char *const QUEST_ITEM_NAMES[85];
 	static const int WEAPON_BASE_COSTS[35];
-	static const int ARMOR_BASE_COSTS[25];
+	static const int ARMOR_BASE_COSTS[14];
 	static const int ACCESSORY_BASE_COSTS[11];
 	static const int MISC_MATERIAL_COSTS[22];
 	static const int MISC_BASE_COSTS[76];
