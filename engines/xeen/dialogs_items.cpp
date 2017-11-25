@@ -466,13 +466,14 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			}
 			break;
 
-		case Common::KEYCODE_n:
-			// Misc category
+		case Common::KEYCODE_m:
+			// Misc
 			category = CATEGORY_MISC;
 			redrawFlag = REDRAW_TEXT;
 			break;
 
 		case Common::KEYCODE_q:
+			// Quests
 			if (mode == ITEMMODE_CHAR_INFO) {
 				Quests::show(_vm);
 				redrawFlag = REDRAW_TEXT;
