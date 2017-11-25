@@ -62,7 +62,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	screen._windows[30].open();
 
 	enum { REDRAW_NONE, REDRAW_TEXT, REDRAW_FULL } redrawFlag = REDRAW_FULL;
-	while (!_vm->shouldQuit()) {
+	for (;;) {
 		if (redrawFlag == REDRAW_FULL) {
 			if ((mode != ITEMMODE_CHAR_INFO || category != CATEGORY_MISC) && mode != ITEMMODE_ENCHANT
 					&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
@@ -135,8 +135,10 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			}
 
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				_itemsDrawList[idx]._x = 8;
-				_itemsDrawList[idx]._y = 18 + idx * 9;
+				DrawStruct &ds = _itemsDrawList[idx];
+				ds._sprites = nullptr;
+				ds._x = 8;
+				ds._y = 18 + idx * 9;
 
 				switch (category) {
 				case CATEGORY_WEAPON:
@@ -161,13 +163,12 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 							));
 						}
 
-						DrawStruct &ds = _itemsDrawList[idx];
 						ds._sprites = &_equipSprites;
 						if (c->_weapons.passRestrictions(i._id, true))
 							ds._frame = i._frame;
 						else
 							ds._frame = 14;
-					} else if (_itemsDrawList[idx]._sprites == nullptr) {
+					} else if (ds._sprites == nullptr) {
 						lines.push_back(Res.NO_ITEMS_AVAILABLE);
 					}
 					break;
@@ -175,7 +176,6 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 				case CATEGORY_MISC: {
 					XeenItem &i = c->_misc[idx];
-					_itemsDrawList[idx]._sprites = nullptr;
 
 					if (i._material == 0) {
 						// No item
@@ -319,6 +319,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		if (_buttonValue == Common::KEYCODE_ESCAPE) {
 			if (mode == ITEMMODE_8)
 				continue;
+			c = startingChar;
 			break;
 		}
 
