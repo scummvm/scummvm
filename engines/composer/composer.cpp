@@ -351,7 +351,7 @@ Common::String ComposerEngine::getFilename(const Common::String &section, uint i
 }
 
 Common::String ComposerEngine::mangleFilename(Common::String filename) {
-	while (filename.size() && (filename[0] == '~' || filename[0] == ':' || filename[0] == '\\'))
+	while (filename.size() && (filename[0] == '~' || filename[0] == ':' || filename[0] == '\\' || filename[0] == '.'))
 		filename = filename.c_str() + 1;
 
 	uint slashesToStrip = _directoriesToStrip;
