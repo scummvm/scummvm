@@ -168,50 +168,51 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		return false;
 
 	if (!inter->_objectId2) {
-		if (obj->_objtype != kObjTypeStaticANIObject)
-			return false;
+		if (obj->_objtype == kObjTypeStaticANIObject) {
+			StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
 
-		StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
-
-		if (!ani->isIdle())
-			return false;
-
-		if (ani->_flags & 0x100)
-			return false;
-
-		if (!inter->_staticsId1 || !(inter->_flags & 1))
-			goto LABEL_38;
-
-		if (ani->_movement || ani->_statics == 0 || ani->_statics->_staticsId != inter->_staticsId1) {
-			mq = ani->changeStatics1(inter->_staticsId1);
-			if (!mq)
-				return false;
-
-			ex = new ExCommand((subj ? subj->_id : 0), 55, 0, 0, 0, 0, 1, 0, 0, 0);
-			ex->_x = obj->_id;
-			ex->_y = obj->_odelay;
-			ex->_param = subj ? subj->_odelay : 0;
-			ex->_excFlags = 3;
-			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
-			ex->_field_20 = invId;
-			mq->addExCommandToEnd(ex);
-
-			if (mq->_isFinished) {
-				mq->_isFinished = 0;
-				ani->queueMessageQueue(mq);
-			}
-		} else {
-			if (ani->getMessageQueue())
-				ani->queueMessageQueue(0);
-LABEL_38:
-			if (inter->_messageQueue) {
-				mq = new MessageQueue(inter->_messageQueue, 0, 1);
-				mq->changeParam28ForObjectId(ani->_id, -1, ani->_odelay);
-
-				if (!mq->chain(0))
+			if (inter->_flags & 1) {
+				if (!ani->isIdle())
 					return false;
+
+				if (ani->_flags & 0x100)
+					return false;
+			} else if (inter->_staticsId1 != 0) {
+				if (ani->_movement || ani->_statics == 0 || ani->_statics->_staticsId != inter->_staticsId1) {
+					mq = ani->changeStatics1(inter->_staticsId1);
+					if (!mq)
+						return false;
+
+					ex = new ExCommand((subj ? subj->_id : 0), 55, 0, 0, 0, 0, 1, 0, 0, 0);
+					ex->_x = obj->_id;
+					ex->_y = obj->_odelay;
+					ex->_param = subj ? subj->_odelay : 0;
+					ex->_excFlags = 3;
+					ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
+					ex->_field_20 = invId;
+					mq->addExCommandToEnd(ex);
+
+					if (mq->_isFinished) {
+						mq->_isFinished = 0;
+						ani->queueMessageQueue(mq);
+					}
+
+					return true;
+				} else {
+					if (ani->getMessageQueue())
+						ani->queueMessageQueue(0);
+				}
 			}
 		}
+
+		if (inter->_messageQueue) {
+			mq = new MessageQueue(inter->_messageQueue, 0, 1);
+			mq->changeParam28ForObjectId(obj->_id, -1, obj->_odelay);
+
+			if (!mq->chain(0))
+				return false;
+		}
+
 		return true;
 	}
 

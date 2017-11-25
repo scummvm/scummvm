@@ -348,8 +348,7 @@ void StaticANIObject::startMQIfIdle(int qId, int flag) {
 }
 
 bool StaticANIObject::isIdle() {
-	if (_objtype != kObjTypeStaticANIObject)
-		return true;
+	assert(_objtype == kObjTypeStaticANIObject);
 
 	if (_messageQueueId) {
 		MessageQueue *m = g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
