@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-26 15:13+0100\n"
-"PO-Revision-Date: 2017-11-26 17:15+0000\n"
+"PO-Revision-Date: 2017-11-26 19:37+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
@@ -3250,7 +3250,7 @@ msgstr "Animované herní rozhraní"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr ""
+msgstr "Hanbatý herní re¾im"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
@@ -3323,16 +3323,20 @@ msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"Nebo mù¾ete také pou¾ít soubor instalace 'arcriven.z'. Dále lze také vyu¾ít "
+"spustitelný soubor ze systému Mac 'Riven'."
 
 #: engines/mohawk/riven.cpp:161
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
+"Schází vám soubor 'extras.mhk'. Místo toho lze pou¾ít soubor instalace "
+"'arcriven.z'."
 
 #: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "Chybí vám následující potøebné datové soubory RIven:\n"
 
 #: engines/mohawk/riven_stack.cpp:182
 msgid ""
