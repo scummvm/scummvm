@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-26 05:15+0100\n"
+"POT-Creation-Date: 2017-11-26 15:13+0100\n"
 "PO-Revision-Date: 2016-12-26 17:36+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -680,7 +680,7 @@ msgid "Search:"
 msgstr "Søk:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:511
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:517
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -690,7 +690,7 @@ msgstr "Åpne spill:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:511 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:517 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -3333,7 +3333,7 @@ msgid ""
 "works."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:410
+#: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
@@ -3343,7 +3343,7 @@ msgid ""
 "the game."
 msgstr ""
 
-#: engines/mohawk/riven_stacks/aspit.cpp:322
+#: engines/mohawk/riven_stacks/aspit.cpp:309
 msgid ""
 "At this point, the Riven Demo would\n"
 "ask if you would like to open a web browser\n"

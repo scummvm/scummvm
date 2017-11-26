@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-26 05:15+0100\n"
+"POT-Creation-Date: 2017-11-26 15:13+0100\n"
 "PO-Revision-Date: 2017-11-23 12:42+0000\n"
 "Last-Translator: Santiago G. Sanz <santiagogarciasanz@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -680,7 +680,7 @@ msgid "Search:"
 msgstr "Buscar:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:511
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:517
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -690,7 +690,7 @@ msgstr "Cargar partida:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:511 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:517 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -3339,7 +3339,7 @@ msgstr ""
 "Falta o ficheiro extras.mhk. Tamén podes empregar o ficheiro do instalador "
 "arcriven.z."
 
-#: engines/mohawk/riven.cpp:410
+#: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
 msgstr "Faltan os seguintes ficheiros de datos requiridos de Riven:\n"
 
@@ -3351,7 +3351,7 @@ msgstr ""
 "A exploración alén deste punto só está dispoñible coa versión\n"
 "completa do xogo.\n"
 
-#: engines/mohawk/riven_stacks/aspit.cpp:322
+#: engines/mohawk/riven_stacks/aspit.cpp:309
 msgid ""
 "At this point, the Riven Demo would\n"
 "ask if you would like to open a web browser\n"

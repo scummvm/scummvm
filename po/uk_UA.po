@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-26 05:15+0100\n"
+"POT-Creation-Date: 2017-11-26 15:13+0100\n"
 "PO-Revision-Date: 2017-06-14 14:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -683,7 +683,7 @@ msgid "Search:"
 msgstr "Пошук:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:511
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:517
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -693,7 +693,7 @@ msgstr "Завантажити гру:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:511 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:517 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -3341,7 +3341,7 @@ msgstr ""
 "У вас немає файлу 'extras.mhk'. Використання файлу 'arcriven.z' також "
 "достатньо."
 
-#: engines/mohawk/riven.cpp:410
+#: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
@@ -3351,7 +3351,7 @@ msgid ""
 "the game."
 msgstr "Дослідування поза цією межою доступне тільки у повнії версії гри."
 
-#: engines/mohawk/riven_stacks/aspit.cpp:322
+#: engines/mohawk/riven_stacks/aspit.cpp:309
 msgid ""
 "At this point, the Riven Demo would\n"
 "ask if you would like to open a web browser\n"
