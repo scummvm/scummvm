@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-26 05:15+0100\n"
-"PO-Revision-Date: 2017-11-18 10:07+0000\n"
+"PO-Revision-Date: 2017-11-26 10:12+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
-"Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/cs/>\n"
+"Language-Team: Czech "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
 "Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -852,7 +852,7 @@ msgstr "Rychlost ukazatele:"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Mrtvá zóna Joysticku:"
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
 msgid "Analog joystick Deadzone"
@@ -861,7 +861,7 @@ msgstr "Mrtvá zóna analogového joysticku"
 #: gui/options.cpp:960
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Mrtvá zóna Joysticku:"
 
 #: gui/options.cpp:974
 msgid "HW Shader:"
@@ -1183,7 +1183,7 @@ msgstr "Jazyk GUI ScummVM"
 
 #: gui/options.cpp:1600 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr "Kontrola aktualizací:"
+msgstr "Ovìøení aktualizací:"
 
 #: gui/options.cpp:1600
 msgid "How often to check ScummVM updates"
