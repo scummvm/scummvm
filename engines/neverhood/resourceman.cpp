@@ -116,6 +116,7 @@ static const EntrySizeFix entrySizeFixes[] = {
 	{ 0x000098880, 39603114,   3028,  10860,   4762 },  // Next walls in the museum
 	{ 0x040080183, 39600259,   2855,  13400,   4305 },  // Next walls in the museum
 	{ 0x004290188, 39580567,   7297,  27131,  12322 },  // Next walls in the museum
+	{ 0x0283CE401, 12795150,  18499,  36658,  29166 },  // Late-game notes
 
 	// Fixes for the Russian "Fargus" version
 	{ 0x041137051,   758264,  29037,  49590,  49591 },	// "Options" menu header text
