@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-24 23:45+0100\n"
+"POT-Creation-Date: 2017-11-26 05:15+0100\n"
 "PO-Revision-Date: 2017-03-03 22:26+0000\n"
 "Last-Translator: rafaelmessias <rmmartins@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -4365,21 +4365,21 @@ msgstr "Voar para direita"
 msgid "Fly to lower right"
 msgstr "Voar para direita inferior"
 
-#: engines/scumm/input.cpp:578
+#: engines/scumm/input.cpp:580
 #, fuzzy
 msgid "Snap scroll on"
 msgstr "Descer na lista"
 
-#: engines/scumm/input.cpp:580
+#: engines/scumm/input.cpp:582
 msgid "Snap scroll off"
 msgstr ""
 
-#: engines/scumm/input.cpp:593
+#: engines/scumm/input.cpp:595
 #, fuzzy
 msgid "Music volume: "
 msgstr "Volume da Música:"
 
-#: engines/scumm/input.cpp:610
+#: engines/scumm/input.cpp:612
 #, fuzzy
 msgid "Subtitle speed: "
 msgstr "Rapidez legendas:"

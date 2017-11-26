@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-24 23:45+0100\n"
+"POT-Creation-Date: 2017-11-26 05:15+0100\n"
 "PO-Revision-Date: 2017-11-10 16:20+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4344,19 +4344,19 @@ msgstr "Jobbra repülés"
 msgid "Fly to lower right"
 msgstr "Jobbra le repülés"
 
-#: engines/scumm/input.cpp:578
+#: engines/scumm/input.cpp:580
 msgid "Snap scroll on"
 msgstr "Finomgörgetés be"
 
-#: engines/scumm/input.cpp:580
+#: engines/scumm/input.cpp:582
 msgid "Snap scroll off"
 msgstr "Finomgörgetés ki"
 
-#: engines/scumm/input.cpp:593
+#: engines/scumm/input.cpp:595
 msgid "Music volume: "
 msgstr "Zene hangereje: "
 
-#: engines/scumm/input.cpp:610
+#: engines/scumm/input.cpp:612
 msgid "Subtitle speed: "
 msgstr "Felirat sebesség: "
 
