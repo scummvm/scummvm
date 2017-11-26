@@ -42,7 +42,7 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 	_window->update();
 
 	while (!_vm->shouldQuit()) {
-		Common::KeyCode keyCode = doCursor(msg);
+		Common::KeyCode keyCode = waitForKey(msg);
 
 		bool refresh = false;
 		if ((keyCode == Common::KEYCODE_BACKSPACE || keyCode == Common::KEYCODE_DELETE)
@@ -72,7 +72,7 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 	return line.size();
 }
 
-Common::KeyCode Input::doCursor(const Common::String &msg) {
+Common::KeyCode Input::waitForKey(const Common::String &msg) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
@@ -92,12 +92,14 @@ Common::KeyCode Input::doCursor(const Common::String &msg) {
 		if (flag)
 			intf.draw3d(false);
 		_window->writeString(msg);
+		animateCursor();
 		_window->update();
 
 		if (flag)
 			screen._windows[3].update();
 
 		events.wait(1);
+
 		if (events.isKeyPending()) {
 			Common::KeyState keyState;
 			events.getKey(keyState);
@@ -113,6 +115,22 @@ Common::KeyCode Input::doCursor(const Common::String &msg) {
 	intf._upDoorText = oldUpDoorText;
 
 	return ch;
+}
+
+void Input::animateCursor() {
+	Screen &screen = *_vm->_screen;
+
+	// Iterate through each frame
+	_cursorAnimIndex = _cursorAnimIndex ? _cursorAnimIndex - 1 : 5;
+	static const int CURSOR_ANIMATION_IDS[] = { 32, 124, 126, 127, 126, 124 };
+
+	// Form a string for the cursor and write it out
+	Common::String cursorStr = Common::String::format("%c",
+		CURSOR_ANIMATION_IDS[_cursorAnimIndex]);
+
+	Common::Point writePos = screen._writePos;
+	_window->writeString(cursorStr);
+	screen._writePos = writePos;
 }
 
 /*------------------------------------------------------------------------*/
