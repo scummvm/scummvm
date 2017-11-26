@@ -59,6 +59,9 @@ Programmcodes finden Sie auf Englisch unter:
  MADE:
    - Fehlerhafte Audio-Wiedergabe behoben (Fehler #9753).
 
+ MADS:
+   - Fehler behoben, der zu einem Absturz führen kann, wenn Rex gefangen genommen wird
+
  MOHAWK:
    - Verbesserungen an den originalen Spieldaten vorgenommen, um die Anweisungen
      zum Öffnen des Tresors in Myst ME zu korrigieren.
@@ -79,6 +82,10 @@ Programmcodes finden Sie auf Englisch unter:
      einer perfekten Punktzahl zu beenden. Dieser Fehler ist auch im Originalspiel
      vorhanden.
    - Verschiedene andere Skript-Fehler wurden behoben.
+
+ TsAGE:
+   - Darstellungsfehler in der Demo-Version von Return to Ringworld behoben.
+   - Möglichen Fehler beim Laden von Spielstände in Return to Ringworld behoben.
 
 1.9.1 (DD.MM.YYYY)
  Allgemein:
