@@ -475,9 +475,11 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 	Common::Point pt;
 
 	if (mapId) {
+		// Specific map, x & y specified
 		pt.x = params.readShort();
 		pt.y = params.readShort();
 	} else {
+		// Mirror teleportation
 		assert(_mirrorId > 0);
 		MirrorEntry &me = _mirror[_mirrorId - 1];
 		mapId = me._mapId;
@@ -933,23 +935,23 @@ bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 		msg2 = Res.WHATS_THE_PASSWORD;
 	}
 
-	int result = StringInput::show(_vm, inputType, msg1, msg2, _event->_opcode);
-	if (result) {
-		if (result == 33 && _vm->_files->_isDarkCc) {
+	_mirrorId = StringInput::show(_vm, inputType, msg1, msg2, _event->_opcode);
+	if (_mirrorId) {
+		if (_mirrorId == 33 && _vm->_files->_isDarkCc) {
 			doEndGame2();
-		} else if (result == 34 && _vm->_files->_isDarkCc) {
+		} else if (_mirrorId == 34 && _vm->_files->_isDarkCc) {
 			doWorldEnd();
-		} else if (result == 35 && _vm->_files->_isDarkCc &&
+		} else if (_mirrorId == 35 && _vm->_files->_isDarkCc &&
 				_vm->getGameID() == GType_WorldOfXeen) {
 			doEndGame();
-		} else if (result == 40 && !_vm->_files->_isDarkCc) {
+		} else if (_mirrorId == 40 && !_vm->_files->_isDarkCc) {
 			doEndGame();
-		} else if (result == 60 && !_vm->_files->_isDarkCc) {
+		} else if (_mirrorId == 60 && !_vm->_files->_isDarkCc) {
 			doEndGame2();
-		} else if (result == 61 && !_vm->_files->_isDarkCc) {
+		} else if (_mirrorId == 61 && !_vm->_files->_isDarkCc) {
 			doWorldEnd();
 		} else {
-			if (result == 59 && !_vm->_files->_isDarkCc) {
+			if (_mirrorId == 59 && !_vm->_files->_isDarkCc) {
 				for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 					XeenItem &item = party._treasure._weapons[idx];
 					if (!item._id) {
@@ -963,7 +965,8 @@ bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 				}
 			}
 
-			_lineNum = result == -1 ? param3 : lineNum;
+			_lineNum = _mirrorId == -1 ? param3 : lineNum;
+			return false;
 		}
 	}
 

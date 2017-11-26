@@ -179,7 +179,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 
 			for (uint idx = 0; idx < scripts._mirror.size(); ++idx) {
 				if (line == scripts._mirror[idx]._name) {
-					result = idx;
+					result = idx + 1;
 					sound.playFX(_vm->_files->_isDarkCc ? 35 : 61);
 					break;
 				}
