@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-26 15:13+0100\n"
-"PO-Revision-Date: 2017-11-26 15:35+0000\n"
+"PO-Revision-Date: 2017-11-26 17:15+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
@@ -3112,7 +3112,7 @@ msgstr "Otevøít/Zavøít Inventáø"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
-msgstr ""
+msgstr "Zamìnit obrazovku Postavy/Inventáøe"
 
 #: engines/kyra/eobcommon.cpp:339
 msgid "Camp"
@@ -3234,7 +3234,7 @@ msgstr ""
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Jednoduché rozhraní my¹i"
 
 #: engines/mads/detection.cpp:92
 msgid "Shows object names when hovering the mouse over them"
