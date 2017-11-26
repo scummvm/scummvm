@@ -258,6 +258,9 @@ void MohawkEngine_Riven::doFrame() {
 				}
 				break;
 			default:
+				if (event.kbdRepeat) {
+					continue;
+				}
 				_stack->onKeyPressed(event.kbd);
 				break;
 			}
