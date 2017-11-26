@@ -122,7 +122,7 @@ Common::Error ComposerEngine::run() {
 		warning("FPS in book.ini is zero. Defaulting to 8...");
 	uint32 lastDrawTime = 0;
 	_lastSaveTime = _system->getMillis();
-	
+
 	bool loadFromLauncher = ConfMan.hasKey("save_slot");
 
 	while (!shouldQuit()) {
