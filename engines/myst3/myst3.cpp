@@ -1369,22 +1369,24 @@ Graphics::Surface *Myst3Engine::decodeJpeg(const DirectorySubEntry *jpegDesc) {
 	Graphics::PixelFormat rgbaFormat = Texture::getRGBAPixelFormat();
 	Graphics::Surface *rgbaSurface = new Graphics::Surface();
 
-	if (rgbaFormat == bitmap->format) {
-		rgbaSurface->copyFrom(*bitmap);
-	} else {
-		assert(rgbaFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#ifdef SCUMM_BIG_ENDIAN
+	assert(rgbaFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	rgbaSurface->copyFrom(*bitmap);
+	rgbaSurface->format = rgbaFormat;
+#else
+	assert(rgbaFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-		rgbaSurface->create(bitmap->w, bitmap->h, rgbaFormat);
+	rgbaSurface->create(bitmap->w, bitmap->h, rgbaFormat);
 
-		// Use SWAP_BYTES_32 as an optimization. This path is hot.
-		for (uint y = 0; y < bitmap->h; y++) {
-			const uint32 *srcRow = (const uint32 *) bitmap->getBasePtr(0, y);
-			uint32 *dstRow = (uint32 *) rgbaSurface->getBasePtr(0, y);
-			for (uint x = 0; x < bitmap->w; x++) {
-				*dstRow++ = SWAP_BYTES_32(*srcRow++);
-			}
+	// Use SWAP_BYTES_32 as an optimization. This path is hot.
+	for (uint y = 0; y < bitmap->h; y++) {
+		const uint32 *srcRow = (const uint32 *) bitmap->getBasePtr(0, y);
+		uint32 *dstRow = (uint32 *) rgbaSurface->getBasePtr(0, y);
+		for (uint x = 0; x < bitmap->w; x++) {
+			*dstRow++ = SWAP_BYTES_32(*srcRow++);
 		}
 	}
+#endif
 
 	return rgbaSurface;
 }
