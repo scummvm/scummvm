@@ -30,8 +30,11 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New ports:
    - Added PSP Vita port.
+   - Added RISC OS port.
 
  General:
+   - Added bilinear filtering option for SDL2 fullscreen mode.
+   - Fixed a bug that caused a crash in the options dialog of the GUI.
    - Added a command-line option to automatically scan for supported games in
      the current or a specified directory.
    - Added possibility to apply changes in the options dialog without closing
@@ -42,6 +45,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved audio latency.
    - Improved management of the ScummVM window in games that switch display
      modes.
+   - Fixed list view drawing over text above it (for example in the save dialog).
+   - Changed location where screenshot are saved. This fixes issues when scummvm
+     is installed in a read-only directory. Also added setting to allow changing
+     this location.
+   - Changed screenshot format to png.
+   - Fixed multithreading issue that could cause a crash in games using MP3 audio.
+
+ ADL:
+   - Fixed application freeze when reading sign in rocket in Mission Asteroid.
 
  AGOS:
    - Fixed subtitle speed setting in the Hebrew version of Simon the Sorcerer 1.
@@ -50,14 +62,23 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added save/load from General Main Menu.
 
  Drascula:
+   - Fixed bug that made it impossible to talk to the drunkard more than once in the inn.
    - Added handling of the master volume and fix volume synchronization between
      the game and ScummVM options.
    - Added possibility to load and save games using GMM.
+
+ Dreamweb:
+   - Fixed crash when collecting last stones under church.
+
+ Kyra:
+   - Fixed a buffer overflow in Lands of Lore.
+   - Fixed crash due to missing palette data for Legend of Kyrandia floppy version.
 
  MADE:
    - Fixed badly distorted sound (bug #9753).
 
  MADS:
+   - Fixed a bug that caused a crash after starting Rex Nebular and the Cosmic Gender Bender.
    - Fix rare crash that can happen when Rex is first locked up
 
  MOHAWK:
@@ -65,8 +86,19 @@ For a more comprehensive changelog of the latest experimental code, see:
      instructions in Myst ME.
    - Fixed situations where Myst could appear to be unresponsive.
    - Reworked sound handling in Myst to be more accurate.
+   - Fixed crash in Myst piano puzzle.
+
+ Neverhood:
+   - Fixed crash in musical hut.
+
+ SAGA:
+   - Fixed crash when using the give verb on an actor in IHNM.
+   - Fixed Gorrister invisible and stuck when reloading at mooring ring in IHNM.
 
  SCI:
+   - Fixed a script bug in Laura Bow 2: Dagger of Amon Ra that made it impossible
+     to exit the party room with the large golden head inside the museum (room 350).
+     This bug is also present, when using the original interpreter.
    - Improved startup speed when using the MT-32 emulator.
    - Improved handling of MT-32 reverb in SCI0 games.
    - Improved selection of synthesized sound effects in SCI0 games.
@@ -79,29 +111,18 @@ For a more comprehensive changelog of the latest experimental code, see:
      locket to Marie. Now it's possible to beat the game with a perfect score.
      This bug is also present when using the original interpreter.
    - Fixed various other script bugs.
+   - Improved audio volume and settings synchronization.
 
- TsAGE:
-   - Display fixes for Return to Ringworld Demo
-   - Fix loading Return to Ringworld savegames with unreferenced dynamic objects
-
-1.9.1 (YYYY-MM-DD)
- General:
-   - Added bilinear filtering option for SDL2 fullscreen mode.
-   - Fixed a bug that caused a crash in the options dialog of the GUI.
-
- Drascula:
-  - Fixed bug that made it impossible to talk to the drunkard more than once in the inn.
-
- Kyra:
-   - Fixed a buffer overflow in Lands of Lore.
-
- MADS:
-   - Fixed a bug that caused a crash after starting Rex Nebular and the Cosmic Gender Bender.
-
- SCI:
-   - Fixed a script bug in Laura Bow 2: Dagger of Amon Ra that made it impossible to exit the
-     party room with the large golden head inside the museum (room 350).
-     This bug is also present, when using the original interpreter.
+ SCUMM:
+   - Fixed crash in amiga games.
+   - Fixed two soundtracks playing at once in Monkey Island 2.
+   - Fixed Caponians dont disguise after using blue crystal in Zak McKracken.
+   - Fixed Dr. Fred facing wrong way in lab cutscene in Maniac Mansion.
+   - Fixed actors being drawn one line too high in V0 and V1 games.
+   - Fixed Purple Tentacle appears in Lab Entry after being chased out in maniac Mansion.
+   - Fixed power not turning back on in Maniac Mansion when entering the lab
+     while Dr. Fred has the power off.
+   - Fixed actors skipping between certain walk-boxes in Maniac Mansion.
 
  Tinsel:
    - Fixed some Discworld 2 text/voice not displaying & playing all the way through
@@ -109,6 +130,20 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  TsAGE:
    - Fixed recently introduced bug preventing animations in Return to Ringworld from playing.
+   - Display fixes for Return to Ringworld Demo.
+   - Fixed loading Return to Ringworld savegames with unreferenced dynamic objects.
+   - Fixed deadlock in audio code.
+
+ Voyeur:
+  - Fixed backgrounds not showing for static rooms.
+  - Fixed playback of audio events on VCR.
+  - Fixed exiting game from the VCR screen.
+  - Added workaround for original game bug using invalid hotspot Ids
+
+ macOS X port:
+   - Added support for selecting any connected MIDI devices instead of automatically
+     using the first one.
+   - Improved behaviour of the file browser.
 
 1.9.0 (2016-10-17)
  New Games:
