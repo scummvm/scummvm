@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-26 15:13+0100\n"
-"PO-Revision-Date: 2017-11-26 19:37+0000\n"
+"PO-Revision-Date: 2017-11-26 22:24+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
@@ -3336,7 +3336,7 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
-msgstr "Chybí vám následující potøebné datové soubory RIven:\n"
+msgstr "Chybí vám následující potøebné datové soubory Riven:\n"
 
 #: engines/mohawk/riven_stack.cpp:182
 msgid ""
@@ -3497,11 +3497,11 @@ msgstr "Vykreslovat u videí èerné èáry pro zvý¹ení jejich zdánlivé ostrosti"
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Pou¾ít vysokou kvalitu ¹kálování videa"
 
 #: engines/sci/detection.cpp:432
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr ""
+msgstr "Pou¾ít lineární interpolaci pøi ¹kálovaní videa, kde jenom je to mo¾né"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
@@ -3569,11 +3569,17 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"Postavy ulo¾ené v rámci ScummVM jsou zobrazeny automaticky. Soubory postav "
+"ulo¾ené v originálním interpretovi, je tøeba umístit do slo¾ky s ulo¾enými "
+"hrami Scummvm a musí k nim být pøidána pøedpona, dle hry, z které pocházejí: "
+"'qfg1-' pro Quest for Glory 1, 'qfg2-' pro Quest for Glory 2. Pøíklad: "
+"'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:348
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
+"Pro otevøení souboru s herní nápovìdou prosím pou¾ijte externí prohlí¾eè: %s"
 
 #: engines/sci/engine/savegame.cpp:1290
 msgid "The format of this saved game is obsolete, unable to load it"
