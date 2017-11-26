@@ -46,6 +46,9 @@ MODULE_OBJS := \
 	softsynth/opl/dbopl.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
+	softsynth/opl/mame/emu/attotime.o \
+	softsynth/opl/mame/sound/fmopl.o \
+	softsynth/opl/mame/sound/ymf262.o \
 	softsynth/fmtowns_pc98/towns_audio.o \
 	softsynth/fmtowns_pc98/towns_euphony.o \
 	softsynth/fmtowns_pc98/towns_midi.o \
