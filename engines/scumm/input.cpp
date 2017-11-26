@@ -484,8 +484,10 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 
 	// On Alt-F5 prepare savegame for the original save/load dialog.
 	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
+		if (_game.id == GID_MANIAC && _game.version == 0 && _game.features & GF_DEMO)
+			return;
 		prepareSavegame();
-		if (_game.id == GID_MANIAC && _game.version == 0 && !(_game.features & GF_DEMO)) {
+		if (_game.id == GID_MANIAC && _game.version == 0) {
 			runScript(2, 0, 0, 0);
 		}
 		if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformNES) {
