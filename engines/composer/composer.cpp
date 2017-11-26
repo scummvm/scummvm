@@ -355,6 +355,10 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 		filename = filename.c_str() + 1;
 
 	uint slashesToStrip = _directoriesToStrip;
+
+	if (filename.hasPrefix(".."))
+		slashesToStrip = 1;
+
 	while (slashesToStrip--) {
 		for (uint i = 0; i < filename.size(); i++) {
 			if (filename[i] != '\\' && filename[i] != ':')
