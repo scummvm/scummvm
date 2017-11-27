@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-26 15:13+0100\n"
+"POT-Creation-Date: 2017-11-27 20:51+0100\n"
 "PO-Revision-Date: 2016-12-26 19:38+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -4311,19 +4311,19 @@ msgstr "Feiwang Youbian"
 msgid "Fly to lower right"
 msgstr "Feiwang Youxia"
 
-#: engines/scumm/input.cpp:580
+#: engines/scumm/input.cpp:578
 msgid "Snap scroll on"
 msgstr "Snap hundong kai"
 
-#: engines/scumm/input.cpp:582
+#: engines/scumm/input.cpp:580
 msgid "Snap scroll off"
 msgstr "Snap Gundong Guan"
 
-#: engines/scumm/input.cpp:595
+#: engines/scumm/input.cpp:593
 msgid "Music volume: "
 msgstr "Yinyue Yinliang: "
 
-#: engines/scumm/input.cpp:612
+#: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
 msgstr "Zimu Sudu: "
 

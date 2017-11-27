@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-26 15:13+0100\n"
+"POT-Creation-Date: 2017-11-27 20:51+0100\n"
 "PO-Revision-Date: 2017-11-26 22:24+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
-"Language-Team: Czech "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
+"Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/cs/>\n"
 "Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -3572,8 +3572,8 @@ msgstr ""
 "Postavy ulo¾ené v rámci ScummVM jsou zobrazeny automaticky. Soubory postav "
 "ulo¾ené v originálním interpretovi, je tøeba umístit do slo¾ky s ulo¾enými "
 "hrami Scummvm a musí k nim být pøidána pøedpona, dle hry, z které pocházejí: "
-"'qfg1-' pro Quest for Glory 1, 'qfg2-' pro Quest for Glory 2. Pøíklad: "
-"'qfg2-thief.sav'."
+"'qfg1-' pro Quest for Glory 1, 'qfg2-' pro Quest for Glory 2. Pøíklad: 'qfg2-"
+"thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:348
 #, c-format
@@ -4315,19 +4315,19 @@ msgstr "Letìt doprava"
 msgid "Fly to lower right"
 msgstr "Letìt doprava dolù"
 
-#: engines/scumm/input.cpp:580
+#: engines/scumm/input.cpp:578
 msgid "Snap scroll on"
 msgstr "Pøichycení pøi posunování zapnuto"
 
-#: engines/scumm/input.cpp:582
+#: engines/scumm/input.cpp:580
 msgid "Snap scroll off"
 msgstr "Pøichycení pøi posunování zapnuto"
 
-#: engines/scumm/input.cpp:595
+#: engines/scumm/input.cpp:593
 msgid "Music volume: "
 msgstr "Hlasitost hudby: "
 
-#: engines/scumm/input.cpp:612
+#: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
 msgstr "Rychlost titulkù: "
 
