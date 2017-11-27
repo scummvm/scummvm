@@ -1431,6 +1431,7 @@ bool ModalMainMenu::init(int counterdiff) {
 	case PIC_MNU_CONTINUE_L:
 		if (!_mfield_34) {
 			g_fp->_gameLoader->unloadScene(SC_MAINMENU);
+			_areas.clear();
 			_scene = nullptr;
 			g_fp->_sceneRect = _screct;
 
