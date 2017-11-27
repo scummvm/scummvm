@@ -125,6 +125,8 @@ Scene::~Scene() {
 
 	_staticANIObjectList1.clear();
 
+	g_fp->_globalPalette = &g_fp->_defaultPalette;
+
 	// delete _field_BC;
 }
 
