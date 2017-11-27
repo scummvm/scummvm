@@ -55,6 +55,7 @@ struct GameState {
 	bool   _cableConnected;
 	bool   _powerOff;
 	bool   _dream;
+	bool   _nameSeen[4];
 };
 
 class Inventory {
@@ -187,6 +188,7 @@ public:
 	void setAnimationTimer(int ticks);
 	void dead(const char *message);
 	void dead(StringID messageId);
+	int  dialog(int num, byte rowLength[6], Common::String text[6], int number);
 	int  dialog(int num, byte rowLength[6], StringID text[6], int number);
 	void sentence(int number, bool brightness);
 	void say(StringID textId);

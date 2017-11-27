@@ -43,7 +43,7 @@
 namespace Supernova {
 
 #define SAVEGAME_HEADER MKTAG('M','S','N','1')
-#define SAVEGAME_VERSION 6
+#define SAVEGAME_VERSION 7
 
 #define SUPERNOVA_DAT "supernova.dat"
 #define SUPERNOVA_DAT_VERSION 1
