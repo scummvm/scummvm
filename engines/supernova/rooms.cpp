@@ -2847,7 +2847,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) &&
 	           (obj1._id >= DOOR1) && (obj1._id <= DOOR4)) {
-		_nameSeen |= 1 << (obj1._id - DOOR1);
+		_gm->_state._nameSeen[obj1._id - DOOR1] = true;
 		return false;
 	} else if ((verb == ACTION_WALK) &&
 	           ((obj1._id == PILLAR1) || (obj1._id == PILLAR2))) {

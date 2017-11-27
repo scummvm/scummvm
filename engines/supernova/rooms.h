@@ -1149,10 +1149,8 @@ public:
 
 	virtual void onEntrance();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
-
-private:
-	byte _nameSeen;
 };
+
 class AxacussIntersection : public Room {
 public:
 	AxacussIntersection(SupernovaEngine *vm, GameManager *gm) {

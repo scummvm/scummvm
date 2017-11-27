@@ -57,6 +57,8 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._cableConnected);
 	out->writeByte(_state._powerOff);
 	out->writeByte(_state._dream);
+	for (int i = 0; i < 4; i++)
+		out->writeByte(_state._nameSeen[i]);
 
 	// Inventory
 	out->writeSint32LE(_inventory.getSize());
@@ -112,6 +114,13 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._cableConnected = in->readByte();
 	_state._powerOff = in->readByte();
 	_state._dream = in->readByte();
+
+	for (int i = 0; i < 4; i++) {
+		if (version >= 7)
+			_state._nameSeen[i] = in->readByte();
+		else
+			_state._nameSeen[i] = false;
+	}
 
 	_oldTime = g_system->getMillis();
 
@@ -655,8 +664,163 @@ void GameManager::corridorOnEntrance() {
 		busted(0);
 }
 
-void GameManager::telomat(int number) {
-	warning("STUB: telomat %d", number);
+void GameManager::telomat(int nr) {
+	static Common::String name[8] = {
+		"DR. ALAB HANSI",
+		"ALAB HANSI",
+		"SAVAL LUN",
+		"x",
+		"PROF. DR. UGNUL TSCHABB",
+		"UGNUL TSCHABB",
+		"ALGA HURZ LI",
+		"x"
+	};
+
+	static Common::String name2[4] = {
+		"Alab Hansi",
+		"Saval Lun",
+		"Ugnul Tschabb",
+		"Alga Hurz Li"
+	};
+
+	Common::String dial1[4];
+	dial1[0] = "Guten Tag, hier ist Horst Hummel.";
+	dial1[1] = "";
+	dial1[2] = "Es ist sehr wichtig.";
+	dial1[3] = "|";
+
+	static byte rows1[3] = {1, 2, 1};
+
+	Common::String dial2[4];
+	dial2[0] = "Vom Mars.";
+	dial2[1] = "Vom Klo.";
+	dial2[2] = "Das werde ich kaum erzählen.";
+	dial2[3] = "|";
+
+	static byte rows2[4] = {1, 1, 1, 1};
+
+	_vm->renderBox(0, 0, 320, 200, kColorBlack);
+	_vm->renderText("1 Büromanager", 100, 70, kColorGreen);
+	_vm->renderText("2 Telomat", 100, 81, kColorGreen);
+	_vm->renderText("3 ProText", 100, 92, kColorGreen);
+	_vm->renderText("4 Calculata", 100, 103, kColorGreen);
+	_vm->renderText("Bitte wählen", 100, 120, kColorDarkGreen);
+	Common::String input;
+	do {
+		getInput();
+
+		switch (_key.keycode) {
+		case Common::KEYCODE_2: {
+			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
+			_vm->renderText("Geben Sie den gewünschten Namen ein:", 50, 80, kColorGreen);
+			_vm->renderText("(Vor- und Nachname)", 50, 91, kColorGreen);
+			do
+				edit(input, 50, 105, 30);
+			while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE));
+	
+			if (_key.keycode == Common::KEYCODE_ESCAPE) {
+				_vm->renderBox(0, 0, 320, 200, kColorBlack);
+				_vm->renderRoom(*_currentRoom);
+				_vm->paletteBrightness();
+				_guiEnabled = true;
+				drawMapExits();
+				return;
+			}
+
+			input.toUppercase();
+
+			int i = 0;
+			while ((input != name[i]) && (i < 8))
+				i++;
+			i >>= 1;
+			if (i == 4) {
+				_vm->renderText("Name unbekannt", 50, 120, kColorGreen);
+				wait2(10);
+				_vm->renderBox(0, 0, 320, 200, kColorBlack);
+				_vm->renderRoom(*_currentRoom);
+				_vm->paletteBrightness();
+				_guiEnabled = true;
+				drawMapExits();
+				return;
+			}
+
+			if ((i == nr) || _rooms[BCORRIDOR]->getObject(4 + i)->hasProperty(CAUGHT)) {
+				_vm->renderText("Verbindung unmöglich", 50, 120, kColorGreen);
+				wait2(10);
+				_vm->renderBox(0, 0, 320, 200, kColorBlack);
+				_vm->renderRoom(*_currentRoom);
+				_vm->paletteBrightness();
+				_guiEnabled = true;
+				drawMapExits();
+				return;
+			}
+
+			_vm->renderText("Verbindung wird hergestellt", 50, 120, kColorGreen);
+			wait2(10);
+			_vm->renderBox(0, 0, 320, 200, kColorBlack);
+			_vm->renderRoom(*_currentRoom);
+			_vm->paletteBrightness();
+			input = Common::String::format("%s am Apparat.", name2[i]);
+			_vm->renderMessage(input, kMessageTop);
+			waitOnInput(_timer1);
+			_vm->removeMessage();
+			if (_state._nameSeen[nr]) {
+				input = Common::String::format("Hier ist %s. Können Sie mal gerade kommen?", name2[nr]);
+				dial1[1] = input;
+				_currentRoom->addSentence(1, 1);
+			} else
+				_currentRoom->removeSentence(1, 1);
+
+			switch (dialog(3, rows1, dial1, 1)) {
+			case 1: _vm->renderMessage("Huch, Sie hören sich aber|nicht gut an. Ich komme sofort.", kMessageTop);
+				waitOnInput(_timer1);
+				_vm->removeMessage();
+				if ((_state._destination == 255) && !_rooms[BCORRIDOR]->isSectionVisible(7)) {
+					_state._eventTime = _state._time + ticksToMsec(150);
+					_state._eventCallback = kGuardWalkFn;
+					_state._origin = i;
+					_state._destination = nr;
+				}
+				break;
+			case 0: _vm->renderMessage("Horst Hummel! Von wo rufen Sie an?", kMessageTop);
+				waitOnInput(_timer1);
+				_vm->removeMessage();
+				if (dialog(4, rows2, dial2, 0) != 3) {
+					wait2(10);
+					say("Hmm, keine Antwort.");
+				}
+				_rooms[BCORRIDOR]->setSectionVisible(7, true);
+				_rooms[BCORRIDOR]->setSectionVisible(i + 1, true);
+				_state._eventTime = 0xffffffff;
+				_currentRoom->addSentence(0, 1);
+			}
+			_guiEnabled = true;
+			drawMapExits();
+			return;
+			}
+		case Common::KEYCODE_1:
+		case Common::KEYCODE_3:
+		case Common::KEYCODE_4:
+			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
+			_vm->renderText("Passwort:", 100, 90, kColorGreen);
+			input = "";
+			do
+				edit(input, 100, 105, 30);
+			while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE));
+
+			if (_key.keycode == Common::KEYCODE_RETURN) {
+				_vm->renderText("Falsches Passwort", 100, 120, kColorGreen);
+				wait2(10);
+			}
+		case Common::KEYCODE_ESCAPE:
+			_vm->renderBox(0, 0, 320, 200, kColorBlack);
+			_vm->renderRoom(*_currentRoom);
+			_vm->paletteBrightness();
+			_guiEnabled = true;
+			drawMapExits();
+			return;
+		}
+	} while (true);
 }
 
 void GameManager::startSearch() {
@@ -1147,6 +1311,11 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 	}
 	if (*text != '|')
 		_vm->removeMessage();
+}
+
+int GameManager::dialog(int num, byte rowLength[6], Common::String text[6], int number) {
+	warning("STUB dialog");
+	return 0;
 }
 
 int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number) {
