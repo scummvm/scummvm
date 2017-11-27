@@ -163,31 +163,6 @@ Programmcodes finden Sie auf Englisch unter:
      automatisch das erste Gerät ausgewählt.
    - Verhalten des Datei-Browsers verbessert.
 
-1.9.1 (DD.MM.YYYY)
- Allgemein:
-   - Option für bilineare Filterung im SDL2-Vollbildmodus hinzugefügt.
-   - Fehler behoben, der einen Absturz im Optionen-Dialog der Benutzeroberfläche verursacht.
-
- Drascula:
-   - Fehler korrigiert, der es unmöglich machte, mehr als einmal in der Gaststätte mit
-     dem Trunkenbold zu sprechen.
-
- Kyra:
-   - Pufferüberlauf in "Lands of Lore" behoben.
-
- MADS:
-   - Fehler behoben, der einen Absturz verursacht, wenn "Rex Nebular and the Cosmic Gender Bender"
-     gestartet wird.
-
- SCI:
-   - Skript-Fehler in Laura Bow 2: Dagger of Amon Ra behoben, der es unmöglich machte,
-     einen bestimmten Raum im Museum (Raum 350) zu verlassen.
-     Dieser Fehler ist auch im Originalspiel vorhanden.
-
- TsAGE:
-   - Kürzlich aufgetretenen Fehler behoben, der verursachte, dass die Animationen
-     in Return to Ringworld nicht abgespielt werden.
-
 1.9.0 (17.10.2016)
  Neue Spiele:
    - Unterstützung für Myst hinzugefügt.
