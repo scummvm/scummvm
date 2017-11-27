@@ -698,7 +698,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 
 	int selected = _list->getSelected();
 	_list->setList(saveNames, &colors);
-	if (selected >= 0 && selected < saveNames.size())
+	if (selected >= 0 && selected < (int)saveNames.size())
 		_list->setSelected(selected);
 	else
 		_chooseButton->setEnabled(false);
