@@ -54,7 +54,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_keyRepeatTime = 0;
 
 #ifdef ENABLE_VKEYBD
-	_vk = new Common::VirtualKeyboard();
+	_vk = nullptr;
 #endif
 #ifdef ENABLE_KEYMAPPER
 	_keymapper = new Common::Keymapper(this);
@@ -74,6 +74,8 @@ DefaultEventManager::~DefaultEventManager() {
 
 void DefaultEventManager::init() {
 #ifdef ENABLE_VKEYBD
+	_vk = new Common::VirtualKeyboard();
+
 	if (ConfMan.hasKey("vkeybd_pack_name")) {
 		_vk->loadKeyboardPack(ConfMan.get("vkeybd_pack_name"));
 	} else {
@@ -152,6 +154,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		break;
 #ifdef ENABLE_VKEYBD
 	case Common::EVENT_VIRTUAL_KEYBOARD:
+		if (!_vk)
+			break;
+
 		if (_vk->isDisplaying()) {
 			_vk->close(true);
 		} else {
