@@ -704,6 +704,10 @@ bool GameFeatures::generalMidiOnly() {
 	case GID_MOTHERGOOSEHIRES:
 		return true;
 	case GID_KQ7: {
+		if (g_sci->isDemo()) {
+			return false;
+		}
+
 		SoundResource sound(13, g_sci->getResMan(), detectDoSoundType());
 		return (sound.getTrackByType(/* AdLib */ 0) == nullptr);
 	}
