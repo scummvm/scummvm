@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-27 20:51+0100\n"
+"POT-Creation-Date: 2017-11-28 05:51+0100\n"
 "PO-Revision-Date: 2017-10-15 16:42+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -63,8 +63,8 @@ msgstr "Su"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:445
 #: gui/saveload-dialog.cpp:727 gui/saveload-dialog.cpp:1121
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: engines/engine.cpp:524 backends/events/default/default-events.cpp:185
-#: backends/events/default/default-events.cpp:207
+#: engines/engine.cpp:524 backends/events/default/default-events.cpp:190
+#: backends/events/default/default-events.cpp:212
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
@@ -2123,19 +2123,19 @@ msgstr "Download completato."
 msgid "Download failed."
 msgstr "Download non riuscito."
 
-#: backends/events/default/default-events.cpp:185
+#: backends/events/default/default-events.cpp:190
 msgid "Do you really want to return to the Launcher?"
 msgstr "Sei sicuro di voler tornare all'elenco giochi?"
 
-#: backends/events/default/default-events.cpp:185
+#: backends/events/default/default-events.cpp:190
 msgid "Launcher"
 msgstr "Elenco giochi"
 
-#: backends/events/default/default-events.cpp:207
+#: backends/events/default/default-events.cpp:212
 msgid "Do you really want to quit?"
 msgstr "Sei sicuro di voler uscire?"
 
-#: backends/events/default/default-events.cpp:207
+#: backends/events/default/default-events.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
