@@ -55,11 +55,25 @@ For a more comprehensive changelog of the latest experimental code, see:
  ADL:
    - Fixed application freeze when reading sign in rocket in Mission Asteroid.
 
+ AGI:
+   - Fixed game script blocking forever after loading a savegame that was saved
+     while music was playing (this could happen for example in Police Quest 1
+     poker back room.
+   - Fixed cursor behaviour in Manhunter.
+   - Fixed nightclub arcade sequence speed for Manhunter Apple IIgs version.
+   - Reduced fastest game speed to a maximum of 40 FPS to ensure the games do
+     not run too fast.
+
  AGOS:
    - Fixed subtitle speed setting in the Hebrew version of Simon the Sorcerer 1.
 
  Composer:
    - Added save/load from General Main Menu.
+   - Fixed the detection for the French Gregory.
+   - Added detection for German Baba Yaga.
+
+ Cruise:
+   - Fixed font rendering.
 
  Drascula:
    - Fixed bug that made it impossible to talk to the drunkard more than once in the inn.
@@ -69,6 +83,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Dreamweb:
    - Fixed crash when collecting last stones under church.
+   - Fixed detection of Italian CD release.
 
  Kyra:
    - Fixed a buffer overflow in Lands of Lore.
@@ -89,11 +104,22 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed crash in Myst piano puzzle.
 
  Neverhood:
-   - Fixed crash in musical hut.
+   - Fixed crash in musical hut in Russian DR version.
+   - Fixed late game notes crash in Russian DR version.
+
+ Pegasus:
+   - Fixed loading a game from the launcher after returning to the launcher.
+   - Ignored events occuring while the GUI is visible. This for example fixed an
+     issue where closing the GMM using Escape would also opens the game's own
+     menu.
+   - Fixed several crashes when toggling the shared screen space.
+   - Improved performances when fading screen.
 
  SAGA:
    - Fixed crash when using the give verb on an actor in IHNM.
    - Fixed Gorrister invisible and stuck when reloading at mooring ring in IHNM.
+   - Fixed the conversation panel background color in IHNM.
+   - Added support French Fan Translation of Inherit the Earth.
 
  SCI:
    - Fixed a script bug in Laura Bow 2: Dagger of Amon Ra that made it impossible
@@ -124,15 +150,27 @@ For a more comprehensive changelog of the latest experimental code, see:
      while Dr. Fred has the power off.
    - Fixed actors skipping between certain walk-boxes in Maniac Mansion.
 
+ Sherlock:
+   - Fixed detection for Italian fan translation of Serrated Scalpel.
+
+ Sky:
+   - Fixed collision detection.
+
+ Sword1:
+   - Added thumbnail when saving from in-game dialog.
+   - Fixed audio and subtitles settings being changed when open the load/save
+     in-game dialog.
+
  Tinsel:
    - Fixed some Discworld 2 text/voice not displaying & playing all the way through
    - Fix crash in in-game save menu when all slots are used with long names
 
  TsAGE:
-   - Fixed recently introduced bug preventing animations in Return to Ringworld from playing.
-   - Display fixes for Return to Ringworld Demo.
+   - Fixed regression preventing animations in Return to Ringworld from playing.
+   - Fixed display issues in Return to Ringworld Demo.
    - Fixed loading Return to Ringworld savegames with unreferenced dynamic objects.
    - Fixed deadlock in audio code.
+   - Fixed crash on Return to Launcher.
 
  Voyeur:
   - Fixed backgrounds not showing for static rooms.
