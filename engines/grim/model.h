@@ -169,7 +169,8 @@ public:
 	void addSprite(Sprite *sprite);
 	void removeSprite(const Sprite *sprite);
 	void translateViewpoint() const;
-	void translateViewpointBack() const;
+	void translateViewpointStart() const;
+	void translateViewpointFinish() const;
 
 	char _name[64];
 	Mesh *_mesh;

@@ -659,9 +659,14 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 }
 
 void ModelNode::draw() const {
+	if (_sibling || _child) {
+		translateViewpointStart();
+	}
 	translateViewpoint();
 	if (_hierVisible) {
-		g_driver->translateViewpointStart();
+		if (_child) {
+			translateViewpointStart();
+		}
 		g_driver->translateViewpoint(_pivot);
 
 		if (!g_driver->isShadowModeActive()) {
@@ -676,37 +681,44 @@ void ModelNode::draw() const {
 			_mesh->draw();
 		}
 
-		g_driver->translateViewpointFinish();
-
 		if (_child) {
+			translateViewpointFinish();
 			_child->draw();
 		}
 	}
-	translateViewpointBack();
 
+	if (_sibling || _child) {
+		translateViewpointFinish();
+	}
 	if (_sibling) {
 		_sibling->draw();
 	}
 }
 
 void ModelNode::getBoundingBox(int *x1, int *y1, int *x2, int *y2) const {
+	if (_sibling || _child) {
+		translateViewpointStart();
+	}
 	translateViewpoint();
 	if (_hierVisible) {
-		g_driver->translateViewpointStart();
+		if (_child) {
+			translateViewpointStart();
+		}
 		g_driver->translateViewpoint(_pivot);
 
 		if (_mesh && _meshVisible) {
 			_mesh->getBoundingBox(x1, y1, x2, y2);
 		}
 
-		g_driver->translateViewpointFinish();
-
 		if (_child) {
+			translateViewpointFinish();
 			_child->getBoundingBox(x1, y1, x2, y2);
 		}
 	}
-	translateViewpointBack();
 
+	if (_sibling || _child) {
+		translateViewpointFinish();
+	}
 	if (_sibling) {
 		_sibling->getBoundingBox(x1, y1, x2, y2);
 	}
@@ -787,8 +799,6 @@ void ModelNode::removeSprite(const Sprite *sprite) {
 }
 
 void ModelNode::translateViewpoint() const {
-	g_driver->translateViewpointStart();
-
 	g_driver->translateViewpoint(_animPos);
 
 	Math::Matrix4 rot = _animRot.toMatrix();
@@ -796,7 +806,11 @@ void ModelNode::translateViewpoint() const {
 	g_driver->rotateViewpoint(rot);
 }
 
-void ModelNode::translateViewpointBack() const {
+void ModelNode::translateViewpointStart() const {
+	g_driver->translateViewpointStart();
+}
+
+void ModelNode::translateViewpointFinish() const {
 	g_driver->translateViewpointFinish();
 }
 

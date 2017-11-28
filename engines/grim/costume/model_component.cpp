@@ -163,8 +163,9 @@ void ModelComponent::translateObject(ModelNode *node, bool reset) {
 		translateObject(node->_parent, reset);
 
 	if (reset) {
-		node->translateViewpointBack();
+		node->translateViewpointFinish();
 	} else {
+		node->translateViewpointStart();
 		node->translateViewpoint();
 	}
 }
