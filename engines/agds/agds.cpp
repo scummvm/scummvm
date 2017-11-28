@@ -22,18 +22,42 @@
 
 #include "agds/agds.h"
 #include "common/error.h"
+#include "common/ini-file.h"
+#include "common/file.h"
+#include "common/debug.h"
 
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc) {
-
 }
 
 AGDSEngine::~AGDSEngine() {
 }
 
+bool AGDSEngine::load() {
+	Common::INIFile config;
+	Common::File configFile;
+	if (!configFile.open("agds.cfg"))
+		return false;
+
+	configFile.readLine(); //skip first line
+	config.setDefaultSectionName("core");
+	if (!config.loadFromStream(configFile))
+		return false;
+
+	Common::INIFile::SectionKeyList values = config.getKeys("core");
+	for(Common::INIFile::SectionKeyList::iterator i = values.begin(); i != values.end(); ++i) {
+		if (i->key == "path")
+			debug("found path %s", i->value.c_str());
+	}
+	
+	return true;
+}
+
 Common::Error AGDSEngine::run() {
+	if (!load())
+		return Common::kNoGameDataFoundError;
 	return Common::kNoError;
 }
 

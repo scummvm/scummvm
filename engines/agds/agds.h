@@ -42,6 +42,10 @@ public:
 	~AGDSEngine();
 
 	Common::Error run();
+
+private:
+	bool load();
+
 private:
 	const ADGameDescription *_gameDescription;
 };
