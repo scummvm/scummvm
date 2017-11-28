@@ -221,7 +221,8 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
 	assert(_window);
 	if (!_window->warpMouseInWindow(x, y)) {
-		_eventSource->fakeWarpMouse(x, y);
+		const Common::Point mouse = convertWindowToVirtual(x, y);
+		_eventSource->fakeWarpMouse(mouse.x, mouse.y);
 	}
 }
 
