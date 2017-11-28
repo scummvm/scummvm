@@ -20,46 +20,53 @@
  *
  */
 
-#include "agds/agds.h"
-#include "common/error.h"
-#include "common/ini-file.h"
-#include "common/file.h"
-#include "common/debug.h"
+#ifndef AGDS_RESOURCE_MANAGER_H
+#define AGDS_RESOURCE_MANAGER_H
+
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/ptr.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 namespace AGDS {
 
-AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc) {
-}
+class ResourceManager {
+private:
+	struct GrpFile
+	{
+		Common::String filename;
 
-AGDSEngine::~AGDSEngine() {
-}
+		GrpFile(const Common::String &fname): filename(fname) {
+		}
+	};
+	typedef Common::SharedPtr<GrpFile> GrpFilePtr;
 
-bool AGDSEngine::load() {
-	Common::INIFile config;
-	Common::File configFile;
-	if (!configFile.open("agds.cfg"))
-		return false;
+	struct Resource
+	{
+		GrpFilePtr	grp;
+		uint32		offset;
+		uint32		size;
+		Resource(const GrpFilePtr &g, uint32 o, uint32 s):
+		grp(g), offset(o), size(s) {
+		}
+	};
+	typedef Common::SharedPtr<Resource> ResourcePtr;
 
-	configFile.readLine(); //skip first line
-	config.setDefaultSectionName("core");
-	if (!config.loadFromStream(configFile))
-		return false;
+	typedef Common::HashMap<Common::String, ResourcePtr> ResourcesType;
+	ResourcesType _resources;
 
-	Common::INIFile::SectionKeyList values = config.getKeys("core");
-	for(Common::INIFile::SectionKeyList::iterator i = values.begin(); i != values.end(); ++i) {
-		if (i->key == "path")
-			if (!_resourceManager.addPath(i->value))
-				return false;
-	}
-	
-	return true;
-}
+	template<typename T>
+	static void decrypt(T * data, unsigned size);
 
-Common::Error AGDSEngine::run() {
-	if (!load())
-		return Common::kNoGameDataFoundError;
-	return Common::kNoError;
-}
+public:
+	ResourceManager();
+	~ResourceManager();
+
+	bool addPath(const Common::String &grpFilename);
+};
+
 
 } // End of namespace AGDS
+
+#endif /* AGDS_RESOURCE_MANAGER_H */

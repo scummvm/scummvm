@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "engines/advancedDetector.h"
+#include "agds/resourceManager.h"
 
 /**
  * This is the namespace of the AGDS engine.
@@ -47,7 +48,8 @@ private:
 	bool load();
 
 private:
-	const ADGameDescription *_gameDescription;
+	const ADGameDescription *	_gameDescription;
+	ResourceManager				_resourceManager;
 };
 
 
