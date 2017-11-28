@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-28 05:51+0100\n"
-"PO-Revision-Date: 2017-07-26 18:23+0000\n"
+"PO-Revision-Date: 2017-11-28 15:51+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
-"Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/be/>\n"
+"Language-Team: Belarusian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/be/>\n"
 "Language: be_BY\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Belarusian\n"
 
@@ -1622,15 +1622,13 @@ msgid "Antialiased"
 msgstr "Са згладжваннем"
 
 #: gui/updates-dialog.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
-"ScummVM стаў падтрымліваць аўтаматычную праверку\n"
-"абнаўленняў, якая патрабуе доступу ў Інтэрнэт.\n"
-"\n"
+"ScummVM падтрымвае аўтаматычную праверку\n"
+"абноў, якая патрабуе доступ ў Інтэрнэт.\n"
 "Ці жадаеце вы ўключыць гэту опцыю?"
 
 #: gui/updates-dialog.cpp:52
@@ -1638,6 +1636,8 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Вы можаце змяніць гэты параметр\n"
+"ва ўкладцы \"Рознае\" у акне \"Налады\"."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -1787,20 +1787,21 @@ msgid "<Bad value>"
 msgstr "<Хібнае значэнне>"
 
 #: engines/advancedDetector.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown %s engine game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Здаецца, гульня ў '%s' невядомая.\n"
-"Калі ласка, перадайце камандзе ScummVM наступныя дадзеныя разам\n"
-"з назвай гульні, яе версіяй, мовай і інш.:"
+"Здаецца, гульня ў '%s' ёсць невядомай гульнёй на рухавічку %s.\n"
+"\n"
+"Калі ласка, перадайце камандзе ScummVM на %s наступныя дадзеныя разам з "
+"назвай гульні, яе версіяй, мовай і інш.:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr ""
+msgstr "Магчымыя ID гульні:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -2919,7 +2920,7 @@ msgid "Restore"
 msgstr "Узнавіць"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game from file:\n"
 "\n"
@@ -2930,7 +2931,7 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game to file:\n"
 "\n"
@@ -2941,7 +2942,7 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Successfully saved game in file:\n"
 "\n"
@@ -2991,13 +2992,11 @@ msgstr "Малюе графіку з выкарыстаннем яркай палітры гульні"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-#, fuzzy
 msgid "Failed to load saved game from file."
 msgstr "Не атрымалася загрузіць захаваную гульню з файла."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-#, fuzzy
 msgid "Failed to save game to file."
 msgstr "Не атрымалася захаваць гульню ў файл."
 
@@ -3224,7 +3223,7 @@ msgstr ""
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
 "ScummVM. If you want to manually import original saved game later you will\n"
@@ -3232,7 +3231,7 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"%d арыгінальных файлаў захавання былі паспяхова імпартаваны ў ScummVM.\n"
+"%d арыгінальных файлаў захавання паспяхова імпартаваны ў ScummVM.\n"
 "Калі вы пажадаеце імпартаваць арыгінальныя захаванні, вам трэба будзе\n"
 "адкрыць адладачную кансоль ScummVM і ўвесці каманду 'import_savefile'.\n"
 "\n"
@@ -3255,7 +3254,7 @@ msgstr "Анімаваны інтэрфейс гульні"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr ""
+msgstr "Гарэзны рэжым гульні"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
@@ -3292,28 +3291,24 @@ msgid "~W~ater Effect Enabled"
 msgstr "~Э~фекты вады ўключаны"
 
 #: engines/mohawk/dialogs.cpp:272
-#, fuzzy
 msgid "Transitions:"
-msgstr "~П~ераходы актываваны"
+msgstr "Пераходы:"
 
 #: engines/mohawk/dialogs.cpp:274
-#, fuzzy
 msgid "Disabled"
-msgstr "Без графікі"
+msgstr "Вылучаны"
 
 #: engines/mohawk/dialogs.cpp:275
-#, fuzzy
 msgid "Fastest"
-msgstr "Уставіць"
+msgstr "Хуткія"
 
 #: engines/mohawk/dialogs.cpp:276
-#, fuzzy
 msgid "Normal"
-msgstr "OpenGL без павелічэння"
+msgstr "Звычайныя"
 
 #: engines/mohawk/dialogs.cpp:277
 msgid "Best"
-msgstr ""
+msgstr "Лепшыя"
 
 #: engines/mohawk/mohawk.cpp:58
 msgid "The game is paused. Press any key to continue."
@@ -3332,6 +3327,8 @@ msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"Замест яго падыдзе файл усталёўніка 'arcriven.z'. Таксама можна скарыстаць "
+"выкананы файл 'Riven' для Mac."
 
 #: engines/mohawk/riven.cpp:161
 msgid ""
@@ -3342,7 +3339,7 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "Бракуе наступных файлаў гульні Riven:\n"
 
 #: engines/mohawk/riven_stack.cpp:182
 msgid ""
@@ -3425,9 +3422,8 @@ msgstr ""
 "наступным запуску гульні.\n"
 
 #: engines/parallaction/saveload.cpp:316
-#, fuzzy
 msgid "ScummVM successfully converted all your saved games."
-msgstr "ScummVM паспяхова пераўтварыў усе вашы захаванні гульняў."
+msgstr "ScummVM паспяхова пераўтварыў усе захаваныя гульні."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -3514,12 +3510,11 @@ msgstr ""
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Ужываць якаснае маштабаванне відэа"
 
 #: engines/sci/detection.cpp:432
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Выкарыстоўваць лінейную фільтрацыю для павелічэння адрознення"
+msgstr "Па магчымасці ужывае лінейную інтэрпаляцыю падчас маштабавання відэа"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
@@ -3573,13 +3568,12 @@ msgstr ""
 "Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных залатых"
 
 #: engines/sci/detection.cpp:506
-#, fuzzy
 msgid "Enable content censoring"
-msgstr "Уключыць плывучыя курсоры"
+msgstr "Уключыць цэнзуру змесціва"
 
 #: engines/sci/detection.cpp:507
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "Уключыць убудаванае неабавязковае цэнзураванне змесціва"
 
 #: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
@@ -3593,6 +3587,11 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"Персанажы, захаваныя ў ScummVM, адлюстроўваюцца аўтаматычна. Файлы "
+"персанажаў, захаваныя выточным рухавічком, трэба змясціць у дырэкторыю "
+"захаваных гульняў ScummVM, дапісаўшы ў пачатак імя файла ID гульні: 'qfg1-' -"
+" для гульні Quest for Glory 1, 'qfg2-' - для Quest for Glory 2. Прыклад: "
+"'qfg2-thief.sav' (злодзей)."
 
 #: engines/sci/engine/kgraphics32.cpp:348
 #, c-format
@@ -3634,6 +3633,9 @@ msgid ""
 "riddles. Please, apply the latest patch for this game by Sierra to avoid "
 "possible problems."
 msgstr ""
+"Выяўлены гульнявы сцэнар з абмылай, якая можа перашкодзіць праходжанню "
+"гульні на загадках Зялёнага Чалавека. Калі ласка, каб пазбегнуць праблем, "
+"усталюйце патч для гэтай гульні ад Sierra."
 
 #: engines/sci/sci.cpp:409
 msgid ""
@@ -3661,6 +3663,14 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"Вы абралі General MIDI у якасці гукавой прылады. Кампанія Sierra выпусціла "
+"патч \"General MIDI Utility\" для падтрымкі General MIDI ў гэтай гульні. Каб "
+"мець магчымасць слухаць MIDI-музыку, калі ласка, усталюйце гэты патч. "
+"Распакуйце ўсе файлы патча *.PAT у тэчку для дадатковых файлаў ScummVM, і "
+"ScummVM аўтаматычна ўжыве яго. У якасці альтэрнатывы можна, кіруючыся "
+"інструкцыяй ў файле READ.ME, змясціць адпаведны файл *.PAT у тэчку з "
+"гульнёй, пераназваўшы яго 4.PAT. Без гэтага патча музыка General MIDI будзе "
+"моцна перакручана."
 
 #: engines/sci/sci.cpp:452
 msgid ""
@@ -3670,6 +3680,10 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Гульня мае прапатчаныя фанатамі гульнявыя скрыпты. Гэтыя патчы могуць "
+"выклікаць праблемы, бо моцна закранаюць скрыпты. Выпраўляемыя гэтымі патчамі "
+"абмылы ў ScummVM не ўзнікаюць, таму рэкамендуецца выдаліць іх з тэчкі з "
+"гульнёй, каб вымінуць неспадзяваныя праблемы надалей."
 
 #: engines/scumm/detection.cpp:1126
 msgid ""
