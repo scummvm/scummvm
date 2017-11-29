@@ -26,7 +26,6 @@
 #include "engines/engine.h"
 
 #include "scumm/imuse/imuse_internal.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 
 #include "audio/midiparser.h"

@@ -28,7 +28,6 @@
 #include "common/str.h"
 #include "audio/mididrv.h"
 #include "backends/audiocd/audiocd.h"
-#include "scumm/saveload.h"
 
 namespace Audio {
 class Mixer;

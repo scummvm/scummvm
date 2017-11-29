@@ -24,7 +24,6 @@
 
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/usage_bits.h"

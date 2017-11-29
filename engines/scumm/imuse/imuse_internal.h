@@ -27,7 +27,6 @@
 #include "common/serializer.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse/instrument.h"
-#include "scumm/saveload.h"
 #include "audio/mididrv.h"
 
 class MidiParser;
