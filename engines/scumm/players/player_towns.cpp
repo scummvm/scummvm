@@ -46,19 +46,18 @@ int Player_Towns::getSoundStatus(int sound) const {
 	return 0;
 }
 
-void Player_Towns::saveLoadWithSerializer(Serializer *ser) {
-	static const SaveLoadEntry pcmEntries[] = {
-		MKLINE(PcmCurrentSound, index, sleInt16, VER(81)),
-		MKLINE(PcmCurrentSound, chan, sleInt16, VER(81)),
-		MKLINE(PcmCurrentSound, note, sleUint8, VER(81)),
-		MKLINE(PcmCurrentSound, velo, sleUint8, VER(81)),
-		MKLINE(PcmCurrentSound, pan, sleUint8, VER(81)),
-		MKLINE(PcmCurrentSound, paused, sleUint8, VER(81)),
-		MKLINE(PcmCurrentSound, looping, sleUint8, VER(81)),
-		MKLINE(PcmCurrentSound, priority, sleUint32, VER(81)),
-		MKEND()
-	};
+void syncWithSerializer(Common::Serializer &s, Player_Towns::PcmCurrentSound &pcs) {
+	s.syncAsSint16LE(pcs.index, VER(81));
+	s.syncAsSint16LE(pcs.chan, VER(81));
+	s.syncAsByte(pcs.note, VER(81));
+	s.syncAsByte(pcs.velo, VER(81));
+	s.syncAsByte(pcs.pan, VER(81));
+	s.syncAsByte(pcs.paused, VER(81));
+	s.syncAsByte(pcs.looping, VER(81));
+	s.syncAsUint32LE(pcs.priority, VER(81));
+}
 
+void Player_Towns::saveLoadWithSerializer(Common::Serializer &s) {
 	for (int i = 1; i < 9; i++) {
 		if (!_pcmCurrentSound[i].index)
 			continue;
@@ -71,7 +70,7 @@ void Player_Towns::saveLoadWithSerializer(Serializer *ser) {
 		_pcmCurrentSound[i].index = 0;
 	}
 
-	ser->saveLoadArrayOf(_pcmCurrentSound, 9, sizeof(PcmCurrentSound), pcmEntries);
+	s.syncArray(_pcmCurrentSound, 9, syncWithSerializer);
 }
 
 void Player_Towns::restoreAfterLoad() {
@@ -362,34 +361,24 @@ void Player_Towns_v1::setSoundNote(int sound, int note) {
 		_soundOverride[sound].note = note;
 }
 
-void Player_Towns_v1::saveLoadWithSerializer(Serializer *ser) {
+void Player_Towns_v1::saveLoadWithSerializer(Common::Serializer &s) {
 	_cdaCurrentSoundTemp = (_vm->_sound->pollCD() && _cdaNumLoops > 1) ? _cdaCurrentSound & 0xff : 0;
 	_cdaNumLoopsTemp = _cdaNumLoops & 0xff;
 
-	static const SaveLoadEntry cdEntries[] = {
-		MKLINE(Player_Towns_v1, _cdaCurrentSoundTemp, sleUint8, VER(81)),
-		MKLINE(Player_Towns_v1, _cdaNumLoopsTemp, sleUint8, VER(81)),
-		MKLINE(Player_Towns_v1, _cdaVolLeft, sleUint8, VER(81)),
-		MKLINE(Player_Towns_v1, _cdaVolRight, sleUint8, VER(81)),
-		MKEND()
-	};
-
-	ser->saveLoadEntries(this, cdEntries);
+	s.syncAsByte(_cdaCurrentSoundTemp, VER(81));
+	s.syncAsByte(_cdaNumLoopsTemp, VER(81));
+	s.syncAsByte(_cdaVolLeft, VER(81));
+	s.syncAsByte(_cdaVolRight, VER(81));
 
 	if (!_eupLooping && !_player->isPlaying())
 		_eupCurrentSound = 0;
 
-	static const SaveLoadEntry eupEntries[] = {
-		MKLINE(Player_Towns_v1, _eupCurrentSound, sleUint8, VER(81)),
-		MKLINE(Player_Towns_v1, _eupLooping, sleUint8, VER(81)),
-		MKLINE(Player_Towns_v1, _eupVolLeft, sleUint8, VER(81)),
-		MKLINE(Player_Towns_v1, _eupVolRight, sleUint8, VER(81)),
-		MKEND()
-	};
+	s.syncAsByte(_eupCurrentSound, VER(81));
+	s.syncAsByte(_eupLooping, VER(81));
+	s.syncAsByte(_eupVolLeft, VER(81));
+	s.syncAsByte(_eupVolRight, VER(81));
 
-	ser->saveLoadEntries(this, eupEntries);
-
-	Player_Towns::saveLoadWithSerializer(ser);
+	Player_Towns::saveLoadWithSerializer(s);
 }
 
 void Player_Towns_v1::restoreAfterLoad() {
@@ -721,9 +710,9 @@ int32 Player_Towns_v2::doCommand(int numargs, int args[]) {
 	return res;
 }
 
-void Player_Towns_v2::saveLoadWithSerializer(Serializer *ser) {
-	if (ser->getVersion() >= 83)
-		Player_Towns::saveLoadWithSerializer(ser);
+void Player_Towns_v2::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() >= VER(83))
+		Player_Towns::saveLoadWithSerializer(s);
 }
 
 void Player_Towns_v2::playVocTrack(const uint8 *data) {

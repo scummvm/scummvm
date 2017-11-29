@@ -84,6 +84,7 @@ protected:
 	struct SubtitleText : TextObject {
 		bool actorSpeechMsg;
 	};
+	friend void syncWithSerializer(Common::Serializer &, SubtitleText &);
 #endif
 
 	int _subtitleQueuePos;
@@ -111,7 +112,7 @@ protected:
 
 	virtual void akos_processQueue();
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	virtual void readMAXS(int blockSize);
 	virtual void readGlobalObjects();

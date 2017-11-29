@@ -1116,14 +1116,9 @@ AudioCDManager::Status Sound::getCDStatus() {
 	}
 }
 
-void Sound::saveLoadWithSerializer(Serializer *ser) {
-	static const SaveLoadEntry soundEntries[] = {
-		MKLINE(Sound, _currentCDSound, sleInt16, VER(35)),
-		MKLINE(Sound, _currentMusic, sleInt16, VER(35)),
-		MKEND()
-	};
-
-	ser->saveLoadEntries(this, soundEntries);
+void Sound::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsSint16LE(_currentCDSound, VER(35));
+	s.syncAsSint16LE(_currentMusic, VER(35));
 }
 
 

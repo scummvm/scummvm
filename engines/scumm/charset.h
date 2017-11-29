@@ -89,7 +89,7 @@ public:
 
 	virtual void setColor(byte color) { _color = color; translateColor(); }
 
-	void saveLoadWithSerializer(Serializer *ser);
+	void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 class CharsetRendererCommon : public CharsetRenderer {
