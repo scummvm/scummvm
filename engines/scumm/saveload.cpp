@@ -35,7 +35,6 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
@@ -69,6 +68,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
+#define CURRENT_VER 98
 #define INFOSECTION_VERSION 2
 
 #pragma mark -

@@ -28,6 +28,7 @@
 
 namespace Common {
 
+#define VER(x) Common::Serializer::Version(x)
 
 #define SYNC_AS(SUFFIX,TYPE,SIZE) \
 	template<typename T> \

@@ -32,7 +32,6 @@
 #include "scumm/imuse/imuse_internal.h"
 #include "scumm/imuse/instrument.h"
 #include "scumm/resource.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {

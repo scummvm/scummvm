@@ -28,7 +28,6 @@
 #include "graphics/sjis.h"
 #include "scumm/scumm.h"
 #include "scumm/gfx.h"
-#include "scumm/saveload.h"
 
 namespace Scumm {
 

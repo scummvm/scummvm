@@ -24,7 +24,6 @@
 #include "common/timer.h"
 
 #include "scumm/actor.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"

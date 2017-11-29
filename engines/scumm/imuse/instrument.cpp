@@ -21,7 +21,6 @@
  */
 
 #include "scumm/scumm.h"
-#include "scumm/saveload.h"
 #include "scumm/imuse/instrument.h"
 #include "audio/mididrv.h"
 

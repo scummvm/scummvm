@@ -61,12 +61,6 @@
 
 namespace Sci {
 
-
-#define VER(x) Common::Serializer::Version(x)
-
-
-#pragma mark -
-
 // These are serialization functions for various objects.
 
 void syncWithSerializer(Common::Serializer &s, Common::Serializable &obj) {
