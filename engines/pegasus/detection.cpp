@@ -92,6 +92,18 @@ static const PegasusGameDescription gameDescriptions[] = {
 	{
 		{
 			"pegasus",
+			"DVD",
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2075337),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK|GF_DVD,
+			GUIO0()
+		},
+	},	
+
+	{
+		{
+			"pegasus",
 			"Demo",
 			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
 			Common::EN_ANY,
