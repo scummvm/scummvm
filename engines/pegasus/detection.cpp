@@ -92,6 +92,18 @@ static const PegasusGameDescription gameDescriptions[] = {
 	{
 		{
 			"pegasus",
+			"DVD",
+			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2075337),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK|GF_DVD,
+			GUIO0()
+		},
+	},	
+
+	{
+		{
+			"pegasus",
 			"Demo",
 			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
 			Common::EN_ANY,
@@ -108,18 +120,6 @@ static const PegasusGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
-			GUIO1(GUIO_NOLAUNCHLOAD)
-		},
-	},
-
-		{
-		{
-			"pegasus",
-			"DVD Demo",
-			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
 			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
 			GUIO1(GUIO_NOLAUNCHLOAD)
 		},
