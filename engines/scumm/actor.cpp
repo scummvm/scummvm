@@ -3437,43 +3437,38 @@ void Actor_v0::actorSetWalkTo() {
 	}
 }
 
-void Actor_v0::saveLoadWithSerializer(Serializer *ser) {
-	Actor::saveLoadWithSerializer(ser);
+void Actor_v0::saveLoadWithSerializer(Common::Serializer &s) {
+	Actor::saveLoadWithSerializer(s);
 
-	static const SaveLoadEntry actorEntries[] = {
-		MKLINE(Actor_v0, _costCommand, sleByte, VER(84)),
-		MK_OBSOLETE(Actor_v0, _costFrame, sleByte, VER(84), VER(89)),
-		MKLINE(Actor_v0, _miscflags, sleByte, VER(84)),
-		MKLINE(Actor_v0, _speaking, sleByte, VER(84)),
-		MK_OBSOLETE(Actor_v0, _speakingPrev, sleByte, VER(84), VER(89)),
-		MK_OBSOLETE(Actor_v0, _limbTemp, sleByte, VER(89), VER(89)),
-		MKLINE(Actor_v0, _animFrameRepeat, sleByte, VER(89)),
-		MKARRAY(Actor_v0, _limbFrameRepeatNew[0], sleInt8, 8, VER(89)),
-		MKARRAY(Actor_v0, _limbFrameRepeat[0], sleInt8, 8, VER(90)),
-		MKLINE(Actor_v0, _CurrentWalkTo.x, sleInt16, VER(97)),
-		MKLINE(Actor_v0, _CurrentWalkTo.y, sleInt16, VER(97)),
-		MKLINE(Actor_v0, _NewWalkTo.x, sleInt16, VER(97)),
-		MKLINE(Actor_v0, _NewWalkTo.y, sleInt16, VER(97)),
-		MKLINE(Actor_v0, _walkCountModulo, sleInt8, VER(97)),
-		MKLINE(Actor_v0, _newWalkBoxEntered, sleByte, VER(97)),
-		MKLINE(Actor_v0, _walkDirX, sleByte, VER(97)),
-		MKLINE(Actor_v0, _walkDirY, sleByte, VER(97)),
-		MKLINE(Actor_v0, _walkYCountGreaterThanXCount, sleByte, VER(97)),
-		MKLINE(Actor_v0, _walkXCount, sleByte, VER(97)),
-		MKLINE(Actor_v0, _walkXCountInc, sleByte, VER(97)),
-		MKLINE(Actor_v0, _walkYCount, sleByte, VER(97)),
-		MKLINE(Actor_v0, _walkYCountInc, sleByte, VER(97)),
-		MKLINE(Actor_v0, _walkMaxXYCountInc, sleByte, VER(97)),
+	s.syncAsByte(_costCommand, VER(84));
+	s.skip(1, VER(84), VER(89)); // _costFrame
+	s.syncAsByte(_miscflags, VER(84));
+	s.syncAsByte(_speaking, VER(84));
+	s.skip(1, VER(84), VER(89)); // _speakingPrev
+	s.skip(1, VER(89), VER(89)); // _limbTemp
+	s.syncAsByte(_animFrameRepeat, VER(89));
+	s.syncArray(_limbFrameRepeatNew, 8, Common::Serializer::SByte, VER(89));
+	s.syncArray(_limbFrameRepeat, 8, Common::Serializer::SByte, VER(90));
+	s.syncAsSint16LE(_CurrentWalkTo.x, VER(97));
+	s.syncAsSint16LE(_CurrentWalkTo.y, VER(97));
+	s.syncAsSint16LE(_NewWalkTo.x, VER(97));
+	s.syncAsSint16LE(_NewWalkTo.y, VER(97));
+	s.syncAsSByte(_walkCountModulo, VER(97));
+	s.syncAsByte(_newWalkBoxEntered, VER(97));
+	s.syncAsByte(_walkDirX, VER(97));
+	s.syncAsByte(_walkDirY, VER(97));
+	s.syncAsByte(_walkYCountGreaterThanXCount, VER(97));
+	s.syncAsByte(_walkXCount, VER(97));
+	s.syncAsByte(_walkXCountInc, VER(97));
+	s.syncAsByte(_walkYCount, VER(97));
+	s.syncAsByte(_walkYCountInc, VER(97));
+	s.syncAsByte(_walkMaxXYCountInc, VER(97));
 
-		MKARRAY(Actor_v0, _walkboxQueue[0], sleByte, 16, VER(98)),
-		MKLINE(Actor_v0, _walkboxQueueIndex, sleByte, VER(98)),
-		MKEND()
-	};
-
-	ser->saveLoadEntries(this, actorEntries);
+	s.syncBytes(_walkboxQueue, 16, VER(98));
+	s.syncAsByte(_walkboxQueueIndex, VER(98));
 
 	// When loading, we need to ensure the limbs are restarted
-	if (ser->isLoading()) {
+	if (s.isLoading()) {
 
 		// valid costume command?
 		if (_costCommand != 0xFF) {
@@ -3498,124 +3493,119 @@ void Actor_v0::saveLoadWithSerializer(Serializer *ser) {
 	}
 }
 
-void Actor::saveLoadWithSerializer(Serializer *ser) {
-	static const SaveLoadEntry actorEntries[] = {
-		MKLINE(Actor, _pos.x, sleInt16, VER(8)),
-		MKLINE(Actor, _pos.y, sleInt16, VER(8)),
-		MKLINE(Actor, _heOffsX, sleInt16, VER(32)),
-		MKLINE(Actor, _heOffsY, sleInt16, VER(32)),
-		MKLINE(Actor, _top, sleInt16, VER(8)),
-		MKLINE(Actor, _bottom, sleInt16, VER(8)),
-		MKLINE(Actor, _elevation, sleInt16, VER(8)),
-		MKLINE(Actor, _width, sleUint16, VER(8)),
-		MKLINE(Actor, _facing, sleUint16, VER(8)),
-		MKLINE(Actor, _costume, sleUint16, VER(8)),
-		MKLINE(Actor, _room, sleByte, VER(8)),
-		MKLINE(Actor, _talkColor, sleByte, VER(8)),
-		MKLINE(Actor, _talkFrequency, sleInt16, VER(16)),
-		MKLINE(Actor, _talkPan, sleInt16, VER(24)),
-		MKLINE(Actor, _talkVolume, sleInt16, VER(29)),
-		MKLINE(Actor, _boxscale, sleUint16, VER(34)),
-		MKLINE(Actor, _scalex, sleByte, VER(8)),
-		MKLINE(Actor, _scaley, sleByte, VER(8)),
-		MKLINE(Actor, _charset, sleByte, VER(8)),
-
-		// Actor sound grew from 8 to 32 bytes and switched to uint16 in HE games
-		MKARRAY_OLD(Actor, _sound[0], sleByte, 8, VER(8), VER(36)),
-		MKARRAY_OLD(Actor, _sound[0], sleByte, 32, VER(37), VER(61)),
-		MKARRAY(Actor, _sound[0], sleUint16, 32, VER(62)),
-
-		// Actor animVariable grew from 8 to 27
-		MKARRAY_OLD(Actor, _animVariable[0], sleUint16, 8, VER(8), VER(40)),
-		MKARRAY(Actor, _animVariable[0], sleUint16, 27, VER(41)),
-
-		MKLINE(Actor, _targetFacing, sleUint16, VER(8)),
-		MKLINE(Actor, _moving, sleByte, VER(8)),
-		MKLINE(Actor, _ignoreBoxes, sleByte, VER(8)),
-		MKLINE(Actor, _forceClip, sleByte, VER(8)),
-		MKLINE(Actor, _initFrame, sleByte, VER(8)),
-		MKLINE(Actor, _walkFrame, sleByte, VER(8)),
-		MKLINE(Actor, _standFrame, sleByte, VER(8)),
-		MKLINE(Actor, _talkStartFrame, sleByte, VER(8)),
-		MKLINE(Actor, _talkStopFrame, sleByte, VER(8)),
-		MKLINE(Actor, _speedx, sleUint16, VER(8)),
-		MKLINE(Actor, _speedy, sleUint16, VER(8)),
-		MKLINE(Actor, _cost.animCounter, sleUint16, VER(8)),
-		MKLINE(Actor, _cost.soundCounter, sleByte, VER(8)),
-		MKLINE(Actor, _drawToBackBuf, sleByte, VER(32)),
-		MKLINE(Actor, _flip, sleByte, VER(32)),
-		MKLINE(Actor, _heSkipLimbs, sleByte, VER(32)),
-
-		// Actor palette grew from 64 to 256 bytes and switched to uint16 in HE games
-		MKARRAY_OLD(Actor, _palette[0], sleByte, 64, VER(8), VER(9)),
-		MKARRAY_OLD(Actor, _palette[0], sleByte, 256, VER(10), VER(79)),
-		MKARRAY(Actor, _palette[0], sleUint16, 256, VER(80)),
-
-		MK_OBSOLETE(Actor, _mask, sleByte, VER(8), VER(9)),
-		MKLINE(Actor, _shadowMode, sleByte, VER(8)),
-		MKLINE(Actor, _visible, sleByte, VER(8)),
-		MKLINE(Actor, _frame, sleByte, VER(8)),
-		MKLINE(Actor, _animSpeed, sleByte, VER(8)),
-		MKLINE(Actor, _animProgress, sleByte, VER(8)),
-		MKLINE(Actor, _walkbox, sleByte, VER(8)),
-		MKLINE(Actor, _needRedraw, sleByte, VER(8)),
-		MKLINE(Actor, _needBgReset, sleByte, VER(8)),
-		MKLINE(Actor, _costumeNeedsInit, sleByte, VER(8)),
-		MKLINE(Actor, _heCondMask, sleUint32, VER(38)),
-		MKLINE(Actor, _hePaletteNum, sleUint32, VER(59)),
-		MKLINE(Actor, _heXmapNum, sleUint32, VER(59)),
-
-		MKLINE(Actor, _talkPosY, sleInt16, VER(8)),
-		MKLINE(Actor, _talkPosX, sleInt16, VER(8)),
-		MKLINE(Actor, _ignoreTurns, sleByte, VER(8)),
-
-		// Actor layer switched to int32 in HE games
-		MKLINE_OLD(Actor, _layer, sleByte, VER(8), VER(57)),
-		MKLINE(Actor, _layer, sleInt32, VER(58)),
-
-		MKLINE(Actor, _talkScript, sleUint16, VER(8)),
-		MKLINE(Actor, _walkScript, sleUint16, VER(8)),
-
-		MKLINE(Actor, _walkdata.dest.x, sleInt16, VER(8)),
-		MKLINE(Actor, _walkdata.dest.y, sleInt16, VER(8)),
-		MKLINE(Actor, _walkdata.destbox, sleByte, VER(8)),
-		MKLINE(Actor, _walkdata.destdir, sleUint16, VER(8)),
-		MKLINE(Actor, _walkdata.curbox, sleByte, VER(8)),
-		MKLINE(Actor, _walkdata.cur.x, sleInt16, VER(8)),
-		MKLINE(Actor, _walkdata.cur.y, sleInt16, VER(8)),
-		MKLINE(Actor, _walkdata.next.x, sleInt16, VER(8)),
-		MKLINE(Actor, _walkdata.next.y, sleInt16, VER(8)),
-		MKLINE(Actor, _walkdata.deltaXFactor, sleInt32, VER(8)),
-		MKLINE(Actor, _walkdata.deltaYFactor, sleInt32, VER(8)),
-		MKLINE(Actor, _walkdata.xfrac, sleUint16, VER(8)),
-		MKLINE(Actor, _walkdata.yfrac, sleUint16, VER(8)),
-
-		MKLINE(Actor, _walkdata.point3.x, sleUint16, VER(42)),
-		MKLINE(Actor, _walkdata.point3.y, sleUint16, VER(42)),
-
-		MKARRAY(Actor, _cost.active[0], sleByte, 16, VER(8)),
-		MKLINE(Actor, _cost.stopped, sleUint16, VER(8)),
-		MKARRAY(Actor, _cost.curpos[0], sleUint16, 16, VER(8)),
-		MKARRAY(Actor, _cost.start[0], sleUint16, 16, VER(8)),
-		MKARRAY(Actor, _cost.end[0], sleUint16, 16, VER(8)),
-		MKARRAY(Actor, _cost.frame[0], sleUint16, 16, VER(8)),
-
-		MKARRAY(Actor, _cost.heJumpOffsetTable[0], sleUint16, 16, VER(65)),
-		MKARRAY(Actor, _cost.heJumpCountTable[0], sleUint16, 16, VER(65)),
-		MKARRAY(Actor, _cost.heCondMaskTable[0], sleUint32, 16, VER(65)),
-		MKEND()
-	};
-
-	if (ser->isLoading()) {
+void Actor::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.isLoading()) {
 		// Not all actor data is saved; so when loading, we first reset
 		// the actor, to ensure completely reproducible behavior (else,
 		// some not saved value in the actor class can cause odd things)
 		initActor(-1);
 	}
 
-	ser->saveLoadEntries(this, actorEntries);
+	s.syncAsSint16LE(_pos.x, VER(8));
+	s.syncAsSint16LE(_pos.y, VER(8));
+	s.syncAsSint16LE(_heOffsX, VER(32));
+	s.syncAsSint16LE(_heOffsY, VER(32));
+	s.syncAsSint16LE(_top, VER(8));
+	s.syncAsSint16LE(_bottom, VER(8));
+	s.syncAsSint16LE(_elevation, VER(8));
+	s.syncAsUint16LE(_width, VER(8));
+	s.syncAsUint16LE(_facing, VER(8));
+	s.syncAsUint16LE(_costume, VER(8));
+	s.syncAsByte(_room, VER(8));
+	s.syncAsByte(_talkColor, VER(8));
+	s.syncAsSint16LE(_talkFrequency, VER(16));
+	s.syncAsSint16LE(_talkPan, VER(24));
+	s.syncAsSint16LE(_talkVolume, VER(29));
+	s.syncAsUint16LE(_boxscale, VER(34));
+	s.syncAsByte(_scalex, VER(8));
+	s.syncAsByte(_scaley, VER(8));
+	s.syncAsByte(_charset, VER(8));
 
-	if (ser->isLoading() && _vm->_game.version <= 2 && ser->getVersion() < VER(70)) {
+	// Actor sound grew from 8 to 32 bytes and switched to uint16 in HE games
+	s.syncArray(_sound, 8, Common::Serializer::Byte, VER(8), VER(36));
+	s.syncArray(_sound, 32, Common::Serializer::Byte, VER(37), VER(61));
+	s.syncArray(_sound, 32, Common::Serializer::Uint16LE, VER(62));
+
+	// Actor animVariable grew from 8 to 27
+	s.syncArray(_animVariable, 8, Common::Serializer::Uint16LE, VER(8), VER(40));
+	s.syncArray(_animVariable, 27, Common::Serializer::Uint16LE, VER(41));
+
+	s.syncAsUint16LE(_targetFacing, VER(8));
+	s.syncAsByte(_moving, VER(8));
+	s.syncAsByte(_ignoreBoxes, VER(8));
+	s.syncAsByte(_forceClip, VER(8));
+	s.syncAsByte(_initFrame, VER(8));
+	s.syncAsByte(_walkFrame, VER(8));
+	s.syncAsByte(_standFrame, VER(8));
+	s.syncAsByte(_talkStartFrame, VER(8));
+	s.syncAsByte(_talkStopFrame, VER(8));
+	s.syncAsUint16LE(_speedx, VER(8));
+	s.syncAsUint16LE(_speedy, VER(8));
+	s.syncAsUint16LE(_cost.animCounter, VER(8));
+	s.syncAsByte(_cost.soundCounter, VER(8));
+	s.syncAsByte(_drawToBackBuf, VER(32));
+	s.syncAsByte(_flip, VER(32));
+	s.syncAsByte(_heSkipLimbs, VER(32));
+
+	// Actor palette grew from 64 to 256 bytes and switched to uint16 in HE games
+	s.syncArray(_palette, 64, Common::Serializer::Byte, VER(8), VER(9));
+	s.syncArray(_palette, 256, Common::Serializer::Byte, VER(10), VER(79));
+	s.syncArray(_palette, 256, Common::Serializer::Uint16LE, VER(80));
+
+	s.skip(1, VER(8), VER(9)); // _mask
+	s.syncAsByte(_shadowMode, VER(8));
+	s.syncAsByte(_visible, VER(8));
+	s.syncAsByte(_frame, VER(8));
+	s.syncAsByte(_animSpeed, VER(8));
+	s.syncAsByte(_animProgress, VER(8));
+	s.syncAsByte(_walkbox, VER(8));
+	s.syncAsByte(_needRedraw, VER(8));
+	s.syncAsByte(_needBgReset, VER(8));
+	s.syncAsByte(_costumeNeedsInit, VER(8));
+	s.syncAsUint32LE(_heCondMask, VER(38));
+	s.syncAsUint32LE(_hePaletteNum, VER(59));
+	s.syncAsUint32LE(_heXmapNum, VER(59));
+
+	s.syncAsSint16LE(_talkPosY, VER(8));
+	s.syncAsSint16LE(_talkPosX, VER(8));
+	s.syncAsByte(_ignoreTurns, VER(8));
+
+	// Actor layer switched to int32 in HE games
+	s.syncAsByte(_layer, VER(8), VER(57));
+	s.syncAsSint32LE(_layer, VER(58));
+
+	s.syncAsUint16LE(_talkScript, VER(8));
+	s.syncAsUint16LE(_walkScript, VER(8));
+
+	s.syncAsSint16LE(_walkdata.dest.x, VER(8));
+	s.syncAsSint16LE(_walkdata.dest.y, VER(8));
+	s.syncAsByte(_walkdata.destbox, VER(8));
+	s.syncAsUint16LE(_walkdata.destdir, VER(8));
+	s.syncAsByte(_walkdata.curbox, VER(8));
+	s.syncAsSint16LE(_walkdata.cur.x, VER(8));
+	s.syncAsSint16LE(_walkdata.cur.y, VER(8));
+	s.syncAsSint16LE(_walkdata.next.x, VER(8));
+	s.syncAsSint16LE(_walkdata.next.y, VER(8));
+	s.syncAsSint32LE(_walkdata.deltaXFactor, VER(8));
+	s.syncAsSint32LE(_walkdata.deltaYFactor, VER(8));
+	s.syncAsUint16LE(_walkdata.xfrac, VER(8));
+	s.syncAsUint16LE(_walkdata.yfrac, VER(8));
+
+	s.syncAsUint16LE(_walkdata.point3.x, VER(42));
+	s.syncAsUint16LE(_walkdata.point3.y, VER(42));
+
+	s.syncBytes(_cost.active, 16, VER(8));
+	s.syncAsUint16LE(_cost.stopped, VER(8));
+	s.syncArray(_cost.curpos, 16, Common::Serializer::Uint16LE, VER(8));
+	s.syncArray(_cost.start, 16, Common::Serializer::Uint16LE, VER(8));
+	s.syncArray(_cost.end, 16, Common::Serializer::Uint16LE, VER(8));
+	s.syncArray(_cost.frame, 16, Common::Serializer::Uint16LE, VER(8));
+
+	s.syncArray(_cost.heJumpOffsetTable, 16, Common::Serializer::Uint16LE, VER(65));
+	s.syncArray(_cost.heJumpCountTable, 16, Common::Serializer::Uint16LE, VER(65));
+	s.syncArray(_cost.heCondMaskTable, 16, Common::Serializer::Uint32LE, VER(65));
+
+	if (s.isLoading() && _vm->_game.version <= 2 && s.getVersion() < VER(70)) {
 		_pos.x >>= V12_X_SHIFT;
 		_pos.y >>= V12_Y_SHIFT;
 

@@ -25,6 +25,7 @@
 #define SCUMM_ACTOR_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
 
@@ -82,7 +83,7 @@ enum {
 	kNewInavlidBox = 0
 };
 
-class Actor : public Serializable {
+class Actor : public Common::Serializable {
 public:
 	static byte kInvalidBox;
 
@@ -300,8 +301,7 @@ public:
 
 	void classChanged(int cls, bool value);
 
-	// Used by the save/load system:
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 protected:
 	bool isInClass(int cls);
@@ -421,8 +421,7 @@ public:
 	void setTmpFromActor();
 	void setActorFromTmp();
 
-	// Used by the save/load system:
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 

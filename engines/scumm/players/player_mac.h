@@ -63,7 +63,7 @@ public:
 	virtual bool endOfData() const { return false; }
 	virtual int getRate() const { return _sampleRate; }
 
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 private:
 	Common::Mutex _mutex;
@@ -92,6 +92,7 @@ private:
 
 		void generateSamples(int16 *data, int pitchModifier, int volume, int numSamples, int remainingSamplesOnNote, bool fadeNoteEnds);
 	};
+	friend void syncWithSerializer(Common::Serializer &, Instrument &);
 
 	int _pitchTable[128];
 	int _numberOfChannels;
@@ -120,6 +121,7 @@ protected:
 
 		bool loadInstrument(Common::SeekableReadStream *stream);
  	};
+	friend void syncWithSerializer(Common::Serializer &, Channel &);
 
 	ScummEngine *const _vm;
 	Channel *_channel;
