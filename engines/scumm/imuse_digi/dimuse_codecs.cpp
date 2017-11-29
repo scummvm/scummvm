@@ -645,8 +645,6 @@ int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inpu
 
 	default:
 		error("BundleCodecs::decompressCodec() Unknown codec %d", (int)codec);
-		outputSize = 0;
-		break;
 	}
 
 	return outputSize;

@@ -216,8 +216,6 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 				break;
 			default:
 				error("Invalid code in VOC file : %d", code);
-				quit = true;
-				break;
 			}
 			offset += len;
 		}

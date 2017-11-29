@@ -152,10 +152,6 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		if (ss->where == WIO_INVENTORY) {
 			if (ss->number < _numInventory && _inventory[ss->number] == obj) {
 				error("Odd setOwnerOf case #1: Please report to Fingolfin where you encountered this");
-				putOwner(obj, 0);
-				runInventoryScript(arg);
-				stopObjectCode();
-				return;
 			}
 			if (ss->number == obj)
 				error("Odd setOwnerOf case #2: Please report to Fingolfin where you encountered this");

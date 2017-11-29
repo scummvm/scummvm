@@ -1304,8 +1304,6 @@ int ScummEngine::readSoundResource(ResId idx) {
 
 		if (!dmuFile.open(buffer)) {
 			error("Can't open music file %s", buffer);
-			_res->_types[rtSound][idx]._roomoffs = RES_INVALID_OFFSET;
-			return 0;
 		}
 		dmuFile.seek(4, SEEK_SET);
 		total_size = dmuFile.readUint32BE();

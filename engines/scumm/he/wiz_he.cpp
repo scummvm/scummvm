@@ -2577,8 +2577,6 @@ void Wiz::processWizImage(const WizParameters *params) {
 					if (f->read(p, size) != size) {
 						_vm->_res->nukeResource(rtImage, params->img.resNum);
 						error("i/o error when reading '%s'", params->filename);
-						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
-						_vm->VAR(119) = -2;
 					} else {
 						_vm->_res->setModified(rtImage, params->img.resNum);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = 0;
@@ -2616,7 +2614,6 @@ void Wiz::processWizImage(const WizParameters *params) {
 					uint32 size = READ_BE_UINT32(p + 4);
 					if (f->write(p, size) != size) {
 						error("i/o error when writing '%s'", params->filename);
-						_vm->VAR(119) = -2;
 					} else {
 						_vm->VAR(119) = 0;
 					}

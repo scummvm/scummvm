@@ -359,10 +359,8 @@ void Player::send(uint32 b) {
 	default:
 		if (!_scanning) {
 			error("Player::send(): Invalid command %d", cmd);
-			clear();
 		}
 	}
-	return;
 }
 
 void Player::sysEx(const byte *p, uint16 len) {
