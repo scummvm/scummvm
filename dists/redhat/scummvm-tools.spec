@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm-tools
-Version		: 2.0.0git
+Version		: 2.0.0pre
 Release		: 1
 Summary		: ScummVM-related tools
 Group		: Interpreters
@@ -67,5 +67,9 @@ rm -Rf ${RPM_BUILD_ROOT}
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* Thu Nov 23 2017 (2.0.0)
+  - remove own libmad since this is now in Fedora itself
+* Sat Apr 03 2010 (1.2.0)
+  - include libmad
 * Sat Mar 26 2005 (0.7.1)
   - first tools package

@@ -92,13 +92,13 @@ BEGIN
             VALUE "Comments", "Look! A three headed monkey (TM)! .. Nice use of the TM!\0"
             VALUE "CompanyName", "scummvm.org\0"
             VALUE "FileDescription", "http://www.scummvm.org/\0"
-            VALUE "FileVersion", "2.0.0git\0"
+            VALUE "FileVersion", "2.0.0pre\0"
             VALUE "InternalName", "scummvm\0"
             VALUE "LegalCopyright", "Copyright © 2001-2017 The ScummVM Team\0"
             VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Beneath a Steel Sky and Broken Sword are a TM of Revolution. Flight of the Amazon Queen is a TM of John Passfield and Steve Stamatiadis. \0"
             VALUE "OriginalFilename", "scummvm.exe\0"
             VALUE "ProductName", "ScummVM\0"
-            VALUE "ProductVersion", "2.0.0git\0"
+            VALUE "ProductVersion", "2.0.0pre\0"
         END
     END
 
