@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-28 05:51+0100\n"
-"PO-Revision-Date: 2017-11-26 22:24+0000\n"
+"PO-Revision-Date: 2017-11-29 07:42+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
-"Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/cs/>\n"
+"Language-Team: Czech "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
 "Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -3342,7 +3342,7 @@ msgstr "Chybí vám následující potøebné datové soubory Riven:\n"
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
-msgstr ""
+msgstr "Pøístup k následující èástí hry je dostupný pouze v její plné verzi."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:309
 msgid ""
@@ -3352,6 +3352,12 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"V tuto chvíli by se Vás demoverze\n"
+"Riven zeptala, zda byste nechtìli nav¹tívit\n"
+"internetové stránky obchodu Red Orb, kde\n"
+"byste si mohli zakoupit tuto hru.\n"
+"ScummVM toto neumí a stránka ji¾\n"
+"neexistuje."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -3602,6 +3608,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Byly zji¹tìny chybìjící nebo po¹kozené zdroje hry. Nìkteré její funkce "
+"nemusí správnì fungovat. Pro dal¹í informace si prosím prohlédnìte konzoli a "
+"ovìøte, ¾e v¹echny soubory hry jsou v poøádku."
 
 #: engines/sci/sci.cpp:400
 msgid ""
@@ -3610,6 +3619,10 @@ msgid ""
 "riddles. Please, apply the latest patch for this game by Sierra to avoid "
 "possible problems."
 msgstr ""
+"Byl zji¹tìn herní skript známý svou chybovostí, který by vám mohl zabránit v "
+"postupu v pozdìj¹í èásti hry, bìhem hádanek od Zeleného mu¾e. Abyste se "
+"vyhnuli pøípadným problémùm, je tøeba pou¾ít nejnovìj¹í záplatu vydanou "
+"spoleèností Sierra."
 
 #: engines/sci/sci.cpp:409
 msgid ""
@@ -3619,6 +3632,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"Titulky jsou zapnuty, ale ve vydané verzi King's Quest 7 nebyly dokonèeny a "
+"ve høe jsou zakázány. ScummVM umo¾òuje je znovu zapnout, ale proto¾e byly v "
+"pùvodní høe odstranìny, ne v¾dycky se zobrazí dobøe a netýkají se právì "
+"øeèených vìt. Toto není chyba ve ScummVM -- je to problém pùvodních herních "
+"dat."
 
 #: engines/sci/sci.cpp:433
 msgid ""
@@ -3632,6 +3650,15 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"Jako zvukové zaøízení jste vybrali General MIDI. Sierra poskytovala "
+"poprodejní podporu General MIDI pro tuto hru pomocí jejich \"General MIDI "
+"Utility\". Prosím pou¾ijte tuto záplatu, abyste pøede¹li problémùm s General "
+"MIDI v této høe. Kdy¾ ji získáte, je tøeba rozbalit v¹echny soubory konèící "
+"na .PAT do dodateèné cesty ScummVM a program pøíslu¹né záplaty pou¾ije "
+"automaticky. Nebo mù¾ete postupovat dle pokynù v souboru READ.ME dodávaného "
+"se záplatou a pøejmenovat pøidru¾ený soubor *.PAT na 4.PAT a umístit ho do "
+"slo¾ky se horu. Bez této záplaty bude hudba General MIDI v této høe znít "
+"velmi zkreslenì."
 
 #: engines/sci/sci.cpp:452
 msgid ""
@@ -3641,6 +3668,11 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Va¹e hra byla upravena komunitní záplatou skriptu. U takovýchto oprav byly "
+"èasto hlá¹eny chyby, proto¾e znaènì mìní herní skripty. Problémy, které mají "
+"tyto záplaty opravit, se ve ScummVM nevyskytují. Proto vám doporuèujeme, "
+"abyste v¹echny záplaty tohoto typu odstranili z herní slo¾ky, abyste "
+"pøede¹li pozdìj¹ím výskytùm neoèekávaných chyb a problémù."
 
 #: engines/scumm/detection.cpp:1126
 msgid ""
@@ -3650,6 +3682,10 @@ msgid ""
 "tried\n"
 "to add and its version, language, etc.:\n"
 msgstr ""
+"Nelze správnì zjistit verzi va¹í hry. Pokud toto *NENÍ* komunitou upravená\n"
+"verze (zvlá¹tì pøeklad od fanou¹kù), prosím nahlaste následující\n"
+"data týmu ScummVM spolu s názvem hry, kterou jste chtìli pøidat, \n"
+"a její verzí, jazykem, atd.:\n"
 
 #: engines/scumm/detection.cpp:1144
 msgid ""
@@ -3657,6 +3693,9 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"Okle¹tìná verze Putt-Putt Saves the Zoo iOS není podporována, aby se "
+"pøede¹lo nelegálnímu ¹íøení.\n"
+"Plnou verzi je mo¾no zakoupit v obchodì iTunes."
 
 #: engines/scumm/detection.cpp:1347
 msgid "Show Object Line"
@@ -4514,7 +4553,7 @@ msgstr ""
 #: engines/tony/tony.cpp:258
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "Varianta písma není dostupná v datovém souboru jádra '%s'."
 
 #: engines/toon/toon.cpp:222
 #, c-format
@@ -4524,7 +4563,7 @@ msgstr "Hra ulo¾ena do pozice #%d "
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "Nelze rychle ulo¾it do pozice #%d"
 
 #: engines/toon/toon.cpp:239
 #, c-format
@@ -4546,11 +4585,11 @@ msgstr "Zobrazit souèasný poèet snímkù za sekundu v horním levém rohu"
 
 #: engines/wintermute/detection.cpp:68
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "Bilineární filtrování spritù (POMALÉ)"
 
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "U ka¾dého spritu pou¾ít bilineární filtrování"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
