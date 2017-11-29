@@ -43,6 +43,11 @@ namespace Common {
 		_bytesSynced += SIZE; \
 	}
 
+#define SYNC_PRIMITIVE(suffix) \
+	template <typename T> \
+	static inline void suffix(Serializer &s, T &value) { \
+		s.syncAs##suffix(value); \
+	}
 
 /**
  * This class allows syncing / serializing data (primarily game savestates)
@@ -66,6 +71,17 @@ class Serializer {
 public:
 	typedef uint32 Version;
 	static const Version kLastVersion = 0xFFFFFFFF;
+
+	SYNC_PRIMITIVE(Uint32LE)
+	SYNC_PRIMITIVE(Uint32BE)
+	SYNC_PRIMITIVE(Sint32LE)
+	SYNC_PRIMITIVE(Sint32BE)
+	SYNC_PRIMITIVE(Uint16LE)
+	SYNC_PRIMITIVE(Uint16BE)
+	SYNC_PRIMITIVE(Sint16LE)
+	SYNC_PRIMITIVE(Sint16BE)
+	SYNC_PRIMITIVE(Byte)
+	SYNC_PRIMITIVE(SByte)
 
 protected:
 	SeekableReadStream *_loadStream;
@@ -94,6 +110,7 @@ public:
 	// in the line "syncAsUint32LE(_version);" of
 	// "bool syncVersion(Version currentVersion)".
 	SYNC_AS(Byte, byte, 1)
+	SYNC_AS(SByte, int8, 1)
 
 	SYNC_AS(Uint16LE, uint16, 2)
 	SYNC_AS(Uint16BE, uint16, 2)
@@ -237,8 +254,18 @@ public:
 		}
 	}
 
+	template <typename T>
+	void syncArray(T *arr, size_t entries, void (*serializer)(Serializer &, T &), Version minVersion = 0, Version maxVersion = kLastVersion) {
+		if (_version < minVersion || _version > maxVersion)
+			return;
+
+		for (size_t i = 0; i < entries; ++i) {
+			serializer(*this, arr[i]);
+		}
+	}
 };
 
+#undef SYNC_PRIMITIVE
 #undef SYNC_AS
 
 
