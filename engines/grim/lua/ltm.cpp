@@ -3,6 +3,8 @@
 ** See Copyright Notice in lua.h
 */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 

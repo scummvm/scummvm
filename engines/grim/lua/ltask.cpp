@@ -1,3 +1,5 @@
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 
 #ifdef _MSC_VER
 #pragma warning(disable:4611)
@@ -342,17 +344,9 @@ void runtasks(LState *const rootState) {
 		LState *nextState = nullptr;
 		bool stillRunning;
 		if (!lua_state->all_paused && !lua_state->updated && !lua_state->paused) {
-			lua_state->errorJmp = true;
-			try {
-				if (lua_state->task) {
-					stillRunning = luaD_call(lua_state->task->some_base, lua_state->task->some_results);
-				} else {
-					StkId base = lua_state->Cstack.base;
-					luaD_openstack((lua_state->stack.top - lua_state->stack.stack) - base);
-					set_normalized(lua_state->stack.stack + lua_state->Cstack.base, &lua_state->taskFunc);
-					stillRunning = luaD_call(base + 1, 255);
-				}
-			} catch (...) {
+			jmp_buf	errorJmp;
+			lua_state->errorJmp = &errorJmp;
+			if (setjmp(errorJmp)) {
 				lua_Task *t, *m;
 				for (t = lua_state->task; t != nullptr;) {
 					m = t->next;
@@ -361,8 +355,16 @@ void runtasks(LState *const rootState) {
 				}
 				stillRunning = false;
 				lua_state->task = nullptr;
+			} else {
+				if (lua_state->task) {
+					stillRunning = luaD_call(lua_state->task->some_base, lua_state->task->some_results);
+				} else {
+					StkId base = lua_state->Cstack.base;
+					luaD_openstack((lua_state->stack.top - lua_state->stack.stack) - base);
+					set_normalized(lua_state->stack.stack + lua_state->Cstack.base, &lua_state->taskFunc);
+					stillRunning = luaD_call(base + 1, 255);
+				}
 			}
-
 			nextState = lua_state->next;
 			// The state returned. Delete it
 			if (!stillRunning) {

@@ -3,6 +3,8 @@
 ** See Copyright Notice in lua.h
 */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
@@ -325,7 +327,7 @@ void lua_error(const char *s) {
 	if (s)
 		message(s);
 	if (lua_state->errorJmp) {
-		throw "lua error";
+		longjmp(*((jmp_buf *)lua_state->errorJmp), 1);
 	} else {
 		fprintf(stderr, "lua: exit(1). Unable to recover\n");
 		exit(1);
@@ -349,16 +351,17 @@ static void do_callinc(int32 nResults) {
 ** parameters are on top of it. Leave nResults on the stack.
 */
 int32 luaD_protectedrun(int32 nResults) {
+	jmp_buf myErrorJmp;
 	int32 status;
 	struct C_Lua_Stack oldCLS = lua_state->Cstack;
-	bool oldErr = lua_state->errorJmp;
-	lua_state->errorJmp = true;
+	jmp_buf *oldErr = lua_state->errorJmp;
+	lua_state->errorJmp = &myErrorJmp;
 	lua_state->state_counter1++;
 	lua_Task *tmpTask = lua_state->task;
-	try {
+	if (setjmp(myErrorJmp) == 0) {
 		do_callinc(nResults);
 		status = 0;
-	} catch (...) { // an error occurred: restore lua_state->Cstack and lua_state->stack.top
+	} else { // an error occurred: restore lua_state->Cstack and lua_state->stack.top
 		lua_state->Cstack = oldCLS;
 		lua_state->stack.top = lua_state->stack.stack + lua_state->Cstack.base;
 		while (tmpTask != lua_state->task) {
@@ -379,9 +382,10 @@ int32 luaD_protectedrun(int32 nResults) {
 static int32 protectedparser(ZIO *z, int32 bin) {
 	int32 status;
 	TProtoFunc *tf;
-	bool oldErr = lua_state->errorJmp;
-	lua_state->errorJmp = true;
-	try {
+	jmp_buf myErrorJmp;
+	jmp_buf *oldErr = lua_state->errorJmp;
+	lua_state->errorJmp = &myErrorJmp;
+	if (setjmp(myErrorJmp) == 0) {
 		tf = bin ? luaU_undump1(z) : luaY_parser(z);
 		status = 0;
 	} else {
