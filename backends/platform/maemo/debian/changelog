@@ -1,8 +1,8 @@
-scummvm (1.10.0~git) unstable; urgency=low
+scummvm (2.0.0~git) unstable; urgency=low
 
   * Development snapshot
 
- -- Tarek Soliman <tsoliman@scummvm.org>  Mon, 10 Oct 2016 20:35:19 -0500
+ -- Tarek Soliman <tsoliman@scummvm.org>  Wed, 29 Nov 2017 21:10:24 -0600
 
 scummvm (1.9.0) unstable; urgency=low
 
