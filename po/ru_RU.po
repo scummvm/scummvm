@@ -6,17 +6,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-11-28 05:51+0100\n"
+"POT-Creation-Date: 2017-11-30 01:15+0100\n"
 "PO-Revision-Date: 2017-11-28 17:59+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
-"Language-Team: Russian "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
+"Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/ru/>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Poedit 2.0.4\n"
 "X-Language-name: Russian\n"
 
@@ -999,8 +999,8 @@ msgstr "Устр. MT-32:"
 #: gui/options.cpp:1132
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Указывает звуковое устройство по умолчанию для вывода на Roland "
-"MT-32/LAPC1/CM32l/CM64"
+"Указывает звуковое устройство по умолчанию для вывода на Roland MT-32/LAPC1/"
+"CM32l/CM64"
 
 #: gui/options.cpp:1137
 msgid "True Roland MT-32 (disable GM emulation)"
@@ -1788,7 +1788,7 @@ msgid "<Bad value>"
 msgstr "<Неправильное значение>"
 
 #: engines/advancedDetector.cpp:330
-#, c-format, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown %s engine game variant.\n"
 "\n"
@@ -2754,7 +2754,8 @@ msgstr "Назначить действие по правому щелчку"
 
 #: backends/platform/wince/wince-sdl.cpp:520
 msgid "You must map a key to the 'Right Click' action to play this game"
-msgstr "Вы должны назначить клавишу на действие \"Правый щелчок\" для этой игры"
+msgstr ""
+"Вы должны назначить клавишу на действие \"Правый щелчок\" для этой игры"
 
 #: backends/platform/wince/wince-sdl.cpp:529
 msgid "Map hide toolbar action"
@@ -3334,8 +3335,8 @@ msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
-"Не хватает файла 'extras.mhk'. Вместо него можно использовать файл "
-"'arcriven.z'."
+"Не хватает файла 'extras.mhk'. Вместо него можно использовать файл 'arcriven."
+"z'."
 
 #: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
@@ -3522,7 +3523,8 @@ msgstr "Предпочитать цифровые звуковые эффекты"
 
 #: engines/sci/detection.cpp:443
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Отдавать предпочтение цифровым звуковым эффектам вместо синтезированных"
+msgstr ""
+"Отдавать предпочтение цифровым звуковым эффектам вместо синтезированных"
 
 #: engines/sci/detection.cpp:462
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
@@ -3533,8 +3535,8 @@ msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Использовать звуковую карту IBM Music Feature или модуль синтеза Yamaha FB-"
-"01 FM для MIDI"
+"Использовать звуковую карту IBM Music Feature или модуль синтеза Yamaha "
+"FB-01 FM для MIDI"
 
 #: engines/sci/detection.cpp:473
 msgid "Use CD audio"
@@ -3590,22 +3592,22 @@ msgstr ""
 "Персонажи, сохранённые в ScummVM, отображаются автоматически. Файлы "
 "персонажей, сохранённые исходным движком, необходимо поместить в директорию "
 "сохранённых игр ScummVM, дописав в начало имени файла ID игры: 'qfg1-' - для "
-"игры Quest for Glory 1, 'qfg2-' - для Quest for Glory 2. Пример: 'qfg2-"
-"thief.sav' (вор)."
+"игры Quest for Glory 1, 'qfg2-' - для Quest for Glory 2. Пример: 'qfg2-thief."
+"sav' (вор)."
 
 #: engines/sci/engine/kgraphics32.cpp:348
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
-"Пожалуйста, воспользуйтесь другой программой для просмотра файла помощи игры:"
-" %s"
+"Пожалуйста, воспользуйтесь другой программой для просмотра файла помощи "
+"игры: %s"
 
 #: engines/sci/engine/savegame.cpp:1290
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr "Формат файла сохранённой игры устарел, не могу загрузить его"
 
 #: engines/sci/engine/savegame.cpp:1292
-#, c-format, c-format
+#, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "Версия файла сохранения: %d, но максимальная поддерживаемая: %0d"
 
@@ -4535,8 +4537,8 @@ msgstr "Это завершение демо \"Сломанного меча 1\""
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"Найдены заставки в формате PSX, но ScummVM был собран без поддержки "
-"RGB-цветов"
+"Найдены заставки в формате PSX, но ScummVM был собран без поддержки RGB-"
+"цветов"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
