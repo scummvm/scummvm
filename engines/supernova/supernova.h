@@ -155,7 +155,8 @@ public:
 			return 0;
 		return textWidth(text.c_str());
 	}
-	void renderMessage(StringID stringId, MessagePosition position = kMessageNormal) {
+	void renderMessage(StringID stringId, MessagePosition position = kMessageNormal, Common::String var1 = "", Common::String var2 = "") {
+		//TODO : Merge the gameString and the variables, if any
 		renderMessage(getGameString(stringId), position);
 	}
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal) {
