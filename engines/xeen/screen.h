@@ -23,14 +23,14 @@
 #ifndef XEEN_SCREEN_H
 #define XEEN_SCREEN_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/array.h"
-#include "common/keyboard.h"
+//#include "common/scummsys.h"
+//#include "common/system.h"
+// #include "common/array.h"
+//#include "common/keyboard.h"
 #include "common/rect.h"
 #include "xeen/font.h"
 #include "xeen/sprites.h"
-#include "xeen/xsurface.h"
+#include "xeen/window.h"
 
 namespace Xeen {
 
@@ -41,71 +41,6 @@ namespace Xeen {
 #define GAME_WINDOW 28
 
 class XeenEngine;
-class Screen;
-
-struct DrawStruct {
-	SpriteResource *_sprites;
-	int _frame;
-	int _x;
-	int _y;
-	int _scale;
-	int _flags;
-
-	DrawStruct(int frame, int x, int y, int scale = 0, int flags = 0) :
-		_sprites(nullptr), _frame(frame), _x(x), _y(y), _scale(scale), _flags(flags) {}
-	DrawStruct(): _sprites(nullptr), _frame(0), _x(0), _y(0), _scale(0), _flags(0) {}
-};
-
-class Window: public XSurface {
-private:
-	static XeenEngine *_vm;
-	Common::Rect _bounds;
-	Common::Rect _innerBounds;
-	XSurface _savedArea;
-	int _a;
-	int _border;
-	int _xLo, _xHi;
-	int _ycL, _ycH;
-
-	void open2();
-public:
-	bool _enabled;
-public:
-	static void init(XeenEngine *vm);
-public:
-	Window();
-	Window(const Window &src);
-	Window(const Common::Rect &bounds, int a, int border,
-		int xLo, int ycL, int xHi, int ycH);
-
-	virtual void addDirtyRect(const Common::Rect &r);
-
-	void setBounds(const Common::Rect &r);
-
-	const Common::Rect &getBounds() { return _bounds; }
-
-	void open();
-
-	void close();
-
-	/**
-	 * Update the window
-	 */
-	void update();
-
-	void frame();
-
-	/**
-	 * Fill the content area of a window with the current background color
-	 */
-	void fill();
-
-	const char *writeString(const Common::String &s);
-
-	void drawList(DrawStruct *items, int count);
-
-	int getString(Common::String &line, uint maxLen, int maxWidth);
-};
 
 class Screen: public FontSurface {
 private:

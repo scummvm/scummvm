@@ -44,6 +44,7 @@ MODULE_OBJS := \
 	spells.o \
 	sprites.o \
 	town.o \
+	window.o \
 	xeen.o \
 	xsurface.o
 
