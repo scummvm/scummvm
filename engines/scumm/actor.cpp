@@ -2844,7 +2844,7 @@ void Actor::runActorTalkScript(int f) {
 
 	if (_talkScript) {
 		int script = _talkScript;
-		int args[16];
+		int args[NUM_SCRIPT_LOCAL];
 		memset(args, 0, sizeof(args));
 		args[1] = f;
 		args[0] = _number;
