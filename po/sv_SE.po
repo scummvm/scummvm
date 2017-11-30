@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-30 01:15+0100\n"
-"PO-Revision-Date: 2017-11-30 15:42+0000\n"
+"PO-Revision-Date: 2017-12-01 10:54+0000\n"
 "Last-Translator: hampusf <hampus.flink@gmail.com>\n"
 "Language-Team: Swedish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
@@ -1121,9 +1121,8 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/options.cpp:1450
-#, fuzzy
 msgid "Control"
-msgstr "Kontrollera musen"
+msgstr "Kontroll"
 
 #: gui/options.cpp:1476
 msgid "FluidSynth Settings"
