@@ -56,12 +56,25 @@ Programmcodes finden Sie auf Englisch unter:
    - Fehler behoben, der zum Einfrieren von ScummVM führt, wenn das Schild in der Rakete
      in Mission Asteroid gelesen wird.
 
+ AGI:
+   - Fehler behoben, der verursacht, dass Spiel-Skripte blockiert werden, nachdem ein Spielstand
+     geladen wird, der gespeichert wurde, während Musik abgespielt wurde (dieser Fehler kann z.B.
+     im Poker-Hinterzimmer in Police Quest 1 auftreten).
+   - Fehlerhaftes Cursor-Verhalten in Manhunter korrigiert.
+   - Geschwindigkeit der Nachtclub-Arcade-Sequenz in der Apple IIgs-Version von Manhunter korrigiert.
+   - Maximale Spielgeschwindigkeit auf 40 FPS begrenzt, um sicherzustellen, dass das Spiel nicht zu schnell läuft.
+
  AGOS:
    - Einstellung für die Untertitel-Geschwindigkeit in der hebräischen Version von
      "Simon the Sorcerer 1" korrigiert.
 
  Composer:
    - Unterstützung für das Speichern und Laden von Spielständen aus dem Hauptmenü heraus hinzugefügt.
+   - Die französische Version von Gregory wird nun korrekt erkannt.
+   - Die deutsche Version von Baba Yaga wird nun korrekt erkannt.
+
+ Cruise:
+   - Schrift-Darstellung korrigiert.
 
  Drascula:
    - Fehler behoben, der es unmöglich gemacht hat, im Gasthaus mehr als einmal mit dem
@@ -73,6 +86,7 @@ Programmcodes finden Sie auf Englisch unter:
  Dreamweb:
    - Fehler behoben, der zu einem Absturz führt, wenn die letzten Steine unter der Kirche
      eingesammelt werden.
+   - Die italienische CD-Version wird nun korrekt erkannt.
 
  Kyra:
    - Pufferüberlauf in Lands of Lore behoben.
@@ -95,12 +109,23 @@ Programmcodes finden Sie auf Englisch unter:
    - Absturz während des Klavier-Rätsels in Myst behoben.
 
  Neverhood:
-   - Absturz im Musikhaus behoben.
+   - Absturz im Musikhaus in der russischen DR-Version behoben.
+   - Absturz im späteren Spiel in der russischen DR-Version behoben.
+
+ Pegasus:
+   - Fehler beim Laden eines Spiels aus dem Launcher korrigiert.
+   - Einige Events werden nun ignoriert, während die ScummVM-Oberfläche sichtbar ist.
+     Damit wird beispielsweise korrigiert, dass das Spieleigene Menü geöffnet wird,
+     wenn der GMM mittels ESC geschlossen wird.
+   - Mehrere Abstürze im Zusammenhang mit dem gemeinsamen Bildschirmplatz korrigiert.
+   - Verbesserte Performance beim Ausblenden des Bildschirms.
 
  SAGA:
    - Absturz behoben, der Auftritt, wenn das Verb "Gib" in IHNM verwendet wird.
    - Gorrister ist nun nicht mehr unsichtbar und hängt nicht mehr fest, wenn
      ein Spiel am Liegeplatz in IHNM geladen wird.
+   - Hintergrundfarbe des Gesprächs-Feldes in IHNM korrigiert.
+   - Unterstützung für die französische Fan-Übersetzung von Inherit the Earth hinzugefügt.
 
  SCI:
    - Script-Fehler in Laura Bow 2: Dagger of Amon Ra korrigiert, der es unmöglich
@@ -138,6 +163,17 @@ Programmcodes finden Sie auf Englisch unter:
    - Fehler in Maniac Mansion behoben, der zu einer fehlerhaften Darstellung von Charakteren
      führen kann.
 
+ Sherlock:
+   - Die italienische Fan-Übersetzuhng von Serrated Scalpel wird nun korrekt erkannt.
+
+ Sky:
+   - Kollisionsabfrage korrigiert.
+
+ Sword1:
+   - Vorschaubild für Spielstände hinzugefügt, die über den spieleigenen Dialog angefertigt werden.
+   - Fehler korrigiert, der dazu führt, dass die Audio- und Untertitel-Einstellungen geändert
+     werden, wenn der spieleigene Laden/Speichern-Dialog geöffnet wird.
+
  Tinsel:
    - Fehler in Discworld 2 behoben, der verursacht, dass der Text und die Sprachausgabe
      nicht durchgehend angezeigt bzw. abgespielt wird.
@@ -150,6 +186,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Darstellungsfehler in der Demo-Version von Return to Ringworld behoben.
    - Möglichen Fehler beim Laden von Spielstände in Return to Ringworld behoben.
    - Fehler im Audio-Code behoben.
+   - Absturz bei der Rückkehr zum Launcher korrigiert.
 
  Voyeur:
    - Fehler behoben, der verursacht, dass Hintergründe in statischen Räumen nicht dargestellt werden.
