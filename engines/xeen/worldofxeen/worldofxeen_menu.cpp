@@ -52,7 +52,6 @@ void WorldOfXeenMenu::show(XeenEngine *vm) {
 
 void WorldOfXeenMenu::execute() {
 	SpriteResource special("special.icn");
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	EventsManager &events = *_vm->_events;
 
@@ -120,7 +119,7 @@ void WorldOfXeenMenu::showTitles1(SpriteResource &sprites) {
 
 		frameNum = (frameNum + 1) % (_vm->getGameID() == GType_WorldOfXeen ? 5 : 10);
 		screen.restoreBackground();
-		sprites.draw(screen, frameNum);
+		sprites.draw(0, frameNum);
 
 		events.wait(4);
 	}
@@ -141,14 +140,14 @@ void WorldOfXeenMenu::showTitles2() {
 		SpriteResource("title2h.int"), SpriteResource("title2i.int"),
 	};
 
-	kludgeSprites.draw(screen, 0);
+	kludgeSprites.draw(0, 0);
 	screen.saveBackground();
 	sound.playSound("elect.voc");
 
 	for (int i = 0; i < 30 && !_vm->shouldQuit(); ++i) {
 		events.updateGameCounter();
 		screen.restoreBackground();
-		title2Sprites[i / 4].draw(screen, i % 4);
+		title2Sprites[i / 4].draw(0, i % 4);
 		windows[0].update();
 
 		if (i == 19)

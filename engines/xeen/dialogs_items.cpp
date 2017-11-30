@@ -41,7 +41,6 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 
 	Character *startingChar = c;
@@ -100,7 +99,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			}
 
 			windows[29].writeString(msg);
-			drawButtons(&screen);
+			drawButtons(&windows[0]);
 
 			Common::fill(&arr[0], &arr[40], 0);
 			itemIndex = -1;
@@ -110,26 +109,26 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			lines.clear();
 
 			if (mode == ITEMMODE_CHAR_INFO || category != 3) {
-				_iconSprites.draw(screen, 8, Common::Point(148, 109));
+				_iconSprites.draw(0, 8, Common::Point(148, 109));
 			}
 			if (mode != ITEMMODE_ENCHANT && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
-				_iconSprites.draw(screen, 10, Common::Point(182, 109));
-				_iconSprites.draw(screen, 12, Common::Point(216, 109));
-				_iconSprites.draw(screen, 14, Common::Point(250, 109));
+				_iconSprites.draw(0, 10, Common::Point(182, 109));
+				_iconSprites.draw(0, 12, Common::Point(216, 109));
+				_iconSprites.draw(0, 14, Common::Point(250, 109));
 			}
 
 			switch (mode) {
 			case ITEMMODE_CHAR_INFO:
-				_iconSprites.draw(screen, 9, Common::Point(148, 109));
+				_iconSprites.draw(0, 9, Common::Point(148, 109));
 				break;
 			case ITEMMODE_BLACKSMITH:
-				_iconSprites.draw(screen, 11, Common::Point(182, 109));
+				_iconSprites.draw(0, 11, Common::Point(182, 109));
 				break;
 			case ITEMMODE_REPAIR:
-				_iconSprites.draw(screen, 15, Common::Point(250, 109));
+				_iconSprites.draw(0, 15, Common::Point(250, 109));
 				break;
 			case ITEMMODE_IDENTIFY:
-				_iconSprites.draw(screen, 13, Common::Point(216, 109));
+				_iconSprites.draw(0, 13, Common::Point(216, 109));
 				break;
 			default:
 				break;
@@ -776,7 +775,6 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	Windows &windows = *_vm->_windows;
@@ -807,7 +805,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 
 		w.open();
 		w.writeString(Common::String::format(Res.WHICH_ITEM, Res.ITEM_ACTIONS[actionIndex]));
-		_iconSprites.draw(screen, 0, Common::Point(235, 111));
+		_iconSprites.draw(0, 0, Common::Point(235, 111));
 		w.update();
 
 		while (!_vm->shouldQuit()) {

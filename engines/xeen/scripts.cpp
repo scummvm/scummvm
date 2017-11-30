@@ -136,7 +136,6 @@ int Scripts::checkEvents() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Town &town = *_vm->_town;
 	Windows &windows = *_vm->_windows;
@@ -1819,7 +1818,6 @@ bool Scripts::copyProtectionCheck() {
 void Scripts::display(bool justifyFlag, int var46) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[_windowIndex];
 

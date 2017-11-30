@@ -23,11 +23,8 @@
 #ifndef XEEN_SCREEN_H
 #define XEEN_SCREEN_H
 
-//#include "common/scummsys.h"
-//#include "common/system.h"
-// #include "common/array.h"
-//#include "common/keyboard.h"
 #include "common/rect.h"
+#include "graphics/screen.h"
 #include "xeen/font.h"
 #include "xeen/sprites.h"
 
@@ -40,19 +37,14 @@ namespace Xeen {
 
 class XeenEngine;
 
-class Screen: public FontSurface {
+class Screen: public Graphics::Screen {
 private:
 	XeenEngine *_vm;
-	Common::List<Common::Rect> _dirtyRects;
 	byte _mainPalette[PALETTE_SIZE];
 	byte _tempPalette[PALETTE_SIZE];
 	XSurface _pages[2];
 	XSurface _savedScreens[10];
 	bool _fadeIn;
-
-	void mergeDirtyRects();
-
-	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 
 	/**
 	 * Mark the entire screen for drawing
@@ -65,16 +57,14 @@ private:
 
 	void updatePalette(const byte *pal, int start, int count16);
 public:
-	/**
-	 * Adds an area that requires redrawing on the next frame update
-	 */
-	virtual void addDirtyRect(const Common::Rect &r);
-public:
 	Screen(XeenEngine *vm);
+	virtual ~Screen() {}
 
-	virtual ~Screen();
-
-	void update();
+	/**
+	 * Base method that descendent classes can override for recording affected
+	 * dirty areas of the surface
+	 */
+	virtual void addDirtyRect(const Common::Rect &r) { Graphics::Screen::addDirtyRect(r); }
 
 	/**
 	 * Load a palette resource into the temporary palette

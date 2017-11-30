@@ -33,7 +33,6 @@ void ExchangeDialog::show(XeenEngine *vm, Character *&c, int &charIndex) {
 }
 
 void ExchangeDialog::execute(Character *&c, int &charIndex) {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;

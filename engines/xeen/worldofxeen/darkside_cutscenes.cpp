@@ -73,7 +73,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	for (int idx = 0; idx < 55 && !_vm->shouldQuit(); ++idx) {
 		// Render the next frame
 		screen.vertMerge(0);
-		nwc[nwcIndex].draw(screen, nwcFrame);
+		nwc[nwcIndex].draw(0, nwcFrame);
 		screen.draw();
 
 		switch (idx) {
@@ -98,7 +98,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	// Loop for dragon using flyspray
 	for (int idx = 0; idx < 42 && !_vm->shouldQuit(); ++idx) {
 		screen.vertMerge(SCREEN_HEIGHT);
-		nwc[3].draw(screen, idx);
+		nwc[3].draw(0, idx);
 		screen.draw();
 
 		switch (idx) {
@@ -188,9 +188,9 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	for (int yCtr = SCREEN_HEIGHT, frameNum = 0; yCtr > 0; ) {
 		screen.vertMerge(yp);
 
-		title.draw(screen, 0);
+		title.draw(0, 0);
 		if (frameNum)
-			title.draw(screen, frameNum);
+			title.draw(0, frameNum);
 
 		idx1 = (idx1 + 1) % 4;
 		if (!idx1)
@@ -222,8 +222,8 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 
 	// Zoom into the Pharoah's base closeup view
 	for (int idx = 14; idx >= 0; --idx) {
-		pyraTop.draw(screen, 0, Common::Point(XLIST1[idx], YLIST1[idx]));
-		pyraTop.draw(screen, 1, Common::Point(XLIST2[idx], YLIST1[idx]));
+		pyraTop.draw(0, 0, Common::Point(XLIST1[idx], YLIST1[idx]));
+		pyraTop.draw(0, 1, Common::Point(XLIST2[idx], YLIST1[idx]));
 		screen.draw();
 
 		if (idx == 2)
@@ -242,7 +242,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	bool phar2 = false;
 	for (int idx = 0; idx < 19; ++idx) {
 		screen.restoreBackground();
-		pyramid.draw(screen, idx, Common::Point(132, 62));
+		pyramid.draw(0, idx, Common::Point(132, 62));
 		showSubtitles();
 
 		if (!sound.isPlaying() && !phar2)
@@ -289,13 +289,13 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	screen.loadPage(0);
 	screen.loadBackground("1room.raw");
 	screen.horizMerge(SCREEN_WIDTH);
-	dragon.draw(screen, 0, Common::Point(XLIST3[0], YLIST3[0]), SPRFLAG_800);
+	dragon.draw(0, 0, Common::Point(XLIST3[0], YLIST3[0]), SPRFLAG_800);
 
 	int posNum = 0, phar2Index = 0, ctr = 0;
 	for (int idx = SCREEN_WIDTH, frameNum = 0; idx >= 0; --idx) {
 		events.updateGameCounter();
 		screen.horizMerge(idx);
-		dragon.draw(screen, FRAMES3[frameNum], Common::Point(XLIST3[posNum], YLIST3[posNum]), SPRFLAG_800);
+		dragon.draw(0, FRAMES3[frameNum], Common::Point(XLIST3[posNum], YLIST3[posNum]), SPRFLAG_800);
 		showSubtitles();
 		events.pollEventsAndWait();
 		if (events.isKeyMousePressed())
@@ -348,7 +348,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	SpriteResource faceEnd("face.end");
 	screen.restoreBackground();
-	faceEnd.draw(screen, 0, Common::Point(29, 76), SPRFLAG_4000);
+	faceEnd.draw(0, 0, Common::Point(29, 76), SPRFLAG_4000);
 	screen.update();
 
 	screen.fadeIn();
@@ -365,7 +365,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.stopSong();
 
 		screen.restoreBackground();
-		faceEnd.draw(screen, 0, Common::Point(29, idx), SPRFLAG_4000);
+		faceEnd.draw(0, 0, Common::Point(29, idx), SPRFLAG_4000);
 		screen.update();
 
 		WAIT(2);
@@ -379,7 +379,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	// Show the entire throne room
 	screen.loadBackground("mainback.raw");
 	SpriteResource sc03a("sc03a.end"), sc03b("sc03b.end"), sc03c("sc03c.end");
-	sc03a.draw(screen, 0, Common::Point(250, 0));
+	sc03a.draw(0, 0, Common::Point(250, 0));
 
 	screen.saveBackground();
 	screen.update();
@@ -389,7 +389,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	sound.playSound("door.voc");
 	for (int idx = 0; idx < 6; ++idx) {
 		screen.restoreBackground();
-		sc03b.draw(screen, idx, Common::Point(72, 125));
+		sc03b.draw(0, idx, Common::Point(72, 125));
 		screen.update();
 
 		WAIT(4);
@@ -398,7 +398,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	// Silhouette of playing entering
 	for (int idx = 0; idx < 19; ++idx) {
 		screen.restoreBackground();
-		sc03c.draw(screen, idx, Common::Point(72, 125));
+		sc03c.draw(0, idx, Common::Point(72, 125));
 		screen.update();
 
 		if (idx == 3 || idx == 11)
@@ -426,10 +426,10 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	for (int xp = 0; xp < 320; xp += 2) {
 		screen.horizMerge(xp);
 
-		disk.draw(screen, frameNum, Common::Point(xp / 2, yp));
+		disk.draw(0, frameNum, Common::Point(xp / 2, yp));
 		if (xp < 44)
-			disk.draw(screen, 11, Common::Point(-xp, 22), SPRFLAG_800);
-		disk.draw(screen, 10, Common::Point(0, 134));
+			disk.draw(0, 11, Common::Point(-xp, 22), SPRFLAG_800);
+		disk.draw(0, 10, Common::Point(0, 134));
 
 		if (!(xp % 22))
 			sound.playSound(whoosh);
@@ -474,7 +474,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	for (int idx = 0; idx < 34; ++idx) {
 		screen.restoreBackground();
-		diskOpen[idx / 8].draw(screen, idx % 8, Common::Point(28, 11));
+		diskOpen[idx / 8].draw(0, idx % 8, Common::Point(28, 11));
 
 		WAIT(3);
 		if (idx == 0 || idx == 2 || idx == 4 || idx == 6)
@@ -495,7 +495,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	};
 	screen.loadBackground("mainback.raw");
 	screen.saveBackground();
-	sc06[0].draw(screen, 0);
+	sc06[0].draw(0, 0);
 	screen.update();
 	sound.playSound("alien2.voc");
 
@@ -506,7 +506,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.playFX(3);
 
 		screen.restoreBackground();
-		sc06[idx / 10].draw(screen, idx % 10);
+		sc06[idx / 10].draw(0, idx % 10);
 		screen.update();
 
 		WAIT(3);
@@ -534,7 +534,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	for (int idx = 0; idx < 45; ++idx) {
 		screen.restoreBackground();
-		sc07[idx / 6].draw(screen, idx % 6, Common::Point(61, 12));
+		sc07[idx / 6].draw(0, idx % 6, Common::Point(61, 12));
 
 		if (_subtitleSize == 0)
 			screen.update();
@@ -566,13 +566,13 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.playSound("yes1.voc");
 
 		// Animate Corak speaking
-		sc08.draw(screen, sound.isPlaying() ? getSpeakingFrame(0, 2) : 0);
+		sc08.draw(0, sound.isPlaying() ? getSpeakingFrame(0, 2) : 0);
 		showSubtitles();
 		WAIT(3);
 	}
 
 	do {
-		sc08.draw(screen, 0);
+		sc08.draw(0, 0);
 		showSubtitles();
 	} while (_subtitleSize);
 
@@ -592,7 +592,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.playSound("nowre1.voc");
 
 		screen.restoreBackground();
-		sc09.draw(screen, getSpeakingFrame(0, 8));
+		sc09.draw(0, getSpeakingFrame(0, 8));
 		showSubtitles();
 		WAIT(3);
 	}
@@ -613,7 +613,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.playSound("nordo2.voc");
 
 		screen.restoreBackground();
-		sc10.draw(screen, getSpeakingFrame(0, 1));
+		sc10.draw(0, getSpeakingFrame(0, 1));
 		showSubtitles();
 		WAIT(3);
 	}
@@ -635,7 +635,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	for (int idx = 0; idx < 15; ++idx) {
 		screen.restoreBackground();
-		sc11.draw(screen, idx, Common::Point(100, 44));
+		sc11.draw(0, idx, Common::Point(100, 44));
 
 		if (idx == 0)
 			screen.fadeIn();
@@ -652,9 +652,9 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	// Helmet raises, we see the face appear
 	for (int idx = 80; idx > 20; idx -= 2) {
 		screen.restoreBackground();
-		sc11.draw(screen, 15, Common::Point(60, 80));
-		sc11.draw(screen, 16, Common::Point(61, idx));
-		sc11.draw(screen, 17);
+		sc11.draw(0, 15, Common::Point(60, 80));
+		sc11.draw(0, 16, Common::Point(61, idx));
+		sc11.draw(0, 17);
 		screen.update();
 
 		if (idx == 80)
@@ -681,7 +681,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		if (idx == 1)
 			sound.playSound("ready2.voc");
 
-		sc13.draw(screen, getSpeakingFrame(0, 3));
+		sc13.draw(0, getSpeakingFrame(0, 3));
 		showSubtitles();
 
 		if (idx == 0)
@@ -690,7 +690,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	}
 
 	do {
-		sc13.draw(screen, 0);
+		sc13.draw(0, 0);
 		showSubtitles();
 		events.pollEventsAndWait();
 	} while (_subtitleSize);
@@ -705,7 +705,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.loadBackground("blank.raw");
 	screen.saveBackground();
 
-	sc14.draw(screen, 0, Common::Point(37, 37));
+	sc14.draw(0, 0, Common::Point(37, 37));
 	screen.update();
 	screen.fadeIn();
 
@@ -715,7 +715,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 				sound.playSound("fight2.voc");
 
 			screen.restoreBackground();
-			sc14.draw(screen, idx, Common::Point(37, 37));
+			sc14.draw(0, idx, Common::Point(37, 37));
 			showSubtitles();
 			WAIT(3);
 		}
@@ -732,12 +732,12 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	SpriteResource sc15("sc15.end");
 	screen.loadBackground("mainback.raw");
 	screen.saveBackground();
-	sc15.draw(screen, 0, Common::Point(52, 84));
+	sc15.draw(0, 0, Common::Point(52, 84));
 	screen.update();
 
 	for (int idx = 0; idx < 21; ++idx) {
 		screen.restoreBackground();
-		sc15.draw(screen, idx, Common::Point(52, 84));
+		sc15.draw(0, idx, Common::Point(52, 84));
 		screen.update();
 		WAIT(3);
 
@@ -761,13 +761,13 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.loadBackground("sc170001.raw");
 	screen.saveBackground();
 	screen.horizMerge(0);
-	sc16.draw(screen, 0, Common::Point(7, 29));
+	sc16.draw(0, 0, Common::Point(7, 29));
 	showSubtitles();
 	sound.playSound("fail1.voc");
 
 	for (int idx = 0; idx < 5; ++idx) {
 		screen.horizMerge(0);
-		sc16.draw(screen, idx, Common::Point(7, 29));
+		sc16.draw(0, idx, Common::Point(7, 29));
 		showSubtitles();
 		WAIT(4);
 	}
@@ -776,11 +776,11 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	int val = 5;
 	for (int idx = 0; idx < 320; idx += 16) {
 		screen.horizMerge(idx);
-		sc16.draw(screen, (val >= 12) ? 11 : val++,
+		sc16.draw(0, (val >= 12) ? 11 : val++,
 			Common::Point(idx * -1 + 7, 29));
 
 		if (val > 10)
-			sc16.draw(screen, 12, Common::Point(273, 70));
+			sc16.draw(0, 12, Common::Point(273, 70));
 
 		showSubtitles();
 		WAIT(2);
@@ -801,7 +801,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	for (int idx = 0; idx < 16; ++idx) {
 		screen.restoreBackground();
-		sc17[idx / 8].draw(screen, idx % 8, Common::Point(44, 19));
+		sc17[idx / 8].draw(0, idx % 8, Common::Point(44, 19));
 		screen.update();
 		WAIT(3);
 
@@ -825,7 +825,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	for (int idx = 0; idx < 31; ++idx) {
 		screen.restoreBackground();
-		sc18[idx / 8].draw(screen, idx % 8, Common::Point(29, 12));
+		sc18[idx / 8].draw(0, idx % 8, Common::Point(29, 12));
 		screen.update();
 		WAIT(3);
 
@@ -847,7 +847,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.songCommand(207);
 
 		screen.restoreBackground();
-		sc19.draw(screen, idx, Common::Point(33, 10));
+		sc19.draw(0, idx, Common::Point(33, 10));
 		WAIT(3);
 	}
 
@@ -869,7 +869,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 		for (int idx = 0; idx < 9; ++idx) {
 			screen.restoreBackground();
-			sc20.draw(screen, idx, Common::Point(80, 18));
+			sc20.draw(0, idx, Common::Point(80, 18));
 			screen.update();
 			WAIT(3);
 		}
@@ -882,7 +882,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	File alien2("alien2.voc");
 	screen.loadBackground("mainback.raw");
 	screen.saveBackground();
-	sc21.draw(screen, 0, Common::Point(133, 81));
+	sc21.draw(0, 0, Common::Point(133, 81));
 	screen.update();
 
 	for (int boltNum = 0; boltNum < 4; ++boltNum) {
@@ -890,13 +890,13 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 		for (int idx = (boltNum == 0) ? 0 : 3; idx < 13; ++idx) {
 			screen.restoreBackground();
-			sc21.draw(screen, idx, Common::Point(133, 81));
+			sc21.draw(0, idx, Common::Point(133, 81));
 			WAIT(2);
 		}
 	}
 
 	screen.restoreBackground();
-	sc21.draw(screen, 0, Common::Point(133, 81));
+	sc21.draw(0, 0, Common::Point(133, 81));
 	screen.update();
 
 	sc21.clear();
@@ -916,13 +916,13 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		WAIT(1);
 	}
 
-	sc22.draw(screen, 0, Common::Point(156, 28));
+	sc22.draw(0, 0, Common::Point(156, 28));
 	screen.update();
 	sound.playSound("cast.voc");
 
 	for (int idx = 0; idx < 5; ++idx) {
 		screen.horizMerge(SCREEN_WIDTH);
-		sc22.draw(screen, idx, Common::Point(156, 28));
+		sc22.draw(0, idx, Common::Point(156, 28));
 		screen.update();
 		WAIT(3);
 	}
@@ -933,10 +933,10 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	int ctr = 5;
 	for (int idx = SCREEN_WIDTH, xOffset = 0; idx >= 0; idx -= 16, xOffset += 16) {
 		screen.horizMerge(idx);
-		sc22.draw(screen, (ctr >= 8) ? 7 : ctr++,
+		sc22.draw(0, (ctr >= 8) ? 7 : ctr++,
 			Common::Point(xOffset + 156, 28), SPRFLAG_800);
 		if (ctr > 7)
-			sc22.draw(screen, 8, Common::Point(136, 64));
+			sc22.draw(0, 8, Common::Point(136, 64));
 		screen.update();
 
 		WAIT(2);
@@ -956,7 +956,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	for (int idx = 0; idx < 19; ++idx) {
 		screen.restoreBackground();
-		sc23[idx / 12].draw(screen, idx % 12, Common::Point(72, 4));
+		sc23[idx / 12].draw(0, idx % 12, Common::Point(72, 4));
 		screen.update();
 		WAIT(3);
 
@@ -967,7 +967,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	}
 
 	screen.restoreBackground();
-	sc23[0].draw(screen, 0, Common::Point(72, 4));
+	sc23[0].draw(0, 0, Common::Point(72, 4));
 	screen.update();
 	screen.fadeOut();
 
@@ -981,14 +981,14 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	screen.loadBackground("mainback.raw");
 	screen.saveBackground();
-	sc24[0].draw(screen, 0, Common::Point(148, 0));
+	sc24[0].draw(0, 0, Common::Point(148, 0));
 	screen.update();
 	screen.fadeIn(4);
 	sound.playSound("cast.voc");
 
 	for (int idx = 0; idx < 30; ++idx) {
 		screen.restoreBackground();
-		sc24[idx / 15].draw(screen, idx % 15, Common::Point(148, 0));
+		sc24[idx / 15].draw(0, idx % 15, Common::Point(148, 0));
 		screen.update();
 		WAIT(3);
 
@@ -1012,7 +1012,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	screen.loadBackground("sc250001.raw");
 	screen.saveBackground();
-	sc25.draw(screen, 0, Common::Point(27, 30));
+	sc25.draw(0, 0, Common::Point(27, 30));
 	screen.update();
 
 	for (int struggleNum = 0; struggleNum < 2; ++struggleNum) {
@@ -1020,7 +1020,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			if (struggleNum == 0 && idx == 2)
 				sound.playSound("admit2.voc");
 
-			sc25.draw(screen, idx, Common::Point(27, 30));
+			sc25.draw(0, idx, Common::Point(27, 30));
 			showSubtitles();
 			WAIT(3);
 		}
@@ -1042,7 +1042,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	for (int idx = 0; sound.isPlaying() || _subtitleSize; ) {
 		screen.restoreBackground();
-		sc26[idx / 8].draw(screen, idx % 8, Common::Point(58, 25));
+		sc26[idx / 8].draw(0, idx % 8, Common::Point(58, 25));
 		WAIT(2);
 
 		idx = (idx == 31) ? 22 : idx + 1;
@@ -1070,7 +1070,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.playSound("what3.voc");
 
 		screen.restoreBackground();
-		sc27.draw(screen, idx, Common::Point(65, 22));
+		sc27.draw(0, idx, Common::Point(65, 22));
 		showSubtitles();
 		WAIT(3);
 	}
@@ -1093,13 +1093,13 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.loadBackground("mainback.raw");
 	screen.saveBackground();
 
-	sc28[0].draw(screen, 0, Common::Point(74, 0));
+	sc28[0].draw(0, 0, Common::Point(74, 0));
 	screen.update();
 	screen.fadeIn();
 
 	for (int idx = 0; idx < 44; ++idx) {
 		screen.restoreBackground();
-		sc28[idx / 4].draw(screen, idx % 4, Common::Point(74, 0));
+		sc28[idx / 4].draw(0, idx % 4, Common::Point(74, 0));
 		screen.update();
 		WAIT(3);
 
@@ -1131,7 +1131,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		if (idx == 40)
 			sound.songCommand(207);
 
-		sc29[idx / 10].draw(screen, idx % 10, Common::Point(92, 10));
+		sc29[idx / 10].draw(0, idx % 10, Common::Point(92, 10));
 		screen.update();
 		WAIT(3);
 
@@ -1143,7 +1143,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	for (int loopNum = 0; loopNum < 4; ++loopNum) {
 		for (int idx = 49; idx < 54; ++idx) {
 			screen.restoreBackground();
-			sc29[idx / 10].draw(screen, idx % 10, Common::Point(92, 10));
+			sc29[idx / 10].draw(0, idx % 10, Common::Point(92, 10));
 			screen.update();
 			WAIT(3);
 		}
@@ -1191,10 +1191,10 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 	screen.loadBackground("3room.raw");
 	screen.saveBackground();
 	screen.loadPalette("dark.pal");
-	claw.draw(screen, 5, Common::Point(CUTSCENES_XLIST[0], CUTSCENES_YLIST[0]), SPRFLAG_800);
-	claw.draw(screen, 6, Common::Point(149, 184));
-	dragon1.draw(screen, FRAMES[0], Common::Point(139, YLIST[0]), SPRFLAG_800);
-	claw.draw(screen, 0, Common::Point(XLIST2[0], YLIST2[0]), SPRFLAG_800);
+	claw.draw(0, 5, Common::Point(CUTSCENES_XLIST[0], CUTSCENES_YLIST[0]), SPRFLAG_800);
+	claw.draw(0, 6, Common::Point(149, 184));
+	dragon1.draw(0, FRAMES[0], Common::Point(139, YLIST[0]), SPRFLAG_800);
+	claw.draw(0, 0, Common::Point(XLIST2[0], YLIST2[0]), SPRFLAG_800);
 	screen.update();
 	screen.fadeIn();
 	events.clearEvents();
@@ -1206,10 +1206,10 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 		do {
 			// Draw the dragon pharoah
 			screen.restoreBackground();
-			claw.draw(screen, 5, Common::Point(CUTSCENES_XLIST[idx], CUTSCENES_YLIST[idx]), SPRFLAG_800);
-			claw.draw(screen, 6, Common::Point(145, 185));
-			dragon1.draw(screen, FRAMES[idx], Common::Point(139, YLIST[idx]), SPRFLAG_800);
-			claw.draw(screen, idx % 5, Common::Point(XLIST2[idx], YLIST2[idx]), SPRFLAG_800);
+			claw.draw(0, 5, Common::Point(CUTSCENES_XLIST[idx], CUTSCENES_YLIST[idx]), SPRFLAG_800);
+			claw.draw(0, 6, Common::Point(145, 185));
+			dragon1.draw(0, FRAMES[idx], Common::Point(139, YLIST[idx]), SPRFLAG_800);
+			claw.draw(0, idx % 5, Common::Point(XLIST2[idx], YLIST2[idx]), SPRFLAG_800);
 
 			// Form the text string to display the text
 			Common::String str1 = Common::String::format(Res.PHAROAH_ENDING_TEXT1,

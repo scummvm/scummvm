@@ -25,8 +25,8 @@
 
 #include "common/rect.h"
 #include "common/str.h"
+#include "xeen/font.h"
 #include "xeen/sprites.h"
-#include "xeen/xsurface.h"
 
 namespace Xeen {
 
@@ -48,7 +48,7 @@ struct DrawStruct {
 	DrawStruct(): _sprites(nullptr), _frame(0), _x(0), _y(0), _scale(0), _flags(0) {}
 };
 
-class Windows {
+class Windows : public FontData {
 	friend class Window;
 private:
 	Common::Array<Window> _windows;
@@ -65,6 +65,7 @@ private:
 	void removeFromStack(Window *win);
 public:
 	Windows();
+	~Windows();
 
 	/**
 	 * Returns a specified window
@@ -77,7 +78,7 @@ public:
 	void closeAll();
 };
 
-class Window: public XSurface {
+class Window: public FontSurface {
 private:
 	Common::Rect _bounds;
 	Common::Rect _innerBounds;
@@ -95,6 +96,7 @@ public:
 	Window(const Window &src);
 	Window(const Common::Rect &bounds, int a, int border,
 		int xLo, int ycL, int xHi, int ycH);
+	virtual ~Window() {}
 
 	virtual void addDirtyRect(const Common::Rect &r);
 
@@ -118,11 +120,32 @@ public:
 	 */
 	void fill();
 
-	const char *writeString(const Common::String &s);
-
 	void drawList(DrawStruct *items, int count);
 
 	int getString(Common::String &line, uint maxLen, int maxWidth);
+
+	/**
+	 * Write a string to the window
+	 * @param s			String to display
+	 * @param clipRect	Window bounds to display string within
+	 * @returns			Any string remainder that couldn't be displayed
+	 * @remarks		Note that bounds is just used for wrapping purposes. Unless
+	 *		justification is set, the message will be written at _writePos
+	 */
+	const char *writeString(const Common::String &s, const Common::Rect &clipRect) {
+		return FontSurface::writeString(s, clipRect);
+	}
+
+	/**
+	 * Write a string to the window
+	 * @param s			String to display
+	 * @returns			Any string remainder that couldn't be displayed
+	 * @remarks		Note that bounds is just used for wrapping purposes. Unless
+	 *		justification is set, the message will be written at _writePos
+	 */
+	const char *writeString(const Common::String &s) {
+		return FontSurface::writeString(s, _innerBounds);
+	}
 };
 
 } // End of namespace Xeen

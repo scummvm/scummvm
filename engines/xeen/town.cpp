@@ -68,7 +68,6 @@ int Town::townAction(TownAction actionId) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
@@ -220,9 +219,9 @@ int Town::townAction(TownAction actionId) {
 	intf._spotDoorsUIFrame = 0;
 	intf._levitateUIFrame = 0;
 
-	_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
+	_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
 	if (actionId == BANK && isDarkCc) {
-		_townSprites[4].draw(screen, _vm->getRandomNumber(13, 18),
+		_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
 			Common::Point(8, 30));
 	}
 
@@ -231,7 +230,7 @@ int Town::townAction(TownAction actionId) {
 	// Open up the window and write the string
 	windows[10].open();
 	windows[10].writeString(title);
-	drawButtons(&screen);
+	drawButtons(&windows[0]);
 
 	windows[0].update();
 	intf.highlightChar(0);
@@ -250,7 +249,7 @@ int Town::townAction(TownAction actionId) {
 
 		title = createTownText(*charP);
 		windows[10].writeString(title);
-		drawButtons(&screen);
+		drawButtons(&windows[0]);
 	} while (_buttonValue != Common::KEYCODE_ESCAPE);
 
 	switch (actionId) {
@@ -598,7 +597,6 @@ Character *Town::doTavernOptions(Character *c) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
@@ -747,7 +745,7 @@ Character *Town::doTavernOptions(Character *c) {
 				windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
 					c->_name.c_str(), Res.HAVE_A_DRINK,
 					XeenEngine::printMil(party._gold).c_str()));
-				drawButtons(&screen);
+				drawButtons(&windows[0]);
 				windows[10].update();
 				townWait();
 			} else {
@@ -756,7 +754,7 @@ Character *Town::doTavernOptions(Character *c) {
 					windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
 						c->_name.c_str(), Res.YOURE_DRUNK,
 						XeenEngine::printMil(party._gold).c_str()));
-					drawButtons(&screen);
+					drawButtons(&windows[0]);
 					windows[10].update();
 					townWait();
 				} else if (party.subtract(0, 1, 0, WT_2)) {
@@ -1062,7 +1060,6 @@ void Town::depositWithdrawl(int choice) {
 
 void Town::drawTownAnim(bool flag) {
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
@@ -1070,23 +1067,23 @@ void Town::drawTownAnim(bool flag) {
 	if (_townActionId == 1) {
 		if (sound.isPlaying()) {
 			if (isDarkCc) {
-				_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
-				_townSprites[2].draw(screen, _vm->getRandomNumber(11) == 1 ? 9 : 10,
+				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
 					Common::Point(34, 33));
-				_townSprites[2].draw(screen, _vm->getRandomNumber(5) + 3,
+				_townSprites[2].draw(0, _vm->getRandomNumber(5) + 3,
 					Common::Point(34, 54));
 			}
 		} else {
-			_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
+			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
 			if (isDarkCc) {
-				_townSprites[2].draw(screen, _vm->getRandomNumber(11) == 1 ? 9 : 10,
+				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
 					Common::Point(34, 33));
 			}
 		}
 	} else {
 		if (!isDarkCc || _townActionId != 5) {
 			if (!_townSprites[_drawFrameIndex / 8].empty())
-				_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
+				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
 		}
 	}
 
@@ -1095,16 +1092,16 @@ void Town::drawTownAnim(bool flag) {
 		if (sound.isPlaying() || (isDarkCc && intf._overallFrame)) {
 			if (isDarkCc) {
 				if (sound.isPlaying() || intf._overallFrame == 1) {
-					_townSprites[4].draw(screen, _vm->getRandomNumber(13, 18),
+					_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
 						Common::Point(8, 30));
 				} else if (intf._overallFrame > 1) {
-					_townSprites[4].draw(screen, 13 - intf._overallFrame++,
+					_townSprites[4].draw(0, 13 - intf._overallFrame++,
 						Common::Point(8, 30));
 					if (intf._overallFrame > 14)
 						intf._overallFrame = 0;
 				}
 			} else {
-				_townSprites[2].draw(screen, _vm->getRandomNumber(7, 11), Common::Point(8, 8));
+				_townSprites[2].draw(0, _vm->getRandomNumber(7, 11), Common::Point(8, 8));
 			}
 		}
 		break;
@@ -1114,9 +1111,9 @@ void Town::drawTownAnim(bool flag) {
 			if (isDarkCc) {
 				if (intf._overallFrame) {
 					intf._overallFrame ^= 1;
-					_townSprites[6].draw(screen, intf._overallFrame, Common::Point(8, 106));
+					_townSprites[6].draw(0, intf._overallFrame, Common::Point(8, 106));
 				} else {
-					_townSprites[6].draw(screen, _vm->getRandomNumber(3), Common::Point(16, 48));
+					_townSprites[6].draw(0, _vm->getRandomNumber(3), Common::Point(16, 48));
 				}
 			}
 		}
@@ -1124,13 +1121,13 @@ void Town::drawTownAnim(bool flag) {
 
 	case TAVERN:
 		if (sound.isPlaying() && isDarkCc) {
-			_townSprites[4].draw(screen, _vm->getRandomNumber(7), Common::Point(153, 49));
+			_townSprites[4].draw(0, _vm->getRandomNumber(7), Common::Point(153, 49));
 		}
 		break;
 
 	case TEMPLE:
 		if (sound.isPlaying()) {
-			_townSprites[3].draw(screen, _vm->getRandomNumber(2, 4), Common::Point(8, 8));
+			_townSprites[3].draw(0, _vm->getRandomNumber(2, 4), Common::Point(8, 8));
 
 		}
 		break;
@@ -1138,14 +1135,14 @@ void Town::drawTownAnim(bool flag) {
 	case TRAINING:
 		if (sound.isPlaying()) {
 			if (isDarkCc) {
-				_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
+				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
 			}
 		} else {
 			if (isDarkCc) {
-				_townSprites[0].draw(screen, ++intf._overallFrame % 8, Common::Point(8, 8));
-				_townSprites[5].draw(screen, _vm->getRandomNumber(5), Common::Point(61, 74));
+				_townSprites[0].draw(0, ++intf._overallFrame % 8, Common::Point(8, 8));
+				_townSprites[5].draw(0, _vm->getRandomNumber(5), Common::Point(61, 74));
 			} else {
-				_townSprites[1].draw(screen, _vm->getRandomNumber(8, 12), Common::Point(8, 8));
+				_townSprites[1].draw(0, _vm->getRandomNumber(8, 12), Common::Point(8, 8));
 			}
 		}
 		break;
@@ -1221,7 +1218,6 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Resources &res = *_vm->_resources;
-	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[11];
@@ -1259,14 +1255,14 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 		}
 
 		town._drawCtr2 = wordCount * 2;	// Set timeout
-		town._townSprites[1].draw(screen, 0, Common::Point(16, 16));
-		town._townSprites[0].draw(screen, town._drawFrameIndex, Common::Point(23, 22));
+		town._townSprites[1].draw(0, 0, Common::Point(16, 16));
+		town._townSprites[0].draw(0, town._drawFrameIndex, Common::Point(23, 22));
 		w.update();
 
 		if (!msgEnd && !confirm) {
-			res._globalSprites.draw(screen, 7, Common::Point(232, 74));
-			res._globalSprites.draw(screen, 0, Common::Point(235, 75));
-			res._globalSprites.draw(screen, 2, Common::Point(260, 75));
+			res._globalSprites.draw(0, 7, Common::Point(232, 74));
+			res._globalSprites.draw(0, 0, Common::Point(235, 75));
+			res._globalSprites.draw(0, 2, Common::Point(260, 75));
 			windows[34].update();
 
 			intf._face1State = map._headData[party._mazePosition.y][party._mazePosition.x]._left;

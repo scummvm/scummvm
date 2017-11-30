@@ -34,7 +34,6 @@ void ErrorDialog::show(XeenEngine *vm, const Common::String &msg, ErrorWaitType 
 }
 
 void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[6];

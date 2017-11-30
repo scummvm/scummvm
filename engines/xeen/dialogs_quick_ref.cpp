@@ -36,7 +36,6 @@ void QuickReferenceDialog::execute() {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	Common::String lines[8];
 

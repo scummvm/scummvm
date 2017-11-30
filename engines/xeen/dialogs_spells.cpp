@@ -43,7 +43,6 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	Windows &windows = *_vm->_windows;
@@ -108,9 +107,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			isCasting ? c->_currentSp : party._gold
 		));
 
-		_scrollSprites.draw(screen, 4, Common::Point(39, 26));
-		_scrollSprites.draw(screen, 0, Common::Point(187, 26));
-		_scrollSprites.draw(screen, 2, Common::Point(187, 111));
+		_scrollSprites.draw(0, 4, Common::Point(39, 26));
+		_scrollSprites.draw(0, 0, Common::Point(187, 26));
+		_scrollSprites.draw(0, 2, Common::Point(187, 111));
 		if (isCasting)
 			_scrollSprites.draw(windows[25], 5, Common::Point(132, 123));
 
@@ -163,7 +162,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					}
 
 					if (priorDialog != nullptr)
-						priorDialog->drawButtons(&screen);
+						priorDialog->drawButtons(&windows[0]);
 					windows[10].update();
 				}
 			}
@@ -479,7 +478,6 @@ int CastSpell::execute(Character *&c) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[10];
@@ -503,7 +501,7 @@ int CastSpell::execute(Character *&c) {
 			w.writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
 				c->_name.c_str(), spells._spellNames[spellId].c_str(),
 				spCost, gemCost, c->_currentSp));
-			drawButtons(&screen);
+			drawButtons(&windows[0]);
 			w.update();
 
 			redrawFlag = false;
@@ -666,7 +664,6 @@ int SelectElement::execute(int spellId) {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[15];
@@ -678,7 +675,7 @@ int SelectElement::execute(int spellId) {
 
 	w.open();
 	w.writeString(Res.WHICH_ELEMENT1);
-	drawButtons(&screen);
+	drawButtons(&windows[0]);
 	w.update();
 
 	while (result == 999) {
@@ -687,7 +684,7 @@ int SelectElement::execute(int spellId) {
 			intf.draw3d(true);
 			w.frame();
 			w.writeString(Res.WHICH_ELEMENT2);
-			drawButtons(&screen);
+			drawButtons(&windows[0]);
 			w.update();
 
 			do {
@@ -745,7 +742,6 @@ void NotWhileEngaged::show(XeenEngine *vm, int spellId) {
 
 void NotWhileEngaged::execute(int spellId) {
 	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[6];
@@ -781,7 +777,6 @@ bool LloydsBeacon::execute() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[10];
@@ -815,7 +810,7 @@ bool LloydsBeacon::execute() {
 	w.open();
 	w.writeString(Common::String::format(Res.LLOYDS_BEACON,
 		mapName.c_str(), c._lloydPosition.x, c._lloydPosition.y));
-	drawButtons(&screen);
+	drawButtons(&windows[0]);
 	w.update();
 
 	bool result = true;
@@ -886,7 +881,6 @@ int Teleport::show(XeenEngine *vm) {
 int Teleport::execute() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[6];
 	Common::String num;
@@ -993,7 +987,6 @@ void IdentifyMonster::execute() {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[17];

@@ -26,6 +26,17 @@
 namespace Xeen {
 
 Windows::Windows() {
+	// Load font data for the game
+	File f("fnt");
+	byte *data = new byte[f.size()];
+	f.read(data, f.size());
+	_fontData = data;
+
+	Common::fill(&_textColors[0], &_textColors[4], 0);
+	_bgColor = DEFAULT_BG_COLOR;
+	_fontReduced = false;
+	_fontJustify = JUSTIFY_NONE;
+
 	Window windows[40] = {
 		Window(Common::Rect(0, 0, 320, 200), 0, 0, 0, 0, 320, 200),
 		Window(Common::Rect(237, 9, 317, 74), 0, 0, 237, 12, 307, 68),
@@ -71,6 +82,10 @@ Windows::Windows() {
 	_windows = Common::Array<Window>(windows, 40);
 }
 
+Windows::~Windows() {
+	delete[] _fontData;
+}
+
 void Windows::closeAll() {
 	for (int i = (int)_windowStack.size() - 1; i >= 0; --i)
 		_windowStack[i]->close();
@@ -92,11 +107,11 @@ void Windows::removeFromStack(Window *win) {
 
 /*------------------------------------------------------------------------*/
 
-Window::Window() : XSurface(), _enabled(false),
+Window::Window() : FontSurface(), _enabled(false),
 	_a(0), _border(0), _xLo(0), _xHi(0), _ycL(0), _ycH(0) {
 }
 
-Window::Window(const Window &src) : XSurface(), _enabled(src._enabled),
+Window::Window(const Window &src) : FontSurface(), _enabled(src._enabled),
 		_a(src._a), _border(src._border), _xLo(src._xLo), _ycL(src._ycL),
 		_xHi(src._xHi), _ycH(src._ycH) {
 
@@ -105,7 +120,7 @@ Window::Window(const Window &src) : XSurface(), _enabled(src._enabled),
 }
 
 Window::Window(const Common::Rect &bounds, int a, int border,
-		int xLo, int ycL, int xHi, int ycH): XSurface(),
+		int xLo, int ycL, int xHi, int ycH): FontSurface(),
 		_enabled(false), _a(a), _border(border),
 		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
 	setBounds(bounds);
@@ -142,47 +157,46 @@ void Window::open2() {
 	frame();
 	fill();
 
-	screen._writePos.x = _bounds.right - 8;
-	screen.writeSymbol(19);
+	_writePos.x = _bounds.right - 8;
+	writeSymbol(19);
 
-	screen._writePos.x = _innerBounds.left;
-	screen._writePos.y = _innerBounds.top;
-	screen._fontJustify = JUSTIFY_NONE;
-	screen._fontReduced = false;
+	_writePos.x = _innerBounds.left;
+	_writePos.y = _innerBounds.top;
+	_fontJustify = JUSTIFY_NONE;
+	_fontReduced = false;
 }
 
 void Window::frame() {
-	Screen &screen = *g_vm->_screen;
 	int xCount = (_bounds.width() - 9) / FONT_WIDTH;
 	int yCount = (_bounds.height() - 9) / FONT_HEIGHT;
 
 	// Write the top line
-	screen._writePos = Common::Point(_bounds.left, _bounds.top);
-	screen.writeSymbol(0);
+	_writePos = Common::Point(_bounds.left, _bounds.top);
+	writeSymbol(0);
 
 	if (xCount > 0) {
 		int symbolId = 1;
 		for (int i = 0; i < xCount; ++i) {
-			screen.writeSymbol(symbolId);
+			writeSymbol(symbolId);
 			if (++symbolId == 5)
 				symbolId = 1;
 		}
 	}
 
-	screen._writePos.x = _bounds.right - FONT_WIDTH;
-	screen.writeSymbol(5);
+	_writePos.x = _bounds.right - FONT_WIDTH;
+	writeSymbol(5);
 
 	// Write the vertical edges
 	if (yCount > 0) {
 		int symbolId = 6;
 		for (int i = 0; i < yCount; ++i) {
-			screen._writePos.y += 8;
+			_writePos.y += 8;
 
-			screen._writePos.x = _bounds.left;
-			screen.writeSymbol(symbolId);
+			_writePos.x = _bounds.left;
+			writeSymbol(symbolId);
 
-			screen._writePos.x = _bounds.right - FONT_WIDTH;
-			screen.writeSymbol(symbolId + 4);
+			_writePos.x = _bounds.right - FONT_WIDTH;
+			writeSymbol(symbolId + 4);
 
 			if (++symbolId == 10)
 				symbolId = 6;
@@ -190,20 +204,20 @@ void Window::frame() {
 	}
 
 	// Write the bottom line
-	screen._writePos = Common::Point(_bounds.left, _bounds.bottom - FONT_HEIGHT);
-	screen.writeSymbol(14);
+	_writePos = Common::Point(_bounds.left, _bounds.bottom - FONT_HEIGHT);
+	writeSymbol(14);
 
 	if (xCount > 0) {
 		int symbolId = 15;
 		for (int i = 0; i < xCount; ++i) {
-			screen.writeSymbol(symbolId);
+			writeSymbol(symbolId);
 			if (++symbolId == 19)
 				symbolId = 15;
 		}
 	}
 
-	screen._writePos.x = _bounds.right - FONT_WIDTH;
-	screen.writeSymbol(19);
+	_writePos.x = _bounds.right - FONT_WIDTH;
+	writeSymbol(19);
 }
 
 void Window::close() {
@@ -238,11 +252,7 @@ void Window::addDirtyRect(const Common::Rect &r) {
 }
 
 void Window::fill() {
-	fillRect(_innerBounds, g_vm->_screen->_bgColor);
-}
-
-const char *Window::writeString(const Common::String &s) {
-	return g_vm->_screen->writeString(s, _innerBounds);
+	fillRect(_innerBounds, _bgColor);
 }
 
 void Window::drawList(DrawStruct *items, int count) {

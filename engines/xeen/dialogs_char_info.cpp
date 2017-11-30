@@ -40,7 +40,6 @@ void CharacterInfo::execute(int charIndex) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 
 	bool redrawFlag = true;
@@ -319,12 +318,11 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 }
 
 void CharacterInfo::showCursor(bool flag) {
-	Screen &screen = *_vm->_screen;
 	const int CURSOR_X[5] = { 9, 60, 111, 176, 0 };
 	const int CURSOR_Y[5] = { 23, 46, 69, 92, 115 };
 
 	if (_cursorCell < 20) {
-		_iconSprites.draw(screen, flag ? 49 : 48,
+		_iconSprites.draw(0, flag ? 49 : 48,
 			Common::Point(CURSOR_X[_cursorCell / 5], CURSOR_Y[_cursorCell % 5]));
 	}
 }

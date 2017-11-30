@@ -308,6 +308,12 @@ void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
 	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
 }
 
+void SpriteResource::draw(int windowIndex, int frame, const Common::Point &destPos,
+		int flags, int scale) {
+	Window &win = (*g_vm->_windows)[windowIndex];
+	draw(win, frame, destPos, flags, scale);
+}
+
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
 		const Common::Rect &bounds, int flags, int scale) {
 
@@ -318,6 +324,10 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 
 void SpriteResource::draw(XSurface &dest, int frame) {
 	draw(dest, frame, Common::Point());
+}
+
+void SpriteResource::draw(int windowIndex, int frame) {
+	draw((*g_vm->_windows)[windowIndex], frame, Common::Point());
 }
 
 uint SpriteResource::getScaledVal(int xy, uint16 &scaleMask) {

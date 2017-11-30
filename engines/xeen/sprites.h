@@ -64,6 +64,12 @@ private:
 		const Common::Rect &bounds, int flags = 0, int scale = 0);
 
 	/**
+	 * Draw the sprite onto a given window
+	 */
+	void draw(int windowNum, int frame, const Common::Point &destPos,
+		const Common::Rect &bounds, int flags = 0, int scale = 0);
+
+	/**
 	 * Draw a sprite frame based on a passed offset into the data stream
 	 */
 	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
@@ -99,16 +105,33 @@ public:
 	 */
 	void clear();
 
+	/**
+	 * Draw a sprite onto a surface
+	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
 		int flags = 0, int scale = 0);
 
+	/**
+	 * Draw a sprite onto a specific window
+	 */
 	void draw(Window &dest, int frame, const Common::Point &destPos,
+		int flags = 0, int scale = 0);
+
+	/**
+	 * Draw a sprite onto a given window
+	 */
+	void draw(int windowIndex, int frame, const Common::Point &destPos,
 		int flags = 0, int scale = 0);
 
 	/**
 	 * Draw the sprite onto the given surface
 	 */
 	void draw(XSurface &dest, int frame);
+
+	/**
+	 * Draw the sprite onto the given window
+	 */
+	void draw(int windowIndex, int frame);
 
 	int size() const { return _index.size(); }
 

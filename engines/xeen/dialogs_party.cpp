@@ -696,7 +696,6 @@ void PartyDialog::createChar() {
 int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[28];
 
@@ -899,7 +898,6 @@ void PartyDialog::drawDice(SpriteResource &dice) {
 
 int PartyDialog::exchangeAttribute(int srcAttr) {
 	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	SpriteResource icons;
 	icons.load("create2.icn");
@@ -982,7 +980,6 @@ bool PartyDialog::saveCharacter(Character &c, int classId,
 
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[6];
 	Common::String name;

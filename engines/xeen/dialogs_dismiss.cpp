@@ -34,7 +34,6 @@ void Dismiss::show(XeenEngine *vm) {
 }
 
 void Dismiss::execute() {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;

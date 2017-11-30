@@ -63,7 +63,6 @@ void ButtonContainer::addPartyButtons(XeenEngine *vm) {
 
 bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	EventsManager &events = *vm->_events;
-	Screen &screen = *vm->_screen;
 	Windows &windows = *_vm->_windows;
 	_buttonValue = 0;
 
@@ -107,7 +106,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 			if (btn._draw && btn._value == _buttonValue) {
 				// Found the correct button
 				// Draw button depressed
-				btn._sprites->draw(screen, btnIndex * 2 + 1,
+				btn._sprites->draw(0, btnIndex * 2 + 1,
 					Common::Point(btn._bounds.left, btn._bounds.top));
 				win.setBounds(btn._bounds);
 				win.update();
@@ -117,7 +116,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 				events.wait(2);
 
 				// Redraw button in it's original non-depressed form
-				btn._sprites->draw(screen, btnIndex * 2,
+				btn._sprites->draw(0, btnIndex * 2,
 					Common::Point(btn._bounds.left, btn._bounds.top));
 				win.setBounds(btn._bounds);
 				win.update();

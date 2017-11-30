@@ -34,7 +34,6 @@ void AutoMapDialog::show(XeenEngine *vm) {
 }
 
 void AutoMapDialog::execute() {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
@@ -91,7 +90,7 @@ void AutoMapDialog::execute() {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0);
 
 					if (map._currentSteppedOn) {
-						map._tileSprites.draw(screen, map.mazeDataCurrent()._surfaceTypes[v],
+						map._tileSprites.draw(0, map.mazeDataCurrent()._surfaceTypes[v],
 							Common::Point(xp, yp));
 					}
 				}
@@ -103,7 +102,7 @@ void AutoMapDialog::execute() {
 					int wallType = map.mazeDataCurrent()._wallTypes[v];
 
 					if (wallType && map._currentSteppedOn)
-						map._tileSprites.draw(screen, wallType, Common::Point(xp, yp));
+						map._tileSprites.draw(0, wallType, Common::Point(xp, yp));
 				}
 			}
 
@@ -112,7 +111,7 @@ void AutoMapDialog::execute() {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 8);
 
 					if (v && map._currentSteppedOn)
-						map._tileSprites.draw(screen, 1, Common::Point(xp, yp));
+						map._tileSprites.draw(0, 1, Common::Point(xp, yp));
 				}
 			}
 		} else {
@@ -125,7 +124,7 @@ void AutoMapDialog::execute() {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
 
 					if (v != INVALID_CELL && map._currentSteppedOn)
-						map._tileSprites.draw(screen, 0, Common::Point(xp, yp));
+						map._tileSprites.draw(0, 0, Common::Point(xp, yp));
 				}
 			}
 
@@ -134,14 +133,14 @@ void AutoMapDialog::execute() {
 				v = map.mazeLookup(Common::Point(pt.x - 8, yDiff), 0, 0xffff);
 
 				if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
-					map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[
+					map._tileSprites.draw(0, 36 + map.mazeData()._surfaceTypes[
 						map._currentSurfaceId], Common::Point(75, yp));
 			}
 
 			// Draw thin tile portion on top-left corner of map
 			v = map.mazeLookup(Common::Point(pt.x - 8, pt.y + 8), 0, 0xffff);
 			if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
-				map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[
+				map._tileSprites.draw(0, 36 + map.mazeData()._surfaceTypes[
 					map._currentSurfaceId], Common::Point(75, 35));
 
 			// Draw any thin tiles at the very top of the map
@@ -149,7 +148,7 @@ void AutoMapDialog::execute() {
 				v = map.mazeLookup(Common::Point(xDiff, pt.y + 8), 0, 0xffff);
 
 				if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
-					map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[
+					map._tileSprites.draw(0, 36 + map.mazeData()._surfaceTypes[
 						map._currentSurfaceId], Common::Point(xp, 35));
 			}
 
@@ -159,7 +158,7 @@ void AutoMapDialog::execute() {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
 
 					if (v != INVALID_CELL && map._currentSurfaceId && map._currentSteppedOn)
-						map._tileSprites.draw(screen, map.mazeData()._surfaceTypes[
+						map._tileSprites.draw(0, map.mazeData()._surfaceTypes[
 							map._currentSurfaceId], Common::Point(xp, yp));
 				}
 			}
@@ -216,7 +215,7 @@ void AutoMapDialog::execute() {
 				}
 
 				if (frame != -1 && map._currentSteppedOn)
-					map._tileSprites.draw(screen, frame, Common::Point(70, yp));
+					map._tileSprites.draw(0, frame, Common::Point(70, yp));
 
 				// Draw walls on top edge of map
 				v = map.mazeLookup(Common::Point(xDiff, pt.y + 8), 0);
@@ -269,7 +268,7 @@ void AutoMapDialog::execute() {
 				}
 
 				if (frame != -1 && map._currentSteppedOn)
-					map._tileSprites.draw(screen, frame, Common::Point(xp, 30));
+					map._tileSprites.draw(0, frame, Common::Point(xp, 30));
 			}
 
 			// Draw any walls on the cells
@@ -277,7 +276,7 @@ void AutoMapDialog::execute() {
 				for (int xCtr = 0, xp = 80, xDiff = pt.x - 7; xCtr < 16; ++xCtr, xp += 10, ++xDiff) {
 					// Draw the arrow if at the correct position
 					if ((arrowPt.x / 10) == xCtr && (14 - (arrowPt.y / 10)) == yCtr && frameEndFlag) {
-						globalSprites.draw(screen, party._mazeDirection + 1,
+						globalSprites.draw(0, party._mazeDirection + 1,
 							Common::Point(arrowPt.x + 81, arrowPt.y + 29));
 					}
 
@@ -331,7 +330,7 @@ void AutoMapDialog::execute() {
 					}
 
 					if (frame != -1 && map._currentSteppedOn)
-						map._tileSprites.draw(screen, frame, Common::Point(xp, yp));
+						map._tileSprites.draw(0, frame, Common::Point(xp, yp));
 
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0);
 					switch (v) {
@@ -382,7 +381,7 @@ void AutoMapDialog::execute() {
 					}
 
 					if (frame != -1 && map._currentSteppedOn)
-						map._tileSprites.draw(screen, frame, Common::Point(xp, yp));
+						map._tileSprites.draw(0, frame, Common::Point(xp, yp));
 				}
 			}
 
@@ -392,16 +391,16 @@ void AutoMapDialog::execute() {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
 
 					if (v == INVALID_CELL || !map._currentSteppedOn)
-						map._tileSprites.draw(screen, 1, Common::Point(xp, yp));
+						map._tileSprites.draw(0, 1, Common::Point(xp, yp));
 				}
 			}
 		}
 
 		windows[5].frame();
 		if (!map._isOutdoors) {
-			map._tileSprites.draw(screen, 52, Common::Point(76, 30));
+			map._tileSprites.draw(0, 52, Common::Point(76, 30));
 		} else if (frameEndFlag) {
-			globalSprites.draw(screen, party._mazeDirection + 1,
+			globalSprites.draw(0, party._mazeDirection + 1,
 				Common::Point(arrowPt.x + 76, arrowPt.y + 25));
 		}
 

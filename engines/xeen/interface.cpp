@@ -50,10 +50,9 @@ void PartyDrawer::drawParty(bool updateFlag) {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	Resources &res = *_vm->_resources;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	bool inCombat = _vm->_mode == MODE_COMBAT;
-	_restoreSprites.draw(screen, 0, Common::Point(8, 149));
+	_restoreSprites.draw(0, 0, Common::Point(8, 149));
 
 	// Handle drawing the party faces
 	uint partyCount = inCombat ? combat._combatParty.size() : party._activeParty.size();
@@ -66,7 +65,7 @@ void PartyDrawer::drawParty(bool updateFlag) {
 		if (charFrame > 4)
 			charFrame -= 5;
 
-		sprites->draw(screen, charFrame, Common::Point(Res.CHAR_FACES_X[idx], 150));
+		sprites->draw(0, charFrame, Common::Point(Res.CHAR_FACES_X[idx], 150));
 	}
 
 	for (uint idx = 0; idx < partyCount; ++idx) {
@@ -86,11 +85,11 @@ void PartyDrawer::drawParty(bool updateFlag) {
 		else
 			frame = 1;
 
-		_hpSprites.draw(screen, frame, Common::Point(Res.HP_BARS_X[idx], 182));
+		_hpSprites.draw(0, frame, Common::Point(Res.HP_BARS_X[idx], 182));
 	}
 
 	if (_hiliteChar != HILIGHT_CHAR_NONE)
-		res._globalSprites.draw(screen, 8, Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
+		res._globalSprites.draw(0, 8, Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 
 	if (updateFlag)
 		windows[33].update();
@@ -98,18 +97,17 @@ void PartyDrawer::drawParty(bool updateFlag) {
 
 void PartyDrawer::highlightChar(int charId) {
 	Resources &res = *_vm->_resources;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 
 	if (charId != _hiliteChar && _hiliteChar != HILIGHT_CHAR_DISABLED) {
 		// Handle deselecting any previusly selected char
 		if (_hiliteChar != HILIGHT_CHAR_NONE) {
-			res._globalSprites.draw(screen, 9 + _hiliteChar,
+			res._globalSprites.draw(0, 9 + _hiliteChar,
 				Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 		}
 
 		// Highlight new character
-		res._globalSprites.draw(screen, 8, Common::Point(Res.CHAR_FACES_X[charId] - 1, 149));
+		res._globalSprites.draw(0, 8, Common::Point(Res.CHAR_FACES_X[charId] - 1, 149));
 		_hiliteChar = charId;
 		windows[33].update();
 	}
@@ -117,11 +115,10 @@ void PartyDrawer::highlightChar(int charId) {
 
 void PartyDrawer::unhighlightChar() {
 	Resources &res = *_vm->_resources;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 
 	if (_hiliteChar != HILIGHT_CHAR_NONE) {
-		res._globalSprites.draw(screen, _hiliteChar + 9,
+		res._globalSprites.draw(0, _hiliteChar + 9,
 			Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 		_hiliteChar = HILIGHT_CHAR_NONE;
 		windows[33].update();
@@ -1749,7 +1746,6 @@ void Interface::drawMiniMap() {
 void Interface::assembleBorder() {
 	Combat &combat = *_vm->_combat;
 	Resources &res = *_vm->_resources;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 
 	// Draw the outer frame
@@ -1762,13 +1758,13 @@ void Interface::assembleBorder() {
 	_levitateUIFrame = (_levitateUIFrame + 1) % 12;
 
 	// Draw UI element to indicate whether can spot hidden doors
-	_borderSprites.draw(screen,
+	_borderSprites.draw(0,
 		(_thinWall && _vm->_party->checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
 		Common::Point(194, 91));
 	_spotDoorsUIFrame = (_spotDoorsUIFrame + 1) % 12;
 
 	// Draw UI element to indicate whether can sense danger
-	_borderSprites.draw(screen,
+	_borderSprites.draw(0,
 		(combat._dangerPresent && _vm->_party->checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
 		Common::Point(107, 9));
 	_dangerSenseUIFrame = (_dangerSenseUIFrame + 1) % 12;
@@ -1791,58 +1787,57 @@ void Interface::assembleBorder() {
 		_face2UIFrame = 8;
 	}
 
-	_borderSprites.draw(screen, _face1UIFrame, Common::Point(0, 32));
-	_borderSprites.draw(screen,
-		windows[10]._enabled || windows[2]._enabled ?
-		52 : _face2UIFrame,
+	_borderSprites.draw(0, _face1UIFrame, Common::Point(0, 32));
+	_borderSprites.draw(0,
+		windows[10]._enabled || windows[2]._enabled ? 52 : _face2UIFrame,
 		Common::Point(215, 32));
 
 	// Draw resistence indicators
 	if (!windows[10]._enabled && !windows[2]._enabled
 		&& windows[38]._enabled) {
-		_fecpSprites.draw(screen, _vm->_party->_fireResistence ? 1 : 0,
+		_fecpSprites.draw(0, _vm->_party->_fireResistence ? 1 : 0,
 			Common::Point(2, 2));
-		_fecpSprites.draw(screen, _vm->_party->_electricityResistence ? 3 : 2,
+		_fecpSprites.draw(0, _vm->_party->_electricityResistence ? 3 : 2,
 			Common::Point(219, 2));
-		_fecpSprites.draw(screen, _vm->_party->_coldResistence ? 5 : 4,
+		_fecpSprites.draw(0, _vm->_party->_coldResistence ? 5 : 4,
 			Common::Point(2, 134));
-		_fecpSprites.draw(screen, _vm->_party->_poisonResistence ? 7 : 6,
+		_fecpSprites.draw(0, _vm->_party->_poisonResistence ? 7 : 6,
 			Common::Point(219, 134));
 	} else {
-		_fecpSprites.draw(screen, _vm->_party->_fireResistence ? 9 : 8,
+		_fecpSprites.draw(0, _vm->_party->_fireResistence ? 9 : 8,
 			Common::Point(8, 8));
-		_fecpSprites.draw(screen, _vm->_party->_electricityResistence ? 10 : 11,
+		_fecpSprites.draw(0, _vm->_party->_electricityResistence ? 10 : 11,
 			Common::Point(219, 8));
-		_fecpSprites.draw(screen, _vm->_party->_coldResistence ? 12 : 13,
+		_fecpSprites.draw(0, _vm->_party->_coldResistence ? 12 : 13,
 			Common::Point(8, 134));
-		_fecpSprites.draw(screen, _vm->_party->_poisonResistence ? 14 : 15,
+		_fecpSprites.draw(0, _vm->_party->_poisonResistence ? 14 : 15,
 			Common::Point(219, 134));
 	}
 
 	// Draw UI element for blessed
-	_blessSprites.draw(screen, 16, Common::Point(33, 137));
+	_blessSprites.draw(0, 16, Common::Point(33, 137));
 	if (_vm->_party->_blessed) {
 		_blessedUIFrame = (_blessedUIFrame + 1) % 4;
-		_blessSprites.draw(screen, _blessedUIFrame, Common::Point(33, 137));
+		_blessSprites.draw(0, _blessedUIFrame, Common::Point(33, 137));
 	}
 
 	// Draw UI element for power shield
 	if (_vm->_party->_powerShield) {
 		_powerShieldUIFrame = (_powerShieldUIFrame + 1) % 4;
-		_blessSprites.draw(screen, _powerShieldUIFrame + 4,
+		_blessSprites.draw(0, _powerShieldUIFrame + 4,
 			Common::Point(55, 137));
 	}
 
 	// Draw UI element for holy bonus
 	if (_vm->_party->_holyBonus) {
 		_holyBonusUIFrame = (_holyBonusUIFrame + 1) % 4;
-		_blessSprites.draw(screen, _holyBonusUIFrame + 8, Common::Point(160, 137));
+		_blessSprites.draw(0, _holyBonusUIFrame + 8, Common::Point(160, 137));
 	}
 
 	// Draw UI element for heroism
 	if (_vm->_party->_heroism) {
 		_heroismUIFrame = (_heroismUIFrame + 1) % 4;
-		_blessSprites.draw(screen, _heroismUIFrame + 12, Common::Point(182, 137));
+		_blessSprites.draw(0, _heroismUIFrame + 12, Common::Point(182, 137));
 	}
 
 	// Draw direction character if direction sense is active
@@ -1863,7 +1858,6 @@ void Interface::doCombat() {
 	EventsManager &events = *_vm->_events;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 	Spells &spells = *_vm->_spells;
 	Sound &sound = *_vm->_sound;
@@ -1926,7 +1920,7 @@ void Interface::doCombat() {
 
 			// Write out the description of the monsters being battled
 			w.writeString(combat.getMonsterDescriptions());
-			_iconSprites.draw(screen, 32, Common::Point(233, combat._monsterIndex * 10 + 27),
+			_iconSprites.draw(0, 32, Common::Point(233, combat._monsterIndex * 10 + 27),
 				0x8010000);
 			w.update();
 
@@ -2244,7 +2238,6 @@ void Interface::spellFX(Character *c) {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 
@@ -2275,7 +2268,7 @@ void Interface::spellFX(Character *c) {
 
 	for (int frameNum = 0; frameNum < 4; ++frameNum) {
 		events.updateGameCounter();
-		_spellFxSprites.draw(screen, frameNum, Common::Point(
+		_spellFxSprites.draw(0, frameNum, Common::Point(
 			Res.CHAR_FACES_X[charIndex], 150));
 
 		if (!windows[11]._enabled)

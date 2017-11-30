@@ -39,7 +39,6 @@ void Quests::show(XeenEngine *vm) {
 void Quests::execute() {
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	Mode oldMode = _vm->_mode;
 	int count = 0;
@@ -60,7 +59,7 @@ void Quests::execute() {
 	}
 
 	windows[29].writeString(Res.QUESTS_DIALOG_TEXT);
-	drawButtons(&screen);
+	drawButtons(&windows[0]);
 
 	while (!_vm->shouldQuit()) {
 		Common::String lines[MAX_DIALOG_LINES];

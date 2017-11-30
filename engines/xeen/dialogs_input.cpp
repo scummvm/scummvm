@@ -118,8 +118,6 @@ Common::KeyCode Input::waitForKey(const Common::String &msg) {
 }
 
 void Input::animateCursor() {
-	Screen &screen = *_vm->_screen;
-
 	// Iterate through each frame
 	_cursorAnimIndex = _cursorAnimIndex ? _cursorAnimIndex - 1 : 5;
 	static const int CURSOR_ANIMATION_IDS[] = { 32, 124, 126, 127, 126, 124 };
@@ -128,9 +126,9 @@ void Input::animateCursor() {
 	Common::String cursorStr = Common::String::format("%c",
 		CURSOR_ANIMATION_IDS[_cursorAnimIndex]);
 
-	Common::Point writePos = screen._writePos;
+	Common::Point writePos = _window->_writePos;
 	_window->writeString(cursorStr);
-	screen._writePos = writePos;
+	_window->_writePos = writePos;
 }
 
 /*------------------------------------------------------------------------*/
@@ -227,7 +225,6 @@ int Choose123::show(XeenEngine *vm, int numOptions) {
 int Choose123::execute(int numOptions) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
 	Windows &windows = *_vm->_windows;
 
@@ -235,8 +232,8 @@ int Choose123::execute(int numOptions) {
 	_vm->_mode = MODE_DIALOG_123;
 
 	loadButtons(numOptions);
-	_iconSprites.draw(screen, 7, Common::Point(232, 74));
-	drawButtons(&screen);
+	_iconSprites.draw(0, 7, Common::Point(232, 74));
+	drawButtons(&windows[0]);
 	windows[34].update();
 
 	int result = -1;

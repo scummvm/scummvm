@@ -133,7 +133,6 @@ void Combat::clear() {
 
 void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
@@ -221,8 +220,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 
 			// Draw the attack effect on the character sprite
 			sound.playFX(fx);
-			_powSprites.draw(screen, frame,
-				Common::Point(Res.CHAR_FACES_X[selectedIndex1], 150));
+			_powSprites.draw(0, frame, Common::Point(Res.CHAR_FACES_X[selectedIndex1], 150));
 			windows[33].update();
 
 			// Reduce damage if power shield active, and set it zero
@@ -265,7 +263,6 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
@@ -322,7 +319,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 	}
 
 	sound.playFX(fx);
-	intf._charPowSprites.draw(screen, frame, Common::Point(Res.CHAR_FACES_X[charNum], 150));
+	intf._charPowSprites.draw(0, frame, Common::Point(Res.CHAR_FACES_X[charNum], 150));
 	windows[33].update();
 
 	damage -= party._powerShield;

@@ -34,7 +34,6 @@ bool Confirm::show(XeenEngine *vm, const Common::String &msg, int mode) {
 }
 
 bool Confirm::execute(const Common::String &msg, int mode) {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
 	SpriteResource confirmSprites;
@@ -103,7 +102,6 @@ bool YesNo::execute(bool type, bool townFlag) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Resources &res = *_vm->_resources;
-	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
 	Windows &windows = *_vm->_windows;
 	SpriteResource confirmSprites;
@@ -114,9 +112,9 @@ bool YesNo::execute(bool type, bool townFlag) {
 
 	if (!type) {
 		confirmSprites.load("confirm.icn");
-		res._globalSprites.draw(screen, 7, Common::Point(232, 74));
-		confirmSprites.draw(screen, 0, Common::Point(235, 75));
-		confirmSprites.draw(screen, 2, Common::Point(260, 75));
+		res._globalSprites.draw(0, 7, Common::Point(232, 74));
+		confirmSprites.draw(0, 0, Common::Point(235, 75));
+		confirmSprites.draw(0, 2, Common::Point(260, 75));
 		windows[34].update();
 
 		addButton(Common::Rect(235, 75, 259, 95), Common::KEYCODE_y, &confirmSprites);
