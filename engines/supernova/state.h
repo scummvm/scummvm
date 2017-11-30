@@ -142,6 +142,7 @@ public:
 	int _currentSentence;
 	int _sentenceNumber[6];
 	StringID _texts[6];
+	Common::String _varTexts[6];
 	byte _rows[6];
 	byte _rowsStart[6];
 
@@ -188,8 +189,7 @@ public:
 	void setAnimationTimer(int ticks);
 	void dead(const char *message);
 	void dead(StringID messageId);
-	int  dialog(int num, byte rowLength[6], Common::String text[6], int number);
-	int  dialog(int num, byte rowLength[6], StringID text[6], int number);
+	int  dialog(int num, byte rowLength[6], StringID text[6], int number, Common::String varText[6] = nullptr);
 	void sentence(int number, bool brightness);
 	void say(StringID textId);
 	void say(const char *text);

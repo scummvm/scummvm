@@ -356,6 +356,7 @@ void GameManager::initState() {
 	for (int i = 0 ; i < 6 ; ++i) {
 		_sentenceNumber[i] = -1;
 		_texts[i] = kNoString;
+		_varTexts[i].clear();
 		_rows[i] = 0;
 		_rowsStart[i] = 0;
 	}
@@ -683,28 +684,30 @@ void GameManager::telomat(int nr) {
 		"Alga Hurz Li"
 	};
 
-	Common::String dial1[4];
-	dial1[0] = "Guten Tag, hier ist Horst Hummel.";
-	dial1[1] = "";
-	dial1[2] = "Es ist sehr wichtig.";
-	dial1[3] = "|";
+	StringID dial1[4];
+	dial1[0] = kStringTelomat1;
+	dial1[1] = kNoString;
+	dial1[2] = kStringTelomat3;
+	dial1[3] = kStringDialogSeparator;
 
 	static byte rows1[3] = {1, 2, 1};
 
-	Common::String dial2[4];
-	dial2[0] = "Vom Mars.";
-	dial2[1] = "Vom Klo.";
-	dial2[2] = "Das werde ich kaum erzählen.";
-	dial2[3] = "|";
+	StringID dial2[4];
+	dial2[0] = kStringTelomat4;
+	dial2[1] = kStringTelomat5;
+	dial2[2] = kStringTelomat6;
+	dial2[3] = kStringDialogSeparator;
 
 	static byte rows2[4] = {1, 1, 1, 1};
+	
+	Common::String varDial[6];
 
 	_vm->renderBox(0, 0, 320, 200, kColorBlack);
-	_vm->renderText("1 Büromanager", 100, 70, kColorGreen);
-	_vm->renderText("2 Telomat", 100, 81, kColorGreen);
-	_vm->renderText("3 ProText", 100, 92, kColorGreen);
-	_vm->renderText("4 Calculata", 100, 103, kColorGreen);
-	_vm->renderText("Bitte wählen", 100, 120, kColorDarkGreen);
+	_vm->renderText(kStringTelomat7, 100, 70, kColorGreen);
+	_vm->renderText(kStringTelomat8, 100, 81, kColorGreen);
+	_vm->renderText(kStringTelomat9, 100, 92, kColorGreen);
+	_vm->renderText(kStringTelomat10, 100, 103, kColorGreen);
+	_vm->renderText(kStringTelomat11, 100, 120, kColorDarkGreen);
 	Common::String input;
 	do {
 		getInput();
@@ -712,8 +715,8 @@ void GameManager::telomat(int nr) {
 		switch (_key.keycode) {
 		case Common::KEYCODE_2: {
 			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
-			_vm->renderText("Geben Sie den gewünschten Namen ein:", 50, 80, kColorGreen);
-			_vm->renderText("(Vor- und Nachname)", 50, 91, kColorGreen);
+			_vm->renderText(kStringTelomat12, 50, 80, kColorGreen);
+			_vm->renderText(kStringTelomat13, 50, 91, kColorGreen);
 			do
 				edit(input, 50, 105, 30);
 			while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE));
@@ -734,7 +737,7 @@ void GameManager::telomat(int nr) {
 				i++;
 			i >>= 1;
 			if (i == 4) {
-				_vm->renderText("Name unbekannt", 50, 120, kColorGreen);
+				_vm->renderText(kStringTelomat14, 50, 120, kColorGreen);
 				wait2(10);
 				_vm->renderBox(0, 0, 320, 200, kColorBlack);
 				_vm->renderRoom(*_currentRoom);
@@ -745,7 +748,7 @@ void GameManager::telomat(int nr) {
 			}
 
 			if ((i == nr) || _rooms[BCORRIDOR]->getObject(4 + i)->hasProperty(CAUGHT)) {
-				_vm->renderText("Verbindung unmöglich", 50, 120, kColorGreen);
+				_vm->renderText(kStringTelomat15, 50, 120, kColorGreen);
 				wait2(10);
 				_vm->renderBox(0, 0, 320, 200, kColorBlack);
 				_vm->renderRoom(*_currentRoom);
@@ -755,24 +758,23 @@ void GameManager::telomat(int nr) {
 				return;
 			}
 
-			_vm->renderText("Verbindung wird hergestellt", 50, 120, kColorGreen);
+			_vm->renderText(kStringTelomat16, 50, 120, kColorGreen);
 			wait2(10);
 			_vm->renderBox(0, 0, 320, 200, kColorBlack);
 			_vm->renderRoom(*_currentRoom);
 			_vm->paletteBrightness();
-			input = Common::String::format("%s am Apparat.", name2[i]);
-			_vm->renderMessage(input, kMessageTop);
+			_vm->renderMessage(kStringTelomat17, kMessageTop, name2[i]);
 			waitOnInput(_timer1);
 			_vm->removeMessage();
 			if (_state._nameSeen[nr]) {
-				input = Common::String::format("Hier ist %s. Können Sie mal gerade kommen?", name2[nr]);
-				dial1[1] = input;
+				varDial[1] = name2[nr];
+				dial1[1] = kStringTelomat2;
 				_currentRoom->addSentence(1, 1);
 			} else
 				_currentRoom->removeSentence(1, 1);
 
-			switch (dialog(3, rows1, dial1, 1)) {
-			case 1: _vm->renderMessage("Huch, Sie hören sich aber|nicht gut an. Ich komme sofort.", kMessageTop);
+			switch (dialog(3, rows1, dial1, 1, varDial)) {
+			case 1: _vm->renderMessage(kStringTelomat18, kMessageTop);
 				waitOnInput(_timer1);
 				_vm->removeMessage();
 				if ((_state._destination == 255) && !_rooms[BCORRIDOR]->isSectionVisible(7)) {
@@ -782,12 +784,12 @@ void GameManager::telomat(int nr) {
 					_state._destination = nr;
 				}
 				break;
-			case 0: _vm->renderMessage("Horst Hummel! Von wo rufen Sie an?", kMessageTop);
+			case 0: _vm->renderMessage(kStringTelomat19, kMessageTop);
 				waitOnInput(_timer1);
 				_vm->removeMessage();
 				if (dialog(4, rows2, dial2, 0) != 3) {
 					wait2(10);
-					say("Hmm, keine Antwort.");
+					say(kStringTelomat20);
 				}
 				_rooms[BCORRIDOR]->setSectionVisible(7, true);
 				_rooms[BCORRIDOR]->setSectionVisible(i + 1, true);
@@ -802,14 +804,14 @@ void GameManager::telomat(int nr) {
 		case Common::KEYCODE_3:
 		case Common::KEYCODE_4:
 			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
-			_vm->renderText("Passwort:", 100, 90, kColorGreen);
+			_vm->renderText(kStringTelomat21, 100, 90, kColorGreen);
 			input = "";
 			do
 				edit(input, 100, 105, 30);
 			while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE));
 
 			if (_key.keycode == Common::KEYCODE_RETURN) {
-				_vm->renderText("Falsches Passwort", 100, 120, kColorGreen);
+				_vm->renderText(kStringShipSleepCabin9, 100, 120, kColorGreen);
 				wait2(10);
 			}
 		case Common::KEYCODE_ESCAPE:
@@ -1313,12 +1315,7 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 		_vm->removeMessage();
 }
 
-int GameManager::dialog(int num, byte rowLength[6], Common::String text[6], int number) {
-	warning("STUB dialog");
-	return 0;
-}
-
-int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number) {
+int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number, Common::String varText[6]) {
 	_vm->_allowLoadGame = false;
 	_guiEnabled = false;
 
@@ -1341,6 +1338,8 @@ int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number
 			_rows[i] = rowLength[i];
 			for (int j = 0; j < _rows[i]; ++j, ++r, ++rq) {
 				_texts[r] = text[rq];
+				if (varText != nullptr && !varText[rq].empty())
+					_varTexts[r] = varText[rq];
 				_sentenceNumber[r] = i;
 			}
 			sentence(i, false);
@@ -1951,10 +1950,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(obj1._description);
 		obj1._description = kStringKeycard2Description2;
 	} else if ((verb == ACTION_LOOK) && (obj1._id == WATCH)) {
-		// FIXME: kStringGenericInteract_13 requires 2 string parameters in order to format the string properly
-		_vm->renderMessage(kStringGenericInteract_13, kMessageNormal);
-		//    timeToString(_state._time).c_str(),
-		//    timeToString(_state._timeAlarm).c_str());
+		_vm->renderMessage(kStringGenericInteract_13, kMessageNormal, timeToString(_state._time), timeToString(_state._timeAlarm));
 	} else if ((verb == ACTION_PRESS) && (obj1._id == WATCH)) {
 		bool validInput = true;
 		int hours = 0;
