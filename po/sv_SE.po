@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-30 01:15+0100\n"
-"PO-Revision-Date: 2017-01-06 09:18+0000\n"
-"Last-Translator: Petter Sjölund <ignalina@mac.com>\n"
-"Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/sv/>\n"
+"PO-Revision-Date: 2017-11-30 15:42+0000\n"
+"Last-Translator: hampusf <hampus.flink@gmail.com>\n"
+"Language-Team: Swedish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
 "Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -831,61 +831,58 @@ msgstr "filterinställningen kunde inte ändras"
 
 #: gui/options.cpp:932
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Visa kontroller på skärmen"
 
 #: gui/options.cpp:936
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Touchpad-läge inaktiverat."
+msgstr "Touchpad-musläge"
 
 #: gui/options.cpp:940
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Växla meny- och tillbakaknappar"
 
 #: gui/options.cpp:945
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Hastighet:"
+msgstr "Pekarhastighet:"
 
 #: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Hastighet för kontroll av muspekare via tangentbord/joystick"
 
 #: gui/options.cpp:947
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Hastighet:"
+msgstr "Pekarhastighet:"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Dödzon för joystick:"
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "Dödzon för analog joystick"
 
 #: gui/options.cpp:960
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Dödzon för joystick:"
 
 #: gui/options.cpp:974
 msgid "HW Shader:"
-msgstr ""
+msgstr "Hårdvarushader:"
 
 #: gui/options.cpp:974 gui/options.cpp:976
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "Olika hårdvarubaserade shaders ger olika visuella effekter"
 
 #: gui/options.cpp:976
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr ""
+msgstr "Hårdvarushader:"
 
 #: gui/options.cpp:977
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Olika shaders ger olika visuella effekter"
 
 #: gui/options.cpp:994
 msgid "Graphics mode:"
@@ -1121,7 +1118,7 @@ msgstr "Talvolym:"
 
 #: gui/options.cpp:1438
 msgid "Shader"
-msgstr ""
+msgstr "Shader"
 
 #: gui/options.cpp:1450
 #, fuzzy
@@ -1321,20 +1318,20 @@ msgid "Another cloud storage is already active."
 msgstr "Ett annat molnlager är redan aktivt."
 
 #: gui/options.cpp:1895
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "Aktuell plugin kan inte spara spel"
+msgstr "Temat stöder inte det valda språket!"
 
 #: gui/options.cpp:1898
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "Spelet laddades EJ"
+msgstr "Temat kunde inte laddas!"
 
 #: gui/options.cpp:1901
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"Diverse inställningar kommer att återställas."
 
 #: gui/options.cpp:1937
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1627,7 +1624,6 @@ msgid "Antialiased"
 msgstr "Antialiserad"
 
 #: gui/updates-dialog.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
@@ -1635,7 +1631,6 @@ msgid ""
 msgstr ""
 "ScummVM stöder nu automatisk uppdateringskontroll,\n"
 "vilket kräver en internetanslutning.\n"
-"\n"
 "Vill du aktivera den här funktionen?"
 
 #: gui/updates-dialog.cpp:52
@@ -1643,6 +1638,8 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Du kan ändra den här inställningen senare\n"
+"under \"Diverse\"-fliken i Inställningar."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -1792,21 +1789,21 @@ msgid "<Bad value>"
 msgstr "<Dåligt värde>"
 
 #: engines/advancedDetector.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown %s engine game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Spelet i '%s' verkar vara okänt.\n"
-"Rapportera informationen nedan till ScummVM-teamet tillsammans med namnet på "
-"spelet du försökte lägga till och vilken version det är, vilket språk det är "
-"på och så vidare:"
+"Spelet i '%s' verkar vara en okänd variant av %s-motorn.\n"
+"\n"
+"Rapportera informationen nedan till ScummVM-teamet på %s tillsammans med "
+"namnet på spelet du försökte lägga till och spelets version, språk, etc.:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr ""
+msgstr "Matchade spel-ID:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -2920,7 +2917,7 @@ msgid "Restore"
 msgstr "Ladda"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game from file:\n"
 "\n"
@@ -2931,7 +2928,7 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game to file:\n"
 "\n"
@@ -2942,13 +2939,13 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
-"Sparade framgångsrikt spardata i filen:\n"
+"Sparade spardata i filen:\n"
 "\n"
 "%s"
 
@@ -2966,7 +2963,6 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Aktivera färgblint läge som standard"
 
 #: engines/drascula/saveload.cpp:47
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
@@ -2994,13 +2990,11 @@ msgstr "Visa grafik med spelets ljusa palett"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-#, fuzzy
 msgid "Failed to load saved game from file."
-msgstr "Kunde inte läsa spardata från filen"
+msgstr "Kunde inte läsa spardata från filen."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-#, fuzzy
 msgid "Failed to save game to file."
 msgstr "Kunde inte skriva spardata till filen."
 
@@ -3226,7 +3220,7 @@ msgstr ""
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
 "ScummVM. If you want to manually import original saved game later you will\n"
@@ -3295,28 +3289,24 @@ msgid "~W~ater Effect Enabled"
 msgstr "~V~atteneffekt aktiverad"
 
 #: engines/mohawk/dialogs.cpp:272
-#, fuzzy
 msgid "Transitions:"
-msgstr "Öv~e~rgångar aktiverade"
+msgstr "Övergångar:"
 
 #: engines/mohawk/dialogs.cpp:274
-#, fuzzy
 msgid "Disabled"
-msgstr "Inaktiverad GFX"
+msgstr "Inaktiverad"
 
 #: engines/mohawk/dialogs.cpp:275
-#, fuzzy
 msgid "Fastest"
-msgstr "Klistra in"
+msgstr "Snabbast"
 
 #: engines/mohawk/dialogs.cpp:276
-#, fuzzy
 msgid "Normal"
-msgstr "OpenGL normal"
+msgstr "Normal"
 
 #: engines/mohawk/dialogs.cpp:277
 msgid "Best"
-msgstr ""
+msgstr "Bästa"
 
 #: engines/mohawk/mohawk.cpp:58
 msgid "The game is paused. Press any key to continue."
@@ -3348,7 +3338,7 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "Du saknar följande obligatoriska datafiler för Riven:\n"
 
 #: engines/mohawk/riven_stack.cpp:182
 msgid ""
@@ -3412,7 +3402,6 @@ msgid "Saving game..."
 msgstr "Sparar speldata..."
 
 #: engines/parallaction/saveload.cpp:269
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
@@ -3426,13 +3415,12 @@ msgstr ""
 "De gamla filnamnen stöds inte längre, så du kommer inte kunna ladda dina "
 "data om du inte konverterar dem.\n"
 "\n"
-"Tryck \"OK\" för att konvertera dem nu, annars kommer du tillfrågas igen "
-"nästa gång du startar spelet.\n"
+"Tryck på \"OK\" för att konvertera dem nu, annars kommer du tillfrågas igen "
+"nästa gång.\n"
 
 #: engines/parallaction/saveload.cpp:316
-#, fuzzy
 msgid "ScummVM successfully converted all your saved games."
-msgstr "ScummVM lyckades konvertera alla dina spardata."
+msgstr "ScummVM konverterade alla dina spardata."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -3516,12 +3504,11 @@ msgstr "Rita svarta linjer över videor för att få dem att se skarpare ut"
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Använd högkvalitativ bildförstoring"
 
 #: engines/sci/detection.cpp:432
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Använd linjärt filter för att förstora bilden"
+msgstr "Använd linjär interpolering för att förstora bilden, om möjligt"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
@@ -3571,18 +3558,16 @@ msgid ""
 msgstr "Använd muspekare i silver istället för de vanliga guldfärgade"
 
 #: engines/sci/detection.cpp:506
-#, fuzzy
 msgid "Enable content censoring"
-msgstr "Aktivera flytande pekare"
+msgstr "Aktivera censurering"
 
 #: engines/sci/detection.cpp:507
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "Aktivera spelets inbyggda och valfria censurfunktion"
 
 #: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
-#, fuzzy
 msgid "(Autosave)"
-msgstr "Autospara:"
+msgstr "(Autosparning)"
 
 #: engines/sci/engine/kgraphics.cpp:984
 msgid ""
@@ -3592,26 +3577,34 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"Rollpersoner som sparats inom ScummVM visas automatiskt. Rollpersonsfiler "
+"som sparats i det ursprungliga programmet måste placeras i ScummVM:s katalog "
+"för sparade data och måste förses med ett prefix beroende på vilket spel det "
+"sparades i: 'qfg1-' för Quest for Glory 1, 'qfg2-' för Quest for Glory 2. "
+"Exempel: 'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:348
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr ""
+msgstr "Använd ett externt visningsprogram för att öppna spelets hjälpfil: %s"
 
 #: engines/sci/engine/savegame.cpp:1290
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
+"Formatet på dessa sparade data är föråldrat, det gick inte att läsa in dem"
 
 #: engines/sci/engine/savegame.cpp:1292
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "Versionen på sparade data är %d, den senaste som stöds är %0d"
 
 #: engines/sci/engine/savegame.cpp:1303
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"Dessa sparade data skapades med en annan version av spelet, de kunde inte "
+"läsas in"
 
 #: engines/sci/resource.cpp:822
 msgid ""
@@ -3619,6 +3612,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Saknade eller skadade spelresurser har upptäckts. Det är möjligt att vissa "
+"spelfunktioner inte kommer att fungera. Se konsolen för ytterligare "
+"information och kontrollera att dina spelfiler är giltiga."
 
 #: engines/sci/sci.cpp:400
 msgid ""
@@ -3627,6 +3623,9 @@ msgid ""
 "riddles. Please, apply the latest patch for this game by Sierra to avoid "
 "possible problems."
 msgstr ""
+"Ett spelscript känt för att vara buggigt har upptäckts, vilket kan hindra "
+"dig från att slutföra sekvensen med den gröne mannens gåtor. Installera den "
+"senaste patchen för det här spelet från Sierra för att undvika problem."
 
 #: engines/sci/sci.cpp:409
 msgid ""
@@ -3636,6 +3635,12 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"Undertexter är aktiverade, men undertexter var en inkomplett funktion i "
+"King's Quest 7 och var avaktiverade i den lanserade versionen av spelet. "
+"ScummVM tillåter återaktivering av undertexterna, men eftersom de togs bort "
+"från det ursprungliga spelet kommer de inte alltid att visas ordentligt "
+"eller matcha talet. Det här är inte en bugg i ScummVM -- det är ett problem "
+"med spelfilerna."
 
 #: engines/sci/sci.cpp:433
 msgid ""
@@ -3649,6 +3654,15 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"Du har valt General MIDI som ljudenhet. Sierra tillhandahåller stöd för "
+"General MIDI för det här spelet via deras \"General MIDI Utility\". Använd "
+"den här patchen för att kunna lyssna på MIDI-musik i det här spelet. När du "
+"har verktyget kan du packa upp alla inkluderade *.PAT-filer i ScummVM:s \""
+"Extras\"-mapp, så kommer ScummVM att tillämpa patchen automatiskt. "
+"Alternativt kan du följa instruktionerna i READ.ME-filen som följer med "
+"patchen och döpa om den tillhörande *.PAT-filen till 4.PAT och placera den i "
+"spelets mapp. Utan den här patchen kommer General MIDI-musik att låta "
+"väldigt förvrängd i det här spelet."
 
 #: engines/sci/sci.cpp:452
 msgid ""
@@ -3658,6 +3672,11 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Ditt spel har patchats med en användartillverkad scriptpatch. Sådana patchar "
+"är kända för att orsaka problem, eftersom de modifierar spelets programkod. "
+"Problemen de här patcharna fixar inträffar inte i ScummVM, så det "
+"rekommenderas att du tar bort den här patchen från spelmappen för att "
+"undvika oväntade fel eller problem senare."
 
 #: engines/scumm/detection.cpp:1126
 msgid ""
@@ -3843,7 +3862,6 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
-#, fuzzy
 msgid "Load saved game 1-10"
 msgstr "Ladda spardata 1-10"
 
@@ -4469,7 +4487,6 @@ msgid "Cutscene '%s' not found"
 msgstr "Filmscenen '%s' hittades ej"
 
 #: engines/sword1/control.cpp:885
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -4484,7 +4501,7 @@ msgstr ""
 "Det gamla spardataformatet stöds inte längre, så du kommer inte kunna ladda "
 "dina data om du inte konverterar dem.\n"
 "\n"
-"Tryck \"OK\" för att konvertera dem nu, annars kommer du tillfrågas igen "
+"Tryck på \"OK\" för att konvertera dem nu, annars kommer du tillfrågas igen "
 "nästa gång du startar spelet.\n"
 
 #: engines/sword1/control.cpp:1259
@@ -4613,10 +4630,8 @@ msgid "Use high resolution MPEG video"
 msgstr "Använd högupplöst MPEG-video"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
-msgstr ""
-"Använd högupplöst MPEG-video från DVD-versionen istället för lågupplöst AVI"
+msgstr "Använd MPEG-video från DVD-versionen istället för lågupplöst AVI"
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
