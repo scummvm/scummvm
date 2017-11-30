@@ -128,8 +128,8 @@ done
 # Default lib behavior yes/no/auto
 _ogg=auto
 _vorbis=auto
-_sdlnet=auto
-_libcurl=auto
+_sdlnet=no
+_libcurl=no
 _tremor=auto
 _tremolo=no
 _flac=auto
@@ -167,7 +167,7 @@ _enable_prof=no
 _global_constructors=no
 _no_undefined_var_template=no
 _bink=yes
-_cloud=auto
+_cloud=no
 # Default vkeybd/keymapper/eventrec options
 _vkeybd=no
 _keymapper=no
