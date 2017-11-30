@@ -64,6 +64,7 @@ void ButtonContainer::addPartyButtons(XeenEngine *vm) {
 bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	EventsManager &events = *vm->_events;
 	Screen &screen = *vm->_screen;
+	Windows &windows = *_vm->_windows;
 	_buttonValue = 0;
 
 	if (events._leftButton) {
@@ -100,7 +101,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 
 	if (_buttonValue) {
 		// Check for a button matching the selected _buttonValue
-		Window &win = screen._windows[39];
+		Window &win = windows[39];
 		for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
 			UIButton &btn = _buttons[btnIndex];
 			if (btn._draw && btn._value == _buttonValue) {
@@ -169,18 +170,19 @@ void CreditsScreen::show(XeenEngine *vm) {
 
 void CreditsScreen::execute() {
 	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 	EventsManager &events = *_vm->_events;
 
 	// Handle drawing the credits screen
 	doScroll(true, false);
-	screen._windows[GAME_WINDOW].close();
+	windows[GAME_WINDOW].close();
 
 	screen.loadBackground("marb.raw");
-	screen._windows[0].writeString(Res.CREDITS);
+	windows[0].writeString(Res.CREDITS);
 	doScroll(false, false);
 
 	events.setCursor(0);
-	screen._windows[0].update();
+	windows[0].update();
 	clearButtons();
 
 	// Wait for keypress
@@ -193,8 +195,10 @@ void CreditsScreen::execute() {
 /*------------------------------------------------------------------------*/
 
 void PleaseWait::show(XeenEngine *vm) {
+	Windows &windows = *vm->_windows;
+	Window &w = windows[9];
+
 	if (vm->_mode != MODE_0) {
-		Window &w = vm->_screen->_windows[9];
 		w.open();
 		w.writeString(Res.PLEASE_WAIT);
 		w.update();

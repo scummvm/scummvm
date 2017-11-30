@@ -37,9 +37,10 @@ void ExchangeDialog::execute(Character *&c, int &charIndex) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
+	Windows &windows = *_vm->_windows;
 	loadButtons();
 
-	Window &w = screen._windows[31];
+	Window &w = windows[31];
 	w.open();
 	w.writeString(Res.EXCHANGE_WITH_WHOM);
 	_iconSprites.draw(w, 0, Common::Point(225, 120));

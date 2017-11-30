@@ -139,6 +139,7 @@ int Scripts::checkEvents() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Town &town = *_vm->_town;
+	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	_refreshIcons = false;
@@ -204,7 +205,7 @@ int Scripts::checkEvents() {
 
 	intf._face1State = intf._face2State = 2;
 	if (_refreshIcons) {
-		screen.closeWindows();
+		windows.closeAll();
 		intf.drawParty(true);
 	}
 
@@ -238,14 +239,14 @@ int Scripts::checkEvents() {
 
 	_animCounter = 0;
 	_vm->_mode = oldMode;
-	screen.closeWindows();
+	windows.closeAll();
 
 	if (_scriptExecuted || !intf._objNumber || _var50) {
 		if (_var50 && !_scriptExecuted && intf._objNumber && !map._currentIsEvent) {
 			sound.playFX(21);
 		}
 	} else {
-		Window &w = screen._windows[38];
+		Window &w = windows[38];
 		w.open();
 		w.writeString(Res.NOTHING_HERE);
 		w.update();
@@ -388,15 +389,15 @@ bool Scripts::cmdDoNothing(ParamsIterator &params) {
 }
 
 bool Scripts::cmdDisplay1(ParamsIterator &params) {
-	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 	Common::String paramText = _vm->_map->_events._text[params.readByte()];
 	Common::String msg = Common::String::format("\r\x03""c%s", paramText.c_str());
 
-	screen._windows[12].close();
-	if (screen._windows[38]._enabled)
-		screen._windows[38].open();
-	screen._windows[38].writeString(msg);
-	screen._windows[38].update();
+	windows[12].close();
+	if (windows[38]._enabled)
+		windows[38].open();
+	windows[38].writeString(msg);
+	windows[38].update();
 
 	return true;
 }
@@ -466,10 +467,10 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 	Sound &sound = *_vm->_sound;
 
-	screen.closeWindows();
+	windows.closeAll();
 
 	int mapId = params.readByte();
 	Common::Point pt;
@@ -591,7 +592,7 @@ bool Scripts::cmdMoveObj(ParamsIterator &params) {
 
 bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 	int mode1, mode2, mode3, param2;
 	uint32 val1, val2, val3;
 
@@ -650,7 +651,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	}
 
 	if (mode2 == 67)
-		screen.closeWindows();
+		windows.closeAll();
 
 	switch (_event->_opcode) {
 	case OP_TakeOrGive_2:
@@ -779,7 +780,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 		} else {
 			if (!party.giveTake(mode1, val1, mode2, val2, _charIndex - 1)) {
 				if (mode2 == 79)
-					screen.closeWindows();
+					windows.closeAll();
 			}
 		}
 		break;
@@ -1144,7 +1145,8 @@ bool Scripts::cmdAlterHed(ParamsIterator &params) {
 
 bool Scripts::cmdDisplayStat(ParamsIterator &params) {
 	Party &party = *_vm->_party;
-	Window &w = _vm->_screen->_windows[12];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[12];
 	Character &c = party._activeParty[_charIndex - 1];
 
 	if (!w._enabled)
@@ -1304,7 +1306,8 @@ bool Scripts::cmdChooseNumeric(ParamsIterator &params) {
 
 bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 	Map &map = *_vm->_map;
-	Window &w = _vm->_screen->_windows[12];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[12];
 
 	params.readByte();
 	int textId = params.readByte();
@@ -1817,13 +1820,14 @@ void Scripts::display(bool justifyFlag, int var46) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
-	Window &w = screen._windows[_windowIndex];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[_windowIndex];
 
 	if (!_redrawDone) {
 		intf.draw3d(true);
 		_redrawDone = true;
 	}
-	screen._windows[38].close();
+	windows[38].close();
 
 	if (!justifyFlag)
 		_displayMessage = Common::String::format("\r\x3""c%s", _message.c_str());

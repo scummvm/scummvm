@@ -42,6 +42,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 
 	Character *startingChar = c;
 	ItemCategory category = mode == ITEMMODE_RECHARGE || mode == ITEMMODE_COMBAT ?
@@ -58,8 +59,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	events.setCursor(0);
 	loadButtons(mode, c);
 
-	screen._windows[29].open();
-	screen._windows[30].open();
+	windows[29].open();
+	windows[30].open();
 
 	enum { REDRAW_NONE, REDRAW_TEXT, REDRAW_FULL } redrawFlag = REDRAW_FULL;
 	for (;;) {
@@ -98,7 +99,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT2, Res.BTN_GOLD);
 			}
 
-			screen._windows[29].writeString(msg);
+			windows[29].writeString(msg);
 			drawButtons(&screen);
 
 			Common::fill(&arr[0], &arr[40], 0);
@@ -213,7 +214,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			switch (mode) {
 			case ITEMMODE_CHAR_INFO:
 			case ITEMMODE_8:
-				screen._windows[30].writeString(Common::String::format(Res.X_FOR_THE_Y,
+				windows[30].writeString(Common::String::format(Res.X_FOR_THE_Y,
 					category == CATEGORY_MISC ? "\x3l" : "\x3c",
 					Res.CATEGORY_NAMES[category], c->_name.c_str(), Res.CLASS_NAMES[c->_class],
 					category == CATEGORY_MISC ? Res.FMT_CHARGES : " ",
@@ -224,7 +225,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				break;
 
 			case ITEMMODE_BLACKSMITH:
-				screen._windows[30].writeString(Common::String::format(Res.AVAILABLE_GOLD_COST,
+				windows[30].writeString(Common::String::format(Res.AVAILABLE_GOLD_COST,
 					Res.CATEGORY_NAMES[category], party._gold,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
@@ -238,7 +239,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			case ITEMMODE_REPAIR:
 			case ITEMMODE_IDENTIFY:
 			case ITEMMODE_TO_GOLD:
-				screen._windows[30].writeString(Common::String::format(Res.X_FOR_Y,
+				windows[30].writeString(Common::String::format(Res.X_FOR_Y,
 					Res.CATEGORY_NAMES[category], startingChar->_name.c_str(),
 					(mode == ITEMMODE_RECHARGE || mode == ITEMMODE_ENCHANT) ? Res.CHARGES : Res.COST,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
@@ -249,7 +250,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 			case ITEMMODE_3:
 			case ITEMMODE_5:
-				screen._windows[30].writeString(Common::String::format(Res.X_FOR_Y_GOLD,
+				windows[30].writeString(Common::String::format(Res.X_FOR_Y_GOLD,
 					Res.CATEGORY_NAMES[category], c->_name.c_str(), party._gold, Res.CHARGES,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
@@ -262,8 +263,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			}
 
 			// Draw the glyphs for the items
-			screen._windows[0].drawList(_itemsDrawList, INV_ITEMS_TOTAL);
-			screen._windows[0].update();
+			windows[0].drawList(_itemsDrawList, INV_ITEMS_TOTAL);
+			windows[0].update();
 		}
 
 		redrawFlag = REDRAW_NONE;
@@ -296,8 +297,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				break;
 			} else if (result == 2) {
 				// Close dialogs and finish dialog with original starting character
-				screen._windows[30].close();
-				screen._windows[29].close();
+				windows[30].close();
+				windows[29].close();
 				c = startingChar;
 				break;
 			}
@@ -778,6 +779,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
+	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	XeenItem *itemCategories[4] = { &c._weapons[0], &c._armor[0], &c._accessories[0], &c._misc[0] };
@@ -786,7 +788,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 		// Inventory is empty
 		return category == CATEGORY_MISC ? 0 : 2;
 
-	Window &w = screen._windows[11];
+	Window &w = windows[11];
 	SpriteResource escSprites;
 	if (itemIndex < 0 || itemIndex > 8) {
 		saveButtons();
@@ -872,9 +874,9 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 							i._bonusFlags = charges;
 							_oldCharacter = &c;
 
-							screen._windows[30].close();
-							screen._windows[29].close();
-							screen._windows[24].close();
+							windows[30].close();
+							windows[29].close();
+							windows[24].close();
 							spells.castItemSpell(i._id);
 
 							if (!charges) {
@@ -1009,7 +1011,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				Common::String str = Common::String::format(Res.IDENTIFY_ITEM_MSG,
 					desc.c_str(), details.c_str());
 
-				Window &win = screen._windows[14];
+				Window &win = windows[14];
 				win.open();
 				win.writeString(str);
 				win.update();

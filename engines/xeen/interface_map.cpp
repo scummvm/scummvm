@@ -3525,6 +3525,7 @@ void InterfaceMap::setOutdoorsObjects() {
 
 void InterfaceMap::drawIndoors() {
 	Map &map = *_vm->_map;
+	Windows &windows = *_vm->_windows;
 	int surfaceId;
 
 	// Draw any surface tiles on top of the default ground
@@ -4357,7 +4358,7 @@ void InterfaceMap::drawIndoors() {
 	_indoorList._horizon._frame = 7;
 
 	// Finally draw the darn indoor scene
-	_vm->_screen->_windows[3].drawList(&_indoorList[0], _indoorList.size());
+	windows[3].drawList(&_indoorList[0], _indoorList.size());
 
 	// Check for any character shooting
 	_isAttacking = false;
@@ -4372,7 +4373,7 @@ void InterfaceMap::drawIndoors() {
 void InterfaceMap::drawOutdoors() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 	int surfaceId;
 
 	// Draw any surface tiles on top of the default ground
@@ -4433,7 +4434,7 @@ void InterfaceMap::drawOutdoors() {
 	_outdoorList._groundSprite._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
 
 	// Finally render the outdoor scene
-	screen._windows[3].drawList(&_outdoorList[0], _outdoorList.size());
+	windows[3].drawList(&_outdoorList[0], _outdoorList.size());
 
 	// Check for any character shooting
 	_isAttacking = false;

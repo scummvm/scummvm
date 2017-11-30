@@ -33,10 +33,10 @@ void InfoDialog::show(XeenEngine *vm) {
 }
 
 void InfoDialog::execute() {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
+	Windows &windows = *_vm->_windows;
 
 	protectionText();
 	Common::String statusText = "";
@@ -61,7 +61,7 @@ void InfoDialog::execute() {
 		party._minutes % 60, (hour > 11) ? 'p' : 'a',
 		party._day, party._year, statusText.c_str());
 
-	Window &w = screen._windows[28];
+	Window &w = windows[28];
 	w.setBounds(Common::Rect(88, 20, 248, 112));
 	w.open();
 

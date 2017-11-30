@@ -907,13 +907,13 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 
 void Map::load(int mapId) {
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 	IndoorDrawList &indoorList = _vm->_interface->_indoorList;
 	OutdoorDrawList &outdoorList = _vm->_interface->_outdoorList;
 
 	if (intf._falling) {
-		Window &w = screen._windows[9];
+		Window &w = windows[9];
 		w.open();
 		w.writeString(Res.OOPS);
 	} else {

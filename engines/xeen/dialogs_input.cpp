@@ -75,14 +75,14 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 Common::KeyCode Input::waitForKey(const Common::String &msg) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 
 	bool oldUpDoorText = intf._upDoorText;
 	byte oldTillMove = intf._tillMove;
 	intf._upDoorText = false;
 	intf._tillMove = 0;
 
-	bool flag = !_vm->_startupWindowActive && !screen._windows[25]._enabled
+	bool flag = !_vm->_startupWindowActive && !windows[25]._enabled
 		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_17;
 
 	Common::KeyCode ch = Common::KEYCODE_INVALID;
@@ -96,7 +96,7 @@ Common::KeyCode Input::waitForKey(const Common::String &msg) {
 		_window->update();
 
 		if (flag)
-			screen._windows[3].update();
+			windows[3].update();
 
 		events.wait(1);
 
@@ -135,7 +135,7 @@ void Input::animateCursor() {
 
 /*------------------------------------------------------------------------*/
 
-StringInput::StringInput(XeenEngine *vm): Input(vm, &vm->_screen->_windows[6]) {
+StringInput::StringInput(XeenEngine *vm): Input(vm, &(*vm->_windows)[6]) {
 }
 
 int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
@@ -150,9 +150,9 @@ int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
 int StringInput::execute(bool type, const Common::String &expected,
 		const Common::String &title, int opcode) {
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
-	Window &w = screen._windows[6];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[6];
 	Sound &sound = *_vm->_sound;
 	int result = 0;
 
@@ -193,7 +193,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 
 /*------------------------------------------------------------------------*/
 
-NumericInput::NumericInput(XeenEngine *vm, int window) : Input(vm, &vm->_screen->_windows[window]) {
+NumericInput::NumericInput(XeenEngine *vm, int window) : Input(vm, &(*vm->_windows)[window]) {
 }
 
 int NumericInput::show(XeenEngine *vm, int window, int maxLength, int maxWidth) {
@@ -229,6 +229,7 @@ int Choose123::execute(int numOptions) {
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
+	Windows &windows = *_vm->_windows;
 
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_DIALOG_123;
@@ -236,7 +237,7 @@ int Choose123::execute(int numOptions) {
 	loadButtons(numOptions);
 	_iconSprites.draw(screen, 7, Common::Point(232, 74));
 	drawButtons(&screen);
-	screen._windows[34].update();
+	windows[34].update();
 
 	int result = -1;
 	while (result == -1) {
@@ -301,8 +302,8 @@ int HowMuch::show(XeenEngine *vm) {
 }
 
 int HowMuch::execute() {
-	Screen &screen = *_vm->_screen;
-	Window &w = screen._windows[6];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[6];
 	Common::String num;
 
 	w.open();

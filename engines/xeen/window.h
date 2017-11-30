@@ -30,7 +30,10 @@
 
 namespace Xeen {
 
+#define GAME_WINDOW 28
+
 class XeenEngine;
+class Window;
 
 struct DrawStruct {
 	SpriteResource *_sprites;
@@ -45,9 +48,37 @@ struct DrawStruct {
 	DrawStruct(): _sprites(nullptr), _frame(0), _x(0), _y(0), _scale(0), _flags(0) {}
 };
 
+class Windows {
+	friend class Window;
+private:
+	Common::Array<Window> _windows;
+	Common::Array<Window *> _windowStack;
+private:
+	/**
+	 * Adds a window to the stack of currently open ones
+	 */
+	void addToStack(Window *win);
+
+	/**
+	 * Removes a window from the currently active stack
+	 */
+	void removeFromStack(Window *win);
+public:
+	Windows();
+
+	/**
+	 * Returns a specified window
+	 */
+	Window &operator[](int index) { return _windows[index]; }
+
+	/**
+	 * Close all currently open windows
+	 */
+	void closeAll();
+};
+
 class Window: public XSurface {
 private:
-	static XeenEngine *_vm;
 	Common::Rect _bounds;
 	Common::Rect _innerBounds;
 	XSurface _savedArea;
@@ -59,8 +90,6 @@ private:
 	void open2();
 public:
 	bool _enabled;
-public:
-	static void init(XeenEngine *vm);
 public:
 	Window();
 	Window(const Window &src);

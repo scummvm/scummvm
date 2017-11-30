@@ -39,6 +39,7 @@ void AutoMapDialog::execute() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
+	Windows &windows = *_vm->_windows;
 	int frame2 = intf._overallFrame * 2;
 	bool frameEndFlag = false;
 
@@ -72,7 +73,7 @@ void AutoMapDialog::execute() {
 		arrowPt.y = 69;
 	}
 
-	screen._windows[5].open();
+	windows[5].open();
 //	MazeData &mazeData = map.mazeDataCurrent();
 	bool drawFlag = true;
 	int v;
@@ -81,7 +82,7 @@ void AutoMapDialog::execute() {
 	do {
 		if (drawFlag)
 			intf.draw3d(false);
-		screen._windows[5].writeString("\n");
+		windows[5].writeString("\n");
 
 		if (map._isOutdoors) {
 			// Draw outdoors map
@@ -396,7 +397,7 @@ void AutoMapDialog::execute() {
 			}
 		}
 
-		screen._windows[5].frame();
+		windows[5].frame();
 		if (!map._isOutdoors) {
 			map._tileSprites.draw(screen, 52, Common::Point(76, 30));
 		} else if (frameEndFlag) {
@@ -410,18 +411,18 @@ void AutoMapDialog::execute() {
 			events.updateGameCounter();
 		}
 
-		screen._windows[5].writeString(Common::String::format(Res.MAP_TEXT,
+		windows[5].writeString(Common::String::format(Res.MAP_TEXT,
 			map._mazeName.c_str(), party._mazePosition.x,
 			party._mazePosition.y, Res.DIRECTION_TEXT[party._mazeDirection]));
-		screen._windows[5].update();
-		screen._windows[3].update();
+		windows[5].update();
+		windows[3].update();
 
 		events.pollEvents();
 		drawFlag = false;
 	} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
 
 	events.clearEvents();
-	screen._windows[5].close();
+	windows[5].close();
 }
 
 } // End of namespace Xeen

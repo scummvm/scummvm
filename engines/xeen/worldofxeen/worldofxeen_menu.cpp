@@ -53,12 +53,13 @@ void WorldOfXeenMenu::show(XeenEngine *vm) {
 void WorldOfXeenMenu::execute() {
 	SpriteResource special("special.icn");
 	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 	EventsManager &events = *_vm->_events;
 
 	File newBright("newbrigh.m");
 	_vm->_sound->playSong(newBright);
 
-	screen._windows[GAME_WINDOW].setBounds(Common::Rect(72, 25, 248, 175));
+	windows[GAME_WINDOW].setBounds(Common::Rect(72, 25, 248, 175));
 
 	Common::String title1, title2;
 	startup(title1, title2);
@@ -129,6 +130,7 @@ void WorldOfXeenMenu::showTitles2() {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 
 	SpriteResource titleSprites("title2b.raw");
 	SpriteResource kludgeSprites("kludge.int");
@@ -147,7 +149,7 @@ void WorldOfXeenMenu::showTitles2() {
 		events.updateGameCounter();
 		screen.restoreBackground();
 		title2Sprites[i / 4].draw(screen, i % 4);
-		screen._windows[0].update();
+		windows[0].update();
 
 		if (i == 19)
 			sound.stopSound();
@@ -157,7 +159,7 @@ void WorldOfXeenMenu::showTitles2() {
 	}
 
 	screen.restoreBackground();
-	screen._windows[0].update();
+	windows[0].update();
 }
 
 void WorldOfXeenMenu::setupButtons(SpriteResource *buttons) {
@@ -208,23 +210,25 @@ void WorldOptionsMenu::setBackground(bool doFade) {
 }
 
 void WorldOptionsMenu::openWindow() {
-	_vm->_screen->_windows[GAME_WINDOW].open();
+	Windows &windows = *_vm->_windows;
+	windows[GAME_WINDOW].open();
 }
 
 void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 	events.updateGameCounter();
 
 	// Draw the background frame in a continous cycle
 	_bgFrame = (_bgFrame + 1) % 5;
-	title1.draw(screen._windows[0], _bgFrame);
+	title1.draw(windows[0], _bgFrame);
 
 	// Draw the basic frame for the optitons menu and title text
-	screen._windows[GAME_WINDOW].frame();
-	screen._windows[GAME_WINDOW].writeString(Res.OPTIONS_TITLE);
+	windows[GAME_WINDOW].frame();
+	windows[GAME_WINDOW].writeString(Res.OPTIONS_TITLE);
 
-	drawButtons(&screen._windows[0]);
+	drawButtons(&windows[0]);
 	screen.update();
 
 	if (waitFlag) {

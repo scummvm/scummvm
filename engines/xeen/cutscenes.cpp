@@ -36,6 +36,7 @@ void Cutscenes::resetSubtitles(uint lineNum, uint defaultSize) {
 void Cutscenes::showSubtitles(uint windowIndex) {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 
 	if (sound._soundOn || _vm->shouldQuit()) {
 		// Sound is on, so subtitles aren't needed
@@ -62,7 +63,7 @@ void Cutscenes::showSubtitles(uint windowIndex) {
 		_boxSprites->draw(screen, 0, Common::Point(36, 189));
 
 		// Write the subtitle line
-		screen._windows[windowIndex].writeString(_subtitleLine);
+		windows[windowIndex].writeString(_subtitleLine);
 	}
 
 	screen.update();

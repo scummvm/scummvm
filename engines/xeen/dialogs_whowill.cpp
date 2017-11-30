@@ -39,25 +39,25 @@ int WhoWill::execute(int message, int action, bool type) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 	Town &town = *_vm->_town;
+	Windows &windows = *_vm->_windows;
 	int numFrames;
 
 	if (party._activeParty.size() <= 1)
 		// Unless there's at least two characters, just return the first one
 		return 1;
 
-	screen._windows[38].close();
-	screen._windows[12].close();
+	windows[38].close();
+	windows[12].close();
 
 	Common::String actionStr = type ? map._events._text[action] : Res.WHO_WILL_ACTIONS[action];
 	Common::String msg = Common::String::format(Res.WHO_WILL, actionStr.c_str(),
 		Res.WHO_ACTIONS[message], party._activeParty.size());
 
-	screen._windows[36].open();
-	screen._windows[36].writeString(msg);
-	screen._windows[36].update();
+	windows[36].open();
+	windows[36].writeString(msg);
+	windows[36].update();
 
 	intf._face1State = map._headData[party._mazePosition.y][party._mazePosition.x]._left;
 	intf._face2State = map._headData[party._mazePosition.y][party._mazePosition.x]._right;
@@ -65,14 +65,14 @@ int WhoWill::execute(int message, int action, bool type) {
 	while (!_vm->shouldQuit()) {
 		events.updateGameCounter();
 
-		if (screen._windows[11]._enabled) {
+		if (windows[11]._enabled) {
 			town.drawTownAnim(0);
-			screen._windows[36].frame();
+			windows[36].frame();
 			numFrames = 3;
 		} else {
 			intf.draw3d(false);
-			screen._windows[36].frame();
-			screen._windows[3].update();
+			windows[36].frame();
+			windows[3].update();
 			numFrames = 1;
 		}
 
@@ -98,7 +98,7 @@ int WhoWill::execute(int message, int action, bool type) {
 	}
 
 	intf._face1State = intf._face2State = 2;
-	screen._windows[36].close();
+	windows[36].close();
 	return _buttonValue;
 }
 

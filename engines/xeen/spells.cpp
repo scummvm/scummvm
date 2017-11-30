@@ -430,9 +430,9 @@ void Spells::detectMonster() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Window &w = screen._windows[19];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[19];
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	int grid[7][7];
 
@@ -753,6 +753,7 @@ void Spells::insectSpray() {
 }
 
 void Spells::itemToGold() {
+	Windows &windows = *_vm->_windows;
 	Character *c = SpellOnWho::show(_vm, MS_ItemToGold);
 	if (!c)
 		return;
@@ -760,7 +761,7 @@ void Spells::itemToGold() {
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_FF;
 
-	_vm->_screen->_windows[11].close();
+	windows[11].close();
 	ItemsDialog::show(_vm, c, ITEMMODE_TO_GOLD);
 
 	_vm->_mode = oldMode;

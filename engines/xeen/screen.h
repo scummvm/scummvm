@@ -30,7 +30,6 @@
 #include "common/rect.h"
 #include "xeen/font.h"
 #include "xeen/sprites.h"
-#include "xeen/window.h"
 
 namespace Xeen {
 
@@ -38,7 +37,6 @@ namespace Xeen {
 #define SCREEN_HEIGHT 200
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
-#define GAME_WINDOW 28
 
 class XeenEngine;
 
@@ -72,17 +70,9 @@ public:
 	 */
 	virtual void addDirtyRect(const Common::Rect &r);
 public:
-	Common::Array<Window> _windows;
-
-	Common::Array<Window *> _windowStack;
-public:
 	Screen(XeenEngine *vm);
 
 	virtual ~Screen();
-
-	void setupWindows();
-
-	void closeWindows();
 
 	void update();
 

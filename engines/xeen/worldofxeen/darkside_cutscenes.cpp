@@ -1182,6 +1182,7 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 	};
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
+	Windows &windows = *_vm->_windows;
 	SpriteResource claw("claw.int");
 	SpriteResource dragon1("dragon1.int");
 	int numPages = 0 + (msg1 ? 1 : 0) + (msg2 ? 1 : 0) + (msg3 ? 1 : 0);
@@ -1213,11 +1214,11 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 			// Form the text string to display the text
 			Common::String str1 = Common::String::format(Res.PHAROAH_ENDING_TEXT1,
 				text[pageNum]);
-			screen._windows[39].writeString(str1);
+			windows[39].writeString(str1);
 
 			Common::String str2 = Common::String::format(Res.PHAROAH_ENDING_TEXT2,
 				text[pageNum]);
-			screen._windows[39].writeString(str2);
+			windows[39].writeString(str2);
 
 			idx = (idx + 1) % 32;
 			screen.update();

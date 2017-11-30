@@ -57,6 +57,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_sound = nullptr;
 	_spells = nullptr;
 	_town = nullptr;
+	_windows = nullptr;
 	_eventData = nullptr;
 	_noDirectionSense = false;
 	_startupWindowActive = false;
@@ -80,6 +81,7 @@ XeenEngine::~XeenEngine() {
 	delete _sound;
 	delete _spells;
 	delete _town;
+	delete _windows;
 	delete _eventData;
 	delete _resources;
 	delete _files;
@@ -99,10 +101,10 @@ void XeenEngine::initialize() {
 	_saves = new SavesManager(this, *_party);
 	_screen = new Screen(this);
 	_scripts = new Scripts(this);
-	_screen->setupWindows();
 	_sound = new Sound(this, _mixer);
 	_spells = new Spells(this);
 	_town = new Town(this);
+	_windows = new Windows();
 
 	File f("029.obj");
 	_eventData = f.readStream(f.size());
@@ -294,9 +296,9 @@ void XeenEngine::play() {
 //		_screen->fadeOut();
 	}
 
-	_screen->_windows[0].update();
+	(*_windows)[0].update();
 	_interface->mainIconsPrint();
-	_screen->_windows[0].update();
+	(*_windows)[0].update();
 	_events->setCursor(0);
 
 	_combat->_moveMonsters = true;

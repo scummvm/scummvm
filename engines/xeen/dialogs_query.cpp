@@ -36,6 +36,7 @@ bool Confirm::show(XeenEngine *vm, const Common::String &msg, int mode) {
 bool Confirm::execute(const Common::String &msg, int mode) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
+	Windows &windows = *_vm->_windows;
 	SpriteResource confirmSprites;
 	bool result = false;
 
@@ -43,7 +44,7 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 	addButton(Common::Rect(129, 112, 153, 122), Common::KEYCODE_y, &confirmSprites);
 	addButton(Common::Rect(185, 112, 209, 122), Common::KEYCODE_n, &confirmSprites);
 
-	Window &w = screen._windows[mode ? 22 : 21];
+	Window &w = windows[mode ? 22 : 21];
 	w.open();
 
 	if (!mode) {
@@ -104,8 +105,8 @@ bool YesNo::execute(bool type, bool townFlag) {
 	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
+	Windows &windows = *_vm->_windows;
 	SpriteResource confirmSprites;
-	//int numFrames;
 	bool result = false;
 
 	Mode oldMode = _vm->_mode;
@@ -116,7 +117,7 @@ bool YesNo::execute(bool type, bool townFlag) {
 		res._globalSprites.draw(screen, 7, Common::Point(232, 74));
 		confirmSprites.draw(screen, 0, Common::Point(235, 75));
 		confirmSprites.draw(screen, 2, Common::Point(260, 75));
-		screen._windows[34].update();
+		windows[34].update();
 
 		addButton(Common::Rect(235, 75, 259, 95), Common::KEYCODE_y, &confirmSprites);
 		addButton(Common::Rect(260, 75, 284, 95), Common::KEYCODE_n, &confirmSprites);

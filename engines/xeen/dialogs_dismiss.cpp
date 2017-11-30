@@ -38,9 +38,10 @@ void Dismiss::execute() {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
+	Windows &windows = *_vm->_windows;
 	loadButtons();
 
-	Window &w = screen._windows[31];
+	Window &w = windows[31];
 	w.open();
 	_iconSprites.draw(w, 0, Common::Point(225, 120));
 	w.update();
@@ -53,7 +54,7 @@ void Dismiss::execute() {
 			w.frame();
 			w.writeString("\r");
 			_iconSprites.draw(w, 0, Common::Point(225, 120));
-			screen._windows[3].update();
+			windows[3].update();
 			w.update();
 
 			do {

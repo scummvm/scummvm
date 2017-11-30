@@ -49,6 +49,7 @@ void PartyDialog::execute() {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 	bool modeFlag = false;
 	int startingChar = 0;
 
@@ -69,7 +70,7 @@ void PartyDialog::execute() {
 			_charList.push_back(i);
 		}
 
-		Window &w = screen._windows[11];
+		Window &w = windows[11];
 		w.open();
 		setupFaces(startingChar, false);
 		w.writeString(Common::String::format(Res.PARTY_DIALOG_TEXT, _partyDetails.c_str()));
@@ -84,13 +85,13 @@ void PartyDialog::execute() {
 		screen.loadPalette("mm4.pal");
 
 		if (modeFlag) {
-			screen._windows[0].update();
+			windows[0].update();
 			events.setCursor(0);
 			screen.fadeIn();
 		} else {
 			if (_vm->getGameID() == GType_DarkSide) {
 				screen.fadeOut();
-				screen._windows[0].update();
+				windows[0].update();
 			}
 
 			doScroll(false, false);
@@ -353,7 +354,8 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 }
 
 void PartyDialog::startingCharChanged(int firstDisplayChar) {
-	Window &w = _vm->_screen->_windows[11];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[11];
 
 	setupFaces(firstDisplayChar, true);
 	w.writeString(Common::String::format(Res.PARTY_DIALOG_TEXT, _partyDetails.c_str()));
@@ -373,7 +375,8 @@ void PartyDialog::createChar() {
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	Window &w = screen._windows[0];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[0];
 	SpriteResource dice, icons;
 	Common::Array<int> freeCharList;
 	int classId;
@@ -694,7 +697,8 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	Window &w = screen._windows[28];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[28];
 
 	SpriteResource iconSprites;
 	iconSprites.load("esc.icn");
@@ -850,7 +854,8 @@ int PartyDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
 }
 
 void PartyDialog::printSelectionArrow(SpriteResource &icons, int selectedClass) {
-	Window &w = _vm->_screen->_windows[0];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[0];
 	icons.draw(w, 61, Common::Point(220, 19));
 	icons.draw(w, 63, Common::Point(220, selectedClass * 11 + 21));
 	w.update();
@@ -858,7 +863,8 @@ void PartyDialog::printSelectionArrow(SpriteResource &icons, int selectedClass) 
 
 void PartyDialog::drawDice(SpriteResource &dice) {
 	EventsManager &events = *_vm->_events;
-	Window &w = _vm->_screen->_windows[32];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[32];
 	dice.draw(w, 7, Common::Point(12, 11));
 
 	for (int diceNum = 0; diceNum < 3; ++diceNum) {
@@ -894,6 +900,7 @@ void PartyDialog::drawDice(SpriteResource &dice) {
 int PartyDialog::exchangeAttribute(int srcAttr) {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 	SpriteResource icons;
 	icons.load("create2.icn");
 
@@ -907,7 +914,7 @@ int PartyDialog::exchangeAttribute(int srcAttr) {
 	addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_a);
 	addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_l);
 
-	Window &w = screen._windows[26];
+	Window &w = windows[26];
 	w.open();
 	w.writeString(Common::String::format(Res.EXCHANGE_ATTR_WITH, Res.STAT_NAMES[srcAttr - 1]));
 	icons.draw(w, 0, Common::Point(118, 58));
@@ -976,7 +983,8 @@ bool PartyDialog::saveCharacter(Character &c, int classId,
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	Window &w = screen._windows[6];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[6];
 	Common::String name;
 	int result;
 	bool isDarkCc = _vm->_files->_isDarkCc;

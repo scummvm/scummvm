@@ -70,6 +70,7 @@ int Town::townAction(TownAction actionId) {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if (actionId == ACTION12) {
@@ -228,11 +229,11 @@ int Town::townAction(TownAction actionId) {
 	intf.assembleBorder();
 
 	// Open up the window and write the string
-	screen._windows[10].open();
-	screen._windows[10].writeString(title);
+	windows[10].open();
+	windows[10].writeString(title);
 	drawButtons(&screen);
 
-	screen._windows[0].update();
+	windows[0].update();
 	intf.highlightChar(0);
 	drawTownAnim(1);
 
@@ -248,7 +249,7 @@ int Town::townAction(TownAction actionId) {
 			return 0;
 
 		title = createTownText(*charP);
-		screen._windows[10].writeString(title);
+		windows[10].writeString(title);
 		drawButtons(&screen);
 	} while (_buttonValue != Common::KEYCODE_ESCAPE);
 
@@ -294,6 +295,7 @@ int Town::townAction(TownAction actionId) {
 
 int Town::townWait() {
 	EventsManager &events = *_vm->_events;
+	Windows &windows = *_vm->_windows;
 
 	_buttonValue = 0;
 	while (!_vm->shouldQuit() && !_buttonValue) {
@@ -303,7 +305,7 @@ int Town::townWait() {
 			checkEvents(_vm);
 		}
 		if (!_buttonValue)
-			drawTownAnim(!_vm->_screen->_windows[11]._enabled);
+			drawTownAnim(!windows[11]._enabled);
 	}
 
 	return _buttonValue;
@@ -596,8 +598,9 @@ Character *Town::doTavernOptions(Character *c) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Sound &sound = *_vm->_sound;
 	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	int idx = 0;
 
@@ -624,11 +627,11 @@ Character *Town::doTavernOptions(Character *c) {
 				sound.playSound("gulp.voc");
 				_v21 = 1;
 
-				screen._windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
+				windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
 					c->_name.c_str(), Res.GOOD_STUFF,
 					XeenEngine::printMil(party._gold).c_str()));
-				drawButtons(&screen._windows[0]);
-				screen._windows[10].update();
+				drawButtons(&windows[0]);
+				windows[10].update();
 
 				if (_vm->getRandomNumber(100) < 26) {
 					++c->_conditions[DRUNK];
@@ -669,10 +672,10 @@ Character *Town::doTavernOptions(Character *c) {
 		}
 
 		Common::String msg = _textStrings[(isDarkCc ? 60 : 75) + idx];
-		screen._windows[10].close();
-		screen._windows[12].open();
-		screen._windows[12].writeString(msg);
-		screen._windows[12].update();
+		windows[10].close();
+		windows[12].open();
+		windows[12].writeString(msg);
+		windows[12].update();
 
 		if (YesNo::show(_vm, false, true)) {
 			if (party._food >= _v22) {
@@ -684,8 +687,8 @@ Character *Town::doTavernOptions(Character *c) {
 			}
 		}
 
-		screen._windows[12].close();
-		screen._windows[10].open();
+		windows[12].close();
+		windows[10].open();
 		_buttonValue = 0;
 		break;
 	}
@@ -702,7 +705,7 @@ Character *Town::doTavernOptions(Character *c) {
 
 		Common::String msg = Common::String::format("\x03""c\x0B""012%s",
 			_textStrings[(party._day % 10) + idx].c_str());
-		Window &w = screen._windows[12];
+		Window &w = windows[12];
 		w.open();
 		w.writeString(msg);
 		w.update();
@@ -741,20 +744,20 @@ Character *Town::doTavernOptions(Character *c) {
 	case Common::KEYCODE_t:
 		if (!c->noActions()) {
 			if (!_v21) {
-				screen._windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
+				windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
 					c->_name.c_str(), Res.HAVE_A_DRINK,
 					XeenEngine::printMil(party._gold).c_str()));
 				drawButtons(&screen);
-				screen._windows[10].update();
+				windows[10].update();
 				townWait();
 			} else {
 				_v21 = 0;
 				if (c->_conditions[DRUNK]) {
-					screen._windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
+					windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
 						c->_name.c_str(), Res.YOURE_DRUNK,
 						XeenEngine::printMil(party._gold).c_str()));
 					drawButtons(&screen);
-					screen._windows[10].update();
+					windows[10].update();
 					townWait();
 				} else if (party.subtract(0, 1, 0, WT_2)) {
 					sound.stopSound();
@@ -776,7 +779,7 @@ Character *Town::doTavernOptions(Character *c) {
 					map.mazeData()._tavernTips = (map.mazeData()._tavernTips + 1) /
 						(isDarkCc ? 10 : 15);
 
-					Window &w = screen._windows[12];
+					Window &w = windows[12];
 					w.open();
 					w.writeString(Common::String::format("\x03""c\x0B""012%s", msg.c_str()));
 					w.update();
@@ -958,8 +961,8 @@ Character *Town::doTrainingOptions(Character *c) {
 
 void Town::depositWithdrawl(int choice) {
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 	int gold, gems;
 
 	if (choice) {
@@ -981,10 +984,10 @@ void Town::depositWithdrawl(int choice) {
 		XeenEngine::printMil(gold).c_str(),
 		XeenEngine::printMil(gems).c_str());
 
-	screen._windows[35].open();
-	screen._windows[35].writeString(msg);
-	drawButtons(&screen._windows[35]);
-	screen._windows[35].update();
+	windows[35].open();
+	windows[35].writeString(msg);
+	drawButtons(&windows[35]);
+	windows[35].update();
 
 	sound.stopSound();
 	File voc("coina.voc");
@@ -1010,7 +1013,7 @@ void Town::depositWithdrawl(int choice) {
 			(!choice && !party._gold && !flag)) {
 			party.notEnough(flag, choice, 1, WT_2);
 		} else {
-			screen._windows[35].writeString(Res.AMOUNT);
+			windows[35].writeString(Res.AMOUNT);
 			int amount = NumericInput::show(_vm, 35, 10, 77);
 
 			if (amount) {
@@ -1044,8 +1047,8 @@ void Town::depositWithdrawl(int choice) {
 			sound.playSound(voc);
 			msg = Common::String::format(Res.GOLD_GEMS_2, Res.DEPOSIT_WITHDRAWL[choice],
 				XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
-			screen._windows[35].writeString(msg);
-			screen._windows[35].update();
+			windows[35].writeString(msg);
+			windows[35].update();
 		}
 		// TODO
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
@@ -1061,6 +1064,7 @@ void Town::drawTownAnim(bool flag) {
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if (_townActionId == 1) {
@@ -1160,7 +1164,7 @@ void Town::drawTownAnim(bool flag) {
 		intf.assembleBorder();
 	}
 
-	if (screen._windows[11]._enabled) {
+	if (windows[11]._enabled) {
 		_drawCtr1 = (_drawCtr1 + 1) % 2;
 		if (!_drawCtr1 || !_drawCtr2) {
 			_drawFrameIndex = 0;
@@ -1188,7 +1192,7 @@ void Town::drawTownAnim(bool flag) {
 			sound.playFX(45);
 	}
 
-	screen._windows[3].update();
+	windows[3].update();
 }
 
 bool Town::isActive() const {
@@ -1219,7 +1223,8 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
-	Window &w = screen._windows[11];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[11];
 
 	town._townMaxId = 4;
 	town._townActionId = NO_ACTION;
@@ -1262,7 +1267,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 			res._globalSprites.draw(screen, 7, Common::Point(232, 74));
 			res._globalSprites.draw(screen, 0, Common::Point(235, 75));
 			res._globalSprites.draw(screen, 2, Common::Point(260, 75));
-			screen._windows[34].update();
+			windows[34].update();
 
 			intf._face1State = map._headData[party._mazePosition.y][party._mazePosition.x]._left;
 			intf._face2State = map._headData[party._mazePosition.y][party._mazePosition.x]._right;

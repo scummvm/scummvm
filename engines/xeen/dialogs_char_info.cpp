@@ -41,6 +41,7 @@ void CharacterInfo::execute(int charIndex) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 
 	bool redrawFlag = true;
 	Mode oldMode = _vm->_mode;
@@ -50,7 +51,7 @@ void CharacterInfo::execute(int charIndex) {
 
 	Character *c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : combat._combatParty[charIndex];
 	intf.highlightChar(charIndex);
-	Window &w = screen._windows[24];
+	Window &w = windows[24];
 	w.open();
 
 	do {
@@ -342,6 +343,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	Common::Rect bounds(STAT_POS[0][attrib], STAT_POS[1][attrib],
 		STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 52);
 	Party &party = *_vm->_party;
+	Windows &windows = *_vm->_windows;
 	uint stat1, stat2;
 	uint idx;
 	Common::String msg;
@@ -551,7 +553,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	}
 
 	// Write the data for the stat display
-	Window &w = _vm->_screen->_windows[28];
+	Window &w = windows[28];
 	w.setBounds(bounds);
 	w.open();
 	w.writeString(msg);

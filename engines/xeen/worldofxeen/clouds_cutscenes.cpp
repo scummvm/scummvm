@@ -88,6 +88,8 @@ bool CloudsCutscenes::showCloudsIntro() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
+
 	SpriteResource stars("stars.vga"), intro1("intro1.vga"),
 		lake("lake.vga"), xeen("xeen.vga"), wizTower("wiztower.vga"),
 		wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
@@ -216,7 +218,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 	groupo.draw(screen, 0);
 	groupo.draw(screen, 1, Common::Point(160, 0));
 	crodo.draw(screen, 0, Common::Point(0, -5));
-	screen._windows[0].writeString(Res.CLOUDS_INTRO1);
+	windows[0].writeString(Res.CLOUDS_INTRO1);
 
 	// Unroll a scroll
 	if (doScroll(false, true))
@@ -284,7 +286,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 			case 12:
 			case 13: {
 				crodo.draw(screen, 0, Common::Point(0, -5));
-				screen._windows[0].writeString(Res.CLOUDS_INTRO1);
+				windows[0].writeString(Res.CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
 				WAIT(1);
@@ -297,7 +299,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 				if (lookup > 30)
 					lookup = 30;
 				frameCtr = _INTRO_FRAMES_VALS[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
-				screen._windows[0].writeString(Res.CLOUDS_INTRO1);
+				windows[0].writeString(Res.CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
 				WAIT(1);

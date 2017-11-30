@@ -571,7 +571,8 @@ void Party::giveTreasure() {
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
-	Window &w = screen._windows[10];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[10];
 
 	if (!_treasure._gold && !_treasure._gems)
 		return;
@@ -705,7 +706,8 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Window &w = screen._windows[10];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[10];
 	XeenItem &treasureItem = _treasure._categories[category][itemIndex];
 	sound.playFX(20);
 

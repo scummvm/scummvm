@@ -37,6 +37,7 @@ void QuickReferenceDialog::execute() {
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 	Common::String lines[8];
 
 	events.setCursor(0);
@@ -68,7 +69,7 @@ void QuickReferenceDialog::execute() {
 		food, food == 1 ? "" : "s"
 	);
 
-	Window &w = screen._windows[24];
+	Window &w = windows[24];
 	bool windowOpen = w._enabled;
 	if (!windowOpen)
 		w.open();

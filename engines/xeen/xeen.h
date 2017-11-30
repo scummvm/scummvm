@@ -46,6 +46,7 @@
 #include "xeen/sound.h"
 #include "xeen/spells.h"
 #include "xeen/town.h"
+#include "xeen/window.h"
 
 /**
  * This is the namespace of the Xeen engine.
@@ -152,6 +153,7 @@ public:
 	Sound *_sound;
 	Spells *_spells;
 	Town *_town;
+	Windows *_windows;
 	Mode _mode;
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;

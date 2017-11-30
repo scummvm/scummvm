@@ -136,12 +136,13 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 	int charIndex1 = charIndex + 1;
 	int selectedIndex1 = 0;
 	int selectedIndex2 = 0;
 	bool breakFlag = false;
 
-	screen.closeWindows();
+	windows.closeAll();
 
 	int idx = (int)party._activeParty.size();
 	if (!scripts._v2) {
@@ -222,7 +223,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 			sound.playFX(fx);
 			_powSprites.draw(screen, frame,
 				Common::Point(Res.CHAR_FACES_X[selectedIndex1], 150));
-			screen._windows[33].update();
+			windows[33].update();
 
 			// Reduce damage if power shield active, and set it zero
 			// if the damage amount has become negative.. you wouldn't
@@ -266,6 +267,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
 
 	// Attacked characters are automatically woken up
@@ -321,7 +323,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 
 	sound.playFX(fx);
 	intf._charPowSprites.draw(screen, frame, Common::Point(Res.CHAR_FACES_X[charNum], 150));
-	screen._windows[33].update();
+	windows[33].update();
 
 	damage -= party._powerShield;
 	if (damage > 0 && monsterData._specialAttack && !c.charSavingThrow(DT_PHYSICAL)) {

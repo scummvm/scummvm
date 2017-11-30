@@ -46,6 +46,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
+	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	loadButtons();
 
@@ -54,7 +55,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	int selection = -1;
 	int topIndex = 0;
 	int newSelection;
-	screen._windows[25].open();
+	windows[25].open();
 
 	do {
 		if (!isCasting) {
@@ -68,14 +69,14 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			Common::String title = Common::String::format(Res.BUY_SPELLS, c->_name.c_str());
 			Common::String msg = Common::String::format(Res.GUILD_OPTIONS,
 				title.c_str(), XeenEngine::printMil(party._gold).c_str());
-			screen._windows[10].writeString(msg);
+			windows[10].writeString(msg);
 
 			warning("TODO: Sprite draw using previously used button sprites");
 		}
 
 		_spells.clear();
 		const char *errorMsg = setSpellText(c, castingCopy);
-		screen._windows[25].writeString(Common::String::format(Res.SPELLS_FOR,
+		windows[25].writeString(Common::String::format(Res.SPELLS_FOR,
 			errorMsg == nullptr ? Res.SPELL_LINES_0_TO_9 : "",
 			c->_name.c_str()));
 
@@ -98,7 +99,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		if (_spells.size() == 0)
 			names[0] = errorMsg;
 
-		screen._windows[37].writeString(Common::String::format(Res.SPELLS_DIALOG_SPELLS,
+		windows[37].writeString(Common::String::format(Res.SPELLS_DIALOG_SPELLS,
 			colors[0], names[0], colors[1], names[1], colors[2], names[2],
 			colors[3], names[3], colors[4], names[4], colors[5], names[5],
 			colors[6], names[6], colors[7], names[7], colors[8], names[8],
@@ -111,9 +112,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		_scrollSprites.draw(screen, 0, Common::Point(187, 26));
 		_scrollSprites.draw(screen, 2, Common::Point(187, 111));
 		if (isCasting)
-			_scrollSprites.draw(screen._windows[25], 5, Common::Point(132, 123));
+			_scrollSprites.draw(windows[25], 5, Common::Point(132, 123));
 
-		screen._windows[25].update();
+		windows[25].update();
 
 		do {
 			events.pollEventsAndWait();
@@ -135,7 +136,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					intf.highlightChar(_buttonValue);
 
 					if (_vm->_mode == MODE_17) {
-						screen._windows[10].writeString(Common::String::format(Res.GUILD_OPTIONS,
+						windows[10].writeString(Common::String::format(Res.GUILD_OPTIONS,
 							XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()));
 					} else {
 						int category;
@@ -155,7 +156,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 						int spellIndex = (c->_currentSpell == -1) ? 39 : c->_currentSpell;
 						int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
-						screen._windows[10].writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
+						windows[10].writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
 							c->_name.c_str(), spells._spellNames[spellId].c_str(),
 							spells.calcSpellPoints(spellId, c->getCurrentLevel()),
 							Res.SPELL_GEM_COST[spellId], c->_currentSp));
@@ -163,7 +164,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 					if (priorDialog != nullptr)
 						priorDialog->drawButtons(&screen);
-					screen._windows[10].update();
+					windows[10].update();
 				}
 			}
 			break;
@@ -273,7 +274,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		}
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
-	screen._windows[25].close();
+	windows[25].close();
 
 	if (_vm->shouldQuit())
 		selection = -1;
@@ -480,7 +481,8 @@ int CastSpell::execute(Character *&c) {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
-	Window &w = screen._windows[10];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[10];
 
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_3;
@@ -598,9 +600,9 @@ int SpellOnWho::execute(int spellId) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
-	Window &w = screen._windows[16];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[16];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_3;
 	int result = 999;
@@ -666,7 +668,8 @@ int SelectElement::execute(int spellId) {
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
-	Window &w = screen._windows[15];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[15];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_3;
 	int result = 999;
@@ -744,7 +747,8 @@ void NotWhileEngaged::execute(int spellId) {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
-	Window &w = screen._windows[6];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[6];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_3;
 
@@ -779,7 +783,8 @@ bool LloydsBeacon::execute() {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Window &w = screen._windows[10];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[10];
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	Character &c = *combat._oldCharacter;
 
@@ -882,7 +887,8 @@ int Teleport::execute() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	Window &w = screen._windows[6];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[6];
 	Common::String num;
 
 	w.open();
@@ -938,8 +944,8 @@ int TownPortal::show(XeenEngine *vm) {
 
 int TownPortal::execute() {
 	Map &map = *_vm->_map;
-	Screen &screen = *_vm->_screen;
-	Window &w = screen._windows[20];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[20];
 	Common::String townNames[5];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_FF;
@@ -989,7 +995,8 @@ void IdentifyMonster::execute() {
 	Map &map = *_vm->_map;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Window &w = screen._windows[17];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[17];
 	Common::String monsterDesc[3];
 
 	for (int monIndex = 0; monIndex < 3; ++monIndex) {
@@ -1017,7 +1024,7 @@ void IdentifyMonster::execute() {
 		events.updateGameCounter();
 		intf.draw3d(false);
 		w.frame();
-		screen._windows[3].update();
+		windows[3].update();
 
 		events.wait(1, false);
 	} while (!events.isKeyMousePressed());
