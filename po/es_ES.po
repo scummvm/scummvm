@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-30 01:15+0100\n"
-"PO-Revision-Date: 2017-12-01 22:46+0000\n"
+"PO-Revision-Date: 2017-12-01 22:51+0000\n"
 "Last-Translator: TomasM <truido@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
@@ -908,7 +908,7 @@ msgstr "Filtros de gráficos"
 
 #: gui/options.cpp:1023
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usar filtrado lineal para escalar gráficos"
+msgstr "Usar filtrado lineal para reescalar gráficos"
 
 #: gui/options.cpp:1026
 msgid "Aspect ratio correction"
@@ -953,7 +953,7 @@ msgstr "Emul. AdLib:"
 
 #: gui/options.cpp:1063 gui/options.cpp:1064
 msgid "AdLib is used for music in many games"
-msgstr "AdLib es usado para la música en muchos juegos"
+msgstr "AdLib se utiliza para reproducir la música en muchos juegos"
 
 #: gui/options.cpp:1077
 msgid "GM Device:"
@@ -971,7 +971,7 @@ msgstr "No usar música General MIDI"
 
 #: gui/options.cpp:1099 gui/options.cpp:1161
 msgid "Use first available device"
-msgstr "Utilizar el primer dispositivo disponible"
+msgstr "Usar el primer dispositivo disponible"
 
 #: gui/options.cpp:1111
 msgid "SoundFont:"
@@ -2995,7 +2995,7 @@ msgstr "Usar paleta original"
 
 #: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
-msgstr "Utilizar los niveles de brillo originales del juego"
+msgstr "Usar los niveles de brillo originales del juego"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
@@ -4625,8 +4625,7 @@ msgstr "Aplicar filtrado bilineal a sprites individuales"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr ""
-"Utilizar los menús originales para guardar/cargar, en vez de los de ScummVM"
+msgstr "Usar los menús originales para guardar/cargar, en vez de los de ScummVM"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
