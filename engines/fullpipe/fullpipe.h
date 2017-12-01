@@ -225,6 +225,8 @@ public:
 
 	Common::Array<Common::Point> _arcadeKeys;
 
+	void deleteModalObject();
+
 	void initMap();
 	void updateMap(PreloadItem *pre);
 	void updateMapPiece(int mapId, int update);

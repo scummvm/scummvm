@@ -230,6 +230,8 @@ bool FullpipeEngine::shouldQuit() {
 }
 
 Common::Error FullpipeEngine::loadGameState(int slot) {
+	deleteModalObject();
+
 	if (_gameLoader->readSavegame(getSavegameFile(slot)))
 		return Common::kNoError;
 	else
@@ -343,11 +345,7 @@ void FullpipeEngine::updateEvents() {
 						if (_modalObject->init(42)) {
 							_modalObject->update();
 						} else {
-							_modalObject->saveload();
-							BaseModalObject *obj = _modalObject->_parentObj;
-							if (obj)
-								delete _modalObject;
-							_modalObject = obj;
+							deleteModalObject();
 						}
 					} else {
 						_gameLoader->updateSystems(42);
@@ -470,6 +468,18 @@ void FullpipeEngine::cleanup() {
 	stopAllSoundStreams();
 }
 
+void FullpipeEngine::deleteModalObject() {
+	if (!_modalObject)
+		return;
+
+	_modalObject->saveload();
+	BaseModalObject *tmp = _modalObject->_parentObj;
+
+	delete _modalObject;
+
+	_modalObject = tmp;
+}
+
 void FullpipeEngine::updateScreen() {
 	debugC(4, kDebugDrawing, "FullpipeEngine::updateScreen()");
 
@@ -484,12 +494,7 @@ void FullpipeEngine::updateScreen() {
 			if (_modalObject->init(42)) {
 				_modalObject->update();
 			} else {
-				_modalObject->saveload();
-				BaseModalObject *tmp = _modalObject->_parentObj;
-
-				delete _modalObject;
-
-				_modalObject = tmp;
+				deleteModalObject();
 			}
 		}
 	} else if (_currentScene) {
