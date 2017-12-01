@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-30 01:15+0100\n"
-"PO-Revision-Date: 2017-04-23 05:59+0000\n"
-"Last-Translator: Santiago Sanchez <sanchez.santiago.j@gmail.com>\n"
-"Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/es/>\n"
+"PO-Revision-Date: 2017-12-01 21:48+0000\n"
+"Last-Translator: TomasM <truido@gmail.com>\n"
+"Language-Team: Spanish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -835,9 +835,8 @@ msgid "Show On-screen control"
 msgstr "Mostrar controles en pantalla"
 
 #: gui/options.cpp:936
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Modo Touchpad desactivado."
+msgstr "Modo Touchpad"
 
 #: gui/options.cpp:940
 msgid "Swap Menu and Back buttons"
@@ -849,7 +848,7 @@ msgstr "Velocidad del puntero:"
 
 #: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Velocidad del puntero para el control por teclado o joystick"
 
 #: gui/options.cpp:947
 msgctxt "lowres"
@@ -858,20 +857,20 @@ msgstr "Velocidad del puntero:"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Zona inactiva del joystick:"
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "Zona inactiva del joystick analógico"
 
 #: gui/options.cpp:960
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Zona inactiva del joystick:"
 
 #: gui/options.cpp:974
 msgid "HW Shader:"
-msgstr ""
+msgstr "Shader:"
 
 #: gui/options.cpp:974 gui/options.cpp:976
 msgid "Different hardware shaders give different visual effects"
@@ -884,7 +883,7 @@ msgstr "HW Shader:"
 
 #: gui/options.cpp:977
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Cada shader produce un efecto visual distinto"
 
 #: gui/options.cpp:994
 msgid "Graphics mode:"
@@ -1131,9 +1130,8 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/options.cpp:1450
-#, fuzzy
 msgid "Control"
-msgstr "Control del ratón"
+msgstr "Controles"
 
 #: gui/options.cpp:1476
 msgid "FluidSynth Settings"
@@ -1333,9 +1331,8 @@ msgid "Theme does not support selected language!"
 msgstr "¡El Tema no soporta el lenguaje seleccionado!"
 
 #: gui/options.cpp:1898
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "La partida no se ha cargado"
+msgstr "No se ha podido cargar el tema."
 
 #: gui/options.cpp:1901
 msgid ""
@@ -1343,7 +1340,7 @@ msgid ""
 "Misc settings will be restored."
 msgstr ""
 "\n"
-"La configuración por defecto será restaurada."
+"Se restaurará la configuración por defecto."
 
 #: gui/options.cpp:1937
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1635,22 +1632,22 @@ msgid "Antialiased"
 msgstr "Suavizado"
 
 #: gui/updates-dialog.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
-"Ahora ScummVM puede buscar actualizaciones automáticamente,\n"
-"para lo cual se requiere una conexión a Internet.\n"
-"\n"
-"Would you like to enable this feature?"
+"ScummVM puede buscar actualizaciones automáticamente,\n"
+"para lo cual hace falta una conexión a Internet. ¿Quieres\n"
+"activar esta opción?"
 
 #: gui/updates-dialog.cpp:52
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Puedes cambiar esta opción más adelante en la\n"
+"pestaña Otras del menú de opciones."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -1800,20 +1797,22 @@ msgid "<Bad value>"
 msgstr "<Valor incorrecto>"
 
 #: engines/advancedDetector.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown %s engine game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"El juego en '%s' parece ser desconocido.\n"
-"Porfavor, informe de ello al equipo de ScummVM junto al nombre\n"
-"del juego que ha intentado añadir y su versión, lenguaje, etc.:"
+"Parece que el juego que se encuentra en '%s' utiliza una versión desconocida "
+"del motor %s.\n"
+"\n"
+"Por favor, envía la siguiente información al equipo de ScummVM en %s, junto "
+"al nombre del juego, su versión, el idioma, etcétera:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr ""
+msgstr "Juegos disponibles:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -3298,28 +3297,24 @@ msgid "~W~ater Effect Enabled"
 msgstr "Efecto ag~u~a activado"
 
 #: engines/mohawk/dialogs.cpp:272
-#, fuzzy
 msgid "Transitions:"
-msgstr "Tra~n~siciones activadas"
+msgstr "Transiciones:"
 
 #: engines/mohawk/dialogs.cpp:274
-#, fuzzy
 msgid "Disabled"
-msgstr "Gráf. desactivados"
+msgstr "Desactivado"
 
 #: engines/mohawk/dialogs.cpp:275
-#, fuzzy
 msgid "Fastest"
-msgstr "Pegar"
+msgstr "Rápido"
 
 #: engines/mohawk/dialogs.cpp:276
-#, fuzzy
 msgid "Normal"
-msgstr "OpenGL Normal"
+msgstr "Normal"
 
 #: engines/mohawk/dialogs.cpp:277
 msgid "Best"
-msgstr ""
+msgstr "Mejor"
 
 #: engines/mohawk/mohawk.cpp:58
 msgid "The game is paused. Press any key to continue."
@@ -3351,7 +3346,7 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "Te faltan estos archivos de Riven:\n"
 
 #: engines/mohawk/riven_stack.cpp:182
 msgid ""
@@ -3522,7 +3517,7 @@ msgstr "Mostrar líneas negras sobre los vídeos para que parezcan más nítidos"
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Usar escalado de vídeo de alta calidad"
 
 #: engines/sci/detection.cpp:432
 #, fuzzy
