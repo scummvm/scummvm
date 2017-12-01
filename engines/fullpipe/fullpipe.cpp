@@ -239,7 +239,7 @@ Common::Error FullpipeEngine::loadGameState(int slot) {
 }
 
 Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &description) {
-	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot)))
+	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot), description))
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;

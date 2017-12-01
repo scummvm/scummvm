@@ -353,7 +353,7 @@ void MessageQueue::messageQueueCallback1(int par) {
 		}
 
 		if (g_fp->_currentScene)
-			g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, "savetmp.sav");
+			g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, "savetmp.sav", "");
 	}
 }
 

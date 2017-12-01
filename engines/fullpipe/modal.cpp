@@ -2285,7 +2285,7 @@ void ModalSaveGame::saveload() {
 			}
 
 			if (g_fp->_isSaveAllowed && allowed)
-				g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, getSaveName());
+				g_fp->_gameLoader->writeSavegame(g_fp->_currentScene, getSaveName(), "");
 		}
 	} else {
 		if (getSaveName()) {
