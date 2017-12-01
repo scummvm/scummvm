@@ -51,6 +51,7 @@ class BaseModalObject {
 	BaseModalObject() : _parentObj(0) { _objtype = kObjTypeDefault; }
 	virtual ~BaseModalObject() {}
 
+	void deleteObject();
 
 	virtual bool pollEvent() = 0;
 	virtual bool handleMessage(ExCommand *message) = 0;
