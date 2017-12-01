@@ -156,6 +156,7 @@ bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSimpleSavesNames);
 }
@@ -184,7 +185,14 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				Fullpipe::FullpipeSavegameHeader header;
 				Fullpipe::readSavegameHeader(in.get(), header);
-				saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+
+				SaveStateDescriptor desc;
+
+				parseSavegameHeader(header, desc);
+
+				desc.setSaveSlot(slotNum);
+
+				saveList.push_back(desc);
 			}
 		}
 	}
@@ -207,7 +215,11 @@ SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, i
 		Fullpipe::readSavegameHeader(f.get(), header);
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header.saveName);
+		SaveStateDescriptor desc;
+
+		parseSavegameHeader(header, desc);
+
+		desc.setSaveSlot(slot);
 		desc.setThumbnail(header.thumbnail);
 
 		return desc;

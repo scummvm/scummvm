@@ -32,7 +32,7 @@
 
 namespace Fullpipe {
 
-#define FULLPIPE_SAVEGAME_VERSION 1
+#define FULLPIPE_SAVEGAME_VERSION 2
 
 class SceneTag;
 class MctlCompound;
@@ -80,6 +80,7 @@ struct FullpipeSavegameHeader {
 	char id[6];
 	uint8 version;
 	Common::String saveName;
+	Common::String description;
 	uint32 date;
 	uint16 time;
 	uint32 playtime;
@@ -115,7 +116,7 @@ class GameLoader : public CObject {
 	PicAniInfoList savePicAniInfos(Scene *sc, int flag1, int flag2);
 
 	bool readSavegame(const char *fname);
-	bool writeSavegame(Scene *sc, const char *fname);
+	bool writeSavegame(Scene *sc, const char *fname, const Common::String &description);
 
 	void addVar(GameVar *var, GameVar *subvar);
 

@@ -178,7 +178,7 @@ void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDesc
 	desc.setSaveTime(hour, minutes);
 	desc.setPlayTime(header.playtime * 1000);
 
-	desc.setDescription(header.saveName);
+	desc.setDescription(header.description);
 }
 
 void fillDummyHeader(Fullpipe::FullpipeSavegameHeader &header) {
@@ -214,21 +214,22 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 	}
 
 	header.version = in->readByte();
-	if (header.version != FULLPIPE_SAVEGAME_VERSION) {
-		in->seek(oldPos, SEEK_SET); // Rewind the file
-		fillDummyHeader(header);
-		return false;
-	}
-
 	header.date = in->readUint32LE();
 	header.time = in->readUint16LE();
 	header.playtime = in->readUint32LE();
+
+	if (header.version > 1)
+		header.description = in->readPascalString();
 
 	// Generate savename
 	SaveStateDescriptor desc;
 
 	parseSavegameHeader(header, desc);
+
 	header.saveName = Common::String::format("%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
+
+	if (header.description.empty())
+		header.description = header.saveName;
 
 	// Get the thumbnail
 	header.thumbnail = Common::SharedPtr<Graphics::Surface>(Graphics::loadThumbnail(*in), Graphics::SurfaceDeleter());
