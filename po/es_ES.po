@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-30 01:15+0100\n"
-"PO-Revision-Date: 2017-12-01 21:48+0000\n"
+"PO-Revision-Date: 2017-12-01 22:09+0000\n"
 "Last-Translator: TomasM <truido@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
@@ -3517,12 +3517,11 @@ msgstr "Mostrar líneas negras sobre los vídeos para que parezcan más nítidos"
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr "Usar escalado de vídeo de alta calidad"
+msgstr "Usar reescalado de vídeo de alta calidad"
 
 #: engines/sci/detection.cpp:432
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Usar filtrado lineal para escalar gráficos"
+msgstr "Usar interpolación lineal al reescalar vídeos, siempre que sea posible"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
@@ -3574,13 +3573,12 @@ msgstr ""
 "normalmente"
 
 #: engines/sci/detection.cpp:506
-#, fuzzy
 msgid "Enable content censoring"
-msgstr "Activar cursores flotantes"
+msgstr "Activar censura"
 
 #: engines/sci/detection.cpp:507
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "Activar la opción de censura incluida en el juego"
 
 #: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
@@ -3594,26 +3592,35 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"Los personajes que se hayan guardado usando ScummVM aparecerán "
+"automáticamente. Si se han guardado usando el intérprete original, es "
+"necesario copiar los archivos al directorio de partidas guardadas de ScummVM "
+"y añadirles un prefijo, que depende del juego en cuestión: 'qfg1-' para "
+"Quest for Glory 1, 'qfg2-' para Quest for Glory 2. Ejemplo: 'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:348
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
+"Utiliza una aplicación externa para abrir el archivo de ayuda del juego: %s"
 
 #: engines/sci/engine/savegame.cpp:1290
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "No se puede cargar esta partida. El formato es obsoleto."
 
 #: engines/sci/engine/savegame.cpp:1292
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
+"La versión de la partida es %d, pero la última versión compatible es %0d"
 
 #: engines/sci/engine/savegame.cpp:1303
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"No se puede cargar esta partida porque se ha creado desde una versión "
+"distinta del juego"
 
 #: engines/sci/resource.cpp:822
 msgid ""
@@ -3621,6 +3628,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Hay archivos dañados o que faltan. Puede que el juego no funcione "
+"correctamente. Consulta la consola para ver más información, y comprueba que "
+"los archivos son válidos."
 
 #: engines/sci/sci.cpp:400
 msgid ""
