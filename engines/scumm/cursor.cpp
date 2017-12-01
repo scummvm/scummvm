@@ -205,7 +205,9 @@ void ScummEngine_v70he::setDefaultCursor() {
 			}
 			p <<= 2;
 
-			if ((j + 1) % 8 == 0)
+			if (j == 31)
+				++src;
+			else if ((j + 1) % 8 == 0)
 				p = *(++src);
 		}
 	}
