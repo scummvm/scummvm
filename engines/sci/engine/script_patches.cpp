@@ -5183,6 +5183,27 @@ static const uint16 qfg1vgaPatchBrutusScriptFreeze[] = {
 	PATCH_END
 };
 
+// Speed up the speed test by a factor 50, ensuring the detected speed
+// will end up at the highest level. This improves the detail in
+// Yorick's room (96), and slightly changes the timing in other rooms.
+//
+// Method changed: speedTest::changeState
+static const uint16 qfg1vgaSignatureSpeedTest[] = {
+	0x76,                               // push0
+	0x43, 0x42, 0x00,                   // callk GetTime 0
+	SIG_MAGICDWORD,
+	0xa3, 0x01,                         // sal 1
+	0x35, 0x32,                         // ldi 50
+	0x65, 0x1a,                         // aTop cycles
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchSpeedTest[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x35, 0x01,                         // ldi 1
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
@@ -5193,6 +5214,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{  true,   299, "speedtest",                                   1, qfg1vgaSignatureSpeedTest,           qfg1vgaPatchSpeedTest },
 	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
 	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
