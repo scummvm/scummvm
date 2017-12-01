@@ -653,6 +653,8 @@ const char *getSavegameFile(int saveGameIdx) {
 
 void GameLoader::restoreDefPicAniInfos() {
 	for (uint i = 0; i < _sc2array.size(); i++) {
+		_sc2array[i]._picAniInfos.clear();
+
 		if (_sc2array[i]._scene)
 			applyPicAniInfos(_sc2array[i]._scene, _sc2array[i]._defPicAniInfos);
 	}
