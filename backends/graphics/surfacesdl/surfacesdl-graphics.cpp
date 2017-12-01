@@ -748,6 +748,8 @@ bool SurfaceSdlGraphicsManager::setShader(int id) {
 void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
+	_newShakePos = 0;
+
 #ifdef USE_RGB_COLOR
 	//avoid redundant format changes
 	Graphics::PixelFormat newFormat;
