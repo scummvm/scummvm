@@ -191,7 +191,7 @@ void ScummEngine_v70he::setDefaultCursor() {
 	_cursor.height = 32;
 
 	for (i = 0; i < 32; i++) {
-		int p = *src;
+		uint p = *src;
 		for (j = 0; j < 32; j++) {
 			switch ((p & (0x3 << 14)) >> 14) {
 				case 1:
