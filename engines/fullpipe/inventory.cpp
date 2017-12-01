@@ -465,6 +465,8 @@ int Inventory2::getHoveredItem(Common::Point *point) {
 	if (!_isInventoryOut)
 		return 0;
 
+	int res = 0;
+
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
 		InventoryIcon &icn = _inventoryIcons[i];
 		if (selId ||
@@ -475,11 +477,11 @@ int Inventory2::getHoveredItem(Common::Point *point) {
 			icn.isMouseHover = false;
 		} else {
 			icn.isMouseHover = true;
-			return icn.inventoryItemId;
+			res = icn.inventoryItemId;
 		}
 	}
 
-	return 0;
+	return res;
 }
 
 void Inventory2::clear() {
