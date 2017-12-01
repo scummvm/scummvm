@@ -236,7 +236,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 						Common::String::format(Res.SPELLS_PURCHASE, spellName.c_str(), spellCost);
 
 					if (Confirm::show(_vm, msg, castingCopy + 1)) {
-						if (party.subtract(0, spellCost, 0, WT_FREEZE_WAIT)) {
+						if (party.subtract(CONS_GOLD, spellCost, WHERE_PARTY, WT_FREEZE_WAIT)) {
 							++c->_spells[spellIndex];
 							sound.stopSound();
 							intf._overallFrame = 0;

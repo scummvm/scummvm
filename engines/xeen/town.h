@@ -101,7 +101,7 @@ private:
 
 	Character *doTrainingOptions(Character *c);
 
-	void depositWithdrawl(int choice);
+	void depositWithdrawl(PartyBank whereId);
 public:
 	Town(XeenEngine *vm);
 

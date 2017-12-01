@@ -478,54 +478,52 @@ void Party::handleLight() {
 		(map.mazeData()._mazeFlags2 & FLAG_IS_DARK) == 0 ? 4 : 0;
 }
 
-int Party::subtract(int mode, uint amount, int whereId, ErrorWaitType wait) {
-	switch (mode) {
-	case 0:
+int Party::subtract(ConsumableType consumableId, uint amount, PartyBank whereId, ErrorWaitType wait) {
+	switch (consumableId) {
+	case CONS_GOLD:
 		// Gold
 		if (whereId) {
 			if (amount <= _bankGold) {
 				_bankGold -= amount;
 			} else {
-				notEnough(0, whereId, false, wait);
+				notEnough(CONS_GOLD, whereId, false, wait);
 				return false;
 			}
-		}
-		else {
+		} else {
 			if (amount <= _gold) {
 				_gold -= amount;
 			} else {
-				notEnough(0, whereId, false, wait);
+				notEnough(CONS_GOLD, whereId, false, wait);
 				return false;
 			}
 		}
 		break;
 
-	case 1:
+	case CONS_GEMS:
 		// Gems
 		if (whereId) {
 			if (amount <= _bankGems) {
 				_bankGems -= amount;
 			} else {
-				notEnough(0, whereId, false, wait);
+				notEnough(CONS_GEMS, whereId, false, wait);
 				return false;
 			}
-		}
-		else {
+		} else {
 			if (amount <= _gems) {
 				_gems -= amount;
 			} else {
-				notEnough(0, whereId, false, wait);
+				notEnough(CONS_GEMS, whereId, false, wait);
 				return false;
 			}
 		}
 		break;
 
-	case 2:
+	case CONS_FOOD:
 		// Food
 		if (amount > _food) {
 			_food -= amount;
 		} else {
-			notEnough(5, 0, 0, wait);
+			notEnough(CONS_FOOD, WHERE_PARTY, 0, wait);
 			return false;
 		}
 		break;
@@ -537,7 +535,8 @@ int Party::subtract(int mode, uint amount, int whereId, ErrorWaitType wait) {
 	return true;
 }
 
-void Party::notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait) {
+void Party::notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, ErrorWaitType wait) {
+	assert(consumableId < 4 && whereId < 2);
 	Common::String msg = Common::String::format(
 		mode ? Res.NO_X_IN_THE_Y : Res.NOT_ENOUGH_X_IN_THE_Y,
 		Res.CONSUMABLE_NAMES[consumableId], Res.WHERE_NAMES[whereId]);
@@ -870,11 +869,11 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		changeTime(takeVal);
 		break;
 	case 34:
-		if (!subtract(0, takeVal, 0, WT_3))
+		if (!subtract(CONS_GOLD, takeVal, WHERE_PARTY, WT_3))
 			return true;
 		break;
 	case 35:
-		if (!subtract(1, takeVal, 0, WT_3))
+		if (!subtract(CONS_GEMS, takeVal, WHERE_PARTY, WT_3))
 			return true;
 		break;
 	case 37:
@@ -959,7 +958,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		ps._level._permanent -= takeVal;
 		break;
 	case 65:
-		if (!subtract(2, takeVal, 0, WT_3))
+		if (!subtract(CONS_FOOD, takeVal, WHERE_PARTY, WT_3))
 			return true;
 		break;
 	case 69:

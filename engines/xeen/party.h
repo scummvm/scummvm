@@ -40,6 +40,14 @@ enum Direction {
 
 enum Difficulty { ADVENTURER = 0, WARRIOR = 1 };
 
+enum ConsumableType {
+	CONS_GOLD = 0, CONS_GEMS = 1, CONS_FOOD = 2, CONS_CONDITION = 3
+};
+
+enum PartyBank {
+	WHERE_PARTY = 0, WHERE_BANK = 1
+};
+
 #define ITEMS_COUNT 36
 #define TOTAL_CHARACTERS 30
 #define XEEN_TOTAL_CHARACTERS 24
@@ -191,9 +199,9 @@ public:
 
 	void handleLight();
 
-	int subtract(int mode, uint amount, int whereId, ErrorWaitType wait = WT_FREEZE_WAIT);
+	int subtract(ConsumableType consumableId, uint amount, PartyBank whereId, ErrorWaitType wait = WT_FREEZE_WAIT);
 
-	void notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait);
+	void notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, ErrorWaitType wait);
 
 	void checkPartyDead();
 

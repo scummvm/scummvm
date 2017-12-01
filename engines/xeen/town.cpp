@@ -529,13 +529,13 @@ Character *Town::doTownOptions(Character *c) {
 
 Character *Town::doBankOptions(Character *c) {
 	if (_buttonValue == Common::KEYCODE_d)
-		_buttonValue = 0;
+		_buttonValue = WHERE_PARTY;
 	else if (_buttonValue == Common::KEYCODE_w)
-		_buttonValue = 1;
+		_buttonValue = WHERE_BANK;
 	else
 		return c;
 
-	depositWithdrawl(_buttonValue);
+	depositWithdrawl((PartyBank)_buttonValue);
 	return c;
 }
 
@@ -620,7 +620,7 @@ Character *Town::doTavernOptions(Character *c) {
 	case Common::KEYCODE_d:
 		// Drink
 		if (!c->noActions()) {
-			if (party.subtract(0, 1, 0, WT_2)) {
+			if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_2)) {
 				sound.stopSound();
 				sound.playSound("gulp.voc");
 				_v21 = 1;
@@ -678,7 +678,7 @@ Character *Town::doTavernOptions(Character *c) {
 		if (YesNo::show(_vm, false, true)) {
 			if (party._food >= _v22) {
 				ErrorScroll::show(_vm, Res.FOOD_PACKS_FULL, WT_2);
-			} else if (party.subtract(0, _v23, 0, WT_2)) {
+			} else if (party.subtract(CONS_GOLD, _v23, WHERE_PARTY, WT_2)) {
 				party._food = _v22;
 				sound.stopSound();
 				sound.playSound(isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
@@ -757,7 +757,7 @@ Character *Town::doTavernOptions(Character *c) {
 					drawButtons(&windows[0]);
 					windows[10].update();
 					townWait();
-				} else if (party.subtract(0, 1, 0, WT_2)) {
+				} else if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_2)) {
 					sound.stopSound();
 					sound.playSound(isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
 
@@ -817,7 +817,7 @@ Character *Town::doTempleOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_d:
-		if (_donation && party.subtract(0, _donation, 0, WT_2)) {
+		if (_donation && party.subtract(CONS_GOLD, _donation, WHERE_PARTY, WT_2)) {
 			sound.stopSound();
 			sound.playSound("coina.voc", 1);
 			_dayOfWeek = (_dayOfWeek + 1) / 10;
@@ -842,7 +842,7 @@ Character *Town::doTempleOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_h:
-		if (_healCost && party.subtract(0, _healCost, 0, WT_2)) {
+		if (_healCost && party.subtract(CONS_GOLD, _healCost, WHERE_PARTY, WT_2)) {
 			c->_magicResistence._temporary = 0;
 			c->_energyResistence._temporary = 0;
 			c->_poisonResistence._temporary = 0;
@@ -869,7 +869,7 @@ Character *Town::doTempleOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_u:
-		if (_uncurseCost && party.subtract(0, _uncurseCost, 0, WT_2)) {
+		if (_uncurseCost && party.subtract(CONS_GOLD, _uncurseCost, WHERE_PARTY, WT_2)) {
 			for (int idx = 0; idx < 9; ++idx) {
 				c->_weapons[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
 				c->_armor[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
@@ -928,7 +928,7 @@ Character *Town::doTrainingOptions(Character *c) {
 			sound.playSound(name);
 
 		} else if (!c->noActions()) {
-			if (party.subtract(0, (c->_level._permanent * c->_level._permanent) * 10, 0, WT_2)) {
+			if (party.subtract(CONS_GOLD, (c->_level._permanent * c->_level._permanent) * 10, WHERE_PARTY, WT_2)) {
 				_drawFrameIndex = 0;
 				sound.stopSound();
 				sound.playSound(isDarkCc ? "prtygd.voc" : "trainin2.voc", 1);
@@ -957,13 +957,13 @@ Character *Town::doTrainingOptions(Character *c) {
 	return c;
 }
 
-void Town::depositWithdrawl(int choice) {
+void Town::depositWithdrawl(PartyBank whereId) {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	int gold, gems;
 
-	if (choice) {
+	if (whereId == WHERE_BANK) {
 		gold = party._bankGold;
 		gems = party._bankGems;
 	} else {
@@ -978,7 +978,7 @@ void Town::depositWithdrawl(int choice) {
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
 
 	Common::String msg = Common::String::format(Res.GOLD_GEMS,
-		Res.DEPOSIT_WITHDRAWL[choice],
+		Res.DEPOSIT_WITHDRAWL[whereId],
 		XeenEngine::printMil(gold).c_str(),
 		XeenEngine::printMil(gems).c_str());
 
@@ -989,15 +989,15 @@ void Town::depositWithdrawl(int choice) {
 
 	sound.stopSound();
 	File voc("coina.voc");
-	bool flag = false;
+	ConsumableType consType = CONS_GOLD;
 
 	do {
 		switch (townWait()) {
 		case Common::KEYCODE_o:
-			flag = false;
+			consType = CONS_GOLD;
 			break;
 		case Common::KEYCODE_e:
-			flag = true;
+			consType = CONS_GEMS;
 			break;
 		case Common::KEYCODE_ESCAPE:
 			break;
@@ -1005,27 +1005,27 @@ void Town::depositWithdrawl(int choice) {
 			continue;
 		}
 
-		if ((choice && !party._bankGems && flag) ||
-			(choice && !party._bankGold && !flag) ||
-			(!choice && !party._gems && flag) ||
-			(!choice && !party._gold && !flag)) {
-			party.notEnough(flag, choice, 1, WT_2);
+		if ((whereId == WHERE_BANK && !party._bankGems && consType == CONS_GEMS) ||
+			(whereId == WHERE_BANK && !party._bankGold && consType == CONS_GOLD) ||
+			(whereId == WHERE_PARTY && !party._gems && consType == CONS_GEMS) ||
+			(whereId == WHERE_PARTY && !party._gold && consType == CONS_GOLD)) {
+			party.notEnough(consType, whereId, WHERE_BANK, WT_2);
 		} else {
 			windows[35].writeString(Res.AMOUNT);
 			int amount = NumericInput::show(_vm, 35, 10, 77);
 
 			if (amount) {
-				if (flag) {
-					if (party.subtract(true, amount, choice, WT_2)) {
-						if (choice) {
+				if (consType == CONS_GEMS) {
+					if (party.subtract(CONS_GEMS, amount, whereId, WT_2)) {
+						if (whereId == WHERE_BANK) {
 							party._gems += amount;
 						} else {
 							party._bankGems += amount;
 						}
 					}
 				} else {
-					if (party.subtract(false, amount, choice, WT_2)) {
-						if (choice) {
+					if (party.subtract(CONS_GOLD, amount, whereId, WT_2)) {
+						if (whereId == WHERE_BANK) {
 							party._gold += amount;
 						} else {
 							party._bankGold += amount;
@@ -1034,7 +1034,7 @@ void Town::depositWithdrawl(int choice) {
 				}
 			}
 
-			if (choice) {
+			if (whereId == WHERE_BANK) {
 				gold = party._bankGold;
 				gems = party._bankGems;
 			} else {
@@ -1043,7 +1043,7 @@ void Town::depositWithdrawl(int choice) {
 			}
 
 			sound.playSound(voc);
-			msg = Common::String::format(Res.GOLD_GEMS_2, Res.DEPOSIT_WITHDRAWL[choice],
+			msg = Common::String::format(Res.GOLD_GEMS_2, Res.DEPOSIT_WITHDRAWL[whereId],
 				XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
 			windows[35].writeString(msg);
 			windows[35].update();

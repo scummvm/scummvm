@@ -909,7 +909,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
 				if (Confirm::show(_vm, Common::String::format(Res.BUY_X_FOR_Y_GOLD,
 						desc.c_str(), cost))) {
-					if (party.subtract(0, cost, 0, WT_FREEZE_WAIT)) {
+					if (party.subtract(CONS_GOLD, cost, WHERE_PARTY, WT_FREEZE_WAIT)) {
 						if (isDarkCc) {
 							sound.stopSound();
 							sound.playSound("choice2.voc");
@@ -990,7 +990,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 					c._items[category].getFullDescription(itemIndex).c_str(),
 					cost);
 
-				if (Confirm::show(_vm, msg) && party.subtract(0, cost, 0)) {
+				if (Confirm::show(_vm, msg) && party.subtract(CONS_GOLD, cost, WHERE_PARTY)) {
 					item._bonusFlags &= ~ITEMFLAG_BROKEN;
 				}
 			}
@@ -1003,7 +1003,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				c._items[category].getFullDescription(itemIndex).c_str(),
 				cost);
 
-			if (Confirm::show(_vm, msg) && party.subtract(0, cost, 0)) {
+			if (Confirm::show(_vm, msg) && party.subtract(CONS_GOLD, cost, WHERE_PARTY)) {
 				Common::String details = c._items[category].getIdentifiedDetails(itemIndex);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
 				Common::String str = Common::String::format(Res.IDENTIFY_ITEM_MSG,
