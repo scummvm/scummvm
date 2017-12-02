@@ -257,7 +257,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 
 void ScummEngine_v80he::o80_cursorCommand() {
 	int a, b, i;
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 
 	byte subOp = fetchScriptByte();
 
@@ -497,7 +497,7 @@ void ScummEngine_v80he::o80_drawLine() {
 
 void ScummEngine_v80he::o80_pickVarRandom() {
 	int num;
-	int args[100];
+	int args[NUM_SCRIPT_LOCAL];
 	int32 dim1end;
 
 	num = getStackList(args, ARRAYSIZE(args));
