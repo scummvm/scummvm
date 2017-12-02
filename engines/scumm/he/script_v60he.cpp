@@ -488,7 +488,7 @@ void ScummEngine_v60he::swapObjects(int object1, int object2) {
 void ScummEngine_v60he::o60_actorOps() {
 	ActorHE *a;
 	int i, j, k;
-	int args[8];
+	int args[NUM_SCRIPT_LOCAL];
 
 	byte subOp = fetchScriptByte();
 	if (subOp == 197) {
@@ -643,7 +643,7 @@ void ScummEngine_v60he::o60_actorOps() {
 }
 
 void ScummEngine_v60he::o60_kernelSetFunctions() {
-	int args[29];
+	int args[NUM_SCRIPT_LOCAL];
 	int num;
 
 	num = getStackList(args, ARRAYSIZE(args));
@@ -723,7 +723,7 @@ uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
 
 
 void ScummEngine_v60he::o60_kernelGetFunctions() {
-	int args[29];
+	int args[NUM_SCRIPT_LOCAL];
 	byte *data;
 	getStackList(args, ARRAYSIZE(args));
 
@@ -1113,7 +1113,7 @@ void ScummEngine_v60he::redimArray(int arrayId, int newX, int newY, int type) {
 
 void ScummEngine_v60he::decodeParseString(int m, int n) {
 	int i, colors;
-	int args[31];
+	int args[NUM_SCRIPT_LOCAL];
 
 	byte b = fetchScriptByte();
 
