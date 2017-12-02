@@ -337,7 +337,7 @@ void ScummEngine_v100he::setupOpcodes() {
 void ScummEngine_v100he::o100_actorOps() {
 	ActorHE *a;
 	int i, j, k;
-	int args[32];
+	int args[NUM_SCRIPT_LOCAL];
 	byte string[256];
 
 	byte subOp = fetchScriptByte();
@@ -733,7 +733,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 }
 
 void ScummEngine_v100he::o100_jumpToScript() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script;
 	byte flags;
 
@@ -1560,7 +1560,7 @@ void ScummEngine_v100he::o100_paletteOps() {
 }
 
 void ScummEngine_v100he::o100_jumpToScriptUnk() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script, cycle;
 	byte flags;
 
@@ -1573,7 +1573,7 @@ void ScummEngine_v100he::o100_jumpToScriptUnk() {
 }
 
 void ScummEngine_v100he::o100_startScriptUnk() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script, cycle;
 	byte flags;
 
@@ -1809,7 +1809,7 @@ void ScummEngine_v100he::o100_soundOps() {
 }
 
 void ScummEngine_v100he::o100_setSpriteInfo() {
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 	int spriteId, n;
 	int32 tmp[2];
 	byte string[80];
@@ -2161,7 +2161,7 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 }
 
 void ScummEngine_v100he::o100_startScript() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script;
 	byte flags;
 
@@ -2209,7 +2209,7 @@ void ScummEngine_v100he::o100_systemOps() {
 
 void ScummEngine_v100he::o100_cursorCommand() {
 	int a, b, i;
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 
 	byte subOp = fetchScriptByte();
 
@@ -2744,7 +2744,7 @@ void ScummEngine_v100he::o100_readFile() {
 }
 
 void ScummEngine_v100he::o100_getSpriteInfo() {
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 	int spriteId, flags, groupId, type;
 	int32 x, y;
 
@@ -3019,7 +3019,7 @@ void ScummEngine_v100he::o100_getVideoData() {
 void ScummEngine_v100he::decodeParseString(int m, int n) {
 	Actor *a;
 	int i, colors, size;
-	int args[31];
+	int args[NUM_SCRIPT_LOCAL];
 	byte name[1024];
 
 	byte b = fetchScriptByte();
