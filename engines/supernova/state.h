@@ -214,6 +214,8 @@ public:
 	void outro();
 	void guardShot();
 	void guard3Shot();
+	void alarm();
+	void alarmSound();
 
 private:
 	int _prevImgId;

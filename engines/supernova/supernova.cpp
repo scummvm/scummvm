@@ -213,6 +213,12 @@ void SupernovaEngine::updateEvents() {
 		return;
 	}
 
+	if (_gm->_state._alarmOn && _gm->_state._timeAlarm <= _gm->_state._time) {
+		_gm->_state._alarmOn = false;
+		_gm->alarm();
+		return;
+	}
+
 	_gm->_mouseClicked = false;
 	_gm->_keyPressed = false;
 	while (g_system->getEventManager()->pollEvent(_event)) {

@@ -156,8 +156,14 @@ public:
 		return textWidth(text.c_str());
 	}
 	void renderMessage(StringID stringId, MessagePosition position = kMessageNormal, Common::String var1 = "", Common::String var2 = "") {
-		//TODO : Merge the gameString and the variables, if any
-		renderMessage(getGameString(stringId), position);
+		Common::String text = getGameString(stringId);
+		if (!var1.empty()) {
+			if (!var2.empty())
+				text = Common::String::format(text.c_str(), var1.c_str(), var2.c_str());
+			else
+				text = Common::String::format(text.c_str(), var1.c_str());
+		}
+		renderMessage(text, position);
 	}
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal) {
 		if (!text.empty())
