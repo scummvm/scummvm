@@ -459,6 +459,10 @@ void PSP2SdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 }
 
 SDL_Surface *PSP2SdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
+	// Vita requires resolution to be divisible by eight
+	width-=width%8;
+	height-=height%8;
+
 	SDL_Surface *screen = SurfaceSdlGraphicsManager::SDL_SetVideoMode(width, height, bpp, flags);
 	
 	if (screen != nullptr) {
