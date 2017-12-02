@@ -3076,10 +3076,8 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
 		_vm->paletteBrightness();
-		// TODO: Reset Time
-//		*startingtime -= 125000; // 2 hours
-//		*alarmsystime -= 125000;
-//		*alarm_on = (*alarmsystime > systime());
+		_gm->_state._time += ticksToMsec(125000); // 2 hours
+		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_state._time);
 		return false;
 	} else
 		return false;
