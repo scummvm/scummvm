@@ -678,7 +678,7 @@ const char *gameText[] = {
 	"Dann gehe ich eben wieder.", // kStringDialogAxacussCorridor5_5
 	"Ach, halten Sie's Maul, ich gehe trotzdem!", // kStringDialogAxacussCorridor5_6
 	// 535
-	"Wenn Sie mich durchlassen gebe ich Ihnen %d Xa.",  // kStringDialogAxacussCorridor5_7
+	"Wenn Sie mich durchlassen gebe ich Ihnen %s Xa.",  // kStringDialogAxacussCorridor5_7
 	"Hallo!", // kStringDialogX1
 	"Guten Tag!", // kStringDialogX2
 	"Ich bin's, Horst Hummel.", // kStringDialogX3
@@ -812,6 +812,8 @@ const char *gameText[] = {
 	// 645
 	"Huch, Sie h\224ren sich aber|nicht gut an. Ich komme sofort.", // kStringTelomat18
 	"Horst Hummel! Von wo rufen Sie an?", // kStringTelomat19
+	"Hmm, keine Antwort.", // kStringTelomat20
+	"Passwort:", // kStringTelomat21
 	NULL
 };
 

@@ -2565,16 +2565,10 @@ bool AxacussCorridor5::handleMoneyDialog() {
 			removeSentence(2, 2);
 			removeSentence(3, 2);
 		} else {
-			// TODO: Handle string manipulation in dialogs
-			// _dialog3[2] and _dialog3[3] are both using kStringDialogAxacussCorridor5_7
-			//    ("Wenn Sie mich durchlassen gebe ich Ihnen %d Xa.")
-			// One way could be to keep an array of string[6], replace the %d of the previous sentence by a %s,
-			// and format the dialog string when the associated parameter string isn't empty. 
-			// The following code is broken and only kept in order to remember the values used.
-			// _dialog3[2] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money - 200);
-			// _dialog3[3] += Common::String::format(kStringDialogAxacussCorridor5_7, _gm->_state._money);
+			_varTexts3[2] = Common::String::format("%d", _gm->_state._money - 200);
+			_varTexts3[3] = Common::String::format("%d", _gm->_state._money);
 		}
-		switch (_gm->dialog(4, _rows, _dialog3, 2)) {
+		switch (_gm->dialog(4, _rows, _dialog3, 2, _varTexts3)) {
 		case 1:
 			_gm->wait2(3);
 			_vm->renderImage(1);
