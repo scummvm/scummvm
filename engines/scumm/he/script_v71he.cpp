@@ -175,7 +175,7 @@ void ScummEngine_v71he::adjustRect(Common::Rect &rect) {
 }
 
 void ScummEngine_v71he::o71_kernelSetFunctions() {
-	int args[29];
+	int args[NUM_SCRIPT_LOCAL];
 	int num;
 	ActorHE *a;
 
