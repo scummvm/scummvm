@@ -48,20 +48,6 @@ struct ADGameFileDescription {
 };
 
 /**
- * A record describing the properties of a file. Used on the existing
- * files while detecting a game.
- */
-struct ADFileProperties {
-	int32 size;
-	Common::String md5;
-};
-
-/**
- * A map of all relevant existing files in a game directory while detecting.
- */
-typedef Common::HashMap<Common::String, ADFileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ADFilePropertiesMap;
-
-/**
  * A shortcut to produce an empty ADGameFileDescription record. Used to mark
  * the end of a list of these.
  */
@@ -112,14 +98,19 @@ struct ADGameDescription {
 };
 
 /**
- * A list of pointers to ADGameDescription structs (or subclasses thereof).
+ * A game installation matching an AD game description
  */
-typedef Common::Array<const ADGameDescription *> ADGameDescList;
+struct ADDetectedGame {
+	bool hasUnknownFiles;
+	FilePropertiesMap matchedFiles;
+	const ADGameDescription *desc;
 
-/**
- * A list of raw game ID strings.
- */
-typedef Common::Array<const char *> ADGameIdList;
+	ADDetectedGame() : desc(nullptr), hasUnknownFiles(false) {}
+	explicit ADDetectedGame(const ADGameDescription *d) : desc(d), hasUnknownFiles(false) {}
+};
+
+/** A list of games detected by the AD */
+typedef Common::Array<ADDetectedGame> ADDetectedGames;
 
 /**
  * End marker for a table of ADGameDescription structs. Use this to
@@ -278,7 +269,7 @@ public:
 
 	virtual GameDescriptor findGame(const char *gameId) const;
 
-	virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
+	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
@@ -294,8 +285,8 @@ protected:
 	 * An (optional) generic fallback detect function which is invoked
 	 * if the regular MD5 based detection failed to detect anything.
 	 */
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		return 0;
+	virtual ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+		return ADDetectedGame();
 	}
 
 private:
@@ -313,7 +304,7 @@ protected:
 	 * @param extra		restrict results to specified extra string (only if kADFlagUseExtraAsHint is set)
 	 * @return	list of ADGameDescription pointers corresponding to matched games
 	 */
-	virtual ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, bool useUnknownGameDialog = false) const;
+	virtual ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
 
 	/**
 	 * Iterates over all ADFileBasedFallback records inside fileBasedFallback.
@@ -327,13 +318,7 @@ protected:
 	 * @param fileBasedFallback	a list of ADFileBasedFallback records, zero-terminated
 	 * @param filesProps	if not 0, return a map of properties for all detected files here
 	 */
-	const ADGameDescription *detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback, ADFilePropertiesMap *filesProps = 0) const;
-
-	/**
-	 * Log and print a report that we found an unknown game variant, together with the file
-	 * names, sizes and MD5 sums.
-	 */
-	void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps, const ADGameIdList &matchedGameIds = ADGameIdList(), bool useUnknownGameDialog = false) const;
+	ADDetectedGame detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback) const;
 
 	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;
@@ -345,7 +330,10 @@ protected:
 	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName = Common::String()) const;
 
 	/** Get the properties (size and MD5) of this file. */
-	bool getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, ADFileProperties &fileProps) const;
+	bool getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
+
+	/** Convert an AD game description into the shared game description format */
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame) const;
 };
 
 #endif

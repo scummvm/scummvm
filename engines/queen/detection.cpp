@@ -447,7 +447,7 @@ public:
 	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual void removeSaveState(const char *target, int slot) const;
 
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
 bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -457,7 +457,7 @@ bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave);
 }
 
-const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame QueenMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	static ADGameDescription desc;
 
 	// Iterate over all files in the given directory
@@ -492,11 +492,13 @@ const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles
 					desc.extra = "Talkie";
 					desc.guiOptions = GAMEOPTION_ALT_INTRO;
 				}
-				return (const ADGameDescription *)&desc;
+
+				return ADDetectedGame(&desc);
 			}
 		}
 	}
-	return 0;
+
+	return ADDetectedGame();
 }
 
 SaveStateList QueenMetaEngine::listSaves(const char *target) const {

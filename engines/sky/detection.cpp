@@ -79,7 +79,7 @@ public:
 	virtual GameList getSupportedGames() const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
+	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
@@ -141,8 +141,8 @@ GameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor();
 }
 
-GameList SkyMetaEngine::detectGames(const Common::FSList &fslist, bool /*useUnknownGameDialog*/) const {
-	GameList detectedGames;
+DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
+	DetectedGames detectedGames;
 	bool hasSkyDsk = false;
 	bool hasSkyDnr = false;
 	int dinnerTableEntries = -1;
@@ -173,18 +173,19 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist, bool /*useUnkn
 		// Match found, add to list of candidates, then abort inner loop.
 		// The game detector uses US English by default. We want British
 		// English to match the recorded voices better.
-		GameDescriptor dg(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown);
+		DetectedGame game;
+		game.matchedGame = GameDescriptor(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		const SkyVersion *sv = skyVersions;
 		while (sv->dinnerTableEntries) {
 			if (dinnerTableEntries == sv->dinnerTableEntries &&
 				(sv->dataDiskSize == dataDiskSize || sv->dataDiskSize == -1)) {
-				dg.updateDesc(Common::String::format("v0.0%d %s", sv->version, sv->extraDesc).c_str());
-				dg.setGUIOptions(sv->guioptions);
+				game.matchedGame.updateDesc(Common::String::format("v0.0%d %s", sv->version, sv->extraDesc).c_str());
+				game.matchedGame.setGUIOptions(sv->guioptions);
 				break;
 			}
 			++sv;
 		}
-		detectedGames.push_back(dg);
+		detectedGames.push_back(game);
 	}
 
 	return detectedGames;

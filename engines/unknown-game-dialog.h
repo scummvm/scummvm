@@ -22,16 +22,18 @@
 
 #include "gui/dialog.h"
 
+#include "engines/metaengine.h"
+
 class UnknownGameDialog : public GUI::Dialog {
 public:
-	UnknownGameDialog(const Common::String &reportData, const Common::String &reportTranslated, const Common::String &bugtrackerAffectedEngine);
-	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual Common::String generateBugtrackerURL();
-	virtual void reflowLayout();
+	UnknownGameDialog(const DetectionResults &detectionResults);
 
 private:
-	Common::String _reportData;
-	Common::String _reportTranslated;
-	Common::String _bugtrackerGameData;
-	Common::String _bugtrackerAffectedEngine;
+	// Dialog API
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void reflowLayout() override;
+
+	Common::String generateBugtrackerURL();
+
+	const DetectionResults &_detectionResults;
 };

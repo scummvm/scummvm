@@ -45,6 +45,7 @@
 #include "gui/EventRecorder.h"
 #endif
 #include "gui/saveload.h"
+#include "engines/unknown-game-dialog.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
 #include "gui/widgets/tab.h"
@@ -573,7 +574,17 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 
 	// ...so let's determine a list of candidates, games that
 	// could be contained in the specified directory.
-	GameList candidates(EngineMan.detectGames(files, true));
+	DetectionResults detectionResults = EngineMan.detectGames(files);
+
+	if (detectionResults.foundUnknownGames()) {
+		Common::String report = detectionResults.generateUnknownGameReport(false, 80);
+		g_system->logMessage(LogMessageType::kInfo, report.c_str());
+
+		UnknownGameDialog dialog(detectionResults);
+		dialog.runModal();
+	}
+
+	Common::Array<DetectedGame> candidates = detectionResults.listRecognizedGames();
 
 	int idx;
 	if (candidates.empty()) {
@@ -589,17 +600,14 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		// Display the candidates to the user and let her/him pick one
 		StringArray list;
 		for (idx = 0; idx < (int)candidates.size(); idx++)
-			list.push_back(candidates[idx].description());
+			list.push_back(candidates[idx].matchedGame.description());
 
 		ChooserDialog dialog(_("Pick the game:"));
 		dialog.setList(list);
 		idx = dialog.runModal();
 	}
 	if (0 <= idx && idx < (int)candidates.size()) {
-		GameDescriptor result = candidates[idx];
-
-		// TODO: Change the detectors to set "path" !
-		result["path"] = dir.getPath();
+		const GameDescriptor &result = candidates[idx].matchedGame;
 
 		Common::String domain = addGameToConf(result);
 

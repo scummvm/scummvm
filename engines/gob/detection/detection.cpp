@@ -35,7 +35,7 @@ public:
 
 	virtual GameDescriptor findGame(const char *gameId) const;
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 
 	virtual const char *getName() const;
 	virtual const char *getOriginalCopyright() const;
@@ -63,25 +63,22 @@ GameDescriptor GobMetaEngine::findGame(const char *gameId) const {
 	return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 }
 
-const ADGameDescription *GobMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-	ADFilePropertiesMap filesProps;
+ADDetectedGame GobMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADDetectedGame detectedGame = detectGameFilebased(allFiles, fslist, Gob::fileBased);
+	if (!detectedGame.desc) {
+		return ADDetectedGame();
+	}
 
-	const Gob::GOBGameDescription *game;
-	game = (const Gob::GOBGameDescription *)detectGameFilebased(allFiles, fslist, Gob::fileBased, &filesProps);
-	if (!game)
-		return 0;
+	const Gob::GOBGameDescription *game = (const Gob::GOBGameDescription *)detectedGame.desc;
 
 	if (game->gameType == Gob::kGameTypeOnceUponATime) {
 		game = detectOnceUponATime(fslist);
-		if (!game)
-			return 0;
+		if (game) {
+			detectedGame.desc = &game->desc;
+		}
 	}
 
-	ADGameIdList gameIds;
-	gameIds.push_back(game->desc.gameId);
-
-	reportUnknown(fslist.begin()->getParent(), filesProps, gameIds);
-	return (const ADGameDescription *)game;
+	return detectedGame;
 }
 
 const Gob::GOBGameDescription *GobMetaEngine::detectOnceUponATime(const Common::FSList &fslist) {

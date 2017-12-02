@@ -961,7 +961,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
+	virtual DetectedGames detectGames(const Common::FSList &fslist) const override;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
@@ -1026,29 +1026,30 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 	return res;
 }
 
-GameList ScummMetaEngine::detectGames(const Common::FSList &fslist, bool /*useUnknownGameDialog*/) const {
-	GameList detectedGames;
+DetectedGames ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
+	DetectedGames detectedGames;
 	Common::List<DetectorResult> results;
-
 	::detectGames(fslist, results, 0);
 
 	for (Common::List<DetectorResult>::iterator
 	          x = results.begin(); x != results.end(); ++x) {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
 		assert(g);
-		GameDescriptor dg(x->game.gameid, g->description, x->language, x->game.platform);
+
+		DetectedGame game;
+		game.matchedGame = GameDescriptor(x->game.gameid, g->description, x->language, x->game.platform);
 
 		// Append additional information, if set, to the description.
-		dg.updateDesc(x->extra);
+		game.matchedGame.updateDesc(x->extra);
 
 		// Compute and set the preferred target name for this game.
 		// Based on generateComplexID() in advancedDetector.cpp.
-		dg["preferredtarget"] = generatePreferredTarget(*x);
+		game.matchedGame["preferredtarget"] = generatePreferredTarget(*x);
 
-		dg.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
-		dg.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
+		game.matchedGame.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
+		game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 
-		detectedGames.push_back(dg);
+		detectedGames.push_back(game);
 	}
 
 	return detectedGames;

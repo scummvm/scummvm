@@ -187,7 +187,12 @@ void MassAddDialog::handleTickle() {
 		}
 
 		// Run the detector on the dir
-		GameList candidates(EngineMan.detectGames(files));
+		DetectionResults detectionResults = EngineMan.detectGames(files);
+
+		if (detectionResults.foundUnknownGames()) {
+			Common::String report = detectionResults.generateUnknownGameReport(false, 80);
+			g_system->logMessage(LogMessageType::kInfo, report.c_str());
+		}
 
 		// Just add all detected games / game variants. If we get more than one,
 		// that either means the directory contains multiple games, or the detector
@@ -195,8 +200,9 @@ void MassAddDialog::handleTickle() {
 		// case, let the user choose which entries he wants to keep.
 		//
 		// However, we only add games which are not already in the config file.
-		for (GameList::const_iterator cand = candidates.begin(); cand != candidates.end(); ++cand) {
-			GameDescriptor result = *cand;
+		DetectedGames candidates = detectionResults.listRecognizedGames();
+		for (DetectedGames::const_iterator cand = candidates.begin(); cand != candidates.end(); ++cand) {
+			const GameDescriptor &result = cand->matchedGame;
 			Common::String path = dir.getPath();
 
 			// Remove trailing slashes
@@ -224,7 +230,6 @@ void MassAddDialog::handleTickle() {
 					break;	// Skip duplicates
 				}
 			}
-			result["path"] = path;
 			_games.push_back(result);
 
 			_list->append(result.description());

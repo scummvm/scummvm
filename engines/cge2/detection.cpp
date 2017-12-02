@@ -132,7 +132,7 @@ public:
 		return "Sfinx (C) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
 	}
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual int getMaximumSaveSlot() const;
@@ -141,13 +141,8 @@ public:
 	virtual void removeSaveState(const char *target, int slot) const;
 };
 
-static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &gameDescriptions[0], { "vol.cat", "vol.dat", 0 } },
-	{ 0, { 0 } }
-};
-
 static ADGameDescription s_fallbackDesc = {
-	"Sfinx",
+	"sfinx",
 	"Unknown version",
 	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 	Common::UNK_LANG,
@@ -156,30 +151,31 @@ static ADGameDescription s_fallbackDesc = {
 	GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 };
 
+static const ADFileBasedFallback fileBasedFallback[] = {
+	{ &s_fallbackDesc, { "vol.cat", "vol.dat", 0 } },
+	{ 0, { 0 } }
+};
+
 // This fallback detection looks identical to the one used for CGE. In fact, the difference resides
 // in the ResourceManager which handles a different archive format. The rest of the detection is identical.
-const ADGameDescription *CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-	ADFilePropertiesMap filesProps;
+ADDetectedGame CGE2MetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADDetectedGame game = detectGameFilebased(allFiles, fslist, CGE2::fileBasedFallback);
 
-	const ADGameDescription *game;
-	game = detectGameFilebased(allFiles, fslist, CGE2::fileBasedFallback, &filesProps);
-
-	if (!game)
-		return 0;
+	if (!game.desc)
+		return ADDetectedGame();
 
 	SearchMan.addDirectory("CGE2MetaEngine::fallbackDetect", fslist.begin()->getParent());
 	ResourceManager *resman;
 	resman = new ResourceManager();
-	bool result = resman->exist("CGE.SAY");
+	bool sayFileFound = resman->exist("CGE.SAY");
 	delete resman;
 
 	SearchMan.remove("CGE2MetaEngine::fallbackDetect");
 
-	if (!result)
-		return 0;
+	if (!sayFileFound)
+		return ADDetectedGame();
 
-	reportUnknown(fslist.begin()->getParent(), filesProps);
-	return &s_fallbackDesc;
+	return game;
 }
 
 bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

@@ -112,7 +112,7 @@ public:
 		return "Macromedia Director (C) Macromedia";
 	}
 
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
@@ -141,7 +141,7 @@ static Director::DirectorGameDescription s_fallbackDesc = {
 
 static char s_fallbackFileNameBuffer[51];
 
-const ADGameDescription *DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// TODO: Handle Mac fallback
 
 	// reset fallback description
@@ -230,10 +230,10 @@ const ADGameDescription *DirectorMetaEngine::fallbackDetect(const FileMap &allFi
 
 		warning("Director fallback detection D%d", desc->version);
 
-		return (ADGameDescription *)desc;
+		return ADDetectedGame(&desc->desc);
 	}
 
-	return 0;
+	return ADDetectedGame();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DIRECTOR)

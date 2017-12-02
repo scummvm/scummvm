@@ -132,7 +132,7 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
 		return detectGameFilebased(allFiles, fslist, Toon::fileBasedFallback);
 	}
 

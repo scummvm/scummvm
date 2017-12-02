@@ -126,7 +126,7 @@ public:
 		return "Soltys (C) 1994-1996 L.K. Avalon";
 	}
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual int getMaximumSaveSlot() const;
@@ -135,13 +135,8 @@ public:
 	virtual void removeSaveState(const char *target, int slot) const;
 };
 
-static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &gameDescriptions[0], { "vol.cat", "vol.dat", 0 } },
-	{ 0, { 0 } }
-};
-
 static ADGameDescription s_fallbackDesc = {
-	"Soltys",
+	"soltys",
 	"Unknown version",
 	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 	Common::UNK_LANG,
@@ -150,28 +145,29 @@ static ADGameDescription s_fallbackDesc = {
 	GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 };
 
-const ADGameDescription *CGEMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-	ADFilePropertiesMap filesProps;
+static const ADFileBasedFallback fileBasedFallback[] = {
+	{ &s_fallbackDesc, { "vol.cat", "vol.dat", 0 } },
+	{ 0, { 0 } }
+};
 
-	const ADGameDescription *game;
-	game = detectGameFilebased(allFiles, fslist, CGE::fileBasedFallback, &filesProps);
+ADDetectedGame CGEMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADDetectedGame game = detectGameFilebased(allFiles, fslist, CGE::fileBasedFallback);
 
-	if (!game)
-		return nullptr;
+	if (!game.desc)
+		return ADDetectedGame();
 
 	SearchMan.addDirectory("CGEMetaEngine::fallbackDetect", fslist.begin()->getParent());
 	ResourceManager *resman;
 	resman = new ResourceManager();
-	bool result = resman->exist("CGE.SAY");
+	bool sayFileFound = resman->exist("CGE.SAY");
 	delete resman;
 
 	SearchMan.remove("CGEMetaEngine::fallbackDetect");
 
-	if (!result)
-		return nullptr;
+	if (!sayFileFound)
+		return ADDetectedGame();
 
-	reportUnknown(fslist.begin()->getParent(), filesProps);
-	return &s_fallbackDesc;
+	return game;
 }
 
 bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {

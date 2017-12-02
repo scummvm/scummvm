@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 
+#include "common/translation.h"
 #include "common/func.h"
 #include "common/debug.h"
 #include "common/config-manager.h"
@@ -514,8 +515,9 @@ GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &game
 	return result;
 }
 
-GameList EngineManager::detectGames(const Common::FSList &fslist, bool useUnknownGameDialog) const {
-	GameList candidates;
+DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const {
+	DetectedGames candidates;
+	Common::String path = fslist.begin()->getParent().getPath();
 	PluginList plugins;
 	PluginList::const_iterator iter;
 	PluginManager::instance().loadFirstPlugin();
@@ -524,16 +526,24 @@ GameList EngineManager::detectGames(const Common::FSList &fslist, bool useUnknow
 		// Iterate over all known games and for each check if it might be
 		// the game in the presented directory.
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-			candidates.push_back((*iter)->get<MetaEngine>().detectGames(fslist, useUnknownGameDialog));
+			const MetaEngine &metaEngine = (*iter)->get<MetaEngine>();
+			DetectedGames engineCandidates = metaEngine.detectGames(fslist);
+
+			for (uint i = 0; i < engineCandidates.size(); i++) {
+				engineCandidates[i].engineName = metaEngine.getName();
+				engineCandidates[i].matchedGame["path"] = path;
+				candidates.push_back(engineCandidates[i]);
+			}
+
 		}
 	} while (PluginManager::instance().loadNextPlugin());
-	return candidates;
+
+	return DetectionResults(candidates);
 }
 
 const PluginList &EngineManager::getPlugins() const {
 	return PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
 }
-
 
 // Music plugins
 

@@ -115,4 +115,108 @@ public:
 	}
 };
 
+/**
+ * A record describing the properties of a file. Used on the existing
+ * files while detecting a game.
+ */
+struct FileProperties {
+	int32 size;
+	Common::String md5;
+
+	FileProperties() : size(-1) {}
+};
+
+/**
+ * A map of all relevant existing files while detecting.
+ */
+typedef Common::HashMap<Common::String, FileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FilePropertiesMap;
+
+struct DetectedGame {
+	/**
+	 * The name of the engine supporting the detected game
+	 */
+	const char *engineName;
+
+	/**
+	 * The identifier of the detected game
+	 *
+	 * For engines using the singleId feature, this is the true engine-specific gameId, not the singleId.
+	 */
+	const char *gameId;
+
+	/**
+	 * A game was detected, but some files were not recognized
+	 *
+	 * This can happen when the md5 or size of the detected files did not match the engine's detection tables.
+	 * When this is true, the list of matched files below contains detail about the unknown files.
+	 *
+	 * @see matchedFiles
+	 */
+	bool hasUnknownFiles;
+
+	/**
+	 * An optional list of the files that were used to match the game with the engine's detection tables
+	 */
+	FilePropertiesMap matchedFiles;
+
+	/**
+	 * This detection entry contains enough data to add the game to the configuration manager and launch it
+	 *
+	 * @see matchedGame
+	 */
+	bool canBeAdded;
+
+	/**
+	 * Details about the detected game
+	 */
+	GameDescriptor matchedGame;
+
+	DetectedGame() : engineName(nullptr), gameId(nullptr), hasUnknownFiles(false), canBeAdded(true) {}
+};
+
+typedef Common::Array<DetectedGame> DetectedGames;
+
+/**
+ * Contains a list of games found by the engines' detectors.
+ *
+ * Each detected game can either:
+ * - be fully recognized (e.g. an exact match was found in the detection tables of an engine)
+ * - be an unknown variant (e.g. a game using files with the same name was found in the detection tables)
+ * - be recognized with unknown files (e.g. the game was exactly not found in the detection tables,
+ *              but the detector was able to gather enough data to allow launching the game)
+ *
+ * Practically, this means a detected game can be in both the recognized game list and in the unknown game
+ * report handled by this class.
+ */
+class DetectionResults {
+public:
+	explicit DetectionResults(const DetectedGames &detectedGames);
+
+	/**
+	 * List all the games that were recognized by the engines
+	 *
+	 * Recognized games can be added to the configuration manager and then launched.
+	 */
+	DetectedGames listRecognizedGames();
+
+	/**
+	 * Were unknown game variants found by the engines?
+	 *
+	 * When unknown game variants are found, an unknown game report can be generated.
+	 */
+	bool foundUnknownGames() const;
+
+	/**
+	 * Generate a report that we found an unknown game variant, together with the file
+	 * names, sizes and MD5 sums.
+	 *
+	 * @param translate translate the report to the currently active GUI language
+	 * @param wordwrapAt word wrap the text part of the report after a number of characters
+	 */
+	Common::String generateUnknownGameReport(bool translate, uint32 wordwrapAt = 0) const;
+
+private:
+	DetectedGames _detectedGames;
+};
+
 #endif

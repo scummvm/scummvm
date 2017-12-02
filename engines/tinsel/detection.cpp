@@ -97,7 +97,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
@@ -185,7 +185,7 @@ typedef Common::Array<const ADGameDescription *> ADGameDescList;
  * Fallback detection scans the list of Discworld 2 targets to see if it can detect an installation
  * where the files haven't been renamed (i.e. don't have the '1' just before the extension)
  */
-const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
+ADDetectedGame TinselMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
 	Common::String extra;
 	FileMap allFiles;
 	SizeMD5Map filesSizeMD5;
@@ -194,7 +194,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 	const Tinsel::TinselGameDescription *g;
 
 	if (fslist.empty())
-		return NULL;
+		return ADDetectedGame();
 
 	// TODO: The following code is essentially a slightly modified copy of the
 	// complete code of function detectGame() in engines/advancedDetector.cpp.
@@ -262,7 +262,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 		}
 	}
 
-	ADGameDescList matched;
+	ADDetectedGame matched;
 	int maxFilesMatched = 0;
 
 	// MD5 based matching
@@ -310,22 +310,15 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 			for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++)
 				curFilesMatched++;
 
-			if (curFilesMatched > maxFilesMatched) {
+			if (curFilesMatched >= maxFilesMatched) {
 				maxFilesMatched = curFilesMatched;
 
-				matched.clear();	// Remove any prior, lower ranked matches.
-				matched.push_back((const ADGameDescription *)g);
-			} else if (curFilesMatched == maxFilesMatched) {
-				matched.push_back((const ADGameDescription *)g);
+				matched = ADDetectedGame(&g->desc);
 			}
 		}
 	}
 
-	// We didn't find a match
-	if (matched.empty())
-		return NULL;
-
-	return *matched.begin();
+	return matched;
 }
 
 int TinselMetaEngine::getMaximumSaveSlot() const { return 99; }

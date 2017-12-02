@@ -184,7 +184,7 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
 		return detectGameFilebased(allFiles, fslist, Mohawk::fileBased);
 	}
 

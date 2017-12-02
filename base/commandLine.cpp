@@ -864,12 +864,20 @@ static GameList getGameList(const Common::FSNode &dir) {
 	}
 
 	// detect Games
-	GameList candidates(EngineMan.detectGames(files));
-	Common::String dataPath = dir.getPath();
-	// add game data path
-	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
-		(*v)["path"] = dataPath;
+	DetectionResults detectionResults = EngineMan.detectGames(files);
+
+	if (detectionResults.foundUnknownGames()) {
+		Common::String report = detectionResults.generateUnknownGameReport(false, 80);
+		g_system->logMessage(LogMessageType::kInfo, report.c_str());
 	}
+
+	DetectedGames detectedGames = detectionResults.listRecognizedGames();
+
+	GameList candidates;
+	for (uint i = 0; i < detectedGames.size(); i++) {
+		candidates.push_back(detectedGames[i].matchedGame);
+	}
+
 	return candidates;
 }
 
@@ -1014,7 +1022,14 @@ static void runDetectorTest() {
 			continue;
 		}
 
-		GameList candidates(EngineMan.detectGames(files));
+		DetectionResults detectionResults = EngineMan.detectGames(files);
+		DetectedGames detectedGames = detectionResults.listRecognizedGames();
+
+		GameList candidates;
+		for (uint i = 0; i < detectedGames.size(); i++) {
+			candidates.push_back(detectedGames[i].matchedGame);
+		}
+
 		bool gameidDiffers = false;
 		GameList::iterator x;
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
@@ -1092,7 +1107,14 @@ void upgradeTargets() {
 		Common::Platform plat = Common::parsePlatform(dom.getVal("platform"));
 		Common::String desc(dom.getVal("description"));
 
-		GameList candidates(EngineMan.detectGames(files));
+		DetectionResults detectionResults = EngineMan.detectGames(files);
+		DetectedGames detectedGames = detectionResults.listRecognizedGames();
+
+		GameList candidates;
+		for (uint i = 0; i < detectedGames.size(); i++) {
+			candidates.push_back(detectedGames[i].matchedGame);
+		}
+
 		GameDescriptor *g = 0;
 
 		// We proceed as follows:
@@ -1100,7 +1122,7 @@ void upgradeTargets() {
 		// * If there is a unique detector match, trust it.
 		// * If there are multiple match, run over them comparing gameid, language and platform.
 		//   If we end up with a unique match, use it. Otherwise, skip.
-		if (candidates.size() == 0) {
+		if (candidates.empty()) {
 			printf(" ... failed to detect game, skipping\n");
 			continue;
 		}

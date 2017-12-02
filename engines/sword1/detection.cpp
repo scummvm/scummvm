@@ -89,7 +89,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
+	DetectedGames detectGames(const Common::FSList &fslist) const override;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -175,9 +175,9 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool r
 	}
 }
 
-GameList SwordMetaEngine::detectGames(const Common::FSList &fslist, bool /*useUnknownGameDialog*/) const {
+DetectedGames SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 	int i, j;
-	GameList detectedGames;
+	DetectedGames detectedGames;
 	bool filesFound[NUM_FILES_TO_CHECK];
 	for (i = 0; i < NUM_FILES_TO_CHECK; i++)
 		filesFound[i] = false;
@@ -212,31 +212,31 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist, bool /*useUn
 		if (!filesFound[i] || psxFilesFound)
 			psxDemoFilesFound = false;
 
-	GameDescriptor gd;
+	DetectedGame game;
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
-		gd = GameDescriptor(sword1DemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game.matchedGame = GameDescriptor(sword1DemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && pcFilesFound && psxFilesFound)
-		gd = GameDescriptor(sword1PSXSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game.matchedGame = GameDescriptor(sword1PSXSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && pcFilesFound && psxDemoFilesFound)
-		gd = GameDescriptor(sword1PSXDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game.matchedGame = GameDescriptor(sword1PSXDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && pcFilesFound && !psxFilesFound)
-		gd = GameDescriptor(sword1FullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game.matchedGame = GameDescriptor(sword1FullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && macFilesFound)
-		gd = GameDescriptor(sword1MacFullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game.matchedGame = GameDescriptor(sword1MacFullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && macDemoFilesFound)
-		gd = GameDescriptor(sword1MacDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+		game.matchedGame = GameDescriptor(sword1MacDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else
 		return detectedGames;
 
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::PT_BRA));
-	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CZ_CZE));
+	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::PT_BRA));
+	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CZ_CZE));
 
-	detectedGames.push_back(gd);
+	detectedGames.push_back(game);
 
 	return detectedGames;
 }

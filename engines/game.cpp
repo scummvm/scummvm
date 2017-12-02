@@ -22,6 +22,7 @@
 
 #include "engines/game.h"
 #include "common/gui_options.h"
+#include "common/translation.h"
 
 
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
@@ -123,4 +124,90 @@ void GameDescriptor::setSupportLevel(GameSupportLevel gsl) {
 	default:
 		erase("gsl");
 	}
+}
+
+DetectionResults::DetectionResults(const DetectedGames &detectedGames) :
+		_detectedGames(detectedGames) {
+}
+
+bool DetectionResults::foundUnknownGames() const {
+	for (uint i = 0; i < _detectedGames.size(); i++) {
+		if (_detectedGames[i].hasUnknownFiles) {
+			return true;
+		}
+	}
+	return false;
+}
+
+DetectedGames DetectionResults::listRecognizedGames() {
+	DetectedGames candidates;
+	for (uint i = 0; i < _detectedGames.size(); i++) {
+		if (_detectedGames[i].canBeAdded) {
+			candidates.push_back(_detectedGames[i]);
+		}
+	}
+	return candidates;
+}
+
+Common::String DetectionResults::generateUnknownGameReport(bool translate, uint32 wordwrapAt) const {
+	assert(!_detectedGames.empty());
+
+	const char *reportStart = _s("The game in '%s' seems to be an unknown game variant.\n\n"
+	                             "Please report the following data to the ScummVM team at %s "
+	                             "along with the name of the game you tried to add and "
+	                             "its version, language, etc.:");
+	const char *reportEngineHeader = _s("Matched game IDs for the %s engine:");
+
+	Common::String report = Common::String::format(
+			translate ? _(reportStart) : reportStart, _detectedGames[0].matchedGame["path"].c_str(),
+			"https://bugs.scummvm.org/"
+	);
+	report += "\n";
+
+	FilePropertiesMap matchedFiles;
+
+	const char *currentEngineName = nullptr;
+	for (uint i = 0; i < _detectedGames.size(); i++) {
+		const DetectedGame &game = _detectedGames[i];
+
+		if (!game.hasUnknownFiles) continue;
+
+		if (!currentEngineName || strcmp(currentEngineName, game.engineName) != 0) {
+			currentEngineName = game.engineName;
+
+			// If the engine is not the same as for the previous entry, print an engine line header
+			report += "\n";
+			report += Common::String::format(
+					translate ? _(reportEngineHeader) : reportEngineHeader,
+					game.engineName
+			);
+			report += " ";
+
+		} else {
+			report += ", ";
+		}
+
+		// Add the gameId to the list of matched games for the engine
+		// TODO: Use the gameId here instead of the preferred target.
+		// This is currently impossible due to the AD singleId feature losing the information.
+		report += game.matchedGame["preferredtarget"];
+
+		// Consolidate matched files across all engines and detection entries
+		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
+			matchedFiles.setVal(it->_key, it->_value);
+		}
+	}
+
+	if (wordwrapAt) {
+		report.wordWrap(wordwrapAt);
+	}
+
+	report += "\n\n";
+
+	for (FilePropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file)
+		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
+
+	report += "\n";
+
+	return report;
 }
