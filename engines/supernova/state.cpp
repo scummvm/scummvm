@@ -1584,8 +1584,10 @@ void GameManager::handleTime() {
 	int32 newTime = g_system->getMillis();
 	int32 delta = newTime - _oldTime;
 	_state._time += delta;
-	if (_state._time > 86400000)
+	if (_state._time > 86400000) {
 		_state._time -= 86400000; // 24h wrap around
+		_state._alarmOn = (_state._timeAlarm > _state._time);
+	}
 	if (_animationTimer > delta)
 		_animationTimer -= delta;
 	else
@@ -2298,6 +2300,62 @@ void GameManager::guard3Shot() {
 	_vm->renderImage(2);
 	wait2(3);
 	shot(3,2);
+}
+
+void GameManager::alarm() {
+	if (_rooms[INTRO]->getObject(2)->hasProperty(CARRIED)) {
+		alarmSound();
+		if (_currentRoom->getId() == GUARD)
+			guardShot();
+		else if (_currentRoom->getId() == CORRIDOR4 || _currentRoom->getId() == CORRIDOR7) {
+			guardNoticed();
+			_state._corridorSearch = true;
+		} else if (_currentRoom->getId() == GUARD3)
+			guard3Shot();
+		else if (_currentRoom->getId() == CORRIDOR1)
+			busted(33);
+	} else {
+		if (_currentRoom->getId() == CORRIDOR2 ||
+			_currentRoom->getId() == CORRIDOR4 ||
+			_currentRoom->getId() == GUARD ||
+			_currentRoom->getId() == CORRIDOR7 ||
+			_currentRoom->getId() == CELL)
+		{
+			alarmSound();
+			if (_currentRoom->getId() == GUARD)
+				guardShot();
+			guardNoticed();
+			if (_currentRoom->getId() == CORRIDOR4)
+				_state._corridorSearch = true;
+		}
+		_rooms[GUARD]->setSectionVisible(1, true);
+		_rooms[GUARD]->getObject(3)->_click = 255;
+		if (!_rooms[GUARD]->getObject(5)->hasProperty(CARRIED)) {
+			_rooms[GUARD]->setSectionVisible(7, true);
+			_rooms[GUARD]->getObject(5)->_click = 4;
+		}
+		_state._eventTime = _state._time + ticksToMsec(180);
+		_state._eventCallback = kGuardReturnedFn;
+	}
+}
+
+void GameManager::alarmSound() {
+	animationOff();
+	_vm->removeMessage();
+	_vm->renderMessage(kStringAlarm);
+
+	int32 end = _state._time + ticksToMsec(_timer1);
+	do {
+		_vm->playSound(kAudioAlarm);
+		while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle)) {
+			g_system->delayMillis(_vm->_delay);
+			_vm->updateEvents();
+			g_system->updateScreen();
+		}
+	} while (_state._time < end && !_vm->shouldQuit());
+
+	_vm->removeMessage();
+	animationOn();
 }
 
 }

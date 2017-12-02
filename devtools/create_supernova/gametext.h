@@ -814,6 +814,7 @@ const char *gameText[] = {
 	"Horst Hummel! Von wo rufen Sie an?", // kStringTelomat19
 	"Hmm, keine Antwort.", // kStringTelomat20
 	"Passwort:", // kStringTelomat21
+	"Deine Armbanduhr piepst,|die Alarmzeit ist erreicht.", // kStringAlarm
 	NULL
 };
 
