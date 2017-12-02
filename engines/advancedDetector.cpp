@@ -167,7 +167,7 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist, bool useU
 	if (matches.empty()) {
 		// Use fallback detector if there were no matches by other means
 		const ADGameDescription *fallbackDesc = fallbackDetect(allFiles, fslist);
-		if (fallbackDesc != 0) {
+		if (fallbackDesc != nullptr) {
 			GameDescriptor desc(toGameDescriptor(*fallbackDesc, _gameIds));
 			updateGameDescriptor(desc, fallbackDesc);
 			detectedGames.push_back(desc);
@@ -336,7 +336,7 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	Common::String reportTranslated = Common::String::format(_(reportCommon), path.getPath().c_str(), getName(), "https://bugs.scummvm.org/");
 	Common::String bugtrackerAffectedEngine = getName();
 
-	if (matchedGameIds.size()) {
+	if (!matchedGameIds.empty()) {
 		report += "\n\n";
 		reportTranslated += "\n\n";
 		report += "Matched game IDs:";
@@ -460,7 +460,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 	// Check which files are included in some ADGameDescription *and* are present.
 	// Compute MD5s and file sizes for these files.
-	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != 0; descPtr += _descItemSize) {
+	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
 		g = (const ADGameDescription *)descPtr;
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
@@ -484,7 +484,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 	// MD5 based matching
 	uint i;
-	for (i = 0, descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != 0; descPtr += _descItemSize, ++i) {
+	for (i = 0, descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize, ++i) {
 		g = (const ADGameDescription *)descPtr;
 		bool fileMissing = false;
 
@@ -516,7 +516,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 			if (hashOrSizeMismatch)
 				continue;
 
-			if (fileDesc->md5 != NULL && fileDesc->md5 != filesProps[tstr].md5) {
+			if (fileDesc->md5 != nullptr && fileDesc->md5 != filesProps[tstr].md5) {
 				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[tstr].md5.c_str());
 				fileMissing = true;
 				hashOrSizeMismatch = true;
@@ -545,7 +545,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 		// cases.
 		if (allFilesPresent) {
 			gotAnyMatchesWithAllFiles = true;
-			if (!matchedGameIds.size() || strcmp(matchedGameIds.back(), g->gameId) != 0)
+			if (matchedGameIds.empty() || strcmp(matchedGameIds.back(), g->gameId) != 0)
 				matchedGameIds.push_back(g->gameId);
 		}
 
