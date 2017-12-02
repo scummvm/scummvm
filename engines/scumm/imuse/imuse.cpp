@@ -752,7 +752,7 @@ int IMuseInternal::getSoundStatus_internal(int sound, bool ignoreFadeouts) const
 }
 
 int32 IMuseInternal::doCommand_internal(int a, int b, int c, int d, int e, int f, int g, int h) {
-	int args[8];
+	int args[NUM_SCRIPT_LOCAL];
 	args[0] = a;
 	args[1] = b;
 	args[2] = c;
