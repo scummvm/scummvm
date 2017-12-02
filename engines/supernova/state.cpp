@@ -856,8 +856,6 @@ void GameManager::guardNoticed() {
 	_currentRoom = r;
 	_guiEnabled = true;
 	drawMapExits();
-	// new_room = true;
-	warning("SKIPPED: new_room");
 }
 
 void GameManager::busted(int i) {
