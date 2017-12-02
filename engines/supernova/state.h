@@ -203,7 +203,6 @@ public:
 	void guardNoticed();
 	void busted(int i);
 	void corridorOnEntrance();
-	void event(int time);
 	void telomat(int number);
 	void novaScroll();
 	void supernovaEvent();
