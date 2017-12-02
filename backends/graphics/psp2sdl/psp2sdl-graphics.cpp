@@ -459,9 +459,6 @@ void PSP2SdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 }
 
 SDL_Surface *PSP2SdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
-	// Vita requires resolution to be divisible by eight
-	width-=width%8;
-	height-=height%8;
 
 	SDL_Surface *screen = SurfaceSdlGraphicsManager::SDL_SetVideoMode(width, height, bpp, flags);
 	
@@ -470,6 +467,7 @@ SDL_Surface *PSP2SdlGraphicsManager::SDL_SetVideoMode(int width, int height, int
 		_vitatex_hwscreen = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
 		_sdlpixels_hwscreen = screen->pixels; // for SDL_FreeSurface...
 		screen->pixels = vita2d_texture_get_datap(_vitatex_hwscreen);
+		screen->pitch = vita2d_texture_get_stride(_vitatex_hwscreen);
 		updateShader();
 	}
 	return screen;
