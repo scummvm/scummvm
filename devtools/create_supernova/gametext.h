@@ -790,27 +790,27 @@ const char *gameText[] = {
 	"Was war das f\201r ein Ger\204usch?", // kStringGuardNoticed1
 	"Ich werde mal nachsehen.", // kStringGuardNoticed2
 	"Guten Tag, hier ist Horst Hummel.", // kStringTelomat1
-	"Hier ist %s. Können Sie mal gerade kommen?", // kStringTelomat2
+	"Hier ist %s. K\224nnen Sie mal gerade kommen?", // kStringTelomat2
 	// 630
 	"Es ist sehr wichtig.", // kStringTelomat3
 	"Vom Mars.", // kStringTelomat4
 	"Vom Klo.", // kStringTelomat5
-	"Das werde ich kaum erzählen.", // kStringTelomat6
-	"1 Büromanager", // kStringTelomat7
+	"Das werde ich kaum erz\204hlen.", // kStringTelomat6
+	"1 B\201romanager", // kStringTelomat7
 	// 635
 	"2 Telomat", // kStringTelomat8
 	"3 ProText", // kStringTelomat9
 	"4 Calculata", // kStringTelomat10
-	"Bitte wählen", // kStringTelomat11
-	"Geben Sie den gewünschten Namen ein:",  // kStringTelomat12
+	"Bitte w\204hlen", // kStringTelomat11
+	"Geben Sie den gew\201nschten Namen ein:",  // kStringTelomat12
 	// 640
 	"(Vor- und Nachname)",  // kStringTelomat13
 	"Name unbekannt", // kStringTelomat14
-	"Verbindung unmöglich", // kStringTelomat15
+	"Verbindung unm\224glich", // kStringTelomat15
 	"Verbindung wird hergestellt", // kStringTelomat16
 	"%s am Apparat.", // kStringTelomat17
 	// 645
-	"Huch, Sie hören sich aber|nicht gut an. Ich komme sofort.", // kStringTelomat18
+	"Huch, Sie h\224ren sich aber|nicht gut an. Ich komme sofort.", // kStringTelomat18
 	"Horst Hummel! Von wo rufen Sie an?", // kStringTelomat19
 	NULL
 };
