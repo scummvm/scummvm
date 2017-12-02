@@ -212,17 +212,16 @@ void GuiElement::setText(const char *text) {
 }
 
 void GuiElement::setTextPosition(int x, int y) {
-	_textPosition.x = x;
-	_textPosition.y = y;
+	_textPosition = Common::Point(x, y);
 }
+
 void GuiElement::setSize(int x1, int y1, int x2, int y2) {
 	this->left = x1;
 	this->top = y1;
 	this->right = x2;
 	this->bottom = y2;
 
-	_textPosition.x = x1 + 1;
-	_textPosition.y = y1 + 1;
+	_textPosition = Common::Point(x1 + 1, y1 + 1);
 }
 
 void GuiElement::setColor(int bgColor, int textColor, int bgColorHighlighted, int textColorHightlighted) {
