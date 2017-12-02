@@ -820,6 +820,8 @@ void GameManager::telomat(int nr) {
 			_guiEnabled = true;
 			drawMapExits();
 			return;
+		default:
+			break;
 		}
 	} while (true);
 }
