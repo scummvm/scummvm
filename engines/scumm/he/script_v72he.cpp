@@ -303,7 +303,7 @@ void ScummEngine_v72he::copyScriptString(byte *dst, int dstSize) {
 
 void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	const byte *src;
-	int args[31];
+	int args[NUM_SCRIPT_LOCAL];
 	int num, len, val;
 	byte chr, string[1024];
 	memset(args, 0, sizeof(args));
@@ -421,7 +421,7 @@ void ScummEngine_v72he::o72_getScriptString() {
 }
 
 void ScummEngine_v72he::o72_isAnyOf() {
-	int args[128];
+	int args[NUM_SCRIPT_LOCAL];
 	int num, value;
 
 	num = getStackList(args, ARRAYSIZE(args));
@@ -449,7 +449,7 @@ void ScummEngine_v72he::o72_resetCutscene() {
 }
 
 void ScummEngine_v72he::o72_findObjectWithClassOf() {
-	int args[16], num;
+	int args[NUM_SCRIPT_LOCAL], num;
 
 	num = getStackList(args, ARRAYSIZE(args));
 	int y = pop();
@@ -519,7 +519,7 @@ void ScummEngine_v72he::o72_getSoundPosition() {
 }
 
 void ScummEngine_v72he::o72_startScript() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script;
 	byte flags;
 
@@ -538,7 +538,7 @@ void ScummEngine_v72he::o72_startScript() {
 }
 
 void ScummEngine_v72he::o72_startObject() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script, entryp;
 	byte flags;
 
@@ -755,7 +755,7 @@ void ScummEngine_v72he::o72_roomOps() {
 void ScummEngine_v72he::o72_actorOps() {
 	ActorHE *a;
 	int i, j, k;
-	int args[32];
+	int args[NUM_SCRIPT_LOCAL];
 	byte string[256];
 
 	byte subOp = fetchScriptByte();
@@ -1340,7 +1340,7 @@ void ScummEngine_v72he::o72_traceStatus() {
 }
 
 void ScummEngine_v72he::o72_kernelGetFunctions() {
-	int args[29];
+	int args[NUM_SCRIPT_LOCAL];
 	byte *data;
 	getStackList(args, ARRAYSIZE(args));
 
@@ -1390,7 +1390,7 @@ void ScummEngine_v72he::o72_debugInput() {
 }
 
 void ScummEngine_v72he::o72_jumpToScript() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script;
 	byte flags;
 
@@ -1621,7 +1621,7 @@ void ScummEngine_v72he::o72_getPixel() {
 
 void ScummEngine_v72he::o72_pickVarRandom() {
 	int num;
-	int args[100];
+	int args[NUM_SCRIPT_LOCAL];
 	int32 dim1end;
 
 	num = getStackList(args, ARRAYSIZE(args));
@@ -2003,7 +2003,7 @@ void ScummEngine_v72he::o72_setSystemMessage() {
 void ScummEngine_v72he::decodeParseString(int m, int n) {
 	Actor *a;
 	int i, colors, size;
-	int args[31];
+	int args[NUM_SCRIPT_LOCAL];
 	byte name[1024];
 
 	byte b = fetchScriptByte();
