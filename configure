@@ -3414,6 +3414,7 @@ case $_backend in
 		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
 		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub -lScePgf_stub"
+		append_var LIBS "-lSceTouch_stub"
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
 		add_line_to_config_mk "USE_SDL2 = 1"
