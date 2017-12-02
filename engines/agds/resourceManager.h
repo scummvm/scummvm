@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/ptr.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -48,7 +49,7 @@ private:
 		uint32		offset;
 		uint32		size;
 		Resource(const GrpFilePtr &g, uint32 o, uint32 s):
-		grp(g), offset(o), size(s) {
+			grp(g), offset(o), size(s) {
 		}
 	};
 	typedef Common::SharedPtr<Resource> ResourcePtr;
@@ -64,6 +65,8 @@ public:
 	~ResourceManager();
 
 	bool addPath(const Common::String &grpFilename);
+
+	Common::SeekableReadStream * getResource(const Common::String &name) const;
 };
 
 

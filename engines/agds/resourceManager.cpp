@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/algorithm.h"
+#include "common/ptr.h"
 
 namespace AGDS {
 	ResourceManager::ResourceManager()
@@ -120,6 +121,28 @@ namespace AGDS {
 
 		debug("\t%u files in index", _resources.size());
 		return true;
+	}
+
+	Common::SeekableReadStream * ResourceManager::getResource(const Common::String &name) const
+	{
+		ResourcesType::const_iterator i = _resources.find(name);
+		if (i == _resources.end()) {
+			error("no resource %s could be found", name.c_str());
+			return NULL;
+		}
+
+		const ResourcePtr & resource = i->_value;
+		assert(resource);
+
+		const Common::String & filename = resource->grp->filename;
+		Common::File grp;
+		if (!grp.open(filename)) {
+			error("could not open group file %s", filename.c_str());
+			return NULL;
+		}
+
+		grp.seek(resource->offset);
+		return grp.readStream(resource->size);
 	}
 
 
