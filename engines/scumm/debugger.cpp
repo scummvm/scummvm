@@ -815,7 +815,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Passcode(int argc, const char **argv) {
 	if (argc > 1) {
 		_vm->_bootParam = atoi(argv[1]);
-		int args[16];
+		int args[NUM_SCRIPT_LOCAL];
 		memset(args, 0, sizeof(args));
 		args[0] = _vm->_bootParam;
 
