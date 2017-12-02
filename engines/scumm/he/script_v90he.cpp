@@ -95,7 +95,7 @@ void ScummEngine_v90he::setupOpcodes() {
 
 void ScummEngine_v90he::o90_dup_n() {
 	int num;
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 
 	push(fetchScriptWord());
 	num = getStackList(args, ARRAYSIZE(args));
@@ -437,7 +437,7 @@ void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
 }
 
 void ScummEngine_v90he::o90_getSpriteInfo() {
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 	int spriteId, flags, groupId, type;
 	int32 x, y;
 
@@ -689,7 +689,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 }
 
 void ScummEngine_v90he::o90_setSpriteInfo() {
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 	int spriteId;
 	int32 tmp[2];
 	int n;
@@ -1371,7 +1371,7 @@ void ScummEngine_v90he::o90_getActorData() {
 }
 
 void ScummEngine_v90he::o90_startScriptUnk() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script, cycle;
 	byte flags;
 
@@ -1383,7 +1383,7 @@ void ScummEngine_v90he::o90_startScriptUnk() {
 }
 
 void ScummEngine_v90he::o90_jumpToScriptUnk() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script, cycle;
 	byte flags;
 
@@ -1538,7 +1538,7 @@ void ScummEngine_v90he::o90_xor() {
 }
 
 void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 	int cond, num, cls, tmp;
 	bool b;
 
@@ -2285,7 +2285,7 @@ void ScummEngine_v90he::o90_getActorAnimProgress() {
 }
 
 void ScummEngine_v90he::o90_kernelGetFunctions() {
-	int args[29];
+	int args[NUM_SCRIPT_LOCAL];
 	int num, tmp;
 	Actor *a;
 
@@ -2319,7 +2319,7 @@ void ScummEngine_v90he::o90_kernelGetFunctions() {
 }
 
 void ScummEngine_v90he::o90_kernelSetFunctions() {
-	int args[29];
+	int args[NUM_SCRIPT_LOCAL];
 	int num, tmp;
 	ActorHE *a;
 
