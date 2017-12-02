@@ -60,7 +60,7 @@ void Moonbase::deallocateArray(int array) {
 int Moonbase::callScummFunction(int scriptNumber, int paramCount,...) {
 	va_list va_params;
 	va_start(va_params, paramCount);
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 
 	memset(args, 0, sizeof(args));
 
