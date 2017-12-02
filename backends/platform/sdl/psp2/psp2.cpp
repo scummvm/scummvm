@@ -101,7 +101,7 @@ void OSystem_PSP2::initBackend() {
 		ConfMan.setInt("joystick_deadzone", 2);
 	}
 	if (!ConfMan.hasKey("shader")) {
-		ConfMan.setInt("shader", 0);
+		ConfMan.setInt("shader", 2);
 	}
 
 	// Create the savefile manager
