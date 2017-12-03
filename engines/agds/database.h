@@ -60,4 +60,4 @@ public:
 
 } // End of namespace AGDS
 
-#endif /* AGDS_RESOURCE_MANAGER_H */
+#endif /* AGDS_DATABASE_H */
