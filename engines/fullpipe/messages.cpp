@@ -86,7 +86,7 @@ bool ExCommand::load(MfcArchive &file) {
 	_messageKind = file.readUint32LE();
 	_x = file.readSint32LE();
 	_y = file.readSint32LE();
-	_field_14 = file.readUint32LE();
+	_z = file.readUint32LE();
 	_sceneClickX = file.readUint32LE();
 	_sceneClickY = file.readUint32LE();
 	_field_20 = file.readUint32LE();
@@ -108,7 +108,7 @@ bool ExCommand::load(MfcArchive &file) {
 	_objtype = kObjTypeExCommand;
 
 	debugC(6, kDebugLoading, "%% <COMMAND parent=%d cmd=%s x=%d y=%d f14=%d sceneX=%d sceneY=%d f20=%d f24=%d param=%d f2c=%d f30=%d f34=%d num=%d flags=%d parId=%d />",
-			_parentId, exCommandType2str(_messageKind), _x, _y, _field_14, _sceneClickX, _sceneClickY, _field_20, _field_24, _param, _field_2C,
+			_parentId, exCommandType2str(_messageKind), _x, _y, _z, _sceneClickX, _sceneClickY, _field_20, _field_24, _param, _field_2C,
 			_field_30, _field_34, _messageNum, _excFlags, _parId);
 
 	return true;
@@ -190,7 +190,7 @@ Message::Message() {
 
 	_x = 0;
 	_y = 0;
-	_field_14 = 0;
+	_z = 0;
 	_sceneClickX = 0;
 	_sceneClickY = 0;
 	_field_20 = 0;
@@ -201,12 +201,12 @@ Message::Message() {
 	_field_34 = 0;
 }
 
-Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, int sceneClickX, int sceneClickY, int a10) {
+Message::Message(int16 parentId, int messageKind, int x, int y, int z, int a7, int sceneClickX, int sceneClickY, int a10) {
 	_messageKind = messageKind;
 	_parentId = parentId;
 	_x = x;
 	_y = y;
-	_field_14 = a6;
+	_z = z;
 	_sceneClickX = sceneClickX;
 	_sceneClickY = sceneClickY;
 	_field_24 = a7;
@@ -582,8 +582,8 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 		if (ex->_parentId == obj->_id) {
 			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
 				if ((mov = obj->getMovementById(ex->_messageNum)) != 0) {
-					if (ex->_field_14 >= 1)
-						res += ex->_field_14;
+					if (ex->_z >= 1)
+						res += ex->_z;
 					else
 						res += mov->calcDuration();
 				}
@@ -958,7 +958,7 @@ void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
 	ex->_x = x;
 	ex->_y = y;
 	ex->_field_20 = f20;
-	ex->_field_14 = f14;
+	ex->_z = f14;
 
 	ex->postMessage();
 }

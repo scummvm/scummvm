@@ -233,7 +233,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 
 	ExCommand *ex = new ExCommand(_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_field_14 = 256;
+	ex->_z = 256;
 	ex->_messageNum = 256;
 	ex->_excFlags |= 3;
 	mq->addExCommandToEnd(ex);
@@ -257,7 +257,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 
 	ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
 	ex->_param = _aniMan->_odelay;
-	ex->_field_14 = 10;
+	ex->_z = 10;
 	ex->_x = -1;
 	ex->_y = -1;
 	ex->_excFlags |= 3;
@@ -265,7 +265,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 
 	ex = new ExCommand(_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 3;
-	ex->_field_14 = 256;
+	ex->_z = 256;
 	ex->_messageNum = 0;
 	mq->addExCommandToEnd(ex);
 
@@ -346,7 +346,7 @@ void FullpipeEngine::lift_walkAndGo() {
 
 		ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = _aniMan->_odelay;
-		ex->_field_14 = _lift->_priority + 1;
+		ex->_z = _lift->_priority + 1;
 		ex->_x = -1;
 		ex->_y = -1;
 		ex->_excFlags |= 3;
@@ -465,7 +465,7 @@ void FullpipeEngine::lift_animateButton(StaticANIObject *button) {
 
 				ExCommand *ex = new ExCommand(0, 35, SND_CMN_032, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
-				ex->_field_14 = 1;
+				ex->_z = 1;
 				ex->postMessage();
 
 				int id = lift_getButtonIdH(_lastLiftButton->_statics->_staticsId);

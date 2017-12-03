@@ -97,7 +97,7 @@ void sceneHandler35_startFlow() {
 			ExCommand *cmd = new ExCommand(g_vars->scene35_bellyInflater->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
 			cmd->_excFlags |= 3;
-			cmd->_field_14 = 256;
+			cmd->_z = 256;
 			cmd->_messageNum = 0;
 
 			mq->addExCommandToEnd(cmd);

@@ -394,7 +394,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 	ExCommand *ex = new ExCommand(mkQueue->ani->_id, 5, -1, mkQueue->x1, mkQueue->y1, 0, 1, 0, 0, 0);
 
-	ex->_field_14 = mkQueue->field_1C;
+	ex->_z = mkQueue->field_1C;
 	ex->_param = mkQueue->ani->_odelay;
 	ex->_field_24 = 0;
 	ex->_excFlags |= 3;
@@ -741,7 +741,7 @@ ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, 
 	ExCommand2 *ex = new ExCommand2(20, objId, points);
 	ex->_excFlags = 2;
 	ex->_messageNum = mov->_id;
-	ex->_field_14 = len;
+	ex->_z = len;
 	ex->_field_24 = 1;
 	ex->_param = -1;
 

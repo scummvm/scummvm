@@ -470,8 +470,8 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 	if (!snd)
 		return;
 
-	if (cmd->_field_14 & 1) {
-		if (!g_fp->_flgSoundList && (cmd->_field_14 & 4))
+	if (cmd->_z & 1) {
+		if (!g_fp->_flgSoundList && (cmd->_z & 4))
 			snd->freeSound();
 
 		snd->updateVolume();
@@ -483,7 +483,7 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 
 		if (snd->getVolume() > -3500)
 			snd->play(cmd->_param);
-	} else if (cmd->_field_14 & 2) {
+	} else if (cmd->_z & 2) {
 		snd->stop();
 	}
 }

@@ -361,7 +361,7 @@ void Inventory2::slideIn() {
 	ExCommand *ex = new ExCommand(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_field_2C = 10;
-	ex->_field_14 = _isInventoryOut;
+	ex->_z = _isInventoryOut;
 	ex->_field_20 = !_isInventoryOut;
 	ex->_excFlags |= 3;
 	ex->postMessage();
@@ -373,7 +373,7 @@ void Inventory2::slideOut() {
 	ExCommand *ex = new ExCommand(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_field_2C = 10;
-	ex->_field_14 = _isInventoryOut;
+	ex->_z = _isInventoryOut;
 	ex->_field_20 = !_isInventoryOut;
 	ex->_excFlags |= 3;
 	ex->postMessage();
@@ -396,7 +396,7 @@ bool Inventory2::handleLeftClick(ExCommand *cmd) {
 			if (getItemFlags(icon.inventoryItemId) & 1) {
 				ExCommand *ex = new ExCommand(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
 				ex->_field_2C = 11;
-				ex->_field_14 = _inventoryIcons[i].inventoryItemId;
+				ex->_z = _inventoryIcons[i].inventoryItemId;
 				ex->_excFlags |= 3;
 				ex->postMessage();
 			}
