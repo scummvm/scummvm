@@ -957,82 +957,88 @@ Optional Features:
   --disable-bink           don't build with Bink video support
 
 Optional Libraries:
-  --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
+  --with-alsa-prefix=DIR   prefix where alsa is installed (optional)
   --disable-alsa           disable ALSA midi sound support [autodetect]
 
-  --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
-  --with-vorbis-prefix=DIR Prefix where libvorbis is installed (optional)
-  --disable-vorbis         disable Ogg Vorbis support [autodetect]
+  --with-ogg-prefix=DIR    prefix where libogg is installed (optional)
+  --disable-ogg            disable Ogg support [autodetect]
 
-  --with-tremor-prefix=DIR Prefix where tremor is installed (optional)
+  --with-vorbis-prefix=DIR prefix where libvorbis is installed (optional)
+  --disable-vorbis         disable Vorbis support [autodetect]
+
+  --with-tremor-prefix=DIR prefix where tremor is installed (optional)
   --disable-tremor         disable tremor support [autodetect]
 
-  --with-mad-prefix=DIR    Prefix where libmad is installed (optional)
+  --with-mad-prefix=DIR    prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
 
-  --with-flac-prefix=DIR   Prefix where libFLAC is installed (optional)
+  --with-flac-prefix=DIR   prefix where libFLAC is installed (optional)
   --disable-flac           disable FLAC support [autodetect]
 
-  --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
+  --with-zlib-prefix=DIR   prefix where zlib is installed (optional)
   --disable-zlib           disable zlib (compression) support [autodetect]
 
-  --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
+  --with-mpeg2-prefix=DIR  prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
 
-  --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
+  --with-opengl-prefix=DIR prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
   --disable-opengl-shaders disable use of modern OpenGL with shaders
   --force-opengles2        only detect OpenGL ES2
 
-  --with-glew-prefix=DIR   Prefix where GLEW is installed (optional)
+  --with-glew-prefix=DIR   prefix where GLEW is installed (optional)
   --disable-glew           disable GLEW support [autodetect]
 
-  --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
+  --with-jpeg-prefix=DIR   prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
 
-  --with-png-prefix=DIR    Prefix where libpng is installed (optional)
+  --with-png-prefix=DIR    prefix where libpng is installed (optional)
   --disable-png            disable PNG decoder [autodetect]
 
-  --with-theoradec-prefix=DIR Prefix where libtheoradec is installed (optional)
+  --with-theoradec-prefix=DIR  prefix where libtheoradec is installed (optional)
   --disable-theoradec      disable Theora decoder [autodetect]
 
-  --with-faad-prefix=DIR   Prefix where libfaad is installed (optional)
+  --with-faad-prefix=DIR   prefix where libfaad is installed (optional)
   --disable-faad           disable AAC decoder [autodetect]
 
-  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
+  --with-fluidsynth-prefix=DIR prefix where libfluidsynth is
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (OS X/Windows only - optional)
-  --disable-sparkle        disable sparkle automatic update support [OS X/Windows only - autodetect]
+  --with-sparkle-prefix=DIR    prefix where sparkle is installed
+                           (OS X/Windows only - optional)
+  --disable-sparkle        disable sparkle automatic update support
+                           [OS X/Windows only - autodetect]
 
-  --disable-osx-dock-plugin disable the NSDockTilePlugin support [Mac OS X only - autodetect]
+  --disable-osx-dock-plugin    disable the NSDockTilePlugin support
+                               [Mac OS X only - autodetect]
 
-  --with-sdl-prefix=DIR    Prefix where the sdl-config script is
+  --with-sdl-prefix=DIR    prefix where the sdl-config script is
                            installed (optional)
 
-  --with-freetype2-prefix=DIR Prefix where the freetype-config script is
-                           installed (optional)
-  --disable-freetype2     disable freetype2 TTF library usage [autodetect]
+  --with-freetype2-prefix=DIR  prefix where the freetype-config script is
+                               installed (optional)
+  --disable-freetype2      disable freetype2 TTF library usage [autodetect]
 
   --with-iconv-prefix=DIR  Prefix where iconv is installed (optional)
   --disable-iconv          disable iconv support [autodetect]
 
-  --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
+  --with-nasm-prefix=DIR   prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
-  --with-readline-prefix=DIR    Prefix where readline is installed (optional)
+  --with-readline-prefix=DIR   prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
 
-  --with-libunity-prefix=DIR   Prefix where libunity is installed (optional)
-  --disable-libunity           disable Unity launcher integration [autodetect]
+  --with-libunity-prefix=DIR   prefix where libunity is installed (optional)
+  --disable-libunity       disable Unity launcher integration [autodetect]
 
-  --with-sndio-prefix=DIR  Prefix where sndio is installed (optional)
+  --with-sndio-prefix=DIR  prefix where sndio is installed (optional)
   --disable-sndio          disable sndio MIDI driver [autodetect]
 
-  --with-sdlnet-prefix=DIR  Prefix where SDL_Net is
-                           installed (optional)
+  --with-sdlnet-prefix=DIR prefix where SDL_Net is installed (optional)
   --disable-sdlnet         disable SDL_Net networking library [autodetect]
+
+  --with-libcurl-prefix=DIR    prefix where libcurl is installed (optional)
   --disable-libcurl        disable libcurl networking library [autodetect]
 
 Some influential environment variables:
@@ -1080,6 +1086,8 @@ for ac_option in $@; do
 	--disable-sndio)          _sndio=no       ;;
 	--enable-timidity)        _timidity=yes   ;;
 	--disable-timidity)       _timidity=no    ;;
+	--enable-ogg)             _ogg=yes        ;;
+	--disable-ogg)            _ogg=no         ;;
 	--enable-vorbis)          _vorbis=yes     ;;
 	--disable-vorbis)         _vorbis=no      ;;
 	--enable-tremor)          _tremor=yes     ;;
@@ -1302,6 +1310,10 @@ for ac_option in $@; do
 	--with-freetype2-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_freetypepath="$arg:$arg/bin"
+		;;
+	--with-libcurl-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_libcurlpath="$arg:$arg/bin"
 		;;
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1751,6 +1763,12 @@ psp)
 		exit 1
 	fi
 	;;
+riscos)
+	if test -z "$GCCSDK_INSTALL_ENV"; then
+		echo "Please set GCCSDK_INSTALL_ENV in your environment. export GCCSDK_INSTALL_ENV=<path to GCCSDK_INSTALL_ENV>"
+		exit 1
+	fi
+	;;
 tizen)
 	if test -z "$TIZEN_ROOTSTRAP"; then
 		echo "Please set TIZEN_ROOTSTRAP in your environment. export TIZEN_ROOTSTRAP=<path to Tizen SDK device profile>"
@@ -2135,13 +2153,11 @@ EOF
 echo_n "Checking 64-bitness... "
 pointer_is_32bit
 if test $? -eq 0; then
-	type_ptr=int32
+	type_ptr=uint32
 	echo "no"
-	add_line_to_config_h "/* #define SCUMM_64BITS */"
 else
-	type_ptr=int64
+	type_ptr=uint64
 	echo "yes"
-	add_line_to_config_h "#define SCUMM_64BITS"
 fi
 
 #
@@ -2169,12 +2185,7 @@ echo_n "Type with 8 bytes... "
 type_8_byte=`find_type_with_size 8`
 TMPR="$?"
 echo "$type_8_byte"
-if test $TMPR -eq 0; then
-	_def_64bit_type_signed="typedef signed $type_8_byte int64;"
-	_def_64bit_type_unsigned="typedef unsigned $type_8_byte uint64;"
-fi
-# force cleanup after check for 8 bytes type
-cc_check_clean tmp_find_type_with_size.cpp
+test $TMPR -eq 0 || exit 1	# check exit code of subshell
 
 #
 # Check whether memory alignment is required
@@ -2227,20 +2238,11 @@ echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
 		echo "ARM"
-		case $_host_alias in
-			# Apple's as does not support the syntax we use in our ARM
-			# assembly. We simply do not enable it.
-			arm-apple-darwin9)
+		case $_host in
+			openpandora)
+				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			arm-apple-darwin10)
-				;;
-			arm-apple-darwin11)
-				;;
-			# psvita does not like the asm code...
-			arm-vita-eabi)
-				;;
-
-			*)
+			android | android-arm | androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo | tizen | wince)
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				# FIXME: The following feature exhibits a bug. It produces distorted
 				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
@@ -2398,6 +2400,8 @@ case $_host_os in
 			append_var LDFLAGS "-mthumb-interwork"
 		fi
 
+		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/include/"
+		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/include/"
 		append_var LDFLAGS "-L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
 		append_var LIBS "-lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
@@ -2706,6 +2710,23 @@ case $_host_os in
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
 		add_line_to_config_mk 'PSP = 1'
 		;;
+	riscos)
+		append_var DEFINES "-DRISCOS"
+		add_line_to_config_mk 'RISCOS = 1'
+		append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
+		append_var CXXFLAGS "-I$GCCSDK_INSTALL_ENV/include"
+		_sdlpath=$GCCSDK_INSTALL_ENV/bin
+		_freetypepath=$GCCSDK_INSTALL_ENV/bin
+		_libcurlpath=$GCCSDK_INSTALL_ENV/bin
+		append_var CXXFLAGS "-march=armv3m"
+		append_var CXXFLAGS "-mtune=xscale"
+		append_var LDFLAGS "-static"
+		_optimization_level=-O2
+		append_var CXXFLAGS "-ffunction-sections"
+		append_var CXXFLAGS "-fdata-sections"
+		append_var LDFLAGS "-Wl,--gc-sections"
+		_port_mk="backends/platform/sdl/riscos/riscos.mk"
+		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -2813,8 +2834,16 @@ if test -n "$_host"; then
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
-		arm-riscos|linupy)
-			append_var DEFINES "-DLINUPY"
+		arm-*riscos)
+			_seq_midi=no
+			_timidity=no
+			_opengl_mode=none
+			_build_hq_scalers=no
+			# toolchain binaries prefixed by host
+			_ranlib=$_host-ranlib
+			_strip=$_host-strip
+			_ar="$_host-ar cru"
+			_as="$_host-as"
 			;;
 		bfin*)
 			;;
@@ -3007,6 +3036,9 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_timidity=no
 			;;
+		linupy)
+			append_var DEFINES "-DLINUPY"
+			;;
 		m68k-atari-mint)
 			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_ranlib=m68k-atari-mint-ranlib
@@ -3110,7 +3142,6 @@ if test -n "$_host"; then
 				_optimization_level=-O3
 			fi
 
-			define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 			append_var CXXFLAGS "-march=armv7-a"
 			append_var CXXFLAGS "-mtune=cortex-a8"
 			append_var CXXFLAGS "-mfloat-abi=softfp"
@@ -3217,7 +3248,6 @@ if test -n "$_host"; then
 			_unix=yes
 			_backend="tizen"
 			_port_mk="backends/platform/tizen/tizen.mk"
-			_arm_asm=yes
 			_build_scalers=no
 			_seq_midi=no
 			_mt32emu=no
@@ -3376,6 +3406,7 @@ case $_backend in
 		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
 		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub -lScePgf_stub"
+		append_var LIBS "-lSceTouch_stub"
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
 		add_line_to_config_mk "USE_SDL2 = 1"
@@ -3571,7 +3602,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | wii | wince)
 		_posix=no
 		;;
-	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | riscos | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -3865,21 +3896,41 @@ EOF
 cc_check -lm && append_var LIBS "-lm"
 
 #
-# Check for Ogg Vorbis
+# Check for Ogg
 #
-echocheck "Ogg Vorbis"
+echocheck "Ogg"
+if test "$_ogg" = auto ; then
+	_ogg=no
+	cat > $TMPC << EOF
+#include <ogg/ogg.h>
+int main(void) { return 0; }
+EOF
+	cc_check $OGG_CFLAGS $OGG_LIBS -logg && _ogg=yes
+fi
+define_in_config_if_yes "$_ogg" 'USE_OGG'
+echo "$_ogg"
+
+#
+# Check for Vorbis
+#
+echocheck "Vorbis"
 if test "$_vorbis" = auto ; then
 	_vorbis=no
 	cat > $TMPC << EOF
 #include <vorbis/codec.h>
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
-	cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
-		-lvorbisfile -lvorbis -logg && _vorbis=yes
+	if test "$_ogg" = yes ; then
+		cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
+			-lvorbisfile -lvorbis -logg && _vorbis=yes
+	else
+		cc_check $VORBIS_CFLAGS $VORBIS_LIBS \
+			-lvorbisfile -lvorbis && _vorbis=yes
+	fi
 fi
 if test "$_vorbis" = yes ; then
-	append_var LIBS "$OGG_LIBS $VORBIS_LIBS -lvorbisfile -lvorbis -logg"
-	append_var INCLUDES "$OGG_CFLAGS $VORBIS_CFLAGS"
+	append_var LIBS "$VORBIS_LIBS -lvorbisfile -lvorbis"
+	append_var INCLUDES "$VORBIS_CFLAGS"
 fi
 define_in_config_if_yes "$_vorbis" 'USE_VORBIS'
 echo "$_vorbis"
@@ -3898,8 +3949,13 @@ if test "$_tremor" = auto ; then
 #include <tremor/ivorbiscodec.h>
 int main(void) { vorbis_info_init(0); return 0; }
 EOF
-	cc_check $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
-	_tremor=yes
+	if test "$_ogg" = yes ; then
+		cc_check $TREMOR_CFLAGS $TREMOR_LIBS $OGG_CFLAGS $OGG_LIBS \
+			-lvorbisidec -logg && _tremor=yes
+	else
+		cc_check $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
+		_tremor=yes
+	fi
 fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
 	add_line_to_config_h '#define USE_TREMOR'
@@ -3915,7 +3971,7 @@ if test "$_tremor" = yes && test "$_vorbis" = no; then
 	append_var INCLUDES "$TREMOR_CFLAGS"
 else
 	if test "$_vorbis" = yes; then
-		_tremor="no (Ogg Vorbis/Tremor support is mutually exclusive)"
+		_tremor="no (Vorbis/Tremor support is mutually exclusive)"
 	fi
 	add_line_to_config_h '#undef USE_TREMOR'
 fi
@@ -3929,10 +3985,15 @@ echocheck "FLAC >= 1.0.1"
 if test "$_flac" = auto ; then
 	_flac=no
 	cat > $TMPC << EOF
+#include <FLAC/stream_decoder.h>
 #include <FLAC/format.h>
-int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
+int main(void) {
+	FLAC__StreamDecoder *decoder = FLAC__stream_decoder_new();
+	FLAC__stream_decoder_delete(decoder);
+	return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */
+}
 EOF
-	if test "$_vorbis" = yes ; then
+	if test "$_ogg" = yes ; then
 		cc_check $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
 			-lFLAC -logg && _flac=yes
 	else
@@ -3941,15 +4002,17 @@ EOF
 	fi
 fi
 if test "$_flac" = yes ; then
-	if test "$_vorbis" = yes ; then
-		append_var LIBS "$FLAC_LIBS $OGG_LIBS -lFLAC -logg"
-	else
-		append_var LIBS "$FLAC_LIBS -lFLAC"
-	fi
+	append_var LIBS "$FLAC_LIBS -lFLAC"
 	append_var INCLUDES "$FLAC_CFLAGS"
 fi
 define_in_config_if_yes "$_flac" 'USE_FLAC'
 echo "$_flac"
+
+# Add the link to ogg only after verbs tremor and flac as it might be used by those.
+if test "$_ogg" = yes ; then
+	append_var LIBS "$OGG_LIBS -logg"
+	append_var INCLUDES "$OGG_CFLAGS"
+fi
 
 #
 # Check for MAD (MP3 library)
@@ -4537,8 +4600,19 @@ if test "$_freetype2" != "no"; then
 	if test -z "$_freetypeconfig"; then
 		_freetype2=no
 	else
-		FREETYPE2_LIBS=`$_freetypeconfig --prefix="$_freetypepath" --libs`
-		FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$_freetypepath" --cflags`
+		# Since 2.3.12, freetype-config prepends $SYSROOT to everything.
+		# This means we can't pass it a --prefix that includes $SYSROOT.
+		freetypeprefix="$_freetypepath"
+		if test -n "$SYSROOT" -a "$SYSROOT" != "/"; then
+			teststring=VeryImplausibleSysrootX1Y2Z3
+			if ( env SYSROOT=/$teststring "$_freetypeconfig" --cflags | grep $teststring 2> /dev/null > /dev/null ); then
+				echo "Adapting FreeType prefix to SYSROOT" >> "$TMPLOG"
+				freetypeprefix="${freetypeprefix##$SYSROOT}"
+			fi
+		fi
+
+		FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
+		FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$freetypeprefix" --cflags`
 
 		if test "$_freetype2" = "auto"; then
 			_freetype2=no
@@ -5347,29 +5421,19 @@ typedef unsigned int uint;
 typedef unsigned $type_1_byte uint8;
 typedef unsigned $type_2_byte uint16;
 typedef unsigned $type_4_byte uint32;
+typedef unsigned $type_8_byte uint64;
 typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
-EOF
+typedef signed $type_8_byte int64;
 
-if test -n "$_def_64bit_type_unsigned"  ; then
-cat >> config.h << EOF
+typedef $type_ptr  uintptr;
 
-/* 64-bit stuff */
-$_def_64bit_type_signed
 #if defined(__APPLE__) && !defined(__ppc__)
 #ifndef _UINT64
 #define _UINT64
-$_def_64bit_type_unsigned
 #endif
-#else
-$_def_64bit_type_unsigned
 #endif
-#define HAVE_INT64
-EOF
-fi
-
-cat >> config.h << EOF
 
 #endif /* CONFIG_H */
 EOF

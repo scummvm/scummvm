@@ -480,9 +480,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 }
 
 void ConsoleDialog::defaultKeyDownHandler(Common::KeyState &state) {
-	if (state.ascii == '~' || state.ascii == '#') {
-		slideUpAndClose();
-	} else if (state.hasFlags(Common::KBD_CTRL)) {
+	if (state.hasFlags(Common::KBD_CTRL)) {
 		specialKeys(state.keycode);
 	} else if ((state.ascii >= 32 && state.ascii <= 127) || (state.ascii >= 160 && state.ascii <= 255)) {
 		for (int i = _promptEndPos - 1; i >= _currentPos; i--)

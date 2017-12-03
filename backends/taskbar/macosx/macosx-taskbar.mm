@@ -26,13 +26,10 @@
 
 #if defined(MACOSX) && defined(USE_TASKBAR)
 
-// NSDockTile was introduced with Mac OS X 10.5.
-// Try provide backward compatibility by avoiding NSDockTile symbols.
-
 #include "backends/taskbar/macosx/macosx-taskbar.h"
 #include "common/config-manager.h"
 #include "common/file.h"
-
+#include "backends/platform/sdl/macosx/macosx-compat.h"
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSImage.h>
 #include <Foundation/NSString.h>
@@ -44,7 +41,16 @@
 #include <AppKit/NSBezierPath.h>
 #include <CoreFoundation/CFString.h>
 
-id _dockTile;
+// NSDockTile was introduced with Mac OS X 10.5.
+// Try provide backward compatibility by avoiding NSDockTile symbols.
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+typedef id NSDockTilePtr;
+#else
+#include <AppKit/NSDockTile.h>
+typedef NSDockTile * NSDockTilePtr;
+#endif
+
+NSDockTilePtr _dockTile;
 NSImageView *_applicationIconView;
 NSImageView *_overlayIconView;
 

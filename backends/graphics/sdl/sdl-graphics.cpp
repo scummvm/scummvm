@@ -41,7 +41,7 @@ void SdlGraphicsManager::deactivateManager() {
 	_eventSource->setGraphicsManager(0);
 }
 
-SdlGraphicsManager::State SdlGraphicsManager::getState() {
+SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 	State state;
 
 	state.screenWidth   = getWidth();
@@ -60,7 +60,7 @@ bool SdlGraphicsManager::setState(const State &state) {
 #ifdef USE_RGB_COLOR
 		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
 #else
-		initSize(state.screenWidth, state.screenHeight, 0);
+		initSize(state.screenWidth, state.screenHeight, nullptr);
 #endif
 		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);

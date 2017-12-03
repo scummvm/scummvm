@@ -58,7 +58,7 @@ SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 #endif
 }
 
-bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
@@ -217,12 +217,12 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 #endif
 }
 
-int16 SurfaceSdlGraphicsManager::getHeight() {
+int16 SurfaceSdlGraphicsManager::getHeight() const {
 	// ResidualVM specific
 	return _subScreen->h;
 }
 
-int16 SurfaceSdlGraphicsManager::getWidth() {
+int16 SurfaceSdlGraphicsManager::getWidth() const {
 	// ResidualVM specific
 	return _subScreen->w;
 }
@@ -276,7 +276,7 @@ void SurfaceSdlGraphicsManager::hideOverlay() {
 	clearOverlay();
 }
 
-void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) {
+void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
 	if (_overlayscreen == NULL)
 		return;
 

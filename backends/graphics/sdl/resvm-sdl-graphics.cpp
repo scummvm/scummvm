@@ -167,7 +167,7 @@ void ResVmSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	}
 }
 
-bool ResVmSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+bool ResVmSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 		case OSystem::kFeatureFullscreenMode:
 			return _fullscreen;
@@ -236,7 +236,7 @@ void ResVmSdlGraphicsManager::setPalette(const byte *colors, uint start, uint nu
 	// ResidualVM: not use it
 }
 
-void ResVmSdlGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
+void ResVmSdlGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
 	// ResidualVM: not use it
 }
 
@@ -314,8 +314,9 @@ void ResVmSdlGraphicsManager::notifyVideoExpose() {
 	updateScreen();
 }
 
-void ResVmSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
+bool ResVmSdlGraphicsManager::notifyMousePosition(Common::Point mouse) {
 	transformMouseCoordinates(mouse);
 	// ResidualVM: not use that:
 	//setMousePos(mouse.x, mouse.y);
+	return true;
 }

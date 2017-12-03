@@ -78,6 +78,7 @@ public:
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d); // ResidualVM specific method
 	virtual Graphics::PixelBuffer getScreenPixelBuffer(); // ResidualVM specific method
 	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right); // ResidualVM specific method
+	virtual void initSizeHint(const Graphics::ModeList &modes) override;
 	virtual int getScreenChangeID() const;
 
 	virtual void beginGFXTransaction();

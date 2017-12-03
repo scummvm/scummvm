@@ -507,7 +507,7 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 	_reversed = reverse;
 
 	if (_reversed) {
-		if (_parent->editCount != 1) {
+		if (_parent->editList.size() != 1) {
 			// TODO: Myst's holo.mov needs this :(
 			warning("Can only set reverse without edits");
 			return false;
@@ -517,7 +517,7 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 			// If we're at the end of the video, go to the penultimate edit.
 			// The current frame is set to one beyond the last frame here;
 			// one "past" the currently displayed frame.
-			_curEdit = _parent->editCount - 1;
+			_curEdit = _parent->editList.size() - 1;
 			_curFrame = _parent->frameCount;
 			_nextFrameStartTime = _parent->editList[_curEdit].trackDuration + _parent->editList[_curEdit].timeOffset;
 		} else if (_durationOverride >= 0) {
@@ -769,7 +769,7 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTrackDuration() const {
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::atLastEdit() const {
-	return _curEdit == _parent->editCount;
+	return _curEdit == _parent->editList.size();
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::endOfCurEdit() const {

@@ -27,6 +27,7 @@
 #include "common/noncopyable.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()
 #include "graphics/pixelformat.h"
+#include "graphics/mode.h"
 
 namespace Audio {
 class Mixer;
@@ -688,6 +689,18 @@ public:
 	 */
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
 
+ 	/**
+	 * Send a list of graphics modes to the backend so it can make a decision
+	 * about the best way to set up the display hardware.
+ 	 *
+	 * Engines that switch between different virtual screen sizes during a game
+	 * should call this function prior to any call to initSize. Engines that use
+	 * only a single screen size do not need to call this function.
+	 *
+	 * @param modes the list of graphics modes the engine will probably use.
+ 	 */
+	virtual void initSizeHint(const Graphics::ModeList &modes) {}
+ 
 	/**
 	 * !!! ResidualVM specific method !!!
 	 * Set the size of the launcher virtual screen.

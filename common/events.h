@@ -111,22 +111,29 @@ struct JoystickState {
 /* END of ResidualVM-specific code */
 
 typedef uint32 CustomEventType;
+
 /**
  * Data structure for an event. A pointer to an instance of Event
  * can be passed to pollEvent.
  */
 struct Event {
+
 	/** The type of the event. */
 	EventType type;
-	/** Flag to indicate if the event is real or synthetic. E.g. keyboard
-	  * repeat events are synthetic.
-	  */
-	bool synthetic;
+
+	/**
+	 * True if this is a key down repeat event.
+	 *
+	 * Only valid for EVENT_KEYDOWN events.
+	 */
+	bool kbdRepeat;
+
 	/**
 	  * Keyboard data; only valid for keyboard events (EVENT_KEYDOWN and
 	  * EVENT_KEYUP). For all other event types, content is undefined.
 	  */
 	KeyState kbd;
+
 	/**
 	 * The mouse coordinates, in virtual screen coordinates. Only valid
 	 * for mouse events.
@@ -156,7 +163,7 @@ struct Event {
 	 */
 	JoystickState joystick;
 
-	Event() : type(EVENT_INVALID), synthetic(false) {
+	Event() : type(EVENT_INVALID), kbdRepeat(false) {
 #ifdef ENABLE_KEYMAPPER
 		customType = 0;
 #endif
@@ -419,6 +426,7 @@ public:
 	 * @note	called after graphics system has been set up
 	 */
 	virtual void init() {}
+
 	/**
 	 * Get the next event in the event queue.
 	 * @param event	point to an Event struct, which will be filled with the event data.
@@ -430,6 +438,11 @@ public:
 	 * Pushes a "fake" event into the event queue
 	 */
 	virtual void pushEvent(const Event &event) = 0;
+
+	/**
+	 * Purges all unprocessed mouse events already in the event queue.
+	 */
+	virtual void purgeMouseEvents() = 0;
 
 	/** Return the current mouse position */
 	virtual Point getMousePos() const = 0;

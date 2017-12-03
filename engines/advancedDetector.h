@@ -117,6 +117,11 @@ struct ADGameDescription {
 typedef Common::Array<const ADGameDescription *> ADGameDescList;
 
 /**
+ * A list of raw game ID strings.
+ */
+typedef Common::Array<const char *> ADGameIdList;
+
+/**
  * End marker for a table of ADGameDescription structs. Use this to
  * terminate a list to be passed to the AdvancedDetector API.
  */
@@ -328,7 +333,7 @@ protected:
 	 * Log and print a report that we found an unknown game variant, together with the file
 	 * names, sizes and MD5 sums.
 	 */
-	void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const;
+	void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps, const ADGameIdList &matchedGameIds = ADGameIdList()) const;
 
 	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;

@@ -481,7 +481,7 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 #endif
 
 	if (s.isLoading()) {
-		thumbnail = Common::SharedPtr<Graphics::Surface>(new Graphics::Surface(), Graphics::SharedPtrSurfaceDeleter());
+		thumbnail = Common::SharedPtr<Graphics::Surface>(new Graphics::Surface(), Graphics::SurfaceDeleter());
 		thumbnail->create(kThumbnailWidth, kThumbnailHeight, saveFormat);
 
 		s.syncBytes((byte *)thumbnail->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
@@ -558,7 +558,7 @@ void GameState::setSaveThumbnail(Graphics::Surface *thumb) {
 	if (_data.thumbnail.get() == thumb)
 		return;
 
-	_data.thumbnail = Common::SharedPtr<Graphics::Surface>(thumb, Graphics::SharedPtrSurfaceDeleter());
+	_data.thumbnail = Common::SharedPtr<Graphics::Surface>(thumb, Graphics::SurfaceDeleter());
 }
 
 Common::String GameState::formatSaveTime() {

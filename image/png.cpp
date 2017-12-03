@@ -122,11 +122,6 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		png_destroy_read_struct(&pngPtr, NULL, NULL);
 		return false;
 	}
-	png_infop endInfo = png_create_info_struct(pngPtr);
-	if (!endInfo) {
-		png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
-		return false;
-	}
 
 	png_set_error_fn(pngPtr, NULL, pngError, pngWarning);
 	// TODO: The manual says errors should be handled via setjmp
@@ -239,7 +234,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	png_read_end(pngPtr, NULL);
 
 	// Destroy libpng structures
-	png_destroy_read_struct(&pngPtr, &infoPtr, &endInfo);
+	png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
 
 	return true;
 #else
@@ -285,11 +280,6 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 	png_infop infoPtr = png_create_info_struct(pngPtr);
 	if (!infoPtr) {
 		png_destroy_write_struct(&pngPtr, NULL);
-		return false;
-	}
-	png_infop endInfo = png_create_info_struct(pngPtr);
-	if (!endInfo) {
-		png_destroy_write_struct(&pngPtr, &infoPtr);
 		return false;
 	}
 

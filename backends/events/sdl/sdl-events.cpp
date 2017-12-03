@@ -85,7 +85,7 @@ static uint32 convUTF8ToUTF32(const char *src) {
 #endif
 
 SdlEventSource::SdlEventSource()
-    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0)
+    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       , _queuedFakeKeyUp(false), _fakeKeyUp()
 #endif
@@ -168,7 +168,7 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
 	} else if (unicode) {
-		// Return unicode in case it's stil set and wasn't filtered.
+		// Return unicode in case it's still set and wasn't filtered.
 		return unicode;
 	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
@@ -180,16 +180,17 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 }
 
 // ResidualVM specific relMouse x,y
-void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int relx, int rely) {
+bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int relx, int rely) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 	event.relMouse.x = relx;
 	event.relMouse.y = rely;
 
 	if (_graphicsManager) {
-		_graphicsManager->notifyMousePos(Common::Point(x, y));
-		_graphicsManager->transformMouseCoordinates(event.mouse);
+		return _graphicsManager->notifyMousePosition(event.mouse);
 	}
+
+	return true;
 }
 
 bool SdlEventSource::handleKbdMouse(Common::Event &event) {
@@ -321,8 +322,7 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 
 			if (_km.x != oldKmX || _km.y != oldKmY) {
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-				return true;
+				return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			}
 		}
 	}
@@ -521,6 +521,12 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 		return true;
 	}
 
+	if (_queuedFakeMouseMove) {
+		event = _fakeMouseMove;
+		_queuedFakeMouseMove = false;
+		return true;
+	}
+
 	SDL_Event ev;
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
@@ -562,7 +568,9 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		// with a mouse wheel event. However, SDL2 does not supply
 		// these, thus we use whatever we got last time. It seems
 		// these are always stored in _km.x, _km.y.
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		if (!processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER)) {
+			return false;
+		}
 		if (yDir < 0) {
 			event.type = Common::EVENT_WHEELDOWN;
 			return true;
@@ -701,6 +709,10 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
 	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	event.kbdRepeat = ev.key.repeat;
+#endif
+
 	return true;
 }
 
@@ -753,12 +765,12 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
-	processMouseEvent(event, ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel); // ResidualVM xrel,yrel
+
 	// update KbdMouse
 	_km.x = ev.motion.x * MULTIPLIER;
 	_km.y = ev.motion.y * MULTIPLIER;
 
-	return true;
+	return processMouseEvent(event, ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel); // ResidualVM xrel,yrel
 }
 
 bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
@@ -779,12 +791,11 @@ bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 	else
 		return false;
 
-	processMouseEvent(event, ev.button.x, ev.button.y);
 	// update KbdMouse
 	_km.x = ev.button.x * MULTIPLIER;
 	_km.y = ev.button.y * MULTIPLIER;
 
-	return true;
+	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
 bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
@@ -798,21 +809,21 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 #endif
 	else
 		return false;
-	processMouseEvent(event, ev.button.x, ev.button.y);
+
 	// update KbdMouse
 	_km.x = ev.button.x * MULTIPLIER;
 	_km.y = ev.button.y * MULTIPLIER;
 
-	return true;
+	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONDOWN;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else {
 		event.type = Common::EVENT_KEYDOWN;
 		switch (ev.jbutton.button) {
@@ -833,17 +844,17 @@ bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		}
+		return true;
 	}
-	return true;
 }
 
 bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONUP;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else {
 		event.type = Common::EVENT_KEYUP;
 		switch (ev.jbutton.button) {
@@ -864,8 +875,8 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		}
+		return true;
 	}
-	return true;
 }
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
@@ -981,9 +992,8 @@ bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		event.kbd.keycode = Common::KEYCODE_F5;
 		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
 	}
-	// Nap center (space) to tab (default action )
+	// Map center (space) to tab (default action)
 	// I wanted to map the calendar button but the calendar comes up
-	//
 	else if (ev.key.keysym.sym == SDLK_SPACE) {
 		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.keycode = Common::KEYCODE_TAB;
@@ -1014,6 +1024,12 @@ void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.modifier = false;
 	_km.joy_x = 0;
 	_km.joy_y = 0;
+}
+
+void SdlEventSource::fakeWarpMouse(const int x, const int y) {
+	_queuedFakeMouseMove = true;
+	_fakeMouseMove.type = Common::EVENT_MOUSEMOVE;
+	_fakeMouseMove.mouse = Common::Point(x, y);
 }
 
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {

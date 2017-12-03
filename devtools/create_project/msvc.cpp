@@ -158,7 +158,6 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	// HACK: This definitely should not be here, but otherwise we would not define SDL_BACKEND for x64.
 	x64Defines.push_back("WIN32");
 	x64Defines.push_back("SDL_BACKEND");
-	x64Defines.push_back("SCUMM_64BITS");
 
 	outputGlobalPropFile(setup, properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 }

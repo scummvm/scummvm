@@ -129,6 +129,39 @@ bool AVIDecoder::isSeekable() const {
 	return isVideoLoaded() && !_indexEntries.empty();
 }
 
+const Graphics::Surface *AVIDecoder::decodeNextFrame() {
+	AVIVideoTrack *track = nullptr;
+	bool isReversed = false;
+	int frameNum = 0;
+
+	// Check whether the video is playing in revese
+	for (int idx = _videoTracks.size() - 1; idx >= 0; --idx) {
+		track = static_cast<AVIVideoTrack *>(_videoTracks[idx].track);
+		isReversed |= track->isReversed();
+	}
+
+	if (isReversed) {
+		// For reverse mode we need to keep seeking to just before the
+		// desired frame prior to actually decoding a frame
+		frameNum = getCurFrame();
+		seekIntern(track->getFrameTime(frameNum));
+	}
+
+	// Decode the next frame
+	const Graphics::Surface *frame = VideoDecoder::decodeNextFrame();
+
+	if (isReversed) {
+		// In reverse mode, set next frame to be the prior frame number
+		for (int idx = _videoTracks.size() - 1; idx >= 0; --idx) {
+			track = static_cast<AVIVideoTrack *>(_videoTracks[idx].track);
+			track->setCurFrame(frameNum - 1);
+			findNextVideoTrack();
+		}
+	}
+
+	return frame;
+}
+
 const Graphics::Surface *AVIDecoder::decodeNextTransparency() {
 	if (!_transparencyTrack.track)
 		return nullptr;
@@ -544,11 +577,6 @@ void AVIDecoder::handleNextPacket(TrackStatus &status) {
 	if (!isReversed) {
 		// Start us off in this position next time
 		status.chunkSearchOffset = _fileStream->pos();
-	} else {
-		// Seek to the prior frame
-		assert(videoTrack);
-		Audio::Timestamp time = videoTrack->getFrameTime(getCurFrame());
-		seekIntern(time);
 	}
 }
 
@@ -734,7 +762,7 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 		seekTransparencyFrame(frame);
 
 	// Set the video track's frame
-	videoTrack->setCurFrame(videoTrack->isReversed() ? frame : frame - 1);
+	videoTrack->setCurFrame(frame - 1);
 
 	// Set the video track's search offset to the right spot
 	_videoTracks[0].chunkSearchOffset = _indexEntries[frameIndex].offset;
@@ -776,7 +804,7 @@ void AVIDecoder::seekTransparencyFrame(int frame) {
 		}
 	}
 
-	transTrack->setCurFrame((int)frame - 1);
+	transTrack->setCurFrame(frame - 1);
 }
 
 byte AVIDecoder::getStreamIndex(uint32 tag) {
@@ -993,7 +1021,7 @@ bool AVIDecoder::AVIVideoTrack::setReverse(bool reverse) {
 
 bool AVIDecoder::AVIVideoTrack::endOfTrack() const {
 	if (_reversed)
-		return _curFrame < 0;
+		return _curFrame < -1;
 
 	return _curFrame >= (getFrameCount() - 1);
 }

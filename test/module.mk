@@ -14,11 +14,14 @@ TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest
 TEST_LDFLAGS := $(LDFLAGS) $(LIBS)
 TEST_CXXFLAGS := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
 
-ifdef HAVE_GCC3
-# In test/common/str.h, we test a zero length format string. This causes GCC
-# to generate a warning which in turn poses a problem when building with -Werror.
-# To work around this, we disable -Wformat here.
-TEST_CFLAGS  +=  -Wno-format
+ifdef N64
+TEST_LDFLAGS := $(filter-out -mno-crt0,$(TEST_LDFLAGS))
+endif
+
+ifdef PSP
+TEST_LIBS += backends/platform/psp/memory.o \
+	backends/platform/psp/mp3.o \
+	backends/platform/psp/trace.o
 endif
 
 # Enable this to get an X11 GUI for the error reporter.

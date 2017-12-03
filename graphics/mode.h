@@ -20,47 +20,31 @@
  *
  */
 
-#ifndef BACKENDS_MIXER_DOUBLEBUFFERSDL_H
-#define BACKENDS_MIXER_DOUBLEBUFFERSDL_H
+#ifndef GRAPHICS_MODE_H
+#define GRAPHICS_MODE_H
 
-#include "backends/mixer/sdl/sdl-mixer.h"
+#include "common/array.h"
+
+namespace Graphics {
 
 /**
- * SDL mixer manager with double buffering support.
+ * Represents a hardware video mode.
  */
-class DoubleBufferSDLMixerManager : public SdlMixerManager {
-public:
-	DoubleBufferSDLMixerManager();
-	virtual ~DoubleBufferSDLMixerManager();
+struct Mode {
+	int16 width; ///< The width in pixels
+	int16 height; ///< The height in pixels
 
-protected:
-	SDL_mutex *_soundMutex;
-	SDL_cond *_soundCond;
-	SDL_Thread *_soundThread;
-	bool _soundThreadIsRunning;
-	bool _soundThreadShouldQuit;
+	Mode(const int16 w, const int16 h) :
+		width(w),
+		height(h) {}
 
-	byte _activeSoundBuf;
-	uint _soundBufSize;
-	byte *_soundBuffers[2];
-
-	/**
-	 * Handles and swap the sound buffers
-	 */
-	void mixerProducerThread();
-
-	/**
-	 * Finish the mixer manager
-	 */
-	void deinitThreadedMixer();
-
-	/**
-	 * Callback entry point for the sound thread
-	 */
-	static int SDLCALL mixerProducerThreadEntry(void *arg);
-
-	virtual void startAudio();
-	virtual void callbackHandler(byte *samples, int len);
+	bool operator<(const Mode &other) const {
+		return width < other.width && height < other.height;
+	}
 };
+
+typedef Common::Array<Mode> ModeList;
+
+}
 
 #endif

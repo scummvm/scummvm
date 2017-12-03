@@ -29,21 +29,21 @@
 
 namespace Networking {
 
-static size_t curlDataCallback(char *d, size_t n, size_t l, void *p) {
+size_t NetworkReadStream::curlDataCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
 	if (stream)
-		return stream->write(d, n * l);
+		return stream->_backingStream.write(d, n * l);
 	return 0;
 }
 
-static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p) {
+size_t NetworkReadStream::curlReadDataCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
 	if (stream)
 		return stream->fillWithSendingContents(d, n * l);
 	return 0;
 }
 
-static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p) {
+size_t NetworkReadStream::curlHeadersCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStream *stream = (NetworkReadStream *)p;
 	if (stream)
 		return stream->addResponseHeaders(d, n * l);
@@ -57,7 +57,7 @@ static int curlProgressCallback(void *p, curl_off_t dltotal, curl_off_t dlnow, c
 	return 0;
 }
 
-static int curlProgressCallbackOlder(void *p, double dltotal, double dlnow, double ultotal, double ulnow) {
+int NetworkReadStream::curlProgressCallbackOlder(void *p, double dltotal, double dlnow, double ultotal, double ulnow) {
 	// for libcurl older than 7.32.0 (CURLOPT_PROGRESSFUNCTION)
 	return curlProgressCallback(p, (curl_off_t)dltotal, (curl_off_t)dlnow, (curl_off_t)ultotal, (curl_off_t)ulnow);
 }
@@ -178,15 +178,18 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	ConnMan.registerEasyHandle(_easy);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch) :
+		_backingStream(DisposeAfterUse::YES) {
 	init(url, headersList, (const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) :
+		_backingStream(DisposeAfterUse::YES) {
 	init(url, headersList, formFields, formFiles);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) :
+		_backingStream(DisposeAfterUse::YES) {
 	init(url, headersList, buffer, bufferSize, uploading, usingPatch, post);
 }
 
@@ -201,7 +204,7 @@ bool NetworkReadStream::eos() const {
 }
 
 uint32 NetworkReadStream::read(void *dataPtr, uint32 dataSize) {
-	uint32 actuallyRead = MemoryReadWriteStream::read(dataPtr, dataSize);
+	uint32 actuallyRead = _backingStream.read(dataPtr, dataSize);
 
 	if (actuallyRead == 0) {
 		if (_requestComplete)

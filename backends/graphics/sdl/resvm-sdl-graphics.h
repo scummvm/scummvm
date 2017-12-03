@@ -66,11 +66,11 @@ public:
 	virtual void activateManager() override;
 	virtual void deactivateManager() override;
 	virtual void notifyVideoExpose() override;
-	virtual void notifyMousePos(Common::Point mouse) override;
+	virtual bool notifyMousePosition(Common::Point mouse) override;
 
 	// GraphicsManager API - Features
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
-	virtual bool getFeatureState(OSystem::Feature f) override;
+	virtual bool getFeatureState(OSystem::Feature f) const override;
 
 	// GraphicsManager API - Graphics mode
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
@@ -90,7 +90,7 @@ public:
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num) override;
-	virtual void grabPalette(byte *colors, uint start, uint num) override;
+	virtual void grabPalette(byte *colors, uint start, uint num) const override;
 
 public:
 	// GraphicsManager API - Draw methods
@@ -105,8 +105,8 @@ public:
 	virtual void clearFocusRectangle() override;
 
 	// GraphicsManager API - Overlay
-	virtual int16 getOverlayHeight() override { return _overlayHeight; }
-	virtual int16 getOverlayWidth() override { return _overlayWidth; }
+	virtual int16 getOverlayHeight() const override { return _overlayHeight; }
+	virtual int16 getOverlayWidth() const override { return _overlayWidth; }
 	virtual Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
 
 	// GraphicsManager API - Mouse

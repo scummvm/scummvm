@@ -51,6 +51,12 @@ public:
 	 */
 	virtual void resetKeyboardEmulation(int16 x_max, int16 y_max);
 
+	/**
+	 * Emulates a mouse movement that would normally be caused by a mouse warp
+	 * of the system mouse.
+	 */
+	void fakeWarpMouse(const int x, const int y);
+
 protected:
 	/** @name Keyboard mouse emulation
 	 * Disabled by fingolfin 2004-12-18.
@@ -119,7 +125,7 @@ protected:
 	 * ResidualVM addon:
 	 * The parameters relx and rely for relative mouse movement are Residual specific
 	 */
-	virtual void processMouseEvent(Common::Event &event, int x, int y, int relx = 0, int rely = 0);
+	virtual bool processMouseEvent(Common::Event &event, int x, int y, int relx = 0, int rely = 0);
 
 	/**
 	 * Remaps key events. This allows platforms to configure
@@ -157,6 +163,18 @@ protected:
 	 * Extracts the keycode for the specified key sym.
 	 */
 	SDLKey obtainKeycode(const SDL_keysym keySym);
+
+	/**
+	 * Whether _fakeMouseMove contains an event we need to send.
+	 */
+	bool _queuedFakeMouseMove;
+
+	/**
+	 * A fake mouse motion event sent when the graphics manager is told to warp
+	 * the mouse but the system mouse is unable to be warped (e.g. because the
+	 * window is not focused).
+	 */
+	Common::Event _fakeMouseMove;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/**

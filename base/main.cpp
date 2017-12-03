@@ -486,7 +486,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	setupKeymapper(system);
 
 #ifdef USE_UPDATES
-	if (!ConfMan.hasKey("updates_check")) {
+	if (!ConfMan.hasKey("updates_check") && g_system->getUpdateManager()) {
 		GUI::UpdatesDialog dlg;
 		dlg.runModal();
 	}

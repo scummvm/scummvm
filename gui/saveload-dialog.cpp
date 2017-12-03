@@ -428,11 +428,13 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 		break;
 	case kChooseCmd:
 		_list->endEditMode();
-		if (!_saveList.empty()) {
-			setResult(_saveList[selItem].getSaveSlot());
-			_resultString = _list->getSelectedString();
+		if (selItem >= 0) {
+			if (!_saveList.empty()) {
+				setResult(_saveList[selItem].getSaveSlot());
+				_resultString = _list->getSelectedString();
+			}
+			close();
 		}
-		close();
 		break;
 	case kListSelectionChangedCmd:
 		updateSelection(true);
@@ -694,7 +696,13 @@ void SaveLoadChooserSimple::updateSaveList() {
 		colors.push_back(ThemeEngine::kFontColorNormal);
 	}
 
+	int selected = _list->getSelected();
 	_list->setList(saveNames, &colors);
+	if (selected >= 0 && selected < (int)saveNames.size())
+		_list->setSelected(selected);
+	else
+		_chooseButton->setEnabled(false);
+
 	draw();
 }
 

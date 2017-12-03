@@ -75,6 +75,26 @@ public:
 	bool isRewindable() const { return true; }
 	bool isSeekable() const;
 
+	/**
+	 * Decode the next frame into a surface and return the latter.
+	 *
+	 * A subclass may override this, but must still call this function. As an
+	 * example, a subclass may do this to apply some global video scale to
+	 * individual track's frame.
+	 *
+	 * Note that this will call readNextPacket() internally first before calling
+	 * the next video track's decodeNextFrame() function.
+	 *
+	 * @return a surface containing the decoded frame, or 0
+	 * @note Ownership of the returned surface stays with the VideoDecoder,
+	 *       hence the caller must *not* free it.
+	 * @note this may return 0, in which case the last frame should be kept on screen
+	 */
+	virtual const Graphics::Surface *decodeNextFrame();
+
+	/**
+	 * Decodes the next transparency track frame
+	 */
 	const Graphics::Surface *decodeNextTransparency();
 protected:
 	// VideoDecoder API

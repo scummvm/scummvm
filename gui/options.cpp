@@ -123,8 +123,6 @@ enum {
 
 static const char *savePeriodLabels[] = { _s("Never"), _s("every 5 mins"), _s("every 10 mins"), _s("every 15 mins"), _s("every 30 mins"), 0 };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
-static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11 kHz"), _s("22 kHz"), _s("44 kHz"), _s("48 kHz"), 0 };
-static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
 static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", 0 };
@@ -173,8 +171,6 @@ void OptionsDialog::init() {
 	_midiPopUpDesc = 0;
 	_oplPopUp = 0;
 	_oplPopUpDesc = 0;
-	_outputRatePopUp = 0;
-	_outputRatePopUpDesc = 0;
 	_enableMIDISettings = false;
 	_gmDevicePopUp = 0;
 	_gmDevicePopUpDesc = 0;
@@ -346,15 +342,6 @@ void OptionsDialog::build() {
 		_oplPopUp->setSelectedTag(id);
 	}
 
-	if (_outputRatePopUp) {
-		_outputRatePopUp->setSelected(1);
-		int value = ConfMan.getInt("output_rate", _domain);
-		for	(int i = 0; outputRateLabels[i]; i++) {
-			if (value == outputRateValues[i])
-				_outputRatePopUp->setSelected(i);
-		}
-	}
-
 	if (_multiMidiCheckbox) {
 		if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device"))
 			_gmDevicePopUp->setSelected(0);
@@ -482,10 +469,10 @@ void OptionsDialog::apply() {
 			
 #if 0 // ResidualVM specific
 			bool isSet = false;
-			
+
 			if ((int32)_gfxPopUp->getSelectedTag() >= 0) {
 				const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
-				
+
 				while (gm->name) {
 					if (gm->id == (int)_gfxPopUp->getSelectedTag()) {
 						if (ConfMan.get("gfx_mode", _domain) != gm->name)
@@ -499,7 +486,7 @@ void OptionsDialog::apply() {
 			}
 			if (!isSet)
 				ConfMan.removeKey("gfx_mode", _domain);
-			
+
 			if ((int32)_renderModePopUp->getSelectedTag() >= 0)
 				ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
 #endif
@@ -525,21 +512,21 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("vsync", _domain); // ResidualVM specific
 		}
 	}
-	
+
 	// Setup graphics again if needed
 	if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
 		g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
-		
+
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 		if (ConfMan.hasKey("fullscreen"))
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 		if (ConfMan.hasKey("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
-		
+
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
-		
+
 		// Since this might change the screen resolution we need to give
 		// the GUI a chance to update it's internal state. Otherwise we might
 		// get a crash when the GUI tries to grab the overlay.
@@ -668,17 +655,6 @@ void OptionsDialog::apply() {
 				ConfMan.removeKey("opl_driver", _domain);
 		} else {
 			ConfMan.removeKey("opl_driver", _domain);
-		}
-	}
-
-	if (_outputRatePopUp) {
-		if (_enableAudioSettings) {
-			if (_outputRatePopUp->getSelectedTag() != 0)
-				ConfMan.setInt("output_rate", _outputRatePopUp->getSelectedTag(), _domain);
-			else
-				ConfMan.removeKey("output_rate", _domain);
-		} else {
-			ConfMan.removeKey("output_rate", _domain);
 		}
 	}
 
@@ -901,8 +877,6 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 		_oplPopUpDesc->setEnabled(enabled);
 		_oplPopUp->setEnabled(enabled);
 	}
-	_outputRatePopUpDesc->setEnabled(enabled);
-	_outputRatePopUp->setEnabled(enabled);
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
@@ -1150,14 +1124,6 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	while (ed->name) {
 		_oplPopUp->appendEntry(_(ed->description), ed->id);
 		++ed;
-	}
-
-	// Sample rate settings
-	_outputRatePopUpDesc = new StaticTextWidget(boss, prefix + "auSampleRatePopupDesc", _("Output rate:"), _("Higher value specifies better sound quality but may be not supported by your soundcard"));
-	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", _("Higher value specifies better sound quality but may be not supported by your soundcard"));
-
-	for (int i = 0; outputRateLabels[i]; i++) {
-		_outputRatePopUp->appendEntry(_(outputRateLabels[i]), outputRateValues[i]);
 	}
 
 	_enableAudioSettings = true;

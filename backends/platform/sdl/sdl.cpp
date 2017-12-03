@@ -316,20 +316,22 @@ void OSystem_SDL::detectFramebufferSupport() {
 #endif // USE_OPENGL
 // End of ResidualVM specific code
 
-#if defined(USE_TASKBAR)
 void OSystem_SDL::engineInit() {
+#ifdef USE_TASKBAR
 	// Add the started engine to the list of recent tasks
 	_taskbarManager->addRecent(ConfMan.getActiveDomainName(), ConfMan.get("description"));
 
 	// Set the overlay icon the current running engine
 	_taskbarManager->setOverlayIcon(ConfMan.getActiveDomainName(), ConfMan.get("description"));
+#endif
 }
 
 void OSystem_SDL::engineDone() {
+#ifdef USE_TASKBAR
 	// Remove overlay icon
 	_taskbarManager->setOverlayIcon("", "");
-}
 #endif
+}
 
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized

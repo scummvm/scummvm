@@ -59,6 +59,24 @@ protected:
 public:
 	Array() : _capacity(0), _size(0), _storage(0) {}
 
+	/**
+	 * Constructs an array with `count` default-inserted instances of T. No
+	 * copies are made.
+	 */
+	explicit Array(size_type count) : _size(count) {
+		allocCapacity(count);
+		for (size_type i = 0; i < count; ++i)
+			new ((void *)&_storage[i]) T();
+	}
+
+	/**
+	 * Constructs an array with `count` copies of elements with value `value`.
+	 */
+	Array(size_type count, const T &value) : _size(count) {
+		allocCapacity(count);
+		uninitialized_fill_n(_storage, count, value);
+	}
+
 	Array(const Array<T> &array) : _capacity(array._size), _size(array._size), _storage(0) {
 		if (array._storage) {
 			allocCapacity(_size);
@@ -70,10 +88,10 @@ public:
 	 * Construct an array by copying data from a regular array.
 	 */
 	template<class T2>
-	Array(const T2 *data, size_type n) {
+	Array(const T2 *array, size_type n) {
 		_size = n;
 		allocCapacity(n);
-		uninitialized_copy(data, data + _size, _storage);
+		uninitialized_copy(array, array + _size, _storage);
 	}
 
 	~Array() {
@@ -104,6 +122,16 @@ public:
 		_size--;
 		// We also need to destroy the last object properly here.
 		_storage[_size].~T();
+	}
+
+	/** Returns a pointer to the underlying memory serving as element storage. */
+	const T *data() const {
+		return _storage;
+	}
+
+	/** Returns a pointer to the underlying memory serving as element storage. */
+	T *data() {
+		return _storage;
 	}
 
 	/** Returns a reference to the first element of the array. */
@@ -391,31 +419,19 @@ public:
 			Array<T>::insert(where, element);
 	}
 
-	T &operator[](size_type idx) {
-		error("Operation []= not allowed with SortedArray");
-	}
-
-	void insert_at(size_type idx, const T &element) {
-		error("Operation insert_at(idx, element) not allowed with SortedArray");
-	}
-
-	void insert_at(size_type idx, const Array<T> &array) {
-		error("Operation insert_at(idx, array) not allowed with SortedArray");
-	}
-
-	void insert(iterator pos, const T &element) {
-		error("Operation insert(pos, elemnet) not allowed with SortedArray");
-	}
-
-	void push_back(const T &element) {
-		error("Operation push_back(element) not allowed with SortedArray");
-	}
-
-	void push_back(const Array<T> &array) {
-		error("Operation push_back(array) not allowed with SortedArray");
-	}
-
 private:
+	T &operator[](size_type idx);
+
+	void insert_at(size_type idx, const T &element);
+
+	void insert_at(size_type idx, const Array<T> &array);
+
+	void insert(iterator pos, const T &element);
+
+	void push_back(const T &element);
+
+	void push_back(const Array<T> &array);
+
 	// Based on code Copyright (C) 2008-2009 Ksplice, Inc.
 	// Author: Tim Abbott <tabbott@ksplice.com>
 	// Licensed under GPLv2+
@@ -438,7 +454,6 @@ private:
 		return &this->_storage[start_];
 	}
 
-private:
 	int (*_comparator)(const void *, const void *);
 };
 

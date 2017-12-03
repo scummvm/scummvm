@@ -62,7 +62,7 @@ OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 #endif
 }
 
-bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
 		(f == OSystem::kFeatureOpenGL) ||
@@ -74,7 +74,7 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 		(f == OSystem::kFeatureOverlaySupportsAlpha && _overlayFormat.aBits() > 3);
 }
 
-bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 		case OSystem::kFeatureVSync:
 			return isVSyncEnabled();
@@ -340,7 +340,7 @@ bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint effectiveWidth, uint
 	return it != pixelFormats.end();
 }
 
-bool OpenGLSdlGraphicsManager::isVSyncEnabled() {
+bool OpenGLSdlGraphicsManager::isVSyncEnabled() const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	return SDL_GL_GetSwapInterval() != 0;
 #else
@@ -433,7 +433,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 	}
 }
 
-int16 OpenGLSdlGraphicsManager::getHeight() {
+int16 OpenGLSdlGraphicsManager::getHeight() const {
 	// ResidualVM specific
 	if (_frameBuffer)
 		return _frameBuffer->getHeight();
@@ -441,7 +441,7 @@ int16 OpenGLSdlGraphicsManager::getHeight() {
 		return _overlayHeight;
 }
 
-int16 OpenGLSdlGraphicsManager::getWidth() {
+int16 OpenGLSdlGraphicsManager::getWidth() const {
 	// ResidualVM specific
 	if (_frameBuffer)
 		return _frameBuffer->getWidth();
@@ -501,7 +501,7 @@ void OpenGLSdlGraphicsManager::clearOverlay() {
 	_overlayScreen->fill(0);
 }
 
-void OpenGLSdlGraphicsManager::grabOverlay(void *buf, int pitch) {
+void OpenGLSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
 	const Graphics::Surface *overlayData = _overlayScreen->getBackingSurface();
 
 	const byte *src = (const byte *)overlayData->getPixels();

@@ -121,6 +121,7 @@ public:
 	 * Hence the caller must not delete the surface.
 	 */
 	void setThumbnail(Graphics::Surface *t);
+	void setThumbnail(Common::SharedPtr<Graphics::Surface> t) { _thumbnail = t; }
 
 	/**
 	 * Sets the date the save state was created.

@@ -26,7 +26,13 @@
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "common/translation.h"
 
+#include "backends/platform/sdl/macosx/macosx-compat.h"
 #include <Cocoa/Cocoa.h>
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#define NSEventModifierFlagCommand NSCommandKeyMask
+#define NSEventModifierFlagOption  NSAlternateKeyMask
+#endif
 
 // Apple added setAppleMenu in 10.5 and removed it in 10.6.
 // But as the method still exists we declare it ourselves here.
@@ -92,7 +98,7 @@ void replaceApplicationMenuItems() {
 	// Add "Hide Others" menu item
 	nsString = constructNSStringFromCString(_("Hide Others"), stringEncoding);
 	menuItem = (NSMenuItem *)[appleMenu addItemWithTitle:nsString action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
-	[menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
+	[menuItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption|NSEventModifierFlagCommand)];
 
 	// Add "Show All" menu item
 	nsString = constructNSStringFromCString(_("Show All"), stringEncoding);

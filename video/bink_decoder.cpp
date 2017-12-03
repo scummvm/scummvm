@@ -1241,6 +1241,7 @@ void BinkDecoder::BinkVideoTrack::readDCTCoeffs(VideoFrame &video, int16 *block,
 			case 0:
 				coefList[listPos] = ccoef + 4;
 				modeList[listPos] = 1;
+				// fall through
 			case 2:
 				if (mode == 2) {
 					coefList[listPos]   = 0;
@@ -1348,6 +1349,7 @@ void BinkDecoder::BinkVideoTrack::readResidue(VideoFrame &video, int16 *block, i
 			case 0:
 				coefList[listPos] = ccoef + 4;
 				modeList[listPos] = 1;
+				// fall through
 			case 2:
 				if (mode == 2) {
 					coefList[listPos]   = 0;
