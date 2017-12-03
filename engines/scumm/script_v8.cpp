@@ -553,7 +553,7 @@ void ScummEngine_v8::o8_blastText() {
 void ScummEngine_v8::o8_cursorCommand() {
 	byte subOp = fetchScriptByte();
 	int a;
-	int args[4];
+	int args[NUM_SCRIPT_LOCAL];
 
 	switch (subOp) {
 	case 0xDC:		// SO_CURSOR_ON Turn cursor on
@@ -1060,7 +1060,7 @@ void ScummEngine_v8::o8_startVideo() {
 void ScummEngine_v8::o8_kernelSetFunctions() {
 	// TODO
 	Actor *a;
-	int args[30];
+	int args[NUM_SCRIPT_LOCAL];
 	int len = getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
@@ -1181,7 +1181,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 }
 
 void ScummEngine_v8::o8_kernelGetFunctions() {
-	int args[30];
+	int args[NUM_SCRIPT_LOCAL];
 	int len = getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {

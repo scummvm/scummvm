@@ -729,7 +729,7 @@ void ScummEngine_v6::o6_jump() {
 }
 
 void ScummEngine_v6::o6_startScript() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script, flags;
 
 	getStackList(args, ARRAYSIZE(args));
@@ -788,7 +788,7 @@ void ScummEngine_v6::o6_startScript() {
 }
 
 void ScummEngine_v6::o6_jumpToScript() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script, flags;
 
 	getStackList(args, ARRAYSIZE(args));
@@ -799,7 +799,7 @@ void ScummEngine_v6::o6_jumpToScript() {
 }
 
 void ScummEngine_v6::o6_startScriptQuick() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script;
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
@@ -807,7 +807,7 @@ void ScummEngine_v6::o6_startScriptQuick() {
 }
 
 void ScummEngine_v6::o6_startScriptQuick2() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script;
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
@@ -815,7 +815,7 @@ void ScummEngine_v6::o6_startScriptQuick2() {
 }
 
 void ScummEngine_v6::o6_startObject() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script, entryp;
 	int flags;
 	getStackList(args, ARRAYSIZE(args));
@@ -826,7 +826,7 @@ void ScummEngine_v6::o6_startObject() {
 }
 
 void ScummEngine_v6::o6_startObjectQuick() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	int script, entryp;
 	getStackList(args, ARRAYSIZE(args));
 	entryp = pop();
@@ -869,7 +869,7 @@ void ScummEngine_v6::o6_endCutscene() {
 }
 
 void ScummEngine_v6::o6_cutscene() {
-	int args[25];
+	int args[NUM_SCRIPT_LOCAL];
 	getStackList(args, ARRAYSIZE(args));
 	beginCutscene(args);
 }
@@ -889,7 +889,7 @@ void ScummEngine_v6::o6_freezeUnfreeze() {
 
 void ScummEngine_v6::o6_cursorCommand() {
 	int a, i;
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 
 	byte subOp = fetchScriptByte();
 
@@ -966,7 +966,7 @@ void ScummEngine_v6::o6_breakHere() {
 }
 
 void ScummEngine_v6::o6_ifClassOfIs() {
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 	int num, obj, cls;
 	bool b;
 	int cond = 1;
@@ -989,7 +989,7 @@ void ScummEngine_v6::o6_ifClassOfIs() {
 }
 
 void ScummEngine_v6::o6_setClass() {
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 	int num, obj, cls;
 
 	num = getStackList(args, ARRAYSIZE(args));
@@ -1723,7 +1723,7 @@ void ScummEngine_v6::o6_roomOps() {
 void ScummEngine_v6::o6_actorOps() {
 	Actor *a;
 	int i, j, k;
-	int args[8];
+	int args[NUM_SCRIPT_LOCAL];
 
 	byte subOp = fetchScriptByte();
 	if (subOp == 197) {
@@ -2464,7 +2464,7 @@ void ScummEngine_v6::o6_distPtPt() {
 }
 
 void ScummEngine_v6::o6_drawBlastObject() {
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 	int a, b, c, d, e;
 
 	getStackList(args, ARRAYSIZE(args));
@@ -2494,7 +2494,7 @@ void ScummEngine_v6::o6_setBlastObjectWindow() {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::o6_kernelSetFunctions() {
-	int args[30];
+	int args[NUM_SCRIPT_LOCAL];
 	int num;
 	Actor *a;
 
@@ -2587,7 +2587,7 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 #endif
 
 void ScummEngine_v6::o6_kernelSetFunctions() {
-	int args[30];
+	int args[NUM_SCRIPT_LOCAL];
 	int num;
 	Actor *a;
 
@@ -2694,7 +2694,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 }
 
 void ScummEngine_v6::o6_kernelGetFunctions() {
-	int args[30];
+	int args[NUM_SCRIPT_LOCAL];
 	int i;
 	int slot;
 	Actor *a;
@@ -2833,7 +2833,7 @@ void ScummEngine_v6::o6_delayFrames() {
 }
 
 void ScummEngine_v6::o6_pickOneOf() {
-	int args[100];
+	int args[NUM_SCRIPT_LOCAL];
 	int i, num;
 
 	num = getStackList(args, ARRAYSIZE(args));
@@ -2844,7 +2844,7 @@ void ScummEngine_v6::o6_pickOneOf() {
 }
 
 void ScummEngine_v6::o6_pickOneOfDefault() {
-	int args[100];
+	int args[NUM_SCRIPT_LOCAL];
 	int i, num, def;
 
 	def = pop();
@@ -2943,7 +2943,7 @@ void ScummEngine_v6::o6_shuffle() {
 
 void ScummEngine_v6::o6_pickVarRandom() {
 	int num;
-	int args[100];
+	int args[NUM_SCRIPT_LOCAL];
 	int dim1;
 
 	num = getStackList(args, ARRAYSIZE(args));
