@@ -2564,9 +2564,7 @@ case $_host_os in
 		esac
 
 		append_var DEFINES "-DMACOSX"
-		append_var LIBS "-framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
-		# SDL2 doesn't seem to add Cocoa for us.
-		append_var LIBS "-framework Cocoa"
+		append_var LIBS "-framework AudioUnit -framework AudioToolbox -framework Cocoa -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
 
 		# Now we may have MacPorts or Fink installed
