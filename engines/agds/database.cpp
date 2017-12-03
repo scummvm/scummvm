@@ -48,9 +48,10 @@ namespace AGDS {
 			return false;
 		}
 
-		static const uint32 kHeaderFieldSize = 9;
+		static const uint32 kHeaderFieldSize	= 0x09;
+		static const uint32 kHeaderSize			= 0x14;
 
-		uint32 dataOffset = (_maxNameSize + kHeaderFieldSize) * _totalEntries;
+		uint32 dataOffset = kHeaderSize + (_maxNameSize + kHeaderFieldSize) * _totalEntries;
 		Common::Array<char> nameBuffer(_maxNameSize + 1);
 		for(uint32 i = 0; i < _usedEntries; ++i) {
 			uint32 offset = file.readUint32LE();
