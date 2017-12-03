@@ -34,6 +34,11 @@
 
 namespace Sci {
 
+// We use frac_t to store non-negative offsets that can be larger than 32767
+static uint fracToUInt(frac_t value) {
+	return ((uint32)value) / (1 << FRAC_BITS);
+}
+
 class MidiDriver_AmigaMac : public MidiDriver_Emulated {
 public:
 	enum {
@@ -170,7 +175,7 @@ void MidiDriver_AmigaMac::setEnvelope(Voice *channel, Envelope *envelope, int ph
 }
 
 int MidiDriver_AmigaMac::interpolate(int8 *samples, frac_t offset, uint32 maxOffset, bool isUnsigned) {
-	uint x = fracToInt(offset);
+	uint x = fracToUInt(offset);
 	uint x2 = x == maxOffset ? 0 : x + 1;
 
 	if (isUnsigned) {
@@ -272,7 +277,7 @@ void MidiDriver_AmigaMac::playInstrument(int16 *dest, Voice *channel, int count)
 		if (index == count)
 			break;
 
-		if ((uint32)fracToInt(channel->offset) >= seg_end) {
+		if (fracToUInt(channel->offset) >= seg_end) {
 			if (instrument->mode & kModeLoop) {
 				/* Loop the samples */
 				channel->offset -= intToFrac(seg_end);
