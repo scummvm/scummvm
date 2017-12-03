@@ -114,22 +114,22 @@ static Common::String sanitizeName(const char *name) {
 
 void AdvancedMetaEngine::updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const {
 	if (_singleId != NULL) {
-		desc["preferredtarget"] = desc["gameid"];
-		desc["gameid"] = _singleId;
+		desc.preferredTarget = desc.gameId;
+		desc.gameId = _singleId;
 	}
 
-	if (!desc.contains("preferredtarget"))
-		desc["preferredtarget"] = desc["gameid"];
+	if (desc.preferredTarget.empty())
+		desc.preferredTarget = desc.gameId;
 
 	if (realDesc->flags & ADGF_AUTOGENTARGET) {
 		if (*realDesc->extra)
-			desc["preferredtarget"] = sanitizeName(realDesc->extra);
+			desc.preferredTarget = sanitizeName(realDesc->extra);
 	}
 
-	desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], realDesc);
+	desc.preferredTarget = generatePreferredTarget(desc.preferredTarget, realDesc);
 
 	if (_flags & kADFlagUseExtraAsHint)
-		desc["extra"] = realDesc->extra;
+		desc.extra = realDesc->extra;
 
 	desc.setGUIOptions(realDesc->guiOptions + _guiOptions);
 	desc.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(realDesc->language));
@@ -329,13 +329,13 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	showTestingWarning = true;
 #endif
 
-	if (((gameDescriptor.getSupportLevel() == kUnstableGame
-			|| (gameDescriptor.getSupportLevel() == kTestingGame
+	if (((gameDescriptor.gameSupportLevel == kUnstableGame
+			|| (gameDescriptor.gameSupportLevel == kTestingGame
 					&& showTestingWarning)))
 			&& !Engine::warnUserAboutUnsupportedGame())
 		return Common::kUserCanceled;
 
-	debug(2, "Running %s", gameDescriptor.description().c_str());
+	debug(2, "Running %s", gameDescriptor.description.c_str());
 	initSubSystems(agdDesc.desc);
 	if (!createInstance(syst, engine, agdDesc.desc))
 		return Common::kNoGameDataFoundError;

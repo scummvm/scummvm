@@ -121,13 +121,13 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 
 struct GameTargetLess {
 	bool operator()(const GameDescriptor &x, const GameDescriptor &y) const {
-		return x.preferredtarget().compareToIgnoreCase(y.preferredtarget()) < 0;
+		return x.preferredTarget.compareToIgnoreCase(y.preferredTarget) < 0;
 	}
 };
 
 struct GameDescLess {
 	bool operator()(const GameDescriptor &x, const GameDescriptor &y) const {
-		return x.description().compareToIgnoreCase(y.description()) < 0;
+		return x.description.compareToIgnoreCase(y.description) < 0;
 	}
 };
 
@@ -143,13 +143,13 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	if (cmd == kOkCmd) {
 		// Sort the detected games. This is not strictly necessary, but nice for
 		// people who want to edit their config file by hand after a mass add.
-		sort(_games.begin(), _games.end(), GameTargetLess());
+		Common::sort(_games.begin(), _games.end(), GameTargetLess());
 		// Add all the detected games to the config
 		for (GameList::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
 			debug(1, "  Added gameid '%s', desc '%s'\n",
-				(*iter)["gameid"].c_str(),
-				(*iter)["description"].c_str());
-			(*iter)["gameid"] = addGameToConf(*iter);
+				iter->gameId.c_str(),
+				iter->description.c_str());
+			iter->gameId = addGameToConf(*iter);
 		}
 
 		// Write everything to disk
@@ -157,8 +157,8 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 		// And scroll to first detected game
 		if (!_games.empty()) {
-			sort(_games.begin(), _games.end(), GameDescLess());
-			ConfMan.set("temp_selection", _games.front().gameid());
+			Common::sort(_games.begin(), _games.end(), GameDescLess());
+			ConfMan.set("temp_selection", _games.front().gameId);
 		}
 
 		close();
@@ -211,6 +211,9 @@ void MassAddDialog::handleTickle() {
 
 			// Check for existing config entries for this path/gameid/lang/platform combination
 			if (_pathToTargets.contains(path)) {
+				const char *resultPlatformCode = Common::getPlatformCode(result.platform);
+				const char *resultLanguageCode = Common::getLanguageCode(result.language);
+
 				bool duplicate = false;
 				const StringArray &targets = _pathToTargets[path];
 				for (StringArray::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
@@ -218,9 +221,9 @@ void MassAddDialog::handleTickle() {
 					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
 					assert(dom);
 
-					if ((*dom)["gameid"] == result["gameid"] &&
-					    (*dom)["platform"] == result["platform"] &&
-					    (*dom)["language"] == result["language"]) {
+					if ((*dom)["gameid"] == result.gameId &&
+					    (*dom)["platform"] == resultPlatformCode &&
+					    (*dom)["language"] == resultLanguageCode) {
 						duplicate = true;
 						break;
 					}
@@ -232,7 +235,7 @@ void MassAddDialog::handleTickle() {
 			}
 			_games.push_back(result);
 
-			_list->append(result.description());
+			_list->append(result.description);
 		}
 
 

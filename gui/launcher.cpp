@@ -376,11 +376,20 @@ void LauncherDialog::addGame() {
 	} while (looping);
 }
 
+namespace {
+
+static void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
+	if (!value.empty())
+		ConfMan.set(key, value, domain);
+}
+
+} // End of anonymous namespace
+
 Common::String addGameToConf(const GameDescriptor &result) {
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).
-	Common::String domain = result.preferredtarget();
+	Common::String domain = result.preferredTarget;
 
 	assert(!domain.empty());
 	if (ConfMan.hasGameDomain(domain)) {
@@ -396,11 +405,15 @@ Common::String addGameToConf(const GameDescriptor &result) {
 	// Add the name domain
 	ConfMan.addGameDomain(domain);
 
-	// Copy all non-empty key/value pairs into the new domain
-	for (GameDescriptor::const_iterator iter = result.begin(); iter != result.end(); ++iter) {
-		if (!iter->_value.empty() && iter->_key != "preferredtarget")
-			ConfMan.set(iter->_key, iter->_value, domain);
-	}
+	// Copy all non-empty relevant values into the new domain
+	// FIXME: Factor out
+	addStringToConf("gameid", result.gameId, domain);
+	addStringToConf("description", result.description, domain);
+	addStringToConf("language", Common::getLanguageCode(result.language), domain);
+	addStringToConf("platform", Common::getPlatformCode(result.platform), domain);
+	addStringToConf("path", result.path, domain);
+	addStringToConf("extra", result.extra, domain);
+	addStringToConf("guioptions", result.getGUIOptions(), domain);
 
 	// TODO: Setting the description field here has the drawback
 	// that the user does never notice when we upgrade our descriptions.
@@ -601,7 +614,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		// Display the candidates to the user and let her/him pick one
 		StringArray list;
 		for (idx = 0; idx < (int)candidates.size(); idx++)
-			list.push_back(candidates[idx].matchedGame.description());
+			list.push_back(candidates[idx].matchedGame.description);
 
 		ChooserDialog dialog(_("Pick the game:"));
 		dialog.setList(list);

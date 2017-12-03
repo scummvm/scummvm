@@ -35,94 +35,75 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 	return 0;
 }
 
-GameDescriptor::GameDescriptor() {
-	setVal("gameid", "");
-	setVal("description", "");
+GameDescriptor::GameDescriptor() :
+		language(Common::UNK_LANG),
+		platform(Common::kPlatformUnknown),
+		gameSupportLevel(kStableGame) {
 }
 
-GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions) {
-	setVal("gameid", pgd.gameId);
-	setVal("description", pgd.description);
+GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, const Common::String &guioptions) :
+		language(Common::UNK_LANG),
+		platform(Common::kPlatformUnknown),
+		gameSupportLevel(kStableGame) {
+
+	gameId = pgd.gameId;
+	preferredTarget = pgd.gameId;
+	description = pgd.description;
 
 	if (!guioptions.empty())
-		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
+		_guiOptions = Common::getGameGUIOptionsDescription(guioptions);
 }
 
-GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, Common::String guioptions, GameSupportLevel gsl) {
-	setVal("gameid", g);
-	setVal("description", d);
-	if (l != Common::UNK_LANG)
-		setVal("language", Common::getLanguageCode(l));
-	if (p != Common::kPlatformUnknown)
-		setVal("platform", Common::getPlatformCode(p));
-	if (!guioptions.empty())
-		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
+GameDescriptor::GameDescriptor(const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &guioptions, GameSupportLevel gsl) {
+	gameId = id;
+	preferredTarget = id;
+	description = d;
+	language = l;
+	platform = p;
+	gameSupportLevel = gsl;
 
-	setSupportLevel(gsl);
+	if (!guioptions.empty())
+		_guiOptions = Common::getGameGUIOptionsDescription(guioptions);
 }
 
-void GameDescriptor::setGUIOptions(Common::String guioptions) {
-	if (!guioptions.empty())
-		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
+void GameDescriptor::setGUIOptions(const Common::String &guioptions) {
+	if (guioptions.empty())
+		_guiOptions.clear();
 	else
-		erase("guioptions");
+		_guiOptions = Common::getGameGUIOptionsDescription(guioptions);
 }
 
 void GameDescriptor::appendGUIOptions(const Common::String &str) {
-	setVal("guioptions", getVal("guioptions", "") + " " + str);
+	if (!_guiOptions.empty())
+		_guiOptions += " ";
+
+	_guiOptions += str;
 }
 
-void GameDescriptor::updateDesc(const char *extra) {
-	const bool hasCustomLanguage = (language() != Common::UNK_LANG);
-	const bool hasCustomPlatform = (platform() != Common::kPlatformUnknown);
-	const bool hasExtraDesc = (extra && extra[0]);
+void GameDescriptor::updateDesc(const char *extraDesc) {
+	const bool hasCustomLanguage = (language != Common::UNK_LANG);
+	const bool hasCustomPlatform = (platform != Common::kPlatformUnknown);
+	const bool hasExtraDesc = (extraDesc && extraDesc[0]);
 
 	// Adapt the description string if custom platform/language is set.
 	if (hasCustomLanguage || hasCustomPlatform || hasExtraDesc) {
-		Common::String descr = description();
+		Common::String descr = description;
 
 		descr += " (";
 		if (hasExtraDesc)
-			descr += extra;
+			descr += extraDesc;
 		if (hasCustomPlatform) {
 			if (hasExtraDesc)
 				descr += "/";
-			descr += Common::getPlatformDescription(platform());
+			descr += Common::getPlatformDescription(platform);
 		}
 		if (hasCustomLanguage) {
 			if (hasExtraDesc || hasCustomPlatform)
 				descr += "/";
-			descr += Common::getLanguageDescription(language());
+			descr += Common::getLanguageDescription(language);
 		}
 		descr += ")";
-		setVal("description", descr);
-	}
-}
-
-GameSupportLevel GameDescriptor::getSupportLevel() {
-	GameSupportLevel gsl = kStableGame;
-	if (contains("gsl")) {
-		Common::String gslString = getVal("gsl");
-		if (gslString.equals("unstable"))
-			gsl = kUnstableGame;
-		else if (gslString.equals("testing"))
-			gsl = kTestingGame;
-	}
-	return gsl;
-}
-
-void GameDescriptor::setSupportLevel(GameSupportLevel gsl) {
-	switch (gsl) {
-	case kUnstableGame:
-		setVal("gsl", "unstable");
-		break;
-	case kTestingGame:
-		setVal("gsl", "testing");
-		break;
-	case kStableGame:
-		// Fall Through intended
-	default:
-		erase("gsl");
+		description = descr;
 	}
 }
 
@@ -159,7 +140,7 @@ Common::String DetectionResults::generateUnknownGameReport(bool translate, uint3
 	const char *reportEngineHeader = _s("Matched game IDs for the %s engine:");
 
 	Common::String report = Common::String::format(
-			translate ? _(reportStart) : reportStart, _detectedGames[0].matchedGame["path"].c_str(),
+			translate ? _(reportStart) : reportStart, _detectedGames[0].matchedGame.path.c_str(),
 			"https://bugs.scummvm.org/"
 	);
 	report += "\n";
@@ -190,7 +171,7 @@ Common::String DetectionResults::generateUnknownGameReport(bool translate, uint3
 		// Add the gameId to the list of matched games for the engine
 		// TODO: Use the gameId here instead of the preferred target.
 		// This is currently impossible due to the AD singleId feature losing the information.
-		report += game.matchedGame["preferredtarget"];
+		report += game.matchedGame.preferredTarget;
 
 		// Consolidate matched files across all engines and detection entries
 		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {

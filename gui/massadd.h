@@ -44,7 +44,7 @@ public:
 
 	Common::String getFirstAddedTarget() const {
 		if (!_games.empty())
-			return _games.front().gameid();
+			return _games.front().gameId;
 		return Common::String();
 	}
 

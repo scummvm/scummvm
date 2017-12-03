@@ -1044,7 +1044,7 @@ DetectedGames ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 		// Compute and set the preferred target name for this game.
 		// Based on generateComplexID() in advancedDetector.cpp.
-		game.matchedGame["preferredtarget"] = generatePreferredTarget(*x);
+		game.matchedGame.preferredTarget = generatePreferredTarget(*x);
 
 		game.matchedGame.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
 		game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));

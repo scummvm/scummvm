@@ -881,8 +881,17 @@ static GameList getGameList(const Common::FSNode &dir) {
 	return candidates;
 }
 
+namespace {
+
+static void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
+	if (!value.empty())
+		ConfMan.set(key, value, domain);
+}
+
+} // End of anonymous namespace
+
 static bool addGameToConf(const GameDescriptor &gd) {
-	const Common::String &domain = gd.preferredtarget();
+	const Common::String &domain = gd.preferredTarget;
 
 	// If game has already been added, don't add
 	if (ConfMan.hasGameDomain(domain))
@@ -891,18 +900,22 @@ static bool addGameToConf(const GameDescriptor &gd) {
 	// Add the name domain
 	ConfMan.addGameDomain(domain);
 
-	// Copy all non-empty key/value pairs into the new domain
-	for (GameDescriptor::const_iterator iter = gd.begin(); iter != gd.end(); ++iter) {
-		if (!iter->_value.empty() && iter->_key != "preferredtarget")
-			ConfMan.set(iter->_key, iter->_value, domain);
-	}
+	// Copy all non-empty relevant values into the new domain
+	// FIXME: Factor out
+	addStringToConf("gameid", gd.gameId, domain);
+	addStringToConf("description", gd.description, domain);
+	addStringToConf("language", Common::getLanguageCode(gd.language), domain);
+	addStringToConf("platform", Common::getPlatformCode(gd.platform), domain);
+	addStringToConf("path", gd.path, domain);
+	addStringToConf("extra", gd.extra, domain);
+	addStringToConf("guioptions", gd.getGUIOptions(), domain);
 
 	// Display added game info
 	printf("Game Added: \n  GameID:   %s\n  Name:     %s\n  Language: %s\n  Platform: %s\n",
-			gd.gameid().c_str(),
-			gd.description().c_str(),
-			Common::getLanguageDescription(gd.language()),
-			Common::getPlatformDescription(gd.platform()));
+			gd.gameId.c_str(),
+			gd.description.c_str(),
+			Common::getLanguageDescription(gd.language),
+			Common::getPlatformDescription(gd.platform));
 
 	return true;
 }
@@ -916,7 +929,7 @@ static GameList recListGames(const Common::FSNode &dir, const Common::String &ga
 		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
 			GameList rec = recListGames(*file, gameId, recursive);
 			for (GameList::const_iterator game = rec.begin(); game != rec.end(); ++game) {
-				if (gameId.empty() || game->gameid().c_str() == gameId)
+				if (gameId.empty() || game->gameId == gameId)
 					list.push_back(*game);
 			}
 		}
@@ -946,23 +959,23 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 	printf("ID             Description                                                Full Path\n");
 	printf("-------------- ---------------------------------------------------------- ---------------------------------------------------------\n");
 	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
-		printf("%-14s %-58s %s\n", v->gameid().c_str(), v->description().c_str(), (*v)["path"].c_str());
+		printf("%-14s %-58s %s\n", v->gameId.c_str(), v->description.c_str(), v->path.c_str());
 	}
 
-	return candidates[0].gameid();
+	return candidates[0].gameId;
 }
 
 static int recAddGames(const Common::FSNode &dir, const Common::String &game, bool recursive) {
 	int count = 0;
 	GameList list = getGameList(dir);
 	for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
-		if (v->gameid().c_str() != game && !game.empty()) {
-			printf("Found %s, only adding %s per --game option, ignoring...\n", v->gameid().c_str(), game.c_str());
+		if (v->gameId != game && !game.empty()) {
+			printf("Found %s, only adding %s per --game option, ignoring...\n", v->gameId.c_str(), game.c_str());
 		} else if (!addGameToConf(*v)) {
 			// TODO Is it reall the case that !addGameToConf iff already added?
-			printf("Found %s, but has already been added, skipping\n", v->gameid().c_str());
+			printf("Found %s, but has already been added, skipping\n", v->gameId.c_str());
 		} else {
-			printf("Found %s, adding...\n", v->gameid().c_str());
+			printf("Found %s, adding...\n", v->gameId.c_str());
 			count++;
 		}
 	}
@@ -1033,7 +1046,7 @@ static void runDetectorTest() {
 		bool gameidDiffers = false;
 		GameList::iterator x;
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
-			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameid().c_str()) != 0);
+			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameId.c_str()) != 0);
 		}
 
 		if (candidates.empty()) {
@@ -1056,10 +1069,10 @@ static void runDetectorTest() {
 
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
-				   x->gameid().c_str(),
-				   x->description().c_str(),
-				   Common::getLanguageCode(x->language()),
-				   Common::getPlatformCode(x->platform()));
+				   x->gameId.c_str(),
+				   x->description.c_str(),
+				   Common::getLanguageDescription(x->language),
+				   Common::getPlatformDescription(x->platform));
 		}
 	}
 	int total = domains.size();
@@ -1131,7 +1144,7 @@ void upgradeTargets() {
 			GameList::iterator x;
 			int matchesFound = 0;
 			for (x = candidates.begin(); x != candidates.end(); ++x) {
-				if (x->gameid() == gameid && x->language() == lang && x->platform() == plat) {
+				if (x->gameId == gameid && x->language == lang && x->platform == plat) {
 					matchesFound++;
 					g = &(*x);
 				}
@@ -1149,27 +1162,27 @@ void upgradeTargets() {
 		// the target referred to by dom. We update several things
 
 		// Always set the gameid explicitly (in case of legacy targets)
-		dom["gameid"] = g->gameid();
+		dom["gameid"] = g->gameId;
 
 		// Always set the GUI options. The user should not modify them, and engines might
 		// gain more features over time, so we want to keep this list up-to-date.
-		if (g->contains("guioptions")) {
-			printf("  -> update guioptions to '%s'\n", (*g)["guioptions"].c_str());
-			dom["guioptions"] = (*g)["guioptions"];
+		if (!g->getGUIOptions().empty()) {
+			printf("  -> update guioptions to '%s'\n", g->getGUIOptions().c_str());
+			dom["guioptions"] = g->getGUIOptions();
 		} else if (dom.contains("guioptions")) {
 			dom.erase("guioptions");
 		}
 
 		// Update the language setting but only if none has been set yet.
-		if (lang == Common::UNK_LANG && g->language() != Common::UNK_LANG) {
-			printf("  -> set language to '%s'\n", Common::getLanguageCode(g->language()));
-			dom["language"] = (*g)["language"];
+		if (lang == Common::UNK_LANG && g->language != Common::UNK_LANG) {
+			printf("  -> set language to '%s'\n", Common::getLanguageCode(g->language));
+			dom["language"] = Common::getLanguageCode(g->language);
 		}
 
 		// Update the platform setting but only if none has been set yet.
-		if (plat == Common::kPlatformUnknown && g->platform() != Common::kPlatformUnknown) {
-			printf("  -> set platform to '%s'\n", Common::getPlatformCode(g->platform()));
-			dom["platform"] = (*g)["platform"];
+		if (plat == Common::kPlatformUnknown && g->platform != Common::kPlatformUnknown) {
+			printf("  -> set platform to '%s'\n", Common::getPlatformCode(g->platform));
+			dom["platform"] = Common::getPlatformCode(g->platform);
 		}
 
 		// TODO: We could also update the description. But not everybody will want that.
@@ -1178,8 +1191,8 @@ void upgradeTargets() {
 		// should only be updated if the user explicitly requests this.
 #if 0
 		if (desc != g->description()) {
-			printf("  -> update desc from '%s' to\n                      '%s' ?\n", desc.c_str(), g->description().c_str());
-			dom["description"] = (*g)["description"];
+			printf("  -> update desc from '%s' to\n                      '%s' ?\n", desc.c_str(), g->description.c_str());
+			dom["description"] = g->description;
 		}
 #endif
 	}

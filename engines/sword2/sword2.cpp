@@ -284,7 +284,7 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	DetectedGames detectedGames = detectGames(fslist);
 
 	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].matchedGame.gameid() == gameid) {
+		if (detectedGames[i].matchedGame.gameId == gameid) {
 			*engine = new Sword2::Sword2Engine(syst);
 			return Common::kNoError;
 		}

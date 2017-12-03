@@ -78,15 +78,15 @@ enum GameSupportLevel {
  * can be contained in a GameDescriptor.
  * This is an essential part of the glue between the game engines and the launcher code.
  */
-class GameDescriptor : public Common::StringMap {
+class GameDescriptor {
 public:
 	GameDescriptor();
-	explicit GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions = Common::String());
-	GameDescriptor(const Common::String &gameid,
+	explicit GameDescriptor(const PlainGameDescriptor &pgd, const Common::String &guioptions = Common::String());
+	GameDescriptor(const Common::String &id,
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,
 				  Common::Platform platform = Common::kPlatformUnknown,
-				  Common::String guioptions = Common::String(),
+				  const Common::String &guioptions = Common::String(),
 				  GameSupportLevel gsl = kStableGame);
 
 	/**
@@ -94,27 +94,27 @@ public:
 	 * Values that are missing are omitted, so e.g. (EXTRA/LANG) would be
 	 * added if no platform has been specified but a language and an extra string.
 	 */
-	void updateDesc(const char *extra = 0);
+	void updateDesc(const char *extraDesc = 0);
 
-	void setGUIOptions(Common::String options);
+	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
+	Common::String getGUIOptions() const { return _guiOptions; }
+
+	Common::String gameId;
+	Common::String preferredTarget;
+	Common::String description;
+	Common::Language language;
+	Common::Platform platform;
+	Common::String path;
+	Common::String extra;
 
 	/**
 	 * What level of support is expected of this game
 	 */
-	GameSupportLevel getSupportLevel();
-	void setSupportLevel(GameSupportLevel gsl);
+	GameSupportLevel gameSupportLevel;
 
-	Common::String &gameid() { return getVal("gameid"); }
-	Common::String &description() { return getVal("description"); }
-	const Common::String &gameid() const { return getVal("gameid"); }
-	const Common::String &description() const { return getVal("description"); }
-	Common::Language language() const { return contains("language") ? Common::parseLanguage(getVal("language")) : Common::UNK_LANG; }
-	Common::Platform platform() const { return contains("platform") ? Common::parsePlatform(getVal("platform")) : Common::kPlatformUnknown; }
-
-	const Common::String &preferredtarget() const {
-		return contains("preferredtarget") ? getVal("preferredtarget") : getVal("gameid");
-	}
+private:
+	Common::String _guiOptions;
 };
 
 /** List of games. */

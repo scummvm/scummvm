@@ -531,7 +531,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 
 			for (uint i = 0; i < engineCandidates.size(); i++) {
 				engineCandidates[i].engineName = metaEngine.getName();
-				engineCandidates[i].matchedGame["path"] = path;
+				engineCandidates[i].matchedGame.path = path;
 				candidates.push_back(engineCandidates[i]);
 			}
 
