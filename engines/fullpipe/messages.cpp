@@ -56,6 +56,29 @@ ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int
 	_parId = 0;
 }
 
+struct exDesc {
+	byte num;
+	const char *name;
+} static const exTypes[] = {
+	{ 1,  "START_MOVEMENT" },
+	{ 5,  "SHOW" },
+	{ 17, "MESSAGE" },
+	{ 63, "USER" },
+	{ 0,  "" }
+};
+
+static const char *exCommandType2str(int type) {
+	static char buf[10];
+
+	for (int i = 0; exTypes[i].num; i++)
+		if (exTypes[i].num == type)
+			return exTypes[i].name;
+
+	snprintf(buf, 10, "%d", type);
+
+	return buf;
+}
+
 bool ExCommand::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "ExCommand::load()");
 
@@ -83,6 +106,10 @@ bool ExCommand::load(MfcArchive &file) {
 	}
 
 	_objtype = kObjTypeExCommand;
+
+	debugC(6, kDebugLoading, "%% <COMMAND parent=%d cmd=%s x=%d y=%d f14=%d sceneX=%d sceneY=%d f20=%d f24=%d param=%d f2c=%d f30=%d f34=%d num=%d flags=%d parId=%d />",
+			_parentId, exCommandType2str(_messageKind), _x, _y, _field_14, _sceneClickX, _sceneClickY, _field_20, _field_24, _param, _field_2C,
+			_field_30, _field_34, _messageNum, _excFlags, _parId);
 
 	return true;
 }
@@ -212,6 +239,8 @@ bool ObjstateCommand::load(MfcArchive &file) {
 	_value = file.readUint32LE();
 
 	_objCommandName = file.readPascalString();
+
+	debugC(6, kDebugLoading, "%% <COMMAND cmd=\"USER\" type=\"SET_LOGIC\" title=\"%s\" state=\"%d\" />", transCyrillic(_objCommandName.c_str()), _value);
 
 	return true;
 }
