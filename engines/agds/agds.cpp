@@ -52,6 +52,10 @@ bool AGDSEngine::load() {
 			if (!_resourceManager.addPath(i->value))
 				return false;
 	}
+	if (!_data.open("data.adb"))
+		return false;
+
+	_patch.open("patch.adb"); //it's ok
 	
 	return true;
 }
@@ -59,6 +63,12 @@ bool AGDSEngine::load() {
 Common::Error AGDSEngine::run() {
 	if (!load())
 		return Common::kNoGameDataFoundError;
+
+	Common::SeekableReadStream * main = _data.getEntry("main");
+	debug("loaded main: %p\n", static_cast<void *>(main));
+	if (!main)
+		return Common::kNoGameDataFoundError;
+
 	return Common::kNoError;
 }
 
