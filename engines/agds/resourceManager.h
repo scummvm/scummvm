@@ -57,12 +57,11 @@ private:
 	typedef Common::HashMap<Common::String, ResourcePtr> ResourcesType;
 	ResourcesType _resources;
 
-	template<typename T>
-	static void decrypt(T * data, unsigned size);
-
 public:
 	ResourceManager();
 	~ResourceManager();
+
+	static void decrypt(uint8 * data, unsigned size);
 
 	bool addPath(const Common::String &grpFilename);
 

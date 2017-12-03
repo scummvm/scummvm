@@ -34,8 +34,7 @@ namespace AGDS {
 	ResourceManager::~ResourceManager()
 	{ }
 
-	template<typename T>
-	void ResourceManager::decrypt(T * data, unsigned size) {
+	void ResourceManager::decrypt(uint8 * data, unsigned size) {
 		static const char * kKey = "Vyvojovy tym AGDS varuje: Hackerovani skodi obchodu!";
 		const char *ptr = kKey;
 		while(size--) {
