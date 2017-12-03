@@ -316,7 +316,7 @@ void sceneHandler11_jumpFromSwing() {
 
 	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 	ExCommand *ex = new ExCommand(g_fp->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
-	ex->_field_14 = 256;
+	ex->_z = 256;
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
 	mq->addExCommandToEnd(ex);

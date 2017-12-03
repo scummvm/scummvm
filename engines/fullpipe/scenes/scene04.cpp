@@ -518,7 +518,7 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 		mq->addExCommandToEnd(ex2);
 
 		ExCommand *ex3 = new ExCommand(g_fp->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
-		ex3->_field_14 = 256;
+		ex3->_z = 256;
 		ex3->_messageNum = 0;
 		ex3->_excFlags |= 3;
 		mq->addExCommandToEnd(ex3);
@@ -1602,7 +1602,7 @@ int sceneHandler04(ExCommand *ex) {
 				exnew = new ExCommand(0, 35, SND_4_012, 0, 0, 0, 1, 0, 0, 0);
 			}
 
-			exnew->_field_14 = 5;
+			exnew->_z = 5;
 			exnew->_excFlags |= 2;
 			exnew->postMessage();
 			break;

@@ -188,7 +188,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 					ex->_y = obj->_odelay;
 					ex->_param = subj ? subj->_odelay : 0;
 					ex->_excFlags = 3;
-					ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
+					ex->_z = (obj->_objtype != kObjTypePictureObject);
 					ex->_field_20 = invId;
 					mq->addExCommandToEnd(ex);
 
@@ -261,7 +261,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		if (!(inter->_flags & 0x10000)) {
 			ex = new ExCommand(obj->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
 			ex->_param = obj->_odelay;
-			ex->_field_14 = 0x80;
+			ex->_z = 0x80;
 			ex->_messageNum = 0;
 			ex->_excFlags = 3;
 			mq->addExCommandToEnd(ex);
@@ -269,14 +269,14 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 
 		ex = new ExCommand(obj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = obj->_odelay;
-		ex->_field_14 = 0x100;
+		ex->_z = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = subj->_odelay;
-		ex->_field_14 = 0x100;
+		ex->_z = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
 		mq->addExCommandToEnd(ex);
@@ -325,7 +325,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			ex->_param = subj->_odelay;
 			ex->_excFlags = 3;
 			ex->_field_20 = invId;
-			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
+			ex->_z = (obj->_objtype != kObjTypePictureObject);
 			mq->addExCommandToEnd(ex);
 
 			someFlag = true;
@@ -335,7 +335,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			ex->_y = ypos;
 			ex->_excFlags |= 3;
 			ex->_param = 6;
-			ex->_field_14 = obj->_id;
+			ex->_z = obj->_id;
 			ex->_field_20 = obj->_odelay;
 			ex->postMessage();
 		}
@@ -366,7 +366,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 						ani->_flags |= 0x80u;
 					} else {
 						ex = new ExCommand(ani->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
-						ex->_field_14 = 0x80;
+						ex->_z = 0x80;
 						ex->_param = ani->_odelay;
 						ex->_excFlags = 3;
 						mq->addExCommandToEnd(ex);
@@ -374,7 +374,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 				}
 				ex = new ExCommand(ani->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
 				ex->_param = ani->_odelay;
-				ex->_field_14 = 0x100;
+				ex->_z = 0x100;
 				ex->_excFlags = 3;
 				mq->addExCommandToEnd(ex);
 			} else {
@@ -383,7 +383,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 				ex->_y = ani->_odelay;
 				ex->_param = subj->_odelay;
 				ex->_excFlags = 2;
-				ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
+				ex->_z = (obj->_objtype != kObjTypePictureObject);
 				ex->_field_20 = invId;
 				mq->addExCommandToEnd(ex);
 

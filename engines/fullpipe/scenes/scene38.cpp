@@ -44,7 +44,7 @@ void scene38_setBottleState(Scene *sc) {
 			ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE)->getExCommandByIndex(0);
 
 			g_vars->scene38_bottle->setOXY(ex->_x, ex->_y);
-			g_vars->scene38_bottle->_priority = ex->_field_14;
+			g_vars->scene38_bottle->_priority = ex->_z;
 
 			g_fp->setObjectState(sO_Bottle_38, g_fp->getObjectEnumState(sO_Bottle_38, sO_Blocked));
 		}

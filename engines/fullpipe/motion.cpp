@@ -944,7 +944,7 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 		ExCommand *ex = mq->getExCommandByIndex(0);
 
 		if ((ex->_messageKind != 1 && ex->_messageKind != 20) || ex->_messageNum != ani->_movement->_id ||
-			(ex->_field_14 >= 1 && ex->_field_14 <= ani->_movement->_currDynamicPhaseIndex)) {
+			(ex->_z >= 1 && ex->_z <= ani->_movement->_currDynamicPhaseIndex)) {
 			mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 
 			ex = new ExCommand(ani->_id, 21, 0, 0, 0, 0, 1, 0, 0, 0);
@@ -970,7 +970,7 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 
 		int count2;
 
-		ani->setSomeDynamicPhaseIndex(ex->_field_14);
+		ani->setSomeDynamicPhaseIndex(ex->_z);
 		getPaths(ani, xpos, ypos, fuzzyMatch, &count2);
 
 		int idx = getObjectIndex(ani);
@@ -1079,7 +1079,7 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 
 					if ((ex->_messageKind != 1 && ex->_messageKind != 20) ||
 						ex->_messageNum != subj->_movement->_id ||
-						(ex->_field_14 >= 1 && ex->_field_14 <= subj->_movement->_currDynamicPhaseIndex))
+						(ex->_z >= 1 && ex->_z <= subj->_movement->_currDynamicPhaseIndex))
 						subj->playIdle();
 				}
 			}
@@ -1988,7 +1988,7 @@ MessageQueue *MctlGraph::makeWholeQueue(MctlMQ &mctlMQ) {
 				ex->_excFlags |= 2;
 				ex->_param = _items2[mctlMQ.index]._obj->_odelay;
 				ex->_field_24 = 1;
-				ex->_field_14 = -1;
+				ex->_z = -1;
 				mq->addExCommandToEnd(ex);
 
 				curX += mg2i->_mx;
@@ -2234,7 +2234,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 
 			ex = new ExCommand(picAniInfo.objectId, 5, -1, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
 
-			ex->_field_14 = -1;
+			ex->_z = -1;
 			ex->_param = picAniInfo.field_8;
 			ex->_excFlags |= 3;
 			mq->addExCommandToEnd(ex);
@@ -2353,11 +2353,11 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 
 			if (ex && (ex->_messageKind == 1 || ex->_messageKind == 20)
 					&& picAniInfo.movementId == ex->_messageNum
-					&& picAniInfo.someDynamicPhaseIndex == ex->_field_14) {
+					&& picAniInfo.someDynamicPhaseIndex == ex->_z) {
 				mq->deleteExCommandByIndex(0, 1);
 			} else {
 				ex = new ExCommand(picAniInfo.objectId, 5, ex->_messageNum, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
-				ex->_field_14 = -1;
+				ex->_z = -1;
 				ex->_param = picAniInfo.field_8;
 				ex->_excFlags |= 2;
 				mq->addExCommand(ex);
@@ -2576,7 +2576,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 							0,
 							0);
 
-		ex->_field_14 = info->distance1;
+		ex->_z = info->distance1;
 
 		ex->_param = _items2[info->index]._obj->_odelay;
 		ex->_field_24 = 1;
@@ -2594,7 +2594,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 							 0,
 							 0);
 
-		ex->_field_14 = info->distance1;
+		ex->_z = info->distance1;
 
 		ex->_param = _items2[info->index]._obj->_odelay;
 		ex->_field_24 = 1;
@@ -2652,7 +2652,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 	}
 
 	ex = new ExCommand(_items2[info->index]._objectId, 5, -1, info->pt2.x, info->pt2.y, 0, 1, 0, 0, 0);
-	ex->_field_14 = info->distance2;
+	ex->_z = info->distance2;
 
 	ex->_param = _items2[info->index]._obj->_odelay;
 	ex->_field_24 = 0;

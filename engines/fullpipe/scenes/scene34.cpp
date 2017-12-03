@@ -180,7 +180,7 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
-	ex->_field_14 = 256;
+	ex->_z = 256;
 	mq->addExCommandToEnd(ex);
 
 	ex = cmd->createClone();
