@@ -129,26 +129,7 @@ ifdef USE_DOCKTILEPLUGIN
 	cp -r scummvm.docktileplugin $(bundle_name)/Contents/PlugIns/
 endif
 
-iphonebundle: iphone
-	mkdir -p $(bundle_name)
-	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
-	cp $(DIST_FILES_DOCS) $(bundle_name)/
-	cp $(DIST_FILES_THEMES) $(bundle_name)/
-ifdef DIST_FILES_NETWORKING
-	cp $(DIST_FILES_NETWORKING) $(bundle_name)/
-endif
-ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
-endif
-	$(STRIP) scummvm
-	ldid -S scummvm
-	chmod 755 scummvm
-	cp scummvm $(bundle_name)/ScummVM
-	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
-	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
-	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
-
-ios7bundle: iphone
+ios7bundle: all
 	mkdir -p $(bundle_name)
 	awk 'BEGIN {s=0}\
 		/<key>CFBundleIcons<\/key>/ {\
@@ -283,13 +264,6 @@ LDFLAGS += -F$(SPARKLEPATH)
 endif
 LDFLAGS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
 endif
-
-# Special target to create a static linked binary for the iPhone (legacy, and iOS 7+)
-iphone: $(OBJS)
-	$(CXX) $(LDFLAGS) -o scummvm $(OBJS) \
-		-framework UIKit -framework CoreGraphics -framework OpenGLES \
-		-framework CoreFoundation -framework QuartzCore -framework Foundation \
-		-framework AudioToolbox -framework CoreAudio -lobjc -lz
 
 publish-appcast:
 	scp dists/macosx/scummvm_appcast.xml www.scummvm.org:/var/www/html/appcasts/macosx/release.xml
