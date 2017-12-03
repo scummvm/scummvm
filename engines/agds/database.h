@@ -20,41 +20,44 @@
  *
  */
 
-#ifndef AGDS_AGDS_H
-#define AGDS_AGDS_H
+#ifndef AGDS_DATABASE_H
+#define AGDS_DATABASE_H
 
 #include "common/scummsys.h"
-#include "engines/advancedDetector.h"
-#include "agds/resourceManager.h"
-#include "agds/database.h"
+#include "common/str.h"
+#include "common/stream.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
-/**
- * This is the namespace of the AGDS engine.
- *
- * Status of this engine: In Progress
- *
- * Games using this engine:
- * - Black Mirror (Windows)
- */
 namespace AGDS {
 
-class AGDSEngine : public Engine {
+class Database {
+private:
+	struct Entry
+	{
+		uint32			offset;
+		uint32			size;
+
+		Entry(): offset(), size() { }
+		Entry(uint32 o, uint32 s): offset(o), size(s) { }
+	};
+
+	typedef Common::HashMap<Common::String, Entry> EntriesType;
+
+	Common::String	_filename;
+	bool			_writeable;
+	uint32			_totalEntries;
+	uint32			_usedEntries;
+	uint32			_maxNameSize;
+
+	EntriesType		_entries;
+
 public:
-	AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~AGDSEngine();
-
-	Common::Error run();
-
-private:
-	bool load();
-
-private:
-	const ADGameDescription *	_gameDescription;
-	ResourceManager				_resourceManager;
-	Database					_data, _patch; //data and patch databases
+	bool open(const Common::String &filename);
+	Common::SeekableReadStream * getEntry(const Common::String &name) const;
 };
 
 
 } // End of namespace AGDS
 
-#endif /* AGDS_AGDS_H */
+#endif /* AGDS_RESOURCE_MANAGER_H */

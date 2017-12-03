@@ -2,6 +2,7 @@ MODULE := engines/agds
 
 MODULE_OBJS := \
 	agds.o \
+	database.o \
 	detection.o \
 	resourceManager.o
 

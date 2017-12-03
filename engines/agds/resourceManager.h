@@ -34,6 +34,8 @@ namespace AGDS {
 
 class ResourceManager {
 private:
+
+	//fixme: port to Archive
 	struct GrpFile
 	{
 		Common::String filename;
