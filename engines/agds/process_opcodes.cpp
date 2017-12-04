@@ -42,20 +42,19 @@ void Process::enter(uint16 magic, uint16 size) {
 
 void Process::setSystemVariable() {
 	int16 valueIndex = pop();
-	int16 nameIndex = pop();
+	const Object::StringEntry &name = popString();
 
-	const Object::StringEntry &name = _object->getString(nameIndex);
 	if (valueIndex != -1) {
 		const Object::StringEntry &value = _object->getString(valueIndex);
-		debug("setSystemVariable: %s[%d] to %s[%d]", name.string.c_str(), nameIndex, value.string.c_str(), valueIndex);
+		debug("setSystemVariable %s to %s", name.string.c_str(), value.string.c_str());
 	} else {
-		debug("resetSystemVariable: %s[%d]", name.string.c_str(), nameIndex);
+		debug("resetSystemVariable %s", name.string.c_str());
 	}
 }
 
 void Process::loadPicture() {
-	int32 id = pop();
-	debug("loadPicture stub %d", id);
+	const Object::StringEntry &name = popString();
+	debug("loadPicture stub %s", name.string.c_str());
 	push(100500); //dummy
 }
 
