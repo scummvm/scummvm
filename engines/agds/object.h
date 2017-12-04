@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/stream.h"
+#include "common/hashmap.h"
 
 namespace AGDS {
 
@@ -33,11 +34,28 @@ class Object {
 public:
 	typedef Common::Array<uint8> CodeType;
 
+	struct StringEntry
+	{
+		Common::String	string;
+		uint16			flags;
+
+		StringEntry(): string(), flags() { }
+		StringEntry(const Common::String &s, uint16 f): string(s), flags(f) { }
+	};
+
 private:
-	CodeType _code;
+	typedef Common::HashMap<uint16, StringEntry, Common::Hash<uint16> > StringTableType;
+
+	CodeType			_code;
+	StringTableType		_stringTable;
+	bool				_stringTableLoaded;
+
 
 public:
 	Object(Common::SeekableReadStream * stream);
+
+	void readStringTable(unsigned resOffset, uint16 resCount);
+	const StringEntry & getString(uint16 index) const;
 
 	const CodeType & getCode() const {
 		return _code;
