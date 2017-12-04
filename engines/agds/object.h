@@ -20,52 +20,31 @@
  *
  */
 
-#ifndef AGDS_AGDS_H
-#define AGDS_AGDS_H
+#ifndef AGDS_OBJECT_H
+#define AGDS_OBJECT_H
 
 #include "common/scummsys.h"
-#include "common/hashmap.h"
-#include "engines/advancedDetector.h"
-#include "agds/resourceManager.h"
-#include "agds/database.h"
+#include "common/array.h"
+#include "common/stream.h"
 
-/**
- * This is the namespace of the AGDS engine.
- *
- * Status of this engine: In Progress
- *
- * Games using this engine:
- * - Black Mirror (Windows)
- */
 namespace AGDS {
 
-class Object;
-class Process;
-
-class AGDSEngine : public Engine {
+class Object {
 public:
-	AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~AGDSEngine();
-
-	Common::Error run();
+	typedef Common::Array<uint8> CodeType;
 
 private:
-	bool load();
-	void loadObject(Common::String & name);
+	CodeType _code;
 
-private:
-	typedef Common::HashMap<Common::String, Object *> ObjectsType;
-	typedef Common::List<Process> ProcessListType;
+public:
+	Object(Common::SeekableReadStream * stream);
 
-	const ADGameDescription *	_gameDescription;
-	ResourceManager				_resourceManager;
-	Database					_data, _patch; //data and patch databases
-	ObjectsType					_objects;
-	ProcessListType				_processes;
-	Common::String				_nextScreen;
+	const CodeType & getCode() const {
+		return _code;
+	}
 };
 
 
 } // End of namespace AGDS
 
-#endif /* AGDS_AGDS_H */
+#endif /* AGDS_OBJECT_H */
