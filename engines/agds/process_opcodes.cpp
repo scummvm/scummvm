@@ -40,16 +40,17 @@ void Process::enter(uint16 magic, uint16 size) {
 	_object->readStringTable(resOffset, resCount);
 }
 
-		Common::String name(nameBegin, nameEnd - nameBegin);
+void Process::setSpecialVariable() {
+	int16 valueIndex = pop();
+	int16 nameIndex = pop();
 
-		debug("resource table 1[%04u]: 0x%04x %s", i, flags, name.c_str());
+	const Object::StringEntry &name = _object->getString(nameIndex);
+	if (valueIndex != -1) {
+		const Object::StringEntry &value = _object->getString(valueIndex);
+		debug("setSpecialVariable: %s[%d] to %s[%d]", name.string.c_str(), nameIndex, value.string.c_str(), valueIndex);
+	} else {
+		debug("resetSpecialVariable: %s[%d]", name.string.c_str(), nameIndex);
 	}
-}
-
-void Process::stub142() {
-	int arg1 = pop();
-	int arg2 = pop();
-	debug("stub142: %d, %d", arg1, arg2);
 }
 
 void Process::loadPicture() {
