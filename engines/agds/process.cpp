@@ -27,6 +27,7 @@ namespace AGDS {
 
 enum Opcode {
 	kEnter				= 5,
+	kPop				= 10,
 	kPushImm8			= 18,
 	kOp142				= 142,
 	kLoadPicture		= 198,
@@ -68,6 +69,7 @@ void Process::execute() {
 		uint8 op = next();
 		switch(op) {
 			OP_UU	(kEnter, enter);
+			OP		(kPop, pop);
 			OP_C	(kPushImm8, push);
 			OP		(kLoadPicture, loadPicture);
 			OP		(kOp142, stub142);
