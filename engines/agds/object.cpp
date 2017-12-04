@@ -22,10 +22,11 @@
 
 #include "agds/object.h"
 #include "common/debug.h"
+#include "common/memstream.h"
 
 namespace AGDS {
 
-Object::Object(Common::SeekableReadStream * stream) {
+Object::Object(Common::SeekableReadStream * stream) : _stringTableLoaded(false) {
 	stream->skip(2);
 	uint16 dataSize = stream->readUint16LE();
 	if (dataSize != 0)
@@ -39,6 +40,47 @@ Object::Object(Common::SeekableReadStream * stream) {
 	_code.resize(codeSize);
 	stream->read(_code.data(), _code.size());
 	delete stream;
+}
+
+void Object::readStringTable(unsigned resOffset, uint16 resCount) {
+	if (_stringTableLoaded)
+		return;
+
+	resOffset += 5 /*instruction*/ + 0x11 /*another header*/;
+	if (resOffset >= _code.size())
+		error("invalid resource table offset");
+
+	debug("resource table at %08x", resOffset);
+	Common::MemoryReadStream stream(_code.data() + resOffset, _code.size() - resOffset);
+	for(uint16 i = 0; i < resCount; ++i) {
+		uint16 offset = stream.readUint16LE();
+		uint16 flags = stream.readUint16LE();
+
+		unsigned nameOffset = resOffset + offset;
+		if (nameOffset > _code.size())
+			error("invalid resource name offset");
+
+		const char * nameBegin = reinterpret_cast<const char *>(_code.data() + nameOffset);
+		const char * codeEnd = reinterpret_cast<const char *>(_code.data() + _code.size());
+		const char * nameEnd = Common::find(nameBegin, codeEnd, 0);
+
+		Common::String name(nameBegin, nameEnd - nameBegin);
+
+		debug("resource table 1[%04u]: 0x%04x %s", i, flags, name.c_str());
+		_stringTable[i] = StringEntry(name, flags);
+	}
+	_stringTableLoaded = true;
+}
+
+const Object::StringEntry & Object::getString(uint16 index) const {
+	if (!_stringTableLoaded)
+		error("no string table loaded");
+
+	StringTableType::const_iterator i = _stringTable.find(index);
+	if (i == _stringTable.end())
+		error("no resource name with id %u", index);
+
+	return i->_value;
 }
 
 }
