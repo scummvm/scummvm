@@ -58,7 +58,7 @@ private:
 	void push(int32 value);
 	int32 pop();
 
-	void enter(int16 dead, int16 jump);
+	void enter(uint16 magic, uint16 size);
 	void stub142();
 	void loadPicture();
 
