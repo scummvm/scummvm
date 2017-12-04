@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-11-28 05:51+0100\n"
-"PO-Revision-Date: 2017-04-23 05:59+0000\n"
-"Last-Translator: Santiago Sanchez <sanchez.santiago.j@gmail.com>\n"
+"PO-Revision-Date: 2017-12-01 22:51+0000\n"
+"Last-Translator: TomasM <truido@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -835,9 +835,8 @@ msgid "Show On-screen control"
 msgstr "Mostrar controles en pantalla"
 
 #: gui/options.cpp:936
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Modo Touchpad desactivado."
+msgstr "Modo Touchpad"
 
 #: gui/options.cpp:940
 msgid "Swap Menu and Back buttons"
@@ -849,7 +848,7 @@ msgstr "Velocidad del puntero:"
 
 #: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Velocidad del puntero para el control por teclado o joystick"
 
 #: gui/options.cpp:947
 msgctxt "lowres"
@@ -858,20 +857,20 @@ msgstr "Velocidad del puntero:"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Zona inactiva del joystick:"
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "Zona inactiva del joystick analógico"
 
 #: gui/options.cpp:960
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Zona inactiva del joystick:"
 
 #: gui/options.cpp:974
 msgid "HW Shader:"
-msgstr ""
+msgstr "Shader:"
 
 #: gui/options.cpp:974 gui/options.cpp:976
 msgid "Different hardware shaders give different visual effects"
@@ -884,7 +883,7 @@ msgstr "HW Shader:"
 
 #: gui/options.cpp:977
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Cada shader produce un efecto visual distinto"
 
 #: gui/options.cpp:994
 msgid "Graphics mode:"
@@ -909,7 +908,7 @@ msgstr "Filtros de gráficos"
 
 #: gui/options.cpp:1023
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usar filtrado lineal para escalar gráficos"
+msgstr "Usar filtrado lineal para reescalar gráficos"
 
 #: gui/options.cpp:1026
 msgid "Aspect ratio correction"
@@ -954,7 +953,7 @@ msgstr "Emul. AdLib:"
 
 #: gui/options.cpp:1063 gui/options.cpp:1064
 msgid "AdLib is used for music in many games"
-msgstr "AdLib es usado para la música en muchos juegos"
+msgstr "AdLib se utiliza para reproducir la música en muchos juegos"
 
 #: gui/options.cpp:1077
 msgid "GM Device:"
@@ -972,7 +971,7 @@ msgstr "No usar música General MIDI"
 
 #: gui/options.cpp:1099 gui/options.cpp:1161
 msgid "Use first available device"
-msgstr "Utilizar el primer dispositivo disponible"
+msgstr "Usar el primer dispositivo disponible"
 
 #: gui/options.cpp:1111
 msgid "SoundFont:"
@@ -1131,9 +1130,8 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/options.cpp:1450
-#, fuzzy
 msgid "Control"
-msgstr "Control del ratón"
+msgstr "Controles"
 
 #: gui/options.cpp:1476
 msgid "FluidSynth Settings"
@@ -1333,9 +1331,8 @@ msgid "Theme does not support selected language!"
 msgstr "¡El Tema no soporta el lenguaje seleccionado!"
 
 #: gui/options.cpp:1898
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "La partida no se ha cargado"
+msgstr "No se ha podido cargar el tema."
 
 #: gui/options.cpp:1901
 msgid ""
@@ -1343,7 +1340,7 @@ msgid ""
 "Misc settings will be restored."
 msgstr ""
 "\n"
-"La configuración por defecto será restaurada."
+"Se restaurará la configuración por defecto."
 
 #: gui/options.cpp:1937
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1635,22 +1632,22 @@ msgid "Antialiased"
 msgstr "Suavizado"
 
 #: gui/updates-dialog.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
-"Ahora ScummVM puede buscar actualizaciones automáticamente,\n"
-"para lo cual se requiere una conexión a Internet.\n"
-"\n"
-"Would you like to enable this feature?"
+"ScummVM puede buscar actualizaciones automáticamente,\n"
+"para lo cual hace falta una conexión a Internet. ¿Quieres\n"
+"activar esta opción?"
 
 #: gui/updates-dialog.cpp:52
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Puedes cambiar esta opción más adelante en la\n"
+"pestaña Otras del menú de opciones."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -1800,20 +1797,22 @@ msgid "<Bad value>"
 msgstr "<Valor incorrecto>"
 
 #: engines/advancedDetector.cpp:330
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown %s engine game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"El juego en '%s' parece ser desconocido.\n"
-"Porfavor, informe de ello al equipo de ScummVM junto al nombre\n"
-"del juego que ha intentado añadir y su versión, lenguaje, etc.:"
+"Parece que el juego que se encuentra en '%s' utiliza una versión desconocida "
+"del motor %s.\n"
+"\n"
+"Por favor, envía la siguiente información al equipo de ScummVM en %s, junto "
+"al nombre del juego, su versión, el idioma, etcétera:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr ""
+msgstr "Juegos disponibles:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -2996,7 +2995,7 @@ msgstr "Usar paleta original"
 
 #: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
-msgstr "Utilizar los niveles de brillo originales del juego"
+msgstr "Usar los niveles de brillo originales del juego"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
@@ -3298,28 +3297,24 @@ msgid "~W~ater Effect Enabled"
 msgstr "Efecto ag~u~a activado"
 
 #: engines/mohawk/dialogs.cpp:272
-#, fuzzy
 msgid "Transitions:"
-msgstr "Tra~n~siciones activadas"
+msgstr "Transiciones:"
 
 #: engines/mohawk/dialogs.cpp:274
-#, fuzzy
 msgid "Disabled"
-msgstr "Gráf. desactivados"
+msgstr "Desactivado"
 
 #: engines/mohawk/dialogs.cpp:275
-#, fuzzy
 msgid "Fastest"
-msgstr "Pegar"
+msgstr "Rápido"
 
 #: engines/mohawk/dialogs.cpp:276
-#, fuzzy
 msgid "Normal"
-msgstr "OpenGL Normal"
+msgstr "Normal"
 
 #: engines/mohawk/dialogs.cpp:277
 msgid "Best"
-msgstr ""
+msgstr "Mejor"
 
 #: engines/mohawk/mohawk.cpp:58
 msgid "The game is paused. Press any key to continue."
@@ -3351,7 +3346,7 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:416
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "Te faltan estos archivos de Riven:\n"
 
 #: engines/mohawk/riven_stack.cpp:182
 msgid ""
@@ -3522,12 +3517,11 @@ msgstr "Mostrar líneas negras sobre los vídeos para que parezcan más nítidos"
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Usar reescalado de vídeo de alta calidad"
 
 #: engines/sci/detection.cpp:432
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Usar filtrado lineal para escalar gráficos"
+msgstr "Usar interpolación lineal al reescalar vídeos, siempre que sea posible"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
@@ -3579,13 +3573,12 @@ msgstr ""
 "normalmente"
 
 #: engines/sci/detection.cpp:506
-#, fuzzy
 msgid "Enable content censoring"
-msgstr "Activar cursores flotantes"
+msgstr "Activar censura"
 
 #: engines/sci/detection.cpp:507
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "Activar la opción de censura incluida en el juego"
 
 #: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
@@ -3599,26 +3592,35 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"Los personajes que se hayan guardado usando ScummVM aparecerán "
+"automáticamente. Si se han guardado usando el intérprete original, es "
+"necesario copiar los archivos al directorio de partidas guardadas de ScummVM "
+"y añadirles un prefijo, que depende del juego en cuestión: 'qfg1-' para "
+"Quest for Glory 1, 'qfg2-' para Quest for Glory 2. Ejemplo: 'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:348
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
+"Utiliza una aplicación externa para abrir el archivo de ayuda del juego: %s"
 
 #: engines/sci/engine/savegame.cpp:1290
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "No se puede cargar esta partida. El formato es obsoleto."
 
 #: engines/sci/engine/savegame.cpp:1292
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
+"La versión de la partida es %d, pero la última versión compatible es %0d"
 
 #: engines/sci/engine/savegame.cpp:1303
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"No se puede cargar esta partida porque se ha creado desde una versión "
+"distinta del juego"
 
 #: engines/sci/resource.cpp:822
 msgid ""
@@ -3626,6 +3628,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Hay archivos dañados o que faltan. Puede que el juego no funcione "
+"correctamente. Consulta la consola para ver más información, y comprueba que "
+"los archivos son válidos."
 
 #: engines/sci/sci.cpp:400
 msgid ""
@@ -3634,6 +3639,9 @@ msgid ""
 "riddles. Please, apply the latest patch for this game by Sierra to avoid "
 "possible problems."
 msgstr ""
+"Se ha detectado un script problemático, que puede impedirte avanzar en el "
+"juego durante la escena de los acertijos del Hombre Verde. Es recomendable "
+"actualizar el juego a la última versión para evitar problemas."
 
 #: engines/sci/sci.cpp:409
 msgid ""
@@ -3643,6 +3651,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"Se han activado los subtítulos, pero los subtítulos de King's Quest 7 no "
+"llegaron a completarse y se deshabilitaron en la versión final del juego. "
+"ScummVM permite activarlos pero, como originalmente se eliminaron, a veces "
+"no se muestran correctamente o no coinciden con lo que dicen las voces. Esto "
+"no es un fallo de ScummVM, sino de los recursos del juego."
 
 #: engines/sci/sci.cpp:433
 msgid ""
@@ -3656,6 +3669,15 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"Has seleccionado General MIDI como dispositivo de sonido. Sierra proporcionó "
+"compatibilidad con General MIDI tras el lanzamiento del juego, en su "
+"\"General MIDI Utility\". Instala este parche para disponer de música MIDI. "
+"Una vez lo tengas, descomprime todos los archivos *.PAT en el directorio "
+"Adicional de ScummVM y el parche se aplicará automáticamente. También puedes "
+"seguir las instrucciones del archivo READ.ME incluido con el parche, que "
+"consisten en renombrar como 4.PAT el archivo *.PAT correspondiente y luego "
+"moverlo al directorio del juego. Sin este parche, la música General MIDI "
+"sonará muy distorsionada."
 
 #: engines/sci/sci.cpp:452
 msgid ""
@@ -3665,6 +3687,11 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Tu juego ha sido modificado con un parche de script no oficial. Estos "
+"parches pueden causar problemas, ya que cambian los scripts del juego. Estos "
+"parches no son necesarios, puesto que ScummVM ya corrige los fallos, así que "
+"es recomendable que los elimines de la carpeta del juego para evitar "
+"problemas."
 
 #: engines/scumm/detection.cpp:1126
 msgid ""
@@ -4599,7 +4626,7 @@ msgstr "Aplicar filtrado bilineal a sprites individuales"
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
 msgstr ""
-"Utilizar los menús originales para guardar/cargar, en vez de los de ScummVM"
+"Usar los menús originales para guardar/cargar, en vez de los de ScummVM"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
